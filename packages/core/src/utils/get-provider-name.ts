@@ -1,4 +1,4 @@
-import { Class } from '#di';
+import { Class, InjectionToken } from '#di';
 import { getToken } from './get-tokens.js';
 import { isNormalizedProvider } from './type-guards.js';
 
@@ -10,7 +10,11 @@ export function getProviderName(provider: any) {
   if (isNormalizedProvider(provider) || provider instanceof Class) {
     token = getToken(provider);
   } else {
-    token = provider;
+    if (provider instanceof InjectionToken) {
+      token = provider;
+    } else {
+      token = provider.constructor instanceof Class ? provider.constructor : provider;
+    }
   }
   return typeof token == 'symbol' ? token.toString() : `${token.name || token}`;
 }
