@@ -3,11 +3,11 @@ import { ChainError, ChainErrorOptions, ErrorMediator, injectable } from '@ditsm
 @injectable()
 export class RoutingErrorMediator extends ErrorMediator {
   /**
-   * `Checking deps in "sandbox" for ${moduleName} failed`.
+   * `Checking deps in "sandbox" for failed`.
    */
-  checkingDepsInSandboxFailed(moduleName: string, cause: Error) {
-    const opts: ChainErrorOptions = { cause, constructorOpt: this.checkingDepsInSandboxFailed };
-    throw new ChainError(`Checking deps in "sandbox" for ${moduleName} failed`, opts);
+  checkingDepsInSandboxFailed(cause: Error) {
+    const opts: ChainErrorOptions = { name: 'Error', cause, constructorOpt: this.checkingDepsInSandboxFailed };
+    throw new ChainError('Checking deps in "sandbox" failed', opts);
   }
   /**
    * Setting route '${fullPath}' in ${moduleName} failed: a handle is already registered for this path.
@@ -38,7 +38,7 @@ export class RoutingErrorMediator extends ErrorMediator {
     throw new Error(msg);
   }
   /**
-   * 
+   *
    */
   throwCatchAllRoutesOnlyAtEnd(fullPath: string) {
     const msg = `catch-all routes are only allowed at the end of the path in path '${fullPath}'`;
