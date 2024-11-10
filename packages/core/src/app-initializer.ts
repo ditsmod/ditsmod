@@ -174,8 +174,8 @@ export class AppInitializer {
       this.systemLogMediator,
       new SystemErrorMediator({ moduleName: this.meta.name }),
     );
-    const { extensionCounters, aMetadataPerMod2 } = importsResolver.resolve();
-    await this.handleExtensions(aMetadataPerMod2, extensionCounters);
+    const { extensionCounters, mMetadataPerMod2 } = importsResolver.resolve();
+    await this.handleExtensions(mMetadataPerMod2, extensionCounters);
     const injectorPerApp = this.perAppService.reinitInjector();
     this.systemLogMediator = injectorPerApp.get(SystemLogMediator) as SystemLogMediator;
     this.preRouter = injectorPerApp.get(PreRouter) as PreRouter;
@@ -250,11 +250,14 @@ export class AppInitializer {
     return moduleFactory2.bootstrap(this.meta.providersPerApp, globalProviders, '', module, moduleManager, new Set());
   }
 
-  protected async handleExtensions(aMetadataPerMod2: MetadataPerMod2[], extensionCounters: ExtensionCounters) {
+  protected async handleExtensions(
+    mMetadataPerMod2: Map<AnyModule, MetadataPerMod2>,
+    extensionCounters: ExtensionCounters,
+  ) {
     const extensionsContext = new ExtensionsContext();
     const injectorPerApp = this.perAppService.reinitInjector([{ token: PerAppService, useValue: this.perAppService }]);
 
-    for (const metadataPerMod2 of aMetadataPerMod2) {
+    for (const [, metadataPerMod2] of mMetadataPerMod2) {
       const { meta } = metadataPerMod2;
       const preparedMetadataPerMod1 = this.prepareMetadataPerMod1(meta);
       const injectorPerMod = injectorPerApp.resolveAndCreateChild(meta.providersPerMod);
@@ -278,10 +281,13 @@ export class AppInitializer {
       await this.handleExtensionsPerMod(preparedMetadataPerMod1, extensionsManager);
       this.logExtensionsStatistic(injectorPerApp, systemLogMediator);
     }
-    await this.perAppHandling(aMetadataPerMod2, extensionsContext);
+    await this.perAppHandling(mMetadataPerMod2, extensionsContext);
   }
 
-  protected async perAppHandling(aMetadataPerMod2: MetadataPerMod2[], extensionsContext: ExtensionsContext) {
+  protected async perAppHandling(
+    mMetadataPerMod2: Map<AnyModule, MetadataPerMod2>,
+    extensionsContext: ExtensionsContext,
+  ) {
     for (const [groupToken, mExtensions] of extensionsContext.mExtensionPendingList) {
       for (const extension of mExtensions.values()) {
         try {
@@ -300,7 +306,8 @@ export class AppInitializer {
           if (!ext.stage2) {
             continue;
           }
-          const injectorPerMod = this.initModuleAndGetInjectorPerMod(aMetadataPerMod2, mod);
+          const { meta } = mMetadataPerMod2.get(mod)!;
+          const injectorPerMod = this.initModuleAndGetInjectorPerMod(meta);
           await ext.stage2(injectorPerMod);
         } catch (err: any) {
           const msg = `Stage2 in ${getModuleName(mod)} -> ${ext.constructor.name} failed`;
@@ -324,9 +331,8 @@ export class AppInitializer {
     }
   }
 
-  protected initModuleAndGetInjectorPerMod(aMetadataPerMod2: MetadataPerMod2[], anyModule: AnyModule): Injector {
-    const meta = aMetadataPerMod2.find((metadataPerMod2) => metadataPerMod2.meta.module === anyModule)!.meta;
-    const mod = getModule(anyModule);
+  protected initModuleAndGetInjectorPerMod(meta: NormalizedModuleMetadata): Injector {
+    const mod = getModule(meta.module);
     const extendedProvidersPerMod = [mod, ...meta.providersPerMod];
     const injectorPerApp = this.perAppService.injector;
     const injectorPerMod = injectorPerApp.resolveAndCreateChild(extendedProvidersPerMod, 'injectorPerMod');
