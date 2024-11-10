@@ -24,5 +24,5 @@ export class RouteMeta {
   decoratorAndValue: DecoratorAndValue;
   controller: Class;
   methodName: string | symbol;
-  routeHandler?: (ctx: SingletonRequestContext) => any;
+  routeHandler?: (ctx: SingletonRequestContext) => Promise<any>;
 }

@@ -1,4 +1,4 @@
-import { parse } from 'querystring';
+import { parse } from 'node:querystring';
 
 import { injectable } from '#di';
 import { HttpFrontend, HttpHandler } from '#interceptors/tokens-and-types.js';
