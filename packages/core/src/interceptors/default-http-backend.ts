@@ -1,5 +1,5 @@
 import { injectable, Injector, skipSelf } from '#di';
-import { HttpBackend } from '#types/http-interceptor.js';
+import { HttpBackend } from '#interceptors/tokens-and-types.js';
 import { RouteMeta } from '#types/route-data.js';
 
 @injectable()

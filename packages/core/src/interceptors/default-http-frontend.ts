@@ -2,7 +2,7 @@ import { parse } from 'querystring';
 
 import { PATH_PARAMS, QUERY_PARAMS } from '#constans';
 import { Injector, injectable } from '#di';
-import { HttpFrontend, HttpHandler, RequestContext } from '#types/http-interceptor.js';
+import { HttpFrontend, HttpHandler, RequestContext } from '#interceptors/tokens-and-types.js';
 import { AnyObj } from '#types/mix.js';
 
 @injectable()

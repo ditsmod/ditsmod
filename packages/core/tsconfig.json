@@ -14,6 +14,7 @@
       "#error/*": ["./src/error/*"],
       "#services/*": ["./src/services/*"],
       "#core/*": ["./src/*"],
+      "#interceptors/*": ["./src/interceptors/*"],
     },
     "module": "nodenext",
     "moduleResolution": "nodenext",

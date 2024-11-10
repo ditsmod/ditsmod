@@ -8,10 +8,10 @@ import {
   TypeProvider,
   ValueProvider,
 } from '#di';
-import { RequestContext } from './http-interceptor.js';
-import { MetadataPerMod1 } from './metadata-per-mod.js';
-import { ModuleWithParams } from './module-metadata.js';
-import { NormalizedModuleMetadata } from './normalized-module-metadata.js';
+import { RequestContext } from '#interceptors/tokens-and-types.js';
+import { MetadataPerMod1 } from '#types/metadata-per-mod.js';
+import { ModuleWithParams } from '#types/module-metadata.js';
+import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 
 export type ModuleType<T extends AnyObj = AnyObj> = Class<T>;
 /**

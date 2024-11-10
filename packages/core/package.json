@@ -27,7 +27,8 @@
     "#logger/*": "./dist/logger/*",
     "#error/*": "./dist/error/*",
     "#services/*": "./dist/services/*",
-    "#core/*": "./dist/*"
+    "#core/*": "./dist/*",
+    "#interceptors/*": "./dist/interceptors/*"
   },
   "exports": {
     "./package.json": {

@@ -3,7 +3,7 @@ import { InjectionToken } from '#di';
 import { PathParam } from '#types/router.js';
 import { NodeServer } from '#types/server-options.js';
 import { ModuleExtract } from './types/module-extract.js';
-import { HttpInterceptor } from './types/http-interceptor.js';
+import { HttpInterceptor } from './interceptors/tokens-and-types.js';
 import { AnyObj, Provider } from './types/mix.js';
 import { NodeRequest, NodeResponse } from './types/server-options.js';
 

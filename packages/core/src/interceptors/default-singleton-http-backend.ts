@@ -1,5 +1,5 @@
 import { injectable } from '#di';
-import { SingletonHttpBackend, SingletonRequestContext } from '#types/http-interceptor.js';
+import { SingletonHttpBackend, SingletonRequestContext } from '#interceptors/tokens-and-types.js';
 import { RouteMeta } from '#types/route-data.js';
 
 @injectable()

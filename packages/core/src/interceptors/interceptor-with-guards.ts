@@ -1,7 +1,7 @@
 import { A_PATH_PARAMS, NODE_REQ, NODE_RES, QUERY_STRING } from '#constans';
 import { injectable, skipSelf, Injector } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { HttpInterceptor, HttpHandler, RequestContext } from '#types/http-interceptor.js';
+import { HttpInterceptor, HttpHandler, RequestContext } from '#interceptors/tokens-and-types.js';
 import { CanActivate, ResolvedGuardPerMod } from '#types/mix.js';
 import { RouteMeta } from '#types/route-data.js';
 import { Status } from '#utils/http-status-codes.js';

@@ -6,26 +6,13 @@ import {
   HttpInterceptor,
   HttpInterceptorHandler,
   RequestContext,
-  SingletonHttpBackend,
-  SingletonRequestContext,
-} from '#types/http-interceptor.js';
-
-class PreHttpBackend implements HttpBackend {
-  constructor(
-    protected backend: SingletonHttpBackend,
-    protected ctx: SingletonRequestContext,
-  ) {}
-
-  handle() {
-    return this.backend.handle(this.ctx);
-  }
-}
+} from '#interceptors/tokens-and-types.js';
 
 /**
  * An injectable service that ties multiple interceptors in chain.
  */
 @injectable()
-export class DefaultSingletonChainMaker {
+export class ChainMaker {
   constructor(
     private backend: HttpBackend,
     @inject(HTTP_INTERCEPTORS) @optional() private interceptors: HttpInterceptor[] = [],
@@ -34,7 +21,7 @@ export class DefaultSingletonChainMaker {
   makeChain(ctx: RequestContext): HttpHandler {
     return this.interceptors.reduceRight(
       (next, interceptor) => new HttpInterceptorHandler(interceptor, ctx, next),
-      new PreHttpBackend(this.backend, ctx) as HttpBackend,
+      this.backend,
     );
   }
 }

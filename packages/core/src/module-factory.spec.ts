@@ -18,7 +18,7 @@ import { Router } from './types/router.js';
 import { getImportedProviders, getImportedTokens } from './utils/get-imports.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { makePropDecorator } from '#di';
-import { HttpBackend } from './types/http-interceptor.js';
+import { HttpBackend } from './interceptors/tokens-and-types.js';
 import { AppendsWithParams } from '#types/module-metadata.js';
 
 type AnyModule = ModuleType | ModuleWithParams;

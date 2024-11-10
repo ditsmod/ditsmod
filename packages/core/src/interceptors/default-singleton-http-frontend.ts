@@ -1,7 +1,7 @@
 import { parse } from 'querystring';
 
 import { injectable } from '#di';
-import { HttpFrontend, HttpHandler, SingletonRequestContext } from '#types/http-interceptor.js';
+import { HttpFrontend, HttpHandler, SingletonRequestContext } from '#interceptors/tokens-and-types.js';
 import { AnyObj } from '#types/mix.js';
 
 @injectable()

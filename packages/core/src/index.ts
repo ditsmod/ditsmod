@@ -35,40 +35,27 @@ export {
   DebugStage1Meta,
   GroupStage1Meta,
   GroupStage1MetaPerApp,
-} from './types/extension-types.js';
-export { ModuleExtract } from './types/module-extract.js';
-export { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
-export { ProvidersMetadata } from './types/providers-metadata.js';
-export { AppOptions } from './types/app-options.js';
+} from '#types/extension-types.js';
+export { ModuleExtract } from '#types/module-extract.js';
+export { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
+export { ProvidersMetadata } from '#types/providers-metadata.js';
+export { AppOptions } from '#types/app-options.js';
 export { ModuleFactory } from './module-factory.js';
-export { InterceptorWithGuards } from './interceptors/interceptor-with-guards.js';
+export { InterceptorWithGuards } from '#interceptors/interceptor-with-guards.js';
 export { ConsoleLogger } from './logger/console-logger.js';
 export { HttpErrorHandler } from './error/http-error-handler.js';
 export { DefaultHttpErrorHandler } from './error/default-http-error-handler.js';
-export { DefaultHttpBackend } from './interceptors/default-http-backend.js';
-export { DefaultHttpFrontend } from './interceptors/default-http-frontend.js';
-export { DefaultSingletonHttpFrontend } from './interceptors/default-singleton-http-frontend.js';
-export { DefaultSingletonHttpBackend } from './interceptors/default-singleton-http-backend.js';
-export { DefaultSingletonChainMaker } from './services/default-singleton-chain-maker.js';
+export { DefaultHttpBackend } from '#interceptors/default-http-backend.js';
+export { DefaultHttpFrontend } from '#interceptors/default-http-frontend.js';
+export { DefaultSingletonHttpFrontend } from '#interceptors/default-singleton-http-frontend.js';
+export { DefaultSingletonHttpBackend } from '#interceptors/default-singleton-http-backend.js';
+export { DefaultSingletonChainMaker } from '#interceptors/default-singleton-chain-maker.js';
 export {
   ISingletonInterceptorWithGuards,
   SingletonInterceptorWithGuards,
   InstantiatedGuard,
-} from './interceptors/singleton-interceptor-with-guards.js';
-export { ExtensionsContext } from './services/extensions-context.js';
-export { ExtensionsManager } from './services/extensions-manager.js';
-export { LogMediator } from '#logger/log-mediator.js';
-export { LogItem } from '#logger/types.js';
-export { SystemLogMediator } from '#logger/system-log-mediator.js';
-export { ErrorMediator } from '#error/error-mediator.js';
-export { SystemErrorMediator } from '#error/system-error-mediator.js';
-export { ModuleManager } from './services/module-manager.js';
-export { PerAppService } from './services/per-app.service.js';
-export { PreRouter } from './services/pre-router.js';
-export { Req } from './services/request.js';
-export { Res } from './services/response.js';
-export { ChainMaker } from './services/chain-maker.js';
-export { ControllerMetadata } from './types/controller-metadata.js';
+} from '#interceptors/singleton-interceptor-with-guards.js';
+export { ChainMaker } from '#interceptors/chain-maker.js';
 export {
   HttpBackend,
   HttpFrontend,
@@ -78,9 +65,22 @@ export {
   RequestContext,
   SingletonRequestContext,
   SingletonHttpBackend,
-} from './types/http-interceptor.js';
+} from '#interceptors/tokens-and-types.js';
+export { ExtensionsContext } from '#services/extensions-context.js';
+export { ExtensionsManager } from '#services/extensions-manager.js';
+export { LogMediator } from '#logger/log-mediator.js';
+export { LogItem } from '#logger/types.js';
+export { SystemLogMediator } from '#logger/system-log-mediator.js';
+export { ErrorMediator } from '#error/error-mediator.js';
+export { SystemErrorMediator } from '#error/system-error-mediator.js';
+export { ModuleManager } from '#services/module-manager.js';
+export { PerAppService } from '#services/per-app.service.js';
+export { PreRouter } from '#services/pre-router.js';
+export { Req } from '#services/request.js';
+export { Res } from '#services/response.js';
+export { ControllerMetadata } from '#types/controller-metadata.js';
 export { Logger, LoggerConfig, InputLogLevel, OutputLogLevel } from '#logger/logger.js';
-export { MetadataPerMod1, MetadataPerMod2 } from './types/metadata-per-mod.js';
+export { MetadataPerMod1, MetadataPerMod2 } from '#types/metadata-per-mod.js';
 export {
   AnyObj,
   CanActivate,
@@ -98,7 +98,7 @@ export {
   GuardPerMod1,
   ProvidersForMod,
   Scope,
-} from './types/mix.js';
+} from '#types/mix.js';
 export {
   ModuleMetadata,
   BaseAppendsWithParams,
@@ -109,22 +109,22 @@ export {
   ModuleWithParams,
   ModuleWithParams1,
   ModuleWithParams2,
-} from './types/module-metadata.js';
-export { getModuleMetadata } from './utils/get-module-metadata.js';
-export { RouteMeta } from './types/route-data.js';
-export { PathParam, RouteHandler, Router, RouterReturns } from './types/router.js';
-export { NodeRequest, NodeResponse, RequestListener, Server, NodeServer } from './types/server-options.js';
-export { createHelperForGuardWithParams } from './utils/create-helper-for-guards-with-params.js';
-export { deepFreeze } from './utils/deep-freeze.js';
-export { getDependencies } from './utils/get-dependecies.js';
-export { ExtensionOptions } from './utils/get-extension-provider.js';
-export { getModule } from './utils/get-module.js';
-export { getStatusText, isSuccess, Status, STATUS_CODE_INFO } from './utils/http-status-codes.js';
-export { NormalizedProvider, normalizeProviders } from './utils/ng-utils.js';
-export { pickProperties } from './utils/pick-properties.js';
-export { Providers } from './utils/providers.js';
-export { getCallerDir } from './utils/callsites.js';
-export * from './utils/get-tokens.js';
+} from '#types/module-metadata.js';
+export { getModuleMetadata } from '#utils/get-module-metadata.js';
+export { RouteMeta } from '#types/route-data.js';
+export { PathParam, RouteHandler, Router, RouterReturns } from '#types/router.js';
+export { NodeRequest, NodeResponse, RequestListener, Server, NodeServer } from '#types/server-options.js';
+export { createHelperForGuardWithParams } from '#utils/create-helper-for-guards-with-params.js';
+export { deepFreeze } from '#utils/deep-freeze.js';
+export { getDependencies } from '#utils/get-dependecies.js';
+export { ExtensionOptions } from '#utils/get-extension-provider.js';
+export { getModule } from '#utils/get-module.js';
+export { getStatusText, isSuccess, Status, STATUS_CODE_INFO } from '#utils/http-status-codes.js';
+export { NormalizedProvider, normalizeProviders } from '#utils/ng-utils.js';
+export { pickProperties } from '#utils/pick-properties.js';
+export { Providers } from '#utils/providers.js';
+export { getCallerDir } from '#utils/callsites.js';
+export * from '#utils/get-tokens.js';
 export {
   MultiProvider,
   isAppendsWithParams,
@@ -151,4 +151,4 @@ export {
   isTypeProvider,
   isValueProvider,
   hasDeclaredInDir,
-} from './utils/type-guards.js';
+} from '#utils/type-guards.js';

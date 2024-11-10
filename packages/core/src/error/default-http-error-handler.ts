@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { injectable } from '#di';
-import { RequestContext } from '#types/http-interceptor.js';
+import { RequestContext } from '#interceptors/tokens-and-types.js';
 import { Logger } from '#logger/logger.js';
 import { Status } from '#utils/http-status-codes.js';
 import { isChainError } from '#utils/type-guards.js';

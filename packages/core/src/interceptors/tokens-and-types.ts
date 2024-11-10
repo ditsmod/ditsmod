@@ -1,7 +1,7 @@
 import { Res } from '#services/response.js';
-import { AnyObj } from './mix.js';
-import { PathParam } from './router.js';
-import { NodeRequest, NodeResponse } from './server-options.js';
+import { AnyObj } from '#types/mix.js';
+import { PathParam } from '#types/router.js';
+import { NodeRequest, NodeResponse } from '#types/server-options.js';
 
 /**
  * The request context class, which you can substitute with your own class.
