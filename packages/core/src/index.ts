@@ -56,14 +56,13 @@ export {
   InstantiatedGuard,
 } from '#interceptors/singleton-interceptor-with-guards.js';
 export { ChainMaker } from '#interceptors/chain-maker.js';
+export { RequestContext, SingletonRequestContext } from './request-context.js';
 export {
   HttpBackend,
   HttpFrontend,
   HttpHandler,
   HttpInterceptor,
   HttpInterceptorHandler,
-  RequestContext,
-  SingletonRequestContext,
   SingletonHttpBackend,
 } from '#interceptors/tokens-and-types.js';
 export { ExtensionsContext } from '#services/extensions-context.js';

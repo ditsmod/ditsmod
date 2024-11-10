@@ -1,4 +1,4 @@
-import { RequestContext } from '#interceptors/tokens-and-types.js';
+import { RequestContext } from '../request-context.js';
 
 export class HttpErrorHandler {
   handleError(error: any, ctx: RequestContext): void | Promise<void> {

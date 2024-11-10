@@ -1,5 +1,5 @@
 import { Class, DecoratorAndValue, ResolvedProvider } from '#di';
-import { SingletonRequestContext } from '#interceptors/tokens-and-types.js';
+import { SingletonRequestContext } from '../request-context.js';
 import { ResolvedGuard, ResolvedGuardPerMod } from './mix.js';
 
 /**

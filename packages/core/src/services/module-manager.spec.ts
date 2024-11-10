@@ -13,7 +13,7 @@ import { getCallerDir } from '#utils/callsites.js';
 import { isMultiProvider } from '#utils/type-guards.js';
 import { ModuleManager } from './module-manager.js';
 import { guard } from '#decorators/guard.js';
-import { RequestContext } from '#interceptors/tokens-and-types.js';
+import { RequestContext } from '../request-context.js';
 
 describe('ModuleManager', () => {
   console.log = jest.fn();

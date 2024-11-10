@@ -15,7 +15,7 @@ import { defaultProvidersPerRou } from './default-providers-per-rou.js';
 import { ModuleExtract } from '#types/module-extract.js';
 import { rootModule } from '#decorators/root-module.js';
 import { guard } from '#decorators/guard.js';
-import { RequestContext } from '#interceptors/tokens-and-types.js';
+import { RequestContext } from './request-context.js';
 
 describe('ImportsResolver', () => {
   @injectable()

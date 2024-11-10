@@ -5,10 +5,9 @@ import {
   HttpHandler,
   HttpInterceptor,
   HttpInterceptorHandler,
-  RequestContext,
   SingletonHttpBackend,
-  SingletonRequestContext,
 } from '#interceptors/tokens-and-types.js';
+import { RequestContext, SingletonRequestContext } from '#core/request-context.js';
 
 class PreHttpBackend implements HttpBackend {
   constructor(

@@ -1,6 +1,7 @@
 import { injectable, Injector } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { HttpInterceptor, HttpHandler, RequestContext } from '#interceptors/tokens-and-types.js';
+import { HttpInterceptor, HttpHandler } from '#interceptors/tokens-and-types.js';
+import { RequestContext } from '#core/request-context.js';
 import { CanActivate } from '#types/mix.js';
 import { RouteMeta } from '#types/route-data.js';
 import { Status } from '#utils/http-status-codes.js';

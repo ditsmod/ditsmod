@@ -1,5 +1,5 @@
 import { DecoratorAndValue, reflector } from '#di';
-import { RequestContext } from '#interceptors/tokens-and-types.js';
+import { RequestContext } from '../request-context.js';
 import { CanActivate } from '#types/mix.js';
 import { getCallerDir } from '../utils/callsites.js';
 import { controller } from './controller.js';

@@ -1,12 +1,7 @@
 import { HTTP_INTERCEPTORS } from '#constans';
 import { inject, injectable, optional } from '#di';
-import {
-  HttpBackend,
-  HttpHandler,
-  HttpInterceptor,
-  HttpInterceptorHandler,
-  RequestContext,
-} from '#interceptors/tokens-and-types.js';
+import { HttpBackend, HttpHandler, HttpInterceptor, HttpInterceptorHandler } from '#interceptors/tokens-and-types.js';
+import { RequestContext } from '#core/request-context.js';
 
 /**
  * An injectable service that ties multiple interceptors in chain.

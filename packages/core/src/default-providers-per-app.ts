@@ -2,7 +2,7 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ModuleExtract } from '#types/module-extract.js';
 import { Logger } from '#logger/logger.js';
 import { Provider } from '#types/mix.js';
-import { RequestContext } from '#interceptors/tokens-and-types.js';
+import { RequestContext } from './request-context.js';
 import { Providers } from '#utils/providers.js';
 import { ConsoleLogger } from '#logger/console-logger.js';
 import { SystemErrorMediator } from '#error/system-error-mediator.js';

@@ -18,7 +18,7 @@ import {
 import { rootModule } from '#decorators/root-module.js';
 import { controller } from '#decorators/controller.js';
 import { route } from '#decorators/route.js';
-import { RequestContext } from '#interceptors/tokens-and-types.js';
+import { RequestContext } from '../request-context.js';
 import { getModuleMetadata } from './get-module-metadata.js';
 
 describe('type guards', () => {
