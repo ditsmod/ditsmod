@@ -11,7 +11,6 @@ import {
   getDependencies,
   Provider,
   GroupStage1MetaPerApp,
-  ModuleManager,
 } from '@ditsmod/core';
 import { PreRouterExtension, RoutingErrorMediator, MetadataPerMod3 } from '@ditsmod/routing';
 
@@ -26,12 +25,11 @@ export class TestPreRouterExtension extends PreRouterExtension {
     perAppService: PerAppService,
     router: Router,
     extensionsManager: ExtensionsManager,
-    moduleManager: ModuleManager,
     log: SystemLogMediator,
     extensionsContext: ExtensionsContext,
     routerErrorMediator: RoutingErrorMediator,
   ) {
-    super(perAppService, router, extensionsManager, moduleManager, log, extensionsContext, routerErrorMediator);
+    super(perAppService, router, extensionsManager, log, extensionsContext, routerErrorMediator);
   }
 
   override async stage2() {

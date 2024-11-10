@@ -38,7 +38,6 @@ import {
   ResolvedProvider,
   NormalizedGuard,
   GuardPerMod1,
-  ModuleManager,
   ResolvedGuardPerMod,
 } from '@ditsmod/core';
 
@@ -55,7 +54,6 @@ export class PreRouterExtension implements Extension<void> {
     protected perAppService: PerAppService,
     protected router: Router,
     protected extensionsManager: ExtensionsManager,
-    protected moduleManager: ModuleManager,
     protected log: SystemLogMediator,
     protected extensionsContext: ExtensionsContext,
     protected errorMediator: RoutingErrorMediator,
@@ -67,12 +65,7 @@ export class PreRouterExtension implements Extension<void> {
   }
 
   async stage2() {
-    this.injectorPerMod = this.initModuleAndGetInjectorPerMod(
-      this.injectorPerApp,
-      this.groupStage1Meta.groupData,
-    );
-    const meta = this.getMeta(this.groupStage1Meta.groupData);
-    this.moduleManager.setInjectorPerMod(meta.module, this.injectorPerMod);
+    this.injectorPerMod = this.initModuleAndGetInjectorPerMod(this.injectorPerApp, this.groupStage1Meta.groupData);
   }
 
   async stage3() {
@@ -135,7 +128,6 @@ export class PreRouterExtension implements Extension<void> {
     const mod = getModule(meta.module);
     const extendedProvidersPerMod = [mod, ...singletons, ...meta.providersPerMod];
     const injectorPerMod = injectorPerApp.resolveAndCreateChild(extendedProvidersPerMod, 'injectorPerMod');
-    injectorPerMod.get(mod); // Call module constructor.
     return injectorPerMod;
   }
 
@@ -216,8 +208,7 @@ export class PreRouterExtension implements Extension<void> {
         throw new Error(msg);
       }
 
-      const injectorPerMod = this.moduleManager.getInjectorPerMod(g.meta.module);
-      const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou);
+      const injectorPerRou = this.injectorPerMod.createChildFromResolved(resolvedPerRou);
 
       const resolvedGuard: ResolvedGuardPerMod = {
         guard,
@@ -348,8 +339,7 @@ export class PreRouterExtension implements Extension<void> {
   protected checkPresenceOfRoutesInApplication(groupDataPerApp: GroupStage1MetaPerApp<MetadataPerMod3>[]) {
     return groupDataPerApp.reduce((prev1, curr1) => {
       return (
-        prev1 ||
-        curr1.groupData.reduce((prev2, curr2) => prev2 || Boolean(curr2.aControllerMetadata.length), false)
+        prev1 || curr1.groupData.reduce((prev2, curr2) => prev2 || Boolean(curr2.aControllerMetadata.length), false)
       );
     }, false);
   }
