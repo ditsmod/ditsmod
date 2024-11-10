@@ -45,7 +45,6 @@ type ModuleId = string | ModuleType | ModuleWithParams;
  * adds and removes imports of one module into another.
  */
 export class ModuleManager {
-  protected injectorPerModMap = new Map<AnyModule, Injector>();
   protected map: ModulesMap = new Map();
   protected mapId = new Map<string, AnyModule>();
   protected oldMap: ModulesMap = new Map();
@@ -69,7 +68,6 @@ export class ModuleManager {
     }
 
     const meta = this.scanRawModule(appModule);
-    this.injectorPerModMap.clear();
     this.unfinishedScanModules.clear();
     this.scanedModules.clear();
     this.mapId.set('root', appModule);
@@ -200,32 +198,6 @@ export class ModuleManager {
    */
   getModulesMap() {
     return new Map(this.map);
-  }
-
-  setInjectorPerMod(moduleId: ModuleId, injectorPerMod: Injector) {
-    if (typeof moduleId == 'string') {
-      const mapId = this.mapId.get(moduleId);
-      if (mapId) {
-        this.injectorPerModMap.set(mapId, injectorPerMod);
-      } else {
-        throw new Error(`${moduleId} not found in ModuleManager.`);
-      }
-    } else {
-      this.injectorPerModMap.set(moduleId, injectorPerMod);
-    }
-  }
-
-  getInjectorPerMod(moduleId: ModuleId) {
-    if (typeof moduleId == 'string') {
-      const mapId = this.mapId.get(moduleId);
-      if (mapId) {
-        return this.injectorPerModMap.get(mapId)!;
-      } else {
-        throw new Error(`${moduleId} not found in ModuleManager.`);
-      }
-    } else {
-      return this.injectorPerModMap.get(moduleId)!;
-    }
   }
 
   /**
