@@ -75,6 +75,19 @@ export class PreRouterExtension implements Extension<void> {
     this.setRoutes(this.groupStage1Meta, preparedRouteMeta);
   }
 
+  protected getInjectorWithControllers(aMetadataPerMod3: MetadataPerMod3[]): Injector {
+    const singletons = new Set<Class>();
+
+    aMetadataPerMod3.forEach((metadataPerMod3) => {
+      metadataPerMod3.aControllerMetadata.forEach((controllerMetadata) => {
+        if (controllerMetadata.scope == 'module') {
+          singletons.add(controllerMetadata.routeMeta.controller);
+        }
+      });
+    });
+    return this.injectorPerMod.resolveAndCreateChild([...singletons]);
+  }
+
   protected prepareRoutesMeta(aMetadataPerMod3: MetadataPerMod3[]) {
     const preparedRouteMeta: PreparedRouteMeta[] = [];
 
@@ -109,17 +122,51 @@ export class PreRouterExtension implements Extension<void> {
     return preparedRouteMeta;
   }
 
-  protected getInjectorWithControllers(aMetadataPerMod3: MetadataPerMod3[]): Injector {
-    const singletons = new Set<Class>();
+  protected getHandlerWithSingleton(
+    metadataPerMod3: MetadataPerMod3,
+    injectorPerMod: Injector,
+    controllerMetadata: ControllerMetadata,
+  ) {
+    const { httpMethod, path, providersPerRou, routeMeta } = controllerMetadata;
 
-    aMetadataPerMod3.forEach((metadataPerMod3) => {
-      metadataPerMod3.aControllerMetadata.forEach((controllerMetadata) => {
-        if (controllerMetadata.scope == 'module') {
-          singletons.add(controllerMetadata.routeMeta.controller);
-        }
-      });
+    const mergedPerRou: Provider[] = [];
+    mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
+
+    routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(metadataPerMod3.guardsPerMod1);
+    routeMeta.resolvedGuards = controllerMetadata.guards.map((g) => {
+      const resolvedGuard: ResolvedGuard = {
+        guard: Injector.resolve([g.guard])[0],
+        params: g.params,
+      };
+      return resolvedGuard;
     });
-    return this.injectorPerMod.resolveAndCreateChild([...singletons]);
+
+    if (routeMeta.resolvedGuards.length || metadataPerMod3.guardsPerMod1.length) {
+      mergedPerRou.push(SingletonInterceptorWithGuards);
+      mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: SingletonInterceptorWithGuards, multi: true });
+    }
+    mergedPerRou.push(...metadataPerMod3.meta.providersPerRou, ...providersPerRou);
+
+    const resolvedPerRou = Injector.resolve(mergedPerRou);
+    const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou, 'injectorPerRou');
+    this.checkDeps(httpMethod, path, injectorPerRou, routeMeta);
+    const resolvedChainMaker = resolvedPerRou.find((rp) => rp.dualKey.token === ChainMaker)!;
+    const resolvedErrHandler = resolvedPerRou.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
+    const chainMaker = injectorPerRou.instantiateResolved<DefaultSingletonChainMaker>(resolvedChainMaker);
+    const controllerInstance = injectorPerMod.get(routeMeta.controller);
+    routeMeta.routeHandler = controllerInstance[routeMeta.methodName].bind(controllerInstance);
+    const errorHandler = injectorPerRou.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
+    const RequestContextClass = injectorPerRou.get(RequestContext) as typeof RequestContext;
+
+    return (async (nodeReq, nodeRes, aPathParams, queryString) => {
+      const ctx = new RequestContextClass(nodeReq, nodeRes, aPathParams, queryString);
+      await chainMaker
+        .makeChain(ctx)
+        .handle() // First HTTP handler in the chain of HTTP interceptors.
+        .catch((err) => {
+          return errorHandler.handleError(err, ctx);
+        });
+    }) as RouteHandler;
   }
 
   protected getDefaultHandler(
@@ -230,53 +277,6 @@ export class PreRouterExtension implements Extension<void> {
     const factoryProvider: FactoryProvider = { useFactory: [controller, controller.prototype[methodName]] };
     const resolvedHandler = Injector.resolve([factoryProvider])[0];
     return resolvedPerReq.concat([resolvedHandler]).find((rp) => rp.dualKey.token === controller.prototype[methodName]);
-  }
-
-  protected getHandlerWithSingleton(
-    metadataPerMod3: MetadataPerMod3,
-    injectorPerMod: Injector,
-    controllerMetadata: ControllerMetadata,
-  ) {
-    const { httpMethod, path, providersPerRou, routeMeta } = controllerMetadata;
-
-    const mergedPerRou: Provider[] = [];
-    mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
-
-    routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(metadataPerMod3.guardsPerMod1);
-    routeMeta.resolvedGuards = controllerMetadata.guards.map((g) => {
-      const resolvedGuard: ResolvedGuard = {
-        guard: Injector.resolve([g.guard])[0],
-        params: g.params,
-      };
-      return resolvedGuard;
-    });
-
-    if (routeMeta.resolvedGuards.length || metadataPerMod3.guardsPerMod1.length) {
-      mergedPerRou.push(SingletonInterceptorWithGuards);
-      mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: SingletonInterceptorWithGuards, multi: true });
-    }
-    mergedPerRou.push(...metadataPerMod3.meta.providersPerRou, ...providersPerRou);
-
-    const resolvedPerRou = Injector.resolve(mergedPerRou);
-    const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou, 'injectorPerRou');
-    this.checkDeps(httpMethod, path, injectorPerRou, routeMeta);
-    const resolvedChainMaker = resolvedPerRou.find((rp) => rp.dualKey.token === ChainMaker)!;
-    const resolvedErrHandler = resolvedPerRou.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
-    const chainMaker = injectorPerRou.instantiateResolved<DefaultSingletonChainMaker>(resolvedChainMaker);
-    const controllerInstance = injectorPerMod.get(routeMeta.controller);
-    routeMeta.routeHandler = controllerInstance[routeMeta.methodName].bind(controllerInstance);
-    const errorHandler = injectorPerRou.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
-    const RequestContextClass = injectorPerRou.get(RequestContext) as typeof RequestContext;
-
-    return (async (nodeReq, nodeRes, aPathParams, queryString) => {
-      const ctx = new RequestContextClass(nodeReq, nodeRes, aPathParams, queryString);
-      await chainMaker
-        .makeChain(ctx)
-        .handle() // First HTTP handler in the chain of HTTP interceptors.
-        .catch((err) => {
-          return errorHandler.handleError(err, ctx);
-        });
-    }) as RouteHandler;
   }
 
   /**
