@@ -52,10 +52,6 @@ export class ExtensionsManager {
       this.throwCircularDeps(groupToken);
     }
 
-    // this.unfinishedInit is empty during calling extensions from panding list.
-    if (perApp && this.unfinishedInit.size > 1) {
-      this.addExtensionToPendingList(groupToken);
-    }
     const beforeToken = KeyRegistry.getBeforeToken(groupToken);
     if (!this.groupStage1MetaCache.has(beforeToken) && this.beforeTokens.has(beforeToken)) {
       await this.prepareAndInitGroup<T>(beforeToken);
@@ -74,8 +70,12 @@ export class ExtensionsManager {
     groupStage1Meta = await this.prepareAndInitGroup<T>(groupToken);
     groupStage1Meta.groupDataPerApp = this.extensionsContext.mGroupStage1Meta.get(groupToken)!;
     groupStage1Meta = this.prepareGroupStage1MetaPerApp(groupStage1Meta, perApp);
-    if (perApp && !groupStage1Meta.delay) {
-      this.excludeExtensionFromPendingList(groupToken);
+    if (perApp) {
+      if (groupStage1Meta.delay) {
+        this.addExtensionToPendingList(groupToken);
+      } else {
+        this.excludeExtensionFromPendingList(groupToken);
+      }
     }
     return groupStage1Meta;
   }
