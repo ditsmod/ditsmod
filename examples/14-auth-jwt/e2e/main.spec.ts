@@ -19,15 +19,15 @@ describe('14-auth-jwt', () => {
 
   it('case 1', async () => {
     const { type, status, text } = await testAgent.get('/');
-    expect(type).toBe('text/plain');
     expect(status).toBe(200);
+    expect(type).toBe('text/plain');
     expect(text).toBe('Hello World!\n');
   });
 
   it('case 2', async () => {
     const response1 = await testAgent.get('/get-token-for/Kostia');
-    expect(response1.type).toBe('text/plain');
     expect(response1.status).toBe(200);
+    expect(response1.type).toBe('text/plain');
     expect(response1.text).toBeDefined();
 
     const response2 = await testAgent.get('/profile');
