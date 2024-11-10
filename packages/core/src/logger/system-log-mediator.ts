@@ -229,10 +229,10 @@ export class SystemLogMediator extends LogMediator {
     if (groupToken instanceof BeforeToken) {
       this.setLog('trace', `${className}: for ${tokenName} no extensions found.`);
     } else {
-      const extension = Array.from(unfinishedInit).at(-1) as Extension;
-      const extensionClassName = extension.constructor.name;
+      const item = Array.from(unfinishedInit).at(-2)!;
+      const itemName = getProviderName(item);
       const msgArr = [
-        `${className}: ${extensionClassName} expects ${tokenName} to be initialized, but no extension was found.`,
+        `${className}: ${itemName} expects ${tokenName} to be initialized, but no extension was found.`,
         'If you see many messages like this, you need to reduce the number of exported modules',
         'from the root module. Try importing all these modules directly into the modules that need them.',
       ];
