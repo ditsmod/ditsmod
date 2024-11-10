@@ -1,3 +1,4 @@
+import { parse } from 'node:querystring';
 import {
   A_PATH_PARAMS,
   HTTP_INTERCEPTORS,
@@ -22,7 +23,6 @@ import {
   RouteMeta,
   RouteHandler,
   Router,
-  getModule,
   Provider,
   InterceptorWithGuards,
   RequestContext,
@@ -39,6 +39,11 @@ import {
   NormalizedGuard,
   GuardPerMod1,
   ResolvedGuardPerMod,
+  SingletonRequestContext,
+  AnyObj,
+  RequireProps,
+  getToken,
+  getProviderTarget,
 } from '@ditsmod/core';
 
 import { MetadataPerMod3, PreparedRouteMeta, ROUTES_EXTENSIONS } from '../types.js';
@@ -127,8 +132,9 @@ export class PreRouterExtension implements Extension<void> {
     injectorPerMod: Injector,
     controllerMetadata: ControllerMetadata,
   ) {
-    const { httpMethod, path, providersPerRou, routeMeta } = controllerMetadata;
+    const { httpMethod, path, providersPerRou, routeMeta: baseRouteMeta } = controllerMetadata;
 
+    const routeMeta = baseRouteMeta as RequireProps<typeof baseRouteMeta, 'routeHandler'>;
     const mergedPerRou: Provider[] = [];
     mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
 
@@ -153,19 +159,59 @@ export class PreRouterExtension implements Extension<void> {
     const resolvedChainMaker = resolvedPerRou.find((rp) => rp.dualKey.token === ChainMaker)!;
     const resolvedErrHandler = resolvedPerRou.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
     const chainMaker = injectorPerRou.instantiateResolved<DefaultSingletonChainMaker>(resolvedChainMaker);
-    const controllerInstance = injectorPerMod.get(routeMeta.controller);
-    routeMeta.routeHandler = controllerInstance[routeMeta.methodName].bind(controllerInstance);
+    const ctrl = injectorPerMod.get(routeMeta.controller);
+    const routeHandler = ctrl[routeMeta.methodName].bind(ctrl) as typeof routeMeta.routeHandler;
+    routeMeta.routeHandler = routeHandler;
     const errorHandler = injectorPerRou.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
     const RequestContextClass = injectorPerRou.get(RequestContext) as typeof RequestContext;
 
+    if (this.hasInterceptors(mergedPerRou)) {
+      return (async (nodeReq, nodeRes, aPathParams, queryString) => {
+        const ctx = new RequestContextClass(nodeReq, nodeRes, aPathParams, queryString);
+        await chainMaker
+          .makeChain(ctx)
+          .handle() // First HTTP handler in the chain of HTTP interceptors.
+          .catch((err) => {
+            return errorHandler.handleError(err, ctx);
+          });
+      }) as RouteHandler;
+    } else {
+      return this.handleWithoutInterceptors(RequestContextClass, routeHandler, errorHandler);
+    }
+  }
+
+  protected hasInterceptors(mergedPerRou: Provider[]) {
+    const interceptors = mergedPerRou
+      .filter((p) => {
+        const token = getToken(p);
+        return token === HTTP_INTERCEPTORS || token === HttpBackend;
+      })
+      .map(getProviderTarget);
+
+    // The application has two default interceptors.
+    return interceptors.length > 2;
+  }
+
+  protected handleWithoutInterceptors(
+    RequestContextClass: typeof RequestContext,
+    routeHandler: (ctx: SingletonRequestContext) => Promise<any>,
+    errorHandler: HttpErrorHandler,
+  ) {
     return (async (nodeReq, nodeRes, aPathParams, queryString) => {
-      const ctx = new RequestContextClass(nodeReq, nodeRes, aPathParams, queryString);
-      await chainMaker
-        .makeChain(ctx)
-        .handle() // First HTTP handler in the chain of HTTP interceptors.
-        .catch((err) => {
-          return errorHandler.handleError(err, ctx);
-        });
+      const ctx = new RequestContextClass(nodeReq, nodeRes, aPathParams, queryString) as SingletonRequestContext;
+      try {
+        if (ctx.queryString) {
+          ctx.queryParams = parse(ctx.queryString);
+        }
+        if (ctx.aPathParams?.length) {
+          const pathParams: AnyObj = {};
+          ctx.aPathParams.forEach((param) => (pathParams[param.key] = param.value));
+          ctx.pathParams = pathParams;
+        }
+        await routeHandler!(ctx);
+      } catch (err: any) {
+        await errorHandler.handleError(err, ctx);
+      }
     }) as RouteHandler;
   }
 
