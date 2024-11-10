@@ -48,6 +48,7 @@ import { RoutingErrorMediator } from '../router-error-mediator.js';
 export class PreRouterExtension implements Extension<void> {
   protected groupStage1Meta: GroupStage1Meta<MetadataPerMod3>;
   protected injectorPerMod: Injector;
+  protected injectorWithControllers: Injector;
   protected injectorPerApp: Injector;
 
   constructor(
@@ -64,19 +65,14 @@ export class PreRouterExtension implements Extension<void> {
     this.injectorPerApp = this.perAppService.reinitInjector([{ token: Router, useValue: this.router }]);
   }
 
-  async stage2() {
-    this.injectorPerMod = this.initModuleAndGetInjectorPerMod(this.injectorPerApp, this.groupStage1Meta.groupData);
+  async stage2(injectorPerMod: Injector) {
+    this.injectorPerMod = injectorPerMod;
+    this.injectorWithControllers = this.getInjectorWithControllers(this.groupStage1Meta.groupData);
   }
 
   async stage3() {
     const preparedRouteMeta = this.prepareRoutesMeta(this.groupStage1Meta.groupData);
     this.setRoutes(this.groupStage1Meta, preparedRouteMeta);
-  }
-
-  protected getMeta(aMetadataPerMod3: MetadataPerMod3[]) {
-    // Since each extension received the same `meta` array and not a copy of it,
-    // we can take `meta` from any element in the `groupData` array.
-    return aMetadataPerMod3.at(0)!.meta;
   }
 
   protected prepareRoutesMeta(aMetadataPerMod3: MetadataPerMod3[]) {
@@ -93,9 +89,9 @@ export class PreRouterExtension implements Extension<void> {
       aControllerMetadata.forEach((controllerMetadata) => {
         let handle: RouteHandler;
         if (controllerMetadata.scope == 'module') {
-          handle = this.getHandlerWithSingleton(metadataPerMod3, this.injectorPerMod, controllerMetadata);
+          handle = this.getHandlerWithSingleton(metadataPerMod3, this.injectorWithControllers, controllerMetadata);
         } else {
-          handle = this.getDefaultHandler(metadataPerMod3, this.injectorPerMod, controllerMetadata);
+          handle = this.getDefaultHandler(metadataPerMod3, this.injectorWithControllers, controllerMetadata);
         }
 
         const countOfGuards = controllerMetadata.routeMeta.resolvedGuards!.length + guardsPerMod1.length;
@@ -113,7 +109,7 @@ export class PreRouterExtension implements Extension<void> {
     return preparedRouteMeta;
   }
 
-  protected initModuleAndGetInjectorPerMod(injectorPerApp: Injector, aMetadataPerMod3: MetadataPerMod3[]): Injector {
+  protected getInjectorWithControllers(aMetadataPerMod3: MetadataPerMod3[]): Injector {
     const singletons = new Set<Class>();
 
     aMetadataPerMod3.forEach((metadataPerMod3) => {
@@ -123,12 +119,7 @@ export class PreRouterExtension implements Extension<void> {
         }
       });
     });
-
-    const meta = this.getMeta(aMetadataPerMod3);
-    const mod = getModule(meta.module);
-    const extendedProvidersPerMod = [mod, ...singletons, ...meta.providersPerMod];
-    const injectorPerMod = injectorPerApp.resolveAndCreateChild(extendedProvidersPerMod, 'injectorPerMod');
-    return injectorPerMod;
+    return this.injectorPerMod.resolveAndCreateChild([...singletons]);
   }
 
   protected getDefaultHandler(
@@ -155,7 +146,7 @@ export class PreRouterExtension implements Extension<void> {
     const injPerReq = injectorPerRou.createChildFromResolved(resolvedPerReq);
     const RequestContextClass = injPerReq.get(RequestContext) as typeof RequestContext;
     routeMeta.resolvedHandler = this.getResolvedHandler(routeMeta, resolvedPerReq);
-    this.checkDeps(metadataPerMod3.meta.name, httpMethod, path, injPerReq, routeMeta);
+    this.checkDeps(httpMethod, path, injPerReq, routeMeta);
     const resolvedChainMaker = resolvedPerReq.find((rp) => rp.dualKey.token === ChainMaker)!;
     const resolvedErrHandler = resolvedPerReq
       .concat(resolvedPerRou)
@@ -208,7 +199,7 @@ export class PreRouterExtension implements Extension<void> {
         throw new Error(msg);
       }
 
-      const injectorPerRou = this.injectorPerMod.createChildFromResolved(resolvedPerRou);
+      const injectorPerRou = this.injectorWithControllers.createChildFromResolved(resolvedPerRou);
 
       const resolvedGuard: ResolvedGuardPerMod = {
         guard,
@@ -268,7 +259,7 @@ export class PreRouterExtension implements Extension<void> {
 
     const resolvedPerRou = Injector.resolve(mergedPerRou);
     const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou, 'injectorPerRou');
-    this.checkDeps(metadataPerMod3.meta.name, httpMethod, path, injectorPerRou, routeMeta);
+    this.checkDeps(httpMethod, path, injectorPerRou, routeMeta);
     const resolvedChainMaker = resolvedPerRou.find((rp) => rp.dualKey.token === ChainMaker)!;
     const resolvedErrHandler = resolvedPerRou.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
     const chainMaker = injectorPerRou.instantiateResolved<DefaultSingletonChainMaker>(resolvedChainMaker);
@@ -291,7 +282,7 @@ export class PreRouterExtension implements Extension<void> {
   /**
    * Used as "sandbox" to test resolvable of controllers, guards and HTTP interceptors.
    */
-  protected checkDeps(moduleName: string, httpMethod: HttpMethod, path: string, inj: Injector, routeMeta: RouteMeta) {
+  protected checkDeps(httpMethod: HttpMethod, path: string, inj: Injector, routeMeta: RouteMeta) {
     try {
       const ignoreDeps: any[] = [HTTP_INTERCEPTORS, CTX_DATA];
       DepsChecker.check(inj, HttpErrorHandler, undefined, ignoreDeps);
@@ -305,7 +296,7 @@ export class PreRouterExtension implements Extension<void> {
       }
       DepsChecker.check(inj, HTTP_INTERCEPTORS, fromSelf, ignoreDeps);
     } catch (cause: any) {
-      this.errorMediator.checkingDepsInSandboxFailed(moduleName, cause);
+      this.errorMediator.checkingDepsInSandboxFailed(cause);
     }
   }
 

@@ -1,4 +1,4 @@
-import { Class, BeforeToken, InjectionToken } from '#di';
+import { Class, BeforeToken, InjectionToken, Injector } from '#di';
 import { AnyObj, OptionalProps, Provider } from '#types/mix.js';
 
 export class ExtensionsMetaPerApp {
@@ -61,9 +61,9 @@ export interface Extension<T = any> {
   stage1?(isLastModule: boolean): Promise<T>;
   /**
    * This method is called after the `stage1()` method has executed for all modules
-   * in the application. There is no strict role for this method.
+   * in the application and this method takes a module-level injector as an argument.
    */
-  stage2?(): Promise<void>;
+  stage2?(injectorPerMod: Injector): Promise<void>;
   /**
    * This method is called after the `stage2()` method has executed for all modules
    * in the application. There is no strict role for this method.

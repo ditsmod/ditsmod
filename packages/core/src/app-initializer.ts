@@ -32,6 +32,8 @@ import { SERVER } from '#constans';
 import { NodeServer } from '#types/server-options.js';
 import { MetadataPerMod2 } from './types/metadata-per-mod.js';
 import { getProviderName } from './utils/get-provider-name.js';
+import { AnyModule } from '#core/imports-resolver.js';
+import { getModule } from '#utils/get-module.js';
 
 export class AppInitializer {
   protected perAppService = new PerAppService();
@@ -276,10 +278,10 @@ export class AppInitializer {
       await this.handleExtensionsPerMod(preparedMetadataPerMod1, extensionsManager);
       this.logExtensionsStatistic(injectorPerApp, systemLogMediator);
     }
-    await this.perAppHandling(extensionsContext);
+    await this.perAppHandling(aMetadataPerMod2, extensionsContext);
   }
 
-  protected async perAppHandling(extensionsContext: ExtensionsContext) {
+  protected async perAppHandling(aMetadataPerMod2: MetadataPerMod2[], extensionsContext: ExtensionsContext) {
     for (const [groupToken, mExtensions] of extensionsContext.mExtensionPendingList) {
       for (const extension of mExtensions.values()) {
         try {
@@ -292,18 +294,44 @@ export class AppInitializer {
       }
     }
 
-    for (const num of [2, 3] as const) {
-      for (const [mod, extensionSet] of extensionsContext.mStage) {
-        for (const ext of extensionSet) {
-          try {
-            await ext[`stage${num}`]?.();
-          } catch (err: any) {
-            const msg = `Stage${num} in ${getModuleName(mod)} -> ${ext.constructor.name} failed`;
-            throw new ChainError(msg, { name: 'Error', cause: err });
+    for (const [mod, extensionSet] of extensionsContext.mStage) {
+      for (const ext of extensionSet) {
+        try {
+          if (!ext.stage2) {
+            continue;
           }
+          const injectorPerMod = this.initModuleAndGetInjectorPerMod(aMetadataPerMod2, mod);
+          await ext.stage2(injectorPerMod);
+        } catch (err: any) {
+          const msg = `Stage2 in ${getModuleName(mod)} -> ${ext.constructor.name} failed`;
+          throw new ChainError(msg, { name: 'Error', cause: err });
         }
       }
     }
+
+    for (const [mod, extensionSet] of extensionsContext.mStage) {
+      for (const ext of extensionSet) {
+        try {
+          if (!ext.stage3) {
+            continue;
+          }
+          await ext.stage3();
+        } catch (err: any) {
+          const msg = `Stage3 in ${getModuleName(mod)} -> ${ext.constructor.name} failed`;
+          throw new ChainError(msg, { name: 'Error', cause: err });
+        }
+      }
+    }
+  }
+
+  protected initModuleAndGetInjectorPerMod(aMetadataPerMod2: MetadataPerMod2[], anyModule: AnyModule): Injector {
+    const meta = aMetadataPerMod2.find((metadataPerMod2) => metadataPerMod2.meta.module === anyModule)!.meta;
+    const mod = getModule(anyModule);
+    const extendedProvidersPerMod = [mod, ...meta.providersPerMod];
+    const injectorPerApp = this.perAppService.injector;
+    const injectorPerMod = injectorPerApp.resolveAndCreateChild(extendedProvidersPerMod, 'injectorPerMod');
+    injectorPerMod.get(mod); // Instantiate the class of the module.
+    return injectorPerMod;
   }
 
   protected getInjectorForExtensions(
