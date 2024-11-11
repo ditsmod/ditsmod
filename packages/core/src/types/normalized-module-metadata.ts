@@ -27,6 +27,7 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   id?: string = '';
   importsModules: ModuleType[] = [];
   importsWithParams: ModuleWithParams[] = [];
+  appendsModules: ModuleType[] = [];
   appendsWithParams: AppendsWithParams[] = [];
   controllers: Class[] = [];
   decoratorFactory: AnyFn;

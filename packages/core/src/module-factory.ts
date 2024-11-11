@@ -8,7 +8,7 @@ import type { ModuleManager } from './services/module-manager.js';
 import type { GlobalProviders, MetadataPerMod1 } from './types/metadata-per-mod.js';
 import { ImportObj } from './types/metadata-per-mod.js';
 import type { ModuleType, Scope, Provider, GuardPerMod1, ModRefId } from './types/mix.js';
-import type { ModuleWithParams, AppendsWithParams } from './types/module-metadata.js';
+import type { ModuleWithParams } from './types/module-metadata.js';
 import type { ExtensionProvider } from '#types/extension-types.js';
 import { getCollisions } from './utils/get-collisions.js';
 import { getImportedProviders, getImportedTokens } from './utils/get-imports.js';
@@ -18,6 +18,7 @@ import { getToken, getTokens } from './utils/get-tokens.js';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error.js';
 import { isAppendsWithParams, isModuleWithParams, isNormRootModule } from './utils/type-guards.js';
 import { hasDeclaredInDir } from '#utils/type-guards.js';
+import { getModule } from '#utils/get-module.js';
 
 /**
  * - exports and imports global providers;
@@ -159,11 +160,11 @@ export class ModuleFactory {
 
   protected importAndAppendModules() {
     this.importOrAppendModules([...this.meta.importsModules, ...this.meta.importsWithParams], true);
-    this.importOrAppendModules(this.meta.appendsWithParams);
+    this.importOrAppendModules([...this.meta.appendsModules, ...this.meta.appendsWithParams]);
     this.checkAllCollisionsWithScopesMix();
   }
 
-  protected importOrAppendModules(inputs: Array<ModRefId>, isImport?: boolean) {
+  protected importOrAppendModules(inputs: ModRefId[], isImport?: boolean) {
     for (const input of inputs) {
       const meta = this.moduleManager.getMetadata(input, true);
       if (isImport) {
@@ -172,11 +173,13 @@ export class ModuleFactory {
 
       let prefixPerMod = '';
       let guardsPerMod1: GuardPerMod1[] = [];
-      if ((isImport && isModuleWithParams(input)) || isAppendsWithParams(input)) {
-        if (typeof input.absolutePath == 'string') {
+      const hasModuleParams = isModuleWithParams(input) || isAppendsWithParams(input);
+      if (hasModuleParams || !isImport) {
+        if (hasModuleParams && typeof input.absolutePath == 'string') {
           prefixPerMod = input.absolutePath;
         } else {
-          prefixPerMod = [this.prefixPerMod, input.path].filter((s) => s).join('/');
+          const path = hasModuleParams ? input.path : '';
+          prefixPerMod = [this.prefixPerMod, path].filter((s) => s).join('/');
         }
         const impGuradsPerMod1 = meta.guardsPerMod.map<GuardPerMod1>((g) => ({ ...g, meta: this.meta }));
         guardsPerMod1 = [...this.guardsPerMod1, ...impGuradsPerMod1];
@@ -376,16 +379,14 @@ export class ModuleFactory {
   }
 
   protected checkImportsAndAppends(meta: NormalizedModuleMetadata) {
-    meta.appendsWithParams.forEach((append) => {
+    [...meta.appendsWithParams, ...meta.appendsModules].forEach((append) => {
       const appendedMeta = this.moduleManager.getMetadata(append, true);
       if (!appendedMeta.controllers.length) {
         const msg = `Appends to "${meta.name}" failed: "${appendedMeta.name}" must have controllers.`;
         throw new Error(msg);
       }
-      if (
-        meta.importsModules.includes(append.module) ||
-        meta.importsWithParams.some((imp) => imp.module === append.module)
-      ) {
+      const mod = getModule(append);
+      if (meta.importsModules.includes(mod) || meta.importsWithParams.some((imp) => imp.module === mod)) {
         const msg = `Appends to "${meta.name}" failed: "${appendedMeta.name}" includes in both: imports and appends arrays.`;
         throw new Error(msg);
       }

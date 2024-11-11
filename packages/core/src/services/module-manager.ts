@@ -239,6 +239,7 @@ export class ModuleManager {
       ...meta.importsWithParams,
       ...meta.exportsModules,
       ...meta.exportsWithParams,
+      ...meta.appendsModules,
       ...meta.appendsWithParams,
     ];
 
@@ -264,6 +265,7 @@ export class ModuleManager {
     meta = { ...(meta || ({} as NormalizedModuleMetadata<T, A>)) };
     meta.importsModules = meta.importsModules.slice();
     meta.importsWithParams = meta.importsWithParams.slice();
+    meta.appendsModules = meta.appendsModules.slice();
     meta.appendsWithParams = meta.appendsWithParams.slice();
     meta.controllers = meta.controllers.slice();
     meta.extensionsProviders = meta.extensionsProviders.slice();
@@ -335,6 +337,7 @@ export class ModuleManager {
       const oldMeta = { ...meta };
       oldMeta.importsModules = oldMeta.importsModules.slice();
       oldMeta.importsWithParams = oldMeta.importsWithParams.slice();
+      oldMeta.appendsModules = oldMeta.appendsModules.slice();
       oldMeta.appendsWithParams = oldMeta.appendsWithParams.slice();
       oldMeta.exportsModules = oldMeta.exportsModules.slice();
       oldMeta.exportsWithParams = oldMeta.exportsWithParams.slice();
@@ -360,6 +363,7 @@ export class ModuleManager {
       importsOrExports.push(
         ...targetMeta.importsModules,
         ...targetMeta.importsWithParams,
+        ...targetMeta.appendsModules,
         ...targetMeta.appendsWithParams,
         ...targetMeta.exportsModules,
         ...targetMeta.exportsWithParams,
@@ -436,7 +440,7 @@ export class ModuleManager {
       if (isAppendsWithParams(ap)) {
         meta.appendsWithParams.push(ap);
       } else {
-        meta.appendsWithParams.push({ path: '', module: ap });
+        meta.appendsModules.push(ap);
       }
     });
 
