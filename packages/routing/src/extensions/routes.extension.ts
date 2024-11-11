@@ -46,46 +46,46 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
 
     const aControllerMetadata: ControllerMetadata[] = [];
     if (applyControllers)
-    for (const Controller of (metadataPerMod2.meta.controllers as Class<Record<string | symbol, any>>[])) {
-      const classMeta = reflector.getMetadata(Controller)!;
-      for (const methodName of classMeta) {
-        for (const decoratorAndValue of classMeta[methodName].decorators) {
-          if (!isRoute<RouteMetadata>(decoratorAndValue)) {
-            continue;
-          }
-          const providersPerRou: Provider[] = [];
-          const providersPerReq: Provider[] = [];
-          const route = decoratorAndValue.value;
-          const ctrlDecorator = classMeta.constructor.decorators.find(isController);
-          const scope = ctrlDecorator?.value.scope;
-          if (scope == 'module') {
-            meta.providersPerMod.unshift(Controller);
-          }
-          const guards = this.normalizeGuards(route.guards).slice();
-          providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
-          providersPerReq.push(...((ctrlDecorator?.value as ControllerRawMetadata1).providersPerReq || []));
-          const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
-          const { path: controllerPath, httpMethod } = route;
-          const path = this.getPath(prefix, controllerPath);
+      for (const Controller of metadataPerMod2.meta.controllers as Class<Record<string | symbol, any>>[]) {
+        const classMeta = reflector.getMetadata(Controller)!;
+        for (const methodName of classMeta) {
+          for (const decoratorAndValue of classMeta[methodName].decorators) {
+            if (!isRoute<RouteMetadata>(decoratorAndValue)) {
+              continue;
+            }
+            const providersPerRou: Provider[] = [];
+            const providersPerReq: Provider[] = [];
+            const route = decoratorAndValue.value;
+            const ctrlDecorator = classMeta.constructor.decorators.find(isController);
+            const scope = ctrlDecorator?.value.scope;
+            if (scope == 'module') {
+              meta.providersPerMod.unshift(Controller);
+            }
+            const guards = this.normalizeGuards(route.guards).slice();
+            providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
+            providersPerReq.push(...((ctrlDecorator?.value as ControllerRawMetadata1).providersPerReq || []));
+            const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
+            const { path: controllerPath, httpMethod } = route;
+            const path = this.getPath(prefix, controllerPath);
 
-          const routeMeta: RouteMeta = {
-            decoratorAndValue,
-            controller: Controller,
-            methodName,
-          };
-          providersPerRou.push({ token: RouteMeta, useValue: routeMeta });
-          aControllerMetadata.push({
-            httpMethod,
-            path,
-            providersPerRou,
-            providersPerReq,
-            routeMeta,
-            scope,
-            guards,
-          });
+            const routeMeta: RouteMeta = {
+              decoratorAndValue,
+              controller: Controller,
+              methodName,
+            };
+            providersPerRou.push({ token: RouteMeta, useValue: routeMeta });
+            aControllerMetadata.push({
+              httpMethod,
+              path,
+              providersPerRou,
+              providersPerReq,
+              routeMeta,
+              scope,
+              guards,
+            });
+          }
         }
       }
-    }
 
     return aControllerMetadata;
   }
