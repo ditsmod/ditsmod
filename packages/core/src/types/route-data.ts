@@ -22,7 +22,7 @@ export class RouteMeta {
    * on the same controller's method.
    */
   decoratorAndValue: DecoratorAndValue;
-  controller: Class;
+  Controller: Class;
   methodName: string | symbol;
   routeHandler?: (ctx: SingletonRequestContext) => Promise<any>;
 }

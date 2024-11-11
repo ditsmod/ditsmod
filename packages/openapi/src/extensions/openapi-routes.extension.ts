@@ -42,8 +42,8 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
 
     const aControllerMetadata: ControllerMetadata[] = [];
     if (applyControllers)
-      for (const controller of meta.controllers as Class<Record<string | symbol, any>>[]) {
-        const classMeta = reflector.getMetadata(controller)!;
+      for (const Controller of meta.controllers as Class<Record<string | symbol, any>>[]) {
+        const classMeta = reflector.getMetadata(Controller)!;
         for (const methodName of classMeta) {
           for (const decoratorAndValue of classMeta[methodName].decorators) {
             if (!isOasRoute(decoratorAndValue)) {
@@ -61,7 +61,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             if (isOasRoute1(decoratorAndValue)) {
               guards.push(...this.normalizeGuards(decoratorAndValue.value.guards));
             }
-            const controllerFactory: FactoryProvider = { useFactory: [controller, controller.prototype[methodName]] };
+            const controllerFactory: FactoryProvider = { useFactory: [Controller, Controller.prototype[methodName]] };
             providersPerReq.push(
               ...((ctrlDecorator?.value as ControllerRawMetadata1).providersPerReq || []),
               controllerFactory,
@@ -74,7 +74,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             const { paramsRefs, paramsInPath, paramsNonPath } = this.mergeParams(
               httpMethod,
               path,
-              controller.name,
+              Controller.name,
               prefixParams,
               parameters,
             );
@@ -87,7 +87,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
               oasPath,
               operationObject: clonedOperationObject,
               decoratorAndValue,
-              controller,
+              Controller,
               methodName,
             };
 

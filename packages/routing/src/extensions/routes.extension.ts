@@ -70,7 +70,7 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
 
             const routeMeta: RouteMeta = {
               decoratorAndValue,
-              controller: Controller,
+              Controller,
               methodName,
             };
             providersPerRou.push({ token: RouteMeta, useValue: routeMeta });

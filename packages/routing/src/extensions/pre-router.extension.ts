@@ -145,7 +145,7 @@ export class PreRouterExtension implements Extension<void> {
     const resolvedChainMaker = resolvedPerRou.find((rp) => rp.dualKey.token === ChainMaker)!;
     const resolvedErrHandler = resolvedPerRou.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
     const chainMaker = injectorPerRou.instantiateResolved<DefaultSingletonChainMaker>(resolvedChainMaker);
-    const ctrl = injectorPerMod.get(routeMeta.controller);
+    const ctrl = injectorPerMod.get(routeMeta.Controller);
     const routeHandler = ctrl[routeMeta.methodName].bind(ctrl) as typeof routeMeta.routeHandler;
     routeMeta.routeHandler = routeHandler;
     const errorHandler = injectorPerRou.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
@@ -306,10 +306,10 @@ export class PreRouterExtension implements Extension<void> {
   }
 
   protected getResolvedHandler(routeMeta: RouteMeta, resolvedPerReq: ResolvedProvider[]) {
-    const { controller, methodName } = routeMeta;
-    const factoryProvider: FactoryProvider = { useFactory: [controller, controller.prototype[methodName]] };
+    const { Controller, methodName } = routeMeta;
+    const factoryProvider: FactoryProvider = { useFactory: [Controller, Controller.prototype[methodName]] };
     const resolvedHandler = Injector.resolve([factoryProvider])[0];
-    return resolvedPerReq.concat([resolvedHandler]).find((rp) => rp.dualKey.token === controller.prototype[methodName]);
+    return resolvedPerReq.concat([resolvedHandler]).find((rp) => rp.dualKey.token === Controller.prototype[methodName]);
   }
 
   /**
