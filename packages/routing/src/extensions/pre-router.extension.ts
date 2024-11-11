@@ -278,7 +278,7 @@ export class PreRouterExtension implements Extension<void> {
         throw new Error(msg);
       }
 
-      const injectorPerMod = this.moduleManager.getInjectorPerMod(g.meta.module);
+      const injectorPerMod = this.moduleManager.getInjectorPerMod(g.meta.modRefId);
       const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou);
 
       const resolvedGuard: ResolvedGuardPerMod = {

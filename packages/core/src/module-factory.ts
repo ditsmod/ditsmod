@@ -106,7 +106,8 @@ export class ModuleFactory {
     this.meta.providersPerMod.unshift({ token: ModuleExtract, useValue: moduleExtract });
 
     const hasPath =
-      isModuleWithParams(meta.module) && (meta.module.path !== undefined || meta.module.absolutePath !== undefined);
+      isModuleWithParams(meta.modRefId) &&
+      (meta.modRefId.path !== undefined || meta.modRefId.absolutePath !== undefined);
 
     let applyControllers = false;
     if (isNormRootModule(meta) || isAppends || hasPath) {
@@ -209,7 +210,7 @@ export class ModuleFactory {
    * @param meta1 Module metadata from where imports providers.
    */
   protected importProvidersAndExtensions(meta1: NormalizedModuleMetadata) {
-    const { module, exportsModules, exportsWithParams } = meta1;
+    const { modRefId, exportsModules, exportsWithParams } = meta1;
 
     for (const modRefId of [...exportsModules, ...exportsWithParams]) {
       const meta2 = this.moduleManager.getMetadata(modRefId, true);
@@ -221,18 +222,18 @@ export class ModuleFactory {
     this.addProviders('Rou', meta1);
     this.addProviders('Req', meta1);
     if (meta1.exportedMultiProvidersPerMod.length) {
-      this.importedMultiProvidersPerMod.set(module, meta1.exportedMultiProvidersPerMod);
+      this.importedMultiProvidersPerMod.set(modRefId, meta1.exportedMultiProvidersPerMod);
     }
     if (meta1.exportedMultiProvidersPerRou.length) {
-      this.importedMultiProvidersPerRou.set(module, meta1.exportedMultiProvidersPerRou);
+      this.importedMultiProvidersPerRou.set(modRefId, meta1.exportedMultiProvidersPerRou);
     }
     if (meta1.exportedMultiProvidersPerReq.length) {
-      this.importedMultiProvidersPerReq.set(module, meta1.exportedMultiProvidersPerReq);
+      this.importedMultiProvidersPerReq.set(modRefId, meta1.exportedMultiProvidersPerReq);
     }
     if (meta1.exportedExtensions.length) {
-      this.importedExtensions.set(meta1.module, meta1.exportedExtensions);
+      this.importedExtensions.set(meta1.modRefId, meta1.exportedExtensions);
     }
-    this.throwIfTryResolvingMultiprovidersCollisions(module);
+    this.throwIfTryResolvingMultiprovidersCollisions(modRefId);
   }
 
   protected throwIfTryResolvingMultiprovidersCollisions(module: ModRefId) {
@@ -259,18 +260,18 @@ export class ModuleFactory {
       const token1 = getToken(provider);
       const importObj = this[`importedProvidersPer${scope}`].get(token1);
       if (importObj) {
-        this.checkCollisionsPerScope(meta.module, scope, token1, provider, importObj);
+        this.checkCollisionsPerScope(meta.modRefId, scope, token1, provider, importObj);
         const hasResolvedCollision = this.meta[`resolvedCollisionsPer${scope}`].some(([token2]) => token2 === token1);
         if (hasResolvedCollision) {
           const { providers, module2 } = this.getResolvedCollisionsPerScope(scope, token1);
           const newImportObj = new ImportObj();
-          newImportObj.module = module2;
+          newImportObj.modRefId = module2;
           newImportObj.providers.push(...providers);
           this[`importedProvidersPer${scope}`].set(token1, newImportObj);
         }
       } else {
         const newImportObj = new ImportObj();
-        newImportObj.module = meta.module;
+        newImportObj.modRefId = meta.modRefId;
         newImportObj.providers.push(provider);
         this[`importedProvidersPer${scope}`].set(token1, newImportObj);
       }
@@ -289,7 +290,7 @@ export class ModuleFactory {
     const duplImpTokens = [...declaredTokens, ...resolvedTokens].includes(token) ? [] : [token];
     const collisions = getCollisions(duplImpTokens, [...importObj.providers, provider]);
     if (collisions.length) {
-      const modulesNames = [importObj.module, module].map(getModuleName);
+      const modulesNames = [importObj.modRefId, module].map(getModuleName);
       throwProvidersCollisionError(this.moduleName, [token], modulesNames, scope, this.meta.isExternal);
     }
   }
@@ -340,13 +341,13 @@ export class ModuleFactory {
         const collision = importedTokens.includes(token1) && ![...declaredTokens, ...resolvedTokens].includes(token1);
         if (collision) {
           const importObj = this[`importedProvidersPer${scope}`].get(token1)!;
-          const hostModulePath = getModuleMetadata(importObj.module)?.declaredInDir || '.';
+          const hostModulePath = getModuleMetadata(importObj.modRefId)?.declaredInDir || '.';
           const decorator = reflector.getMetadata(token1)?.constructor.decorators.find(hasDeclaredInDir);
           const collisionWithPath = decorator?.declaredInDir || '.';
           if (hostModulePath !== '.' && collisionWithPath !== '.' && collisionWithPath.startsWith(hostModulePath)) {
             // Allow collisions in host modules.
           } else {
-            const hostModuleName = getModuleName(importObj.module);
+            const hostModuleName = getModuleName(importObj.modRefId);
             throwProvidersCollisionError(this.moduleName, [token1], [hostModuleName], scope, this.meta.isExternal);
           }
         }
@@ -358,7 +359,7 @@ export class ModuleFactory {
   protected resolveCollisionsWithScopesMix(token1: any, scope: Scope, resolvedTokens: any[]) {
     if (resolvedTokens.includes(token1)) {
       const [, module2] = this.meta[`resolvedCollisionsPer${scope}`].find(([token2]) => token1 === token2)!;
-      if (this.meta.module === module2) {
+      if (this.meta.modRefId === module2) {
         if (!this[`importedProvidersPer${scope}`].delete(token1)) {
           const tokenName = token1.name || token1;
           const errorMsg =
@@ -381,7 +382,10 @@ export class ModuleFactory {
         const msg = `Appends to "${meta.name}" failed: "${appendedMeta.name}" must have controllers.`;
         throw new Error(msg);
       }
-      if (meta.importsModules.includes(append.module) || meta.importsWithParams.some(imp => imp.module === append.module)) {
+      if (
+        meta.importsModules.includes(append.module) ||
+        meta.importsWithParams.some((imp) => imp.module === append.module)
+      ) {
         const msg = `Appends to "${meta.name}" failed: "${appendedMeta.name}" includes in both: imports and appends arrays.`;
         throw new Error(msg);
       }

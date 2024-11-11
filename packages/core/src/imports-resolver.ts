@@ -40,7 +40,7 @@ export class ImportsResolver {
     this.tokensPerApp = getTokens(this.providersPerApp);
     this.appMetadataMap.forEach((metadataPerMod1) => {
       const { meta, importedTokensMap, guardsPerMod1, applyControllers, prefixPerMod } = metadataPerMod1;
-      mMetadataPerMod2.set(meta.module, {
+      mMetadataPerMod2.set(meta.modRefId, {
         meta,
         guardsPerMod1,
         applyControllers,
@@ -64,7 +64,7 @@ export class ImportsResolver {
       importedTokensMap[`per${scope}`].forEach((importObj) => {
         targetProviders[`providersPer${scope}`].unshift(...importObj.providers);
         importObj.providers.forEach((importedProvider) => {
-          this.grabDependecies(targetProviders, importObj.module, importedProvider, scopes.slice(i));
+          this.grabDependecies(targetProviders, importObj.modRefId, importedProvider, scopes.slice(i));
         });
       });
 
@@ -122,7 +122,7 @@ export class ImportsResolver {
       });
       targetProviders.extensionsProviders.unshift(...newProviders);
       importedProviders.forEach((importedProvider) => {
-        if (this.hasUnresolvedDependecies(targetProviders.module, importedProvider, ['Mod'])) {
+        if (this.hasUnresolvedDependecies(targetProviders.modRefId, importedProvider, ['Mod'])) {
           this.grabDependecies(targetProviders, sourceModule, importedProvider, ['Mod']);
         }
       });
@@ -215,12 +215,12 @@ export class ImportsResolver {
       if (importObj) {
         found = true;
         path.push(dep.token);
-        const { module: sourceModule2, providers: sourceProviders2 } = importObj;
+        const { modRefId: modRefId2, providers: sourceProviders2 } = importObj;
         targetProviders[`providersPer${scope}`].unshift(...sourceProviders2);
 
         // Loop for multi providers.
         for (const sourceProvider2 of sourceProviders2) {
-          this.grabDependeciesAgain(targetProviders, sourceModule2, sourceProvider2, scopes, path);
+          this.grabDependeciesAgain(targetProviders, modRefId2, sourceProvider2, scopes, path);
         }
         break;
       }
@@ -278,13 +278,13 @@ export class ImportsResolver {
       const importObj = this.appMetadataMap.get(module1)?.importedTokensMap[`per${scope}`].get(dep.token);
       if (importObj) {
         found = true;
-        const { module: module2, providers } = importObj;
+        const { modRefId: modRefId2, providers } = importObj;
 
         // Loop for multi providers.
         for (const provider of providers) {
-          this.addToUnfinishedSearchDependecies(module2, provider);
-          found = !this.hasUnresolvedDependecies(module2, provider, scopes);
-          this.deleteFromUnfinishedSearchDependecies(module2, provider);
+          this.addToUnfinishedSearchDependecies(modRefId2, provider);
+          found = !this.hasUnresolvedDependecies(modRefId2, provider, scopes);
+          this.deleteFromUnfinishedSearchDependecies(modRefId2, provider);
           if (!found) {
             return true;
           }

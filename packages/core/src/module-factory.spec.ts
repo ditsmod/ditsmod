@@ -116,7 +116,7 @@ describe('ModuleFactory', () => {
       expect(metadataPerMod1_1.importedTokensMap.multiPerMod).toEqual(new Map());
       expect(metadataPerMod1_1.importedTokensMap.multiPerRou).toEqual(new Map());
       expect(metadataPerMod1_1.importedTokensMap.multiPerReq).toEqual(new Map());
-      
+
       expect(metadataPerMod1_2.prefixPerMod).toBe('prefix2');
       expect(metadataPerMod1_3.prefixPerMod).toBe('');
       expect(metadataPerMod1_2.applyControllers).toBe(true);
@@ -358,13 +358,13 @@ describe('ModuleFactory', () => {
       expect(getImportedProviders(mock.importedProvidersPerReq)).toEqual([Provider1, Provider2, Provider3]);
 
       const importObj = new ImportObj();
-      importObj.module = Module1;
+      importObj.modRefId = Module1;
       importObj.providers = [Provider1];
       expect(mock?.importedProvidersPerReq.get(Provider1)).toEqual(importObj);
-      importObj.module = Module2;
+      importObj.modRefId = Module2;
       importObj.providers = [Provider2];
       expect(mock?.importedProvidersPerReq.get(Provider2)).toEqual(importObj);
-      importObj.module = AppModule;
+      importObj.modRefId = AppModule;
       importObj.providers = [Provider3];
       expect(mock?.importedProvidersPerReq.get(Provider3)).toEqual(importObj);
     });
@@ -518,11 +518,11 @@ describe('ModuleFactory', () => {
 
         expect(mock?.importedProvidersPerMod).toBeDefined();
         const importObj = new ImportObj();
-        importObj.module = Module0;
+        importObj.modRefId = Module0;
         importObj.providers = [Provider0];
         expect(mock?.importedProvidersPerMod.get(Provider0)).toEqual(importObj);
 
-        importObj.module = Module1;
+        importObj.modRefId = Module1;
         importObj.providers = [Provider1];
         expect(mock?.importedProvidersPerMod.get(Provider1)).toEqual(importObj);
         importObj.providers = [Provider2];
@@ -530,13 +530,13 @@ describe('ModuleFactory', () => {
         importObj.providers = [Provider3];
         expect(mock?.importedProvidersPerMod.get(Provider3)).toEqual(importObj);
 
-        importObj.module = Module2;
+        importObj.modRefId = Module2;
         importObj.providers = [Provider5];
         expect(mock?.importedProvidersPerMod.get(Provider5)).toEqual(importObj);
 
         expect(mock.meta.providersPerReq).toEqual([]);
 
-        importObj.module = Module2;
+        importObj.modRefId = Module2;
         importObj.providers = [Provider8];
         expect(mock?.importedProvidersPerReq.get(Provider8)).toEqual(importObj);
         expect(mock.meta.decoratorFactory).toBe(rootModule);
@@ -584,7 +584,7 @@ describe('ModuleFactory', () => {
 
         expect(mock?.importedProvidersPerReq).toBeDefined();
         const importObj = new ImportObj();
-        importObj.module = Module2;
+        importObj.modRefId = Module2;
         importObj.providers = [Provider2];
         expect(mock?.importedProvidersPerReq.get(Provider2)).toEqual(importObj);
         expect(mod3?.meta.decoratorFactory).toBe(featureModule);
@@ -665,7 +665,7 @@ describe('ModuleFactory', () => {
           moduleManager.scanRootModule(AppModule);
           expect(() => mock.exportGlobalProviders(moduleManager, [])).not.toThrow();
           expect([...mock.importedProvidersPerMod]).toEqual([
-            [Provider1, { module: Module1, providers: [{ token: Provider1, useValue: 'one' }] }],
+            [Provider1, { modRefId: Module1, providers: [{ token: Provider1, useValue: 'one' }] }],
           ]);
         });
 
@@ -800,7 +800,7 @@ describe('ModuleFactory', () => {
             [
               Provider2,
               {
-                module: Module2,
+                modRefId: Module2,
                 providers: [{ token: Provider2, useValue: 'value100' }],
               },
             ],
@@ -917,9 +917,9 @@ describe('ModuleFactory', () => {
             mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set()),
           ).not.toThrow();
           expect([...mock.importedProvidersPerMod]).toEqual([
-            [Provider1, { module: Module1, providers: [Provider1] }],
-            [Provider2, { module: Module1, providers: [useFactoryProvider2] }],
-            [Provider3, { module: Module2, providers: [Provider3] }],
+            [Provider1, { modRefId: Module1, providers: [Provider1] }],
+            [Provider2, { modRefId: Module1, providers: [useFactoryProvider2] }],
+            [Provider3, { modRefId: Module2, providers: [Provider3] }],
           ]);
         });
 
@@ -956,8 +956,8 @@ describe('ModuleFactory', () => {
             mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set()),
           ).not.toThrow();
           expect([...mock.importedProvidersPerMod]).toEqual([
-            [Provider1, { module: Module1, providers: [Provider1] }],
-            [Provider2, { module: moduleWithParams, providers: [Provider2] }],
+            [Provider1, { modRefId: Module1, providers: [Provider1] }],
+            [Provider2, { modRefId: moduleWithParams, providers: [Provider2] }],
           ]);
         });
 
@@ -997,10 +997,10 @@ describe('ModuleFactory', () => {
           ).not.toThrow();
           const mod3 = mock.appMetadataMap.get(Module3)!;
           expect([...mod3.importedTokensMap.perMod]).toEqual([
-            [Provider1, { module: Module1, providers: [Provider1] }],
+            [Provider1, { modRefId: Module1, providers: [Provider1] }],
           ]);
           expect([...mock.importedProvidersPerMod]).toEqual([
-            [Provider1, { module: Module2, providers: [{ token: Provider1, useValue: 'one' }] }],
+            [Provider1, { modRefId: Module2, providers: [{ token: Provider1, useValue: 'one' }] }],
           ]);
         });
 
@@ -1095,9 +1095,9 @@ describe('ModuleFactory', () => {
             mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set()),
           ).not.toThrow();
           expect([...mock.importedProvidersPerReq]).toEqual([
-            [Provider1, { module: Module1, providers: [{ token: Provider1, useToken: Provider1 }] }],
-            [Provider2, { module: Module2, providers: [{ token: Provider2, useClass: Provider2 }] }],
-            [Provider3, { module: Module2, providers: [Provider3] }],
+            [Provider1, { modRefId: Module1, providers: [{ token: Provider1, useToken: Provider1 }] }],
+            [Provider2, { modRefId: Module2, providers: [{ token: Provider2, useClass: Provider2 }] }],
+            [Provider3, { modRefId: Module2, providers: [Provider3] }],
           ]);
         });
 
@@ -1160,8 +1160,8 @@ describe('ModuleFactory', () => {
             mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set()),
           ).not.toThrow();
           expect([...mock.importedProvidersPerReq]).toEqual([
-            [Provider1, { module: Module2, providers: [{ token: Provider1, useToken: Provider1 }] }],
-            [Provider2, { module: Module1, providers: [Provider2] }],
+            [Provider1, { modRefId: Module2, providers: [{ token: Provider1, useToken: Provider1 }] }],
+            [Provider2, { modRefId: Module1, providers: [Provider2] }],
           ]);
         });
       });
@@ -1209,7 +1209,7 @@ describe('ModuleFactory', () => {
             mock.bootstrap([Provider1], new GlobalProviders(), '', AppModule, moduleManager, new Set());
           expect(callback).not.toThrow();
           expect([...mock.importedProvidersPerMod]).toEqual([
-            [Provider1, { module: Module1, providers: [{ token: Provider1, useValue: 'fake' }] }],
+            [Provider1, { modRefId: Module1, providers: [{ token: Provider1, useValue: 'fake' }] }],
           ]);
         });
 
@@ -1251,7 +1251,7 @@ describe('ModuleFactory', () => {
             mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set()),
           ).not.toThrow();
           expect([...mock.importedProvidersPerReq]).toEqual([
-            [Provider1, { module: Module1, providers: [{ token: Provider1, useClass: Provider1 }] }],
+            [Provider1, { modRefId: Module1, providers: [{ token: Provider1, useClass: Provider1 }] }],
           ]);
         });
 
@@ -1281,7 +1281,9 @@ describe('ModuleFactory', () => {
             mock.bootstrap([Provider1], new GlobalProviders(), '', AppModule, moduleManager, new Set());
           }).not.toThrow();
           expect([...mock.importedProvidersPerMod]).toEqual([]);
-          expect([...mock.importedProvidersPerReq]).toEqual([[Provider1, { module: Module1, providers: [Provider1] }]]);
+          expect([...mock.importedProvidersPerReq]).toEqual([
+            [Provider1, { modRefId: Module1, providers: [Provider1] }],
+          ]);
         });
 
         it('point to current module to increase scope and to resolve case 2', () => {
@@ -1363,7 +1365,7 @@ describe('ModuleFactory', () => {
             mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set()),
           ).not.toThrow();
           expect([...mock.importedProvidersPerReq]).toEqual([
-            [Req, { module: Module1, providers: [{ token: Req, useClass: Req }] }],
+            [Req, { modRefId: Module1, providers: [{ token: Req, useClass: Req }] }],
           ]);
         });
 
@@ -1422,7 +1424,7 @@ describe('ModuleFactory', () => {
             mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set()),
           ).not.toThrow();
           expect([...mock.importedProvidersPerReq]).toEqual([
-            [HttpBackend, { module: Module1, providers: [{ token: HttpBackend, useValue: '' }] }],
+            [HttpBackend, { modRefId: Module1, providers: [{ token: HttpBackend, useValue: '' }] }],
           ]);
         });
       });

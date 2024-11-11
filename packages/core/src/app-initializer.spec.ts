@@ -492,11 +492,11 @@ describe('AppInitializer', () => {
       const perMod = metadataPerMod1?.importedTokensMap?.perMod!;
       const expectedPerMod = new ImportObj();
 
-      expectedPerMod.module = Module0;
+      expectedPerMod.modRefId = Module0;
       expectedPerMod.providers = [Provider0];
       expect(perMod.get(Provider0)).toEqual(expectedPerMod);
 
-      expectedPerMod.module = module2WithParams;
+      expectedPerMod.modRefId = module2WithParams;
       expectedPerMod.providers = [Provider3];
       expect(perMod.get(Provider3)).toEqual(expectedPerMod);
       expectedPerMod.providers = [Provider4];
@@ -505,7 +505,7 @@ describe('AppInitializer', () => {
       // Global providers per a request
       const perReq = metadataPerMod1?.importedTokensMap.perReq!;
       const expectedPerReq = new ImportObj();
-      expectedPerReq.module = module3WithParams;
+      expectedPerReq.modRefId = module3WithParams;
       expectedPerReq.providers = [Provider5];
       expect(perReq.get(Provider5)).toEqual(expectedPerReq);
       expectedPerReq.providers = [Provider6];

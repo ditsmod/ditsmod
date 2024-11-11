@@ -1,5 +1,5 @@
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
-import { GuardPerMod1, ModuleType, Provider } from './mix.js';
+import { GuardPerMod1, ModRefId, ModuleType, Provider } from './mix.js';
 import { ModuleWithParams } from './module-metadata.js';
 import { ExtensionProvider } from './extension-types.js';
 
@@ -7,7 +7,7 @@ import { ExtensionProvider } from './extension-types.js';
  * @todo Rename this.
  */
 export class ImportObj<T extends Provider = Provider> {
-  module: ModuleType | ModuleWithParams;
+  modRefId: ModRefId;
   /**
    * This property can have more than one element for multi-providers only.
    */

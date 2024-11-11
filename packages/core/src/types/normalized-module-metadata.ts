@@ -16,7 +16,7 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
    * 
    * @todo Rename this to `moduleKey`.
    */
-  module: ModuleType<T> | ModuleWithParams<T> | AppendsWithParams<T>;
+  modRefId: ModuleType<T> | ModuleWithParams<T> | AppendsWithParams<T>;
   /**
    * The module name.
    */

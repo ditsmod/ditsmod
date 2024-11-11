@@ -150,8 +150,8 @@ export class ModuleManager {
       const msg = `Failed removing ${inputMeta.name} from "imports" array: target module with ID "${modIdStr}" not found.`;
       throw new Error(msg);
     }
-    const prop = isModuleWithParams(inputMeta.module) ? 'importsWithParams' : 'importsModules';
-    const index = targetMeta[prop].findIndex((imp: ModRefId) => imp === inputMeta.module);
+    const prop = isModuleWithParams(inputMeta.modRefId) ? 'importsWithParams' : 'importsModules';
+    const index = targetMeta[prop].findIndex((imp: ModRefId) => imp === inputMeta.modRefId);
     if (index == -1) {
       const modIdStr = format(inputModuleId);
       this.systemLogMediator.moduleNotFound(this, modIdStr);
@@ -165,7 +165,7 @@ export class ModuleManager {
         if (inputMeta.id) {
           this.mapId.delete(inputMeta.id);
         }
-        this.map.delete(inputMeta.module);
+        this.map.delete(inputMeta.modRefId);
       }
       this.systemLogMediator.moduleSuccessfulRemoved(this, inputMeta.name, targetMeta.name);
       return true;
@@ -387,7 +387,7 @@ export class ModuleManager {
      */
     const meta = new NormalizedModuleMetadata();
     meta.name = modName;
-    meta.module = modRefId;
+    meta.modRefId = modRefId;
     meta.decoratorFactory = rawMeta.decoratorFactory;
     meta.declaredInDir = rawMeta.declaredInDir;
     this.checkWhetherIsExternalModule(rawMeta, meta);

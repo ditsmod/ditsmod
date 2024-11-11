@@ -245,8 +245,8 @@ export class AppInitializer {
     const globalProviders = moduleFactory1.exportGlobalProviders(moduleManager, this.meta.providersPerApp);
     this.systemLogMediator.printGlobalProviders(this, globalProviders);
     const moduleFactory2 = new ModuleFactory();
-    const { module } = moduleManager.getMetadata('root', true);
-    return moduleFactory2.bootstrap(this.meta.providersPerApp, globalProviders, '', module, moduleManager, new Set());
+    const { modRefId } = moduleManager.getMetadata('root', true);
+    return moduleFactory2.bootstrap(this.meta.providersPerApp, globalProviders, '', modRefId, moduleManager, new Set());
   }
 
   protected async handleExtensions(
@@ -340,7 +340,7 @@ export class AppInitializer {
   }
 
   protected initModuleAndGetInjectorPerMod(meta: NormalizedModuleMetadata): Injector {
-    const mod = getModule(meta.module);
+    const mod = getModule(meta.modRefId);
     const extendedProvidersPerMod = [mod, ...meta.providersPerMod];
     const injectorPerApp = this.perAppService.injector;
     const injectorPerMod = injectorPerApp.resolveAndCreateChild(extendedProvidersPerMod, 'injectorPerMod');
@@ -385,7 +385,7 @@ export class AppInitializer {
       }
     }
 
-    extensionsManager.setExtensionsToStage2(meta.module);
+    extensionsManager.setExtensionsToStage2(meta.modRefId);
   }
 
   /**
