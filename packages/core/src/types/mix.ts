@@ -10,10 +10,14 @@ import {
 } from '#di';
 import { RequestContext } from '../request-context.js';
 import { MetadataPerMod1 } from '#types/metadata-per-mod.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
+import { AppendsWithParams, ModuleWithParams } from '#types/module-metadata.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 
 export type ModuleType<T extends AnyObj = AnyObj> = Class<T>;
+/**
+ * Module reference ID.
+ */
+export type ModRefId = ModuleType | ModuleWithParams | AppendsWithParams;
 /**
  * Require only specified properties from the `K` list for `T`.
  * 

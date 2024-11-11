@@ -97,6 +97,7 @@ export {
   GuardPerMod1,
   ProvidersForMod,
   Scope,
+  ModRefId,
 } from '#types/mix.js';
 export {
   ModuleMetadata,

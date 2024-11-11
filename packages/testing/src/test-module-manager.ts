@@ -1,16 +1,5 @@
-import {
-  AppendsWithParams,
-  ModuleManager,
-  ModuleType,
-  ModuleWithParams,
-  NormalizedModuleMetadata,
-  OutputLogLevel,
-  Provider,
-} from '@ditsmod/core';
-
+import { ModRefId, ModuleManager, NormalizedModuleMetadata, OutputLogLevel, Provider } from '@ditsmod/core';
 import { TestProvider } from './types.js';
-
-type AnyModule = ModuleType | ModuleWithParams | AppendsWithParams;
 
 export class TestModuleManager extends ModuleManager {
   protected providersToOverride: TestProvider[] = [];
@@ -46,7 +35,7 @@ export class TestModuleManager extends ModuleManager {
     return this.providersToOverride;
   }
 
-  protected override normalizeMetadata(mod: AnyModule): NormalizedModuleMetadata {
+  protected override normalizeMetadata(mod: ModRefId): NormalizedModuleMetadata {
     const meta = super.normalizeMetadata(mod);
     meta.providersPerApp.push(...this.providersPerApp);
     meta.extensionsProviders.push(...this.extensionsProviders);

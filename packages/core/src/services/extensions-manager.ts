@@ -8,10 +8,9 @@ import {
   ExtensionCounters,
   GroupStage1Meta2,
 } from '#types/extension-types.js';
-import { OptionalProps } from '#types/mix.js';
+import { ModRefId, OptionalProps } from '#types/mix.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { isInjectionToken } from '#utils/type-guards.js';
-import { AnyModule } from '../imports-resolver.js';
 import { Counter } from './counter.js';
 import { ExtensionsContext } from './extensions-context.js';
 
@@ -89,7 +88,7 @@ export class ExtensionsManager {
     }
   }
 
-  setExtensionsToStage2(mod: AnyModule) {
+  setExtensionsToStage2(mod: ModRefId) {
     this.extensionsContext.mStage.set(mod, this.extensionsListForStage2);
   }
 

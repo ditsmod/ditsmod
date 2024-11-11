@@ -2,7 +2,7 @@ import { format } from 'util';
 
 import { Class, Injector, reflector, resolveForwardRef } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { AnyObj, GuardItem, ModuleType, NormalizedGuard, Scope, Provider } from '#types/mix.js';
+import { AnyObj, GuardItem, ModuleType, NormalizedGuard, Scope, Provider, ModRefId } from '#types/mix.js';
 import { ModuleWithParams, AppendsWithParams, ModuleMetadata } from '#types/module-metadata.js';
 import { ExtensionProvider, Extension } from '#types/extension-types.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
@@ -34,10 +34,6 @@ import { Providers } from '#utils/providers.js';
 
 export type ModulesMap = Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>;
 export type ModulesMapId = Map<string, ModuleType | ModuleWithParams>;
-/**
- * Don't use this for public API (worse readable).
- */
-type AnyModule = ModuleType | ModuleWithParams | AppendsWithParams;
 type ModuleId = string | ModuleType | ModuleWithParams;
 
 /**
@@ -45,13 +41,13 @@ type ModuleId = string | ModuleType | ModuleWithParams;
  * adds and removes imports of one module into another.
  */
 export class ModuleManager {
-  protected injectorPerModMap = new Map<AnyModule, Injector>();
+  protected injectorPerModMap = new Map<ModRefId, Injector>();
   protected map: ModulesMap = new Map();
-  protected mapId = new Map<string, AnyModule>();
+  protected mapId = new Map<string, ModRefId>();
   protected oldMap: ModulesMap = new Map();
-  protected oldMapId = new Map<string, AnyModule>();
-  protected unfinishedScanModules = new Set<AnyModule>();
-  protected scanedModules = new Set<AnyModule>();
+  protected oldMapId = new Map<string, ModRefId>();
+  protected unfinishedScanModules = new Set<ModRefId>();
+  protected scanedModules = new Set<ModRefId>();
   /**
    * The directory in which the class was declared.
    */
@@ -120,7 +116,7 @@ export class ModuleManager {
     }
 
     const prop = isModuleWithParams(inputModule) ? 'importsWithParams' : 'importsModules';
-    if (targetMeta[prop].some((imp: AnyModule) => imp === inputModule)) {
+    if (targetMeta[prop].some((imp: ModRefId) => imp === inputModule)) {
       const modIdStr = format(targetModuleId);
       this.systemLogMediator.moduleAlreadyImported(this, inputModule, modIdStr);
       return false;
@@ -128,7 +124,7 @@ export class ModuleManager {
 
     this.startTransaction();
     try {
-      (targetMeta[prop] as AnyModule[]).push(inputModule);
+      (targetMeta[prop] as ModRefId[]).push(inputModule);
       this.scanRawModule(inputModule);
       this.systemLogMediator.successfulAddedModuleToImport(this, inputModule, targetMeta.name);
       return true;
@@ -155,7 +151,7 @@ export class ModuleManager {
       throw new Error(msg);
     }
     const prop = isModuleWithParams(inputMeta.module) ? 'importsWithParams' : 'importsModules';
-    const index = targetMeta[prop].findIndex((imp: AnyModule) => imp === inputMeta.module);
+    const index = targetMeta[prop].findIndex((imp: ModRefId) => imp === inputMeta.module);
     if (index == -1) {
       const modIdStr = format(inputModuleId);
       this.systemLogMediator.moduleNotFound(this, modIdStr);
@@ -231,7 +227,7 @@ export class ModuleManager {
   /**
    * Here "raw" means that it returns "raw" normalized metadata (without `this.copyMeta()`).
    */
-  protected scanRawModule(modOrObj: AnyModule) {
+  protected scanRawModule(modOrObj: ModRefId) {
     const meta = this.normalizeMetadata(modOrObj);
 
     const inputs = [
@@ -379,7 +375,7 @@ export class ModuleManager {
   /**
    * Returns normalized module metadata.
    */
-  protected normalizeMetadata(mod: AnyModule) {
+  protected normalizeMetadata(mod: ModRefId) {
     const rawMeta = getModuleMetadata(mod);
     const modName = getModuleName(mod);
     if (!rawMeta) {
@@ -599,7 +595,7 @@ export class ModuleManager {
   protected throwIfUndefined(
     modName: string,
     action: 'Imports' | 'Exports' | 'Appends',
-    imp: AnyModule | Provider,
+    imp: ModRefId | Provider,
     i: number,
   ) {
     if (imp === undefined) {

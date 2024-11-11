@@ -16,7 +16,7 @@ import { ExtensionsManager } from './services/extensions-manager.js';
 import { ModuleManager } from './services/module-manager.js';
 import { PerAppService } from './services/per-app.service.js';
 import { PreRouter } from './services/pre-router.js';
-import { ModuleType, Provider } from './types/mix.js';
+import { ModRefId, ModuleType, Provider } from './types/mix.js';
 import { ModuleWithParams } from './types/module-metadata.js';
 import { Extension, ExtensionCounters, ExtensionsGroupToken } from '#types/extension-types.js';
 import { RequestListener } from './types/server-options.js';
@@ -32,7 +32,6 @@ import { SERVER } from '#constans';
 import { NodeServer } from '#types/server-options.js';
 import { MetadataPerMod2 } from './types/metadata-per-mod.js';
 import { getProviderName } from './utils/get-provider-name.js';
-import { AnyModule } from '#core/imports-resolver.js';
 import { getModule } from '#utils/get-module.js';
 
 export class AppInitializer {
@@ -251,7 +250,7 @@ export class AppInitializer {
   }
 
   protected async handleExtensions(
-    mMetadataPerMod2: Map<AnyModule, MetadataPerMod2>,
+    mMetadataPerMod2: Map<ModRefId, MetadataPerMod2>,
     extensionCounters: ExtensionCounters,
   ) {
     const extensionsContext = new ExtensionsContext();
@@ -285,7 +284,7 @@ export class AppInitializer {
   }
 
   protected async perAppHandling(
-    mMetadataPerMod2: Map<AnyModule, MetadataPerMod2>,
+    mMetadataPerMod2: Map<ModRefId, MetadataPerMod2>,
     extensionsContext: ExtensionsContext,
   ) {
     for (const [groupToken, mExtensions] of extensionsContext.mExtensionPendingList) {

@@ -20,7 +20,7 @@ import { Providers } from './utils/providers.js';
 import { AppOptions } from './types/app-options.js';
 
 describe('AppInitializer', () => {
-  type AnyModule = ModuleType | ModuleWithParams;
+  type ModRefId = ModuleType | ModuleWithParams;
 
   @injectable()
   class AppInitializerMock extends AppInitializer {
@@ -471,7 +471,7 @@ describe('AppInitializer', () => {
     })
     class AppModule {}
 
-    let appMetadataMap: Map<AnyModule, MetadataPerMod1>;
+    let appMetadataMap: Map<ModRefId, MetadataPerMod1>;
 
     beforeAll(() => {
       const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });

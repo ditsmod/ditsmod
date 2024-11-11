@@ -1,9 +1,9 @@
 import { forwardRef, inject, injectable, Injector, KeyRegistry } from '#di';
 
-import { AnyModule, ImportsResolver } from './imports-resolver.js';
+import { ImportsResolver } from './imports-resolver.js';
 import { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
 import { GlobalProviders, ImportedTokensMap } from './types/metadata-per-mod.js';
-import { CanActivate, ModuleType, Provider, Scope } from './types/mix.js';
+import { CanActivate, ModRefId, ModuleType, Provider, Scope } from './types/mix.js';
 import { ModuleWithParams } from './types/module-metadata.js';
 import { ModuleFactory } from './module-factory.js';
 import { ModuleManager } from '#services/module-manager.js';
@@ -37,7 +37,7 @@ describe('ImportsResolver', () => {
 
     override grabDependecies(
       targetMeta: NormalizedModuleMetadata,
-      sourceModule: AnyModule,
+      sourceModule: ModRefId,
       importedProvider: Provider,
       scopes: Scope[],
       path: any[] = [],

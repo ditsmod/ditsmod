@@ -7,8 +7,7 @@ import { defaultProvidersPerReq } from './default-providers-per-req.js';
 import { ModuleManager } from './services/module-manager.js';
 import { AppOptions } from './types/app-options.js';
 import { ImportedTokensMap, MetadataPerMod2 } from './types/metadata-per-mod.js';
-import { AppMetadataMap, ModuleType, Scope, Provider, ProvidersForMod } from '#types/mix.js';
-import { ModuleWithParams } from './types/module-metadata.js';
+import { AppMetadataMap, Scope, Provider, ProvidersForMod, ModRefId } from '#types/mix.js';
 import { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
 import { RouteMeta } from './types/route-data.js';
 import { ReflectiveDependency, getDependencies } from './utils/get-dependecies.js';
@@ -21,10 +20,8 @@ import { SystemErrorMediator } from '#error/system-error-mediator.js';
 import { defaultProvidersPerRou } from './default-providers-per-rou.js';
 import { ExtensionCounters, ExtensionsGroupToken } from '#types/extension-types.js';
 
-export type AnyModule = ModuleType | ModuleWithParams;
-
 export class ImportsResolver {
-  protected unfinishedSearchDependecies: [AnyModule, Provider][] = [];
+  protected unfinishedSearchDependecies: [ModRefId, Provider][] = [];
   protected tokensPerApp: any[];
   protected extensionsTokens: any[] = [];
   protected extensionCounters = new ExtensionCounters();
@@ -39,7 +36,7 @@ export class ImportsResolver {
 
   resolve() {
     const scopes: Scope[] = ['Req', 'Rou', 'Mod'];
-    const mMetadataPerMod2 = new Map<AnyModule, MetadataPerMod2>();
+    const mMetadataPerMod2 = new Map<ModRefId, MetadataPerMod2>();
     this.tokensPerApp = getTokens(this.providersPerApp);
     this.appMetadataMap.forEach((metadataPerMod1) => {
       const { meta, importedTokensMap, guardsPerMod1, applyControllers, prefixPerMod } = metadataPerMod1;
@@ -159,7 +156,7 @@ export class ImportsResolver {
    */
   protected grabDependecies(
     targetProviders: ProvidersForMod,
-    sourceModule: AnyModule,
+    sourceModule: ModRefId,
     importedProvider: Provider,
     scopes: Scope[],
     path: any[] = [],
@@ -205,7 +202,7 @@ export class ImportsResolver {
    */
   protected grabImportedDependecies(
     targetProviders: ProvidersForMod,
-    sourceModule1: AnyModule,
+    sourceModule1: ModRefId,
     importedProvider: Provider,
     scopes: Scope[],
     path: any[] = [],
@@ -236,7 +233,7 @@ export class ImportsResolver {
 
   protected grabDependeciesAgain(
     targetProviders: ProvidersForMod,
-    sourceModule: AnyModule,
+    sourceModule: ModRefId,
     importedProvider: Provider,
     scopes: Scope[],
     path: any[],
@@ -246,7 +243,7 @@ export class ImportsResolver {
     this.deleteFromUnfinishedSearchDependecies(sourceModule, importedProvider);
   }
 
-  protected hasUnresolvedDependecies(module: AnyModule, provider: Provider, scopes: Scope[]) {
+  protected hasUnresolvedDependecies(module: ModRefId, provider: Provider, scopes: Scope[]) {
     const meta = this.moduleManager.getMetadata(module, true);
 
     for (const dep of this.getDependencies(provider)) {
@@ -275,7 +272,7 @@ export class ImportsResolver {
     return false;
   }
 
-  protected hasUnresolvedImportedDependecies(module1: AnyModule, scopes: Scope[], dep: ReflectiveDependency) {
+  protected hasUnresolvedImportedDependecies(module1: ModRefId, scopes: Scope[], dep: ReflectiveDependency) {
     let found = false;
     for (const scope of scopes) {
       const importObj = this.appMetadataMap.get(module1)?.importedTokensMap[`per${scope}`].get(dep.token);
@@ -331,7 +328,7 @@ export class ImportsResolver {
     return deps.filter((d) => !defaultTokens.includes(d.token));
   }
 
-  protected addToUnfinishedSearchDependecies(module: AnyModule, provider: Provider) {
+  protected addToUnfinishedSearchDependecies(module: ModRefId, provider: Provider) {
     const index = this.unfinishedSearchDependecies.findIndex(([m, p]) => m === module && p === provider);
     if (index != -1) {
       this.throwCircularDependencies(index);
@@ -339,7 +336,7 @@ export class ImportsResolver {
     this.unfinishedSearchDependecies.push([module, provider]);
   }
 
-  protected deleteFromUnfinishedSearchDependecies(module: AnyModule, provider: Provider) {
+  protected deleteFromUnfinishedSearchDependecies(module: ModRefId, provider: Provider) {
     const index = this.unfinishedSearchDependecies.findIndex(([m, p]) => m === module && p === provider);
     this.unfinishedSearchDependecies.splice(index, 1);
   }

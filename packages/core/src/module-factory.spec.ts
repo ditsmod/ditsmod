@@ -21,7 +21,7 @@ import { makePropDecorator } from '#di';
 import { HttpBackend } from './interceptors/tokens-and-types.js';
 import { AppendsWithParams } from '#types/module-metadata.js';
 
-type AnyModule = ModuleType | ModuleWithParams;
+type ModRefId = ModuleType | ModuleWithParams;
 
 describe('ModuleFactory', () => {
   @injectable()
@@ -34,10 +34,10 @@ describe('ModuleFactory', () => {
     override importedProvidersPerMod = new Map<any, ImportObj>();
     override importedProvidersPerRou = new Map<any, ImportObj>();
     override importedProvidersPerReq = new Map<any, ImportObj>();
-    override importedMultiProvidersPerMod = new Map<AnyModule, Provider[]>();
-    override importedMultiProvidersPerRou = new Map<AnyModule, Provider[]>();
-    override importedMultiProvidersPerReq = new Map<AnyModule, Provider[]>();
-    override importedExtensions = new Map<AnyModule, ExtensionProvider[]>();
+    override importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
+    override importedMultiProvidersPerRou = new Map<ModRefId, Provider[]>();
+    override importedMultiProvidersPerReq = new Map<ModRefId, Provider[]>();
+    override importedExtensions = new Map<ModRefId, ExtensionProvider[]>();
     override guardsPerMod1: GuardPerMod1[] = [];
 
     override exportGlobalProviders(moduleManager: ModuleManager, providersPerApp: Provider[]) {

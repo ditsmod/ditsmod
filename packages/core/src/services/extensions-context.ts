@@ -1,6 +1,6 @@
 import { Class, injectable } from '#di';
 import { ExtensionsGroupToken, GroupStage1Meta, Extension } from '#types/extension-types.js';
-import { AnyModule } from '../imports-resolver.js';
+import { ModRefId } from '#types/mix.js';
 
 @injectable()
 export class ExtensionsContext {
@@ -11,5 +11,5 @@ export class ExtensionsContext {
    */
   mExtensionPendingList = new Map<ExtensionsGroupToken, Map<Class<Extension>, Extension>>();
 
-  mStage = new Map<AnyModule, Set<Extension>>();
+  mStage = new Map<ModRefId, Set<Extension>>();
 }

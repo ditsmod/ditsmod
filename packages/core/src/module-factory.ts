@@ -7,7 +7,7 @@ import { defaultProvidersPerReq } from './default-providers-per-req.js';
 import type { ModuleManager } from './services/module-manager.js';
 import type { GlobalProviders, MetadataPerMod1 } from './types/metadata-per-mod.js';
 import { ImportObj } from './types/metadata-per-mod.js';
-import type { ModuleType, Scope, Provider, GuardPerMod1 } from './types/mix.js';
+import type { ModuleType, Scope, Provider, GuardPerMod1, ModRefId } from './types/mix.js';
 import type { ModuleWithParams, AppendsWithParams } from './types/module-metadata.js';
 import type { ExtensionProvider } from '#types/extension-types.js';
 import { getCollisions } from './utils/get-collisions.js';
@@ -18,8 +18,6 @@ import { getToken, getTokens } from './utils/get-tokens.js';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error.js';
 import { isAppendsWithParams, isModuleWithParams, isNormRootModule } from './utils/type-guards.js';
 import { hasDeclaredInDir } from '#utils/type-guards.js';
-
-type AnyModule = ModuleType | ModuleWithParams | AppendsWithParams;
 
 /**
  * - exports and imports global providers;
@@ -41,17 +39,17 @@ export class ModuleFactory {
   protected importedProvidersPerMod = new Map<any, ImportObj>();
   protected importedProvidersPerRou = new Map<any, ImportObj>();
   protected importedProvidersPerReq = new Map<any, ImportObj>();
-  protected importedMultiProvidersPerMod = new Map<AnyModule, Provider[]>();
-  protected importedMultiProvidersPerRou = new Map<AnyModule, Provider[]>();
-  protected importedMultiProvidersPerReq = new Map<AnyModule, Provider[]>();
-  protected importedExtensions = new Map<AnyModule, ExtensionProvider[]>();
+  protected importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
+  protected importedMultiProvidersPerRou = new Map<ModRefId, Provider[]>();
+  protected importedMultiProvidersPerReq = new Map<ModRefId, Provider[]>();
+  protected importedExtensions = new Map<ModRefId, ExtensionProvider[]>();
 
   /**
    * GlobalProviders.
    */
   protected glProviders: GlobalProviders;
-  protected appMetadataMap = new Map<AnyModule, MetadataPerMod1>();
-  protected unfinishedScanModules = new Set<AnyModule>();
+  protected appMetadataMap = new Map<ModRefId, MetadataPerMod1>();
+  protected unfinishedScanModules = new Set<ModRefId>();
   protected moduleManager: ModuleManager;
 
   exportGlobalProviders(moduleManager: ModuleManager, providersPerApp: Provider[]) {
@@ -83,9 +81,9 @@ export class ModuleFactory {
     providersPerApp: Provider[],
     globalProviders: GlobalProviders,
     prefixPerMod: string,
-    modOrObj: AnyModule,
+    modOrObj: ModRefId,
     moduleManager: ModuleManager,
-    unfinishedScanModules: Set<AnyModule>,
+    unfinishedScanModules: Set<ModRefId>,
     guardsPerMod1?: GuardPerMod1[],
     isAppends?: boolean,
   ) {
@@ -164,7 +162,7 @@ export class ModuleFactory {
     this.checkAllCollisionsWithScopesMix();
   }
 
-  protected importOrAppendModules(inputs: Array<AnyModule>, isImport?: boolean) {
+  protected importOrAppendModules(inputs: Array<ModRefId>, isImport?: boolean) {
     for (const input of inputs) {
       const meta = this.moduleManager.getMetadata(input, true);
       if (isImport) {
@@ -237,7 +235,7 @@ export class ModuleFactory {
     this.throwIfTryResolvingMultiprovidersCollisions(module);
   }
 
-  protected throwIfTryResolvingMultiprovidersCollisions(module: AnyModule) {
+  protected throwIfTryResolvingMultiprovidersCollisions(module: ModRefId) {
     const scopes: Scope[] = ['Mod', 'Rou', 'Req'];
     scopes.forEach((scope) => {
       const tokens: any[] = [];
@@ -280,7 +278,7 @@ export class ModuleFactory {
   }
 
   protected checkCollisionsPerScope(
-    module: AnyModule,
+    module: ModRefId,
     scope: Scope,
     token: NonNullable<unknown>,
     provider: Provider,
