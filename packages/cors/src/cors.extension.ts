@@ -42,12 +42,16 @@ export class CorsExtension implements Extension<void | false> {
     groupDataPerApp: GroupStage1MetaPerApp<MetadataPerMod3>[],
     injectorPerApp: Injector,
   ) {
-    groupDataPerApp.forEach((totaStage1Meta) => {
-      totaStage1Meta.groupData.forEach((metadataPerMod3) => {
+    groupDataPerApp.forEach((groupStage1MetaPerApp) => {
+      groupStage1MetaPerApp.groupData.forEach((metadataPerMod3) => {
         const { aControllerMetadata } = metadataPerMod3;
         const { providersPerMod } = metadataPerMod3.meta;
         const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
-        const routesWithOptions = this.getRoutesWithOptions(totaStage1Meta.groupData, aControllerMetadata);
+        const routesWithOptions = this.getRoutesWithOptions(
+          providersPerMod,
+          groupStage1MetaPerApp.groupData,
+          aControllerMetadata,
+        );
         aControllerMetadata.push(...routesWithOptions);
 
         aControllerMetadata.forEach(({ providersPerReq, providersPerRou, scope }) => {
@@ -88,7 +92,11 @@ export class CorsExtension implements Extension<void | false> {
     return sPathWithOptions;
   }
 
-  protected getRoutesWithOptions(aMetadataPerMod3: MetadataPerMod3[], aControllerMetadata: ControllerMetadata[]) {
+  protected getRoutesWithOptions(
+    providersPerMod: Provider[],
+    aMetadataPerMod3: MetadataPerMod3[],
+    aControllerMetadata: ControllerMetadata[],
+  ) {
     const sPathWithOptions = this.getPathWtihOptions(aMetadataPerMod3);
     const newArrControllersMetadata2: ControllerMetadata[] = []; // Routes with OPTIONS methods
 
@@ -111,6 +119,8 @@ export class CorsExtension implements Extension<void | false> {
           ctx.setHeader('Allow', httpMethods.join()).send(undefined, Status.NO_CONTENT);
         }
       }
+
+      providersPerMod.unshift(DynamicController);
 
       const routeMeta: RouteMeta = {
         decoratorAndValue: {} as any,

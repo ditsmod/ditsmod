@@ -54,6 +54,9 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             const providersPerReq: Provider[] = [];
             const ctrlDecorator = classMeta.constructor.decorators.find(isController);
             const scope = ctrlDecorator?.value.scope;
+            if (scope == 'module') {
+              meta.providersPerMod.unshift(Controller);
+            }
             const guards = [];
             if (isOasRoute1(decoratorAndValue)) {
               guards.push(...this.normalizeGuards(decoratorAndValue.value.guards));

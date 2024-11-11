@@ -29,7 +29,6 @@ import {
   ControllerMetadata,
   DefaultSingletonChainMaker,
   SingletonInterceptorWithGuards,
-  Class,
   GroupStage1Meta,
   GroupStage1MetaPerApp,
   CTX_DATA,
@@ -54,7 +53,6 @@ import { RoutingErrorMediator } from '../router-error-mediator.js';
 export class PreRouterExtension implements Extension<void> {
   protected groupStage1Meta: GroupStage1Meta<MetadataPerMod3>;
   protected injectorPerMod: Injector;
-  protected injectorWithControllers: Injector;
   protected injectorPerApp: Injector;
 
   constructor(
@@ -74,25 +72,11 @@ export class PreRouterExtension implements Extension<void> {
 
   async stage2(injectorPerMod: Injector) {
     this.injectorPerMod = injectorPerMod;
-    this.injectorWithControllers = this.getInjectorWithControllers(this.groupStage1Meta.groupData);
   }
 
   async stage3() {
     const preparedRouteMeta = this.prepareRoutesMeta(this.groupStage1Meta.groupData);
     this.setRoutes(this.groupStage1Meta, preparedRouteMeta);
-  }
-
-  protected getInjectorWithControllers(aMetadataPerMod3: MetadataPerMod3[]): Injector {
-    const singletons = new Set<Class>();
-
-    aMetadataPerMod3.forEach((metadataPerMod3) => {
-      metadataPerMod3.aControllerMetadata.forEach((controllerMetadata) => {
-        if (controllerMetadata.scope == 'module') {
-          singletons.add(controllerMetadata.routeMeta.controller);
-        }
-      });
-    });
-    return this.injectorPerMod.resolveAndCreateChild([...singletons]);
   }
 
   protected prepareRoutesMeta(aMetadataPerMod3: MetadataPerMod3[]) {
@@ -109,9 +93,9 @@ export class PreRouterExtension implements Extension<void> {
       aControllerMetadata.forEach((controllerMetadata) => {
         let handle: RouteHandler;
         if (controllerMetadata.scope == 'module') {
-          handle = this.getHandlerWithSingleton(metadataPerMod3, this.injectorWithControllers, controllerMetadata);
+          handle = this.getHandlerWithSingleton(metadataPerMod3, this.injectorPerMod, controllerMetadata);
         } else {
-          handle = this.getDefaultHandler(metadataPerMod3, this.injectorWithControllers, controllerMetadata);
+          handle = this.getDefaultHandler(metadataPerMod3, this.injectorPerMod, controllerMetadata);
         }
 
         const countOfGuards = controllerMetadata.routeMeta.resolvedGuards!.length + guardsPerMod1.length;
