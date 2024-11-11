@@ -1,4 +1,5 @@
-import { Injector, Res, controller, route } from '@ditsmod/core';
+import { Injector, Res, controller } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 
 @controller()
 export class Controller1 {

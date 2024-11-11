@@ -59,8 +59,10 @@ export class SomeModule {}
 
 Ґарди передаються до контролерів в масиві у третьому параметрі декоратора `route`:
 
-```ts {6}
-import { controller, Res, route } from '@ditsmod/core';
+```ts {8}
+import { controller, Res } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
+
 import { AuthGuard } from './auth.guard.js';
 
 @controller()
@@ -78,8 +80,9 @@ export class SomeController {
 
 Давайте розглянемо такий приклад:
 
-```ts {8}
-import { controller, Res, route } from '@ditsmod/core';
+```ts {9}
+import { controller, Res } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 
 import { PermissionsGuard } from './permissions.guard.js';
 import { Permission } from './permission.js';
@@ -131,8 +134,9 @@ export const requirePermissions = createHelperForGuardWithParams<Permission>(Per
 
 Тепер `requirePermissions()` можна використовувати для створення роутів:
 
-```ts {8}
-import { controller, Res, route } from '@ditsmod/core';
+```ts {9}
+import { controller, Res } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 
 import { requirePermissions } from '../auth/guards-utils.js';
 import { Permission } from '../auth/types.js';

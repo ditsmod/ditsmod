@@ -3,7 +3,6 @@ import { FactoryProvider, injectable, Provider, Injector } from '#di';
 import { controller } from './decorators/controller.js';
 import { featureModule } from './decorators/module.js';
 import { rootModule } from './decorators/root-module.js';
-import { route } from './decorators/route.js';
 import { ModuleExtract } from './types/module-extract.js';
 import { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
 import { ModuleFactory } from './module-factory.js';
@@ -409,7 +408,6 @@ describe('ModuleFactory', () => {
 
       @controller()
       class Ctrl {
-        @route('GET')
         method() {}
       }
 

@@ -1,4 +1,5 @@
-import { controller, inject, Res, route } from '@ditsmod/core';
+import { controller, inject, Res } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 import { JWT_PAYLOAD } from '@ditsmod/jwt';
 
 import { BearerGuard } from './modules/services/auth/bearer.guard.js';

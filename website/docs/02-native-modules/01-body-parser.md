@@ -92,8 +92,9 @@ export class AppModule {}
 
 1. Якщо контролер не є одинаком, результат можна отримати за допомогою токена `HTTP_BODY`:
 
-  ```ts {11}
-  import { controller, Res, route, inject } from '@ditsmod/core';
+  ```ts {12}
+  import { controller, Res, inject } from '@ditsmod/core';
+  import { route } from '@ditsmod/routing';
   import { HTTP_BODY } from '@ditsmod/body-parser';
 
   interface Body {
@@ -110,8 +111,9 @@ export class AppModule {}
   ```
 2. Якщо контролер є одинаком, результат можна отримати з контексту:
 
-  ```ts {6}
-  import { controller, route, SingletonRequestContext } from '@ditsmod/core';
+  ```ts {7}
+  import { controller, SingletonRequestContext } from '@ditsmod/core';
+  import { route } from '@ditsmod/routing';
 
   @controller({ scope: 'module' })
   export class SomeController {
@@ -128,9 +130,10 @@ export class AppModule {}
 
 1. Якщо контролер не є одинаком, через DI необхідно запитати `MulterParser`, після чого можете користуватись його методами:
 
-  ```ts {9}
+  ```ts {10}
   import { createWriteStream } from 'node:fs';
-  import { controller, Res, route } from '@ditsmod/core';
+  import { controller, Res } from '@ditsmod/core';
+  import { route } from '@ditsmod/routing';
   import { MulterParsedForm, MulterParser } from '@ditsmod/body-parser';
 
   @controller()
@@ -160,9 +163,10 @@ export class AppModule {}
   ```
 2. Якщо контролер є одинаком, через DI необхідно запитати `MulterSingletonParser`, після чого можете користуватись його методами:
 
-  ```ts {7,11}
+  ```ts {8,12}
   import { createWriteStream } from 'node:fs';
-  import { controller, route, SingletonRequestContext } from '@ditsmod/core';
+  import { controller, SingletonRequestContext } from '@ditsmod/core';
+  import { route } from '@ditsmod/routing';
   import { MulterParsedForm, MulterSingletonParser } from '@ditsmod/body-parser';
 
   @controller({ scope: 'module' })

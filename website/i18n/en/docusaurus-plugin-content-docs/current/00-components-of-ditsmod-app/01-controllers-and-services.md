@@ -68,8 +68,9 @@ export class SomeController {}
 
 As mentioned above, after the router finds the HTTP request handler, this handler can call the controller method. To make this possible, HTTP requests are first bound to controller methods through a routing system using the `route` decorator. In the following example, a single route is created that accepts a `GET` request at the path `/hello`:
 
-```ts {5}
-import { controller, route, Res } from '@ditsmod/core';
+```ts {6}
+import { controller, Res } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 
 @controller()
 export class HelloWorldController {
@@ -88,8 +89,9 @@ What we see here:
 
 Although in the previous example, an instance of the `Res` class was requested through `method1`, we can similarly request this instance in the constructor:
 
-```ts {5}
-import { controller, route, Res } from '@ditsmod/core';
+```ts {6}
+import { controller, Res } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 
 @controller()
 export class HelloWorldController {
@@ -110,8 +112,9 @@ The access modifier in the constructor can be any (private, protected or public)
 
 To obtain `pathParams` or `queryParams`, you need to use the `inject` decorator and the `PATH_PARAMS` and `QUERY_PARAMS` tokens:
 
-```ts {7-8}
-import { controller, Res, route, inject, AnyObj, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/core';
+```ts {8-9}
+import { controller, Res, inject, AnyObj, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 
 @controller()
 export class SomeController {
@@ -132,8 +135,9 @@ As you can see from the previous example, to send responses with objects, you ne
 
 Native Node.js request and response objects can be obtained by tokens, respectively - `NODE_REQ` and `NODE_RES`:
 
-```ts {6-7}
-import { controller, route, inject, NODE_REQ, NODE_RES, NodeRequest, NodeResponse } from '@ditsmod/core';
+```ts {7-8}
+import { controller, inject, NODE_REQ, NODE_RES, NodeRequest, NodeResponse } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 
 @controller()
 export class HelloWorldController {
@@ -155,8 +159,9 @@ You may also be interested in [how to get the HTTP request body][5].
 
 Because the controller is instantiated in this mode only once, you will not be able to query in its constructor for class instances that are instantiated on each request. For example, if you request an instance of the `Res` class in the constructor, Ditsmod will throw an error:
 
-```ts {3,5}
-import { controller, route, RequestContext } from '@ditsmod/core';
+```ts {4,6}
+import { controller, RequestContext } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 
 @controller({ scope: 'module' })
 export class HelloWorldController {
@@ -171,8 +176,9 @@ export class HelloWorldController {
 
 The working case will be as follows:
 
-```ts {3,6}
-import { controller, route, RequestContext } from '@ditsmod/core';
+```ts {4,7}
+import { controller, RequestContext } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 
 @controller({ scope: 'module' })
 export class HelloWorldController {
@@ -278,8 +284,10 @@ export class SomeModule {}
 
 Similarly, the services is passed in the controller metadata:
 
-```ts {7-8}
-import { controller, route, Res } from '@ditsmod/core';
+```ts {9-10}
+import { controller, Res } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
+
 import { FirstService } from './first.service.js';
 import { SecondService } from './second.service.js';
 

@@ -1,4 +1,5 @@
-import { controller, Res, route } from '@ditsmod/core';
+import { controller, Res } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 import { Permission, basicAuth, requirePermissions, BearerGuard } from '#auth';
 
 @controller()

@@ -1,4 +1,5 @@
-import { controller, RequestContext, route } from '@ditsmod/core';
+import { controller, RequestContext } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 import { Permission, requirePermissionsSngl, BearerGuard } from '#auth';
 
 @controller({ scope: 'module' })

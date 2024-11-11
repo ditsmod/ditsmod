@@ -1,4 +1,5 @@
-import { controller, route, SingletonRequestContext } from '@ditsmod/core';
+import { controller, SingletonRequestContext } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 import { MulterSingletonParser } from '@ditsmod/body-parser';
 
 import { saveFiles, sendHtmlForm } from './utils.js';

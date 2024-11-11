@@ -1,4 +1,5 @@
-import { controller, Injector, Res, route } from '@ditsmod/core';
+import { controller, Injector, Res } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 
 import {
   ServicePerApp,
@@ -7,7 +8,7 @@ import {
   ServicePerReq,
   ServicePerRou2,
   ServicePerReq2,
-  ServicePerRou3
+  ServicePerRou3,
 } from './services.js';
 
 @controller({

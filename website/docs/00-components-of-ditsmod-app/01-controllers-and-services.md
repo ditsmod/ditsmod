@@ -68,8 +68,9 @@ export class SomeController {}
 
 Як вже було сказано вище, після того, як роутер знайшов обробника HTTP-запиту, цей обробник може викликати метод контролера. Щоб це стало можливим, спочатку HTTP-запити прив'язуються до методів контролерів через систему маршрутизації, з використанням декоратора `route`. В наступному прикладі створено єдиний маршрут, що приймає `GET` запит за адресою `/hello`:
 
-```ts {5}
-import { controller, route, Res } from '@ditsmod/core';
+```ts {6}
+import { controller, Res } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 
 @controller()
 export class HelloWorldController {
@@ -88,8 +89,9 @@ export class HelloWorldController {
 
 Хоча в попередньому прикладі інстанс класу `Res` запитувався через `method1`, але аналогічним чином ми можемо запитати цей інстанс і в конструкторі:
 
-```ts {5}
-import { controller, route, Res } from '@ditsmod/core';
+```ts {6}
+import { controller, Res } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 
 @controller()
 export class HelloWorldController {
@@ -110,8 +112,9 @@ export class HelloWorldController {
 
 Щоб отримати `pathParams` чи `queryParams`, доведеться скористатись декоратором `inject` та токенами `PATH_PARAMS` і `QUERY_PARAMS`:
 
-```ts {7-8}
-import { controller, Res, route, inject, AnyObj, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/core';
+```ts {8-9}
+import { controller, Res, inject, AnyObj, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 
 @controller()
 export class SomeController {
@@ -132,8 +135,9 @@ export class SomeController {
 
 Рідні Node.js об'єкти запиту та відповіді можна отримати за токенами відповідно - `NODE_REQ` та `NODE_RES`:
 
-```ts {6-7}
-import { controller, route, inject, NODE_REQ, NODE_RES, NodeRequest, NodeResponse } from '@ditsmod/core';
+```ts {7-8}
+import { controller, inject, NODE_REQ, NODE_RES, NodeRequest, NodeResponse } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 
 @controller()
 export class HelloWorldController {
@@ -155,8 +159,9 @@ export class HelloWorldController {
 
 Через те, що інстанс контролера у цьому режимі створюється єдиний раз, ви не зможете запитувати у його конструкторі інстанси класів, які створюються за кожним запитом. Наприклад, якщо в конструкторі ви запросите інстанс класу `Res`, Ditsmod кине помилку:
 
-```ts {3,5}
-import { controller, route, RequestContext } from '@ditsmod/core';
+```ts {4,6}
+import { controller, RequestContext } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 
 @controller({ scope: 'module' })
 export class HelloWorldController {
@@ -171,8 +176,9 @@ export class HelloWorldController {
 
 Робочий варіант буде таким:
 
-```ts {3,6}
-import { controller, route, RequestContext } from '@ditsmod/core';
+```ts {4,7}
+import { controller, RequestContext } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 
 @controller({ scope: 'module' })
 export class HelloWorldController {
@@ -278,8 +284,10 @@ export class SomeModule {}
 
 Аналогічно сервіси передаються у метадані контролера:
 
-```ts {7-8}
-import { controller, route, Res } from '@ditsmod/core';
+```ts {9-10}
+import { controller, Res } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
+
 import { FirstService } from './first.service.js';
 import { SecondService } from './second.service.js';
 

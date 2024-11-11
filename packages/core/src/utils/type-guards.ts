@@ -19,7 +19,6 @@ import { RootModuleMetadata } from '#types/root-module-metadata.js';
 import { Http2SecureServerOptions, ServerOptions } from '#types/server-options.js';
 import { featureModule } from '#decorators/module.js';
 import { controller, ControllerRawMetadata } from '#decorators/controller.js';
-import { route } from '#decorators/route.js';
 import { rootModule } from '#decorators/root-module.js';
 import { NormalizedProvider } from './ng-utils.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
@@ -85,10 +84,6 @@ export function isController(
   decoratorAndValue?: AnyObj,
 ): decoratorAndValue is DecoratorAndValue<ControllerRawMetadata> {
   return decoratorAndValue?.decorator === controller;
-}
-
-export function isRoute<T>(decoratorAndValue?: DecoratorAndValue<T>): decoratorAndValue is DecoratorAndValue<T> {
-  return (decoratorAndValue as DecoratorAndValue<T>)?.decorator === route;
 }
 
 export function isModuleWithParams(modRefId?: Provider | ModuleWithParams | ModuleType): modRefId is ModuleWithParams {

@@ -1,8 +1,5 @@
-import { DecoratorAndValue, reflector } from '#di';
-import { RequestContext } from '../request-context.js';
-import { CanActivate } from '#types/mix.js';
-import { getCallerDir } from '../utils/callsites.js';
-import { controller } from './controller.js';
+import { CanActivate, controller, DecoratorAndValue, getCallerDir, reflector, RequestContext } from '@ditsmod/core';
+
 import { route } from './route.js';
 
 describe('Route decorator', () => {

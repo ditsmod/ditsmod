@@ -1,4 +1,5 @@
-import { controller, Res, route, SingletonRequestContext } from '@ditsmod/core';
+import { controller, Res, SingletonRequestContext } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 
 @controller()
 export class SecondController {

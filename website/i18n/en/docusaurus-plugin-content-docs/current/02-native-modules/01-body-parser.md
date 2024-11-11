@@ -92,8 +92,9 @@ Depending on whether the controller is [singleton][3] or not, the result of the 
 
 1. If the controller is non-singleton, the result can be obtained using the `HTTP_BODY` token:
 
-  ```ts {11}
-  import { controller, Res, route, inject } from '@ditsmod/core';
+  ```ts {12}
+  import { controller, Res, inject } from '@ditsmod/core';
+  import { route } from '@ditsmod/routing';
   import { HTTP_BODY } from '@ditsmod/body-parser';
 
   interface Body {
@@ -110,8 +111,9 @@ Depending on whether the controller is [singleton][3] or not, the result of the 
   ```
 2. If the controller is singleton, the result can be obtained from the context:
 
-  ```ts {6}
-  import { controller, route, SingletonRequestContext } from '@ditsmod/core';
+  ```ts {7}
+  import { controller, SingletonRequestContext } from '@ditsmod/core';
+  import { route } from '@ditsmod/routing';
 
   @controller({ scope: 'module' })
   export class SomeController {
@@ -128,9 +130,10 @@ Depending on whether the controller is [singleton][3] or not, the method of obta
 
 1. If the controller is not a singleton, you need to request `MulterParser` through DI, after which you can use its methods:
 
-  ```ts {9}
+  ```ts {10}
   import { createWriteStream } from 'node:fs';
-  import { controller, Res, route } from '@ditsmod/core';
+  import { controller, Res } from '@ditsmod/core';
+  import { route } from '@ditsmod/routing';
   import { MulterParsedForm, MulterParser } from '@ditsmod/body-parser';
 
   @controller()
@@ -160,9 +163,10 @@ Depending on whether the controller is [singleton][3] or not, the method of obta
   ```
 2. If the controller is a singleton, you need to request `MulterSingletonParser` through DI, after which you can use its methods:
 
-  ```ts {7,11}
+  ```ts {8,12}
   import { createWriteStream } from 'node:fs';
-  import { controller, route, SingletonRequestContext } from '@ditsmod/core';
+  import { controller, SingletonRequestContext } from '@ditsmod/core';
+  import { route } from '@ditsmod/routing';
   import { MulterParsedForm, MulterSingletonParser } from '@ditsmod/body-parser';
 
   @controller({ scope: 'module' })

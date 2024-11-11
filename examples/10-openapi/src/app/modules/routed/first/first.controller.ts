@@ -1,4 +1,5 @@
-import { AnyObj, controller, inject, PATH_PARAMS, Req, Res, route, Status } from '@ditsmod/core';
+import { AnyObj, controller, inject, PATH_PARAMS, Res, Status } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 import { getParams, getContent, oasRoute } from '@ditsmod/openapi';
 
 import { BasicGuard } from './basic.guard.js';

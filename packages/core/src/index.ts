@@ -24,7 +24,6 @@ export {
 export { guard } from './decorators/guard.js';
 export { featureModule } from './decorators/module.js';
 export { rootModule } from './decorators/root-module.js';
-export { route, RouteMetadata } from './decorators/route.js';
 export {
   ExtensionType,
   ExtensionCounters,
@@ -147,7 +146,6 @@ export {
   isProvider,
   isRawRootModule,
   isRootModule,
-  isRoute,
   isTokenProvider,
   isTypeProvider,
   isValueProvider,

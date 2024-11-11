@@ -59,8 +59,9 @@ In this case, the guard will work at the request level, for non-singleton contro
 
 The guards are passed to the controllers in the array in the third parameter of the `route` decorator:
 
-```ts {6}
-import { controller, Res, route } from '@ditsmod/core';
+```ts {7}
+import { controller, Res } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 import { AuthGuard } from './auth.guard.js';
 
 @controller()
@@ -78,8 +79,9 @@ The guard in the `canActivate()` method has two parameters. The arguments for th
 
 Let's consider such an example:
 
-```ts {8}
-import { controller, Res, route } from '@ditsmod/core';
+```ts {9}
+import { controller, Res } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 
 import { PermissionsGuard } from './permissions.guard.js';
 import { Permission } from './permission.js';
@@ -131,8 +133,9 @@ In this example, `PermissionsGuard` is passed as an argument, which accepts para
 
 `requirePermissions()` can now be used to create routes:
 
-```ts {8}
-import { controller, Res, route } from '@ditsmod/core';
+```ts {9}
+import { controller, Res } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 
 import { requirePermissions } from '../auth/guards-utils.js';
 import { Permission } from '../auth/types.js';

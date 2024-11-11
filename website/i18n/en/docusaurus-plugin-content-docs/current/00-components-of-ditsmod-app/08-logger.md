@@ -184,7 +184,8 @@ You can view finished examples with loggers [in the Ditsmod repository][104].
 To change the logging level in production mode, you do not need to change the compiled code. You can create a custom controller, guard it, and then call the appropriate route to change the logging level that you specify in the URL:
 
 ```ts
-import { AnyObj, controller, inject, Logger, LogLevel, QUERY_PARAMS, Res, route } from '@ditsmod/core';
+import { AnyObj, controller, inject, Logger, LogLevel, QUERY_PARAMS, Res } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 
 import { requirePermissions } from '../auth/guards-utils.js';
 import { Permission } from '../auth/types.js';

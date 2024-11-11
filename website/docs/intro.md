@@ -36,8 +36,8 @@ app.listen(3000, '0.0.0.0');
 ```
 
 ```ts
-import { controller, route, Res, rootModule, Application } from '@ditsmod/core';
-import { RoutingModule } from '@ditsmod/routing';
+import { controller, Res, rootModule, Application } from '@ditsmod/core';
+import { RoutingModule, route } from '@ditsmod/routing';
 
 @controller()
 class ExampleController {

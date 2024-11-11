@@ -184,7 +184,8 @@ export class AppModule {}
 Щоб змінити рівень логування в продуктовому режимі (іншими словами - "на продакті"), не обов'язково заходити в скомпільований код. Для цієї мети ви можете створити спеціальний контролер, захистити його ґардом, а потім викликати відповідний роут для зміни рівня логування, який ви вкажете в URL:
 
 ```ts
-import { AnyObj, controller, inject, Logger, LogLevel, QUERY_PARAMS, Res, route } from '@ditsmod/core';
+import { AnyObj, controller, inject, Logger, LogLevel, QUERY_PARAMS, Res } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 
 import { requirePermissions } from '../auth/guards-utils.js';
 import { Permission } from '../auth/types.js';

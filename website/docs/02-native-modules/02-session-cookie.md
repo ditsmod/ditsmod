@@ -38,7 +38,8 @@ export class AppModule {}
 Використання:
 
 ```ts
-import { controller, Res, route } from '@ditsmod/core';
+import { controller, Res } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 import { SessionCookie } from '@ditsmod/session-cookie';
 
 @controller()

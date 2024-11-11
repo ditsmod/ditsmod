@@ -1,4 +1,5 @@
-import { controller, Res, route } from '@ditsmod/core';
+import { controller, Res } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 
 @controller()
 export class HelloWorldController {

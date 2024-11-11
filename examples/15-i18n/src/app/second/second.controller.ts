@@ -1,4 +1,5 @@
-import { AnyObj, controller, inject, PATH_PARAMS, Res, route } from '@ditsmod/core';
+import { AnyObj, controller, inject, PATH_PARAMS, Res } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 import { DictService } from '@ditsmod/i18n';
 
 import { FirstService } from '../first/first.service.js';

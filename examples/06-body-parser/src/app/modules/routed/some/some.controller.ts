@@ -1,4 +1,5 @@
-import { controller, inject, NODE_RES, NodeResponse, Res, route } from '@ditsmod/core';
+import { controller, inject, NODE_RES, NodeResponse, Res } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 import { HTTP_BODY, MulterParser } from '@ditsmod/body-parser';
 import { saveFiles, sendHtmlForm } from './utils.js';
 

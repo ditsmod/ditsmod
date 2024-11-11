@@ -98,7 +98,8 @@ export class SomeModule {}
 When you need the CORS HTTP response to contain cookies, and for those cookies to be accepted by web browsers, you can use `CorsService`:
 
 ```ts
-import { controller, Res, route } from '@ditsmod/core';
+import { controller, Res } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 import { CorsService } from '@ditsmod/cors';
 
 @controller()

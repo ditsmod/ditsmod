@@ -6,17 +6,17 @@ import {
   Provider,
   RouteMeta,
   isController,
-  isRoute,
   AppOptions,
   ControllerRawMetadata1,
   GuardPerMod1,
   reflector,
   Class,
-  RouteMetadata,
   MetadataPerMod2,
 } from '@ditsmod/core';
 
 import { MetadataPerMod3 } from '../types.js';
+import { isRoute } from '../type.guards.js';
+import { RouteMetadata } from '../decorators/route.js';
 
 @injectable()
 export class RoutesExtension implements Extension<MetadataPerMod3> {

@@ -1,4 +1,5 @@
-import { controller, Logger, Res, route } from '@ditsmod/core';
+import { controller, Logger, Res } from '@ditsmod/core';
+import { route } from '@ditsmod/routing';
 
 @controller()
 export class SomeController {
