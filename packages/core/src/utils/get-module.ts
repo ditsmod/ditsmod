@@ -1,6 +1,6 @@
 import { ModRefId, ModuleType } from '#types/mix.js';
 import { isModuleWithParams } from './type-guards.js';
 
-export function getModule(modOrObj: ModRefId) {
-  return (isModuleWithParams(modOrObj) ? modOrObj.module : modOrObj) as ModuleType;
+export function getModule(modRefId: ModRefId) {
+  return (isModuleWithParams(modRefId) ? modRefId.module : modRefId) as ModuleType;
 }
