@@ -299,15 +299,23 @@ export class AppInitializer {
       }
     }
 
+    for (const [modRefId, metadataPerMod2] of mMetadataPerMod2) {
+      try {
+        const injectorPerMod = this.initModuleAndGetInjectorPerMod(metadataPerMod2.meta);
+        this.moduleManager.setInjectorPerMod(modRefId, injectorPerMod);
+      } catch (err: any) {
+        const msg = `Creating injector per module for ${getModuleName(modRefId)} failed`;
+        throw new ChainError(msg, { name: 'Error', cause: err });
+      }
+    }
+
     for (const [modRefId, extensionSet] of extensionsContext.mStage) {
       for (const ext of extensionSet) {
         try {
           if (!ext.stage2) {
             continue;
           }
-          const { meta } = mMetadataPerMod2.get(modRefId)!;
-          const injectorPerMod = this.initModuleAndGetInjectorPerMod(meta);
-          this.moduleManager.setInjectorPerMod(modRefId, injectorPerMod);
+          const injectorPerMod = this.moduleManager.getInjectorPerMod(modRefId);
           await ext.stage2(injectorPerMod);
         } catch (err: any) {
           const msg = `Stage2 in ${getModuleName(modRefId)} -> ${ext.constructor.name} failed`;
