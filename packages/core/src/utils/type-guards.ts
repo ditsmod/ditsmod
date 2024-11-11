@@ -95,8 +95,13 @@ export function isModuleWithParams(modRefId?: Provider | ModuleWithParams | Modu
   return (modRefId as ModuleWithParams)?.module !== undefined;
 }
 
-export function isAppendsWithParams(modRefId?: ModuleType | ModuleWithParams | AppendsWithParams): modRefId is AppendsWithParams {
-  return (modRefId as AppendsWithParams)?.module !== undefined && (modRefId as AppendsWithParams)?.path !== undefined;
+export function isAppendsWithParams(
+  modRefId?: ModuleType | ModuleWithParams | AppendsWithParams,
+): modRefId is AppendsWithParams {
+  return (
+    (modRefId as AppendsWithParams)?.module !== undefined &&
+    ((modRefId as AppendsWithParams)?.path !== undefined || (modRefId as AppendsWithParams)?.absolutePath !== undefined)
+  );
 }
 
 export function isInjectionToken(token?: any): token is InjectionToken<any> {
