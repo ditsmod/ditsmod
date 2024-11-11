@@ -13,12 +13,12 @@ import type { ExtensionProvider } from '#types/extension-types.js';
 import { getCollisions } from './utils/get-collisions.js';
 import { getImportedProviders, getImportedTokens } from './utils/get-imports.js';
 import { getLastProviders } from './utils/get-last-providers.js';
-import { getModuleName } from './utils/get-module-name.js';
 import { getToken, getTokens } from './utils/get-tokens.js';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error.js';
 import { isAppendsWithParams, isModuleWithParams, isNormRootModule } from './utils/type-guards.js';
 import { hasDeclaredInDir } from '#utils/type-guards.js';
 import { getModule } from '#utils/get-module.js';
+import { getDebugModuleName } from '#utils/get-debug-module-name.js';
 
 /**
  * - exports and imports global providers;
@@ -236,17 +236,16 @@ export class ModuleFactory {
     if (meta1.exportedExtensions.length) {
       this.importedExtensions.set(meta1.modRefId, meta1.exportedExtensions);
     }
-    this.throwIfTryResolvingMultiprovidersCollisions(modRefId);
+    this.throwIfTryResolvingMultiprovidersCollisions(meta1.name);
   }
 
-  protected throwIfTryResolvingMultiprovidersCollisions(module: ModRefId) {
+  protected throwIfTryResolvingMultiprovidersCollisions(moduleName: string) {
     const scopes: Scope[] = ['Mod', 'Rou', 'Req'];
     scopes.forEach((scope) => {
       const tokens: any[] = [];
       this[`importedMultiProvidersPer${scope}`].forEach((providers) => tokens.push(...getTokens(providers)));
       this.meta[`resolvedCollisionsPer${scope}`].some(([token]) => {
         if (tokens.includes(token)) {
-          const moduleName = getModuleName(module);
           const tokenName = token.name || token;
           const errorMsg =
             `Resolving collisions for providersPer${scope} in ${this.moduleName} failed: ` +
@@ -282,7 +281,7 @@ export class ModuleFactory {
   }
 
   protected checkCollisionsPerScope(
-    module: ModRefId,
+    modRefId: ModRefId,
     scope: Scope,
     token: NonNullable<unknown>,
     provider: Provider,
@@ -293,16 +292,17 @@ export class ModuleFactory {
     const duplImpTokens = [...declaredTokens, ...resolvedTokens].includes(token) ? [] : [token];
     const collisions = getCollisions(duplImpTokens, [...importObj.providers, provider]);
     if (collisions.length) {
-      const modulesNames = [importObj.modRefId, module].map(getModuleName);
-      throwProvidersCollisionError(this.moduleName, [token], modulesNames, scope, this.meta.isExternal);
+      const moduleName1 = getDebugModuleName(importObj.modRefId);
+      const moduleName2 = getDebugModuleName(modRefId);
+      throwProvidersCollisionError(this.moduleName, [token], [moduleName1, moduleName2], scope, this.meta.isExternal);
     }
   }
 
   protected getResolvedCollisionsPerScope(scope: Scope, token1: any) {
-    const [token2, module2] = this.meta[`resolvedCollisionsPer${scope}`].find(([token2]) => token1 === token2)!;
-    const moduleName = getModuleName(module2);
+    const [token2, modRefId2] = this.meta[`resolvedCollisionsPer${scope}`].find(([token2]) => token1 === token2)!;
+    const moduleName = getDebugModuleName(modRefId2);
     const tokenName = token2.name || token2;
-    const meta2 = this.moduleManager.getMetadata(module2);
+    const meta2 = this.moduleManager.getMetadata(modRefId2);
     let errorMsg =
       `Resolving collisions for providersPer${scope} in ${this.moduleName} failed: ` +
       `${tokenName} mapped with ${moduleName}, but `;
@@ -316,7 +316,7 @@ export class ModuleFactory {
       throw new Error(errorMsg);
     }
 
-    return { module2, providers };
+    return { module2: modRefId2, providers };
   }
 
   protected checkAllCollisionsWithScopesMix() {
@@ -350,7 +350,7 @@ export class ModuleFactory {
           if (hostModulePath !== '.' && collisionWithPath !== '.' && collisionWithPath.startsWith(hostModulePath)) {
             // Allow collisions in host modules.
           } else {
-            const hostModuleName = getModuleName(importObj.modRefId);
+            const hostModuleName = getDebugModuleName(importObj.modRefId);
             throwProvidersCollisionError(this.moduleName, [token1], [hostModuleName], scope, this.meta.isExternal);
           }
         }

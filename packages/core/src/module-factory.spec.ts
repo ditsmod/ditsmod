@@ -20,6 +20,7 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { makePropDecorator } from '#di';
 import { HttpBackend } from './interceptors/tokens-and-types.js';
 import { AppendsWithParams } from '#types/module-metadata.js';
+import { clearDebugModuleNames } from '#utils/get-debug-module-name.js';
 
 type ModRefId = ModuleType | ModuleWithParams;
 
@@ -49,6 +50,7 @@ describe('ModuleFactory', () => {
   let moduleManager: ModuleManager;
 
   beforeEach(() => {
+    clearDebugModuleNames();
     const injectorPerApp = Injector.resolveAndCreate([...defaultProvidersPerApp, MockModuleFactory]);
     mock = injectorPerApp.get(MockModuleFactory);
     moduleManager = new ModuleManager(new SystemLogMediator({ moduleName: 'fakeName' }));

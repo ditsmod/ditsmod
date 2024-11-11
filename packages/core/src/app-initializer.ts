@@ -23,7 +23,6 @@ import { RequestListener } from './types/server-options.js';
 import { getCollisions } from './utils/get-collisions.js';
 import { getDuplicates } from './utils/get-duplicates.js';
 import { getLastProviders } from './utils/get-last-providers.js';
-import { getModuleName } from './utils/get-module-name.js';
 import { getProvidersTargets, getToken, getTokens } from './utils/get-tokens.js';
 import { normalizeProviders } from './utils/ng-utils.js';
 import { throwProvidersCollisionError } from './utils/throw-providers-collision-error.js';
@@ -33,6 +32,7 @@ import { NodeServer } from '#types/server-options.js';
 import { MetadataPerMod2 } from './types/metadata-per-mod.js';
 import { getProviderName } from './utils/get-provider-name.js';
 import { getModule } from '#utils/get-module.js';
+import { getDebugModuleName } from '#utils/get-debug-module-name.js';
 
 export class AppInitializer {
   protected perAppService = new PerAppService();
@@ -138,7 +138,7 @@ export class AppInitializer {
     const rootMeta = this.moduleManager.getMetadata('root', true);
     const resolvedProviders: Provider[] = [];
     this.meta.resolvedCollisionsPerApp.forEach(([token, module]) => {
-      const moduleName = getModuleName(module);
+      const moduleName = getDebugModuleName(module);
       const tokenName = token.name || token;
       const meta = this.moduleManager.getMetadata(module);
       let errorMsg =
@@ -305,7 +305,8 @@ export class AppInitializer {
         const injectorPerMod = this.initModuleAndGetInjectorPerMod(metadataPerMod2.meta);
         this.moduleManager.setInjectorPerMod(modRefId, injectorPerMod);
       } catch (err: any) {
-        const msg = `Creating injector per module for ${getModuleName(modRefId)} failed`;
+        const debugModuleName = getDebugModuleName(modRefId);
+        const msg = `Creating injector per module for ${debugModuleName} failed`;
         throw new ChainError(msg, { name: 'Error', cause: err });
       }
     }
@@ -319,7 +320,8 @@ export class AppInitializer {
           const injectorPerMod = this.moduleManager.getInjectorPerMod(modRefId);
           await ext.stage2(injectorPerMod);
         } catch (err: any) {
-          const msg = `Stage2 in ${getModuleName(modRefId)} -> ${ext.constructor.name} failed`;
+          const debugModuleName = getDebugModuleName(modRefId);
+          const msg = `Stage2 in ${debugModuleName} -> ${ext.constructor.name} failed`;
           throw new ChainError(msg, { name: 'Error', cause: err });
         }
       }
@@ -333,7 +335,8 @@ export class AppInitializer {
           }
           await ext.stage3();
         } catch (err: any) {
-          const msg = `Stage3 in ${getModuleName(modRefId)} -> ${ext.constructor.name} failed`;
+          const debugModuleName = getDebugModuleName(modRefId);
+          const msg = `Stage3 in ${debugModuleName} -> ${ext.constructor.name} failed`;
           throw new ChainError(msg, { name: 'Error', cause: err });
         }
       }

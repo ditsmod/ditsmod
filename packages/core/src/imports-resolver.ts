@@ -12,13 +12,13 @@ import { NormalizedModuleMetadata } from './types/normalized-module-metadata.js'
 import { RouteMeta } from './types/route-data.js';
 import { ReflectiveDependency, getDependencies } from './utils/get-dependecies.js';
 import { getLastProviders } from './utils/get-last-providers.js';
-import { getModuleName } from './utils/get-module-name.js';
 import { getProviderName } from './utils/get-provider-name.js';
 import { getProvidersTargets, getTokens } from './utils/get-tokens.js';
 import { isClassProvider, isFactoryProvider, isTokenProvider, isValueProvider } from './utils/type-guards.js';
 import { SystemErrorMediator } from '#error/system-error-mediator.js';
 import { defaultProvidersPerRou } from './default-providers-per-rou.js';
 import { ExtensionCounters, ExtensionsGroupToken } from '#types/extension-types.js';
+import { getDebugModuleName } from '#utils/get-debug-module-name.js';
 
 export class ImportsResolver {
   protected unfinishedSearchDependecies: [ModRefId, Provider][] = [];
@@ -345,10 +345,24 @@ export class ImportsResolver {
     const items = this.unfinishedSearchDependecies;
     const prefixChain = items.slice(0, index);
     const circularChain = items.slice(index);
-    const prefixNames = prefixChain.map(([m, p]) => `[${getProviderName(p)} in ${getModuleName(m)}]`).join(' -> ');
-    const [module, provider] = items[index];
-    let circularNames = circularChain.map(([m, p]) => `[${getProviderName(p)} in ${getModuleName(m)}]`).join(' -> ');
-    circularNames += ` -> [${getProviderName(provider)} in ${getModuleName(module)}]`;
+
+    const prefixNames = prefixChain
+      .map(([m, p]) => {
+        const debugModuleName = getDebugModuleName(m);
+        return `[${getProviderName(p)} in ${debugModuleName}]`;
+      })
+      .join(' -> ');
+
+    const [modRefId, provider] = items[index];
+    let circularNames = circularChain
+      .map(([m, p]) => {
+        const debugModuleName = getDebugModuleName(m);
+        return `[${getProviderName(p)} in ${debugModuleName}]`;
+      })
+      .join(' -> ');
+
+    const debugModuleName = getDebugModuleName(modRefId);
+    circularNames += ` -> [${getProviderName(provider)} in ${debugModuleName}]`;
     let msg = `Detected circular dependencies: ${circularNames}.`;
     if (prefixNames) {
       msg += ` It is started from ${prefixNames}.`;

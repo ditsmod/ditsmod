@@ -5,7 +5,7 @@ import { featureModule } from '#decorators/module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { Class, InjectionToken, forwardRef, injectable } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { AnyObj, CanActivate, ModRefId, ModuleType, Provider } from '#types/mix.js';
+import { AnyObj, CanActivate, ModuleType, Provider } from '#types/mix.js';
 import { ModuleWithParams, AppendsWithParams } from '#types/module-metadata.js';
 import { ExtensionProvider, Extension } from '#types/extension-types.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
@@ -14,6 +14,7 @@ import { isMultiProvider } from '#utils/type-guards.js';
 import { ModuleManager } from './module-manager.js';
 import { guard } from '#decorators/guard.js';
 import { RequestContext } from '../request-context.js';
+import { clearDebugModuleNames } from '#utils/get-debug-module-name.js';
 
 describe('ModuleManager', () => {
   console.log = jest.fn();
@@ -51,26 +52,9 @@ describe('ModuleManager', () => {
   let mock: MockModuleManager;
 
   beforeEach(() => {
+    clearDebugModuleNames();
     const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName', path: '' });
     mock = new MockModuleManager(systemLogMediator);
-  });
-
-  describe('getDebugModuleName()', () => {
-    it('case1', () => {
-      class Module1 {}
-      const modRefId2 = { module: Module1 };
-      const modRefId3 = { module: Module1 };
-      expect(mock.getDebugModuleName(Module1)).toBe('Module1');
-      expect(mock.getDebugModuleName(modRefId2)).toBe('Module1-2');
-
-      // Repeat
-      expect(mock.getDebugModuleName(Module1)).toBe('Module1');
-      expect(mock.getDebugModuleName(modRefId2)).toBe('Module1-2');
-
-      // Other Name
-      expect(mock.getDebugModuleName(modRefId3)).toBe('Module1-3');
-      expect(mock.getDebugModuleName(modRefId3)).toBe('Module1-3');
-    });
   });
 
   describe('quickCheckMetadata()', () => {

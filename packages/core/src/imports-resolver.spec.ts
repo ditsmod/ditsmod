@@ -16,6 +16,7 @@ import { ModuleExtract } from '#types/module-extract.js';
 import { rootModule } from '#decorators/root-module.js';
 import { guard } from '#decorators/guard.js';
 import { RequestContext } from './request-context.js';
+import { clearDebugModuleNames } from '#utils/get-debug-module-name.js';
 
 describe('ImportsResolver', () => {
   @injectable()
@@ -53,13 +54,13 @@ describe('ImportsResolver', () => {
   let errorMediator: SystemErrorMediator;
 
   beforeEach(() => {
-    mock = new ImportsResolverMock(null as any, null as any, null as any, null as any, null as any);
-
+    clearDebugModuleNames();
     const injectorPerApp = Injector.resolveAndCreate([ModuleFactory]);
     moduleFactory = injectorPerApp.get(ModuleFactory);
     systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
     errorMediator = new SystemErrorMediator({ moduleName: 'fakeName' });
     moduleManager = new ModuleManager(systemLogMediator);
+    mock = new ImportsResolverMock(moduleManager, null as any, null as any, null as any, null as any);
   });
 
   describe('resolve()', () => {

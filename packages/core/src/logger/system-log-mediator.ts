@@ -7,9 +7,9 @@ import { ModuleType, Provider } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { ExtensionsGroupToken, Extension } from '#types/extension-types.js';
 import { getImportedTokens } from '#utils/get-imports.js';
-import { getModuleName } from '#utils/get-module-name.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { isInjectionToken } from '#utils/type-guards.js';
+import { getDebugModuleName } from '#utils/get-debug-module-name.js';
 
 /**
  * Mediator between core logger and custom user's logger.
@@ -57,7 +57,7 @@ export class SystemLogMediator extends LogMediator {
    */
   moduleAlreadyImported(self: object, inputModule: ModuleType | ModuleWithParams, targetModuleId: string) {
     const className = self.constructor.name;
-    const inputModuleId = getModuleName(inputModule);
+    const inputModuleId = getDebugModuleName(inputModule);
     const msg = `${className}: "${inputModuleId}" has already been imported into "${targetModuleId}".`;
     this.setLog('warn', msg);
   }
@@ -125,7 +125,7 @@ export class SystemLogMediator extends LogMediator {
    */
   successfulAddedModuleToImport(self: object, inputModule: ModuleType | ModuleWithParams, targetMetaName: string) {
     const className = self.constructor.name;
-    const inputModuleName = getModuleName(inputModule);
+    const inputModuleName = getDebugModuleName(inputModule);
     this.setLog('debug', `${className}: successful added "${inputModuleName}" to "${targetMetaName}".`);
   }
 
