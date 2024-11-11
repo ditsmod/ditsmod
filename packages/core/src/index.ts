@@ -124,6 +124,7 @@ export { NormalizedProvider, normalizeProviders } from '#utils/ng-utils.js';
 export { pickProperties } from '#utils/pick-properties.js';
 export { Providers } from '#utils/providers.js';
 export { getCallerDir } from '#utils/callsites.js';
+export { getDebugModuleName, clearDebugModuleNames } from '#utils/get-debug-module-name.js';
 export * from '#utils/get-tokens.js';
 export {
   MultiProvider,
