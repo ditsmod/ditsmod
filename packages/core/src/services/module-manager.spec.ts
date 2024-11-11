@@ -46,10 +46,6 @@ describe('ModuleManager', () => {
     override checkController(modName: string, Controller: Class) {
       return super.checkController(modName, Controller);
     }
-
-    override getDebugModuleName(modRefId: ModRefId): string {
-      return super.getDebugModuleName(modRefId);
-    }
   }
 
   let mock: MockModuleManager;

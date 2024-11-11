@@ -380,7 +380,7 @@ export class ModuleManager {
     );
   }
 
-  protected getDebugModuleName(modRefId: ModRefId): string {
+  getDebugModuleName(modRefId: ModRefId): string {
     const debugModuleName = this.debugModuleNames.get(modRefId);
     if (debugModuleName) {
       return debugModuleName;
