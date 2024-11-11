@@ -91,12 +91,12 @@ export function isRoute<T>(decoratorAndValue?: DecoratorAndValue<T>): decoratorA
   return (decoratorAndValue as DecoratorAndValue<T>)?.decorator === route;
 }
 
-export function isModuleWithParams(mod?: Provider | ModuleWithParams | ModuleType): mod is ModuleWithParams {
-  return (mod as ModuleWithParams)?.module !== undefined;
+export function isModuleWithParams(modRefId?: Provider | ModuleWithParams | ModuleType): modRefId is ModuleWithParams {
+  return (modRefId as ModuleWithParams)?.module !== undefined;
 }
 
-export function isAppendsWithParams(mod?: ModuleType | ModuleWithParams | AppendsWithParams): mod is AppendsWithParams {
-  return (mod as AppendsWithParams)?.module !== undefined && (mod as AppendsWithParams)?.path !== undefined;
+export function isAppendsWithParams(modRefId?: ModuleType | ModuleWithParams | AppendsWithParams): modRefId is AppendsWithParams {
+  return (modRefId as AppendsWithParams)?.module !== undefined && (modRefId as AppendsWithParams)?.path !== undefined;
 }
 
 export function isInjectionToken(token?: any): token is InjectionToken<any> {

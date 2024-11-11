@@ -211,8 +211,8 @@ export class ModuleFactory {
   protected importProvidersAndExtensions(meta1: NormalizedModuleMetadata) {
     const { module, exportsModules, exportsWithParams } = meta1;
 
-    for (const mod of [...exportsModules, ...exportsWithParams]) {
-      const meta2 = this.moduleManager.getMetadata(mod, true);
+    for (const modRefId of [...exportsModules, ...exportsWithParams]) {
+      const meta2 = this.moduleManager.getMetadata(modRefId, true);
       // Reexported module
       this.importProvidersAndExtensions(meta2);
     }

@@ -482,14 +482,14 @@ describe('AppInitializer', () => {
       appMetadataMap = mock.bootstrapModuleFactory(moduleManager);
     });
 
-    function checkGlobalProviders(mod: MetadataPerMod1 | undefined) {
-      const tokensPerMod = getImportedTokens(mod?.importedTokensMap.perMod).slice(0, 3);
+    function checkGlobalProviders(metadataPerMod1: MetadataPerMod1 | undefined) {
+      const tokensPerMod = getImportedTokens(metadataPerMod1?.importedTokensMap.perMod).slice(0, 3);
       expect(tokensPerMod).toEqual([Provider0, Provider3, Provider4]);
-      const tokensPerReq = getImportedTokens(mod?.importedTokensMap.perReq).slice(0, 3);
+      const tokensPerReq = getImportedTokens(metadataPerMod1?.importedTokensMap.perReq).slice(0, 3);
       expect(tokensPerReq).toEqual([Provider5, Provider6, Provider7]);
 
       // Global providers per a module
-      const perMod = mod?.importedTokensMap?.perMod!;
+      const perMod = metadataPerMod1?.importedTokensMap?.perMod!;
       const expectedPerMod = new ImportObj();
 
       expectedPerMod.module = Module0;
@@ -503,7 +503,7 @@ describe('AppInitializer', () => {
       expect(perMod.get(Provider4)).toEqual(expectedPerMod);
 
       // Global providers per a request
-      const perReq = mod?.importedTokensMap.perReq!;
+      const perReq = metadataPerMod1?.importedTokensMap.perReq!;
       const expectedPerReq = new ImportObj();
       expectedPerReq.module = module3WithParams;
       expectedPerReq.providers = [Provider5];

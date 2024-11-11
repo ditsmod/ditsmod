@@ -375,9 +375,9 @@ export class ModuleManager {
   /**
    * Returns normalized module metadata.
    */
-  protected normalizeMetadata(mod: ModRefId) {
-    const rawMeta = getModuleMetadata(mod);
-    const modName = getModuleName(mod);
+  protected normalizeMetadata(modRefId: ModRefId) {
+    const rawMeta = getModuleMetadata(modRefId);
+    const modName = getModuleName(modRefId);
     if (!rawMeta) {
       throw new Error(`Module build failed: module "${modName}" does not have the "@featureModule()" decorator`);
     }
@@ -387,7 +387,7 @@ export class ModuleManager {
      */
     const meta = new NormalizedModuleMetadata();
     meta.name = modName;
-    meta.module = mod;
+    meta.module = modRefId;
     meta.decoratorFactory = rawMeta.decoratorFactory;
     meta.declaredInDir = rawMeta.declaredInDir;
     this.checkWhetherIsExternalModule(rawMeta, meta);
@@ -584,7 +584,7 @@ export class ModuleManager {
       !meta.exportedExtensions.length &&
       !meta.extensionsProviders.length
     ) {
-      const moduleNames = [...this.unfinishedScanModules].map((mod) => getModuleName(mod)).join(' -> ') || meta.name;
+      const moduleNames = [...this.unfinishedScanModules].map((modRefId) => getModuleName(modRefId)).join(' -> ') || meta.name;
       const msg =
         `Validation ${moduleNames} failed: this module should have "providersPerApp"` +
         ' or some controllers, or exports, or extensions.';
@@ -641,7 +641,7 @@ export class ModuleManager {
 
   protected throwPath(modName: string) {
     if (this.unfinishedScanModules.size) {
-      const path = [...this.unfinishedScanModules].map((mod) => getModuleName(mod)).join(' -> ');
+      const path = [...this.unfinishedScanModules].map((modRefId) => getModuleName(modRefId)).join(' -> ');
       return `${modName} (${path})`;
     } else {
       return modName;

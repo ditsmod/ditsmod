@@ -88,8 +88,8 @@ export class ExtensionsManager {
     }
   }
 
-  setExtensionsToStage2(mod: ModRefId) {
-    this.extensionsContext.mStage.set(mod, this.extensionsListForStage2);
+  setExtensionsToStage2(modRefId: ModRefId) {
+    this.extensionsContext.mStage.set(modRefId, this.extensionsListForStage2);
   }
 
   protected prepareGroupStage1MetaPerApp(groupStage1Meta: GroupStage1Meta2, perApp?: boolean): GroupStage1Meta {

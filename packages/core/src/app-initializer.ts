@@ -96,7 +96,7 @@ export class AppInitializer {
    * Recursively collects per app providers from non-root modules.
    */
   protected collectProvidersPerApp(meta1: NormalizedModuleMetadata) {
-    const modules = [
+    const aModRefId: ModRefId[] = [
       ...meta1.appendsWithParams,
       ...meta1.importsModules,
       ...meta1.importsWithParams,
@@ -105,14 +105,14 @@ export class AppInitializer {
     ];
     const providersPerApp: Provider[] = [];
     // Removes duplicate (because of reexports modules)
-    for (const mod of new Set(modules)) {
-      if (this.unfinishedScanModules.has(mod)) {
+    for (const modRefId of new Set(aModRefId)) {
+      if (this.unfinishedScanModules.has(modRefId)) {
         continue;
       }
-      const meta2 = this.moduleManager.getMetadata(mod, true);
-      this.unfinishedScanModules.add(mod);
+      const meta2 = this.moduleManager.getMetadata(modRefId, true);
+      this.unfinishedScanModules.add(modRefId);
       providersPerApp.push(...this.collectProvidersPerApp(meta2));
-      this.unfinishedScanModules.delete(mod);
+      this.unfinishedScanModules.delete(modRefId);
     }
     const currProvidersPerApp = isNormRootModule(meta1) ? [] : meta1.providersPerApp;
 
@@ -299,24 +299,24 @@ export class AppInitializer {
       }
     }
 
-    for (const [mod, extensionSet] of extensionsContext.mStage) {
+    for (const [modRefId, extensionSet] of extensionsContext.mStage) {
       for (const ext of extensionSet) {
         try {
           if (!ext.stage2) {
             continue;
           }
-          const { meta } = mMetadataPerMod2.get(mod)!;
+          const { meta } = mMetadataPerMod2.get(modRefId)!;
           const injectorPerMod = this.initModuleAndGetInjectorPerMod(meta);
-          this.moduleManager.setInjectorPerMod(mod, injectorPerMod);
+          this.moduleManager.setInjectorPerMod(modRefId, injectorPerMod);
           await ext.stage2(injectorPerMod);
         } catch (err: any) {
-          const msg = `Stage2 in ${getModuleName(mod)} -> ${ext.constructor.name} failed`;
+          const msg = `Stage2 in ${getModuleName(modRefId)} -> ${ext.constructor.name} failed`;
           throw new ChainError(msg, { name: 'Error', cause: err });
         }
       }
     }
 
-    for (const [mod, extensionSet] of extensionsContext.mStage) {
+    for (const [modRefId, extensionSet] of extensionsContext.mStage) {
       for (const ext of extensionSet) {
         try {
           if (!ext.stage3) {
@@ -324,7 +324,7 @@ export class AppInitializer {
           }
           await ext.stage3();
         } catch (err: any) {
-          const msg = `Stage3 in ${getModuleName(mod)} -> ${ext.constructor.name} failed`;
+          const msg = `Stage3 in ${getModuleName(modRefId)} -> ${ext.constructor.name} failed`;
           throw new ChainError(msg, { name: 'Error', cause: err });
         }
       }

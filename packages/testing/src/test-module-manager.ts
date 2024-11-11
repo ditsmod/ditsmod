@@ -35,8 +35,8 @@ export class TestModuleManager extends ModuleManager {
     return this.providersToOverride;
   }
 
-  protected override normalizeMetadata(mod: ModRefId): NormalizedModuleMetadata {
-    const meta = super.normalizeMetadata(mod);
+  protected override normalizeMetadata(modRefId: ModRefId): NormalizedModuleMetadata {
+    const meta = super.normalizeMetadata(modRefId);
     meta.providersPerApp.push(...this.providersPerApp);
     meta.extensionsProviders.push(...this.extensionsProviders);
     return meta;
