@@ -44,6 +44,7 @@ import {
   RequireProps,
   getToken,
   getProviderTarget,
+  ModuleManager,
 } from '@ditsmod/core';
 
 import { MetadataPerMod3, PreparedRouteMeta, ROUTES_EXTENSIONS } from '../types.js';
@@ -60,6 +61,7 @@ export class PreRouterExtension implements Extension<void> {
     protected perAppService: PerAppService,
     protected router: Router,
     protected extensionsManager: ExtensionsManager,
+    protected moduleManager: ModuleManager,
     protected log: SystemLogMediator,
     protected extensionsContext: ExtensionsContext,
     protected errorMediator: RoutingErrorMediator,
@@ -292,7 +294,8 @@ export class PreRouterExtension implements Extension<void> {
         throw new Error(msg);
       }
 
-      const injectorPerRou = this.injectorWithControllers.createChildFromResolved(resolvedPerRou);
+      const injectorPerMod = this.moduleManager.getInjectorPerMod(g.meta.module);
+      const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou);
 
       const resolvedGuard: ResolvedGuardPerMod = {
         guard,

@@ -308,6 +308,7 @@ export class AppInitializer {
           }
           const { meta } = mMetadataPerMod2.get(mod)!;
           const injectorPerMod = this.initModuleAndGetInjectorPerMod(meta);
+          this.moduleManager.setInjectorPerMod(mod, injectorPerMod);
           await ext.stage2(injectorPerMod);
         } catch (err: any) {
           const msg = `Stage2 in ${getModuleName(mod)} -> ${ext.constructor.name} failed`;
