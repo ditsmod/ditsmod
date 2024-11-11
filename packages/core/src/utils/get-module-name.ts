@@ -1,7 +1,10 @@
-import { ModuleType } from '#types/mix.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
-import { isModuleWithParams } from './type-guards.js';
+import { ModRefId } from '#types/mix.js';
+import { isAppendsWithParams, isModuleWithParams } from './type-guards.js';
 
-export function getModuleName(modOrObject: ModuleType | ModuleWithParams): string {
-  return isModuleWithParams(modOrObject) ? modOrObject.id || modOrObject.module.name : modOrObject.name;
+export function getModuleName(modRefId: ModRefId): string {
+  if (isModuleWithParams(modRefId) || isAppendsWithParams(modRefId)) {
+    return modRefId.id || modRefId.module.name;
+  } else {
+    return modRefId.name;
+  }
 }
