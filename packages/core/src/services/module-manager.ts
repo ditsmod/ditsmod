@@ -52,6 +52,8 @@ export class ModuleManager {
    * The directory in which the class was declared.
    */
   protected rootDeclaredInDir: string;
+  protected debugModuleNames = new Map<ModRefId, string>();
+  protected debugModuleNameCounters = new Map<string, number>();
 
   constructor(protected systemLogMediator: SystemLogMediator) {}
 
@@ -68,6 +70,8 @@ export class ModuleManager {
     this.injectorPerModMap.clear();
     this.unfinishedScanModules.clear();
     this.scanedModules.clear();
+    this.debugModuleNames.clear();
+    this.debugModuleNameCounters.clear();
     this.mapId.set('root', appModule);
     return this.copyMeta(meta);
   }
@@ -106,10 +110,10 @@ export class ModuleManager {
    * @param inputModule Module to be added.
    * @param targetModuleId Module ID to which the input module will be added.
    */
-  addImport(inputModule: ModuleType | ModuleWithParams, targetModuleId: ModuleId = 'root'): boolean | void {
+  addImport(inputModule: ModRefId, targetModuleId: ModuleId = 'root'): boolean | void {
     const targetMeta = this.getRawMetadata(targetModuleId);
     if (!targetMeta) {
-      const modName = getModuleName(inputModule);
+      const modName = this.getDebugModuleName(inputModule);
       const modIdStr = format(targetModuleId);
       const msg = `Failed adding ${modName} to imports: target module with ID "${modIdStr}" not found.`;
       throw new Error(msg);
@@ -313,7 +317,7 @@ export class ModuleManager {
       if (typeof moduleId == 'string') {
         moduleName = moduleId;
       } else {
-        moduleName = getModuleName(moduleId);
+        moduleName = this.getDebugModuleName(moduleId);
       }
       throw new Error(`${moduleName} not found in ModuleManager.`);
     }
@@ -372,12 +376,32 @@ export class ModuleManager {
     );
   }
 
+  protected getDebugModuleName(modRefId: ModRefId): string {
+    const debugModuleName = this.debugModuleNames.get(modRefId);
+    if (debugModuleName) {
+      return debugModuleName;
+    }
+
+    const moduleName = getModuleName(modRefId);
+    const count = this.debugModuleNameCounters.get(moduleName);
+    let newDebugModuleName: string;
+    if (count) {
+      newDebugModuleName = `${moduleName}-${count + 1}`;
+      this.debugModuleNameCounters.set(moduleName, count + 1);
+    } else {
+      newDebugModuleName = moduleName;
+      this.debugModuleNameCounters.set(moduleName, 1);
+    }
+    this.debugModuleNames.set(modRefId, newDebugModuleName);
+    return newDebugModuleName;
+  }
+
   /**
    * Returns normalized module metadata.
    */
   protected normalizeMetadata(modRefId: ModRefId) {
     const rawMeta = getModuleMetadata(modRefId);
-    const modName = getModuleName(modRefId);
+    const modName = this.getDebugModuleName(modRefId);
     if (!rawMeta) {
       throw new Error(`Module build failed: module "${modName}" does not have the "@featureModule()" decorator`);
     }
@@ -584,7 +608,8 @@ export class ModuleManager {
       !meta.exportedExtensions.length &&
       !meta.extensionsProviders.length
     ) {
-      const moduleNames = [...this.unfinishedScanModules].map((modRefId) => getModuleName(modRefId)).join(' -> ') || meta.name;
+      const moduleNames =
+        [...this.unfinishedScanModules].map((modRefId) => this.getDebugModuleName(modRefId)).join(' -> ') || meta.name;
       const msg =
         `Validation ${moduleNames} failed: this module should have "providersPerApp"` +
         ' or some controllers, or exports, or extensions.';
@@ -641,7 +666,7 @@ export class ModuleManager {
 
   protected throwPath(modName: string) {
     if (this.unfinishedScanModules.size) {
-      const path = [...this.unfinishedScanModules].map((modRefId) => getModuleName(modRefId)).join(' -> ');
+      const path = [...this.unfinishedScanModules].map((modRefId) => this.getDebugModuleName(modRefId)).join(' -> ');
       return `${modName} (${path})`;
     } else {
       return modName;
