@@ -32,9 +32,9 @@ import {
 import { Providers } from '#utils/providers.js';
 import { clearDebugModuleNames, getDebugModuleName } from '#utils/get-debug-module-name.js';
 
-export type ModulesMap = Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>;
-export type ModulesMapId = Map<string, ModuleType | ModuleWithParams>;
-type ModuleId = string | ModuleType | ModuleWithParams;
+export type ModulesMap = Map<ModRefId, NormalizedModuleMetadata>;
+export type ModulesMapId = Map<string, ModRefId>;
+type ModuleId = string | ModRefId;
 
 /**
  * Scans modules, normalizes, stores and checks their metadata for correctness,
@@ -52,6 +52,14 @@ export class ModuleManager {
    * The directory in which the class was declared.
    */
   protected rootDeclaredInDir: string;
+  protected propsWithModules = [
+    'importsModules',
+    'importsWithParams',
+    'exportsModules',
+    'exportsWithParams',
+    'appendsModules',
+    'appendsWithParams',
+  ] as const;
 
   constructor(protected systemLogMediator: SystemLogMediator) {}
 
@@ -230,17 +238,9 @@ export class ModuleManager {
    */
   protected scanRawModule(modRefId: ModRefId) {
     const meta = this.normalizeMetadata(modRefId);
-    const props = [
-      'importsModules',
-      'importsWithParams',
-      'exportsModules',
-      'exportsWithParams',
-      'appendsModules',
-      'appendsWithParams',
-    ] as const;
 
     // Merging arrays with this props in one array.
-    const inputs = props.map((p) => meta[p]).reduce<ModRefId[]>((prev, curr) => prev.concat(curr), []);
+    const inputs = this.propsWithModules.map((p) => meta[p]).reduce<ModRefId[]>((prev, curr) => prev.concat(curr), []);
 
     for (const input of inputs) {
       if (this.unfinishedScanModules.has(input) || this.scanedModules.has(input)) {
@@ -316,12 +316,10 @@ export class ModuleManager {
 
     this.map.forEach((meta, key) => {
       const oldMeta = { ...meta };
-      oldMeta.importsModules = oldMeta.importsModules.slice();
-      oldMeta.importsWithParams = oldMeta.importsWithParams.slice();
-      oldMeta.appendsModules = oldMeta.appendsModules.slice();
-      oldMeta.appendsWithParams = oldMeta.appendsWithParams.slice();
-      oldMeta.exportsModules = oldMeta.exportsModules.slice();
-      oldMeta.exportsWithParams = oldMeta.exportsWithParams.slice();
+      this.propsWithModules.forEach((p) => {
+        (oldMeta as any)[p] = (oldMeta as any)[p].slice();
+      });
+
       this.oldMap.set(key, oldMeta);
     });
     this.oldMapId = new Map(this.mapId);
@@ -338,26 +336,17 @@ export class ModuleManager {
    */
   protected includesInSomeModule(inputModuleId: ModuleId, targetModuleId: ModuleId): boolean {
     const targetMeta = this.getRawMetadata(targetModuleId);
-    const importsOrExports: (ModuleType<AnyObj> | ModuleWithParams<AnyObj>)[] = [];
-
-    if (targetMeta) {
-      importsOrExports.push(
-        ...targetMeta.importsModules,
-        ...targetMeta.importsWithParams,
-        ...targetMeta.appendsModules,
-        ...targetMeta.appendsWithParams,
-        ...targetMeta.exportsModules,
-        ...targetMeta.exportsWithParams,
-      );
+    if (!targetMeta) {
+      return false;
     }
 
+    const aModRefId = this.propsWithModules
+      .map((p) => targetMeta[p])
+      .reduce<ModRefId[]>((prev, curr) => prev.concat(curr), []);
+
     return (
-      importsOrExports.some((modOrObj) => {
-        return inputModuleId === modOrObj;
-      }) ||
-      importsOrExports.some((modOrObj) => {
-        return this.includesInSomeModule(inputModuleId, modOrObj);
-      })
+      aModRefId.some((modRefId) => inputModuleId === modRefId) ||
+      aModRefId.some((modRefId) => this.includesInSomeModule(inputModuleId, modRefId))
     );
   }
 
