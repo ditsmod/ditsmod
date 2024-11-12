@@ -12,6 +12,7 @@ import {
 } from '@ditsmod/core';
 
 import { ChainMaker } from './chain-maker.js';
+import { DefaultHttpBackend } from './default-http-backend.js';
 
 describe('HttpInterceptor', () => {
   const jestFn = jest.fn((interceptorName: string) => interceptorName);
@@ -44,7 +45,12 @@ describe('HttpInterceptor', () => {
     }
   }
 
-  const defaultProviders: Provider[] = [...defaultProvidersPerApp, ...defaultProvidersPerReq];
+  const defaultProviders: Provider[] = [
+    ...defaultProvidersPerApp,
+    ...defaultProvidersPerReq,
+    { token: HttpBackend, useClass: DefaultHttpBackend },
+    ChainMaker,
+  ];
 
   beforeEach(() => {
     jestFn.mockRestore();
