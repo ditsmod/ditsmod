@@ -13,9 +13,10 @@ export {
   ISingletonInterceptorWithGuards,
   SingletonInterceptorWithGuards,
   InstantiatedGuard,
-} from './interceptors/singleton-interceptor-with-guards.js';
-export { InterceptorWithGuards } from './interceptors/interceptor-with-guards.js';
-export { DefaultSingletonHttpBackend } from './interceptors/default-singleton-http-backend.js';
-export { DefaultHttpBackend } from './interceptors/default-http-backend.js';
-export { ChainMaker } from './interceptors/chain-maker.js';
-export { DefaultSingletonChainMaker } from './interceptors/default-singleton-chain-maker.js';
+} from '#interceptors/singleton-interceptor-with-guards.js';
+export { InterceptorWithGuards } from '#interceptors/interceptor-with-guards.js';
+export { DefaultSingletonHttpBackend } from '#interceptors/default-singleton-http-backend.js';
+export { DefaultHttpBackend } from '#interceptors/default-http-backend.js';
+export { ChainMaker } from '#interceptors/chain-maker.js';
+export { DefaultSingletonChainMaker } from '#interceptors/default-singleton-chain-maker.js';
+export { DefaultSingletonHttpFrontend } from '#interceptors/default-singleton-http-frontend.js';

@@ -50,6 +50,7 @@ import { ChainMaker } from '#interceptors/chain-maker.js';
 import { DefaultHttpBackend } from '#interceptors/default-http-backend.js';
 import { DefaultSingletonHttpBackend } from '#interceptors/default-singleton-http-backend.js';
 import { DefaultSingletonChainMaker } from '#interceptors/default-singleton-chain-maker.js';
+import { DefaultSingletonHttpFrontend } from '#interceptors/default-singleton-http-frontend.js';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
@@ -95,6 +96,7 @@ export class PreRouterExtension implements Extension<void> {
     meta.providersPerRou.unshift(
       { token: HttpBackend, useClass: DefaultSingletonHttpBackend },
       { token: ChainMaker, useClass: DefaultSingletonChainMaker },
+      { token: HttpFrontend, useClass: DefaultSingletonHttpFrontend },
     );
   }
 
