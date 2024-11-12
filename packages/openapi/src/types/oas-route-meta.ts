@@ -1,4 +1,4 @@
-import { RouteMeta } from '@ditsmod/core';
+import { RouteMeta } from '@ditsmod/routing';
 import { XOperationObject } from '@ts-stack/openapi-spec';
 
 /**

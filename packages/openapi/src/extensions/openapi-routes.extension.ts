@@ -1,11 +1,9 @@
 import {
   FactoryProvider,
   injectable,
-  ControllerMetadata,
   Extension,
   HttpMethod,
   isController,
-  RouteMeta,
   Provider,
   AppOptions,
   ControllerRawMetadata1,
@@ -13,7 +11,7 @@ import {
   Class,
   MetadataPerMod2,
 } from '@ditsmod/core';
-import { MetadataPerMod3, RoutesExtension } from '@ditsmod/routing';
+import { ControllerMetadata, MetadataPerMod3, RouteMeta, RoutesExtension } from '@ditsmod/routing';
 import { ReferenceObject, XOperationObject, XParameterObject } from '@ts-stack/openapi-spec';
 
 import { isOasRoute, isOasRoute1, isReferenceObject } from '#utils/type-guards.js';
