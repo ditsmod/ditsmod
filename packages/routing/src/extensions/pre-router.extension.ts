@@ -11,7 +11,6 @@ import {
   injectable,
   DepsChecker,
   SystemLogMediator,
-  ChainMaker,
   ExtensionsContext,
   ExtensionsManager,
   HttpErrorHandler,
@@ -48,6 +47,7 @@ import { ControllerMetadata } from '../controller-metadata.js';
 import { SingletonInterceptorWithGuards } from '../interceptors/singleton-interceptor-with-guards.js';
 import { InterceptorWithGuards } from '../interceptors/interceptor-with-guards.js';
 import { RouteMeta } from '../route-data.js';
+import { ChainMaker } from '../interceptors/chain-maker.js';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
