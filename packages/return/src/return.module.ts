@@ -1,5 +1,5 @@
-import { HttpBackend, featureModule } from '@ditsmod/core';
-import { RoutingModule } from '@ditsmod/routing';
+import { featureModule } from '@ditsmod/core';
+import { HttpBackend, RoutingModule } from '@ditsmod/routing';
 
 import { ReturnHttpBackend } from './return-http-backend.js';
 import { SingletonReturnHttpBackend } from './singleton-return-http-backend.js';
