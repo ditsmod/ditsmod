@@ -1,5 +1,5 @@
-import { Extension, ExtensionsManager, HTTP_INTERCEPTORS, InjectionToken, injectable } from '@ditsmod/core';
-import { ROUTES_EXTENSIONS } from '@ditsmod/routing';
+import { Extension, ExtensionsManager, InjectionToken, injectable } from '@ditsmod/core';
+import { HTTP_INTERCEPTORS, ROUTES_EXTENSIONS } from '@ditsmod/routing';
 
 import { SessionCookieInterceptor } from './session-cookie.interceptor.js';
 
