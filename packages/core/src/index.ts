@@ -45,7 +45,6 @@ export { HttpErrorHandler } from './error/http-error-handler.js';
 export { DefaultHttpErrorHandler } from './error/default-http-error-handler.js';
 export { DefaultHttpFrontend } from '#interceptors/default-http-frontend.js';
 export { DefaultSingletonHttpFrontend } from '#interceptors/default-singleton-http-frontend.js';
-export { DefaultSingletonChainMaker } from '#interceptors/default-singleton-chain-maker.js';
 export { defaultProvidersPerApp } from './default-providers-per-app.js';
 export { defaultProvidersPerRou } from './default-providers-per-rou.js';
 export { defaultProvidersPerReq } from './default-providers-per-req.js';
