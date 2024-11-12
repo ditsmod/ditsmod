@@ -40,20 +40,12 @@ export { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 export { ProvidersMetadata } from '#types/providers-metadata.js';
 export { AppOptions } from '#types/app-options.js';
 export { ModuleFactory } from './module-factory.js';
-export { InterceptorWithGuards } from '#interceptors/interceptor-with-guards.js';
 export { ConsoleLogger } from './logger/console-logger.js';
 export { HttpErrorHandler } from './error/http-error-handler.js';
 export { DefaultHttpErrorHandler } from './error/default-http-error-handler.js';
-export { DefaultHttpBackend } from '#interceptors/default-http-backend.js';
 export { DefaultHttpFrontend } from '#interceptors/default-http-frontend.js';
 export { DefaultSingletonHttpFrontend } from '#interceptors/default-singleton-http-frontend.js';
-export { DefaultSingletonHttpBackend } from '#interceptors/default-singleton-http-backend.js';
 export { DefaultSingletonChainMaker } from '#interceptors/default-singleton-chain-maker.js';
-export {
-  ISingletonInterceptorWithGuards,
-  SingletonInterceptorWithGuards,
-  InstantiatedGuard,
-} from '#interceptors/singleton-interceptor-with-guards.js';
 export { ChainMaker } from '#interceptors/chain-maker.js';
 export { RequestContext, SingletonRequestContext } from './request-context.js';
 export {
@@ -76,7 +68,6 @@ export { PerAppService } from '#services/per-app.service.js';
 export { PreRouter } from '#services/pre-router.js';
 export { Req } from '#services/request.js';
 export { Res } from '#services/response.js';
-export { ControllerMetadata } from '#types/controller-metadata.js';
 export { Logger, LoggerConfig, InputLogLevel, OutputLogLevel } from '#logger/logger.js';
 export { MetadataPerMod1, MetadataPerMod2 } from '#types/metadata-per-mod.js';
 export {
@@ -110,7 +101,6 @@ export {
   ModuleWithParams2,
 } from '#types/module-metadata.js';
 export { getModuleMetadata } from '#utils/get-module-metadata.js';
-export { RouteMeta } from '#types/route-data.js';
 export { PathParam, RouteHandler, Router, RouterReturns } from '#types/router.js';
 export { NodeRequest, NodeResponse, RequestListener, Server, NodeServer } from '#types/server-options.js';
 export { createHelperForGuardWithParams } from '#utils/create-helper-for-guards-with-params.js';

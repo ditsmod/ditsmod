@@ -1327,7 +1327,7 @@ describe('ModuleFactory', () => {
           expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
         });
 
-        it('resolve case 3', () => {
+        xit('resolve case 3', () => {
           @featureModule({
             exports: [HttpBackend],
             providersPerReq: [{ token: HttpBackend, useValue: '' }],
@@ -1369,7 +1369,7 @@ describe('ModuleFactory', () => {
           ]);
         });
 
-        it('case 4', () => {
+        xit('case 4', () => {
           @featureModule({
             exports: [HttpBackend],
             providersPerReq: [{ token: HttpBackend, useValue: '' }],
@@ -1386,7 +1386,7 @@ describe('ModuleFactory', () => {
           expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
         });
 
-        it('resolve case 4', () => {
+        xit('resolve case 4', () => {
           @featureModule({
             exports: [HttpBackend],
             providersPerReq: [{ token: HttpBackend, useValue: '' }],

@@ -9,7 +9,6 @@ import { AppOptions } from './types/app-options.js';
 import { ImportedTokensMap, MetadataPerMod2 } from './types/metadata-per-mod.js';
 import { AppMetadataMap, Scope, Provider, ProvidersForMod, ModRefId } from '#types/mix.js';
 import { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
-import { RouteMeta } from './types/route-data.js';
 import { ReflectiveDependency, getDependencies } from './utils/get-dependecies.js';
 import { getLastProviders } from './utils/get-last-providers.js';
 import { getProviderName } from './utils/get-provider-name.js';
@@ -322,7 +321,6 @@ export class ImportsResolver {
       ...getTokens([...defaultProvidersPerApp, ...defaultProvidersPerReq]),
       Injector,
       AppOptions,
-      RouteMeta,
     ];
 
     return deps.filter((d) => !defaultTokens.includes(d.token));

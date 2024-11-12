@@ -5,7 +5,6 @@ import { Injector } from '#di';
 import { ChainMaker } from '#interceptors/chain-maker.js';
 import { HttpBackend, HttpFrontend, HttpHandler, HttpInterceptor } from '#interceptors/tokens-and-types.js';
 import { Provider } from '#types/mix.js';
-import { RouteMeta } from '#types/route-data.js';
 import { defaultProvidersPerApp } from '#core/default-providers-per-app.js';
 import { defaultProvidersPerReq } from '#core/default-providers-per-req.js';
 
@@ -82,8 +81,9 @@ describe('HttpInterceptor', () => {
       }
     }
 
-    const injector = Injector.resolveAndCreate([RouteMeta]).resolveAndCreateChild([
+    const injector = Injector.resolveAndCreate([
       ...defaultProviders,
+      HttpBackend as any,
       { token: HttpFrontend, useClass: MockHttpFrontend },
       { token: HTTP_INTERCEPTORS, useClass: Interceptor1, multi: true },
       { token: HTTP_INTERCEPTORS, useClass: Interceptor2, multi: true },
@@ -97,7 +97,7 @@ describe('HttpInterceptor', () => {
   });
 
   it('without HTTP_INTERCEPTORS, chain should be HttpBackend', () => {
-    const injector = Injector.resolveAndCreate([RouteMeta]).resolveAndCreateChild([...defaultProviders]);
+    const injector = Injector.resolveAndCreate([...defaultProviders, HttpBackend as any]);
 
     const chainMaker = injector.get(ChainMaker) as ChainMaker;
     const chain = chainMaker.makeChain({} as any);
