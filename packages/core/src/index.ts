@@ -43,7 +43,6 @@ export { ModuleFactory } from './module-factory.js';
 export { ConsoleLogger } from './logger/console-logger.js';
 export { HttpErrorHandler } from './error/http-error-handler.js';
 export { DefaultHttpErrorHandler } from './error/default-http-error-handler.js';
-export { DefaultHttpFrontend } from '#interceptors/default-http-frontend.js';
 export { defaultProvidersPerApp } from './default-providers-per-app.js';
 export { defaultProvidersPerRou } from './default-providers-per-rou.js';
 export { defaultProvidersPerReq } from './default-providers-per-req.js';
