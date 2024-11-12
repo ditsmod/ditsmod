@@ -2,7 +2,7 @@ import { DecoratorAndValue, reflector, resolveForwardRef } from '#di';
 import { ModuleMetadata } from '#types/module-metadata.js';
 import { AnyFn, GuardItem, ModRefId, Scope } from '#types/mix.js';
 import { mergeArrays } from './merge-arrays.js';
-import { isAppendsWithParams, isFeatureModule, isModuleWithParams, isRootModule } from './type-guards.js';
+import { isAppendsWithParams, isFeatureModDecor, isModuleWithParams, isRootModDecor } from './type-guards.js';
 import { getLastProviders } from './get-last-providers.js';
 import { getDebugModuleName } from './get-debug-module-name.js';
 
@@ -12,7 +12,7 @@ import { getDebugModuleName } from './get-debug-module-name.js';
  * property to arrays.
  */
 export function getModuleMetadata(modRefId: ModRefId, isRoot?: boolean): ModuleMetadataWithContext | undefined {
-  const typeGuard = isRoot ? isRootModule : (m: DecoratorAndValue) => isFeatureModule(m) || isRootModule(m);
+  const decoratorGuard = isRoot ? isRootModDecor : (m: DecoratorAndValue) => isFeatureModDecor(m) || isRootModDecor(m);
 
   modRefId = resolveForwardRef(modRefId);
   const scopes = ['App', 'Mod', 'Rou', 'Req'] as Scope[];
@@ -21,7 +21,7 @@ export function getModuleMetadata(modRefId: ModRefId, isRoot?: boolean): ModuleM
     const modWitParams = modRefId;
     const decoratorAndValue = reflector
       .getMetadata<ModuleMetadataValue>(modWitParams.module)
-      ?.constructor.decorators.find(typeGuard);
+      ?.constructor.decorators.find(decoratorGuard);
     const modMetadata = decoratorAndValue?.value.data;
     if (!modMetadata) {
       return modMetadata;
@@ -55,7 +55,7 @@ export function getModuleMetadata(modRefId: ModRefId, isRoot?: boolean): ModuleM
   } else {
     const decoratorAndValue = reflector
       .getMetadata<ModuleMetadataValue>(modRefId)
-      ?.constructor.decorators.find(typeGuard);
+      ?.constructor.decorators.find(decoratorGuard);
     const modMetadata = decoratorAndValue?.value.data;
     if (!modMetadata) {
       return modMetadata;

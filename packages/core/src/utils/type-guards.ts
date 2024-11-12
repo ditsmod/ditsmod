@@ -31,22 +31,22 @@ export function isChainError<T extends AnyObj>(err: any): err is ChainError<T> {
   return err instanceof ChainError;
 }
 
-export function isFeatureModule(
+export function isFeatureModDecor(
   decoratorAndValue?: DecoratorAndValue,
 ): decoratorAndValue is DecoratorAndValue<ModuleMetadata> {
   return decoratorAndValue?.decorator === featureModule;
 }
 
-export function isRootModule(
+export function isRootModDecor(
   decoratorAndValue?: DecoratorAndValue,
 ): decoratorAndValue is DecoratorAndValue<RootModuleMetadata> {
   return decoratorAndValue?.decorator === rootModule;
 }
 
-export function isModule(
+export function isModDecor(
   decoratorAndValue?: DecoratorAndValue,
 ): decoratorAndValue is DecoratorAndValue<RootModuleMetadata> | DecoratorAndValue<ModuleMetadata> {
-  return isRootModule(decoratorAndValue) || isFeatureModule(decoratorAndValue);
+  return isRootModDecor(decoratorAndValue) || isFeatureModDecor(decoratorAndValue);
 }
 
 /**
@@ -80,7 +80,7 @@ export function isNormRootModule(
   return rawModule?.decoratorFactory === rootModule;
 }
 
-export function isController(
+export function isCtrlDecor(
   decoratorAndValue?: AnyObj,
 ): decoratorAndValue is DecoratorAndValue<ControllerRawMetadata> {
   return decoratorAndValue?.decorator === controller;
@@ -149,9 +149,7 @@ export function isProvider(maybeProvider?: any): maybeProvider is Provider {
   if (isModuleWithParams(maybeProvider)) {
     return false;
   }
-  const isSomeModule = reflector
-    .getMetadata(maybeProvider)
-    ?.constructor.decorators.some((m) => isRootModule(m) || isFeatureModule(m));
+  const isSomeModule = reflector.getMetadata(maybeProvider)?.constructor.decorators.some(isModDecor);
   return (maybeProvider instanceof Class && !isSomeModule) || isNormalizedProvider(maybeProvider);
 }
 

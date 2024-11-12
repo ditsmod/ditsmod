@@ -3,7 +3,7 @@ import {
   Extension,
   GuardItem,
   Provider,
-  isController,
+  isCtrlDecor,
   AppOptions,
   ControllerRawMetadata1,
   GuardPerMod1,
@@ -56,7 +56,7 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
             const providersPerRou: Provider[] = [];
             const providersPerReq: Provider[] = [];
             const route = decoratorAndValue.value;
-            const ctrlDecorator = classMeta.constructor.decorators.find(isController);
+            const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
             const scope = ctrlDecorator?.value.scope;
             if (scope == 'module') {
               meta.providersPerMod.unshift(Controller);

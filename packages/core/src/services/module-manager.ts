@@ -19,7 +19,7 @@ import {
   MultiProvider,
   isAppendsWithParams,
   isClassProvider,
-  isController,
+  isCtrlDecor,
   isModuleWithParams,
   isMultiProvider,
   isNormRootModule,
@@ -464,7 +464,7 @@ export class ModuleManager {
 
   protected checkController(modName: string, Controller: Class) {
     const decoratorsAndValues = reflector.getMetadata(Controller)?.constructor.decorators;
-    if (!decoratorsAndValues?.find(isController)) {
+    if (!decoratorsAndValues?.find(isCtrlDecor)) {
       throw new Error(
         `Collecting controller's metadata in ${modName} failed: class ` +
           `"${Controller.name}" does not have the "@controller()" decorator.`,

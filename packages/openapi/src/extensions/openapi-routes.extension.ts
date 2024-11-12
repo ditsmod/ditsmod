@@ -3,7 +3,7 @@ import {
   injectable,
   Extension,
   HttpMethod,
-  isController,
+  isCtrlDecor,
   Provider,
   AppOptions,
   ControllerRawMetadata1,
@@ -50,7 +50,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             const oasRoute = decoratorAndValue.value;
             const providersPerRou: Provider[] = [];
             const providersPerReq: Provider[] = [];
-            const ctrlDecorator = classMeta.constructor.decorators.find(isController);
+            const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
             const scope = ctrlDecorator?.value.scope;
             if (scope == 'module') {
               meta.providersPerMod.unshift(Controller);

@@ -3,13 +3,13 @@ import { Extension } from '#types/extension-types.js';
 import { InjectionToken, makePropDecorator, reflector } from '#di';
 import { featureModule } from '#decorators/module.js';
 import {
-  isController,
+  isCtrlDecor,
   isInjectionToken,
-  isFeatureModule,
+  isFeatureModDecor,
   isModuleWithParams,
   isNormalizedProvider,
   isProvider,
-  isRootModule,
+  isRootModDecor,
   isMultiProvider,
   MultiProvider,
   isRawRootModule,
@@ -25,13 +25,13 @@ describe('type guards', () => {
       @featureModule({})
       class Module1 {}
       const metadata = reflector.getMetadata(Module1)!.constructor.decorators[0];
-      expect(isFeatureModule(metadata)).toBe(true);
+      expect(isFeatureModDecor(metadata)).toBe(true);
     });
 
     it('class without decorator', () => {
       class Module1 {}
       const metadata = reflector.getMetadata(Module1) as any;
-      expect(isFeatureModule(metadata)).toBe(false);
+      expect(isFeatureModDecor(metadata)).toBe(false);
     });
   });
 
@@ -40,13 +40,13 @@ describe('type guards', () => {
       @rootModule({})
       class Module1 {}
       const metadata = reflector.getMetadata(Module1)!.constructor.decorators[0];
-      expect(isRootModule(metadata)).toBe(true);
+      expect(isRootModDecor(metadata)).toBe(true);
     });
 
     it('class without decorator', () => {
       class Module1 {}
       const metadata = reflector.getMetadata(Module1) as any;
-      expect(isRootModule(metadata)).toBe(false);
+      expect(isRootModDecor(metadata)).toBe(false);
     });
   });
 
@@ -70,13 +70,13 @@ describe('type guards', () => {
       @controller()
       class Module1 {}
       const metadata = reflector.getMetadata(Module1)!.constructor.decorators[0];
-      expect(isController(metadata)).toBe(true);
+      expect(isCtrlDecor(metadata)).toBe(true);
     });
 
     it('class without decorator', () => {
       class Module1 {}
       const metadata = reflector.getMetadata(Module1);
-      expect(isController(metadata)).toBe(false);
+      expect(isCtrlDecor(metadata)).toBe(false);
     });
   });
 
