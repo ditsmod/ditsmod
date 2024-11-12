@@ -1,4 +1,5 @@
-import { injectable, HttpHandler, HttpInterceptor, Logger, RequestContext } from '@ditsmod/core';
+import { injectable, Logger, RequestContext } from '@ditsmod/core';
+import { HttpHandler, HttpInterceptor } from '@ditsmod/routing';
 
 @injectable()
 export class MyHttpInterceptor implements HttpInterceptor {

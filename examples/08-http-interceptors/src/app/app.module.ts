@@ -1,5 +1,5 @@
-import { HTTP_INTERCEPTORS, Providers, rootModule } from '@ditsmod/core';
-import { RoutingModule } from '@ditsmod/routing';
+import { Providers, rootModule } from '@ditsmod/core';
+import { HTTP_INTERCEPTORS, RoutingModule } from '@ditsmod/routing';
 
 import { HelloWorldController, HelloWorldController2 } from './hello-world.controller.js';
 import { MyHttpInterceptor } from './my-http-interceptor.js';
