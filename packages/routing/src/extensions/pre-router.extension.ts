@@ -1,7 +1,6 @@
 import { parse } from 'node:querystring';
 import {
   A_PATH_PARAMS,
-  HTTP_INTERCEPTORS,
   NODE_REQ,
   NODE_RES,
   QUERY_STRING,
@@ -15,8 +14,6 @@ import {
   ExtensionsManager,
   HttpErrorHandler,
   PerAppService,
-  HttpBackend,
-  HttpFrontend,
   Extension,
   HttpMethod,
   RouteHandler,
@@ -40,7 +37,7 @@ import {
   ModuleManager,
 } from '@ditsmod/core';
 
-import { MetadataPerMod3, PreparedRouteMeta, ROUTES_EXTENSIONS } from '../types.js';
+import { HTTP_INTERCEPTORS, MetadataPerMod3, PreparedRouteMeta, ROUTES_EXTENSIONS } from '../types.js';
 import { RoutingErrorMediator } from '../router-error-mediator.js';
 import { ControllerMetadata } from '../controller-metadata.js';
 import { SingletonInterceptorWithGuards } from '#interceptors/singleton-interceptor-with-guards.js';
@@ -52,6 +49,7 @@ import { DefaultSingletonHttpBackend } from '#interceptors/default-singleton-htt
 import { DefaultSingletonChainMaker } from '#interceptors/default-singleton-chain-maker.js';
 import { DefaultSingletonHttpFrontend } from '#interceptors/default-singleton-http-frontend.js';
 import { DefaultHttpFrontend } from '#interceptors/default-http-frontend.js';
+import { HttpBackend, HttpFrontend } from '#interceptors/tokens-and-types.js';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {

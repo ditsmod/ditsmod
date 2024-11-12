@@ -1,14 +1,7 @@
-import {
-  HTTP_INTERCEPTORS,
-  HttpBackend,
-  HttpHandler,
-  HttpInterceptor,
-  HttpInterceptorHandler,
-  inject,
-  injectable,
-  optional,
-  RequestContext,
-} from '@ditsmod/core';
+import { inject, injectable, optional, RequestContext } from '@ditsmod/core';
+
+import { HttpBackend, HttpInterceptor, HttpHandler, HttpInterceptorHandler } from './tokens-and-types.js';
+import { HTTP_INTERCEPTORS } from '../types.js';
 
 /**
  * An injectable service that ties multiple interceptors in chain.

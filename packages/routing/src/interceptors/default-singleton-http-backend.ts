@@ -1,5 +1,7 @@
-import { injectable, SingletonHttpBackend, SingletonRequestContext } from '@ditsmod/core';
+import { injectable, SingletonRequestContext } from '@ditsmod/core';
+
 import { RouteMeta } from '../route-data.js';
+import { SingletonHttpBackend } from './tokens-and-types.js';
 
 
 @injectable()

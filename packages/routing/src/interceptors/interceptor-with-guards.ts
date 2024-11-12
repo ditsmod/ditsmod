@@ -1,8 +1,6 @@
 import {
   A_PATH_PARAMS,
   CanActivate,
-  HttpHandler,
-  HttpInterceptor,
   injectable,
   Injector,
   NODE_REQ,
@@ -16,6 +14,7 @@ import {
 } from '@ditsmod/core';
 
 import { RouteMeta } from '../route-data.js';
+import { HttpHandler, HttpInterceptor } from './tokens-and-types.js';
 
 @injectable()
 export class InterceptorWithGuards implements HttpInterceptor {

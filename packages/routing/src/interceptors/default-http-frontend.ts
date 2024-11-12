@@ -1,14 +1,7 @@
 import { parse } from 'querystring';
-import {
-  AnyObj,
-  HttpFrontend,
-  HttpHandler,
-  injectable,
-  Injector,
-  PATH_PARAMS,
-  QUERY_PARAMS,
-  RequestContext,
-} from '@ditsmod/core';
+import { AnyObj, injectable, Injector, PATH_PARAMS, QUERY_PARAMS, RequestContext } from '@ditsmod/core';
+
+import { HttpFrontend, HttpHandler } from './tokens-and-types.js';
 
 @injectable()
 export class DefaultHttpFrontend implements HttpFrontend {

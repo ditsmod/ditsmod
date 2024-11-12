@@ -1,5 +1,7 @@
 import { parse } from 'node:querystring';
-import { AnyObj, HttpFrontend, HttpHandler, injectable, SingletonRequestContext } from '@ditsmod/core';
+import { AnyObj, injectable, SingletonRequestContext } from '@ditsmod/core';
+
+import { HttpFrontend, HttpHandler } from './tokens-and-types.js';
 
 @injectable()
 export class DefaultSingletonHttpFrontend implements HttpFrontend {

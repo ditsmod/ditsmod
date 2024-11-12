@@ -1,15 +1,7 @@
-import {
-  injectable,
-  Injector,
-  RequestContext,
-  HttpHandler,
-  CanActivate,
-  Status,
-  SystemLogMediator,
-  HttpInterceptor,
-} from '@ditsmod/core';
+import { injectable, Injector, RequestContext, CanActivate, Status, SystemLogMediator } from '@ditsmod/core';
 
 import { RouteMeta } from '../route-data.js';
+import { HttpHandler, HttpInterceptor } from './tokens-and-types.js';
 
 @injectable()
 export class SingletonInterceptorWithGuards implements ISingletonInterceptorWithGuards {

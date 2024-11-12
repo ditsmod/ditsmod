@@ -21,3 +21,12 @@ export { ChainMaker } from '#interceptors/chain-maker.js';
 export { DefaultSingletonChainMaker } from '#interceptors/default-singleton-chain-maker.js';
 export { DefaultSingletonHttpFrontend } from '#interceptors/default-singleton-http-frontend.js';
 export { DefaultHttpFrontend } from '#interceptors/default-http-frontend.js';
+export {
+  HttpBackend,
+  HttpFrontend,
+  HttpHandler,
+  HttpInterceptor,
+  HttpInterceptorHandler,
+  SingletonHttpBackend,
+} from '#interceptors/tokens-and-types.js';
+export { HTTP_INTERCEPTORS } from './types.js';
