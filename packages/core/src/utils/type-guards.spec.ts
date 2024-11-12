@@ -1,6 +1,6 @@
-import { CanActivate, Provider } from '#types/mix.js';
+import { Provider } from '#types/mix.js';
 import { Extension } from '#types/extension-types.js';
-import { injectable, InjectionToken, makePropDecorator, reflector } from '#di';
+import { InjectionToken, makePropDecorator, reflector } from '#di';
 import { featureModule } from '#decorators/module.js';
 import {
   isController,
@@ -16,7 +16,6 @@ import {
 } from './type-guards.js';
 import { rootModule } from '#decorators/root-module.js';
 import { controller } from '#decorators/controller.js';
-import { RequestContext } from '../request-context.js';
 import { getModuleMetadata } from './get-module-metadata.js';
 import { AppendsWithParams } from '#types/module-metadata.js';
 
