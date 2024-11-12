@@ -20,3 +20,4 @@ export { DefaultHttpBackend } from '#interceptors/default-http-backend.js';
 export { ChainMaker } from '#interceptors/chain-maker.js';
 export { DefaultSingletonChainMaker } from '#interceptors/default-singleton-chain-maker.js';
 export { DefaultSingletonHttpFrontend } from '#interceptors/default-singleton-http-frontend.js';
+export { DefaultHttpFrontend } from '#interceptors/default-http-frontend.js';

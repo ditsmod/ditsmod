@@ -51,6 +51,7 @@ import { DefaultHttpBackend } from '#interceptors/default-http-backend.js';
 import { DefaultSingletonHttpBackend } from '#interceptors/default-singleton-http-backend.js';
 import { DefaultSingletonChainMaker } from '#interceptors/default-singleton-chain-maker.js';
 import { DefaultSingletonHttpFrontend } from '#interceptors/default-singleton-http-frontend.js';
+import { DefaultHttpFrontend } from '#interceptors/default-http-frontend.js';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
@@ -91,7 +92,11 @@ export class PreRouterExtension implements Extension<void> {
 
   protected addDefaultProviders(aMetadataPerMod3: MetadataPerMod3[]) {
     const meta = this.getMeta(aMetadataPerMod3);
-    meta.providersPerReq.unshift({ token: HttpBackend, useClass: DefaultHttpBackend }, ChainMaker);
+    meta.providersPerReq.unshift(
+      { token: HttpBackend, useClass: DefaultHttpBackend },
+      { token: HttpFrontend, useClass: DefaultHttpFrontend },
+      ChainMaker,
+    );
 
     meta.providersPerRou.unshift(
       { token: HttpBackend, useClass: DefaultSingletonHttpBackend },
