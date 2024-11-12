@@ -18,3 +18,4 @@ export { InterceptorWithGuards } from './interceptors/interceptor-with-guards.js
 export { DefaultSingletonHttpBackend } from './interceptors/default-singleton-http-backend.js';
 export { DefaultHttpBackend } from './interceptors/default-http-backend.js';
 export { ChainMaker } from './interceptors/chain-maker.js';
+export { DefaultSingletonChainMaker } from './interceptors/default-singleton-chain-maker.js';
