@@ -4,9 +4,7 @@ import {
   Extension,
   ExtensionsManager,
   HTTP_INTERCEPTORS,
-  RouteMeta,
   PerAppService,
-  ControllerMetadata,
   Status,
   HttpMethod,
   Provider,
@@ -14,7 +12,7 @@ import {
   GroupStage1MetaPerApp,
 } from '@ditsmod/core';
 import { CorsOptions, mergeOptions } from '@ts-stack/cors';
-import { MetadataPerMod3, ROUTES_EXTENSIONS } from '@ditsmod/routing';
+import { ControllerMetadata, MetadataPerMod3, RouteMeta, ROUTES_EXTENSIONS } from '@ditsmod/routing';
 
 import { CorsInterceptor } from './cors.interceptor.js';
 import { ALLOW_METHODS } from './constans.js';
