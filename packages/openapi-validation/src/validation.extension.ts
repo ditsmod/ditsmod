@@ -1,5 +1,5 @@
-import { Extension, ExtensionsManager, HTTP_INTERCEPTORS, PerAppService, injectable, optional } from '@ditsmod/core';
-import { ROUTES_EXTENSIONS } from '@ditsmod/routing';
+import { Extension, ExtensionsManager, PerAppService, injectable, optional } from '@ditsmod/core';
+import { HTTP_INTERCEPTORS, ROUTES_EXTENSIONS } from '@ditsmod/routing';
 import { BODY_PARSER_EXTENSIONS } from '@ditsmod/body-parser';
 import { isReferenceObject } from '@ditsmod/openapi';
 

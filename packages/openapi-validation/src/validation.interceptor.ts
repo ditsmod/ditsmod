@@ -2,8 +2,6 @@ import {
   injectable,
   Injector,
   skipSelf,
-  HttpHandler,
-  HttpInterceptor,
   Status,
   CustomError,
   NodeRequest,
@@ -12,7 +10,7 @@ import {
 } from '@ditsmod/core';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
 import { DictService } from '@ditsmod/i18n';
-import { RouteMeta } from '@ditsmod/routing';
+import { HttpHandler, HttpInterceptor, RouteMeta } from '@ditsmod/routing';
 
 import { ValidationRouteMeta } from './types.js';
 import { AssertDict } from './locales/current/index.js';
