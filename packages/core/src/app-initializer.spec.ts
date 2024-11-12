@@ -463,7 +463,7 @@ describe('AppInitializer', () => {
 
     const module2WithParams: ModuleWithParams = Module2.withParams();
     const module3WithParams: ModuleWithParams = { path: 'one', module: Module3 };
-    const module4WithParams: ModuleWithParams = { guards: [], module: Module4 };
+    const module4WithParams: ModuleWithParams = { module: Module4 };
     @rootModule({
       imports: [Module0, Module1, module2WithParams, Module5, module3WithParams, module4WithParams],
       exports: [Module0, module2WithParams, module3WithParams],
