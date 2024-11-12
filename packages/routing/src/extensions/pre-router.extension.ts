@@ -48,6 +48,8 @@ import { SingletonInterceptorWithGuards } from '../interceptors/singleton-interc
 import { InterceptorWithGuards } from '../interceptors/interceptor-with-guards.js';
 import { RouteMeta } from '../route-data.js';
 import { ChainMaker } from '../interceptors/chain-maker.js';
+import { DefaultHttpBackend } from '../interceptors/default-http-backend.js';
+import { DefaultSingletonHttpBackend } from '../interceptors/default-singleton-http-backend.js';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
@@ -68,6 +70,7 @@ export class PreRouterExtension implements Extension<void> {
   async stage1() {
     this.groupStage1Meta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS);
     this.injectorPerApp = this.perAppService.reinitInjector([{ token: Router, useValue: this.router }]);
+    this.addDefaultProviders(this.groupStage1Meta.groupData);
   }
 
   async stage2(injectorPerMod: Injector) {
@@ -77,6 +80,22 @@ export class PreRouterExtension implements Extension<void> {
   async stage3() {
     const preparedRouteMeta = this.prepareRoutesMeta(this.groupStage1Meta.groupData);
     this.setRoutes(this.groupStage1Meta, preparedRouteMeta);
+  }
+
+  protected getMeta(aMetadataPerMod3: MetadataPerMod3[]) {
+    // Since each extension received the same `meta` array and not a copy of it,
+    // we can take `meta` from any element in the `groupData` array.
+    return aMetadataPerMod3.at(0)!.meta;
+  }
+
+  protected addDefaultProviders(aMetadataPerMod3: MetadataPerMod3[]) {
+    const meta = this.getMeta(aMetadataPerMod3);
+    meta.providersPerReq.unshift({ token: HttpBackend, useClass: DefaultHttpBackend }, ChainMaker);
+
+    meta.providersPerRou.unshift(
+      { token: HttpBackend, useClass: DefaultSingletonHttpBackend },
+      { token: ChainMaker, useClass: DefaultSingletonChainMaker },
+    );
   }
 
   protected prepareRoutesMeta(aMetadataPerMod3: MetadataPerMod3[]) {
