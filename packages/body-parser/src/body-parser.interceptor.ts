@@ -1,7 +1,8 @@
-import { HttpHandler, HttpInterceptor, Injector, RequestContext, injectable } from '@ditsmod/core';
+import { Injector, RequestContext, injectable } from '@ditsmod/core';
 import { BodyParserGroup } from '@ts-stack/body-parser';
 
 import { HTTP_BODY } from './body-parser-config.js';
+import { HttpHandler, HttpInterceptor } from '@ditsmod/routing';
 
 @injectable()
 export class BodyParserInterceptor implements HttpInterceptor {

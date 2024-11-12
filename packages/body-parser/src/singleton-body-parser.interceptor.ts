@@ -1,5 +1,6 @@
-import { HttpHandler, HttpInterceptor, SingletonRequestContext, injectable } from '@ditsmod/core';
 import { BodyParserGroup } from '@ts-stack/body-parser';
+import { SingletonRequestContext, injectable } from '@ditsmod/core';
+import { HttpHandler, HttpInterceptor } from '@ditsmod/routing';
 
 @injectable()
 export class SingletonBodyParserInterceptor implements HttpInterceptor {

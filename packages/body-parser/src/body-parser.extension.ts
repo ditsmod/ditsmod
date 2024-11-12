@@ -1,12 +1,5 @@
-import {
-  Extension,
-  ExtensionsManager,
-  HTTP_INTERCEPTORS,
-  PerAppService,
-  injectable,
-  InjectionToken,
-} from '@ditsmod/core';
-import { ROUTES_EXTENSIONS } from '@ditsmod/routing';
+import { Extension, ExtensionsManager, PerAppService, injectable, InjectionToken } from '@ditsmod/core';
+import { HTTP_INTERCEPTORS, ROUTES_EXTENSIONS } from '@ditsmod/routing';
 
 import { BodyParserConfig } from './body-parser-config.js';
 import { BodyParserInterceptor } from './body-parser.interceptor.js';
