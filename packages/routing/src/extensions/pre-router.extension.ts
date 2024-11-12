@@ -20,15 +20,11 @@ import {
   HttpFrontend,
   Extension,
   HttpMethod,
-  RouteMeta,
   RouteHandler,
   Router,
   Provider,
-  InterceptorWithGuards,
   RequestContext,
-  ControllerMetadata,
   DefaultSingletonChainMaker,
-  SingletonInterceptorWithGuards,
   GroupStage1Meta,
   GroupStage1MetaPerApp,
   CTX_DATA,
@@ -48,6 +44,10 @@ import {
 
 import { MetadataPerMod3, PreparedRouteMeta, ROUTES_EXTENSIONS } from '../types.js';
 import { RoutingErrorMediator } from '../router-error-mediator.js';
+import { ControllerMetadata } from '../controller-metadata.js';
+import { SingletonInterceptorWithGuards } from '../interceptors/singleton-interceptor-with-guards.js';
+import { InterceptorWithGuards } from '../interceptors/interceptor-with-guards.js';
+import { RouteMeta } from '../route-data.js';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
