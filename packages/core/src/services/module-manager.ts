@@ -228,17 +228,19 @@ export class ModuleManager {
   /**
    * Here "raw" means that it returns "raw" normalized metadata (without `this.copyMeta()`).
    */
-  protected scanRawModule(modOrObj: ModRefId) {
-    const meta = this.normalizeMetadata(modOrObj);
+  protected scanRawModule(modRefId: ModRefId) {
+    const meta = this.normalizeMetadata(modRefId);
+    const props = [
+      'importsModules',
+      'importsWithParams',
+      'exportsModules',
+      'exportsWithParams',
+      'appendsModules',
+      'appendsWithParams',
+    ] as const;
 
-    const inputs = [
-      ...meta.importsModules,
-      ...meta.importsWithParams,
-      ...meta.exportsModules,
-      ...meta.exportsWithParams,
-      ...meta.appendsModules,
-      ...meta.appendsWithParams,
-    ];
+    // Merging arrays with this props in one array.
+    const inputs = props.map((p) => meta[p]).reduce<ModRefId[]>((prev, curr) => prev.concat(curr), []);
 
     for (const input of inputs) {
       if (this.unfinishedScanModules.has(input) || this.scanedModules.has(input)) {
@@ -251,38 +253,20 @@ export class ModuleManager {
     }
 
     if (meta.id) {
-      this.mapId.set(meta.id, modOrObj);
+      this.mapId.set(meta.id, modRefId);
       this.systemLogMediator.moduleHasId(this, meta.id);
     }
-    this.map.set(modOrObj, meta);
+    this.map.set(modRefId, meta);
     return meta;
   }
 
   protected copyMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(meta: NormalizedModuleMetadata<T, A>) {
     meta = { ...(meta || ({} as NormalizedModuleMetadata<T, A>)) };
-    meta.importsModules = meta.importsModules.slice();
-    meta.importsWithParams = meta.importsWithParams.slice();
-    meta.appendsModules = meta.appendsModules.slice();
-    meta.appendsWithParams = meta.appendsWithParams.slice();
-    meta.controllers = meta.controllers.slice();
-    meta.extensionsProviders = meta.extensionsProviders.slice();
-    meta.exportsModules = meta.exportsModules.slice();
-    meta.exportsWithParams = meta.exportsWithParams.slice();
-    meta.exportedProvidersPerMod = meta.exportedProvidersPerMod.slice();
-    meta.exportedProvidersPerRou = meta.exportedProvidersPerRou.slice();
-    meta.exportedProvidersPerReq = meta.exportedProvidersPerReq.slice();
-    meta.exportedMultiProvidersPerMod = meta.exportedMultiProvidersPerMod.slice();
-    meta.exportedMultiProvidersPerRou = meta.exportedMultiProvidersPerRou.slice();
-    meta.exportedMultiProvidersPerReq = meta.exportedMultiProvidersPerReq.slice();
-    meta.providersPerApp = meta.providersPerApp.slice();
-    meta.providersPerMod = meta.providersPerMod.slice();
-    meta.providersPerRou = meta.providersPerRou.slice();
-    meta.providersPerReq = meta.providersPerReq.slice();
-    meta.resolvedCollisionsPerApp = meta.resolvedCollisionsPerApp.slice();
-    meta.resolvedCollisionsPerMod = meta.resolvedCollisionsPerMod.slice();
-    meta.resolvedCollisionsPerRou = meta.resolvedCollisionsPerRou.slice();
-    meta.resolvedCollisionsPerReq = meta.resolvedCollisionsPerReq.slice();
-    meta.guardsPerMod = meta.guardsPerMod.slice();
+    Object.keys(meta).forEach((p) => {
+      if (Array.isArray((meta as any)[p])) {
+        (meta as any)[p] = (meta as any)[p].slice();
+      }
+    });
     return meta;
   }
 
