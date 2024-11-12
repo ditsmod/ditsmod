@@ -1,4 +1,5 @@
-import { injectable, Status, HttpMethod, DefaultSingletonHttpBackend, SingletonRequestContext } from '@ditsmod/core';
+import { injectable, Status, HttpMethod, SingletonRequestContext } from '@ditsmod/core';
+import { DefaultSingletonHttpBackend } from '@ditsmod/routing';
 
 @injectable()
 export class SingletonReturnHttpBackend extends DefaultSingletonHttpBackend {
