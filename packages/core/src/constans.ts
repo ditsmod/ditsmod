@@ -3,7 +3,6 @@ import { InjectionToken } from '#di';
 import { PathParam } from '#types/router.js';
 import { NodeServer } from '#types/server-options.js';
 import { ModuleExtract } from './types/module-extract.js';
-import { HttpInterceptor } from './interceptors/tokens-and-types.js';
 import { AnyObj, Provider } from './types/mix.js';
 import { NodeRequest, NodeResponse } from './types/server-options.js';
 
@@ -11,7 +10,6 @@ import { NodeRequest, NodeResponse } from './types/server-options.js';
  * A DI token that allows you to obtain the instance of the server that is serving the current application.
  */
 export const SERVER = new InjectionToken<NodeServer>('SERVER');
-export const HTTP_INTERCEPTORS = new InjectionToken<HttpInterceptor[]>('HTTP_INTERCEPTORS');
 export const defaultProvidersPerMod: Provider[] = [ModuleExtract];
 /**
  * DI token for native Node.js request.

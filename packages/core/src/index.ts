@@ -5,7 +5,6 @@ export { AppInitializer } from './app-initializer.js';
 export { Application } from './application.js';
 export {
   SERVER,
-  HTTP_INTERCEPTORS,
   NODE_REQ,
   NODE_RES,
   A_PATH_PARAMS,
@@ -47,14 +46,6 @@ export { defaultProvidersPerApp } from './default-providers-per-app.js';
 export { defaultProvidersPerRou } from './default-providers-per-rou.js';
 export { defaultProvidersPerReq } from './default-providers-per-req.js';
 export { RequestContext, SingletonRequestContext } from './request-context.js';
-export {
-  HttpBackend,
-  HttpFrontend,
-  HttpHandler,
-  HttpInterceptor,
-  HttpInterceptorHandler,
-  SingletonHttpBackend,
-} from '#interceptors/tokens-and-types.js';
 export { ExtensionsContext } from '#services/extensions-context.js';
 export { ExtensionsManager } from '#services/extensions-manager.js';
 export { LogMediator } from '#logger/log-mediator.js';
