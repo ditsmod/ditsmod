@@ -103,7 +103,7 @@ export class PreRouterExtension implements Extension<void> {
 
     aMetadataPerMod3.forEach((metadataPerMod3) => {
       if (!metadataPerMod3.aControllerMetadata.length) {
-        // No routes from this extension (stage1Meta.extension.constructor.name).
+        // No routes from this extension.
         return;
       }
 
