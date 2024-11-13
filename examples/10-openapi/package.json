@@ -17,10 +17,5 @@
     "#app/*": "./dist/app/*",
     "#routed/*": "./dist/app/modules/routed/*",
     "#service/*": "./dist/app/modules/service/*"
-  },
-  "dependencies": {
-    "@ditsmod/core": "^2.49.0",
-    "@ditsmod/openapi": "^2.22.0",
-    "@ditsmod/routing": "^2.0.0"
   }
 }

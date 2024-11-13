@@ -14,9 +14,5 @@
   },
   "imports": {
     "#app/*": "./dist/app/*"
-  },
-  "dependencies": {
-    "@ditsmod/core": "^2.50.0",
-    "@ditsmod/routing": "^2.0.0"
   }
 }
