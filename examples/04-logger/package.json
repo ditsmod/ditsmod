@@ -9,7 +9,7 @@
     "watch": "npm run build -- --watch",
     "clean": "rimraf dist*",
     "test": "tsc -b tsconfig.e2e.json && yarn esm-jest",
-"esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",
+    "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",
     "build": "tsc -b tsconfig.build.json"
   },
   "imports": {
@@ -17,8 +17,8 @@
   },
   "dependencies": {
     "bunyan": "^1.8.15",
-    "pino": "^9.4.0",
-    "winston": "^3.14.2"
+    "pino": "^9.5.0",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "@types/bunyan": "^1.8.11"
