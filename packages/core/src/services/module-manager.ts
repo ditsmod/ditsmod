@@ -31,6 +31,7 @@ import {
 } from '#utils/type-guards.js';
 import { Providers } from '#utils/providers.js';
 import { clearDebugModuleNames, getDebugModuleName } from '#utils/get-debug-module-name.js';
+import { objectKeys } from '#utils/object-keys.js';
 
 export type ModulesMap = Map<ModRefId, NormalizedModuleMetadata>;
 export type ModulesMapId = Map<string, ModRefId>;
@@ -262,9 +263,9 @@ export class ModuleManager {
 
   protected copyMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(meta: NormalizedModuleMetadata<T, A>) {
     meta = { ...(meta || ({} as NormalizedModuleMetadata<T, A>)) };
-    Object.keys(meta).forEach((p) => {
-      if (Array.isArray((meta as any)[p])) {
-        (meta as any)[p] = (meta as any)[p].slice();
+    objectKeys(meta).forEach((p) => {
+      if (Array.isArray(meta[p])) {
+        (meta as any)[p] = meta[p].slice();
       }
     });
     return meta;
