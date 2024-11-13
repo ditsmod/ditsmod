@@ -1,7 +1,7 @@
 /**
  * This function is type-safe if the returned keys are used as an index in the object
- * from which they were taken. However, if you use the keys separately from the `obj`
- * object, keep in mind that there may actually be more keys than `keyof T`.
+ * from which they were taken. However, if you use the keys separately from the `obj`,
+ * keep in mind that there may actually be more keys than `keyof T`.
  *
  * For more info, see https://github.com/microsoft/TypeScript/wiki/FAQ#indirect-excess-properties-are-ok
  */
