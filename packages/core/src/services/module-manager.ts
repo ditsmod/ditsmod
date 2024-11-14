@@ -550,6 +550,7 @@ export class ModuleManager {
   protected quickCheckMetadata(meta: NormalizedModuleMetadata) {
     if (
       !isNormRootModule(meta) &&
+      !meta.appendsWithParams.length &&
       !meta.providersPerApp.length &&
       !meta.controllers.length &&
       !meta.exportedProvidersPerMod.length &&

@@ -70,6 +70,22 @@ describe('ModuleManager', () => {
       expect(() => mock.scanModule(Module1)).toThrow(/Validation Module1 failed: this module should have/);
     });
 
+    it('should works, when no export and no controllers, but with appends for prefix (for version)', () => {
+      class Provider1 {}
+      class Provider2 {}
+
+      @featureModule({
+        providersPerMod: [Provider1, Provider2],
+        exports: [Provider1],
+      })
+      class Version1Module {}
+
+      @featureModule({ appends: [{ path: 'v1', module: Version1Module }] })
+      class Module2 {}
+
+      expect(() => mock.scanModule(Module2)).not.toThrow();
+    });
+
     it('should works with extension only', () => {
       class Ext implements Extension {
         async stage1() {}
