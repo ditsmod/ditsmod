@@ -76,7 +76,7 @@ import { route } from '@ditsmod/routing';
 export class HelloWorldController {
   @route('GET', 'hello')
   method1(res: Res) {
-    res.send('Hello World!');
+    res.send('Hello, World!');
   }
 }
 ```
@@ -99,7 +99,7 @@ export class HelloWorldController {
 
   @route('GET', 'hello')
   method1() {
-    this.res.send('Hello World!');
+    this.res.send('Hello, World!');
   }
 }
 ```
@@ -148,7 +148,7 @@ export class HelloWorldController {
 
   @route('GET', 'hello')
   method1() {
-    this.nodeRes.end('Hello World!');
+    this.nodeRes.end('Hello, World!');
   }
 }
 ```

@@ -15,7 +15,7 @@ describe('SomeController', () => {
     someController = injector.get(SomeController);
   });
 
-  it('should say "Hello World!"', () => {
+  it('should say "Hello, World!"', () => {
     expect(() => someController.tellHello(res)).not.toThrow();
     expect(send).toHaveBeenCalledTimes(1);
   });

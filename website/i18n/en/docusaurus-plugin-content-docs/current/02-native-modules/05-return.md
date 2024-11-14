@@ -14,7 +14,7 @@ import { route } from '@ditsmod/routing';
 export class HelloWorldController {
   @route('GET')
   async tellHello() {
-    return 'Hello World!\n';
+    return 'Hello, World!\n';
   }
 }
 ```

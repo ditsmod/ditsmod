@@ -21,7 +21,7 @@ describe('10-openapi', () => {
     const { type, status, text } = await testAgent.get('/');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
-    expect(text).toBe('Hello World!\n');
+    expect(text).toBe('Hello, World!\n');
   });
 
   it('serves main page for OpenAPI docs', async () => {

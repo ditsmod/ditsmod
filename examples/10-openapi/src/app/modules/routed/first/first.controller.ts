@@ -10,7 +10,7 @@ import { getMetaContent } from './overriden-helper.js';
 export class FirstController {
   @route('GET')
   hello(res: Res) {
-    res.send('Hello World!\n');
+    res.send('Hello, World!\n');
   }
 
   @oasRoute('GET', 'guard', [BasicGuard])

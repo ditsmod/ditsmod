@@ -9,7 +9,7 @@ import { MyJwtPayload } from './modules/services/auth/types.js';
 export class HelloWorldController {
   @route('GET')
   async getToken(res: Res) {
-    res.send('Hello World!\n');
+    res.send('Hello, World!\n');
   }
 
   @route('GET', 'profile', [BearerGuard])

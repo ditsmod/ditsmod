@@ -5,6 +5,6 @@ import { route } from '@ditsmod/routing';
 export class HelloWorldController {
   @route('GET')
   tellHello(res: Res) {
-    res.send('Hello World!\n');
+    res.send('Hello, World!\n');
   }
 }

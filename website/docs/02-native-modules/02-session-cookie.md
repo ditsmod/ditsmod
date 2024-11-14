@@ -49,7 +49,7 @@ export class HelloWorldController {
   @route('GET', 'set')
   setCookie() {
     this.session.id = '123';
-    this.res.send('Hello World!\n');
+    this.res.send('Hello, World!\n');
   }
 
   @route('GET', 'get')

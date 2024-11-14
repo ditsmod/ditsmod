@@ -9,7 +9,7 @@ import { controller, route } from '@ditsmod/core';
 export class HelloWorldController {
   @route('GET')
   async tellHello() {
-    return 'Hello World!\n';
+    return 'Hello, World!\n';
   }
 }
 ```

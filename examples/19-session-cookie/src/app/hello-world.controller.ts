@@ -9,7 +9,7 @@ export class HelloWorldController {
   @route('GET', 'set')
   setCookie(res: Res) {
     this.session.id = '123';
-    res.send('Hello World!\n');
+    res.send('Hello, World!\n');
   }
 
   @route('GET', 'get')
@@ -23,7 +23,7 @@ export class HelloWorldController2 {
   @route('GET', 'set2')
   setCookie(ctx: RequestContextWithSession) {
     ctx.sessionCookie.id = '123';
-    ctx.send('Hello World!\n');
+    ctx.send('Hello, World!\n');
   }
 
   @route('GET', 'get2')

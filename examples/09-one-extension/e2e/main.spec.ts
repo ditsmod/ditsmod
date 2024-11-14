@@ -21,6 +21,6 @@ describe('09-one-extension', () => {
     const { type, status, text } = await testAgent.get('/');
     expect(type).toBe('text/plain');
     expect(status).toBe(200);
-    expect(text).toBe('Hello World!\n');
+    expect(text).toBe('Hello, World!\n');
   });
 });

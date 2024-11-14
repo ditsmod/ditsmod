@@ -22,7 +22,7 @@ describe('19-session-cookie', () => {
       const { status, headers, text } = await testAgent.get('/set');
       expect(status).toBe(200);
       expect(headers['set-cookie'][0]).toMatch(/custom-session-name=123/);
-      expect(text).toBe('Hello World!\n');
+      expect(text).toBe('Hello, World!\n');
     });
 
     it('should read cookie', async () => {
@@ -37,7 +37,7 @@ describe('19-session-cookie', () => {
       const { status, headers, text } = await testAgent.get('/set2');
       expect(status).toBe(200);
       expect(headers['set-cookie'][0]).toMatch(/custom-session-name=123/);
-      expect(text).toBe('Hello World!\n');
+      expect(text).toBe('Hello, World!\n');
     });
 
     it('should read cookie', async () => {
