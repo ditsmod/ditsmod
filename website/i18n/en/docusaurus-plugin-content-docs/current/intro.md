@@ -16,7 +16,9 @@ The main features of Ditsmod:
 - Ability to write your own extensions (sometimes called plugins) that can be asynchronously initialized and that can depend on each other.
 - Ability to dynamically add and remove modules after starting the web server, without the need to restart.
 - Has OpenAPI support, and has the ability to validate queries based on OpenAPI metadata.
-- To date, [Ditsmod is one of the fastest][14] among Node.js web frameworks.
+- To date, [Ditsmod is one of the fastest][14] among Node.js web frameworks:
+
+![Techempower benchmarks](/img/tech-empower-benchmarks.png)
 
 Some concepts of Ditsmod architecture are taken from Angular concepts, and DI is built based on the native Angular DI module.
 
@@ -226,7 +228,7 @@ bun dist/main.js
 [10]: https://jestjs.io/en/
 [12]: https://en.wikipedia.org/wiki/Singleton_pattern
 [13]: https://github.com/ditsmod/realworld
-[14]: https://github.com/ditsmod/vs-webframework#readme
+[14]: https://www.techempower.com/benchmarks/#section=test&runid=e81c1103-95d8-485e-949a-5ae323c76c87&hw=ph&test=composite&l=zieepr-67z
 [15]: https://github.com/remy/nodemon
 [16]: https://www.typescriptlang.org/docs/handbook/project-references.html
 [17]: https://github.com/TypeStrong/ts-node
