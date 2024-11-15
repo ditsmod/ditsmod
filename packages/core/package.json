@@ -19,6 +19,7 @@
   "imports": {
     "#di": "./dist/di/index.js",
     "#di/*": "./dist/di/*",
+    "#init/*": "./dist/init/*",
     "#types/*": "./dist/types/*",
     "#utils/*": "./dist/utils/*",
     "#models/*": "./dist/models/*",

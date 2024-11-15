@@ -3,14 +3,15 @@ import * as http2 from 'http2';
 import * as https from 'https';
 
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { ModuleManager } from './module-manager.js';
+import { ModuleManager } from '#init/module-manager.js';
 import { Router } from '#types/router.js';
 import { AppOptions } from '#types/app-options.js';
 import { ModuleType } from '#types/mix.js';
-import { AppInitializer } from './app-initializer.js';
-import { Application } from './application.js';
-import { rootModule } from './decorators/root-module.js';
-import { LoggerConfig, LogMediator } from '#core/index.js';
+import { AppInitializer } from '#init/app-initializer.js';
+import { Application } from '#init/application.js';
+import { rootModule } from '#decorators/root-module.js';
+import { LogMediator } from '#logger/log-mediator.js';
+import { LoggerConfig } from '#logger/logger.js';
 
 describe('Application', () => {
   class ApplicationMock extends Application {

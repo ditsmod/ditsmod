@@ -1,17 +1,17 @@
 import { forwardRef, inject, injectable, Injector, KeyRegistry } from '#di';
 
-import { ImportsResolver } from './imports-resolver.js';
-import { NormalizedModuleMetadata } from './types/normalized-module-metadata.js';
-import { GlobalProviders, ImportedTokensMap } from './types/metadata-per-mod.js';
-import { CanActivate, ModRefId, ModuleType, Provider, Scope } from './types/mix.js';
-import { ModuleWithParams } from './types/module-metadata.js';
-import { ModuleFactory } from './module-factory.js';
-import { ModuleManager } from './module-manager.js';
-import { SystemLogMediator } from './logger/system-log-mediator.js';
+import { ImportsResolver } from '#init/imports-resolver.js';
+import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
+import { GlobalProviders, ImportedTokensMap } from '#types/metadata-per-mod.js';
+import { CanActivate, ModRefId, ModuleType, Provider, Scope } from '#types/mix.js';
+import { ModuleWithParams } from '#types/module-metadata.js';
+import { ModuleFactory } from '#init/module-factory.js';
+import { ModuleManager } from '#init/module-manager.js';
+import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { featureModule } from '#decorators/module.js';
-import { SystemErrorMediator } from './error/system-error-mediator.js';
-import { defaultProvidersPerReq } from './default-providers-per-req.js';
-import { defaultProvidersPerRou } from './default-providers-per-rou.js';
+import { SystemErrorMediator } from '#error/system-error-mediator.js';
+import { defaultProvidersPerReq } from '#init/default-providers-per-req.js';
+import { defaultProvidersPerRou } from '#init/default-providers-per-rou.js';
 import { ModuleExtract } from '#types/module-extract.js';
 import { rootModule } from '#decorators/root-module.js';
 import { guard } from '#decorators/guard.js';

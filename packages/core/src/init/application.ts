@@ -9,9 +9,9 @@ import { AppOptions } from '#types/app-options.js';
 import { HttpServerModule, HttpsServerModule } from '#types/http-module.js';
 import { AnyFn, ModuleType } from '#types/mix.js';
 import { Http2SecureServerOptions, NodeServer, RequestListener } from '#types/server-options.js';
-import { ModuleManager } from './module-manager.js';
+import { ModuleManager } from '#init/module-manager.js';
 import { isHttp2SecureServerOptions } from '#utils/type-guards.js';
-import { AppInitializer } from './app-initializer.js';
+import { AppInitializer } from '#init/app-initializer.js';
 
 export class Application {
   protected appOptions: AppOptions;

@@ -11,7 +11,7 @@ import { ExtensionProvider, Extension } from '#extension/extension-types.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { getCallerDir } from '#utils/callsites.js';
 import { isMultiProvider } from '#utils/type-guards.js';
-import { ModuleManager } from './module-manager.js';
+import { ModuleManager } from '#init/module-manager.js';
 import { guard } from '#decorators/guard.js';
 import { RequestContext } from '#services/request-context.js';
 import { clearDebugModuleNames } from '#utils/get-debug-module-name.js';

@@ -1,20 +1,24 @@
 export * from '#di';
 export * from '@ts-stack/chain-error';
 
-export { AppInitializer } from './app-initializer.js';
-export { Application } from './application.js';
+export { AppInitializer } from '#init/app-initializer.js';
+export { Application } from '#init/application.js';
+export { ModuleFactory } from '#init/module-factory.js';
+export { defaultProvidersPerApp } from '#init/default-providers-per-app.js';
+export { defaultProvidersPerRou } from '#init/default-providers-per-rou.js';
+export { defaultProvidersPerReq } from '#init/default-providers-per-req.js';
 export { SERVER, NODE_REQ, NODE_RES, A_PATH_PARAMS, QUERY_STRING, PATH_PARAMS, QUERY_PARAMS } from './constans.js';
-export { CustomError } from './error/custom-error.js';
-export { ErrorOpts } from './error/error-opts.js';
+export { CustomError } from '#error/custom-error.js';
+export { ErrorOpts } from '#error/error-opts.js';
 export {
   controller,
   ControllerRawMetadata,
   ControllerRawMetadata1,
   ControllerRawMetadata2,
-} from './decorators/controller.js';
-export { guard } from './decorators/guard.js';
-export { featureModule } from './decorators/module.js';
-export { rootModule } from './decorators/root-module.js';
+} from '#decorators/controller.js';
+export { guard } from '#decorators/guard.js';
+export { featureModule } from '#decorators/module.js';
+export { rootModule } from '#decorators/root-module.js';
 export {
   ExtensionType,
   ExtensionCounters,
@@ -30,13 +34,9 @@ export { ModuleExtract } from '#types/module-extract.js';
 export { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 export { ProvidersMetadata } from '#types/providers-metadata.js';
 export { AppOptions } from '#types/app-options.js';
-export { ModuleFactory } from './module-factory.js';
-export { ConsoleLogger } from './logger/console-logger.js';
-export { HttpErrorHandler } from './error/http-error-handler.js';
-export { DefaultHttpErrorHandler } from './error/default-http-error-handler.js';
-export { defaultProvidersPerApp } from './default-providers-per-app.js';
-export { defaultProvidersPerRou } from './default-providers-per-rou.js';
-export { defaultProvidersPerReq } from './default-providers-per-req.js';
+export { ConsoleLogger } from '#logger/console-logger.js';
+export { HttpErrorHandler } from '#error/http-error-handler.js';
+export { DefaultHttpErrorHandler } from '#error/default-http-error-handler.js';
 export { RequestContext, SingletonRequestContext } from '#services/request-context.js';
 export { ExtensionsContext } from '#extension/extensions-context.js';
 export { ExtensionsManager } from '#extension/extensions-manager.js';
@@ -45,7 +45,7 @@ export { LogItem } from '#logger/types.js';
 export { SystemLogMediator } from '#logger/system-log-mediator.js';
 export { ErrorMediator } from '#error/error-mediator.js';
 export { SystemErrorMediator } from '#error/system-error-mediator.js';
-export { ModuleManager } from './module-manager.js';
+export { ModuleManager } from '#init/module-manager.js';
 export { PerAppService } from '#services/per-app.service.js';
 export { PreRouter } from '#services/pre-router.js';
 export { Req } from '#services/request.js';

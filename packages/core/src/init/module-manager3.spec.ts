@@ -3,8 +3,8 @@ import { featureModule } from '#decorators/module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { forwardRef } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { ModuleManager } from './module-manager.js';
-import { Module1 } from './module-manager4.spec.js';
+import { ModuleManager } from '#init/module-manager.js';
+import { Module1 } from '#init/module-manager4.spec.js';
 
 @controller()
 class Controller1 {}

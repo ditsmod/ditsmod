@@ -1,19 +1,19 @@
 import { ChainError } from '@ts-stack/chain-error';
 
 import { BeforeToken, InjectionToken, Injector } from '#di';
-import { ImportsResolver } from './imports-resolver.js';
+import { ImportsResolver } from '#init/imports-resolver.js';
 import { Logger } from '#logger/logger.js';
 import { SystemErrorMediator } from '#error/system-error-mediator.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { AppOptions } from '#types/app-options.js';
-import { ModuleFactory } from './module-factory.js';
+import { ModuleFactory } from '#init/module-factory.js';
 import { Counter } from '#extension/counter.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ExtensionsContext } from '#extension/extensions-context.js';
 import { ExtensionsManager } from '#extension/extensions-manager.js';
-import { ModuleManager } from './module-manager.js';
+import { ModuleManager } from '#init/module-manager.js';
 import { PerAppService } from '#services/per-app.service.js';
 import { PreRouter } from '#services/pre-router.js';
 import { ModRefId, ModuleType, Provider } from '#types/mix.js';

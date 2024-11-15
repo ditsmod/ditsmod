@@ -1,7 +1,7 @@
 import { injectable, InjectionToken, Injector } from '#di';
 import { Extension, ExtensionCounters } from '#extension/extension-types.js';
 import { getExtensionProviderList } from '#extension/get-extension-provider.js';
-import { defaultProvidersPerApp } from '../default-providers-per-app.js';
+import { defaultProvidersPerApp } from '#init/default-providers-per-app.js';
 import { ExtensionsContext } from '#extension/extensions-context.js';
 import { ExtensionsManager } from '#extension/extensions-manager.js';
 
