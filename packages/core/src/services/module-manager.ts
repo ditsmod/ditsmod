@@ -550,19 +550,19 @@ export class ModuleManager {
   protected quickCheckMetadata(meta: NormalizedModuleMetadata) {
     if (
       !isNormRootModule(meta) &&
-      !meta.appendsWithParams.length &&
-      !meta.providersPerApp.length &&
+      !meta.exportedProvidersPerReq.length &&
       !meta.controllers.length &&
       !meta.exportedProvidersPerMod.length &&
       !meta.exportedProvidersPerRou.length &&
-      !meta.exportedProvidersPerReq.length &&
+      !meta.exportsModules.length &&
+      !meta.exportsWithParams.length &&
       !meta.exportedMultiProvidersPerMod.length &&
       !meta.exportedMultiProvidersPerRou.length &&
       !meta.exportedMultiProvidersPerReq.length &&
-      !meta.exportsModules.length &&
-      !meta.exportsWithParams.length &&
+      !meta.providersPerApp.length &&
       !meta.exportedExtensions.length &&
-      !meta.extensionsProviders.length
+      !meta.extensionsProviders.length &&
+      !meta.appendsWithParams.length
     ) {
       const moduleNames =
         [...this.unfinishedScanModules].map((modRefId) => getDebugModuleName(modRefId)).join(' -> ') || meta.name;
