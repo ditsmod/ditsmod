@@ -28,7 +28,7 @@
     "#error/*": "./dist/error/*",
     "#services/*": "./dist/services/*",
     "#core/*": "./dist/*",
-    "#extensions/*": "./dist/extensions/*",
+    "#extension/*": "./dist/extension/*",
     "#interceptors/*": "./dist/interceptors/*"
   },
   "exports": {

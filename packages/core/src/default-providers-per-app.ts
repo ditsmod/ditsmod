@@ -6,7 +6,7 @@ import { RequestContext } from '#services/request-context.js';
 import { Providers } from '#utils/providers.js';
 import { ConsoleLogger } from '#logger/console-logger.js';
 import { SystemErrorMediator } from '#error/system-error-mediator.js';
-import { Counter } from '#extensions/counter.js';
+import { Counter } from '#extension/counter.js';
 import { PreRouter } from '#services/pre-router.js';
 
 export const defaultProvidersPerApp: Readonly<Provider[]> = [

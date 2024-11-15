@@ -7,7 +7,7 @@ import { Class, InjectionToken, forwardRef, injectable } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyObj, CanActivate, ModuleType, Provider } from '#types/mix.js';
 import { ModuleWithParams, AppendsWithParams } from '#types/module-metadata.js';
-import { ExtensionProvider, Extension } from '#extensions/extension-types.js';
+import { ExtensionProvider, Extension } from '#extension/extension-types.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { getCallerDir } from '#utils/callsites.js';
 import { isMultiProvider } from '#utils/type-guards.js';

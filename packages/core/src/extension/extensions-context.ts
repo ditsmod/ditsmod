@@ -1,5 +1,5 @@
 import { Class, injectable } from '#di';
-import { ExtensionsGroupToken, GroupStage1Meta, Extension } from '#extensions/extension-types.js';
+import { ExtensionsGroupToken, GroupStage1Meta, Extension } from '#extension/extension-types.js';
 import { ModRefId } from '#types/mix.js';
 
 @injectable()

@@ -1,5 +1,5 @@
 import { KeyRegistry, InjectionToken, Provider } from '#di';
-import { ExtensionType, ExtensionProvider, Extension } from '#extensions/extension-types.js';
+import { ExtensionType, ExtensionProvider, Extension } from '#extension/extension-types.js';
 
 export class ExtensionObj {
   exportedOnly?: boolean;

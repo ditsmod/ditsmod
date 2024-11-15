@@ -9,7 +9,7 @@ import type { GlobalProviders, MetadataPerMod1 } from '#types/metadata-per-mod.j
 import { ImportObj } from '#types/metadata-per-mod.js';
 import type { ModuleType, Scope, Provider, GuardPerMod1, ModRefId } from '#types/mix.js';
 import type { ModuleWithParams } from '#types/module-metadata.js';
-import type { ExtensionProvider } from '#extensions/extension-types.js';
+import type { ExtensionProvider } from '#extension/extension-types.js';
 import { getCollisions } from '#utils/get-collisions.js';
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { getLastProviders } from '#utils/get-last-providers.js';

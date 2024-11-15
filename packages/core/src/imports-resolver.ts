@@ -16,7 +16,7 @@ import { getProvidersTargets, getTokens } from './utils/get-tokens.js';
 import { isClassProvider, isFactoryProvider, isTokenProvider, isValueProvider } from './utils/type-guards.js';
 import { SystemErrorMediator } from '#error/system-error-mediator.js';
 import { defaultProvidersPerRou } from './default-providers-per-rou.js';
-import { ExtensionCounters, ExtensionsGroupToken } from '#extensions/extension-types.js';
+import { ExtensionCounters, ExtensionsGroupToken } from '#extension/extension-types.js';
 import { getDebugModuleName } from '#utils/get-debug-module-name.js';
 
 export class ImportsResolver {

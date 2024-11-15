@@ -1,7 +1,7 @@
 import { Class } from '#di';
 import { ProvidersMetadata } from '#types/providers-metadata.js';
 import { AnyObj, GuardItem, ModuleType } from '#types/mix.js';
-import { ExtensionOptions } from '#extensions/get-extension-provider.js';
+import { ExtensionOptions } from '#extension/get-extension-provider.js';
 
 /**
  * Used for module metadata, for `appends` array.

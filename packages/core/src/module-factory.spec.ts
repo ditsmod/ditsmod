@@ -11,7 +11,7 @@ import { ModuleManager } from './module-manager.js';
 import { GlobalProviders, ImportObj, MetadataPerMod1 } from '#types/metadata-per-mod.js';
 import { GuardPerMod1, ModuleType } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
-import { ExtensionProvider } from '#extensions/extension-types.js';
+import { ExtensionProvider } from '#extension/extension-types.js';
 import { Router } from '#types/router.js';
 import { getImportedProviders, getImportedTokens } from './utils/get-imports.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';

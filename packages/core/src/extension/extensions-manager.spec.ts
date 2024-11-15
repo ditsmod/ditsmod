@@ -1,9 +1,9 @@
 import { injectable, InjectionToken, Injector } from '#di';
-import { Extension, ExtensionCounters } from '#extensions/extension-types.js';
-import { getExtensionProviderList } from '#extensions/get-extension-provider.js';
+import { Extension, ExtensionCounters } from '#extension/extension-types.js';
+import { getExtensionProviderList } from '#extension/get-extension-provider.js';
 import { defaultProvidersPerApp } from '../default-providers-per-app.js';
-import { ExtensionsContext } from '#extensions/extensions-context.js';
-import { ExtensionsManager } from '#extensions/extensions-manager.js';
+import { ExtensionsContext } from '#extension/extensions-context.js';
+import { ExtensionsManager } from '#extension/extensions-manager.js';
 
 describe('ExtensionsManager', () => {
   describe('stage1', () => {});
