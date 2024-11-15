@@ -1,7 +1,7 @@
 import { BeforeToken, InjectionToken, Injector } from '#di';
 
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { defaultExtensionsProviders } from './default-extensions-providers.js';
+import { defaultExtensionsProviders } from '#extension/default-extensions-providers.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { defaultProvidersPerReq } from './default-providers-per-req.js';
 import { ModuleManager } from './module-manager.js';
