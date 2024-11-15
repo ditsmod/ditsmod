@@ -1,5 +1,5 @@
 import { HttpMethod } from './mix.js';
-import { NodeRequest, NodeResponse } from './server-options.js';
+import { HttpRequest, HttpResponse } from './server-options.js';
 
 export class Router {
   on(method: HttpMethod, path: string, handle: RouteHandler): this {
@@ -16,8 +16,8 @@ export class Router {
 }
 
 export type RouteHandler = (
-  nodeReq: NodeRequest,
-  nodeRes: NodeResponse,
+  httpReq: HttpRequest,
+  httpRes: HttpResponse,
   params: PathParam[] | null,
   queryString: string,
 ) => Promise<void>;

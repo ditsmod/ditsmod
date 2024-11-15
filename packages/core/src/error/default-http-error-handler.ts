@@ -28,13 +28,13 @@ export class DefaultHttpErrorHandler implements HttpErrorHandler {
   }
 
   protected sendError(error: string, ctx: RequestContext, requestId: string, status?: Status) {
-    if (!ctx.nodeRes.headersSent) {
+    if (!ctx.httpRes.headersSent) {
       this.addRequestIdToHeader(requestId, ctx);
       ctx.sendJson({ error }, status);
     }
   }
 
   protected addRequestIdToHeader(requestId: string, ctx: RequestContext) {
-    ctx.nodeRes.setHeader('x-requestId', requestId);
+    ctx.httpRes.setHeader('x-requestId', requestId);
   }
 }

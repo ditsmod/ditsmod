@@ -1,11 +1,11 @@
 import request from 'supertest';
-import { NodeServer } from '@ditsmod/core';
+import { HttpServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 
 import { AppModule } from '#app/app.module.js';
 
 describe('11-override-core-log-messages', () => {
-  let server: NodeServer;
+  let server: HttpServer;
   let testAgent: ReturnType<typeof request>;
 
   beforeAll(async () => {

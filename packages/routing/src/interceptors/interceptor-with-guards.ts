@@ -3,8 +3,8 @@ import {
   CanActivate,
   injectable,
   Injector,
-  NODE_REQ,
-  NODE_RES,
+  REQ,
+  RES,
   QUERY_STRING,
   RequestContext,
   ResolvedGuardPerMod,
@@ -51,13 +51,13 @@ export class InterceptorWithGuards implements HttpInterceptor {
 
   protected getInjectorPerReq(rg: ResolvedGuardPerMod) {
     const inj = rg.injectorPerRou.createChildFromResolved(rg.resolvedPerReq!);
-    this.injector.fill(inj, [NODE_REQ, NODE_RES, A_PATH_PARAMS, QUERY_STRING]);
+    this.injector.fill(inj, [REQ, RES, A_PATH_PARAMS, QUERY_STRING]);
     return inj;
   }
 
   protected prohibitActivation(ctx: RequestContext, status?: Status) {
     const systemLogMediator = this.injector.get(SystemLogMediator) as SystemLogMediator;
-    systemLogMediator.youCannotActivateRoute(this, ctx.nodeReq.method!, ctx.nodeReq.url!);
+    systemLogMediator.youCannotActivateRoute(this, ctx.httpReq.method!, ctx.httpReq.url!);
     ctx.send(undefined, status || Status.UNAUTHORIZED);
   }
 }

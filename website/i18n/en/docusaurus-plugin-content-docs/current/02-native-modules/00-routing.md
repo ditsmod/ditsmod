@@ -16,8 +16,8 @@ interface Router {
 }
 
 type RouteHandler = (
-  nodeReq: NodeRequest,
-  nodeRes: NodeResponse,
+  httpReq: HttpRequest,
+  httpRes: HttpResponse,
   params: PathParam[],
   queryString: any
 ) => Promise<void>;

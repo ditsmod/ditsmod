@@ -3,7 +3,7 @@ import { CanActivate, guard, RequestContext } from '@ditsmod/core';
 @guard()
 export class BearerGuard implements CanActivate {
   async canActivate(ctx: RequestContext, params?: any[]) {
-    const authValue = ctx.nodeReq.headers.authorization?.split(' ');
+    const authValue = ctx.httpReq.headers.authorization?.split(' ');
     if (authValue?.[0] != 'Bearer') {
       return false;
     }

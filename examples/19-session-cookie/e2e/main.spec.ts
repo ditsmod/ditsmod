@@ -1,11 +1,11 @@
 import request from 'supertest';
 import { TestApplication } from '@ditsmod/testing';
-import { NodeServer } from '@ditsmod/core';
+import { HttpServer } from '@ditsmod/core';
 
 import { AppModule } from '#app/app.module.js';
 
 describe('19-session-cookie', () => {
-  let server: NodeServer;
+  let server: HttpServer;
   let testAgent: ReturnType<typeof request>;
 
   beforeAll(async () => {

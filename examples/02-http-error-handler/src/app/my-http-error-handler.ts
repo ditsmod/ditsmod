@@ -21,7 +21,7 @@ export class MyHttpErrorHandler implements HttpErrorHandler {
   }
 
   protected sendError(error: string, ctx: RequestContext, requestId: string, status?: Status) {
-    if (!ctx.nodeRes.headersSent) {
+    if (!ctx.httpRes.headersSent) {
       this.addRequestIdToHeader(requestId, ctx);
       const errStr = JSON.stringify({ error });
       ctx.send(errStr, status || Status.INTERNAL_SERVER_ERROR);
@@ -29,6 +29,6 @@ export class MyHttpErrorHandler implements HttpErrorHandler {
   }
 
   protected addRequestIdToHeader(requestId: string, ctx: RequestContext) {
-    ctx.nodeRes.setHeader('x-requestId', requestId);
+    ctx.httpRes.setHeader('x-requestId', requestId);
   }
 }

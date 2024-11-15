@@ -178,7 +178,7 @@ export class AppModule {}
       const parsedForm = await this.parse.array(ctx, 'fieldName', 5);
       await this.saveFiles(parsedForm);
       // ...
-      ctx.nodeRes.end('ok');
+      ctx.httpRes.end('ok');
     }
 
     protected saveFiles(parsedForm: MulterParsedForm) {

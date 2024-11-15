@@ -3,8 +3,8 @@ import {
   inject,
   injectable,
   Injector,
-  NodeRequest,
-  NODE_REQ,
+  HttpRequest,
+  REQ,
   optional,
   QUERY_PARAMS,
   Logger,
@@ -20,7 +20,7 @@ export class MyDictService extends DictService {
     protected logger: Logger,
     @optional() protected override i18nOptions?: I18nOptions,
     @inject(QUERY_PARAMS) protected override queryParams?: AnyObj,
-    @optional() @inject(NODE_REQ) protected nodeReq?: NodeRequest,
+    @optional() @inject(REQ) protected httpReq?: HttpRequest,
   ) {
     super(injector, log, errMediator, i18nOptions, queryParams);
   }
@@ -38,7 +38,7 @@ export class MyDictService extends DictService {
   }
 
   protected getHeaderLng(): ISO639 | void {
-    const acceptLanguage = this.nodeReq?.headers['accept-language']; // Here string like: uk,en-US;q=0.9,en;q=0.8
+    const acceptLanguage = this.httpReq?.headers['accept-language']; // Here string like: uk,en-US;q=0.9,en;q=0.8
     // ... here your code for parsing acceptLanguage, after that you should returns result
     this.logger.log('info', 'works custom DictService');
   }

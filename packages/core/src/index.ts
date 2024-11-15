@@ -7,7 +7,7 @@ export { ModuleFactory } from '#init/module-factory.js';
 export { defaultProvidersPerApp } from '#init/default-providers-per-app.js';
 export { defaultProvidersPerRou } from '#init/default-providers-per-rou.js';
 export { defaultProvidersPerReq } from '#init/default-providers-per-req.js';
-export { SERVER, NODE_REQ, NODE_RES, A_PATH_PARAMS, QUERY_STRING, PATH_PARAMS, QUERY_PARAMS } from './constans.js';
+export { SERVER, REQ, RES, A_PATH_PARAMS, QUERY_STRING, PATH_PARAMS, QUERY_PARAMS } from './constans.js';
 export { CustomError } from '#error/custom-error.js';
 export { ErrorOpts } from '#error/error-opts.js';
 export {
@@ -84,7 +84,7 @@ export {
 } from '#types/module-metadata.js';
 export { getModuleMetadata } from '#utils/get-module-metadata.js';
 export { PathParam, RouteHandler, Router, RouterReturns } from '#types/router.js';
-export { NodeRequest, NodeResponse, RequestListener, Server, NodeServer } from '#types/server-options.js';
+export { HttpRequest, HttpResponse, RequestListener, Server, HttpServer } from '#types/server-options.js';
 export { createHelperForGuardWithParams } from '#utils/create-helper-for-guards-with-params.js';
 export { deepFreeze } from '#utils/deep-freeze.js';
 export { getDependencies } from '#utils/get-dependecies.js';

@@ -1,5 +1,5 @@
-import { Cookies, NodeRequest, NodeResponse } from '@ts-stack/cookies';
-import { AnyFn, inject, injectable, NODE_REQ, NODE_RES, optional } from '@ditsmod/core';
+import { Cookies } from '@ts-stack/cookies';
+import { AnyFn, HttpRequest, HttpResponse, inject, injectable, REQ, RES, optional } from '@ditsmod/core';
 
 import { SessionCookieOptions } from './types.js';
 
@@ -10,19 +10,19 @@ export class SessionCookie {
   protected maxAge: number;
 
   constructor(
-    @inject(NODE_REQ) nodeReq: NodeRequest,
-    @inject(NODE_RES) nodeRes: NodeResponse,
-    @optional() protected opts: SessionCookieOptions
+    @inject(REQ) httpReq: HttpRequest,
+    @inject(RES) httpRes: HttpResponse,
+    @optional() protected opts: SessionCookieOptions,
   ) {
     this.opts = { ...(opts || {}) };
-    this.cookies = new Cookies(nodeReq, nodeRes);
+    this.cookies = new Cookies(httpReq, httpRes);
     this.opts.cookieName ??= 'session_id';
     this.maxAge = this.opts.maxAge === undefined ? 1000 * 60 * 60 * 24 : this.opts.maxAge; // By default - 24 hours
 
-    const writeHead = nodeRes.writeHead as AnyFn;
-    nodeRes.writeHead = (...args: any[]) => {
+    const writeHead = httpRes.writeHead as AnyFn;
+    httpRes.writeHead = (...args: any[]) => {
       this.updateSessionCookie();
-      return writeHead.apply(nodeRes, args);
+      return writeHead.apply(httpRes, args);
     };
   }
 

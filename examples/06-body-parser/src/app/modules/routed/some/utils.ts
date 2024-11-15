@@ -1,6 +1,6 @@
 import { createWriteStream } from 'node:fs';
 import { MulterParsedForm } from '@ditsmod/body-parser';
-import { NodeResponse } from '@ditsmod/core';
+import { HttpResponse } from '@ditsmod/core';
 
 export function saveFiles(parsedForm: MulterParsedForm) {
   const promises: Promise<void>[] = [];
@@ -16,9 +16,9 @@ export function saveFiles(parsedForm: MulterParsedForm) {
   return Promise.all(promises);
 }
 
-export function sendHtmlForm(nodeRes: NodeResponse) {
-  nodeRes.setHeader('Content-Type', 'text/html');
-  nodeRes.end(`
+export function sendHtmlForm(httpRes: HttpResponse) {
+  httpRes.setHeader('Content-Type', 'text/html');
+  httpRes.end(`
 <!DOCTYPE html>
 <html lang="uk">
 <head>

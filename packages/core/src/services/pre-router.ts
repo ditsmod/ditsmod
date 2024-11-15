@@ -3,7 +3,7 @@ import { injectable } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { HttpMethod } from '#types/mix.js';
 import { Router } from '#types/router.js';
-import { NodeResponse, RequestListener } from '#types/server-options.js';
+import { HttpResponse, RequestListener } from '#types/server-options.js';
 import { Status } from '#utils/http-status-codes.js';
 
 @injectable()
@@ -13,20 +13,20 @@ export class PreRouter {
     protected systemLogMediator: SystemLogMediator,
   ) {}
 
-  requestListener: RequestListener = async (nodeReq, nodeRes) => {
-    const [pathname, search] = (nodeReq.url || '').split('?');
-    let method = nodeReq.method as HttpMethod;
+  requestListener: RequestListener = async (httpReq, httpRes) => {
+    const [pathname, search] = (httpReq.url || '').split('?');
+    let method = httpReq.method as HttpMethod;
     if (method == 'HEAD') {
       method = 'GET';
-      this.handleHeadMethod(nodeRes);
+      this.handleHeadMethod(httpRes);
     }
     const { handle, params } = this.router.find(method, pathname);
     if (!handle) {
-      this.sendNotImplemented(nodeRes);
+      this.sendNotImplemented(httpRes);
       return;
     }
-    await handle(nodeReq, nodeRes, params, search).catch((err) => {
-      this.sendInternalServerError(nodeRes, err);
+    await handle(httpReq, httpRes, params, search).catch((err) => {
+      this.sendInternalServerError(httpRes, err);
     });
   };
 
@@ -35,27 +35,27 @@ export class PreRouter {
    *
    * @param err An error to logs it (not sends).
    */
-  protected sendInternalServerError(nodeRes: NodeResponse, err: Error) {
+  protected sendInternalServerError(httpRes: HttpResponse, err: Error) {
     this.systemLogMediator.internalServerError(this, err);
-    nodeRes.statusCode = Status.INTERNAL_SERVER_ERROR;
-    nodeRes.end();
+    httpRes.statusCode = Status.INTERNAL_SERVER_ERROR;
+    httpRes.end();
   }
 
-  protected sendNotImplemented(nodeRes: NodeResponse) {
-    nodeRes.statusCode = Status.NOT_IMPLEMENTED;
-    nodeRes.end();
+  protected sendNotImplemented(httpRes: HttpResponse) {
+    httpRes.statusCode = Status.NOT_IMPLEMENTED;
+    httpRes.end();
   }
 
-  protected handleHeadMethod(nodeRes: NodeResponse) {
+  protected handleHeadMethod(httpRes: HttpResponse) {
     let isChunked = false;
-    nodeRes.write = () => (isChunked = true);
+    httpRes.write = () => (isChunked = true);
     type Callback = () => void;
 
-    const nodeEnd = nodeRes.end.bind(nodeRes);
-    nodeRes.end = function (chunkOrFn?: Callback | string | Buffer, cbOrEncoding?: Callback | BufferEncoding) {
+    const nodeEnd = httpRes.end.bind(httpRes);
+    httpRes.end = function (chunkOrFn?: Callback | string | Buffer, cbOrEncoding?: Callback | BufferEncoding) {
       if (isChunked) {
-        if (!nodeRes.headersSent) {
-          nodeRes.setHeader('Transfer-Encoding', 'chunked');
+        if (!httpRes.headersSent) {
+          httpRes.setHeader('Transfer-Encoding', 'chunked');
         }
       } else {
         let contentLenght = 0;
@@ -63,8 +63,8 @@ export class PreRouter {
           const encoding: BufferEncoding = !cbOrEncoding || typeof cbOrEncoding == 'function' ? 'utf8' : cbOrEncoding;
           contentLenght = Buffer.byteLength(chunkOrFn, encoding);
         }
-        if (!nodeRes.headersSent) {
-          nodeRes.setHeader('Content-Length', contentLenght);
+        if (!httpRes.headersSent) {
+          httpRes.setHeader('Content-Length', contentLenght);
         }
       }
       return nodeEnd() as ServerResponse<IncomingMessage>;

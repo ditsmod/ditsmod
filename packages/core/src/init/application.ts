@@ -8,7 +8,7 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AppOptions } from '#types/app-options.js';
 import { HttpServerModule, HttpsServerModule } from '#types/http-module.js';
 import { AnyFn, ModuleType } from '#types/mix.js';
-import { Http2SecureServerOptions, NodeServer, RequestListener } from '#types/server-options.js';
+import { Http2SecureServerOptions, HttpServer, RequestListener } from '#types/server-options.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { isHttp2SecureServerOptions } from '#utils/type-guards.js';
 import { AppInitializer } from '#init/app-initializer.js';
@@ -23,7 +23,7 @@ export class Application {
    * @param appOptions Application options.
    */
   bootstrap(appModule: ModuleType, appOptions?: AppOptions) {
-    return new Promise<{ server: NodeServer }>(async (resolve, reject) => {
+    return new Promise<{ server: HttpServer }>(async (resolve, reject) => {
       try {
         this.init(appOptions);
         const moduleManager = this.scanRootModule(appModule);
@@ -101,7 +101,7 @@ export class Application {
     this.systemLogMediator.flush();
   }
 
-  protected async createServer(requestListener: RequestListener): Promise<NodeServer> {
+  protected async createServer(requestListener: RequestListener): Promise<HttpServer> {
     if (isHttp2SecureServerOptions(this.appOptions.serverOptions || {})) {
       const serverModule = this.appOptions.httpModule as typeof http2;
       return serverModule.createSecureServer(this.appOptions.serverOptions || {}, requestListener);
@@ -127,7 +127,7 @@ class PublicLogMediator extends SystemLogMediator {
  * This class is needed only to access the protected methods of the `AppInitializer` class.
  */
 class PublicAppInitializer extends AppInitializer {
-  override setServer(server: NodeServer) {
+  override setServer(server: HttpServer) {
     return super.setServer(server);
   }
 }

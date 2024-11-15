@@ -1,4 +1,4 @@
-import { controller, inject, NODE_RES, NodeResponse, Res } from '@ditsmod/core';
+import { controller, inject, RES, HttpResponse, Res } from '@ditsmod/core';
 import { route } from '@ditsmod/routing';
 import { HTTP_BODY, MulterParser } from '@ditsmod/body-parser';
 import { saveFiles, sendHtmlForm } from './utils.js';
@@ -20,15 +20,15 @@ export class SomeController {
   }
 
   @route('GET', 'file-upload')
-  getHtmlForm(@inject(NODE_RES) nodeRes: NodeResponse) {
-    sendHtmlForm(nodeRes);
+  getHtmlForm(@inject(RES) httpRes: HttpResponse) {
+    sendHtmlForm(httpRes);
   }
 
   @route('POST', 'file-upload')
   async downloadFile(res: Res, parse: MulterParser) {
     const parsedForm = await parse.array('fieldName', 5);
     await saveFiles(parsedForm);
-    res.nodeRes.writeHead(303, { Connection: 'close', Location: '/file-upload' });
-    res.nodeRes.end();
+    res.httpRes.writeHead(303, { Connection: 'close', Location: '/file-upload' });
+    res.httpRes.end();
   }
 }

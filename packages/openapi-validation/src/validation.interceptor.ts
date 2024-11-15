@@ -4,8 +4,8 @@ import {
   skipSelf,
   Status,
   CustomError,
-  NodeRequest,
-  NodeResponse,
+  HttpRequest,
+  HttpResponse,
   RequestContext,
 } from '@ditsmod/core';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
@@ -18,8 +18,8 @@ import { AjvService } from './ajv.service.js';
 
 @injectable()
 export class ValidationInterceptor implements HttpInterceptor {
-  protected nodeReq: NodeRequest;
-  protected nodeRes: NodeResponse;
+  protected httpReq: HttpRequest;
+  protected httpRes: HttpResponse;
 
   constructor(
     protected injector: Injector,
@@ -28,8 +28,8 @@ export class ValidationInterceptor implements HttpInterceptor {
   ) {}
 
   intercept(next: HttpHandler, ctx: RequestContext) {
-    this.nodeReq = ctx.nodeReq;
-    this.nodeRes = ctx.nodeRes;
+    this.httpReq = ctx.httpReq;
+    this.httpRes = ctx.httpRes;
     this.prepareAndValidate();
     return next.handle();
   }

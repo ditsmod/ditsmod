@@ -1,12 +1,12 @@
 import request from 'supertest';
 import { TestApplication } from '@ditsmod/testing';
-import { NodeServer, Providers, Status } from '@ditsmod/core';
+import { HttpServer, Providers, Status } from '@ditsmod/core';
 import { BodyParserConfig } from '@ditsmod/body-parser';
 
 import { AppModule } from '#app/app.module.js';
 
 describe('06-body-parser', () => {
-  let server: NodeServer;
+  let server: HttpServer;
   let testAgent: ReturnType<typeof request>;
 
   beforeAll(async () => {

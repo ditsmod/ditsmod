@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { HttpErrorHandler, NodeServer } from '@ditsmod/core';
+import { HttpErrorHandler, HttpServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 import { jest } from '@jest/globals';
 
@@ -8,7 +8,7 @@ import { CustomHttpErrorHandler } from './custom-controller-error-handler.js';
 import { ErrorContainer } from './error-container.js';
 
 describe('12-testing', () => {
-  let server: NodeServer;
+  let server: HttpServer;
   let testAgent: ReturnType<typeof request>;
 
   it('controller works case 1', async () => {
@@ -36,7 +36,7 @@ describe('12-testing', () => {
   describe('good error stack trace', () => {
     const setError = jest.fn();
     const errorContainer = { setError } as ErrorContainer;
-    let server: NodeServer;
+    let server: HttpServer;
 
     beforeAll(async () => {
       server = await new TestApplication(AppModule)

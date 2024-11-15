@@ -9,7 +9,7 @@ export class SessionCookieInterceptor implements HttpInterceptor {
   constructor(@optional() protected opts: SessionCookieOptions) {}
 
   async intercept(next: HttpHandler, ctx: RequestContextWithSession) {
-    ctx.sessionCookie = new SessionCookie(ctx.nodeReq, ctx.nodeRes, this.opts);
+    ctx.sessionCookie = new SessionCookie(ctx.httpReq, ctx.httpRes, this.opts);
     return next.handle();
   }
 }

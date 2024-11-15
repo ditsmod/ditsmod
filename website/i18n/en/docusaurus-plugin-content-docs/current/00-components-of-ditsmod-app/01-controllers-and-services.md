@@ -133,22 +133,22 @@ You can find more information about what a token is and what the `inject` decora
 
 As you can see from the previous example, to send responses with objects, you need to use the `res.sendJson()` method instead of `res.send()` (which only sends text).
 
-Native Node.js request and response objects can be obtained by tokens, respectively - `NODE_REQ` and `NODE_RES`:
+Native Node.js request and response objects can be obtained by tokens, respectively - `REQ` and `RES`:
 
 ```ts {7-8}
-import { controller, inject, NODE_REQ, NODE_RES, NodeRequest, NodeResponse } from '@ditsmod/core';
+import { controller, inject, REQ, RES, HttpRequest, HttpResponse } from '@ditsmod/core';
 import { route } from '@ditsmod/routing';
 
 @controller()
 export class HelloWorldController {
   constructor(
-    @inject(NODE_REQ) private nodeReq: NodeRequest,
-    @inject(NODE_RES) private nodeRes: NodeResponse
+    @inject(REQ) private httpReq: HttpRequest,
+    @inject(RES) private httpRes: HttpResponse
   ) {}
 
   @route('GET', 'hello')
   method1() {
-    this.nodeRes.end('Hello, World!');
+    this.httpRes.end('Hello, World!');
   }
 }
 ```

@@ -133,22 +133,22 @@ export class SomeController {
 
 Як бачите з попереднього прикладу, щоб відправляти відповіді з об'єктами, необхідно використовувати метод `res.sendJson()` замість `res.send()` (бо він відправляє тільки текст).
 
-Рідні Node.js об'єкти запиту та відповіді можна отримати за токенами відповідно - `NODE_REQ` та `NODE_RES`:
+Рідні Node.js об'єкти запиту та відповіді можна отримати за токенами відповідно - `REQ` та `RES`:
 
 ```ts {7-8}
-import { controller, inject, NODE_REQ, NODE_RES, NodeRequest, NodeResponse } from '@ditsmod/core';
+import { controller, inject, REQ, RES, HttpRequest, HttpResponse } from '@ditsmod/core';
 import { route } from '@ditsmod/routing';
 
 @controller()
 export class HelloWorldController {
   constructor(
-    @inject(NODE_REQ) private nodeReq: NodeRequest,
-    @inject(NODE_RES) private nodeRes: NodeResponse
+    @inject(REQ) private httpReq: HttpRequest,
+    @inject(RES) private httpRes: HttpResponse
   ) {}
 
   @route('GET', 'hello')
   method1() {
-    this.nodeRes.end('Hello, World!');
+    this.httpRes.end('Hello, World!');
   }
 }
 ```

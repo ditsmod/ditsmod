@@ -5,8 +5,8 @@ import type * as https from 'https';
 
 export type Http2SecureServerOptions = http2.SecureServerOptions & { isHttp2SecureServer: boolean };
 export type ServerOptions = http.ServerOptions | https.ServerOptions | http2.ServerOptions | Http2SecureServerOptions;
-export type NodeRequest = http.IncomingMessage | Http2ServerRequest;
-export type NodeResponse = http.ServerResponse | Http2ServerResponse;
-export type RequestListener = (request: NodeRequest, response: NodeResponse) => void | Promise<void>;
+export type HttpRequest = http.IncomingMessage | Http2ServerRequest;
+export type HttpResponse = http.ServerResponse | Http2ServerResponse;
+export type RequestListener = (request: HttpRequest, response: HttpResponse) => void | Promise<void>;
 export type Server = http.Server | https.Server | Http2Server | Http2SecureServer;
-export type NodeServer = Server; // Alias for more unambiguous import.
+export type HttpServer = Server; // Alias for more unambiguous import.

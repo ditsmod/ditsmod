@@ -47,7 +47,7 @@ export class SingletonInterceptorWithGuards implements ISingletonInterceptorWith
 
   protected prohibitActivation(ctx: RequestContext, status?: Status) {
     const systemLogMediator = this.injector.get(SystemLogMediator) as SystemLogMediator;
-    systemLogMediator.youCannotActivateRoute(this, ctx.nodeReq.method!, ctx.nodeReq.url!);
+    systemLogMediator.youCannotActivateRoute(this, ctx.httpReq.method!, ctx.httpReq.url!);
     ctx.send(undefined, status || Status.UNAUTHORIZED);
   }
 }

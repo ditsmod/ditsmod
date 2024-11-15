@@ -19,7 +19,7 @@ export class MyHttpErrorHandler implements HttpErrorHandler {
   handleError(err: Error, ctx: RequestContext) {
     const message = err.message;
     this.logger.log('error', { err, note: 'This is my implementation of HttpErrorHandler' });
-    if (!ctx.nodeRes.headersSent) {
+    if (!ctx.httpRes.headersSent) {
       const error = { error: { message } };
       const headers = { 'x-requestId': randomUUID() };
       ctx.sendJson(error, Status.INTERNAL_SERVER_ERROR, headers);

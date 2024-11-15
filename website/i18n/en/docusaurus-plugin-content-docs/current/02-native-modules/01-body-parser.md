@@ -178,7 +178,7 @@ Depending on whether the controller is [singleton][3] or not, the method of obta
       const parsedForm = await this.parse.array(ctx, 'fieldName', 5);
       await this.saveFiles(parsedForm);
       // ...
-      ctx.nodeRes.end('ok');
+      ctx.httpRes.end('ok');
     }
 
     protected saveFiles(parsedForm: MulterParsedForm) {

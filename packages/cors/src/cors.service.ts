@@ -1,20 +1,20 @@
-import { inject, injectable, NodeRequest, NodeResponse, NODE_REQ, NODE_RES, optional } from '@ditsmod/core';
+import { inject, injectable, HttpRequest, HttpResponse, REQ, RES, optional } from '@ditsmod/core';
 import { Cookies, CookieOptions } from '@ts-stack/cookies';
 import { CorsOptions, cors, mergeOptions } from '@ts-stack/cors';
 
 @injectable()
 export class CorsService {
   constructor(
-    @inject(NODE_REQ) private nodeReq: NodeRequest,
-    @inject(NODE_RES) private nodeRes: NodeResponse,
+    @inject(REQ) private httpReq: HttpRequest,
+    @inject(RES) private httpRes: HttpResponse,
     @optional() private corsOptions?: CorsOptions
   ) {}
 
   setCookie(name: string, value?: any, opts?: CookieOptions) {
-    const cookies = new Cookies(this.nodeReq, this.nodeRes);
+    const cookies = new Cookies(this.httpReq, this.httpRes);
     cookies.set(name, value, opts);
     const clonedCorsOptions = { ...(this.corsOptions || {}) };
     clonedCorsOptions.allowCredentials = true;
-    cors(this.nodeReq, this.nodeRes, mergeOptions(clonedCorsOptions));
+    cors(this.httpReq, this.httpRes, mergeOptions(clonedCorsOptions));
   }
 }

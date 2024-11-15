@@ -16,7 +16,7 @@ export class MulterSingletonParser {
    * The single file will be stored in `parsedForm.file` property.
    */
   single<F extends object = any>(ctx: RequestContext, name: string) {
-    const result = this.multer.single<F>(name)(ctx.nodeReq, ctx.nodeReq.headers);
+    const result = this.multer.single<F>(name)(ctx.httpReq, ctx.httpReq.headers);
     return checkResult(result);
   }
 
@@ -28,7 +28,7 @@ export class MulterSingletonParser {
    * __Note__: `maxCount` limit has precedence over `limits.files`.
    */
   array<F extends object = any>(ctx: RequestContext, name: string, maxCount?: number) {
-    const result = this.multer.array<F>(name, maxCount)(ctx.nodeReq, ctx.nodeReq.headers);
+    const result = this.multer.array<F>(name, maxCount)(ctx.httpReq, ctx.httpReq.headers);
     return checkResult(result);
   }
 
@@ -42,7 +42,7 @@ export class MulterSingletonParser {
    * where you are handling the uploaded files.
    */
   any<F extends object = any>(ctx: RequestContext) {
-    const result = this.multer.any<F>()(ctx.nodeReq, ctx.nodeReq.headers);
+    const result = this.multer.any<F>()(ctx.httpReq, ctx.httpReq.headers);
     return checkResult(result);
   }
 
@@ -63,7 +63,7 @@ export class MulterSingletonParser {
    * __Note__: `maxCount` limit has precedence over `limits.files`.
    */
   groups<F extends object = any, G extends string = string>(ctx: RequestContext, groups: MulterGroup<G>[]) {
-    const result = this.multer.groups<F, G>(groups)(ctx.nodeReq, ctx.nodeReq.headers);
+    const result = this.multer.groups<F, G>(groups)(ctx.httpReq, ctx.httpReq.headers);
     return checkResult(result);
   }
 
@@ -72,7 +72,7 @@ export class MulterSingletonParser {
    * `LIMIT_UNEXPECTED_FILE` will be issued. This is the same as doing `parse.groups([])`.
    */
   textFields<F extends object = any>(ctx: RequestContext) {
-    const result = this.multer.textFields<F>()(ctx.nodeReq, ctx.nodeReq.headers);
+    const result = this.multer.textFields<F>()(ctx.httpReq, ctx.httpReq.headers);
     return checkResult(result).then(parsedForm => parsedForm.textFields);
   }
 }

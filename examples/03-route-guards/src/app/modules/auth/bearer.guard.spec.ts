@@ -5,7 +5,7 @@ import { BearerGuard } from './bearer.guard.js';
 describe('AuthGuard#canActivate()', () => {
   const authGuard = new BearerGuard();
   function getCtx(authorization: string) {
-    return { nodeReq: { headers: { authorization } } } as RequestContext;
+    return { httpReq: { headers: { authorization } } } as RequestContext;
   }
 
   it('should return false', async () => {

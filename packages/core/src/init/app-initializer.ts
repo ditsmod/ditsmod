@@ -28,7 +28,7 @@ import { normalizeProviders } from '#utils/ng-utils.js';
 import { throwProvidersCollisionError } from '#utils/throw-providers-collision-error.js';
 import { isMultiProvider, isNormRootModule } from '#utils/type-guards.js';
 import { SERVER } from '#constans';
-import { NodeServer } from '#types/server-options.js';
+import { HttpServer } from '#types/server-options.js';
 import { MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { getModule } from '#utils/get-module.js';
@@ -39,7 +39,7 @@ export class AppInitializer {
   protected preRouter: PreRouter;
   protected meta: NormalizedModuleMetadata;
   protected unfinishedScanModules = new Set<ModuleType | ModuleWithParams>();
-  protected server: NodeServer;
+  protected server: HttpServer;
 
   constructor(
     protected appOptions: AppOptions,
@@ -58,7 +58,7 @@ export class AppInitializer {
     this.createInjectorAndSetLogMediator();
   }
 
-  protected setServer(server: NodeServer) {
+  protected setServer(server: HttpServer) {
     this.server = server;
   }
 
@@ -430,7 +430,7 @@ export class AppInitializer {
     counter.resetInitedExtensionsSet();
   }
 
-  requestListener: RequestListener = (nodeReq, nodeRes) => {
-    return this.preRouter.requestListener(nodeReq, nodeRes);
+  requestListener: RequestListener = (httpReq, httpRes) => {
+    return this.preRouter.requestListener(httpReq, httpRes);
   };
 }

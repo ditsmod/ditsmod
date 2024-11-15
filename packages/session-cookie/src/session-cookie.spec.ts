@@ -1,5 +1,4 @@
-import { NodeRequest, NodeResponse } from '@ts-stack/cookies';
-import { Injector, NODE_REQ, NODE_RES } from '@ditsmod/core';
+import { HttpRequest, HttpResponse, Injector, REQ, RES } from '@ditsmod/core';
 import { jest } from '@jest/globals';
 
 import { SessionCookie } from './session-cookie.js';
@@ -7,25 +6,25 @@ import { SessionCookieOptions } from './types.js';
 
 describe('@ditsmod/session-cookie', () => {
   const setHeader = jest.fn();
-  let nodeReq: NodeRequest;
-  let nodeRes: NodeResponse;
+  let httpReq: HttpRequest;
+  let httpRes: HttpResponse;
   let session: SessionCookie;
   const config = new SessionCookieOptions();
   config.cookieName = 'session';
   config.maxAge = 1000 * 3600 * 24 * 30; // 30 days;
 
   beforeEach(() => {
-    nodeReq = { headers: { cookie: '' } } as NodeRequest;
-    nodeRes = {
+    httpReq = { headers: { cookie: '' } } as HttpRequest;
+    httpRes = {
       getHeader: (): any => {},
       setHeader,
       writeHead: (): any => {},
-    } as unknown as NodeResponse;
+    } as unknown as HttpResponse;
 
     const injector = Injector.resolveAndCreate([
       { token: SessionCookieOptions, useValue: config },
-      { token: NODE_REQ, useValue: nodeReq },
-      { token: NODE_RES, useValue: nodeRes },
+      { token: REQ, useValue: httpReq },
+      { token: RES, useValue: httpRes },
       SessionCookie,
     ]);
     session = injector.get(SessionCookie);
@@ -60,7 +59,7 @@ describe('@ditsmod/session-cookie', () => {
 
   it('includes cookie headers', async () => {
     session.id = 'foobar';
-    nodeRes.writeHead(200);
+    httpRes.writeHead(200);
     expect(setHeader).toHaveBeenCalledTimes(1);
     expect(setHeader).toHaveBeenCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/session=foobar; path=\/;/)]));
     expect(setHeader).toHaveBeenCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/httponly/)]));
@@ -70,7 +69,7 @@ describe('@ditsmod/session-cookie', () => {
     const maxAge = 1000 * 60 * 60 * 3;
     session.setMaxAge(maxAge);
     session.id = 'foobar';
-    nodeRes.writeHead(200);
+    httpRes.writeHead(200);
     expect(setHeader).toHaveBeenCalledTimes(1);
     expect(setHeader).toHaveBeenCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/session=foobar; path=\/;/)]));
     expect(setHeader).toHaveBeenCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/httponly/)]));
@@ -80,7 +79,7 @@ describe('@ditsmod/session-cookie', () => {
     session.id = 'foobar';
     const maxAge = 1000 * 60 * 60 * 3;
     session.setMaxAge(maxAge);
-    nodeRes.writeHead(200);
+    httpRes.writeHead(200);
     expect(setHeader).toHaveBeenCalledTimes(1);
     expect(setHeader).toHaveBeenCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/session=foobar; path=\/;/)]));
     expect(setHeader).toHaveBeenCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/httponly/)]));

@@ -5,12 +5,12 @@ import { DefaultSingletonHttpBackend } from '@ditsmod/routing';
 export class SingletonReturnHttpBackend extends DefaultSingletonHttpBackend {
   override async handle(ctx: SingletonRequestContext) {
     const value = await super.handle(ctx); // Controller's route returned value.
-    if (ctx.nodeRes.headersSent) {
+    if (ctx.httpRes.headersSent) {
       return value;
     }
-    let { statusCode } = ctx.nodeRes;
+    let { statusCode } = ctx.httpRes;
     if (!statusCode) {
-      const httpMethod = ctx.nodeReq.method as HttpMethod;
+      const httpMethod = ctx.httpReq.method as HttpMethod;
       if (httpMethod == 'GET') {
         statusCode = Status.OK;
       } else if (httpMethod == 'POST') {
@@ -22,8 +22,8 @@ export class SingletonReturnHttpBackend extends DefaultSingletonHttpBackend {
       }
     }
 
-    ctx.nodeRes.statusCode = statusCode;
-    if (typeof value == 'object' || ctx.nodeRes.getHeader('content-type') == 'application/json') {
+    ctx.httpRes.statusCode = statusCode;
+    if (typeof value == 'object' || ctx.httpRes.getHeader('content-type') == 'application/json') {
       ctx.sendJson(value);
     } else {
       ctx.send(value);
