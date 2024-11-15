@@ -5,7 +5,7 @@ import { LogMediator } from '#logger/log-mediator.js';
 import { GlobalProviders, ImportObj } from '#types/metadata-per-mod.js';
 import { ModuleType, Provider } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
-import { ExtensionsGroupToken, Extension } from '#types/extension-types.js';
+import { ExtensionsGroupToken, Extension } from '#extensions/extension-types.js';
 import { getImportedTokens } from '#utils/get-imports.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { isInjectionToken } from '#utils/type-guards.js';

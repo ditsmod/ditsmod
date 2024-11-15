@@ -15,6 +15,7 @@
       "#services/*": ["./src/services/*"],
       "#core/*": ["./src/*"],
       "#interceptors/*": ["./src/interceptors/*"],
+      "#extensions/*": ["./src/extensions/*"],
     },
     "module": "nodenext",
     "moduleResolution": "nodenext",

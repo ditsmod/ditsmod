@@ -1,7 +1,7 @@
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { GuardPerMod1, ModRefId, ModuleType, Provider } from './mix.js';
 import { ModuleWithParams } from './module-metadata.js';
-import { ExtensionProvider } from './extension-types.js';
+import { ExtensionProvider } from '#extensions/extension-types.js';
 
 /**
  * @todo Rename this.

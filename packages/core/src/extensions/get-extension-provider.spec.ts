@@ -1,6 +1,6 @@
 import { KeyRegistry, InjectionToken } from '#di';
-import { ExtensionProvider, Extension } from '#types/extension-types.js';
-import { ExtensionOptions, getExtensionProvider } from './get-extension-provider.js';
+import { ExtensionProvider, Extension } from '#extensions/extension-types.js';
+import { ExtensionOptions, getExtensionProvider } from '#extensions/get-extension-provider.js';
 
 describe('getExtensionProvider', () => {
   const MY_EXTENSION = new InjectionToken('MY_EXTENSION');

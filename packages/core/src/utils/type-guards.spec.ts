@@ -1,5 +1,5 @@
 import { Provider } from '#types/mix.js';
-import { Extension } from '#types/extension-types.js';
+import { Extension } from '#extensions/extension-types.js';
 import { InjectionToken, makePropDecorator, reflector } from '#di';
 import { featureModule } from '#decorators/module.js';
 import {

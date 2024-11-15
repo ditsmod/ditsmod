@@ -14,7 +14,6 @@ import {
 } from '#di';
 import { AnyObj, ModuleType, AnyFn, RequireProps } from '#types/mix.js';
 import { ModuleWithParams, AppendsWithParams, ModuleMetadata } from '#types/module-metadata.js';
-import { Extension } from '#types/extension-types.js';
 import { RootModuleMetadata } from '#types/root-module-metadata.js';
 import { Http2SecureServerOptions, ServerOptions } from '#types/server-options.js';
 import { featureModule } from '#decorators/module.js';
@@ -101,11 +100,6 @@ export function isAppendsWithParams(
 
 export function isInjectionToken(token?: any): token is InjectionToken<any> {
   return token instanceof InjectionToken;
-}
-
-export function isExtensionProvider(provider?: Provider): provider is Class<Extension> {
-  const init = (provider as Class<Extension>)?.prototype?.init;
-  return typeof init == 'function';
 }
 
 export function isTypeProvider(provider?: Provider): provider is TypeProvider {

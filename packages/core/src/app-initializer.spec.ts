@@ -12,7 +12,7 @@ import { AppInitializer } from './app-initializer.js';
 import { ModuleManager } from './services/module-manager.js';
 import { ModuleType, Provider } from './types/mix.js';
 import { ModuleWithParams } from './types/module-metadata.js';
-import { Extension, ExtensionCounters } from '#types/extension-types.js';
+import { Extension, ExtensionCounters } from '#extensions/extension-types.js';
 import { controller } from './decorators/controller.js';
 import { ModuleExtract } from './types/module-extract.js';
 import { ImportObj, MetadataPerMod1 } from './types/metadata-per-mod.js';

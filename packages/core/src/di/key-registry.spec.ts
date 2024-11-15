@@ -1,4 +1,4 @@
-import { Extension } from '#types/extension-types.js';
+import { Extension } from '#extensions/extension-types.js';
 import { InjectionToken } from './injection-token.js';
 import { KeyRegistry } from './key-registry.js';
 

@@ -3,15 +3,7 @@ export * from '@ts-stack/chain-error';
 
 export { AppInitializer } from './app-initializer.js';
 export { Application } from './application.js';
-export {
-  SERVER,
-  NODE_REQ,
-  NODE_RES,
-  A_PATH_PARAMS,
-  QUERY_STRING,
-  PATH_PARAMS,
-  QUERY_PARAMS,
-} from './constans.js';
+export { SERVER, NODE_REQ, NODE_RES, A_PATH_PARAMS, QUERY_STRING, PATH_PARAMS, QUERY_PARAMS } from './constans.js';
 export { CustomError } from './error/custom-error.js';
 export { ErrorOpts } from './error/error-opts.js';
 export {
@@ -33,7 +25,7 @@ export {
   DebugStage1Meta,
   GroupStage1Meta,
   GroupStage1MetaPerApp,
-} from '#types/extension-types.js';
+} from '#extensions/extension-types.js';
 export { ModuleExtract } from '#types/module-extract.js';
 export { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 export { ProvidersMetadata } from '#types/providers-metadata.js';
@@ -46,8 +38,8 @@ export { defaultProvidersPerApp } from './default-providers-per-app.js';
 export { defaultProvidersPerRou } from './default-providers-per-rou.js';
 export { defaultProvidersPerReq } from './default-providers-per-req.js';
 export { RequestContext, SingletonRequestContext } from './request-context.js';
-export { ExtensionsContext } from '#services/extensions-context.js';
-export { ExtensionsManager } from '#services/extensions-manager.js';
+export { ExtensionsContext } from '#extensions/extensions-context.js';
+export { ExtensionsManager } from '#extensions/extensions-manager.js';
 export { LogMediator } from '#logger/log-mediator.js';
 export { LogItem } from '#logger/types.js';
 export { SystemLogMediator } from '#logger/system-log-mediator.js';
@@ -96,7 +88,7 @@ export { NodeRequest, NodeResponse, RequestListener, Server, NodeServer } from '
 export { createHelperForGuardWithParams } from '#utils/create-helper-for-guards-with-params.js';
 export { deepFreeze } from '#utils/deep-freeze.js';
 export { getDependencies } from '#utils/get-dependecies.js';
-export { ExtensionOptions } from '#utils/get-extension-provider.js';
+export { ExtensionOptions } from '#extensions/get-extension-provider.js';
 export { getModule } from '#utils/get-module.js';
 export { getStatusText, isSuccess, Status, STATUS_CODE_INFO } from '#utils/http-status-codes.js';
 export { NormalizedProvider, normalizeProviders } from '#utils/ng-utils.js';
@@ -105,13 +97,13 @@ export { Providers } from '#utils/providers.js';
 export { getCallerDir } from '#utils/callsites.js';
 export { getDebugModuleName, clearDebugModuleNames } from '#utils/get-debug-module-name.js';
 export * from '#utils/get-tokens.js';
+export { isExtensionProvider } from '#extensions/type-guards.js';
 export {
   MultiProvider,
   isAppendsWithParams,
   isChainError,
   isClassProvider,
   isCtrlDecor,
-  isExtensionProvider,
   isFactoryProvider,
   isClassFactoryProvider,
   isModuleWithParams,

@@ -1,7 +1,7 @@
 import { Class } from '#di';
 import { AnyFn, AnyObj, ModuleType, NormalizedGuard, Provider } from '#types/mix.js';
 import { AppendsWithParams, ModuleWithParams } from './module-metadata.js';
-import { ExtensionProvider } from './extension-types.js';
+import { ExtensionProvider } from '#extensions/extension-types.js';
 import { MultiProvider } from '#utils/type-guards.js';
 import { ProvidersMetadata } from '#types/providers-metadata.js';
 

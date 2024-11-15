@@ -4,13 +4,13 @@ import { Class, Injector, reflector, resolveForwardRef } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyObj, GuardItem, ModuleType, NormalizedGuard, Scope, Provider, ModRefId } from '#types/mix.js';
 import { ModuleWithParams, ModuleMetadata } from '#types/module-metadata.js';
-import { ExtensionProvider, Extension } from '#types/extension-types.js';
+import { ExtensionProvider, Extension } from '#extensions/extension-types.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import {
   ExtensionOptions,
   getExtensionProvider,
   isOptionWithOverrideExtension,
-} from '#utils/get-extension-provider.js';
+} from '#extensions/get-extension-provider.js';
 import { ModuleMetadataWithContext, getModuleMetadata } from '#utils/get-module-metadata.js';
 import { getModule } from '#utils/get-module.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';

@@ -7,12 +7,12 @@ import {
   GroupStage1Meta,
   ExtensionCounters,
   GroupStage1Meta2,
-} from '#types/extension-types.js';
+} from '#extensions/extension-types.js';
 import { ModRefId, OptionalProps } from '#types/mix.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { isInjectionToken } from '#utils/type-guards.js';
-import { Counter } from './counter.js';
-import { ExtensionsContext } from './extensions-context.js';
+import { Counter } from '#extensions/counter.js';
+import { ExtensionsContext } from '#extensions/extensions-context.js';
 
 @injectable()
 export class ExtensionsManager {

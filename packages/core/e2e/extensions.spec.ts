@@ -3,8 +3,8 @@ import { TestApplication } from '@ditsmod/testing';
 
 import { InjectionToken, injectable } from '#di';
 import { rootModule } from '#decorators/root-module.js';
-import { Extension, DebugStage1Meta, GroupStage1Meta, GroupStage1Meta2 } from '#types/extension-types.js';
-import { ExtensionsManager } from '#services/extensions-manager.js';
+import { Extension, DebugStage1Meta, GroupStage1Meta, GroupStage1Meta2 } from '#extensions/extension-types.js';
+import { ExtensionsManager } from '#extensions/extensions-manager.js';
 import { featureModule } from '#decorators/module.js';
 import { Router } from '#types/router.js';
 
