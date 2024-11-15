@@ -4,7 +4,7 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { defaultExtensionsProviders } from './default-extensions-providers.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { defaultProvidersPerReq } from './default-providers-per-req.js';
-import { ModuleManager } from './services/module-manager.js';
+import { ModuleManager } from './module-manager.js';
 import { AppOptions } from './types/app-options.js';
 import { ImportedTokensMap, MetadataPerMod2 } from './types/metadata-per-mod.js';
 import { AppMetadataMap, Scope, Provider, ProvidersForMod, ModRefId } from '#types/mix.js';

@@ -7,7 +7,7 @@ import { ModuleExtract } from '#types/module-extract.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { ModuleFactory } from './module-factory.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
-import { ModuleManager } from '#services/module-manager.js';
+import { ModuleManager } from './module-manager.js';
 import { GlobalProviders, ImportObj, MetadataPerMod1 } from '#types/metadata-per-mod.js';
 import { GuardPerMod1, ModuleType } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';

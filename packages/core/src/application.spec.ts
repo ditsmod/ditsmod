@@ -3,7 +3,7 @@ import * as http2 from 'http2';
 import * as https from 'https';
 
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { ModuleManager } from '#services/module-manager.js';
+import { ModuleManager } from './module-manager.js';
 import { Router } from '#types/router.js';
 import { AppOptions } from '#types/app-options.js';
 import { ModuleType } from '#types/mix.js';

@@ -45,7 +45,7 @@ export { LogItem } from '#logger/types.js';
 export { SystemLogMediator } from '#logger/system-log-mediator.js';
 export { ErrorMediator } from '#error/error-mediator.js';
 export { SystemErrorMediator } from '#error/system-error-mediator.js';
-export { ModuleManager } from '#services/module-manager.js';
+export { ModuleManager } from './module-manager.js';
 export { PerAppService } from '#services/per-app.service.js';
 export { PreRouter } from '#services/pre-router.js';
 export { Req } from '#services/request.js';

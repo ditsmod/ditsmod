@@ -13,7 +13,7 @@ import { Counter } from '#extensions/counter.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ExtensionsContext } from '#extensions/extensions-context.js';
 import { ExtensionsManager } from '#extensions/extensions-manager.js';
-import { ModuleManager } from '#services/module-manager.js';
+import { ModuleManager } from './module-manager.js';
 import { PerAppService } from '#services/per-app.service.js';
 import { PreRouter } from '#services/pre-router.js';
 import { ModRefId, ModuleType, Provider } from '#types/mix.js';

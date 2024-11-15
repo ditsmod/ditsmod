@@ -6,7 +6,7 @@ import { GlobalProviders, ImportedTokensMap } from './types/metadata-per-mod.js'
 import { CanActivate, ModRefId, ModuleType, Provider, Scope } from './types/mix.js';
 import { ModuleWithParams } from './types/module-metadata.js';
 import { ModuleFactory } from './module-factory.js';
-import { ModuleManager } from '#services/module-manager.js';
+import { ModuleManager } from './module-manager.js';
 import { SystemLogMediator } from './logger/system-log-mediator.js';
 import { featureModule } from '#decorators/module.js';
 import { SystemErrorMediator } from './error/system-error-mediator.js';
