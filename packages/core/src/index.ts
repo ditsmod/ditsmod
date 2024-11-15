@@ -37,7 +37,7 @@ export { DefaultHttpErrorHandler } from './error/default-http-error-handler.js';
 export { defaultProvidersPerApp } from './default-providers-per-app.js';
 export { defaultProvidersPerRou } from './default-providers-per-rou.js';
 export { defaultProvidersPerReq } from './default-providers-per-req.js';
-export { RequestContext, SingletonRequestContext } from './request-context.js';
+export { RequestContext, SingletonRequestContext } from '#services/request-context.js';
 export { ExtensionsContext } from '#extensions/extensions-context.js';
 export { ExtensionsManager } from '#extensions/extensions-manager.js';
 export { LogMediator } from '#logger/log-mediator.js';

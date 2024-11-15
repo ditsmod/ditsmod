@@ -8,7 +8,7 @@ import {
   TypeProvider,
   ValueProvider,
 } from '#di';
-import { RequestContext } from '../request-context.js';
+import { RequestContext } from '#services/request-context.js';
 import { MetadataPerMod1 } from '#types/metadata-per-mod.js';
 import { AppendsWithParams, ModuleWithParams } from '#types/module-metadata.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';

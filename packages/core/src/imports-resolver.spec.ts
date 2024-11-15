@@ -15,7 +15,7 @@ import { defaultProvidersPerRou } from './default-providers-per-rou.js';
 import { ModuleExtract } from '#types/module-extract.js';
 import { rootModule } from '#decorators/root-module.js';
 import { guard } from '#decorators/guard.js';
-import { RequestContext } from './request-context.js';
+import { RequestContext } from '#services/request-context.js';
 import { clearDebugModuleNames } from '#utils/get-debug-module-name.js';
 
 describe('ImportsResolver', () => {

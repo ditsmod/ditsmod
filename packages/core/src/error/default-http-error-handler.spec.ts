@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 
 import { Injector } from '#di';
-import { RequestContext } from '../request-context.js';
+import { RequestContext } from '#services/request-context.js';
 import { Logger } from '#logger/logger.js';
 import { NodeResponse } from '#types/server-options.js';
 import { Status } from '#utils/http-status-codes.js';
