@@ -23,6 +23,7 @@
     "#types/*": "./dist/types/*",
     "#utils/*": "./dist/utils/*",
     "#models/*": "./dist/models/*",
+    "#public-api/*": "./dist/public-api/*",
     "#decorators/*": "./dist/decorators/*",
     "#constans": "./dist/constans.js",
     "#logger/*": "./dist/logger/*",
