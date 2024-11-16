@@ -142,7 +142,7 @@ export class PreRouterExtension implements Extension<void> {
     injectorPerMod: Injector,
     controllerMetadata: ControllerMetadata,
   ) {
-    const { httpMethod, path, providersPerRou, routeMeta: baseRouteMeta } = controllerMetadata;
+    const { providersPerRou, routeMeta: baseRouteMeta } = controllerMetadata;
 
     const routeMeta = baseRouteMeta as RequireProps<typeof baseRouteMeta, 'routeHandler'>;
     const mergedPerRou: Provider[] = [];
@@ -230,7 +230,7 @@ export class PreRouterExtension implements Extension<void> {
     injectorPerMod: Injector,
     controllerMetadata: ControllerMetadata,
   ) {
-    const { httpMethod, path, providersPerRou, providersPerReq, routeMeta } = controllerMetadata;
+    const { providersPerRou, providersPerReq, routeMeta } = controllerMetadata;
     const mergedPerRou = [...metadataPerMod3.meta.providersPerRou, ...providersPerRou];
     const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'injectorPerRou');
 
