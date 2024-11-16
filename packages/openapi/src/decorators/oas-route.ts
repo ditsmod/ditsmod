@@ -5,7 +5,7 @@ import { XOperationObject } from '@ts-stack/openapi-spec';
  * This route metadata has a `guards` property.
  */
 export interface OasRouteMetadata1 {
-  httpMethod: HttpMethod | HttpMethod[];
+  httpMethod: HttpMethod | [HttpMethod, ...HttpMethod[]];
   path?: string;
   guards?: GuardItem[];
   /**
@@ -18,7 +18,7 @@ export interface OasRouteMetadata1 {
  * This route metadata does not have a `guards` property.
  */
 export interface OasRouteMetadata2 {
-  httpMethod: HttpMethod | HttpMethod[];
+  httpMethod: HttpMethod | [HttpMethod, ...HttpMethod[]];
   path?: string;
   /**
    * OAS `OperationObject`.
@@ -27,7 +27,7 @@ export interface OasRouteMetadata2 {
 }
 
 function oasRouteCallback(
-  httpMethod: HttpMethod | HttpMethod[],
+  httpMethod: HttpMethod | [HttpMethod, ...HttpMethod[]],
   path?: string,
   guardsOrOperationObj?: XOperationObject | GuardItem[],
   operationObject?: XOperationObject
