@@ -17,15 +17,22 @@ describe('01-hello-world', () => {
     server?.close();
   });
 
-  it('controller works', async () => {
+  it('controller works with GET method', async () => {
     const { type, status, text } = await testAgent.get('/hello');
     expect(type).toBe('text/plain');
     expect(status).toBe(200);
     expect(text).toBe('Hello, World!');
   });
 
-  it('method key as symbol', async () => {
+  it('method key as symbol with GET method', async () => {
     const { type, status, text } = await testAgent.get('/symbol');
+    expect(type).toBe('text/plain');
+    expect(status).toBe(200);
+    expect(text).toBe('Hello, World!');
+  });
+
+  it('method key as symbol with POST method', async () => {
+    const { type, status, text } = await testAgent.post('/symbol');
     expect(type).toBe('text/plain');
     expect(status).toBe(200);
     expect(text).toBe('Hello, World!');

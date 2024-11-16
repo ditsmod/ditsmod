@@ -5,7 +5,7 @@ export interface RouteDecoratorMetadata {
 }
 
 export interface RouteMetadata {
-  httpMethod: HttpMethod;
+  httpMethod: HttpMethod | HttpMethod[];
   path: string;
   guards: GuardItem[];
 }
@@ -14,7 +14,7 @@ export interface RouteMetadata {
  * in order to determine if the current user is allowed to activate the controller.
  * By default, any user can activate.
  */
-function routeFn(httpMethod: HttpMethod, path: string = '', guards: GuardItem[] = []): RouteMetadata {
+function routeFn(httpMethod: HttpMethod | HttpMethod[], path: string = '', guards: GuardItem[] = []): RouteMetadata {
   return { httpMethod, path, guards };
 }
 

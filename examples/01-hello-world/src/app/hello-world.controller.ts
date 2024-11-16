@@ -8,7 +8,7 @@ export class HelloWorldController {
     res.send('Hello, World!');
   }
 
-  @route('GET', 'symbol')
+  @route(['GET', 'POST'], 'symbol')
   [Symbol()](res: Res) {
     res.send('Hello, World!');
   }

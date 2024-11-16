@@ -11,7 +11,7 @@ export interface ControllerMetadata {
    */
   providersPerReq: Provider[];
   path: string;
-  httpMethod: HttpMethod;
+  httpMethod: HttpMethod | HttpMethod[];
   routeMeta: RouteMeta;
   /**
    * Singleton per scope.

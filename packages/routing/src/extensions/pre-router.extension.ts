@@ -165,7 +165,7 @@ export class PreRouterExtension implements Extension<void> {
 
     const resolvedPerRou = Injector.resolve(mergedPerRou);
     const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou, 'injectorPerRou');
-    this.checkDeps(httpMethod, path, injectorPerRou, routeMeta);
+    this.checkDeps(injectorPerRou, routeMeta);
     const resolvedChainMaker = resolvedPerRou.find((rp) => rp.dualKey.token === ChainMaker)!;
     const resolvedErrHandler = resolvedPerRou.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
     const chainMaker = injectorPerRou.instantiateResolved<DefaultSingletonChainMaker>(resolvedChainMaker);
@@ -249,7 +249,7 @@ export class PreRouterExtension implements Extension<void> {
     const injPerReq = injectorPerRou.createChildFromResolved(resolvedPerReq);
     const RequestContextClass = injPerReq.get(RequestContext) as typeof RequestContext;
     routeMeta.resolvedHandler = this.getResolvedHandler(routeMeta, resolvedPerReq);
-    this.checkDeps(httpMethod, path, injPerReq, routeMeta);
+    this.checkDeps(injPerReq, routeMeta);
     const resolvedChainMaker = resolvedPerReq.find((rp) => rp.dualKey.token === ChainMaker)!;
     const resolvedErrHandler = resolvedPerReq
       .concat(resolvedPerRou)
@@ -339,7 +339,7 @@ export class PreRouterExtension implements Extension<void> {
   /**
    * Used as "sandbox" to test resolvable of controllers, guards and HTTP interceptors.
    */
-  protected checkDeps(httpMethod: HttpMethod, path: string, inj: Injector, routeMeta: RouteMeta) {
+  protected checkDeps(inj: Injector, routeMeta: RouteMeta) {
     try {
       const ignoreDeps: any[] = [HTTP_INTERCEPTORS, CTX_DATA];
       DepsChecker.check(inj, HttpErrorHandler, undefined, ignoreDeps);
@@ -375,12 +375,15 @@ export class PreRouterExtension implements Extension<void> {
         throw new Error(msg);
       }
 
-      this.log.printRoute(this, httpMethod, path, countOfGuards);
-      if (httpMethod == 'ALL') {
-        this.router.all(`/${path}`, handle);
-      } else {
-        this.router.on(httpMethod, `/${path}`, handle);
-      }
+      const httpMethods = Array.isArray(httpMethod) ? httpMethod : [httpMethod];
+      httpMethods.forEach((httpMethod) => {
+        this.log.printRoute(this, httpMethod, path, countOfGuards);
+        if (httpMethod == 'ALL') {
+          this.router.all(`/${path}`, handle);
+        } else {
+          this.router.on(httpMethod, `/${path}`, handle);
+        }
+      });
     });
   }
 
