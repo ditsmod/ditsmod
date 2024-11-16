@@ -27,7 +27,7 @@ import { getProvidersTargets, getToken, getTokens } from '#utils/get-tokens.js';
 import { normalizeProviders } from '#utils/ng-utils.js';
 import { throwProvidersCollisionError } from '#utils/throw-providers-collision-error.js';
 import { isMultiProvider, isNormRootModule } from '#utils/type-guards.js';
-import { SERVER } from '#constans';
+import { SERVER } from '#public-api/constans.js';
 import { HttpServer } from '#types/server-options.js';
 import { MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import { getProviderName } from '#utils/get-provider-name.js';

@@ -1,4 +1,4 @@
-import { HTTP_RES } from '#constans';
+import { HTTP_RES } from '#public-api/constans.js';
 import { inject, injectable } from '#di';
 import { RedirectStatusCodes } from '#types/mix.js';
 import { HttpResponse } from '#types/server-options.js';
