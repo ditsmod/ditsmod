@@ -69,20 +69,23 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     for (const groupStage1MetaPerApp of groupDataPerApp) {
       for (const metadataPerMod3 of groupStage1MetaPerApp.groupData) {
         metadataPerMod3.aControllerMetadata.forEach(({ httpMethod, path, routeMeta, guards }) => {
-          const { oasPath, resolvedGuards, operationObject } = routeMeta as OasRouteMeta;
-          if (operationObject) {
-            const clonedOperationObject = { ...operationObject };
-            this.setSecurityInfo(clonedOperationObject, guards);
-            const pathItemObject: PathItemObject = { [httpMethod.toLowerCase()]: clonedOperationObject };
-            paths[`/${oasPath}`] = { ...(paths[`/${oasPath}`] || {}), ...pathItemObject };
-          } else {
-            if (!httpMethod) {
-              const moduleName = metadataPerMod3.meta.name;
-              const msg = `[${moduleName}]: OpenapiCompilerExtension: OasRouteMeta not found.`;
-              throw new Error(msg);
+          const httpMethods = Array.isArray(httpMethod) ? httpMethod : [httpMethod];
+          httpMethods.forEach((method) => {
+            const { oasPath, resolvedGuards, operationObject } = routeMeta as OasRouteMeta;
+            if (operationObject) {
+              const clonedOperationObject = { ...operationObject };
+              this.setSecurityInfo(clonedOperationObject, guards);
+              const pathItemObject: PathItemObject = { [method.toLowerCase()]: clonedOperationObject };
+              paths[`/${oasPath}`] = { ...(paths[`/${oasPath}`] || {}), ...pathItemObject };
+            } else {
+              if (!method) {
+                const moduleName = metadataPerMod3.meta.name;
+                const msg = `[${moduleName}]: OpenapiCompilerExtension: OasRouteMeta not found.`;
+                throw new Error(msg);
+              }
+              this.applyNonOasRoute(path, paths, method, guards);
             }
-            this.applyNonOasRoute(path, paths, httpMethod, guards);
-          }
+          });
         });
       }
     }

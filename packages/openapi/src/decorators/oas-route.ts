@@ -1,11 +1,11 @@
-import { GuardItem, HttpMethod, AnyFn, makePropDecorator } from '@ditsmod/core';
+import { GuardItem, HttpMethod, makePropDecorator } from '@ditsmod/core';
 import { XOperationObject } from '@ts-stack/openapi-spec';
 
 /**
  * This route metadata has a `guards` property.
  */
 export interface OasRouteMetadata1 {
-  httpMethod: HttpMethod;
+  httpMethod: HttpMethod | HttpMethod[];
   path?: string;
   guards?: GuardItem[];
   /**
@@ -18,7 +18,7 @@ export interface OasRouteMetadata1 {
  * This route metadata does not have a `guards` property.
  */
 export interface OasRouteMetadata2 {
-  httpMethod: HttpMethod;
+  httpMethod: HttpMethod | HttpMethod[];
   path?: string;
   /**
    * OAS `OperationObject`.
@@ -27,7 +27,7 @@ export interface OasRouteMetadata2 {
 }
 
 function oasRouteCallback(
-  httpMethod: HttpMethod,
+  httpMethod: HttpMethod | HttpMethod[],
   path?: string,
   guardsOrOperationObj?: XOperationObject | GuardItem[],
   operationObject?: XOperationObject

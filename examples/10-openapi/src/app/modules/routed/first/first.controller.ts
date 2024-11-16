@@ -8,7 +8,7 @@ import { getMetaContent } from './overriden-helper.js';
 
 @controller({ providersPerReq: [BasicGuard] })
 export class FirstController {
-  @route('GET')
+  @route(['GET', 'POST'])
   hello(res: Res) {
     res.send('Hello, World!\n');
   }
