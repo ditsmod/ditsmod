@@ -1,6 +1,6 @@
 import { injectable, reflector } from '#di';
 import { getModuleMetadata } from '#utils/get-module-metadata.js';
-import { defaultProvidersPerMod } from '../constans.js';
+import { defaultProvidersPerMod } from '#init/default-providers-per-mod.js';
 import { ModuleExtract } from '#types/module-extract.js';
 import type { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { defaultProvidersPerReq } from './default-providers-per-req.js';

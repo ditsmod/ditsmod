@@ -2,15 +2,13 @@ import { InjectionToken } from '#di';
 
 import { PathParam } from '#types/router.js';
 import { HttpServer } from '#types/server-options.js';
-import { ModuleExtract } from '#types/module-extract.js';
-import { AnyObj, Provider } from '#types/mix.js';
+import { AnyObj } from '#types/mix.js';
 import { HttpRequest, HttpResponse } from '#types/server-options.js';
 
 /**
  * A DI token that allows you to obtain the instance of the server that is serving the current application.
  */
 export const SERVER = new InjectionToken<HttpServer>('SERVER');
-export const defaultProvidersPerMod: Provider[] = [ModuleExtract];
 /**
  * DI token for native webserver request.
  */
