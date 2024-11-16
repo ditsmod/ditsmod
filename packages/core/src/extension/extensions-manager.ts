@@ -82,8 +82,8 @@ export class ExtensionsManager {
   updateExtensionPendingList() {
     for (const [groupToken, sExtensions] of this.excludedExtensionPendingList) {
       for (const ExtensionClass of sExtensions) {
-        const mExtensions = this.extensionsContext.mExtensionPendingList.get(groupToken)!;
-        mExtensions.delete(ExtensionClass);
+        const mExtensions = this.extensionsContext.mExtensionPendingList.get(groupToken);
+        mExtensions?.delete(ExtensionClass);
       }
     }
   }

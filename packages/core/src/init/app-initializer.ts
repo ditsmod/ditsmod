@@ -385,7 +385,7 @@ export class AppInitializer {
         await extensionsManager.stage1(groupToken);
         extensionsManager.updateExtensionPendingList();
       } catch (error: any) {
-        throw new ChainError(moduleName, error);
+        throw new ChainError(moduleName, { cause: error, name: 'Error' });
       }
     }
 
