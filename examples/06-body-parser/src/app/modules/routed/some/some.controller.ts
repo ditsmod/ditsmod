@@ -1,4 +1,4 @@
-import { controller, inject, RES, HttpResponse, Res } from '@ditsmod/core';
+import { controller, inject, HTTP_RES, HttpResponse, Res } from '@ditsmod/core';
 import { route } from '@ditsmod/routing';
 import { HTTP_BODY, MulterParser } from '@ditsmod/body-parser';
 import { saveFiles, sendHtmlForm } from './utils.js';
@@ -20,7 +20,7 @@ export class SomeController {
   }
 
   @route('GET', 'file-upload')
-  getHtmlForm(@inject(RES) httpRes: HttpResponse) {
+  getHtmlForm(@inject(HTTP_RES) httpRes: HttpResponse) {
     sendHtmlForm(httpRes);
   }
 

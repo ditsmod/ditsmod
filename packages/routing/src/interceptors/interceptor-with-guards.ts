@@ -3,8 +3,8 @@ import {
   CanActivate,
   injectable,
   Injector,
-  REQ,
-  RES,
+  HTTP_REQ,
+  HTTP_RES,
   QUERY_STRING,
   RequestContext,
   ResolvedGuardPerMod,
@@ -51,7 +51,7 @@ export class InterceptorWithGuards implements HttpInterceptor {
 
   protected getInjectorPerReq(rg: ResolvedGuardPerMod) {
     const inj = rg.injectorPerRou.createChildFromResolved(rg.resolvedPerReq!);
-    this.injector.fill(inj, [REQ, RES, A_PATH_PARAMS, QUERY_STRING]);
+    this.injector.fill(inj, [HTTP_REQ, HTTP_RES, A_PATH_PARAMS, QUERY_STRING]);
     return inj;
   }
 

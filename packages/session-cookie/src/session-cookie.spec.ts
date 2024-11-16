@@ -1,4 +1,4 @@
-import { HttpRequest, HttpResponse, Injector, REQ, RES } from '@ditsmod/core';
+import { HttpRequest, HttpResponse, Injector, HTTP_REQ, HTTP_RES } from '@ditsmod/core';
 import { jest } from '@jest/globals';
 
 import { SessionCookie } from './session-cookie.js';
@@ -23,8 +23,8 @@ describe('@ditsmod/session-cookie', () => {
 
     const injector = Injector.resolveAndCreate([
       { token: SessionCookieOptions, useValue: config },
-      { token: REQ, useValue: httpReq },
-      { token: RES, useValue: httpRes },
+      { token: HTTP_REQ, useValue: httpReq },
+      { token: HTTP_RES, useValue: httpRes },
       SessionCookie,
     ]);
     session = injector.get(SessionCookie);

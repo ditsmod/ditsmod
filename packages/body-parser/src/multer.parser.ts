@@ -1,4 +1,4 @@
-import { inject, injectable, REQ, HttpRequest, optional } from '@ditsmod/core';
+import { inject, injectable, HTTP_REQ, HttpRequest, optional } from '@ditsmod/core';
 import { Multer, MulterGroup } from '@ts-stack/multer';
 
 import { MulterExtendedOptions } from './multer-extended-options.js';
@@ -7,7 +7,7 @@ import { checkResult } from './multer-utils.js';
 @injectable()
 export class MulterParser {
   constructor(
-    @inject(REQ) protected httpReq: HttpRequest,
+    @inject(HTTP_REQ) protected httpReq: HttpRequest,
     protected multer: Multer,
     @optional() protected options?: MulterExtendedOptions,
   ) {}

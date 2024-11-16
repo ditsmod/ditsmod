@@ -2,9 +2,9 @@ import { InjectionToken } from '#di';
 
 import { PathParam } from '#types/router.js';
 import { HttpServer } from '#types/server-options.js';
-import { ModuleExtract } from './types/module-extract.js';
-import { AnyObj, Provider } from './types/mix.js';
-import { HttpRequest, HttpResponse } from './types/server-options.js';
+import { ModuleExtract } from '#types/module-extract.js';
+import { AnyObj, Provider } from '#types/mix.js';
+import { HttpRequest, HttpResponse } from '#types/server-options.js';
 
 /**
  * A DI token that allows you to obtain the instance of the server that is serving the current application.
@@ -12,13 +12,13 @@ import { HttpRequest, HttpResponse } from './types/server-options.js';
 export const SERVER = new InjectionToken<HttpServer>('SERVER');
 export const defaultProvidersPerMod: Provider[] = [ModuleExtract];
 /**
- * DI token for native Node.js request.
+ * DI token for native webserver request.
  */
-export const REQ = new InjectionToken<HttpRequest>('REQ');
+export const HTTP_REQ = new InjectionToken<HttpRequest>('HTTP_REQ');
 /**
- * DI token for native Node.js response.
+ * DI token for native webserver response.
  */
-export const RES = new InjectionToken<HttpResponse>('RES');
+export const HTTP_RES = new InjectionToken<HttpResponse>('HTTP_RES');
 /**
  * DI token for path params that is returned by `@ditsmod/routing`.
  */

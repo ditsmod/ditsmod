@@ -1,5 +1,5 @@
 import { Cookies } from '@ts-stack/cookies';
-import { AnyFn, HttpRequest, HttpResponse, inject, injectable, REQ, RES, optional } from '@ditsmod/core';
+import { AnyFn, HttpRequest, HttpResponse, inject, injectable, HTTP_REQ, HTTP_RES, optional } from '@ditsmod/core';
 
 import { SessionCookieOptions } from './types.js';
 
@@ -10,8 +10,8 @@ export class SessionCookie {
   protected maxAge: number;
 
   constructor(
-    @inject(REQ) httpReq: HttpRequest,
-    @inject(RES) httpRes: HttpResponse,
+    @inject(HTTP_REQ) httpReq: HttpRequest,
+    @inject(HTTP_RES) httpRes: HttpResponse,
     @optional() protected opts: SessionCookieOptions,
   ) {
     this.opts = { ...(opts || {}) };

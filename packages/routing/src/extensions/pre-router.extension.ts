@@ -1,8 +1,8 @@
 import { parse } from 'node:querystring';
 import {
   A_PATH_PARAMS,
-  REQ,
-  RES,
+  HTTP_REQ,
+  HTTP_RES,
   QUERY_STRING,
   Injector,
   KeyRegistry,
@@ -255,8 +255,8 @@ export class PreRouterExtension implements Extension<void> {
       .concat(resolvedPerRou)
       .find((rp) => rp.dualKey.token === HttpErrorHandler)!;
     const RegistryPerReq = Injector.prepareRegistry(resolvedPerReq);
-    const nodeReqId = KeyRegistry.get(REQ).id;
-    const nodeResId = KeyRegistry.get(RES).id;
+    const nodeReqId = KeyRegistry.get(HTTP_REQ).id;
+    const nodeResId = KeyRegistry.get(HTTP_RES).id;
     const pathParamsId = KeyRegistry.get(A_PATH_PARAMS).id;
     const queryStringId = KeyRegistry.get(QUERY_STRING).id;
 

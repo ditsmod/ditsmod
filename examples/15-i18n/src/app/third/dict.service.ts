@@ -4,7 +4,7 @@ import {
   injectable,
   Injector,
   HttpRequest,
-  REQ,
+  HTTP_REQ,
   optional,
   QUERY_PARAMS,
   Logger,
@@ -20,7 +20,7 @@ export class MyDictService extends DictService {
     protected logger: Logger,
     @optional() protected override i18nOptions?: I18nOptions,
     @inject(QUERY_PARAMS) protected override queryParams?: AnyObj,
-    @optional() @inject(REQ) protected httpReq?: HttpRequest,
+    @optional() @inject(HTTP_REQ) protected httpReq?: HttpRequest,
   ) {
     super(injector, log, errMediator, i18nOptions, queryParams);
   }

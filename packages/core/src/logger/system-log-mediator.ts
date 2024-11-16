@@ -63,11 +63,11 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * `${serverName} is running at ${host}:${port}.`
+   * `${serverName}: webserver is running at ${host}:${port}.`
    */
   serverListen(self: object, host: string, port: number) {
     const className = self.constructor.name;
-    this.setLog('info', `${className}: Node.js is running at http://${host}:${port}.`);
+    this.setLog('info', `${className}: webserver is running at http://${host}:${port}.`);
   }
 
   /**

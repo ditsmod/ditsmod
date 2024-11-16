@@ -1,10 +1,10 @@
-import { inject, injectable, Injector, HttpRequest, REQ, Res, skipSelf, Status, HttpMethod } from '@ditsmod/core';
+import { inject, injectable, Injector, HttpRequest, HTTP_REQ, Res, skipSelf, Status, HttpMethod } from '@ditsmod/core';
 import { DefaultHttpBackend, RouteMeta } from '@ditsmod/routing';
 
 @injectable()
 export class ReturnHttpBackend extends DefaultHttpBackend {
   constructor(
-    @inject(REQ) protected httpReq: HttpRequest,
+    @inject(HTTP_REQ) protected httpReq: HttpRequest,
     @skipSelf() protected override routeMeta: RouteMeta,
     protected override injector: Injector,
     protected res: Res,

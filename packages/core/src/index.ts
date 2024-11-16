@@ -7,7 +7,7 @@ export { ModuleFactory } from '#init/module-factory.js';
 export { defaultProvidersPerApp } from '#init/default-providers-per-app.js';
 export { defaultProvidersPerRou } from '#init/default-providers-per-rou.js';
 export { defaultProvidersPerReq } from '#init/default-providers-per-req.js';
-export { SERVER, REQ, RES, A_PATH_PARAMS, QUERY_STRING, PATH_PARAMS, QUERY_PARAMS } from './constans.js';
+export { SERVER, HTTP_REQ, HTTP_RES, A_PATH_PARAMS, QUERY_STRING, PATH_PARAMS, QUERY_PARAMS } from './constans.js';
 export { CustomError } from '#error/custom-error.js';
 export { ErrorOpts } from '#error/error-opts.js';
 export {

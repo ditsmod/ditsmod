@@ -1,12 +1,12 @@
-import { inject, injectable, HttpRequest, HttpResponse, REQ, RES, optional } from '@ditsmod/core';
+import { inject, injectable, HttpRequest, HttpResponse, HTTP_REQ, HTTP_RES, optional } from '@ditsmod/core';
 import { Cookies, CookieOptions } from '@ts-stack/cookies';
 import { CorsOptions, cors, mergeOptions } from '@ts-stack/cors';
 
 @injectable()
 export class CorsService {
   constructor(
-    @inject(REQ) private httpReq: HttpRequest,
-    @inject(RES) private httpRes: HttpResponse,
+    @inject(HTTP_REQ) private httpReq: HttpRequest,
+    @inject(HTTP_RES) private httpRes: HttpResponse,
     @optional() private corsOptions?: CorsOptions
   ) {}
 

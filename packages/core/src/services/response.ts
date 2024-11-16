@@ -1,4 +1,4 @@
-import { RES } from '#constans';
+import { HTTP_RES } from '#constans';
 import { inject, injectable } from '#di';
 import { RedirectStatusCodes } from '#types/mix.js';
 import { HttpResponse } from '#types/server-options.js';
@@ -8,9 +8,9 @@ import { Status } from '#utils/http-status-codes.js';
 export class Res<T = any> {
   constructor(
     /**
-     * Native Node.js response.
+     * Native webserver response.
      */
-    @inject(RES) public httpRes: HttpResponse,
+    @inject(HTTP_RES) public httpRes: HttpResponse,
   ) {}
 
   /**
