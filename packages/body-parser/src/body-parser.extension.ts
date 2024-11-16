@@ -28,20 +28,23 @@ export class BodyParserExtension implements Extension<void> {
         const injectorPerApp = this.perAppService.injector;
         const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedProvidersPerRou);
-        if (scope == 'module') {
-          let bodyParserConfig = injectorPerRou.get(BodyParserConfig, undefined, {}) as BodyParserConfig;
-          bodyParserConfig = { ...new BodyParserConfig(), ...bodyParserConfig }; // Merge with default.
-          if (bodyParserConfig.acceptMethods!.includes(httpMethod)) {
-            providersPerRou.push({ token: HTTP_INTERCEPTORS, useClass: SingletonBodyParserInterceptor, multi: true });
+        const httpMethods = Array.isArray(httpMethod) ? httpMethod : [httpMethod];
+        httpMethods.forEach((method) => {
+          if (scope == 'module') {
+            let bodyParserConfig = injectorPerRou.get(BodyParserConfig, undefined, {}) as BodyParserConfig;
+            bodyParserConfig = { ...new BodyParserConfig(), ...bodyParserConfig }; // Merge with default.
+            if (bodyParserConfig.acceptMethods!.includes(method)) {
+              providersPerRou.push({ token: HTTP_INTERCEPTORS, useClass: SingletonBodyParserInterceptor, multi: true });
+            }
+          } else {
+            const injectorPerReq = injectorPerRou.resolveAndCreateChild(mergedProvidersPerReq);
+            let bodyParserConfig = injectorPerReq.get(BodyParserConfig, undefined, {}) as BodyParserConfig;
+            bodyParserConfig = { ...new BodyParserConfig(), ...bodyParserConfig }; // Merge with default.
+            if (bodyParserConfig.acceptMethods!.includes(method)) {
+              providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: BodyParserInterceptor, multi: true });
+            }
           }
-        } else {
-          const injectorPerReq = injectorPerRou.resolveAndCreateChild(mergedProvidersPerReq);
-          let bodyParserConfig = injectorPerReq.get(BodyParserConfig, undefined, {}) as BodyParserConfig;
-          bodyParserConfig = { ...new BodyParserConfig(), ...bodyParserConfig }; // Merge with default.
-          if (bodyParserConfig.acceptMethods!.includes(httpMethod)) {
-            providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: BodyParserInterceptor, multi: true });
-          }
-        }
+        });
       });
     });
   }
