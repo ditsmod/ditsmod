@@ -44,7 +44,7 @@ describe('07-dynamically-composing-modules', () => {
   });
 
   it('case 5', async () => {
-    const msg = 'Validation ThirdModule failed: this module should have "providersPerApp" or some controllers, or exports, or extensions.';
+    const msg = 'Normalization of ThirdModule failed: this module should have "providersPerApp" or some controllers, or exports, or extensions.';
     const { status, body, type } = await testAgent.get('/add-3');
     expect(status).toBe(500);
     expect(type).toBe('application/json');
