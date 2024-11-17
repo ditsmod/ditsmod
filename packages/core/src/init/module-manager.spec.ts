@@ -3,7 +3,7 @@ import { jest } from '@jest/globals';
 import { controller } from '#decorators/controller.js';
 import { featureModule } from '#decorators/module.js';
 import { rootModule } from '#decorators/root-module.js';
-import { Class, InjectionToken, forwardRef, injectable } from '#di';
+import { InjectionToken, forwardRef, injectable } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyObj, CanActivate, ModuleType, Provider } from '#types/mix.js';
 import { ModuleWithParams, AppendsWithParams } from '#types/module-metadata.js';
@@ -39,14 +39,6 @@ describe('ModuleManager', () => {
     ) {
       return super.getRawMetadata<T, A>(moduleId, throwErrOnNotFound);
     }
-
-    override quickCheckMetadata(meta: NormalizedModuleMetadata) {
-      return super.quickCheckMetadata(meta);
-    }
-
-    override checkController(modName: string, Controller: Class) {
-      return super.checkController(modName, Controller);
-    }
   }
 
   let mock: MockModuleManager;
@@ -67,7 +59,7 @@ describe('ModuleManager', () => {
       })
       class Module1 {}
 
-      expect(() => mock.scanModule(Module1)).toThrow(/Validation Module1 failed: this module should have/);
+      expect(() => mock.scanModule(Module1)).toThrow(/Normalization of Module1 failed: this module should have/);
     });
 
     it('should works, when no export and no controllers, but with appends for prefix (for version)', () => {
@@ -115,7 +107,7 @@ describe('ModuleManager', () => {
       @featureModule({ imports: [Module1] })
       class Module2 {}
 
-      expect(() => mock.scanModule(Module2)).toThrow('Validation Module2 failed: this module should have');
+      expect(() => mock.scanModule(Module2)).toThrow('Normalization of Module2 failed: this module should have');
     });
 
     it('should not throw an error, when exports some provider', () => {
@@ -143,11 +135,6 @@ describe('ModuleManager', () => {
       class Module1 {}
 
       expect(() => mock.scanModule(Module1)).not.toThrow();
-    });
-
-    it('without @controller decorator', () => {
-      const msg = 'Collecting controller\'s metadata in TestModuleName failed: class "Controller1"';
-      expect(() => mock.checkController('TestModuleName', class Controller1 {})).toThrow(msg);
     });
   });
 

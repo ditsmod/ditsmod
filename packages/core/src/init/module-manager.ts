@@ -1,37 +1,16 @@
 import { format } from 'util';
 
-import { Class, Injector, reflector, resolveForwardRef } from '#di';
+import { Injector } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { AnyObj, GuardItem, ModuleType, NormalizedGuard, Scope, Provider, ModRefId } from '#types/mix.js';
-import { ModuleWithParams, ModuleMetadata } from '#types/module-metadata.js';
-import { ExtensionProvider, Extension } from '#extension/extension-types.js';
+import { AnyObj, ModuleType, ModRefId } from '#types/mix.js';
+import { ModuleWithParams } from '#types/module-metadata.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
-import {
-  ExtensionOptions,
-  getExtensionProvider,
-  isOptionWithOverrideExtension,
-} from '#extension/get-extension-provider.js';
-import { ModuleMetadataWithContext, getModuleMetadata } from '#utils/get-module-metadata.js';
-import { getModule } from '#utils/get-module.js';
-import { getToken, getTokens } from '#utils/get-tokens.js';
-import { normalizeProviders } from '#utils/ng-utils.js';
-import {
-  MultiProvider,
-  isAppendsWithParams,
-  isClassProvider,
-  isCtrlDecor,
-  isModuleWithParams,
-  isMultiProvider,
-  isNormRootModule,
-  isNormalizedProvider,
-  isProvider,
-  isRawRootModule,
-  isTokenProvider,
-  isValueProvider,
-} from '#utils/type-guards.js';
-import { Providers } from '#utils/providers.js';
+import { getModuleMetadata } from '#utils/get-module-metadata.js';
+import { isModuleWithParams } from '#utils/type-guards.js';
 import { clearDebugModuleNames, getDebugModuleName } from '#utils/get-debug-module-name.js';
 import { objectKeys } from '#utils/object-keys.js';
+import { ModuleNormalizer } from '#init/module-normalizer.js';
+import { ChainError } from '@ts-stack/chain-error';
 
 export type ModulesMap = Map<ModRefId, NormalizedModuleMetadata>;
 export type ModulesMapId = Map<string, ModRefId>;
@@ -49,10 +28,7 @@ export class ModuleManager {
   protected oldMapId = new Map<string, ModRefId>();
   protected unfinishedScanModules = new Set<ModRefId>();
   protected scanedModules = new Set<ModRefId>();
-  /**
-   * The directory in which the class was declared.
-   */
-  protected rootDeclaredInDir: string;
+  protected moduleNormalizer = new ModuleNormalizer();
   protected propsWithModules = [
     'importsModules',
     'importsWithParams',
@@ -351,332 +327,14 @@ export class ModuleManager {
     );
   }
 
-  /**
-   * Returns normalized module metadata.
-   */
-  protected normalizeMetadata(modRefId: ModRefId) {
-    const rawMeta = getModuleMetadata(modRefId);
-    const modName = getDebugModuleName(modRefId);
-    if (!rawMeta) {
-      throw new Error(`Module build failed: module "${modName}" does not have the "@featureModule()" decorator`);
-    }
-
-    /**
-     * Setting initial properties of metadata.
-     */
-    const meta = new NormalizedModuleMetadata();
-    meta.name = modName;
-    meta.modRefId = modRefId;
-    meta.decoratorFactory = rawMeta.decoratorFactory;
-    meta.declaredInDir = rawMeta.declaredInDir;
-    this.checkWhetherIsExternalModule(rawMeta, meta);
-    if (rawMeta.guards.length) {
-      meta.guardsPerMod.push(...this.normalizeGuards(rawMeta.guards));
-      this.checkGuardsPerMod(meta.guardsPerMod, modName);
-    }
-
-    rawMeta.imports?.forEach((imp, i) => {
-      imp = resolveForwardRef(imp);
-      this.throwIfUndefined(modName, 'Imports', imp, i);
-      if (isModuleWithParams(imp)) {
-        meta.importsWithParams.push(imp);
-      } else {
-        meta.importsModules.push(imp);
-      }
-    });
-
-    rawMeta.appends?.forEach((ap, i) => {
-      ap = resolveForwardRef(ap);
-      this.throwIfUndefined(modName, 'Appends', ap, i);
-      if (isAppendsWithParams(ap)) {
-        meta.appendsWithParams.push(ap);
-      } else {
-        meta.appendsModules.push(ap);
-      }
-    });
-
-    const providersTokens = getTokens([
-      ...(rawMeta.providersPerMod || []),
-      ...(rawMeta.providersPerRou || []),
-      ...(rawMeta.providersPerReq || []),
-    ]);
-
-    const resolvedCollisionsPerScope = [
-      ...(rawMeta.resolvedCollisionsPerMod || []),
-      ...(rawMeta.resolvedCollisionsPerRou || []),
-      ...(rawMeta.resolvedCollisionsPerReq || []),
-    ];
-    if (isRawRootModule(rawMeta)) {
-      resolvedCollisionsPerScope.push(...(rawMeta.resolvedCollisionsPerApp || []));
-    }
-    resolvedCollisionsPerScope.forEach(([token]) => this.throwIfNormalizedProvider(modName, token));
-    this.exportFromRawMeta(rawMeta, modName, providersTokens, meta);
-    this.checkReexportModules(meta);
-
-    rawMeta.extensions?.forEach((extensionOptions, i) => {
-      this.checkExtensionOptions(modName, extensionOptions, i);
-      const extensionObj = getExtensionProvider(extensionOptions);
-      extensionObj.providers.forEach((p) => this.checkInitMethodForExtension(modName, p));
-      if (!extensionObj.exportedOnly) {
-        meta.extensionsProviders.push(...extensionObj.providers);
-      }
-      extensionObj.exports.forEach((token) => {
-        this.throwExportsIfNormalizedProvider(modName, token);
-        const exportedExtensions = extensionObj.providers.filter((provider) => getToken(provider) === token);
-        meta.exportedExtensions.push(...exportedExtensions);
-      });
-    });
-
-    // @todo Refactor the logic with the `pickMeta()` call, as it may override previously set values in `meta`.
-    this.pickMeta(meta, rawMeta);
-    meta.extensionsMeta = { ...(meta.extensionsMeta || {}) };
-    this.quickCheckMetadata(meta);
-    meta.controllers.forEach((Controller) => this.checkController(modName, Controller));
-
-    return meta;
-  }
-
-  protected checkController(modName: string, Controller: Class) {
-    const decoratorsAndValues = reflector.getMetadata(Controller)?.constructor.decorators;
-    if (!decoratorsAndValues?.find(isCtrlDecor)) {
-      throw new Error(
-        `Collecting controller's metadata in ${modName} failed: class ` +
-          `"${Controller.name}" does not have the "@controller()" decorator.`,
-      );
-    }
-  }
-
-  protected checkExtensionOptions(modName: string, extensionOptions: ExtensionOptions, i: number) {
-    if (!isOptionWithOverrideExtension(extensionOptions)) {
-      // Previously, extensions had a `groupToken` property, which was renamed to `token`.
-      if (!extensionOptions.token) {
-        const msg = `Export of "${modName}" failed: extension in [${i}] index does not have "token" property.`;
-        throw new TypeError(msg);
-      }
-    }
-  }
-
-  protected pickMeta(targetObject: NormalizedModuleMetadata, ...sourceObjects: ModuleMetadataWithContext[]) {
-    const trgtObj = targetObject as any;
-    sourceObjects.forEach((sourceObj: AnyObj) => {
-      sourceObj ??= {};
-      for (const prop in targetObject) {
-        if (Array.isArray(sourceObj[prop])) {
-          trgtObj[prop] = sourceObj[prop].slice();
-        } else if (sourceObj[prop] instanceof Providers) {
-          trgtObj[prop] = [...sourceObj[prop]];
-        } else if (sourceObj[prop] !== undefined) {
-          trgtObj[prop] = sourceObj[prop] as any;
-        }
-      }
-    });
-
-    return trgtObj;
-  }
-
-  protected checkWhetherIsExternalModule(rawMeta: ModuleMetadataWithContext, meta: NormalizedModuleMetadata) {
-    meta.isExternal = false;
-    if (isRawRootModule(rawMeta)) {
-      this.rootDeclaredInDir = meta.declaredInDir;
-    } else if (this.rootDeclaredInDir) {
-      const { declaredInDir } = meta;
-      if (this.rootDeclaredInDir !== '.' && declaredInDir !== '.') {
-        // Case when getCallerDir() works correctly.
-        meta.isExternal = !declaredInDir.startsWith(this.rootDeclaredInDir);
-      }
-    }
-  }
-
-  protected exportFromRawMeta(
-    rawMeta: ModuleMetadata,
-    modName: string,
-    providersTokens: any[],
-    meta: NormalizedModuleMetadata,
-  ) {
-    rawMeta.exports?.forEach((exp, i) => {
-      exp = resolveForwardRef(exp);
-      this.throwIfUndefined(modName, 'Exports', exp, i);
-      this.throwExportsIfNormalizedProvider(modName, exp);
-      if (isModuleWithParams(exp)) {
-        meta.exportsWithParams.push(exp);
-        if (exp.exports?.length) {
-          this.exportFromRawMeta(exp, modName, providersTokens, meta);
-        }
-      } else if (isProvider(exp) || providersTokens.includes(exp)) {
-        this.findAndSetProviders(exp, rawMeta, meta);
-      } else if (getModuleMetadata(exp)) {
-        meta.exportsModules.push(exp);
-      } else {
-        this.throwUnidentifiedToken(modName, exp);
-      }
-    });
-  }
-
-  protected checkReexportModules(meta: NormalizedModuleMetadata) {
-    const imports = [...meta.importsModules, ...meta.importsWithParams].map(getModule);
-    const exports = [...meta.exportsModules, ...meta.exportsWithParams].map(getModule);
-
-    exports.forEach((mod) => {
-      if (!imports.includes(mod)) {
-        const msg =
-          `Reexport from ${meta.name} failed: ${mod.name} includes in exports, but not includes in imports. ` +
-          `In ${meta.name} you need include ${mod.name} to imports or remove it from exports.`;
-        throw new Error(msg);
-      }
-    });
-  }
-
-  protected normalizeGuards(guards?: GuardItem[]) {
-    return (guards || []).map((item) => {
-      if (Array.isArray(item)) {
-        return { guard: item[0], params: item.slice(1) } as NormalizedGuard;
-      } else {
-        return { guard: item } as NormalizedGuard;
-      }
-    });
-  }
-
-  protected checkGuardsPerMod(guards: NormalizedGuard[], moduleName: string) {
-    for (const Guard of guards.map((n) => n.guard)) {
-      const type = typeof Guard?.prototype.canActivate;
-      if (type != 'function') {
-        throw new TypeError(
-          `Import ${moduleName} with guards failed: Guard.prototype.canActivate must be a function, got: ${type}`,
-        );
-      }
-    }
-  }
-
-  protected quickCheckMetadata(meta: NormalizedModuleMetadata) {
-    if (
-      !isNormRootModule(meta) &&
-      !meta.exportedProvidersPerReq.length &&
-      !meta.controllers.length &&
-      !meta.exportedProvidersPerMod.length &&
-      !meta.exportedProvidersPerRou.length &&
-      !meta.exportsModules.length &&
-      !meta.exportsWithParams.length &&
-      !meta.exportedMultiProvidersPerMod.length &&
-      !meta.exportedMultiProvidersPerRou.length &&
-      !meta.exportedMultiProvidersPerReq.length &&
-      !meta.providersPerApp.length &&
-      !meta.exportedExtensions.length &&
-      !meta.extensionsProviders.length &&
-      !meta.appendsWithParams.length
-    ) {
-      const moduleNames =
-        [...this.unfinishedScanModules].map((modRefId) => getDebugModuleName(modRefId)).join(' -> ') || meta.name;
-      const msg =
-        `Validation ${moduleNames} failed: this module should have "providersPerApp"` +
-        ' or some controllers, or exports, or extensions.';
-      throw new Error(msg);
-    }
-  }
-
-  protected throwIfUndefined(
-    modName: string,
-    action: 'Imports' | 'Exports' | 'Appends',
-    imp: ModRefId | Provider,
-    i: number,
-  ) {
-    if (imp === undefined) {
-      const lowerAction = action.toLowerCase();
-      const msg =
-        `${action} into "${modName}" failed: element at ${lowerAction}[${i}] has "undefined" type. ` +
-        'This can be caused by circular dependency. Try to replace this element with this expression: ' +
-        '"forwardRef(() => YourModule)".';
-      throw new Error(msg);
-    }
-  }
-
-  protected checkInitMethodForExtension(modName: string, extensionsProvider: ExtensionProvider) {
-    const np = normalizeProviders([extensionsProvider])[0];
-    let extensionClass: Class<Extension> | undefined;
-    if (isClassProvider(np)) {
-      extensionClass = np.useClass;
-    } else if (isTokenProvider(np) && np.useToken instanceof Class) {
-      extensionClass = np.useToken;
-    } else if (isValueProvider(np) && np.useValue.constructor instanceof Class) {
-      extensionClass = np.useValue.constructor;
-    }
-
-    if (
-      !extensionClass ||
-      (typeof extensionClass.prototype?.stage1 != 'function' && typeof extensionClass.prototype?.stage2 != 'function')
-    ) {
-      const token = getToken(extensionsProvider);
-      const tokenName = token.name || token;
-      const msg = `Exporting "${tokenName}" from "${modName}" failed: all extensions must have stage1() method.`;
-      throw new TypeError(msg);
-    }
-  }
-
-  protected throwUnidentifiedToken(modName: string, token: any) {
-    const tokenName = token.name || token;
-    const msg =
-      `Exporting from ${this.throwPath(modName)} failed: if "${tokenName}" is a token of a provider, this provider ` +
-      'must be included in providersPerReq or in providersPerRou, or in providersPerMod. ' +
-      `If "${tokenName}" is a token of extension, this extension must be included in "extensions" array.`;
-    throw new TypeError(msg);
-  }
-
-  protected throwPath(modName: string) {
-    if (this.unfinishedScanModules.size) {
-      const path = [...this.unfinishedScanModules].map((modRefId) => getDebugModuleName(modRefId)).join(' -> ');
-      return `${modName} (${path})`;
-    } else {
-      return modName;
-    }
-  }
-
-  protected throwIfNormalizedProvider(moduleName: string, provider: any) {
-    if (isNormalizedProvider(provider)) {
-      const providerName = provider.token.name || provider.token;
-      const msg =
-        `Resolving collisions in ${moduleName} failed: for ${providerName} inside ` +
-        '"resolvedCollisionPer*" array must be includes tokens only.';
-      throw new TypeError(msg);
-    }
-  }
-
-  protected throwExportsIfNormalizedProvider(moduleName: string, provider: any) {
-    if (isNormalizedProvider(provider)) {
-      const providerName = provider.token.name || provider.token;
-      const msg = `Exporting "${providerName}" from "${moduleName}" failed: in "exports" array must be includes tokens only.`;
-      throw new TypeError(msg);
-    }
-  }
-
-  protected findAndSetProviders(token: any, rawMeta: ModuleMetadata, meta: NormalizedModuleMetadata) {
-    const scopes: Scope[] = ['Req', 'Rou', 'Mod'];
-    let found = false;
-    scopes.forEach((scope) => {
-      const unfilteredProviders = [...(rawMeta[`providersPer${scope}`] || [])];
-      const providers = unfilteredProviders.filter((p) => getToken(p) === token);
-      if (providers.length) {
-        found = true;
-        if (providers.some(isMultiProvider)) {
-          meta[`exportedMultiProvidersPer${scope}`].push(...(providers as MultiProvider[]));
-        } else {
-          meta[`exportedProvidersPer${scope}`].push(...providers);
-        }
-      }
-    });
-
-    if (!found) {
-      const providerName = token.name || token;
-      let msg = '';
-      const providersPerApp = [...(rawMeta.providersPerApp || [])];
-      if (providersPerApp.some((p) => getToken(p) === token)) {
-        msg =
-          `Exported "${providerName}" includes in "providersPerApp" and "exports" of ${meta.name}. ` +
-          'This is an error, because "providersPerApp" is always exported automatically.';
-      } else {
-        msg =
-          `Exporting from ${meta.name} failed: if "${providerName}" is a provider, it must be included ` +
-          'in "providersPerMod" or "providersPerRou", or "providersPerReq".';
-      }
-      throw new Error(msg);
+  protected normalizeMetadata(modRefId: ModRefId): NormalizedModuleMetadata {
+    try {
+      return this.moduleNormalizer.normalize(modRefId);
+    } catch (err: any) {
+      const moduleName = getDebugModuleName(modRefId);
+      let path = [...this.unfinishedScanModules].map((id) => getDebugModuleName(id)).join(' -> ');
+      path = this.unfinishedScanModules.size > 1 ? `${moduleName} (${path})` : `${moduleName}`;
+      throw new ChainError(`Normalization of ${path} failed`, err);
     }
   }
 }
