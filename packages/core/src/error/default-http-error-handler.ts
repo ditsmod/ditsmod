@@ -4,8 +4,7 @@ import { injectable } from '#di';
 import { RequestContext } from '#services/request-context.js';
 import { Logger } from '#logger/logger.js';
 import { Status } from '#utils/http-status-codes.js';
-import { isChainError } from '#utils/type-guards.js';
-import { ErrorOpts } from '#error/error-opts.js';
+import { isCustomError } from '#utils/type-guards.js';
 import { HttpErrorHandler } from '#error/http-error-handler.js';
 
 @injectable()
@@ -15,7 +14,7 @@ export class DefaultHttpErrorHandler implements HttpErrorHandler {
   async handleError(err: Error, ctx: RequestContext) {
     const requestId = randomUUID();
     const errObj = { requestId, err };
-    if (isChainError<ErrorOpts>(err)) {
+    if (isCustomError(err)) {
       const { level, status } = err.info;
       this.logger.log(level || 'debug', errObj);
       this.sendError(err.message, ctx, requestId, status);
