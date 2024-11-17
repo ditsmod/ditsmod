@@ -106,9 +106,6 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
     }
   }
 
-  /**
-   * @todo Refactor this as this method actually returns `NormalisedGuard`.
-   */
   protected normalizeGuards(guards?: GuardItem[]) {
     return (guards || []).map((item) => {
       if (Array.isArray(item)) {
