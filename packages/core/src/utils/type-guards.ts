@@ -73,15 +73,15 @@ export function isDecoratorAndValue(
 }
 
 export function isRawRootModule(
-  rawModule?: RootModuleMetadata & { decoratorFactory?: AnyFn },
+  rawModule?: RootModuleMetadata & { decorator?: AnyFn },
 ): rawModule is RootModuleMetadata {
-  return rawModule?.decoratorFactory === rootModule;
+  return rawModule?.decorator === rootModule;
 }
 
 export function isNormRootModule(
   rawModule?: NormalizedModuleMetadata,
 ): rawModule is NormalizedModuleMetadata<RootModuleMetadata> {
-  return rawModule?.decoratorFactory === rootModule;
+  return rawModule?.decorator === rootModule;
 }
 
 export function isCtrlDecor(

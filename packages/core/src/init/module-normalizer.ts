@@ -53,7 +53,7 @@ export class ModuleNormalizer {
     const meta = new NormalizedModuleMetadata();
     meta.name = modName;
     meta.modRefId = modRefId;
-    meta.decoratorFactory = rawMeta.decoratorFactory;
+    meta.decorator = rawMeta.decorator;
     meta.declaredInDir = rawMeta.declaredInDir;
     this.checkWhetherIsExternalModule(rawMeta, meta);
     if (rawMeta.guards.length) {

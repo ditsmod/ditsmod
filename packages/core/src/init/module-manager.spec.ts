@@ -146,7 +146,7 @@ describe('ModuleManager', () => {
     expectedMeta.id = '';
     expectedMeta.name = 'AppModule';
     expectedMeta.modRefId = AppModule;
-    expectedMeta.decoratorFactory = rootModule;
+    expectedMeta.decorator = rootModule;
     expectedMeta.declaredInDir = getCallerDir();
     expectedMeta.isExternal = false;
 
@@ -212,7 +212,7 @@ describe('ModuleManager', () => {
     expectedMeta.name = 'AppModule';
     expectedMeta.modRefId = AppModule;
     expectedMeta.providersPerReq = [Provider1];
-    expectedMeta.decoratorFactory = rootModule;
+    expectedMeta.decorator = rootModule;
     expectedMeta.declaredInDir = getCallerDir();
     expectedMeta.isExternal = false;
 
@@ -445,7 +445,7 @@ describe('ModuleManager', () => {
     expectedMeta1.modRefId = Module1;
     expectedMeta1.controllers = [Controller1];
     expectedMeta1.importsWithParams = [module4WithParams];
-    expectedMeta1.decoratorFactory = featureModule;
+    expectedMeta1.decorator = featureModule;
     expectedMeta1.declaredInDir = getCallerDir();
     expectedMeta1.isExternal = false;
 
@@ -463,7 +463,7 @@ describe('ModuleManager', () => {
     expectedMeta2.exportsModules = [Module1];
     expectedMeta2.exportedProvidersPerMod = [Provider0];
     expectedMeta2.exportedProvidersPerRou = [Provider1];
-    expectedMeta2.decoratorFactory = featureModule;
+    expectedMeta2.decorator = featureModule;
     expectedMeta2.declaredInDir = getCallerDir();
     expectedMeta2.isExternal = false;
 
@@ -474,7 +474,7 @@ describe('ModuleManager', () => {
     expectedMeta3.name = 'Module3';
     expectedMeta3.modRefId = Module3;
     expectedMeta3.importsModules = [Module1, Module2];
-    expectedMeta3.decoratorFactory = rootModule;
+    expectedMeta3.decorator = rootModule;
     expectedMeta3.declaredInDir = getCallerDir();
     expectedMeta3.isExternal = false;
 
@@ -486,7 +486,7 @@ describe('ModuleManager', () => {
     expectedMeta4.controllers = [Controller1];
     expectedMeta4.modRefId = module4WithParams;
     expectedMeta4.providersPerMod = [Provider2];
-    expectedMeta4.decoratorFactory = featureModule;
+    expectedMeta4.decorator = featureModule;
     expectedMeta4.declaredInDir = getCallerDir();
     expectedMeta4.isExternal = false;
 
@@ -580,7 +580,7 @@ describe('ModuleManager', () => {
     expectedMeta1.name = 'AppModule';
     expectedMeta1.modRefId = AppModule;
     expectedMeta1.providersPerReq = [Provider1];
-    expectedMeta1.decoratorFactory = rootModule;
+    expectedMeta1.decorator = rootModule;
     expectedMeta1.declaredInDir = getCallerDir();
     expectedMeta1.isExternal = false;
 
@@ -623,7 +623,7 @@ describe('ModuleManager', () => {
     expectedMeta2.modRefId = AppModule;
     expectedMeta2.importsModules = [Module1];
     expectedMeta2.providersPerReq = [Provider1];
-    expectedMeta2.decoratorFactory = rootModule;
+    expectedMeta2.decorator = rootModule;
     expectedMeta2.declaredInDir = getCallerDir();
     expectedMeta2.isExternal = false;
 
@@ -661,7 +661,7 @@ describe('ModuleManager', () => {
     expectedMeta3.modRefId = AppModule;
     expectedMeta3.importsModules = [Module1, Module2, Module4];
     expectedMeta3.providersPerReq = [Provider1];
-    expectedMeta3.decoratorFactory = rootModule;
+    expectedMeta3.decorator = rootModule;
     expectedMeta3.declaredInDir = getCallerDir();
     expectedMeta3.isExternal = false;
 
@@ -742,7 +742,7 @@ describe('ModuleManager', () => {
     expectedMeta1.importsModules = [Module1, Module2];
     expectedMeta1.importsWithParams = [module3WithProviders, module4WithProviders];
     expectedMeta1.providersPerReq = [Provider1];
-    expectedMeta1.decoratorFactory = rootModule;
+    expectedMeta1.decorator = rootModule;
     expectedMeta1.declaredInDir = getCallerDir();
     expectedMeta1.isExternal = false;
 
@@ -788,7 +788,7 @@ describe('ModuleManager', () => {
     expectedMeta2.importsModules = [Module1];
     expectedMeta2.importsWithParams = [module3WithProviders, module4WithProviders];
     expectedMeta2.providersPerReq = [Provider1];
-    expectedMeta2.decoratorFactory = rootModule;
+    expectedMeta2.decorator = rootModule;
     expectedMeta2.declaredInDir = getCallerDir();
     expectedMeta2.isExternal = false;
 
@@ -814,7 +814,7 @@ describe('ModuleManager', () => {
     expectedMeta3.importsModules = [Module1];
     expectedMeta3.importsWithParams = [module4WithProviders];
     expectedMeta3.providersPerReq = [Provider1];
-    expectedMeta3.decoratorFactory = rootModule;
+    expectedMeta3.decorator = rootModule;
     expectedMeta3.declaredInDir = getCallerDir();
     expectedMeta3.isExternal = false;
 
@@ -837,7 +837,7 @@ describe('ModuleManager', () => {
     expectedMeta4.modRefId = AppModule;
     expectedMeta4.importsModules = [Module1];
     expectedMeta4.providersPerReq = [Provider1];
-    expectedMeta4.decoratorFactory = rootModule;
+    expectedMeta4.decorator = rootModule;
     expectedMeta4.declaredInDir = getCallerDir();
     expectedMeta4.isExternal = false;
 
@@ -882,7 +882,7 @@ describe('ModuleManager', () => {
     expectedMeta3.name = 'Module3';
     expectedMeta3.modRefId = Module3;
     expectedMeta3.importsModules = [Module1];
-    expectedMeta3.decoratorFactory = rootModule;
+    expectedMeta3.decorator = rootModule;
     expectedMeta3.declaredInDir = getCallerDir();
     expectedMeta3.isExternal = false;
 
@@ -892,7 +892,7 @@ describe('ModuleManager', () => {
     expectedMeta1.modRefId = Module1;
     expectedMeta1.extensionsProviders = extensionsProviders;
     expectedMeta1.exportedExtensions = extensionsProviders;
-    expectedMeta1.decoratorFactory = featureModule;
+    expectedMeta1.decorator = featureModule;
     expectedMeta1.declaredInDir = getCallerDir();
     expectedMeta1.isExternal = false;
 
@@ -930,7 +930,7 @@ describe('ModuleManager', () => {
     expectedMeta3.modRefId = Module3;
     expectedMeta3.importsModules = [Module1];
     expectedMeta3.exportsModules = [Module1];
-    expectedMeta3.decoratorFactory = rootModule;
+    expectedMeta3.decorator = rootModule;
     expectedMeta3.declaredInDir = getCallerDir();
     expectedMeta3.isExternal = false;
 
@@ -940,7 +940,7 @@ describe('ModuleManager', () => {
     expectedMeta1.modRefId = Module1;
     expectedMeta1.extensionsProviders = extensionsProviders;
     expectedMeta1.exportedExtensions = extensionsProviders;
-    expectedMeta1.decoratorFactory = featureModule;
+    expectedMeta1.decorator = featureModule;
     expectedMeta1.declaredInDir = getCallerDir();
     expectedMeta1.isExternal = false;
 
@@ -1002,7 +1002,7 @@ describe('ModuleManager', () => {
     expectedMeta3.name = 'Module3';
     expectedMeta3.modRefId = Module3;
     expectedMeta3.importsModules = [Module1];
-    expectedMeta3.decoratorFactory = rootModule;
+    expectedMeta3.decorator = rootModule;
     expectedMeta3.declaredInDir = getCallerDir();
     expectedMeta3.isExternal = false;
 
@@ -1013,7 +1013,7 @@ describe('ModuleManager', () => {
     expectedMeta1.providersPerReq = providersPerReq;
     expectedMeta1.exportedProvidersPerReq = [Provider3];
     expectedMeta1.exportedMultiProvidersPerReq = providersPerReq.filter(isMultiProvider);
-    expectedMeta1.decoratorFactory = featureModule;
+    expectedMeta1.decorator = featureModule;
     expectedMeta1.declaredInDir = getCallerDir();
     expectedMeta1.isExternal = false;
 
