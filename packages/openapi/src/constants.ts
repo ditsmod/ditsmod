@@ -1,4 +1,3 @@
-import { deepFreeze } from '@ditsmod/core';
 import { openapi, XOasObject } from '@ts-stack/openapi-spec';
 
 /**
@@ -13,5 +12,3 @@ export const DEFAULT_OAS_OBJECT: XOasObject = {
   tags: [],
   components: {},
 };
-
-deepFreeze(DEFAULT_OAS_OBJECT);
