@@ -295,7 +295,7 @@ export class AppInitializer {
         } catch (err: any) {
           const groupName = getProviderName(groupToken);
           const msg = `Metadata collection from all modules for ${groupName} failed`;
-          throw new ChainError(msg, { name: 'Error', cause: err });
+          throw new ChainError(msg, err);
         }
       }
     }
@@ -307,7 +307,7 @@ export class AppInitializer {
       } catch (err: any) {
         const debugModuleName = getDebugModuleName(modRefId);
         const msg = `Creating injector per module for ${debugModuleName} failed`;
-        throw new ChainError(msg, { name: 'Error', cause: err });
+        throw new ChainError(msg, err);
       }
     }
 
@@ -322,7 +322,7 @@ export class AppInitializer {
         } catch (err: any) {
           const debugModuleName = getDebugModuleName(modRefId);
           const msg = `Stage2 in ${debugModuleName} -> ${ext.constructor.name} failed`;
-          throw new ChainError(msg, { name: 'Error', cause: err });
+          throw new ChainError(msg, err);
         }
       }
     }
@@ -337,7 +337,7 @@ export class AppInitializer {
         } catch (err: any) {
           const debugModuleName = getDebugModuleName(modRefId);
           const msg = `Stage3 in ${debugModuleName} -> ${ext.constructor.name} failed`;
-          throw new ChainError(msg, { name: 'Error', cause: err });
+          throw new ChainError(msg, err);
         }
       }
     }
