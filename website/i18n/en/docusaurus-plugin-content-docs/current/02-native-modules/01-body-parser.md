@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # @ditsmod/body-parser
 
-In this module, integration is done with [@ts-stack/body-parser][4] (which is a fork of the well-known [ExpressJS package][6]) and [@ts-stack/multer][5] (which is also a fork of the well-known [ExpressJS package][7]). By default, the following data formats are supported:
+In this module, integration is done with [@ts-stack/body-parser][4] and [@ts-stack/multer][5]. By default, the following data formats are supported:
 
 1. `application/json`
 2. `application/x-www-form-urlencoded`
