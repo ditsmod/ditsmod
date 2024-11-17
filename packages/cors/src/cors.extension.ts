@@ -98,48 +98,51 @@ export class CorsExtension implements Extension<void | false> {
     const newArrControllersMetadata2: ControllerMetadata[] = []; // Routes with OPTIONS methods
 
     aControllerMetadata.forEach(({ httpMethod, path }) => {
-      // Search routes with non-OPTIONS methods, and makes new routes with OPTIONS methods
-      if (sPathWithOptions.has(path)) {
-        return;
-      }
-      const methodName = Symbol(path);
-      const httpMethods = this.registeredPathForOptions.get(path) || [];
-      if (httpMethods.length) {
-        httpMethods.push(httpMethod);
-        return;
-      }
-      httpMethods.push('OPTIONS', httpMethod);
-      this.registeredPathForOptions.set(path, httpMethods);
-
-      class DynamicController {
-        [methodName](ctx: RequestContext) {
-          ctx.setHeader('Allow', httpMethods.join()).send(undefined, Status.NO_CONTENT);
+      const httpMethods = Array.isArray(httpMethod) ? httpMethod : [httpMethod];
+      httpMethods.forEach((method) => {
+        // Search routes with non-OPTIONS methods, and makes new routes with OPTIONS methods
+        if (sPathWithOptions.has(path)) {
+          return;
         }
-      }
+        const methodName = Symbol(path);
+        const allowHttpMethods = this.registeredPathForOptions.get(path) || [];
+        if (allowHttpMethods.length) {
+          allowHttpMethods.push(method);
+          return;
+        }
+        allowHttpMethods.push('OPTIONS', method);
+        this.registeredPathForOptions.set(path, allowHttpMethods);
 
-      providersPerMod.unshift(DynamicController);
+        class DynamicController {
+          [methodName](ctx: RequestContext) {
+            ctx.setHeader('Allow', allowHttpMethods.join()).send(undefined, Status.NO_CONTENT);
+          }
+        }
 
-      const routeMeta: RouteMeta = {
-        decoratorAndValue: {} as any,
-        resolvedGuards: [],
-        Controller: DynamicController,
-        methodName,
-      };
+        providersPerMod.unshift(DynamicController);
 
-      const controllerMetadata: ControllerMetadata = {
-        httpMethod: 'OPTIONS',
-        path,
-        providersPerRou: [
-          { token: ALLOW_METHODS, useValue: httpMethods },
-          { token: RouteMeta, useValue: routeMeta },
-        ],
-        providersPerReq: [],
-        routeMeta,
-        scope: 'module',
-        guards: [],
-      };
+        const routeMeta: RouteMeta = {
+          decoratorAndValue: {} as any,
+          resolvedGuards: [],
+          Controller: DynamicController,
+          methodName,
+        };
 
-      newArrControllersMetadata2.push(controllerMetadata);
+        const controllerMetadata: ControllerMetadata = {
+          httpMethod: 'OPTIONS',
+          path,
+          providersPerRou: [
+            { token: ALLOW_METHODS, useValue: allowHttpMethods },
+            { token: RouteMeta, useValue: routeMeta },
+          ],
+          providersPerReq: [],
+          routeMeta,
+          scope: 'module',
+          guards: [],
+        };
+
+        newArrControllersMetadata2.push(controllerMetadata);
+      });
     });
 
     return newArrControllersMetadata2;
