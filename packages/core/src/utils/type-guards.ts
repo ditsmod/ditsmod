@@ -21,6 +21,7 @@ import { controller, ControllerRawMetadata } from '#decorators/controller.js';
 import { rootModule } from '#decorators/root-module.js';
 import { NormalizedProvider } from './ng-utils.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
+import { CustomError } from '#error/custom-error.js';
 
 export function isHttp2SecureServerOptions(serverOptions: ServerOptions): serverOptions is Http2SecureServerOptions {
   return (serverOptions as Http2SecureServerOptions).isHttp2SecureServer;
@@ -28,6 +29,10 @@ export function isHttp2SecureServerOptions(serverOptions: ServerOptions): server
 
 export function isChainError<T extends AnyObj>(err: any): err is ChainError<T> {
   return err instanceof ChainError;
+}
+
+export function isCustomError(err: any): err is CustomError {
+  return err instanceof CustomError;
 }
 
 export function isFeatureModDecor(
