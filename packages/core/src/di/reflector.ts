@@ -1,4 +1,5 @@
 import { AnyObj } from '#types/mix.js';
+import { TypeGuard } from '#utils/type-guards.js';
 import { ClassMetaIterator } from './class-meta-iterator.js';
 import {
   CACHE_KEY,
@@ -43,6 +44,28 @@ export class Reflector {
 
   constructor(reflect?: typeof Reflect) {
     this.reflect = reflect || Reflect;
+  }
+
+  /**
+   * @param Cls The class from which to return the metadata.
+   * @param typeGuard Type guard, which will search for necessary decorators.
+   * @returns Returns an array of `DecoratorAndValue` for the passed `Cls`, using the passed `typeGuard`,
+   * or `undefined` if no appropriate decorators.
+   */
+  getDecorators<T extends DecoratorAndValue>(Cls: Class, typeGuard: TypeGuard<T>): T[] | undefined;
+  /**
+   * @param Cls The class from which to return the metadata.
+   * @param typeGuard Type guard, which will search for necessary decorators.
+   * @returns Returns an array of `DecoratorAndValue` for the passed `Cls`,
+   * or `undefined` if no appropriate decorators.
+   */
+  getDecorators<T = any>(Cls: Class): DecoratorAndValue<T>[] | undefined;
+  getDecorators<T extends DecoratorAndValue>(Cls: Class, typeGuard?: TypeGuard<T>) {
+    let decorators = this.getMetadata(Cls)?.constructor.decorators || [];
+    if (typeGuard) {
+      decorators = decorators.filter(typeGuard);
+    }
+    return decorators.length ? decorators : undefined;
   }
 
   /**
