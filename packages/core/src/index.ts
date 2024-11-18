@@ -131,4 +131,5 @@ export {
   isValueProvider,
   hasDeclaredInDir,
   isCustomError,
+  TypeGuard,
 } from '#utils/type-guards.js';

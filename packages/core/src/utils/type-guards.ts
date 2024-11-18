@@ -23,6 +23,10 @@ import { NormalizedProvider } from './ng-utils.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { CustomError } from '#error/custom-error.js';
 
+export interface TypeGuard<T> {
+  (arg: any): arg is T;
+}
+
 export function isHttp2SecureServerOptions(serverOptions: ServerOptions): serverOptions is Http2SecureServerOptions {
   return (serverOptions as Http2SecureServerOptions).isHttp2SecureServer;
 }
@@ -148,7 +152,7 @@ export function isProvider(maybeProvider?: any): maybeProvider is Provider {
   if (isModuleWithParams(maybeProvider)) {
     return false;
   }
-  const isSomeModule = reflector.getMetadata(maybeProvider)?.constructor.decorators.some(isModDecor);
+  const isSomeModule = reflector.getDecorators(maybeProvider, isModDecor);
   return (maybeProvider instanceof Class && !isSomeModule) || isNormalizedProvider(maybeProvider);
 }
 
