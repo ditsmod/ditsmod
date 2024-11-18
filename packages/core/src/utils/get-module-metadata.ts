@@ -55,16 +55,8 @@ export function getModuleMetadata(modRefId: ModRefId, isRoot?: boolean): ModuleM
     if (!decorAndVal) {
       return;
     }
-    const modMetadata = decorAndVal.value;
-    const metadata = Object.assign({}, modMetadata);
-    scopes.forEach((scope) => {
-      const arr = [...(modMetadata[`providersPer${scope}`] || [])];
-      if (arr.length) {
-        metadata[`providersPer${scope}`] = arr;
-      }
-    });
     const declaredInDir = decorAndVal.declaredInDir || '';
-    return decorAndVal ? { ...metadata, decorator: decorAndVal.decorator, declaredInDir, guards: [] } : undefined;
+    return decorAndVal ? { ...decorAndVal.value, decorator: decorAndVal.decorator, declaredInDir, guards: [] } : undefined;
   }
 }
 
