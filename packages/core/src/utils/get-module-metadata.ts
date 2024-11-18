@@ -1,8 +1,8 @@
-import { DecoratorAndValue, reflector, resolveForwardRef } from '#di';
+import { reflector, resolveForwardRef } from '#di';
 import { ModuleMetadata } from '#types/module-metadata.js';
 import { AnyFn, GuardItem, ModRefId, Scope } from '#types/mix.js';
 import { mergeArrays } from './merge-arrays.js';
-import { isAppendsWithParams, isFeatureModDecor, isModuleWithParams, isRootModDecor } from './type-guards.js';
+import { isAppendsWithParams, isModDecor, isModuleWithParams, isRootModDecor } from './type-guards.js';
 import { getLastProviders } from './get-last-providers.js';
 import { getDebugModuleName } from './get-debug-module-name.js';
 
@@ -12,20 +12,18 @@ import { getDebugModuleName } from './get-debug-module-name.js';
  * property to arrays.
  */
 export function getModuleMetadata(modRefId: ModRefId, isRoot?: boolean): ModuleMetadataWithContext | undefined {
-  const decoratorGuard = isRoot ? isRootModDecor : (m: DecoratorAndValue) => isFeatureModDecor(m) || isRootModDecor(m);
+  const decoratorGuard = isRoot ? isRootModDecor : isModDecor;
 
   modRefId = resolveForwardRef(modRefId);
   const scopes = ['App', 'Mod', 'Rou', 'Req'] as Scope[];
 
   if (isModuleWithParams(modRefId) || isAppendsWithParams(modRefId)) {
     const modWitParams = modRefId;
-    const decoratorAndValue = reflector
-      .getMetadata<ModuleMetadataValue>(modWitParams.module)
-      ?.constructor.decorators.find(decoratorGuard);
-    const modMetadata = decoratorAndValue?.value.data;
-    if (!modMetadata) {
-      return modMetadata;
+    const decorAndVal = reflector.getDecorators(modWitParams.module, decoratorGuard)?.at(0);
+    if (!decorAndVal) {
+      return;
     }
+    const modMetadata = (decorAndVal.value as ModuleMetadataValue).data;
 
     if (modMetadata.id) {
       const modName = getDebugModuleName(modWitParams.module);
@@ -45,21 +43,19 @@ export function getModuleMetadata(modRefId: ModRefId, isRoot?: boolean): ModuleM
       metadata.exports = getLastProviders(mergeArrays(modMetadata.exports, modWitParams.exports));
       metadata.extensionsMeta = { ...modMetadata.extensionsMeta, ...modWitParams.extensionsMeta };
     }
-    const declaredInDir = decoratorAndValue.declaredInDir || '';
+    const declaredInDir = decorAndVal.declaredInDir || '';
     return {
       ...metadata,
-      decorator: decoratorAndValue.decorator,
+      decorator: decorAndVal.decorator,
       declaredInDir,
       guards: modRefId.guards || [],
     };
   } else {
-    const decoratorAndValue = reflector
-      .getMetadata<ModuleMetadataValue>(modRefId)
-      ?.constructor.decorators.find(decoratorGuard);
-    const modMetadata = decoratorAndValue?.value.data;
-    if (!modMetadata) {
-      return modMetadata;
+    const decorAndVal = reflector.getDecorators(modRefId, decoratorGuard)?.at(0);
+    if (!decorAndVal) {
+      return;
     }
+    const modMetadata = (decorAndVal.value as ModuleMetadataValue).data;
     const metadata = Object.assign({}, modMetadata);
     scopes.forEach((scope) => {
       const arr = [...(modMetadata[`providersPer${scope}`] || [])];
@@ -67,10 +63,8 @@ export function getModuleMetadata(modRefId: ModRefId, isRoot?: boolean): ModuleM
         metadata[`providersPer${scope}`] = arr;
       }
     });
-    const declaredInDir = decoratorAndValue?.declaredInDir || '';
-    return decoratorAndValue
-      ? { ...metadata, decorator: decoratorAndValue.decorator, declaredInDir, guards: [] }
-      : undefined;
+    const declaredInDir = decorAndVal.declaredInDir || '';
+    return decorAndVal ? { ...metadata, decorator: decorAndVal.decorator, declaredInDir, guards: [] } : undefined;
   }
 }
 

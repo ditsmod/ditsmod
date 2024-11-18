@@ -24,7 +24,7 @@ describe('type guards', () => {
     it('class with decorator', () => {
       @featureModule({})
       class Module1 {}
-      const metadata = reflector.getMetadata(Module1)!.constructor.decorators[0];
+      const metadata = reflector.getDecorators(Module1)![0];
       expect(isFeatureModDecor(metadata)).toBe(true);
     });
 
@@ -39,7 +39,7 @@ describe('type guards', () => {
     it('class with decorator', () => {
       @rootModule({})
       class Module1 {}
-      const metadata = reflector.getMetadata(Module1)!.constructor.decorators[0];
+      const metadata = reflector.getDecorators(Module1)![0];
       expect(isRootModDecor(metadata)).toBe(true);
     });
 
@@ -69,7 +69,7 @@ describe('type guards', () => {
     it('class with decorator', () => {
       @controller()
       class Module1 {}
-      const metadata = reflector.getMetadata(Module1)!.constructor.decorators[0];
+      const metadata = reflector.getDecorators(Module1)![0];
       expect(isCtrlDecor(metadata)).toBe(true);
     });
 

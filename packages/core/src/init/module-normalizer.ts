@@ -123,8 +123,7 @@ export class ModuleNormalizer {
   }
 
   protected checkController(modName: string, Controller: Class) {
-    const decoratorsAndValues = reflector.getMetadata(Controller)?.constructor.decorators;
-    if (!decoratorsAndValues?.find(isCtrlDecor)) {
+    if (!reflector.getDecorators(Controller, isCtrlDecor)) {
       throw new Error(
         `Collecting controller's metadata in ${modName} failed: class ` +
           `"${Controller.name}" does not have the "@controller()" decorator.`,
