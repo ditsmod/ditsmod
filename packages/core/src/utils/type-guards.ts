@@ -77,7 +77,7 @@ export function isDecoratorAndValue(
 }
 
 export function isRawRootModule(
-  rawModule?: RootModuleMetadata & { decorator?: AnyFn },
+  rawModule?: ModuleMetadata & { decorator?: AnyFn },
 ): rawModule is RootModuleMetadata {
   return rawModule?.decorator === rootModule;
 }

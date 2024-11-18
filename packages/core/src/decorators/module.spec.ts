@@ -1,5 +1,4 @@
 import { reflector } from '#di';
-import { ModuleMetadataValue } from '#utils/get-module-metadata.js';
 import { featureModule } from './module.js';
 
 describe('Module decorator', () => {
@@ -7,19 +6,19 @@ describe('Module decorator', () => {
     @featureModule({})
     class Module1 {}
 
-    const metadata = reflector.getDecorators<ModuleMetadataValue>(Module1)!;
+    const metadata = reflector.getDecorators(Module1)!;
     expect(metadata.length).toBe(1);
     expect(metadata[0].decorator).toBe(featureModule);
-    expect(metadata[0].value.data).toEqual({});
+    expect(metadata[0].value).toEqual({});
   });
 
   it('decorator with some data', () => {
     @featureModule({ controllers: [] })
     class Module1 {}
 
-    const metadata = reflector.getDecorators<ModuleMetadataValue>(Module1)!;
+    const metadata = reflector.getDecorators(Module1)!;
     expect(metadata.length).toBe(1);
-    expect(metadata[0].value.data).toEqual({ controllers: [] });
+    expect(metadata[0].value).toEqual({ controllers: [] });
   });
 
   it('multi decorator with some data', () => {
@@ -27,10 +26,10 @@ describe('Module decorator', () => {
     @featureModule({ controllers: [] })
     class Module1 {}
 
-    const metadata = reflector.getDecorators<ModuleMetadataValue>(Module1)!;
+    const metadata = reflector.getDecorators(Module1)!;
     expect(metadata.length).toBe(2);
-    expect(metadata[0].value.data).toEqual({ controllers: [] });
-    expect(metadata[1].value.data).toEqual({ providersPerApp: [] });
+    expect(metadata[0].value).toEqual({ controllers: [] });
+    expect(metadata[1].value).toEqual({ providersPerApp: [] });
   });
 
   it('decorator with all allowed properties', () => {
@@ -45,9 +44,9 @@ describe('Module decorator', () => {
     })
     class Module1 {}
 
-    const metadata = reflector.getDecorators<ModuleMetadataValue>(Module1)!;
+    const metadata = reflector.getDecorators(Module1)!;
     expect(metadata.length).toBe(1);
-    expect(metadata[0].value.data).toEqual({
+    expect(metadata[0].value).toEqual({
       imports: [],
       providersPerApp: [],
       providersPerMod: [],

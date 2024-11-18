@@ -23,7 +23,7 @@ export function getModuleMetadata(modRefId: ModRefId, isRoot?: boolean): ModuleM
     if (!decorAndVal) {
       return;
     }
-    const modMetadata = (decorAndVal.value as ModuleMetadataValue).data;
+    const modMetadata = decorAndVal.value;
 
     if (modMetadata.id) {
       const modName = getDebugModuleName(modWitParams.module);
@@ -55,7 +55,7 @@ export function getModuleMetadata(modRefId: ModRefId, isRoot?: boolean): ModuleM
     if (!decorAndVal) {
       return;
     }
-    const modMetadata = (decorAndVal.value as ModuleMetadataValue).data;
+    const modMetadata = decorAndVal.value;
     const metadata = Object.assign({}, modMetadata);
     scopes.forEach((scope) => {
       const arr = [...(modMetadata[`providersPer${scope}`] || [])];
@@ -66,10 +66,6 @@ export function getModuleMetadata(modRefId: ModRefId, isRoot?: boolean): ModuleM
     const declaredInDir = decorAndVal.declaredInDir || '';
     return decorAndVal ? { ...metadata, decorator: decorAndVal.decorator, declaredInDir, guards: [] } : undefined;
   }
-}
-
-export interface ModuleMetadataValue {
-  data: ModuleMetadata;
 }
 
 export interface ModuleMetadataWithContext extends ModuleMetadata {
