@@ -1,5 +1,4 @@
 import { injectable, reflector } from '#di';
-import { getModuleMetadata } from '#utils/get-module-metadata.js';
 import { defaultProvidersPerMod } from '#init/default-providers-per-mod.js';
 import { ModuleExtract } from '#types/module-extract.js';
 import type { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
@@ -344,7 +343,7 @@ export class ModuleFactory {
         const collision = importedTokens.includes(token1) && ![...declaredTokens, ...resolvedTokens].includes(token1);
         if (collision) {
           const importObj = this[`importedProvidersPer${scope}`].get(token1)!;
-          const hostModulePath = getModuleMetadata(importObj.modRefId)?.declaredInDir || '.';
+          const hostModulePath = this.moduleManager.getMetadata(importObj.modRefId)?.declaredInDir || '.';
           const decorAndVal = reflector.getDecorators(token1, hasDeclaredInDir)?.at(0);
           const collisionWithPath = decorAndVal?.declaredInDir || '.';
           if (hostModulePath !== '.' && collisionWithPath !== '.' && collisionWithPath.startsWith(hostModulePath)) {
