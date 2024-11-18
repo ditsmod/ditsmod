@@ -1,12 +1,13 @@
 import { makeClassDecorator } from '#di';
 import { ModuleMetadata } from '#types/module-metadata.js';
-import { Scope } from '#types/mix.js';
+import { AnyFn, GuardItem, Scope } from '#types/mix.js';
+import { getCallerDir } from '#utils/callsites.js';
 
 const scopes = ['App', 'Mod', 'Rou', 'Req'] as Scope[];
 
 export const featureModule = makeClassDecorator(transformModule);
 
-export function transformModule(data?: ModuleMetadata) {
+export function transformModule(data?: ModuleMetadata): ModuleMetadataWithContext {
   const metadata = Object.assign({}, data);
   scopes.forEach((scope) => {
     // If here is object with [Symbol.iterator]() method, this transform it to an array.
@@ -15,5 +16,11 @@ export function transformModule(data?: ModuleMetadata) {
       metadata[`providersPer${scope}`] = arr;
     }
   });
-  return metadata;
+  return { ...metadata, decorator: featureModule, declaredInDir: getCallerDir(), guards: [] };
+}
+
+export interface ModuleMetadataWithContext extends ModuleMetadata {
+  decorator: AnyFn;
+  declaredInDir: string;
+  guards: GuardItem[];
 }

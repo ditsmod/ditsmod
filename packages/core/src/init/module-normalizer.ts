@@ -18,7 +18,8 @@ import {
   isOptionWithOverrideExtension,
 } from '#extension/get-extension-provider.js';
 import { AnyObj, GuardItem, ModRefId, NormalizedGuard, Provider, Scope } from '#types/mix.js';
-import { getModuleMetadata, ModuleMetadataWithContext } from '#utils/get-module-metadata.js';
+import { getModuleMetadata } from '#utils/get-module-metadata.js';
+import { ModuleMetadataWithContext } from '#decorators/module.js';
 import { getDebugModuleName } from '#utils/get-debug-module-name.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { resolveForwardRef } from '#di/forward-ref.js';

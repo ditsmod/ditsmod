@@ -16,7 +16,7 @@ import { AnyObj, ModuleType, AnyFn, RequireProps } from '#types/mix.js';
 import { ModuleWithParams, AppendsWithParams, ModuleMetadata } from '#types/module-metadata.js';
 import { RootModuleMetadata } from '#types/root-module-metadata.js';
 import { Http2SecureServerOptions, ServerOptions } from '#types/server-options.js';
-import { featureModule } from '#decorators/module.js';
+import { featureModule, ModuleMetadataWithContext } from '#decorators/module.js';
 import { controller, ControllerRawMetadata } from '#decorators/controller.js';
 import { rootModule } from '#decorators/root-module.js';
 import { NormalizedProvider } from './ng-utils.js';
@@ -41,19 +41,22 @@ export function isCustomError(err: any): err is CustomError {
 
 export function isFeatureModDecor(
   decoratorAndValue?: DecoratorAndValue,
-): decoratorAndValue is DecoratorAndValue<ModuleMetadata> {
+): decoratorAndValue is DecoratorAndValue<ModuleMetadataWithContext> {
   return decoratorAndValue?.decorator === featureModule;
 }
 
+/**
+ * @todo Refactor type for this (`ModuleMetadataWithContext` for root module not have `id`, etc.).
+ */
 export function isRootModDecor(
   decoratorAndValue?: DecoratorAndValue,
-): decoratorAndValue is DecoratorAndValue<RootModuleMetadata> {
+): decoratorAndValue is DecoratorAndValue<ModuleMetadataWithContext> {
   return decoratorAndValue?.decorator === rootModule;
 }
 
 export function isModDecor(
   decoratorAndValue?: DecoratorAndValue,
-): decoratorAndValue is DecoratorAndValue<RootModuleMetadata> | DecoratorAndValue<ModuleMetadata> {
+): decoratorAndValue is DecoratorAndValue<ModuleMetadataWithContext> | DecoratorAndValue<ModuleMetadataWithContext> {
   return isRootModDecor(decoratorAndValue) || isFeatureModDecor(decoratorAndValue);
 }
 
@@ -76,9 +79,7 @@ export function isDecoratorAndValue(
   );
 }
 
-export function isRawRootModule(
-  rawModule?: ModuleMetadata & { decorator?: AnyFn },
-): rawModule is RootModuleMetadata {
+export function isRawRootModule(rawModule?: ModuleMetadata & { decorator?: AnyFn }): rawModule is RootModuleMetadata {
   return rawModule?.decorator === rootModule;
 }
 
@@ -88,9 +89,7 @@ export function isNormRootModule(
   return rawModule?.decorator === rootModule;
 }
 
-export function isCtrlDecor(
-  decoratorAndValue?: AnyObj,
-): decoratorAndValue is DecoratorAndValue<ControllerRawMetadata> {
+export function isCtrlDecor(decoratorAndValue?: AnyObj): decoratorAndValue is DecoratorAndValue<ControllerRawMetadata> {
   return decoratorAndValue?.decorator === controller;
 }
 
