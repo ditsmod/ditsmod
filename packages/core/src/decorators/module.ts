@@ -16,7 +16,7 @@ export function transformModule(data?: ModuleMetadata): ExtendedModuleMetadata {
       metadata[`providersPer${scope}`] = arr;
     }
   });
-  return { ...metadata, decorator: featureModule, declaredInDir: getCallerDir(), guards: [] };
+  return { decorator: featureModule, declaredInDir: getCallerDir(), guards: [], ...metadata };
 }
 
 export interface ExtendedModuleMetadata extends ModuleMetadata {
