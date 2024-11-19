@@ -5,11 +5,11 @@ import { featureModule } from '#decorators/module.js';
 import {
   isCtrlDecor,
   isInjectionToken,
-  isFeatureModDecor,
+  isFeatureModule,
   isModuleWithParams,
   isNormalizedProvider,
   isProvider,
-  isRootModDecor,
+  isRootModule,
   isMultiProvider,
   MultiProvider,
 } from './type-guards.js';
@@ -24,13 +24,13 @@ describe('type guards', () => {
       @featureModule({})
       class Module1 {}
       const metadata = reflector.getDecorators(Module1)![0];
-      expect(isFeatureModDecor(metadata)).toBe(true);
+      expect(isFeatureModule(metadata)).toBe(true);
     });
 
     it('class without decorator', () => {
       class Module1 {}
       const metadata = reflector.getMetadata(Module1) as any;
-      expect(isFeatureModDecor(metadata)).toBe(false);
+      expect(isFeatureModule(metadata)).toBe(false);
     });
   });
 
@@ -39,21 +39,21 @@ describe('type guards', () => {
       @rootModule({})
       class Module1 {}
       const metadata = reflector.getDecorators(Module1)![0];
-      expect(isRootModDecor(metadata)).toBe(true);
+      expect(isRootModule(metadata)).toBe(true);
     });
 
     it('class without decorator', () => {
       class Module1 {}
       const metadata = reflector.getMetadata(Module1) as any;
-      expect(isRootModDecor(metadata)).toBe(false);
+      expect(isRootModule(metadata)).toBe(false);
     });
   });
 
-  describe('isRootModDecor()', () => {
+  describe('isRootModule()', () => {
     it('class with decorator', () => {
       @rootModule({})
       class Module1 {}
-      const rawMeta = reflector.getDecorators(Module1, isRootModDecor)!;
+      const rawMeta = reflector.getDecorators(Module1, isRootModule)!;
       expect(rawMeta).toBeDefined();
     });
 

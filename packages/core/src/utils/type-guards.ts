@@ -40,27 +40,25 @@ export function isCustomError(err: any): err is CustomError {
   return err instanceof CustomError;
 }
 
-export function isFeatureModDecor(
+export function isFeatureModule(
   decoratorAndValue?: DecoratorAndValue,
 ): decoratorAndValue is DecoratorAndValue<ModuleMetadataWithContext> {
   return decoratorAndValue?.decorator === featureModule;
 }
 
-export function isRootModDecor(
-  decoratorAndValue?: DecoratorAndValue,
-): decoratorAndValue is DecoratorAndValue<ModuleMetadataWithContext>;
-export function isRootModDecor(metaWithCtx?: ModuleMetadataWithContext): metaWithCtx is ModuleMetadataWithContext;
-export function isRootModDecor(meta?: NormalizedModuleMetadata): meta is NormalizedModuleMetadata<RootModuleMetadata>;
-export function isRootModDecor(
-  decoratorAndValue?: DecoratorAndValue | ModuleMetadataWithContext | NormalizedModuleMetadata,
-): decoratorAndValue is DecoratorAndValue<ModuleMetadataWithContext> {
-  return decoratorAndValue?.decorator === rootModule;
+export function isRootModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<ModuleMetadataWithContext>;
+export function isRootModule(arg?: ModuleMetadataWithContext): arg is ModuleMetadataWithContext;
+export function isRootModule(meta?: NormalizedModuleMetadata): meta is NormalizedModuleMetadata<RootModuleMetadata>;
+export function isRootModule(
+  arg?: DecoratorAndValue | ModuleMetadataWithContext | NormalizedModuleMetadata,
+): arg is DecoratorAndValue<ModuleMetadataWithContext> {
+  return arg?.decorator === rootModule;
 }
 
 export function isModDecor(
   decoratorAndValue?: DecoratorAndValue,
 ): decoratorAndValue is DecoratorAndValue<ModuleMetadataWithContext> | DecoratorAndValue<ModuleMetadataWithContext> {
-  return isRootModDecor(decoratorAndValue) || isFeatureModDecor(decoratorAndValue);
+  return isRootModule(decoratorAndValue) || isFeatureModule(decoratorAndValue);
 }
 
 /**

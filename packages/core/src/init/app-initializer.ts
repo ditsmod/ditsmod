@@ -26,7 +26,7 @@ import { getLastProviders } from '#utils/get-last-providers.js';
 import { getProvidersTargets, getToken, getTokens } from '#utils/get-tokens.js';
 import { normalizeProviders } from '#utils/ng-utils.js';
 import { throwProvidersCollisionError } from '#utils/throw-providers-collision-error.js';
-import { isMultiProvider, isRootModDecor } from '#utils/type-guards.js';
+import { isMultiProvider, isRootModule } from '#utils/type-guards.js';
 import { SERVER } from '#public-api/constans.js';
 import { HttpServer } from '#types/server-options.js';
 import { MetadataPerMod2 } from '#types/metadata-per-mod.js';
@@ -115,7 +115,7 @@ export class AppInitializer {
       providersPerApp.push(...this.collectProvidersPerApp(meta2));
       this.unfinishedScanModules.delete(modRefId);
     }
-    const currProvidersPerApp = isRootModDecor(meta1) ? [] : meta1.providersPerApp;
+    const currProvidersPerApp = isRootModule(meta1) ? [] : meta1.providersPerApp;
 
     return [...providersPerApp, ...currProvidersPerApp];
   }

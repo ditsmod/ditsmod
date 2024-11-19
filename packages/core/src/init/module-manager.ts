@@ -5,7 +5,7 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyObj, ModuleType, ModRefId } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
-import { isModuleWithParams, isRootModDecor } from '#utils/type-guards.js';
+import { isModuleWithParams, isRootModule } from '#utils/type-guards.js';
 import { clearDebugModuleNames, getDebugModuleName } from '#utils/get-debug-module-name.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { ModuleNormalizer } from '#init/module-normalizer.js';
@@ -44,7 +44,7 @@ export class ModuleManager {
    * You can also get the result this way: `moduleManager.getMetadata('root')`.
    */
   scanRootModule(appModule: ModuleType) {
-    if (!reflector.getDecorators(appModule, isRootModDecor)) {
+    if (!reflector.getDecorators(appModule, isRootModule)) {
       throw new Error(`Module scaning failed: "${appModule.name}" does not have the "@rootModule()" decorator`);
     }
 

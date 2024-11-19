@@ -6,7 +6,7 @@ import {
   isModuleWithParams,
   isMultiProvider,
   isNormalizedProvider,
-  isRootModDecor,
+  isRootModule,
   isProvider,
   isTokenProvider,
   isValueProvider,
@@ -94,7 +94,7 @@ export class ModuleNormalizer {
       ...(rawMeta.resolvedCollisionsPerRou || []),
       ...(rawMeta.resolvedCollisionsPerReq || []),
     ];
-    if (isRootModDecor(rawMeta)) {
+    if (isRootModule(rawMeta)) {
       resolvedCollisionsPerScope.push(...(rawMeta.resolvedCollisionsPerApp || []));
     }
     resolvedCollisionsPerScope.forEach(([token]) => this.throwIfNormalizedProvider(modName, token));
@@ -163,7 +163,7 @@ export class ModuleNormalizer {
 
   protected checkWhetherIsExternalModule(rawMeta: ModuleMetadataWithContext, meta: NormalizedModuleMetadata) {
     meta.isExternal = false;
-    if (isRootModDecor(rawMeta)) {
+    if (isRootModule(rawMeta)) {
       this.rootDeclaredInDir = meta.declaredInDir;
     } else if (this.rootDeclaredInDir) {
       const { declaredInDir } = meta;
@@ -236,7 +236,7 @@ export class ModuleNormalizer {
 
   protected quickCheckMetadata(meta: NormalizedModuleMetadata) {
     if (
-      !isRootModDecor(meta) &&
+      !isRootModule(meta) &&
       !meta.exportedProvidersPerReq.length &&
       !meta.controllers.length &&
       !meta.exportedProvidersPerMod.length &&
@@ -362,7 +362,7 @@ export class ModuleNormalizer {
 
 export function getModuleMetadata(modRefId: ModRefId, isRoot?: boolean): ModuleMetadataWithContext | undefined {
   modRefId = resolveForwardRef(modRefId);
-  const decoratorGuard = isRoot ? isRootModDecor : isModDecor;
+  const decoratorGuard = isRoot ? isRootModule : isModDecor;
 
   if (!isModuleWithParams(modRefId) && !isAppendsWithParams(modRefId)) {
     return reflector.getDecorators(modRefId, decoratorGuard)?.at(0)?.value;
