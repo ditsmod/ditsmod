@@ -14,7 +14,7 @@ import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
 import { throwProvidersCollisionError } from '#utils/throw-providers-collision-error.js';
-import { isAppendsWithParams, isModuleWithParams, isNormRootModule } from '#utils/type-guards.js';
+import { isAppendsWithParams, isModuleWithParams, isRootModDecor } from '#utils/type-guards.js';
 import { hasDeclaredInDir } from '#utils/type-guards.js';
 import { getModule } from '#utils/get-module.js';
 import { getDebugModuleName } from '#utils/get-debug-module-name.js';
@@ -110,7 +110,7 @@ export class ModuleFactory {
       (meta.modRefId.path !== undefined || meta.modRefId.absolutePath !== undefined);
 
     let applyControllers = false;
-    if (isNormRootModule(meta) || isAppends || hasPath) {
+    if (isRootModDecor(meta) || isAppends || hasPath) {
       applyControllers = true;
     }
 

@@ -46,15 +46,13 @@ export function isFeatureModDecor(
   return decoratorAndValue?.decorator === featureModule;
 }
 
-/**
- * @todo Refactor type for this (`ModuleMetadataWithContext` for root module not have `id`, etc.).
- */
 export function isRootModDecor(
   decoratorAndValue?: DecoratorAndValue,
 ): decoratorAndValue is DecoratorAndValue<ModuleMetadataWithContext>;
 export function isRootModDecor(metaWithCtx?: ModuleMetadataWithContext): metaWithCtx is ModuleMetadataWithContext;
+export function isRootModDecor(meta?: NormalizedModuleMetadata): meta is NormalizedModuleMetadata<RootModuleMetadata>;
 export function isRootModDecor(
-  decoratorAndValue?: DecoratorAndValue | ModuleMetadataWithContext,
+  decoratorAndValue?: DecoratorAndValue | ModuleMetadataWithContext | NormalizedModuleMetadata,
 ): decoratorAndValue is DecoratorAndValue<ModuleMetadataWithContext> {
   return decoratorAndValue?.decorator === rootModule;
 }
@@ -82,12 +80,6 @@ export function isDecoratorAndValue(
     (decoratorAndValue as DecoratorAndValue)?.decorator !== undefined &&
     Boolean(decoratorAndValue?.hasOwnProperty('value'))
   );
-}
-
-export function isNormRootModule(
-  rawModule?: NormalizedModuleMetadata,
-): rawModule is NormalizedModuleMetadata<RootModuleMetadata> {
-  return rawModule?.decorator === rootModule;
 }
 
 export function isCtrlDecor(decoratorAndValue?: AnyObj): decoratorAndValue is DecoratorAndValue<ControllerRawMetadata> {

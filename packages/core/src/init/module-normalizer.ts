@@ -6,9 +6,8 @@ import {
   isModuleWithParams,
   isMultiProvider,
   isNormalizedProvider,
-  isNormRootModule,
-  isProvider,
   isRootModDecor,
+  isProvider,
   isTokenProvider,
   isValueProvider,
   MultiProvider,
@@ -237,7 +236,7 @@ export class ModuleNormalizer {
 
   protected quickCheckMetadata(meta: NormalizedModuleMetadata) {
     if (
-      !isNormRootModule(meta) &&
+      !isRootModDecor(meta) &&
       !meta.exportedProvidersPerReq.length &&
       !meta.controllers.length &&
       !meta.exportedProvidersPerMod.length &&
