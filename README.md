@@ -18,22 +18,13 @@ During you run the following command:
 yarn install
 ```
 
-yarn will create symlinks in `node_modules` for all packages listed in the `packages/*` and `examples/*` folders. Also, the applications in the `examples/*` folder are linked to the modules in the `packages/*` folder thanks to [compilerOptions.paths][2] as well as [Project References][3]. So, after any change in the source files in `packages/*`, these changes are automatically reflected in `examples/*`.
+yarn will create symlinks in `node_modules` for all packages listed in the `packages/*` and `examples/*` folders. Also, modules in the `packages/*` folder are linked to the applications in the `examples/*` folder thanks to [compilerOptions.paths][2] as well as [Project References][3]. So, after any change in the source files in `packages/*`, these changes are automatically reflected in `examples/*`.
 
-Development mode for any application in the `examples/*` directory can be started with two commands in two different terminals.
-
-From first terminal:
+Development mode for any application in the `examples/*` directory can be started with this command:
 
 ```bash
 cd examples/01*
-yarn build -w
-```
-
-From second terminal:
-
-```bash
-cd examples/01*
-yarn start
+yarn start:dev
 ```
 
 ## Benchmarks
