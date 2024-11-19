@@ -1,6 +1,6 @@
 import { makeClassDecorator } from '#di';
-import { ModuleMetadata } from '#types/module-metadata.js';
-import { AnyFn, GuardItem, Scope } from '#types/mix.js';
+import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
+import { AnyFn, GuardItem, ModuleType, Scope } from '#types/mix.js';
 import { getCallerDir } from '#utils/callsites.js';
 
 const scopes = ['App', 'Mod', 'Rou', 'Req'] as Scope[];
@@ -23,4 +23,9 @@ export interface ModuleMetadataWithContext extends ModuleMetadata {
   decorator: AnyFn;
   declaredInDir: string;
   guards: GuardItem[];
+  /**
+   * An array of pairs, each of which is in the first place the provider's token,
+   * and in the second - the module from which to import the provider with the specified token.
+   */
+  resolvedCollisionsPerApp?: [any, ModuleType | ModuleWithParams][];
 }

@@ -2,9 +2,9 @@ import { forwardRef, injectable } from '#di';
 import { featureModule } from '#decorators/module.js';
 import { Provider } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
-import { getModuleMetadata } from './get-module-metadata.js';
-import { getCallerDir } from './callsites.js';
+import { getModuleMetadata } from '#init/module-normalizer.js';
 import { Providers } from '#utils/providers.js';
+import { getCallerDir } from '#utils/callsites.js';
 
 describe('getModuleMetadata', () => {
   it('module without decorator', () => {

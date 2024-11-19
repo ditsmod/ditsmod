@@ -12,11 +12,10 @@ import {
   isRootModDecor,
   isMultiProvider,
   MultiProvider,
-  isRawRootModule,
 } from './type-guards.js';
 import { rootModule } from '#decorators/root-module.js';
 import { controller } from '#decorators/controller.js';
-import { getModuleMetadata } from './get-module-metadata.js';
+import { getModuleMetadata } from '#init/module-normalizer.js';
 import { AppendsWithParams } from '#types/module-metadata.js';
 
 describe('type guards', () => {
@@ -50,18 +49,18 @@ describe('type guards', () => {
     });
   });
 
-  describe('isRawRootModule()', () => {
+  describe('isRootModDecor()', () => {
     it('class with decorator', () => {
       @rootModule({})
       class Module1 {}
-      const rawMeta = getModuleMetadata(Module1)!;
-      expect(isRawRootModule(rawMeta)).toBe(true);
+      const rawMeta = reflector.getDecorators(Module1, isRootModDecor)!;
+      expect(rawMeta).toBeDefined();
     });
 
     it('class without decorator', () => {
       class Module1 {}
       const rawMeta = getModuleMetadata(Module1)!;
-      expect(isRawRootModule(rawMeta)).toBe(false);
+      expect(rawMeta).toBeUndefined();
     });
   });
 

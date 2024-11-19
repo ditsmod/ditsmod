@@ -2,12 +2,13 @@ import {
   isAppendsWithParams,
   isClassProvider,
   isCtrlDecor,
+  isModDecor,
   isModuleWithParams,
   isMultiProvider,
   isNormalizedProvider,
   isNormRootModule,
   isProvider,
-  isRawRootModule,
+  isRootModDecor,
   isTokenProvider,
   isValueProvider,
   MultiProvider,
@@ -18,8 +19,7 @@ import {
   isOptionWithOverrideExtension,
 } from '#extension/get-extension-provider.js';
 import { AnyObj, GuardItem, ModRefId, NormalizedGuard, Provider, Scope } from '#types/mix.js';
-import { getModuleMetadata } from '#utils/get-module-metadata.js';
-import { ModuleMetadataWithContext } from '#decorators/module.js';
+import { ModuleMetadataWithContext } from '../decorators/module.js';
 import { getDebugModuleName } from '#utils/get-debug-module-name.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { resolveForwardRef } from '#di/forward-ref.js';
@@ -31,6 +31,8 @@ import { ModuleMetadata } from '#types/module-metadata.js';
 import { getModule } from '#utils/get-module.js';
 import { Extension, ExtensionProvider } from '#extension/extension-types.js';
 import { normalizeProviders } from '#utils/ng-utils.js';
+import { getLastProviders } from '#utils/get-last-providers.js';
+import { mergeArrays } from '#utils/merge-arrays.js';
 
 export class ModuleNormalizer {
   /**
@@ -93,7 +95,7 @@ export class ModuleNormalizer {
       ...(rawMeta.resolvedCollisionsPerRou || []),
       ...(rawMeta.resolvedCollisionsPerReq || []),
     ];
-    if (isRawRootModule(rawMeta)) {
+    if (isRootModDecor(rawMeta)) {
       resolvedCollisionsPerScope.push(...(rawMeta.resolvedCollisionsPerApp || []));
     }
     resolvedCollisionsPerScope.forEach(([token]) => this.throwIfNormalizedProvider(modName, token));
@@ -162,7 +164,7 @@ export class ModuleNormalizer {
 
   protected checkWhetherIsExternalModule(rawMeta: ModuleMetadataWithContext, meta: NormalizedModuleMetadata) {
     meta.isExternal = false;
-    if (isRawRootModule(rawMeta)) {
+    if (isRootModDecor(rawMeta)) {
       this.rootDeclaredInDir = meta.declaredInDir;
     } else if (this.rootDeclaredInDir) {
       const { declaredInDir } = meta;
@@ -352,4 +354,47 @@ export class ModuleNormalizer {
       throw new Error(msg);
     }
   }
+}
+
+/**
+ * Merges metadata passed in `rootModule` or `featureModule` decorators with metadata passed
+ * in `ModuleWithParams`.
+ */
+
+export function getModuleMetadata(modRefId: ModRefId, isRoot?: boolean): ModuleMetadataWithContext | undefined {
+  modRefId = resolveForwardRef(modRefId);
+  const decoratorGuard = isRoot ? isRootModDecor : isModDecor;
+
+  if (!isModuleWithParams(modRefId) && !isAppendsWithParams(modRefId)) {
+    return reflector.getDecorators(modRefId, decoratorGuard)?.at(0)?.value;
+  }
+
+  const modWitParams = modRefId;
+  const decorAndVal = reflector.getDecorators(modWitParams.module, decoratorGuard)?.at(0);
+  if (!decorAndVal) {
+    return;
+  }
+  const modMetadata = decorAndVal.value;
+
+  if (modMetadata.id) {
+    const modName = getDebugModuleName(modWitParams.module);
+    const msg =
+      `${modName} must not have an "id" in the metadata of the decorator @featureModule. ` +
+      'Instead, you can specify the "id" in the object that contains the module parameters.';
+    throw new Error(msg);
+  }
+  const metadata = Object.assign({}, modMetadata);
+  metadata.id = modWitParams.id;
+  const scopes = ['App', 'Mod', 'Rou', 'Req'] as Scope[];
+  if (isModuleWithParams(modWitParams)) {
+    scopes.forEach((scope) => {
+      const arr1 = modMetadata[`providersPer${scope}`];
+      const arr2 = modWitParams[`providersPer${scope}`];
+      metadata[`providersPer${scope}`] = getLastProviders(mergeArrays(arr1, arr2));
+    });
+    metadata.exports = getLastProviders(mergeArrays(modMetadata.exports, modWitParams.exports));
+    metadata.extensionsMeta = { ...modMetadata.extensionsMeta, ...modWitParams.extensionsMeta };
+  }
+  metadata.guards = modRefId.guards || [];
+  return metadata;
 }

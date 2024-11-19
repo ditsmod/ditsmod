@@ -90,7 +90,6 @@ export {
   ModuleWithParams1,
   ModuleWithParams2,
 } from '#types/module-metadata.js';
-export { getModuleMetadata } from '#utils/get-module-metadata.js';
 export { PathParam, RouteHandler, Router, RouterReturns } from '#types/router.js';
 export { HttpRequest, HttpResponse, RequestListener, Server, HttpServer } from '#types/server-options.js';
 export { createHelperForGuardWithParams } from '#utils/create-helper-for-guards-with-params.js';
@@ -122,10 +121,8 @@ export {
   isHttp2SecureServerOptions,
   isInjectionToken,
   isMultiProvider,
-  isNormRootModule,
   isNormalizedProvider,
   isProvider,
-  isRawRootModule,
   isTokenProvider,
   isTypeProvider,
   isValueProvider,

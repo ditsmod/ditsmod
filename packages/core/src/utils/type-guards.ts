@@ -12,11 +12,12 @@ import {
   reflector,
   ClassFactoryProvider,
 } from '#di';
-import { AnyObj, ModuleType, AnyFn, RequireProps } from '#types/mix.js';
-import { ModuleWithParams, AppendsWithParams, ModuleMetadata } from '#types/module-metadata.js';
+import { AnyObj, ModuleType, RequireProps } from '#types/mix.js';
+import { ModuleWithParams, AppendsWithParams } from '#types/module-metadata.js';
 import { RootModuleMetadata } from '#types/root-module-metadata.js';
 import { Http2SecureServerOptions, ServerOptions } from '#types/server-options.js';
-import { featureModule, ModuleMetadataWithContext } from '#decorators/module.js';
+import { featureModule } from '#decorators/module.js';
+import { ModuleMetadataWithContext } from '../decorators/module.js';
 import { controller, ControllerRawMetadata } from '#decorators/controller.js';
 import { rootModule } from '#decorators/root-module.js';
 import { NormalizedProvider } from './ng-utils.js';
@@ -50,6 +51,10 @@ export function isFeatureModDecor(
  */
 export function isRootModDecor(
   decoratorAndValue?: DecoratorAndValue,
+): decoratorAndValue is DecoratorAndValue<ModuleMetadataWithContext>;
+export function isRootModDecor(metaWithCtx?: ModuleMetadataWithContext): metaWithCtx is ModuleMetadataWithContext;
+export function isRootModDecor(
+  decoratorAndValue?: DecoratorAndValue | ModuleMetadataWithContext,
 ): decoratorAndValue is DecoratorAndValue<ModuleMetadataWithContext> {
   return decoratorAndValue?.decorator === rootModule;
 }
@@ -77,10 +82,6 @@ export function isDecoratorAndValue(
     (decoratorAndValue as DecoratorAndValue)?.decorator !== undefined &&
     Boolean(decoratorAndValue?.hasOwnProperty('value'))
   );
-}
-
-export function isRawRootModule(rawModule?: ModuleMetadata & { decorator?: AnyFn }): rawModule is RootModuleMetadata {
-  return rawModule?.decorator === rootModule;
 }
 
 export function isNormRootModule(
