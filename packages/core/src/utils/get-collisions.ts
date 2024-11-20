@@ -4,9 +4,9 @@ import { getTokens } from './get-tokens.js';
 import { isClassProvider, isTokenProvider, isFactoryProvider, isValueProvider } from './type-guards.js';
 
 /**
- * Returns array of uniq tokens.
- *
  * If you have a replacement for some provider - you have a collision.
+ *
+ * Returns array of uniq tokens.
  *
  * @todo Add checks for FactoryProvider.
  */
