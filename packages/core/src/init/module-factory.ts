@@ -310,7 +310,7 @@ export class ModuleFactory {
       throw new Error(errorMsg);
     }
     const providers = getLastProviders(meta2[`providersPer${scope}`]).filter((p) => getToken(p) === token2);
-    if (!providers) {
+    if (!providers.length) {
       errorMsg += `providersPer${scope} does not includes ${tokenName} in this module.`;
       throw new Error(errorMsg);
     }
@@ -335,25 +335,25 @@ export class ModuleFactory {
   }
 
   protected checkCollisionsWithScopesMix(providers: any[], scopes: Scope[]) {
-    getTokens(providers).forEach((token1) => {
+    getTokens(providers).forEach((token) => {
       for (const scope of scopes) {
         const declaredTokens = getTokens(this.meta[`providersPer${scope}`]);
         const importedTokens = getImportedTokens(this[`importedProvidersPer${scope}`]);
         const resolvedTokens = this.meta[`resolvedCollisionsPer${scope}`].map(([t]) => t);
-        const collision = importedTokens.includes(token1) && ![...declaredTokens, ...resolvedTokens].includes(token1);
+        const collision = importedTokens.includes(token) && ![...declaredTokens, ...resolvedTokens].includes(token);
         if (collision) {
-          const importObj = this[`importedProvidersPer${scope}`].get(token1)!;
+          const importObj = this[`importedProvidersPer${scope}`].get(token)!;
           const hostModulePath = this.moduleManager.getMetadata(importObj.modRefId)?.declaredInDir || '.';
-          const decorAndVal = reflector.getDecorators(token1, hasDeclaredInDir)?.at(0);
+          const decorAndVal = reflector.getDecorators(token, hasDeclaredInDir)?.at(0);
           const collisionWithPath = decorAndVal?.declaredInDir || '.';
           if (hostModulePath !== '.' && collisionWithPath !== '.' && collisionWithPath.startsWith(hostModulePath)) {
             // Allow collisions in host modules.
           } else {
             const hostModuleName = getDebugModuleName(importObj.modRefId);
-            throwProvidersCollisionError(this.moduleName, [token1], [hostModuleName], scope, this.meta.isExternal);
+            throwProvidersCollisionError(this.moduleName, [token], [hostModuleName], scope, this.meta.isExternal);
           }
         }
-        this.resolveCollisionsWithScopesMix(token1, scope, resolvedTokens);
+        this.resolveCollisionsWithScopesMix(token, scope, resolvedTokens);
       }
     });
   }
