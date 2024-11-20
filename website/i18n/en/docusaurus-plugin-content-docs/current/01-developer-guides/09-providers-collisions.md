@@ -2,21 +2,45 @@
 sidebar_position: 9
 ---
 
-# Collision of providers
+# Provider Collisions
 
-Imagine you have `Module3` where you imported `Module2` and `Module1`. You did this import because you need `Service2` and `Service1` from these modules, respectively. You are viewing how these services work, but for some reason `Service1` does not work as expected. You start debugging and it turns out that `Service1` is exported from both modules: `Module2` and `Module1`. You expected that `Service1` would only be exported from `Module1`, but the version exported from `Module2` actually worked.
+Imagine you have `Module3`, where you import `Module2` and `Module1`. You made these imports because you need `Provider2` and `Provider1` from these modules, respectively. You review the results of these providers’ operations, but for some reason, `Provider1` does not behave as expected. You start debugging and discover that `Provider1` is exported from both `Module2` and `Module1`. You expected `Provider1` to be exported only from `Module1`, but in reality, the version exported by `Module2` is being used:
 
-To prevent this from happening, if you import two or more modules that export non-identical providers with the same token, Ditsmod will throw the following error:
+```ts
+import { featureModule, rootModule } from '@ditsmod/core';
 
-> Error: Importing providers to Module3 failed: exports from Module2 and Module1 causes collision with Service1. You should add Service1 to resolvedCollisionsPer* in this module. For example: resolvedCollisionsPerReq: [ [Service1, Module1] ].
+class Provider1 {}
+class Provider2 {}
 
-Specifically in this case:
+@featureModule({
+  providersPerReq: [Provider1],
+  exports: [Provider1]
+})
+class Module1 {}
 
-1. `Module1` substitute and then exports the provider with the token `Service1`;
-2. and `Module2` substitute and then exports the provider with the token `Service1`;
-3. providers with token `Service1` are not identical in `Module1` and `Module2`, i.e. from `Module2` can be exported, for example, object `{ token: Service1, useValue: {} }`, and from `Module1` `Service1` can be exported as a class.
+@featureModule({
+  providersPerReq: [{ token: Provider1, useValue: 'some value' }, Provider2],
+  exports: [Provider1, Provider2],
+})
+class Module2 {}
 
-And since both of these modules are imported into `Module3`, this causes a "provider collisions", because the developer may not know which of these substitutions will work in `Module3`.
+@rootModule({
+  imports: [Module1, Module2],
+})
+class Module3 {}
+```
+
+To prevent this, if you import two or more modules that export non-identical providers with the same token, Ditsmod will throw an error similar to this:
+
+> Error: Importing providers to Module3 failed: exports from Module1, Module2 causes collision with Provider1. You should add Provider1 to resolvedCollisionsPerReq in this module. For example: resolvedCollisionsPerReq: [ [Provider1, Module1] ].
+
+In this specific scenario:
+
+1. `Module1` exports a provider with the token `Provider1`.
+2. `Module2` overrides and then exports a provider with the token `Provider1`.
+3. The providers with the token `Provider1` in `Module1` and `Module2` are not identical.
+
+And because both of these modules are imported into `Module3`, a "provider collision" occurs, leaving the developer uncertain about which provider will be used in `Module3`.
 
 ## Collision resolution
 
