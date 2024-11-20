@@ -9,7 +9,7 @@ import { ModuleFactory } from '#init/module-factory.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { GlobalProviders, ImportObj, MetadataPerMod1 } from '#types/metadata-per-mod.js';
-import { GuardPerMod1, ModuleType } from '#types/mix.js';
+import { GuardPerMod1, ModuleType, Scope } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { ExtensionProvider } from '#extension/extension-types.js';
 import { Router } from '#types/router.js';
@@ -41,6 +41,10 @@ describe('ModuleFactory', () => {
     override exportGlobalProviders(moduleManager: ModuleManager, providersPerApp: Provider[]) {
       return super.exportGlobalProviders(moduleManager, providersPerApp);
     }
+
+    override getResolvedCollisionsPerScope(scope: Scope, token1: any) {
+      return super.getResolvedCollisionsPerScope(scope, token1);
+    }
   }
 
   let mock: MockModuleFactory;
@@ -58,6 +62,98 @@ describe('ModuleFactory', () => {
       expect(() => moduleManager.scanModule(mod)).not.toThrow();
       return mock.bootstrap([], new GlobalProviders(), '', mod, moduleManager, new Set());
     }
+
+    it('should throw an error because resolvedCollisionsPerReq not properly setted provider', () => {
+      class Provider1 {}
+      class Provider2 {}
+
+      @featureModule({
+        providersPerMod: [Provider2],
+        exports: [Provider2],
+      })
+      class Module0 {}
+
+      @featureModule({ providersPerReq: [{ token: Provider1, useValue: 'some value' }], exports: [Provider1] })
+      class Module1 {}
+
+      @featureModule({ providersPerReq: [Provider1], exports: [Provider1] })
+      class Module2 {}
+
+      @rootModule({
+        imports: [Module0, Module1, Module2],
+        resolvedCollisionsPerReq: [[Provider1, Module0]],
+      })
+      class AppModule {}
+
+      const msg = 'AppModule failed: Provider1 mapped with Module0, but providersPerReq does not includes Provider1';
+      expect(() => bootstrap(AppModule)).toThrow(msg);
+    });
+
+    xit('should throw an error because AppModule have resolvedCollisionsPerReq when there is no collisions', () => {
+      class Provider1 {}
+      class Provider2 {}
+
+      @featureModule({ providersPerReq: [Provider1], exports: [Provider1] })
+      class Module1 {}
+
+      @featureModule({ providersPerReq: [Provider2], exports: [Provider2] })
+      class Module2 {}
+
+      @rootModule({
+        imports: [Module1, Module2],
+        resolvedCollisionsPerReq: [[Provider1, Module1]],
+      })
+      class AppModule {}
+
+      const msg = 'no collision';
+      expect(() => bootstrap(AppModule)).toThrow(msg);
+    });
+
+    it('should work with resolved collision', () => {
+      class Provider1 {}
+      class Provider2 {}
+
+      @featureModule({
+        providersPerReq: [Provider1],
+        exports: [Provider1],
+      })
+      class Module1 {}
+
+      @featureModule({
+        providersPerReq: [{ token: Provider1, useValue: 'some value' }, Provider2],
+        exports: [Provider1, Provider2],
+      })
+      class Module2 {}
+
+      @rootModule({
+        imports: [Module1, Module2],
+      })
+      class Module3 {}
+
+      let msg =
+        'Importing providers to Module3 failed: exports from Module1, Module2 causes collision with Provider1. ';
+      msg += 'You should add Provider1 to resolvedCollisionsPerReq in this module. ';
+      msg += 'For example: resolvedCollisionsPerReq: [ [Provider1, Module1] ].';
+      expect(() => bootstrap(Module3)).toThrow(msg);
+    });
+
+    it('should work with resolved collision', () => {
+      class Provider1 {}
+
+      @featureModule({ providersPerReq: [{ token: Provider1, useValue: 'some value' }], exports: [Provider1] })
+      class Module1 {}
+
+      @featureModule({ providersPerReq: [Provider1], exports: [Provider1] })
+      class Module2 {}
+
+      @rootModule({
+        imports: [Module1, Module2],
+        resolvedCollisionsPerReq: [[Provider1, Module1]],
+      })
+      class AppModule {}
+
+      expect(() => bootstrap(AppModule)).not.toThrow();
+    });
 
     it('should not throw an error during appending modules', () => {
       @controller()
@@ -1125,7 +1221,7 @@ describe('ModuleFactory', () => {
           expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
         });
 
-        it('exporting duplicates of Provider1 from Module1 and Module2, but declared in providersPerReq of root module', () => {
+        it('exporting duplicates of Provider1 from Module1 and Module2, but also includes in resolvedCollisionsPerReq of root module', () => {
           class Provider1 {}
           class Provider2 {}
 
