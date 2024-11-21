@@ -58,7 +58,7 @@ export class AppModule {}
 
 ## Feature module
 
-The TypeScript class becomes a non-root Ditsmod module with the `featureModule` decorator:
+The TypeScript class becomes a feature Ditsmod module with the `featureModule` decorator:
 
 ```ts
 import { featureModule } from '@ditsmod/core';

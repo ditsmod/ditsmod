@@ -93,7 +93,7 @@ export class AppInitializer {
   }
 
   /**
-   * Recursively collects per app providers from non-root modules.
+   * Recursively collects per app providers from feature modules.
    */
   protected collectProvidersPerApp(meta1: NormalizedModuleMetadata) {
     const aModRefId: ModRefId[] = [

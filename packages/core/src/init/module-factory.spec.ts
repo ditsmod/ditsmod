@@ -1055,7 +1055,7 @@ describe('ModuleFactory', () => {
           ]);
         });
 
-        it('resolved collision for non-root module', () => {
+        it('resolved collision for feature module', () => {
           @controller()
           class SomeController {}
 
@@ -1098,7 +1098,7 @@ describe('ModuleFactory', () => {
           ]);
         });
 
-        it('for non-root module', () => {
+        it('for feature module', () => {
           @controller()
           class SomeController {}
 

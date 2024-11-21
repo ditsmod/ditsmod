@@ -78,7 +78,7 @@ export class AppModule {}
 
 In this case, the first element of the array `providersPerApp` will allow using `MyLogMediator` in the Ditsmod core code, the second element - will allow requesting the instance of `MyLogMediator` in the constructors of controllers or services of your application.
 
-Keep in mind that such an application-level substitution works without additional settings only in the root module. If you do this in a non-root module, you will additionally have [to resolve the provider collision][100] in the root module (although this is quite simple).
+Keep in mind that such an application-level substitution works without additional settings only in the root module. If you do this in a feature module, you will additionally have [to resolve the provider collision][100] in the root module (although this is quite simple).
 
 ## Module-level substitute of LogMediator
 

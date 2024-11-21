@@ -30,7 +30,7 @@ export class MyHttpErrorHandler implements HttpErrorHandler {
 
 To add your new error handler centrally, you can do it directly in the root module:
 
-```ts
+```ts {6-7}
 import { rootModule, HttpErrorHandler } from '@ditsmod/core';
 import { MyHttpErrorHandler } from './my-http-error-handler.js';
 
@@ -44,7 +44,7 @@ export class AppModule {}
 
 Of course, if there are error handling specifics for a separate module or controller, you can just as easily add your new handler to its metadata without affecting other components of your application.
 
-If you add such a handler to the metadata of a non-root module, you probably don't need to export it. On the other hand, if you want to write a custom error handling module and still want to export `HttpErrorHandler` from it, be aware that importing it into any module will require [provider collisions][1] to be resolved. This occurs because a default error handler has already been added to each module in your application, and when you import the module with its new error handler, the two error handlers collide. This can be easily resolved:
+If you add such a handler to the metadata of a feature module, you probably don't need to export it. On the other hand, if you want to write a custom error handling module and still want to export `HttpErrorHandler` from it, be aware that importing it into any module will require [provider collisions][1] to be resolved. This occurs because a default error handler has already been added to each module in your application, and when you import the module with its new error handler, the two error handlers collide. This can be easily resolved:
 
 ```ts {8}
 import { featureModule, HttpErrorHandler } from '@ditsmod/core';

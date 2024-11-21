@@ -30,7 +30,7 @@ export class MyHttpErrorHandler implements HttpErrorHandler {
 
 Щоб централізовано додати ваш новий обробник помилок, можете це зробити прямо у кореневому модулі:
 
-```ts
+```ts {6-7}
 import { rootModule, HttpErrorHandler } from '@ditsmod/core';
 import { MyHttpErrorHandler } from './my-http-error-handler.js';
 
