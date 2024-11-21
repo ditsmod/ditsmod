@@ -1,4 +1,4 @@
-import { ErrorOpts, HttpErrorHandler, injectable, isChainError, Logger, RequestContext, Status } from '@ditsmod/core';
+import { HttpErrorHandler, injectable, isCustomError, Logger, RequestContext, Status } from '@ditsmod/core';
 import { randomUUID } from 'node:crypto';
 
 @injectable()
@@ -8,7 +8,7 @@ export class MyHttpErrorHandler implements HttpErrorHandler {
   async handleError(err: Error, ctx: RequestContext) {
     const requestId = randomUUID();
     const errObj = { requestId, err, note: 'This is my implementation of HttpErrorHandler' };
-    if (isChainError<ErrorOpts>(err)) {
+    if (isCustomError(err)) {
       const { level, status } = err.info;
       this.logger.log(level || 'debug', errObj);
       this.sendError(err.message, ctx, requestId, status);
@@ -23,8 +23,7 @@ export class MyHttpErrorHandler implements HttpErrorHandler {
   protected sendError(error: string, ctx: RequestContext, requestId: string, status?: Status) {
     if (!ctx.httpRes.headersSent) {
       this.addRequestIdToHeader(requestId, ctx);
-      const errStr = JSON.stringify({ error });
-      ctx.send(errStr, status || Status.INTERNAL_SERVER_ERROR);
+      ctx.sendJson({ error }, status);
     }
   }
 
