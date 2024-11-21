@@ -26,7 +26,9 @@
     "test": "tsc -b tsconfig.unit.json && yarn esm-jest",
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)"
   },
-  "keywords": ["ditsmod"],
+  "keywords": [
+    "ditsmod"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
