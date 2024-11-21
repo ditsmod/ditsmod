@@ -1,29 +1,109 @@
 ---
+title: HttpErrorHandler
 sidebar_position: 10
 ---
 
-# HttpErrorHandler
+# CustomError and HttpErrorHandler
+
+## CustomError
+
+Ditsmod provides two built-in classes - `CustomError` and `HttpErrorHandler` - that can be used to throw and catch errors, respectively.
+
+The `CustomError` class can be composed to generate any error:
+
+```ts {9}
+import { CustomError, Status } from '@ditsmod/core';
+
+// ...
+
+if (someCondition) {
+  const msg1 = 'message for client';
+  const msg2 = 'message for logger';
+
+  throw new CustomError({ msg1, msg2, level: 'debug', status: Status.BAD_REQUEST });
+}
+```
+
+That is, in `CustomError` arguments it is possible to transmit two types of messages:
+- `msg1` - message to be sent to the client that created the current HTTP request;
+- `msg2` - message for the logger.
+
+In general, the constructor of the `CustomError` class takes an object with the following interface as the first argument:
+
+```ts
+interface ErrorOpts {
+  id?: string | number;
+  /**
+   * Message to send it to a client.
+   */
+  msg1?: string = 'Internal server error';
+  /**
+   * A message to send it to a logger.
+   */
+  msg2?: string = '';
+  /**
+   * Arguments for error handler to send it to a client.
+   */
+  args1?: any;
+  /**
+   * Arguments for error handler to send it to a logger.
+   */
+  args2?: any;
+  /**
+   * Log level. By default - `warn`.
+   */
+  level?: InputLogLevel = 'warn';
+  /**
+   * HTTP status.
+   */
+  status?: Status = Status.BAD_REQUEST;
+  /**
+   * The parameters that came with the HTTP request.
+   */
+  params?: any;
+}
+```
+
+The `CustomError' class constructor can accept cause error as the second argument, if there is one.
+
+## HttpErrorHandler
 
 Any errors that occur while processing an HTTP request that you have not caught in controllers, interceptors, or services go to [DefaultHttpErrorHandler][100]. This handler is passed to the DI registry at the route level.
 
 You can create your own error handler by creating a class that implements the [HttpErrorHandler][101] interface:
 
 ```ts
-import { Logger, Status, HttpErrorHandler, injectable, Req, RequestContext } from '@ditsmod/core';
+import { HttpErrorHandler, injectable, isCustomError, Logger, RequestContext, Status } from '@ditsmod/core';
 import { randomUUID } from 'node:crypto';
 
 @injectable()
 export class MyHttpErrorHandler implements HttpErrorHandler {
   constructor(protected logger: Logger) {}
 
-  handleError(err: Error, ctx: RequestContext) {
-    const message = err.message;
-    this.logger.log('error', { err, note: 'This is my implementation of HttpErrorHandler' });
-    if (!ctx.httpRes.headersSent) {
-      const error = { error: { message } };
-      const headers = { 'x-requestId': randomUUID() };
-      ctx.sendJson(error, Status.INTERNAL_SERVER_ERROR, headers);
+  async handleError(err: Error, ctx: RequestContext) {
+    const requestId = randomUUID();
+    const errObj = { requestId, err, note: 'This is my implementation of HttpErrorHandler' };
+    if (isCustomError(err)) {
+      const { level, status } = err.info;
+      this.logger.log(level || 'debug', errObj);
+      this.sendError(err.message, ctx, requestId, status);
+    } else {
+      this.logger.log('error', errObj);
+      const msg = err.message || 'Internal server error';
+      const status = (err as any).status || Status.INTERNAL_SERVER_ERROR;
+      this.sendError(msg, ctx, requestId, status);
     }
+  }
+
+  protected sendError(error: string, ctx: RequestContext, requestId: string, status?: Status) {
+    if (!ctx.httpRes.headersSent) {
+      this.addRequestIdToHeader(requestId, ctx);
+      ctx.sendJson({ error }, status);
+    }
+  }
+
+  protected addRequestIdToHeader(requestId: string, ctx: RequestContext) {
+    ctx.httpRes.setHeader('x-requestId', requestId);
   }
 }
 ```
@@ -74,3 +154,4 @@ We remind you that provider collisions can only occur when importing modules. Th
 
 [100]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/error/default-http-error-handler.ts
 [101]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/error/http-error-handler.ts
+[102]: https://github.com/ditsmod/ditsmod/blob/main/packages/core/src/error/error-opts.ts
