@@ -18,30 +18,16 @@ describe('01-hello-world', () => {
   });
 
   it('controller works with GET method', async () => {
-    const { type, status, text } = await testAgent.get('/hello');
-    expect(type).toBe('text/plain');
+    const { type, status, text } = await testAgent.get('/default-controller');
     expect(status).toBe(200);
-    expect(text).toBe('Hello, World!');
-  });
-
-  it('method key as symbol with GET method', async () => {
-    const { type, status, text } = await testAgent.get('/symbol');
     expect(type).toBe('text/plain');
-    expect(status).toBe(200);
-    expect(text).toBe('Hello, World!');
-  });
-
-  it('method key as symbol with POST method', async () => {
-    const { type, status, text } = await testAgent.post('/symbol');
-    expect(type).toBe('text/plain');
-    expect(status).toBe(200);
     expect(text).toBe('Hello, World!');
   });
 
   it('controller handles HEAD method', async () => {
-    const { type, status, text, headers } = await testAgent.head('/hello');
-    expect(type).toBe('text/plain');
+    const { type, status, text, headers } = await testAgent.head('/default-controller');
     expect(status).toBe(200);
+    expect(type).toBe('text/plain');
     expect(text).toBeUndefined();
     expect(headers).toMatchObject({
       'content-type': 'text/plain; charset=utf-8',
@@ -50,9 +36,23 @@ describe('01-hello-world', () => {
   });
 
   it('controller as singleton works', async () => {
-    const { type, status, text } = await testAgent.get('/hello2');
-    expect(type).toBe('text/plain');
+    const { type, status, text } = await testAgent.get('/singleton-controller');
     expect(status).toBe(200);
+    expect(type).toBe('text/plain');
+    expect(text).toBe('Hello, World!');
+  });
+
+  it('method name as symbol with GET method', async () => {
+    const { type, status, text } = await testAgent.get('/method-name-as-symbol');
+    expect(status).toBe(200);
+    expect(type).toBe('text/plain');
+    expect(text).toBe('Hello, World!');
+  });
+
+  it('method name as symbol with POST method', async () => {
+    const { type, status, text } = await testAgent.post('/method-name-as-symbol');
+    expect(status).toBe(200);
+    expect(type).toBe('text/plain');
     expect(text).toBe('Hello, World!');
   });
 });
