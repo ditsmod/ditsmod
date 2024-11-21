@@ -2,6 +2,7 @@ import { InputLogLevel } from '#logger/logger.js';
 import { Status } from '#utils/http-status-codes.js';
 
 export class ErrorOpts {
+  id?: string | number;
   /**
    * Message to send it to a client.
    */
