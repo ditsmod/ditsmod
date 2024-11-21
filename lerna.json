@@ -2,13 +2,5 @@
   "$schema": "node_modules/lerna/schemas/lerna-schema.json",
   "version": "3.0.0",
   "npmClient": "yarn",
-  "packages": ["packages/*"],
-  "command": {
-    "publish": {
-      "message": "chore(release): publish"
-    },
-    "bootstrap": {
-      "npmClientArgs": ["--no-package-lock"]
-    }
-  }
+  "packages": ["packages/*"]
 }
