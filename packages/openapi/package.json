@@ -42,7 +42,7 @@
   "gitHead": "c64c99dc2b6f65bb3e7027e8f8dceeca7a8c2172",
   "dependencies": {
     "@ts-stack/openapi-spec": "^3.1.6",
-    "yaml": "^2.6.0"
+    "yaml": "^2.6.1"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^12.0.2",
