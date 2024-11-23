@@ -210,13 +210,12 @@ export class PreRouterExtension implements Extension<void> {
     return (async (httpReq, httpRes, aPathParams, queryString) => {
       const ctx = new RequestContextClass(httpReq, httpRes, aPathParams, queryString) as SingletonRequestContext;
       try {
-        if (ctx.queryString) {
-          ctx.queryParams = parse(ctx.queryString);
+        if (queryString) {
+          ctx.queryParams = parse(queryString);
         }
-        if (ctx.aPathParams?.length) {
-          const pathParams: AnyObj = {};
-          ctx.aPathParams.forEach((param) => (pathParams[param.key] = param.value));
-          ctx.pathParams = pathParams;
+        if (aPathParams?.length) {
+          ctx.pathParams = {};
+          aPathParams.forEach((param) => (ctx.pathParams![param.key] = param.value));
         }
         await routeHandler!(ctx);
       } catch (err: any) {
