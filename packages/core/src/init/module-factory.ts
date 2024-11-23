@@ -182,6 +182,8 @@ export class ModuleFactory {
         }
         const impGuradsPerMod1 = meta.guardsPerMod.map<GuardPerMod1>((g) => ({ ...g, meta: this.meta }));
         guardsPerMod1 = [...this.guardsPerMod1, ...impGuradsPerMod1];
+      } else {
+        prefixPerMod = this.prefixPerMod;
       }
 
       if (this.unfinishedScanModules.has(input)) {
