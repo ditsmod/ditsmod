@@ -105,6 +105,7 @@ export { getCallerDir } from '#utils/callsites.js';
 export { getDebugModuleName, clearDebugModuleNames } from '#utils/get-debug-module-name.js';
 export * from '#utils/get-tokens.js';
 export { isExtensionProvider } from '#extension/type-guards.js';
+export { RawMeta } from '#decorators/module.js';
 export {
   MultiProvider,
   isAppendsWithParams,

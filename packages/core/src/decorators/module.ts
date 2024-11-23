@@ -7,7 +7,7 @@ const scopes = ['App', 'Mod', 'Rou', 'Req'] as Scope[];
 
 export const featureModule = makeClassDecorator(transformModule);
 
-export function transformModule(data?: ModuleMetadata): ExtendedModuleMetadata {
+export function transformModule(data?: ModuleMetadata): RawMeta {
   const metadata = Object.assign({}, data);
   scopes.forEach((scope) => {
     // If here is object with [Symbol.iterator]() method, this transform it to an array.
@@ -19,7 +19,10 @@ export function transformModule(data?: ModuleMetadata): ExtendedModuleMetadata {
   return { decorator: featureModule, declaredInDir: getCallerDir(), guards: [], ...metadata };
 }
 
-export interface ExtendedModuleMetadata extends ModuleMetadata {
+/**
+ * Raw module metadata returned by reflector.
+ */
+export interface RawMeta extends ModuleMetadata {
   decorator: AnyFn;
   declaredInDir: string;
   guards: GuardItem[];

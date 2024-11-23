@@ -18,7 +18,7 @@ import {
   isOptionWithOverrideExtension,
 } from '#extension/get-extension-provider.js';
 import { AnyObj, GuardItem, ModRefId, NormalizedGuard, Provider, Scope } from '#types/mix.js';
-import { ExtendedModuleMetadata } from '../decorators/module.js';
+import { RawMeta } from '../decorators/module.js';
 import { getDebugModuleName } from '#utils/get-debug-module-name.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { resolveForwardRef } from '#di/forward-ref.js';
@@ -144,7 +144,7 @@ export class ModuleNormalizer {
     }
   }
 
-  protected pickMeta(targetObject: NormalizedModuleMetadata, ...sourceObjects: ExtendedModuleMetadata[]) {
+  protected pickMeta(targetObject: NormalizedModuleMetadata, ...sourceObjects: RawMeta[]) {
     const trgtObj = targetObject as any;
     sourceObjects.forEach((sourceObj: AnyObj) => {
       sourceObj ??= {};
@@ -162,7 +162,7 @@ export class ModuleNormalizer {
     return trgtObj;
   }
 
-  protected checkWhetherIsExternalModule(rawMeta: ExtendedModuleMetadata, meta: NormalizedModuleMetadata) {
+  protected checkWhetherIsExternalModule(rawMeta: RawMeta, meta: NormalizedModuleMetadata) {
     meta.isExternal = false;
     if (isRootModule(rawMeta)) {
       this.rootDeclaredInDir = meta.declaredInDir;
@@ -361,7 +361,7 @@ export class ModuleNormalizer {
  * in `ModuleWithParams`.
  */
 
-export function getModuleMetadata(modRefId: ModRefId, isRoot?: boolean): ExtendedModuleMetadata | undefined {
+export function getModuleMetadata(modRefId: ModRefId, isRoot?: boolean): RawMeta | undefined {
   modRefId = resolveForwardRef(modRefId);
   const decoratorGuard = isRoot ? isRootModule : isModDecor;
 

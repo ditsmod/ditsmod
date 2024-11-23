@@ -4,14 +4,14 @@ import { AppendsWithParams, ModuleWithParams } from './module-metadata.js';
 import { ExtensionProvider } from '#extension/extension-types.js';
 import { MultiProvider } from '#utils/type-guards.js';
 import { ProvidersMetadata } from '#types/providers-metadata.js';
-import { ExtendedModuleMetadata } from '#decorators/module.js';
+import { RawMeta } from '#decorators/module.js';
 
 export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> extends ProvidersMetadata {
   override providersPerApp: Provider[] = [];
   override providersPerMod: Provider[] = [];
   override providersPerRou: Provider[] = [];
   override providersPerReq: Provider[] = [];
-  rawMeta: ExtendedModuleMetadata;
+  rawMeta: RawMeta;
   /**
    * The module setted here must be identical to the module
    * passed to "imports", "exports" or "appends" array of `@featureModule` metadata.

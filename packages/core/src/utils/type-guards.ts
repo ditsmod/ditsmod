@@ -17,7 +17,7 @@ import { ModuleWithParams, AppendsWithParams } from '#types/module-metadata.js';
 import { RootModuleMetadata } from '#types/root-module-metadata.js';
 import { Http2SecureServerOptions, ServerOptions } from '#types/server-options.js';
 import { featureModule } from '#decorators/module.js';
-import { ExtendedModuleMetadata } from '../decorators/module.js';
+import { RawMeta } from '../decorators/module.js';
 import { controller, ControllerRawMetadata } from '#decorators/controller.js';
 import { rootModule } from '#decorators/root-module.js';
 import { NormalizedProvider } from './ng-utils.js';
@@ -42,22 +42,22 @@ export function isCustomError(err: any): err is CustomError {
 
 export function isFeatureModule(
   decoratorAndValue?: DecoratorAndValue,
-): decoratorAndValue is DecoratorAndValue<ExtendedModuleMetadata> {
+): decoratorAndValue is DecoratorAndValue<RawMeta> {
   return decoratorAndValue?.decorator === featureModule;
 }
 
-export function isRootModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<ExtendedModuleMetadata>;
-export function isRootModule(arg?: ExtendedModuleMetadata): arg is ExtendedModuleMetadata;
+export function isRootModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<RawMeta>;
+export function isRootModule(arg?: RawMeta): arg is RawMeta;
 export function isRootModule(meta?: NormalizedModuleMetadata): meta is NormalizedModuleMetadata<RootModuleMetadata>;
 export function isRootModule(
-  arg?: DecoratorAndValue | ExtendedModuleMetadata | NormalizedModuleMetadata,
-): arg is DecoratorAndValue<ExtendedModuleMetadata> {
+  arg?: DecoratorAndValue | RawMeta | NormalizedModuleMetadata,
+): arg is DecoratorAndValue<RawMeta> {
   return arg?.decorator === rootModule;
 }
 
 export function isModDecor(
   decoratorAndValue?: DecoratorAndValue,
-): decoratorAndValue is DecoratorAndValue<ExtendedModuleMetadata> | DecoratorAndValue<ExtendedModuleMetadata> {
+): decoratorAndValue is DecoratorAndValue<RawMeta> | DecoratorAndValue<RawMeta> {
   return isRootModule(decoratorAndValue) || isFeatureModule(decoratorAndValue);
 }
 
