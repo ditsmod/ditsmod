@@ -53,6 +53,7 @@ export class ModuleNormalizer {
      * Setting initial properties of metadata.
      */
     const meta = new NormalizedModuleMetadata();
+    meta.rawMeta = rawMeta;
     meta.name = modName;
     meta.modRefId = modRefId;
     meta.decorator = rawMeta.decorator;
