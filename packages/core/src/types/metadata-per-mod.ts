@@ -38,7 +38,7 @@ export class MetadataPerMod1 {
   /**
    * Specifies whether to apply controllers in the current module.
    */
-  applyControllers: boolean;
+  applyControllers?: boolean;
   /**
    * Map between a token and its ImportObj per scope.
    */
@@ -59,7 +59,7 @@ export interface ImportedTokensMap {
  * This metadata returns from `ImportsResolver`. The target for this metadata is `ROUTES_EXTENSIONS` group.
  */
 export class MetadataPerMod2 {
-  applyControllers: boolean;
+  applyControllers?: boolean;
   prefixPerMod: string;
   meta: NormalizedModuleMetadata;
   guardsPerMod1: GuardPerMod1[];
