@@ -11,7 +11,7 @@
       "#constants": ["./src/constants.js"],
     },
     "module": "nodenext",
-    "moduleResolution": "nodenext",
+    // "moduleResolution": "nodenext",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,

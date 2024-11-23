@@ -7,7 +7,7 @@
       "#interceptors/*": ["./src/interceptors/*"],
     },
     "module": "nodenext",
-    "moduleResolution": "nodenext",
+    // "moduleResolution": "nodenext",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,

@@ -1,8 +1,12 @@
 {
   "private": true,
   "name": "ditsmod",
+  "type": "module",
   "version": "1.0.0",
   "description": "monorepo for ditsmod projects",
+  "engines": {
+    "node": ">= 22.11.0"
+  },
   "workspaces": [
     "packages/*",
     "examples/*"
@@ -49,7 +53,7 @@
     "reflect-metadata": "^0.2.2",
     "supertest": "^7.0.0",
     "ts-node": "^10.9.2",
-    "typescript": "~5.5.4",
+    "typescript": "~5.7.2",
     "typescript-eslint": "^8.15.0"
   },
   "resolutions": {
