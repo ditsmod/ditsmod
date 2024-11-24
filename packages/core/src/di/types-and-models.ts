@@ -88,7 +88,11 @@ export class DecoratorAndValue<Value = any> {
      * The directory in which the class was declared.
      */
     public declaredInDir?: string,
-  ) {}
+  ) {
+    if (declaredInDir === undefined) {
+      delete this.declaredInDir;
+    }
+  }
 }
 
 export type Visibility = typeof fromSelf | typeof skipSelf | null;
