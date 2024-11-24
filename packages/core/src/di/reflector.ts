@@ -74,7 +74,7 @@ export class Reflector {
    *
    * @param Cls A class that has decorators.
    */
-  getMetadata<DecorValue = any, Proto extends object = object>(
+  getMetadata<DecorValue = any, Proto extends AnyObj = AnyObj>(
     Cls: Class<Proto>,
   ): ClassMeta<DecorValue, Proto> | undefined;
   /**
@@ -82,11 +82,11 @@ export class Reflector {
    *
    * @param Cls A class that has decorators.
    */
-  getMetadata<DecorValue = any, Proto extends object = object>(
+  getMetadata<DecorValue = any, Proto extends AnyObj = AnyObj>(
     Cls: Class<Proto>,
-    propertyKey?: string | symbol,
+    propertyKey?: keyof Proto | 'constructor' | symbol,
   ): ClassPropMeta<DecorValue> | undefined;
-  getMetadata<DecorValue = any, Proto extends object = object>(
+  getMetadata<DecorValue = any, Proto extends AnyObj = AnyObj>(
     Cls: Class<Proto>,
     propertyKey?: string | symbol,
   ): ClassMeta<DecorValue, Proto> | ClassPropMeta<DecorValue> | undefined {

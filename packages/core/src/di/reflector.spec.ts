@@ -132,7 +132,7 @@ describe('Reflector', () => {
         });
       });
       it('should return empty array for non existen property name', () => {
-        expect(reflector.getMetadata(Parent, 'nonExistingPropName')).toEqual({
+        expect(reflector.getMetadata(Parent, 'nonExistingPropName' as any)).toEqual({
           decorators: [],
           params: [],
           type: UnknownType,
