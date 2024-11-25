@@ -166,4 +166,4 @@ export const skipSelf = makeParamDecorator(() => undefined);
 /**
  * Used to mark methods in a class for `FactoryProvider`.
  */
-export const methodFactory = makePropDecorator(() => undefined);
+export const factoryMethod = makePropDecorator(() => undefined);

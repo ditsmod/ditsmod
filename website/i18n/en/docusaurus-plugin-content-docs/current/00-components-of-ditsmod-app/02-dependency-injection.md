@@ -261,10 +261,10 @@ If the provider is represented as an object, the following values can be passed 
   - The **first form** (recommended because of its better encapsulation) assumes that a [tuple][11] is passed to `useFactory`, where the first place should be a class, and the second place should be a method of this class that must return some value for the specified token. For example, if the class is like this:
 
     ```ts
-    import { methodFactory } from '@ditsmod/core';
+    import { factoryMethod } from '@ditsmod/core';
 
     export class ClassWithFactory {
-      @methodFactory()
+      @factoryMethod()
       method1(dependecy1: Dependecy1, dependecy2: Dependecy2) {
         // ...
         return '...';

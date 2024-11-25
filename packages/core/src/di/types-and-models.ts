@@ -403,13 +403,13 @@ export interface TokenProvider extends BaseNormalizedProvider {
  * ### Example
  *
 ```ts
-import { methodFactory } from '#di';
+import { factoryMethod } from '#di';
 
 const Location = new InjectionToken('location');
 const Hash = new InjectionToken('hash');
 
 export class ClassWithFactory {
-  @methodFactory()
+  @factoryMethod()
   method1(@optional() location: Location) {
     return `Hash for: ${location}`;
   }

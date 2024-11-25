@@ -1,8 +1,8 @@
-import { Logger, LoggerConfig, OutputLogLevel, methodFactory, optional } from '@ditsmod/core';
+import { Logger, LoggerConfig, OutputLogLevel, factoryMethod, optional } from '@ditsmod/core';
 import { createLogger, addColors, format, transports } from 'winston';
 
 export class PatchLogger {
-  @methodFactory()
+  @factoryMethod()
   patchLogger(@optional() config: LoggerConfig = new LoggerConfig()) {
     const logger = createLogger();
 

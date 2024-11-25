@@ -100,14 +100,14 @@ export class AppModule {}
 
 But, most likely, you will want to use some ready-made, well-known logger. And there is a good chance that its interface is different from that of [Logger][100]. But, as a rule, this is also not a problem, because before transferring the logger instance to DI, it can be patched so that it implements the necessary interface. For this, a provider with the `useFactory` property is used.
 
-Let's write the code for this provider first. At the moment (2023-09-02), one of the most popular Node.js loggers is [winston][103]. For patching, we wrote a class method before which we added the `methodFactory` decorator:
+Let's write the code for this provider first. At the moment (2023-09-02), one of the most popular Node.js loggers is [winston][103]. For patching, we wrote a class method before which we added the `factoryMethod` decorator:
 
 ```ts {42-44,47-49}
-import { Logger, LoggerConfig, OutputLogLevel, methodFactory, optional } from '@ditsmod/core';
+import { Logger, LoggerConfig, OutputLogLevel, factoryMethod, optional } from '@ditsmod/core';
 import { createLogger, addColors, format, transports } from 'winston';
 
 export class PatchLogger {
-  @methodFactory()
+  @factoryMethod()
   patchLogger(@optional() config: LoggerConfig = new LoggerConfig()) {
     const logger = createLogger();
 

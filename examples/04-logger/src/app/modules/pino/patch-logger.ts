@@ -1,8 +1,8 @@
-import { Logger, LoggerConfig, InputLogLevel, OutputLogLevel, methodFactory, optional } from '@ditsmod/core';
+import { Logger, LoggerConfig, InputLogLevel, OutputLogLevel, factoryMethod, optional } from '@ditsmod/core';
 import pino from 'pino';
 
 export class PatchLogger {
-  @methodFactory()
+  @factoryMethod()
   patchLogger(@optional() config: LoggerConfig = new LoggerConfig()) {
     const logger = pino.default({ customLevels: { off: 100, all: 0 } });
     logger.level = config.level;

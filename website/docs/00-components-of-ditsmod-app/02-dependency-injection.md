@@ -261,10 +261,10 @@ type Provider = Class<any> |
   - **Перша форма** (рекомендована, через свою кращу інкапсуляцію) передбачає, що до `useFactory` передається [tuple][11], де на першому місці повинен бути клас, а на другому місці - метод цього класу, який повинен повернути якесь значення для вказаного токена. Наприклад, якщо клас буде таким:
 
     ```ts
-    import { methodFactory } from '@ditsmod/core';
+    import { factoryMethod } from '@ditsmod/core';
 
     export class ClassWithFactory {
-      @methodFactory()
+      @factoryMethod()
       method1(dependecy1: Dependecy1, dependecy2: Dependecy2) {
         // ...
         return '...';

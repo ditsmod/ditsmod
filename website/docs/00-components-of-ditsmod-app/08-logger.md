@@ -100,14 +100,14 @@ export class AppModule {}
 
 Але, швидше за все, ви захочете використовувати якийсь вже готовий, широко-відомий логер. І велика ймовірність, що його інтерфейс відрізняється від інтерфейсу [Logger][100]. Але, як правило, це теж не проблема, бо перед передачою інстанса логера до DI, його можна пропатчити таким чином, щоб він впроваджував необхідний інтерфейс. Для цього використовується провайдер з властивістю `useFactory`.
 
-Давайте спочатку напишемо код для цього провайдера. На даний момент (2023-09-02), одним із самих популярних серед Node.js-логерів є [winston][103]. Для патчінгу ми написали метод класу, перед яким додали декоратор `methodFactory`:
+Давайте спочатку напишемо код для цього провайдера. На даний момент (2023-09-02), одним із самих популярних серед Node.js-логерів є [winston][103]. Для патчінгу ми написали метод класу, перед яким додали декоратор `factoryMethod`:
 
 ```ts {42-44,47-49}
-import { Logger, LoggerConfig, OutputLogLevel, methodFactory, optional } from '@ditsmod/core';
+import { Logger, LoggerConfig, OutputLogLevel, factoryMethod, optional } from '@ditsmod/core';
 import { createLogger, addColors, format, transports } from 'winston';
 
 export class PatchLogger {
-  @methodFactory()
+  @factoryMethod()
   patchLogger(@optional() config: LoggerConfig = new LoggerConfig()) {
     const logger = createLogger();
 
