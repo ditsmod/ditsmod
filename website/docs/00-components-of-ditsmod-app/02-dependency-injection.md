@@ -10,7 +10,7 @@ sidebar_position: 2
 
 Мабуть найпростіше зрозуміти, що саме робить DI, на прикладах. Почнемо з прикладів, де не використовується DI. В даному разі нам потрібен інстанс класу `Service3` та його метод `doSomething()`:
 
-```ts title='./services.ts'
+```ts {12-14} title='./services.ts'
 export class Service1 {}
 
 export class Service2 {

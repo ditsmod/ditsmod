@@ -10,7 +10,7 @@ Let's first get a general idea of how [Dependency Injection][1] (or just DI) wor
 
 It's probably easiest to understand exactly what DI does by looking at examples. Let's start with examples where DI is not used. In this case, we need an instance of the `Service3` class and its `doSomething()` method:
 
-```ts title='./services.ts'
+```ts {12-14} title='./services.ts'
 export class Service1 {}
 
 export class Service2 {
