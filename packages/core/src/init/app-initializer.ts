@@ -321,7 +321,7 @@ export class AppInitializer {
           await ext.stage2(injectorPerMod);
         } catch (err: any) {
           const debugModuleName = getDebugModuleName(modRefId);
-          const msg = `Stage2 in ${debugModuleName} -> ${ext.constructor.name} failed`;
+          const msg = `Initialization in ${debugModuleName} -> ${ext.constructor.name} on stage 2 failed`;
           throw new ChainError(msg, err);
         }
       }
@@ -336,7 +336,7 @@ export class AppInitializer {
           await ext.stage3();
         } catch (err: any) {
           const debugModuleName = getDebugModuleName(modRefId);
-          const msg = `Stage3 in ${debugModuleName} -> ${ext.constructor.name} failed`;
+          const msg = `Initialization in ${debugModuleName} -> ${ext.constructor.name} on stage 3 failed`;
           throw new ChainError(msg, err);
         }
       }
