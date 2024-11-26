@@ -67,6 +67,8 @@ export class ModuleManager {
 
   /**
    * Returns a snapshot of `NormalizedModuleMetadata` for given module or module ID.
+   * If this snapshot is later mutated outside of `ModuleManager`, it does not affect
+   * the new snapshot that later returns this method.
    */
   getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
