@@ -78,7 +78,7 @@ P.S. Although a link to the repository with all the necessary settings for Ditsm
 
 ## Prerequisites
 
-Please make sure that Node.js >= v18.14.0 is installed on your operating system.
+Please make sure that Node.js >= v22.11.0 is installed on your operating system.
 
 ## Installation
 
