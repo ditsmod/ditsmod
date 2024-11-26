@@ -1,4 +1,4 @@
-import { injectable, methodFactory } from '@ditsmod/core';
+import { injectable, factoryMethod } from '@ditsmod/core';
 
 import { TestPreRouterExtension } from './test-pre-router.extension.js';
 import { TestClassProvider, TestFactoryProvider } from './types.js';
@@ -65,7 +65,7 @@ describe('TestPreRouterExtension', () => {
       class Service1 {
         constructor(dep2: Dependecy2) {}
 
-        @methodFactory()
+        @factoryMethod()
         method1(dep1: Dependecy1) {}
       }
 

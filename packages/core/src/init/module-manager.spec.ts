@@ -14,7 +14,7 @@ import { isMultiProvider } from '#utils/type-guards.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { guard } from '#decorators/guard.js';
 import { RequestContext } from '#services/request-context.js';
-import { clearDebugModuleNames } from '#utils/get-debug-module-name.js';
+import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 
 describe('ModuleManager', () => {
   console.log = jest.fn();
@@ -44,7 +44,7 @@ describe('ModuleManager', () => {
   let mock: MockModuleManager;
 
   beforeEach(() => {
-    clearDebugModuleNames();
+    clearDebugClassNames();
     const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName', path: '' });
     mock = new MockModuleManager(systemLogMediator);
   });

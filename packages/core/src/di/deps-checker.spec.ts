@@ -9,7 +9,7 @@ import {
   Provider,
   inject,
   injectable,
-  methodFactory,
+  factoryMethod,
   optional,
   skipSelf
 } from './index.js';
@@ -165,7 +165,7 @@ describe("null as provider's value", () => {
           spy();
         }
 
-        @methodFactory()
+        @factoryMethod()
         method1(dep: Dependecy1) {
           spy();
         }
@@ -197,7 +197,7 @@ describe("null as provider's value", () => {
           spy();
         }
 
-        @methodFactory()
+        @factoryMethod()
         method1(dep: Dependecy1) {
           spy();
         }
@@ -224,7 +224,7 @@ describe("null as provider's value", () => {
           spy();
         }
 
-        @methodFactory()
+        @factoryMethod()
         method1(dep: Dependecy1) {
           spy();
         }
@@ -250,7 +250,7 @@ describe("null as provider's value", () => {
           spy();
         }
 
-        @methodFactory()
+        @factoryMethod()
         method1(dep: Dependecy1) {
           spy();
         }

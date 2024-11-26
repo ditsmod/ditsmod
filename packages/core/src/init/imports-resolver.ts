@@ -17,7 +17,7 @@ import { isClassProvider, isFactoryProvider, isTokenProvider, isValueProvider } 
 import { SystemErrorMediator } from '#error/system-error-mediator.js';
 import { defaultProvidersPerRou } from './default-providers-per-rou.js';
 import { ExtensionCounters, ExtensionsGroupToken } from '#extension/extension-types.js';
-import { getDebugModuleName } from '#utils/get-debug-module-name.js';
+import { getDebugClassName } from '#utils/get-debug-class-name.js';
 
 export class ImportsResolver {
   protected unfinishedSearchDependecies: [ModRefId, Provider][] = [];
@@ -346,7 +346,7 @@ export class ImportsResolver {
 
     const prefixNames = prefixChain
       .map(([m, p]) => {
-        const debugModuleName = getDebugModuleName(m);
+        const debugModuleName = getDebugClassName(m);
         return `[${getProviderName(p)} in ${debugModuleName}]`;
       })
       .join(' -> ');
@@ -354,12 +354,12 @@ export class ImportsResolver {
     const [modRefId, provider] = items[index];
     let circularNames = circularChain
       .map(([m, p]) => {
-        const debugModuleName = getDebugModuleName(m);
+        const debugModuleName = getDebugClassName(m);
         return `[${getProviderName(p)} in ${debugModuleName}]`;
       })
       .join(' -> ');
 
-    const debugModuleName = getDebugModuleName(modRefId);
+    const debugModuleName = getDebugClassName(modRefId);
     circularNames += ` -> [${getProviderName(provider)} in ${debugModuleName}]`;
     let msg = `Detected circular dependencies: ${circularNames}.`;
     if (prefixNames) {

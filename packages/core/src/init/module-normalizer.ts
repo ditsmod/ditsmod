@@ -19,7 +19,7 @@ import {
 } from '#extension/get-extension-provider.js';
 import { AnyObj, GuardItem, ModRefId, NormalizedGuard, Provider, Scope } from '#types/mix.js';
 import { RawMeta } from '../decorators/module.js';
-import { getDebugModuleName } from '#utils/get-debug-module-name.js';
+import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { resolveForwardRef } from '#di/forward-ref.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
@@ -44,7 +44,7 @@ export class ModuleNormalizer {
    */
   normalize(modRefId: ModRefId) {
     const rawMeta = getModuleMetadata(modRefId);
-    const modName = getDebugModuleName(modRefId);
+    const modName = getDebugClassName(modRefId);
     if (!rawMeta) {
       throw new Error(`Module build failed: module "${modName}" does not have the "@featureModule()" decorator`);
     }
@@ -377,7 +377,7 @@ export function getModuleMetadata(modRefId: ModRefId, isRoot?: boolean): RawMeta
   const modMetadata = decorAndVal.value;
 
   if (modMetadata.id) {
-    const modName = getDebugModuleName(modWitParams.module);
+    const modName = getDebugClassName(modWitParams.module);
     const msg =
       `${modName} must not have an "id" in the metadata of the decorator @featureModule. ` +
       'Instead, you can specify the "id" in the object that contains the module parameters.';

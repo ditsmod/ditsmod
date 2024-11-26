@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 import {
-  clearDebugModuleNames,
+  clearDebugClassNames,
   defaultProvidersPerApp,
   defaultProvidersPerReq,
   ExtensionProvider,
@@ -168,7 +168,7 @@ describe('mix per app, per mod or per req', () => {
   let moduleManager: ModuleManager;
 
   beforeEach(() => {
-    clearDebugModuleNames();
+    clearDebugClassNames();
     const injectorPerApp = Injector.resolveAndCreate([...defaultProvidersPerApp, MockModuleFactory]);
     mock = injectorPerApp.get(MockModuleFactory);
     moduleManager = new ModuleManager(new SystemLogMediator({ moduleName: 'fakeName' }));

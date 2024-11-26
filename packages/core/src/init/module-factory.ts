@@ -17,7 +17,7 @@ import { throwProvidersCollisionError } from '#utils/throw-providers-collision-e
 import { isAppendsWithParams, isModuleWithParams, isRootModule } from '#utils/type-guards.js';
 import { hasDeclaredInDir } from '#utils/type-guards.js';
 import { getModule } from '#utils/get-module.js';
-import { getDebugModuleName } from '#utils/get-debug-module-name.js';
+import { getDebugClassName } from '#utils/get-debug-class-name.js';
 
 /**
  * - exports and imports global providers;
@@ -293,15 +293,15 @@ export class ModuleFactory {
     const duplImpTokens = [...declaredTokens, ...resolvedTokens].includes(token) ? [] : [token];
     const collisions = getCollisions(duplImpTokens, [...importObj.providers, provider]);
     if (collisions.length) {
-      const moduleName1 = getDebugModuleName(importObj.modRefId);
-      const moduleName2 = getDebugModuleName(modRefId);
+      const moduleName1 = getDebugClassName(importObj.modRefId);
+      const moduleName2 = getDebugClassName(modRefId);
       throwProvidersCollisionError(this.moduleName, [token], [moduleName1, moduleName2], scope, this.meta.isExternal);
     }
   }
 
   protected getResolvedCollisionsPerScope(scope: Scope, token1: any) {
     const [token2, modRefId2] = this.meta[`resolvedCollisionsPer${scope}`].find(([token2]) => token1 === token2)!;
-    const moduleName = getDebugModuleName(modRefId2);
+    const moduleName = getDebugClassName(modRefId2);
     const tokenName = token2.name || token2;
     const meta2 = this.moduleManager.getMetadata(modRefId2);
     let errorMsg =
@@ -351,7 +351,7 @@ export class ModuleFactory {
           if (hostModulePath !== '.' && collisionWithPath !== '.' && collisionWithPath.startsWith(hostModulePath)) {
             // Allow collisions in host modules.
           } else {
-            const hostModuleName = getDebugModuleName(importObj.modRefId);
+            const hostModuleName = getDebugClassName(importObj.modRefId);
             throwProvidersCollisionError(this.moduleName, [token], [hostModuleName], scope, this.meta.isExternal);
           }
         }

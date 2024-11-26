@@ -32,7 +32,7 @@ import { HttpServer } from '#types/server-options.js';
 import { MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { getModule } from '#utils/get-module.js';
-import { getDebugModuleName } from '#utils/get-debug-module-name.js';
+import { getDebugClassName } from '#utils/get-debug-class-name.js';
 
 export class AppInitializer {
   protected perAppService = new PerAppService();
@@ -138,7 +138,7 @@ export class AppInitializer {
     const rootMeta = this.moduleManager.getMetadata('root', true);
     const resolvedProviders: Provider[] = [];
     this.meta.resolvedCollisionsPerApp.forEach(([token, module]) => {
-      const moduleName = getDebugModuleName(module);
+      const moduleName = getDebugClassName(module);
       const tokenName = token.name || token;
       const meta = this.moduleManager.getMetadata(module);
       let errorMsg =
@@ -305,7 +305,7 @@ export class AppInitializer {
         const injectorPerMod = this.initModuleAndGetInjectorPerMod(metadataPerMod2.meta);
         this.moduleManager.setInjectorPerMod(modRefId, injectorPerMod);
       } catch (err: any) {
-        const debugModuleName = getDebugModuleName(modRefId);
+        const debugModuleName = getDebugClassName(modRefId);
         const msg = `Creating injector per module for ${debugModuleName} failed`;
         throw new ChainError(msg, err);
       }
@@ -320,7 +320,7 @@ export class AppInitializer {
           const injectorPerMod = this.moduleManager.getInjectorPerMod(modRefId);
           await ext.stage2(injectorPerMod);
         } catch (err: any) {
-          const debugModuleName = getDebugModuleName(modRefId);
+          const debugModuleName = getDebugClassName(modRefId);
           const msg = `Initialization in ${debugModuleName} -> ${ext.constructor.name} on stage 2 failed`;
           throw new ChainError(msg, err);
         }
@@ -335,7 +335,7 @@ export class AppInitializer {
           }
           await ext.stage3();
         } catch (err: any) {
-          const debugModuleName = getDebugModuleName(modRefId);
+          const debugModuleName = getDebugClassName(modRefId);
           const msg = `Initialization in ${debugModuleName} -> ${ext.constructor.name} on stage 3 failed`;
           throw new ChainError(msg, err);
         }

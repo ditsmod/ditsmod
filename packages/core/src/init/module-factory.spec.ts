@@ -17,7 +17,7 @@ import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { makePropDecorator } from '#di';
 import { AppendsWithParams } from '#types/module-metadata.js';
-import { clearDebugModuleNames } from '#utils/get-debug-module-name.js';
+import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 
 type ModRefId = ModuleType | ModuleWithParams;
 
@@ -51,7 +51,7 @@ describe('ModuleFactory', () => {
   let moduleManager: ModuleManager;
 
   beforeEach(() => {
-    clearDebugModuleNames();
+    clearDebugClassNames();
     const injectorPerApp = Injector.resolveAndCreate([...defaultProvidersPerApp, MockModuleFactory]);
     mock = injectorPerApp.get(MockModuleFactory);
     moduleManager = new ModuleManager(new SystemLogMediator({ moduleName: 'fakeName' }));

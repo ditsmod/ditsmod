@@ -9,7 +9,7 @@ import { ExtensionsGroupToken, Extension } from '#extension/extension-types.js';
 import { getImportedTokens } from '#utils/get-imports.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { isInjectionToken } from '#utils/type-guards.js';
-import { getDebugModuleName } from '#utils/get-debug-module-name.js';
+import { getDebugClassName } from '#utils/get-debug-class-name.js';
 
 /**
  * Mediator between core logger and custom user's logger.
@@ -57,7 +57,7 @@ export class SystemLogMediator extends LogMediator {
    */
   moduleAlreadyImported(self: object, inputModule: ModuleType | ModuleWithParams, targetModuleId: string) {
     const className = self.constructor.name;
-    const inputModuleId = getDebugModuleName(inputModule);
+    const inputModuleId = getDebugClassName(inputModule);
     const msg = `${className}: "${inputModuleId}" has already been imported into "${targetModuleId}".`;
     this.setLog('warn', msg);
   }
@@ -125,7 +125,7 @@ export class SystemLogMediator extends LogMediator {
    */
   successfulAddedModuleToImport(self: object, inputModule: ModuleType | ModuleWithParams, targetMetaName: string) {
     const className = self.constructor.name;
-    const inputModuleName = getDebugModuleName(inputModule);
+    const inputModuleName = getDebugClassName(inputModule);
     this.setLog('debug', `${className}: successful added "${inputModuleName}" to "${targetMetaName}".`);
   }
 

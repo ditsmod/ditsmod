@@ -6,7 +6,7 @@ import { AnyObj, ModuleType, ModRefId } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { isModuleWithParams, isRootModule } from '#utils/type-guards.js';
-import { clearDebugModuleNames, getDebugModuleName } from '#utils/get-debug-module-name.js';
+import { clearDebugClassNames, getDebugClassName } from '#utils/get-debug-class-name.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { ModuleNormalizer } from '#init/module-normalizer.js';
 import { ChainError } from '@ts-stack/chain-error';
@@ -52,7 +52,7 @@ export class ModuleManager {
     this.injectorPerModMap.clear();
     this.unfinishedScanModules.clear();
     this.scanedModules.clear();
-    clearDebugModuleNames();
+    clearDebugClassNames();
     this.mapId.set('root', appModule);
     return this.copyMeta(meta);
   }
@@ -94,7 +94,7 @@ export class ModuleManager {
   addImport(inputModule: ModRefId, targetModuleId: ModuleId = 'root'): boolean | void {
     const targetMeta = this.getRawMetadata(targetModuleId);
     if (!targetMeta) {
-      const modName = getDebugModuleName(inputModule);
+      const modName = getDebugClassName(inputModule);
       const modIdStr = format(targetModuleId);
       const msg = `Failed adding ${modName} to imports: target module with ID "${modIdStr}" not found.`;
       throw new Error(msg);
@@ -276,7 +276,7 @@ export class ModuleManager {
       if (typeof moduleId == 'string') {
         moduleName = moduleId;
       } else {
-        moduleName = getDebugModuleName(moduleId);
+        moduleName = getDebugClassName(moduleId);
       }
       throw new Error(`${moduleName} not found in ModuleManager.`);
     }
@@ -330,8 +330,8 @@ export class ModuleManager {
     try {
       return this.moduleNormalizer.normalize(modRefId);
     } catch (err: any) {
-      const moduleName = getDebugModuleName(modRefId);
-      let path = [...this.unfinishedScanModules].map((id) => getDebugModuleName(id)).join(' -> ');
+      const moduleName = getDebugClassName(modRefId);
+      let path = [...this.unfinishedScanModules].map((id) => getDebugClassName(id)).join(' -> ');
       path = this.unfinishedScanModules.size > 1 ? `${moduleName} (${path})` : `${moduleName}`;
       throw new ChainError(`Normalization of ${path} failed`, err);
     }

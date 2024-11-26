@@ -1,4 +1,4 @@
-import { FactoryProvider, TokenProvider, ValueProvider, inject, injectable, methodFactory, optional } from '#di';
+import { FactoryProvider, TokenProvider, ValueProvider, inject, injectable, factoryMethod, optional } from '#di';
 import { getDependencies } from './get-dependecies.js';
 
 describe('getDependencies()', () => {
@@ -45,7 +45,7 @@ describe('getDependencies()', () => {
     class Dep4 {
       constructor(@optional() @inject('some-token2') someDep2: any) {}
 
-      @methodFactory()
+      @factoryMethod()
       method1(dep2: Dep2, @inject('some-token1') someDep1: any) {}
     }
 
