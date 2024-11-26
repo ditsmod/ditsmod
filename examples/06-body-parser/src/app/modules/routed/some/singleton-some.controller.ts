@@ -20,14 +20,14 @@ export class SingletonController {
 
   @route('GET', 'singleton-file-upload')
   getHtmlForm(ctx: SingletonRequestContext) {
-    sendHtmlForm(ctx.httpRes);
+    sendHtmlForm(ctx.rawRes);
   }
 
   @route('POST', 'singleton-file-upload')
   async downloadFile(ctx: SingletonRequestContext) {
     const parsedForm = await this.parse.array(ctx, 'fieldName', 5);
     await saveFiles(parsedForm);
-    ctx.httpRes.writeHead(303, { Connection: 'close', Location: '/singleton-file-upload' });
-    ctx.httpRes.end();
+    ctx.rawRes.writeHead(303, { Connection: 'close', Location: '/singleton-file-upload' });
+    ctx.rawRes.end();
   }
 }

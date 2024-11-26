@@ -352,7 +352,7 @@ interface TotalStage1Meta<T = any> {
   getLevel(): OutputLogLevel;
   ```
 
-- Now `res.httpRes` is public property, so you can use this native Node.js response object.
+- Now `res.rawRes` is public property, so you can use this native Node.js response object.
 
 ### Bug fixes
 

@@ -65,6 +65,6 @@ export class OpenapiController {
   })
   async getJavaScript() {
     this.res.setContentType('text/javascript; charset=utf-8');
-    createReadStream(`${webpackDist}/openapi.bundle.js`).pipe(this.res.httpRes);
+    createReadStream(`${webpackDist}/openapi.bundle.js`).pipe(this.res.rawRes);
   }
 }

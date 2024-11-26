@@ -26,10 +26,10 @@ export class ParametersInterceptor extends ValidationInterceptor {
         const queryParams = this.injector.get(QUERY_PARAMS, fromSelf, null);
         value = queryParams?.[parameter.name];
       } else if (parameter.in == 'cookie') {
-        const cookies = new Cookies(this.httpReq, this.httpRes);
+        const cookies = new Cookies(this.rawReq, this.rawRes);
         value = cookies.get(parameter.name);
       } else if (parameter.in == 'header') {
-        value = this.httpReq.headers[parameter.name];
+        value = this.rawReq.headers[parameter.name];
       }
 
       if (value === undefined) {

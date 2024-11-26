@@ -1,10 +1,10 @@
-import { inject, injectable, Injector, HttpRequest, HTTP_REQ, Res, skipSelf, Status, HttpMethod } from '@ditsmod/core';
+import { inject, injectable, Injector, RawRequest, RAW_REQ, Res, skipSelf, Status, HttpMethod } from '@ditsmod/core';
 import { DefaultHttpBackend, RouteMeta } from '@ditsmod/routing';
 
 @injectable()
 export class ReturnHttpBackend extends DefaultHttpBackend {
   constructor(
-    @inject(HTTP_REQ) protected httpReq: HttpRequest,
+    @inject(RAW_REQ) protected rawReq: RawRequest,
     @skipSelf() protected override routeMeta: RouteMeta,
     protected override injector: Injector,
     protected res: Res,
@@ -14,12 +14,12 @@ export class ReturnHttpBackend extends DefaultHttpBackend {
 
   override async handle() {
     const value = await super.handle(); // Controller's route returned value.
-    if (this.res.httpRes.headersSent) {
+    if (this.res.rawRes.headersSent) {
       return value;
     }
-    let { statusCode } = this.res.httpRes;
+    let { statusCode } = this.res.rawRes;
     if (!statusCode) {
-      const httpMethod = this.httpReq.method as HttpMethod;
+      const httpMethod = this.rawReq.method as HttpMethod;
       if (httpMethod == 'GET') {
         statusCode = Status.OK;
       } else if (httpMethod == 'POST') {
@@ -33,7 +33,7 @@ export class ReturnHttpBackend extends DefaultHttpBackend {
 
     if (
       typeof value == 'object' ||
-      this.res.httpRes.getHeader('content-type')?.toString().includes('application/json')
+      this.res.rawRes.getHeader('content-type')?.toString().includes('application/json')
     ) {
       this.res.sendJson(value, statusCode);
     } else {

@@ -1,8 +1,8 @@
 import { parse } from 'node:querystring';
 import {
   A_PATH_PARAMS,
-  HTTP_REQ,
-  HTTP_RES,
+  RAW_REQ,
+  RAW_RES,
   QUERY_STRING,
   Injector,
   KeyRegistry,
@@ -176,8 +176,8 @@ export class PreRouterExtension implements Extension<void> {
     const RequestContextClass = injectorPerRou.get(RequestContext) as typeof RequestContext;
 
     if (this.hasInterceptors(mergedPerRou)) {
-      return (async (httpReq, httpRes, aPathParams, queryString) => {
-        const ctx = new RequestContextClass(httpReq, httpRes, aPathParams, queryString);
+      return (async (rawReq, rawRes, aPathParams, queryString) => {
+        const ctx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString);
         await chainMaker
           .makeChain(ctx)
           .handle() // First HTTP handler in the chain of HTTP interceptors.
@@ -207,8 +207,8 @@ export class PreRouterExtension implements Extension<void> {
     routeHandler: (ctx: SingletonRequestContext) => Promise<any>,
     errorHandler: HttpErrorHandler,
   ) {
-    return (async (httpReq, httpRes, aPathParams, queryString) => {
-      const ctx = new RequestContextClass(httpReq, httpRes, aPathParams, queryString) as SingletonRequestContext;
+    return (async (rawReq, rawRes, aPathParams, queryString) => {
+      const ctx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString) as SingletonRequestContext;
       try {
         if (queryString) {
           ctx.queryParams = parse(queryString);
@@ -254,19 +254,19 @@ export class PreRouterExtension implements Extension<void> {
       .concat(resolvedPerRou)
       .find((rp) => rp.dualKey.token === HttpErrorHandler)!;
     const RegistryPerReq = Injector.prepareRegistry(resolvedPerReq);
-    const nodeReqId = KeyRegistry.get(HTTP_REQ).id;
-    const nodeResId = KeyRegistry.get(HTTP_RES).id;
+    const nodeReqId = KeyRegistry.get(RAW_REQ).id;
+    const nodeResId = KeyRegistry.get(RAW_RES).id;
     const pathParamsId = KeyRegistry.get(A_PATH_PARAMS).id;
     const queryStringId = KeyRegistry.get(QUERY_STRING).id;
 
-    return (async (httpReq, httpRes, aPathParams, queryString) => {
+    return (async (rawReq, rawRes, aPathParams, queryString) => {
       const injector = new Injector(RegistryPerReq, injectorPerRou, 'injectorPerReq');
 
-      const ctx = new RequestContextClass(httpReq, httpRes, aPathParams, queryString);
+      const ctx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString);
 
       await injector
-        .setById(nodeReqId, httpReq)
-        .setById(nodeResId, httpRes)
+        .setById(nodeReqId, rawReq)
+        .setById(nodeResId, rawRes)
         .setById(pathParamsId, aPathParams)
         .setById(queryStringId, queryString || '')
         .instantiateResolved<ChainMaker>(resolvedChainMaker)

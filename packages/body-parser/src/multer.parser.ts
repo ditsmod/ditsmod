@@ -1,4 +1,4 @@
-import { inject, injectable, HTTP_REQ, HttpRequest, optional } from '@ditsmod/core';
+import { inject, injectable, RAW_REQ, RawRequest, optional } from '@ditsmod/core';
 import { Multer, MulterGroup } from '@ts-stack/multer';
 
 import { MulterExtendedOptions } from './multer-extended-options.js';
@@ -7,7 +7,7 @@ import { checkResult } from './multer-utils.js';
 @injectable()
 export class MulterParser {
   constructor(
-    @inject(HTTP_REQ) protected httpReq: HttpRequest,
+    @inject(RAW_REQ) protected rawReq: RawRequest,
     protected multer: Multer,
     @optional() protected options?: MulterExtendedOptions,
   ) {}
@@ -17,7 +17,7 @@ export class MulterParser {
    * The single file will be stored in `parsedForm.file` property.
    */
   single<F extends object = any>(name: string) {
-    const result = this.multer.single<F>(name)(this.httpReq, this.httpReq.headers);
+    const result = this.multer.single<F>(name)(this.rawReq, this.rawReq.headers);
     return checkResult(result);
   }
 
@@ -29,7 +29,7 @@ export class MulterParser {
    * __Note__: `maxCount` limit has precedence over `limits.files`.
    */
   array<F extends object = any>(name: string, maxCount?: number) {
-    const result = this.multer.array<F>(name, maxCount)(this.httpReq, this.httpReq.headers);
+    const result = this.multer.array<F>(name, maxCount)(this.rawReq, this.rawReq.headers);
     return checkResult(result);
   }
 
@@ -43,7 +43,7 @@ export class MulterParser {
    * where you are handling the uploaded files.
    */
   any<F extends object = any>() {
-    const result = this.multer.any<F>()(this.httpReq, this.httpReq.headers);
+    const result = this.multer.any<F>()(this.rawReq, this.rawReq.headers);
     return checkResult(result);
   }
 
@@ -64,7 +64,7 @@ export class MulterParser {
    * __Note__: `maxCount` limit has precedence over `limits.files`.
    */
   groups<F extends object = any, G extends string = string>(groups: MulterGroup<G>[]) {
-    const result = this.multer.groups<F, G>(groups)(this.httpReq, this.httpReq.headers);
+    const result = this.multer.groups<F, G>(groups)(this.rawReq, this.rawReq.headers);
     return checkResult(result);
   }
 
@@ -73,7 +73,7 @@ export class MulterParser {
    * `LIMIT_UNEXPECTED_FILE` will be issued. This is the same as doing `parse.groups([])`.
    */
   textFields<F extends object = any>() {
-    const result = this.multer.textFields<F>()(this.httpReq, this.httpReq.headers);
+    const result = this.multer.textFields<F>()(this.rawReq, this.rawReq.headers);
     return checkResult(result).then(parsedForm => parsedForm.textFields);
   }
 }

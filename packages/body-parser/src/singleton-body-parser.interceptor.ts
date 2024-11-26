@@ -7,7 +7,7 @@ export class SingletonBodyParserInterceptor implements HttpInterceptor {
   constructor(private bodyParserGroup: BodyParserGroup) {}
 
   async intercept(next: HttpHandler, ctx: SingletonRequestContext) {
-    ctx.body = await this.bodyParserGroup.parse(ctx.httpReq, ctx.httpReq.headers, {});
+    ctx.body = await this.bodyParserGroup.parse(ctx.rawReq, ctx.rawReq.headers, {});
 
     return next.handle();
   }

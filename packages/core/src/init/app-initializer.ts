@@ -430,7 +430,7 @@ export class AppInitializer {
     counter.resetInitedExtensionsSet();
   }
 
-  requestListener: RequestListener = (httpReq, httpRes) => {
-    return this.preRouter.requestListener(httpReq, httpRes);
+  requestListener: RequestListener = (rawReq, rawRes) => {
+    return this.preRouter.requestListener(rawReq, rawRes);
   };
 }

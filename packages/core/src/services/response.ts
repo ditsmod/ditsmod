@@ -1,7 +1,7 @@
-import { HTTP_RES } from '#public-api/constans.js';
+import { RAW_RES } from '#public-api/constans.js';
 import { inject, injectable } from '#di';
 import { RedirectStatusCodes } from '#types/mix.js';
-import { HttpResponse } from '#types/server-options.js';
+import { RawResponse } from '#types/server-options.js';
 import { Status } from '#utils/http-status-codes.js';
 
 @injectable()
@@ -10,7 +10,7 @@ export class Res<T = any> {
     /**
      * Native webserver response.
      */
-    @inject(HTTP_RES) public httpRes: HttpResponse,
+    @inject(RAW_RES) public rawRes: RawResponse,
   ) {}
 
   /**
@@ -21,12 +21,12 @@ export class Res<T = any> {
    * res.setContentType('application/xml').send({ one: 1, two: 2 });
    */
   setContentType(contentType: string) {
-    this.httpRes.setHeader('Content-Type', contentType);
+    this.rawRes.setHeader('Content-Type', contentType);
     return this;
   }
 
   setHeader(key: string, value: string | number | string[]) {
-    this.httpRes.setHeader(key, value);
+    this.rawRes.setHeader(key, value);
     return this;
   }
 
@@ -34,11 +34,11 @@ export class Res<T = any> {
    * Send data as is, without any transformation.
    */
   send(data?: string | Buffer | Uint8Array, statusCode: Status = Status.OK): void {
-    if (!this.httpRes.getHeader('Content-Type')) {
-      this.httpRes.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    if (!this.rawRes.getHeader('Content-Type')) {
+      this.rawRes.setHeader('Content-Type', 'text/plain; charset=utf-8');
     }
-    this.httpRes.statusCode = statusCode;
-    this.httpRes.end(data || '');
+    this.rawRes.statusCode = statusCode;
+    this.rawRes.end(data || '');
   }
 
   sendJson(data?: T, statusCode: Status = Status.OK): void {
@@ -46,6 +46,6 @@ export class Res<T = any> {
   }
 
   redirect(statusCode: RedirectStatusCodes, path: string) {
-    this.httpRes.writeHead(statusCode, { Location: path }).end();
+    this.rawRes.writeHead(statusCode, { Location: path }).end();
   }
 }

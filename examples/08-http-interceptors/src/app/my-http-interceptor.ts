@@ -9,11 +9,11 @@ export class MyHttpInterceptor implements HttpInterceptor {
     // Handling request to `HelloWorldController`
     return next.handle().then((originalMsg: string) => {
       // You can to do something after, for example, log status:
-      if (ctx.httpRes.headersSent) {
-        const msg = `MyHttpInterceptor works! Status code: ${ctx.httpRes.statusCode}`;
+      if (ctx.rawRes.headersSent) {
+        const msg = `MyHttpInterceptor works! Status code: ${ctx.rawRes.statusCode}`;
         this.logger.log('info', msg);
       } else {
-        ctx.httpRes.setHeader('Content-Type', 'application/json; charset=utf-8');
+        ctx.rawRes.setHeader('Content-Type', 'application/json; charset=utf-8');
         const msg = JSON.stringify({ originalMsg, msg: 'message that attached by interceptor' });
         ctx.send(msg);
       }

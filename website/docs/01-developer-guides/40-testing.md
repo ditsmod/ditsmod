@@ -198,20 +198,20 @@ const server = await new TestApplication(AppModule)
 В такому разі вам не потрібні вкладені провайдери. Але не завжди певний сервіс може мати такий простий мок. Наприклад, якщо у даному разі `Service1` має залежність від об'єкту запиту, який генерує Node.js вебсервер, і ви не хочете підміняти цей об'єкт відповідним моком, для `Service1` мок може мати такий вигляд:
 
 ```ts {8,14}
-import { inject, injectable, HTTP_REQ, HttpRequest } from '@ditsmod/core';
+import { inject, injectable, RAW_REQ, RawRequest } from '@ditsmod/core';
 import { SpyService } from './spy.service.js';
 
 @injectable()
 export class MockService1 extends Service1 {
   constructor(
-    @inject(HTTP_REQ) private httpReq: HttpRequest,
+    @inject(RAW_REQ) private rawReq: RawRequest,
     private spyService: SpyService,
   ) {
-    super(httpReq);
+    super(rawReq);
   }
 
   method1() {
-    this.spyService.setInsights(this.httpReq.headers);
+    this.spyService.setInsights(this.rawReq.headers);
   }
 }
 ```

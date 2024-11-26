@@ -3,7 +3,7 @@ import { jest } from '@jest/globals';
 import { Injector } from '#di';
 import { RequestContext } from '#services/request-context.js';
 import { Logger } from '#logger/logger.js';
-import { HttpResponse } from '#types/server-options.js';
+import { RawResponse } from '#types/server-options.js';
 import { Status } from '#utils/http-status-codes.js';
 import { CustomError } from '#error/custom-error.js';
 import { DefaultHttpErrorHandler as ErrorHandler } from '#error/default-http-error-handler.js';
@@ -11,22 +11,22 @@ import { DefaultHttpErrorHandler as ErrorHandler } from '#error/default-http-err
 describe('DefaultHttpErrorHandler', () => {
   let errorHandler: ErrorHandler;
 
-  const httpRes = {
+  const rawRes = {
     headersSent: false,
     getHeader(...args: any[]) {},
     hasHeader(...args: any[]) {},
     setHeader(...args: any[]) {},
     writeHead(...args: any[]) {},
     end(...args: any[]) {},
-  } as HttpResponse;
+  } as RawResponse;
 
-  const ctx = new RequestContext({} as any, httpRes, null, '');
+  const ctx = new RequestContext({} as any, rawRes, null, '');
   const logger = { log(...args: any[]) {} } as Logger;
 
   beforeEach(() => {
     const injector = Injector.resolveAndCreate([{ token: Logger, useValue: logger }, ErrorHandler]);
     errorHandler = injector.get(ErrorHandler);
-    jest.spyOn(httpRes, 'end');
+    jest.spyOn(rawRes, 'end');
     jest.spyOn(logger, 'log');
   });
 
@@ -38,9 +38,9 @@ describe('DefaultHttpErrorHandler', () => {
     const err = new Error('one');
     (err as any).status = Status.PAYLOAD_TO_LARGE;
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
-    expect(httpRes.statusCode).toBe(Status.PAYLOAD_TO_LARGE);
-    expect(httpRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'one' }));
-    expect(httpRes.end).toHaveBeenCalledTimes(1);
+    expect(rawRes.statusCode).toBe(Status.PAYLOAD_TO_LARGE);
+    expect(rawRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'one' }));
+    expect(rawRes.end).toHaveBeenCalledTimes(1);
     expect(logger.log).toHaveBeenCalledWith('error', { err, requestId: expect.any(String) });
     expect(logger.log).toHaveBeenCalledTimes(1);
   });
@@ -49,9 +49,9 @@ describe('DefaultHttpErrorHandler', () => {
     const msg1 = 'one';
     const err = new CustomError({ msg1 });
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
-    expect(httpRes.statusCode).toBe(Status.BAD_REQUEST);
-    expect(httpRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'one' }));
-    expect(httpRes.end).toHaveBeenCalledTimes(1);
+    expect(rawRes.statusCode).toBe(Status.BAD_REQUEST);
+    expect(rawRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'one' }));
+    expect(rawRes.end).toHaveBeenCalledTimes(1);
     expect(logger.log).toHaveBeenCalledWith('warn', { err, requestId: expect.any(String) });
     expect(logger.log).toHaveBeenCalledTimes(1);
   });
@@ -60,9 +60,9 @@ describe('DefaultHttpErrorHandler', () => {
     const msg1 = 'one';
     const err = new CustomError({ msg1, status: Status.CONFLICT, level: 'fatal' });
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
-    expect(httpRes.statusCode).toBe(Status.CONFLICT);
-    expect(httpRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'one' }));
-    expect(httpRes.end).toHaveBeenCalledTimes(1);
+    expect(rawRes.statusCode).toBe(Status.CONFLICT);
+    expect(rawRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'one' }));
+    expect(rawRes.end).toHaveBeenCalledTimes(1);
     expect(logger.log).toHaveBeenCalledWith('fatal', { err, requestId: expect.any(String) });
     expect(logger.log).toHaveBeenCalledTimes(1);
   });
@@ -71,9 +71,9 @@ describe('DefaultHttpErrorHandler', () => {
     const msg1 = 'one two';
     const err = new CustomError({ msg1 });
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
-    expect(httpRes.statusCode).toBe(Status.BAD_REQUEST);
-    expect(httpRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'one two' }));
-    expect(httpRes.end).toHaveBeenCalledTimes(1);
+    expect(rawRes.statusCode).toBe(Status.BAD_REQUEST);
+    expect(rawRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'one two' }));
+    expect(rawRes.end).toHaveBeenCalledTimes(1);
     expect(logger.log).toHaveBeenCalledWith('warn', { err, requestId: expect.any(String) });
     expect(logger.log).toHaveBeenCalledTimes(1);
   });
@@ -82,9 +82,9 @@ describe('DefaultHttpErrorHandler', () => {
     const msg2 = 'one';
     const err = new CustomError({ msg2 });
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
-    expect(httpRes.statusCode).toBe(Status.BAD_REQUEST);
-    expect(httpRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'Internal server error' }));
-    expect(httpRes.end).toHaveBeenCalledTimes(1);
+    expect(rawRes.statusCode).toBe(Status.BAD_REQUEST);
+    expect(rawRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'Internal server error' }));
+    expect(rawRes.end).toHaveBeenCalledTimes(1);
     expect(logger.log).toHaveBeenCalledWith('warn', { err, requestId: expect.any(String) });
     expect(logger.log).toHaveBeenCalledTimes(1);
   });
@@ -93,8 +93,8 @@ describe('DefaultHttpErrorHandler', () => {
     const msg2 = 'one %s three';
     const err = new CustomError({ msg2 });
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
-    expect(httpRes.statusCode).toBe(Status.BAD_REQUEST);
-    expect(httpRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'Internal server error' }));
+    expect(rawRes.statusCode).toBe(Status.BAD_REQUEST);
+    expect(rawRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'Internal server error' }));
     expect(logger.log).toHaveBeenCalledWith('warn', { err, requestId: expect.any(String) });
     expect(logger.log).toHaveBeenCalledTimes(1);
   });
@@ -104,9 +104,9 @@ describe('DefaultHttpErrorHandler', () => {
     const msg2 = 'four six';
     const err = new CustomError({ msg1, msg2 });
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
-    expect(httpRes.statusCode).toBe(Status.BAD_REQUEST);
-    expect(httpRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'one two' }));
-    expect(httpRes.end).toHaveBeenCalledTimes(1);
+    expect(rawRes.statusCode).toBe(Status.BAD_REQUEST);
+    expect(rawRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'one two' }));
+    expect(rawRes.end).toHaveBeenCalledTimes(1);
     expect(logger.log).toHaveBeenCalledWith('warn', { err, requestId: expect.any(String) });
     expect(logger.log).toHaveBeenCalledTimes(1);
   });

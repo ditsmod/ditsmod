@@ -9,8 +9,8 @@ export { defaultProvidersPerRou } from '#init/default-providers-per-rou.js';
 export { defaultProvidersPerReq } from '#init/default-providers-per-req.js';
 export {
   SERVER,
-  HTTP_REQ,
-  HTTP_RES,
+  RAW_REQ,
+  RAW_RES,
   A_PATH_PARAMS,
   QUERY_STRING,
   PATH_PARAMS,
@@ -91,7 +91,7 @@ export {
   ModuleWithParams2,
 } from '#types/module-metadata.js';
 export { PathParam, RouteHandler, Router, RouterReturns } from '#types/router.js';
-export { HttpRequest, HttpResponse, RequestListener, Server, HttpServer } from '#types/server-options.js';
+export { RawRequest, RawResponse, RequestListener, Server, HttpServer } from '#types/server-options.js';
 export { createHelperForGuardWithParams } from '#utils/create-helper-for-guards-with-params.js';
 export { deepFreeze } from '#utils/deep-freeze.js';
 export { getDependencies } from '#utils/get-dependecies.js';

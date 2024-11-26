@@ -12,7 +12,7 @@ if (!basicAuth) {
 @guard()
 export class BasicGuard implements CanActivate {
   canActivate(ctx: RequestContext, [realm]: [string?] = []) {
-    const { authorization } = ctx.httpReq.headers;
+    const { authorization } = ctx.rawReq.headers;
     if (!authorization) {
       return this.unauth(ctx, realm);
     }
@@ -26,7 +26,7 @@ export class BasicGuard implements CanActivate {
 
   protected unauth(ctx: RequestContext, realm?: string) {
     realm ??= 'Access to the API endpoint';
-    ctx.httpRes.setHeader('WWW-Authenticate', `Basic realm="${realm}"`);
+    ctx.rawRes.setHeader('WWW-Authenticate', `Basic realm="${realm}"`);
     return Status.UNAUTHORIZED;
   }
 }

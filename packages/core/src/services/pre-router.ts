@@ -3,7 +3,7 @@ import { injectable } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { HttpMethod } from '#types/mix.js';
 import { Router } from '#types/router.js';
-import { HttpResponse, RequestListener } from '#types/server-options.js';
+import { RawResponse, RequestListener } from '#types/server-options.js';
 import { Status } from '#utils/http-status-codes.js';
 
 @injectable()
@@ -13,20 +13,20 @@ export class PreRouter {
     protected systemLogMediator: SystemLogMediator,
   ) {}
 
-  requestListener: RequestListener = async (httpReq, httpRes) => {
-    const [pathname, search] = (httpReq.url || '').split('?');
-    let method = httpReq.method as HttpMethod;
+  requestListener: RequestListener = async (rawReq, rawRes) => {
+    const [pathname, search] = (rawReq.url || '').split('?');
+    let method = rawReq.method as HttpMethod;
     if (method == 'HEAD') {
       method = 'GET';
-      this.handleHeadMethod(httpRes);
+      this.handleHeadMethod(rawRes);
     }
     const { handle, params } = this.router.find(method, pathname);
     if (!handle) {
-      this.sendNotImplemented(httpRes);
+      this.sendNotImplemented(rawRes);
       return;
     }
-    await handle(httpReq, httpRes, params, search).catch((err) => {
-      this.sendInternalServerError(httpRes, err);
+    await handle(rawReq, rawRes, params, search).catch((err) => {
+      this.sendInternalServerError(rawRes, err);
     });
   };
 
@@ -35,27 +35,27 @@ export class PreRouter {
    *
    * @param err An error to logs it (not sends).
    */
-  protected sendInternalServerError(httpRes: HttpResponse, err: Error) {
+  protected sendInternalServerError(rawRes: RawResponse, err: Error) {
     this.systemLogMediator.internalServerError(this, err);
-    httpRes.statusCode = Status.INTERNAL_SERVER_ERROR;
-    httpRes.end();
+    rawRes.statusCode = Status.INTERNAL_SERVER_ERROR;
+    rawRes.end();
   }
 
-  protected sendNotImplemented(httpRes: HttpResponse) {
-    httpRes.statusCode = Status.NOT_IMPLEMENTED;
-    httpRes.end();
+  protected sendNotImplemented(rawRes: RawResponse) {
+    rawRes.statusCode = Status.NOT_IMPLEMENTED;
+    rawRes.end();
   }
 
-  protected handleHeadMethod(httpRes: HttpResponse) {
+  protected handleHeadMethod(rawRes: RawResponse) {
     let isChunked = false;
-    httpRes.write = () => (isChunked = true);
+    rawRes.write = () => (isChunked = true);
     type Callback = () => void;
 
-    const nodeEnd = httpRes.end.bind(httpRes);
-    httpRes.end = function (chunkOrFn?: Callback | string | Buffer, cbOrEncoding?: Callback | BufferEncoding) {
+    const rawEnd = rawRes.end.bind(rawRes);
+    rawRes.end = function (chunkOrFn?: Callback | string | Buffer, cbOrEncoding?: Callback | BufferEncoding) {
       if (isChunked) {
-        if (!httpRes.headersSent) {
-          httpRes.setHeader('Transfer-Encoding', 'chunked');
+        if (!rawRes.headersSent) {
+          rawRes.setHeader('Transfer-Encoding', 'chunked');
         }
       } else {
         let contentLenght = 0;
@@ -63,11 +63,11 @@ export class PreRouter {
           const encoding: BufferEncoding = !cbOrEncoding || typeof cbOrEncoding == 'function' ? 'utf8' : cbOrEncoding;
           contentLenght = Buffer.byteLength(chunkOrFn, encoding);
         }
-        if (!httpRes.headersSent) {
-          httpRes.setHeader('Content-Length', contentLenght);
+        if (!rawRes.headersSent) {
+          rawRes.setHeader('Content-Length', contentLenght);
         }
       }
-      return nodeEnd() as ServerResponse<IncomingMessage>;
+      return rawEnd() as ServerResponse<IncomingMessage>;
     };
   }
 }

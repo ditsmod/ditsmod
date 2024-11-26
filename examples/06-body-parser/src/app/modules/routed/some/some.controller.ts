@@ -1,4 +1,4 @@
-import { controller, inject, HTTP_RES, HttpResponse, Res } from '@ditsmod/core';
+import { controller, inject, RAW_RES, RawResponse, Res } from '@ditsmod/core';
 import { route } from '@ditsmod/routing';
 import { HTTP_BODY, MulterParser } from '@ditsmod/body-parser';
 
@@ -21,15 +21,15 @@ export class SomeController {
   }
 
   @route('GET', 'file-upload')
-  getHtmlForm(@inject(HTTP_RES) httpRes: HttpResponse) {
-    sendHtmlForm(httpRes);
+  getHtmlForm(@inject(RAW_RES) rawRes: RawResponse) {
+    sendHtmlForm(rawRes);
   }
 
   @route('POST', 'file-upload')
   async downloadFile(res: Res, parse: MulterParser) {
     const parsedForm = await parse.array('fieldName', 5);
     await saveFiles(parsedForm);
-    res.httpRes.writeHead(303, { Connection: 'close', Location: '/file-upload' });
-    res.httpRes.end();
+    res.rawRes.writeHead(303, { Connection: 'close', Location: '/file-upload' });
+    res.rawRes.end();
   }
 }

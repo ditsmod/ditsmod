@@ -1,5 +1,5 @@
 import { Res } from '#services/response.js';
-import { HttpRequest, HttpResponse } from '#types/server-options.js';
+import { RawRequest, RawResponse } from '#types/server-options.js';
 import { PathParam } from '#types/router.js';
 import { AnyObj } from '#types/mix.js';
 
@@ -13,12 +13,12 @@ import { AnyObj } from '#types/mix.js';
  */
 export class RequestContext extends Res {
   constructor(
-    public httpReq: HttpRequest,
-    public override httpRes: HttpResponse,
+    public rawReq: RawRequest,
+    public override rawRes: RawResponse,
     public aPathParams: PathParam[] | null,
     public queryString: string
   ) {
-    super(httpRes);
+    super(rawRes);
   }
 }
 
