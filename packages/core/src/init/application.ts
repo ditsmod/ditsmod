@@ -4,7 +4,7 @@ import type * as https from 'node:https';
 import type { AddressInfo } from 'node:net';
 
 import { LogMediator } from '#logger/log-mediator.js';
-import { SystemLogMediator } from '#logger/system-log-mediator.js';
+import { PublicLogMediator, SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AppOptions } from '#types/app-options.js';
 import { HttpServerModule, HttpsServerModule } from '#types/http-module.js';
 import { AnyFn, ModuleType } from '#types/mix.js';
@@ -115,14 +115,6 @@ export class Application {
   }
 }
 
-/**
- * This class is needed only to access the protected methods of the `LogMediator` class.
- */
-class PublicLogMediator extends SystemLogMediator {
-  override updateOutputLogLevel() {
-    return super.updateOutputLogLevel();
-  }
-}
 /**
  * This class is needed only to access the protected methods of the `AppInitializer` class.
  */

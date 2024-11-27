@@ -342,3 +342,12 @@ export class SystemLogMediator extends LogMediator {
     this.setLog('trace', `${startStr}Req: ${perReqNames}.`);
   }
 }
+
+/**
+ * This class is needed only to access the protected methods of the `LogMediator` class.
+ */
+export class PublicLogMediator extends SystemLogMediator {
+  override updateOutputLogLevel() {
+    return super.updateOutputLogLevel();
+  }
+}
