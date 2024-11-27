@@ -47,8 +47,8 @@ export abstract class LogMediator {
 
   /**
    * This method is needed only for those cases when logs are written to the buffer before
-   * the `OutputLogLevel` is known. At the moment, it is needed only for the `Application`
-   * class, before initializing providers at the application level.
+   * the `OutputLogLevel` is known. At the moment, it is needed only for the `Application` and `AppInitializer`
+   * classes, ater initializing providers at the application level, and after init extensions.
    */
   protected updateOutputLogLevel() {
     LogMediator.buffer.forEach((logItem) => {

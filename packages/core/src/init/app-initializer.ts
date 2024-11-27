@@ -5,7 +5,7 @@ import { ImportsResolver } from '#init/imports-resolver.js';
 import { Logger } from '#logger/logger.js';
 import { SystemErrorMediator } from '#error/system-error-mediator.js';
 import { LogMediator } from '#logger/log-mediator.js';
-import { SystemLogMediator } from '#logger/system-log-mediator.js';
+import { PublicLogMediator, SystemLogMediator } from '#logger/system-log-mediator.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { AppOptions } from '#types/app-options.js';
 import { ModuleFactory } from '#init/module-factory.js';
@@ -190,6 +190,7 @@ export class AppInitializer {
     // Before init new logger, works previous logger.
     try {
       this.bootstrapProvidersPerApp();
+      (this.systemLogMediator as PublicLogMediator).updateOutputLogLevel();
     } catch (err) {
       this.systemLogMediator.restorePreviousLogger();
       LogMediator.bufferLogs = false;
@@ -199,6 +200,7 @@ export class AppInitializer {
     // After init new logger, works new logger.
     try {
       await this.bootstrapModulesAndExtensions();
+      (this.systemLogMediator as PublicLogMediator).updateOutputLogLevel();
       if (autocommit) {
         this.moduleManager.commit();
       } else {
