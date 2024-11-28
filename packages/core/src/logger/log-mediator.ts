@@ -16,7 +16,8 @@ export abstract class LogMediator {
    */
   static bufferLogs?: boolean = false;
   static buffer: LogItem[] = [];
-  protected static outputLogLevel: OutputLogLevel;
+  static outputLogLevel: OutputLogLevel;
+  protected static prevOutputLogLevel: OutputLogLevel;
   protected static hasDiffLogLevels: boolean;
 
   constructor(
@@ -63,8 +64,8 @@ export abstract class LogMediator {
     if (this.hasDiffLogLevels) {
       return;
     }
-    this.outputLogLevel ??= level;
-    if (this.outputLogLevel != level) {
+    this.prevOutputLogLevel ??= level;
+    if (this.prevOutputLogLevel != level) {
       this.hasDiffLogLevels = true;
     }
   }
