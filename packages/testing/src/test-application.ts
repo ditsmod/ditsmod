@@ -1,32 +1,44 @@
-import { AppOptions, OutputLogLevel, ModuleType, ModuleManager, SystemLogMediator, LoggerConfig } from '@ditsmod/core';
+import {
+  AppOptions,
+  OutputLogLevel,
+  ModuleType,
+  ModuleManager,
+  SystemLogMediator,
+  LoggerConfig,
+  Application,
+} from '@ditsmod/core';
 import { PreRouterExtension } from '@ditsmod/routing';
 
-import { PreTestApplication } from './pre-test-application.js';
 import { TestModuleManager } from './test-module-manager.js';
 import { TestProvider } from './types.js';
 import { TestPreRouterExtension } from './test-pre-router.extension.js';
+import { TestAppInitializer } from './test-app-initializer.js';
 
-// This class is only needed as a wrapper over the PreTestApplication
-// class to hide the bootstrap() method from the public API.
-export class TestApplication {
-  protected preTestApplication: PreTestApplication;
+export class TestApplication extends Application {
   protected testModuleManager: TestModuleManager;
   protected logLevel: OutputLogLevel;
 
-  constructor(appModule: ModuleType, appOptions: AppOptions = new AppOptions()) {
-    this.initAndScanRootModule(appModule, appOptions);
-  }
-
-  protected initAndScanRootModule(appModule: ModuleType, appOptions: AppOptions) {
-    this.preTestApplication = new PreTestApplication();
-    const config: LoggerConfig = { level: 'off' };
-    const systemLogMediator = new SystemLogMediator({ moduleName: 'TestAppModule' }, undefined, undefined, config);
-    this.preTestApplication.init(appOptions, systemLogMediator);
-    this.testModuleManager = new TestModuleManager(systemLogMediator);
-    this.testModuleManager.setProvidersPerApp([{ token: TestModuleManager, useToken: ModuleManager }]);
-    this.testModuleManager.setExtensionProviders([{ token: PreRouterExtension, useClass: TestPreRouterExtension }]);
-    this.testModuleManager.scanRootModule(appModule);
-    return this.testModuleManager;
+  /**
+   * @param appModule The root module of the application.
+   * @param appOptions Application options.
+   */
+  static createTestApp(appModule: ModuleType, appOptions?: AppOptions) {
+    const app = new this();
+    try {
+      const config: LoggerConfig = { level: 'off' };
+      const systemLogMediator = new SystemLogMediator({ moduleName: 'TestAppModule' }, undefined, undefined, config);
+      app.init(appOptions, systemLogMediator);
+      app.testModuleManager = new TestModuleManager(systemLogMediator);
+      app.testModuleManager.setProvidersPerApp([{ token: TestModuleManager, useToken: ModuleManager }]);
+      app.testModuleManager.setExtensionProviders([{ token: PreRouterExtension, useClass: TestPreRouterExtension }]);
+      app.testModuleManager.scanRootModule(appModule);
+      return app;
+    } catch (err: any) {
+      (app.systemLogMediator as PublicLogMediator).updateOutputLogLevel();
+      app.systemLogMediator.internalServerError(app, err, true);
+      app.flushLogs();
+      throw err;
+    }
   }
 
   /**
@@ -48,7 +60,30 @@ export class TestApplication {
   }
 
   async getServer() {
-    const { server } = await this.preTestApplication.bootstrapTestApplication(this.testModuleManager, this.logLevel);
-    return server;
+    try {
+      const testAppInitializer = new TestAppInitializer(
+        this.appOptions,
+        this.testModuleManager,
+        this.systemLogMediator,
+      );
+      testAppInitializer.setInitLogLevel(this.logLevel);
+      await this.bootstrapApplication(testAppInitializer);
+      await this.createServerAndBindToListening(testAppInitializer);
+      return this.server;
+    } catch (err: any) {
+      (this.systemLogMediator as PublicLogMediator).updateOutputLogLevel();
+      this.systemLogMediator.internalServerError(this, err, true);
+      this.flushLogs();
+      throw err;
+    }
+  }
+}
+
+/**
+ * This class is needed only to access the protected methods of the `LogMediator` class.
+ */
+class PublicLogMediator extends SystemLogMediator {
+  override updateOutputLogLevel() {
+    return super.updateOutputLogLevel();
   }
 }

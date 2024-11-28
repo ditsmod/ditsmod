@@ -1,7 +1,6 @@
 import request from 'supertest';
 import { Providers, Res } from '@ditsmod/core';
 import { jest } from '@jest/globals';
-import { TestApplication } from '@ditsmod/testing';
 
 import { AppModule } from './app/app.module.js';
 import {
@@ -13,6 +12,7 @@ import {
   ServicePerReq2,
   ServicePerRou3,
 } from './app/services.js';
+import { TestApplication } from '#app/test-application.js';
 
 describe('@ditsmod/testing', () => {
   const message = 'any-string';
@@ -30,7 +30,7 @@ describe('@ditsmod/testing', () => {
   });
 
   it('override services at any level', async () => {
-    const server = await new TestApplication(AppModule)
+    const server = await TestApplication.createTestApp(AppModule)
       .overrideProviders([
         ...new Providers()
           .useValue<ServicePerApp>(ServicePerApp, { method: methodPerApp })
@@ -59,7 +59,7 @@ describe('@ditsmod/testing', () => {
   });
 
   it('should failed because we trying to override non-passed provider', async () => {
-    const server = await new TestApplication(AppModule)
+    const server = await TestApplication.createTestApp(AppModule)
       .overrideProviders([
         { token: ServicePerRou3, useValue: { method: methodPerRou3 } },
         { token: Res, useClass: Res, providers: [ServicePerRou3] },
