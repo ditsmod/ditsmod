@@ -7,13 +7,14 @@ import { LogMediator } from '#logger/log-mediator.js';
 import { PublicLogMediator, SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AppOptions } from '#types/app-options.js';
 import { HttpServerModule, HttpsServerModule } from '#types/http-module.js';
-import { AnyFn, ModuleType } from '#types/mix.js';
+import { ModuleType } from '#types/mix.js';
 import { Http2SecureServerOptions, HttpServer, RequestListener } from '#types/server-options.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { isHttp2SecureServerOptions } from '#utils/type-guards.js';
 import { AppInitializer, PublicAppInitializer } from '#init/app-initializer.js';
 
 export class Application {
+  server: HttpServer;
   protected appOptions: AppOptions;
   protected systemLogMediator: SystemLogMediator;
 
@@ -21,21 +22,21 @@ export class Application {
    * @param appModule The root module of the application.
    * @param appOptions Application options.
    */
-  bootstrap(appModule: ModuleType, appOptions?: AppOptions) {
-    return new Promise<{ server: HttpServer }>(async (resolve, reject) => {
-      try {
-        this.init(appOptions);
-        const moduleManager = this.scanRootModule(appModule);
-        const appInitializer = this.getAppInitializer(moduleManager);
-        await this.bootstrapApplication(appInitializer);
-        await this.createServerAndBindToListening(appInitializer, resolve);
-      } catch (err: any) {
-        (this.systemLogMediator as PublicLogMediator).updateOutputLogLevel();
-        this.systemLogMediator.internalServerError(this, err, true);
-        this.flushLogs();
-        reject(err);
-      }
-    });
+  static async create(appModule: ModuleType, appOptions?: AppOptions) {
+    const app = new this();
+    try {
+      app.init(appOptions);
+      const moduleManager = app.scanRootModule(appModule);
+      const appInitializer = app.getAppInitializer(moduleManager);
+      await app.bootstrapApplication(appInitializer);
+      await app.createServerAndBindToListening(appInitializer);
+      return app;
+    } catch (err: any) {
+      (app.systemLogMediator as PublicLogMediator).updateOutputLogLevel();
+      app.systemLogMediator.internalServerError(app, err, true);
+      app.flushLogs();
+      throw err;
+    }
   }
 
   /**
@@ -83,15 +84,14 @@ export class Application {
     (this.systemLogMediator as PublicLogMediator).updateOutputLogLevel();
   }
 
-  protected async createServerAndBindToListening(appInitializer: AppInitializer, resolve: AnyFn) {
+  protected async createServerAndBindToListening(appInitializer: AppInitializer) {
     this.flushLogs();
-    const server = await this.createServer(appInitializer.requestListener);
-    (appInitializer as PublicAppInitializer).setServer(server);
-    server.on('listening', () => {
-      const info = server.address() as AddressInfo;
+    this.server = await this.createServer(appInitializer.requestListener);
+    (appInitializer as PublicAppInitializer).setServer(this.server);
+    this.server.on('listening', () => {
+      const info = this.server.address() as AddressInfo;
       this.systemLogMediator.serverListen(this, info.address, info.port);
     });
-    resolve({ server });
   }
 
   protected flushLogs() {
