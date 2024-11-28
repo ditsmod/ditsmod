@@ -193,6 +193,7 @@ export class AppInitializer {
       (this.systemLogMediator as PublicLogMediator).updateOutputLogLevel();
     } catch (err) {
       this.systemLogMediator.restorePreviousLogger();
+      (this.systemLogMediator as PublicLogMediator).updateOutputLogLevel();
       LogMediator.bufferLogs = false;
       this.systemLogMediator.flush();
       return this.handleReinitError(err);
@@ -221,6 +222,7 @@ export class AppInitializer {
     this.moduleManager.rollback();
     this.bootstrapProvidersPerApp();
     await this.bootstrapModulesAndExtensions();
+    (this.systemLogMediator as PublicLogMediator).updateOutputLogLevel();
     this.systemLogMediator.successfulRollbackModuleConfigChanges(this);
     return err as Error;
   }
