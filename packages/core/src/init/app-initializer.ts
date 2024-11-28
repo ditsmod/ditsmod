@@ -438,3 +438,13 @@ export class AppInitializer {
     return this.preRouter.requestListener(rawReq, rawRes);
   };
 }
+
+/**
+ * This class is needed only to access the protected methods of the `AppInitializer` class.
+ */
+export class PublicAppInitializer extends AppInitializer {
+  override setServer(server: HttpServer) {
+    return super.setServer(server);
+  }
+}
+

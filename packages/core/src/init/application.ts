@@ -11,7 +11,7 @@ import { AnyFn, ModuleType } from '#types/mix.js';
 import { Http2SecureServerOptions, HttpServer, RequestListener } from '#types/server-options.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { isHttp2SecureServerOptions } from '#utils/type-guards.js';
-import { AppInitializer } from '#init/app-initializer.js';
+import { AppInitializer, PublicAppInitializer } from '#init/app-initializer.js';
 
 export class Application {
   protected appOptions: AppOptions;
@@ -112,14 +112,5 @@ export class Application {
       const serverOptions = this.appOptions.serverOptions as http.ServerOptions | https.ServerOptions;
       return serverModule.createServer(serverOptions, requestListener);
     }
-  }
-}
-
-/**
- * This class is needed only to access the protected methods of the `AppInitializer` class.
- */
-class PublicAppInitializer extends AppInitializer {
-  override setServer(server: HttpServer) {
-    return super.setServer(server);
   }
 }
