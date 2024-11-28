@@ -15,7 +15,7 @@ interface ChannelMap {
 }
 
 interface TracingChannelMap {
-  'ditsmod.request.handler': { tmp: any };
+  // 'ditsmod.request.handler': { tmp: any };
 }
 
 type Channels = keyof ChannelMap;
