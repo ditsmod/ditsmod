@@ -54,7 +54,7 @@ describe('extensions e2e', () => {
     })
     class AppModule {}
 
-    await new TestApplication(AppModule).getServer();
+    await TestApplication.createTestApp(AppModule).getServer();
     expect(extensionInit).toHaveBeenCalledTimes(3);
     expect(extensionInit).toHaveBeenNthCalledWith(1, false);
     expect(extensionInit).toHaveBeenNthCalledWith(2, false);
@@ -122,7 +122,7 @@ describe('extensions e2e', () => {
     })
     class AppModule {}
 
-    await new TestApplication(AppModule).getServer();
+    await TestApplication.createTestApp(AppModule).getServer();
     expect(extensionInit1).toHaveBeenCalledTimes(3);
     expect(extensionInit1).toHaveBeenNthCalledWith(1, false);
     expect(extensionInit1).toHaveBeenNthCalledWith(2, false);
@@ -216,7 +216,7 @@ describe('extensions e2e', () => {
     })
     class AppModule {}
 
-    await new TestApplication(AppModule).getServer();
+    await TestApplication.createTestApp(AppModule).getServer();
     expect(spyIsLastModule).toHaveBeenCalledTimes(3);
     expect(spyIsLastModule).toHaveBeenNthCalledWith(1, false);
     expect(spyIsLastModule).toHaveBeenNthCalledWith(2, false);

@@ -9,7 +9,7 @@ describe('07-dynamically-composing-modules', () => {
   let testAgent: ReturnType<typeof request>;
 
   beforeAll(async () => {
-    server = await new TestApplication(AppModule).getServer();
+    server = await TestApplication.createTestApp(AppModule).getServer();
     testAgent = request(server);
   });
 

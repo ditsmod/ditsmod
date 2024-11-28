@@ -12,7 +12,7 @@ describe('12-testing', () => {
   let testAgent: ReturnType<typeof request>;
 
   it('controller works case 1', async () => {
-    const server = await new TestApplication(AppModule).getServer();
+    const server = await TestApplication.createTestApp(AppModule).getServer();
     testAgent = request(server);
 
     const { type, status, text } = await testAgent.get('/');
@@ -23,7 +23,7 @@ describe('12-testing', () => {
   });
 
   it('controller works case 2', async () => {
-    const server = await new TestApplication(AppModule).getServer();
+    const server = await TestApplication.createTestApp(AppModule).getServer();
     testAgent = request(server);
 
     const { type, status, text } = await testAgent.get('/admin');
@@ -39,7 +39,7 @@ describe('12-testing', () => {
     let server: HttpServer;
 
     beforeAll(async () => {
-      server = await new TestApplication(AppModule)
+      server = await TestApplication.createTestApp(AppModule)
         .overrideProviders([
           {
             token: HttpErrorHandler,

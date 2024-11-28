@@ -12,7 +12,7 @@ describe('06-body-parser', () => {
   beforeAll(async () => {
     const providers = new Providers().useValue<BodyParserConfig>(BodyParserConfig, { jsonOptions: { limit: '9b' } });
 
-    server = await new TestApplication(AppModule).overrideProviders([...providers]).getServer();
+    server = await TestApplication.createTestApp(AppModule).overrideProviders([...providers]).getServer();
     testAgent = request(server);
   });
 
