@@ -16,7 +16,6 @@ import { AppInitializer, PublicAppInitializer } from '#init/app-initializer.js';
 export class Application {
   protected appOptions: AppOptions;
   protected systemLogMediator: SystemLogMediator;
-  protected appInitializer: AppInitializer;
 
   /**
    * @param appModule The root module of the application.
@@ -69,8 +68,7 @@ export class Application {
   }
 
   protected getAppInitializer(moduleManager: ModuleManager) {
-    this.appInitializer = new AppInitializer(this.appOptions, moduleManager, this.systemLogMediator);
-    return this.appInitializer;
+    return new AppInitializer(this.appOptions, moduleManager, this.systemLogMediator);
   }
 
   protected async bootstrapApplication(appInitializer: AppInitializer) {
@@ -88,7 +86,7 @@ export class Application {
   protected async createServerAndBindToListening(appInitializer: AppInitializer, resolve: AnyFn) {
     this.flushLogs();
     const server = await this.createServer(appInitializer.requestListener);
-    (this.appInitializer as PublicAppInitializer).setServer(server);
+    (appInitializer as PublicAppInitializer).setServer(server);
     server.on('listening', () => {
       const info = server.address() as AddressInfo;
       this.systemLogMediator.serverListen(this, info.address, info.port);
