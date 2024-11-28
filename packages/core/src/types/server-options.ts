@@ -8,5 +8,4 @@ export type ServerOptions = http.ServerOptions | https.ServerOptions | http2.Ser
 export type RawRequest = http.IncomingMessage | Http2ServerRequest;
 export type RawResponse = http.ServerResponse | Http2ServerResponse;
 export type RequestListener = (request: RawRequest, response: RawResponse) => void | Promise<void>;
-export type Server = http.Server | https.Server | Http2Server | Http2SecureServer;
-export type HttpServer = Server; // Alias for more unambiguous import.
+export type HttpServer = http.Server | https.Server | Http2Server | Http2SecureServer;

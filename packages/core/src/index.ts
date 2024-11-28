@@ -91,7 +91,7 @@ export {
   ModuleWithParams2,
 } from '#types/module-metadata.js';
 export { PathParam, RouteHandler, Router, RouterReturns } from '#types/router.js';
-export { RawRequest, RawResponse, RequestListener, Server, HttpServer } from '#types/server-options.js';
+export { RawRequest, RawResponse, RequestListener, HttpServer } from '#types/server-options.js';
 export { createHelperForGuardWithParams } from '#utils/create-helper-for-guards-with-params.js';
 export { deepFreeze } from '#utils/deep-freeze.js';
 export { getDependencies } from '#utils/get-dependecies.js';
