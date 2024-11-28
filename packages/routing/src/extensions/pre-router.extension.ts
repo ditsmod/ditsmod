@@ -15,7 +15,6 @@ import {
   HttpErrorHandler,
   PerAppService,
   Extension,
-  HttpMethod,
   RouteHandler,
   Router,
   Provider,
@@ -30,11 +29,11 @@ import {
   GuardPerMod1,
   ResolvedGuardPerMod,
   SingletonRequestContext,
-  AnyObj,
   RequireProps,
   getToken,
   getProviderTarget,
   ModuleManager,
+  diagnosticsChannel,
 } from '@ditsmod/core';
 
 import { HTTP_INTERCEPTORS, MetadataPerMod3, PreparedRouteMeta, ROUTES_EXTENSIONS } from '../types.js';
@@ -377,6 +376,7 @@ export class PreRouterExtension implements Extension<void> {
       const httpMethods = Array.isArray(httpMethod) ? httpMethod : [httpMethod];
       httpMethods.forEach((httpMethod) => {
         this.log.printRoute(this, httpMethod, path, countOfGuards);
+        diagnosticsChannel.channel('ditsmod.route').publish({ moduleName, httpMethod, path, countOfGuards });
         if (httpMethod == 'ALL') {
           this.router.all(`/${path}`, handle);
         } else {
