@@ -36,6 +36,9 @@
     "./package.json": {
       "default": "./package.json"
     },
+    "./diagnosticsChannel": {
+      "default": "./dist/init/diagnostics-channel.js"
+    },
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"

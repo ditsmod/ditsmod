@@ -131,9 +131,3 @@ export {
   isCustomError,
   TypeGuard,
 } from '#utils/type-guards.js';
-
-import * as diagnostics_channel from '#init/diagnostics-channel.js';
-/**
- * The native `node:diagnostics_channel` module with some added TypeScript types.
- */
-export const diagnosticsChannel = diagnostics_channel;

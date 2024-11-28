@@ -33,8 +33,8 @@ import {
   getToken,
   getProviderTarget,
   ModuleManager,
-  diagnosticsChannel,
 } from '@ditsmod/core';
+import { channel } from '@ditsmod/core/diagnosticsChannel';
 
 import { HTTP_INTERCEPTORS, MetadataPerMod3, PreparedRouteMeta, ROUTES_EXTENSIONS } from '../types.js';
 import { RoutingErrorMediator } from '../router-error-mediator.js';
@@ -376,7 +376,7 @@ export class PreRouterExtension implements Extension<void> {
       const httpMethods = Array.isArray(httpMethod) ? httpMethod : [httpMethod];
       httpMethods.forEach((httpMethod) => {
         this.log.printRoute(this, httpMethod, path, countOfGuards);
-        diagnosticsChannel.channel('ditsmod.route').publish({ moduleName, httpMethod, path, countOfGuards });
+        channel('ditsmod.route').publish({ moduleName, httpMethod, path, countOfGuards });
         if (httpMethod == 'ALL') {
           this.router.all(`/${path}`, handle);
         } else {
