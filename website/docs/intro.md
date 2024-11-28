@@ -55,7 +55,7 @@ class ExampleController {
 })
 class AppModule {}
 
-const app = await new Application().bootstrap(AppModule);
+const app = await Application.create(AppModule);
 app.server.listen(3000, '0.0.0.0');
 ```
 
