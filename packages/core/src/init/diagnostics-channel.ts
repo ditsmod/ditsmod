@@ -1,13 +1,5 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
-import {
-  Channel,
-  channel as originChannel,
-  subscribe as originSubscribe,
-  unsubscribe as originUnsubscribe,
-  hasSubscribers as originHasSubscribers,
-  tracingChannel as originTracingChannel,
-} from 'node:diagnostics_channel';
-
+import { Channel, channel, subscribe, unsubscribe, hasSubscribers, tracingChannel } from 'node:diagnostics_channel';
 export { TracingChannelCollection, TracingChannelSubscribers } from 'node:diagnostics_channel';
 
 interface ChannelMap {
@@ -55,8 +47,8 @@ export type TypedChannelListener<T extends Channels> = (message: ChannelMap[T], 
  * @param name The channel name
  * @return The named channel object
  */
-export function channel<T extends Channels>(name: T): TypedChannel<T> {
-  return originChannel(name) as any;
+export function coreChannel<T extends Channels>(name: T): TypedChannel<T> {
+  return channel(name) as any;
 }
 
 /**
@@ -75,8 +67,8 @@ export function channel<T extends Channels>(name: T): TypedChannel<T> {
  * @param name The channel name
  * @param onMessage The handler to receive channel messages
  */
-export function subscribe<T extends Channels>(name: T, onMessage: TypedChannelListener<T>): void {
-  return originSubscribe(name, onMessage as any);
+export function coreSubscribe<T extends Channels>(name: T, onMessage: TypedChannelListener<T>): void {
+  return subscribe(name, onMessage as any);
 }
 
 /**
@@ -98,8 +90,8 @@ export function subscribe<T extends Channels>(name: T, onMessage: TypedChannelLi
  * @param onMessage The previous subscribed handler to remove
  * @return `true` if the handler was found, `false` otherwise.
  */
-export function unsubscribe<T extends Channels>(name: T, onMessage: TypedChannelListener<T>): boolean {
-  return originUnsubscribe(name, onMessage as any);
+export function coreUnsubscribe<T extends Channels>(name: T, onMessage: TypedChannelListener<T>): boolean {
+  return unsubscribe(name, onMessage as any);
 }
 
 /**
@@ -120,8 +112,8 @@ export function unsubscribe<T extends Channels>(name: T, onMessage: TypedChannel
  * @param name The channel name
  * @return If there are active subscribers
  */
-export function hasSubscribers(name: Channels): boolean {
-  return originHasSubscribers(name);
+export function coreHasSubscribers(name: Channels): boolean {
+  return hasSubscribers(name);
 }
 
 /**
@@ -148,10 +140,10 @@ export function hasSubscribers(name: Channels): boolean {
  * @param nameOrChannels Channel name or object containing all the `TracingChannel Channels`
  * @return Collection of channels to trace with
  */
-export function tracingChannel<T extends TracingChannels>(
+export function coreTracingChannel<T extends TracingChannels>(
   nameOrChannels: T | TracingChannelCollection<T>,
 ): TypedTracingChannel<T> {
-  return originTracingChannel(nameOrChannels as any) as any;
+  return tracingChannel(nameOrChannels as any) as any;
 }
 
 interface TracingChannelCollection<T extends TracingChannels> {
@@ -198,7 +190,8 @@ interface TracingChannelSubscribers<T extends TracingChannels> {
  * @since v19.9.0
  * @experimental
  */
-interface TypedTracingChannel<T extends TracingChannels, ContextType extends object = {}> extends TracingChannelCollection<T> {
+interface TypedTracingChannel<T extends TracingChannels>
+  extends TracingChannelCollection<T> {
   start: TypedChannel2<T>;
   end: TypedChannel2<T>;
   asyncStart: TypedChannel2<T>;
