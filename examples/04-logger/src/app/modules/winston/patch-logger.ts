@@ -1,9 +1,12 @@
-import { Logger, LoggerConfig, OutputLogLevel, factoryMethod, optional } from '@ditsmod/core';
+import { AppOptions, Logger, LoggerConfig, OutputLogLevel, factoryMethod, optional } from '@ditsmod/core';
 import { createLogger, addColors, format, transports } from 'winston';
 
 export class PatchLogger {
   @factoryMethod()
-  patchLogger(@optional() config: LoggerConfig = new LoggerConfig()) {
+  patchLogger(
+    @optional() config: LoggerConfig = new LoggerConfig(),
+    @optional() appOptions: AppOptions = new AppOptions(),
+  ) {
     const logger = createLogger();
 
     const transport = new transports.Console({
@@ -34,18 +37,18 @@ export class PatchLogger {
 
     logger.configure({
       levels: customLevels.levels,
-      level: config.level,
+      level: appOptions.loggerConfig?.level || config.level,
       transports: [transport],
     });
 
     // Logger must have `setLevel` method.
     (logger as unknown as Logger).setLevel = (value: OutputLogLevel) => {
-      logger.level = value;
+      logger.level = appOptions.loggerConfig?.level || value;
     };
 
     // Logger must have `getLevel` method.
     (logger as unknown as Logger).getLevel = () => {
-      return logger.level as OutputLogLevel;
+      return appOptions.loggerConfig?.level || (logger.level as OutputLogLevel);
     };
 
     addColors(customLevels.colors);

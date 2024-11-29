@@ -598,7 +598,7 @@ describe('AppInitializer', () => {
 
       class LogMediatorMock extends SystemLogMediator {
         override flush() {
-          const { level } = (this.logger as any).config;
+          const level = (this.logger as any).level;
           loggerSpy(level);
           super.flush();
         }
