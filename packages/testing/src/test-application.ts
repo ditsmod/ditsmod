@@ -34,9 +34,7 @@ export class TestApplication extends Application {
       app.testModuleManager.scanRootModule(appModule);
       return app;
     } catch (err: any) {
-      (app.systemLogMediator as PublicLogMediator).updateOutputLogLevel();
-      app.systemLogMediator.internalServerError(app, err, true);
-      app.flushLogs();
+      app.handleError(err);
       throw err;
     }
   }
@@ -71,11 +69,15 @@ export class TestApplication extends Application {
       await this.createServerAndBindToListening(testAppInitializer);
       return this.server;
     } catch (err: any) {
-      (this.systemLogMediator as PublicLogMediator).updateOutputLogLevel();
-      this.systemLogMediator.internalServerError(this, err, true);
-      this.flushLogs();
+      this.handleError(err);
       throw err;
     }
+  }
+
+  protected handleError(err: any) {
+    (this.systemLogMediator as PublicLogMediator).updateOutputLogLevel();
+    this.systemLogMediator.internalServerError(this, err, true);
+    this.flushLogs();
   }
 }
 
