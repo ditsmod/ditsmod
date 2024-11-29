@@ -126,7 +126,7 @@ describe('End-to-end testing', () => {
   beforeEach(async () => {
     jest.restoreAllMocks();
 
-    server = await new TestApplication(AppModule)
+    server = await TestApplication.createTestApp(AppModule)
       .overrideProviders([
         { token: EmailService, useValue: MockEmailService }
       ])
@@ -154,7 +154,7 @@ describe('End-to-end testing', () => {
 Зверніть увагу, що у даних тестах не використовується код з файлу `./src/main.ts`, тому усі аргументи, які ви передали у цей код, потрібно продублювати і для `TestApplication`. Наприклад, якщо ваш застосунок має префікс `api`, значить передайте такий самий префікс і у тестовий застосунок:
 
 ```ts
-server = await new TestApplication(AppModule, { path: 'api' }).getServer();
+server = await TestApplication.createTestApp(AppModule, { path: 'api' }).getServer();
 ```
 
 Підміна моків, за допомогою методу `testApplication.overrideProviders()`, працює глобально на будь-якому рівні ієрархії інжекторів. Провайдери з моками передаються до DI на певний рівень ієрархії, тільки якщо у застосунку на цьому рівні є відповідні провайдери з такими самими токенами.
@@ -166,7 +166,7 @@ server = await new TestApplication(AppModule, { path: 'api' }).getServer();
 Нагадаємо, що у метод `testApplication.overrideProviders()` є сенс передавати лише моки тих провайдерів, які у застосунку ви вже передали до DI. Виходить, що моки не можуть мати залежність від нових провайдерів, яких не існує у застосунку. Тобто, якщо застосунок має провайдери `Service1` та `Service2`, то мок для підміни будь-якого з цих провайдерів не може містити залежність, наприклад, від `SpyService`. Саме тому для end-to-end тестування вводиться поняття "вкладених провайдерів", які вирішують залежність для нових провайдерів, запроваджених у моках:
 
 ```ts {6}
-const server = await new TestApplication(AppModule)
+const server = await TestApplication.createTestApp(AppModule)
   .overrideProviders([
     {
       token: Service1,
@@ -185,7 +185,7 @@ const server = await new TestApplication(AppModule)
 const method1 = jest.fn();
 const mockService1 = { method1 } as Service1;
 
-const server = await new TestApplication(AppModule)
+const server = await TestApplication.createTestApp(AppModule)
   .overrideProviders([
     {
       token: Service1,
@@ -222,7 +222,7 @@ export class MockService1 extends Service1 {
 const setInsights = jest.fn();
 const spyService = { setInsights } as SpyService;
 
-const server = await new TestApplication(AppModule)
+const server = await TestApplication.createTestApp(AppModule)
   .overrideProviders([
     {
       token: Service1,
