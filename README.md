@@ -8,7 +8,7 @@ So, what’s the problem? Why not just take the innovative NestJS and adapt it t
 
 Ditsmod began development in 2020, also inspired by Angular v2+. I literally extracted Angular’s Dependency Injection module v4.4.7, which became the backbone of the future **Ditsmod** framework.
 
-For those who are not familiar with Angular, I will try to explain the basic concepts borrowed from this framework in a simplified form. Let's consider the following example:
+For those who are not familiar with Angular, I will try to explain the basic concepts DI borrowed from this framework in a simplified form. Let's consider the following example:
 
 ```ts
 class Service1 {}
