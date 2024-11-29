@@ -17,7 +17,7 @@
       "#core/*": ["./src/*"],
       "#interceptors/*": ["./src/interceptors/*"],
       "#extension/*": ["./src/extension/*"],
-      "#diagnosticsChannel": ["./src/init/diagnostics-channel.js"],
+      "#diagnostics-channel": ["./src/init/diagnostics-channel.js"],
     },
     "module": "nodenext",
     // "moduleResolution": "nodenext",

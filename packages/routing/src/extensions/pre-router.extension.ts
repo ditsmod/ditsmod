@@ -34,7 +34,7 @@ import {
   getProviderTarget,
   ModuleManager,
 } from '@ditsmod/core';
-import { coreChannel } from '@ditsmod/core/diagnosticsChannel';
+import { coreChannel } from '@ditsmod/core/diagnostics-channel';
 
 import { HTTP_INTERCEPTORS, MetadataPerMod3, PreparedRouteMeta, ROUTES_EXTENSIONS } from '../types.js';
 import { RoutingErrorMediator } from '../router-error-mediator.js';
