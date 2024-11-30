@@ -32,9 +32,9 @@
       "type": "node",
     },
     {
+      "name": "Jest All",
       "type": "node",
       "request": "launch",
-      "name": "Jest All",
       "program": "${workspaceFolder}/node_modules/.bin/jest",
       "runtimeArgs": [
         "--experimental-vm-modules",
@@ -48,10 +48,10 @@
       }
     },
     {
+      "name": "Jest Current File",
       "type": "node",
       "request": "launch",
-      "preLaunchTask": "npm: build-test - packages/core",
-      "name": "Jest Current File",
+      "preLaunchTask": "npm: build-test",
       "program": "${workspaceFolder}/node_modules/.bin/jest",
       "runtimeArgs": [
         "--experimental-vm-modules",
