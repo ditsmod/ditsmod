@@ -30,10 +30,6 @@ describe('Application', () => {
       return super.scanRootModule(appModule);
     }
 
-    override getAppInitializer(moduleManager: ModuleManager) {
-      return new AppInitializer(this.appOptions, moduleManager, this.systemLogMediator);
-    }
-
     override bootstrapApplication(appInitializer: AppInitializer) {
       return super.bootstrapApplication(appInitializer);
     }
@@ -106,7 +102,11 @@ describe('Application', () => {
 
     it('should replace logMediator during call bootstrapApplication()', async () => {
       const moduleManager = mock.scanRootModule(AppModule);
-      const appInitializer = mock.getAppInitializer(moduleManager);
+      const appInitializer = new AppInitializer(
+        new AppOptions(),
+        moduleManager,
+        new SystemLogMediator({ moduleName: '' }),
+      );
       const { systemLogMediator } = mock;
       await mock.bootstrapApplication(appInitializer);
       expect(mock.systemLogMediator !== systemLogMediator).toBe(true);

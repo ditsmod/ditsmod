@@ -27,7 +27,7 @@ export class Application {
     try {
       app.init(appOptions);
       const moduleManager = app.scanRootModule(appModule);
-      const appInitializer = app.getAppInitializer(moduleManager);
+      const appInitializer = new AppInitializer(app.appOptions, moduleManager, app.systemLogMediator);
       await app.bootstrapApplication(appInitializer);
       await app.createServerAndBindToListening(appInitializer);
       return app;
@@ -66,10 +66,6 @@ export class Application {
     const moduleManager = new ModuleManager(this.systemLogMediator);
     moduleManager.scanRootModule(appModule);
     return moduleManager;
-  }
-
-  protected getAppInitializer(moduleManager: ModuleManager) {
-    return new AppInitializer(this.appOptions, moduleManager, this.systemLogMediator);
   }
 
   protected async bootstrapApplication(appInitializer: AppInitializer) {
