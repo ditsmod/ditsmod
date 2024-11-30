@@ -41,7 +41,7 @@ export class TestPreRouterExtension extends PreRouterExtension {
 
   protected overrideAllProviders(groupDataPerApp: GroupStage1MetaPerApp<MetadataPerMod3>[]) {
     const providersToOverride = this.testModuleManager.getProvidersToOverride();
-    const logLevel = this.testModuleManager.getLogLevel();
+    const logLevel = this.testModuleManager.logLevel;
     overrideLogLevel(this.perAppService.providers, logLevel);
 
     providersToOverride.forEach((provider) => {

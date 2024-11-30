@@ -1,12 +1,4 @@
-import {
-  AppOptions,
-  OutputLogLevel,
-  ModuleType,
-  ModuleManager,
-  SystemLogMediator,
-  LoggerConfig,
-  Application,
-} from '@ditsmod/core';
+import { AppOptions, OutputLogLevel, ModuleType, SystemLogMediator, LoggerConfig, Application, ModuleManager } from '@ditsmod/core';
 import { PreRouterExtension } from '@ditsmod/routing';
 
 import { TestModuleManager } from './test-module-manager.js';
@@ -28,6 +20,9 @@ export class TestApplication extends Application {
       const config: LoggerConfig = { level: 'off' };
       const systemLogMediator = new SystemLogMediator({ moduleName: 'TestAppModule' }, undefined, undefined, config);
       app.init(appOptions, systemLogMediator);
+      if (!app.appOptions.loggerConfig) {
+        app.appOptions.loggerConfig = { level: 'off' };
+      }
       app.testModuleManager = new TestModuleManager(systemLogMediator);
       app.testModuleManager.setProvidersPerApp([{ token: TestModuleManager, useToken: ModuleManager }]);
       app.testModuleManager.setExtensionProviders([{ token: PreRouterExtension, useClass: TestPreRouterExtension }]);
@@ -53,7 +48,7 @@ export class TestApplication extends Application {
    */
   setLogLevel(logLevel: OutputLogLevel) {
     this.logLevel = logLevel;
-    this.testModuleManager.setLogLevel(logLevel);
+    this.testModuleManager.logLevel = logLevel;
     return this;
   }
 

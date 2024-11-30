@@ -2,10 +2,10 @@ import { ModRefId, ModuleManager, NormalizedModuleMetadata, OutputLogLevel, Prov
 import { TestProvider } from './types.js';
 
 export class TestModuleManager extends ModuleManager {
+  #logLevel: OutputLogLevel;
   protected providersToOverride: TestProvider[] = [];
-  protected logLevel: OutputLogLevel;
-  protected providersPerApp: Provider[];
-  protected extensionsProviders: Provider[];
+  protected providersPerApp: Provider[] = [];
+  protected extensionsProviders: Provider[] = [];
 
   setProvidersPerApp(providersPerApp: Provider[]) {
     this.providersPerApp = providersPerApp;
@@ -23,12 +23,16 @@ export class TestModuleManager extends ModuleManager {
    * This log level is set after the HTTP request handlers are installed.
    * It does not cover application initialization time.
    */
-  setLogLevel(logLevel: OutputLogLevel) {
-    this.logLevel = logLevel;
+  set logLevel(logLevel: OutputLogLevel) {
+    this.#logLevel = logLevel;
   }
 
-  getLogLevel() {
-    return this.logLevel || 'off';
+  /**
+   * This log level is set after the HTTP request handlers are installed.
+   * It does not cover application initialization time.
+   */
+  get logLevel() {
+    return this.#logLevel || 'off';
   }
 
   getProvidersToOverride() {
