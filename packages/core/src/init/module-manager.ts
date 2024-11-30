@@ -1,6 +1,6 @@
 import { format } from 'util';
 
-import { Injector, reflector } from '#di';
+import { injectable, Injector, reflector } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyObj, ModuleType, ModRefId } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
@@ -19,6 +19,7 @@ type ModuleId = string | ModRefId;
  * Scans modules, normalizes, stores and checks their metadata for correctness,
  * adds and removes imports of one module into another.
  */
+@injectable()
 export class ModuleManager {
   protected injectorPerModMap = new Map<ModRefId, Injector>();
   protected map: ModulesMap = new Map();
