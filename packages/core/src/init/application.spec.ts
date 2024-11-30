@@ -42,10 +42,6 @@ describe('Application', () => {
   });
 
   describe('init()', () => {
-    it('should return instance of SystemLogMediator', () => {
-      expect(mock.init()).toBeInstanceOf(SystemLogMediator);
-    });
-
     it('should merge AppOptions with default', () => {
       mock.init({ bufferLogs: false });
       expect(mock.appOptions.bufferLogs).toBe(false);
