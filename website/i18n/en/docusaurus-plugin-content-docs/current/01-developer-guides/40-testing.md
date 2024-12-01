@@ -159,7 +159,7 @@ server = await TestApplication.createTestApp(AppModule, { path: 'api' }).getServ
 
 Overriding mocks with the `testApplication.overrideProviders()` method works globally at any level of the injector hierarchy. Providers with mocks are only passed to DI at a particular level of the hierarchy if there are corresponding providers with the same tokens in application at that level.
 
-We recommend keeping such tests in a separate directory called `test`, at the same level as the `src` root directory.
+We recommend keeping such tests in a separate directory called `e2e`, at the same level as the `src` root directory.
 
 ### Nested providers for testing
 
