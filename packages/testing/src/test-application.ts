@@ -29,8 +29,8 @@ export class TestApplication extends Application {
   }
 
   setExtensionProviders(extensionsProviders: Provider[]) {
-    // this.testModuleManager.setExtensionProviders([{ token: PreRouterExtension, useClass: TestPreRouterExtension }]);
     this.testModuleManager.setExtensionProviders(extensionsProviders);
+    return this;
   }
 
   /**
