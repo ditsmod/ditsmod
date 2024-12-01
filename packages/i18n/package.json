@@ -27,9 +27,6 @@
       "default": "./dist/index.js"
     }
   },
-  "directories": {
-    "lib": "src"
-  },
   "keywords": [
     "ditsmod"
   ],

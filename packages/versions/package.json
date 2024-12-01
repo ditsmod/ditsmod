@@ -18,9 +18,6 @@
       "default": "./dist/index.js"
     }
   },
-  "directories": {
-    "lib": "src"
-  },
   "scripts": {
     "build": "tsc -b tsconfig.build.json",
     "clean": "rm -rf dist*",

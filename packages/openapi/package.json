@@ -24,9 +24,6 @@
       "default": "./dist/index.js"
     }
   },
-  "directories": {
-    "lib": "src"
-  },
   "scripts": {
     "build": "tsc -b tsconfig.build.json",
     "build-ui": "yarn build && node dist/swagger-ui/compile.js",

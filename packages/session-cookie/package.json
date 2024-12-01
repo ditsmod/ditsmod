@@ -20,9 +20,6 @@
   },
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "license": "MIT",
-  "directories": {
-    "lib": "src"
-  },
   "keywords": [
     "ditsmod"
   ],
