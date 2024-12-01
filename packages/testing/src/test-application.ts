@@ -1,4 +1,4 @@
-import { AppOptions, OutputLogLevel, ModuleType, SystemLogMediator, LoggerConfig, Application, ModuleManager } from '@ditsmod/core';
+import { AppOptions, ModuleType, SystemLogMediator, Application, ModuleManager } from '@ditsmod/core';
 import { PreRouterExtension } from '@ditsmod/routing';
 
 import { TestModuleManager } from './test-module-manager.js';
@@ -8,7 +8,6 @@ import { TestAppInitializer } from './test-app-initializer.js';
 
 export class TestApplication extends Application {
   protected testModuleManager: TestModuleManager;
-  protected logLevel: OutputLogLevel;
 
   /**
    * @param appModule The root module of the application.
@@ -17,13 +16,11 @@ export class TestApplication extends Application {
   static createTestApp(appModule: ModuleType, appOptions?: AppOptions) {
     const app = new this();
     try {
-      const config: LoggerConfig = { level: 'off' };
-      const systemLogMediator = new SystemLogMediator({ moduleName: 'TestAppModule' }, undefined, undefined, config);
-      app.init(appOptions, systemLogMediator);
+      app.init(appOptions);
       if (!app.appOptions.loggerConfig) {
         app.appOptions.loggerConfig = { level: 'off' };
       }
-      app.testModuleManager = new TestModuleManager(systemLogMediator);
+      app.testModuleManager = new TestModuleManager(app.systemLogMediator);
       app.testModuleManager.setProvidersPerApp([{ token: TestModuleManager, useToken: ModuleManager }]);
       app.testModuleManager.setExtensionProviders([{ token: PreRouterExtension, useClass: TestPreRouterExtension }]);
       app.testModuleManager.scanRootModule(appModule);
@@ -40,15 +37,6 @@ export class TestApplication extends Application {
    */
   overrideProviders(providers: TestProvider[]) {
     this.testModuleManager.overrideProviders(providers);
-    return this;
-  }
-
-  /**
-   * During testing, the logging level is set to `off` by default (any logs are disabled).
-   */
-  setLogLevel(logLevel: OutputLogLevel) {
-    this.logLevel = logLevel;
-    this.testModuleManager.logLevel = logLevel;
     return this;
   }
 

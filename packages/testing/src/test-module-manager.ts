@@ -1,8 +1,7 @@
-import { ModRefId, ModuleManager, NormalizedModuleMetadata, OutputLogLevel, Provider } from '@ditsmod/core';
+import { ModRefId, ModuleManager, NormalizedModuleMetadata, Provider } from '@ditsmod/core';
 import { TestProvider } from './types.js';
 
 export class TestModuleManager extends ModuleManager {
-  #logLevel: OutputLogLevel;
   protected providersToOverride: TestProvider[] = [];
   protected providersPerApp: Provider[] = [];
   protected extensionsProviders: Provider[] = [];
@@ -17,22 +16,6 @@ export class TestModuleManager extends ModuleManager {
 
   overrideProviders(providers: TestProvider[]) {
     this.providersToOverride = providers;
-  }
-
-  /**
-   * This log level is set after the HTTP request handlers are installed.
-   * It does not cover application initialization time.
-   */
-  set logLevel(logLevel: OutputLogLevel) {
-    this.#logLevel = logLevel;
-  }
-
-  /**
-   * This log level is set after the HTTP request handlers are installed.
-   * It does not cover application initialization time.
-   */
-  get logLevel() {
-    return this.#logLevel || 'off';
   }
 
   getProvidersToOverride() {

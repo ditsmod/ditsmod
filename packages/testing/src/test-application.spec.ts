@@ -52,11 +52,4 @@ describe('TestApplication', () => {
       expect(server).toBeInstanceOf(Server);
     });
   });
-
-  describe('setLogLevel()', () => {
-    it('not to throw an error', async () => {
-      const mock = await TestApplicationMock.create(RootModule1, { path });
-      expect(() => mock.setLogLevel('all')).not.toThrow();
-    });
-  });
 });
