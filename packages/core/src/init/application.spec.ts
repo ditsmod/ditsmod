@@ -18,8 +18,8 @@ describe('Application', () => {
     override appOptions = new AppOptions();
     declare systemLogMediator: SystemLogMediator;
 
-    override init(appOptions?: AppOptions, systemLogMediator?: SystemLogMediator) {
-      return super.init(appOptions, systemLogMediator);
+    override init(appOptions?: AppOptions) {
+      return super.init(appOptions);
     }
 
     override checkSecureServerOption() {
