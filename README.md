@@ -1,6 +1,6 @@
 ## Why should you try Ditsmod?
 
-Ditsmod is a Node.js web framework written in TypeScript. Yet another backend JavaScript framework? Well, what options do we have at the beginning of 2025? Probably 90% of all these frameworks suggest writing routes and middleware in the ExpressJS style. They look very concise when showcasing a "Hello, World!" example, but as soon as you move to even moderately sized projects (like [RealWorld][5]), it becomes a real challenge for the developer. You need to structure the code so that it is easy to read, test, and scale. This is one reason why microservices are so popular among these frameworks.
+Ditsmod is a highly extensible Node.js web framework written in TypeScript. Another backend JavaScript framework, you say? Well, yes, but what options do we have as we enter 2025 in this stack? Probably 80% of all these frameworks suggest writing routes and middleware in the ExpressJS style. They look very concise when showcasing a "Hello, World!" example, but as soon as you move to even moderately sized projects (like [RealWorld][5]), it becomes a real challenge for the developer. You need to structure the code so that it is easy to read, test, and scale. This is one reason why microservices are so popular among these frameworks.
 
 This trend continued until the rise of TypeScript, or more accurately, until its popularization through Angular v2+ (in 2016). The static typing offered by TypeScript allows for large-scale project development, and the Dependency Injection (DI) design pattern dramatically simplifies working with such projects. Thanks to these capabilities, Angular inspired the creator of NestJS to develop an "Angular for the backend" (as NestJS is sometimes called), with the first commit made in 2017.
 
@@ -8,7 +8,7 @@ So, what’s the problem? Why not just take the innovative NestJS and adapt it t
 
 Ditsmod began development in 2020, also inspired by Angular v2+. I literally extracted Angular’s Dependency Injection module v4.4.7, which became the backbone of the future **Ditsmod** framework.
 
-For those who are not familiar with Angular, I will try to explain the basic concepts DI borrowed from this framework in a simplified form. Let's consider the following example:
+For those unfamiliar with Angular, I will try to explain the basic DI concepts borrowed from this framework in a simplified manner. Let's consider the following example:
 
 ```ts
 class Service1 {}
@@ -44,13 +44,13 @@ const rawMeta = reflector.getMetadata(Service3);
 console.log(rawMeta?.constructor.params);
 ```
 
-The mere fact that we can retrieve information about parameters defined in TypeScript code while working in JavaScript elevates the process of creating an instance of `Service3` to a new level. Now, we can programmatically "understand" what `Service3` requests in its constructor, allowing us to programmatically (i.e., automatically) inject instances of exactly the classes that `Service3` needs.
+The mere fact that we can retrieve information about parameters defined in TypeScript code while working in JavaScript elevates the process of creating an instance of `Service3` to a new level. This capability allows us to programmatically "understand" what `Service3` requires in its constructor and automatically inject instances of the exact classes it needs.
 
 It’s not mandatory to work directly with the reflector when getting acquainted with Ditsmod, as most of its functionality operates under Ditsmod's hood. You simply specify the required dependencies in the constructors of your classes, and Ditsmod automatically uses the reflector to determine what each class requires.
 
-Returning to the comparison with other frameworks, it can be said that the feature described above is likely unavailable in about 90% of all backend frameworks based on JavaScript/TypeScript. While the remaining frameworks do offer Dependency Injection (DI), they do not provide the same level of modularity and encapsulation as Ditsmod does.
+Returning to the comparison with other frameworks, it can be stated that the feature described above is likely unavailable in approximately 80% of all backend frameworks based on JavaScript or TypeScript. While the remaining frameworks do offer Dependency Injection (DI), they do not provide the same level of extensibility, modularity, and encapsulation as Ditsmod.
 
-Up until version 3.0.0, Ditsmod had a small user base, allowing for many breaking changes that introduced a range of necessary architectural improvements. Currently, Ditsmod is a mature and stable framework. Starting from version 3.0.0, it adopted synchronized package versions (if any package changes, all packages are published with the same new version). The entire Ditsmod codebase is written in ESM format.
+Up until version 3.0.0, Ditsmod had a small user base, which allowed for numerous breaking changes that introduced essential architectural improvements. Today, Ditsmod is a mature and stable framework. Starting with version 3.0.0, it adopted synchronized package versions, ensuring that any change to a package results in all packages being published with the same new version. Additionally, the entire Ditsmod codebase is written in the ESM format.
 
 - [The English version of the documentation](https://ditsmod.github.io/en/).
 - [Українська версія документації](https://ditsmod.github.io/).
