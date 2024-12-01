@@ -34,6 +34,7 @@ describe('TestApplication', () => {
 
     it('TestModuleManager has metadata of the root module', async () => {
       const mock = await TestApplicationMock.create(RootModule1, { path });
+      mock.testModuleManager.scanRootModule(RootModule1);
       const meta = mock.testModuleManager.getMetadata(RootModule1);
       expect(meta?.providersPerApp[0]).toBe(Service1);
       expect(mock.appOptions.path).toBe(path);

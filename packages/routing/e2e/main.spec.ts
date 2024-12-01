@@ -31,7 +31,7 @@ describe('@ditsmod/routing/testing', () => {
     jest.restoreAllMocks();
   });
 
-  fit('override services at any level', async () => {
+  it('override services at any level', async () => {
     const server = await TestApplication.createTestApp(AppModule)
       .overrideProviders([
         ...new Providers()
