@@ -39,14 +39,11 @@ export class Application {
     }
   }
 
-  /**
-   * @param systemLogMediator This parameter was originally created for `@ditsmod/testing`.
-   */
-  protected init(appOptions?: AppOptions, systemLogMediator?: SystemLogMediator) {
+  protected init(appOptions?: AppOptions) {
     if (Error.stackTraceLimit == 10) {
       Error.stackTraceLimit = 50; // Override default limit.
     }
-    systemLogMediator ??= new SystemLogMediator({ moduleName: 'AppModule' });
+    const systemLogMediator = new SystemLogMediator({ moduleName: 'AppModule' });
     this.systemLogMediator = systemLogMediator;
     this.appOptions = { ...new AppOptions(), ...appOptions };
     LogMediator.bufferLogs = this.appOptions.bufferLogs;
