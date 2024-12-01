@@ -4,7 +4,6 @@
     "paths": {
       "#app/*": ["./src/*"],
       "@ditsmod/core": ["../core/src/index.js"],
-      "@ditsmod/routing": ["../routing/src/index.js"],
     },
     "module": "nodenext",
     // "moduleResolution": "nodenext",
@@ -27,7 +26,6 @@
   "include": ["src", "e2e"],
   "references": [
     { "path": "../core/tsconfig.build.json" },
-    { "path": "../routing/tsconfig.build.json" },
     // { "path": "./tsconfig.e2e.json" }, // Trying to make ESlint happy.
   ]
 }

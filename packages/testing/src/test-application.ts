@@ -1,9 +1,7 @@
-import { AppOptions, ModuleType, SystemLogMediator, Application, ModuleManager } from '@ditsmod/core';
-import { PreRouterExtension } from '@ditsmod/routing';
+import { AppOptions, ModuleType, SystemLogMediator, Application, ModuleManager, Provider } from '@ditsmod/core';
 
 import { TestModuleManager } from './test-module-manager.js';
 import { TestProvider } from './types.js';
-import { TestPreRouterExtension } from './test-pre-router.extension.js';
 import { TestAppInitializer } from './test-app-initializer.js';
 
 export class TestApplication extends Application {
@@ -22,13 +20,17 @@ export class TestApplication extends Application {
       }
       app.testModuleManager = new TestModuleManager(app.systemLogMediator);
       app.testModuleManager.setProvidersPerApp([{ token: TestModuleManager, useToken: ModuleManager }]);
-      app.testModuleManager.setExtensionProviders([{ token: PreRouterExtension, useClass: TestPreRouterExtension }]);
       app.testModuleManager.scanRootModule(appModule);
       return app;
     } catch (err: any) {
       app.handleError(err);
       throw err;
     }
+  }
+
+  setExtensionProviders(extensionsProviders: Provider[]) {
+    // this.testModuleManager.setExtensionProviders([{ token: PreRouterExtension, useClass: TestPreRouterExtension }]);
+    this.testModuleManager.setExtensionProviders(extensionsProviders);
   }
 
   /**

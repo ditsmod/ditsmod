@@ -22,7 +22,7 @@ describe('TestApplication', () => {
   })
   class RootModule1 {}
 
-  describe('constructor()', () => {
+  describe('create()', () => {
     it('not throw an error', async () => {
       await expect(TestApplicationMock.create(RootModule1, { path })).resolves.not.toThrow();
     });
