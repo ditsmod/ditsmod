@@ -59,7 +59,6 @@ export class TestApplication extends Application {
         this.testModuleManager,
         this.systemLogMediator,
       );
-      testAppInitializer.setInitLogLevel(this.logLevel);
       await this.bootstrapApplication(testAppInitializer);
       await this.createServerAndBindToListening(testAppInitializer);
       return this.server;

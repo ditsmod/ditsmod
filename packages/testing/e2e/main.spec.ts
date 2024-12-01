@@ -42,12 +42,14 @@ describe('@ditsmod/testing', () => {
       ])
       .getServer();
 
-    await request(server).get('/per-app').expect(200).expect(message);
-    await request(server).get('/per-mod').expect(200).expect(message);
-    await request(server).get('/per-rou').expect(200).expect(message);
-    await request(server).get('/per-req').expect(200).expect(message);
-    await request(server).get('/per-rou2').expect(200).expect(message);
-    await request(server).get('/per-req2').expect(200).expect(message);
+    const testAgent = request(server);
+
+    await testAgent.get('/per-app').expect(200).expect(message);
+    await testAgent.get('/per-mod').expect(200).expect(message);
+    await testAgent.get('/per-rou').expect(200).expect(message);
+    await testAgent.get('/per-req').expect(200).expect(message);
+    await testAgent.get('/per-rou2').expect(200).expect(message);
+    await testAgent.get('/per-req2').expect(200).expect(message);
     expect(methodPerApp).toHaveBeenCalledTimes(1);
     expect(methodPerMod).toHaveBeenCalledTimes(1);
     expect(methodPerRou).toHaveBeenCalledTimes(1);
