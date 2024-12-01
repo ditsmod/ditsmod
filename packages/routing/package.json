@@ -11,7 +11,7 @@
       "default": "./package.json"
     },
     "./testing": {
-      "default": "./testing/index.js"
+      "default": "./dist/testing/index.js"
     },
     ".": {
       "types": "./dist/index.d.ts",

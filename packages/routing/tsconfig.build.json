@@ -1,19 +1,15 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "outDir": "dist",
     "rootDir": "src",
     "baseUrl": ".",
     "tsBuildInfoFile": "dist/build.tsbuildinfo",
-    "outDir": "dist",
-    "paths": {
-      "@ditsmod/core": ["../core/src"]
-    }
   },
   "include": ["src"],
   "exclude": ["src/**/*.spec.ts"],
   "references": [
-    {
-      "path": "../core/tsconfig.build.json"
-    }
+    { "path": "../core/tsconfig.build.json" },
+    { "path": "../testing/tsconfig.build.json" },
   ]
 }

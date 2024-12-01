@@ -262,8 +262,8 @@ export class AppInitializer {
     const injectorPerApp = this.perAppService.reinitInjector([{ token: PerAppService, useValue: this.perAppService }]);
 
     for (const [, metadataPerMod2] of mMetadataPerMod2) {
-      const { meta } = metadataPerMod2;
-      const preparedMetadataPerMod1 = this.prepareMeta(meta);
+      let { meta } = metadataPerMod2;
+      meta = this.prepareMeta(meta);
       const injectorPerMod = injectorPerApp.resolveAndCreateChild(meta.providersPerMod);
       injectorPerMod.pull(Logger);
       const systemLogMediator = injectorPerMod.pull(SystemLogMediator) as SystemLogMediator;
@@ -282,7 +282,7 @@ export class AppInitializer {
 
       systemLogMediator.startExtensions(this);
       this.decreaseExtensionsCounters(extensionCounters, extensionsProviders);
-      await this.handleExtensionsPerMod(preparedMetadataPerMod1, extensionsManager);
+      await this.handleExtensionsPerMod(meta, extensionsManager);
       this.logExtensionsStatistic(injectorPerApp, systemLogMediator);
     }
     await this.perAppHandling(mMetadataPerMod2, extensionsContext);

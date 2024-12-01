@@ -11,11 +11,11 @@ export class TestModuleManager extends ModuleManager {
   }
 
   setExtensionProviders(extensionsProviders: Provider[]) {
-    this.extensionsProviders = extensionsProviders;
+    this.extensionsProviders.push(...extensionsProviders);
   }
 
   overrideProviders(providers: TestProvider[]) {
-    this.providersToOverride = providers;
+    this.providersToOverride.push(...providers);
   }
 
   getProvidersToOverride() {
