@@ -81,10 +81,10 @@ P.S. Хоча нижче надано лінк на репозиторій з у
 
 ## Встановлення
 
-Базовий набір для роботи застосунку має репозиторій [ditsmod/seed][2]. Клонуйте його та встановіть залежності:
+Базовий набір для роботи застосунку має репозиторій [ditsmod/starter][2]. Клонуйте його та встановіть залежності:
 
 ```bash
-git clone --depth 1 https://github.com/ditsmod/seed.git my-app
+git clone --depth 1 https://github.com/ditsmod/starter.git my-app
 cd my-app
 npm i
 ```
@@ -115,16 +115,16 @@ curl -i localhost:3000/api/hello
 
 По дефолту, застосунок працює з деталізацією log level на рівні `info`. Змінити його можна у файлі `src/app/app.module.ts` або `apps/backend/src/app/app.module.ts` (у монорепозиторію).
 
-Завдяки використанню у [ditsmod/seed][2] так званих [Project References][16] і режиму збірки `tsc -b`, навіть дуже великі проекти компілюються дуже швидко.
+Завдяки використанню у [ditsmod/starter][2] так званих [Project References][16] і режиму збірки `tsc -b`, навіть дуже великі проекти компілюються дуже швидко.
 
-Зверніть увагу, що у репозиторії `ditsmod/seed` є чотири конфіг-файли для TypeScript:
+Зверніть увагу, що у репозиторії `ditsmod/starter` є чотири конфіг-файли для TypeScript:
 
 - `tsconfig.json` - базова конфігурація, що використовується вашою IDE (у більшості це мабуть VS Code).
 - `tsconfig.build.json` - ця конфігурація використовується для компіляції коду з теки `src` у теку `dist`, вона призначається для коду застосунку.
 - `tsconfig.e2e.json` - ця конфігурація використовується для компіляції коду end-to-end тестів.
 - `tsconfig.unit.json` - ця конфігурація використовується для компіляції коду юніт-тестів.
 
-Окрім цього, зверніть увагу, що завдяки тому, що `ditsmod/seed` оголошено як EcmaScript Module (ESM), для скорочення шляху до файлів ви можете використовувати [нативні аліаси Node.js][18]. Це аналог `compilerOptions.paths` у `tsconfig`. Такі аліаси оголошуються у `package.json` у полі `imports`:
+Окрім цього, зверніть увагу, що завдяки тому, що `ditsmod/starter` оголошено як EcmaScript Module (ESM), для скорочення шляху до файлів ви можете використовувати [нативні аліаси Node.js][18]. Це аналог `compilerOptions.paths` у `tsconfig`. Такі аліаси оголошуються у `package.json` у полі `imports`:
 
 ```json {2}
 "imports": {
@@ -161,7 +161,7 @@ npm run start-prod
 
 ## Вхідний файл для Node.js
 
-Після [встановлення Ditsmod seed][1], перше, що необхідно знати: весь код застосунку знаходиться у теці `src`, він компілюється за допомогою TypeScript-утиліти `tsc`, після компіляції попадає у теку `dist`, і далі вже у вигляді JavaScript-коду його можна виконувати у Node.js.
+Після [встановлення Ditsmod starter][1], перше, що необхідно знати: весь код застосунку знаходиться у теці `src`, він компілюється за допомогою TypeScript-утиліти `tsc`, після компіляції попадає у теку `dist`, і далі вже у вигляді JavaScript-коду його можна виконувати у Node.js.
 
 Давайте розглянемо файл `src/main.ts`:
 
@@ -188,10 +188,10 @@ node dist/main.js
 
 ## Ditsmod на Bun
 
-Ditsmod може працювати на базі [Bun][19]. Щоправда, на даний момент (v1.1.29), [Bun має баг][20], через який він некоректно працює з TypeScript. Якщо ви скачаєте сіди Ditsmod, встановите залежності, і спробуєте запустити затосунок:
+Ditsmod може працювати на базі [Bun][19]. Щоправда, на даний момент (v1.1.29), [Bun має баг][20], через який він некоректно працює з TypeScript. Якщо ви скачаєте стартер Ditsmod, встановите залежності, і спробуєте запустити затосунок:
 
 ```sh
-git clone --depth 1 https://github.com/ditsmod/seed.git my-app
+git clone --depth 1 https://github.com/ditsmod/starter.git my-app
 cd my-app
 bun install
 bun run build
@@ -220,7 +220,7 @@ bun dist/main.js
 
 
 [1]: #встановлення
-[2]: https://github.com/ditsmod/seed
+[2]: https://github.com/ditsmod/starter
 [4]: https://github.com/ditsmod/ditsmod/tree/main/examples
 [8]: https://uk.wikipedia.org/wiki/%D0%92%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F_%D0%B7%D0%B0%D0%BB%D0%B5%D0%B6%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9
 [9]: https://github.com/angular/angular
