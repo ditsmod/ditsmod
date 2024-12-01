@@ -6,6 +6,7 @@ import { TestAppInitializer } from './test-app-initializer.js';
 
 export class TestApplication extends Application {
   protected testModuleManager: TestModuleManager;
+  protected appModule: ModuleType;
 
   /**
    * @param appModule The root module of the application.
@@ -14,13 +15,13 @@ export class TestApplication extends Application {
   static createTestApp(appModule: ModuleType, appOptions?: AppOptions) {
     const app = new this();
     try {
+      app.appModule = appModule;
       app.init(appOptions);
       if (!app.appOptions.loggerConfig) {
         app.appOptions.loggerConfig = { level: 'off' };
       }
       app.testModuleManager = new TestModuleManager(app.systemLogMediator);
       app.testModuleManager.setProvidersPerApp([{ token: TestModuleManager, useToken: ModuleManager }]);
-      app.testModuleManager.scanRootModule(appModule);
       return app;
     } catch (err: any) {
       app.handleError(err);
@@ -44,6 +45,7 @@ export class TestApplication extends Application {
 
   async getServer() {
     try {
+      this.testModuleManager.scanRootModule(this.appModule);
       const testAppInitializer = new TestAppInitializer(
         this.appOptions,
         this.testModuleManager,
