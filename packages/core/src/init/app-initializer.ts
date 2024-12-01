@@ -263,7 +263,7 @@ export class AppInitializer {
 
     for (const [, metadataPerMod2] of mMetadataPerMod2) {
       const { meta } = metadataPerMod2;
-      const preparedMetadataPerMod1 = this.prepareMetadataPerMod1(meta);
+      const preparedMetadataPerMod1 = this.prepareMeta(meta);
       const injectorPerMod = injectorPerApp.resolveAndCreateChild(meta.providersPerMod);
       injectorPerMod.pull(Logger);
       const systemLogMediator = injectorPerMod.pull(SystemLogMediator) as SystemLogMediator;
@@ -401,7 +401,7 @@ export class AppInitializer {
    *
    * See `TestAppInitializer` in `@ditsmod/testing` for more info.
    */
-  protected prepareMetadataPerMod1(meta: NormalizedModuleMetadata) {
+  protected prepareMeta(meta: NormalizedModuleMetadata) {
     return meta;
   }
 
