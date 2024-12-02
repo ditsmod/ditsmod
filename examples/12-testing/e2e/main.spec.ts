@@ -1,6 +1,8 @@
 import request from 'supertest';
 import { HttpErrorHandler, HttpServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
+import { PreRouterExtension } from '@ditsmod/routing';
+import { TestPreRouterExtension } from '@ditsmod/routing/testing';
 import { jest } from '@jest/globals';
 
 import { AppModule } from '#app/app.module.js';
@@ -40,6 +42,7 @@ describe('12-testing', () => {
 
     beforeAll(async () => {
       server = await TestApplication.createTestApp(AppModule)
+        .setExtensionProviders([{ token: PreRouterExtension, useClass: TestPreRouterExtension }])
         .overrideProviders([
           {
             token: HttpErrorHandler,

@@ -2,6 +2,8 @@ import request from 'supertest';
 import { TestApplication } from '@ditsmod/testing';
 import { HttpServer, Providers, Status } from '@ditsmod/core';
 import { BodyParserConfig } from '@ditsmod/body-parser';
+import { PreRouterExtension } from '@ditsmod/routing';
+import { TestPreRouterExtension } from '@ditsmod/routing/testing';
 
 import { AppModule } from '#app/app.module.js';
 
@@ -12,7 +14,10 @@ describe('06-body-parser', () => {
   beforeAll(async () => {
     const providers = new Providers().useValue<BodyParserConfig>(BodyParserConfig, { jsonOptions: { limit: '9b' } });
 
-    server = await TestApplication.createTestApp(AppModule).overrideProviders([...providers]).getServer();
+    server = await TestApplication.createTestApp(AppModule)
+      .setExtensionProviders([{ token: PreRouterExtension, useClass: TestPreRouterExtension }])
+      .overrideProviders([...providers])
+      .getServer();
     testAgent = request(server);
   });
 
@@ -40,7 +45,10 @@ describe('06-body-parser', () => {
   });
 
   it('should not parse fake-content-type', async () => {
-    const { status, body, type } = await testAgent.post('/').set('Content-Type', 'fake-content-type').send('{ one: 1 }');
+    const { status, body, type } = await testAgent
+      .post('/')
+      .set('Content-Type', 'fake-content-type')
+      .send('{ one: 1 }');
     expect(status).toBe(200);
     expect(type).toBe('application/json');
     expect(body).toEqual({});
@@ -54,19 +62,28 @@ describe('06-body-parser', () => {
   });
 
   it('controller singleton should parsed post', async () => {
-    const { status, body, type } = await testAgent.post('/singleton').set('Content-Type', 'application/json').send({ one: 1 });
+    const { status, body, type } = await testAgent
+      .post('/singleton')
+      .set('Content-Type', 'application/json')
+      .send({ one: 1 });
     expect(status).toBe(200);
     expect(type).toBe('application/json');
     expect(body).toEqual({ one: 1 });
   });
 
   it('controller singleton should parsed post', async () => {
-    const { status } = await testAgent.post('/singleton').set('Content-Type', 'application/json').send({ one: 1, two: 2 });
+    const { status } = await testAgent
+      .post('/singleton')
+      .set('Content-Type', 'application/json')
+      .send({ one: 1, two: 2 });
     expect(status).toBe(Status.PAYLOAD_TO_LARGE);
   });
 
   it('controller singleton should not parse fake-content-type', async () => {
-    const { status, body, type } = await testAgent.post('/singleton').set('Content-Type', 'fake-content-type').send('{ one: 1 }');
+    const { status, body, type } = await testAgent
+      .post('/singleton')
+      .set('Content-Type', 'fake-content-type')
+      .send('{ one: 1 }');
     expect(status).toBe(200);
     expect(type).toBe('application/json');
     expect(body).toEqual({});
