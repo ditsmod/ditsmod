@@ -3,7 +3,7 @@ import { TestApplication } from '@ditsmod/testing';
 
 import { InjectionToken, injectable } from '#di';
 import { rootModule } from '#decorators/root-module.js';
-import { Extension, DebugStage1Meta, GroupStage1Meta, GroupStage1Meta2 } from '#extension/extension-types.js';
+import { Extension, DebugStage1Meta, Stage1GroupMeta, Stage1GroupMeta2 } from '#extension/extension-types.js';
 import { ExtensionsManager } from '#extension/extensions-manager.js';
 import { featureModule } from '#decorators/module.js';
 import { Router } from '#types/router.js';
@@ -90,8 +90,8 @@ describe('extensions e2e', () => {
       constructor(private extensionManager: ExtensionsManager) {}
 
       async stage1() {
-        const groupStage1Meta = await this.extensionManager.stage1(MY_EXTENSIONS1);
-        extensionInit2(groupStage1Meta);
+        const stage1GroupMeta = await this.extensionManager.stage1(MY_EXTENSIONS1);
+        extensionInit2(stage1GroupMeta);
       }
     }
 
@@ -131,17 +131,17 @@ describe('extensions e2e', () => {
     expect(extensionInit2).toHaveBeenCalledTimes(2);
     const extension = new Extension1();
     const stage1Meta = new DebugStage1Meta(extension, undefined, true, 1);
-    const groupStage1Meta = new GroupStage1Meta('Module3', [stage1Meta], [undefined]);
-    groupStage1Meta.delay = true;
-    groupStage1Meta.countdown = 1;
-    groupStage1Meta.groupDataPerApp = expect.any(Array);
-    expect(extensionInit2).toHaveBeenNthCalledWith(1, groupStage1Meta);
+    const stage1GroupMeta = new Stage1GroupMeta('Module3', [stage1Meta], [undefined]);
+    stage1GroupMeta.delay = true;
+    stage1GroupMeta.countdown = 1;
+    stage1GroupMeta.groupDataPerApp = expect.any(Array);
+    expect(extensionInit2).toHaveBeenNthCalledWith(1, stage1GroupMeta);
     stage1Meta.delay = false;
     stage1Meta.countdown = 0;
-    groupStage1Meta.delay = false;
-    groupStage1Meta.countdown = 0;
-    groupStage1Meta.moduleName = 'AppModule';
-    expect(extensionInit2).toHaveBeenNthCalledWith(2, groupStage1Meta);
+    stage1GroupMeta.delay = false;
+    stage1GroupMeta.countdown = 0;
+    stage1GroupMeta.moduleName = 'AppModule';
+    expect(extensionInit2).toHaveBeenNthCalledWith(2, stage1GroupMeta);
   });
 
   it('extension depends on data from the entire application', async () => {
@@ -172,8 +172,8 @@ describe('extensions e2e', () => {
       constructor(private extensionManager: ExtensionsManager) {}
 
       async stage1() {
-        const groupStage1Meta = await this.extensionManager.stage1(MY_EXTENSIONS1, true);
-        spyMetaFromAllModules(structuredClone(groupStage1Meta));
+        const stage1GroupMeta = await this.extensionManager.stage1(MY_EXTENSIONS1, true);
+        spyMetaFromAllModules(structuredClone(stage1GroupMeta));
       }
     }
 
@@ -182,8 +182,8 @@ describe('extensions e2e', () => {
       constructor(private extensionManager: ExtensionsManager) {}
 
       async stage1() {
-        const groupStage1Meta = await this.extensionManager.stage1(MY_EXTENSIONS1);
-        spyMetaFromCurrentModule(structuredClone(groupStage1Meta));
+        const stage1GroupMeta = await this.extensionManager.stage1(MY_EXTENSIONS1);
+        spyMetaFromCurrentModule(structuredClone(stage1GroupMeta));
       }
     }
 
@@ -279,7 +279,7 @@ describe('extensions e2e', () => {
           countdown: 0,
         },
       ],
-    } as GroupStage1Meta;
+    } as Stage1GroupMeta;
 
     expect(spyMetaFromAllModules).toHaveBeenCalledTimes(2);
     const firstCall = structuredClone(fullMeta);
@@ -291,7 +291,7 @@ describe('extensions e2e', () => {
     firstCall.groupDataPerApp.pop();
     expect(spyMetaFromAllModules).toHaveBeenNthCalledWith(1, firstCall);
 
-    const secondCall = structuredClone(fullMeta) as GroupStage1Meta2;
+    const secondCall = structuredClone(fullMeta) as Stage1GroupMeta2;
     secondCall.delay = false;
     delete secondCall.groupDebugMeta;
     delete secondCall.groupData;

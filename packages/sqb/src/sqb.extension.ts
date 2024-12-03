@@ -6,8 +6,8 @@ export class SqbExtension implements Extension<void> {
   constructor(protected extensionManager: ExtensionsManager) {}
 
   async stage1() {
-    const groupStage1Meta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
-    groupStage1Meta.groupData.forEach((metadataPerMod3) => {
+    const stage1GroupMeta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
+    stage1GroupMeta.groupData.forEach((metadataPerMod3) => {
       const { aControllerMetadata } = metadataPerMod3;
       console.log('-'.repeat(50), metadataPerMod3.meta.name);
 

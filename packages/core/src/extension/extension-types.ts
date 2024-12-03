@@ -21,10 +21,10 @@ export class DebugStage1Meta<T = any> {
   ) {}
 }
 
-export class GroupStage1Meta<T = any> {
+export class Stage1GroupMeta<T = any> {
   delay: boolean;
   countdown = 0;
-  groupDataPerApp: GroupStage1MetaPerApp<T>[];
+  groupDataPerApp: Stage1GroupMetaPerApp<T>[];
 
   constructor(
     public moduleName: string,
@@ -39,8 +39,8 @@ export class GroupStage1Meta<T = any> {
 }
 
 // prettier-ignore
-export type GroupStage1Meta2<T = any> = OptionalProps<GroupStage1Meta<T>, 'groupDebugMeta' | 'groupData' | 'moduleName' | 'countdown'>;
-export type GroupStage1MetaPerApp<T = any> = Omit<GroupStage1Meta<T>, 'groupDataPerApp'>;
+export type Stage1GroupMeta2<T = any> = OptionalProps<Stage1GroupMeta<T>, 'groupDebugMeta' | 'groupData' | 'moduleName' | 'countdown'>;
+export type Stage1GroupMetaPerApp<T = any> = Omit<Stage1GroupMeta<T>, 'groupDataPerApp'>;
 
 /**
  * The concept of "stages" in extensions was introduced so that metadata or injectors

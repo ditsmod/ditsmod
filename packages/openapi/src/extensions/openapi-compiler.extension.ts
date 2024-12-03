@@ -8,7 +8,7 @@ import {
   Injector,
   optional,
   reflector,
-  GroupStage1MetaPerApp,
+  Stage1GroupMetaPerApp,
   NormalizedGuard,
 } from '@ditsmod/core';
 import {
@@ -47,14 +47,14 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
       return this.oasObject;
     }
 
-    const groupStage1Meta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS, true);
-    if (groupStage1Meta.delay) {
+    const stage1GroupMeta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS, true);
+    if (stage1GroupMeta.delay) {
       this.log.dataAccumulation(this);
       return false;
     }
     this.log.applyingAccumulatedData(this);
 
-    await this.compileOasObject(groupStage1Meta.groupDataPerApp);
+    await this.compileOasObject(stage1GroupMeta.groupDataPerApp);
     const json = JSON.stringify(this.oasObject);
     const oasOptions = this.extensionsMetaPerApp?.oasOptions as OasOptions | undefined;
     const yaml = stringify(this.oasObject, oasOptions?.yamlSchemaOptions);
@@ -63,11 +63,11 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     return this.oasObject;
   }
 
-  protected async compileOasObject(groupDataPerApp: GroupStage1MetaPerApp<MetadataPerMod3>[]) {
+  protected async compileOasObject(groupDataPerApp: Stage1GroupMetaPerApp<MetadataPerMod3>[]) {
     const paths: XPathsObject = {};
     this.initOasObject();
-    for (const groupStage1MetaPerApp of groupDataPerApp) {
-      for (const metadataPerMod3 of groupStage1MetaPerApp.groupData) {
+    for (const stage1GroupMetaPerApp of groupDataPerApp) {
+      for (const metadataPerMod3 of stage1GroupMetaPerApp.groupData) {
         metadataPerMod3.aControllerMetadata.forEach(({ httpMethod, path, routeMeta, guards }) => {
           const httpMethods = Array.isArray(httpMethod) ? httpMethod : [httpMethod];
           httpMethods.forEach((method) => {

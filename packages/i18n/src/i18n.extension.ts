@@ -6,7 +6,7 @@ import {
   injectable,
   Injector,
   fromSelf,
-  GroupStage1Meta,
+  Stage1GroupMeta,
 } from '@ditsmod/core';
 import { MetadataPerMod3, ROUTES_EXTENSIONS } from '@ditsmod/routing';
 
@@ -33,13 +33,13 @@ export class I18nExtension implements Extension<void> {
       return;
     }
 
-    const groupStage1Meta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS);
-    this.addI18nProviders(groupStage1Meta, isLastModule);
+    const stage1GroupMeta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS);
+    this.addI18nProviders(stage1GroupMeta, isLastModule);
 
     this.#inited = true;
   }
 
-  protected addI18nProviders(groupStage1Meta: GroupStage1Meta<MetadataPerMod3>, isLastModule?: boolean) {
+  protected addI18nProviders(stage1GroupMeta: Stage1GroupMeta<MetadataPerMod3>, isLastModule?: boolean) {
     const injectorPerApp = this.perAppService.injector;
 
     const translationsPerApp = injectorPerApp.get(I18N_TRANSLATIONS, undefined, null);
@@ -49,7 +49,7 @@ export class I18nExtension implements Extension<void> {
       this.perAppService.providers.push(...providers);
     }
 
-    for (const metadataPerMod3 of groupStage1Meta.groupData) {
+    for (const metadataPerMod3 of stage1GroupMeta.groupData) {
       const { aControllerMetadata } = metadataPerMod3;
       const { providersPerMod, providersPerRou, providersPerReq } = metadataPerMod3.meta;
       if (!aControllerMetadata.length) {

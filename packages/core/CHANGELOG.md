@@ -163,7 +163,7 @@ interface TotalStage1Meta<T = any> {
   delay: boolean;
   countdown = 0;
   totalStage1MetaPerApp: TotalStage1MetaPerApp<T>[];
-  groupStage1Meta: ExtensionStage1Meta<T>[],
+  stage1GroupMeta: ExtensionStage1Meta<T>[],
   moduleName: string;
 }
 ```
