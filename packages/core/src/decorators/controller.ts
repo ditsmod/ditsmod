@@ -1,18 +1,19 @@
 import { makeClassDecorator } from '#di';
 import { Provider } from '#types/mix.js';
+import { Providers } from '#utils/providers.js';
 
 /**
  * Metadata accepted by the default (non-singleton) controller.
  */
 export interface ControllerRawMetadata1 {
   /**
-   * Providers per HTTP request.
-   */
-  providersPerReq?: Provider[];
-  /**
    * Providers per route.
    */
-  providersPerRou?: Provider[];
+  providersPerRou?: Providers | Provider[];
+  /**
+   * Providers per HTTP request.
+   */
+  providersPerReq?: Providers | Provider[];
   /**
    * Singleton per scope.
    * 
@@ -30,7 +31,7 @@ export interface ControllerRawMetadata2 {
   /**
    * Providers per route.
    */
-  providersPerRou?: Provider[];
+  providersPerRou?: Providers | Provider[];
   /**
    * __Warn__: at the moment, this is an experimental feature.
    * Default - `module`.
