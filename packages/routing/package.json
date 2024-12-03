@@ -10,9 +10,6 @@
     "./package.json": {
       "default": "./package.json"
     },
-    "./testing": {
-      "default": "./dist/testing/index.js"
-    },
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
@@ -20,8 +17,7 @@
   },
   "imports": {
     "#mod/*": "./dist/*",
-    "#interceptors/*": "./dist/interceptors/*",
-    "#testing/*": "./dist/testing/*"
+    "#interceptors/*": "./dist/interceptors/*"
   },
   "repository": {
     "type": "git",
@@ -47,8 +43,7 @@
     "trek-router": "^1.2.0"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^3.0.0",
-    "@ditsmod/testing": "^3.0.0"
+    "@ditsmod/core": "^3.0.0"
   },
   "gitHead": "c64c99dc2b6f65bb3e7027e8f8dceeca7a8c2172"
 }

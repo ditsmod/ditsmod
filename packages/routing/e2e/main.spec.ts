@@ -13,8 +13,6 @@ import {
   ServicePerReq2,
   ServicePerRou3,
 } from './app/services.js';
-import { PreRouterExtension } from '#mod/extensions/pre-router.extension.js';
-import { TestPreRouterExtension } from '#mod/testing/test-pre-router.extension.js';
 
 describe('@ditsmod/routing/testing', () => {
   const message = 'any-string';
@@ -42,7 +40,6 @@ describe('@ditsmod/routing/testing', () => {
           .useValue<ServicePerRou2>(ServicePerRou2, { method: methodPerRou2 })
           .useValue<ServicePerReq2>(ServicePerReq2, { method: methodPerReq2 }),
       ])
-      .setExtensionProviders([{ token: PreRouterExtension, useClass: TestPreRouterExtension }])
       .getServer();
 
     const testAgent = request(server);
@@ -69,7 +66,6 @@ describe('@ditsmod/routing/testing', () => {
         { token: ServicePerRou3, useValue: { method: methodPerRou3 } },
         { token: Res, useClass: Res, providers: [ServicePerRou3] },
       ])
-      .setExtensionProviders([{ token: PreRouterExtension, useClass: TestPreRouterExtension }])
       .getServer();
 
     methodPerRou3.mockImplementation(implementation);

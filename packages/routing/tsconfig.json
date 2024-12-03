@@ -6,7 +6,6 @@
       "@ditsmod/core": ["../core/src/index.js"],
       "@ditsmod/testing": ["../testing/src/index.js"],
       "#interceptors/*": ["./src/interceptors/*"],
-      "#testing/*": ["./src/testing/*"],
       "#mod/*": ["./src/*"],
     },
     "module": "nodenext",
