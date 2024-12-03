@@ -1,4 +1,4 @@
-import { AppOptions, ModuleType, SystemLogMediator, Application, ModuleManager, Provider } from '@ditsmod/core';
+import { AppOptions, ModuleType, SystemLogMediator, Application, ModuleManager } from '@ditsmod/core';
 
 import { TestModuleManager } from './test-module-manager.js';
 import { TestProvider } from './types.js';
@@ -7,6 +7,7 @@ import { TestAppInitializer } from './test-app-initializer.js';
 export class TestApplication extends Application {
   protected testModuleManager: TestModuleManager;
   protected appModule: ModuleType;
+  protected testAppInitializer: TestAppInitializer;
 
   /**
    * @param appModule The root module of the application.
@@ -21,7 +22,9 @@ export class TestApplication extends Application {
         app.appOptions.loggerConfig = { level: 'off' };
       }
       app.testModuleManager = new TestModuleManager(app.systemLogMediator);
-      app.testModuleManager.setProvidersPerApp([{ token: TestModuleManager, useToken: ModuleManager }]);
+      app.testModuleManager.scanRootModule(app.appModule);
+      app.testAppInitializer = new TestAppInitializer(app.appOptions, app.testModuleManager, app.systemLogMediator);
+      app.testAppInitializer.setProvidersPerApp([{ token: TestModuleManager, useToken: ModuleManager }]);
       return app;
     } catch (err: any) {
       app.handleError(err);
@@ -29,30 +32,19 @@ export class TestApplication extends Application {
     }
   }
 
-  setExtensionProviders(extensionsProviders: Provider[]) {
-    this.testModuleManager.setExtensionProviders(extensionsProviders);
-    return this;
-  }
-
   /**
    * Overrides providers at any level if there are matching providers (they have the same tokens)
    * at those levels. Therefore, this method does not always add providers to the DI.
    */
   overrideProviders(providers: TestProvider[]) {
-    this.testModuleManager.overrideProviders(providers);
+    this.testAppInitializer.overrideProviders(providers);
     return this;
   }
 
   async getServer() {
     try {
-      this.testModuleManager.scanRootModule(this.appModule);
-      const testAppInitializer = new TestAppInitializer(
-        this.appOptions,
-        this.testModuleManager,
-        this.systemLogMediator,
-      );
-      await this.bootstrapApplication(testAppInitializer);
-      await this.createServerAndBindToListening(testAppInitializer);
+      await this.bootstrapApplication(this.testAppInitializer);
+      await this.createServerAndBindToListening(this.testAppInitializer);
       return this.server;
     } catch (err: any) {
       this.handleError(err);
