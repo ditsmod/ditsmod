@@ -34,7 +34,7 @@ Each extension needs to be registered, this will be mentioned later, and now let
 
 1. metadata is collected from all decorators (`@rootModule`, `@featureModule`, `@controller`, `@route`...);
 2. this metadata is then passed to DI with token `MetadataPerMod2`, so - every extension can get this metadata in the constructor;
-3. the work on the extensions starts per module:
+3. the extensions start working per module:
     - in each module, the extensions created within this module or imported into this module are collected;
     - each of these extensions gets metadata, also collected in this module, and the `stage1()` methods of given extensions are called.
 4. HTTP request handlers are created;
@@ -42,17 +42,17 @@ Each extension needs to be registered, this will be mentioned later, and now let
 
 You can see a simple example in the folder [09-one-extension][1].
 
-## Extensions groups
+## Group of extensions
 
-Any extension must be a member of one or more groups. The concept of an **extensions group** is similar to the concept of an [interceptors][10] group. Note that  interceptors group performs a specific type of work: augmenting the processing of an HTTP request for a particular route. Similarly, each extensions group represents a distinct type of work on specific metadata. As a rule, extensions in a particular group return metadata that has the same basic interface. Essentially, extension groups allow abstraction from specific extensions; instead, they make only the type of work performed within these groups important.
+Any extension must be a member of one or more groups. The concept of a **group of extensions** is similar to the concept of a group of [interceptors][10]. Note that group of interceptors performs a specific type of work: augmenting the processing of an HTTP request for a particular route. Similarly, each group of extensions represents a distinct type of work on specific metadata. As a rule, extensions in a particular group return metadata that has the same basic interface. Essentially, a group of extensions allows abstraction from specific extensions; instead, it makes only the type of work performed within this group important.
 
 For example, in `@ditsmod/routing` there is a group `ROUTES_EXTENSIONS` which by default includes a single extension that processes metadata collected from the `@route()` decorator. If an application requires OpenAPI documentation, you can import the `@ditsmod/openapi` module, which also has an extension registered in the `ROUTES_EXTENSIONS` group, but this extension works with the `@oasRoute()` decorator. In this case, two extensions will already be registered in the `ROUTES_EXTENSIONS` group, each of which will prepare data for establishing the router's routes. These extensions are grouped together because they configure routes and their `stage1()` methods return data with the same basic interface.
 
 Having a common base data interface returned by each extension in a given group is an important requirement because other extensions may expect data from that group and will rely on that base interface. Of course, the base interface can be expanded if necessary, but not narrowed.
 
-In addition to a common basic interface, the sequence in which extensions groups are launched and the dependency between them is also important. In our example, after all the extensions from the `ROUTES_EXTENSIONS` group have worked, their data is collected in one array and passed to the `PRE_ROUTER_EXTENSIONS` group. Even if you later register more new extensions in the `ROUTES_EXTENSIONS` group, the `PRE_ROUTER_EXTENSIONS` group will still be started after absolutely all extensions from the `ROUTES_EXTENSIONS` group, including your new extensions, have been worked out.
+In addition to a common basic interface, the sequence in which group of extensions is launched and the dependency between them is also important. In our example, after all the extensions from the `ROUTES_EXTENSIONS` group have worked, their data is collected in one array and passed to the `PRE_ROUTER_EXTENSIONS` group. Even if you later register more new extensions in the `ROUTES_EXTENSIONS` group, the `PRE_ROUTER_EXTENSIONS` group will still be started after absolutely all extensions from the `ROUTES_EXTENSIONS` group, including your new extensions, have been worked out.
 
-This feature is very handy because it sometimes allows you to integrate external Ditsmod modules (for example, from npmjs.com) into your application without any customization, just by importing them into the desired module. Thanks to extension groups, the imported extensions will be executed in the correct order, even if they are imported from different external modules.
+This feature is very handy because it sometimes allows you to integrate external Ditsmod modules (for example, from npmjs.com) into your application without any customization, just by importing them into the desired module. Thanks to group of extensions, the imported extensions will be executed in the correct order, even if they are imported from different external modules.
 
 This is how the extension from `@ditsmod/body-parser` works, for example. You simply import `BodyParserModule`, and its extensions will already be run in the correct order, which is written in this module. In this case, its extension will run after the `ROUTES_EXTENSIONS` group, but before the `PRE_ROUTER_EXTENSIONS` group. And note that `BodyParserModule` has no idea which extensions will work in these groups, it only cares about
 
@@ -69,7 +69,7 @@ This means that the `BodyParserModule` will take into account the routes set wit
 
 The extension group token must be an instance of the `InjectionToken` class.
 
-For example, to create a token for the group `MY_EXTENSIONS`, you need to do the following:
+For example, to create a token for `MY_EXTENSIONS` group, you need to do the following:
 
 ```ts
 import { InjectionToken, Extension } from '@ditsmod/core';
@@ -123,7 +123,7 @@ That is, the token of the group `MY_EXTENSIONS`, to which your extension belongs
 
 ## Using ExtensionsManager
 
-If a certain extension has a dependency on another extension, it is recommended to specify that dependency indirectly through the extension group. To do this, you need `ExtensionsManager`, which initializes extensions groups, throws errors about cyclic dependencies between extensions, and shows the entire chain of extensions that caused the loop. Additionally, `ExtensionsManager` allows you to collect extensions initialization results from the entire application, not just from a single module.
+If a certain extension has a dependency on another extension, it is recommended to specify that dependency indirectly through the extension group. To do this, you need `ExtensionsManager`, which initializes groups of extensions, throws errors about cyclic dependencies between extensions, and shows the entire chain of extensions that caused the loop. Additionally, `ExtensionsManager` allows you to collect extensions initialization results from the entire application, not just from a single module.
 
 Suppose `MyExtension` has to wait for the initialization of the `OTHER_EXTENSIONS` group to complete. To do this, you must specify the dependence on `ExtensionsManager` in the constructor, and in `stage1()` call `stage1()` of this service:
 

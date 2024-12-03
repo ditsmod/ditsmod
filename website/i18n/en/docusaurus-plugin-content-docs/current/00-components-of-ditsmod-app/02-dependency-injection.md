@@ -916,6 +916,6 @@ Remember that when DI cannot find the right provider, there are only three possi
 [101]: #hierarchy-of-injectors
 [102]: #injector
 [103]: /components-of-ditsmod-app/controllers-and-services/#what-is-a-controller
-[104]: /components-of-ditsmod-app/extensions/#extensions-groups
+[104]: /components-of-ditsmod-app/extensions/#group-of-extensions
 [105]: /components-of-ditsmod-app/http-interceptors/
 [106]: /components-of-ditsmod-app/guards/
