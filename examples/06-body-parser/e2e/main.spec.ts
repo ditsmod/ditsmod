@@ -2,8 +2,6 @@ import request from 'supertest';
 import { TestApplication } from '@ditsmod/testing';
 import { HttpServer, Providers, Status } from '@ditsmod/core';
 import { BodyParserConfig } from '@ditsmod/body-parser';
-import { PreRouterExtension } from '@ditsmod/routing';
-import { TestPreRouterExtension } from '@ditsmod/routing/testing';
 
 import { AppModule } from '#app/app.module.js';
 
@@ -15,7 +13,6 @@ describe('06-body-parser', () => {
     const providers = new Providers().useValue<BodyParserConfig>(BodyParserConfig, { jsonOptions: { limit: '9b' } });
 
     server = await TestApplication.createTestApp(AppModule)
-      .setExtensionProviders([{ token: PreRouterExtension, useClass: TestPreRouterExtension }])
       .overrideProviders([...providers])
       .getServer();
     testAgent = request(server);
