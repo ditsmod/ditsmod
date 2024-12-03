@@ -1,12 +1,9 @@
-import { AppOptions, ModuleType, SystemLogMediator, Application, ModuleManager } from '@ditsmod/core';
+import { AppOptions, ModuleType, SystemLogMediator, Application } from '@ditsmod/core';
 
-import { TestModuleManager } from './test-module-manager.js';
 import { TestProvider } from './types.js';
 import { TestAppInitializer } from './test-app-initializer.js';
 
 export class TestApplication extends Application {
-  protected testModuleManager: TestModuleManager;
-  protected appModule: ModuleType;
   protected testAppInitializer: TestAppInitializer;
 
   /**
@@ -16,15 +13,12 @@ export class TestApplication extends Application {
   static createTestApp(appModule: ModuleType, appOptions?: AppOptions) {
     const app = new this();
     try {
-      app.appModule = appModule;
       app.init(appOptions);
       if (!app.appOptions.loggerConfig) {
         app.appOptions.loggerConfig = { level: 'off' };
       }
-      app.testModuleManager = new TestModuleManager(app.systemLogMediator);
-      app.testModuleManager.scanRootModule(app.appModule);
-      app.testAppInitializer = new TestAppInitializer(app.appOptions, app.testModuleManager, app.systemLogMediator);
-      app.testAppInitializer.setProvidersPerApp([{ token: TestModuleManager, useToken: ModuleManager }]);
+      const moduleManager = app.scanRootModule(appModule);
+      app.testAppInitializer = new TestAppInitializer(app.appOptions, moduleManager, app.systemLogMediator);
       return app;
     } catch (err: any) {
       app.handleError(err);

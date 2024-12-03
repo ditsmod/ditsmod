@@ -2,13 +2,10 @@ import { AppOptions, ModuleType, rootModule, Router } from '@ditsmod/core';
 import { Server } from 'node:http';
 
 import { TestApplication } from './test-application.js';
-import { TestModuleManager } from './test-module-manager.js';
 
 describe('TestApplication', () => {
   class TestApplicationMock extends TestApplication {
     declare preTestApplication: TestApplicationMock;
-    declare testModuleManager: TestModuleManager;
-    declare appOptions: AppOptions;
     static override async create(appModule: ModuleType, appOptions?: AppOptions) {
       return super.createTestApp(appModule, appOptions) as unknown as TestApplicationMock;
     }
@@ -25,19 +22,6 @@ describe('TestApplication', () => {
   describe('create()', () => {
     it('not throw an error', async () => {
       await expect(TestApplicationMock.create(RootModule1, { path })).resolves.not.toThrow();
-    });
-
-    it('TestModuleManager is inited', async () => {
-      const mock = await TestApplicationMock.create(RootModule1, { path });
-      expect(mock.testModuleManager).toBeInstanceOf(TestModuleManager);
-    });
-
-    it('TestModuleManager has metadata of the root module', async () => {
-      const mock = await TestApplicationMock.create(RootModule1, { path });
-      mock.testModuleManager.scanRootModule(RootModule1);
-      const meta = mock.testModuleManager.getMetadata(RootModule1);
-      expect(meta?.providersPerApp[0]).toBe(Service1);
-      expect(mock.appOptions.path).toBe(path);
     });
   });
 
