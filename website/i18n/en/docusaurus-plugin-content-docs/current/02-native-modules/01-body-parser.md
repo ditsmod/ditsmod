@@ -124,6 +124,26 @@ Depending on whether the controller is [singleton][3] or not, the result of the 
   }
   ```
 
+## Disabling the Request Body Parser
+
+Of course, the first thing you can do to disable the request body parser is to avoid importing `@ditsmod/body-parser` into your module, either globally or locally. Additionally, you can disable the parser for a specific controller as follows:
+
+```ts {6}
+import { controller } from '@ditsmod/core';
+import { BodyParserConfig } from '@ditsmod/body-parser';
+
+@controller({
+  providersPerRou: [
+    { token: BodyParserConfig, useValue: { acceptMethods: [] } }
+  ],
+})
+export class SomeController {
+  // ...
+}
+```
+
+That is, this way you pass an empty array, instead of the default array `['POST', 'PUT', 'PATCH']`.
+
 ## File Uploads
 
 Depending on whether the controller is [singleton][3] or not, the method of obtaining the parser and the signatures of its methods differ slightly:
