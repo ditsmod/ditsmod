@@ -37,15 +37,14 @@ app.listen(3000, '0.0.0.0');
 ```
 
 ```ts
-import { controller, Res, rootModule, Application } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
-import { RoutingModule } from '@ditsmod/routing';
+import { controller, rootModule, Application } from '@ditsmod/core';
+import { route, RoutingModule } from '@ditsmod/routing';
 
 @controller()
 class ExampleController {
   @route('GET', 'hello')
-  tellHello(res: Res) {
-    res.send('Hello, World!');
+  tellHello() {
+    return 'Hello, World!';
   }
 }
 
