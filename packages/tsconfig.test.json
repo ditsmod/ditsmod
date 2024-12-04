@@ -8,7 +8,6 @@
     { "path": "jwt/tsconfig.unit.json" },
     { "path": "openapi/tsconfig.unit.json" },
     { "path": "openapi-validation/tsconfig.unit.json" },
-    { "path": "return/tsconfig.unit.json" },
     { "path": "routing/tsconfig.unit.json" },
     { "path": "session-cookie/tsconfig.unit.json" },
     { "path": "sqb/tsconfig.unit.json" },
