@@ -3,28 +3,27 @@ slug: /
 sidebar_position: 1
 ---
 
-# Introduction
+# What is Ditsmod
 
-## About the project
+## Introduction to Ditsmod
 
-Ditsmod is a Node.js web framework, named **DI** + **TS** + **Mod** to emphasize its important components: it has **D**ependency **I**njection, written in **T**ype**S**cript, and designed for good **Mod**ularity.
+Ditsmod is a highly extensible and fast Node.js-based web framework. Its name combines **DI** + **TS** + **Mod**, emphasizing its key components: it features **D**ependency **I**njection, is written in **T**ype**S**cript using ESM format, and is designed for robust **Mod**ularity.
 
-The main features of Ditsmod:
+### Key Features of Ditsmod
 
-- Modular architecture on decorators, which allows you to declaratively describe the structure of the application.
-- A convenient mechanism for [specifying and resolving dependencies][8] between different classes: you specify the instances of which classes you need in the constructor, and DI does the hard work of "how to get them".
-- Ability to write your own extensions (sometimes called plugins) that can be asynchronously initialized and that can depend on each other.
-- Ability to dynamically add and remove modules after starting the web server, without the need to restart.
-- Has OpenAPI support, and has the ability to validate queries based on OpenAPI metadata.
-- To date, [Ditsmod is one of the fastest][14] among Node.js web frameworks:
+- **Modular architecture** with decorators, enabling declarative application structure definition.
+- Support for creating custom extensions (sometimes referred to as plugins) that can initialize asynchronously and depend on one another.
+- Dynamic module addition and removal after the server starts, without requiring a restart.
+- Built-in **OpenAPI** support with request validation based on OpenAPI metadata.
+- As of today, [Ditsmod is one of the fastest Node.js web frameworks][14]:
 
 ![Techempower benchmarks](/img/tech-empower-benchmarks.png)
 
-Some concepts of Ditsmod architecture are taken from Angular concepts, and DI is built based on the native Angular DI module.
+Some architectural concepts in Ditsmod are inspired by [Angular][9], with its DI system built on Angular's native DI module.
 
 ### ExpressJS vs. Ditsmod
 
-For comparison, the following two examples show the minimal code required to run ExpressJS and Ditsmod applications.
+For comparison, the following examples demonstrate the minimal code needed to start applications with ExpressJS and Ditsmod.
 
 ```js
 import express from 'express';
