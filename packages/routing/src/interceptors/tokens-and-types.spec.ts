@@ -24,7 +24,7 @@ import {
 import { ChainMaker } from './chain-maker.js';
 import { DefaultHttpBackend } from './default-http-backend.js';
 import { HttpBackend, HttpFrontend, HttpHandler, HttpInterceptor } from './tokens-and-types.js';
-import { HTTP_INTERCEPTORS } from '../types.js';
+import { HTTP_INTERCEPTORS } from '../constants.js';
 
 describe('HttpInterceptor', () => {
   const jestFn = jest.fn((interceptorName: string) => interceptorName);

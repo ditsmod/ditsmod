@@ -7,7 +7,7 @@ import {
   HttpInterceptorHandler,
   SingletonHttpBackend,
 } from './tokens-and-types.js';
-import { HTTP_INTERCEPTORS } from '../types.js';
+import { HTTP_INTERCEPTORS } from '../constants.js';
 
 class PreHttpBackend implements HttpBackend {
   constructor(

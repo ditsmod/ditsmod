@@ -4,7 +4,7 @@ import { DefaultRouter } from './router.js';
 import { RoutingErrorMediator } from './router-error-mediator.js';
 import { RoutesExtension } from './extensions/routes.extension.js';
 import { PreRouterExtension } from './extensions/pre-router.extension.js';
-import { ROUTES_EXTENSIONS, PRE_ROUTER_EXTENSIONS } from './types.js';
+import { ROUTES_EXTENSIONS, PRE_ROUTER_EXTENSIONS } from './constants.js';
 import { RouteMeta } from './route-data.js';
 
 /**

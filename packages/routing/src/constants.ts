@@ -1,0 +1,15 @@
+import { InjectionToken, Extension } from '@ditsmod/core';
+import { HttpInterceptor } from './interceptors/tokens-and-types.js';
+import { MetadataPerMod3 } from './types.js';
+
+
+export const HTTP_INTERCEPTORS = new InjectionToken<HttpInterceptor[]>('HTTP_INTERCEPTORS');
+/**
+ * A group of extensions that setting routes for router.
+ */
+
+export const PRE_ROUTER_EXTENSIONS = new InjectionToken<Extension<void>[]>('PRE_ROUTER_EXTENSIONS');
+/**
+ * A group of extensions that returns `MetadataPerMod3[]` for a router.
+ */
+export const ROUTES_EXTENSIONS = new InjectionToken<Extension<MetadataPerMod3>[]>('ROUTES_EXTENSIONS');

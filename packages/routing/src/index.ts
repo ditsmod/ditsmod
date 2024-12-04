@@ -1,6 +1,6 @@
 export { DefaultRouter } from './router.js';
 export { Tree } from './tree.js';
-export { RouteParam, ROUTES_EXTENSIONS, PRE_ROUTER_EXTENSIONS, MetadataPerMod3 } from './types.js';
+export { RouteParam, MetadataPerMod3 } from './types.js';
 export { RoutingModule } from './routing.module.js';
 export { RoutingErrorMediator } from './router-error-mediator.js';
 export { RoutesExtension } from './extensions/routes.extension.js';
@@ -29,4 +29,4 @@ export {
   HttpInterceptorHandler,
   SingletonHttpBackend,
 } from '#interceptors/tokens-and-types.js';
-export { HTTP_INTERCEPTORS } from './types.js';
+export { ROUTES_EXTENSIONS, PRE_ROUTER_EXTENSIONS, HTTP_INTERCEPTORS } from './constants.js';
