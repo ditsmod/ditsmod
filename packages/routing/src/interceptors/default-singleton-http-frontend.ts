@@ -7,6 +7,10 @@ import { SILENT_RES } from '../constants.js';
 @injectable()
 export class DefaultSingletonHttpFrontend implements HttpFrontend {
   async intercept(next: HttpHandler, ctx: SingletonRequestContext) {
+    this.preIntercept(ctx).send(ctx, await next.handle());
+  }
+
+  preIntercept(ctx: SingletonRequestContext) {
     if (ctx.queryString) {
       ctx.queryParams = parse(ctx.queryString);
     }
@@ -15,7 +19,7 @@ export class DefaultSingletonHttpFrontend implements HttpFrontend {
       ctx.aPathParams.forEach((param) => (pathParams[param.key] = param.value));
       ctx.pathParams = pathParams;
     }
-    this.send(ctx, await next.handle()); // Controller's route returned value.
+    return this;
   }
 
   send(ctx: RequestContext, val: any) {

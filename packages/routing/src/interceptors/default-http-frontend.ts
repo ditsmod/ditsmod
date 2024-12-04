@@ -29,7 +29,7 @@ export class DefaultHttpFrontend implements HttpFrontend {
     this.send(ctx, await next.handle()); // Controller's route returned value.
   }
 
-  send(ctx: RequestContext, val: any) {
+  protected send(ctx: RequestContext, val: any) {
     if (ctx.rawRes.headersSent || val === SILENT_RES) {
       return;
     }

@@ -33,11 +33,13 @@ import {
   getToken,
   getProviderTarget,
   ModuleManager,
+  HttpMethod,
+  Status,
 } from '@ditsmod/core';
 import { coreChannel } from '@ditsmod/core/diagnostics-channel';
 
 import { MetadataPerMod3, PreparedRouteMeta } from '../types.js';
-import { HTTP_INTERCEPTORS, ROUTES_EXTENSIONS } from '../constants.js';
+import { HTTP_INTERCEPTORS, ROUTES_EXTENSIONS, SILENT_RES } from '../constants.js';
 import { RoutingErrorMediator } from '../router-error-mediator.js';
 import { ControllerMetadata } from '../controller-metadata.js';
 import { SingletonInterceptorWithGuards } from '#interceptors/singleton-interceptor-with-guards.js';
@@ -207,17 +209,11 @@ export class PreRouterExtension implements Extension<void> {
     routeHandler: (ctx: SingletonRequestContext) => Promise<any>,
     errorHandler: HttpErrorHandler,
   ) {
+    const interceptor = new DefaultSingletonHttpFrontend();
     return (async (rawReq, rawRes, aPathParams, queryString) => {
       const ctx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString) as SingletonRequestContext;
       try {
-        if (queryString) {
-          ctx.queryParams = parse(queryString);
-        }
-        if (aPathParams?.length) {
-          ctx.pathParams = {};
-          aPathParams.forEach((param) => (ctx.pathParams![param.key] = param.value));
-        }
-        await routeHandler!(ctx);
+        interceptor.preIntercept(ctx).send(ctx, await routeHandler(ctx));
       } catch (err: any) {
         await errorHandler.handleError(err, ctx);
       }
