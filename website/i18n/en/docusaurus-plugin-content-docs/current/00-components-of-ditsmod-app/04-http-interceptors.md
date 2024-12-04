@@ -45,9 +45,7 @@ Given that starting from `PreRouter` and to the controller method, a promise is 
 
 As `PreRouter`, `HttpFrontend`, `InterceptorWithGuards`, and `HttpBackend` instances are created using DI, you can replace them with your own version of the respective classes. For example, if you don't just want to send a 501 status when the required route is missing, but also want to add some text or change headers, you can substitute [PreRouter][7] with your own class.
 
-Each call to the interceptor returns `Promise<any>`, and it eventually leads to a controller method tied to the corresponding route. This means that in the interceptor you can listen for the result of promise resolve, which returns the method of the controller. However, at the moment (Ditsmod v2.0.0), `HttpFrontend` and `HttpBackend` by default ignores everything that returns the controller or interceptors, so listening to the resolution of a promise can be useful only for collecting metrics.
-
-On the other hand, with DI you can easily replace `HttpFrontend` or `HttpBackend` with your own interceptors to take into account the return value of the controller method. One of the variants of this functionality is implemented in the [@ditsmod/return][104] module.
+Each call to the interceptor returns `Promise<any>`, and it eventually leads to a controller method tied to the corresponding route. This means that in the interceptor you can listen for the result of promise resolve, which returns the method of the controller.
 
 ### Singleton
 
@@ -118,7 +116,6 @@ In this case, the interceptors are passed in the module's metadata. They can als
 [8]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/types/route-data.ts
 [9]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.16.0/packages/body-parser/src/body-parser.extension.ts#L54
 
-[104]: /native-modules/return
 [106]: /components-of-ditsmod-app/dependency-injection
 [107]: /components-of-ditsmod-app/dependency-injection#multi-providers
 [108]: /components-of-ditsmod-app/extensions

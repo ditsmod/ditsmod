@@ -9,7 +9,6 @@
     { "path": "jwt/tsconfig.build.json" },
     { "path": "i18n/tsconfig.build.json" },
     { "path": "cors/tsconfig.build.json" },
-    { "path": "return/tsconfig.build.json" },
     { "path": "versions/tsconfig.build.json" },
     { "path": "openapi-validation/tsconfig.build.json" },
     { "path": "sqb/tsconfig.build.json" },
