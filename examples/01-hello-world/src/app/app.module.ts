@@ -1,24 +1,24 @@
-import { controller, Res, rootModule, Providers, SingletonRequestContext } from '@ditsmod/core';
+import { controller, rootModule, Providers } from '@ditsmod/core';
 import { route, RoutingModule } from '@ditsmod/routing';
 
 @controller()
 export class DefaultController {
   @route('GET', 'default-controller')
-  tellHello(res: Res) {
-    res.send('Hello, World!');
+  tellHello() {
+    return 'Hello, World!';
   }
 
   @route(['GET', 'POST'], 'method-name-as-symbol')
-  [Symbol()](res: Res) {
-    res.send('Hello, World!');
+  [Symbol()]() {
+    return 'Hello, World!';
   }
 }
 
 @controller({ scope: 'module' })
 export class SingletonController {
   @route('GET', 'singleton-controller')
-  tellHello(ctx: SingletonRequestContext) {
-    ctx.send('Hello, World!');
+  tellHello() {
+    return 'Hello, World!';
   }
 }
 
