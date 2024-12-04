@@ -263,7 +263,7 @@ export class AppInitializer {
 
     for (const [, metadataPerMod2] of mMetadataPerMod2) {
       let { meta } = metadataPerMod2;
-      meta = this.prepareMeta(meta);
+      meta = this.patchMetaBeforeExtensionHanling(meta);
       const injectorPerMod = injectorPerApp.resolveAndCreateChild(meta.providersPerMod);
       injectorPerMod.pull(Logger);
       const systemLogMediator = injectorPerMod.pull(SystemLogMediator) as SystemLogMediator;
@@ -306,7 +306,8 @@ export class AppInitializer {
 
     for (const [modRefId, metadataPerMod2] of mMetadataPerMod2) {
       try {
-        const injectorPerMod = this.initModuleAndGetInjectorPerMod(metadataPerMod2.meta);
+        const meta = this.patchMetaAfterStage1(metadataPerMod2.meta);
+        const injectorPerMod = this.initModuleAndGetInjectorPerMod(meta);
         this.moduleManager.setInjectorPerMod(modRefId, injectorPerMod);
       } catch (err: any) {
         const debugModuleName = getDebugClassName(modRefId);
@@ -401,7 +402,16 @@ export class AppInitializer {
    *
    * See `TestAppInitializer` in `@ditsmod/testing` for more info.
    */
-  protected prepareMeta(meta: NormalizedModuleMetadata) {
+  protected patchMetaBeforeExtensionHanling(meta: NormalizedModuleMetadata) {
+    return meta;
+  }
+
+  /**
+   * This method is needed to be able to forcibly change the metadata (for example, during testing).
+   *
+   * See `TestAppInitializer` in `@ditsmod/testing` for more info.
+   */
+  protected patchMetaAfterStage1(meta: NormalizedModuleMetadata) {
     return meta;
   }
 
