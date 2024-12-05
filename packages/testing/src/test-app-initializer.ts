@@ -24,7 +24,7 @@ export class TestAppInitializer extends AppInitializer {
     return this.providersToOverride;
   }
 
-  protected override patchMetaAfterStage1(meta: NormalizedModuleMetadata) {
+  protected override overrideMetaAfterStage1(meta: NormalizedModuleMetadata) {
     meta.providersPerApp.push(...this.providersPerApp);
     meta.extensionsProviders.push(...this.extensionsProviders);
     const providersToOverride = this.getProvidersToOverride();
