@@ -1,4 +1,4 @@
-import { AnyObj, Injector, QUERY_PARAMS } from '@ditsmod/core';
+import { AnyObj, Injector, ModuleExtract, QUERY_PARAMS } from '@ditsmod/core';
 import { jest } from '@jest/globals';
 
 import { I18nOptions } from '#src/types/mix.js';
@@ -6,14 +6,17 @@ import { DictService } from '#src/dict.service.js';
 import { CommonDict } from './current/index.js';
 import { CommonUkDict } from './current/common-uk.dict.js';
 import { I18nLogMediator } from '#src/i18n-log-mediator.js';
+import { I18nErrorMediator } from '#src/i18n-error-mediator.js';
 
 describe('DictService', () => {
   function getService(queryParams?: AnyObj, i18nOptions?: I18nOptions) {
     const injector = Injector.resolveAndCreate([
       DictService,
+      I18nErrorMediator,
       { token: I18nLogMediator, useValue: { missingLng: jest.fn } },
       { token: QUERY_PARAMS, useValue: queryParams },
       { token: I18nOptions, useValue: i18nOptions },
+      { token: ModuleExtract, useValue: { moduleName: 'test-i18n' } },
       { token: CommonDict, useClass: CommonDict, multi: true },
       { token: CommonDict, useClass: CommonUkDict, multi: true },
     ]);
