@@ -33,13 +33,11 @@ import {
   getToken,
   getProviderTarget,
   ModuleManager,
-  HttpMethod,
-  Status,
 } from '@ditsmod/core';
 import { coreChannel } from '@ditsmod/core/diagnostics-channel';
 
 import { MetadataPerMod3, PreparedRouteMeta } from '../types.js';
-import { HTTP_INTERCEPTORS, ROUTES_EXTENSIONS, SILENT_RES } from '../constants.js';
+import { HTTP_INTERCEPTORS, ROUTES_EXTENSIONS } from '../constants.js';
 import { RoutingErrorMediator } from '../router-error-mediator.js';
 import { ControllerMetadata } from '../controller-metadata.js';
 import { SingletonInterceptorWithGuards } from '#interceptors/singleton-interceptor-with-guards.js';

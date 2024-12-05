@@ -2,7 +2,6 @@ import { parse } from 'node:querystring';
 import { AnyObj, HttpMethod, injectable, RequestContext, SingletonRequestContext, Status } from '@ditsmod/core';
 
 import { HttpFrontend, HttpHandler } from './tokens-and-types.js';
-import { SILENT_RES } from '../constants.js';
 
 @injectable()
 export class DefaultSingletonHttpFrontend implements HttpFrontend {
@@ -23,7 +22,7 @@ export class DefaultSingletonHttpFrontend implements HttpFrontend {
   }
 
   send(ctx: RequestContext, val: any) {
-    if (ctx.rawRes.headersSent || val === SILENT_RES) {
+    if (ctx.rawRes.headersSent) {
       return;
     }
     let { statusCode } = ctx.rawRes;
