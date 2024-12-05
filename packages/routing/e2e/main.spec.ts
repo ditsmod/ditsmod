@@ -31,15 +31,15 @@ describe('@ditsmod/routing/testing', () => {
 
   it('override services at any level', async () => {
     const server = await TestApplication.createTestApp(AppModule)
-      .overrideProviders([
-        ...new Providers()
+      .overrideProviders(
+        new Providers()
           .useValue<ServicePerApp>(ServicePerApp, { method: methodPerApp })
           .useValue<ServicePerMod>(ServicePerMod, { method: methodPerMod })
           .useValue<ServicePerRou>(ServicePerRou, { method: methodPerRou })
           .useValue<ServicePerReq>(ServicePerReq, { method: methodPerReq })
           .useValue<ServicePerRou2>(ServicePerRou2, { method: methodPerRou2 })
           .useValue<ServicePerReq2>(ServicePerReq2, { method: methodPerReq2 }),
-      ])
+      )
       .getServer();
 
     const testAgent = request(server);

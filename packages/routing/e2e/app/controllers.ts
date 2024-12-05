@@ -1,4 +1,4 @@
-import { controller, Injector, Res } from '@ditsmod/core';
+import { controller, Injector } from '@ditsmod/core';
 
 import { route } from '#mod/decorators/route.js';
 import {
@@ -17,38 +17,38 @@ import {
 })
 export class Controller1 {
   @route('GET', 'per-app')
-  perApp(res: Res, perApp: ServicePerApp) {
-    res.send(perApp.method());
+  perApp(perApp: ServicePerApp) {
+    return perApp.method();
   }
 
   @route('GET', 'per-mod')
-  perMod(res: Res, perMod: ServicePerMod) {
-    res.send(perMod.method());
+  perMod(perMod: ServicePerMod) {
+    return perMod.method();
   }
 
   @route('GET', 'per-rou')
-  perRou(res: Res, perRou: ServicePerRou) {
-    res.send(perRou.method());
+  perRou(perRou: ServicePerRou) {
+    return perRou.method();
   }
 
   @route('GET', 'per-req')
-  perReq(res: Res, perReq: ServicePerReq) {
-    res.send(perReq.method());
+  perReq(perReq: ServicePerReq) {
+    return perReq.method();
   }
 
   @route('GET', 'per-rou2')
-  perRou2(res: Res, perRou2: ServicePerRou2) {
-    res.send(perRou2.method());
+  perRou2(perRou2: ServicePerRou2) {
+    return perRou2.method();
   }
 
   @route('GET', 'per-req2')
-  perReq2(res: Res, perReq2: ServicePerReq2) {
-    res.send(perReq2.method());
+  perReq2(perReq2: ServicePerReq2) {
+    return perReq2.method();
   }
 
   @route('GET', 'per-rou3')
-  perRou3(res: Res, injector: Injector) {
+  perRou3(injector: Injector) {
     const perRou3 = injector.get(ServicePerRou3); // This provider is not passed to DI
-    res.send(perRou3.method());
+    return perRou3.method();
   }
 }
