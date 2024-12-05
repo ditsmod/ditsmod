@@ -27,7 +27,7 @@
   },
   "include": [
     "src",
-    "test"
+    "e2e",
   ],
   "files": [],
   "references": [

@@ -4,9 +4,6 @@ import { I18nProviders } from '#src/i18n-providers.js';
 import { CommonDict } from './current/index.js';
 import { CommonUkDict } from './current/common-uk.dict.js';
 import { I18nOptions, I18N_TRANSLATIONS, Translations } from '#src/types/mix.js';
-import { DictService } from '#src/dict.service.js';
-import { I18nLogMediator } from '#src/i18n-log-mediator.js';
-import { I18nTransformer } from '#src/i18n-transformer.js';
 
 describe('I18nProviders', () => {
   it('returns arrays with two elements of DI providers', () => {
@@ -31,7 +28,7 @@ describe('I18nProviders', () => {
     let providers: I18nProviders;
 
     function callback() {
-      providers = new Providers().use(I18nProviders);
+      providers = new Providers().$use(I18nProviders);
       providers.i18n({ current: [[CommonDict, CommonUkDict]] }, { defaultLng: 'uk' });
     }
 
