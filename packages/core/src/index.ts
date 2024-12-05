@@ -36,6 +36,7 @@ export {
   Extension,
   DebugStage1Meta,
   Stage1GroupMeta,
+  Stage1GroupMeta2,
   Stage1GroupMetaPerApp,
 } from '#extension/extension-types.js';
 export { ModuleExtract } from '#types/module-extract.js';
