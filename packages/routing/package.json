@@ -15,6 +15,9 @@
       "default": "./dist/index.js"
     }
   },
+  "./diagnostics-channel": {
+    "default": "./dist/diagnostics-channel.js"
+  },
   "imports": {
     "#mod/*": "./dist/*",
     "#interceptors/*": "./dist/interceptors/*"

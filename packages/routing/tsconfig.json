@@ -7,6 +7,7 @@
       "@ditsmod/testing": ["../testing/src/index.js"],
       "#interceptors/*": ["./src/interceptors/*"],
       "#mod/*": ["./src/*"],
+      "#diagnostics-channel": ["./src/diagnostics-channel.js"],
     },
     "module": "nodenext",
     // "moduleResolution": "nodenext",

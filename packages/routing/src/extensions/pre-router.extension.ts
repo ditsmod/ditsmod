@@ -1,4 +1,3 @@
-import { parse } from 'node:querystring';
 import {
   A_PATH_PARAMS,
   RAW_REQ,
@@ -34,7 +33,6 @@ import {
   getProviderTarget,
   ModuleManager,
 } from '@ditsmod/core';
-import { coreChannel } from '@ditsmod/core/diagnostics-channel';
 
 import { MetadataPerMod3, PreparedRouteMeta } from '../types.js';
 import { HTTP_INTERCEPTORS, ROUTES_EXTENSIONS } from '../constants.js';
@@ -50,6 +48,7 @@ import { DefaultSingletonChainMaker } from '#interceptors/default-singleton-chai
 import { DefaultSingletonHttpFrontend } from '#interceptors/default-singleton-http-frontend.js';
 import { DefaultHttpFrontend } from '#interceptors/default-http-frontend.js';
 import { HttpBackend, HttpFrontend } from '#interceptors/tokens-and-types.js';
+import { routeChannel } from '../diagnostics-channel.js';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
@@ -371,7 +370,7 @@ export class PreRouterExtension implements Extension<void> {
       const httpMethods = Array.isArray(httpMethod) ? httpMethod : [httpMethod];
       httpMethods.forEach((httpMethod) => {
         this.log.printRoute(this, httpMethod, path, countOfGuards);
-        coreChannel('ditsmod.route').publish({ moduleName, httpMethod, path, countOfGuards });
+        routeChannel('ditsmod.route').publish({ moduleName, httpMethod, path, countOfGuards });
         if (httpMethod == 'ALL') {
           this.router.all(`/${path}`, handle);
         } else {

@@ -47,7 +47,7 @@ export type TypedChannelListener<T extends Channels> = (message: ChannelMap[T], 
  * @param name The channel name
  * @return The named channel object
  */
-export function coreChannel<T extends Channels>(name: T): TypedChannel<T> {
+export function routeChannel<T extends Channels>(name: T): TypedChannel<T> {
   return channel(name) as any;
 }
 
@@ -67,7 +67,7 @@ export function coreChannel<T extends Channels>(name: T): TypedChannel<T> {
  * @param name The channel name
  * @param onMessage The handler to receive channel messages
  */
-export function coreSubscribe<T extends Channels>(name: T, onMessage: TypedChannelListener<T>): void {
+export function routeSubscribe<T extends Channels>(name: T, onMessage: TypedChannelListener<T>): void {
   return subscribe(name, onMessage as any);
 }
 
@@ -90,7 +90,7 @@ export function coreSubscribe<T extends Channels>(name: T, onMessage: TypedChann
  * @param onMessage The previous subscribed handler to remove
  * @return `true` if the handler was found, `false` otherwise.
  */
-export function coreUnsubscribe<T extends Channels>(name: T, onMessage: TypedChannelListener<T>): boolean {
+export function routeUnsubscribe<T extends Channels>(name: T, onMessage: TypedChannelListener<T>): boolean {
   return unsubscribe(name, onMessage as any);
 }
 
@@ -112,7 +112,7 @@ export function coreUnsubscribe<T extends Channels>(name: T, onMessage: TypedCha
  * @param name The channel name
  * @return If there are active subscribers
  */
-export function coreHasSubscribers(name: Channels): boolean {
+export function routeHasSubscribers(name: Channels): boolean {
   return hasSubscribers(name);
 }
 
@@ -140,7 +140,7 @@ export function coreHasSubscribers(name: Channels): boolean {
  * @param nameOrChannels Channel name or object containing all the `TracingChannel Channels`
  * @return Collection of channels to trace with
  */
-export function coreTracingChannel<T extends TracingChannels>(
+export function routeTracingChannel<T extends TracingChannels>(
   nameOrChannels: T | TracingChannelCollection<T>,
 ): TypedTracingChannel<T> {
   return tracingChannel(nameOrChannels as any) as any;
