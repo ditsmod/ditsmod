@@ -12,7 +12,7 @@
     { "path": "routing/tsconfig.unit.json" },
     { "path": "session-cookie/tsconfig.unit.json" },
     { "path": "sqb/tsconfig.unit.json" },
-    { "path": "testing/tsconfig.unit.json" },
-    { "path": "versions/tsconfig.e2e.json" },
+    { "path": "testing/tsconfig.e2e.json" },
+    { "path": "versions/tsconfig.unit.json" },
   ]
 }
