@@ -1,7 +1,17 @@
-import { AppInitializer, NormalizedModuleMetadata, Provider, Providers } from '@ditsmod/core';
+import {
+  AppInitializer,
+  ExtensionCounters,
+  ExtensionsContext,
+  ExtensionsManager,
+  MetadataPerMod2,
+  NormalizedModuleMetadata,
+  Provider,
+  Providers,
+} from '@ditsmod/core';
 
 import { TestOverrider } from './test-overrider.js';
 import { TestProvider } from './types.js';
+import { TestExtensionsManager } from './test-extensions-manager.js';
 
 export class TestAppInitializer extends AppInitializer {
   protected providersToOverride: TestProvider[] = [];
@@ -30,5 +40,15 @@ export class TestAppInitializer extends AppInitializer {
     const providersToOverride = this.getProvidersToOverride();
     new TestOverrider().overrideAllProviders(this.perAppService, meta, providersToOverride);
     return meta;
+  }
+
+  protected override getProvidersForExtensions(
+    metadataPerMod2: MetadataPerMod2,
+    extensionCounters: ExtensionCounters,
+    extensionsContext: ExtensionsContext,
+  ): Provider[] {
+    const providers = super.getProvidersForExtensions(metadataPerMod2, extensionCounters, extensionsContext);
+    providers.push({ token: ExtensionsManager, useClass: TestExtensionsManager });
+    return providers;
   }
 }
