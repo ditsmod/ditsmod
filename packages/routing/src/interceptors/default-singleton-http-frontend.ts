@@ -6,10 +6,13 @@ import { HttpFrontend, HttpHandler } from './tokens-and-types.js';
 @injectable()
 export class DefaultSingletonHttpFrontend implements HttpFrontend {
   async intercept(next: HttpHandler, ctx: SingletonRequestContext) {
-    this.preIntercept(ctx).send(ctx, await next.handle());
+    this.before(ctx).after(ctx, await next.handle());
   }
 
-  preIntercept(ctx: SingletonRequestContext) {
+  /**
+   * This method is called before `intercept()`.
+   */
+  before(ctx: SingletonRequestContext) {
     if (ctx.queryString) {
       ctx.queryParams = parse(ctx.queryString);
     }
@@ -21,7 +24,10 @@ export class DefaultSingletonHttpFrontend implements HttpFrontend {
     return this;
   }
 
-  send(ctx: RequestContext, val: any) {
+  /**
+   * This method is called after `intercept()`.
+   */
+  after(ctx: RequestContext, val: any) {
     if (ctx.rawRes.headersSent) {
       return;
     }

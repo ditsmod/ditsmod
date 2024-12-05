@@ -211,7 +211,7 @@ export class PreRouterExtension implements Extension<void> {
     return (async (rawReq, rawRes, aPathParams, queryString) => {
       const ctx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString) as SingletonRequestContext;
       try {
-        interceptor.preIntercept(ctx).send(ctx, await routeHandler(ctx));
+        interceptor.before(ctx).after(ctx, await routeHandler(ctx));
       } catch (err: any) {
         await errorHandler.handleError(err, ctx);
       }

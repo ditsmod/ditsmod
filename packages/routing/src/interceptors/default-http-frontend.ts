@@ -1,22 +1,19 @@
 import { parse } from 'querystring';
-import {
-  AnyObj,
-  HttpMethod,
-  injectable,
-  Injector,
-  PATH_PARAMS,
-  QUERY_PARAMS,
-  RequestContext,
-  Status,
-} from '@ditsmod/core';
+import { AnyObj, injectable, Injector, PATH_PARAMS, QUERY_PARAMS, RequestContext } from '@ditsmod/core';
 
 import { HttpFrontend, HttpHandler } from './tokens-and-types.js';
+import { DefaultSingletonHttpFrontend } from './default-singleton-http-frontend.js';
+
+const singleton = new DefaultSingletonHttpFrontend();
 
 @injectable()
 export class DefaultHttpFrontend implements HttpFrontend {
   constructor(private injector: Injector) {}
-
   async intercept(next: HttpHandler, ctx: RequestContext) {
+    this.before(ctx).after(ctx, await next.handle());
+  }
+
+  protected before(ctx: RequestContext) {
     if (ctx.queryString) {
       this.injector.setByToken(QUERY_PARAMS, parse(ctx.queryString));
     }
@@ -25,31 +22,10 @@ export class DefaultHttpFrontend implements HttpFrontend {
       ctx.aPathParams.forEach((param) => (pathParams[param.key] = param.value));
       this.injector.setByToken(PATH_PARAMS, pathParams);
     }
-    this.send(ctx, await next.handle()); // Controller's route returned value.
+    return this;
   }
 
-  protected send(ctx: RequestContext, val: any) {
-    if (ctx.rawRes.headersSent) {
-      return;
-    }
-    let { statusCode } = ctx.rawRes;
-    if (!statusCode) {
-      const httpMethod = ctx.rawReq.method as HttpMethod;
-      if (httpMethod == 'GET') {
-        statusCode = Status.OK;
-      } else if (httpMethod == 'POST') {
-        statusCode = Status.CREATED;
-      } else if (httpMethod == 'OPTIONS') {
-        statusCode = Status.NO_CONTENT;
-      } else {
-        statusCode = Status.OK;
-      }
-    }
-
-    if (typeof val == 'object' || ctx.rawRes.getHeader('content-type')?.toString().includes('application/json')) {
-      ctx.sendJson(val, statusCode);
-    } else {
-      ctx.send(val, statusCode);
-    }
+  protected after(ctx: RequestContext, val: any) {
+    singleton.after(ctx, val);
   }
 }
