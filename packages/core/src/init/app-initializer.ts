@@ -272,12 +272,8 @@ export class AppInitializer {
         systemLogMediator.skippingStartExtensions(this);
         continue;
       }
-      const injectorForExtensions = this.getInjectorForExtensions(
-        metadataPerMod2,
-        extensionCounters,
-        extensionsContext,
-        injectorPerMod,
-      );
+      const providers = this.getProvidersForExtensions(metadataPerMod2, extensionCounters, extensionsContext);
+      const injectorForExtensions = injectorPerMod.resolveAndCreateChild(providers);
       const extensionsManager = injectorForExtensions.get(ExtensionsManager) as ExtensionsManager;
 
       systemLogMediator.startExtensions(this);
@@ -357,19 +353,21 @@ export class AppInitializer {
     return injectorPerMod;
   }
 
-  protected getInjectorForExtensions(
+  /**
+   * Note that this method is used for `@ditsmod/testing`.
+   */
+  protected getProvidersForExtensions(
     metadataPerMod2: MetadataPerMod2,
     extensionCounters: ExtensionCounters,
     extensionsContext: ExtensionsContext,
-    injectorPerMod: Injector,
-  ) {
-    return injectorPerMod.resolveAndCreateChild([
+  ): Provider[] {
+    return [
       ExtensionsManager,
       { token: ExtensionsContext, useValue: extensionsContext },
       { token: MetadataPerMod2, useValue: metadataPerMod2 },
       { token: ExtensionCounters, useValue: extensionCounters },
       ...metadataPerMod2.meta.extensionsProviders,
-    ]);
+    ];
   }
 
   protected async handleExtensionsPerMod(meta: NormalizedModuleMetadata, extensionsManager: ExtensionsManager) {
