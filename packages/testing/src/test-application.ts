@@ -1,4 +1,4 @@
-import { AppOptions, ModuleType, SystemLogMediator, Application } from '@ditsmod/core';
+import { AppOptions, ModuleType, SystemLogMediator, Application, Providers } from '@ditsmod/core';
 
 import { TestProvider } from './types.js';
 import { TestAppInitializer } from './test-app-initializer.js';
@@ -30,7 +30,7 @@ export class TestApplication extends Application {
    * Overrides providers at any level if there are matching providers (they have the same tokens)
    * at those levels. Therefore, this method does not always add providers to the DI.
    */
-  overrideProviders(providers: TestProvider[]) {
+  overrideProviders(providers: Providers | TestProvider[]) {
     this.testAppInitializer.overrideProviders(providers);
     return this;
   }

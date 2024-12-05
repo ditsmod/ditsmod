@@ -1,4 +1,4 @@
-import { AppInitializer, NormalizedModuleMetadata, Provider } from '@ditsmod/core';
+import { AppInitializer, NormalizedModuleMetadata, Provider, Providers } from '@ditsmod/core';
 
 import { TestOverrider } from './test-overrider.js';
 import { TestProvider } from './types.js';
@@ -16,7 +16,7 @@ export class TestAppInitializer extends AppInitializer {
     this.providersPerApp = providersPerApp;
   }
 
-  overrideProviders(providers: TestProvider[]) {
+  overrideProviders(providers: Providers | TestProvider[]) {
     this.providersToOverride.push(...providers);
   }
 
