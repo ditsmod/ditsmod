@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "@ditsmod/diagnostics",
+  "name": "@ditsmod/routing-diagnostics",
   "type": "module",
   "version": "3.0.0",
   "repository": {
@@ -32,7 +32,8 @@
   "author": "",
   "license": "MIT",
   "peerDependencies": {
-    "@ditsmod/core": "^3.0.0"
+    "@ditsmod/core": "^3.0.0",
+    "@ditsmod/routing": "^3.0.0"
   },
   "gitHead": "c64c99dc2b6f65bb3e7027e8f8dceeca7a8c2172"
 }

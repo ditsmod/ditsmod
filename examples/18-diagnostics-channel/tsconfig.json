@@ -9,7 +9,7 @@
       "@ditsmod/core": ["../../packages/core/src/index.js"],
       "@ditsmod/routing": ["../../packages/routing/src/index.js"],
       "@ditsmod/testing": ["../../packages/testing/src/index.js"],
-      "@ditsmod/diagnostics": ["../../packages/diagnostics/src/index.js"],
+      "@ditsmod/routing-diagnostics": ["../../packages/routing-diagnostics/src/index.js"],
     }
   },
   "include": ["src", "e2e"],
@@ -17,6 +17,6 @@
     { "path": "../../packages/core/tsconfig.build.json" },
     { "path": "../../packages/routing/tsconfig.build.json" },
     { "path": "../../packages/testing/tsconfig.build.json" },
-    { "path": "../../packages/diagnostics/tsconfig.build.json" },
+    { "path": "../../packages/routing-diagnostics/tsconfig.build.json" },
   ]
 }
