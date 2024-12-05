@@ -59,7 +59,12 @@ export class Providers {
 
   useFactory(token: NonNullable<unknown>, useFactory: AnyFn, deps?: any[], multi?: boolean): this;
   useFactory(token: NonNullable<unknown>, useFactory: UseFactoryTuple, multi?: boolean): this;
-  useFactory(token: NonNullable<unknown>, useFactory: UseFactoryTuple | AnyFn, depsOrMulti?: any[] | boolean, multi?: boolean) {
+  useFactory(
+    token: NonNullable<unknown>,
+    useFactory: UseFactoryTuple | AnyFn,
+    depsOrMulti?: any[] | boolean,
+    multi?: boolean,
+  ) {
     if (!this.true) {
       return this.self;
     }
@@ -121,7 +126,7 @@ const providers = new Providers().$if(true).useValue('token', 'value');
    * __Example 2__
    * 
 ```ts
-const value = new Providers()
+const providers = new Providers()
   .$if(false)
   .useValue('token1', 'value1')
   .useValue('token2', 'value2');
@@ -159,25 +164,29 @@ const value = new Providers()
   }
 
   const providers = [...new Providers()
-    .use(Plugin1)
-    .use(Plugin2)
+    .$use(Plugin1)
+    .$use(Plugin2)
     .method1()
     .method2()
     .useLogConfig({ level: 'trace' })
     .useClass(SomeService, ExtendedService)];
  * ```
  * 
- * That is, after using the use() method, you will be able to use plugin methods.
- * As you can see, each plugin method should only add providers if the`if (this.true)'
- * condition is truthy. Additionally, each method must return `this.self`.
- * 
- * This should be done so that the `providers.$if()` method works correctly.
+ * That is, after using the `.$use()` method, you will be able to use plugin methods.
+ * As you can see, each plugin method should only add providers if condition of `if (this.true)`
+ * is truthy. Additionally, each method must return `this.self`. This should be done so that
+ * the `providers.$if()` method works correctly.
  */
   $use<T extends Class<Providers>>(Plugin: T): T['prototype'] & this {
     Object.getOwnPropertyNames(Plugin.prototype)
       .filter((p) => p != 'constructor')
       .forEach((p) => {
-        (this as any)[p] = Plugin.prototype[p];
+        const maybeFn = Plugin.prototype[p] as AnyFn | unknown;
+        if (typeof maybeFn == 'function') {
+          (this as any)[p] = maybeFn.bind(this);
+        } else {
+          (this as any)[p] = maybeFn;
+        }
       });
     return this.self;
   }
@@ -201,8 +210,8 @@ const value = new Providers()
     return {
       next: () => {
         return {
-          done: !(counter in this.providers), 
-          value: this.providers[counter++], 
+          done: !(counter in this.providers),
+          value: this.providers[counter++],
         };
       },
     };
