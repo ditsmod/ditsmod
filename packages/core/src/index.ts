@@ -40,6 +40,7 @@ export {
   Stage1GroupMetaPerApp,
 } from '#extension/extension-types.js';
 export { ModuleExtract } from '#types/module-extract.js';
+export { Counter } from '#extension/counter.js';
 export { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 export { ProvidersMetadata } from '#types/providers-metadata.js';
 export { AppOptions } from '#types/app-options.js';
@@ -79,6 +80,7 @@ export {
   ProvidersForMod,
   Scope,
   ModRefId,
+  UnionToIntersection
 } from '#types/mix.js';
 export {
   ModuleMetadata,

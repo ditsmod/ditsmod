@@ -13,6 +13,34 @@ import { MetadataPerMod1 } from '#types/metadata-per-mod.js';
 import { AppendsWithParams, ModuleWithParams } from '#types/module-metadata.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 
+/**
+ * Auxiliary type for combining interfaces.
+ * 
+ * ### Usage
+ * 
+ * The following example shows a base class whose instance can be dynamically extended
+ * by plugins using the `$use()` method.
+ * 
+```ts
+import { Class, UnionToIntersection } from '@ditsmod/core';
+
+class Base {
+  $use<T extends Class<Base>[]>(...Plugins: T) {
+    Plugins.forEach((Plugin) => {
+      Object.getOwnPropertyNames(Plugin.prototype)
+        .filter((p) => p != 'constructor')
+        .forEach((p) => {
+          (this as any)[p] = Plugin.prototype[p];
+        });
+    });
+
+    return this as UnionToIntersection<InstanceType<T[number]>> & this;
+  }
+}
+```
+ */
+export type UnionToIntersection<U> = (U extends any ? (x: U) => any : never) extends (x: infer I) => any ? I : never;
+
 export type ModuleType<T extends AnyObj = AnyObj> = Class<T>;
 /**
  * Module reference ID.
