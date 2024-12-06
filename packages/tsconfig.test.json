@@ -10,6 +10,7 @@
     { "path": "openapi-validation/tsconfig.unit.json" },
     { "path": "routing/tsconfig.e2e.json" },
     { "path": "routing-diagnostics/tsconfig.unit.json" },
+    { "path": "routing-testing/tsconfig.unit.json" },
     { "path": "session-cookie/tsconfig.unit.json" },
     { "path": "sqb/tsconfig.unit.json" },
     { "path": "testing/tsconfig.unit.json" },
