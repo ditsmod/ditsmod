@@ -55,10 +55,10 @@ describe('ExtensionsManager', () => {
       const injector = Injector.resolveAndCreate([
         ...defaultProvidersPerApp,
         ...getExtensionProviderList([
-          { token: MY_EXTENSIONS1, extension: Extension1 },
-          { token: MY_EXTENSIONS2, extension: Extension2 },
-          { token: MY_EXTENSIONS3, extension: Extension3 },
-          { token: MY_EXTENSIONS4, extension: Extension4 },
+          { group: MY_EXTENSIONS1, extension: Extension1 },
+          { group: MY_EXTENSIONS2, extension: Extension2 },
+          { group: MY_EXTENSIONS3, extension: Extension3 },
+          { group: MY_EXTENSIONS4, extension: Extension4 },
         ]),
         MockExtensionsManager,
         ExtensionsContext,

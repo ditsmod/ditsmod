@@ -16,7 +16,7 @@ describe('getExtensionProvider', () => {
     const providers: ExtensionProvider[] = [Extension1, { token: MY_EXTENSION, useToken: Extension1, multi: true }];
 
     it('extension without exports (two arguments)', () => {
-      const args: ExtensionOptions = { extension: Extension1, token: MY_EXTENSION };
+      const args: ExtensionOptions = { extension: Extension1, group: MY_EXTENSION };
       expect(getExtensionProvider(args)).toEqual({
         exports: [],
         providers,
@@ -33,7 +33,7 @@ describe('getExtensionProvider', () => {
     });
 
     it('extension without exports (three arguments)', () => {
-      const args: ExtensionOptions = { extension: Extension1, token: MY_EXTENSION, exported: false };
+      const args: ExtensionOptions = { extension: Extension1, group: MY_EXTENSION, exported: false };
       expect(getExtensionProvider(args)).toEqual({
         exports: [],
         providers,
@@ -41,7 +41,7 @@ describe('getExtensionProvider', () => {
     });
 
     it('extension with exports', () => {
-      const args: ExtensionOptions = { extension: Extension1, token: MY_EXTENSION, exported: true };
+      const args: ExtensionOptions = { extension: Extension1, group: MY_EXTENSION, exported: true };
       expect(getExtensionProvider(args)).toEqual({
         exports: [Extension1, MY_EXTENSION],
         providers,
@@ -57,7 +57,7 @@ describe('getExtensionProvider', () => {
     ];
 
     it('extension without exports (three arguments)', () => {
-      const args: ExtensionOptions = { extension: Extension1, token: MY_EXTENSION, nextToken: OTHER_EXTENSION };
+      const args: ExtensionOptions = { extension: Extension1, group: MY_EXTENSION, beforeGroup: OTHER_EXTENSION };
       expect(getExtensionProvider(args)).toEqual({
         exports: [],
         providers,
@@ -67,8 +67,8 @@ describe('getExtensionProvider', () => {
     it('extension without exports (foure arguments)', () => {
       const args: ExtensionOptions = {
         extension: Extension1,
-        token: MY_EXTENSION,
-        nextToken: OTHER_EXTENSION,
+        group: MY_EXTENSION,
+        beforeGroup: OTHER_EXTENSION,
         exported: false,
       };
       expect(getExtensionProvider(args)).toEqual({
@@ -80,8 +80,8 @@ describe('getExtensionProvider', () => {
     it('extension with exports', () => {
       const args: ExtensionOptions = {
         extension: Extension1,
-        token: MY_EXTENSION,
-        nextToken: OTHER_EXTENSION,
+        group: MY_EXTENSION,
+        beforeGroup: OTHER_EXTENSION,
         exported: true,
       };
       expect(getExtensionProvider(args)).toEqual({

@@ -12,12 +12,12 @@ export interface ExtensionOptionsBase {
   /**
    * Extension group token.
    */
-  token: InjectionToken<Extension[]>;
+  group: InjectionToken<Extension[]>;
   /**
    * The token of the group before which this extension will be called. Use this option
    * only if the extension group you place here does not expect your extension group to work.
    */
-  nextToken?: InjectionToken<Extension[]>;
+  beforeGroup?: InjectionToken<Extension[]>;
   overrideExtension?: never;
 }
 
@@ -59,9 +59,9 @@ export function getExtensionProvider(extensionOptions: ExtensionOptions): Extens
       exports: [],
       providers: [{ token: overrideExtension, useClass: extension }],
     };
-  } else if (extensionOptions.nextToken) {
-    const { nextToken, exported, exportedOnly, extension, token: groupToken } = extensionOptions;
-    const beforeGroupToken = KeyRegistry.getBeforeToken(nextToken);
+  } else if (extensionOptions.beforeGroup) {
+    const { beforeGroup, exported, exportedOnly, extension, group: groupToken } = extensionOptions;
+    const beforeGroupToken = KeyRegistry.getBeforeToken(beforeGroup);
     const exports = exported || exportedOnly ? [extension, groupToken, beforeGroupToken] : [];
     return {
       exportedOnly,
@@ -73,7 +73,7 @@ export function getExtensionProvider(extensionOptions: ExtensionOptions): Extens
       ],
     };
   } else {
-    const { exported, exportedOnly, extension, token: groupToken } = extensionOptions;
+    const { exported, exportedOnly, extension, group: groupToken } = extensionOptions;
     const exports = exported || exportedOnly ? [extension, groupToken] : [];
     return {
       exportedOnly,

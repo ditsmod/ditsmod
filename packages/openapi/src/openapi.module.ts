@@ -17,11 +17,11 @@ import { OpenapiErrorMediator } from './services/openapi-error-mediator.js';
   providersPerApp: [OasConfigFiles],
   providersPerMod: [OpenapiLogMediator, OpenapiErrorMediator],
   extensions: [
-    { extension: OpenapiRoutesExtension, token: ROUTES_EXTENSIONS, exported: true },
+    { extension: OpenapiRoutesExtension, group: ROUTES_EXTENSIONS, exported: true },
     {
       extension: OpenapiCompilerExtension,
-      token: OAS_COMPILER_EXTENSIONS,
-      nextToken: PRE_ROUTER_EXTENSIONS,
+      group: OAS_COMPILER_EXTENSIONS,
+      beforeGroup: PRE_ROUTER_EXTENSIONS,
       exported: true,
     },
   ],

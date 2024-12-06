@@ -13,8 +13,8 @@ import { SESSION_COOKIE_EXTENSIONS, SessionCookieExtension } from './session-coo
   extensions: [
     {
       extension: SessionCookieExtension,
-      token: SESSION_COOKIE_EXTENSIONS,
-      nextToken: PRE_ROUTER_EXTENSIONS,
+      group: SESSION_COOKIE_EXTENSIONS,
+      beforeGroup: PRE_ROUTER_EXTENSIONS,
       exportedOnly: true,
     },
   ],

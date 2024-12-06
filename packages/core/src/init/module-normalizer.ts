@@ -137,7 +137,7 @@ export class ModuleNormalizer {
   protected checkExtensionOptions(modName: string, extensionOptions: ExtensionOptions, i: number) {
     if (!isOptionWithOverrideExtension(extensionOptions)) {
       // Previously, extensions had a `groupToken` property, which was renamed to `token`.
-      if (!extensionOptions.token) {
+      if (!extensionOptions.group) {
         const msg = `Export of "${modName}" failed: extension in [${i}] index does not have "token" property.`;
         throw new TypeError(msg);
       }

@@ -725,7 +725,7 @@ describe('AppInitializer', () => {
     it('properly declared extensions in a root module', async () => {
       @rootModule({
         providersPerApp: [{ token: Router, useValue: 'fake value for router' }],
-        extensions: [{ extension: Extension1, token: MY_EXTENSIONS }],
+        extensions: [{ extension: Extension1, group: MY_EXTENSIONS }],
       })
       class AppModule {}
 

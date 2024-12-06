@@ -8,6 +8,6 @@ import { MyExtension } from './my-extension.js';
   imports: [RoutingModule],
   controllers: [HelloWorldController],
   providersPerApp: new Providers().useLogConfig({ level: 'info' }),
-  extensions: [{ extension: MyExtension, token: PRE_ROUTER_EXTENSIONS }],
+  extensions: [{ extension: MyExtension, group: PRE_ROUTER_EXTENSIONS }],
 })
 export class AppModule {}

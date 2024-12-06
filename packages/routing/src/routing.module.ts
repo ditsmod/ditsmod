@@ -16,8 +16,8 @@ import { RouteMeta } from './route-data.js';
     RouteMeta, // In fact, the provider with this token is added dynamically. This requires `ImportsResolver`.
   ],
   extensions: [
-    { extension: RoutesExtension, token: ROUTES_EXTENSIONS, exportedOnly: true },
-    { extension: PreRouterExtension, token: PRE_ROUTER_EXTENSIONS, exportedOnly: true },
+    { extension: RoutesExtension, group: ROUTES_EXTENSIONS, exportedOnly: true },
+    { extension: PreRouterExtension, group: PRE_ROUTER_EXTENSIONS, exportedOnly: true },
   ],
   exports: [RouteMeta],
 })
