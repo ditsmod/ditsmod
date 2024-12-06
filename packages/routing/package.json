@@ -13,10 +13,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./diagnostics-channel": {
+      "default": "./dist/diagnostics-channel.js"
     }
-  },
-  "./diagnostics-channel": {
-    "default": "./dist/diagnostics-channel.js"
   },
   "imports": {
     "#mod/*": "./dist/*",
