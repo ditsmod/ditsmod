@@ -142,7 +142,7 @@ const providers = new Providers()
   /**
  * ### Plugins
  * 
- * You can even use plugins for this class:
+ * This method allows you to dynamically extend this class using plugins:
  * 
  * ```ts
   class Plugin1 extends Providers {
@@ -176,6 +176,8 @@ const providers = new Providers()
  * As you can see, each plugin method should only add providers if condition of `if (this.true)`
  * is truthy. Additionally, each method must return `this.self`. This should be done so that
  * the `providers.$if()` method works correctly.
+ * 
+ * __Warning__: Plugins cannot use arrow functions as methods, as they will not work.
  */
   $use<T extends Class<Providers>>(Plugin: T): T['prototype'] & this {
     Object.getOwnPropertyNames(Plugin.prototype)

@@ -3,6 +3,8 @@ import { Extension } from '#extension/extension-types.js';
 
 /**
  * Used to collect various statistics.
+ * 
+ * @todo Rename this (maybe to ExtensionCounter?)
  */
 @injectable()
 export class Counter {
