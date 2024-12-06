@@ -10,13 +10,19 @@ import {
 } from '@ditsmod/core';
 
 import { TestOverrider } from './test-overrider.js';
-import { TestProvider } from './types.js';
+import { OverriderConfig, TestProvider } from './types.js';
 import { TestExtensionsManager } from './test-extensions-manager.js';
+import { GROUP_METAOVERRIDER } from './constants.js';
 
 export class TestAppInitializer extends AppInitializer {
   protected providersToOverride: TestProvider[] = [];
   protected providersPerApp: Provider[] = [];
   protected extensionsProviders: Provider[] = [];
+  protected aOverriderConfig: OverriderConfig[] = [];
+
+  setOverriderConfig(overrider: OverriderConfig) {
+    this.aOverriderConfig.push(overrider);
+  }
 
   setExtensionProviders(extensionsProviders: Provider[]) {
     this.extensionsProviders.push(...extensionsProviders);
@@ -48,7 +54,10 @@ export class TestAppInitializer extends AppInitializer {
     extensionsContext: ExtensionsContext,
   ): Provider[] {
     const providers = super.getProvidersForExtensions(metadataPerMod2, extensionCounters, extensionsContext);
-    providers.push({ token: ExtensionsManager, useClass: TestExtensionsManager });
+    providers.push(
+      { token: ExtensionsManager, useClass: TestExtensionsManager },
+      { token: GROUP_METAOVERRIDER, useValue: this.aOverriderConfig },
+    );
     return providers;
   }
 }

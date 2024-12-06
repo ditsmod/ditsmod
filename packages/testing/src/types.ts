@@ -1,4 +1,13 @@
-import { FactoryProvider, ClassProvider, Provider, ValueProvider, TokenProvider } from '@ditsmod/core';
+import {
+  FactoryProvider,
+  ClassProvider,
+  Provider,
+  ValueProvider,
+  TokenProvider,
+  Stage1GroupMeta,
+  Stage1GroupMeta2,
+  ExtensionsGroupToken,
+} from '@ditsmod/core';
 
 export interface TestInlineProviders {
   providers?: Provider[];
@@ -13,4 +22,14 @@ export interface Meta {
   providersPerMod?: Provider[];
   providersPerRou?: Provider[];
   providersPerReq?: Provider[];
+}
+
+export interface GroupMetaOverrider<T = any> {
+  (providers: Provider[], stage1GroupMeta: Stage1GroupMeta<T> | Stage1GroupMeta2<T>): any;
+}
+
+export interface OverriderConfig {
+  groupToken: ExtensionsGroupToken;
+  override: GroupMetaOverrider;
+  providers: Provider[];
 }

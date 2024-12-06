@@ -1,6 +1,16 @@
-import { AppOptions, ModuleType, SystemLogMediator, Application, Providers } from '@ditsmod/core';
+import {
+  AppOptions,
+  ModuleType,
+  SystemLogMediator,
+  Application,
+  Providers,
+  ExtensionsGroupToken,
+  Provider,
+  Class,
+  UnionToIntersection,
+} from '@ditsmod/core';
 
-import { TestProvider } from './types.js';
+import { GroupMetaOverrider, TestProvider } from './types.js';
 import { TestAppInitializer } from './test-app-initializer.js';
 
 export class TestApplication extends Application {
@@ -35,6 +45,15 @@ export class TestApplication extends Application {
     return this;
   }
 
+  overrideGroupMeta<T>(
+    groupToken: ExtensionsGroupToken<T>,
+    override: GroupMetaOverrider<T>,
+    providers: Providers | Provider[],
+  ) {
+    this.testAppInitializer.setOverriderConfig({ groupToken, override, providers: [...providers] });
+    return this;
+  }
+
   async getServer() {
     try {
       await this.bootstrapApplication(this.testAppInitializer);
@@ -44,6 +63,54 @@ export class TestApplication extends Application {
       this.handleError(err);
       throw err;
     }
+  }
+
+  /**
+ * ### Plugins
+ * 
+ * This method allows you to dynamically extend this class using plugins:
+ * 
+ * ```ts
+import { TestApplication } from '@ditsmod/testing';
+
+class Plugin1 extends TestApplication {
+  method1() {
+    // ...
+    return this;
+  }
+}
+
+class Plugin2 extends TestApplication {
+  method2() {
+    // ...
+    return this;
+  }
+}
+
+class AppModule {}
+
+TestApplication.createTestApp(AppModule)
+  .$use(Plugin1, Plugin2)
+  .method1()
+  .method2()
+  .overrideProviders([]);
+ * ```
+ * 
+ * That is, after using the `.$use()` method, you will be able to use plugin methods.
+ * Additionally, each method must return `this`.
+ * 
+ * __Warning__: Plugins cannot use arrow functions as methods, as they will not work.
+ */
+  $use<T extends [Class<TestApplication>, ...Class<TestApplication>[]]>(...Plugins: T) {
+    Plugins.forEach((Plugin) => {
+      Object.getOwnPropertyNames(Plugin.prototype)
+        .filter((p) => p != 'constructor')
+        .forEach((p) => {
+          (this as any)[p] = Plugin.prototype[p];
+        });
+    });
+
+    return this as UnionToIntersection<InstanceType<T[number]>> & this;
   }
 
   protected handleError(err: any) {
