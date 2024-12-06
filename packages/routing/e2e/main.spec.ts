@@ -13,8 +13,9 @@ import {
   ServicePerReq2,
   ServicePerRou3,
 } from './app/services.js';
+import { TestRoutingPlugin } from '#mod/testing/test-routing-application.js';
 
-describe('@ditsmod/routing/testing', () => {
+describe('@ditsmod/routing/e2e', () => {
   const message = 'any-string';
   const implementation = () => message;
   const methodPerApp = jest.fn(implementation);
@@ -30,15 +31,19 @@ describe('@ditsmod/routing/testing', () => {
   });
 
   it('override services at any level', async () => {
+    const aProvidersToOverride = new Providers()
+      .useValue<ServicePerRou2>(ServicePerRou2, { method: methodPerRou2 })
+      .useValue<ServicePerReq2>(ServicePerReq2, { method: methodPerReq2 });
+
     const server = await TestApplication.createTestApp(AppModule)
+      .$use(TestRoutingPlugin)
+      .overrideGroupRoutingMeta(aProvidersToOverride)
       .overrideProviders(
         new Providers()
           .useValue<ServicePerApp>(ServicePerApp, { method: methodPerApp })
           .useValue<ServicePerMod>(ServicePerMod, { method: methodPerMod })
           .useValue<ServicePerRou>(ServicePerRou, { method: methodPerRou })
-          .useValue<ServicePerReq>(ServicePerReq, { method: methodPerReq })
-          .useValue<ServicePerRou2>(ServicePerRou2, { method: methodPerRou2 })
-          .useValue<ServicePerReq2>(ServicePerReq2, { method: methodPerReq2 }),
+          .useValue<ServicePerReq>(ServicePerReq, { method: methodPerReq }),
       )
       .getServer();
 
