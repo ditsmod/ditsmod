@@ -1,8 +1,6 @@
 import { getToken, Provider, Providers } from '@ditsmod/core';
+import { MetadataPerMod3, ROUTES_EXTENSIONS } from '@ditsmod/routing';
 import { TestApplication, GroupMetaOverrider } from '@ditsmod/testing';
-
-import { MetadataPerMod3 } from '#mod/types.js';
-import { ROUTES_EXTENSIONS } from '../constants.js';
 
 export class TestRoutingPlugin extends TestApplication {
   overrideGroupRoutingMeta(aProvidersToOverride: Providers | Provider[]) {

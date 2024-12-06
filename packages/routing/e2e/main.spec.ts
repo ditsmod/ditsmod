@@ -1,7 +1,8 @@
+import { jest } from '@jest/globals';
 import request from 'supertest';
 import { Providers, Res } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
-import { jest } from '@jest/globals';
+import { TestRoutingPlugin } from '@ditsmod/routing-testing';
 
 import { AppModule } from './app/app.module.js';
 import {
@@ -13,7 +14,6 @@ import {
   ServicePerReq2,
   ServicePerRou3,
 } from './app/services.js';
-import { TestRoutingPlugin } from '#mod/testing/test-routing-application.js';
 
 describe('@ditsmod/routing/e2e', () => {
   const message = 'any-string';
