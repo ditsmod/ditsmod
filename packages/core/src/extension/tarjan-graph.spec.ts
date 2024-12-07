@@ -38,4 +38,16 @@ describe("Tarjan's algorithm", () => {
 
     expect(findCycle(arr)).toEqual(['ext3', 'ext2', 'ext1', 'ext3']);
   });
+
+  it('has circular dependencies with mediator and other deps', () => {
+    const arr = [
+      { group: 'ext3', beforeGroup: 'ext2' },
+      { group: 'ext3', beforeGroup: 'ext4' },
+      { group: 'ext2', beforeGroup: 'ext1' },
+      { group: 'ext2', beforeGroup: 'ext4' },
+      { group: 'ext1', beforeGroup: 'ext3' },
+    ];
+
+    expect(findCycle(arr)).toEqual(['ext3', 'ext2', 'ext1', 'ext3']);
+  });
 });
