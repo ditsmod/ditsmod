@@ -14,11 +14,12 @@ import {
 } from '#utils/type-guards.js';
 import {
   ExtensionOptions,
+  ExtensionOptionsBase,
   getExtensionProvider,
   isOptionWithOverrideExtension,
 } from '#extension/get-extension-provider.js';
 import { AnyObj, GuardItem, ModRefId, NormalizedGuard, Provider, Scope } from '#types/mix.js';
-import { RawMeta } from '../decorators/module.js';
+import { RawMeta } from '#decorators/module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { resolveForwardRef } from '#di/forward-ref.js';
@@ -32,6 +33,8 @@ import { Extension, ExtensionProvider } from '#extension/extension-types.js';
 import { normalizeProviders } from '#utils/ng-utils.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
 import { mergeArrays } from '#utils/merge-arrays.js';
+import { findCycle } from '#extension/tarjan-graph.js';
+import { getProviderName } from '#utils/get-provider-name.js';
 
 export class ModuleNormalizer {
   /**
@@ -101,6 +104,7 @@ export class ModuleNormalizer {
     resolvedCollisionsPerScope.forEach(([token]) => this.throwIfNormalizedProvider(modName, token));
     this.exportFromRawMeta(rawMeta, modName, providersTokens, meta);
     this.checkReexportModules(meta);
+    this.checkExtensionGroupsGpaph(rawMeta);
 
     rawMeta.extensions?.forEach((extensionOptions, i) => {
       this.checkExtensionOptions(modName, extensionOptions, i);
@@ -123,6 +127,20 @@ export class ModuleNormalizer {
     meta.controllers.forEach((Controller) => this.checkController(modName, Controller));
 
     return meta;
+  }
+
+  protected checkExtensionGroupsGpaph(rawMeta: RawMeta) {
+    const extensionWithBeforeGroup = rawMeta.extensions?.filter((config) => {
+      return !isOptionWithOverrideExtension(config) && config.beforeGroup;
+    }) as ExtensionOptionsBase[] | undefined;
+
+    if (extensionWithBeforeGroup) {
+      const path = findCycle(extensionWithBeforeGroup);
+      if (path) {
+        const strPath = path.map(getProviderName).join(' -> ');
+        throw new Error(`Circular dependencies are detected: ${strPath}`);
+      }
+    }
   }
 
   protected checkController(modName: string, Controller: Class) {
