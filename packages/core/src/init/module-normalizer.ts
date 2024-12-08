@@ -104,7 +104,7 @@ export class ModuleNormalizer {
     resolvedCollisionsPerScope.forEach(([token]) => this.throwIfNormalizedProvider(modName, token));
     this.exportFromRawMeta(rawMeta, modName, providersTokens, meta);
     this.checkReexportModules(meta);
-    this.checkExtensionGroupsGpaph(rawMeta);
+    this.checkExtensionGroupsGraph(rawMeta);
 
     rawMeta.extensions?.forEach((extensionOptions, i) => {
       this.checkExtensionOptions(modName, extensionOptions, i);
@@ -129,7 +129,7 @@ export class ModuleNormalizer {
     return meta;
   }
 
-  protected checkExtensionGroupsGpaph(rawMeta: RawMeta) {
+  protected checkExtensionGroupsGraph(rawMeta: RawMeta) {
     const extensionWithBeforeGroup = rawMeta.extensions?.filter((config) => {
       return !isOptionWithOverrideExtension(config) && config.beforeGroup;
     }) as ExtensionOptionsBase[] | undefined;
