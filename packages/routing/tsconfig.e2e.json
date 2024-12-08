@@ -11,6 +11,5 @@
     { "path": "./tsconfig.build.json" },
     { "path": "./tsconfig.unit.json" },
     { "path": "../testing/tsconfig.build.json" },
-    { "path": "../routing-testing/tsconfig.build.json" },
   ]
 }
