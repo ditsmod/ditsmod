@@ -9,7 +9,7 @@ import { featureModule } from '#decorators/module.js';
 import { Router } from '#types/router.js';
 
 describe('extensions e2e', () => {
-  it('circular dependencies of groups', async () => {
+  it('circular dependencies of groups in single module', async () => {
     const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
     const MY_EXTENSIONS2 = new InjectionToken<Extension[]>('MY_EXTENSIONS2');
     const MY_EXTENSIONS3 = new InjectionToken<Extension[]>('MY_EXTENSIONS3');
@@ -34,6 +34,55 @@ describe('extensions e2e', () => {
       extensions: [
         { extension: Extension3, group: MY_EXTENSIONS3, beforeGroup: MY_EXTENSIONS2 },
         { extension: Extension2, group: MY_EXTENSIONS2, beforeGroup: MY_EXTENSIONS1 },
+        { extension: Extension1, group: MY_EXTENSIONS1, beforeGroup: MY_EXTENSIONS3 },
+      ],
+    })
+    class AppModule {}
+
+    const msg = 'Circular dependencies are detected: MY_EXTENSIONS3 -> MY_EXTENSIONS2 -> MY_EXTENSIONS1 -> MY_EXTENSIONS3';
+    expect(() => TestApplication.createTestApp(AppModule)).toThrow(msg);
+  });
+
+  it('circular dependencies of groups in two modules', async () => {
+    const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
+    const MY_EXTENSIONS2 = new InjectionToken<Extension[]>('MY_EXTENSIONS2');
+    const MY_EXTENSIONS3 = new InjectionToken<Extension[]>('MY_EXTENSIONS3');
+
+    @injectable()
+    class Extension1 implements Extension<void> {
+      async stage1() {}
+    }
+
+    @injectable()
+    class Extension2 implements Extension<void> {
+      async stage1() {}
+    }
+
+    @injectable()
+    class Extension3 implements Extension<void> {
+      async stage1() {}
+    }
+
+    @featureModule({
+      extensions: [
+        { extension: Extension3, group: MY_EXTENSIONS3, beforeGroup: MY_EXTENSIONS2, exportedOnly: true },
+      ],
+    })
+    class Module1 {}
+
+    @featureModule({
+      imports: [Module1],
+      extensions: [
+        { extension: Extension2, group: MY_EXTENSIONS2, beforeGroup: MY_EXTENSIONS1, exportedOnly: true },
+      ],
+      exports: [Module1]
+    })
+    class Module2 {}
+
+    @rootModule({
+      imports: [Module1, Module2],
+      providersPerApp: [{ token: Router, useValue: 'fake value' }],
+      extensions: [
         { extension: Extension1, group: MY_EXTENSIONS1, beforeGroup: MY_EXTENSIONS3 },
       ],
     })
