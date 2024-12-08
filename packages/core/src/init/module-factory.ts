@@ -20,10 +20,9 @@ import { getModule } from '#utils/get-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 
 /**
- * - exports and imports global providers;
+ * - exports global providers;
  * - merges global and local providers;
- * - checks on providers collisions;
- * - collects module and controllers metadata.
+ * - checks on providers collisions.
  */
 @injectable()
 export class ModuleFactory {
