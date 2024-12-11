@@ -17,15 +17,10 @@ import { GROUP_METAOVERRIDER } from './constants.js';
 export class TestAppInitializer extends AppInitializer {
   protected providersToOverride: TestProvider[] = [];
   protected providersPerApp: Provider[] = [];
-  protected extensionsProviders: Provider[] = [];
   protected aOverriderConfig: OverriderConfig[] = [];
 
   setOverriderConfig(overrider: OverriderConfig) {
     this.aOverriderConfig.push(overrider);
-  }
-
-  setExtensionProviders(extensionsProviders: Provider[]) {
-    this.extensionsProviders.push(...extensionsProviders);
   }
 
   setProvidersPerApp(providersPerApp: Provider[]) {
@@ -42,7 +37,6 @@ export class TestAppInitializer extends AppInitializer {
 
   protected override overrideMetaAfterStage1(meta: NormalizedModuleMetadata) {
     meta.providersPerApp.push(...this.providersPerApp);
-    meta.extensionsProviders.push(...this.extensionsProviders);
     const providersToOverride = this.getProvidersToOverride();
     new TestOverrider().overrideAllProviders(this.perAppService, meta, providersToOverride);
     return meta;
