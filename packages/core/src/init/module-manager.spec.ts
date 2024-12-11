@@ -379,7 +379,7 @@ describe('ModuleManager', () => {
     @featureModule({ extensions: [{ extension: Extension1 as any, group: TEST_EXTENSIONS, exported: true }] })
     class Module2 {}
 
-    expect(() => mock.scanModule(Module2)).toThrow('must have stage1() method');
+    expect(() => mock.scanModule(Module2)).toThrow('must have stage1(), stage2() or stage3() method');
   });
 
   it('module exported valid extension', () => {
