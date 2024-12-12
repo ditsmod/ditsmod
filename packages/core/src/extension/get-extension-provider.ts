@@ -2,8 +2,7 @@ import { KeyRegistry, InjectionToken, Provider } from '#di';
 import { ExtensionType, ExtensionProvider, Extension } from '#extension/extension-types.js';
 
 export class ExtensionObj {
-  exportedOnly?: boolean;
-  exports: any[];
+  exportedProviders: Provider[];
   providers: ExtensionProvider[];
 }
 
@@ -44,7 +43,9 @@ export interface ExtensionOptions3 {
 
 export type ExtensionOptions = ExtensionOptions1 | ExtensionOptions2 | ExtensionOptions3;
 
-export function isOptionWithOverrideExtension(extensionOptions: ExtensionOptions): extensionOptions is ExtensionOptions3 {
+export function isOptionWithOverrideExtension(
+  extensionOptions: ExtensionOptions,
+): extensionOptions is ExtensionOptions3 {
   return (extensionOptions as ExtensionOptions3).overrideExtension !== undefined;
 }
 
@@ -56,29 +57,32 @@ export function getExtensionProvider(extensionOptions: ExtensionOptions): Extens
   if (isOptionWithOverrideExtension(extensionOptions)) {
     const { extension, overrideExtension } = extensionOptions;
     return {
-      exports: [],
       providers: [{ token: overrideExtension, useClass: extension }],
+      exportedProviders: [],
     };
-  } else if (extensionOptions.beforeGroup) {
-    const { beforeGroup, exported, exportedOnly, extension, group: groupToken } = extensionOptions;
-    const beforeGroupToken = KeyRegistry.getBeforeToken(beforeGroup);
-    const exports = exported || exportedOnly ? [extension, groupToken, beforeGroupToken] : [];
+  }
+
+  const { extension } = extensionOptions;
+  const providers: Provider[] = [extension, { token: extensionOptions.group, useToken: extension, multi: true }];
+  if (extensionOptions.beforeGroup) {
+    const token = KeyRegistry.getBeforeToken(extensionOptions.beforeGroup);
+    providers.push({ token, useToken: extension, multi: true });
+  }
+
+  if (extensionOptions.exportedOnly) {
     return {
-      exportedOnly,
-      exports,
-      providers: [
-        extension,
-        { token: groupToken, useToken: extension, multi: true },
-        { token: beforeGroupToken, useToken: extension, multi: true },
-      ],
+      providers: [],
+      exportedProviders: providers,
+    };
+  } else if (extensionOptions.exported) {
+    return {
+      providers,
+      exportedProviders: providers,
     };
   } else {
-    const { exported, exportedOnly, extension, group: groupToken } = extensionOptions;
-    const exports = exported || exportedOnly ? [extension, groupToken] : [];
     return {
-      exportedOnly,
-      exports,
-      providers: [extension, { token: groupToken, useToken: extension, multi: true }],
+      providers,
+      exportedProviders: [],
     };
   }
 }

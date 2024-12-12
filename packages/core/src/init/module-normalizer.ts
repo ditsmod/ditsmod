@@ -104,20 +104,14 @@ export class ModuleNormalizer {
     resolvedCollisionsPerScope.forEach(([token]) => this.throwIfNormalizedProvider(modName, token));
     this.exportFromRawMeta(rawMeta, modName, providersTokens, meta);
     this.checkReexportModules(meta);
-    this.checkExtensionGroupsGraph(rawMeta);
+    this.checkExtensionGroupsGraph(rawMeta.extensions);
 
     rawMeta.extensions?.forEach((extensionOptions, i) => {
       this.checkExtensionOptions(modName, extensionOptions, i);
       const extensionObj = getExtensionProvider(extensionOptions);
       extensionObj.providers.forEach((p) => this.checkInitMethodForExtension(modName, p));
-      if (!extensionObj.exportedOnly) {
-        meta.extensionsProviders.push(...extensionObj.providers);
-      }
-      extensionObj.exports.forEach((token) => {
-        this.throwExportsIfNormalizedProvider(modName, token);
-        const exportedExtensions = extensionObj.providers.filter((provider) => getToken(provider) === token);
-        meta.exportedExtensions.push(...exportedExtensions);
-      });
+      meta.extensionsProviders.push(...extensionObj.providers);
+      meta.exportedExtensions.push(...extensionObj.exportedProviders);
     });
 
     // @todo Refactor the logic with the `pickMeta()` call, as it may override previously set values in `meta`.
@@ -129,8 +123,8 @@ export class ModuleNormalizer {
     return meta;
   }
 
-  protected checkExtensionGroupsGraph(rawMeta: RawMeta) {
-    const extensionWithBeforeGroup = rawMeta.extensions?.filter((config) => {
+  protected checkExtensionGroupsGraph(extensions?: ExtensionOptions[]) {
+    const extensionWithBeforeGroup = extensions?.filter((config) => {
       return !isOptionWithOverrideExtension(config) && config.beforeGroup;
     }) as ExtensionOptionsBase[] | undefined;
 
@@ -154,9 +148,9 @@ export class ModuleNormalizer {
 
   protected checkExtensionOptions(modName: string, extensionOptions: ExtensionOptions, i: number) {
     if (!isOptionWithOverrideExtension(extensionOptions)) {
-      // Previously, extensions had a `groupToken` property, which was renamed to `token`.
+      // Previously, extensions had a `groupToken` property, which was renamed to `token`, and then to `group`.
       if (!extensionOptions.group) {
-        const msg = `Export of "${modName}" failed: extension in [${i}] index does not have "token" property.`;
+        const msg = `Export of "${modName}" failed: extension in [${i}] index does not have "group" property.`;
         throw new TypeError(msg);
       }
     }
@@ -304,11 +298,13 @@ export class ModuleNormalizer {
 
     if (
       !extensionClass ||
-      (typeof extensionClass.prototype?.stage1 != 'function' && typeof extensionClass.prototype?.stage2 != 'function')
+      (typeof extensionClass.prototype?.stage1 != 'function' &&
+        typeof extensionClass.prototype?.stage2 != 'function' &&
+        typeof extensionClass.prototype?.stage3 != 'function')
     ) {
       const token = getToken(extensionsProvider);
       const tokenName = token.name || token;
-      const msg = `Exporting "${tokenName}" from "${modName}" failed: all extensions must have stage1() method.`;
+      const msg = `Exporting "${tokenName}" from "${modName}" failed: all extensions must have stage1(), stage2() or stage3() method.`;
       throw new TypeError(msg);
     }
   }

@@ -18,7 +18,7 @@ describe('getExtensionProvider', () => {
     it('extension without exports (two arguments)', () => {
       const args: ExtensionOptions = { extension: Extension1, group: MY_EXTENSION };
       expect(getExtensionProvider(args)).toEqual({
-        exports: [],
+        exportedProviders: [],
         providers,
       });
     });
@@ -27,7 +27,7 @@ describe('getExtensionProvider', () => {
       const args: ExtensionOptions = { extension: Extension2, overrideExtension: Extension1 };
       const providers: ExtensionProvider[] = [{ token: Extension1, useClass: Extension2 }];
       expect(getExtensionProvider(args)).toEqual({
-        exports: [],
+        exportedProviders: [],
         providers,
       });
     });
@@ -35,7 +35,7 @@ describe('getExtensionProvider', () => {
     it('extension without exports (three arguments)', () => {
       const args: ExtensionOptions = { extension: Extension1, group: MY_EXTENSION, exported: false };
       expect(getExtensionProvider(args)).toEqual({
-        exports: [],
+        exportedProviders: [],
         providers,
       });
     });
@@ -43,7 +43,7 @@ describe('getExtensionProvider', () => {
     it('extension with exports', () => {
       const args: ExtensionOptions = { extension: Extension1, group: MY_EXTENSION, exported: true };
       expect(getExtensionProvider(args)).toEqual({
-        exports: [Extension1, MY_EXTENSION],
+        exportedProviders: providers,
         providers,
       });
     });
@@ -59,7 +59,7 @@ describe('getExtensionProvider', () => {
     it('extension without exports (three arguments)', () => {
       const args: ExtensionOptions = { extension: Extension1, group: MY_EXTENSION, beforeGroup: OTHER_EXTENSION };
       expect(getExtensionProvider(args)).toEqual({
-        exports: [],
+        exportedProviders: [],
         providers,
       });
     });
@@ -72,7 +72,7 @@ describe('getExtensionProvider', () => {
         exported: false,
       };
       expect(getExtensionProvider(args)).toEqual({
-        exports: [],
+        exportedProviders: [],
         providers,
       });
     });
@@ -85,7 +85,7 @@ describe('getExtensionProvider', () => {
         exported: true,
       };
       expect(getExtensionProvider(args)).toEqual({
-        exports: [Extension1, MY_EXTENSION, KeyRegistry.getBeforeToken(OTHER_EXTENSION)],
+        exportedProviders: providers,
         providers,
       });
     });
