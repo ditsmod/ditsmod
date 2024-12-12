@@ -2,7 +2,7 @@ import { Logger, LoggerConfig } from '#logger/logger.js';
 import { Class, FunctionFactoryProvider, Provider, UseFactoryTuple } from '#di';
 import { LogMediator } from '#logger/log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { AnyFn } from '#types/mix.js';
+import { AnyFn, UnionToIntersection } from '#types/mix.js';
 import { NormalizedProvider } from './ng-utils.js';
 
 /**
@@ -164,8 +164,7 @@ const providers = new Providers()
   }
 
   const providers = [...new Providers()
-    .$use(Plugin1)
-    .$use(Plugin2)
+    .$use(Plugin1, Plugin2)
     .method1()
     .method2()
     .useLogConfig({ level: 'trace' })
@@ -179,18 +178,16 @@ const providers = new Providers()
  * 
  * __Warning__: Plugins cannot use arrow functions as methods, as they will not work.
  */
-  $use<T extends Class<Providers>>(Plugin: T): T['prototype'] & this {
-    Object.getOwnPropertyNames(Plugin.prototype)
-      .filter((p) => p != 'constructor')
-      .forEach((p) => {
-        const maybeFn = Plugin.prototype[p] as AnyFn | unknown;
-        if (typeof maybeFn == 'function') {
-          (this as any)[p] = maybeFn.bind(this);
-        } else {
-          (this as any)[p] = maybeFn;
-        }
-      });
-    return this.self;
+  $use<T extends [Class<Providers>, ...Class<Providers>[]]>(...Plugins: T) {
+    Plugins.forEach((Plugin) => {
+      Object.getOwnPropertyNames(Plugin.prototype)
+        .filter((p) => p != 'constructor')
+        .forEach((p) => {
+          (this as any)[p] = Plugin.prototype[p];
+        });
+    });
+
+    return this.self as UnionToIntersection<InstanceType<T[number]>> & this;
   }
 
   protected resetIfConditions() {
