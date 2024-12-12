@@ -55,6 +55,12 @@ Up until version 3.0.0, Ditsmod had a small user base, which allowed for numerou
 - [The English version of the documentation](https://ditsmod.github.io/en/).
 - [Українська версія документації](https://ditsmod.github.io/).
 
+## Benchmarks
+
+On the techempower website, you can view [benchmarks for backend frameworks on the JavaScript stack][4]. As you can see, according to the composite score, Ditsmod is the fastest framework that works on the basis of Node.js. Above it are only those frameworks that work on other JavaScript runtimes (Bun, Just-JS, uwebsockets).
+
+![](tech-empower-benchmarks.png)
+
 ## About the repo
 
 This monorepository uses yarn workspaces (see `package.json`).
@@ -73,12 +79,6 @@ Development mode for any application in the `examples/*` directory can be starte
 cd examples/01*
 yarn start:dev
 ```
-
-## Benchmarks
-
-On the techempower website, you can view [benchmarks for backend frameworks on the JavaScript stack][4]. As you can see, according to the composite score, Ditsmod is the fastest framework that works on the basis of Node.js. Above it are only those frameworks that work on other JavaScript runtimes (Bun, Just-JS, uwebsockets).
-
-![](tech-empower-benchmarks.png)
 
 [1]: https://github.com/angular/angular
 [2]: https://www.typescriptlang.org/tsconfig#paths
