@@ -43,6 +43,47 @@ describe('extensions e2e', () => {
     await expect(TestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
   });
 
+  it('circular dependencies of groups in three modules', async () => {
+    const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
+    const MY_EXTENSIONS2 = new InjectionToken<Extension[]>('MY_EXTENSIONS2');
+    const MY_EXTENSIONS3 = new InjectionToken<Extension[]>('MY_EXTENSIONS3');
+
+    @injectable()
+    class Extension1 implements Extension<void> {
+      async stage1() {}
+    }
+
+    @injectable()
+    class Extension2 implements Extension<void> {
+      async stage1() {}
+    }
+
+    @injectable()
+    class Extension3 implements Extension<void> {
+      async stage1() {}
+    }
+
+    @featureModule({
+      extensions: [{ extension: Extension3, group: MY_EXTENSIONS3, beforeGroup: MY_EXTENSIONS2, exportedOnly: true }],
+    })
+    class Module1 {}
+
+    @featureModule({
+      extensions: [{ extension: Extension2, group: MY_EXTENSIONS2, beforeGroup: MY_EXTENSIONS1, exportedOnly: true }],
+    })
+    class Module2 {}
+
+    @rootModule({
+      imports: [Module1, Module2],
+      providersPerApp: [{ token: Router, useValue: 'fake value' }],
+      extensions: [{ extension: Extension1, group: MY_EXTENSIONS1, beforeGroup: MY_EXTENSIONS3 }],
+    })
+    class AppModule {}
+
+    const msg = ': MY_EXTENSIONS1 -> MY_EXTENSIONS3 -> MY_EXTENSIONS2 -> MY_EXTENSIONS1';
+    await expect(TestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
+  });
+
   it('circular dependencies of groups in two modules', async () => {
     const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
     const MY_EXTENSIONS2 = new InjectionToken<Extension[]>('MY_EXTENSIONS2');
@@ -70,19 +111,64 @@ describe('extensions e2e', () => {
 
     @featureModule({
       imports: [Module1],
-      extensions: [{ extension: Extension2, group: MY_EXTENSIONS2, beforeGroup: MY_EXTENSIONS1, exportedOnly: true }],
-      exports: [Module1],
+      extensions: [
+        { extension: Extension2, group: MY_EXTENSIONS2, beforeGroup: MY_EXTENSIONS1 },
+        { extension: Extension1, group: MY_EXTENSIONS1, beforeGroup: MY_EXTENSIONS3 }
+      ],
+    })
+    class Module2 {}
+
+    @rootModule({
+      imports: [Module2],
+      providersPerApp: [{ token: Router, useValue: 'fake value' }],
+    })
+    class AppModule {}
+
+    const msg = ': MY_EXTENSIONS2 -> MY_EXTENSIONS1 -> MY_EXTENSIONS3 -> MY_EXTENSIONS2';
+    await expect(TestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
+  });
+
+  it('circular dependencies of groups in Module2 with global Module1', async () => {
+    const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
+    const MY_EXTENSIONS2 = new InjectionToken<Extension[]>('MY_EXTENSIONS2');
+    const MY_EXTENSIONS3 = new InjectionToken<Extension[]>('MY_EXTENSIONS3');
+
+    @injectable()
+    class Extension1 implements Extension<void> {
+      async stage1() {}
+    }
+
+    @injectable()
+    class Extension2 implements Extension<void> {
+      async stage1() {}
+    }
+
+    @injectable()
+    class Extension3 implements Extension<void> {
+      async stage1() {}
+    }
+
+    @featureModule({
+      extensions: [{ extension: Extension3, group: MY_EXTENSIONS3, beforeGroup: MY_EXTENSIONS2, exportedOnly: true }],
+    })
+    class Module1 {}
+
+    @featureModule({
+      extensions: [
+        { extension: Extension2, group: MY_EXTENSIONS2, beforeGroup: MY_EXTENSIONS1 },
+        { extension: Extension1, group: MY_EXTENSIONS1, beforeGroup: MY_EXTENSIONS3 }
+      ],
     })
     class Module2 {}
 
     @rootModule({
       imports: [Module1, Module2],
       providersPerApp: [{ token: Router, useValue: 'fake value' }],
-      extensions: [{ extension: Extension1, group: MY_EXTENSIONS1, beforeGroup: MY_EXTENSIONS3 }],
+      exports: [Module1]
     })
     class AppModule {}
 
-    const msg = ': MY_EXTENSIONS1 -> MY_EXTENSIONS3 -> MY_EXTENSIONS2 -> MY_EXTENSIONS1';
+    const msg = ': MY_EXTENSIONS2 -> MY_EXTENSIONS1 -> MY_EXTENSIONS3 -> MY_EXTENSIONS2';
     await expect(TestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
   });
 
