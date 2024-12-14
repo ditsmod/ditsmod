@@ -12,15 +12,15 @@ import {
 import { TestOverrider } from './test-overrider.js';
 import { OverriderConfig, TestProvider } from './types.js';
 import { TestExtensionsManager } from './test-extensions-manager.js';
-import { GROUP_METAOVERRIDER } from './constants.js';
+import { OVERRIDERS_CONFIG } from './constants.js';
 
 export class TestAppInitializer extends AppInitializer {
   protected providersToOverride: TestProvider[] = [];
   protected providersPerApp: Provider[] = [];
   protected aOverriderConfig: OverriderConfig[] = [];
 
-  setOverriderConfig(overrider: OverriderConfig) {
-    this.aOverriderConfig.push(overrider);
+  setOverriderConfig(config: OverriderConfig) {
+    this.aOverriderConfig.push(config);
   }
 
   setProvidersPerApp(providersPerApp: Provider[]) {
@@ -50,7 +50,7 @@ export class TestAppInitializer extends AppInitializer {
     const providers = super.getProvidersForExtensions(metadataPerMod2, extensionCounters, extensionsContext);
     providers.push(
       { token: ExtensionsManager, useClass: TestExtensionsManager },
-      { token: GROUP_METAOVERRIDER, useValue: this.aOverriderConfig },
+      { token: OVERRIDERS_CONFIG, useValue: this.aOverriderConfig },
     );
     return providers;
   }

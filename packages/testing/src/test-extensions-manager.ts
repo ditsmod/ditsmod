@@ -14,7 +14,7 @@ import {
 } from '@ditsmod/core';
 
 import { OverriderConfig } from './types.js';
-import { GROUP_METAOVERRIDER } from './constants.js';
+import { OVERRIDERS_CONFIG } from './constants.js';
 
 @injectable()
 export class TestExtensionsManager extends ExtensionsManager {
@@ -24,7 +24,7 @@ export class TestExtensionsManager extends ExtensionsManager {
     counter: Counter,
     extensionsContext: ExtensionsContext,
     extensionCounters: ExtensionCounters,
-    @inject(GROUP_METAOVERRIDER)
+    @inject(OVERRIDERS_CONFIG)
     @optional()
     protected aOverriderConfig: OverriderConfig[] = [],
   ) {

@@ -1,3 +1,3 @@
 import { InjectionToken } from '@ditsmod/core';
 
-export const GROUP_METAOVERRIDER = new InjectionToken('GROUP_METAOVERRIDER');
+export const OVERRIDERS_CONFIG = new InjectionToken('OVERRIDERS_CONFIG');
