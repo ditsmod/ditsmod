@@ -27,7 +27,7 @@ export class TestAppInitializer extends AppInitializer {
     this.providersPerApp = providersPerApp;
   }
 
-  overrideProviders(providers: Providers | TestProvider[]) {
+  overrideStatic(providers: Providers | TestProvider[]) {
     this.providersToOverride.push(...providers);
   }
 

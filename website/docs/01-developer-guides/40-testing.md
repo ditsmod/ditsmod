@@ -127,7 +127,7 @@ describe('End-to-end testing', () => {
     jest.restoreAllMocks();
 
     server = await TestApplication.createTestApp(AppModule)
-      .overrideProviders([
+      .overrideStatic([
         { token: EmailService, useValue: MockEmailService }
       ])
       .getServer();
@@ -157,17 +157,17 @@ describe('End-to-end testing', () => {
 server = await TestApplication.createTestApp(AppModule, { path: 'api' }).getServer();
 ```
 
-Підміна моків, за допомогою методу `testApplication.overrideProviders()`, працює глобально на будь-якому рівні ієрархії інжекторів. Провайдери з моками передаються до DI на певний рівень ієрархії, тільки якщо у застосунку на цьому рівні є відповідні провайдери з такими самими токенами.
+Підміна моків, за допомогою методу `testApplication.overrideStatic()`, працює глобально на будь-якому рівні ієрархії інжекторів. Провайдери з моками передаються до DI на певний рівень ієрархії, тільки якщо у застосунку на цьому рівні є відповідні провайдери з такими самими токенами.
 
 Рекомендуємо подібні тести тримати в окремому каталозі з назвою `e2e`, на одному рівні з кореневим каталогом `src`.
 
 ### Вкладені провайдери для тестування
 
-Нагадаємо, що у метод `testApplication.overrideProviders()` є сенс передавати лише моки тих провайдерів, які у застосунку ви вже передали до DI. Виходить, що моки не можуть мати залежність від нових провайдерів, яких не існує у застосунку. Тобто, якщо застосунок має провайдери `Service1` та `Service2`, то мок для підміни будь-якого з цих провайдерів не може містити залежність, наприклад, від `SpyService`. Саме тому для end-to-end тестування вводиться поняття "вкладених провайдерів", які вирішують залежність для нових провайдерів, запроваджених у моках:
+Нагадаємо, що у метод `testApplication.overrideStatic()` є сенс передавати лише моки тих провайдерів, які у застосунку ви вже передали до DI. Виходить, що моки не можуть мати залежність від нових провайдерів, яких не існує у застосунку. Тобто, якщо застосунок має провайдери `Service1` та `Service2`, то мок для підміни будь-якого з цих провайдерів не може містити залежність, наприклад, від `SpyService`. Саме тому для end-to-end тестування вводиться поняття "вкладених провайдерів", які вирішують залежність для нових провайдерів, запроваджених у моках:
 
 ```ts {6}
 const server = await TestApplication.createTestApp(AppModule)
-  .overrideProviders([
+  .overrideStatic([
     {
       token: Service1,
       useClass: MockService1,
@@ -186,7 +186,7 @@ const method1 = jest.fn();
 const mockService1 = { method1 } as Service1;
 
 const server = await TestApplication.createTestApp(AppModule)
-  .overrideProviders([
+  .overrideStatic([
     {
       token: Service1,
       useValue: mockService1,
@@ -223,7 +223,7 @@ const setInsights = jest.fn();
 const spyService = { setInsights } as SpyService;
 
 const server = await TestApplication.createTestApp(AppModule)
-  .overrideProviders([
+  .overrideStatic([
     {
       token: Service1,
       useClass: MockService1,

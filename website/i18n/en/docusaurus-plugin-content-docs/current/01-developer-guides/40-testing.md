@@ -127,7 +127,7 @@ describe('End-to-end testing', () => {
     jest.restoreAllMocks();
 
     server = await TestApplication.createTestApp(AppModule)
-      .overrideProviders([
+      .overrideStatic([
         { token: EmailService, useValue: MockEmailService }
       ])
       .getServer();
@@ -157,17 +157,17 @@ Note that these tests do not use the code from the `./src/main.ts` file, so any 
 server = await TestApplication.createTestApp(AppModule, { path: 'api' }).getServer();
 ```
 
-Overriding mocks with the `testApplication.overrideProviders()` method works globally at any level of the injector hierarchy. Providers with mocks are only passed to DI at a particular level of the hierarchy if there are corresponding providers with the same tokens in application at that level.
+Overriding mocks with the `testApplication.overrideStatic()` method works globally at any level of the injector hierarchy. Providers with mocks are only passed to DI at a particular level of the hierarchy if there are corresponding providers with the same tokens in application at that level.
 
 We recommend keeping such tests in a separate directory called `e2e`, at the same level as the `src` root directory.
 
 ### Nested providers for testing
 
-Recall that in `testApplication.overrideProviders()` it makes sense to only pass the mocks of those providers that you have already passed to DI in application. It turns out that mocks cannot have dependencies on new providers that do not exist in application. That is, if application has providers `Service1` and `Service2`, then the mock that replaces one of those providers cannot have a dependency on, say, `SpyService`. Therefore, for end-to-end testing, the concept of "nested providers" is introduced, which resolve the dependency for new providers introduced in mocks:
+Recall that in `testApplication.overrideStatic()` it makes sense to only pass the mocks of those providers that you have already passed to DI in application. It turns out that mocks cannot have dependencies on new providers that do not exist in application. That is, if application has providers `Service1` and `Service2`, then the mock that replaces one of those providers cannot have a dependency on, say, `SpyService`. Therefore, for end-to-end testing, the concept of "nested providers" is introduced, which resolve the dependency for new providers introduced in mocks:
 
 ```ts {6}
 const server = await TestApplication.createTestApp(AppModule)
-  .overrideProviders([
+  .overrideStatic([
     {
       token: Service1,
       useClass: MockService1,
@@ -186,7 +186,7 @@ const method1 = jest.fn();
 const mockService1 = { method1 } as Service1;
 
 const server = await TestApplication.createTestApp(AppModule)
-  .overrideProviders([
+  .overrideStatic([
     {
       token: Service1,
       useValue: mockService1,
@@ -223,7 +223,7 @@ const setInsights = jest.fn();
 const spyService = { setInsights } as SpyService;
 
 const server = await TestApplication.createTestApp(AppModule)
-  .overrideProviders([
+  .overrideStatic([
     {
       token: Service1,
       useClass: MockService1,

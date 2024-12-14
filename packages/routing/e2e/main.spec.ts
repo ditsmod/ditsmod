@@ -38,7 +38,7 @@ describe('@ditsmod/routing/e2e', () => {
     const server = await TestApplication.createTestApp(AppModule)
       .$use(TestRoutingPlugin)
       .overrideGroupRoutingMeta(aProvidersToOverride)
-      .overrideProviders(
+      .overrideStatic(
         new Providers()
           .useValue<ServicePerApp>(ServicePerApp, { method: methodPerApp })
           .useValue<ServicePerMod>(ServicePerMod, { method: methodPerMod })
@@ -67,7 +67,7 @@ describe('@ditsmod/routing/e2e', () => {
 
   it('should failed because we trying to override non-passed provider', async () => {
     const server = await TestApplication.createTestApp(AppModule)
-      .overrideProviders([
+      .overrideStatic([
         { token: ServicePerRou3, useValue: { method: methodPerRou3 } },
         { token: Res, useClass: Res, providers: [ServicePerRou3] },
       ])
