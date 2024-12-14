@@ -15,7 +15,6 @@
   "references": [
     { "path": "../../packages/core/tsconfig.build.json" },
     { "path": "../../packages/routing/tsconfig.build.json" },
-    { "path": "../../packages/return/tsconfig.build.json" },
     { "path": "../../packages/testing/tsconfig.build.json" },
   ]
 }
