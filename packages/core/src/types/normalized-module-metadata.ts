@@ -54,9 +54,9 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   resolvedCollisionsPerRou: [any, ModuleType | ModuleWithParams][] = [];
   resolvedCollisionsPerReq: [any, ModuleType | ModuleWithParams][] = [];
   extensionsProviders: ExtensionProvider[] = [];
+  exportedExtensionsProviders: ExtensionProvider[] = [];
   aExtensionOptions: ExtensionOptions[] = [];
   aExportedExtensionOptions: ExtensionOptions[] = [];
-  exportedExtensions: ExtensionProvider[] = [];
   /**
    * This property allows you to pass any information to extensions.
    *

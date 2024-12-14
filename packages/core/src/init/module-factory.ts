@@ -263,8 +263,8 @@ export class ModuleFactory {
     if (meta1.exportedMultiProvidersPerReq.length) {
       this.importedMultiProvidersPerReq.set(modRefId, meta1.exportedMultiProvidersPerReq);
     }
-    if (meta1.exportedExtensions.length) {
-      this.importedExtensions.set(meta1.modRefId, meta1.exportedExtensions);
+    if (meta1.exportedExtensionsProviders.length) {
+      this.importedExtensions.set(meta1.modRefId, meta1.exportedExtensionsProviders);
       this.aImportedExtensionsOptions.push(...meta1.aExportedExtensionOptions);
     }
     this.throwIfTryResolvingMultiprovidersCollisions(meta1.name);

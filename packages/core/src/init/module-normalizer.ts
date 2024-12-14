@@ -113,7 +113,7 @@ export class ModuleNormalizer {
         meta.aExportedExtensionOptions.push(extensionObj.exportedOptions);
       }
       meta.extensionsProviders.push(...extensionObj.providers);
-      meta.exportedExtensions.push(...extensionObj.exportedProviders);
+      meta.exportedExtensionsProviders.push(...extensionObj.exportedProviders);
     });
 
     // @todo Refactor the logic with the `pickMeta()` call, as it may override previously set values in `meta`.
@@ -248,7 +248,7 @@ export class ModuleNormalizer {
       !meta.exportedMultiProvidersPerRou.length &&
       !meta.exportedMultiProvidersPerReq.length &&
       !meta.providersPerApp.length &&
-      !meta.exportedExtensions.length &&
+      !meta.exportedExtensionsProviders.length &&
       !meta.extensionsProviders.length &&
       !meta.appendsWithParams.length
     ) {
