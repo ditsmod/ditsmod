@@ -57,7 +57,7 @@ This feature is very handy because it sometimes allows you to integrate external
 This is how the extension from `@ditsmod/body-parser` works, for example. You simply import `BodyParserModule`, and its extensions will already be run in the correct order, which is written in this module. In this case, its extension will run after the `ROUTES_EXTENSIONS` group, but before the `PRE_ROUTER_EXTENSIONS` group. And note that `BodyParserModule` has no idea which extensions will work in these groups, it only cares about
 
 1. the data interface that the extensions in the `ROUTES_EXTENSIONS` group will return;
-2. the startup order, so that the routes are not installed before this module works (i.e. the `PRE_ROUTER_EXTENSIONS` group works after it, not before).
+2. the startup order, so that the routes are not set before this module works (i.e. the `PRE_ROUTER_EXTENSIONS` group works after it, not before).
 
 This means that the `BodyParserModule` will take into account the routes set with the `@route()` or `@oasRoute()` decorators, or any other decorators from this group, since they are processed by the extensions that run before it in the `ROUTES_EXTENSIONS` group.
 
