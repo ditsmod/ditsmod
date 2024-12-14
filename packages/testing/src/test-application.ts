@@ -45,7 +45,7 @@ export class TestApplication extends Application {
     return this;
   }
 
-  overrideGroupMeta<T>(
+  overrideDynamic<T>(
     groupToken: ExtensionsGroupToken<T>,
     override: GroupMetaOverrider<T>,
     providers: Providers | Provider[],
