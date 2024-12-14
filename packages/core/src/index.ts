@@ -31,7 +31,6 @@ export {
   ExtensionType,
   ExtensionCounters,
   ExtensionsGroupToken,
-  ExtensionProvider,
   ExtensionsMetaPerApp,
   Extension,
   DebugStage1Meta,
@@ -80,7 +79,7 @@ export {
   ProvidersForMod,
   Scope,
   ModRefId,
-  UnionToIntersection
+  UnionToIntersection,
 } from '#types/mix.js';
 export {
   ModuleMetadata,

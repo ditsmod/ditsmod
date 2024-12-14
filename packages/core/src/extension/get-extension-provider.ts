@@ -1,9 +1,9 @@
 import { KeyRegistry, InjectionToken, Provider } from '#di';
-import { ExtensionType, ExtensionProvider, Extension } from '#extension/extension-types.js';
+import { ExtensionType, Extension } from '#extension/extension-types.js';
 
 export class ExtensionObj {
-  exportedProviders: ExtensionProvider[];
-  providers: ExtensionProvider[];
+  exportedProviders: Provider[];
+  providers: Provider[];
   options?: ExtensionOptions;
   exportedOptions?: ExtensionOptions;
 }

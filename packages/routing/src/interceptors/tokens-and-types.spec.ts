@@ -4,7 +4,7 @@ import {
   defaultProvidersPerApp,
   defaultProvidersPerReq,
   ExtensionOptions,
-  ExtensionProvider,
+  Provider,
   featureModule,
   GuardPerMod1,
   injectable,
@@ -16,7 +16,6 @@ import {
   ModuleType,
   ModuleWithParams,
   NormalizedModuleMetadata,
-  Provider,
   Req,
   rootModule,
   SystemLogMediator,
@@ -141,7 +140,7 @@ describe('mix per app, per mod or per req', () => {
     importedMultiProvidersPerMod = new Map<ModuleType | ModuleWithParams, Provider[]>();
     importedMultiProvidersPerRou = new Map<ModuleType | ModuleWithParams, Provider[]>();
     importedMultiProvidersPerReq = new Map<ModuleType | ModuleWithParams, Provider[]>();
-    importedExtensions = new Map<ModuleType | ModuleWithParams, ExtensionProvider[]>();
+    importedExtensions = new Map<ModuleType | ModuleWithParams, Provider[]>();
     aImportedExtensionsOptions: ExtensionOptions[] = [];
   }
 
@@ -158,7 +157,7 @@ describe('mix per app, per mod or per req', () => {
     override importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
     override importedMultiProvidersPerRou = new Map<ModRefId, Provider[]>();
     override importedMultiProvidersPerReq = new Map<ModRefId, Provider[]>();
-    override importedExtensions = new Map<ModRefId, ExtensionProvider[]>();
+    override importedExtensions = new Map<ModRefId, Provider[]>();
     override guardsPerMod1: GuardPerMod1[] = [];
 
     override exportGlobalProviders(moduleManager: ModuleManager, providersPerApp: Provider[]) {

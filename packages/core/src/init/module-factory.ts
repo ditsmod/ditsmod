@@ -8,7 +8,6 @@ import type { GlobalProviders, MetadataPerMod1 } from '#types/metadata-per-mod.j
 import { ImportObj } from '#types/metadata-per-mod.js';
 import type { ModuleType, Scope, Provider, GuardPerMod1, ModRefId } from '#types/mix.js';
 import type { ModuleWithParams } from '#types/module-metadata.js';
-import type { ExtensionProvider } from '#extension/extension-types.js';
 import { getCollisions } from '#utils/get-collisions.js';
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
@@ -48,7 +47,7 @@ export class ModuleFactory {
   protected importedMultiProvidersPerMod = new Map<ModuleType | ModuleWithParams, Provider[]>();
   protected importedMultiProvidersPerRou = new Map<ModuleType | ModuleWithParams, Provider[]>();
   protected importedMultiProvidersPerReq = new Map<ModuleType | ModuleWithParams, Provider[]>();
-  protected importedExtensions = new Map<ModuleType | ModuleWithParams, ExtensionProvider[]>();
+  protected importedExtensions = new Map<ModuleType | ModuleWithParams, Provider[]>();
   protected aImportedExtensionsOptions: ExtensionOptions[] = [];
 
   /**
@@ -128,7 +127,7 @@ export class ModuleFactory {
     let multiPerMod: Map<ModuleType | ModuleWithParams, Provider[]>;
     let multiPerRou: Map<ModuleType | ModuleWithParams, Provider[]>;
     let multiPerReq: Map<ModuleType | ModuleWithParams, Provider[]>;
-    let extensions: Map<ModuleType | ModuleWithParams, ExtensionProvider[]>;
+    let extensions: Map<ModuleType | ModuleWithParams, Provider[]>;
     let aExtensionsOptions: ExtensionOptions[];
     if (meta.isExternal) {
       // External modules do not require global providers and extensions from the application.

@@ -28,7 +28,7 @@ import { reflector } from '#di/reflection.js';
 import { Providers } from '#utils/providers.js';
 import { ModuleMetadata } from '#types/module-metadata.js';
 import { getModule } from '#utils/get-module.js';
-import { Extension, ExtensionProvider } from '#extension/extension-types.js';
+import { Extension } from '#extension/extension-types.js';
 import { normalizeProviders } from '#utils/ng-utils.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
 import { mergeArrays } from '#utils/merge-arrays.js';
@@ -273,7 +273,7 @@ export class ModuleNormalizer {
     }
   }
 
-  protected checkInitMethodForExtension(modName: string, extensionsProvider: ExtensionProvider) {
+  protected checkInitMethodForExtension(modName: string, extensionsProvider: Provider) {
     const np = normalizeProviders([extensionsProvider])[0];
     let extensionClass: Class<Extension> | undefined;
     if (isClassProvider(np)) {

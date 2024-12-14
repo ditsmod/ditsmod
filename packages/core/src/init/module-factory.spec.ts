@@ -11,7 +11,6 @@ import { ModuleManager } from '#init/module-manager.js';
 import { GlobalProviders, ImportObj, MetadataPerMod1 } from '#types/metadata-per-mod.js';
 import { GuardPerMod1, ModuleType, Scope } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
-import { ExtensionProvider } from '#extension/extension-types.js';
 import { Router } from '#types/router.js';
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
@@ -35,7 +34,7 @@ describe('ModuleFactory', () => {
     override importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
     override importedMultiProvidersPerRou = new Map<ModRefId, Provider[]>();
     override importedMultiProvidersPerReq = new Map<ModRefId, Provider[]>();
-    override importedExtensions = new Map<ModRefId, ExtensionProvider[]>();
+    override importedExtensions = new Map<ModRefId, Provider[]>();
     override guardsPerMod1: GuardPerMod1[] = [];
 
     override exportGlobalProviders(moduleManager: ModuleManager, providersPerApp: Provider[]) {

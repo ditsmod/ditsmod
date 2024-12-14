@@ -1,5 +1,5 @@
-import { KeyRegistry, InjectionToken } from '#di';
-import { ExtensionProvider, Extension } from '#extension/extension-types.js';
+import { KeyRegistry, InjectionToken, Provider } from '#di';
+import { Extension } from '#extension/extension-types.js';
 import { ExtensionOptions, getExtensionProvider } from '#extension/get-extension-provider.js';
 
 describe('getExtensionProvider', () => {
@@ -13,7 +13,7 @@ describe('getExtensionProvider', () => {
   }
 
   describe('without BEFORE group', () => {
-    const providers: ExtensionProvider[] = [Extension1, { token: MY_EXTENSION, useToken: Extension1, multi: true }];
+    const providers: Provider[] = [Extension1, { token: MY_EXTENSION, useToken: Extension1, multi: true }];
 
     it('extension without exports (two arguments)', () => {
       const args: ExtensionOptions = { extension: Extension1, group: MY_EXTENSION };
@@ -25,7 +25,7 @@ describe('getExtensionProvider', () => {
 
     it('extension with override', () => {
       const args: ExtensionOptions = { extension: Extension2, overrideExtension: Extension1 };
-      const providers: ExtensionProvider[] = [{ token: Extension1, useClass: Extension2 }];
+      const providers: Provider[] = [{ token: Extension1, useClass: Extension2 }];
       expect(getExtensionProvider(args)).toMatchObject({
         exportedProviders: [],
         providers,
@@ -50,7 +50,7 @@ describe('getExtensionProvider', () => {
   });
 
   describe('with BEFORE group', () => {
-    const providers: ExtensionProvider[] = [
+    const providers: Provider[] = [
       Extension1,
       { token: MY_EXTENSION, useToken: Extension1, multi: true },
       { token: KeyRegistry.getBeforeToken(OTHER_EXTENSION), useToken: Extension1, multi: true },
