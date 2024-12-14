@@ -18,6 +18,13 @@ import { isAppendsWithParams, isModuleWithParams, isRootModule } from '#utils/ty
 import { hasDeclaredInDir } from '#utils/type-guards.js';
 import { getModule } from '#utils/get-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
+import {
+  ExtensionOptions,
+  ExtensionOptionsBase,
+  isOptionWithOverrideExtension,
+} from '#extension/get-extension-provider.js';
+import { findCycle } from '#extension/tarjan-graph.js';
+import { getProviderName } from '#utils/get-provider-name.js';
 
 /**
  * - exports global providers;
@@ -38,10 +45,11 @@ export class ModuleFactory {
   protected importedProvidersPerMod = new Map<any, ImportObj>();
   protected importedProvidersPerRou = new Map<any, ImportObj>();
   protected importedProvidersPerReq = new Map<any, ImportObj>();
-  protected importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
-  protected importedMultiProvidersPerRou = new Map<ModRefId, Provider[]>();
-  protected importedMultiProvidersPerReq = new Map<ModRefId, Provider[]>();
-  protected importedExtensions = new Map<ModRefId, ExtensionProvider[]>();
+  protected importedMultiProvidersPerMod = new Map<ModuleType | ModuleWithParams, Provider[]>();
+  protected importedMultiProvidersPerRou = new Map<ModuleType | ModuleWithParams, Provider[]>();
+  protected importedMultiProvidersPerReq = new Map<ModuleType | ModuleWithParams, Provider[]>();
+  protected importedExtensions = new Map<ModuleType | ModuleWithParams, ExtensionProvider[]>();
+  protected aImportedExtensionsOptions: ExtensionOptions[] = [];
 
   /**
    * GlobalProviders.
@@ -51,7 +59,7 @@ export class ModuleFactory {
   protected unfinishedScanModules = new Set<ModRefId>();
   protected moduleManager: ModuleManager;
 
-  exportGlobalProviders(moduleManager: ModuleManager, providersPerApp: Provider[]) {
+  exportGlobalProviders(moduleManager: ModuleManager, providersPerApp: Provider[]): GlobalProviders {
     this.moduleManager = moduleManager;
     const meta = moduleManager.getMetadata('root', true);
     this.moduleName = meta.name;
@@ -68,6 +76,7 @@ export class ModuleFactory {
       importedMultiProvidersPerRou: this.importedMultiProvidersPerRou,
       importedMultiProvidersPerReq: this.importedMultiProvidersPerReq,
       importedExtensions: this.importedExtensions,
+      aImportedExtensionsOptions: this.aImportedExtensionsOptions,
     };
   }
 
@@ -120,6 +129,7 @@ export class ModuleFactory {
     let multiPerRou: Map<ModuleType | ModuleWithParams, Provider[]>;
     let multiPerReq: Map<ModuleType | ModuleWithParams, Provider[]>;
     let extensions: Map<ModuleType | ModuleWithParams, ExtensionProvider[]>;
+    let aExtensionsOptions: ExtensionOptions[];
     if (meta.isExternal) {
       // External modules do not require global providers and extensions from the application.
       perMod = new Map([...this.importedProvidersPerMod]);
@@ -129,6 +139,7 @@ export class ModuleFactory {
       multiPerRou = new Map([...this.importedMultiProvidersPerRou]);
       multiPerReq = new Map([...this.importedMultiProvidersPerReq]);
       extensions = new Map([...this.importedExtensions]);
+      aExtensionsOptions = [...this.aImportedExtensionsOptions];
     } else {
       perMod = new Map([...this.glProviders.importedProvidersPerMod, ...this.importedProvidersPerMod]);
       perRou = new Map([...this.glProviders.importedProvidersPerRou, ...this.importedProvidersPerRou]);
@@ -137,7 +148,10 @@ export class ModuleFactory {
       multiPerRou = new Map([...this.glProviders.importedMultiProvidersPerRou, ...this.importedMultiProvidersPerRou]);
       multiPerReq = new Map([...this.glProviders.importedMultiProvidersPerReq, ...this.importedMultiProvidersPerReq]);
       extensions = new Map([...this.glProviders.importedExtensions, ...this.importedExtensions]);
+      aExtensionsOptions = [...this.glProviders.aImportedExtensionsOptions, ...this.aImportedExtensionsOptions];
     }
+
+    this.checkExtensionGroupsGraph(meta.aExtensionOptions.concat(aExtensionsOptions));
 
     return this.appMetadataMap.set(modOrObj, {
       prefixPerMod,
@@ -154,6 +168,22 @@ export class ModuleFactory {
         extensions,
       },
     });
+  }
+
+  protected checkExtensionGroupsGraph(extensions: ExtensionOptions[]) {
+    const extensionWithBeforeGroup = extensions?.filter((config) => {
+      return !isOptionWithOverrideExtension(config) && config.beforeGroup;
+    }) as ExtensionOptionsBase[] | undefined;
+
+    if (extensionWithBeforeGroup) {
+      const path = findCycle(extensionWithBeforeGroup);
+      if (path) {
+        const strPath = path.map(getProviderName).join(' -> ');
+        let msg = `A configuration of extensions detected in ${this.moduleName}`;
+        msg += ` creates a cyclic dependency in the startup sequence of different groups: ${strPath}.`;
+        throw new Error(msg);
+      }
+    }
   }
 
   protected importAndAppendModules() {
@@ -235,6 +265,7 @@ export class ModuleFactory {
     }
     if (meta1.exportedExtensions.length) {
       this.importedExtensions.set(meta1.modRefId, meta1.exportedExtensions);
+      this.aImportedExtensionsOptions.push(...meta1.aExportedExtensionOptions);
     }
     this.throwIfTryResolvingMultiprovidersCollisions(meta1.name);
   }

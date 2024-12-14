@@ -14,7 +14,6 @@ import {
 } from '#utils/type-guards.js';
 import {
   ExtensionOptions,
-  ExtensionOptionsBase,
   getExtensionProvider,
   isOptionWithOverrideExtension,
 } from '#extension/get-extension-provider.js';
@@ -33,8 +32,6 @@ import { Extension, ExtensionProvider } from '#extension/extension-types.js';
 import { normalizeProviders } from '#utils/ng-utils.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
 import { mergeArrays } from '#utils/merge-arrays.js';
-import { findCycle } from '#extension/tarjan-graph.js';
-import { getProviderName } from '#utils/get-provider-name.js';
 
 export class ModuleNormalizer {
   /**
@@ -104,12 +101,17 @@ export class ModuleNormalizer {
     resolvedCollisionsPerScope.forEach(([token]) => this.throwIfNormalizedProvider(modName, token));
     this.exportFromRawMeta(rawMeta, modName, providersTokens, meta);
     this.checkReexportModules(meta);
-    this.checkExtensionGroupsGraph(rawMeta.extensions);
 
     rawMeta.extensions?.forEach((extensionOptions, i) => {
       this.checkExtensionOptions(modName, extensionOptions, i);
       const extensionObj = getExtensionProvider(extensionOptions);
       extensionObj.providers.forEach((p) => this.checkInitMethodForExtension(modName, p));
+      if (extensionObj.options) {
+        meta.aExtensionOptions.push(extensionObj.options);
+      }
+      if (extensionObj.exportedOptions) {
+        meta.aExportedExtensionOptions.push(extensionObj.exportedOptions);
+      }
       meta.extensionsProviders.push(...extensionObj.providers);
       meta.exportedExtensions.push(...extensionObj.exportedProviders);
     });
@@ -121,20 +123,6 @@ export class ModuleNormalizer {
     meta.controllers.forEach((Controller) => this.checkController(modName, Controller));
 
     return meta;
-  }
-
-  protected checkExtensionGroupsGraph(extensions?: ExtensionOptions[]) {
-    const extensionWithBeforeGroup = extensions?.filter((config) => {
-      return !isOptionWithOverrideExtension(config) && config.beforeGroup;
-    }) as ExtensionOptionsBase[] | undefined;
-
-    if (extensionWithBeforeGroup) {
-      const path = findCycle(extensionWithBeforeGroup);
-      if (path) {
-        const strPath = path.map(getProviderName).join(' -> ');
-        throw new Error(`Circular dependencies are detected: ${strPath}`);
-      }
-    }
   }
 
   protected checkController(modName: string, Controller: Class) {

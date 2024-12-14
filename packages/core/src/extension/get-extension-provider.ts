@@ -2,8 +2,10 @@ import { KeyRegistry, InjectionToken, Provider } from '#di';
 import { ExtensionType, ExtensionProvider, Extension } from '#extension/extension-types.js';
 
 export class ExtensionObj {
-  exportedProviders: Provider[];
+  exportedProviders: ExtensionProvider[];
   providers: ExtensionProvider[];
+  options?: ExtensionOptions;
+  exportedOptions?: ExtensionOptions;
 }
 
 export interface ExtensionOptionsBase {
@@ -73,16 +75,20 @@ export function getExtensionProvider(extensionOptions: ExtensionOptions): Extens
     return {
       providers: [],
       exportedProviders: providers,
+      exportedOptions: extensionOptions,
     };
   } else if (extensionOptions.exported) {
     return {
       providers,
       exportedProviders: providers,
+      options: extensionOptions,
+      exportedOptions: extensionOptions,
     };
   } else {
     return {
       providers,
       exportedProviders: [],
+      options: extensionOptions,
     };
   }
 }

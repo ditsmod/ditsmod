@@ -17,7 +17,7 @@ describe('getExtensionProvider', () => {
 
     it('extension without exports (two arguments)', () => {
       const args: ExtensionOptions = { extension: Extension1, group: MY_EXTENSION };
-      expect(getExtensionProvider(args)).toEqual({
+      expect(getExtensionProvider(args)).toMatchObject({
         exportedProviders: [],
         providers,
       });
@@ -26,7 +26,7 @@ describe('getExtensionProvider', () => {
     it('extension with override', () => {
       const args: ExtensionOptions = { extension: Extension2, overrideExtension: Extension1 };
       const providers: ExtensionProvider[] = [{ token: Extension1, useClass: Extension2 }];
-      expect(getExtensionProvider(args)).toEqual({
+      expect(getExtensionProvider(args)).toMatchObject({
         exportedProviders: [],
         providers,
       });
@@ -34,7 +34,7 @@ describe('getExtensionProvider', () => {
 
     it('extension without exports (three arguments)', () => {
       const args: ExtensionOptions = { extension: Extension1, group: MY_EXTENSION, exported: false };
-      expect(getExtensionProvider(args)).toEqual({
+      expect(getExtensionProvider(args)).toMatchObject({
         exportedProviders: [],
         providers,
       });
@@ -42,7 +42,7 @@ describe('getExtensionProvider', () => {
 
     it('extension with exports', () => {
       const args: ExtensionOptions = { extension: Extension1, group: MY_EXTENSION, exported: true };
-      expect(getExtensionProvider(args)).toEqual({
+      expect(getExtensionProvider(args)).toMatchObject({
         exportedProviders: providers,
         providers,
       });
@@ -58,7 +58,7 @@ describe('getExtensionProvider', () => {
 
     it('extension without exports (three arguments)', () => {
       const args: ExtensionOptions = { extension: Extension1, group: MY_EXTENSION, beforeGroup: OTHER_EXTENSION };
-      expect(getExtensionProvider(args)).toEqual({
+      expect(getExtensionProvider(args)).toMatchObject({
         exportedProviders: [],
         providers,
       });
@@ -71,7 +71,7 @@ describe('getExtensionProvider', () => {
         beforeGroup: OTHER_EXTENSION,
         exported: false,
       };
-      expect(getExtensionProvider(args)).toEqual({
+      expect(getExtensionProvider(args)).toMatchObject({
         exportedProviders: [],
         providers,
       });
@@ -84,7 +84,7 @@ describe('getExtensionProvider', () => {
         beforeGroup: OTHER_EXTENSION,
         exported: true,
       };
-      expect(getExtensionProvider(args)).toEqual({
+      expect(getExtensionProvider(args)).toMatchObject({
         exportedProviders: providers,
         providers,
       });

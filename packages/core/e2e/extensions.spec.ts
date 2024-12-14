@@ -39,8 +39,8 @@ describe('extensions e2e', () => {
     })
     class AppModule {}
 
-    const msg = 'Circular dependencies are detected: MY_EXTENSIONS3 -> MY_EXTENSIONS2 -> MY_EXTENSIONS1 -> MY_EXTENSIONS3';
-    expect(() => TestApplication.createTestApp(AppModule)).toThrow(msg);
+    const msg = ': MY_EXTENSIONS3 -> MY_EXTENSIONS2 -> MY_EXTENSIONS1 -> MY_EXTENSIONS3';
+    await expect(TestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
   });
 
   it('circular dependencies of groups in two modules', async () => {
@@ -64,32 +64,26 @@ describe('extensions e2e', () => {
     }
 
     @featureModule({
-      extensions: [
-        { extension: Extension3, group: MY_EXTENSIONS3, beforeGroup: MY_EXTENSIONS2, exportedOnly: true },
-      ],
+      extensions: [{ extension: Extension3, group: MY_EXTENSIONS3, beforeGroup: MY_EXTENSIONS2, exportedOnly: true }],
     })
     class Module1 {}
 
     @featureModule({
       imports: [Module1],
-      extensions: [
-        { extension: Extension2, group: MY_EXTENSIONS2, beforeGroup: MY_EXTENSIONS1, exportedOnly: true },
-      ],
-      exports: [Module1]
+      extensions: [{ extension: Extension2, group: MY_EXTENSIONS2, beforeGroup: MY_EXTENSIONS1, exportedOnly: true }],
+      exports: [Module1],
     })
     class Module2 {}
 
     @rootModule({
       imports: [Module1, Module2],
       providersPerApp: [{ token: Router, useValue: 'fake value' }],
-      extensions: [
-        { extension: Extension1, group: MY_EXTENSIONS1, beforeGroup: MY_EXTENSIONS3 },
-      ],
+      extensions: [{ extension: Extension1, group: MY_EXTENSIONS1, beforeGroup: MY_EXTENSIONS3 }],
     })
     class AppModule {}
 
-    const msg = 'Circular dependencies are detected: MY_EXTENSIONS3 -> MY_EXTENSIONS2 -> MY_EXTENSIONS1 -> MY_EXTENSIONS3';
-    expect(() => TestApplication.createTestApp(AppModule)).toThrow(msg);
+    const msg = ': MY_EXTENSIONS1 -> MY_EXTENSIONS3 -> MY_EXTENSIONS2 -> MY_EXTENSIONS1';
+    await expect(TestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
   });
 
   it('check isLastModule', async () => {

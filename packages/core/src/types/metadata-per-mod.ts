@@ -2,6 +2,7 @@ import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { GuardPerMod1, ModRefId, ModuleType, Provider } from './mix.js';
 import { ModuleWithParams } from './module-metadata.js';
 import { ExtensionProvider } from '#extension/extension-types.js';
+import { ExtensionOptions } from '#extension/get-extension-provider.js';
 
 /**
  * @todo Rename this.
@@ -22,6 +23,7 @@ export class GlobalProviders {
   importedMultiProvidersPerRou = new Map<ModuleType | ModuleWithParams, Provider[]>();
   importedMultiProvidersPerReq = new Map<ModuleType | ModuleWithParams, Provider[]>();
   importedExtensions = new Map<ModuleType | ModuleWithParams, ExtensionProvider[]>();
+  aImportedExtensionsOptions: ExtensionOptions[] = [];
 }
 
 /**

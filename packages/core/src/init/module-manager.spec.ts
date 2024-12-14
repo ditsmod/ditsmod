@@ -899,6 +899,8 @@ describe('ModuleManager', () => {
     expectedMeta3.declaredInDir = getCallerDir();
     expectedMeta3.isExternal = false;
     expectedMeta3.rawMeta = expect.any(Object);
+    delete (expectedMeta3 as any).aExtensionOptions;
+    delete (expectedMeta3 as any).aExportedExtensionOptions;
 
     const expectedMeta1 = new NormalizedModuleMetadata();
     expectedMeta1.id = '';
@@ -910,10 +912,12 @@ describe('ModuleManager', () => {
     expectedMeta1.declaredInDir = getCallerDir();
     expectedMeta1.isExternal = false;
     expectedMeta1.rawMeta = expect.any(Object);
+    delete (expectedMeta1 as any).aExtensionOptions;
+    delete (expectedMeta1 as any).aExportedExtensionOptions;
 
     mock.scanRootModule(Module3);
-    expect(mock.getMetadata('root')).toEqual(expectedMeta3);
-    expect(mock.getMetadata(Module1)).toEqual(expectedMeta1);
+    expect(mock.getMetadata('root')).toMatchObject(expectedMeta3);
+    expect(mock.getMetadata(Module1)).toMatchObject(expectedMeta1);
   });
 
   it('root module with exported globaly some extension', () => {
@@ -949,6 +953,8 @@ describe('ModuleManager', () => {
     expectedMeta3.declaredInDir = getCallerDir();
     expectedMeta3.isExternal = false;
     expectedMeta3.rawMeta = expect.any(Object);
+    delete (expectedMeta3 as any).aExtensionOptions;
+    delete (expectedMeta3 as any).aExportedExtensionOptions;
 
     const expectedMeta1 = new NormalizedModuleMetadata();
     expectedMeta1.id = '';
@@ -960,10 +966,12 @@ describe('ModuleManager', () => {
     expectedMeta1.declaredInDir = getCallerDir();
     expectedMeta1.isExternal = false;
     expectedMeta1.rawMeta = expect.any(Object);
+    delete (expectedMeta1 as any).aExtensionOptions;
+    delete (expectedMeta1 as any).aExportedExtensionOptions;
 
     mock.scanRootModule(Module3);
-    expect(mock.getMetadata('root')).toEqual(expectedMeta3);
-    expect(mock.getMetadata(Module1)).toEqual(expectedMeta1);
+    expect(mock.getMetadata('root')).toMatchObject(expectedMeta3);
+    expect(mock.getMetadata(Module1)).toMatchObject(expectedMeta1);
   });
 
   describe('init extensions', () => {

@@ -5,6 +5,7 @@ import { ExtensionProvider } from '#extension/extension-types.js';
 import { MultiProvider } from '#utils/type-guards.js';
 import { ProvidersMetadata } from '#types/providers-metadata.js';
 import { RawMeta } from '#decorators/module.js';
+import { ExtensionOptions } from '#extension/get-extension-provider.js';
 
 export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> extends ProvidersMetadata {
   override providersPerApp: Provider[] = [];
@@ -53,6 +54,8 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   resolvedCollisionsPerRou: [any, ModuleType | ModuleWithParams][] = [];
   resolvedCollisionsPerReq: [any, ModuleType | ModuleWithParams][] = [];
   extensionsProviders: ExtensionProvider[] = [];
+  aExtensionOptions: ExtensionOptions[] = [];
+  aExportedExtensionOptions: ExtensionOptions[] = [];
   exportedExtensions: ExtensionProvider[] = [];
   /**
    * This property allows you to pass any information to extensions.
