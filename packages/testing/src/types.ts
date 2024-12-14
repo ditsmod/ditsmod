@@ -25,11 +25,17 @@ export interface Meta {
 }
 
 export interface GroupMetaOverrider<T = any> {
+  /**
+   * @param providers Providers to override.
+   */
   (providers: Provider[], stage1GroupMeta: Stage1GroupMeta<T> | Stage1GroupMeta2<T>): any;
 }
 
 export interface OverriderConfig {
   groupToken: ExtensionsGroupToken;
   override: GroupMetaOverrider;
+  /**
+   * Providers to override.
+   */
   providers: Provider[];
 }
