@@ -6,9 +6,7 @@ sidebar_position: 40
 
 ## What is unit testing
 
-In fact, unit testing is a testing method that allows you to verify that the smallest parts of an application, such as functions and class methods (which are also essentially functions), work correctly. To perform testing, you alternately focus on a separate function while isolating all other parts of the program that interact with that function.
-
-Properly written unit tests allow you to read them as documentation for your program. It can be said that in most projects only the public part of the application API is documented, and the rest is TypeScript types, documentation based on unit tests and comments in the code.
+In fact, unit testing is a testing method that allows you to verify that the smallest parts of an application, such as functions and class methods (which are also essentially functions), work correctly. To perform testing, you alternately focus on a separate function while isolating all other parts of the program that interact with that function. Properly written unit tests allow you to read them as documentation for your program.
 
 One of the most popular frameworks for writing unit tests for JavaScript code is [jest][100]. In this section, we will use this framework.
 
@@ -43,6 +41,7 @@ Since `Service2` depends on `Service1`, we need to isolate this service from int
 
 ```ts
 import { Injector } from '@ditsmod/core';
+
 import { Service1 } from './service1.js';
 import { Service2 } from './service2.js';
 
@@ -54,8 +53,10 @@ So, as an input to the `Injector.resolveAndCreate()` method, we pass an array of
 
 In this case, to create `Service2`, the injector will first create an instance of the `Service1` class. But in order to write tests specifically for `Service2`, we don't care if `Service1` is working properly, so instead of the real `Service1` class, we can simulate its operation using [mock functions][101]. This is how it will look like (without tests yet):
 
-```ts {6}
+```ts {8}
 import { Injector } from '@ditsmod/core';
+import { jest } from '@jest/globals';
+
 import { Service1 } from './service1.js';
 import { Service2 } from './service2.js';
 
@@ -70,8 +71,10 @@ As you can see, in the highlighted line, instead of `Service1`, a value provider
 
 Now you can write a test using this technique of substituting providers:
 
-```ts {6-7,14}
+```ts {8-9,16}
 import { Injector } from '@ditsmod/core';
+import { jest } from '@jest/globals';
+
 import { Service1 } from './service1.js';
 import { Service2 } from './service2.js';
 
@@ -109,10 +112,11 @@ End-to-end testing checks the operation of the entire application. For this purp
 
 Let's look at the situation when we make a mock for `EmailService`:
 
-```ts {12,19}
+```ts {14,21}
 import request from 'supertest';
 import { HttpServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
+import { jest } from '@jest/globals';
 
 import { AppModule } from '#app/app.module.js';
 import { EmailService } from '#app/email.service.js';
@@ -120,6 +124,7 @@ import { InterfaceOfEmailService } from '#app/types.js';
 
 describe('End-to-end testing', () => {
   let server: HttpServer;
+  let testAgent: ReturnType<typeof request>;
   const query = jest.fn();
   const MockEmailService = { query } as InterfaceOfEmailService;
 
@@ -131,20 +136,23 @@ describe('End-to-end testing', () => {
         { token: EmailService, useValue: MockEmailService }
       ])
       .getServer();
+
+    testAgent = request(server);
+  });
+
+  afterAll(() => {
+    server?.close();
   });
 
   it('work with EmailService', async () => {
     const values = [{ one: 1, two: 2 }];
     query.mockImplementation(() => values);
 
-    await request(server)
-      .get('/get-some-from-email')
-      .expect(200)
-      .expect(values);
-
+    const { status, type, body } = await testAgent.get('/get-some-from-email');
+    expect(status).toBe(200);
+    expect(type).toBe('application/json');
+    expect(body).toBe(values);
     expect(query).toHaveBeenCalledTimes(1);
-
-    server.close();
   });
 });
 ```

@@ -6,9 +6,7 @@ sidebar_position: 40
 
 ## Що таке unit-тестування
 
-По-суті, юніт-тестування - це метод тестування, який дозволяє перевірити чи правильно працюють окремі найменші частини застосунку, такі як функції та методи класів (які по-суті також є функціями). Для проведення тестування, почергово фокусуються на окремій функції, при цьому ізолюють усі інші частини програми, які взаємодіють з цією функцією.
-
-Правильно написані юніт-тести дозволяють читати їх як документацію до вашої програми. Можна сказати, що у більшості проектів документують лише публічну частину API застосунку, а решта - це TypeScript-типи, документація на основі юніт-тестів та коментарів у коді.
+По-суті, юніт-тестування - це метод тестування, який дозволяє перевірити чи правильно працюють окремі найменші частини застосунку, такі як функції та методи класів (які по-суті також є функціями). Для проведення тестування, почергово фокусуються на окремій функції, при цьому ізолюють усі інші частини програми, які взаємодіють з цією функцією. Правильно написані юніт-тести дозволяють читати їх як документацію до вашої програми.
 
 Одним із самих популярних фреймворків для написання юніт-тестів для JavaScript-коду є [jest][100]. В даному розділі ми будемо використовувати саме цей фреймворк.
 
@@ -43,6 +41,7 @@ class Service2 {
 
 ```ts
 import { Injector } from '@ditsmod/core';
+
 import { Service1 } from './service1.js';
 import { Service2 } from './service2.js';
 
@@ -54,8 +53,10 @@ const service2 = injector.get(Service2);
 
 В даному разі, для створення `Service2`, інжектор спочатку створить інстанс класу `Service1`. Але щоб написати тести саме для `Service2`, нам не важливо чи справно працює `Service1`, тому замість справжнього класу `Service1` нам можна імітувати його роботу за допомогою [мок-функцій][101]. Ось як це виглядатиме (покищо без тестів):
 
-```ts {6}
+```ts {8}
 import { Injector } from '@ditsmod/core';
+import { jest } from '@jest/globals';
+
 import { Service1 } from './service1.js';
 import { Service2 } from './service2.js';
 
@@ -70,8 +71,10 @@ const service2 = injector.get(Service2);
 
 Тепер можна написати тест, використовуючи цю техніку підміни провайдерів:
 
-```ts {6-7,14}
+```ts {8-9,16}
 import { Injector } from '@ditsmod/core';
+import { jest } from '@jest/globals';
+
 import { Service1 } from './service1.js';
 import { Service2 } from './service2.js';
 
@@ -109,10 +112,11 @@ describe('Service2', () => {
 
 Давайте розглянемо ситуацію, коли ми робимо мок для `EmailService`:
 
-```ts {12,19}
+```ts {14,21}
 import request from 'supertest';
 import { HttpServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
+import { jest } from '@jest/globals';
 
 import { AppModule } from '#app/app.module.js';
 import { EmailService } from '#app/email.service.js';
@@ -120,6 +124,7 @@ import { InterfaceOfEmailService } from '#app/types.js';
 
 describe('End-to-end testing', () => {
   let server: HttpServer;
+  let testAgent: ReturnType<typeof request>;
   const query = jest.fn();
   const MockEmailService = { query } as InterfaceOfEmailService;
 
@@ -131,20 +136,23 @@ describe('End-to-end testing', () => {
         { token: EmailService, useValue: MockEmailService }
       ])
       .getServer();
+
+    testAgent = request(server);
+  });
+
+  afterAll(() => {
+    server?.close();
   });
 
   it('work with EmailService', async () => {
     const values = [{ one: 1, two: 2 }];
     query.mockImplementation(() => values);
 
-    await request(server)
-      .get('/get-some-from-email')
-      .expect(200)
-      .expect(values);
-
+    const { status, type, body } = await testAgent.get('/get-some-from-email');
+    expect(status).toBe(200);
+    expect(type).toBe('application/json');
+    expect(body).toBe(values);
     expect(query).toHaveBeenCalledTimes(1);
-
-    server.close();
   });
 });
 ```
@@ -157,7 +165,7 @@ describe('End-to-end testing', () => {
 server = await TestApplication.createTestApp(AppModule, { path: 'api' }).getServer();
 ```
 
-Підміна моків, за допомогою методу `testApplication.overrideStatic()`, працює глобально на будь-якому рівні ієрархії інжекторів. Провайдери з моками передаються до DI на певний рівень ієрархії, тільки якщо у застосунку на цьому рівні є відповідні провайдери з такими самими токенами.
+Підміна моків за допомогою методу `testApplication.overrideStatic()` працює глобально на будь-якому рівні ієрархії інжекторів. Провайдери з моками передаються до DI на певний рівень ієрархії, тільки якщо у застосунку на цьому рівні є відповідні провайдери з такими самими токенами.
 
 Рекомендуємо подібні тести тримати в окремому каталозі з назвою `e2e`, на одному рівні з кореневим каталогом `src`.
 
