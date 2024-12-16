@@ -1,1 +1,1 @@
-export { TestRoutingPlugin } from './test-routing-application.js';
+export { TestRoutingPlugin } from './test-routing.plugin.js';
