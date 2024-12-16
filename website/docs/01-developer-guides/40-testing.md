@@ -165,7 +165,11 @@ describe('End-to-end testing', () => {
 server = await TestApplication.createTestApp(AppModule, { path: 'api' }).getServer();
 ```
 
+### `testApplication.overrideStatic()`
+
 Метод `testApplication.overrideStatic()` підміняє провайдери, які додаються статично в метадані модулів чи контролерів. Провайдери з моками передаються до DI на певний рівень ієрархії, тільки якщо у застосунку на цьому рівні є відповідні провайдери з такими самими токенами.
+
+### `testApplication.overrideDynamic()`
 
 Інстанс `TestApplication` також має метод `overrideDynamic()`, який призначений для підміни провайдерів, що додаються розширеннями динамічно. Цей метод приймає три аргументи:
 
@@ -185,6 +189,38 @@ interface GroupMetaOverrider<T = any> {
 
 1. провайдери для підміни;
 2. метадані, де у властивості `groupData` ви можете знайти метадані, з указаної групи розширень.
+
+### `testApplication.$use()`
+
+Даний метод призначений для створення плагінів, які можуть динамічно додавати методи та властивості до інстансу `TestApplication`:
+
+```ts
+import { TestApplication } from '@ditsmod/testing';
+
+class Plugin1 extends TestApplication {
+  method1() {
+    // ...
+    return this;
+  }
+}
+
+class Plugin2 extends TestApplication {
+  method2() {
+    // ...
+    return this;
+  }
+}
+
+class AppModule {}
+
+TestApplication.createTestApp(AppModule)
+  .$use(Plugin1, Plugin2)
+  .method1()
+  .method2()
+  .overrideStatic([]);
+```
+
+Як бачите, після використання `$use()` інстанс `TestApplication` може використовувати методи плагінів. [Приклад використання такого плагіна в реальному житті][103] можна проглянути в модулі `@ditsmod/routing`.
 
 ### Вкладені провайдери для тестування
 
@@ -270,3 +306,4 @@ const server = await TestApplication.createTestApp(AppModule)
 [100]: https://jestjs.io/
 [101]: https://jestjs.io/docs/mock-functions
 [102]: https://github.com/ladjs/supertest
+[103]: https://github.com/ditsmod/ditsmod/blob/c42c834cb93cb2/packages/routing/e2e/main.spec.ts#L39

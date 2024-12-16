@@ -165,7 +165,11 @@ Note that these tests do not use the code from the `./src/main.ts` file, so any 
 server = await TestApplication.createTestApp(AppModule, { path: 'api' }).getServer();
 ```
 
+### `testApplication.overrideStatic()`
+
 The `testApplication.overrideStatic()` method overrides providers that are statically added to module or controller metadata. Providers with mocks are only passed to DI at a particular level of the hierarchy if there are corresponding providers with the same tokens in application at that level.
+
+### `testApplication.overrideDynamic()`
 
 The `TestApplication` instance also has a method called `overrideDynamic()`, which is designed to override providers dynamically added by extensions. This method takes three arguments:
 
@@ -185,6 +189,38 @@ This means the callback takes two arguments:
 
 1. the providers to override;
 2. metadata, where the `groupData` property contains the metadata from the specified extension group.
+
+### `testApplication.$use()`
+
+This method is intended for creating plugins that can dynamically add methods and properties to the `TestApplication` instance:
+
+```ts
+import { TestApplication } from '@ditsmod/testing';
+
+class Plugin1 extends TestApplication {
+  method1() {
+    // ...
+    return this;
+  }
+}
+
+class Plugin2 extends TestApplication {
+  method2() {
+    // ...
+    return this;
+  }
+}
+
+class AppModule {}
+
+TestApplication.createTestApp(AppModule)
+  .$use(Plugin1, Plugin2)
+  .method1()
+  .method2()
+  .overrideStatic([]);
+```
+
+As you can see, after using `$use()`, the `TestApplication` instance can use plugin methods. [An example of using such a plugin in real life][103] can be viewed in the `@ditsmod/routing` module.
 
 ### Nested providers for testing
 
@@ -270,3 +306,4 @@ const server = await TestApplication.createTestApp(AppModule)
 [100]: https://jestjs.io/
 [101]: https://jestjs.io/docs/mock-functions
 [102]: https://github.com/ladjs/supertest
+[103]: https://github.com/ditsmod/ditsmod/blob/c42c834cb93cb2/packages/routing/e2e/main.spec.ts#L39
