@@ -165,7 +165,7 @@ Note that these tests do not use the code from the `./src/main.ts` file, so any 
 server = await TestApplication.createTestApp(AppModule, { path: 'api' }).getServer();
 ```
 
-Overriding mocks with the `testApplication.overrideStatic()` method works globally at any level of the injector hierarchy. Providers with mocks are only passed to DI at a particular level of the hierarchy if there are corresponding providers with the same tokens in application at that level.
+The `testApplication.overrideStatic()` method overrides providers that are statically added to module or controller metadata. Providers with mocks are only passed to DI at a particular level of the hierarchy if there are corresponding providers with the same tokens in application at that level.
 
 We recommend keeping such tests in a separate directory called `e2e`, at the same level as the `src` root directory.
 
