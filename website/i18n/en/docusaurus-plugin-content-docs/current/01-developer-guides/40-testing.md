@@ -167,7 +167,24 @@ server = await TestApplication.createTestApp(AppModule, { path: 'api' }).getServ
 
 The `testApplication.overrideStatic()` method overrides providers that are statically added to module or controller metadata. Providers with mocks are only passed to DI at a particular level of the hierarchy if there are corresponding providers with the same tokens in application at that level.
 
-We recommend keeping such tests in a separate directory called `e2e`, at the same level as the `src` root directory.
+The `TestApplication` instance also has a method called `overrideDynamic()`, which is designed to override providers dynamically added by extensions. This method takes three arguments:
+
+1. the token of the extension group whose metadata will be used to override providers for testing purposes;
+2. a callback that processes the metadata returned by the extension group (specified in the first argument);
+3. an array of providers that need to be overridden.
+
+The callback from the second argument has the following type:
+
+```ts
+interface GroupMetaOverrider<T = any> {
+  (providers: Provider[], stage1GroupMeta: Stage1GroupMeta<T> | Stage1GroupMeta2<T>): void;
+}
+```
+
+This means the callback takes two arguments:
+
+1. the providers to override;
+2. metadata, where the `groupData` property contains the metadata from the specified extension group.
 
 ### Nested providers for testing
 

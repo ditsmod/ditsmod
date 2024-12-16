@@ -17,6 +17,7 @@ That is,
 2. if there are several words in the file name, you should separate them with a hyphen;
 3. class roles must precede the extension and must be preceded by a dot (`*.module.ts`, `*.controller.ts`, `*.service.ts`, `*.guard.ts`);
 4. class names must start with a capital letter, and contain exactly the same words as in the name of their files, but in the style of [CamelCase][1].
+5. End-to-end tests should be kept in a separate directory named `e2e`, at the same level as the `src` root directory.
 
 It is recommended to call the root module - `AppModule`.
 
