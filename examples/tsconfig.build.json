@@ -20,5 +20,6 @@
     { "path": "17-cors/tsconfig.build.json" },
     { "path": "18-diagnostics-channel/tsconfig.build.json" },
     { "path": "19-session-cookie/tsconfig.build.json" },
+    { "path": "20-authjs/tsconfig.build.json" },
   ]
 }

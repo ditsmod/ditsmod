@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "outDir": "dist",
-      "paths": {
+    "paths": {
       "@ditsmod/core": ["../core/src/index.js"],
       "@ditsmod/routing": ["../routing/src/index.js"],
     },

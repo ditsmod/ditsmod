@@ -20,5 +20,6 @@
     { "path": "17-cors/tsconfig.e2e.json" },
     { "path": "18-diagnostics-channel/tsconfig.e2e.json" },
     { "path": "19-session-cookie/tsconfig.e2e.json" },
+    { "path": "20-authjs/tsconfig.e2e.json" },
   ]
 }
