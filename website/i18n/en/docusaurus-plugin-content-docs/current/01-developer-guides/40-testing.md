@@ -167,7 +167,7 @@ server = await TestApplication.createTestApp(AppModule, { path: 'api' }).getServ
 
 ### `testApplication.overrideStatic()`
 
-The `testApplication.overrideStatic()` method overrides providers that are statically added to module or controller metadata. Providers with mocks are only passed to DI at a particular level of the hierarchy if there are corresponding providers with the same tokens in application at that level.
+The `testApplication.overrideStatic()` method overrides providers that are statically added to module metadata. Providers with mocks are only passed to DI at a particular level of the hierarchy if there are corresponding providers with the same tokens in application at that level.
 
 ### `testApplication.overrideDynamic()`
 
