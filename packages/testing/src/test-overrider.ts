@@ -10,7 +10,7 @@ import {
 import { Meta, Scope, TestClassProvider, TestFactoryProvider, TestProvider } from './types.js';
 
 export class TestOverrider {
-  overrideAllProviders(perAppService: PerAppService, metadata: Meta, providersToOverride: Provider[]) {
+  static overrideAllProviders(perAppService: PerAppService, metadata: Meta, providersToOverride: Provider[]) {
     providersToOverride.forEach((provider) => {
       const providersPerApp = perAppService.providers;
       this.overrideProvider(['App'], { providersPerApp }, provider);
@@ -27,7 +27,7 @@ export class TestOverrider {
    * If the token of the `provider` that needs to be overridden is found in the `metadata`,
    * that `provider` is added to the `metadata` array last in the same scope.
    */
-  protected overrideProvider(scopes: Scope[], metadata: Meta, provider: TestProvider) {
+  protected static overrideProvider(scopes: Scope[], metadata: Meta, provider: TestProvider) {
     scopes.forEach((scope) => {
       const normExistingProviders = normalizeProviders(metadata[`providersPer${scope}`] || []);
       const normProvider = normalizeProviders([provider])[0];
@@ -46,7 +46,7 @@ export class TestOverrider {
    * as this can lead to unwanted results. We first need to check if the current provider depends
    * on the prepared providers, and if it does, then only add them at the same scope.
    */
-  protected getAllowedDeps(provider: TestClassProvider | TestFactoryProvider) {
+  protected static getAllowedDeps(provider: TestClassProvider | TestFactoryProvider) {
     const tokensOfDeps = getDependencies(provider).map((reflectiveDependecy) => reflectiveDependecy.token);
     const allowedDeps: Provider[] = [];
 

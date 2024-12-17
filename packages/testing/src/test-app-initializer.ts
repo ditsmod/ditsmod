@@ -27,7 +27,7 @@ export class TestAppInitializer extends AppInitializer {
   }
 
   protected override overrideMetaAfterStage1(meta: NormalizedModuleMetadata) {
-    new TestOverrider().overrideAllProviders(this.perAppService, meta, this.providersToOverride);
+    TestOverrider.overrideAllProviders(this.perAppService, meta, this.providersToOverride);
     return meta;
   }
 
