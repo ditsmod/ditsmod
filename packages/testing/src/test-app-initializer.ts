@@ -16,29 +16,18 @@ import { OVERRIDERS_CONFIG } from './constants.js';
 
 export class TestAppInitializer extends AppInitializer {
   protected providersToOverride: TestProvider[] = [];
-  protected providersPerApp: Provider[] = [];
   protected aOverriderConfig: OverriderConfig[] = [];
 
   setOverriderConfig(config: OverriderConfig) {
     this.aOverriderConfig.push(config);
   }
 
-  setProvidersPerApp(providersPerApp: Provider[]) {
-    this.providersPerApp = providersPerApp;
-  }
-
   overrideStatic(providers: Providers | TestProvider[]) {
     this.providersToOverride.push(...providers);
   }
 
-  getProvidersToOverride() {
-    return this.providersToOverride;
-  }
-
   protected override overrideMetaAfterStage1(meta: NormalizedModuleMetadata) {
-    meta.providersPerApp.push(...this.providersPerApp);
-    const providersToOverride = this.getProvidersToOverride();
-    new TestOverrider().overrideAllProviders(this.perAppService, meta, providersToOverride);
+    new TestOverrider().overrideAllProviders(this.perAppService, meta, this.providersToOverride);
     return meta;
   }
 
