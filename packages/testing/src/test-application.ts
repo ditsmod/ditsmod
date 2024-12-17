@@ -39,10 +39,10 @@ export class TestApplication extends Application {
   /**
    * Overrides providers at any level if there are matching providers (they have the same tokens)
    * at those levels. Therefore, this method does not always add providers to the DI.
-   * 
+   *
    * This method has the word "static" in its name, because it overrides the providers that are
    * set statically in the metadata of the module or controller.
-   * 
+   *
    * @param providers Providers to override.
    */
   overrideStatic(providers: Providers | TestProvider[]) {
@@ -53,15 +53,11 @@ export class TestApplication extends Application {
   /**
    * This method has the word "dynamic" in its name, because it overrides providers that are set
    * dynamically using extensions.
-   * 
+   *
    * @param providers Providers to override.
    */
-  overrideDynamic<T>(
-    groupToken: ExtensionsGroupToken<T>,
-    override: GroupMetaOverrider<T>,
-    providers: Providers | Provider[],
-  ) {
-    this.testAppInitializer.setOverriderConfig({ groupToken, override, providers: [...providers] });
+  overrideDynamic<T>(groupToken: ExtensionsGroupToken<T>, override: GroupMetaOverrider<T>) {
+    this.testAppInitializer.setOverriderConfig({ groupToken, override });
     return this;
   }
 

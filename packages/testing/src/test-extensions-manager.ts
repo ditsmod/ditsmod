@@ -39,7 +39,7 @@ export class TestExtensionsManager extends ExtensionsManager {
       if (groupToken !== overriderConfig.groupToken) {
         return;
       }
-      overriderConfig.override(overriderConfig.providers, stage1GroupMeta);
+      overriderConfig.override(stage1GroupMeta);
     });
     return stage1GroupMeta;
   }
