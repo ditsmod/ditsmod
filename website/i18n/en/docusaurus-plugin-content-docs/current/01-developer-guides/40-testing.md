@@ -171,24 +171,22 @@ The `testApplication.overrideStatic()` method overrides providers that are stati
 
 ### `testApplication.overrideDynamic()`
 
-The `TestApplication` instance also has a method called `overrideDynamic()`, which is designed to override providers dynamically added by extensions. This method takes three arguments:
+The `testApplication.overrideDynamic()` method overrides providers added by extensions dynamically. This method takes two arguments:
 
-1. the token of the extension group whose metadata will be used to override providers for testing purposes;
-2. a callback that processes the metadata returned by the extension group (specified in the first argument);
-3. an array of providers that need to be overridden.
+1. token of the group of extensions from which metadata is returned, where it will be necessary to replace providers for tests;
+2. a callback that will work with the metadata returned by the extension group (specified in the first argument).
 
-The callback from the second argument has the following type:
+The callback in the second argument has the following type:
 
 ```ts
 interface GroupMetaOverrider<T = any> {
-  (providers: Provider[], stage1GroupMeta: Stage1GroupMeta<T> | Stage1GroupMeta2<T>): void;
+ (stage1GroupMeta: Stage1GroupMeta<T> | Stage1GroupMeta2<T>): void;
 }
 ```
 
-This means the callback takes two arguments:
+That is, this callback accepts a single argument - an object where you can find metadata from the specified group of extensions in the `groupData` property.
 
-1. the providers to override;
-2. metadata, where the `groupData` property contains the metadata from the specified extension group.
+[TestRoutingPlugin][4] is described below, which shows how to use `testApplication.overrideDynamic()`.
 
 ### `testApplication.$use()`
 
@@ -221,6 +219,32 @@ TestApplication.createTestApp(AppModule)
 ```
 
 As you can see, after using `$use()`, the `TestApplication` instance can use plugin methods. [An example of using such a plugin in real life][103] can be viewed in the `@ditsmod/routing` module.
+
+
+### `TestRoutingPlugin`
+
+The `TestRoutingPlugin` class uses `testApplication.overrideDynamic()` to override dynamically added providers in extensions of the `ROUTES_EXTENSIONS` group.
+
+```ts
+import { Provider } from '@ditsmod/core';
+import { MetadataPerMod3, ROUTES_EXTENSIONS } from '@ditsmod/routing';
+import { TestApplication, GroupMetaOverrider } from '@ditsmod/testing';
+
+export class TestRoutingPlugin extends TestApplication {
+  overrideGroupRoutingMeta(providersToOverride: Provider[]) {
+    const overrideRoutesMeta: GroupMetaOverrider<MetadataPerMod3> = (stage1GroupMeta) => {
+      stage1GroupMeta.groupData?.forEach((metadataPerMod3) => {
+        // ...
+      });
+    };
+
+    this.overrideDynamic(ROUTES_EXTENSIONS, overrideRoutesMeta);
+    return this;
+  }
+}
+```
+
+You can use this example to create plugins that will replace providers for other groups of extensions. You can find a complete example with `TestRoutingPlugin` [in the Ditsmod repository][104].
 
 ### Nested providers for testing
 
@@ -302,8 +326,10 @@ const server = await TestApplication.createTestApp(AppModule)
 [1]: /components-of-ditsmod-app/dependency-injection
 [2]: /components-of-ditsmod-app/dependency-injection#injector
 [3]: /components-of-ditsmod-app/dependency-injection#hierarchy-of-injectors
+[4]: #testapplicationoverridedynamic
 
 [100]: https://jestjs.io/
 [101]: https://jestjs.io/docs/mock-functions
 [102]: https://github.com/ladjs/supertest
 [103]: https://github.com/ditsmod/ditsmod/blob/c42c834cb93cb2/packages/routing/e2e/main.spec.ts#L39
+[104]: https://github.com/ditsmod/ditsmod/blob/aca9476a870/packages/routing-testing/src/test-routing.plugin.ts

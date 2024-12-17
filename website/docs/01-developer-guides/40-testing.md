@@ -171,24 +171,22 @@ server = await TestApplication.createTestApp(AppModule, { path: 'api' }).getServ
 
 ### `testApplication.overrideDynamic()`
 
-Інстанс `TestApplication` також має метод `overrideDynamic()`, який призначений для підміни провайдерів, що додаються розширеннями динамічно. Цей метод приймає три аргументи:
+Метод `testApplication.overrideDynamic()` підміняє провайдери, що додаються розширеннями динамічно. Цей метод приймає два аргументи:
 
 1. токен групи розширень, від яких повертаються метадані, де потрібно буде підмінити провайдери для тестів;
-2. колбек, що буде працювати з метаданими, які повертає група розширень (указана у першому аргументі);
-3. масив провайдерів, які потрібно підмінити.
+2. колбек, що буде працювати з метаданими, які повертає група розширень (указана у першому аргументі).
 
-Колбек з другого пункту має наступний тип:
+Колбек у другому аргументі має наступний тип:
 
 ```ts
 interface GroupMetaOverrider<T = any> {
-  (providers: Provider[], stage1GroupMeta: Stage1GroupMeta<T> | Stage1GroupMeta2<T>): void;
+  (stage1GroupMeta: Stage1GroupMeta<T> | Stage1GroupMeta2<T>): void;
 }
 ```
 
-Тобто даний колбек приймає два аргументи:
+Тобто даний колбек приймає єдиний аргумент - об'єкт, де у властивості `groupData` ви можете знайти метадані, з указаної групи розширень.
 
-1. провайдери для підміни;
-2. метадані, де у властивості `groupData` ви можете знайти метадані, з указаної групи розширень.
+Нижче описано [TestRoutingPlugin][4], де показано як можна використовувати `testApplication.overrideDynamic()`.
 
 ### `testApplication.$use()`
 
@@ -221,6 +219,32 @@ TestApplication.createTestApp(AppModule)
 ```
 
 Як бачите, після використання `$use()` інстанс `TestApplication` може використовувати методи плагінів. [Приклад використання такого плагіна в реальному житті][103] можна проглянути в модулі `@ditsmod/routing`.
+
+
+### `TestRoutingPlugin`
+
+В класі `TestRoutingPlugin` використовується `testApplication.overrideDynamic()` для підміни динамічно доданих провайдерів у розширеннях групи `ROUTES_EXTENSIONS`.
+
+```ts
+import { Provider } from '@ditsmod/core';
+import { MetadataPerMod3, ROUTES_EXTENSIONS } from '@ditsmod/routing';
+import { TestApplication, GroupMetaOverrider } from '@ditsmod/testing';
+
+export class TestRoutingPlugin extends TestApplication {
+  overrideGroupRoutingMeta(providersToOverride: Provider[]) {
+    const overrideRoutesMeta: GroupMetaOverrider<MetadataPerMod3> = (stage1GroupMeta) => {
+      stage1GroupMeta.groupData?.forEach((metadataPerMod3) => {
+        // ...
+      });
+    };
+
+    this.overrideDynamic(ROUTES_EXTENSIONS, overrideRoutesMeta);
+    return this;
+  }
+}
+```
+
+Ви можете використовувати цей приклад для створення плагінів, що будуть підміняти провайдери для інших груп розширень. Повний приклад з `TestRoutingPlugin` ви можете знайти [в репозиторії Ditsmod][104].
 
 ### Вкладені провайдери для тестування
 
@@ -302,8 +326,10 @@ const server = await TestApplication.createTestApp(AppModule)
 [1]: /components-of-ditsmod-app/dependency-injection
 [2]: /components-of-ditsmod-app/dependency-injection#інжектор
 [3]: /components-of-ditsmod-app/dependency-injection#ієрархія-інжекторів
+[4]: #testapplicationoverridedynamic
 
 [100]: https://jestjs.io/
 [101]: https://jestjs.io/docs/mock-functions
 [102]: https://github.com/ladjs/supertest
-[103]: https://github.com/ditsmod/ditsmod/blob/c42c834cb93cb2/packages/routing/e2e/main.spec.ts#L39
+[103]: https://github.com/ditsmod/ditsmod/blob/c42c834cb9/packages/routing/e2e/main.spec.ts#L39
+[104]: https://github.com/ditsmod/ditsmod/blob/aca9476a870/packages/routing-testing/src/test-routing.plugin.ts
