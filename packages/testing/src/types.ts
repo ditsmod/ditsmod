@@ -28,7 +28,7 @@ export interface GroupMetaOverrider<T = any> {
   /**
    * @param providers Providers to override.
    */
-  (providers: Provider[], stage1GroupMeta: Stage1GroupMeta<T> | Stage1GroupMeta2<T>): any;
+  (providers: Provider[], stage1GroupMeta: Stage1GroupMeta<T> | Stage1GroupMeta2<T>): void;
 }
 
 export interface OverriderConfig {
