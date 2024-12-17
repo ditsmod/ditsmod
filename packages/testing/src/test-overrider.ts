@@ -27,7 +27,7 @@ export class TestOverrider {
    * If the token of the `provider` that needs to be overridden is found in the `metadata`,
    * that `provider` is added to the `metadata` array last in the same scope.
    */
-  protected static overrideProvider(scopes: Scope[], metadata: Meta, provider: TestProvider) {
+  static overrideProvider(scopes: Scope[], metadata: Meta, provider: TestProvider) {
     scopes.forEach((scope) => {
       const normExistingProviders = normalizeProviders(metadata[`providersPer${scope}`] || []);
       const normProvider = normalizeProviders([provider])[0];

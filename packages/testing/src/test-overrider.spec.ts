@@ -3,26 +3,26 @@ import { injectable, factoryMethod } from '@ditsmod/core';
 import { TestOverrider } from './test-overrider.js';
 import { TestClassProvider, TestFactoryProvider } from './types.js';
 
-describe('TestPreRouterExtension', () => {
-  class MockTestPreRouterExtension extends TestOverrider {
-    override getAllowedDeps(provider: TestClassProvider | TestFactoryProvider) {
+describe('TestOverrider', () => {
+  class MockTestOverrider extends TestOverrider {
+    static override getAllowedDeps(provider: TestClassProvider | TestFactoryProvider) {
       return super.getAllowedDeps(provider);
     }
   }
 
-  let mock: MockTestPreRouterExtension;
+  let mock: MockTestOverrider;
 
   beforeEach(() => {
-    mock = new MockTestPreRouterExtension();
+    mock = new MockTestOverrider();
   });
 
   describe('getAllowedDeps()', () => {
     it('should not to throw an error when there no providers', () => {
       class Service1 {}
       const provider1: TestClassProvider = { token: 'token1', useClass: Service1 };
-      expect(() => mock.getAllowedDeps(provider1)).not.toThrow();
+      expect(() => MockTestOverrider.getAllowedDeps(provider1)).not.toThrow();
       const provider2: TestClassProvider = { token: 'token1', useClass: Service1, providers: [] };
-      expect(() => mock.getAllowedDeps(provider2)).not.toThrow();
+      expect(() => MockTestOverrider.getAllowedDeps(provider2)).not.toThrow();
     });
 
     it('should return an array of allowed providers for ClassProvider', () => {
@@ -40,8 +40,8 @@ describe('TestPreRouterExtension', () => {
         useClass: Service1,
         providers: [Dependecy1, Dependecy2, Dependecy3],
       };
-      expect(() => mock.getAllowedDeps(provider1)).not.toThrow();
-      const allowedDeps = mock.getAllowedDeps(provider1);
+      expect(() => MockTestOverrider.getAllowedDeps(provider1)).not.toThrow();
+      const allowedDeps = MockTestOverrider.getAllowedDeps(provider1);
       expect(allowedDeps.length).toBe(2);
       expect(allowedDeps[0]).toBe(Dependecy1);
       expect(allowedDeps[1]).toBe(Dependecy2);
@@ -65,8 +65,8 @@ describe('TestPreRouterExtension', () => {
         useFactory: [Service1, Service1.prototype.method1],
         providers: [Dependecy1, Dependecy2, Dependecy3],
       };
-      expect(() => mock.getAllowedDeps(provider1)).not.toThrow();
-      const allowedDeps = mock.getAllowedDeps(provider1);
+      expect(() => MockTestOverrider.getAllowedDeps(provider1)).not.toThrow();
+      const allowedDeps = MockTestOverrider.getAllowedDeps(provider1);
       expect(allowedDeps.length).toBe(2);
       expect(allowedDeps[0]).toBe(Dependecy1);
       expect(allowedDeps[1]).toBe(Dependecy2);
