@@ -27,6 +27,5 @@
   "files": [],
   "references": [
     { "path": "../core/tsconfig.build.json" },
-    { "path": "../routing/tsconfig.build.json" },
   ]
 }
