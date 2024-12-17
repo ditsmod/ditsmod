@@ -14,7 +14,7 @@ import { AppendsWithParams, ModuleWithParams } from '#types/module-metadata.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 
 /**
- * Auxiliary type for combining interfaces.
+ * Help type for combining interfaces.
  * 
  * ### Usage
  * 
