@@ -1,9 +1,9 @@
-import { getToken, Provider, Providers } from '@ditsmod/core';
+import { Provider, Providers } from '@ditsmod/core';
 import { MetadataPerMod3, ROUTES_EXTENSIONS } from '@ditsmod/routing';
-import { TestApplication, GroupMetaOverrider } from '@ditsmod/testing';
+import { TestApplication, GroupMetaOverrider, TestOverrider, TestProvider } from '@ditsmod/testing';
 
 export class TestRoutingPlugin extends TestApplication {
-  overrideGroupRoutingMeta(providersToOverride: Providers | Provider[]) {
+  overrideGroupRoutingMeta(providersToOverride: Providers | TestProvider[]) {
     const aProvidersToOverride: Provider[] = [...providersToOverride];
     const overrideRoutesMeta: GroupMetaOverrider<MetadataPerMod3> = (stage1GroupMeta) => {
       if (!aProvidersToOverride.length) {
@@ -12,16 +12,7 @@ export class TestRoutingPlugin extends TestApplication {
       stage1GroupMeta.groupData?.forEach((metadataPerMod3) => {
         metadataPerMod3.aControllerMetadata.forEach((controllerMetadata) => {
           aProvidersToOverride.forEach((providerToOverride) => {
-            (['Rou', 'Req'] as const).forEach((scope) => {
-              for (const providerOrigin of controllerMetadata[`providersPer${scope}`]) {
-                const token1 = getToken(providerToOverride);
-                const token2 = getToken(providerOrigin);
-                if (token1 === token2) {
-                  controllerMetadata[`providersPer${scope}`].push(providerToOverride);
-                  break;
-                }
-              }
-            });
+            TestOverrider.overrideProvider(['Rou', 'Req'], controllerMetadata, providerToOverride);
           });
         });
       });
