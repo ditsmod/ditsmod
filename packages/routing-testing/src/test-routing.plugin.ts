@@ -3,8 +3,9 @@ import { MetadataPerMod3, ROUTES_EXTENSIONS } from '@ditsmod/routing';
 import { TestApplication, GroupMetaOverrider } from '@ditsmod/testing';
 
 export class TestRoutingPlugin extends TestApplication {
-  overrideGroupRoutingMeta(aProvidersToOverride: Providers | Provider[]) {
-    const overrideRoutesMeta: GroupMetaOverrider<MetadataPerMod3> = (aProvidersToOverride, stage1GroupMeta) => {
+  overrideGroupRoutingMeta(providersToOverride: Providers | Provider[]) {
+    const aProvidersToOverride: Provider[] = [...providersToOverride];
+    const overrideRoutesMeta: GroupMetaOverrider<MetadataPerMod3> = (stage1GroupMeta) => {
       if (!aProvidersToOverride.length) {
         return;
       }
@@ -26,7 +27,7 @@ export class TestRoutingPlugin extends TestApplication {
       });
     };
 
-    this.overrideDynamic(ROUTES_EXTENSIONS, overrideRoutesMeta, aProvidersToOverride);
+    this.overrideDynamic(ROUTES_EXTENSIONS, overrideRoutesMeta);
     return this;
   }
 }
