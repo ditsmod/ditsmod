@@ -7,6 +7,7 @@
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
   },
+  "homepage": "https://ditsmod.github.io/en/",
   "description": "Ditsmod module to support...",
   "module": "dist/index.js",
   "exports": {
