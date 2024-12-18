@@ -13,6 +13,7 @@
   },
   "include": ["src", "e2e"],
   "references": [
+    { "path": "../../packages/authjs/tsconfig.build.json" },
     { "path": "../../packages/core/tsconfig.build.json" },
     { "path": "../../packages/routing/tsconfig.build.json" },
     { "path": "../../packages/testing/tsconfig.build.json" },

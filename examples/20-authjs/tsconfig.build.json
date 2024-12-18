@@ -9,6 +9,7 @@
   "include": ["src"],
   "exclude": ["src/**/*.spec.ts"],
   "references": [
+    { "path": "../../packages/authjs/tsconfig.build.json" },
     { "path": "../../packages/core/tsconfig.build.json" },
     { "path": "../../packages/routing/tsconfig.build.json" },
   ]
