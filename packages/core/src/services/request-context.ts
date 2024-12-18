@@ -1,3 +1,5 @@
+import { TLSSocket } from 'node:tls';
+
 import { Res } from '#services/response.js';
 import { RawRequest, RawResponse } from '#types/server-options.js';
 import { PathParam } from '#types/router.js';
@@ -16,9 +18,13 @@ export class RequestContext extends Res {
     public rawReq: RawRequest,
     public override rawRes: RawResponse,
     public aPathParams: PathParam[] | null,
-    public queryString: string
+    public queryString: string,
   ) {
     super(rawRes);
+  }
+
+  get protocol() {
+    return this.rawReq.socket instanceof TLSSocket && this.rawReq.socket.encrypted ? 'https' : 'http';
   }
 }
 
