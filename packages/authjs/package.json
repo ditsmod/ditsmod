@@ -33,6 +33,6 @@
     "@ditsmod/core": "^3.0.0"
   },
   "dependencies": {
-    "next-auth": "^5.0.0-beta.25"
+    "@auth/core": "^0.37.4"
   }
 }

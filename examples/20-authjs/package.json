@@ -14,5 +14,8 @@
   },
   "imports": {
     "#app/*": "./dist/app/*"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7"
   }
 }
