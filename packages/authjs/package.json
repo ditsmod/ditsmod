@@ -24,6 +24,9 @@
     "./providers/*": {
       "types": "./dist/providers/*.d.ts",
       "import": "./dist/providers/*.js"
+    },
+    "./adapters": {
+      "types": "./adapters.d.ts"
     }
   },
   "scripts": {
