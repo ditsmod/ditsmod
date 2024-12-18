@@ -23,7 +23,7 @@
     "experimentalDecorators": true,
     "removeComments": false,
   },
-  "include": ["src"],
+  "include": ["src", "e2e"],
   "files": [],
   "references": [
     { "path": "../core/tsconfig.build.json" },
