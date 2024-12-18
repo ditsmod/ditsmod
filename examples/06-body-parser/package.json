@@ -9,7 +9,7 @@
     "watch": "npm run build -- --watch",
     "clean": "rimraf dist*",
     "test": "tsc -b tsconfig.e2e.json && yarn esm-jest",
-"esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",
+    "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",
     "build": "tsc -b tsconfig.build.json"
   },
   "imports": {
