@@ -48,7 +48,7 @@
     "json-loader": "^0.5.7",
     "style-loader": "^4.0.0",
     "swagger-ui": "^5.18.2",
-    "webpack": "^5.96.1",
+    "webpack": "^5.97.1",
     "yaml-loader": "^0.8.1"
   },
   "peerDependencies": {

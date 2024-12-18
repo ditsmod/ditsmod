@@ -68,6 +68,8 @@ This monorepository uses yarn workspaces (see `package.json`).
 During you run the following command:
 
 ```bash
+corepack enable
+corepack prepare yarn@latest --activate
 yarn install
 ```
 
