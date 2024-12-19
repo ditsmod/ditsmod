@@ -36,8 +36,5 @@
     "experimentalDecorators": true,
     "removeComments": false,
   },
-  "include": [
-    "src",
-    "e2e"
-  ]
+  "include": ["src", "e2e"]
 }
