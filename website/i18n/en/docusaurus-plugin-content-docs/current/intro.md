@@ -7,7 +7,7 @@ sidebar_position: 1
 
 ## Introduction to Ditsmod
 
-Ditsmod is a highly extensible and fast Node.js-based web framework. Its name combines **DI** + **TS** + **Mod**, emphasizing its key components: it features **D**ependency **I**njection, is written in **T**ype**S**cript using ESM format, and is designed for robust **Mod**ularity.
+Ditsmod is a Node.js-based web framework designed for building highly extensible and fast applications. Its name combines **DI** + **TS** + **Mod** to highlight its key features: it includes **D**ependency **I**njection, is written in **T**ype**S**cript in ESM format, and is designed with strong **Mod**ularity in mind.
 
 ### Key Features of Ditsmod
 
@@ -76,7 +76,7 @@ P.S. Although a link to the repository with all the necessary settings for Ditsm
 
 ## Prerequisites
 
-Please make sure that Node.js >= v22.11.0 is installed on your operating system.
+Please make sure that Node.js >= v20.6.0 is installed on your operating system.
 
 ## Installation
 
