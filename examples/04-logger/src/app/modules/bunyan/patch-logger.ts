@@ -43,14 +43,14 @@ export class PatchLogger {
         { level: 100, name: 'off' },
       ];
       const levelNumber = appOptions.loggerConfig?.level || logger.level();
-      const levelName = bunyanLevels.find((i) => i.level == levelNumber)?.name || config.level;
+      const levelName = bunyanLevels.find((i) => i.level == levelNumber)?.name || config.level || 'info';
       return levelName;
     };
 
     return logger;
   }
 
-  protected setLogLeveL(appOptions: AppOptions, logger: BunyanLogger, logLevel: OutputLogLevel) {
+  protected setLogLeveL(appOptions: AppOptions, logger: BunyanLogger, logLevel?: OutputLogLevel) {
     const level = appOptions.loggerConfig?.level || logLevel;
     if (level == 'off') {
       logger.level(100);
