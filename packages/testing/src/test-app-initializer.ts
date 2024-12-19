@@ -4,7 +4,6 @@ import {
   ExtensionsContext,
   ExtensionsManager,
   MetadataPerMod2,
-  ModRefId,
   NormalizedModuleMetadata,
   Provider,
   Providers,
