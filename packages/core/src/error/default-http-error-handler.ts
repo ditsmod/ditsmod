@@ -6,6 +6,7 @@ import { Logger } from '#logger/logger.js';
 import { Status } from '#utils/http-status-codes.js';
 import { isCustomError } from '#utils/type-guards.js';
 import { HttpErrorHandler } from '#error/http-error-handler.js';
+import { CustomError } from './custom-error.js';
 
 @injectable()
 export class DefaultHttpErrorHandler implements HttpErrorHandler {
@@ -16,7 +17,11 @@ export class DefaultHttpErrorHandler implements HttpErrorHandler {
     const errObj = { requestId, err };
     if (isCustomError(err)) {
       const { level, status } = err.info;
-      this.logger.log(level || 'debug', errObj);
+      if (err.info.msg2) {
+        this.logMsg2(err, requestId);
+      } else {
+        this.logger.log(level || 'debug', errObj);
+      }
       this.sendError(err.message, ctx, requestId, status);
     } else {
       this.logger.log('error', errObj);
@@ -24,6 +29,10 @@ export class DefaultHttpErrorHandler implements HttpErrorHandler {
       const status = (err as any).status || Status.INTERNAL_SERVER_ERROR;
       this.sendError(msg, ctx, requestId, status);
     }
+  }
+
+  protected logMsg2(err: CustomError, requestId: string) {
+    this.logger.log(err.info.level || 'debug', `Error: ${err.info.msg2}\nrequestId: ${requestId}\n${err.stack}`);
   }
 
   protected sendError(error: string, ctx: RequestContext, requestId: string, status?: Status) {
