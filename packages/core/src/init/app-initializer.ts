@@ -2,7 +2,7 @@ import { ChainError } from '@ts-stack/chain-error';
 
 import { BeforeToken, InjectionToken, Injector } from '#di';
 import { ImportsResolver } from '#init/imports-resolver.js';
-import { Logger, LoggerConfig } from '#logger/logger.js';
+import { Logger } from '#logger/logger.js';
 import { SystemErrorMediator } from '#error/system-error-mediator.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { PublicLogMediator, SystemLogMediator } from '#logger/system-log-mediator.js';
