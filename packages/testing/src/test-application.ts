@@ -5,16 +5,19 @@ import {
   Application,
   Providers,
   ExtensionsGroupToken,
-  Provider,
   Class,
   UnionToIntersection,
+  ModRefId,
 } from '@ditsmod/core';
 
 import { GroupMetaOverrider, TestProvider } from './types.js';
 import { TestAppInitializer } from './test-app-initializer.js';
+import { TestModuleManager } from './test-module-manager.js';
 
 export class TestApplication extends Application {
   protected testAppInitializer: TestAppInitializer;
+  protected testModuleManager: TestModuleManager;
+  protected appModule: ModuleType;
 
   /**
    * @param appModule The root module of the application.
@@ -24,16 +27,30 @@ export class TestApplication extends Application {
     const app = new this();
     try {
       app.init(appOptions);
+      app.appModule = appModule;
       if (!app.appOptions.loggerConfig) {
         app.appOptions.loggerConfig = { level: 'off' };
       }
-      const moduleManager = app.scanRootModule(appModule);
-      app.testAppInitializer = new TestAppInitializer(app.appOptions, moduleManager, app.systemLogMediator);
+      app.testModuleManager = new TestModuleManager(app.systemLogMediator);
+      app.testAppInitializer = new TestAppInitializer(app.appOptions, app.testModuleManager, app.systemLogMediator);
       return app;
     } catch (err: any) {
       app.handleError(err);
       throw err;
     }
+  }
+
+  /**
+   * Marks modules as external (those installed via package managers like npm, yarn, etc).
+   * As a result, they will not accept global providers that the application exports from
+   * the root module. Useful when you want to test how external modules will behave.
+   * 
+   * @param modRefId The module reference ID. If you import the module as an object,
+   * it is this object that must be passed to this method.
+   */
+  markModuleAsExternal(...modRefId: [ModRefId, ...ModRefId[]]) {
+    this.testModuleManager.markModuleAsExternal(modRefId);
+    return this;
   }
 
   /**
@@ -63,6 +80,7 @@ export class TestApplication extends Application {
 
   async getServer() {
     try {
+      this.testModuleManager.scanRootModule(this.appModule);
       await this.bootstrapApplication(this.testAppInitializer);
       await this.createServerAndBindToListening(this.testAppInitializer);
       return this.server;

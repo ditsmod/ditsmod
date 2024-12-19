@@ -4,6 +4,7 @@ import { route } from '#mod/decorators/route.js';
 import { RoutingModule } from '#mod/routing.module.js';
 import { Module1 } from './module1/module1.js';
 import { Module2 } from './module2/module2.js';
+import { Module3 } from './module3/module3.js';
 
 @controller()
 class Controller0 {
@@ -13,8 +14,10 @@ class Controller0 {
   }
 }
 
+export const modRefId3 = { path: 'module3', module: Module3 };
+
 @rootModule({
-  imports: [RoutingModule, { path: 'module1', module: Module1 }],
+  imports: [RoutingModule, { path: 'module1', module: Module1 }, modRefId3],
   appends: [Module2, { path: 'module2', module: Module2 }],
   controllers: [Controller0],
 })
