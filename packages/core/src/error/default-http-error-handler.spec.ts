@@ -85,7 +85,8 @@ describe('DefaultHttpErrorHandler', () => {
     expect(rawRes.statusCode).toBe(Status.BAD_REQUEST);
     expect(rawRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'Internal server error' }));
     expect(rawRes.end).toHaveBeenCalledTimes(1);
-    expect(logger.log).toHaveBeenCalledWith('warn', { err, requestId: expect.any(String) });
+    expect(logger.log).toHaveBeenCalledWith('warn', expect.stringContaining('Error: one'));
+    expect(logger.log).toHaveBeenCalledWith('warn', expect.stringContaining('requestId:'));
     expect(logger.log).toHaveBeenCalledTimes(1);
   });
 
@@ -95,7 +96,8 @@ describe('DefaultHttpErrorHandler', () => {
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
     expect(rawRes.statusCode).toBe(Status.BAD_REQUEST);
     expect(rawRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'Internal server error' }));
-    expect(logger.log).toHaveBeenCalledWith('warn', { err, requestId: expect.any(String) });
+    expect(logger.log).toHaveBeenCalledWith('warn', expect.stringContaining('Error: one %s three'));
+    expect(logger.log).toHaveBeenCalledWith('warn', expect.stringContaining('requestId:'));
     expect(logger.log).toHaveBeenCalledTimes(1);
   });
 
@@ -107,7 +109,8 @@ describe('DefaultHttpErrorHandler', () => {
     expect(rawRes.statusCode).toBe(Status.BAD_REQUEST);
     expect(rawRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'one two' }));
     expect(rawRes.end).toHaveBeenCalledTimes(1);
-    expect(logger.log).toHaveBeenCalledWith('warn', { err, requestId: expect.any(String) });
+    expect(logger.log).toHaveBeenCalledWith('warn', expect.stringContaining('Error: four six'));
+    expect(logger.log).toHaveBeenCalledWith('warn', expect.stringContaining('requestId:'));
     expect(logger.log).toHaveBeenCalledTimes(1);
   });
 });
