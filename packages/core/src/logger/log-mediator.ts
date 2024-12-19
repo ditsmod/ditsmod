@@ -3,6 +3,7 @@ import { ModuleExtract } from '#types/module-extract.js';
 import { ConsoleLogger } from '#logger/console-logger.js';
 import { Logger, LoggerConfig, InputLogLevel, OutputLogLevel } from '#logger/logger.js';
 import { LogItem } from '#logger/types.js';
+import { AppOptions } from '#types/app-options.js';
 
 /**
  * Mediator between the core logger and the user's custom logger.
@@ -25,14 +26,16 @@ export abstract class LogMediator {
     protected injector?: Injector,
     @optional() protected logger: Logger = new ConsoleLogger(),
     @optional() protected loggerConfig: LoggerConfig = new LoggerConfig(),
+    @optional() protected appOptions?: AppOptions,
   ) {}
 
   protected setLog(inputLogLevel: InputLogLevel, msg: string) {
+    const showExternalLogs = this.appOptions?.loggerConfig?.showExternalLogs || this.loggerConfig.showExternalLogs;
     if (LogMediator.bufferLogs) {
       LogMediator.checkDiffLogLevels(this.loggerConfig.level);
       LogMediator.buffer.push({
         isExternal: this.moduleExtract.isExternal,
-        showExternalLogs: this.loggerConfig.showExternalLogs,
+        showExternalLogs,
         moduleName: this.moduleExtract.moduleName,
         inputLogLevel,
         outputLogLevel: this.loggerConfig.level || 'info',
@@ -40,7 +43,7 @@ export abstract class LogMediator {
         msg,
       });
     } else {
-      if (!this.moduleExtract.isExternal || this.loggerConfig.showExternalLogs) {
+      if (!this.moduleExtract.isExternal || showExternalLogs) {
         this.logger.log(inputLogLevel, `[${this.moduleExtract.moduleName}]: ${msg}`);
       }
     }
@@ -83,7 +86,8 @@ export abstract class LogMediator {
 
     logItems.forEach((logItem) => {
       logger.setLevel(logItem.outputLogLevel);
-      if (!logItem.isExternal || logItem.showExternalLogs) {
+      const showExternalLogs = this.appOptions?.loggerConfig?.showExternalLogs || logItem.showExternalLogs;
+      if (!logItem.isExternal || showExternalLogs) {
         logger.log(logItem.inputLogLevel, `[${logItem.moduleName}]: ${logItem.msg}`);
       }
     });
