@@ -1,5 +1,13 @@
 import { parse } from 'node:querystring';
-import { AnyObj, HttpMethod, injectable, RequestContext, SingletonRequestContext, Status } from '@ditsmod/core';
+import {
+  AnyObj,
+  CustomError,
+  HttpMethod,
+  injectable,
+  RequestContext,
+  SingletonRequestContext,
+  Status,
+} from '@ditsmod/core';
 
 import { HttpFrontend, HttpHandler } from './tokens-and-types.js';
 
@@ -45,10 +53,21 @@ export class DefaultSingletonHttpFrontend implements HttpFrontend {
       }
     }
 
-    if (typeof val == 'object' || ctx.rawRes.getHeader('content-type')?.toString().includes('application/json')) {
+    const contentType = ctx.rawRes.getHeader('content-type');
+    if (typeof val == 'object' || contentType?.toString().includes('application/json')) {
       ctx.sendJson(val, statusCode);
+    } else if (contentType && !val) {
+      this.throwTypeError(ctx, contentType);
     } else {
       ctx.send(val, statusCode);
     }
+  }
+
+  protected throwTypeError(ctx: RequestContext, contentType?: string | number | string[]) {
+    const msg1 = 'Internal Server Error';
+    const route = JSON.stringify({ method: ctx.rawReq.method, url: ctx.rawReq.url });
+    let msg2 = `The request handler with route ${route} set the data type to "${contentType}"`;
+    msg2 += ' but did not send the response body. Make sure your handler returns a value.';
+    throw new CustomError({ msg1, msg2, level: 'error', status: Status.INTERNAL_SERVER_ERROR });
   }
 }
