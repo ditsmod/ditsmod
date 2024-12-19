@@ -17,7 +17,7 @@ export abstract class LogMediator {
   static bufferLogs?: boolean = false;
   static buffer: LogItem[] = [];
   static outputLogLevel: OutputLogLevel;
-  protected static prevOutputLogLevel: OutputLogLevel;
+  protected static prevOutputLogLevel?: OutputLogLevel;
   protected static hasDiffLogLevels: boolean;
 
   constructor(
@@ -35,7 +35,7 @@ export abstract class LogMediator {
         showExternalLogs: this.loggerConfig.showExternalLogs,
         moduleName: this.moduleExtract.moduleName,
         inputLogLevel,
-        outputLogLevel: this.loggerConfig.level,
+        outputLogLevel: this.loggerConfig.level || 'info',
         date: new Date(),
         msg,
       });
@@ -53,14 +53,14 @@ export abstract class LogMediator {
    */
   protected updateOutputLogLevel() {
     LogMediator.buffer.forEach((logItem) => {
-      logItem.outputLogLevel = this.loggerConfig.level;
+      logItem.outputLogLevel = this.loggerConfig.level || 'info';
     });
   }
 
   /**
    * Sets `LogMediator.hasDiffLogLevels` to `true`, if `LogMediator.buffer` has logs with different `OutputLogLevel`s.
    */
-  protected static checkDiffLogLevels(level: OutputLogLevel) {
+  protected static checkDiffLogLevels(level?: OutputLogLevel) {
     if (this.hasDiffLogLevels) {
       return;
     }

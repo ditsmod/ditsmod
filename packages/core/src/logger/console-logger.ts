@@ -14,7 +14,7 @@ export class ConsoleLogger implements Logger {
     @optional() appOptions: AppOptions = new AppOptions(),
   ) {
     this.appOptions = appOptions;
-    this.level = this.appOptions.loggerConfig?.level || config.level;
+    this.level = this.appOptions.loggerConfig?.level || config.level || 'info';
   }
 
   log(level: InputLogLevel, ...args: any[]) {
