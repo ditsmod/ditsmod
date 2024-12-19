@@ -2,14 +2,15 @@ import request from 'supertest';
 import { HttpServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 
-import { AppModule, modRefId3 } from './app2/app.module.js';
+import { AppModule } from './app2/app.module.js';
+import { Module3 } from './app2/module3/module3.js';
 
 describe('routing app2', () => {
   let server: HttpServer;
   let testAgent: ReturnType<typeof request>;
 
   beforeAll(async () => {
-    server = await TestApplication.createTestApp(AppModule).markModuleAsExternal(modRefId3).getServer();
+    server = await TestApplication.createTestApp(AppModule).markModuleAsExternal(Module3).getServer();
     testAgent = request(server);
   });
 
