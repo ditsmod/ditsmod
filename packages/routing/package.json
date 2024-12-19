@@ -29,7 +29,8 @@
   "scripts": {
     "build": "tsc -b tsconfig.build.json",
     "clean": "rm -rf dist*",
-    "test": "tsc -b tsconfig.e2e.json && yarn esm-jest",
+    "test": "yarn build-test && yarn esm-jest",
+    "build-test": "tsc -b tsconfig.e2e.json",
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",
     "bench": "yarn build && node --enable-source-maps --expose-gc dist/bench.js",
     "rebuild": "cd ../.. && yarn clean && cd - && yarn build"
