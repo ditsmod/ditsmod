@@ -2,14 +2,14 @@ import request from 'supertest';
 import { HttpServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 
-import { AppModule } from './app2/app.module.js';
+import { AppModule, modRefId3 } from './app2/app.module.js';
 
 describe('routing app2', () => {
   let server: HttpServer;
   let testAgent: ReturnType<typeof request>;
 
   beforeAll(async () => {
-    server = await TestApplication.createTestApp(AppModule).getServer();
+    server = await TestApplication.createTestApp(AppModule).markModuleAsExternal(modRefId3).getServer();
     testAgent = request(server);
   });
 
@@ -43,5 +43,12 @@ describe('routing app2', () => {
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('controller2');
+  });
+
+  it('appends module3 marked as external module', async () => {
+    const { status, type, text } = await testAgent.get('/module3/controller3');
+    expect(status).toBe(200);
+    expect(type).toBe('text/plain');
+    expect(text).toBe('controller3');
   });
 });
