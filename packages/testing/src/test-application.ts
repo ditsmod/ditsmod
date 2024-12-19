@@ -48,7 +48,7 @@ export class TestApplication extends Application {
    * @param modRefId The module reference ID. If you import the module as an object,
    * it is this object that must be passed to this method.
    */
-  markModuleAsExternal(...modRefId: [ModRefId, ...ModRefId[]]) {
+  markModuleAsExternal(...modRefId: ModRefId[]) {
     this.testModuleManager.markModuleAsExternal(modRefId);
     return this;
   }
