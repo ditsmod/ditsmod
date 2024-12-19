@@ -63,8 +63,13 @@ export class OpenapiController {
       },
     },
   })
-  async getJavaScript() {
+  getJavaScript() {
     this.res.setContentType('text/javascript; charset=utf-8');
-    createReadStream(`${webpackDist}/openapi.bundle.js`).pipe(this.res.rawRes);
+    return new Promise((resolve, reject) => {
+      createReadStream(`${webpackDist}/openapi.bundle.js`)
+        .on('close', resolve)
+        .on('error', reject)
+        .pipe(this.res.rawRes);
+    });
   }
 }
