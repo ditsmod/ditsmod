@@ -223,7 +223,7 @@ TestApplication.createTestApp(AppModule)
 
 ### `TestRoutingPlugin`
 
-В класі `TestRoutingPlugin` використовується `testApplication.overrideExtensionMeta()` для підміни провайдерів у метаданих, що додаються групою `ROUTES_EXTENSIONS`.
+В класі `TestRoutingPlugin` використовується `testApplication.overrideExtensionMeta()` для підміни провайдерів у метаданих, що додаються групою `ROUTES_EXTENSIONS`:
 
 ```ts
 import { Provider } from '@ditsmod/core';
@@ -332,4 +332,4 @@ const server = await TestApplication.createTestApp(AppModule)
 [101]: https://jestjs.io/docs/mock-functions
 [102]: https://github.com/ladjs/supertest
 [103]: https://github.com/ditsmod/ditsmod/blob/c42c834cb9/packages/routing/e2e/main.spec.ts#L39
-[104]: https://github.com/ditsmod/ditsmod/blob/aca9476a870/packages/routing-testing/src/test-routing.plugin.ts
+[104]: https://github.com/ditsmod/ditsmod/blob/main/packages/routing-testing/src/test-routing.plugin.ts

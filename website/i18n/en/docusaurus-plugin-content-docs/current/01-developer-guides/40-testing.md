@@ -223,7 +223,7 @@ As you can see, after using `$use()`, the `TestApplication` instance can use plu
 
 ### `TestRoutingPlugin`
 
-The `TestRoutingPlugin` class uses `testApplication.overrideExtensionMeta()` to override providers in the metadata added by the `ROUTES_EXTENSIONS` group.
+The `TestRoutingPlugin` class uses `testApplication.overrideExtensionMeta()` to override providers in the metadata added by the `ROUTES_EXTENSIONS` group:
 
 ```ts
 import { Provider } from '@ditsmod/core';
@@ -332,4 +332,4 @@ const server = await TestApplication.createTestApp(AppModule)
 [101]: https://jestjs.io/docs/mock-functions
 [102]: https://github.com/ladjs/supertest
 [103]: https://github.com/ditsmod/ditsmod/blob/c42c834cb93cb2/packages/routing/e2e/main.spec.ts#L39
-[104]: https://github.com/ditsmod/ditsmod/blob/aca9476a870/packages/routing-testing/src/test-routing.plugin.ts
+[104]: https://github.com/ditsmod/ditsmod/blob/main/packages/routing-testing/src/test-routing.plugin.ts
