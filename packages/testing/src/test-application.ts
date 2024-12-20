@@ -8,9 +8,10 @@ import {
   Class,
   UnionToIntersection,
   ModRefId,
+  Provider,
 } from '@ditsmod/core';
 
-import { GroupMetaOverrider, TestProvider } from './types.js';
+import { GroupMetaOverrider, Meta } from './types.js';
 import { TestAppInitializer } from './test-app-initializer.js';
 import { TestModuleManager } from './test-module-manager.js';
 
@@ -40,11 +41,16 @@ export class TestApplication extends Application {
     }
   }
 
+  addProvidersToModule(modRefId: ModRefId, providersMeta: Meta) {
+    this.testAppInitializer.addProvidersToModule(modRefId, providersMeta);
+    return this;
+  }
+
   /**
    * Marks modules as external (those installed via package managers like npm, yarn, etc).
    * As a result, they will not accept global providers that the application exports from
    * the root module. Useful when you want to test how external modules will behave.
-   * 
+   *
    * @param modRefId The module reference ID. If you import the module as an object,
    * it is this object that must be passed to this method.
    */
@@ -59,7 +65,7 @@ export class TestApplication extends Application {
    *
    * @param providers Providers to override.
    */
-  overrideModuleMeta(providers: Providers | TestProvider[]) {
+  overrideModuleMeta(providers: Providers | Provider[]) {
     this.testAppInitializer.overrideModuleMeta(providers);
     return this;
   }

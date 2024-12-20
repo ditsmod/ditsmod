@@ -1,27 +1,12 @@
-import {
-  FactoryProvider,
-  ClassProvider,
-  Provider,
-  ValueProvider,
-  TokenProvider,
-  Stage1GroupMeta,
-  Stage1GroupMeta2,
-  ExtensionsGroupToken,
-} from '@ditsmod/core';
+import { Provider, Stage1GroupMeta, Stage1GroupMeta2, ExtensionsGroupToken, Providers } from '@ditsmod/core';
 
-export interface TestInlineProviders {
-  providers?: Provider[];
-}
-export type TestClassProvider = ClassProvider & TestInlineProviders;
-export type TestFactoryProvider = FactoryProvider & TestInlineProviders;
-export type TestProvider = TestClassProvider | TestFactoryProvider | ValueProvider | TokenProvider | Provider;
 export type Scope = 'App' | 'Mod' | 'Rou' | 'Req';
 
-export interface Meta {
-  providersPerApp?: Provider[];
-  providersPerMod?: Provider[];
-  providersPerRou?: Provider[];
-  providersPerReq?: Provider[];
+export interface Meta <T = Providers | Provider[]> {
+  providersPerApp?: T;
+  providersPerMod?: T;
+  providersPerRou?: T;
+  providersPerReq?: T;
 }
 
 /**
