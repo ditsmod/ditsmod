@@ -61,7 +61,7 @@ In this case, `Provider2` will not be passed to DI, while `Provider1` and `Provi
 
 The `providers.$use()` method allows creating plugins (or middlewares) to extend the functionality of `Providers`:
 
-```ts {2,11,22-23}
+```ts {2,11,21-22}
 class Plugin1 extends Providers {
   method1() {
     if (this.true) {
@@ -81,8 +81,7 @@ class Plugin2 extends Providers {
 }
 
 const providers = [...new Providers()
-  .use(Plugin1)
-  .use(Plugin2)
+  .$use(Plugin1, Plugin2)
   .method1()
   .method2()
   .useLogConfig({ level: 'trace' })

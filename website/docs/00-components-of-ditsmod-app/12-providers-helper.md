@@ -61,7 +61,7 @@ export class SomeModule {}
 
 Метод `providers.$use()` дозволяє створювати плагіни (чи middleware) для розширення функціональності `Providers`:
 
-```ts {2,11,22-23}
+```ts {2,11,21-22}
 class Plugin1 extends Providers {
   method1() {
     if (this.true) {
@@ -81,8 +81,7 @@ class Plugin2 extends Providers {
 }
 
 const providers = [...new Providers()
-  .use(Plugin1)
-  .use(Plugin2)
+  .$use(Plugin1, Plugin2)
   .method1()
   .method2()
   .useLogConfig({ level: 'trace' })
