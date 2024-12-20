@@ -57,13 +57,10 @@ export class TestApplication extends Application {
    * Overrides providers at any level if there are matching providers (they have the same tokens)
    * at those levels. Therefore, this method does not always add providers to the DI.
    *
-   * This method has the word "static" in its name, because it overrides the providers that are
-   * set statically in the metadata of the module or controller.
-   *
    * @param providers Providers to override.
    */
-  overrideStatic(providers: Providers | TestProvider[]) {
-    this.testAppInitializer.overrideStatic(providers);
+  overrideModuleMeta(providers: Providers | TestProvider[]) {
+    this.testAppInitializer.overrideModuleMeta(providers);
     return this;
   }
 
@@ -118,7 +115,7 @@ TestApplication.createTestApp(AppModule)
   .$use(Plugin1, Plugin2)
   .method1()
   .method2()
-  .overrideStatic([]);
+  .overrideModuleMeta([]);
  * ```
  * 
  * That is, after using the `.$use()` method, you will be able to use plugin methods.

@@ -40,7 +40,7 @@ describe('12-testing', () => {
 
     beforeAll(async () => {
       server = await TestApplication.createTestApp(AppModule)
-        .overrideStatic([
+        .overrideModuleMeta([
           {
             token: HttpErrorHandler,
             useClass: CustomHttpErrorHandler,

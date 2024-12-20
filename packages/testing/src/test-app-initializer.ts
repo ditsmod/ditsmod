@@ -22,7 +22,7 @@ export class TestAppInitializer extends AppInitializer {
     this.aOverriderConfig.push(config);
   }
 
-  overrideStatic(providers: Providers | TestProvider[]) {
+  overrideModuleMeta(providers: Providers | TestProvider[]) {
     this.providersToOverride.push(...providers);
   }
 
