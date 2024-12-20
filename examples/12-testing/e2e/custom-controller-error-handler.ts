@@ -1,4 +1,4 @@
-import { DefaultHttpErrorHandler, injectable, Res, Logger, Req, RequestContext } from '@ditsmod/core';
+import { DefaultHttpErrorHandler, injectable, Logger, RequestContext } from '@ditsmod/core';
 import { ErrorContainer } from './error-container.js';
 
 @injectable()
