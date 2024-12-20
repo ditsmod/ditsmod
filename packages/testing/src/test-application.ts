@@ -54,7 +54,7 @@ export class TestApplication extends Application {
   }
 
   /**
-   * Overrides providers at any level if there are matching providers (they have the same tokens)
+   * Overrides providers from a module metadata at any level if there are matching providers (they have the same tokens)
    * at those levels. Therefore, this method does not always add providers to the DI.
    *
    * @param providers Providers to override.
@@ -65,8 +65,7 @@ export class TestApplication extends Application {
   }
 
   /**
-   * This method has the word "dynamic" in its name, because it overrides providers that are set
-   * dynamically using extensions.
+   * Overrides providers at any level in metadata that generate extension groups.
    *
    * @param providers Providers to override.
    */
