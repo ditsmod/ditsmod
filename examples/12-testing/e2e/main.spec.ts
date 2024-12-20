@@ -40,11 +40,11 @@ describe('12-testing', () => {
 
     beforeAll(async () => {
       server = await TestApplication.createTestApp(AppModule)
+        .addProvidersToModule(AppModule, { providersPerRou: [{ token: ErrorContainer, useValue: errorContainer }] })
         .overrideModuleMeta([
           {
             token: HttpErrorHandler,
             useClass: CustomHttpErrorHandler,
-            providers: [{ token: ErrorContainer, useValue: errorContainer }],
           },
         ])
         .getServer();
