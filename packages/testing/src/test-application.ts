@@ -41,6 +41,10 @@ export class TestApplication extends Application {
     }
   }
 
+  /**
+   * Adds providers to module metadata at any level. Use this method only if the `overrideModuleMeta()`
+   * method is not suitable for you.
+   */
   addProvidersToModule(modRefId: ModRefId, providersMeta: Meta) {
     this.testAppInitializer.addProvidersToModule(modRefId, providersMeta);
     return this;
