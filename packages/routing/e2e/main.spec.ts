@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
-import { Providers, Res } from '@ditsmod/core';
+import { Providers } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 import { TestRoutingPlugin } from '@ditsmod/routing-testing';
 
@@ -12,7 +12,6 @@ import {
   ServicePerReq,
   ServicePerRou2,
   ServicePerReq2,
-  ServicePerRou3,
 } from './app/services.js';
 
 describe('@ditsmod/routing/e2e', () => {
@@ -24,7 +23,6 @@ describe('@ditsmod/routing/e2e', () => {
   const methodPerReq = jest.fn(implementation);
   const methodPerRou2 = jest.fn(implementation);
   const methodPerReq2 = jest.fn(implementation);
-  const methodPerRou3 = jest.fn(implementation);
 
   beforeEach(() => {
     jest.restoreAllMocks();

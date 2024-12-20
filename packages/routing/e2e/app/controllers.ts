@@ -1,4 +1,4 @@
-import { controller, Injector } from '@ditsmod/core';
+import { controller } from '@ditsmod/core';
 
 import { route } from '#mod/decorators/route.js';
 import {
@@ -8,7 +8,6 @@ import {
   ServicePerReq,
   ServicePerRou2,
   ServicePerReq2,
-  ServicePerRou3,
 } from './services.js';
 
 @controller({
@@ -44,11 +43,5 @@ export class Controller1 {
   @route('GET', 'per-req2')
   perReq2(perReq2: ServicePerReq2) {
     return perReq2.method();
-  }
-
-  @route('GET', 'per-rou3')
-  perRou3(injector: Injector) {
-    const perRou3 = injector.get(ServicePerRou3); // This provider is not passed to DI
-    return perRou3.method();
   }
 }

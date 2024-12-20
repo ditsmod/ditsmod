@@ -39,9 +39,3 @@ export class ServicePerReq2 {
     return 'Req2';
   }
 }
-
-export class ServicePerRou3 {
-  method() {
-    return 'Rou3';
-  }
-}
