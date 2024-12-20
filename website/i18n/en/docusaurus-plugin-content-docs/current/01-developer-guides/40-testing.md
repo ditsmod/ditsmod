@@ -167,11 +167,11 @@ server = await TestApplication.createTestApp(AppModule, { path: 'api' }).getServ
 
 ### `testApplication.overrideModuleMeta()`
 
-The `testApplication.overrideModuleMeta()` method overrides providers that are statically added to module metadata. Providers with mocks are only passed to DI at a particular level of the hierarchy if there are corresponding providers with the same tokens in application at that level.
+The `testApplication.overrideModuleMeta()` method replaces providers in module metadata. Providers with mocks are only passed to DI at a particular level of the hierarchy if there are corresponding providers with the same tokens in application at that level.
 
 ### `testApplication.overrideExtensionMeta()`
 
-The `testApplication.overrideExtensionMeta()` method overrides providers added by extensions dynamically. This method takes two arguments:
+The `testApplication.overrideExtensionMeta()` method overrides providers in metadata added by extension groups. This method takes two arguments:
 
 1. token of the group of extensions from which metadata is returned, where it will be necessary to replace providers for tests;
 2. a callback that will work with the metadata returned by the extension group (specified in the first argument).
@@ -184,7 +184,7 @@ interface GroupMetaOverrider<T = any> {
 }
 ```
 
-That is, this callback accepts a single argument - an object where you can find metadata from the specified group of extensions in the `groupData` property.
+That is, this callback accepts a single argument - an object with the `groupData` property, where you can find metadata from the specified group of extensions.
 
 [TestRoutingPlugin][4] is described below, which shows how to use `testApplication.overrideExtensionMeta()`.
 
@@ -223,7 +223,7 @@ As you can see, after using `$use()`, the `TestApplication` instance can use plu
 
 ### `TestRoutingPlugin`
 
-The `TestRoutingPlugin` class uses `testApplication.overrideExtensionMeta()` to override dynamically added providers in extensions of the `ROUTES_EXTENSIONS` group.
+The `TestRoutingPlugin` class uses `testApplication.overrideExtensionMeta()` to override providers in the metadata added by the `ROUTES_EXTENSIONS` group.
 
 ```ts
 import { Provider } from '@ditsmod/core';
@@ -326,7 +326,7 @@ const server = await TestApplication.createTestApp(AppModule)
 [1]: /components-of-ditsmod-app/dependency-injection
 [2]: /components-of-ditsmod-app/dependency-injection#injector
 [3]: /components-of-ditsmod-app/dependency-injection#hierarchy-of-injectors
-[4]: #testapplicationoverridedynamic
+[4]: #testroutingplugin
 
 [100]: https://jestjs.io/
 [101]: https://jestjs.io/docs/mock-functions

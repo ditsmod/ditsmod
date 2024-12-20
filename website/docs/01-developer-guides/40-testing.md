@@ -167,11 +167,11 @@ server = await TestApplication.createTestApp(AppModule, { path: 'api' }).getServ
 
 ### `testApplication.overrideModuleMeta()`
 
-Метод `testApplication.overrideModuleMeta()` підміняє провайдери, які додаються статично в метадані модулів. Провайдери з моками передаються до DI на певний рівень ієрархії, тільки якщо у застосунку на цьому рівні є відповідні провайдери з такими самими токенами.
+Метод `testApplication.overrideModuleMeta()` підміняє провайдери в метаданих модулів. Провайдери з моками передаються до DI на певний рівень ієрархії, тільки якщо у застосунку на цьому рівні є відповідні провайдери з такими самими токенами.
 
 ### `testApplication.overrideExtensionMeta()`
 
-Метод `testApplication.overrideExtensionMeta()` підміняє провайдери, що додаються розширеннями динамічно. Цей метод приймає два аргументи:
+Метод `testApplication.overrideExtensionMeta()` підміняє провайдери у метаданих, що додаються групами розширень. Цей метод приймає два аргументи:
 
 1. токен групи розширень, від яких повертаються метадані, де потрібно буде підмінити провайдери для тестів;
 2. колбек, що буде працювати з метаданими, які повертає група розширень (указана у першому аргументі).
@@ -184,7 +184,7 @@ interface GroupMetaOverrider<T = any> {
 }
 ```
 
-Тобто даний колбек приймає єдиний аргумент - об'єкт, де у властивості `groupData` ви можете знайти метадані, з указаної групи розширень.
+Тобто даний колбек приймає єдиний аргумент - об'єкт з властивістю `groupData`, де ви можете знайти метадані, з указаної групи розширень.
 
 Нижче описано [TestRoutingPlugin][4], де показано як можна використовувати `testApplication.overrideExtensionMeta()`.
 
@@ -223,7 +223,7 @@ TestApplication.createTestApp(AppModule)
 
 ### `TestRoutingPlugin`
 
-В класі `TestRoutingPlugin` використовується `testApplication.overrideExtensionMeta()` для підміни динамічно доданих провайдерів у розширеннях групи `ROUTES_EXTENSIONS`.
+В класі `TestRoutingPlugin` використовується `testApplication.overrideExtensionMeta()` для підміни провайдерів у метаданих, що додаються групою `ROUTES_EXTENSIONS`.
 
 ```ts
 import { Provider } from '@ditsmod/core';
@@ -326,7 +326,7 @@ const server = await TestApplication.createTestApp(AppModule)
 [1]: /components-of-ditsmod-app/dependency-injection
 [2]: /components-of-ditsmod-app/dependency-injection#інжектор
 [3]: /components-of-ditsmod-app/dependency-injection#ієрархія-інжекторів
-[4]: #testapplicationoverridedynamic
+[4]: #testroutingplugin
 
 [100]: https://jestjs.io/
 [101]: https://jestjs.io/docs/mock-functions
