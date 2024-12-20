@@ -70,7 +70,7 @@ export class TestApplication extends Application {
    *
    * @param providers Providers to override.
    */
-  overrideDynamic<T>(groupToken: ExtensionsGroupToken<T>, override: GroupMetaOverrider<T>) {
+  overrideExtensionMeta<T>(groupToken: ExtensionsGroupToken<T>, override: GroupMetaOverrider<T>) {
     this.testAppInitializer.setOverriderConfig({ groupToken, override });
     return this;
   }

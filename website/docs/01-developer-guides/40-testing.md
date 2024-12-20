@@ -169,9 +169,9 @@ server = await TestApplication.createTestApp(AppModule, { path: 'api' }).getServ
 
 Метод `testApplication.overrideModuleMeta()` підміняє провайдери, які додаються статично в метадані модулів. Провайдери з моками передаються до DI на певний рівень ієрархії, тільки якщо у застосунку на цьому рівні є відповідні провайдери з такими самими токенами.
 
-### `testApplication.overrideDynamic()`
+### `testApplication.overrideExtensionMeta()`
 
-Метод `testApplication.overrideDynamic()` підміняє провайдери, що додаються розширеннями динамічно. Цей метод приймає два аргументи:
+Метод `testApplication.overrideExtensionMeta()` підміняє провайдери, що додаються розширеннями динамічно. Цей метод приймає два аргументи:
 
 1. токен групи розширень, від яких повертаються метадані, де потрібно буде підмінити провайдери для тестів;
 2. колбек, що буде працювати з метаданими, які повертає група розширень (указана у першому аргументі).
@@ -186,7 +186,7 @@ interface GroupMetaOverrider<T = any> {
 
 Тобто даний колбек приймає єдиний аргумент - об'єкт, де у властивості `groupData` ви можете знайти метадані, з указаної групи розширень.
 
-Нижче описано [TestRoutingPlugin][4], де показано як можна використовувати `testApplication.overrideDynamic()`.
+Нижче описано [TestRoutingPlugin][4], де показано як можна використовувати `testApplication.overrideExtensionMeta()`.
 
 ### `testApplication.$use()`
 
@@ -223,7 +223,7 @@ TestApplication.createTestApp(AppModule)
 
 ### `TestRoutingPlugin`
 
-В класі `TestRoutingPlugin` використовується `testApplication.overrideDynamic()` для підміни динамічно доданих провайдерів у розширеннях групи `ROUTES_EXTENSIONS`.
+В класі `TestRoutingPlugin` використовується `testApplication.overrideExtensionMeta()` для підміни динамічно доданих провайдерів у розширеннях групи `ROUTES_EXTENSIONS`.
 
 ```ts
 import { Provider } from '@ditsmod/core';
@@ -238,7 +238,7 @@ export class TestRoutingPlugin extends TestApplication {
       });
     };
 
-    this.overrideDynamic(ROUTES_EXTENSIONS, overrideRoutesMeta);
+    this.overrideExtensionMeta(ROUTES_EXTENSIONS, overrideRoutesMeta);
     return this;
   }
 }

@@ -18,7 +18,7 @@ export class TestRoutingPlugin extends TestApplication {
       });
     };
 
-    this.overrideDynamic(ROUTES_EXTENSIONS, overrideRoutesMeta);
+    this.overrideExtensionMeta(ROUTES_EXTENSIONS, overrideRoutesMeta);
     return this;
   }
 }
