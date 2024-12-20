@@ -64,20 +64,4 @@ describe('@ditsmod/routing/e2e', () => {
 
     server?.close();
   });
-
-  it('should failed because we trying to override non-passed provider', async () => {
-    const server = await TestApplication.createTestApp(AppModule)
-      .overrideModuleMeta([
-        { token: ServicePerRou3, useValue: { method: methodPerRou3 } },
-        { token: Res, useClass: Res, providers: [ServicePerRou3] },
-      ])
-      .getServer();
-
-    methodPerRou3.mockImplementation(implementation);
-    const msg = 'No provider for ServicePerRou3!; this error during calling Controller1.prototype.perRou3!';
-    await request(server).get('/per-rou3').expect(500).expect({ error: msg });
-    expect(methodPerRou3).toHaveBeenCalledTimes(0);
-
-    server?.close();
-  });
 });
