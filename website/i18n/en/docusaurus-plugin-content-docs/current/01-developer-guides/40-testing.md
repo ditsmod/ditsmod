@@ -244,7 +244,26 @@ export class TestRoutingPlugin extends TestApplication {
 }
 ```
 
-You can use this example to create plugins that will replace providers for other groups of extensions. You can find a complete example with `TestRoutingPlugin` [in the Ditsmod repository][104].
+You can use this example to create plugins that will replace providers for other groups of extensions. You can find a complete example with `TestRoutingPlugin` [in the Ditsmod repository][104]. Basically, you will need this plugin in tests if you need to replace the providers that you have added in the controller metadata in your application:
+
+```ts {14-15}
+import { Provider } from '@ditsmod/core';
+import { TestApplication } from '@ditsmod/testing';
+import { TestRoutingPlugin } from '@ditsmod/routing-testing';
+
+import { AppModule } from './app.module.js';
+import { Service1, Service2 } from './services.js';
+
+const providers: Provider[] = [
+  { token: Service1, useValue: 'value1' },
+  { token: Service2, useValue: 'value2' },
+];
+
+const server = await TestApplication.createTestApp(AppModule)
+  .$use(TestRoutingPlugin)
+  .overrideGroupRoutingMeta(providers)
+  .getServer();
+```
 
 
 

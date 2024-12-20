@@ -244,7 +244,26 @@ export class TestRoutingPlugin extends TestApplication {
 }
 ```
 
-Ви можете використовувати цей приклад для створення плагінів, що будуть підміняти провайдери для інших груп розширень. Повний приклад з `TestRoutingPlugin` ви можете знайти [в репозиторії Ditsmod][104].
+Ви можете використовувати цей приклад для створення плагінів, що будуть підміняти провайдери для інших груп розширень. Повний приклад з `TestRoutingPlugin` ви можете знайти [в репозиторії Ditsmod][104]. По-суті, цей плагін вам буде потрібен у тестах, якщо вам потрібно буде підмінити провайдери, які у вашому застосунку ви додали у метадані контролера:
+
+```ts {14-15}
+import { Provider } from '@ditsmod/core';
+import { TestApplication } from '@ditsmod/testing';
+import { TestRoutingPlugin } from '@ditsmod/routing-testing';
+
+import { AppModule } from './app.module.js';
+import { Service1, Service2 } from './services.js';
+
+const providers: Provider[] = [
+  { token: Service1, useValue: 'value1' },
+  { token: Service2, useValue: 'value2' },
+];
+
+const server = await TestApplication.createTestApp(AppModule)
+  .$use(TestRoutingPlugin)
+  .overrideGroupRoutingMeta(providers)
+  .getServer();
+```
 
 
 
