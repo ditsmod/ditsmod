@@ -716,17 +716,11 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
   }
 
   /**
-   * If the nearest provider with the given token is in the parent injector, then
-   * this method pulls that provider into the current injector. After that, it works
-   * the same as `injector.get()`. If the nearest provider with the given token
-   * is in the current injector, then this method behaves exactly like `injector.get()`.
+   * This method makes sense to use only in a child injector when it lacks a certain provider available
+   * in the parent injector, and that provider depends on another provider that is present in the child injector.
    * 
-   * This method is useful if you don't use `ValueProvider` for requested token. And this method
-   * is primarily useful because it allows you, in the context of the current injector, to create
-   * instances of providers that depend on a particular configuration that may be different in
-   * the current and parent injectors.
-   *
-   * ## Example
+   * For example, when `Service` depends on `Config`, and `Service` exists only in the parent injector,
+   * while `Config` exists in both the parent and child injectors:
    * 
    * ```ts
 import { injectable, Injector } from '@ditsmod/core';
@@ -745,13 +739,12 @@ const parent = Injector.resolveAndCreate([Service, { token: Config, useValue: { 
 const child = parent.resolveAndCreateChild([{ token: Config, useValue: { one: 11, two: 22 } }]);
 child.get(Service).config; // returns from parent injector: { one: 1, two: 2 }
 child.pull(Service).config; // pulls Service in current injector: { one: 11, two: 22 }
-child.get(Service).config; // now, in current injector, works cache: { one: 11, two: 22 }
    * ```
-   * __Attention:__ Try to avoid using the `child.pull()` method when you can easily achieve the same
-   * result with the `child.get()` method, by passing the appropriate provider to the child injector
-   * during its creation. Use `child.pull()` only in exceptional cases, such as when you dynamically
-   * create an injector and do not know the dependencies of a specific provider whose value you need
-   * to create.
+   * As you can see, if you use `child.get(Service)` in this case, `Service` will be created with
+   * the `Config` from the parent injector. However, if you use `child.pull(Service)`, it will
+   * first pull the required provider into the child injector and then create its value in the context
+   * of the child injector without adding it to the injector cache (i.e., `child.pull(Service)` will
+   * return a new instance each time).
    */
   pull<T>(token: Class<T> | InjectionToken<T>, defaultValue?: T): T;
   pull<T extends AnyFn>(token: T, defaultValue?: T): ReturnType<T>;
@@ -772,8 +765,7 @@ child.get(Service).config; // now, in current injector, works cache: { one: 11, 
     if (this.parent) {
       const resolvedProvider = this.getResolvedProvider(this.parent, dualKey);
       if (resolvedProvider) {
-        const value = this.instantiateResolved(resolvedProvider, []);
-        return (this.#registry[dualKey.id] = value);
+        return this.instantiateResolved(resolvedProvider, []);
       }
     }
     if (defaultValue === NoDefaultValue) {

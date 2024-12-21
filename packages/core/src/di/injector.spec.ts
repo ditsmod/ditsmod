@@ -229,9 +229,7 @@ describe('injector', () => {
       const child = parent.resolveAndCreateChild([Engine]);
       expect(() => child.get(Car)).toThrow('No provider for Engine! (Car -> Engine)');
       expect(child.pull(Car)).toBeInstanceOf(Car);
-      expect(() => child.get(Car)).not.toThrow();
       expect(child.pull(Car).engine).toBeInstanceOf(Engine);
-      expect(child.pull(Car) === child.pull(Car)).toBe(true);
     });
 
     it('allow default value', () => {
