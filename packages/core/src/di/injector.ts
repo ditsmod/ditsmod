@@ -509,8 +509,8 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
    * @param id The ID from KeyRegistry for some token.
    * @param value New value for this ID.
    */
-  setById(id: number, value: any) {
-    if (this.hasId(id)) {
+  setById(id: number, value: any, force?: boolean) {
+    if (force || this.hasId(id)) {
       this.#registry[id] = value;
       return this;
     }
@@ -544,9 +544,9 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
    *
    * @param value New value for this ID.
    */
-  setByToken(token: NonNullable<unknown>, value: any) {
+  setByToken(token: NonNullable<unknown>, value: any, force?: boolean) {
     const { id } = KeyRegistry.get(token);
-    if (this.hasId(id)) {
+    if (force || this.hasId(id)) {
       this.#registry[id] = value;
       return this;
     }
