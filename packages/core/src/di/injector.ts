@@ -519,6 +519,22 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
   }
 
   /**
+   * Sets value in injector registry by its token.
+   *
+   * @param value New value for this ID.
+   */
+  setByToken(token: NonNullable<unknown>, value: any, force?: boolean) {
+    const { id } = KeyRegistry.get(token);
+    if (force || this.hasId(id)) {
+      this.#registry[id] = value;
+      return this;
+    }
+
+    const displayToken = stringify(token);
+    throw new DiError(format(msg2, displayToken));
+  }
+
+  /**
    * Extracts the values from the current injector for the specified tokens,
    * and inserts them into the external injector.
    * 
@@ -537,22 +553,6 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
       }
       externalInj.setById(id, val);
     });
-  }
-
-  /**
-   * Sets value in injector registry by its token.
-   *
-   * @param value New value for this ID.
-   */
-  setByToken(token: NonNullable<unknown>, value: any, force?: boolean) {
-    const { id } = KeyRegistry.get(token);
-    if (force || this.hasId(id)) {
-      this.#registry[id] = value;
-      return this;
-    }
-
-    const displayToken = stringify(token);
-    throw new DiError(format(msg2, displayToken));
   }
 
   clear(): void {
