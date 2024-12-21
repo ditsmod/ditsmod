@@ -264,9 +264,9 @@ export class AppInitializer {
     for (const [, metadataPerMod2] of mMetadataPerMod2) {
       let { meta } = metadataPerMod2;
       meta = this.overrideMetaBeforeExtensionHanling(meta);
-      const injectorPerMod = injectorPerApp.resolveAndCreateChild(meta.providersPerMod);
-      injectorPerMod.pull(Logger);
-      const systemLogMediator = injectorPerMod.pull(SystemLogMediator) as SystemLogMediator;
+      const providersPerMod = meta.providersPerMod.concat(Logger, SystemLogMediator);
+      const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
+      const systemLogMediator = injectorPerMod.get(SystemLogMediator) as SystemLogMediator;
       const { extensionsProviders } = meta;
       if (!extensionsProviders.length) {
         systemLogMediator.skippingStartExtensions(this);
