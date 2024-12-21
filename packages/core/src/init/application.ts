@@ -43,8 +43,7 @@ export class Application {
     if (Error.stackTraceLimit == 10) {
       Error.stackTraceLimit = 50; // Override default limit.
     }
-    const systemLogMediator = new SystemLogMediator({ moduleName: 'AppModule' });
-    this.systemLogMediator = systemLogMediator;
+    this.systemLogMediator = new SystemLogMediator({ moduleName: 'AppModule' });
     this.appOptions = { ...new AppOptions(), ...appOptions };
     LogMediator.bufferLogs = this.appOptions.bufferLogs;
     this.systemLogMediator.startingDitsmod(this); // OutputLogLevel is still unknown here.
