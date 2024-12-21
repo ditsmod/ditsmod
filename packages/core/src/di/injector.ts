@@ -740,6 +740,7 @@ const child = parent.resolveAndCreateChild([{ token: Config, useValue: { one: 11
 child.get(Service).config; // returns from parent injector: { one: 1, two: 2 }
 child.pull(Service).config; // pulls Service in current injector: { one: 11, two: 22 }
    * ```
+   *
    * As you can see, if you use `child.get(Service)` in this case, `Service` will be created with
    * the `Config` from the parent injector. However, if you use `child.pull(Service)`, it will
    * first pull the required provider into the child injector and then create its value in the context
@@ -773,6 +774,51 @@ child.pull(Service).config; // pulls Service in current injector: { one: 11, two
     } else {
       return defaultValue;
     }
+  }
+
+  /**
+   * This method makes sense to use only in a child injector when it lacks a certain provider available
+   * in the parent injector, and that provider depends on another provider that is present in the child injector.
+   * 
+   * For example, when `Service` depends on `Config`, and `Service` exists only in the parent injector,
+   * while `Config` exists in both the parent and child injectors:
+   * 
+   * ```ts
+import { injectable, Injector } from '@ditsmod/core';
+
+class Config {
+  one: any;
+  two: any;
+}
+
+@injectable()
+class Service {
+  constructor(public config: Config) {}
+}
+
+const parent = Injector.resolveAndCreate([Service, { token: Config, useValue: { one: 1, two: 2 } }]);
+const child = parent.resolveAndCreateChild([{ token: Config, useValue: { one: 11, two: 22 } }]);
+child.get(Service).config; // returns from parent injector: { one: 1, two: 2 }
+child.pullAndSave(Service).config; // pulls Service in current injector: { one: 11, two: 22 }
+child.get(Service).config; // now returns: { one: 11, two: 22 }
+   * ```
+   *
+   * As you can see, if you use `child.get(Service)` first time, `Service` will be created with
+   * the `Config` from the parent injector. However, if you use `child.pullAndSave(Service)`, it will
+   * first pull the required provider into the child injector and then create its value in the context
+   * of the child injector with adding it to the injector cache.
+   * 
+   * __Attention!__ This method should be used with caution because, during the creation of an injector,
+   * a provider with the specified token might not have been passed to it. As a result, the appearance
+   * of a provider with the specified token could be undesirable. If possible, it is better to use `child.pull()` instead.
+   */
+  pullAndSave<T>(token: Class<T> | InjectionToken<T>, defaultValue?: T): T;
+  pullAndSave<T extends AnyFn>(token: T, defaultValue?: T): ReturnType<T>;
+  pullAndSave(token: NonNullable<unknown>, defaultValue?: any): any;
+  pullAndSave(token: NonNullable<unknown>, defaultValue: any = NoDefaultValue): any {
+    const value = this.pull(token, defaultValue);
+    this.setByToken(token, value, true);
+    return value;
   }
 
   protected getResolvedProvider(injector: Injector, dualKey: DualKey): ResolvedProvider | void {
