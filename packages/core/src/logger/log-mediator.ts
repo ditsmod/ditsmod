@@ -30,7 +30,7 @@ export abstract class LogMediator {
   ) {}
 
   protected setLog(inputLogLevel: InputLogLevel, msg: string) {
-    const showExternalLogs = this.appOptions?.loggerConfig?.showExternalLogs || this.loggerConfig.showExternalLogs;
+    const showExternalLogs = this.appOptions?.loggerConfig?.showExternalLogs ?? this.loggerConfig.showExternalLogs;
     if (LogMediator.bufferLogs) {
       LogMediator.checkDiffLogLevels(this.loggerConfig.level);
       LogMediator.buffer.push({
@@ -86,7 +86,7 @@ export abstract class LogMediator {
 
     logItems.forEach((logItem) => {
       logger.setLevel(logItem.outputLogLevel);
-      const showExternalLogs = this.appOptions?.loggerConfig?.showExternalLogs || logItem.showExternalLogs;
+      const showExternalLogs = this.appOptions?.loggerConfig?.showExternalLogs ?? logItem.showExternalLogs;
       if (!logItem.isExternal || showExternalLogs) {
         logger.log(logItem.inputLogLevel, `[${logItem.moduleName}]: ${logItem.msg}`);
       }
