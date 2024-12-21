@@ -1,4 +1,5 @@
 import { format } from 'util';
+import { ChainError } from '@ts-stack/chain-error';
 
 import { injectable, Injector, reflector } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
@@ -9,7 +10,6 @@ import { isModuleWithParams, isRootModule } from '#utils/type-guards.js';
 import { clearDebugClassNames, getDebugClassName } from '#utils/get-debug-class-name.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { ModuleNormalizer } from '#init/module-normalizer.js';
-import { ChainError } from '@ts-stack/chain-error';
 
 export type ModulesMap = Map<ModRefId, NormalizedModuleMetadata>;
 export type ModulesMapId = Map<string, ModRefId>;
