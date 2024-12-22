@@ -8,7 +8,7 @@ import { AUTHJS_CONFIG } from './constants.js';
 @controller({ scope: 'module' })
 export class AuthjsSingletonController {
   constructor(@optional() @inject(AUTHJS_CONFIG) protected config: AuthConfig = { providers: [] }) {
-    this.config.basePath = '/api/auth';
+    this.config.basePath ??= '/api/auth';
   }
 
   @route(['POST', 'PUT', 'PATCH'])
