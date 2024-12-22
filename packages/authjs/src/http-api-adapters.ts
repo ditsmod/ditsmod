@@ -51,7 +51,7 @@ function encodeRequestBody(ctx: SingletonRequestContext): string {
 /**
  * Encodes an object as url-encoded string.
  */
-function encodeUrlEncoded(body: AnyObj = {}) {
+export function encodeUrlEncoded(body: AnyObj = {}) {
   const params = new URLSearchParams();
 
   for (const [key, value] of Object.entries(body)) {

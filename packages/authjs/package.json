@@ -29,6 +29,9 @@
       "types": "./adapters.d.ts"
     }
   },
+  "imports": {
+    "#mod/*": "./dist/*"
+  },
   "scripts": {
     "build": "tsc -b tsconfig.build.json",
     "clean": "rm -rf dist*",
