@@ -17,7 +17,7 @@ import { RequestContext } from '#services/request-context.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 
 describe('ModuleManager', () => {
-  // console.log = vi.fn();
+  console.log = vi.fn();
   type ModuleId = string | ModuleType | ModuleWithParams;
 
   class MockModuleManager extends ModuleManager {
