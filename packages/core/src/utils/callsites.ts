@@ -3,55 +3,78 @@ import { dirname } from 'node:path';
 /**
  * Taken from https://github.com/sindresorhus/caller-callsite
  */
-export function callerCallsite({ depth = 0 } = {}) {
-  const callers = [];
-  const callerFileSet = new Set();
-  const sliceOfCallsites = callsites();
-  // const allPaths = sliceOfCallsites.map(c => {    
-  //   return `${c.getMethodName()}, ${c.getTypeName()}, ${c.getFunctionName()}, ${c.getFileName()}`;
-  // });
-  // console.log('*'.repeat(20), allPaths);
+export class CallsiteUtils {
+  /**
+   * Use this method very carefully, it works unreliable.
+   */
+  static getCallerDir() {
+    const callsites = this.callerCallsite({ depth: 0 });
+    const rawPath = callsites?.getFileName() || '';
+    const path = rawPath.startsWith('file:///') ? rawPath.slice(7) : rawPath;
+    // console.log('=== result:', path);
+    return dirname(path);
+  }
 
-  for (let i = 0; i < sliceOfCallsites.length; i++) {
-    const callsite = sliceOfCallsites[i];
-    const fileName = callsite.getFileName();
+  protected static callerCallsite({ depth = 0 } = {}) {
+    const callers = [];
+    const callerFileSet = new Set();
+    const sliceOfCallsites = this.callsites();
+    let startListen = false;
+    const hasClassDecorFactory = sliceOfCallsites.some((c) => c.getFunctionName() == 'classDecorFactory');
+    // this.debug(sliceOfCallsites);
 
-    if (!callerFileSet.has(fileName) && !fileName?.startsWith('node:internal/')) {
-      callerFileSet.add(fileName);
-      callers.unshift(callsite);
+    for (let i = 0; i < sliceOfCallsites.length; i++) {
+      const callsite = sliceOfCallsites[i];
+      const fileName = callsite.getFileName();
+      if (callsite.getFunctionName() == 'classDecorFactory') {
+        startListen = true;
+      }
+
+      if (!callerFileSet.has(fileName) && !fileName?.startsWith('node:internal/')) {
+        callerFileSet.add(fileName);
+        callers.unshift(callsite);
+      }
+
+      if (((hasClassDecorFactory && startListen) || !hasClassDecorFactory) && callsite.getTypeName() === null) {
+        return callers[depth];
+      }
     }
+    return;
+  }
 
-    if (callsite.getFunctionName() === null) {
-      return callers[depth];
+  protected static debug(sliceOfCallsites: NodeJS.CallSite[]) {
+    const arr = sliceOfCallsites.map((c) => {
+      return {
+        getFileName: c.getFileName(),
+        getFunctionName: c.getFunctionName(),
+        getTypeName: c.getTypeName(),
+        getMethodName: c.getMethodName(),
+      };
+    });
+    console.table(arr);
+  }
+
+  /**
+   * Taken from https://github.com/sindresorhus/callsites
+   */
+  protected static callsites() {
+    const _prepareStackTrace = Error.prepareStackTrace;
+    const originStackTraceLimit = Error.stackTraceLimit;
+    Error.stackTraceLimit = 50;
+    try {
+      let result: NodeJS.CallSite[] = [];
+      Error.prepareStackTrace = (_, callSites) => {
+        const callSitesWithoutCurrent = callSites.slice(1);
+        result = callSitesWithoutCurrent;
+        return callSitesWithoutCurrent;
+      };
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      new Error().stack;
+      return result;
+    } finally {
+      Error.stackTraceLimit = originStackTraceLimit;
+      Error.prepareStackTrace = _prepareStackTrace;
     }
   }
-  return;
-}
-
-/**
- * Taken from https://github.com/sindresorhus/callsites
- */
-export function callsites() {
-  const _prepareStackTrace = Error.prepareStackTrace;
-  try {
-    let result: NodeJS.CallSite[] = [];
-    Error.prepareStackTrace = (_, callSites) => {
-      const callSitesWithoutCurrent = callSites.slice(1);
-      result = callSitesWithoutCurrent;
-      return callSitesWithoutCurrent;
-    };
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    new Error().stack;
-    return result;
-  } finally {
-    Error.prepareStackTrace = _prepareStackTrace;
-  }
-}
-
-export function getCallerDir() {
-  const callsites = callerCallsite({ depth: 0 });
-  const rawPath = callsites?.getFileName() || '';
-  const path = rawPath.startsWith('file:///') ? rawPath.slice(8) : rawPath;
-  return dirname(path);
 }

@@ -1,4 +1,4 @@
-import { CanActivate, controller, DecoratorAndValue, getCallerDir, reflector, RequestContext } from '@ditsmod/core';
+import { CanActivate, controller, DecoratorAndValue, CallsiteUtils, reflector, RequestContext } from '@ditsmod/core';
 import { describe, expect, it } from 'vitest';
 
 import { route, RouteMetadata } from './route.js';
@@ -11,7 +11,7 @@ describe('Route decorator', () => {
     const actualMeta = reflector.getMetadata(Controller1)!;
     expect(actualMeta.constructor.type).toBe(Function);
     expect(actualMeta.constructor.decorators).toMatchObject<DecoratorAndValue[]>([
-      new DecoratorAndValue(controller, {}, getCallerDir()),
+      new DecoratorAndValue(controller, {}, CallsiteUtils.getCallerDir()),
     ]);
   });
 

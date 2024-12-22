@@ -9,7 +9,7 @@ import { AnyObj, CanActivate, ModuleType, Provider } from '#types/mix.js';
 import { ModuleWithParams, AppendsWithParams } from '#types/module-metadata.js';
 import { Extension } from '#extension/extension-types.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
-import { getCallerDir } from '#utils/callsites.js';
+import { CallsiteUtils } from '#utils/callsites.js';
 import { isMultiProvider } from '#utils/type-guards.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { guard } from '#decorators/guard.js';
@@ -147,7 +147,7 @@ describe('ModuleManager', () => {
     expectedMeta.name = 'AppModule';
     expectedMeta.modRefId = AppModule;
     expectedMeta.decorator = rootModule;
-    expectedMeta.declaredInDir = getCallerDir();
+    expectedMeta.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta.isExternal = false;
     expectedMeta.rawMeta = expect.any(Object);
 
@@ -214,7 +214,7 @@ describe('ModuleManager', () => {
     expectedMeta.modRefId = AppModule;
     expectedMeta.providersPerReq = [Provider1];
     expectedMeta.decorator = rootModule;
-    expectedMeta.declaredInDir = getCallerDir();
+    expectedMeta.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta.isExternal = false;
     expectedMeta.rawMeta = expect.any(Object);
 
@@ -448,7 +448,7 @@ describe('ModuleManager', () => {
     expectedMeta1.controllers = [Controller1];
     expectedMeta1.importsWithParams = [module4WithParams];
     expectedMeta1.decorator = featureModule;
-    expectedMeta1.declaredInDir = getCallerDir();
+    expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta1.isExternal = false;
     expectedMeta1.rawMeta = expect.any(Object);
 
@@ -467,7 +467,7 @@ describe('ModuleManager', () => {
     expectedMeta2.exportedProvidersPerMod = [Provider0];
     expectedMeta2.exportedProvidersPerRou = [Provider1];
     expectedMeta2.decorator = featureModule;
-    expectedMeta2.declaredInDir = getCallerDir();
+    expectedMeta2.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta2.isExternal = false;
     expectedMeta2.rawMeta = expect.any(Object);
 
@@ -479,7 +479,7 @@ describe('ModuleManager', () => {
     expectedMeta3.modRefId = Module3;
     expectedMeta3.importsModules = [Module1, Module2];
     expectedMeta3.decorator = rootModule;
-    expectedMeta3.declaredInDir = getCallerDir();
+    expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta3.isExternal = false;
     expectedMeta3.rawMeta = expect.any(Object);
 
@@ -492,7 +492,7 @@ describe('ModuleManager', () => {
     expectedMeta4.modRefId = module4WithParams;
     expectedMeta4.providersPerMod = [Provider2];
     expectedMeta4.decorator = featureModule;
-    expectedMeta4.declaredInDir = getCallerDir();
+    expectedMeta4.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta4.isExternal = false;
     expectedMeta4.rawMeta = expect.any(Object);
 
@@ -587,7 +587,7 @@ describe('ModuleManager', () => {
     expectedMeta1.modRefId = AppModule;
     expectedMeta1.providersPerReq = [Provider1];
     expectedMeta1.decorator = rootModule;
-    expectedMeta1.declaredInDir = getCallerDir();
+    expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta1.isExternal = false;
     expectedMeta1.rawMeta = expect.any(Object);
 
@@ -631,7 +631,7 @@ describe('ModuleManager', () => {
     expectedMeta2.importsModules = [Module1];
     expectedMeta2.providersPerReq = [Provider1];
     expectedMeta2.decorator = rootModule;
-    expectedMeta2.declaredInDir = getCallerDir();
+    expectedMeta2.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta2.isExternal = false;
     expectedMeta2.rawMeta = expect.any(Object);
 
@@ -670,7 +670,7 @@ describe('ModuleManager', () => {
     expectedMeta3.importsModules = [Module1, Module2, Module4];
     expectedMeta3.providersPerReq = [Provider1];
     expectedMeta3.decorator = rootModule;
-    expectedMeta3.declaredInDir = getCallerDir();
+    expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta3.isExternal = false;
     expectedMeta3.rawMeta = expect.any(Object);
 
@@ -752,7 +752,7 @@ describe('ModuleManager', () => {
     expectedMeta1.importsWithParams = [module3WithProviders, module4WithProviders];
     expectedMeta1.providersPerReq = [Provider1];
     expectedMeta1.decorator = rootModule;
-    expectedMeta1.declaredInDir = getCallerDir();
+    expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta1.isExternal = false;
     expectedMeta1.rawMeta = expect.any(Object);
 
@@ -799,7 +799,7 @@ describe('ModuleManager', () => {
     expectedMeta2.importsWithParams = [module3WithProviders, module4WithProviders];
     expectedMeta2.providersPerReq = [Provider1];
     expectedMeta2.decorator = rootModule;
-    expectedMeta2.declaredInDir = getCallerDir();
+    expectedMeta2.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta2.isExternal = false;
     expectedMeta2.rawMeta = expect.any(Object);
 
@@ -826,7 +826,7 @@ describe('ModuleManager', () => {
     expectedMeta3.importsWithParams = [module4WithProviders];
     expectedMeta3.providersPerReq = [Provider1];
     expectedMeta3.decorator = rootModule;
-    expectedMeta3.declaredInDir = getCallerDir();
+    expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta3.isExternal = false;
     expectedMeta3.rawMeta = expect.any(Object);
 
@@ -850,7 +850,7 @@ describe('ModuleManager', () => {
     expectedMeta4.importsModules = [Module1];
     expectedMeta4.providersPerReq = [Provider1];
     expectedMeta4.decorator = rootModule;
-    expectedMeta4.declaredInDir = getCallerDir();
+    expectedMeta4.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta4.isExternal = false;
     expectedMeta4.rawMeta = expect.any(Object);
 
@@ -896,7 +896,7 @@ describe('ModuleManager', () => {
     expectedMeta3.modRefId = Module3;
     expectedMeta3.importsModules = [Module1];
     expectedMeta3.decorator = rootModule;
-    expectedMeta3.declaredInDir = getCallerDir();
+    expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta3.isExternal = false;
     expectedMeta3.rawMeta = expect.any(Object);
     delete (expectedMeta3 as any).aExtensionOptions;
@@ -909,7 +909,7 @@ describe('ModuleManager', () => {
     expectedMeta1.extensionsProviders = extensionsProviders;
     expectedMeta1.exportedExtensionsProviders = extensionsProviders;
     expectedMeta1.decorator = featureModule;
-    expectedMeta1.declaredInDir = getCallerDir();
+    expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta1.isExternal = false;
     expectedMeta1.rawMeta = expect.any(Object);
     delete (expectedMeta1 as any).aExtensionOptions;
@@ -950,7 +950,7 @@ describe('ModuleManager', () => {
     expectedMeta3.importsModules = [Module1];
     expectedMeta3.exportsModules = [Module1];
     expectedMeta3.decorator = rootModule;
-    expectedMeta3.declaredInDir = getCallerDir();
+    expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta3.isExternal = false;
     expectedMeta3.rawMeta = expect.any(Object);
     delete (expectedMeta3 as any).aExtensionOptions;
@@ -963,7 +963,7 @@ describe('ModuleManager', () => {
     expectedMeta1.extensionsProviders = extensionsProviders;
     expectedMeta1.exportedExtensionsProviders = extensionsProviders;
     expectedMeta1.decorator = featureModule;
-    expectedMeta1.declaredInDir = getCallerDir();
+    expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta1.isExternal = false;
     expectedMeta1.rawMeta = expect.any(Object);
     delete (expectedMeta1 as any).aExtensionOptions;
@@ -1028,7 +1028,7 @@ describe('ModuleManager', () => {
     expectedMeta3.modRefId = Module3;
     expectedMeta3.importsModules = [Module1];
     expectedMeta3.decorator = rootModule;
-    expectedMeta3.declaredInDir = getCallerDir();
+    expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta3.isExternal = false;
     expectedMeta3.rawMeta = expect.any(Object);
 
@@ -1040,7 +1040,7 @@ describe('ModuleManager', () => {
     expectedMeta1.exportedProvidersPerReq = [Provider3];
     expectedMeta1.exportedMultiProvidersPerReq = providersPerReq.filter(isMultiProvider);
     expectedMeta1.decorator = featureModule;
-    expectedMeta1.declaredInDir = getCallerDir();
+    expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta1.isExternal = false;
     expectedMeta1.rawMeta = expect.any(Object);
 

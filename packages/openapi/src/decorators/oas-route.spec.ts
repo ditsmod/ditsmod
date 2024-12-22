@@ -1,4 +1,4 @@
-import { reflector, controller, CanActivate, RequestContext, DecoratorAndValue, getCallerDir } from '@ditsmod/core';
+import { reflector, controller, CanActivate, RequestContext, DecoratorAndValue, CallsiteUtils } from '@ditsmod/core';
 import { describe, expect, it } from 'vitest';
 
 import { oasRoute } from './oas-route.js';
@@ -13,7 +13,7 @@ describe('@oasRoute', () => {
     const actualMeta = reflector.getMetadata(Controller1)!;
     expect(actualMeta.constructor.type).toBe(Function);
     expect(actualMeta.constructor.decorators).toMatchObject<DecoratorAndValue[]>([
-      new DecoratorAndValue(controller, {}, getCallerDir()),
+      new DecoratorAndValue(controller, {}, CallsiteUtils.getCallerDir()),
     ]);
   });
 

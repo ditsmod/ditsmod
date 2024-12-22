@@ -169,7 +169,7 @@ export class ModuleNormalizer {
     } else if (this.rootDeclaredInDir) {
       const { declaredInDir } = meta;
       if (this.rootDeclaredInDir !== '.' && declaredInDir !== '.') {
-        // Case when getCallerDir() works correctly.
+        // Case when CallsiteUtils.getCallerDir() works correctly.
         meta.isExternal = !declaredInDir.startsWith(this.rootDeclaredInDir);
       }
     }

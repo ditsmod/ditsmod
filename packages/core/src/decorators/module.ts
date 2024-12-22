@@ -1,7 +1,7 @@
 import { makeClassDecorator } from '#di';
 import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
 import { AnyFn, GuardItem, ModuleType, Scope } from '#types/mix.js';
-import { getCallerDir } from '#utils/callsites.js';
+import { CallsiteUtils } from '#utils/callsites.js';
 
 const scopes = ['App', 'Mod', 'Rou', 'Req'] as Scope[];
 
@@ -16,7 +16,7 @@ export function transformModule(data?: ModuleMetadata): RawMeta {
       metadata[`providersPer${scope}`] = arr;
     }
   });
-  return { decorator: featureModule, declaredInDir: getCallerDir(), guards: [], ...metadata };
+  return { decorator: featureModule, declaredInDir: CallsiteUtils.getCallerDir(), guards: [], ...metadata };
 }
 
 /**

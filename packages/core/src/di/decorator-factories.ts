@@ -1,4 +1,4 @@
-import { getCallerDir } from '#utils/callsites.js';
+import { CallsiteUtils } from '#utils/callsites.js';
 import { DecoratorAndValue, type Class } from './types-and-models.js';
 import { isType } from './utils.js';
 
@@ -35,7 +35,7 @@ export const METHODS_WITH_PARAMS = Symbol();
 export function makeClassDecorator<T extends (...args: any[]) => any>(transform?: T) {
   return function classDecorFactory(...args: Parameters<T>): any {
     const value = transform ? transform(...args) : [...args];
-    const declaredInDir = getCallerDir();
+    const declaredInDir = CallsiteUtils.getCallerDir();
     return function classDecorator(Cls: Class): void {
       const annotations: any[] = getRawMetadata(Cls, CLASS_KEY, []);
       const decoratorAndValue = new DecoratorAndValue(classDecorFactory, value, declaredInDir);
@@ -75,7 +75,7 @@ export function makePropDecorator<T extends (...args: any[]) => any>(transform?:
     const value = transform ? transform(...args) : [...args];
     return function propDecorator(target: any, propertyKey: string | symbol): void {
       const Cls = target.constructor as Class;
-      const meta = getRawMetadata(Cls, PROP_KEY, {} as { [key: string | symbol]: any});
+      const meta = getRawMetadata(Cls, PROP_KEY, {} as { [key: string | symbol]: any });
       meta[propertyKey] = (meta.hasOwnProperty(propertyKey) && meta[propertyKey]) || [];
       meta[propertyKey].push(new DecoratorAndValue(propDecorFactory, value));
     };

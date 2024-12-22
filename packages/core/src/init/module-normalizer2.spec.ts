@@ -6,7 +6,7 @@ import { Provider } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { getModuleMetadata } from '#init/module-normalizer.js';
 import { Providers } from '#utils/providers.js';
-import { getCallerDir } from '#utils/callsites.js';
+import { CallsiteUtils } from '#utils/callsites.js';
 
 describe('getModuleMetadata', () => {
   it('module without decorator', () => {
@@ -21,7 +21,7 @@ describe('getModuleMetadata', () => {
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
-    expect(metadata).toEqual({ decorator: featureModule, guards: [], declaredInDir: getCallerDir() });
+    expect(metadata).toEqual({ decorator: featureModule, guards: [], declaredInDir: CallsiteUtils.getCallerDir() });
   });
 
   it('@featureModule() decorator with id', () => {
@@ -33,7 +33,7 @@ describe('getModuleMetadata', () => {
       decorator: featureModule,
       id: 'someId',
       guards: [],
-      declaredInDir: getCallerDir(),
+      declaredInDir: CallsiteUtils.getCallerDir(),
     });
   });
 
@@ -46,7 +46,7 @@ describe('getModuleMetadata', () => {
       decorator: featureModule,
       guards: [],
       controllers: [],
-      declaredInDir: getCallerDir(),
+      declaredInDir: CallsiteUtils.getCallerDir(),
     });
   });
 
@@ -66,7 +66,7 @@ describe('getModuleMetadata', () => {
       guards: [],
       providersPerMod: [Provider1],
       providersPerRou: [{ token: 'token2', useValue: 'value2' }],
-      declaredInDir: getCallerDir(),
+      declaredInDir: CallsiteUtils.getCallerDir(),
     });
   });
 
@@ -87,7 +87,7 @@ describe('getModuleMetadata', () => {
     const metadata = getModuleMetadata(Module1.withParams([Provider1]));
     expect(metadata).toEqual({
       decorator: featureModule,
-      declaredInDir: getCallerDir(),
+      declaredInDir: CallsiteUtils.getCallerDir(),
       extensionsMeta: {},
       guards: [],
       providersPerApp: [],
@@ -116,7 +116,7 @@ describe('getModuleMetadata', () => {
     const metadata = getModuleMetadata(forwardRef(fn));
     expect(metadata).toEqual({
       decorator: featureModule,
-      declaredInDir: getCallerDir(),
+      declaredInDir: CallsiteUtils.getCallerDir(),
       extensionsMeta: {},
       guards: [],
       providersPerApp: [],

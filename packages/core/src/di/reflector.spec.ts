@@ -4,7 +4,7 @@ import { describe, expect, it, beforeEach } from 'vitest';
 import { makeClassDecorator, makeParamDecorator, makePropDecorator } from './decorator-factories.js';
 import { Reflector, isDelegateCtor } from './reflector.js';
 import { ClassPropMeta, DecoratorAndValue, ParamsMeta, PropMetadataTuple, UnknownType } from './types-and-models.js';
-import { getCallerDir } from '#utils/callsites.js';
+import { CallsiteUtils } from '#utils/callsites.js';
 
 const classDecorator = makeClassDecorator((data?: any) => data);
 const classDecoratorWithoutTransformator = makeClassDecorator();
@@ -75,7 +75,7 @@ class TestObj {
 }
 
 describe('Reflector', () => {
-  const __dir = getCallerDir();
+  const __dir = CallsiteUtils.getCallerDir();
   let reflector: Reflector;
 
   beforeEach(() => {
@@ -353,13 +353,13 @@ describe('Reflector', () => {
 
   describe('annotations', () => {
     it('should return an array of annotations for a type', () => {
-      const declaredInDir = getCallerDir();
+      const declaredInDir = CallsiteUtils.getCallerDir();
       const p = reflector.getMetadata(ClassWithDecorators)!.constructor.decorators;
       expect(p).toEqual([new DecoratorAndValue(classDecorator, { value: 'class' }, declaredInDir)]);
     });
 
     it('should work for a class without metadata in annotation', () => {
-      const declaredInDir = getCallerDir();
+      const declaredInDir = CallsiteUtils.getCallerDir();
       @classDecorator()
       class ClassWithoutMetadata {}
       const p = reflector.getMetadata(ClassWithoutMetadata)!.constructor.decorators;
@@ -370,7 +370,7 @@ describe('Reflector', () => {
       @classDecoratorWithoutTransformator()
       class ClassWithoutMetadata {}
       const p = reflector.getMetadata(ClassWithoutMetadata)!.constructor.decorators;
-      const declaredInDir = getCallerDir();
+      const declaredInDir = CallsiteUtils.getCallerDir();
       expect(p).toEqual([new DecoratorAndValue(classDecoratorWithoutTransformator, [], declaredInDir)]);
     });
 
@@ -462,7 +462,7 @@ describe('Reflector', () => {
       class NoDecorators {}
 
       // Check that metadata for Parent was not changed!
-      const declaredInDir = getCallerDir();
+      const declaredInDir = CallsiteUtils.getCallerDir();
       expect(reflector.getMetadata(Parent)!.constructor.decorators).toEqual([
         new DecoratorAndValue(classDecorator, { value: 'parent' }, declaredInDir),
       ]);
