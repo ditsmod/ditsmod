@@ -20,7 +20,7 @@ interface CanActivate {
 import { guard, CanActivate, RequestContext } from '@ditsmod/core';
 import { AuthService } from './auth.service.js';
 
-@guard({ singleton: false })
+@guard()
 export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService) {}
 
