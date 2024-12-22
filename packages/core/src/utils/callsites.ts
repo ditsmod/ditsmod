@@ -7,18 +7,21 @@ export function callerCallsite({ depth = 0 } = {}) {
   const callers = [];
   const callerFileSet = new Set();
   const sliceOfCallsites = callsites();
+  // const allPaths = sliceOfCallsites.map(c => {    
+  //   return `${c.getMethodName()}, ${c.getTypeName()}, ${c.getFunctionName()}, ${c.getFileName()}`;
+  // });
+  // console.log('*'.repeat(20), allPaths);
 
   for (let i = 0; i < sliceOfCallsites.length; i++) {
     const callsite = sliceOfCallsites[i];
     const fileName = callsite.getFileName();
-    const hasReceiver = callsite.getTypeName() !== null && fileName !== null;
 
     if (!callerFileSet.has(fileName) && !fileName?.startsWith('node:internal/')) {
       callerFileSet.add(fileName);
       callers.unshift(callsite);
     }
 
-    if (hasReceiver || sliceOfCallsites.length == i + 1) {
+    if (callsite.getFunctionName() === null) {
       return callers[depth];
     }
   }
@@ -48,5 +51,7 @@ export function callsites() {
 
 export function getCallerDir() {
   const callsites = callerCallsite({ depth: 0 });
-  return dirname(callsites?.getFileName()?.slice(8) || '');
+  const rawPath = callsites?.getFileName() || '';
+  const path = rawPath.startsWith('file:///') ? rawPath.slice(8) : rawPath;
+  return dirname(path);
 }
