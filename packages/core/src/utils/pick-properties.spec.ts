@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest';
+
 import { pickAllPropertiesAsGetters, pickPropertiesAsGetters } from './pick-properties.js';
 
 describe('pickAllPropertiesAsGetters', () => {

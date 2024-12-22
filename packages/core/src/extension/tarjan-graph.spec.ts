@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { findCycle } from './tarjan-graph.js';
 
 describe("Tarjan's algorithm", () => {

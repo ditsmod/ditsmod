@@ -1,4 +1,6 @@
 import { CanActivate, controller, injectable, reflector, RequestContext } from '@ditsmod/core';
+import { describe, expect, it } from 'vitest';
+
 import { route } from './decorators/route.js';
 import { isRoute } from './type.guards.js';
 

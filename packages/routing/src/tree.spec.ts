@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest';
+
 import { Tree } from './tree.js';
 import { RouteParam } from './types.js';
 

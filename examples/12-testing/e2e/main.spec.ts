@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { HttpErrorHandler, HttpServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
-import { jest } from '@jest/globals';
+import { describe, expect, it, vi, afterEach, beforeAll } from 'vitest';
 
 import { AppModule } from '#app/app.module.js';
 import { CustomHttpErrorHandler } from './custom-controller-error-handler.js';
@@ -34,7 +34,7 @@ describe('12-testing', () => {
   });
 
   describe('good error stack trace', () => {
-    const setError = jest.fn();
+    const setError = vi.fn();
     const errorContainer = { setError } as ErrorContainer;
     let server: HttpServer;
 

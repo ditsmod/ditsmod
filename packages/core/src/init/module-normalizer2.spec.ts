@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest';
+
 import { forwardRef, injectable } from '#di';
 import { featureModule } from '#decorators/module.js';
 import { Provider } from '#types/mix.js';

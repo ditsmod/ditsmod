@@ -1,4 +1,5 @@
 import { CanActivate, RequestContext, reflector } from '@ditsmod/core';
+import { describe, expect, it } from 'vitest';
 
 import { oasGuard } from '#decorators/oas-guard.js';
 import { isOasGuard } from './type-guards.js';

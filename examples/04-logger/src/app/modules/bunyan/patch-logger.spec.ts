@@ -1,4 +1,6 @@
 import { Logger } from '@ditsmod/core';
+import { describe, expect, it } from 'vitest';
+
 import { PatchLogger } from './patch-logger.js';
 
 describe('PatchLogger Bunyan', () => {

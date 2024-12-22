@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest';
+
 import { FactoryProvider, TokenProvider, ValueProvider, inject, injectable, factoryMethod, optional } from '#di';
 import { getDependencies } from './get-dependecies.js';
 

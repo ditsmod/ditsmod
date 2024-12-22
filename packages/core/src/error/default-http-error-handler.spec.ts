@@ -1,4 +1,4 @@
-import { jest } from '@jest/globals';
+import { beforeEach, describe, expect, it, vi, afterEach } from 'vitest';
 
 import { Injector } from '#di';
 import { RequestContext } from '#services/request-context.js';
@@ -26,12 +26,12 @@ describe('DefaultHttpErrorHandler', () => {
   beforeEach(() => {
     const injector = Injector.resolveAndCreate([{ token: Logger, useValue: logger }, ErrorHandler]);
     errorHandler = injector.get(ErrorHandler);
-    jest.spyOn(rawRes, 'end');
-    jest.spyOn(logger, 'log');
+    vi.spyOn(rawRes, 'end');
+    vi.spyOn(logger, 'log');
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('default error with some message', () => {

@@ -1,4 +1,5 @@
 import { ParameterObject, ReferenceObject, XParameterObject } from '@ts-stack/openapi-spec';
+import { describe, expect, it, beforeEach } from 'vitest';
 
 import { OpenapiRoutesExtension } from './openapi-routes.extension.js';
 import { HttpMethod } from '@ditsmod/core';

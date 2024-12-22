@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 
 import { Provider } from '#types/mix.js';
 import { getCollisions } from './get-collisions.js';

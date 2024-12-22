@@ -1,4 +1,5 @@
 import { Injector } from '@ditsmod/core';
+import { describe, expect, it, beforeEach } from 'vitest';
 import { DefaultController } from './app.module.js';
 
 describe('ExampleController', () => {

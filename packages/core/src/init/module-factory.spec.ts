@@ -1,5 +1,6 @@
-import { FactoryProvider, injectable, Provider, Injector } from '#di';
+import { describe, beforeEach, expect, it } from 'vitest';
 
+import { FactoryProvider, injectable, Provider, Injector } from '#di';
 import { controller } from '#decorators/controller.js';
 import { featureModule } from '#decorators/module.js';
 import { rootModule } from '#decorators/root-module.js';
@@ -88,7 +89,7 @@ describe('ModuleFactory', () => {
       expect(() => bootstrap(AppModule)).toThrow(msg);
     });
 
-    xit('should throw an error because AppModule have resolvedCollisionsPerReq when there is no collisions', () => {
+    it.skip('should throw an error because AppModule have resolvedCollisionsPerReq when there is no collisions', () => {
       class Provider1 {}
       class Provider2 {}
 

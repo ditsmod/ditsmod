@@ -1,15 +1,15 @@
 import { Injector, Res } from '@ditsmod/core';
-import { jest } from '@jest/globals';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { PostsController } from './posts.controller.js';
 
 describe('PostsController', () => {
-  const sendJson = jest.fn();
+  const sendJson = vi.fn();
   const res = { sendJson } as unknown as Res;
   let postsController: PostsController;
 
   beforeEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     const injector = Injector.resolveAndCreate([PostsController]);
     postsController = injector.get(PostsController);
   });

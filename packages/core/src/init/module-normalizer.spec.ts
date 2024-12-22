@@ -1,3 +1,5 @@
+import { describe, expect, it, beforeEach } from 'vitest';
+
 import { ModuleNormalizer } from '#init/module-normalizer.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { Class } from '#di/types-and-models.js';

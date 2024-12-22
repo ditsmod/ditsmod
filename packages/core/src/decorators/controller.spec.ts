@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest';
+
 import { reflector } from '#di';
 import { controller } from './controller.js';
 

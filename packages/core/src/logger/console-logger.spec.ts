@@ -1,14 +1,14 @@
-import { jest } from '@jest/globals';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ConsoleLogger } from '#logger/console-logger.js';
 import { InputLogLevel } from '#logger/logger.js';
 
 describe('ConsoleLogger', () => {
   const inputLogLevels: InputLogLevel[] = ['all', 'trace', 'debug', 'info', 'warn', 'error', 'fatal'];
-  jest.spyOn(console, 'log');
+  vi.spyOn(console, 'log');
 
   beforeEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   it('"off" log level', () => {

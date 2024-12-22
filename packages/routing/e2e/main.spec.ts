@@ -1,4 +1,4 @@
-import { jest } from '@jest/globals';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import request from 'supertest';
 import { Providers } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
@@ -17,15 +17,15 @@ import {
 describe('@ditsmod/routing/e2e', () => {
   const message = 'any-string';
   const implementation = () => message;
-  const methodPerApp = jest.fn(implementation);
-  const methodPerMod = jest.fn(implementation);
-  const methodPerRou = jest.fn(implementation);
-  const methodPerReq = jest.fn(implementation);
-  const methodPerRou2 = jest.fn(implementation);
-  const methodPerReq2 = jest.fn(implementation);
+  const methodPerApp = vi.fn(implementation);
+  const methodPerMod = vi.fn(implementation);
+  const methodPerRou = vi.fn(implementation);
+  const methodPerReq = vi.fn(implementation);
+  const methodPerRou2 = vi.fn(implementation);
+  const methodPerReq2 = vi.fn(implementation);
 
   beforeEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('override services at any level', async () => {

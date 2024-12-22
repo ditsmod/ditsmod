@@ -1,4 +1,4 @@
-import { jest } from '@jest/globals';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import 'reflect-metadata/lite';
 
 import { makePropDecorator } from './decorator-factories.js';
@@ -101,7 +101,7 @@ function createInjector(providers: Provider[], parent?: Injector | null): Inject
 
 describe("null as provider's value", () => {
   describe('checkDeps()', () => {
-    const spy = jest.fn();
+    const spy = vi.fn();
     beforeEach(() => {
       spy.mockRestore();
     });

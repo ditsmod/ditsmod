@@ -1,6 +1,7 @@
 import * as http from 'http';
 import * as http2 from 'http2';
 import * as https from 'https';
+import { describe, expect, it, beforeEach } from 'vitest';
 
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ModuleManager } from '#init/module-manager.js';

@@ -1,4 +1,5 @@
 import { RequestContext } from '@ditsmod/core';
+import { describe, expect, it } from 'vitest';
 
 import { BearerGuard } from './bearer.guard.js';
 

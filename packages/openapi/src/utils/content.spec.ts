@@ -1,4 +1,5 @@
 import { MediaTypeObject } from '@ts-stack/openapi-spec';
+import { describe, expect, it } from 'vitest';
 
 import { property } from '#decorators/property.js';
 import { Content } from './content.js';

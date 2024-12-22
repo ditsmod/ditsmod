@@ -1,10 +1,10 @@
-import { jest } from '@jest/globals';
+import { describe, expect, it, vi } from 'vitest';
 import { ClassMetaIterator } from './class-meta-iterator.js';
 
 describe('ClassMetaIterator', () => {
   it('works with nested loops', () => {
-    const for1 = jest.fn();
-    const for2 = jest.fn();
+    const for1 = vi.fn();
+    const for2 = vi.fn();
     const sym = Symbol();
     const classMetaIterator = new ClassMetaIterator();
     (classMetaIterator as any)['key1'] = '';

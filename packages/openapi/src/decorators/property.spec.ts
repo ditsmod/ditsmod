@@ -1,4 +1,5 @@
 import { DecoratorAndValue, reflector } from '@ditsmod/core';
+import { describe, expect, it } from 'vitest';
 
 import { property } from './property.js';
 

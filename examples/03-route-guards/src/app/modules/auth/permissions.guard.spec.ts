@@ -1,11 +1,11 @@
 import { Injector, RequestContext, Status } from '@ditsmod/core';
-import { jest } from '@jest/globals';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { PermissionsGuard } from './permissions.guard.js';
 import { AuthService } from './auth.service.js';
 
 describe('PermissionsGuard#canActivate()', () => {
-  const hasPermissions = jest.fn();
+  const hasPermissions = vi.fn();
   let permissionsGuard: PermissionsGuard;
   const ctx = {} as RequestContext;
 

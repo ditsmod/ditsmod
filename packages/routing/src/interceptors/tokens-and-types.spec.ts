@@ -1,4 +1,4 @@
-import { jest } from '@jest/globals';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   clearDebugClassNames,
   defaultProvidersPerApp,
@@ -27,7 +27,7 @@ import { HttpBackend, HttpFrontend, HttpHandler, HttpInterceptor } from './token
 import { HTTP_INTERCEPTORS } from '../constants.js';
 
 describe('HttpInterceptor', () => {
-  const jestFn = jest.fn((interceptorName: string) => interceptorName);
+  const jestFn = vi.fn((interceptorName: string) => interceptorName);
 
   class Interceptor1 implements HttpInterceptor {
     intercept(next: HttpHandler) {
@@ -328,7 +328,7 @@ describe('mix per app, per mod or per req', () => {
     expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
   });
 
-  xit('resolve case 3', () => {
+  it.skip('resolve case 3', () => {
     @featureModule({
       exports: [HttpBackend],
       providersPerReq: [{ token: HttpBackend, useValue: '' }],
@@ -366,7 +366,7 @@ describe('mix per app, per mod or per req', () => {
     ]);
   });
 
-  xit('case 4', () => {
+  it.skip('case 4', () => {
     @featureModule({
       exports: [HttpBackend],
       providersPerReq: [{ token: HttpBackend, useValue: '' }],
@@ -383,7 +383,7 @@ describe('mix per app, per mod or per req', () => {
     expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
   });
 
-  xit('resolve case 4', () => {
+  it.skip('resolve case 4', () => {
     @featureModule({
       providersPerReq: [{ token: HttpBackend, useValue: '' }],
       exports: [HttpBackend],

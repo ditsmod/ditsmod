@@ -1,4 +1,6 @@
 import { reflector, controller, CanActivate, RequestContext, DecoratorAndValue, getCallerDir } from '@ditsmod/core';
+import { describe, expect, it } from 'vitest';
+
 import { oasRoute } from './oas-route.js';
 
 // console.log(inspect(actualMeta, false, 5));

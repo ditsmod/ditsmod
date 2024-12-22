@@ -1,4 +1,5 @@
 import { SchemaObject, XParameterObject } from '@ts-stack/openapi-spec';
+import { describe, expect, it } from 'vitest';
 
 import { Parameters } from './parameters.js';
 import { property } from '#decorators/property.js';

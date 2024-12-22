@@ -1,4 +1,5 @@
 import { CanActivate, controller, DecoratorAndValue, getCallerDir, reflector, RequestContext } from '@ditsmod/core';
+import { describe, expect, it } from 'vitest';
 
 import { route, RouteMetadata } from './route.js';
 

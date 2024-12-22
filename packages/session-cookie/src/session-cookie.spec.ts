@@ -1,11 +1,11 @@
 import { RawRequest, RawResponse, Injector, RAW_REQ, RAW_RES } from '@ditsmod/core';
-import { jest } from '@jest/globals';
+import { beforeEach, describe, expect, it, vi, afterEach } from 'vitest';
 
 import { SessionCookie } from './session-cookie.js';
 import { SessionCookieOptions } from './types.js';
 
 describe('@ditsmod/session-cookie', () => {
-  const setHeader = jest.fn();
+  const setHeader = vi.fn();
   let rawReq: RawRequest;
   let rawRes: RawResponse;
   let session: SessionCookie;
@@ -31,7 +31,7 @@ describe('@ditsmod/session-cookie', () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   it('returns instanceof Session', async () => {

@@ -1,4 +1,4 @@
-import { jest } from '@jest/globals';
+import { describe, expect, it, vi } from 'vitest';
 import { TestApplication } from '@ditsmod/testing';
 
 import { InjectionToken, injectable } from '#di';
@@ -173,7 +173,7 @@ describe('extensions e2e', () => {
   });
 
   it('check isLastModule', async () => {
-    const extensionInit = jest.fn();
+    const extensionInit = vi.fn();
 
     const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
     class Provider1 {}
@@ -225,8 +225,8 @@ describe('extensions e2e', () => {
   });
 
   it('one extension depends on another', async () => {
-    const extensionInit1 = jest.fn();
-    const extensionInit2 = jest.fn();
+    const extensionInit1 = vi.fn();
+    const extensionInit2 = vi.fn();
 
     const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
     const MY_EXTENSIONS2 = new InjectionToken<Extension[]>('MY_EXTENSIONS2');
@@ -308,9 +308,9 @@ describe('extensions e2e', () => {
   });
 
   it('extension depends on data from the entire application', async () => {
-    const spyIsLastModule = jest.fn();
-    const spyMetaFromAllModules = jest.fn();
-    const spyMetaFromCurrentModule = jest.fn();
+    const spyIsLastModule = vi.fn();
+    const spyMetaFromAllModules = vi.fn();
+    const spyMetaFromCurrentModule = vi.fn();
 
     const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
     const MY_EXTENSIONS2 = new InjectionToken<Extension[]>('MY_EXTENSIONS2');

@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { getDuplicates } from './get-duplicates.js';
 
 describe('getDuplicates()', () => {

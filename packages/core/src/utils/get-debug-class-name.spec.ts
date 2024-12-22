@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { getDebugClassName } from './get-debug-class-name.js';
 
 describe('getDebugClassName()', () => {

@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest';
+
 import { Provider } from '#types/mix.js';
 import { Extension } from '#extension/extension-types.js';
 import { InjectionToken, makePropDecorator, reflector } from '#di';

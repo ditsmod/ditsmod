@@ -1,12 +1,12 @@
 import { Injector, Res } from '@ditsmod/core';
 import BunyanLogger from 'bunyan';
-import { jest } from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { BunyanController } from './bunyan.controller.js';
 
 describe('BunyanController', () => {
-  const send = jest.fn();
-  const info = jest.fn();
+  const send = vi.fn();
+  const info = vi.fn();
   const res = { send } as unknown as Res;
   const bunyanLogger = { info } as unknown as BunyanLogger;
   let bunyanController: BunyanController;
@@ -16,7 +16,7 @@ describe('BunyanController', () => {
     bunyanController = injector.get(BunyanController);
   });
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('controller should send response', async () => {

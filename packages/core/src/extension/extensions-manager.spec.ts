@@ -1,3 +1,5 @@
+import { describe, expect, it, beforeEach } from 'vitest';
+
 import { injectable, InjectionToken, Injector } from '#di';
 import { Extension, ExtensionCounters } from '#extension/extension-types.js';
 import { getExtensionProviderList } from '#extension/get-extension-provider.js';

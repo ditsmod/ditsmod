@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { HttpServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
+import { describe, expect, it, beforeAll, afterAll } from 'vitest';
 
 import { AppModule } from '#app/app.module.js';
 

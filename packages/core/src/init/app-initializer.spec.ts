@@ -1,4 +1,4 @@
-import { jest } from '@jest/globals';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { injectable, InjectionToken, KeyRegistry } from '#di';
 import { InputLogLevel, Logger } from '#logger/logger.js';
@@ -123,7 +123,7 @@ describe('AppInitializer', () => {
 
   describe('prepareProvidersPerApp()', () => {
     beforeAll(() => {
-      console.log = jest.fn() as any;
+      console.log = vi.fn() as any;
     });
 
     beforeEach(() => {
@@ -594,7 +594,7 @@ describe('AppInitializer', () => {
 
   describe('bootstrapProvidersPerApp()', () => {
     it('logMediator should has different instances in contexts of Application and AppInitializer', () => {
-      const loggerSpy = jest.fn();
+      const loggerSpy = vi.fn();
 
       class LogMediatorMock extends SystemLogMediator {
         override flush() {
@@ -629,7 +629,7 @@ describe('AppInitializer', () => {
   });
 
   describe('init()', () => {
-    const testMethodSpy = jest.fn();
+    const testMethodSpy = vi.fn();
     class LogMediatorMock1 extends SystemLogMediator {
       testMethod(level: InputLogLevel, ...args: any[]) {
         testMethodSpy();
@@ -693,10 +693,10 @@ describe('AppInitializer', () => {
   });
 
   describe('extensions stage1', () => {
-    const jestFn = jest.fn((extensionName: string) => extensionName);
+    const jestFn = vi.fn((extensionName: string) => extensionName);
 
     beforeEach(() => {
-      jest.restoreAllMocks();
+      vi.restoreAllMocks();
       const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
       moduleManager = new ModuleManager(systemLogMediator);
       const appOptions = new AppOptions();

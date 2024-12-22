@@ -1,4 +1,4 @@
-import { jest } from '@jest/globals';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { controller } from '#decorators/controller.js';
 import { featureModule } from '#decorators/module.js';
@@ -17,7 +17,7 @@ import { RequestContext } from '#services/request-context.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 
 describe('ModuleManager', () => {
-  console.log = jest.fn();
+  // console.log = vi.fn();
   type ModuleId = string | ModuleType | ModuleWithParams;
 
   class MockModuleManager extends ModuleManager {

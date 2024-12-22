@@ -1,5 +1,6 @@
-import { forwardRef, inject, injectable, Injector, KeyRegistry } from '#di';
+import { describe, expect, it, beforeEach } from 'vitest';
 
+import { forwardRef, inject, injectable, Injector, KeyRegistry } from '#di';
 import { ImportsResolver } from '#init/imports-resolver.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { GlobalProviders, ImportedTokensMap } from '#types/metadata-per-mod.js';
