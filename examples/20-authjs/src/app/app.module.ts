@@ -1,6 +1,7 @@
 import { controller, rootModule, Providers } from '@ditsmod/core';
 import { route, RoutingModule } from '@ditsmod/routing';
 import { AuthjsModule } from '@ditsmod/authjs';
+import GitHub from '@auth/core/providers/github';
 
 @controller()
 export class DefaultController {
@@ -24,8 +25,8 @@ export class SingletonController {
 }
 
 @rootModule({
-  imports: [RoutingModule, { path: 'api/auth', module: AuthjsModule }],
+  imports: [RoutingModule, AuthjsModule.withParams('api/auth', { providers: [GitHub] })],
   controllers: [DefaultController, SingletonController],
-  providersPerApp: new Providers().useLogConfig({ level: 'info' }),
+  providersPerApp: new Providers().useLogConfig({ level: 'info', showExternalLogs: true }),
 })
 export class AppModule {}
