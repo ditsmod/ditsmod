@@ -1,5 +1,6 @@
 import { KeyRegistry, InjectionToken, Provider } from '#di';
 import { ExtensionType, Extension } from '#extension/extension-types.js';
+import { AnyObj } from '#types/mix.js';
 
 export class ExtensionObj {
   exportedProviders: Provider[];
@@ -8,21 +9,12 @@ export class ExtensionObj {
   exportedOptions?: ExtensionOptions;
 }
 
-export interface ExtensionOptionsBase {
+interface ExtensionOptionsBase {
   extension: ExtensionType;
-  /**
-   * Extension group token.
-   */
-  group: InjectionToken<Extension[]>;
-  /**
-   * The token of the group before which this extension will be called. Use this option
-   * only if the extension group you place here does not expect your extension group to work.
-   */
-  beforeGroup?: InjectionToken<Extension[]>;
   overrideExtension?: never;
 }
 
-export interface ExtensionOptions1 extends ExtensionOptionsBase {
+interface ExtensionOptions1 extends ExtensionOptionsBase {
   /**
    * Indicates whether this extension needs to be exported.
    */
@@ -30,7 +22,7 @@ export interface ExtensionOptions1 extends ExtensionOptionsBase {
   exportedOnly?: never;
 }
 
-export interface ExtensionOptions2 extends ExtensionOptionsBase {
+interface ExtensionOptions2 extends ExtensionOptionsBase {
   exported?: never;
   /**
    * Indicates whether this extension needs to be exported without working in host module.
@@ -43,16 +35,35 @@ export interface ExtensionOptions3 {
   overrideExtension: ExtensionType;
 }
 
-export type ExtensionOptions = ExtensionOptions1 | ExtensionOptions2 | ExtensionOptions3;
-
-export function isOptionWithOverrideExtension(
-  extensionOptions: ExtensionOptions,
-): extensionOptions is ExtensionOptions3 {
-  return (extensionOptions as ExtensionOptions3).overrideExtension !== undefined;
+export interface ExtensionOptions4 extends ExtensionOptions1 {
+  group: InjectionToken<Extension[]>;
+  beforeGroup?: InjectionToken<Extension[]>;
 }
 
-function isExportedOnlyExtension(extensionOptions: ExtensionOptions): extensionOptions is ExtensionOptions2 {
-  return Boolean((extensionOptions as ExtensionOptions2).exportedOnly);
+export interface ExtensionOptions5 extends ExtensionOptions1 {
+  group?: InjectionToken<Extension[]>;
+  beforeGroup: InjectionToken<Extension[]>;
+}
+
+export interface ExtensionOptions6 extends ExtensionOptions2 {
+  group: InjectionToken<Extension[]>;
+  beforeGroup?: InjectionToken<Extension[]>;
+}
+
+export interface ExtensionOptions7 extends ExtensionOptions2 {
+  group?: InjectionToken<Extension[]>;
+  beforeGroup: InjectionToken<Extension[]>;
+}
+
+export type ExtensionOptions =
+  | ExtensionOptions3
+  | ExtensionOptions4
+  | ExtensionOptions5
+  | ExtensionOptions6
+  | ExtensionOptions7;
+
+export function isOptionWithOverrideExtension(extensionOptions: AnyObj): extensionOptions is ExtensionOptions3 {
+  return (extensionOptions as ExtensionOptions3).overrideExtension !== undefined;
 }
 
 export function getExtensionProvider(extensionOptions: ExtensionOptions): ExtensionObj {
@@ -65,7 +76,10 @@ export function getExtensionProvider(extensionOptions: ExtensionOptions): Extens
   }
 
   const { extension } = extensionOptions;
-  const providers: Provider[] = [extension, { token: extensionOptions.group, useToken: extension, multi: true }];
+  const providers: Provider[] = [extension];
+  if (extensionOptions.group) {
+    providers.push({ token: extensionOptions.group, useToken: extension, multi: true });
+  }
   if (extensionOptions.beforeGroup) {
     const token = KeyRegistry.getBeforeToken(extensionOptions.beforeGroup);
     providers.push({ token, useToken: extension, multi: true });

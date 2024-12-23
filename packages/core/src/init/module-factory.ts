@@ -19,10 +19,10 @@ import { getModule } from '#utils/get-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import {
   ExtensionOptions,
-  ExtensionOptionsBase,
+  ExtensionOptions3,
   isOptionWithOverrideExtension,
 } from '#extension/get-extension-provider.js';
-import { findCycle } from '#extension/tarjan-graph.js';
+import { findCycle, GroupConfig } from '#extension/tarjan-graph.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 
 /**
@@ -169,10 +169,10 @@ export class ModuleFactory {
     });
   }
 
-  protected checkExtensionGroupsGraph(extensions: ExtensionOptions[]) {
+  protected checkExtensionGroupsGraph(extensions: (GroupConfig<any> | ExtensionOptions3)[]) {
     const extensionWithBeforeGroup = extensions?.filter((config) => {
       return !isOptionWithOverrideExtension(config) && config.beforeGroup;
-    }) as ExtensionOptionsBase[] | undefined;
+    }) as GroupConfig<any>[] | undefined;
 
     if (extensionWithBeforeGroup) {
       const path = findCycle(extensionWithBeforeGroup);
