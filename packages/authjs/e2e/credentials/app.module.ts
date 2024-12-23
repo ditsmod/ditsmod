@@ -1,43 +1,48 @@
-import { SingletonRequestContext, controller, rootModule, Providers } from '@ditsmod/core';
+import { SingletonRequestContext, controller, rootModule, Providers, inject } from '@ditsmod/core';
 import { route, RoutingModule } from '@ditsmod/routing';
-import Credentials from '@auth/core/providers/credentials';
 import type { AuthConfig } from '@auth/core';
+import credentials from '@auth/core/providers/credentials';
 import { vi } from 'vitest';
 
 import { getSession } from '#mod/get-session.js';
 import { AuthjsModule } from '#mod/authjs.module.js';
+import { AUTHJS_CONFIG } from '#mod/constants.js';
 
 export const expectation = vi.fn((userName?: string | null) => userName);
 
-const authConfig = {
-  secret: 'secret',
-  providers: [
-    Credentials({
-      credentials: { username: { label: 'Username' } },
-      async authorize(credentials) {
-        if (typeof credentials?.username == 'string') {
-          const { username: name } = credentials;
-          return { name: name, email: name.replace(' ', '') + '@example.com' };
-        }
-        return null;
-      },
-    }),
-  ],
-} satisfies AuthConfig;
-
 @controller({ scope: 'module' })
 export class SingletonController {
+  constructor(@inject(AUTHJS_CONFIG) protected authConfig: AuthConfig) {}
+
   @route('POST', 'test')
   async getAuth(ctx: SingletonRequestContext) {
-    const session = await getSession(ctx, authConfig);
+    const session = await getSession(ctx, this.authConfig);
     expectation(session?.user?.name);
     return 'OK';
   }
 }
 
 @rootModule({
-  imports: [RoutingModule, AuthjsModule.withParams('auth', authConfig)],
+  imports: [RoutingModule, AuthjsModule.withParams({ basePath: '/auth' })],
   controllers: [SingletonController],
   providersPerApp: new Providers().useLogConfig({ level: 'info' }),
 })
-export class AppModule {}
+export class AppModule {
+  constructor(@inject(AUTHJS_CONFIG) protected authConfig: AuthConfig) {}
+
+  onModuleInit() {
+    const credentialsProvider = credentials({
+      credentials: { username: { label: 'Username' } },
+      async authorize(user) {
+        if (typeof user?.username == 'string') {
+          const { username: name } = user;
+          return { name: name, email: name.replace(' ', '') + '@example.com' };
+        }
+        return null;
+      },
+    });
+    this.authConfig.secret ??= 'secret';
+    this.authConfig.providers ??= [];
+    this.authConfig.providers.push(credentialsProvider);
+  }
+}
