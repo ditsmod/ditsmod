@@ -1,24 +1,21 @@
-import { SingletonRequestContext, controller, rootModule, Providers, inject } from '@ditsmod/core';
+import { controller, rootModule, Providers, inject } from '@ditsmod/core';
 import { route, RoutingModule } from '@ditsmod/routing';
 import type { AuthConfig } from '@auth/core';
 import credentials from '@auth/core/providers/credentials';
 import { vi } from 'vitest';
 
-import { getSession } from '#mod/get-session.js';
 import { AuthjsModule } from '#mod/authjs.module.js';
-import { AUTHJS_CONFIG } from '#mod/constants.js';
+import { AUTHJS_CONFIG, AUTHJS_SESSION } from '#mod/constants.js';
+import { AuthjsGuard } from '#mod/auth.guard.js';
 
 export const expectation = vi.fn((userName?: string | null) => userName);
 
-@controller({ scope: 'module' })
+@controller()
 export class SingletonController {
-  constructor(@inject(AUTHJS_CONFIG) protected authConfig: AuthConfig) {}
-
-  @route('POST', 'test')
-  async getAuth(ctx: SingletonRequestContext) {
-    const session = await getSession(ctx, this.authConfig);
+  @route('POST', 'test', [AuthjsGuard])
+  async getAuth(@inject(AUTHJS_SESSION) session: any) {
     expectation(session?.user?.name);
-    return 'OK';
+    return session;
   }
 }
 

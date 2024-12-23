@@ -4,8 +4,9 @@ import { RoutingModule } from '@ditsmod/routing';
 import { BodyParserModule } from '@ditsmod/body-parser';
 import { LoggerInstance } from '@auth/core/types';
 
-import { AUTHJS_CONFIG } from './constants.js';
+import { AUTHJS_CONFIG, AUTHJS_SESSION } from './constants.js';
 import { AuthjsController } from '#mod/authjs.controller.js';
+import { AuthjsGuard } from '#mod/auth.guard.js';
 
 /**
  * Ditsmod module to support [Auth.js][1].
@@ -15,8 +16,10 @@ import { AuthjsController } from '#mod/authjs.controller.js';
 @featureModule({
   imports: [RoutingModule, BodyParserModule],
   providersPerMod: new Providers().useValue(AUTHJS_CONFIG, {}),
+  providersPerRou: [AuthjsGuard],
+  providersPerReq: [{ token: AUTHJS_SESSION, useValue: {} }],
   controllers: [AuthjsController],
-  exports: [AUTHJS_CONFIG],
+  exports: [AUTHJS_CONFIG, AUTHJS_SESSION, AuthjsGuard],
 })
 export class AuthjsModule implements OnModuleInit {
   constructor(
