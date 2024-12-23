@@ -75,6 +75,7 @@ export {
   Provider,
   AnyFn,
   RequireProps,
+  RequireOnlyProps,
   OptionalProps,
   GuardPerMod1,
   ProvidersForMod,

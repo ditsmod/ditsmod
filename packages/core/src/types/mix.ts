@@ -68,6 +68,8 @@ const obj: ModifiedInterface = {
 ```
  */
 export type RequireProps<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>;
+export type RequireOnlyProps<T, K extends keyof T> = Partial<Omit<T, K>> & Required<Pick<T, K>>;
+
 export type OptionalProps<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
 export type AnyFn<T = any> = (...args: any[]) => T;
