@@ -23,7 +23,7 @@ export class SingletonController {
 }
 
 @rootModule({
-  imports: [RoutingModule, AuthjsModule.withParams({ basePath: '/auth' })],
+  imports: [RoutingModule, { absolutePath: 'auth', module: AuthjsModule }],
   controllers: [SingletonController],
   providersPerApp: new Providers().useLogConfig({ level: 'info' }),
 })
