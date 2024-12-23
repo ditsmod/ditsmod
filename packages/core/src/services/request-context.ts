@@ -31,6 +31,6 @@ export class RequestContext extends Res {
 export class SingletonRequestContext extends RequestContext {
   pathParams?: AnyObj;
   queryParams?: AnyObj;
-  body?: AnyObj;
-  auth?: AnyObj;
+  body?: any;
+  auth?: any;
 }
