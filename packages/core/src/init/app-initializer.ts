@@ -307,7 +307,7 @@ export class AppInitializer {
         this.moduleManager.setInjectorPerMod(modRefId, injectorPerMod);
       } catch (err: any) {
         const debugModuleName = getDebugClassName(modRefId);
-        const msg = `Creating injector per module for ${debugModuleName} failed`;
+        const msg = `${debugModuleName} initialization failed`;
         throw new ChainError(msg, err);
       }
     }
