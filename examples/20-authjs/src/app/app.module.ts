@@ -1,32 +1,37 @@
-import { controller, rootModule, Providers } from '@ditsmod/core';
 import { route, RoutingModule } from '@ditsmod/routing';
-import { AuthjsModule } from '@ditsmod/authjs';
-import GitHub from '@auth/core/providers/github';
+import { AUTHJS_CONFIG, AuthjsModule } from '@ditsmod/authjs';
+import { controller, rootModule, Providers, inject, OnModuleInit } from '@ditsmod/core';
+import type { AuthConfig } from '@auth/core';
+import credentials from '@auth/core/providers/credentials';
 
 @controller()
 export class DefaultController {
-  @route('GET', 'default-controller')
-  tellHello() {
-    return 'Hello, World!';
-  }
-
-  @route(['GET', 'POST'], 'method-name-as-symbol')
-  [Symbol()]() {
-    return 'Hello, World!';
-  }
-}
-
-@controller({ scope: 'module' })
-export class SingletonController {
-  @route('GET', 'singleton-controller')
+  @route('GET', 'hello')
   tellHello() {
     return 'Hello, World!';
   }
 }
 
 @rootModule({
-  imports: [RoutingModule, AuthjsModule.withParams('api/auth', { providers: [GitHub] })],
-  controllers: [DefaultController, SingletonController],
+  imports: [RoutingModule, { absolutePath: 'auth', module: AuthjsModule }],
+  controllers: [DefaultController],
   providersPerApp: new Providers().useLogConfig({ level: 'info', showExternalLogs: true }),
 })
-export class AppModule {}
+export class AppModule implements OnModuleInit {
+  constructor(@inject(AUTHJS_CONFIG) protected authConfig: AuthConfig) {}
+
+  onModuleInit() {
+    const credentialsProvider = credentials({
+      credentials: { username: { label: 'Username' } },
+      async authorize(user) {
+        if (typeof user?.username == 'string') {
+          const { username: name } = user;
+          return { name: name, email: name.replace(' ', '') + '@example.com' };
+        }
+        return null;
+      },
+    });
+    this.authConfig.providers ??= [];
+    this.authConfig.providers.push(credentialsProvider);
+  }
+}

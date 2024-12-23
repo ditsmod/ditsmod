@@ -18,8 +18,7 @@ npm run start:dev
 From second terminal:
 
 ```bash
-curl -i localhost:3000/default-controller
-curl -i localhost:3000/singleton-controller
+curl -iS localhost:3000/auth/signin
 ```
 
 ## TypeScript configs
