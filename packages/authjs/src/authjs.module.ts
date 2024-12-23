@@ -14,12 +14,18 @@ import { AuthjsController } from '#mod/authjs.controller.js';
 @featureModule({
   imports: [RoutingModule, BodyParserModule],
   controllers: [AuthjsController],
-  exports: [BodyParserModule]
 })
 export class AuthjsModule {
-  static withParams(path: string, config: AuthConfig): ModuleWithParams<AuthjsModule> {
+  static withParams(absolutePath: string, config: AuthConfig): ModuleWithParams<AuthjsModule> {
+    if (absolutePath.at(0) == '/') {
+      config.basePath = absolutePath;
+      absolutePath = absolutePath.slice(1);
+    } else {
+      config.basePath = `/${absolutePath}`;
+    }
+
     return {
-      path,
+      absolutePath,
       module: this,
       providersPerMod: [{ token: AUTHJS_CONFIG, useValue: config }],
     };

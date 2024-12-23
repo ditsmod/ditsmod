@@ -5,7 +5,6 @@ import { AnyObj, RawResponse, SingletonRequestContext } from '@ditsmod/core';
  */
 export function toWebRequest(ctx: SingletonRequestContext) {
   const url = `${ctx.protocol}://${process.env.HOST ?? 'localhost'}${ctx.rawReq.url}`;
-
   const headers = new Headers();
 
   Object.entries(ctx.rawReq.headers).forEach(([key, value]) => {
@@ -34,18 +33,14 @@ export function toWebRequest(ctx: SingletonRequestContext) {
 /**
  * Encodes Ditsmod Request body based on the content type header.
  */
-function encodeRequestBody(ctx: SingletonRequestContext): string {
+function encodeRequestBody(ctx: SingletonRequestContext): BodyInit | null | undefined {
   const contentType = ctx.rawReq.headers['content-type'];
 
   if (contentType?.includes('application/x-www-form-urlencoded')) {
     return encodeUrlEncoded(ctx.body);
   }
 
-  if (contentType?.includes('application/json')) {
-    return encodeJson(ctx.body);
-  }
-
-  return JSON.stringify(ctx.body);
+  return encodeJson(ctx.body);
 }
 
 /**
