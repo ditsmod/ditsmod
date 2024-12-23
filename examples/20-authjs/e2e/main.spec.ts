@@ -22,6 +22,6 @@ describe('01-hello-world', () => {
     const { status, type, text } = await testAgent.get('/auth/signin');
     expect(status).toBe(200);
     expect(type).toBe('text/html');
-    expect(text).toStrictEqual(expect.any(String));
+    expect(text).toEqual(expect.any(String));
   });
 });
