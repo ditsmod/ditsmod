@@ -18,10 +18,20 @@ describe('01-hello-world', () => {
     server?.close();
   });
 
-  it('controller works with GET method', async () => {
+  it('case1', async () => {
     const { status, type, text } = await testAgent.get('/auth/signin');
     expect(status).toBe(200);
     expect(type).toBe('text/html');
     expect(text).toEqual(expect.any(String));
+  });
+
+  it('case2', async () => {
+    const { status } = await testAgent.get('/per-req');
+    expect(status).toBe(401);
+  });
+
+  it('case3', async () => {
+    const { status } = await testAgent.get('/per-mod');
+    expect(status).toBe(401);
   });
 });
