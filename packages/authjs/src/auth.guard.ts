@@ -1,4 +1,4 @@
-import { CanActivate, guard, inject, Injector, RequestContext } from '@ditsmod/core';
+import { CanActivate, guard, inject, Injector, SingletonRequestContext } from '@ditsmod/core';
 import { AuthConfig } from '@auth/core';
 
 import { getSession } from '#mod/get-session.js';
@@ -11,12 +11,16 @@ export class AuthjsGuard implements CanActivate {
     protected injector: Injector,
   ) {}
 
-  async canActivate(ctx: RequestContext, params?: any[]): Promise<boolean | number> {
+  async canActivate(ctx: SingletonRequestContext, params?: any[]): Promise<boolean | number> {
     const session = await getSession(ctx, this.authConfig);
-    if (session) {
-      this.injector.setByToken(AUTHJS_SESSION, session);
-      return true;
+    if (!session) {
+      return false;
     }
-    return false;
+    if (this.injector.hasToken(AUTHJS_SESSION)) {
+      this.injector.setByToken(AUTHJS_SESSION, session); // For controllers per request.
+    } else {
+      ctx.auth = session; // For controllers per module.
+    }
+    return true;
   }
 }
