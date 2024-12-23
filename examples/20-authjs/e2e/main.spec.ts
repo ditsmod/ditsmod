@@ -19,41 +19,9 @@ describe('01-hello-world', () => {
   });
 
   it('controller works with GET method', async () => {
-    const { status, type, text } = await testAgent.get('/default-controller');
+    const { status, type, text } = await testAgent.get('/auth/signin');
     expect(status).toBe(200);
-    expect(type).toBe('text/plain');
-    expect(text).toBe('Hello, World!');
-  });
-
-  it('controller handles HEAD method', async () => {
-    const { status, type, text, headers } = await testAgent.head('/default-controller');
-    expect(status).toBe(200);
-    expect(type).toBe('text/plain');
-    expect(text).toBeUndefined();
-    expect(headers).toMatchObject({
-      'content-type': 'text/plain; charset=utf-8',
-      'content-length': '13',
-    });
-  });
-
-  it('controller as singleton works', async () => {
-    const { status, type, text } = await testAgent.get('/singleton-controller');
-    expect(status).toBe(200);
-    expect(type).toBe('text/plain');
-    expect(text).toBe('Hello, World!');
-  });
-
-  it('method name as symbol with GET method', async () => {
-    const { status, type, text } = await testAgent.get('/method-name-as-symbol');
-    expect(status).toBe(200);
-    expect(type).toBe('text/plain');
-    expect(text).toBe('Hello, World!');
-  });
-
-  it('method name as symbol with POST method', async () => {
-    const { status, type, text } = await testAgent.post('/method-name-as-symbol');
-    expect(status).toBe(200);
-    expect(type).toBe('text/plain');
-    expect(text).toBe('Hello, World!');
+    expect(type).toBe('text/html');
+    expect(text).toStrictEqual(expect.any(String));
   });
 });

@@ -2,10 +2,16 @@ import { defineConfig } from 'vitest/config';
 import { config } from 'dotenv';
 import * as path from 'path';
 
-const dotenvPath = path.resolve('examples/03-route-guards/.env');
-const output = config({ path: dotenvPath });
-if (output.error) {
-  throw output.error;
+const dotenvPath1 = path.resolve('examples/03-route-guards/.env');
+const output1 = config({ path: dotenvPath1 });
+if (output1.error) {
+  throw output1.error;
+}
+
+const dotenvPath2 = path.resolve('examples/20-authjs/.env');
+const output2 = config({ path: dotenvPath2 });
+if (output2.error) {
+  throw output2.error;
 }
 
 export default defineConfig({
@@ -20,9 +26,6 @@ export default defineConfig({
       'examples/10-openapi/dist-e2e/**/*.spec.js',
       'examples/16-openapi-validation/dist-e2e/**/*.spec.js',
     ],
-    env: {
-      ...config({ path: 'examples/03-route-guards/.env' }).parsed,
-    },
     watch: false
   },
 });
