@@ -537,7 +537,7 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
   /**
    * Extracts the values from the current injector for the specified tokens,
    * and inserts them into the external injector.
-   * 
+   *
    * _Note: At the time of creation, this method was intended to enable guards at the module level,
    * specifically to pass contextual values to their injector at the request level. In this case,
    * the injectors for the guards are considered external in relation to the injectors of the
@@ -840,5 +840,10 @@ child.get(Service).config; // now returns: { one: 11, two: 22 }
 
   hasId(id: number) {
     return id in this.#registry;
+  }
+
+  hasToken(token: NonNullable<unknown>) {
+    const id = KeyRegistry.get(token).id;
+    return id !== undefined && this.hasId(id);
   }
 }
