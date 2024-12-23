@@ -303,7 +303,7 @@ export class AppInitializer {
     for (const [modRefId, metadataPerMod2] of mMetadataPerMod2) {
       try {
         const meta = this.overrideMetaAfterStage1(metadataPerMod2.meta);
-        const injectorPerMod = this.initModuleAndGetInjectorPerMod(meta);
+        const injectorPerMod = await this.initModuleAndGetInjectorPerMod(meta);
         this.moduleManager.setInjectorPerMod(modRefId, injectorPerMod);
       } catch (err: any) {
         const debugModuleName = getDebugClassName(modRefId);
@@ -344,12 +344,12 @@ export class AppInitializer {
     }
   }
 
-  protected initModuleAndGetInjectorPerMod(meta: NormalizedModuleMetadata): Injector {
-    const mod = getModule(meta.modRefId);
-    const extendedProvidersPerMod = [mod, ...meta.providersPerMod];
+  protected async initModuleAndGetInjectorPerMod(meta: NormalizedModuleMetadata): Promise<Injector> {
+    const Mod = getModule(meta.modRefId);
+    const extendedProvidersPerMod = [Mod, ...meta.providersPerMod];
     const injectorPerApp = this.perAppService.injector;
     const injectorPerMod = injectorPerApp.resolveAndCreateChild(extendedProvidersPerMod, 'injectorPerMod');
-    injectorPerMod.get(mod); // Instantiate the class of the module.
+    await injectorPerMod.get(Mod).onModuleInit?.(); // Instantiate the class of the module and call the hook.
     return injectorPerMod;
   }
 

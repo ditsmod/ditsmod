@@ -7,6 +7,7 @@ export { ModuleFactory } from '#init/module-factory.js';
 export { defaultProvidersPerApp } from '#init/default-providers-per-app.js';
 export { defaultProvidersPerRou } from '#init/default-providers-per-rou.js';
 export { defaultProvidersPerReq } from '#init/default-providers-per-req.js';
+export { OnModuleInit } from '#init/hooks.js';
 export {
   SERVER,
   RAW_REQ,
