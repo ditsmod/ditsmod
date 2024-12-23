@@ -1,9 +1,10 @@
 import { featureModule, ModuleWithParams } from '@ditsmod/core';
-import { RoutingModule } from '@ditsmod/routing';
 import { type AuthConfig } from '@auth/core';
+import { RoutingModule } from '@ditsmod/routing';
+import { BodyParserModule } from '@ditsmod/body-parser';
 
-import { AuthjsSingletonController } from './authjs-singleton.controller.js';
 import { AUTHJS_CONFIG } from './constants.js';
+import { AuthjsController } from '#mod/authjs.controller.js';
 
 /**
  * Ditsmod module to support [Auth.js][1].
@@ -11,8 +12,9 @@ import { AUTHJS_CONFIG } from './constants.js';
  * [1]: https://authjs.dev/
  */
 @featureModule({
-  imports: [RoutingModule],
-  controllers: [AuthjsSingletonController],
+  imports: [RoutingModule, BodyParserModule],
+  controllers: [AuthjsController],
+  exports: [BodyParserModule]
 })
 export class AuthjsModule {
   static withParams(path: string, config: AuthConfig): ModuleWithParams<AuthjsModule> {

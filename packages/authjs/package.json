@@ -10,6 +10,12 @@
   "homepage": "https://ditsmod.github.io/en/",
   "description": "Ditsmod module to support Auth.js",
   "module": "dist/index.js",
+  "scripts": {
+    "build": "tsc -b tsconfig.build.json",
+    "clean": "rm -rf dist*",
+    "test": "yarn build-test && yarn vitest",
+    "build-test": "tsc -b tsconfig.e2e.json"
+  },
   "exports": {
     "./package.json": {
       "default": "./package.json"
@@ -31,11 +37,6 @@
   },
   "imports": {
     "#mod/*": "./dist/*"
-  },
-  "scripts": {
-    "build": "tsc -b tsconfig.build.json",
-    "clean": "rm -rf dist*",
-    "test": "tsc -b tsconfig.unit.json && yarn vitest"
   },
   "keywords": [
     "ditsmod",

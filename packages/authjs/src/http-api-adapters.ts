@@ -1,4 +1,4 @@
-import { AnyObj, RawResponse, Res, SingletonRequestContext } from '@ditsmod/core';
+import { AnyObj, RawResponse, SingletonRequestContext } from '@ditsmod/core';
 
 /**
  * Adapts Ditsmod Request to a Web Request, returning the Web Request.
@@ -79,7 +79,7 @@ function encodeJson(obj?: AnyObj) {
 export async function toDitsmodResponse(response: Response, rawRes: RawResponse) {
   response.headers.forEach((value, key) => {
     if (value) {
-      rawRes.setHeader(key, value);
+      rawRes.appendHeader(key, value);
     }
   });
 

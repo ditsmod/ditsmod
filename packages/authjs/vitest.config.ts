@@ -7,7 +7,8 @@ export default defineConfig({
     include: [
       './dist*/**/*.spec.js',
     ],
+    setupFiles: ['./dist-e2e/test-setup.js'],
     exclude: ['**/node_modules/**'],
-    watch: false
+    watch: true
   },
 });
