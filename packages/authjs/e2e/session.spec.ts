@@ -1,7 +1,33 @@
-import { vi, describe, it, beforeEach, expect } from 'vitest';
+import { vi, describe, it, expect, afterAll, beforeAll } from 'vitest';
 import supertest from 'supertest';
-import express from 'express';
-import { AnyFn, Status } from '@ditsmod/core';
+import { Status, controller, rootModule, HttpServer, Req } from '@ditsmod/core';
+import { route, RoutingModule } from '@ditsmod/routing';
+import { TestApplication } from '@ditsmod/testing';
+
+import { getSession } from '#mod/get-session.js';
+
+const expectation = vi.fn((data?: any) => data);
+
+@controller()
+export class Controller1 {
+  @route('POST')
+  async getAuth(req: Req) {
+    const session = await getSession(req, {
+      providers: [],
+      secret: 'secret',
+    });
+
+    expectation(session);
+
+    return 'OK';
+  }
+}
+
+@rootModule({
+  imports: [RoutingModule],
+  controllers: [Controller1],
+})
+export class AppModule {}
 
 const sessionJson = {
   user: {
@@ -26,40 +52,21 @@ vi.mock('@auth/core', async (importOriginal) => {
   };
 });
 
-// dynamic import to avoid loading Auth before hoisting
-const { getSession } = await import('#mod/get-session.js');
-
 describe('getSession', () => {
-  let app: express.Express;
+  let server: HttpServer | undefined;
   let client: ReturnType<typeof supertest>;
 
-  beforeEach(() => {
-    app = express();
-    client = supertest(app);
+  beforeAll(async () => {
+    server = await TestApplication.createTestApp(AppModule).getServer();
+    client = supertest(server);
   });
 
+  afterAll(async () => server?.close());
+
   it('Should return the mocked session from the Auth response', async () => {
-    let expectations: AnyFn = () => {};
-
-    app.post('/', async (req, res) => {
-      const session = await getSession(req, {
-        providers: [],
-        secret: 'secret',
-      });
-
-      expectations = async () => {
-        expect(session).toEqual(sessionJson);
-      };
-
-      res.send('OK');
-    });
-
-    const { status } = await client
-      .post('/')
-      .set('X-Test-Header', 'foo')
-      .set('Accept', 'application/json');
+    const { status } = await client.post('/').set('X-Test-Header', 'foo').set('Accept', 'application/json');
 
     expect(status).toBe(Status.OK);
-    await expectations();
+    expect(expectation).lastCalledWith(sessionJson);
   });
 });
