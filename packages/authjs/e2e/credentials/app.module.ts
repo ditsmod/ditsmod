@@ -23,7 +23,6 @@ export class SingletonController {
 @rootModule({
   imports: [RoutingModule, { absolutePath: 'auth', module: AuthjsModule }],
   controllers: [SingletonController],
-  providersPerApp: new Providers().useLogConfig({ level: 'info' }),
   providersPerMod: [CredentialsService]
 })
 export class AppModule implements OnModuleInit {
