@@ -39,6 +39,7 @@ export class AppModule implements OnModuleInit {
         return null;
       },
     });
+    this.authConfig.basePath ??= '/auth';
     this.authConfig.providers ??= [];
     this.authConfig.providers.push(credentialsProvider);
   }

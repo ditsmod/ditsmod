@@ -1,4 +1,4 @@
-import { controller, rootModule, Providers, inject } from '@ditsmod/core';
+import { controller, rootModule, Providers, inject, OnModuleInit } from '@ditsmod/core';
 import { route, RoutingModule } from '@ditsmod/routing';
 import type { AuthConfig } from '@auth/core';
 import credentials from '@auth/core/providers/credentials';
@@ -24,7 +24,7 @@ export class SingletonController {
   controllers: [SingletonController],
   providersPerApp: new Providers().useLogConfig({ level: 'info' }),
 })
-export class AppModule {
+export class AppModule implements OnModuleInit {
   constructor(@inject(AUTHJS_CONFIG) protected authConfig: AuthConfig) {}
 
   onModuleInit() {
@@ -38,6 +38,7 @@ export class AppModule {
         return null;
       },
     });
+    this.authConfig.basePath ??= '/auth';
     this.authConfig.secret ??= 'secret';
     this.authConfig.providers ??= [];
     this.authConfig.providers.push(credentialsProvider);

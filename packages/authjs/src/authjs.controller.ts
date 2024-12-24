@@ -7,12 +7,13 @@ import { toDitsmodResponse, toWebRequest } from '#mod/http-api-adapters.js';
 
 @controller({ scope: 'module' })
 export class AuthjsController {
-  constructor(@inject(AUTHJS_CONFIG) protected config: AuthConfig) {}
+  constructor(@inject(AUTHJS_CONFIG) protected config: AuthConfig) {
+    setEnvDefaults(process.env, this.config);
+  }
 
   @route('GET', ':action')
   @route('POST', ':action/:provider')
   async handleAction(ctx: SingletonRequestContext) {
-    setEnvDefaults(process.env, this.config);
     return toDitsmodResponse(await Auth(toWebRequest(ctx), this.config), ctx.rawRes);
   }
 }
