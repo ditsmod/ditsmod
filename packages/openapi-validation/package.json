@@ -36,6 +36,5 @@
     "@ditsmod/i18n": "^3.0.0",
     "@ditsmod/openapi": "^3.0.0",
     "@ditsmod/routing": "^3.0.0"
-  },
-  "gitHead": "c64c99dc2b6f65bb3e7027e8f8dceeca7a8c2172"
+  }
 }
