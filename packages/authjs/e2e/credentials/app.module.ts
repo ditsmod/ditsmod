@@ -7,6 +7,7 @@ import { vi } from 'vitest';
 import { AuthjsModule } from '#mod/authjs.module.js';
 import { AUTHJS_CONFIG, AUTHJS_SESSION } from '#mod/constants.js';
 import { AuthjsGuard } from '#mod/auth.guard.js';
+import { CredentialsService } from './credentials.service.js';
 
 export const expectation = vi.fn((userName?: string | null) => userName);
 
@@ -23,20 +24,18 @@ export class SingletonController {
   imports: [RoutingModule, { absolutePath: 'auth', module: AuthjsModule }],
   controllers: [SingletonController],
   providersPerApp: new Providers().useLogConfig({ level: 'info' }),
+  providersPerMod: [CredentialsService]
 })
 export class AppModule implements OnModuleInit {
-  constructor(@inject(AUTHJS_CONFIG) protected authConfig: AuthConfig) {}
+  constructor(
+    @inject(AUTHJS_CONFIG) protected authConfig: AuthConfig,
+    protected credentialsService: CredentialsService,
+  ) {}
 
   onModuleInit() {
     const credentialsProvider = credentials({
       credentials: { username: { label: 'Username' } },
-      async authorize(user) {
-        if (typeof user?.username == 'string') {
-          const { username: name } = user;
-          return { name: name, email: name.replace(' ', '') + '@example.com' };
-        }
-        return null;
-      },
+      authorize: (data) => this.credentialsService.authorize(data),
     });
     this.authConfig.basePath ??= '/auth';
     this.authConfig.secret ??= 'secret';

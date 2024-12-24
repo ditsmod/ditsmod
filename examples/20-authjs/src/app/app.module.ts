@@ -4,6 +4,8 @@ import { controller, rootModule, Providers, inject, OnModuleInit, SingletonReque
 import type { AuthConfig } from '@auth/core';
 import credentials from '@auth/core/providers/credentials';
 
+import { CredentialsService } from './credentials.service.js';
+
 @controller()
 export class PerReqController {
   @route('GET', 'per-req', [AuthjsGuard])
@@ -24,20 +26,18 @@ export class PerModController {
   imports: [RoutingModule, { absolutePath: 'auth', module: AuthjsModule }],
   controllers: [PerReqController, PerModController],
   providersPerApp: new Providers().useLogConfig({ level: 'info', showExternalLogs: true }),
+  providersPerMod: [CredentialsService]
 })
 export class AppModule implements OnModuleInit {
-  constructor(@inject(AUTHJS_CONFIG) protected authConfig: AuthConfig) {}
+  constructor(
+    @inject(AUTHJS_CONFIG) protected authConfig: AuthConfig,
+    protected credentialsService: CredentialsService,
+  ) {}
 
   onModuleInit() {
     const credentialsProvider = credentials({
       credentials: { username: { label: 'Username' } },
-      async authorize(user) {
-        if (typeof user?.username == 'string') {
-          const { username: name } = user;
-          return { name: name, email: name.replace(' ', '') + '@example.com' };
-        }
-        return null;
-      },
+      authorize: (data) => this.credentialsService.authorize(data),
     });
     this.authConfig.basePath ??= '/auth';
     this.authConfig.providers ??= [];
