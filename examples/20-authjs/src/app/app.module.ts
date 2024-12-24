@@ -2,7 +2,7 @@ import { route, RoutingModule } from '@ditsmod/routing';
 import { AUTHJS_CONFIG, AUTHJS_SESSION, AuthjsGuard, AuthjsModule } from '@ditsmod/authjs';
 import { controller, rootModule, Providers, inject, OnModuleInit, SingletonRequestContext } from '@ditsmod/core';
 import type { AuthConfig } from '@auth/core';
-import credentials from '@auth/core/providers/credentials';
+import credentials from '@ditsmod/authjs/providers/credentials';
 
 import { CredentialsService } from './credentials.service.js';
 

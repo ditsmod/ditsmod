@@ -1,9 +1,9 @@
 import { controller, rootModule, Providers, inject, OnModuleInit } from '@ditsmod/core';
 import { route, RoutingModule } from '@ditsmod/routing';
 import type { AuthConfig } from '@auth/core';
-import credentials from '@auth/core/providers/credentials';
 import { vi } from 'vitest';
 
+import credentials from '#mod/providers/credentials.js';
 import { AuthjsModule } from '#mod/authjs.module.js';
 import { AUTHJS_CONFIG, AUTHJS_SESSION } from '#mod/constants.js';
 import { AuthjsGuard } from '#mod/auth.guard.js';
