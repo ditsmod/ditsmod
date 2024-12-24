@@ -1,13 +1,7 @@
 import { Auth, createActionURL, setEnvDefaults } from '@auth/core';
-import type { AuthConfig, Session } from '@auth/core/types';
-import type { RawRequest } from '@ditsmod/core';
+import type { AuthConfig } from '@auth/core/types';
 
-export type GetSessionResult = Promise<Session | null>;
-
-interface ReqForSession {
-  protocol: 'http' | 'https';
-  rawReq: RawRequest;
-}
+import { GetSessionResult, ReqForSession } from './types.js';
 
 export async function getSession(req: ReqForSession, config: AuthConfig): GetSessionResult {
   setEnvDefaults(process.env, config);
