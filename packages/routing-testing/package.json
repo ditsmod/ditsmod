@@ -1,7 +1,7 @@
 {
   "name": "@ditsmod/routing-testing",
   "type": "module",
-  "version": "3.0.0",
+  "version": "3.0.0-alpha.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
@@ -30,8 +30,8 @@
   "license": "MIT",
   "peerDependencies": {
     "@ditsmod/core": "^3.0.0",
-    "@ditsmod/testing": "^3.0.0",
-    "@ditsmod/routing": "^3.0.0"
+    "@ditsmod/routing": "^3.0.0",
+    "@ditsmod/testing": "^3.0.0"
   },
   "gitHead": "c64c99dc2b6f65bb3e7027e8f8dceeca7a8c2172"
 }
