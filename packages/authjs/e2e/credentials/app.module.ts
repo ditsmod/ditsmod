@@ -33,7 +33,7 @@ export class AppModule implements OnModuleInit {
 
   onModuleInit() {
     const credentialsProvider = credentials({
-      credentials: { username: { label: 'Username' } },
+      credentials: this.credentialsService.credentials,
       authorize: (data) => this.credentialsService.authorize(data),
     });
     this.authConfig.basePath ??= '/auth';

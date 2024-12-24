@@ -1,11 +1,22 @@
+import { CredentialsConfig } from '@auth/core/providers';
 import { injectable } from '@ditsmod/core';
+
+interface User {
+  username?: string;
+  name?: string;
+  email?: string;
+}
 
 @injectable()
 export class CredentialsService {
-  async authorize(data: any) {
-    if (typeof data?.username == 'string') {
-      const { username: name } = data;
-      return { name: name, email: name.replace(' ', '') + '@example.com' };
+  get credentials(): CredentialsConfig['credentials'] {
+    return { username: { label: 'Username' } };
+  }
+
+  async authorize(user?: User): Promise<User | null> {
+    if (typeof user?.username == 'string') {
+      const { username: name } = user;
+      return { name, email: name.replace(' ', '') + '@example.com' };
     }
     return null;
   }
