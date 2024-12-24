@@ -43,7 +43,7 @@ describe('Integration test with login and getSession', () => {
 
     // Call test route
     const { status } = await client
-      .post('/test')
+      .get('/test')
       .set('X-Test-Header', 'foo')
       .set('Accept', 'application/json')
       .set('Cookie', [sessionTokenCookie]);

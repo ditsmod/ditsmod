@@ -10,7 +10,7 @@ const expectation = vi.fn((data?: any) => data);
 
 @controller()
 export class Controller1 {
-  @route('POST')
+  @route('GET')
   async getAuth(req: Req) {
     const session = await getSession(req, {
       providers: [],
@@ -64,7 +64,7 @@ describe('getSession', () => {
   afterAll(async () => server?.close());
 
   it('Should return the mocked session from the Auth response', async () => {
-    const { status } = await client.post('/').set('X-Test-Header', 'foo').set('Accept', 'application/json');
+    const { status } = await client.get('/').set('X-Test-Header', 'foo').set('Accept', 'application/json');
 
     expect(status).toBe(Status.OK);
     expect(expectation).lastCalledWith(sessionJson);

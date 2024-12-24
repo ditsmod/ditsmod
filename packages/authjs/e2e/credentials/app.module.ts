@@ -13,7 +13,7 @@ export const expectation = vi.fn((userName?: string | null) => userName);
 
 @controller()
 export class Controller1 {
-  @route('POST', 'test', [AuthjsGuard])
+  @route('GET', 'test', [AuthjsGuard])
   async getAuth(@inject(AUTHJS_SESSION) session: any) {
     expectation(session?.user?.name);
     return session;

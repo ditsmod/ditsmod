@@ -10,7 +10,7 @@ let webResponse: Response = new Response();
 
 @controller()
 export class Controller1 {
-  @route('POST')
+  @route('GET')
   async getAuth(res: Res) {
     const headers = new Headers();
     headers.append('X-Test-Header', 'foo');
@@ -48,7 +48,7 @@ describe('toWebResponse', () => {
   afterAll(async () => server?.close());
 
   it('adapts response', async () => {
-    const res = await client.post('/');
+    const res = await client.get('/');
 
     expectMatchingResponseHeaders(webResponse, res);
     expect(res.body).toEqual({ name: 'Rexford' });
