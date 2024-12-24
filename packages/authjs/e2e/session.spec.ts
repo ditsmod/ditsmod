@@ -4,7 +4,31 @@ import { Status, controller, rootModule, HttpServer, Req } from '@ditsmod/core';
 import { route, RoutingModule } from '@ditsmod/routing';
 import { TestApplication } from '@ditsmod/testing';
 
-import { getSession } from '#mod/get-session.js';
+const sessionJson = {
+  user: {
+    name: 'John Doe',
+    email: 'test@example.com',
+    image: '',
+    id: '1234',
+  },
+  expires: '',
+};
+
+vi.mock('@auth/core', async (importOriginal) => {
+  const mod = await importOriginal<typeof import('@auth/core')>();
+  return {
+    ...mod,
+    Auth: vi.fn((request, config) => {
+      return new Response(JSON.stringify(sessionJson), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }),
+  };
+});
+
+// dynamic import to avoid loading Auth before hoisting
+const { getSession } = await import('#mod/get-session.js');
 
 const expectation = vi.fn((data?: any) => data);
 
@@ -28,29 +52,6 @@ export class Controller1 {
   controllers: [Controller1],
 })
 export class AppModule {}
-
-const sessionJson = {
-  user: {
-    name: 'John Doe',
-    email: 'test@example.com',
-    image: '',
-    id: '1234',
-  },
-  expires: '',
-};
-
-vi.mock('@auth/core', async (importOriginal) => {
-  const mod = await importOriginal<typeof import('@auth/core')>();
-  return {
-    ...mod,
-    Auth: vi.fn((request, config) => {
-      return new Response(JSON.stringify(sessionJson), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }),
-  };
-});
 
 describe('getSession', () => {
   let server: HttpServer | undefined;
