@@ -1,4 +1,4 @@
-import { controller, rootModule, Providers, inject, OnModuleInit } from '@ditsmod/core';
+import { controller, rootModule, inject, OnModuleInit } from '@ditsmod/core';
 import { route, RoutingModule } from '@ditsmod/routing';
 import type { AuthConfig } from '@auth/core';
 import { vi } from 'vitest';
@@ -12,7 +12,7 @@ import { CredentialsService } from './credentials.service.js';
 export const expectation = vi.fn((userName?: string | null) => userName);
 
 @controller()
-export class SingletonController {
+export class Controller1 {
   @route('POST', 'test', [AuthjsGuard])
   async getAuth(@inject(AUTHJS_SESSION) session: any) {
     expectation(session?.user?.name);
@@ -22,7 +22,7 @@ export class SingletonController {
 
 @rootModule({
   imports: [RoutingModule, { absolutePath: 'auth', module: AuthjsModule }],
-  controllers: [SingletonController],
+  controllers: [Controller1],
   providersPerMod: [CredentialsService]
 })
 export class AppModule implements OnModuleInit {

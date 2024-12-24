@@ -9,7 +9,7 @@ import { toDitsmodResponse } from '#mod/http-api-adapters.js';
 let webResponse: Response = new Response();
 
 @controller()
-export class SingletonController {
+export class Controller1 {
   @route('POST')
   async getAuth(res: Res) {
     const headers = new Headers();
@@ -26,7 +26,7 @@ export class SingletonController {
 
 @rootModule({
   imports: [RoutingModule],
-  controllers: [SingletonController],
+  controllers: [Controller1],
 })
 export class AppModule {}
 
