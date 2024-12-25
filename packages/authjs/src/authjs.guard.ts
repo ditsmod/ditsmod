@@ -16,11 +16,7 @@ export class AuthjsGuard implements CanActivate {
     if (!session) {
       return false;
     }
-    if (this.injector.hasToken(AUTHJS_SESSION)) {
-      this.injector.setByToken(AUTHJS_SESSION, session); // For controllers per request.
-    } else {
-      ctx.auth = session; // For controllers per module.
-    }
+    this.injector.setByToken(AUTHJS_SESSION, session);
     return true;
   }
 }

@@ -6,7 +6,7 @@ import { vi } from 'vitest';
 import credentials from '#mod/providers/credentials.js';
 import { AuthjsModule } from '#mod/authjs.module.js';
 import { AUTHJS_CONFIG, AUTHJS_SESSION } from '#mod/constants.js';
-import { AuthjsGuard } from '#mod/auth.guard.js';
+import { AuthjsGuard } from '#mod/authjs.guard.js';
 import { CredentialsService } from './credentials.service.js';
 
 export const expectation = vi.fn((userName?: string | null) => userName);

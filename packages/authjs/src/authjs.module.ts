@@ -6,7 +6,7 @@ import { LoggerInstance } from '@auth/core/types';
 
 import { AUTHJS_CONFIG, AUTHJS_SESSION } from './constants.js';
 import { AuthjsController } from '#mod/authjs.controller.js';
-import { AuthjsGuard } from '#mod/auth.guard.js';
+import { AuthjsGuard } from '#mod/authjs.guard.js';
 
 /**
  * Ditsmod module to support [Auth.js][1].
@@ -16,8 +16,7 @@ import { AuthjsGuard } from '#mod/auth.guard.js';
 @featureModule({
   imports: [RoutingModule, BodyParserModule],
   providersPerMod: new Providers().useValue(AUTHJS_CONFIG, {}),
-  providersPerRou: [AuthjsGuard],
-  providersPerReq: [{ token: AUTHJS_SESSION, useValue: {} }],
+  providersPerReq: [AuthjsGuard, { token: AUTHJS_SESSION, useValue: {} }],
   controllers: [AuthjsController],
   exports: [AUTHJS_CONFIG, AUTHJS_SESSION, AuthjsGuard],
 })
