@@ -37,6 +37,7 @@
     "access": "public"
   },
   "devDependencies": {
+    "npm-run-all": "*",
     "typescript": "*",
     "vitest": "*"
   }

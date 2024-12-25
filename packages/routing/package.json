@@ -43,6 +43,7 @@
   "devDependencies": {
     "find-my-way": "^9.1.0",
     "koa-tree-router": "^0.12.1",
+    "npm-run-all": "*",
     "trek-router": "^1.2.0",
     "typescript": "*",
     "vitest": "*"

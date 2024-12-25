@@ -5,8 +5,8 @@
   "license": "MIT",
   "scripts": {
     "start": "yarn build && node --env-file=.env --watch --enable-source-maps dist/main.js",
-    "start:dev": "concurrently -r 'npm:watch' 'npm:start'",
-    "watch": "npm run build -- --watch",
+    "start:dev": "run-p watch start",
+    "watch": "yarn build --watch",
     "clean": "rimraf dist*",
     "test": "tsc -b tsconfig.e2e.json && yarn vitest",
     "build": "tsc -b tsconfig.build.json"
@@ -15,6 +15,7 @@
     "#app/*": "./dist/app/*"
   },
   "devDependencies": {
+    "npm-run-all": "*",
     "typescript": "*",
     "vitest": "*"
   }
