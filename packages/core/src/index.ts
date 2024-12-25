@@ -34,7 +34,7 @@ export {
   ExtensionsGroupToken,
   ExtensionsMetaPerApp,
   Extension,
-  DebugStage1Meta,
+  Stage1DebugMeta,
   Stage1GroupMeta,
   Stage1GroupMeta2,
   Stage1GroupMetaPerApp,

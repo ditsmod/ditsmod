@@ -3,7 +3,7 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import {
   ExtensionsGroupToken,
   Extension,
-  DebugStage1Meta,
+  Stage1DebugMeta,
   Stage1GroupMeta,
   ExtensionCounters,
   Stage1GroupMeta2,
@@ -32,7 +32,7 @@ export class ExtensionsManager {
   /**
    * The cache for extension in the current module.
    */
-  protected debugMetaCache = new Map<Extension, DebugStage1Meta>();
+  protected debugMetaCache = new Map<Extension, Stage1DebugMeta>();
   protected excludedExtensionPendingList = new Map<ExtensionsGroupToken, Set<Class<Extension>>>();
   protected extensionsListForStage2 = new Set<Extension>();
 
@@ -179,7 +179,7 @@ export class ExtensionsManager {
       this.systemLogMediator.finishInitExtension(this, this.unfinishedInit, data);
       this.counter.addInitedExtensions(extension);
       this.unfinishedInit.delete(extension);
-      const debugMeta = new DebugStage1Meta<T>(extension, data, !isLastModule, countdown);
+      const debugMeta = new Stage1DebugMeta<T>(extension, data, !isLastModule, countdown);
       this.debugMetaCache.set(extension, debugMeta);
       stage1GroupMeta.addDebugMeta(debugMeta);
     }

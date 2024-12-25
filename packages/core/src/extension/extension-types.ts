@@ -5,10 +5,7 @@ export class ExtensionsMetaPerApp {
   [key: string]: AnyObj;
 }
 
-/**
- * As a rule, an instance of this class is set in a variable named `groupData`.
- */
-export class DebugStage1Meta<T = any> {
+export class Stage1DebugMeta<T = any> {
   /**
    * @param extension Instance of an extension.
    * @param payload Value that `extension` returns from its `stage1` method.
@@ -28,11 +25,11 @@ export class Stage1GroupMeta<T = any> {
 
   constructor(
     public moduleName: string,
-    public groupDebugMeta: DebugStage1Meta<T>[],
+    public groupDebugMeta: Stage1DebugMeta<T>[],
     public groupData: T[],
   ) {}
 
-  addDebugMeta(debugMeta: DebugStage1Meta<T>) {
+  addDebugMeta(debugMeta: Stage1DebugMeta<T>) {
     this.groupDebugMeta.push(debugMeta);
     this.groupData.push(debugMeta.payload);
   }
