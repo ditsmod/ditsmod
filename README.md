@@ -69,7 +69,7 @@ During you run the following command:
 
 ```bash
 corepack enable
-corepack prepare yarn@latest --activate
+corepack install
 yarn install
 ```
 

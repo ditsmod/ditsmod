@@ -6,3 +6,10 @@ dist*
 .vscode/settings.json
 .env
 packages/openapi/ui
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
