@@ -31,7 +31,7 @@ describe('01-hello-world', () => {
   });
 
   it('case3', async () => {
-    const { status } = await testAgent.get('/per-mod');
+    const { status } = await testAgent.get('/per-rou');
     expect(status).toBe(401);
   });
 });
