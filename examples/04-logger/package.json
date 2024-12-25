@@ -20,6 +20,8 @@
     "winston": "^3.17.0"
   },
   "devDependencies": {
-    "@types/bunyan": "^1.8.11"
+    "@types/bunyan": "^1.8.11",
+    "typescript": "*",
+    "vitest": "*"
   }
 }

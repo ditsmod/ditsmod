@@ -14,5 +14,9 @@
   },
   "imports": {
     "#app/*": "./dist/app/*"
+  },
+  "devDependencies": {
+    "typescript": "*",
+    "vitest": "*"
   }
 }

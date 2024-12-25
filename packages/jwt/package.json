@@ -32,5 +32,9 @@
   },
   "peerDependencies": {
     "@ditsmod/core": "^3.0.0-alpha.1"
+  },
+  "devDependencies": {
+    "typescript": "*",
+    "vitest": "*"
   }
 }

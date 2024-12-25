@@ -126,6 +126,8 @@ __metadata:
   resolution: "@ditsmod/authjs@workspace:packages/authjs"
   dependencies:
     "@auth/core": "npm:^0.37.4"
+    typescript: "npm:*"
+    vitest: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.1
     "@ditsmod/routing": ^3.0.0-alpha.1
@@ -138,6 +140,8 @@ __metadata:
   dependencies:
     "@ts-stack/body-parser": "npm:^1.2.0"
     "@ts-stack/multer": "npm:^1.0.0"
+    typescript: "npm:*"
+    vitest: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.1
     "@ditsmod/routing": ^3.0.0-alpha.1
@@ -151,6 +155,8 @@ __metadata:
     "@ts-stack/chain-error": "npm:^1.3.1"
     "@ts-stack/stack-utils": "npm:^1.1.0"
     reflect-metadata: "npm:^0.2.2"
+    typescript: "npm:*"
+    vitest: "npm:*"
   languageName: unknown
   linkType: soft
 
@@ -160,6 +166,8 @@ __metadata:
   dependencies:
     "@ts-stack/cookies": "npm:^1.2.2"
     "@ts-stack/cors": "npm:^1.4.2"
+    typescript: "npm:*"
+    vitest: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.1
     "@ditsmod/routing": ^3.0.0-alpha.1
@@ -169,6 +177,9 @@ __metadata:
 "@ditsmod/i18n@workspace:packages/i18n":
   version: 0.0.0-use.local
   resolution: "@ditsmod/i18n@workspace:packages/i18n"
+  dependencies:
+    typescript: "npm:*"
+    vitest: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.1
     "@ditsmod/routing": ^3.0.0-alpha.1
@@ -180,6 +191,8 @@ __metadata:
   resolution: "@ditsmod/jwt@workspace:packages/jwt"
   dependencies:
     jsonwebtoken: "npm:^9.0.2"
+    typescript: "npm:*"
+    vitest: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.1
   languageName: unknown
@@ -191,6 +204,8 @@ __metadata:
   dependencies:
     "@ts-stack/cookies": "npm:^1.2.2"
     ajv: "npm:^8.17.1"
+    typescript: "npm:*"
+    vitest: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.1
     "@ditsmod/i18n": ^3.0.0-alpha.1
@@ -210,6 +225,8 @@ __metadata:
     json-loader: "npm:^0.5.7"
     style-loader: "npm:^4.0.0"
     swagger-ui: "npm:^5.18.2"
+    typescript: "npm:*"
+    vitest: "npm:*"
     webpack: "npm:^5.97.1"
     yaml: "npm:^2.6.1"
     yaml-loader: "npm:^0.8.1"
@@ -222,6 +239,9 @@ __metadata:
 "@ditsmod/routing-diagnostics@workspace:packages/routing-diagnostics":
   version: 0.0.0-use.local
   resolution: "@ditsmod/routing-diagnostics@workspace:packages/routing-diagnostics"
+  dependencies:
+    typescript: "npm:*"
+    vitest: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.1
     "@ditsmod/routing": ^3.0.0-alpha.1
@@ -231,6 +251,9 @@ __metadata:
 "@ditsmod/routing-testing@workspace:packages/routing-testing":
   version: 0.0.0-use.local
   resolution: "@ditsmod/routing-testing@workspace:packages/routing-testing"
+  dependencies:
+    typescript: "npm:*"
+    vitest: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.1
     "@ditsmod/routing": ^3.0.0-alpha.1
@@ -245,6 +268,8 @@ __metadata:
     find-my-way: "npm:^9.1.0"
     koa-tree-router: "npm:^0.12.1"
     trek-router: "npm:^1.2.0"
+    typescript: "npm:*"
+    vitest: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.1
   languageName: unknown
@@ -255,6 +280,8 @@ __metadata:
   resolution: "@ditsmod/session-cookie@workspace:packages/session-cookie"
   dependencies:
     "@ts-stack/cookies": "npm:^1.2.2"
+    typescript: "npm:*"
+    vitest: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.1
     "@ditsmod/routing": ^3.0.0-alpha.1
@@ -264,6 +291,9 @@ __metadata:
 "@ditsmod/sqb@workspace:packages/sqb":
   version: 0.0.0-use.local
   resolution: "@ditsmod/sqb@workspace:packages/sqb"
+  dependencies:
+    typescript: "npm:*"
+    vitest: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.1
     "@ditsmod/routing": ^3.0.0-alpha.1
@@ -273,6 +303,9 @@ __metadata:
 "@ditsmod/testing@workspace:packages/testing":
   version: 0.0.0-use.local
   resolution: "@ditsmod/testing@workspace:packages/testing"
+  dependencies:
+    typescript: "npm:*"
+    vitest: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.1
   languageName: unknown
@@ -281,6 +314,9 @@ __metadata:
 "@ditsmod/versions@workspace:packages/versions":
   version: 0.0.0-use.local
   resolution: "@ditsmod/versions@workspace:packages/versions"
+  dependencies:
+    typescript: "npm:*"
+    vitest: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.1
     "@ditsmod/routing": ^3.0.0-alpha.1
@@ -4679,12 +4715,18 @@ __metadata:
 "example01@workspace:examples/01-hello-world":
   version: 0.0.0-use.local
   resolution: "example01@workspace:examples/01-hello-world"
+  dependencies:
+    typescript: "npm:*"
+    vitest: "npm:*"
   languageName: unknown
   linkType: soft
 
 "example02@workspace:examples/02-http-error-handler":
   version: 0.0.0-use.local
   resolution: "example02@workspace:examples/02-http-error-handler"
+  dependencies:
+    typescript: "npm:*"
+    vitest: "npm:*"
   languageName: unknown
   linkType: soft
 
@@ -4693,6 +4735,8 @@ __metadata:
   resolution: "example03@workspace:examples/03-route-guards"
   dependencies:
     dotenv: "npm:^16.4.7"
+    typescript: "npm:*"
+    vitest: "npm:*"
   languageName: unknown
   linkType: soft
 
@@ -4703,6 +4747,8 @@ __metadata:
     "@types/bunyan": "npm:^1.8.11"
     bunyan: "npm:^1.8.15"
     pino: "npm:^9.6.0"
+    typescript: "npm:*"
+    vitest: "npm:*"
     winston: "npm:^3.17.0"
   languageName: unknown
   linkType: soft
@@ -4710,96 +4756,144 @@ __metadata:
 "example05@workspace:examples/05-nested-routes":
   version: 0.0.0-use.local
   resolution: "example05@workspace:examples/05-nested-routes"
+  dependencies:
+    typescript: "npm:*"
+    vitest: "npm:*"
   languageName: unknown
   linkType: soft
 
 "example06@workspace:examples/06-body-parser":
   version: 0.0.0-use.local
   resolution: "example06@workspace:examples/06-body-parser"
+  dependencies:
+    typescript: "npm:*"
+    vitest: "npm:*"
   languageName: unknown
   linkType: soft
 
 "example07@workspace:examples/07-dynamically-composing-modules":
   version: 0.0.0-use.local
   resolution: "example07@workspace:examples/07-dynamically-composing-modules"
+  dependencies:
+    typescript: "npm:*"
+    vitest: "npm:*"
   languageName: unknown
   linkType: soft
 
 "example08@workspace:examples/08-http-interceptors":
   version: 0.0.0-use.local
   resolution: "example08@workspace:examples/08-http-interceptors"
+  dependencies:
+    typescript: "npm:*"
+    vitest: "npm:*"
   languageName: unknown
   linkType: soft
 
 "example09@workspace:examples/09-one-extension":
   version: 0.0.0-use.local
   resolution: "example09@workspace:examples/09-one-extension"
+  dependencies:
+    typescript: "npm:*"
+    vitest: "npm:*"
   languageName: unknown
   linkType: soft
 
 "example10@workspace:examples/10-openapi":
   version: 0.0.0-use.local
   resolution: "example10@workspace:examples/10-openapi"
+  dependencies:
+    typescript: "npm:*"
+    vitest: "npm:*"
   languageName: unknown
   linkType: soft
 
 "example11@workspace:examples/11-override-core-log-messages":
   version: 0.0.0-use.local
   resolution: "example11@workspace:examples/11-override-core-log-messages"
+  dependencies:
+    typescript: "npm:*"
+    vitest: "npm:*"
   languageName: unknown
   linkType: soft
 
 "example12@workspace:examples/12-testing":
   version: 0.0.0-use.local
   resolution: "example12@workspace:examples/12-testing"
+  dependencies:
+    typescript: "npm:*"
+    vitest: "npm:*"
   languageName: unknown
   linkType: soft
 
 "example13@workspace:examples/13-module-encapsulation":
   version: 0.0.0-use.local
   resolution: "example13@workspace:examples/13-module-encapsulation"
+  dependencies:
+    typescript: "npm:*"
+    vitest: "npm:*"
   languageName: unknown
   linkType: soft
 
 "example14@workspace:examples/14-auth-jwt":
   version: 0.0.0-use.local
   resolution: "example14@workspace:examples/14-auth-jwt"
+  dependencies:
+    typescript: "npm:*"
+    vitest: "npm:*"
   languageName: unknown
   linkType: soft
 
 "example15@workspace:examples/15-i18n":
   version: 0.0.0-use.local
   resolution: "example15@workspace:examples/15-i18n"
+  dependencies:
+    typescript: "npm:*"
+    vitest: "npm:*"
   languageName: unknown
   linkType: soft
 
 "example16@workspace:examples/16-openapi-validation":
   version: 0.0.0-use.local
   resolution: "example16@workspace:examples/16-openapi-validation"
+  dependencies:
+    typescript: "npm:*"
+    vitest: "npm:*"
   languageName: unknown
   linkType: soft
 
 "example17@workspace:examples/17-cors":
   version: 0.0.0-use.local
   resolution: "example17@workspace:examples/17-cors"
+  dependencies:
+    typescript: "npm:*"
+    vitest: "npm:*"
   languageName: unknown
   linkType: soft
 
 "example18@workspace:examples/18-diagnostics-channel":
   version: 0.0.0-use.local
   resolution: "example18@workspace:examples/18-diagnostics-channel"
+  dependencies:
+    typescript: "npm:*"
+    vitest: "npm:*"
   languageName: unknown
   linkType: soft
 
 "example19@workspace:examples/19-session-cookie":
   version: 0.0.0-use.local
   resolution: "example19@workspace:examples/19-session-cookie"
+  dependencies:
+    typescript: "npm:*"
+    vitest: "npm:*"
   languageName: unknown
   linkType: soft
 
 "example20@workspace:examples/20-authjs":
   version: 0.0.0-use.local
   resolution: "example20@workspace:examples/20-authjs"
+  dependencies:
+    typescript: "npm:*"
+    vitest: "npm:*"
   languageName: unknown
   linkType: soft
 
@@ -10468,6 +10562,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typescript@npm:*, typescript@npm:~5.7.2":
+  version: 5.7.2
+  resolution: "typescript@npm:5.7.2"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10c0/a873118b5201b2ef332127ef5c63fb9d9c155e6fdbe211cbd9d8e65877283797cca76546bad742eea36ed7efbe3424a30376818f79c7318512064e8625d61622
+  languageName: node
+  linkType: hard
+
 "typescript@npm:>=3 < 6":
   version: 5.6.2
   resolution: "typescript@npm:5.6.2"
@@ -10478,13 +10582,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:~5.7.2":
+"typescript@patch:typescript@npm%3A*#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A~5.7.2#optional!builtin<compat/typescript>":
   version: 5.7.2
-  resolution: "typescript@npm:5.7.2"
+  resolution: "typescript@patch:typescript@npm%3A5.7.2#optional!builtin<compat/typescript>::version=5.7.2&hash=5786d5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/a873118b5201b2ef332127ef5c63fb9d9c155e6fdbe211cbd9d8e65877283797cca76546bad742eea36ed7efbe3424a30376818f79c7318512064e8625d61622
+  checksum: 10c0/f3b8082c9d1d1629a215245c9087df56cb784f9fb6f27b5d55577a20e68afe2a889c040aacff6d27e35be165ecf9dca66e694c42eb9a50b3b2c451b36b5675cb
   languageName: node
   linkType: hard
 
@@ -10495,16 +10599,6 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 10c0/94eb47e130d3edd964b76da85975601dcb3604b0c848a36f63ac448d0104e93819d94c8bdf6b07c00120f2ce9c05256b8b6092d23cf5cf1c6fa911159e4d572f
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@npm%3A~5.7.2#optional!builtin<compat/typescript>":
-  version: 5.7.2
-  resolution: "typescript@patch:typescript@npm%3A5.7.2#optional!builtin<compat/typescript>::version=5.7.2&hash=5786d5"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 10c0/f3b8082c9d1d1629a215245c9087df56cb784f9fb6f27b5d55577a20e68afe2a889c040aacff6d27e35be165ecf9dca66e694c42eb9a50b3b2c451b36b5675cb
   languageName: node
   linkType: hard
 
@@ -10779,7 +10873,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^2.1.8":
+"vitest@npm:*, vitest@npm:^2.1.8":
   version: 2.1.8
   resolution: "vitest@npm:2.1.8"
   dependencies:
@@ -11109,6 +11203,9 @@ __metadata:
 "x-package-example@workspace:packages/x-package-template":
   version: 0.0.0-use.local
   resolution: "x-package-example@workspace:packages/x-package-template"
+  dependencies:
+    typescript: "npm:*"
+    vitest: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.1
   languageName: unknown

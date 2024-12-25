@@ -15,5 +15,9 @@
     "test": "tsc -b tsconfig.e2e.json && yarn vitest",
     "build": "tsc -b tsconfig.build.json",
     "clean": "rimraf dist*"
+  },
+  "devDependencies": {
+    "typescript": "*",
+    "vitest": "*"
   }
 }
