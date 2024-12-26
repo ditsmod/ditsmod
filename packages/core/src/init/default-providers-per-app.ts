@@ -16,6 +16,6 @@ export const defaultProvidersPerApp: Readonly<Provider[]> = [
     .passThrough(SystemErrorMediator)
     .useValue(Counter, new Counter())
     .useValue(RequestContext, RequestContext)
-    .useValue<ModuleExtract>(ModuleExtract, { moduleName: 'init' })
+    .useValue<ModuleExtract>(ModuleExtract, { moduleName: 'app' })
     .useFactory(Logger, [PatchLogger, PatchLogger.prototype.patchLogger]),
 ];
