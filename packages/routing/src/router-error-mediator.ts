@@ -1,13 +1,13 @@
-import { ChainError, ChainErrorOptions, ErrorMediator, injectable } from '@ditsmod/core';
+import { ChainError, ChainErrorOptions, ErrorMediator, HttpMethod, injectable } from '@ditsmod/core';
 
 @injectable()
 export class RoutingErrorMediator extends ErrorMediator {
   /**
    * `Checking deps in "sandbox" for failed`.
    */
-  checkingDepsInSandboxFailed(cause: Error) {
+  checkingDepsInSandboxFailed(cause: Error, httpMethod: HttpMethod | HttpMethod[], path: string) {
     const opts: ChainErrorOptions = { name: 'Error', cause, constructorOpt: this.checkingDepsInSandboxFailed };
-    throw new ChainError('Checking deps in "sandbox" failed', opts);
+    throw new ChainError(`Checking deps in "sandbox" for route "${httpMethod} ${path}" failed`, opts);
   }
   /**
    * Setting route '${fullPath}' in ${moduleName} failed: a handle is already registered for this path.
