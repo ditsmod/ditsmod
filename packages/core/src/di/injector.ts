@@ -658,7 +658,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
   /**
    * Instantiates an object using a resolved provider in the context of the injector.
    *
-   * The created object does not get cached by the injector, but create the cache of its dependecies.
+   * The created object does not get cached by the injector.
    *
    * ### Example
    *
