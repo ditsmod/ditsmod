@@ -33,6 +33,7 @@ import {
   getProviderTarget,
   ModuleManager,
   HttpMethod,
+  getDebugClassName,
 } from '@ditsmod/core';
 
 import { MetadataPerMod3, PreparedRouteMeta } from '../types.js';
@@ -142,7 +143,7 @@ export class PreRouterExtension implements Extension<void> {
     injectorPerMod: Injector,
     controllerMetadata: ControllerMetadata,
   ) {
-    const { providersPerRou, routeMeta: baseRouteMeta } = controllerMetadata;
+    const { providersPerRou, routeMeta: baseRouteMeta, httpMethod, path } = controllerMetadata;
 
     const routeMeta = baseRouteMeta as RequireProps<typeof baseRouteMeta, 'routeHandler'>;
     const mergedPerRou: Provider[] = [];
@@ -165,7 +166,8 @@ export class PreRouterExtension implements Extension<void> {
 
     const resolvedPerRou = Injector.resolve(mergedPerRou);
     const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou, 'injectorPerRou');
-    this.checkDeps(injectorPerRou, routeMeta, controllerMetadata.httpMethod, controllerMetadata.path);
+    const controllerName = getDebugClassName(routeMeta.Controller);
+    this.checkDeps(injectorPerRou, routeMeta, controllerName, httpMethod, path);
     const resolvedChainMaker = resolvedPerRou.find((rp) => rp.dualKey.token === ChainMaker)!;
     const resolvedErrHandler = resolvedPerRou.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
     const chainMaker = injectorPerRou.instantiateResolved<DefaultSingletonChainMaker>(resolvedChainMaker);
@@ -223,7 +225,7 @@ export class PreRouterExtension implements Extension<void> {
     injectorPerMod: Injector,
     controllerMetadata: ControllerMetadata,
   ) {
-    const { providersPerRou, providersPerReq, routeMeta } = controllerMetadata;
+    const { providersPerRou, providersPerReq, routeMeta, httpMethod, path } = controllerMetadata;
     const mergedPerRou = [...metadataPerMod3.meta.providersPerRou, ...providersPerRou];
     const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'injectorPerRou');
 
@@ -242,7 +244,8 @@ export class PreRouterExtension implements Extension<void> {
     const injPerReq = injectorPerRou.createChildFromResolved(resolvedPerReq);
     const RequestContextClass = injPerReq.get(RequestContext) as typeof RequestContext;
     routeMeta.resolvedHandler = this.getResolvedHandler(routeMeta, resolvedPerReq);
-    this.checkDeps(injPerReq, routeMeta, controllerMetadata.httpMethod, controllerMetadata.path);
+    const controllerName = getDebugClassName(routeMeta.Controller);
+    this.checkDeps(injPerReq, routeMeta, controllerName, httpMethod, path);
     const resolvedChainMaker = resolvedPerReq.find((rp) => rp.dualKey.token === ChainMaker)!;
     const resolvedErrHandler = resolvedPerReq
       .concat(resolvedPerRou)
@@ -330,7 +333,13 @@ export class PreRouterExtension implements Extension<void> {
   /**
    * Used as "sandbox" to test resolvable of controllers, guards and HTTP interceptors.
    */
-  protected checkDeps(inj: Injector, routeMeta: RouteMeta, httpMethod: HttpMethod | HttpMethod[], path: string) {
+  protected checkDeps(
+    inj: Injector,
+    routeMeta: RouteMeta,
+    controllerName: string,
+    httpMethod: HttpMethod | HttpMethod[],
+    path: string,
+  ) {
     try {
       const ignoreDeps: any[] = [HTTP_INTERCEPTORS, CTX_DATA];
       DepsChecker.check(inj, HttpErrorHandler, undefined, ignoreDeps);
@@ -344,7 +353,7 @@ export class PreRouterExtension implements Extension<void> {
       }
       DepsChecker.check(inj, HTTP_INTERCEPTORS, fromSelf, ignoreDeps);
     } catch (cause: any) {
-      this.errorMediator.checkingDepsInSandboxFailed(cause, httpMethod, path);
+      this.errorMediator.checkingDepsInSandboxFailed(cause, controllerName, httpMethod, path);
     }
   }
 

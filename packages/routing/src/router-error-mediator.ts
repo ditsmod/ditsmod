@@ -5,9 +5,9 @@ export class RoutingErrorMediator extends ErrorMediator {
   /**
    * `Checking deps in "sandbox" for failed`.
    */
-  checkingDepsInSandboxFailed(cause: Error, httpMethod: HttpMethod | HttpMethod[], path: string) {
+  checkingDepsInSandboxFailed(cause: Error, controllerName: string, httpMethod: HttpMethod | HttpMethod[], path: string) {
     const opts: ChainErrorOptions = { name: 'Error', cause, constructorOpt: this.checkingDepsInSandboxFailed };
-    throw new ChainError(`Checking deps in "sandbox" for route "${httpMethod} ${path}" failed`, opts);
+    throw new ChainError(`Checking deps in sandbox for route "${controllerName} -> ${httpMethod} ${path}" failed`, opts);
   }
   /**
    * Setting route '${fullPath}' in ${moduleName} failed: a handle is already registered for this path.
