@@ -116,9 +116,9 @@ export class PreRouterExtension implements Extension<void> {
       aControllerMetadata.forEach((controllerMetadata) => {
         let handle: RouteHandler;
         if (controllerMetadata.scope == 'module') {
-          handle = this.getHandlerWithSingleton(metadataPerMod3, this.injectorPerMod, controllerMetadata);
+          handle = this.getHandlerPerMod(metadataPerMod3, this.injectorPerMod, controllerMetadata);
         } else {
-          handle = this.getDefaultHandler(metadataPerMod3, this.injectorPerMod, controllerMetadata);
+          handle = this.getHandlerPerReq(metadataPerMod3, this.injectorPerMod, controllerMetadata);
         }
 
         const countOfGuards = controllerMetadata.routeMeta.resolvedGuards!.length + guardsPerMod1.length;
@@ -136,7 +136,7 @@ export class PreRouterExtension implements Extension<void> {
     return preparedRouteMeta;
   }
 
-  protected getHandlerWithSingleton(
+  protected getHandlerPerMod(
     metadataPerMod3: MetadataPerMod3,
     injectorPerMod: Injector,
     controllerMetadata: ControllerMetadata,
@@ -217,7 +217,7 @@ export class PreRouterExtension implements Extension<void> {
     }) as RouteHandler;
   }
 
-  protected getDefaultHandler(
+  protected getHandlerPerReq(
     metadataPerMod3: MetadataPerMod3,
     injectorPerMod: Injector,
     controllerMetadata: ControllerMetadata,
