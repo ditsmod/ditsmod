@@ -148,8 +148,13 @@ export class PreRouterExtension implements Extension<void> {
     const routeMeta = baseRouteMeta as RequireProps<typeof baseRouteMeta, 'routeHandler'>;
     const mergedPerRou: Provider[] = [];
     mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
-
-    routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(metadataPerMod3.guardsPerMod1);
+    const controllerName = getDebugClassName(routeMeta.Controller);
+    routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(
+      metadataPerMod3.guardsPerMod1,
+      controllerName,
+      httpMethod,
+      path,
+    );
     routeMeta.resolvedGuards = controllerMetadata.guards.map((g) => {
       const resolvedGuard: ResolvedGuard = {
         guard: Injector.resolve([g.guard])[0],
@@ -166,7 +171,6 @@ export class PreRouterExtension implements Extension<void> {
 
     const resolvedPerRou = Injector.resolve(mergedPerRou);
     const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou, 'injectorPerRou');
-    const controllerName = getDebugClassName(routeMeta.Controller);
     this.checkDeps(injectorPerRou, routeMeta, controllerName, httpMethod, path);
     const resolvedChainMaker = resolvedPerRou.find((rp) => rp.dualKey.token === ChainMaker)!;
     const resolvedErrHandler = resolvedPerRou.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
@@ -239,12 +243,18 @@ export class PreRouterExtension implements Extension<void> {
 
     const resolvedPerReq = Injector.resolve(mergedPerReq);
     const resolvedPerRou = Injector.resolve(mergedPerRou);
+    const controllerName = getDebugClassName(routeMeta.Controller);
     routeMeta.resolvedGuards = this.getResolvedGuards(controllerMetadata.guards, resolvedPerReq);
-    routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(metadataPerMod3.guardsPerMod1, true);
+    routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(
+      metadataPerMod3.guardsPerMod1,
+      controllerName,
+      httpMethod,
+      path,
+      true,
+    );
     const injPerReq = injectorPerRou.createChildFromResolved(resolvedPerReq);
     const RequestContextClass = injPerReq.get(RequestContext) as typeof RequestContext;
     routeMeta.resolvedHandler = this.getResolvedHandler(routeMeta, resolvedPerReq);
-    const controllerName = getDebugClassName(routeMeta.Controller);
     this.checkDeps(injPerReq, routeMeta, controllerName, httpMethod, path);
     const resolvedChainMaker = resolvedPerReq.find((rp) => rp.dualKey.token === ChainMaker)!;
     const resolvedErrHandler = resolvedPerReq
@@ -275,7 +285,13 @@ export class PreRouterExtension implements Extension<void> {
     }) as RouteHandler;
   }
 
-  protected getResolvedGuardsPerMod(guards: GuardPerMod1[], perReq?: boolean) {
+  protected getResolvedGuardsPerMod(
+    guards: GuardPerMod1[],
+    controllerName: string,
+    httpMethod: HttpMethod | HttpMethod[],
+    path: string,
+    perReq?: boolean,
+  ) {
     return guards.map((g) => {
       const resolvedPerMod = Injector.resolve(g.meta.providersPerMod);
       const resolvedPerRou = Injector.resolve(g.meta.providersPerRou);
@@ -291,8 +307,13 @@ export class PreRouterExtension implements Extension<void> {
         if (perReq) {
           scopes.push('providersPerReq');
         }
-        const scopeNames = scopes.join(', ');
-        const msg = `Resolving guard for ${g.meta.name} failed: ${g.guard.name} not found in ${scopeNames}.`;
+        const scopeNames = scopes.join(' and ');
+        let msg = `Could not find the required ${g.guard.name} in the context of`;
+        msg += ` ${g.meta.name} for route "${controllerName} -> ${httpMethod} /${path}".`;
+        msg += ` Lookup in ${scopeNames} was unsuccessful.`;
+        if (!perReq) {
+          msg += ` Notice that ${controllerName} has "{ scope: 'module' }" in its metadata.`;
+        }
         throw new Error(msg);
       }
 
