@@ -247,19 +247,17 @@ export class PreRouterExtension implements Extension<void> {
       .concat(resolvedPerRou)
       .find((rp) => rp.dualKey.token === HttpErrorHandler)!;
     const RegistryPerReq = Injector.prepareRegistry(resolvedPerReq);
-    const nodeReqId = KeyRegistry.get(RAW_REQ).id;
-    const nodeResId = KeyRegistry.get(RAW_RES).id;
+    const rawReqId = KeyRegistry.get(RAW_REQ).id;
+    const rawResId = KeyRegistry.get(RAW_RES).id;
     const pathParamsId = KeyRegistry.get(A_PATH_PARAMS).id;
     const queryStringId = KeyRegistry.get(QUERY_STRING).id;
 
     return (async (rawReq, rawRes, aPathParams, queryString) => {
       const injector = new Injector(RegistryPerReq, injectorPerRou, 'injectorPerReq');
-
       const ctx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString);
-
       await injector
-        .setById(nodeReqId, rawReq)
-        .setById(nodeResId, rawRes)
+        .setById(rawReqId, rawReq)
+        .setById(rawResId, rawRes)
         .setById(pathParamsId, aPathParams)
         .setById(queryStringId, queryString || '')
         .instantiateResolved<ChainMaker>(resolvedChainMaker)
