@@ -1,6 +1,9 @@
 import { controller, RequestContext } from '@ditsmod/core';
 import { route } from '@ditsmod/routing';
-import { Permission, requirePermissionsSngl, BearerGuard } from '#auth';
+
+import { BearerGuard } from '../auth/bearer.guard.js';
+import { requirePermissionsSngl } from '../auth/guards-utils.js';
+import { Permission } from '../auth/types.js';
 
 @controller({ scope: 'module' })
 export class Controller2 {

@@ -37,7 +37,7 @@ describe('03-route-guards', () => {
     expect(status).toBe(401);
   });
 
-  it('controller singleton in module3 appended singletor controller should works with guards', async () => {
+  it('controller singleton in module3 appended singleton controller should works with guards', async () => {
     const { status } = await testAgent.get('/controler2-of-module2');
     expect(status).toBe(401);
   });

@@ -1,6 +1,9 @@
 import { controller, Res } from '@ditsmod/core';
 import { route } from '@ditsmod/routing';
-import { Permission, basicAuth, requirePermissions, BearerGuard } from '#auth';
+
+import { BearerGuard } from '../auth/bearer.guard.js';
+import { basicAuth, requirePermissions } from '../auth/guards-utils.js';
+import { Permission } from '../auth/types.js';
 
 @controller()
 export class Controller1 {
