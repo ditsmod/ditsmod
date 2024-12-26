@@ -10,10 +10,10 @@ export { isRoute } from './type.guards.js';
 export { RouteMeta } from './route-data.js';
 export { ControllerMetadata } from './controller-metadata.js';
 export {
-  ISingletonInterceptorWithGuards,
-  SingletonInterceptorWithGuards,
+  IInterceptorWithGuardsPerRou,
+  InterceptorWithGuardsPerRou,
   InstantiatedGuard,
-} from '#interceptors/singleton-interceptor-with-guards.js';
+} from '#mod/interceptors/interceptor-with-guards-per-rou.js';
 export { InterceptorWithGuards } from '#interceptors/interceptor-with-guards.js';
 export { DefaultSingletonHttpBackend } from '#interceptors/default-singleton-http-backend.js';
 export { DefaultHttpBackend } from '#interceptors/default-http-backend.js';

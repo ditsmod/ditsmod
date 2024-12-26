@@ -4,7 +4,7 @@ import { RouteMeta } from '../route-data.js';
 import { HttpHandler, HttpInterceptor } from './tokens-and-types.js';
 
 @injectable()
-export class SingletonInterceptorWithGuards implements ISingletonInterceptorWithGuards {
+export class InterceptorWithGuardsPerRou implements IInterceptorWithGuardsPerRou {
   instantiatedGuards: InstantiatedGuard[] = [];
 
   constructor(
@@ -52,7 +52,7 @@ export class SingletonInterceptorWithGuards implements ISingletonInterceptorWith
   }
 }
 
-export interface ISingletonInterceptorWithGuards extends HttpInterceptor {
+export interface IInterceptorWithGuardsPerRou extends HttpInterceptor {
   instantiatedGuards: InstantiatedGuard[];
 }
 

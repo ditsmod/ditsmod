@@ -38,7 +38,7 @@ import { MetadataPerMod3, PreparedRouteMeta } from '../types.js';
 import { HTTP_INTERCEPTORS, ROUTES_EXTENSIONS } from '../constants.js';
 import { RoutingErrorMediator } from '../router-error-mediator.js';
 import { ControllerMetadata } from '../controller-metadata.js';
-import { SingletonInterceptorWithGuards } from '#interceptors/singleton-interceptor-with-guards.js';
+import { InterceptorWithGuardsPerRou } from '#mod/interceptors/interceptor-with-guards-per-rou.js';
 import { InterceptorWithGuards } from '#interceptors/interceptor-with-guards.js';
 import { RouteMeta } from '../route-data.js';
 import { ChainMaker } from '#interceptors/chain-maker.js';
@@ -157,8 +157,8 @@ export class PreRouterExtension implements Extension<void> {
     });
 
     if (routeMeta.resolvedGuards.length || metadataPerMod3.guardsPerMod1.length) {
-      mergedPerRou.push(SingletonInterceptorWithGuards);
-      mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: SingletonInterceptorWithGuards, multi: true });
+      mergedPerRou.push(InterceptorWithGuardsPerRou);
+      mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: InterceptorWithGuardsPerRou, multi: true });
     }
     mergedPerRou.push(...metadataPerMod3.meta.providersPerRou, ...providersPerRou);
 
