@@ -7,7 +7,7 @@
     "start": "yarn build && node --watch --enable-source-maps dist/main.js",
     "start:dev": "run-p watch start",
     "watch": "yarn build --watch",
-    "clean": "rimraf dist*",
+    "clean": "rm -r dist*",
     "test": "tsc -b tsconfig.e2e.json && yarn vitest",
     "build": "tsc -b tsconfig.build.json"
   },

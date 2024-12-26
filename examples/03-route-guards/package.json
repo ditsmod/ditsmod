@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "yarn build && node --watch --enable-source-maps -r dotenv/config dist/main.js",
-    "clean": "rimraf dist*",
+    "clean": "rm -r dist*",
     "start:dev": "run-p watch start",
     "watch": "yarn build --watch",
     "test": "tsc -b tsconfig.e2e.json && yarn vitest",
