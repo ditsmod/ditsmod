@@ -1,4 +1,4 @@
-import { featureModule, OnModuleInit, Logger, Providers, inject } from '@ditsmod/core';
+import { featureModule, OnModuleInit, Logger, inject } from '@ditsmod/core';
 import { type AuthConfig } from '@auth/core';
 import { RoutingModule } from '@ditsmod/routing';
 import { BodyParserModule } from '@ditsmod/body-parser';
@@ -16,11 +16,11 @@ import { AuthjsPerRouGuard } from './authjs-per-rou.guard.js';
  */
 @featureModule({
   imports: [RoutingModule, BodyParserModule],
-  providersPerMod: new Providers().useValue(AUTHJS_CONFIG, {}),
+  providersPerMod: [{ token: AUTHJS_CONFIG, useValue: {} }],
+  providersPerRou: [{ token: AuthjsGuard, useClass: AuthjsPerRouGuard }],
   providersPerReq: [AuthjsGuard, { token: AUTHJS_SESSION, useValue: {} }],
-  providersPerRou: [AuthjsPerRouGuard],
   controllers: [AuthjsController],
-  exports: [AUTHJS_CONFIG, AUTHJS_SESSION, AuthjsGuard, AuthjsPerRouGuard],
+  exports: [AUTHJS_CONFIG, AUTHJS_SESSION, AuthjsGuard],
 })
 export class AuthjsModule implements OnModuleInit {
   constructor(
