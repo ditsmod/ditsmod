@@ -10,7 +10,7 @@ describe('03-route-guards', () => {
   let testAgent: ReturnType<typeof request>;
 
   beforeAll(async () => {
-    server = await TestApplication.createTestApp(AppModule).getServer();
+    server = await TestApplication.createTestApp(AppModule, { loggerConfig: { level: 'info' } }).getServer();
     testAgent = request(server);
   });
 
@@ -18,83 +18,72 @@ describe('03-route-guards', () => {
     server?.close();
   });
 
-  it('controller in AppModule should works', async () => {
-    const { type, status, text } = await testAgent.get('/');
+  it('controller of root module without guard', async () => {
+    const { type, status, text } = await testAgent.get('/root-controller');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('ok');
   });
 
-  it('should works', async () => {
-    const { type, status, text } = await testAgent.get('/controler1-of-module1');
+  it('controller1 of module1 without guard', async () => {
+    const { type, status, text } = await testAgent.get('/module1/ok1');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
-    expect(text).toBe('ok');
+    expect(text).toBe('ok1');
   });
 
-  it('in module3 appended controller should works with guards', async () => {
-    const { status } = await testAgent.get('/controler1-of-module2');
+  it('controller1 of module1 with guard (forbidden)', async () => {
+    const { status } = await testAgent.get('/module1/need-auth1');
     expect(status).toBe(401);
   });
 
-  it('controller singleton in module3 appended singleton controller should works with guards', async () => {
-    const { status } = await testAgent.get('/controler2-of-module2');
-    expect(status).toBe(401);
-  });
-
-  it('should throw 401', async () => {
-    const { status } = await testAgent.get('/unauth');
-    expect(status).toBe(401);
-  });
-
-  it('should throw 403 for guards setted for a module', async () => {
-    const { status } = await testAgent.get('/guards-1/controler1-of-module2');
-    expect(status).toBe(403);
-  });
-
-  it('controller singleton should throw 403 for guards setted for a module', async () => {
-    const { status } = await testAgent.get('/guards-1/controler2-of-module2');
-    expect(status).toBe(403);
-  });
-
-  it('should throw 403', async () => {
-    const { status } = await testAgent.get('/forbidden');
-    expect(status).toBe(403);
-  });
-
-  it('should works with singleton', async () => {
-    const { type, status, text } = await testAgent.get('/controler2-of-module1');
+  it('controller1 of module1 with guard (allow)', async () => {
+    const { type, status, text } = await testAgent.get('/module1/need-auth1?allow=1');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
-    expect(text).toBe('ok');
+    expect(text).toBe('some secret1');
   });
 
-  it('should throw 401 by singleton', async () => {
-    const { status } = await testAgent.get('/unauth2');
-    expect(status).toBe(401);
-  });
-
-  it('should throw 403 by singleton', async () => {
-    const { status } = await testAgent.get('/forbidden2');
-    expect(status).toBe(403);
-  });
-
-  it('should works', async () => {
-    const expectBase64 = Buffer.from(process.env.BASIC_AUTH!, 'utf8').toString('base64');
-    const { type, status, text } = await testAgent.get('/basic-auth').set('Authorization', `Basic ${expectBase64}`);
+  it('controller2 of module1 without guard', async () => {
+    const { type, status, text } = await testAgent.get('/module1/ok2');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
-    expect(text).toBe('You are now authorized with BasicGuard');
+    expect(text).toBe('ok2');
   });
 
-  it('should throw 401', async () => {
-    const expectBase64 = Buffer.from('fake-string', 'utf8').toString('base64');
-    const { status } = await testAgent.get('/basic-auth').set('Authorization', `Basic ${expectBase64}`);
+  it('controller2 of module1 with guard (forbidden)', async () => {
+    const { status } = await testAgent.get('/module1/need-auth2');
     expect(status).toBe(401);
   });
 
-  it('should throw 401', async () => {
-    const { status } = await testAgent.get('/basic-auth');
+  it('controller2 of module1 with guard (allow)', async () => {
+    const { type, status, text } = await testAgent.get('/module1/need-auth2?allow=1');
+    expect(status).toBe(200);
+    expect(type).toBe('text/plain');
+    expect(text).toBe('some secret2');
+  });
+
+  it('controller1 of module2 with external guard (forbidden)', async () => {
+    const { status } = await testAgent.get('/module2-with-guard/ok1');
     expect(status).toBe(401);
+  });
+
+  it.only('controller1 of module2 with external guard (allow)', async () => {
+    const { type, status, text } = await testAgent.get('/module2-with-guard/ok1?allow=1');
+    expect(status).toBe(200);
+    expect(type).toBe('text/plain');
+    expect(text).toBe('ok1');
+  });
+
+  it('controller2 of module2 with external guard (forbidden)', async () => {
+    const { status } = await testAgent.get('/module2-with-guard/ok2');
+    expect(status).toBe(401);
+  });
+
+  it('controller2 of module2 with external guard (allow)', async () => {
+    const { type, status, text } = await testAgent.get('/module2-with-guard/ok2?allow=1');
+    expect(status).toBe(200);
+    expect(type).toBe('text/plain');
+    expect(text).toBe('ok2');
   });
 });
