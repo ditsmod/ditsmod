@@ -45,7 +45,7 @@ async function runBench() {
       let router: any;
 
       if (lib.name == '@ditsmod/routing') {
-        const injector = Injector.resolveAndCreate([Tree, DefaultRouter, RoutingErrorMediator, ModuleExtract]);
+        const injector = Injector.resolveAndCreate([Tree, DefaultRouter, RoutingErrorMediator, ModuleExtract], 'bench');
         router = injector.get(DefaultRouter);
       } else {
         router = new Router();
