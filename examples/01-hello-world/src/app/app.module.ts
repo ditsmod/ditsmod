@@ -3,22 +3,17 @@ import { route, RoutingModule } from '@ditsmod/routing';
 
 @controller()
 export class DefaultController {
-  @route('GET', 'default-controller')
+  @route('GET', 'injector-scoped')
   tellHello() {
-    return 'Hello, World!';
-  }
-
-  @route(['GET', 'POST'], 'method-name-as-symbol')
-  [Symbol()]() {
-    return 'Hello, World!';
+    return 'ok1';
   }
 }
 
 @controller({ scope: 'ctx' })
 export class SingletonController {
-  @route('GET', 'singleton-controller')
+  @route('GET', 'context-scoped')
   tellHello() {
-    return 'Hello, World!';
+    return 'ok2';
   }
 }
 

@@ -13,6 +13,6 @@ describe('ExampleController', () => {
 
   it('should say "Hello, World!"', () => {
     expect(() => exampleController.tellHello()).not.toThrow();
-    expect(exampleController.tellHello()).toBe('Hello, World!');
+    expect(exampleController.tellHello()).toBe('ok1');
   });
 });

@@ -18,8 +18,8 @@ npm run start:dev
 From second terminal:
 
 ```bash
-curl -i localhost:3000/default-controller
-curl -i localhost:3000/singleton-controller
+curl -i localhost:3000/injector-scoped
+curl -i localhost:3000/context-scoped
 ```
 
 ## TypeScript configs
@@ -35,7 +35,7 @@ This example has four tsconfig files:
 
 As you can see, even the minimal application code for "Hello, World!" requires splitting into two files for testing purposes:
 
-- The file `src/main.ts` contains the code for starting the web server, so it must be separated from the code to be tested.  
+- The file `src/01.ts` contains the code for starting the web server, so it must be separated from the code to be tested.  
 - The file `src/app/app.module.ts` contains the application code that needs to be tested.
 
-The test files themselves are located at `src/app/example.controller.spec.ts` and `e2e/main.spec.ts`.
+The test files themselves are located at `src/app/example.controller.spec.ts` and `e2e/01.spec.ts`.
