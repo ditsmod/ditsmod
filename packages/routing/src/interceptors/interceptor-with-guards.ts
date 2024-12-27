@@ -11,6 +11,8 @@ import {
   skipSelf,
   Status,
   SystemLogMediator,
+  QUERY_PARAMS,
+  PATH_PARAMS,
 } from '@ditsmod/core';
 
 import { RouteMeta } from '../route-data.js';
@@ -50,8 +52,8 @@ export class InterceptorWithGuards implements HttpInterceptor {
   }
 
   protected getInjectorPerReq(rg: ResolvedGuardPerMod) {
-    const inj = rg.injectorPerRou.createChildFromResolved(rg.resolvedPerReq!);
-    this.injector.fill(inj, [RAW_REQ, RAW_RES, A_PATH_PARAMS, QUERY_STRING]);
+    const inj = rg.injectorPerRou.createChildFromResolved(rg.resolvedPerReq!, 'Req');
+    this.injector.fill(inj, [RAW_REQ, RAW_RES, A_PATH_PARAMS, QUERY_STRING, QUERY_PARAMS, PATH_PARAMS]);
     return inj;
   }
 

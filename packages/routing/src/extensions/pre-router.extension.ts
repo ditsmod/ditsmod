@@ -170,7 +170,7 @@ export class PreRouterExtension implements Extension<void> {
     mergedPerRou.push(...metadataPerMod3.meta.providersPerRou, ...providersPerRou);
 
     const resolvedPerRou = Injector.resolve(mergedPerRou);
-    const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou, 'injectorPerRou');
+    const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou, 'Rou');
     this.checkDeps(injectorPerRou, routeMeta, controllerName, httpMethod, path);
     const resolvedChainMaker = resolvedPerRou.find((rp) => rp.dualKey.token === ChainMaker)!;
     const resolvedErrHandler = resolvedPerRou.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
@@ -231,7 +231,7 @@ export class PreRouterExtension implements Extension<void> {
   ) {
     const { providersPerRou, providersPerReq, routeMeta, httpMethod, path } = controllerMetadata;
     const mergedPerRou = [...metadataPerMod3.meta.providersPerRou, ...providersPerRou];
-    const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'injectorPerRou');
+    const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'Rou');
 
     const mergedPerReq: Provider[] = [];
     mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
@@ -252,7 +252,7 @@ export class PreRouterExtension implements Extension<void> {
       path,
       true,
     );
-    const injPerReq = injectorPerRou.createChildFromResolved(resolvedPerReq);
+    const injPerReq = injectorPerRou.createChildFromResolved(resolvedPerReq, 'Req');
     const RequestContextClass = injPerReq.get(RequestContext) as typeof RequestContext;
     routeMeta.resolvedHandler = this.getResolvedHandler(routeMeta, resolvedPerReq);
     this.checkDeps(injPerReq, routeMeta, controllerName, httpMethod, path);
@@ -267,7 +267,7 @@ export class PreRouterExtension implements Extension<void> {
     const queryStringId = KeyRegistry.get(QUERY_STRING).id;
 
     return (async (rawReq, rawRes, aPathParams, queryString) => {
-      const injector = new Injector(RegistryPerReq, injectorPerRou, 'injectorPerReq');
+      const injector = new Injector(RegistryPerReq, 'Req', injectorPerRou);
       const ctx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString);
       await injector
         .setById(rawReqId, rawReq)
@@ -318,7 +318,7 @@ export class PreRouterExtension implements Extension<void> {
       }
 
       const injectorPerMod = this.moduleManager.getInjectorPerMod(g.meta.modRefId);
-      const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou);
+      const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou, 'Rou');
 
       const resolvedGuard: ResolvedGuardPerMod = {
         guard,
