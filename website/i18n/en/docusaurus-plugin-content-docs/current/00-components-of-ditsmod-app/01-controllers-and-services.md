@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Router, controllers and services
 
-## What does a router do?
+## What does a router do? {#what-does-a-router-do}
 
 A router maps URLs to the appropriate request handler. For example, when users request URLs like `/some-path`, `/other-path`, or `/path-with/:parameter` from their browser, they are informing the Ditsmod application that they want to access a specific resource or perform an action on the website. To enable the Ditsmod application to respond appropriately in these cases, you need to define the corresponding request handlers in the code. So, if `/some-path` is requested, a specific function is executed; if `/other-path` is requested, a different function is triggered, and so on. This process of defining the relationship between a URL and its handler is known as URL-to-handler mapping.
 
@@ -35,7 +35,7 @@ if (handle) {
 
 In most cases, the request handler calls the controller method.
 
-## What is a controller
+## What is a controller {#what-is-a-controller}
 
 The mapping between the URL and the request handler is based on the metadata attached to the controller methods. A TypeScript class becomes a Ditsmod controller thanks to the `controller` decorator:
 
@@ -48,23 +48,23 @@ export class SomeController {}
 
 It is recommended that controller files end with `*.controller.ts` and their class names end with `*Controller`.
 
-Starting with v2.50.0, Ditsmod makes it possible to work with the controller in two modes:
+Ditsmod supports two alternative modes of operation for controllers:
 
-1. Controller non-singleton (by default). Its instance is created for each HTTP request.
-2. Controller [singleton][8]. It is instantiated once at the module level during application initialization.
+1. **Injector-scoped controller** (default). The HTTP request is obtained from DI injector.
+2. **Context-scoped controller**. The HTTP request (along with other contextual data) is passed as an argument to the class method.
 
-The first mode is safer when you need to work in the context of the current HTTP request (the client provides a certain identifier that must be taken into account to form a response). The second mode is noticeably faster (about 15%) and consumes less memory, but the request context cannot be stored in the properties of the controller instance, because this instance can be used for other clients at the same time. In the second mode, the request context will have to be passed only as an argument to the methods.
+The first mode is more convenient and safer when working within the context of the current HTTP request (e.g., when the client provides a specific identifier that must be considered when forming the response). The second mode is noticeably faster (approximately 15–20%) and consumes less memory, but the request context cannot be stored in the instance properties of the controller, as this instance may be used simultaneously for other clients.
 
-In order for Ditsmod to work with the controller as a singleton, `{ scope: 'module' }` must be specified in the metadata:
+To make a controller operate in the context-scoped mode, you need to specify `{ scope: 'ctx' }` in its metadata:
 
 ```ts
 import { controller } from '@ditsmod/core';
 
-@controller({ scope: 'module' })
+@controller({ scope: 'ctx' })
 export class SomeController {}
 ```
 
-### The controller non-singleton
+### Injector-scoped controller {#injector-scoped-controller}
 
 As mentioned above, after the router finds the HTTP request handler, this handler can call the controller method. To make this possible, HTTP requests are first bound to controller methods through a routing system using the `route` decorator. In the following example, a single route is created that accepts a `GET` request at the path `/hello`:
 
@@ -155,7 +155,7 @@ export class HelloWorldController {
 
 You may also be interested in [how to get the HTTP request body][5].
 
-### The controller singleton
+### Context-scoped controller {#context-scoped-controller}
 
 Because the controller is instantiated in this mode only once, you will not be able to query in its constructor for class instances that are instantiated on each request. For example, if you request an instance of the `Res` class in the constructor, Ditsmod will throw an error:
 
@@ -163,7 +163,7 @@ Because the controller is instantiated in this mode only once, you will not be a
 import { controller, RequestContext } from '@ditsmod/core';
 import { route } from '@ditsmod/routing';
 
-@controller({ scope: 'module' })
+@controller({ scope: 'ctx' })
 export class HelloWorldController {
   constructor(private res: Res) {}
 
@@ -180,7 +180,7 @@ The working case will be as follows:
 import { controller, RequestContext } from '@ditsmod/core';
 import { route } from '@ditsmod/routing';
 
-@controller({ scope: 'module' })
+@controller({ scope: 'ctx' })
 export class HelloWorldController {
   @route('GET', 'hello')
   method1(ctx: RequestContext) {
@@ -189,7 +189,7 @@ export class HelloWorldController {
 }
 ```
 
-In the "controller singleton" mode, controller methods bound to specific routes receive a single argument - the request context. That is, in this mode, you will no longer be able to ask Ditsmod to pass instances of other classes to these methods. However, in the constructor you can still request instances of certain classes that are created only once.
+In the "context-scoped" mode, controller methods bound to specific routes receive a single argument - the request context. That is, in this mode, you will no longer be able to ask Ditsmod to pass instances of other classes to these methods. However, in the constructor you can still request instances of certain classes that are created only once.
 
 ## Binding of the controller to the module
 
@@ -314,5 +314,4 @@ In the last two examples, the services is passed to the `providersPerReq` array,
 [5]: /native-modules/body-parser#retrieving-the-request-body
 [6]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/services/pre-router.ts
 [7]: /components-of-ditsmod-app/dependency-injection
-[8]: https://en.wikipedia.org/wiki/Singleton_pattern
 [9]: /components-of-ditsmod-app/extensions/
