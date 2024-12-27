@@ -149,27 +149,21 @@ export class PreRouterExtension implements Extension<void> {
     const mergedPerRou: Provider[] = [];
     mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
     const controllerName = getDebugClassName(routeMeta.Controller);
-    routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(
-      metadataPerMod3.guardsPerMod1,
-      controllerName,
-      httpMethod,
-      path,
-    );
-    routeMeta.resolvedGuards = controllerMetadata.guards.map((g) => {
-      const resolvedGuard: ResolvedGuard = {
-        guard: Injector.resolve([g.guard])[0],
-        params: g.params,
-      };
-      return resolvedGuard;
-    });
 
-    if (routeMeta.resolvedGuards.length || metadataPerMod3.guardsPerMod1.length) {
+    if (metadataPerMod3.guardsPerMod1.length || controllerMetadata.guards.length) {
       mergedPerRou.push(InterceptorWithGuardsPerRou);
       mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: InterceptorWithGuardsPerRou, multi: true });
     }
     mergedPerRou.push(...metadataPerMod3.meta.providersPerRou, ...providersPerRou);
 
     const resolvedPerRou = Injector.resolve(mergedPerRou);
+    routeMeta.resolvedGuards = this.getResolvedGuards(controllerMetadata.guards, resolvedPerRou);
+    routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(
+      metadataPerMod3.guardsPerMod1,
+      controllerName,
+      httpMethod,
+      path,
+    );
     const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou, 'Rou');
     this.checkDeps(injectorPerRou, routeMeta, controllerName, httpMethod, path);
     const resolvedChainMaker = resolvedPerRou.find((rp) => rp.dualKey.token === ChainMaker)!;
@@ -331,12 +325,12 @@ export class PreRouterExtension implements Extension<void> {
     });
   }
 
-  protected getResolvedGuards(guards: NormalizedGuard[], resolvedPerReq: ResolvedProvider[]) {
+  protected getResolvedGuards(guards: NormalizedGuard[], resolvedProviders: ResolvedProvider[]) {
     return guards.map((g) => {
       const defaultResolvedGuard = Injector.resolve([g.guard])[0];
 
       const resolvedGuard: ResolvedGuard = {
-        guard: resolvedPerReq.concat([defaultResolvedGuard]).find((rp) => rp.dualKey.token === g.guard)!,
+        guard: resolvedProviders.concat([defaultResolvedGuard]).find((rp) => rp.dualKey.token === g.guard)!,
         params: g.params,
       };
 
