@@ -88,9 +88,9 @@ export class AppModule {}
 
 ## Retrieving the request body
 
-Depending on whether the controller is [singleton][3] or not, the result of the interceptor can be obtained in two ways:
+Depending on whether the controller works [in context-scoped or injector-scoped mode][3], the result of the interceptor can be obtained in two ways:
 
-1. If the controller is non-singleton, the result can be obtained using the `HTTP_BODY` token:
+1. If the controller works in injector-scoped mode, the result can be obtained using the `HTTP_BODY` token:
 
   ```ts {12}
   import { controller, Res, inject } from '@ditsmod/core';
@@ -109,7 +109,7 @@ Depending on whether the controller is [singleton][3] or not, the result of the 
     }
   }
   ```
-2. If the controller is singleton, the result can be obtained from the context:
+2. If the controller is in context-scoped mode, the result can be obtained from the context:
 
   ```ts {7}
   import { controller, SingletonRequestContext } from '@ditsmod/core';
@@ -146,9 +146,9 @@ That is, this way you pass an empty array, instead of the default array `['POST'
 
 ## File Uploads
 
-Depending on whether the controller is [singleton][3] or not, the method of obtaining the parser and the signatures of its methods differ slightly:
+Depending on whether the controller works [in injector-scope or context-scope mode][3], the method of obtaining the parser and the signatures of its methods differ slightly:
 
-1. If the controller is not a singleton, you need to request `MulterParser` through DI, after which you can use its methods:
+1. If the controller is running in injector-scope mode, `MulterParser` must be requested via DI, after which you can use its methods:
 
   ```ts {10}
   import { createWriteStream } from 'node:fs';
@@ -181,7 +181,7 @@ Depending on whether the controller is [singleton][3] or not, the method of obta
     }
   }
   ```
-2. If the controller is a singleton, you need to request `MulterSingletonParser` through DI, after which you can use its methods:
+2. If the controller works in context-scoped mode, `MulterSingletonParser` must be requested via DI, after which you can use its methods:
 
   ```ts {8,12}
   import { createWriteStream } from 'node:fs';

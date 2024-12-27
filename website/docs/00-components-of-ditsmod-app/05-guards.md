@@ -6,7 +6,7 @@ sidebar_position: 5
 
 Якщо ви хочете обмежити доступ до певних маршрутів, ви можете скористатись ґардами. Готовий приклад застосунку з ґардами ви можете проглянути у теці [examples][1], або у [RealWorld example][2].
 
-Будь-який ґард є [DI провайдером][3], що передається в інжектори на рівні запиту (якщо контролер є [неодинаком][4]), або на інших рівнях (якщо контролер є одинаком). Кожен ґард повинен бути класом, що впроваджує інтерфейс `CanActivate`:
+Будь-який ґард є [DI провайдером][3], що передається в інжектори на рівні запиту [в injector-scope режимі][4], або на інших рівнях, якщо контролер працює в режимі context-scoped. Кожен ґард повинен бути класом, що впроваджує інтерфейс `CanActivate`:
 
 ```ts
 interface CanActivate {
@@ -175,4 +175,4 @@ export class SomeModule {}
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/03-route-guards
 [2]: https://github.com/ditsmod/realworld/blob/main/packages/server/src/app/modules/service/auth/bearer.guard.ts
 [3]: /components-of-ditsmod-app/dependency-injection#провайдери
-[4]: /components-of-ditsmod-app/controllers-and-services/#що-являє-собою-контролер
+[4]: /components-of-ditsmod-app/controllers-and-services/#what-is-a-controller

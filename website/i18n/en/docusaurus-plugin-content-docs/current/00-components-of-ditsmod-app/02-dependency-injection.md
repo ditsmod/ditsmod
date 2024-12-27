@@ -446,19 +446,19 @@ You can also write a certain class and pass it to the `providersPerMod` array. I
 
 ### Hierarchy of controller injectors
 
-Any [non-singleton][103] controller, in addition to its own injector at the request level, also has three parent injectors: at the route, module, and application levels. These injectors are also generated based on the providers you pass in the following arrays:
+The controller in [injector-scoped][103] mode, in addition to its own injector at the request level, also has three parent injectors: at the route, module, and application levels. These injectors are also generated based on the providers you pass in the following arrays:
 
 - `providersPerApp`;
 - `providersPerMod`;
 - `providersPerRou`;
-- `providersPerReq` (this is the array from which the injector for the non-singleton controller is formed).
+- `providersPerReq` (this is an array from which the injector for the controller in injector-scoped mode is formed).
 
-That is, the non-singleton controller can depend on services at any level.
+That is, the controller in injector-scoped mode can depend on services at any level.
 
-If the controller is [singleton][103], its own injector is at the module level, and it has one parent injector at the application levels:
+If the controller in [context-scoped][103] mode, its own injector is at the module level, and it has one parent injector at the application levels:
 
 - `providersPerApp`;
-- `providersPerMod` (this is the array from which the injector for the singleton controller is formed).
+- `providersPerMod` (this is the array from which the injector for the controller in context-scoped mode is formed).
 
 ### Hierarchy of service injectors
 

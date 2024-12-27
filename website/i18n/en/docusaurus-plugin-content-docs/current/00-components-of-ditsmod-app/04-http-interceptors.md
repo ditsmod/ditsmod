@@ -16,11 +16,11 @@ Typically, interceptors are used to automate standard processing, such as:
 - caching;
 - etc.
 
-Interceptors can be centrally connected or disconnected without changing the method code of the controllers to which they are attached. Like controllers, interceptors can be [singletons][109] or non-singletons. Unlike singletons, non-singletons have access to the request-level injector, so they can invoke request-level services. On the other hand, singletons are created at the route level - services are available to them at the route, module, or application level.
+Interceptors can be centrally enabled or disabled without modifying the code of the controller methods they are attached to. Like controllers, interceptors can operate in either [injector-scoped or context-scoped mode][109]. Unlike the context-scoped mode, in the injector-scoped mode, interceptors have access to the request-level injector, allowing them to invoke services at the request level. On the other hand, in the context-scoped mode, their instances are created at the route level, which grants them access to services at the route, module, or application level.
 
 ## HTTP request processing scheme
 
-### Non-singletons
+### Injector-scoped mode
 
 HTTP request processing has the following workflow:
 
@@ -47,9 +47,9 @@ As `PreRouter`, `HttpFrontend`, `InterceptorWithGuards`, and `HttpBackend` insta
 
 Each call to the interceptor returns `Promise<any>`, and it eventually leads to a controller method tied to the corresponding route. This means that in the interceptor you can listen for the result of promise resolve, which returns the method of the controller.
 
-### Singleton
+### Context-scoped mode
 
-A singleton interceptor works very similarly to a non-singleton interceptor, except that it does not use an injector at the request level. The workflow with his participation differs in points 4 and 7, because a single interceptor instance is created at the route level:
+A context-scoped interceptor operates very similarly to an injector-scoped interceptor but does not utilize the request-level injector. The workflow involving it differs at points 4 and 7, as the instance of a context-scoped interceptor is created at the route level:
 
 1. Ditsmod creates an instance of [PreRouter][7] at the application level.
 2. `PreRouter` uses the router to search for the request handler according to the URI.
@@ -78,7 +78,7 @@ As you can see, the `intercept()` method has two parameters: the first is the ha
 
 ## Passing interceptor to the injector
 
-The non-singleton interceptor is passed to the injector at the request level using [multi-providers][107] with the `HTTP_INTERCEPTORS` token:
+The interceptor for injector-scoped mode is passed to the injector at the request level using [multi-providers][107] with the `HTTP_INTERCEPTORS` token:
 
 ```ts
 import { HTTP_INTERCEPTORS, featureModule } from '@ditsmod/core';
@@ -91,7 +91,7 @@ import { MyHttpInterceptor } from './my-http-interceptor.js';
 export class SomeModule {}
 ```
 
-Transmission of a singleton interceptor occurs in exactly the same way, but at the route, module, or application level:
+Passing an interceptor for context-scoped mode happens in exactly the same way, but at the route, module, or application level:
 
 ```ts
 import { HTTP_INTERCEPTORS, featureModule } from '@ditsmod/core';

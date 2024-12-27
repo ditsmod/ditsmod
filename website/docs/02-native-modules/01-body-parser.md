@@ -88,9 +88,9 @@ export class AppModule {}
 
 ## Отримання тіла запиту
 
-В залежності від того, чи є контролер [одинаком][3] чи ні, результат роботи інтерсептора можна отримати двома способами:
+В залежності від того, чи працює контролер [в context-scoped, чи injector-scoped режимі][3], результат роботи інтерсептора можна отримати двома способами:
 
-1. Якщо контролер не є одинаком, результат можна отримати за допомогою токена `HTTP_BODY`:
+1. Якщо контролер працює в режимі injector-scoped, результат можна отримати за допомогою токена `HTTP_BODY`:
 
   ```ts {12}
   import { controller, Res, inject } from '@ditsmod/core';
@@ -109,7 +109,7 @@ export class AppModule {}
     }
   }
   ```
-2. Якщо контролер є одинаком, результат можна отримати з контексту:
+2. Якщо контролер працює в режимі context-scoped, результат можна отримати з контексту:
 
   ```ts {7}
   import { controller, SingletonRequestContext } from '@ditsmod/core';
@@ -146,9 +146,9 @@ export class SomeController {
 
 ## Завантаження файлів
 
-В залежності від того, чи є контролер [одинаком][3] чи ні, спосіб отримання парсера, та сигнатури його методів трохи відрізняються:
+В залежності від того, чи контролер працює [в режимі injector-scope, чи context-scope][3], спосіб отримання парсера, та сигнатури його методів трохи відрізняються:
 
-1. Якщо контролер не є одинаком, через DI необхідно запитати `MulterParser`, після чого можете користуватись його методами:
+1. Якщо контролер працює в режимі injector-scope, через DI необхідно запитати `MulterParser`, після чого можете користуватись його методами:
 
   ```ts {10}
   import { createWriteStream } from 'node:fs';
@@ -181,7 +181,7 @@ export class SomeController {
     }
   }
   ```
-2. Якщо контролер є одинаком, через DI необхідно запитати `MulterSingletonParser`, після чого можете користуватись його методами:
+2. Якщо контролер працює в режимі context-scoped, через DI необхідно запитати `MulterSingletonParser`, після чого можете користуватись його методами:
 
   ```ts {8,12}
   import { createWriteStream } from 'node:fs';
@@ -301,7 +301,7 @@ export class SomeModule {}
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/06-body-parser
 [2]: https://www.npmjs.com/package/@ts-stack/multiparty
-[3]: /components-of-ditsmod-app/controllers-and-services/#що-являє-собою-контролер
+[3]: /components-of-ditsmod-app/controllers-and-services/#what-is-a-controller
 [4]: https://github.com/ts-stack/body-parser/
 [5]: https://github.com/ts-stack/multer
 [6]: https://github.com/expressjs/body-parser
