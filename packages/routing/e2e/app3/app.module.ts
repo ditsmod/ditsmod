@@ -17,6 +17,5 @@ import { Guard, GuardPerRou } from './guards.js';
     { path: 'module2-with-guard', module: Module2, guards: [Guard] },
     { path: 'module3', module: Module3 },
   ],
-  exports: [Guard],
 })
 export class AppModule {}

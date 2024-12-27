@@ -3,16 +3,16 @@ import { route } from '@ditsmod/routing';
 
 @controller()
 export class Controller1 {
-  @route('GET', 'controler1-of-module3')
+  @route('GET', 'ok1')
   ok(res: Res) {
-    res.send('ok');
+    res.send('ok1');
   }
 }
 
 @controller({ scope: 'module' })
 export class Controller2 {
-  @route('GET', 'controler2-of-module3')
+  @route('GET', 'ok2')
   ok(res: Res) {
-    res.send('ok');
+    res.send('ok2');
   }
 }
