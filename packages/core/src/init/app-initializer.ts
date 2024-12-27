@@ -264,7 +264,7 @@ export class AppInitializer {
     for (const [, metadataPerMod2] of mMetadataPerMod2) {
       let { meta } = metadataPerMod2;
       meta = this.overrideMetaBeforeExtensionHanling(meta);
-      const injectorPerMod = injectorPerApp.resolveAndCreateChild(meta.providersPerMod);
+      const injectorPerMod = injectorPerApp.resolveAndCreateChild(meta.providersPerMod, 'Mod');
       injectorPerMod.pullAndSave(Logger);
       const systemLogMediator = injectorPerMod.pullAndSave(SystemLogMediator) as SystemLogMediator;
       const { extensionsProviders } = meta;
@@ -273,7 +273,7 @@ export class AppInitializer {
         continue;
       }
       const providers = this.getProvidersForExtensions(metadataPerMod2, extensionCounters, extensionsContext);
-      const injectorForExtensions = injectorPerMod.resolveAndCreateChild(providers);
+      const injectorForExtensions = injectorPerMod.resolveAndCreateChild(providers, 'ForExtensions');
       const extensionsManager = injectorForExtensions.get(ExtensionsManager) as ExtensionsManager;
 
       systemLogMediator.startExtensions(this);
@@ -348,7 +348,7 @@ export class AppInitializer {
     const Mod = getModule(meta.modRefId);
     const extendedProvidersPerMod = [Mod, ...meta.providersPerMod];
     const injectorPerApp = this.perAppService.injector;
-    const injectorPerMod = injectorPerApp.resolveAndCreateChild(extendedProvidersPerMod, 'injectorPerMod');
+    const injectorPerMod = injectorPerApp.resolveAndCreateChild(extendedProvidersPerMod, 'Mod');
     await injectorPerMod.get(Mod).onModuleInit?.(); // Instantiate the class of the module and call the hook.
     return injectorPerMod;
   }

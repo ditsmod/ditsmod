@@ -20,8 +20,8 @@ export class PerAppService {
     if (providers) {
       this.providers.push(...providers);
     }
-    this.#injector = Injector.resolveAndCreate(this.providers, 'injectorPerApp');
-    const child = this.#injector.createChildFromResolved([]);
+    this.#injector = Injector.resolveAndCreate(this.providers, 'App');
+    const child = this.#injector.createChildFromResolved([], 'Child of App');
     child.setParentGetter(() => this.#injector);
     return child;
   }

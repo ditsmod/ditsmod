@@ -42,6 +42,8 @@ import {
 } from './utils.js';
 import { DEPS_KEY } from './decorator-factories.js';
 
+type ScopeOfInjector = 'App' | 'Mod' | 'Rou' | 'Req' | (string & {});
+
 const NoDefaultValue = Symbol();
 const msg1 = 'Setting value by ID failed: cannot find ID in register: "%d". Try use injector.setByToken()';
 const msg2 =
@@ -87,12 +89,12 @@ export class Injector {
   #Registry: typeof RegistryOfInjector;
 
   /**
-   * @param injectorName Injector name. Useful for debugging.
+   * @param scope Scope name of the injector. Useful for debugging.
    */
   constructor(
     Registry: typeof RegistryOfInjector,
+    public readonly scope?: ScopeOfInjector,
     parent?: Injector,
-    protected readonly injectorName?: string,
   ) {
     this.#Registry = Registry;
     this.#registry = new Registry();
@@ -182,11 +184,11 @@ expect(injector.get(Car) instanceof Car).toBe(true);
    * because it needs to resolve the passed-in providers first.
    * See `Injector.resolve()` and `Injector.fromResolvedProviders()`.
    * 
-   * @param injectorName Injector name. Useful for debugging.
+   * @param scope Injector name. Useful for debugging.
    */
-  static resolveAndCreate(providers: Provider[], injectorName?: string): Injector {
+  static resolveAndCreate(providers: Provider[], scope: ScopeOfInjector): Injector {
     const resolvedProviders = this.resolve(providers);
-    return this.fromResolvedProviders(resolvedProviders, injectorName);
+    return this.fromResolvedProviders(resolvedProviders, scope);
   }
 
   /**
@@ -211,10 +213,10 @@ const injector = Injector.fromResolvedProviders(providers);
 expect(injector.get(Car) instanceof Car).toBe(true);
 ```
   *
-  * @param injectorName Injector name. Useful for debugging.
+  * @param scope Injector name. Useful for debugging.
    */
-  static fromResolvedProviders(providers: ResolvedProvider[], injectorName?: string): Injector {
-    return new Injector(this.prepareRegistry(providers), undefined, injectorName);
+  static fromResolvedProviders(providers: ResolvedProvider[], scope: ScopeOfInjector): Injector {
+    return new Injector(this.prepareRegistry(providers), scope);
   }
 
   protected static normalizeProviders(
@@ -467,11 +469,11 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
    *
    * See `Injector.resolve()` and `Injector.createChildFromResolved()`.
    * 
-   * @param injectorName Injector name. Useful for debugging.
+   * @param scope Injector name. Useful for debugging.
    */
-  resolveAndCreateChild(providers: Provider[], injectorName?: string): Injector {
+  resolveAndCreateChild(providers: Provider[], scope: ScopeOfInjector): Injector {
     const resolvedProviders = Injector.resolve(providers);
-    return this.createChildFromResolved(resolvedProviders, injectorName);
+    return this.createChildFromResolved(resolvedProviders, scope);
   }
 
   /**
@@ -496,10 +498,10 @@ expect(child.get(ChildProvider) instanceof ChildProvider).toBe(true);
 expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
 ```
    *
-   * @param injectorName Injector name. Useful for debugging.
+   * @param scope Injector name. Useful for debugging.
    */
-  createChildFromResolved(providers: ResolvedProvider[], injectorName?: string): Injector {
-    return new Injector(Injector.prepareRegistry(providers), this, injectorName);
+  createChildFromResolved(providers: ResolvedProvider[], scope: ScopeOfInjector): Injector {
+    return new Injector(Injector.prepareRegistry(providers), scope, this);
   }
 
   /**
@@ -544,15 +546,14 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
    * module they protect._
    */
   fill(externalInj: Injector, tokens: any[]) {
-    tokens.forEach((token) => {
+    for (const token of tokens) {
       const id = KeyRegistry.get(token).id;
       const val = this.getValue(id);
       if (val?.[ID]) {
-        const msg = `The filling of the external injector is failed: no value yet for ${token}`;
-        throw new Error(msg);
+        continue;
       }
       externalInj.setById(id, val);
-    });
+    }
   }
 
   clear(): void {

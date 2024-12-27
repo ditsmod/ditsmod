@@ -79,7 +79,7 @@ export abstract class LogMediator {
    */
   protected writeLogs(logItems: LogItem[]) {
     // A separate instance of the logger is created so that changing the OutputLogLevel does not affect other loggers.
-    const logger: Logger = this.injector?.resolveAndCreateChild([]).pull(Logger) || new ConsoleLogger();
+    const logger: Logger = this.injector?.resolveAndCreateChild([], 'child of logger').pull(Logger) || new ConsoleLogger();
 
     if (LogMediator.hasDiffLogLevels && logger === this.logger) {
       logger.log('warn', this.msgAboutSingletonLogger);
