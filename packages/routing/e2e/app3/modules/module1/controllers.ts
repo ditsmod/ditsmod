@@ -1,7 +1,7 @@
 import { controller } from '@ditsmod/core';
 import { route } from '@ditsmod/routing';
 
-import { Guard, GuardPerRou } from '../../guards.js';
+import { Guard } from '../../guards.js';
 
 @controller()
 export class Controller1 {
@@ -23,7 +23,7 @@ export class Controller2 {
     return 'ok2';
   }
 
-  @route('GET', 'need-auth2', [GuardPerRou])
+  @route('GET', 'need-auth2', [Guard])
   auth() {
     return 'some secret2';
   }

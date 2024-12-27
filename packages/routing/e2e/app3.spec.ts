@@ -10,7 +10,7 @@ describe('guards per module and per controller', () => {
   let testAgent: ReturnType<typeof request>;
 
   beforeAll(async () => {
-    server = await TestApplication.createTestApp(AppModule, { loggerConfig: { level: 'info' } }).getServer();
+    server = await TestApplication.createTestApp(AppModule).getServer();
     testAgent = request(server);
   });
 
