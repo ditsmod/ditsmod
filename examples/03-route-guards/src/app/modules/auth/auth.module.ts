@@ -1,22 +1,29 @@
 import { featureModule } from '@ditsmod/core';
 
-import { BearerGuard } from './bearer.guard.js';
+import { BearerGuard, BearerCtxGuard } from './bearer.guard.js';
 import { AuthService } from './auth.service.js';
 import { PermissionsGuard } from './permissions.guard.js';
-import { SingletonAuthService } from './singleton-auth.service.js';
-import { SingletonPermissionsGuard } from './singleton-permissions.guard.js';
+import { CtxAuthService } from './ctx-auth.service.js';
+import { CtxPermissionsGuard } from './ctx-permissions.guard.js';
 import { BasicGuard } from './basic.guard.js';
 
 @featureModule({
+  // This array allows the tokens to be used for context scoped routes.
   providersPerRou: [
-    SingletonAuthService,
-    SingletonPermissionsGuard,
+    CtxAuthService,
+    CtxPermissionsGuard,
     BasicGuard,
-    BearerGuard,
+    { token: BearerGuard, useClass: BearerCtxGuard },
     PermissionsGuard,
     AuthService,
   ],
-  providersPerReq: [BasicGuard, BearerGuard, PermissionsGuard, AuthService],
-  exports: [BasicGuard, BearerGuard, PermissionsGuard, SingletonPermissionsGuard],
+
+  // This array allows the tokens to be used for request scoped routes.
+  providersPerReq: [
+    BearerGuard,
+    BasicGuard,
+    PermissionsGuard,
+  ],
+  exports: [BasicGuard, BearerGuard, PermissionsGuard, CtxPermissionsGuard],
 })
 export class AuthModule {}

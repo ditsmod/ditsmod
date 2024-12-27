@@ -11,4 +11,10 @@ export class AuthService {
 
     return permissions?.every((permission) => currentUser.permissions.includes(permission));
   }
+  /**
+   * Here you need implement more logic.
+   */
+  async getSession(token: string) {
+    return { userName: 'Name1', email: 'some@gmail.com' };
+  }
 }

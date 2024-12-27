@@ -3,7 +3,7 @@ import { RequestContext, injectable } from '@ditsmod/core';
 import { Permission } from './types.js';
 
 @injectable()
-export class SingletonAuthService {
+export class CtxAuthService {
   /**
    * Here you need implement more logic.
    */
