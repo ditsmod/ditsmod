@@ -5,7 +5,7 @@ import { describe, expect, it, beforeAll, afterAll } from 'vitest';
 
 import { AppModule } from './app3/app.module.js';
 
-describe('03-route-guards', () => {
+describe('guards per module and per controller', () => {
   let server: HttpServer;
   let testAgent: ReturnType<typeof request>;
 
@@ -68,7 +68,7 @@ describe('03-route-guards', () => {
     expect(status).toBe(401);
   });
 
-  it.only('controller1 of module2 with external guard (allow)', async () => {
+  it('controller1 of module2 with external guard (allow)', async () => {
     const { type, status, text } = await testAgent.get('/module2-with-guard/ok1?allow=1');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
