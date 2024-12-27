@@ -30,7 +30,7 @@ export class BodyParserExtension implements Extension<void> {
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedProvidersPerRou);
         const httpMethods = Array.isArray(httpMethod) ? httpMethod : [httpMethod];
         httpMethods.forEach((method) => {
-          if (scope == 'module') {
+          if (scope == 'ctx') {
             let bodyParserConfig = injectorPerRou.get(BodyParserConfig, undefined, {}) as BodyParserConfig;
             bodyParserConfig = { ...new BodyParserConfig(), ...bodyParserConfig }; // Merge with default.
             if (bodyParserConfig.acceptMethods!.includes(method)) {

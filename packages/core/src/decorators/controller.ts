@@ -21,7 +21,7 @@ export interface ControllerRawMetadata1 {
    *
    * Default - `module`.
    */
-  scope?: 'module';
+  scope?: 'ctx';
 }
 
 /**
@@ -36,7 +36,7 @@ export interface ControllerRawMetadata2 {
    * __Warn__: at the moment, this is an experimental feature.
    * Default - `module`.
    */
-  scope?: 'module';
+  scope?: 'ctx';
 }
 
 export type ControllerRawMetadata = ControllerRawMetadata1 | ControllerRawMetadata2;

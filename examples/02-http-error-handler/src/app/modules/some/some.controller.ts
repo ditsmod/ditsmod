@@ -14,7 +14,7 @@ export class SomeController {
   }
 }
 
-@controller({ scope: 'module' })
+@controller({ scope: 'ctx' })
 export class SomeSingletonController {
   @route('GET', 'hello2')
   ok(ctx: RequestContext) {

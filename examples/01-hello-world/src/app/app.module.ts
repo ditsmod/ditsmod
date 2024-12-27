@@ -14,7 +14,7 @@ export class DefaultController {
   }
 }
 
-@controller({ scope: 'module' })
+@controller({ scope: 'ctx' })
 export class SingletonController {
   @route('GET', 'singleton-controller')
   tellHello() {

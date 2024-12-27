@@ -58,7 +58,7 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
             const route = decoratorAndValue.value;
             const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
             const scope = ctrlDecorator?.value.scope;
-            if (scope == 'module') {
+            if (scope == 'ctx') {
               meta.providersPerMod.unshift(Controller);
             }
             const guards = this.normalizeGuards(route.guards).slice();

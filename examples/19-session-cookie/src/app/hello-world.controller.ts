@@ -18,7 +18,7 @@ export class HelloWorldController {
   }
 }
 
-@controller({ scope: 'module' })
+@controller({ scope: 'ctx' })
 export class HelloWorldController2 {
   @route('GET', 'set2')
   setCookie(ctx: RequestContextWithSession) {

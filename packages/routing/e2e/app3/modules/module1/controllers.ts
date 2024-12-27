@@ -16,7 +16,7 @@ export class Controller1 {
   }
 }
 
-@controller({ scope: 'module' })
+@controller({ scope: 'ctx' })
 export class Controller2 {
   @route('GET', 'ok2')
   ok() {

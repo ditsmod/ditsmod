@@ -52,7 +52,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             const providersPerReq: Provider[] = [];
             const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
             const scope = ctrlDecorator?.value.scope;
-            if (scope == 'module') {
+            if (scope == 'ctx') {
               meta.providersPerMod.unshift(Controller);
             }
             const guards = [];

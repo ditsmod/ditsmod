@@ -20,6 +20,6 @@ export interface ControllerMetadata {
    *
    * Default - `module`.
    */
-  scope?: 'module';
+  scope?: 'ctx';
   guards: NormalizedGuard[];
 }

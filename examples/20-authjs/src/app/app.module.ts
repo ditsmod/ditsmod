@@ -14,7 +14,7 @@ export class PerReqController {
   }
 }
 
-@controller({ scope: 'module' })
+@controller({ scope: 'ctx' })
 export class PerModController {
   @route('GET', 'per-rou', [AuthjsGuard])
   tellHello(ctx: SingletonRequestContext) {

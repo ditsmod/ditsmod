@@ -320,7 +320,7 @@ interface TotalStage1Meta<T = any> {
     intercept(next: HttpHandler, ctx: RequestContext): Promise<any>;
   }
   ```
-- Introduced `@controller({ singletonPerScope: 'module' })` options. You can now specify that your controller is a singleton. In this case, the controller receives a `RequestContext`, but an injector is not created for it on every request. Routes in such a controller are very fast.
+- Introduced `@controller({ singletonPerscope: 'ctx' })` options. You can now specify that your controller is a singleton. In this case, the controller receives a `RequestContext`, but an injector is not created for it on every request. Routes in such a controller are very fast.
 
 <a name="core-2.49.0"></a>
 ## [core-2.49.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.49.0) (2023-09-15)

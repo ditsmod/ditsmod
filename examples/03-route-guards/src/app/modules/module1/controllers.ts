@@ -32,7 +32,7 @@ export class InjController {
 /**
  * Context-scoped controller
  */
-@controller({ scope: 'module' })
+@controller({ scope: 'ctx' })
 export class CtxController {
   @route('GET', 'controler2-of-module1')
   ok() {

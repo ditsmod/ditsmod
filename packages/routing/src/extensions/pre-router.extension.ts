@@ -117,7 +117,7 @@ export class PreRouterExtension implements Extension<void> {
 
       aControllerMetadata.forEach((controllerMetadata) => {
         let handle: RouteHandler;
-        if (controllerMetadata.scope == 'module') {
+        if (controllerMetadata.scope == 'ctx') {
           handle = this.getHandlerPerMod(metadataPerMod3, this.injectorPerMod, controllerMetadata);
         } else {
           handle = this.getHandlerPerReq(metadataPerMod3, this.injectorPerMod, controllerMetadata);
@@ -306,7 +306,7 @@ export class PreRouterExtension implements Extension<void> {
         msg += ` ${g.meta.name} for route "${controllerName} -> ${httpMethod} /${path}".`;
         msg += ` Lookup in ${scopeNames} was unsuccessful.`;
         if (!perReq) {
-          msg += ` Notice that ${controllerName} has "{ scope: 'module' }" in its metadata.`;
+          msg += ` Notice that ${controllerName} has "{ scope: 'ctx' }" in its metadata.`;
         }
         throw new Error(msg);
       }

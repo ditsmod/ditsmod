@@ -56,7 +56,7 @@ export class CorsExtension implements Extension<void | false> {
           const corsOptions = this.getCorsOptions(injectorPerMod, mergedPerRou);
           const mergedCorsOptions = mergeOptions(corsOptions);
           providersPerRou.unshift({ token: CorsOptions, useValue: mergedCorsOptions });
-          if (scope == 'module') {
+          if (scope == 'ctx') {
             providersPerRou.push({ token: HTTP_INTERCEPTORS, useClass: CorsInterceptor, multi: true });
           } else {
             providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: CorsInterceptor, multi: true });
@@ -137,7 +137,7 @@ export class CorsExtension implements Extension<void | false> {
           ],
           providersPerReq: [],
           routeMeta,
-          scope: 'module',
+          scope: 'ctx',
           guards: [],
         };
 

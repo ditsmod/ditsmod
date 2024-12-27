@@ -11,7 +11,7 @@ export class Controller1 {
   }
 }
 
-@controller({ scope: 'module' })
+@controller({ scope: 'ctx' })
 export class Controller2 {
   @route('GET', 'ok2')
   ok() {
@@ -27,7 +27,7 @@ export class Controller3 {
   }
 }
 
-@controller({ scope: 'module' })
+@controller({ scope: 'ctx' })
 export class Controller4 {
   @route('GET', 'ok4', [OtherGuard])
   ok() {

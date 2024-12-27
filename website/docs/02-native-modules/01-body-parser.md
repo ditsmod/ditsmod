@@ -115,7 +115,7 @@ export class AppModule {}
   import { controller, SingletonRequestContext } from '@ditsmod/core';
   import { route } from '@ditsmod/routing';
 
-  @controller({ scope: 'module' })
+  @controller({ scope: 'ctx' })
   export class SomeController {
     @route('POST')
     ok(ctx: SingletonRequestContext) {
@@ -189,7 +189,7 @@ export class SomeController {
   import { route } from '@ditsmod/routing';
   import { MulterParsedForm, MulterSingletonParser } from '@ditsmod/body-parser';
 
-  @controller({ scope: 'module' })
+  @controller({ scope: 'ctx' })
   export class SomeController {
     constructor(protected parse: MulterSingletonParser) {}
 

@@ -7,7 +7,7 @@ import { BodyParserModule } from '@ditsmod/body-parser';
 
 import { toWebRequest, encodeUrlEncoded } from '#mod/http-api-adapters.js';
 
-@controller({ scope: 'module' })
+@controller({ scope: 'ctx' })
 export class Controller1 {
   @route('GET', 'case1')
   async case1(ctx: SingletonRequestContext) {
