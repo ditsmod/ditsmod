@@ -8,8 +8,9 @@
     "clean": "rm -r dist*",
     "start:dev": "run-p watch start",
     "watch": "yarn build --watch",
-    "test": "tsc -b tsconfig.e2e.json && yarn vitest",
-    "build": "tsc -b tsconfig.build.json"
+    "test": "yarn build-test && yarn vitest",
+    "build": "tsc -b tsconfig.build.json",
+    "build-test": "tsc -b tsconfig.e2e.json"
   },
   "imports": {
     "#app/*": "./dist/app/*",

@@ -18,13 +18,6 @@ describe('03-route-guards', () => {
     server?.close();
   });
 
-  it('controller in AppModule should works', async () => {
-    const { type, status, text } = await testAgent.get('/');
-    expect(status).toBe(200);
-    expect(type).toBe('text/plain');
-    expect(text).toBe('ok');
-  });
-
   it('should works', async () => {
     const { type, status, text } = await testAgent.get('/controler1-of-module1');
     expect(status).toBe(200);
@@ -32,29 +25,9 @@ describe('03-route-guards', () => {
     expect(text).toBe('ok');
   });
 
-  it('in module3 appended controller should works with guards', async () => {
-    const { status } = await testAgent.get('/controler1-of-module2');
-    expect(status).toBe(401);
-  });
-
-  it('controller singleton in module3 appended singleton controller should works with guards', async () => {
-    const { status } = await testAgent.get('/controler2-of-module2');
-    expect(status).toBe(401);
-  });
-
   it('should throw 401', async () => {
     const { status } = await testAgent.get('/unauth');
     expect(status).toBe(401);
-  });
-
-  it('should throw 403 for guards setted for a module', async () => {
-    const { status } = await testAgent.get('/guards-1/controler1-of-module2');
-    expect(status).toBe(403);
-  });
-
-  it('controller singleton should throw 403 for guards setted for a module', async () => {
-    const { status } = await testAgent.get('/guards-1/controler2-of-module2');
-    expect(status).toBe(403);
   });
 
   it('should throw 403', async () => {

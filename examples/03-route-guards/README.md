@@ -44,4 +44,4 @@ curl -i localhost:3000/forbidden2
 
 To test authentication with BasicGuard, open a browser at [http://0.0.0.0:3000/basic-auth](http://0.0.0.0:3000/basic-auth) and enter username: `demo` and password: `p@55w0rd`. You can change the username and password in the `.env` file and then you need restart the application.
 
-We also recommend paying attention to how the `dotenv` module is included in the `package.json` and `jest.config.ts` files.
+We also recommend paying attention to how the `dotenv` module is included in the `package.json` and `vitest.config.ts` files.
