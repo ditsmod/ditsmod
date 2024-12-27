@@ -24,112 +24,117 @@ describe('guards per module and per controller', () => {
    * - route with `/need-auth` - this is a route with guard;
    */
 
-  it('controller of root module, route without guard', async () => {
+  it('passing guards to providers, or setting them to import a module, does not affect access to the root controller', async () => {
     const { type, status, text } = await testAgent.get('/root-controller');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('ok');
   });
 
-  it('controller1 of module1, route without guard', async () => {
+  it('setting guards on individual routes does not affect other routes', async () => {
     const { type, status, text } = await testAgent.get('/module1/ok1');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('ok1');
   });
 
-  it('controller1 of module1, route with guard (forbidden)', async () => {
+  it('the guard added to a specific route works', async () => {
     const { status } = await testAgent.get('/module1/need-auth1');
     expect(status).toBe(401);
   });
 
-  it('controller1 of module1, route with guard (allow)', async () => {
+  it('guard is able to receive "allow=1" in queryParams and passing requests', async () => {
     const { type, status, text } = await testAgent.get('/module1/need-auth1?allow=1');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('some secret1');
   });
 
-  it('controller2 of module1, route without guard', async () => {
+  it('guard for a single route, in a module-level scoped controller, does not affect other routes', async () => {
     const { type, status, text } = await testAgent.get('/module1/ok2');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('ok2');
   });
 
-  it('controller2 of module1, route with guard (forbidden)', async () => {
+  it('a controller with scope at the module level has guard running', async () => {
     const { status } = await testAgent.get('/module1/need-auth2');
     expect(status).toBe(401);
   });
 
-  it('controller2 of module1, route with guard (allow)', async () => {
+  it('in a module-scoped controller, guard allows a query if it receives allow=1 in queryParams', async () => {
     const { type, status, text } = await testAgent.get('/module1/need-auth2?allow=1');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('some secret2');
   });
 
-  it('controller1 of module2, route with external guard (forbidden)', async () => {
+  it('guard set to import Module2 prohibits access to controllers without guards', async () => {
     const { status } = await testAgent.get('/module2-with-guard/ok1');
     expect(status).toBe(401);
   });
 
-  it('controller1 of module2, route with external guard (allow)', async () => {
+  it('guard set to import Module2 allows access to controllers if it receives allow=1 in queryParams', async () => {
     const { type, status, text } = await testAgent.get('/module2-with-guard/ok1?allow=1');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('ok1');
   });
 
-  it('controller2 of module2, route with external guard (forbidden)', async () => {
+  it('guard set to import Module2 prohibits access to module-scoped controllers without guards', async () => {
     const { status } = await testAgent.get('/module2-with-guard/ok2');
     expect(status).toBe(401);
   });
 
-  it('controller2 of module2, route with external guard (allow)', async () => {
+  it('guard set to import Module2 allows access to module-scoped controllers if it receives allow=1 in queryParams', async () => {
     const { type, status, text } = await testAgent.get('/module2-with-guard/ok2?allow=1');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('ok2');
   });
 
-  it('controller3 of module2, route with one external guard and one guard on the controller (forbidden)', async () => {
+  it('the first route (out of the two available) that is installed directly on the controller route does not pass the request', async () => {
     const { status } = await testAgent.get('/module2-with-guard/ok3?allow=1');
     expect(status).toBe(401);
   });
 
-  it('controller3 of module2, route with one external guard and and one guard on the controller (allow)', async () => {
-    const { type, status, text } = await testAgent.get('/module2-with-guard/ok3?allow=2');
+  it('the second route (out of the two available) that is installed directly on the controller route does not pass the request', async () => {
+    const { status } = await testAgent.get('/module2-with-guard/ok3?allow=2');
+    expect(status).toBe(401);
+  });
+
+  it('both guards (set on import and directly in the controller) pass the request if they get allow=3 in queryParams', async () => {
+    const { type, status, text } = await testAgent.get('/module2-with-guard/ok3?allow=3');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('ok3');
   });
 
-  it('module3 has own controller1, route without guard', async () => {
+  it('guards set on some module imports do not affect the controllers of other modules', async () => {
     const { type, status, text } = await testAgent.get('/module3/ok1');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('ok1');
   });
 
-  it('module3 imports module2, route with controller1 and external guard (forbidden)', async () => {
+  it('a child module that is imported into a root module without guards can set guards on its own module imports', async () => {
     const { status } = await testAgent.get('/module3/module2-with-guard/ok1');
     expect(status).toBe(401);
   });
 
-  it('module3 imports module2, route with controller1 and external guard (allow)', async () => {
+  it('guards set to import in child modules work correctly', async () => {
     const { type, status, text } = await testAgent.get('/module3/module2-with-guard/ok1?allow=1');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('ok1');
   });
 
-  it('module3 imports module2, route with controller1 and external guard (forbidden)', async () => {
+  it('guards set to import in child modules also work correctly in controllers that have scope at the module level', async () => {
     const { status } = await testAgent.get('/module3/module2-with-guard/ok2');
     expect(status).toBe(401);
   });
 
-  it('module3 imports module2, route with controller1 and external guard (allow)', async () => {
+  it('guards set to import in child modules skip requests to module-scoped controllers', async () => {
     const { type, status, text } = await testAgent.get('/module3/module2-with-guard/ok2?allow=1');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
