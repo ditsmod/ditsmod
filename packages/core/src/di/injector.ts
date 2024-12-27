@@ -186,7 +186,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
    * 
    * @param scope Injector name. Useful for debugging.
    */
-  static resolveAndCreate(providers: Provider[], scope: ScopeOfInjector): Injector {
+  static resolveAndCreate(providers: Provider[], scope?: ScopeOfInjector): Injector {
     const resolvedProviders = this.resolve(providers);
     return this.fromResolvedProviders(resolvedProviders, scope);
   }
@@ -215,7 +215,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
   *
   * @param scope Injector name. Useful for debugging.
    */
-  static fromResolvedProviders(providers: ResolvedProvider[], scope: ScopeOfInjector): Injector {
+  static fromResolvedProviders(providers: ResolvedProvider[], scope?: ScopeOfInjector): Injector {
     return new Injector(this.prepareRegistry(providers), scope);
   }
 
@@ -471,7 +471,7 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
    * 
    * @param scope Injector name. Useful for debugging.
    */
-  resolveAndCreateChild(providers: Provider[], scope: ScopeOfInjector): Injector {
+  resolveAndCreateChild(providers: Provider[], scope?: ScopeOfInjector): Injector {
     const resolvedProviders = Injector.resolve(providers);
     return this.createChildFromResolved(resolvedProviders, scope);
   }
@@ -500,7 +500,7 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
    *
    * @param scope Injector name. Useful for debugging.
    */
-  createChildFromResolved(providers: ResolvedProvider[], scope: ScopeOfInjector): Injector {
+  createChildFromResolved(providers: ResolvedProvider[], scope?: ScopeOfInjector): Injector {
     return new Injector(Injector.prepareRegistry(providers), scope, this);
   }
 
