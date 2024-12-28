@@ -171,6 +171,8 @@ export class Parameters {
 // prettier-ignore
 export function getParams<T extends Class<AnyObj>>(paramsIn: 'path', isRequired: true, model: T, ...params: KeysOf<T>): XParameterObject[];
 // prettier-ignore
+export function getParams(paramsIn: 'path', isRequired: true, ...params: [string, ...string[]]): XParameterObject[];
+// prettier-ignore
 export function getParams<T extends Class<AnyObj>>(paramsIn: OptionalParamsIn, isRequired: boolean, model: T, ...params: KeysOf<T>): XParameterObject[];
 // prettier-ignore
 export function getParams(paramsIn: OptionalParamsIn, isRequired: boolean, ...params: [string, ...string[]]): XParameterObject[];
