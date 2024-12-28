@@ -31,7 +31,7 @@
       "import": "./dist/providers/*.js"
     },
     "./adapters": {
-      "types": "./adapters.d.ts"
+      "types": "./dist/adapters.d.ts"
     }
   },
   "imports": {
