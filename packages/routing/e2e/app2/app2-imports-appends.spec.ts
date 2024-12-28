@@ -3,8 +3,8 @@ import { HttpServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 import { describe, expect, it, beforeAll, afterAll } from 'vitest';
 
-import { AppModule } from './app2/app.module.js';
-import { Module3 } from './app2/module3/module3.js';
+import { AppModule } from './app.module.js';
+import { Module3 } from './module3/module3.js';
 
 describe('routing app2', () => {
   let server: HttpServer;

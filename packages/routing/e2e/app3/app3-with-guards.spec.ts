@@ -3,7 +3,7 @@ import { HttpServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 import { describe, expect, it, beforeAll, afterAll } from 'vitest';
 
-import { AppModule } from './app3/app.module.js';
+import { AppModule } from './app.module.js';
 
 describe('guard', () => {
   let server: HttpServer;

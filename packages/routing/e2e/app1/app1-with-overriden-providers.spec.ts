@@ -4,7 +4,7 @@ import { Providers } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 import { TestRoutingPlugin } from '@ditsmod/routing-testing';
 
-import { AppModule } from './app1/app.module.js';
+import { AppModule } from './app.module.js';
 import {
   ServicePerApp,
   ServicePerMod,
@@ -12,7 +12,7 @@ import {
   ServicePerReq,
   ServicePerRou2,
   ServicePerReq2,
-} from './app1/services.js';
+} from './services.js';
 
 describe('@ditsmod/routing/e2e', () => {
   const message = 'any-string';
