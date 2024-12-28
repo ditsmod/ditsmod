@@ -1,7 +1,6 @@
 import { route, RoutingModule } from '@ditsmod/routing';
-import { AUTHJS_CONFIG, AUTHJS_SESSION, AuthjsGuard, AuthjsModule } from '@ditsmod/authjs';
+import { AuthjsConfig, AUTHJS_CONFIG, AUTHJS_SESSION, AuthjsGuard, AuthjsModule } from '@ditsmod/authjs';
 import { controller, rootModule, Providers, inject, OnModuleInit, SingletonRequestContext } from '@ditsmod/core';
-import type { AuthConfig } from '@auth/core';
 import credentials from '@ditsmod/authjs/providers/credentials';
 
 import { CredentialsService } from './credentials.service.js';
@@ -30,7 +29,7 @@ export class PerModController {
 })
 export class AppModule implements OnModuleInit {
   constructor(
-    @inject(AUTHJS_CONFIG) protected authConfig: AuthConfig,
+    @inject(AUTHJS_CONFIG) protected authConfig: AuthjsConfig,
     protected credentialsService: CredentialsService,
   ) {}
 
