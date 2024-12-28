@@ -203,7 +203,8 @@ export class ModuleFactory {
       const hasModuleParams = isModuleWithParams(input) || isAppendsWithParams(input);
       if (hasModuleParams || !isImport) {
         if (hasModuleParams && typeof input.absolutePath == 'string') {
-          prefixPerMod = input.absolutePath;
+          // Allow slash for absolutePath.
+          prefixPerMod = input.absolutePath.startsWith('/') ? input.absolutePath.slice(1) : input.absolutePath;
         } else {
           const path = hasModuleParams ? input.path : '';
           prefixPerMod = [this.prefixPerMod, path].filter((s) => s).join('/');

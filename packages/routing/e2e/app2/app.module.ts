@@ -15,7 +15,12 @@ class Controller0 {
 }
 
 @rootModule({
-  imports: [RoutingModule, { path: 'module1', module: Module1 }, { path: 'module3', module: Module3 }],
+  imports: [
+    RoutingModule,
+    // Allow slash for absolutePath.
+    { absolutePath: '/module1', module: Module1 },
+    { path: 'module3', module: Module3 },
+  ],
   appends: [Module2, { path: 'module2', module: Module2 }],
   controllers: [Controller0],
 })
