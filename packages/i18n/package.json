@@ -9,7 +9,7 @@
   "description": "Ditsmod module to integration with i18n (internalization)",
   "module": "dist/index.js",
   "scripts": {
-    "test": "tsc -b tsconfig.e2e.json && yarn vitest",
+    "test": "tsc -b tsconfig.e2e.json && vitest",
     "build": "tsc -b tsconfig.build.json",
     "clean": "rm -rf dist*"
   },

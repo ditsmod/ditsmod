@@ -22,7 +22,7 @@
   "scripts": {
     "build": "tsc -b tsconfig.build.json",
     "clean": "rm -rf dist*",
-    "test": "tsc -b tsconfig.unit.json && yarn vitest"
+    "test": "tsc -b tsconfig.unit.json && vitest"
   },
   "keywords": [
     "ditsmod"

@@ -18,7 +18,7 @@
     }
   },
   "scripts": {
-    "test": "tsc -b tsconfig.unit.json && yarn vitest",
+    "test": "tsc -b tsconfig.unit.json && vitest",
     "build": "tsc -b tsconfig.build.json",
     "clean": "rm -rf dist*"
   },

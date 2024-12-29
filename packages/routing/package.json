@@ -29,7 +29,7 @@
   "scripts": {
     "build": "tsc -b tsconfig.build.json",
     "clean": "rm -rf dist*",
-    "test": "yarn build-test && yarn vitest",
+    "test": "yarn build-test && vitest",
     "build-test": "tsc -b tsconfig.e2e.json",
     "bench": "yarn build && node --enable-source-maps --expose-gc dist/bench.js",
     "rebuild": "cd ../.. && yarn clean && cd - && yarn build"

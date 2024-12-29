@@ -9,7 +9,7 @@
     "watch": "yarn build --watch",
     "clean": "rm -r dist*",
     "vitest": "vitest",
-    "test": "run-p 'build-test --watch' vitest",
+    "test": "yarn build-test && vitest",
     "build-test": "tsc -b tsconfig.e2e.json",
     "build": "tsc -b tsconfig.build.json"
   },
