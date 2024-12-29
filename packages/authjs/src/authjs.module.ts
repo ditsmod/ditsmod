@@ -2,14 +2,13 @@ import { featureModule, OnModuleInit, Logger, inject, CustomError } from '@ditsm
 import { type AuthConfig } from '@auth/core';
 import { RoutingModule } from '@ditsmod/routing';
 import { BodyParserModule } from '@ditsmod/body-parser';
-import { OasOptions, Parameters } from '@ditsmod/openapi';
+import { OasOptions, OpenapiModule } from '@ditsmod/openapi';
 import { LoggerInstance } from '@auth/core/types';
 
 import { AUTHJS_CONFIG, AUTHJS_SESSION } from './constants.js';
 import { AuthjsController } from '#mod/authjs.controller.js';
 import { AuthjsGuard } from '#mod/authjs.guard.js';
 import { AuthjsPerRouGuard } from './authjs-per-rou.guard.js';
-import { Params } from './types.js';
 
 /**
  * Ditsmod module to support [Auth.js][1].
@@ -17,7 +16,7 @@ import { Params } from './types.js';
  * [1]: https://authjs.dev/
  */
 @featureModule({
-  imports: [RoutingModule, BodyParserModule],
+  imports: [RoutingModule, BodyParserModule, OpenapiModule],
   providersPerMod: [{ token: AUTHJS_CONFIG, useValue: {} }],
   providersPerRou: [{ token: AuthjsGuard, useClass: AuthjsPerRouGuard }],
   providersPerReq: [AuthjsGuard, { token: AUTHJS_SESSION, useValue: {} }],
