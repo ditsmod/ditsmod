@@ -40,9 +40,12 @@
   "keywords": [
     "ditsmod",
     "auth.js",
-    "auth-js",
     "authjs",
-    "auth"
+    "auth",
+    "oauth2",
+    "authentication",
+    "oidc",
+    "csrf"
   ],
   "author": "",
   "license": "MIT",
