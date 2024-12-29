@@ -1,4 +1,4 @@
-import { featureModule, OnModuleInit, inject, CustomError } from '@ditsmod/core';
+import { featureModule, OnModuleInit, inject, ChainError } from '@ditsmod/core';
 import { type AuthConfig } from '@auth/core';
 import { RoutingModule } from '@ditsmod/routing';
 import { BodyParserModule } from '@ditsmod/body-parser';
@@ -40,8 +40,7 @@ export class AuthjsModule implements OnModuleInit {
   protected patchAuthjsConfig() {
     this.authConfig.logger ??= {
       error: (err) => {
-        const chainError = new CustomError({ msg1: 'Auth.js message', constructorOpt: this.patchAuthjsConfig }, err);
-        this.logMediator.message('error', chainError.toString());
+        this.logMediator.message('error', ChainError.getFullStack(err)!);
       },
       debug: (message) => {
         this.logMediator.message('debug', message);
