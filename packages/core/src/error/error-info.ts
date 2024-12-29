@@ -1,8 +1,8 @@
 import { InputLogLevel } from '#logger/logger.js';
 import { Status } from '#utils/http-status-codes.js';
+import { AnyFn } from '#types/mix.js';
 
 export class ErrorInfo {
-  code?: string;
   /**
    * Message to send it to a client.
    */
@@ -31,6 +31,21 @@ export class ErrorInfo {
    * The parameters that came with the HTTP request.
    */
   params?: any;
+  /**
+   * If specified, then the stack trace for this error ends at function `constructorOpt`.
+   * Functions called by `constructorOpt` will not show up in the stack. This is useful when this
+   * class is subclassed, and this option is passed as the second argument to
+   * `Error.captureStackTrace(this, constructorOpt)`.
+   */
+  constructorOpt?: AnyFn;
+  /**
+   * Describes what kind of error this is. This is intended for programmatic use
+   * to distinguish between different kinds of errors. Note that in modern versions of Node.js,
+   * this name is ignored in the `stack` property value, but callers can still use the `name`
+   * property to get at it.
+   */
+  name?: string;
+  code?: string;
 
   constructor(info = {} as ErrorInfo) {
     let key: keyof ErrorInfo;

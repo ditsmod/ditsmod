@@ -9,6 +9,6 @@ export class CustomError extends ChainError {
     // Merge with default options
     info = new ErrorInfo(info);
 
-    super(`${info.msg1}`, { info, cause }, true);
+    super(`${info.msg1}`, { info, cause, constructorOpt: info.constructorOpt, name: info.name }, true);
   }
 }
