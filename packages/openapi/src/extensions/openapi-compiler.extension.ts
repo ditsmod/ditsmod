@@ -24,8 +24,7 @@ import { stringify } from 'yaml';
 import { MetadataPerMod3, ROUTES_EXTENSIONS } from '@ditsmod/routing';
 
 import { OasRouteMeta } from '#types/oas-route-meta.js';
-import { DEFAULT_OAS_OBJECT } from '#constants';
-import { isOasGuard } from '#utils/type-guards.js';
+import { DEFAULT_OAS_OBJECT, defaultForNonOasGuard } from '#constants';
 import { OasConfigFiles, OasExtensionOptions } from '#types/oas-extension-options.js';
 import { OasOptions } from '#types/oas-options.js';
 import { OpenapiLogMediator } from '../services/openapi-log-mediator.js';
@@ -112,21 +111,23 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     const tags: string[] = [];
     const responses: XResponsesObject = {};
     normalizedGuards.forEach((normalizedGuard) => {
-      const aOasGuardMetadata = reflector.getDecorators(normalizedGuard.guard, isOasGuard) || [];
       const guardName = normalizedGuard.guard.name;
-
-      aOasGuardMetadata.forEach((oasGuardMetadata, index) => {
-        let securityName = aOasGuardMetadata.length > 1 ? `${guardName}_${index}` : guardName;
+      const numberOfDecorators = reflector.getDecorators(normalizedGuard.guard)?.length || 0;
+      reflector.getDecorators(normalizedGuard.guard)?.forEach((decor, index) => {
+        let securityName = numberOfDecorators > 1 ? `${guardName}_${index}` : guardName;
         securityName = securityName.charAt(0).toLowerCase() + securityName.slice(1);
+
         this.oasObject.components!.securitySchemes = { ...(this.oasObject.components!.securitySchemes || {}) };
-        this.oasObject.components!.securitySchemes[securityName] = oasGuardMetadata.value.securitySchemeObject;
+        this.oasObject.components!.securitySchemes[securityName] =
+          decor.value?.securitySchemeObject || defaultForNonOasGuard.securitySchemeObject;
         let scopes = normalizedGuard.params || [];
         if (!scopes.some((scope) => typeof scope == 'string')) {
           scopes = [];
         }
+
         security.push({ [securityName]: scopes });
-        tags.push(...(oasGuardMetadata.value.tags || []));
-        Object.assign(responses, oasGuardMetadata.value.responses);
+        tags.push(...(decor.value?.tags || defaultForNonOasGuard.tags || []));
+        Object.assign(responses, decor.value?.responses || defaultForNonOasGuard.responses);
       });
     });
     this.mergeOperationObjects(operationObject, security, tags, responses);
