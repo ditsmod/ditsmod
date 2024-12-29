@@ -48,8 +48,12 @@ describe('10-openapi', () => {
   it('serves route with JSON response for OpenAPI docs', async () => {
     const { status, type, headers } = await testAgent.get('/openapi.bundle.js');
     expect(status).toBe(200);
-    expect(type).toBe('test/javascript');
-    expect(Number(headers?.['content-length'])).toBeGreaterThan(0);
+    expect(type).toBe('text/javascript');
+    if (headers?.['content-length']) {
+      expect(Number(headers?.['content-length'])).toBeGreaterThan(0);
+    } else {
+      expect(headers?.['transfer-encoding']).toBe('chunked');
+    }
   });
 
   it('serves route with YAML response for OpenAPI docs', async () => {

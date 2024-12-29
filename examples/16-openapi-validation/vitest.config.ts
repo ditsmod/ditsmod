@@ -4,11 +4,8 @@ export default defineConfig({
   test: {
     passWithNoTests: true,
     clearMocks: true,
-    include: [
-      './dist/**/*.spec.js',
-      // './dist-e2e/**/*.spec.js', // For now, comment this becuse issue with `import.meta.resolve` , see https://github.com/vitest-dev/vitest/issues/6953
-    ],
+    include: ['./dist*/**/*.spec.js'],
     exclude: ['**/node_modules/**'],
-    watch: false
+    watch: true
   },
 });
