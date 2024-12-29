@@ -11,14 +11,5 @@ export { AuthError, CredentialsSignin } from '@auth/core/errors';
 export type { Account, DefaultSession, Profile, Session, User } from '@auth/core/types';
 export interface AuthjsConfig extends Omit<AuthConfig, 'raw'> {}
 export type GetSessionResult = Promise<{ data: Session | null; cookie: any }>;
-export const actions: AuthAction[] = [
-  'providers',
-  'session',
-  'csrf',
-  'signin',
-  'signout',
-  'callback',
-  'verify-request',
-  'error',
-  'webauthn-options',
-];
+export { actions, providerTypes } from './types.js';
+export { ProviderType } from '@auth/core/providers';

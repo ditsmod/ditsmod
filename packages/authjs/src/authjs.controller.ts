@@ -1,9 +1,10 @@
 import { controller, SingletonRequestContext, inject } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+import { getParams, oasRoute } from '@ditsmod/openapi';
 import { Auth, type AuthConfig, setEnvDefaults } from '@auth/core';
 
 import { AUTHJS_CONFIG } from '#mod/constants.js';
 import { toDitsmodResponse, toWebRequest } from '#mod/http-api-adapters.js';
+import { Params } from './types.js';
 
 @controller({ scope: 'ctx' })
 export class AuthjsController {
@@ -11,9 +12,17 @@ export class AuthjsController {
     setEnvDefaults(process.env, this.config);
   }
 
-  @route('GET', ':action')
-  @route('POST', ':action/:provider')
-  async handleAction(ctx: SingletonRequestContext) {
+  @oasRoute('GET', ':action', {
+    tags: ['authjs'],
+    description: '',
+    parameters: getParams('path', true, Params, 'action'),
+  })
+  @oasRoute('POST', ':action/:providerType', {
+    tags: ['authjs'],
+    description: '',
+    parameters: getParams('path', true, Params, 'action', 'providerType'),
+  })
+  async handle(ctx: SingletonRequestContext) {
     return toDitsmodResponse(await Auth(toWebRequest(ctx), this.config), ctx.rawRes);
   }
 }
