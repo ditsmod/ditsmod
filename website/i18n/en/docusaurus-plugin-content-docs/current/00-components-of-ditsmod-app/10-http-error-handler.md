@@ -31,7 +31,7 @@ That is, in `CustomError` arguments it is possible to transmit two types of mess
 In general, the constructor of the `CustomError` class takes an object with the following interface as the first argument:
 
 ```ts
-interface ErrorOpts {
+interface ErrorInfo {
   id?: string | number;
   /**
    * Message to send it to a client.

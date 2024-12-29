@@ -1,8 +1,8 @@
 import { InputLogLevel } from '#logger/logger.js';
 import { Status } from '#utils/http-status-codes.js';
 
-export class ErrorOpts {
-  id?: string | number;
+export class ErrorInfo {
+  code?: string;
   /**
    * Message to send it to a client.
    */
@@ -32,8 +32,8 @@ export class ErrorOpts {
    */
   params?: any;
 
-  constructor(info = {} as ErrorOpts) {
-    let key: keyof ErrorOpts;
+  constructor(info = {} as ErrorInfo) {
+    let key: keyof ErrorInfo;
     for (key in info) {
       if (info[key] !== undefined) {
         this[key] = info[key];

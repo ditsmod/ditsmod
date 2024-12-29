@@ -18,7 +18,7 @@ export {
   QUERY_PARAMS,
 } from '#public-api/constans.js';
 export { CustomError } from '#error/custom-error.js';
-export { ErrorOpts } from '#error/error-opts.js';
+export { ErrorInfo } from '#error/error-info.js';
 export {
   controller,
   ControllerRawMetadata,

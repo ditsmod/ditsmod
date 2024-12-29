@@ -31,7 +31,7 @@ if (someCondition) {
 Загалом, конструктор класу `CustomError` першим аргументом приймає об'єкт, що має наступний інтерфейс:
 
 ```ts
-interface ErrorOpts {
+interface ErrorInfo {
   id?: string | number;
   /**
    * Message to send it to a client.

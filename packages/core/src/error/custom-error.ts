@@ -1,13 +1,13 @@
 import { ChainError } from '@ts-stack/chain-error';
 
-import { ErrorOpts } from './error-opts.js';
+import { ErrorInfo } from './error-info.js';
 
 export class CustomError extends ChainError {
-  declare info: ErrorOpts;
+  declare info: ErrorInfo;
 
-  constructor(info: ErrorOpts, cause?: Error) {
+  constructor(info: ErrorInfo, cause?: Error) {
     // Merge with default options
-    info = new ErrorOpts(info);
+    info = new ErrorInfo(info);
 
     super(`${info.msg1}`, { info, cause }, true);
   }
