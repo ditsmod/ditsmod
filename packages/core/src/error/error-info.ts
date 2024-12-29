@@ -46,6 +46,7 @@ export class ErrorInfo {
    */
   name?: string;
   code?: string;
+  skipCauseMessage?: boolean;
 
   constructor(info = {} as ErrorInfo) {
     let key: keyof ErrorInfo;
