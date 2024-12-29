@@ -19,7 +19,7 @@ import { featureModule } from '@ditsmod/core';
 import { OpenapiModule } from '@ditsmod/openapi';
 
 @featureModule({
-  imports: [OpenapiModule],
+  imports: [{ absolutePath: '', module: OpenapiModule }],
   // ...
 })
 export class SomeModule {}

@@ -28,8 +28,6 @@ import { OpenapiErrorMediator } from './services/openapi-error-mediator.js';
   exports: [RoutingModule],
 })
 export class OpenapiModule {
-  static module = OpenapiModule;
-  static absolutePath = '';
   /**
    * @param oasObject This object used for OpenAPI per application.
    * @param absolutePath This absolute path used for OpenAPI module with params.
