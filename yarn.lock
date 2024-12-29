@@ -131,6 +131,7 @@ __metadata:
     vitest: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.1
+    "@ditsmod/openapi": ^3.0.0-alpha.1
     "@ditsmod/routing": ^3.0.0-alpha.1
   languageName: unknown
   linkType: soft
@@ -154,7 +155,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ditsmod/core@workspace:packages/core"
   dependencies:
-    "@ts-stack/chain-error": "npm:^1.3.1"
+    "@ts-stack/chain-error": "npm:^1.4.0"
     "@ts-stack/stack-utils": "npm:^1.1.0"
     npm-run-all: "npm:*"
     reflect-metadata: "npm:^0.2.2"
@@ -1805,12 +1806,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ts-stack/chain-error@npm:^1.3.1":
-  version: 1.3.1
-  resolution: "@ts-stack/chain-error@npm:1.3.1"
+"@ts-stack/chain-error@npm:^1.4.0":
+  version: 1.4.0
+  resolution: "@ts-stack/chain-error@npm:1.4.0"
   dependencies:
     assert-plus: "npm:^1.0.0"
-  checksum: 10c0/b556e02f1a6dce24a4a4ee3537437321f577713d15c41c93831bdb95c0a7bbb67ee841c91778323c31aef2c12b9084419f8f8259fcb2dd6bead05478081bf55e
+  checksum: 10c0/e6f5538f375d0c8939c70025780eead312a9ae86bf92ad00cae35ce25bd06f3c0fa784371dbade607bef525810281e961742eed588cb0f48c0658929386d5019
   languageName: node
   linkType: hard
 
