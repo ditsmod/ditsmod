@@ -40,7 +40,7 @@ const descriptionOfAction =
 
 const descriptionOfProviderType =
   'Provider passed to Auth.js must define one of these types.' +
-  ' See [providers](https://authjs.dev/reference/core/providers#providertype) for more info.';
+  ' See [provider typess](https://authjs.dev/reference/core/providers#providertype) for more info.';
 
 export class Params {
   @property({ [REQUIRED]: true, enum: actions, description: descriptionOfAction })
