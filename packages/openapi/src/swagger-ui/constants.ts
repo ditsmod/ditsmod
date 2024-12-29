@@ -1,7 +1,6 @@
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { join } from 'node:path';
 
-export const openapiRoot = dirname(fileURLToPath(import.meta.resolve('@ditsmod/openapi/package.json')));
+export const openapiRoot = join(import.meta.dirname, '../..');
 
 /**
  * `${openapiRoot}/ui`
