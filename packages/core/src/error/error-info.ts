@@ -10,7 +10,7 @@ export class ErrorInfo {
   /**
    * A message to send it to a logger.
    */
-  msg2?: string = '';
+  msg2?: string;
   /**
    * Arguments for error handler to send it to a client.
    */
@@ -49,10 +49,11 @@ export class ErrorInfo {
   skipCauseMessage?: boolean;
 
   constructor(info = {} as ErrorInfo) {
-    let key: keyof ErrorInfo;
-    for (key in info) {
-      if (info[key] !== undefined) {
-        this[key] = info[key];
+    for (const key in this) {
+      if ((info as any)[key] === undefined) {
+        if (this[key] === undefined) delete this[key];
+      } else {
+        this[key] = (info as any)[key];
       }
     }
   }
