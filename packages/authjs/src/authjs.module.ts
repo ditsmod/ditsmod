@@ -40,10 +40,7 @@ export class AuthjsModule implements OnModuleInit {
   protected patchAuthjsConfig() {
     this.authConfig.logger ??= {
       error: (err) => {
-        const chainError = new CustomError(
-          { msg1: 'Auth.js message' },
-          { cause: err, constructorOpt: this.patchAuthjsConfig },
-        );
+        const chainError = new CustomError({ msg1: 'Auth.js message', constructorOpt: this.patchAuthjsConfig }, err);
         this.logger.log('error', chainError);
       },
       debug: (message) => {
