@@ -51,7 +51,7 @@ export class ValidationInterceptor implements HttpInterceptor {
         args1 = validate.errors;
       }
       const validationRouteMeta = this.routeMeta as ValidationRouteMeta;
-      throw new CustomError({ msg1, args1, status: validationRouteMeta.options.invalidStatus });
+      throw new CustomError({ msg1, args1, status: validationRouteMeta.options.invalidStatus, level: 'debug' });
     }
   }
 
