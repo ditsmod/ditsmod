@@ -12,8 +12,8 @@ export class BodyParserInterceptor implements HttpInterceptor {
   ) {}
 
   async intercept(next: HttpHandler, ctx: RequestContext) {
-    const body = await this.bodyParserGroup.parse(ctx.rawReq, ctx.rawReq.headers, {});
-    this.injector.setByToken(HTTP_BODY, body);
+    ctx.body = await this.bodyParserGroup.parse(ctx.rawReq, ctx.rawReq.headers, {});
+    this.injector.setByToken(HTTP_BODY, ctx.body);
 
     return next.handle();
   }
