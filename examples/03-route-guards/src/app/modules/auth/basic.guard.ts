@@ -24,9 +24,9 @@ export class BasicGuard implements CanActivate {
     return true;
   }
 
-  protected unauth(ctx: RequestContext, realm?: string) {
+  protected unauth(ctx: RequestContext, realm?: string): Response {
     realm ??= 'Access to the API endpoint';
     ctx.rawRes.setHeader('WWW-Authenticate', `Basic realm="${realm}"`);
-    return Status.UNAUTHORIZED;
+    return new Response(null, { status: Status.UNAUTHORIZED });
   }
 }

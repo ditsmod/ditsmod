@@ -11,7 +11,7 @@ export class CtxPermissionsGuard implements CanActivate {
     if (await this.authService.hasPermissions(ctx, params)) {
       return true;
     } else {
-      return Status.FORBIDDEN;
+      return new Response(null, { status: Status.FORBIDDEN });
     }
   }
 }
