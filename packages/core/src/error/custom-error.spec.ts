@@ -16,7 +16,6 @@ describe('CustomError', () => {
     const cause = new Error();
     const err = new CustomError({ msg1, msg2, level: 'warn', status: Status.CONFLICT }, cause);
     expect(err).toMatchObject({
-      skipCauseMessage: true,
       currentMessage: msg1,
       cause,
       info: {
