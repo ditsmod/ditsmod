@@ -36,8 +36,8 @@ describe('01-hello-world', () => {
     });
   });
 
-  it('controller as singleton works', async () => {
-    const { type, status, text } = await testAgent.get('/singleton-controller');
+  it('controller as context-scoped works', async () => {
+    const { type, status, text } = await testAgent.get('/context-scoped-controller');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('Hello, World!');

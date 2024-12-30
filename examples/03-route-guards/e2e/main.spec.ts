@@ -57,19 +57,19 @@ describe('03-route-guards', () => {
   });
 
   describe('context-scoped controller', () => {
-    it('should works with singleton', async () => {
+    it('should works', async () => {
       const { type, status, text } = await testAgent.get('/controler2-of-module1');
       expect(status).toBe(200);
       expect(type).toBe('text/plain');
       expect(text).toBe('ok');
     });
 
-    it('should throw 401 by singleton', async () => {
+    it('should throw 401', async () => {
       const { status } = await testAgent.get('/unauth2');
       expect(status).toBe(401);
     });
 
-    it('should throw 403 by singleton', async () => {
+    it('should throw 403', async () => {
       const { status } = await testAgent.get('/forbidden2');
       expect(status).toBe(403);
     });

@@ -48,6 +48,6 @@ export abstract class HttpBackend implements HttpHandler {
   abstract handle(): Promise<any>;
 }
 
-export abstract class SingletonHttpBackend {
+export abstract class CtxHttpBackend {
   abstract handle(ctx: RequestContext): Promise<any>;
 }

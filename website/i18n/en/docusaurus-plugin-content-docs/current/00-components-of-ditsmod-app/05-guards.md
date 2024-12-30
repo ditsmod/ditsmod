@@ -53,7 +53,7 @@ import { AuthGuard } from 'auth.guard';
 export class SomeModule {}
 ```
 
-In this case, the guard will work at the request level, for non-singleton controllers.
+In this case, the guard will work at the request level, for injector-scoped controllers.
 
 ## Use of guards
 

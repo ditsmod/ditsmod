@@ -181,17 +181,17 @@ Depending on whether the controller works [in injector-scope or context-scope mo
     }
   }
   ```
-2. If the controller works in context-scoped mode, `MulterSingletonParser` must be requested via DI, after which you can use its methods:
+2. If the controller works in context-scoped mode, `MulterCtxParser` must be requested via DI, after which you can use its methods:
 
   ```ts {8,12}
   import { createWriteStream } from 'node:fs';
   import { controller, RequestContext } from '@ditsmod/core';
   import { route } from '@ditsmod/routing';
-  import { MulterParsedForm, MulterSingletonParser } from '@ditsmod/body-parser';
+  import { MulterParsedForm, MulterCtxParser } from '@ditsmod/body-parser';
 
   @controller({ scope: 'ctx' })
   export class SomeController {
-    constructor(protected parse: MulterSingletonParser) {}
+    constructor(protected parse: MulterCtxParser) {}
 
     @route('POST', 'file-upload')
     async downloadFile(ctx: RequestContext) {
@@ -230,20 +230,20 @@ A maximum of two properties from these four can be filled in one parsing: the `t
   ```ts
   const { textFields, file } = await parse.single('fieldName');
   // OR
-  const { textFields, file } = await parse.single(ctx, 'fieldName'); // For singleton.
+  const { textFields, file } = await parse.single(ctx, 'fieldName'); // For context-scoped.
   ```
 
 - The `array` method can accept multiple files from the specified form field:
   ```ts
   const { textFields, files } = await parse.array('fieldName', 5);
   // OR
-  const { textFields, files } = await parse.array(ctx, 'fieldName', 5); // For singleton.
+  const { textFields, files } = await parse.array(ctx, 'fieldName', 5); // For context-scoped.
   ```
 - The `any` method returns the same type of data as the `array` method, but it accepts files with any form field names and does not have parameters to limit the maximum number of files (this limit is determined by the general configuration, which will be discussed later):
   ```ts
   const { textFields, files } = await parse.any();
   // OR
-  const { textFields, files } = await parse.any(ctx); // For singleton.
+  const { textFields, files } = await parse.any(ctx); // For context-scoped.
   ```
 
 - The `groups` method accepts arrays of files from specified form fields:
@@ -256,13 +256,13 @@ A maximum of two properties from these four can be filled in one parsing: the `t
   const { textFields, groups } = await parse.groups(ctx, [
     { name: 'avatar', maxCount: 1 },
     { name: 'gallery', maxCount: 8 },
-  ]); // For singleton.
+  ]); // For context-scoped.
   ```
 - The `textFields` method returns an object only with form fields that do not have `type="file"`; if there are file fields in the form, this method will throw an error:
   ```ts
   const textFields = await parse.textFields();
   // OR
-  const textFields = await parse.textFields(ctx); // For singleton.
+  const textFields = await parse.textFields(ctx); // For context-scoped.
   ```
 
 ### MulterExtendedOptions
@@ -279,7 +279,7 @@ export class MulterExtendedOptions extends MulterOptions {
 }
 ```
 
-It is recommended to pass the provider with this token at the module level so that it applies to both `MulterParser` and `MulterSingletonParser`:
+It is recommended to pass the provider with this token at the module level so that it applies to both `MulterParser` and `MulterCtxParser`:
 
 ```ts {4,12}
 import { featureModule } from '@ditsmod/core';

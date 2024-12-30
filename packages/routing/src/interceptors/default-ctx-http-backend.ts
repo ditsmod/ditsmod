@@ -1,11 +1,11 @@
 import { injectable, RequestContext } from '@ditsmod/core';
 
 import { RouteMeta } from '../route-data.js';
-import { SingletonHttpBackend } from './tokens-and-types.js';
+import { CtxHttpBackend } from './tokens-and-types.js';
 
 
 @injectable()
-export class DefaultSingletonHttpBackend implements SingletonHttpBackend {
+export class DefaultCtxHttpBackend implements CtxHttpBackend {
   constructor(protected routeMeta: RouteMeta) {}
 
   async handle(ctx: RequestContext) {

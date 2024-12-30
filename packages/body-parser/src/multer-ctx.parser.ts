@@ -5,7 +5,7 @@ import { MulterExtendedOptions } from './multer-extended-options.js';
 import { checkResult } from './multer-utils.js';
 
 @injectable()
-export class MulterSingletonParser {
+export class MulterCtxParser {
   constructor(
     protected multer: Multer,
     @optional() protected options?: MulterExtendedOptions,

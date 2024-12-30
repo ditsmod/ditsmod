@@ -16,7 +16,7 @@ export class HelloWorldController {
 
 @controller({ scope: 'ctx' })
 export class HelloWorldController2 {
-  @route('GET', 'singleton')
+  @route('GET', 'context-scoped')
   tellHello(ctx: RequestContext) {
     return 'Original message!';
   }

@@ -7,7 +7,7 @@ import { BasicGuard } from './basic.guard.js';
 
 export const requirePermissions = createHelperForGuardWithParams<Permission>(PermissionsGuard);
 /**
- * Singleton permission guard.
+ * Context-scoped permission guard.
  */
 export const requirePermissionsSngl = createHelperForGuardWithParams<Permission>(CtxPermissionsGuard);
 

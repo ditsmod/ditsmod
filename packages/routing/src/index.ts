@@ -15,11 +15,11 @@ export {
   InstantiatedGuard,
 } from '#mod/interceptors/interceptor-with-guards-per-rou.js';
 export { InterceptorWithGuards } from '#interceptors/interceptor-with-guards.js';
-export { DefaultSingletonHttpBackend } from '#interceptors/default-singleton-http-backend.js';
+export { DefaultCtxHttpBackend } from '#mod/interceptors/default-ctx-http-backend.js';
 export { DefaultHttpBackend } from '#interceptors/default-http-backend.js';
 export { ChainMaker } from '#interceptors/chain-maker.js';
-export { DefaultSingletonChainMaker } from '#interceptors/default-singleton-chain-maker.js';
-export { DefaultSingletonHttpFrontend } from '#interceptors/default-singleton-http-frontend.js';
+export { DefaultCtxChainMaker } from '#mod/interceptors/default-ctx-chain-maker.js';
+export { DefaultCtxHttpFrontend } from '#mod/interceptors/default-ctx-http-frontend.js';
 export { DefaultHttpFrontend } from '#interceptors/default-http-frontend.js';
 export {
   HttpBackend,
@@ -27,6 +27,6 @@ export {
   HttpHandler,
   HttpInterceptor,
   HttpInterceptorHandler,
-  SingletonHttpBackend,
+  CtxHttpBackend,
 } from '#interceptors/tokens-and-types.js';
 export { ROUTES_EXTENSIONS, PRE_ROUTER_EXTENSIONS, HTTP_INTERCEPTORS } from './constants.js';

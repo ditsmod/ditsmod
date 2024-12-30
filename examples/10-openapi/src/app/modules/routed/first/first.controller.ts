@@ -53,8 +53,8 @@ export class FirstController {
 
 @controller({ scope: 'ctx' })
 export class CtxController {
-  @route('GET', 'singleton')
-  singleton(res: Res) {
+  @route('GET', 'context-scoped')
+  ctxScoped(res: Res) {
     res.send('ok');
   }
 }

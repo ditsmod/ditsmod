@@ -52,16 +52,16 @@ describe('06-body-parser', () => {
     expect(body).toEqual({});
   });
 
-  it('controller singleton should works with get', async () => {
-    const { type, status, text } = await testAgent.get('/singleton');
+  it('controller context-scoped should works with get', async () => {
+    const { type, status, text } = await testAgent.get('/context-scoped');
     expect(status).toBe(200);
     expect(type).toBe('text/plain');
     expect(text).toBe('Hello, you need send POST request');
   });
 
-  it('controller singleton should parsed post', async () => {
+  it('controller context-scoped should parsed post', async () => {
     const { status, body, type } = await testAgent
-      .post('/singleton')
+      .post('/context-scoped')
       .set('Content-Type', 'application/json')
       .send({ one: 1 });
     expect(status).toBe(200);
@@ -69,17 +69,17 @@ describe('06-body-parser', () => {
     expect(body).toEqual({ one: 1 });
   });
 
-  it('controller singleton should parsed post', async () => {
+  it('controller context-scoped should parsed post', async () => {
     const { status } = await testAgent
-      .post('/singleton')
+      .post('/context-scoped')
       .set('Content-Type', 'application/json')
       .send({ one: 1, two: 2 });
     expect(status).toBe(Status.PAYLOAD_TO_LARGE);
   });
 
-  it('controller singleton should not parse fake-content-type', async () => {
+  it('controller context-scoped should not parse fake-content-type', async () => {
     const { status, body, type } = await testAgent
-      .post('/singleton')
+      .post('/context-scoped')
       .set('Content-Type', 'fake-content-type')
       .send('{ one: 1 }');
     expect(status).toBe(200);

@@ -3,7 +3,7 @@ import { Provider } from '#types/mix.js';
 import { Providers } from '#utils/providers.js';
 
 /**
- * Metadata accepted by the default (non-singleton) controller.
+ * Metadata accepted by the default injector-scoped controller.
  */
 export interface ControllerRawMetadata1 {
   /**
@@ -25,7 +25,7 @@ export interface ControllerRawMetadata1 {
 }
 
 /**
- * Metadata accepted by the singleton controller.
+ * Metadata accepted by the context-scoped controller.
  */
 export interface ControllerRawMetadata2 {
   /**

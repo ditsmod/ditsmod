@@ -125,7 +125,7 @@ class Dependecy1 {
 
 - renamed `res.setHeaders()` to `res.setHeader()`;
 - removed `res.sendText()`;
-- remove `singleton` for gurads;
+- remove `context-scoped` for gurads;
 - removed `headers` parameter from `res.send()` and `res.sendJson()`.
 
 **Other changes**
@@ -241,7 +241,7 @@ interface TotalStage1Meta<T = any> {
 
 | Commit | Type | Description |
 | -- | -- | -- |
-| [7643ee3f2a](https://github.com/ditsmod/ditsmod/commit/7643ee3f2a) | fix | fixed `DefaultSingletonHttpErrorHandler`. |
+| [7643ee3f2a](https://github.com/ditsmod/ditsmod/commit/7643ee3f2a) | fix | fixed `DefaultCtxHttpErrorHandler`. |
 
 <a name="core-2.53.0"></a>
 ## [core-2.53.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.53.0) (2024-07-22)
@@ -261,9 +261,9 @@ interface TotalStage1Meta<T = any> {
 
 **Breaking Changes**
 
-- renamed `SingletonHttpFrontend` to `DefaultSingletonHttpFrontend` [34c1f18eb4](https://github.com/ditsmod/ditsmod/commit/34c1f18eb4fa9b5a959ec34f7c8497a52cfc5afc).
-- renamed `SingletonChainMaker` to `DefaultSingletonChainMaker` [6f6bdd4c64](https://github.com/ditsmod/ditsmod/commit/6f6bdd4c6493ee88c0d8d7f0c9bf81cd4dcdc75d).
-- renamed `SingletonHttpErrorHandler` to `DefaultSingletonHttpErrorHandler` [d3be41e942](https://github.com/ditsmod/ditsmod/commit/d3be41e942905ced21304dad2910ee2682405aa8).
+- renamed `SingletonHttpFrontend` to `DefaultCtxHttpFrontend` [34c1f18eb4](https://github.com/ditsmod/ditsmod/commit/34c1f18eb4fa9b5a959ec34f7c8497a52cfc5afc).
+- renamed `SingletonChainMaker` to `DefaultCtxChainMaker` [6f6bdd4c64](https://github.com/ditsmod/ditsmod/commit/6f6bdd4c6493ee88c0d8d7f0c9bf81cd4dcdc75d).
+- renamed `SingletonHttpErrorHandler` to `DefaultCtxHttpErrorHandler` [d3be41e942](https://github.com/ditsmod/ditsmod/commit/d3be41e942905ced21304dad2910ee2682405aa8).
 
 
 | Commit | Type | Description |
@@ -285,7 +285,7 @@ interface TotalStage1Meta<T = any> {
 
 | Commit | Type | Description |
 | -- | -- | -- |
-| [820b3e6d39](https://github.com/ditsmod/ditsmod/commit/820b3e6d39238b17bdf5d48857956ad7a221c5c7) | fix | Fixed passing request context to singleton interceptors. |
+| [820b3e6d39](https://github.com/ditsmod/ditsmod/commit/820b3e6d39238b17bdf5d48857956ad7a221c5c7) | fix | Fixed passing request context to context-scoped interceptors. |
 
 <a name="core-2.51.1"></a>
 ## [core-2.51.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.51.1) (2023-10-08)
@@ -320,7 +320,7 @@ interface TotalStage1Meta<T = any> {
     intercept(next: HttpHandler, ctx: RequestContext): Promise<any>;
   }
   ```
-- Introduced `@controller({ singletonPerscope: 'ctx' })` options. You can now specify that your controller is a singleton. In this case, the controller receives a `RequestContext`, but an injector is not created for it on every request. Routes in such a controller are very fast.
+- Introduced `@controller({ singletonPerscope: 'ctx' })` options. You can now specify that your controller is a context-scoped. In this case, the controller receives a `RequestContext`, but an injector is not created for it on every request. Routes in such a controller are very fast.
 
 <a name="core-2.49.0"></a>
 ## [core-2.49.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.49.0) (2023-09-15)

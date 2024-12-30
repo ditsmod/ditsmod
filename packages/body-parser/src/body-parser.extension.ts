@@ -3,7 +3,7 @@ import { HTTP_INTERCEPTORS, ROUTES_EXTENSIONS } from '@ditsmod/routing';
 
 import { BodyParserConfig } from './body-parser-config.js';
 import { BodyParserInterceptor } from './body-parser.interceptor.js';
-import { SingletonBodyParserInterceptor } from './singleton-body-parser.interceptor.js';
+import { CtxBodyParserInterceptor } from './ctx-body-parser.interceptor.js';
 
 export const BODY_PARSER_EXTENSIONS = new InjectionToken<Extension<void>[]>('BODY_PARSER_EXTENSIONS');
 
@@ -34,7 +34,7 @@ export class BodyParserExtension implements Extension<void> {
             let bodyParserConfig = injectorPerRou.get(BodyParserConfig, undefined, {}) as BodyParserConfig;
             bodyParserConfig = { ...new BodyParserConfig(), ...bodyParserConfig }; // Merge with default.
             if (bodyParserConfig.acceptMethods!.includes(method)) {
-              providersPerRou.push({ token: HTTP_INTERCEPTORS, useClass: SingletonBodyParserInterceptor, multi: true });
+              providersPerRou.push({ token: HTTP_INTERCEPTORS, useClass: CtxBodyParserInterceptor, multi: true });
             }
           } else {
             const injectorPerReq = injectorPerRou.resolveAndCreateChild(mergedProvidersPerReq);

@@ -16,7 +16,7 @@ export class DefaultController {
 
 @controller({ scope: 'ctx' })
 export class CtxController {
-  @route('GET', 'singleton-controller')
+  @route('GET', 'context-scoped-controller')
   tellHello() {
     return 'Hello, World!';
   }

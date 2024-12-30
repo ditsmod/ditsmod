@@ -1,10 +1,10 @@
 import { parse } from 'querystring';
 import { AnyObj, injectable, Injector, PATH_PARAMS, QUERY_PARAMS, RequestContext } from '@ditsmod/core';
 
-import { DefaultSingletonHttpFrontend } from './default-singleton-http-frontend.js';
+import { DefaultCtxHttpFrontend } from './default-ctx-http-frontend.js';
 
 @injectable()
-export class DefaultHttpFrontend extends DefaultSingletonHttpFrontend {
+export class DefaultHttpFrontend extends DefaultCtxHttpFrontend {
   constructor(private injector: Injector) {
     super();
   }

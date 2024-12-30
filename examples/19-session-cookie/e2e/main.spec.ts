@@ -18,7 +18,7 @@ describe('19-session-cookie', () => {
     server?.close();
   });
 
-  describe('non-singleton', () => {
+  describe('non-context-scoped', () => {
     it('should set cookie', async () => {
       const { status, headers, text } = await testAgent.get('/set');
       expect(status).toBe(200);
@@ -33,7 +33,7 @@ describe('19-session-cookie', () => {
     });
   });
 
-  describe('singleton', () => {
+  describe('context-scoped', () => {
     it('should set cookie', async () => {
       const { status, headers, text } = await testAgent.get('/set2');
       expect(status).toBe(200);

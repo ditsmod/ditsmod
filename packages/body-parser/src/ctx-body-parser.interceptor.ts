@@ -3,7 +3,7 @@ import { RequestContext, injectable } from '@ditsmod/core';
 import { HttpHandler, HttpInterceptor } from '@ditsmod/routing';
 
 @injectable()
-export class SingletonBodyParserInterceptor implements HttpInterceptor {
+export class CtxBodyParserInterceptor implements HttpInterceptor {
   constructor(private bodyParserGroup: BodyParserGroup) {}
 
   async intercept(next: HttpHandler, ctx: RequestContext) {

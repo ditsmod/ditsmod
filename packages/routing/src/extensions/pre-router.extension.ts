@@ -44,9 +44,9 @@ import { InterceptorWithGuards } from '#interceptors/interceptor-with-guards.js'
 import { RouteMeta } from '../route-data.js';
 import { ChainMaker } from '#interceptors/chain-maker.js';
 import { DefaultHttpBackend } from '#interceptors/default-http-backend.js';
-import { DefaultSingletonHttpBackend } from '#interceptors/default-singleton-http-backend.js';
-import { DefaultSingletonChainMaker } from '#interceptors/default-singleton-chain-maker.js';
-import { DefaultSingletonHttpFrontend } from '#interceptors/default-singleton-http-frontend.js';
+import { DefaultCtxHttpBackend } from '#mod/interceptors/default-ctx-http-backend.js';
+import { DefaultCtxChainMaker } from '#mod/interceptors/default-ctx-chain-maker.js';
+import { DefaultCtxHttpFrontend } from '#mod/interceptors/default-ctx-http-frontend.js';
 import { DefaultHttpFrontend } from '#interceptors/default-http-frontend.js';
 import { HttpBackend, HttpFrontend } from '#interceptors/tokens-and-types.js';
 import { routeChannel } from '../diagnostics-channel.js';
@@ -97,9 +97,9 @@ export class PreRouterExtension implements Extension<void> {
     );
 
     meta.providersPerRou.unshift(
-      { token: HttpBackend, useClass: DefaultSingletonHttpBackend },
-      { token: ChainMaker, useClass: DefaultSingletonChainMaker },
-      { token: HttpFrontend, useClass: DefaultSingletonHttpFrontend },
+      { token: HttpBackend, useClass: DefaultCtxHttpBackend },
+      { token: ChainMaker, useClass: DefaultCtxChainMaker },
+      { token: HttpFrontend, useClass: DefaultCtxHttpFrontend },
     );
   }
 
@@ -167,7 +167,7 @@ export class PreRouterExtension implements Extension<void> {
     this.checkDeps(injectorPerRou, routeMeta, controllerName, httpMethod, path);
     const resolvedChainMaker = resolvedPerRou.find((rp) => rp.dualKey.token === ChainMaker)!;
     const resolvedErrHandler = resolvedPerRou.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
-    const chainMaker = injectorPerRou.instantiateResolved<DefaultSingletonChainMaker>(resolvedChainMaker);
+    const chainMaker = injectorPerRou.instantiateResolved<DefaultCtxChainMaker>(resolvedChainMaker);
     const ctrl = injectorPerMod.get(routeMeta.Controller);
     const routeHandler = ctrl[routeMeta.methodName].bind(ctrl) as typeof routeMeta.routeHandler;
     routeMeta.routeHandler = routeHandler;
@@ -206,7 +206,7 @@ export class PreRouterExtension implements Extension<void> {
     routeHandler: (ctx: RequestContext) => Promise<any>,
     errorHandler: HttpErrorHandler,
   ) {
-    const interceptor = new DefaultSingletonHttpFrontend();
+    const interceptor = new DefaultCtxHttpFrontend();
     return (async (rawReq, rawRes, aPathParams, queryString) => {
       const ctx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString) as RequestContext;
       try {

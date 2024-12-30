@@ -11,7 +11,7 @@ import {
 import { HttpFrontend, HttpHandler } from './tokens-and-types.js';
 
 @injectable()
-export class DefaultSingletonHttpFrontend implements HttpFrontend {
+export class DefaultCtxHttpFrontend implements HttpFrontend {
   async intercept(next: HttpHandler, ctx: RequestContext) {
     this.before(ctx).after(ctx, await next.handle());
   }

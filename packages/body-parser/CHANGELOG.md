@@ -35,7 +35,7 @@
 
 ### Bug fixes
 
-- Added support for controller singleton.
+- Added support for controller context-scoped.
 
 <a name="body-parser-2.13.0"></a>
 ## [body-parser-2.13.0](https://github.com/ditsmod/ditsmod/releases/tag/body-parser-2.13.0) (2023-09-30)

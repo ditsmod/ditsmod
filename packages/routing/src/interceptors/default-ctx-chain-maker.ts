@@ -5,13 +5,13 @@ import {
   HttpHandler,
   HttpInterceptor,
   HttpInterceptorHandler,
-  SingletonHttpBackend,
+  CtxHttpBackend,
 } from './tokens-and-types.js';
 import { HTTP_INTERCEPTORS } from '../constants.js';
 
 class PreHttpBackend implements HttpBackend {
   constructor(
-    protected backend: SingletonHttpBackend,
+    protected backend: CtxHttpBackend,
     protected ctx: RequestContext,
   ) {}
 
@@ -24,7 +24,7 @@ class PreHttpBackend implements HttpBackend {
  * An injectable service that ties multiple interceptors in chain.
  */
 @injectable()
-export class DefaultSingletonChainMaker {
+export class DefaultCtxChainMaker {
   constructor(
     private backend: HttpBackend,
     @inject(HTTP_INTERCEPTORS) @optional() private interceptors: HttpInterceptor[] = [],

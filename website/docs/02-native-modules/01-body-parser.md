@@ -181,17 +181,17 @@ export class SomeController {
     }
   }
   ```
-2. Якщо контролер працює в режимі context-scoped, через DI необхідно запитати `MulterSingletonParser`, після чого можете користуватись його методами:
+2. Якщо контролер працює в режимі context-scoped, через DI необхідно запитати `MulterCtxParser`, після чого можете користуватись його методами:
 
   ```ts {8,12}
   import { createWriteStream } from 'node:fs';
   import { controller, RequestContext } from '@ditsmod/core';
   import { route } from '@ditsmod/routing';
-  import { MulterParsedForm, MulterSingletonParser } from '@ditsmod/body-parser';
+  import { MulterParsedForm, MulterCtxParser } from '@ditsmod/body-parser';
 
   @controller({ scope: 'ctx' })
   export class SomeController {
-    constructor(protected parse: MulterSingletonParser) {}
+    constructor(protected parse: MulterCtxParser) {}
 
     @route('POST', 'file-upload')
     async downloadFile(ctx: RequestContext) {
@@ -230,20 +230,20 @@ export class SomeController {
   ```ts
   const { textFields, file } = await parse.single('fieldName');
   // OR
-  const { textFields, file } = await parse.single(ctx, 'fieldName'); // For singleton.
+  const { textFields, file } = await parse.single(ctx, 'fieldName'); // For context-scoped.
   ```
 
 - метод `array` може приймати декілька файлів з указаного поля форми:
   ```ts
   const { textFields, files } = await parse.array('fieldName', 5);
   // OR
-  const { textFields, files } = await parse.array(ctx, 'fieldName', 5); // For singleton.
+  const { textFields, files } = await parse.array(ctx, 'fieldName', 5); // For context-scoped.
   ```
 - метод `any` повертає такий самий тип даних, що і метод `array`, але він приймає файли з будь-якими назвами полів форми, а також він не має параметрів для обмеження максимальної кількості файлів (вона обмежується лише загальною конфігурацією, про яку буде йти мова згодом):
   ```ts
   const { textFields, files } = await parse.any();
   // OR
-  const { textFields, files } = await parse.any(ctx); // For singleton.
+  const { textFields, files } = await parse.any(ctx); // For context-scoped.
   ```
 
 - метод `groups` приймає масиви файлів з указаними полями форми:
@@ -256,13 +256,13 @@ export class SomeController {
   const { textFields, groups } = await parse.groups(ctx, [
     { name: 'avatar', maxCount: 1 },
     { name: 'gallery', maxCount: 8 },
-  ]); // For singleton.
+  ]); // For context-scoped.
   ```
 - метод `textFields` повертає об'єкт лише з полів форми, що не мають `type="file"`; якщо у формі будуть поля з файлами, цей метод кине помилку:
   ```ts
   const textFields = await parse.textFields();
   // OR
-  const textFields = await parse.textFields(ctx); // For singleton.
+  const textFields = await parse.textFields(ctx); // For context-scoped.
   ```
 
 ### MulterExtendedOptions
@@ -279,7 +279,7 @@ export class MulterExtendedOptions extends MulterOptions {
 }
 ```
 
-Рекомендуємо передавати провайдер з цим токеном на рівні модуля, щоб він діяв як для `MulterParser` так і для `MulterSingletonParser`:
+Рекомендуємо передавати провайдер з цим токеном на рівні модуля, щоб він діяв як для `MulterParser` так і для `MulterCtxParser`:
 
 ```ts {4,12}
 import { featureModule } from '@ditsmod/core';
