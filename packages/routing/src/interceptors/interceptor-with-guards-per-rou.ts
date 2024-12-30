@@ -21,24 +21,14 @@ export class InterceptorWithGuardsPerRou implements IInterceptorWithGuardsPerRou
         const guard = item.injectorPerRou.instantiateResolved(item.guard) as CanActivate;
         const result = await guard.canActivate(ctx, item.params);
         if (result !== true) {
-          if (result instanceof Response) {
-            await toDitsmodResponse(result, ctx.rawRes);
-            return result;
-          }
-          this.prohibitActivation(ctx);
-          return;
+          return this.sendResponse(ctx, result);
         }
       }
     }
     for (const item of this.instantiatedGuards) {
       const result = await item.guard.canActivate(ctx, item.params);
       if (result !== true) {
-        if (result instanceof Response) {
-          await toDitsmodResponse(result, ctx.rawRes);
-          return result;
-        }
-        this.prohibitActivation(ctx);
-        return;
+        return this.sendResponse(ctx, result);
       }
     }
 
@@ -50,6 +40,15 @@ export class InterceptorWithGuardsPerRou implements IInterceptorWithGuardsPerRou
       const guard = this.injector.instantiateResolved(item.guard) as CanActivate;
       this.instantiatedGuards.push({ guard, params: item.params });
     });
+  }
+
+  protected async sendResponse(ctx: RequestContext, result: false | Response) {
+    if (result === false) {
+      this.prohibitActivation(ctx);
+      return;
+    }
+    await toDitsmodResponse(result, ctx.rawRes);
+    return result;
   }
 
   protected prohibitActivation(ctx: RequestContext, status?: Status) {

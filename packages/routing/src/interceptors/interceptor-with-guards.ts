@@ -33,12 +33,7 @@ export class InterceptorWithGuards implements HttpInterceptor {
         const guard = injectorPerReq.instantiateResolved(item.guard) as CanActivate;
         const result = await guard.canActivate(ctx, item.params);
         if (result !== true) {
-          if (result instanceof Response) {
-            await toDitsmodResponse(result, ctx.rawRes);
-            return result;
-          }
-          this.prohibitActivation(ctx);
-          return;
+          return this.sendResponse(ctx, result);
         }
       }
     if (this.routeMeta.resolvedGuards)
@@ -46,16 +41,20 @@ export class InterceptorWithGuards implements HttpInterceptor {
         const guard = this.injector.instantiateResolved(item.guard) as CanActivate;
         const result = await guard.canActivate(ctx, item.params);
         if (result !== true) {
-          if (result instanceof Response) {
-            await toDitsmodResponse(result, ctx.rawRes);
-            return result;
-          }
-          this.prohibitActivation(ctx);
-          return;
+          return this.sendResponse(ctx, result);
         }
       }
 
     return next.handle();
+  }
+
+  protected async sendResponse(ctx: RequestContext, result: false | Response) {
+    if (result === false) {
+      this.prohibitActivation(ctx);
+      return;
+    }
+    await toDitsmodResponse(result, ctx.rawRes);
+    return result;
   }
 
   protected getInjectorPerReq(rg: ResolvedGuardPerMod) {
