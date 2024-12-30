@@ -82,7 +82,7 @@ export interface AnyObj {
 }
 
 export interface CanActivate {
-  canActivate(ctx: RequestContext, params?: any[]): boolean | number | Promise<boolean | number>;
+  canActivate(ctx: RequestContext, params?: any[]): boolean | Response | Promise<boolean | Response>;
 }
 
 export type AppMetadataMap = Map<ModuleType | ModuleWithParams, MetadataPerMod1>;

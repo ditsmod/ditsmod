@@ -2,6 +2,7 @@ import { injectable, Injector, RequestContext, CanActivate, Status, SystemLogMed
 
 import { RouteMeta } from '../route-data.js';
 import { HttpHandler, HttpInterceptor } from './tokens-and-types.js';
+import { toDitsmodResponse } from '#mod/utils/to-ditsmod-response.js';
 
 @injectable()
 export class InterceptorWithGuardsPerRou implements IInterceptorWithGuardsPerRou {
@@ -18,19 +19,25 @@ export class InterceptorWithGuardsPerRou implements IInterceptorWithGuardsPerRou
     if (this.routeMeta.resolvedGuardsPerMod) {
       for (const item of this.routeMeta.resolvedGuardsPerMod) {
         const guard = item.injectorPerRou.instantiateResolved(item.guard) as CanActivate;
-        const canActivate = await guard.canActivate(ctx, item.params);
-        if (canActivate !== true) {
-          const status = typeof canActivate == 'number' ? canActivate : undefined;
-          this.prohibitActivation(ctx, status);
+        const result = await guard.canActivate(ctx, item.params);
+        if (result !== true) {
+          if (result instanceof Response) {
+            await toDitsmodResponse(result, ctx.rawRes);
+            return result;
+          }
+          this.prohibitActivation(ctx);
           return;
         }
       }
     }
     for (const item of this.instantiatedGuards) {
-      const canActivate = await item.guard.canActivate(ctx, item.params);
-      if (canActivate !== true) {
-        const status = typeof canActivate == 'number' ? canActivate : undefined;
-        this.prohibitActivation(ctx, status);
+      const result = await item.guard.canActivate(ctx, item.params);
+      if (result !== true) {
+        if (result instanceof Response) {
+          await toDitsmodResponse(result, ctx.rawRes);
+          return result;
+        }
+        this.prohibitActivation(ctx);
         return;
       }
     }
