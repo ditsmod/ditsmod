@@ -5,7 +5,7 @@ import { MulterSingletonParser } from '@ditsmod/body-parser';
 import { saveFiles, sendHtmlForm } from './utils.js';
 
 @controller({ scope: 'ctx' })
-export class SingletonController {
+export class CtxController {
   constructor(protected parse: MulterSingletonParser) {}
 
   @route('GET', 'singleton')

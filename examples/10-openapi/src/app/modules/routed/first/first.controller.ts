@@ -52,7 +52,7 @@ export class FirstController {
 }
 
 @controller({ scope: 'ctx' })
-export class SingletonController {
+export class CtxController {
   @route('GET', 'singleton')
   singleton(res: Res) {
     res.send('ok');

@@ -25,7 +25,7 @@ export class DefaultController {
 }
 
 @controller({ scope: 'ctx' })
-export class SingletonController {
+export class CtxController {
   @route('GET', 'get1/:pathParam1/:pathParam2')
   tellHello(ctx: RequestContext) {
     return { pathParams: ctx.pathParams, queryParams: ctx.queryParams };
@@ -39,7 +39,7 @@ export class SingletonController {
 
 @rootModule({
   imports: [RoutingModule],
-  controllers: [DefaultController, SingletonController],
+  controllers: [DefaultController, CtxController],
   providersPerApp: new Providers().useLogConfig({ level: 'info' }),
 })
 export class AppModule {}

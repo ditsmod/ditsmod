@@ -15,7 +15,7 @@ export class DefaultController {
 }
 
 @controller({ scope: 'ctx' })
-export class SingletonController {
+export class CtxController {
   @route('GET', 'singleton-controller')
   tellHello() {
     return 'Hello, World!';
@@ -24,7 +24,7 @@ export class SingletonController {
 
 @rootModule({
   imports: [RoutingModule],
-  controllers: [DefaultController, SingletonController],
+  controllers: [DefaultController, CtxController],
   providersPerApp: new Providers().useLogConfig({ level: 'info' }),
 })
 export class AppModule {}
