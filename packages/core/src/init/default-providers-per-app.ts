@@ -14,8 +14,8 @@ export const defaultProvidersPerApp: Readonly<Provider[]> = [
     .passThrough(PreRouter)
     .passThrough(SystemLogMediator)
     .passThrough(SystemErrorMediator)
+    .passThrough(RequestContext)
     .useValue(Counter, new Counter())
-    .useValue(RequestContext, RequestContext)
     .useValue<ModuleExtract>(ModuleExtract, { moduleName: 'app' })
     .useFactory(Logger, [PatchLogger, PatchLogger.prototype.patchLogger]),
 ];

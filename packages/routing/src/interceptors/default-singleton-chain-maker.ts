@@ -1,4 +1,4 @@
-import { inject, injectable, optional, RequestContext, SingletonRequestContext } from '@ditsmod/core';
+import { inject, injectable, optional, RequestContext } from '@ditsmod/core';
 
 import {
   HttpBackend,
@@ -12,7 +12,7 @@ import { HTTP_INTERCEPTORS } from '../constants.js';
 class PreHttpBackend implements HttpBackend {
   constructor(
     protected backend: SingletonHttpBackend,
-    protected ctx: SingletonRequestContext,
+    protected ctx: RequestContext,
   ) {}
 
   handle() {

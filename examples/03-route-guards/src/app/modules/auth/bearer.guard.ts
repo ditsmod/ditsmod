@@ -1,4 +1,4 @@
-import { CanActivate, guard, Injector, RequestContext, SingletonRequestContext } from '@ditsmod/core';
+import { CanActivate, guard, Injector, RequestContext } from '@ditsmod/core';
 import { SESSION } from './types.js';
 import { AuthService } from './auth.service.js';
 
@@ -32,7 +32,7 @@ export class BearerGuard implements CanActivate {
 export class BearerCtxGuard implements CanActivate {
   constructor(protected injector: Injector, protected authService: AuthService) {}
 
-  async canActivate(ctx: SingletonRequestContext, params?: any[]) {
+  async canActivate(ctx: RequestContext, params?: any[]) {
     const authValue = ctx.rawReq.headers.authorization?.split(' ');
     if (authValue?.[0] != 'Bearer') {
       return false;

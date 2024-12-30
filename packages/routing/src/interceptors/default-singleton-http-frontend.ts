@@ -5,7 +5,6 @@ import {
   HttpMethod,
   injectable,
   RequestContext,
-  SingletonRequestContext,
   Status,
 } from '@ditsmod/core';
 
@@ -13,14 +12,14 @@ import { HttpFrontend, HttpHandler } from './tokens-and-types.js';
 
 @injectable()
 export class DefaultSingletonHttpFrontend implements HttpFrontend {
-  async intercept(next: HttpHandler, ctx: SingletonRequestContext) {
+  async intercept(next: HttpHandler, ctx: RequestContext) {
     this.before(ctx).after(ctx, await next.handle());
   }
 
   /**
    * This method is called before `intercept()`.
    */
-  before(ctx: SingletonRequestContext) {
+  before(ctx: RequestContext) {
     if (ctx.queryString) {
       ctx.queryParams = parse(ctx.queryString);
     }

@@ -4,7 +4,7 @@ import {
   ResolvedGuard,
   ResolvedGuardPerMod,
   ResolvedProvider,
-  SingletonRequestContext,
+  RequestContext,
 } from '@ditsmod/core';
 
 /**
@@ -29,5 +29,5 @@ export class RouteMeta {
   decoratorAndValue: DecoratorAndValue;
   Controller: Class;
   methodName: string | symbol;
-  routeHandler?: (ctx: SingletonRequestContext) => Promise<any>;
+  routeHandler?: (ctx: RequestContext) => Promise<any>;
 }

@@ -54,7 +54,7 @@ A context-scoped interceptor operates very similarly to an injector-scoped inter
 1. Ditsmod creates an instance of [PreRouter][7] at the application level.
 2. `PreRouter` uses the router to search for the request handler according to the URI.
 3. If the request handler is not found, `PreRouter` issues a 501 error.
-4. If a request handler is found, Ditsmod uses a provider instance with the [HttpFrontend][2] token at the route level, places it first in the interceptor queue, and automatically invokes it. By default, this interceptor is responsible for setting `pathParams` and `queryParams` values for `SingletonRequestContext`.
+4. If a request handler is found, Ditsmod uses a provider instance with the [HttpFrontend][2] token at the route level, places it first in the interceptor queue, and automatically invokes it. By default, this interceptor is responsible for setting `pathParams` and `queryParams` values for `RequestContext`.
 5. If there are guards in the current route, then by default `InterceptorWithGuardsPerRou` is run immediately after `HttpFrontend`.
 6. Other interceptors may be launched next, depending on whether the previous interceptor in the queue will launch them.
 7. If all interceptors have worked, Ditsmod starts [HttpBackend][3], the instance of which is used at the route level. By default, `HttpBackend` runs directly the controller method responsible for processing the current request.

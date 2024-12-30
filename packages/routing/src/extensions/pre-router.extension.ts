@@ -17,7 +17,6 @@ import {
   RouteHandler,
   Router,
   Provider,
-  RequestContext,
   Stage1GroupMeta,
   Stage1GroupMetaPerApp,
   CTX_DATA,
@@ -27,7 +26,7 @@ import {
   NormalizedGuard,
   GuardPerMod1,
   ResolvedGuardPerMod,
-  SingletonRequestContext,
+  RequestContext,
   RequireProps,
   getToken,
   getProviderTarget,
@@ -204,12 +203,12 @@ export class PreRouterExtension implements Extension<void> {
 
   protected handleWithoutInterceptors(
     RequestContextClass: typeof RequestContext,
-    routeHandler: (ctx: SingletonRequestContext) => Promise<any>,
+    routeHandler: (ctx: RequestContext) => Promise<any>,
     errorHandler: HttpErrorHandler,
   ) {
     const interceptor = new DefaultSingletonHttpFrontend();
     return (async (rawReq, rawRes, aPathParams, queryString) => {
-      const ctx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString) as SingletonRequestContext;
+      const ctx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString) as RequestContext;
       try {
         interceptor.before(ctx).after(ctx, await routeHandler(ctx));
       } catch (err: any) {

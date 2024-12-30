@@ -14,6 +14,11 @@ import { AnyObj } from '#types/mix.js';
  * An instance of this class is created without DI.
  */
 export class RequestContext extends Res {
+  pathParams?: AnyObj;
+  queryParams?: AnyObj;
+  body?: any;
+  auth?: any;
+
   constructor(
     public rawReq: RawRequest,
     public override rawRes: RawResponse,
@@ -26,11 +31,4 @@ export class RequestContext extends Res {
   get protocol() {
     return this.rawReq.socket instanceof TLSSocket && this.rawReq.socket.encrypted ? 'https' : 'http';
   }
-}
-
-export class SingletonRequestContext extends RequestContext {
-  pathParams?: AnyObj;
-  queryParams?: AnyObj;
-  body?: any;
-  auth?: any;
 }

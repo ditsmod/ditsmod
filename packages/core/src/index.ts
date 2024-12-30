@@ -47,7 +47,7 @@ export { AppOptions } from '#types/app-options.js';
 export { ConsoleLogger } from '#logger/console-logger.js';
 export { HttpErrorHandler } from '#error/http-error-handler.js';
 export { DefaultHttpErrorHandler } from '#error/default-http-error-handler.js';
-export { RequestContext, SingletonRequestContext } from '#services/request-context.js';
+export { RequestContext } from '#services/request-context.js';
 export { ExtensionsContext } from '#extension/extensions-context.js';
 export { ExtensionsManager } from '#extension/extensions-manager.js';
 export { LogMediator } from '#logger/log-mediator.js';

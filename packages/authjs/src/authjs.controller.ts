@@ -1,4 +1,4 @@
-import { controller, SingletonRequestContext, inject } from '@ditsmod/core';
+import { controller, RequestContext, inject } from '@ditsmod/core';
 import { getParams, oasRoute } from '@ditsmod/openapi';
 import { Auth, type AuthConfig, setEnvDefaults } from '@auth/core';
 
@@ -22,7 +22,7 @@ export class AuthjsController {
     description: '',
     parameters: getParams('path', true, Params, 'action', 'providerType'),
   })
-  async handle(ctx: SingletonRequestContext) {
+  async handle(ctx: RequestContext) {
     return toDitsmodResponse(await Auth(toWebRequest(ctx), this.config), ctx.rawRes);
   }
 }

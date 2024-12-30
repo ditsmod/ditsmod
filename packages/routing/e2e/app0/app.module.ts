@@ -7,7 +7,7 @@ import {
   PATH_PARAMS,
   Res,
   Req,
-  SingletonRequestContext,
+  RequestContext,
 } from '@ditsmod/core';
 import { route, RoutingModule } from '@ditsmod/routing';
 
@@ -27,12 +27,12 @@ export class DefaultController {
 @controller({ scope: 'ctx' })
 export class SingletonController {
   @route('GET', 'get1/:pathParam1/:pathParam2')
-  tellHello(ctx: SingletonRequestContext) {
+  tellHello(ctx: RequestContext) {
     return { pathParams: ctx.pathParams, queryParams: ctx.queryParams };
   }
 
   @route(['GET', 'POST'], 'get-array1')
-  [Symbol()](ctx: SingletonRequestContext) {
+  [Symbol()](ctx: RequestContext) {
     return ctx.sendJson(ctx.rawReq.headers);
   }
 }

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import supertest from 'supertest';
 import type { AuthConfig } from '@auth/core';
-import { rootModule, HttpServer, inject, OnModuleInit, injectable, SingletonRequestContext } from '@ditsmod/core';
+import { rootModule, HttpServer, inject, OnModuleInit, injectable, RequestContext } from '@ditsmod/core';
 import { RoutingModule } from '@ditsmod/routing';
 import { TestApplication } from '@ditsmod/testing';
 
@@ -14,7 +14,7 @@ vi.mock('#mod/http-api-adapters.js', async (importOriginal) => {
   const mod = await importOriginal<typeof import('#mod/http-api-adapters.js')>();
   return {
     ...mod,
-    toWebRequest: vi.fn((ctx: SingletonRequestContext) => {
+    toWebRequest: vi.fn((ctx: RequestContext) => {
       if (ctx.rawReq.headers['x-test-header'] == 'throw') {
         throw new Error('Test error');
       }

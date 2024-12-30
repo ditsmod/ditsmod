@@ -1,6 +1,6 @@
 import { route, RoutingModule } from '@ditsmod/routing';
 import { AuthjsConfig, AUTHJS_CONFIG, AUTHJS_SESSION, AuthjsGuard, AuthjsModule } from '@ditsmod/authjs';
-import { controller, rootModule, Providers, inject, OnModuleInit, SingletonRequestContext } from '@ditsmod/core';
+import { controller, rootModule, Providers, inject, OnModuleInit, RequestContext } from '@ditsmod/core';
 import credentials from '@ditsmod/authjs/providers/credentials';
 
 import { CredentialsService } from './credentials.service.js';
@@ -16,7 +16,7 @@ export class PerReqController {
 @controller({ scope: 'ctx' })
 export class PerModController {
   @route('GET', 'per-rou', [AuthjsGuard])
-  tellHello(ctx: SingletonRequestContext) {
+  tellHello(ctx: RequestContext) {
     return ctx.auth;
   }
 }

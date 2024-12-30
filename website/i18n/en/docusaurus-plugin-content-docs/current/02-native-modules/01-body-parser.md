@@ -112,13 +112,13 @@ Depending on whether the controller works [in context-scoped or injector-scoped 
 2. If the controller is in context-scoped mode, the result can be obtained from the context:
 
   ```ts {7}
-  import { controller, SingletonRequestContext } from '@ditsmod/core';
+  import { controller, RequestContext } from '@ditsmod/core';
   import { route } from '@ditsmod/routing';
 
   @controller({ scope: 'ctx' })
   export class SomeController {
     @route('POST')
-    ok(ctx: SingletonRequestContext) {
+    ok(ctx: RequestContext) {
       ctx.sendJson(ctx.body);
     }
   }
@@ -185,7 +185,7 @@ Depending on whether the controller works [in injector-scope or context-scope mo
 
   ```ts {8,12}
   import { createWriteStream } from 'node:fs';
-  import { controller, SingletonRequestContext } from '@ditsmod/core';
+  import { controller, RequestContext } from '@ditsmod/core';
   import { route } from '@ditsmod/routing';
   import { MulterParsedForm, MulterSingletonParser } from '@ditsmod/body-parser';
 
@@ -194,7 +194,7 @@ Depending on whether the controller works [in injector-scope or context-scope mo
     constructor(protected parse: MulterSingletonParser) {}
 
     @route('POST', 'file-upload')
-    async downloadFile(ctx: SingletonRequestContext) {
+    async downloadFile(ctx: RequestContext) {
       const parsedForm = await this.parse.array(ctx, 'fieldName', 5);
       await this.saveFiles(parsedForm);
       // ...

@@ -1,4 +1,4 @@
-import { RequestContext, SingletonRequestContext } from '@ditsmod/core';
+import { RequestContext } from '@ditsmod/core';
 
 /**
  * `HttpHandler` is injectable. When injected, the handler instance dispatches requests to the
@@ -49,5 +49,5 @@ export abstract class HttpBackend implements HttpHandler {
 }
 
 export abstract class SingletonHttpBackend {
-  abstract handle(ctx: SingletonRequestContext): Promise<any>;
+  abstract handle(ctx: RequestContext): Promise<any>;
 }

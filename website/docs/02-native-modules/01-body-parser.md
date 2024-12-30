@@ -112,13 +112,13 @@ export class AppModule {}
 2. Якщо контролер працює в режимі context-scoped, результат можна отримати з контексту:
 
   ```ts {7}
-  import { controller, SingletonRequestContext } from '@ditsmod/core';
+  import { controller, RequestContext } from '@ditsmod/core';
   import { route } from '@ditsmod/routing';
 
   @controller({ scope: 'ctx' })
   export class SomeController {
     @route('POST')
-    ok(ctx: SingletonRequestContext) {
+    ok(ctx: RequestContext) {
       ctx.sendJson(ctx.body);
     }
   }
@@ -185,7 +185,7 @@ export class SomeController {
 
   ```ts {8,12}
   import { createWriteStream } from 'node:fs';
-  import { controller, SingletonRequestContext } from '@ditsmod/core';
+  import { controller, RequestContext } from '@ditsmod/core';
   import { route } from '@ditsmod/routing';
   import { MulterParsedForm, MulterSingletonParser } from '@ditsmod/body-parser';
 
@@ -194,7 +194,7 @@ export class SomeController {
     constructor(protected parse: MulterSingletonParser) {}
 
     @route('POST', 'file-upload')
-    async downloadFile(ctx: SingletonRequestContext) {
+    async downloadFile(ctx: RequestContext) {
       const parsedForm = await this.parse.array(ctx, 'fieldName', 5);
       await this.saveFiles(parsedForm);
       // ...

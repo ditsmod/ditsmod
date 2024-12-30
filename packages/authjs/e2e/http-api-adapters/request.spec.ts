@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import supertest from 'supertest';
-import { Status, controller, rootModule, HttpServer, SingletonRequestContext, RawRequest } from '@ditsmod/core';
+import { Status, controller, rootModule, HttpServer, RequestContext, RawRequest } from '@ditsmod/core';
 import { route, RoutingModule } from '@ditsmod/routing';
 import { TestApplication } from '@ditsmod/testing';
 import { BodyParserModule } from '@ditsmod/body-parser';
@@ -10,21 +10,21 @@ import { toWebRequest, encodeUrlEncoded } from '#mod/http-api-adapters.js';
 @controller({ scope: 'ctx' })
 export class Controller1 {
   @route('GET', 'case1')
-  async case1(ctx: SingletonRequestContext) {
+  async case1(ctx: RequestContext) {
     const request = toWebRequest(ctx);
     expectMatchingRequestHeaders(ctx.rawReq, request);
     return 'OK';
   }
 
   @route('POST', 'case2')
-  async case2(ctx: SingletonRequestContext) {
+  async case2(ctx: RequestContext) {
     const request = toWebRequest(ctx);
     await expectMatchingJsonRequestBody(ctx, request);
     return 'OK';
   }
 
   @route('POST', 'case3')
-  async case3(ctx: SingletonRequestContext) {
+  async case3(ctx: RequestContext) {
     const request = toWebRequest(ctx);
     await expectMatchingUrlEncodedRequestBody(ctx, request);
     return 'OK';
@@ -43,12 +43,12 @@ function expectMatchingRequestHeaders(req: RawRequest, request: Request) {
   }
 }
 
-async function expectMatchingJsonRequestBody(req: SingletonRequestContext, request: Request) {
+async function expectMatchingJsonRequestBody(req: RequestContext, request: Request) {
   const body = await request.json();
   expect(body).toEqual(req.body);
 }
 
-async function expectMatchingUrlEncodedRequestBody(req: SingletonRequestContext, request: Request) {
+async function expectMatchingUrlEncodedRequestBody(req: RequestContext, request: Request) {
   const body = await request.text();
   expect(body).toEqual(encodeUrlEncoded(req.body));
 }
