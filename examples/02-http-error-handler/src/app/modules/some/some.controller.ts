@@ -15,7 +15,7 @@ export class SomeController {
 }
 
 @controller({ scope: 'ctx' })
-export class SomeSingletonController {
+export class SomeCtxController {
   @route('GET', 'hello2')
   ok(ctx: RequestContext) {
     ctx.send('Hello, World2!');
