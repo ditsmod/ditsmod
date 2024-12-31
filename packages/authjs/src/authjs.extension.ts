@@ -16,12 +16,13 @@ export class AuthjsExtension implements Extension {
       const { aControllerMetadata } = metadataPerMod3;
       aControllerMetadata.forEach(({ providersPerRou, providersPerReq, httpMethods, path, scope }) => {
         httpMethods.forEach((method) => {
+          if ((method != 'GET' && method != 'POST') || !/^auth\/.+/.test(path)) {
+            return;
+          }
           if (scope == 'ctx') {
-            // providersPerRou.push({ token: HTTP_INTERCEPTORS, useClass: AuthjsInterceptor, multi: true });
+            providersPerRou.push({ token: HTTP_INTERCEPTORS, useClass: AuthjsInterceptor, multi: true });
           } else {
-            if (path == 'auth/:action' || path == 'auth/:action/:providerType') {
-              providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: AuthjsInterceptor, multi: true });
-            }
+            providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: AuthjsInterceptor, multi: true });
           }
         });
       });

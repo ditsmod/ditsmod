@@ -3,7 +3,7 @@ import supertest from 'supertest';
 import { HttpServer, Status } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
 
-import { AppModule, expectation } from './app.module.js';
+import { AppModule } from './app.module.js';
 
 describe('Integration test with login and getSession', () => {
   let server: HttpServer | undefined;
@@ -23,35 +23,34 @@ describe('Integration test with login and getSession', () => {
 
   afterAll(async () => server?.close());
 
-  it('Should return the session with username after logging in', async () => {
-    // Get cookies with csrf
-    const response = await client.get('/auth/csrf').set('X-Test-Header', 'foo').set('Accept', 'application/json');
+  ['inj', 'ctx'].forEach((scope) => {
+    it(`${scope}-scoped controller should return the session with username after logging in`, async () => {
+      // Get cookies with csrf
+      const response = await client.get('/auth/csrf').set('Accept', 'application/json');
 
-    // Parse cookies for csrf token and callback url
-    const csrfTokenCookie = extractCookieValue(response.headers['set-cookie'], 'authjs.csrf-token');
-    const callbackCookie = extractCookieValue(response.headers['set-cookie'], 'authjs.callback-url');
-    const csrfTokenValue = csrfTokenCookie.split('%')[0].split('=')[1];
+      // Parse cookies for csrf token and callback url
+      const csrfTokenCookie = extractCookieValue(response.headers['set-cookie'], 'authjs.csrf-token');
+      const callbackCookie = extractCookieValue(response.headers['set-cookie'], 'authjs.callback-url');
+      const csrfTokenValue = csrfTokenCookie.split('%')[0].split('=')[1];
 
-    // Sign in
-    const responseCredentials = await client
-      .post('/auth/callback/credentials')
-      .set('Cookie', [csrfTokenCookie, callbackCookie]) // Send the cookie with the request
-      .send({ csrfToken: csrfTokenValue, username: 'johnsmith' });
+      // Sign in
+      const responseCredentials = await client
+        .post('/auth/callback/credentials')
+        .set('Cookie', [csrfTokenCookie, callbackCookie]) // Send the cookie with the request
+        .send({ csrfToken: csrfTokenValue, username: 'johnsmith' });
 
       expect(responseCredentials.status).toBe(Status.OK);
       expect(responseCredentials.text).toBe('ok');
 
-    // Parse cookie for session token
-    const sessionTokenCookie = extractCookieValue(responseCredentials.headers['set-cookie'], 'authjs.session-token');
+      // Parse cookie for session token
+      const sessionTokenCookie = extractCookieValue(responseCredentials.headers['set-cookie'], 'authjs.session-token');
+      const expectedSession = { user: { name: expect.any(String), email: expect.any(String) } };
 
-    // Call test route
-    const { status } = await client
-      .get('/test')
-      .set('X-Test-Header', 'foo')
-      .set('Accept', 'application/json')
-      .set('Cookie', [sessionTokenCookie]);
+      // Call test route
+      const { status, body } = await client.get(`/${scope}-scoped`).set('Cookie', [sessionTokenCookie]);
 
-    expect(status).toBe(Status.OK);
-    expect(expectation).lastCalledWith('johnsmith');
+      expect(status).toBe(Status.OK);
+      expect(body).toMatchObject(expectedSession);
+    });
   });
 });
