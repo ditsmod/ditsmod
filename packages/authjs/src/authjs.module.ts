@@ -1,15 +1,14 @@
 import { featureModule, OnModuleInit, inject, ChainError } from '@ditsmod/core';
 import { type AuthConfig } from '@auth/core';
-import { RoutingModule } from '@ditsmod/routing';
+import { PRE_ROUTER_EXTENSIONS, RoutingModule } from '@ditsmod/routing';
 import { BodyParserModule } from '@ditsmod/body-parser';
-import { OasOptions, OpenapiModule } from '@ditsmod/openapi';
 import { LoggerInstance } from '@auth/core/types';
 
-import { AUTHJS_CONFIG, AUTHJS_SESSION } from './constants.js';
-import { AuthjsController } from '#mod/authjs.controller.js';
+import { AUTHJS_CONFIG, AUTHJS_EXTENSIONS, AUTHJS_SESSION } from './constants.js';
 import { AuthjsGuard } from '#mod/authjs.guard.js';
 import { AuthjsPerRouGuard } from './authjs-per-rou.guard.js';
 import { AuthjsLogMediator } from './authjs-log-mediator.js';
+import { AuthjsExtension } from './authjs.extension.js';
 
 /**
  * Ditsmod module to support [Auth.js][1].
@@ -17,15 +16,14 @@ import { AuthjsLogMediator } from './authjs-log-mediator.js';
  * [1]: https://authjs.dev/
  */
 @featureModule({
-  imports: [RoutingModule, BodyParserModule, OpenapiModule],
+  imports: [RoutingModule, BodyParserModule],
   providersPerMod: [{ token: AUTHJS_CONFIG, useValue: {} }, AuthjsLogMediator],
   providersPerRou: [{ token: AuthjsGuard, useClass: AuthjsPerRouGuard }],
   providersPerReq: [AuthjsGuard, { token: AUTHJS_SESSION, useValue: {} }],
-  controllers: [AuthjsController],
-  exports: [AUTHJS_CONFIG, AUTHJS_SESSION, AuthjsGuard],
-  extensionsMeta: {
-    oasOptions: { tags: ['authjs'] } as OasOptions,
-  },
+  extensions: [
+    { extension: AuthjsExtension, group: AUTHJS_EXTENSIONS, beforeGroup: PRE_ROUTER_EXTENSIONS, exported: true },
+  ],
+  exports: [AUTHJS_CONFIG, AUTHJS_SESSION, AuthjsGuard, BodyParserModule],
 })
 export class AuthjsModule implements OnModuleInit {
   constructor(

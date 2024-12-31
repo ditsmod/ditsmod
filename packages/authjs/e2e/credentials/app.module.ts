@@ -13,6 +13,12 @@ export const expectation = vi.fn((userName?: string | null) => userName);
 
 @controller()
 export class Controller1 {
+  @route('GET', 'auth/:action')
+  @route('POST', 'auth/:action/:providerType')
+  async customAuthCsrf() {
+    return 'ok';
+  }
+
   @route('GET', 'test', [AuthjsGuard])
   async getAuth(@inject(AUTHJS_SESSION) session: any) {
     expectation(session?.user?.name);
@@ -23,7 +29,7 @@ export class Controller1 {
 @rootModule({
   imports: [RoutingModule, { absolutePath: 'auth', module: AuthjsModule }],
   controllers: [Controller1],
-  providersPerMod: [CredentialsService]
+  providersPerMod: [CredentialsService],
 })
 export class AppModule implements OnModuleInit {
   constructor(

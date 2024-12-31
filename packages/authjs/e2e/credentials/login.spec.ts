@@ -24,8 +24,8 @@ describe('Integration test with login and getSession', () => {
   afterAll(async () => server?.close());
 
   it('Should return the session with username after logging in', async () => {
-    // Get signin page
-    const response = await client.get('/auth/signin').set('X-Test-Header', 'foo').set('Accept', 'application/json');
+    // Get cookies with csrf
+    const response = await client.get('/auth/csrf').set('X-Test-Header', 'foo').set('Accept', 'application/json');
 
     // Parse cookies for csrf token and callback url
     const csrfTokenCookie = extractCookieValue(response.headers['set-cookie'], 'authjs.csrf-token');
@@ -37,6 +37,9 @@ describe('Integration test with login and getSession', () => {
       .post('/auth/callback/credentials')
       .set('Cookie', [csrfTokenCookie, callbackCookie]) // Send the cookie with the request
       .send({ csrfToken: csrfTokenValue, username: 'johnsmith' });
+
+      expect(responseCredentials.status).toBe(Status.OK);
+      expect(responseCredentials.text).toBe('ok');
 
     // Parse cookie for session token
     const sessionTokenCookie = extractCookieValue(responseCredentials.headers['set-cookie'], 'authjs.session-token');

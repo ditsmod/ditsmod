@@ -11,7 +11,7 @@ export class AuthjsPerRouGuard implements CanActivate {
     protected injector: Injector,
   ) {}
 
-  async canActivate(ctx: RequestContext, params?: any[]): Promise<boolean | number> {
+  async canActivate(ctx: RequestContext, params?: any[]): Promise<boolean | Response> {
     const session = await getSession(ctx, this.authConfig);
     if (!session) {
       return false;

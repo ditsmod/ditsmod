@@ -1,9 +1,6 @@
 import type { RawRequest } from '@ditsmod/core';
-import { property, REQUIRED } from '@ditsmod/openapi';
-import type { AuthAction, Session } from '@auth/core/types';
+import type { AuthAction, AuthConfig, Session } from '@auth/core/types';
 import { ProviderType } from '@auth/core/providers';
-
-export type GetSessionResult = Promise<Session | null>;
 
 export interface ReqForSession {
   protocol: 'http' | 'https';
@@ -33,19 +30,6 @@ export const providerTypes: ProviderType[] = [
   'webauthn'
 ];
 
-const descriptionOfAction =
-  'Supported actions by Auth.js. Each action map to a REST API endpoint. Some actions' +
-  ' have a GET and POST variant, depending on if the action changes the state of the server.' +
-  ' See [AuthAction](https://authjs.dev/reference/core/types#authaction) for more info.';
 
-const descriptionOfProviderType =
-  'Provider passed to Auth.js must define one of these types.' +
-  ' See [provider typess](https://authjs.dev/reference/core/providers#providertype) for more info.';
-
-export class Params {
-  @property({ [REQUIRED]: true, enum: actions, description: descriptionOfAction })
-  action: AuthAction;
-
-  @property({ [REQUIRED]: true, enum: providerTypes, description: descriptionOfProviderType })
-  providerType: string;
-}
+export interface AuthjsConfig extends Omit<AuthConfig, 'raw'> {}
+export type GetSessionResult = Promise<Session | null>;

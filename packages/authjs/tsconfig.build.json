@@ -12,7 +12,6 @@
   "references": [
     { "path": "../core/tsconfig.build.json" },
     { "path": "../routing/tsconfig.build.json" },
-    { "path": "../openapi/tsconfig.build.json" },
     { "path": "../body-parser/tsconfig.build.json" },
   ]
 }

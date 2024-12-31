@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import supertest from 'supertest';
 import type { AuthConfig } from '@auth/core';
-import { rootModule, HttpServer, inject, OnModuleInit, injectable, RequestContext } from '@ditsmod/core';
-import { RoutingModule } from '@ditsmod/routing';
+import { rootModule, HttpServer, inject, OnModuleInit, RequestContext, controller } from '@ditsmod/core';
+import { route, RoutingModule } from '@ditsmod/routing';
 import { TestApplication } from '@ditsmod/testing';
 
 import credentials from '#mod/providers/credentials.js';
@@ -23,36 +23,27 @@ vi.mock('#mod/http-api-adapters.js', async (importOriginal) => {
   };
 });
 
-@injectable()
-export class CredentialsService {
-  async authorize(credentials: Partial<Record<'username', unknown>>) {
-    if (typeof credentials?.username === 'string') {
-      const { username: name } = credentials;
-      return { name: name, email: name.replace(' ', '') + '@example.com' };
-    }
-    return null;
+@controller()
+export class Controller1 {
+  @route('GET', 'auth/:action')
+  @route('POST', 'auth/:action/:providerType')
+  async getAuth() {
+    return 'OK';
   }
 }
 
 @rootModule({
   imports: [RoutingModule, { absolutePath: 'auth', module: AuthjsModule }],
-  providersPerMod: [CredentialsService],
+  controllers: [Controller1],
 })
 export class AppModule implements OnModuleInit {
-  constructor(
-    @inject(AUTHJS_CONFIG) protected authConfig: AuthConfig,
-    protected credentialsService: CredentialsService,
-  ) {}
+  constructor(@inject(AUTHJS_CONFIG) protected authConfig: AuthConfig) {}
 
   onModuleInit() {
-    const credentialsProvider = credentials({
-      credentials: { username: { label: 'Username' } },
-      authorize: (data) => this.credentialsService.authorize(data),
-    });
     this.authConfig.basePath ??= '/auth';
     this.authConfig.secret ??= 'secret';
     this.authConfig.providers ??= [];
-    this.authConfig.providers.push(credentialsProvider);
+    this.authConfig.providers.push(credentials);
   }
 }
 
@@ -67,7 +58,7 @@ describe('Middleware behaviour', () => {
 
   afterAll(async () => server?.close());
 
-  it('Should sent response only once', async () => {
+  it('should sent OK response', async () => {
     const { status } = await client.get('/auth/session').set('Accept', 'application/json');
     expect(status).toBe(200);
   });

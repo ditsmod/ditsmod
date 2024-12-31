@@ -20,7 +20,7 @@ describe('PermissionsGuard#canActivate()', () => {
   it('should return forbidden', async () => {
     hasPermissions.mockReturnValue(false);
     await expect(permissionsGuard.canActivate(ctx)).resolves.not.toThrow();
-    await expect(permissionsGuard.canActivate(ctx)).resolves.toBe(Status.FORBIDDEN);
+    await expect(permissionsGuard.canActivate(ctx)).resolves.toMatchObject({ status: Status.FORBIDDEN });
   });
 
   it('should return true', async () => {

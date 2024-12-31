@@ -1,10 +1,8 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import supertest from 'supertest';
 import { controller, rootModule, HttpServer, Res } from '@ditsmod/core';
-import { route, RoutingModule } from '@ditsmod/routing';
+import { route, RoutingModule, applyResponse } from '@ditsmod/routing';
 import { TestApplication } from '@ditsmod/testing';
-
-import { toDitsmodResponse } from '#mod/http-api-adapters.js';
 
 let webResponse: Response = new Response();
 
@@ -20,7 +18,7 @@ export class Controller1 {
       headers: headers,
       status: 200,
     });
-    await toDitsmodResponse(webResponse, res.rawRes);
+    await applyResponse(webResponse, res.rawRes);
   }
 }
 
