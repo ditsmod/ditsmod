@@ -2,19 +2,17 @@ import { describe, expect, it } from 'vitest';
 
 import { Provider } from '#types/mix.js';
 import { Extension } from '#extension/extension-types.js';
-import { InjectionToken, makePropDecorator, reflector } from '#di';
-import { featureModule } from '#decorators/module.js';
 import {
-  isCtrlDecor,
-  isInjectionToken,
-  isFeatureModule,
-  isModuleWithParams,
-  isNormalizedProvider,
-  isProvider,
-  isRootModule,
+  InjectionToken,
   isMultiProvider,
+  isNormalizedProvider,
+  makePropDecorator,
+  reflector,
+  isInjectionToken,
   MultiProvider,
-} from './type-guards.js';
+} from '#di';
+import { featureModule } from '#decorators/module.js';
+import { isCtrlDecor, isFeatureModule, isModuleWithParams, isProvider, isRootModule } from './type-guards.js';
 import { rootModule } from '#decorators/root-module.js';
 import { controller } from '#decorators/controller.js';
 import { getModuleMetadata } from '#init/module-normalizer.js';

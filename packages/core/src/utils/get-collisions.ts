@@ -1,7 +1,6 @@
-import { isFunctionFactoryProvider } from '#di';
+import { isClassProvider, isFactoryProvider, isFunctionFactoryProvider, isTokenProvider, isValueProvider } from '#di';
 import { Provider } from '#types/mix.js';
 import { getTokens } from './get-tokens.js';
-import { isClassProvider, isTokenProvider, isFactoryProvider, isValueProvider } from './type-guards.js';
 
 /**
  * If you have a replacement for some provider - you have a collision.

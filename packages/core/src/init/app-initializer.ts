@@ -1,6 +1,6 @@
 import { ChainError } from '@ts-stack/chain-error';
 
-import { BeforeToken, InjectionToken, Injector } from '#di';
+import { BeforeToken, InjectionToken, Injector, isMultiProvider } from '#di';
 import { ImportsResolver } from '#init/imports-resolver.js';
 import { Logger } from '#logger/logger.js';
 import { SystemErrorMediator } from '#error/system-error-mediator.js';
@@ -26,7 +26,7 @@ import { getLastProviders } from '#utils/get-last-providers.js';
 import { getProvidersTargets, getToken, getTokens } from '#utils/get-tokens.js';
 import { normalizeProviders } from '#utils/ng-utils.js';
 import { throwProvidersCollisionError } from '#utils/throw-providers-collision-error.js';
-import { isMultiProvider, isRootModule } from '#utils/type-guards.js';
+import { isRootModule } from '#utils/type-guards.js';
 import { SERVER } from '#public-api/constans.js';
 import { HttpServer } from '#types/server-options.js';
 import { MetadataPerMod2 } from '#types/metadata-per-mod.js';

@@ -32,6 +32,7 @@ export {
   UnknownType
 } from './types-and-models.js';
 export {
+  isClassFactoryProvider,
   isClassProvider,
   isDecoratorAndValue,
   isFactoryProvider,
@@ -41,5 +42,7 @@ export {
   isTokenProvider,
   isTypeProvider,
   isValueProvider,
+  isInjectionToken,
+  MultiProvider,
 } from './utils.js';
 export { DepsChecker } from './deps-checker.js';

@@ -8,7 +8,7 @@ import { ModuleWithParams } from '#types/module-metadata.js';
 import { ExtensionsGroupToken, Extension } from '#extension/extension-types.js';
 import { getImportedTokens } from '#utils/get-imports.js';
 import { getProviderName } from '#utils/get-provider-name.js';
-import { isInjectionToken } from '#utils/type-guards.js';
+import { isInjectionToken } from '#di';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 
 /**

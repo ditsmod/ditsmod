@@ -1,6 +1,6 @@
 import { Provider } from '#types/mix.js';
 import { getTokens } from './get-tokens.js';
-import { isMultiProvider } from './type-guards.js';
+import { isMultiProvider } from '#di';
 
 /**
  * Returns last provider if the provider has the duplicate.

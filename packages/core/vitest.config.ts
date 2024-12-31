@@ -8,6 +8,6 @@ export default defineConfig({
       './dist*/**/*.spec.js',
     ],
     exclude: ['**/node_modules/**'],
-    watch: false
+    watch: true
   },
 });

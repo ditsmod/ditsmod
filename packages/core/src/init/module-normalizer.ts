@@ -1,16 +1,11 @@
+import { isClassProvider, isMultiProvider, isNormalizedProvider, isTokenProvider, isValueProvider, MultiProvider } from '#di';
 import {
   isAppendsWithParams,
-  isClassProvider,
   isCtrlDecor,
   isModDecor,
   isModuleWithParams,
-  isMultiProvider,
-  isNormalizedProvider,
   isRootModule,
   isProvider,
-  isTokenProvider,
-  isValueProvider,
-  MultiProvider,
 } from '#utils/type-guards.js';
 import {
   ExtensionOptions,

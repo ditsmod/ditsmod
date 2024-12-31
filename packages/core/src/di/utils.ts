@@ -1,5 +1,7 @@
+import { InjectionToken } from './injection-token.js';
 import {
   Class,
+  ClassFactoryProvider,
   ClassProvider,
   DecoratorAndValue,
   FactoryProvider,
@@ -108,10 +110,12 @@ export function newArray<T>(size: number, value?: T): T[] {
   return list;
 }
 
-export function isDecoratorAndValue(container: any): container is DecoratorAndValue {
+export function isDecoratorAndValue(
+  decoratorAndValue?: DecoratorAndValue | Class,
+): decoratorAndValue is DecoratorAndValue {
   return (
-    typeof (container as DecoratorAndValue)?.decorator == 'function' &&
-    (container as DecoratorAndValue)?.hasOwnProperty('value')
+    (decoratorAndValue as DecoratorAndValue)?.decorator !== undefined &&
+    Boolean(decoratorAndValue?.hasOwnProperty('value'))
   );
 }
 
@@ -133,16 +137,23 @@ export function isValueProvider(provider?: Provider): provider is ValueProvider 
   );
 }
 
-export function isClassProvider(provider: Provider): provider is ClassProvider {
+export function isClassProvider(provider?: Provider): provider is ClassProvider {
   return (provider as ClassProvider)?.useClass !== undefined;
 }
-
-export function isTokenProvider(provider: Provider): provider is TokenProvider {
+export function isTokenProvider(provider?: Provider): provider is TokenProvider {
   return (provider as TokenProvider)?.useToken !== undefined;
 }
 
-export function isFactoryProvider(provider: Provider): provider is FactoryProvider {
+export function isFactoryProvider(provider?: Provider): provider is FactoryProvider {
   return (provider as FactoryProvider)?.useFactory !== undefined;
+}
+
+export function isInjectionToken(token?: any): token is InjectionToken<any> {
+  return token instanceof InjectionToken;
+}
+
+export function isClassFactoryProvider(provider?: Provider): provider is ClassFactoryProvider {
+  return Array.isArray((provider as ClassFactoryProvider)?.useFactory);
 }
 
 export function isFunctionFactoryProvider(provider: Provider): provider is FunctionFactoryProvider {
@@ -151,8 +162,11 @@ export function isFunctionFactoryProvider(provider: Provider): provider is Funct
 
 export type MultiProvider = Exclude<Provider, TypeProvider> & { multi: boolean };
 
-export function isMultiProvider(provider: Provider): provider is MultiProvider {
-  return isNormalizedProvider(provider) && !!provider.multi;
+export function isMultiProvider(provider?: Provider): provider is MultiProvider {
+  return (
+    (provider as ValueProvider)?.multi === true &&
+    (isValueProvider(provider) || isClassProvider(provider) || isTokenProvider(provider) || isFactoryProvider(provider))
+  );
 }
 
 /**
@@ -161,8 +175,8 @@ export function isMultiProvider(provider: Provider): provider is MultiProvider {
  * { token: SomeClas, useClass: OtherClass }
  * ```
  */
-export function isNormalizedProvider(provider: Provider): provider is NormalizedProvider {
+export function isNormalizedProvider(provider?: Provider): provider is NormalizedProvider {
   return (
-    isClassProvider(provider) || isValueProvider(provider) || isFactoryProvider(provider) || isTokenProvider(provider)
+    isValueProvider(provider) || isClassProvider(provider) || isTokenProvider(provider) || isFactoryProvider(provider)
   );
 }

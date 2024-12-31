@@ -1,6 +1,7 @@
+import { isClassProvider, isFactoryProvider, isTokenProvider, isValueProvider } from '#di';
 import { Provider } from '#types/mix.js';
 import { normalizeProviders } from './ng-utils.js';
-import { isClassProvider, isTokenProvider, isFactoryProvider, isProvider, isValueProvider } from './type-guards.js';
+import { isProvider } from './type-guards.js';
 
 export function getToken(provider: Provider): any {
   return normalizeProviders([provider]).map((p) => p.token)[0];

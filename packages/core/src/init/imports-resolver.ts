@@ -13,7 +13,7 @@ import { ReflectiveDependency, getDependencies } from '#utils/get-dependecies.js
 import { getLastProviders } from '#utils/get-last-providers.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { getProvidersTargets, getTokens } from '#utils/get-tokens.js';
-import { isClassProvider, isFactoryProvider, isTokenProvider, isValueProvider } from '#utils/type-guards.js';
+import { isClassProvider, isFactoryProvider, isTokenProvider, isValueProvider } from '#di';
 import { SystemErrorMediator } from '#error/system-error-mediator.js';
 import { defaultProvidersPerRou } from './default-providers-per-rou.js';
 import { ExtensionCounters, ExtensionsGroupToken } from '#extension/extension-types.js';

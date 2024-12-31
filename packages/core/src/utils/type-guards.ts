@@ -1,17 +1,5 @@
 import { ChainError } from '@ts-stack/chain-error';
-import {
-  ClassProvider,
-  FactoryProvider,
-  InjectionToken,
-  Provider,
-  Class,
-  TypeProvider,
-  ValueProvider,
-  TokenProvider,
-  DecoratorAndValue,
-  reflector,
-  ClassFactoryProvider,
-} from '#di';
+import { Provider, Class, DecoratorAndValue, reflector, isNormalizedProvider } from '#di';
 import { AnyObj, ModuleType, RequireProps } from '#types/mix.js';
 import { ModuleWithParams, AppendsWithParams } from '#types/module-metadata.js';
 import { RootModuleMetadata } from '#types/root-module-metadata.js';
@@ -20,7 +8,6 @@ import { featureModule } from '#decorators/module.js';
 import { RawMeta } from '../decorators/module.js';
 import { controller, ControllerRawMetadata } from '#decorators/controller.js';
 import { rootModule } from '#decorators/root-module.js';
-import { NormalizedProvider } from './ng-utils.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { CustomError } from '#error/custom-error.js';
 
@@ -71,15 +58,6 @@ export function hasDeclaredInDir(
   return Boolean(decoratorAndValue?.declaredInDir) && decoratorAndValue?.declaredInDir != '.';
 }
 
-export function isDecoratorAndValue(
-  decoratorAndValue?: DecoratorAndValue | Class,
-): decoratorAndValue is DecoratorAndValue {
-  return (
-    (decoratorAndValue as DecoratorAndValue)?.decorator !== undefined &&
-    Boolean(decoratorAndValue?.hasOwnProperty('value'))
-  );
-}
-
 export function isCtrlDecor(decoratorAndValue?: AnyObj): decoratorAndValue is DecoratorAndValue<ControllerRawMetadata> {
   return decoratorAndValue?.decorator === controller;
 }
@@ -97,65 +75,10 @@ export function isAppendsWithParams(
   );
 }
 
-export function isInjectionToken(token?: any): token is InjectionToken<any> {
-  return token instanceof InjectionToken;
-}
-
-export function isTypeProvider(provider?: Provider): provider is TypeProvider {
-  return provider instanceof Class;
-}
-
-export function isValueProvider(provider?: Provider): provider is ValueProvider {
-  return (
-    provider?.hasOwnProperty('useValue') ||
-    (Boolean(provider?.hasOwnProperty('token')) &&
-      !provider?.hasOwnProperty('useClass') &&
-      !provider?.hasOwnProperty('useToken') &&
-      !provider?.hasOwnProperty('useFactory'))
-  );
-}
-
-export function isClassProvider(provider?: Provider): provider is ClassProvider {
-  return (provider as ClassProvider)?.useClass !== undefined;
-}
-
-export function isTokenProvider(provider?: Provider): provider is TokenProvider {
-  return (provider as TokenProvider)?.useToken !== undefined;
-}
-
-export function isFactoryProvider(provider?: Provider): provider is FactoryProvider {
-  return (provider as FactoryProvider)?.useFactory !== undefined;
-}
-
-export function isClassFactoryProvider(provider?: Provider): provider is ClassFactoryProvider {
-  return Array.isArray((provider as ClassFactoryProvider)?.useFactory);
-}
-
-export type MultiProvider = Exclude<Provider, TypeProvider> & { multi: boolean };
-
-export function isMultiProvider(provider?: Provider): provider is MultiProvider {
-  return (
-    (provider as ValueProvider)?.multi === true &&
-    (isValueProvider(provider) || isClassProvider(provider) || isTokenProvider(provider) || isFactoryProvider(provider))
-  );
-}
-
 export function isProvider(maybeProvider?: any): maybeProvider is Provider {
   if (isModuleWithParams(maybeProvider)) {
     return false;
   }
   const isSomeModule = reflector.getDecorators(maybeProvider, isModDecor);
   return (maybeProvider instanceof Class && !isSomeModule) || isNormalizedProvider(maybeProvider);
-}
-
-/**
- * Returns true if providers declares in format:
- * ```ts
- * { token: SomeClas, useClass: OtherClass }
- * ```
- */
-export function isNormalizedProvider(provider?: Provider): provider is NormalizedProvider {
-  return (
-    isValueProvider(provider) || isClassProvider(provider) || isTokenProvider(provider) || isFactoryProvider(provider)
-  );
 }

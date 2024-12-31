@@ -1,6 +1,5 @@
-import { Class, InjectionToken } from '#di';
+import { Class, InjectionToken, isNormalizedProvider } from '#di';
 import { getToken } from './get-tokens.js';
-import { isNormalizedProvider } from './type-guards.js';
 
 /**
  * Returns provider or token name.

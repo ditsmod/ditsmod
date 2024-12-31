@@ -890,7 +890,7 @@ describe('injector', () => {
 
   it('should throw when given invalid providers', () => {
     expect(() => createInjector(['blah'] as any)).toThrow(
-      'Invalid provider - only instances of Provider and Class are allowed, got: blah',
+      "Invalid provider - only instances of Provider and Class are allowed, got: 'blah'",
     );
   });
 
