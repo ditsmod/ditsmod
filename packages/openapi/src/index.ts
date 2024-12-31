@@ -1,6 +1,6 @@
 export { REQUIRED, DEFAULT_OAS_OBJECT } from './constants.js';
 export { oasGuard, OasGuardMetadata } from './decorators/oas-guard.js';
-export { oasRoute, OasRouteMetadata1, OasRouteMetadata2 } from './decorators/oas-route.js';
+export { oasRoute, OasRouteMetadata } from './decorators/oas-route.js';
 export { property } from './decorators/property.js';
 export * from './di-tokens.js';
 export { OpenapiModule } from './openapi.module.js';

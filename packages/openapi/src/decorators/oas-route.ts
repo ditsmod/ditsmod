@@ -1,47 +1,93 @@
-import { GuardItem, HttpMethod, makePropDecorator } from '@ditsmod/core';
+import { Class, Extension, GuardItem, HttpMethod, InjectionToken, makePropDecorator } from '@ditsmod/core';
+import { HttpInterceptor } from '@ditsmod/routing';
 import { XOperationObject } from '@ts-stack/openapi-spec';
 
 /**
  * This route metadata has a `guards` property.
  */
-export interface OasRouteMetadata1 {
+export interface OasRouteMetadata {
   httpMethod: HttpMethod | [HttpMethod, ...HttpMethod[]];
-  path?: string;
-  guards?: GuardItem[];
+  path: string;
+  guards: GuardItem[];
+  interceptors: (Class<HttpInterceptor> | InjectionToken<Extension[]>)[];
   /**
    * OAS `OperationObject`.
    */
-  operationObject?: XOperationObject;
-}
-
-/**
- * This route metadata does not have a `guards` property.
- */
-export interface OasRouteMetadata2 {
-  httpMethod: HttpMethod | [HttpMethod, ...HttpMethod[]];
-  path?: string;
-  /**
-   * OAS `OperationObject`.
-   */
-  operationObject?: XOperationObject;
+  operationObject: XOperationObject;
 }
 
 function oasRouteCallback(
   httpMethod: HttpMethod | [HttpMethod, ...HttpMethod[]],
   path?: string,
   guardsOrOperationObj?: XOperationObject | GuardItem[],
-  operationObject?: XOperationObject
-): OasRouteMetadata1 | OasRouteMetadata2 {
-  if (Array.isArray(guardsOrOperationObj)) {
-    return { httpMethod, path, guards: guardsOrOperationObj, operationObject };
-  } else if (guardsOrOperationObj) {
-    return { httpMethod, path, operationObject: guardsOrOperationObj };
+  interceptorsOrOperationObj?: XOperationObject | (Class<HttpInterceptor> | InjectionToken<Extension[]>)[],
+  operationObject?: XOperationObject,
+): OasRouteMetadata {
+  if (operationObject) {
+    return {
+      httpMethod,
+      path: path || '',
+      guards: (guardsOrOperationObj || []) as GuardItem[],
+      interceptors: (interceptorsOrOperationObj || []) as (Class<HttpInterceptor> | InjectionToken<Extension[]>)[],
+      operationObject: operationObject || {},
+    } satisfies OasRouteMetadata;
+  } else if (Array.isArray(interceptorsOrOperationObj)) {
+    return {
+      httpMethod,
+      path: path || '',
+      guards: (guardsOrOperationObj || []) as GuardItem[],
+      interceptors: interceptorsOrOperationObj,
+      operationObject: {},
+    } satisfies OasRouteMetadata;
+  } else if (interceptorsOrOperationObj) {
+    return {
+      httpMethod,
+      path: path || '',
+      guards: (guardsOrOperationObj || []) as GuardItem[],
+      operationObject: interceptorsOrOperationObj,
+      interceptors: [],
+    } satisfies OasRouteMetadata;
+  } else if (Array.isArray(guardsOrOperationObj)) {
+    return {
+      httpMethod,
+      path: path || '',
+      guards: guardsOrOperationObj,
+      operationObject: {},
+      interceptors: [],
+    } satisfies OasRouteMetadata;
   } else {
-    return { httpMethod, path };
+    return {
+      httpMethod,
+      path: path || '',
+      operationObject: guardsOrOperationObj || {},
+      guards: [],
+      interceptors: [],
+    } satisfies OasRouteMetadata;
   }
 }
 
 /**
  * Open API Specification Route.
  */
-export const oasRoute = makePropDecorator(oasRouteCallback);
+export const oasRoute: OasRouteInterface = makePropDecorator(oasRouteCallback);
+
+interface OasRouteInterface {
+  (
+    httpMethod: HttpMethod | [HttpMethod, ...HttpMethod[]],
+    path: string,
+    guards: GuardItem[],
+    interceptors: (Class<HttpInterceptor> | InjectionToken<Extension[]>)[],
+    operationObject: XOperationObject,
+  ): any;
+  (
+    httpMethod: HttpMethod | [HttpMethod, ...HttpMethod[]],
+    path: string,
+    guards: GuardItem[],
+    interceptorsOrOperationObj?: XOperationObject | (Class<HttpInterceptor> | InjectionToken<Extension[]>)[],
+  ): any;
+  (
+    httpMethod: HttpMethod | [HttpMethod, ...HttpMethod[]],
+    path?: string,
+    guardsOrOperationObj?: XOperationObject | GuardItem[],
+  ): any;
+}

@@ -6,6 +6,7 @@ import { RoutesExtension } from './extensions/routes.extension.js';
 import { PreRouterExtension } from './extensions/pre-router.extension.js';
 import { ROUTES_EXTENSIONS, PRE_ROUTER_EXTENSIONS } from './constants.js';
 import { RouteMeta } from './route-data.js';
+import { UseInterceptorExtension } from '#mod/extensions/use-interceptor.extension.js';
 
 /**
  * Sets `Router` provider on application scope, and adds `RoutesExtension` with `PreRouterExtension`.
@@ -18,6 +19,7 @@ import { RouteMeta } from './route-data.js';
   extensions: [
     { extension: RoutesExtension, group: ROUTES_EXTENSIONS, exportedOnly: true },
     { extension: PreRouterExtension, group: PRE_ROUTER_EXTENSIONS, exportedOnly: true },
+    { extension: UseInterceptorExtension, beforeGroup: PRE_ROUTER_EXTENSIONS, exportedOnly: true },
   ],
   exports: [RouteMeta],
 })

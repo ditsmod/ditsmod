@@ -1,5 +1,7 @@
-import { HttpMethod, NormalizedGuard, Provider } from '@ditsmod/core';
+import { Class, Extension, HttpMethod, InjectionToken, NormalizedGuard, Provider } from '@ditsmod/core';
+
 import { RouteMeta } from './route-data.js';
+import { HttpInterceptor } from '#mod/interceptors/tokens-and-types.js';
 
 export interface ControllerMetadata {
   /**
@@ -12,6 +14,7 @@ export interface ControllerMetadata {
   providersPerReq: Provider[];
   path: string;
   httpMethods: HttpMethod[];
+  interceptors: (Class<HttpInterceptor> | InjectionToken<Extension[]>)[];
   routeMeta: RouteMeta;
   /**
    * Singleton per scope.

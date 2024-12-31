@@ -28,7 +28,8 @@
     "build": "tsc -b tsconfig.build.json",
     "build-ui": "yarn build && node dist/swagger-ui/compile.js",
     "clean": "rm -rf dist*",
-    "test": "tsc -b tsconfig.unit.json && vitest"
+    "build-test": "tsc -b tsconfig.unit.json",
+    "test": "yarn build-test && vitest"
   },
   "keywords": [
     "ditsmod"

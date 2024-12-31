@@ -14,7 +14,7 @@ import {
 import { ControllerMetadata, MetadataPerMod3, RouteMeta, RoutesExtension } from '@ditsmod/routing';
 import { ReferenceObject, XOperationObject, XParameterObject } from '@ts-stack/openapi-spec';
 
-import { isOasRoute, isOasRoute1, isReferenceObject } from '#utils/type-guards.js';
+import { isOasRoute, isReferenceObject } from '#utils/type-guards.js';
 import { BOUND_TO_HTTP_METHOD, BOUND_TO_PATH_PARAM } from '#utils/parameters.js';
 import { OasRouteMeta } from '#types/oas-route-meta.js';
 import { getLastParameterObjects, getLastReferenceObjects } from '#utils/get-last-params.js';
@@ -56,15 +56,13 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
               meta.providersPerMod.unshift(Controller);
             }
             const guards = [];
-            if (isOasRoute1(decoratorAndValue)) {
-              guards.push(...this.normalizeGuards(decoratorAndValue.value.guards));
-            }
+            guards.push(...this.normalizeGuards(decoratorAndValue.value.guards));
             const controllerFactory: FactoryProvider = { useFactory: [Controller, Controller.prototype[methodName]] };
             providersPerReq.push(
               ...((ctrlDecorator?.value as ControllerRawMetadata1).providersPerReq || []),
               controllerFactory,
             );
-            const { httpMethod, path: controllerPath, operationObject } = oasRoute;
+            const { httpMethod, path: controllerPath, operationObject, interceptors } = oasRoute;
             const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
             const path = this.getPath(prefix, controllerPath);
             const clonedOperationObject = { ...(operationObject || {}) } as XOperationObject;
@@ -101,6 +99,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
               routeMeta,
               scope,
               guards,
+              interceptors
             });
           }
         }
@@ -132,7 +131,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             this.errMediator.throwParamNotFoundInPath(controllerName, paramName, path);
           }
         } else {
-          httpMethods.forEach(httpMethod => this.bindParams(httpMethod, path, paramsNonPath, p));
+          httpMethods.forEach((httpMethod) => this.bindParams(httpMethod, path, paramsNonPath, p));
         }
       }
     });

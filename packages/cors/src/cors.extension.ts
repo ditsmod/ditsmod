@@ -137,6 +137,7 @@ export class CorsExtension implements Extension<void | false> {
           providersPerReq: [],
           routeMeta,
           scope: 'ctx',
+          interceptors: [],
           guards: [],
         };
 

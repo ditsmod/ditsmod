@@ -1,36 +1,83 @@
-import { reflector, controller, CanActivate, RequestContext, DecoratorAndValue, CallsiteUtils } from '@ditsmod/core';
+import {
+  reflector,
+  controller,
+  CanActivate,
+  RequestContext,
+  DecoratorAndValue,
+  InjectionToken,
+  Extension,
+} from '@ditsmod/core';
 import { describe, expect, it } from 'vitest';
 
-import { oasRoute } from './oas-route.js';
+import { oasRoute, OasRouteMetadata } from './oas-route.js';
+import { HttpHandler, HttpInterceptor } from '@ditsmod/routing';
 
 // console.log(inspect(actualMeta, false, 5));
 
 describe('@oasRoute', () => {
-  it('controller without methods', () => {
-    @controller()
-    class Controller1 {}
+  it('route params: method, path, guards, interceptors, operation object', () => {
+    class Guard1 implements CanActivate {
+      canActivate(ctx: RequestContext) {
+        return true;
+      }
+    }
 
-    const actualMeta = reflector.getMetadata(Controller1)!;
-    expect(actualMeta.constructor.type).toBe(Function);
-    expect(actualMeta.constructor.decorators).toMatchObject<DecoratorAndValue[]>([
-      new DecoratorAndValue(controller, {}, CallsiteUtils.getCallerDir()),
-    ]);
-  });
+    class Interceptor1 implements HttpInterceptor {
+      async intercept(next: HttpHandler, ctx: RequestContext) {}
+    }
 
-  it('one method, without operation object', () => {
+    const GR1_EXTENSIONS = new InjectionToken<Extension[]>('GR1_EXTENSIONS');
+
     @controller()
     class Controller1 {
-      @oasRoute('GET')
+      @oasRoute('GET', 'posts', [Guard1], [GR1_EXTENSIONS, Interceptor1], { operationId: 'someId' })
       method() {}
     }
 
     const actualMeta = reflector.getMetadata(Controller1)!;
     expect(actualMeta.method.type).toBe(Function);
-    const value = { httpMethod: 'GET', path: undefined };
+    const value: OasRouteMetadata = {
+      httpMethod: 'GET',
+      path: 'posts',
+      guards: [Guard1],
+      interceptors: [GR1_EXTENSIONS, Interceptor1],
+      operationObject: { operationId: 'someId' },
+    };
     expect(actualMeta.method.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(oasRoute, value)]);
   });
 
-  it('one method, with operation object', () => {
+  it('route params: method, path, guards, interceptors', () => {
+    class Guard1 implements CanActivate {
+      canActivate(ctx: RequestContext) {
+        return true;
+      }
+    }
+
+    class Interceptor1 implements HttpInterceptor {
+      async intercept(next: HttpHandler, ctx: RequestContext) {}
+    }
+
+    const GR1_EXTENSIONS = new InjectionToken<Extension[]>('GR1_EXTENSIONS');
+
+    @controller()
+    class Controller1 {
+      @oasRoute('GET', 'posts', [Guard1], [GR1_EXTENSIONS, Interceptor1])
+      method() {}
+    }
+
+    const actualMeta = reflector.getMetadata(Controller1)!;
+    expect(actualMeta.method.type).toBe(Function);
+    const value: OasRouteMetadata = {
+      httpMethod: 'GET',
+      path: 'posts',
+      guards: [Guard1],
+      interceptors: [GR1_EXTENSIONS, Interceptor1],
+      operationObject: {},
+    };
+    expect(actualMeta.method.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(oasRoute, value)]);
+  });
+
+  it('route params: method, path, guards, operation object', () => {
     class Guard1 implements CanActivate {
       canActivate(ctx: RequestContext) {
         return true;
@@ -44,11 +91,42 @@ describe('@oasRoute', () => {
 
     const actualMeta = reflector.getMetadata(Controller1)!;
     expect(actualMeta.method.type).toBe(Function);
-    const value = { httpMethod: 'GET', path: 'posts', guards: [Guard1], operationObject: { operationId: 'someId' } };
+    const value: OasRouteMetadata = {
+      httpMethod: 'GET',
+      path: 'posts',
+      guards: [Guard1],
+      operationObject: { operationId: 'someId' },
+      interceptors: [],
+    };
     expect(actualMeta.method.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(oasRoute, value)]);
   });
 
-  it('route with operationObject as third argument', () => {
+  it('route params: method, path, guards', () => {
+    class Guard1 implements CanActivate {
+      canActivate(ctx: RequestContext) {
+        return true;
+      }
+    }
+    @controller()
+    class Controller1 {
+      @oasRoute('GET', 'path', [Guard1])
+      method() {}
+    }
+
+    const actualMeta = reflector.getMetadata(Controller1)!;
+
+    expect(actualMeta.method.type).toBe(Function);
+    const value: OasRouteMetadata = {
+      httpMethod: 'GET',
+      path: 'path',
+      operationObject: {},
+      guards: [Guard1],
+      interceptors: [],
+    };
+    expect(actualMeta.method.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(oasRoute, value)]);
+  });
+
+  it('route params: method, path, operation object', () => {
     @controller()
     class Controller1 {
       @oasRoute('GET', 'path', { operationId: 'someId' })
@@ -58,7 +136,46 @@ describe('@oasRoute', () => {
     const actualMeta = reflector.getMetadata(Controller1)!;
 
     expect(actualMeta.method.type).toBe(Function);
-    const value = { httpMethod: 'GET', path: 'path', operationObject: { operationId: 'someId' } };
+    const value: OasRouteMetadata = {
+      httpMethod: 'GET',
+      path: 'path',
+      operationObject: { operationId: 'someId' },
+      guards: [],
+      interceptors: [],
+    };
+    expect(actualMeta.method.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(oasRoute, value)]);
+  });
+
+  it('route params: method, path', () => {
+    @controller()
+    class Controller1 {
+      @oasRoute('GET', 'path')
+      method() {}
+    }
+
+    const actualMeta = reflector.getMetadata(Controller1)!;
+
+    expect(actualMeta.method.type).toBe(Function);
+    const value: OasRouteMetadata = {
+      httpMethod: 'GET',
+      path: 'path',
+      operationObject: {},
+      guards: [],
+      interceptors: [],
+    };
+    expect(actualMeta.method.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(oasRoute, value)]);
+  });
+
+  it('route params: method', () => {
+    @controller()
+    class Controller1 {
+      @oasRoute('GET')
+      method() {}
+    }
+
+    const actualMeta = reflector.getMetadata(Controller1)!;
+    expect(actualMeta.method.type).toBe(Function);
+    const value: OasRouteMetadata = { httpMethod: 'GET', path: '', guards: [], interceptors: [], operationObject: {} };
     expect(actualMeta.method.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(oasRoute, value)]);
   });
 });
