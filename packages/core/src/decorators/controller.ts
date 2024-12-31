@@ -14,14 +14,7 @@ export interface ControllerRawMetadata1 {
    * Providers per HTTP request.
    */
   providersPerReq?: Providers | Provider[];
-  /**
-   * Singleton per scope.
-   * 
-   * __Warn__: at the moment, this is an experimental feature.
-   *
-   * Default - `module`.
-   */
-  scope?: 'ctx';
+  scope?: never;
 }
 
 /**
@@ -34,11 +27,15 @@ export interface ControllerRawMetadata2 {
   providersPerRou?: Providers | Provider[];
   /**
    * __Warn__: at the moment, this is an experimental feature.
-   * Default - `module`.
    */
-  scope?: 'ctx';
+  scope: 'ctx';
 }
 
 export type ControllerRawMetadata = ControllerRawMetadata1 | ControllerRawMetadata2;
 
-export const controller = makeClassDecorator((data?: ControllerRawMetadata) => data || {});
+export const controller: ControllerDecor = makeClassDecorator((data?: ControllerRawMetadata) => data || {});
+
+interface ControllerDecor {
+  (meta?: ControllerRawMetadata1): any;
+  (meta?: ControllerRawMetadata2): any;
+}
