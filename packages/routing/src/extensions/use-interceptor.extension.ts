@@ -1,27 +1,30 @@
 import { inspect } from 'node:util';
 import { Extension, ExtensionsManager, injectable, isInjectionToken } from '@ditsmod/core';
-import { HTTP_INTERCEPTORS, isInterceptor, ROUTES_EXTENSIONS } from '@ditsmod/routing';
+
+import { RoutingErrorMediator } from '../router-error-mediator.js';
+import { HTTP_INTERCEPTORS, ROUTES_EXTENSIONS } from '#mod/constants.js';
+import { isInterceptor } from '#mod/type.guards.js';
 
 @injectable()
 export class UseInterceptorExtension implements Extension {
-  constructor(protected extensionManager: ExtensionsManager) {}
+  constructor(
+    protected extensionManager: ExtensionsManager,
+    protected errorMediator: RoutingErrorMediator,
+  ) {}
 
   async stage1() {
     const stage1GroupMeta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
-
     for (const metadataPerMod3 of stage1GroupMeta.groupData) {
-      for (const { providersPerRou, providersPerReq, interceptors } of metadataPerMod3.aControllerMetadata) {
-        if (interceptors)
-          for (const groupOrInterceptor of interceptors) {
+      for (const meta of metadataPerMod3.aControllerMetadata) {
+        if (meta.interceptors)
+          for (const groupOrInterceptor of meta.interceptors) {
             if (isInjectionToken(groupOrInterceptor)) {
               await this.extensionManager.stage1(groupOrInterceptor);
             } else if (isInterceptor(groupOrInterceptor)) {
-              providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: groupOrInterceptor, multi: true });
+              meta.providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: groupOrInterceptor, multi: true });
             } else {
               const whatIsThis = inspect(groupOrInterceptor, false, 3);
-              let msg = 'The fourth parameter to the @route() decorator should be the HttpInterceptor ';
-              msg += ` or extension group token, got: ${whatIsThis}.`;
-              throw new TypeError(msg);
+              this.errorMediator.invalidInterceptor(meta.httpMethods.join(', '), meta.path, whatIsThis);
             }
           }
       }
