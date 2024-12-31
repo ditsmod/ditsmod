@@ -1,20 +1,26 @@
 import { route, RoutingModule } from '@ditsmod/routing';
 import { AuthjsConfig, AUTHJS_CONFIG, AUTHJS_SESSION, AuthjsGuard, AuthjsModule } from '@ditsmod/authjs';
-import { controller, rootModule, Providers, inject, OnModuleInit, RequestContext } from '@ditsmod/core';
+import { controller, rootModule, inject, OnModuleInit, RequestContext } from '@ditsmod/core';
 import credentials from '@ditsmod/authjs/providers/credentials';
 
 import { CredentialsService } from './credentials.service.js';
 
 @controller()
-export class PerReqController {
+export class InjScopedController {
   @route('GET', 'per-req', [AuthjsGuard])
   tellHello(@inject(AUTHJS_SESSION) session: any) {
-    return session;
+    return session.user;
+  }
+
+  @route('GET', 'auth/:action')
+  @route('POST', 'auth/:action/:providerType')
+  auth() {
+    return 'ok';
   }
 }
 
 @controller({ scope: 'ctx' })
-export class PerModController {
+export class CtxScopedController {
   @route('GET', 'per-rou', [AuthjsGuard])
   tellHello(ctx: RequestContext) {
     return ctx.auth;
@@ -23,9 +29,8 @@ export class PerModController {
 
 @rootModule({
   imports: [RoutingModule, { absolutePath: 'auth', module: AuthjsModule }],
-  controllers: [PerReqController, PerModController],
-  providersPerApp: new Providers().useLogConfig({ level: 'info', showExternalLogs: true }),
-  providersPerMod: [CredentialsService]
+  controllers: [InjScopedController, CtxScopedController],
+  providersPerMod: [CredentialsService],
 })
 export class AppModule implements OnModuleInit {
   constructor(
@@ -39,7 +44,6 @@ export class AppModule implements OnModuleInit {
       authorize: (data) => this.credentialsService.authorize(data),
     });
     this.authConfig.basePath ??= '/auth';
-    this.authConfig.providers ??= [];
-    this.authConfig.providers.push(credentialsProvider);
+    this.authConfig.providers ??= [credentialsProvider];
   }
 }

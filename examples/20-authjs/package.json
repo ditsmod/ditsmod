@@ -8,7 +8,8 @@
     "start:dev": "run-p watch start",
     "watch": "yarn build --watch",
     "clean": "rm -r dist*",
-    "test": "tsc -b tsconfig.e2e.json && vitest",
+    "test": "yarn build-test && vitest",
+    "build-test": "tsc -b tsconfig.e2e.json",
     "build": "tsc -b tsconfig.build.json"
   },
   "imports": {

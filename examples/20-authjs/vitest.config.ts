@@ -14,6 +14,6 @@ export default defineConfig({
     clearMocks: true,
     include: ['./dist*/**/*.spec.js'],
     exclude: ['**/node_modules/**'],
-    watch: false,
+    watch: true,
   },
 });
