@@ -1,5 +1,6 @@
+import { inspect } from 'node:util';
 import { Extension, ExtensionsManager, injectable, isInjectionToken } from '@ditsmod/core';
-import { HTTP_INTERCEPTORS, ROUTES_EXTENSIONS } from '@ditsmod/routing';
+import { HTTP_INTERCEPTORS, isInterceptor, ROUTES_EXTENSIONS } from '@ditsmod/routing';
 
 @injectable()
 export class UseInterceptorExtension implements Extension {
@@ -11,11 +12,16 @@ export class UseInterceptorExtension implements Extension {
     for (const metadataPerMod3 of stage1GroupMeta.groupData) {
       for (const { providersPerRou, providersPerReq, interceptors } of metadataPerMod3.aControllerMetadata) {
         if (interceptors)
-          for (const groupExtensionOrInterceptor of interceptors) {
-            if (isInjectionToken(groupExtensionOrInterceptor)) {
-              await this.extensionManager.stage1(groupExtensionOrInterceptor);
+          for (const groupOrInterceptor of interceptors) {
+            if (isInjectionToken(groupOrInterceptor)) {
+              await this.extensionManager.stage1(groupOrInterceptor);
+            } else if (isInterceptor(groupOrInterceptor)) {
+              providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: groupOrInterceptor, multi: true });
             } else {
-              providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: groupExtensionOrInterceptor, multi: true });
+              const whatIsThis = inspect(groupOrInterceptor, false, 3);
+              let msg = 'The fourth parameter to the @route() decorator should be the HttpInterceptor ';
+              msg += ` or extension group token, got: ${whatIsThis}.`;
+              throw new TypeError(msg);
             }
           }
       }
