@@ -28,7 +28,7 @@ import { MulterCtxParser } from './multer-ctx.parser.js';
       useFactory: [BodyParserGroupFactory, BodyParserGroupFactory.prototype.getBodyParserGroup],
     },
   ],
-  providersPerReq: [{ token: HTTP_BODY, useValue: undefined }, MulterParser],
+  providersPerReq: [{ token: HTTP_BODY }, MulterParser],
   exports: [HTTP_BODY, BodyParserGroup, MulterParser, MulterCtxParser],
   extensions: [
     {

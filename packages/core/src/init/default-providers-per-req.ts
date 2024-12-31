@@ -4,12 +4,12 @@ import { Req } from '#services/request.js';
 import { Res } from '#services/response.js';
 
 export const defaultProvidersPerReq: Readonly<Provider[]> = [
-  { token: RAW_REQ, useValue: {} },
-  { token: RAW_RES, useValue: {} },
-  { token: A_PATH_PARAMS, useValue: undefined },
-  { token: PATH_PARAMS, useValue: undefined },
-  { token: QUERY_PARAMS, useValue: undefined },
-  { token: QUERY_STRING, useValue: undefined },
+  { token: RAW_REQ },
+  { token: RAW_RES },
+  { token: A_PATH_PARAMS },
+  { token: PATH_PARAMS },
+  { token: QUERY_PARAMS },
+  { token: QUERY_STRING },
   Req,
   Res,
 ];
