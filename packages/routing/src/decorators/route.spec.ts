@@ -1,7 +1,8 @@
-import { CanActivate, controller, DecoratorAndValue, CallsiteUtils, reflector, RequestContext } from '@ditsmod/core';
+import { CanActivate, controller, DecoratorAndValue, CallsiteUtils, reflector, RequestContext, InjectionToken, Extension } from '@ditsmod/core';
 import { describe, expect, it } from 'vitest';
 
 import { route, RouteMetadata } from './route.js';
+import { HttpHandler, HttpInterceptor } from '#interceptors/tokens-and-types.js';
 
 describe('Route decorator', () => {
   it('controller without methods', () => {
@@ -28,6 +29,7 @@ describe('Route decorator', () => {
       httpMethod: 'GET',
       path: '',
       guards: [],
+      interceptors: [],
     });
     expect(metadata.method.decorators).toMatchObject<DecoratorAndValue[]>([decorator]);
   });
@@ -45,6 +47,7 @@ describe('Route decorator', () => {
       httpMethod: ['GET', 'POST'],
       path: '',
       guards: [],
+      interceptors: [],
     });
     expect(metadata.method.decorators).toMatchObject<DecoratorAndValue[]>([decorator]);
   });
@@ -63,11 +66,13 @@ describe('Route decorator', () => {
       httpMethod: 'GET',
       path: '',
       guards: [],
+      interceptors: [],
     });
     const decoratorPost = new DecoratorAndValue<RouteMetadata>(route, {
       httpMethod: 'POST',
       path: '',
       guards: [],
+      interceptors: [],
     });
     expect(metadata.method.decorators).toMatchObject<DecoratorAndValue[]>([decoratorPost, decoratorGet]);
   });
@@ -90,6 +95,7 @@ describe('Route decorator', () => {
       httpMethod: 'GET',
       path: 'posts/:postId',
       guards: [Guard1],
+      interceptors: [],
     });
     expect(metadata.method.decorators).toMatchObject<DecoratorAndValue[]>([decorator]);
   });
@@ -112,6 +118,7 @@ describe('Route decorator', () => {
       httpMethod: 'GET',
       path: 'posts/:postId',
       guards: [Guard1, Guard1],
+      interceptors: [],
     });
     expect(metadata.method.decorators).toMatchObject<DecoratorAndValue[]>([decorator]);
   });
@@ -141,6 +148,32 @@ describe('Route decorator', () => {
           [Guard1, 'one', 123],
           [Guard1, []],
         ],
+        interceptors: [],
+      }),
+    ]);
+  });
+
+  it('one interceptor, one extension group', () => {
+    class Interceptor1 implements HttpInterceptor {
+      async intercept(next: HttpHandler, ctx: RequestContext) {}
+    }
+
+    const SOME_EXTENIONS = new InjectionToken<Extension[]>('SOME_EXTENIONS');
+
+    @controller()
+    class Controller1 {
+      @route('GET', 'one', [], [Interceptor1, SOME_EXTENIONS])
+      method() {}
+    }
+
+    const metadata = reflector.getMetadata(Controller1)!;
+    expect(metadata.method.type).toBe(Function);
+    expect(metadata.method.decorators).toMatchObject<DecoratorAndValue[]>([
+      new DecoratorAndValue<RouteMetadata>(route, {
+        httpMethod: 'GET',
+        path: 'one',
+        guards: [],
+        interceptors: [Interceptor1, SOME_EXTENIONS],
       }),
     ]);
   });
