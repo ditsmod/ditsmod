@@ -126,7 +126,7 @@ export class PreRouterExtension implements Extension<void> {
 
         preparedRouteMeta.push({
           moduleName: metadataPerMod3.meta.name,
-          httpMethod: controllerMetadata.httpMethod,
+          httpMethod: controllerMetadata.httpMethods,
           path: controllerMetadata.path,
           handle,
           countOfGuards,
@@ -142,7 +142,7 @@ export class PreRouterExtension implements Extension<void> {
     injectorPerMod: Injector,
     controllerMetadata: ControllerMetadata,
   ) {
-    const { providersPerRou, routeMeta: baseRouteMeta, httpMethod, path } = controllerMetadata;
+    const { providersPerRou, routeMeta: baseRouteMeta, httpMethods, path } = controllerMetadata;
 
     const routeMeta = baseRouteMeta as RequireProps<typeof baseRouteMeta, 'routeHandler'>;
     const mergedPerRou: Provider[] = [];
@@ -160,11 +160,11 @@ export class PreRouterExtension implements Extension<void> {
     routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(
       metadataPerMod3.guardsPerMod1,
       controllerName,
-      httpMethod,
+      httpMethods,
       path,
     );
     const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou, 'Rou');
-    this.checkDeps(injectorPerRou, routeMeta, controllerName, httpMethod, path);
+    this.checkDeps(injectorPerRou, routeMeta, controllerName, httpMethods, path);
     const resolvedChainMaker = resolvedPerRou.find((rp) => rp.dualKey.token === ChainMaker)!;
     const resolvedErrHandler = resolvedPerRou.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
     const chainMaker = injectorPerRou.instantiateResolved<DefaultCtxChainMaker>(resolvedChainMaker);
@@ -222,7 +222,7 @@ export class PreRouterExtension implements Extension<void> {
     injectorPerMod: Injector,
     controllerMetadata: ControllerMetadata,
   ) {
-    const { providersPerRou, providersPerReq, routeMeta, httpMethod, path } = controllerMetadata;
+    const { providersPerRou, providersPerReq, routeMeta, httpMethods: httpMethod, path } = controllerMetadata;
     const mergedPerRou = [...metadataPerMod3.meta.providersPerRou, ...providersPerRou];
     const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'Rou');
 

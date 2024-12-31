@@ -82,7 +82,7 @@ export class CorsExtension implements Extension<void | false> {
 
     aMetadataPerMod3.forEach((metadataPerMod3) => {
       metadataPerMod3.aControllerMetadata
-        .filter(({ httpMethod }) => httpMethod == 'OPTIONS')
+        .filter(({ httpMethods }) => httpMethods.includes('OPTIONS'))
         .forEach(({ path }) => sPathWithOptions.add(path));
     });
 
@@ -97,8 +97,7 @@ export class CorsExtension implements Extension<void | false> {
     const sPathWithOptions = this.getPathWtihOptions(aMetadataPerMod3);
     const newArrControllersMetadata2: ControllerMetadata[] = []; // Routes with OPTIONS methods
 
-    aControllerMetadata.forEach(({ httpMethod, path }) => {
-      const httpMethods = Array.isArray(httpMethod) ? httpMethod : [httpMethod];
+    aControllerMetadata.forEach(({ httpMethods, path }) => {
       httpMethods.forEach((method) => {
         // Search routes with non-OPTIONS methods, and makes new routes with OPTIONS methods
         if (sPathWithOptions.has(path)) {
@@ -129,7 +128,7 @@ export class CorsExtension implements Extension<void | false> {
         };
 
         const controllerMetadata: ControllerMetadata = {
-          httpMethod: 'OPTIONS',
+          httpMethods: ['OPTIONS'],
           path,
           providersPerRou: [
             { token: ALLOW_METHODS, useValue: allowHttpMethods },

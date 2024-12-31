@@ -69,8 +69,10 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             const path = this.getPath(prefix, controllerPath);
             const clonedOperationObject = { ...(operationObject || {}) } as XOperationObject;
             const { parameters } = clonedOperationObject;
+            const httpMethods = Array.isArray(httpMethod) ? httpMethod : [httpMethod];
+
             const { paramsRefs, paramsInPath, paramsNonPath } = this.mergeParams(
-              httpMethod,
+              httpMethods,
               path,
               Controller.name,
               prefixParams,
@@ -95,7 +97,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
               providersPerRou,
               providersPerReq,
               path,
-              httpMethod,
+              httpMethods,
               routeMeta,
               scope,
               guards,
@@ -108,7 +110,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
   }
 
   protected mergeParams(
-    httpMethod: HttpMethod,
+    httpMethods: HttpMethod[],
     path: string,
     controllerName: string,
     prefixParams?: (XParameterObject<any> | ReferenceObject)[],
@@ -130,7 +132,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             this.errMediator.throwParamNotFoundInPath(controllerName, paramName, path);
           }
         } else {
-          this.bindParams(httpMethod, path, paramsNonPath, p);
+          httpMethods.forEach(httpMethod => this.bindParams(httpMethod, path, paramsNonPath, p));
         }
       }
     });

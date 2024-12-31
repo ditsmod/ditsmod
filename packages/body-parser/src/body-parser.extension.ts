@@ -19,7 +19,7 @@ export class BodyParserExtension implements Extension<void> {
     stage1GroupMeta.groupData.forEach((metadataPerMod3) => {
       const { aControllerMetadata } = metadataPerMod3;
       const { providersPerMod } = metadataPerMod3.meta;
-      aControllerMetadata.forEach(({ providersPerRou, providersPerReq, httpMethod, scope }) => {
+      aControllerMetadata.forEach(({ providersPerRou, providersPerReq, httpMethods, scope }) => {
         // Merging the providers from a module and a controller
         const mergedProvidersPerRou = [...metadataPerMod3.meta.providersPerRou, ...providersPerRou];
         const mergedProvidersPerReq = [...metadataPerMod3.meta.providersPerReq, ...providersPerReq];
@@ -28,7 +28,6 @@ export class BodyParserExtension implements Extension<void> {
         const injectorPerApp = this.perAppService.injector;
         const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedProvidersPerRou);
-        const httpMethods = Array.isArray(httpMethod) ? httpMethod : [httpMethod];
         httpMethods.forEach((method) => {
           if (scope == 'ctx') {
             let bodyParserConfig = injectorPerRou.get(BodyParserConfig, undefined, {}) as BodyParserConfig;

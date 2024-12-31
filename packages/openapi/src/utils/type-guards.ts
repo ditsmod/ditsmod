@@ -5,7 +5,7 @@ import { property, PropertyDecoratorItem } from '#decorators/property.js';
 import { oasGuard, OasGuardMetadata } from '#decorators/oas-guard.js';
 import { oasRoute, OasRouteMetadata1, OasRouteMetadata2 } from '#decorators/oas-route.js';
 
-export function isOasRoute(decoratorAndValue: AnyObj): decoratorAndValue is DecoratorAndValue {
+export function isOasRoute(decoratorAndValue: AnyObj): decoratorAndValue is DecoratorAndValue<OasRouteMetadata1 | OasRouteMetadata2> {
   return (decoratorAndValue as DecoratorAndValue).decorator === oasRoute;
 }
 

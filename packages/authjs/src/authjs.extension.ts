@@ -14,8 +14,7 @@ export class AuthjsExtension implements Extension {
 
     stage1GroupMeta.groupData.forEach((metadataPerMod3) => {
       const { aControllerMetadata } = metadataPerMod3;
-      aControllerMetadata.forEach(({ providersPerRou, providersPerReq, httpMethod, path, scope }) => {
-        const httpMethods = Array.isArray(httpMethod) ? httpMethod : [httpMethod];
+      aControllerMetadata.forEach(({ providersPerRou, providersPerReq, httpMethods, path, scope }) => {
         httpMethods.forEach((method) => {
           if (scope == 'ctx') {
             // providersPerRou.push({ token: HTTP_INTERCEPTORS, useClass: AuthjsInterceptor, multi: true });

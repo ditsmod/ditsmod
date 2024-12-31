@@ -75,7 +75,7 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
             };
             providersPerRou.push({ token: RouteMeta, useValue: routeMeta });
             aControllerMetadata.push({
-              httpMethod,
+              httpMethods: Array.isArray(httpMethod) ? httpMethod : [httpMethod],
               path,
               providersPerRou,
               providersPerReq,

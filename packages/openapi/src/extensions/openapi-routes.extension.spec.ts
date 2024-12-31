@@ -12,13 +12,13 @@ describe('OpenapiRoutesExtension', () => {
     }
 
     override mergeParams(
-      httpMethod: HttpMethod,
+      httpMethods: HttpMethod[],
       path: string,
       controllerName: string,
       prefixParams: (XParameterObject<any> | ReferenceObject)[],
       params: (XParameterObject<any> | ReferenceObject)[]
     ) {
-      return super.mergeParams(httpMethod, path, controllerName, prefixParams, params);
+      return super.mergeParams(httpMethods, path, controllerName, prefixParams, params);
     }
 
     override bindParams(httpMethod: HttpMethod, path: string, paramsNonPath: XParameterObject[], p: XParameterObject) {
@@ -41,7 +41,7 @@ describe('OpenapiRoutesExtension', () => {
         { in: 'query', name: 'rubricId' },
         { in: 'query', name: 'contextId' },
       ];
-      const { paramsNonPath, paramsInPath, paramsRefs } = mock.mergeParams('GET', '', '', prefixParams, parameters);
+      const { paramsNonPath, paramsInPath, paramsRefs } = mock.mergeParams(['GET'], '', '', prefixParams, parameters);
       expect(paramsNonPath).toEqual([
         { in: 'query', name: 'catId' },
         { in: 'query', name: 'rubricId' },
@@ -58,7 +58,7 @@ describe('OpenapiRoutesExtension', () => {
         { in: 'query', name: 'contextId' },
       ];
       const { paramsNonPath, paramsInPath, paramsRefs } = mock.mergeParams(
-        'GET',
+        ['GET'],
         'posts/:postId/comments',
         '',
         prefixParams,

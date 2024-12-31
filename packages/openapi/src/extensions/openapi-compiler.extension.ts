@@ -67,8 +67,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     this.initOasObject();
     for (const stage1GroupMetaPerApp of groupDataPerApp) {
       for (const metadataPerMod3 of stage1GroupMetaPerApp.groupData) {
-        metadataPerMod3.aControllerMetadata.forEach(({ httpMethod, path, routeMeta, guards }) => {
-          const httpMethods = Array.isArray(httpMethod) ? httpMethod : [httpMethod];
+        metadataPerMod3.aControllerMetadata.forEach(({ httpMethods, path, routeMeta, guards }) => {
           httpMethods.forEach((method) => {
             const { oasPath, resolvedGuards, operationObject } = routeMeta as OasRouteMeta;
             if (operationObject) {
