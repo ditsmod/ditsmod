@@ -2,7 +2,7 @@ import { injectable, Injector, RequestContext, CanActivate, Status, SystemLogMed
 
 import { RouteMeta } from '../route-data.js';
 import { HttpHandler, HttpInterceptor } from './tokens-and-types.js';
-import { toDitsmodResponse } from '#mod/utils/to-ditsmod-response.js';
+import { applyResponse } from '#mod/utils/apply-web-response.js';
 
 @injectable()
 export class InterceptorWithGuardsPerRou implements IInterceptorWithGuardsPerRou {
@@ -47,7 +47,7 @@ export class InterceptorWithGuardsPerRou implements IInterceptorWithGuardsPerRou
       this.prohibitActivation(ctx);
       return;
     }
-    await toDitsmodResponse(result, ctx.rawRes);
+    await applyResponse(result, ctx.rawRes);
     return result;
   }
 

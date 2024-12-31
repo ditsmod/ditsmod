@@ -30,4 +30,4 @@ export {
   CtxHttpBackend,
 } from '#interceptors/tokens-and-types.js';
 export { ROUTES_EXTENSIONS, PRE_ROUTER_EXTENSIONS, HTTP_INTERCEPTORS } from './constants.js';
-export { toDitsmodResponse } from './utils/to-ditsmod-response.js';
+export { applyResponse, applyHeaders } from './utils/apply-web-response.js';
