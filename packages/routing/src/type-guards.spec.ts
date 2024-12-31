@@ -2,7 +2,8 @@ import { CanActivate, controller, injectable, reflector, RequestContext } from '
 import { describe, expect, it } from 'vitest';
 
 import { route } from './decorators/route.js';
-import { isRoute } from './type.guards.js';
+import { isInterceptor, isRoute } from './type.guards.js';
+import { HttpHandler, HttpInterceptor } from '#interceptors/tokens-and-types.js';
 
 describe('type guards', () => {
   describe('isRoute()', () => {
@@ -24,6 +25,24 @@ describe('type guards', () => {
     it('should recognize the route', () => {
       const firstDecor = reflector.getMetadata(ClassWithDecorators)!.some.decorators[0];
       expect(isRoute({ decorator: firstDecor.decorator, value: firstDecor.value })).toBe(true);
+    });
+  });
+
+  describe('isInterceptor()', () => {
+    it('true Interceptor', () => {
+      class Interceptor1 implements HttpInterceptor {
+        async intercept(next: HttpHandler, ctx: RequestContext) {}
+      }
+
+      expect(isInterceptor(Interceptor1)).toBe(true);
+    });
+
+    it('false Interceptor', () => {
+      class Interceptor1 {
+        async inter(next: HttpHandler, ctx: RequestContext) {}
+      }
+
+      expect(isInterceptor(Interceptor1)).toBe(false);
     });
   });
 });
