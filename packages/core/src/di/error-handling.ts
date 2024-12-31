@@ -1,3 +1,4 @@
+import { inspect } from 'node:util';
 import { Class, DiError } from './types-and-models.js';
 import { stringify } from './utils.js';
 
@@ -114,7 +115,8 @@ expect(() => Injector.resolveAndCreate(["not a type"])).toThrow();
 ```
  */
 export function invalidProviderError(provider: any) {
-  return new DiError(`Invalid provider - only instances of Provider and Class are allowed, got: ${provider}`);
+  const obj = inspect(provider, false, 2);
+  return new DiError(`Invalid provider - only instances of Provider and Class are allowed, got: ${obj}`);
 }
 
 /**
