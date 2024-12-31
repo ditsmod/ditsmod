@@ -281,7 +281,7 @@ export interface ValueProvider<T = any> extends BaseNormalizedProvider {
   /**
    * The value to inject.
    */
-  useValue: T;
+  useValue?: T;
 }
 
 /**

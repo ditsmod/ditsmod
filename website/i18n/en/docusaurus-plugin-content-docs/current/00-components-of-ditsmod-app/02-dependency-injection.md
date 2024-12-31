@@ -234,7 +234,7 @@ import { Class } from '@ditsmod/core';
 
 type Provider = Class<any> |
 { token: NonNullable<unknown>, useClass: Class<any>, multi?: boolean } |
-{ token: NonNullable<unknown>, useValue: any, multi?: boolean } |
+{ token: NonNullable<unknown>, useValue?: any, multi?: boolean } |
 { token?: NonNullable<unknown>, useFactory: [Class<any>, Class<any>.prototype.methodName], multi?: boolean } |
 { token?: NonNullable<unknown>, useFactory: (...args: any[]) => any, deps: any[], multi?: boolean } |
 { token: NonNullable<unknown>, useToken: any, multi?: boolean }

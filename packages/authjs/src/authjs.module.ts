@@ -19,7 +19,7 @@ import { AuthjsExtension } from './authjs.extension.js';
   imports: [RoutingModule, BodyParserModule],
   providersPerMod: [{ token: AUTHJS_CONFIG, useValue: {} }, AuthjsLogMediator],
   providersPerRou: [{ token: AuthjsGuard, useClass: AuthjsPerRouGuard }],
-  providersPerReq: [AuthjsGuard, { token: AUTHJS_SESSION, useValue: {} }],
+  providersPerReq: [AuthjsGuard, { token: AUTHJS_SESSION }],
   extensions: [
     { extension: AuthjsExtension, group: AUTHJS_EXTENSIONS, beforeGroup: PRE_ROUTER_EXTENSIONS, exported: true },
   ],

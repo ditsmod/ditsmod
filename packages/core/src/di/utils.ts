@@ -123,8 +123,14 @@ export function isTypeProvider(provider: Provider): provider is TypeProvider {
   return provider instanceof Class;
 }
 
-export function isValueProvider(provider: Provider): provider is ValueProvider {
-  return provider.hasOwnProperty('useValue');
+export function isValueProvider(provider?: Provider): provider is ValueProvider {
+  return (
+    provider?.hasOwnProperty('useValue') ||
+    (Boolean(provider?.hasOwnProperty('token')) &&
+      !provider?.hasOwnProperty('useClass') &&
+      !provider?.hasOwnProperty('useToken') &&
+      !provider?.hasOwnProperty('useFactory'))
+  );
 }
 
 export function isClassProvider(provider: Provider): provider is ClassProvider {

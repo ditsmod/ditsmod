@@ -126,6 +126,7 @@ describe('type guards', () => {
 
       expect(isProvider(class {})).toBe(true);
       expect(isProvider({ token: '', useValue: '' })).toBe(true);
+      expect(isProvider({ token: '' })).toBe(true);
       expect(isProvider(Module1)).toBe(false);
       expect(isProvider(Module2)).toBe(false);
       expect(isProvider(5 as any)).toBe(false);
@@ -136,6 +137,7 @@ describe('type guards', () => {
     it('should recognize all types of providers', () => {
       const providers: Provider[] = [
         { token: '', useValue: '' },
+        { token: '' },
         { token: '', useClass: class {} },
         { token: '', useToken: class {} },
         { token: '', useFactory: class {} as any },
@@ -168,8 +170,12 @@ describe('type guards', () => {
   });
 
   describe('isMultiProvider()', () => {
-    it('true ValueProvider', () => {
+    it('true ValueProvider with "useValue"', () => {
       const provider: MultiProvider = { token: 'token', useValue: 'fake', multi: true };
+      expect(isMultiProvider(provider)).toBe(true);
+    });
+    it('true ValueProvider without "useValue"', () => {
+      const provider: MultiProvider = { token: 'token', multi: true };
       expect(isMultiProvider(provider)).toBe(true);
     });
 

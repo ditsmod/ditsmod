@@ -106,7 +106,13 @@ export function isTypeProvider(provider?: Provider): provider is TypeProvider {
 }
 
 export function isValueProvider(provider?: Provider): provider is ValueProvider {
-  return Boolean(provider?.hasOwnProperty('useValue'));
+  return (
+    provider?.hasOwnProperty('useValue') ||
+    (Boolean(provider?.hasOwnProperty('token')) &&
+      !provider?.hasOwnProperty('useClass') &&
+      !provider?.hasOwnProperty('useToken') &&
+      !provider?.hasOwnProperty('useFactory'))
+  );
 }
 
 export function isClassProvider(provider?: Provider): provider is ClassProvider {
@@ -129,12 +135,8 @@ export type MultiProvider = Exclude<Provider, TypeProvider> & { multi: boolean }
 
 export function isMultiProvider(provider?: Provider): provider is MultiProvider {
   return (
-    (provider as ValueProvider)?.token !== undefined &&
-    (provider as ValueProvider)?.multi !== undefined &&
-    ((provider as ValueProvider)?.useValue !== undefined ||
-      (provider as ClassProvider)?.useClass !== undefined ||
-      (provider as TokenProvider)?.useToken !== undefined ||
-      (provider as FactoryProvider)?.useFactory !== undefined)
+    (provider as ValueProvider)?.multi === true &&
+    (isValueProvider(provider) || isClassProvider(provider) || isTokenProvider(provider) || isFactoryProvider(provider))
   );
 }
 
