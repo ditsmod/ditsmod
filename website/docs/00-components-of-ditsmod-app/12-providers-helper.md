@@ -14,7 +14,7 @@ import { featureModule, Providers } from '@ditsmod/core';
   providersPerRou: [
     Provider1,
     Provider2,
-    ...new Providers().useValue<CorsOpts>(CorsOpts, { origin: 'https://example.com' }),
+    ...new Providers().useValue<CorsOptions>(CorsOptions, { origin: 'https://example.com' }),
     // ...
   ],
   // ...
@@ -32,7 +32,7 @@ import { featureModule, Providers } from '@ditsmod/core';
   providersPerRou: new Providers()
     .passThrough(Provider1)
     .passThrough(Provider2)
-    .useValue<CorsOpts>(CorsOpts, { origin: 'https://example.com' }),
+    .useValue<CorsOptions>(CorsOptions, { origin: 'https://example.com' }),
   // ...
 })
 export class SomeModule {}

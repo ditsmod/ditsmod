@@ -79,7 +79,7 @@ It is also possible to pass CORS options at the route level:
 
 ```ts
 import { featureModule, Providers } from '@ditsmod/core';
-import { CorsModule, CorsOpts } from '@ditsmod/cors';
+import { CorsModule, CorsOptions } from '@ditsmod/cors';
 
 @featureModule({
   imports: [
@@ -87,7 +87,7 @@ import { CorsModule, CorsOpts } from '@ditsmod/cors';
     // ...
   ],
   providersPerRou: new Providers()
-    .useValue<CorsOpts>(CorsOpts, { origin: 'https://example.com' }),
+    .useValue<CorsOptions>(CorsOptions, { origin: 'https://example.com' }),
   // ...
 })
 export class SomeModule {}
