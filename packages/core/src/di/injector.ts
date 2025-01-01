@@ -45,9 +45,9 @@ import { DEPS_KEY } from './decorator-factories.js';
 type ScopeOfInjector = 'App' | 'Mod' | 'Rou' | 'Req' | (string & {});
 
 const NoDefaultValue = Symbol();
-const msg1 = 'Setting value by ID failed: cannot find ID in register: "%d". Try use injector.setByToken()';
+const msg1 = 'Setting value by ID failed: cannot find ID "%d" in register, in providersPer%s. Try use injector.setByToken()';
 const msg2 =
-  'Setting value by token failed: cannot find token in register: "%s". Try adding a provider ' +
+  'Setting value by token failed: cannot find token "%s" in register, in providersPer%s. Try adding a provider ' +
   'with the same token to the current injector via module or controller metadata.';
 
 /**
@@ -523,7 +523,7 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
       return this;
     }
 
-    throw new DiError(format(msg1, id));
+    throw new DiError(format(msg1, id, this.#scope));
   }
 
   /**
@@ -539,7 +539,7 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
     }
 
     const displayToken = stringify(token);
-    throw new DiError(format(msg2, displayToken));
+    throw new DiError(format(msg2, displayToken, this.#scope));
   }
 
   /**
