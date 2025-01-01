@@ -162,7 +162,7 @@ describe('Route decorator', () => {
 
     @controller()
     class Controller1 {
-      @route('GET', 'one', [], [Interceptor1, SOME_EXTENIONS])
+      @route('GET', 'one', [], [SOME_EXTENIONS, Interceptor1])
       method() {}
     }
 
@@ -173,7 +173,7 @@ describe('Route decorator', () => {
         httpMethod: 'GET',
         path: 'one',
         guards: [],
-        interceptors: [Interceptor1, SOME_EXTENIONS],
+        interceptors: [SOME_EXTENIONS, Interceptor1],
       }),
     ]);
   });
