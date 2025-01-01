@@ -1,5 +1,5 @@
 import { inspect } from 'node:util';
-import { Extension, ExtensionsManager, injectable, isInjectionToken } from '@ditsmod/core';
+import { Extension, ExtensionsManager, injectable, Injector, isInjectionToken } from '@ditsmod/core';
 
 import { RoutingErrorMediator } from '../router-error-mediator.js';
 import { HTTP_INTERCEPTORS, ROUTES_EXTENSIONS } from '#mod/constants.js';
@@ -10,6 +10,7 @@ export class UseInterceptorExtension implements Extension {
   constructor(
     protected extensionManager: ExtensionsManager,
     protected errorMediator: RoutingErrorMediator,
+    protected injector: Injector,
   ) {}
 
   async stage1() {
@@ -21,7 +22,11 @@ export class UseInterceptorExtension implements Extension {
             if (isInjectionToken(groupOrInterceptor)) {
               await this.extensionManager.stage1(groupOrInterceptor);
             } else if (isInterceptor(groupOrInterceptor)) {
-              meta.providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: groupOrInterceptor, multi: true });
+              if (this.injector.scope == 'Rou') {
+                meta.providersPerRou.push({ token: HTTP_INTERCEPTORS, useClass: groupOrInterceptor, multi: true });
+              } else {
+                meta.providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: groupOrInterceptor, multi: true });
+              }
             } else {
               const whatIsThis = inspect(groupOrInterceptor, false, 3);
               this.errorMediator.invalidInterceptor(meta.httpMethods.join(', '), meta.path, whatIsThis);
