@@ -16,6 +16,13 @@ export interface ControllerMetadata {
   httpMethods: HttpMethod[];
   interceptors: (Class<HttpInterceptor> | InjectionToken<Extension[]>)[];
   routeMeta: RouteMeta;
+  /**
+   * Indicates in which mode the controller methods work.
+   *
+   * The operation of the controller in `ctx` mode means that its methods,
+   * which are bound to routes, receive a single argument - an object containing
+   * context data, including native request objects.
+   */
   scope?: 'ctx';
   guards: NormalizedGuard[];
 }

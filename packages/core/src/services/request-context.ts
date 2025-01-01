@@ -24,6 +24,14 @@ export class RequestContext extends Res {
     public override rawRes: RawResponse,
     public aPathParams: PathParam[] | null,
     public queryString: string,
+    /**
+     * Indicates in which mode the controller methods work.
+     * 
+     * The operation of the controller in `ctx` mode means that its methods,
+     * which are bound to routes, receive a single argument - an object containing 
+     * context data, including native request objects.
+     */
+    public scope?: 'ctx',
   ) {
     super(rawRes);
   }
