@@ -25,9 +25,6 @@ export interface ControllerRawMetadata2 {
    * Providers per route.
    */
   providersPerRou?: Providers | Provider[];
-  /**
-   * __Warn__: at the moment, this is an experimental feature.
-   */
   scope: 'ctx';
 }
 

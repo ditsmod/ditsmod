@@ -16,13 +16,6 @@ export interface ControllerMetadata {
   httpMethods: HttpMethod[];
   interceptors: (Class<HttpInterceptor> | InjectionToken<Extension[]>)[];
   routeMeta: RouteMeta;
-  /**
-   * Singleton per scope.
-   * 
-   * __Warn__: at the moment, this is an experimental feature.
-   *
-   * Default - `module`.
-   */
   scope?: 'ctx';
   guards: NormalizedGuard[];
 }
