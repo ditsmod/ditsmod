@@ -21,6 +21,13 @@ export class InjScopedController {
 
 @controller({ scope: 'ctx' })
 export class CtxScopedController {
+  @route('GET')
+  goto(ctx: RequestContext) {
+    ctx.rawRes.setHeader('content-type', 'text/html');
+    const url = 'http://0.0.0.0:3000/auth/signin';
+    return `Open your browser on <a href="${url}">${url}</a>`;
+  }
+
   @route('GET', 'per-rou', [AuthjsGuard])
   tellHello(ctx: RequestContext) {
     return ctx.auth;
@@ -40,8 +47,8 @@ export class AppModule implements OnModuleInit {
 
   onModuleInit() {
     const credentialsProvider = credentials({
-      credentials: { username: { label: 'Username' } },
-      authorize: (data) => this.credentialsService.authorize(data),
+      credentials: this.credentialsService.credentials,
+      authorize: this.credentialsService.authorize,
     });
     this.authConfig.basePath ??= '/auth';
     this.authConfig.providers ??= [credentialsProvider];

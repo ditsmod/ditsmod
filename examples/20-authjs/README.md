@@ -15,4 +15,4 @@ cd examples/20*
 npm run start:dev
 ```
 
-Open your browser to http://0.0.0.0:3000/auth/signin
+Open your browser on http://0.0.0.0:3000/auth/signin
