@@ -176,7 +176,7 @@ export class PreRouterExtension implements Extension<void> {
 
     if (this.hasInterceptors(mergedPerRou)) {
       return (async (rawReq, rawRes, aPathParams, queryString) => {
-        const ctx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString);
+        const ctx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString, 'ctx');
         await chainMaker
           .makeChain(ctx)
           .handle() // First HTTP handler in the chain of HTTP interceptors.
@@ -208,7 +208,7 @@ export class PreRouterExtension implements Extension<void> {
   ) {
     const interceptor = new DefaultCtxHttpFrontend();
     return (async (rawReq, rawRes, aPathParams, queryString) => {
-      const ctx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString) as RequestContext;
+      const ctx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString, 'ctx') as RequestContext;
       try {
         interceptor.before(ctx).after(ctx, await routeHandler(ctx));
       } catch (err: any) {
