@@ -10,15 +10,15 @@ export class ErrorInfo {
   /**
    * A message to send it to a logger.
    */
-  msg2?: string;
+  declare msg2?: string;
   /**
    * Arguments for error handler to send it to a client.
    */
-  args1?: any;
+  declare args1?: any;
   /**
    * Arguments for error handler to send it to a logger.
    */
-  args2?: any;
+  declare args2?: any;
   /**
    * Log level. By default - `warn`.
    */
@@ -30,30 +30,29 @@ export class ErrorInfo {
   /**
    * The parameters that came with the HTTP request.
    */
-  params?: any;
+  declare params?: any;
   /**
    * If specified, then the stack trace for this error ends at function `constructorOpt`.
    * Functions called by `constructorOpt` will not show up in the stack. This is useful when this
    * class is subclassed, and this option is passed as the second argument to
    * `Error.captureStackTrace(this, constructorOpt)`.
    */
-  constructorOpt?: AnyFn;
+  declare constructorOpt?: AnyFn;
   /**
    * Describes what kind of error this is. This is intended for programmatic use
    * to distinguish between different kinds of errors. Note that in modern versions of Node.js,
    * this name is ignored in the `stack` property value, but callers can still use the `name`
    * property to get at it.
    */
-  name?: string;
-  code?: string;
-  skipCauseMessage?: boolean;
+  declare name?: string;
+  declare code?: string;
+  declare skipCauseMessage?: boolean;
 
   constructor(info = {} as ErrorInfo) {
-    for (const key in this) {
-      if ((info as any)[key] === undefined) {
-        if (this[key] === undefined) delete this[key];
-      } else {
-        this[key] = (info as any)[key];
+    let key: keyof ErrorInfo;
+    for (key in info) {
+      if (info[key] !== undefined) {
+        this[key] = info[key];
       }
     }
   }
