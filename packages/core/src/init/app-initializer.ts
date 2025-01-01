@@ -442,9 +442,7 @@ export class AppInitializer {
     counter.resetInitedExtensionsSet();
   }
 
-  requestListener: RequestListener = (rawReq, rawRes) => {
-    return this.preRouter.requestListener(rawReq, rawRes);
-  };
+  requestListener: RequestListener = (rawReq, rawRes) => this.preRouter.requestListener(rawReq, rawRes);
 }
 
 /**
