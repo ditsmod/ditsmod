@@ -87,18 +87,24 @@ export class Injector {
   #parent: Injector | null;
   #registry: RegistryOfInjector;
   #Registry: typeof RegistryOfInjector;
+  #scope?: ScopeOfInjector;
+
+  get scope() {
+    return this.#scope;
+  }
 
   /**
    * @param scope Scope name of the injector. Useful for debugging.
    */
   constructor(
     Registry: typeof RegistryOfInjector,
-    public readonly scope?: ScopeOfInjector,
+    scope?: ScopeOfInjector,
     parent?: Injector,
   ) {
     this.#Registry = Registry;
     this.#registry = new Registry();
     this.#parent = parent || null;
+    this.#scope = scope;
   }
 
   /**
@@ -560,6 +566,7 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
     this.#Registry = undefined as any;
     this.#registry = undefined as any;
     this.#parent = undefined as any;
+    this.#scope = undefined;
     this.setParentGetter(() => this.#parent);
   }
 
