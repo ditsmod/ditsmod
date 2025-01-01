@@ -54,6 +54,12 @@ describe('basic features of the routing module', () => {
           'content-length': '50',
         });
       });
+
+      it('controller method with interceptor per route', async () => {
+        const { status, text } = await testAgent.get(`/interceptor${id}`);
+        expect(status).toBe(200);
+        expect(text).toBe('ok');
+      });
     });
   });
 });
