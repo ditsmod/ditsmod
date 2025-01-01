@@ -14,10 +14,10 @@ import { AnyObj } from '#types/mix.js';
  * An instance of this class is created without DI.
  */
 export class RequestContext extends Res {
-  pathParams?: AnyObj;
-  queryParams?: AnyObj;
-  body?: any;
-  auth?: any;
+  declare pathParams?: AnyObj;
+  declare queryParams?: AnyObj;
+  declare body?: any;
+  declare auth?: any;
 
   constructor(
     public rawReq: RawRequest,
