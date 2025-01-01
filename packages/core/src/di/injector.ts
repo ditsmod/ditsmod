@@ -45,10 +45,9 @@ import { DEPS_KEY } from './decorator-factories.js';
 type ScopeOfInjector = 'App' | 'Mod' | 'Rou' | 'Req' | (string & {});
 
 const NoDefaultValue = Symbol();
-const msg1 = 'Setting value by ID failed: cannot find ID "%d" in register, in providersPer%s. Try use injector.setByToken()';
-const msg2 =
-  'Setting value by token failed: cannot find token "%s" in register, in providersPer%s. Try adding a provider ' +
-  'with the same token to the current injector via module or controller metadata.';
+const msg1 =
+  'Setting value by ID failed: cannot find ID "%d" in register, in providersPer%s. Try use injector.setByToken()';
+const msg2 = 'Setting value by token failed: cannot find token "%s" in register, in providersPer%s.';
 
 /**
  * A dependency injection container used for instantiating objects and resolving
@@ -96,11 +95,7 @@ export class Injector {
   /**
    * @param scope Scope name of the injector. Useful for debugging.
    */
-  constructor(
-    Registry: typeof RegistryOfInjector,
-    scope?: ScopeOfInjector,
-    parent?: Injector,
-  ) {
+  constructor(Registry: typeof RegistryOfInjector, scope?: ScopeOfInjector, parent?: Injector) {
     this.#Registry = Registry;
     this.#registry = new Registry();
     this.#parent = parent || null;
