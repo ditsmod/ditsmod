@@ -1,5 +1,6 @@
 export { AjvService } from './ajv.service.js';
-export { AssertDict, AssertUkDict } from './locales/current/index.js';
+export { AssertDict } from './locales/current/_base-en/assert.dict.js';
+export { AssertUkDict } from './locales/current/uk/assert.dict.js';
 export { ValidationModule } from './validation.module.js';
 export { VALIDATION_EXTENSIONS, AJV_OPTIONS } from './constants.js';
 export { ValidationOptions } from './validation-options.js';

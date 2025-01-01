@@ -13,7 +13,7 @@ import { DictService } from '@ditsmod/i18n';
 import { HttpHandler, HttpInterceptor, RouteMeta } from '@ditsmod/routing';
 
 import { ValidationRouteMeta } from './types.js';
-import { AssertDict } from './locales/current/index.js';
+import { AssertDict } from './locales/current/_base-en/assert.dict.js';
 import { AjvService } from './ajv.service.js';
 
 @injectable()
