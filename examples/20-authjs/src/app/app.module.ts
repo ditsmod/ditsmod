@@ -1,9 +1,9 @@
 import { route, RoutingModule } from '@ditsmod/routing';
-import { AuthjsConfig, AUTHJS_CONFIG, AUTHJS_SESSION, AuthjsGuard, AuthjsModule } from '@ditsmod/authjs';
-import { controller, rootModule, inject, OnModuleInit, RequestContext } from '@ditsmod/core';
-import credentials from '@ditsmod/authjs/providers/credentials';
+import { AuthjsConfig, AUTHJS_SESSION, AuthjsGuard, AuthjsModule, AuthjsInterceptor } from '@ditsmod/authjs';
+import { controller, rootModule, inject, RequestContext } from '@ditsmod/core';
+import { BODY_PARSER_EXTENSIONS } from '@ditsmod/body-parser';
 
-import { CredentialsService } from './credentials.service.js';
+import { OverriddenAuthConfig } from './authjs.config.js';
 
 @controller()
 export class InjScopedController {
@@ -12,8 +12,8 @@ export class InjScopedController {
     return session.user;
   }
 
-  @route('GET', 'auth/:action')
-  @route('POST', 'auth/:action/:providerType')
+  @route('GET', 'auth/:action', [], [AuthjsInterceptor])
+  @route('POST', 'auth/:action/:providerType', [], [BODY_PARSER_EXTENSIONS, AuthjsInterceptor])
   auth() {
     return 'ok';
   }
@@ -35,22 +35,13 @@ export class CtxScopedController {
 }
 
 @rootModule({
-  imports: [RoutingModule, { absolutePath: 'auth', module: AuthjsModule }],
+  imports: [
+    RoutingModule,
+    AuthjsModule.withConfigProvider({
+      token: AuthjsConfig,
+      useFactory: [OverriddenAuthConfig, OverriddenAuthConfig.prototype.initAuthjsConfig],
+    }),
+  ],
   controllers: [InjScopedController, CtxScopedController],
-  providersPerMod: [CredentialsService],
 })
-export class AppModule implements OnModuleInit {
-  constructor(
-    @inject(AUTHJS_CONFIG) protected authConfig: AuthjsConfig,
-    protected credentialsService: CredentialsService,
-  ) {}
-
-  onModuleInit() {
-    const credentialsProvider = credentials({
-      credentials: this.credentialsService.credentials,
-      authorize: this.credentialsService.authorize,
-    });
-    this.authConfig.basePath ??= '/auth';
-    this.authConfig.providers ??= [credentialsProvider];
-  }
-}
+export class AppModule {}

@@ -1,3 +1,4 @@
+import { BODY_PARSER_EXTENSIONS } from '@ditsmod/body-parser';
 import { controller, rootModule, inject, RequestContext } from '@ditsmod/core';
 import { route, RoutingModule } from '@ditsmod/routing';
 
@@ -6,11 +7,12 @@ import { AUTHJS_SESSION } from '#mod/constants.js';
 import { AuthjsGuard } from '#mod/authjs.guard.js';
 import { AuthjsConfig } from '#mod/authjs.config.js';
 import { OverriddenAuthConfig } from './authjs.config.js';
+import { AuthjsInterceptor } from '#mod/authjs.interceptor.js';
 
 @controller()
 export class InjScopedController {
-  @route('GET', 'auth/:action')
-  @route('POST', 'auth/:action/:providerType')
+  @route('GET', 'auth/:action', [], [AuthjsInterceptor])
+  @route('POST', 'auth/:action/:providerType', [], [BODY_PARSER_EXTENSIONS, AuthjsInterceptor])
   async customAuthCsrf() {
     return 'ok';
   }
@@ -30,10 +32,13 @@ export class CtxScopedController {
 }
 
 @rootModule({
-  imports: [RoutingModule, { absolutePath: 'auth', module: AuthjsModule }],
-  controllers: [InjScopedController, CtxScopedController],
-  providersPerMod: [
-    { token: AuthjsConfig, useFactory: [OverriddenAuthConfig, OverriddenAuthConfig.prototype.initAuthjsConfig] },
+  imports: [
+    RoutingModule,
+    AuthjsModule.withConfigProvider({
+      token: AuthjsConfig,
+      useFactory: [OverriddenAuthConfig, OverriddenAuthConfig.prototype.initAuthjsConfig],
+    }),
   ],
+  controllers: [InjScopedController, CtxScopedController],
 })
 export class AppModule {}

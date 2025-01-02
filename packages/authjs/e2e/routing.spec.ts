@@ -1,12 +1,14 @@
 import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import supertest from 'supertest';
-import { rootModule, HttpServer, OnModuleInit, RequestContext, controller } from '@ditsmod/core';
+import { rootModule, HttpServer, RequestContext, controller } from '@ditsmod/core';
 import { route, RoutingModule } from '@ditsmod/routing';
+import { BODY_PARSER_EXTENSIONS } from '@ditsmod/body-parser';
 import { TestApplication } from '@ditsmod/testing';
 
 import credentials from '#mod/providers/credentials.js';
 import { AuthjsModule } from '#mod/authjs.module.js';
 import { AuthjsConfig } from '#mod/authjs.config.js';
+import { AuthjsInterceptor } from '#mod/authjs.interceptor.js';
 
 // mock the toWebRequest, make it throw if "X-Test-Header" = 'throw'
 vi.mock('#mod/http-api-adapters.js', async (importOriginal) => {
@@ -24,25 +26,21 @@ vi.mock('#mod/http-api-adapters.js', async (importOriginal) => {
 
 @controller()
 export class Controller1 {
-  @route('GET', 'auth/:action')
-  @route('POST', 'auth/:action/:providerType')
+  @route('GET', 'auth/:action', [], [AuthjsInterceptor])
+  @route('POST', 'auth/:action/:providerType', [], [BODY_PARSER_EXTENSIONS, AuthjsInterceptor])
   async getAuth() {
     return 'OK';
   }
 }
 
 @rootModule({
-  imports: [RoutingModule, { absolutePath: 'auth', module: AuthjsModule }],
+  imports: [
+    RoutingModule,
+    AuthjsModule.withConfigProvider({ secret: 'secret', providers: [credentials] }),
+  ],
   controllers: [Controller1],
 })
-export class AppModule implements OnModuleInit {
-  constructor(protected config: AuthjsConfig) {}
-
-  onModuleInit() {
-    this.config.secret ??= 'secret';
-    this.config.providers ??= [credentials];
-  }
-}
+export class AppModule {}
 
 describe('Middleware behaviour', () => {
   let server: HttpServer | undefined;

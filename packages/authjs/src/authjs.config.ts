@@ -7,7 +7,10 @@ import { Provider } from '@auth/core/providers';
 export class AuthjsConfig implements Omit<AuthConfig, 'raw'> {
   providers: Provider[] = [];
   declare adapter?: AuthConfig['adapter'];
-  declare basePath?: AuthConfig['basePath'];
+  /**
+   * You do not have to set this option as it is set correctly automatically by `AuthjsModule`.
+   */
+  declare basePath?: never;
   declare callbacks?: AuthConfig['callbacks'];
   declare cookies?: AuthConfig['cookies'];
   declare debug?: AuthConfig['debug'];

@@ -3,8 +3,6 @@ import credentials, { CredentialsConfig } from '@ditsmod/authjs/providers/creden
 import { factoryMethod } from '@ditsmod/core';
 
 export class OverriddenAuthConfig extends AuthjsConfig {
-  override basePath = '/auth';
-
   @factoryMethod()
   initAuthjsConfig() {
     const credentialsConfig: Partial<CredentialsConfig> = {
@@ -17,7 +15,7 @@ export class OverriddenAuthConfig extends AuthjsConfig {
       authorize: async (formData: any) => {
         // Validation, transformation here.
         if (typeof formData?.username == 'string') {
-          return formData; // This returns as session data.
+          return { name: formData?.username, email: formData?.username }; // This returns as session data.
         }
 
         // When access is denied.

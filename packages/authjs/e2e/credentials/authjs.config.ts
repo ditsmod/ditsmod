@@ -3,7 +3,6 @@ import credentials, { CredentialsConfig } from '@ditsmod/authjs/providers/creden
 import { factoryMethod } from '@ditsmod/core';
 
 export class OverriddenAuthConfig extends AuthjsConfig {
-  override basePath = '/auth';
   override secret = 'secret';
 
   @factoryMethod()
