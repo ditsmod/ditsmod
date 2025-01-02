@@ -6,7 +6,7 @@ sidebar_position: 9
 
 Imagine you have `Module3`, where you import `Module2` and `Module1`. You made these imports because you need `Provider2` and `Provider1` from these modules, respectively. You review the results of these providers’ operations, but for some reason, `Provider1` does not behave as expected. You start debugging and discover that `Provider1` is exported from both `Module2` and `Module1`. You expected `Provider1` to be exported only from `Module1`, but in reality, the version exported by `Module2` is being used:
 
-```ts
+```ts {8,14}
 import { featureModule, rootModule } from '@ditsmod/core';
 
 class Provider1 {}
