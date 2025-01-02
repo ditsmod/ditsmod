@@ -1,3 +1,5 @@
+export const init = Symbol();
+
 export class ClassMetaIterator {
   #properties: (string | symbol)[];
 
@@ -13,7 +15,7 @@ export class ClassMetaIterator {
     };
   }
 
-  init() {
+  [init]() {
     const arr1 = Object.getOwnPropertyNames(this) as (string | symbol)[];
     const arr2 = Object.getOwnPropertySymbols(this);
     this.#properties = arr1.concat(arr2);

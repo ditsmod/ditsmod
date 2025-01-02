@@ -1,6 +1,6 @@
 import { AnyObj } from '#types/mix.js';
 import { TypeGuard } from '#utils/type-guards.js';
-import { ClassMetaIterator } from './class-meta-iterator.js';
+import { ClassMetaIterator, init } from './class-meta-iterator.js';
 import {
   CACHE_KEY,
   CLASS_KEY,
@@ -104,7 +104,7 @@ export class Reflector {
       this.concatWithParentClassMeta(Cls, classMeta);
       cache = this.concatWithOwnClassMeta(Cls, classMeta);
       if (cache) {
-        (cache as unknown as ClassMetaIterator).init();
+        (cache as unknown as ClassMetaIterator)[init]();
       }
     }
 
