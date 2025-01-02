@@ -371,7 +371,7 @@ export class AppInitializer {
   }
 
   protected async handleExtensionsPerMod(meta: NormalizedModuleMetadata, extensionsManager: ExtensionsManager) {
-    const { extensionsProviders, name: moduleName } = meta;
+    const { extensionsProviders, name: moduleName, modRefId } = meta;
     const extensionTokens = new Set<InjectionToken<Extension[]>>();
     const beforeTokens = new Set<BeforeToken>();
     for (const token of getTokens<ExtensionsGroupToken>(extensionsProviders)) {
@@ -388,7 +388,9 @@ export class AppInitializer {
         await extensionsManager.stage1(groupToken);
         extensionsManager.updateExtensionPendingList();
       } catch (error: any) {
-        throw new ChainError(moduleName, { cause: error, name: 'Error' });
+        const debugModuleName = getDebugClassName(modRefId);
+        const msg = `The work of extension group ${groupToken} in ${debugModuleName} failed`;
+        throw new ChainError(msg, { cause: error, name: 'Error' });
       }
     }
 
