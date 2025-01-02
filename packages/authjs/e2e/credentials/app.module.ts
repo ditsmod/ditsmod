@@ -1,12 +1,11 @@
-import { controller, rootModule, inject, OnModuleInit, RequestContext } from '@ditsmod/core';
+import { controller, rootModule, inject, RequestContext } from '@ditsmod/core';
 import { route, RoutingModule } from '@ditsmod/routing';
-import type { AuthConfig } from '@auth/core';
 
-import credentials from '#mod/providers/credentials.js';
 import { AuthjsModule } from '#mod/authjs.module.js';
-import { AUTHJS_CONFIG, AUTHJS_SESSION } from '#mod/constants.js';
+import { AUTHJS_SESSION } from '#mod/constants.js';
 import { AuthjsGuard } from '#mod/authjs.guard.js';
-import { CredentialsService } from './credentials.service.js';
+import { AuthjsConfig } from '#mod/authjs.config.js';
+import { OverriddenAuthConfig } from './authjs.config.js';
 
 @controller()
 export class InjScopedController {
@@ -33,19 +32,8 @@ export class CtxScopedController {
 @rootModule({
   imports: [RoutingModule, { absolutePath: 'auth', module: AuthjsModule }],
   controllers: [InjScopedController, CtxScopedController],
-  providersPerMod: [CredentialsService],
+  providersPerMod: [
+    { token: AuthjsConfig, useFactory: [OverriddenAuthConfig, OverriddenAuthConfig.prototype.initAuthjsConfig] },
+  ],
 })
-export class AppModule implements OnModuleInit {
-  constructor(
-    @inject(AUTHJS_CONFIG) protected authConfig: AuthConfig,
-    protected credentialsService: CredentialsService,
-  ) {}
-
-  onModuleInit() {
-    const credentialsProvider = credentials({
-      authorize: (data) => this.credentialsService.authorize(data),
-    });
-    this.authConfig.secret ??= 'secret';
-    this.authConfig.providers ??= [credentialsProvider];
-  }
-}
+export class AppModule {}

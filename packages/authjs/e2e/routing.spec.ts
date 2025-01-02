@@ -1,13 +1,12 @@
 import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import supertest from 'supertest';
-import type { AuthConfig } from '@auth/core';
-import { rootModule, HttpServer, inject, OnModuleInit, RequestContext, controller } from '@ditsmod/core';
+import { rootModule, HttpServer, OnModuleInit, RequestContext, controller } from '@ditsmod/core';
 import { route, RoutingModule } from '@ditsmod/routing';
 import { TestApplication } from '@ditsmod/testing';
 
 import credentials from '#mod/providers/credentials.js';
 import { AuthjsModule } from '#mod/authjs.module.js';
-import { AUTHJS_CONFIG } from '#mod/constants.js';
+import { AuthjsConfig } from '#mod/authjs.config.js';
 
 // mock the toWebRequest, make it throw if "X-Test-Header" = 'throw'
 vi.mock('#mod/http-api-adapters.js', async (importOriginal) => {
@@ -37,13 +36,11 @@ export class Controller1 {
   controllers: [Controller1],
 })
 export class AppModule implements OnModuleInit {
-  constructor(@inject(AUTHJS_CONFIG) protected authConfig: AuthConfig) {}
+  constructor(protected config: AuthjsConfig) {}
 
   onModuleInit() {
-    this.authConfig.basePath ??= '/auth';
-    this.authConfig.secret ??= 'secret';
-    this.authConfig.providers ??= [];
-    this.authConfig.providers.push(credentials);
+    this.config.secret ??= 'secret';
+    this.config.providers ??= [credentials];
   }
 }
 

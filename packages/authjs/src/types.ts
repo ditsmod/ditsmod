@@ -1,5 +1,5 @@
 import type { RawRequest } from '@ditsmod/core';
-import type { AuthAction, AuthConfig, Session } from '@auth/core/types';
+import type { AuthAction, Session } from '@auth/core/types';
 import { ProviderType } from '@auth/core/providers';
 
 export interface ReqForSession {
@@ -30,6 +30,4 @@ export const providerTypes: ProviderType[] = [
   'webauthn'
 ];
 
-
-export interface AuthjsConfig extends Omit<AuthConfig, 'raw'> {}
 export type GetSessionResult = Promise<Session | null>;

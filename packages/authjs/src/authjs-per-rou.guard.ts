@@ -1,18 +1,17 @@
-import { CanActivate, guard, inject, Injector, RequestContext } from '@ditsmod/core';
-import { AuthConfig } from '@auth/core';
+import { CanActivate, guard, Injector, RequestContext } from '@ditsmod/core';
 
 import { getSession } from '#mod/get-session.js';
-import { AUTHJS_CONFIG } from '#mod/constants.js';
+import { AuthjsConfig } from './authjs.config.js';
 
 @guard()
 export class AuthjsPerRouGuard implements CanActivate {
   constructor(
-    @inject(AUTHJS_CONFIG) protected authConfig: AuthConfig,
+    protected config: AuthjsConfig,
     protected injector: Injector,
   ) {}
 
   async canActivate(ctx: RequestContext, params?: any[]): Promise<boolean | Response> {
-    const session = await getSession(ctx, this.authConfig);
+    const session = await getSession(ctx, this.config);
     if (!session) {
       return false;
     }

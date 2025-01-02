@@ -1,9 +1,8 @@
 import { Auth, createActionURL, setEnvDefaults } from '@auth/core';
-import type { AuthConfig } from '@auth/core/types';
-
 import { GetSessionResult, ReqForSession } from './types.js';
+import { AuthjsConfig } from './authjs.config.js';
 
-export async function getSession(req: ReqForSession, config: AuthConfig): GetSessionResult {
+export async function getSession(req: ReqForSession, config: AuthjsConfig): GetSessionResult {
   setEnvDefaults(process.env, config);
   const url = createActionURL(
     'session',

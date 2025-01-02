@@ -1,14 +1,14 @@
-import { RequestContext, Status, inject, injectable } from '@ditsmod/core';
-import { Auth, type AuthConfig, setEnvDefaults } from '@auth/core';
+import { RequestContext, Status, injectable } from '@ditsmod/core';
+import { Auth, setEnvDefaults } from '@auth/core';
 import { HttpHandler, HttpInterceptor, applyHeaders, applyResponse } from '@ditsmod/routing';
 
-import { AUTHJS_CONFIG } from '#mod/constants.js';
 import { toWebRequest } from '#mod/http-api-adapters.js';
+import { AuthjsConfig } from './authjs.config.js';
 
 @injectable()
 export class AuthjsInterceptor implements HttpInterceptor {
-  constructor(@inject(AUTHJS_CONFIG) protected config: AuthConfig) {
-    setEnvDefaults(process.env, this.config);
+  constructor(protected config: AuthjsConfig) {
+    setEnvDefaults(process.env, config);
   }
 
   async intercept(next: HttpHandler, ctx: RequestContext) {
