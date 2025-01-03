@@ -37,7 +37,7 @@ export class CtxScopedController {
 @rootModule({
   imports: [
     RoutingModule,
-    AuthjsModule.withConfigProvider({
+    AuthjsModule.withConfig({
       token: AuthjsConfig,
       useFactory: [OverriddenAuthConfig, OverriddenAuthConfig.prototype.initAuthjsConfig],
     }),

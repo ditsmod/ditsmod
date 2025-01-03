@@ -25,7 +25,7 @@ import { AuthjsConfig } from './authjs.config.js';
   exports: [AUTHJS_SESSION, AuthjsGuard, BodyParserModule],
 })
 export class AuthjsModule {
-  static withConfigProvider(providerOrConfig: Provider | AuthjsConfig): ModuleWithParams<AuthjsModule> {
+  static withConfig(providerOrConfig: Provider | AuthjsConfig): ModuleWithParams<AuthjsModule> {
     return {
       module: this,
       providersPerMod: [

@@ -13,12 +13,12 @@ import { AuthjsInterceptor } from '#mod/authjs.interceptor.js';
 export class InjScopedController {
   @route('GET', 'auth/:action', [], [AuthjsInterceptor])
   @route('POST', 'auth/:action/:providerType', [], [BODY_PARSER_EXTENSIONS, AuthjsInterceptor])
-  async customAuthCsrf() {
+  async method1() {
     return 'ok';
   }
 
   @route('GET', 'inj-scoped', [AuthjsGuard])
-  async getAuth(@inject(AUTHJS_SESSION) session: any) {
+  async method2(@inject(AUTHJS_SESSION) session: any) {
     return session;
   }
 }
@@ -26,7 +26,7 @@ export class InjScopedController {
 @controller({ scope: 'ctx' })
 export class CtxScopedController {
   @route('GET', 'ctx-scoped', [AuthjsGuard])
-  async getAuth(ctx: RequestContext) {
+  async method1(ctx: RequestContext) {
     return ctx.auth;
   }
 }
@@ -34,7 +34,7 @@ export class CtxScopedController {
 @rootModule({
   imports: [
     RoutingModule,
-    AuthjsModule.withConfigProvider({
+    AuthjsModule.withConfig({
       token: AuthjsConfig,
       useFactory: [OverriddenAuthConfig, OverriddenAuthConfig.prototype.initAuthjsConfig],
     }),

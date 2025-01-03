@@ -36,7 +36,7 @@ export class Controller1 {
 @rootModule({
   imports: [
     RoutingModule,
-    AuthjsModule.withConfigProvider({ secret: 'secret', providers: [credentials] }),
+    AuthjsModule.withConfig({ secret: 'secret', providers: [credentials] }),
   ],
   controllers: [Controller1],
 })
