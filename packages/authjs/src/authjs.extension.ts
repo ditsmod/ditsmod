@@ -28,9 +28,9 @@ export class AuthjsExtension implements Extension {
         if (interceptors.includes(AuthjsInterceptor)) {
           let basePath: string;
           if (httpMethods.at(0) == 'GET') {
-            basePath = (path || '').split('/').slice(0, -1).join('/');
+            basePath = path.split('/').slice(0, -1).join('/');
           } else {
-            basePath = (path || '').split('/').slice(0, -2).join('/');
+            basePath = path.split('/').slice(0, -2).join('/');
           }
 
           if (prevBasePath !== undefined && prevBasePath != basePath) {

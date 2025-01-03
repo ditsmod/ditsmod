@@ -8,14 +8,15 @@ export class OverriddenAuthConfig extends AuthjsConfig {
     const credentialsConfig: Partial<CredentialsConfig> = {
       credentials: {
         username: { label: 'Username' },
+        email: { label: 'Email', type: 'email' },
         password: { label: 'Your password', type: 'password' },
         iAgree: { label: 'I agree', type: 'checkbox' },
       },
 
       authorize: async (formData: any) => {
-        // Validation, transformation here.
-        if (typeof formData?.username == 'string') {
-          return { name: formData?.username, email: formData?.username }; // This returns as session data.
+        if (formData?.iAgree) {
+          // Validation, transformation here.
+          return { name: formData?.username, email: formData?.email }; // This returns as session data.
         }
 
         // When access is denied.

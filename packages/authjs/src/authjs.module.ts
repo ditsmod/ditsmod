@@ -25,6 +25,11 @@ import { AuthjsConfig } from './authjs.config.js';
   exports: [AUTHJS_SESSION, AuthjsGuard, BodyParserModule],
 })
 export class AuthjsModule {
+  /**
+   * You can pass either a ready-made configuration or a provider that returns the configuration.
+   * The second option is often preferable because, by passing a provider, you can use DI within
+   * it to integrate, for example, with the {@link https://authjs.dev/reference/core/providers/credentials#authorize | CredentialsConfig.authorize()} method.
+   */
   static withConfig(providerOrConfig: Provider | AuthjsConfig): ModuleWithParams<AuthjsModule> {
     return {
       module: this,
