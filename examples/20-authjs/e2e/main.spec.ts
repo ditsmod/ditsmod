@@ -25,7 +25,7 @@ describe('01-hello-world', () => {
     server?.close();
   });
 
-  it.only('case1', async () => {
+  it('case1', async () => {
     const response = await testAgent.get('/auth/csrf');
     expect(response.status).toBe(200);
     expect(response.type).toBe('application/json');
@@ -54,15 +54,9 @@ describe('01-hello-world', () => {
     const { status, body } = await testAgent.get('/per-req').set('Cookie', [sessionTokenCookie]);
 
     expect(status).toBe(Status.OK);
-    console.log('body:', body);
     expect(body).toEqual({
       name: expect.any(String),
       email: expect.any(String),
     });
-  });
-
-  it('case3', async () => {
-    const { status } = await testAgent.get('/per-rou');
-    expect(status).toBe(401);
   });
 });

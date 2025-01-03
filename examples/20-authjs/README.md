@@ -16,3 +16,5 @@ npm run start:dev
 ```
 
 Open your browser on http://0.0.0.0:3000/auth/signin
+
+For more info, see https://ditsmod.github.io/en/native-modules/authjs/
