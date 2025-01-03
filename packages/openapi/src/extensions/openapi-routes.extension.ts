@@ -56,15 +56,15 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
               meta.providersPerMod.unshift(Controller);
             }
             const guards = [];
-            guards.push(...this.normalizeGuards(decoratorAndValue.value.guards));
+            const { httpMethod, path: controllerPath, operationObject, interceptors } = oasRoute;
+            const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
+            const path = this.getPath(prefix, controllerPath);
+            guards.push(...this.normalizeGuards(httpMethod, path, decoratorAndValue.value.guards));
             const controllerFactory: FactoryProvider = { useFactory: [Controller, Controller.prototype[methodName]] };
             providersPerReq.push(
               ...((ctrlDecorator?.value as ControllerRawMetadata1).providersPerReq || []),
               controllerFactory,
             );
-            const { httpMethod, path: controllerPath, operationObject, interceptors } = oasRoute;
-            const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
-            const path = this.getPath(prefix, controllerPath);
             const clonedOperationObject = { ...(operationObject || {}) } as XOperationObject;
             const { parameters } = clonedOperationObject;
             const httpMethods = Array.isArray(httpMethod) ? httpMethod : [httpMethod];
