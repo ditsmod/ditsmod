@@ -1,7 +1,8 @@
 import { AuthjsConfig } from '@ditsmod/authjs';
 import credentials, { CredentialsConfig } from '@ditsmod/authjs/providers/credentials';
-import { factoryMethod } from '@ditsmod/core';
+import { factoryMethod, injectable } from '@ditsmod/core';
 
+@injectable()
 export class OverriddenAuthConfig extends AuthjsConfig {
   @factoryMethod()
   initAuthjsConfig() {
@@ -9,7 +10,7 @@ export class OverriddenAuthConfig extends AuthjsConfig {
       credentials: {
         username: { label: 'Username' },
         email: { label: 'Email', type: 'email' },
-        password: { label: 'Your password', type: 'password' },
+        password: { label: 'Password', type: 'password' },
         iAgree: { label: 'I agree', type: 'checkbox' },
       },
 
