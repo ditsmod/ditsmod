@@ -10,3 +10,4 @@ CHANGELOG.md
 *.tsbuildinfo
 tsconfig.e2e.json
 tsconfig.unit.json
+dist-e2e
