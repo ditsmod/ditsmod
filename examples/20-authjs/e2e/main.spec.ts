@@ -42,7 +42,7 @@ describe('01-hello-world', () => {
     const responseCredentials = await testAgent
       .post('/auth/callback/credentials')
       .set('Cookie', [csrfTokenCookie, callbackCookie]) // Send the cookie with the request
-      .send({ csrfToken: csrfTokenValue, username: 'johnsmith' });
+      .send({ csrfToken: csrfTokenValue, username: 'johnsmith', email: 'johnsmith@i.ua', iAgree: true });
 
     expect(responseCredentials.status).toBe(Status.OK);
     expect(responseCredentials.text).toBe('ok');
@@ -54,6 +54,7 @@ describe('01-hello-world', () => {
     const { status, body } = await testAgent.get('/per-req').set('Cookie', [sessionTokenCookie]);
 
     expect(status).toBe(Status.OK);
+    console.log('body:', body);
     expect(body).toEqual({
       name: expect.any(String),
       email: expect.any(String),
