@@ -1,6 +1,6 @@
 import { route, RoutingModule } from '@ditsmod/routing';
 import { AuthjsConfig, AUTHJS_SESSION, AuthjsGuard, AuthjsModule, AuthjsInterceptor } from '@ditsmod/authjs';
-import { controller, rootModule, inject, RequestContext } from '@ditsmod/core';
+import { controller, rootModule, inject, Res } from '@ditsmod/core';
 import { BODY_PARSER_EXTENSIONS } from '@ditsmod/body-parser';
 
 import { OverriddenAuthConfig } from './authjs.config.js';
@@ -8,8 +8,8 @@ import { OverriddenAuthConfig } from './authjs.config.js';
 @controller()
 export class InjScopedController {
   @route('GET')
-  goto(ctx: RequestContext) {
-    ctx.rawRes.setHeader('content-type', 'text/html');
+  goto(res: Res) {
+    res.rawRes.setHeader('content-type', 'text/html');
     const url = 'http://0.0.0.0:3000/auth/signin';
     return `Open your browser on <a href="${url}">${url}</a>`;
   }
