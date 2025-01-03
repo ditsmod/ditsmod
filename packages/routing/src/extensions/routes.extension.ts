@@ -10,6 +10,7 @@ import {
   reflector,
   Class,
   MetadataPerMod2,
+  HttpMethod,
 } from '@ditsmod/core';
 
 import { MetadataPerMod3 } from '../types.js';
@@ -17,6 +18,7 @@ import { isRoute } from '../type.guards.js';
 import { RouteMetadata } from '../decorators/route.js';
 import { ControllerMetadata } from '../controller-metadata.js';
 import { RouteMeta } from '../route-data.js';
+import { inspect } from 'node:util';
 
 @injectable()
 export class RoutesExtension implements Extension<MetadataPerMod3> {
@@ -61,12 +63,12 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
             if (scope == 'ctx') {
               meta.providersPerMod.unshift(Controller);
             }
-            const guards = this.normalizeGuards(route.guards).slice();
+            const { path: controllerPath, httpMethod, interceptors } = route;
+            const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
+            const path = this.getPath(prefix, controllerPath);
+            const guards = this.normalizeGuards(httpMethod, path, route.guards).slice();
             providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
             providersPerReq.push(...((ctrlDecorator?.value as ControllerRawMetadata1).providersPerReq || []));
-            const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
-            const { path: controllerPath, httpMethod, interceptors } = route;
-            const path = this.getPath(prefix, controllerPath);
 
             const routeMeta: RouteMeta = {
               decoratorAndValue,
@@ -82,7 +84,7 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
               routeMeta,
               scope,
               guards,
-              interceptors
+              interceptors,
             });
           }
         }
@@ -107,13 +109,26 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
     }
   }
 
-  protected normalizeGuards(guards?: GuardItem[]) {
+  protected normalizeGuards(httpMethod: HttpMethod | HttpMethod[], path: string, guards?: GuardItem[]) {
     return (guards || []).map((item) => {
       if (Array.isArray(item)) {
+        this.checkGuardsPerMod(httpMethod, path, item[0]);
         return { guard: item[0], params: item.slice(1) } as GuardPerMod1;
       } else {
+        this.checkGuardsPerMod(httpMethod, path, item);
         return { guard: item } as GuardPerMod1;
       }
     });
+  }
+
+  protected checkGuardsPerMod(httpMethod: HttpMethod | HttpMethod[], path: string, Guard: Class) {
+    const type = typeof Guard?.prototype.canActivate;
+    if (type != 'function') {
+      const methods = Array.isArray(httpMethod) ? httpMethod.join(', ') : httpMethod;
+      const whatIsThis = inspect(Guard, false, 3);
+      throw new TypeError(
+        `Validation of route "${methods} ${path}" failed: Guard.prototype.canActivate must be a function, got: ${type} (in ${whatIsThis})`,
+      );
+    }
   }
 }
