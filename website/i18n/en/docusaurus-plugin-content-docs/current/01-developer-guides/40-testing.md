@@ -273,7 +273,7 @@ const server = await TestApplication.createTestApp(AppModule)
 
 [1]: /components-of-ditsmod-app/dependency-injection
 [2]: /components-of-ditsmod-app/dependency-injection#injector
-[3]: /components-of-ditsmod-app/dependency-injection#hierarchy-of-injectors
+[3]: /components-of-ditsmod-app/dependency-injection#hierarchy-and-encapsulation-of-injectors
 [4]: #testroutingplugin
 
 [100]: https://vitest.dev/

@@ -346,24 +346,29 @@ When automatically resolving a class dependency (when the injector is not used d
 
 Using DI, you may not know the entire `Service3` dependency chain, entrust this work to the injector, the main thing is to transfer all necessary classes to the DI registry. Keep in mind that you can write unit tests for individual classes this way.
 
-## Hierarchy of injectors
+## Hierarchy and encapsulation of injectors {#hierarchy-and-encapsulation-of-injectors}
 
-DI also allows you to create a hierarchy of injectors - this is when there are parent and child injectors. At first glance, there is nothing interesting in such a hierarchy, because it is not clear what it is needed for, but in Ditsmod this possibility is used very often, since it allows you to make the application architecture modular. It is worth paying special attention to the study of the specifics of the hierarchy, it will save you more than one hour of time in the future, because you will know how it works and why it does not find this dependency...
+DI provides the ability to create a hierarchy and encapsulation of injectors, involving parent and child injectors. It is precisely through this hierarchy and encapsulation that the structure and modularity of an application are built. On the other hand, where there is encapsulation, there are rules to learn in order to understand when one service can access a specific provider and when it cannot.
 
-When creating a hierarchy, only the child injector holds the connection, it has an object of the parent injector. At the same time, the parent injector knows nothing about its child injectors. That is, the connection between injectors in the hierarchy is one-way. Conditionally, it looks like this:
+Let's consider the following situation. Imagine you need to create a default configuration for the entire application and a custom configuration for specific modules. This means that at the level of certain modules, you will modify the configuration, and you need to ensure that it does not affect the default value or other modules. The following pseudo-code demonstrates the basic concept that ensures such behavior:
 
-```ts {6}
-interface Parent {
-  // There are certain properties of the parent injector, but no child injector
+```ts
+// Parent injector
+class InjectorPerApplication {
+  locale = 'en';
+  token1 = 'value1';
+  token2 = 'value2';
+  // ...
 }
 
-interface Child {
-  parent: Parent;
-  // There are other properties of the child injector.
+// Child injector
+class InjectorPerModule {
+  injectorPerApp: InjectorPerApplication;
+  locale = 'uk';
 }
 ```
 
-By having a parent injector object, a child injector can refer to its parent when the child needs a provider value that it does not have.
+The child injector can refer to the parent injector because it has the appropriate variable containing the parent injector instance. On the other hand, the parent injector does not have access to the child injector, so it can only find values for those providers explicitly passed to it.
 
 Let's consider the following example. For simplicity, no decorators are used here at all, since each class is independent:
 
@@ -912,7 +917,7 @@ Remember that when DI cannot find the right provider, there are only three possi
 [107]: /developer-guides/exports-and-imports
 [121]: /components-of-ditsmod-app/providers-collisions
 [100]: #passing-of-providers-to-the-di-registry
-[101]: #hierarchy-of-injectors
+[101]: #hierarchy-and-encapsulation-of-injectors
 [102]: #injector
 [103]: /components-of-ditsmod-app/controllers-and-services/#what-is-a-controller
 [104]: /components-of-ditsmod-app/extensions/#group-of-extensions

@@ -260,6 +260,6 @@ export class BodyParserExtension implements Extension<void> {
 [5]: /native-modules/body-parser
 [6]: /native-modules/openapi
 [7]: /components-of-ditsmod-app/dependency-injection#мульти-провайдери
-[8]: /components-of-ditsmod-app/dependency-injection#ієрархія-інжекторів
+[8]: /components-of-ditsmod-app/dependency-injection#hierarchy-and-encapsulation-of-injectors
 [9]: /components-of-ditsmod-app/dependency-injection#провайдери
 [10]: /components-of-ditsmod-app/http-interceptors/

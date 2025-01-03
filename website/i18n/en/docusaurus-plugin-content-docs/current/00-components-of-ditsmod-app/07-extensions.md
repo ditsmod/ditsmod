@@ -260,6 +260,6 @@ Of course, such dynamic addition of providers is possible only before creating H
 [5]: /native-modules/body-parser
 [6]: /native-modules/openapi
 [7]: /components-of-ditsmod-app/dependency-injection#multi-providers
-[8]: /components-of-ditsmod-app/dependency-injection#hierarchy-of-injectors
+[8]: /components-of-ditsmod-app/dependency-injection#hierarchy-and-encapsulation-of-injectors
 [9]: /components-of-ditsmod-app/dependency-injection#providers
 [10]: /components-of-ditsmod-app/http-interceptors/
