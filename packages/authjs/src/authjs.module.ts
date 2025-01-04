@@ -1,5 +1,5 @@
 import { featureModule, isProvider, ModuleWithParams, Provider } from '@ditsmod/core';
-import { PRE_ROUTER_EXTENSIONS, RoutingModule } from '@ditsmod/routing';
+import { ORDERED_INTERCEPTORS_EXTENSIONS, RoutingModule } from '@ditsmod/routing';
 import { BodyParserModule } from '@ditsmod/body-parser';
 
 import { AUTHJS_EXTENSIONS, AUTHJS_SESSION } from './constants.js';
@@ -20,7 +20,12 @@ import { AuthjsConfig } from './authjs.config.js';
   providersPerRou: [{ token: AuthjsGuard, useClass: AuthjsPerRouGuard }],
   providersPerReq: [AuthjsGuard, { token: AUTHJS_SESSION }],
   extensions: [
-    { extension: AuthjsExtension, group: AUTHJS_EXTENSIONS, beforeGroup: PRE_ROUTER_EXTENSIONS, exportedOnly: true },
+    {
+      extension: AuthjsExtension,
+      group: AUTHJS_EXTENSIONS,
+      beforeGroup: ORDERED_INTERCEPTORS_EXTENSIONS,
+      exportedOnly: true,
+    },
   ],
   exports: [AUTHJS_SESSION, AuthjsGuard, BodyParserModule],
 })
