@@ -9,31 +9,22 @@ import { featureModule } from '#decorators/module.js';
 import { Router } from '#types/router.js';
 
 describe('extensions e2e', () => {
+  const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
+  const MY_EXTENSIONS2 = new InjectionToken<Extension[]>('MY_EXTENSIONS2');
+  const MY_EXTENSIONS3 = new InjectionToken<Extension[]>('MY_EXTENSIONS3');
+
   it('circular dependencies of groups in single module', async () => {
-    const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
-    const MY_EXTENSIONS2 = new InjectionToken<Extension[]>('MY_EXTENSIONS2');
-    const MY_EXTENSIONS3 = new InjectionToken<Extension[]>('MY_EXTENSIONS3');
 
     @injectable()
     class Extension1 implements Extension<void> {
       async stage1() {}
     }
 
-    @injectable()
-    class Extension2 implements Extension<void> {
-      async stage1() {}
-    }
-
-    @injectable()
-    class Extension3 implements Extension<void> {
-      async stage1() {}
-    }
-
     @rootModule({
       providersPerApp: [{ token: Router, useValue: 'fake value' }],
       extensions: [
-        { extension: Extension3, group: MY_EXTENSIONS3, beforeGroup: MY_EXTENSIONS2 },
-        { extension: Extension2, group: MY_EXTENSIONS2, beforeGroup: MY_EXTENSIONS1 },
+        { extension: Extension1, group: MY_EXTENSIONS3, beforeGroup: MY_EXTENSIONS2 },
+        { extension: Extension1, group: MY_EXTENSIONS2, beforeGroup: MY_EXTENSIONS1 },
         { extension: Extension1, group: MY_EXTENSIONS1, beforeGroup: MY_EXTENSIONS3 },
       ],
     })
@@ -44,32 +35,18 @@ describe('extensions e2e', () => {
   });
 
   it('circular dependencies of groups in three modules', async () => {
-    const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
-    const MY_EXTENSIONS2 = new InjectionToken<Extension[]>('MY_EXTENSIONS2');
-    const MY_EXTENSIONS3 = new InjectionToken<Extension[]>('MY_EXTENSIONS3');
-
     @injectable()
     class Extension1 implements Extension<void> {
       async stage1() {}
     }
 
-    @injectable()
-    class Extension2 implements Extension<void> {
-      async stage1() {}
-    }
-
-    @injectable()
-    class Extension3 implements Extension<void> {
-      async stage1() {}
-    }
-
     @featureModule({
-      extensions: [{ extension: Extension3, group: MY_EXTENSIONS3, beforeGroup: MY_EXTENSIONS2, exportedOnly: true }],
+      extensions: [{ extension: Extension1, group: MY_EXTENSIONS3, beforeGroup: MY_EXTENSIONS2, exportedOnly: true }],
     })
     class Module1 {}
 
     @featureModule({
-      extensions: [{ extension: Extension2, group: MY_EXTENSIONS2, beforeGroup: MY_EXTENSIONS1, exportedOnly: true }],
+      extensions: [{ extension: Extension1, group: MY_EXTENSIONS2, beforeGroup: MY_EXTENSIONS1, exportedOnly: true }],
     })
     class Module2 {}
 
@@ -85,34 +62,20 @@ describe('extensions e2e', () => {
   });
 
   it('circular dependencies of groups in two modules', async () => {
-    const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
-    const MY_EXTENSIONS2 = new InjectionToken<Extension[]>('MY_EXTENSIONS2');
-    const MY_EXTENSIONS3 = new InjectionToken<Extension[]>('MY_EXTENSIONS3');
-
     @injectable()
     class Extension1 implements Extension<void> {
       async stage1() {}
     }
 
-    @injectable()
-    class Extension2 implements Extension<void> {
-      async stage1() {}
-    }
-
-    @injectable()
-    class Extension3 implements Extension<void> {
-      async stage1() {}
-    }
-
     @featureModule({
-      extensions: [{ extension: Extension3, group: MY_EXTENSIONS3, beforeGroup: MY_EXTENSIONS2, exportedOnly: true }],
+      extensions: [{ extension: Extension1, group: MY_EXTENSIONS3, beforeGroup: MY_EXTENSIONS2, exportedOnly: true }],
     })
     class Module1 {}
 
     @featureModule({
       imports: [Module1],
       extensions: [
-        { extension: Extension2, group: MY_EXTENSIONS2, beforeGroup: MY_EXTENSIONS1 },
+        { extension: Extension1, group: MY_EXTENSIONS2, beforeGroup: MY_EXTENSIONS1 },
         { extension: Extension1, group: MY_EXTENSIONS1, beforeGroup: MY_EXTENSIONS3 }
       ],
     })
@@ -129,33 +92,19 @@ describe('extensions e2e', () => {
   });
 
   it('circular dependencies of groups in Module2 with global Module1', async () => {
-    const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
-    const MY_EXTENSIONS2 = new InjectionToken<Extension[]>('MY_EXTENSIONS2');
-    const MY_EXTENSIONS3 = new InjectionToken<Extension[]>('MY_EXTENSIONS3');
-
     @injectable()
     class Extension1 implements Extension<void> {
       async stage1() {}
     }
 
-    @injectable()
-    class Extension2 implements Extension<void> {
-      async stage1() {}
-    }
-
-    @injectable()
-    class Extension3 implements Extension<void> {
-      async stage1() {}
-    }
-
     @featureModule({
-      extensions: [{ extension: Extension3, group: MY_EXTENSIONS3, beforeGroup: MY_EXTENSIONS2, exportedOnly: true }],
+      extensions: [{ extension: Extension1, group: MY_EXTENSIONS3, beforeGroup: MY_EXTENSIONS2, exportedOnly: true }],
     })
     class Module1 {}
 
     @featureModule({
       extensions: [
-        { extension: Extension2, group: MY_EXTENSIONS2, beforeGroup: MY_EXTENSIONS1 },
+        { extension: Extension1, group: MY_EXTENSIONS2, beforeGroup: MY_EXTENSIONS1 },
         { extension: Extension1, group: MY_EXTENSIONS1, beforeGroup: MY_EXTENSIONS3 }
       ],
     })
@@ -174,8 +123,6 @@ describe('extensions e2e', () => {
 
   it('check isLastModule', async () => {
     const extensionInit = vi.fn();
-
-    const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
     class Provider1 {}
     class Provider2 {}
     class Provider3 {}
@@ -227,9 +174,6 @@ describe('extensions e2e', () => {
   it('one extension depends on another', async () => {
     const extensionInit1 = vi.fn();
     const extensionInit2 = vi.fn();
-
-    const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
-    const MY_EXTENSIONS2 = new InjectionToken<Extension[]>('MY_EXTENSIONS2');
     class Provider1 {}
     class Provider2 {}
     class Provider3 {}
@@ -311,9 +255,6 @@ describe('extensions e2e', () => {
     const spyIsLastModule = vi.fn();
     const spyMetaFromAllModules = vi.fn();
     const spyMetaFromCurrentModule = vi.fn();
-
-    const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
-    const MY_EXTENSIONS2 = new InjectionToken<Extension[]>('MY_EXTENSIONS2');
     class Provider1 {}
 
     /**
