@@ -5,6 +5,9 @@ import { RoutingErrorMediator } from '../router-error-mediator.js';
 import { HTTP_INTERCEPTORS, ROUTES_EXTENSIONS } from '#mod/constants.js';
 import { isInterceptor } from '#mod/type.guards.js';
 
+/**
+ * A group of extensions that allows you to set the order of launching different interceptors.
+ */
 @injectable()
 export class UseInterceptorExtension implements Extension {
   constructor(

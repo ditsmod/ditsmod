@@ -6,9 +6,12 @@ export const HTTP_INTERCEPTORS = new InjectionToken<HttpInterceptor[]>('HTTP_INT
 /**
  * A group of extensions that setting routes for router.
  */
-
 export const PRE_ROUTER_EXTENSIONS = new InjectionToken<Extension<void>[]>('PRE_ROUTER_EXTENSIONS');
 /**
  * A group of extensions that returns `MetadataPerMod3[]` for a router.
  */
 export const ROUTES_EXTENSIONS = new InjectionToken<Extension<MetadataPerMod3>[]>('ROUTES_EXTENSIONS');
+/**
+ * A group of extensions that allows you to set the order of launching different interceptors.
+ */
+export const ORDERED_INTERCEPTORS_EXTENSIONS = new InjectionToken<Extension[]>('ORDERED_INTERCEPTORS_EXTENSIONS');
