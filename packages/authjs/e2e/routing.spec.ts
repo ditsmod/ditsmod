@@ -2,12 +2,10 @@ import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import supertest from 'supertest';
 import { rootModule, HttpServer, RequestContext, controller } from '@ditsmod/core';
 import { route, RoutingModule } from '@ditsmod/routing';
-import { BODY_PARSER_EXTENSIONS } from '@ditsmod/body-parser';
 import { TestApplication } from '@ditsmod/testing';
 
 import credentials from '#mod/providers/credentials.js';
 import { AuthjsModule } from '#mod/authjs.module.js';
-import { AuthjsConfig } from '#mod/authjs.config.js';
 import { AuthjsInterceptor } from '#mod/authjs.interceptor.js';
 
 // mock the toWebRequest, make it throw if "X-Test-Header" = 'throw'
@@ -26,8 +24,7 @@ vi.mock('#mod/http-api-adapters.js', async (importOriginal) => {
 
 @controller()
 export class Controller1 {
-  @route('GET', 'auth/:action', [], [AuthjsInterceptor])
-  @route('POST', 'auth/:action/:providerType', [], [BODY_PARSER_EXTENSIONS, AuthjsInterceptor])
+  @route('POST', 'auth/:action/:providerType', [], [AuthjsInterceptor])
   async getAuth() {
     return 'OK';
   }

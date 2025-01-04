@@ -1,7 +1,6 @@
 import { route, RoutingModule } from '@ditsmod/routing';
 import { AuthjsConfig, AUTHJS_SESSION, AuthjsGuard, AuthjsModule, AuthjsInterceptor } from '@ditsmod/authjs';
 import { controller, rootModule, inject, Res } from '@ditsmod/core';
-import { BODY_PARSER_EXTENSIONS } from '@ditsmod/body-parser';
 
 import { OverriddenAuthConfig } from './authjs.config.js';
 
@@ -14,8 +13,7 @@ export class InjScopedController {
     return `Open your browser on <a href="${url}">${url}</a>`;
   }
 
-  @route('GET', 'auth/:action', [], [AuthjsInterceptor])
-  @route('POST', 'auth/:action/:providerType', [], [BODY_PARSER_EXTENSIONS, AuthjsInterceptor])
+  @route('POST', 'auth/:action/:providerType', [], [AuthjsInterceptor])
   auth() {
     return 'ok';
   }

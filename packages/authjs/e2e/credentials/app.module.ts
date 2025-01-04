@@ -1,4 +1,3 @@
-import { BODY_PARSER_EXTENSIONS } from '@ditsmod/body-parser';
 import { controller, rootModule, inject, RequestContext } from '@ditsmod/core';
 import { route, RoutingModule } from '@ditsmod/routing';
 
@@ -11,8 +10,7 @@ import { AuthjsInterceptor } from '#mod/authjs.interceptor.js';
 
 @controller()
 export class InjScopedController {
-  @route('GET', 'auth/:action', [], [AuthjsInterceptor])
-  @route('POST', 'auth/:action/:providerType', [], [BODY_PARSER_EXTENSIONS, AuthjsInterceptor])
+  @route('POST', 'auth/:action/:providerType', [], [AuthjsInterceptor])
   async method1() {
     return 'ok';
   }
