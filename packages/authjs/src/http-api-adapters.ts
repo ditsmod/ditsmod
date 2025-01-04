@@ -1,10 +1,10 @@
-import { AnyObj, RawResponse, RequestContext } from '@ditsmod/core';
+import { AnyObj, RequestContext } from '@ditsmod/core';
 
 /**
  * Adapts Ditsmod Request to a Web Request, returning the Web Request.
  */
-export function toWebRequest(ctx: RequestContext) {
-  const url = `${ctx.protocol}://${process.env.HOST ?? 'localhost'}${ctx.rawReq.url}`;
+export function toWebRequest(ctx: RequestContext, alternativeUrl?: string) {
+  const url = `${ctx.protocol}://${process.env.HOST ?? 'localhost'}${alternativeUrl || ctx.rawReq.url}`;
   const headers = new Headers();
 
   Object.entries(ctx.rawReq.headers).forEach(([key, value]) => {
