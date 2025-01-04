@@ -1,4 +1,12 @@
-import { ChainError, Extension, ExtensionsManager, injectable, Injector, Stage1GroupMeta } from '@ditsmod/core';
+import {
+  ChainError,
+  Extension,
+  ExtensionsManager,
+  HttpMethod,
+  injectable,
+  Injector,
+  Stage1GroupMeta,
+} from '@ditsmod/core';
 import { MetadataPerMod3, ROUTES_EXTENSIONS } from '@ditsmod/routing';
 import { LoggerInstance } from '@auth/core/types';
 import { BODY_PARSER_EXTENSIONS } from '@ditsmod/body-parser';
@@ -26,17 +34,27 @@ export class AuthjsExtension implements Extension {
     parent: for (const metadataPerMod3 of this.stage1GroupMeta.groupData) {
       const { aControllerMetadata } = metadataPerMod3;
       for (const obj of aControllerMetadata) {
-        const { path, interceptors } = obj;
+        const { path, interceptors, httpMethods } = obj;
+        const splitedPath = path.split('/');
         if (interceptors.includes(AuthjsInterceptor)) {
-          const basePath = path.split('/').slice(0, -2).join('/');
+          if (splitedPath.length < 3 || splitedPath.at(-2) != ':action') {
+            this.throwInvalidUrl(httpMethods, path);
+          }
+          const basePath = splitedPath.slice(0, -2).join('/');
           (authjsConfig.basePath as unknown as string) = `/${basePath}`;
-          const actionPath = basePath ? `${basePath}/:action` : ':action';
-          aControllerMetadata.push({...obj, httpMethods: ['GET'], path: actionPath });
+          aControllerMetadata.push({ ...obj, httpMethods: ['GET'], path: `${basePath}/:action` });
           break parent;
         }
       }
     }
     this.setAuthjsLogger(authjsConfig);
+  }
+
+  protected throwInvalidUrl(httpMethods: HttpMethod[], path: string) {
+    const msg =
+      `Unexpected URL for Auth.js: "${httpMethods.join(', ')} ${path}". Please provide a ` +
+      'URL that matches the following pattern: "arbitrary-path/:action/:arbitrary-param-name"';
+    throw new Error(msg);
   }
 
   protected setAuthjsLogger(authjsConfig: AuthjsConfig) {

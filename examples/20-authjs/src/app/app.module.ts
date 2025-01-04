@@ -13,7 +13,7 @@ export class InjScopedController {
     return `Open your browser on <a href="${url}">${url}</a>`;
   }
 
-  @route('POST', 'auth/:action/:providerType', [], [AuthjsInterceptor])
+  @route('POST', 'auth/:action/:providerId', [], [AuthjsInterceptor])
   auth() {
     return 'ok';
   }
