@@ -17,6 +17,9 @@ export class AuthjsInterceptor implements HttpInterceptor {
       await applyResponse(response, ctx.rawRes);
       return;
     }
+    if (response.status == Status.FOUND) {
+      response.headers.delete('location');
+    }
     applyHeaders(response, ctx.rawRes);
     return next.handle();
   }
