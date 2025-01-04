@@ -19,7 +19,6 @@
     { "path": "15-i18n/tsconfig.json" },
     { "path": "16-openapi-validation/tsconfig.json" },
     { "path": "17-cors/tsconfig.json" },
-    { "path": "18-diagnostics-channel/tsconfig.json" },
     { "path": "19-session-cookie/tsconfig.json" },
     { "path": "20-authjs/tsconfig.json" },
   ]
