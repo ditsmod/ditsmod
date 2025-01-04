@@ -20,18 +20,16 @@ describe('01-hello-world', () => {
 
   describe('injector-scoped controller', () => {
     it('works with GET method', async () => {
-      const { status, type, text } = await testAgent.get('/injector-scoped');
+      const { status, text } = await testAgent.get('/injector-scoped');
       expect(status).toBe(200);
-      expect(type).toBe('text/plain');
       expect(text).toBe('ok1');
     });
   });
 
   describe('context-scoped controller', () => {
     it('works with GET method', async () => {
-      const { status, type, text } = await testAgent.get('/context-scoped');
+      const { status, text } = await testAgent.get('/context-scoped');
       expect(status).toBe(200);
-      expect(type).toBe('text/plain');
       expect(text).toBe('ok2');
     });
   });

@@ -11,19 +11,20 @@ export class MyHttpErrorHandler implements HttpErrorHandler {
     if (isCustomError(err)) {
       const { level, status } = err.info;
       this.logger.log(level || 'debug', errObj);
-      this.sendError(err.message, ctx, requestId, status);
+      ctx.rawRes.statusCode = status || Status.INTERNAL_SERVER_ERROR;
+      this.sendError(err.message, ctx, requestId);
     } else {
       this.logger.log('error', errObj);
       const msg = err.message || 'Internal server error';
-      const status = (err as any).status || Status.INTERNAL_SERVER_ERROR;
-      this.sendError(msg, ctx, requestId, status);
+      ctx.rawRes.statusCode = (err as any).status || Status.INTERNAL_SERVER_ERROR;
+      this.sendError(msg, ctx, requestId);
     }
   }
 
-  protected sendError(error: string, ctx: RequestContext, requestId: string, status?: Status) {
+  protected sendError(error: string, ctx: RequestContext, requestId: string) {
     if (!ctx.rawRes.headersSent) {
       this.addRequestIdToHeader(requestId, ctx);
-      ctx.sendJson({ error }, status);
+      ctx.sendJson({ error });
     }
   }
 

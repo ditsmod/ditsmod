@@ -19,16 +19,14 @@ describe('14-auth-jwt', () => {
   });
 
   it('case 1', async () => {
-    const { type, status, text } = await testAgent.get('/');
+    const { status, text } = await testAgent.get('/');
     expect(status).toBe(200);
-    expect(type).toBe('text/plain');
     expect(text).toBe('Hello, World!\n');
   });
 
   it('case 2', async () => {
     const response1 = await testAgent.get('/get-token-for/Kostia');
     expect(response1.status).toBe(200);
-    expect(response1.type).toBe('text/plain');
     expect(response1.text).toBeDefined();
 
     const response2 = await testAgent.get('/profile');
@@ -36,7 +34,6 @@ describe('14-auth-jwt', () => {
 
     const response3 = await testAgent.get('/profile').set('Authorization', `Bearer ${response1.text}`);
     expect(response3.status).toBe(200);
-    expect(response3.type).toBe('text/plain');
     expect(response3.text).toBe('Hello, Kostia! You have successfully authorized.');
   });
 });

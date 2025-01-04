@@ -114,7 +114,9 @@ export class CorsExtension implements Extension<void | false> {
 
         class DynamicController {
           [methodName](ctx: RequestContext) {
-            ctx.setHeader('Allow', allowHttpMethods.join()).send(undefined, Status.NO_CONTENT);
+            ctx.rawRes.statusCode = Status.NO_CONTENT;
+            ctx.rawRes.setHeader('Allow', allowHttpMethods.join());
+            ctx.rawRes.end();
           }
         }
 

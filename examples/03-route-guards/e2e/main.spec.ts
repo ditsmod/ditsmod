@@ -20,9 +20,8 @@ describe('03-route-guards', () => {
 
   describe('injector-scoped controller', () => {
     it('should works', async () => {
-      const { type, status, text } = await testAgent.get('/controler1-of-module1');
+      const { status, text } = await testAgent.get('/controler1-of-module1');
       expect(status).toBe(200);
-      expect(type).toBe('text/plain');
       expect(text).toBe('ok');
     });
 
@@ -38,9 +37,8 @@ describe('03-route-guards', () => {
 
     it('should works', async () => {
       const expectBase64 = Buffer.from(process.env.BASIC_AUTH!, 'utf8').toString('base64');
-      const { type, status, text } = await testAgent.get('/basic-auth').set('Authorization', `Basic ${expectBase64}`);
+      const { status, text } = await testAgent.get('/basic-auth').set('Authorization', `Basic ${expectBase64}`);
       expect(status).toBe(200);
-      expect(type).toBe('text/plain');
       expect(text).toBe('You are now authorized with BasicGuard');
     });
 
@@ -58,9 +56,8 @@ describe('03-route-guards', () => {
 
   describe('context-scoped controller', () => {
     it('should works', async () => {
-      const { type, status, text } = await testAgent.get('/controler2-of-module1');
+      const { status, text } = await testAgent.get('/controler2-of-module1');
       expect(status).toBe(200);
-      expect(type).toBe('text/plain');
       expect(text).toBe('ok');
     });
 
@@ -76,9 +73,8 @@ describe('03-route-guards', () => {
 
     it('should works', async () => {
       const expectBase64 = Buffer.from(process.env.BASIC_AUTH!, 'utf8').toString('base64');
-      const { type, status, text } = await testAgent.get('/basic-auth2').set('Authorization', `Basic ${expectBase64}`);
+      const { status, text } = await testAgent.get('/basic-auth2').set('Authorization', `Basic ${expectBase64}`);
       expect(status).toBe(200);
-      expect(type).toBe('text/plain');
       expect(text).toBe('You are now authorized with BasicGuard');
     });
 

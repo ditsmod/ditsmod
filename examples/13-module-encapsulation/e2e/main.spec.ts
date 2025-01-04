@@ -19,22 +19,19 @@ describe('13-module-encapsulation', () => {
   });
 
   it('case 1', async () => {
-    const { type, status, text } = await testAgent.get('/');
-    expect(type).toBe('text/plain');
+    const { status, text } = await testAgent.get('/');
     expect(status).toBe(200);
     expect(text).toBe('per req counter: 1, per rou counter: 1');
   });
 
   it('case 2', async () => {
-    const { type, status, text } = await testAgent.get('/');
-    expect(type).toBe('text/plain');
+    const { status, text } = await testAgent.get('/');
     expect(status).toBe(200);
     expect(text).toBe('per req counter: 1, per rou counter: 2');
   });
 
   it('case 3', async () => {
-    const { type, status, text } = await testAgent.get('/');
-    expect(type).toBe('text/plain');
+    const { status, text } = await testAgent.get('/');
     expect(status).toBe(200);
     expect(text).toBe('per req counter: 1, per rou counter: 3');
   });

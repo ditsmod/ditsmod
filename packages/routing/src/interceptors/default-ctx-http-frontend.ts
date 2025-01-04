@@ -31,27 +31,24 @@ export class DefaultCtxHttpFrontend implements HttpFrontend {
     if (ctx.rawRes.headersSent) {
       return;
     }
-    let { statusCode } = ctx.rawRes;
-    if (!statusCode) {
+    if (!ctx.rawRes.statusCode) {
       const httpMethod = ctx.rawReq.method as HttpMethod;
       if (httpMethod == 'GET') {
-        statusCode = Status.OK;
+        ctx.rawRes.statusCode = Status.OK;
       } else if (httpMethod == 'POST') {
-        statusCode = Status.CREATED;
+        ctx.rawRes.statusCode = Status.CREATED;
       } else if (httpMethod == 'OPTIONS') {
-        statusCode = Status.NO_CONTENT;
-      } else {
-        statusCode = Status.OK;
+        ctx.rawRes.statusCode = Status.NO_CONTENT;
       }
     }
 
     const contentType = ctx.rawRes.getHeader('content-type');
     if (typeof val == 'object' || contentType?.toString().includes('application/json')) {
-      ctx.sendJson(val, statusCode);
+      ctx.sendJson(val);
     } else if (contentType && !val) {
       this.throwTypeError(ctx, contentType);
     } else {
-      ctx.send(val, statusCode);
+      ctx.send(val);
     }
   }
 

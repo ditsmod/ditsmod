@@ -33,16 +33,12 @@ export class Res<T = any> {
   /**
    * Send data as is, without any transformation.
    */
-  send(data?: string | Buffer | Uint8Array, statusCode: Status = Status.OK): void {
-    if (!this.rawRes.getHeader('Content-Type')) {
-      this.rawRes.setHeader('Content-Type', 'text/plain; charset=utf-8');
-    }
-    this.rawRes.statusCode = statusCode;
+  send(data?: string | Buffer | Uint8Array): void {
     this.rawRes.end(data || '');
   }
 
-  sendJson(data?: T, statusCode: Status = Status.OK): void {
-    this.setHeader('Content-Type', 'application/json; charset=utf-8').send(JSON.stringify(data), statusCode);
+  sendJson(data?: T): void {
+    this.setHeader('Content-Type', 'application/json; charset=utf-8').send(JSON.stringify(data));
   }
 
   redirect(statusCode: RedirectStatusCodes, path: string) {

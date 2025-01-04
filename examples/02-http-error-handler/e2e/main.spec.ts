@@ -19,8 +19,7 @@ describe('02-controller-error-handler', () => {
   });
 
   it('should works', async () => {
-    const { type, status, text } = await testAgent.get('/hello');
-    expect(type).toBe('text/plain');
+    const { status, text } = await testAgent.get('/hello');
     expect(status).toBe(200);
     expect(text).toBe('Hello, World!');
   });
@@ -31,8 +30,7 @@ describe('02-controller-error-handler', () => {
   });
 
   it('should works', async () => {
-    const { type, status, text } = await testAgent.get('/hello2');
-    expect(type).toBe('text/plain');
+    const { status, text } = await testAgent.get('/hello2');
     expect(status).toBe(200);
     expect(text).toBe('Hello, World2!');
   });

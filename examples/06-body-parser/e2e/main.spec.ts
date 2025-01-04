@@ -24,9 +24,8 @@ describe('06-body-parser', () => {
   });
 
   it('should works with get', async () => {
-    const { type, status, text } = await testAgent.get('/');
+    const { status, text } = await testAgent.get('/');
     expect(status).toBe(200);
-    expect(type).toBe('text/plain');
     expect(text).toBe('Hello, you need send POST request');
   });
 
@@ -53,9 +52,8 @@ describe('06-body-parser', () => {
   });
 
   it('controller context-scoped should works with get', async () => {
-    const { type, status, text } = await testAgent.get('/context-scoped');
+    const { status, text } = await testAgent.get('/context-scoped');
     expect(status).toBe(200);
-    expect(type).toBe('text/plain');
     expect(text).toBe('Hello, you need send POST request');
   });
 

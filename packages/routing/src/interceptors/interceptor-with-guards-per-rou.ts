@@ -51,10 +51,11 @@ export class InterceptorWithGuardsPerRou implements IInterceptorWithGuardsPerRou
     return result;
   }
 
-  protected prohibitActivation(ctx: RequestContext, status?: Status) {
+  protected prohibitActivation(ctx: RequestContext) {
     const systemLogMediator = this.injector.get(SystemLogMediator) as SystemLogMediator;
     systemLogMediator.youCannotActivateRoute(this, ctx.rawReq.method!, ctx.rawReq.url!);
-    ctx.send(undefined, status || Status.UNAUTHORIZED);
+    ctx.rawRes.statusCode = Status.UNAUTHORIZED;
+    ctx.rawRes.end();
   }
 }
 

@@ -20,37 +20,32 @@ describe('routing app2', () => {
   });
 
   it('controller from root module', async () => {
-    const { status, type, text } = await testAgent.get('/controller0');
+    const { status, text } = await testAgent.get('/controller0');
     expect(status).toBe(200);
-    expect(type).toBe('text/plain');
     expect(text).toBe('controller0');
   });
 
   it('imports module1 with controllers', async () => {
-    const { status, type, text } = await testAgent.get('/module1/controller1');
+    const { status, text } = await testAgent.get('/module1/controller1');
     expect(status).toBe(200);
-    expect(type).toBe('text/plain');
     expect(text).toBe('controller1');
   });
 
   it('appends module2 with controllers with "path"', async () => {
-    const { status, type, text } = await testAgent.get('/module2/controller2');
+    const { status, text } = await testAgent.get('/module2/controller2');
     expect(status).toBe(200);
-    expect(type).toBe('text/plain');
     expect(text).toBe('controller2');
   });
 
   it('appends module2 with controllers without "path"', async () => {
-    const { status, type, text } = await testAgent.get('/controller2');
+    const { status, text } = await testAgent.get('/controller2');
     expect(status).toBe(200);
-    expect(type).toBe('text/plain');
     expect(text).toBe('controller2');
   });
 
   it('appends module3 marked as external module', async () => {
-    const { status, type, text } = await testAgent.get('/module3/controller3');
+    const { status, text } = await testAgent.get('/module3/controller3');
     expect(status).toBe(200);
-    expect(type).toBe('text/plain');
     expect(text).toBe('controller3');
   });
 });

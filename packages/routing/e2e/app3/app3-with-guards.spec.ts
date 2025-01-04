@@ -26,16 +26,14 @@ describe('guard', () => {
 
   describe('with injector-scoped controller', () => {
     it('passing guards to providers, or setting them to import a module, does not affect access to the root controller', async () => {
-      const { type, status, text } = await testAgent.get('/root-controller');
+      const { status, text } = await testAgent.get('/root-controller');
       expect(status).toBe(200);
-      expect(type).toBe('text/plain');
       expect(text).toBe('ok');
     });
 
     it('setting guards on individual routes does not affect other routes', async () => {
-      const { type, status, text } = await testAgent.get('/module1/ok1');
+      const { status, text } = await testAgent.get('/module1/ok1');
       expect(status).toBe(200);
-      expect(type).toBe('text/plain');
       expect(text).toBe('ok1');
     });
 
@@ -45,9 +43,8 @@ describe('guard', () => {
     });
 
     it('guard is able to receive "allow=1" in queryParams and passing requests', async () => {
-      const { type, status, text } = await testAgent.get('/module1/need-auth1?allow=1');
+      const { status, text } = await testAgent.get('/module1/need-auth1?allow=1');
       expect(status).toBe(200);
-      expect(type).toBe('text/plain');
       expect(text).toBe('some secret1');
     });
 
@@ -57,9 +54,8 @@ describe('guard', () => {
     });
 
     it('guard set to import Module2 allows access to controllers if it receives allow=1 in queryParams', async () => {
-      const { type, status, text } = await testAgent.get('/module2-with-guard/ok1?allow=1');
+      const { status, text } = await testAgent.get('/module2-with-guard/ok1?allow=1');
       expect(status).toBe(200);
-      expect(type).toBe('text/plain');
       expect(text).toBe('ok1');
     });
 
@@ -74,16 +70,14 @@ describe('guard', () => {
     });
 
     it('both guards (set on import and directly in the controller) pass the request if they get allow=3 in queryParams', async () => {
-      const { type, status, text } = await testAgent.get('/module2-with-guard/ok3?allow=3');
+      const { status, text } = await testAgent.get('/module2-with-guard/ok3?allow=3');
       expect(status).toBe(200);
-      expect(type).toBe('text/plain');
       expect(text).toBe('ok3');
     });
 
     it('guards set on some module imports do not affect the controllers of other modules', async () => {
-      const { type, status, text } = await testAgent.get('/module3/ok1');
+      const { status, text } = await testAgent.get('/module3/ok1');
       expect(status).toBe(200);
-      expect(type).toBe('text/plain');
       expect(text).toBe('ok1');
     });
 
@@ -93,18 +87,16 @@ describe('guard', () => {
     });
 
     it('guards set to import in child modules work correctly', async () => {
-      const { type, status, text } = await testAgent.get('/module3/module2-with-guard/ok1?allow=1');
+      const { status, text } = await testAgent.get('/module3/module2-with-guard/ok1?allow=1');
       expect(status).toBe(200);
-      expect(type).toBe('text/plain');
       expect(text).toBe('ok1');
     });
   });
 
   describe('with context-scoped controller', () => {
     it('setting guards on individual routes does not affect other routes', async () => {
-      const { type, status, text } = await testAgent.get('/module1/ok2');
+      const { status, text } = await testAgent.get('/module1/ok2');
       expect(status).toBe(200);
-      expect(type).toBe('text/plain');
       expect(text).toBe('ok2');
     });
 
@@ -114,9 +106,8 @@ describe('guard', () => {
     });
 
     it('guard is able to receive "allow=1" in queryParams and passing requests', async () => {
-      const { type, status, text } = await testAgent.get('/module1/need-auth2?allow=1');
+      const { status, text } = await testAgent.get('/module1/need-auth2?allow=1');
       expect(status).toBe(200);
-      expect(type).toBe('text/plain');
       expect(text).toBe('some secret2');
     });
 
@@ -126,9 +117,8 @@ describe('guard', () => {
     });
 
     it('guard set to import Module2 allows access to controllers if it receives allow=1 in queryParams', async () => {
-      const { type, status, text } = await testAgent.get('/module2-with-guard/ok2?allow=1');
+      const { status, text } = await testAgent.get('/module2-with-guard/ok2?allow=1');
       expect(status).toBe(200);
-      expect(type).toBe('text/plain');
       expect(text).toBe('ok2');
     });
 
@@ -143,16 +133,14 @@ describe('guard', () => {
     });
 
     it('both guards (set on import and directly in the controller) pass the request if they get allow=3 in queryParams', async () => {
-      const { type, status, text } = await testAgent.get('/module2-with-guard/ok4?allow=3');
+      const { status, text } = await testAgent.get('/module2-with-guard/ok4?allow=3');
       expect(status).toBe(200);
-      expect(type).toBe('text/plain');
       expect(text).toBe('ok4');
     });
 
     it('guards set on some module imports do not affect the controllers of other modules', async () => {
-      const { type, status, text } = await testAgent.get('/module3/ok2');
+      const { status, text } = await testAgent.get('/module3/ok2');
       expect(status).toBe(200);
-      expect(type).toBe('text/plain');
       expect(text).toBe('ok2');
     });
 
@@ -162,9 +150,8 @@ describe('guard', () => {
     });
 
     it('guards set to import in child modules work correctly', async () => {
-      const { type, status, text } = await testAgent.get('/module3/module2-with-guard/ok2?allow=1');
+      const { status, text } = await testAgent.get('/module3/module2-with-guard/ok2?allow=1');
       expect(status).toBe(200);
-      expect(type).toBe('text/plain');
       expect(text).toBe('ok2');
     });
   });

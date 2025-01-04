@@ -19,16 +19,14 @@ describe('10-openapi', () => {
   });
 
   it('controller works with GET', async () => {
-    const { type, status, text } = await testAgent.get('/');
+    const { status, text } = await testAgent.get('/');
     expect(status).toBe(200);
-    expect(type).toBe('text/plain');
     expect(text).toBe('Hello, World!\n');
   });
 
   it('controller works with POST', async () => {
-    const { type, status, text } = await testAgent.post('/');
+    const { status, text } = await testAgent.post('/');
     expect(status).toBe(200);
-    expect(type).toBe('text/plain');
     expect(text).toBe('Hello, World!\n');
   });
 

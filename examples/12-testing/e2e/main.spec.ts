@@ -15,8 +15,7 @@ describe('12-testing', () => {
     const server = await TestApplication.createTestApp(AppModule).getServer();
     testAgent = request(server);
 
-    const { type, status, text } = await testAgent.get('/');
-    expect(type).toBe('text/plain');
+    const { status, text } = await testAgent.get('/');
     expect(status).toBe(200);
     expect(text).toBe('Hello, World!\n');
     server?.close();
@@ -26,8 +25,7 @@ describe('12-testing', () => {
     const server = await TestApplication.createTestApp(AppModule).getServer();
     testAgent = request(server);
 
-    const { type, status, text } = await testAgent.get('/admin');
-    expect(type).toBe('text/plain');
+    const { status, text } = await testAgent.get('/admin');
     expect(status).toBe(200);
     expect(text).toBe('Hello, admin!\n');
     server?.close();
