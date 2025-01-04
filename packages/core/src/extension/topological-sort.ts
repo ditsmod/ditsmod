@@ -3,17 +3,18 @@ export type GroupConfig<T> = {
   beforeGroup?: T;
 };
 
-export function topologicalSort<T>(groups: GroupConfig<T>[]): GroupConfig<T>[] {
-  const graph = new Map<T, T[]>();
-  const visited: Set<T> = new Set();
-  const result: T[] = [];
+export function topologicalSort(groups: any[]): any[] {
+  const graph = new Map<any, any[]>();
+  const visited: Set<any> = new Set();
+  const result: any[] = [];
 
   // Construction of the graph of dependencies.
-  const validGroups = new Set(groups.map((g) => g.group));
-  for (const { group, beforeGroup } of groups) {
-    if (!group) {
+  const validGroups = new Set(groups.filter((g) => g?.group).map((g) => g.group));
+  for (const item of groups) {
+    if (!item || !item.group) {
       continue;
     }
+    const { group, beforeGroup } = item;
     if (!graph.has(group)) {
       graph.set(group, []);
     }
@@ -26,7 +27,7 @@ export function topologicalSort<T>(groups: GroupConfig<T>[]): GroupConfig<T>[] {
   }
 
   // Recursive depth-first search.
-  function dfs(node: T) {
+  function dfs(node: any) {
     if (visited.has(node)) return;
     visited.add(node);
 
@@ -48,6 +49,8 @@ export function topologicalSort<T>(groups: GroupConfig<T>[]): GroupConfig<T>[] {
     }
   }
 
-  // Mapping the sorted result to GroupConfig<T>
-  return result.map((group) => groups.find((g) => g.group === group)!);
+  // Mapping the sorted result to GroupConfig<T> and adding non-GroupConfig<T> items
+  const sortedGroups = result.map((group) => groups.find((g) => g.group === group)!);
+  const nonGroupItems = groups.filter((g) => !g || !g.group);
+  return [...sortedGroups, ...nonGroupItems];
 }
