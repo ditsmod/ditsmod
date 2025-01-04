@@ -13,8 +13,43 @@ describe('extensions e2e', () => {
   const MY_EXTENSIONS2 = new InjectionToken<Extension[]>('MY_EXTENSIONS2');
   const MY_EXTENSIONS3 = new InjectionToken<Extension[]>('MY_EXTENSIONS3');
 
-  it('circular dependencies of groups in single module', async () => {
+  it('using "before" groups, run first the group that was declared (or imported) last', async () => {
+    const callOrder: string[] = [];
 
+    @injectable()
+    class Extension1 implements Extension<void> {
+      async stage1() {
+        callOrder.push('Extension1');
+      }
+    }
+    @injectable()
+    class Extension2 implements Extension<void> {
+      async stage1() {
+        callOrder.push('Extension2');
+      }
+    }
+    @injectable()
+    class Extension3 implements Extension<void> {
+      async stage1() {
+        callOrder.push('Extension3');
+      }
+    }
+
+    @rootModule({
+      providersPerApp: [{ token: Router, useValue: 'fake value' }],
+      extensions: [
+        { extension: Extension1, group: MY_EXTENSIONS1 },
+        { extension: Extension2, group: MY_EXTENSIONS2, beforeGroup: MY_EXTENSIONS1 },
+        { extension: Extension3, group: MY_EXTENSIONS3, beforeGroup: MY_EXTENSIONS2 },
+      ],
+    })
+    class AppModule {}
+
+    await expect(TestApplication.createTestApp(AppModule).getServer()).resolves.not.toThrow();
+    expect(callOrder).toEqual(['Extension3', 'Extension2', 'Extension1']);
+  });
+
+  it('circular dependencies of groups in single module', async () => {
     @injectable()
     class Extension1 implements Extension<void> {
       async stage1() {}
@@ -76,7 +111,7 @@ describe('extensions e2e', () => {
       imports: [Module1],
       extensions: [
         { extension: Extension1, group: MY_EXTENSIONS2, beforeGroup: MY_EXTENSIONS1 },
-        { extension: Extension1, group: MY_EXTENSIONS1, beforeGroup: MY_EXTENSIONS3 }
+        { extension: Extension1, group: MY_EXTENSIONS1, beforeGroup: MY_EXTENSIONS3 },
       ],
     })
     class Module2 {}
@@ -105,7 +140,7 @@ describe('extensions e2e', () => {
     @featureModule({
       extensions: [
         { extension: Extension1, group: MY_EXTENSIONS2, beforeGroup: MY_EXTENSIONS1 },
-        { extension: Extension1, group: MY_EXTENSIONS1, beforeGroup: MY_EXTENSIONS3 }
+        { extension: Extension1, group: MY_EXTENSIONS1, beforeGroup: MY_EXTENSIONS3 },
       ],
     })
     class Module2 {}
@@ -113,7 +148,7 @@ describe('extensions e2e', () => {
     @rootModule({
       imports: [Module1, Module2],
       providersPerApp: [{ token: Router, useValue: 'fake value' }],
-      exports: [Module1]
+      exports: [Module1],
     })
     class AppModule {}
 
