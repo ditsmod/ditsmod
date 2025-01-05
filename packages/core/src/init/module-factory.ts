@@ -18,8 +18,8 @@ import { hasDeclaredInDir } from '#utils/type-guards.js';
 import { getModule } from '#utils/get-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import {
-  ExtensionOptions,
-  ExtensionOptions3,
+  ExtensionConfig,
+  ExtensionConfig3,
   isOptionWithOverrideExtension,
 } from '#extension/get-extension-provider.js';
 import { findCycle, GroupConfig } from '#extension/tarjan-graph.js';
@@ -48,7 +48,7 @@ export class ModuleFactory {
   protected importedMultiProvidersPerRou = new Map<ModuleType | ModuleWithParams, Provider[]>();
   protected importedMultiProvidersPerReq = new Map<ModuleType | ModuleWithParams, Provider[]>();
   protected importedExtensions = new Map<ModuleType | ModuleWithParams, Provider[]>();
-  protected aImportedExtensionsOptions: ExtensionOptions[] = [];
+  protected aImportedExtensionsOptions: ExtensionConfig[] = [];
 
   /**
    * GlobalProviders.
@@ -128,7 +128,7 @@ export class ModuleFactory {
     let multiPerRou: Map<ModuleType | ModuleWithParams, Provider[]>;
     let multiPerReq: Map<ModuleType | ModuleWithParams, Provider[]>;
     let extensions: Map<ModuleType | ModuleWithParams, Provider[]>;
-    let aExtensionsOptions: ExtensionOptions[];
+    let aExtensionsOptions: ExtensionConfig[];
     if (meta.isExternal) {
       // External modules do not require global providers and extensions from the application.
       perMod = new Map([...this.importedProvidersPerMod]);
@@ -150,7 +150,7 @@ export class ModuleFactory {
       aExtensionsOptions = [...this.glProviders.aImportedExtensionsOptions, ...this.aImportedExtensionsOptions];
     }
 
-    this.checkExtensionGroupsGraph(meta.aExtensionOptions.concat(aExtensionsOptions));
+    this.checkExtensionGroupsGraph(meta.aExtensionConfig.concat(aExtensionsOptions));
 
     return this.appMetadataMap.set(modOrObj, {
       prefixPerMod,
@@ -169,7 +169,7 @@ export class ModuleFactory {
     });
   }
 
-  protected checkExtensionGroupsGraph(extensions: (GroupConfig<any> | ExtensionOptions3)[]) {
+  protected checkExtensionGroupsGraph(extensions: (GroupConfig<any> | ExtensionConfig3)[]) {
     const extensionWithBeforeGroup = extensions?.filter((config) => {
       return !isOptionWithOverrideExtension(config) && config.beforeGroup;
     }) as GroupConfig<any>[] | undefined;
@@ -265,7 +265,7 @@ export class ModuleFactory {
     }
     if (meta1.exportedExtensionsProviders.length) {
       this.importedExtensions.set(meta1.modRefId, meta1.exportedExtensionsProviders);
-      this.aImportedExtensionsOptions.push(...meta1.aExportedExtensionOptions);
+      this.aImportedExtensionsOptions.push(...meta1.aExportedExtensionConfig);
     }
     this.throwIfTryResolvingMultiprovidersCollisions(meta1.name);
   }

@@ -25,7 +25,7 @@ import { MetadataPerMod3, ROUTES_EXTENSIONS } from '@ditsmod/routing';
 
 import { OasRouteMeta } from '#types/oas-route-meta.js';
 import { DEFAULT_OAS_OBJECT, defaultForNonOasGuard } from '#constants';
-import { OasConfigFiles, OasExtensionOptions } from '#types/oas-extension-options.js';
+import { OasConfigFiles, OasExtensionConfig } from '#types/oas-extension-options.js';
 import { OasOptions } from '#types/oas-options.js';
 import { OpenapiLogMediator } from '../services/openapi-log-mediator.js';
 
@@ -94,14 +94,14 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
   }
 
   protected initOasObject() {
-    let oasExtensionOptions = this.injectorPerMod.get(OasExtensionOptions, undefined, null);
-    if (!oasExtensionOptions) {
-      oasExtensionOptions = {};
+    let oasExtensionConfig = this.injectorPerMod.get(OasExtensionConfig, undefined, null);
+    if (!oasExtensionConfig) {
+      oasExtensionConfig = {};
       this.log.oasObjectNotFound(this);
     } else {
       this.log.foundOasObject(this);
     }
-    this.oasObject = Object.assign({}, DEFAULT_OAS_OBJECT, oasExtensionOptions.oasObject);
+    this.oasObject = Object.assign({}, DEFAULT_OAS_OBJECT, oasExtensionConfig.oasObject);
     this.oasObject.components = { ...(this.oasObject.components || {}) };
   }
 

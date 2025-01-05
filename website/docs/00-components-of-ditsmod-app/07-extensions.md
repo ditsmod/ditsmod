@@ -84,7 +84,7 @@ export const MY_EXTENSIONS = new InjectionToken<Extension<void>[]>('MY_EXTENSION
 В масив `extensions`, що знаходиться в метаданих модуля, можуть передаватись об'єкти наступного типу:
 
 ```ts
-class ExtensionOptions {
+class ExtensionConfig {
   extension: ExtensionType;
   /**
    * Extension group token.

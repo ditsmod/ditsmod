@@ -8,7 +8,7 @@ import {
   isProvider,
 } from '#utils/type-guards.js';
 import {
-  ExtensionOptions,
+  ExtensionConfig,
   getExtensionProvider,
   isOptionWithOverrideExtension,
 } from '#extension/get-extension-provider.js';
@@ -97,15 +97,15 @@ export class ModuleNormalizer {
     this.exportFromRawMeta(rawMeta, modName, providersTokens, meta);
     this.checkReexportModules(meta);
 
-    rawMeta.extensions?.forEach((extensionOptions, i) => {
-      this.checkExtensionOptions(modName, extensionOptions, i);
-      const extensionObj = getExtensionProvider(extensionOptions);
+    rawMeta.extensions?.forEach((extensionConfig, i) => {
+      this.checkExtensionConfig(modName, extensionConfig, i);
+      const extensionObj = getExtensionProvider(extensionConfig);
       extensionObj.providers.forEach((p) => this.checkInitMethodForExtension(modName, p));
       if (extensionObj.options) {
-        meta.aExtensionOptions.push(extensionObj.options);
+        meta.aExtensionConfig.push(extensionObj.options);
       }
       if (extensionObj.exportedOptions) {
-        meta.aExportedExtensionOptions.push(extensionObj.exportedOptions);
+        meta.aExportedExtensionConfig.push(extensionObj.exportedOptions);
       }
       meta.extensionsProviders.push(...extensionObj.providers);
       meta.exportedExtensionsProviders.push(...extensionObj.exportedProviders);
@@ -129,10 +129,10 @@ export class ModuleNormalizer {
     }
   }
 
-  protected checkExtensionOptions(modName: string, extensionOptions: ExtensionOptions, i: number) {
-    if (!isOptionWithOverrideExtension(extensionOptions)) {
+  protected checkExtensionConfig(modName: string, extensionConfig: ExtensionConfig, i: number) {
+    if (!isOptionWithOverrideExtension(extensionConfig)) {
       // Previously, extensions had a `groupToken` property, which was renamed to `token`, and then to `group`.
-      if (!extensionOptions.group && !extensionOptions.beforeGroup) {
+      if (!extensionConfig.group && !extensionConfig.beforeGroup) {
         const msg = `Export of "${modName}" failed: extension in [${i}] index must have "group" or "beforeGroup" property.`;
         throw new TypeError(msg);
       }

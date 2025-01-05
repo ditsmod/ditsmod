@@ -898,8 +898,8 @@ describe('ModuleManager', () => {
     expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta3.isExternal = false;
     expectedMeta3.rawMeta = expect.any(Object);
-    delete (expectedMeta3 as any).aExtensionOptions;
-    delete (expectedMeta3 as any).aExportedExtensionOptions;
+    delete (expectedMeta3 as any).aExtensionConfig;
+    delete (expectedMeta3 as any).aExportedExtensionConfig;
 
     const expectedMeta1 = new NormalizedModuleMetadata();
     expectedMeta1.id = '';
@@ -911,8 +911,8 @@ describe('ModuleManager', () => {
     expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta1.isExternal = false;
     expectedMeta1.rawMeta = expect.any(Object);
-    delete (expectedMeta1 as any).aExtensionOptions;
-    delete (expectedMeta1 as any).aExportedExtensionOptions;
+    delete (expectedMeta1 as any).aExtensionConfig;
+    delete (expectedMeta1 as any).aExportedExtensionConfig;
 
     mock.scanRootModule(Module3);
     expect(mock.getMetadata('root')).toMatchObject(expectedMeta3);
@@ -952,8 +952,8 @@ describe('ModuleManager', () => {
     expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta3.isExternal = false;
     expectedMeta3.rawMeta = expect.any(Object);
-    delete (expectedMeta3 as any).aExtensionOptions;
-    delete (expectedMeta3 as any).aExportedExtensionOptions;
+    delete (expectedMeta3 as any).aExtensionConfig;
+    delete (expectedMeta3 as any).aExportedExtensionConfig;
 
     const expectedMeta1 = new NormalizedModuleMetadata();
     expectedMeta1.id = '';
@@ -965,8 +965,8 @@ describe('ModuleManager', () => {
     expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta1.isExternal = false;
     expectedMeta1.rawMeta = expect.any(Object);
-    delete (expectedMeta1 as any).aExtensionOptions;
-    delete (expectedMeta1 as any).aExportedExtensionOptions;
+    delete (expectedMeta1 as any).aExtensionConfig;
+    delete (expectedMeta1 as any).aExportedExtensionConfig;
 
     mock.scanRootModule(Module3);
     expect(mock.getMetadata('root')).toMatchObject(expectedMeta3);

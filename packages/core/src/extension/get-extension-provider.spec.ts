@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { KeyRegistry, InjectionToken, Provider } from '#di';
 import { Extension } from '#extension/extension-types.js';
-import { ExtensionOptions, getExtensionProvider } from '#extension/get-extension-provider.js';
+import { ExtensionConfig, getExtensionProvider } from '#extension/get-extension-provider.js';
 
 describe('getExtensionProvider', () => {
   const MY_EXTENSION = new InjectionToken('MY_EXTENSION');
@@ -18,7 +18,7 @@ describe('getExtensionProvider', () => {
     const providers: Provider[] = [Extension1, { token: MY_EXTENSION, useToken: Extension1, multi: true }];
 
     it('extension without exports (two arguments)', () => {
-      const args: ExtensionOptions = { extension: Extension1, group: MY_EXTENSION };
+      const args: ExtensionConfig = { extension: Extension1, group: MY_EXTENSION };
       expect(getExtensionProvider(args)).toMatchObject({
         exportedProviders: [],
         providers,
@@ -26,7 +26,7 @@ describe('getExtensionProvider', () => {
     });
 
     it('extension with override', () => {
-      const args: ExtensionOptions = { extension: Extension2, overrideExtension: Extension1 };
+      const args: ExtensionConfig = { extension: Extension2, overrideExtension: Extension1 };
       const providers: Provider[] = [{ token: Extension1, useClass: Extension2 }];
       expect(getExtensionProvider(args)).toMatchObject({
         exportedProviders: [],
@@ -35,7 +35,7 @@ describe('getExtensionProvider', () => {
     });
 
     it('extension without exports (three arguments)', () => {
-      const args: ExtensionOptions = { extension: Extension1, group: MY_EXTENSION, exported: false };
+      const args: ExtensionConfig = { extension: Extension1, group: MY_EXTENSION, exported: false };
       expect(getExtensionProvider(args)).toMatchObject({
         exportedProviders: [],
         providers,
@@ -43,7 +43,7 @@ describe('getExtensionProvider', () => {
     });
 
     it('extension with exports', () => {
-      const args: ExtensionOptions = { extension: Extension1, group: MY_EXTENSION, exported: true };
+      const args: ExtensionConfig = { extension: Extension1, group: MY_EXTENSION, exported: true };
       expect(getExtensionProvider(args)).toMatchObject({
         exportedProviders: providers,
         providers,
@@ -59,7 +59,7 @@ describe('getExtensionProvider', () => {
     ];
 
     it('extension without exports (three arguments)', () => {
-      const args: ExtensionOptions = { extension: Extension1, group: MY_EXTENSION, beforeGroup: OTHER_EXTENSION };
+      const args: ExtensionConfig = { extension: Extension1, group: MY_EXTENSION, beforeGroup: OTHER_EXTENSION };
       expect(getExtensionProvider(args)).toMatchObject({
         exportedProviders: [],
         providers,
@@ -67,7 +67,7 @@ describe('getExtensionProvider', () => {
     });
 
     it('extension without exports (foure arguments)', () => {
-      const args: ExtensionOptions = {
+      const args: ExtensionConfig = {
         extension: Extension1,
         group: MY_EXTENSION,
         beforeGroup: OTHER_EXTENSION,
@@ -80,7 +80,7 @@ describe('getExtensionProvider', () => {
     });
 
     it('extension with exports', () => {
-      const args: ExtensionOptions = {
+      const args: ExtensionConfig = {
         extension: Extension1,
         group: MY_EXTENSION,
         beforeGroup: OTHER_EXTENSION,

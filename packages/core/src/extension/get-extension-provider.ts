@@ -5,11 +5,11 @@ import { AnyObj } from '#types/mix.js';
 export class ExtensionObj {
   exportedProviders: Provider[];
   providers: Provider[];
-  options?: ExtensionOptions;
-  exportedOptions?: ExtensionOptions;
+  options?: ExtensionConfig;
+  exportedOptions?: ExtensionConfig;
 }
 
-export interface ExtensionOptionsBase {
+export interface ExtensionConfigBase {
   extension: ExtensionType;
   /**
    * Extension group token.
@@ -23,7 +23,7 @@ export interface ExtensionOptionsBase {
   overrideExtension?: never;
 }
 
-export interface ExtensionOptions1 extends ExtensionOptionsBase {
+export interface ExtensionConfig1 extends ExtensionConfigBase {
   /**
    * Indicates whether this extension needs to be exported.
    */
@@ -31,7 +31,7 @@ export interface ExtensionOptions1 extends ExtensionOptionsBase {
   exportedOnly?: never;
 }
 
-export interface ExtensionOptions2 extends ExtensionOptionsBase {
+export interface ExtensionConfig2 extends ExtensionConfigBase {
   exported?: never;
   /**
    * Indicates whether this extension needs to be exported without working in host module.
@@ -39,60 +39,60 @@ export interface ExtensionOptions2 extends ExtensionOptionsBase {
   exportedOnly?: boolean;
 }
 
-export interface ExtensionOptions3 {
+export interface ExtensionConfig3 {
   extension: ExtensionType;
   overrideExtension: ExtensionType;
 }
 
-export type ExtensionOptions = ExtensionOptions1 | ExtensionOptions2 | ExtensionOptions3;
+export type ExtensionConfig = ExtensionConfig1 | ExtensionConfig2 | ExtensionConfig3;
 
-export function isOptionWithOverrideExtension(extensionOptions: AnyObj): extensionOptions is ExtensionOptions3 {
-  return (extensionOptions as ExtensionOptions3).overrideExtension !== undefined;
+export function isOptionWithOverrideExtension(extensionConfig: AnyObj): extensionConfig is ExtensionConfig3 {
+  return (extensionConfig as ExtensionConfig3).overrideExtension !== undefined;
 }
 
-export function getExtensionProvider(extensionOptions: ExtensionOptions): ExtensionObj {
-  if (isOptionWithOverrideExtension(extensionOptions)) {
-    const { extension, overrideExtension } = extensionOptions;
+export function getExtensionProvider(extensionConfig: ExtensionConfig): ExtensionObj {
+  if (isOptionWithOverrideExtension(extensionConfig)) {
+    const { extension, overrideExtension } = extensionConfig;
     return {
       providers: [{ token: overrideExtension, useClass: extension }],
       exportedProviders: [],
     };
   }
 
-  const { extension } = extensionOptions;
+  const { extension } = extensionConfig;
   const providers: Provider[] = [extension];
-  if (extensionOptions.group) {
-    providers.push({ token: extensionOptions.group, useToken: extension, multi: true });
+  if (extensionConfig.group) {
+    providers.push({ token: extensionConfig.group, useToken: extension, multi: true });
   }
-  if (extensionOptions.beforeGroup) {
-    const token = KeyRegistry.getBeforeToken(extensionOptions.beforeGroup);
+  if (extensionConfig.beforeGroup) {
+    const token = KeyRegistry.getBeforeToken(extensionConfig.beforeGroup);
     providers.push({ token, useToken: extension, multi: true });
   }
 
-  if (extensionOptions.exportedOnly) {
+  if (extensionConfig.exportedOnly) {
     return {
       providers: [],
       exportedProviders: providers,
-      exportedOptions: extensionOptions,
+      exportedOptions: extensionConfig,
     };
-  } else if (extensionOptions.exported) {
+  } else if (extensionConfig.exported) {
     return {
       providers,
       exportedProviders: providers,
-      options: extensionOptions,
-      exportedOptions: extensionOptions,
+      options: extensionConfig,
+      exportedOptions: extensionConfig,
     };
   } else {
     return {
       providers,
       exportedProviders: [],
-      options: extensionOptions,
+      options: extensionConfig,
     };
   }
 }
 
-export function getExtensionProviderList(extensionOptions: ExtensionOptions[]) {
+export function getExtensionProviderList(extensionConfig: ExtensionConfig[]) {
   const providers: Provider[] = [];
-  extensionOptions.map((obj) => providers.push(...getExtensionProvider(obj).providers));
+  extensionConfig.map((obj) => providers.push(...getExtensionProvider(obj).providers));
   return providers;
 }

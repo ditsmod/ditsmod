@@ -3,7 +3,7 @@ import { AnyFn, AnyObj, ModuleType, NormalizedGuard, Provider } from '#types/mix
 import { AppendsWithParams, ModuleWithParams } from './module-metadata.js';
 import { ProvidersMetadata } from '#types/providers-metadata.js';
 import { RawMeta } from '#decorators/module.js';
-import { ExtensionOptions } from '#extension/get-extension-provider.js';
+import { ExtensionConfig } from '#extension/get-extension-provider.js';
 
 export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> extends ProvidersMetadata {
   override providersPerApp: Provider[] = [];
@@ -53,8 +53,8 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   resolvedCollisionsPerReq: [any, ModuleType | ModuleWithParams][] = [];
   extensionsProviders: Provider[] = [];
   exportedExtensionsProviders: Provider[] = [];
-  aExtensionOptions: ExtensionOptions[] = [];
-  aExportedExtensionOptions: ExtensionOptions[] = [];
+  aExtensionConfig: ExtensionConfig[] = [];
+  aExportedExtensionConfig: ExtensionConfig[] = [];
   /**
    * This property allows you to pass any information to extensions.
    *

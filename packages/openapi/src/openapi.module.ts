@@ -7,7 +7,7 @@ import { OpenapiRoutesExtension } from './extensions/openapi-routes.extension.js
 import { OAS_COMPILER_EXTENSIONS } from './di-tokens.js';
 import { OpenapiController } from './openapi.controller.js';
 import { SwaggerOAuthOptions } from './swagger-ui/o-auth-options.js';
-import { OasConfigFiles, OasExtensionOptions } from './types/oas-extension-options.js';
+import { OasConfigFiles, OasExtensionConfig } from './types/oas-extension-options.js';
 import { OpenapiLogMediator } from './services/openapi-log-mediator.js';
 import { OpenapiErrorMediator } from './services/openapi-error-mediator.js';
 
@@ -33,14 +33,14 @@ export class OpenapiModule {
    * @param absolutePath This absolute path used for OpenAPI module with params.
    */
   static withParams(oasObject: XOasObject<any>, absolutePath?: string, swaggerOAuthOptions?: SwaggerOAuthOptions) {
-    const oasExtensionOptions: OasExtensionOptions = {
+    const oasExtensionConfig: OasExtensionConfig = {
       oasObject,
       swaggerOAuthOptions,
     };
 
     const moduleWithParams: ModuleWithParams<OpenapiModule> = {
       module: this,
-      providersPerApp: new Providers().useValue<OasExtensionOptions>(OasExtensionOptions, oasExtensionOptions),
+      providersPerApp: new Providers().useValue<OasExtensionConfig>(OasExtensionConfig, oasExtensionConfig),
     };
 
     if (typeof absolutePath == 'string') {

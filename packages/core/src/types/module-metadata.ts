@@ -1,7 +1,7 @@
 import { Class } from '#di';
 import { ProvidersMetadata } from '#types/providers-metadata.js';
 import { AnyObj, GuardItem, ModuleType } from '#types/mix.js';
-import { ExtensionOptions } from '#extension/get-extension-provider.js';
+import { ExtensionConfig } from '#extension/get-extension-provider.js';
 
 /**
  * Used for module metadata, for `appends` array.
@@ -55,7 +55,7 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
   /**
    * The application extensions.
    */
-  extensions?: ExtensionOptions[];
+  extensions?: ExtensionConfig[];
   /**
    * This property allows you to pass any information to extensions.
    *

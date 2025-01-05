@@ -84,7 +84,7 @@ As you can see, each extension group must specify that DI will return an array o
 Objects of the following type can be transferred to the `extensions` array, which is in the module's metadata:
 
 ```ts
-class ExtensionOptions {
+class ExtensionConfig {
   extension: ExtensionType;
   /**
    * Extension group token.

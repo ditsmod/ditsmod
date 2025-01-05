@@ -100,7 +100,7 @@ export { RawRequest, RawResponse, RequestListener, HttpServer } from '#types/ser
 export { createHelperForGuardWithParams } from '#utils/create-helper-for-guards-with-params.js';
 export { deepFreeze } from '#utils/deep-freeze.js';
 export { getDependencies } from '#utils/get-dependecies.js';
-export { ExtensionOptions } from '#extension/get-extension-provider.js';
+export { ExtensionConfig } from '#extension/get-extension-provider.js';
 export { getModule } from '#utils/get-module.js';
 export { getStatusText, isSuccess, Status, STATUS_CODE_INFO } from '#utils/http-status-codes.js';
 export { NormalizedProvider, normalizeProviders } from '#utils/ng-utils.js';
