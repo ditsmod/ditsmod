@@ -1,3 +1,5 @@
+import { AnyObj } from '#types/mix.js';
+
 export type GroupConfig<T> = {
   group: T;
   beforeGroup?: T;
@@ -5,10 +7,14 @@ export type GroupConfig<T> = {
 
 type Graph<T> = Map<T, T[]>;
 
-export function buildGraph<T>(configs: GroupConfig<T>[]): { graph: Graph<T>; origin: Set<T> } {
+export function buildGraph<T>(configs: AnyObj[]): { graph: Graph<T>; origin: Set<T> } {
   const graph = new Map() as Graph<T>;
   const origin = new Set<T>(configs.map((config) => config.group));
-  for (const { group, beforeGroup } of configs) {
+  for (const config of configs) {
+    if (!isGroupConfig<T>(config)) {
+      continue;
+    }
+    const { group, beforeGroup } = config;
     if (!graph.has(group)) {
       graph.set(group, []);
     }
@@ -59,4 +65,8 @@ function dfsWithPath<T>(group: T, graph: Graph<T>, visited: Set<T>, stack: Set<T
 
   stack.delete(group);
   return false;
+}
+
+export function isGroupConfig<T>(groupConfig: AnyObj): groupConfig is GroupConfig<T> {
+  return Boolean((groupConfig as GroupConfig<T>).group);
 }

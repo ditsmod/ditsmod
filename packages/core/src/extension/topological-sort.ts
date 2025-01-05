@@ -1,4 +1,5 @@
-import { buildGraph } from './tarjan-graph.js';
+import { AnyObj } from '../types/mix.js';
+import { buildGraph, isGroupConfig } from './tarjan-graph.js';
 
 export type GroupConfig<T> = {
   group: T;
@@ -7,9 +8,19 @@ export type GroupConfig<T> = {
 
 type Graph<T> = Map<T, T[]>;
 
-export function topologicalSort<T>(configs: GroupConfig<T>[], groupsOnly: true): T[];
-export function topologicalSort<T>(configs: GroupConfig<T>[]): GroupConfig<T>[];
-export function topologicalSort<T>(configs: GroupConfig<T>[], groupsOnly?: boolean): GroupConfig<T>[] | T[] {
+export function topologicalSort<T = any, R extends GroupConfig<T> = GroupConfig<any>>(
+  configs: AnyObj[],
+  groupsOnly: true,
+): T[];
+export function topologicalSort<T = any, R extends GroupConfig<T> = GroupConfig<any>>(
+  configs: AnyObj[],
+  groupsOnly?: false,
+): R[];
+export function topologicalSort<T = any, R extends GroupConfig<T> = GroupConfig<any>>(
+  inputConfigs: AnyObj[],
+  groupsOnly?: boolean,
+): R[] | T[] {
+  const configs = inputConfigs.filter(isGroupConfig) as R[];
   const { origin, graph } = buildGraph<T>(configs);
   const visited = new Set<T>();
   const orderedGroups: T[] = [];
