@@ -1,63 +1,62 @@
 export type GroupConfig<T> = {
-  group?: T;
+  group: T;
   beforeGroup?: T;
 };
 
 type Graph<T> = Map<T, T[]>;
 
-function buildGraph<T>(configs: GroupConfig<T>[]): Graph<T> {
+export function buildGraph<T>(configs: GroupConfig<T>[]): { graph: Graph<T>; origin: Set<T> } {
   const graph = new Map() as Graph<T>;
-
+  const origin = new Set<T>(configs.map((config) => config.group));
   for (const { group, beforeGroup } of configs) {
-    if (!group || !beforeGroup) {
-      continue;
-    }
     if (!graph.has(group)) {
       graph.set(group, []);
     }
-    if (!graph.has(beforeGroup)) {
-      graph.set(beforeGroup, []);
+    if (beforeGroup && origin.has(beforeGroup)) {
+      if (!graph.has(beforeGroup)) {
+        graph.set(beforeGroup, []);
+      }
+      graph.get(beforeGroup)!.push(group); // Adding a dependency.
     }
-    graph.get(group)?.push(beforeGroup); // We create the edge "group -> beforeGroup"
   }
 
-  return graph;
+  return { origin, graph };
 }
 
 export function findCycle<T>(configs: GroupConfig<T>[]): T[] | null {
-  const graph = buildGraph(configs);
+  const { origin, graph } = buildGraph(configs);
   const visited = new Set<T>();
   const stack = new Set<T>();
   const path: T[] = [];
 
-  for (const [node] of graph) {
-    if (dfsWithPath(node, graph, visited, stack, path)) {
-      return path.reverse(); // Return the cycle path in correct order
+  for (const group of origin) {
+    if (dfsWithPath(group, graph, visited, stack, path)) {
+      return path;
     }
   }
   return null;
 }
 
-function dfsWithPath<T>(node: T, graph: Graph<T>, visited: Set<T>, stack: Set<T>, path: T[]): boolean {
-  if (stack.has(node)) {
-    path.push(node);
+function dfsWithPath<T>(group: T, graph: Graph<T>, visited: Set<T>, stack: Set<T>, path: T[]): boolean {
+  if (stack.has(group)) {
+    path.push(group);
     return true; // Cycle found
   }
 
-  if (visited.has(node)) {
+  if (visited.has(group)) {
     return false; // There is no cycle here
   }
 
-  visited.add(node);
-  stack.add(node);
+  visited.add(group);
+  stack.add(group);
 
-  for (const neighbor of graph.get(node) || []) {
+  for (const neighbor of graph.get(group) || []) {
     if (dfsWithPath(neighbor, graph, visited, stack, path)) {
-      path.push(node);
+      path.push(group);
       return true;
     }
   }
 
-  stack.delete(node);
+  stack.delete(group);
   return false;
 }

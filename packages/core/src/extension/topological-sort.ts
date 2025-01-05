@@ -1,47 +1,44 @@
+import { buildGraph } from './tarjan-graph.js';
+
 export type GroupConfig<T> = {
   group: T;
   beforeGroup?: T;
 };
 
-export function topologicalSort<T>(groups: GroupConfig<T>[]): GroupConfig<T>[] {
-  const graph = new Map<T, T[]>();
-  const visited: Set<T> = new Set();
-  const result: T[] = [];
+type Graph<T> = Map<T, T[]>;
 
-  // Construction of the graph of dependencies.
-  const validGroups = new Set(groups.map((g) => g.group));
-  for (const { group, beforeGroup } of groups) {
-    if (!graph.has(group)) {
-      graph.set(group, []);
-    }
-    if (beforeGroup && validGroups.has(beforeGroup)) {
-      if (!graph.has(beforeGroup)) {
-        graph.set(beforeGroup, []);
-      }
-      graph.get(beforeGroup)!.push(group); // Adding a dependency.
+export function topologicalSort<T>(configs: GroupConfig<T>[], groupsOnly: true): T[];
+export function topologicalSort<T>(configs: GroupConfig<T>[]): GroupConfig<T>[];
+export function topologicalSort<T>(configs: GroupConfig<T>[], groupsOnly?: boolean): GroupConfig<T>[] | T[] {
+  const { origin, graph } = buildGraph<T>(configs);
+  const visited = new Set<T>();
+  const orderedGroups: T[] = [];
+
+  // Running DFS for each group.
+  for (const group of origin) {
+    if (!visited.has(group)) {
+      dfs(graph, visited, orderedGroups, group);
     }
   }
 
-  // Recursive depth-first search.
-  function dfs(node: T) {
-    if (visited.has(node)) return;
-    visited.add(node);
-
-    const neighbors = graph.get(node) || [];
-    for (const neighbor of neighbors) {
-      dfs(neighbor);
-    }
-
-    result.push(node); // Adding a node after processing all dependencies.
+  if (groupsOnly) {
+    return orderedGroups;
   }
-
-  // Running DFS for each node.
-  for (const node of validGroups) {
-    if (!visited.has(node)) {
-      dfs(node);
-    }
-  }
-
   // Mapping the sorted result to GroupConfig<T>
-  return result.map((group) => groups.find((g) => g.group === group)!);
+  return orderedGroups.map((group) => configs.find((config) => config.group === group)!);
+}
+
+// Recursive depth-first search.
+function dfs<T>(graph: Graph<T>, visited: Set<T>, orderedGroups: T[], group: T) {
+  if (visited.has(group)) {
+    return;
+  }
+  visited.add(group);
+
+  const neighbors = graph.get(group) || [];
+  for (const neighbor of neighbors) {
+    dfs(graph, visited, orderedGroups, neighbor);
+  }
+
+  orderedGroups.push(group); // Adding a group after processing all dependencies.
 }
