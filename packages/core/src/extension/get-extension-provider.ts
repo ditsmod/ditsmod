@@ -46,12 +46,16 @@ export interface ExtensionConfig3 {
 
 export type ExtensionConfig = ExtensionConfig1 | ExtensionConfig2 | ExtensionConfig3;
 
-export function isOptionWithOverrideExtension(extensionConfig: AnyObj): extensionConfig is ExtensionConfig3 {
+export function isConfigWithOverrideExtension(extensionConfig: AnyObj): extensionConfig is ExtensionConfig3 {
   return (extensionConfig as ExtensionConfig3).overrideExtension !== undefined;
 }
 
+export function isBaseExtensionConfig(extensionConfig: AnyObj): extensionConfig is ExtensionConfigBase {
+  return (extensionConfig as ExtensionConfigBase).group !== undefined;
+}
+
 export function getExtensionProvider(extensionConfig: ExtensionConfig): ExtensionObj {
-  if (isOptionWithOverrideExtension(extensionConfig)) {
+  if (isConfigWithOverrideExtension(extensionConfig)) {
     const { extension, overrideExtension } = extensionConfig;
     return {
       providers: [{ token: overrideExtension, useClass: extension }],
