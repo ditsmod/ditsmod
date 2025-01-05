@@ -50,46 +50,4 @@ describe('getExtensionProvider', () => {
       });
     });
   });
-
-  describe('with BEFORE group', () => {
-    const providers: Provider[] = [
-      Extension1,
-      { token: MY_EXTENSION, useToken: Extension1, multi: true },
-      { token: KeyRegistry.getBeforeToken(OTHER_EXTENSION), useToken: Extension1, multi: true },
-    ];
-
-    it('extension without exports (three arguments)', () => {
-      const args: ExtensionConfig = { extension: Extension1, group: MY_EXTENSION, beforeGroup: OTHER_EXTENSION };
-      expect(getExtensionProvider(args)).toMatchObject({
-        exportedProviders: [],
-        providers,
-      });
-    });
-
-    it('extension without exports (foure arguments)', () => {
-      const args: ExtensionConfig = {
-        extension: Extension1,
-        group: MY_EXTENSION,
-        beforeGroup: OTHER_EXTENSION,
-        exported: false,
-      };
-      expect(getExtensionProvider(args)).toMatchObject({
-        exportedProviders: [],
-        providers,
-      });
-    });
-
-    it('extension with exports', () => {
-      const args: ExtensionConfig = {
-        extension: Extension1,
-        group: MY_EXTENSION,
-        beforeGroup: OTHER_EXTENSION,
-        exported: true,
-      };
-      expect(getExtensionProvider(args)).toMatchObject({
-        exportedProviders: providers,
-        providers,
-      });
-    });
-  });
 });

@@ -4,6 +4,7 @@ import { AppendsWithParams, ModuleWithParams } from './module-metadata.js';
 import { ProvidersMetadata } from '#types/providers-metadata.js';
 import { RawMeta } from '#decorators/module.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
+import { ExtensionsGroupToken } from '#extension/extension-types.js';
 
 export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> extends ProvidersMetadata {
   override providersPerApp: Provider[] = [];
@@ -54,6 +55,7 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   extensionsProviders: Provider[] = [];
   exportedExtensionsProviders: Provider[] = [];
   aExtensionConfig: ExtensionConfig[] = [];
+  sOrderedGroups = new Set<ExtensionsGroupToken>;
   aExportedExtensionConfig: ExtensionConfig[] = [];
   /**
    * This property allows you to pass any information to extensions.

@@ -1,4 +1,4 @@
-import { Class, BeforeToken, InjectionToken, Injector } from '#di';
+import { Class, InjectionToken, Injector } from '#di';
 import { AnyObj, OptionalProps, Provider } from '#types/mix.js';
 
 export class ExtensionsMetaPerApp {
@@ -67,7 +67,7 @@ export interface Extension<T = any> {
    */
   stage3?(): Promise<void>;
 }
-export type ExtensionsGroupToken<T = any> = InjectionToken<Extension<T>[]> | BeforeToken<Extension<T>[]>;
+export type ExtensionsGroupToken<T = any> = InjectionToken<Extension<T>[]>;
 export type ExtensionType<T = any> = Class<Extension<T>>;
 /**
  * Used to count all extension groups and extensions that are in the application.

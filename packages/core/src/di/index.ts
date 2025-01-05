@@ -5,7 +5,7 @@ export * from './decorators.js';
 export { ForwardRefFn, forwardRef, resolveForwardRef } from './forward-ref.js';
 export { InjectionToken } from './injection-token.js';
 export { Injector } from './injector.js';
-export { DualKey, KeyRegistry, BeforeToken, ParamToken } from './key-registry.js';
+export { DualKey, KeyRegistry, ParamToken } from './key-registry.js';
 export { reflector } from './reflection.js';
 export {
   Class,

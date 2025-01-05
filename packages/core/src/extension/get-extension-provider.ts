@@ -68,10 +68,6 @@ export function getExtensionProvider(extensionConfig: ExtensionConfig): Extensio
   if (extensionConfig.group) {
     providers.push({ token: extensionConfig.group, useToken: extension, multi: true });
   }
-  if (extensionConfig.beforeGroup) {
-    const token = KeyRegistry.getBeforeToken(extensionConfig.beforeGroup);
-    providers.push({ token, useToken: extension, multi: true });
-  }
 
   if (extensionConfig.exportedOnly) {
     return {

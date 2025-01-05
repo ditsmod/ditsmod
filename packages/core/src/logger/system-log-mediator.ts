@@ -1,4 +1,4 @@
-import { BeforeToken, injectable } from '#di';
+import { injectable } from '#di';
 import { ConsoleLogger } from '#logger/console-logger.js';
 import { Logger } from '#logger/logger.js';
 import { LogMediator } from '#logger/log-mediator.js';
@@ -226,18 +226,14 @@ export class SystemLogMediator extends LogMediator {
   noExtensionsFound(self: object, groupToken: any, unfinishedInit: Set<Extension | ExtensionsGroupToken>) {
     const className = self.constructor.name;
     const tokenName = getProviderName(groupToken);
-    if (groupToken instanceof BeforeToken) {
-      this.setLog('trace', `${className}: for ${tokenName} no extensions found.`);
-    } else {
-      const item = Array.from(unfinishedInit).at(-2)!;
-      const itemName = getProviderName(item);
-      const msgArr = [
-        `${className}: ${itemName} expects ${tokenName} to be initialized, but no extension was found.`,
-        'If you see many messages like this, you need to reduce the number of exported modules',
-        'from the root module. Try importing all these modules directly into the modules that need them.',
-      ];
-      this.setLog('warn', msgArr.join(' '));
-    }
+    const item = Array.from(unfinishedInit).at(-2)!;
+    const itemName = getProviderName(item);
+    const msgArr = [
+      `${className}: ${itemName} expects ${tokenName} to be initialized, but no extension was found.`,
+      'If you see many messages like this, you need to reduce the number of exported modules',
+      'from the root module. Try importing all these modules directly into the modules that need them.',
+    ];
+    this.setLog('warn', msgArr.join(' '));
   }
 
   /**

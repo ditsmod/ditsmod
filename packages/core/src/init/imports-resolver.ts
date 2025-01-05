@@ -1,4 +1,4 @@
-import { BeforeToken, InjectionToken, Injector } from '#di';
+import { InjectionToken, Injector } from '#di';
 
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { defaultExtensionsProviders } from '#extension/default-extensions-providers.js';
@@ -133,7 +133,7 @@ export class ImportsResolver {
     const extensionsProviders = [...meta.extensionsProviders];
     const uniqTargets = new Set<Provider>(getProvidersTargets(extensionsProviders));
     const uniqGroupTokens = new Set<ExtensionsGroupToken>(
-      getTokens(extensionsProviders).filter((token) => token instanceof InjectionToken || token instanceof BeforeToken),
+      getTokens(extensionsProviders).filter((token) => token instanceof InjectionToken),
     );
 
     uniqGroupTokens.forEach((groupToken) => {

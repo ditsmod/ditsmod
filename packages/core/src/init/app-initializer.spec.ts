@@ -76,13 +76,11 @@ describe('AppInitializer', () => {
     });
 
     const SOME_EXTENSIONS = new InjectionToken('SOME_EXTENSIONS');
-    const BEFORE_SOME_EXTENSIONS = KeyRegistry.getBeforeToken(SOME_EXTENSIONS);
     class Extension1 {}
     class Extension2 {}
     class Extension3 {}
 
     const extensionCounters = new ExtensionCounters();
-    extensionCounters.mGroupTokens.set(BEFORE_SOME_EXTENSIONS, 1);
     extensionCounters.mGroupTokens.set(SOME_EXTENSIONS, 3);
 
     extensionCounters.mExtensions.set(Extension1, 9);
@@ -92,7 +90,6 @@ describe('AppInitializer', () => {
     it('counters should remain the same', () => {
       mock.decreaseExtensionsCounters(extensionCounters, []);
 
-      expect(extensionCounters.mGroupTokens.get(BEFORE_SOME_EXTENSIONS)).toBe(1);
       expect(extensionCounters.mGroupTokens.get(SOME_EXTENSIONS)).toBe(3);
 
       expect(extensionCounters.mExtensions.get(Extension1)).toBe(9);
@@ -104,15 +101,11 @@ describe('AppInitializer', () => {
       const providers: Provider[] = [
         Extension2,
         Extension2,
-        { token: BEFORE_SOME_EXTENSIONS, useClass: Extension3 },
-        { token: BEFORE_SOME_EXTENSIONS, useClass: Extension3 },
-        { token: BEFORE_SOME_EXTENSIONS, useClass: Extension3 },
         { token: SOME_EXTENSIONS, useClass: Extension1 },
         Extension1,
       ];
       mock.decreaseExtensionsCounters(extensionCounters, providers);
 
-      expect(extensionCounters.mGroupTokens.get(BEFORE_SOME_EXTENSIONS)).toBe(0);
       expect(extensionCounters.mGroupTokens.get(SOME_EXTENSIONS)).toBe(2);
 
       expect(extensionCounters.mExtensions.get(Extension1)).toBe(8);

@@ -1,6 +1,6 @@
 import { ChainError } from '@ts-stack/chain-error';
 
-import { BeforeToken, InjectionToken, Injector, isMultiProvider } from '#di';
+import { InjectionToken, Injector, isMultiProvider } from '#di';
 import { ImportsResolver } from '#init/imports-resolver.js';
 import { Logger } from '#logger/logger.js';
 import { SystemErrorMediator } from '#error/system-error-mediator.js';
@@ -12,13 +12,13 @@ import { ModuleFactory } from '#init/module-factory.js';
 import { Counter } from '#extension/counter.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ExtensionsContext } from '#extension/extensions-context.js';
-import { ExtensionsManager } from '#extension/extensions-manager.js';
+import { ExtensionsManager, DeferredResultMap } from '#extension/extensions-manager.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { PerAppService } from '#services/per-app.service.js';
 import { PreRouter } from '#services/pre-router.js';
 import { ModRefId, ModuleType, Provider } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
-import { Extension, ExtensionCounters, ExtensionsGroupToken } from '#extension/extension-types.js';
+import { ExtensionCounters, ExtensionsGroupToken, Stage1GroupMeta } from '#extension/extension-types.js';
 import { RequestListener } from '#types/server-options.js';
 import { getCollisions } from '#utils/get-collisions.js';
 import { getDuplicates } from '#utils/get-duplicates.js';
@@ -33,7 +33,7 @@ import { MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { getModule } from '#utils/get-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
-import { isBaseExtensionConfig } from '#extension/get-extension-provider.js';
+import { createDeferred } from '#utils/create-deferred.js';
 
 export class AppInitializer {
   protected perAppService = new PerAppService();
@@ -372,26 +372,31 @@ export class AppInitializer {
   }
 
   protected async handleExtensionsPerMod(meta: NormalizedModuleMetadata, extensionsManager: ExtensionsManager) {
-    const { extensionsProviders, name: moduleName, modRefId, aExtensionConfig } = meta;
-    const beforeTokens = new Set<BeforeToken>();
-    for (const token of getTokens<ExtensionsGroupToken>(extensionsProviders)) {
-      if (token instanceof BeforeToken) {
-        beforeTokens.add(token);
-      }
+    const mOrderedGroups = new Map() as DeferredResultMap;
+    extensionsManager.moduleName = meta.name;
+    extensionsManager.mOrderedGroups = mOrderedGroups;
+
+    [...meta.sOrderedGroups].forEach((groupToken, index) => {
+      const { promise, resolve, reject } = createDeferred<Stage1GroupMeta>();
+      mOrderedGroups.set(groupToken, { promise, resolve, reject, index });
+    });
+
+    const promises: Promise<any>[] = [];
+
+    for (const [groupToken, currDeferredResult] of mOrderedGroups) {
+      extensionsManager.currDeferredResult = currDeferredResult;
+      const promise = extensionsManager
+        .stage1(groupToken)
+        .then(() => extensionsManager.updateExtensionPendingList())
+        .catch((err) => {
+          const debugModuleName = getDebugClassName(meta.modRefId);
+          const msg = `The work of extension group ${groupToken} in ${debugModuleName} failed`;
+          throw new ChainError(msg, { cause: err, name: 'Error' });
+        });
+      promises.push(promise);
     }
-    const orderedGroups = aExtensionConfig.filter(isBaseExtensionConfig).map((c) => c.group);
-    for (const groupToken of orderedGroups) {
-      try {
-        extensionsManager.moduleName = moduleName;
-        extensionsManager.beforeTokens = beforeTokens;
-        await extensionsManager.stage1(groupToken);
-        extensionsManager.updateExtensionPendingList();
-      } catch (error: any) {
-        const debugModuleName = getDebugClassName(modRefId);
-        const msg = `The work of extension group ${groupToken} in ${debugModuleName} failed`;
-        throw new ChainError(msg, { cause: error, name: 'Error' });
-      }
-    }
+
+    await Promise.all(promises);
 
     extensionsManager.setExtensionsToStage2(meta.modRefId);
   }
@@ -416,9 +421,7 @@ export class AppInitializer {
 
   protected decreaseExtensionsCounters(extensionCounters: ExtensionCounters, providers: Provider[]) {
     const { mGroupTokens, mExtensions } = extensionCounters;
-    const groupTokens = getTokens(providers).filter(
-      (token) => token instanceof InjectionToken || token instanceof BeforeToken,
-    );
+    const groupTokens = getTokens(providers).filter((token) => token instanceof InjectionToken);
     const uniqGroupTokens = new Set<ExtensionsGroupToken>(groupTokens);
     const uniqTargets = new Set<Provider>(getProvidersTargets(providers));
 
