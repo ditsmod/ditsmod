@@ -101,11 +101,11 @@ export class ModuleNormalizer {
       this.checkExtensionConfig(modName, extensionConfig, i);
       const extensionObj = getExtensionProvider(extensionConfig);
       extensionObj.providers.forEach((p) => this.checkInitMethodForExtension(modName, p));
-      if (extensionObj.options) {
-        meta.aExtensionConfig.push(extensionObj.options);
+      if (extensionObj.config) {
+        meta.aExtensionConfig.push(extensionObj.config);
       }
-      if (extensionObj.exportedOptions) {
-        meta.aExportedExtensionConfig.push(extensionObj.exportedOptions);
+      if (extensionObj.exportedConfig) {
+        meta.aExportedExtensionConfig.push(extensionObj.exportedConfig);
       }
       meta.extensionsProviders.push(...extensionObj.providers);
       meta.exportedExtensionsProviders.push(...extensionObj.exportedProviders);

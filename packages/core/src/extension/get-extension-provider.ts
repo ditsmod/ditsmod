@@ -5,8 +5,8 @@ import { AnyObj } from '#types/mix.js';
 export class ExtensionObj {
   exportedProviders: Provider[];
   providers: Provider[];
-  options?: ExtensionConfig;
-  exportedOptions?: ExtensionConfig;
+  config?: ExtensionConfig;
+  exportedConfig?: ExtensionConfig;
 }
 
 export interface ExtensionConfigBase {
@@ -73,20 +73,20 @@ export function getExtensionProvider(extensionConfig: ExtensionConfig): Extensio
     return {
       providers: [],
       exportedProviders: providers,
-      exportedOptions: extensionConfig,
+      exportedConfig: extensionConfig,
     };
   } else if (extensionConfig.exported) {
     return {
       providers,
       exportedProviders: providers,
-      options: extensionConfig,
-      exportedOptions: extensionConfig,
+      config: extensionConfig,
+      exportedConfig: extensionConfig,
     };
   } else {
     return {
       providers,
       exportedProviders: [],
-      options: extensionConfig,
+      config: extensionConfig,
     };
   }
 }
