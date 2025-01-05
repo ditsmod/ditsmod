@@ -51,6 +51,6 @@ export function topologicalSort(groups: any[]): any[] {
 
   // Mapping the sorted result to GroupConfig<T> and adding non-GroupConfig<T> items
   const sortedGroups = result.map((group) => groups.find((g) => g.group === group)!);
-  const nonGroupItems = groups.filter((g) => !g || !g.group);
+  const nonGroupItems = groups.filter((g) => !g?.group);
   return [...sortedGroups, ...nonGroupItems];
 }

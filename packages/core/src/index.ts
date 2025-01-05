@@ -39,6 +39,7 @@ export {
   Stage1GroupMeta2,
   Stage1GroupMetaPerApp,
 } from '#extension/extension-types.js';
+export { topologicalSort } from './extension/topological-sort.js';
 export { ModuleExtract } from '#types/module-extract.js';
 export { Counter } from '#extension/counter.js';
 export { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
