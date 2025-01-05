@@ -48,7 +48,7 @@ export class ModuleFactory {
   protected importedMultiProvidersPerRou = new Map<ModuleType | ModuleWithParams, Provider[]>();
   protected importedMultiProvidersPerReq = new Map<ModuleType | ModuleWithParams, Provider[]>();
   protected importedExtensions = new Map<ModuleType | ModuleWithParams, Provider[]>();
-  protected aImportedExtensionsOptions: ExtensionConfig[] = [];
+  protected aImportedExtensionConfig: ExtensionConfig[] = [];
 
   /**
    * GlobalProviders.
@@ -75,7 +75,7 @@ export class ModuleFactory {
       importedMultiProvidersPerRou: this.importedMultiProvidersPerRou,
       importedMultiProvidersPerReq: this.importedMultiProvidersPerReq,
       importedExtensions: this.importedExtensions,
-      aImportedExtensionsOptions: this.aImportedExtensionsOptions,
+      aImportedExtensionConfig: this.aImportedExtensionConfig,
     };
   }
 
@@ -128,7 +128,7 @@ export class ModuleFactory {
     let multiPerRou: Map<ModuleType | ModuleWithParams, Provider[]>;
     let multiPerReq: Map<ModuleType | ModuleWithParams, Provider[]>;
     let extensions: Map<ModuleType | ModuleWithParams, Provider[]>;
-    let aExtensionsOptions: ExtensionConfig[];
+    let aExtensionConfig: ExtensionConfig[];
     if (meta.isExternal) {
       // External modules do not require global providers and extensions from the application.
       perMod = new Map([...this.importedProvidersPerMod]);
@@ -138,7 +138,7 @@ export class ModuleFactory {
       multiPerRou = new Map([...this.importedMultiProvidersPerRou]);
       multiPerReq = new Map([...this.importedMultiProvidersPerReq]);
       extensions = new Map([...this.importedExtensions]);
-      aExtensionsOptions = [...this.aImportedExtensionsOptions];
+      aExtensionConfig = [...this.aImportedExtensionConfig];
     } else {
       perMod = new Map([...this.glProviders.importedProvidersPerMod, ...this.importedProvidersPerMod]);
       perRou = new Map([...this.glProviders.importedProvidersPerRou, ...this.importedProvidersPerRou]);
@@ -147,10 +147,10 @@ export class ModuleFactory {
       multiPerRou = new Map([...this.glProviders.importedMultiProvidersPerRou, ...this.importedMultiProvidersPerRou]);
       multiPerReq = new Map([...this.glProviders.importedMultiProvidersPerReq, ...this.importedMultiProvidersPerReq]);
       extensions = new Map([...this.glProviders.importedExtensions, ...this.importedExtensions]);
-      aExtensionsOptions = [...this.glProviders.aImportedExtensionsOptions, ...this.aImportedExtensionsOptions];
+      aExtensionConfig = [...this.glProviders.aImportedExtensionConfig, ...this.aImportedExtensionConfig];
     }
 
-    this.checkExtensionGroupsGraph(meta.aExtensionConfig.concat(aExtensionsOptions));
+    this.checkExtensionGroupsGraph(meta.aExtensionConfig.concat(aExtensionConfig));
 
     return this.appMetadataMap.set(modOrObj, {
       prefixPerMod,
@@ -265,7 +265,7 @@ export class ModuleFactory {
     }
     if (meta1.exportedExtensionsProviders.length) {
       this.importedExtensions.set(meta1.modRefId, meta1.exportedExtensionsProviders);
-      this.aImportedExtensionsOptions.push(...meta1.aExportedExtensionConfig);
+      this.aImportedExtensionConfig.push(...meta1.aExportedExtensionConfig);
     }
     this.throwIfTryResolvingMultiprovidersCollisions(meta1.name);
   }

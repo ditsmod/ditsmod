@@ -141,7 +141,7 @@ describe('mix per app, per mod or per req', () => {
     importedMultiProvidersPerRou = new Map<ModuleType | ModuleWithParams, Provider[]>();
     importedMultiProvidersPerReq = new Map<ModuleType | ModuleWithParams, Provider[]>();
     importedExtensions = new Map<ModuleType | ModuleWithParams, Provider[]>();
-    aImportedExtensionsOptions: ExtensionConfig[] = [];
+    aImportedExtensionConfig: ExtensionConfig[] = [];
   }
 
   @injectable()
