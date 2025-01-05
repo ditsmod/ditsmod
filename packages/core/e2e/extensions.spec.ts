@@ -420,7 +420,7 @@ describe('extensions e2e', () => {
       ],
     } as Stage1GroupMeta;
 
-    expect(spyMetaFromAllModules).toHaveBeenCalledTimes(2);
+    expect(spyMetaFromAllModules).toHaveBeenCalledTimes(1);
     const firstCall = structuredClone(fullMeta);
     firstCall.moduleName = 'Module3';
     firstCall.delay = true;
@@ -429,14 +429,6 @@ describe('extensions e2e', () => {
     firstCall.groupDebugMeta.at(0)!.countdown = 1;
     firstCall.groupDataPerApp.pop();
     expect(spyMetaFromAllModules).toHaveBeenNthCalledWith(1, firstCall);
-
-    const secondCall = structuredClone(fullMeta) as Stage1GroupMeta2;
-    secondCall.delay = false;
-    delete secondCall.groupDebugMeta;
-    delete secondCall.groupData;
-    delete secondCall.moduleName;
-    delete secondCall.countdown;
-    expect(spyMetaFromAllModules).toHaveBeenNthCalledWith(2, secondCall);
 
     expect(spyMetaFromCurrentModule).toHaveBeenCalledTimes(1);
     expect(spyMetaFromCurrentModule).toHaveBeenNthCalledWith(1, fullMeta);

@@ -33,6 +33,7 @@ import { MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { getModule } from '#utils/get-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
+import { isBaseExtensionConfig } from '#extension/get-extension-provider.js';
 
 export class AppInitializer {
   protected perAppService = new PerAppService();
@@ -371,17 +372,15 @@ export class AppInitializer {
   }
 
   protected async handleExtensionsPerMod(meta: NormalizedModuleMetadata, extensionsManager: ExtensionsManager) {
-    const { extensionsProviders, name: moduleName, modRefId } = meta;
-    const extensionTokens = new Set<InjectionToken<Extension[]>>();
+    const { extensionsProviders, name: moduleName, modRefId, aExtensionConfig } = meta;
     const beforeTokens = new Set<BeforeToken>();
     for (const token of getTokens<ExtensionsGroupToken>(extensionsProviders)) {
       if (token instanceof BeforeToken) {
         beforeTokens.add(token);
-      } else if (token instanceof InjectionToken) {
-        extensionTokens.add(token);
       }
     }
-    for (const groupToken of extensionTokens) {
+    const orderedGroups = aExtensionConfig.filter(isBaseExtensionConfig).map((c) => c.group);
+    for (const groupToken of orderedGroups) {
       try {
         extensionsManager.moduleName = moduleName;
         extensionsManager.beforeTokens = beforeTokens;

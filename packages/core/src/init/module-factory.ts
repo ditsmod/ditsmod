@@ -20,10 +20,13 @@ import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import {
   ExtensionConfig,
   ExtensionConfig3,
-  isOptionWithOverrideExtension,
+  ExtensionConfigBase,
+  isConfigWithOverrideExtension,
 } from '#extension/get-extension-provider.js';
 import { findCycle, GroupConfig } from '#extension/tarjan-graph.js';
 import { getProviderName } from '#utils/get-provider-name.js';
+import { topologicalSort } from '#extension/topological-sort.js';
+import { ExtensionsGroupToken } from '#extension/extension-types.js';
 
 /**
  * - exports global providers;
@@ -150,7 +153,9 @@ export class ModuleFactory {
       aExtensionConfig = [...this.glProviders.aImportedExtensionConfig, ...this.aImportedExtensionConfig];
     }
 
-    this.checkExtensionGroupsGraph(meta.aExtensionConfig.concat(aExtensionConfig));
+    const allExtensionConfigs = meta.aExtensionConfig.concat(aExtensionConfig);
+    this.checkExtensionGroupsGraph(allExtensionConfigs);
+    meta.aExtensionConfig = topologicalSort<ExtensionsGroupToken, ExtensionConfigBase>(allExtensionConfigs);
 
     return this.appMetadataMap.set(modOrObj, {
       prefixPerMod,
@@ -171,7 +176,7 @@ export class ModuleFactory {
 
   protected checkExtensionGroupsGraph(extensions: (GroupConfig<any> | ExtensionConfig3)[]) {
     const extensionWithBeforeGroup = extensions?.filter((config) => {
-      return !isOptionWithOverrideExtension(config) && config.beforeGroup;
+      return !isConfigWithOverrideExtension(config) && config.beforeGroup;
     }) as GroupConfig<any>[] | undefined;
 
     if (extensionWithBeforeGroup) {

@@ -10,7 +10,7 @@ import {
 import {
   ExtensionConfig,
   getExtensionProvider,
-  isOptionWithOverrideExtension,
+  isConfigWithOverrideExtension,
 } from '#extension/get-extension-provider.js';
 import { AnyObj, GuardItem, ModRefId, NormalizedGuard, Provider, Scope } from '#types/mix.js';
 import { RawMeta } from '#decorators/module.js';
@@ -130,7 +130,7 @@ export class ModuleNormalizer {
   }
 
   protected checkExtensionConfig(modName: string, extensionConfig: ExtensionConfig, i: number) {
-    if (!isOptionWithOverrideExtension(extensionConfig)) {
+    if (!isConfigWithOverrideExtension(extensionConfig)) {
       // Previously, extensions had a `groupToken` property, which was renamed to `token`, and then to `group`.
       if (!extensionConfig.group && !extensionConfig.beforeGroup) {
         const msg = `Export of "${modName}" failed: extension in [${i}] index must have "group" or "beforeGroup" property.`;
