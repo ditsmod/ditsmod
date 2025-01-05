@@ -7,7 +7,7 @@ export type GroupConfig<T> = {
 
 type Graph<T> = Map<T, T[]>;
 
-export function buildGraph<T>(configs: AnyObj[]): { graph: Graph<T>; origin: Set<T> } {
+export function getGraph<T>(configs: AnyObj[]): { graph: Graph<T>; origin: Set<T> } {
   const graph = new Map() as Graph<T>;
   const origin = new Set<T>(configs.map((config) => config.group));
   for (const config of configs) {
@@ -30,7 +30,7 @@ export function buildGraph<T>(configs: AnyObj[]): { graph: Graph<T>; origin: Set
 }
 
 export function findCycle<T>(configs: GroupConfig<T>[]): T[] | null {
-  const { origin, graph } = buildGraph(configs);
+  const { origin, graph } = getGraph(configs);
   const visited = new Set<T>();
   const stack = new Set<T>();
   const path: T[] = [];
