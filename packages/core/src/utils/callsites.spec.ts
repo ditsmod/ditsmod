@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { CallsiteUtils } from '#core/utils/callsites.js';
+import { CallsiteUtils } from '#utils/callsites.js';
 
 describe('CallsiteUtils.getCallerDir()', function some1() {
-  const expectedPath = 'ditsmod/ditsmod/packages/core/dist/utils';
+  const expectedPath = import.meta.dirname;
 
   it('inside class method and common function', function some2() {
     class Test3 {

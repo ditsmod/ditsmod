@@ -26,16 +26,18 @@ export class CallsiteUtils {
     for (let i = 0; i < sliceOfCallsites.length; i++) {
       const callsite = sliceOfCallsites[i];
       const fileName = callsite.getFileName();
-      if (callsite.getFunctionName() == 'classDecorFactory') {
-        startListen = true;
-      }
 
       if (!callerFileSet.has(fileName) && !fileName?.startsWith('node:internal/')) {
         callerFileSet.add(fileName);
         callers.unshift(callsite);
       }
 
-      if (((hasClassDecorFactory && startListen) || !hasClassDecorFactory) && callsite.getTypeName() === null) {
+      if (callsite.getFunctionName() == 'classDecorFactory') {
+        startListen = true;
+        continue;
+      }
+
+      if ((startListen || !hasClassDecorFactory) && callsite.getFunctionName() === null) {
         return callers[depth];
       }
     }
