@@ -12,9 +12,8 @@ describe('ExtensionsManager', () => {
 
   describe('circular dependencies', () => {
     class MockExtensionsManager extends ExtensionsManager {
-      override unfinishedInit = new Set<Extension>();
       override stageIterationMap = new Map();
-      override currStageIteration = new StageIteration;
+      override currStageIteration = new StageIteration(0);
     }
 
     let mock: MockExtensionsManager;

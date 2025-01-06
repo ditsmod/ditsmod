@@ -371,16 +371,16 @@ export class AppInitializer {
   }
 
   protected async handleExtensionsPerMod(meta: NormalizedModuleMetadata, extensionsManager: ExtensionsManager) {
-    const mOrderedGroups = new Map() as StageIterationMap;
+    const stageIterationMap = new Map() as StageIterationMap;
     extensionsManager.moduleName = meta.name;
-    extensionsManager.stageIterationMap = mOrderedGroups;
+    extensionsManager.stageIterationMap = stageIterationMap;
     const promises: Promise<any>[] = [];
 
     [...meta.sOrderedGroups].forEach((groupToken, index) => {
-      mOrderedGroups.set(groupToken, new StageIteration(index));
+      stageIterationMap.set(groupToken, new StageIteration(index));
     });
 
-    for (const [groupToken, currStageIteration] of mOrderedGroups) {
+    for (const [groupToken, currStageIteration] of stageIterationMap) {
       extensionsManager.currStageIteration = currStageIteration;
       const promise = extensionsManager
         .stage1(groupToken)
