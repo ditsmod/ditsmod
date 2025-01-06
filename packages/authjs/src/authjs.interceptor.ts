@@ -12,13 +12,15 @@ export class AuthjsInterceptor implements HttpInterceptor {
   }
 
   async intercept(next: HttpHandler, ctx: RequestContext) {
-    const response = await Auth(toWebRequest(ctx), this.config);
+    let response = await Auth(toWebRequest(ctx), this.config);
     if (response.body || (response.status != Status.OK && response.status != Status.FOUND)) {
       await applyResponse(response, ctx.rawRes);
       return;
     }
     if (response.status == Status.FOUND) {
-      response.headers.delete('location');
+      const headers = new Headers(response.headers);
+      headers.delete('location');
+      response = new Response(undefined, { headers });
     }
     applyHeaders(response, ctx.rawRes);
     return next.handle();
