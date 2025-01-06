@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "yarn build && node --env-file=.env --watch --enable-source-maps dist/main.js",
+    "start": "yarn build && node --watch --env-file=.env --watch --enable-source-maps dist/main.js",
     "start:dev": "run-p watch start",
     "watch": "yarn build --watch",
     "clean": "rm -r dist*",

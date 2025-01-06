@@ -5,7 +5,7 @@ import { describe, expect, it, beforeAll, afterAll } from 'vitest';
 
 import { AppModule } from '#app/app.module.js';
 
-describe('01-hello-world', () => {
+describe('20-authjs', () => {
   let server: HttpServer;
   let testAgent: ReturnType<typeof request>;
 
