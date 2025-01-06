@@ -16,11 +16,13 @@ import { ExtensionsContext } from '#extension/extensions-context.js';
 import { createDeferred } from '#utils/create-deferred.js';
 
 export class StageIteration {
+  unfinishedInit = new Set<Extension | ExtensionsGroupToken>();
   promise: Promise<Stage1GroupMeta>;
   resolve: (stage1GroupMeta: Stage1GroupMeta) => void;
   reject: (err: any) => void;
+  index: number = 0;
 
-  constructor(public index: number = 0) {
+  constructor() {
     const obj = createDeferred<Stage1GroupMeta>();
     this.promise = obj.promise;
     this.resolve = obj.resolve;
@@ -40,7 +42,6 @@ export class ExtensionsManager {
    */
   stageIterationMap: StageIterationMap;
   currStageIteration: StageIteration;
-  protected unfinishedInit = new Set<Extension | ExtensionsGroupToken>();
   /**
    * The cache for groupToken in the current module.
    */
@@ -63,11 +64,11 @@ export class ExtensionsManager {
   async stage1<T>(groupToken: ExtensionsGroupToken<T>, perApp?: false): Promise<Stage1GroupMeta<T>>;
   async stage1<T>(groupToken: ExtensionsGroupToken<T>, perApp: true): Promise<Stage1GroupMeta2<T>>;
   async stage1<T>(groupToken: ExtensionsGroupToken<T>, perApp?: boolean): Promise<Stage1GroupMeta<T>> {
-    const stageIteration = this.stageIterationMap.get(groupToken);
-    if (this.unfinishedInit.has(groupToken)) {
+    if (this.currStageIteration.unfinishedInit.has(groupToken)) {
       this.throwCircularDeps(groupToken);
     }
 
+    const stageIteration = this.stageIterationMap.get(groupToken);
     if (stageIteration && stageIteration.index > this.currStageIteration.index) {
       return stageIteration.promise;
     }
@@ -126,7 +127,7 @@ export class ExtensionsManager {
    * result of `groupToken` from the whole application.
    */
   protected addExtensionToPendingList(groupToken: ExtensionsGroupToken) {
-    const caller = Array.from(this.unfinishedInit).at(-1) as Extension;
+    const caller = Array.from(this.currStageIteration.unfinishedInit).at(-1) as Extension;
     const ExtensionClass = caller.constructor as Class<Extension>;
     const mExtensions =
       this.extensionsContext.mExtensionPendingList.get(groupToken) || new Map<Class<Extension>, Extension>();
@@ -138,7 +139,7 @@ export class ExtensionsManager {
   }
 
   protected excludeExtensionFromPendingList(groupToken: ExtensionsGroupToken) {
-    const caller = Array.from(this.unfinishedInit).at(-1) as Extension;
+    const caller = Array.from(this.currStageIteration.unfinishedInit).at(-1) as Extension;
     if (!caller) {
       return;
     }
@@ -149,11 +150,11 @@ export class ExtensionsManager {
   }
 
   protected async prepareAndInitGroup<T>(groupToken: ExtensionsGroupToken<T>) {
-    this.unfinishedInit.add(groupToken);
-    this.systemLogMediator.startExtensionsGroupInit(this, this.unfinishedInit);
+    this.currStageIteration.unfinishedInit.add(groupToken);
+    this.systemLogMediator.startExtensionsGroupInit(this, this.currStageIteration.unfinishedInit);
     const stage1GroupMeta = await this.initGroup(groupToken);
-    this.systemLogMediator.finishExtensionsGroupInit(this, this.unfinishedInit);
-    this.unfinishedInit.delete(groupToken);
+    this.systemLogMediator.finishExtensionsGroupInit(this, this.currStageIteration.unfinishedInit);
+    this.currStageIteration.unfinishedInit.delete(groupToken);
     this.stage1GroupMetaCache.set(groupToken, stage1GroupMeta);
     this.setStage1GroupMetaPerApp(groupToken, stage1GroupMeta);
     return stage1GroupMeta;
@@ -173,11 +174,11 @@ export class ExtensionsManager {
     this.updateGroupCounters(groupToken, stage1GroupMeta);
 
     if (!extensions.length) {
-      this.systemLogMediator.noExtensionsFound(this, groupToken, this.unfinishedInit);
+      this.systemLogMediator.noExtensionsFound(this, groupToken, this.currStageIteration.unfinishedInit);
     }
 
     for (const extension of extensions) {
-      if (this.unfinishedInit.has(extension)) {
+      if (this.currStageIteration.unfinishedInit.has(extension)) {
         this.throwCircularDeps(extension);
       }
       const debugMetaCache = this.debugMetaCache.get(extension);
@@ -186,16 +187,16 @@ export class ExtensionsManager {
         continue;
       }
 
-      this.unfinishedInit.add(extension);
-      this.systemLogMediator.startInitExtension(this, this.unfinishedInit);
+      this.currStageIteration.unfinishedInit.add(extension);
+      this.systemLogMediator.startInitExtension(this, this.currStageIteration.unfinishedInit);
       const ExtensionClass = extension.constructor as Class<Extension<T>>;
       const countdown = this.extensionCounters.mExtensions.get(ExtensionClass) || 0;
       const isLastModule = countdown === 0;
       const data = (await extension.stage1?.(isLastModule)) as T;
       this.extensionsListForStage2.add(extension);
-      this.systemLogMediator.finishInitExtension(this, this.unfinishedInit, data);
+      this.systemLogMediator.finishInitExtension(this, this.currStageIteration.unfinishedInit, data);
       this.counter.addInitedExtensions(extension);
-      this.unfinishedInit.delete(extension);
+      this.currStageIteration.unfinishedInit.delete(extension);
       const debugMeta = new Stage1DebugMeta<T>(extension, data, !isLastModule, countdown);
       this.debugMetaCache.set(extension, debugMeta);
       stage1GroupMeta.addDebugMeta(debugMeta);
@@ -210,7 +211,7 @@ export class ExtensionsManager {
   }
 
   protected throwCircularDeps(item: Extension | ExtensionsGroupToken) {
-    const items = Array.from(this.unfinishedInit);
+    const items = Array.from(this.currStageIteration.unfinishedInit);
     const index = items.findIndex((ext) => ext === item);
     const prefixChain = items.slice(0, index);
     const circularChain = items.slice(index);

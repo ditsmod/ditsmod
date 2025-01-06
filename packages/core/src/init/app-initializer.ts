@@ -18,7 +18,7 @@ import { PerAppService } from '#services/per-app.service.js';
 import { PreRouter } from '#services/pre-router.js';
 import { ModRefId, ModuleType, Provider } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
-import { ExtensionCounters, ExtensionsGroupToken, Stage1GroupMeta } from '#extension/extension-types.js';
+import { Extension, ExtensionCounters, ExtensionsGroupToken, Stage1GroupMeta } from '#extension/extension-types.js';
 import { RequestListener } from '#types/server-options.js';
 import { getCollisions } from '#utils/get-collisions.js';
 import { getDuplicates } from '#utils/get-duplicates.js';
@@ -378,7 +378,8 @@ export class AppInitializer {
 
     [...meta.sOrderedGroups].forEach((groupToken, index) => {
       const { promise, resolve, reject } = createDeferred<Stage1GroupMeta>();
-      mOrderedGroups.set(groupToken, { promise, resolve, reject, index });
+      const unfinishedInit = new Set<Extension | ExtensionsGroupToken>();
+      mOrderedGroups.set(groupToken, { promise, resolve, reject, index, unfinishedInit });
     });
 
     const promises: Promise<any>[] = [];
@@ -390,7 +391,7 @@ export class AppInitializer {
         .then(() => extensionsManager.updateExtensionPendingList())
         .catch((err) => {
           const debugModuleName = getDebugClassName(meta.modRefId);
-          const msg = `The work of extension group ${groupToken} in ${debugModuleName} failed`;
+          const msg = `The work of ${groupToken} group in ${debugModuleName} failed`;
           throw new ChainError(msg, { cause: err, name: 'Error' });
         });
       promises.push(promise);
