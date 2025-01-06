@@ -15,7 +15,7 @@ import { Counter } from '#extension/counter.js';
 import { ExtensionsContext } from '#extension/extensions-context.js';
 import { createDeferred } from '#utils/create-deferred.js';
 
-export class DeferredResult {
+export class StageIteration {
   promise: Promise<Stage1GroupMeta>;
   resolve: (stage1GroupMeta: Stage1GroupMeta) => void;
   reject: (err: any) => void;
@@ -27,7 +27,7 @@ export class DeferredResult {
     this.reject = obj.reject;
   }
 }
-export type DeferredResultMap = Map<ExtensionsGroupToken, DeferredResult>;
+export type StageIterationMap = Map<ExtensionsGroupToken, StageIteration>;
 
 @injectable()
 export class ExtensionsManager {
@@ -38,8 +38,8 @@ export class ExtensionsManager {
   /**
    * Settings by AppInitializer.
    */
-  mOrderedGroups: DeferredResultMap;
-  currDeferredResult: DeferredResult;
+  stageIterationMap: StageIterationMap;
+  currStageIteration: StageIteration;
   protected unfinishedInit = new Set<Extension | ExtensionsGroupToken>();
   /**
    * The cache for groupToken in the current module.
@@ -63,13 +63,13 @@ export class ExtensionsManager {
   async stage1<T>(groupToken: ExtensionsGroupToken<T>, perApp?: false): Promise<Stage1GroupMeta<T>>;
   async stage1<T>(groupToken: ExtensionsGroupToken<T>, perApp: true): Promise<Stage1GroupMeta2<T>>;
   async stage1<T>(groupToken: ExtensionsGroupToken<T>, perApp?: boolean): Promise<Stage1GroupMeta<T>> {
+    const stageIteration = this.stageIterationMap.get(groupToken);
     if (this.unfinishedInit.has(groupToken)) {
       this.throwCircularDeps(groupToken);
     }
 
-    const deferredResult = this.mOrderedGroups.get(groupToken);
-    if (deferredResult && deferredResult.index > this.currDeferredResult.index) {
-      return deferredResult.promise;
+    if (stageIteration && stageIteration.index > this.currStageIteration.index) {
+      return stageIteration.promise;
     }
 
     let stage1GroupMeta = this.stage1GroupMetaCache.get(groupToken);
@@ -92,7 +92,7 @@ export class ExtensionsManager {
         this.excludeExtensionFromPendingList(groupToken);
       }
     }
-    this.currDeferredResult.resolve(stage1GroupMeta);
+    this.currStageIteration.resolve(stage1GroupMeta);
     return stage1GroupMeta;
   }
 

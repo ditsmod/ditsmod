@@ -12,7 +12,7 @@ import { ModuleFactory } from '#init/module-factory.js';
 import { Counter } from '#extension/counter.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ExtensionsContext } from '#extension/extensions-context.js';
-import { ExtensionsManager, DeferredResultMap } from '#extension/extensions-manager.js';
+import { ExtensionsManager, StageIterationMap } from '#extension/extensions-manager.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { PerAppService } from '#services/per-app.service.js';
 import { PreRouter } from '#services/pre-router.js';
@@ -372,9 +372,9 @@ export class AppInitializer {
   }
 
   protected async handleExtensionsPerMod(meta: NormalizedModuleMetadata, extensionsManager: ExtensionsManager) {
-    const mOrderedGroups = new Map() as DeferredResultMap;
+    const mOrderedGroups = new Map() as StageIterationMap;
     extensionsManager.moduleName = meta.name;
-    extensionsManager.mOrderedGroups = mOrderedGroups;
+    extensionsManager.stageIterationMap = mOrderedGroups;
 
     [...meta.sOrderedGroups].forEach((groupToken, index) => {
       const { promise, resolve, reject } = createDeferred<Stage1GroupMeta>();
@@ -383,8 +383,8 @@ export class AppInitializer {
 
     const promises: Promise<any>[] = [];
 
-    for (const [groupToken, currDeferredResult] of mOrderedGroups) {
-      extensionsManager.currDeferredResult = currDeferredResult;
+    for (const [groupToken, currStageIteration] of mOrderedGroups) {
+      extensionsManager.currStageIteration = currStageIteration;
       const promise = extensionsManager
         .stage1(groupToken)
         .then(() => extensionsManager.updateExtensionPendingList())

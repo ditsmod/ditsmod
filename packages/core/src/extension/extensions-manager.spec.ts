@@ -5,7 +5,7 @@ import { Extension, ExtensionCounters } from '#extension/extension-types.js';
 import { getExtensionProviderList } from '#extension/get-extension-provider.js';
 import { defaultProvidersPerApp } from '#init/default-providers-per-app.js';
 import { ExtensionsContext } from '#extension/extensions-context.js';
-import { DeferredResult, ExtensionsManager } from '#extension/extensions-manager.js';
+import { StageIteration, ExtensionsManager } from '#extension/extensions-manager.js';
 
 describe('ExtensionsManager', () => {
   describe('stage1', () => {});
@@ -13,8 +13,8 @@ describe('ExtensionsManager', () => {
   describe('circular dependencies', () => {
     class MockExtensionsManager extends ExtensionsManager {
       override unfinishedInit = new Set<Extension>();
-      override mOrderedGroups = new Map();
-      override currDeferredResult = new DeferredResult;
+      override stageIterationMap = new Map();
+      override currStageIteration = new StageIteration;
     }
 
     let mock: MockExtensionsManager;
