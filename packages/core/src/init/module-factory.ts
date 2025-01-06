@@ -155,8 +155,7 @@ export class ModuleFactory {
 
     const allExtensionConfigs = meta.aExtensionConfig.concat(aExtensionConfig);
     this.checkExtensionGroupsGraph(allExtensionConfigs);
-    const aOrderedGroups = topologicalSort<ExtensionsGroupToken, ExtensionConfigBase>(allExtensionConfigs, true);
-    aOrderedGroups.forEach(v => meta.sOrderedGroups.add(v));
+    meta.aOrderedGroups = topologicalSort<ExtensionsGroupToken, ExtensionConfigBase>(allExtensionConfigs, true);
 
     return this.appMetadataMap.set(modOrObj, {
       prefixPerMod,

@@ -376,7 +376,7 @@ export class AppInitializer {
     extensionsManager.stageIterationMap = stageIterationMap;
     const promises: Promise<any>[] = [];
 
-    [...meta.sOrderedGroups].forEach((groupToken, index) => {
+    meta.aOrderedGroups.forEach((groupToken, index) => {
       stageIterationMap.set(groupToken, new StageIteration(index));
     });
 

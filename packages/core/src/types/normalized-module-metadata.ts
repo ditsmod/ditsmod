@@ -55,7 +55,7 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   extensionsProviders: Provider[] = [];
   exportedExtensionsProviders: Provider[] = [];
   aExtensionConfig: ExtensionConfig[] = [];
-  sOrderedGroups = new Set<ExtensionsGroupToken>;
+  aOrderedGroups: ExtensionsGroupToken[] = [];
   aExportedExtensionConfig: ExtensionConfig[] = [];
   /**
    * This property allows you to pass any information to extensions.
