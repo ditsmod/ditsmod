@@ -8,8 +8,7 @@ describe('topologicalSort()', () => {
       { group: 'MY_EXTENSIONS2', beforeGroup: 'MY_EXTENSIONS1' },
       { group: 'MY_EXTENSIONS3', beforeGroup: 'MY_EXTENSIONS2' },
     ];
-    const expectedSet = new Set(['MY_EXTENSIONS3', 'MY_EXTENSIONS2', 'MY_EXTENSIONS1']);
-    expect(topologicalSort(configs, true)).toEqual(expectedSet);
+    expect(topologicalSort(configs, true)).toEqual(['MY_EXTENSIONS3', 'MY_EXTENSIONS2', 'MY_EXTENSIONS1']);
   });
 
   it('case 2', () => {
@@ -18,8 +17,7 @@ describe('topologicalSort()', () => {
       { group: 'MY_EXTENSIONS2', beforeGroup: 'MY_EXTENSIONS1' },
       { group: 'MY_EXTENSIONS1' },
     ];
-    const expectedSet = new Set(['MY_EXTENSIONS3', 'MY_EXTENSIONS2', 'MY_EXTENSIONS1']);
-    expect(topologicalSort(configs, true)).toEqual(expectedSet);
+    expect(topologicalSort(configs, true)).toEqual(['MY_EXTENSIONS3', 'MY_EXTENSIONS2', 'MY_EXTENSIONS1']);
   });
 
   it('case 3', () => {
@@ -28,8 +26,7 @@ describe('topologicalSort()', () => {
       { group: 'MY_EXTENSIONS3', beforeGroup: 'MY_EXTENSIONS2' },
       { group: 'MY_EXTENSIONS1' },
     ];
-    const expectedSet = new Set(['MY_EXTENSIONS3', 'MY_EXTENSIONS2', 'MY_EXTENSIONS1']);
-    expect(topologicalSort(configs, true)).toEqual(expectedSet);
+    expect(topologicalSort(configs, true)).toEqual(['MY_EXTENSIONS3', 'MY_EXTENSIONS2', 'MY_EXTENSIONS1']);
   });
 
   it('case 4', () => {
@@ -38,8 +35,7 @@ describe('topologicalSort()', () => {
       { group: 'MY_EXTENSIONS2' },
       { group: 'MY_EXTENSIONS3', beforeGroup: 'MY_EXTENSIONS2' },
     ];
-    const expectedSet = new Set(['MY_EXTENSIONS1', 'MY_EXTENSIONS3', 'MY_EXTENSIONS2']);
-    expect(topologicalSort(configs, true)).toEqual(expectedSet);
+    expect(topologicalSort(configs, true)).toEqual(['MY_EXTENSIONS1', 'MY_EXTENSIONS3', 'MY_EXTENSIONS2']);
   });
 
   it('case 5', () => {
@@ -48,8 +44,7 @@ describe('topologicalSort()', () => {
       { group: 'MY_EXTENSIONS2', beforeGroup: 'MY_EXTENSIONS1' },
       { group: 'MY_EXTENSIONS3', beforeGroup: 'MY_EXTENSIONS10' },
     ];
-    const expectedSet = new Set(['MY_EXTENSIONS2', 'MY_EXTENSIONS1', 'MY_EXTENSIONS3']);
-    expect(topologicalSort(configs, true)).toEqual(expectedSet);
+    expect(topologicalSort(configs, true)).toEqual(['MY_EXTENSIONS2', 'MY_EXTENSIONS1', 'MY_EXTENSIONS3']);
   });
 
   it('case 6', () => {
@@ -60,14 +55,13 @@ describe('topologicalSort()', () => {
       { group: 'MY_EXTENSIONS4', beforeGroup: 'MY_EXTENSIONS1' },
       { group: 'MY_EXTENSIONS5', beforeGroup: 'MY_EXTENSIONS4' },
     ];
-    const expectedSet = new Set([
+    expect(topologicalSort(configs, true)).toEqual([
       'MY_EXTENSIONS3',
       'MY_EXTENSIONS2',
       'MY_EXTENSIONS5',
       'MY_EXTENSIONS4',
       'MY_EXTENSIONS1',
     ]);
-    expect(topologicalSort(configs, true)).toEqual(expectedSet);
   });
 
   it('case 7', () => {
@@ -78,14 +72,13 @@ describe('topologicalSort()', () => {
       { group: 'MY_EXTENSIONS3', beforeGroup: 'MY_EXTENSIONS2' },
       { group: 'MY_EXTENSIONS4', beforeGroup: 'MY_EXTENSIONS1' },
     ];
-    const expectedSet = new Set([
+    expect(topologicalSort(configs, true)).toEqual([
       'MY_EXTENSIONS5',
       'MY_EXTENSIONS3',
       'MY_EXTENSIONS2',
       'MY_EXTENSIONS4',
       'MY_EXTENSIONS1',
     ]);
-    expect(topologicalSort(configs, true)).toEqual(expectedSet);
   });
 
   it('case 8', () => {
@@ -96,13 +89,12 @@ describe('topologicalSort()', () => {
       { group: 'MY_EXTENSIONS3', beforeGroup: 'MY_EXTENSIONS2' },
       { group: 'MY_EXTENSIONS4', beforeGroup: 'MY_EXTENSIONS1' },
     ];
-    const expectedSet = new Set([
+    expect(topologicalSort(configs, true)).toEqual([
       'MY_EXTENSIONS3',
       'MY_EXTENSIONS2',
       'MY_EXTENSIONS5',
       'MY_EXTENSIONS4',
       'MY_EXTENSIONS1',
     ]);
-    expect(topologicalSort(configs, true)).toEqual(expectedSet);
   });
 });
