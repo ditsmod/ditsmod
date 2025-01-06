@@ -12,13 +12,13 @@ import { ModuleFactory } from '#init/module-factory.js';
 import { Counter } from '#extension/counter.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ExtensionsContext } from '#extension/extensions-context.js';
-import { ExtensionsManager, StageIterationMap } from '#extension/extensions-manager.js';
+import { ExtensionsManager, StageIteration, StageIterationMap } from '#extension/extensions-manager.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { PerAppService } from '#services/per-app.service.js';
 import { PreRouter } from '#services/pre-router.js';
 import { ModRefId, ModuleType, Provider } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
-import { Extension, ExtensionCounters, ExtensionsGroupToken, Stage1GroupMeta } from '#extension/extension-types.js';
+import { ExtensionCounters, ExtensionsGroupToken } from '#extension/extension-types.js';
 import { RequestListener } from '#types/server-options.js';
 import { getCollisions } from '#utils/get-collisions.js';
 import { getDuplicates } from '#utils/get-duplicates.js';
@@ -33,7 +33,6 @@ import { MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { getModule } from '#utils/get-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
-import { createDeferred } from '#utils/create-deferred.js';
 
 export class AppInitializer {
   protected perAppService = new PerAppService();
@@ -375,14 +374,11 @@ export class AppInitializer {
     const mOrderedGroups = new Map() as StageIterationMap;
     extensionsManager.moduleName = meta.name;
     extensionsManager.stageIterationMap = mOrderedGroups;
+    const promises: Promise<any>[] = [];
 
     [...meta.sOrderedGroups].forEach((groupToken, index) => {
-      const { promise, resolve, reject } = createDeferred<Stage1GroupMeta>();
-      const unfinishedInit = new Set<Extension | ExtensionsGroupToken>();
-      mOrderedGroups.set(groupToken, { promise, resolve, reject, index, unfinishedInit });
+      mOrderedGroups.set(groupToken, new StageIteration(index));
     });
-
-    const promises: Promise<any>[] = [];
 
     for (const [groupToken, currStageIteration] of mOrderedGroups) {
       extensionsManager.currStageIteration = currStageIteration;

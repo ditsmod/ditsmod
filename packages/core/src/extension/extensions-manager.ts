@@ -20,9 +20,8 @@ export class StageIteration {
   promise: Promise<Stage1GroupMeta>;
   resolve: (stage1GroupMeta: Stage1GroupMeta) => void;
   reject: (err: any) => void;
-  index: number = 0;
 
-  constructor() {
+  constructor(public index: number) {
     const obj = createDeferred<Stage1GroupMeta>();
     this.promise = obj.promise;
     this.resolve = obj.resolve;
