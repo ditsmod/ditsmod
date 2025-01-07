@@ -14,7 +14,6 @@
       "#logger/*": ["./src/logger/*"],
       "#error/*": ["./src/error/*"],
       "#services/*": ["./src/services/*"],
-      "#core/*": ["./src/*"],
       "#interceptors/*": ["./src/interceptors/*"],
       "#extension/*": ["./src/extension/*"],
     },

@@ -27,7 +27,6 @@
     "#logger/*": "./dist/logger/*",
     "#error/*": "./dist/error/*",
     "#services/*": "./dist/services/*",
-    "#core/*": "./dist/*",
     "#extension/*": "./dist/extension/*",
     "#interceptors/*": "./dist/interceptors/*"
   },
