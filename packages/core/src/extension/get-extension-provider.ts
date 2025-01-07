@@ -1,4 +1,4 @@
-import { KeyRegistry, InjectionToken, Provider } from '#di';
+import { InjectionToken, Provider } from '#di';
 import { ExtensionType, Extension } from '#extension/extension-types.js';
 import { AnyObj } from '#types/mix.js';
 
@@ -20,6 +20,7 @@ export interface ExtensionConfigBase {
    * only if the extension group you place here does not expect your extension group to work.
    */
   beforeGroup?: InjectionToken<Extension[]>;
+  afterGroup?: InjectionToken<Extension[]>;
   overrideExtension?: never;
 }
 

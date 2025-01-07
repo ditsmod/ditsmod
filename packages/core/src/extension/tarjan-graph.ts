@@ -3,9 +3,10 @@ import { AnyObj } from '#types/mix.js';
 export type GroupConfig<T> = {
   group: T;
   beforeGroup?: T;
+  afterGroup?: T;
 };
 
-type Graph<T> = Map<T, T[]>;
+export type Graph<T> = Map<T, T[]>;
 
 export function getGraph<T>(configs: AnyObj[]): { graph: Graph<T>; origin: Set<T> } {
   const graph = new Map() as Graph<T>;
@@ -14,7 +15,7 @@ export function getGraph<T>(configs: AnyObj[]): { graph: Graph<T>; origin: Set<T
     if (!isGroupConfig<T>(config)) {
       continue;
     }
-    const { group, beforeGroup } = config;
+    const { group, beforeGroup, afterGroup } = config;
     if (!graph.has(group)) {
       graph.set(group, []);
     }
@@ -23,6 +24,12 @@ export function getGraph<T>(configs: AnyObj[]): { graph: Graph<T>; origin: Set<T
         graph.set(beforeGroup, []);
       }
       graph.get(beforeGroup)!.push(group); // Adding a dependency.
+    }
+    if (afterGroup && origin.has(afterGroup)) {
+      if (!graph.has(afterGroup)) {
+        graph.set(afterGroup, []);
+      }
+      graph.get(group)!.push(afterGroup); // Adding a dependency.
     }
   }
 

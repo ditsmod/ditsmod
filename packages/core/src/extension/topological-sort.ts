@@ -1,10 +1,5 @@
 import { AnyObj } from '../types/mix.js';
-import { getGraph, Graph, isGroupConfig } from './tarjan-graph.js';
-
-export type GroupConfig<T> = {
-  group: T;
-  beforeGroup?: T;
-};
+import { getGraph, Graph, GroupConfig, isGroupConfig } from './tarjan-graph.js';
 
 export function topologicalSort<T = any, R extends GroupConfig<T> = GroupConfig<any>>(
   configs: AnyObj[],
@@ -34,7 +29,7 @@ export function topologicalSort<T = any, R extends GroupConfig<T> = GroupConfig<
     return orderedGroups;
   }
   // Mapping the sorted result to GroupConfig<T>
-  return orderedGroups.map((group) => configs.find((config) => config.group === group)!);
+  return orderedGroups.map((group) => configs.findLast((config) => config.group === group)!);
 }
 
 // Recursive depth-first search.
