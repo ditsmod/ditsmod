@@ -292,6 +292,17 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
+   * `${className}: The sequence of extension group operations: ...`
+   */
+  sequenceOfExtensionGroups(self: object, aOrderedGroups: ExtensionsGroupToken[]) {
+    const className = self.constructor.name;
+    const msg =
+      `${className}: The sequence of extension group operations: ` +
+      `${aOrderedGroups.map((g, i) => `${i + 1}. ${g}`).join(', ')}.`;
+    this.setLog('debug', msg);
+  }
+
+  /**
    * `the application has no routes.`
    */
   noRoutes(self: object) {

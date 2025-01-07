@@ -278,7 +278,7 @@ export class AppInitializer {
 
       systemLogMediator.startExtensions(this);
       this.decreaseExtensionsCounters(extensionCounters, extensionsProviders);
-      await this.handleExtensionsPerMod(meta, extensionsManager);
+      await this.handleExtensionsPerMod(meta, extensionsManager, systemLogMediator);
       this.logExtensionsStatistic(injectorPerApp, systemLogMediator);
     }
     await this.perAppHandling(mMetadataPerMod2, extensionsContext);
@@ -370,15 +370,19 @@ export class AppInitializer {
     ];
   }
 
-  protected async handleExtensionsPerMod(meta: NormalizedModuleMetadata, extensionsManager: ExtensionsManager) {
+  protected async handleExtensionsPerMod(
+    meta: NormalizedModuleMetadata,
+    extensionsManager: ExtensionsManager,
+    systemLogMediator: SystemLogMediator,
+  ) {
+    systemLogMediator.sequenceOfExtensionGroups(this, meta.aOrderedGroups);
     const stageIterationMap = new Map() as StageIterationMap;
     extensionsManager.moduleName = meta.name;
     extensionsManager.stageIterationMap = stageIterationMap;
-    const promises: Promise<any>[] = [];
-
     meta.aOrderedGroups.forEach((groupToken, index) => {
       stageIterationMap.set(groupToken, new StageIteration(index));
     });
+    const promises: Promise<any>[] = [];
 
     for (const [groupToken, currStageIteration] of stageIterationMap) {
       extensionsManager.currStageIteration = currStageIteration;
@@ -394,7 +398,6 @@ export class AppInitializer {
     }
 
     await Promise.all(promises);
-
     extensionsManager.setExtensionsToStage2(meta.modRefId);
   }
 
