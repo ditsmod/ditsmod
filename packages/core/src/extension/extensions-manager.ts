@@ -173,6 +173,7 @@ export class ExtensionsManager {
         continue;
       }
 
+      this.unfinishedInit.add(extension);
       this.systemLogMediator.startInitExtension(this, this.unfinishedInit);
       const ExtensionClass = extension.constructor as Class<Extension<T>>;
       const countdown = this.extensionCounters.mExtensions.get(ExtensionClass) || 0;
