@@ -6,13 +6,6 @@ import { OverriddenAuthConfig } from './authjs.config.js';
 
 @controller()
 export class InjScopedController {
-  @route('GET')
-  goto(res: Res) {
-    res.rawRes.setHeader('content-type', 'text/html');
-    const url = 'http://0.0.0.0:3000/auth/signin';
-    return `Open your browser on <a href="${url}">${url}</a>`;
-  }
-
   @route('POST', 'auth/:action/:providerId', [], [AuthjsInterceptor])
   auth() {
     return 'ok';
@@ -21,6 +14,13 @@ export class InjScopedController {
   @route('GET', 'per-req', [AuthjsGuard])
   getSession(@inject(AUTHJS_SESSION) session: any) {
     return session.user;
+  }
+
+  @route('GET')
+  goto(res: Res) {
+    res.rawRes.setHeader('content-type', 'text/html');
+    const url = 'http://0.0.0.0:3000/auth/signin';
+    return `Open your browser on <a href="${url}">${url}</a>`;
   }
 }
 

@@ -9,7 +9,6 @@ import {
 } from '@ditsmod/core';
 import { MetadataPerMod3, ROUTES_EXTENSIONS } from '@ditsmod/routing';
 import { LoggerInstance } from '@auth/core/types';
-import { BODY_PARSER_EXTENSIONS } from '@ditsmod/body-parser';
 
 import { AuthjsConfig } from '#mod/authjs.config.js';
 import { AuthjsInterceptor } from '#mod/authjs.interceptor.js';
