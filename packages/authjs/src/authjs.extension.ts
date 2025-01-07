@@ -26,7 +26,6 @@ export class AuthjsExtension implements Extension {
 
   async stage1() {
     this.stage1GroupMeta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
-    await this.extensionManager.stage1(BODY_PARSER_EXTENSIONS);
   }
 
   async stage2(injectorPerMod: Injector): Promise<void> {
