@@ -1,4 +1,4 @@
-import { AnyObj } from '../types/mix.js';
+import { AnyObj } from '#types/mix.js';
 import { getGraph, Graph, GroupConfig, isGroupConfig } from './tarjan-graph.js';
 
 export function topologicalSort<T = any, R extends GroupConfig<T> = GroupConfig<any>>(
