@@ -297,7 +297,7 @@ describe('extensions e2e', () => {
      * A second extension that depends on this extension is declared below. The second extension
      * is declared in `Module2`, it is imported into one module.
      * 
-     * The test verifies that `ExtensionsManager` returns data from `MY_EXTENSIONS1`, from the entire
+     * The test verifies that `ExtensionsManager` returns data for `MY_EXTENSIONS1` from the entire
      * application, even though `Module2` is imported into only one module.
      */
     @injectable()

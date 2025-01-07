@@ -1,6 +1,6 @@
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { injectable, InjectionToken, KeyRegistry } from '#di';
+import { injectable, InjectionToken } from '#di';
 import { InputLogLevel, Logger } from '#logger/logger.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
@@ -110,7 +110,7 @@ describe('AppInitializer', () => {
 
       expect(extensionCounters.mExtensions.get(Extension1)).toBe(8);
       expect(extensionCounters.mExtensions.get(Extension2)).toBe(7);
-      expect(extensionCounters.mExtensions.get(Extension3)).toBe(5);
+      expect(extensionCounters.mExtensions.get(Extension3)).toBe(6);
     });
   });
 
