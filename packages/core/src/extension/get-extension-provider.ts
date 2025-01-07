@@ -16,11 +16,13 @@ export interface ExtensionConfigBase {
    */
   group: InjectionToken<Extension[]>;
   /**
-   * The token of the group before which this extension will be called. Use this option
-   * only if the extension group you place here does not expect your extension group to work.
+   * The array of tokens of the group before which this extension will be called.
    */
-  beforeGroup?: InjectionToken<Extension[]>;
-  afterGroup?: InjectionToken<Extension[]>;
+  beforeGroups?: InjectionToken<Extension[]>[];
+  /**
+   * The array of tokens of the group after which this extension will be called.
+   */
+  afterGroups?: InjectionToken<Extension[]>[];
   overrideExtension?: never;
 }
 

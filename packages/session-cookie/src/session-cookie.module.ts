@@ -14,8 +14,8 @@ import { SESSION_COOKIE_EXTENSIONS, SessionCookieExtension } from './session-coo
     {
       extension: SessionCookieExtension,
       group: SESSION_COOKIE_EXTENSIONS,
-      afterGroup: ROUTES_EXTENSIONS,
-      beforeGroup: PRE_ROUTER_EXTENSIONS,
+      afterGroups: [ROUTES_EXTENSIONS],
+      beforeGroups: [PRE_ROUTER_EXTENSIONS],
       exportedOnly: true,
     },
   ],

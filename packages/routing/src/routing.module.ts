@@ -17,13 +17,13 @@ import { UseInterceptorExtension } from '#mod/extensions/use-interceptor.extensi
     RouteMeta, // In fact, the provider with this token is added dynamically. This requires `ImportsResolver`.
   ],
   extensions: [
-    { extension: RoutesExtension, group: ROUTES_EXTENSIONS, beforeGroup: PRE_ROUTER_EXTENSIONS, exportedOnly: true },
+    { extension: RoutesExtension, group: ROUTES_EXTENSIONS, beforeGroups: [PRE_ROUTER_EXTENSIONS], exportedOnly: true },
     { extension: PreRouterExtension, group: PRE_ROUTER_EXTENSIONS, exportedOnly: true },
     {
       extension: UseInterceptorExtension,
       group: ORDERED_INTERCEPTORS_EXTENSIONS,
-      afterGroup: ROUTES_EXTENSIONS,
-      beforeGroup: PRE_ROUTER_EXTENSIONS,
+      afterGroups: [ROUTES_EXTENSIONS],
+      beforeGroups: [PRE_ROUTER_EXTENSIONS],
       exportedOnly: true,
     },
   ],

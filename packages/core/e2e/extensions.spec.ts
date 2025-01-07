@@ -39,8 +39,8 @@ describe('extensions e2e', () => {
       providersPerApp: [{ token: Router, useValue: 'fake value' }],
       extensions: [
         { extension: Extension1, group: MY_EXTENSIONS1 },
-        { extension: Extension2, group: MY_EXTENSIONS2, beforeGroup: MY_EXTENSIONS1 },
-        { extension: Extension3, group: MY_EXTENSIONS3, beforeGroup: MY_EXTENSIONS2 },
+        { extension: Extension2, group: MY_EXTENSIONS2, beforeGroups: [MY_EXTENSIONS1] },
+        { extension: Extension3, group: MY_EXTENSIONS3, beforeGroups: [MY_EXTENSIONS2] },
       ],
     })
     class AppModule {}
@@ -58,9 +58,9 @@ describe('extensions e2e', () => {
     @rootModule({
       providersPerApp: [{ token: Router, useValue: 'fake value' }],
       extensions: [
-        { extension: Extension1, group: MY_EXTENSIONS3, beforeGroup: MY_EXTENSIONS2 },
-        { extension: Extension1, group: MY_EXTENSIONS2, beforeGroup: MY_EXTENSIONS1 },
-        { extension: Extension1, group: MY_EXTENSIONS1, beforeGroup: MY_EXTENSIONS3 },
+        { extension: Extension1, group: MY_EXTENSIONS3, beforeGroups: [MY_EXTENSIONS2] },
+        { extension: Extension1, group: MY_EXTENSIONS2, beforeGroups: [MY_EXTENSIONS1] },
+        { extension: Extension1, group: MY_EXTENSIONS1, beforeGroups: [MY_EXTENSIONS3] },
       ],
     })
     class AppModule {}
@@ -76,19 +76,19 @@ describe('extensions e2e', () => {
     }
 
     @featureModule({
-      extensions: [{ extension: Extension1, group: MY_EXTENSIONS3, beforeGroup: MY_EXTENSIONS2, exportedOnly: true }],
+      extensions: [{ extension: Extension1, group: MY_EXTENSIONS3, beforeGroups: [MY_EXTENSIONS2], exportedOnly: true }],
     })
     class Module1 {}
 
     @featureModule({
-      extensions: [{ extension: Extension1, group: MY_EXTENSIONS2, beforeGroup: MY_EXTENSIONS1, exportedOnly: true }],
+      extensions: [{ extension: Extension1, group: MY_EXTENSIONS2, beforeGroups: [MY_EXTENSIONS1], exportedOnly: true }],
     })
     class Module2 {}
 
     @rootModule({
       imports: [Module1, Module2],
       providersPerApp: [{ token: Router, useValue: 'fake value' }],
-      extensions: [{ extension: Extension1, group: MY_EXTENSIONS1, beforeGroup: MY_EXTENSIONS3 }],
+      extensions: [{ extension: Extension1, group: MY_EXTENSIONS1, beforeGroups: [MY_EXTENSIONS3] }],
     })
     class AppModule {}
 
@@ -103,15 +103,15 @@ describe('extensions e2e', () => {
     }
 
     @featureModule({
-      extensions: [{ extension: Extension1, group: MY_EXTENSIONS3, beforeGroup: MY_EXTENSIONS2, exportedOnly: true }],
+      extensions: [{ extension: Extension1, group: MY_EXTENSIONS3, beforeGroups: [MY_EXTENSIONS2], exportedOnly: true }],
     })
     class Module1 {}
 
     @featureModule({
       imports: [Module1],
       extensions: [
-        { extension: Extension1, group: MY_EXTENSIONS2, beforeGroup: MY_EXTENSIONS1 },
-        { extension: Extension1, group: MY_EXTENSIONS1, beforeGroup: MY_EXTENSIONS3 },
+        { extension: Extension1, group: MY_EXTENSIONS2, beforeGroups: [MY_EXTENSIONS1] },
+        { extension: Extension1, group: MY_EXTENSIONS1, beforeGroups: [MY_EXTENSIONS3] },
       ],
     })
     class Module2 {}
@@ -133,14 +133,14 @@ describe('extensions e2e', () => {
     }
 
     @featureModule({
-      extensions: [{ extension: Extension1, group: MY_EXTENSIONS3, beforeGroup: MY_EXTENSIONS2, exportedOnly: true }],
+      extensions: [{ extension: Extension1, group: MY_EXTENSIONS3, beforeGroups: [MY_EXTENSIONS2], exportedOnly: true }],
     })
     class Module1 {}
 
     @featureModule({
       extensions: [
-        { extension: Extension1, group: MY_EXTENSIONS2, beforeGroup: MY_EXTENSIONS1 },
-        { extension: Extension1, group: MY_EXTENSIONS1, beforeGroup: MY_EXTENSIONS3 },
+        { extension: Extension1, group: MY_EXTENSIONS2, beforeGroups: [MY_EXTENSIONS1] },
+        { extension: Extension1, group: MY_EXTENSIONS1, beforeGroups: [MY_EXTENSIONS3] },
       ],
     })
     class Module2 {}

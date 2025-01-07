@@ -21,7 +21,7 @@ import { OpenapiErrorMediator } from './services/openapi-error-mediator.js';
     {
       extension: OpenapiCompilerExtension,
       group: OAS_COMPILER_EXTENSIONS,
-      beforeGroup: PRE_ROUTER_EXTENSIONS,
+      beforeGroups: [PRE_ROUTER_EXTENSIONS],
       exported: true,
     },
   ],

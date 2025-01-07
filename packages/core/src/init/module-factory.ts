@@ -176,7 +176,7 @@ export class ModuleFactory {
 
   protected checkExtensionGroupsGraph(extensions: (GroupConfig<any> | ExtensionConfig3)[]) {
     const extensionWithBeforeGroup = extensions?.filter((config) => {
-      return !isConfigWithOverrideExtension(config) && config.beforeGroup;
+      return !isConfigWithOverrideExtension(config) && config.beforeGroups;
     }) as GroupConfig<any>[] | undefined;
 
     if (extensionWithBeforeGroup) {

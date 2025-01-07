@@ -23,8 +23,8 @@ import { AuthjsConfig } from './authjs.config.js';
     {
       extension: AuthjsExtension,
       group: AUTHJS_EXTENSIONS,
-      afterGroup: BODY_PARSER_EXTENSIONS,
-      beforeGroup: ORDERED_INTERCEPTORS_EXTENSIONS,
+      afterGroups: [BODY_PARSER_EXTENSIONS],
+      beforeGroups: [ORDERED_INTERCEPTORS_EXTENSIONS],
       exportedOnly: true,
     },
   ],
