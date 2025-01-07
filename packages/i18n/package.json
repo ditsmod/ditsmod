@@ -1,7 +1,7 @@
 {
   "name": "@ditsmod/i18n",
   "type": "module",
-  "version": "3.0.0-alpha.2",
+  "version": "3.0.0-alpha.3",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
@@ -32,8 +32,8 @@
   "author": "Костя Третяк",
   "license": "MIT",
   "peerDependencies": {
-    "@ditsmod/core": "^3.0.0-alpha.1",
-    "@ditsmod/routing": "^3.0.0-alpha.1"
+    "@ditsmod/core": "^3.0.0-alpha.3",
+    "@ditsmod/routing": "^3.0.0-alpha.3"
   },
   "devDependencies": {
     "npm-run-all": "*",

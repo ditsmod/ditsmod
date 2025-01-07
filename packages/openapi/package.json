@@ -1,7 +1,7 @@
 {
   "name": "@ditsmod/openapi",
   "type": "module",
-  "version": "3.0.0-alpha.2",
+  "version": "3.0.0-alpha.3",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git",
@@ -54,8 +54,8 @@
     "yaml-loader": "^0.8.1"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^3.0.0-alpha.1",
-    "@ditsmod/routing": "^3.0.0-alpha.1"
+    "@ditsmod/core": "^3.0.0-alpha.3",
+    "@ditsmod/routing": "^3.0.0-alpha.3"
   },
   "resolutions": {
     "@swagger-api/apidom-ns-asyncapi-2": "npm:-@0.0.1",

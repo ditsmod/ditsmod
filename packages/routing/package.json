@@ -1,7 +1,7 @@
 {
   "name": "@ditsmod/routing",
   "type": "module",
-  "version": "3.0.0-alpha.2",
+  "version": "3.0.0-alpha.3",
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "homepage": "https://ditsmod.github.io/en/",
   "description": "Routing module for Ditsmod applications",
@@ -49,6 +49,6 @@
     "vitest": "*"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^3.0.0-alpha.1"
+    "@ditsmod/core": "^3.0.0-alpha.3"
   }
 }
