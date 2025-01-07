@@ -22,6 +22,7 @@ import { UseInterceptorExtension } from '#mod/extensions/use-interceptor.extensi
     {
       extension: UseInterceptorExtension,
       group: ORDERED_INTERCEPTORS_EXTENSIONS,
+      afterGroup: ROUTES_EXTENSIONS,
       beforeGroup: PRE_ROUTER_EXTENSIONS,
       exportedOnly: true,
     },
