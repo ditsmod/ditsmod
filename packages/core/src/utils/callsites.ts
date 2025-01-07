@@ -33,11 +33,14 @@ export class CallsiteUtils {
       }
 
       if (callsite.getFunctionName() == 'classDecorFactory') {
-        startListen = true;
+        startListen = true; // This mean - expect next row
         continue;
       }
 
-      if ((startListen || !hasClassDecorFactory) && callsite.getFunctionName() === null) {
+      if (
+        (startListen && callsite.getFunctionName() === null) ||
+        (!hasClassDecorFactory && callsite.getTypeName() === null)
+      ) {
         return callers[depth];
       }
     }
