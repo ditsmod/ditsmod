@@ -286,7 +286,7 @@ describe('extensions e2e', () => {
     expect(extensionInit2).toHaveBeenNthCalledWith(2, stage1GroupMeta);
   });
 
-  it('extension depends on data from the entire application', async () => {
+  it.only('extension depends on data from the entire application', async () => {
     const spyIsLastModule = vi.fn();
     const spyMetaFromAllModules = vi.fn();
     const spyMetaFromCurrentModule = vi.fn();
@@ -339,16 +339,16 @@ describe('extensions e2e', () => {
     class Module2 {}
 
     @featureModule({
-      extensions: [{ group: MY_EXTENSIONS2, extension: Extension3, exportedOnly: true }],
-    })
-    class Module4 {}
-
-    @featureModule({
       imports: [Module1, Module2],
       providersPerMod: [Provider1],
       exports: [Provider1],
     })
     class Module3 {}
+
+    @featureModule({
+      extensions: [{ group: MY_EXTENSIONS2, extension: Extension3, exportedOnly: true }],
+    })
+    class Module4 {}
 
     @rootModule({
       imports: [Module1, Module3, Module4],

@@ -76,8 +76,12 @@ export class ExtensionsManager {
     if (stage1GroupMeta) {
       this.updateGroupCounters(groupToken, stage1GroupMeta);
       stage1GroupMeta = this.prepareStage1GroupMetaPerApp(stage1GroupMeta, perApp);
-      if (perApp && !stage1GroupMeta.delay) {
-        this.excludeExtensionFromPendingList(groupToken);
+      if (perApp) {
+        if (stage1GroupMeta.delay) {
+          this.addExtensionToPendingList(groupToken);
+        } else {
+          this.excludeExtensionFromPendingList(groupToken);
+        }
       }
       return stage1GroupMeta;
     }
