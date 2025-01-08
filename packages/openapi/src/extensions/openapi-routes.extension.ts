@@ -84,7 +84,6 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             const routeMeta: OasRouteMeta = {
               oasPath,
               operationObject: clonedOperationObject,
-              decoratorAndValue,
               Controller,
               methodName,
             };

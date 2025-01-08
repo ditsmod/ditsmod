@@ -1,3 +1,4 @@
+import { inspect } from 'node:util';
 import {
   injectable,
   Extension,
@@ -18,7 +19,6 @@ import { isRoute } from '../type.guards.js';
 import { RouteMetadata } from '../decorators/route.js';
 import { ControllerMetadata } from '../controller-metadata.js';
 import { RouteMeta } from '../route-data.js';
-import { inspect } from 'node:util';
 
 @injectable()
 export class RoutesExtension implements Extension<MetadataPerMod3> {
@@ -71,7 +71,6 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
             providersPerReq.push(...((ctrlDecorator?.value as ControllerRawMetadata1).providersPerReq || []));
 
             const routeMeta: RouteMeta = {
-              decoratorAndValue,
               Controller,
               methodName,
             };

@@ -123,7 +123,6 @@ export class CorsExtension implements Extension<void | false> {
         providersPerMod.unshift(DynamicController);
 
         const routeMeta: RouteMeta = {
-          decoratorAndValue: {} as any,
           resolvedGuards: [],
           Controller: DynamicController,
           methodName,
