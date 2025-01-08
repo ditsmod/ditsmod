@@ -376,28 +376,7 @@ export class AppInitializer {
     systemLogMediator: SystemLogMediator,
   ) {
     systemLogMediator.sequenceOfExtensionGroups(this, meta.aOrderedGroups);
-    const stageIterationMap = new Map() as StageIterationMap;
-    extensionsManager.moduleName = meta.name;
-    extensionsManager.stageIterationMap = stageIterationMap;
-    meta.aOrderedGroups.forEach((groupToken, index) => {
-      stageIterationMap.set(groupToken, new StageIteration(index));
-    });
-    const promises: Promise<any>[] = [];
-
-    for (const [groupToken, currStageIteration] of stageIterationMap) {
-      extensionsManager.currStageIteration = currStageIteration;
-      const promise = extensionsManager
-        .stage1(groupToken)
-        .then(() => extensionsManager.updateExtensionPendingList())
-        .catch((err) => {
-          const debugModuleName = getDebugClassName(meta.modRefId);
-          const msg = `The work of ${groupToken} group in ${debugModuleName} failed`;
-          throw new ChainError(msg, { cause: err, name: 'Error' });
-        });
-      promises.push(promise);
-    }
-
-    await Promise.all(promises);
+    await extensionsManager.internalStage1(meta);
     extensionsManager.setExtensionsToStage2(meta.modRefId);
   }
 

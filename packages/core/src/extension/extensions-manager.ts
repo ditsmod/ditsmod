@@ -1,3 +1,5 @@
+import { ChainError } from '@ts-stack/chain-error';
+
 import { Class, Injector, injectable } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import {
@@ -14,6 +16,8 @@ import { isInjectionToken } from '#di';
 import { Counter } from '#extension/counter.js';
 import { ExtensionsContext } from '#extension/extensions-context.js';
 import { createDeferred } from '#utils/create-deferred.js';
+import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
+import { getDebugClassName } from '#utils/get-debug-class-name.js';
 
 export class StageIteration {
   promise: Promise<void>;
@@ -60,6 +64,31 @@ export class ExtensionsManager {
     protected extensionCounters: ExtensionCounters,
   ) {}
 
+  async internalStage1(meta: NormalizedModuleMetadata) {
+    const stageIterationMap = new Map() as StageIterationMap;
+    this.moduleName = meta.name;
+    this.stageIterationMap = stageIterationMap;
+    meta.aOrderedGroups.forEach((groupToken, index) => {
+      stageIterationMap.set(groupToken, new StageIteration(index));
+    });
+    const promises: Promise<any>[] = [];
+
+    for (const [groupToken, currStageIteration] of stageIterationMap) {
+      this.currStageIteration = currStageIteration;
+      const promise = this
+        .stage1(groupToken)
+        .then(() => this.updateExtensionPendingList())
+        .catch((err) => {
+          const debugModuleName = getDebugClassName(meta.modRefId);
+          const msg = `The work of ${groupToken} group in ${debugModuleName} failed`;
+          throw new ChainError(msg, { cause: err, name: 'Error' });
+        });
+      promises.push(promise);
+    }
+
+    await Promise.all(promises);
+  }
+
   async stage1<T>(groupToken: ExtensionsGroupToken<T>, perApp?: false): Promise<Stage1GroupMeta<T>>;
   async stage1<T>(groupToken: ExtensionsGroupToken<T>, perApp: true): Promise<Stage1GroupMeta2<T>>;
   async stage1<T>(groupToken: ExtensionsGroupToken<T>, perApp?: boolean): Promise<Stage1GroupMeta<T>> {
@@ -100,7 +129,7 @@ export class ExtensionsManager {
     return stage1GroupMeta;
   }
 
-  updateExtensionPendingList() {
+  protected updateExtensionPendingList() {
     for (const [groupToken, sExtensions] of this.excludedExtensionPendingList) {
       for (const ExtensionClass of sExtensions) {
         const mExtensions = this.extensionsContext.mExtensionPendingList.get(groupToken);
