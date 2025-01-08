@@ -4,6 +4,17 @@ import { factoryMethod, injectable } from '@ditsmod/core';
 
 @injectable()
 export class OverriddenAuthConfig extends AuthjsConfig {
+  override session: AuthjsConfig['session'] = { strategy: 'jwt' };
+
+  override callbacks: AuthjsConfig['callbacks'] = {
+    async jwt({ token, user, trigger }) {
+      return token;
+    },
+    async session({ session, token }) {
+      return session;
+    },
+  };
+
   @factoryMethod()
   initAuthjsConfig() {
     const credentialsConfig: Partial<CredentialsConfig> = {
