@@ -36,7 +36,7 @@ import { MulterCtxParser } from './multer-ctx.parser.js';
       group: BODY_PARSER_EXTENSIONS,
       afterGroups: [ROUTES_EXTENSIONS],
       beforeGroups: [PRE_ROUTER_EXTENSIONS],
-      exportedOnly: true,
+      exportOnly: true,
     },
   ],
 })

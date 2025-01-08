@@ -35,7 +35,7 @@ describe('getExtensionProvider', () => {
     });
 
     it('extension without exports (three arguments)', () => {
-      const args: ExtensionConfig = { extension: Extension1, group: MY_EXTENSION, exported: false };
+      const args: ExtensionConfig = { extension: Extension1, group: MY_EXTENSION, export: false };
       expect(getExtensionProvider(args)).toMatchObject({
         exportedProviders: [],
         providers,
@@ -43,7 +43,7 @@ describe('getExtensionProvider', () => {
     });
 
     it('extension with exports', () => {
-      const args: ExtensionConfig = { extension: Extension1, group: MY_EXTENSION, exported: true };
+      const args: ExtensionConfig = { extension: Extension1, group: MY_EXTENSION, export: true };
       expect(getExtensionProvider(args)).toMatchObject({
         exportedProviders: providers,
         providers,

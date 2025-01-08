@@ -97,11 +97,11 @@ class ExtensionConfig {
   /**
    * Indicates whether this extension needs to be exported.
    */
-  exported?: boolean;
+  export?: boolean;
   /**
    * Indicates whether this extension needs to be exported without working in host module.
    */
-  exportedOnly?: boolean;
+  exportOnly?: boolean;
 }
 ```
 
@@ -113,13 +113,13 @@ import { MyExtension, MY_EXTENSIONS } from './my.extension.js';
 
 @featureModule({
   extensions: [
-    { extension: MyExtension, group: MY_EXTENSIONS, beforeGroups: [ROUTES_EXTENSIONS], exported: true }
+    { extension: MyExtension, group: MY_EXTENSIONS, beforeGroups: [ROUTES_EXTENSIONS], export: true }
   ],
 })
 export class SomeModule {}
 ```
 
-Тобто у властивість `token` передається токен групи `MY_EXTENSIONS`, до якої належить ваше розширення. У властивість `beforeGroups` передається токен групи розширень `ROUTES_EXTENSIONS`, перед якою потрібно запускати групу `MY_EXTENSIONS`. Опціонально можна використовувати властивість `exported` або `exportedOnly` для того, щоб вказати, чи потрібно щоб дане розширення працювало у зовнішньому модулі, яке імпортуватиме цей модуль. Окрім цього, властивість `exportedOnly` ще й вказує на те, що дане розширення не потрібно запускати у так званому хост-модулі (тобто в модулі, де оголошується це розширення).
+Тобто у властивість `token` передається токен групи `MY_EXTENSIONS`, до якої належить ваше розширення. У властивість `beforeGroups` передається токен групи розширень `ROUTES_EXTENSIONS`, перед якою потрібно запускати групу `MY_EXTENSIONS`. Опціонально можна використовувати властивість `exported` або `exportOnly` для того, щоб вказати, чи потрібно щоб дане розширення працювало у зовнішньому модулі, яке імпортуватиме цей модуль. Окрім цього, властивість `exportOnly` ще й вказує на те, що дане розширення не потрібно запускати у так званому хост-модулі (тобто в модулі, де оголошується це розширення).
 
 ## Використання ExtensionsManager
 

@@ -10,7 +10,7 @@ import { CorsService } from './cors.service.js';
   providersPerReq: [CorsService],
   exports: [CorsService],
   extensions: [
-    { extension: CorsExtension, group: CORS_EXTENSIONS, beforeGroups: [PRE_ROUTER_EXTENSIONS], exported: true },
+    { extension: CorsExtension, group: CORS_EXTENSIONS, beforeGroups: [PRE_ROUTER_EXTENSIONS], export: true },
   ],
 })
 export class CorsModule {

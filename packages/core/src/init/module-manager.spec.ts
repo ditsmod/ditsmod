@@ -84,7 +84,7 @@ describe('ModuleManager', () => {
       const GROUP1_EXTENSIONS = new InjectionToken('GROUP1_EXTENSIONS');
 
       @featureModule({
-        extensions: [{ extension: Ext, group: GROUP1_EXTENSIONS, exported: true }],
+        extensions: [{ extension: Ext, group: GROUP1_EXTENSIONS, export: true }],
       })
       class Module1 {}
 
@@ -375,7 +375,7 @@ describe('ModuleManager', () => {
     class Extension1 {}
     const TEST_EXTENSIONS = new InjectionToken<Extension>('TEST_EXTENSIONS');
 
-    @featureModule({ extensions: [{ extension: Extension1 as any, group: TEST_EXTENSIONS, exported: true }] })
+    @featureModule({ extensions: [{ extension: Extension1 as any, group: TEST_EXTENSIONS, export: true }] })
     class Module2 {}
 
     expect(() => mock.scanModule(Module2)).toThrow('must have stage1(), stage2() or stage3() method');
@@ -388,7 +388,7 @@ describe('ModuleManager', () => {
     }
     const TEST_EXTENSIONS = new InjectionToken<Extension>('TEST_EXTENSIONS');
 
-    @featureModule({ extensions: [{ extension: Extension1 as any, group: TEST_EXTENSIONS, exported: true }] })
+    @featureModule({ extensions: [{ extension: Extension1 as any, group: TEST_EXTENSIONS, export: true }] })
     class Module2 {}
 
     expect(() => mock.scanModule(Module2)).not.toThrow();
@@ -880,7 +880,7 @@ describe('ModuleManager', () => {
     ];
 
     @featureModule({
-      extensions: [{ extension: Extension1 as any, group: GROUP_EXTENSIONS, exported: true }],
+      extensions: [{ extension: Extension1 as any, group: GROUP_EXTENSIONS, export: true }],
     })
     class Module1 {}
 
@@ -932,7 +932,7 @@ describe('ModuleManager', () => {
     ];
 
     @featureModule({
-      extensions: [{ extension: Extension1 as any, group: GROUP_EXTENSIONS, exported: true }],
+      extensions: [{ extension: Extension1 as any, group: GROUP_EXTENSIONS, export: true }],
     })
     class Module1 {}
 

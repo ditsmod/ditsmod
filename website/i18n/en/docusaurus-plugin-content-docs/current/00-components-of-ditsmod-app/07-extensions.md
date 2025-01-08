@@ -97,11 +97,11 @@ class ExtensionConfig {
   /**
    * Indicates whether this extension needs to be exported.
    */
-  exported?: boolean;
+  export?: boolean;
   /**
    * Indicates whether this extension needs to be exported without working in host module.
    */
-  exportedOnly?: boolean;
+  exportOnly?: boolean;
 }
 ```
 
@@ -113,13 +113,13 @@ import { MyExtension, MY_EXTENSIONS } from './my.extension.js';
 
 @featureModule({
   extensions: [
-    { extension: MyExtension, group: MY_EXTENSIONS, beforeGroups: [ROUTES_EXTENSIONS], exported: true }
+    { extension: MyExtension, group: MY_EXTENSIONS, beforeGroups: [ROUTES_EXTENSIONS], export: true }
   ],
 })
 export class SomeModule {}
 ```
 
-That is, the token of the group `MY_EXTENSIONS`, to which your extension belongs, is transferred to the `token` property. The token of the `ROUTES_EXTENSIONS` group, before which the `MY_EXTENSIONS` group should be started, is passed to the `beforeGroups` property. Optionally, you can use the `exported` or `exportedOnly` property to specify whether this extension should function in an external module that imports this module. Additionally, the `exportedOnly` property indicates that this extension should not be executed in the so-called host module (i.e., the module where this extension is declared).
+That is, the token of the group `MY_EXTENSIONS`, to which your extension belongs, is transferred to the `token` property. The token of the `ROUTES_EXTENSIONS` group, before which the `MY_EXTENSIONS` group should be started, is passed to the `beforeGroups` property. Optionally, you can use the `exported` or `exportOnly` property to specify whether this extension should function in an external module that imports this module. Additionally, the `exportOnly` property indicates that this extension should not be executed in the so-called host module (i.e., the module where this extension is declared).
 
 ## Using ExtensionsManager
 

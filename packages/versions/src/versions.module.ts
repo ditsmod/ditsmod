@@ -4,7 +4,7 @@ import { API_VERSIONS_EXTENSIONS } from './types.js';
 import { VersionsExtension } from './versions.extension.js';
 
 @featureModule({
-  extensions: [{ group: API_VERSIONS_EXTENSIONS, extension: VersionsExtension, exported: true }],
+  extensions: [{ group: API_VERSIONS_EXTENSIONS, extension: VersionsExtension, export: true }],
 })
 export class VersionsModule {
   static withParams(): ModuleWithParams<VersionsModule> {

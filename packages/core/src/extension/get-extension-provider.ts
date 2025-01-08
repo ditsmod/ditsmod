@@ -28,18 +28,18 @@ export interface ExtensionConfigBase {
 
 export interface ExtensionConfig1 extends ExtensionConfigBase {
   /**
-   * Indicates whether this extension needs to be exported.
+   * Indicates whether this extension needs to be export.
    */
-  exported?: boolean;
-  exportedOnly?: never;
+  export?: boolean;
+  exportOnly?: never;
 }
 
 export interface ExtensionConfig2 extends ExtensionConfigBase {
-  exported?: never;
+  export?: never;
   /**
-   * Indicates whether this extension needs to be exported without working in host module.
+   * Indicates whether this extension needs to be export without working in host module.
    */
-  exportedOnly?: boolean;
+  exportOnly?: boolean;
 }
 
 export interface ExtensionConfig3 {
@@ -72,13 +72,13 @@ export function getExtensionProvider(extensionConfig: ExtensionConfig): Extensio
     providers.push({ token: extensionConfig.group, useToken: extension, multi: true });
   }
 
-  if (extensionConfig.exportedOnly) {
+  if (extensionConfig.exportOnly) {
     return {
       providers: [],
       exportedProviders: providers,
       exportedConfig: extensionConfig,
     };
-  } else if (extensionConfig.exported) {
+  } else if (extensionConfig.export) {
     return {
       providers,
       exportedProviders: providers,

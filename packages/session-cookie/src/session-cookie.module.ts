@@ -16,7 +16,7 @@ import { SESSION_COOKIE_EXTENSIONS, SessionCookieExtension } from './session-coo
       group: SESSION_COOKIE_EXTENSIONS,
       afterGroups: [ROUTES_EXTENSIONS],
       beforeGroups: [PRE_ROUTER_EXTENSIONS],
-      exportedOnly: true,
+      exportOnly: true,
     },
   ],
 })

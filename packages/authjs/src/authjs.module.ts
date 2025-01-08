@@ -25,7 +25,7 @@ import { AuthjsConfig } from './authjs.config.js';
       group: AUTHJS_EXTENSIONS,
       afterGroups: [BODY_PARSER_EXTENSIONS],
       beforeGroups: [ORDERED_INTERCEPTORS_EXTENSIONS],
-      exportedOnly: true,
+      exportOnly: true,
     },
   ],
   exports: [AUTHJS_SESSION, AuthjsGuard, BodyParserModule],
