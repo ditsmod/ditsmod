@@ -65,8 +65,8 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
             }
             const { path: controllerPath, httpMethod, interceptors } = route;
             const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
-            const path = this.getPath(prefix, controllerPath);
-            const guards = this.normalizeGuards(httpMethod, path, route.guards).slice();
+            const fullPath = this.getPath(prefix, controllerPath);
+            const guards = this.normalizeGuards(httpMethod, fullPath, route.guards).slice();
             providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
             providersPerReq.push(...((ctrlDecorator?.value as ControllerRawMetadata1).providersPerReq || []));
 
@@ -77,7 +77,7 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
             providersPerRou.push({ token: RouteMeta, useValue: routeMeta });
             aControllerMetadata.push({
               httpMethods: Array.isArray(httpMethod) ? httpMethod : [httpMethod],
-              path,
+              fullPath,
               providersPerRou,
               providersPerReq,
               routeMeta,

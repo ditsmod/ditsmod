@@ -32,15 +32,15 @@ export class AuthjsExtension implements Extension {
     parent: for (const metadataPerMod3 of this.stage1GroupMeta.groupData) {
       const { aControllerMetadata } = metadataPerMod3;
       for (const obj of aControllerMetadata) {
-        const { path, interceptors, httpMethods } = obj;
-        const splitedPath = path.split('/');
+        const { fullPath, interceptors, httpMethods } = obj;
+        const splitedPath = fullPath.split('/');
         if (interceptors.includes(AuthjsInterceptor)) {
           if (splitedPath.length < 3 || splitedPath.at(-2) != ':action') {
-            this.throwInvalidUrl(httpMethods, path);
+            this.throwInvalidUrl(httpMethods, fullPath);
           }
           const basePath = splitedPath.slice(0, -2).join('/');
           (authjsConfig.basePath as unknown as string) = `/${basePath}`;
-          aControllerMetadata.push({ ...obj, httpMethods: ['GET'], path: `${basePath}/:action` });
+          aControllerMetadata.push({ ...obj, httpMethods: ['GET'], fullPath: `${basePath}/:action` });
           break parent;
         }
       }

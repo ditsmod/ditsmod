@@ -58,8 +58,8 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             const guards = [];
             const { httpMethod, path: controllerPath, operationObject, interceptors } = oasRoute;
             const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
-            const path = this.getPath(prefix, controllerPath);
-            guards.push(...this.normalizeGuards(httpMethod, path, decoratorAndValue.value.guards));
+            const fullPath = this.getPath(prefix, controllerPath);
+            guards.push(...this.normalizeGuards(httpMethod, fullPath, decoratorAndValue.value.guards));
             const controllerFactory: FactoryProvider = { useFactory: [Controller, Controller.prototype[methodName]] };
             providersPerReq.push(
               ...((ctrlDecorator?.value as ControllerRawMetadata1).providersPerReq || []),
@@ -71,7 +71,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
 
             const { paramsRefs, paramsInPath, paramsNonPath } = this.mergeParams(
               httpMethods,
-              path,
+              fullPath,
               Controller.name,
               prefixParams,
               parameters,
@@ -79,7 +79,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             clonedOperationObject.parameters = [...paramsRefs, ...paramsInPath, ...paramsNonPath];
             clonedOperationObject.tags = [...(clonedOperationObject.tags || []), ...(prefixTags || [])];
             // For now, here ReferenceObjects is ignored, if it is intended for a path.
-            const oasPath = this.transformToOasPath(meta.name, path, paramsInPath);
+            const oasPath = this.transformToOasPath(meta.name, fullPath, paramsInPath);
             providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
             const routeMeta: OasRouteMeta = {
               oasPath,
@@ -93,7 +93,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
             aControllerMetadata.push({
               providersPerRou,
               providersPerReq,
-              path,
+              fullPath,
               httpMethods,
               routeMeta,
               scope,

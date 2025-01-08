@@ -12,7 +12,10 @@ export interface ControllerMetadata {
    * Providers per a request.
    */
   providersPerReq: Provider[];
-  path: string;
+  /**
+   * This path consists of the following components: `[per app prefix]` + `[per module prefix]` + `[route (in controller) path]`
+   */
+  fullPath: string;
   httpMethods: HttpMethod[];
   interceptors: (Class<HttpInterceptor> | InjectionToken<Extension[]>)[];
   routeMeta: RouteMeta;

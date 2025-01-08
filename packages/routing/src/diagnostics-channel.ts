@@ -3,7 +3,7 @@ import { Channel, channel, subscribe, unsubscribe, hasSubscribers, tracingChanne
 export { TracingChannelCollection, TracingChannelSubscribers } from 'node:diagnostics_channel';
 
 interface ChannelMap {
-  'ditsmod.route': { moduleName: string; httpMethod: string; path: string; countOfGuards: number };
+  'ditsmod.route': { moduleName: string; httpMethod: string; fullPath: string; countOfGuards: number };
 }
 
 interface TracingChannelMap {

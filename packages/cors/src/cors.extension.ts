@@ -83,7 +83,7 @@ export class CorsExtension implements Extension<void | false> {
     aMetadataPerMod3.forEach((metadataPerMod3) => {
       metadataPerMod3.aControllerMetadata
         .filter(({ httpMethods }) => httpMethods.includes('OPTIONS'))
-        .forEach(({ path }) => sPathWithOptions.add(path));
+        .forEach(({ fullPath }) => sPathWithOptions.add(fullPath));
     });
 
     return sPathWithOptions;
@@ -97,20 +97,20 @@ export class CorsExtension implements Extension<void | false> {
     const sPathWithOptions = this.getPathWtihOptions(aMetadataPerMod3);
     const newArrControllersMetadata2: ControllerMetadata[] = []; // Routes with OPTIONS methods
 
-    aControllerMetadata.forEach(({ httpMethods, path }) => {
+    aControllerMetadata.forEach(({ httpMethods, fullPath }) => {
       httpMethods.forEach((method) => {
         // Search routes with non-OPTIONS methods, and makes new routes with OPTIONS methods
-        if (sPathWithOptions.has(path)) {
+        if (sPathWithOptions.has(fullPath)) {
           return;
         }
-        const methodName = Symbol(path);
-        const allowHttpMethods = this.registeredPathForOptions.get(path) || [];
+        const methodName = Symbol(fullPath);
+        const allowHttpMethods = this.registeredPathForOptions.get(fullPath) || [];
         if (allowHttpMethods.length) {
           allowHttpMethods.push(method);
           return;
         }
         allowHttpMethods.push('OPTIONS', method);
-        this.registeredPathForOptions.set(path, allowHttpMethods);
+        this.registeredPathForOptions.set(fullPath, allowHttpMethods);
 
         class DynamicController {
           [methodName](ctx: RequestContext) {
@@ -130,7 +130,7 @@ export class CorsExtension implements Extension<void | false> {
 
         const controllerMetadata: ControllerMetadata = {
           httpMethods: ['OPTIONS'],
-          path,
+          fullPath,
           providersPerRou: [
             { token: ALLOW_METHODS, useValue: allowHttpMethods },
             { token: RouteMeta, useValue: routeMeta },

@@ -32,7 +32,7 @@ export class UseInterceptorExtension implements Extension {
               }
             } else {
               const whatIsThis = inspect(groupOrInterceptor, false, 3);
-              this.errorMediator.invalidInterceptor(meta.httpMethods.join(', '), meta.path, whatIsThis);
+              this.errorMediator.invalidInterceptor(meta.httpMethods.join(', '), meta.fullPath, whatIsThis);
             }
           }
       }

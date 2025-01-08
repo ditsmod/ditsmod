@@ -127,7 +127,7 @@ export class PreRouterExtension implements Extension<void> {
         preparedRouteMeta.push({
           moduleName: metadataPerMod3.meta.name,
           httpMethods: controllerMetadata.httpMethods,
-          path: controllerMetadata.path,
+          fullPath: controllerMetadata.fullPath,
           handle,
           countOfGuards,
         });
@@ -142,7 +142,7 @@ export class PreRouterExtension implements Extension<void> {
     injectorPerMod: Injector,
     controllerMetadata: ControllerMetadata,
   ) {
-    const { providersPerRou, routeMeta: baseRouteMeta, httpMethods, path } = controllerMetadata;
+    const { providersPerRou, routeMeta: baseRouteMeta, httpMethods, fullPath } = controllerMetadata;
 
     const routeMeta = baseRouteMeta as RequireProps<typeof baseRouteMeta, 'routeHandler'>;
     const mergedPerRou: Provider[] = [];
@@ -161,10 +161,10 @@ export class PreRouterExtension implements Extension<void> {
       metadataPerMod3.guardsPerMod1,
       controllerName,
       httpMethods,
-      path,
+      fullPath,
     );
     const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou, 'Rou');
-    this.checkDeps(injectorPerRou, routeMeta, controllerName, httpMethods, path);
+    this.checkDeps(injectorPerRou, routeMeta, controllerName, httpMethods, fullPath);
     const resolvedChainMaker = resolvedPerRou.find((rp) => rp.dualKey.token === ChainMaker)!;
     const resolvedErrHandler = resolvedPerRou.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
     const chainMaker = injectorPerRou.instantiateResolved<DefaultCtxChainMaker>(resolvedChainMaker);
@@ -222,7 +222,7 @@ export class PreRouterExtension implements Extension<void> {
     injectorPerMod: Injector,
     controllerMetadata: ControllerMetadata,
   ) {
-    const { providersPerRou, providersPerReq, routeMeta, httpMethods: httpMethod, path } = controllerMetadata;
+    const { providersPerRou, providersPerReq, routeMeta, httpMethods: httpMethod, fullPath } = controllerMetadata;
     const mergedPerRou = [...metadataPerMod3.meta.providersPerRou, ...providersPerRou];
     const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'Rou');
 
@@ -242,13 +242,13 @@ export class PreRouterExtension implements Extension<void> {
       metadataPerMod3.guardsPerMod1,
       controllerName,
       httpMethod,
-      path,
+      fullPath,
       true,
     );
     const injPerReq = injectorPerRou.createChildFromResolved(resolvedPerReq, 'Req');
     const RequestContextClass = injPerReq.get(RequestContext) as typeof RequestContext;
     routeMeta.resolvedHandler = this.getResolvedHandler(routeMeta, resolvedPerReq);
-    this.checkDeps(injPerReq, routeMeta, controllerName, httpMethod, path);
+    this.checkDeps(injPerReq, routeMeta, controllerName, httpMethod, fullPath);
     const resolvedChainMaker = resolvedPerReq.find((rp) => rp.dualKey.token === ChainMaker)!;
     const resolvedErrHandler = resolvedPerReq
       .concat(resolvedPerRou)
@@ -381,21 +381,21 @@ export class PreRouterExtension implements Extension<void> {
     }
 
     preparedRouteMeta.forEach((data) => {
-      const { moduleName, path, httpMethods, handle, countOfGuards } = data;
+      const { moduleName, fullPath, httpMethods, handle, countOfGuards } = data;
 
-      if (path?.charAt(0) == '/') {
-        let msg = `Invalid configuration of route '${path}'`;
+      if (fullPath?.charAt(0) == '/') {
+        let msg = `Invalid configuration of route '${fullPath}'`;
         msg += ` (in ${moduleName}): path cannot start with a slash`;
         throw new Error(msg);
       }
 
       httpMethods.forEach((httpMethod) => {
-        this.log.printRoute(this, httpMethod, path, countOfGuards);
-        routeChannel('ditsmod.route').publish({ moduleName, httpMethod, path, countOfGuards });
+        this.log.printRoute(this, httpMethod, fullPath, countOfGuards);
+        routeChannel('ditsmod.route').publish({ moduleName, httpMethod, fullPath, countOfGuards });
         if (httpMethod == 'ALL') {
-          this.router.all(`/${path}`, handle);
+          this.router.all(`/${fullPath}`, handle);
         } else {
-          this.router.on(httpMethod, `/${path}`, handle);
+          this.router.on(httpMethod, `/${fullPath}`, handle);
         }
       });
     });
