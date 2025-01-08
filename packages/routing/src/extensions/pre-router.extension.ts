@@ -126,7 +126,7 @@ export class PreRouterExtension implements Extension<void> {
 
         preparedRouteMeta.push({
           moduleName: metadataPerMod3.meta.name,
-          httpMethod: controllerMetadata.httpMethods,
+          httpMethods: controllerMetadata.httpMethods,
           path: controllerMetadata.path,
           handle,
           countOfGuards,
@@ -381,7 +381,7 @@ export class PreRouterExtension implements Extension<void> {
     }
 
     preparedRouteMeta.forEach((data) => {
-      const { moduleName, path, httpMethod, handle, countOfGuards } = data;
+      const { moduleName, path, httpMethods, handle, countOfGuards } = data;
 
       if (path?.charAt(0) == '/') {
         let msg = `Invalid configuration of route '${path}'`;
@@ -389,7 +389,6 @@ export class PreRouterExtension implements Extension<void> {
         throw new Error(msg);
       }
 
-      const httpMethods = Array.isArray(httpMethod) ? httpMethod : [httpMethod];
       httpMethods.forEach((httpMethod) => {
         this.log.printRoute(this, httpMethod, path, countOfGuards);
         routeChannel('ditsmod.route').publish({ moduleName, httpMethod, path, countOfGuards });

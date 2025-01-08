@@ -22,7 +22,7 @@ export interface ObjectAny {
  */
 export interface PreparedRouteMeta {
   moduleName: string;
-  httpMethod: HttpMethod | HttpMethod[];
+  httpMethods: HttpMethod[];
   path: string;
   handle: RouteHandler;
   countOfGuards: number;
