@@ -10,6 +10,7 @@ import {
   reflector,
   Stage1GroupMetaPerApp,
   NormalizedGuard,
+  Stage1GroupMeta2,
 } from '@ditsmod/core';
 import {
   PathItemObject,
@@ -32,6 +33,7 @@ import { OpenapiLogMediator } from '#services/openapi-log-mediator.js';
 @injectable()
 export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
   protected oasObject: XOasObject;
+  protected stage1GroupMeta: Stage1GroupMeta2<MetadataPerMod3>;
 
   constructor(
     private perAppService: PerAppService,
@@ -42,24 +44,22 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
   ) {}
 
   async stage1() {
-    if (this.oasObject) {
-      return this.oasObject;
-    }
-
     const stage1GroupMeta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS, true);
     if (stage1GroupMeta.delay) {
       this.log.dataAccumulation(this);
       return false;
     }
-    this.log.applyingAccumulatedData(this);
+    this.stage1GroupMeta = stage1GroupMeta;
+    return this.oasObject;
+  }
 
-    await this.compileOasObject(stage1GroupMeta.groupDataPerApp);
+  async stage2() {
+    this.log.applyingAccumulatedData(this);
+    await this.compileOasObject(this.stage1GroupMeta.groupDataPerApp);
     const json = JSON.stringify(this.oasObject);
     const oasOptions = this.extensionsMetaPerApp?.oasOptions as OasOptions | undefined;
     const yaml = stringify(this.oasObject, oasOptions?.yamlSchemaOptions);
     this.perAppService.reinitInjector([{ token: OasConfigFiles, useValue: { json, yaml } }]);
-
-    return this.oasObject;
   }
 
   protected async compileOasObject(groupDataPerApp: Stage1GroupMetaPerApp<MetadataPerMod3>[]) {
