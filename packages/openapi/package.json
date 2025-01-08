@@ -13,6 +13,7 @@
     "#types/*": "./dist/types/*",
     "#utils/*": "./dist/utils/*",
     "#decorators/*": "./dist/decorators/*",
+    "#services/*": "./dist/services/*",
     "#constants": "./dist/constants.js"
   },
   "exports": {

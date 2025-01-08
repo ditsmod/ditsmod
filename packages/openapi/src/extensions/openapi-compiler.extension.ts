@@ -27,7 +27,7 @@ import { OasRouteMeta } from '#types/oas-route-meta.js';
 import { DEFAULT_OAS_OBJECT, defaultForNonOasGuard } from '#constants';
 import { OasConfigFiles, OasExtensionConfig } from '#types/oas-extension-options.js';
 import { OasOptions } from '#types/oas-options.js';
-import { OpenapiLogMediator } from '../services/openapi-log-mediator.js';
+import { OpenapiLogMediator } from '#services/openapi-log-mediator.js';
 
 @injectable()
 export class OpenapiCompilerExtension implements Extension<XOasObject | false> {

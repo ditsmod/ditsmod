@@ -19,7 +19,7 @@ import { BOUND_TO_HTTP_METHOD, BOUND_TO_PATH_PARAM } from '#utils/parameters.js'
 import { OasRouteMeta } from '#types/oas-route-meta.js';
 import { getLastParameterObjects, getLastReferenceObjects } from '#utils/get-last-params.js';
 import { OasOptions } from '#types/oas-options.js';
-import { OpenapiErrorMediator } from '../services/openapi-error-mediator.js';
+import { OpenapiErrorMediator } from '#services/openapi-error-mediator.js';
 
 @injectable()
 export class OpenapiRoutesExtension extends RoutesExtension implements Extension<MetadataPerMod3> {
