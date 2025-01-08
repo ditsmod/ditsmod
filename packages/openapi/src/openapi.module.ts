@@ -8,8 +8,8 @@ import { OAS_COMPILER_EXTENSIONS } from './di-tokens.js';
 import { OpenapiController } from './openapi.controller.js';
 import { SwaggerOAuthOptions } from './swagger-ui/o-auth-options.js';
 import { OasConfigFiles, OasExtensionConfig } from './types/oas-extension-options.js';
-import { OpenapiLogMediator } from './services/openapi-log-mediator.js';
-import { OpenapiErrorMediator } from './services/openapi-error-mediator.js';
+import { OpenapiLogMediator } from '#services/openapi-log-mediator.js';
+import { OpenapiErrorMediator } from '#services/openapi-error-mediator.js';
 
 @featureModule({
   imports: [RoutingModule],
@@ -21,6 +21,7 @@ import { OpenapiErrorMediator } from './services/openapi-error-mediator.js';
     {
       extension: OpenapiCompilerExtension,
       group: OAS_COMPILER_EXTENSIONS,
+      afterGroups: [ROUTES_EXTENSIONS],
       beforeGroups: [PRE_ROUTER_EXTENSIONS],
       export: true,
     },
