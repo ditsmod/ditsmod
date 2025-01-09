@@ -2,7 +2,7 @@ import {
   AppInitializer,
   ExtensionCounters,
   ExtensionsContext,
-  ExtensionsManager,
+  InternalExtensionsManager,
   MetadataPerMod2,
   ModRefId,
   NormalizedModuleMetadata,
@@ -63,7 +63,7 @@ export class TestAppInitializer extends AppInitializer {
   ): Provider[] {
     const providers = super.getProvidersForExtensions(metadataPerMod2, extensionCounters, extensionsContext);
     providers.push(
-      { token: ExtensionsManager, useClass: TestExtensionsManager },
+      { token: InternalExtensionsManager, useClass: TestExtensionsManager },
       { token: OVERRIDERS_CONFIG, useValue: this.aOverriderConfig },
     );
     return providers;

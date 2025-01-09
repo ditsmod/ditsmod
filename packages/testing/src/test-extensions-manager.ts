@@ -2,7 +2,6 @@ import {
   ExtensionCounters,
   ExtensionsContext,
   ExtensionsGroupToken,
-  ExtensionsManager,
   inject,
   injectable,
   Injector,
@@ -12,13 +11,14 @@ import {
   SystemLogMediator,
   Counter,
   Extension,
+  InternalExtensionsManager,
 } from '@ditsmod/core';
 
 import { OverriderConfig } from './types.js';
 import { OVERRIDERS_CONFIG } from './constants.js';
 
 @injectable()
-export class TestExtensionsManager extends ExtensionsManager {
+export class TestExtensionsManager extends InternalExtensionsManager {
   constructor(
     injector: Injector,
     systemLogMediator: SystemLogMediator,
@@ -37,10 +37,9 @@ export class TestExtensionsManager extends ExtensionsManager {
   override async stage1<T>(groupToken: ExtensionsGroupToken<T>, pendingExtension?: Extension) {
     const stage1GroupMeta = await super.stage1<T>(groupToken, pendingExtension as Extension);
     this.aOverriderConfig.forEach((overriderConfig) => {
-      if (groupToken !== overriderConfig.groupToken) {
-        return;
+      if (groupToken === overriderConfig.groupToken) {
+        overriderConfig.override(stage1GroupMeta);
       }
-      overriderConfig.override(stage1GroupMeta);
     });
     return stage1GroupMeta;
   }
