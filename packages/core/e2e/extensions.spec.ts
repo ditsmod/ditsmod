@@ -13,6 +13,40 @@ describe('extensions e2e', () => {
   const MY_EXTENSIONS2 = new InjectionToken<Extension[]>('MY_EXTENSIONS2');
   const MY_EXTENSIONS3 = new InjectionToken<Extension[]>('MY_EXTENSIONS3');
 
+  it('extension from firs iteration want to call group from third iteration', async () => {
+    @injectable()
+    class Extension1 implements Extension<void> {
+      constructor(private extensionsManager: ExtensionsManager) {}
+
+      async stage1() {
+        await this.extensionsManager.stage1(MY_EXTENSIONS3);
+      }
+    }
+
+    @injectable()
+    class Extension2 implements Extension<void> {
+      async stage1() {}
+    }
+
+    @injectable()
+    class Extension3 implements Extension<void> {
+      async stage1() {}
+    }
+
+    @rootModule({
+      providersPerApp: [{ token: Router, useValue: 'fake value' }],
+      extensions: [
+        { extension: Extension1, group: MY_EXTENSIONS1, beforeGroups: [MY_EXTENSIONS2] },
+        { extension: Extension2, group: MY_EXTENSIONS2, beforeGroups: [MY_EXTENSIONS3] },
+        { extension: Extension3, group: MY_EXTENSIONS3 },
+      ],
+    })
+    class AppModule {}
+
+    const msg = 'Extension1 attempted to call "extensionsManager.stage1(MY_EXTENSIONS3)';
+    await expect(TestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
+  });
+
   it('using "before" groups, run first the group that was declared (or imported) last', async () => {
     const callOrder: string[] = [];
 
@@ -296,7 +330,7 @@ describe('extensions e2e', () => {
      * This extension is declared in `Module1`, which is imported into three different modules.
      * A second extension that depends on this extension is declared below. The second extension
      * is declared in `Module2`, it is imported into one module.
-     * 
+     *
      * The test verifies that `ExtensionsManager` returns data for `MY_EXTENSIONS1` from the entire
      * application, even though `Module2` is imported into only one module.
      */

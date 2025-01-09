@@ -42,9 +42,9 @@ export class ExtensionsManager {
   /**
    * Settings by AppInitializer.
    */
-  stageIterationMap: StageIterationMap;
-  currStageIteration: StageIteration;
-  unfinishedInit = new Set<Extension | ExtensionsGroupToken>();
+  protected stageIterationMap: StageIterationMap;
+  protected currStageIteration: StageIteration;
+  protected unfinishedInit = new Set<Extension | ExtensionsGroupToken>();
   /**
    * The cache for extension in the current module.
    */
