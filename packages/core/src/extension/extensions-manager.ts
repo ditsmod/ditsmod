@@ -130,6 +130,9 @@ export class ExtensionsManager {
       for (const ExtensionClass of sExtensions) {
         const mExtensions = this.extensionsContext.mExtensionPendingList.get(groupToken);
         mExtensions?.delete(ExtensionClass);
+        if (!mExtensions?.size) {
+          this.extensionsContext.mExtensionPendingList.delete(groupToken);
+        }
       }
     }
   }
