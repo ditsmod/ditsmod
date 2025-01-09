@@ -64,28 +64,6 @@ export class ExtensionsManager {
     protected extensionCounters: ExtensionCounters,
   ) {}
 
-  async internalStage1(meta: NormalizedModuleMetadata) {
-    this.moduleName = meta.name;
-    const stageIterationMap = new Map() as StageIterationMap;
-    this.stageIterationMap = stageIterationMap;
-    meta.aOrderedGroups.forEach((groupToken, index) => {
-      stageIterationMap.set(groupToken, new StageIteration(index));
-    });
-
-    for (const [groupToken, currStageIteration] of stageIterationMap) {
-      try {
-        this.currStageIteration = currStageIteration;
-        await this.stage1(groupToken);
-        this.updateExtensionPendingList();
-      } catch (err: any) {
-        const debugModuleName = getDebugClassName(meta.modRefId);
-        const msg = `The work of ${groupToken} group in ${debugModuleName} failed`;
-        throw new ChainError(msg, { cause: err, name: 'Error' });
-      }
-    }
-    this.setExtensionsToStage2(meta.modRefId);
-  }
-
   async stage1<T>(groupToken: ExtensionsGroupToken<T>): Promise<Stage1GroupMeta<T>>;
   async stage1<T>(groupToken: ExtensionsGroupToken<T>, pendingExtension: Extension): Promise<Stage1GroupMeta2<T>>;
   async stage1<T>(groupToken: ExtensionsGroupToken<T>, pendingExtension?: Extension): Promise<Stage1GroupMeta<T>> {
@@ -124,22 +102,6 @@ export class ExtensionsManager {
     }
     currStageIteration.resolve();
     return stage1GroupMeta;
-  }
-
-  protected updateExtensionPendingList() {
-    for (const [groupToken, sExtensions] of this.excludedExtensionPendingList) {
-      for (const ExtensionClass of sExtensions) {
-        const mExtensions = this.extensionsContext.mExtensionPendingList.get(groupToken);
-        mExtensions?.delete(ExtensionClass);
-        if (!mExtensions?.size) {
-          this.extensionsContext.mExtensionPendingList.delete(groupToken);
-        }
-      }
-    }
-  }
-
-  protected setExtensionsToStage2(modRefId: ModRefId) {
-    this.extensionsContext.mStage.set(modRefId, this.extensionsListForStage2);
   }
 
   protected prepareStage1GroupMetaPerApp(
@@ -260,6 +222,47 @@ export class ExtensionsManager {
       return getProviderName(tokenOrExtension);
     } else {
       return tokenOrExtension.constructor.name;
+    }
+  }
+}
+
+@injectable()
+export class InternalExtensionsManager extends ExtensionsManager {
+  async internalStage1(meta: NormalizedModuleMetadata) {
+    this.moduleName = meta.name;
+    const stageIterationMap = new Map() as StageIterationMap;
+    this.stageIterationMap = stageIterationMap;
+    meta.aOrderedGroups.forEach((groupToken, index) => {
+      stageIterationMap.set(groupToken, new StageIteration(index));
+    });
+
+    for (const [groupToken, currStageIteration] of stageIterationMap) {
+      try {
+        this.currStageIteration = currStageIteration;
+        await this.stage1(groupToken);
+        this.updateExtensionPendingList();
+      } catch (err: any) {
+        const debugModuleName = getDebugClassName(meta.modRefId);
+        const msg = `The work of ${groupToken} group in ${debugModuleName} failed`;
+        throw new ChainError(msg, { cause: err, name: 'Error' });
+      }
+    }
+    this.setExtensionsToStage2(meta.modRefId);
+  }
+
+  protected setExtensionsToStage2(modRefId: ModRefId) {
+    this.extensionsContext.mStage.set(modRefId, this.extensionsListForStage2);
+  }
+
+  protected updateExtensionPendingList() {
+    for (const [groupToken, sExtensions] of this.excludedExtensionPendingList) {
+      for (const ExtensionClass of sExtensions) {
+        const mExtensions = this.extensionsContext.mExtensionPendingList.get(groupToken);
+        mExtensions?.delete(ExtensionClass);
+        if (!mExtensions?.size) {
+          this.extensionsContext.mExtensionPendingList.delete(groupToken);
+        }
+      }
     }
   }
 }

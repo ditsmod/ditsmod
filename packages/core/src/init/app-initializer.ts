@@ -12,7 +12,12 @@ import { ModuleFactory } from '#init/module-factory.js';
 import { Counter } from '#extension/counter.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ExtensionsContext } from '#extension/extensions-context.js';
-import { ExtensionsManager, StageIteration, StageIterationMap } from '#extension/extensions-manager.js';
+import {
+  ExtensionsManager,
+  InternalExtensionsManager,
+  StageIteration,
+  StageIterationMap,
+} from '#extension/extensions-manager.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { PerAppService } from '#services/per-app.service.js';
 import { PreRouter } from '#services/pre-router.js';
@@ -274,7 +279,7 @@ export class AppInitializer {
       }
       const providers = this.getProvidersForExtensions(metadataPerMod2, extensionCounters, extensionsContext);
       const injectorForExtensions = injectorPerMod.resolveAndCreateChild(providers, 'ForExtensions');
-      const extensionsManager = injectorForExtensions.get(ExtensionsManager) as ExtensionsManager;
+      const extensionsManager = injectorForExtensions.get(InternalExtensionsManager) as InternalExtensionsManager;
 
       systemLogMediator.startExtensions(this);
       this.decreaseExtensionsCounters(extensionCounters, extensionsProviders);
@@ -362,7 +367,8 @@ export class AppInitializer {
     extensionsContext: ExtensionsContext,
   ): Provider[] {
     return [
-      ExtensionsManager,
+      InternalExtensionsManager,
+      { token: ExtensionsManager, useToken: InternalExtensionsManager },
       { token: ExtensionsContext, useValue: extensionsContext },
       { token: MetadataPerMod2, useValue: metadataPerMod2 },
       { token: ExtensionCounters, useValue: extensionCounters },
@@ -372,7 +378,7 @@ export class AppInitializer {
 
   protected async handleExtensionsPerMod(
     meta: NormalizedModuleMetadata,
-    extensionsManager: ExtensionsManager,
+    extensionsManager: InternalExtensionsManager,
     systemLogMediator: SystemLogMediator,
   ) {
     systemLogMediator.sequenceOfExtensionGroups(this, meta.aOrderedGroups);

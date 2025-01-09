@@ -50,7 +50,7 @@ export { HttpErrorHandler } from '#error/http-error-handler.js';
 export { DefaultHttpErrorHandler } from '#error/default-http-error-handler.js';
 export { RequestContext } from '#services/request-context.js';
 export { ExtensionsContext } from '#extension/extensions-context.js';
-export { ExtensionsManager } from '#extension/extensions-manager.js';
+export { ExtensionsManager, InternalExtensionsManager } from '#extension/extensions-manager.js';
 export { LogMediator } from '#logger/log-mediator.js';
 export { LogItem } from '#logger/types.js';
 export { SystemLogMediator } from '#logger/system-log-mediator.js';
