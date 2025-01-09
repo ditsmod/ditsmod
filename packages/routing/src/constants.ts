@@ -14,4 +14,4 @@ export const ROUTES_EXTENSIONS = new InjectionToken<Extension<MetadataPerMod3>[]
 /**
  * A group of extensions that allows you to set the order of launching different interceptors.
  */
-export const ORDERED_INTERCEPTORS_EXTENSIONS = new InjectionToken<Extension[]>('ORDERED_INTERCEPTORS_EXTENSIONS');
+export const USE_INTERCEPTOR_EXTENSIONS = new InjectionToken<Extension[]>('USE_INTERCEPTOR_EXTENSIONS');

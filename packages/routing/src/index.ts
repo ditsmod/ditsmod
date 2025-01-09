@@ -33,6 +33,6 @@ export {
   ROUTES_EXTENSIONS,
   PRE_ROUTER_EXTENSIONS,
   HTTP_INTERCEPTORS,
-  ORDERED_INTERCEPTORS_EXTENSIONS,
+  USE_INTERCEPTOR_EXTENSIONS,
 } from './constants.js';
 export { applyResponse, applyHeaders } from './utils/apply-web-response.js';

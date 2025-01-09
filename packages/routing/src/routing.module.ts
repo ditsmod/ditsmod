@@ -4,7 +4,7 @@ import { DefaultRouter } from './router.js';
 import { RoutingErrorMediator } from './router-error-mediator.js';
 import { RoutesExtension } from './extensions/routes.extension.js';
 import { PreRouterExtension } from './extensions/pre-router.extension.js';
-import { ROUTES_EXTENSIONS, PRE_ROUTER_EXTENSIONS, ORDERED_INTERCEPTORS_EXTENSIONS } from './constants.js';
+import { ROUTES_EXTENSIONS, PRE_ROUTER_EXTENSIONS, USE_INTERCEPTOR_EXTENSIONS } from './constants.js';
 import { RouteMeta } from './route-data.js';
 import { UseInterceptorExtension } from '#mod/extensions/use-interceptor.extension.js';
 
@@ -21,7 +21,7 @@ import { UseInterceptorExtension } from '#mod/extensions/use-interceptor.extensi
     { extension: PreRouterExtension, group: PRE_ROUTER_EXTENSIONS, afterGroups: [ROUTES_EXTENSIONS], exportOnly: true },
     {
       extension: UseInterceptorExtension,
-      group: ORDERED_INTERCEPTORS_EXTENSIONS,
+      group: USE_INTERCEPTOR_EXTENSIONS,
       afterGroups: [ROUTES_EXTENSIONS],
       beforeGroups: [PRE_ROUTER_EXTENSIONS],
       exportOnly: true,
