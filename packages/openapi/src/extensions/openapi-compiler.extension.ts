@@ -54,12 +54,14 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
   }
 
   async stage2() {
-    this.log.applyingAccumulatedData(this);
-    await this.compileOasObject(this.stage1GroupMeta.groupDataPerApp);
-    const json = JSON.stringify(this.oasObject);
-    const oasOptions = this.extensionsMetaPerApp?.oasOptions as OasOptions | undefined;
-    const yaml = stringify(this.oasObject, oasOptions?.yamlSchemaOptions);
-    this.perAppService.reinitInjector([{ token: OasConfigFiles, useValue: { json, yaml } }]);
+    if (this.stage1GroupMeta) {
+      this.log.applyingAccumulatedData(this);
+      await this.compileOasObject(this.stage1GroupMeta.groupDataPerApp);
+      const json = JSON.stringify(this.oasObject);
+      const oasOptions = this.extensionsMetaPerApp?.oasOptions as OasOptions | undefined;
+      const yaml = stringify(this.oasObject, oasOptions?.yamlSchemaOptions);
+      this.perAppService.reinitInjector([{ token: OasConfigFiles, useValue: { json, yaml } }]);
+    }
   }
 
   protected async compileOasObject(groupDataPerApp: Stage1GroupMetaPerApp<MetadataPerMod3>[]) {
