@@ -65,28 +65,24 @@ export class ExtensionsManager {
   ) {}
 
   async internalStage1(meta: NormalizedModuleMetadata) {
-    const stageIterationMap = new Map() as StageIterationMap;
     this.moduleName = meta.name;
+    const stageIterationMap = new Map() as StageIterationMap;
     this.stageIterationMap = stageIterationMap;
     meta.aOrderedGroups.forEach((groupToken, index) => {
       stageIterationMap.set(groupToken, new StageIteration(index));
     });
-    const promises: Promise<any>[] = [];
 
     for (const [groupToken, currStageIteration] of stageIterationMap) {
-      this.currStageIteration = currStageIteration;
-      const promise = this
-        .stage1(groupToken)
-        .then(() => this.updateExtensionPendingList())
-        .catch((err) => {
-          const debugModuleName = getDebugClassName(meta.modRefId);
-          const msg = `The work of ${groupToken} group in ${debugModuleName} failed`;
-          throw new ChainError(msg, { cause: err, name: 'Error' });
-        });
-      promises.push(promise);
+      try {
+        this.currStageIteration = currStageIteration;
+        await this.stage1(groupToken);
+        this.updateExtensionPendingList();
+      } catch (err: any) {
+        const debugModuleName = getDebugClassName(meta.modRefId);
+        const msg = `The work of ${groupToken} group in ${debugModuleName} failed`;
+        throw new ChainError(msg, { cause: err, name: 'Error' });
+      }
     }
-
-    await Promise.all(promises);
   }
 
   async stage1<T>(groupToken: ExtensionsGroupToken<T>, perApp?: false): Promise<Stage1GroupMeta<T>>;
