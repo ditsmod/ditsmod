@@ -81,7 +81,7 @@ describe("Tarjan's algorithm", () => {
       expect(findCycle(configs)).toEqual(['ext.1', 'ext.2', 'ext.1']);
     });
 
-    it.only('case 2', () => {
+    it('case 2', () => {
       const configs: GroupConfig<string>[] = [
         { group: 'ext.1', afterGroups: ['ext.2'], beforeGroups: ['ext.3'] },
         { group: 'ext.2' },
