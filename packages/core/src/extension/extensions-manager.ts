@@ -83,6 +83,7 @@ export class ExtensionsManager {
         throw new ChainError(msg, { cause: err, name: 'Error' });
       }
     }
+    this.setExtensionsToStage2(meta.modRefId);
   }
 
   async stage1<T>(groupToken: ExtensionsGroupToken<T>): Promise<Stage1GroupMeta<T>>;
@@ -137,7 +138,7 @@ export class ExtensionsManager {
     }
   }
 
-  setExtensionsToStage2(modRefId: ModRefId) {
+  protected setExtensionsToStage2(modRefId: ModRefId) {
     this.extensionsContext.mStage.set(modRefId, this.extensionsListForStage2);
   }
 

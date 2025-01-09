@@ -377,7 +377,6 @@ export class AppInitializer {
   ) {
     systemLogMediator.sequenceOfExtensionGroups(this, meta.aOrderedGroups);
     await extensionsManager.internalStage1(meta);
-    extensionsManager.setExtensionsToStage2(meta.modRefId);
   }
 
   /**
