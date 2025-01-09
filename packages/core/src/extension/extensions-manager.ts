@@ -79,19 +79,21 @@ export class ExtensionsManager {
     let stage1GroupMeta = this.stage1GroupMetaCache.get(groupToken);
     if (stage1GroupMeta) {
       this.updateGroupCounters(groupToken, stage1GroupMeta);
-      stage1GroupMeta = this.prepareStage1GroupMetaPerApp(stage1GroupMeta, pendingExtension);
-      if (pendingExtension) {
-        if (stage1GroupMeta.delay) {
-          this.addExtensionToPendingList(groupToken, pendingExtension);
-        } else {
-          this.excludeExtensionFromPendingList(groupToken, pendingExtension);
-        }
-      }
-      return stage1GroupMeta;
+      return this.updatePerAppState(groupToken, stage1GroupMeta, pendingExtension);
     }
 
     stage1GroupMeta = await this.prepareAndInitGroup<T>(groupToken);
     stage1GroupMeta.groupDataPerApp = this.extensionsContext.mStage1GroupMeta.get(groupToken)!;
+    stage1GroupMeta = this.updatePerAppState(groupToken, stage1GroupMeta, pendingExtension);
+    currStageIteration.resolve();
+    return stage1GroupMeta;
+  }
+
+  protected updatePerAppState(
+    groupToken: ExtensionsGroupToken,
+    stage1GroupMeta: Stage1GroupMeta,
+    pendingExtension?: Extension,
+  ) {
     stage1GroupMeta = this.prepareStage1GroupMetaPerApp(stage1GroupMeta, pendingExtension);
     if (pendingExtension) {
       if (stage1GroupMeta.delay) {
@@ -100,7 +102,6 @@ export class ExtensionsManager {
         this.excludeExtensionFromPendingList(groupToken, pendingExtension);
       }
     }
-    currStageIteration.resolve();
     return stage1GroupMeta;
   }
 
