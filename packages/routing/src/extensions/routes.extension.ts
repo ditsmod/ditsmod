@@ -30,10 +30,6 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
   ) {}
 
   async stage1() {
-    if (this.metadataPerMod3) {
-      return this.metadataPerMod3;
-    }
-
     const { path: prefixPerApp } = this.appOptions;
     this.metadataPerMod3 = new MetadataPerMod3();
     this.metadataPerMod3.meta = this.metadataPerMod2.meta;
