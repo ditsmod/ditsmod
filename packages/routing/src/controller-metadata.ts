@@ -17,7 +17,7 @@ export interface ControllerMetadata {
    */
   fullPath: string;
   httpMethods: HttpMethod[];
-  interceptors: (Class<HttpInterceptor> | InjectionToken<Extension[]>)[];
+  interceptors: Class<HttpInterceptor>[];
   routeMeta: RouteMeta;
   /**
    * Indicates in which mode the controller methods work.

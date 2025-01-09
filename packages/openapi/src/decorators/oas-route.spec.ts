@@ -1,12 +1,4 @@
-import {
-  reflector,
-  controller,
-  CanActivate,
-  RequestContext,
-  DecoratorAndValue,
-  InjectionToken,
-  Extension,
-} from '@ditsmod/core';
+import { reflector, controller, CanActivate, RequestContext, DecoratorAndValue } from '@ditsmod/core';
 import { describe, expect, it } from 'vitest';
 
 import { oasRoute, OasRouteMetadata } from './oas-route.js';
@@ -26,11 +18,9 @@ describe('@oasRoute', () => {
       async intercept(next: HttpHandler, ctx: RequestContext) {}
     }
 
-    const GR1_EXTENSIONS = new InjectionToken<Extension[]>('GR1_EXTENSIONS');
-
     @controller()
     class Controller1 {
-      @oasRoute('GET', 'posts', [Guard1], [GR1_EXTENSIONS, Interceptor1], { operationId: 'someId' })
+      @oasRoute('GET', 'posts', [Guard1], [Interceptor1], { operationId: 'someId' })
       method() {}
     }
 
@@ -40,7 +30,7 @@ describe('@oasRoute', () => {
       httpMethod: 'GET',
       path: 'posts',
       guards: [Guard1],
-      interceptors: [GR1_EXTENSIONS, Interceptor1],
+      interceptors: [Interceptor1],
       operationObject: { operationId: 'someId' },
     };
     expect(actualMeta.method.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(oasRoute, value)]);
@@ -57,11 +47,9 @@ describe('@oasRoute', () => {
       async intercept(next: HttpHandler, ctx: RequestContext) {}
     }
 
-    const GR1_EXTENSIONS = new InjectionToken<Extension[]>('GR1_EXTENSIONS');
-
     @controller()
     class Controller1 {
-      @oasRoute('GET', 'posts', [Guard1], [GR1_EXTENSIONS, Interceptor1])
+      @oasRoute('GET', 'posts', [Guard1], [Interceptor1])
       method() {}
     }
 
@@ -71,7 +59,7 @@ describe('@oasRoute', () => {
       httpMethod: 'GET',
       path: 'posts',
       guards: [Guard1],
-      interceptors: [GR1_EXTENSIONS, Interceptor1],
+      interceptors: [Interceptor1],
       operationObject: {},
     };
     expect(actualMeta.method.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(oasRoute, value)]);

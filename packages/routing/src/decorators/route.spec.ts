@@ -158,11 +158,9 @@ describe('Route decorator', () => {
       async intercept(next: HttpHandler, ctx: RequestContext) {}
     }
 
-    const SOME_EXTENIONS = new InjectionToken<Extension[]>('SOME_EXTENIONS');
-
     @controller()
     class Controller1 {
-      @route('GET', 'one', [], [SOME_EXTENIONS, Interceptor1])
+      @route('GET', 'one', [], [Interceptor1])
       method() {}
     }
 
@@ -173,7 +171,7 @@ describe('Route decorator', () => {
         httpMethod: 'GET',
         path: 'one',
         guards: [],
-        interceptors: [SOME_EXTENIONS, Interceptor1],
+        interceptors: [Interceptor1],
       }),
     ]);
   });

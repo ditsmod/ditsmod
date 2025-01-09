@@ -1,4 +1,4 @@
-import { Class, Extension, GuardItem, HttpMethod, InjectionToken, makePropDecorator } from '@ditsmod/core';
+import { Class, GuardItem, HttpMethod, makePropDecorator } from '@ditsmod/core';
 import { HttpInterceptor } from '@ditsmod/routing';
 import { XOperationObject } from '@ts-stack/openapi-spec';
 
@@ -9,7 +9,7 @@ export interface OasRouteMetadata {
   httpMethod: HttpMethod | [HttpMethod, ...HttpMethod[]];
   path: string;
   guards: GuardItem[];
-  interceptors: (Class<HttpInterceptor> | InjectionToken<Extension[]>)[];
+  interceptors: Class<HttpInterceptor>[];
   /**
    * OAS `OperationObject`.
    */
@@ -20,7 +20,7 @@ function oasRouteCallback(
   httpMethod: HttpMethod | [HttpMethod, ...HttpMethod[]],
   path?: string,
   guardsOrOperationObj?: XOperationObject | GuardItem[],
-  interceptorsOrOperationObj?: XOperationObject | (Class<HttpInterceptor> | InjectionToken<Extension[]>)[],
+  interceptorsOrOperationObj?: XOperationObject | Class<HttpInterceptor>[],
   operationObject?: XOperationObject,
 ): OasRouteMetadata {
   if (operationObject) {
@@ -28,7 +28,7 @@ function oasRouteCallback(
       httpMethod,
       path: path || '',
       guards: (guardsOrOperationObj || []) as GuardItem[],
-      interceptors: (interceptorsOrOperationObj || []) as (Class<HttpInterceptor> | InjectionToken<Extension[]>)[],
+      interceptors: (interceptorsOrOperationObj || []) as Class<HttpInterceptor>[],
       operationObject: operationObject || {},
     } satisfies OasRouteMetadata;
   } else if (Array.isArray(interceptorsOrOperationObj)) {
@@ -76,14 +76,14 @@ interface OasRouteInterface {
     httpMethod: HttpMethod | [HttpMethod, ...HttpMethod[]],
     path: string,
     guards: GuardItem[],
-    interceptors: (Class<HttpInterceptor> | InjectionToken<Extension[]>)[],
+    interceptors: Class<HttpInterceptor>[],
     operationObject: XOperationObject,
   ): any;
   (
     httpMethod: HttpMethod | [HttpMethod, ...HttpMethod[]],
     path: string,
     guards: GuardItem[],
-    interceptorsOrOperationObj?: XOperationObject | (Class<HttpInterceptor> | InjectionToken<Extension[]>)[],
+    interceptorsOrOperationObj?: XOperationObject | Class<HttpInterceptor>[],
   ): any;
   (
     httpMethod: HttpMethod | [HttpMethod, ...HttpMethod[]],

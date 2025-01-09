@@ -1,5 +1,5 @@
 import { HttpInterceptor } from '#mod/interceptors/tokens-and-types.js';
-import { Class, GuardItem, HttpMethod, makePropDecorator, InjectionToken, Extension } from '@ditsmod/core';
+import { Class, GuardItem, HttpMethod, makePropDecorator } from '@ditsmod/core';
 
 export interface RouteDecoratorMetadata {
   [key: string]: RouteMetadata[];
@@ -9,7 +9,7 @@ export interface RouteMetadata {
   httpMethod: HttpMethod | [HttpMethod, ...HttpMethod[]];
   path: string;
   guards: GuardItem[];
-  interceptors: (Class<HttpInterceptor> | InjectionToken<Extension[]>)[];
+  interceptors: Class<HttpInterceptor>[];
 }
 /**
  * @param guards An array of DI tokens used to look up `CanActivate()` handlers,
@@ -20,7 +20,7 @@ function routeFn(
   httpMethod: HttpMethod | [HttpMethod, ...HttpMethod[]],
   path: string = '',
   guards: GuardItem[] = [],
-  interceptors: (Class<HttpInterceptor> | InjectionToken<Extension[]>)[] = [],
+  interceptors: Class<HttpInterceptor>[] = [],
 ): RouteMetadata {
   return { httpMethod, path, guards, interceptors };
 }
