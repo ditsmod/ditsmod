@@ -69,8 +69,13 @@ export class ExtensionsManager {
   async stage1<T>(groupToken: ExtensionsGroupToken<T>, pendingExtension?: Extension): Promise<Stage1GroupMeta<T>> {
     const currStageIteration = this.currStageIteration;
     const stageIteration = this.stageIterationMap.get(groupToken);
-    if (stageIteration && (stageIteration.index > currStageIteration.index || this.unfinishedInit.has(groupToken))) {
-      await stageIteration.promise;
+    if (stageIteration) {
+      if (stageIteration.index > currStageIteration.index) {
+        const extensionName = this.getItemName([...this.unfinishedInit].at(-1)!);
+        this.systemLogMediator.earlyGroupCalling(`${groupToken}`, extensionName);
+      } else if (this.unfinishedInit.has(groupToken)) {
+        await stageIteration.promise;
+      }
     }
     if (this.unfinishedInit.has(groupToken)) {
       this.throwCircularDeps(groupToken);
@@ -244,7 +249,7 @@ export class InternalExtensionsManager extends ExtensionsManager {
         this.updateExtensionPendingList();
       } catch (err: any) {
         const debugModuleName = getDebugClassName(meta.modRefId);
-        const msg = `The work of ${groupToken} group in ${debugModuleName} failed`;
+        const msg = `${groupToken} group in ${debugModuleName} failed`;
         throw new ChainError(msg, { cause: err, name: 'Error' });
       }
     }

@@ -34,6 +34,17 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
+   * ${extensionName} attempted to call "extensionsManager.stage1(${groupToken})", but ${groupToken}
+   * not declared in "afterGroups" array in this module.
+   */
+  earlyGroupCalling(groupToken: string, extensionName: string) {
+    const msg =
+      `${extensionName} attempted to call "extensionsManager.stage1(${groupToken})", but ${groupToken} ` +
+      'not declared in "afterGroups" array in this module.';
+    throw new Error(msg);
+  }
+
+  /**
    * @todo Move throwing an error to ErrorMediator.
    */
   restorePreviousLogger() {
