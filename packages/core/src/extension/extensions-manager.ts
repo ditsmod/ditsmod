@@ -72,7 +72,7 @@ export class ExtensionsManager {
     if (stageIteration) {
       if (stageIteration.index > currStageIteration.index) {
         const extensionName = this.getItemName([...this.unfinishedInit].at(-1)!);
-        this.systemLogMediator.earlyGroupCalling(`${groupToken}`, extensionName);
+        this.systemLogMediator.throwEarlyGroupCalling(`${groupToken}`, extensionName);
       } else if (this.unfinishedInit.has(groupToken)) {
         await stageIteration.promise;
       }
