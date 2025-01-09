@@ -18,7 +18,7 @@ import { UseInterceptorExtension } from '#mod/extensions/use-interceptor.extensi
   ],
   extensions: [
     { extension: RoutesExtension, group: ROUTES_EXTENSIONS, beforeGroups: [PRE_ROUTER_EXTENSIONS], exportOnly: true },
-    { extension: PreRouterExtension, group: PRE_ROUTER_EXTENSIONS, exportOnly: true },
+    { extension: PreRouterExtension, group: PRE_ROUTER_EXTENSIONS, afterGroups: [ROUTES_EXTENSIONS], exportOnly: true },
     {
       extension: UseInterceptorExtension,
       group: ORDERED_INTERCEPTORS_EXTENSIONS,

@@ -1,6 +1,5 @@
 import { Extension, ExtensionsManager, PerAppService, injectable, optional } from '@ditsmod/core';
 import { HTTP_INTERCEPTORS, ROUTES_EXTENSIONS } from '@ditsmod/routing';
-import { BODY_PARSER_EXTENSIONS } from '@ditsmod/body-parser';
 import { isReferenceObject } from '@ditsmod/openapi';
 
 import { ValidationRouteMeta } from './types.js';
@@ -19,7 +18,6 @@ export class ValidationExtension implements Extension<void> {
   ) {}
 
   async stage1() {
-    await this.extensionsManager.stage1(BODY_PARSER_EXTENSIONS);
     await this.filterParameters();
   }
 

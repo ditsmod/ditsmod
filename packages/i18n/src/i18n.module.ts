@@ -1,5 +1,5 @@
 import { featureModule } from '@ditsmod/core';
-import { PRE_ROUTER_EXTENSIONS } from '@ditsmod/routing';
+import { PRE_ROUTER_EXTENSIONS, ROUTES_EXTENSIONS } from '@ditsmod/routing';
 
 import { DictService } from './dict.service.js';
 import { I18nLogMediator } from './i18n-log-mediator.js';
@@ -13,7 +13,13 @@ import { I18N_EXTENSIONS } from './types/mix.js';
   providersPerMod: [DictService, I18nTransformer, I18nLogMediator, I18nErrorMediator],
   exports: [DictService, I18nTransformer, I18nLogMediator, I18nErrorMediator],
   extensions: [
-    { extension: I18nExtension, group: I18N_EXTENSIONS, beforeGroups: [PRE_ROUTER_EXTENSIONS], exportOnly: true },
-  ]
+    {
+      extension: I18nExtension,
+      group: I18N_EXTENSIONS,
+      afterGroups: [ROUTES_EXTENSIONS],
+      beforeGroups: [PRE_ROUTER_EXTENSIONS],
+      exportOnly: true,
+    },
+  ],
 })
 export class I18nModule {}
