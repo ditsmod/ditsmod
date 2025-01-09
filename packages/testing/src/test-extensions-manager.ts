@@ -11,6 +11,7 @@ import {
   Stage1GroupMeta2,
   SystemLogMediator,
   Counter,
+  Extension,
 } from '@ditsmod/core';
 
 import { OverriderConfig } from './types.js';
@@ -31,10 +32,10 @@ export class TestExtensionsManager extends ExtensionsManager {
     super(injector, systemLogMediator, counter, extensionsContext, extensionCounters);
   }
 
-  override async stage1<T>(groupToken: ExtensionsGroupToken<T>, perApp?: false): Promise<Stage1GroupMeta<T>>;
-  override async stage1<T>(groupToken: ExtensionsGroupToken<T>, perApp: true): Promise<Stage1GroupMeta2<T>>;
-  override async stage1<T>(groupToken: ExtensionsGroupToken<T>, perApp?: boolean) {
-    const stage1GroupMeta = await super.stage1<T>(groupToken, perApp as true);
+  override async stage1<T>(groupToken: ExtensionsGroupToken<T>): Promise<Stage1GroupMeta<T>>;
+  override async stage1<T>(groupToken: ExtensionsGroupToken<T>, pendingExtension: Extension): Promise<Stage1GroupMeta2<T>>;
+  override async stage1<T>(groupToken: ExtensionsGroupToken<T>, pendingExtension?: Extension) {
+    const stage1GroupMeta = await super.stage1<T>(groupToken, pendingExtension as Extension);
     this.aOverriderConfig.forEach((overriderConfig) => {
       if (groupToken !== overriderConfig.groupToken) {
         return;

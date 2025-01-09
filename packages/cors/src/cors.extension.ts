@@ -26,7 +26,7 @@ export class CorsExtension implements Extension<void | false> {
   ) {}
 
   async stage1() {
-    const stage1GroupMeta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS, true);
+    const stage1GroupMeta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS, this);
     if (stage1GroupMeta.delay) {
       return false;
     }

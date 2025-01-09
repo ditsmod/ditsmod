@@ -167,7 +167,7 @@ The `groupData` property holds an array of data collected from the current modul
 
 It's important to note that a separate instance of each extension is created for each module. For example, if `MyExtension` is imported into three different modules, Ditsmod will process these three modules sequentially with three different instances of `MyExtension`. Additionally, if `MyExtension` requires data from, say, the `OTHER_EXTENSIONS` group, which spans four modules, but `MyExtension` is only imported into three modules, it may not receive all the necessary data from one of the modules.
 
-In this case, you need to pass `true` as the second argument to the `extensionsManager.init` method:
+In this case, you need to pass `this` as the second argument to the `extensionsManager.stage1` method:
 
 ```ts {11}
 import { injectable } from '@ditsmod/core';
@@ -180,7 +180,7 @@ export class MyExtension implements Extension<void> {
   constructor(private extensionsManager: ExtensionsManager) {}
 
   async stage1() {
-    const stage1GroupMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, true);
+    const stage1GroupMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, this);
     if (stage1GroupMeta.delay) {
       return;
     }
@@ -195,10 +195,10 @@ export class MyExtension implements Extension<void> {
 }
 ```
 
-Thus, when you need `MyExtension` to receive data from the `OTHER_EXTENSIONS` group throughout the application, you need to pass `true` as the second argument to the `stage1` method:
+Thus, when you need `MyExtension` to receive data from the `OTHER_EXTENSIONS` group throughout the application, you need to pass `this` as the second argument to the `stage1` method:
 
 ```ts
-const stage1GroupMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, true);
+const stage1GroupMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, this);
 ```
 
 In this case, it is guaranteed that the `MyExtension` instance will receive data from all modules where `OTHER_EXTENSIONS` is imported. Even if `MyExtension` is imported into a module without any extensions from the `OTHER_EXTENSIONS` group, but these extensions exist in other modules, the `stage1` method of this extension will still be called after all extensions are initialized, ensuring that `MyExtension` receives data from `OTHER_EXTENSIONS` across all modules.

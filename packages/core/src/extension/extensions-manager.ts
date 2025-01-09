@@ -85,9 +85,9 @@ export class ExtensionsManager {
     }
   }
 
-  async stage1<T>(groupToken: ExtensionsGroupToken<T>, perApp?: false): Promise<Stage1GroupMeta<T>>;
-  async stage1<T>(groupToken: ExtensionsGroupToken<T>, perApp: true): Promise<Stage1GroupMeta2<T>>;
-  async stage1<T>(groupToken: ExtensionsGroupToken<T>, perApp?: boolean): Promise<Stage1GroupMeta<T>> {
+  async stage1<T>(groupToken: ExtensionsGroupToken<T>): Promise<Stage1GroupMeta<T>>;
+  async stage1<T>(groupToken: ExtensionsGroupToken<T>, pendingExtension: Extension): Promise<Stage1GroupMeta2<T>>;
+  async stage1<T>(groupToken: ExtensionsGroupToken<T>, pendingExtension?: Extension): Promise<Stage1GroupMeta<T>> {
     const currStageIteration = this.currStageIteration;
     const stageIteration = this.stageIterationMap.get(groupToken);
     if (stageIteration && (stageIteration.index > currStageIteration.index || this.unfinishedInit.has(groupToken))) {
@@ -100,12 +100,12 @@ export class ExtensionsManager {
     let stage1GroupMeta = this.stage1GroupMetaCache.get(groupToken);
     if (stage1GroupMeta) {
       this.updateGroupCounters(groupToken, stage1GroupMeta);
-      stage1GroupMeta = this.prepareStage1GroupMetaPerApp(stage1GroupMeta, perApp);
-      if (perApp) {
+      stage1GroupMeta = this.prepareStage1GroupMetaPerApp(stage1GroupMeta, pendingExtension);
+      if (pendingExtension) {
         if (stage1GroupMeta.delay) {
-          this.addExtensionToPendingList(groupToken);
+          this.addExtensionToPendingList(groupToken, pendingExtension);
         } else {
-          this.excludeExtensionFromPendingList(groupToken);
+          this.excludeExtensionFromPendingList(groupToken, pendingExtension);
         }
       }
       return stage1GroupMeta;
@@ -113,12 +113,12 @@ export class ExtensionsManager {
 
     stage1GroupMeta = await this.prepareAndInitGroup<T>(groupToken);
     stage1GroupMeta.groupDataPerApp = this.extensionsContext.mStage1GroupMeta.get(groupToken)!;
-    stage1GroupMeta = this.prepareStage1GroupMetaPerApp(stage1GroupMeta, perApp);
-    if (perApp) {
+    stage1GroupMeta = this.prepareStage1GroupMetaPerApp(stage1GroupMeta, pendingExtension);
+    if (pendingExtension) {
       if (stage1GroupMeta.delay) {
-        this.addExtensionToPendingList(groupToken);
+        this.addExtensionToPendingList(groupToken, pendingExtension);
       } else {
-        this.excludeExtensionFromPendingList(groupToken);
+        this.excludeExtensionFromPendingList(groupToken, pendingExtension);
       }
     }
     currStageIteration.resolve();
@@ -138,8 +138,11 @@ export class ExtensionsManager {
     this.extensionsContext.mStage.set(modRefId, this.extensionsListForStage2);
   }
 
-  protected prepareStage1GroupMetaPerApp(stage1GroupMeta: Stage1GroupMeta2, perApp?: boolean): Stage1GroupMeta {
-    if (perApp && !stage1GroupMeta.delay) {
+  protected prepareStage1GroupMetaPerApp(
+    stage1GroupMeta: Stage1GroupMeta2,
+    pendingExtension?: Extension,
+  ): Stage1GroupMeta {
+    if (pendingExtension && !stage1GroupMeta.delay) {
       const copystage1GroupMeta = { ...stage1GroupMeta };
       delete (copystage1GroupMeta as Stage1GroupMeta2).groupData;
       delete (copystage1GroupMeta as Stage1GroupMeta2).groupDebugMeta;
@@ -154,24 +157,19 @@ export class ExtensionsManager {
    * Adds to the pending list of extensions that want to receive the initialization
    * result of `groupToken` from the whole application.
    */
-  protected addExtensionToPendingList(groupToken: ExtensionsGroupToken) {
-    const caller = Array.from(this.unfinishedInit).at(-1) as Extension;
-    const ExtensionClass = caller.constructor as Class<Extension>;
+  protected addExtensionToPendingList(groupToken: ExtensionsGroupToken, pendingExtension: Extension) {
+    const ExtensionClass = pendingExtension.constructor as Class<Extension>;
     const mExtensions =
       this.extensionsContext.mExtensionPendingList.get(groupToken) || new Map<Class<Extension>, Extension>();
 
     if (!mExtensions.has(ExtensionClass)) {
-      mExtensions.set(ExtensionClass, caller);
+      mExtensions.set(ExtensionClass, pendingExtension);
       this.extensionsContext.mExtensionPendingList.set(groupToken, mExtensions);
     }
   }
 
-  protected excludeExtensionFromPendingList(groupToken: ExtensionsGroupToken) {
-    const caller = Array.from(this.unfinishedInit).at(-1) as Extension;
-    if (!caller) {
-      return;
-    }
-    const ExtensionClass = caller.constructor as Class<Extension>;
+  protected excludeExtensionFromPendingList(groupToken: ExtensionsGroupToken, pendingExtension: Extension) {
+    const ExtensionClass = pendingExtension.constructor as Class<Extension>;
     const excludedExtensions = this.excludedExtensionPendingList.get(groupToken) || new Set<Class<Extension>>();
     excludedExtensions.add(ExtensionClass);
     this.excludedExtensionPendingList.set(groupToken, excludedExtensions);

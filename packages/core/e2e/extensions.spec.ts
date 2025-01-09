@@ -286,7 +286,7 @@ describe('extensions e2e', () => {
     expect(extensionInit2).toHaveBeenNthCalledWith(2, stage1GroupMeta);
   });
 
-  it.only('extension depends on data from the entire application', async () => {
+  it('extension depends on data from the entire application', async () => {
     const spyIsLastModule = vi.fn();
     const spyMetaFromAllModules = vi.fn();
     const spyMetaFromCurrentModule = vi.fn();
@@ -312,7 +312,7 @@ describe('extensions e2e', () => {
       constructor(private extensionManager: ExtensionsManager) {}
 
       async stage1() {
-        const stage1GroupMeta = await this.extensionManager.stage1(MY_EXTENSIONS1, true);
+        const stage1GroupMeta = await this.extensionManager.stage1(MY_EXTENSIONS1, this);
         spyMetaFromAllModules(structuredClone(stage1GroupMeta));
       }
     }
