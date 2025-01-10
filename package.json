@@ -13,12 +13,13 @@
   ],
   "scripts": {
     "test": "yarn build-test && vitest",
-    "test-examples": "tsc -b examples/tsconfig.e2e.json && vitest -c examples/vitest.config.ts",
+    "test-examples": "yarn build-exam-test && vitest -c examples/vitest.config.ts",
     "test-all": "yarn test && yarn test-examples && yarn build-vscode",
     "pub": "lerna publish from-package --no-git-tag-version",
     "build": "tsc -b packages",
     "build-test": "tsc -b packages/tsconfig.test.json",
     "build-examples": "tsc -b examples/tsconfig.build.json",
+    "build-exam-test": "tsc -b examples/tsconfig.e2e.json",
     "build-vscode": "tsc -b examples/tsconfig.vscode.json",
     "lint": "eslint .",
     "clean": "rm -r packages/*/dist* examples/*/dist*"

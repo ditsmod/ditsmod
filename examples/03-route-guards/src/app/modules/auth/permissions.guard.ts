@@ -1,4 +1,5 @@
-import { CanActivate, RequestContext, Status, guard } from '@ditsmod/core';
+import { CanActivate, RequestContext, Status } from '@ditsmod/core';
+import { guard } from '@ditsmod/routing';
 
 import { AuthService } from './auth.service.js';
 import { Permission } from './types.js';

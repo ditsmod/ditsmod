@@ -12,7 +12,6 @@ import { Extension } from '#extension/extension-types.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ModuleManager } from '#init/module-manager.js';
-import { guard } from '#decorators/guard.js';
 import { RequestContext } from '#services/request-context.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 
@@ -497,48 +496,6 @@ describe('ModuleManager', () => {
     expectedMeta4.rawMeta = expect.any(Object);
 
     expect(mock.map.get(module4WithParams)).toEqual(expectedMeta4);
-  });
-
-  it('imports and appends with gruards for some modules', () => {
-    @guard()
-    class Guard1 implements CanActivate {
-      async canActivate(ctx: RequestContext, params?: any[]) {
-        return false;
-      }
-    }
-
-    @guard()
-    class Guard2 implements CanActivate {
-      async canActivate(ctx: RequestContext, params?: any[]) {
-        return false;
-      }
-    }
-
-    @controller()
-    class Controller1 {}
-
-    @controller()
-    class Controller2 {}
-
-    @featureModule({ controllers: [Controller1] })
-    class Module1 {}
-
-    @featureModule({ controllers: [Controller2] })
-    class Module2 {}
-
-    const moduleWithParams: ModuleWithParams = { path: 'module1', module: Module1, guards: [Guard1] };
-    const appendsWithParams: AppendsWithParams = { path: 'module2', module: Module2, guards: [Guard2] };
-
-    @rootModule({
-      imports: [moduleWithParams],
-      appends: [appendsWithParams],
-    })
-    class AppModule {}
-
-    mock.scanRootModule(AppModule);
-    expect(mock.map.size).toBe(3);
-    expect(mock.getMetadata(moduleWithParams)?.guardsPerMod).toMatchObject([{ guard: Guard1 }]);
-    expect(mock.getMetadata(appendsWithParams)?.guardsPerMod).toMatchObject([{ guard: Guard2 }]);
   });
 
   it('programmatically adding some modules to "imports" array of root module', () => {

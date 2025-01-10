@@ -3,6 +3,9 @@ export * from '@ts-stack/chain-error';
 
 export { AppInitializer } from '#init/app-initializer.js';
 export { Application } from '#init/application.js';
+export { ImportsResolver } from '#init/imports-resolver.js';
+export { ImportedTokensMap } from '#types/metadata-per-mod.js';
+export { GlobalProviders } from '#types/metadata-per-mod.js';
 export { ModuleFactory } from '#init/module-factory.js';
 export { defaultProvidersPerApp } from '#init/default-providers-per-app.js';
 export { defaultProvidersPerRou } from '#init/default-providers-per-rou.js';
@@ -25,7 +28,6 @@ export {
   ControllerRawMetadata1,
   ControllerRawMetadata2,
 } from '#decorators/controller.js';
-export { guard } from '#decorators/guard.js';
 export { featureModule } from '#decorators/module.js';
 export { rootModule } from '#decorators/root-module.js';
 export {
