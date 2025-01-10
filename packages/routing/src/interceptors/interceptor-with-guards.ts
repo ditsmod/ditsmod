@@ -1,6 +1,5 @@
 import {
   A_PATH_PARAMS,
-  CanActivate,
   injectable,
   Injector,
   RAW_REQ,
@@ -15,6 +14,7 @@ import {
   PATH_PARAMS,
 } from '@ditsmod/core';
 
+import { CanActivate } from '../interceptors/guard.js';
 import { RouteMeta } from '../route-data.js';
 import { HttpHandler, HttpInterceptor } from './tokens-and-types.js';
 import { applyResponse } from '#mod/utils/apply-web-response.js';

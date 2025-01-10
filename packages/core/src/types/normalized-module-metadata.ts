@@ -1,5 +1,5 @@
 import { Class, MultiProvider } from '#di';
-import { AnyFn, AnyObj, ModuleType, NormalizedGuard } from '#types/mix.js';
+import { AnyFn, AnyObj, ModuleType } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { AppendsWithParams, ModuleWithParams } from './module-metadata.js';
 import { ProvidersMetadata } from '#types/providers-metadata.js';
@@ -48,7 +48,7 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   exportedMultiProvidersPerMod: MultiProvider[] = [];
   exportedMultiProvidersPerRou: MultiProvider[] = [];
   exportedMultiProvidersPerReq: MultiProvider[] = [];
-  guardsPerMod: NormalizedGuard[] = [];
+  // guardsPerMod: NormalizedGuard[] = [];
   resolvedCollisionsPerApp: [any, ModuleType | ModuleWithParams][] = [];
   resolvedCollisionsPerMod: [any, ModuleType | ModuleWithParams][] = [];
   resolvedCollisionsPerRou: [any, ModuleType | ModuleWithParams][] = [];

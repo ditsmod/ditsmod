@@ -1,5 +1,5 @@
-import { CanActivate, Injector, RequestContext } from '@ditsmod/core';
-import { guard } from '@ditsmod/routing';
+import { Injector, RequestContext } from '@ditsmod/core';
+import { CanActivate, guard } from '@ditsmod/routing';
 import { SESSION } from './types.js';
 import { AuthService } from './auth.service.js';
 

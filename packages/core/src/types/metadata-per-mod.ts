@@ -1,5 +1,5 @@
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
-import { GuardPerMod1, ModRefId, ModuleType } from './mix.js';
+import { ModRefId, ModuleType } from './mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from './module-metadata.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
@@ -31,7 +31,7 @@ export class GlobalProviders {
  */
 export class MetadataPerMod1 {
   prefixPerMod: string;
-  guardsPerMod1: GuardPerMod1[];
+  // guardsPerMod1: GuardPerMod1[];
   /**
    * Snapshot of NormalizedModuleMetadata. If you modify any array in this object,
    * the original array will remain unchanged.
@@ -64,5 +64,5 @@ export class MetadataPerMod2 {
   applyControllers?: boolean;
   prefixPerMod: string;
   meta: NormalizedModuleMetadata;
-  guardsPerMod1: GuardPerMod1[];
+  // guardsPerMod1: GuardPerMod1[];
 }

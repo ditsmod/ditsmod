@@ -1,9 +1,10 @@
-import { CanActivate, controller, injectable, reflector, RequestContext } from '@ditsmod/core';
+import { controller, injectable, reflector, RequestContext } from '@ditsmod/core';
 import { describe, expect, it } from 'vitest';
 
 import { route } from './decorators/route.js';
 import { isInterceptor, isRoute } from './type.guards.js';
 import { HttpHandler, HttpInterceptor } from '#interceptors/tokens-and-types.js';
+import { CanActivate } from './interceptors/guard.js';
 
 describe('type guards', () => {
   describe('isRoute()', () => {

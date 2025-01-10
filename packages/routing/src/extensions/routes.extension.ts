@@ -2,12 +2,10 @@ import { inspect } from 'node:util';
 import {
   injectable,
   Extension,
-  GuardItem,
   Provider,
   isCtrlDecor,
   AppOptions,
   ControllerRawMetadata1,
-  GuardPerMod1,
   reflector,
   Class,
   MetadataPerMod2,
@@ -19,6 +17,7 @@ import { isRoute } from '../type.guards.js';
 import { RouteMetadata } from '../decorators/route.js';
 import { ControllerMetadata } from '../controller-metadata.js';
 import { RouteMeta } from '../route-data.js';
+import { GuardItem, GuardPerMod1 } from '#mod/interceptors/guard.js';
 
 @injectable()
 export class RoutesExtension implements Extension<MetadataPerMod3> {
@@ -34,7 +33,7 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
     this.metadataPerMod3 = new MetadataPerMod3();
     this.metadataPerMod3.meta = this.metadataPerMod2.meta;
     this.metadataPerMod3.aControllerMetadata = this.getControllersMetadata(prefixPerApp, this.metadataPerMod2);
-    this.metadataPerMod3.guardsPerMod1 = this.metadataPerMod2.guardsPerMod1;
+    // this.metadataPerMod3.guardsPerMod1 = this.metadataPerMod2.guardsPerMod1;
 
     return this.metadataPerMod3;
   }

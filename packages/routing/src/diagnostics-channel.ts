@@ -190,8 +190,7 @@ interface TracingChannelSubscribers<T extends TracingChannels> {
  * @since v19.9.0
  * @experimental
  */
-interface TypedTracingChannel<T extends TracingChannels>
-  extends TracingChannelCollection<T> {
+interface TypedTracingChannel<T extends TracingChannels> extends TracingChannelCollection<T> {
   start: TypedChannel2<T>;
   end: TypedChannel2<T>;
   asyncStart: TypedChannel2<T>;

@@ -39,10 +39,17 @@ export class ImportsResolver {
     const mMetadataPerMod2 = new Map<ModRefId, MetadataPerMod2>();
     this.tokensPerApp = getTokens(this.providersPerApp);
     this.appMetadataMap.forEach((metadataPerMod1) => {
-      const { meta, importedTokensMap, guardsPerMod1, applyControllers, prefixPerMod } = metadataPerMod1;
+      const {
+        //
+        meta,
+        importedTokensMap,
+        // guardsPerMod1,
+        applyControllers,
+        prefixPerMod,
+      } = metadataPerMod1;
       mMetadataPerMod2.set(meta.modRefId, {
         meta,
-        guardsPerMod1,
+        // guardsPerMod1,
         applyControllers,
         prefixPerMod,
       });
@@ -318,11 +325,7 @@ export class ImportsResolver {
   protected getDependencies(provider: Provider) {
     const deps = getDependencies(provider);
 
-    const defaultTokens = [
-      ...getTokens([...defaultProvidersPerApp, ...defaultProvidersPerReq]),
-      Injector,
-      AppOptions,
-    ];
+    const defaultTokens = [...getTokens([...defaultProvidersPerApp, ...defaultProvidersPerReq]), Injector, AppOptions];
 
     return deps.filter((d) => !defaultTokens.includes(d.token));
   }

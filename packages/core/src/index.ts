@@ -67,11 +67,8 @@ export { Logger, LoggerConfig, InputLogLevel, OutputLogLevel } from '#logger/log
 export { MetadataPerMod1, MetadataPerMod2 } from '#types/metadata-per-mod.js';
 export {
   AnyObj,
-  CanActivate,
-  GuardItem,
   HttpMethod,
   ModuleType,
-  NormalizedGuard,
   ResolvedGuard,
   ResolvedGuardPerMod,
   RedirectStatusCodes,
@@ -79,7 +76,6 @@ export {
   RequireProps,
   RequireOnlyProps,
   OptionalProps,
-  GuardPerMod1,
   ProvidersForMod,
   Scope,
   ModRefId,
@@ -98,7 +94,6 @@ export {
 } from '#types/module-metadata.js';
 export { PathParam, RouteHandler, Router, RouterReturns } from '#types/router.js';
 export { RawRequest, RawResponse, RequestListener, HttpServer } from '#types/server-options.js';
-export { createHelperForGuardWithParams } from '#utils/create-helper-for-guards-with-params.js';
 export { deepFreeze } from '#utils/deep-freeze.js';
 export { getDependencies } from '#utils/get-dependecies.js';
 export { ExtensionConfig } from '#extension/get-extension-provider.js';

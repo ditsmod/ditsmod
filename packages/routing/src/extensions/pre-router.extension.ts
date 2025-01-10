@@ -23,8 +23,6 @@ import {
   FactoryProvider,
   ResolvedGuard,
   ResolvedProvider,
-  NormalizedGuard,
-  GuardPerMod1,
   ResolvedGuardPerMod,
   RequestContext,
   RequireProps,
@@ -50,6 +48,7 @@ import { DefaultCtxHttpFrontend } from '#mod/interceptors/default-ctx-http-front
 import { DefaultHttpFrontend } from '#interceptors/default-http-frontend.js';
 import { HttpBackend, HttpFrontend } from '#interceptors/tokens-and-types.js';
 import { routeChannel } from '../diagnostics-channel.js';
+import { GuardPerMod1, NormalizedGuard } from '#mod/interceptors/guard.js';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {

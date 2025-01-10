@@ -9,7 +9,14 @@ import { Guard, GuardPerRou } from '../../guards.js';
   imports: [RoutingModule],
   providersPerRou: [{ token: Guard, useClass: GuardPerRou }],
   providersPerReq: [Guard],
-  appends: [{ path: 'module2-with-guard', module: Module2, guards: [Guard] }],
+  appends: [
+    {
+      //
+      path: 'module2-with-guard',
+      module: Module2,
+      // guards: [Guard],
+    },
+  ],
   controllers: [Controller1, Controller2],
 })
 export class Module3 {}

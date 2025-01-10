@@ -9,7 +9,6 @@ import {
   optional,
   reflector,
   Stage1GroupMetaPerApp,
-  NormalizedGuard,
   Stage1GroupMeta2,
 } from '@ditsmod/core';
 import {
@@ -22,7 +21,7 @@ import {
   XSecurityRequirementObject,
 } from '@ts-stack/openapi-spec';
 import { stringify } from 'yaml';
-import { MetadataPerMod3, ROUTE_EXTENSIONS } from '@ditsmod/routing';
+import { MetadataPerMod3, NormalizedGuard, ROUTE_EXTENSIONS } from '@ditsmod/routing';
 
 import { OasRouteMeta } from '#types/oas-route-meta.js';
 import { DEFAULT_OAS_OBJECT, defaultForNonOasGuard } from '#constants';

@@ -1,6 +1,6 @@
 import { Class } from '#di';
 import { ProvidersMetadata } from '#types/providers-metadata.js';
-import { AnyObj, GuardItem, ModuleType } from '#types/mix.js';
+import { AnyObj, ModuleType } from '#types/mix.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 
 /**
@@ -14,7 +14,7 @@ export interface BaseAppendsWithParams<T extends AnyObj = AnyObj> {
    */
   id?: string;
   module: ModuleType<T>;
-  guards?: GuardItem[];
+  // guards?: GuardItem[];
 }
 
 export interface AppendsWithParams1<T extends AnyObj = AnyObj> extends BaseAppendsWithParams<T> {
@@ -92,7 +92,7 @@ export interface BaseModuleWithParams<M extends AnyObj = AnyObj, E extends AnyOb
    * module.
    */
   exports?: any[];
-  guards?: GuardItem[];
+  // guards?: GuardItem[];
   /**
    * This property allows you to pass any information to extensions.
    *

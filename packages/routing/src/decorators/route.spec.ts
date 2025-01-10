@@ -1,8 +1,9 @@
-import { CanActivate, controller, DecoratorAndValue, CallsiteUtils, reflector, RequestContext, InjectionToken, Extension } from '@ditsmod/core';
+import { controller, DecoratorAndValue, CallsiteUtils, reflector, RequestContext } from '@ditsmod/core';
 import { describe, expect, it } from 'vitest';
 
 import { route, RouteMetadata } from './route.js';
 import { HttpHandler, HttpInterceptor } from '#interceptors/tokens-and-types.js';
+import { CanActivate } from '../interceptors/guard.js';
 
 describe('Route decorator', () => {
   it('controller without methods', () => {

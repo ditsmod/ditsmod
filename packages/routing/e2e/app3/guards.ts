@@ -1,4 +1,5 @@
-import { CanActivate, inject, QUERY_PARAMS, RequestContext } from '@ditsmod/core';
+import { inject, QUERY_PARAMS, RequestContext } from '@ditsmod/core';
+import { CanActivate } from '#mod/interceptors/guard.js';
 
 export class Guard implements CanActivate {
   constructor(@inject(QUERY_PARAMS) protected queryParams: any) {}

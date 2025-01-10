@@ -11,7 +11,7 @@ describe('RootModule decorator', () => {
     const metadata = reflector.getDecorators(Module1)!;
     expect(metadata.length).toBe(1);
     expect(metadata[0].value).toEqual({
-      guards: [],
+      // guards: [],
       decorator: rootModule,
       declaredInDir: expect.stringContaining('decorators'),
     });
@@ -26,7 +26,7 @@ describe('RootModule decorator', () => {
     expect(metadata.length).toBe(1);
     expect(metadata[0].value).toEqual({
       controllers: [],
-      guards: [],
+      // guards: [],
       decorator: rootModule,
       declaredInDir: expect.stringContaining('decorators'),
     });
@@ -41,14 +41,14 @@ describe('RootModule decorator', () => {
     expect(metadata.length).toBe(2);
     expect(metadata[0].value).toEqual({
       controllers: [],
-      guards: [],
+      // guards: [],
       decorator: rootModule,
       declaredInDir: expect.stringContaining('decorators'),
     });
 
     expect(metadata[1].value).toEqual({
       providersPerApp: [],
-      guards: [],
+      // guards: [],
       decorator: rootModule,
       declaredInDir: expect.stringContaining('decorators'),
     });
@@ -76,7 +76,7 @@ describe('RootModule decorator', () => {
       controllers: [],
       exports: [],
       extensions: [],
-      guards: [],
+      // guards: [],
       decorator: rootModule,
       declaredInDir: expect.stringContaining('decorators'),
     });

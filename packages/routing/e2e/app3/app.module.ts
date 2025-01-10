@@ -14,7 +14,12 @@ import { Guard, GuardPerRou } from './guards.js';
   providersPerReq: [Guard],
   appends: [
     { path: 'module1', module: Module1 },
-    { path: 'module2-with-guard', module: Module2, guards: [Guard] },
+    {
+      //
+      path: 'module2-with-guard',
+      module: Module2,
+      // guards: [Guard],
+    },
     { path: 'module3', module: Module3 },
   ],
 })

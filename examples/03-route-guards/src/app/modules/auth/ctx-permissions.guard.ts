@@ -1,5 +1,5 @@
-import { CanActivate, RequestContext, Status } from '@ditsmod/core';
-import { guard } from '@ditsmod/routing';
+import { RequestContext, Status } from '@ditsmod/core';
+import { CanActivate, guard } from '@ditsmod/routing';
 
 import { Permission } from './types.js';
 import { CtxAuthService } from './ctx-auth.service.js';

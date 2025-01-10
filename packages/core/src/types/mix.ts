@@ -77,26 +77,13 @@ export interface AnyObj {
   [key: string | symbol]: any;
 }
 
-export interface CanActivate {
-  canActivate(ctx: RequestContext, params?: any[]): boolean | Response | Promise<boolean | Response>;
-}
-
 export type AppMetadataMap = Map<ModuleType | ModuleWithParams, MetadataPerMod1>;
-export type GuardItem = Class<CanActivate> | [Class<CanActivate>, any, ...any[]];
 
-export interface NormalizedGuard {
-  guard: Class<CanActivate>;
-  params?: any[];
-}
 
 export class ProvidersForMod {
   providersPerMod: Provider[] = [];
   providersPerRou: Provider[] = [];
   providersPerReq: Provider[] = [];
-}
-
-export interface GuardPerMod1 extends NormalizedGuard {
-  meta: NormalizedModuleMetadata;
 }
 
 export interface ResolvedGuardPerMod {

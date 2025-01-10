@@ -1,6 +1,6 @@
 import { makeClassDecorator } from '#di';
 import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
-import { AnyFn, GuardItem, ModuleType, Scope } from '#types/mix.js';
+import { AnyFn, ModuleType, Scope } from '#types/mix.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 
 const scopes = ['App', 'Mod', 'Rou', 'Req'] as Scope[];
@@ -16,7 +16,13 @@ export function transformModule(data?: ModuleMetadata): RawMeta {
       metadata[`providersPer${scope}`] = arr;
     }
   });
-  return { decorator: featureModule, declaredInDir: CallsiteUtils.getCallerDir(), guards: [], ...metadata };
+  return {
+    //
+    decorator: featureModule,
+    declaredInDir: CallsiteUtils.getCallerDir(),
+    // guards: [],
+    ...metadata,
+  };
 }
 
 /**
@@ -25,7 +31,7 @@ export function transformModule(data?: ModuleMetadata): RawMeta {
 export interface RawMeta extends ModuleMetadata {
   decorator: AnyFn;
   declaredInDir: string;
-  guards: GuardItem[];
+  // guards: GuardItem[];
   /**
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.

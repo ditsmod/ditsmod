@@ -6,7 +6,7 @@ import { defaultProvidersPerReq } from './default-providers-per-req.js';
 import type { ModuleManager } from '#init/module-manager.js';
 import type { GlobalProviders, MetadataPerMod1 } from '#types/metadata-per-mod.js';
 import { ImportObj } from '#types/metadata-per-mod.js';
-import type { ModuleType, Scope, GuardPerMod1, ModRefId } from '#types/mix.js';
+import type { ModuleType, Scope, ModRefId } from '#types/mix.js';
 import type { Provider } from '#di/types-and-models.js';
 import type { ModuleWithParams } from '#types/module-metadata.js';
 import { getCollisions } from '#utils/get-collisions.js';
@@ -39,7 +39,7 @@ export class ModuleFactory {
   protected providersPerApp: Provider[];
   protected moduleName: string;
   protected prefixPerMod: string;
-  protected guardsPerMod1: GuardPerMod1[];
+  // protected guardsPerMod1: GuardPerMod1[];
   /**
    * Module metadata.
    */
@@ -95,7 +95,7 @@ export class ModuleFactory {
     modOrObj: ModRefId,
     moduleManager: ModuleManager,
     unfinishedScanModules: Set<ModRefId>,
-    guardsPerMod1?: GuardPerMod1[],
+    // guardsPerMod1?: GuardPerMod1[],
     isAppends?: boolean,
   ) {
     const meta = moduleManager.getMetadata(modOrObj, true);
@@ -104,7 +104,7 @@ export class ModuleFactory {
     this.glProviders = globalProviders;
     this.prefixPerMod = prefixPerMod || '';
     this.moduleName = meta.name;
-    this.guardsPerMod1 = guardsPerMod1 || [];
+    // this.guardsPerMod1 = guardsPerMod1 || [];
     this.unfinishedScanModules = unfinishedScanModules;
     this.meta = meta;
     this.checkImportsAndAppends(meta);
@@ -160,7 +160,7 @@ export class ModuleFactory {
 
     return this.appMetadataMap.set(modOrObj, {
       prefixPerMod,
-      guardsPerMod1: this.guardsPerMod1,
+      // guardsPerMod1: this.guardsPerMod1,
       meta: this.meta,
       applyControllers,
       importedTokensMap: {
@@ -205,7 +205,7 @@ export class ModuleFactory {
       }
 
       let prefixPerMod = '';
-      let guardsPerMod1: GuardPerMod1[] = [];
+      // let guardsPerMod1: GuardPerMod1[] = [];
       const hasModuleParams = isModuleWithParams(input) || isAppendsWithParams(input);
       if (hasModuleParams || !isImport) {
         if (hasModuleParams && typeof input.absolutePath == 'string') {
@@ -215,8 +215,8 @@ export class ModuleFactory {
           const path = hasModuleParams ? input.path : '';
           prefixPerMod = [this.prefixPerMod, path].filter((s) => s).join('/');
         }
-        const impGuradsPerMod1 = meta.guardsPerMod.map<GuardPerMod1>((g) => ({ ...g, meta: this.meta }));
-        guardsPerMod1 = [...this.guardsPerMod1, ...impGuradsPerMod1];
+        // const impGuradsPerMod1 = meta.guardsPerMod.map<GuardPerMod1>((g) => ({ ...g, meta: this.meta }));
+        // guardsPerMod1 = [...this.guardsPerMod1, ...impGuradsPerMod1];
       } else {
         prefixPerMod = this.prefixPerMod;
       }
@@ -234,7 +234,7 @@ export class ModuleFactory {
         input,
         this.moduleManager,
         this.unfinishedScanModules,
-        guardsPerMod1,
+        // guardsPerMod1,
         !isImport,
       );
       this.unfinishedScanModules.delete(input);

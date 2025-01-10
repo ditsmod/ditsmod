@@ -5,14 +5,13 @@ import { featureModule } from '#decorators/module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { InjectionToken, forwardRef, injectable, isMultiProvider } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { AnyObj, CanActivate, ModuleType } from '#types/mix.js';
+import { AnyObj, ModuleType } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
-import { ModuleWithParams, AppendsWithParams } from '#types/module-metadata.js';
+import { ModuleWithParams } from '#types/module-metadata.js';
 import { Extension } from '#extension/extension-types.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ModuleManager } from '#init/module-manager.js';
-import { RequestContext } from '#services/request-context.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 
 describe('ModuleManager', () => {

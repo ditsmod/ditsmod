@@ -1,5 +1,7 @@
+import { Class, HttpMethod, makePropDecorator } from '@ditsmod/core';
+
+import { GuardItem } from '#mod/interceptors/guard.js';
 import { HttpInterceptor } from '#mod/interceptors/tokens-and-types.js';
-import { Class, GuardItem, HttpMethod, makePropDecorator } from '@ditsmod/core';
 
 export interface RouteDecoratorMetadata {
   [key: string]: RouteMetadata[];

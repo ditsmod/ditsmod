@@ -10,7 +10,7 @@ import { ModuleFactory } from '#init/module-factory.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { GlobalProviders, ImportObj, MetadataPerMod1 } from '#types/metadata-per-mod.js';
-import { GuardPerMod1, ModuleType, Scope } from '#types/mix.js';
+import { ModuleType, Scope } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { Router } from '#types/router.js';
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
@@ -36,7 +36,7 @@ describe('ModuleFactory', () => {
     override importedMultiProvidersPerRou = new Map<ModRefId, Provider[]>();
     override importedMultiProvidersPerReq = new Map<ModRefId, Provider[]>();
     override importedExtensions = new Map<ModRefId, Provider[]>();
-    override guardsPerMod1: GuardPerMod1[] = [];
+    // override guardsPerMod1: GuardPerMod1[] = [];
 
     override exportGlobalProviders(moduleManager: ModuleManager, providersPerApp: Provider[]) {
       return super.exportGlobalProviders(moduleManager, providersPerApp);

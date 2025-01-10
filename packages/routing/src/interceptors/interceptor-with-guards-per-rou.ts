@@ -1,8 +1,9 @@
-import { injectable, Injector, RequestContext, CanActivate, Status, SystemLogMediator } from '@ditsmod/core';
+import { injectable, Injector, RequestContext, Status, SystemLogMediator } from '@ditsmod/core';
 
 import { RouteMeta } from '../route-data.js';
 import { HttpHandler, HttpInterceptor } from './tokens-and-types.js';
 import { applyResponse } from '#mod/utils/apply-web-response.js';
+import { CanActivate } from './guard.js';
 
 @injectable()
 export class InterceptorWithGuardsPerRou implements IInterceptorWithGuardsPerRou {

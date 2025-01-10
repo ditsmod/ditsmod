@@ -29,6 +29,7 @@ export {
   HttpInterceptorHandler,
   CtxHttpBackend,
 } from '#interceptors/tokens-and-types.js';
-export { guard } from '#interceptors/guard.js';
+export { guard, CanActivate, GuardItem, NormalizedGuard, GuardPerMod1 } from '#interceptors/guard.js';
 export { ROUTE_EXTENSIONS, PRE_ROUTER_EXTENSIONS, HTTP_INTERCEPTORS, USE_INTERCEPTOR_EXTENSIONS } from './constants.js';
 export { applyResponse, applyHeaders } from './utils/apply-web-response.js';
+export { createHelperForGuardWithParams } from './create-helper-for-guards-with-params.js';

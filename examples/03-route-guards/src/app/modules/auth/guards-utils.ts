@@ -1,4 +1,5 @@
-import { createHelperForGuardWithParams } from '@ditsmod/core';
+import '@ditsmod/core'; // @todo Why whitout this, throw the error: This is likely not portable. A type annotation is necessary.
+import { createHelperForGuardWithParams } from '@ditsmod/routing';
 
 import { PermissionsGuard } from './permissions.guard.js';
 import { Permission } from './types.js';

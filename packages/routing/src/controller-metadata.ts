@@ -1,7 +1,8 @@
-import { Class, Extension, HttpMethod, InjectionToken, NormalizedGuard, Provider } from '@ditsmod/core';
+import { Class, HttpMethod, Provider } from '@ditsmod/core';
 
 import { RouteMeta } from './route-data.js';
 import { HttpInterceptor } from '#mod/interceptors/tokens-and-types.js';
+import { NormalizedGuard } from './interceptors/guard.js';
 
 export interface ControllerMetadata {
   /**

@@ -12,7 +12,7 @@ import {
   getExtensionProvider,
   isConfigWithOverrideExtension,
 } from '#extension/get-extension-provider.js';
-import { AnyObj, GuardItem, ModRefId, NormalizedGuard, Scope } from '#types/mix.js';
+import { AnyObj, ModRefId, Scope } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { RawMeta } from '#decorators/module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
@@ -55,10 +55,10 @@ export class ModuleNormalizer {
     meta.decorator = rawMeta.decorator;
     meta.declaredInDir = rawMeta.declaredInDir;
     this.checkWhetherIsExternalModule(rawMeta, meta);
-    if (rawMeta.guards.length) {
-      meta.guardsPerMod.push(...this.normalizeGuards(rawMeta.guards));
-      this.checkGuardsPerMod(meta.guardsPerMod, modName);
-    }
+    // if (rawMeta.guards.length) {
+    //   meta.guardsPerMod.push(...this.normalizeGuards(rawMeta.guards));
+    //   this.checkGuardsPerMod(meta.guardsPerMod, modName);
+    // }
 
     rawMeta.imports?.forEach((imp, i) => {
       imp = resolveForwardRef(imp);
@@ -209,26 +209,26 @@ export class ModuleNormalizer {
     });
   }
 
-  protected normalizeGuards(guards?: GuardItem[]) {
-    return (guards || []).map((item) => {
-      if (Array.isArray(item)) {
-        return { guard: item[0], params: item.slice(1) } as NormalizedGuard;
-      } else {
-        return { guard: item } as NormalizedGuard;
-      }
-    });
-  }
+  // protected normalizeGuards(guards?: GuardItem[]) {
+  //   return (guards || []).map((item) => {
+  //     if (Array.isArray(item)) {
+  //       return { guard: item[0], params: item.slice(1) } as NormalizedGuard;
+  //     } else {
+  //       return { guard: item } as NormalizedGuard;
+  //     }
+  //   });
+  // }
 
-  protected checkGuardsPerMod(guards: NormalizedGuard[], moduleName: string) {
-    for (const Guard of guards.map((n) => n.guard)) {
-      const type = typeof Guard?.prototype.canActivate;
-      if (type != 'function') {
-        throw new TypeError(
-          `Import ${moduleName} with guards failed: Guard.prototype.canActivate must be a function, got: ${type}`,
-        );
-      }
-    }
-  }
+  // protected checkGuardsPerMod(guards: NormalizedGuard[], moduleName: string) {
+  //   for (const Guard of guards.map((n) => n.guard)) {
+  //     const type = typeof Guard?.prototype.canActivate;
+  //     if (type != 'function') {
+  //       throw new TypeError(
+  //         `Import ${moduleName} with guards failed: Guard.prototype.canActivate must be a function, got: ${type}`,
+  //       );
+  //     }
+  //   }
+  // }
 
   protected quickCheckMetadata(meta: NormalizedModuleMetadata) {
     if (
@@ -392,6 +392,6 @@ export function getModuleMetadata(modRefId: ModRefId, isRoot?: boolean): RawMeta
     metadata.exports = getLastProviders(mergeArrays(modMetadata.exports, modWitParams.exports));
     metadata.extensionsMeta = { ...modMetadata.extensionsMeta, ...modWitParams.extensionsMeta };
   }
-  metadata.guards = modRefId.guards || [];
+  // metadata.guards = modRefId.guards || [];
   return metadata;
 }
