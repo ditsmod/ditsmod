@@ -30,7 +30,7 @@ export {
   CtxHttpBackend,
 } from '#interceptors/tokens-and-types.js';
 export {
-  ROUTES_EXTENSIONS,
+  ROUTE_EXTENSIONS,
   PRE_ROUTER_EXTENSIONS,
   HTTP_INTERCEPTORS,
   USE_INTERCEPTOR_EXTENSIONS,

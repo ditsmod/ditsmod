@@ -57,7 +57,7 @@ export interface ImportedTokensMap {
 }
 
 /**
- * This metadata returns from `ImportsResolver`. The target for this metadata is `ROUTES_EXTENSIONS` group.
+ * This metadata returns from `ImportsResolver`. The target for this metadata is `ROUTE_EXTENSIONS` group.
  */
 export class MetadataPerMod2 {
   applyControllers?: boolean;

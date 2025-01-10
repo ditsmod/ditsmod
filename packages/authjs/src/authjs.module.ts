@@ -1,5 +1,5 @@
 import { featureModule, isProvider, ModuleWithParams, Provider } from '@ditsmod/core';
-import { USE_INTERCEPTOR_EXTENSIONS, ROUTES_EXTENSIONS, RoutingModule } from '@ditsmod/routing';
+import { USE_INTERCEPTOR_EXTENSIONS, ROUTE_EXTENSIONS, RoutingModule } from '@ditsmod/routing';
 import { BODY_PARSER_EXTENSIONS, BodyParserModule } from '@ditsmod/body-parser';
 
 import { AUTHJS_EXTENSIONS, AUTHJS_SESSION } from './constants.js';
@@ -23,7 +23,7 @@ import { AuthjsConfig } from './authjs.config.js';
     {
       extension: AuthjsExtension,
       group: AUTHJS_EXTENSIONS,
-      afterGroups: [BODY_PARSER_EXTENSIONS, ROUTES_EXTENSIONS],
+      afterGroups: [BODY_PARSER_EXTENSIONS, ROUTE_EXTENSIONS],
       beforeGroups: [USE_INTERCEPTOR_EXTENSIONS],
       exportOnly: true,
     },

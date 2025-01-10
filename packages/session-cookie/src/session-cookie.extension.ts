@@ -1,5 +1,5 @@
 import { Extension, ExtensionsManager, InjectionToken, injectable } from '@ditsmod/core';
-import { HTTP_INTERCEPTORS, ROUTES_EXTENSIONS } from '@ditsmod/routing';
+import { HTTP_INTERCEPTORS, ROUTE_EXTENSIONS } from '@ditsmod/routing';
 
 import { SessionCookieInterceptor } from './session-cookie.interceptor.js';
 
@@ -16,7 +16,7 @@ export class SessionCookieExtension implements Extension<void> {
       return;
     }
 
-    const stage1GroupMeta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
+    const stage1GroupMeta = await this.extensionManager.stage1(ROUTE_EXTENSIONS);
     stage1GroupMeta.groupData.forEach((metadataPerMod3) => {
       metadataPerMod3.aControllerMetadata.forEach(({ providersPerRou, scope }) => {
         if (scope == 'ctx') {

@@ -7,7 +7,7 @@ import {
   Injector,
   Stage1GroupMeta,
 } from '@ditsmod/core';
-import { MetadataPerMod3, ROUTES_EXTENSIONS } from '@ditsmod/routing';
+import { MetadataPerMod3, ROUTE_EXTENSIONS } from '@ditsmod/routing';
 import { LoggerInstance } from '@auth/core/types';
 
 import { AuthjsConfig } from '#mod/authjs.config.js';
@@ -24,7 +24,7 @@ export class AuthjsExtension implements Extension {
   ) {}
 
   async stage1() {
-    this.stage1GroupMeta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
+    this.stage1GroupMeta = await this.extensionManager.stage1(ROUTE_EXTENSIONS);
   }
 
   async stage2(injectorPerMod: Injector): Promise<void> {

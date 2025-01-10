@@ -11,7 +11,7 @@ import {
   Stage1GroupMetaPerApp,
 } from '@ditsmod/core';
 import { CorsOptions, mergeOptions } from '@ts-stack/cors';
-import { ControllerMetadata, HTTP_INTERCEPTORS, MetadataPerMod3, RouteMeta, ROUTES_EXTENSIONS } from '@ditsmod/routing';
+import { ControllerMetadata, HTTP_INTERCEPTORS, MetadataPerMod3, RouteMeta, ROUTE_EXTENSIONS } from '@ditsmod/routing';
 
 import { CorsInterceptor } from './cors.interceptor.js';
 import { ALLOW_METHODS } from './constans.js';
@@ -26,7 +26,7 @@ export class CorsExtension implements Extension<void | false> {
   ) {}
 
   async stage1() {
-    const stage1GroupMeta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS, this);
+    const stage1GroupMeta = await this.extensionsManager.stage1(ROUTE_EXTENSIONS, this);
     if (stage1GroupMeta.delay) {
       return false;
     }

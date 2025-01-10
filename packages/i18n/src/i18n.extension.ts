@@ -8,7 +8,7 @@ import {
   fromSelf,
   Stage1GroupMeta,
 } from '@ditsmod/core';
-import { MetadataPerMod3, ROUTES_EXTENSIONS } from '@ditsmod/routing';
+import { MetadataPerMod3, ROUTE_EXTENSIONS } from '@ditsmod/routing';
 
 import { I18nTransformer } from './i18n-transformer.js';
 import { I18nLogMediator } from './i18n-log-mediator.js';
@@ -33,7 +33,7 @@ export class I18nExtension implements Extension<void> {
       return;
     }
 
-    const stage1GroupMeta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS);
+    const stage1GroupMeta = await this.extensionsManager.stage1(ROUTE_EXTENSIONS);
     this.addI18nProviders(stage1GroupMeta, isLastModule);
 
     this.#inited = true;

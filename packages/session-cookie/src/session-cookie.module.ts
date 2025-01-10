@@ -1,5 +1,5 @@
 import { featureModule, ModuleWithParams, optional } from '@ditsmod/core';
-import { PRE_ROUTER_EXTENSIONS, ROUTES_EXTENSIONS } from '@ditsmod/routing';
+import { PRE_ROUTER_EXTENSIONS, ROUTE_EXTENSIONS } from '@ditsmod/routing';
 
 import { SessionCookie } from './session-cookie.js';
 import { SessionLogMediator } from './session-log-mediator.js';
@@ -14,7 +14,7 @@ import { SESSION_COOKIE_EXTENSIONS, SessionCookieExtension } from './session-coo
     {
       extension: SessionCookieExtension,
       group: SESSION_COOKIE_EXTENSIONS,
-      afterGroups: [ROUTES_EXTENSIONS],
+      afterGroups: [ROUTE_EXTENSIONS],
       beforeGroups: [PRE_ROUTER_EXTENSIONS],
       exportOnly: true,
     },

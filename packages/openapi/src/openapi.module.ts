@@ -1,6 +1,6 @@
 import { XOasObject } from '@ts-stack/openapi-spec';
 import { featureModule, ModuleWithParams, Providers } from '@ditsmod/core';
-import { RoutingModule, PRE_ROUTER_EXTENSIONS, ROUTES_EXTENSIONS } from '@ditsmod/routing';
+import { RoutingModule, PRE_ROUTER_EXTENSIONS, ROUTE_EXTENSIONS } from '@ditsmod/routing';
 
 import { OpenapiCompilerExtension } from './extensions/openapi-compiler.extension.js';
 import { OpenapiRoutesExtension } from './extensions/openapi-routes.extension.js';
@@ -17,11 +17,11 @@ import { OpenapiErrorMediator } from '#services/openapi-error-mediator.js';
   providersPerApp: [OasConfigFiles],
   providersPerMod: [OpenapiLogMediator, OpenapiErrorMediator],
   extensions: [
-    { extension: OpenapiRoutesExtension, group: ROUTES_EXTENSIONS, export: true },
+    { extension: OpenapiRoutesExtension, group: ROUTE_EXTENSIONS, export: true },
     {
       extension: OpenapiCompilerExtension,
       group: OAS_COMPILER_EXTENSIONS,
-      afterGroups: [ROUTES_EXTENSIONS],
+      afterGroups: [ROUTE_EXTENSIONS],
       beforeGroups: [PRE_ROUTER_EXTENSIONS],
       export: true,
     },

@@ -1,6 +1,6 @@
 import { Options } from 'ajv';
 import { featureModule, ModuleWithParams, Providers, Class } from '@ditsmod/core';
-import { PRE_ROUTER_EXTENSIONS, ROUTES_EXTENSIONS } from '@ditsmod/routing';
+import { PRE_ROUTER_EXTENSIONS, ROUTE_EXTENSIONS } from '@ditsmod/routing';
 import { DictGroup, Dictionary, I18nModule, I18nProviders, I18N_TRANSLATIONS } from '@ditsmod/i18n';
 import { BODY_PARSER_EXTENSIONS } from '@ditsmod/body-parser';
 
@@ -18,7 +18,7 @@ import { ValidationExtension } from './validation.extension.js';
     {
       extension: ValidationExtension,
       group: VALIDATION_EXTENSIONS,
-      afterGroups: [BODY_PARSER_EXTENSIONS, ROUTES_EXTENSIONS],
+      afterGroups: [BODY_PARSER_EXTENSIONS, ROUTE_EXTENSIONS],
       beforeGroups: [PRE_ROUTER_EXTENSIONS],
       exportOnly: true,
     },

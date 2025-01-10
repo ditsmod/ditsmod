@@ -36,7 +36,7 @@ import {
 } from '@ditsmod/core';
 
 import { MetadataPerMod3, PreparedRouteMeta } from '../types.js';
-import { HTTP_INTERCEPTORS, ROUTES_EXTENSIONS } from '../constants.js';
+import { HTTP_INTERCEPTORS, ROUTE_EXTENSIONS } from '../constants.js';
 import { RoutingErrorMediator } from '../router-error-mediator.js';
 import { ControllerMetadata } from '../controller-metadata.js';
 import { InterceptorWithGuardsPerRou } from '#mod/interceptors/interceptor-with-guards-per-rou.js';
@@ -68,7 +68,7 @@ export class PreRouterExtension implements Extension<void> {
   ) {}
 
   async stage1() {
-    this.stage1GroupMeta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS);
+    this.stage1GroupMeta = await this.extensionsManager.stage1(ROUTE_EXTENSIONS);
     this.injectorPerApp = this.perAppService.reinitInjector([{ token: Router, useValue: this.router }]);
     this.addDefaultProviders(this.stage1GroupMeta.groupData);
   }

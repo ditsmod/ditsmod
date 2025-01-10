@@ -10,7 +10,7 @@ export const PRE_ROUTER_EXTENSIONS = new InjectionToken<Extension<void>[]>('PRE_
 /**
  * A group of extensions that returns `MetadataPerMod3[]` for a router.
  */
-export const ROUTES_EXTENSIONS = new InjectionToken<Extension<MetadataPerMod3>[]>('ROUTES_EXTENSIONS');
+export const ROUTE_EXTENSIONS = new InjectionToken<Extension<MetadataPerMod3>[]>('ROUTE_EXTENSIONS');
 /**
  * A group of extensions that allows you to set the order of launching different interceptors.
  */

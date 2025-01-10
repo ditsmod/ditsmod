@@ -22,7 +22,7 @@ import {
   XSecurityRequirementObject,
 } from '@ts-stack/openapi-spec';
 import { stringify } from 'yaml';
-import { MetadataPerMod3, ROUTES_EXTENSIONS } from '@ditsmod/routing';
+import { MetadataPerMod3, ROUTE_EXTENSIONS } from '@ditsmod/routing';
 
 import { OasRouteMeta } from '#types/oas-route-meta.js';
 import { DEFAULT_OAS_OBJECT, defaultForNonOasGuard } from '#constants';
@@ -44,7 +44,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
   ) {}
 
   async stage1() {
-    const stage1GroupMeta = await this.extensionsManager.stage1(ROUTES_EXTENSIONS, this);
+    const stage1GroupMeta = await this.extensionsManager.stage1(ROUTE_EXTENSIONS, this);
     if (stage1GroupMeta.delay) {
       this.log.dataAccumulation(this);
       return false;

@@ -1,5 +1,5 @@
 import { Provider, Providers } from '@ditsmod/core';
-import { MetadataPerMod3, ROUTES_EXTENSIONS } from '@ditsmod/routing';
+import { MetadataPerMod3, ROUTE_EXTENSIONS } from '@ditsmod/routing';
 import { TestApplication, GroupMetaOverrider, TestOverrider } from '@ditsmod/testing';
 
 export class TestRoutingPlugin extends TestApplication {
@@ -18,7 +18,7 @@ export class TestRoutingPlugin extends TestApplication {
       });
     };
 
-    this.overrideExtensionMeta(ROUTES_EXTENSIONS, overrideRoutesMeta);
+    this.overrideExtensionMeta(ROUTE_EXTENSIONS, overrideRoutesMeta);
     return this;
   }
 }
