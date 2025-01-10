@@ -1,8 +1,8 @@
-import { reflector, controller, CanActivate, RequestContext, DecoratorAndValue } from '@ditsmod/core';
+import { reflector, controller, RequestContext, DecoratorAndValue } from '@ditsmod/core';
 import { describe, expect, it } from 'vitest';
 
 import { oasRoute, OasRouteMetadata } from './oas-route.js';
-import { HttpHandler, HttpInterceptor } from '@ditsmod/routing';
+import { CanActivate, HttpHandler, HttpInterceptor } from '@ditsmod/routing';
 
 // console.log(inspect(actualMeta, false, 5));
 
