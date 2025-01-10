@@ -73,7 +73,6 @@ export {
   ResolvedGuard,
   ResolvedGuardPerMod,
   RedirectStatusCodes,
-  Provider,
   AnyFn,
   RequireProps,
   RequireOnlyProps,

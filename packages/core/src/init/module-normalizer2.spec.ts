@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { forwardRef, injectable } from '#di';
 import { featureModule } from '#decorators/module.js';
-import { Provider } from '#types/mix.js';
+import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { getModuleMetadata } from '#init/module-normalizer.js';
 import { Providers } from '#utils/providers.js';

@@ -12,7 +12,8 @@ import {
   getExtensionProvider,
   isConfigWithOverrideExtension,
 } from '#extension/get-extension-provider.js';
-import { AnyObj, GuardItem, ModRefId, NormalizedGuard, Provider, Scope } from '#types/mix.js';
+import { AnyObj, GuardItem, ModRefId, NormalizedGuard, Scope } from '#types/mix.js';
+import { Provider } from '#di/types-and-models.js';
 import { RawMeta } from '#decorators/module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';

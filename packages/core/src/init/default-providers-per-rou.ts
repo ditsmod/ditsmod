@@ -1,4 +1,4 @@
-import { Provider } from '#types/mix.js';
+import { Provider } from '#di/types-and-models.js';
 import { HttpErrorHandler } from '#error/http-error-handler.js';
 import { DefaultHttpErrorHandler } from '#error/default-http-error-handler.js';
 

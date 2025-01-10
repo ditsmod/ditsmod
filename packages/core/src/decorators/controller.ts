@@ -1,5 +1,5 @@
 import { makeClassDecorator } from '#di';
-import { Provider } from '#types/mix.js';
+import { Provider } from '#di/types-and-models.js';
 import { Providers } from '#utils/providers.js';
 
 /**

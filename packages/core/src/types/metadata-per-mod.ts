@@ -1,5 +1,6 @@
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
-import { GuardPerMod1, ModRefId, ModuleType, Provider } from './mix.js';
+import { GuardPerMod1, ModRefId, ModuleType } from './mix.js';
+import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from './module-metadata.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 

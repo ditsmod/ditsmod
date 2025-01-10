@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { Logger, LoggerConfig } from '#logger/logger.js';
-import { Provider } from '#types/mix.js';
+import { Provider } from '#di/types-and-models.js';
 import { ConsoleLogger } from '#logger/console-logger.js';
 import { Providers } from './providers.js';
 import { LogMediator } from '#logger/log-mediator.js';

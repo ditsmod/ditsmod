@@ -1,13 +1,9 @@
 import {
   Class,
-  ClassProvider,
-  FactoryProvider,
   Injector,
   ResolvedProvider,
-  TokenProvider,
-  TypeProvider,
-  ValueProvider,
 } from '#di';
+import { Provider } from '#di/types-and-models.js';
 import { RequestContext } from '#services/request-context.js';
 import { MetadataPerMod1 } from '#types/metadata-per-mod.js';
 import { AppendsWithParams, ModuleWithParams } from '#types/module-metadata.js';
@@ -119,16 +115,6 @@ export interface ResolvedGuard {
  * See also https://en.wikipedia.org/wiki/URL_redirection#HTTP_status_codes_3xx
  */
 export type RedirectStatusCodes = 300 | 301 | 302 | 303 | 307 | 308;
-
-/**
- * Describes how the `Injector` should be configured.
- *
- * ### How To Use
- * See `TypeProvider`, `ValueProvider`, `ClassProvider`, `TokenProvider`, `FactoryProvider`.
- *
- * For more details, see the [Dependency Injection Guide](https://v4.angular.io/guide/dependency-injection).
- */
-export type Provider = TypeProvider | ValueProvider | ClassProvider | TokenProvider | FactoryProvider;
 
 /**
  * Scope imports/exports.

@@ -452,6 +452,5 @@ export type UseFactoryTuple = [Class, AnyFn];
  *
  * ### How To Use
  * See `TypeProvider`, `ValueProvider`, `ClassProvider`, `TokenProvider`, `FactoryProvider`.
- *
  */
 export type Provider = TypeProvider | ValueProvider | ClassProvider | TokenProvider | FactoryProvider;

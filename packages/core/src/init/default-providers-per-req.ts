@@ -1,5 +1,5 @@
 import { A_PATH_PARAMS, RAW_REQ, RAW_RES, PATH_PARAMS, QUERY_PARAMS, QUERY_STRING } from '#public-api/constans.js';
-import { Provider } from '#types/mix.js';
+import { Provider } from '#di/types-and-models.js';
 import { Req } from '#services/request.js';
 import { Res } from '#services/response.js';
 

@@ -1,5 +1,6 @@
 import { Class, MultiProvider } from '#di';
-import { AnyFn, AnyObj, ModuleType, NormalizedGuard, Provider } from '#types/mix.js';
+import { AnyFn, AnyObj, ModuleType, NormalizedGuard } from '#types/mix.js';
+import { Provider } from '#di/types-and-models.js';
 import { AppendsWithParams, ModuleWithParams } from './module-metadata.js';
 import { ProvidersMetadata } from '#types/providers-metadata.js';
 import { RawMeta } from '#decorators/module.js';

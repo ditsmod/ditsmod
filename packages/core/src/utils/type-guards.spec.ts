@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { Provider } from '#types/mix.js';
+import { Provider } from '#di/types-and-models.js';
 import { Extension } from '#extension/extension-types.js';
 import {
   InjectionToken,

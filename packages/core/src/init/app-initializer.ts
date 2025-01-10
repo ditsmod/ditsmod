@@ -12,16 +12,12 @@ import { ModuleFactory } from '#init/module-factory.js';
 import { Counter } from '#extension/counter.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ExtensionsContext } from '#extension/extensions-context.js';
-import {
-  ExtensionsManager,
-  InternalExtensionsManager,
-  StageIteration,
-  StageIterationMap,
-} from '#extension/extensions-manager.js';
+import { ExtensionsManager, InternalExtensionsManager } from '#extension/extensions-manager.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { PerAppService } from '#services/per-app.service.js';
 import { PreRouter } from '#services/pre-router.js';
-import { ModRefId, ModuleType, Provider } from '#types/mix.js';
+import { ModRefId, ModuleType } from '#types/mix.js';
+import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { ExtensionCounters, ExtensionsGroupToken } from '#extension/extension-types.js';
 import { RequestListener } from '#types/server-options.js';
