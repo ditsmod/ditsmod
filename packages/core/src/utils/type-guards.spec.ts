@@ -16,7 +16,6 @@ import { isCtrlDecor, isFeatureModule, isModuleWithParams, isProvider, isRootMod
 import { rootModule } from '#decorators/root-module.js';
 import { controller } from '#decorators/controller.js';
 import { getModuleMetadata } from '#init/module-normalizer.js';
-import { AppendsWithParams } from '#types/module-metadata.js';
 
 describe('type guards', () => {
   describe('isModule()', () => {
@@ -100,18 +99,6 @@ describe('type guards', () => {
 
       const modObj = Module1.withParams();
       expect(isModuleWithParams(modObj)).toBe(true);
-    });
-  });
-
-  describe('isAppendsWithParams', () => {
-    it('appends with params', () => {
-      @featureModule({})
-      class Module1 {}
-
-      const modRefId1: AppendsWithParams = { module: Module1, path: '' };
-      expect(isModuleWithParams(modRefId1)).toBe(true);
-      const modRefId2: AppendsWithParams = { module: Module1, absolutePath: '' };
-      expect(isModuleWithParams(modRefId2)).toBe(true);
     });
   });
 

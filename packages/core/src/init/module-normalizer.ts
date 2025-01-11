@@ -1,6 +1,5 @@
 import { isClassProvider, isMultiProvider, isNormalizedProvider, isTokenProvider, isValueProvider, MultiProvider } from '#di';
 import {
-  isAppendsWithParams,
   isCtrlDecor,
   isModDecor,
   isModuleWithParams,
@@ -70,15 +69,15 @@ export class ModuleNormalizer {
       }
     });
 
-    rawMeta.appends?.forEach((ap, i) => {
-      ap = resolveForwardRef(ap);
-      this.throwIfUndefined(modName, 'Appends', ap, i);
-      if (isAppendsWithParams(ap)) {
-        meta.appendsWithParams.push(ap);
-      } else {
-        meta.appendsModules.push(ap);
-      }
-    });
+    // rawMeta.appends?.forEach((ap, i) => {
+    //   ap = resolveForwardRef(ap);
+    //   this.throwIfUndefined(modName, 'Appends', ap, i);
+    //   if (isAppendsWithParams(ap)) {
+    //     meta.appendsWithParams.push(ap);
+    //   } else {
+    //     meta.appendsModules.push(ap);
+    //   }
+    // });
 
     const providersTokens = getTokens([
       ...(rawMeta.providersPerMod || []),
@@ -244,8 +243,8 @@ export class ModuleNormalizer {
       !meta.exportedMultiProvidersPerReq.length &&
       !meta.providersPerApp.length &&
       !meta.exportedExtensionsProviders.length &&
-      !meta.extensionsProviders.length &&
-      !meta.appendsWithParams.length
+      !meta.extensionsProviders.length
+      // !meta.appendsWithParams.length
     ) {
       const msg = 'this module should have "providersPerApp" or some controllers, or exports, or extensions.';
       throw new Error(msg);
@@ -362,7 +361,8 @@ export function getModuleMetadata(modRefId: ModRefId, isRoot?: boolean): RawMeta
   modRefId = resolveForwardRef(modRefId);
   const decoratorGuard = isRoot ? isRootModule : isModDecor;
 
-  if (!isModuleWithParams(modRefId) && !isAppendsWithParams(modRefId)) {
+  // if (!isModuleWithParams(modRefId) && !isAppendsWithParams(modRefId)) {
+  if (!isModuleWithParams(modRefId)) {
     return reflector.getDecorators(modRefId, decoratorGuard)?.at(0)?.value;
   }
 

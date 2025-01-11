@@ -99,7 +99,7 @@ export class AppInitializer {
   protected collectProvidersPerApp(meta1: NormalizedModuleMetadata) {
     const aModRefId: ModRefId[] = [
       ...meta1.appendsModules,
-      ...meta1.appendsWithParams,
+      // ...meta1.appendsWithParams,
       ...meta1.importsModules,
       ...meta1.importsWithParams,
       ...meta1.exportsModules,

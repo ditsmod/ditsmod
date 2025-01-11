@@ -5,7 +5,11 @@ import { CallsiteUtils } from '#utils/callsites.js';
 
 const scopes = ['App', 'Mod', 'Rou', 'Req'] as Scope[];
 
-export const featureModule = makeClassDecorator(transformModule);
+export const featureModule: FeatureModuleDecorator = makeClassDecorator(transformModule);
+
+export interface FeatureModuleDecorator {
+  <T extends object = {}>(data?: ModuleMetadata & T): any;
+}
 
 export function transformModule(data?: ModuleMetadata): RawMeta {
   const metadata = Object.assign({}, data);

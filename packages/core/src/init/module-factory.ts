@@ -14,7 +14,7 @@ import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
 import { throwProvidersCollisionError } from '#utils/throw-providers-collision-error.js';
-import { isAppendsWithParams, isModuleWithParams, isRootModule } from '#utils/type-guards.js';
+import { isModuleWithParams, isRootModule } from '#utils/type-guards.js';
 import { hasDeclaredInDir } from '#utils/type-guards.js';
 import { getModule } from '#utils/get-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
@@ -193,7 +193,7 @@ export class ModuleFactory {
 
   protected importAndAppendModules() {
     this.importOrAppendModules([...this.meta.importsModules, ...this.meta.importsWithParams], true);
-    this.importOrAppendModules([...this.meta.appendsModules, ...this.meta.appendsWithParams]);
+    // this.importOrAppendModules([...this.meta.appendsModules, ...this.meta.appendsWithParams]);
     this.checkAllCollisionsWithScopesMix();
   }
 
@@ -206,7 +206,7 @@ export class ModuleFactory {
 
       let prefixPerMod = '';
       // let guardsPerMod1: GuardPerMod1[] = [];
-      const hasModuleParams = isModuleWithParams(input) || isAppendsWithParams(input);
+      const hasModuleParams = isModuleWithParams(input);
       if (hasModuleParams || !isImport) {
         if (hasModuleParams && typeof input.absolutePath == 'string') {
           // Allow slash for absolutePath.
@@ -416,7 +416,7 @@ export class ModuleFactory {
   }
 
   protected checkImportsAndAppends(meta: NormalizedModuleMetadata) {
-    [...meta.appendsWithParams, ...meta.appendsModules].forEach((append) => {
+    [...meta.appendsModules].forEach((append) => {
       const appendedMeta = this.moduleManager.getMetadata(append, true);
       if (!appendedMeta.controllers.length) {
         const msg = `Appends to "${meta.name}" failed: "${appendedMeta.name}" must have controllers.`;

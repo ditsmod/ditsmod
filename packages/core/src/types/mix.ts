@@ -1,13 +1,7 @@
-import {
-  Class,
-  Injector,
-  ResolvedProvider,
-} from '#di';
+import { Class, Injector, ResolvedProvider } from '#di';
 import { Provider } from '#di/types-and-models.js';
-import { RequestContext } from '#services/request-context.js';
 import { MetadataPerMod1 } from '#types/metadata-per-mod.js';
-import { AppendsWithParams, ModuleWithParams } from '#types/module-metadata.js';
-import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
+import { ModuleWithParams } from '#types/module-metadata.js';
 
 /**
  * Help type for combining interfaces.
@@ -41,7 +35,7 @@ export type ModuleType<T extends AnyObj = AnyObj> = Class<T>;
 /**
  * Module reference ID.
  */
-export type ModRefId = ModuleType | ModuleWithParams | AppendsWithParams;
+export type ModRefId = ModuleType | ModuleWithParams;
 /**
  * Require only specified properties from the `K` list for `T`.
  * 
@@ -78,7 +72,6 @@ export interface AnyObj {
 }
 
 export type AppMetadataMap = Map<ModuleType | ModuleWithParams, MetadataPerMod1>;
-
 
 export class ProvidersForMod {
   providersPerMod: Provider[] = [];

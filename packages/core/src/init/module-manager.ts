@@ -34,8 +34,6 @@ export class ModuleManager {
     'importsWithParams',
     'exportsModules',
     'exportsWithParams',
-    'appendsModules',
-    'appendsWithParams',
   ] as const;
 
   constructor(protected systemLogMediator: SystemLogMediator) {}

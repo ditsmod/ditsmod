@@ -1,5 +1,5 @@
 import { ModRefId } from '#types/mix.js';
-import { isAppendsWithParams, isModuleWithParams } from './type-guards.js';
+import { isModuleWithParams } from './type-guards.js';
 
 const debugClassNames = new Map<ModRefId, string>();
 const debugClassNameCounters = new Map<string, number>();
@@ -21,7 +21,7 @@ export function getDebugClassName(modRefId: ModRefId): string {
   }
 
   let className: string;
-  if (isModuleWithParams(modRefId) || isAppendsWithParams(modRefId)) {
+  if (isModuleWithParams(modRefId)) {
     className = modRefId.id || modRefId.module.name;
   } else {
     className = modRefId.name;

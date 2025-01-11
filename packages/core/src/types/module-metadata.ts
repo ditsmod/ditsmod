@@ -3,30 +3,6 @@ import { ProvidersMetadata } from '#types/providers-metadata.js';
 import { AnyObj, ModuleType } from '#types/mix.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 
-/**
- * Used for module metadata, for `appends` array.
- */
-export type AppendsWithParams<T extends AnyObj = AnyObj> = AppendsWithParams1<T> | AppendsWithParams2<T>;
-
-export interface BaseAppendsWithParams<T extends AnyObj = AnyObj> {
-  /**
-   * The module ID.
-   */
-  id?: string;
-  module: ModuleType<T>;
-  // guards?: GuardItem[];
-}
-
-export interface AppendsWithParams1<T extends AnyObj = AnyObj> extends BaseAppendsWithParams<T> {
-  path: string;
-  absolutePath?: never;
-}
-
-export interface AppendsWithParams2<T extends AnyObj = AnyObj> extends BaseAppendsWithParams<T> {
-  absolutePath: string;
-  path?: never;
-}
-
 export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<ProvidersMetadata> {
   /**
    * The module ID.
@@ -42,7 +18,7 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
    * are not imported into the current module. If the current module has a prefix path,
    * that path will be added to each controller route from the appended modules.
    */
-  appends?: Array<ModuleType | AppendsWithParams>;
+  // appends?: Array<ModuleType | AppendsWithParams>;
   /**
    * List of modules, `ModuleWithParams` or tokens of providers exported by this
    * module.

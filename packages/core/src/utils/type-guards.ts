@@ -1,7 +1,7 @@
 import { ChainError } from '@ts-stack/chain-error';
 import { Provider, Class, DecoratorAndValue, reflector, isNormalizedProvider } from '#di';
 import { AnyObj, ModuleType, RequireProps } from '#types/mix.js';
-import { ModuleWithParams, AppendsWithParams } from '#types/module-metadata.js';
+import { ModuleWithParams } from '#types/module-metadata.js';
 import { RootModuleMetadata } from '#types/root-module-metadata.js';
 import { Http2SecureServerOptions, ServerOptions } from '#types/server-options.js';
 import { featureModule } from '#decorators/module.js';
@@ -64,15 +64,6 @@ export function isCtrlDecor(decoratorAndValue?: AnyObj): decoratorAndValue is De
 
 export function isModuleWithParams(modRefId?: Provider | ModuleWithParams | ModuleType): modRefId is ModuleWithParams {
   return (modRefId as ModuleWithParams)?.module !== undefined;
-}
-
-export function isAppendsWithParams(
-  modRefId?: ModuleType | ModuleWithParams | AppendsWithParams,
-): modRefId is AppendsWithParams {
-  return (
-    (modRefId as AppendsWithParams)?.module !== undefined &&
-    ((modRefId as AppendsWithParams)?.path !== undefined || (modRefId as AppendsWithParams)?.absolutePath !== undefined)
-  );
 }
 
 export function isProvider(maybeProvider?: any): maybeProvider is Provider {

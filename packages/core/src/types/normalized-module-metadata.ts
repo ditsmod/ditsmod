@@ -1,7 +1,7 @@
 import { Class, MultiProvider } from '#di';
 import { AnyFn, AnyObj, ModuleType } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
-import { AppendsWithParams, ModuleWithParams } from './module-metadata.js';
+import { ModuleWithParams } from './module-metadata.js';
 import { ProvidersMetadata } from '#types/providers-metadata.js';
 import { RawMeta } from '#decorators/module.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
@@ -17,7 +17,7 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
    * The module setted here must be identical to the module
    * passed to "imports", "exports" or "appends" array of `@featureModule` metadata.
    */
-  modRefId: ModuleType<T> | ModuleWithParams<T> | AppendsWithParams<T>;
+  modRefId: ModuleType<T> | ModuleWithParams<T>;
   /**
    * The module name.
    */
@@ -29,7 +29,7 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   importsModules: ModuleType[] = [];
   importsWithParams: ModuleWithParams[] = [];
   appendsModules: ModuleType[] = [];
-  appendsWithParams: AppendsWithParams[] = [];
+  // appendsWithParams: AppendsWithParams[] = [];
   controllers: Class[] = [];
   decorator: AnyFn;
   /**

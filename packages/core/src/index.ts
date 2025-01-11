@@ -83,10 +83,6 @@ export {
 } from '#types/mix.js';
 export {
   ModuleMetadata,
-  BaseAppendsWithParams,
-  AppendsWithParams,
-  AppendsWithParams1,
-  AppendsWithParams2,
   BaseModuleWithParams,
   ModuleWithParams,
   ModuleWithParams1,
@@ -121,7 +117,6 @@ export {
   isClassFactoryProvider,
 } from '#di';
 export {
-  isAppendsWithParams,
   isChainError,
   isCtrlDecor,
   isModuleWithParams,

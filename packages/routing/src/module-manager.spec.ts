@@ -1,7 +1,6 @@
 import { beforeEach, expect, it } from 'vitest';
 import {
   AnyObj,
-  AppendsWithParams,
   clearDebugClassNames,
   controller,
   featureModule,
@@ -15,6 +14,7 @@ import {
 } from '@ditsmod/core';
 
 import { CanActivate, guard } from './interceptors/guard.js';
+import { AppendsWithParams } from './types.js';
 
 let mock: MockModuleManager;
 
