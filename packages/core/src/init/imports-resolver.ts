@@ -3,7 +3,6 @@ import { InjectionToken, Injector } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { defaultExtensionsProviders } from '#extension/default-extensions-providers.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
-import { defaultProvidersPerReq } from './default-providers-per-req.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { AppOptions } from '#types/app-options.js';
 import { ImportedTokensMap, MetadataPerMod2 } from '#types/metadata-per-mod.js';
@@ -16,7 +15,6 @@ import { getProviderName } from '#utils/get-provider-name.js';
 import { getProvidersTargets, getTokens } from '#utils/get-tokens.js';
 import { isClassProvider, isFactoryProvider, isTokenProvider, isValueProvider } from '#di';
 import { SystemErrorMediator } from '#error/system-error-mediator.js';
-import { defaultProvidersPerRou } from './default-providers-per-rou.js';
 import { ExtensionCounters, ExtensionsGroupToken } from '#extension/extension-types.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 
@@ -53,8 +51,8 @@ export class ImportsResolver {
       });
       this.resolveImportedProviders(meta, importedTokensMap, scopes);
       this.resolveProvidersForExtensions(meta, importedTokensMap);
-      meta.providersPerRou.unshift(...defaultProvidersPerRou);
-      meta.providersPerReq.unshift(...defaultProvidersPerReq);
+      // meta.providersPerRou.unshift(...defaultProvidersPerRou);
+      // meta.providersPerReq.unshift(...defaultProvidersPerReq);
     });
 
     return { extensionCounters: this.extensionCounters, mMetadataPerMod2 };
@@ -323,7 +321,15 @@ export class ImportsResolver {
   protected getDependencies(provider: Provider) {
     const deps = getDependencies(provider);
 
-    const defaultTokens = [...getTokens([...defaultProvidersPerApp, ...defaultProvidersPerReq]), Injector, AppOptions];
+    const defaultTokens = [
+      ...getTokens([
+        //
+        ...defaultProvidersPerApp,
+        // ...defaultProvidersPerReq,
+      ]),
+      Injector,
+      AppOptions,
+    ];
 
     return deps.filter((d) => !defaultTokens.includes(d.token));
   }

@@ -1,5 +1,5 @@
-import { inject, RAW_RES, RawResponse, Res } from '@ditsmod/core';
-import { controller, route } from '@ditsmod/routing';
+import { inject } from '@ditsmod/core';
+import { controller, route, RAW_RES, RawResponse, Res } from '@ditsmod/routing';
 import { HTTP_BODY, MulterParser } from '@ditsmod/body-parser';
 
 import { saveFiles, sendHtmlForm } from './utils.js';

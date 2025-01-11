@@ -1,6 +1,6 @@
 import { createWriteStream } from 'node:fs';
 import { MulterParsedForm } from '@ditsmod/body-parser';
-import { RawResponse } from '@ditsmod/core';
+import { RawResponse } from '@ditsmod/routing';
 
 export function saveFiles(parsedForm: MulterParsedForm) {
   const promises: Promise<void>[] = [];

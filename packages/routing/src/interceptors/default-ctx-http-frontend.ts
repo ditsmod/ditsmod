@@ -1,7 +1,8 @@
 import { parse } from 'node:querystring';
-import { AnyObj, CustomError, HttpMethod, injectable, RequestContext, Status } from '@ditsmod/core';
+import { AnyObj, CustomError, HttpMethod, injectable, Status } from '@ditsmod/core';
 
 import { HttpFrontend, HttpHandler } from './tokens-and-types.js';
+import { RequestContext } from '#mod/request-context.js';
 
 @injectable()
 export class DefaultCtxHttpFrontend implements HttpFrontend {

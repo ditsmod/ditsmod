@@ -1,4 +1,5 @@
-import { Injector, Res, Logger } from '@ditsmod/core';
+import { Injector, Logger } from '@ditsmod/core';
+import { Res } from '@ditsmod/routing';
 import { beforeEach, describe, expect, it, vi, afterEach } from 'vitest';
 
 import { SomeController } from './some.controller.js';

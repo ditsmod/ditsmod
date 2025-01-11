@@ -1,4 +1,5 @@
-import { AnyObj, inject, QUERY_PARAMS, injectable, Injector, optional, Class } from '@ditsmod/core';
+import { AnyObj, inject, injectable, Injector, optional, Class } from '@ditsmod/core';
+import { QUERY_PARAMS } from '@ditsmod/routing';
 
 import { I18nLogMediator } from './i18n-log-mediator.js';
 import { ISO639 } from './types/iso-639.js';

@@ -1,7 +1,8 @@
-import { injectable, RequestContext } from '@ditsmod/core';
+import { injectable } from '@ditsmod/core';
 
 import { RouteMeta } from '../route-data.js';
 import { CtxHttpBackend } from './tokens-and-types.js';
+import { RequestContext } from '#mod/request-context.js';
 
 
 @injectable()

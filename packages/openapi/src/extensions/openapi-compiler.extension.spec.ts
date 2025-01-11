@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeEach } from 'vitest';
-import { CanActivate, NormalizedGuard } from '@ditsmod/routing';
-import { PerAppService, Status, Injector, RequestContext } from '@ditsmod/core';
+import { CanActivate, NormalizedGuard, RequestContext } from '@ditsmod/routing';
+import { PerAppService, Status, Injector } from '@ditsmod/core';
 import {
   ComponentsObject,
   OperationObject,

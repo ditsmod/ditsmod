@@ -1,5 +1,5 @@
-import { AppInitializer, ModuleManager, ModuleWithParams, Res, skipSelf } from '@ditsmod/core';
-import { controller, route } from '@ditsmod/routing';
+import { AppInitializer, ModuleManager, ModuleWithParams, skipSelf } from '@ditsmod/core';
+import { controller, route, Res } from '@ditsmod/routing';
 
 import { SecondModule } from '../second/second.module.js';
 import { ThirdModule } from '../third/third.module.js';

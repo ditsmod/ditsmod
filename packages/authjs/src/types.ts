@@ -1,4 +1,4 @@
-import type { RawRequest } from '@ditsmod/core';
+import type { RawRequest } from '@ditsmod/routing';
 import type { AuthAction, Session } from '@auth/core/types';
 import { ProviderType } from '@auth/core/providers';
 

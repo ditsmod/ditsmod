@@ -1,7 +1,9 @@
 import { parse } from 'querystring';
-import { AnyObj, injectable, Injector, PATH_PARAMS, QUERY_PARAMS, RequestContext } from '@ditsmod/core';
+import { AnyObj, injectable, Injector } from '@ditsmod/core';
 
 import { DefaultCtxHttpFrontend } from './default-ctx-http-frontend.js';
+import { RequestContext } from '#mod/request-context.js';
+import { PATH_PARAMS, QUERY_PARAMS } from '#mod/constants.js';
 
 @injectable()
 export class DefaultHttpFrontend extends DefaultCtxHttpFrontend {

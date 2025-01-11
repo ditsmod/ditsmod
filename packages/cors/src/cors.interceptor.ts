@@ -1,5 +1,5 @@
-import { RequestContext, injectable } from '@ditsmod/core';
-import { HttpHandler, HttpInterceptor } from '@ditsmod/routing';
+import { injectable } from '@ditsmod/core';
+import { RequestContext, HttpHandler, HttpInterceptor } from '@ditsmod/routing';
 import { cors, CorsOptions } from '@ts-stack/cors';
 
 @injectable()

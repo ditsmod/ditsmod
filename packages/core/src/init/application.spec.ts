@@ -5,7 +5,7 @@ import { describe, expect, it, beforeEach } from 'vitest';
 
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ModuleManager } from '#init/module-manager.js';
-import { Router } from '#types/router.js';
+// import { Router } from '#types/router.js';
 import { AppOptions } from '#types/app-options.js';
 import { ModuleType } from '#types/mix.js';
 import { AppInitializer } from '#init/app-initializer.js';
@@ -91,7 +91,7 @@ describe('Application', () => {
   describe('bootstrapApplication()', () => {
     @rootModule({
       providersPerApp: [
-        { token: Router, useValue: {} },
+        // { token: Router, useValue: {} },
         { token: LoggerConfig, useValue: { level: 'off' } },
       ],
     })

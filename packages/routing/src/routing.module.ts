@@ -1,6 +1,6 @@
-import { featureModule, Router } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 
-import { DefaultRouter } from './router.js';
+import { DefaultRouter, Router } from './router.js';
 import { RoutingErrorMediator } from './router-error-mediator.js';
 import { RoutesExtension } from './extensions/routes.extension.js';
 import { PreRouterExtension } from './extensions/pre-router.extension.js';

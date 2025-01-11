@@ -1,12 +1,19 @@
 import { describe, expect, it, vi } from 'vitest';
 import { TestApplication } from '@ditsmod/testing';
+import {
+  InjectionToken,
+  Extension,
+  injectable,
+  ExtensionsManager,
+  rootModule,
+  featureModule,
+  Stage1DebugMeta,
+  Stage1GroupMeta,
+  Stage1GroupMeta2,
+} from '@ditsmod/core';
 
-import { InjectionToken, injectable } from '#di';
-import { rootModule } from '#decorators/root-module.js';
-import { Extension, Stage1DebugMeta, Stage1GroupMeta, Stage1GroupMeta2 } from '#extension/extension-types.js';
-import { ExtensionsManager } from '#extension/extensions-manager.js';
-import { featureModule } from '#decorators/module.js';
-import { Router } from '#types/router.js';
+import { Router } from '#mod/router.js';
+
 
 describe('extensions e2e', () => {
   const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');

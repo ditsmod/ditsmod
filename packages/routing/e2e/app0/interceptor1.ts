@@ -1,5 +1,7 @@
-import { injectable, Injector, RequestContext } from '@ditsmod/core';
+import { injectable, Injector } from '@ditsmod/core';
+
 import { HttpHandler, HttpInterceptor } from '#interceptors/tokens-and-types.js';
+import { RequestContext } from '#mod/request-context.js';
 
 @injectable()
 export class Interceptor1 implements HttpInterceptor {

@@ -1,4 +1,4 @@
-import { RequestContext } from '@ditsmod/core';
+import { RequestContext } from '#mod/request-context.js';
 
 /**
  * `HttpHandler` is injectable. When injected, the handler instance dispatches requests to the

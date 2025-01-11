@@ -1,4 +1,5 @@
-import { inject, injectable, RawRequest, RawResponse, RAW_REQ, RAW_RES, optional } from '@ditsmod/core';
+import { inject, injectable, optional } from '@ditsmod/core';
+import { RawRequest, RawResponse, RAW_REQ, RAW_RES } from '@ditsmod/routing';
 import { Cookies, CookieOptions } from '@ts-stack/cookies';
 import { CorsOptions, cors, mergeOptions } from '@ts-stack/cors';
 

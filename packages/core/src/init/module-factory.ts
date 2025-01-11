@@ -2,7 +2,6 @@ import { injectable, reflector } from '#di';
 import { defaultProvidersPerMod } from '#init/default-providers-per-mod.js';
 import { ModuleExtract } from '#types/module-extract.js';
 import type { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
-import { defaultProvidersPerReq } from './default-providers-per-req.js';
 import type { ModuleManager } from '#init/module-manager.js';
 import type { GlobalProviders, MetadataPerMod1 } from '#types/metadata-per-mod.js';
 import { ImportObj } from '#types/metadata-per-mod.js';
@@ -367,7 +366,7 @@ export class ModuleFactory {
     const mergedProvidersAndTokens = [
       ...this.meta.providersPerRou,
       ...getImportedProviders(this.importedProvidersPerRou),
-      ...defaultProvidersPerReq,
+      // ...defaultProvidersPerReq,
     ];
     this.checkCollisionsWithScopesMix(mergedProvidersAndTokens, ['Req']);
   }

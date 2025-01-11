@@ -1,5 +1,5 @@
-import { controller, rootModule, inject, RequestContext } from '@ditsmod/core';
-import { route, RoutingModule } from '@ditsmod/routing';
+import { rootModule, inject } from '@ditsmod/core';
+import { controller, route, RoutingModule, RequestContext } from '@ditsmod/routing';
 
 import { AuthjsModule } from '#mod/authjs.module.js';
 import { AUTHJS_SESSION } from '#mod/constants.js';

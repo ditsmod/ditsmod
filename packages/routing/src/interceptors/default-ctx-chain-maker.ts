@@ -1,4 +1,4 @@
-import { inject, injectable, optional, RequestContext } from '@ditsmod/core';
+import { inject, injectable, optional } from '@ditsmod/core';
 
 import {
   HttpBackend,
@@ -8,6 +8,7 @@ import {
   CtxHttpBackend,
 } from './tokens-and-types.js';
 import { HTTP_INTERCEPTORS } from '../constants.js';
+import { RequestContext } from '#mod/request-context.js';
 
 class PreHttpBackend implements HttpBackend {
   constructor(

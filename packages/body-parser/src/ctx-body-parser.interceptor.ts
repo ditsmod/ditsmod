@@ -1,6 +1,6 @@
 import { BodyParserGroup } from '@ts-stack/body-parser';
-import { RequestContext, injectable } from '@ditsmod/core';
-import { HttpHandler, HttpInterceptor } from '@ditsmod/routing';
+import { injectable } from '@ditsmod/core';
+import { RequestContext, HttpHandler, HttpInterceptor } from '@ditsmod/routing';
 
 @injectable()
 export class CtxBodyParserInterceptor implements HttpInterceptor {

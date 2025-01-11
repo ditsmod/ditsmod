@@ -1,4 +1,5 @@
-import { RawRequest, RawResponse, Injector, RAW_REQ, RAW_RES } from '@ditsmod/core';
+import { Injector } from '@ditsmod/core';
+import { RawRequest, RawResponse, RAW_REQ, RAW_RES } from '@ditsmod/routing';
 import { beforeEach, describe, expect, it, vi, afterEach } from 'vitest';
 
 import { SessionCookie } from './session-cookie.js';

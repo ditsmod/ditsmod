@@ -1,9 +1,11 @@
+import { AnyObj } from '@ditsmod/core';
 import { TLSSocket } from 'node:tls';
 
-import { Res } from '#services/response.js';
-import { RawRequest, RawResponse } from '#types/server-options.js';
-import { PathParam } from '#types/router.js';
-import { AnyObj } from '#types/mix.js';
+import { RawRequest, RawResponse } from './request.js';
+import { Res } from './response.js';
+import { PathParam } from './router.js';
+
+
 
 /**
  * The request context class, which you can substitute with your own class.

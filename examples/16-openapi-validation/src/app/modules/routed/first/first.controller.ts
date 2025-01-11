@@ -1,7 +1,7 @@
-import { AnyObj, inject, PATH_PARAMS, Res } from '@ditsmod/core';
+import { AnyObj, inject } from '@ditsmod/core';
 import { HTTP_BODY } from '@ditsmod/body-parser';
 import { getParams, getContent, oasRoute } from '@ditsmod/openapi';
-import { controller } from '@ditsmod/routing';
+import { controller, PATH_PARAMS, Res } from '@ditsmod/routing';
 
 import { Model1, Model2 } from './models.js';
 

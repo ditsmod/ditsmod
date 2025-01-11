@@ -7,7 +7,6 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { featureModule } from '#decorators/module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
-import { Router } from '#types/router.js';
 import { AppInitializer } from '#init/app-initializer.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { ModuleType } from '#types/mix.js';
@@ -403,7 +402,7 @@ describe('AppInitializer', () => {
       // Simulation of a call from the AppModule
       @rootModule({
         providersPerApp: new Providers()
-          .passThrough(Router)
+          // .passThrough(Router)
           .useLogConfig({ level: 'trace' })
           .useSystemLogMediator(LogMediatorMock),
       })
@@ -434,7 +433,7 @@ describe('AppInitializer', () => {
     @rootModule({
       imports: [Module1],
       providersPerApp: [
-        { token: Router, useValue: 'fake' },
+        // { token: Router, useValue: 'fake' },
         { token: SystemLogMediator, useClass: LogMediatorMock1 },
       ],
     })
@@ -514,7 +513,7 @@ describe('AppInitializer', () => {
 
     it('properly declared extensions in a root module', async () => {
       @rootModule({
-        providersPerApp: [{ token: Router, useValue: 'fake value for router' }],
+        // providersPerApp: [{ token: Router, useValue: 'fake value for router' }],
         extensions: [{ extension: Extension1, group: MY_EXTENSIONS }],
       })
       class AppModule {}

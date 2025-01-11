@@ -1,8 +1,4 @@
 import {
-  A_PATH_PARAMS,
-  RAW_REQ,
-  RAW_RES,
-  QUERY_STRING,
   Injector,
   KeyRegistry,
   fromSelf,
@@ -11,11 +7,8 @@ import {
   SystemLogMediator,
   ExtensionsContext,
   ExtensionsManager,
-  HttpErrorHandler,
   PerAppService,
   Extension,
-  RouteHandler,
-  Router,
   Provider,
   Stage1GroupMeta,
   Stage1GroupMetaPerApp,
@@ -24,7 +17,6 @@ import {
   ResolvedGuard,
   ResolvedProvider,
   ResolvedGuardPerMod,
-  RequestContext,
   RequireProps,
   getToken,
   getProviderTarget,
@@ -34,7 +26,7 @@ import {
 } from '@ditsmod/core';
 
 import { MetadataPerMod3, PreparedRouteMeta } from '../types.js';
-import { HTTP_INTERCEPTORS, ROUTE_EXTENSIONS } from '../constants.js';
+import { A_PATH_PARAMS, HTTP_INTERCEPTORS, QUERY_STRING, RAW_REQ, RAW_RES, ROUTE_EXTENSIONS } from '../constants.js';
 import { RoutingErrorMediator } from '../router-error-mediator.js';
 import { ControllerMetadata } from '../controller-metadata.js';
 import { InterceptorWithGuardsPerRou } from '#mod/interceptors/interceptor-with-guards-per-rou.js';
@@ -49,6 +41,9 @@ import { DefaultHttpFrontend } from '#interceptors/default-http-frontend.js';
 import { HttpBackend, HttpFrontend } from '#interceptors/tokens-and-types.js';
 import { routeChannel } from '../diagnostics-channel.js';
 import { GuardPerMod1, NormalizedGuard } from '#mod/interceptors/guard.js';
+import { RouteHandler, Router } from '#mod/router.js';
+import { HttpErrorHandler } from '#mod/http-error-handler.js';
+import { RequestContext } from '#mod/request-context.js';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {

@@ -1,12 +1,10 @@
+import { Logger, Injector, Status, CustomError } from '@ditsmod/core';
 import { beforeEach, describe, expect, it, vi, afterEach } from 'vitest';
 
-import { Injector } from '#di';
-import { RequestContext } from '#services/request-context.js';
-import { Logger } from '#logger/logger.js';
-import { RawResponse } from '#types/server-options.js';
-import { Status } from '#utils/http-status-codes.js';
-import { CustomError } from '#error/custom-error.js';
-import { DefaultHttpErrorHandler as ErrorHandler } from '#error/default-http-error-handler.js';
+import { RequestContext } from './request-context.js';
+import { RawResponse } from './request.js';
+import { DefaultHttpErrorHandler as ErrorHandler } from './default-http-error-handler.js';
+
 
 describe('DefaultHttpErrorHandler', () => {
   let errorHandler: ErrorHandler;

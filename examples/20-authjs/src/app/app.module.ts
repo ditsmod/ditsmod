@@ -1,6 +1,6 @@
-import { controller, route, RoutingModule } from '@ditsmod/routing';
+import { controller, route, RoutingModule, Res } from '@ditsmod/routing';
 import { AuthjsConfig, AUTHJS_SESSION, AuthjsGuard, AuthjsModule, AuthjsInterceptor } from '@ditsmod/authjs';
-import { rootModule, inject, Res } from '@ditsmod/core';
+import { rootModule, inject } from '@ditsmod/core';
 
 import { OverriddenAuthConfig } from './authjs.config.js';
 

@@ -8,18 +8,8 @@ export { ImportedTokensMap } from '#types/metadata-per-mod.js';
 export { GlobalProviders } from '#types/metadata-per-mod.js';
 export { ModuleFactory } from '#init/module-factory.js';
 export { defaultProvidersPerApp } from '#init/default-providers-per-app.js';
-export { defaultProvidersPerRou } from '#init/default-providers-per-rou.js';
-export { defaultProvidersPerReq } from '#init/default-providers-per-req.js';
 export { OnModuleInit } from '#init/hooks.js';
-export {
-  SERVER,
-  RAW_REQ,
-  RAW_RES,
-  A_PATH_PARAMS,
-  QUERY_STRING,
-  PATH_PARAMS,
-  QUERY_PARAMS,
-} from '#public-api/constans.js';
+export { SERVER } from '#public-api/constans.js';
 export { CustomError } from '#error/custom-error.js';
 export { ErrorInfo } from '#error/error-info.js';
 export { featureModule } from '#decorators/module.js';
@@ -42,9 +32,6 @@ export { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 export { ProvidersMetadata } from '#types/providers-metadata.js';
 export { AppOptions } from '#types/app-options.js';
 export { ConsoleLogger } from '#logger/console-logger.js';
-export { HttpErrorHandler } from '#error/http-error-handler.js';
-export { DefaultHttpErrorHandler } from '#error/default-http-error-handler.js';
-export { RequestContext } from '#services/request-context.js';
 export { ExtensionsContext } from '#extension/extensions-context.js';
 export { ExtensionsManager, InternalExtensionsManager } from '#extension/extensions-manager.js';
 export { LogMediator } from '#logger/log-mediator.js';
@@ -54,9 +41,6 @@ export { ErrorMediator } from '#error/error-mediator.js';
 export { SystemErrorMediator } from '#error/system-error-mediator.js';
 export { ModuleManager } from '#init/module-manager.js';
 export { PerAppService } from '#services/per-app.service.js';
-export { PreRouter } from '#services/pre-router.js';
-export { Req } from '#services/request.js';
-export { Res } from '#services/response.js';
 export { Logger, LoggerConfig, InputLogLevel, OutputLogLevel } from '#logger/logger.js';
 export { MetadataPerMod1, MetadataPerMod2 } from '#types/metadata-per-mod.js';
 export {
@@ -65,7 +49,6 @@ export {
   ModuleType,
   ResolvedGuard,
   ResolvedGuardPerMod,
-  RedirectStatusCodes,
   AnyFn,
   RequireProps,
   RequireOnlyProps,
@@ -82,8 +65,7 @@ export {
   ModuleWithParams1,
   ModuleWithParams2,
 } from '#types/module-metadata.js';
-export { PathParam, RouteHandler, Router, RouterReturns } from '#types/router.js';
-export { RawRequest, RawResponse, RequestListener, HttpServer } from '#types/server-options.js';
+export { HttpServer } from '#types/server-options.js';
 export { deepFreeze } from '#utils/deep-freeze.js';
 export { getDependencies } from '#utils/get-dependecies.js';
 export { ExtensionConfig } from '#extension/get-extension-provider.js';

@@ -1,8 +1,24 @@
 import * as http from 'http';
-import { HttpMethod, injectable, Injector, Router, RouterReturns } from '@ditsmod/core';
+import { HttpMethod, injectable, Injector } from '@ditsmod/core';
 
 import { Tree } from './tree.js';
 import { MethodTree, Fn } from './types.js';
+import { RawRequest, RawResponse } from './request.js';
+
+
+export class Router {
+  on(method: HttpMethod, path: string, handle: RouteHandler): this {
+    return this;
+  }
+
+  all(path: string, handle: RouteHandler): this {
+    return this;
+  }
+
+  find(method: HttpMethod, path: string): RouterReturns {
+    return { handle: null as any, params: null as any };
+  }
+}
 
 @injectable()
 export class DefaultRouter implements Router {
@@ -35,4 +51,21 @@ export class DefaultRouter implements Router {
     }
     return { handle: null, params: null };
   }
+}
+
+export type RouteHandler = (
+  rawReq: RawRequest,
+  rawRes: RawResponse,
+  params: PathParam[] | null,
+  queryString: string,
+) => Promise<void>;
+
+export class RouterReturns {
+  handle: RouteHandler | null;
+  params: PathParam[] | null;
+}
+
+export interface PathParam {
+  key: string;
+  value: string;
 }

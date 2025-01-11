@@ -1,5 +1,5 @@
-import { inject, Logger, Res } from '@ditsmod/core';
-import { controller, route } from '@ditsmod/routing';
+import { inject, Logger } from '@ditsmod/core';
+import { controller, route, Res } from '@ditsmod/routing';
 import { BaseLogger as PinoLogger } from 'pino';
 
 @controller()

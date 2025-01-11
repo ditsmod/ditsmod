@@ -2,7 +2,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   clearDebugClassNames,
   defaultProvidersPerApp,
-  defaultProvidersPerReq,
   ExtensionConfig,
   Provider,
   featureModule,
@@ -15,7 +14,6 @@ import {
   ModuleType,
   ModuleWithParams,
   NormalizedModuleMetadata,
-  Req,
   rootModule,
   SystemLogMediator,
 } from '@ditsmod/core';
@@ -24,6 +22,8 @@ import { ChainMaker } from './chain-maker.js';
 import { DefaultHttpBackend } from './default-http-backend.js';
 import { HttpBackend, HttpFrontend, HttpHandler, HttpInterceptor } from './tokens-and-types.js';
 import { HTTP_INTERCEPTORS } from '../constants.js';
+import { Req } from '../request.js';
+import { defaultProvidersPerReq } from '../default-providers-per-req.js';
 
 describe('HttpInterceptor', () => {
   const jestFn = vi.fn((interceptorName: string) => interceptorName);

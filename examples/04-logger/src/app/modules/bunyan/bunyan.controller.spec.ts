@@ -1,4 +1,5 @@
-import { Injector, Res } from '@ditsmod/core';
+import { Injector } from '@ditsmod/core';
+import { Res } from '@ditsmod/routing';
 import BunyanLogger from 'bunyan';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 

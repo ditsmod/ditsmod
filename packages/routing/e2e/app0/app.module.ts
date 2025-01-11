@@ -1,5 +1,14 @@
-import { rootModule, Providers, inject, QUERY_PARAMS, PATH_PARAMS, Res, Req, RequestContext } from '@ditsmod/core';
-import { controller, route, RoutingModule } from '@ditsmod/routing';
+import { rootModule, Providers, inject } from '@ditsmod/core';
+import {
+  QUERY_PARAMS,
+  PATH_PARAMS,
+  Res,
+  Req,
+  controller,
+  route,
+  RoutingModule,
+  RequestContext,
+} from '@ditsmod/routing';
 
 import { Interceptor1 } from './interceptor1.js';
 

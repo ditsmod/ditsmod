@@ -1,4 +1,5 @@
-import { inject, injectable, RAW_REQ, RawRequest, optional } from '@ditsmod/core';
+import { inject, injectable, optional } from '@ditsmod/core';
+import { RAW_REQ, RawRequest } from '@ditsmod/routing';
 import { Multer, MulterGroup } from '@ts-stack/multer';
 
 import { MulterExtendedOptions } from './multer-extended-options.js';

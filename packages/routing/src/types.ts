@@ -5,12 +5,18 @@ import {
   ModuleMetadata,
   ModuleType,
   NormalizedModuleMetadata,
-  RouteHandler,
 } from '@ditsmod/core';
 
 import { Tree } from './tree.js';
 import { ControllerMetadata } from './controller-metadata.js';
 import { GuardPerMod1 } from './interceptors/guard.js';
+import { RouteHandler } from './router.js';
+
+
+/**
+ * See also https://en.wikipedia.org/wiki/URL_redirection#HTTP_status_codes_3xx
+ */
+export type RedirectStatusCodes = 300 | 301 | 302 | 303 | 307 | 308;
 
 interface ExtendedModuleMetadata extends ModuleMetadata {
   /**

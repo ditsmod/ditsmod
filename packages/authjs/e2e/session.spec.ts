@@ -1,7 +1,7 @@
 import { vi, describe, it, expect, afterAll, beforeAll } from 'vitest';
 import supertest from 'supertest';
-import { Status, controller, rootModule, HttpServer, Req } from '@ditsmod/core';
-import { route, RoutingModule } from '@ditsmod/routing';
+import { Status, rootModule, HttpServer } from '@ditsmod/core';
+import { route, controller, RoutingModule, Req } from '@ditsmod/routing';
 import { TestApplication } from '@ditsmod/testing';
 
 const sessionJson = {

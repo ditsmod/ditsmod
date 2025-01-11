@@ -1,4 +1,5 @@
-import { Injector, Res } from '@ditsmod/core';
+import { Injector } from '@ditsmod/core';
+import { Res } from '@ditsmod/routing';
 import { Logger as WinstonLogger } from 'winston';
 import { beforeEach, describe, expect, it, vi, afterEach } from 'vitest';
 

@@ -1,8 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import {
   clearDebugClassNames,
-  defaultProvidersPerReq,
-  defaultProvidersPerRou,
   featureModule,
   forwardRef,
   GlobalProviders,
@@ -20,7 +18,6 @@ import {
   ModuleWithParams,
   NormalizedModuleMetadata,
   Provider,
-  RequestContext,
   rootModule,
   Scope,
   SystemErrorMediator,
@@ -28,6 +25,9 @@ import {
 } from '@ditsmod/core';
 
 import { CanActivate, guard } from './interceptors/guard.js';
+import { defaultProvidersPerReq } from './default-providers-per-req.js';
+import { defaultProvidersPerRou } from './default-providers-per-rou.js';
+import { RequestContext } from './request-context.js';
 
 describe('resolve()', () => {
   let mock: ImportsResolverMock;

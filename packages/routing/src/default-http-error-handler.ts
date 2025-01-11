@@ -1,12 +1,8 @@
+import { injectable, Logger, isCustomError, Status, CustomError } from '@ditsmod/core';
 import { randomUUID } from 'node:crypto';
 
-import { injectable } from '#di';
-import { RequestContext } from '#services/request-context.js';
-import { Logger } from '#logger/logger.js';
-import { Status } from '#utils/http-status-codes.js';
-import { isCustomError } from '#utils/type-guards.js';
-import { HttpErrorHandler } from '#error/http-error-handler.js';
-import { CustomError } from './custom-error.js';
+import { HttpErrorHandler } from './http-error-handler.js';
+import { RequestContext } from './request-context.js';
 
 @injectable()
 export class DefaultHttpErrorHandler implements HttpErrorHandler {

@@ -1,5 +1,5 @@
-import { inject, Res, Req} from '@ditsmod/core';
-import { controller, route } from '@ditsmod/routing';
+import { inject } from '@ditsmod/core';
+import { controller, route, Res, Req } from '@ditsmod/routing';
 
 import { FirstPerRouService } from './first/first-per-rou.service.js';
 import { ThirdService } from './third/three.service.js';
@@ -9,7 +9,7 @@ export class AppController {
   constructor(
     private threeService: ThirdService,
     private onePerRouService: FirstPerRouService,
-    @inject('multi-provider') private multiProvider: any
+    @inject('multi-provider') private multiProvider: any,
   ) {}
 
   @route('GET')

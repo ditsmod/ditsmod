@@ -212,7 +212,7 @@ describe.skip('appending modules', () => {
 
     expect(metadataPerMod1_1.prefixPerMod).toBe('prefix1');
     expect(metadataPerMod1_1.meta).toBeDefined();
-    expect(metadataPerMod1_1.applyControllers).toBe(true);
+    // expect(metadataPerMod1_1.applyControllers).toBe(true);
     expect(metadataPerMod1_1.importedTokensMap.perMod).toEqual(new Map());
     expect(metadataPerMod1_1.importedTokensMap.perRou).toEqual(new Map());
     expect(metadataPerMod1_1.importedTokensMap.perReq).toEqual(new Map());
@@ -222,8 +222,8 @@ describe.skip('appending modules', () => {
 
     expect(metadataPerMod1_2.prefixPerMod).toBe('prefix2');
     expect(metadataPerMod1_3.prefixPerMod).toBe('');
-    expect(metadataPerMod1_2.applyControllers).toBe(true);
-    expect(metadataPerMod1_3.applyControllers).toBe(false);
+    // expect(metadataPerMod1_2.applyControllers).toBe(true);
+    // expect(metadataPerMod1_3.applyControllers).toBe(false);
   });
 
   it('should throw an error during importing and appending same module', () => {
@@ -359,7 +359,7 @@ describe.skip('appending modules', () => {
 
     expect(metadataPerMod1_1.prefixPerMod).toBe('prefix1');
     expect(metadataPerMod1_1.meta).toBeDefined();
-    expect(metadataPerMod1_1.applyControllers).toBe(true);
+    // expect(metadataPerMod1_1.applyControllers).toBe(true);
     expect(metadataPerMod1_1.importedTokensMap.perMod).toEqual(new Map());
     expect(metadataPerMod1_1.importedTokensMap.perRou).toEqual(new Map());
     expect(metadataPerMod1_1.importedTokensMap.perReq).toEqual(new Map());
@@ -369,7 +369,7 @@ describe.skip('appending modules', () => {
 
     expect(metadataPerMod1_2.prefixPerMod).toBe('prefix2');
     expect(metadataPerMod1_3.prefixPerMod).toBe('');
-    expect(metadataPerMod1_2.applyControllers).toBe(true);
-    expect(metadataPerMod1_3.applyControllers).toBe(false);
+    // expect(metadataPerMod1_2.applyControllers).toBe(true);
+    // expect(metadataPerMod1_3.applyControllers).toBe(false);
   });
 });

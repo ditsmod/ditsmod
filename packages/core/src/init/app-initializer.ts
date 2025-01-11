@@ -15,12 +15,10 @@ import { ExtensionsContext } from '#extension/extensions-context.js';
 import { ExtensionsManager, InternalExtensionsManager } from '#extension/extensions-manager.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { PerAppService } from '#services/per-app.service.js';
-import { PreRouter } from '#services/pre-router.js';
 import { ModRefId, ModuleType } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { ExtensionCounters, ExtensionsGroupToken } from '#extension/extension-types.js';
-import { RequestListener } from '#types/server-options.js';
 import { getCollisions } from '#utils/get-collisions.js';
 import { getDuplicates } from '#utils/get-duplicates.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
@@ -37,7 +35,7 @@ import { getDebugClassName } from '#utils/get-debug-class-name.js';
 
 export class AppInitializer {
   protected perAppService = new PerAppService();
-  protected preRouter: PreRouter;
+  // protected preRouter: PreRouter;
   protected meta: NormalizedModuleMetadata;
   protected unfinishedScanModules = new Set<ModuleType | ModuleWithParams>();
   protected server: HttpServer;
@@ -179,7 +177,7 @@ export class AppInitializer {
     await this.handleExtensions(mMetadataPerMod2, extensionCounters);
     const injectorPerApp = this.perAppService.reinitInjector();
     this.systemLogMediator = injectorPerApp.get(SystemLogMediator) as SystemLogMediator;
-    this.preRouter = injectorPerApp.get(PreRouter) as PreRouter;
+    // this.preRouter = injectorPerApp.get(PreRouter) as PreRouter;
     return appMetadataMap;
   }
 
@@ -426,7 +424,7 @@ export class AppInitializer {
     counter.resetInitedExtensionsSet();
   }
 
-  requestListener: RequestListener = (rawReq, rawRes) => this.preRouter.requestListener(rawReq, rawRes);
+  // requestListener: RequestListener = (rawReq, rawRes) => this.preRouter.requestListener(rawReq, rawRes);
 }
 
 /**

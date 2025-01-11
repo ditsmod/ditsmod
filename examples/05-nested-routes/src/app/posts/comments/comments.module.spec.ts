@@ -1,4 +1,5 @@
-import { Injector, Res } from '@ditsmod/core';
+import { Injector } from '@ditsmod/core';
+import { Res } from '@ditsmod/routing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CommentsController } from './comments.controller.js';

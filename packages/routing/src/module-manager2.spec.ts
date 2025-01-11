@@ -7,7 +7,6 @@ import {
   ModuleType,
   ModuleWithParams,
   NormalizedModuleMetadata,
-  RequestContext,
   rootModule,
   SystemLogMediator,
 } from '@ditsmod/core';
@@ -15,6 +14,7 @@ import {
 import { CanActivate, guard } from './interceptors/guard.js';
 import { AppendsWithParams } from './types.js';
 import { controller } from './controller.js';
+import { RequestContext } from './request-context.js';
 
 let mock: MockModuleManager;
 

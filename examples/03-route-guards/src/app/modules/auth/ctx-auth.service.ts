@@ -1,4 +1,5 @@
-import { RequestContext, injectable } from '@ditsmod/core';
+import { injectable } from '@ditsmod/core';
+import { RequestContext } from '@ditsmod/routing';
 
 import { Permission } from './types.js';
 

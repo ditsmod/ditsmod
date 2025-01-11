@@ -1,9 +1,8 @@
 import { describe, beforeEach, expect, it } from 'vitest';
 
-import { FactoryProvider, injectable, Provider, Injector } from '#di';
+import { injectable, Provider, Injector } from '#di';
 import { featureModule } from '#decorators/module.js';
 import { rootModule } from '#decorators/root-module.js';
-import { ModuleExtract } from '#types/module-extract.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { ModuleFactory } from '#init/module-factory.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
@@ -11,10 +10,8 @@ import { ModuleManager } from '#init/module-manager.js';
 import { GlobalProviders, ImportObj, MetadataPerMod1 } from '#types/metadata-per-mod.js';
 import { ModuleType, Scope } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
-import { Router } from '#types/router.js';
-import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
+import { getImportedProviders } from '#utils/get-imports.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { makePropDecorator } from '#di';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 
 type ModRefId = ModuleType | ModuleWithParams;

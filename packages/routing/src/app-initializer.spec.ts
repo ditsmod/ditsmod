@@ -13,13 +13,13 @@ import {
   NormalizedModuleMetadata,
   Provider,
   rootModule,
-  Router,
   SystemLogMediator,
 } from '@ditsmod/core';
 import { beforeAll, describe, expect, it } from 'vitest';
 
 import { controller } from './controller.js';
 import { ImportObj } from './module-factory.spec.js';
+import { Router } from './router.js';
 
 function getImportedTokens(map: Map<any, ImportObj<Provider>> | undefined) {
   return [...(map || [])].map(([key]) => key);

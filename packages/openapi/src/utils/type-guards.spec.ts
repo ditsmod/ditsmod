@@ -1,5 +1,5 @@
-import { RequestContext, reflector } from '@ditsmod/core';
-import { CanActivate } from '@ditsmod/routing';
+import { reflector } from '@ditsmod/core';
+import { RequestContext, CanActivate } from '@ditsmod/routing';
 import { describe, expect, it } from 'vitest';
 
 import { oasGuard } from '#decorators/oas-guard.js';

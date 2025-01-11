@@ -3,13 +3,11 @@ import {
   inject,
   injectable,
   Injector,
-  RawRequest,
-  RAW_REQ,
   optional,
-  QUERY_PARAMS,
   Logger,
 } from '@ditsmod/core';
 import { DictService, I18nErrorMediator, I18nLogMediator, I18nOptions, ISO639 } from '@ditsmod/i18n';
+import { QUERY_PARAMS, RAW_REQ, RawRequest } from '@ditsmod/routing';
 
 @injectable()
 export class MyDictService extends DictService {

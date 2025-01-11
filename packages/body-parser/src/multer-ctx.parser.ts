@@ -1,4 +1,5 @@
-import { injectable, optional, RequestContext } from '@ditsmod/core';
+import { injectable, optional } from '@ditsmod/core';
+import { RequestContext } from '@ditsmod/routing';
 import { Multer, MulterGroup } from '@ts-stack/multer';
 
 import { MulterExtendedOptions } from './multer-extended-options.js';

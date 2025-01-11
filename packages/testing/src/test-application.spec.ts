@@ -1,4 +1,5 @@
-import { AppOptions, ModuleType, rootModule, Router } from '@ditsmod/core';
+import { AppOptions, ModuleType, rootModule } from '@ditsmod/core';
+import { Router } from '@ditsmod/routing';
 import { Server } from 'node:http';
 import { describe, expect, it } from 'vitest';
 

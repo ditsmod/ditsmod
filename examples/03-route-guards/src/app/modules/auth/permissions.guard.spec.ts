@@ -1,4 +1,5 @@
-import { Injector, RequestContext, Status } from '@ditsmod/core';
+import { Injector, Status } from '@ditsmod/core';
+import { RequestContext } from '@ditsmod/routing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { PermissionsGuard } from './permissions.guard.js';
