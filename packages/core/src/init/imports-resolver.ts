@@ -44,13 +44,11 @@ export class ImportsResolver {
         meta,
         importedTokensMap,
         // guardsPerMod1,
-        applyControllers,
         prefixPerMod,
       } = metadataPerMod1;
       mMetadataPerMod2.set(meta.modRefId, {
         meta,
         // guardsPerMod1,
-        applyControllers,
         prefixPerMod,
       });
       this.resolveImportedProviders(meta, importedTokensMap, scopes);

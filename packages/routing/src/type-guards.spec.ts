@@ -1,13 +1,29 @@
-import { controller, featureModule, injectable, isModuleWithParams, reflector, RequestContext } from '@ditsmod/core';
+import { featureModule, injectable, isModuleWithParams, reflector, RequestContext } from '@ditsmod/core';
 import { describe, expect, it } from 'vitest';
 
 import { route } from './decorators/route.js';
-import { isInterceptor, isRoute } from './type.guards.js';
+import { isCtrlDecor, isInterceptor, isRoute } from './type.guards.js';
 import { HttpHandler, HttpInterceptor } from '#interceptors/tokens-and-types.js';
 import { CanActivate } from './interceptors/guard.js';
 import { AppendsWithParams } from './types.js';
+import { controller } from './controller.js';
 
 describe('type guards', () => {
+  describe('isController()', () => {
+    it('class with decorator', () => {
+      @controller()
+      class Module1 {}
+      const metadata = reflector.getDecorators(Module1)![0];
+      expect(isCtrlDecor(metadata)).toBe(true);
+    });
+
+    it('class without decorator', () => {
+      class Module1 {}
+      const metadata = reflector.getMetadata(Module1);
+      expect(isCtrlDecor(metadata)).toBe(false);
+    });
+  });
+
   describe('isAppendsWithParams', () => {
     it('appends with params', () => {
       @featureModule({})

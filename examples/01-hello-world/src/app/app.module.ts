@@ -1,5 +1,5 @@
-import { controller, rootModule, Providers } from '@ditsmod/core';
-import { route, RoutingModule } from '@ditsmod/routing';
+import { rootModule, Providers } from '@ditsmod/core';
+import { controller, route, RoutingModule } from '@ditsmod/routing';
 
 @controller()
 export class DefaultController {

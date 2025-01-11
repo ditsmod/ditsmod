@@ -1,5 +1,5 @@
-import { inject, controller, Logger, Res } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+import { inject, Logger, Res } from '@ditsmod/core';
+import { controller, route } from '@ditsmod/routing';
 import { Logger as WinstonLogger } from 'winston';
 
 @controller()

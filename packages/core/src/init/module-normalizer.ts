@@ -1,6 +1,5 @@
 import { isClassProvider, isMultiProvider, isNormalizedProvider, isTokenProvider, isValueProvider, MultiProvider } from '#di';
 import {
-  isCtrlDecor,
   isModDecor,
   isModuleWithParams,
   isRootModule,
@@ -115,19 +114,19 @@ export class ModuleNormalizer {
     this.pickMeta(meta, rawMeta);
     meta.extensionsMeta = { ...(meta.extensionsMeta || {}) };
     this.quickCheckMetadata(meta);
-    meta.controllers.forEach((Controller) => this.checkController(modName, Controller));
+    // meta.controllers.forEach((Controller) => this.checkController(modName, Controller));
 
     return meta;
   }
 
-  protected checkController(modName: string, Controller: Class) {
-    if (!reflector.getDecorators(Controller, isCtrlDecor)) {
-      throw new Error(
-        `Collecting controller's metadata in ${modName} failed: class ` +
-          `"${Controller.name}" does not have the "@controller()" decorator.`,
-      );
-    }
-  }
+  // protected checkController(modName: string, Controller: Class) {
+  //   if (!reflector.getDecorators(Controller, isCtrlDecor)) {
+  //     throw new Error(
+  //       `Collecting controller's metadata in ${modName} failed: class ` +
+  //         `"${Controller.name}" does not have the "@controller()" decorator.`,
+  //     );
+  //   }
+  // }
 
   protected checkExtensionConfig(modName: string, extensionConfig: ExtensionConfig, i: number) {
     if (!isConfigWithOverrideExtension(extensionConfig)) {
@@ -233,7 +232,7 @@ export class ModuleNormalizer {
     if (
       !isRootModule(meta) &&
       !meta.exportedProvidersPerReq.length &&
-      !meta.controllers.length &&
+      // !meta.controllers.length &&
       !meta.exportedProvidersPerMod.length &&
       !meta.exportedProvidersPerRou.length &&
       !meta.exportsModules.length &&

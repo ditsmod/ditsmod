@@ -1,7 +1,6 @@
 import { describe, beforeEach, expect, it } from 'vitest';
 
 import { FactoryProvider, injectable, Provider, Injector } from '#di';
-import { controller } from '#decorators/controller.js';
 import { featureModule } from '#decorators/module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { ModuleExtract } from '#types/module-extract.js';
@@ -231,658 +230,658 @@ describe('ModuleFactory', () => {
     const overriddenProvider8: Provider = { token: Provider8, useValue: 'overridden' };
     class Provider9 {}
 
-    describe('exporting providers order', () => {
-      @featureModule({
-        exports: [Provider0],
-        providersPerMod: [Provider0],
-      })
-      class Module0 {}
+    // describe('exporting providers order', () => {
+    //   @featureModule({
+    //     exports: [Provider0],
+    //     providersPerMod: [Provider0],
+    //   })
+    //   class Module0 {}
 
-      @featureModule({
-        imports: [Module0],
-        exports: [Module0, Provider1, Provider2, Provider3],
-        providersPerMod: [Provider1, Provider2, Provider3],
-      })
-      class Module1 {}
+    //   @featureModule({
+    //     imports: [Module0],
+    //     exports: [Module0, Provider1, Provider2, Provider3],
+    //     providersPerMod: [Provider1, Provider2, Provider3],
+    //   })
+    //   class Module1 {}
 
-      @featureModule({
-        imports: [Module1],
-        exports: [Module1, Provider5, Provider8],
-        providersPerMod: [Provider4, Provider5, Provider6],
-        providersPerReq: [Provider7, Provider8],
-      })
-      class Module2 {}
+    //   @featureModule({
+    //     imports: [Module1],
+    //     exports: [Module1, Provider5, Provider8],
+    //     providersPerMod: [Provider4, Provider5, Provider6],
+    //     providersPerReq: [Provider7, Provider8],
+    //   })
+    //   class Module2 {}
 
-      @controller()
-      class Ctrl {
-        method() {}
-      }
+    //   @controller()
+    //   class Ctrl {
+    //     method() {}
+    //   }
 
-      @featureModule({
-        imports: [Module2],
-        exports: [Module2],
-        providersPerReq: [Provider9, overriddenProvider8],
-        controllers: [Ctrl],
-      })
-      class Module3 {}
+    //   @featureModule({
+    //     imports: [Module2],
+    //     exports: [Module2],
+    //     providersPerReq: [Provider9, overriddenProvider8],
+    //     controllers: [Ctrl],
+    //   })
+    //   class Module3 {}
 
-      it('case 0', () => {
-        @featureModule({ controllers: [Ctrl] })
-        class Module1 {}
+    //   it('case 0', () => {
+    //     @featureModule({ controllers: [Ctrl] })
+    //     class Module1 {}
 
-        @rootModule({
-          imports: [Module1],
-        })
-        class AppModule {}
+    //     @rootModule({
+    //       imports: [Module1],
+    //     })
+    //     class AppModule {}
 
-        const meta = moduleManager.scanRootModule(AppModule);
-        expect(meta.providersPerReq).toEqual(meta.exportedProvidersPerReq);
-        expect(meta.providersPerReq).toEqual([]);
+    //     const meta = moduleManager.scanRootModule(AppModule);
+    //     expect(meta.providersPerReq).toEqual(meta.exportedProvidersPerReq);
+    //     expect(meta.providersPerReq).toEqual([]);
 
-        mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set());
-        expect(mock.appMetadataMap.get(AppModule)?.meta.exportedProvidersPerReq).toEqual([]);
-      });
+    //     mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set());
+    //     expect(mock.appMetadataMap.get(AppModule)?.meta.exportedProvidersPerReq).toEqual([]);
+    //   });
 
-      it('case 1', () => {
-        const injectorPerApp = Injector.resolveAndCreate([...defaultProvidersPerApp]);
+    //   it('case 1', () => {
+    //     const injectorPerApp = Injector.resolveAndCreate([...defaultProvidersPerApp]);
 
-        mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
-        mock.injectorPerMod = injectorPerApp;
-        moduleManager.scanModule(Module3);
-        mock.bootstrap([], new GlobalProviders(), '', Module3, moduleManager, new Set());
+    //     mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
+    //     mock.injectorPerMod = injectorPerApp;
+    //     moduleManager.scanModule(Module3);
+    //     mock.bootstrap([], new GlobalProviders(), '', Module3, moduleManager, new Set());
 
-        const mod0 = mock.appMetadataMap.get(Module0);
-        const moduleExtract: ModuleExtract = { path: '', moduleName: 'Module0', isExternal: false };
-        const providerPerMod0: Provider = {
-          token: ModuleExtract,
-          useValue: moduleExtract,
-        };
-        expect(mod0?.meta.providersPerMod).toEqual([providerPerMod0, Provider0]);
-        expect(mod0?.meta.providersPerReq).toEqual([]);
-        expect(mod0?.meta.decorator).toBe(featureModule);
+    //     const mod0 = mock.appMetadataMap.get(Module0);
+    //     const moduleExtract: ModuleExtract = { path: '', moduleName: 'Module0', isExternal: false };
+    //     const providerPerMod0: Provider = {
+    //       token: ModuleExtract,
+    //       useValue: moduleExtract,
+    //     };
+    //     expect(mod0?.meta.providersPerMod).toEqual([providerPerMod0, Provider0]);
+    //     expect(mod0?.meta.providersPerReq).toEqual([]);
+    //     expect(mod0?.meta.decorator).toBe(featureModule);
 
-        const mod1 = mock.appMetadataMap.get(Module1);
-        const moduleExtract2: ModuleExtract = { path: '', moduleName: 'Module1', isExternal: false };
-        const providerPerMod1: Provider = {
-          token: ModuleExtract,
-          useValue: moduleExtract2,
-        };
-        expect(mod1?.meta.providersPerMod).toEqual([providerPerMod1, Provider1, Provider2, Provider3]);
+    //     const mod1 = mock.appMetadataMap.get(Module1);
+    //     const moduleExtract2: ModuleExtract = { path: '', moduleName: 'Module1', isExternal: false };
+    //     const providerPerMod1: Provider = {
+    //       token: ModuleExtract,
+    //       useValue: moduleExtract2,
+    //     };
+    //     expect(mod1?.meta.providersPerMod).toEqual([providerPerMod1, Provider1, Provider2, Provider3]);
 
-        const tokensPerMod = getImportedTokens(mod1?.importedTokensMap.perMod);
-        expect(tokensPerMod).toEqual([Provider0]);
+    //     const tokensPerMod = getImportedTokens(mod1?.importedTokensMap.perMod);
+    //     expect(tokensPerMod).toEqual([Provider0]);
 
-        expect(mod1?.meta.providersPerReq).toEqual([]);
-        expect(mod1?.meta.decorator).toBe(featureModule);
+    //     expect(mod1?.meta.providersPerReq).toEqual([]);
+    //     expect(mod1?.meta.decorator).toBe(featureModule);
 
-        const mod2 = mock.appMetadataMap.get(Module2);
-        const moduleExtract3: ModuleExtract = { path: '', moduleName: 'Module2', isExternal: false };
-        const providerPerMod2: Provider = {
-          token: ModuleExtract,
-          useValue: moduleExtract3,
-        };
-        expect(mod2?.meta.providersPerMod).toEqual([providerPerMod2, Provider4, Provider5, Provider6]);
+    //     const mod2 = mock.appMetadataMap.get(Module2);
+    //     const moduleExtract3: ModuleExtract = { path: '', moduleName: 'Module2', isExternal: false };
+    //     const providerPerMod2: Provider = {
+    //       token: ModuleExtract,
+    //       useValue: moduleExtract3,
+    //     };
+    //     expect(mod2?.meta.providersPerMod).toEqual([providerPerMod2, Provider4, Provider5, Provider6]);
 
-        const tokensPerMod2 = getImportedTokens(mod2?.importedTokensMap.perMod);
-        expect(tokensPerMod2).toEqual([Provider0, Provider1, Provider2, Provider3]);
+    //     const tokensPerMod2 = getImportedTokens(mod2?.importedTokensMap.perMod);
+    //     expect(tokensPerMod2).toEqual([Provider0, Provider1, Provider2, Provider3]);
 
-        expect(mod2?.meta.providersPerReq).toEqual([Provider7, Provider8]);
-        expect(mod2?.meta.decorator).toBe(featureModule);
+    //     expect(mod2?.meta.providersPerReq).toEqual([Provider7, Provider8]);
+    //     expect(mod2?.meta.decorator).toBe(featureModule);
 
-        const mod3 = mock.appMetadataMap.get(Module3);
-        const moduleExtract4: ModuleExtract = { path: '', moduleName: 'Module3', isExternal: false };
-        const providerPerMod3: Provider = {
-          token: ModuleExtract,
-          useValue: moduleExtract4,
-        };
-        expect(mod3?.meta.providersPerMod).toEqual([providerPerMod3]);
+    //     const mod3 = mock.appMetadataMap.get(Module3);
+    //     const moduleExtract4: ModuleExtract = { path: '', moduleName: 'Module3', isExternal: false };
+    //     const providerPerMod3: Provider = {
+    //       token: ModuleExtract,
+    //       useValue: moduleExtract4,
+    //     };
+    //     expect(mod3?.meta.providersPerMod).toEqual([providerPerMod3]);
 
-        // expect(mod3.providersPerReq).toEqual([Ctrl, [], Provider8, Provider9, overriddenProvider8]);
-        expect(mod3?.meta.controllers).toEqual([Ctrl]);
-        expect(mod3?.meta.decorator).toBe(featureModule);
-      });
+    //     // expect(mod3.providersPerReq).toEqual([Ctrl, [], Provider8, Provider9, overriddenProvider8]);
+    //     expect(mod3?.meta.controllers).toEqual([Ctrl]);
+    //     expect(mod3?.meta.decorator).toBe(featureModule);
+    //   });
 
-      it('case 2', () => {
-        @rootModule({
-          imports: [Module3],
-        })
-        class Module4 {}
-        const providers: Provider[] = [...defaultProvidersPerApp, { token: Router, useValue: 'fake' }];
-        const injectorPerApp = Injector.resolveAndCreate(providers);
-        mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
-        mock.injectorPerMod = injectorPerApp;
-        moduleManager.scanModule(Module4);
-        mock.bootstrap([], new GlobalProviders(), 'other', Module4, moduleManager, new Set());
+    //   it('case 2', () => {
+    //     @rootModule({
+    //       imports: [Module3],
+    //     })
+    //     class Module4 {}
+    //     const providers: Provider[] = [...defaultProvidersPerApp, { token: Router, useValue: 'fake' }];
+    //     const injectorPerApp = Injector.resolveAndCreate(providers);
+    //     mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
+    //     mock.injectorPerMod = injectorPerApp;
+    //     moduleManager.scanModule(Module4);
+    //     mock.bootstrap([], new GlobalProviders(), 'other', Module4, moduleManager, new Set());
 
-        expect(mock.prefixPerMod).toBe('other');
-        // expect(mock.router.find('GET', '/some/other').handle().controller).toBe(Ctrl);
-        const moduleExtract: ModuleExtract = { path: 'other', moduleName: 'Module4', isExternal: false };
-        const providerPerMod: Provider = {
-          token: ModuleExtract,
-          useValue: moduleExtract,
-        };
-        expect(mock.meta.providersPerMod).toEqual([providerPerMod]);
+    //     expect(mock.prefixPerMod).toBe('other');
+    //     // expect(mock.router.find('GET', '/some/other').handle().controller).toBe(Ctrl);
+    //     const moduleExtract: ModuleExtract = { path: 'other', moduleName: 'Module4', isExternal: false };
+    //     const providerPerMod: Provider = {
+    //       token: ModuleExtract,
+    //       useValue: moduleExtract,
+    //     };
+    //     expect(mock.meta.providersPerMod).toEqual([providerPerMod]);
 
-        expect(mock?.importedProvidersPerMod).toBeDefined();
-        const importObj = new ImportObj();
-        importObj.modRefId = Module0;
-        importObj.providers = [Provider0];
-        expect(mock?.importedProvidersPerMod.get(Provider0)).toEqual(importObj);
+    //     expect(mock?.importedProvidersPerMod).toBeDefined();
+    //     const importObj = new ImportObj();
+    //     importObj.modRefId = Module0;
+    //     importObj.providers = [Provider0];
+    //     expect(mock?.importedProvidersPerMod.get(Provider0)).toEqual(importObj);
 
-        importObj.modRefId = Module1;
-        importObj.providers = [Provider1];
-        expect(mock?.importedProvidersPerMod.get(Provider1)).toEqual(importObj);
-        importObj.providers = [Provider2];
-        expect(mock?.importedProvidersPerMod.get(Provider2)).toEqual(importObj);
-        importObj.providers = [Provider3];
-        expect(mock?.importedProvidersPerMod.get(Provider3)).toEqual(importObj);
+    //     importObj.modRefId = Module1;
+    //     importObj.providers = [Provider1];
+    //     expect(mock?.importedProvidersPerMod.get(Provider1)).toEqual(importObj);
+    //     importObj.providers = [Provider2];
+    //     expect(mock?.importedProvidersPerMod.get(Provider2)).toEqual(importObj);
+    //     importObj.providers = [Provider3];
+    //     expect(mock?.importedProvidersPerMod.get(Provider3)).toEqual(importObj);
 
-        importObj.modRefId = Module2;
-        importObj.providers = [Provider5];
-        expect(mock?.importedProvidersPerMod.get(Provider5)).toEqual(importObj);
+    //     importObj.modRefId = Module2;
+    //     importObj.providers = [Provider5];
+    //     expect(mock?.importedProvidersPerMod.get(Provider5)).toEqual(importObj);
 
-        expect(mock.meta.providersPerReq).toEqual([]);
+    //     expect(mock.meta.providersPerReq).toEqual([]);
 
-        importObj.modRefId = Module2;
-        importObj.providers = [Provider8];
-        expect(mock?.importedProvidersPerReq.get(Provider8)).toEqual(importObj);
-        expect(mock.meta.decorator).toBe(rootModule);
-      });
+    //     importObj.modRefId = Module2;
+    //     importObj.providers = [Provider8];
+    //     expect(mock?.importedProvidersPerReq.get(Provider8)).toEqual(importObj);
+    //     expect(mock.meta.decorator).toBe(rootModule);
+    //   });
 
-      it('importDependenciesOfImportedProviders() case 1', () => {
-        class Provider1 {}
+    //   it('importDependenciesOfImportedProviders() case 1', () => {
+    //     class Provider1 {}
 
-        @injectable()
-        class Provider2 {
-          constructor(provider1: Provider1) {}
-        }
+    //     @injectable()
+    //     class Provider2 {
+    //       constructor(provider1: Provider1) {}
+    //     }
 
-        class Provider3 {}
+    //     class Provider3 {}
 
-        @featureModule({
-          providersPerReq: [Provider1],
-          exports: [Provider1],
-        })
-        class Module1 {}
+    //     @featureModule({
+    //       providersPerReq: [Provider1],
+    //       exports: [Provider1],
+    //     })
+    //     class Module1 {}
 
-        @featureModule({
-          imports: [Module1],
-          providersPerReq: [Provider2],
-          exports: [Provider2],
-        })
-        class Module2 {}
+    //     @featureModule({
+    //       imports: [Module1],
+    //       providersPerReq: [Provider2],
+    //       exports: [Provider2],
+    //     })
+    //     class Module2 {}
 
-        @featureModule({
-          imports: [Module2],
-          providersPerReq: [Provider3],
-          controllers: [Ctrl],
-        })
-        class Module3 {}
+    //     @featureModule({
+    //       imports: [Module2],
+    //       providersPerReq: [Provider3],
+    //       controllers: [Ctrl],
+    //     })
+    //     class Module3 {}
 
-        const injectorPerApp = Injector.resolveAndCreate([...defaultProvidersPerApp]);
+    //     const injectorPerApp = Injector.resolveAndCreate([...defaultProvidersPerApp]);
 
-        mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
-        mock.injectorPerMod = injectorPerApp;
-        moduleManager.scanModule(Module3);
-        mock.bootstrap([], new GlobalProviders(), '', Module3, moduleManager, new Set());
+    //     mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
+    //     mock.injectorPerMod = injectorPerApp;
+    //     moduleManager.scanModule(Module3);
+    //     mock.bootstrap([], new GlobalProviders(), '', Module3, moduleManager, new Set());
 
-        const mod3 = mock.appMetadataMap.get(Module3);
-        expect(mod3?.meta.providersPerReq).toEqual([Provider3]);
+    //     const mod3 = mock.appMetadataMap.get(Module3);
+    //     expect(mod3?.meta.providersPerReq).toEqual([Provider3]);
 
-        expect(mock?.importedProvidersPerReq).toBeDefined();
-        const importObj = new ImportObj();
-        importObj.modRefId = Module2;
-        importObj.providers = [Provider2];
-        expect(mock?.importedProvidersPerReq.get(Provider2)).toEqual(importObj);
-        expect(mod3?.meta.decorator).toBe(featureModule);
-      });
+    //     expect(mock?.importedProvidersPerReq).toBeDefined();
+    //     const importObj = new ImportObj();
+    //     importObj.modRefId = Module2;
+    //     importObj.providers = [Provider2];
+    //     expect(mock?.importedProvidersPerReq.get(Provider2)).toEqual(importObj);
+    //     expect(mod3?.meta.decorator).toBe(featureModule);
+    //   });
 
-      it('should throw an error about not proper provider exports', () => {
-        @featureModule({
-          exports: [Provider1, Provider2, Provider3],
-          providersPerMod: [Provider1, Provider3],
-        })
-        class Module6 {}
+    //   it('should throw an error about not proper provider exports', () => {
+    //     @featureModule({
+    //       exports: [Provider1, Provider2, Provider3],
+    //       providersPerMod: [Provider1, Provider3],
+    //     })
+    //     class Module6 {}
 
-        @rootModule({
-          imports: [Module6],
-        })
-        class Module7 {}
-        const providers = [...defaultProvidersPerApp] as Provider[];
-        const injectorPerApp = Injector.resolveAndCreate(providers);
-        mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
-        mock.injectorPerMod = injectorPerApp;
-        const msg = 'Module6 failed: if "Provider2" is a provider';
-        expect(() => moduleManager.scanModule(Module7)).toThrow(msg);
-      });
-    });
+    //     @rootModule({
+    //       imports: [Module6],
+    //     })
+    //     class Module7 {}
+    //     const providers = [...defaultProvidersPerApp] as Provider[];
+    //     const injectorPerApp = Injector.resolveAndCreate(providers);
+    //     mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
+    //     mock.injectorPerMod = injectorPerApp;
+    //     const msg = 'Module6 failed: if "Provider2" is a provider';
+    //     expect(() => moduleManager.scanModule(Module7)).toThrow(msg);
+    //   });
+    // });
 
     describe('Providers collisions', () => {
-      describe('per a module', () => {
-        it('in global providers', () => {
-          class Provider1 {}
-
-          @featureModule({
-            providersPerMod: [{ token: Provider1, useValue: 'one' }],
-            exports: [Provider1],
-          })
-          class Module1 {}
-
-          @featureModule({
-            imports: [Module1],
-            providersPerMod: [Provider1],
-            exports: [Module1, Provider1],
-          })
-          class Module2 {}
-
-          @rootModule({
-            imports: [Module2],
-            exports: [Module2],
-          })
-          class AppModule {}
-
-          moduleManager.scanRootModule(AppModule);
-          const msg = 'AppModule failed: exports from Module1, Module2 causes collision with Provider1.';
-          expect(() => mock.exportGlobalProviders(moduleManager, [])).toThrow(msg);
-        });
-
-        it('in AppModule with exported provider, but it has resolvedCollisionsPerMod array', () => {
-          class Provider1 {}
-
-          @featureModule({
-            providersPerMod: [{ token: Provider1, useValue: 'one' }],
-            exports: [Provider1],
-          })
-          class Module1 {}
-
-          @featureModule({
-            imports: [Module1],
-            providersPerMod: [Provider1],
-            exports: [Module1, Provider1],
-          })
-          class Module2 {}
-
-          @rootModule({
-            imports: [Module2],
-            resolvedCollisionsPerMod: [[Provider1, Module1]],
-            exports: [Module2],
-          })
-          class AppModule {}
-
-          moduleManager.scanRootModule(AppModule);
-          expect(() => mock.exportGlobalProviders(moduleManager, [])).not.toThrow();
-          expect([...mock.importedProvidersPerMod]).toEqual([
-            [Provider1, { modRefId: Module1, providers: [{ token: Provider1, useValue: 'one' }] }],
-          ]);
-        });
-
-        it('identical duplicates but not collision with exported providers', () => {
-          class Provider1 {}
-
-          @featureModule({
-            providersPerMod: [{ token: Provider1, useValue: 'one' }],
-            exports: [Provider1],
-          })
-          class Module1 {}
-
-          @featureModule({
-            imports: [Module1],
-            providersPerMod: [{ token: Provider1, useValue: 'one' }],
-            exports: [Module1, Provider1],
-          })
-          class Module2 {}
-
-          @rootModule({
-            imports: [Module2],
-            exports: [Module2],
-          })
-          class AppModule {}
-
-          moduleManager.scanRootModule(AppModule);
-          expect(() => mock.exportGlobalProviders(moduleManager, [])).not.toThrow();
-        });
-
-        it('import Module2 and reexport Module1 with collision - Provider2', () => {
-          class Provider1 {}
-          class Provider2 {}
-          class Provider3 {}
-          const factory = makePropDecorator();
-
-          class ClassWithFactory {
-            @factory()
-            method1() {}
-          }
-
-          @featureModule({
-            providersPerMod: [
-              Provider1,
-              { token: Provider2, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
-            ],
-            exports: [Provider1, Provider2],
-          })
-          class Module1 {}
-
-          @featureModule({
-            imports: [Module1],
-            providersPerMod: [Provider2, Provider3],
-            exports: [Module1, Provider2, Provider3],
-          })
-          class Module2 {}
-
-          @rootModule({
-            imports: [Module2],
-          })
-          class AppModule {}
-
-          moduleManager.scanRootModule(AppModule);
-          const msg = 'AppModule failed: exports from Module1, Module2 causes collision with Provider2.';
-          expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
-        });
-
-        it('import Module2 and Module1 with collision - Provider1', () => {
-          class Provider1 {}
-          class Provider2 {}
-          const factory = makePropDecorator();
-
-          class ClassWithFactory {
-            @factory()
-            method1() {}
-          }
-
-          @featureModule({
-            exports: [Provider1],
-            providersPerMod: [{ token: Provider1, useClass: Provider1 }, Provider2],
-          })
-          class Module1 {}
-
-          @featureModule({
-            exports: [Provider1, Provider2],
-            providersPerMod: [
-              Provider1,
-              { token: Provider2, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
-            ],
-          })
-          class Module2 {}
-
-          @rootModule({ imports: [Module1, Module2] })
-          class AppModule {}
-
-          moduleManager.scanRootModule(AppModule);
-          const msg = 'AppModule failed: exports from Module1, Module2 causes collision with Provider1.';
-          expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
-        });
-
-        it('import multi providers that has token Provider1', () => {
-          class Provider1 {}
-          class Provider2 {}
-
-          @featureModule({
-            exports: [Provider1],
-            providersPerMod: [
-              { token: Provider1, useValue: 'value1 of module1', multi: true },
-              { token: Provider1, useValue: 'value2 of module1', multi: true },
-              Provider2,
-            ],
-          })
-          class Module1 {}
-
-          @featureModule({
-            exports: [Provider1, Provider2],
-            providersPerMod: [
-              { token: Provider1, useValue: 'value1 of module2', multi: true },
-              { token: Provider1, useValue: 'value2 of module2', multi: true },
-              { token: Provider1, useValue: 'value3 of module2', multi: true },
-              { token: Provider2, useValue: 'value100' },
-            ],
-          })
-          class Module2 {}
-
-          @rootModule({ imports: [Module1, Module2] })
-          class AppModule {}
-
-          moduleManager.scanRootModule(AppModule);
-          const callback = () => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set());
-          expect(callback).not.toThrow();
-          expect([...mock.importedProvidersPerMod]).toEqual([
-            [
-              Provider2,
-              {
-                modRefId: Module2,
-                providers: [{ token: Provider2, useValue: 'value100' }],
-              },
-            ],
-          ]);
-          expect([...mock.importedMultiProvidersPerMod]).toEqual([
-            [
-              Module1,
-              [
-                { token: Provider1, useValue: 'value1 of module1', multi: true },
-                { token: Provider1, useValue: 'value2 of module1', multi: true },
-              ],
-            ],
-            [
-              Module2,
-              [
-                { token: Provider1, useValue: 'value1 of module2', multi: true },
-                { token: Provider1, useValue: 'value2 of module2', multi: true },
-                { token: Provider1, useValue: 'value3 of module2', multi: true },
-              ],
-            ],
-          ]);
-        });
-
-        it('should throw an error when resolving multi providers duplicates', () => {
-          class Provider1 {}
-
-          @featureModule({
-            exports: [Provider1],
-            providersPerMod: [{ token: Provider1, useValue: 'value1 of module1', multi: true }],
-          })
-          class Module1 {}
-
-          @featureModule({
-            exports: [Provider1],
-            providersPerMod: [{ token: Provider1, useValue: 'value1 of module2', multi: true }],
-          })
-          class Module2 {}
-
-          @rootModule({
-            imports: [Module1, Module2],
-            resolvedCollisionsPerMod: [[Provider1, Module1]],
-          })
-          class AppModule {}
-
-          moduleManager.scanRootModule(AppModule);
-          const msg = 'but Provider1 is a token of the multi providers,';
-          expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
-        });
-
-        it('exporting duplicates with "multi == true" not to throw', () => {
-          class Provider1 {}
-          class Provider2 {}
-
-          @featureModule({
-            exports: [Provider1],
-            providersPerMod: [{ token: Provider1, useClass: Provider1, multi: true }, Provider2],
-          })
-          class Module1 {}
-
-          @featureModule({
-            exports: [Provider1],
-            providersPerMod: [{ token: Provider1, useClass: Provider1, multi: true }],
-          })
-          class Module2 {}
-
-          @rootModule({
-            imports: [Module1, Module2],
-            providersPerApp: [{ token: Router, useValue: 'fake' }],
-          })
-          class AppModule {}
-
-          moduleManager.scanRootModule(AppModule);
-          expect(() =>
-            mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set()),
-          ).not.toThrow();
-        });
-
-        it('exporting duplicates of Provider2, declared in resolvedCollisionsPerMod of root module', () => {
-          class Provider1 {}
-          class Provider2 {}
-          class Provider3 {}
-          const factory = makePropDecorator();
-
-          class ClassWithFactory {
-            @factory()
-            method1() {}
-          }
-          const useFactoryProvider2: FactoryProvider = {
-            token: Provider2,
-            useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1],
-          };
-
-          @featureModule({
-            providersPerMod: [Provider1, useFactoryProvider2],
-            exports: [Provider1, Provider2],
-          })
-          class Module1 {}
-
-          @featureModule({
-            imports: [Module1],
-            providersPerMod: [Provider2, Provider3],
-            exports: [Module1, Provider2, Provider3],
-          })
-          class Module2 {}
-
-          @rootModule({
-            imports: [Module2],
-            resolvedCollisionsPerMod: [[Provider2, Module1]],
-          })
-          class AppModule {}
-
-          moduleManager.scanRootModule(AppModule);
-          expect(() =>
-            mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set()),
-          ).not.toThrow();
-          expect([...mock.importedProvidersPerMod]).toEqual([
-            [Provider1, { modRefId: Module1, providers: [Provider1] }],
-            [Provider2, { modRefId: Module1, providers: [useFactoryProvider2] }],
-            [Provider3, { modRefId: Module2, providers: [Provider3] }],
-          ]);
-        });
-
-        it('exporting duplicates in Module2 (with params), but declared in resolvedCollisionsPerMod of root module', () => {
-          class Provider1 {}
-          class Provider2 {}
-
-          @featureModule({
-            exports: [Provider1],
-            providersPerMod: [Provider1, Provider2],
-          })
-          class Module1 {}
-
-          @featureModule({
-            exports: [Provider1, Provider2],
-            providersPerMod: [{ token: Provider1, useClass: Provider1 }, Provider2],
-          })
-          class Module2 {
-            static withParams() {
-              return { module: Module2 };
-            }
-          }
-
-          const moduleWithParams = Module2.withParams();
-
-          @rootModule({
-            imports: [Module1, moduleWithParams],
-            resolvedCollisionsPerMod: [[Provider1, Module1]],
-          })
-          class AppModule {}
-
-          moduleManager.scanRootModule(AppModule);
-          expect(() =>
-            mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set()),
-          ).not.toThrow();
-          expect([...mock.importedProvidersPerMod]).toEqual([
-            [Provider1, { modRefId: Module1, providers: [Provider1] }],
-            [Provider2, { modRefId: moduleWithParams, providers: [Provider2] }],
-          ]);
-        });
-
-        it('resolved collision for feature module', () => {
-          @controller()
-          class SomeController {}
-
-          @featureModule({
-            providersPerMod: [Provider1],
-            exports: [Provider1],
-          })
-          class Module1 {}
-
-          @featureModule({
-            providersPerMod: [{ token: Provider1, useValue: 'one' }],
-            exports: [Provider1],
-          })
-          class Module2 {}
-
-          @featureModule({
-            imports: [Module1, Module2],
-            controllers: [SomeController],
-            resolvedCollisionsPerMod: [[Provider1, Module1]],
-            exports: [Module1, Module2],
-          })
-          class Module3 {}
-
-          @rootModule({
-            imports: [Module3],
-            resolvedCollisionsPerMod: [[Provider1, Module2]],
-          })
-          class AppModule {}
-
-          moduleManager.scanRootModule(AppModule);
-          expect(() =>
-            mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set()),
-          ).not.toThrow();
-          const mod3 = mock.appMetadataMap.get(Module3)!;
-          expect([...mod3.importedTokensMap.perMod]).toEqual([
-            [Provider1, { modRefId: Module1, providers: [Provider1] }],
-          ]);
-          expect([...mock.importedProvidersPerMod]).toEqual([
-            [Provider1, { modRefId: Module2, providers: [{ token: Provider1, useValue: 'one' }] }],
-          ]);
-        });
-
-        it('for feature module', () => {
-          @controller()
-          class SomeController {}
-
-          @featureModule({
-            providersPerMod: [Provider1],
-            exports: [Provider1],
-          })
-          class Module1 {}
-
-          @featureModule({
-            providersPerMod: [{ token: Provider1, useValue: 'one' }],
-            exports: [Provider1],
-          })
-          class Module2 {}
-
-          @featureModule({
-            imports: [Module1, Module2],
-            controllers: [SomeController],
-          })
-          class Module3 {}
-
-          @rootModule({
-            imports: [Module3],
-          })
-          class AppModule {}
-
-          moduleManager.scanModule(AppModule);
-          const msg = 'Module3 failed: exports from Module1, Module2 causes collision with Provider1.';
-          expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
-        });
-      });
+      // describe('per a module', () => {
+      //   it('in global providers', () => {
+      //     class Provider1 {}
+
+      //     @featureModule({
+      //       providersPerMod: [{ token: Provider1, useValue: 'one' }],
+      //       exports: [Provider1],
+      //     })
+      //     class Module1 {}
+
+      //     @featureModule({
+      //       imports: [Module1],
+      //       providersPerMod: [Provider1],
+      //       exports: [Module1, Provider1],
+      //     })
+      //     class Module2 {}
+
+      //     @rootModule({
+      //       imports: [Module2],
+      //       exports: [Module2],
+      //     })
+      //     class AppModule {}
+
+      //     moduleManager.scanRootModule(AppModule);
+      //     const msg = 'AppModule failed: exports from Module1, Module2 causes collision with Provider1.';
+      //     expect(() => mock.exportGlobalProviders(moduleManager, [])).toThrow(msg);
+      //   });
+
+      //   it('in AppModule with exported provider, but it has resolvedCollisionsPerMod array', () => {
+      //     class Provider1 {}
+
+      //     @featureModule({
+      //       providersPerMod: [{ token: Provider1, useValue: 'one' }],
+      //       exports: [Provider1],
+      //     })
+      //     class Module1 {}
+
+      //     @featureModule({
+      //       imports: [Module1],
+      //       providersPerMod: [Provider1],
+      //       exports: [Module1, Provider1],
+      //     })
+      //     class Module2 {}
+
+      //     @rootModule({
+      //       imports: [Module2],
+      //       resolvedCollisionsPerMod: [[Provider1, Module1]],
+      //       exports: [Module2],
+      //     })
+      //     class AppModule {}
+
+      //     moduleManager.scanRootModule(AppModule);
+      //     expect(() => mock.exportGlobalProviders(moduleManager, [])).not.toThrow();
+      //     expect([...mock.importedProvidersPerMod]).toEqual([
+      //       [Provider1, { modRefId: Module1, providers: [{ token: Provider1, useValue: 'one' }] }],
+      //     ]);
+      //   });
+
+      //   it('identical duplicates but not collision with exported providers', () => {
+      //     class Provider1 {}
+
+      //     @featureModule({
+      //       providersPerMod: [{ token: Provider1, useValue: 'one' }],
+      //       exports: [Provider1],
+      //     })
+      //     class Module1 {}
+
+      //     @featureModule({
+      //       imports: [Module1],
+      //       providersPerMod: [{ token: Provider1, useValue: 'one' }],
+      //       exports: [Module1, Provider1],
+      //     })
+      //     class Module2 {}
+
+      //     @rootModule({
+      //       imports: [Module2],
+      //       exports: [Module2],
+      //     })
+      //     class AppModule {}
+
+      //     moduleManager.scanRootModule(AppModule);
+      //     expect(() => mock.exportGlobalProviders(moduleManager, [])).not.toThrow();
+      //   });
+
+      //   it('import Module2 and reexport Module1 with collision - Provider2', () => {
+      //     class Provider1 {}
+      //     class Provider2 {}
+      //     class Provider3 {}
+      //     const factory = makePropDecorator();
+
+      //     class ClassWithFactory {
+      //       @factory()
+      //       method1() {}
+      //     }
+
+      //     @featureModule({
+      //       providersPerMod: [
+      //         Provider1,
+      //         { token: Provider2, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
+      //       ],
+      //       exports: [Provider1, Provider2],
+      //     })
+      //     class Module1 {}
+
+      //     @featureModule({
+      //       imports: [Module1],
+      //       providersPerMod: [Provider2, Provider3],
+      //       exports: [Module1, Provider2, Provider3],
+      //     })
+      //     class Module2 {}
+
+      //     @rootModule({
+      //       imports: [Module2],
+      //     })
+      //     class AppModule {}
+
+      //     moduleManager.scanRootModule(AppModule);
+      //     const msg = 'AppModule failed: exports from Module1, Module2 causes collision with Provider2.';
+      //     expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
+      //   });
+
+      //   it('import Module2 and Module1 with collision - Provider1', () => {
+      //     class Provider1 {}
+      //     class Provider2 {}
+      //     const factory = makePropDecorator();
+
+      //     class ClassWithFactory {
+      //       @factory()
+      //       method1() {}
+      //     }
+
+      //     @featureModule({
+      //       exports: [Provider1],
+      //       providersPerMod: [{ token: Provider1, useClass: Provider1 }, Provider2],
+      //     })
+      //     class Module1 {}
+
+      //     @featureModule({
+      //       exports: [Provider1, Provider2],
+      //       providersPerMod: [
+      //         Provider1,
+      //         { token: Provider2, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
+      //       ],
+      //     })
+      //     class Module2 {}
+
+      //     @rootModule({ imports: [Module1, Module2] })
+      //     class AppModule {}
+
+      //     moduleManager.scanRootModule(AppModule);
+      //     const msg = 'AppModule failed: exports from Module1, Module2 causes collision with Provider1.';
+      //     expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
+      //   });
+
+      //   it('import multi providers that has token Provider1', () => {
+      //     class Provider1 {}
+      //     class Provider2 {}
+
+      //     @featureModule({
+      //       exports: [Provider1],
+      //       providersPerMod: [
+      //         { token: Provider1, useValue: 'value1 of module1', multi: true },
+      //         { token: Provider1, useValue: 'value2 of module1', multi: true },
+      //         Provider2,
+      //       ],
+      //     })
+      //     class Module1 {}
+
+      //     @featureModule({
+      //       exports: [Provider1, Provider2],
+      //       providersPerMod: [
+      //         { token: Provider1, useValue: 'value1 of module2', multi: true },
+      //         { token: Provider1, useValue: 'value2 of module2', multi: true },
+      //         { token: Provider1, useValue: 'value3 of module2', multi: true },
+      //         { token: Provider2, useValue: 'value100' },
+      //       ],
+      //     })
+      //     class Module2 {}
+
+      //     @rootModule({ imports: [Module1, Module2] })
+      //     class AppModule {}
+
+      //     moduleManager.scanRootModule(AppModule);
+      //     const callback = () => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set());
+      //     expect(callback).not.toThrow();
+      //     expect([...mock.importedProvidersPerMod]).toEqual([
+      //       [
+      //         Provider2,
+      //         {
+      //           modRefId: Module2,
+      //           providers: [{ token: Provider2, useValue: 'value100' }],
+      //         },
+      //       ],
+      //     ]);
+      //     expect([...mock.importedMultiProvidersPerMod]).toEqual([
+      //       [
+      //         Module1,
+      //         [
+      //           { token: Provider1, useValue: 'value1 of module1', multi: true },
+      //           { token: Provider1, useValue: 'value2 of module1', multi: true },
+      //         ],
+      //       ],
+      //       [
+      //         Module2,
+      //         [
+      //           { token: Provider1, useValue: 'value1 of module2', multi: true },
+      //           { token: Provider1, useValue: 'value2 of module2', multi: true },
+      //           { token: Provider1, useValue: 'value3 of module2', multi: true },
+      //         ],
+      //       ],
+      //     ]);
+      //   });
+
+      //   it('should throw an error when resolving multi providers duplicates', () => {
+      //     class Provider1 {}
+
+      //     @featureModule({
+      //       exports: [Provider1],
+      //       providersPerMod: [{ token: Provider1, useValue: 'value1 of module1', multi: true }],
+      //     })
+      //     class Module1 {}
+
+      //     @featureModule({
+      //       exports: [Provider1],
+      //       providersPerMod: [{ token: Provider1, useValue: 'value1 of module2', multi: true }],
+      //     })
+      //     class Module2 {}
+
+      //     @rootModule({
+      //       imports: [Module1, Module2],
+      //       resolvedCollisionsPerMod: [[Provider1, Module1]],
+      //     })
+      //     class AppModule {}
+
+      //     moduleManager.scanRootModule(AppModule);
+      //     const msg = 'but Provider1 is a token of the multi providers,';
+      //     expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
+      //   });
+
+      //   it('exporting duplicates with "multi == true" not to throw', () => {
+      //     class Provider1 {}
+      //     class Provider2 {}
+
+      //     @featureModule({
+      //       exports: [Provider1],
+      //       providersPerMod: [{ token: Provider1, useClass: Provider1, multi: true }, Provider2],
+      //     })
+      //     class Module1 {}
+
+      //     @featureModule({
+      //       exports: [Provider1],
+      //       providersPerMod: [{ token: Provider1, useClass: Provider1, multi: true }],
+      //     })
+      //     class Module2 {}
+
+      //     @rootModule({
+      //       imports: [Module1, Module2],
+      //       providersPerApp: [{ token: Router, useValue: 'fake' }],
+      //     })
+      //     class AppModule {}
+
+      //     moduleManager.scanRootModule(AppModule);
+      //     expect(() =>
+      //       mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set()),
+      //     ).not.toThrow();
+      //   });
+
+      //   it('exporting duplicates of Provider2, declared in resolvedCollisionsPerMod of root module', () => {
+      //     class Provider1 {}
+      //     class Provider2 {}
+      //     class Provider3 {}
+      //     const factory = makePropDecorator();
+
+      //     class ClassWithFactory {
+      //       @factory()
+      //       method1() {}
+      //     }
+      //     const useFactoryProvider2: FactoryProvider = {
+      //       token: Provider2,
+      //       useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1],
+      //     };
+
+      //     @featureModule({
+      //       providersPerMod: [Provider1, useFactoryProvider2],
+      //       exports: [Provider1, Provider2],
+      //     })
+      //     class Module1 {}
+
+      //     @featureModule({
+      //       imports: [Module1],
+      //       providersPerMod: [Provider2, Provider3],
+      //       exports: [Module1, Provider2, Provider3],
+      //     })
+      //     class Module2 {}
+
+      //     @rootModule({
+      //       imports: [Module2],
+      //       resolvedCollisionsPerMod: [[Provider2, Module1]],
+      //     })
+      //     class AppModule {}
+
+      //     moduleManager.scanRootModule(AppModule);
+      //     expect(() =>
+      //       mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set()),
+      //     ).not.toThrow();
+      //     expect([...mock.importedProvidersPerMod]).toEqual([
+      //       [Provider1, { modRefId: Module1, providers: [Provider1] }],
+      //       [Provider2, { modRefId: Module1, providers: [useFactoryProvider2] }],
+      //       [Provider3, { modRefId: Module2, providers: [Provider3] }],
+      //     ]);
+      //   });
+
+      //   it('exporting duplicates in Module2 (with params), but declared in resolvedCollisionsPerMod of root module', () => {
+      //     class Provider1 {}
+      //     class Provider2 {}
+
+      //     @featureModule({
+      //       exports: [Provider1],
+      //       providersPerMod: [Provider1, Provider2],
+      //     })
+      //     class Module1 {}
+
+      //     @featureModule({
+      //       exports: [Provider1, Provider2],
+      //       providersPerMod: [{ token: Provider1, useClass: Provider1 }, Provider2],
+      //     })
+      //     class Module2 {
+      //       static withParams() {
+      //         return { module: Module2 };
+      //       }
+      //     }
+
+      //     const moduleWithParams = Module2.withParams();
+
+      //     @rootModule({
+      //       imports: [Module1, moduleWithParams],
+      //       resolvedCollisionsPerMod: [[Provider1, Module1]],
+      //     })
+      //     class AppModule {}
+
+      //     moduleManager.scanRootModule(AppModule);
+      //     expect(() =>
+      //       mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set()),
+      //     ).not.toThrow();
+      //     expect([...mock.importedProvidersPerMod]).toEqual([
+      //       [Provider1, { modRefId: Module1, providers: [Provider1] }],
+      //       [Provider2, { modRefId: moduleWithParams, providers: [Provider2] }],
+      //     ]);
+      //   });
+
+      //   it('resolved collision for feature module', () => {
+      //     @controller()
+      //     class SomeController {}
+
+      //     @featureModule({
+      //       providersPerMod: [Provider1],
+      //       exports: [Provider1],
+      //     })
+      //     class Module1 {}
+
+      //     @featureModule({
+      //       providersPerMod: [{ token: Provider1, useValue: 'one' }],
+      //       exports: [Provider1],
+      //     })
+      //     class Module2 {}
+
+      //     @featureModule({
+      //       imports: [Module1, Module2],
+      //       controllers: [SomeController],
+      //       resolvedCollisionsPerMod: [[Provider1, Module1]],
+      //       exports: [Module1, Module2],
+      //     })
+      //     class Module3 {}
+
+      //     @rootModule({
+      //       imports: [Module3],
+      //       resolvedCollisionsPerMod: [[Provider1, Module2]],
+      //     })
+      //     class AppModule {}
+
+      //     moduleManager.scanRootModule(AppModule);
+      //     expect(() =>
+      //       mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set()),
+      //     ).not.toThrow();
+      //     const mod3 = mock.appMetadataMap.get(Module3)!;
+      //     expect([...mod3.importedTokensMap.perMod]).toEqual([
+      //       [Provider1, { modRefId: Module1, providers: [Provider1] }],
+      //     ]);
+      //     expect([...mock.importedProvidersPerMod]).toEqual([
+      //       [Provider1, { modRefId: Module2, providers: [{ token: Provider1, useValue: 'one' }] }],
+      //     ]);
+      //   });
+
+      //   it('for feature module', () => {
+      //     @controller()
+      //     class SomeController {}
+
+      //     @featureModule({
+      //       providersPerMod: [Provider1],
+      //       exports: [Provider1],
+      //     })
+      //     class Module1 {}
+
+      //     @featureModule({
+      //       providersPerMod: [{ token: Provider1, useValue: 'one' }],
+      //       exports: [Provider1],
+      //     })
+      //     class Module2 {}
+
+      //     @featureModule({
+      //       imports: [Module1, Module2],
+      //       controllers: [SomeController],
+      //     })
+      //     class Module3 {}
+
+      //     @rootModule({
+      //       imports: [Module3],
+      //     })
+      //     class AppModule {}
+
+      //     moduleManager.scanModule(AppModule);
+      //     const msg = 'Module3 failed: exports from Module1, Module2 causes collision with Provider1.';
+      //     expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
+      //   });
+      // });
 
       describe('per a req', () => {
         it('exporting duplicates of Provider2', () => {

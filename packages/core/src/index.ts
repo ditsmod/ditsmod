@@ -22,12 +22,6 @@ export {
 } from '#public-api/constans.js';
 export { CustomError } from '#error/custom-error.js';
 export { ErrorInfo } from '#error/error-info.js';
-export {
-  controller,
-  ControllerRawMetadata,
-  ControllerRawMetadata1,
-  ControllerRawMetadata2,
-} from '#decorators/controller.js';
 export { featureModule } from '#decorators/module.js';
 export { rootModule } from '#decorators/root-module.js';
 export {
@@ -118,7 +112,6 @@ export {
 } from '#di';
 export {
   isChainError,
-  isCtrlDecor,
   isModuleWithParams,
   isFeatureModule,
   isModDecor,

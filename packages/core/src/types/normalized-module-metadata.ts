@@ -30,7 +30,7 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   importsWithParams: ModuleWithParams[] = [];
   appendsModules: ModuleType[] = [];
   // appendsWithParams: AppendsWithParams[] = [];
-  controllers: Class[] = [];
+  // controllers: Class[] = [];
   decorator: AnyFn;
   /**
    * The directory in which the class was declared.

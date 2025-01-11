@@ -1,6 +1,5 @@
 import {
   clearDebugClassNames,
-  controller,
   defaultProvidersPerApp,
   featureModule,
   GlobalProviders,
@@ -19,6 +18,7 @@ import {
 } from '@ditsmod/core';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { AppendsWithParams } from './types.js';
+import { controller } from './controller.js';
 
 /**
  * @todo Rename this.

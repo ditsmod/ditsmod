@@ -1,4 +1,4 @@
-import { controller } from '@ditsmod/core';
+import { controller } from '@ditsmod/routing';
 
 import { route } from '#mod/decorators/route.js';
 import {

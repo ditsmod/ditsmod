@@ -1,5 +1,5 @@
-import { controller, Res } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+import { Res } from '@ditsmod/core';
+import { controller, route } from '@ditsmod/routing';
 
 import { FirstService } from './first.service.js';
 

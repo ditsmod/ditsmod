@@ -3,9 +3,7 @@ import {
   injectable,
   Extension,
   Provider,
-  isCtrlDecor,
   AppOptions,
-  ControllerRawMetadata1,
   reflector,
   Class,
   MetadataPerMod2,
@@ -13,11 +11,12 @@ import {
 } from '@ditsmod/core';
 
 import { MetadataPerMod3 } from '../types.js';
-import { isRoute } from '../type.guards.js';
+import { isCtrlDecor, isRoute } from '../type.guards.js';
 import { RouteMetadata } from '../decorators/route.js';
 import { ControllerMetadata } from '../controller-metadata.js';
 import { RouteMeta } from '../route-data.js';
 import { GuardItem, GuardPerMod1 } from '#mod/interceptors/guard.js';
+import { ControllerRawMetadata1 } from '#mod/controller.js';
 
 @injectable()
 export class RoutesExtension implements Extension<MetadataPerMod3> {
@@ -40,50 +39,50 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
   }
 
   protected getControllersMetadata(prefixPerApp: string = '', metadataPerMod2: MetadataPerMod2) {
-    const { applyControllers, prefixPerMod, meta } = metadataPerMod2;
+    const { prefixPerMod, meta } = metadataPerMod2;
 
     const aControllerMetadata: ControllerMetadata[] = [];
-    if (applyControllers)
-      for (const Controller of metadataPerMod2.meta.controllers as Class<Record<string | symbol, any>>[]) {
-        const classMeta = reflector.getMetadata(Controller)!;
-        for (const methodName of classMeta) {
-          for (const decoratorAndValue of classMeta[methodName].decorators) {
-            if (!isRoute<RouteMetadata>(decoratorAndValue)) {
-              continue;
-            }
-            const providersPerRou: Provider[] = [];
-            const providersPerReq: Provider[] = [];
-            const route = decoratorAndValue.value;
-            const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
-            const scope = ctrlDecorator?.value.scope;
-            if (scope == 'ctx') {
-              meta.providersPerMod.unshift(Controller);
-            }
-            const { path: controllerPath, httpMethod, interceptors } = route;
-            const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
-            const fullPath = this.getPath(prefix, controllerPath);
-            const guards = this.normalizeGuards(httpMethod, fullPath, route.guards).slice();
-            providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
-            providersPerReq.push(...((ctrlDecorator?.value as ControllerRawMetadata1).providersPerReq || []));
+    // if (applyControllers)
+      // for (const Controller of metadataPerMod2.meta.controllers as Class<Record<string | symbol, any>>[]) {
+      //   const classMeta = reflector.getMetadata(Controller)!;
+      //   for (const methodName of classMeta) {
+      //     for (const decoratorAndValue of classMeta[methodName].decorators) {
+      //       if (!isRoute<RouteMetadata>(decoratorAndValue)) {
+      //         continue;
+      //       }
+      //       const providersPerRou: Provider[] = [];
+      //       const providersPerReq: Provider[] = [];
+      //       const route = decoratorAndValue.value;
+      //       const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
+      //       const scope = ctrlDecorator?.value.scope;
+      //       if (scope == 'ctx') {
+      //         meta.providersPerMod.unshift(Controller);
+      //       }
+      //       const { path: controllerPath, httpMethod, interceptors } = route;
+      //       const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
+      //       const fullPath = this.getPath(prefix, controllerPath);
+      //       const guards = this.normalizeGuards(httpMethod, fullPath, route.guards).slice();
+      //       providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
+      //       providersPerReq.push(...((ctrlDecorator?.value as ControllerRawMetadata1).providersPerReq || []));
 
-            const routeMeta: RouteMeta = {
-              Controller,
-              methodName,
-            };
-            providersPerRou.push({ token: RouteMeta, useValue: routeMeta });
-            aControllerMetadata.push({
-              httpMethods: Array.isArray(httpMethod) ? httpMethod : [httpMethod],
-              fullPath,
-              providersPerRou,
-              providersPerReq,
-              routeMeta,
-              scope,
-              guards,
-              interceptors,
-            });
-          }
-        }
-      }
+      //       const routeMeta: RouteMeta = {
+      //         Controller,
+      //         methodName,
+      //       };
+      //       providersPerRou.push({ token: RouteMeta, useValue: routeMeta });
+      //       aControllerMetadata.push({
+      //         httpMethods: Array.isArray(httpMethod) ? httpMethod : [httpMethod],
+      //         fullPath,
+      //         providersPerRou,
+      //         providersPerReq,
+      //         routeMeta,
+      //         scope,
+      //         guards,
+      //         interceptors,
+      //       });
+      //     }
+      //   }
+      // }
 
     return aControllerMetadata;
   }

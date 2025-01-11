@@ -12,9 +12,8 @@ import {
   MultiProvider,
 } from '#di';
 import { featureModule } from '#decorators/module.js';
-import { isCtrlDecor, isFeatureModule, isModuleWithParams, isProvider, isRootModule } from './type-guards.js';
+import { isFeatureModule, isModuleWithParams, isProvider, isRootModule } from './type-guards.js';
 import { rootModule } from '#decorators/root-module.js';
-import { controller } from '#decorators/controller.js';
 import { getModuleMetadata } from '#init/module-normalizer.js';
 
 describe('type guards', () => {
@@ -60,21 +59,6 @@ describe('type guards', () => {
       class Module1 {}
       const rawMeta = getModuleMetadata(Module1)!;
       expect(rawMeta).toBeUndefined();
-    });
-  });
-
-  describe('isController()', () => {
-    it('class with decorator', () => {
-      @controller()
-      class Module1 {}
-      const metadata = reflector.getDecorators(Module1)![0];
-      expect(isCtrlDecor(metadata)).toBe(true);
-    });
-
-    it('class without decorator', () => {
-      class Module1 {}
-      const metadata = reflector.getMetadata(Module1);
-      expect(isCtrlDecor(metadata)).toBe(false);
     });
   });
 

@@ -1,5 +1,5 @@
-import { controller, RequestContext, Res } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+import { RequestContext, Res } from '@ditsmod/core';
+import { controller, route } from '@ditsmod/routing';
 
 @controller()
 export class SomeController {

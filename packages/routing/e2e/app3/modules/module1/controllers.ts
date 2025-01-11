@@ -1,5 +1,4 @@
-import { controller } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+import { route, controller } from '@ditsmod/routing';
 
 import { Guard } from '../../guards.js';
 

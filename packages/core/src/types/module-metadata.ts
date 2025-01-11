@@ -1,4 +1,3 @@
-import { Class } from '#di';
 import { ProvidersMetadata } from '#types/providers-metadata.js';
 import { AnyObj, ModuleType } from '#types/mix.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
@@ -14,20 +13,10 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
    */
   imports?: Array<ModuleType | ModuleWithParams>;
   /**
-   * List of modules that contain controllers. Providers and extensions from these modules
-   * are not imported into the current module. If the current module has a prefix path,
-   * that path will be added to each controller route from the appended modules.
-   */
-  // appends?: Array<ModuleType | AppendsWithParams>;
-  /**
    * List of modules, `ModuleWithParams` or tokens of providers exported by this
    * module.
    */
   exports?: any[];
-  /**
-   * The application controllers.
-   */
-  controllers?: Class[];
   /**
    * The application extensions.
    */

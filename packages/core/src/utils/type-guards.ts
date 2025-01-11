@@ -6,7 +6,6 @@ import { RootModuleMetadata } from '#types/root-module-metadata.js';
 import { Http2SecureServerOptions, ServerOptions } from '#types/server-options.js';
 import { featureModule } from '#decorators/module.js';
 import { RawMeta } from '../decorators/module.js';
-import { controller, ControllerRawMetadata } from '#decorators/controller.js';
 import { rootModule } from '#decorators/root-module.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { CustomError } from '#error/custom-error.js';
@@ -56,10 +55,6 @@ export function hasDeclaredInDir(
   decoratorAndValue?: DecoratorAndValue,
 ): decoratorAndValue is RequireProps<DecoratorAndValue, 'declaredInDir'> {
   return Boolean(decoratorAndValue?.declaredInDir) && decoratorAndValue?.declaredInDir != '.';
-}
-
-export function isCtrlDecor(decoratorAndValue?: AnyObj): decoratorAndValue is DecoratorAndValue<ControllerRawMetadata> {
-  return decoratorAndValue?.decorator === controller;
 }
 
 export function isModuleWithParams(modRefId?: Provider | ModuleWithParams | ModuleType): modRefId is ModuleWithParams {

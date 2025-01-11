@@ -1,6 +1,6 @@
-import { controller, Res } from '@ditsmod/core';
+import { Res } from '@ditsmod/core';
 import { RequestContextWithSession, SessionCookie } from '@ditsmod/session-cookie';
-import { route } from '@ditsmod/routing';
+import { controller, route } from '@ditsmod/routing';
 
 @controller()
 export class HelloWorldController {

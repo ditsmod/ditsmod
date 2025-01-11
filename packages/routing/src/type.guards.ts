@@ -1,8 +1,14 @@
-import { Class, DecoratorAndValue, ModuleType, ModuleWithParams } from '@ditsmod/core';
+import { AnyObj, Class, DecoratorAndValue, ModuleType, ModuleWithParams } from '@ditsmod/core';
 
 import { route } from './decorators/route.js';
 import { HttpInterceptor } from '#mod/interceptors/tokens-and-types.js';
 import { AppendsWithParams } from './types.js';
+import { controller, ControllerRawMetadata } from './controller.js';
+
+
+export function isCtrlDecor(decoratorAndValue?: AnyObj): decoratorAndValue is DecoratorAndValue<ControllerRawMetadata> {
+  return decoratorAndValue?.decorator === controller;
+}
 
 export function isRoute<T>(decoratorAndValue?: DecoratorAndValue<T>): decoratorAndValue is DecoratorAndValue<T> {
   return (decoratorAndValue as DecoratorAndValue<T>)?.decorator === route;

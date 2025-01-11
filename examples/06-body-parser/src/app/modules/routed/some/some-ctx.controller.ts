@@ -1,5 +1,5 @@
-import { controller, RequestContext } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+import { RequestContext } from '@ditsmod/core';
+import { controller, route } from '@ditsmod/routing';
 import { MulterCtxParser } from '@ditsmod/body-parser';
 
 import { saveFiles, sendHtmlForm } from './utils.js';

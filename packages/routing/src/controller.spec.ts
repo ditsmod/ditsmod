@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { reflector } from '@ditsmod/core';
 
-import { reflector } from '#di';
 import { controller } from './controller.js';
 
 describe('Controller decorator', () => {

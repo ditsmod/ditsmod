@@ -1,6 +1,4 @@
-import { makeClassDecorator } from '#di';
-import { Provider } from '#di/types-and-models.js';
-import { Providers } from '#utils/providers.js';
+import { makeClassDecorator, Provider, Providers } from '@ditsmod/core';
 
 /**
  * Metadata accepted by the default injector-scoped controller.

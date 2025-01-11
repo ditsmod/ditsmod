@@ -120,10 +120,10 @@ export class ModuleFactory {
       isModuleWithParams(meta.modRefId) &&
       (meta.modRefId.path !== undefined || meta.modRefId.absolutePath !== undefined);
 
-    let applyControllers = false;
-    if (isRootModule(meta) || isAppends || hasPath) {
-      applyControllers = true;
-    }
+    // let applyControllers = false;
+    // if (isRootModule(meta) || isAppends || hasPath) {
+    //   applyControllers = true;
+    // }
 
     let perMod: Map<any, ImportObj>;
     let perRou: Map<any, ImportObj>;
@@ -162,7 +162,7 @@ export class ModuleFactory {
       prefixPerMod,
       // guardsPerMod1: this.guardsPerMod1,
       meta: this.meta,
-      applyControllers,
+      // applyControllers,
       importedTokensMap: {
         perMod,
         perRou,
@@ -418,10 +418,10 @@ export class ModuleFactory {
   protected checkImportsAndAppends(meta: NormalizedModuleMetadata) {
     [...meta.appendsModules].forEach((append) => {
       const appendedMeta = this.moduleManager.getMetadata(append, true);
-      if (!appendedMeta.controllers.length) {
-        const msg = `Appends to "${meta.name}" failed: "${appendedMeta.name}" must have controllers.`;
-        throw new Error(msg);
-      }
+      // if (!appendedMeta.controllers.length) {
+      //   const msg = `Appends to "${meta.name}" failed: "${appendedMeta.name}" must have controllers.`;
+      //   throw new Error(msg);
+      // }
       const mod = getModule(append);
       if (meta.importsModules.includes(mod) || meta.importsWithParams.some((imp) => imp.module === mod)) {
         const msg = `Appends to "${meta.name}" failed: "${appendedMeta.name}" includes in both: imports and appends arrays.`;
