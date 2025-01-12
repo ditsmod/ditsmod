@@ -13,7 +13,7 @@
     "build": "tsc -b tsconfig.build.json",
     "clean": "rm -rf dist*",
     "test": "yarn build-test && vitest",
-    "build-test": "tsc -b tsconfig.e2e.json"
+    "build-test": "tsc -b tsconfig.unit.json"
   },
   "imports": {
     "#di": "./dist/di/index.js",
