@@ -2,7 +2,6 @@ import {
   AppOptions,
   ModuleType,
   SystemLogMediator,
-  Application,
   Providers,
   ExtensionsGroupToken,
   Class,
@@ -10,12 +9,13 @@ import {
   ModRefId,
   Provider,
 } from '@ditsmod/core';
+import { RoutingApplication } from '@ditsmod/routing';
 
 import { GroupMetaOverrider, Meta } from './types.js';
 import { TestAppInitializer } from './test-app-initializer.js';
 import { TestModuleManager } from './test-module-manager.js';
 
-export class TestApplication extends Application {
+export class TestApplication extends RoutingApplication {
   protected testAppInitializer: TestAppInitializer;
   protected testModuleManager: TestModuleManager;
   protected appModule: ModuleType;

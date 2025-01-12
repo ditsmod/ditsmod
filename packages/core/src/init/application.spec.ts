@@ -1,6 +1,3 @@
-import * as http from 'http';
-import * as http2 from 'http2';
-import * as https from 'https';
 import { describe, expect, it, beforeEach } from 'vitest';
 
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
@@ -23,10 +20,6 @@ describe('Application', () => {
       return super.init(appOptions);
     }
 
-    override checkSecureServerOption() {
-      return super.checkSecureServerOption();
-    }
-
     override scanRootModule(appModule: ModuleType) {
       return super.scanRootModule(appModule);
     }
@@ -47,35 +40,6 @@ describe('Application', () => {
       mock.init({ bufferLogs: false });
       expect(mock.appOptions.bufferLogs).toBe(false);
       expect(LogMediator.bufferLogs).toBe(false);
-      expect(mock.appOptions.path).toBeDefined();
-      expect(mock.appOptions.serverOptions).toBeDefined();
-    });
-  });
-
-  describe('checkSecureServerOption()', () => {
-    const msg = 'createSecureServer() not found';
-
-    it('should not to throw with http2 and isHttp2SecureServer == true', () => {
-      mock.appOptions.serverOptions = { isHttp2SecureServer: true };
-      mock.appOptions.httpModule = http2;
-      expect(() => mock.checkSecureServerOption()).not.toThrow();
-    });
-
-    it('should to throw with http and isHttp2SecureServer == true', () => {
-      mock.appOptions.serverOptions = { isHttp2SecureServer: true };
-      mock.appOptions.httpModule = http;
-      expect(() => mock.checkSecureServerOption()).toThrow(msg);
-    });
-
-    it('should not to throw with http and isHttp2SecureServer == false', () => {
-      mock.appOptions.httpModule = http;
-      expect(() => mock.checkSecureServerOption()).not.toThrow(msg);
-    });
-
-    it('should to throw with https and isHttp2SecureServer == true', () => {
-      mock.appOptions.serverOptions = { isHttp2SecureServer: true };
-      mock.appOptions.httpModule = https;
-      expect(() => mock.checkSecureServerOption()).toThrow(msg);
     });
   });
 

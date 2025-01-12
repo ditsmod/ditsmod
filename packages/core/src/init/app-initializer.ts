@@ -26,8 +26,6 @@ import { getProvidersTargets, getToken, getTokens } from '#utils/get-tokens.js';
 import { normalizeProviders } from '#utils/ng-utils.js';
 import { throwProvidersCollisionError } from '#utils/throw-providers-collision-error.js';
 import { isRootModule } from '#utils/type-guards.js';
-import { SERVER } from '#public-api/constans.js';
-import { HttpServer } from '#types/server-options.js';
 import { MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { getModule } from '#utils/get-module.js';
@@ -38,7 +36,6 @@ export class AppInitializer {
   // protected preRouter: PreRouter;
   protected meta: NormalizedModuleMetadata;
   protected unfinishedScanModules = new Set<ModuleType | ModuleWithParams>();
-  protected server: HttpServer;
 
   constructor(
     protected appOptions: AppOptions,
@@ -55,10 +52,6 @@ export class AppInitializer {
     this.prepareProvidersPerApp();
     this.addDefaultProvidersPerApp();
     this.createInjectorAndSetLogMediator();
-  }
-
-  protected setServer(server: HttpServer) {
-    this.server = server;
   }
 
   /**
@@ -229,7 +222,7 @@ export class AppInitializer {
   protected addDefaultProvidersPerApp() {
     this.meta.providersPerApp.unshift(
       ...defaultProvidersPerApp,
-      { token: SERVER, useFactory: () => this.server },
+      // { token: SERVER, useFactory: () => this.server },
       { token: AppOptions, useValue: this.appOptions },
       { token: ModuleManager, useValue: this.moduleManager },
       { token: AppInitializer, useValue: this },
@@ -425,13 +418,4 @@ export class AppInitializer {
   }
 
   // requestListener: RequestListener = (rawReq, rawRes) => this.preRouter.requestListener(rawReq, rawRes);
-}
-
-/**
- * This class is needed only to access the protected methods of the `AppInitializer` class.
- */
-export class PublicAppInitializer extends AppInitializer {
-  override setServer(server: HttpServer) {
-    return super.setServer(server);
-  }
 }

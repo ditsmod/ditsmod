@@ -3,13 +3,13 @@ export * from '@ts-stack/chain-error';
 
 export { AppInitializer } from '#init/app-initializer.js';
 export { Application } from '#init/application.js';
+export { AppOptions } from '#types/app-options.js';
 export { ImportsResolver } from '#init/imports-resolver.js';
 export { ImportedTokensMap } from '#types/metadata-per-mod.js';
 export { GlobalProviders } from '#types/metadata-per-mod.js';
 export { ModuleFactory } from '#init/module-factory.js';
 export { defaultProvidersPerApp } from '#init/default-providers-per-app.js';
 export { OnModuleInit } from '#init/hooks.js';
-export { SERVER } from '#public-api/constans.js';
 export { CustomError } from '#error/custom-error.js';
 export { ErrorInfo } from '#error/error-info.js';
 export { featureModule } from '#decorators/module.js';
@@ -30,7 +30,6 @@ export { ModuleExtract } from '#types/module-extract.js';
 export { Counter } from '#extension/counter.js';
 export { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 export { ProvidersMetadata } from '#types/providers-metadata.js';
-export { AppOptions } from '#types/app-options.js';
 export { ConsoleLogger } from '#logger/console-logger.js';
 export { ExtensionsContext } from '#extension/extensions-context.js';
 export { ExtensionsManager, InternalExtensionsManager } from '#extension/extensions-manager.js';
@@ -65,7 +64,6 @@ export {
   ModuleWithParams1,
   ModuleWithParams2,
 } from '#types/module-metadata.js';
-export { HttpServer } from '#types/server-options.js';
 export { deepFreeze } from '#utils/deep-freeze.js';
 export { getDependencies } from '#utils/get-dependecies.js';
 export { ExtensionConfig } from '#extension/get-extension-provider.js';
@@ -98,7 +96,6 @@ export {
   isFeatureModule,
   isModDecor,
   isRootModule,
-  isHttp2SecureServerOptions,
   isProvider,
   hasDeclaredInDir,
   isCustomError,

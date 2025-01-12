@@ -4,6 +4,7 @@ import { route } from './decorators/route.js';
 import { HttpInterceptor } from '#mod/interceptors/tokens-and-types.js';
 import { AppendsWithParams } from './types.js';
 import { controller, ControllerRawMetadata } from './controller.js';
+import { Http2SecureServerOptions, ServerOptions } from './server-options.js';
 
 
 export function isCtrlDecor(decoratorAndValue?: AnyObj): decoratorAndValue is DecoratorAndValue<ControllerRawMetadata> {
@@ -25,4 +26,9 @@ export function isAppendsWithParams(
     (modRefId as AppendsWithParams)?.module !== undefined &&
     ((modRefId as AppendsWithParams)?.path !== undefined || (modRefId as AppendsWithParams)?.absolutePath !== undefined)
   );
+}
+
+
+export function isHttp2SecureServerOptions(serverOptions: ServerOptions): serverOptions is Http2SecureServerOptions {
+  return (serverOptions as Http2SecureServerOptions).isHttp2SecureServer;
 }

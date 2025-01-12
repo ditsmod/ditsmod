@@ -3,7 +3,6 @@ import { Provider, Class, DecoratorAndValue, reflector, isNormalizedProvider } f
 import { AnyObj, ModuleType, RequireProps } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { RootModuleMetadata } from '#types/root-module-metadata.js';
-import { Http2SecureServerOptions, ServerOptions } from '#types/server-options.js';
 import { featureModule } from '#decorators/module.js';
 import { RawMeta } from '../decorators/module.js';
 import { rootModule } from '#decorators/root-module.js';
@@ -12,10 +11,6 @@ import { CustomError } from '#error/custom-error.js';
 
 export interface TypeGuard<T> {
   (arg: any): arg is T;
-}
-
-export function isHttp2SecureServerOptions(serverOptions: ServerOptions): serverOptions is Http2SecureServerOptions {
-  return (serverOptions as Http2SecureServerOptions).isHttp2SecureServer;
 }
 
 export function isChainError<T extends AnyObj>(err: any): err is ChainError<T> {

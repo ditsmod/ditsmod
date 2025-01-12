@@ -17,13 +17,14 @@ import { ControllerMetadata } from '../controller-metadata.js';
 import { RouteMeta } from '../route-data.js';
 import { GuardItem, GuardPerMod1 } from '#mod/interceptors/guard.js';
 import { ControllerRawMetadata1 } from '#mod/controller.js';
+import { RoutingOptions } from '#mod/routing-options.js';
 
 @injectable()
 export class RoutesExtension implements Extension<MetadataPerMod3> {
   protected metadataPerMod3: MetadataPerMod3;
 
   constructor(
-    protected appOptions: AppOptions,
+    protected appOptions: RoutingOptions,
     protected metadataPerMod2: MetadataPerMod2,
   ) {}
 

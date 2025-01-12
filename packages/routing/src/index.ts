@@ -1,3 +1,6 @@
+export { RoutingApplication } from './routing-application.js';
+export { HttpServer } from './server-options.js';
+export { RoutingOptions } from './routing-options.js';
 export { DefaultRouter, PathParam, RouteHandler, Router, RouterReturns } from './router.js';
 export { Tree } from './tree.js';
 export {
@@ -15,7 +18,7 @@ export { RoutingErrorMediator } from './router-error-mediator.js';
 export { RoutesExtension } from './extensions/routes.extension.js';
 export { PreRouterExtension } from './extensions/pre-router.extension.js';
 export { route, RouteMetadata } from './decorators/route.js';
-export { isRoute, isInterceptor, isAppendsWithParams, isCtrlDecor } from './type.guards.js';
+export { isRoute, isInterceptor, isAppendsWithParams, isCtrlDecor, isHttp2SecureServerOptions } from './type.guards.js';
 export { RouteMeta } from './route-data.js';
 export { ControllerMetadata } from './controller-metadata.js';
 export {
@@ -51,6 +54,7 @@ export {
   QUERY_STRING,
   PATH_PARAMS,
   QUERY_PARAMS,
+  SERVER
 } from './constants.js';
 export { applyResponse, applyHeaders } from './utils/apply-web-response.js';
 export { Req, RawRequest, RawResponse, RequestListener } from './request.js';

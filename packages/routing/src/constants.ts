@@ -4,6 +4,7 @@ import { HttpInterceptor } from './interceptors/tokens-and-types.js';
 import { MetadataPerMod3 } from './types.js';
 import { RawRequest, RawResponse } from './request.js';
 import { PathParam } from './router.js';
+import { HttpServer } from './server-options.js';
 
 export const HTTP_INTERCEPTORS = new InjectionToken<HttpInterceptor[]>('HTTP_INTERCEPTORS');
 /**
@@ -38,3 +39,8 @@ export const QUERY_PARAMS = new InjectionToken<AnyObj>('QUERY_PARAMS');
  * DI token for querystring that is returned by `PreRouter` after spliting `rawReq.url` by question mark.
  */
 export const QUERY_STRING = new InjectionToken<RawRequest>('QUERY_STRING');
+
+/**
+ * A DI token that allows you to obtain the instance of the server that is serving the current application.
+ */
+export const SERVER = new InjectionToken<HttpServer>('SERVER');
