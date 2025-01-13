@@ -25,19 +25,19 @@ class MockModuleManager extends ModuleManager {
   override mapId = new Map<string, ModuleType | ModuleWithParams>();
   override oldMap = new Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>();
   override oldMapId = new Map<string, ModuleType | ModuleWithParams>();
-  override getRawMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
+  override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound?: boolean,
   ): NormalizedModuleMetadata<T, A> | undefined;
-  override getRawMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
+  override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound: true,
   ): NormalizedModuleMetadata<T, A>;
-  override getRawMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
+  override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrOnNotFound?: boolean,
   ) {
-    return super.getRawMetadata<T, A>(moduleId, throwErrOnNotFound);
+    return super.getOriginMetadata<T, A>(moduleId, throwErrOnNotFound);
   }
 }
 

@@ -29,19 +29,19 @@ describe('ModuleManager', () => {
     override mapId = new Map<string, ModuleType | ModuleWithParams>();
     override oldMap = new Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>();
     override oldMapId = new Map<string, ModuleType | ModuleWithParams>();
-    override getRawMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
+    override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
       moduleId: ModuleId,
       throwErrIfNotFound?: boolean,
     ): NormalizedModuleMetadata<T, A> | undefined;
-    override getRawMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
+    override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
       moduleId: ModuleId,
       throwErrIfNotFound: true,
     ): NormalizedModuleMetadata<T, A>;
-    override getRawMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
+    override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
       moduleId: ModuleId,
       throwErrOnNotFound?: boolean,
     ) {
-      return super.getRawMetadata<T, A>(moduleId, throwErrOnNotFound);
+      return super.getOriginMetadata<T, A>(moduleId, throwErrOnNotFound);
     }
   }
 
@@ -556,7 +556,7 @@ describe('ModuleManager', () => {
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(1);
     expect(mock.getMetadata('root')).not.toBe(mock.getMetadata('root'));
-    expect(mock.getRawMetadata('root')).toBe(mock.getRawMetadata('root'));
+    expect(mock.getOriginMetadata('root')).toBe(mock.getOriginMetadata('root'));
     expect(mock.getMetadata('root')).toEqual(expectedMeta1);
 
     expect(mock.addImport(Module1)).toBe(true);

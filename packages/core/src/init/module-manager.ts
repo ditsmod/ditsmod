@@ -78,7 +78,7 @@ export class ModuleManager {
     throwErrIfNotFound: true,
   ): NormalizedModuleMetadata<T, A>;
   getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrIfNotFound?: boolean) {
-    const meta = this.getRawMetadata<T, A>(moduleId, throwErrIfNotFound);
+    const meta = this.getOriginMetadata<T, A>(moduleId, throwErrIfNotFound);
     if (meta) {
       return this.copyMeta(meta);
     } else {
@@ -93,7 +93,7 @@ export class ModuleManager {
    * @param targetModuleId Module ID to which the input module will be added.
    */
   addImport(inputModule: ModRefId, targetModuleId: ModuleId = 'root'): boolean | void {
-    const targetMeta = this.getRawMetadata(targetModuleId);
+    const targetMeta = this.getOriginMetadata(targetModuleId);
     if (!targetMeta) {
       const modName = getDebugClassName(inputModule);
       const modIdStr = format(targetModuleId);
@@ -123,14 +123,14 @@ export class ModuleManager {
    * @param targetModuleId Module ID from where the input module will be removed.
    */
   removeImport(inputModuleId: ModuleId, targetModuleId: ModuleId = 'root'): boolean | void {
-    const inputMeta = this.getRawMetadata(inputModuleId);
+    const inputMeta = this.getOriginMetadata(inputModuleId);
     if (!inputMeta) {
       const modIdStr = format(inputModuleId);
       this.systemLogMediator.moduleNotFound(this, modIdStr);
       return false;
     }
 
-    const targetMeta = this.getRawMetadata(targetModuleId);
+    const targetMeta = this.getOriginMetadata(targetModuleId);
     if (!targetMeta) {
       const modIdStr = format(targetModuleId);
       const msg = `Failed removing ${inputMeta.name} from "imports" array: target module with ID "${modIdStr}" not found.`;
@@ -250,15 +250,15 @@ export class ModuleManager {
   /**
    * Returns normalized metadata, but without `this.copyMeta()`.
    */
-  protected getRawMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
+  protected getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound?: boolean,
   ): NormalizedModuleMetadata<T, A> | undefined;
-  protected getRawMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
+  protected getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound: true,
   ): NormalizedModuleMetadata<T, A>;
-  protected getRawMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
+  protected getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound?: boolean,
   ) {
@@ -312,7 +312,7 @@ export class ModuleManager {
    * @param targetModuleId Module where to search `inputModule`.
    */
   protected includesInSomeModule(inputModuleId: ModuleId, targetModuleId: ModuleId): boolean {
-    const targetMeta = this.getRawMetadata(targetModuleId);
+    const targetMeta = this.getOriginMetadata(targetModuleId);
     if (!targetMeta) {
       return false;
     }
