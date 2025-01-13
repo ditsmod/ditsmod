@@ -4,7 +4,7 @@ import { injectable, Injector } from '#di';
 import { ImportsResolver } from '#init/imports-resolver.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { ImportedTokensMap } from '#types/metadata-per-mod.js';
-import { ModRefId, ModuleType, Scope } from '#types/mix.js';
+import { ModRefId, ModuleType, Level } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { ModuleFactory } from '#init/module-factory.js';
@@ -20,9 +20,9 @@ describe('ImportsResolver', () => {
     override resolveImportedProviders(
       targetProviders: NormalizedModuleMetadata,
       importedTokensMap: ImportedTokensMap,
-      scopes: Scope[],
+      levels: Level[],
     ) {
-      return super.resolveImportedProviders(targetProviders, importedTokensMap, scopes);
+      return super.resolveImportedProviders(targetProviders, importedTokensMap, levels);
     }
     override addToUnfinishedSearchDependecies(module: ModuleType | ModuleWithParams, provider: Provider) {
       return super.addToUnfinishedSearchDependecies(module, provider);
@@ -35,10 +35,10 @@ describe('ImportsResolver', () => {
       targetMeta: NormalizedModuleMetadata,
       sourceModule: ModRefId,
       importedProvider: Provider,
-      scopes: Scope[],
+      levels: Level[],
       path: any[] = [],
     ) {
-      return super.grabDependecies(targetMeta, sourceModule, importedProvider, scopes, path);
+      return super.grabDependecies(targetMeta, sourceModule, importedProvider, levels, path);
     }
   }
 

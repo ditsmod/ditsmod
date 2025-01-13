@@ -9,7 +9,7 @@ import { RouteMeta } from './route-data.js';
 import { UseInterceptorExtension } from '#mod/extensions/use-interceptor.extension.js';
 
 /**
- * Sets `Router` provider on application scope, and adds `RoutesExtension` with `PreRouterExtension`.
+ * Sets `Router` provider on application level, and adds `RoutesExtension` with `PreRouterExtension`.
  */
 @featureModule({
   providersPerApp: [{ token: Router, useClass: DefaultRouter }, RoutingErrorMediator],

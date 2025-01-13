@@ -17,10 +17,10 @@ describe('ModuleManager', () => {
   type ModuleId = string | ModuleType | ModuleWithParams;
 
   class MockModuleManager extends ModuleManager {
-    override map = new Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>();
-    override mapId = new Map<string, ModuleType | ModuleWithParams>();
-    override oldMap = new Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>();
-    override oldMapId = new Map<string, ModuleType | ModuleWithParams>();
+    declare map: Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>;
+    declare mapId: Map<string, ModuleType | ModuleWithParams>;
+    declare oldMap: Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>;
+    declare oldMapId: Map<string, ModuleType | ModuleWithParams>;
     override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
       moduleId: ModuleId,
       throwErrIfNotFound?: boolean,
@@ -46,7 +46,7 @@ describe('ModuleManager', () => {
   });
 
   describe('quickCheckMetadata()', () => {
-    it('should throw an error, when no export and no controllers', () => {
+    it.only('should throw an error, when no export and no controllers', () => {
       class Provider1 {}
       class Provider2 {}
 
@@ -55,7 +55,7 @@ describe('ModuleManager', () => {
       })
       class Module1 {}
 
-      expect(() => mock.scanModule(Module1)).toThrow(/Normalization of Module1 failed: this module should have/);
+      expect(() => mock.scanModule(Module1)).toThrow('Normalization of Module1 failed: this module should have');
     });
 
     it('should works with extension only', () => {

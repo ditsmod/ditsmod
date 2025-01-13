@@ -10,7 +10,7 @@ import {
   getExtensionProvider,
   isConfigWithOverrideExtension,
 } from '#extension/get-extension-provider.js';
-import { AnyObj, ModRefId, Scope } from '#types/mix.js';
+import { AnyObj, ModRefId, Level } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { RawMeta } from '#decorators/module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
@@ -84,15 +84,15 @@ export class ModuleNormalizer {
       ...(rawMeta.providersPerReq || []),
     ]);
 
-    const resolvedCollisionsPerScope = [
+    const resolvedCollisionsPerLevel = [
       ...(rawMeta.resolvedCollisionsPerMod || []),
       ...(rawMeta.resolvedCollisionsPerRou || []),
       ...(rawMeta.resolvedCollisionsPerReq || []),
     ];
     if (isRootModule(rawMeta)) {
-      resolvedCollisionsPerScope.push(...(rawMeta.resolvedCollisionsPerApp || []));
+      resolvedCollisionsPerLevel.push(...(rawMeta.resolvedCollisionsPerApp || []));
     }
-    resolvedCollisionsPerScope.forEach(([token]) => this.throwIfNormalizedProvider(modName, token));
+    resolvedCollisionsPerLevel.forEach(([token]) => this.throwIfNormalizedProvider(modName, token));
     this.exportFromRawMeta(rawMeta, modName, providersTokens, meta);
     this.checkReexportModules(meta);
 
@@ -231,15 +231,15 @@ export class ModuleNormalizer {
   protected quickCheckMetadata(meta: NormalizedModuleMetadata) {
     if (
       !isRootModule(meta) &&
-      !meta.exportedProvidersPerReq.length &&
+      // !meta.exportedProvidersPerReq.length &&
       // !meta.controllers.length &&
       !meta.exportedProvidersPerMod.length &&
-      !meta.exportedProvidersPerRou.length &&
+      // !meta.exportedProvidersPerRou.length &&
       !meta.exportsModules.length &&
       !meta.exportsWithParams.length &&
       !meta.exportedMultiProvidersPerMod.length &&
-      !meta.exportedMultiProvidersPerRou.length &&
-      !meta.exportedMultiProvidersPerReq.length &&
+      // !meta.exportedMultiProvidersPerRou.length &&
+      // !meta.exportedMultiProvidersPerReq.length &&
       !meta.providersPerApp.length &&
       !meta.exportedExtensionsProviders.length &&
       !meta.extensionsProviders.length
@@ -318,17 +318,17 @@ export class ModuleNormalizer {
   }
 
   protected findAndSetProviders(token: any, rawMeta: ModuleMetadata, meta: NormalizedModuleMetadata) {
-    const scopes: Scope[] = ['Req', 'Rou', 'Mod'];
+    const levels: Level[] = ['Mod'];
     let found = false;
-    scopes.forEach((scope) => {
-      const unfilteredProviders = [...(rawMeta[`providersPer${scope}`] || [])];
+    levels.forEach((level) => {
+      const unfilteredProviders = [...(rawMeta[`providersPer${level}`] || [])];
       const providers = unfilteredProviders.filter((p) => getToken(p) === token);
       if (providers.length) {
         found = true;
         if (providers.some(isMultiProvider)) {
-          meta[`exportedMultiProvidersPer${scope}`].push(...(providers as MultiProvider[]));
+          meta[`exportedMultiProvidersPer${level}`].push(...(providers as MultiProvider[]));
         } else {
-          meta[`exportedProvidersPer${scope}`].push(...providers);
+          meta[`exportedProvidersPer${level}`].push(...providers);
         }
       }
     });
@@ -381,12 +381,12 @@ export function getModuleMetadata(modRefId: ModRefId, isRoot?: boolean): RawMeta
   }
   const metadata = Object.assign({}, modMetadata);
   metadata.id = modWitParams.id;
-  const scopes = ['App', 'Mod', 'Rou', 'Req'] as Scope[];
+  const levels = ['App', 'Mod', 'Rou', 'Req'] as Level[];
   if (isModuleWithParams(modWitParams)) {
-    scopes.forEach((scope) => {
-      const arr1 = modMetadata[`providersPer${scope}`];
-      const arr2 = modWitParams[`providersPer${scope}`];
-      metadata[`providersPer${scope}`] = getLastProviders(mergeArrays(arr1, arr2));
+    levels.forEach((level) => {
+      const arr1 = modMetadata[`providersPer${level}`];
+      const arr2 = modWitParams[`providersPer${level}`];
+      metadata[`providersPer${level}`] = getLastProviders(mergeArrays(arr1, arr2));
     });
     metadata.exports = getLastProviders(mergeArrays(modMetadata.exports, modWitParams.exports));
     metadata.extensionsMeta = { ...modMetadata.extensionsMeta, ...modWitParams.extensionsMeta };

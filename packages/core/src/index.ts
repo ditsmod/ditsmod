@@ -53,7 +53,6 @@ export {
   RequireOnlyProps,
   OptionalProps,
   ProvidersForMod,
-  Scope,
   ModRefId,
   UnionToIntersection,
 } from '#types/mix.js';

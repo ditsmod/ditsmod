@@ -92,9 +92,9 @@ export interface ResolvedGuard {
 }
 
 /**
- * Scope imports/exports.
+ * Level imports/exports.
  */
-export type Scope = 'Mod' | 'Rou' | 'Req';
+export type Level = 'Mod';
 
 export type Override<T extends object, K extends { [P in keyof T]?: any }> = Omit<T, keyof K> & K;
 

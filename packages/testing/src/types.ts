@@ -1,6 +1,6 @@
 import { Provider, Stage1GroupMeta, Stage1GroupMeta2, ExtensionsGroupToken, Providers } from '@ditsmod/core';
 
-export type Scope = 'App' | 'Mod' | 'Rou' | 'Req';
+export type Level = 'App' | 'Mod' | 'Rou' | 'Req';
 
 export interface Meta <T = Providers | Provider[]> {
   providersPerApp?: T;

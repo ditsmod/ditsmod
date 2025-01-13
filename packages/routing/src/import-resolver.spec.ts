@@ -19,7 +19,6 @@ import {
   NormalizedModuleMetadata,
   Provider,
   rootModule,
-  Scope,
   SystemErrorMediator,
   SystemLogMediator,
 } from '@ditsmod/core';
@@ -28,6 +27,8 @@ import { CanActivate, guard } from './interceptors/guard.js';
 import { defaultProvidersPerReq } from './default-providers-per-req.js';
 import { defaultProvidersPerRou } from './default-providers-per-rou.js';
 import { RequestContext } from './request-context.js';
+
+type Level = 'Mod';
 
 describe('resolve()', () => {
   let mock: ImportsResolverMock;
@@ -42,9 +43,9 @@ describe('resolve()', () => {
     override resolveImportedProviders(
       targetProviders: NormalizedModuleMetadata,
       importedTokensMap: ImportedTokensMap,
-      scopes: Scope[],
+      levels: Level[],
     ) {
-      return super.resolveImportedProviders(targetProviders, importedTokensMap, scopes);
+      return super.resolveImportedProviders(targetProviders, importedTokensMap, levels);
     }
     override addToUnfinishedSearchDependecies(module: ModuleType | ModuleWithParams, provider: Provider) {
       return super.addToUnfinishedSearchDependecies(module, provider);
@@ -57,10 +58,10 @@ describe('resolve()', () => {
       targetMeta: NormalizedModuleMetadata,
       sourceModule: ModRefId,
       importedProvider: Provider,
-      scopes: Scope[],
+      levels: Level[],
       path: any[] = [],
     ) {
-      return super.grabDependecies(targetMeta, sourceModule, importedProvider, scopes, path);
+      return super.grabDependecies(targetMeta, sourceModule, importedProvider, levels, path);
     }
   }
 

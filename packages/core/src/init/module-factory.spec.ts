@@ -8,7 +8,7 @@ import { ModuleFactory } from '#init/module-factory.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { GlobalProviders, ImportObj, MetadataPerMod1 } from '#types/metadata-per-mod.js';
-import { ModuleType, Scope } from '#types/mix.js';
+import { ModuleType, Level } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { getImportedProviders } from '#utils/get-imports.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
@@ -37,8 +37,8 @@ describe('ModuleFactory', () => {
       return super.exportGlobalProviders(moduleManager, providersPerApp);
     }
 
-    override getResolvedCollisionsPerScope(scope: Scope, token1: any) {
-      return super.getResolvedCollisionsPerScope(scope, token1);
+    override getResolvedCollisionsPerLevel(level: Level, token1: any) {
+      return super.getResolvedCollisionsPerLevel(level, token1);
     }
   }
 

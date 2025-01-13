@@ -57,9 +57,9 @@ export class I18nExtension implements Extension<void> {
       }
 
       this.injector = injectorPerApp;
-      this.addI18nProvidersToScope(providersPerMod);
-      this.addI18nProvidersToScope(providersPerRou);
-      this.addI18nProvidersToScope(providersPerReq);
+      this.addI18nProvidersToLevel(providersPerMod);
+      this.addI18nProvidersToLevel(providersPerRou);
+      this.addI18nProvidersToLevel(providersPerReq);
     }
 
     if (!this.hasTranslation) {
@@ -67,7 +67,7 @@ export class I18nExtension implements Extension<void> {
     }
   }
 
-  protected addI18nProvidersToScope(providers: Provider[]) {
+  protected addI18nProvidersToLevel(providers: Provider[]) {
     this.injector = this.injector.resolveAndCreateChild(providers);
     const translations = this.injector.get(I18N_TRANSLATIONS, fromSelf, null) as Translations[];
     if (translations) {

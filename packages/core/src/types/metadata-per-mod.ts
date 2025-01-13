@@ -38,7 +38,7 @@ export class MetadataPerMod1 {
    */
   meta: NormalizedModuleMetadata;
   /**
-   * Map between a token and its ImportObj per scope.
+   * Map between a token and its ImportObj per level.
    */
   importedTokensMap: ImportedTokensMap;
 }

@@ -290,14 +290,14 @@ export class PreRouterExtension implements Extension<void> {
       const guard = resolvedProviders.find((rp) => rp.dualKey.token === g.guard);
 
       if (!guard) {
-        const scopes = ['providersPerRou', 'providersPerMod'];
+        const levels = ['providersPerRou', 'providersPerMod'];
         if (perReq) {
-          scopes.push('providersPerReq');
+          levels.push('providersPerReq');
         }
-        const scopeNames = scopes.join(' and ');
+        const levelNames = levels.join(' and ');
         let msg = `Could not find the required ${g.guard.name} in the context of`;
         msg += ` ${g.meta.name} for route "${controllerName} -> ${httpMethod} /${path}".`;
-        msg += ` Lookup in ${scopeNames} was unsuccessful.`;
+        msg += ` Lookup in ${levelNames} was unsuccessful.`;
         if (!perReq) {
           msg += ` Notice that ${controllerName} has "{ scope: 'ctx' }" in its metadata.`;
         }

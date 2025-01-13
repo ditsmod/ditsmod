@@ -13,13 +13,13 @@ import {
   NormalizedModuleMetadata,
   Provider,
   rootModule,
-  Scope,
   SystemLogMediator,
 } from '@ditsmod/core';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { AppendsWithParams } from './types.js';
 import { controller } from './controller.js';
 
+type Level = 'Mod';
 /**
  * @todo Rename this.
  */
@@ -51,8 +51,8 @@ class MockModuleFactory extends ModuleFactory {
     return super.exportGlobalProviders(moduleManager, providersPerApp);
   }
 
-  override getResolvedCollisionsPerScope(scope: Scope, token1: any) {
-    return super.getResolvedCollisionsPerScope(scope, token1);
+  override getResolvedCollisionsPerLevel(level: Level, token1: any) {
+    return super.getResolvedCollisionsPerLevel(level, token1);
   }
 }
 

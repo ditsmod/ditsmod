@@ -1,10 +1,10 @@
-import { Scope } from '#types/mix.js';
+import { Level } from '#types/mix.js';
 
 export function throwProvidersCollisionError(
   moduleName: string,
   duplicates: any[],
   modulesNames: string[] = [],
-  scope?: Scope,
+  level?: Level,
   isExternal?: boolean,
 ) {
   const namesArr = duplicates.map((p) => p.name || p);
@@ -13,9 +13,9 @@ export function throwProvidersCollisionError(
   let example = '';
   if (modulesNames.length) {
     fromModules = `from ${modulesNames.join(', ')} `;
-    example = ` For example: resolvedCollisionsPer${scope || 'App'}: [ [${namesArr[0]}, ${modulesNames[0]}] ].`;
+    example = ` For example: resolvedCollisionsPer${level || 'App'}: [ [${namesArr[0]}, ${modulesNames[0]}] ].`;
   }
-  const resolvedCollisionsPer = scope ? `resolvedCollisionsPer${scope}` : 'resolvedCollisionsPer*';
+  const resolvedCollisionsPer = level ? `resolvedCollisionsPer${level}` : 'resolvedCollisionsPer*';
   let msg = `Importing providers to ${moduleName} failed: exports ${fromModules}causes collision with ${namesStr}. `;
   if (!isExternal) {
     msg += `You should add ${namesStr} to ${resolvedCollisionsPer} in this module.${example}`;

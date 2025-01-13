@@ -1,9 +1,9 @@
 import { makeClassDecorator } from '#di';
 import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
-import { AnyFn, ModuleType, Scope } from '#types/mix.js';
+import { AnyFn, ModuleType } from '#types/mix.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 
-const scopes = ['App', 'Mod', 'Rou', 'Req'] as Scope[];
+const levels = ['App', 'Mod'] as const;
 
 export const featureModule: FeatureModuleDecorator = makeClassDecorator(transformModule);
 
@@ -13,11 +13,11 @@ export interface FeatureModuleDecorator {
 
 export function transformModule(data?: ModuleMetadata): RawMeta {
   const metadata = Object.assign({}, data);
-  scopes.forEach((scope) => {
+  levels.forEach((lvl) => {
     // If here is object with [Symbol.iterator]() method, this transform it to an array.
-    const arr = [...(data?.[`providersPer${scope}`] || [])];
+    const arr = [...(data?.[`providersPer${lvl}`] || [])];
     if (arr.length) {
-      metadata[`providersPer${scope}`] = arr;
+      metadata[`providersPer${lvl}`] = arr;
     }
   });
   return {

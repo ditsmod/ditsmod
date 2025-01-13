@@ -42,7 +42,7 @@ import {
 } from './utils.js';
 import { DEPS_KEY } from './decorator-factories.js';
 
-type ScopeOfInjector = 'App' | 'Mod' | 'Rou' | 'Req' | (string & {});
+type LevelOfInjector = 'App' | 'Mod' | 'Rou' | 'Req' | (string & {});
 
 const NoDefaultValue = Symbol();
 const msg1 =
@@ -86,20 +86,20 @@ export class Injector {
   #parent: Injector | null;
   #registry: RegistryOfInjector;
   #Registry: typeof RegistryOfInjector;
-  #scope?: ScopeOfInjector;
+  #level?: LevelOfInjector;
 
-  get scope() {
-    return this.#scope;
+  get level() {
+    return this.#level;
   }
 
   /**
-   * @param scope Scope name of the injector. Useful for debugging.
+   * @param level name of the injector. Useful for debugging.
    */
-  constructor(Registry: typeof RegistryOfInjector, scope?: ScopeOfInjector, parent?: Injector) {
+  constructor(Registry: typeof RegistryOfInjector, level?: LevelOfInjector, parent?: Injector) {
     this.#Registry = Registry;
     this.#registry = new Registry();
     this.#parent = parent || null;
-    this.#scope = scope;
+    this.#level = level;
   }
 
   /**
@@ -185,11 +185,11 @@ expect(injector.get(Car) instanceof Car).toBe(true);
    * because it needs to resolve the passed-in providers first.
    * See `Injector.resolve()` and `Injector.fromResolvedProviders()`.
    * 
-   * @param scope Injector name. Useful for debugging.
+   * @param level Injector name. Useful for debugging.
    */
-  static resolveAndCreate(providers: Provider[], scope?: ScopeOfInjector): Injector {
+  static resolveAndCreate(providers: Provider[], level?: LevelOfInjector): Injector {
     const resolvedProviders = this.resolve(providers);
-    return this.fromResolvedProviders(resolvedProviders, scope);
+    return this.fromResolvedProviders(resolvedProviders, level);
   }
 
   /**
@@ -214,10 +214,10 @@ const injector = Injector.fromResolvedProviders(providers);
 expect(injector.get(Car) instanceof Car).toBe(true);
 ```
   *
-  * @param scope Injector name. Useful for debugging.
+  * @param level Injector name. Useful for debugging.
    */
-  static fromResolvedProviders(providers: ResolvedProvider[], scope?: ScopeOfInjector): Injector {
-    return new Injector(this.prepareRegistry(providers), scope);
+  static fromResolvedProviders(providers: ResolvedProvider[], level?: LevelOfInjector): Injector {
+    return new Injector(this.prepareRegistry(providers), level);
   }
 
   protected static normalizeProviders(
@@ -470,11 +470,11 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
    *
    * See `Injector.resolve()` and `Injector.createChildFromResolved()`.
    * 
-   * @param scope Injector name. Useful for debugging.
+   * @param level Injector name. Useful for debugging.
    */
-  resolveAndCreateChild(providers: Provider[], scope?: ScopeOfInjector): Injector {
+  resolveAndCreateChild(providers: Provider[], level?: LevelOfInjector): Injector {
     const resolvedProviders = Injector.resolve(providers);
-    return this.createChildFromResolved(resolvedProviders, scope);
+    return this.createChildFromResolved(resolvedProviders, level);
   }
 
   /**
@@ -499,10 +499,10 @@ expect(child.get(ChildProvider) instanceof ChildProvider).toBe(true);
 expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
 ```
    *
-   * @param scope Injector name. Useful for debugging.
+   * @param level Injector name. Useful for debugging.
    */
-  createChildFromResolved(providers: ResolvedProvider[], scope?: ScopeOfInjector): Injector {
-    return new Injector(Injector.prepareRegistry(providers), scope, this);
+  createChildFromResolved(providers: ResolvedProvider[], level?: LevelOfInjector): Injector {
+    return new Injector(Injector.prepareRegistry(providers), level, this);
   }
 
   /**
@@ -518,7 +518,7 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
       return this;
     }
 
-    throw new DiError(format(msg1, id, this.#scope));
+    throw new DiError(format(msg1, id, this.#level));
   }
 
   /**
@@ -534,7 +534,7 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
     }
 
     const displayToken = stringify(token);
-    throw new DiError(format(msg2, displayToken, this.#scope));
+    throw new DiError(format(msg2, displayToken, this.#level));
   }
 
   /**
@@ -561,7 +561,7 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
     this.#Registry = undefined as any;
     this.#registry = undefined as any;
     this.#parent = undefined as any;
-    this.#scope = undefined;
+    this.#level = undefined;
     this.setParentGetter(() => this.#parent);
   }
 

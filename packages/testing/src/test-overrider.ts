@@ -1,5 +1,5 @@
 import { normalizeProviders, Provider, PerAppService, Providers } from '@ditsmod/core';
-import { Meta, Scope } from './types.js';
+import { Meta, Level } from './types.js';
 
 export class TestOverrider {
   static overrideAllProviders(perAppService: PerAppService, metadata: Meta, providersToOverride: Provider[]) {
@@ -19,16 +19,16 @@ export class TestOverrider {
    * If the token of the `provider` that needs to be overridden is found in the `metadata`,
    * that `provider` is added to the `metadata` array last in the same scope.
    */
-  static overrideProvider(scopes: Scope[], metadata: Meta, provider: Provider) {
-    scopes.forEach((scope) => {
-      const providers = [...(metadata[`providersPer${scope}`] || [])];
+  static overrideProvider(levels: Level[], metadata: Meta, provider: Provider) {
+    levels.forEach((level) => {
+      const providers = [...(metadata[`providersPer${level}`] || [])];
       const normExistingProviders = normalizeProviders(providers);
       const normProvider = normalizeProviders([provider])[0];
       if (normExistingProviders.some((p) => p.token === normProvider.token)) {
-        if (metadata[`providersPer${scope}`] instanceof Providers) {
-          metadata[`providersPer${scope}`] = [...(metadata[`providersPer${scope}`] as Providers), provider];
+        if (metadata[`providersPer${level}`] instanceof Providers) {
+          metadata[`providersPer${level}`] = [...(metadata[`providersPer${level}`] as Providers), provider];
         } else {
-          (metadata[`providersPer${scope}`] as Provider[]).push(provider);
+          (metadata[`providersPer${level}`] as Provider[]).push(provider);
         }
       }
     });
