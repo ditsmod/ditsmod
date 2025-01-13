@@ -1,5 +1,6 @@
 import request from 'supertest';
-import { HttpServer, Status } from '@ditsmod/core';
+import { Status } from '@ditsmod/core';
+import { HttpServer } from '@ditsmod/routing';
 import { TestApplication } from '@ditsmod/testing';
 import { describe, expect, it, beforeAll, afterAll } from 'vitest';
 

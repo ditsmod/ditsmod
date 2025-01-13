@@ -23,18 +23,18 @@ describe('TestApplication', () => {
 
   describe('create()', () => {
     it('not throw an error', async () => {
-      await expect(TestApplicationMock.create(RootModule1, { path })).resolves.not.toThrow();
+      await expect(TestApplicationMock.create(RootModule1)).resolves.not.toThrow();
     });
   });
 
   describe('getServer()', () => {
     it('not to throw an error', async () => {
-      const mock = await TestApplicationMock.create(RootModule1, { path });
+      const mock = await TestApplicationMock.create(RootModule1);
       await expect(mock.getServer()).resolves.not.toThrow();
     });
 
     it('returns instance of http.Server', async () => {
-      const mock = await TestApplicationMock.create(RootModule1, { path });
+      const mock = await TestApplicationMock.create(RootModule1);
       const server = await mock.getServer();
       expect(server).toBeInstanceOf(Server);
     });

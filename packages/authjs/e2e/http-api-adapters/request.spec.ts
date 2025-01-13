@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import supertest from 'supertest';
-import { Status, rootModule, HttpServer } from '@ditsmod/core';
+import { Status, rootModule } from '@ditsmod/core';
 import { controller, RequestContext, RawRequest } from '@ditsmod/routing';
-import { route, RoutingModule } from '@ditsmod/routing';
+import { route, RoutingModule, HttpServer } from '@ditsmod/routing';
 import { TestApplication } from '@ditsmod/testing';
 import { BodyParserModule } from '@ditsmod/body-parser';
 

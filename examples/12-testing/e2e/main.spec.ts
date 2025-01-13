@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { HttpServer } from '@ditsmod/core';
+import { HttpServer } from '@ditsmod/routing';
 import { HttpErrorHandler } from '@ditsmod/routing';
 import { TestApplication } from '@ditsmod/testing';
 import { describe, expect, it, vi, afterEach, beforeAll } from 'vitest';

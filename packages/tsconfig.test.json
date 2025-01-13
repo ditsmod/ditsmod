@@ -3,7 +3,7 @@
   "references": [
     { "path": "authjs/tsconfig.e2e.json" },
     { "path": "body-parser/tsconfig.unit.json" },
-    { "path": "core/tsconfig.e2e.json" },
+    { "path": "core/tsconfig.unit.json" },
     { "path": "cors/tsconfig.unit.json" },
     { "path": "i18n/tsconfig.e2e.json" },
     { "path": "jwt/tsconfig.unit.json" },

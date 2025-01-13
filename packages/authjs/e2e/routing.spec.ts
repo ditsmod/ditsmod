@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import supertest from 'supertest';
-import { rootModule, HttpServer } from '@ditsmod/core';
-import { route, RoutingModule, RequestContext, controller } from '@ditsmod/routing';
+import { rootModule } from '@ditsmod/core';
+import { route, RoutingModule, RequestContext, controller, HttpServer } from '@ditsmod/routing';
 import { TestApplication } from '@ditsmod/testing';
 
 import credentials from '#mod/providers/credentials.js';

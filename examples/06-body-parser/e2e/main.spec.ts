@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { TestApplication } from '@ditsmod/testing';
-import { HttpServer, Providers, Status } from '@ditsmod/core';
+import { Providers, Status } from '@ditsmod/core';
+import { HttpServer } from '@ditsmod/routing';
 import { BodyParserConfig } from '@ditsmod/body-parser';
 import { describe, expect, it, beforeAll, afterAll } from 'vitest';
 
