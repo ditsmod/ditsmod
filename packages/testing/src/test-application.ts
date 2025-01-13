@@ -79,8 +79,8 @@ export class TestApplication extends RoutingApplication {
    *
    * @param providers Providers to override.
    */
-  overrideExtensionMeta<T>(groupToken: ExtensionsGroupToken<T>, override: GroupMetaOverrider<T>) {
-    this.testAppInitializer.setOverriderConfig({ groupToken, override });
+  overrideExtensionMeta<T>(ExtCls: ExtensionsGroupToken<T>, override: GroupMetaOverrider<T>) {
+    this.testAppInitializer.setOverriderConfig({ ExtCls, override });
     return this;
   }
 

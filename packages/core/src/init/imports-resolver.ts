@@ -140,9 +140,9 @@ export class ImportsResolver {
       getTokens(extensionsProviders).filter((token) => token instanceof InjectionToken),
     );
 
-    uniqGroupTokens.forEach((groupToken) => {
-      const counter = this.extensionCounters.mGroupTokens.get(groupToken) || 0;
-      this.extensionCounters.mGroupTokens.set(groupToken, counter + 1);
+    uniqGroupTokens.forEach((ExtCls) => {
+      const counter = this.extensionCounters.mGroupTokens.get(ExtCls) || 0;
+      this.extensionCounters.mGroupTokens.set(ExtCls, counter + 1);
     });
 
     uniqTargets.forEach((target) => {

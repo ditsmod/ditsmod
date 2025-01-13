@@ -7,7 +7,7 @@ export class ExtensionsContext {
   mStage1GroupMeta = new Map<ExtensionsGroupToken, Stage1GroupMeta[]>();
   /**
    * The pending list of extensions that want to receive the initialization result
-   * of `groupToken` from the whole application.
+   * of `ExtCls` from the whole application.
    */
   mExtensionPendingList = new Map<ExtensionsGroupToken, Map<Class<Extension>, Extension>>();
 

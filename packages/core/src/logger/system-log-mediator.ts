@@ -35,12 +35,12 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * ${extensionName} attempted to call "extensionsManager.stage1(${groupToken})", but ${groupToken}
+   * ${extensionName} attempted to call "extensionsManager.stage1(${ExtCls})", but ${ExtCls}
    * not declared in "afterGroups" array in this module.
    */
-  throwEarlyGroupCalling(groupToken: string, extensionName: string) {
+  throwEarlyGroupCalling(ExtCls: string, extensionName: string) {
     const msg =
-      `${extensionName} attempted to call "extensionsManager.stage1(${groupToken})", but ${groupToken} ` +
+      `${extensionName} attempted to call "extensionsManager.stage1(${ExtCls})", but ${ExtCls} ` +
       'not declared in "afterGroups" array in this module.';
     throw new Error(msg);
   }
@@ -235,9 +235,9 @@ export class SystemLogMediator extends LogMediator {
   /**
    * `for ${tokenName} no extensions found.`
    */
-  noExtensionsFound(self: object, groupToken: any, unfinishedInit: Set<Extension | ExtensionsGroupToken>) {
+  noExtensionsFound(self: object, ExtCls: any, unfinishedInit: Set<Extension | ExtensionsGroupToken>) {
     const className = self.constructor.name;
-    const tokenName = getProviderName(groupToken);
+    const tokenName = getProviderName(ExtCls);
     const item = Array.from(unfinishedInit).at(-2)!;
     const itemName = getProviderName(item);
     const msgArr = [

@@ -17,6 +17,6 @@ export interface GroupMetaOverrider<T = any> {
 }
 
 export interface OverriderConfig {
-  groupToken: ExtensionsGroupToken;
+  ExtCls: ExtensionsGroupToken;
   override: GroupMetaOverrider;
 }

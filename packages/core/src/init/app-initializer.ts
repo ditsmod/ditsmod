@@ -280,12 +280,12 @@ export class AppInitializer {
     mMetadataPerMod2: Map<ModRefId, MetadataPerMod2>,
     extensionsContext: ExtensionsContext,
   ) {
-    for (const [groupToken, mExtensions] of extensionsContext.mExtensionPendingList) {
+    for (const [ExtCls, mExtensions] of extensionsContext.mExtensionPendingList) {
       for (const extension of mExtensions.values()) {
         try {
           await extension.stage1?.(true);
         } catch (err: any) {
-          const groupName = getProviderName(groupToken);
+          const groupName = getProviderName(ExtCls);
           const msg = `Metadata collection from all modules for ${groupName} failed`;
           throw new ChainError(msg, err);
         }
@@ -396,9 +396,9 @@ export class AppInitializer {
     const uniqGroupTokens = new Set<ExtensionsGroupToken>(groupTokens);
     const uniqTargets = new Set<Provider>(getProvidersTargets(providers));
 
-    uniqGroupTokens.forEach((groupToken) => {
-      const counter = mGroupTokens.get(groupToken)!;
-      mGroupTokens.set(groupToken, counter - 1);
+    uniqGroupTokens.forEach((ExtCls) => {
+      const counter = mGroupTokens.get(ExtCls)!;
+      mGroupTokens.set(ExtCls, counter - 1);
     });
 
     uniqTargets.forEach((target) => {

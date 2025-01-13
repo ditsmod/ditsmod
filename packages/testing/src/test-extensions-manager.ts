@@ -32,12 +32,12 @@ export class TestExtensionsManager extends InternalExtensionsManager {
     super(injector, systemLogMediator, counter, extensionsContext, extensionCounters);
   }
 
-  override async stage1<T>(groupToken: ExtensionsGroupToken<T>): Promise<Stage1GroupMeta<T>>;
-  override async stage1<T>(groupToken: ExtensionsGroupToken<T>, pendingExtension: Extension): Promise<Stage1GroupMeta2<T>>;
-  override async stage1<T>(groupToken: ExtensionsGroupToken<T>, pendingExtension?: Extension) {
-    const stage1GroupMeta = await super.stage1<T>(groupToken, pendingExtension as Extension);
+  override async stage1<T>(ExtCls: ExtensionsGroupToken<T>): Promise<Stage1GroupMeta<T>>;
+  override async stage1<T>(ExtCls: ExtensionsGroupToken<T>, pendingExtension: Extension): Promise<Stage1GroupMeta2<T>>;
+  override async stage1<T>(ExtCls: ExtensionsGroupToken<T>, pendingExtension?: Extension) {
+    const stage1GroupMeta = await super.stage1<T>(ExtCls, pendingExtension as Extension);
     this.aOverriderConfig.forEach((overriderConfig) => {
-      if (groupToken === overriderConfig.groupToken) {
+      if (ExtCls === overriderConfig.ExtCls) {
         overriderConfig.override(stage1GroupMeta);
       }
     });
