@@ -2,6 +2,11 @@ import { ProvidersMetadata } from '#types/providers-metadata.js';
 import { AnyObj, ModuleType } from '#types/mix.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { ExtensionType } from '#extension/extension-types.js';
+import { NormalizedModuleMetadata } from './normalized-module-metadata.js';
+
+export interface IModuleNormalizer {
+  normalize(meta: NormalizedModuleMetadata): NormalizedModuleMetadata;
+}
 
 export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<ProvidersMetadata> {
   /**
@@ -18,6 +23,7 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
    * module.
    */
   exports?: any[];
+  moduleNormalizers?: IModuleNormalizer[];
   /**
    * The application extensions.
    */

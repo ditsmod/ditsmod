@@ -122,7 +122,7 @@ export class ModuleNormalizer {
     this.quickCheckMetadata(meta);
     // meta.controllers.forEach((Controller) => this.checkController(modName, Controller));
 
-    return meta;
+    return rawMeta.moduleNormalizers?.reduce((prev, curr) => curr.normalize(prev), meta) || meta;
   }
 
   // protected checkController(modName: string, Controller: Class) {
@@ -361,7 +361,6 @@ export class ModuleNormalizer {
  * Merges metadata passed in `rootModule` or `featureModule` decorators with metadata passed
  * in `ModuleWithParams`.
  */
-
 export function getModuleMetadata(modRefId: ModRefId, isRoot?: boolean): RawMeta | undefined {
   modRefId = resolveForwardRef(modRefId);
   const decoratorGuard = isRoot ? isRootModule : isModDecor;
