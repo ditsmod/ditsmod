@@ -160,6 +160,18 @@ export class ModuleManager {
     }
   }
 
+  protected startTransaction() {
+    if (this.oldMapId.has('root')) {
+      // Transaction already started.
+      return false;
+    }
+
+    this.map.forEach((meta, key) => this.oldMap.set(key, this.copyMeta(meta)));
+    this.oldMapId = new Map(this.mapId);
+
+    return true;
+  }
+
   commit() {
     this.oldMapId = new Map();
     this.oldMap = new Map();
@@ -283,25 +295,6 @@ export class ModuleManager {
     }
 
     return meta;
-  }
-
-  protected startTransaction() {
-    if (this.oldMapId.has('root')) {
-      // Transaction already started.
-      return false;
-    }
-
-    this.map.forEach((meta, key) => {
-      const oldMeta = { ...meta };
-      this.propsWithModules.forEach((p) => {
-        (oldMeta as any)[p] = (oldMeta as any)[p].slice();
-      });
-
-      this.oldMap.set(key, oldMeta);
-    });
-    this.oldMapId = new Map(this.mapId);
-
-    return true;
   }
 
   /**
