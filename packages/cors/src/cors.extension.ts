@@ -7,7 +7,7 @@ import {
   Status,
   HttpMethod,
   Provider,
-  Stage1GroupMetaPerApp,
+  Stage1ExtensionMetaPerApp,
 } from '@ditsmod/core';
 import { CorsOptions, mergeOptions } from '@ts-stack/cors';
 import {
@@ -16,7 +16,7 @@ import {
   HTTP_INTERCEPTORS,
   MetadataPerMod3,
   RouteMeta,
-  ROUTE_EXTENSIONS,
+  RoutesExtension,
 } from '@ditsmod/routing';
 
 import { CorsInterceptor } from './cors.interceptor.js';
@@ -32,27 +32,27 @@ export class CorsExtension implements Extension<void | false> {
   ) {}
 
   async stage1() {
-    const stage1GroupMeta = await this.extensionsManager.stage1(ROUTE_EXTENSIONS, this);
-    if (stage1GroupMeta.delay) {
+    const stage1ExtensionMeta = await this.extensionsManager.stage1(RoutesExtension, this);
+    if (stage1ExtensionMeta.delay) {
       return false;
     }
-    this.prepareDataAndSetInterceptors(stage1GroupMeta.groupDataPerApp, this.perAppService.injector);
+    this.prepareDataAndSetInterceptors(stage1ExtensionMeta.groupDataPerApp, this.perAppService.injector);
 
     return; // Make TypeScript happy
   }
 
   protected prepareDataAndSetInterceptors(
-    groupDataPerApp: Stage1GroupMetaPerApp<MetadataPerMod3>[],
+    groupDataPerApp: Stage1ExtensionMetaPerApp<MetadataPerMod3>[],
     injectorPerApp: Injector,
   ) {
-    groupDataPerApp.forEach((stage1GroupMetaPerApp) => {
-      stage1GroupMetaPerApp.groupData.forEach((metadataPerMod3) => {
+    groupDataPerApp.forEach((stage1ExtensionMetaPerApp) => {
+      stage1ExtensionMetaPerApp.groupData.forEach((metadataPerMod3) => {
         const { aControllerMetadata } = metadataPerMod3;
         const { providersPerMod } = metadataPerMod3.meta;
         const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
         const routesWithOptions = this.getRoutesWithOptions(
           providersPerMod,
-          stage1GroupMetaPerApp.groupData,
+          stage1ExtensionMetaPerApp.groupData,
           aControllerMetadata,
         );
         aControllerMetadata.push(...routesWithOptions);

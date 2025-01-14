@@ -2,8 +2,9 @@ import { inspect } from 'node:util';
 import { Extension, ExtensionsManager, injectable } from '@ditsmod/core';
 
 import { RoutingErrorMediator } from '../router-error-mediator.js';
-import { HTTP_INTERCEPTORS, ROUTE_EXTENSIONS } from '#mod/constants.js';
+import { HTTP_INTERCEPTORS } from '#mod/constants.js';
 import { isInterceptor } from '#mod/type.guards.js';
+import { RoutesExtension } from './routes.extension.js';
 
 /**
  * A group of extensions that allows you to set the order of launching different interceptors.
@@ -16,8 +17,8 @@ export class UseInterceptorExtension implements Extension {
   ) {}
 
   async stage1() {
-    const stage1GroupMeta = await this.extensionManager.stage1(ROUTE_EXTENSIONS);
-    for (const metadataPerMod3 of stage1GroupMeta.groupData) {
+    const stage1ExtensionMeta = await this.extensionManager.stage1(RoutesExtension);
+    for (const metadataPerMod3 of stage1ExtensionMeta.groupData) {
       for (const meta of metadataPerMod3.aControllerMetadata) {
         if (meta.interceptors)
           for (const interceptor of meta.interceptors) {

@@ -86,10 +86,9 @@ describe('ModuleManager', () => {
       class Ext implements Extension {
         async stage1() {}
       }
-      const GROUP1_EXTENSIONS = new InjectionToken('GROUP1_EXTENSIONS');
 
       @featureModule({
-        extensions: [{ extension: Ext, group: GROUP1_EXTENSIONS, export: true }],
+        extensions: [{ extension: Ext, export: true }],
       })
       class Module1 {}
 
@@ -216,7 +215,6 @@ describe('ModuleManager', () => {
     expectedMeta.id = '';
     expectedMeta.name = 'AppModule';
     expectedMeta.modRefId = AppModule;
-    expectedMeta.providersPerReq = [Provider1];
     expectedMeta.decorator = rootModule;
     expectedMeta.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta.isExternal = false;
@@ -378,9 +376,8 @@ describe('ModuleManager', () => {
   it('module exported invalid extension', () => {
     @injectable()
     class Extension1 {}
-    const TEST_EXTENSIONS = new InjectionToken<Extension>('TEST_EXTENSIONS');
 
-    @featureModule({ extensions: [{ extension: Extension1 as any, group: TEST_EXTENSIONS, export: true }] })
+    @featureModule({ extensions: [{ extension: Extension1 as any, export: true }] })
     class Module2 {}
 
     expect(() => mock.scanModule(Module2)).toThrow('must have stage1(), stage2() or stage3() method');
@@ -391,9 +388,8 @@ describe('ModuleManager', () => {
     class Extension1 implements Extension {
       async stage1() {}
     }
-    const TEST_EXTENSIONS = new InjectionToken<Extension>('TEST_EXTENSIONS');
 
-    @featureModule({ extensions: [{ extension: Extension1 as any, group: TEST_EXTENSIONS, export: true }] })
+    @featureModule({ extensions: [{ extension: Extension1 as any, export: true }] })
     class Module2 {}
 
     expect(() => mock.scanModule(Module2)).not.toThrow();
@@ -466,10 +462,8 @@ describe('ModuleManager', () => {
     expectedMeta2.modRefId = Module2;
     expectedMeta2.importsModules = [Module1];
     expectedMeta2.providersPerMod = [Provider0];
-    expectedMeta2.providersPerRou = [Provider1];
     expectedMeta2.exportsModules = [Module1];
     expectedMeta2.exportedProvidersPerMod = [Provider0];
-    expectedMeta2.exportedProvidersPerRou = [Provider1];
     expectedMeta2.decorator = featureModule;
     expectedMeta2.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta2.isExternal = false;
@@ -547,7 +541,6 @@ describe('ModuleManager', () => {
     expectedMeta1.id = '';
     expectedMeta1.name = 'AppModule';
     expectedMeta1.modRefId = AppModule;
-    expectedMeta1.providersPerReq = [Provider1];
     expectedMeta1.decorator = rootModule;
     expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta1.isExternal = false;
@@ -591,7 +584,6 @@ describe('ModuleManager', () => {
     expectedMeta2.name = 'AppModule';
     expectedMeta2.modRefId = AppModule;
     expectedMeta2.importsModules = [Module1];
-    expectedMeta2.providersPerReq = [Provider1];
     expectedMeta2.decorator = rootModule;
     expectedMeta2.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta2.isExternal = false;
@@ -630,7 +622,6 @@ describe('ModuleManager', () => {
     expectedMeta3.name = 'AppModule';
     expectedMeta3.modRefId = AppModule;
     expectedMeta3.importsModules = [Module1, Module2, Module4];
-    expectedMeta3.providersPerReq = [Provider1];
     expectedMeta3.decorator = rootModule;
     expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta3.isExternal = false;
@@ -712,7 +703,6 @@ describe('ModuleManager', () => {
     expectedMeta1.modRefId = AppModule;
     expectedMeta1.importsModules = [Module1, Module2];
     expectedMeta1.importsWithParams = [module3WithProviders, module4WithProviders];
-    expectedMeta1.providersPerReq = [Provider1];
     expectedMeta1.decorator = rootModule;
     expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta1.isExternal = false;
@@ -759,7 +749,6 @@ describe('ModuleManager', () => {
     expectedMeta2.modRefId = AppModule;
     expectedMeta2.importsModules = [Module1];
     expectedMeta2.importsWithParams = [module3WithProviders, module4WithProviders];
-    expectedMeta2.providersPerReq = [Provider1];
     expectedMeta2.decorator = rootModule;
     expectedMeta2.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta2.isExternal = false;
@@ -786,7 +775,6 @@ describe('ModuleManager', () => {
     expectedMeta3.modRefId = AppModule;
     expectedMeta3.importsModules = [Module1];
     expectedMeta3.importsWithParams = [module4WithProviders];
-    expectedMeta3.providersPerReq = [Provider1];
     expectedMeta3.decorator = rootModule;
     expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta3.isExternal = false;
@@ -810,7 +798,6 @@ describe('ModuleManager', () => {
     expectedMeta4.name = 'AppModule';
     expectedMeta4.modRefId = AppModule;
     expectedMeta4.importsModules = [Module1];
-    expectedMeta4.providersPerReq = [Provider1];
     expectedMeta4.decorator = rootModule;
     expectedMeta4.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta4.isExternal = false;
@@ -836,14 +823,12 @@ describe('ModuleManager', () => {
       async stage1() {}
     }
 
-    const GROUP_EXTENSIONS = new InjectionToken<Extension<void>[]>('GROUP_EXTENSIONS');
     const extensionsProviders: Provider[] = [
       Extension1,
-      { token: GROUP_EXTENSIONS, useToken: Extension1, multi: true },
     ];
 
     @featureModule({
-      extensions: [{ extension: Extension1 as any, group: GROUP_EXTENSIONS, export: true }],
+      extensions: [{ extension: Extension1 as any, export: true }],
     })
     class Module1 {}
 
@@ -888,14 +873,12 @@ describe('ModuleManager', () => {
       async stage1() {}
     }
 
-    const GROUP_EXTENSIONS = new InjectionToken<Extension<void>[]>('GROUP_EXTENSIONS');
     const extensionsProviders: Provider[] = [
       Extension1,
-      { token: GROUP_EXTENSIONS, useToken: Extension1, multi: true },
     ];
 
     @featureModule({
-      extensions: [{ extension: Extension1 as any, group: GROUP_EXTENSIONS, export: true }],
+      extensions: [{ extension: Extension1 as any, export: true }],
     })
     class Module1 {}
 
@@ -941,10 +924,9 @@ describe('ModuleManager', () => {
       one: string;
       two: number;
     }
-    const MY_EXTENSIONS = new InjectionToken<Extension<MyInterface>[]>('MY_EXTENSIONS');
 
     it('exports token of an extension without this extension', async () => {
-      @rootModule({ exports: [MY_EXTENSIONS] })
+      @rootModule({ exports: [] })
       class AppModule {}
 
       const msg = 'is a token of extension, this extension must be included in';
@@ -952,7 +934,7 @@ describe('ModuleManager', () => {
     });
 
     it('should throw error about no extension', async () => {
-      @rootModule({ exports: [MY_EXTENSIONS] })
+      @rootModule({ exports: [] })
       class AppModule {}
 
       const msg = 'is a token of extension, this extension must be included in';
@@ -998,9 +980,6 @@ describe('ModuleManager', () => {
     expectedMeta1.id = '';
     expectedMeta1.name = 'Module1';
     expectedMeta1.modRefId = Module1;
-    expectedMeta1.providersPerReq = providersPerReq;
-    expectedMeta1.exportedProvidersPerReq = [Provider3];
-    expectedMeta1.exportedMultiProvidersPerReq = providersPerReq.filter(isMultiProvider);
     expectedMeta1.decorator = featureModule;
     expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta1.isExternal = false;

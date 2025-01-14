@@ -1,8 +1,8 @@
 import { featureModule, isProvider, ModuleWithParams, Provider } from '@ditsmod/core';
-import { USE_INTERCEPTOR_EXTENSIONS, ROUTE_EXTENSIONS, RoutingModule } from '@ditsmod/routing';
-import { BODY_PARSER_EXTENSIONS, BodyParserModule } from '@ditsmod/body-parser';
+import { RoutesExtension, RoutingModule, UseInterceptorExtension } from '@ditsmod/routing';
+import { BodyParserModule, BodyParserExtension } from '@ditsmod/body-parser';
 
-import { AUTHJS_EXTENSIONS, AUTHJS_SESSION } from './constants.js';
+import { AUTHJS_SESSION } from './constants.js';
 import { AuthjsGuard } from '#mod/authjs.guard.js';
 import { AuthjsPerRouGuard } from './authjs-per-rou.guard.js';
 import { AuthjsLogMediator } from './authjs-log-mediator.js';
@@ -22,9 +22,8 @@ import { AuthjsConfig } from './authjs.config.js';
   extensions: [
     {
       extension: AuthjsExtension,
-      group: AUTHJS_EXTENSIONS,
-      afterGroups: [BODY_PARSER_EXTENSIONS, ROUTE_EXTENSIONS],
-      beforeGroups: [USE_INTERCEPTOR_EXTENSIONS],
+      afterExtensions: [BodyParserExtension, RoutesExtension],
+      beforeExtensions: [UseInterceptorExtension],
       exportOnly: true,
     },
   ],

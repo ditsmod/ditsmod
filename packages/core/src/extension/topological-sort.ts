@@ -1,48 +1,48 @@
 import { AnyObj } from '#types/mix.js';
-import { getGraph, Graph, GroupConfig, isGroupConfig } from './tarjan-graph.js';
+import { getGraph, Graph, ExtensionConfig, isExtensionConfig } from './tarjan-graph.js';
 
-export function topologicalSort<T = any, R extends GroupConfig<T> = GroupConfig<any>>(
+export function topologicalSort<T = any, R extends ExtensionConfig<T> = ExtensionConfig<any>>(
   configs: AnyObj[],
-  groupsOnly: true,
+  extensionsOnly: true,
 ): T[];
-export function topologicalSort<T = any, R extends GroupConfig<T> = GroupConfig<any>>(
+export function topologicalSort<T = any, R extends ExtensionConfig<T> = ExtensionConfig<any>>(
   configs: AnyObj[],
-  groupsOnly?: false,
+  extensionsOnly?: false,
 ): R[];
-export function topologicalSort<T = any, R extends GroupConfig<T> = GroupConfig<any>>(
+export function topologicalSort<T = any, R extends ExtensionConfig<T> = ExtensionConfig<any>>(
   inputConfigs: AnyObj[],
-  groupsOnly?: boolean,
+  extensionsOnly?: boolean,
 ): R[] | T[] {
-  const configs = inputConfigs.filter(isGroupConfig) as R[];
+  const configs = inputConfigs.filter(isExtensionConfig) as R[];
   const { origin, graph } = getGraph<T>(configs);
   const visited = new Set<T>();
-  const orderedGroups: T[] = [];
+  const orderedExtensions: T[] = [];
 
-  // Running DFS for each group.
-  for (const group of origin) {
-    if (!visited.has(group)) {
-      dfs(graph, visited, orderedGroups, group);
+  // Running DFS for each extension.
+  for (const extension of origin) {
+    if (!visited.has(extension)) {
+      dfs(graph, visited, orderedExtensions, extension);
     }
   }
 
-  if (groupsOnly) {
-    return orderedGroups;
+  if (extensionsOnly) {
+    return orderedExtensions;
   }
-  // Mapping the sorted result to GroupConfig<T>
-  return orderedGroups.map((group) => configs.findLast((config) => config.group === group)!);
+  // Mapping the sorted result to ExtensionConfig<T>
+  return orderedExtensions.map((extension) => configs.findLast((config) => config.extension === extension)!);
 }
 
 // Recursive depth-first search.
-function dfs<T>(graph: Graph<T>, visited: Set<T>, orderedGroups: T[], group: T) {
-  if (visited.has(group)) {
+function dfs<T>(graph: Graph<T>, visited: Set<T>, orderedExtensions: T[], extension: T) {
+  if (visited.has(extension)) {
     return;
   }
-  visited.add(group);
+  visited.add(extension);
 
-  const neighbors = graph.get(group) || [];
+  const neighbors = graph.get(extension) || [];
   for (const neighbor of neighbors) {
-    dfs(graph, visited, orderedGroups, neighbor);
+    dfs(graph, visited, orderedExtensions, neighbor);
   }
 
-  orderedGroups.push(group); // Adding a group after processing all dependencies.
+  orderedExtensions.push(extension); // Adding a extension after processing all dependencies.
 }

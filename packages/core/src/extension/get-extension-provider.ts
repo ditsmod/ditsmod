@@ -12,17 +12,13 @@ export class ExtensionObj {
 export interface ExtensionConfigBase {
   extension: ExtensionType;
   /**
-   * Extension group token.
-   */
-  group: InjectionToken<Extension[]>;
-  /**
    * The array of tokens of the group before which this extension will be called.
    */
-  beforeGroups?: InjectionToken<Extension[]>[];
+  beforeExtensions?: ExtensionType[];
   /**
    * The array of tokens of the group after which this extension will be called.
    */
-  afterGroups?: InjectionToken<Extension[]>[];
+  afterExtensions?: ExtensionType[];
   overrideExtension?: never;
 }
 
@@ -54,7 +50,7 @@ export function isConfigWithOverrideExtension(extensionConfig: AnyObj): extensio
 }
 
 export function isBaseExtensionConfig(extensionConfig: AnyObj): extensionConfig is ExtensionConfigBase {
-  return (extensionConfig as ExtensionConfigBase).group !== undefined;
+  return (extensionConfig as ExtensionConfigBase).extension !== undefined;
 }
 
 export function getExtensionProvider(extensionConfig: ExtensionConfig): ExtensionObj {
@@ -68,10 +64,6 @@ export function getExtensionProvider(extensionConfig: ExtensionConfig): Extensio
 
   const { extension } = extensionConfig;
   const providers: Provider[] = [extension];
-  if (extensionConfig.group) {
-    providers.push({ token: extensionConfig.group, useToken: extension, multi: true });
-  }
-
   if (extensionConfig.exportOnly) {
     return {
       providers: [],

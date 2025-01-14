@@ -1,17 +1,15 @@
-import { Class, MultiProvider } from '#di';
+import { MultiProvider } from '#di';
 import { AnyFn, AnyObj, ModuleType } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from './module-metadata.js';
 import { ProvidersMetadata } from '#types/providers-metadata.js';
 import { RawMeta } from '#decorators/module.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
-import { ExtensionsGroupToken } from '#extension/extension-types.js';
+import { ExtensionType } from '#extension/extension-types.js';
 
 export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> extends ProvidersMetadata {
   override providersPerApp: Provider[] = [];
   override providersPerMod: Provider[] = [];
-  override providersPerRou: Provider[] = [];
-  override providersPerReq: Provider[] = [];
   rawMeta: RawMeta;
   /**
    * The module setted here must be identical to the module
@@ -56,7 +54,7 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   extensionsProviders: Provider[] = [];
   exportedExtensionsProviders: Provider[] = [];
   aExtensionConfig: ExtensionConfig[] = [];
-  aOrderedGroups: ExtensionsGroupToken[] = [];
+  aOrderedExtensions: ExtensionType[] = [];
   aExportedExtensionConfig: ExtensionConfig[] = [];
   /**
    * This property allows you to pass any information to extensions.

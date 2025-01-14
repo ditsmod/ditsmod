@@ -1,11 +1,9 @@
-import { Extension, ExtensionsManager, PerAppService, injectable, InjectionToken } from '@ditsmod/core';
-import { HTTP_INTERCEPTORS, ROUTE_EXTENSIONS } from '@ditsmod/routing';
+import { Extension, ExtensionsManager, PerAppService, injectable } from '@ditsmod/core';
+import { HTTP_INTERCEPTORS, RoutesExtension } from '@ditsmod/routing';
 
 import { BodyParserConfig } from './body-parser-config.js';
 import { BodyParserInterceptor } from './body-parser.interceptor.js';
 import { CtxBodyParserInterceptor } from './ctx-body-parser.interceptor.js';
-
-export const BODY_PARSER_EXTENSIONS = new InjectionToken<Extension<void>[]>('BODY_PARSER_EXTENSIONS');
 
 @injectable()
 export class BodyParserExtension implements Extension<void> {
@@ -15,8 +13,8 @@ export class BodyParserExtension implements Extension<void> {
   ) {}
 
   async stage1() {
-    const stage1GroupMeta = await this.extensionManager.stage1(ROUTE_EXTENSIONS);
-    stage1GroupMeta.groupData.forEach((metadataPerMod3) => {
+    const stage1ExtensionMeta = await this.extensionManager.stage1(RoutesExtension);
+    stage1ExtensionMeta.groupData.forEach((metadataPerMod3) => {
       const { aControllerMetadata } = metadataPerMod3;
       const { providersPerMod } = metadataPerMod3.meta;
       aControllerMetadata.forEach(({ providersPerRou, providersPerReq, httpMethods, scope }) => {

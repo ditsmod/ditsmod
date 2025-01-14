@@ -15,8 +15,9 @@ import { getProviderName } from '#utils/get-provider-name.js';
 import { getProvidersTargets, getTokens } from '#utils/get-tokens.js';
 import { isClassProvider, isFactoryProvider, isTokenProvider, isValueProvider } from '#di';
 import { SystemErrorMediator } from '#error/system-error-mediator.js';
-import { ExtensionCounters, ExtensionsGroupToken } from '#extension/extension-types.js';
+import { ExtensionCounters, ExtensionType } from '#extension/extension-types.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
+import { isExtensionProvider } from '#extension/type-guards.js';
 
 export class ImportsResolver {
   protected unfinishedSearchDependecies: [ModRefId, Provider][] = [];
@@ -136,13 +137,13 @@ export class ImportsResolver {
   protected increaseExtensionCounters(meta: NormalizedModuleMetadata) {
     const extensionsProviders = [...meta.extensionsProviders];
     const uniqTargets = new Set<Provider>(getProvidersTargets(extensionsProviders));
-    const uniqGroupTokens = new Set<ExtensionsGroupToken>(
-      getTokens(extensionsProviders).filter((token) => token instanceof InjectionToken),
+    const uniqExtensionTokens = new Set<ExtensionType>(
+      getTokens(extensionsProviders).filter(isExtensionProvider),
     );
 
-    uniqGroupTokens.forEach((ExtCls) => {
-      const counter = this.extensionCounters.mGroupTokens.get(ExtCls) || 0;
-      this.extensionCounters.mGroupTokens.set(ExtCls, counter + 1);
+    uniqExtensionTokens.forEach((ExtCls) => {
+      const counter = this.extensionCounters.mExtensionTokens.get(ExtCls) || 0;
+      this.extensionCounters.mExtensionTokens.set(ExtCls, counter + 1);
     });
 
     uniqTargets.forEach((target) => {

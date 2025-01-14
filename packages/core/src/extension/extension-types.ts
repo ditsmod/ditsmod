@@ -19,10 +19,10 @@ export class Stage1DebugMeta<T = any> {
   ) {}
 }
 
-export class Stage1GroupMeta<T = any> {
+export class Stage1ExtensionMeta<T = any> {
   delay: boolean;
   countdown = 0;
-  groupDataPerApp: Stage1GroupMetaPerApp<T>[];
+  groupDataPerApp: Stage1ExtensionMetaPerApp<T>[];
 
   constructor(
     public moduleName: string,
@@ -37,8 +37,8 @@ export class Stage1GroupMeta<T = any> {
 }
 
 // prettier-ignore
-export type Stage1GroupMeta2<T = any> = OptionalProps<Stage1GroupMeta<T>, 'groupDebugMeta' | 'groupData' | 'moduleName' | 'countdown'>;
-export type Stage1GroupMetaPerApp<T = any> = Omit<Stage1GroupMeta<T>, 'groupDataPerApp'>;
+export type Stage1ExtensionMeta2<T = any> = OptionalProps<Stage1ExtensionMeta<T>, 'groupDebugMeta' | 'groupData' | 'moduleName' | 'countdown'>;
+export type Stage1ExtensionMetaPerApp<T = any> = Omit<Stage1ExtensionMeta<T>, 'groupDataPerApp'>;
 
 /**
  * The concept of "stages" in extensions was introduced so that metadata or injectors
@@ -68,12 +68,11 @@ export interface Extension<T = any> {
    */
   stage3?(): Promise<void>;
 }
-export type ExtensionsGroupToken<T = any> = InjectionToken<Extension<T>[]>;
 export type ExtensionType<T = any> = Class<Extension<T>>;
 /**
  * Used to count all extension groups and extensions that are in the application.
  */
 export class ExtensionCounters {
   mExtensions = new Map<Provider, number>();
-  mGroupTokens = new Map<ExtensionsGroupToken, number>();
+  mExtensionTokens = new Map<ExtensionType, number>();
 }

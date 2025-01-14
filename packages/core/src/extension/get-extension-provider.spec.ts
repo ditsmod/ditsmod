@@ -15,10 +15,10 @@ describe('getExtensionProvider', () => {
   }
 
   describe('without BEFORE group', () => {
-    const providers: Provider[] = [Extension1, { token: MY_EXTENSION, useToken: Extension1, multi: true }];
+    const providers: Provider[] = [Extension1];
 
     it('extension without exports (two arguments)', () => {
-      const args: ExtensionConfig = { extension: Extension1, group: MY_EXTENSION };
+      const args: ExtensionConfig = { extension: Extension1 };
       expect(getExtensionProvider(args)).toMatchObject({
         exportedProviders: [],
         providers,
@@ -35,7 +35,7 @@ describe('getExtensionProvider', () => {
     });
 
     it('extension without exports (three arguments)', () => {
-      const args: ExtensionConfig = { extension: Extension1, group: MY_EXTENSION, export: false };
+      const args: ExtensionConfig = { extension: Extension1, export: false };
       expect(getExtensionProvider(args)).toMatchObject({
         exportedProviders: [],
         providers,
@@ -43,7 +43,7 @@ describe('getExtensionProvider', () => {
     });
 
     it('extension with exports', () => {
-      const args: ExtensionConfig = { extension: Extension1, group: MY_EXTENSION, export: true };
+      const args: ExtensionConfig = { extension: Extension1, export: true };
       expect(getExtensionProvider(args)).toMatchObject({
         exportedProviders: providers,
         providers,

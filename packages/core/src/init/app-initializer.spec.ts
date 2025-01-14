@@ -70,13 +70,12 @@ describe('AppInitializer', () => {
       mock = new AppInitializerMock(appOptions, moduleManager, systemLogMediator);
     });
 
-    const SOME_EXTENSIONS = new InjectionToken('SOME_EXTENSIONS');
     class Extension1 {}
     class Extension2 {}
     class Extension3 {}
 
     const extensionCounters = new ExtensionCounters();
-    extensionCounters.mGroupTokens.set(SOME_EXTENSIONS, 3);
+    extensionCounters.mExtensionTokens.set(Extension1, 3);
 
     extensionCounters.mExtensions.set(Extension1, 9);
     extensionCounters.mExtensions.set(Extension2, 8);
@@ -85,7 +84,7 @@ describe('AppInitializer', () => {
     it('counters should remain the same', () => {
       mock.decreaseExtensionsCounters(extensionCounters, []);
 
-      expect(extensionCounters.mGroupTokens.get(SOME_EXTENSIONS)).toBe(3);
+      expect(extensionCounters.mExtensionTokens.get(Extension1)).toBe(3);
 
       expect(extensionCounters.mExtensions.get(Extension1)).toBe(9);
       expect(extensionCounters.mExtensions.get(Extension2)).toBe(8);
@@ -96,12 +95,11 @@ describe('AppInitializer', () => {
       const providers: Provider[] = [
         Extension2,
         Extension2,
-        { token: SOME_EXTENSIONS, useClass: Extension1 },
         Extension1,
       ];
       mock.decreaseExtensionsCounters(extensionCounters, providers);
 
-      expect(extensionCounters.mGroupTokens.get(SOME_EXTENSIONS)).toBe(2);
+      expect(extensionCounters.mExtensionTokens.get(Extension1)).toBe(2);
 
       expect(extensionCounters.mExtensions.get(Extension1)).toBe(8);
       expect(extensionCounters.mExtensions.get(Extension2)).toBe(7);
@@ -496,7 +494,6 @@ describe('AppInitializer', () => {
       one: string;
       two: number;
     }
-    const MY_EXTENSIONS = new InjectionToken<Extension<MyInterface>[]>('MY_EXTENSIONS');
 
     @injectable()
     class Extension1 implements Extension {
@@ -514,7 +511,7 @@ describe('AppInitializer', () => {
     it('properly declared extensions in a root module', async () => {
       @rootModule({
         // providersPerApp: [{ token: Router, useValue: 'fake value for router' }],
-        extensions: [{ extension: Extension1, group: MY_EXTENSIONS }],
+        extensions: [{ extension: Extension1 }],
       })
       class AppModule {}
 

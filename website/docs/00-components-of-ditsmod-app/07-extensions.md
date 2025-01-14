@@ -87,13 +87,13 @@ export const MY_EXTENSIONS = new InjectionToken<Extension<void>[]>('MY_EXTENSION
 class ExtensionConfig {
   extension: ExtensionType;
   /**
-   * Extension group token.
+   * The token of the group after which this extension will be called.
    */
-  group: InjectionToken<Extension<any>[]>;
+  afterExtensions?: ExtensionType[]>;
   /**
    * The token of the group before which this extension will be called.
    */
-  beforeGroups?: InjectionToken<Extension<any>[]>;
+  beforeExtensions?: ExtensionType[]>;
   /**
    * Indicates whether this extension needs to be exported.
    */
@@ -105,7 +105,7 @@ class ExtensionConfig {
 }
 ```
 
-Властивість `beforeGroups` використовується, коли вашу групу розширень потрібно запускати перед іншою групою розширень:
+Властивість `beforeExtensions` використовується, коли вашу групу розширень потрібно запускати перед іншою групою розширень:
 
 ```ts
 import { featureModule, ROUTES_EXTENSIONS } from '@ditsmod/core';
@@ -113,13 +113,13 @@ import { MyExtension, MY_EXTENSIONS } from './my.extension.js';
 
 @featureModule({
   extensions: [
-    { extension: MyExtension, group: MY_EXTENSIONS, beforeGroups: [ROUTES_EXTENSIONS], export: true }
+    { extension: MyExtension, group: MY_EXTENSIONS, beforeExtensions: [ROUTES_EXTENSIONS], export: true }
   ],
 })
 export class SomeModule {}
 ```
 
-Тобто у властивість `token` передається токен групи `MY_EXTENSIONS`, до якої належить ваше розширення. У властивість `beforeGroups` передається токен групи розширень `ROUTES_EXTENSIONS`, перед якою потрібно запускати групу `MY_EXTENSIONS`. Опціонально можна використовувати властивість `exported` або `exportOnly` для того, щоб вказати, чи потрібно щоб дане розширення працювало у зовнішньому модулі, яке імпортуватиме цей модуль. Окрім цього, властивість `exportOnly` ще й вказує на те, що дане розширення не потрібно запускати у так званому хост-модулі (тобто в модулі, де оголошується це розширення).
+Тобто у властивість `token` передається токен групи `MY_EXTENSIONS`, до якої належить ваше розширення. У властивість `beforeExtensions` передається токен групи розширень `ROUTES_EXTENSIONS`, перед якою потрібно запускати групу `MY_EXTENSIONS`. Опціонально можна використовувати властивість `exported` або `exportOnly` для того, щоб вказати, чи потрібно щоб дане розширення працювало у зовнішньому модулі, яке імпортуватиме цей модуль. Окрім цього, властивість `exportOnly` ще й вказує на те, що дане розширення не потрібно запускати у так званому хост-модулі (тобто в модулі, де оголошується це розширення).
 
 ## Використання ExtensionsManager
 

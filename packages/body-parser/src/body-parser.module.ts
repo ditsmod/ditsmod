@@ -1,10 +1,10 @@
 import { featureModule, ModuleWithParams } from '@ditsmod/core';
-import { PRE_ROUTER_EXTENSIONS, ROUTE_EXTENSIONS } from '@ditsmod/routing';
+import { PreRouterExtension, RoutesExtension } from '@ditsmod/routing';
 import { BodyParserGroup } from '@ts-stack/body-parser';
 import { Multer } from '@ts-stack/multer';
 
 import { HTTP_BODY, BodyParserConfig } from './body-parser-config.js';
-import { BodyParserExtension, BODY_PARSER_EXTENSIONS } from './body-parser.extension.js';
+import { BodyParserExtension } from './body-parser.extension.js';
 import { BodyParserGroupFactory } from './body-parser-group.factory.js';
 import { MulterFactory } from './multer.factory.js';
 import { MulterParser } from './multer.parser.js';
@@ -12,7 +12,7 @@ import { MulterCtxParser } from './multer-ctx.parser.js';
 
 /**
  * Adds `BodyParserInterceptor` to all requests with HTTP methods specified in `bodyParserConfig.acceptMethods`.
- * This is done using `BodyParserExtension` in `BODY_PARSER_EXTENSIONS` group.
+ * This is done using `BodyParserExtension`.
  */
 @featureModule({
   providersPerMod: [
@@ -33,9 +33,8 @@ import { MulterCtxParser } from './multer-ctx.parser.js';
   extensions: [
     {
       extension: BodyParserExtension,
-      group: BODY_PARSER_EXTENSIONS,
-      afterGroups: [ROUTE_EXTENSIONS],
-      beforeGroups: [PRE_ROUTER_EXTENSIONS],
+      afterExtensions: [RoutesExtension],
+      beforeExtensions: [PreRouterExtension],
       exportOnly: true,
     },
   ],

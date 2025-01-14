@@ -1,5 +1,5 @@
 import { Providers, rootModule } from '@ditsmod/core';
-import { RoutingModule, PRE_ROUTER_EXTENSIONS } from '@ditsmod/routing';
+import { RoutingModule, PreRouterExtension } from '@ditsmod/routing';
 
 import { HelloWorldController } from './hello-world.controller.js';
 import { MyExtension } from './my-extension.js';
@@ -8,6 +8,6 @@ import { MyExtension } from './my-extension.js';
   imports: [RoutingModule],
   controllers: [HelloWorldController],
   providersPerApp: new Providers().useLogConfig({ level: 'info' }),
-  extensions: [{ extension: MyExtension, group: PRE_ROUTER_EXTENSIONS }],
+  extensions: [{ extension: MyExtension, beforeExtensions: [PreRouterExtension] }],
 })
 export class AppModule {}

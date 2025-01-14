@@ -1,9 +1,7 @@
-import { Extension, ExtensionsManager, InjectionToken, injectable } from '@ditsmod/core';
-import { HTTP_INTERCEPTORS, ROUTE_EXTENSIONS } from '@ditsmod/routing';
+import { Extension, ExtensionsManager, injectable } from '@ditsmod/core';
+import { HTTP_INTERCEPTORS, RoutesExtension } from '@ditsmod/routing';
 
 import { SessionCookieInterceptor } from './session-cookie.interceptor.js';
-
-export const SESSION_COOKIE_EXTENSIONS = new InjectionToken<Extension<void>[]>('SESSION_COOKIE_EXTENSIONS');
 
 @injectable()
 export class SessionCookieExtension implements Extension<void> {
@@ -16,8 +14,8 @@ export class SessionCookieExtension implements Extension<void> {
       return;
     }
 
-    const stage1GroupMeta = await this.extensionManager.stage1(ROUTE_EXTENSIONS);
-    stage1GroupMeta.groupData.forEach((metadataPerMod3) => {
+    const stage1ExtensionMeta = await this.extensionManager.stage1(RoutesExtension);
+    stage1ExtensionMeta.groupData.forEach((metadataPerMod3) => {
       metadataPerMod3.aControllerMetadata.forEach(({ providersPerRou, scope }) => {
         if (scope == 'ctx') {
           providersPerRou.unshift(SessionCookieInterceptor);

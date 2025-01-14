@@ -6,7 +6,7 @@ import { GlobalProviders, ImportObj } from '#types/metadata-per-mod.js';
 import { ModuleType } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
-import { ExtensionsGroupToken, Extension } from '#extension/extension-types.js';
+import { ExtensionType, Extension } from '#extension/extension-types.js';
 import { getImportedTokens } from '#utils/get-imports.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { isInjectionToken } from '#di';
@@ -36,12 +36,12 @@ export class SystemLogMediator extends LogMediator {
 
   /**
    * ${extensionName} attempted to call "extensionsManager.stage1(${ExtCls})", but ${ExtCls}
-   * not declared in "afterGroups" array in this module.
+   * not declared in "afterExtensions" array in this module.
    */
-  throwEarlyGroupCalling(ExtCls: string, extensionName: string) {
+  throwEarlyExtensionCalling(ExtCls: string, extensionName: string) {
     const msg =
       `${extensionName} attempted to call "extensionsManager.stage1(${ExtCls})", but ${ExtCls} ` +
-      'not declared in "afterGroups" array in this module.';
+      'not declared in "afterExtensions" array in this module.';
     throw new Error(msg);
   }
 
@@ -205,13 +205,13 @@ export class SystemLogMediator extends LogMediator {
   /**
    * `${tokenName} start init.`
    */
-  startExtensionsGroupInit(self: object, unfinishedInit: Set<Extension | ExtensionsGroupToken>) {
+  startExtensionsExtensionInit(self: object, unfinishedInit: Set<Extension | ExtensionType>) {
     const className = self.constructor.name;
     const path = this.getExtentionPath(unfinishedInit);
     this.setLog('trace', `${className}: ${path}: start init.`);
   }
 
-  protected getExtentionPath(unfinishedInit: Set<Extension | ExtensionsGroupToken>) {
+  protected getExtentionPath(unfinishedInit: Set<Extension | ExtensionType>) {
     return [...unfinishedInit]
       .map((tokenOrExtension) => {
         if (isInjectionToken(tokenOrExtension)) {
@@ -226,7 +226,7 @@ export class SystemLogMediator extends LogMediator {
   /**
    * `finish init ${tokenName}.`
    */
-  finishExtensionsGroupInit(self: object, unfinishedInit: Set<Extension | ExtensionsGroupToken>) {
+  finishExtensionsExtensionInit(self: object, unfinishedInit: Set<Extension | ExtensionType>) {
     const className = self.constructor.name;
     const path = this.getExtentionPath(unfinishedInit);
     this.setLog('trace', `${className}: ${path}: finish init.`);
@@ -235,7 +235,7 @@ export class SystemLogMediator extends LogMediator {
   /**
    * `for ${tokenName} no extensions found.`
    */
-  noExtensionsFound(self: object, ExtCls: any, unfinishedInit: Set<Extension | ExtensionsGroupToken>) {
+  noExtensionsFound(self: object, ExtCls: any, unfinishedInit: Set<Extension | ExtensionType>) {
     const className = self.constructor.name;
     const tokenName = getProviderName(ExtCls);
     const item = Array.from(unfinishedInit).at(-2)!;
@@ -251,7 +251,7 @@ export class SystemLogMediator extends LogMediator {
   /**
    * `${path}: start init.`
    */
-  startInitExtension(self: object, unfinishedInit: Set<Extension | ExtensionsGroupToken>) {
+  startInitExtension(self: object, unfinishedInit: Set<Extension | ExtensionType>) {
     const className = self.constructor.name;
     const path = this.getExtentionPath(unfinishedInit);
     this.setLog('trace', `${className}: ${path}: start init.`);
@@ -260,7 +260,7 @@ export class SystemLogMediator extends LogMediator {
   /**
    * `${path}: finish init${withSomeValue}.`
    */
-  finishInitExtension(self: object, unfinishedInit: Set<Extension | ExtensionsGroupToken>, data: any) {
+  finishInitExtension(self: object, unfinishedInit: Set<Extension | ExtensionType>, data: any) {
     const className = self.constructor.name;
     const path = this.getExtentionPath(unfinishedInit);
     const withSomeValue = data === undefined ? ', no value returned' : ', returned some value';
@@ -306,11 +306,11 @@ export class SystemLogMediator extends LogMediator {
   /**
    * `${className}: The sequence of extension group operations: ...`
    */
-  sequenceOfExtensionGroups(self: object, aOrderedGroups: ExtensionsGroupToken[]) {
+  sequenceOfExtensionExtensions(self: object, aOrderedExtensions: ExtensionType[]) {
     const className = self.constructor.name;
     const msg =
       `${className}: The sequence of extension group operations: ` +
-      `${aOrderedGroups.map((g, i) => `${i + 1}. ${g}`).join(', ')}.`;
+      `${aOrderedExtensions.map((g, i) => `${i + 1}. ${g}`).join(', ')}.`;
     this.setLog('trace', msg);
   }
 

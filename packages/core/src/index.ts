@@ -15,15 +15,14 @@ export { ErrorInfo } from '#error/error-info.js';
 export { featureModule } from '#decorators/module.js';
 export { rootModule } from '#decorators/root-module.js';
 export {
-  ExtensionType,
   ExtensionCounters,
-  ExtensionsGroupToken,
+  ExtensionType,
   ExtensionsMetaPerApp,
   Extension,
   Stage1DebugMeta,
-  Stage1GroupMeta,
-  Stage1GroupMeta2,
-  Stage1GroupMetaPerApp,
+  Stage1ExtensionMeta,
+  Stage1ExtensionMeta2,
+  Stage1ExtensionMetaPerApp,
 } from '#extension/extension-types.js';
 export { topologicalSort } from './extension/topological-sort.js';
 export { ModuleExtract } from '#types/module-extract.js';

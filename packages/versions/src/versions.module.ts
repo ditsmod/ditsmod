@@ -1,12 +1,11 @@
 import { featureModule, ModuleWithParams } from '@ditsmod/core';
+import { RoutesExtension } from '@ditsmod/routing';
 
-import { API_VERSIONS_EXTENSIONS } from './types.js';
 import { VersionsExtension } from './versions.extension.js';
-import { ROUTE_EXTENSIONS } from '@ditsmod/routing';
 
 @featureModule({
   extensions: [
-    { group: API_VERSIONS_EXTENSIONS, afterGroups: [ROUTE_EXTENSIONS], extension: VersionsExtension, export: true },
+    { extension: VersionsExtension, afterExtensions: [RoutesExtension], export: true },
   ],
 })
 export class VersionsModule {

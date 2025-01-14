@@ -8,25 +8,27 @@ import {
   rootModule,
   featureModule,
   Stage1DebugMeta,
-  Stage1GroupMeta,
-  Stage1GroupMeta2,
+  Stage1ExtensionMeta,
+  Stage1ExtensionMeta2,
 } from '@ditsmod/core';
 
 import { Router } from '#mod/router.js';
-
-
 describe('extensions e2e', () => {
-  const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
-  const MY_EXTENSIONS2 = new InjectionToken<Extension[]>('MY_EXTENSIONS2');
-  const MY_EXTENSIONS3 = new InjectionToken<Extension[]>('MY_EXTENSIONS3');
-
+  @injectable()
+  class Extension2 implements Extension<void> {
+    async stage1() {}
+  }
+  @injectable()
+  class Extension3 implements Extension<void> {
+    async stage1() {}
+  }
   it('extension from firs iteration want to call group from third iteration', async () => {
     @injectable()
     class Extension1 implements Extension<void> {
       constructor(private extensionsManager: ExtensionsManager) {}
 
       async stage1() {
-        await this.extensionsManager.stage1(MY_EXTENSIONS3);
+        await this.extensionsManager.stage1(Extension3);
       }
     }
 
@@ -43,14 +45,14 @@ describe('extensions e2e', () => {
     @rootModule({
       providersPerApp: [{ token: Router, useValue: 'fake value' }],
       extensions: [
-        { extension: Extension1, group: MY_EXTENSIONS1, beforeGroups: [MY_EXTENSIONS2] },
-        { extension: Extension2, group: MY_EXTENSIONS2, beforeGroups: [MY_EXTENSIONS3] },
-        { extension: Extension3, group: MY_EXTENSIONS3 },
+        { extension: Extension1, beforeExtensions: [Extension2] },
+        { extension: Extension2, beforeExtensions: [Extension3] },
+        { extension: Extension3 },
       ],
     })
     class AppModule {}
 
-    const msg = 'Extension1 attempted to call "extensionsManager.stage1(MY_EXTENSIONS3)';
+    const msg = 'Extension1 attempted to call "extensionsManager.stage1(Extension3)';
     await expect(TestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
   });
 
@@ -79,9 +81,9 @@ describe('extensions e2e', () => {
     @rootModule({
       providersPerApp: [{ token: Router, useValue: 'fake value' }],
       extensions: [
-        { extension: Extension1, group: MY_EXTENSIONS1 },
-        { extension: Extension2, group: MY_EXTENSIONS2, beforeGroups: [MY_EXTENSIONS1] },
-        { extension: Extension3, group: MY_EXTENSIONS3, beforeGroups: [MY_EXTENSIONS2] },
+        { extension: Extension1 },
+        { extension: Extension2, beforeExtensions: [Extension1] },
+        { extension: Extension3, beforeExtensions: [Extension2] },
       ],
     })
     class AppModule {}
@@ -99,14 +101,14 @@ describe('extensions e2e', () => {
     @rootModule({
       providersPerApp: [{ token: Router, useValue: 'fake value' }],
       extensions: [
-        { extension: Extension1, group: MY_EXTENSIONS3, beforeGroups: [MY_EXTENSIONS2] },
-        { extension: Extension1, group: MY_EXTENSIONS2, beforeGroups: [MY_EXTENSIONS1] },
-        { extension: Extension1, group: MY_EXTENSIONS1, beforeGroups: [MY_EXTENSIONS3] },
+        { extension: Extension1, beforeExtensions: [Extension2] },
+        { extension: Extension1, beforeExtensions: [Extension1] },
+        { extension: Extension1, beforeExtensions: [Extension3] },
       ],
     })
     class AppModule {}
 
-    const msg = ': MY_EXTENSIONS3 -> MY_EXTENSIONS2 -> MY_EXTENSIONS1 -> MY_EXTENSIONS3';
+    const msg = ': Extension3 -> Extension2 -> Extension1 -> Extension3';
     await expect(TestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
   });
 
@@ -117,23 +119,23 @@ describe('extensions e2e', () => {
     }
 
     @featureModule({
-      extensions: [{ extension: Extension1, group: MY_EXTENSIONS3, beforeGroups: [MY_EXTENSIONS2], exportOnly: true }],
+      extensions: [{ extension: Extension1, beforeExtensions: [Extension2], exportOnly: true }],
     })
     class Module1 {}
 
     @featureModule({
-      extensions: [{ extension: Extension1, group: MY_EXTENSIONS2, beforeGroups: [MY_EXTENSIONS1], exportOnly: true }],
+      extensions: [{ extension: Extension1, beforeExtensions: [Extension1], exportOnly: true }],
     })
     class Module2 {}
 
     @rootModule({
       imports: [Module1, Module2],
       providersPerApp: [{ token: Router, useValue: 'fake value' }],
-      extensions: [{ extension: Extension1, group: MY_EXTENSIONS1, beforeGroups: [MY_EXTENSIONS3] }],
+      extensions: [{ extension: Extension1, beforeExtensions: [Extension3] }],
     })
     class AppModule {}
 
-    const msg = ': MY_EXTENSIONS1 -> MY_EXTENSIONS3 -> MY_EXTENSIONS2 -> MY_EXTENSIONS1';
+    const msg = ': Extension1 -> Extension3 -> Extension2 -> Extension1';
     await expect(TestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
   });
 
@@ -144,15 +146,15 @@ describe('extensions e2e', () => {
     }
 
     @featureModule({
-      extensions: [{ extension: Extension1, group: MY_EXTENSIONS3, beforeGroups: [MY_EXTENSIONS2], exportOnly: true }],
+      extensions: [{ extension: Extension1, beforeExtensions: [Extension2], exportOnly: true }],
     })
     class Module1 {}
 
     @featureModule({
       imports: [Module1],
       extensions: [
-        { extension: Extension1, group: MY_EXTENSIONS2, beforeGroups: [MY_EXTENSIONS1] },
-        { extension: Extension1, group: MY_EXTENSIONS1, beforeGroups: [MY_EXTENSIONS3] },
+        { extension: Extension1, beforeExtensions: [Extension1] },
+        { extension: Extension1, beforeExtensions: [Extension3] },
       ],
     })
     class Module2 {}
@@ -163,7 +165,7 @@ describe('extensions e2e', () => {
     })
     class AppModule {}
 
-    const msg = ': MY_EXTENSIONS2 -> MY_EXTENSIONS1 -> MY_EXTENSIONS3 -> MY_EXTENSIONS2';
+    const msg = ': Extension2 -> Extension1 -> Extension3 -> Extension2';
     await expect(TestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
   });
 
@@ -174,14 +176,14 @@ describe('extensions e2e', () => {
     }
 
     @featureModule({
-      extensions: [{ extension: Extension1, group: MY_EXTENSIONS3, beforeGroups: [MY_EXTENSIONS2], exportOnly: true }],
+      extensions: [{ extension: Extension1, beforeExtensions: [Extension2], exportOnly: true }],
     })
     class Module1 {}
 
     @featureModule({
       extensions: [
-        { extension: Extension1, group: MY_EXTENSIONS2, beforeGroups: [MY_EXTENSIONS1] },
-        { extension: Extension1, group: MY_EXTENSIONS1, beforeGroups: [MY_EXTENSIONS3] },
+        { extension: Extension1, beforeExtensions: [Extension1] },
+        { extension: Extension1, beforeExtensions: [Extension3] },
       ],
     })
     class Module2 {}
@@ -193,7 +195,7 @@ describe('extensions e2e', () => {
     })
     class AppModule {}
 
-    const msg = ': MY_EXTENSIONS2 -> MY_EXTENSIONS1 -> MY_EXTENSIONS3 -> MY_EXTENSIONS2';
+    const msg = ': Extension2 -> Extension1 -> Extension3 -> Extension2';
     await expect(TestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
   });
 
@@ -216,7 +218,7 @@ describe('extensions e2e', () => {
 
     @featureModule({
       providersPerMod: [Provider1],
-      extensions: [{ group: MY_EXTENSIONS1, extension: Extension1, exportOnly: true }],
+      extensions: [{ group: Extension1, extension: Extension1, exportOnly: true }],
     })
     class Module1 {}
 
@@ -258,7 +260,7 @@ describe('extensions e2e', () => {
      * This extension is declared in `Module1`, which is imported into three different modules.
      * A second extension that depends on this extension is declared below. The second extension
      * is declared in `Module2`, it is imported into two different modules. The tests check exactly
-     * what the `extensionsManager.stage1()` returns from the `MY_EXTENSIONS1` group, and how many times
+     * what the `extensionsManager.stage1()` returns from the `Extension1` group, and how many times
      * the initialization of the second extension is called.
      */
     @injectable()
@@ -273,21 +275,21 @@ describe('extensions e2e', () => {
       constructor(private extensionManager: ExtensionsManager) {}
 
       async stage1() {
-        const stage1GroupMeta = await this.extensionManager.stage1(MY_EXTENSIONS1);
-        extensionInit2(stage1GroupMeta);
+        const stage1ExtensionMeta = await this.extensionManager.stage1(Extension1);
+        extensionInit2(stage1ExtensionMeta);
       }
     }
 
     @featureModule({
       providersPerMod: [Provider1],
-      extensions: [{ group: MY_EXTENSIONS1, extension: Extension1, exportOnly: true }],
+      extensions: [{ group: Extension1, extension: Extension1, exportOnly: true }],
     })
     class Module1 {}
 
     @featureModule({
       imports: [Module1],
       providersPerMod: [Provider2],
-      extensions: [{ group: MY_EXTENSIONS2, extension: Extension2, exportOnly: true }],
+      extensions: [{ group: Extension2, extension: Extension2, exportOnly: true }],
       exports: [Provider2],
     })
     class Module2 {}
@@ -314,17 +316,17 @@ describe('extensions e2e', () => {
     expect(extensionInit2).toHaveBeenCalledTimes(2);
     const extension = new Extension1();
     const stage1Meta = new Stage1DebugMeta(extension, undefined, true, 1);
-    const stage1GroupMeta = new Stage1GroupMeta('Module3', [stage1Meta], [undefined]);
-    stage1GroupMeta.delay = true;
-    stage1GroupMeta.countdown = 1;
-    stage1GroupMeta.groupDataPerApp = expect.any(Array);
-    expect(extensionInit2).toHaveBeenNthCalledWith(1, stage1GroupMeta);
+    const stage1ExtensionMeta = new Stage1ExtensionMeta('Module3', [stage1Meta], [undefined]);
+    stage1ExtensionMeta.delay = true;
+    stage1ExtensionMeta.countdown = 1;
+    stage1ExtensionMeta.groupDataPerApp = expect.any(Array);
+    expect(extensionInit2).toHaveBeenNthCalledWith(1, stage1ExtensionMeta);
     stage1Meta.delay = false;
     stage1Meta.countdown = 0;
-    stage1GroupMeta.delay = false;
-    stage1GroupMeta.countdown = 0;
-    stage1GroupMeta.moduleName = 'AppModule';
-    expect(extensionInit2).toHaveBeenNthCalledWith(2, stage1GroupMeta);
+    stage1ExtensionMeta.delay = false;
+    stage1ExtensionMeta.countdown = 0;
+    stage1ExtensionMeta.moduleName = 'AppModule';
+    expect(extensionInit2).toHaveBeenNthCalledWith(2, stage1ExtensionMeta);
   });
 
   it('extension depends on data from the entire application', async () => {
@@ -338,7 +340,7 @@ describe('extensions e2e', () => {
      * A second extension that depends on this extension is declared below. The second extension
      * is declared in `Module2`, it is imported into one module.
      *
-     * The test verifies that `ExtensionsManager` returns data for `MY_EXTENSIONS1` from the entire
+     * The test verifies that `ExtensionsManager` returns data for `Extension1` from the entire
      * application, even though `Module2` is imported into only one module.
      */
     @injectable()
@@ -353,8 +355,8 @@ describe('extensions e2e', () => {
       constructor(private extensionManager: ExtensionsManager) {}
 
       async stage1() {
-        const stage1GroupMeta = await this.extensionManager.stage1(MY_EXTENSIONS1, this);
-        spyMetaFromAllModules(structuredClone(stage1GroupMeta));
+        const stage1ExtensionMeta = await this.extensionManager.stage1(Extension1, this);
+        spyMetaFromAllModules(structuredClone(stage1ExtensionMeta));
       }
     }
 
@@ -363,19 +365,19 @@ describe('extensions e2e', () => {
       constructor(private extensionManager: ExtensionsManager) {}
 
       async stage1() {
-        const stage1GroupMeta = await this.extensionManager.stage1(MY_EXTENSIONS1);
-        spyMetaFromCurrentModule(structuredClone(stage1GroupMeta));
+        const stage1ExtensionMeta = await this.extensionManager.stage1(Extension1);
+        spyMetaFromCurrentModule(structuredClone(stage1ExtensionMeta));
       }
     }
 
     @featureModule({
-      extensions: [{ group: MY_EXTENSIONS1, extension: Extension1, exportOnly: true }],
+      extensions: [{ group: Extension1, extension: Extension1, exportOnly: true }],
     })
     class Module1 {}
 
     @featureModule({
       imports: [Module1],
-      extensions: [{ group: MY_EXTENSIONS2, extension: Extension2, exportOnly: true }],
+      extensions: [{ group: Extension2, extension: Extension2, exportOnly: true }],
     })
     class Module2 {}
 
@@ -387,7 +389,7 @@ describe('extensions e2e', () => {
     class Module3 {}
 
     @featureModule({
-      extensions: [{ group: MY_EXTENSIONS2, extension: Extension3, exportOnly: true }],
+      extensions: [{ group: Extension2, extension: Extension3, exportOnly: true }],
     })
     class Module4 {}
 
@@ -460,7 +462,7 @@ describe('extensions e2e', () => {
           countdown: 0,
         },
       ],
-    } as Stage1GroupMeta;
+    } as Stage1ExtensionMeta;
 
     expect(spyMetaFromAllModules).toHaveBeenCalledTimes(2);
     const firstCall = structuredClone(fullMeta);
@@ -472,7 +474,7 @@ describe('extensions e2e', () => {
     firstCall.groupDataPerApp.pop();
     expect(spyMetaFromAllModules).toHaveBeenNthCalledWith(1, firstCall);
 
-    const secondCall = structuredClone(fullMeta) as Stage1GroupMeta2;
+    const secondCall = structuredClone(fullMeta) as Stage1ExtensionMeta2;
     secondCall.delay = false;
     delete secondCall.groupDebugMeta;
     delete secondCall.groupData;

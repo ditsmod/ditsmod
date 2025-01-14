@@ -10,8 +10,8 @@ import {
   PerAppService,
   Extension,
   Provider,
-  Stage1GroupMeta,
-  Stage1GroupMetaPerApp,
+  Stage1ExtensionMeta,
+  Stage1ExtensionMetaPerApp,
   CTX_DATA,
   FactoryProvider,
   ResolvedGuard,
@@ -26,7 +26,7 @@ import {
 } from '@ditsmod/core';
 
 import { MetadataPerMod3, PreparedRouteMeta } from '../types.js';
-import { A_PATH_PARAMS, HTTP_INTERCEPTORS, QUERY_STRING, RAW_REQ, RAW_RES, ROUTE_EXTENSIONS } from '../constants.js';
+import { A_PATH_PARAMS, HTTP_INTERCEPTORS, QUERY_STRING, RAW_REQ, RAW_RES } from '../constants.js';
 import { RoutingErrorMediator } from '../router-error-mediator.js';
 import { ControllerMetadata } from '../controller-metadata.js';
 import { InterceptorWithGuardsPerRou } from '#mod/interceptors/interceptor-with-guards-per-rou.js';
@@ -44,10 +44,11 @@ import { GuardPerMod1, NormalizedGuard } from '#mod/interceptors/guard.js';
 import { RouteHandler, Router } from '#mod/router.js';
 import { HttpErrorHandler } from '#mod/http-error-handler.js';
 import { RequestContext } from '#mod/request-context.js';
+import { RoutesExtension } from './routes.extension.js';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
-  protected stage1GroupMeta: Stage1GroupMeta<MetadataPerMod3>;
+  protected stage1ExtensionMeta: Stage1ExtensionMeta<MetadataPerMod3>;
   protected injectorPerMod: Injector;
   protected injectorPerApp: Injector;
 
@@ -62,9 +63,9 @@ export class PreRouterExtension implements Extension<void> {
   ) {}
 
   async stage1() {
-    this.stage1GroupMeta = await this.extensionsManager.stage1(ROUTE_EXTENSIONS);
+    this.stage1ExtensionMeta = await this.extensionsManager.stage1(RoutesExtension);
     this.injectorPerApp = this.perAppService.reinitInjector([{ token: Router, useValue: this.router }]);
-    this.addDefaultProviders(this.stage1GroupMeta.groupData);
+    this.addDefaultProviders(this.stage1ExtensionMeta.groupData);
   }
 
   async stage2(injectorPerMod: Injector) {
@@ -72,8 +73,8 @@ export class PreRouterExtension implements Extension<void> {
   }
 
   async stage3() {
-    const preparedRouteMeta = this.prepareRoutesMeta(this.stage1GroupMeta.groupData);
-    this.setRoutes(this.stage1GroupMeta, preparedRouteMeta);
+    const preparedRouteMeta = this.prepareRoutesMeta(this.stage1ExtensionMeta.groupData);
+    this.setRoutes(this.stage1ExtensionMeta, preparedRouteMeta);
   }
 
   protected getMeta(aMetadataPerMod3: MetadataPerMod3[]) {
@@ -365,9 +366,9 @@ export class PreRouterExtension implements Extension<void> {
     }
   }
 
-  protected setRoutes(stage1GroupMeta: Stage1GroupMeta<MetadataPerMod3>, preparedRouteMeta: PreparedRouteMeta[]) {
-    if (!stage1GroupMeta.delay) {
-      const appHasRoutes = this.checkPresenceOfRoutesInApplication(stage1GroupMeta.groupDataPerApp);
+  protected setRoutes(stage1ExtensionMeta: Stage1ExtensionMeta<MetadataPerMod3>, preparedRouteMeta: PreparedRouteMeta[]) {
+    if (!stage1ExtensionMeta.delay) {
+      const appHasRoutes = this.checkPresenceOfRoutesInApplication(stage1ExtensionMeta.groupDataPerApp);
       if (!appHasRoutes) {
         this.log.noRoutes(this);
         return;
@@ -395,7 +396,7 @@ export class PreRouterExtension implements Extension<void> {
     });
   }
 
-  protected checkPresenceOfRoutesInApplication(groupDataPerApp: Stage1GroupMetaPerApp<MetadataPerMod3>[]) {
+  protected checkPresenceOfRoutesInApplication(groupDataPerApp: Stage1ExtensionMetaPerApp<MetadataPerMod3>[]) {
     return groupDataPerApp.reduce((prev1, curr1) => {
       return (
         prev1 || curr1.groupData.reduce((prev2, curr2) => prev2 || Boolean(curr2.aControllerMetadata.length), false)

@@ -6,9 +6,9 @@ import {
   injectable,
   Injector,
   fromSelf,
-  Stage1GroupMeta,
+  Stage1ExtensionMeta,
 } from '@ditsmod/core';
-import { MetadataPerMod3, ROUTE_EXTENSIONS } from '@ditsmod/routing';
+import { MetadataPerMod3, RoutesExtension } from '@ditsmod/routing';
 
 import { I18nTransformer } from './i18n-transformer.js';
 import { I18nLogMediator } from './i18n-log-mediator.js';
@@ -33,13 +33,13 @@ export class I18nExtension implements Extension<void> {
       return;
     }
 
-    const stage1GroupMeta = await this.extensionsManager.stage1(ROUTE_EXTENSIONS);
+    const stage1GroupMeta = await this.extensionsManager.stage1(RoutesExtension);
     this.addI18nProviders(stage1GroupMeta, isLastModule);
 
     this.#inited = true;
   }
 
-  protected addI18nProviders(stage1GroupMeta: Stage1GroupMeta<MetadataPerMod3>, isLastModule?: boolean) {
+  protected addI18nProviders(stage1GroupMeta: Stage1ExtensionMeta<MetadataPerMod3>, isLastModule?: boolean) {
     const injectorPerApp = this.perAppService.injector;
 
     const translationsPerApp = injectorPerApp.get(I18N_TRANSLATIONS, undefined, null);

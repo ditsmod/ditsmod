@@ -87,13 +87,13 @@ Objects of the following type can be transferred to the `extensions` array, whic
 class ExtensionConfig {
   extension: ExtensionType;
   /**
-   * Extension group token.
+   * The token of the group after which this extension will be called.
    */
-  group: InjectionToken<Extension<any>[]>;
+  afterExtensions?: ExtensionType[]>;
   /**
    * The token of the group before which this extension will be called.
    */
-  beforeGroups?: InjectionToken<Extension<any>[]>;
+  beforeExtensions?: ExtensionType[]>;
   /**
    * Indicates whether this extension needs to be exported.
    */
@@ -105,7 +105,7 @@ class ExtensionConfig {
 }
 ```
 
-The `beforeGroups` property is used when you want your extension group to run before another extension group:
+The `beforeExtensions` property is used when you want your extension group to run before another extension group:
 
 ```ts
 import { featureModule, ROUTES_EXTENSIONS } from '@ditsmod/core';
@@ -113,13 +113,13 @@ import { MyExtension, MY_EXTENSIONS } from './my.extension.js';
 
 @featureModule({
   extensions: [
-    { extension: MyExtension, group: MY_EXTENSIONS, beforeGroups: [ROUTES_EXTENSIONS], export: true }
+    { extension: MyExtension, group: MY_EXTENSIONS, beforeExtensions: [ROUTES_EXTENSIONS], export: true }
   ],
 })
 export class SomeModule {}
 ```
 
-That is, the token of the group `MY_EXTENSIONS`, to which your extension belongs, is transferred to the `token` property. The token of the `ROUTES_EXTENSIONS` group, before which the `MY_EXTENSIONS` group should be started, is passed to the `beforeGroups` property. Optionally, you can use the `exported` or `exportOnly` property to specify whether this extension should function in an external module that imports this module. Additionally, the `exportOnly` property indicates that this extension should not be executed in the so-called host module (i.e., the module where this extension is declared).
+That is, the token of the group `MY_EXTENSIONS`, to which your extension belongs, is transferred to the `token` property. The token of the `ROUTES_EXTENSIONS` group, before which the `MY_EXTENSIONS` group should be started, is passed to the `beforeExtensions` property. Optionally, you can use the `exported` or `exportOnly` property to specify whether this extension should function in an external module that imports this module. Additionally, the `exportOnly` property indicates that this extension should not be executed in the so-called host module (i.e., the module where this extension is declared).
 
 ## Using ExtensionsManager
 

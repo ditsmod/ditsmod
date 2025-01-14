@@ -17,6 +17,7 @@ export { RequestContext } from './request-context.js';
 export { RoutingErrorMediator } from './router-error-mediator.js';
 export { RoutesExtension } from './extensions/routes.extension.js';
 export { PreRouterExtension } from './extensions/pre-router.extension.js';
+export { UseInterceptorExtension } from './extensions/use-interceptor.extension.js';
 export { route, RouteMetadata } from './decorators/route.js';
 export { isRoute, isInterceptor, isAppendsWithParams, isCtrlDecor, isHttp2SecureServerOptions } from './type.guards.js';
 export { RouteMeta } from './route-data.js';
@@ -44,17 +45,14 @@ export {
 export { guard, CanActivate, GuardItem, NormalizedGuard, GuardPerMod1 } from '#interceptors/guard.js';
 export { PreRouter } from './pre-router.js';
 export {
-  ROUTE_EXTENSIONS,
-  PRE_ROUTER_EXTENSIONS,
   HTTP_INTERCEPTORS,
-  USE_INTERCEPTOR_EXTENSIONS,
   RAW_REQ,
   RAW_RES,
   A_PATH_PARAMS,
   QUERY_STRING,
   PATH_PARAMS,
   QUERY_PARAMS,
-  SERVER
+  SERVER,
 } from './constants.js';
 export { applyResponse, applyHeaders } from './utils/apply-web-response.js';
 export { Req, RawRequest, RawResponse, RequestListener } from './request.js';

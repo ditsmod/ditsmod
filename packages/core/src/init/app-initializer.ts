@@ -18,7 +18,7 @@ import { PerAppService } from '#services/per-app.service.js';
 import { ModRefId, ModuleType } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
-import { ExtensionCounters, ExtensionsGroupToken } from '#extension/extension-types.js';
+import { ExtensionCounters, ExtensionType } from '#extension/extension-types.js';
 import { getCollisions } from '#utils/get-collisions.js';
 import { getDuplicates } from '#utils/get-duplicates.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
@@ -30,6 +30,7 @@ import { MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { getModule } from '#utils/get-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
+import { isExtensionProvider } from '#extension/type-guards.js';
 
 export class AppInitializer {
   protected perAppService = new PerAppService();
@@ -368,7 +369,7 @@ export class AppInitializer {
     extensionsManager: InternalExtensionsManager,
     systemLogMediator: SystemLogMediator,
   ) {
-    systemLogMediator.sequenceOfExtensionGroups(this, meta.aOrderedGroups);
+    systemLogMediator.sequenceOfExtensionExtensions(this, meta.aOrderedExtensions);
     await extensionsManager.internalStage1(meta);
   }
 
@@ -391,14 +392,14 @@ export class AppInitializer {
   }
 
   protected decreaseExtensionsCounters(extensionCounters: ExtensionCounters, providers: Provider[]) {
-    const { mGroupTokens, mExtensions } = extensionCounters;
-    const groupTokens = getTokens(providers).filter((token) => token instanceof InjectionToken);
-    const uniqGroupTokens = new Set<ExtensionsGroupToken>(groupTokens);
+    const { mExtensionTokens, mExtensions } = extensionCounters;
+    const extClasses = getTokens(providers).filter(isExtensionProvider);
+    const uniqExtensionTokens = new Set<ExtensionType>(extClasses);
     const uniqTargets = new Set<Provider>(getProvidersTargets(providers));
 
-    uniqGroupTokens.forEach((ExtCls) => {
-      const counter = mGroupTokens.get(ExtCls)!;
-      mGroupTokens.set(ExtCls, counter - 1);
+    uniqExtensionTokens.forEach((ExtCls) => {
+      const counter = mExtensionTokens.get(ExtCls)!;
+      mExtensionTokens.set(ExtCls, counter - 1);
     });
 
     uniqTargets.forEach((target) => {

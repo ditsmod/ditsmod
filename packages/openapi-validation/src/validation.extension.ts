@@ -1,5 +1,5 @@
 import { Extension, ExtensionsManager, PerAppService, injectable, optional } from '@ditsmod/core';
-import { HTTP_INTERCEPTORS, ROUTE_EXTENSIONS } from '@ditsmod/routing';
+import { HTTP_INTERCEPTORS, RoutesExtension } from '@ditsmod/routing';
 import { isReferenceObject } from '@ditsmod/openapi';
 
 import { ValidationRouteMeta } from './types.js';
@@ -22,9 +22,9 @@ export class ValidationExtension implements Extension<void> {
   }
 
   protected async filterParameters() {
-    const stage1GroupMeta = await this.extensionsManager.stage1(ROUTE_EXTENSIONS);
+    const stage1ExtensionMeta = await this.extensionsManager.stage1(RoutesExtension);
 
-    stage1GroupMeta.groupData.forEach((metadataPerMod3) => {
+    stage1ExtensionMeta.groupData.forEach((metadataPerMod3) => {
       const { aControllerMetadata } = metadataPerMod3;
       const { providersPerMod } = metadataPerMod3.meta;
       providersPerMod.push({ token: AjvService, useValue: this.ajvService });

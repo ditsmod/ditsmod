@@ -130,8 +130,8 @@ export class ModuleNormalizer {
 
   protected checkExtensionConfig(modName: string, extensionConfig: ExtensionConfig, i: number) {
     if (!isConfigWithOverrideExtension(extensionConfig)) {
-      if (!extensionConfig.group) {
-        const msg = `Export of "${modName}" failed: extension in [${i}] index must have "group" property.`;
+      if (!extensionConfig.extension) {
+        const msg = `Export of "${modName}" failed: extension in [${i}] index must have "extension" property.`;
         throw new TypeError(msg);
       }
     }

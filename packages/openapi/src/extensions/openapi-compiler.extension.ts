@@ -8,8 +8,8 @@ import {
   Injector,
   optional,
   reflector,
-  Stage1GroupMetaPerApp,
-  Stage1GroupMeta2,
+  Stage1ExtensionMetaPerApp,
+  Stage1ExtensionMeta2,
 } from '@ditsmod/core';
 import {
   PathItemObject,
@@ -21,7 +21,7 @@ import {
   XSecurityRequirementObject,
 } from '@ts-stack/openapi-spec';
 import { stringify } from 'yaml';
-import { MetadataPerMod3, NormalizedGuard, ROUTE_EXTENSIONS } from '@ditsmod/routing';
+import { MetadataPerMod3, NormalizedGuard, RoutesExtension } from '@ditsmod/routing';
 
 import { OasRouteMeta } from '#types/oas-route-meta.js';
 import { DEFAULT_OAS_OBJECT, defaultForNonOasGuard } from '#constants';
@@ -32,7 +32,7 @@ import { OpenapiLogMediator } from '#services/openapi-log-mediator.js';
 @injectable()
 export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
   protected oasObject: XOasObject;
-  protected stage1GroupMeta: Stage1GroupMeta2<MetadataPerMod3>;
+  protected stage1ExtensionMeta: Stage1ExtensionMeta2<MetadataPerMod3>;
 
   constructor(
     private perAppService: PerAppService,
@@ -43,19 +43,19 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
   ) {}
 
   async stage1() {
-    const stage1GroupMeta = await this.extensionsManager.stage1(ROUTE_EXTENSIONS, this);
-    if (stage1GroupMeta.delay) {
+    const stage1ExtensionMeta = await this.extensionsManager.stage1(RoutesExtension, this);
+    if (stage1ExtensionMeta.delay) {
       this.log.dataAccumulation(this);
       return false;
     }
-    this.stage1GroupMeta = stage1GroupMeta;
+    this.stage1ExtensionMeta = stage1ExtensionMeta;
     return this.oasObject;
   }
 
   async stage2() {
-    if (this.stage1GroupMeta) {
+    if (this.stage1ExtensionMeta) {
       this.log.applyingAccumulatedData(this);
-      await this.compileOasObject(this.stage1GroupMeta.groupDataPerApp);
+      await this.compileOasObject(this.stage1ExtensionMeta.groupDataPerApp);
       const json = JSON.stringify(this.oasObject);
       const oasOptions = this.extensionsMetaPerApp?.oasOptions as OasOptions | undefined;
       const yaml = stringify(this.oasObject, oasOptions?.yamlSchemaOptions);
@@ -63,11 +63,11 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     }
   }
 
-  protected async compileOasObject(groupDataPerApp: Stage1GroupMetaPerApp<MetadataPerMod3>[]) {
+  protected async compileOasObject(groupDataPerApp: Stage1ExtensionMetaPerApp<MetadataPerMod3>[]) {
     const paths: XPathsObject = {};
     this.initOasObject();
-    for (const stage1GroupMetaPerApp of groupDataPerApp) {
-      for (const metadataPerMod3 of stage1GroupMetaPerApp.groupData) {
+    for (const stage1ExtensionMetaPerApp of groupDataPerApp) {
+      for (const metadataPerMod3 of stage1ExtensionMetaPerApp.groupData) {
         metadataPerMod3.aControllerMetadata.forEach(({ httpMethods, fullPath, routeMeta, guards }) => {
           httpMethods.forEach((method) => {
             const { oasPath, resolvedGuards, operationObject } = routeMeta as OasRouteMeta;

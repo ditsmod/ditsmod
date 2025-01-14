@@ -62,10 +62,9 @@ describe('ModuleManager', () => {
       class Ext implements Extension {
         async stage1() {}
       }
-      const GROUP1_EXTENSIONS = new InjectionToken('GROUP1_EXTENSIONS');
 
       @featureModule<{}>({
-        extensions: [{ extension: Ext, group: GROUP1_EXTENSIONS, export: true }],
+        extensions: [{ extension: Ext, export: true }],
       })
       class Module1 {}
 
@@ -311,9 +310,8 @@ describe('ModuleManager', () => {
   it('module exported invalid extension', () => {
     @injectable()
     class Extension1 {}
-    const TEST_EXTENSIONS = new InjectionToken<Extension>('TEST_EXTENSIONS');
 
-    @featureModule<{}>({ extensions: [{ extension: Extension1 as any, group: TEST_EXTENSIONS, export: true }] })
+    @featureModule<{}>({ extensions: [{ extension: Extension1 as any, export: true }] })
     class Module2 {}
 
     expect(() => mock.scanModule(Module2)).toThrow('must have stage1(), stage2() or stage3() method');
@@ -324,9 +322,8 @@ describe('ModuleManager', () => {
     class Extension1 implements Extension {
       async stage1() {}
     }
-    const TEST_EXTENSIONS = new InjectionToken<Extension>('TEST_EXTENSIONS');
 
-    @featureModule<{}>({ extensions: [{ extension: Extension1 as any, group: TEST_EXTENSIONS, export: true }] })
+    @featureModule<{}>({ extensions: [{ extension: Extension1 as any, export: true }] })
     class Module2 {}
 
     expect(() => mock.scanModule(Module2)).not.toThrow();
@@ -754,14 +751,12 @@ describe('ModuleManager', () => {
       async stage1() {}
     }
 
-    const GROUP_EXTENSIONS = new InjectionToken<Extension<void>[]>('GROUP_EXTENSIONS');
     const extensionsProviders: Provider[] = [
-      Extension1,
-      { token: GROUP_EXTENSIONS, useToken: Extension1, multi: true },
+      Extension1
     ];
 
     @featureModule<{}>({
-      extensions: [{ extension: Extension1 as any, group: GROUP_EXTENSIONS, export: true }],
+      extensions: [{ extension: Extension1 as any, export: true }],
     })
     class Module1 {}
 
@@ -806,14 +801,12 @@ describe('ModuleManager', () => {
       async stage1() {}
     }
 
-    const GROUP_EXTENSIONS = new InjectionToken<Extension<void>[]>('GROUP_EXTENSIONS');
     const extensionsProviders: Provider[] = [
-      Extension1,
-      { token: GROUP_EXTENSIONS, useToken: Extension1, multi: true },
+      Extension1
     ];
 
     @featureModule<{}>({
-      extensions: [{ extension: Extension1 as any, group: GROUP_EXTENSIONS, export: true }],
+      extensions: [{ extension: Extension1 as any, export: true }],
     })
     class Module1 {}
 
@@ -859,10 +852,9 @@ describe('ModuleManager', () => {
       one: string;
       two: number;
     }
-    const MY_EXTENSIONS = new InjectionToken<Extension<MyInterface>[]>('MY_EXTENSIONS');
 
     it('exports token of an extension without this extension', async () => {
-      @rootModule<{}>({ exports: [MY_EXTENSIONS] })
+      @rootModule<{}>({ exports: [] })
       class AppModule {}
 
       const msg = 'is a token of extension, this extension must be included in';
@@ -870,7 +862,7 @@ describe('ModuleManager', () => {
     });
 
     it('should throw error about no extension', async () => {
-      @rootModule<{}>({ exports: [MY_EXTENSIONS] })
+      @rootModule<{}>({ exports: [] })
       class AppModule {}
 
       const msg = 'is a token of extension, this extension must be included in';

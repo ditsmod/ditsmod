@@ -23,10 +23,10 @@ import {
   ExtensionConfigBase,
   isConfigWithOverrideExtension,
 } from '#extension/get-extension-provider.js';
-import { findCycle, GroupConfig } from '#extension/tarjan-graph.js';
+import { findCycle } from '#extension/tarjan-graph.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { topologicalSort } from '#extension/topological-sort.js';
-import { ExtensionsGroupToken } from '#extension/extension-types.js';
+import { ExtensionType } from '#extension/extension-types.js';
 
 /**
  * - exports global providers;
@@ -154,8 +154,8 @@ export class ModuleFactory {
     }
 
     const allExtensionConfigs = meta.aExtensionConfig.concat(aExtensionConfig);
-    this.checkExtensionGroupsGraph(allExtensionConfigs);
-    meta.aOrderedGroups = topologicalSort<ExtensionsGroupToken, ExtensionConfigBase>(allExtensionConfigs, true);
+    this.checkExtensionsGraph(allExtensionConfigs);
+    meta.aOrderedExtensions = topologicalSort<ExtensionType, ExtensionConfigBase>(allExtensionConfigs, true);
 
     return this.appMetadataMap.set(modOrObj, {
       prefixPerMod,
@@ -174,13 +174,13 @@ export class ModuleFactory {
     });
   }
 
-  protected checkExtensionGroupsGraph(extensions: (GroupConfig<any> | ExtensionConfig3)[]) {
-    const extensionWithBeforeGroup = extensions?.filter((config) => {
-      return !isConfigWithOverrideExtension(config) && config.beforeGroups;
-    }) as GroupConfig<any>[] | undefined;
+  protected checkExtensionsGraph(extensions: (ExtensionConfig | ExtensionConfig3)[]) {
+    const extensionWithBeforeExtension = extensions?.filter((config) => {
+      return !isConfigWithOverrideExtension(config) && config.beforeExtensions;
+    }) as ExtensionConfig[] | undefined;
 
-    if (extensionWithBeforeGroup) {
-      const path = findCycle(extensionWithBeforeGroup);
+    if (extensionWithBeforeExtension) {
+      const path = findCycle(extensionWithBeforeExtension);
       if (path) {
         const strPath = path.map(getProviderName).join(' -> ');
         let msg = `A configuration of extensions detected in ${this.moduleName}`;

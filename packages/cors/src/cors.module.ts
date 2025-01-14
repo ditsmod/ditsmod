@@ -1,8 +1,7 @@
 import { featureModule, ModuleWithParams, Providers } from '@ditsmod/core';
-import { PRE_ROUTER_EXTENSIONS, ROUTE_EXTENSIONS } from '@ditsmod/routing';
+import { PreRouterExtension, RoutesExtension } from '@ditsmod/routing';
 import { CorsOptions } from '@ts-stack/cors';
 
-import { CORS_EXTENSIONS } from './constans.js';
 import { CorsExtension } from './cors.extension.js';
 import { CorsService } from './cors.service.js';
 
@@ -12,9 +11,8 @@ import { CorsService } from './cors.service.js';
   extensions: [
     {
       extension: CorsExtension,
-      group: CORS_EXTENSIONS,
-      afterGroups: [ROUTE_EXTENSIONS],
-      beforeGroups: [PRE_ROUTER_EXTENSIONS],
+      afterExtensions: [RoutesExtension],
+      beforeExtensions: [PreRouterExtension],
       export: true,
     },
   ],
