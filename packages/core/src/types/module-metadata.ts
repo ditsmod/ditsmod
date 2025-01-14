@@ -37,12 +37,12 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  resolvedCollisionsPerRou?: [any, ModuleType | ModuleWithParams][];
+  // resolvedCollisionsPerRou?: [any, ModuleType | ModuleWithParams][];
   /**
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  resolvedCollisionsPerReq?: [any, ModuleType | ModuleWithParams][];
+  // resolvedCollisionsPerReq?: [any, ModuleType | ModuleWithParams][];
 }
 
 export type ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj> =

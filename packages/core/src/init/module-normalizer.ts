@@ -1,10 +1,12 @@
-import { isClassProvider, isMultiProvider, isNormalizedProvider, isTokenProvider, isValueProvider, MultiProvider } from '#di';
 import {
-  isModDecor,
-  isModuleWithParams,
-  isRootModule,
-  isProvider,
-} from '#utils/type-guards.js';
+  isClassProvider,
+  isMultiProvider,
+  isNormalizedProvider,
+  isTokenProvider,
+  isValueProvider,
+  MultiProvider,
+} from '#di';
+import { isModDecor, isModuleWithParams, isRootModule, isProvider } from '#utils/type-guards.js';
 import {
   ExtensionConfig,
   getExtensionProvider,
@@ -22,10 +24,11 @@ import { reflector } from '#di/reflection.js';
 import { Providers } from '#utils/providers.js';
 import { ModuleMetadata } from '#types/module-metadata.js';
 import { getModule } from '#utils/get-module.js';
-import { Extension } from '#extension/extension-types.js';
+import { Extension, ExtensionType } from '#extension/extension-types.js';
 import { normalizeProviders } from '#utils/ng-utils.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
 import { mergeArrays } from '#utils/merge-arrays.js';
+import { isExtensionConfig } from '#extension/tarjan-graph.js';
 
 export class ModuleNormalizer {
   /**
@@ -80,14 +83,14 @@ export class ModuleNormalizer {
 
     const providersTokens = getTokens([
       ...(rawMeta.providersPerMod || []),
-      ...(rawMeta.providersPerRou || []),
-      ...(rawMeta.providersPerReq || []),
+      // ...(rawMeta.providersPerRou || []),
+      // ...(rawMeta.providersPerReq || []),
     ]);
 
     const resolvedCollisionsPerLevel = [
       ...(rawMeta.resolvedCollisionsPerMod || []),
-      ...(rawMeta.resolvedCollisionsPerRou || []),
-      ...(rawMeta.resolvedCollisionsPerReq || []),
+      // ...(rawMeta.resolvedCollisionsPerRou || []),
+      // ...(rawMeta.resolvedCollisionsPerReq || []),
     ];
     if (isRootModule(rawMeta)) {
       resolvedCollisionsPerLevel.push(...(rawMeta.resolvedCollisionsPerApp || []));
@@ -96,9 +99,12 @@ export class ModuleNormalizer {
     this.exportFromRawMeta(rawMeta, modName, providersTokens, meta);
     this.checkReexportModules(meta);
 
-    rawMeta.extensions?.forEach((extensionConfig, i) => {
-      this.checkExtensionConfig(modName, extensionConfig, i);
-      const extensionObj = getExtensionProvider(extensionConfig);
+    rawMeta.extensions?.forEach((extensionOrConfig, i) => {
+      if (!isExtensionConfig(extensionOrConfig)) {
+        extensionOrConfig = { extension: extensionOrConfig as ExtensionType };
+      }
+      this.checkExtensionConfig(modName, extensionOrConfig, i);
+      const extensionObj = getExtensionProvider(extensionOrConfig);
       extensionObj.providers.forEach((p) => this.checkInitMethodForExtension(modName, p));
       if (extensionObj.config) {
         meta.aExtensionConfig.push(extensionObj.config);
