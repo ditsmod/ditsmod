@@ -1,18 +1,9 @@
-import { describe, expect, it, beforeEach } from 'vitest';
+import { describe, beforeEach } from 'vitest';
 
 import { ModuleNormalizer } from '#init/module-normalizer.js';
-import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 
 describe('ModuleNormalizer', () => {
-  class MockModuleNormalizer extends ModuleNormalizer {
-    override quickCheckMetadata(meta: NormalizedModuleMetadata) {
-      return super.quickCheckMetadata(meta);
-    }
-
-    // override checkController(modName: string, Controller: Class) {
-    //   return super.checkController(modName, Controller);
-    // }
-  }
+  class MockModuleNormalizer extends ModuleNormalizer {}
 
   let mock: MockModuleNormalizer;
 

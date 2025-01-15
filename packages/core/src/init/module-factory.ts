@@ -94,7 +94,7 @@ export class ModuleFactory {
     modOrObj: ModRefId,
     moduleManager: ModuleManager,
     unfinishedScanModules: Set<ModRefId>,
-    guardsPerMod1?: GuardPerMod1[],
+    // guardsPerMod1?: GuardPerMod1[],
     isAppends?: boolean,
   ) {
     const meta = moduleManager.getMetadata(modOrObj, true);
@@ -103,26 +103,26 @@ export class ModuleFactory {
     this.glProviders = globalProviders;
     this.prefixPerMod = prefixPerMod || '';
     this.moduleName = meta.name;
-    this.guardsPerMod1 = guardsPerMod1 || [];
+    // this.guardsPerMod1 = guardsPerMod1 || [];
     this.unfinishedScanModules = unfinishedScanModules;
     this.meta = meta;
     this.checkImportsAndAppends(meta);
     this.importAndAppendModules();
     const moduleExtract: ModuleExtract = {
-      path: this.prefixPerMod,
+      // path: this.prefixPerMod,
       moduleName: meta.name,
       isExternal: meta.isExternal,
     };
     this.meta.providersPerMod.unshift({ token: ModuleExtract, useValue: moduleExtract });
 
-    const hasPath =
-      isModuleWithParams(meta.modRefId) &&
-      (meta.modRefId.path !== undefined || meta.modRefId.absolutePath !== undefined);
+    // const hasPath =
+    //   isModuleWithParams(meta.modRefId) &&
+    //   (meta.modRefId.path !== undefined || meta.modRefId.absolutePath !== undefined);
 
-    let applyControllers = false;
-    if (isRootModule(meta) || isAppends || hasPath) {
-      applyControllers = true;
-    }
+    // let applyControllers = false;
+    // if (isRootModule(meta) || isAppends || hasPath) {
+    //   applyControllers = true;
+    // }
 
     let perMod: Map<any, ImportObj>;
     let perRou: Map<any, ImportObj>;
@@ -159,9 +159,9 @@ export class ModuleFactory {
 
     return this.appMetadataMap.set(modOrObj, {
       prefixPerMod,
-      guardsPerMod1: this.guardsPerMod1,
+      // guardsPerMod1: this.guardsPerMod1,
       meta: this.meta,
-      applyControllers,
+      // applyControllers,
       importedTokensMap: {
         perMod,
         perRou,
@@ -192,7 +192,7 @@ export class ModuleFactory {
 
   protected importAndAppendModules() {
     this.importOrAppendModules([...this.meta.importsModules, ...this.meta.importsWithParams], true);
-    this.importOrAppendModules([...this.meta.appendsModules, ...this.meta.appendsWithParams]);
+    // this.importOrAppendModules([...this.meta.appendsModules, ...this.meta.appendsWithParams]);
     this.checkAllCollisionsWithLevelsMix();
   }
 
@@ -204,18 +204,18 @@ export class ModuleFactory {
       }
 
       let prefixPerMod = '';
-      let guardsPerMod1: GuardPerMod1[] = [];
+      // let guardsPerMod1: GuardPerMod1[] = [];
       const hasModuleParams = isModuleWithParams(input);
       if (hasModuleParams || !isImport) {
-        if (hasModuleParams && typeof input.absolutePath == 'string') {
-          // Allow slash for absolutePath.
-          prefixPerMod = input.absolutePath.startsWith('/') ? input.absolutePath.slice(1) : input.absolutePath;
-        } else {
-          const path = hasModuleParams ? input.path : '';
-          prefixPerMod = [this.prefixPerMod, path].filter((s) => s).join('/');
-        }
-        const impGuradsPerMod1 = meta.guardsPerMod.map<GuardPerMod1>((g) => ({ ...g, meta: this.meta }));
-        guardsPerMod1 = [...this.guardsPerMod1, ...impGuradsPerMod1];
+        // if (hasModuleParams && typeof input.absolutePath == 'string') {
+        //   // Allow slash for absolutePath.
+        //   prefixPerMod = input.absolutePath.startsWith('/') ? input.absolutePath.slice(1) : input.absolutePath;
+        // } else {
+          // const path = hasModuleParams ? input.path : '';
+          prefixPerMod = [this.prefixPerMod, ''].filter((s) => s).join('/');
+        // }
+        // const impGuradsPerMod1 = meta.guardsPerMod.map<GuardPerMod1>((g) => ({ ...g, meta: this.meta }));
+        // guardsPerMod1 = [...this.guardsPerMod1, ...impGuradsPerMod1];
       } else {
         prefixPerMod = this.prefixPerMod;
       }
@@ -233,7 +233,7 @@ export class ModuleFactory {
         input,
         this.moduleManager,
         this.unfinishedScanModules,
-        guardsPerMod1,
+        // guardsPerMod1,
         !isImport,
       );
       this.unfinishedScanModules.delete(input);
@@ -260,12 +260,12 @@ export class ModuleFactory {
     if (meta1.exportedMultiProvidersPerMod.length) {
       this.importedMultiProvidersPerMod.set(modRefId, meta1.exportedMultiProvidersPerMod);
     }
-    if (meta1.exportedMultiProvidersPerRou.length) {
-      this.importedMultiProvidersPerRou.set(modRefId, meta1.exportedMultiProvidersPerRou);
-    }
-    if (meta1.exportedMultiProvidersPerReq.length) {
-      this.importedMultiProvidersPerReq.set(modRefId, meta1.exportedMultiProvidersPerReq);
-    }
+    // if (meta1.exportedMultiProvidersPerRou.length) {
+    //   this.importedMultiProvidersPerRou.set(modRefId, meta1.exportedMultiProvidersPerRou);
+    // }
+    // if (meta1.exportedMultiProvidersPerReq.length) {
+    //   this.importedMultiProvidersPerReq.set(modRefId, meta1.exportedMultiProvidersPerReq);
+    // }
     if (meta1.exportedExtensionsProviders.length) {
       this.importedExtensions.set(meta1.modRefId, meta1.exportedExtensionsProviders);
       this.aImportedExtensionConfig.push(...meta1.aExportedExtensionConfig);
@@ -355,18 +355,18 @@ export class ModuleFactory {
 
   protected checkAllCollisionsWithLevelsMix() {
     this.checkCollisionsWithLevelsMix(this.providersPerApp, ['Mod']);
-    const providersPerMod = [
-      ...defaultProvidersPerMod,
-      ...this.meta.providersPerMod,
-      ...getImportedProviders(this.importedProvidersPerMod),
-    ];
-    this.checkCollisionsWithLevelsMix(providersPerMod, ['Rou', 'Req']);
-    const mergedProvidersAndTokens = [
-      ...this.meta.providersPerRou,
-      ...getImportedProviders(this.importedProvidersPerRou),
-      // ...defaultProvidersPerReq,
-    ];
-    this.checkCollisionsWithLevelsMix(mergedProvidersAndTokens, ['Req']);
+    // const providersPerMod = [
+    //   ...defaultProvidersPerMod,
+    //   ...this.meta.providersPerMod,
+    //   ...getImportedProviders(this.importedProvidersPerMod),
+    // ];
+    // this.checkCollisionsWithLevelsMix(providersPerMod, ['Rou', 'Req']);
+    // const mergedProvidersAndTokens = [
+    //   ...this.meta.providersPerRou,
+    //   ...getImportedProviders(this.importedProvidersPerRou),
+    //   // ...defaultProvidersPerReq,
+    // ];
+    // this.checkCollisionsWithLevelsMix(mergedProvidersAndTokens, ['Req']);
   }
 
   protected checkCollisionsWithLevelsMix(providers: any[], levels: Level[]) {
@@ -413,17 +413,17 @@ export class ModuleFactory {
   }
 
   protected checkImportsAndAppends(meta: NormalizedModuleMetadata) {
-    [...meta.appendsModules].forEach((append) => {
-      const appendedMeta = this.moduleManager.getMetadata(append, true);
-      if (!appendedMeta.controllers.length) {
-        const msg = `Appends to "${meta.name}" failed: "${appendedMeta.name}" must have controllers.`;
-        throw new Error(msg);
-      }
-      const mod = getModule(append);
-      if (meta.importsModules.includes(mod) || meta.importsWithParams.some((imp) => imp.module === mod)) {
-        const msg = `Appends to "${meta.name}" failed: "${appendedMeta.name}" includes in both: imports and appends arrays.`;
-        throw new Error(msg);
-      }
-    });
+    // [...meta.appendsModules].forEach((append) => {
+    //   const appendedMeta = this.moduleManager.getMetadata(append, true);
+    //   if (!appendedMeta.controllers.length) {
+    //     const msg = `Appends to "${meta.name}" failed: "${appendedMeta.name}" must have controllers.`;
+    //     throw new Error(msg);
+    //   }
+    //   const mod = getModule(append);
+    //   if (meta.importsModules.includes(mod) || meta.importsWithParams.some((imp) => imp.module === mod)) {
+    //     const msg = `Appends to "${meta.name}" failed: "${appendedMeta.name}" includes in both: imports and appends arrays.`;
+    //     throw new Error(msg);
+    //   }
+    // });
   }
 }

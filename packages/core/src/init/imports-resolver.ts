@@ -314,7 +314,7 @@ export class ImportsResolver {
       .map((level) => `providersPer${level}`)
       .join(', ');
     const partMsg = path.length > 1 ? `(${strPath}, searching in ${levelsPath})` : levelsPath;
-    this.log.showProvidersInLogs(this, meta.name, meta.providersPerReq, meta.providersPerRou, meta.providersPerMod);
+    // this.log.showProvidersInLogs(this, meta.name, meta.providersPerReq, meta.providersPerRou, meta.providersPerMod);
 
     this.errorMediator.throwNoProviderDuringResolveImports(meta.name, token.name || token, partMsg);
   }

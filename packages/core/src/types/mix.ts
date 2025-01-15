@@ -75,8 +75,8 @@ export type AppMetadataMap = Map<ModuleType | ModuleWithParams, MetadataPerMod1>
 
 export class ProvidersForMod {
   providersPerMod: Provider[] = [];
-  providersPerRou: Provider[] = [];
-  providersPerReq: Provider[] = [];
+  // providersPerRou: Provider[] = [];
+  // providersPerReq: Provider[] = [];
 }
 
 export interface ResolvedGuardPerMod {

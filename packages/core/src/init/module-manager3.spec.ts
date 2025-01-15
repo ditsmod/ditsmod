@@ -17,7 +17,7 @@ describe('ModuleManager', () => {
   let mock: ModuleManager;
 
   beforeEach(() => {
-    const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName', path: '' });
+    const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
     mock = new ModuleManager(systemLogMediator);
   });
 

@@ -9,7 +9,7 @@ import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { GlobalProviders, ImportObj, MetadataPerMod1 } from '#types/metadata-per-mod.js';
 import { ModuleType, Level } from '#types/mix.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
+import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
 import { getImportedProviders } from '#utils/get-imports.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
@@ -56,7 +56,7 @@ describe('ModuleFactory', () => {
     it('forbidden reexports providers', () => {
       class Provider1 {}
 
-      @featureModule({
+      @featureModule<ModuleMetadata & {providersPerReq: Provider[]}>({
         providersPerReq: [Provider1],
       })
       class Module1 {}
