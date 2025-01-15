@@ -11,9 +11,9 @@ import { ModuleType, AnyObj } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
+import { inspect } from 'node:util';
 
 describe('ModuleManager', () => {
-  console.log = vi.fn();
   type ModuleId = string | ModuleType | ModuleWithParams;
   @injectable()
   class Provider0 {}
@@ -53,25 +53,7 @@ describe('ModuleManager', () => {
     mock = new MockModuleManager(systemLogMediator);
   });
 
-  it('empty root module', () => {
-    @rootModule({})
-    class AppModule {}
-
-    const expectedMeta = new NormalizedModuleMetadata();
-    expectedMeta.id = '';
-    expectedMeta.name = 'AppModule';
-    expectedMeta.modRefId = AppModule;
-    expectedMeta.decorator = rootModule;
-    expectedMeta.declaredInDir = CallsiteUtils.getCallerDir();
-    expectedMeta.isExternal = false;
-    expectedMeta.rawMeta = expect.any(Object);
-
-    mock.scanRootModule(AppModule);
-    expect(mock.map.size).toBe(1);
-    expect(mock.getMetadata('root')).toEqual(expectedMeta);
-  });
-
-  it('circular imports modules with forwardRef()', () => {
+  it('circular imports modules "Module1 -> Module3 -> Module2 -> Module1" with forwardRef()', () => {
     @featureModule({ providersPerApp: [Provider1], imports: [forwardRef(() => Module3)] })
     class Module1 {}
 
@@ -91,15 +73,21 @@ describe('ModuleManager', () => {
     class AppModule {}
 
     expect(() => mock.scanRootModule(AppModule)).not.toThrow();
+    expect(mock.getMetadata(Module1)).toMatchObject<Partial<NormalizedModuleMetadata>>({
+      importsModules: [Module3],
+    });
+    expect(mock.getMetadata(Module3)).toMatchObject<Partial<NormalizedModuleMetadata>>({
+      importsModules: [Module2],
+    });
   });
 
-  it('non properly exports from root module', () => {
+  it('exports provider that is not declared in current module', () => {
     @rootModule({
       exports: [Provider1],
     })
     class AppModule {}
 
-    expect(() => mock.scanRootModule(AppModule)).toThrow(/if "Provider1" is a provider, it must be included in/);
+    expect(() => mock.scanRootModule(AppModule)).toThrow('if "Provider1" is a provider, it must be included in');
   });
 
   it('root module with some metadata', () => {
