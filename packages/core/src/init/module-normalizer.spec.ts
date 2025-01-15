@@ -48,4 +48,28 @@ describe('ModuleNormalizer', () => {
 
     expect(new ModuleNormalizer().normalize(AppModule)).toEqual(expectedMeta);
   });
+
+  it('module reexports another a module without @featureModule decorator', () => {
+    class Module1 {}
+
+    @featureModule({ imports: [Module1], exports: [Module1] })
+    class Module2 {}
+
+    expect(() => new ModuleNormalizer().normalize(Module2)).toThrow('if "Module1" is a provider, it must be included in');
+  });
+
+  it('imports module with params, but exports only a module class (without ref to module with params)', () => {
+    @featureModule({ providersPerMod: [Provider1], exports: [Provider1] })
+    class Module1 {}
+    const moduleWithParams: ModuleWithParams = { module: Module1 };
+
+    @featureModule({
+      imports: [moduleWithParams],
+      exports: [Module1],
+    })
+    class Module2 {}
+
+    const msg = 'Reexport from Module2 failed: Module1 includes in exports, but not includes in imports';
+    expect(() => new ModuleNormalizer().normalize(Module2)).toThrow(msg);
+  });
 });

@@ -13,7 +13,7 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   rawMeta: RawMeta;
   /**
    * The module setted here must be identical to the module
-   * passed to "imports", "exports" or "appends" array of `@featureModule` metadata.
+   * passed to "imports", "exports" array of `@featureModule` metadata.
    */
   modRefId: ModuleType<T> | ModuleWithParams<T>;
   /**

@@ -165,14 +165,15 @@ export class ModuleNormalizer {
   }
 
   protected checkReexportModules(meta: NormalizedModuleMetadata) {
-    const imports = [...meta.importsModules, ...meta.importsWithParams].map(getModule);
-    const exports = [...meta.exportsModules, ...meta.exportsWithParams].map(getModule);
+    const imports = [...meta.importsModules, ...meta.importsWithParams];
+    const exports = [...meta.exportsModules, ...meta.exportsWithParams];
 
-    exports.forEach((mod) => {
-      if (!imports.includes(mod)) {
+    exports.forEach((modRefId) => {
+      if (!imports.includes(modRefId)) {
+        const importedModuleName = getDebugClassName(modRefId);
         const msg =
-          `Reexport from ${meta.name} failed: ${mod.name} includes in exports, but not includes in imports. ` +
-          `In ${meta.name} you need include ${mod.name} to imports or remove it from exports.`;
+          `Reexport from ${meta.name} failed: ${importedModuleName} includes in exports, but not includes in imports. ` +
+          `If in ${meta.name} you imports ${importedModuleName} as module with params, same object you should export (if you need reexport).`;
         throw new Error(msg);
       }
     });
