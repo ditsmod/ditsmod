@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { forwardRef, injectable } from '#di';
-import { featureModule } from '#decorators/module.js';
+import { forwardRef } from '#di';
+import { featureModule, RawMeta } from '#decorators/module.js';
 import { Provider } from '#di/types-and-models.js';
 import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
 import { getModuleMetadata } from './get-module-metadata.js';
@@ -9,6 +9,12 @@ import { Providers } from '#utils/providers.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 
 describe('getModuleMetadata()', () => {
+  class Provider0 {}
+  class Provider1 {}
+  class Provider2 {}
+  class Provider3 {}
+  class Provider4 {}
+
   it('module without decorator', () => {
     class Module1 {}
 
@@ -17,11 +23,11 @@ describe('getModuleMetadata()', () => {
   });
 
   it('empty decorator', () => {
-    @featureModule({})
+    @featureModule()
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
-    expect(metadata).toEqual({ decorator: featureModule, declaredInDir: CallsiteUtils.getCallerDir() });
+    expect(metadata).toEqual<RawMeta>({ decorator: featureModule, declaredInDir: CallsiteUtils.getCallerDir() });
   });
 
   it('@featureModule() decorator with id', () => {
@@ -29,23 +35,26 @@ describe('getModuleMetadata()', () => {
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
-    expect(metadata).toEqual({ decorator: featureModule, id: 'someId', declaredInDir: CallsiteUtils.getCallerDir() });
-  });
-
-  it('decorator with some data', () => {
-    @featureModule<ModuleMetadata & { controllers: any }>({ controllers: [] })
-    class Module1 {}
-
-    const metadata = getModuleMetadata(Module1);
-    expect(metadata).toEqual({
+    expect(metadata).toEqual<RawMeta>({
       decorator: featureModule,
-      controllers: [],
+      id: 'someId',
       declaredInDir: CallsiteUtils.getCallerDir(),
     });
   });
 
   it('decorator with some data', () => {
-    class Provider1 {}
+    @featureModule<ModuleMetadata & { anyProperty: any }>({ anyProperty: [] })
+    class Module1 {}
+
+    const metadata = getModuleMetadata(Module1);
+    expect(metadata).toEqual<RawMeta & { anyProperty: any }>({
+      decorator: featureModule,
+      anyProperty: [],
+      declaredInDir: CallsiteUtils.getCallerDir(),
+    });
+  });
+
+  it('decorator with instance of Providers class', () => {
     const providers = new Providers().useValue('token2', 'value2');
 
     @featureModule({
@@ -55,7 +64,7 @@ describe('getModuleMetadata()', () => {
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
-    expect(metadata).toEqual({
+    expect(metadata).toEqual<RawMeta & { providersPerRou: any }>({
       decorator: featureModule,
       providersPerMod: [Provider1],
       providersPerRou: [{ token: 'token2', useValue: 'value2' }],
@@ -63,37 +72,38 @@ describe('getModuleMetadata()', () => {
     });
   });
 
-  it('module with params', () => {
-    @injectable()
-    class Provider1 {}
-
-    @featureModule({})
+  it('module with params; some properties are in static metadata, some are in dynamic metadata, some are in both', () => {
+    @featureModule({
+      providersPerMod: [Provider1],
+      providersPerRou: new Providers().useValue('token1', 'value1'),
+      providersPerApp: [Provider0],
+    })
     class Module1 {
-      static withParams(providersPerMod: Provider[]): ModuleWithParams<Module1> {
+      static withParams(
+        providersPerMod: Provider[],
+      ): ModuleWithParams<Module1> & { providersPerRou: Provider[]; providersPerReq: Provider[] } {
         return {
           module: Module1,
           providersPerMod,
+          providersPerRou: [Provider3],
+          providersPerReq: [Provider4],
         };
       }
     }
 
-    const metadata = getModuleMetadata(Module1.withParams([Provider1]));
-    expect(metadata).toEqual({
+    const metadata = getModuleMetadata(Module1.withParams([Provider2]));
+    expect(metadata).toEqual<RawMeta & { providersPerRou: Provider[]; providersPerReq: Provider[] }>({
       decorator: featureModule,
       declaredInDir: CallsiteUtils.getCallerDir(),
       extensionsMeta: {},
-      providersPerApp: [],
-      exports: [],
-      providersPerMod: [Provider1],
-      providersPerRou: [],
-      providersPerReq: [],
+      providersPerApp: [Provider0], // From static metadata.
+      providersPerMod: [Provider1, Provider2], // Merge from static and dynamic metadata.
+      providersPerRou: [{ token: 'token1', useValue: 'value1' }, Provider3], // Transformation from class instance to an array.
+      providersPerReq: [Provider4], // From dynamic metadata.
     });
   });
 
   it('module with params in forwardRef() function', () => {
-    @injectable()
-    class Provider1 {}
-
     @featureModule({})
     class Module1 {
       static withParams(providersPerMod: Provider[]): ModuleWithParams<Module1> {
@@ -106,22 +116,15 @@ describe('getModuleMetadata()', () => {
 
     const fn = () => Module1.withParams([Provider1]);
     const metadata = getModuleMetadata(forwardRef(fn));
-    expect(metadata).toEqual({
+    expect(metadata).toEqual<RawMeta>({
       decorator: featureModule,
       declaredInDir: CallsiteUtils.getCallerDir(),
       extensionsMeta: {},
-      providersPerApp: [],
-      exports: [],
       providersPerMod: [Provider1],
-      providersPerRou: [],
-      providersPerReq: [],
     });
   });
 
-  it('module with params has id', () => {
-    @injectable()
-    class Provider1 {}
-
+  it('module with param "id"', () => {
     @featureModule({ id: 'someId' })
     class Module1 {
       static withParams(providersPerMod: Provider[]): ModuleWithParams<Module1> {
