@@ -6,11 +6,13 @@ import { RoutesExtension } from './extensions/routes.extension.js';
 import { PreRouterExtension } from './extensions/pre-router.extension.js';
 import { RouteMeta } from './route-data.js';
 import { UseInterceptorExtension } from '#mod/extensions/use-interceptor.extension.js';
+import { RoutingModuleNormalizer } from './module-normalizer.js';
 
 /**
  * Sets `Router` provider on application level, and adds `RoutesExtension` with `PreRouterExtension`.
  */
 @featureModule({
+  moduleNormalizers: [RoutingModuleNormalizer],
   providersPerApp: [{ token: Router, useClass: DefaultRouter }, RoutingErrorMediator],
   providersPerRou: [
     RouteMeta, // In fact, the provider with this token is added dynamically. This requires `ImportsResolver`.

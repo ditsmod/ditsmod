@@ -1,5 +1,4 @@
 import {
-  AnyObj,
   Class,
   HttpMethod,
   ModuleMetadata,
@@ -11,6 +10,7 @@ import { Tree } from './tree.js';
 import { ControllerMetadata } from './controller-metadata.js';
 import { GuardPerMod1 } from './interceptors/guard.js';
 import { RouteHandler } from './router.js';
+import { AppendsWithParams } from './module-metadata.js';
 
 
 /**
@@ -83,27 +83,4 @@ export interface RouteParam {
   key: string;
   value: string;
 }
-
-/**
- * Used for module metadata, for `appends` array.
- */
-export type AppendsWithParams<T extends AnyObj = AnyObj> = AppendsWithParams1<T> | AppendsWithParams2<T>;
-
-export interface BaseAppendsWithParams<T extends AnyObj = AnyObj> {
-  /**
-   * The module ID.
-   */
-  id?: string;
-  module: ModuleType<T>;
-  // guards?: GuardItem[];
-}
-
-export interface AppendsWithParams1<T extends AnyObj = AnyObj> extends BaseAppendsWithParams<T> {
-  path: string;
-  absolutePath?: never;
-}
-
-export interface AppendsWithParams2<T extends AnyObj = AnyObj> extends BaseAppendsWithParams<T> {
-  absolutePath: string;
-  path?: never;
-}
+export type Level = 'Rou' | 'Req';
