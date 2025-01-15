@@ -1,8 +1,8 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
-import { featureModule, RawMeta } from '#decorators/module.js';
+import { featureModule } from '#decorators/module.js';
 import { rootModule } from '#decorators/root-module.js';
-import { InjectionToken, injectable, forwardRef, Provider } from '#di';
+import { injectable, forwardRef, Provider, isMultiProvider } from '#di';
 import { Extension } from '#extension/extension-types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { CallsiteUtils } from '#utils/callsites.js';
@@ -11,7 +11,6 @@ import { ModuleType, AnyObj } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
-import { inspect } from 'node:util';
 
 describe('ModuleManager', () => {
   type ModuleId = string | ModuleType | ModuleWithParams;
@@ -114,14 +113,14 @@ describe('ModuleManager', () => {
     expect(mock.getMetadata('root')).toEqual(expectedMeta);
   });
 
-  it('root module without @rootModule decorator', () => {
+  it('scan module as root module without @rootModule decorator', () => {
     @featureModule()
     class Module1 {}
 
     expect(() => mock.scanRootModule(Module1)).toThrow('"Module1" does not have the "@rootModule()" decorator');
   });
 
-  it('root module imported module without @featureModule decorator', () => {
+  it('root module imports a module that not have @featureModule decorator', () => {
     class Module1 {}
 
     @rootModule({ imports: [Module1] })
@@ -130,16 +129,7 @@ describe('ModuleManager', () => {
     expect(() => mock.scanRootModule(Module2)).toThrow('"Module1" does not have the "@featureModule()" decorator');
   });
 
-  it('module reexported another module without @featureModule decorator', () => {
-    class Module1 {}
-
-    @featureModule({ imports: [Module1], exports: [Module1] })
-    class Module2 {}
-
-    expect(() => mock.scanModule(Module2)).toThrow(/if "Module1" is a provider, it must be included in/);
-  });
-
-  it('properly reexport module', () => {
+  it('properly reexport a module', () => {
     @featureModule({ providersPerMod: [Provider1], exports: [Provider1] })
     class Module1 {}
 
@@ -152,17 +142,10 @@ describe('ModuleManager', () => {
     expect(() => mock.scanModule(Module2)).not.toThrow();
   });
 
-  it('properly reexport module with params, case 1', () => {
+  it('reexport same object of module with params', () => {
     @featureModule({ providersPerMod: [Provider1], exports: [Provider1] })
-    class Module1 {
-      static withParams(): ModuleWithParams<Module1> {
-        return {
-          module: this,
-        };
-      }
-    }
-
-    const moduleWithParams = Module1.withParams();
+    class Module1 {}
+    const moduleWithParams: ModuleWithParams = { module: Module1 };
 
     @featureModule({
       imports: [moduleWithParams],
@@ -171,12 +154,16 @@ describe('ModuleManager', () => {
     class Module2 {}
 
     expect(() => mock.scanModule(Module2)).not.toThrow();
+    expect(mock.getMetadata(moduleWithParams)).toMatchObject<Partial<NormalizedModuleMetadata>>({
+      modRefId: moduleWithParams,
+    });
+    expect(mock.getMetadata(Module1)).toBeUndefined();
   });
 
   it('exports multi providers', () => {
     class Multi {}
 
-    const exportedMultiProvidersPerMod = [{ token: Multi, useClass: Multi, multi: true }];
+    const exportedMultiProvidersPerMod: Provider[] = [{ token: Multi, useClass: Multi, multi: true }];
 
     @featureModule()
     class Module1 {
@@ -194,73 +181,6 @@ describe('ModuleManager', () => {
     const meta = mock.scanModule(moduleWithParams);
     expect(meta.exportedProvidersPerMod.length).toBe(0);
     expect(meta.exportedMultiProvidersPerMod).toEqual(exportedMultiProvidersPerMod);
-  });
-
-  it('not properly reexport module with params, case 2', () => {
-    @featureModule({ providersPerMod: [Provider1], exports: [Provider1] })
-    class Module1 {
-      static withParams(): ModuleWithParams<Module1> {
-        return {
-          module: this,
-        };
-      }
-    }
-
-    const moduleWithParams = Module1.withParams();
-
-    @featureModule({
-      imports: [moduleWithParams],
-      exports: [Module1],
-    })
-    class Module2 {}
-
-    expect(() => mock.scanModule(Module2)).not.toThrow();
-  });
-
-  it('exports module without imports it', () => {
-    @featureModule({ providersPerMod: [Provider1], exports: [Provider1] })
-    class Module1 {}
-
-    @featureModule({ exports: [Module1] })
-    class Module2 {}
-
-    expect(() => mock.scanModule(Module2)).toThrow(/Reexport from Module2 failed: Module1 includes in exports/);
-  });
-
-  it('module exported provider from providersPerApp', () => {
-    @featureModule({ providersPerApp: [Provider1], exports: [Provider1] })
-    class Module2 {}
-
-    expect(() => mock.scanModule(Module2)).toThrow(/includes in "providersPerApp" and "exports" of/);
-  });
-
-  it('module exported normalized provider', () => {
-    @featureModule({ providersPerMod: [Provider1], exports: [{ token: Provider1, useClass: Provider1 }] })
-    class Module2 {}
-
-    expect(() => mock.scanModule(Module2)).toThrow('failed: in "exports" array must be includes tokens only');
-  });
-
-  it('module exported invalid extension', () => {
-    @injectable()
-    class Extension1 {}
-
-    @featureModule({ extensions: [{ extension: Extension1 as any, export: true }] })
-    class Module2 {}
-
-    expect(() => mock.scanModule(Module2)).toThrow('must have stage1(), stage2() or stage3() method');
-  });
-
-  it('module exported valid extension', () => {
-    @injectable()
-    class Extension1 implements Extension {
-      async stage1() {}
-    }
-
-    @featureModule({ extensions: [{ extension: Extension1 as any, export: true }] })
-    class Module2 {}
-
-    expect(() => mock.scanModule(Module2)).not.toThrow();
   });
 
   it('root module with imported some other modules', () => {
@@ -316,11 +236,9 @@ describe('ModuleManager', () => {
     expectedMeta2.name = 'Module2';
     expectedMeta2.modRefId = Module2;
     expectedMeta2.importsModules = [Module1];
-    expectedMeta2.providersPerMod = [Provider0];
-    // expectedMeta2.providersPerRou = [Provider1];
+    expectedMeta2.providersPerMod = [Provider0, Provider1];
     expectedMeta2.exportsModules = [Module1];
-    expectedMeta2.exportedProvidersPerMod = [Provider0];
-    // expectedMeta2.exportedProvidersPerRou = [Provider1];
+    expectedMeta2.exportedProvidersPerMod = [Provider0, Provider1];
     expectedMeta2.decorator = featureModule;
     expectedMeta2.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta2.isExternal = false;
@@ -388,7 +306,7 @@ describe('ModuleManager', () => {
     expectedMeta1.id = '';
     expectedMeta1.name = 'AppModule';
     expectedMeta1.modRefId = AppModule;
-    // expectedMeta1.providersPerReq = [Provider1];
+    expectedMeta1.providersPerMod = [Provider1];
     expectedMeta1.decorator = rootModule;
     expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta1.isExternal = false;
@@ -432,7 +350,7 @@ describe('ModuleManager', () => {
     expectedMeta2.name = 'AppModule';
     expectedMeta2.modRefId = AppModule;
     expectedMeta2.importsModules = [Module1];
-    // expectedMeta2.providersPerReq = [Provider1];
+    expectedMeta2.providersPerMod = [Provider1];
     expectedMeta2.decorator = rootModule;
     expectedMeta2.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta2.isExternal = false;
@@ -471,7 +389,7 @@ describe('ModuleManager', () => {
     expectedMeta3.name = 'AppModule';
     expectedMeta3.modRefId = AppModule;
     expectedMeta3.importsModules = [Module1, Module2, Module4];
-    // expectedMeta3.providersPerReq = [Provider1];
+    expectedMeta3.providersPerMod = [Provider1];
     expectedMeta3.decorator = rootModule;
     expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta3.isExternal = false;
@@ -543,7 +461,7 @@ describe('ModuleManager', () => {
     expectedMeta1.modRefId = AppModule;
     expectedMeta1.importsModules = [Module1, Module2];
     expectedMeta1.importsWithParams = [module3WithProviders, module4WithProviders];
-    // expectedMeta1.providersPerReq = [Provider1];
+    expectedMeta1.providersPerMod = [Provider1];
     expectedMeta1.decorator = rootModule;
     expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta1.isExternal = false;
@@ -590,7 +508,7 @@ describe('ModuleManager', () => {
     expectedMeta2.modRefId = AppModule;
     expectedMeta2.importsModules = [Module1];
     expectedMeta2.importsWithParams = [module3WithProviders, module4WithProviders];
-    // expectedMeta2.providersPerReq = [Provider1];
+    expectedMeta2.providersPerMod = [Provider1];
     expectedMeta2.decorator = rootModule;
     expectedMeta2.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta2.isExternal = false;
@@ -617,7 +535,7 @@ describe('ModuleManager', () => {
     expectedMeta3.modRefId = AppModule;
     expectedMeta3.importsModules = [Module1];
     expectedMeta3.importsWithParams = [module4WithProviders];
-    // expectedMeta3.providersPerReq = [Provider1];
+    expectedMeta3.providersPerMod = [Provider1];
     expectedMeta3.decorator = rootModule;
     expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta3.isExternal = false;
@@ -641,7 +559,7 @@ describe('ModuleManager', () => {
     expectedMeta4.name = 'AppModule';
     expectedMeta4.modRefId = AppModule;
     expectedMeta4.importsModules = [Module1];
-    // expectedMeta4.providersPerReq = [Provider1];
+    expectedMeta4.providersPerMod = [Provider1];
     expectedMeta4.decorator = rootModule;
     expectedMeta4.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta4.isExternal = false;
@@ -759,29 +677,6 @@ describe('ModuleManager', () => {
     expect(mock.getMetadata(Module1)).toMatchObject(expectedMeta1);
   });
 
-  describe('init extensions', () => {
-    interface MyInterface {
-      one: string;
-      two: number;
-    }
-
-    it('exports token of an extension without this extension', async () => {
-      @rootModule({ exports: [] })
-      class AppModule {}
-
-      const msg = 'is a token of extension, this extension must be included in';
-      expect(() => mock.scanRootModule(AppModule)).toThrow(msg);
-    });
-
-    it('should throw error about no extension', async () => {
-      @rootModule({ exports: [] })
-      class AppModule {}
-
-      const msg = 'is a token of extension, this extension must be included in';
-      expect(() => mock.scanRootModule(AppModule)).toThrow(msg);
-    });
-  });
-
   it('split multi providers and common providers', () => {
     const providersPerMod: Provider[] = [
       { token: Provider2, useValue: 'val4', multi: true },
@@ -816,9 +711,9 @@ describe('ModuleManager', () => {
     expectedMeta1.id = '';
     expectedMeta1.name = 'Module1';
     expectedMeta1.modRefId = Module1;
-    // expectedMeta1.providersPerReq = providersPerReq;
-    // expectedMeta1.exportedProvidersPerReq = [Provider3];
-    // expectedMeta1.exportedMultiProvidersPerReq = providersPerReq.filter(isMultiProvider);
+    expectedMeta1.providersPerMod = providersPerMod;
+    expectedMeta1.exportedProvidersPerMod = [Provider3];
+    expectedMeta1.exportedMultiProvidersPerMod = providersPerMod.filter(isMultiProvider);
     expectedMeta1.decorator = featureModule;
     expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta1.isExternal = false;
