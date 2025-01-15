@@ -8,7 +8,7 @@ import { getModuleMetadata } from './get-module-metadata.js';
 import { Providers } from '#utils/providers.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 
-describe('getModuleMetadata', () => {
+describe('getModuleMetadata()', () => {
   it('module without decorator', () => {
     class Module1 {}
 
@@ -21,12 +21,7 @@ describe('getModuleMetadata', () => {
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
-    expect(metadata).toEqual({
-      //
-      decorator: featureModule,
-      // guards: [],
-      declaredInDir: CallsiteUtils.getCallerDir(),
-    });
+    expect(metadata).toEqual({ decorator: featureModule, declaredInDir: CallsiteUtils.getCallerDir() });
   });
 
   it('@featureModule() decorator with id', () => {
@@ -34,12 +29,7 @@ describe('getModuleMetadata', () => {
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
-    expect(metadata).toEqual({
-      decorator: featureModule,
-      id: 'someId',
-      // guards: [],
-      declaredInDir: CallsiteUtils.getCallerDir(),
-    });
+    expect(metadata).toEqual({ decorator: featureModule, id: 'someId', declaredInDir: CallsiteUtils.getCallerDir() });
   });
 
   it('decorator with some data', () => {
@@ -49,7 +39,6 @@ describe('getModuleMetadata', () => {
     const metadata = getModuleMetadata(Module1);
     expect(metadata).toEqual({
       decorator: featureModule,
-      // guards: [],
       controllers: [],
       declaredInDir: CallsiteUtils.getCallerDir(),
     });
@@ -68,7 +57,6 @@ describe('getModuleMetadata', () => {
     const metadata = getModuleMetadata(Module1);
     expect(metadata).toEqual({
       decorator: featureModule,
-      // guards: [],
       providersPerMod: [Provider1],
       providersPerRou: [{ token: 'token2', useValue: 'value2' }],
       declaredInDir: CallsiteUtils.getCallerDir(),
@@ -94,7 +82,6 @@ describe('getModuleMetadata', () => {
       decorator: featureModule,
       declaredInDir: CallsiteUtils.getCallerDir(),
       extensionsMeta: {},
-      // guards: [],
       providersPerApp: [],
       exports: [],
       providersPerMod: [Provider1],
@@ -123,7 +110,6 @@ describe('getModuleMetadata', () => {
       decorator: featureModule,
       declaredInDir: CallsiteUtils.getCallerDir(),
       extensionsMeta: {},
-      // guards: [],
       providersPerApp: [],
       exports: [],
       providersPerMod: [Provider1],
