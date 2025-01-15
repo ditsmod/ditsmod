@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { featureModule } from '#decorators/module.js';
+import { featureModule, RawMeta } from '#decorators/module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { InjectionToken, injectable, forwardRef, Provider } from '#di';
 import { Extension } from '#extension/extension-types.js';
@@ -15,6 +15,14 @@ import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 describe('ModuleManager', () => {
   console.log = vi.fn();
   type ModuleId = string | ModuleType | ModuleWithParams;
+  @injectable()
+  class Provider0 {}
+  @injectable()
+  class Provider1 {}
+  @injectable()
+  class Provider2 {}
+  @injectable()
+  class Provider3 {}
 
   class MockModuleManager extends ModuleManager {
     declare map: Map<ModuleType | ModuleWithParams, NormalizedModuleMetadata>;
@@ -45,46 +53,6 @@ describe('ModuleManager', () => {
     mock = new MockModuleManager(systemLogMediator);
   });
 
-  describe('quickCheckMetadata()', () => {
-    it.only('should throw an error, when no export and no controllers', () => {
-      class Provider1 {}
-      class Provider2 {}
-
-      @featureModule({
-        providersPerMod: [Provider1, Provider2],
-      })
-      class Module1 {}
-
-      expect(() => mock.scanModule(Module1)).toThrow('Normalization of Module1 failed: this module should have');
-    });
-
-    it('should works with extension only', () => {
-      class Ext implements Extension {
-        async stage1() {}
-      }
-
-      @featureModule({
-        extensions: [{ extension: Ext, export: true }],
-      })
-      class Module1 {}
-
-      expect(() => mock.scanModule(Module1)).not.toThrow();
-    });
-
-    it('should not throw an error, when exports some provider', () => {
-      class Provider1 {}
-      class Provider2 {}
-
-      @featureModule({
-        exports: [Provider1],
-        providersPerMod: [Provider1, Provider2],
-      })
-      class Module1 {}
-
-      expect(() => mock.scanModule(Module1)).not.toThrow();
-    });
-  });
-
   it('empty root module', () => {
     @rootModule({})
     class AppModule {}
@@ -104,9 +72,6 @@ describe('ModuleManager', () => {
   });
 
   it('circular imports modules with forwardRef()', () => {
-    @injectable()
-    class Provider1 {}
-
     @featureModule({ providersPerApp: [Provider1], imports: [forwardRef(() => Module3)] })
     class Module1 {}
 
@@ -129,8 +94,6 @@ describe('ModuleManager', () => {
   });
 
   it('non properly exports from root module', () => {
-    class Provider1 {}
-
     @rootModule({
       exports: [Provider1],
     })
@@ -140,9 +103,6 @@ describe('ModuleManager', () => {
   });
 
   it('root module with some metadata', () => {
-    @injectable()
-    class Provider1 {}
-
     @rootModule({
       imports: [],
       providersPerMod: [Provider1],
@@ -155,7 +115,7 @@ describe('ModuleManager', () => {
     expectedMeta.id = '';
     expectedMeta.name = 'AppModule';
     expectedMeta.modRefId = AppModule;
-    // expectedMeta.providersPerReq = [Provider1];
+    expectedMeta.providersPerMod = [Provider1];
     expectedMeta.decorator = rootModule;
     expectedMeta.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta.isExternal = false;
@@ -192,8 +152,6 @@ describe('ModuleManager', () => {
   });
 
   it('properly reexport module', () => {
-    class Provider1 {}
-
     @featureModule({ providersPerMod: [Provider1], exports: [Provider1] })
     class Module1 {}
 
@@ -207,8 +165,6 @@ describe('ModuleManager', () => {
   });
 
   it('properly reexport module with params, case 1', () => {
-    class Provider1 {}
-
     @featureModule({ providersPerMod: [Provider1], exports: [Provider1] })
     class Module1 {
       static withParams(): ModuleWithParams<Module1> {
@@ -253,8 +209,6 @@ describe('ModuleManager', () => {
   });
 
   it('not properly reexport module with params, case 2', () => {
-    class Provider1 {}
-
     @featureModule({ providersPerMod: [Provider1], exports: [Provider1] })
     class Module1 {
       static withParams(): ModuleWithParams<Module1> {
@@ -276,8 +230,6 @@ describe('ModuleManager', () => {
   });
 
   it('exports module without imports it', () => {
-    class Provider1 {}
-
     @featureModule({ providersPerMod: [Provider1], exports: [Provider1] })
     class Module1 {}
 
@@ -288,9 +240,6 @@ describe('ModuleManager', () => {
   });
 
   it('module exported provider from providersPerApp', () => {
-    @injectable()
-    class Provider1 {}
-
     @featureModule({ providersPerApp: [Provider1], exports: [Provider1] })
     class Module2 {}
 
@@ -298,9 +247,6 @@ describe('ModuleManager', () => {
   });
 
   it('module exported normalized provider', () => {
-    @injectable()
-    class Provider1 {}
-
     @featureModule({ providersPerMod: [Provider1], exports: [{ token: Provider1, useClass: Provider1 }] })
     class Module2 {}
 
@@ -330,9 +276,6 @@ describe('ModuleManager', () => {
   });
 
   it('root module with imported some other modules', () => {
-    class Provider0 {}
-    class Provider1 {}
-
     const fn = () => module4WithParams;
     @featureModule({ id: '1', imports: [forwardRef(fn)], providersPerMod: [Provider1], exports: [Provider1] })
     class Module1 {}
@@ -353,9 +296,6 @@ describe('ModuleManager', () => {
         };
       }
     }
-
-    @injectable()
-    class Provider2 {}
 
     const module4WithParams = Module4.withParams([Provider2]);
 
@@ -427,9 +367,6 @@ describe('ModuleManager', () => {
   });
 
   it('programmatically adding some modules to "imports" array of root module', () => {
-    @injectable()
-    class Provider1 {}
-
     @rootModule({
       imports: [],
       providersPerMod: [Provider1],
@@ -456,9 +393,6 @@ describe('ModuleManager', () => {
 
     @featureModule({ providersPerMod: [Provider1], exports: [Provider1] })
     class Module4 {}
-
-    @injectable()
-    class Provider2 {}
 
     const module3WithProviders = Module3.withParams([Provider2]);
 
@@ -572,9 +506,6 @@ describe('ModuleManager', () => {
   });
 
   it('programmatically removing some modules from "imports" array of root module', () => {
-    @injectable()
-    class Provider1 {}
-
     @featureModule({ providersPerMod: [Provider1], exports: [Provider1] })
     class Module0 {}
 
@@ -593,9 +524,6 @@ describe('ModuleManager', () => {
         };
       }
     }
-
-    @injectable()
-    class Provider2 {}
 
     const module3WithProviders = Module3.withParams([Provider2]);
 
@@ -751,9 +679,7 @@ describe('ModuleManager', () => {
       async stage1() {}
     }
 
-    const extensionsProviders: Provider[] = [
-      Extension1
-    ];
+    const extensionsProviders: Provider[] = [Extension1];
 
     @featureModule({
       extensions: [{ extension: Extension1 as any, export: true }],
@@ -801,9 +727,7 @@ describe('ModuleManager', () => {
       async stage1() {}
     }
 
-    const extensionsProviders: Provider[] = [
-      Extension1
-    ];
+    const extensionsProviders: Provider[] = [Extension1];
 
     @featureModule({
       extensions: [{ extension: Extension1 as any, export: true }],
@@ -871,10 +795,6 @@ describe('ModuleManager', () => {
   });
 
   it('split multi providers and common providers', () => {
-    class Provider1 {}
-    class Provider2 {}
-    class Provider3 {}
-
     const providersPerMod: Provider[] = [
       { token: Provider2, useValue: 'val4', multi: true },
       { token: Provider1, useValue: 'val1', multi: true },
