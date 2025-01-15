@@ -3,9 +3,10 @@ import { AnyObj, ModuleType } from '#types/mix.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { ExtensionType } from '#extension/extension-types.js';
 import { NormalizedModuleMetadata } from './normalized-module-metadata.js';
+import { Class } from '#di';
 
 export interface IModuleNormalizer {
-  normalize(meta: NormalizedModuleMetadata): NormalizedModuleMetadata;
+  normalize<T extends NormalizedModuleMetadata>(meta: T): T;
 }
 
 export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<ProvidersMetadata> {
@@ -23,7 +24,7 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
    * module.
    */
   exports?: any[];
-  moduleNormalizers?: IModuleNormalizer[];
+  moduleNormalizers?: Class<IModuleNormalizer>[];
   /**
    * The application extensions.
    */
@@ -39,21 +40,9 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
    * and in the second - the module from which to import the provider with the specified token.
    */
   resolvedCollisionsPerMod?: [any, ModuleType | ModuleWithParams][];
-  /**
-   * An array of pairs, each of which is in the first place the provider's token,
-   * and in the second - the module from which to import the provider with the specified token.
-   */
-  // resolvedCollisionsPerRou?: [any, ModuleType | ModuleWithParams][];
-  /**
-   * An array of pairs, each of which is in the first place the provider's token,
-   * and in the second - the module from which to import the provider with the specified token.
-   */
-  // resolvedCollisionsPerReq?: [any, ModuleType | ModuleWithParams][];
 }
 
-export type ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj> =
-  | ModuleWithParams1<M, E>
-  | ModuleWithParams2<M, E>;
+export type ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj> = BaseModuleWithParams<M, E>;
 
 export interface BaseModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
   extends Partial<ProvidersMetadata> {
@@ -64,23 +53,10 @@ export interface BaseModuleWithParams<M extends AnyObj = AnyObj, E extends AnyOb
    * module.
    */
   exports?: any[];
-  // guards?: GuardItem[];
   /**
    * This property allows you to pass any information to extensions.
    *
    * You must follow this rule: data for one extension - one key in `extensionsMeta` object.
    */
   extensionsMeta?: E;
-}
-
-export interface ModuleWithParams1<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
-  extends BaseModuleWithParams<M, E> {
-  path?: string;
-  absolutePath?: never;
-}
-
-export interface ModuleWithParams2<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
-  extends BaseModuleWithParams<M, E> {
-  absolutePath?: string;
-  path?: never;
 }

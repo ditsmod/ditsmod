@@ -25,9 +25,12 @@ export {
   Stage1ExtensionMetaPerApp,
 } from '#extension/extension-types.js';
 export { topologicalSort } from './extension/topological-sort.js';
+export { getExtensionProvider } from './extension/get-extension-provider.js';
+export { isExtensionProvider, isExtensionConfig } from '#extension/type-guards.js';
 export { ModuleExtract } from '#types/module-extract.js';
 export { Counter } from '#extension/counter.js';
 export { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
+export { getModuleMetadata } from '#init/get-module-metadata.js';
 export { ProvidersMetadata } from '#types/providers-metadata.js';
 export { ConsoleLogger } from '#logger/console-logger.js';
 export { ExtensionsContext } from '#extension/extensions-context.js';
@@ -55,16 +58,10 @@ export {
   ModRefId,
   UnionToIntersection,
 } from '#types/mix.js';
-export {
-  ModuleMetadata,
-  BaseModuleWithParams,
-  ModuleWithParams,
-  ModuleWithParams1,
-  ModuleWithParams2,
-} from '#types/module-metadata.js';
+export { ModuleMetadata, IModuleNormalizer, BaseModuleWithParams, ModuleWithParams } from '#types/module-metadata.js';
 export { deepFreeze } from '#utils/deep-freeze.js';
 export { getDependencies } from '#utils/get-dependecies.js';
-export { ExtensionConfig } from '#extension/get-extension-provider.js';
+export { ExtensionConfig, isConfigWithOverrideExtension, } from '#extension/get-extension-provider.js';
 export { getModule } from '#utils/get-module.js';
 export { getStatusText, isSuccess, Status, STATUS_CODE_INFO } from '#utils/http-status-codes.js';
 export { NormalizedProvider, normalizeProviders } from '#utils/ng-utils.js';
@@ -73,7 +70,6 @@ export { Providers } from '#utils/providers.js';
 export { CallsiteUtils } from '#utils/callsites.js';
 export { getDebugClassName, clearDebugClassNames } from '#utils/get-debug-class-name.js';
 export * from '#utils/get-tokens.js';
-export { isExtensionProvider } from '#extension/type-guards.js';
 export { RawMeta } from '#decorators/module.js';
 export {
   isInjectionToken,

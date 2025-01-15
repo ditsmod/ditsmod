@@ -1,7 +1,8 @@
 import { ChainError } from '@ts-stack/chain-error';
+
 import { Provider, Class, DecoratorAndValue, reflector, isNormalizedProvider } from '#di';
-import { AnyObj, ModuleType, RequireProps } from '#types/mix.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
+import { AnyObj, ModRefId, RequireProps } from '#types/mix.js';
+import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
 import { RootModuleMetadata } from '#types/root-module-metadata.js';
 import { featureModule } from '#decorators/module.js';
 import { RawMeta } from '../decorators/module.js';
@@ -21,10 +22,10 @@ export function isCustomError(err: any): err is CustomError {
   return err instanceof CustomError;
 }
 
-export function isFeatureModule(
-  decoratorAndValue?: DecoratorAndValue,
-): decoratorAndValue is DecoratorAndValue<RawMeta> {
-  return decoratorAndValue?.decorator === featureModule;
+export function isFeatureModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<RawMeta>;
+export function isFeatureModule(meta?: NormalizedModuleMetadata): meta is NormalizedModuleMetadata<ModuleMetadata>;
+export function isFeatureModule(arg?: DecoratorAndValue | NormalizedModuleMetadata): arg is DecoratorAndValue<RawMeta> {
+  return arg?.decorator === featureModule;
 }
 
 export function isRootModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<RawMeta>;
@@ -36,9 +37,7 @@ export function isRootModule(
   return arg?.decorator === rootModule;
 }
 
-export function isModDecor(
-  decoratorAndValue?: DecoratorAndValue,
-): decoratorAndValue is DecoratorAndValue<RawMeta> | DecoratorAndValue<RawMeta> {
+export function isModDecor(decoratorAndValue?: DecoratorAndValue) {
   return isRootModule(decoratorAndValue) || isFeatureModule(decoratorAndValue);
 }
 
@@ -52,7 +51,7 @@ export function hasDeclaredInDir(
   return Boolean(decoratorAndValue?.declaredInDir) && decoratorAndValue?.declaredInDir != '.';
 }
 
-export function isModuleWithParams(modRefId?: Provider | ModuleWithParams | ModuleType): modRefId is ModuleWithParams {
+export function isModuleWithParams(modRefId?: ModRefId): modRefId is ModuleWithParams {
   return (modRefId as ModuleWithParams)?.module !== undefined;
 }
 

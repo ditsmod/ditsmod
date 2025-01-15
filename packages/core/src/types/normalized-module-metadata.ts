@@ -26,9 +26,6 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   id?: string = '';
   importsModules: ModuleType[] = [];
   importsWithParams: ModuleWithParams[] = [];
-  appendsModules: ModuleType[] = [];
-  // appendsWithParams: AppendsWithParams[] = [];
-  // controllers: Class[] = [];
   decorator: AnyFn;
   /**
    * The directory in which the class was declared.
@@ -41,16 +38,9 @@ export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyOb
   exportsModules: ModuleType[] = [];
   exportsWithParams: ModuleWithParams[] = [];
   exportedProvidersPerMod: Provider[] = [];
-  // exportedProvidersPerRou: Provider[] = [];
-  // exportedProvidersPerReq: Provider[] = [];
   exportedMultiProvidersPerMod: MultiProvider[] = [];
-  // exportedMultiProvidersPerRou: MultiProvider[] = [];
-  // exportedMultiProvidersPerReq: MultiProvider[] = [];
-  // guardsPerMod: NormalizedGuard[] = [];
   resolvedCollisionsPerApp: [any, ModuleType | ModuleWithParams][] = [];
   resolvedCollisionsPerMod: [any, ModuleType | ModuleWithParams][] = [];
-  // resolvedCollisionsPerRou: [any, ModuleType | ModuleWithParams][] = [];
-  // resolvedCollisionsPerReq: [any, ModuleType | ModuleWithParams][] = [];
   extensionsProviders: Provider[] = [];
   exportedExtensionsProviders: Provider[] = [];
   aExtensionConfig: ExtensionConfig[] = [];

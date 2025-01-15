@@ -2,31 +2,24 @@ import { makeClassDecorator } from '#di';
 import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
 import { AnyFn, ModuleType } from '#types/mix.js';
 import { CallsiteUtils } from '#utils/callsites.js';
-
-const levels = ['App', 'Mod'] as const;
+import { objectKeys } from '#utils/object-keys.js';
+import { Providers } from '#utils/providers.js';
 
 export const featureModule: FeatureModuleDecorator = makeClassDecorator(transformModule);
 
 export interface FeatureModuleDecorator {
-  <T extends object = {}>(data?: ModuleMetadata & T): any;
+  <T extends ModuleMetadata = {}>(data?: T): any;
 }
 
 export function transformModule(data?: ModuleMetadata): RawMeta {
   const metadata = Object.assign({}, data);
-  levels.forEach((lvl) => {
+  objectKeys(metadata).forEach((p) => {
     // If here is object with [Symbol.iterator]() method, this transform it to an array.
-    const arr = [...(data?.[`providersPer${lvl}`] || [])];
-    if (arr.length) {
-      metadata[`providersPer${lvl}`] = arr;
+    if (metadata[p] instanceof Providers) {
+      (metadata as any)[p] = [...metadata[p]];
     }
   });
-  return {
-    //
-    decorator: featureModule,
-    declaredInDir: CallsiteUtils.getCallerDir(),
-    // guards: [],
-    ...metadata,
-  };
+  return { decorator: featureModule, declaredInDir: CallsiteUtils.getCallerDir(), ...metadata };
 }
 
 /**
@@ -35,7 +28,6 @@ export function transformModule(data?: ModuleMetadata): RawMeta {
 export interface RawMeta extends ModuleMetadata {
   decorator: AnyFn;
   declaredInDir: string;
-  // guards: GuardItem[];
   /**
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.

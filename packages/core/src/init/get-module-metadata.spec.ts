@@ -3,8 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { forwardRef, injectable } from '#di';
 import { featureModule } from '#decorators/module.js';
 import { Provider } from '#di/types-and-models.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
-import { getModuleMetadata } from '#init/module-normalizer.js';
+import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
+import { getModuleMetadata } from './get-module-metadata.js';
 import { Providers } from '#utils/providers.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 
@@ -43,7 +43,7 @@ describe('getModuleMetadata', () => {
   });
 
   it('decorator with some data', () => {
-    @featureModule({ controllers: [] })
+    @featureModule<ModuleMetadata & { controllers: any }>({ controllers: [] })
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);

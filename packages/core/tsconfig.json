@@ -5,7 +5,6 @@
     "paths": {
       "#di": ["./src/di/index.js"],
       "#di/*": ["./src/di/*"],
-      "#public-api/*": ["./src/public-api/*"],
       "#init/*": ["./src/init/*"],
       "#types/*": ["./src/types/*"],
       "#utils/*": ["./src/utils/*"],

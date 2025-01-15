@@ -72,11 +72,11 @@ export class ModuleManager {
   getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound?: false,
-  ): NormalizedModuleMetadata<T, A> | undefined;
+  ): NormalizedModuleMetadata | undefined;
   getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound: true,
-  ): NormalizedModuleMetadata<T, A>;
+  ): NormalizedModuleMetadata;
   getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrIfNotFound?: boolean) {
     const meta = this.getOriginMetadata<T, A>(moduleId, throwErrIfNotFound);
     if (meta) {
@@ -172,11 +172,6 @@ export class ModuleManager {
     return true;
   }
 
-  commit() {
-    this.oldMapId = new Map();
-    this.oldMap = new Map();
-  }
-
   rollback(err?: Error) {
     if (!this.oldMapId.size) {
       throw new Error('It is forbidden for rollback() to an empty state.');
@@ -187,6 +182,11 @@ export class ModuleManager {
     if (err) {
       throw err;
     }
+  }
+
+  commit() {
+    this.oldMapId = new Map();
+    this.oldMap = new Map();
   }
 
   /**
@@ -249,8 +249,8 @@ export class ModuleManager {
     return meta;
   }
 
-  protected copyMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(meta: NormalizedModuleMetadata<T, A>) {
-    meta = { ...(meta || ({} as NormalizedModuleMetadata<T, A>)) };
+  protected copyMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(meta: NormalizedModuleMetadata) {
+    meta = { ...(meta || ({} as NormalizedModuleMetadata)) };
     objectKeys(meta).forEach((p) => {
       if (Array.isArray(meta[p])) {
         (meta as any)[p] = meta[p].slice();
@@ -265,23 +265,23 @@ export class ModuleManager {
   protected getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound?: boolean,
-  ): NormalizedModuleMetadata<T, A> | undefined;
+  ): NormalizedModuleMetadata | undefined;
   protected getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound: true,
-  ): NormalizedModuleMetadata<T, A>;
+  ): NormalizedModuleMetadata;
   protected getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound?: boolean,
   ) {
-    let meta: NormalizedModuleMetadata<T, A> | undefined;
+    let meta: NormalizedModuleMetadata | undefined;
     if (typeof moduleId == 'string') {
       const mapId = this.mapId.get(moduleId);
       if (mapId) {
-        meta = this.map.get(mapId) as NormalizedModuleMetadata<T, A>;
+        meta = this.map.get(mapId) as NormalizedModuleMetadata;
       }
     } else {
-      meta = this.map.get(moduleId) as NormalizedModuleMetadata<T, A>;
+      meta = this.map.get(moduleId) as NormalizedModuleMetadata;
     }
 
     if (throwErrIfNotFound && !meta) {

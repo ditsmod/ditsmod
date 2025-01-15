@@ -6,7 +6,7 @@ import {
   isValueProvider,
   MultiProvider,
 } from '#di';
-import { isModDecor, isModuleWithParams, isRootModule, isProvider } from '#utils/type-guards.js';
+import { isModuleWithParams, isRootModule, isProvider } from '#utils/type-guards.js';
 import {
   ExtensionConfig,
   getExtensionProvider,
@@ -20,15 +20,13 @@ import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { resolveForwardRef } from '#di/forward-ref.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
 import { Class } from '#di/types-and-models.js';
-import { reflector } from '#di/reflection.js';
 import { Providers } from '#utils/providers.js';
 import { ModuleMetadata } from '#types/module-metadata.js';
 import { getModule } from '#utils/get-module.js';
 import { Extension, ExtensionType } from '#extension/extension-types.js';
 import { normalizeProviders } from '#utils/ng-utils.js';
-import { getLastProviders } from '#utils/get-last-providers.js';
-import { mergeArrays } from '#utils/merge-arrays.js';
-import { isExtensionConfig } from '#extension/tarjan-graph.js';
+import { isExtensionConfig } from '#extension/type-guards.js';
+import { getModuleMetadata } from './get-module-metadata.js';
 
 export class ModuleNormalizer {
   /**
@@ -56,10 +54,6 @@ export class ModuleNormalizer {
     meta.decorator = rawMeta.decorator;
     meta.declaredInDir = rawMeta.declaredInDir;
     this.checkWhetherIsExternalModule(rawMeta, meta);
-    // if (rawMeta.guards.length) {
-    //   meta.guardsPerMod.push(...this.normalizeGuards(rawMeta.guards));
-    //   this.checkGuardsPerMod(meta.guardsPerMod, modName);
-    // }
 
     rawMeta.imports?.forEach((imp, i) => {
       imp = resolveForwardRef(imp);
@@ -71,27 +65,9 @@ export class ModuleNormalizer {
       }
     });
 
-    // rawMeta.appends?.forEach((ap, i) => {
-    //   ap = resolveForwardRef(ap);
-    //   this.throwIfUndefined(modName, 'Appends', ap, i);
-    //   if (isAppendsWithParams(ap)) {
-    //     meta.appendsWithParams.push(ap);
-    //   } else {
-    //     meta.appendsModules.push(ap);
-    //   }
-    // });
+    const providersTokens = getTokens([...(rawMeta.providersPerMod || [])]);
 
-    const providersTokens = getTokens([
-      ...(rawMeta.providersPerMod || []),
-      // ...(rawMeta.providersPerRou || []),
-      // ...(rawMeta.providersPerReq || []),
-    ]);
-
-    const resolvedCollisionsPerLevel = [
-      ...(rawMeta.resolvedCollisionsPerMod || []),
-      // ...(rawMeta.resolvedCollisionsPerRou || []),
-      // ...(rawMeta.resolvedCollisionsPerReq || []),
-    ];
+    const resolvedCollisionsPerLevel = [...(rawMeta.resolvedCollisionsPerMod || [])];
     if (isRootModule(rawMeta)) {
       resolvedCollisionsPerLevel.push(...(rawMeta.resolvedCollisionsPerApp || []));
     }
@@ -119,20 +95,9 @@ export class ModuleNormalizer {
     // @todo Refactor the logic with the `pickMeta()` call, as it may override previously set values in `meta`.
     this.pickMeta(meta, rawMeta);
     meta.extensionsMeta = { ...(meta.extensionsMeta || {}) };
-    this.quickCheckMetadata(meta);
-    // meta.controllers.forEach((Controller) => this.checkController(modName, Controller));
 
-    return rawMeta.moduleNormalizers?.reduce((prev, curr) => curr.normalize(prev), meta) || meta;
+    return rawMeta.moduleNormalizers?.reduce((mt, Cls) => new Cls().normalize(mt), meta) || meta;
   }
-
-  // protected checkController(modName: string, Controller: Class) {
-  //   if (!reflector.getDecorators(Controller, isCtrlDecor)) {
-  //     throw new Error(
-  //       `Collecting controller's metadata in ${modName} failed: class ` +
-  //         `"${Controller.name}" does not have the "@controller()" decorator.`,
-  //     );
-  //   }
-  // }
 
   protected checkExtensionConfig(modName: string, extensionConfig: ExtensionConfig, i: number) {
     if (!isConfigWithOverrideExtension(extensionConfig)) {
@@ -211,49 +176,6 @@ export class ModuleNormalizer {
         throw new Error(msg);
       }
     });
-  }
-
-  // protected normalizeGuards(guards?: GuardItem[]) {
-  //   return (guards || []).map((item) => {
-  //     if (Array.isArray(item)) {
-  //       return { guard: item[0], params: item.slice(1) } as NormalizedGuard;
-  //     } else {
-  //       return { guard: item } as NormalizedGuard;
-  //     }
-  //   });
-  // }
-
-  // protected checkGuardsPerMod(guards: NormalizedGuard[], moduleName: string) {
-  //   for (const Guard of guards.map((n) => n.guard)) {
-  //     const type = typeof Guard?.prototype.canActivate;
-  //     if (type != 'function') {
-  //       throw new TypeError(
-  //         `Import ${moduleName} with guards failed: Guard.prototype.canActivate must be a function, got: ${type}`,
-  //       );
-  //     }
-  //   }
-  // }
-
-  protected quickCheckMetadata(meta: NormalizedModuleMetadata) {
-    if (
-      !isRootModule(meta) &&
-      // !meta.exportedProvidersPerReq.length &&
-      // !meta.controllers.length &&
-      !meta.exportedProvidersPerMod.length &&
-      // !meta.exportedProvidersPerRou.length &&
-      !meta.exportsModules.length &&
-      !meta.exportsWithParams.length &&
-      !meta.exportedMultiProvidersPerMod.length &&
-      // !meta.exportedMultiProvidersPerRou.length &&
-      // !meta.exportedMultiProvidersPerReq.length &&
-      !meta.providersPerApp.length &&
-      !meta.exportedExtensionsProviders.length &&
-      !meta.extensionsProviders.length
-      // !meta.appendsWithParams.length
-    ) {
-      const msg = 'this module should have "providersPerApp" or some controllers, or exports, or extensions.';
-      throw new Error(msg);
-    }
   }
 
   protected throwIfUndefined(
@@ -355,47 +277,4 @@ export class ModuleNormalizer {
       throw new Error(msg);
     }
   }
-}
-
-/**
- * Merges metadata passed in `rootModule` or `featureModule` decorators with metadata passed
- * in `ModuleWithParams`.
- */
-export function getModuleMetadata(modRefId: ModRefId, isRoot?: boolean): RawMeta | undefined {
-  modRefId = resolveForwardRef(modRefId);
-  const decoratorGuard = isRoot ? isRootModule : isModDecor;
-
-  // if (!isModuleWithParams(modRefId) && !isAppendsWithParams(modRefId)) {
-  if (!isModuleWithParams(modRefId)) {
-    return reflector.getDecorators(modRefId, decoratorGuard)?.at(0)?.value;
-  }
-
-  const modWitParams = modRefId;
-  const decorAndVal = reflector.getDecorators(modWitParams.module, decoratorGuard)?.at(0);
-  if (!decorAndVal) {
-    return;
-  }
-  const modMetadata = decorAndVal.value;
-
-  if (modMetadata.id) {
-    const modName = getDebugClassName(modWitParams.module);
-    const msg =
-      `${modName} must not have an "id" in the metadata of the decorator @featureModule. ` +
-      'Instead, you can specify the "id" in the object that contains the module parameters.';
-    throw new Error(msg);
-  }
-  const metadata = Object.assign({}, modMetadata);
-  metadata.id = modWitParams.id;
-  const levels = ['App', 'Mod', 'Rou', 'Req'] as Level[];
-  if (isModuleWithParams(modWitParams)) {
-    levels.forEach((level) => {
-      const arr1 = modMetadata[`providersPer${level}`];
-      const arr2 = modWitParams[`providersPer${level}`];
-      metadata[`providersPer${level}`] = getLastProviders(mergeArrays(arr1, arr2));
-    });
-    metadata.exports = getLastProviders(mergeArrays(modMetadata.exports, modWitParams.exports));
-    metadata.extensionsMeta = { ...modMetadata.extensionsMeta, ...modWitParams.extensionsMeta };
-  }
-  // metadata.guards = modRefId.guards || [];
-  return metadata;
 }

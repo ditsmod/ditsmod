@@ -24,11 +24,11 @@ describe('ModuleManager', () => {
     override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
       moduleId: ModuleId,
       throwErrIfNotFound?: boolean,
-    ): NormalizedModuleMetadata<T, A> | undefined;
+    ): NormalizedModuleMetadata | undefined;
     override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
       moduleId: ModuleId,
       throwErrIfNotFound: true,
-    ): NormalizedModuleMetadata<T, A>;
+    ): NormalizedModuleMetadata;
     override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
       moduleId: ModuleId,
       throwErrOnNotFound?: boolean,

@@ -22,7 +22,6 @@
     "#types/*": "./dist/types/*",
     "#utils/*": "./dist/utils/*",
     "#models/*": "./dist/models/*",
-    "#public-api/*": "./dist/public-api/*",
     "#decorators/*": "./dist/decorators/*",
     "#logger/*": "./dist/logger/*",
     "#error/*": "./dist/error/*",

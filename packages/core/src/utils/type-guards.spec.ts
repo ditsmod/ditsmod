@@ -14,7 +14,7 @@ import {
 import { featureModule } from '#decorators/module.js';
 import { isFeatureModule, isModuleWithParams, isProvider, isRootModule } from './type-guards.js';
 import { rootModule } from '#decorators/root-module.js';
-import { getModuleMetadata } from '#init/module-normalizer.js';
+import { getModuleMetadata } from '#init/get-module-metadata.js';
 
 describe('type guards', () => {
   describe('isModule()', () => {

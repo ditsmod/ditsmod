@@ -11,5 +11,5 @@ export const rootModule: RootModuleDecorator = makeClassDecorator(function trans
 });
 
 export interface RootModuleDecorator {
-  <T extends object = {}>(data?: RootModuleMetadata & T): any;
+  <T extends RootModuleMetadata = {}>(data?: T): any;
 }

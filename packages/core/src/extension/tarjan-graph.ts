@@ -1,4 +1,5 @@
 import { AnyObj } from '#types/mix.js';
+import { isExtensionConfig } from './type-guards.js';
 
 export type ExtensionConfig<T> = {
   extension: T;
@@ -76,8 +77,4 @@ function dfsWithPath<T>(extension: T, graph: Graph<T>, visited: Set<T>, stack: S
 
   stack.delete(extension);
   return false;
-}
-
-export function isExtensionConfig<T>(extensionConfig: AnyObj): extensionConfig is ExtensionConfig<T> {
-  return Boolean((extensionConfig as ExtensionConfig<T>).extension);
 }
