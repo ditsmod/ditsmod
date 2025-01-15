@@ -74,5 +74,4 @@ export type ExtensionType<T = any> = Class<Extension<T>>;
  */
 export class ExtensionCounters {
   mExtensions = new Map<Provider, number>();
-  mExtensionTokens = new Map<ExtensionType, number>();
 }

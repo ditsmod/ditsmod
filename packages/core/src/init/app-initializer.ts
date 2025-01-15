@@ -392,15 +392,8 @@ export class AppInitializer {
   }
 
   protected decreaseExtensionsCounters(extensionCounters: ExtensionCounters, providers: Provider[]) {
-    const { mExtensionTokens, mExtensions } = extensionCounters;
-    const extClasses = getTokens(providers).filter(isExtensionProvider);
-    const uniqExtensionTokens = new Set<ExtensionType>(extClasses);
+    const { mExtensions } = extensionCounters;
     const uniqTargets = new Set<Provider>(getProvidersTargets(providers));
-
-    uniqExtensionTokens.forEach((ExtCls) => {
-      const counter = mExtensionTokens.get(ExtCls)!;
-      mExtensionTokens.set(ExtCls, counter - 1);
-    });
 
     uniqTargets.forEach((target) => {
       const counter = mExtensions.get(target)!;

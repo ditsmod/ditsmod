@@ -204,7 +204,7 @@ export class ExtensionsManager {
   }
 
   protected updateExtensionCounters(ExtCls: ExtensionType, stage1ExtensionMeta: Stage1ExtensionMeta) {
-    stage1ExtensionMeta.countdown = this.extensionCounters.mExtensionTokens.get(ExtCls)!;
+    // stage1ExtensionMeta.countdown = this.extensionCounters.mExtensionTokens.get(ExtCls)!;
     stage1ExtensionMeta.delay = stage1ExtensionMeta.countdown > 0;
   }
 

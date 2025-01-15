@@ -137,14 +137,6 @@ export class ImportsResolver {
   protected increaseExtensionCounters(meta: NormalizedModuleMetadata) {
     const extensionsProviders = [...meta.extensionsProviders];
     const uniqTargets = new Set<Provider>(getProvidersTargets(extensionsProviders));
-    const uniqExtensionTokens = new Set<ExtensionType>(
-      getTokens(extensionsProviders).filter(isExtensionProvider),
-    );
-
-    uniqExtensionTokens.forEach((ExtCls) => {
-      const counter = this.extensionCounters.mExtensionTokens.get(ExtCls) || 0;
-      this.extensionCounters.mExtensionTokens.set(ExtCls, counter + 1);
-    });
 
     uniqTargets.forEach((target) => {
       const counter = this.extensionCounters.mExtensions.get(target) || 0;
