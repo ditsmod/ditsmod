@@ -12,7 +12,7 @@ import {
   Stage1ExtensionMeta2,
 } from '@ditsmod/core';
 
-import { Router } from '#mod/services/router.js';
+import { Router } from '#services/router.js';
 describe('extensions e2e', () => {
   @injectable()
   class Extension2 implements Extension<void> {

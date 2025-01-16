@@ -1,8 +1,8 @@
 import { inject, injectable } from '@ditsmod/core';
 
-import { RAW_RES } from '../constants.js';
+import { RAW_RES } from '#types/constants.js';
 import { RawResponse } from './request.js';
-import { RedirectStatusCodes } from '../types/types.js';
+import { RedirectStatusCodes } from '#types/types.js';
 
 @injectable()
 export class Res<T = any> {

@@ -3,7 +3,7 @@ import { AnyObj, injectable, Injector } from '@ditsmod/core';
 
 import { DefaultCtxHttpFrontend } from './default-ctx-http-frontend.js';
 import { RequestContext } from '#services/request-context.js';
-import { PATH_PARAMS, QUERY_PARAMS } from '../constants.js';
+import { PATH_PARAMS, QUERY_PARAMS } from '#types/constants.js';
 
 @injectable()
 export class DefaultHttpFrontend extends DefaultCtxHttpFrontend {

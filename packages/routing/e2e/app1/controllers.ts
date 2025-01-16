@@ -1,6 +1,6 @@
 import { controller } from '@ditsmod/routing';
 
-import { route } from '#mod/decorators/route.js';
+import { route } from '#decorators/route.js';
 import {
   ServicePerApp,
   ServicePerMod,

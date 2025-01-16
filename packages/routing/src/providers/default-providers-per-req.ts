@@ -1,6 +1,6 @@
 import { Provider } from '@ditsmod/core';
 
-import { RAW_REQ, RAW_RES, A_PATH_PARAMS, PATH_PARAMS, QUERY_PARAMS, QUERY_STRING } from '../constants.js';
+import { RAW_REQ, RAW_RES, A_PATH_PARAMS, PATH_PARAMS, QUERY_PARAMS, QUERY_STRING } from '#types/constants.js';
 import { Req } from '../services/request.js';
 import { Res } from '../services/response.js';
 

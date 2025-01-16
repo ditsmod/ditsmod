@@ -8,6 +8,7 @@
       "#interceptors/*": ["./src/interceptors/*"],
       "#utils/*": ["./utils/*"],
       "#module/*": ["./src/module/*"],
+      "#decorators/*": ["./src/decorators/*"],
       "#types/*": ["./src/types/*"],
       "#services/*": ["./src/services/*"],
       "#providers/*": ["./src/providers/*"],

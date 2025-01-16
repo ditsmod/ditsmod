@@ -5,7 +5,7 @@ import { RouteMeta } from '../types/route-data.js';
 import { HttpHandler, HttpInterceptor } from './tokens-and-types.js';
 import { applyResponse } from '#utils/apply-web-response.js';
 import { RequestContext } from '#services/request-context.js';
-import { RAW_REQ, RAW_RES, A_PATH_PARAMS, QUERY_STRING, QUERY_PARAMS, PATH_PARAMS } from '../constants.js';
+import { RAW_REQ, RAW_RES, A_PATH_PARAMS, QUERY_STRING, QUERY_PARAMS, PATH_PARAMS } from '#types/constants.js';
 
 @injectable()
 export class InterceptorWithGuards implements HttpInterceptor {

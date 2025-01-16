@@ -2,7 +2,7 @@ import { rootModule } from '@ditsmod/core';
 
 import { Controller1 } from './controllers.js';
 import { ServicePerApp, ServicePerMod, ServicePerReq, ServicePerRou } from './services.js';
-import { RoutingModule } from '#mod/module/routing.module.js';
+import { RoutingModule } from '#module/routing.module.js';
 
 @rootModule({
   imports: [RoutingModule],

@@ -52,7 +52,7 @@ export {
   PATH_PARAMS,
   QUERY_PARAMS,
   SERVER,
-} from './constants.js';
+} from './types/constants.js';
 export { applyResponse, applyHeaders } from './utils/apply-web-response.js';
 export { Req, RawRequest, RawResponse, RequestListener } from './services/request.js';
 export { Res } from './services/response.js';

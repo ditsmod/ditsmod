@@ -26,7 +26,7 @@ import {
 } from '@ditsmod/core';
 
 import { MetadataPerMod3, PreparedRouteMeta } from '../types/types.js';
-import { A_PATH_PARAMS, HTTP_INTERCEPTORS, QUERY_STRING, RAW_REQ, RAW_RES } from '../constants.js';
+import { A_PATH_PARAMS, HTTP_INTERCEPTORS, QUERY_STRING, RAW_REQ, RAW_RES } from '#types/constants.js';
 import { RoutingErrorMediator } from '../services/router-error-mediator.js';
 import { ControllerMetadata } from '../types/controller-metadata.js';
 import { InterceptorWithGuardsPerRou } from '#interceptors/interceptor-with-guards-per-rou.js';

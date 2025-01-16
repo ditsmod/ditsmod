@@ -1,8 +1,8 @@
 import { inspect } from 'node:util';
 import { Extension, ExtensionsManager, injectable } from '@ditsmod/core';
 
-import { RoutingErrorMediator } from '../services/router-error-mediator.js';
-import { HTTP_INTERCEPTORS } from '../constants.js';
+import { RoutingErrorMediator } from '#services/router-error-mediator.js';
+import { HTTP_INTERCEPTORS } from '#types/constants.js';
 import { isInterceptor } from '#types/type.guards.js';
 import { RoutesExtension } from './routes.extension.js';
 
