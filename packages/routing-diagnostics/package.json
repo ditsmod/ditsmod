@@ -40,6 +40,6 @@
   "devDependencies": {
     "npm-run-all": "*",
     "typescript": "*",
-    "vitest": "*"
+    "vitest": "^3.0.0"
   }
 }
