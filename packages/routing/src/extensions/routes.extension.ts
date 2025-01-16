@@ -17,7 +17,7 @@ import { ControllerMetadata } from '../types/controller-metadata.js';
 import { RouteMeta } from '../types/route-data.js';
 import { GuardItem, GuardPerMod1 } from '#interceptors/guard.js';
 import { ControllerRawMetadata1 } from '#types/controller.js';
-import { AppOptions } from '#types/routing-options.js';
+import { AppOptions } from '#types/app-options.js';
 
 @injectable()
 export class RoutesExtension implements Extension<MetadataPerMod3> {

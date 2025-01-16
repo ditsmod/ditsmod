@@ -14,7 +14,7 @@ import {
 } from '@ditsmod/core';
 
 import { RoutingApplication } from './routing-application.js';
-import { AppOptions } from '../types/routing-options.js';
+import { AppOptions } from '../types/app-options.js';
 
 describe('Application', () => {
   class ApplicationMock extends RoutingApplication {

@@ -4,7 +4,7 @@ import type * as https from 'node:https';
 import type { AddressInfo } from 'node:net';
 import { ModuleType, SystemLogMediator, AppInitializer, Application } from '@ditsmod/core';
 
-import { AppOptions } from '#types/routing-options.js';
+import { AppOptions } from '#types/app-options.js';
 import { HttpServerModule, HttpsServerModule } from '#module/http-module.js';
 import { Http2SecureServerOptions, HttpServer } from '#types/server-options.js';
 import { isHttp2SecureServerOptions } from '#types/type.guards.js';

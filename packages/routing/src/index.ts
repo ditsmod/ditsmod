@@ -1,6 +1,6 @@
 export { RoutingApplication } from './services/routing-application.js';
 export { HttpServer } from './types/server-options.js';
-export { AppOptions as RoutingOptions } from './types/routing-options.js';
+export { AppOptions } from './types/app-options.js';
 export { DefaultRouter, PathParam, RouteHandler, Router, RouterReturns } from './services/router.js';
 export { Tree } from './services/tree.js';
 export {
