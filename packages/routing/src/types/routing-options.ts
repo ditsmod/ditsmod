@@ -1,8 +1,8 @@
 import { AppOptions } from '@ditsmod/core';
-import { HttpModule } from './http-module.js';
+import { HttpModule } from '../module/http-module.js';
 import { ServerOptions } from './server-options.js';
 
-export class RoutingOptions extends AppOptions {
+export class AppOptions extends AppOptions {
   httpModule?: HttpModule | null = null;
   serverOptions?: ServerOptions = {};
   /**

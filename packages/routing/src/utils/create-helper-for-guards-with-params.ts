@@ -1,5 +1,5 @@
 import { Class } from '@ditsmod/core';
-import { CanActivate } from './interceptors/guard.js';
+import { CanActivate } from '../interceptors/guard.js';
 
 /**
  * This factory creates a helper that makes it easier to work with guards that have parameters.

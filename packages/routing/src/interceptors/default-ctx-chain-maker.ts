@@ -8,7 +8,7 @@ import {
   CtxHttpBackend,
 } from './tokens-and-types.js';
 import { HTTP_INTERCEPTORS } from '../constants.js';
-import { RequestContext } from '#mod/request-context.js';
+import { RequestContext } from '#services/request-context.js';
 
 class PreHttpBackend implements HttpBackend {
   constructor(

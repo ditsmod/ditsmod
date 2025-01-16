@@ -9,8 +9,8 @@ import {
   Providers,
 } from '@ditsmod/core';
 
-import { NormalizedGuard } from './interceptors/guard.js';
-import { AppendsWithParams, RoutingRawMeta } from './module-metadata.js';
+import { NormalizedGuard } from '#interceptors/guard.js';
+import { AppendsWithParams, RoutingRawMeta } from '#module/module-metadata.js';
 
 export interface RoutingRawProvidersMetadata {
   providersPerApp?: Providers | Provider[];

@@ -2,7 +2,7 @@ import * as http from 'http';
 import { HttpMethod, injectable, Injector } from '@ditsmod/core';
 
 import { Tree } from './tree.js';
-import { MethodTree, Fn } from './types.js';
+import { MethodTree, Fn } from '../types/types.js';
 import { RawRequest, RawResponse } from './request.js';
 
 

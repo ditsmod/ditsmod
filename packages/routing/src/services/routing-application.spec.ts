@@ -14,11 +14,11 @@ import {
 } from '@ditsmod/core';
 
 import { RoutingApplication } from './routing-application.js';
-import { RoutingOptions } from './routing-options.js';
+import { AppOptions } from '../types/routing-options.js';
 
 describe('Application', () => {
   class ApplicationMock extends RoutingApplication {
-    override appOptions = new RoutingOptions();
+    override appOptions = new AppOptions();
     declare systemLogMediator: SystemLogMediator;
 
     override init(appOptions?: AppOptions) {

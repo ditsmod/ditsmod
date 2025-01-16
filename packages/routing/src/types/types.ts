@@ -6,11 +6,11 @@ import {
   NormalizedModuleMetadata,
 } from '@ditsmod/core';
 
-import { Tree } from './tree.js';
+import { Tree } from '../services/tree.js';
 import { ControllerMetadata } from './controller-metadata.js';
-import { GuardPerMod1 } from './interceptors/guard.js';
-import { RouteHandler } from './router.js';
-import { AppendsWithParams } from './module-metadata.js';
+import { GuardPerMod1 } from '../interceptors/guard.js';
+import { RouteHandler } from '../services/router.js';
+import { AppendsWithParams } from '../module/module-metadata.js';
 
 
 /**

@@ -16,8 +16,8 @@ import {
   SystemLogMediator,
 } from '@ditsmod/core';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { AppendsWithParams } from './types.js';
-import { controller } from './controller.js';
+import { AppendsWithParams } from '../types/types.js';
+import { controller } from '../types/controller.js';
 
 type Level = 'Mod';
 /**

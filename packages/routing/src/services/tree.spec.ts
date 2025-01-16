@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { Tree } from './tree.js';
-import { RouteParam } from './types.js';
+import { RouteParam } from '../types/types.js';
 
 class TestTree extends Tree {
   printTree(prefix = '') {

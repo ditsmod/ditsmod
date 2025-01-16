@@ -18,7 +18,7 @@ import {
   isMultiProvider,
 } from '@ditsmod/core';
 
-import { controller } from './controller.js';
+import { controller } from '../types/controller.js';
 
 describe('ModuleManager', () => {
   console.log = vi.fn();

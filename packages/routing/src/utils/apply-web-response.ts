@@ -1,4 +1,4 @@
-import { RawResponse } from '#mod/request.js';
+import { RawResponse } from '#services/request.js';
 
 /**
  * Apply a Web Response to Ditsmod Response.

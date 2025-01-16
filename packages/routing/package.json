@@ -19,8 +19,13 @@
     }
   },
   "imports": {
-    "#mod/*": "./dist/*",
-    "#interceptors/*": "./dist/interceptors/*"
+    "#utils/*": "./dist/utils/*",
+    "#module/*": "./dist/module/*",
+    "#types/*": "./dist/types/*",
+    "#services/*": "./dist/services/*",
+    "#providers/*": "./dist/providers/*",
+    "#interceptors/*": "./dist/interceptors/*",
+    "#extensions/*": "./dist/extensions/*"
   },
   "repository": {
     "type": "git",

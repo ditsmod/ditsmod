@@ -11,10 +11,10 @@ import {
   SystemLogMediator,
 } from '@ditsmod/core';
 
-import { CanActivate, guard } from './interceptors/guard.js';
-import { AppendsWithParams } from './types.js';
-import { controller } from './controller.js';
-import { RequestContext } from './request-context.js';
+import { CanActivate, guard } from '../interceptors/guard.js';
+import { controller } from '../types/controller.js';
+import { RequestContext } from '../services/request-context.js';
+import { AppendsWithParams } from './module-metadata.js';
 
 let mock: MockModuleManager;
 

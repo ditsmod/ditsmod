@@ -4,8 +4,8 @@ import { describe, expect, it } from 'vitest';
 import { route, RouteMetadata } from './route.js';
 import { HttpHandler, HttpInterceptor } from '#interceptors/tokens-and-types.js';
 import { CanActivate } from '../interceptors/guard.js';
-import { controller } from '../controller.js';
-import { RequestContext } from '../request-context.js';
+import { controller } from '../types/controller.js';
+import { RequestContext } from '../services/request-context.js';
 
 describe('Route decorator', () => {
   it('controller without methods', () => {

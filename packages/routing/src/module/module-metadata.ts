@@ -1,5 +1,5 @@
 import { AnyObj, ProvidersMetadata, ModuleType, ModuleMetadata, Class, Provider, Providers, AnyFn } from '@ditsmod/core';
-import { GuardItem } from './interceptors/guard.js';
+import { GuardItem } from '../interceptors/guard.js';
 
 export interface RoutingModuleMetadata<T extends AnyObj = AnyObj> extends ModuleMetadata<T> {
   /**

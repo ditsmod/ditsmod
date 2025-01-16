@@ -1,6 +1,6 @@
 import { injectable, Injector, skipSelf } from '@ditsmod/core';
 
-import { RouteMeta } from '../route-data.js';
+import { RouteMeta } from '../types/route-data.js';
 import { HttpBackend } from './tokens-and-types.js';
 
 

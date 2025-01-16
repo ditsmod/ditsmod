@@ -25,25 +25,25 @@ import {
   getDebugClassName,
 } from '@ditsmod/core';
 
-import { MetadataPerMod3, PreparedRouteMeta } from '../types.js';
+import { MetadataPerMod3, PreparedRouteMeta } from '../types/types.js';
 import { A_PATH_PARAMS, HTTP_INTERCEPTORS, QUERY_STRING, RAW_REQ, RAW_RES } from '../constants.js';
-import { RoutingErrorMediator } from '../router-error-mediator.js';
-import { ControllerMetadata } from '../controller-metadata.js';
-import { InterceptorWithGuardsPerRou } from '#mod/interceptors/interceptor-with-guards-per-rou.js';
+import { RoutingErrorMediator } from '../services/router-error-mediator.js';
+import { ControllerMetadata } from '../types/controller-metadata.js';
+import { InterceptorWithGuardsPerRou } from '#interceptors/interceptor-with-guards-per-rou.js';
 import { InterceptorWithGuards } from '#interceptors/interceptor-with-guards.js';
-import { RouteMeta } from '../route-data.js';
+import { RouteMeta } from '../types/route-data.js';
 import { ChainMaker } from '#interceptors/chain-maker.js';
 import { DefaultHttpBackend } from '#interceptors/default-http-backend.js';
-import { DefaultCtxHttpBackend } from '#mod/interceptors/default-ctx-http-backend.js';
-import { DefaultCtxChainMaker } from '#mod/interceptors/default-ctx-chain-maker.js';
-import { DefaultCtxHttpFrontend } from '#mod/interceptors/default-ctx-http-frontend.js';
+import { DefaultCtxHttpBackend } from '#interceptors/default-ctx-http-backend.js';
+import { DefaultCtxChainMaker } from '#interceptors/default-ctx-chain-maker.js';
+import { DefaultCtxHttpFrontend } from '#interceptors/default-ctx-http-frontend.js';
 import { DefaultHttpFrontend } from '#interceptors/default-http-frontend.js';
 import { HttpBackend, HttpFrontend } from '#interceptors/tokens-and-types.js';
-import { routeChannel } from '../diagnostics-channel.js';
-import { GuardPerMod1, NormalizedGuard } from '#mod/interceptors/guard.js';
-import { RouteHandler, Router } from '#mod/router.js';
-import { HttpErrorHandler } from '#mod/http-error-handler.js';
-import { RequestContext } from '#mod/request-context.js';
+import { routeChannel } from '../services/diagnostics-channel.js';
+import { GuardPerMod1, NormalizedGuard } from '#interceptors/guard.js';
+import { RouteHandler, Router } from '#services/router.js';
+import { HttpErrorHandler } from '#services/http-error-handler.js';
+import { RequestContext } from '#services/request-context.js';
 import { RoutesExtension } from './routes.extension.js';
 
 @injectable()

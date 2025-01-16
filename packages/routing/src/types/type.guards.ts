@@ -1,8 +1,8 @@
 import { AnyObj, Class, DecoratorAndValue, ModuleType, ModuleWithParams } from '@ditsmod/core';
 
-import { route } from './decorators/route.js';
-import { HttpInterceptor } from '#mod/interceptors/tokens-and-types.js';
-import { AppendsWithParams } from './module-metadata.js';
+import { route } from '../decorators/route.js';
+import { HttpInterceptor } from '#interceptors/tokens-and-types.js';
+import { AppendsWithParams } from '../module/module-metadata.js';
 import { controller, ControllerRawMetadata } from './controller.js';
 import { Http2SecureServerOptions, ServerOptions } from './server-options.js';
 

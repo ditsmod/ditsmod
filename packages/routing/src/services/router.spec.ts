@@ -2,7 +2,7 @@ import { Injector } from '@ditsmod/core';
 import { describe, expect, it, beforeEach } from 'vitest';
 
 import { DefaultRouter } from './router.js';
-import { Fn } from './types.js';
+import { Fn } from '../types/types.js';
 import { Tree } from './tree.js';
 import { RoutingErrorMediator } from './router-error-mediator.js';
 

@@ -10,21 +10,21 @@ import {
   HttpMethod,
 } from '@ditsmod/core';
 
-import { MetadataPerMod3 } from '../types.js';
-import { isCtrlDecor, isRoute } from '../type.guards.js';
+import { MetadataPerMod3 } from '../types/types.js';
+import { isCtrlDecor, isRoute } from '../types/type.guards.js';
 import { RouteMetadata } from '../decorators/route.js';
-import { ControllerMetadata } from '../controller-metadata.js';
-import { RouteMeta } from '../route-data.js';
-import { GuardItem, GuardPerMod1 } from '#mod/interceptors/guard.js';
-import { ControllerRawMetadata1 } from '#mod/controller.js';
-import { RoutingOptions } from '#mod/routing-options.js';
+import { ControllerMetadata } from '../types/controller-metadata.js';
+import { RouteMeta } from '../types/route-data.js';
+import { GuardItem, GuardPerMod1 } from '#interceptors/guard.js';
+import { ControllerRawMetadata1 } from '#types/controller.js';
+import { AppOptions } from '#types/routing-options.js';
 
 @injectable()
 export class RoutesExtension implements Extension<MetadataPerMod3> {
   protected metadataPerMod3: MetadataPerMod3;
 
   constructor(
-    protected appOptions: RoutingOptions,
+    protected appOptions: AppOptions,
     protected metadataPerMod2: MetadataPerMod2,
   ) {}
 

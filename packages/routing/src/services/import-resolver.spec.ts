@@ -23,9 +23,9 @@ import {
   SystemLogMediator,
 } from '@ditsmod/core';
 
-import { CanActivate, guard } from './interceptors/guard.js';
-import { defaultProvidersPerReq } from './default-providers-per-req.js';
-import { defaultProvidersPerRou } from './default-providers-per-rou.js';
+import { CanActivate, guard } from '../interceptors/guard.js';
+import { defaultProvidersPerReq } from '../providers/default-providers-per-req.js';
+import { defaultProvidersPerRou } from '../providers/default-providers-per-rou.js';
 import { RequestContext } from './request-context.js';
 
 type Level = 'Mod';

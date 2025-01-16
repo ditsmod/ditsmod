@@ -1,7 +1,7 @@
 import { injectable, optional } from '@ditsmod/core';
 
 import { RoutingErrorMediator } from './router-error-mediator.js';
-import { Fn, TreeConfig, RouteType, RouteParam } from './types.js';
+import { Fn, TreeConfig, RouteType, RouteParam } from '../types/types.js';
 
 @injectable()
 export class Tree {

@@ -1,8 +1,8 @@
 import { featureModule } from '@ditsmod/core';
 
 import { route } from '#mod/decorators/route.js';
-import { RoutingModule } from '#mod/routing.module.js';
-import { controller } from '#mod/controller.js';
+import { RoutingModule } from '#mod/module/routing.module.js';
+import { controller } from '#mod/types/controller.js';
 
 @controller()
 class Controller2 {

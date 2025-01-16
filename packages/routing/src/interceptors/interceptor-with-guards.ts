@@ -1,11 +1,11 @@
 import { injectable, Injector, ResolvedGuardPerMod, skipSelf, Status, SystemLogMediator } from '@ditsmod/core';
 
 import { CanActivate } from '../interceptors/guard.js';
-import { RouteMeta } from '../route-data.js';
+import { RouteMeta } from '../types/route-data.js';
 import { HttpHandler, HttpInterceptor } from './tokens-and-types.js';
-import { applyResponse } from '#mod/utils/apply-web-response.js';
-import { RequestContext } from '#mod/request-context.js';
-import { RAW_REQ, RAW_RES, A_PATH_PARAMS, QUERY_STRING, QUERY_PARAMS, PATH_PARAMS } from '#mod/constants.js';
+import { applyResponse } from '#utils/apply-web-response.js';
+import { RequestContext } from '#services/request-context.js';
+import { RAW_REQ, RAW_RES, A_PATH_PARAMS, QUERY_STRING, QUERY_PARAMS, PATH_PARAMS } from '../constants.js';
 
 @injectable()
 export class InterceptorWithGuards implements HttpInterceptor {

@@ -1,13 +1,13 @@
 import { featureModule, injectable, isModuleWithParams, reflector } from '@ditsmod/core';
 import { describe, expect, it } from 'vitest';
 
-import { route } from './decorators/route.js';
+import { route } from '../decorators/route.js';
 import { isCtrlDecor, isInterceptor, isRoute } from './type.guards.js';
 import { HttpHandler, HttpInterceptor } from '#interceptors/tokens-and-types.js';
-import { CanActivate } from './interceptors/guard.js';
+import { CanActivate } from '../interceptors/guard.js';
 import { AppendsWithParams } from './types.js';
 import { controller } from './controller.js';
-import { RequestContext } from './request-context.js';
+import { RequestContext } from '../services/request-context.js';
 
 describe('type guards', () => {
   describe('isController()', () => {

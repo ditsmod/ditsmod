@@ -1,9 +1,9 @@
 import { Injector, ModuleExtract } from '@ditsmod/core';
 
-import { Fn } from './types.js';
-import { Tree } from './tree.js';
-import { DefaultRouter } from './router.js';
-import { RoutingErrorMediator } from './router-error-mediator.js';
+import { Fn } from '../types/types.js';
+import { Tree } from '../services/tree.js';
+import { DefaultRouter } from '../services/router.js';
+import { RoutingErrorMediator } from '../services/router-error-mediator.js';
 
 await runBench();
 

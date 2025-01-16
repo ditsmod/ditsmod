@@ -4,7 +4,7 @@ import { TLSSocket } from 'node:tls';
 import type * as http from 'node:http';
 import { Http2ServerRequest, Http2ServerResponse } from 'http2';
 
-import { RAW_REQ } from './constants.js';
+import { RAW_REQ } from '../constants.js';
 
 export class Req {
   #requestId: string;

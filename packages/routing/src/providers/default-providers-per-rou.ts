@@ -1,7 +1,7 @@
 import { Provider } from '@ditsmod/core';
 
-import { HttpErrorHandler } from './http-error-handler.js';
-import { DefaultHttpErrorHandler } from './default-http-error-handler.js';
+import { HttpErrorHandler } from '../services/http-error-handler.js';
+import { DefaultHttpErrorHandler } from '../services/default-http-error-handler.js';
 
 
 export const defaultProvidersPerRou: Provider[] = [

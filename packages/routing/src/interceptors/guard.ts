@@ -1,5 +1,5 @@
 import { Class, makeClassDecorator, NormalizedModuleMetadata } from '@ditsmod/core';
-import { RequestContext } from '#mod/request-context.js';
+import { RequestContext } from '#services/request-context.js';
 
 export const guard = makeClassDecorator((data?: never) => data);
 

@@ -21,10 +21,10 @@ import {
 } from '@ditsmod/core';
 
 import { RoutingRawMeta } from './module-metadata.js';
-import { RoutingNormalizedModuleMetadata, RoutingRawProvidersMetadata } from './routing-normalized-module-metadata.js';
-import { isAppendsWithParams, isCtrlDecor } from './type.guards.js';
-import { GuardItem, NormalizedGuard } from './interceptors/guard.js';
-import { Level } from './types.js';
+import { RoutingNormalizedModuleMetadata, RoutingRawProvidersMetadata } from '../types/routing-normalized-module-metadata.js';
+import { isAppendsWithParams, isCtrlDecor } from '../types/type.guards.js';
+import { GuardItem, NormalizedGuard } from '../interceptors/guard.js';
+import { Level } from '../types/types.js';
 
 type MergedNormalizedModuleMetadata<T extends AnyObj> = NormalizedModuleMetadata<T> &
   RoutingNormalizedModuleMetadata<T>;
