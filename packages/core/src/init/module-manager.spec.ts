@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { featureModule } from '#decorators/module.js';
 import { rootModule } from '#decorators/root-module.js';
@@ -13,6 +13,7 @@ import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 
 describe('ModuleManager', () => {
+  console.log = vi.fn();
   type ModuleId = string | ModuleType | ModuleWithParams;
   @injectable()
   class Provider0 {}

@@ -4,6 +4,7 @@ import { ConsoleLogger } from '#logger/console-logger.js';
 import { InputLogLevel } from '#logger/logger.js';
 
 describe('ConsoleLogger', () => {
+  console.log = vi.fn();
   const inputLogLevels: InputLogLevel[] = ['all', 'trace', 'debug', 'info', 'warn', 'error', 'fatal'];
   vi.spyOn(console, 'log');
 
