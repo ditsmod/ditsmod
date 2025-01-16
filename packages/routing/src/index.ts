@@ -4,14 +4,13 @@ export { RoutingOptions } from './routing-options.js';
 export { DefaultRouter, PathParam, RouteHandler, Router, RouterReturns } from './router.js';
 export { Tree } from './tree.js';
 export {
-  RouteParam,
-  MetadataPerMod3,
   AppendsWithParams,
   AppendsWithParams1,
   AppendsWithParams2,
   BaseAppendsWithParams,
-  RedirectStatusCodes,
-} from './types.js';
+  RoutingModuleMetadata,
+} from './module-metadata.js';
+export { RouteParam, MetadataPerMod3, RedirectStatusCodes } from './types.js';
 export { RoutingModule } from './routing.module.js';
 export { RequestContext } from './request-context.js';
 export { RoutingErrorMediator } from './router-error-mediator.js';

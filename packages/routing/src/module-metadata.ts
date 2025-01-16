@@ -5,11 +5,11 @@ export interface RoutingModuleMetadata<T extends AnyObj = AnyObj> extends Module
   /**
    * Providers per route.
    */
-  providersPerRou: Providers | Provider[];
+  providersPerRou?: Providers | Provider[];
   /**
    * Providers per HTTP request.
    */
-  providersPerReq: Providers | Provider[];
+  providersPerReq?: Providers | Provider[];
   /**
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
