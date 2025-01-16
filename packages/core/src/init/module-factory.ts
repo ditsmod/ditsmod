@@ -95,7 +95,7 @@ export class ModuleFactory {
     moduleManager: ModuleManager,
     unfinishedScanModules: Set<ModRefId>,
     // guardsPerMod1?: GuardPerMod1[],
-    isAppends?: boolean,
+    // isAppends?: boolean,
   ) {
     const meta = moduleManager.getMetadata(modOrObj, true);
     this.moduleManager = moduleManager;
@@ -234,7 +234,7 @@ export class ModuleFactory {
         this.moduleManager,
         this.unfinishedScanModules,
         // guardsPerMod1,
-        !isImport,
+        // !isImport,
       );
       this.unfinishedScanModules.delete(input);
 

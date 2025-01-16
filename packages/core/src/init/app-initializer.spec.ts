@@ -101,9 +101,7 @@ describe('AppInitializer', () => {
   });
 
   describe('prepareProvidersPerApp()', () => {
-    beforeAll(() => {
-      console.log = vi.fn() as any;
-    });
+    console.log = vi.fn() as any;
 
     beforeEach(() => {
       const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
