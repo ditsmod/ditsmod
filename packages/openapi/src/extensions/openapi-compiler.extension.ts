@@ -43,7 +43,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
   ) {}
 
   async stage1() {
-    const stage1ExtensionMeta = await this.extensionsManager.stage1(RoutesExtension, this);
+    const stage1ExtensionMeta = await this.extensionsManager.stage1(RoutesExtension, this, true);
     if (stage1ExtensionMeta.delay) {
       this.log.dataAccumulation(this);
       return false;

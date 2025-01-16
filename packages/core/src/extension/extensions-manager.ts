@@ -18,6 +18,7 @@ import { ExtensionsContext } from '#extension/extensions-context.js';
 import { createDeferred } from '#utils/create-deferred.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
+import { isExtensionProvider } from './type-guards.js';
 
 export class StageIteration {
   promise: Promise<void>;
@@ -64,9 +65,9 @@ export class ExtensionsManager {
     protected extensionCounters: ExtensionCounters,
   ) {}
 
-  async stage1<T>(ExtCls: ExtensionType<T>): Promise<Stage1ExtensionMeta<T>>;
-  async stage1<T>(ExtCls: ExtensionType<T>, pendingExtension: Extension): Promise<Stage1ExtensionMeta2<T>>;
-  async stage1<T>(ExtCls: ExtensionType<T>, pendingExtension?: Extension): Promise<Stage1ExtensionMeta<T>> {
+  async stage1<T>(ExtCls: ExtensionType<T>, pendingExtension?: Extension, parApp?: false): Promise<Stage1ExtensionMeta<T>>;
+  async stage1<T>(ExtCls: ExtensionType<T>, pendingExtension: Extension, parApp: true): Promise<Stage1ExtensionMeta2<T>>;
+  async stage1<T>(ExtCls: ExtensionType<T>, pendingExtension?: Extension, parApp?: boolean): Promise<Stage1ExtensionMeta<T>> {
     const currStageIteration = this.currStageIteration;
     const stageIteration = this.stageIterationMap.get(ExtCls);
     if (stageIteration) {
@@ -84,12 +85,12 @@ export class ExtensionsManager {
     let stage1ExtensionMeta = this.stage1ExtensionMetaCache.get(ExtCls);
     if (stage1ExtensionMeta) {
       this.updateExtensionCounters(ExtCls, stage1ExtensionMeta);
-      return this.updatePerAppState(ExtCls, stage1ExtensionMeta, pendingExtension);
+      return this.updatePerAppState(ExtCls, stage1ExtensionMeta, pendingExtension, parApp);
     }
 
     stage1ExtensionMeta = await this.prepareAndInitExtension<T>(ExtCls);
     stage1ExtensionMeta.groupDataPerApp = this.extensionsContext.mStage1ExtensionMeta.get(ExtCls)!;
-    stage1ExtensionMeta = this.updatePerAppState(ExtCls, stage1ExtensionMeta, pendingExtension);
+    stage1ExtensionMeta = this.updatePerAppState(ExtCls, stage1ExtensionMeta, pendingExtension, parApp);
     currStageIteration.resolve();
     return stage1ExtensionMeta;
   }
@@ -98,13 +99,14 @@ export class ExtensionsManager {
     ExtCls: ExtensionType,
     stage1ExtensionMeta: Stage1ExtensionMeta,
     pendingExtension?: Extension,
+    parApp?: boolean
   ) {
-    stage1ExtensionMeta = this.prepareStage1ExtensionMetaPerApp(stage1ExtensionMeta, pendingExtension);
-    if (pendingExtension) {
+    stage1ExtensionMeta = this.prepareStage1ExtensionMetaPerApp(stage1ExtensionMeta, parApp);
+    if (parApp) {
       if (stage1ExtensionMeta.delay) {
-        this.addExtensionToPendingList(ExtCls, pendingExtension);
+        this.addExtensionToPendingList(ExtCls, pendingExtension!);
       } else {
-        this.excludeExtensionFromPendingList(ExtCls, pendingExtension);
+        this.excludeExtensionFromPendingList(ExtCls, pendingExtension!);
       }
     }
     return stage1ExtensionMeta;
@@ -112,9 +114,9 @@ export class ExtensionsManager {
 
   protected prepareStage1ExtensionMetaPerApp(
     stage1ExtensionMeta: Stage1ExtensionMeta2,
-    pendingExtension?: Extension,
+    parApp?: boolean
   ): Stage1ExtensionMeta {
-    if (pendingExtension && !stage1ExtensionMeta.delay) {
+    if (parApp && !stage1ExtensionMeta.delay) {
       const copystage1ExtensionMeta = { ...stage1ExtensionMeta };
       delete (copystage1ExtensionMeta as Stage1ExtensionMeta2).groupData;
       delete (copystage1ExtensionMeta as Stage1ExtensionMeta2).groupDebugMeta;
@@ -167,22 +169,17 @@ export class ExtensionsManager {
   }
 
   protected async initExtension<T>(ExtCls: ExtensionType): Promise<Stage1ExtensionMeta> {
-    const extensions = this.injector.get(ExtCls, undefined, []) as Extension<T>[];
+    const extension = this.injector.get(ExtCls, undefined, []) as Extension<T>;
     const stage1ExtensionMeta = new Stage1ExtensionMeta<T>(this.moduleName, [], []);
     this.updateExtensionCounters(ExtCls, stage1ExtensionMeta);
 
-    if (!extensions.length) {
-      this.systemLogMediator.noExtensionsFound(this, ExtCls, this.unfinishedInit);
-    }
-
-    for (const extension of extensions) {
       if (this.unfinishedInit.has(extension)) {
         this.throwCircularDeps(extension);
       }
       const debugMetaCache = this.debugMetaCache.get(extension);
       if (debugMetaCache) {
         stage1ExtensionMeta.addDebugMeta(debugMetaCache);
-        continue;
+        return stage1ExtensionMeta;
       }
 
       this.unfinishedInit.add(extension);
@@ -198,7 +195,6 @@ export class ExtensionsManager {
       const debugMeta = new Stage1DebugMeta<T>(extension, data, !isLastModule, countdown);
       this.debugMetaCache.set(extension, debugMeta);
       stage1ExtensionMeta.addDebugMeta(debugMeta);
-    }
 
     return stage1ExtensionMeta;
   }
@@ -223,11 +219,11 @@ export class ExtensionsManager {
     throw new Error(msg);
   }
 
-  protected getItemName(tokenOrExtension: Extension | ExtensionType) {
-    if (isInjectionToken(tokenOrExtension) || typeof tokenOrExtension == 'string') {
-      return getProviderName(tokenOrExtension);
+  protected getItemName(classOrInstance: Extension | ExtensionType) {
+    if (isExtensionProvider(classOrInstance)) {
+      return getDebugClassName(classOrInstance);
     } else {
-      return tokenOrExtension.constructor.name;
+      return classOrInstance.constructor.name;
     }
   }
 }

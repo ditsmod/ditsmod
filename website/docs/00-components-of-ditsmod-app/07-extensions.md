@@ -167,7 +167,7 @@ interface Stage1GroupMeta<T = any> {
 
 Важливо пам'ятати, що для кожного модуля створюється окремий інстанс певного розширення. Наприклад, якщо `MyExtension` імпортовано у три різні модулі, то Ditsmod буде послідовно обробляти ці три модулі із трьома різними інстансами `MyExtension`. Окрім цього, якщо `MyExtension` потребує підсумкові дані, наприклад, від групи розширень `OTHER_EXTENSIONS` із чотирьох модулів, а саме `MyExtension` імпортовано лише у три модулі, це означає, що з одного модуля `MyExtension` може і не отримати необхідних даних.
 
-В такому випадку потрібно передавати `this` у якості аргументу для другого параметра методу `extensionsManager.stage1`:
+В такому випадку потрібно передавати `true` у якості аргументу для третього параметра методу `extensionsManager.stage1`:
 
 ```ts {11}
 import { injectable } from '@ditsmod/core';
@@ -180,7 +180,7 @@ export class MyExtension implements Extension<void> {
   constructor(private extensionsManager: ExtensionsManager) {}
 
   async stage1() {
-    const stage1GroupMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, this);
+    const stage1GroupMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, this, true);
     if (stage1GroupMeta.delay) {
       return;
     }
@@ -195,10 +195,10 @@ export class MyExtension implements Extension<void> {
 }
 ```
 
-Тобто коли вам потрібно щоб `MyExtension` отримало дані з групи `OTHER_EXTENSIONS` з усього застосунку, другим аргументом для методу `stage1` потрібно передавати `this`:
+Тобто коли вам потрібно щоб `MyExtension` отримало дані з групи `OTHER_EXTENSIONS` з усього застосунку, третім аргументом для методу `stage1` потрібно передавати `true`:
 
 ```ts
-const stage1GroupMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, this);
+const stage1GroupMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, this, true);
 ```
 
 В такому разі гарантується, що інстанс `MyExtension` отримає дані з усіх модулів, куди імпортовано `OTHER_EXTENSIONS`. Навіть якщо `MyExtension` буде імпортовано у певний модуль, в якому немає розширень із групи `OTHER_EXTENSIONS`, але ці розширення є в інших модулях, все-одно метод `stage1` даного розширення буде викликано після ініціалізації усіх розширень, тому `MyExtension` отримає дані від `OTHER_EXTENSIONS` з усіх модулів.
