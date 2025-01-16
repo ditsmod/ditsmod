@@ -5,7 +5,7 @@ import { AppInitializer } from '#init/app-initializer.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { ModuleManager } from '#init/module-manager.js';
 
-export abstract class Application {
+export abstract class BaseApplication {
   protected baseAppOptions: BaseAppOptions;
   protected systemLogMediator: SystemLogMediator;
 

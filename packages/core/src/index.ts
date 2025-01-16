@@ -2,7 +2,7 @@ export * from '#di';
 export * from '@ts-stack/chain-error';
 
 export { AppInitializer } from '#init/app-initializer.js';
-export { Application } from '#init/application.js';
+export { BaseApplication } from '#init/application.js';
 export { BaseAppOptions } from '#types/app-options.js';
 export { ImportsResolver } from '#init/imports-resolver.js';
 export { ImportedTokensMap } from '#types/metadata-per-mod.js';
