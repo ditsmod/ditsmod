@@ -4,7 +4,6 @@ import * as https from 'https';
 import { describe, expect, it, beforeEach } from 'vitest';
 import {
   SystemLogMediator,
-  AppOptions,
   ModuleType,
   AppInitializer,
   LogMediator,
@@ -13,11 +12,11 @@ import {
   LoggerConfig,
 } from '@ditsmod/core';
 
-import { RoutingApplication } from './routing-application.js';
+import { Application } from './application.js';
 import { AppOptions } from '../types/app-options.js';
 
 describe('Application', () => {
-  class ApplicationMock extends RoutingApplication {
+  class ApplicationMock extends Application {
     override appOptions = new AppOptions();
     declare systemLogMediator: SystemLogMediator;
 

@@ -1,4 +1,4 @@
-export { RoutingApplication } from './services/routing-application.js';
+export { Application } from './services/application.js';
 export { HttpServer } from './types/server-options.js';
 export { AppOptions } from './types/app-options.js';
 export { DefaultRouter, PathParam, RouteHandler, Router, RouterReturns } from './services/router.js';

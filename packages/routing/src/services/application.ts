@@ -2,7 +2,7 @@ import type * as http from 'node:http';
 import type * as http2 from 'node:http2';
 import type * as https from 'node:https';
 import type { AddressInfo } from 'node:net';
-import { ModuleType, SystemLogMediator, AppInitializer, Application } from '@ditsmod/core';
+import { ModuleType, SystemLogMediator, AppInitializer, BaseApplication } from '@ditsmod/core';
 
 import { AppOptions } from '#types/app-options.js';
 import { HttpServerModule, HttpsServerModule } from '#module/http-module.js';
@@ -10,7 +10,7 @@ import { Http2SecureServerOptions, HttpServer } from '#types/server-options.js';
 import { isHttp2SecureServerOptions } from '#types/type.guards.js';
 import { RequestListener } from '#services/request.js';
 
-export class RoutingApplication extends Application {
+export class Application extends BaseApplication {
   server: HttpServer;
   declare protected appOptions: AppOptions;
 
