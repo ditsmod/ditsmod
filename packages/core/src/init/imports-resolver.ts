@@ -4,7 +4,7 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { defaultExtensionsProviders } from '#extension/default-extensions-providers.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ModuleManager } from '#init/module-manager.js';
-import { AppOptions } from '#types/app-options.js';
+import { BaseAppOptions } from '#types/app-options.js';
 import { ImportedTokensMap, MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import { AppMetadataMap, Level, ProvidersForMod, ModRefId } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
@@ -321,7 +321,7 @@ export class ImportsResolver {
         // ...defaultProvidersPerReq,
       ]),
       Injector,
-      AppOptions,
+      BaseAppOptions,
     ];
 
     return deps.filter((d) => !defaultTokens.includes(d.token));

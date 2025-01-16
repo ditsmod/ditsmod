@@ -1,20 +1,20 @@
 import { injectable, optional } from '#di';
 import { InputLogLevel, Logger, LoggerConfig, OutputLogLevel } from '#logger/logger.js';
 import { AnyFn } from '#types/mix.js';
-import { AppOptions } from '#types/app-options.js';
+import { BaseAppOptions } from '#types/app-options.js';
 
 @injectable()
 export class ConsoleLogger implements Logger {
   protected level: OutputLogLevel;
-  protected appOptions: AppOptions;
+  protected baseAppOptions: BaseAppOptions;
   protected allLevels: OutputLogLevel[] = ['all', 'trace', 'debug', 'info', 'warn', 'error', 'fatal', 'off'];
 
   constructor(
     @optional() config: LoggerConfig = new LoggerConfig(),
-    @optional() appOptions: AppOptions = new AppOptions(),
+    @optional() baseAppOptions: BaseAppOptions = new BaseAppOptions(),
   ) {
-    this.appOptions = appOptions;
-    this.level = this.appOptions.loggerConfig?.level || config.level || 'info';
+    this.baseAppOptions = baseAppOptions;
+    this.level = this.baseAppOptions.loggerConfig?.level || config.level || 'info';
   }
 
   log(level: InputLogLevel, ...args: any[]) {
@@ -40,10 +40,10 @@ export class ConsoleLogger implements Logger {
   }
 
   setLevel(value: OutputLogLevel) {
-    this.level = this.appOptions.loggerConfig?.level || value;
+    this.level = this.baseAppOptions.loggerConfig?.level || value;
   }
 
   getLevel(): OutputLogLevel {
-    return this.appOptions.loggerConfig?.level || this.level || 'info';
+    return this.baseAppOptions.loggerConfig?.level || this.level || 'info';
   }
 }

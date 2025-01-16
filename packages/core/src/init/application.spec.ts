@@ -3,7 +3,7 @@ import { describe, expect, it, beforeEach } from 'vitest';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ModuleManager } from '#init/module-manager.js';
 // import { Router } from '#types/router.js';
-import { AppOptions } from '#types/app-options.js';
+import { BaseAppOptions } from '#types/app-options.js';
 import { ModuleType } from '#types/mix.js';
 import { AppInitializer } from '#init/app-initializer.js';
 import { Application } from '#init/application.js';
@@ -13,11 +13,11 @@ import { LoggerConfig } from '#logger/logger.js';
 
 describe('Application', () => {
   class ApplicationMock extends Application {
-    override appOptions = new AppOptions();
+    override baseAppOptions = new BaseAppOptions();
     declare systemLogMediator: SystemLogMediator;
 
-    override init(appOptions?: AppOptions) {
-      return super.init(appOptions);
+    override init(baseAppOptions?: BaseAppOptions) {
+      return super.init(baseAppOptions);
     }
 
     override scanRootModule(appModule: ModuleType) {
@@ -36,9 +36,9 @@ describe('Application', () => {
   });
 
   describe('init()', () => {
-    it('should merge AppOptions with default', () => {
+    it('should merge BaseAppOptions with default', () => {
       mock.init({ bufferLogs: false });
-      expect(mock.appOptions.bufferLogs).toBe(false);
+      expect(mock.baseAppOptions.bufferLogs).toBe(false);
       expect(LogMediator.bufferLogs).toBe(false);
     });
   });
@@ -64,7 +64,7 @@ describe('Application', () => {
     it('should replace systemLogMediator during call bootstrapApplication()', async () => {
       const moduleManager = mock.scanRootModule(AppModule);
       const appInitializer = new AppInitializer(
-        new AppOptions(),
+        new BaseAppOptions(),
         moduleManager,
         new SystemLogMediator({ moduleName: '' }),
       );

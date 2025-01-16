@@ -1,6 +1,6 @@
 import { LoggerConfig } from '#logger/logger.js';
 
-export class AppOptions {
+export class BaseAppOptions {
   /**
    * If `{ bufferLogs: true }`, all messages are buffered during application initialization
    * and flushed afterwards. This can be useful if you want all messages to be logged by
@@ -17,7 +17,7 @@ export class AppOptions {
    * 
    * If you want this option to have higher priority for your loggers at any level, it is recommended
    * to [create your logger using a `FactoryProvider`][1], where you override the logger methods to set
-   * the `OutputLogLevel` based on `appOptions.loggerConfig?.level`.
+   * the `OutputLogLevel` based on `baseAppOptions.loggerConfig?.level`.
    * 
    * [1]: https://github.com/ditsmod/ditsmod/blob/main/examples/04-logger/src/app/modules/pino/patch-logger.ts
    */

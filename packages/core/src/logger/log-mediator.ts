@@ -3,7 +3,7 @@ import { ModuleExtract } from '#types/module-extract.js';
 import { ConsoleLogger } from '#logger/console-logger.js';
 import { Logger, LoggerConfig, InputLogLevel, OutputLogLevel } from '#logger/logger.js';
 import { LogItem } from '#logger/types.js';
-import { AppOptions } from '#types/app-options.js';
+import { BaseAppOptions } from '#types/app-options.js';
 
 /**
  * Mediator between the core logger and the user's custom logger.
@@ -26,12 +26,12 @@ export abstract class LogMediator {
     protected injector?: Injector,
     @optional() protected logger: Logger = new ConsoleLogger(),
     @optional() protected loggerConfig: LoggerConfig = new LoggerConfig(),
-    @optional() protected appOptions?: AppOptions,
+    @optional() protected baseAppOptions?: BaseAppOptions,
   ) {}
 
   protected setLog(inputLogLevel: InputLogLevel, msg: string) {
     const showExternalLogs =
-      this.appOptions?.loggerConfig?.showExternalLogs ?? this.loggerConfig.showExternalLogs ?? true;
+      this.baseAppOptions?.loggerConfig?.showExternalLogs ?? this.loggerConfig.showExternalLogs ?? true;
     if (LogMediator.bufferLogs) {
       LogMediator.checkDiffLogLevels(this.loggerConfig.level);
       LogMediator.buffer.push({
@@ -87,7 +87,7 @@ export abstract class LogMediator {
 
     logItems.forEach((logItem) => {
       logger.setLevel(logItem.outputLogLevel);
-      const showExternalLogs = this.appOptions?.loggerConfig?.showExternalLogs ?? logItem.showExternalLogs ?? true;
+      const showExternalLogs = this.baseAppOptions?.loggerConfig?.showExternalLogs ?? logItem.showExternalLogs ?? true;
       if (!logItem.isExternal || showExternalLogs) {
         logger.log(logItem.inputLogLevel, `[${logItem.moduleName}]: ${logItem.msg}`);
       }

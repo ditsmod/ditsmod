@@ -16,7 +16,7 @@ import { Extension, ExtensionCounters } from '#extension/extension-types.js';
 import { ModuleExtract } from '#types/module-extract.js';
 import { ImportObj, MetadataPerMod1 } from '#types/metadata-per-mod.js';
 import { Providers } from '#utils/providers.js';
-import { AppOptions } from '#types/app-options.js';
+import { BaseAppOptions } from '#types/app-options.js';
 
 describe('AppInitializer', () => {
   type ModRefId = ModuleType | ModuleWithParams;
@@ -26,11 +26,11 @@ describe('AppInitializer', () => {
     override meta = new NormalizedModuleMetadata();
 
     constructor(
-      public override appOptions: AppOptions,
+      public override baseAppOptions: BaseAppOptions,
       public override moduleManager: ModuleManager,
       public override systemLogMediator: SystemLogMediator,
     ) {
-      super(appOptions, moduleManager, systemLogMediator);
+      super(baseAppOptions, moduleManager, systemLogMediator);
     }
 
     async init() {
@@ -66,8 +66,8 @@ describe('AppInitializer', () => {
     beforeEach(() => {
       const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
       moduleManager = new ModuleManager(systemLogMediator);
-      const appOptions = new AppOptions();
-      mock = new AppInitializerMock(appOptions, moduleManager, systemLogMediator);
+      const baseAppOptions = new BaseAppOptions();
+      mock = new AppInitializerMock(baseAppOptions, moduleManager, systemLogMediator);
     });
 
     class Extension1 {}
@@ -108,8 +108,8 @@ describe('AppInitializer', () => {
     beforeEach(() => {
       const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
       moduleManager = new ModuleManager(systemLogMediator);
-      const appOptions = new AppOptions();
-      mock = new AppInitializerMock(appOptions, moduleManager, systemLogMediator);
+      const baseAppOptions = new BaseAppOptions();
+      mock = new AppInitializerMock(baseAppOptions, moduleManager, systemLogMediator);
     });
 
     it('should throw an error about collision', () => {
@@ -342,8 +342,8 @@ describe('AppInitializer', () => {
     beforeEach(() => {
       const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
       moduleManager = new ModuleManager(systemLogMediator);
-      const appOptions = new AppOptions();
-      mock = new AppInitializerMock(appOptions, moduleManager, systemLogMediator);
+      const baseAppOptions = new BaseAppOptions();
+      mock = new AppInitializerMock(baseAppOptions, moduleManager, systemLogMediator);
     });
 
     it('should collects providers from exports array without imports them', () => {
@@ -387,8 +387,8 @@ describe('AppInitializer', () => {
       // Simulation of a call from the Application
       const logMediator = new LogMediatorMock({ moduleName: 'fakeName' });
       moduleManager = new ModuleManager(logMediator);
-      const appOptions = new AppOptions();
-      mock = new AppInitializerMock(appOptions, moduleManager, logMediator);
+      const baseAppOptions = new BaseAppOptions();
+      mock = new AppInitializerMock(baseAppOptions, moduleManager, logMediator);
 
       // Simulation of a call from the AppModule
       @rootModule({
@@ -436,8 +436,8 @@ describe('AppInitializer', () => {
       LogMediator.buffer = [];
       const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
       moduleManager = new ModuleManager(systemLogMediator);
-      const appOptions = new AppOptions();
-      mock = new AppInitializerMock(appOptions, moduleManager, systemLogMediator);
+      const baseAppOptions = new BaseAppOptions();
+      mock = new AppInitializerMock(baseAppOptions, moduleManager, systemLogMediator);
     });
 
     it('logs should collects between two init()', async () => {
@@ -479,8 +479,8 @@ describe('AppInitializer', () => {
       vi.restoreAllMocks();
       const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
       moduleManager = new ModuleManager(systemLogMediator);
-      const appOptions = new AppOptions();
-      mock = new AppInitializerMock(appOptions, moduleManager, systemLogMediator);
+      const baseAppOptions = new BaseAppOptions();
+      mock = new AppInitializerMock(baseAppOptions, moduleManager, systemLogMediator);
     });
 
     @injectable()
