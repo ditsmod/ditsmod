@@ -47,7 +47,7 @@
       "name": "Vitest Current File",
       "type": "node",
       "request": "launch",
-      "preLaunchTask": "npm: build-test",
+      // "preLaunchTask": "npm: build-test",
       "program": "${workspaceFolder}/node_modules/.bin/vitest",
       "args": [
         "${fileBasenameNoExtension}"
