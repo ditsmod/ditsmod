@@ -5,7 +5,7 @@ import { ModuleManager } from '#init/module-manager.js';
 // import { Router } from '#types/router.js';
 import { BaseAppOptions } from '#types/app-options.js';
 import { ModuleType } from '#types/mix.js';
-import { AppInitializer } from '#init/app-initializer.js';
+import { BaseAppInitializer } from '#init/base-app-initializer.js';
 import { BaseApplication } from '#init/application.js';
 import { rootModule } from '#decorators/root-module.js';
 import { LogMediator } from '#logger/log-mediator.js';
@@ -24,8 +24,8 @@ describe('Application', () => {
       return super.scanRootModule(appModule);
     }
 
-    override bootstrapApplication(appInitializer: AppInitializer) {
-      return super.bootstrapApplication(appInitializer);
+    override bootstrapApplication(baseAppInitializer: BaseAppInitializer) {
+      return super.bootstrapApplication(baseAppInitializer);
     }
   }
 
@@ -63,13 +63,13 @@ describe('Application', () => {
 
     it('should replace systemLogMediator during call bootstrapApplication()', async () => {
       const moduleManager = mock.scanRootModule(AppModule);
-      const appInitializer = new AppInitializer(
+      const baseAppInitializer = new BaseAppInitializer(
         new BaseAppOptions(),
         moduleManager,
         new SystemLogMediator({ moduleName: '' }),
       );
       const { systemLogMediator } = mock;
-      await mock.bootstrapApplication(appInitializer);
+      await mock.bootstrapApplication(baseAppInitializer);
       expect(mock.systemLogMediator !== systemLogMediator).toBe(true);
     });
   });

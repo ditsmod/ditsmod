@@ -52,7 +52,7 @@ export abstract class LogMediator {
 
   /**
    * This method is needed only for those cases when logs are written to the buffer before
-   * the `OutputLogLevel` is known. At the moment, it is needed only for the `Application` and `AppInitializer`
+   * the `OutputLogLevel` is known. At the moment, it is needed only for the `Application` and `BaseAppInitializer`
    * classes, ater initializing providers at the application level, and after init extensions.
    */
   protected updateOutputLogLevel() {

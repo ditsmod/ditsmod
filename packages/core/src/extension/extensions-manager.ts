@@ -37,11 +37,11 @@ export type StageIterationMap = Map<ExtensionType, StageIteration>;
 @injectable()
 export class ExtensionsManager {
   /**
-   * Settings by AppInitializer.
+   * Settings by BaseAppInitializer.
    */
   moduleName: string = '';
   /**
-   * Settings by AppInitializer.
+   * Settings by BaseAppInitializer.
    */
   protected stageIterationMap: StageIterationMap;
   protected currStageIteration: StageIteration;
@@ -200,7 +200,7 @@ export class ExtensionsManager {
   }
 
   protected updateExtensionCounters(ExtCls: ExtensionType, stage1ExtensionMeta: Stage1ExtensionMeta) {
-    // stage1ExtensionMeta.countdown = this.extensionCounters.mExtensionTokens.get(ExtCls)!;
+    stage1ExtensionMeta.countdown = this.extensionCounters.mExtensions.get(ExtCls)!;
     stage1ExtensionMeta.delay = stage1ExtensionMeta.countdown > 0;
   }
 

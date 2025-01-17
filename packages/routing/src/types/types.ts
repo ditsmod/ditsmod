@@ -11,6 +11,7 @@ import { ControllerMetadata } from './controller-metadata.js';
 import { GuardPerMod1 } from '../interceptors/guard.js';
 import { RouteHandler } from '../services/router.js';
 import { AppendsWithParams } from '../module/module-metadata.js';
+import { RoutingNormalizedModuleMetadata } from './routing-normalized-module-metadata.js';
 
 
 /**
@@ -36,7 +37,7 @@ interface ExtendedModuleMetadata extends ModuleMetadata {
  * that need set routes. The target for this metadata is `PreRouterExtension` group.
  */
 export class MetadataPerMod3 {
-  meta: NormalizedModuleMetadata;
+  meta: RoutingNormalizedModuleMetadata;
   aControllerMetadata: ControllerMetadata[];
   guardsPerMod1: GuardPerMod1[];
 }

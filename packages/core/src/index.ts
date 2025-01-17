@@ -1,7 +1,7 @@
 export * from '#di';
 export * from '@ts-stack/chain-error';
 
-export { AppInitializer } from '#init/app-initializer.js';
+export { BaseAppInitializer } from '#init/base-app-initializer.js';
 export { BaseApplication } from '#init/application.js';
 export { BaseAppOptions } from '#types/app-options.js';
 export { ImportsResolver } from '#init/imports-resolver.js';

@@ -1,6 +1,6 @@
 import { ChainError } from '@ts-stack/chain-error';
 
-import { InjectionToken, Injector, isMultiProvider } from '#di';
+import { Injector, isMultiProvider } from '#di';
 import { ImportsResolver } from '#init/imports-resolver.js';
 import { Logger } from '#logger/logger.js';
 import { SystemErrorMediator } from '#error/system-error-mediator.js';
@@ -18,7 +18,7 @@ import { PerAppService } from '#services/per-app.service.js';
 import { ModRefId, ModuleType } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
-import { ExtensionCounters, ExtensionType } from '#extension/extension-types.js';
+import { ExtensionCounters } from '#extension/extension-types.js';
 import { getCollisions } from '#utils/get-collisions.js';
 import { getDuplicates } from '#utils/get-duplicates.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
@@ -30,11 +30,9 @@ import { MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { getModule } from '#utils/get-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
-import { isExtensionProvider } from '#extension/type-guards.js';
 
-export class AppInitializer {
+export class BaseAppInitializer {
   protected perAppService = new PerAppService();
-  // protected preRouter: PreRouter;
   protected meta: NormalizedModuleMetadata;
   protected unfinishedScanModules = new Set<ModuleType | ModuleWithParams>();
 
@@ -226,7 +224,7 @@ export class AppInitializer {
       // { token: SERVER, useFactory: () => this.server },
       { token: BaseAppOptions, useValue: this.baseAppOptions },
       { token: ModuleManager, useValue: this.moduleManager },
-      { token: AppInitializer, useValue: this },
+      { token: BaseAppInitializer, useValue: this },
     );
   }
 
@@ -410,6 +408,4 @@ export class AppInitializer {
     systemLogMediator.totalInitedExtensions(this, extensions.size, names);
     counter.resetInitedExtensionsSet();
   }
-
-  // requestListener: RequestListener = (rawReq, rawRes) => this.preRouter.requestListener(rawReq, rawRes);
 }

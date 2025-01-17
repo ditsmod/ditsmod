@@ -1,7 +1,7 @@
 import { BaseAppOptions } from '#types/app-options.js';
 import { PublicLogMediator, SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ModuleType } from '#types/mix.js';
-import { AppInitializer } from '#init/app-initializer.js';
+import { BaseAppInitializer } from '#init/base-app-initializer.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { ModuleManager } from '#init/module-manager.js';
 
@@ -25,15 +25,15 @@ export abstract class BaseApplication {
     return moduleManager;
   }
 
-  protected async bootstrapApplication(appInitializer: AppInitializer) {
+  protected async bootstrapApplication(baseAppInitializer: BaseAppInitializer) {
     // Here, before init custom logger, works default logger.
-    appInitializer.bootstrapProvidersPerApp();
+    baseAppInitializer.bootstrapProvidersPerApp();
     // Here, after init providers per app, reinit Logger with new config.
-    this.systemLogMediator = appInitializer.systemLogMediator;
+    this.systemLogMediator = baseAppInitializer.systemLogMediator;
     (this.systemLogMediator as PublicLogMediator).updateOutputLogLevel();
-    await appInitializer.bootstrapModulesAndExtensions();
+    await baseAppInitializer.bootstrapModulesAndExtensions();
     // Here, after init extensions, reinit Logger with new config.
-    this.systemLogMediator = appInitializer.systemLogMediator;
+    this.systemLogMediator = baseAppInitializer.systemLogMediator;
     (this.systemLogMediator as PublicLogMediator).updateOutputLogLevel();
   }
 

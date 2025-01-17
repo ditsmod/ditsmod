@@ -166,9 +166,9 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-- AppInitializer: global providers per a module: []
-- AppInitializer: global providers per a route: []
-- AppInitializer: global providers per a request: []
+- BaseAppInitializer: global providers per a module: []
+- BaseAppInitializer: global providers per a route: []
+- BaseAppInitializer: global providers per a request: []
    */
   printGlobalProviders(self: object, globalProviders: GlobalProviders) {
     const className = self.constructor.name;

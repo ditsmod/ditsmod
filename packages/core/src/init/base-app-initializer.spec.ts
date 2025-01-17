@@ -7,7 +7,7 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { featureModule } from '#decorators/module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
-import { AppInitializer } from '#init/app-initializer.js';
+import { BaseAppInitializer } from '#init/base-app-initializer.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { ModuleType } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
@@ -18,11 +18,11 @@ import { ImportObj, MetadataPerMod1 } from '#types/metadata-per-mod.js';
 import { Providers } from '#utils/providers.js';
 import { BaseAppOptions } from '#types/app-options.js';
 
-describe('AppInitializer', () => {
+describe('BaseAppInitializer', () => {
   type ModRefId = ModuleType | ModuleWithParams;
 
   @injectable()
-  class AppInitializerMock extends AppInitializer {
+  class AppInitializerMock extends BaseAppInitializer {
     override meta = new NormalizedModuleMetadata();
 
     constructor(
@@ -371,7 +371,7 @@ describe('AppInitializer', () => {
   });
 
   describe('bootstrapProvidersPerApp()', () => {
-    it('logMediator should has different instances in contexts of Application and AppInitializer', () => {
+    it('logMediator should has different instances in contexts of Application and BaseAppInitializer', () => {
       const loggerSpy = vi.fn();
 
       class LogMediatorMock extends SystemLogMediator {
