@@ -52,7 +52,7 @@
     "npm-run-all": "*",
     "trek-router": "^1.2.0",
     "typescript": "*",
-    "vitest": "*"
+    "vitest": "^3.0.2"
   },
   "peerDependencies": {
     "@ditsmod/core": "^3.0.0-alpha.3"
