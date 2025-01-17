@@ -42,10 +42,10 @@ export class RoutingModuleNormalizer implements IModuleNormalizer {
     const meta = new RoutingNormalizedModuleMetadata();
     const modName = (meta.name = baseMeta.name);
     const rawMeta = baseMeta.rawMeta as RoutingRawMeta;
-    if (rawMeta.guards.length) {
-      meta.guardsPerMod.push(...this.normalizeGuards(rawMeta.guards));
-      this.checkGuardsPerMod(meta.guardsPerMod, modName);
-    }
+    // if (isModuleWithParams(meta.modRefId) && meta.modRefId.guards.length) {
+    //   meta.guardsPerMod.push(...this.normalizeGuards(rawMeta.guards));
+    //   this.checkGuardsPerMod(meta.guardsPerMod, modName);
+    // }
 
     rawMeta.appends?.forEach((ap, i) => {
       ap = resolveForwardRef(ap);
