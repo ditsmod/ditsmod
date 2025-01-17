@@ -1,4 +1,4 @@
-import { Application } from '@ditsmod/core';
+import { Application } from '@ditsmod/routing';
 import { AppModule } from './app/app.module.js';
 
 const app = await Application.create(AppModule);
