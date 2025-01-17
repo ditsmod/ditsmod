@@ -181,7 +181,7 @@ export class ModuleNormalizer {
 
   protected throwIfUndefined(
     modName: string,
-    action: 'Imports' | 'Exports' | 'Appends',
+    action: 'Imports' | 'Exports',
     imp: ModRefId | Provider,
     i: number,
   ) {
