@@ -1,6 +1,7 @@
 export { Application } from './services/application.js';
 export { HttpServer } from './types/server-options.js';
 export { AppOptions } from './types/app-options.js';
+export { AppInitializer } from './services/app-initializer.js';
 export { DefaultRouter, PathParam, RouteHandler, Router, RouterReturns } from './services/router.js';
 export { Tree } from './services/tree.js';
 export {

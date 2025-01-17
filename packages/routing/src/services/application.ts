@@ -2,13 +2,14 @@ import type * as http from 'node:http';
 import type * as http2 from 'node:http2';
 import type * as https from 'node:https';
 import type { AddressInfo } from 'node:net';
-import { ModuleType, SystemLogMediator, AppInitializer, BaseApplication } from '@ditsmod/core';
+import { ModuleType, SystemLogMediator, BaseApplication } from '@ditsmod/core';
 
 import { AppOptions } from '#types/app-options.js';
 import { HttpServerModule, HttpsServerModule } from '#module/http-module.js';
 import { Http2SecureServerOptions, HttpServer } from '#types/server-options.js';
 import { isHttp2SecureServerOptions } from '#types/type.guards.js';
 import { RequestListener } from '#services/request.js';
+import { AppInitializer } from './app-initializer.js';
 
 export class Application extends BaseApplication {
   server: HttpServer;
@@ -51,7 +52,7 @@ export class Application extends BaseApplication {
   protected async createServerAndBindToListening(appInitializer: AppInitializer) {
     this.flushLogs();
     this.server = await this.createServer(appInitializer.requestListener);
-    (appInitializer as PublicAppInitializer).setServer(this.server);
+    appInitializer.setServer(this.server);
     this.server.on('listening', () => {
       const info = this.server.address() as AddressInfo;
       this.systemLogMediator.serverListen(this, info.address, info.port);
