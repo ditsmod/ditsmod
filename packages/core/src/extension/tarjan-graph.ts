@@ -9,7 +9,7 @@ export type ExtensionConfig<T> = {
 
 export type Graph<T> = Map<T, T[]>;
 
-export function getGraph<T>(configs: AnyObj[]): { graph: Graph<T>; origin: Set<T> } {
+export function getGraph<T>(configs: (ExtensionConfig<T> | AnyObj)[]): { graph: Graph<T>; origin: Set<T> } {
   const graph = new Map() as Graph<T>;
   const origin = new Set<T>(configs.map((config) => config.extension));
   for (const config of configs) {
