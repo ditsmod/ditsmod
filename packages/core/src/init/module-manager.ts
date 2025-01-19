@@ -23,7 +23,7 @@ type ModuleId = string | ModRefId;
 export class ModuleManager {
   protected injectorPerModMap = new Map<ModRefId, Injector>();
   protected map: ModulesMap = new Map();
-  protected mapId = new Map<string, ModRefId>();
+  protected mapId = new Map<'root' | (string & {}), ModRefId>();
   protected oldMap: ModulesMap = new Map();
   protected oldMapId = new Map<string, ModRefId>();
   protected unfinishedScanModules = new Set<ModRefId>();
