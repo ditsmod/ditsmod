@@ -65,14 +65,12 @@ export class ModuleNormalizer {
       }
     });
 
-    const providersTokens = getTokens([...(rawMeta.providersPerMod || [])]);
-
     const resolvedCollisionsPerLevel = [...(rawMeta.resolvedCollisionsPerMod || [])];
     if (isRootModule(rawMeta)) {
       resolvedCollisionsPerLevel.push(...(rawMeta.resolvedCollisionsPerApp || []));
     }
     resolvedCollisionsPerLevel.forEach(([token]) => this.throwIfNormalizedProvider(modName, token));
-    this.exportFromRawMeta(rawMeta, modName, providersTokens, meta);
+    this.exportFromRawMeta(rawMeta, modName, meta);
     this.checkReexportModules(meta);
 
     rawMeta.extensions?.forEach((extensionOrConfig, i) => {
@@ -139,12 +137,7 @@ export class ModuleNormalizer {
     }
   }
 
-  protected exportFromRawMeta(
-    rawMeta: ModuleMetadata,
-    modName: string,
-    providersTokens: any[],
-    meta: NormalizedModuleMetadata,
-  ) {
+  protected exportFromRawMeta(rawMeta: ModuleMetadata, modName: string, meta: NormalizedModuleMetadata) {
     rawMeta.exports?.forEach((exp, i) => {
       exp = resolveForwardRef(exp);
       this.throwIfUndefined(modName, 'Exports', exp, i);
@@ -152,9 +145,9 @@ export class ModuleNormalizer {
       if (isModuleWithParams(exp)) {
         meta.exportsWithParams.push(exp);
         if (exp.exports?.length) {
-          this.exportFromRawMeta(exp, modName, providersTokens, meta);
+          this.exportFromRawMeta(exp, modName, meta);
         }
-      } else if (isProvider(exp) || providersTokens.includes(exp)) {
+      } else if (isProvider(exp) || getTokens([...(rawMeta.providersPerMod || [])]).includes(exp)) {
         this.findAndSetProviders(exp, rawMeta, meta);
       } else if (getModuleMetadata(exp)) {
         meta.exportsModules.push(exp);
@@ -179,12 +172,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected throwIfUndefined(
-    modName: string,
-    action: 'Imports' | 'Exports',
-    imp: ModRefId | Provider,
-    i: number,
-  ) {
+  protected throwIfUndefined(modName: string, action: 'Imports' | 'Exports', imp: ModRefId | Provider, i: number) {
     if (imp === undefined) {
       const lowerAction = action.toLowerCase();
       const msg =
