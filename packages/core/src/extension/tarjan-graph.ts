@@ -7,7 +7,7 @@ export type ExtensionConfig<T> = {
   afterExtensions?: T[];
 };
 
-export type Graph<T> = Map<T, T[]>;
+export type Graph<T> = Map<T, Set<T>>;
 
 export function getGraph<T>(configs: (ExtensionConfig<T> | AnyObj)[]): { graph: Graph<T>; origin: Set<T> } {
   const graph = new Map() as Graph<T>;
@@ -18,22 +18,22 @@ export function getGraph<T>(configs: (ExtensionConfig<T> | AnyObj)[]): { graph: 
     }
     const { extension, beforeExtensions, afterExtensions } = config;
     if (!graph.has(extension)) {
-      graph.set(extension, []);
+      graph.set(extension, new Set());
     }
     beforeExtensions?.forEach((beforeExtension) => {
       if (beforeExtension && origin.has(beforeExtension)) {
         if (!graph.has(beforeExtension)) {
-          graph.set(beforeExtension, []);
+          graph.set(beforeExtension, new Set());
         }
-        graph.get(beforeExtension)!.push(extension); // Adding a dependency.
+        graph.get(beforeExtension)!.add(extension); // Adding a dependency.
       }
     });
     afterExtensions?.forEach((afterExtension) => {
       if (afterExtension && origin.has(afterExtension)) {
         if (!graph.has(afterExtension)) {
-          graph.set(afterExtension, []);
+          graph.set(afterExtension, new Set());
         }
-        graph.get(extension)!.push(afterExtension); // Adding a dependency.
+        graph.get(extension)!.add(afterExtension); // Adding a dependency.
       }
     });
   }
