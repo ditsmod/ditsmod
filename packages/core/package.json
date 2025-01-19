@@ -36,6 +36,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./di": {
+      "types": "./dist/di/public-api.d.ts",
+      "default": "./dist.di/public-api.js"
     }
   },
   "keywords": [

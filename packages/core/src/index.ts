@@ -1,4 +1,4 @@
-export * from '#di';
+export * from '#di/public-api.js';
 export * from '@ts-stack/chain-error';
 
 export { BaseAppInitializer } from '#init/base-app-initializer.js';
@@ -71,19 +71,6 @@ export { CallsiteUtils } from '#utils/callsites.js';
 export { getDebugClassName, clearDebugClassNames } from '#utils/get-debug-class-name.js';
 export { getProviderTarget, getProvidersTargets, getToken, getTokens } from '#utils/get-tokens.js';
 export { RawMeta } from '#decorators/module.js';
-export {
-  isInjectionToken,
-  isMultiProvider,
-  isNormalizedProvider,
-  isDecoratorAndValue,
-  isFactoryProvider,
-  isClassProvider,
-  MultiProvider,
-  isTokenProvider,
-  isTypeProvider,
-  isValueProvider,
-  isClassFactoryProvider,
-} from '#di';
 export {
   isChainError,
   isModuleWithParams,
