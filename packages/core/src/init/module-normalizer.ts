@@ -22,7 +22,6 @@ import { getToken, getTokens } from '#utils/get-tokens.js';
 import { Class } from '#di/types-and-models.js';
 import { Providers } from '#utils/providers.js';
 import { ModuleMetadata } from '#types/module-metadata.js';
-import { getModule } from '#utils/get-module.js';
 import { Extension, ExtensionType } from '#extension/extension-types.js';
 import { normalizeProviders } from '#utils/ng-utils.js';
 import { isExtensionConfig } from '#extension/type-guards.js';
@@ -65,11 +64,7 @@ export class ModuleNormalizer {
       }
     });
 
-    const resolvedCollisionsPerLevel = [...(rawMeta.resolvedCollisionsPerMod || [])];
-    if (isRootModule(rawMeta)) {
-      resolvedCollisionsPerLevel.push(...(rawMeta.resolvedCollisionsPerApp || []));
-    }
-    resolvedCollisionsPerLevel.forEach(([token]) => this.throwIfNormalizedProvider(modName, token));
+    this.throwIfNormalizedProvider(modName, rawMeta);
     this.exportFromRawMeta(rawMeta, modName, meta);
     this.checkReexportModules(meta);
 
@@ -216,14 +211,21 @@ export class ModuleNormalizer {
     throw new TypeError(msg);
   }
 
-  protected throwIfNormalizedProvider(moduleName: string, provider: any) {
-    if (isNormalizedProvider(provider)) {
-      const providerName = provider.token.name || provider.token;
-      const msg =
-        `Resolving collisions in ${moduleName} failed: for ${providerName} inside ` +
-        '"resolvedCollisionPer*" array must be includes tokens only.';
-      throw new TypeError(msg);
+  protected throwIfNormalizedProvider(moduleName: string, rawMeta: RawMeta) {
+    const resolvedCollisionsPerLevel = [...(rawMeta.resolvedCollisionsPerMod || [])];
+    if (isRootModule(rawMeta)) {
+      resolvedCollisionsPerLevel.push(...(rawMeta.resolvedCollisionsPerApp || []));
     }
+
+    resolvedCollisionsPerLevel.forEach(([provider]) => {
+      if (isNormalizedProvider(provider)) {
+        const providerName = provider.token.name || provider.token;
+        const msg =
+          `Resolving collisions in ${moduleName} failed: for ${providerName} inside ` +
+          '"resolvedCollisionPer*" array must be includes tokens only.';
+        throw new TypeError(msg);
+      }
+    });
   }
 
   protected throwExportsIfNormalizedProvider(moduleName: string, provider: any) {

@@ -60,11 +60,7 @@ export class RoutingModuleNormalizer implements IModuleNormalizer {
       }
     });
 
-    const resolvedCollisionsPerLevel = [
-      ...(rawMeta.resolvedCollisionsPerRou || []),
-      ...(rawMeta.resolvedCollisionsPerReq || []),
-    ];
-    resolvedCollisionsPerLevel.forEach(([token]) => this.throwIfNormalizedProvider(modName, token));
+    this.throwIfNormalizedProvider(modName, rawMeta);
     this.exportFromRawMeta(rawMeta, modName, meta);
 
     // @todo Refactor the logic with the `pickMeta()` call, as it may override previously set values in `meta`.
@@ -196,14 +192,21 @@ export class RoutingModuleNormalizer implements IModuleNormalizer {
     throw new TypeError(msg);
   }
 
-  protected throwIfNormalizedProvider(moduleName: string, provider: any) {
-    if (isNormalizedProvider(provider)) {
-      const providerName = provider.token.name || provider.token;
-      const msg =
-        `Resolving collisions in ${moduleName} failed: for ${providerName} inside ` +
-        '"resolvedCollisionPer*" array must be includes tokens only.';
-      throw new TypeError(msg);
-    }
+  protected throwIfNormalizedProvider(moduleName: string, rawMeta: RoutingRawMeta) {
+    const resolvedCollisionsPerLevel = [
+      ...(rawMeta.resolvedCollisionsPerRou || []),
+      ...(rawMeta.resolvedCollisionsPerReq || []),
+    ];
+
+    resolvedCollisionsPerLevel.forEach(([provider]) => {
+      if (isNormalizedProvider(provider)) {
+        const providerName = provider.token.name || provider.token;
+        const msg =
+          `Resolving collisions in ${moduleName} failed: for ${providerName} inside ` +
+          '"resolvedCollisionPer*" array must be includes tokens only.';
+        throw new TypeError(msg);
+      }
+    });
   }
 
   protected throwExportsIfNormalizedProvider(moduleName: string, provider: any) {
