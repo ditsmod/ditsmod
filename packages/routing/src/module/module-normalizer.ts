@@ -21,7 +21,10 @@ import {
 } from '@ditsmod/core';
 
 import { RoutingRawMeta } from './module-metadata.js';
-import { RoutingNormalizedModuleMetadata, RoutingRawProvidersMetadata } from '../types/routing-normalized-module-metadata.js';
+import {
+  RoutingNormalizedModuleMetadata,
+  RoutingRawProvidersMetadata,
+} from '../types/routing-normalized-module-metadata.js';
 import { isAppendsWithParams, isCtrlDecor } from '../types/type.guards.js';
 import { GuardItem, NormalizedGuard } from '../interceptors/guard.js';
 import { Level } from '../types/types.js';
@@ -57,14 +60,12 @@ export class RoutingModuleNormalizer implements IModuleNormalizer {
       }
     });
 
-    const providersTokens = getTokens([...(rawMeta.providersPerRou || []), ...(rawMeta.providersPerReq || [])]);
-
     const resolvedCollisionsPerLevel = [
       ...(rawMeta.resolvedCollisionsPerRou || []),
       ...(rawMeta.resolvedCollisionsPerReq || []),
     ];
     resolvedCollisionsPerLevel.forEach(([token]) => this.throwIfNormalizedProvider(modName, token));
-    this.exportFromRawMeta(rawMeta, modName, providersTokens, meta);
+    this.exportFromRawMeta(rawMeta, modName, meta);
 
     // @todo Refactor the logic with the `pickMeta()` call, as it may override previously set values in `meta`.
     this.pickMeta(meta, rawMeta);
@@ -105,17 +106,17 @@ export class RoutingModuleNormalizer implements IModuleNormalizer {
   protected exportFromRawMeta(
     rawMeta: { exports?: any[] } & RoutingRawProvidersMetadata,
     modName: string,
-    providersTokens: any[],
     meta: RoutingNormalizedModuleMetadata,
   ) {
     rawMeta.exports?.forEach((exp, i) => {
       exp = resolveForwardRef(exp);
       this.throwIfUndefined(modName, 'Exports', exp, i);
       this.throwExportsIfNormalizedProvider(modName, exp);
+      const providersTokens = getTokens([...(rawMeta.providersPerRou || []), ...(rawMeta.providersPerReq || [])]);
       if (isModuleWithParams(exp)) {
         // meta.exportsWithParams.push(exp);
         if (exp.exports?.length) {
-          this.exportFromRawMeta(exp, modName, providersTokens, meta);
+          this.exportFromRawMeta(exp, modName, meta);
         }
       } else if (isProvider(exp) || providersTokens.includes(exp)) {
         this.findAndSetProviders(exp, rawMeta, meta);
