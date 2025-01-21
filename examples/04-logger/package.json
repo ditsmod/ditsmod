@@ -23,6 +23,6 @@
     "@types/bunyan": "^1.8.11",
     "npm-run-all": "*",
     "typescript": "*",
-    "vitest": "^3.0.2"
+    "vitest": "^3.0.3"
   }
 }

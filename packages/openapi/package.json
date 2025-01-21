@@ -50,7 +50,7 @@
     "style-loader": "^4.0.0",
     "swagger-ui": "^5.18.2",
     "typescript": "*",
-    "vitest": "^3.0.2",
+    "vitest": "^3.0.3",
     "webpack": "^5.97.1",
     "yaml-loader": "^0.8.1"
   },
