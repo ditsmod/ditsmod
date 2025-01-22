@@ -59,9 +59,10 @@ export {
   UnionToIntersection,
 } from '#types/mix.js';
 export { ModuleMetadata, IModuleNormalizer, BaseModuleWithParams, ModuleWithParams } from '#types/module-metadata.js';
+export { RootModuleMetadata } from '#types/root-module-metadata.js';
 export { deepFreeze } from '#utils/deep-freeze.js';
 export { getDependencies } from '#utils/get-dependecies.js';
-export { ExtensionConfig, isConfigWithOverrideExtension, } from '#extension/get-extension-provider.js';
+export { ExtensionConfig, isConfigWithOverrideExtension } from '#extension/get-extension-provider.js';
 export { getModule } from '#utils/get-module.js';
 export { getStatusText, isSuccess, Status, STATUS_CODE_INFO } from '#utils/http-status-codes.js';
 export { NormalizedProvider, normalizeProviders } from '#utils/ng-utils.js';
