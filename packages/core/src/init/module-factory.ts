@@ -26,7 +26,7 @@ import {
 import { findCycle } from '#extension/tarjan-graph.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { topologicalSort } from '#extension/topological-sort.js';
-import { ExtensionType } from '#extension/extension-types.js';
+import { ExtensionClass } from '#extension/extension-types.js';
 
 /**
  * - exports global providers;
@@ -155,7 +155,7 @@ export class ModuleFactory {
 
     const allExtensionConfigs = meta.aExtensionConfig.concat(aExtensionConfig);
     this.checkExtensionsGraph(allExtensionConfigs);
-    meta.aOrderedExtensions = topologicalSort<ExtensionType, ExtensionConfigBase>(allExtensionConfigs, true);
+    meta.aOrderedExtensions = topologicalSort<ExtensionClass, ExtensionConfigBase>(allExtensionConfigs, true);
 
     return this.appMetadataMap.set(modOrObj, {
       prefixPerMod,

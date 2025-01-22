@@ -1,7 +1,7 @@
 import {
   ExtensionCounters,
   ExtensionsContext,
-  ExtensionType,
+  ExtensionClass,
   inject,
   injectable,
   Injector,
@@ -32,9 +32,9 @@ export class TestExtensionsManager extends InternalExtensionsManager {
     super(injector, systemLogMediator, counter, extensionsContext, extensionCounters);
   }
 
-  override async stage1<T>(ExtCls: ExtensionType<T>): Promise<Stage1ExtensionMeta<T>>;
-  override async stage1<T>(ExtCls: ExtensionType<T>, pendingExtension: Extension): Promise<Stage1ExtensionMeta2<T>>;
-  override async stage1<T>(ExtCls: ExtensionType<T>, pendingExtension?: Extension) {
+  override async stage1<T>(ExtCls: ExtensionClass<T>): Promise<Stage1ExtensionMeta<T>>;
+  override async stage1<T>(ExtCls: ExtensionClass<T>, pendingExtension: Extension): Promise<Stage1ExtensionMeta2<T>>;
+  override async stage1<T>(ExtCls: ExtensionClass<T>, pendingExtension?: Extension) {
     const stage1ExtensionMeta = await super.stage1<T>(ExtCls, pendingExtension as Extension);
     this.aOverriderConfig.forEach((overriderConfig) => {
       if (ExtCls === overriderConfig.ExtCls) {

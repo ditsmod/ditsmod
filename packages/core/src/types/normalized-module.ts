@@ -4,7 +4,7 @@ import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from './module-metadata.js';
 import { RawMeta } from '#decorators/module.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
-import { ExtensionType } from '#extension/extension-types.js';
+import { ExtensionClass } from '#extension/extension-types.js';
 
 export class NormalizedModule<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> {
   providersPerApp: Provider[] = [];
@@ -43,7 +43,7 @@ export class NormalizedModule<T extends AnyObj = AnyObj, A extends AnyObj = AnyO
   extensionsProviders: Provider[] = [];
   exportedExtensionsProviders: Provider[] = [];
   aExtensionConfig: ExtensionConfig[] = [];
-  aOrderedExtensions: ExtensionType[] = [];
+  aOrderedExtensions: ExtensionClass[] = [];
   aExportedExtensionConfig: ExtensionConfig[] = [];
   /**
    * This property allows you to pass any information to extensions.

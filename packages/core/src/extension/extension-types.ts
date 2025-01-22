@@ -68,7 +68,7 @@ export interface Extension<T = any> {
    */
   stage3?(): Promise<void>;
 }
-export type ExtensionType<T = any> = Class<Extension<T>>;
+export type ExtensionClass<T = any> = Class<Extension<T>>;
 /**
  * Used to count all extension groups and extensions that are in the application.
  */

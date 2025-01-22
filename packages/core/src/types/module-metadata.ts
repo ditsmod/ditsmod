@@ -1,7 +1,7 @@
 import { ProvidersMetadata } from '#types/providers-metadata.js';
 import { AnyObj, ModuleType } from '#types/mix.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
-import { ExtensionType } from '#extension/extension-types.js';
+import { ExtensionClass } from '#extension/extension-types.js';
 import { NormalizedModule } from './normalized-module.js';
 import { Class } from '#di';
 
@@ -28,7 +28,7 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
   /**
    * The application extensions.
    */
-  extensions?: (ExtensionConfig | ExtensionType)[];
+  extensions?: (ExtensionConfig | ExtensionClass)[];
   /**
    * This property allows you to pass any information to extensions.
    *

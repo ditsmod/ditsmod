@@ -85,15 +85,15 @@ Objects of the following type can be transferred to the `extensions` array, whic
 
 ```ts
 class ExtensionConfig {
-  extension: ExtensionType;
+  extension: ExtensionClass;
   /**
    * The token of the group after which this extension will be called.
    */
-  afterExtensions?: ExtensionType[]>;
+  afterExtensions?: ExtensionClass[]>;
   /**
    * The token of the group before which this extension will be called.
    */
-  beforeExtensions?: ExtensionType[]>;
+  beforeExtensions?: ExtensionClass[]>;
   /**
    * Indicates whether this extension needs to be exported.
    */

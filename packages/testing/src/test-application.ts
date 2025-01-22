@@ -3,7 +3,7 @@ import {
   ModuleType,
   SystemLogMediator,
   Providers,
-  ExtensionType,
+  ExtensionClass,
   Class,
   UnionToIntersection,
   ModRefId,
@@ -79,7 +79,7 @@ export class TestApplication extends RoutingApplication {
    *
    * @param providers Providers to override.
    */
-  overrideExtensionMeta<T>(ExtCls: ExtensionType<T>, override: GroupMetaOverrider<T>) {
+  overrideExtensionMeta<T>(ExtCls: ExtensionClass<T>, override: GroupMetaOverrider<T>) {
     this.testAppInitializer.setOverriderConfig({ ExtCls, override });
     return this;
   }

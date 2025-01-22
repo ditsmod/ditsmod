@@ -16,7 +16,7 @@ export { featureModule } from '#decorators/module.js';
 export { rootModule } from '#decorators/root-module.js';
 export {
   ExtensionCounters,
-  ExtensionType,
+  ExtensionClass,
   ExtensionsMetaPerApp,
   Extension,
   Stage1DebugMeta,

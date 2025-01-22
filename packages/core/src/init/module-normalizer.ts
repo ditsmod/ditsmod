@@ -22,7 +22,7 @@ import { getToken, getTokens } from '#utils/get-tokens.js';
 import { Class } from '#di/types-and-models.js';
 import { Providers } from '#utils/providers.js';
 import { ModuleMetadata } from '#types/module-metadata.js';
-import { Extension, ExtensionType } from '#extension/extension-types.js';
+import { Extension, ExtensionClass } from '#extension/extension-types.js';
 import { normalizeProviders } from '#utils/ng-utils.js';
 import { isExtensionConfig } from '#extension/type-guards.js';
 import { getModuleMetadata } from './get-module-metadata.js';
@@ -70,7 +70,7 @@ export class ModuleNormalizer {
 
     rawMeta.extensions?.forEach((extensionOrConfig, i) => {
       if (!isExtensionConfig(extensionOrConfig)) {
-        extensionOrConfig = { extension: extensionOrConfig as ExtensionType };
+        extensionOrConfig = { extension: extensionOrConfig as ExtensionClass };
       }
       this.checkExtensionConfig(modName, extensionOrConfig, i);
       const extensionObj = getExtensionProvider(extensionOrConfig);

@@ -6,7 +6,7 @@ import { GlobalProviders, ImportObj } from '#types/metadata-per-mod.js';
 import { ModuleType } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
-import { ExtensionType, Extension } from '#extension/extension-types.js';
+import { ExtensionClass, Extension } from '#extension/extension-types.js';
 import { getImportedTokens } from '#utils/get-imports.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { isInjectionToken } from '#di';
@@ -205,13 +205,13 @@ export class SystemLogMediator extends LogMediator {
   /**
    * `${tokenName} start init.`
    */
-  startExtensionsExtensionInit(self: object, unfinishedInit: Set<Extension | ExtensionType>) {
+  startExtensionsExtensionInit(self: object, unfinishedInit: Set<Extension | ExtensionClass>) {
     const className = self.constructor.name;
     const path = this.getExtentionPath(unfinishedInit);
     this.setLog('trace', `${className}: ${path}: start init.`);
   }
 
-  protected getExtentionPath(unfinishedInit: Set<Extension | ExtensionType>) {
+  protected getExtentionPath(unfinishedInit: Set<Extension | ExtensionClass>) {
     return [...unfinishedInit]
       .map((tokenOrExtension) => {
         if (isInjectionToken(tokenOrExtension)) {
@@ -226,7 +226,7 @@ export class SystemLogMediator extends LogMediator {
   /**
    * `finish init ${tokenName}.`
    */
-  finishExtensionsExtensionInit(self: object, unfinishedInit: Set<Extension | ExtensionType>) {
+  finishExtensionsExtensionInit(self: object, unfinishedInit: Set<Extension | ExtensionClass>) {
     const className = self.constructor.name;
     const path = this.getExtentionPath(unfinishedInit);
     this.setLog('trace', `${className}: ${path}: finish init.`);
@@ -235,7 +235,7 @@ export class SystemLogMediator extends LogMediator {
   /**
    * `for ${tokenName} no extensions found.`
    */
-  noExtensionsFound(self: object, ExtCls: any, unfinishedInit: Set<Extension | ExtensionType>) {
+  noExtensionsFound(self: object, ExtCls: any, unfinishedInit: Set<Extension | ExtensionClass>) {
     const className = self.constructor.name;
     const tokenName = getProviderName(ExtCls);
     const item = Array.from(unfinishedInit).at(-2)!;
@@ -251,7 +251,7 @@ export class SystemLogMediator extends LogMediator {
   /**
    * `${path}: start init.`
    */
-  startInitExtension(self: object, unfinishedInit: Set<Extension | ExtensionType>) {
+  startInitExtension(self: object, unfinishedInit: Set<Extension | ExtensionClass>) {
     const className = self.constructor.name;
     const path = this.getExtentionPath(unfinishedInit);
     this.setLog('trace', `${className}: ${path}: start init.`);
@@ -260,7 +260,7 @@ export class SystemLogMediator extends LogMediator {
   /**
    * `${path}: finish init${withSomeValue}.`
    */
-  finishInitExtension(self: object, unfinishedInit: Set<Extension | ExtensionType>, data: any) {
+  finishInitExtension(self: object, unfinishedInit: Set<Extension | ExtensionClass>, data: any) {
     const className = self.constructor.name;
     const path = this.getExtentionPath(unfinishedInit);
     const withSomeValue = data === undefined ? ', no value returned' : ', returned some value';
@@ -306,7 +306,7 @@ export class SystemLogMediator extends LogMediator {
   /**
    * `${className}: The sequence of extension group operations: ...`
    */
-  sequenceOfExtensionExtensions(self: object, aOrderedExtensions: ExtensionType[]) {
+  sequenceOfExtensionExtensions(self: object, aOrderedExtensions: ExtensionClass[]) {
     const className = self.constructor.name;
     const msg =
       `${className}: The sequence of extension group operations: ` +

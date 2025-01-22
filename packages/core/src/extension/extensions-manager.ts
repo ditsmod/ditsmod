@@ -8,7 +8,7 @@ import {
   Stage1ExtensionMeta,
   ExtensionCounters,
   Stage1ExtensionMeta2,
-  ExtensionType,
+  ExtensionClass,
 } from '#extension/extension-types.js';
 import { ModRefId, OptionalProps } from '#types/mix.js';
 import { getProviderName } from '#utils/get-provider-name.js';
@@ -32,7 +32,7 @@ export class StageIteration {
     this.reject = obj.reject;
   }
 }
-export type StageIterationMap = Map<ExtensionType, StageIteration>;
+export type StageIterationMap = Map<ExtensionClass, StageIteration>;
 
 @injectable()
 export class ExtensionsManager {
@@ -45,17 +45,17 @@ export class ExtensionsManager {
    */
   protected stageIterationMap: StageIterationMap;
   protected currStageIteration: StageIteration;
-  protected unfinishedInit = new Set<Extension | ExtensionType>();
+  protected unfinishedInit = new Set<Extension | ExtensionClass>();
   /**
    * The cache for extension in the current module.
    */
   protected debugMetaCache = new Map<Extension, Stage1DebugMeta>();
-  protected excludedExtensionPendingList = new Map<ExtensionType, Set<Class<Extension>>>();
+  protected excludedExtensionPendingList = new Map<ExtensionClass, Set<Class<Extension>>>();
   protected extensionsListForStage2 = new Set<Extension>();
   /**
    * The cache for ExtCls in the current module.
    */
-  protected stage1ExtensionMetaCache = new Map<ExtensionType, Stage1ExtensionMeta>();
+  protected stage1ExtensionMetaCache = new Map<ExtensionClass, Stage1ExtensionMeta>();
 
   constructor(
     protected injector: Injector,
@@ -65,9 +65,9 @@ export class ExtensionsManager {
     protected extensionCounters: ExtensionCounters,
   ) {}
 
-  async stage1<T>(ExtCls: ExtensionType<T>, pendingExtension?: Extension, parApp?: false): Promise<Stage1ExtensionMeta<T>>;
-  async stage1<T>(ExtCls: ExtensionType<T>, pendingExtension: Extension, parApp: true): Promise<Stage1ExtensionMeta2<T>>;
-  async stage1<T>(ExtCls: ExtensionType<T>, pendingExtension?: Extension, parApp?: boolean): Promise<Stage1ExtensionMeta<T>> {
+  async stage1<T>(ExtCls: ExtensionClass<T>, pendingExtension?: Extension, parApp?: false): Promise<Stage1ExtensionMeta<T>>;
+  async stage1<T>(ExtCls: ExtensionClass<T>, pendingExtension: Extension, parApp: true): Promise<Stage1ExtensionMeta2<T>>;
+  async stage1<T>(ExtCls: ExtensionClass<T>, pendingExtension?: Extension, parApp?: boolean): Promise<Stage1ExtensionMeta<T>> {
     const currStageIteration = this.currStageIteration;
     const stageIteration = this.stageIterationMap.get(ExtCls);
     if (stageIteration) {
@@ -96,7 +96,7 @@ export class ExtensionsManager {
   }
 
   protected updatePerAppState(
-    ExtCls: ExtensionType,
+    ExtCls: ExtensionClass,
     stage1ExtensionMeta: Stage1ExtensionMeta,
     pendingExtension?: Extension,
     parApp?: boolean
@@ -131,7 +131,7 @@ export class ExtensionsManager {
    * Adds to the pending list of extensions that want to receive the initialization
    * result of `ExtCls` from the whole application.
    */
-  protected addExtensionToPendingList(ExtCls: ExtensionType, pendingExtension: Extension) {
+  protected addExtensionToPendingList(ExtCls: ExtensionClass, pendingExtension: Extension) {
     const ExtensionClass = pendingExtension.constructor as Class<Extension>;
     const mExtensions =
       this.extensionsContext.mExtensionPendingList.get(ExtCls) || new Map<Class<Extension>, Extension>();
@@ -142,14 +142,14 @@ export class ExtensionsManager {
     }
   }
 
-  protected excludeExtensionFromPendingList(ExtCls: ExtensionType, pendingExtension: Extension) {
+  protected excludeExtensionFromPendingList(ExtCls: ExtensionClass, pendingExtension: Extension) {
     const ExtensionClass = pendingExtension.constructor as Class<Extension>;
     const excludedExtensions = this.excludedExtensionPendingList.get(ExtCls) || new Set<Class<Extension>>();
     excludedExtensions.add(ExtensionClass);
     this.excludedExtensionPendingList.set(ExtCls, excludedExtensions);
   }
 
-  protected async prepareAndInitExtension<T>(ExtCls: ExtensionType<T>) {
+  protected async prepareAndInitExtension<T>(ExtCls: ExtensionClass<T>) {
     this.unfinishedInit.add(ExtCls);
     this.systemLogMediator.startExtensionsExtensionInit(this, this.unfinishedInit);
     const stage1ExtensionMeta = await this.initExtension(ExtCls);
@@ -160,7 +160,7 @@ export class ExtensionsManager {
     return stage1ExtensionMeta;
   }
 
-  protected setStage1ExtensionMetaPerApp(ExtCls: ExtensionType, stage1ExtensionMeta: Stage1ExtensionMeta) {
+  protected setStage1ExtensionMetaPerApp(ExtCls: ExtensionClass, stage1ExtensionMeta: Stage1ExtensionMeta) {
     const copyStage1ExtensionMeta = { ...stage1ExtensionMeta } as Stage1ExtensionMeta;
     delete (copyStage1ExtensionMeta as OptionalProps<Stage1ExtensionMeta, 'groupDataPerApp'>).groupDataPerApp;
     const aStage1ExtensionMeta = this.extensionsContext.mStage1ExtensionMeta.get(ExtCls) || [];
@@ -168,7 +168,7 @@ export class ExtensionsManager {
     this.extensionsContext.mStage1ExtensionMeta.set(ExtCls, aStage1ExtensionMeta);
   }
 
-  protected async initExtension<T>(ExtCls: ExtensionType): Promise<Stage1ExtensionMeta> {
+  protected async initExtension<T>(ExtCls: ExtensionClass): Promise<Stage1ExtensionMeta> {
     const extension = this.injector.get(ExtCls, undefined, []) as Extension<T>;
     const stage1ExtensionMeta = new Stage1ExtensionMeta<T>(this.moduleName, [], []);
     this.updateExtensionCounters(ExtCls, stage1ExtensionMeta);
@@ -199,12 +199,12 @@ export class ExtensionsManager {
     return stage1ExtensionMeta;
   }
 
-  protected updateExtensionCounters(ExtCls: ExtensionType, stage1ExtensionMeta: Stage1ExtensionMeta) {
+  protected updateExtensionCounters(ExtCls: ExtensionClass, stage1ExtensionMeta: Stage1ExtensionMeta) {
     stage1ExtensionMeta.countdown = this.extensionCounters.mExtensions.get(ExtCls)!;
     stage1ExtensionMeta.delay = stage1ExtensionMeta.countdown > 0;
   }
 
-  protected throwCircularDeps(item: Extension | ExtensionType) {
+  protected throwCircularDeps(item: Extension | ExtensionClass) {
     const items = Array.from(this.unfinishedInit);
     const index = items.findIndex((ext) => ext === item);
     const prefixChain = items.slice(0, index);
@@ -219,7 +219,7 @@ export class ExtensionsManager {
     throw new Error(msg);
   }
 
-  protected getItemName(classOrInstance: Extension | ExtensionType) {
+  protected getItemName(classOrInstance: Extension | ExtensionClass) {
     if (isExtensionProvider(classOrInstance)) {
       return getDebugClassName(classOrInstance);
     } else {

@@ -1,5 +1,5 @@
 import { InjectionToken, Provider } from '#di';
-import { ExtensionType, Extension } from '#extension/extension-types.js';
+import { ExtensionClass, Extension } from '#extension/extension-types.js';
 import { AnyObj } from '#types/mix.js';
 
 export class ExtensionObj {
@@ -10,15 +10,15 @@ export class ExtensionObj {
 }
 
 export interface ExtensionConfigBase {
-  extension: ExtensionType;
+  extension: ExtensionClass;
   /**
    * The array of tokens of the group before which this extension will be called.
    */
-  beforeExtensions?: ExtensionType[];
+  beforeExtensions?: ExtensionClass[];
   /**
    * The array of tokens of the group after which this extension will be called.
    */
-  afterExtensions?: ExtensionType[];
+  afterExtensions?: ExtensionClass[];
   overrideExtension?: never;
 }
 
@@ -39,8 +39,8 @@ export interface ExtensionConfig2 extends ExtensionConfigBase {
 }
 
 export interface ExtensionConfig3 {
-  extension: ExtensionType;
-  overrideExtension: ExtensionType;
+  extension: ExtensionClass;
+  overrideExtension: ExtensionClass;
 }
 
 export type ExtensionConfig = ExtensionConfig1 | ExtensionConfig2 | ExtensionConfig3;
