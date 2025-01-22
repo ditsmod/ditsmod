@@ -29,7 +29,7 @@ export { getExtensionProvider } from './extension/get-extension-provider.js';
 export { isExtensionProvider, isExtensionConfig } from '#extension/type-guards.js';
 export { ModuleExtract } from '#types/module-extract.js';
 export { Counter } from '#extension/counter.js';
-export { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
+export { NormalizedModule } from '#types/normalized-module.js';
 export { getModuleMetadata } from '#init/get-module-metadata.js';
 export { ProvidersMetadata } from '#types/providers-metadata.js';
 export { ConsoleLogger } from '#logger/console-logger.js';

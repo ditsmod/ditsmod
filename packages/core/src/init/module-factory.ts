@@ -1,7 +1,7 @@
 import { injectable, reflector } from '#di';
 import { defaultProvidersPerMod } from '#init/default-providers-per-mod.js';
 import { ModuleExtract } from '#types/module-extract.js';
-import type { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
+import type { NormalizedModule } from '#types/normalized-module.js';
 import type { ModuleManager } from '#init/module-manager.js';
 import type { GlobalProviders, MetadataPerMod1 } from '#types/metadata-per-mod.js';
 import { ImportObj } from '#types/metadata-per-mod.js';
@@ -42,7 +42,7 @@ export class ModuleFactory {
   /**
    * Module metadata.
    */
-  protected meta: NormalizedModuleMetadata;
+  protected meta: NormalizedModule;
 
   protected importedProvidersPerMod = new Map<any, ImportObj>();
   protected importedProvidersPerRou = new Map<any, ImportObj>();
@@ -247,7 +247,7 @@ export class ModuleFactory {
    *
    * @param meta1 Module metadata from where imports providers.
    */
-  protected importProvidersAndExtensions(meta1: NormalizedModuleMetadata) {
+  protected importProvidersAndExtensions(meta1: NormalizedModule) {
     const { modRefId, exportsModules, exportsWithParams } = meta1;
 
     for (const modRefId of [...exportsModules, ...exportsWithParams]) {
@@ -291,7 +291,7 @@ export class ModuleFactory {
     });
   }
 
-  protected addProviders(level: Level, meta: NormalizedModuleMetadata) {
+  protected addProviders(level: Level, meta: NormalizedModule) {
     meta[`exportedProvidersPer${level}`].forEach((provider) => {
       const token1 = getToken(provider);
       const importObj = this[`importedProvidersPer${level}`].get(token1);
@@ -412,7 +412,7 @@ export class ModuleFactory {
     }
   }
 
-  protected checkImportsAndAppends(meta: NormalizedModuleMetadata) {
+  protected checkImportsAndAppends(meta: NormalizedModule) {
     // [...meta.appendsModules].forEach((append) => {
     //   const appendedMeta = this.moduleManager.getMetadata(append, true);
     //   if (!appendedMeta.controllers.length) {

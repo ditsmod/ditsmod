@@ -3,7 +3,7 @@ import {
   HttpMethod,
   ModuleMetadata,
   ModuleType,
-  NormalizedModuleMetadata,
+  NormalizedModule,
 } from '@ditsmod/core';
 
 import { Tree } from '../services/tree.js';
@@ -11,7 +11,7 @@ import { ControllerMetadata } from './controller-metadata.js';
 import { GuardPerMod1 } from '../interceptors/guard.js';
 import { RouteHandler } from '../services/router.js';
 import { AppendsWithParams } from '../module/module-metadata.js';
-import { RoutingNormalizedModuleMetadata } from './routing-normalized-module-metadata.js';
+import { RoutingNormalizedModule } from './routing-normalized-module-metadata.js';
 
 
 /**
@@ -37,7 +37,7 @@ interface ExtendedModuleMetadata extends ModuleMetadata {
  * that need set routes. The target for this metadata is `PreRouterExtension` group.
  */
 export class MetadataPerMod3 {
-  meta: RoutingNormalizedModuleMetadata;
+  meta: RoutingNormalizedModule;
   aControllerMetadata: ControllerMetadata[];
   guardsPerMod1: GuardPerMod1[];
 }

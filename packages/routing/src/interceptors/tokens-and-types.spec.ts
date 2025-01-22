@@ -13,7 +13,7 @@ import {
   ModuleManager,
   ModuleType,
   ModuleWithParams,
-  NormalizedModuleMetadata,
+  NormalizedModule,
   rootModule,
   SystemLogMediator,
 } from '@ditsmod/core';
@@ -148,7 +148,7 @@ describe('mix per app, per mod or per req', () => {
     injectorPerMod: Injector;
     declare prefixPerMod: string;
     override moduleName = 'MockModule';
-    override meta = new NormalizedModuleMetadata();
+    override meta = new NormalizedModule();
     override appMetadataMap = new Map<ModuleType, MetadataPerMod1>();
     override importedProvidersPerMod = new Map<any, ImportObj>();
     override importedProvidersPerRou = new Map<any, ImportObj>();

@@ -10,7 +10,7 @@ import {
   ModuleManager,
   ModuleType,
   ModuleWithParams,
-  NormalizedModuleMetadata,
+  NormalizedModule,
   Provider,
   rootModule,
   SystemLogMediator,
@@ -29,7 +29,7 @@ type ModRefId = ModuleType | ModuleWithParams;
 
 @injectable()
 class AppInitializerMock extends AppInitializer {
-  override meta = new NormalizedModuleMetadata();
+  override meta = new NormalizedModule();
 
   constructor(
     public override appOptions: AppOptions,
@@ -44,7 +44,7 @@ class AppInitializerMock extends AppInitializer {
     await this.bootstrapModulesAndExtensions();
   }
 
-  override collectProvidersPerApp(meta: NormalizedModuleMetadata) {
+  override collectProvidersPerApp(meta: NormalizedModule) {
     return super.collectProvidersPerApp(meta);
   }
 

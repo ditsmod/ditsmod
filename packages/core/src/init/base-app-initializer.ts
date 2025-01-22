@@ -6,7 +6,7 @@ import { Logger } from '#logger/logger.js';
 import { SystemErrorMediator } from '#error/system-error-mediator.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { PublicLogMediator, SystemLogMediator } from '#logger/system-log-mediator.js';
-import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
+import { NormalizedModule } from '#types/normalized-module.js';
 import { BaseAppOptions } from '#types/app-options.js';
 import { ModuleFactory } from '#init/module-factory.js';
 import { Counter } from '#extension/counter.js';
@@ -33,7 +33,7 @@ import { getDebugClassName } from '#utils/get-debug-class-name.js';
 
 export class BaseAppInitializer {
   protected perAppService = new PerAppService();
-  protected meta: NormalizedModuleMetadata;
+  protected meta: NormalizedModule;
   protected unfinishedScanModules = new Set<ModuleType | ModuleWithParams>();
 
   constructor(
@@ -86,7 +86,7 @@ export class BaseAppInitializer {
   /**
    * Recursively collects per app providers from feature modules.
    */
-  protected collectProvidersPerApp(meta1: NormalizedModuleMetadata) {
+  protected collectProvidersPerApp(meta1: NormalizedModule) {
     const aModRefId: ModRefId[] = [
       // ...meta1.appendsModules,
       // ...meta1.appendsWithParams,
@@ -335,7 +335,7 @@ export class BaseAppInitializer {
     }
   }
 
-  protected async initModuleAndGetInjectorPerMod(meta: NormalizedModuleMetadata): Promise<Injector> {
+  protected async initModuleAndGetInjectorPerMod(meta: NormalizedModule): Promise<Injector> {
     const Mod = getModule(meta.modRefId);
     const extendedProvidersPerMod = [Mod, ...meta.providersPerMod];
     const injectorPerApp = this.perAppService.injector;
@@ -363,7 +363,7 @@ export class BaseAppInitializer {
   }
 
   protected async handleExtensionsPerMod(
-    meta: NormalizedModuleMetadata,
+    meta: NormalizedModule,
     extensionsManager: InternalExtensionsManager,
     systemLogMediator: SystemLogMediator,
   ) {
@@ -376,7 +376,7 @@ export class BaseAppInitializer {
    *
    * See `TestAppInitializer` in `@ditsmod/testing` for more info.
    */
-  protected overrideMetaBeforeExtensionHanling(meta: NormalizedModuleMetadata) {
+  protected overrideMetaBeforeExtensionHanling(meta: NormalizedModule) {
     return meta;
   }
 
@@ -385,7 +385,7 @@ export class BaseAppInitializer {
    *
    * See `TestAppInitializer` in `@ditsmod/testing` for more info.
    */
-  protected overrideMetaAfterStage1(meta: NormalizedModuleMetadata) {
+  protected overrideMetaAfterStage1(meta: NormalizedModule) {
     return meta;
   }
 

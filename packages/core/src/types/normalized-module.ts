@@ -6,7 +6,7 @@ import { RawMeta } from '#decorators/module.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { ExtensionType } from '#extension/extension-types.js';
 
-export class NormalizedModuleMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> {
+export class NormalizedModule<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> {
   providersPerApp: Provider[] = [];
   providersPerMod: Provider[] = [];
   rawMeta: RawMeta;

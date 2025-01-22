@@ -9,7 +9,7 @@ import { CallsiteUtils } from '#utils/callsites.js';
 import { ModuleManager } from './module-manager.js';
 import { ModuleType, AnyObj } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
-import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
+import { NormalizedModule } from '#types/normalized-module.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { ModuleNormalizer } from './module-normalizer.js';
 import { inspect } from 'node:util';
@@ -37,7 +37,7 @@ describe('ModuleNormalizer', () => {
     @rootModule()
     class AppModule {}
 
-    const expectedMeta = new NormalizedModuleMetadata();
+    const expectedMeta = new NormalizedModule();
     expectedMeta.id = '';
     expectedMeta.name = 'AppModule';
     expectedMeta.modRefId = AppModule;

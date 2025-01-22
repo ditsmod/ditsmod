@@ -16,7 +16,7 @@ import { isInjectionToken } from '#di';
 import { Counter } from '#extension/counter.js';
 import { ExtensionsContext } from '#extension/extensions-context.js';
 import { createDeferred } from '#utils/create-deferred.js';
-import { NormalizedModuleMetadata } from '#types/normalized-module-metadata.js';
+import { NormalizedModule } from '#types/normalized-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { isExtensionProvider } from './type-guards.js';
 
@@ -230,7 +230,7 @@ export class ExtensionsManager {
 
 @injectable()
 export class InternalExtensionsManager extends ExtensionsManager {
-  async internalStage1(meta: NormalizedModuleMetadata) {
+  async internalStage1(meta: NormalizedModule) {
     this.moduleName = meta.name;
     const stageIterationMap = new Map() as StageIterationMap;
     this.stageIterationMap = stageIterationMap;

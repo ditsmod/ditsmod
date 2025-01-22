@@ -24,7 +24,7 @@ export class RoutingProvidersMetadata {
   providersPerReq: Provider[] = [];
 }
 
-export class RoutingNormalizedModuleMetadata<T extends AnyObj = AnyObj> extends RoutingProvidersMetadata {
+export class RoutingNormalizedModule<T extends AnyObj = AnyObj> extends RoutingProvidersMetadata {
   /**
    * The module setted here must be identical to the module
    * passed to "imports", "exports" or "appends" array of `@featureModule` metadata.
