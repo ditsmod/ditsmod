@@ -57,7 +57,6 @@ describe('RootModule decorator', () => {
       imports: [],
       providersPerApp: [],
       providersPerMod: [],
-      providersPerReq: [],
       exports: [],
       extensions: [],
     })
@@ -69,7 +68,6 @@ describe('RootModule decorator', () => {
       imports: [],
       providersPerApp: [],
       providersPerMod: [],
-      providersPerReq: [],
       exports: [],
       extensions: [],
       // guards: [],

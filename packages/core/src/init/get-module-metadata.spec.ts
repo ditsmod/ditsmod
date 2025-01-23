@@ -43,13 +43,13 @@ describe('getModuleMetadata()', () => {
   });
 
   it('decorator with some data', () => {
-    @featureModule<ModuleMetadata & { anyProperty: any }>({ anyProperty: [] })
+    @featureModule({ id: 'test-id' })
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
-    expect(metadata).toEqual<RawMeta & { anyProperty: any }>({
+    expect(metadata).toEqual({
       decorator: featureModule,
-      anyProperty: [],
+      id: 'test-id',
       declaredInDir: CallsiteUtils.getCallerDir(),
     });
   });
@@ -58,16 +58,14 @@ describe('getModuleMetadata()', () => {
     const providers = new Providers().useValue('token2', 'value2');
 
     @featureModule({
-      providersPerMod: [Provider1],
-      providersPerRou: providers,
+      providersPerMod: [Provider1]
     })
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
-    expect(metadata).toEqual<RawMeta & { providersPerRou: any }>({
+    expect(metadata).toEqual<RawMeta>({
       decorator: featureModule,
       providersPerMod: [Provider1],
-      providersPerRou: [{ token: 'token2', useValue: 'value2' }],
       declaredInDir: CallsiteUtils.getCallerDir(),
     });
   });
@@ -75,31 +73,26 @@ describe('getModuleMetadata()', () => {
   it('module with params; some properties are in static metadata, some are in dynamic metadata, some are in both', () => {
     @featureModule({
       providersPerMod: [Provider1],
-      providersPerRou: new Providers().useValue('token1', 'value1'),
       providersPerApp: [Provider0],
     })
     class Module1 {
       static withParams(
         providersPerMod: Provider[],
-      ): BaseModuleWithParams<Module1> & { providersPerRou: Provider[]; providersPerReq: Provider[] } {
+      ): BaseModuleWithParams<Module1> {
         return {
           module: Module1,
           providersPerMod,
-          providersPerRou: [Provider3],
-          providersPerReq: [Provider4],
         };
       }
     }
 
     const metadata = getModuleMetadata(Module1.withParams([Provider2]));
-    expect(metadata).toEqual<RawMeta & { providersPerRou: Provider[]; providersPerReq: Provider[] }>({
+    expect(metadata).toEqual<RawMeta>({
       decorator: featureModule,
       declaredInDir: CallsiteUtils.getCallerDir(),
       extensionsMeta: {},
       providersPerApp: [Provider0], // From static metadata.
       providersPerMod: [Provider1, Provider2], // Merge from static and dynamic metadata.
-      providersPerRou: [{ token: 'token1', useValue: 'value1' }, Provider3], // Transformation from class instance to an array.
-      providersPerReq: [Provider4], // From dynamic metadata.
     });
   });
 
