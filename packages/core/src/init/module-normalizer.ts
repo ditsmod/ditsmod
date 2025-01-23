@@ -89,7 +89,7 @@ export class ModuleNormalizer {
     this.pickMeta(meta, rawMeta);
     meta.extensionsMeta = { ...(meta.extensionsMeta || {}) };
 
-    return rawMeta.moduleNormalizers?.reduce((mt, Cls) => new Cls().normalize(mt), meta) || meta;
+    return meta;
   }
 
   protected checkExtensionConfig(modName: string, extensionConfig: ExtensionConfig, i: number) {

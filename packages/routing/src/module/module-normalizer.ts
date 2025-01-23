@@ -4,7 +4,6 @@ import {
   getModuleMetadata,
   getToken,
   getTokens,
-  IModuleNormalizer,
   isFeatureModule,
   isModuleWithParams,
   isMultiProvider,
@@ -20,19 +19,15 @@ import {
   resolveForwardRef,
 } from '@ditsmod/core';
 
-import { RoutingRawMeta } from './module-metadata.js';
-import {
-  RoutingNormalizedMeta,
-  RoutingRawProvidersMetadata,
-} from '../types/routing-normalized-meta.js';
-import { isAppendsWithParams, isCtrlDecor } from '../types/type.guards.js';
-import { GuardItem, NormalizedGuard } from '../interceptors/guard.js';
-import { Level } from '../types/types.js';
+import { RoutingRawMeta } from '#module/module-metadata.js';
+import { RoutingNormalizedMeta, RoutingRawProvidersMetadata } from '#types/routing-normalized-meta.js';
+import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
+import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
+import { Level } from '#types/types.js';
 
-type MergedNormalizedMeta<T extends AnyObj> = NormalizedMeta<T> &
-  RoutingNormalizedMeta<T>;
+type MergedNormalizedMeta<T extends AnyObj> = NormalizedMeta<T> & RoutingNormalizedMeta<T>;
 
-export class RoutingModuleNormalizer implements IModuleNormalizer {
+export class RoutingModuleNormalizer {
   /**
    * The directory in which the class was declared.
    */
@@ -217,11 +212,7 @@ export class RoutingModuleNormalizer implements IModuleNormalizer {
     }
   }
 
-  protected findAndSetProviders(
-    token: any,
-    rawMeta: RoutingRawProvidersMetadata,
-    meta: RoutingNormalizedMeta,
-  ) {
+  protected findAndSetProviders(token: any, rawMeta: RoutingRawProvidersMetadata, meta: RoutingNormalizedMeta) {
     const levels = ['Rou', 'Req'] as Level[];
     let found = false;
     levels.forEach((level) => {

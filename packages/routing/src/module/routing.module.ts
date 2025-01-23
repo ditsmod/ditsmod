@@ -6,7 +6,6 @@ import { RoutesExtension } from '#extensions/routes.extension.js';
 import { PreRouterExtension } from '#extensions/pre-router.extension.js';
 import { RouteMeta } from '#types/route-data.js';
 import { UseInterceptorExtension } from '#extensions/use-interceptor.extension.js';
-import { RoutingModuleNormalizer } from '#module/module-normalizer.js';
 import { routingMetadata } from '#decorators/routing-module.js';
 
 /**
@@ -18,7 +17,6 @@ import { routingMetadata } from '#decorators/routing-module.js';
   ],
 })
 @featureModule({
-  moduleNormalizers: [RoutingModuleNormalizer],
   providersPerApp: [{ token: Router, useClass: DefaultRouter }, RoutingErrorMediator],
   extensions: [
     { extension: RoutesExtension, beforeExtensions: [PreRouterExtension], exportOnly: true },
