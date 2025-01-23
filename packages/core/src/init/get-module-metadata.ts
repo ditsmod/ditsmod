@@ -5,23 +5,21 @@ import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { mergeArrays } from '#utils/merge-arrays.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { Providers } from '#utils/providers.js';
-import { isRootModule, isModDecor, isModuleWithParams } from '#utils/type-guards.js';
+import { isModDecor, isModuleWithParams } from '#utils/type-guards.js';
 
 /**
  * Merges metadata passed in `rootModule` or `featureModule` decorators with metadata passed
  * in `BaseModuleWithParams`. Merges only those properties that contain an array or an instance of the
  * `Providers` class.
  */
-export function getModuleMetadata(modRefId: ModRefId, isRoot?: boolean): RawMeta | undefined {
+export function getModuleMetadata(modRefId: ModRefId): RawMeta | undefined {
   modRefId = resolveForwardRef(modRefId);
-  const decoratorGuard = isRoot ? isRootModule : isModDecor;
-
   if (!isModuleWithParams(modRefId)) {
-    return reflector.getDecorators(modRefId, decoratorGuard)?.at(0)?.value;
+    return reflector.getDecorators(modRefId, isModDecor)?.at(0)?.value;
   }
 
   const modWitParams = modRefId;
-  const decorAndVal = reflector.getDecorators(modWitParams.module, decoratorGuard)?.at(0);
+  const decorAndVal = reflector.getDecorators(modWitParams.module, isModDecor)?.at(0);
   if (!decorAndVal) {
     return;
   }
