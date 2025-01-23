@@ -11,7 +11,7 @@ import {
   isInjectionToken,
   MultiProvider,
 } from '#di';
-import { featureModule } from '#decorators/module.js';
+import { featureModule } from '#decorators/feature-module.js';
 import { isFeatureModule, isModuleWithParams, isProvider, isRootModule } from './type-guards.js';
 import { rootModule } from '#decorators/root-module.js';
 import { getModuleMetadata } from '#init/get-module-metadata.js';

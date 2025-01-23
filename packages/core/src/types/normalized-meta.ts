@@ -2,7 +2,7 @@ import { MultiProvider } from '#di';
 import { AnyFn, AnyObj, ModuleType } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { BaseModuleWithParams } from './module-metadata.js';
-import { RawMeta } from '#decorators/module.js';
+import { RawMeta } from '#decorators/feature-module.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { ExtensionClass } from '#extension/extension-types.js';
 

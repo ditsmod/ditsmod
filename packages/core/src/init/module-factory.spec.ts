@@ -1,7 +1,7 @@
 import { describe, beforeEach, expect, it } from 'vitest';
 
 import { injectable, Provider, Injector } from '#di';
-import { featureModule } from '#decorators/module.js';
+import { featureModule } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { ModuleFactory } from '#init/module-factory.js';

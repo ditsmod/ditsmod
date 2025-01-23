@@ -5,7 +5,7 @@ import { AnyObj, ModRefId, RequireProps } from '#types/mix.js';
 import { ModuleMetadata, BaseModuleWithParams } from '#types/module-metadata.js';
 import { RootModuleMetadata } from '#types/root-module-metadata.js';
 import { featureModule } from '#decorators/module.js';
-import { RawMeta } from '../decorators/module.js';
+import { RawMeta } from '../decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { CustomError } from '#error/custom-error.js';

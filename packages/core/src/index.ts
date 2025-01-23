@@ -12,7 +12,7 @@ export { defaultProvidersPerApp } from '#init/default-providers-per-app.js';
 export { OnModuleInit } from '#init/hooks.js';
 export { CustomError } from '#error/custom-error.js';
 export { ErrorInfo } from '#error/error-info.js';
-export { featureModule } from '#decorators/module.js';
+export { featureModule } from '#decorators/feature-module.js';
 export { rootModule } from '#decorators/root-module.js';
 export {
   ExtensionCounters,
@@ -71,7 +71,7 @@ export { Providers } from '#utils/providers.js';
 export { CallsiteUtils } from '#utils/callsites.js';
 export { getDebugClassName, clearDebugClassNames } from '#utils/get-debug-class-name.js';
 export { getProviderTarget, getProvidersTargets, getToken, getTokens } from '#utils/get-tokens.js';
-export { RawMeta } from '#decorators/module.js';
+export { RawMeta } from '#decorators/feature-module.js';
 export {
   isChainError,
   isModuleWithParams,

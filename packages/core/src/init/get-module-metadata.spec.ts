@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { forwardRef } from '#di';
-import { featureModule, RawMeta } from '#decorators/module.js';
+import { featureModule, RawMeta } from '#decorators/feature-module.js';
 import { Provider } from '#di/types-and-models.js';
 import { ModuleMetadata, BaseModuleWithParams } from '#types/module-metadata.js';
 import { getModuleMetadata } from './get-module-metadata.js';

@@ -4,7 +4,7 @@ import { injectable, InjectionToken } from '#di';
 import { InputLogLevel, Logger } from '#logger/logger.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { featureModule } from '#decorators/module.js';
+import { featureModule } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { BaseAppInitializer } from '#init/base-app-initializer.js';

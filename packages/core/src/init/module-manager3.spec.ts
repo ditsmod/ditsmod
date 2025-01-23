@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeEach } from 'vitest';
 
-import { featureModule } from '#decorators/module.js';
+import { featureModule } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { forwardRef } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';

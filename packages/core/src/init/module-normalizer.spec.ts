@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { featureModule, RawMeta } from '#decorators/module.js';
+import { featureModule, RawMeta } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { InjectionToken, injectable, forwardRef, Provider } from '#di';
 import { Extension } from '#extension/extension-types.js';

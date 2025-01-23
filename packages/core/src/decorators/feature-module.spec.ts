@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { reflector } from '#di';
-import { featureModule } from './module.js';
+import { featureModule } from './feature-module.js';
 
 describe('Module decorator', () => {
   it('empty decorator', () => {
