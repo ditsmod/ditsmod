@@ -7,7 +7,7 @@ import type { GlobalProviders, MetadataPerMod1 } from '#types/metadata-per-mod.j
 import { ImportObj } from '#types/metadata-per-mod.js';
 import type { ModuleType, Level, ModRefId } from '#types/mix.js';
 import type { Provider } from '#di/types-and-models.js';
-import type { ModuleWithParams } from '#types/module-metadata.js';
+import type { BaseModuleWithParams } from '#types/module-metadata.js';
 import { getCollisions } from '#utils/get-collisions.js';
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
@@ -47,10 +47,10 @@ export class ModuleFactory {
   protected importedProvidersPerMod = new Map<any, ImportObj>();
   protected importedProvidersPerRou = new Map<any, ImportObj>();
   protected importedProvidersPerReq = new Map<any, ImportObj>();
-  protected importedMultiProvidersPerMod = new Map<ModuleType | ModuleWithParams, Provider[]>();
-  protected importedMultiProvidersPerRou = new Map<ModuleType | ModuleWithParams, Provider[]>();
-  protected importedMultiProvidersPerReq = new Map<ModuleType | ModuleWithParams, Provider[]>();
-  protected importedExtensions = new Map<ModuleType | ModuleWithParams, Provider[]>();
+  protected importedMultiProvidersPerMod = new Map<ModuleType | BaseModuleWithParams, Provider[]>();
+  protected importedMultiProvidersPerRou = new Map<ModuleType | BaseModuleWithParams, Provider[]>();
+  protected importedMultiProvidersPerReq = new Map<ModuleType | BaseModuleWithParams, Provider[]>();
+  protected importedExtensions = new Map<ModuleType | BaseModuleWithParams, Provider[]>();
   protected aImportedExtensionConfig: ExtensionConfig[] = [];
 
   /**
@@ -127,10 +127,10 @@ export class ModuleFactory {
     let perMod: Map<any, ImportObj>;
     let perRou: Map<any, ImportObj>;
     let perReq: Map<any, ImportObj>;
-    let multiPerMod: Map<ModuleType | ModuleWithParams, Provider[]>;
-    let multiPerRou: Map<ModuleType | ModuleWithParams, Provider[]>;
-    let multiPerReq: Map<ModuleType | ModuleWithParams, Provider[]>;
-    let extensions: Map<ModuleType | ModuleWithParams, Provider[]>;
+    let multiPerMod: Map<ModuleType | BaseModuleWithParams, Provider[]>;
+    let multiPerRou: Map<ModuleType | BaseModuleWithParams, Provider[]>;
+    let multiPerReq: Map<ModuleType | BaseModuleWithParams, Provider[]>;
+    let extensions: Map<ModuleType | BaseModuleWithParams, Provider[]>;
     let aExtensionConfig: ExtensionConfig[];
     if (meta.isExternal) {
       // External modules do not require global providers and extensions from the application.

@@ -16,8 +16,9 @@ import {
   SystemLogMediator,
 } from '@ditsmod/core';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { AppendsWithParams } from '../types/types.js';
-import { controller } from '../types/controller.js';
+
+import { controller } from '#types/controller.js';
+import { AppendsWithParams, RoutingModuleMetadata } from './module-metadata.js';
 
 type Level = 'Mod';
 /**
@@ -76,16 +77,16 @@ describe.skip('appending modules', () => {
     class Provider1 {}
     class Provider2 {}
 
-    @featureModule({
+    @featureModule<RoutingModuleMetadata>({
       providersPerMod: [Provider2],
       exports: [Provider2],
     })
     class Module0 {}
 
-    @featureModule({ providersPerReq: [{ token: Provider1, useValue: 'some value' }], exports: [Provider1] })
+    @featureModule<RoutingModuleMetadata>({ providersPerReq: [{ token: Provider1, useValue: 'some value' }], exports: [Provider1] })
     class Module1 {}
 
-    @featureModule({ providersPerReq: [Provider1], exports: [Provider1] })
+    @featureModule<RoutingModuleMetadata>({ providersPerReq: [Provider1], exports: [Provider1] })
     class Module2 {}
 
     @rootModule({
@@ -102,10 +103,10 @@ describe.skip('appending modules', () => {
     class Provider1 {}
     class Provider2 {}
 
-    @featureModule({ providersPerReq: [Provider1], exports: [Provider1] })
+    @featureModule<RoutingModuleMetadata>({ providersPerReq: [Provider1], exports: [Provider1] })
     class Module1 {}
 
-    @featureModule({ providersPerReq: [Provider2], exports: [Provider2] })
+    @featureModule<RoutingModuleMetadata>({ providersPerReq: [Provider2], exports: [Provider2] })
     class Module2 {}
 
     @rootModule({
@@ -122,13 +123,13 @@ describe.skip('appending modules', () => {
     class Provider1 {}
     class Provider2 {}
 
-    @featureModule({
+    @featureModule<RoutingModuleMetadata>({
       providersPerReq: [Provider1],
       exports: [Provider1],
     })
     class Module1 {}
 
-    @featureModule({
+    @featureModule<RoutingModuleMetadata>({
       providersPerReq: [{ token: Provider1, useValue: 'some value' }, Provider2],
       exports: [Provider1, Provider2],
     })
@@ -148,10 +149,10 @@ describe.skip('appending modules', () => {
   it('should work with resolved collision', () => {
     class Provider1 {}
 
-    @featureModule({ providersPerReq: [{ token: Provider1, useValue: 'some value' }], exports: [Provider1] })
+    @featureModule<RoutingModuleMetadata>({ providersPerReq: [{ token: Provider1, useValue: 'some value' }], exports: [Provider1] })
     class Module1 {}
 
-    @featureModule({ providersPerReq: [Provider1], exports: [Provider1] })
+    @featureModule<RoutingModuleMetadata>({ providersPerReq: [Provider1], exports: [Provider1] })
     class Module2 {}
 
     @rootModule({
@@ -167,13 +168,13 @@ describe.skip('appending modules', () => {
     @controller()
     class Controller1 {}
 
-    @featureModule({ controllers: [Controller1] })
+    @featureModule<RoutingModuleMetadata>({ controllers: [Controller1] })
     class Module1 {}
 
-    @featureModule({ controllers: [Controller1] })
+    @featureModule<RoutingModuleMetadata>({ controllers: [Controller1] })
     class Module2 {}
 
-    @featureModule({
+    @featureModule<RoutingModuleMetadata>({
       // appends: [Module1, { path: 'some-prefix', module: Module2 }],
       controllers: [Controller1],
     })
@@ -186,15 +187,15 @@ describe.skip('appending modules', () => {
     @controller()
     class Controller1 {}
 
-    @featureModule({ controllers: [Controller1] })
+    @featureModule<RoutingModuleMetadata>({ controllers: [Controller1] })
     class Module1 {}
 
-    @featureModule({ controllers: [Controller1] })
+    @featureModule<RoutingModuleMetadata>({ controllers: [Controller1] })
     class Module2 {}
 
     const mod1: AppendsWithParams = { path: 'prefix1', module: Module1 };
     const mod2: AppendsWithParams = { path: 'prefix2', module: Module2 };
-    @featureModule({
+    @featureModule<RoutingModuleMetadata>({
       // appends: [mod1, mod2],
       controllers: [Controller1],
     })
@@ -230,10 +231,10 @@ describe.skip('appending modules', () => {
     @controller()
     class Controller1 {}
 
-    @featureModule({ controllers: [Controller1] })
+    @featureModule<RoutingModuleMetadata>({ controllers: [Controller1] })
     class Module1 {}
 
-    @featureModule({
+    @featureModule<RoutingModuleMetadata>({
       imports: [Module1],
       // appends: [Module1],
       controllers: [Controller1],
@@ -250,13 +251,13 @@ describe.skip('appending modules', () => {
     @controller()
     class Controller1 {}
 
-    @featureModule({
+    @featureModule<RoutingModuleMetadata>({
       providersPerMod: [Provider1, Provider2],
       exports: [Provider1, Provider2],
     })
     class Module1 {}
 
-    @featureModule({
+    @featureModule<RoutingModuleMetadata>({
       // appends: [Module1],
       controllers: [Controller1],
     })
@@ -272,13 +273,13 @@ describe.skip('appending modules', () => {
     @controller()
     class Controller1 {}
 
-    @featureModule({
+    @featureModule<RoutingModuleMetadata>({
       providersPerMod: [Provider1, Provider2],
       exports: [Provider1, Provider2],
     })
     class Module1 {}
 
-    @featureModule({
+    @featureModule<RoutingModuleMetadata>({
       // appends: [{ path: '', module: Module1 }],
       controllers: [Controller1],
     })
@@ -294,14 +295,14 @@ describe.skip('appending modules', () => {
     @controller()
     class Controller1 {}
 
-    @featureModule({
+    @featureModule<RoutingModuleMetadata>({
       providersPerMod: [Provider1, Provider2],
       exports: [Provider1, Provider2],
       controllers: [Controller1],
     })
     class Module1 {}
 
-    @featureModule({
+    @featureModule<RoutingModuleMetadata>({
       // appends: [Module1],
       controllers: [Controller1],
     })
@@ -314,13 +315,13 @@ describe.skip('appending modules', () => {
     @controller()
     class Controller1 {}
 
-    @featureModule({ controllers: [Controller1] })
+    @featureModule<RoutingModuleMetadata>({ controllers: [Controller1] })
     class Module1 {}
 
-    @featureModule({ controllers: [Controller1] })
+    @featureModule<RoutingModuleMetadata>({ controllers: [Controller1] })
     class Module2 {}
 
-    @featureModule({
+    @featureModule<RoutingModuleMetadata>({
       // appends: [Module1, { path: 'some-prefix', module: Module2 }],
       controllers: [Controller1],
     })
@@ -333,15 +334,15 @@ describe.skip('appending modules', () => {
     @controller()
     class Controller1 {}
 
-    @featureModule({ controllers: [Controller1] })
+    @featureModule<RoutingModuleMetadata>({ controllers: [Controller1] })
     class Module1 {}
 
-    @featureModule({ controllers: [Controller1] })
+    @featureModule<RoutingModuleMetadata>({ controllers: [Controller1] })
     class Module2 {}
 
     const mod1: AppendsWithParams = { path: 'prefix1', module: Module1 };
     const mod2: AppendsWithParams = { path: 'prefix2', module: Module2 };
-    @featureModule({
+    @featureModule<RoutingModuleMetadata>({
       // appends: [mod1, mod2],
       controllers: [Controller1],
     })

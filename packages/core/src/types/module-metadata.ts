@@ -15,12 +15,12 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
    */
   id?: string;
   /**
-   * List of modules or `ModuleWithParams` imported by this module.
+   * List of modules or `BaseModuleWithParams` imported by this module.
    * Also you can imports modules and set some prefix per each the module.
    */
-  imports?: Array<ModuleType | ModuleWithParams>;
+  imports?: Array<ModuleType | BaseModuleWithParams>;
   /**
-   * List of modules, `ModuleWithParams` or tokens of providers exported by this
+   * List of modules, `BaseModuleWithParams` or tokens of providers exported by this
    * module.
    */
   exports?: any[];
@@ -39,17 +39,14 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  resolvedCollisionsPerMod?: [any, ModuleType | ModuleWithParams][];
+  resolvedCollisionsPerMod?: [any, ModuleType | BaseModuleWithParams][];
 }
-
-export type ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj> = BaseModuleWithParams<M, E>;
-
 export interface BaseModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
   extends Partial<ProvidersMetadata> {
   id?: string;
   module: ModuleType<M>;
   /**
-   * List of modules, `ModuleWithParams` or tokens of providers exported by this
+   * List of modules, `BaseModuleWithParams` or tokens of providers exported by this
    * module.
    */
   exports?: any[];

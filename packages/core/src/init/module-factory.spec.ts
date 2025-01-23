@@ -9,13 +9,13 @@ import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { GlobalProviders, ImportObj, MetadataPerMod1 } from '#types/metadata-per-mod.js';
 import { ModuleType, Level } from '#types/mix.js';
-import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
+import { ModuleMetadata, BaseModuleWithParams } from '#types/module-metadata.js';
 import { getImportedProviders } from '#utils/get-imports.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { RootModuleMetadata } from '#types/root-module-metadata.js';
 
-type ModRefId = ModuleType | ModuleWithParams;
+type ModRefId = ModuleType | BaseModuleWithParams;
 
 describe('ModuleFactory', () => {
   class Provider1 {}
@@ -755,10 +755,10 @@ describe('ModuleFactory', () => {
       //       }
       //     }
 
-      //     const moduleWithParams = Module2.withParams();
+      //     const baseModuleWithParams = Module2.withParams();
 
       //     @rootModule<RootModuleMetadata>({
-      //       imports: [Module1, moduleWithParams],
+      //       imports: [Module1, baseModuleWithParams],
       //       resolvedCollisionsPerMod: [[Provider1, Module1]],
       //     })
       //     class AppModule {}
@@ -769,7 +769,7 @@ describe('ModuleFactory', () => {
       //     ).not.toThrow();
       //     expect([...mock.importedProvidersPerMod]).toEqual([
       //       [Provider1, { modRefId: Module1, providers: [Provider1] }],
-      //       [Provider2, { modRefId: moduleWithParams, providers: [Provider2] }],
+      //       [Provider2, { modRefId: baseModuleWithParams, providers: [Provider2] }],
       //     ]);
       //   });
 

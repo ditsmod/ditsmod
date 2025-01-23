@@ -6,7 +6,7 @@ import { NormalizedMeta } from '#types/normalized-meta.js';
 import { ImportedTokensMap } from '#types/metadata-per-mod.js';
 import { ModRefId, ModuleType, Level } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
+import { BaseModuleWithParams } from '#types/module-metadata.js';
 import { ModuleFactory } from '#init/module-factory.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
@@ -16,7 +16,7 @@ import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 describe('ImportsResolver', () => {
   @injectable()
   class ImportsResolverMock extends ImportsResolver {
-    declare unfinishedSearchDependecies: [ModuleType | ModuleWithParams, Provider][];
+    declare unfinishedSearchDependecies: [ModuleType | BaseModuleWithParams, Provider][];
     override resolveImportedProviders(
       targetProviders: NormalizedMeta,
       importedTokensMap: ImportedTokensMap,
@@ -24,10 +24,10 @@ describe('ImportsResolver', () => {
     ) {
       return super.resolveImportedProviders(targetProviders, importedTokensMap, levels);
     }
-    override addToUnfinishedSearchDependecies(module: ModuleType | ModuleWithParams, provider: Provider) {
+    override addToUnfinishedSearchDependecies(module: ModuleType | BaseModuleWithParams, provider: Provider) {
       return super.addToUnfinishedSearchDependecies(module, provider);
     }
-    override deleteFromUnfinishedSearchDependecies(module: ModuleType | ModuleWithParams, provider: Provider) {
+    override deleteFromUnfinishedSearchDependecies(module: ModuleType | BaseModuleWithParams, provider: Provider) {
       return super.deleteFromUnfinishedSearchDependecies(module, provider);
     }
 

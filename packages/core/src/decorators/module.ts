@@ -1,5 +1,5 @@
 import { makeClassDecorator } from '#di';
-import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
+import { ModuleMetadata, BaseModuleWithParams } from '#types/module-metadata.js';
 import { AnyFn, ModuleType } from '#types/mix.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { objectKeys } from '#utils/object-keys.js';
@@ -32,5 +32,5 @@ export interface RawMeta extends ModuleMetadata {
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  resolvedCollisionsPerApp?: [any, ModuleType | ModuleWithParams][];
+  resolvedCollisionsPerApp?: [any, ModuleType | BaseModuleWithParams][];
 }

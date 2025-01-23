@@ -2,7 +2,7 @@ import {
   AnyObj,
   Provider,
   ModuleType,
-  ModuleWithParams,
+  BaseModuleWithParams,
   MultiProvider,
   Class,
   ProvidersMetadata,
@@ -29,7 +29,7 @@ export class RoutingNormalizedMeta<T extends AnyObj = AnyObj> extends RoutingPro
    * The module setted here must be identical to the module
    * passed to "imports", "exports" or "appends" array of `@featureModule` metadata.
    */
-  modRefId: ModuleType<T> | ModuleWithParams<T> | AppendsWithParams<T>;
+  modRefId: ModuleType<T> | BaseModuleWithParams<T> | AppendsWithParams<T>;
   name: string;
   rawMeta: RoutingRawMeta;
   exportedProvidersPerRou: Provider[] = [];
@@ -37,8 +37,8 @@ export class RoutingNormalizedMeta<T extends AnyObj = AnyObj> extends RoutingPro
   exportedMultiProvidersPerRou: MultiProvider[] = [];
   exportedMultiProvidersPerReq: MultiProvider[] = [];
   guardsPerMod: NormalizedGuard[] = [];
-  resolvedCollisionsPerRou: [any, ModuleType | ModuleWithParams][] = [];
-  resolvedCollisionsPerReq: [any, ModuleType | ModuleWithParams][] = [];
+  resolvedCollisionsPerRou: [any, ModuleType | BaseModuleWithParams][] = [];
+  resolvedCollisionsPerReq: [any, ModuleType | BaseModuleWithParams][] = [];
   appendsWithParams: AppendsWithParams[] = [];
   appendsModules: ModuleType[] = [];
   controllers: Class[] = [];

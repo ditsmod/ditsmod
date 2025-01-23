@@ -9,7 +9,7 @@ import { isRootModule, isModDecor, isModuleWithParams } from '#utils/type-guards
 
 /**
  * Merges metadata passed in `rootModule` or `featureModule` decorators with metadata passed
- * in `ModuleWithParams`. Merges only those properties that contain an array or an instance of the
+ * in `BaseModuleWithParams`. Merges only those properties that contain an array or an instance of the
  * `Providers` class.
  */
 export function getModuleMetadata(modRefId: ModRefId, isRoot?: boolean): RawMeta | undefined {

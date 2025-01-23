@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   ModuleType,
-  ModuleWithParams,
+  BaseModuleWithParams,
   ModuleManager,
   NormalizedMeta,
   AnyObj,
@@ -22,13 +22,13 @@ import { controller } from '../types/controller.js';
 
 describe('ModuleManager', () => {
   console.log = vi.fn();
-  type ModuleId = string | ModuleType | ModuleWithParams;
+  type ModuleId = string | ModuleType | BaseModuleWithParams;
 
   class MockModuleManager extends ModuleManager {
-    override map = new Map<ModuleType | ModuleWithParams, NormalizedMeta>();
-    override mapId = new Map<string, ModuleType | ModuleWithParams>();
-    override oldMap = new Map<ModuleType | ModuleWithParams, NormalizedMeta>();
-    override oldMapId = new Map<string, ModuleType | ModuleWithParams>();
+    override map = new Map<ModuleType | BaseModuleWithParams, NormalizedMeta>();
+    override mapId = new Map<string, ModuleType | BaseModuleWithParams>();
+    override oldMap = new Map<ModuleType | BaseModuleWithParams, NormalizedMeta>();
+    override oldMapId = new Map<string, ModuleType | BaseModuleWithParams>();
     override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
       moduleId: ModuleId,
       throwErrIfNotFound?: boolean,
@@ -273,7 +273,7 @@ describe('ModuleManager', () => {
 
     @featureModule({ controllers: [Controller1] })
     class Module1 {
-      static withParams(): ModuleWithParams<Module1> {
+      static withParams(): BaseModuleWithParams<Module1> {
         return {
           module: this,
         };
@@ -299,7 +299,7 @@ describe('ModuleManager', () => {
 
     @featureModule()
     class Module1 {
-      static withParams(): ModuleWithParams<Module1> {
+      static withParams(): BaseModuleWithParams<Module1> {
         return {
           module: this,
           providersPerMod: [{ token: Multi, useClass: Multi, multi: true }],
@@ -321,7 +321,7 @@ describe('ModuleManager', () => {
 
     @featureModule({ controllers: [Controller1] })
     class Module1 {
-      static withParams(): ModuleWithParams<Module1> {
+      static withParams(): BaseModuleWithParams<Module1> {
         return {
           module: this,
         };
@@ -419,7 +419,7 @@ describe('ModuleManager', () => {
 
     @featureModule({ controllers: [Controller1] })
     class Module4 {
-      static withParams(providersPerMod: Provider[]): ModuleWithParams<Module4> {
+      static withParams(providersPerMod: Provider[]): BaseModuleWithParams<Module4> {
         return {
           module: Module4,
           providersPerMod,
@@ -521,7 +521,7 @@ describe('ModuleManager', () => {
 
     @featureModule({ controllers: [Controller1] })
     class Module3 {
-      static withParams(providersPerMod: Provider[]): ModuleWithParams<Module3> {
+      static withParams(providersPerMod: Provider[]): BaseModuleWithParams<Module3> {
         return {
           module: Module3,
           providersPerMod,
@@ -661,7 +661,7 @@ describe('ModuleManager', () => {
 
     @featureModule({ controllers: [Controller1] })
     class Module3 {
-      static withParams(providersPerMod: Provider[]): ModuleWithParams<Module3> {
+      static withParams(providersPerMod: Provider[]): BaseModuleWithParams<Module3> {
         return {
           module: Module3,
           providersPerMod,
@@ -677,7 +677,7 @@ describe('ModuleManager', () => {
     const moduleId = 'my-mix';
     @featureModule({ controllers: [Controller1] })
     class Module4 {
-      static withParams(providersPerMod: Provider[]): ModuleWithParams<Module4> {
+      static withParams(providersPerMod: Provider[]): BaseModuleWithParams<Module4> {
         return {
           id: moduleId,
           module: Module4,

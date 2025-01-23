@@ -9,7 +9,7 @@ import {
   ModuleExtract,
   ModuleManager,
   ModuleType,
-  ModuleWithParams,
+  BaseModuleWithParams,
   NormalizedMeta,
   Provider,
   rootModule,
@@ -25,7 +25,7 @@ function getImportedTokens(map: Map<any, ImportObj<Provider>> | undefined) {
   return [...(map || [])].map(([key]) => key);
 }
 
-type ModRefId = ModuleType | ModuleWithParams;
+type ModRefId = ModuleType | BaseModuleWithParams;
 
 @injectable()
 class AppInitializerMock extends AppInitializer {
@@ -124,9 +124,9 @@ describe('exports/imports', () => {
   })
   class Module5 {}
 
-  const module2WithParams: ModuleWithParams = Module2.withParams();
-  const module3WithParams: ModuleWithParams = { path: 'one', module: Module3 };
-  const module4WithParams: ModuleWithParams = { module: Module4 };
+  const module2WithParams: BaseModuleWithParams = Module2.withParams();
+  const module3WithParams: BaseModuleWithParams = { path: 'one', module: Module3 };
+  const module4WithParams: BaseModuleWithParams = { module: Module4 };
   @rootModule({
     imports: [Module0, Module1, module2WithParams, Module5, module3WithParams, module4WithParams],
     exports: [Module0, module2WithParams, module3WithParams],

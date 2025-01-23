@@ -5,7 +5,7 @@ import {
   featureModule,
   ModuleManager,
   ModuleType,
-  ModuleWithParams,
+  BaseModuleWithParams,
   NormalizedMeta,
   rootModule,
   SystemLogMediator,
@@ -18,13 +18,13 @@ import { AppendsWithParams } from './module-metadata.js';
 
 let mock: MockModuleManager;
 
-type ModuleId = string | ModuleType | ModuleWithParams;
+type ModuleId = string | ModuleType | BaseModuleWithParams;
 
 class MockModuleManager extends ModuleManager {
-  override map = new Map<ModuleType | ModuleWithParams, NormalizedMeta>();
-  override mapId = new Map<string, ModuleType | ModuleWithParams>();
-  override oldMap = new Map<ModuleType | ModuleWithParams, NormalizedMeta>();
-  override oldMapId = new Map<string, ModuleType | ModuleWithParams>();
+  override map = new Map<ModuleType | BaseModuleWithParams, NormalizedMeta>();
+  override mapId = new Map<string, ModuleType | BaseModuleWithParams>();
+  override oldMap = new Map<ModuleType | BaseModuleWithParams, NormalizedMeta>();
+  override oldMapId = new Map<string, ModuleType | BaseModuleWithParams>();
   override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound?: boolean,
@@ -74,7 +74,7 @@ it('imports and appends with gruards for some modules', () => {
   @featureModule({ controllers: [Controller2] })
   class Module2 {}
 
-  const moduleWithParams: ModuleWithParams = {
+  const baseModuleWithParams: BaseModuleWithParams = {
     //
     path: 'module1',
     module: Module1,
@@ -88,13 +88,13 @@ it('imports and appends with gruards for some modules', () => {
   };
 
   @rootModule({
-    imports: [moduleWithParams],
+    imports: [baseModuleWithParams],
     appends: [appendsWithParams],
   })
   class AppModule {}
 
   mock.scanRootModule(AppModule);
   expect(mock.map.size).toBe(3);
-  // expect(mock.getMetadata(moduleWithParams)?.guardsPerMod).toMatchObject([{ guard: Guard1 }]);
+  // expect(mock.getMetadata(baseModuleWithParams)?.guardsPerMod).toMatchObject([{ guard: Guard1 }]);
   // expect(mock.getMetadata(appendsWithParams)?.guardsPerMod).toMatchObject([{ guard: Guard2 }]);
 });

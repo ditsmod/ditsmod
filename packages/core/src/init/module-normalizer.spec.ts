@@ -8,14 +8,14 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ModuleManager } from './module-manager.js';
 import { ModuleType, AnyObj } from '#types/mix.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
+import { BaseModuleWithParams } from '#types/module-metadata.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { ModuleNormalizer } from './module-normalizer.js';
 import { inspect } from 'node:util';
 
 describe('ModuleNormalizer', () => {
-  type ModuleId = string | ModuleType | ModuleWithParams;
+  type ModuleId = string | ModuleType | BaseModuleWithParams;
   @injectable()
   class Provider0 {}
   @injectable()
@@ -61,10 +61,10 @@ describe('ModuleNormalizer', () => {
   it('imports module with params, but exports only a module class (without ref to module with params)', () => {
     @featureModule({ providersPerMod: [Provider1], exports: [Provider1] })
     class Module1 {}
-    const moduleWithParams: ModuleWithParams = { module: Module1 };
+    const baseModuleWithParams: BaseModuleWithParams = { module: Module1 };
 
     @featureModule({
-      imports: [moduleWithParams],
+      imports: [baseModuleWithParams],
       exports: [Module1],
     })
     class Module2 {}

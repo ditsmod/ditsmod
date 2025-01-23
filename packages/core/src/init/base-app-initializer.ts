@@ -17,7 +17,7 @@ import { ModuleManager } from '#init/module-manager.js';
 import { PerAppService } from '#services/per-app.service.js';
 import { ModRefId, ModuleType } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
+import { BaseModuleWithParams } from '#types/module-metadata.js';
 import { ExtensionCounters } from '#extension/extension-types.js';
 import { getCollisions } from '#utils/get-collisions.js';
 import { getDuplicates } from '#utils/get-duplicates.js';
@@ -34,7 +34,7 @@ import { getDebugClassName } from '#utils/get-debug-class-name.js';
 export class BaseAppInitializer {
   protected perAppService = new PerAppService();
   protected meta: NormalizedMeta;
-  protected unfinishedScanModules = new Set<ModuleType | ModuleWithParams>();
+  protected unfinishedScanModules = new Set<ModuleType | BaseModuleWithParams>();
 
   constructor(
     protected baseAppOptions: BaseAppOptions,

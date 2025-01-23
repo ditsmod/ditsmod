@@ -4,7 +4,7 @@ import { ChainError } from '@ts-stack/chain-error';
 import { injectable, Injector, reflector } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyObj, ModuleType, ModRefId } from '#types/mix.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
+import { BaseModuleWithParams } from '#types/module-metadata.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { isModuleWithParams, isRootModule } from '#utils/type-guards.js';
 import { clearDebugClassNames, getDebugClassName } from '#utils/get-debug-class-name.js';
@@ -59,7 +59,7 @@ export class ModuleManager {
   /**
    * Returns a snapshot of `NormalizedMeta` for a module.
    */
-  scanModule(modOrObj: ModuleType | ModuleWithParams) {
+  scanModule(modOrObj: ModuleType | BaseModuleWithParams) {
     const meta = this.scanRawModule(modOrObj);
     return this.copyMeta(meta);
   }

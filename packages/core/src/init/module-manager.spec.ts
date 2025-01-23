@@ -8,13 +8,13 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ModuleManager } from './module-manager.js';
 import { ModuleType, AnyObj } from '#types/mix.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
+import { BaseModuleWithParams } from '#types/module-metadata.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 
 describe('ModuleManager', () => {
   console.log = vi.fn();
-  type ModuleId = string | ModuleType | ModuleWithParams;
+  type ModuleId = string | ModuleType | BaseModuleWithParams;
   @injectable()
   class Provider0 {}
   @injectable()
@@ -25,10 +25,10 @@ describe('ModuleManager', () => {
   class Provider3 {}
 
   class MockModuleManager extends ModuleManager {
-    declare map: Map<ModuleType | ModuleWithParams, NormalizedMeta>;
-    declare mapId: Map<string, ModuleType | ModuleWithParams>;
-    declare oldMap: Map<ModuleType | ModuleWithParams, NormalizedMeta>;
-    declare oldMapId: Map<string, ModuleType | ModuleWithParams>;
+    declare map: Map<ModuleType | BaseModuleWithParams, NormalizedMeta>;
+    declare mapId: Map<string, ModuleType | BaseModuleWithParams>;
+    declare oldMap: Map<ModuleType | BaseModuleWithParams, NormalizedMeta>;
+    declare oldMapId: Map<string, ModuleType | BaseModuleWithParams>;
     override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
       moduleId: ModuleId,
       throwErrIfNotFound?: boolean,
@@ -146,17 +146,17 @@ describe('ModuleManager', () => {
   it('reexport same object of module with params', () => {
     @featureModule({ providersPerMod: [Provider1], exports: [Provider1] })
     class Module1 {}
-    const moduleWithParams: ModuleWithParams = { module: Module1 };
+    const baseModuleWithParams: BaseModuleWithParams = { module: Module1 };
 
     @featureModule({
-      imports: [moduleWithParams],
-      exports: [moduleWithParams],
+      imports: [baseModuleWithParams],
+      exports: [baseModuleWithParams],
     })
     class Module2 {}
 
     expect(() => mock.scanModule(Module2)).not.toThrow();
-    expect(mock.getMetadata(moduleWithParams)).toMatchObject<Partial<NormalizedMeta>>({
-      modRefId: moduleWithParams,
+    expect(mock.getMetadata(baseModuleWithParams)).toMatchObject<Partial<NormalizedMeta>>({
+      modRefId: baseModuleWithParams,
     });
     expect(mock.getMetadata(Module1)).toBeUndefined();
   });
@@ -168,7 +168,7 @@ describe('ModuleManager', () => {
 
     @featureModule()
     class Module1 {
-      static withParams(): ModuleWithParams<Module1> {
+      static withParams(): BaseModuleWithParams<Module1> {
         return {
           module: this,
           providersPerMod: [{ token: Multi, useClass: Multi, multi: true }],
@@ -177,9 +177,9 @@ describe('ModuleManager', () => {
       }
     }
 
-    const moduleWithParams = Module1.withParams();
+    const baseModuleWithParams = Module1.withParams();
 
-    const meta = mock.scanModule(moduleWithParams);
+    const meta = mock.scanModule(baseModuleWithParams);
     expect(meta.exportedProvidersPerMod.length).toBe(0);
     expect(meta.exportedMultiProvidersPerMod).toEqual(exportedMultiProvidersPerMod);
   });
@@ -198,7 +198,7 @@ describe('ModuleManager', () => {
 
     @featureModule({ providersPerMod: [Provider1], exports: [Provider1] })
     class Module4 {
-      static withParams(providersPerMod: Provider[]): ModuleWithParams<Module4> {
+      static withParams(providersPerMod: Provider[]): BaseModuleWithParams<Module4> {
         return {
           module: Module4,
           providersPerMod,
@@ -290,7 +290,7 @@ describe('ModuleManager', () => {
 
     @featureModule({ providersPerMod: [Provider1], exports: [Provider1] })
     class Module3 {
-      static withParams(providersPerMod: Provider[]): ModuleWithParams<Module3> {
+      static withParams(providersPerMod: Provider[]): BaseModuleWithParams<Module3> {
         return {
           module: Module3,
           providersPerMod,
@@ -424,7 +424,7 @@ describe('ModuleManager', () => {
 
     @featureModule({ providersPerMod: [Provider1], exports: [Provider1] })
     class Module3 {
-      static withParams(providersPerMod: Provider[]): ModuleWithParams<Module3> {
+      static withParams(providersPerMod: Provider[]): BaseModuleWithParams<Module3> {
         return {
           module: Module3,
           providersPerMod,
@@ -437,7 +437,7 @@ describe('ModuleManager', () => {
     const moduleId = 'my-mix';
     @featureModule({ providersPerMod: [Provider1], exports: [Provider1] })
     class Module4 {
-      static withParams(providersPerMod: Provider[]): ModuleWithParams<Module4> {
+      static withParams(providersPerMod: Provider[]): BaseModuleWithParams<Module4> {
         return {
           id: moduleId,
           module: Module4,
