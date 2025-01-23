@@ -8,7 +8,7 @@ import { Providers } from '#utils/providers.js';
 export const featureModule: FeatureModuleDecorator = makeClassDecorator(transformModule);
 
 export interface FeatureModuleDecorator {
-  <T extends ModuleMetadata = {}>(data?: T): any;
+  (data?: ModuleMetadata): any;
 }
 
 export function transformModule(data?: ModuleMetadata): RawMeta {
