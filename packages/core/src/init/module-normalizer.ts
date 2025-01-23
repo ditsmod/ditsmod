@@ -5,8 +5,9 @@ import {
   isTokenProvider,
   isValueProvider,
   MultiProvider,
+  reflector,
 } from '#di';
-import { isModuleWithParams, isRootModule, isProvider } from '#utils/type-guards.js';
+import { isModuleWithParams, isRootModule, isProvider, isModDecor } from '#utils/type-guards.js';
 import {
   ExtensionConfig,
   getExtensionProvider,
@@ -25,7 +26,8 @@ import { ModuleMetadata } from '#types/module-metadata.js';
 import { Extension, ExtensionClass } from '#extension/extension-types.js';
 import { normalizeProviders } from '#utils/ng-utils.js';
 import { isExtensionConfig } from '#extension/type-guards.js';
-import { getModuleMetadata } from './get-module-metadata.js';
+import { mergeArrays } from '#utils/merge-arrays.js';
+import { objectKeys } from '#utils/object-keys.js';
 
 export class ModuleNormalizer {
   /**
@@ -37,7 +39,7 @@ export class ModuleNormalizer {
    * Returns normalized module metadata.
    */
   normalize(modRefId: ModRefId) {
-    const rawMeta = getModuleMetadata(modRefId);
+    const rawMeta = this.getModuleMetadata(modRefId);
     const modName = getDebugClassName(modRefId);
     if (!rawMeta) {
       throw new Error(`Module build failed: module "${modName}" does not have the "@featureModule()" decorator`);
@@ -92,6 +94,41 @@ export class ModuleNormalizer {
     return meta;
   }
 
+  protected getModuleMetadata(modRefId: ModRefId): RawMeta | undefined {
+    modRefId = resolveForwardRef(modRefId);
+    if (!isModuleWithParams(modRefId)) {
+      return reflector.getDecorators(modRefId, isModDecor)?.at(0)?.value;
+    }
+
+    const modWitParams = modRefId;
+    const decorAndVal = reflector.getDecorators(modWitParams.module, isModDecor)?.at(0);
+    if (!decorAndVal) {
+      return;
+    }
+    const modMetadata = decorAndVal.value;
+
+    if (modMetadata.id) {
+      const modName = getDebugClassName(modWitParams.module);
+      const msg =
+        `${modName} must not have an "id" in the metadata of the decorator @featureModule. ` +
+        'Instead, you can specify the "id" in the object that contains the module parameters.';
+      throw new Error(msg);
+    }
+    const metadata = Object.assign({}, modMetadata);
+    metadata.id = modWitParams.id;
+    if (isModuleWithParams(modWitParams)) {
+      objectKeys(modWitParams).forEach((p) => {
+        // If here is object with [Symbol.iterator]() method, this transform it to an array.
+        if (Array.isArray(modWitParams[p]) || modWitParams[p] instanceof Providers) {
+          (metadata as any)[p] = mergeArrays((metadata as any)[p], modWitParams[p]);
+        }
+      });
+
+      metadata.extensionsMeta = { ...modMetadata.extensionsMeta, ...modWitParams.extensionsMeta };
+    }
+    return metadata;
+  }
+
   protected checkExtensionConfig(modName: string, extensionConfig: ExtensionConfig, i: number) {
     if (!isConfigWithOverrideExtension(extensionConfig)) {
       if (!extensionConfig.extension) {
@@ -144,7 +181,7 @@ export class ModuleNormalizer {
         }
       } else if (isProvider(exp) || getTokens([...(rawMeta.providersPerMod || [])]).includes(exp)) {
         this.findAndSetProviders(exp, rawMeta, meta);
-      } else if (getModuleMetadata(exp)) {
+      } else if (this.getModuleMetadata(exp)) {
         meta.exportsModules.push(exp);
       } else {
         this.throwUnidentifiedToken(modName, exp);
