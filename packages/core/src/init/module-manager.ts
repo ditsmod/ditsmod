@@ -5,13 +5,13 @@ import { injectable, Injector, reflector } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyObj, ModuleType, ModRefId } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
-import { NormalizedModule } from '#types/normalized-module.js';
+import { NormalizedMeta } from '#types/normalized-meta.js';
 import { isModuleWithParams, isRootModule } from '#utils/type-guards.js';
 import { clearDebugClassNames, getDebugClassName } from '#utils/get-debug-class-name.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { ModuleNormalizer } from '#init/module-normalizer.js';
 
-export type ModulesMap = Map<ModRefId, NormalizedModule>;
+export type ModulesMap = Map<ModRefId, NormalizedMeta>;
 export type ModulesMapId = Map<string, ModRefId>;
 type ModuleId = string | ModRefId;
 
@@ -39,7 +39,7 @@ export class ModuleManager {
   constructor(protected systemLogMediator: SystemLogMediator) {}
 
   /**
-   * Creates a snapshot of `NormalizedModule` for the root module, stores locally and returns it.
+   * Creates a snapshot of `NormalizedMeta` for the root module, stores locally and returns it.
    * You can also get the result this way: `moduleManager.getMetadata('root')`.
    */
   scanRootModule(appModule: ModuleType) {
@@ -57,7 +57,7 @@ export class ModuleManager {
   }
 
   /**
-   * Returns a snapshot of `NormalizedModule` for a module.
+   * Returns a snapshot of `NormalizedMeta` for a module.
    */
   scanModule(modOrObj: ModuleType | ModuleWithParams) {
     const meta = this.scanRawModule(modOrObj);
@@ -65,18 +65,18 @@ export class ModuleManager {
   }
 
   /**
-   * Returns a snapshot of `NormalizedModule` for given module or module ID.
+   * Returns a snapshot of `NormalizedMeta` for given module or module ID.
    * If this snapshot is later mutated outside of `ModuleManager`, it does not affect
    * the new snapshot that later returns this method.
    */
   getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound?: false,
-  ): NormalizedModule | undefined;
+  ): NormalizedMeta | undefined;
   getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound: true,
-  ): NormalizedModule;
+  ): NormalizedMeta;
   getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrIfNotFound?: boolean) {
     const meta = this.getOriginMetadata<T, A>(moduleId, throwErrIfNotFound);
     if (meta) {
@@ -249,8 +249,8 @@ export class ModuleManager {
     return meta;
   }
 
-  protected copyMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(meta: NormalizedModule) {
-    meta = { ...(meta || ({} as NormalizedModule)) };
+  protected copyMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(meta: NormalizedMeta) {
+    meta = { ...(meta || ({} as NormalizedMeta)) };
     objectKeys(meta).forEach((p) => {
       if (Array.isArray(meta[p])) {
         (meta as any)[p] = meta[p].slice();
@@ -265,23 +265,23 @@ export class ModuleManager {
   protected getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound?: boolean,
-  ): NormalizedModule | undefined;
+  ): NormalizedMeta | undefined;
   protected getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound: true,
-  ): NormalizedModule;
+  ): NormalizedMeta;
   protected getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound?: boolean,
   ) {
-    let meta: NormalizedModule | undefined;
+    let meta: NormalizedMeta | undefined;
     if (typeof moduleId == 'string') {
       const mapId = this.mapId.get(moduleId);
       if (mapId) {
-        meta = this.map.get(mapId) as NormalizedModule;
+        meta = this.map.get(mapId) as NormalizedMeta;
       }
     } else {
-      meta = this.map.get(moduleId) as NormalizedModule;
+      meta = this.map.get(moduleId) as NormalizedMeta;
     }
 
     if (throwErrIfNotFound && !meta) {
@@ -320,7 +320,7 @@ export class ModuleManager {
     );
   }
 
-  protected normalizeMetadata(modRefId: ModRefId): NormalizedModule {
+  protected normalizeMetadata(modRefId: ModRefId): NormalizedMeta {
     try {
       return this.moduleNormalizer.normalize(modRefId);
     } catch (err: any) {

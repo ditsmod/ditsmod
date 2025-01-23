@@ -7,7 +7,7 @@ import { RootModuleMetadata } from '#types/root-module-metadata.js';
 import { featureModule } from '#decorators/module.js';
 import { RawMeta } from '../decorators/module.js';
 import { rootModule } from '#decorators/root-module.js';
-import { NormalizedModule } from '#types/normalized-module.js';
+import { NormalizedMeta } from '#types/normalized-meta.js';
 import { CustomError } from '#error/custom-error.js';
 
 export interface TypeGuard<T> {
@@ -23,16 +23,16 @@ export function isCustomError(err: any): err is CustomError {
 }
 
 export function isFeatureModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<RawMeta>;
-export function isFeatureModule(meta?: NormalizedModule): meta is NormalizedModule<ModuleMetadata>;
-export function isFeatureModule(arg?: DecoratorAndValue | NormalizedModule): arg is DecoratorAndValue<RawMeta> {
+export function isFeatureModule(meta?: NormalizedMeta): meta is NormalizedMeta<ModuleMetadata>;
+export function isFeatureModule(arg?: DecoratorAndValue | NormalizedMeta): arg is DecoratorAndValue<RawMeta> {
   return arg?.decorator === featureModule;
 }
 
 export function isRootModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<RawMeta>;
 export function isRootModule(arg?: RawMeta): arg is RawMeta;
-export function isRootModule(meta?: NormalizedModule): meta is NormalizedModule<RootModuleMetadata>;
+export function isRootModule(meta?: NormalizedMeta): meta is NormalizedMeta<RootModuleMetadata>;
 export function isRootModule(
-  arg?: DecoratorAndValue | RawMeta | NormalizedModule,
+  arg?: DecoratorAndValue | RawMeta | NormalizedMeta,
 ): arg is DecoratorAndValue<RawMeta> {
   return arg?.decorator === rootModule;
 }

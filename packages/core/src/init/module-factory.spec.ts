@@ -3,7 +3,7 @@ import { describe, beforeEach, expect, it } from 'vitest';
 import { injectable, Provider, Injector } from '#di';
 import { featureModule } from '#decorators/module.js';
 import { rootModule } from '#decorators/root-module.js';
-import { NormalizedModule } from '#types/normalized-module.js';
+import { NormalizedMeta } from '#types/normalized-meta.js';
 import { ModuleFactory } from '#init/module-factory.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ModuleManager } from '#init/module-manager.js';
@@ -28,7 +28,7 @@ describe('ModuleFactory', () => {
     injectorPerMod: Injector;
     declare prefixPerMod: string;
     override moduleName = 'MockModule';
-    override meta = new NormalizedModule();
+    override meta = new NormalizedMeta();
     override appMetadataMap = new Map<ModuleType, MetadataPerMod1>();
     override importedProvidersPerMod = new Map<any, ImportObj>();
     override importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();

@@ -10,7 +10,7 @@ import {
   ModuleFactory,
   ModuleManager,
   ModuleType,
-  NormalizedModule,
+  NormalizedMeta,
   Provider,
   rootModule,
   SystemLogMediator,
@@ -36,7 +36,7 @@ class MockModuleFactory extends ModuleFactory {
   injectorPerMod: Injector;
   declare prefixPerMod: string;
   override moduleName = 'MockModule';
-  override meta = new NormalizedModule();
+  override meta = new NormalizedMeta();
   override appMetadataMap = new Map<ModuleType, MetadataPerMod1>();
   override importedProvidersPerMod = new Map<any, ImportObj>();
   override importedProvidersPerRou = new Map<any, ImportObj>();

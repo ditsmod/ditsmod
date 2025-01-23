@@ -9,7 +9,7 @@ import { CallsiteUtils } from '#utils/callsites.js';
 import { ModuleManager } from './module-manager.js';
 import { ModuleType, AnyObj } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
-import { NormalizedModule } from '#types/normalized-module.js';
+import { NormalizedMeta } from '#types/normalized-meta.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 
 describe('ModuleManager', () => {
@@ -25,18 +25,18 @@ describe('ModuleManager', () => {
   class Provider3 {}
 
   class MockModuleManager extends ModuleManager {
-    declare map: Map<ModuleType | ModuleWithParams, NormalizedModule>;
+    declare map: Map<ModuleType | ModuleWithParams, NormalizedMeta>;
     declare mapId: Map<string, ModuleType | ModuleWithParams>;
-    declare oldMap: Map<ModuleType | ModuleWithParams, NormalizedModule>;
+    declare oldMap: Map<ModuleType | ModuleWithParams, NormalizedMeta>;
     declare oldMapId: Map<string, ModuleType | ModuleWithParams>;
     override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
       moduleId: ModuleId,
       throwErrIfNotFound?: boolean,
-    ): NormalizedModule | undefined;
+    ): NormalizedMeta | undefined;
     override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
       moduleId: ModuleId,
       throwErrIfNotFound: true,
-    ): NormalizedModule;
+    ): NormalizedMeta;
     override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
       moduleId: ModuleId,
       throwErrOnNotFound?: boolean,
@@ -73,10 +73,10 @@ describe('ModuleManager', () => {
     class AppModule {}
 
     expect(() => mock.scanRootModule(AppModule)).not.toThrow();
-    expect(mock.getMetadata(Module1)).toMatchObject<Partial<NormalizedModule>>({
+    expect(mock.getMetadata(Module1)).toMatchObject<Partial<NormalizedMeta>>({
       importsModules: [Module3],
     });
-    expect(mock.getMetadata(Module3)).toMatchObject<Partial<NormalizedModule>>({
+    expect(mock.getMetadata(Module3)).toMatchObject<Partial<NormalizedMeta>>({
       importsModules: [Module2],
     });
   });
@@ -99,7 +99,7 @@ describe('ModuleManager', () => {
     })
     class AppModule {}
 
-    const expectedMeta = new NormalizedModule();
+    const expectedMeta = new NormalizedMeta();
     expectedMeta.id = '';
     expectedMeta.name = 'AppModule';
     expectedMeta.modRefId = AppModule;
@@ -155,7 +155,7 @@ describe('ModuleManager', () => {
     class Module2 {}
 
     expect(() => mock.scanModule(Module2)).not.toThrow();
-    expect(mock.getMetadata(moduleWithParams)).toMatchObject<Partial<NormalizedModule>>({
+    expect(mock.getMetadata(moduleWithParams)).toMatchObject<Partial<NormalizedMeta>>({
       modRefId: moduleWithParams,
     });
     expect(mock.getMetadata(Module1)).toBeUndefined();
@@ -216,7 +216,7 @@ describe('ModuleManager', () => {
     })
     class Module3 {}
 
-    const expectedMeta1 = new NormalizedModule();
+    const expectedMeta1 = new NormalizedMeta();
     expectedMeta1.id = '1';
     expectedMeta1.name = 'Module1';
     expectedMeta1.modRefId = Module1;
@@ -232,7 +232,7 @@ describe('ModuleManager', () => {
     expect(mock.map.size).toBe(4);
     expect(mock.getMetadata('1')).toEqual(expectedMeta1);
 
-    const expectedMeta2 = new NormalizedModule();
+    const expectedMeta2 = new NormalizedMeta();
     expectedMeta2.id = '';
     expectedMeta2.name = 'Module2';
     expectedMeta2.modRefId = Module2;
@@ -247,7 +247,7 @@ describe('ModuleManager', () => {
 
     expect(mock.map.get(Module2)).toEqual(expectedMeta2);
 
-    const expectedMeta3 = new NormalizedModule();
+    const expectedMeta3 = new NormalizedMeta();
     expectedMeta3.id = '';
     expectedMeta3.name = 'Module3';
     expectedMeta3.modRefId = Module3;
@@ -259,7 +259,7 @@ describe('ModuleManager', () => {
 
     expect(mock.getMetadata('root')).toEqual(expectedMeta3);
 
-    const expectedMeta4 = new NormalizedModule();
+    const expectedMeta4 = new NormalizedMeta();
     expectedMeta4.exportedProvidersPerMod = [Provider1];
     expectedMeta4.id = '';
     expectedMeta4.name = 'Module4';
@@ -303,7 +303,7 @@ describe('ModuleManager', () => {
 
     const module3WithProviders = Module3.withParams([Provider2]);
 
-    const expectedMeta1 = new NormalizedModule();
+    const expectedMeta1 = new NormalizedMeta();
     expectedMeta1.id = '';
     expectedMeta1.name = 'AppModule';
     expectedMeta1.modRefId = AppModule;
@@ -346,7 +346,7 @@ describe('ModuleManager', () => {
     expect(mock.oldMapId.size).toBe(0);
     expect(mock.oldMap.size).toBe(0);
 
-    const expectedMeta2 = new NormalizedModule();
+    const expectedMeta2 = new NormalizedMeta();
     expectedMeta2.id = '';
     expectedMeta2.name = 'AppModule';
     expectedMeta2.modRefId = AppModule;
@@ -385,7 +385,7 @@ describe('ModuleManager', () => {
     expect(mock.oldMapId.size).toBe(0);
     expect(mock.oldMap.has(AppModule)).toBe(false);
 
-    const expectedMeta3 = new NormalizedModule();
+    const expectedMeta3 = new NormalizedMeta();
     expectedMeta3.id = '';
     expectedMeta3.name = 'AppModule';
     expectedMeta3.modRefId = AppModule;
@@ -456,7 +456,7 @@ describe('ModuleManager', () => {
     })
     class AppModule {}
 
-    const expectedMeta1 = new NormalizedModule();
+    const expectedMeta1 = new NormalizedMeta();
     expectedMeta1.id = '';
     expectedMeta1.name = 'AppModule';
     expectedMeta1.modRefId = AppModule;
@@ -503,7 +503,7 @@ describe('ModuleManager', () => {
     expect(mock.oldMapId.size).toBe(0);
     expect(mock.oldMap.size).toBe(0);
 
-    const expectedMeta2 = new NormalizedModule();
+    const expectedMeta2 = new NormalizedMeta();
     expectedMeta2.id = '';
     expectedMeta2.name = 'AppModule';
     expectedMeta2.modRefId = AppModule;
@@ -530,7 +530,7 @@ describe('ModuleManager', () => {
     expect(mock.oldMapId.size).toBe(2);
     expect(mock.oldMap.size).toBe(5);
 
-    const expectedMeta3 = new NormalizedModule();
+    const expectedMeta3 = new NormalizedMeta();
     expectedMeta3.id = '';
     expectedMeta3.name = 'AppModule';
     expectedMeta3.modRefId = AppModule;
@@ -555,7 +555,7 @@ describe('ModuleManager', () => {
       importsWithParams: [module3WithProviders, module4WithProviders],
     });
 
-    const expectedMeta4 = new NormalizedModule();
+    const expectedMeta4 = new NormalizedMeta();
     expectedMeta4.id = '';
     expectedMeta4.name = 'AppModule';
     expectedMeta4.modRefId = AppModule;
@@ -598,7 +598,7 @@ describe('ModuleManager', () => {
     })
     class Module3 {}
 
-    const expectedMeta3 = new NormalizedModule();
+    const expectedMeta3 = new NormalizedMeta();
     expectedMeta3.id = '';
     expectedMeta3.name = 'Module3';
     expectedMeta3.modRefId = Module3;
@@ -610,7 +610,7 @@ describe('ModuleManager', () => {
     delete (expectedMeta3 as any).aExtensionConfig;
     delete (expectedMeta3 as any).aExportedExtensionConfig;
 
-    const expectedMeta1 = new NormalizedModule();
+    const expectedMeta1 = new NormalizedMeta();
     expectedMeta1.id = '';
     expectedMeta1.name = 'Module1';
     expectedMeta1.modRefId = Module1;
@@ -647,7 +647,7 @@ describe('ModuleManager', () => {
     })
     class Module3 {}
 
-    const expectedMeta3 = new NormalizedModule();
+    const expectedMeta3 = new NormalizedMeta();
     expectedMeta3.id = '';
     expectedMeta3.name = 'Module3';
     expectedMeta3.modRefId = Module3;
@@ -660,7 +660,7 @@ describe('ModuleManager', () => {
     delete (expectedMeta3 as any).aExtensionConfig;
     delete (expectedMeta3 as any).aExportedExtensionConfig;
 
-    const expectedMeta1 = new NormalizedModule();
+    const expectedMeta1 = new NormalizedMeta();
     expectedMeta1.id = '';
     expectedMeta1.name = 'Module1';
     expectedMeta1.modRefId = Module1;
@@ -698,7 +698,7 @@ describe('ModuleManager', () => {
     })
     class Module3 {}
 
-    const expectedMeta3 = new NormalizedModule();
+    const expectedMeta3 = new NormalizedMeta();
     expectedMeta3.id = '';
     expectedMeta3.name = 'Module3';
     expectedMeta3.modRefId = Module3;
@@ -708,7 +708,7 @@ describe('ModuleManager', () => {
     expectedMeta3.isExternal = false;
     expectedMeta3.rawMeta = expect.any(Object);
 
-    const expectedMeta1 = new NormalizedModule();
+    const expectedMeta1 = new NormalizedMeta();
     expectedMeta1.id = '';
     expectedMeta1.name = 'Module1';
     expectedMeta1.modRefId = Module1;

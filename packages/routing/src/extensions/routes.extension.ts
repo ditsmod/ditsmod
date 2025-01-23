@@ -6,7 +6,7 @@ import {
   reflector,
   Class,
   HttpMethod,
-  NormalizedModule,
+  NormalizedMeta,
   MetadataPerMod2,
 } from '@ditsmod/core';
 
@@ -18,13 +18,13 @@ import { RouteMeta } from '#types/route-data.js';
 import { GuardItem, GuardPerMod1 } from '#interceptors/guard.js';
 import { ControllerRawMetadata1 } from '#types/controller.js';
 import { AppOptions } from '#types/app-options.js';
-import { RoutingNormalizedModule } from '#types/routing-normalized-module-metadata.js';
+import { RoutingNormalizedMeta } from '#types/routing-normalized-meta.js';
 
 /**
  * This metadata returns from `ImportsResolver`. The target for this metadata is `RoutesExtension`.
  */
 export class RoutingMetadataPerMod2 extends MetadataPerMod2 {
-  declare meta: NormalizedModule & RoutingNormalizedModule;
+  declare meta: NormalizedMeta & RoutingNormalizedMeta;
   applyControllers?: boolean;
   guardsPerMod1: GuardPerMod1[];
 }

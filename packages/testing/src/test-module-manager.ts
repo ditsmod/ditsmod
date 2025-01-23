@@ -1,4 +1,4 @@
-import { getModule, ModRefId, ModuleManager, NormalizedModule } from '@ditsmod/core';
+import { getModule, ModRefId, ModuleManager, NormalizedMeta } from '@ditsmod/core';
 
 export class TestModuleManager extends ModuleManager {
   protected externalModules = new Set<ModRefId>();
@@ -10,7 +10,7 @@ export class TestModuleManager extends ModuleManager {
     });
   }
 
-  protected override normalizeMetadata(modRefId: ModRefId): NormalizedModule {
+  protected override normalizeMetadata(modRefId: ModRefId): NormalizedMeta {
     const meta = super.normalizeMetadata(modRefId);
     const mod = getModule(modRefId);
     if (this.externalModules.has(mod)) {

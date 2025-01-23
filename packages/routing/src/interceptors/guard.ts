@@ -1,6 +1,6 @@
-import { Class, makeClassDecorator, NormalizedModule } from '@ditsmod/core';
+import { Class, makeClassDecorator, NormalizedMeta } from '@ditsmod/core';
 import { RequestContext } from '#services/request-context.js';
-import { RoutingNormalizedModule } from '#types/routing-normalized-module-metadata.js';
+import { RoutingNormalizedMeta } from '#types/routing-normalized-meta.js';
 
 export const guard = makeClassDecorator((data?: never) => data);
 
@@ -16,5 +16,5 @@ export interface NormalizedGuard {
 }
 
 export interface GuardPerMod1 extends NormalizedGuard {
-  meta: RoutingNormalizedModule & NormalizedModule;
+  meta: RoutingNormalizedMeta & NormalizedMeta;
 }

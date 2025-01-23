@@ -8,7 +8,7 @@ import { BaseAppOptions } from '#types/app-options.js';
 import { ImportedTokensMap, MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import { AppMetadataMap, Level, ProvidersForMod, ModRefId } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
-import { NormalizedModule } from '#types/normalized-module.js';
+import { NormalizedMeta } from '#types/normalized-meta.js';
 import { ReflectiveDependency, getDependencies } from '#utils/get-dependecies.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
 import { getProviderName } from '#utils/get-provider-name.js';
@@ -60,7 +60,7 @@ export class ImportsResolver {
   }
 
   protected resolveImportedProviders(
-    targetProviders: NormalizedModule,
+    targetProviders: NormalizedMeta,
     importedTokensMap: ImportedTokensMap,
     levels: Level[],
   ) {
@@ -82,7 +82,7 @@ export class ImportsResolver {
   }
 
   protected resolveProvidersForExtensions(
-    targetProviders: NormalizedModule,
+    targetProviders: NormalizedMeta,
     importedTokensMap: ImportedTokensMap,
   ) {
     const currentExtensionsTokens: any[] = [];
@@ -134,7 +134,7 @@ export class ImportsResolver {
     this.increaseExtensionCounters(targetProviders);
   }
 
-  protected increaseExtensionCounters(meta: NormalizedModule) {
+  protected increaseExtensionCounters(meta: NormalizedMeta) {
     const extensionsProviders = [...meta.extensionsProviders];
     const uniqTargets = new Set<Provider>(getProvidersTargets(extensionsProviders));
 
@@ -295,7 +295,7 @@ export class ImportsResolver {
     return false;
   }
 
-  protected throwError(meta: NormalizedModule, provider: Provider, path: any[], token: any, levels: Level[]) {
+  protected throwError(meta: NormalizedMeta, provider: Provider, path: any[], token: any, levels: Level[]) {
     path = [provider, ...path, token];
     const strPath = getTokens(path)
       .map((t) => t.name || t)

@@ -16,7 +16,7 @@ import {
   ModuleManager,
   ModuleType,
   ModuleWithParams,
-  NormalizedModule,
+  NormalizedMeta,
   Provider,
   rootModule,
   SystemErrorMediator,
@@ -41,7 +41,7 @@ describe('resolve()', () => {
   class ImportsResolverMock extends ImportsResolver {
     declare unfinishedSearchDependecies: [ModuleType | ModuleWithParams, Provider][];
     override resolveImportedProviders(
-      targetProviders: NormalizedModule,
+      targetProviders: NormalizedMeta,
       importedTokensMap: ImportedTokensMap,
       levels: Level[],
     ) {
@@ -55,7 +55,7 @@ describe('resolve()', () => {
     }
 
     override grabDependecies(
-      targetMeta: NormalizedModule,
+      targetMeta: NormalizedMeta,
       sourceModule: ModRefId,
       importedProvider: Provider,
       levels: Level[],

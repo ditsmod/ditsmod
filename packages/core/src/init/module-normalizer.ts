@@ -16,7 +16,7 @@ import { AnyObj, ModRefId, Level } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { RawMeta } from '#decorators/module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
-import { NormalizedModule } from '#types/normalized-module.js';
+import { NormalizedMeta } from '#types/normalized-meta.js';
 import { resolveForwardRef } from '#di/forward-ref.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
 import { Class } from '#di/types-and-models.js';
@@ -46,7 +46,7 @@ export class ModuleNormalizer {
     /**
      * Setting initial properties of metadata.
      */
-    const meta = new NormalizedModule();
+    const meta = new NormalizedMeta();
     meta.rawMeta = Object.freeze(rawMeta);
     meta.name = modName;
     meta.modRefId = modRefId;
@@ -101,7 +101,7 @@ export class ModuleNormalizer {
     }
   }
 
-  protected pickMeta(targetObject: NormalizedModule, ...sourceObjects: RawMeta[]) {
+  protected pickMeta(targetObject: NormalizedMeta, ...sourceObjects: RawMeta[]) {
     const trgtObj = targetObject as any;
     sourceObjects.forEach((sourceObj: AnyObj) => {
       sourceObj ??= {};
@@ -119,7 +119,7 @@ export class ModuleNormalizer {
     return trgtObj;
   }
 
-  protected checkWhetherIsExternalModule(rawMeta: RawMeta, meta: NormalizedModule) {
+  protected checkWhetherIsExternalModule(rawMeta: RawMeta, meta: NormalizedMeta) {
     meta.isExternal = false;
     if (isRootModule(rawMeta)) {
       this.rootDeclaredInDir = meta.declaredInDir;
@@ -132,7 +132,7 @@ export class ModuleNormalizer {
     }
   }
 
-  protected exportFromRawMeta(rawMeta: ModuleMetadata, modName: string, meta: NormalizedModule) {
+  protected exportFromRawMeta(rawMeta: ModuleMetadata, modName: string, meta: NormalizedMeta) {
     rawMeta.exports?.forEach((exp, i) => {
       exp = resolveForwardRef(exp);
       this.throwIfUndefined(modName, 'Exports', exp, i);
@@ -152,7 +152,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected checkReexportModules(meta: NormalizedModule) {
+  protected checkReexportModules(meta: NormalizedMeta) {
     const imports = [...meta.importsModules, ...meta.importsWithParams];
     const exports = [...meta.exportsModules, ...meta.exportsWithParams];
 
@@ -236,7 +236,7 @@ export class ModuleNormalizer {
     }
   }
 
-  protected findAndSetProviders(token: any, rawMeta: ModuleMetadata, meta: NormalizedModule) {
+  protected findAndSetProviders(token: any, rawMeta: ModuleMetadata, meta: NormalizedMeta) {
     const levels: Level[] = ['Mod'];
     let found = false;
     levels.forEach((level) => {

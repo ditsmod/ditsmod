@@ -1,4 +1,4 @@
-import { NormalizedModule } from '#types/normalized-module.js';
+import { NormalizedMeta } from '#types/normalized-meta.js';
 import { ModRefId, ModuleType } from './mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from './module-metadata.js';
@@ -33,10 +33,10 @@ export class MetadataPerMod1 {
   prefixPerMod: string;
   // guardsPerMod1: GuardPerMod1[];
   /**
-   * Snapshot of NormalizedModule. If you modify any array in this object,
+   * Snapshot of NormalizedMeta. If you modify any array in this object,
    * the original array will remain unchanged.
    */
-  meta: NormalizedModule;
+  meta: NormalizedMeta;
   /**
    * Map between a token and its ImportObj per level.
    */
@@ -59,6 +59,6 @@ export interface ImportedTokensMap {
 export class MetadataPerMod2 {
   // applyControllers?: boolean;
   prefixPerMod: string;
-  meta: NormalizedModule;
+  meta: NormalizedMeta;
   // guardsPerMod1: GuardPerMod1[];
 }

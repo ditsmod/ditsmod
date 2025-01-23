@@ -12,7 +12,7 @@ import {
   isProvider,
   ModRefId,
   MultiProvider,
-  NormalizedModule,
+  NormalizedMeta,
   Provider,
   Providers,
   RawMeta,
@@ -22,15 +22,15 @@ import {
 
 import { RoutingRawMeta } from './module-metadata.js';
 import {
-  RoutingNormalizedModule,
+  RoutingNormalizedMeta,
   RoutingRawProvidersMetadata,
-} from '../types/routing-normalized-module-metadata.js';
+} from '../types/routing-normalized-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '../types/type.guards.js';
 import { GuardItem, NormalizedGuard } from '../interceptors/guard.js';
 import { Level } from '../types/types.js';
 
-type MergedNormalizedModule<T extends AnyObj> = NormalizedModule<T> &
-  RoutingNormalizedModule<T>;
+type MergedNormalizedMeta<T extends AnyObj> = NormalizedMeta<T> &
+  RoutingNormalizedMeta<T>;
 
 export class RoutingModuleNormalizer implements IModuleNormalizer {
   /**
@@ -41,8 +41,8 @@ export class RoutingModuleNormalizer implements IModuleNormalizer {
   /**
    * Returns normalized module metadata.
    */
-  normalize<T extends NormalizedModule>(baseMeta: T) {
-    const meta = new RoutingNormalizedModule();
+  normalize<T extends NormalizedMeta>(baseMeta: T) {
+    const meta = new RoutingNormalizedMeta();
     const modName = (meta.name = baseMeta.name);
     const rawMeta = baseMeta.rawMeta as RoutingRawMeta;
     // if (isModuleWithParams(meta.modRefId) && meta.modRefId.guards.length) {
@@ -81,7 +81,7 @@ export class RoutingModuleNormalizer implements IModuleNormalizer {
     }
   }
 
-  protected pickMeta(targetObject: RoutingNormalizedModule, ...sourceObjects: RawMeta[]) {
+  protected pickMeta(targetObject: RoutingNormalizedMeta, ...sourceObjects: RawMeta[]) {
     const trgtObj = targetObject as any;
     sourceObjects.forEach((sourceObj: AnyObj) => {
       sourceObj ??= {};
@@ -102,7 +102,7 @@ export class RoutingModuleNormalizer implements IModuleNormalizer {
   protected exportFromRawMeta(
     rawMeta: { exports?: any[] } & RoutingRawProvidersMetadata,
     modName: string,
-    meta: RoutingNormalizedModule,
+    meta: RoutingNormalizedMeta,
   ) {
     rawMeta.exports?.forEach((exp, i) => {
       exp = resolveForwardRef(exp);
@@ -145,7 +145,7 @@ export class RoutingModuleNormalizer implements IModuleNormalizer {
     }
   }
 
-  protected quickCheckMetadata<T extends AnyObj>(meta: MergedNormalizedModule<T>) {
+  protected quickCheckMetadata<T extends AnyObj>(meta: MergedNormalizedMeta<T>) {
     if (
       isFeatureModule(meta) &&
       !meta.exportedProvidersPerReq.length &&
@@ -220,7 +220,7 @@ export class RoutingModuleNormalizer implements IModuleNormalizer {
   protected findAndSetProviders(
     token: any,
     rawMeta: RoutingRawProvidersMetadata,
-    meta: RoutingNormalizedModule,
+    meta: RoutingNormalizedMeta,
   ) {
     const levels = ['Rou', 'Req'] as Level[];
     let found = false;

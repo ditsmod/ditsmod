@@ -2,7 +2,7 @@ import { describe, expect, it, beforeEach } from 'vitest';
 
 import { injectable, Injector } from '#di';
 import { ImportsResolver } from '#init/imports-resolver.js';
-import { NormalizedModule } from '#types/normalized-module.js';
+import { NormalizedMeta } from '#types/normalized-meta.js';
 import { ImportedTokensMap } from '#types/metadata-per-mod.js';
 import { ModRefId, ModuleType, Level } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
@@ -18,7 +18,7 @@ describe('ImportsResolver', () => {
   class ImportsResolverMock extends ImportsResolver {
     declare unfinishedSearchDependecies: [ModuleType | ModuleWithParams, Provider][];
     override resolveImportedProviders(
-      targetProviders: NormalizedModule,
+      targetProviders: NormalizedMeta,
       importedTokensMap: ImportedTokensMap,
       levels: Level[],
     ) {
@@ -32,7 +32,7 @@ describe('ImportsResolver', () => {
     }
 
     override grabDependecies(
-      targetMeta: NormalizedModule,
+      targetMeta: NormalizedMeta,
       sourceModule: ModRefId,
       importedProvider: Provider,
       levels: Level[],
