@@ -83,3 +83,5 @@ export {
   isCustomError,
   TypeGuard,
 } from '#utils/type-guards.js';
+
+export { objectKeys } from '#utils/object-keys.js';
