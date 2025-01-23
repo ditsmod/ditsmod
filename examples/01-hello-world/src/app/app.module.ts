@@ -1,5 +1,5 @@
 import { rootModule, Providers } from '@ditsmod/core';
-import { controller, route, RoutingModule } from '@ditsmod/routing';
+import { controller, route, routingMetadata, RoutingModule } from '@ditsmod/routing';
 
 @controller()
 export class DefaultController {
@@ -17,9 +17,9 @@ export class CtxController {
   }
 }
 
+@routingMetadata({ controllers: [DefaultController, CtxController] })
 @rootModule({
   imports: [RoutingModule],
-  controllers: [DefaultController, CtxController],
   providersPerApp: new Providers().useLogConfig({ level: 'info' }),
 })
 export class AppModule {}

@@ -1,7 +1,7 @@
-import { AnyObj, ProvidersMetadata, ModuleType, ModuleMetadata, Class, Provider, Providers, AnyFn } from '@ditsmod/core';
-import { GuardItem } from '../interceptors/guard.js';
+import { AnyObj, ProvidersMetadata, ModuleType, Class, Provider, Providers, AnyFn } from '@ditsmod/core';
+import { GuardItem } from '#interceptors/guard.js';
 
-export interface RoutingModuleMetadata<T extends AnyObj = AnyObj> extends ModuleMetadata<T> {
+export interface RoutingMetadata {
   /**
    * Providers per route.
    */
@@ -91,7 +91,7 @@ export interface AppendsWithParams2<T extends AnyObj = AnyObj> extends BaseAppen
 /**
  * Raw module metadata returned by reflector.
  */
-export interface RoutingRawMeta extends RoutingModuleMetadata {
+export interface RoutingRawMeta extends RoutingMetadata {
   decorator: AnyFn;
   declaredInDir: string;
   // guards: GuardItem[];
