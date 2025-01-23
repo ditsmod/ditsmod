@@ -1,17 +1,20 @@
 import {
   AnyObj,
   Class,
-  getModuleMetadata,
+  getDebugClassName,
   getToken,
   getTokens,
   isFeatureModule,
+  isModDecor,
   isModuleWithParams,
   isMultiProvider,
   isNormalizedProvider,
   isProvider,
+  mergeArrays,
   ModRefId,
   MultiProvider,
   NormalizedMeta,
+  objectKeys,
   Provider,
   Providers,
   RawMeta,
@@ -67,6 +70,41 @@ export class RoutingModuleNormalizer {
     return mergedMeta;
   }
 
+  protected getModuleMetadata(modRefId: ModRefId): RawMeta | undefined {
+    modRefId = resolveForwardRef(modRefId);
+    if (!isModuleWithParams(modRefId)) {
+      return reflector.getDecorators(modRefId, isModDecor)?.at(0)?.value;
+    }
+
+    const modWitParams = modRefId;
+    const decorAndVal = reflector.getDecorators(modWitParams.module, isModDecor)?.at(0);
+    if (!decorAndVal) {
+      return;
+    }
+    const modMetadata = decorAndVal.value;
+
+    if (modMetadata.id) {
+      const modName = getDebugClassName(modWitParams.module);
+      const msg =
+        `${modName} must not have an "id" in the metadata of the decorator @featureModule. ` +
+        'Instead, you can specify the "id" in the object that contains the module parameters.';
+      throw new Error(msg);
+    }
+    const metadata = Object.assign({}, modMetadata);
+    metadata.id = modWitParams.id;
+    if (isModuleWithParams(modWitParams)) {
+      objectKeys(modWitParams).forEach((p) => {
+        // If here is object with [Symbol.iterator]() method, this transform it to an array.
+        if (Array.isArray(modWitParams[p]) || modWitParams[p] instanceof Providers) {
+          (metadata as any)[p] = mergeArrays((metadata as any)[p], modWitParams[p]);
+        }
+      });
+
+      metadata.extensionsMeta = { ...modMetadata.extensionsMeta, ...modWitParams.extensionsMeta };
+    }
+    return metadata;
+  }
+
   protected checkController(modName: string, Controller: Class) {
     if (!reflector.getDecorators(Controller, isCtrlDecor)) {
       throw new Error(
@@ -111,7 +149,7 @@ export class RoutingModuleNormalizer {
         }
       } else if (isProvider(exp) || providersTokens.includes(exp)) {
         this.findAndSetProviders(exp, rawMeta, meta);
-      } else if (getModuleMetadata(exp)) {
+      } else if (this.getModuleMetadata(exp)) {
         // meta.exportsModules.push(exp);
       } else {
         this.throwUnidentifiedToken(modName, exp);

@@ -30,7 +30,6 @@ export { isExtensionProvider, isExtensionConfig } from '#extension/type-guards.j
 export { ModuleExtract } from '#types/module-extract.js';
 export { Counter } from '#extension/counter.js';
 export { NormalizedMeta } from '#types/normalized-meta.js';
-export { getModuleMetadata } from '#init/get-module-metadata.js';
 export { ProvidersMetadata } from '#types/providers-metadata.js';
 export { ConsoleLogger } from '#logger/console-logger.js';
 export { ExtensionsContext } from '#extension/extensions-context.js';
@@ -60,6 +59,7 @@ export {
 } from '#types/mix.js';
 export { ModuleMetadata, BaseModuleWithParams } from '#types/module-metadata.js';
 export { RootModuleMetadata } from '#types/root-module-metadata.js';
+export { mergeArrays } from '#utils/merge-arrays.js';
 export { deepFreeze } from '#utils/deep-freeze.js';
 export { getDependencies } from '#utils/get-dependecies.js';
 export { ExtensionConfig, isConfigWithOverrideExtension } from '#extension/get-extension-provider.js';
