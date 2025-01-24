@@ -15,7 +15,7 @@ import {
   ModuleFactory,
   ModuleManager,
   ModuleType,
-  BaseModuleWithParams,
+  ModuleWithParams,
   NormalizedMeta,
   Provider,
   rootModule,
@@ -39,7 +39,7 @@ describe('resolve()', () => {
   
   @injectable()
   class ImportsResolverMock extends ImportsResolver {
-    declare unfinishedSearchDependecies: [ModuleType | BaseModuleWithParams, Provider][];
+    declare unfinishedSearchDependecies: [ModuleType | ModuleWithParams, Provider][];
     override resolveImportedProviders(
       targetProviders: NormalizedMeta,
       importedTokensMap: ImportedTokensMap,
@@ -47,10 +47,10 @@ describe('resolve()', () => {
     ) {
       return super.resolveImportedProviders(targetProviders, importedTokensMap, levels);
     }
-    override addToUnfinishedSearchDependecies(module: ModuleType | BaseModuleWithParams, provider: Provider) {
+    override addToUnfinishedSearchDependecies(module: ModuleType | ModuleWithParams, provider: Provider) {
       return super.addToUnfinishedSearchDependecies(module, provider);
     }
-    override deleteFromUnfinishedSearchDependecies(module: ModuleType | BaseModuleWithParams, provider: Provider) {
+    override deleteFromUnfinishedSearchDependecies(module: ModuleType | ModuleWithParams, provider: Provider) {
       return super.deleteFromUnfinishedSearchDependecies(module, provider);
     }
 

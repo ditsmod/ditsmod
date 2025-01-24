@@ -11,7 +11,7 @@ import { BaseAppInitializer } from '#init/base-app-initializer.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { ModuleType } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
-import { BaseModuleWithParams } from '#types/module-metadata.js';
+import { ModuleWithParams } from '#types/module-metadata.js';
 import { Extension, ExtensionCounters } from '#extension/extension-types.js';
 import { ModuleExtract } from '#types/module-extract.js';
 import { ImportObj, MetadataPerMod1 } from '#types/metadata-per-mod.js';
@@ -19,7 +19,7 @@ import { Providers } from '#utils/providers.js';
 import { BaseAppOptions } from '#types/app-options.js';
 
 describe('BaseAppInitializer', () => {
-  type ModRefId = ModuleType | BaseModuleWithParams;
+  type ModRefId = ModuleType | ModuleWithParams;
 
   @injectable()
   class AppInitializerMock extends BaseAppInitializer {
@@ -359,7 +359,7 @@ describe('BaseAppInitializer', () => {
     it('should works with baseModuleWithParams', () => {
       @featureModule({})
       class Module6 {
-        static withParams(providers: Provider[]): BaseModuleWithParams<Module6> {
+        static withParams(providers: Provider[]): ModuleWithParams<Module6> {
           return { module: Module6, providersPerApp: providers };
         }
       }

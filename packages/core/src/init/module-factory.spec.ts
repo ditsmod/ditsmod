@@ -9,13 +9,13 @@ import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { GlobalProviders, ImportObj, MetadataPerMod1 } from '#types/metadata-per-mod.js';
 import { ModuleType, Level } from '#types/mix.js';
-import { ModuleMetadata, BaseModuleWithParams } from '#types/module-metadata.js';
+import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
 import { getImportedProviders } from '#utils/get-imports.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { RootModuleMetadata } from '#types/root-module-metadata.js';
 
-type ModRefId = ModuleType | BaseModuleWithParams;
+type ModRefId = ModuleType | ModuleWithParams;
 
 describe('ModuleFactory', () => {
   class Provider1 {}

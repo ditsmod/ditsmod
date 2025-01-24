@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { forwardRef } from '#di';
 import { featureModule, RawMeta } from '#decorators/feature-module.js';
 import { Provider } from '#di/types-and-models.js';
-import { ModuleMetadata, BaseModuleWithParams } from '#types/module-metadata.js';
+import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
 import { getModuleMetadata } from './get-module-metadata.js';
 import { Providers } from '#utils/providers.js';
 import { CallsiteUtils } from '#utils/callsites.js';
@@ -78,7 +78,7 @@ describe('getModuleMetadata()', () => {
     class Module1 {
       static withParams(
         providersPerMod: Provider[],
-      ): BaseModuleWithParams<Module1> {
+      ): ModuleWithParams<Module1> {
         return {
           module: Module1,
           providersPerMod,
@@ -99,7 +99,7 @@ describe('getModuleMetadata()', () => {
   it('module with params in forwardRef() function', () => {
     @featureModule({})
     class Module1 {
-      static withParams(providersPerMod: Provider[]): BaseModuleWithParams<Module1> {
+      static withParams(providersPerMod: Provider[]): ModuleWithParams<Module1> {
         return {
           module: Module1,
           providersPerMod,
@@ -120,7 +120,7 @@ describe('getModuleMetadata()', () => {
   it('module with param "id"', () => {
     @featureModule({ id: 'someId' })
     class Module1 {
-      static withParams(providersPerMod: Provider[]): BaseModuleWithParams<Module1> {
+      static withParams(providersPerMod: Provider[]): ModuleWithParams<Module1> {
         return {
           module: Module1,
           providersPerMod,

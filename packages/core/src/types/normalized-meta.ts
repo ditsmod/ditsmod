@@ -1,7 +1,7 @@
 import { MultiProvider } from '#di';
 import { AnyFn, AnyObj, ModuleType } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
-import { BaseModuleWithParams } from './module-metadata.js';
+import { ModuleWithParams } from './module-metadata.js';
 import { RawMeta } from '#decorators/feature-module.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { ExtensionClass } from '#extension/extension-types.js';
@@ -14,7 +14,7 @@ export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj
    * The module setted here must be identical to the module
    * passed to "imports", "exports" array of `@featureModule` metadata.
    */
-  modRefId: ModuleType<T> | BaseModuleWithParams<T>;
+  modRefId: ModuleType<T> | ModuleWithParams<T>;
   /**
    * The module name.
    */
@@ -24,7 +24,7 @@ export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj
    */
   id?: string = '';
   importsModules: ModuleType[] = [];
-  importsWithParams: BaseModuleWithParams[] = [];
+  importsWithParams: ModuleWithParams[] = [];
   decorator: AnyFn;
   /**
    * The directory in which the class was declared.
@@ -35,11 +35,11 @@ export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj
    */
   isExternal: boolean;
   exportsModules: ModuleType[] = [];
-  exportsWithParams: BaseModuleWithParams[] = [];
+  exportsWithParams: ModuleWithParams[] = [];
   exportedProvidersPerMod: Provider[] = [];
   exportedMultiProvidersPerMod: MultiProvider[] = [];
-  resolvedCollisionsPerApp: [any, ModuleType | BaseModuleWithParams][] = [];
-  resolvedCollisionsPerMod: [any, ModuleType | BaseModuleWithParams][] = [];
+  resolvedCollisionsPerApp: [any, ModuleType | ModuleWithParams][] = [];
+  resolvedCollisionsPerMod: [any, ModuleType | ModuleWithParams][] = [];
   extensionsProviders: Provider[] = [];
   exportedExtensionsProviders: Provider[] = [];
   aExtensionConfig: ExtensionConfig[] = [];

@@ -1,4 +1,4 @@
-import { AnyObj, Class, DecoratorAndValue, ModuleType, BaseModuleWithParams } from '@ditsmod/core';
+import { AnyObj, Class, DecoratorAndValue, ModuleType, ModuleWithParams } from '@ditsmod/core';
 
 import { route } from '../decorators/route.js';
 import { HttpInterceptor } from '#interceptors/tokens-and-types.js';
@@ -20,7 +20,7 @@ export function isInterceptor(cls?: Class): cls is Class<HttpInterceptor> {
 }
 
 export function isAppendsWithParams(
-  modRefId?: ModuleType | BaseModuleWithParams | AppendsWithParams,
+  modRefId?: ModuleType | ModuleWithParams | AppendsWithParams,
 ): modRefId is AppendsWithParams {
   return (
     (modRefId as AppendsWithParams)?.module !== undefined &&

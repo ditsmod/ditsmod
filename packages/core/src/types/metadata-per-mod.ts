@@ -1,7 +1,7 @@
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { ModRefId, ModuleType } from './mix.js';
 import { Provider } from '#di/types-and-models.js';
-import { BaseModuleWithParams } from './module-metadata.js';
+import { ModuleWithParams } from './module-metadata.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 
 /**
@@ -19,10 +19,10 @@ export class GlobalProviders {
   importedProvidersPerMod = new Map<any, ImportObj>();
   importedProvidersPerRou = new Map<any, ImportObj>();
   importedProvidersPerReq = new Map<any, ImportObj>();
-  importedMultiProvidersPerMod = new Map<ModuleType | BaseModuleWithParams, Provider[]>();
-  importedMultiProvidersPerRou = new Map<ModuleType | BaseModuleWithParams, Provider[]>();
-  importedMultiProvidersPerReq = new Map<ModuleType | BaseModuleWithParams, Provider[]>();
-  importedExtensions = new Map<ModuleType | BaseModuleWithParams, Provider[]>();
+  importedMultiProvidersPerMod = new Map<ModuleType | ModuleWithParams, Provider[]>();
+  importedMultiProvidersPerRou = new Map<ModuleType | ModuleWithParams, Provider[]>();
+  importedMultiProvidersPerReq = new Map<ModuleType | ModuleWithParams, Provider[]>();
+  importedExtensions = new Map<ModuleType | ModuleWithParams, Provider[]>();
   aImportedExtensionConfig: ExtensionConfig[] = [];
 }
 
@@ -47,10 +47,10 @@ export interface ImportedTokensMap {
   perMod: Map<any, ImportObj>;
   perRou: Map<any, ImportObj>;
   perReq: Map<any, ImportObj>;
-  multiPerMod: Map<ModuleType | BaseModuleWithParams, Provider[]>;
-  multiPerRou: Map<ModuleType | BaseModuleWithParams, Provider[]>;
-  multiPerReq: Map<ModuleType | BaseModuleWithParams, Provider[]>;
-  extensions: Map<ModuleType | BaseModuleWithParams, Provider[]>;
+  multiPerMod: Map<ModuleType | ModuleWithParams, Provider[]>;
+  multiPerRou: Map<ModuleType | ModuleWithParams, Provider[]>;
+  multiPerReq: Map<ModuleType | ModuleWithParams, Provider[]>;
+  extensions: Map<ModuleType | ModuleWithParams, Provider[]>;
 }
 
 /**

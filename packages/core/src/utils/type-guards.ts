@@ -2,7 +2,7 @@ import { ChainError } from '@ts-stack/chain-error';
 
 import { Provider, Class, DecoratorAndValue, reflector, isNormalizedProvider } from '#di';
 import { AnyObj, ModRefId, RequireProps } from '#types/mix.js';
-import { ModuleMetadata, BaseModuleWithParams } from '#types/module-metadata.js';
+import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
 import { RootModuleMetadata } from '#types/root-module-metadata.js';
 import { featureModule } from '#decorators/module.js';
 import { RawMeta } from '../decorators/feature-module.js';
@@ -51,8 +51,8 @@ export function hasDeclaredInDir(
   return Boolean(decoratorAndValue?.declaredInDir) && decoratorAndValue?.declaredInDir != '.';
 }
 
-export function isModuleWithParams(modRefId?: ModRefId): modRefId is BaseModuleWithParams {
-  return (modRefId as BaseModuleWithParams)?.module !== undefined;
+export function isModuleWithParams(modRefId?: ModRefId): modRefId is ModuleWithParams {
+  return (modRefId as ModuleWithParams)?.module !== undefined;
 }
 
 export function isProvider(maybeProvider?: any): maybeProvider is Provider {
