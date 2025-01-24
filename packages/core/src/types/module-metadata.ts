@@ -34,10 +34,19 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
    */
   resolvedCollisionsPerMod?: [any, ModuleType | ModuleWithParams][];
 }
-export interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
-  extends Partial<ProvidersMetadata> {
+/**
+ * The interface intended for `moduleWithParams.params`.
+ */
+export interface ModuleParamItem {
+  token: any;
+  metadata: AnyObj;
+}
+export interface ModuleWithParams<M extends AnyObj = AnyObj> {
   id?: string;
   module: ModuleType<M>;
+  params: ModuleParamItem[];
+}
+export interface ModuleParams<E extends AnyObj = AnyObj> extends Partial<ProvidersMetadata> {
   /**
    * List of modules, `ModuleWithParams` or tokens of providers exported by this
    * module.

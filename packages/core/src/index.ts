@@ -57,7 +57,7 @@ export {
   ModRefId,
   UnionToIntersection,
 } from '#types/mix.js';
-export { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
+export { ModuleMetadata, ModuleWithParams, ModuleParamItem } from '#types/module-metadata.js';
 export { RootModuleMetadata } from '#types/root-module-metadata.js';
 export { mergeArrays } from '#utils/merge-arrays.js';
 export { deepFreeze } from '#utils/deep-freeze.js';
