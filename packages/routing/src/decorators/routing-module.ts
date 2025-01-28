@@ -1,22 +1,14 @@
-import {
-  makeClassDecorator,
-  Providers,
-  CallsiteUtils,
-  AnyFn,
-  ModuleType,
-  ModuleWithParams,
-  objectKeys,
-} from '@ditsmod/core';
+import { makeClassDecorator, Providers, AnyFn, objectKeys } from '@ditsmod/core';
 
 import { RoutingMetadata } from '#module/module-metadata.js';
 
-export const routingMetadata: FeatureModuleDecorator = makeClassDecorator(transformModule);
+export const routingMetadata: RoutingMetadataDecorator = makeClassDecorator(transformMetadata);
 
-export interface FeatureModuleDecorator {
+export interface RoutingMetadataDecorator {
   (data?: RoutingMetadata): any;
 }
 
-export function transformModule(data?: RoutingMetadata): RawMeta {
+export function transformMetadata(data?: RoutingMetadata): RoutingRawMeta {
   const metadata = Object.assign({}, data);
   objectKeys(metadata).forEach((p) => {
     // If here is object with [Symbol.iterator]() method, this transform it to an array.
@@ -24,18 +16,12 @@ export function transformModule(data?: RoutingMetadata): RawMeta {
       (metadata as any)[p] = [...metadata[p]];
     }
   });
-  return { decorator: routingMetadata, declaredInDir: CallsiteUtils.getCallerDir(), ...metadata };
+  return { decorator: routingMetadata, ...metadata };
 }
 
 /**
- * Raw module metadata returned by reflector.
+ * Raw routing metadata returned by reflector.
  */
-export interface RawMeta extends RoutingMetadata {
+export interface RoutingRawMeta extends RoutingMetadata {
   decorator: AnyFn;
-  declaredInDir: string;
-  /**
-   * An array of pairs, each of which is in the first place the provider's token,
-   * and in the second - the module from which to import the provider with the specified token.
-   */
-  resolvedCollisionsPerApp?: [any, ModuleType | ModuleWithParams][];
 }
