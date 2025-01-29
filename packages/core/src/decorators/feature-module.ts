@@ -1,7 +1,6 @@
 import { makeClassDecorator } from '#di';
 import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
 import { AnyFn, ModuleType } from '#types/mix.js';
-import { CallsiteUtils } from '#utils/callsites.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { Providers } from '#utils/providers.js';
 
@@ -11,7 +10,7 @@ export interface FeatureModuleDecorator {
   (data?: ModuleMetadata): any;
 }
 
-export function transformModule(data?: ModuleMetadata): RawMeta {
+export function transformModule(data?: ModuleMetadata): ModuleMetadata {
   const metadata = Object.assign({}, data);
   objectKeys(metadata).forEach((p) => {
     // If here is object with [Symbol.iterator]() method, this transform it to an array.
@@ -19,7 +18,7 @@ export function transformModule(data?: ModuleMetadata): RawMeta {
       (metadata as any)[p] = [...metadata[p]];
     }
   });
-  return { decorator: featureModule, declaredInDir: CallsiteUtils.getCallerDir(), ...metadata };
+  return metadata;
 }
 
 /**
