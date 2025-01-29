@@ -4,8 +4,7 @@ import { Provider, Class, DecoratorAndValue, reflector, isNormalizedProvider } f
 import { AnyObj, ModRefId, RequireProps } from '#types/mix.js';
 import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
 import { RootModuleMetadata } from '#types/root-module-metadata.js';
-import { featureModule } from '#decorators/module.js';
-import { RawMeta } from '../decorators/feature-module.js';
+import { featureModule, ModuleWithMetadata, RawMeta } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { CustomError } from '#error/custom-error.js';
@@ -28,12 +27,22 @@ export function isFeatureModule(arg?: DecoratorAndValue | NormalizedMeta): arg i
   return arg?.decorator === featureModule;
 }
 
+export function isModuleWithMetadata(arg?: DecoratorAndValue): arg is DecoratorAndValue<ModuleWithMetadata>;
+export function isModuleWithMetadata(metadata?: ModuleWithMetadata): metadata is ModuleWithMetadata;
+export function isModuleWithMetadata(
+  arg?: DecoratorAndValue | ModuleWithMetadata,
+): arg is DecoratorAndValue<ModuleWithMetadata> {
+  if (arg instanceof DecoratorAndValue) {
+    return arg.value.isModuleMetadata === true;
+  } else {
+    return arg?.isModuleMetadata === true;
+  }
+}
+
 export function isRootModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<RawMeta>;
 export function isRootModule(arg?: RawMeta): arg is RawMeta;
 export function isRootModule(meta?: NormalizedMeta): meta is NormalizedMeta<RootModuleMetadata>;
-export function isRootModule(
-  arg?: DecoratorAndValue | RawMeta | NormalizedMeta,
-): arg is DecoratorAndValue<RawMeta> {
+export function isRootModule(arg?: DecoratorAndValue | RawMeta | NormalizedMeta): arg is DecoratorAndValue<RawMeta> {
   return arg?.decorator === rootModule;
 }
 
