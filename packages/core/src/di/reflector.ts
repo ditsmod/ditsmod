@@ -52,7 +52,10 @@ export class Reflector {
    * @returns Returns an array of `DecoratorAndValue` for the passed `Cls`, using the passed `typeGuard`,
    * or `undefined` if no appropriate decorators.
    */
-  getDecorators<T extends DecoratorAndValue>(Cls: Class, typeGuard: TypeGuard<T>): T[] | undefined;
+  getDecorators<T extends DecoratorAndValue>(
+    Cls: Class,
+    typeGuard: TypeGuard<T>,
+  ): (T extends DecoratorAndValue<infer V> ? DecoratorAndValue<V> : never)[] | undefined;
   /**
    * @param Cls The class from which to return the metadata.
    * @param typeGuard Type guard, which will search for necessary decorators.
