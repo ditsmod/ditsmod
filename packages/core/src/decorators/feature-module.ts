@@ -1,6 +1,6 @@
 import { makeClassDecorator } from '#di';
 import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
-import { AnyFn, ModuleType } from '#types/mix.js';
+import { AnyFn, AnyObj, ModuleType } from '#types/mix.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { Providers } from '#utils/providers.js';
 
@@ -10,7 +10,7 @@ export interface FeatureModuleDecorator {
   (data?: ModuleMetadata): any;
 }
 
-export function transformModule(data?: ModuleMetadata): ModuleMetadata {
+export function transformModule(data?: ModuleMetadata): ModuleWithMetadata {
   const metadata = Object.assign({}, data);
   objectKeys(metadata).forEach((p) => {
     // If here is object with [Symbol.iterator]() method, this transform it to an array.
@@ -18,7 +18,12 @@ export function transformModule(data?: ModuleMetadata): ModuleMetadata {
       (metadata as any)[p] = [...metadata[p]];
     }
   });
-  return metadata;
+  return { isModuleMetadata: true, metadata};
+}
+
+export interface ModuleWithMetadata {
+  isModuleMetadata: true;
+  metadata: AnyObj;
 }
 
 /**
