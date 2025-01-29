@@ -27,8 +27,8 @@ export function isFeatureModule(arg?: DecoratorAndValue | NormalizedMeta): arg i
   return arg?.decorator === featureModule;
 }
 
-export function isModuleWithMetadata(arg?: DecoratorAndValue): arg is DecoratorAndValue<ModuleWithMetadata>;
 export function isModuleWithMetadata(metadata?: ModuleWithMetadata): metadata is ModuleWithMetadata;
+export function isModuleWithMetadata(arg?: DecoratorAndValue): arg is DecoratorAndValue<ModuleWithMetadata>;
 export function isModuleWithMetadata(
   arg?: DecoratorAndValue | ModuleWithMetadata,
 ): arg is DecoratorAndValue<ModuleWithMetadata> {
