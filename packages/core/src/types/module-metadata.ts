@@ -1,5 +1,5 @@
 import { ProvidersMetadata } from '#types/providers-metadata.js';
-import { AnyObj, ModuleType } from '#types/mix.js';
+import { AnyFn, AnyObj, ModuleType } from '#types/mix.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { ExtensionClass } from '#extension/extension-types.js';
 
@@ -38,7 +38,7 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
  * The interface intended for `moduleWithParams.params`.
  */
 export interface ModuleParamItem {
-  token: any;
+  decorator: AnyFn;
   metadata: AnyObj;
 }
 export interface ModuleWithParams<M extends AnyObj = AnyObj> {
