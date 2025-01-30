@@ -10,7 +10,7 @@ export interface FeatureModuleDecorator {
   (data?: ModuleMetadata): any;
 }
 
-export function transformModule(data?: ModuleMetadata): ModuleWithMetadata {
+export function transformModule(data?: ModuleMetadata): AttachedMetadata {
   const metadata = Object.assign({}, data);
   objectKeys(metadata).forEach((p) => {
     // If here is object with [Symbol.iterator]() method, this transform it to an array.
@@ -18,12 +18,16 @@ export function transformModule(data?: ModuleMetadata): ModuleWithMetadata {
       (metadata as any)[p] = [...metadata[p]];
     }
   });
-  return { isModuleMetadata: true, metadata};
+  return { isAttachedMetadata: true, metadata};
 }
 
-export interface ModuleWithMetadata {
-  isModuleMetadata: true;
+/**
+ * A metadata attached to the `rootModule` or `featureModule` decorators.
+ */
+export interface AttachedMetadata {
+  isAttachedMetadata: true;
   metadata: AnyObj;
+  normalize?: (arg: any) => AnyObj;
 }
 
 /**

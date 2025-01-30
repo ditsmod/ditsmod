@@ -1,4 +1,4 @@
-import { makeClassDecorator, Providers, AnyFn, objectKeys } from '@ditsmod/core';
+import { makeClassDecorator, Providers, AnyFn, objectKeys, AttachedMetadata } from '@ditsmod/core';
 
 import { RoutingMetadata } from '#module/module-metadata.js';
 
@@ -8,7 +8,7 @@ export interface RoutingMetadataDecorator {
   (data?: RoutingMetadata): any;
 }
 
-export function transformMetadata(data?: RoutingMetadata): RoutingRawMeta {
+export function transformMetadata(data?: RoutingMetadata): AttachedMetadata {
   const metadata = Object.assign({}, data);
   objectKeys(metadata).forEach((p) => {
     // If here is object with [Symbol.iterator]() method, this transform it to an array.
@@ -16,7 +16,7 @@ export function transformMetadata(data?: RoutingMetadata): RoutingRawMeta {
       (metadata as any)[p] = [...metadata[p]];
     }
   });
-  return { decorator: routingMetadata, ...metadata };
+  return { isAttachedMetadata: true, metadata};
 }
 
 /**
