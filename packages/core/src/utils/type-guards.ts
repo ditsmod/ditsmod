@@ -21,10 +21,25 @@ export function isCustomError(err: any): err is CustomError {
   return err instanceof CustomError;
 }
 
+export function isRootModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<RawMeta>;
+export function isRootModule(arg?: RawMeta): arg is RawMeta;
+export function isRootModule(meta?: NormalizedMeta): meta is NormalizedMeta<RootModuleMetadata>;
+export function isRootModule(arg?: DecoratorAndValue | RawMeta | NormalizedMeta): arg is DecoratorAndValue<RawMeta> {
+  return arg?.decorator === rootModule;
+}
+
 export function isFeatureModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<RawMeta>;
+export function isFeatureModule(arg?: RawMeta): arg is RawMeta;
 export function isFeatureModule(meta?: NormalizedMeta): meta is NormalizedMeta<ModuleMetadata>;
-export function isFeatureModule(arg?: DecoratorAndValue | NormalizedMeta): arg is DecoratorAndValue<RawMeta> {
+export function isFeatureModule(arg?: DecoratorAndValue | RawMeta | NormalizedMeta): arg is DecoratorAndValue<RawMeta> {
   return arg?.decorator === featureModule;
+}
+
+export function isModDecor(arg?: DecoratorAndValue): arg is DecoratorAndValue<RawMeta>;
+export function isModDecor(arg?: RawMeta): arg is RawMeta;
+export function isModDecor(meta?: NormalizedMeta): meta is NormalizedMeta<RootModuleMetadata>;
+export function isModDecor(arg?: any) {
+  return isRootModule(arg) || isFeatureModule(arg);
 }
 
 export function isModuleWithMetadata(metadata?: AttachedMetadata): metadata is AttachedMetadata;
@@ -37,17 +52,6 @@ export function isModuleWithMetadata(
   } else {
     return arg?.isAttachedMetadata === true;
   }
-}
-
-export function isRootModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<RawMeta>;
-export function isRootModule(arg?: RawMeta): arg is RawMeta;
-export function isRootModule(meta?: NormalizedMeta): meta is NormalizedMeta<RootModuleMetadata>;
-export function isRootModule(arg?: DecoratorAndValue | RawMeta | NormalizedMeta): arg is DecoratorAndValue<RawMeta> {
-  return arg?.decorator === rootModule;
-}
-
-export function isModDecor(decoratorAndValue?: DecoratorAndValue) {
-  return isRootModule(decoratorAndValue) || isFeatureModule(decoratorAndValue);
 }
 
 /**
