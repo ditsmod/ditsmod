@@ -96,7 +96,7 @@ export interface ResolvedGuard {
  */
 export type Level = 'Mod';
 
-export type Override<T extends object, K extends { [P in keyof T]?: any }> = Omit<T, keyof K> & K;
+export type Override<T extends object, K extends { [P in keyof T]?: unknown }> = Omit<T, keyof K> & K;
 
 /**
  * `http.METHODS`
