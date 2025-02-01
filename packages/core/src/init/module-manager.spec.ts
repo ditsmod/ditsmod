@@ -127,7 +127,8 @@ describe('ModuleManager', () => {
     @rootModule({ imports: [Module1] })
     class Module2 {}
 
-    expect(() => mock.scanRootModule(Module2)).toThrow('"Module1" does not have the "@featureModule()" decorator');
+    const msg = '"Module1" does not have the "@rootModule()" or "@featureModule()" decorator';
+    expect(() => mock.scanRootModule(Module2)).toThrow(msg);
   });
 
   it('properly reexport a module', () => {

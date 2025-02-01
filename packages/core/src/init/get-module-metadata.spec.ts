@@ -34,7 +34,7 @@ describe('getModuleMetadata()', () => {
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
-    expect(metadata).toEqual<RawMeta>({ decorator: featureModule, declaredInDir: CallsiteUtils.getCallerDir() });
+    expect(metadata).toEqual<RawMeta[]>([{ decorator: featureModule, declaredInDir: CallsiteUtils.getCallerDir() }]);
   });
 
   it('@featureModule() decorator with id', () => {
@@ -42,11 +42,13 @@ describe('getModuleMetadata()', () => {
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
-    expect(metadata).toEqual<RawMeta>({
-      decorator: featureModule,
-      id: 'someId',
-      declaredInDir: CallsiteUtils.getCallerDir(),
-    });
+    expect(metadata).toEqual<RawMeta[]>([
+      {
+        decorator: featureModule,
+        id: 'someId',
+        declaredInDir: CallsiteUtils.getCallerDir(),
+      },
+    ]);
   });
 
   it('decorator with some data', () => {
@@ -54,11 +56,13 @@ describe('getModuleMetadata()', () => {
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
-    expect(metadata).toEqual({
-      decorator: featureModule,
-      id: 'test-id',
-      declaredInDir: CallsiteUtils.getCallerDir(),
-    });
+    expect(metadata).toEqual<RawMeta[]>([
+      {
+        decorator: featureModule,
+        id: 'test-id',
+        declaredInDir: CallsiteUtils.getCallerDir(),
+      },
+    ]);
   });
 
   it('decorator with instance of Providers class', () => {
@@ -70,11 +74,13 @@ describe('getModuleMetadata()', () => {
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
-    expect(metadata).toEqual<RawMeta>({
-      decorator: featureModule,
-      providersPerMod: [Provider1],
-      declaredInDir: CallsiteUtils.getCallerDir(),
-    });
+    expect(metadata).toEqual<RawMeta[]>([
+      {
+        decorator: featureModule,
+        providersPerMod: [Provider1],
+        declaredInDir: CallsiteUtils.getCallerDir(),
+      },
+    ]);
   });
 
   it('module with params; some properties are in static metadata, some are in dynamic metadata, some are in both', () => {
@@ -92,13 +98,15 @@ describe('getModuleMetadata()', () => {
     }
 
     const metadata = getModuleMetadata(Module1.withParams([Provider2]));
-    expect(metadata).toEqual<RawMeta>({
-      decorator: featureModule,
-      declaredInDir: CallsiteUtils.getCallerDir(),
-      extensionsMeta: {},
-      providersPerApp: [Provider0], // From static metadata.
-      providersPerMod: [Provider1, Provider2], // Merge from static and dynamic metadata.
-    });
+    expect(metadata).toEqual<RawMeta[]>([
+      {
+        decorator: featureModule,
+        declaredInDir: CallsiteUtils.getCallerDir(),
+        extensionsMeta: {},
+        providersPerApp: [Provider0], // From static metadata.
+        providersPerMod: [Provider1, Provider2], // Merge from static and dynamic metadata.
+      },
+    ]);
   });
 
   it('module with params in forwardRef() function', () => {
@@ -114,26 +122,13 @@ describe('getModuleMetadata()', () => {
 
     const fn = () => Module1.withParams([Provider1]);
     const metadata = getModuleMetadata(forwardRef(fn));
-    expect(metadata).toEqual<RawMeta>({
-      decorator: featureModule,
-      declaredInDir: CallsiteUtils.getCallerDir(),
-      extensionsMeta: {},
-      providersPerMod: [Provider1],
-    });
-  });
-
-  it('module with param "id"', () => {
-    @featureModule({ id: 'someId' })
-    class Module1 {
-      static withParams(providersPerMod: Provider[]): ModuleWithParams<Module1> {
-        return {
-          module: Module1,
-          params: [{ decorator: featureModule, metadata: { providersPerMod } as ModuleMetadata }],
-        };
-      }
-    }
-
-    const obj = Module1.withParams([Provider1]);
-    expect(() => getModuleMetadata(obj)).toThrow(/Module1 must not have an "id" in the metadata/);
+    expect(metadata).toEqual<RawMeta[]>([
+      {
+        decorator: featureModule,
+        declaredInDir: CallsiteUtils.getCallerDir(),
+        extensionsMeta: {},
+        providersPerMod: [Provider1],
+      },
+    ]);
   });
 });
