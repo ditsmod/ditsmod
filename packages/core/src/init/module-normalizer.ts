@@ -145,18 +145,18 @@ export class ModuleNormalizer {
     }
   }
 
-  protected exportFromRawMeta(rawMeta: ModuleMetadata, modName: string, meta: NormalizedMeta) {
-    rawMeta.exports?.forEach((exp, i) => {
+  protected exportFromRawMeta(modMetadata: ModuleMetadata, modName: string, meta: NormalizedMeta) {
+    modMetadata.exports?.forEach((exp, i) => {
       exp = resolveForwardRef(exp);
       this.throwIfUndefined(modName, 'Exports', exp, i);
       this.throwExportsIfNormalizedProvider(modName, exp);
       if (isModuleWithParams(exp)) {
         meta.exportsWithParams.push(exp);
-        if (exp.exports?.length) {
-          this.exportFromRawMeta(exp, modName, meta);
-        }
-      } else if (isProvider(exp) || getTokens([...(rawMeta.providersPerMod || [])]).includes(exp)) {
-        this.findAndSetProviders(exp, rawMeta, meta);
+        // if (exp.exports?.length) {
+        //   this.exportFromRawMeta(exp, modName, meta);
+        // }
+      } else if (isProvider(exp) || getTokens([...(modMetadata.providersPerMod || [])]).includes(exp)) {
+        this.findAndSetProviders(exp, modMetadata, meta);
       } else if (this.getModuleMetadata(exp)) {
         meta.exportsModules.push(exp);
       } else {
@@ -249,11 +249,11 @@ export class ModuleNormalizer {
     }
   }
 
-  protected findAndSetProviders(token: any, rawMeta: ModuleMetadata, meta: NormalizedMeta) {
+  protected findAndSetProviders(token: any, modMetadata: ModuleMetadata, meta: NormalizedMeta) {
     const levels: Level[] = ['Mod'];
     let found = false;
     levels.forEach((level) => {
-      const unfilteredProviders = [...(rawMeta[`providersPer${level}`] || [])];
+      const unfilteredProviders = [...(modMetadata[`providersPer${level}`] || [])];
       const providers = unfilteredProviders.filter((p) => getToken(p) === token);
       if (providers.length) {
         found = true;
@@ -268,7 +268,7 @@ export class ModuleNormalizer {
     if (!found) {
       const providerName = token.name || token;
       let msg = '';
-      const providersPerApp = [...(rawMeta.providersPerApp || [])];
+      const providersPerApp = [...(modMetadata.providersPerApp || [])];
       if (providersPerApp.some((p) => getToken(p) === token)) {
         msg =
           `Exported "${providerName}" includes in "providersPerApp" and "exports" of ${meta.name}. ` +
