@@ -101,7 +101,7 @@ export class ModuleNormalizer {
         return decorAndVal.value.mergeModuleWithParams?.(modRefId, decorAndVal) || decorAndVal.value.metadata;
       });
     } else {
-      return reflector.getDecorators(modRefId, isModuleWithMetadata);
+      return reflector.getDecorators(modRefId, isModuleWithMetadata)?.map((decorAndVal) => decorAndVal.value.metadata);
     }
   }
 
