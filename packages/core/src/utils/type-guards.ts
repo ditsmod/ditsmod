@@ -48,7 +48,7 @@ export function isModuleWithMetadata(
   arg?: DecoratorAndValue | AttachedMetadata,
 ): arg is DecoratorAndValue<AttachedMetadata> {
   if (arg instanceof DecoratorAndValue) {
-    return arg.value.isModuleMetadata === true;
+    return (arg as DecoratorAndValue<AttachedMetadata>).value.isAttachedMetadata === true;
   } else {
     return arg?.isAttachedMetadata === true;
   }
