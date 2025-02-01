@@ -1,28 +1,24 @@
 import {
   AnyObj,
   Class,
-  getDebugClassName,
   getToken,
   getTokens,
   isFeatureModule,
-  isModDecor,
+  isModuleWithMetadata,
   isModuleWithParams,
   isMultiProvider,
   isNormalizedProvider,
   isProvider,
-  mergeArrays,
   ModRefId,
   MultiProvider,
   NormalizedMeta,
-  objectKeys,
   Provider,
   Providers,
-  RawMeta,
   reflector,
   resolveForwardRef,
 } from '@ditsmod/core';
 
-import { RoutingRawMeta } from '#module/module-metadata.js';
+import { AppendsWithParams, RoutingRawMeta } from '#module/module-metadata.js';
 import { RoutingNormalizedMeta, RoutingRawProvidersMetadata } from '#types/routing-normalized-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
@@ -70,39 +66,15 @@ export class RoutingModuleNormalizer {
     return mergedMeta;
   }
 
-  protected getModuleMetadata(modRefId: ModRefId): RawMeta | undefined {
+  protected getModuleMetadata(modRefId: ModRefId) {
     modRefId = resolveForwardRef(modRefId);
-    if (!isModuleWithParams(modRefId)) {
-      return reflector.getDecorators(modRefId, isModDecor)?.at(0)?.value;
-    }
-
-    const modWitParams = modRefId;
-    const decorAndVal = reflector.getDecorators(modWitParams.module, isModDecor)?.at(0);
-    if (!decorAndVal) {
-      return;
-    }
-    const modMetadata = decorAndVal.value;
-
-    if (modMetadata.id) {
-      const modName = getDebugClassName(modWitParams.module);
-      const msg =
-        `${modName} must not have an "id" in the metadata of the decorator @featureModule. ` +
-        'Instead, you can specify the "id" in the object that contains the module parameters.';
-      throw new Error(msg);
-    }
-    const metadata = Object.assign({}, modMetadata);
-    metadata.id = modWitParams.id;
-    if (isModuleWithParams(modWitParams)) {
-      objectKeys(modWitParams).forEach((p) => {
-        // If here is object with [Symbol.iterator]() method, this transform it to an array.
-        if (Array.isArray(modWitParams[p]) || modWitParams[p] instanceof Providers) {
-          (metadata as any)[p] = mergeArrays((metadata as any)[p], modWitParams[p]);
-        }
+    if (isModuleWithParams(modRefId)) {
+      return reflector.getDecorators(modRefId.module, isModuleWithMetadata)?.map((decorAndVal) => {
+        return decorAndVal.value.mergeModuleWithParams?.(modRefId, decorAndVal) || decorAndVal.value.metadata;
       });
-
-      metadata.extensionsMeta = { ...modMetadata.extensionsMeta, ...modWitParams.extensionsMeta };
+    } else {
+      return reflector.getDecorators(modRefId, isModuleWithMetadata)?.map((decorAndVal) => decorAndVal.value.metadata);
     }
-    return metadata;
   }
 
   protected checkController(modName: string, Controller: Class) {
@@ -114,7 +86,7 @@ export class RoutingModuleNormalizer {
     }
   }
 
-  protected pickMeta(targetObject: RoutingNormalizedMeta, ...sourceObjects: RawMeta[]) {
+  protected pickMeta(targetObject: RoutingNormalizedMeta, ...sourceObjects: RoutingRawMeta[]) {
     const trgtObj = targetObject as any;
     sourceObjects.forEach((sourceObj: AnyObj) => {
       sourceObj ??= {};
@@ -144,9 +116,9 @@ export class RoutingModuleNormalizer {
       const providersTokens = getTokens([...(rawMeta.providersPerRou || []), ...(rawMeta.providersPerReq || [])]);
       if (isModuleWithParams(exp)) {
         // meta.exportsWithParams.push(exp);
-        if (exp.exports?.length) {
-          this.exportFromRawMeta(exp, modName, meta);
-        }
+        // if (exp.exports?.length) {
+        //   this.exportFromRawMeta(exp, modName, meta);
+        // }
       } else if (isProvider(exp) || providersTokens.includes(exp)) {
         this.findAndSetProviders(exp, rawMeta, meta);
       } else if (this.getModuleMetadata(exp)) {
@@ -203,7 +175,7 @@ export class RoutingModuleNormalizer {
   protected throwIfUndefined(
     modName: string,
     action: 'Imports' | 'Exports' | 'Appends',
-    imp: ModRefId | Provider,
+    imp: ModRefId | Provider | AppendsWithParams,
     i: number,
   ) {
     if (imp === undefined) {
