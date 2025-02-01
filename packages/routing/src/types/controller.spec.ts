@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { reflector } from '@ditsmod/core';
 
-import { controller } from './types/controller.js';
+import { controller } from './controller.js';
+
 
 describe('Controller decorator', () => {
   it('empty decorator', () => {

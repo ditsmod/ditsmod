@@ -218,7 +218,7 @@ describe('extensions e2e', () => {
 
     @featureModule({
       providersPerMod: [Provider1],
-      extensions: [{ group: Extension1, extension: Extension1, exportOnly: true }],
+      extensions: [{ extension: Extension1, exportOnly: true }],
     })
     class Module1 {}
 
@@ -282,14 +282,14 @@ describe('extensions e2e', () => {
 
     @featureModule({
       providersPerMod: [Provider1],
-      extensions: [{ group: Extension1, extension: Extension1, exportOnly: true }],
+      extensions: [{ extension: Extension1, exportOnly: true }],
     })
     class Module1 {}
 
     @featureModule({
       imports: [Module1],
       providersPerMod: [Provider2],
-      extensions: [{ group: Extension2, extension: Extension2, exportOnly: true }],
+      extensions: [{ extension: Extension2, exportOnly: true }],
       exports: [Provider2],
     })
     class Module2 {}
@@ -371,13 +371,13 @@ describe('extensions e2e', () => {
     }
 
     @featureModule({
-      extensions: [{ group: Extension1, extension: Extension1, exportOnly: true }],
+      extensions: [{ extension: Extension1, exportOnly: true }],
     })
     class Module1 {}
 
     @featureModule({
       imports: [Module1],
-      extensions: [{ group: Extension2, extension: Extension2, exportOnly: true }],
+      extensions: [{ extension: Extension2, exportOnly: true }],
     })
     class Module2 {}
 
@@ -389,7 +389,7 @@ describe('extensions e2e', () => {
     class Module3 {}
 
     @featureModule({
-      extensions: [{ group: Extension2, extension: Extension3, exportOnly: true }],
+      extensions: [{ extension: Extension3, exportOnly: true }],
     })
     class Module4 {}
 

@@ -19,6 +19,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 import { controller } from '#types/controller.js';
 import { AppendsWithParams, RoutingMetadata } from './module-metadata.js';
+import { routingMetadata } from '#decorators/routing-metadata.js';
 
 type Level = 'Mod';
 /**
@@ -67,7 +68,7 @@ beforeEach(() => {
   moduleManager = new ModuleManager(new SystemLogMediator({ moduleName: 'fakeName' }));
 });
 
-describe.skip('appending modules', () => {
+describe('appending modules', () => {
   function bootstrap(mod: ModuleType) {
     expect(() => moduleManager.scanModule(mod)).not.toThrow();
     return mock.bootstrap([], new GlobalProviders(), '', mod, moduleManager, new Set());
@@ -77,41 +78,43 @@ describe.skip('appending modules', () => {
     class Provider1 {}
     class Provider2 {}
 
-    @featureModule<RoutingMetadata>({
+    @featureModule({
       providersPerMod: [Provider2],
       exports: [Provider2],
     })
     class Module0 {}
 
-    @featureModule<RoutingMetadata>({ providersPerReq: [{ token: Provider1, useValue: 'some value' }], exports: [Provider1] })
+    @routingMetadata({ providersPerReq: [{ token: Provider1, useValue: 'some value' }] })
+    @featureModule({ exports: [Provider1] })
     class Module1 {}
 
-    @featureModule<RoutingMetadata>({ providersPerReq: [Provider1], exports: [Provider1] })
+    @routingMetadata({ providersPerReq: [Provider1] })
+    @featureModule({ exports: [Provider1] })
     class Module2 {}
 
-    @rootModule({
-      imports: [Module0, Module1, Module2],
-      resolvedCollisionsPerReq: [[Provider1, Module0]],
-    })
+    @routingMetadata({ resolvedCollisionsPerReq: [[Provider1, Module0]] })
+    @rootModule({ imports: [Module0, Module1, Module2] })
     class AppModule {}
 
     const msg = 'AppModule failed: Provider1 mapped with Module0, but providersPerReq does not includes Provider1';
     expect(() => bootstrap(AppModule)).toThrow(msg);
   });
 
-  it.skip('should throw an error because AppModule have resolvedCollisionsPerReq when there is no collisions', () => {
+  it('should throw an error because AppModule have resolvedCollisionsPerReq when there is no collisions', () => {
     class Provider1 {}
     class Provider2 {}
 
-    @featureModule<RoutingMetadata>({ providersPerReq: [Provider1], exports: [Provider1] })
+    @routingMetadata({ providersPerReq: [Provider1] })
+    @featureModule({ exports: [Provider1] })
     class Module1 {}
 
-    @featureModule<RoutingMetadata>({ providersPerReq: [Provider2], exports: [Provider2] })
+    @routingMetadata({ providersPerReq: [Provider2] })
+    @featureModule({ exports: [Provider2] })
     class Module2 {}
 
+    @routingMetadata({ resolvedCollisionsPerReq: [[Provider1, Module1]] })
     @rootModule({
       imports: [Module1, Module2],
-      resolvedCollisionsPerReq: [[Provider1, Module1]],
     })
     class AppModule {}
 
@@ -123,16 +126,12 @@ describe.skip('appending modules', () => {
     class Provider1 {}
     class Provider2 {}
 
-    @featureModule<RoutingMetadata>({
-      providersPerReq: [Provider1],
-      exports: [Provider1],
-    })
+    @routingMetadata({ providersPerReq: [Provider1] })
+    @featureModule({ exports: [Provider1] })
     class Module1 {}
 
-    @featureModule<RoutingMetadata>({
-      providersPerReq: [{ token: Provider1, useValue: 'some value' }, Provider2],
-      exports: [Provider1, Provider2],
-    })
+    @routingMetadata({ providersPerReq: [{ token: Provider1, useValue: 'some value' }, Provider2] })
+    @featureModule({ exports: [Provider1, Provider2] })
     class Module2 {}
 
     @rootModule({
@@ -149,16 +148,16 @@ describe.skip('appending modules', () => {
   it('should work with resolved collision', () => {
     class Provider1 {}
 
-    @featureModule<RoutingMetadata>({ providersPerReq: [{ token: Provider1, useValue: 'some value' }], exports: [Provider1] })
+    @routingMetadata({ providersPerReq: [{ token: Provider1, useValue: 'some value' }] })
+    @featureModule({ exports: [Provider1] })
     class Module1 {}
 
-    @featureModule<RoutingMetadata>({ providersPerReq: [Provider1], exports: [Provider1] })
+    @routingMetadata({ providersPerReq: [Provider1] })
+    @featureModule({ exports: [Provider1] })
     class Module2 {}
 
-    @rootModule({
-      imports: [Module1, Module2],
-      resolvedCollisionsPerReq: [[Provider1, Module1]],
-    })
+    @routingMetadata({ resolvedCollisionsPerReq: [[Provider1, Module1]] })
+    @rootModule({ imports: [Module1, Module2] })
     class AppModule {}
 
     expect(() => bootstrap(AppModule)).not.toThrow();
@@ -168,16 +167,19 @@ describe.skip('appending modules', () => {
     @controller()
     class Controller1 {}
 
-    @featureModule<RoutingMetadata>({ controllers: [Controller1] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule()
     class Module1 {}
 
-    @featureModule<RoutingMetadata>({ controllers: [Controller1] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule()
     class Module2 {}
 
-    @featureModule<RoutingMetadata>({
-      // appends: [Module1, { path: 'some-prefix', module: Module2 }],
+    @routingMetadata({
+      appends: [Module1, { path: 'some-prefix', module: Module2 }],
       controllers: [Controller1],
     })
+    @featureModule()
     class Module3 {}
 
     expect(() => bootstrap(Module3)).not.toThrow();
@@ -187,18 +189,21 @@ describe.skip('appending modules', () => {
     @controller()
     class Controller1 {}
 
-    @featureModule<RoutingMetadata>({ controllers: [Controller1] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule()
     class Module1 {}
 
-    @featureModule<RoutingMetadata>({ controllers: [Controller1] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule()
     class Module2 {}
 
     const mod1: AppendsWithParams = { path: 'prefix1', module: Module1 };
     const mod2: AppendsWithParams = { path: 'prefix2', module: Module2 };
-    @featureModule<RoutingMetadata>({
-      // appends: [mod1, mod2],
+    @routingMetadata({
+      appends: [mod1, mod2],
       controllers: [Controller1],
     })
+    @featureModule()
     class Module3 {}
 
     const map = bootstrap(Module3);
@@ -231,14 +236,15 @@ describe.skip('appending modules', () => {
     @controller()
     class Controller1 {}
 
-    @featureModule<RoutingMetadata>({ controllers: [Controller1] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule()
     class Module1 {}
 
-    @featureModule<RoutingMetadata>({
-      imports: [Module1],
-      // appends: [Module1],
+    @routingMetadata({
+      appends: [Module1],
       controllers: [Controller1],
     })
+    @featureModule({ imports: [Module1] })
     class Module2 {}
 
     const msg = 'Appends to "Module2" failed: "Module1" includes in both: imports and appends arrays';
@@ -251,16 +257,17 @@ describe.skip('appending modules', () => {
     @controller()
     class Controller1 {}
 
-    @featureModule<RoutingMetadata>({
+    @featureModule({
       providersPerMod: [Provider1, Provider2],
       exports: [Provider1, Provider2],
     })
     class Module1 {}
 
-    @featureModule<RoutingMetadata>({
-      // appends: [Module1],
+    @routingMetadata({
+      appends: [Module1],
       controllers: [Controller1],
     })
+    @featureModule()
     class Module2 {}
 
     const msg = 'Appends to "Module2" failed: "Module1" must have controllers';
@@ -273,16 +280,17 @@ describe.skip('appending modules', () => {
     @controller()
     class Controller1 {}
 
-    @featureModule<RoutingMetadata>({
+    @featureModule({
       providersPerMod: [Provider1, Provider2],
       exports: [Provider1, Provider2],
     })
     class Module1 {}
 
-    @featureModule<RoutingMetadata>({
-      // appends: [{ path: '', module: Module1 }],
+    @routingMetadata({
+      appends: [{ path: '', module: Module1 }],
       controllers: [Controller1],
     })
+    @featureModule()
     class Module2 {}
 
     const msg = 'Appends to "Module2" failed: "Module1" must have controllers';
@@ -295,17 +303,18 @@ describe.skip('appending modules', () => {
     @controller()
     class Controller1 {}
 
-    @featureModule<RoutingMetadata>({
+    @routingMetadata({ controllers: [Controller1], })
+    @featureModule({
       providersPerMod: [Provider1, Provider2],
       exports: [Provider1, Provider2],
-      controllers: [Controller1],
     })
     class Module1 {}
 
-    @featureModule<RoutingMetadata>({
-      // appends: [Module1],
+    @routingMetadata({
+      appends: [Module1],
       controllers: [Controller1],
     })
+    @featureModule()
     class Module2 {}
 
     expect(() => bootstrap(Module2)).not.toThrow();
@@ -315,16 +324,19 @@ describe.skip('appending modules', () => {
     @controller()
     class Controller1 {}
 
-    @featureModule<RoutingMetadata>({ controllers: [Controller1] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule()
     class Module1 {}
 
-    @featureModule<RoutingMetadata>({ controllers: [Controller1] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule()
     class Module2 {}
 
-    @featureModule<RoutingMetadata>({
-      // appends: [Module1, { path: 'some-prefix', module: Module2 }],
+    @routingMetadata({
+      appends: [Module1, { path: 'some-prefix', module: Module2 }],
       controllers: [Controller1],
     })
+    @featureModule()
     class Module3 {}
 
     expect(() => bootstrap(Module3)).not.toThrow();
@@ -334,18 +346,21 @@ describe.skip('appending modules', () => {
     @controller()
     class Controller1 {}
 
-    @featureModule<RoutingMetadata>({ controllers: [Controller1] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule()
     class Module1 {}
 
-    @featureModule<RoutingMetadata>({ controllers: [Controller1] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule()
     class Module2 {}
 
     const mod1: AppendsWithParams = { path: 'prefix1', module: Module1 };
     const mod2: AppendsWithParams = { path: 'prefix2', module: Module2 };
-    @featureModule<RoutingMetadata>({
-      // appends: [mod1, mod2],
+    @routingMetadata({
+      appends: [mod1, mod2],
       controllers: [Controller1],
     })
+    @featureModule()
     class Module3 {}
 
     const map = bootstrap(Module3);

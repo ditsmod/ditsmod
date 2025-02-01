@@ -24,6 +24,7 @@ import { HttpBackend, HttpFrontend, HttpHandler, HttpInterceptor } from './token
 import { HTTP_INTERCEPTORS } from '#types/constants.js';
 import { Req } from '#services/request.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
+import { routingMetadata } from '#decorators/routing-metadata.js';
 
 describe('HttpInterceptor', () => {
   const jestFn = vi.fn((interceptorName: string) => interceptorName);
@@ -221,16 +222,14 @@ describe('mix per app, per mod or per req', () => {
   });
 
   it('case 2', () => {
-    @featureModule({
-      exports: [Provider1],
-      providersPerReq: [{ token: Provider1, useClass: Provider1 }],
-    })
+    @routingMetadata({ providersPerReq: [{ token: Provider1, useClass: Provider1 }] })
+    @featureModule({ exports: [Provider1] })
     class Module0 {}
 
+    @routingMetadata({ providersPerReq: [] })
     @rootModule({
       imports: [Module0],
       providersPerMod: [Provider1],
-      providersPerReq: [],
     })
     class AppModule {}
 
@@ -240,17 +239,12 @@ describe('mix per app, per mod or per req', () => {
   });
 
   it('resolved case 2', () => {
-    @featureModule({
-      exports: [Provider1],
-      providersPerReq: [{ token: Provider1, useClass: Provider1 }],
-    })
+    @routingMetadata({ providersPerReq: [{ token: Provider1, useClass: Provider1 }], exports: [Provider1] })
+    @featureModule()
     class Module1 {}
 
-    @rootModule({
-      imports: [Module1],
-      providersPerMod: [Provider1],
-      resolvedCollisionsPerReq: [[Provider1, Module1]],
-    })
+    @routingMetadata({ resolvedCollisionsPerReq: [[Provider1, Module1]] })
+    @rootModule({ imports: [Module1], providersPerMod: [Provider1] })
     class AppModule {}
 
     moduleManager.scanRootModule(AppModule);
@@ -261,10 +255,8 @@ describe('mix per app, per mod or per req', () => {
   });
 
   it('double resolve', () => {
-    @featureModule({
-      exports: [Provider1],
-      providersPerReq: [Provider1],
-    })
+    @routingMetadata({ providersPerReq: [Provider1] })
+    @featureModule({ exports: [Provider1] })
     class Module1 {}
 
     @featureModule({
@@ -273,11 +265,11 @@ describe('mix per app, per mod or per req', () => {
     })
     class Module2 {}
 
+    @routingMetadata({ resolvedCollisionsPerReq: [[Provider1, Module1]] })
     @rootModule({
       imports: [Module1, Module2],
       providersPerApp: [Provider1],
       resolvedCollisionsPerMod: [[Provider1, AppModule]],
-      resolvedCollisionsPerReq: [[Provider1, Module1]],
     })
     class AppModule {}
 
@@ -290,17 +282,12 @@ describe('mix per app, per mod or per req', () => {
   });
 
   it('point to current module to increase scope and to resolve case 2', () => {
-    @featureModule({
-      exports: [Provider1],
-      providersPerReq: [{ token: Provider1, useClass: Provider1 }],
-    })
+    @routingMetadata({ providersPerReq: [{ token: Provider1, useClass: Provider1 }] })
+    @featureModule({ exports: [Provider1] })
     class Module1 {}
 
-    @rootModule({
-      imports: [Module1],
-      providersPerMod: [Provider1],
-      resolvedCollisionsPerReq: [[Provider1, AppModule]],
-    })
+    @routingMetadata({ resolvedCollisionsPerReq: [[Provider1, AppModule]] })
+    @rootModule({ imports: [Module1], providersPerMod: [Provider1] })
     class AppModule {}
 
     moduleManager.scanRootModule(AppModule);
@@ -309,17 +296,12 @@ describe('mix per app, per mod or per req', () => {
   });
 
   it('wrong point to current module', () => {
-    @featureModule({
-      exports: [Provider2],
-      providersPerReq: [{ token: Provider2, useClass: Provider1 }],
-    })
+    @routingMetadata({ providersPerReq: [{ token: Provider2, useClass: Provider1 }] })
+    @featureModule({ exports: [Provider2] })
     class Module1 {}
 
-    @rootModule({
-      imports: [Module1],
-      providersPerMod: [Provider1],
-      resolvedCollisionsPerReq: [[Provider1, AppModule]],
-    })
+    @routingMetadata({ resolvedCollisionsPerReq: [[Provider1, AppModule]] })
+    @rootModule({ imports: [Module1], providersPerMod: [Provider1] })
     class AppModule {}
 
     moduleManager.scanRootModule(AppModule);
@@ -328,16 +310,12 @@ describe('mix per app, per mod or per req', () => {
   });
 
   it.skip('resolve case 3', () => {
-    @featureModule({
-      exports: [HttpBackend],
-      providersPerReq: [{ token: HttpBackend, useValue: '' }],
-    })
+    @routingMetadata({ providersPerReq: [{ token: HttpBackend, useValue: '' }] })
+    @featureModule({ exports: [HttpBackend] })
     class Module0 {}
 
-    @rootModule({
-      imports: [Module0],
-      resolvedCollisionsPerReq: [[HttpBackend, AppModule]],
-    })
+    @routingMetadata({ resolvedCollisionsPerReq: [[HttpBackend, AppModule]] })
+    @rootModule({ imports: [Module0] })
     class AppModule {}
 
     moduleManager.scanRootModule(AppModule);
@@ -346,16 +324,12 @@ describe('mix per app, per mod or per req', () => {
   });
 
   it('resolve 2 case 3', () => {
-    @featureModule({
-      exports: [Req],
-      providersPerReq: [{ token: Req, useClass: Req }],
-    })
+    @routingMetadata({ providersPerReq: [{ token: Req, useClass: Req }] })
+    @featureModule({ exports: [Req] })
     class Module1 {}
 
-    @rootModule({
-      imports: [Module1],
-      resolvedCollisionsPerReq: [[Req, Module1]],
-    })
+    @routingMetadata({ resolvedCollisionsPerReq: [[Req, Module1]] })
+    @rootModule({ imports: [Module1] })
     class AppModule {}
 
     moduleManager.scanRootModule(AppModule);
@@ -366,10 +340,8 @@ describe('mix per app, per mod or per req', () => {
   });
 
   it.skip('case 4', () => {
-    @featureModule({
-      exports: [HttpBackend],
-      providersPerReq: [{ token: HttpBackend, useValue: '' }],
-    })
+    @routingMetadata({ providersPerReq: [{ token: HttpBackend, useValue: '' }] })
+    @featureModule({ exports: [HttpBackend] })
     class Module0 {}
 
     @rootModule({
@@ -383,16 +355,12 @@ describe('mix per app, per mod or per req', () => {
   });
 
   it.skip('resolve case 4', () => {
-    @featureModule({
-      providersPerReq: [{ token: HttpBackend, useValue: '' }],
-      exports: [HttpBackend],
-    })
+    @routingMetadata({ providersPerReq: [{ token: HttpBackend, useValue: '' }] })
+    @featureModule({ exports: [HttpBackend] })
     class Module0 {}
 
-    @rootModule({
-      imports: [Module0],
-      resolvedCollisionsPerReq: [[HttpBackend, AppModule]],
-    })
+    @routingMetadata({ resolvedCollisionsPerReq: [[HttpBackend, AppModule]] })
+    @rootModule({ imports: [Module0] })
     class AppModule {}
 
     moduleManager.scanRootModule(AppModule);
@@ -401,16 +369,12 @@ describe('mix per app, per mod or per req', () => {
   });
 
   it('resolved case 4', () => {
-    @featureModule({
-      exports: [HttpBackend],
-      providersPerReq: [{ token: HttpBackend, useValue: '' }],
-    })
+    @routingMetadata({ providersPerReq: [{ token: HttpBackend, useValue: '' }] })
+    @featureModule({ exports: [HttpBackend] })
     class Module1 {}
 
-    @rootModule({
-      imports: [Module1],
-      resolvedCollisionsPerReq: [[HttpBackend, Module1]],
-    })
+    @routingMetadata({ resolvedCollisionsPerReq: [[HttpBackend, Module1]] })
+    @rootModule({ imports: [Module1] })
     class AppModule {}
 
     moduleManager.scanRootModule(AppModule);

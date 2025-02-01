@@ -1,6 +1,7 @@
+import { ImportObj } from '#module/module-factory.spec.js';
+import { AppOptions } from '#types/app-options.js';
+import { controller } from '#types/controller.js';
 import {
-  AppInitializer,
-  AppOptions,
   ExtensionCounters,
   featureModule,
   injectable,
@@ -17,9 +18,9 @@ import {
 } from '@ditsmod/core';
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { controller } from './controller.js';
-import { ImportObj } from './module/module-factory.spec.js';
-import { Router } from './services/router.js';
+import { AppInitializer } from './app-initializer.js';
+import { Router } from './router.js';
+import { routingMetadata } from '#decorators/routing-metadata.js';
 
 function getImportedTokens(map: Map<any, ImportObj<Provider>> | undefined) {
   return [...(map || [])].map(([key]) => key);
@@ -90,8 +91,8 @@ describe('exports/imports', () => {
   class Module0 {}
 
   const obj1 = { token: Provider1, useClass: Provider1 };
+  @routingMetadata({ controllers: [Ctrl] })
   @featureModule({
-    controllers: [Ctrl],
     providersPerMod: [obj1, Provider2],
     exports: [Provider1],
   })
@@ -107,16 +108,12 @@ describe('exports/imports', () => {
     }
   }
 
-  @featureModule({
-    providersPerReq: [Provider5, Provider6, Provider7],
-    exports: [Provider5, Provider6, Provider7],
-  })
+  @routingMetadata({ providersPerReq: [Provider5, Provider6, Provider7], exports: [Provider5, Provider6, Provider7] })
+  @featureModule({})
   class Module3 {}
 
-  @featureModule({
-    providersPerReq: [Provider8, Provider9],
-    exports: [Provider8, Provider9],
-  })
+  @routingMetadata({ providersPerReq: [Provider8, Provider9], exports: [Provider8, Provider9] })
+  @featureModule()
   class Module4 {}
 
   @featureModule({
@@ -258,7 +255,8 @@ it('should works without providersPerApp', () => {
   @controller()
   class Controller1 {}
 
-  @featureModule({ controllers: [Controller1] })
+  @routingMetadata({ controllers: [Controller1] })
+  @featureModule()
   class Module7 {}
 
   const meta = moduleManager.scanModule(Module7);

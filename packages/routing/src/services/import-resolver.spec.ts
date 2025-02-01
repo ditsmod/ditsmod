@@ -10,6 +10,7 @@ import {
   injectable,
   Injector,
   KeyRegistry,
+  MetadataPerMod1,
   ModRefId,
   ModuleExtract,
   ModuleFactory,
@@ -27,6 +28,7 @@ import { CanActivate, guard } from '../interceptors/guard.js';
 import { defaultProvidersPerReq } from '../providers/default-providers-per-req.js';
 import { defaultProvidersPerRou } from '../providers/default-providers-per-rou.js';
 import { RequestContext } from './request-context.js';
+import { routingMetadata } from '#decorators/routing-metadata.js';
 
 type Level = 'Mod';
 
@@ -36,7 +38,7 @@ describe('resolve()', () => {
   let moduleManager: ModuleManager;
   let systemLogMediator: SystemLogMediator;
   let errorMediator: SystemErrorMediator;
-  
+
   @injectable()
   class ImportsResolverMock extends ImportsResolver {
     declare unfinishedSearchDependecies: [ModuleType | ModuleWithParams, Provider][];
@@ -69,7 +71,7 @@ describe('resolve()', () => {
     expect(() => moduleManager.scanModule(mod)).not.toThrow();
     const appMetadataMap = moduleFactory.bootstrap([], new GlobalProviders(), '', mod, moduleManager, new Set());
     mock = new ImportsResolverMock(moduleManager, appMetadataMap, [], systemLogMediator, errorMediator);
-    return appMetadataMap;
+    return appMetadataMap as Map<ModRefId, MetadataPerMod1>;
   }
 
   beforeEach(() => {
@@ -91,7 +93,8 @@ describe('resolve()', () => {
       constructor(public service1: Service1) {}
     }
 
-    @featureModule({ providersPerRou: [Service2], exports: [Service2] })
+    @routingMetadata({ providersPerRou: [Service2] })
+    @featureModule({ exports: [Service2] })
     class Module2 {}
 
     bootstrap(Module2);
@@ -107,8 +110,8 @@ describe('resolve()', () => {
     class Service2 {
       constructor(public service1: Service1) {}
     }
-
-    @featureModule({ providersPerRou: [Service2], exports: [Service2] })
+    @routingMetadata({ providersPerRou: [Service2] })
+    @featureModule({ exports: [Service2] })
     class Module2 {}
 
     @rootModule({ imports: [Module2] })
@@ -145,10 +148,10 @@ describe('resolve()', () => {
       constructor(public service3: Service3) {}
     }
 
+    @routingMetadata({ providersPerRou: [Service3, Service4] })
     @featureModule({
       imports: [Module1],
       providersPerMod: [Service2],
-      providersPerRou: [Service3, Service4],
       exports: [Service4],
     })
     class Module2 {}
@@ -193,10 +196,10 @@ describe('resolve()', () => {
       constructor(public service3: Service3) {}
     }
 
+    @routingMetadata({ providersPerRou: [Service3, Service4] })
     @featureModule({
       imports: [Module1],
       providersPerMod: [Service2],
-      providersPerRou: [Service3, Service4],
       exports: [Service4],
     })
     class Module2 {}
@@ -218,9 +221,9 @@ describe('resolve()', () => {
       constructor(@inject(forwardRef(() => Service4)) public service4: any) {}
     }
 
+    @routingMetadata({ providersPerRou: [Service1] })
     @featureModule({
       imports: [forwardRef(() => Module2)],
-      providersPerRou: [Service1],
       exports: [Service1],
     })
     class Module1 {}
@@ -240,9 +243,9 @@ describe('resolve()', () => {
       constructor(public service3: Service3) {}
     }
 
+    @routingMetadata({ providersPerRou: [Service2, Service3, Service4] })
     @featureModule({
       imports: [Module1],
-      providersPerRou: [Service2, Service3, Service4],
       exports: [Service4],
     })
     class Module2 {}
@@ -271,7 +274,8 @@ describe('resolve()', () => {
       constructor(public service1: Service1) {}
     }
 
-    @featureModule({ providersPerRou: [Service2], exports: [Service2] })
+    @routingMetadata({ providersPerRou: [Service2] })
+    @featureModule({ exports: [Service2] })
     class Module2 {}
 
     @rootModule({ imports: [Module1, Module2] })
@@ -295,7 +299,8 @@ describe('resolve()', () => {
     @featureModule({ providersPerMod: [Service1], exports: [Service1] })
     class Module1 {}
 
-    @featureModule({ imports: [Module1], providersPerRou: [Service2], exports: [Service2] })
+    @routingMetadata({ providersPerRou: [Service2] })
+    @featureModule({ imports: [Module1], exports: [Service2] })
     class Module2 {}
 
     @rootModule({
@@ -329,7 +334,8 @@ describe('resolve()', () => {
     @featureModule({ providersPerMod: [Service1], exports: [Service1] })
     class Module1 {}
 
-    @featureModule({ imports: [Module1], providersPerRou: [Service2], exports: [Service2] })
+    @routingMetadata({ providersPerRou: [Service2] })
+    @featureModule({ imports: [Module1], exports: [Service2] })
     class Module2 {}
 
     @rootModule({
@@ -366,15 +372,17 @@ describe('resolve()', () => {
       constructor(public service2: Service2) {}
     }
 
-    @featureModule({ providersPerRou: [Service1], exports: [Service1] })
+    @routingMetadata({ providersPerRou: [Service1] })
+    @featureModule({ exports: [Service1] })
     class Module1 {}
 
-    @featureModule({ imports: [Module1], providersPerRou: [Service2], exports: [Service2] })
+    @routingMetadata({ providersPerRou: [Service2] })
+    @featureModule({ imports: [Module1], exports: [Service2] })
     class Module2 {}
 
+    @routingMetadata({ providersPerRou: [Service3] })
     @featureModule({
       imports: [Module2],
-      providersPerRou: [Service3],
       exports: [Service3],
     })
     class Module3 {}
@@ -400,10 +408,12 @@ describe('resolve()', () => {
       }
     }
 
-    @featureModule({ providersPerRou: [Service1], exports: [Service1] })
+    @routingMetadata({ providersPerRou: [Service1] })
+    @featureModule({ exports: [Service1] })
     class Module1 {}
 
-    @featureModule({ imports: [Module1], providersPerRou: [Service2], exports: [Service2] })
+    @routingMetadata({ providersPerRou: [Service2] })
+    @featureModule({ imports: [Module1], exports: [Service2] })
     class Module2 {}
 
     const appMetadataMap = bootstrap(Module2);
@@ -454,10 +464,8 @@ describe('resolve()', () => {
     const mod1WithParams = { module: Module1, guards: [BearerGuard1] };
     const provider: Provider = { token: BearerGuard1, useClass: BearerGuard2 };
 
-    @rootModule({
-      imports: [mod1WithParams],
-      providersPerRou: [provider, Service0, Service2],
-    })
+    @routingMetadata({ providersPerRou: [provider, Service0, Service2] })
+    @rootModule({ imports: [mod1WithParams] })
     class Module2 {}
 
     const appMetadataMap = bootstrap(Module2);

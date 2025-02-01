@@ -15,6 +15,7 @@ import { routingMetadata } from '#decorators/routing-metadata.js';
   providersPerRou: [
     RouteMeta, // In fact, the provider with this token is added dynamically. This requires `ImportsResolver`.
   ],
+  exports: [RouteMeta],
 })
 @featureModule({
   providersPerApp: [{ token: Router, useClass: DefaultRouter }, RoutingErrorMediator],
@@ -28,6 +29,5 @@ import { routingMetadata } from '#decorators/routing-metadata.js';
       exportOnly: true,
     },
   ],
-  exports: [RouteMeta],
 })
 export class RoutingModule {}

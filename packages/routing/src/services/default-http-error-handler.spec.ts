@@ -1,9 +1,9 @@
 import { Logger, Injector, Status, CustomError } from '@ditsmod/core';
 import { beforeEach, describe, expect, it, vi, afterEach } from 'vitest';
 
-import { RequestContext } from './services/request-context.js';
-import { RawResponse } from './services/request.js';
-import { DefaultHttpErrorHandler as ErrorHandler } from './services/default-http-error-handler.js';
+import { RequestContext } from '#services/request-context.js';
+import { RawResponse } from '#services/request.js';
+import { DefaultHttpErrorHandler as ErrorHandler } from '#services/default-http-error-handler.js';
 
 
 describe('DefaultHttpErrorHandler', () => {

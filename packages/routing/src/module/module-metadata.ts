@@ -3,6 +3,11 @@ import { GuardItem } from '#interceptors/guard.js';
 
 export interface RoutingMetadata {
   /**
+   * List of modules, `ModuleWithParams` or tokens of providers exported by this
+   * module.
+   */
+  exports?: any[];
+  /**
    * Providers per route.
    */
   providersPerRou?: Providers | Provider[];

@@ -276,7 +276,7 @@ export class ModuleNormalizer {
       } else {
         msg =
           `Exporting from ${meta.name} failed: if "${providerName}" is a provider, it must be included ` +
-          'in "providersPerMod" or "providersPerRou", or "providersPerReq".';
+          'in "providersPerMod".';
       }
       throw new Error(msg);
     }

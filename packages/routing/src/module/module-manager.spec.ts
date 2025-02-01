@@ -19,6 +19,7 @@ import {
 } from '@ditsmod/core';
 
 import { controller } from '../types/controller.js';
+import { routingMetadata } from '#decorators/routing-metadata.js';
 
 describe('ModuleManager', () => {
   console.log = vi.fn();
@@ -76,7 +77,8 @@ describe('ModuleManager', () => {
       })
       class Version1Module {}
 
-      @featureModule({ appends: [{ path: 'v1', module: Version1Module }] })
+      @routingMetadata({ appends: [{ path: 'v1', module: Version1Module }] })
+      @featureModule()
       class Module2 {}
 
       expect(() => mock.scanModule(Module2)).not.toThrow();
@@ -101,10 +103,8 @@ describe('ModuleManager', () => {
       @controller()
       class Controller1 {}
 
-      @featureModule({
-        providersPerMod: [Provider1, Provider2],
-        controllers: [Controller1],
-      })
+      @routingMetadata({ controllers: [Controller1] })
+      @featureModule({ providersPerMod: [Provider1, Provider2] })
       class Module1 {}
 
       @featureModule({ imports: [Module1] })
@@ -131,10 +131,8 @@ describe('ModuleManager', () => {
       class Provider1 {}
       class Provider2 {}
 
-      @featureModule({
-        controllers: [Provider1],
-        providersPerMod: [Provider1, Provider2],
-      })
+      @routingMetadata({ controllers: [Provider1] })
+      @featureModule({ providersPerMod: [Provider1, Provider2] })
       class Module1 {}
 
       expect(() => mock.scanModule(Module1)).not.toThrow();
@@ -169,13 +167,16 @@ describe('ModuleManager', () => {
     @featureModule({ providersPerApp: [Provider1], imports: [forwardRef(() => Module3)] })
     class Module1 {}
 
-    @featureModule({ imports: [Module1], controllers: [Controller1] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule({ imports: [Module1] })
     class Module2 {}
 
-    @featureModule({ imports: [Module2], controllers: [Controller1] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule({ imports: [Module2] })
     class Module3 {}
 
-    @featureModule({ imports: [Module3], controllers: [Controller1] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule({ imports: [Module3] })
     class Module4 {}
 
     @rootModule({
@@ -201,12 +202,10 @@ describe('ModuleManager', () => {
     @injectable()
     class Provider1 {}
 
+    @routingMetadata({ providersPerRou: [], providersPerReq: [Provider1], controllers: [] })
     @rootModule({
       imports: [],
-      providersPerRou: [],
-      providersPerReq: [Provider1],
       extensionsMeta: {},
-      controllers: [],
       exports: [],
     })
     class AppModule {}
@@ -254,12 +253,13 @@ describe('ModuleManager', () => {
     @controller()
     class Controller1 {}
 
-    @featureModule({ controllers: [Controller1] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule()
     class Module1 {}
 
+    @routingMetadata({ controllers: [Controller1] })
     @featureModule({
       imports: [Module1],
-      controllers: [Controller1],
       exports: [Module1],
     })
     class Module2 {}
@@ -271,20 +271,22 @@ describe('ModuleManager', () => {
     @controller()
     class Controller1 {}
 
-    @featureModule({ controllers: [Controller1] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule()
     class Module1 {
       static withParams(): ModuleWithParams<Module1> {
         return {
           module: this,
+          params: [],
         };
       }
     }
 
     const moduleWithParams = Module1.withParams();
 
+    @routingMetadata({ controllers: [Controller1] })
     @featureModule({
       imports: [moduleWithParams],
-      controllers: [Controller1],
       exports: [moduleWithParams],
     })
     class Module2 {}
@@ -297,13 +299,18 @@ describe('ModuleManager', () => {
 
     const exportedMultiProvidersPerMod = [{ token: Multi, useClass: Multi, multi: true }];
 
+    @routingMetadata({})
     @featureModule()
     class Module1 {
       static withParams(): ModuleWithParams<Module1> {
         return {
           module: this,
-          providersPerMod: [{ token: Multi, useClass: Multi, multi: true }],
-          exports: [Multi],
+          params: [
+            {
+              decorator: featureModule,
+              metadata: { providersPerMod: [{ token: Multi, useClass: Multi, multi: true }], exports: [Multi] },
+            },
+          ],
         };
       }
     }
@@ -319,20 +326,22 @@ describe('ModuleManager', () => {
     @controller()
     class Controller1 {}
 
-    @featureModule({ controllers: [Controller1] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule()
     class Module1 {
       static withParams(): ModuleWithParams<Module1> {
         return {
           module: this,
+          params: [],
         };
       }
     }
 
     const moduleWithParams = Module1.withParams();
 
+    @routingMetadata({ controllers: [Controller1] })
     @featureModule({
       imports: [moduleWithParams],
-      controllers: [Controller1],
       exports: [Module1],
     })
     class Module2 {}
@@ -344,10 +353,12 @@ describe('ModuleManager', () => {
     @controller()
     class Controller1 {}
 
-    @featureModule({ controllers: [Controller1] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule()
     class Module1 {}
 
-    @featureModule({ controllers: [Controller1], exports: [Module1] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule({ exports: [Module1] })
     class Module2 {}
 
     expect(() => mock.scanModule(Module2)).toThrow(/Reexport from Module2 failed: Module1 includes in exports/);
@@ -367,7 +378,8 @@ describe('ModuleManager', () => {
     @injectable()
     class Provider1 {}
 
-    @featureModule({ providersPerReq: [Provider1], exports: [{ token: Provider1, useClass: Provider1 }] })
+    @routingMetadata({ providersPerReq: [Provider1] })
+    @featureModule({ exports: [{ token: Provider1, useClass: Provider1 }] })
     class Module2 {}
 
     expect(() => mock.scanModule(Module2)).toThrow('failed: in "exports" array must be includes tokens only');
@@ -400,7 +412,8 @@ describe('ModuleManager', () => {
     class Controller1 {}
 
     const fn = () => module4WithParams;
-    @featureModule({ id: '1', imports: [forwardRef(fn)], controllers: [Controller1] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule({ id: '1', imports: [forwardRef(fn)] })
     class Module1 {}
 
     @injectable()
@@ -409,20 +422,21 @@ describe('ModuleManager', () => {
     @injectable()
     class Provider1 {}
 
+    @routingMetadata({ providersPerRou: [Provider1], exports: [Provider1] })
     @featureModule({
       imports: [Module1],
       providersPerMod: [Provider0],
-      providersPerRou: [Provider1],
-      exports: [Provider0, Provider1, Module1],
+      exports: [Provider0, Module1],
     })
     class Module2 {}
 
-    @featureModule({ controllers: [Controller1] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule()
     class Module4 {
       static withParams(providersPerMod: Provider[]): ModuleWithParams<Module4> {
         return {
           module: Module4,
-          providersPerMod,
+          params: [{ decorator: featureModule, metadata: providersPerMod }],
         };
       }
     }
@@ -432,11 +446,11 @@ describe('ModuleManager', () => {
 
     const module4WithParams = Module4.withParams([Provider2]);
 
+    @routingMetadata({ controllers: [] })
     @rootModule({
       imports: [Module1, Module2],
       providersPerApp: [],
       extensionsMeta: {},
-      controllers: [],
       exports: [],
     })
     class Module3 {}
@@ -504,32 +518,35 @@ describe('ModuleManager', () => {
     @controller()
     class Controller1 {}
 
+    @routingMetadata({ controllers: [], providersPerReq: [Provider1] })
     @rootModule({
       imports: [],
-      providersPerReq: [Provider1],
       extensionsMeta: {},
-      controllers: [],
       exports: [],
     })
     class AppModule {}
 
-    @featureModule({ controllers: [Controller1] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule()
     class Module1 {}
 
-    @featureModule({ controllers: [Controller1] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule()
     class Module2 {}
 
-    @featureModule({ controllers: [Controller1] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule()
     class Module3 {
       static withParams(providersPerMod: Provider[]): ModuleWithParams<Module3> {
         return {
           module: Module3,
-          providersPerMod,
+          params: [{ decorator: featureModule, metadata: { providersPerMod } }],
         };
       }
     }
 
-    @featureModule({ controllers: [Controller1] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule()
     class Module4 {}
 
     @injectable()
@@ -650,21 +667,25 @@ describe('ModuleManager', () => {
     @controller()
     class Controller1 {}
 
-    @featureModule({ controllers: [Controller1] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule()
     class Module0 {}
 
-    @featureModule({ controllers: [Controller1], imports: [Module0] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule({ imports: [Module0] })
     class Module1 {}
 
-    @featureModule({ controllers: [Controller1], imports: [Module0] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule({ imports: [Module0] })
     class Module2 {}
 
-    @featureModule({ controllers: [Controller1] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule()
     class Module3 {
       static withParams(providersPerMod: Provider[]): ModuleWithParams<Module3> {
         return {
           module: Module3,
-          providersPerMod,
+          params: [{ decorator: featureModule, metadata: { providersPerMod } }],
         };
       }
     }
@@ -675,24 +696,27 @@ describe('ModuleManager', () => {
     const module3WithProviders = Module3.withParams([Provider2]);
 
     const moduleId = 'my-mix';
-    @featureModule({ controllers: [Controller1] })
+    @routingMetadata({ controllers: [Controller1] })
+    @featureModule()
     class Module4 {
       static withParams(providersPerMod: Provider[]): ModuleWithParams<Module4> {
         return {
           id: moduleId,
           module: Module4,
-          providersPerMod,
+          params: [{ decorator: featureModule, metadata: { providersPerMod } }],
         };
       }
     }
 
     const module4WithProviders = Module4.withParams([Provider2]);
 
+    @routingMetadata({
+      controllers: [],
+      providersPerReq: [Provider1],
+    })
     @rootModule({
       imports: [Module1, Module2, module3WithProviders, module4WithProviders],
-      providersPerReq: [Provider1],
       extensionsMeta: {},
-      controllers: [],
       exports: [],
     })
     class AppModule {}
@@ -823,9 +847,7 @@ describe('ModuleManager', () => {
       async stage1() {}
     }
 
-    const extensionsProviders: Provider[] = [
-      Extension1,
-    ];
+    const extensionsProviders: Provider[] = [Extension1];
 
     @featureModule({
       extensions: [{ extension: Extension1 as any, export: true }],
@@ -873,9 +895,7 @@ describe('ModuleManager', () => {
       async stage1() {}
     }
 
-    const extensionsProviders: Provider[] = [
-      Extension1,
-    ];
+    const extensionsProviders: Provider[] = [Extension1];
 
     @featureModule({
       extensions: [{ extension: Extension1 as any, export: true }],
@@ -955,10 +975,8 @@ describe('ModuleManager', () => {
       Provider3,
     ];
 
-    @featureModule({
-      providersPerReq,
-      exports: [Provider2, Provider1, Provider3],
-    })
+    @routingMetadata({ providersPerReq, exports: [Provider2, Provider1, Provider3] })
+    @featureModule()
     class Module1 {}
 
     @rootModule({

@@ -1,13 +1,13 @@
 import { featureModule, injectable, isModuleWithParams, reflector } from '@ditsmod/core';
 import { describe, expect, it } from 'vitest';
 
-import { route } from '../decorators/route.js';
-import { isCtrlDecor, isInterceptor, isRoute } from './type.guards.js';
+import { route } from '#decorators/route.js';
+import { isAppendsWithParams, isCtrlDecor, isInterceptor, isRoute } from './type.guards.js';
 import { HttpHandler, HttpInterceptor } from '#interceptors/tokens-and-types.js';
-import { CanActivate } from '../interceptors/guard.js';
-import { AppendsWithParams } from './types.js';
+import { CanActivate } from '#interceptors/guard.js';
 import { controller } from './controller.js';
-import { RequestContext } from '../services/request-context.js';
+import { RequestContext } from '#services/request-context.js';
+import { AppendsWithParams } from '#module/module-metadata.js';
 
 describe('type guards', () => {
   describe('isController()', () => {
@@ -31,9 +31,9 @@ describe('type guards', () => {
       class Module1 {}
 
       const modRefId1: AppendsWithParams = { module: Module1, path: '' };
-      expect(isModuleWithParams(modRefId1)).toBe(true);
+      expect(isAppendsWithParams(modRefId1)).toBe(true);
       const modRefId2: AppendsWithParams = { module: Module1, absolutePath: '' };
-      expect(isModuleWithParams(modRefId2)).toBe(true);
+      expect(isAppendsWithParams(modRefId2)).toBe(true);
     });
   });
 

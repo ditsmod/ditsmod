@@ -15,6 +15,7 @@ import { CanActivate, guard } from '../interceptors/guard.js';
 import { controller } from '../types/controller.js';
 import { RequestContext } from '../services/request-context.js';
 import { AppendsWithParams } from './module-metadata.js';
+import { routingMetadata } from '#decorators/routing-metadata.js';
 
 let mock: MockModuleManager;
 
@@ -68,10 +69,12 @@ it('imports and appends with gruards for some modules', () => {
   @controller()
   class Controller2 {}
 
-  @featureModule({ controllers: [Controller1] })
+  @routingMetadata({ controllers: [Controller1] })
+  @featureModule()
   class Module1 {}
 
-  @featureModule({ controllers: [Controller2] })
+  @routingMetadata({ controllers: [Controller2] })
+  @featureModule()
   class Module2 {}
 
   const ModuleWithParams: ModuleWithParams = {
@@ -87,10 +90,9 @@ it('imports and appends with gruards for some modules', () => {
     // guards: [Guard2],
   };
 
-  @rootModule({
-    imports: [ModuleWithParams],
-    appends: [appendsWithParams],
-  })
+  @routingMetadata({})
+  @routingMetadata({ appends: [appendsWithParams] })
+  @rootModule({ imports: [ModuleWithParams] })
   class AppModule {}
 
   mock.scanRootModule(AppModule);
