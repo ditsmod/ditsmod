@@ -10,13 +10,24 @@ import {
   reflector,
   isInjectionToken,
   MultiProvider,
+  DecoratorAndValue,
 } from '#di';
-import { featureModule } from '#decorators/feature-module.js';
+import { AttachedMetadata, featureModule } from '#decorators/feature-module.js';
 import { isFeatureModule, isModuleWithParams, isProvider, isRootModule } from './type-guards.js';
 import { rootModule } from '#decorators/root-module.js';
-import { getModuleMetadata } from '#init/get-module-metadata.js';
+import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
+import { ModuleNormalizer } from '#init/module-normalizer.js';
+import { ModRefId, AnyObj } from '#types/mix.js';
 
 describe('type guards', () => {
+  class MockModuleNormalizer extends ModuleNormalizer {
+    override getModuleMetadata(modRefId: ModRefId): DecoratorAndValue<AttachedMetadata>[] | AnyObj[] | undefined {
+      return super.getModuleMetadata(modRefId);
+    }
+  }
+  const mockModuleNormalizer = new MockModuleNormalizer();
+  const getModuleMetadata = mockModuleNormalizer.getModuleMetadata.bind(mockModuleNormalizer);
+
   describe('isModule()', () => {
     it('class with decorator', () => {
       @featureModule({})
@@ -73,10 +84,10 @@ describe('type guards', () => {
     it('module with params', () => {
       @featureModule({})
       class Module1 {
-        static withParams() {
+        static withParams(): ModuleWithParams<Module1> {
           return {
             module: Module1,
-            other: 123,
+            params: [{ decorator: featureModule, metadata: { other: 123 } as ModuleMetadata }],
           };
         }
       }

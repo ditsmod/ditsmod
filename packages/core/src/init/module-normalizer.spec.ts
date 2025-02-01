@@ -61,7 +61,7 @@ describe('ModuleNormalizer', () => {
   it('imports module with params, but exports only a module class (without ref to module with params)', () => {
     @featureModule({ providersPerMod: [Provider1], exports: [Provider1] })
     class Module1 {}
-    const baseModuleWithParams: ModuleWithParams = { module: Module1 };
+    const baseModuleWithParams: ModuleWithParams = { module: Module1, params: [] };
 
     @featureModule({
       imports: [baseModuleWithParams],

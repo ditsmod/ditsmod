@@ -1,19 +1,26 @@
 import { describe, expect, it } from 'vitest';
 
-import { forwardRef } from '#di';
-import { featureModule, RawMeta } from '#decorators/feature-module.js';
+import { DecoratorAndValue, forwardRef } from '#di';
+import { AttachedMetadata, featureModule, RawMeta } from '#decorators/feature-module.js';
 import { Provider } from '#di/types-and-models.js';
 import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
-import { getModuleMetadata } from './get-module-metadata.js';
 import { Providers } from '#utils/providers.js';
 import { CallsiteUtils } from '#utils/callsites.js';
+import { ModuleNormalizer } from './module-normalizer.js';
+import { ModRefId, AnyObj } from '#types/mix.js';
 
 describe('getModuleMetadata()', () => {
   class Provider0 {}
   class Provider1 {}
   class Provider2 {}
-  class Provider3 {}
-  class Provider4 {}
+
+  class MockModuleNormalizer extends ModuleNormalizer {
+    override getModuleMetadata(modRefId: ModRefId): DecoratorAndValue<AttachedMetadata>[] | AnyObj[] | undefined {
+      return super.getModuleMetadata(modRefId);
+    }
+  }
+  const mockModuleNormalizer = new MockModuleNormalizer();
+  const getModuleMetadata = mockModuleNormalizer.getModuleMetadata.bind(mockModuleNormalizer);
 
   it('module without decorator', () => {
     class Module1 {}
@@ -58,7 +65,7 @@ describe('getModuleMetadata()', () => {
     const providers = new Providers().useValue('token2', 'value2');
 
     @featureModule({
-      providersPerMod: [Provider1]
+      providersPerMod: [Provider1],
     })
     class Module1 {}
 
@@ -76,12 +83,10 @@ describe('getModuleMetadata()', () => {
       providersPerApp: [Provider0],
     })
     class Module1 {
-      static withParams(
-        providersPerMod: Provider[],
-      ): ModuleWithParams<Module1> {
+      static withParams(providersPerMod: Provider[]): ModuleWithParams<Module1> {
         return {
           module: Module1,
-          providersPerMod,
+          params: [{ decorator: featureModule, metadata: { providersPerMod } as ModuleMetadata }],
         };
       }
     }
@@ -102,7 +107,7 @@ describe('getModuleMetadata()', () => {
       static withParams(providersPerMod: Provider[]): ModuleWithParams<Module1> {
         return {
           module: Module1,
-          providersPerMod,
+          params: [{ decorator: featureModule, metadata: { providersPerMod } as ModuleMetadata }],
         };
       }
     }
@@ -123,7 +128,7 @@ describe('getModuleMetadata()', () => {
       static withParams(providersPerMod: Provider[]): ModuleWithParams<Module1> {
         return {
           module: Module1,
-          providersPerMod,
+          params: [{ decorator: featureModule, metadata: { providersPerMod } as ModuleMetadata }],
         };
       }
     }

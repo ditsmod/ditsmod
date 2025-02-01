@@ -8,7 +8,7 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ModuleManager } from './module-manager.js';
 import { ModuleType, AnyObj } from '#types/mix.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
+import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 
@@ -146,7 +146,7 @@ describe('ModuleManager', () => {
   it('reexport same object of module with params', () => {
     @featureModule({ providersPerMod: [Provider1], exports: [Provider1] })
     class Module1 {}
-    const baseModuleWithParams: ModuleWithParams = { module: Module1 };
+    const baseModuleWithParams: ModuleWithParams = { module: Module1, params: [] };
 
     @featureModule({
       imports: [baseModuleWithParams],
@@ -171,8 +171,15 @@ describe('ModuleManager', () => {
       static withParams(): ModuleWithParams<Module1> {
         return {
           module: this,
-          providersPerMod: [{ token: Multi, useClass: Multi, multi: true }],
-          exports: [Multi],
+          params: [
+            {
+              decorator: featureModule,
+              metadata: {
+                providersPerMod: [{ token: Multi, useClass: Multi, multi: true }],
+                exports: [Multi],
+              } as ModuleMetadata,
+            },
+          ],
         };
       }
     }
@@ -201,7 +208,7 @@ describe('ModuleManager', () => {
       static withParams(providersPerMod: Provider[]): ModuleWithParams<Module4> {
         return {
           module: Module4,
-          providersPerMod,
+          params: [{ decorator: featureModule, metadata: { providersPerMod } as ModuleMetadata }],
         };
       }
     }
@@ -293,7 +300,7 @@ describe('ModuleManager', () => {
       static withParams(providersPerMod: Provider[]): ModuleWithParams<Module3> {
         return {
           module: Module3,
-          providersPerMod,
+          params: [{ decorator: featureModule, metadata: { providersPerMod } as ModuleMetadata }],
         };
       }
     }
@@ -427,7 +434,7 @@ describe('ModuleManager', () => {
       static withParams(providersPerMod: Provider[]): ModuleWithParams<Module3> {
         return {
           module: Module3,
-          providersPerMod,
+          params: [{ decorator: featureModule, metadata: { providersPerMod } as ModuleMetadata }],
         };
       }
     }
@@ -441,7 +448,7 @@ describe('ModuleManager', () => {
         return {
           id: moduleId,
           module: Module4,
-          providersPerMod,
+          params: [{ decorator: featureModule, metadata: { providersPerMod } as ModuleMetadata }],
         };
       }
     }

@@ -11,7 +11,7 @@ import { BaseAppInitializer } from '#init/base-app-initializer.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { ModuleType } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
+import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
 import { Extension, ExtensionCounters } from '#extension/extension-types.js';
 import { ModuleExtract } from '#types/module-extract.js';
 import { ImportObj, MetadataPerMod1 } from '#types/metadata-per-mod.js';
@@ -88,11 +88,7 @@ describe('BaseAppInitializer', () => {
     });
 
     it('counter should be changed', () => {
-      const providers: Provider[] = [
-        Extension2,
-        Extension2,
-        Extension1,
-      ];
+      const providers: Provider[] = [Extension2, Extension2, Extension1];
       mock.decreaseExtensionsCounters(extensionCounters, providers);
       expect(extensionCounters.mExtensions.get(Extension1)).toBe(8);
       expect(extensionCounters.mExtensions.get(Extension2)).toBe(7);
@@ -360,7 +356,10 @@ describe('BaseAppInitializer', () => {
       @featureModule({})
       class Module6 {
         static withParams(providers: Provider[]): ModuleWithParams<Module6> {
-          return { module: Module6, providersPerApp: providers };
+          return {
+            module: Module6,
+            params: [{ decorator: featureModule, metadata: { providersPerApp: providers } as ModuleMetadata }],
+          };
         }
       }
       const modWithParams = Module6.withParams([Provider7]);
@@ -483,7 +482,6 @@ describe('BaseAppInitializer', () => {
 
     @injectable()
     class Extension1 implements Extension {
-
       async stage1() {
         jestFn('Extension1');
       }
