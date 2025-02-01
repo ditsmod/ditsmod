@@ -37,9 +37,9 @@ export class ModuleNormalizer {
    * Returns normalized module metadata.
    */
   normalize(modRefId: ModRefId) {
-    const rawMeta = Object.assign({}, ...(this.getModuleMetadata(modRefId) || [])) as RawMeta;
+    const reflectMetadata = this.getModuleMetadata(modRefId);
     const modName = getDebugClassName(modRefId);
-    if (!rawMeta || !isModDecor(rawMeta)) {
+    if (!reflectMetadata || !reflectMetadata.some(m => isModDecor(m as RawMeta))) {
       throw new Error(
         `Module build failed: module "${modName}" does not have the "@rootModule()" or "@featureModule()" decorator`,
       );
@@ -49,47 +49,53 @@ export class ModuleNormalizer {
      * Setting initial properties of metadata.
      */
     const meta = new NormalizedMeta();
-    meta.rawMeta = Object.freeze(rawMeta);
     meta.name = modName;
     meta.modRefId = modRefId;
-    meta.decorator = rawMeta.decorator;
-    meta.declaredInDir = rawMeta.declaredInDir;
-    this.checkWhetherIsExternalModule(rawMeta, meta);
 
-    rawMeta.imports?.forEach((imp, i) => {
-      imp = resolveForwardRef(imp);
-      this.throwIfUndefined(modName, 'Imports', imp, i);
-      if (isModuleWithParams(imp)) {
-        meta.importsWithParams.push(imp);
-      } else {
-        meta.importsModules.push(imp);
-      }
+    meta.aReflectMetadata = reflectMetadata;
+    const featureOrRootMetadata = (reflectMetadata as RawMeta[]).find(isModDecor);
+    meta.decorator = featureOrRootMetadata!.decorator;
+    meta.declaredInDir = featureOrRootMetadata!.declaredInDir;
+
+    reflectMetadata.forEach((m) => {
+      const rawMeta = m as RawMeta;
+      this.checkWhetherIsExternalModule(rawMeta, meta);
+
+      rawMeta.imports?.forEach((imp, i) => {
+        imp = resolveForwardRef(imp);
+        this.throwIfUndefined(modName, 'Imports', imp, i);
+        if (isModuleWithParams(imp)) {
+          meta.importsWithParams.push(imp);
+        } else {
+          meta.importsModules.push(imp);
+        }
+      });
+
+      this.throwIfNormalizedProvider(modName, rawMeta);
+      this.exportFromRawMeta(m, modName, meta);
+      this.checkReexportModules(meta);
+
+      rawMeta.extensions?.forEach((extensionOrConfig, i) => {
+        if (!isExtensionConfig(extensionOrConfig)) {
+          extensionOrConfig = { extension: extensionOrConfig as ExtensionClass };
+        }
+        this.checkExtensionConfig(modName, extensionOrConfig, i);
+        const extensionObj = getExtensionProvider(extensionOrConfig);
+        extensionObj.providers.forEach((p) => this.checkInitMethodForExtension(modName, p));
+        if (extensionObj.config) {
+          meta.aExtensionConfig.push(extensionObj.config);
+        }
+        if (extensionObj.exportedConfig) {
+          meta.aExportedExtensionConfig.push(extensionObj.exportedConfig);
+        }
+        meta.extensionsProviders.push(...extensionObj.providers);
+        meta.exportedExtensionsProviders.push(...extensionObj.exportedProviders);
+      });
+
+      // @todo Refactor the logic with the `pickMeta()` call, as it may override previously set values in `meta`.
+      this.pickMeta(meta, rawMeta);
+      meta.extensionsMeta = { ...(meta.extensionsMeta || {}) };
     });
-
-    this.throwIfNormalizedProvider(modName, rawMeta);
-    this.exportFromRawMeta(rawMeta, modName, meta);
-    this.checkReexportModules(meta);
-
-    rawMeta.extensions?.forEach((extensionOrConfig, i) => {
-      if (!isExtensionConfig(extensionOrConfig)) {
-        extensionOrConfig = { extension: extensionOrConfig as ExtensionClass };
-      }
-      this.checkExtensionConfig(modName, extensionOrConfig, i);
-      const extensionObj = getExtensionProvider(extensionOrConfig);
-      extensionObj.providers.forEach((p) => this.checkInitMethodForExtension(modName, p));
-      if (extensionObj.config) {
-        meta.aExtensionConfig.push(extensionObj.config);
-      }
-      if (extensionObj.exportedConfig) {
-        meta.aExportedExtensionConfig.push(extensionObj.exportedConfig);
-      }
-      meta.extensionsProviders.push(...extensionObj.providers);
-      meta.exportedExtensionsProviders.push(...extensionObj.exportedProviders);
-    });
-
-    // @todo Refactor the logic with the `pickMeta()` call, as it may override previously set values in `meta`.
-    this.pickMeta(meta, rawMeta);
-    meta.extensionsMeta = { ...(meta.extensionsMeta || {}) };
 
     return meta;
   }
