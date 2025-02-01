@@ -2,14 +2,13 @@ import { MultiProvider } from '#di';
 import { AnyFn, AnyObj, ModuleType } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from './module-metadata.js';
-import { RawMeta } from '#decorators/feature-module.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { ExtensionClass } from '#extension/extension-types.js';
 
 export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> {
   providersPerApp: Provider[] = [];
   providersPerMod: Provider[] = [];
-  rawMeta: RawMeta;
+  aReflectMetadata: AnyObj[] = [];
   /**
    * The module setted here must be identical to the module
    * passed to "imports", "exports" array of `@featureModule` metadata.
