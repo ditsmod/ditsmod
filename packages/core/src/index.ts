@@ -55,6 +55,7 @@ export {
   OptionalProps,
   ProvidersForMod,
   ModRefId,
+  Override,
   UnionToIntersection,
 } from '#types/mix.js';
 export { ModuleMetadata, ModuleWithParams, ModuleParamItem } from '#types/module-metadata.js';
