@@ -1,7 +1,7 @@
 import { ChainError } from '@ts-stack/chain-error';
 
 import { Provider, Class, DecoratorAndValue, reflector, isNormalizedProvider } from '#di';
-import { AnyObj, ModRefId, RequireProps } from '#types/mix.js';
+import { AnyFn, AnyObj, ModRefId, RequireProps } from '#types/mix.js';
 import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
 import { RootModuleMetadata } from '#types/root-module-metadata.js';
 import { featureModule, AttachedMetadata, RawMeta } from '#decorators/feature-module.js';
@@ -24,14 +24,16 @@ export function isCustomError(err: any): err is CustomError {
 export function isRootModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<RawMeta>;
 export function isRootModule(arg?: RawMeta): arg is RawMeta;
 export function isRootModule(meta?: NormalizedMeta): meta is NormalizedMeta<RootModuleMetadata>;
-export function isRootModule(arg?: DecoratorAndValue | RawMeta | NormalizedMeta): arg is DecoratorAndValue<RawMeta> {
+export function isRootModule(arg?: AnyObj): arg is { decorator: typeof rootModule } & AnyObj;
+export function isRootModule(arg?: DecoratorAndValue | RawMeta | NormalizedMeta | AnyObj): arg is DecoratorAndValue<RawMeta> {
   return arg?.decorator === rootModule;
 }
 
 export function isFeatureModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<RawMeta>;
 export function isFeatureModule(arg?: RawMeta): arg is RawMeta;
 export function isFeatureModule(meta?: NormalizedMeta): meta is NormalizedMeta<ModuleMetadata>;
-export function isFeatureModule(arg?: DecoratorAndValue | RawMeta | NormalizedMeta): arg is DecoratorAndValue<RawMeta> {
+export function isFeatureModule(arg?: AnyObj): arg is { decorator: typeof featureModule } & AnyObj;
+export function isFeatureModule(arg?: DecoratorAndValue | RawMeta | NormalizedMeta | AnyObj): arg is DecoratorAndValue<RawMeta> {
   return arg?.decorator === featureModule;
 }
 
