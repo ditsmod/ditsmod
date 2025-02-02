@@ -22,9 +22,8 @@ import { resolveForwardRef } from '#di/forward-ref.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
 import { Class } from '#di/types-and-models.js';
 import { Providers } from '#utils/providers.js';
-import { ModuleMetadata } from '#types/module-metadata.js';
 import { Extension, ExtensionClass } from '#extension/extension-types.js';
-import { normalizeProviders } from '#utils/ng-utils.js';
+import { NormalizedProvider, normalizeProviders } from '#utils/ng-utils.js';
 import { isExtensionConfig } from '#extension/type-guards.js';
 
 export class ModuleNormalizer {
@@ -37,9 +36,10 @@ export class ModuleNormalizer {
    * Returns normalized module metadata.
    */
   normalize(modRefId: ModRefId) {
-    const reflectMetadata = this.getModuleMetadata(modRefId);
+    const aReflectMetadata = this.getModuleMetadata(modRefId) || [];
+    const rawMeta = (aReflectMetadata as RawMeta[]).find(isModDecor);
     const modName = getDebugClassName(modRefId);
-    if (!reflectMetadata || !reflectMetadata.some(m => isModDecor(m as RawMeta))) {
+    if (!rawMeta) {
       throw new Error(
         `Module build failed: module "${modName}" does not have the "@rootModule()" or "@featureModule()" decorator`,
       );
@@ -52,48 +52,47 @@ export class ModuleNormalizer {
     meta.name = modName;
     meta.modRefId = modRefId;
 
-    meta.aReflectMetadata = reflectMetadata;
-    const featureOrRootMetadata = (reflectMetadata as RawMeta[]).find(isModDecor);
-    meta.decorator = featureOrRootMetadata!.decorator;
-    meta.declaredInDir = featureOrRootMetadata!.declaredInDir;
+    meta.aReflectMetadata = aReflectMetadata;
+    meta.decorator = rawMeta.decorator;
+    meta.declaredInDir = rawMeta.declaredInDir;
+    this.checkAndMarkExternalModule(isRootModule(rawMeta), meta);
 
-    reflectMetadata.forEach((m) => {
-      const rawMeta = m as RawMeta;
-      this.checkWhetherIsExternalModule(rawMeta, meta);
-
-      rawMeta.imports?.forEach((imp, i) => {
+    aReflectMetadata.forEach((reflectMetadata) => {
+      (reflectMetadata.imports as undefined | ModRefId[])?.forEach((imp, i) => {
         imp = resolveForwardRef(imp);
         this.throwIfUndefined(modName, 'Imports', imp, i);
         if (isModuleWithParams(imp)) {
           meta.importsWithParams.push(imp);
         } else {
+          // @todo check type of imported symbol
           meta.importsModules.push(imp);
         }
       });
 
-      this.throwIfNormalizedProvider(modName, rawMeta);
-      this.exportFromRawMeta(m, modName, meta);
+      this.throwIfResolvingNormalizedProvider(modName, reflectMetadata);
+      this.exportFromReflectMetadata(reflectMetadata, modName, meta);
       this.checkReexportModules(meta);
 
-      rawMeta.extensions?.forEach((extensionOrConfig, i) => {
-        if (!isExtensionConfig(extensionOrConfig)) {
-          extensionOrConfig = { extension: extensionOrConfig as ExtensionClass };
-        }
-        this.checkExtensionConfig(modName, extensionOrConfig, i);
-        const extensionObj = getExtensionProvider(extensionOrConfig);
-        extensionObj.providers.forEach((p) => this.checkInitMethodForExtension(modName, p));
-        if (extensionObj.config) {
-          meta.aExtensionConfig.push(extensionObj.config);
-        }
-        if (extensionObj.exportedConfig) {
-          meta.aExportedExtensionConfig.push(extensionObj.exportedConfig);
-        }
-        meta.extensionsProviders.push(...extensionObj.providers);
-        meta.exportedExtensionsProviders.push(...extensionObj.exportedProviders);
-      });
+      (reflectMetadata.extensions as undefined | (ExtensionConfig | ExtensionClass)[])?.forEach(
+        (extensionOrConfig, i) => {
+          if (!isExtensionConfig(extensionOrConfig)) {
+            extensionOrConfig = { extension: extensionOrConfig as ExtensionClass };
+          }
+          this.checkExtensionConfig(modName, extensionOrConfig, i);
+          const extensionObj = getExtensionProvider(extensionOrConfig);
+          extensionObj.providers.forEach((p) => this.checkInitMethodForExtension(modName, p));
+          if (extensionObj.config) {
+            meta.aExtensionConfig.push(extensionObj.config);
+          }
+          if (extensionObj.exportedConfig) {
+            meta.aExportedExtensionConfig.push(extensionObj.exportedConfig);
+          }
+          meta.extensionsProviders.push(...extensionObj.providers);
+          meta.exportedExtensionsProviders.push(...extensionObj.exportedProviders);
+        },
+      );
 
-      // @todo Refactor the logic with the `pickMeta()` call, as it may override previously set values in `meta`.
-      this.pickMeta(meta, rawMeta);
+      this.pickAndMergeMeta(meta, reflectMetadata);
       meta.extensionsMeta = { ...(meta.extensionsMeta || {}) };
     });
 
@@ -120,17 +119,21 @@ export class ModuleNormalizer {
     }
   }
 
-  protected pickMeta(targetObject: NormalizedMeta, ...sourceObjects: RawMeta[]) {
+  protected pickAndMergeMeta(targetObject: NormalizedMeta, ...sourceObjects: AnyObj[]) {
     const trgtObj = targetObject as any;
     sourceObjects.forEach((sourceObj: AnyObj) => {
       sourceObj ??= {};
       for (const prop in targetObject) {
         if (Array.isArray(sourceObj[prop])) {
-          trgtObj[prop] = sourceObj[prop].slice();
+          trgtObj[prop] ??= [];
+          trgtObj[prop].push(...sourceObj[prop].slice());
         } else if (sourceObj[prop] instanceof Providers) {
-          trgtObj[prop] = [...sourceObj[prop]];
+          trgtObj[prop] ??= [];
+          trgtObj[prop].push(...sourceObj[prop]);
+        } else if (sourceObj[prop] && typeof sourceObj[prop] == 'object') {
+          trgtObj[prop] = { ...trgtObj[prop], ...(sourceObj[prop] as any) };
         } else if (sourceObj[prop] !== undefined) {
-          trgtObj[prop] = sourceObj[prop] as any;
+          trgtObj[prop] = sourceObj[prop];
         }
       }
     });
@@ -138,9 +141,9 @@ export class ModuleNormalizer {
     return trgtObj;
   }
 
-  protected checkWhetherIsExternalModule(rawMeta: RawMeta, meta: NormalizedMeta) {
+  protected checkAndMarkExternalModule(isRootModule: boolean, meta: NormalizedMeta) {
     meta.isExternal = false;
-    if (isRootModule(rawMeta)) {
+    if (isRootModule) {
       this.rootDeclaredInDir = meta.declaredInDir;
     } else if (this.rootDeclaredInDir) {
       const { declaredInDir } = meta;
@@ -151,8 +154,15 @@ export class ModuleNormalizer {
     }
   }
 
-  protected exportFromRawMeta(modMetadata: ModuleMetadata, modName: string, meta: NormalizedMeta) {
-    modMetadata.exports?.forEach((exp, i) => {
+  protected exportFromReflectMetadata(reflectMetadata: AnyObj, modName: string, meta: NormalizedMeta) {
+    const providers: Provider[] = [];
+    Object.keys(reflectMetadata).forEach((k) => {
+      if (k.includes('providers') && Array.isArray(reflectMetadata[k])) {
+        providers.push(...reflectMetadata[k]);
+      }
+    });
+
+    (reflectMetadata.exports as undefined | any[])?.forEach((exp, i) => {
       exp = resolveForwardRef(exp);
       this.throwIfUndefined(modName, 'Exports', exp, i);
       this.throwExportsIfNormalizedProvider(modName, exp);
@@ -161,8 +171,8 @@ export class ModuleNormalizer {
         // if (exp.exports?.length) {
         //   this.exportFromRawMeta(exp, modName, meta);
         // }
-      } else if (isProvider(exp) || getTokens([...(modMetadata.providersPerMod || [])]).includes(exp)) {
-        this.findAndSetProviders(exp, modMetadata, meta);
+      } else if (isProvider(exp) || getTokens(providers).includes(exp)) {
+        this.findAndSetProviders(exp, reflectMetadata, meta);
       } else if (this.getModuleMetadata(exp)) {
         meta.exportsModules.push(exp);
       } else {
@@ -186,7 +196,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected throwIfUndefined(modName: string, action: 'Imports' | 'Exports', imp: ModRefId | Provider, i: number) {
+  protected throwIfUndefined(modName: string, action: 'Imports' | 'Exports', imp: unknown, i: number) {
     if (imp === undefined) {
       const lowerAction = action.toLowerCase();
       const msg =
@@ -230,11 +240,13 @@ export class ModuleNormalizer {
     throw new TypeError(msg);
   }
 
-  protected throwIfNormalizedProvider(moduleName: string, rawMeta: RawMeta) {
-    const resolvedCollisionsPerLevel = [...(rawMeta.resolvedCollisionsPerMod || [])];
-    if (isRootModule(rawMeta)) {
-      resolvedCollisionsPerLevel.push(...(rawMeta.resolvedCollisionsPerApp || []));
-    }
+  protected throwIfResolvingNormalizedProvider(moduleName: string, obj: AnyObj) {
+    const resolvedCollisionsPerLevel: [any, ModRefId][] = [];
+    Object.keys(obj).forEach((k) => {
+      if (k.includes('resolvedCollision') && Array.isArray(obj[k])) {
+        resolvedCollisionsPerLevel.push(...obj[k]);
+      }
+    });
 
     resolvedCollisionsPerLevel.forEach(([provider]) => {
       if (isNormalizedProvider(provider)) {
@@ -247,7 +259,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected throwExportsIfNormalizedProvider(moduleName: string, provider: any) {
+  protected throwExportsIfNormalizedProvider(moduleName: string, provider: NormalizedProvider) {
     if (isNormalizedProvider(provider)) {
       const providerName = provider.token.name || provider.token;
       const msg = `Exporting "${providerName}" from "${moduleName}" failed: in "exports" array must be includes tokens only.`;
@@ -255,17 +267,30 @@ export class ModuleNormalizer {
     }
   }
 
-  protected findAndSetProviders(token: any, modMetadata: ModuleMetadata, meta: NormalizedMeta) {
-    const levels: Level[] = ['Mod'];
+  protected findAndSetProviders(token: any, reflectMetadata: AnyObj, meta: NormalizedMeta) {
+    const levels: Level[] = [];
+    const providersPer = 'providersPer';
+    Object.keys(reflectMetadata).forEach((k) => {
+      const index = k.indexOf(providersPer);
+      if (index !== -1) {
+        const level = k.slice(index + providersPer.length) as Level;
+        if (level != 'App' as Level) {
+          levels.push(level);
+        }
+      }
+    });
+
     let found = false;
     levels.forEach((level) => {
-      const unfilteredProviders = [...(modMetadata[`providersPer${level}`] || [])];
+      const unfilteredProviders = [...(reflectMetadata[`providersPer${level}`] || [])];
       const providers = unfilteredProviders.filter((p) => getToken(p) === token);
       if (providers.length) {
         found = true;
         if (providers.some(isMultiProvider)) {
+          meta[`exportedMultiProvidersPer${level}`] ??= [];
           meta[`exportedMultiProvidersPer${level}`].push(...(providers as MultiProvider[]));
         } else {
+          meta[`exportedProvidersPer${level}`] ??= [];
           meta[`exportedProvidersPer${level}`].push(...providers);
         }
       }
@@ -274,7 +299,7 @@ export class ModuleNormalizer {
     if (!found) {
       const providerName = token.name || token;
       let msg = '';
-      const providersPerApp = [...(modMetadata.providersPerApp || [])];
+      const providersPerApp = [...(reflectMetadata.providersPerApp || [])];
       if (providersPerApp.some((p) => getToken(p) === token)) {
         msg =
           `Exported "${providerName}" includes in "providersPerApp" and "exports" of ${meta.name}. ` +

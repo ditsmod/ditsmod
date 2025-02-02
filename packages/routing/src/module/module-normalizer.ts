@@ -38,7 +38,7 @@ export class RoutingModuleNormalizer {
   normalize<T extends NormalizedMeta>(baseMeta: T) {
     const meta = new RoutingNormalizedMeta();
     const modName = (meta.name = baseMeta.name);
-    const rawMeta = baseMeta.rawMeta as RoutingRawMeta;
+    const rawMeta = baseMeta.aReflectMetadata as RoutingRawMeta[];
     // if (isModuleWithParams(meta.modRefId) && meta.modRefId.guards.length) {
     //   meta.guardsPerMod.push(...this.normalizeGuards(rawMeta.guards));
     //   this.checkGuardsPerMod(meta.guardsPerMod, modName);
