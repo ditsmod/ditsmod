@@ -6,12 +6,12 @@ import { ModuleManager } from '#init/module-manager.js';
 import { BaseAppOptions } from '#types/app-options.js';
 import { ModuleType } from '#types/mix.js';
 import { BaseAppInitializer } from '#init/base-app-initializer.js';
-import { BaseApplication } from '#init/application.js';
+import { BaseApplication } from '#init/base-application.js';
 import { rootModule } from '#decorators/root-module.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { LoggerConfig } from '#logger/logger.js';
 
-describe('Application', () => {
+describe('BaseApplication', () => {
   class ApplicationMock extends BaseApplication {
     override baseAppOptions = new BaseAppOptions();
     declare systemLogMediator: SystemLogMediator;
