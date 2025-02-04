@@ -3,6 +3,7 @@ import { BaseAppInitializer } from '@ditsmod/core';
 import { RequestListener } from './request.js';
 import { PreRouter } from './pre-router.js';
 import { HttpServer } from '#types/server-options.js';
+import { SERVER } from '#types/constants.js';
 
 export class AppInitializer extends BaseAppInitializer {
   protected preRouter: PreRouter;
@@ -13,4 +14,11 @@ export class AppInitializer extends BaseAppInitializer {
   }
 
   requestListener: RequestListener = (rawReq, rawRes) => this.preRouter.requestListener(rawReq, rawRes);
+
+  protected override addDefaultProvidersPerApp() {
+    this.meta.providersPerApp.unshift(
+      { token: SERVER, useFactory: () => this.server },
+    );
+    super.addDefaultProvidersPerApp();
+  }
 }

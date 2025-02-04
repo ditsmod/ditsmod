@@ -1,4 +1,4 @@
-import { InjectionToken, Injector } from '#di';
+import { Injector } from '#di';
 
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { defaultExtensionsProviders } from '#extension/default-extensions-providers.js';
@@ -15,9 +15,8 @@ import { getProviderName } from '#utils/get-provider-name.js';
 import { getProvidersTargets, getTokens } from '#utils/get-tokens.js';
 import { isClassProvider, isFactoryProvider, isTokenProvider, isValueProvider } from '#di';
 import { SystemErrorMediator } from '#error/system-error-mediator.js';
-import { ExtensionCounters, ExtensionClass } from '#extension/extension-types.js';
+import { ExtensionCounters } from '#extension/extension-types.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
-import { isExtensionProvider } from '#extension/type-guards.js';
 
 export class ImportsResolver {
   protected unfinishedSearchDependecies: [ModRefId, Provider][] = [];

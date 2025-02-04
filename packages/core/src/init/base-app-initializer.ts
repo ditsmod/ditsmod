@@ -221,7 +221,6 @@ export class BaseAppInitializer {
   protected addDefaultProvidersPerApp() {
     this.meta.providersPerApp.unshift(
       ...defaultProvidersPerApp,
-      // { token: SERVER, useFactory: () => this.server },
       { token: BaseAppOptions, useValue: this.baseAppOptions },
       { token: ModuleManager, useValue: this.moduleManager },
       { token: BaseAppInitializer, useValue: this },
