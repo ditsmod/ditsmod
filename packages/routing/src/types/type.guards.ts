@@ -1,8 +1,8 @@
-import { AnyObj, Class, DecoratorAndValue, ModuleType, ModuleWithParams } from '@ditsmod/core';
+import { AnyObj, Class, DecoratorAndValue, ModuleType } from '@ditsmod/core';
 
-import { route } from '../decorators/route.js';
+import { route } from '#decorators/route.js';
 import { HttpInterceptor } from '#interceptors/tokens-and-types.js';
-import { AppendsWithParams } from '../module/module-metadata.js';
+import { AppendsWithParams, RoutingModuleParams } from '#module/module-metadata.js';
 import { controller, ControllerRawMetadata } from './controller.js';
 import { Http2SecureServerOptions, ServerOptions } from './server-options.js';
 
@@ -20,7 +20,7 @@ export function isInterceptor(cls?: Class): cls is Class<HttpInterceptor> {
 }
 
 export function isAppendsWithParams(
-  modRefId?: ModuleType | ModuleWithParams | AppendsWithParams,
+  modRefId?: ModuleType | RoutingModuleParams | AppendsWithParams,
 ): modRefId is AppendsWithParams {
   return (
     (modRefId as AppendsWithParams)?.module !== undefined &&

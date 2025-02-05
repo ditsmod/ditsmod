@@ -1,16 +1,7 @@
-import {
-  AnyObj,
-  Provider,
-  ModuleType,
-  ModuleWithParams,
-  MultiProvider,
-  Class,
-  ProvidersMetadata,
-  Providers,
-} from '@ditsmod/core';
+import { AnyObj, Provider, ModuleType, MultiProvider, Class, Providers } from '@ditsmod/core';
 
 import { NormalizedGuard } from '#interceptors/guard.js';
-import { AppendsWithParams, RoutingRawMeta } from '#module/module-metadata.js';
+import { AppendsWithParams, RoutingModuleParams } from '#module/module-metadata.js';
 
 export interface RoutingRawProvidersMetadata {
   providersPerApp?: Providers | Provider[];
@@ -29,16 +20,15 @@ export class RoutingNormalizedMeta<T extends AnyObj = AnyObj> extends RoutingPro
    * The module setted here must be identical to the module
    * passed to "imports", "exports" or "appends" array of `@featureModule` metadata.
    */
-  modRefId: ModuleType<T> | ModuleWithParams<T> | AppendsWithParams<T>;
+  modRefId: ModuleType<T> | RoutingModuleParams<T> | AppendsWithParams<T>;
   name: string;
-  rawMeta: RoutingRawMeta;
   exportedProvidersPerRou: Provider[] = [];
   exportedProvidersPerReq: Provider[] = [];
   exportedMultiProvidersPerRou: MultiProvider[] = [];
   exportedMultiProvidersPerReq: MultiProvider[] = [];
   guardsPerMod: NormalizedGuard[] = [];
-  resolvedCollisionsPerRou: [any, ModuleType | ModuleWithParams][] = [];
-  resolvedCollisionsPerReq: [any, ModuleType | ModuleWithParams][] = [];
+  resolvedCollisionsPerRou: [any, ModuleType | RoutingModuleParams][] = [];
+  resolvedCollisionsPerReq: [any, ModuleType | RoutingModuleParams][] = [];
   appendsWithParams: AppendsWithParams[] = [];
   appendsModules: ModuleType[] = [];
   controllers: Class[] = [];
