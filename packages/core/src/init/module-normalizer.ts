@@ -93,7 +93,6 @@ export class ModuleNormalizer {
       );
 
       this.pickAndMergeMeta(meta, reflectMetadata);
-      meta.extensionsMeta = { ...(meta.extensionsMeta || {}) };
     });
 
     return meta;

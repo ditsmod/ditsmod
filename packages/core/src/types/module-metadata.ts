@@ -37,9 +37,9 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
 /**
  * The interface intended for `moduleWithParams.params`.
  */
-export interface ModuleParamItem {
+export interface ModuleParamItem<T extends AnyObj = AnyObj> {
   decorator: AnyFn;
-  metadata: AnyObj;
+  metadata: T;
 }
 export interface ModuleWithParams<M extends AnyObj = AnyObj> {
   id?: string;
