@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
 import { SignOptions, SignPayload } from 'jsonwebtoken';
-import { beforeEach, describe, expect, it } from 'vitest';
 
 import { JwtService } from './jwt.service.js';
 import { JwtServiceOptions } from './models/jwt-service-options.js';

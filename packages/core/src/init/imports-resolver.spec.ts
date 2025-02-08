@@ -1,6 +1,5 @@
-import { describe, expect, it, beforeEach } from 'vitest';
+import { forwardRef, inject, injectable, Injector, KeyRegistry } from '#di';
 
-import { injectable, Injector } from '#di';
 import { ImportsResolver } from '#init/imports-resolver.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { ImportedTokensMap } from '#types/metadata-per-mod.js';

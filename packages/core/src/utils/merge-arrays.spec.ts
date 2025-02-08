@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import { mergeArrays } from './merge-arrays.js';
 
 describe('mergeArrays()', () => {

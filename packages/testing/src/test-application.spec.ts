@@ -1,7 +1,6 @@
 import { AppOptions, ModuleType, rootModule } from '@ditsmod/core';
 import { Router } from '@ditsmod/routing';
 import { Server } from 'node:http';
-import { describe, expect, it } from 'vitest';
 
 import { TestApplication } from './test-application.js';
 

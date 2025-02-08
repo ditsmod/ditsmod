@@ -1,5 +1,3 @@
-import { describe, expect, it } from 'vitest';
-
 import { Extension } from '#extension/extension-types.js';
 import { InjectionToken } from './injection-token.js';
 import { KeyRegistry } from './key-registry.js';

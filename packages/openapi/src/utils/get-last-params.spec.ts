@@ -1,5 +1,4 @@
 import { ParameterObject, ReferenceObject } from '@ts-stack/openapi-spec';
-import { describe, expect, it } from 'vitest';
 
 import { getLastParameterObjects, getLastReferenceObjects } from './get-last-params.js';
 

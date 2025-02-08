@@ -1,5 +1,4 @@
 import { Injector } from '@ditsmod/core';
-import { describe, expect, it, beforeEach } from 'vitest';
 
 import { MyService } from './my.service.js';
 import { OtherService } from './other.service.js';

@@ -1,5 +1,4 @@
 import { ModRefId, NormalizedMeta, Provider, Providers } from '@ditsmod/core';
-import { describe, expect, it } from 'vitest';
 
 import { TestAppInitializer } from '#app/test-app-initializer.js';
 import { Meta } from '#app/types.js';

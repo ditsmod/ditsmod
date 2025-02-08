@@ -1,5 +1,4 @@
 import 'reflect-metadata/lite';
-import { describe, expect, it } from 'vitest';
 
 import { CLASS_KEY, makeClassDecorator, makePropDecorator } from './decorator-factories.js';
 import { reflector } from './reflection.js';

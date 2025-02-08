@@ -1,5 +1,3 @@
-import { describe, expect, it, beforeEach } from 'vitest';
-
 import { featureModule } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { forwardRef } from '#di';

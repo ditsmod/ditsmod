@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { jest } from '@jest/globals';
 import 'reflect-metadata/lite';
 
 import { makeClassDecorator, makeParamDecorator, makePropDecorator } from './decorator-factories.js';
@@ -313,8 +313,8 @@ describe('injector', () => {
   });
 
   it('should support function factory', () => {
-    const spy1 = vi.fn();
-    const spy2 = vi.fn();
+    const spy1 = jest.fn();
+    const spy2 = jest.fn();
 
     function method1(engine: Engine) {
       spy1();
@@ -350,7 +350,7 @@ describe('injector', () => {
   });
 
   it('should support function factory non-class tokens', () => {
-    const spy1 = vi.fn();
+    const spy1 = jest.fn();
 
     function method1(engine: Engine) {
       spy1();
@@ -371,9 +371,9 @@ describe('injector', () => {
   });
 
   it('should support method factory', () => {
-    const spy1 = vi.fn();
-    const spy2 = vi.fn();
-    const spy3 = vi.fn();
+    const spy1 = jest.fn();
+    const spy2 = jest.fn();
+    const spy3 = jest.fn();
     const controller = makeClassDecorator();
     const route = makePropDecorator((method: 'GET' | 'POST', path: string) => ({ method, path }));
 
@@ -433,8 +433,8 @@ describe('injector', () => {
   });
 
   it('should support function factory without token', () => {
-    const spy1 = vi.fn();
-    const spy2 = vi.fn();
+    const spy1 = jest.fn();
+    const spy2 = jest.fn();
 
     function method1(engine: Engine) {
       spy1();
@@ -469,9 +469,9 @@ describe('injector', () => {
   });
 
   it('should support method factory without token', () => {
-    const spy1 = vi.fn();
-    const spy2 = vi.fn();
-    const spy3 = vi.fn();
+    const spy1 = jest.fn();
+    const spy2 = jest.fn();
+    const spy3 = jest.fn();
     const controller = makeClassDecorator();
     const route = makePropDecorator((method: 'GET' | 'POST', path: string) => ({ method, path }));
 
@@ -745,7 +745,7 @@ describe('injector', () => {
       expect(targetClass.dependecy1).not.toBe(targetClass.dependecy3);
     });
 
-    it.skip('for child dependency', () => {
+    xit('for child dependency', () => {
       @injectable()
       class Dependecy1 {
         constructor(@inject(CTX_DATA) public contextParameter: string | number) {}

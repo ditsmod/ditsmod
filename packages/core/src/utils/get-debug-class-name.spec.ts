@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import { getDebugClassName } from './get-debug-class-name.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 

@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { jest } from '@jest/globals';
 
 import { table } from '#decorators/table.js';
 import { getTableMetadata } from '../../utils.js';
@@ -41,7 +41,7 @@ describe('MySqlSelectBuilder', () => {
   const [a, articles_as_a, aAlias] = getTableMetadata(Articles, 'a');
 
   it('should apply and execute "run" callback', () => {
-    const cb = vi.fn();
+    const cb = jest.fn();
     const sql1 = new MySqlSelectBuilder<Tables>().$setHook(cb).select('field1');
     const opts = { one: 'three' };
     const args = [1, 2];

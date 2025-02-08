@@ -1,5 +1,5 @@
 import { AnyObj, Injector, ModuleExtract, QUERY_PARAMS } from '@ditsmod/core';
-import { describe, expect, it, vi } from 'vitest';
+import { jest } from '@jest/globals';
 
 import { I18nOptions } from '#src/types/mix.js';
 import { DictService } from '#src/dict.service.js';
@@ -13,7 +13,7 @@ describe('DictService', () => {
     const injector = Injector.resolveAndCreate([
       DictService,
       I18nErrorMediator,
-      { token: I18nLogMediator, useValue: { missingLng: vi.fn } },
+      { token: I18nLogMediator, useValue: { missingLng: jest.fn } },
       { token: QUERY_PARAMS, useValue: queryParams },
       { token: I18nOptions, useValue: i18nOptions },
       { token: ModuleExtract, useValue: { moduleName: 'test-i18n' } },

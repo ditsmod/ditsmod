@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { jest } from '@jest/globals';
 
 import { Logger, LoggerConfig } from '#logger/logger.js';
 import { Provider } from '#di/types-and-models.js';
@@ -41,8 +41,8 @@ describe('Providers', () => {
   });
 
   it('works with nested loops', () => {
-    const for1 = vi.fn();
-    const for2 = vi.fn();
+    const for1 = jest.fn();
+    const for2 = jest.fn();
     const providers = new Providers()
       .useValue('token1', 'value1')
       .useValue('token2', 'value2')
@@ -224,9 +224,9 @@ describe('Providers', () => {
       }
     }
 
-    vi.spyOn(Some.prototype, 'one');
-    vi.spyOn(Other.prototype, 'two');
-    vi.spyOn(Third.prototype, 'three');
+    jest.spyOn(Some.prototype, 'one');
+    jest.spyOn(Other.prototype, 'two');
+    jest.spyOn(Third.prototype, 'three');
 
     const providers = new Providers();
 

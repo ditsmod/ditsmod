@@ -1,5 +1,4 @@
 import { Providers } from '@ditsmod/core';
-import { describe, expect, it } from 'vitest';
 
 import { I18nProviders } from '#src/i18n-providers.js';
 import { CommonDict } from './current/index.js';

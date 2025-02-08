@@ -3,7 +3,6 @@ import { TestApplication } from '@ditsmod/testing';
 import { Providers, Status } from '@ditsmod/core';
 import { HttpServer } from '@ditsmod/routing';
 import { BodyParserConfig } from '@ditsmod/body-parser';
-import { describe, expect, it, beforeAll, afterAll } from 'vitest';
 
 import { AppModule } from '#app/app.module.js';
 

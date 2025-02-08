@@ -1,4 +1,3 @@
-import { describe, it, beforeEach } from 'vitest';
 
 import { CorsExtension } from './cors.extension.js';
 

@@ -1,5 +1,3 @@
-import { describe, expect, it } from 'vitest';
-
 import { table } from '#decorators/table.js';
 import { getTableMetadata } from '../../utils.js';
 import { MySqlDeleteBuilder } from './mysql-delete-builder.js';

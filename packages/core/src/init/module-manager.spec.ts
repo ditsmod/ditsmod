@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { jest } from '@jest/globals';
 
 import { featureModule } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
@@ -13,7 +13,7 @@ import { NormalizedMeta } from '#types/normalized-meta.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 
 describe('ModuleManager', () => {
-  console.log = vi.fn();
+  console.log = jest.fn();
   type ModuleId = string | ModuleType | ModuleWithParams;
   @injectable()
   class Provider0 {}

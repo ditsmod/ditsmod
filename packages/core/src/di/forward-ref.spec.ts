@@ -1,5 +1,3 @@
-import { describe, expect, it } from 'vitest';
-
 import { forwardRef, resolveForwardRef } from './forward-ref.js';
 import { Class } from './types-and-models.js';
 

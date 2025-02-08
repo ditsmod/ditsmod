@@ -1,4 +1,3 @@
-import { describe, expect, it, beforeEach } from 'vitest';
 import { CanActivate, NormalizedGuard, RequestContext } from '@ditsmod/routing';
 import { PerAppService, Status, Injector } from '@ditsmod/core';
 import {
@@ -136,7 +135,10 @@ describe('OpenapiCompilerExtension', () => {
         }
       }
 
-      const guards: NormalizedGuard[] = [{ guard: Guard1 }, { guard: Guard1 }];
+      const guards: NormalizedGuard[] = [
+        { guard: Guard1 },
+        { guard: Guard1 },
+      ];
       mock.setSecurityInfo(operationObject, guards);
       expect(mock.oasObject).not.toEqual(DEFAULT_OAS_OBJECT);
       const expectedcomponents: ComponentsObject = { securitySchemes: { guard1: securitySchemeObject } };

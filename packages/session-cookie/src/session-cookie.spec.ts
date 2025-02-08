@@ -1,12 +1,12 @@
 import { Injector } from '@ditsmod/core';
 import { RawRequest, RawResponse, RAW_REQ, RAW_RES } from '@ditsmod/routing';
-import { beforeEach, describe, expect, it, vi, afterEach } from 'vitest';
+import { jest } from '@jest/globals';
 
 import { SessionCookie } from './session-cookie.js';
 import { SessionCookieOptions } from './types.js';
 
 describe('@ditsmod/session-cookie', () => {
-  const setHeader = vi.fn();
+  const setHeader = jest.fn();
   let rawReq: RawRequest;
   let rawRes: RawResponse;
   let session: SessionCookie;
@@ -32,7 +32,7 @@ describe('@ditsmod/session-cookie', () => {
   });
 
   afterEach(() => {
-    vi.resetAllMocks();
+    jest.resetAllMocks();
   });
 
   it('returns instanceof Session', async () => {

@@ -8,7 +8,7 @@ sidebar_position: 40
 
 По-суті, юніт-тестування - це метод тестування, який дозволяє перевірити чи правильно працюють окремі найменші частини застосунку, такі як функції та методи класів (які по-суті також є функціями). Для проведення тестування, почергово фокусуються на окремій функції, при цьому ізолюють усі інші частини програми, які взаємодіють з цією функцією. Правильно написані юніт-тести дозволяють читати їх як документацію до вашої програми.
 
-Одним із самих популярних фреймворків для написання юніт-тестів для JavaScript-коду є [vitest][100]. В даному розділі ми будемо використовувати саме цей фреймворк.
+Одним із самих популярних фреймворків для написання юніт-тестів для JavaScript-коду є [jest][100]. В даному розділі ми будемо використовувати саме цей фреймворк.
 
 ## Попередні умови для написання юніт-тестів
 
@@ -55,13 +55,13 @@ const service2 = injector.get(Service2);
 
 ```ts {8}
 import { Injector } from '@ditsmod/core';
-import { vi } from 'vitest';
+import { jest } from '@jest/globals';
 
 import { Service1 } from './service1.js';
 import { Service2 } from './service2.js';
 
 const injector = Injector.resolveAndCreate([
-  { token: Service1, useValue: { saySomething: vi.fn() } },
+  { token: Service1, useValue: { saySomething: jest.fn() } },
   Service2
 ]);
 const service2 = injector.get(Service2);
@@ -73,18 +73,18 @@ const service2 = injector.get(Service2);
 
 ```ts {8-9,16}
 import { Injector } from '@ditsmod/core';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { jest } from '@jest/globals';
 
 import { Service1 } from './service1.js';
 import { Service2 } from './service2.js';
 
 describe('Service2', () => {
-  const saySomething = vi.fn();
+  const saySomething = jest.fn();
   const MockService1 = { saySomething } as Service1;
   let service2: Service2;
 
   beforeEach(() => {
-    vi.restoreAllMocks();
+    jest.restoreAllMocks();
 
     const injector = Injector.resolveAndCreate([
       { token: Service1, useValue: MockService1 },
@@ -116,7 +116,7 @@ describe('Service2', () => {
 import request from 'supertest';
 import { HttpServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { jest } from '@jest/globals';
 
 import { AppModule } from '#app/app.module.js';
 import { EmailService } from '#app/email.service.js';
@@ -125,11 +125,11 @@ import { InterfaceOfEmailService } from '#app/types.js';
 describe('End-to-end testing', () => {
   let server: HttpServer;
   let testAgent: ReturnType<typeof request>;
-  const query = vi.fn();
+  const query = jest.fn();
   const MockEmailService = { query } as InterfaceOfEmailService;
 
   beforeEach(async () => {
-    vi.restoreAllMocks();
+    jest.restoreAllMocks();
 
     server = await TestApplication.createTestApp(AppModule)
       .overrideModuleMeta([
@@ -276,8 +276,8 @@ const server = await TestApplication.createTestApp(AppModule)
 [3]: /components-of-ditsmod-app/dependency-injection#hierarchy-and-encapsulation-of-injectors
 [4]: #testroutingplugin
 
-[100]: https://vitest.dev/
-[101]: https://vitest.dev/api/mock.html
+[100]: https://jestjs.io/
+[101]: https://jestjs.io/docs/mock-functions
 [102]: https://github.com/ladjs/supertest
 [103]: https://github.com/ditsmod/ditsmod/blob/c42c834cb9/packages/routing/e2e/main.spec.ts#L39
 [104]: https://github.com/ditsmod/ditsmod/blob/main/packages/routing-testing/src/test-routing.plugin.ts

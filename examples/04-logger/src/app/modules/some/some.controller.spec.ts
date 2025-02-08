@@ -1,12 +1,12 @@
 import { Injector, Logger } from '@ditsmod/core';
 import { Res } from '@ditsmod/routing';
-import { beforeEach, describe, expect, it, vi, afterEach } from 'vitest';
+import { jest } from '@jest/globals';
 
 import { SomeController } from './some.controller.js';
 
 describe('SomeController', () => {
-  const send = vi.fn();
-  const log = vi.fn();
+  const send = jest.fn();
+  const log = jest.fn();
   const res = { send } as unknown as Res;
   const logger = { log } as unknown as Logger;
   let someController: SomeController;
@@ -16,7 +16,7 @@ describe('SomeController', () => {
     someController = injector.get(SomeController);
   });
   afterEach(() => {
-    vi.restoreAllMocks();
+    jest.restoreAllMocks();
   });
 
   it('controller should send response', async () => {

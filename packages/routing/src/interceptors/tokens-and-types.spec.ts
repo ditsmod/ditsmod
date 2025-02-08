@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { jest } from '@jest/globals';
 import {
   clearDebugClassNames,
   defaultProvidersPerApp,
@@ -27,7 +27,7 @@ import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js'
 import { routingMetadata } from '#decorators/routing-metadata.js';
 
 describe('HttpInterceptor', () => {
-  const jestFn = vi.fn((interceptorName: string) => interceptorName);
+  const jestFn = jest.fn((interceptorName: string) => interceptorName);
 
   class Interceptor1 implements HttpInterceptor {
     intercept(next: HttpHandler) {
@@ -309,9 +309,11 @@ describe('mix per app, per mod or per req', () => {
     expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
   });
 
-  it.skip('resolve case 3', () => {
-    @routingMetadata({ providersPerReq: [{ token: HttpBackend, useValue: '' }] })
-    @featureModule({ exports: [HttpBackend] })
+  xit('resolve case 3', () => {
+    @featureModule({
+      exports: [HttpBackend],
+      providersPerReq: [{ token: HttpBackend, useValue: '' }],
+    })
     class Module0 {}
 
     @routingMetadata({ resolvedCollisionsPerReq: [[HttpBackend, AppModule]] })
@@ -339,9 +341,11 @@ describe('mix per app, per mod or per req', () => {
     ]);
   });
 
-  it.skip('case 4', () => {
-    @routingMetadata({ providersPerReq: [{ token: HttpBackend, useValue: '' }] })
-    @featureModule({ exports: [HttpBackend] })
+  xit('case 4', () => {
+    @featureModule({
+      exports: [HttpBackend],
+      providersPerReq: [{ token: HttpBackend, useValue: '' }],
+    })
     class Module0 {}
 
     @rootModule({
@@ -354,9 +358,11 @@ describe('mix per app, per mod or per req', () => {
     expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
   });
 
-  it.skip('resolve case 4', () => {
-    @routingMetadata({ providersPerReq: [{ token: HttpBackend, useValue: '' }] })
-    @featureModule({ exports: [HttpBackend] })
+  xit('resolve case 4', () => {
+    @featureModule({
+      providersPerReq: [{ token: HttpBackend, useValue: '' }],
+      exports: [HttpBackend],
+    })
     class Module0 {}
 
     @routingMetadata({ resolvedCollisionsPerReq: [[HttpBackend, AppModule]] })

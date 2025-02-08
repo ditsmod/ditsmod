@@ -8,7 +8,7 @@ sidebar_position: 40
 
 In fact, unit testing is a testing method that allows you to verify that the smallest parts of an application, such as functions and class methods (which are also essentially functions), work correctly. To perform testing, you alternately focus on a separate function while isolating all other parts of the program that interact with that function. Properly written unit tests allow you to read them as documentation for your program.
 
-One of the most popular frameworks for writing unit tests for JavaScript code is [vitest][100]. In this section, we will use this framework.
+One of the most popular frameworks for writing unit tests for JavaScript code is [jest][100]. In this section, we will use this framework.
 
 ## Prerequisites for writing unit tests
 
@@ -55,13 +55,13 @@ In this case, to create `Service2`, the injector will first create an instance o
 
 ```ts {8}
 import { Injector } from '@ditsmod/core';
-import { vi } from 'vitest';
+import { jest } from '@jest/globals';
 
 import { Service1 } from './service1.js';
 import { Service2 } from './service2.js';
 
 const injector = Injector.resolveAndCreate([
-  { token: Service1, useValue: { saySomething: vi.fn() } },
+  { token: Service1, useValue: { saySomething: jest.fn() } },
   Service2
 ]);
 const service2 = injector.get(Service2);
@@ -73,18 +73,18 @@ Now you can write a test using this technique of substituting providers:
 
 ```ts {8-9,16}
 import { Injector } from '@ditsmod/core';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { jest } from '@jest/globals';
 
 import { Service1 } from './service1.js';
 import { Service2 } from './service2.js';
 
 describe('Service2', () => {
-  const saySomething = vi.fn();
+  const saySomething = jest.fn();
   const MockService1 = { saySomething } as Service1;
   let service2: Service2;
 
   beforeEach(() => {
-    vi.restoreAllMocks();
+    jest.restoreAllMocks();
 
     const injector = Injector.resolveAndCreate([
       { token: Service1, useValue: MockService1 },
@@ -116,7 +116,7 @@ Let's look at the situation when we make a mock for `EmailService`:
 import request from 'supertest';
 import { HttpServer } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { jest } from '@jest/globals';
 
 import { AppModule } from '#app/app.module.js';
 import { EmailService } from '#app/email.service.js';
@@ -125,11 +125,11 @@ import { InterfaceOfEmailService } from '#app/types.js';
 describe('End-to-end testing', () => {
   let server: HttpServer;
   let testAgent: ReturnType<typeof request>;
-  const query = vi.fn();
+  const query = jest.fn();
   const MockEmailService = { query } as InterfaceOfEmailService;
 
   beforeEach(async () => {
-    vi.restoreAllMocks();
+    jest.restoreAllMocks();
 
     server = await TestApplication.createTestApp(AppModule)
       .overrideModuleMeta([
@@ -276,8 +276,8 @@ const server = await TestApplication.createTestApp(AppModule)
 [3]: /components-of-ditsmod-app/dependency-injection#hierarchy-and-encapsulation-of-injectors
 [4]: #testroutingplugin
 
-[100]: https://vitest.dev/
-[101]: https://vitest.dev/api/mock.html
+[100]: https://jestjs.io/
+[101]: https://jestjs.io/docs/mock-functions
 [102]: https://github.com/ladjs/supertest
 [103]: https://github.com/ditsmod/ditsmod/blob/c42c834cb93cb2/packages/routing/e2e/main.spec.ts#L39
 [104]: https://github.com/ditsmod/ditsmod/blob/main/packages/routing-testing/src/test-routing.plugin.ts

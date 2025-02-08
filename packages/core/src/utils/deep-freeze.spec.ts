@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import { deepFreeze } from './deep-freeze.js';
 
 describe('deepFreeze', () => {

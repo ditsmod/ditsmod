@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { jest } from '@jest/globals';
 
 import { Injector } from '#di';
 import { ConsoleLogger } from '#logger/console-logger.js';
@@ -25,7 +25,7 @@ describe('LogMediator', () => {
   }
 
   beforeEach(() => {
-    console.log = vi.fn();
+    console.log = jest.fn();
   });
 
   describe('checkDiffLogLevels()', () => {
@@ -48,8 +48,8 @@ describe('LogMediator', () => {
   describe('setLog()', () => {
     const mock = new MockLogMediator({ moduleName: 'fakeName' });
     beforeEach(() => {
-      vi.resetAllMocks();
-      vi.spyOn(mock.logger, 'log');
+      jest.resetAllMocks();
+      jest.spyOn(mock.logger, 'log');
     });
 
     it('default state', () => {
@@ -83,8 +83,8 @@ describe('LogMediator', () => {
     describe('without passing injector to the constructor', () => {
       const mock = new MockLogMediator({ moduleName: 'fakeName' });
       beforeEach(() => {
-        vi.resetAllMocks();
-        vi.spyOn(mock.logger, 'log');
+        jest.resetAllMocks();
+        jest.spyOn(mock.logger, 'log');
       });
 
       it('works without log items', () => {
@@ -115,8 +115,8 @@ describe('LogMediator', () => {
       const injector = Injector.resolveAndCreate([{ token: Logger, useClass: ConsoleLogger }]);
       const mock = new MockLogMediator({ moduleName: 'fakeName' }, injector);
       beforeEach(() => {
-        vi.resetAllMocks();
-        vi.spyOn(mock.logger, 'log');
+        jest.resetAllMocks();
+        jest.spyOn(mock.logger, 'log');
       });
 
       it('works with log items', () => {

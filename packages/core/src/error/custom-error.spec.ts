@@ -1,5 +1,4 @@
 import { ChainError } from '@ts-stack/chain-error';
-import { describe, expect, it } from 'vitest';
 
 import { Status } from '#utils/http-status-codes.js';
 import { CustomError } from '#error/custom-error.js';

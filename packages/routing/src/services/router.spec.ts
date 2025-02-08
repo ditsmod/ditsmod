@@ -1,5 +1,4 @@
 import { Injector } from '@ditsmod/core';
-import { describe, expect, it, beforeEach } from 'vitest';
 
 import { DefaultRouter } from './router.js';
 import { Fn } from '../types/types.js';

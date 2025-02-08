@@ -2,7 +2,7 @@ import request from 'supertest';
 import { HttpServer } from '@ditsmod/routing';
 import { HttpErrorHandler } from '@ditsmod/routing';
 import { TestApplication } from '@ditsmod/testing';
-import { describe, expect, it, vi, afterEach, beforeAll } from 'vitest';
+import { jest } from '@jest/globals';
 
 import { AppModule } from '#app/app.module.js';
 import { CustomHttpErrorHandler } from './custom-controller-error-handler.js';
@@ -33,7 +33,7 @@ describe('12-testing', () => {
   });
 
   describe('good error stack trace', () => {
-    const setError = vi.fn();
+    const setError = jest.fn();
     const errorContainer = { setError } as ErrorContainer;
     let server: HttpServer;
 

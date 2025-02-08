@@ -1,6 +1,5 @@
 import { Injector } from '@ditsmod/core';
 import { RequestContext } from '@ditsmod/routing';
-import { describe, expect, it } from 'vitest';
 
 import { BearerGuard } from './bearer.guard.js';
 import { SESSION } from './types.js';

@@ -1,5 +1,5 @@
 import { Logger, Injector, Status, CustomError } from '@ditsmod/core';
-import { beforeEach, describe, expect, it, vi, afterEach } from 'vitest';
+import { jest } from '@jest/globals';
 
 import { RequestContext } from '#services/request-context.js';
 import { RawResponse } from '#services/request.js';
@@ -24,12 +24,12 @@ describe('DefaultHttpErrorHandler', () => {
   beforeEach(() => {
     const injector = Injector.resolveAndCreate([{ token: Logger, useValue: logger }, ErrorHandler]);
     errorHandler = injector.get(ErrorHandler);
-    vi.spyOn(rawRes, 'end');
-    vi.spyOn(logger, 'log');
+    jest.spyOn(rawRes, 'end');
+    jest.spyOn(logger, 'log');
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    jest.restoreAllMocks();
   });
 
   it('default error with some message', () => {

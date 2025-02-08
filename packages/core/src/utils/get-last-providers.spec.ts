@@ -1,5 +1,3 @@
-import { describe, expect, it } from 'vitest';
-
 import { ValueProvider } from '#di';
 import { getLastProviders } from './get-last-providers.js';
 
