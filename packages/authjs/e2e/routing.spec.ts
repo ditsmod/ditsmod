@@ -1,4 +1,3 @@
-import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import supertest from 'supertest';
 import { rootModule } from '@ditsmod/core';
 import { route, RoutingModule, RequestContext, controller, HttpServer } from '@ditsmod/routing';
@@ -9,7 +8,7 @@ import { AuthjsModule } from '#mod/authjs.module.js';
 import { AuthjsInterceptor } from '#mod/authjs.interceptor.js';
 
 // mock the toWebRequest, make it throw if "X-Test-Header" = 'throw'
-vi.mock('#mod/http-api-adapters.js', async (importOriginal) => {
+jest.mock('#mod/http-api-adapters.js', async (importOriginal) => {
   const mod = await importOriginal<typeof import('#mod/http-api-adapters.js')>();
   return {
     ...mod,

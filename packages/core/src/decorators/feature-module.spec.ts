@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 
 import { reflector } from '#di';
 import { AttachedMetadata, featureModule } from './feature-module.js';

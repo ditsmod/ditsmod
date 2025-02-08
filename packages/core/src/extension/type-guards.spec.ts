@@ -1,5 +1,3 @@
-import { describe, expect, it } from 'vitest';
-
 import { isExtensionProvider } from '#extension/type-guards.js';
 import { Extension } from '#extension/extension-types.js';
 

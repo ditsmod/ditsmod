@@ -15,7 +15,6 @@ import {
   rootModule,
   SystemLogMediator,
 } from '@ditsmod/core';
-import { beforeEach, describe, expect, it } from 'vitest';
 
 import { controller } from '#types/controller.js';
 import { AppendsWithParams, RoutingMetadata } from './module-metadata.js';

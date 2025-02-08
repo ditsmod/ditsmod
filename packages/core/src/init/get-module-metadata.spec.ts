@@ -1,5 +1,3 @@
-import { describe, expect, it } from 'vitest';
-
 import { DecoratorAndValue, forwardRef } from '#di';
 import { AttachedMetadata, featureModule, RawMeta } from '#decorators/feature-module.js';
 import { Provider } from '#di/types-and-models.js';

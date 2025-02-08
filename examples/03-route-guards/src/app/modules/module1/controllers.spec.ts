@@ -1,5 +1,4 @@
 import { Injector } from '@ditsmod/core';
-import { beforeEach, describe, expect, it } from 'vitest';
 
 import { InjController } from './controllers.js';
 

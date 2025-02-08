@@ -1,4 +1,3 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   ModuleType,
   ModuleWithParams,
@@ -22,7 +21,7 @@ import { controller } from '../types/controller.js';
 import { routingMetadata } from '#decorators/routing-metadata.js';
 
 describe('ModuleManager', () => {
-  console.log = vi.fn();
+  console.log = jest.fn();
   type ModuleId = string | ModuleType | ModuleWithParams;
 
   class MockModuleManager extends ModuleManager {

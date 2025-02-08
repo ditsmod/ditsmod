@@ -16,7 +16,6 @@ import {
   rootModule,
   SystemLogMediator,
 } from '@ditsmod/core';
-import { beforeAll, describe, expect, it } from 'vitest';
 
 import { AppInitializer } from './app-initializer.js';
 import { Router } from './router.js';

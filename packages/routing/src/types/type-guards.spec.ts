@@ -1,5 +1,4 @@
 import { featureModule, injectable, isModuleWithParams, reflector } from '@ditsmod/core';
-import { describe, expect, it } from 'vitest';
 
 import { route } from '#decorators/route.js';
 import { isAppendsWithParams, isCtrlDecor, isInterceptor, isRoute } from './type.guards.js';

@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import { topologicalSort } from './topological-sort.js';
 import { getGraph, ExtensionConfig} from './tarjan-graph.js';
 
