@@ -48,11 +48,11 @@
   ],
   "devDependencies": {
     "find-my-way": "^9.1.0",
+    "jest": "^29.7.0",
     "koa-tree-router": "^0.12.1",
     "npm-run-all": "*",
     "trek-router": "^1.2.0",
-    "typescript": "*",
-    "vitest": "^3.0.3"
+    "typescript": "*"
   },
   "peerDependencies": {
     "@ditsmod/core": "^3.0.0-alpha.3"

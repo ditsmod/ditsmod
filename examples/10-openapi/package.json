@@ -21,8 +21,8 @@
     "#service/*": "./dist/app/modules/service/*"
   },
   "devDependencies": {
+    "jest": "^29.7.0",
     "npm-run-all": "*",
-    "typescript": "*",
-    "vitest": "^3.0.3"
+    "typescript": "*"
   }
 }

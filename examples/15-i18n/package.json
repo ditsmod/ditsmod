@@ -17,8 +17,8 @@
     "clean": "rm -r dist*"
   },
   "devDependencies": {
+    "jest": "^29.7.0",
     "npm-run-all": "*",
-    "typescript": "*",
-    "vitest": "^3.0.3"
+    "typescript": "*"
   }
 }

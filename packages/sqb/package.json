@@ -39,8 +39,8 @@
     "@ditsmod/routing": "^3.0.0-alpha.3"
   },
   "devDependencies": {
+    "jest": "^29.7.0",
     "npm-run-all": "*",
-    "typescript": "*",
-    "vitest": "^3.0.3"
+    "typescript": "*"
   }
 }
