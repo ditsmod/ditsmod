@@ -12,8 +12,9 @@
   "scripts": {
     "build": "tsc -b tsconfig.build.json",
     "clean": "rm -rf dist*",
-    "test": "yarn build-test && vitest",
-    "build-test": "tsc -b tsconfig.unit.json"
+    "test": "yarn build-test && yarn esm-jest",
+    "build-test": "tsc -b tsconfig.unit.json",
+    "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)"
   },
   "imports": {
     "#di": "./dist/di/index.js",
