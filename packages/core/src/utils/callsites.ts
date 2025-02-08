@@ -32,7 +32,7 @@ export class CallsiteUtils {
         callers.unshift(callsite);
       }
 
-      if (callsite.getFunctionName() == 'classDecorFactory') {
+      if (callsite.getFunctionName() == 'classDecorFactory' || callsite.getFunctionName() == 'getCallerDir') {
         startListen = true; // This mean - expect next row
         continue;
       }
