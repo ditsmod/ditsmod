@@ -6,9 +6,6 @@ import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { ExtensionClass } from '#extension/extension-types.js';
 
 export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> {
-  providersPerApp: Provider[] = [];
-  providersPerMod: Provider[] = [];
-  aReflectMetadata: AnyObj[] = [];
   /**
    * The module setted here must be identical to the module
    * passed to "imports", "exports" array of `@featureModule` metadata.
@@ -22,8 +19,6 @@ export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj
    * The module ID.
    */
   id?: string = '';
-  importsModules: ModuleType[] = [];
-  importsWithParams: ModuleWithParams[] = [];
   decorator: AnyFn;
   /**
    * The directory in which the class was declared.
@@ -33,6 +28,12 @@ export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj
    * Indicates whether this module is external to the application.
    */
   isExternal: boolean;
+  aReflectMetadata: AnyObj[] = [];
+
+  importsModules: ModuleType[] = [];
+  importsWithParams: ModuleWithParams[] = [];
+  providersPerApp: Provider[] = [];
+  providersPerMod: Provider[] = [];
   exportsModules: ModuleType[] = [];
   exportsWithParams: ModuleWithParams[] = [];
   exportedProvidersPerMod: Provider[] = [];

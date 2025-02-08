@@ -3,8 +3,8 @@ import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
 import { AnyFn, AnyObj, ModuleType, Override } from '#types/mix.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { Providers } from '#utils/providers.js';
-import { CallsiteUtils } from '#utils/callsites.js';
 import { mergeArrays } from '#utils/merge-arrays.js';
+import { CallsiteUtils } from '#utils/callsites.js';
 
 export const featureModule: FeatureModuleDecorator = makeClassDecorator(transformModule);
 
@@ -34,16 +34,18 @@ function mergeModuleWithParams(modWitParams: ModuleWithParams, decorAndVal: Deco
 }
 
 export function transformModule(data?: ModuleMetadata): Override<AttachedMetadata, { metadata: RawMeta }> {
-  const metadata = Object.assign({}, data) as RawMeta;
-  objectKeys(metadata).forEach((p) => {
-    // If here is object with [Symbol.iterator]() method, this transform it to an array.
-    if (metadata[p] instanceof Providers) {
-      (metadata as any)[p] = [...metadata[p]];
+  const rawMeta = Object.assign({}, data) as RawMeta;
+  objectKeys(rawMeta).forEach((p) => {
+    if (rawMeta[p] instanceof Providers) {
+      (rawMeta as any)[p] = [...rawMeta[p]];
+    } else if (Array.isArray(rawMeta[p])) {
+      (rawMeta as any)[p] = rawMeta[p].slice();
     }
   });
-  metadata.decorator = featureModule;
-  metadata.declaredInDir = CallsiteUtils.getCallerDir() || '.';
-  return { isAttachedMetadata: true, metadata, mergeModuleWithParams };
+
+  rawMeta.decorator = featureModule;
+  rawMeta.declaredInDir = CallsiteUtils.getCallerDir() || '.';
+  return { isAttachedMetadata: true, metadata: rawMeta, mergeModuleWithParams };
 }
 /**
  * A metadata attached to the `rootModule` or `featureModule` decorators.
