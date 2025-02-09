@@ -25,6 +25,7 @@ import { Providers } from '#utils/providers.js';
 import { Extension, ExtensionClass } from '#extension/extension-types.js';
 import { NormalizedProvider, normalizeProviders } from '#utils/ng-utils.js';
 import { isExtensionConfig } from '#extension/type-guards.js';
+import { objectKeys } from '#utils/object-keys.js';
 
 export class ModuleNormalizer {
   /**
@@ -56,46 +57,46 @@ export class ModuleNormalizer {
     meta.decorator = rawMeta.decorator;
     meta.declaredInDir = rawMeta.declaredInDir;
     this.checkAndMarkExternalModule(isRootModule(rawMeta), meta);
+    this.normalizeModule(modName, rawMeta, meta);
+    return meta;
+  }
 
-    aReflectMetadata.forEach((reflectMetadata) => {
-      (reflectMetadata.imports as undefined | ModRefId[])?.forEach((imp, i) => {
-        imp = resolveForwardRef(imp);
-        this.throwIfUndefined(modName, 'Imports', imp, i);
-        if (isModuleWithParams(imp)) {
-          meta.importsWithParams.push(imp);
-        } else {
-          // @todo check type of imported symbol
-          meta.importsModules.push(imp);
-        }
-      });
-
-      this.throwIfResolvingNormalizedProvider(modName, reflectMetadata);
-      this.exportFromReflectMetadata(reflectMetadata, modName, meta);
-      this.checkReexportModules(meta);
-
-      (reflectMetadata.extensions as undefined | (ExtensionConfig | ExtensionClass)[])?.forEach(
-        (extensionOrConfig, i) => {
-          if (!isExtensionConfig(extensionOrConfig)) {
-            extensionOrConfig = { extension: extensionOrConfig as ExtensionClass };
-          }
-          this.checkExtensionConfig(modName, extensionOrConfig, i);
-          const extensionObj = getExtensionProvider(extensionOrConfig);
-          extensionObj.providers.forEach((p) => this.checkInitMethodForExtension(modName, p));
-          if (extensionObj.config) {
-            meta.aExtensionConfig.push(extensionObj.config);
-          }
-          if (extensionObj.exportedConfig) {
-            meta.aExportedExtensionConfig.push(extensionObj.exportedConfig);
-          }
-          meta.extensionsProviders.push(...extensionObj.providers);
-          meta.exportedExtensionsProviders.push(...extensionObj.exportedProviders);
-        },
-      );
-
-      this.pickAndMergeMeta(meta, reflectMetadata);
+  protected normalizeModule(modName: string, rawMeta: RawMeta, meta: NormalizedMeta) {
+    rawMeta.imports?.forEach((imp, i) => {
+      imp = resolveForwardRef(imp);
+      this.throwIfUndefined(modName, 'Imports', imp, i);
+      if (isModuleWithParams(imp)) {
+        meta.importsWithParams.push(imp);
+      } else {
+        // @todo check type of imported symbol
+        meta.importsModules.push(imp);
+      }
     });
 
-    return meta;
+    this.throwIfResolvingNormalizedProvider(modName, rawMeta);
+    this.exportFromReflectMetadata(rawMeta, modName, meta);
+    this.checkReexportModules(meta);
+
+    rawMeta.extensions?.forEach(
+      (extensionOrConfig, i) => {
+        if (!isExtensionConfig(extensionOrConfig)) {
+          extensionOrConfig = { extension: extensionOrConfig as ExtensionClass };
+        }
+        this.checkExtensionConfig(modName, extensionOrConfig, i);
+        const extensionObj = getExtensionProvider(extensionOrConfig);
+        extensionObj.providers.forEach((p) => this.checkInitMethodForExtension(modName, p));
+        if (extensionObj.config) {
+          meta.aExtensionConfig.push(extensionObj.config);
+        }
+        if (extensionObj.exportedConfig) {
+          meta.aExportedExtensionConfig.push(extensionObj.exportedConfig);
+        }
+        meta.extensionsProviders.push(...extensionObj.providers);
+        meta.exportedExtensionsProviders.push(...extensionObj.exportedProviders);
+      },
+    );
+
+    this.pickAndMergeMeta(meta, rawMeta);
   }
 
   protected getModuleMetadata(modRefId: ModRefId) {
@@ -153,15 +154,15 @@ export class ModuleNormalizer {
     }
   }
 
-  protected exportFromReflectMetadata(reflectMetadata: AnyObj, modName: string, meta: NormalizedMeta) {
+  protected exportFromReflectMetadata(rawMeta: RawMeta, modName: string, meta: NormalizedMeta) {
     const providers: Provider[] = [];
-    Object.keys(reflectMetadata).forEach((k) => {
-      if (k.includes('providers') && Array.isArray(reflectMetadata[k])) {
-        providers.push(...reflectMetadata[k]);
+    objectKeys(rawMeta).forEach((k) => {
+      if (k.includes('providersPer') && Array.isArray(rawMeta[k])) {
+        providers.push(...rawMeta[k]);
       }
     });
 
-    (reflectMetadata.exports as undefined | any[])?.forEach((exp, i) => {
+    rawMeta.exports?.forEach((exp, i) => {
       exp = resolveForwardRef(exp);
       this.throwIfUndefined(modName, 'Exports', exp, i);
       this.throwExportsIfNormalizedProvider(modName, exp);
@@ -171,7 +172,7 @@ export class ModuleNormalizer {
         //   this.exportFromRawMeta(exp, modName, meta);
         // }
       } else if (isProvider(exp) || getTokens(providers).includes(exp)) {
-        this.findAndSetProviders(exp, reflectMetadata, meta);
+        this.findAndSetProviders(exp, rawMeta, meta);
       } else if (this.getModuleMetadata(exp)) {
         meta.exportsModules.push(exp);
       } else {
@@ -234,14 +235,14 @@ export class ModuleNormalizer {
     const tokenName = token.name || token;
     const msg =
       `Exporting from ${modName} failed: if "${tokenName}" is a token of a provider, this provider ` +
-      'must be included in providersPerReq or in providersPerRou, or in providersPerMod. ' +
+      'must be included in providersPerMod. ' +
       `If "${tokenName}" is a token of extension, this extension must be included in "extensions" array.`;
     throw new TypeError(msg);
   }
 
-  protected throwIfResolvingNormalizedProvider(moduleName: string, obj: AnyObj) {
+  protected throwIfResolvingNormalizedProvider(moduleName: string, obj: RawMeta) {
     const resolvedCollisionsPerLevel: [any, ModRefId][] = [];
-    Object.keys(obj).forEach((k) => {
+    objectKeys(obj).forEach((k) => {
       if (k.includes('resolvedCollision') && Array.isArray(obj[k])) {
         resolvedCollisionsPerLevel.push(...obj[k]);
       }
@@ -266,22 +267,22 @@ export class ModuleNormalizer {
     }
   }
 
-  protected findAndSetProviders(token: any, reflectMetadata: AnyObj, meta: NormalizedMeta) {
-    const levels: Level[] = [];
+  protected findAndSetProviders(token: any, rawMeta: RawMeta, meta: NormalizedMeta) {
+    const levels = new Set<Level>();
     const providersPer = 'providersPer';
-    Object.keys(reflectMetadata).forEach((k) => {
+    Object.keys(rawMeta).forEach((k) => {
       const index = k.indexOf(providersPer);
       if (index !== -1) {
         const level = k.slice(index + providersPer.length) as Level;
         if (level != 'App' as Level) {
-          levels.push(level);
+          levels.add(level);
         }
       }
     });
 
     let found = false;
     levels.forEach((level) => {
-      const unfilteredProviders = [...(reflectMetadata[`providersPer${level}`] || [])];
+      const unfilteredProviders = [...(rawMeta[`providersPer${level}`] || [])];
       const providers = unfilteredProviders.filter((p) => getToken(p) === token);
       if (providers.length) {
         found = true;
@@ -298,7 +299,7 @@ export class ModuleNormalizer {
     if (!found) {
       const providerName = token.name || token;
       let msg = '';
-      const providersPerApp = [...(reflectMetadata.providersPerApp || [])];
+      const providersPerApp = [...(rawMeta.providersPerApp || [])];
       if (providersPerApp.some((p) => getToken(p) === token)) {
         msg =
           `Exported "${providerName}" includes in "providersPerApp" and "exports" of ${meta.name}. ` +
