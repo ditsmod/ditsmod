@@ -37,8 +37,8 @@ export class ModuleNormalizer {
    * Returns normalized module metadata.
    */
   normalize(modRefId: ModRefId) {
-    const aReflectMetadata = this.getModuleMetadata(modRefId) || [];
-    const rawMeta = (aReflectMetadata as RawMeta[]).find(isModDecor);
+    const aDecoratorMeta = this.getModuleMetadata(modRefId) || [];
+    const rawMeta = aDecoratorMeta.find((d) => isModDecor(d))?.value;
     const modName = getDebugClassName(modRefId);
     if (!rawMeta) {
       throw new Error(
@@ -53,7 +53,7 @@ export class ModuleNormalizer {
     meta.name = modName;
     meta.modRefId = modRefId;
 
-    meta.aReflectMetadata = aReflectMetadata;
+    meta.aDecoratorMeta = aDecoratorMeta;
     meta.decorator = rawMeta.decorator;
     meta.declaredInDir = rawMeta.declaredInDir;
     this.checkAndMarkExternalModule(isRootModule(rawMeta), meta);
@@ -77,24 +77,22 @@ export class ModuleNormalizer {
     this.exportFromReflectMetadata(rawMeta, modName, meta);
     this.checkReexportModules(meta);
 
-    rawMeta.extensions?.forEach(
-      (extensionOrConfig, i) => {
-        if (!isExtensionConfig(extensionOrConfig)) {
-          extensionOrConfig = { extension: extensionOrConfig as ExtensionClass };
-        }
-        this.checkExtensionConfig(modName, extensionOrConfig, i);
-        const extensionObj = getExtensionProvider(extensionOrConfig);
-        extensionObj.providers.forEach((p) => this.checkInitMethodForExtension(modName, p));
-        if (extensionObj.config) {
-          meta.aExtensionConfig.push(extensionObj.config);
-        }
-        if (extensionObj.exportedConfig) {
-          meta.aExportedExtensionConfig.push(extensionObj.exportedConfig);
-        }
-        meta.extensionsProviders.push(...extensionObj.providers);
-        meta.exportedExtensionsProviders.push(...extensionObj.exportedProviders);
-      },
-    );
+    rawMeta.extensions?.forEach((extensionOrConfig, i) => {
+      if (!isExtensionConfig(extensionOrConfig)) {
+        extensionOrConfig = { extension: extensionOrConfig as ExtensionClass };
+      }
+      this.checkExtensionConfig(modName, extensionOrConfig, i);
+      const extensionObj = getExtensionProvider(extensionOrConfig);
+      extensionObj.providers.forEach((p) => this.checkInitMethodForExtension(modName, p));
+      if (extensionObj.config) {
+        meta.aExtensionConfig.push(extensionObj.config);
+      }
+      if (extensionObj.exportedConfig) {
+        meta.aExportedExtensionConfig.push(extensionObj.exportedConfig);
+      }
+      meta.extensionsProviders.push(...extensionObj.providers);
+      meta.exportedExtensionsProviders.push(...extensionObj.exportedProviders);
+    });
 
     this.pickAndMergeMeta(meta, rawMeta);
   }
@@ -103,10 +101,12 @@ export class ModuleNormalizer {
     modRefId = resolveForwardRef(modRefId);
     if (isModuleWithParams(modRefId)) {
       return reflector.getDecorators(modRefId.module, isModuleWithMetadata)?.map((decorAndVal) => {
-        return decorAndVal.value.mergeModuleWithParams?.(modRefId, decorAndVal) || decorAndVal.value.metadata;
+        decorAndVal.value.metadata =
+          decorAndVal.value.mergeModuleWithParams?.(modRefId, decorAndVal) || decorAndVal.value.metadata;
+        return decorAndVal;
       });
     } else {
-      return reflector.getDecorators(modRefId, isModuleWithMetadata)?.map((decorAndVal) => decorAndVal.value.metadata);
+      return reflector.getDecorators(modRefId, isModuleWithMetadata);
     }
   }
 
@@ -274,7 +274,7 @@ export class ModuleNormalizer {
       const index = k.indexOf(providersPer);
       if (index !== -1) {
         const level = k.slice(index + providersPer.length) as Level;
-        if (level != 'App' as Level) {
+        if (level != ('App' as Level)) {
           levels.add(level);
         }
       }

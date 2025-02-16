@@ -54,6 +54,7 @@ export interface AttachedMetadata {
   isAttachedMetadata: true;
   metadata: AnyObj;
   mergeModuleWithParams?: (modWitParams: ModuleWithParams, decorAndVal: DecoratorAndValue<AttachedMetadata>) => AnyObj;
+  patchMeta?: (...args: any[]) => AnyObj;
 }
 
 /**

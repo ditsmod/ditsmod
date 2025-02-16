@@ -58,7 +58,11 @@ function checkGuardsPerMod(guards: NormalizedGuard[]) {
   }
 }
 
+export function patchMeta() {
+  return {  };
+}
+
 export function transformMetadata(data?: RoutingMetadata): AttachedMetadata {
   const metadata = new RoutingMetadataNormalizer().normalize(data);
-  return { isAttachedMetadata: true, metadata, mergeModuleWithParams };
+  return { isAttachedMetadata: true, metadata, mergeModuleWithParams, patchMeta };
 }

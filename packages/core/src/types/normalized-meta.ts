@@ -28,7 +28,7 @@ export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj
    * Indicates whether this module is external to the application.
    */
   isExternal: boolean;
-  aReflectMetadata: AnyObj[] = [];
+  aDecoratorMeta: AnyObj[] = [];
 
   importsModules: ModuleType[] = [];
   importsWithParams: ModuleWithParams[] = [];
