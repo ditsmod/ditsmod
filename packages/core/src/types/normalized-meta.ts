@@ -1,9 +1,10 @@
-import { MultiProvider } from '#di';
+import { DecoratorAndValue, MultiProvider } from '#di';
 import { AnyFn, AnyObj, ModuleType } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from './module-metadata.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { ExtensionClass } from '#extension/extension-types.js';
+import { AttachedMetadata } from '#decorators/feature-module.js';
 
 export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> {
   /**
@@ -28,7 +29,7 @@ export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj
    * Indicates whether this module is external to the application.
    */
   isExternal: boolean;
-  aDecoratorMeta: AnyObj[] = [];
+  aDecoratorMeta: DecoratorAndValue<AttachedMetadata>[] = [];
 
   importsModules: ModuleType[] = [];
   importsWithParams: ModuleWithParams[] = [];
