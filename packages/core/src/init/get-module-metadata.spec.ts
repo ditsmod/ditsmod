@@ -1,11 +1,11 @@
-import { DecoratorAndValue, forwardRef } from '#di';
-import { AttachedMetadata, featureModule, RawMeta } from '#decorators/feature-module.js';
+import { forwardRef } from '#di';
+import { featureModule, RawMeta } from '#decorators/feature-module.js';
 import { Provider } from '#di/types-and-models.js';
 import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
 import { Providers } from '#utils/providers.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ModuleNormalizer } from './module-normalizer.js';
-import { ModRefId, AnyObj } from '#types/mix.js';
+import { ModRefId } from '#types/mix.js';
 
 describe('getModuleMetadata()', () => {
   class Provider0 {}
@@ -13,12 +13,12 @@ describe('getModuleMetadata()', () => {
   class Provider2 {}
 
   class MockModuleNormalizer extends ModuleNormalizer {
-    override getModuleMetadata(modRefId: ModRefId): DecoratorAndValue<AttachedMetadata>[] | AnyObj[] | undefined {
-      return super.getModuleMetadata(modRefId);
+    override getDecoratorMeta(modRefId: ModRefId) {
+      return super.getDecoratorMeta(modRefId);
     }
   }
   const mockModuleNormalizer = new MockModuleNormalizer();
-  const getModuleMetadata = mockModuleNormalizer.getModuleMetadata.bind(mockModuleNormalizer);
+  const getModuleMetadata = mockModuleNormalizer.getDecoratorMeta.bind(mockModuleNormalizer);
 
   it('module without decorator', () => {
     class Module1 {}

@@ -8,23 +8,22 @@ import {
   reflector,
   isInjectionToken,
   MultiProvider,
-  DecoratorAndValue,
 } from '#di';
-import { AttachedMetadata, featureModule } from '#decorators/feature-module.js';
+import { featureModule } from '#decorators/feature-module.js';
 import { isFeatureModule, isModuleWithParams, isProvider, isRootModule } from './type-guards.js';
 import { rootModule } from '#decorators/root-module.js';
 import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
 import { ModuleNormalizer } from '#init/module-normalizer.js';
-import { ModRefId, AnyObj } from '#types/mix.js';
+import { ModRefId } from '#types/mix.js';
 
 describe('type guards', () => {
   class MockModuleNormalizer extends ModuleNormalizer {
-    override getModuleMetadata(modRefId: ModRefId): DecoratorAndValue<AttachedMetadata>[] | AnyObj[] | undefined {
-      return super.getModuleMetadata(modRefId);
+    override getDecoratorMeta(modRefId: ModRefId) {
+      return super.getDecoratorMeta(modRefId);
     }
   }
   const mockModuleNormalizer = new MockModuleNormalizer();
-  const getModuleMetadata = mockModuleNormalizer.getModuleMetadata.bind(mockModuleNormalizer);
+  const getModuleMetadata = mockModuleNormalizer.getDecoratorMeta.bind(mockModuleNormalizer);
 
   describe('isModule()', () => {
     it('class with decorator', () => {

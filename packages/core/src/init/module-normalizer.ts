@@ -37,7 +37,7 @@ export class ModuleNormalizer {
    * Returns normalized module metadata.
    */
   normalize(modRefId: ModRefId) {
-    const aDecoratorMeta = this.getModuleMetadata(modRefId) || [];
+    const aDecoratorMeta = this.getDecoratorMeta(modRefId) || [];
     const rawMeta = aDecoratorMeta.find((d) => isModDecor(d))?.value;
     const modName = getDebugClassName(modRefId);
     if (!rawMeta) {
@@ -97,7 +97,7 @@ export class ModuleNormalizer {
     this.pickAndMergeMeta(meta, rawMeta);
   }
 
-  protected getModuleMetadata(modRefId: ModRefId) {
+  protected getDecoratorMeta(modRefId: ModRefId) {
     modRefId = resolveForwardRef(modRefId);
     if (isModuleWithParams(modRefId)) {
       return reflector.getDecorators(modRefId.module, isModuleWithMetadata)?.map((decorAndVal) => {
@@ -173,7 +173,7 @@ export class ModuleNormalizer {
         // }
       } else if (isProvider(exp) || getTokens(providers).includes(exp)) {
         this.findAndSetProviders(exp, rawMeta, meta);
-      } else if (this.getModuleMetadata(exp)) {
+      } else if (this.getDecoratorMeta(exp)) {
         meta.exportsModules.push(exp);
       } else {
         this.throwUnidentifiedToken(modName, exp);
