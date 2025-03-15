@@ -83,7 +83,7 @@ export class ModuleNormalizer {
       }
       this.checkExtensionConfig(modName, extensionOrConfig, i);
       const extensionObj = getExtensionProvider(extensionOrConfig);
-      extensionObj.providers.forEach((p) => this.checkInitMethodForExtension(modName, p));
+      extensionObj.providers.forEach((p) => this.checkStageMethodsForExtension(modName, p));
       if (extensionObj.config) {
         meta.aExtensionConfig.push(extensionObj.config);
       }
@@ -207,7 +207,7 @@ export class ModuleNormalizer {
     }
   }
 
-  protected checkInitMethodForExtension(modName: string, extensionsProvider: Provider) {
+  protected checkStageMethodsForExtension(modName: string, extensionsProvider: Provider) {
     const np = normalizeProviders([extensionsProvider])[0];
     let extensionClass: Class<Extension> | undefined;
     if (isClassProvider(np)) {
