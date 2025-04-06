@@ -32,6 +32,10 @@ export const DEPS_KEY = Symbol();
  */
 export const METHODS_WITH_PARAMS = Symbol();
 
+/**
+ * @param transform Such a transformer should not use symbols that can be wrapped with `forwardRef()`,
+ * because at this stage the `resolveForwardRef()` function will not work correctly.
+ */
 export function makeClassDecorator<T extends (...args: any[]) => any>(transform?: T) {
   return function classDecorFactory(...args: Parameters<T>): any {
     const value = transform ? transform(...args) : [...args];
@@ -44,6 +48,10 @@ export function makeClassDecorator<T extends (...args: any[]) => any>(transform?
   };
 }
 
+/**
+ * @param transform Such a transformer should not use symbols that can be wrapped with `forwardRef()`,
+ * because at this stage the `resolveForwardRef()` function will not work correctly.
+ */
 export function makeParamDecorator<T extends (...args: any[]) => any>(transform?: T) {
   return function paramDecorFactory(...args: Parameters<T>) {
     const value = transform ? transform(...args) : [...args];
@@ -70,6 +78,10 @@ export function makeParamDecorator<T extends (...args: any[]) => any>(transform?
   };
 }
 
+/**
+ * @param transform Such a transformer should not use symbols that can be wrapped with `forwardRef()`,
+ * because at this stage the `resolveForwardRef()` function will not work correctly.
+ */
 export function makePropDecorator<T extends (...args: any[]) => any>(transform?: T) {
   return function propDecorFactory(...args: Parameters<T>) {
     const value = transform ? transform(...args) : [...args];
