@@ -224,7 +224,7 @@ bun dist/main.js
 [10]: https://jestjs.io/en/
 [12]: https://en.wikipedia.org/wiki/Singleton_pattern
 [13]: https://github.com/ditsmod/realworld
-[14]: https://www.techempower.com/benchmarks/#section=test&runid=967babf5-cf1a-4b3f-a6d0-1cd49ef2c424&hw=ph&test=composite&l=zieepr-33z
+[14]: https://www.techempower.com/benchmarks/#section=test&runid=8495ffea-08e2-4da7-a91d-4d6a48690ef2&l=zieepr-cjj
 [15]: https://github.com/remy/nodemon
 [16]: https://www.typescriptlang.org/docs/handbook/project-references.html
 [17]: https://github.com/TypeStrong/ts-node
