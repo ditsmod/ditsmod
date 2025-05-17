@@ -508,7 +508,7 @@ __metadata:
     "@auth/core": "npm:^0.37.4"
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   peerDependencies:
     "@ditsmod/body-parser": ^3.0.0-alpha.3
     "@ditsmod/core": ^3.0.0-alpha.3
@@ -524,7 +524,7 @@ __metadata:
     "@ts-stack/multer": "npm:^1.0.0"
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.3
     "@ditsmod/routing": ^3.0.0-alpha.3
@@ -540,7 +540,7 @@ __metadata:
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
     reflect-metadata: "npm:^0.2.2"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   languageName: unknown
   linkType: soft
 
@@ -552,7 +552,7 @@ __metadata:
     "@ts-stack/cors": "npm:^1.4.2"
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.3
     "@ditsmod/routing": ^3.0.0-alpha.3
@@ -565,7 +565,7 @@ __metadata:
   dependencies:
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.3
     "@ditsmod/routing": ^3.0.0-alpha.3
@@ -579,7 +579,7 @@ __metadata:
     jest: "npm:^29.7.0"
     jsonwebtoken: "npm:^9.0.2"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.3
   languageName: unknown
@@ -593,7 +593,7 @@ __metadata:
     ajv: "npm:^8.17.1"
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.3
     "@ditsmod/i18n": ^3.0.0-alpha.3
@@ -615,7 +615,7 @@ __metadata:
     npm-run-all: "npm:*"
     style-loader: "npm:^4.0.0"
     swagger-ui: "npm:^5.18.2"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
     webpack: "npm:^5.97.1"
     yaml: "npm:^2.7.0"
     yaml-loader: "npm:^0.8.1"
@@ -631,7 +631,7 @@ __metadata:
   dependencies:
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.3
     "@ditsmod/routing": ^3.0.0-alpha.3
@@ -644,7 +644,7 @@ __metadata:
   dependencies:
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.3
     "@ditsmod/routing": ^3.0.0-alpha.3
@@ -656,12 +656,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ditsmod/routing@workspace:packages/routing"
   dependencies:
-    find-my-way: "npm:^9.3.0"
+    find-my-way: "npm:^9.1.0"
     jest: "npm:^29.7.0"
-    koa-tree-router: "npm:^0.13.1"
+    koa-tree-router: "npm:^0.12.1"
     npm-run-all: "npm:*"
     trek-router: "npm:^1.2.0"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.3
   languageName: unknown
@@ -674,7 +674,7 @@ __metadata:
     "@ts-stack/cookies": "npm:^1.2.2"
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.3
     "@ditsmod/routing": ^3.0.0-alpha.3
@@ -687,7 +687,7 @@ __metadata:
   dependencies:
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.3
     "@ditsmod/routing": ^3.0.0-alpha.3
@@ -700,7 +700,7 @@ __metadata:
   dependencies:
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.3
   languageName: unknown
@@ -712,7 +712,7 @@ __metadata:
   dependencies:
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.3
     "@ditsmod/routing": ^3.0.0-alpha.3
@@ -827,7 +827,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/js@npm:*, @eslint/js@npm:9.27.0, @eslint/js@npm:^9.27.0":
+"@eslint/js@npm:9.27.0, @eslint/js@npm:^9.27.0":
   version: 9.27.0
   resolution: "@eslint/js@npm:9.27.0"
   checksum: 10c0/79b219ceda79182732954b52f7a494f49995a9a6419c7ae0316866e324d3706afeb857e1306bb6f35a4caaf176a5174d00228fc93d36781a570d32c587736564
@@ -2410,15 +2410,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/eslint__js@npm:^9.14.0":
-  version: 9.14.0
-  resolution: "@types/eslint__js@npm:9.14.0"
-  dependencies:
-    "@eslint/js": "npm:*"
-  checksum: 10c0/da5e315aaf17a3e038eff3a4e1b90e360d9d22319653f43f746ad4b7f90dca2d1f8e0ea08f4d02b1b426e7baeb15610be4a30b64d28d16ef06d2feb75c549dc1
-  languageName: node
-  linkType: hard
-
 "@types/estree@npm:*, @types/estree@npm:^1.0.6":
   version: 1.0.6
   resolution: "@types/estree@npm:1.0.6"
@@ -2554,7 +2545,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/koa@npm:*, @types/koa@npm:^2.15.0":
+"@types/koa@npm:*, @types/koa@npm:^2.13.4":
   version: 2.15.0
   resolution: "@types/koa@npm:2.15.0"
   dependencies:
@@ -4758,7 +4749,6 @@ __metadata:
   resolution: "ditsmod@workspace:."
   dependencies:
     "@eslint/js": "npm:^9.27.0"
-    "@types/eslint__js": "npm:^9.14.0"
     "@types/jest": "npm:^29.5.14"
     "@types/node": "npm:^22.15.18"
     "@types/supertest": "npm:^6.0.3"
@@ -4865,7 +4855,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^16.5.0":
+"dotenv@npm:^16.4.7":
   version: 16.5.0
   resolution: "dotenv@npm:16.5.0"
   checksum: 10c0/5bc94c919fbd955bf0ba44d33922a1e93d1078e64a1db5c30faeded1d996e7a83c55332cb8ea4fae5a9ca4d0be44cbceb95c5811e70f9f095298df09d1997dd9
@@ -5378,7 +5368,7 @@ __metadata:
   dependencies:
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   languageName: unknown
   linkType: soft
 
@@ -5388,7 +5378,7 @@ __metadata:
   dependencies:
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   languageName: unknown
   linkType: soft
 
@@ -5396,10 +5386,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example03@workspace:examples/03-route-guards"
   dependencies:
-    dotenv: "npm:^16.5.0"
+    dotenv: "npm:^16.4.7"
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   languageName: unknown
   linkType: soft
 
@@ -5412,7 +5402,7 @@ __metadata:
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
     pino: "npm:^9.6.0"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
     winston: "npm:^3.17.0"
   languageName: unknown
   linkType: soft
@@ -5423,7 +5413,7 @@ __metadata:
   dependencies:
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   languageName: unknown
   linkType: soft
 
@@ -5433,7 +5423,7 @@ __metadata:
   dependencies:
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   languageName: unknown
   linkType: soft
 
@@ -5443,7 +5433,7 @@ __metadata:
   dependencies:
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   languageName: unknown
   linkType: soft
 
@@ -5453,7 +5443,7 @@ __metadata:
   dependencies:
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   languageName: unknown
   linkType: soft
 
@@ -5463,7 +5453,7 @@ __metadata:
   dependencies:
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   languageName: unknown
   linkType: soft
 
@@ -5473,7 +5463,7 @@ __metadata:
   dependencies:
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   languageName: unknown
   linkType: soft
 
@@ -5483,7 +5473,7 @@ __metadata:
   dependencies:
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   languageName: unknown
   linkType: soft
 
@@ -5493,7 +5483,7 @@ __metadata:
   dependencies:
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   languageName: unknown
   linkType: soft
 
@@ -5503,7 +5493,7 @@ __metadata:
   dependencies:
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   languageName: unknown
   linkType: soft
 
@@ -5513,7 +5503,7 @@ __metadata:
   dependencies:
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   languageName: unknown
   linkType: soft
 
@@ -5523,7 +5513,7 @@ __metadata:
   dependencies:
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   languageName: unknown
   linkType: soft
 
@@ -5533,7 +5523,7 @@ __metadata:
   dependencies:
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   languageName: unknown
   linkType: soft
 
@@ -5543,7 +5533,7 @@ __metadata:
   dependencies:
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   languageName: unknown
   linkType: soft
 
@@ -5553,7 +5543,7 @@ __metadata:
   dependencies:
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   languageName: unknown
   linkType: soft
 
@@ -5563,7 +5553,7 @@ __metadata:
   dependencies:
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   languageName: unknown
   linkType: soft
 
@@ -5799,7 +5789,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"find-my-way@npm:^9.3.0":
+"find-my-way@npm:^9.1.0":
   version: 9.3.0
   resolution: "find-my-way@npm:9.3.0"
   dependencies:
@@ -8111,13 +8101,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"koa-tree-router@npm:^0.13.1":
-  version: 0.13.1
-  resolution: "koa-tree-router@npm:0.13.1"
+"koa-tree-router@npm:^0.12.1":
+  version: 0.12.1
+  resolution: "koa-tree-router@npm:0.12.1"
   dependencies:
-    "@types/koa": "npm:^2.15.0"
+    "@types/koa": "npm:^2.13.4"
     koa-compose: "npm:^4.1.0"
-  checksum: 10c0/952b85441211dab435c0445ab281a9fec30939cb93707fdd13cd950877a840e7920791f9e1908354c31f929c55dc9b4a90d0efa8f5c4ac4f59ef135d673d54a1
+  checksum: 10c0/10367516377c5cc73e50098cada79285ef3e374afdc88825bc58ec67383b4c201382fb05cdbea5c574bee776dd94e4ee19d96d422353b72add57d06db1bc657a
   languageName: node
   linkType: hard
 
@@ -12430,6 +12420,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typescript@npm:*, typescript@npm:~5.8.3":
+  version: 5.8.3
+  resolution: "typescript@npm:5.8.3"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10c0/5f8bb01196e542e64d44db3d16ee0e4063ce4f3e3966df6005f2588e86d91c03e1fb131c2581baf0fb65ee79669eea6e161cd448178986587e9f6844446dbb48
+  languageName: node
+  linkType: hard
+
 "typescript@npm:>=3 < 6":
   version: 5.6.2
   resolution: "typescript@npm:5.6.2"
@@ -12440,13 +12440,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.8.3, typescript@npm:~5.8.3":
+"typescript@patch:typescript@npm%3A*#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A~5.8.3#optional!builtin<compat/typescript>":
   version: 5.8.3
-  resolution: "typescript@npm:5.8.3"
+  resolution: "typescript@patch:typescript@npm%3A5.8.3#optional!builtin<compat/typescript>::version=5.8.3&hash=5786d5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/5f8bb01196e542e64d44db3d16ee0e4063ce4f3e3966df6005f2588e86d91c03e1fb131c2581baf0fb65ee79669eea6e161cd448178986587e9f6844446dbb48
+  checksum: 10c0/39117e346ff8ebd87ae1510b3a77d5d92dae5a89bde588c747d25da5c146603a99c8ee588c7ef80faaf123d89ed46f6dbd918d534d641083177d5fac38b8a1cb
   languageName: node
   linkType: hard
 
@@ -12457,16 +12457,6 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 10c0/94eb47e130d3edd964b76da85975601dcb3604b0c848a36f63ac448d0104e93819d94c8bdf6b07c00120f2ce9c05256b8b6092d23cf5cf1c6fa911159e4d572f
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@npm%3A^5.8.3#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A~5.8.3#optional!builtin<compat/typescript>":
-  version: 5.8.3
-  resolution: "typescript@patch:typescript@npm%3A5.8.3#optional!builtin<compat/typescript>::version=5.8.3&hash=5786d5"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 10c0/39117e346ff8ebd87ae1510b3a77d5d92dae5a89bde588c747d25da5c146603a99c8ee588c7ef80faaf123d89ed46f6dbd918d534d641083177d5fac38b8a1cb
   languageName: node
   linkType: hard
 
@@ -13067,7 +13057,7 @@ __metadata:
   dependencies:
     jest: "npm:^29.7.0"
     npm-run-all: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.3
   languageName: unknown

@@ -41,7 +41,6 @@
   "homepage": "https://github.com/ditsmod/ditsmod#readme",
   "devDependencies": {
     "@eslint/js": "^9.27.0",
-    "@types/eslint__js": "^9.14.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.15.18",
     "@types/supertest": "^6.0.3",
