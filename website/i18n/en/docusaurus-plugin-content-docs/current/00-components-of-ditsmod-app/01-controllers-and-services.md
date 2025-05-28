@@ -48,10 +48,20 @@ export class SomeController {}
 
 It is recommended that controller files end with `*.controller.ts` and their class names end with `*Controller`.
 
-Ditsmod supports two alternative modes of operation for controllers:
+To make a controller handle everything needed for a router in a classic HTTP request processing scenario (not GraphQL), the following is required:
 
-1. **Injector-scoped controller** (default). The HTTP request is obtained from DI injector.
+- A class method that will be invoked during an HTTP request.
+- The HTTP method name (`GET`, `POST`, `PATCH`, etc.).
+- The URL to which the class method call will be bound.
+
+The combination of the second and third points must be unique across the entire application. In other words, if you define that `GET` + `some/path` is bound to a specific controller method, this combination must not be reused. Otherwise, the `@ditsmod/routing` module will throw an error with an appropriate message.
+
+To handle an HTTP request, it is often important to have direct access to the JavaScript HTTP request object. Ditsmod supports controller operation in two alternative modes, which differ in particular by the mechanism used to pass the JavaScript HTTP request object:
+
+1. **Injector-scoped controller** (default). The HTTP request is obtained from [DI injector][11].
 2. **Context-scoped controller**. The HTTP request (along with other contextual data) is passed as an argument to the class method.
+
+You will learn about the injector in the [next section of the documentation][10], but for now, it’s enough to know that it can contain the HTTP request object in the first mode of the controller’s operation.
 
 The first mode is more convenient and safer when working within the context of the current HTTP request (e.g., when the client provides a specific identifier that must be considered when forming the response). The second mode is noticeably faster (approximately 15–20%) and consumes less memory, but the request context cannot be stored in the instance properties of the controller, as this instance may be used simultaneously for other clients.
 
@@ -315,3 +325,5 @@ In the last two examples, the services is passed to the `providersPerReq` array,
 [6]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/services/pre-router.ts
 [7]: /components-of-ditsmod-app/dependency-injection
 [9]: /components-of-ditsmod-app/extensions/
+[10]: /components-of-ditsmod-app/dependency-injection/
+[11]: /components-of-ditsmod-app/dependency-injection/#injector
