@@ -39,48 +39,41 @@ In most cases, the request handler calls the controller method.
 
 The mapping between the URL and the request handler is based on the metadata attached to the controller methods. A TypeScript class becomes a Ditsmod controller thanks to the `controller` decorator:
 
-```ts
-import { controller } from '@ditsmod/core';
+```ts {3}
+import { controller, route } from '@ditsmod/routing';
 
 @controller()
-export class SomeController {}
+export class SomeController {
+  @route('GET', 'hello')
+  method1() {
+    // ...
+  }
+}
 ```
 
 It is recommended that controller files end with `*.controller.ts` and their class names end with `*Controller`.
 
-To make a controller handle everything needed for a router in a classic HTTP request processing scenario (not GraphQL), the following is required:
+As can be seen from the previous example, any controller must have:
 
-- A class method that will be invoked during an HTTP request.
-- The HTTP method name (`GET`, `POST`, `PATCH`, etc.).
-- The URL to which the class method call will be bound.
+1. A class method that will be invoked during an HTTP request.
+2. The HTTP method name (`GET`, `POST`, `PATCH`, etc.).
+3. The URL to which the class method call will be bound.
 
-The combination of the second and third points must be unique across the entire application. In other words, if you define that `GET` + `some/path` is bound to a specific controller method, this combination must not be reused. Otherwise, the `@ditsmod/routing` module will throw an error with an appropriate message.
+The combination of the second and third points must be unique across the entire application. In other words, if you define that `GET` + `/hello` is bound to a specific controller method, this combination must not be reused. Otherwise, the `@ditsmod/routing` module will throw an error with an appropriate message.
 
-To handle an HTTP request, it is often important to have direct access to the JavaScript HTTP request object. Ditsmod supports controller operation in two alternative modes, which differ in particular by the mechanism used to pass the JavaScript HTTP request object:
+Ditsmod provides controllers in two alternative modes, which differ in particular in the mechanism for passing the HTTP request to the controller method:
 
-1. **Injector-scoped controller** (default). The HTTP request is obtained from [DI injector][11].
-2. **Context-scoped controller**. The HTTP request (along with other contextual data) is passed as an argument to the class method.
-
-You will learn about the injector in the [next section of the documentation][10], but for now, it’s enough to know that it can contain the HTTP request object in the first mode of the controller’s operation.
+1. **Injector-scoped controller** (default). A controller method can receive any number of arguments from the [DI injector][11]. These arguments can include an HTTP request.
+2. **Context-scoped controller**. The controller method receives a single argument - the request context, which includes the HTTP request.
 
 The first mode is more convenient and safer when working within the context of the current HTTP request (e.g., when the client provides a specific identifier that must be considered when forming the response). The second mode is noticeably faster (approximately 15–20%) and consumes less memory, but the request context cannot be stored in the instance properties of the controller, as this instance may be used simultaneously for other clients.
 
-To make a controller operate in the context-scoped mode, you need to specify `{ scope: 'ctx' }` in its metadata:
-
-```ts
-import { controller } from '@ditsmod/core';
-
-@controller({ scope: 'ctx' })
-export class SomeController {}
-```
-
 ### Injector-scoped controller {#injector-scoped-controller}
 
-As mentioned above, after the router finds the HTTP request handler, this handler can call the controller method. To make this possible, HTTP requests are first bound to controller methods through a routing system using the `route` decorator. In the following example, a single route is created that accepts a `GET` request at the path `/hello`:
+By default, Ditsmod works with the controller in injector-scoped mode. This means, first, that a separate controller instance will be created for each HTTP request. Second, any controller method that has a `route` decorator will receive an arbitrary number of arguments from the [DI injector][11]. The following example creates a single route that accepts a `GET` request at `/hello`:
 
-```ts {6}
-import { controller, Res } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+```ts {5}
+import { controller, route, Res } from '@ditsmod/routing';
 
 @controller()
 export class HelloWorldController {
@@ -99,9 +92,8 @@ What we see here:
 
 Although in the previous example, an instance of the `Res` class was requested through `method1`, we can similarly request this instance in the constructor:
 
-```ts {6}
-import { controller, Res } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+```ts {5}
+import { controller, Res, route } from '@ditsmod/routing';
 
 @controller()
 export class HelloWorldController {
@@ -120,34 +112,37 @@ Of course, other instances of classes can be requested in the parameters, and th
 The access modifier in the constructor can be any (private, protected or public), but without a modifier - `res` will be just a simple parameter with visibility only in the constructor.
 :::
 
-To obtain `pathParams` or `queryParams`, you need to use the `inject` decorator and the `PATH_PARAMS` and `QUERY_PARAMS` tokens:
+#### Routing parameters {#routing-parameters}
+
+To pass path parameters to the router, you need to use a colon before the parameter name. For example, the URL `some-url/:param1/:param2` includes two path parameters. If you are using the `@ditsmod/routing` module for routing, only path parameters determine the routes, while query parameters are not taken into account.
+
+To access path or query parameters, you need to use the `inject` decorator along with the `PATH_PARAMS` and `QUERY_PARAMS` tokens:
 
 ```ts {8-9}
-import { controller, Res, inject, AnyObj, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+import { inject, AnyObj } from '@ditsmod/core';
+import { controller, route, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/routing';
 
 @controller()
 export class SomeController {
   @route('GET', 'some-url/:param1/:param2')
   method1(
     @inject(PATH_PARAMS) pathParams: AnyObj,
-    @inject(QUERY_PARAMS) queryParams: AnyObj,
-    res: Res
+    @inject(QUERY_PARAMS) queryParams: AnyObj
   ) {
-    res.sendJson({ pathParams, queryParams });
+    return ({ pathParams, queryParams });
   }
 }
 ```
 
 You can find more information about what a token is and what the `inject` decorator does in the [Dependency Injection][4] section.
 
-As you can see from the previous example, to send responses with objects, you need to use the `res.sendJson()` method instead of `res.send()` (which only sends text).
+As you can see from the previous example, responses to HTTP requests can also be sent using the regular `return`.
 
 Native Node.js request and response objects can be obtained by tokens, respectively - `RAW_REQ` and `RAW_RES`:
 
 ```ts {7-8}
-import { controller, inject, RAW_REQ, RAW_RES, RawRequest, RawResponse } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+import { inject } from '@ditsmod/core';
+import { controller, route, RAW_REQ, RAW_RES, RawRequest, RawResponse } from '@ditsmod/routing';
 
 @controller()
 export class HelloWorldController {
@@ -167,11 +162,10 @@ You may also be interested in [how to get the HTTP request body][5].
 
 ### Context-scoped controller {#context-scoped-controller}
 
-Because the controller is instantiated in this mode only once, you will not be able to query in its constructor for class instances that are instantiated on each request. For example, if you request an instance of the `Res` class in the constructor, Ditsmod will throw an error:
+To make a controller operate in the context-scoped mode, you need to specify `{ scope: 'ctx' }` in its metadata. Because the controller is instantiated in this mode only once, you will not be able to query in its constructor for class instances that are instantiated on each request. For example, if you request an instance of the `Res` class in the constructor, Ditsmod will throw an error:
 
-```ts {4,6}
-import { controller, RequestContext } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+```ts {3,5}
+import { RequestContext, controller, route } from '@ditsmod/routing';
 
 @controller({ scope: 'ctx' })
 export class HelloWorldController {
@@ -186,9 +180,8 @@ export class HelloWorldController {
 
 The working case will be as follows:
 
-```ts {4,7}
-import { controller, RequestContext } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+```ts {3,6}
+import { controller, RequestContext, route } from '@ditsmod/routing';
 
 @controller({ scope: 'ctx' })
 export class HelloWorldController {
@@ -201,9 +194,9 @@ export class HelloWorldController {
 
 In the "context-scoped" mode, controller methods bound to specific routes receive a single argument - the request context. That is, in this mode, you will no longer be able to ask Ditsmod to pass instances of other classes to these methods. However, in the constructor you can still request instances of certain classes that are created only once.
 
-## Binding of the controller to the module
+## Binding of the controller to the host module
 
-The controller is bound to the module through the `controllers` array:
+Any controller should only be bound to the current module where it was declared, i.e. the host module. This binding is done via the `controllers` array:
 
 ```ts {5}
 import { featureModule } from '@ditsmod/core';
@@ -215,7 +208,8 @@ import { SomeController } from './some.controller.js';
 export class SomeModule {}
 ```
 
-After binding controllers to a module, in order for Ditsmod to take these controllers into account, the module should be either appended or imported as an object that has the [ModuleWithParams][2] interface. The following example shows both the appending and the full import of the module (this is just to demonstrate the possibility, in practice it does not make sense to append and import at the same time):
+After binding controllers to the host module, in order for Ditsmod to recognize them in an external module, the host module must either be attached or imported as an object that implements the [ModuleWithParams][2] interface. The following example shows both attaching and fully importing the host module (this is done only to demonstrate the possibility; in practice, there is no reason to do both at the same time):
+
 
 ```ts {5-7}
 import { featureModule } from '@ditsmod/core';
@@ -294,9 +288,8 @@ export class SomeModule {}
 
 Similarly, the services is passed in the controller metadata:
 
-```ts {9-10}
-import { controller, Res } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+```ts {8-9}
+import { controller, Res, route } from '@ditsmod/routing';
 
 import { FirstService } from './first.service.js';
 import { SecondService } from './second.service.js';

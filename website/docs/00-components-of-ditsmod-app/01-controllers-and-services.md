@@ -39,48 +39,41 @@ if (handle) {
 
 Мапінг між URL та обробником запиту формується на основі метаданих, які закріпляються за методами контролерів. TypeScript клас стає контролером Ditsmod завдяки декоратору `controller`:
 
-```ts
-import { controller } from '@ditsmod/core';
+```ts {3}
+import { controller, route } from '@ditsmod/routing';
 
 @controller()
-export class SomeController {}
+export class SomeController {
+  @route('GET', 'hello')
+  method1() {
+    // ...
+  }
+}
 ```
 
 Файли контролерів рекомендується називати із закінченням `*.controller.ts`, а імена їхніх класів - із закінченням `*Controller`.
 
-По-суті, що потрібно, щоб контролер містив усе для роботи роутера? - В класичному варіанті обробки HTTP-запиту (не GraphQL), це:
+Як видно з попереднього прикладу, будь-який контролер повинен мати:
 
 1. метод класу, який буде викликатись під час HTTP-запиту;
-2. назва HTTP-методу (`GET`, `POST`, `PATCH` і т.д.);
-3. та URL до якого буде прив'язуватись виклик метода класу.
+2. назву HTTP-методу (`GET`, `POST`, `PATCH` і т.д.);
+3. URL до якого буде прив'язуватись виклик метода класу.
 
-Комбінація другого та третього пункту повинна бути унікальною на весь застосунок. Тобто, якщо ви один раз визначили що `GET` + `some/path` будуть прив'язані до певного методу контролера, то другий раз ця сама комбінація не повинна повторюватись. В противному разі, модуль `@ditsmod/routing` кине помилку з відповідним повідомленням.
+Комбінація другого та третього пункту повинна бути унікальною на весь застосунок. Тобто, якщо ви один раз визначили що `GET` + `/hello` будуть прив'язані до певного методу контролера, то другий раз ця сама комбінація не повинна повторюватись. В противному разі, модуль `@ditsmod/routing` кине помилку з відповідним повідомленням.
 
-Для обробки HTTP-запиту, часто важливо мати доступ власне до JavaScript-об'єкту HTTP-запиту. Ditsmod забезпечує роботу контролерів у двох альтернативних режимах, які зокрема відрізняються механізмом передачі JavaScript-об'єкту HTTP-запиту:
+Ditsmod забезпечує роботу контролерів у двох альтернативних режимах, які зокрема відрізняються механізмом передачі HTTP-запиту у метод контролера:
 
-1. **Injector-scoped контролер** (по-дефолту). HTTP-запит він отримує з [DI-інжектора][11].
-2. **Context-scoped контролер**. HTTP-запит (разом з іншими контекстними даними) він отримує у якості аргументу, що передається до методу класу.
-
-Що таке інжектор ви дізнаєтесь у [наступному розділі документації][10], зараз же достатньо знати, що він може містити об'єкт HTTP-запиту у першому режимі роботи контролера.
+1. **Injector-scoped контролер** (по-дефолту). Метод контролера може отримувати довільну кількість аргументів від [DI-інжектора][11]. Серед цих аргументів може бути HTTP-запит.
+2. **Context-scoped контролер**. Метод контролера отримує єдиний аргумент - контекст запиту, який зокрема містить HTTP-запит.
 
 Перший режим більш зручний і більш безпечний, коли потрібно працювати в контексті поточного HTTP-запиту (клієнт надає певний ідентифікатор, який необхідно враховувати для формування відповіді). Другий режим роботи помітно швидший (приблизно на 15-20%) і споживає менше пам'яті, але контекст запиту не можна зберігати у властивостях інстансу контролера, бо цей інстанс може одночасно використовуватись для інших клієнтів.
 
-Щоб контролер працював в режимі context-scoped, в його метаданих потрібно вказати `{ scope: 'ctx' }`:
-
-```ts
-import { controller } from '@ditsmod/core';
-
-@controller({ scope: 'ctx' })
-export class SomeController {}
-```
-
 ### Injector-scoped контролер {#injector-scoped-controller}
 
-Як вже було сказано вище, після того, як роутер знайшов обробника HTTP-запиту, цей обробник може викликати метод контролера. Щоб це стало можливим, спочатку HTTP-запити прив'язуються до методів контролерів через систему маршрутизації, з використанням декоратора `route`. В наступному прикладі створено єдиний маршрут, що приймає `GET` запит за адресою `/hello`:
+По-дефолту, Ditsmod працює з контролером у injector-scoped режимі. Це означає, по-перше, що для кожного HTTP-запиту буде створюватись окремий інстанс контролеру. По-друге, будь-який метод контролера, який має декоратор `route`, буде отримувати довільну кількість аргументів від [DI-інжектора][11]. В наступному прикладі створено єдиний маршрут, що приймає `GET` запит за адресою `/hello`:
 
-```ts {6}
-import { controller, Res } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+```ts {5}
+import { controller, route, Res } from '@ditsmod/routing';
 
 @controller()
 export class HelloWorldController {
@@ -99,9 +92,8 @@ export class HelloWorldController {
 
 Хоча в попередньому прикладі інстанс класу `Res` запитувався через `method1`, але аналогічним чином ми можемо запитати цей інстанс і в конструкторі:
 
-```ts {6}
-import { controller, Res } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+```ts {5}
+import { controller, Res, route } from '@ditsmod/routing';
 
 @controller()
 export class HelloWorldController {
@@ -120,34 +112,37 @@ export class HelloWorldController {
 Модифікатор доступу в конструкторі може бути будь-яким (private, protected або public), але взагалі без модифікатора - `res` вже буде простим параметром з видимістю лише в конструкторі.
 :::
 
-Щоб отримати `pathParams` чи `queryParams`, доведеться скористатись декоратором `inject` та токенами `PATH_PARAMS` і `QUERY_PARAMS`:
+#### Параметри в роутінгу {#routing-parameters}
+
+Щоб передати path-параметри для роутера, необхідно використовувати двокрапку перед іменем параметра. Наприклад, в URL `some-url/:param1/:param2` передано два path-параметри. Якщо для роутінгу ви використовуєте модуль `@ditsmod/routing`, лише path-параметри визначають роути, а query-параметри не беруться до уваги.
+
+Щоб отримати path-параметри чи query-параметри, доведеться скористатись декоратором `inject` та токенами `PATH_PARAMS` і `QUERY_PARAMS`:
 
 ```ts {8-9}
-import { controller, Res, inject, AnyObj, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+import { inject, AnyObj } from '@ditsmod/core';
+import { controller, route, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/routing';
 
 @controller()
 export class SomeController {
   @route('GET', 'some-url/:param1/:param2')
   method1(
     @inject(PATH_PARAMS) pathParams: AnyObj,
-    @inject(QUERY_PARAMS) queryParams: AnyObj,
-    res: Res
+    @inject(QUERY_PARAMS) queryParams: AnyObj
   ) {
-    res.sendJson({ pathParams, queryParams });
+    return ({ pathParams, queryParams });
   }
 }
 ```
 
 Більше інформації про те, що таке **токен** та що саме робить декоратор `inject` ви можете отримати з розділу [Dependecy Injection][4].
 
-Як бачите з попереднього прикладу, щоб відправляти відповіді з об'єктами, необхідно використовувати метод `res.sendJson()` замість `res.send()` (бо він відправляє тільки текст).
+Як бачите з попереднього прикладу, відповіді на HTTP-запити також можна відправляти завдяки звичайному `return`.
 
 Рідні Node.js об'єкти запиту та відповіді можна отримати за токенами відповідно - `RAW_REQ` та `RAW_RES`:
 
 ```ts {7-8}
-import { controller, inject, RAW_REQ, RAW_RES, RawRequest, RawResponse } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+import { inject } from '@ditsmod/core';
+import { controller, route, RAW_REQ, RAW_RES, RawRequest, RawResponse } from '@ditsmod/routing';
 
 @controller()
 export class HelloWorldController {
@@ -167,11 +162,10 @@ export class HelloWorldController {
 
 ### Context-scoped контролер {#context-scoped-controller}
 
-Через те, що інстанс контролера у цьому режимі створюється єдиний раз, ви не зможете запитувати у його конструкторі інстанси класів, які створюються за кожним запитом. Наприклад, якщо в конструкторі ви запросите інстанс класу `Res`, Ditsmod кине помилку:
+Щоб контролер працював в режимі context-scoped, в його метаданих потрібно вказати `{ scope: 'ctx' }`. Через те, що інстанс контролера у цьому режимі створюється єдиний раз, ви не зможете запитувати у його конструкторі інстанси класів, які створюються за кожним запитом. Наприклад, якщо в конструкторі ви запросите інстанс класу `Res`, Ditsmod кине помилку:
 
-```ts {4,6}
-import { controller, RequestContext } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+```ts {3,5}
+import { RequestContext, controller, route } from '@ditsmod/routing';
 
 @controller({ scope: 'ctx' })
 export class HelloWorldController {
@@ -186,9 +180,8 @@ export class HelloWorldController {
 
 Робочий варіант буде таким:
 
-```ts {4,7}
-import { controller, RequestContext } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+```ts {3,6}
+import { controller, RequestContext, route } from '@ditsmod/routing';
 
 @controller({ scope: 'ctx' })
 export class HelloWorldController {
@@ -201,9 +194,9 @@ export class HelloWorldController {
 
 В режимі "context-scoped", методи контролерів, що прив'язані до певних роутів, отримують єдиний аргумент - контекст запиту. Тобто в цьому режимі ви вже не зможете запитати у Ditsmod, щоб він передавав у ці методи інстанси інших класів. Разом з тим, в конструкторі ви все ще можете запитувати інстанси певних класів, які створюються єдиний раз.
 
-## Прив'язка контролера до модуля
+## Прив'язка контролера до хост-модуля
 
-Прив'язується контролер до модуля через масив `controllers`:
+Будь-який контролер повинен прив'язуватись лише до поточного модуля, де він був оголошений, тобто до хост-модуля. Така прив'язка робиться через масив `controllers`:
 
 ```ts {5}
 import { featureModule } from '@ditsmod/core';
@@ -215,7 +208,7 @@ import { SomeController } from './some.controller.js';
 export class SomeModule {}
 ```
 
-Після прив'язки контролерів до модуля, щоб Ditsmod брав до уваги ці контролери, даний модуль потрібно або прикріпити, або імпортувати у формі об'єкта, що має інтерфейс [ModuleWithParams][2]. В наступному прикладі показано і прикріплення, і повний імпорт модуля (це зроблено лише щоб продемонструвати можливість, на практиці немає сенсу робити одночасне прикріплення з імпортом):
+Після прив'язки контролерів до хост-модуля, щоб Ditsmod брав їх до уваги у зовнішньому модулі, хост-модуль потрібно або прикріпити, або імпортувати у формі об'єкта, що має інтерфейс [ModuleWithParams][2]. В наступному прикладі показано і прикріплення, і повний імпорт хост-модуля (це зроблено лише щоб продемонструвати можливість, на практиці немає сенсу робити одночасне прикріплення з імпортом):
 
 ```ts {5-7}
 import { featureModule } from '@ditsmod/core';
@@ -294,9 +287,8 @@ export class SomeModule {}
 
 Аналогічно сервіси передаються у метадані контролера:
 
-```ts {9-10}
-import { controller, Res } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+```ts {8-9}
+import { controller, Res, route } from '@ditsmod/routing';
 
 import { FirstService } from './first.service.js';
 import { SecondService } from './second.service.js';
