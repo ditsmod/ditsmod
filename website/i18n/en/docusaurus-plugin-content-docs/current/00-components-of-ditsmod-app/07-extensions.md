@@ -10,7 +10,7 @@ Typically, an extension does its work before the HTTP request handlers are creat
 
 The task of most extensions is to act like a pipeline, taking a multidimensional array of configuration data (metadata) as input and producing another (or augmented) multidimensional array as output. This final array is ultimately interpreted by the target extension, e.g. to create routes and their handlers. However, extensions do not necessarily need to work with configuration or setting up HTTP request handlers; they can also write logs, collect metrics for monitoring, or perform other tasks.
 
-In most cases, these multidimensional arrays reflect the structure of the application:
+In most cases, multidimensional arrays of configuration data reflect the structure of the application:
 
 1. they are divided into modules;
 2. each module contains controllers or providers;
