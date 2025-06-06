@@ -13,7 +13,7 @@ import {
   getExtensionProvider,
   isConfigWithOverrideExtension,
 } from '#extension/get-extension-provider.js';
-import { AnyObj, ModRefId, Level } from '#types/mix.js';
+import { AnyObj, ModRefId } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { RawMeta } from '#decorators/feature-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
@@ -25,7 +25,6 @@ import { Providers } from '#utils/providers.js';
 import { Extension, ExtensionClass } from '#extension/extension-types.js';
 import { NormalizedProvider, normalizeProviders } from '#utils/ng-utils.js';
 import { isExtensionConfig } from '#extension/type-guards.js';
-import { objectKeys } from '#utils/object-keys.js';
 
 export class ModuleNormalizer {
   /**
@@ -156,11 +155,12 @@ export class ModuleNormalizer {
 
   protected exportFromReflectMetadata(rawMeta: RawMeta, modName: string, meta: NormalizedMeta) {
     const providers: Provider[] = [];
-    objectKeys(rawMeta).forEach((k) => {
-      if (k.includes('providersPer') && Array.isArray(rawMeta[k])) {
-        providers.push(...rawMeta[k]);
-      }
-    });
+    if (Array.isArray(rawMeta.providersPerApp)) {
+      providers.push(...rawMeta.providersPerApp);
+    }
+    if (Array.isArray(rawMeta.providersPerMod)) {
+      providers.push(...rawMeta.providersPerMod);
+    }
 
     rawMeta.exports?.forEach((exp, i) => {
       exp = resolveForwardRef(exp);
@@ -242,11 +242,12 @@ export class ModuleNormalizer {
 
   protected throwIfResolvingNormalizedProvider(moduleName: string, obj: RawMeta) {
     const resolvedCollisionsPerLevel: [any, ModRefId][] = [];
-    objectKeys(obj).forEach((k) => {
-      if (k.includes('resolvedCollision') && Array.isArray(obj[k])) {
-        resolvedCollisionsPerLevel.push(...obj[k]);
-      }
-    });
+    if (Array.isArray(obj.resolvedCollisionsPerApp)) {
+      resolvedCollisionsPerLevel.push(...obj.resolvedCollisionsPerApp);
+    }
+    if (Array.isArray(obj.resolvedCollisionsPerMod)) {
+      resolvedCollisionsPerLevel.push(...obj.resolvedCollisionsPerMod);
+    }
 
     resolvedCollisionsPerLevel.forEach(([provider]) => {
       if (isNormalizedProvider(provider)) {
@@ -268,33 +269,19 @@ export class ModuleNormalizer {
   }
 
   protected findAndSetProviders(token: any, rawMeta: RawMeta, meta: NormalizedMeta) {
-    const levels = new Set<Level>();
-    const providersPer = 'providersPer';
-    Object.keys(rawMeta).forEach((k) => {
-      const index = k.indexOf(providersPer);
-      if (index !== -1) {
-        const level = k.slice(index + providersPer.length) as Level;
-        if (level != ('App' as Level)) {
-          levels.add(level);
-        }
-      }
-    });
-
     let found = false;
-    levels.forEach((level) => {
-      const unfilteredProviders = [...(rawMeta[`providersPer${level}`] || [])];
-      const providers = unfilteredProviders.filter((p) => getToken(p) === token);
-      if (providers.length) {
-        found = true;
-        if (providers.some(isMultiProvider)) {
-          meta[`exportedMultiProvidersPer${level}`] ??= [];
-          meta[`exportedMultiProvidersPer${level}`].push(...(providers as MultiProvider[]));
-        } else {
-          meta[`exportedProvidersPer${level}`] ??= [];
-          meta[`exportedProvidersPer${level}`].push(...providers);
-        }
+    const unfilteredProviders = [...(rawMeta.providersPerMod || [])];
+    const providers = unfilteredProviders.filter((p) => getToken(p) === token);
+    if (providers.length) {
+      found = true;
+      if (providers.some(isMultiProvider)) {
+        meta.exportedMultiProvidersPerMod ??= [];
+        meta.exportedMultiProvidersPerMod.push(...(providers as MultiProvider[]));
+      } else {
+        meta.exportedProvidersPerMod ??= [];
+        meta.exportedProvidersPerMod.push(...providers);
       }
-    });
+    }
 
     if (!found) {
       const providerName = token.name || token;
