@@ -6,6 +6,7 @@ import {
   mergeArrays,
   DecoratorAndValue,
   ModuleWithParams,
+  NormalizedMeta,
 } from '@ditsmod/core';
 
 import { RoutingModuleParams, RoutingMetadata } from '#module/module-metadata.js';
@@ -59,10 +60,15 @@ function checkGuardsPerMod(guards: NormalizedGuard[]) {
 }
 
 export function patchMeta() {
-  return {  };
+  return {};
 }
 
 export function transformMetadata(data?: RoutingMetadata): AttachedMetadata {
-  const metadata = new RoutingMetadataNormalizer().normalize(data);
-  return { isAttachedMetadata: true, metadata, mergeModuleWithParams, patchMeta };
+  return {
+    isAttachedMetadata: true,
+    metadata: data || {},
+    normalize: () => new RoutingMetadataNormalizer().normalize(data),
+    mergeModuleWithParams,
+    patchMeta,
+  };
 }

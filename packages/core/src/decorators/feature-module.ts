@@ -5,6 +5,7 @@ import { objectKeys } from '#utils/object-keys.js';
 import { Providers } from '#utils/providers.js';
 import { mergeArrays } from '#utils/merge-arrays.js';
 import { CallsiteUtils } from '#utils/callsites.js';
+import { NormalizedMeta } from '#types/normalized-meta.js';
 
 export const featureModule: FeatureModuleDecorator = makeClassDecorator(transformModule);
 
@@ -54,6 +55,7 @@ export interface AttachedMetadata {
   isAttachedMetadata: true;
   metadata: AnyObj;
   mergeModuleWithParams?: (modWitParams: ModuleWithParams, decorAndVal: DecoratorAndValue<AttachedMetadata>) => AnyObj;
+  normalize?: () => AnyObj | undefined;
   patchMeta?: (...args: any[]) => AnyObj;
 }
 

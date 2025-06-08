@@ -3,10 +3,9 @@ import { AnyObj, Class, isFeatureModule, objectKeys, Providers, reflector, resol
 import { RoutingMetadata } from '#module/module-metadata.js';
 import { RoutingNormalizedMeta } from '#types/routing-normalized-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
-import { NormalizedGuard } from '#interceptors/guard.js';
 
 export class RoutingMetadataNormalizer {
-  normalize(rawMeta?: RoutingMetadata) {
+  normalize(rawMeta?: RoutingMetadata): RoutingNormalizedMeta {
     rawMeta = Object.assign({}, rawMeta);
     objectKeys(rawMeta).forEach((p) => {
       if (rawMeta[p] instanceof Providers) {

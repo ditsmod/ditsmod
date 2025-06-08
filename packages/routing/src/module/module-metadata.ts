@@ -3,8 +3,7 @@ import { GuardItem } from '#interceptors/guard.js';
 
 export interface RoutingMetadata {
   /**
-   * List of modules, `RoutingModuleParams` or tokens of providers exported by this
-   * module.
+   * List of provider tokens exported by this module.
    */
   exports?: any[];
   /**
