@@ -25,7 +25,6 @@ import { Providers } from '#utils/providers.js';
 import { Extension, ExtensionClass } from '#extension/extension-types.js';
 import { NormalizedProvider, normalizeProviders } from '#utils/ng-utils.js';
 import { isExtensionConfig } from '#extension/type-guards.js';
-import { CustomError } from '#error/custom-error.js';
 
 export class ModuleNormalizer {
   /**
@@ -61,11 +60,7 @@ export class ModuleNormalizer {
 
     aDecoratorMeta.forEach((decorAndVal) => {
       if (!isModDecor(decorAndVal)) {
-        try {
-          meta.mMeta.set(decorAndVal.decorator, decorAndVal.value.normalize?.());
-        } catch (err: any) {
-          throw new CustomError({ msg1: `Normalize ${modName} failed`, level: 'fatal' }, err);
-        }
+        meta.mMeta.set(decorAndVal.decorator, decorAndVal.value.normalize?.());
       }
     });
 
