@@ -1,6 +1,23 @@
-import { AnyObj, Class, isFeatureModule, objectKeys, Providers, reflector, resolveForwardRef } from '@ditsmod/core';
+import {
+  AnyObj,
+  Class,
+  getToken,
+  getTokens,
+  isFeatureModule,
+  isMultiProvider,
+  isNormalizedProvider,
+  isProvider,
+  ModuleType,
+  MultiProvider,
+  NormalizedProvider,
+  objectKeys,
+  Provider,
+  Providers,
+  reflector,
+  resolveForwardRef,
+} from '@ditsmod/core';
 
-import { RoutingMetadata } from '#module/module-metadata.js';
+import { RoutingMetadata, RoutingModuleParams } from '#module/module-metadata.js';
 import { RoutingNormalizedMeta } from '#types/routing-normalized-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 
@@ -30,8 +47,97 @@ export class RoutingMetadataNormalizer {
     const mergedMeta = { ...rawMeta, ...meta };
     this.quickCheckMetadata(mergedMeta);
     meta.controllers.forEach((Controller) => this.checkController(Controller));
+    this.normalizeModule(rawMeta, meta);
 
     return mergedMeta;
+  }
+
+  protected normalizeModule(rawMeta: RoutingMetadata, meta: RoutingNormalizedMeta) {
+    this.throwIfResolvingNormalizedProvider(rawMeta);
+    this.exportFromReflectMetadata(rawMeta, meta);
+    this.pickAndMergeMeta(meta, rawMeta);
+  }
+
+  protected throwIfResolvingNormalizedProvider(rawMeta: RoutingMetadata) {
+    const resolvedCollisionsPerLevel: [any, ModuleType | RoutingModuleParams][] = [];
+    if (Array.isArray(rawMeta.resolvedCollisionsPerRou)) {
+      resolvedCollisionsPerLevel.push(...rawMeta.resolvedCollisionsPerRou);
+    }
+    if (Array.isArray(rawMeta.resolvedCollisionsPerReq)) {
+      resolvedCollisionsPerLevel.push(...rawMeta.resolvedCollisionsPerReq);
+    }
+
+    resolvedCollisionsPerLevel.forEach(([provider]) => {
+      if (isNormalizedProvider(provider)) {
+        const providerName = provider.token.name || provider.token;
+        const msg = `for ${providerName} inside "resolvedCollisionPer*" array must be includes tokens only.`;
+        throw new TypeError(msg);
+      }
+    });
+  }
+
+  protected exportFromReflectMetadata(rawMeta: RoutingMetadata, meta: RoutingNormalizedMeta) {
+    const providers: Provider[] = [];
+    if (Array.isArray(rawMeta.providersPerRou)) {
+      providers.push(...rawMeta.providersPerRou);
+    }
+    if (Array.isArray(rawMeta.providersPerReq)) {
+      providers.push(...rawMeta.providersPerReq);
+    }
+
+    rawMeta.exports?.forEach((exp, i) => {
+      exp = resolveForwardRef(exp);
+      this.throwIfUndefined(exp, i);
+      this.throwExportsIfNormalizedProvider(exp);
+      if (isProvider(exp) || getTokens(providers).includes(exp)) {
+        this.findAndSetProviders(exp, rawMeta, meta);
+      } else {
+        this.throwUnidentifiedToken(exp);
+      }
+    });
+  }
+
+  protected throwUnidentifiedToken(token: any) {
+    const tokenName = token.name || token;
+    const msg =
+      `Exporting "${tokenName}" failed: if "${tokenName}" is a token of a provider, this provider ` +
+      'must be included in providersPerRou or providersPerReq. ' +
+      `If "${tokenName}" is a token of extension, this extension must be included in "extensions" array.`;
+    throw new TypeError(msg);
+  }
+
+  protected throwExportsIfNormalizedProvider(provider: NormalizedProvider) {
+    if (isNormalizedProvider(provider)) {
+      const providerName = provider.token.name || provider.token;
+      const msg = `Exporting "${providerName}" failed: in "exports" array must be includes tokens only.`;
+      throw new TypeError(msg);
+    }
+  }
+
+  protected findAndSetProviders(token: any, rawMeta: RoutingMetadata, meta: RoutingNormalizedMeta) {
+    let found = false;
+    (['Rou', 'Req'] as const).forEach((level) => {
+      const unfilteredProviders = [...(rawMeta[`providersPer${level}`] || [])];
+      const providers = unfilteredProviders.filter((p) => getToken(p) === token);
+      if (providers.length) {
+        found = true;
+        if (providers.some(isMultiProvider)) {
+          meta[`exportedMultiProvidersPer${level}`] ??= [];
+          meta[`exportedMultiProvidersPer${level}`].push(...(providers as MultiProvider[]));
+        } else {
+          meta[`exportedProvidersPer${level}`] ??= [];
+          meta[`exportedProvidersPer${level}`].push(...providers);
+        }
+      }
+    });
+
+    if (!found) {
+      const providerName = token.name || token;
+      const msg =
+        `Exporting from ${meta.name} failed: if "${providerName}" is a provider, it must be included ` +
+        'in "providersPerRou" or "providersPerReq".';
+      throw new Error(msg);
+    }
   }
 
   protected pickAndMergeMeta(targetObject: RoutingNormalizedMeta, ...sourceObjects: RoutingMetadata[]) {
@@ -80,11 +186,11 @@ export class RoutingMetadataNormalizer {
       isFeatureModule(meta) &&
       !meta.exportedProvidersPerReq.length &&
       !meta.controllers.length &&
-      !meta.exportedProvidersPerMod.length &&
+      // !meta.exportedProvidersPerMod.length &&
       !meta.exportedProvidersPerRou.length &&
       !meta.exportsModules.length &&
       !meta.exportsWithParams.length &&
-      !meta.exportedMultiProvidersPerMod.length &&
+      // !meta.exportedMultiProvidersPerMod.length &&
       !meta.exportedMultiProvidersPerRou.length &&
       !meta.exportedMultiProvidersPerReq.length &&
       !meta.providersPerApp.length &&
