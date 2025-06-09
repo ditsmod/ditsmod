@@ -17,11 +17,7 @@ export class ImportObj<T extends Provider = Provider> {
 
 export class GlobalProviders {
   importedProvidersPerMod = new Map<any, ImportObj>();
-  importedProvidersPerRou = new Map<any, ImportObj>();
-  importedProvidersPerReq = new Map<any, ImportObj>();
   importedMultiProvidersPerMod = new Map<ModuleType | ModuleWithParams, Provider[]>();
-  importedMultiProvidersPerRou = new Map<ModuleType | ModuleWithParams, Provider[]>();
-  importedMultiProvidersPerReq = new Map<ModuleType | ModuleWithParams, Provider[]>();
   importedExtensions = new Map<ModuleType | ModuleWithParams, Provider[]>();
   aImportedExtensionConfig: ExtensionConfig[] = [];
 }
@@ -45,11 +41,7 @@ export class MetadataPerMod1 {
 
 export interface ImportedTokensMap {
   perMod: Map<any, ImportObj>;
-  perRou: Map<any, ImportObj>;
-  perReq: Map<any, ImportObj>;
   multiPerMod: Map<ModuleType | ModuleWithParams, Provider[]>;
-  multiPerRou: Map<ModuleType | ModuleWithParams, Provider[]>;
-  multiPerReq: Map<ModuleType | ModuleWithParams, Provider[]>;
   extensions: Map<ModuleType | ModuleWithParams, Provider[]>;
 }
 

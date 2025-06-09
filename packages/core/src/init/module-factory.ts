@@ -37,7 +37,7 @@ import { ExtensionClass } from '#extension/extension-types.js';
 export class ModuleFactory {
   protected providersPerApp: Provider[];
   protected moduleName: string;
-  protected prefixPerMod: string;
+  // protected prefixPerMod: string;
   // protected guardsPerMod1: GuardPerMod1[];
   /**
    * Module metadata.
@@ -45,11 +45,11 @@ export class ModuleFactory {
   protected meta: NormalizedMeta;
 
   protected importedProvidersPerMod = new Map<any, ImportObj>();
-  protected importedProvidersPerRou = new Map<any, ImportObj>();
-  protected importedProvidersPerReq = new Map<any, ImportObj>();
+  // protected importedProvidersPerRou = new Map<any, ImportObj>();
+  // protected importedProvidersPerReq = new Map<any, ImportObj>();
   protected importedMultiProvidersPerMod = new Map<ModuleType | ModuleWithParams, Provider[]>();
-  protected importedMultiProvidersPerRou = new Map<ModuleType | ModuleWithParams, Provider[]>();
-  protected importedMultiProvidersPerReq = new Map<ModuleType | ModuleWithParams, Provider[]>();
+  // protected importedMultiProvidersPerRou = new Map<ModuleType | ModuleWithParams, Provider[]>();
+  // protected importedMultiProvidersPerReq = new Map<ModuleType | ModuleWithParams, Provider[]>();
   protected importedExtensions = new Map<ModuleType | ModuleWithParams, Provider[]>();
   protected aImportedExtensionConfig: ExtensionConfig[] = [];
 
@@ -72,11 +72,11 @@ export class ModuleFactory {
 
     return {
       importedProvidersPerMod: this.importedProvidersPerMod,
-      importedProvidersPerRou: this.importedProvidersPerRou,
-      importedProvidersPerReq: this.importedProvidersPerReq,
+      // importedProvidersPerRou: this.importedProvidersPerRou,
+      // importedProvidersPerReq: this.importedProvidersPerReq,
       importedMultiProvidersPerMod: this.importedMultiProvidersPerMod,
-      importedMultiProvidersPerRou: this.importedMultiProvidersPerRou,
-      importedMultiProvidersPerReq: this.importedMultiProvidersPerReq,
+      // importedMultiProvidersPerRou: this.importedMultiProvidersPerRou,
+      // importedMultiProvidersPerReq: this.importedMultiProvidersPerReq,
       importedExtensions: this.importedExtensions,
       aImportedExtensionConfig: this.aImportedExtensionConfig,
     };
@@ -135,20 +135,20 @@ export class ModuleFactory {
     if (meta.isExternal) {
       // External modules do not require global providers and extensions from the application.
       perMod = new Map([...this.importedProvidersPerMod]);
-      perRou = new Map([...this.importedProvidersPerRou]);
-      perReq = new Map([...this.importedProvidersPerReq]);
+      // perRou = new Map([...this.importedProvidersPerRou]);
+      // perReq = new Map([...this.importedProvidersPerReq]);
       multiPerMod = new Map([...this.importedMultiProvidersPerMod]);
-      multiPerRou = new Map([...this.importedMultiProvidersPerRou]);
-      multiPerReq = new Map([...this.importedMultiProvidersPerReq]);
+      // multiPerRou = new Map([...this.importedMultiProvidersPerRou]);
+      // multiPerReq = new Map([...this.importedMultiProvidersPerReq]);
       extensions = new Map([...this.importedExtensions]);
       aExtensionConfig = [...this.aImportedExtensionConfig];
     } else {
       perMod = new Map([...this.glProviders.importedProvidersPerMod, ...this.importedProvidersPerMod]);
-      perRou = new Map([...this.glProviders.importedProvidersPerRou, ...this.importedProvidersPerRou]);
-      perReq = new Map([...this.glProviders.importedProvidersPerReq, ...this.importedProvidersPerReq]);
+      // perRou = new Map([...this.glProviders.importedProvidersPerRou, ...this.importedProvidersPerRou]);
+      // perReq = new Map([...this.glProviders.importedProvidersPerReq, ...this.importedProvidersPerReq]);
       multiPerMod = new Map([...this.glProviders.importedMultiProvidersPerMod, ...this.importedMultiProvidersPerMod]);
-      multiPerRou = new Map([...this.glProviders.importedMultiProvidersPerRou, ...this.importedMultiProvidersPerRou]);
-      multiPerReq = new Map([...this.glProviders.importedMultiProvidersPerReq, ...this.importedMultiProvidersPerReq]);
+      // multiPerRou = new Map([...this.glProviders.importedMultiProvidersPerRou, ...this.importedMultiProvidersPerRou]);
+      // multiPerReq = new Map([...this.glProviders.importedMultiProvidersPerReq, ...this.importedMultiProvidersPerReq]);
       extensions = new Map([...this.glProviders.importedExtensions, ...this.importedExtensions]);
       aExtensionConfig = [...this.glProviders.aImportedExtensionConfig, ...this.aImportedExtensionConfig];
     }
@@ -164,11 +164,11 @@ export class ModuleFactory {
       // applyControllers,
       importedTokensMap: {
         perMod,
-        perRou,
-        perReq,
+        // perRou,
+        // perReq,
         multiPerMod,
-        multiPerRou,
-        multiPerReq,
+        // multiPerRou,
+        // multiPerReq,
         extensions,
       },
     });
