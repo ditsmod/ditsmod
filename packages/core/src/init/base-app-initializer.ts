@@ -241,7 +241,7 @@ export class BaseAppInitializer {
     this.systemLogMediator.printGlobalProviders(this, globalProviders);
     const moduleFactory2 = new ModuleFactory();
     const { modRefId } = moduleManager.getMetadata('root', true);
-    return moduleFactory2.bootstrap(this.meta.providersPerApp, globalProviders, '', modRefId, moduleManager, new Set());
+    return moduleFactory2.bootstrap(this.meta.providersPerApp, globalProviders, modRefId, moduleManager, new Set());
   }
 
   protected async handleExtensions(

@@ -26,7 +26,7 @@ export class GlobalProviders {
  * Metadata collected using `ModuleFactory`. The target for this metadata is `ImportsResolver`.
  */
 export class MetadataPerMod1 {
-  prefixPerMod: string;
+  // prefixPerMod: string;
   // guardsPerMod1: GuardPerMod1[];
   /**
    * Snapshot of NormalizedMeta. If you modify any array in this object,

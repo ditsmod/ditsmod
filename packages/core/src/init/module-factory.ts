@@ -90,10 +90,10 @@ export class ModuleFactory {
   bootstrap(
     providersPerApp: Provider[],
     globalProviders: GlobalProviders,
-    prefixPerMod: string,
     modOrObj: ModRefId,
     moduleManager: ModuleManager,
     unfinishedScanModules: Set<ModRefId>,
+    // prefixPerMod: string,
     // guardsPerMod1?: GuardPerMod1[],
     // isAppends?: boolean,
   ) {
@@ -101,7 +101,7 @@ export class ModuleFactory {
     this.moduleManager = moduleManager;
     this.providersPerApp = providersPerApp;
     this.glProviders = globalProviders;
-    this.prefixPerMod = prefixPerMod || '';
+    // this.prefixPerMod = prefixPerMod || '';
     this.moduleName = meta.name;
     // this.guardsPerMod1 = guardsPerMod1 || [];
     this.unfinishedScanModules = unfinishedScanModules;
@@ -125,11 +125,11 @@ export class ModuleFactory {
     // }
 
     let perMod: Map<any, ImportObj>;
-    let perRou: Map<any, ImportObj>;
-    let perReq: Map<any, ImportObj>;
+    // let perRou: Map<any, ImportObj>;
+    // let perReq: Map<any, ImportObj>;
     let multiPerMod: Map<ModuleType | ModuleWithParams, Provider[]>;
-    let multiPerRou: Map<ModuleType | ModuleWithParams, Provider[]>;
-    let multiPerReq: Map<ModuleType | ModuleWithParams, Provider[]>;
+    // let multiPerRou: Map<ModuleType | ModuleWithParams, Provider[]>;
+    // let multiPerReq: Map<ModuleType | ModuleWithParams, Provider[]>;
     let extensions: Map<ModuleType | ModuleWithParams, Provider[]>;
     let aExtensionConfig: ExtensionConfig[];
     if (meta.isExternal) {
@@ -158,7 +158,7 @@ export class ModuleFactory {
     meta.aOrderedExtensions = topologicalSort<ExtensionClass, ExtensionConfigBase>(allExtensionConfigs, true);
 
     return this.appMetadataMap.set(modOrObj, {
-      prefixPerMod,
+      // prefixPerMod,
       // guardsPerMod1: this.guardsPerMod1,
       meta: this.meta,
       // applyControllers,
@@ -203,7 +203,7 @@ export class ModuleFactory {
         this.importProvidersAndExtensions(meta);
       }
 
-      let prefixPerMod = '';
+      // let prefixPerMod = '';
       // let guardsPerMod1: GuardPerMod1[] = [];
       const hasModuleParams = isModuleWithParams(input);
       if (hasModuleParams || !isImport) {
@@ -212,12 +212,12 @@ export class ModuleFactory {
         //   prefixPerMod = input.absolutePath.startsWith('/') ? input.absolutePath.slice(1) : input.absolutePath;
         // } else {
           // const path = hasModuleParams ? input.path : '';
-          prefixPerMod = [this.prefixPerMod, ''].filter((s) => s).join('/');
+          // prefixPerMod = [this.prefixPerMod, ''].filter((s) => s).join('/');
         // }
         // const impGuradsPerMod1 = meta.guardsPerMod.map<GuardPerMod1>((g) => ({ ...g, meta: this.meta }));
         // guardsPerMod1 = [...this.guardsPerMod1, ...impGuradsPerMod1];
       } else {
-        prefixPerMod = this.prefixPerMod;
+        // prefixPerMod = this.prefixPerMod;
       }
 
       if (this.unfinishedScanModules.has(input)) {
@@ -229,10 +229,10 @@ export class ModuleFactory {
       const appMetadataMap = moduleFactory.bootstrap(
         this.providersPerApp,
         this.glProviders,
-        prefixPerMod,
         input,
         this.moduleManager,
         this.unfinishedScanModules,
+        // prefixPerMod,
         // guardsPerMod1,
         // !isImport,
       );
