@@ -20,7 +20,7 @@
     "dotenv": "^16.4.7"
   },
   "devDependencies": {
-    "jest": "^29.7.0",
+    "jest": "^30.0.0",
     "npm-run-all": "*",
     "typescript": "*"
   }

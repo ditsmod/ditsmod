@@ -57,7 +57,7 @@
     "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
-    "jest": "^29.7.0",
+    "jest": "^30.0.0",
     "npm-run-all": "*",
     "typescript": "*"
   }
