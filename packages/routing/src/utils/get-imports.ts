@@ -1,5 +1,4 @@
-import { ImportObj } from '#types/metadata-per-mod.js';
-import { Provider } from '#di/types-and-models.js';
+import { ImportObj, Provider } from '@ditsmod/core';
 
 export function getImportedTokens(map: Map<any, ImportObj<Provider>> | undefined) {
   return [...(map || []).keys()];
