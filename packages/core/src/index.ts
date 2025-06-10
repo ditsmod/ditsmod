@@ -60,8 +60,11 @@ export {
 } from '#types/mix.js';
 export { ModuleMetadata, ModuleWithParams, ModuleParamItem } from '#types/module-metadata.js';
 export { RootModuleMetadata } from '#types/root-module-metadata.js';
+export { ImportObj } from '#types/metadata-per-mod.js';
 export { mergeArrays } from '#utils/merge-arrays.js';
 export { deepFreeze } from '#utils/deep-freeze.js';
+export { getCollisions } from '#utils/get-collisions.js';
+export { throwProvidersCollisionError } from '#utils/throw-providers-collision-error.js';
 export { getDependencies } from '#utils/get-dependecies.js';
 export { ExtensionConfig, isConfigWithOverrideExtension } from '#extension/get-extension-provider.js';
 export { getModule } from '#utils/get-module.js';
