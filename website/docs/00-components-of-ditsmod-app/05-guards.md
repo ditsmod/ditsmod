@@ -62,7 +62,6 @@ export class SomeModule {}
 ```ts {8}
 import { controller, Res } from '@ditsmod/core';
 import { route } from '@ditsmod/routing';
-
 import { AuthGuard } from './auth.guard.js';
 
 @controller()
@@ -154,8 +153,9 @@ export class SomeController {
 
 Можна також централізовано підключати ґарди на рівні модуля:
 
-```ts {10}
+```ts {16}
 import { featureModule } from '@ditsmod/core';
+import { routingMetadata } from '@ditsmod/routing';
 
 import { OtherModule } from '../other/other.module.js';
 import { AuthModule } from '../auth/auth.module.js';
@@ -164,7 +164,15 @@ import { AuthGuard } from '../auth/auth.guard.js';
 @featureModule({
   imports: [
     AuthModule,
-    { path: 'some-path', module: OtherModule, guards: [AuthGuard] }
+    {
+      module: OtherModule,
+      params: [
+        {
+          decorator: routingMetadata,
+          metadata: { path: '', guards: [AuthGuard] }
+        }
+      ]
+    }
   ]
 })
 export class SomeModule {}
