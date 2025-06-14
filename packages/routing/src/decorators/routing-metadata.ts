@@ -6,15 +6,24 @@ import {
   mergeArrays,
   DecoratorAndValue,
   ModuleWithParams,
-  NormalizedMeta,
+  ModuleManager,
+  Provider,
+  GlobalProviders,
+  ModRefId,
+  ModuleParamItem,
 } from '@ditsmod/core';
 
 import { RoutingModuleParams, RoutingMetadata } from '#module/module-metadata.js';
 import { RoutingMetadataNormalizer } from '#module/routing-metadata-normalizer.js';
 import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
 import { RoutingNormalizedMeta } from '#types/routing-normalized-meta.js';
+import { RoutingModuleFactory } from '#module/routing-module-factory.js';
 
 export const routingMetadata: RoutingMetadataDecorator = makeClassDecorator(transformMetadata);
+
+export function routingMetadataParams<T extends { path: any }>(metadata: T): ModuleParamItem<T> {
+  return { decorator: routingMetadata, metadata };
+}
 
 export interface RoutingMetadataDecorator {
   (data?: RoutingMetadata): any;
@@ -59,16 +68,23 @@ function checkGuardsPerMod(guards: NormalizedGuard[]) {
   }
 }
 
-export function patchMeta() {
-  return {};
-}
-
 export function transformMetadata(data?: RoutingMetadata): AttachedMetadata {
   return {
     isAttachedMetadata: true,
     metadata: data || {},
     normalize: () => new RoutingMetadataNormalizer().normalize(data),
+    exportGlobalProviders: (moduleManager: ModuleManager, providersPerApp: Provider[]) => {
+      new RoutingModuleFactory().exportGlobalProviders(moduleManager, providersPerApp);
+    },
+    bootstrap: (
+      ...args: [
+        providersPerApp: Provider[],
+        globalProviders: GlobalProviders,
+        modRefId: ModRefId,
+        moduleManager: ModuleManager,
+        unfinishedScanModules: Set<ModRefId>,
+      ]
+    ) => new RoutingModuleFactory().bootstrap(...args),
     mergeModuleWithParams,
-    patchMeta,
   };
 }
