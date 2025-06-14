@@ -57,7 +57,7 @@ As can be seen from the previous example, any controller must have:
 
 1. A class method that will be invoked during an HTTP request.
 2. The HTTP method name (`GET`, `POST`, `PATCH`, etc.).
-3. The URL to which the class method call will be bound.
+3. The URL to which the class method call will be bound (optionally).
 
 The combination of the second and third points must be unique across the entire application. In other words, if you define that `GET` + `/hello` is bound to a specific controller method, this combination must not be reused. Otherwise, the `@ditsmod/routing` module will throw an error with an appropriate message.
 
@@ -200,11 +200,11 @@ Any controller should only be bound to the current module where it was declared,
 
 ```ts {5}
 import { featureModule } from '@ditsmod/core';
+import { routingMetadata } from '@ditsmod/routing';
 import { SomeController } from './some.controller.js';
 
-@featureModule({
-  controllers: [SomeController]
-})
+@routingMetadata({ controllers: [SomeController] })
+@featureModule()
 export class SomeModule {}
 ```
 

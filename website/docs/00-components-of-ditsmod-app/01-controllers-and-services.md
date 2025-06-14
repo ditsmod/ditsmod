@@ -57,7 +57,7 @@ export class SomeController {
 
 1. метод класу, який буде викликатись під час HTTP-запиту;
 2. назву HTTP-методу (`GET`, `POST`, `PATCH` і т.д.);
-3. URL до якого буде прив'язуватись виклик метода класу.
+3. URL до якого буде прив'язуватись виклик метода класу (опціонально).
 
 Комбінація другого та третього пункту повинна бути унікальною на весь застосунок. Тобто, якщо ви один раз визначили що `GET` + `/hello` будуть прив'язані до певного методу контролера, то другий раз ця сама комбінація не повинна повторюватись. В противному разі, модуль `@ditsmod/routing` кине помилку з відповідним повідомленням.
 
@@ -200,11 +200,11 @@ export class HelloWorldController {
 
 ```ts {5}
 import { featureModule } from '@ditsmod/core';
+import { routingMetadata } from '@ditsmod/routing';
 import { SomeController } from './some.controller.js';
 
-@featureModule({
-  controllers: [SomeController]
-})
+@routingMetadata({ controllers: [SomeController] })
+@featureModule()
 export class SomeModule {}
 ```
 
