@@ -208,17 +208,25 @@ import { SomeController } from './some.controller.js';
 export class SomeModule {}
 ```
 
-After binding controllers to the host module, in order for Ditsmod to recognize them in an external module, the host module must either be attached or imported as an object that implements the [ModuleWithParams][2] interface. The following example shows both attaching and fully importing the host module (this is done only to demonstrate the possibility; in practice, there is no reason to do both at the same time):
+After binding controllers to the host module, in order for Ditsmod to recognize them in an external module, the host module must either be appended or imported as an object that implements the [ModuleWithParams][2] interface. The following example shows both appending and fully importing the host module (this is done only to demonstrate the possibility; in practice, there is no reason to do both at the same time):
 
 
-```ts {5-7}
+```ts {6,10-15}
 import { featureModule } from '@ditsmod/core';
+import { routingMetadata } from '@ditsmod/routing';
 import { SomeModule } from './some.module.js';
 
-@featureModule({
-  appends: [SomeModule],
+@routingMetadata({
+  appends: [SomeModule]
+})
   // OR
-  imports: [{ path: 'some-prefix', module: SomeModule }]
+@featureModule({
+  imports: [{
+    module: SomeModule,
+    params: [
+      { decorator: routingMetadata, metadata: { path: '' } }
+    ],
+  }]
 })
 export class OtherModule {}
 ```

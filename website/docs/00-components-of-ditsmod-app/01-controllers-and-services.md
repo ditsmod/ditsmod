@@ -210,14 +210,22 @@ export class SomeModule {}
 
 Після прив'язки контролерів до хост-модуля, щоб Ditsmod брав їх до уваги у зовнішньому модулі, хост-модуль потрібно або прикріпити, або імпортувати у формі об'єкта, що має інтерфейс [ModuleWithParams][2]. В наступному прикладі показано і прикріплення, і повний імпорт хост-модуля (це зроблено лише щоб продемонструвати можливість, на практиці немає сенсу робити одночасне прикріплення з імпортом):
 
-```ts {5-7}
+```ts {6,10-15}
 import { featureModule } from '@ditsmod/core';
+import { routingMetadata } from '@ditsmod/routing';
 import { SomeModule } from './some.module.js';
 
-@featureModule({
-  appends: [SomeModule],
+@routingMetadata({
+  appends: [SomeModule]
+})
   // АБО
-  imports: [{ path: 'some-prefix', module: SomeModule }]
+@featureModule({
+  imports: [{
+    module: SomeModule,
+    params: [
+      { decorator: routingMetadata, metadata: { path: '' } }
+    ],
+  }]
 })
 export class OtherModule {}
 ```
