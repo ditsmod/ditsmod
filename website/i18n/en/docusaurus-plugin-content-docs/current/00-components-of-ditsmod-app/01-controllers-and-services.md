@@ -74,11 +74,15 @@ By default, Ditsmod works with the controller in injector-scoped mode. This mean
 
 ```ts {5}
 import { controller, route, Res } from '@ditsmod/routing';
+import { Service1 } from './service-1';
+import { Service2 } from './service-2';
 
 @controller()
 export class HelloWorldController {
   @route('GET', 'hello')
-  method1(res: Res) {
+  method1(service1: Service1, service2: Service2, res: Res) {
+    // Working with service1 and service2
+    // ...
     res.send('Hello, World!');
   }
 }
@@ -86,21 +90,25 @@ export class HelloWorldController {
 
 What we see here:
 
-1. The route is created using the `route` decorator, which is placed in front of the class method, and it does not matter what the name of this method is.
-2. In the class method, the parameter `res` is declared with the data type `Res`. So we ask Ditsmod to create an instance of the `Res` class and pass it to the corresponding variable. By the way, `res` is short for the word _response_.
-3. Text responses to HTTP requests are sent via `res.send()`.
+1. A route is created using the `route` decorator, which is placed before a class method, and the method's name doesn't matter.
+2. In this controller mode, the class method can declare any number of parameters. In this case, we declared three parameters: `service1` of type `Service1`, `service2` of type `Service2`, and `res` of type `Res`. This way, we are instructing Ditsmod to create instances of these classes based on their types and pass them to the corresponding variables. By the way, `res` is short for *response*.
+3. Text responses to HTTP requests are sent using `res.send()`.
 
-Although in the previous example, an instance of the `Res` class was requested through `method1`, we can similarly request this instance in the constructor:
+Although in the previous example the class instances were injected into `method1`, we can request these instances in the constructor in the same way:
 
-```ts {5}
+```ts {7}
 import { controller, Res, route } from '@ditsmod/routing';
+import { Service1 } from './service-1';
+import { Service2 } from './service-2';
 
 @controller()
 export class HelloWorldController {
-  constructor(private res: Res) {}
+  constructor(private service1: Service1, private service2: Service2, private res: Res) {}
 
   @route('GET', 'hello')
   method1() {
+    // Working with this.service1 and this.service2
+    // ...
     this.res.send('Hello, World!');
   }
 }
@@ -109,7 +117,7 @@ export class HelloWorldController {
 Of course, other instances of classes can be requested in the parameters, and the order of the parameters is not important.
 
 :::tip Use the access modifier
-The access modifier in the constructor can be any (private, protected or public), but without a modifier - `res` will be just a simple parameter with visibility only in the constructor.
+The access modifier in the constructor can be any of the following: `private`, `protected`, or `public`. However, if no modifier is specified, the parameters will only be visible within the constructor (they will not be accessible in the methods).
 :::
 
 #### Routing parameters {#routing-parameters}
@@ -210,7 +218,6 @@ export class SomeModule {}
 
 After binding controllers to the host module, in order for Ditsmod to recognize them in an external module, the host module must either be appended or imported as an object that implements the [ModuleWithParams][2] interface. The following example shows both appending and fully importing the host module (this is done only to demonstrate the possibility; in practice, there is no reason to do both at the same time):
 
-
 ```ts {6,10-15}
 import { featureModule } from '@ditsmod/core';
 import { routingMetadata } from '@ditsmod/routing';
@@ -280,17 +287,20 @@ As you can see, the rules for getting a class instance in the constructor are th
 
 To be able to use the newly created service classes, they must be passed in the metadata of the **current** module or controller. You can pass the services in the module metadata as follows:
 
-```ts {7-8}
+```ts {9-10}
 import { featureModule } from '@ditsmod/core';
+import { routingMetadata } from '@ditsmod/routing';
+
 import { FirstService } from './first.service.js';
 import { SecondService } from './second.service.js';
 
-@featureModule({
+@routingMetadata({
   providersPerReq: [
     FirstService,
     SecondService
   ],
 })
+@featureModule()
 export class SomeModule {}
 ```
 
