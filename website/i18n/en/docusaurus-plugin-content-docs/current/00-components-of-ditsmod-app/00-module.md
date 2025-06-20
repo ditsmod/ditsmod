@@ -37,20 +37,14 @@ In general, an object with the following properties can be passed to the `rootMo
 import { rootModule } from '@ditsmod/core';
 
 @rootModule({
-  appends: [], // Appended modules (these are only needed to inherit the path prefix from the current module)
   imports: [], // Import modules
-  controllers: [], // Binding controllers to the module
   providersPerApp: [], // Application-level providers
   providersPerMod: [], // Module-level providers
-  providersPerRou: [], // Route-level providers
-  providersPerReq: [], // Request-level providers
   exports: [], // Export modules and providers from the current module
   extensions: [],
   extensionsMeta: {}, // Data for extensions
   resolvedCollisionsPerApp: [], // Collision resolution of imported classes at the application level
   resolvedCollisionsPerMod: [], //                                    ...at the route level
-  resolvedCollisionsPerRou: [], //                                    ...at the route level
-  resolvedCollisionsPerReq: [], //                                    ...at the request level
   id: '', // Can be used to dynamically add or remove modules
 })
 export class AppModule {}

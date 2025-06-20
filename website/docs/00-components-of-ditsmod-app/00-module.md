@@ -37,20 +37,14 @@ export class AppModule {}
 import { rootModule } from '@ditsmod/core';
 
 @rootModule({
-  appends: [], // Прикріплені модулі (вони потрібні лише для успадкування префікса у поточного модуля)
   imports: [], // Імпорт модулів
-  controllers: [], // Прив'язка контролерів до модуля
   providersPerApp: [], // Провайдери на рівні застосунку
   providersPerMod: [], //         ...на рівні модуля
-  providersPerRou: [], //         ...на рівні роуту
-  providersPerReq: [], //         ...на рівні запиту
   exports: [], // Експорт модулів та провайдерів з поточного модуля
   extensions: [], // Розширення
   extensionsMeta: {}, // Дані для роботи розширень
   resolvedCollisionsPerApp: [], // Вирішення колізій імпортованих класів на рівні застосунку
   resolvedCollisionsPerMod: [], //                                    ...на рівні модуля
-  resolvedCollisionsPerRou: [], //                                    ...на рівні роута
-  resolvedCollisionsPerReq: [], //                                    ...на рівні запиту
   id: '', // Може використовуватись для динамічного додавання чи видалення модулів
 })
 export class AppModule {}
