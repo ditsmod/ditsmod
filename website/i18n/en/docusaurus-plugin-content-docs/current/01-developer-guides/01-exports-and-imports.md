@@ -22,13 +22,7 @@ import { ThirdService } from './third.service.js';
 export class SomeModule {}
 ```
 
-Taking into account the exported tokens, Ditsmod will export the corresponding providers from the arrays:
-
-- `providersPerMod`;
-- `providersPerRou`;
-- `providersPerReq`.
-
-It makes no sense to export the providers that are passed to `providersPerApp`, since this array will be used to form the [injector][1] at the application level. That is, the providers from the `providersPerApp` array will be available for any module, at any level, and without exporting.
+Considering the exported tokens, Ditsmod will look for exported providers in the `providersPerMod` array. It makes no sense to export the providers that are passed to `providersPerApp`, since this array will be used to form the [injector][1] at the application level. That is, the providers from the `providersPerApp` array will be available for any module, at any level, and without exporting.
 
 Since you only need to export provider tokens from the host module, not the providers themselves, you cannot directly pass providers in the form of an object to the `exports` property.
 
@@ -52,13 +46,13 @@ import { OtherModule } from './other.module.js';
 
 @rootModule({
   imports: [OtherModule],
-  providersPerRou: [SomeService],
+  providersPerMod: [SomeService],
   exports: [SomeService, OtherModule],
 })
 export class AppModule {}
 ```
 
-In this case, `SomeService` will be added to all application modules at the route level. As you can see, you can also export entire modules. In this case, all providers exported from `OtherModule` will also be added to each application module.
+In this case, `SomeService` will be added to all application modules at the module level. As you can see, you can also export entire modules. In this case, all providers exported from `OtherModule` will also be added to each application module.
 
 ## Import module
 
@@ -78,11 +72,19 @@ export class SecondModule {}
 
 For example, if `SomeService` is exported from the `FirstModule`, then this service can now be used in the `SecondModule`. However, if `FirstModule` has controllers, they will be ignored in this import form. For Ditsmod to take into account controllers from an imported module, the module must be imported with a prefix passed in `path`:
 
-```ts {4}
-// ...
+```ts {10}
+import { featureModule } from '@ditsmod/core';
+import { routingMetadata } from '@ditsmod/routing';
+import { FirstModule } from './first.module';
+
 @featureModule({
   imports: [
-    { path: '', module: FirstModule }
+    {
+      module: FirstModule,
+      params: [
+        { decorator: routingMetadata, metadata: { path: '' } }
+      ],
+    }
   ]
 })
 export class SecondModule {}
@@ -101,35 +103,30 @@ As you can see, in the previous example, this time neither the provider nor the 
 interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj> {
   id?: string;
   module: ModuleType<M>;
-  path?: string;
-  guards?: GuardItem[];
-  /**
-   * List of modules, `ModuleWithParams` or tokens of providers exported by this
-   * module.
-   */
-  exports?: any[];
-  providersPerApp?: Provider[];
-  providersPerMod?: Provider[];
-  providersPerRou?: Provider[];
-  providersPerReq?: Provider[];
-  /**
-   * This property allows you to pass any information to extensions.
-   *
-   * You must follow this rule: data for one extension - one key in `extensionsMeta` object.
-   */
-  extensionsMeta?: E;
+  params: ModuleParamItem[];
+}
+
+interface ModuleParamItem<T extends AnyObj = AnyObj> {
+  decorator: AnyFn;
+  metadata: T;
 }
 ```
 
-Note that only the `module` property is required in this interface.
-
 To reduce the length of the code when importing an object of this type, it is sometimes advisable to write a static method in the importing module. To see this clearly, let's take the previous example again:
 
-```ts {4}
-// ...
+```ts {10}
+import { featureModule } from '@ditsmod/core';
+import { routingMetadata } from '@ditsmod/routing';
+import { FirstModule } from './first.module';
+
 @featureModule({
   imports: [
-    { path: '', module: FirstModule }
+    {
+      module: FirstModule,
+      params: [
+        { decorator: routingMetadata, metadata: { path: '' } }
+      ],
+    }
   ]
 })
 export class SecondModule {}
@@ -138,13 +135,14 @@ export class SecondModule {}
 If you wrote `FirstModule` and knew that this module would make sense to be imported many times into different modules with different prefixes, then in this case you could write a static method in this class that returns an object specially designed for import:
 
 ```ts
+import { routingMetadata } from '@ditsmod/routing';
 // ...
 export class FirstModule {
   static withPrefix(path: string) {
     return {
       module: this,
-      path
-    }
+      params: [{ decorator: routingMetadata, metadata: { path } }],
+    };
   }
 }
 ```
@@ -161,7 +159,7 @@ Now the object returned by this method can be imported as follows:
 export class SecondModule {}
 ```
 
-In this case, the reduction of the code almost did not occur compared to the previous example, when we imported the object directly, and the readability also worsened. So when you write static methods for import, consider whether they simplify the code.
+Static methods make it easier to pass module parameters.
 
 In order for TypeScript to control exactly what the static import method returns, it is recommended to use the `ModuleWithParams` interface:
 
@@ -186,9 +184,7 @@ Let's consider a specific situation. In the following example, each provider is 
 // ...
 @featureModule({
   providersPerMod: [Provider1],
-  providersPerRou: [Provider2],
-  providersPerReq: [Provider3],
-  exports: [Provider1, Provider2, Provider3],
+  exports: [Provider1],
 })
 export class Module1 {}
 ```
@@ -204,7 +200,7 @@ Suppose we import this module into `Module2`, which has no providers of its own:
 export class Module2 {}
 ```
 
-As a result of this import, `Module2` will now have three providers at the same levels as declared in `Module1`. When working with these providers, their instances are created separately in both modules. A [singleton][3] can only be shared between modules if its provider is declared at the application level. In our example, providers are declared at the module, route, and request levels, so `Module1` and `Module2` will not share class instances at any level.
+As a result of this import, the consumer module (`Module2`) will now have `Provider1` at the module level, because it is declared at that level in the host module (`Module1`). When working with `Provider1`, its instances will be created separately in both modules. [Singleton][3] can be shared between modules only if its provider is declared at the application level. In our example, the provider is declared at the module level, so `Module1` and `Module2` will not have instances of `Provider1` shared at either level.
 
 So it can be argued that classes are imported, not their instances.
 
@@ -215,9 +211,7 @@ Let's consider a situation where only `Provider3` is exported from `Module1`, si
 ```ts
 // ...
 @featureModule({
-  providersPerMod: [Provider1],
-  providersPerRou: [Provider2],
-  providersPerReq: [Provider3],
+  providersPerMod: [Provider3, Provider2, Provider1],
   exports: [Provider3],
 })
 export class Module1 {}

@@ -918,7 +918,7 @@ service2.service1 instanceof Service1; // true
 [121]: /components-of-ditsmod-app/providers-collisions
 [100]: #передача-провайдерів-в-реєстр-di
 [101]: #hierarchy-and-encapsulation-of-injectors
-[102]: #інжектор
+[102]: #injector
 [103]: /components-of-ditsmod-app/controllers-and-services/#what-is-a-controller
 [104]: /components-of-ditsmod-app/extensions/#групи-розширень
 [105]: /components-of-ditsmod-app/http-interceptors/

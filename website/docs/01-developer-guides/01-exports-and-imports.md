@@ -22,13 +22,7 @@ import { ThirdService } from './third.service.js';
 export class SomeModule {}
 ```
 
-Беручи до уваги експортовані токени, Ditsmod буде експортувати відповідні провайдери з масивів:
-
-- `providersPerMod`;
-- `providersPerRou`;
-- `providersPerReq`.
-
-Експортувати провайдери, що передаються у `providersPerApp`, не має сенсу, оскільки з цього масиву буде сформовано [інжектор][1] на рівні застосунку. Тобто провайдери з масиву `providersPerApp` будуть доступними для будь-якого модуля, на будь-якому рівні, і без експорту.
+Беручи до уваги експортовані токени, Ditsmod буде шукати експортовані провайдери в масиві `providersPerMod`. Експортувати провайдери, що передаються у `providersPerApp`, не має сенсу, оскільки з цього масиву буде сформовано [інжектор][1] на рівні застосунку. Тобто провайдери з масиву `providersPerApp` будуть доступними для будь-якого модуля, на будь-якому рівні, і без експорту.
 
 Оскільки з модуля-хоста вам потрібно експортувати лише токени провайдерів, а не самі провайдери, у властивість `exports` не можна безпосередньо передавати провайдери у формі об'єкта.
 
@@ -52,13 +46,13 @@ import { OtherModule } from './other.module.js';
 
 @rootModule({
   imports: [OtherModule],
-  providersPerRou: [SomeService],
+  providersPerMod: [SomeService],
   exports: [SomeService, OtherModule],
 })
 export class AppModule {}
 ```
 
-В даному випадку, `SomeService` буде додаватись до усіх модулів застосунку на рівні роуту. Як бачите, експортувати можна також і цілі модулі. В даному разі, усі провайдери, що експортуються з `OtherModule`, також будуть додаватись до кожного модуля застосунку.
+В даному випадку, `SomeService` буде додаватись до усіх модулів застосунку на рівні модуля. Як бачите, експортувати можна також і цілі модулі. В даному разі, усі провайдери, що експортуються з `OtherModule`, також будуть додаватись до кожного модуля застосунку.
 
 ## Імпорт модуля
 
@@ -78,11 +72,19 @@ export class SecondModule {}
 
 Якщо з `FirstModule` експортується, наприклад, `SomeService`, то тепер цей сервіс можна використовувати у `SecondModule`. Разом з тим, якщо `FirstModule` має контролери, у такій формі імпорту вони будуть ігноруватись. Щоб Ditsmod брав до уваги контролери з імпортованого модуля, цей модуль потрібно імпортувати з префіксом, що передається у `path`:
 
-```ts {4}
-// ...
+```ts {10}
+import { featureModule } from '@ditsmod/core';
+import { routingMetadata } from '@ditsmod/routing';
+import { FirstModule } from './first.module';
+
 @featureModule({
   imports: [
-    { path: '', module: FirstModule }
+    {
+      module: FirstModule,
+      params: [
+        { decorator: routingMetadata, metadata: { path: '' } }
+      ],
+    }
   ]
 })
 export class SecondModule {}
@@ -101,35 +103,30 @@ export class SecondModule {}
 interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj> {
   id?: string;
   module: ModuleType<M>;
-  path?: string;
-  guards?: GuardItem[];
-  /**
-   * List of modules, `ModuleWithParams` or tokens of providers exported by this
-   * module.
-   */
-  exports?: any[];
-  providersPerApp?: Provider[];
-  providersPerMod?: Provider[];
-  providersPerRou?: Provider[];
-  providersPerReq?: Provider[];
-  /**
-   * This property allows you to pass any information to extensions.
-   *
-   * You must follow this rule: data for one extension - one key in `extensionsMeta` object.
-   */
-  extensionsMeta?: E;
+  params: ModuleParamItem[];
+}
+
+interface ModuleParamItem<T extends AnyObj = AnyObj> {
+  decorator: AnyFn;
+  metadata: T;
 }
 ```
 
-Зверніть увагу, що в даному інтерфейсі обов'язковим є лише властивість `module`.
-
 Щоб скоротити довжину запису при імпорті об'єкту з цим типом, інколи доцільно написати статичний метод у модулі, який імпортується. Щоб наочно побачити це, давайте візьмемо знову попередній приклад:
 
-```ts {4}
-// ...
+```ts {10}
+import { featureModule } from '@ditsmod/core';
+import { routingMetadata } from '@ditsmod/routing';
+import { FirstModule } from './first.module';
+
 @featureModule({
   imports: [
-    { path: '', module: FirstModule }
+    {
+      module: FirstModule,
+      params: [
+        { decorator: routingMetadata, metadata: { path: '' } }
+      ],
+    }
   ]
 })
 export class SecondModule {}
@@ -138,13 +135,14 @@ export class SecondModule {}
 Якщо б ви писали `FirstModule` і знали, що цей модуль є сенс імпортувати багато разів в різні модулі з різними префіксами, в такому разі в даному класі можна написати статичний метод, що повертає об'єкт, спеціально призначений для імпорту:
 
 ```ts
+import { routingMetadata } from '@ditsmod/routing';
 // ...
 export class FirstModule {
   static withPrefix(path: string) {
     return {
       module: this,
-      path
-    }
+      params: [{ decorator: routingMetadata, metadata: { path } }],
+    };
   }
 }
 ```
@@ -161,7 +159,7 @@ export class FirstModule {
 export class SecondModule {}
 ```
 
-В даному разі, скорочення запису майже не відбулось у порівнянні з попереднім прикладом, коли ми імпортували безпосередньо об'єкт, та ще й погіршилась читабельність. Тому коли пишете статичні методи для імпорту, зважуйте чи спрощують вони код.
+Статичні методи дозволяють спрощувати передачу параметрів модулів.
 
 Щоб TypeScript контролював, що саме повертає статичний метод для імпорту, рекомендується використовувати інтерфейс `ModuleWithParams`:
 
@@ -186,9 +184,7 @@ export class SomeModule {
 // ...
 @featureModule({
   providersPerMod: [Provider1],
-  providersPerRou: [Provider2],
-  providersPerReq: [Provider3],
-  exports: [Provider1, Provider2, Provider3],
+  exports: [Provider1],
 })
 export class Module1 {}
 ```
@@ -204,7 +200,7 @@ export class Module1 {}
 export class Module2 {}
 ```
 
-В результаті такого імпорту, `Module2` тепер матиме три провайдери на тих самих рівнях, на яких вони були оголошені у `Module1`. Під час роботи з цими провайдерами, їхні інстанси будуть створюватись окремо в обох модулях. Між модулями може бути спільним [одинак][3], тільки якщо його провайдер оголошено на рівні застосунку. В нашому прикладі провайдери оголошені на рівні модуля, роута та запиту, тому у `Module1` та `Module2` інстанси класів не будуть спільними на жодному із рівнів.
+В результаті такого імпорту, модуль-споживач (`Module2`) тепер матиме `Provider1` на рівні модуля, тому що у модулі-хості (`Module1`) його оголошено на цьому рівні. Під час роботи з `Provider1`, його інстанси будуть створюватись окремо в обох модулях. Між модулями може бути спільним [одинак][3], тільки якщо його провайдер оголошено на рівні застосунку. В нашому прикладі провайдер оголошено на рівні модуля, тому у `Module1` та `Module2` інстанси `Provider1` не будуть спільними на жодному із рівнів.
 
 Отже можна стверджувати, що імпортуються класи, а не їхні інстанси.
 
@@ -215,9 +211,7 @@ export class Module2 {}
 ```ts
 // ...
 @featureModule({
-  providersPerMod: [Provider1],
-  providersPerRou: [Provider2],
-  providersPerReq: [Provider3],
+  providersPerMod: [Provider3, Provider2, Provider1],
   exports: [Provider3],
 })
 export class Module1 {}
@@ -295,7 +289,7 @@ export class SecondModule {}
 ```
 
 
-[1]: /components-of-ditsmod-app/dependency-injection#інжектор
+[1]: /components-of-ditsmod-app/dependency-injection#injector
 [2]: /components-of-ditsmod-app/extensions
 [3]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) "Singleton"
 [4]: /components-of-ditsmod-app/dependency-injection/#провайдери
