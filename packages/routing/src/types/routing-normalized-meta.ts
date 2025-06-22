@@ -20,7 +20,7 @@ export class RoutingNormalizedMeta<T extends AnyObj = AnyObj> extends RoutingPro
    * The module setted here must be identical to the module
    * passed to "imports", "exports" or "appends" array of `@featureModule` metadata.
    */
-  modRefId: ModuleType<T> | RoutingModuleParams<T> | AppendsWithParams<T>;
+  modRefId: RoutingModRefId<T>;
   name: string;
   exportedProvidersPerRou: Provider[] = [];
   exportedProvidersPerReq: Provider[] = [];
@@ -33,3 +33,5 @@ export class RoutingNormalizedMeta<T extends AnyObj = AnyObj> extends RoutingPro
   appendsModules: ModuleType[] = [];
   controllers: Class[] = [];
 }
+
+export type RoutingModRefId<T extends AnyObj = AnyObj> = ModuleType<T> | RoutingModuleParams<T> | AppendsWithParams<T>;
