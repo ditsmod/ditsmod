@@ -16,6 +16,7 @@ import {
   throwProvidersCollisionError,
   isRootModule,
   getModule,
+  NormalizedMeta,
 } from '@ditsmod/core';
 
 import { GuardPerMod1 } from '#interceptors/guard.js';
@@ -65,13 +66,14 @@ export class RoutingModuleFactory {
 
   exportGlobalProviders(
     moduleManager: ModuleManager,
-    meta: RoutingNormalizedMeta,
+    baseMeta: NormalizedMeta,
     providersPerApp: Provider[],
   ): RoutingGlobalProviders {
     this.moduleManager = moduleManager;
-    this.moduleName = meta.name;
+    this.moduleName = baseMeta.name;
     this.providersPerApp = providersPerApp;
-    this.importProviders(meta);
+    const meta = baseMeta.mMeta.get(routingMetadata) as RoutingNormalizedMeta;
+    this.importProviders(this.moduleName, meta);
     this.checkAllCollisionsWithLevelsMix();
 
     return {
@@ -213,7 +215,7 @@ export class RoutingModuleFactory {
    *
    * @param meta1 Module metadata from where imports providers.
    */
-  protected importProviders(meta1: RoutingNormalizedMeta) {
+  protected importProviders(moduleName: string, meta1: RoutingNormalizedMeta) {
     this.addProviders('Rou', meta1);
     this.addProviders('Req', meta1);
     if (meta1.exportedMultiProvidersPerRou.length) {
@@ -222,7 +224,7 @@ export class RoutingModuleFactory {
     if (meta1.exportedMultiProvidersPerReq.length) {
       this.importedMultiProvidersPerReq.set(meta1.modRefId, meta1.exportedMultiProvidersPerReq);
     }
-    this.throwIfTryResolvingMultiprovidersCollisions(meta1.name);
+    this.throwIfTryResolvingMultiprovidersCollisions(moduleName);
   }
 
   protected throwIfTryResolvingMultiprovidersCollisions(moduleName: string) {
