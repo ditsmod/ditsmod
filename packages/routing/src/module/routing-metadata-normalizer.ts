@@ -134,7 +134,7 @@ export class RoutingMetadataNormalizer {
     if (!found) {
       const providerName = token.name || token;
       const msg =
-        `Exporting from ${meta.name} failed: if "${providerName}" is a provider, it must be included ` +
+        `Exporting failed: if "${providerName}" is a provider, it must be included ` +
         'in "providersPerRou" or "providersPerReq".';
       throw new Error(msg);
     }
