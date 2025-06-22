@@ -1,18 +1,19 @@
-import {
-  Class,
-  HttpMethod,
-  ModuleMetadata,
-  ModuleType,
-  NormalizedMeta,
-} from '@ditsmod/core';
+import { Class, HttpMethod, ModuleMetadata, ModuleType, Provider } from '@ditsmod/core';
 
-import { Tree } from '../services/tree.js';
+import { RoutingImportObj } from '#module/routing-module-factory.js';
+import { Tree } from '#services/tree.js';
+import { GuardPerMod1 } from '#interceptors/guard.js';
+import { RouteHandler } from '#services/router.js';
+import { AppendsWithParams } from '#module/module-metadata.js';
 import { ControllerMetadata } from './controller-metadata.js';
-import { GuardPerMod1 } from '../interceptors/guard.js';
-import { RouteHandler } from '../services/router.js';
-import { AppendsWithParams } from '../module/module-metadata.js';
-import { RoutingNormalizedMeta } from './routing-normalized-meta.js';
+import { RoutingModRefId, RoutingNormalizedMeta } from './routing-normalized-meta.js';
 
+export class RoutingGlobalProviders {
+  importedProvidersPerRou = new Map<any, RoutingImportObj>();
+  importedProvidersPerReq = new Map<any, RoutingImportObj>();
+  importedMultiProvidersPerRou = new Map<RoutingModRefId, Provider[]>();
+  importedMultiProvidersPerReq = new Map<RoutingModRefId, Provider[]>();
+}
 
 /**
  * See also https://en.wikipedia.org/wiki/URL_redirection#HTTP_status_codes_3xx
