@@ -1,10 +1,12 @@
-import { DecoratorAndValue, makeClassDecorator } from '#di';
+import { DecoratorAndValue, makeClassDecorator, Provider } from '#di';
 import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
-import { AnyFn, AnyObj, ModuleType, Override } from '#types/mix.js';
+import { AnyFn, AnyObj, ModRefId, ModuleType, Override } from '#types/mix.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { Providers } from '#utils/providers.js';
 import { mergeArrays } from '#utils/merge-arrays.js';
 import { CallsiteUtils } from '#utils/callsites.js';
+import { ModuleManager } from '#init/module-manager.js';
+import { GlobalProviders, MetadataPerMod1 } from '#types/metadata-per-mod.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 
 export const featureModule: FeatureModuleDecorator = makeClassDecorator(transformModule);
@@ -56,7 +58,14 @@ export interface AttachedMetadata {
   metadata: AnyObj;
   mergeModuleWithParams?: (modWitParams: ModuleWithParams, decorAndVal: DecoratorAndValue<AttachedMetadata>) => AnyObj;
   normalize?: () => AnyObj | undefined;
-  patchMeta?: (...args: any[]) => AnyObj;
+  exportGlobalProviders?: (moduleManager: ModuleManager, meta: NormalizedMeta, providersPerApp: Provider[]) => any;
+  bootstrap?: (
+    providersPerApp: Provider[],
+    globalProviders: GlobalProviders,
+    modRefId: ModRefId,
+    moduleManager: ModuleManager,
+    unfinishedScanModules: Set<ModRefId>,
+  ) => Map<ModRefId, MetadataPerMod1>;
 }
 
 /**

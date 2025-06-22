@@ -31,6 +31,8 @@ export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj
   isExternal: boolean;
   aDecoratorMeta: DecoratorAndValue<AttachedMetadata>[] = [];
   mMeta = new Map<AnyFn, AnyObj | undefined>();
+  mGlobalProviders = new Map<AnyFn, AnyObj | undefined>();
+  mBootstrap = new Map<AnyFn, AnyObj | undefined>();
 
   importsModules: ModuleType[] = [];
   importsWithParams: ModuleWithParams[] = [];

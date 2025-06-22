@@ -1,4 +1,4 @@
-import { injectable, reflector } from '#di';
+import { reflector } from '#di';
 import { defaultProvidersPerMod } from '#init/default-providers-per-mod.js';
 import { ModuleExtract } from '#types/module-extract.js';
 import type { NormalizedMeta } from '#types/normalized-meta.js';
@@ -13,7 +13,7 @@ import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
 import { throwProvidersCollisionError } from '#utils/throw-providers-collision-error.js';
-import { isModuleWithParams, isRootModule } from '#utils/type-guards.js';
+import { isModDecor, isModuleWithParams, isRootModule } from '#utils/type-guards.js';
 import { hasDeclaredInDir } from '#utils/type-guards.js';
 import { getModule } from '#utils/get-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
@@ -33,7 +33,6 @@ import { ExtensionClass } from '#extension/extension-types.js';
  * - merges global and local providers;
  * - checks on providers collisions.
  */
-@injectable()
 export class ModuleFactory {
   protected providersPerApp: Provider[];
   protected moduleName: string;
@@ -70,6 +69,15 @@ export class ModuleFactory {
     this.importProvidersAndExtensions(meta);
     this.checkAllCollisionsWithLevelsMix();
 
+    meta.aDecoratorMeta.forEach((decorAndVal) => {
+      if (!isModDecor(decorAndVal)) {
+        meta.mGlobalProviders.set(
+          decorAndVal.decorator,
+          decorAndVal.value.exportGlobalProviders?.(moduleManager, meta, providersPerApp),
+        );
+      }
+    });
+
     return {
       importedProvidersPerMod: this.importedProvidersPerMod,
       // importedProvidersPerRou: this.importedProvidersPerRou,
@@ -85,19 +93,19 @@ export class ModuleFactory {
   /**
    * Bootstraps a module.
    *
-   * @param modOrObj Module that will bootstrapped.
+   * @param modRefId Module that will bootstrapped.
    */
   bootstrap(
     providersPerApp: Provider[],
     globalProviders: GlobalProviders,
-    modOrObj: ModRefId,
+    modRefId: ModRefId,
     moduleManager: ModuleManager,
     unfinishedScanModules: Set<ModRefId>,
     // prefixPerMod: string,
     // guardsPerMod1?: GuardPerMod1[],
     // isAppends?: boolean,
   ) {
-    const meta = moduleManager.getMetadata(modOrObj, true);
+    const meta = moduleManager.getMetadata(modRefId, true);
     this.moduleManager = moduleManager;
     this.providersPerApp = providersPerApp;
     this.glProviders = globalProviders;
@@ -157,7 +165,22 @@ export class ModuleFactory {
     this.checkExtensionsGraph(allExtensionConfigs);
     meta.aOrderedExtensions = topologicalSort<ExtensionClass, ExtensionConfigBase>(allExtensionConfigs, true);
 
-    return this.appMetadataMap.set(modOrObj, {
+    meta.aDecoratorMeta.forEach((decorAndVal) => {
+      if (!isModDecor(decorAndVal)) {
+        meta.mBootstrap.set(
+          decorAndVal.decorator,
+          decorAndVal.value.bootstrap?.(
+            providersPerApp,
+            globalProviders,
+            modRefId,
+            moduleManager,
+            unfinishedScanModules,
+          ),
+        );
+      }
+    });
+
+    return this.appMetadataMap.set(modRefId, {
       // prefixPerMod,
       // guardsPerMod1: this.guardsPerMod1,
       meta: this.meta,
@@ -211,8 +234,8 @@ export class ModuleFactory {
         //   // Allow slash for absolutePath.
         //   prefixPerMod = input.absolutePath.startsWith('/') ? input.absolutePath.slice(1) : input.absolutePath;
         // } else {
-          // const path = hasModuleParams ? input.path : '';
-          // prefixPerMod = [this.prefixPerMod, ''].filter((s) => s).join('/');
+        // const path = hasModuleParams ? input.path : '';
+        // prefixPerMod = [this.prefixPerMod, ''].filter((s) => s).join('/');
         // }
         // const impGuradsPerMod1 = meta.guardsPerMod.map<GuardPerMod1>((g) => ({ ...g, meta: this.meta }));
         // guardsPerMod1 = [...this.guardsPerMod1, ...impGuradsPerMod1];
