@@ -1,4 +1,4 @@
-import { AnyObj, ProvidersMetadata, ModuleType, Class, Provider, Providers } from '@ditsmod/core';
+import { ProvidersMetadata, ModuleType, Class, Provider, Providers } from '@ditsmod/core';
 import { GuardItem } from '#interceptors/guard.js';
 
 export interface RoutingMetadata {
@@ -36,11 +36,9 @@ export interface RoutingMetadata {
   controllers?: Class[];
 }
 
-export type RoutingModuleParams<M extends AnyObj = AnyObj> = RoutingModuleParams1<M> | RoutingModuleParams2<M>;
+export type RoutingModuleParams = RoutingModuleParams1 | RoutingModuleParams2;
 
-export interface BaseModuleWithParams<M extends AnyObj = AnyObj> extends Partial<ProvidersMetadata> {
-  id?: string;
-  module: ModuleType<M>;
+export interface BaseModuleWithParams extends Partial<ProvidersMetadata> {
   /**
    * List of modules, `RoutingModuleParams` or tokens of providers exported by this
    * module.
@@ -49,35 +47,30 @@ export interface BaseModuleWithParams<M extends AnyObj = AnyObj> extends Partial
   guards?: GuardItem[];
 }
 
-export interface RoutingModuleParams1<M extends AnyObj = AnyObj> extends BaseModuleWithParams<M> {
+export interface RoutingModuleParams1 extends BaseModuleWithParams {
   path?: string;
   absolutePath?: never;
 }
 
-export interface RoutingModuleParams2<M extends AnyObj = AnyObj> extends BaseModuleWithParams<M> {
+export interface RoutingModuleParams2 extends BaseModuleWithParams {
   absolutePath?: string;
   path?: never;
 }
 /**
  * Used for module metadata, for `appends` array.
  */
-export type AppendsWithParams<T extends AnyObj = AnyObj> = AppendsWithParams1<T> | AppendsWithParams2<T>;
+export type AppendsWithParams = AppendsWithParams1 | AppendsWithParams2;
 
-export interface BaseAppendsWithParams<T extends AnyObj = AnyObj> {
-  /**
-   * The module ID.
-   */
-  id?: string;
-  module: ModuleType<T>;
+export interface BaseAppendsWithParams {
   guards?: GuardItem[];
 }
 
-export interface AppendsWithParams1<T extends AnyObj = AnyObj> extends BaseAppendsWithParams<T> {
+export interface AppendsWithParams1 extends BaseAppendsWithParams {
   path: string;
   absolutePath?: never;
 }
 
-export interface AppendsWithParams2<T extends AnyObj = AnyObj> extends BaseAppendsWithParams<T> {
+export interface AppendsWithParams2 extends BaseAppendsWithParams {
   absolutePath: string;
   path?: never;
 }
