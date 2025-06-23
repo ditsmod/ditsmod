@@ -1,4 +1,4 @@
-import { ProvidersMetadata, ModuleType, Class, Provider, Providers } from '@ditsmod/core';
+import { AnyObj, ProvidersMetadata, ModuleType, Class, Provider, Providers } from '@ditsmod/core';
 import { GuardItem } from '#interceptors/guard.js';
 
 export interface RoutingMetadata {
@@ -59,18 +59,23 @@ export interface RoutingModuleParams2 extends BaseModuleWithParams {
 /**
  * Used for module metadata, for `appends` array.
  */
-export type AppendsWithParams = AppendsWithParams1 | AppendsWithParams2;
+export type AppendsWithParams<T extends AnyObj = AnyObj> = AppendsWithParams1<T> | AppendsWithParams2<T>;
 
-export interface BaseAppendsWithParams {
+export interface BaseAppendsWithParams<T extends AnyObj = AnyObj> {
+  /**
+   * The module ID.
+   */
+  id?: string;
+  module: ModuleType<T>;
   guards?: GuardItem[];
 }
 
-export interface AppendsWithParams1 extends BaseAppendsWithParams {
+export interface AppendsWithParams1<T extends AnyObj = AnyObj> extends BaseAppendsWithParams<T> {
   path: string;
   absolutePath?: never;
 }
 
-export interface AppendsWithParams2 extends BaseAppendsWithParams {
+export interface AppendsWithParams2<T extends AnyObj = AnyObj> extends BaseAppendsWithParams<T> {
   absolutePath: string;
   path?: never;
 }
