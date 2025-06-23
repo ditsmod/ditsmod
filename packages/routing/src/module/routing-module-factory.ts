@@ -21,7 +21,7 @@ import {
 
 import { GuardPerMod1 } from '#interceptors/guard.js';
 import { RoutingModRefId, RoutingNormalizedMeta } from '#types/routing-normalized-meta.js';
-import { Level, RoutingGlobalProviders } from '#types/types.js';
+import { Level, RoutingGlobalProviders, RoutingModuleExtract } from '#types/types.js';
 import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js';
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
@@ -109,14 +109,14 @@ export class RoutingModuleFactory {
     this.guardsPerMod1 = guardsPerMod1 || [];
     this.unfinishedScanModules = unfinishedScanModules;
     this.meta = meta;
+    const moduleExtract: RoutingModuleExtract = {
+      path: this.prefixPerMod,
+      moduleName: baseMeta.name,
+      isExternal: baseMeta.isExternal,
+    };
+    baseMeta.providersPerMod.push({ token: ModuleExtract, useValue: moduleExtract });
     this.checkImportsAndAppends(meta);
     this.importAndAppendModules();
-    // const moduleExtract: ModuleExtract = {
-    //   path: this.prefixPerMod,
-    //   moduleName: baseMeta.name,
-    //   isExternal: baseMeta.isExternal,
-    // };
-    // baseMeta.providersPerMod.unshift({ token: ModuleExtract, useValue: moduleExtract });
 
     const hasPath =
       isModuleWithParams(meta.modRefId) &&

@@ -1,4 +1,4 @@
-import { Class, HttpMethod, ModuleMetadata, ModuleType, Provider } from '@ditsmod/core';
+import { Class, HttpMethod, ModuleExtract, ModuleMetadata, ModuleType, Provider } from '@ditsmod/core';
 
 import { RoutingImportObj } from '#module/routing-module-factory.js';
 import { Tree } from '#services/tree.js';
@@ -86,3 +86,7 @@ export interface RouteParam {
   value: string;
 }
 export type Level = 'Rou' | 'Req';
+
+export class RoutingModuleExtract extends ModuleExtract {
+  path: string;
+}
