@@ -132,7 +132,7 @@ import { FirstModule } from './first.module';
 export class SecondModule {}
 ```
 
-If you wrote `FirstModule` and knew that this module would make sense to be imported many times into different modules with different prefixes, then in this case you could write a static method in this class that returns an object specially designed for import:
+If you declare `FirstModule` and knew that this module would make sense to be imported many times into different modules with different prefixes, then in this case you could write a static method in this class that returns an object specially designed for import:
 
 ```ts
 import { routingMetadata } from '@ditsmod/routing';
