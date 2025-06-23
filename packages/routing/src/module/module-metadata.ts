@@ -25,7 +25,7 @@ export interface RoutingMetadata {
    */
   resolvedCollisionsPerReq?: [any, ModuleType | RoutingModuleParams][];
   /**
-   * List of modules that contain controllers. Providers and extensions from these modules
+   * List of modules that contain controllers. Providers from these modules
    * are not imported into the current module. If the current module has a prefix path,
    * that path will be added to each controller route from the appended modules.
    */
@@ -36,12 +36,9 @@ export interface RoutingMetadata {
   controllers?: Class[];
 }
 
-export type RoutingModuleParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj> =
-  | RoutingModuleParams1<M, E>
-  | RoutingModuleParams2<M, E>;
+export type RoutingModuleParams<M extends AnyObj = AnyObj> = RoutingModuleParams1<M> | RoutingModuleParams2<M>;
 
-export interface BaseModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
-  extends Partial<ProvidersMetadata> {
+export interface BaseModuleWithParams<M extends AnyObj = AnyObj> extends Partial<ProvidersMetadata> {
   id?: string;
   module: ModuleType<M>;
   /**
@@ -50,22 +47,14 @@ export interface BaseModuleWithParams<M extends AnyObj = AnyObj, E extends AnyOb
    */
   exports?: any[];
   guards?: GuardItem[];
-  /**
-   * This property allows you to pass any information to extensions.
-   *
-   * You must follow this rule: data for one extension - one key in `extensionsMeta` object.
-   */
-  extensionsMeta?: E;
 }
 
-export interface RoutingModuleParams1<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
-  extends BaseModuleWithParams<M, E> {
+export interface RoutingModuleParams1<M extends AnyObj = AnyObj> extends BaseModuleWithParams<M> {
   path?: string;
   absolutePath?: never;
 }
 
-export interface RoutingModuleParams2<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj>
-  extends BaseModuleWithParams<M, E> {
+export interface RoutingModuleParams2<M extends AnyObj = AnyObj> extends BaseModuleWithParams<M> {
   absolutePath?: string;
   path?: never;
 }
