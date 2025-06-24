@@ -228,18 +228,17 @@ export class ModuleManager {
   protected scanRawModule(modRefId: ModRefId) {
     const meta = this.normalizeMetadata(modRefId);
 
-    // Merging arrays with this props in one array.
-    const inputs = this.propsWithModules.map((p) => meta[p]).reduce<ModRefId[]>((prev, curr) => prev.concat(curr), []);
-
-    for (const input of inputs) {
-      if (this.unfinishedScanModules.has(input) || this.scanedModules.has(input)) {
-        continue;
+    this.propsWithModules.forEach((p) => {
+      for (const input of meta[p]) {
+        if (this.unfinishedScanModules.has(input) || this.scanedModules.has(input)) {
+          continue;
+        }
+        this.unfinishedScanModules.add(input);
+        this.scanRawModule(input);
+        this.unfinishedScanModules.delete(input);
+        this.scanedModules.add(input);
       }
-      this.unfinishedScanModules.add(input);
-      this.scanRawModule(input);
-      this.unfinishedScanModules.delete(input);
-      this.scanedModules.add(input);
-    }
+    });
 
     if (meta.id) {
       this.mapId.set(meta.id, modRefId);
