@@ -67,7 +67,7 @@ export function hasDeclaredInDir(
 }
 
 export function isModuleWithParams(modRefId?: ModRefId): modRefId is ModuleWithParams {
-  return (modRefId as ModuleWithParams)?.module !== undefined;
+  return (modRefId as ModuleWithParams)?.module !== undefined && Array.isArray((modRefId as ModuleWithParams).params);
 }
 
 export function isProvider(maybeProvider?: any): maybeProvider is Provider {
