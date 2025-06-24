@@ -9,6 +9,7 @@ import {
   isProvider,
   ModuleType,
   MultiProvider,
+  NormalizedMeta,
   NormalizedProvider,
   objectKeys,
   Provider,
@@ -22,7 +23,7 @@ import { RoutingNormalizedMeta } from '#types/routing-normalized-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 
 export class RoutingMetadataNormalizer {
-  normalize(rawMeta?: RoutingMetadata): RoutingNormalizedMeta {
+  normalize(baseMeta: NormalizedMeta, rawMeta?: RoutingMetadata): RoutingNormalizedMeta {
     rawMeta = Object.assign({}, rawMeta);
     objectKeys(rawMeta).forEach((p) => {
       if (rawMeta[p] instanceof Providers) {
@@ -45,7 +46,7 @@ export class RoutingMetadataNormalizer {
 
     this.pickAndMergeMeta(meta, rawMeta);
     const mergedMeta = { ...rawMeta, ...meta };
-    this.quickCheckMetadata(mergedMeta);
+    this.quickCheckMetadata(baseMeta, mergedMeta);
     meta.controllers.forEach((Controller) => this.checkController(Controller));
     this.normalizeModule(rawMeta, meta);
 
@@ -181,21 +182,21 @@ export class RoutingMetadataNormalizer {
     }
   }
 
-  protected quickCheckMetadata<T extends AnyObj>(meta: RoutingNormalizedMeta<T>) {
+  protected quickCheckMetadata<T extends AnyObj>(baseMeta: NormalizedMeta, meta: RoutingNormalizedMeta<T>) {
     if (
       isFeatureModule(meta) &&
+      !baseMeta.exportedProvidersPerMod.length &&
+      !baseMeta.exportedMultiProvidersPerMod.length &&
+      !baseMeta.exportsModules.length &&
+      !baseMeta.providersPerApp.length &&
+      !baseMeta.exportsWithParams.length &&
+      !baseMeta.exportedExtensionsProviders.length &&
+      !baseMeta.extensionsProviders.length &&
       !meta.exportedProvidersPerReq.length &&
-      !meta.controllers.length &&
-      // !meta.exportedProvidersPerMod.length &&
       !meta.exportedProvidersPerRou.length &&
-      !meta.exportsModules.length &&
-      !meta.exportsWithParams.length &&
-      // !meta.exportedMultiProvidersPerMod.length &&
       !meta.exportedMultiProvidersPerRou.length &&
       !meta.exportedMultiProvidersPerReq.length &&
-      !meta.providersPerApp.length &&
-      !meta.exportedExtensionsProviders.length &&
-      !meta.extensionsProviders.length &&
+      !meta.controllers.length &&
       !meta.appendsWithParams.length
     ) {
       const msg = 'this module should have "providersPerApp" or some controllers, or exports, or extensions.';

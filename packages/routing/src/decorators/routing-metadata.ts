@@ -11,6 +11,7 @@ import {
   GlobalProviders,
   ModRefId,
   ModuleParamItem,
+  NormalizedMeta,
 } from '@ditsmod/core';
 
 import { RoutingModuleParams, RoutingMetadata } from '#module/module-metadata.js';
@@ -72,9 +73,9 @@ export function transformMetadata(data?: RoutingMetadata): AttachedMetadata {
   return {
     isAttachedMetadata: true,
     metadata: data || {},
-    normalize: () => new RoutingMetadataNormalizer().normalize(data),
-    exportGlobalProviders: (moduleManager: ModuleManager, providersPerApp: Provider[]) => {
-      new RoutingModuleFactory().exportGlobalProviders(moduleManager, providersPerApp);
+    normalize: (baseMeta: NormalizedMeta) => new RoutingMetadataNormalizer().normalize(baseMeta, data),
+    exportGlobalProviders: (moduleManager: ModuleManager, baseMeta: NormalizedMeta, providersPerApp: Provider[]) => {
+      new RoutingModuleFactory().exportGlobalProviders(moduleManager, baseMeta, providersPerApp);
     },
     bootstrap: (
       ...args: [

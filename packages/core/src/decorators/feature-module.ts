@@ -57,8 +57,8 @@ export interface AttachedMetadata {
   isAttachedMetadata: true;
   metadata: AnyObj;
   mergeModuleWithParams?: (modWitParams: ModuleWithParams, decorAndVal: DecoratorAndValue<AttachedMetadata>) => AnyObj;
-  normalize?: () => AnyObj | undefined;
-  exportGlobalProviders?: (moduleManager: ModuleManager, meta: NormalizedMeta, providersPerApp: Provider[]) => any;
+  normalize?: (baseMeta: NormalizedMeta) => AnyObj | undefined;
+  exportGlobalProviders?: (moduleManager: ModuleManager, baseMeta: NormalizedMeta, providersPerApp: Provider[]) => any;
   bootstrap?: (
     providersPerApp: Provider[],
     globalProviders: GlobalProviders,

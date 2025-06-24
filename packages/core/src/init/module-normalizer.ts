@@ -60,7 +60,7 @@ export class ModuleNormalizer {
 
     aDecoratorMeta.forEach((decorAndVal) => {
       if (!isModDecor(decorAndVal)) {
-        meta.mMeta.set(decorAndVal.decorator, decorAndVal.value.normalize?.());
+        meta.mMeta.set(decorAndVal.decorator, decorAndVal.value.normalize?.(meta));
       }
     });
 
