@@ -7,6 +7,7 @@ import {
   isMultiProvider,
   isNormalizedProvider,
   isProvider,
+  MetaAndImportsOrExports,
   ModuleType,
   MultiProvider,
   NormalizedMeta,
@@ -23,7 +24,7 @@ import { RoutingNormalizedMeta } from '#types/routing-normalized-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 
 export class RoutingMetadataNormalizer {
-  normalize(baseMeta: NormalizedMeta, rawMeta?: RoutingMetadata): RoutingNormalizedMeta {
+  normalize(baseMeta: NormalizedMeta, rawMeta?: RoutingMetadata): MetaAndImportsOrExports {
     rawMeta = Object.assign({}, rawMeta);
     objectKeys(rawMeta).forEach((p) => {
       if (rawMeta[p] instanceof Providers) {
@@ -50,7 +51,7 @@ export class RoutingMetadataNormalizer {
     meta.controllers.forEach((Controller) => this.checkController(Controller));
     this.normalizeModule(rawMeta, meta);
 
-    return mergedMeta;
+    return { meta: mergedMeta, importsOrExports: meta.appendsModules.concat(meta.appendsModules) };
   }
 
   protected normalizeModule(rawMeta: RoutingMetadata, meta: RoutingNormalizedMeta) {

@@ -7,7 +7,7 @@ import { mergeArrays } from '#utils/merge-arrays.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { GlobalProviders, MetadataPerMod1 } from '#types/metadata-per-mod.js';
-import { NormalizedMeta } from '#types/normalized-meta.js';
+import { MetaAndImportsOrExports, NormalizedMeta } from '#types/normalized-meta.js';
 
 export const featureModule: FeatureModuleDecorator = makeClassDecorator(transformModule);
 
@@ -57,7 +57,7 @@ export interface AttachedMetadata {
   isAttachedMetadata: true;
   metadata: AnyObj;
   mergeModuleWithParams?: (modWitParams: ModuleWithParams, decorAndVal: DecoratorAndValue<AttachedMetadata>) => AnyObj;
-  normalize?: (baseMeta: NormalizedMeta) => AnyObj | undefined;
+  normalize?: (baseMeta: NormalizedMeta) => MetaAndImportsOrExports | undefined;
   exportGlobalProviders?: (moduleManager: ModuleManager, baseMeta: NormalizedMeta, providersPerApp: Provider[]) => any;
   bootstrap?: (
     providersPerApp: Provider[],
