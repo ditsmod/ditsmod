@@ -32,6 +32,7 @@ function mergeModuleWithParams(modWitParams: ModuleWithParams, decorAndVal: Deco
     });
 
     rawMeta.extensionsMeta = { ...rawMeta.extensionsMeta, ...param.metadata.extensionsMeta };
+    break;
   }
   return rawMeta;
 }

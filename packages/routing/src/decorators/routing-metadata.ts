@@ -46,6 +46,7 @@ function mergeModuleWithParams(modWitParams: ModuleWithParams, decorAndVal: Deco
       meta.guardsPerMod.push(...normalizeGuards((param.metadata as RoutingModuleParams).guards));
       checkGuardsPerMod(meta.guardsPerMod);
     }
+    break;
   }
   return meta;
 }
