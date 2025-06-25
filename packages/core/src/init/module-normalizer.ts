@@ -162,9 +162,6 @@ export class ModuleNormalizer {
 
   protected exportFromReflectMetadata(rawMeta: RawMeta, modName: string, meta: NormalizedMeta) {
     const providers: Provider[] = [];
-    if (Array.isArray(rawMeta.providersPerApp)) {
-      providers.push(...rawMeta.providersPerApp);
-    }
     if (Array.isArray(rawMeta.providersPerMod)) {
       providers.push(...rawMeta.providersPerMod);
     }
@@ -179,6 +176,7 @@ export class ModuleNormalizer {
         //   this.exportFromRawMeta(exp, modName, meta);
         // }
       } else if (isProvider(exp) || getTokens(providers).includes(exp)) {
+        // @todo Why here is `getTokens(providers).includes(exp)`?
         this.findAndSetProviders(exp, rawMeta, meta);
       } else if (this.getDecoratorMeta(exp)) {
         meta.exportsModules.push(exp);
