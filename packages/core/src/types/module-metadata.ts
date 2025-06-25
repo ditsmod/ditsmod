@@ -44,7 +44,7 @@ export interface ModuleParamItem<T extends AnyObj = AnyObj> {
 export interface ModuleWithParams<M extends AnyObj = AnyObj> {
   id?: string;
   module: ModuleType<M>;
-  params: ModuleParamItem[];
+  params?: ModuleParamItem[];
 }
 export interface ModuleParams<E extends AnyObj = AnyObj> extends Partial<ProvidersMetadata> {
   /**

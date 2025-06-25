@@ -32,7 +32,7 @@ export interface RoutingMetadataDecorator {
 
 function mergeModuleWithParams(modWitParams: ModuleWithParams, decorAndVal: DecoratorAndValue<AttachedMetadata>) {
   const meta = decorAndVal.value.metadata as RoutingNormalizedMeta;
-  for (const param of modWitParams.params) {
+  for (const param of (modWitParams.params || [])) {
     if (param.decorator !== decorAndVal.decorator) {
       continue;
     }

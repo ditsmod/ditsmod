@@ -20,7 +20,7 @@ function mergeModuleWithParams(modWitParams: ModuleWithParams, decorAndVal: Deco
   if (modWitParams.id) {
     rawMeta.id = modWitParams.id;
   }
-  for (const param of modWitParams.params) {
+  for (const param of (modWitParams.params || [])) {
     if (param.decorator !== decorAndVal.decorator) {
       continue;
     }
