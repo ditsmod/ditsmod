@@ -51,7 +51,7 @@ export class RoutingMetadataNormalizer {
     meta.controllers.forEach((Controller) => this.checkController(Controller));
     this.normalizeModule(rawMeta, meta);
 
-    return { meta: mergedMeta, importsOrExports: meta.appendsModules.concat(meta.appendsModules) };
+    return { meta: mergedMeta, importsOrExports: meta.appendsModules.concat(meta.appendsWithParams as any[]) };
   }
 
   protected normalizeModule(rawMeta: RoutingMetadata, meta: RoutingNormalizedMeta) {
