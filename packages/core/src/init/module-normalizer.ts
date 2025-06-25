@@ -67,6 +67,32 @@ export class ModuleNormalizer {
     return meta;
   }
 
+  protected getDecoratorMeta(modRefId: ModRefId) {
+    modRefId = resolveForwardRef(modRefId);
+    if (isModuleWithParams(modRefId)) {
+      return reflector.getDecorators(modRefId.module, isModuleWithMetadata)?.map((decorAndVal) => {
+        decorAndVal.value.metadata =
+          decorAndVal.value.mergeModuleWithParams?.(modRefId, decorAndVal) || decorAndVal.value.metadata;
+        return decorAndVal;
+      });
+    } else {
+      return reflector.getDecorators(modRefId, isModuleWithMetadata);
+    }
+  }
+
+  protected checkAndMarkExternalModule(isRootModule: boolean, meta: NormalizedMeta) {
+    meta.isExternal = false;
+    if (isRootModule) {
+      this.rootDeclaredInDir = meta.declaredInDir;
+    } else if (this.rootDeclaredInDir) {
+      const { declaredInDir } = meta;
+      if (this.rootDeclaredInDir !== '.' && declaredInDir !== '.') {
+        // Case when CallsiteUtils.getCallerDir() works correctly.
+        meta.isExternal = !declaredInDir.startsWith(this.rootDeclaredInDir);
+      }
+    }
+  }
+
   protected normalizeModule(modName: string, rawMeta: RawMeta, meta: NormalizedMeta) {
     rawMeta.imports?.forEach((imp, i) => {
       imp = resolveForwardRef(imp);
@@ -103,61 +129,35 @@ export class ModuleNormalizer {
     this.pickAndMergeMeta(meta, rawMeta);
   }
 
-  protected getDecoratorMeta(modRefId: ModRefId) {
-    modRefId = resolveForwardRef(modRefId);
-    if (isModuleWithParams(modRefId)) {
-      return reflector.getDecorators(modRefId.module, isModuleWithMetadata)?.map((decorAndVal) => {
-        decorAndVal.value.metadata =
-          decorAndVal.value.mergeModuleWithParams?.(modRefId, decorAndVal) || decorAndVal.value.metadata;
-        return decorAndVal;
-      });
-    } else {
-      return reflector.getDecorators(modRefId, isModuleWithMetadata);
+  protected throwIfUndefined(modName: string, action: 'Imports' | 'Exports', imp: unknown, i: number) {
+    if (imp === undefined) {
+      const lowerAction = action.toLowerCase();
+      const msg =
+        `${action} into "${modName}" failed: element at ${lowerAction}[${i}] has "undefined" type. ` +
+        'This can be caused by circular dependency. Try to replace this element with this expression: ' +
+        '"forwardRef(() => YourModule)".';
+      throw new Error(msg);
     }
   }
 
-  protected checkExtensionConfig(modName: string, extensionConfig: ExtensionConfig, i: number) {
-    if (!isConfigWithOverrideExtension(extensionConfig)) {
-      if (!extensionConfig.extension) {
-        const msg = `Export of "${modName}" failed: extension in [${i}] index must have "extension" property.`;
+  protected throwIfResolvingNormalizedProvider(moduleName: string, obj: RawMeta) {
+    const resolvedCollisionsPerLevel: [any, ModRefId][] = [];
+    if (Array.isArray(obj.resolvedCollisionsPerApp)) {
+      resolvedCollisionsPerLevel.push(...obj.resolvedCollisionsPerApp);
+    }
+    if (Array.isArray(obj.resolvedCollisionsPerMod)) {
+      resolvedCollisionsPerLevel.push(...obj.resolvedCollisionsPerMod);
+    }
+
+    resolvedCollisionsPerLevel.forEach(([provider]) => {
+      if (isNormalizedProvider(provider)) {
+        const providerName = provider.token.name || provider.token;
+        const msg =
+          `Resolving collisions in ${moduleName} failed: for ${providerName} inside ` +
+          '"resolvedCollisionPer*" array must be includes tokens only.';
         throw new TypeError(msg);
       }
-    }
-  }
-
-  protected pickAndMergeMeta(targetObject: NormalizedMeta, ...sourceObjects: AnyObj[]) {
-    const trgtObj = targetObject as any;
-    sourceObjects.forEach((sourceObj: AnyObj) => {
-      sourceObj ??= {};
-      for (const prop in targetObject) {
-        if (Array.isArray(sourceObj[prop])) {
-          trgtObj[prop] ??= [];
-          trgtObj[prop].push(...sourceObj[prop].slice());
-        } else if (sourceObj[prop] instanceof Providers) {
-          trgtObj[prop] ??= [];
-          trgtObj[prop].push(...sourceObj[prop]);
-        } else if (sourceObj[prop] && typeof sourceObj[prop] == 'object') {
-          trgtObj[prop] = { ...trgtObj[prop], ...(sourceObj[prop] as any) };
-        } else if (sourceObj[prop] !== undefined) {
-          trgtObj[prop] = sourceObj[prop];
-        }
-      }
     });
-
-    return trgtObj;
-  }
-
-  protected checkAndMarkExternalModule(isRootModule: boolean, meta: NormalizedMeta) {
-    meta.isExternal = false;
-    if (isRootModule) {
-      this.rootDeclaredInDir = meta.declaredInDir;
-    } else if (this.rootDeclaredInDir) {
-      const { declaredInDir } = meta;
-      if (this.rootDeclaredInDir !== '.' && declaredInDir !== '.') {
-        // Case when CallsiteUtils.getCallerDir() works correctly.
-        meta.isExternal = !declaredInDir.startsWith(this.rootDeclaredInDir);
-      }
-    }
   }
 
   protected exportFromReflectMetadata(rawMeta: RawMeta, modName: string, meta: NormalizedMeta) {
@@ -203,14 +203,12 @@ export class ModuleNormalizer {
     });
   }
 
-  protected throwIfUndefined(modName: string, action: 'Imports' | 'Exports', imp: unknown, i: number) {
-    if (imp === undefined) {
-      const lowerAction = action.toLowerCase();
-      const msg =
-        `${action} into "${modName}" failed: element at ${lowerAction}[${i}] has "undefined" type. ` +
-        'This can be caused by circular dependency. Try to replace this element with this expression: ' +
-        '"forwardRef(() => YourModule)".';
-      throw new Error(msg);
+  protected checkExtensionConfig(modName: string, extensionConfig: ExtensionConfig, i: number) {
+    if (!isConfigWithOverrideExtension(extensionConfig)) {
+      if (!extensionConfig.extension) {
+        const msg = `Export of "${modName}" failed: extension in [${i}] index must have "extension" property.`;
+        throw new TypeError(msg);
+      }
     }
   }
 
@@ -238,6 +236,28 @@ export class ModuleNormalizer {
     }
   }
 
+  protected pickAndMergeMeta(targetObject: NormalizedMeta, ...sourceObjects: AnyObj[]) {
+    const trgtObj = targetObject as any;
+    sourceObjects.forEach((sourceObj: AnyObj) => {
+      sourceObj ??= {};
+      for (const prop in targetObject) {
+        if (Array.isArray(sourceObj[prop])) {
+          trgtObj[prop] ??= [];
+          trgtObj[prop].push(...sourceObj[prop].slice());
+        } else if (sourceObj[prop] instanceof Providers) {
+          trgtObj[prop] ??= [];
+          trgtObj[prop].push(...sourceObj[prop]);
+        } else if (sourceObj[prop] && typeof sourceObj[prop] == 'object') {
+          trgtObj[prop] = { ...trgtObj[prop], ...(sourceObj[prop] as any) };
+        } else if (sourceObj[prop] !== undefined) {
+          trgtObj[prop] = sourceObj[prop];
+        }
+      }
+    });
+
+    return trgtObj;
+  }
+
   protected throwUnidentifiedToken(modName: string, token: any) {
     const tokenName = token.name || token;
     const msg =
@@ -245,26 +265,6 @@ export class ModuleNormalizer {
       'must be included in providersPerMod. ' +
       `If "${tokenName}" is a token of extension, this extension must be included in "extensions" array.`;
     throw new TypeError(msg);
-  }
-
-  protected throwIfResolvingNormalizedProvider(moduleName: string, obj: RawMeta) {
-    const resolvedCollisionsPerLevel: [any, ModRefId][] = [];
-    if (Array.isArray(obj.resolvedCollisionsPerApp)) {
-      resolvedCollisionsPerLevel.push(...obj.resolvedCollisionsPerApp);
-    }
-    if (Array.isArray(obj.resolvedCollisionsPerMod)) {
-      resolvedCollisionsPerLevel.push(...obj.resolvedCollisionsPerMod);
-    }
-
-    resolvedCollisionsPerLevel.forEach(([provider]) => {
-      if (isNormalizedProvider(provider)) {
-        const providerName = provider.token.name || provider.token;
-        const msg =
-          `Resolving collisions in ${moduleName} failed: for ${providerName} inside ` +
-          '"resolvedCollisionPer*" array must be includes tokens only.';
-        throw new TypeError(msg);
-      }
-    });
   }
 
   protected throwExportsIfNormalizedProvider(moduleName: string, provider: NormalizedProvider) {
