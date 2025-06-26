@@ -8,6 +8,7 @@ import { CallsiteUtils } from '#utils/callsites.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { GlobalProviders, MetadataPerMod1 } from '#types/metadata-per-mod.js';
 import { MetaAndImportsOrExports, NormalizedMeta } from '#types/normalized-meta.js';
+import { isModuleWithParams } from '#utils/type-guards.js';
 
 export const featureModule: FeatureModuleDecorator = makeClassDecorator(transformModule);
 
@@ -15,12 +16,16 @@ export interface FeatureModuleDecorator {
   (data?: ModuleMetadata): any;
 }
 
-function mergeModuleWithParams(modWitParams: ModuleWithParams, decorAndVal: DecoratorAndValue<AttachedMetadata>) {
+function mergeModuleWithParams(modWitParams: AnyObj, decorAndVal: DecoratorAndValue<AttachedMetadata>) {
   const rawMeta = Object.assign({}, decorAndVal.value.metadata) as RawMeta;
+  if (!isModuleWithParams(modWitParams)) {
+    return rawMeta;
+  }
+
   if (modWitParams.id) {
     rawMeta.id = modWitParams.id;
   }
-  for (const param of (modWitParams.params || [])) {
+  for (const param of modWitParams.params || []) {
     if (param.decorator !== decorAndVal.decorator) {
       continue;
     }
@@ -57,7 +62,7 @@ export function transformModule(data?: ModuleMetadata): Override<AttachedMetadat
 export interface AttachedMetadata {
   isAttachedMetadata: true;
   metadata: AnyObj;
-  mergeModuleWithParams?: (modWitParams: ModuleWithParams, decorAndVal: DecoratorAndValue<AttachedMetadata>) => AnyObj;
+  mergeModuleWithParams?: (params: AnyObj, decorAndVal: DecoratorAndValue<AttachedMetadata>) => AnyObj;
   normalize?: (baseMeta: NormalizedMeta) => MetaAndImportsOrExports | undefined;
   exportGlobalProviders?: (moduleManager: ModuleManager, baseMeta: NormalizedMeta, providersPerApp: Provider[]) => any;
   bootstrap?: (
