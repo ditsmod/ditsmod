@@ -66,7 +66,7 @@ export function hasDeclaredInDir(
   return Boolean(decoratorAndValue?.declaredInDir) && decoratorAndValue?.declaredInDir != '.';
 }
 
-export function isModuleWithParams(modRefId?: ModRefId): modRefId is ModuleWithParams {
+export function isModuleWithParams(modRefId?: AnyObj): modRefId is ModuleWithParams {
   return (modRefId as ModuleWithParams)?.module !== undefined;
 }
 
