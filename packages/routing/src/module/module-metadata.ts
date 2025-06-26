@@ -1,4 +1,4 @@
-import { AnyObj, ProvidersMetadata, ModuleType, Class, Provider, Providers } from '@ditsmod/core';
+import { AnyObj, ProvidersMetadata, ModuleType, Class, Provider, Providers, ModuleWithParams } from '@ditsmod/core';
 import { GuardItem } from '#interceptors/guard.js';
 
 export interface RoutingMetadata {
@@ -18,12 +18,12 @@ export interface RoutingMetadata {
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  resolvedCollisionsPerRou?: [any, ModuleType | RoutingModuleParams][];
+  resolvedCollisionsPerRou?: [any, ModuleType | ModuleWithParams][];
   /**
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  resolvedCollisionsPerReq?: [any, ModuleType | RoutingModuleParams][];
+  resolvedCollisionsPerReq?: [any, ModuleType | ModuleWithParams][];
   /**
    * List of modules that contain controllers. Providers from these modules
    * are not imported into the current module. If the current module has a prefix path,

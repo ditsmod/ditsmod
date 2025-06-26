@@ -9,6 +9,7 @@ import {
   isProvider,
   MetaAndImportsOrExports,
   ModuleType,
+  ModuleWithParams,
   MultiProvider,
   NormalizedMeta,
   NormalizedProvider,
@@ -19,7 +20,7 @@ import {
   resolveForwardRef,
 } from '@ditsmod/core';
 
-import { RoutingMetadata, RoutingModuleParams } from '#module/module-metadata.js';
+import { RoutingMetadata } from '#module/module-metadata.js';
 import { RoutingNormalizedMeta } from '#types/routing-normalized-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 
@@ -61,7 +62,7 @@ export class RoutingMetadataNormalizer {
   }
 
   protected throwIfResolvingNormalizedProvider(rawMeta: RoutingMetadata) {
-    const resolvedCollisionsPerLevel: [any, ModuleType | RoutingModuleParams][] = [];
+    const resolvedCollisionsPerLevel: [any, ModuleType | ModuleWithParams][] = [];
     if (Array.isArray(rawMeta.resolvedCollisionsPerRou)) {
       resolvedCollisionsPerLevel.push(...rawMeta.resolvedCollisionsPerRou);
     }
