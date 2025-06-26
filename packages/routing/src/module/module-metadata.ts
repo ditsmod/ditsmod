@@ -1,5 +1,7 @@
-import { AnyObj, ProvidersMetadata, ModuleType, Class, Provider, Providers, ModuleWithParams } from '@ditsmod/core';
+import { AnyObj, ModuleType, Class, Provider, Providers, ModuleWithParams } from '@ditsmod/core';
+
 import { GuardItem } from '#interceptors/guard.js';
+import { RoutingProvidersMetadata } from '#types/routing-normalized-meta.js';
 
 export interface RoutingMetadata {
   /**
@@ -38,7 +40,7 @@ export interface RoutingMetadata {
 
 export type RoutingModuleParams = RoutingModuleParams1 | RoutingModuleParams2;
 
-export interface BaseModuleParams extends Partial<ProvidersMetadata> {
+export interface BaseModuleParams extends Partial<RoutingProvidersMetadata> {
   /**
    * List of modules, `RoutingModuleParams` or tokens of providers exported by this
    * module.
