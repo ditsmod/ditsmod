@@ -1,7 +1,6 @@
 import {
   makeClassDecorator,
   Providers,
-  objectKeys,
   AttachedMetadata,
   mergeArrays,
   DecoratorAndValue,
@@ -11,6 +10,8 @@ import {
   ModRefId,
   ModuleParamItem,
   NormalizedMeta,
+  ModuleWithParams,
+  objectKeys,
 } from '@ditsmod/core';
 
 import { RoutingModuleParams, RoutingMetadata } from '#module/module-metadata.js';
@@ -29,18 +30,23 @@ export interface RoutingMetadataDecorator {
   (data?: RoutingMetadata): any;
 }
 
-function mergeModuleWithParams(params: RoutingModuleParams, decorAndVal: DecoratorAndValue<AttachedMetadata>) {
+function mergeModuleWithParams(modWitParams: ModuleWithParams, decorAndVal: DecoratorAndValue<AttachedMetadata>) {
   const meta = decorAndVal.value.metadata as RoutingNormalizedMeta;
-
-  objectKeys(params).forEach((p) => {
-    // If here is object with [Symbol.iterator]() method, this transform it to an array.
-    if (Array.isArray(params[p]) || params[p] instanceof Providers) {
-      (meta as any)[p] = mergeArrays((meta as any)[p], params[p]);
+  for (const param of (modWitParams.params || [])) {
+    if (param.decorator !== decorAndVal.decorator) {
+      continue;
     }
-  });
-  if (params.guards?.length) {
-    meta.guardsPerMod.push(...normalizeGuards(params.guards));
-    checkGuardsPerMod(meta.guardsPerMod);
+    objectKeys(param.metadata).forEach((p) => {
+      // If here is object with [Symbol.iterator]() method, this transform it to an array.
+      if (Array.isArray(param.metadata[p]) || param.metadata[p] instanceof Providers) {
+        (meta as any)[p] = mergeArrays((meta as any)[p], param.metadata[p]);
+      }
+    });
+    if ((param.metadata as RoutingModuleParams).guards?.length) {
+      meta.guardsPerMod.push(...normalizeGuards((param.metadata as RoutingModuleParams).guards));
+      checkGuardsPerMod(meta.guardsPerMod);
+    }
+    break;
   }
   return meta;
 }
