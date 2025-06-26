@@ -38,7 +38,7 @@ export interface RoutingMetadata {
 
 export type RoutingModuleParams = RoutingModuleParams1 | RoutingModuleParams2;
 
-export interface BaseModuleWithParams extends Partial<ProvidersMetadata> {
+export interface BaseModuleParams extends Partial<ProvidersMetadata> {
   /**
    * List of modules, `RoutingModuleParams` or tokens of providers exported by this
    * module.
@@ -47,12 +47,12 @@ export interface BaseModuleWithParams extends Partial<ProvidersMetadata> {
   guards?: GuardItem[];
 }
 
-export interface RoutingModuleParams1 extends BaseModuleWithParams {
+export interface RoutingModuleParams1 extends BaseModuleParams {
   path?: string;
   absolutePath?: never;
 }
 
-export interface RoutingModuleParams2 extends BaseModuleWithParams {
+export interface RoutingModuleParams2 extends BaseModuleParams {
   absolutePath?: string;
   path?: never;
 }
