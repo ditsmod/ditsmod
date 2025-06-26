@@ -5,7 +5,6 @@ import {
   AttachedMetadata,
   mergeArrays,
   DecoratorAndValue,
-  ModuleWithParams,
   ModuleManager,
   Provider,
   GlobalProviders,
@@ -30,23 +29,18 @@ export interface RoutingMetadataDecorator {
   (data?: RoutingMetadata): any;
 }
 
-function mergeModuleWithParams(modWitParams: ModuleWithParams, decorAndVal: DecoratorAndValue<AttachedMetadata>) {
+function mergeModuleWithParams(params: RoutingModuleParams, decorAndVal: DecoratorAndValue<AttachedMetadata>) {
   const meta = decorAndVal.value.metadata as RoutingNormalizedMeta;
-  for (const param of (modWitParams.params || [])) {
-    if (param.decorator !== decorAndVal.decorator) {
-      continue;
+
+  objectKeys(params).forEach((p) => {
+    // If here is object with [Symbol.iterator]() method, this transform it to an array.
+    if (Array.isArray(params[p]) || params[p] instanceof Providers) {
+      (meta as any)[p] = mergeArrays((meta as any)[p], params[p]);
     }
-    objectKeys(param.metadata).forEach((p) => {
-      // If here is object with [Symbol.iterator]() method, this transform it to an array.
-      if (Array.isArray(param.metadata[p]) || param.metadata[p] instanceof Providers) {
-        (meta as any)[p] = mergeArrays((meta as any)[p], param.metadata[p]);
-      }
-    });
-    if ((param.metadata as RoutingModuleParams).guards?.length) {
-      meta.guardsPerMod.push(...normalizeGuards((param.metadata as RoutingModuleParams).guards));
-      checkGuardsPerMod(meta.guardsPerMod);
-    }
-    break;
+  });
+  if (params.guards?.length) {
+    meta.guardsPerMod.push(...normalizeGuards(params.guards));
+    checkGuardsPerMod(meta.guardsPerMod);
   }
   return meta;
 }
