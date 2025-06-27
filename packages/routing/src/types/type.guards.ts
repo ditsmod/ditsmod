@@ -1,11 +1,10 @@
-import { AnyObj, Class, DecoratorAndValue, ModuleType } from '@ditsmod/core';
+import { AnyObj, Class, DecoratorAndValue, ModuleType, ModuleWithParams } from '@ditsmod/core';
 
 import { route } from '#decorators/route.js';
 import { HttpInterceptor } from '#interceptors/tokens-and-types.js';
 import { AppendsWithParams, RoutingModuleParams } from '#module/module-metadata.js';
 import { controller, ControllerRawMetadata } from './controller.js';
 import { Http2SecureServerOptions, ServerOptions } from './server-options.js';
-
 
 export function isCtrlDecor(decoratorAndValue?: AnyObj): decoratorAndValue is DecoratorAndValue<ControllerRawMetadata> {
   return decoratorAndValue?.decorator === controller;
@@ -20,14 +19,13 @@ export function isInterceptor(cls?: Class): cls is Class<HttpInterceptor> {
 }
 
 export function isAppendsWithParams(
-  modRefId?: ModuleType | RoutingModuleParams | AppendsWithParams,
+  modRefId?: ModuleType | ModuleWithParams | RoutingModuleParams | AppendsWithParams,
 ): modRefId is AppendsWithParams {
   return (
     (modRefId as AppendsWithParams)?.module !== undefined &&
     ((modRefId as AppendsWithParams)?.path !== undefined || (modRefId as AppendsWithParams)?.absolutePath !== undefined)
   );
 }
-
 
 export function isHttp2SecureServerOptions(serverOptions: ServerOptions): serverOptions is Http2SecureServerOptions {
   return (serverOptions as Http2SecureServerOptions).isHttp2SecureServer;
