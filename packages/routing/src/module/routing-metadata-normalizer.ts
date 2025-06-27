@@ -24,6 +24,9 @@ import { RoutingMetadata } from '#module/module-metadata.js';
 import { RoutingNormalizedMeta } from '#types/routing-normalized-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 
+/**
+ * Normalizes and validates module metadata.
+ */
 export class RoutingMetadataNormalizer {
   normalize(baseMeta: NormalizedMeta, rawMeta?: RoutingMetadata): MetaAndImportsOrExports {
     rawMeta = Object.assign({}, rawMeta);

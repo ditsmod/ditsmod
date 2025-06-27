@@ -26,6 +26,9 @@ import { Extension, ExtensionClass } from '#extension/extension-types.js';
 import { NormalizedProvider, normalizeProviders } from '#utils/ng-utils.js';
 import { isExtensionConfig } from '#extension/type-guards.js';
 
+/**
+ * Normalizes and validates module metadata.
+ */
 export class ModuleNormalizer {
   /**
    * The directory in which the class was declared.
