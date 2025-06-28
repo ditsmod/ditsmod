@@ -1,5 +1,5 @@
 import { NormalizedMeta } from '#types/normalized-meta.js';
-import { ModRefId, ModuleType } from './mix.js';
+import { AnyFn, AnyObj, ModRefId, ModuleType } from './mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from './module-metadata.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
@@ -20,6 +20,7 @@ export class GlobalProviders {
   importedMultiProvidersPerMod = new Map<ModuleType | ModuleWithParams, Provider[]>();
   importedExtensions = new Map<ModuleType | ModuleWithParams, Provider[]>();
   aImportedExtensionConfig: ExtensionConfig[] = [];
+  mGlobalProviders: Map<AnyFn, AnyObj | undefined>;
 }
 
 /**

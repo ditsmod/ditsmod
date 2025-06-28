@@ -5,7 +5,7 @@ import type { NormalizedMeta } from '#types/normalized-meta.js';
 import type { ModuleManager } from '#init/module-manager.js';
 import type { GlobalProviders, MetadataPerMod1 } from '#types/metadata-per-mod.js';
 import { ImportObj } from '#types/metadata-per-mod.js';
-import type { ModuleType, Level, ModRefId } from '#types/mix.js';
+import type { ModuleType, Level, ModRefId, AnyFn, AnyObj } from '#types/mix.js';
 import type { Provider } from '#di/types-and-models.js';
 import type { ModuleWithParams } from '#types/module-metadata.js';
 import { getCollisions } from '#utils/get-collisions.js';
@@ -68,25 +68,21 @@ export class ModuleFactory {
     this.providersPerApp = providersPerApp;
     this.importProvidersAndExtensions(meta);
     this.checkAllCollisionsWithLevelsMix();
+    const mGlobalProviders = new Map<AnyFn, AnyObj | undefined>();
 
     meta.aDecoratorMeta.forEach((decorAndVal) => {
-      if (!isModDecor(decorAndVal)) {
-        meta.mGlobalProviders.set(
-          decorAndVal.decorator,
-          decorAndVal.value.exportGlobalProviders?.(moduleManager, meta, providersPerApp),
-        );
-      }
+      mGlobalProviders.set(
+        decorAndVal.decorator,
+        decorAndVal.value.exportGlobalProviders?.(moduleManager, meta, providersPerApp),
+      );
     });
 
     return {
       importedProvidersPerMod: this.importedProvidersPerMod,
-      // importedProvidersPerRou: this.importedProvidersPerRou,
-      // importedProvidersPerReq: this.importedProvidersPerReq,
       importedMultiProvidersPerMod: this.importedMultiProvidersPerMod,
-      // importedMultiProvidersPerRou: this.importedMultiProvidersPerRou,
-      // importedMultiProvidersPerReq: this.importedMultiProvidersPerReq,
       importedExtensions: this.importedExtensions,
       aImportedExtensionConfig: this.aImportedExtensionConfig,
+      mGlobalProviders,
     };
   }
 
