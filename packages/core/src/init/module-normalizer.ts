@@ -62,9 +62,7 @@ export class ModuleNormalizer {
     this.normalizeModule(modName, rawMeta, meta);
 
     aDecoratorMeta.forEach((decorAndVal) => {
-      if (!isModDecor(decorAndVal)) {
-        meta.mMeta.set(decorAndVal.decorator, decorAndVal.value.normalize?.(meta));
-      }
+      meta.mMeta.set(decorAndVal.decorator, decorAndVal.value.normalize?.(meta));
     });
 
     return meta;
