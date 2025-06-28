@@ -1,5 +1,4 @@
 import { reflector } from '#di';
-import { defaultProvidersPerMod } from '#init/default-providers-per-mod.js';
 import { ModuleExtract } from '#types/module-extract.js';
 import type { NormalizedMeta } from '#types/normalized-meta.js';
 import type { ModuleManager } from '#init/module-manager.js';
@@ -9,13 +8,11 @@ import type { ModuleType, Level, ModRefId, AnyFn, AnyObj } from '#types/mix.js';
 import type { Provider } from '#di/types-and-models.js';
 import type { ModuleWithParams } from '#types/module-metadata.js';
 import { getCollisions } from '#utils/get-collisions.js';
-import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
+import { getImportedTokens } from '#utils/get-imports.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
 import { throwProvidersCollisionError } from '#utils/throw-providers-collision-error.js';
-import { isModDecor, isModuleWithParams, isRootModule } from '#utils/type-guards.js';
 import { hasDeclaredInDir } from '#utils/type-guards.js';
-import { getModule } from '#utils/get-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import {
   ExtensionConfig,
@@ -36,19 +33,13 @@ import { ExtensionClass } from '#extension/extension-types.js';
 export class ModuleFactory {
   protected providersPerApp: Provider[];
   protected moduleName: string;
-  // protected prefixPerMod: string;
-  // protected guardsPerMod1: GuardPerMod1[];
   /**
    * Module metadata.
    */
   protected meta: NormalizedMeta;
 
   protected importedProvidersPerMod = new Map<any, ImportObj>();
-  // protected importedProvidersPerRou = new Map<any, ImportObj>();
-  // protected importedProvidersPerReq = new Map<any, ImportObj>();
   protected importedMultiProvidersPerMod = new Map<ModuleType | ModuleWithParams, Provider[]>();
-  // protected importedMultiProvidersPerRou = new Map<ModuleType | ModuleWithParams, Provider[]>();
-  // protected importedMultiProvidersPerReq = new Map<ModuleType | ModuleWithParams, Provider[]>();
   protected importedExtensions = new Map<ModuleType | ModuleWithParams, Provider[]>();
   protected aImportedExtensionConfig: ExtensionConfig[] = [];
 
@@ -97,62 +88,34 @@ export class ModuleFactory {
     modRefId: ModRefId,
     moduleManager: ModuleManager,
     unfinishedScanModules: Set<ModRefId>,
-    // prefixPerMod: string,
-    // guardsPerMod1?: GuardPerMod1[],
-    // isAppends?: boolean,
   ) {
     const meta = moduleManager.getMetadata(modRefId, true);
     this.moduleManager = moduleManager;
     this.providersPerApp = providersPerApp;
     this.glProviders = globalProviders;
-    // this.prefixPerMod = prefixPerMod || '';
     this.moduleName = meta.name;
-    // this.guardsPerMod1 = guardsPerMod1 || [];
     this.unfinishedScanModules = unfinishedScanModules;
     this.meta = meta;
-    this.checkImportsAndAppends(meta);
-    this.importAndAppendModules();
+    this.importModules();
     const moduleExtract: ModuleExtract = {
-      // path: this.prefixPerMod,
       moduleName: meta.name,
       isExternal: meta.isExternal,
     };
     this.meta.providersPerMod.unshift({ token: ModuleExtract, useValue: moduleExtract });
 
-    // const hasPath =
-    //   isModuleWithParams(meta.modRefId) &&
-    //   (meta.modRefId.path !== undefined || meta.modRefId.absolutePath !== undefined);
-
-    // let applyControllers = false;
-    // if (isRootModule(meta) || isAppends || hasPath) {
-    //   applyControllers = true;
-    // }
-
     let perMod: Map<any, ImportObj>;
-    // let perRou: Map<any, ImportObj>;
-    // let perReq: Map<any, ImportObj>;
     let multiPerMod: Map<ModuleType | ModuleWithParams, Provider[]>;
-    // let multiPerRou: Map<ModuleType | ModuleWithParams, Provider[]>;
-    // let multiPerReq: Map<ModuleType | ModuleWithParams, Provider[]>;
     let extensions: Map<ModuleType | ModuleWithParams, Provider[]>;
     let aExtensionConfig: ExtensionConfig[];
     if (meta.isExternal) {
       // External modules do not require global providers and extensions from the application.
       perMod = new Map([...this.importedProvidersPerMod]);
-      // perRou = new Map([...this.importedProvidersPerRou]);
-      // perReq = new Map([...this.importedProvidersPerReq]);
       multiPerMod = new Map([...this.importedMultiProvidersPerMod]);
-      // multiPerRou = new Map([...this.importedMultiProvidersPerRou]);
-      // multiPerReq = new Map([...this.importedMultiProvidersPerReq]);
       extensions = new Map([...this.importedExtensions]);
       aExtensionConfig = [...this.aImportedExtensionConfig];
     } else {
       perMod = new Map([...this.glProviders.importedProvidersPerMod, ...this.importedProvidersPerMod]);
-      // perRou = new Map([...this.glProviders.importedProvidersPerRou, ...this.importedProvidersPerRou]);
-      // perReq = new Map([...this.glProviders.importedProvidersPerReq, ...this.importedProvidersPerReq]);
       multiPerMod = new Map([...this.glProviders.importedMultiProvidersPerMod, ...this.importedMultiProvidersPerMod]);
-      // multiPerRou = new Map([...this.glProviders.importedMultiProvidersPerRou, ...this.importedMultiProvidersPerRou]);
-      // multiPerReq = new Map([...this.glProviders.importedMultiProvidersPerReq, ...this.importedMultiProvidersPerReq]);
       extensions = new Map([...this.glProviders.importedExtensions, ...this.importedExtensions]);
       aExtensionConfig = [...this.glProviders.aImportedExtensionConfig, ...this.aImportedExtensionConfig];
     }
@@ -160,105 +123,46 @@ export class ModuleFactory {
     const allExtensionConfigs = meta.aExtensionConfig.concat(aExtensionConfig);
     this.checkExtensionsGraph(allExtensionConfigs);
     meta.aOrderedExtensions = topologicalSort<ExtensionClass, ExtensionConfigBase>(allExtensionConfigs, true);
+    const mBootstrap = new Map<AnyFn, AnyObj | undefined>();
 
     meta.aDecoratorMeta.forEach((decorAndVal) => {
-      if (!isModDecor(decorAndVal)) {
-        meta.mBootstrap.set(
-          decorAndVal.decorator,
-          decorAndVal.value.bootstrap?.(
-            providersPerApp,
-            globalProviders,
-            modRefId,
-            moduleManager,
-            unfinishedScanModules,
-          ),
-        );
-      }
+      mBootstrap.set(
+        decorAndVal.decorator,
+        decorAndVal.value.bootstrap?.(providersPerApp, globalProviders, modRefId, moduleManager, unfinishedScanModules),
+      );
     });
 
     return this.appMetadataMap.set(modRefId, {
-      // prefixPerMod,
-      // guardsPerMod1: this.guardsPerMod1,
       meta: this.meta,
-      // applyControllers,
+      mBootstrap,
       importedTokensMap: {
         perMod,
-        // perRou,
-        // perReq,
         multiPerMod,
-        // multiPerRou,
-        // multiPerReq,
         extensions,
       },
     });
   }
 
-  protected checkExtensionsGraph(extensions: (ExtensionConfig | ExtensionConfig3)[]) {
-    const extensionWithBeforeExtension = extensions?.filter((config) => {
-      return !isConfigWithOverrideExtension(config) && config.beforeExtensions;
-    }) as ExtensionConfig[] | undefined;
-
-    if (extensionWithBeforeExtension) {
-      const path = findCycle(extensionWithBeforeExtension);
-      if (path) {
-        const strPath = path.map(getProviderName).join(' -> ');
-        let msg = `A configuration of extensions detected in ${this.moduleName}`;
-        msg += ` creates a cyclic dependency in the startup sequence of different groups: ${strPath}.`;
-        throw new Error(msg);
-      }
-    }
-  }
-
-  protected importAndAppendModules() {
-    this.importOrAppendModules([...this.meta.importsModules, ...this.meta.importsWithParams], true);
-    // this.importOrAppendModules([...this.meta.appendsModules, ...this.meta.appendsWithParams]);
-    this.checkAllCollisionsWithLevelsMix();
-  }
-
-  protected importOrAppendModules(inputs: ModRefId[], isImport?: boolean) {
-    for (const input of inputs) {
-      const meta = this.moduleManager.getMetadata(input, true);
-      if (isImport) {
-        this.importProvidersAndExtensions(meta);
-      }
-
-      // let prefixPerMod = '';
-      // let guardsPerMod1: GuardPerMod1[] = [];
-      const hasModuleParams = isModuleWithParams(input);
-      if (hasModuleParams || !isImport) {
-        // if (hasModuleParams && typeof input.absolutePath == 'string') {
-        //   // Allow slash for absolutePath.
-        //   prefixPerMod = input.absolutePath.startsWith('/') ? input.absolutePath.slice(1) : input.absolutePath;
-        // } else {
-        // const path = hasModuleParams ? input.path : '';
-        // prefixPerMod = [this.prefixPerMod, ''].filter((s) => s).join('/');
-        // }
-        // const impGuradsPerMod1 = meta.guardsPerMod.map<GuardPerMod1>((g) => ({ ...g, meta: this.meta }));
-        // guardsPerMod1 = [...this.guardsPerMod1, ...impGuradsPerMod1];
-      } else {
-        // prefixPerMod = this.prefixPerMod;
-      }
-
-      if (this.unfinishedScanModules.has(input)) {
+  protected importModules() {
+    for (const modRefId of [...this.meta.importsModules, ...this.meta.importsWithParams]) {
+      const meta = this.moduleManager.getMetadata(modRefId, true);
+      this.importProvidersAndExtensions(meta);
+      if (this.unfinishedScanModules.has(modRefId)) {
         continue;
       }
-
       const moduleFactory = new ModuleFactory();
-      this.unfinishedScanModules.add(input);
+      this.unfinishedScanModules.add(modRefId);
       const appMetadataMap = moduleFactory.bootstrap(
         this.providersPerApp,
         this.glProviders,
-        input,
+        modRefId,
         this.moduleManager,
         this.unfinishedScanModules,
-        // prefixPerMod,
-        // guardsPerMod1,
-        // !isImport,
       );
-      this.unfinishedScanModules.delete(input);
-
+      this.unfinishedScanModules.delete(modRefId);
       this.appMetadataMap = new Map([...this.appMetadataMap, ...appMetadataMap]);
     }
+    this.checkAllCollisionsWithLevelsMix();
   }
 
   /**
@@ -279,35 +183,11 @@ export class ModuleFactory {
     if (meta1.exportedMultiProvidersPerMod.length) {
       this.importedMultiProvidersPerMod.set(modRefId, meta1.exportedMultiProvidersPerMod);
     }
-    // if (meta1.exportedMultiProvidersPerRou.length) {
-    //   this.importedMultiProvidersPerRou.set(modRefId, meta1.exportedMultiProvidersPerRou);
-    // }
-    // if (meta1.exportedMultiProvidersPerReq.length) {
-    //   this.importedMultiProvidersPerReq.set(modRefId, meta1.exportedMultiProvidersPerReq);
-    // }
     if (meta1.exportedExtensionsProviders.length) {
       this.importedExtensions.set(meta1.modRefId, meta1.exportedExtensionsProviders);
       this.aImportedExtensionConfig.push(...meta1.aExportedExtensionConfig);
     }
     this.throwIfTryResolvingMultiprovidersCollisions(meta1.name);
-  }
-
-  protected throwIfTryResolvingMultiprovidersCollisions(moduleName: string) {
-    const levels: Level[] = ['Mod'];
-    levels.forEach((level) => {
-      const tokens: any[] = [];
-      this[`importedMultiProvidersPer${level}`].forEach((providers) => tokens.push(...getTokens(providers)));
-      this.meta[`resolvedCollisionsPer${level}`].some(([token]) => {
-        if (tokens.includes(token)) {
-          const tokenName = token.name || token;
-          const errorMsg =
-            `Resolving collisions for providersPer${level} in ${this.moduleName} failed: ` +
-            `${tokenName} mapped with ${moduleName}, but ${tokenName} is a token of the multi providers, ` +
-            `and in this case it should not be included in resolvedCollisionsPer${level}.`;
-          throw new Error(errorMsg);
-        }
-      });
-    });
   }
 
   protected addProviders(level: Level, meta: NormalizedMeta) {
@@ -372,20 +252,42 @@ export class ModuleFactory {
     return { module2: modRefId2, providers };
   }
 
+  protected checkExtensionsGraph(extensions: (ExtensionConfig | ExtensionConfig3)[]) {
+    const extensionWithBeforeExtension = extensions?.filter((config) => {
+      return !isConfigWithOverrideExtension(config) && config.beforeExtensions;
+    }) as ExtensionConfig[] | undefined;
+
+    if (extensionWithBeforeExtension) {
+      const path = findCycle(extensionWithBeforeExtension);
+      if (path) {
+        const strPath = path.map(getProviderName).join(' -> ');
+        let msg = `A configuration of extensions detected in ${this.moduleName}`;
+        msg += ` creates a cyclic dependency in the startup sequence of different groups: ${strPath}.`;
+        throw new Error(msg);
+      }
+    }
+  }
+
+  protected throwIfTryResolvingMultiprovidersCollisions(moduleName: string) {
+    const levels: Level[] = ['Mod'];
+    levels.forEach((level) => {
+      const tokens: any[] = [];
+      this[`importedMultiProvidersPer${level}`].forEach((providers) => tokens.push(...getTokens(providers)));
+      this.meta[`resolvedCollisionsPer${level}`].some(([token]) => {
+        if (tokens.includes(token)) {
+          const tokenName = token.name || token;
+          const errorMsg =
+            `Resolving collisions for providersPer${level} in ${this.moduleName} failed: ` +
+            `${tokenName} mapped with ${moduleName}, but ${tokenName} is a token of the multi providers, ` +
+            `and in this case it should not be included in resolvedCollisionsPer${level}.`;
+          throw new Error(errorMsg);
+        }
+      });
+    });
+  }
+
   protected checkAllCollisionsWithLevelsMix() {
     this.checkCollisionsWithLevelsMix(this.providersPerApp, ['Mod']);
-    // const providersPerMod = [
-    //   ...defaultProvidersPerMod,
-    //   ...this.meta.providersPerMod,
-    //   ...getImportedProviders(this.importedProvidersPerMod),
-    // ];
-    // this.checkCollisionsWithLevelsMix(providersPerMod, ['Rou', 'Req']);
-    // const mergedProvidersAndTokens = [
-    //   ...this.meta.providersPerRou,
-    //   ...getImportedProviders(this.importedProvidersPerRou),
-    //   // ...defaultProvidersPerReq,
-    // ];
-    // this.checkCollisionsWithLevelsMix(mergedProvidersAndTokens, ['Req']);
   }
 
   protected checkCollisionsWithLevelsMix(providers: any[], levels: Level[]) {
@@ -429,20 +331,5 @@ export class ModuleFactory {
         this.getResolvedCollisionsPerLevel(level, token1);
       }
     }
-  }
-
-  protected checkImportsAndAppends(meta: NormalizedMeta) {
-    // [...meta.appendsModules].forEach((append) => {
-    //   const appendedMeta = this.moduleManager.getMetadata(append, true);
-    //   if (!appendedMeta.controllers.length) {
-    //     const msg = `Appends to "${meta.name}" failed: "${appendedMeta.name}" must have controllers.`;
-    //     throw new Error(msg);
-    //   }
-    //   const mod = getModule(append);
-    //   if (meta.importsModules.includes(mod) || meta.importsWithParams.some((imp) => imp.module === mod)) {
-    //     const msg = `Appends to "${meta.name}" failed: "${appendedMeta.name}" includes in both: imports and appends arrays.`;
-    //     throw new Error(msg);
-    //   }
-    // });
   }
 }
