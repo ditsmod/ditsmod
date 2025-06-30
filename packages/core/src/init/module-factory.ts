@@ -144,7 +144,8 @@ export class ModuleFactory {
   }
 
   protected importModules() {
-    for (const modRefId of [...this.meta.importsModules, ...this.meta.importsWithParams]) {
+    // @todo Remove `as any[]` and `as ModRefId[]` after fixing https://github.com/microsoft/TypeScript/issues/36554#issuecomment-580924501
+    for (const modRefId of this.meta.importsModules.concat(this.meta.importsWithParams as any[]) as ModRefId[]) {
       const meta = this.moduleManager.getMetadata(modRefId, true);
       this.importProvidersAndExtensions(meta);
       if (this.unfinishedScanModules.has(modRefId)) {
@@ -160,7 +161,7 @@ export class ModuleFactory {
         this.unfinishedScanModules,
       );
       this.unfinishedScanModules.delete(modRefId);
-      this.appMetadataMap = new Map([...this.appMetadataMap, ...appMetadataMap]);
+      appMetadataMap.forEach((val, key) => this.appMetadataMap.set(key, val));
     }
     this.checkAllCollisionsWithLevelsMix();
   }
