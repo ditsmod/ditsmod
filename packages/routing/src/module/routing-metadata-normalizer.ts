@@ -20,26 +20,26 @@ import {
   resolveForwardRef,
 } from '@ditsmod/core';
 
-import { RoutingMetadata } from '#module/module-metadata.js';
+import { RoutingMetadataWithParams } from '#module/module-metadata.js';
 import { RoutingNormalizedMeta } from '#types/routing-normalized-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
+import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
 
 /**
  * Normalizes and validates module metadata.
  */
 export class RoutingMetadataNormalizer {
-  normalize(baseMeta: NormalizedMeta, rawMeta?: RoutingMetadata): MetaAndImportsOrExports {
-    rawMeta = Object.assign({}, rawMeta);
-    objectKeys(rawMeta).forEach((p) => {
-      if (rawMeta[p] instanceof Providers) {
-        (rawMeta as any)[p] = [...rawMeta[p]];
-      } else if (Array.isArray(rawMeta[p])) {
-        (rawMeta as any)[p] = rawMeta[p].slice();
+  normalize(baseMeta: NormalizedMeta, metaWithParams: RoutingMetadataWithParams): MetaAndImportsOrExports {
+    objectKeys(metaWithParams).forEach((p) => {
+      if (metaWithParams[p] instanceof Providers) {
+        (metaWithParams as any)[p] = [...metaWithParams[p]];
+      } else if (Array.isArray(metaWithParams[p])) {
+        (metaWithParams as any)[p] = metaWithParams[p].slice();
       }
     });
 
     const meta = new RoutingNormalizedMeta();
-    rawMeta.appends?.forEach((ap, i) => {
+    metaWithParams.appends?.forEach((ap, i) => {
       ap = resolveForwardRef(ap);
       this.throwIfUndefined(ap, i);
       if (isAppendsWithParams(ap)) {
@@ -49,28 +49,30 @@ export class RoutingMetadataNormalizer {
       }
     });
 
-    this.pickAndMergeMeta(meta, rawMeta);
-    const mergedMeta = { ...rawMeta, ...meta };
+    this.pickAndMergeMeta(meta, metaWithParams);
+    const mergedMeta = { ...metaWithParams, ...meta };
     this.quickCheckMetadata(baseMeta, mergedMeta);
     meta.controllers.forEach((Controller) => this.checkController(Controller));
-    this.normalizeModule(rawMeta, meta);
+    this.normalizeModule(metaWithParams, meta);
 
     return { meta: mergedMeta, importsOrExports: meta.appendsModules.concat(meta.appendsWithParams as any[]) };
   }
 
-  protected normalizeModule(rawMeta: RoutingMetadata, meta: RoutingNormalizedMeta) {
-    this.throwIfResolvingNormalizedProvider(rawMeta);
-    this.exportFromReflectMetadata(rawMeta, meta);
-    this.pickAndMergeMeta(meta, rawMeta);
+  protected normalizeModule(metaWithParams: RoutingMetadataWithParams, meta: RoutingNormalizedMeta) {
+    this.throwIfResolvingNormalizedProvider(metaWithParams);
+    this.exportFromReflectMetadata(metaWithParams, meta);
+    this.pickAndMergeMeta(meta, metaWithParams);
+    meta.guardsPerMod.push(...this.normalizeGuards(metaWithParams.guards));
+    this.checkGuardsPerMod(meta.guardsPerMod);
   }
 
-  protected throwIfResolvingNormalizedProvider(rawMeta: RoutingMetadata) {
+  protected throwIfResolvingNormalizedProvider(metaWithParams: RoutingMetadataWithParams) {
     const resolvedCollisionsPerLevel: [any, ModuleType | ModuleWithParams][] = [];
-    if (Array.isArray(rawMeta.resolvedCollisionsPerRou)) {
-      resolvedCollisionsPerLevel.push(...rawMeta.resolvedCollisionsPerRou);
+    if (Array.isArray(metaWithParams.resolvedCollisionsPerRou)) {
+      resolvedCollisionsPerLevel.push(...metaWithParams.resolvedCollisionsPerRou);
     }
-    if (Array.isArray(rawMeta.resolvedCollisionsPerReq)) {
-      resolvedCollisionsPerLevel.push(...rawMeta.resolvedCollisionsPerReq);
+    if (Array.isArray(metaWithParams.resolvedCollisionsPerReq)) {
+      resolvedCollisionsPerLevel.push(...metaWithParams.resolvedCollisionsPerReq);
     }
 
     resolvedCollisionsPerLevel.forEach(([provider]) => {
@@ -82,21 +84,21 @@ export class RoutingMetadataNormalizer {
     });
   }
 
-  protected exportFromReflectMetadata(rawMeta: RoutingMetadata, meta: RoutingNormalizedMeta) {
+  protected exportFromReflectMetadata(metaWithParams: RoutingMetadataWithParams, meta: RoutingNormalizedMeta) {
     const providers: Provider[] = [];
-    if (Array.isArray(rawMeta.providersPerRou)) {
-      providers.push(...rawMeta.providersPerRou);
+    if (Array.isArray(metaWithParams.providersPerRou)) {
+      providers.push(...metaWithParams.providersPerRou);
     }
-    if (Array.isArray(rawMeta.providersPerReq)) {
-      providers.push(...rawMeta.providersPerReq);
+    if (Array.isArray(metaWithParams.providersPerReq)) {
+      providers.push(...metaWithParams.providersPerReq);
     }
 
-    rawMeta.exports?.forEach((exp, i) => {
+    metaWithParams.exports?.forEach((exp, i) => {
       exp = resolveForwardRef(exp);
       this.throwIfUndefined(exp, i);
       this.throwExportsIfNormalizedProvider(exp);
       if (isProvider(exp) || getTokens(providers).includes(exp)) {
-        this.findAndSetProviders(exp, rawMeta, meta);
+        this.findAndSetProviders(exp, metaWithParams, meta);
       } else {
         this.throwUnidentifiedToken(exp);
       }
@@ -120,10 +122,10 @@ export class RoutingMetadataNormalizer {
     }
   }
 
-  protected findAndSetProviders(token: any, rawMeta: RoutingMetadata, meta: RoutingNormalizedMeta) {
+  protected findAndSetProviders(token: any, metaWithParams: RoutingMetadataWithParams, meta: RoutingNormalizedMeta) {
     let found = false;
     (['Rou', 'Req'] as const).forEach((level) => {
-      const unfilteredProviders = [...(rawMeta[`providersPer${level}`] || [])];
+      const unfilteredProviders = [...(metaWithParams[`providersPer${level}`] || [])];
       const providers = unfilteredProviders.filter((p) => getToken(p) === token);
       if (providers.length) {
         found = true;
@@ -146,7 +148,7 @@ export class RoutingMetadataNormalizer {
     }
   }
 
-  protected pickAndMergeMeta(targetObject: RoutingNormalizedMeta, ...sourceObjects: RoutingMetadata[]) {
+  protected pickAndMergeMeta(targetObject: RoutingNormalizedMeta, ...sourceObjects: RoutingMetadataWithParams[]) {
     const trgtObj = targetObject as any;
     sourceObjects.forEach((sourceObj: AnyObj) => {
       sourceObj ??= {};
@@ -206,6 +208,25 @@ export class RoutingMetadataNormalizer {
     ) {
       const msg = 'this module should have "providersPerApp" or some controllers, or exports, or extensions.';
       throw new Error(msg);
+    }
+  }
+
+  protected normalizeGuards(guards?: GuardItem[]) {
+    return (guards || []).map((item) => {
+      if (Array.isArray(item)) {
+        return { guard: item[0], params: item.slice(1) } as NormalizedGuard;
+      } else {
+        return { guard: item } as NormalizedGuard;
+      }
+    });
+  }
+
+  protected checkGuardsPerMod(guards: NormalizedGuard[]) {
+    for (const Guard of guards.map((n) => n.guard)) {
+      const type = typeof Guard?.prototype.canActivate;
+      if (type != 'function') {
+        throw new TypeError(`Import with guards failed: Guard.prototype.canActivate must be a function, got: ${type}`);
+      }
     }
   }
 }
