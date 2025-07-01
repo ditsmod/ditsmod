@@ -6,7 +6,7 @@ import { Providers } from '#utils/providers.js';
 import { mergeArrays } from '#utils/merge-arrays.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ModuleManager } from '#init/module-manager.js';
-import { GlobalProviders, MetadataPerMod1 } from '#types/metadata-per-mod.js';
+import { GlobalProviders } from '#types/metadata-per-mod.js';
 import { MetaAndImportsOrExports, NormalizedMeta } from '#types/normalized-meta.js';
 
 export const featureModule: FeatureModuleDecorator = makeClassDecorator(transformModule);
@@ -16,7 +16,7 @@ export interface FeatureModuleDecorator {
 }
 
 function mergeModuleWithParams(modWitParams: ModuleWithParams, decorAndVal: DecoratorAndValue<AttachedMetadata>) {
-  const rawMeta = Object.assign({}, decorAndVal.value.metadata) as RawMeta;
+  const rawMeta = decorAndVal.value.metadata as RawMeta;
   if (modWitParams.id) {
     rawMeta.id = modWitParams.id;
   }
@@ -38,18 +38,18 @@ function mergeModuleWithParams(modWitParams: ModuleWithParams, decorAndVal: Deco
 }
 
 export function transformModule(data?: ModuleMetadata): Override<AttachedMetadata, { metadata: RawMeta }> {
-  const rawMeta = Object.assign({}, data) as RawMeta;
-  objectKeys(rawMeta).forEach((p) => {
-    if (rawMeta[p] instanceof Providers) {
-      (rawMeta as any)[p] = [...rawMeta[p]];
-    } else if (Array.isArray(rawMeta[p])) {
-      (rawMeta as any)[p] = rawMeta[p].slice();
+  const metadata = Object.assign({}, data) as RawMeta;
+  objectKeys(metadata).forEach((p) => {
+    if (metadata[p] instanceof Providers) {
+      (metadata as any)[p] = [...metadata[p]];
+    } else if (Array.isArray(metadata[p])) {
+      (metadata as any)[p] = metadata[p].slice();
     }
   });
 
-  rawMeta.decorator = featureModule;
-  rawMeta.declaredInDir = CallsiteUtils.getCallerDir() || '.';
-  return { isAttachedMetadata: true, metadata: rawMeta, mergeModuleWithParams };
+  metadata.decorator = featureModule;
+  metadata.declaredInDir = CallsiteUtils.getCallerDir() || '.';
+  return { isAttachedMetadata: true, metadata, mergeModuleWithParams };
 }
 /**
  * A metadata attached to the `rootModule` or `featureModule` decorators.
@@ -58,7 +58,7 @@ export interface AttachedMetadata {
   isAttachedMetadata: true;
   metadata: AnyObj;
   mergeModuleWithParams?: (modWithParams: ModuleWithParams, decorAndVal: DecoratorAndValue<AttachedMetadata>) => AnyObj;
-  normalize?: (baseMeta: NormalizedMeta) => MetaAndImportsOrExports | undefined;
+  normalize?: (baseMeta: NormalizedMeta, metadata: AnyObj) => MetaAndImportsOrExports | undefined;
   exportGlobalProviders?: (moduleManager: ModuleManager, baseMeta: NormalizedMeta, providersPerApp: Provider[]) => any;
   bootstrap?: (
     providersPerApp: Provider[],
@@ -66,7 +66,7 @@ export interface AttachedMetadata {
     modRefId: ModRefId,
     moduleManager: ModuleManager,
     unfinishedScanModules: Set<ModRefId>,
-  ) => Map<ModRefId, MetadataPerMod1>;
+  ) => Map<ModRefId, AnyObj>;
 }
 
 /**
