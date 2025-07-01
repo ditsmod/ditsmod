@@ -17,6 +17,8 @@ import {
   isRootModule,
   getModule,
   NormalizedMeta,
+  GlobalProviders,
+  ImportedTokensMap,
 } from '@ditsmod/core';
 
 import { GuardPerMod1 } from '#interceptors/guard.js';
@@ -27,6 +29,7 @@ import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
 import { AppendsWithParams, RoutingModuleParams } from './module-metadata.js';
 import { routingMetadata } from '#decorators/routing-metadata.js';
+import { isAppendsWithParams } from '#types/type.guards.js';
 
 export class RoutingImportObj<T extends Provider = Provider> {
   modRefId: RoutingModRefId;
@@ -34,6 +37,31 @@ export class RoutingImportObj<T extends Provider = Provider> {
    * This property can have more than one element for multi-providers only.
    */
   providers: T[] = [];
+}
+
+/**
+ * Metadata collected using `ModuleFactory`. The target for this metadata is `ImportsResolver`.
+ */
+export class RoutingMetadataPerMod1 {
+  prefixPerMod: string;
+  guardsPerMod1: GuardPerMod1[];
+  /**
+   * Snapshot of `RoutingNormalizedMeta`. If you modify any array in this object,
+   * the original array will remain unchanged.
+   */
+  meta: RoutingNormalizedMeta;
+  /**
+   * Map between a token and its ImportObj per level.
+   */
+  importedTokensMap: RoutingImportedTokensMap;
+  applyControllers?: boolean;
+}
+
+export interface RoutingImportedTokensMap {
+  perRou: Map<any, RoutingImportObj>;
+  perReq: Map<any, RoutingImportObj>;
+  multiPerRou: Map<RoutingModRefId, Provider[]>;
+  multiPerReq: Map<RoutingModRefId, Provider[]>;
 }
 
 /**
@@ -49,6 +77,7 @@ export class RoutingModuleFactory {
   /**
    * Module metadata.
    */
+  protected baseMeta: NormalizedMeta;
   protected meta: RoutingNormalizedMeta;
 
   protected importedProvidersPerRou = new Map<any, RoutingImportObj>();
@@ -59,8 +88,9 @@ export class RoutingModuleFactory {
   /**
    * GlobalProviders.
    */
-  protected glProviders: RoutingGlobalProviders;
-  protected appMetadataMap = new Map<ModRefId, MetadataPerMod1>();
+  protected glProviders: GlobalProviders;
+  protected routingGlProviders = new RoutingGlobalProviders();
+  protected appMetadataMap = new Map<ModRefId, RoutingMetadataPerMod1>();
   protected unfinishedScanModules = new Set<ModRefId>();
   protected moduleManager: ModuleManager;
 
@@ -91,20 +121,21 @@ export class RoutingModuleFactory {
    */
   bootstrap(
     providersPerApp: Provider[],
-    globalProviders: RoutingGlobalProviders,
+    globalProviders: GlobalProviders,
     modRefId: ModRefId,
     moduleManager: ModuleManager,
     unfinishedScanModules: Set<ModRefId>,
-    prefixPerMod?: string,
+    prefixPerMod: string = '',
     guardsPerMod1?: GuardPerMod1[],
     isAppends?: boolean,
   ) {
     const baseMeta = moduleManager.getMetadata(modRefId, true);
+    this.baseMeta = baseMeta;
     const meta = baseMeta.mMeta.get(routingMetadata) as RoutingNormalizedMeta;
     this.moduleManager = moduleManager;
     this.providersPerApp = providersPerApp;
     this.glProviders = globalProviders;
-    this.prefixPerMod = prefixPerMod || '';
+    this.prefixPerMod = prefixPerMod;
     this.moduleName = baseMeta.name;
     this.guardsPerMod1 = guardsPerMod1 || [];
     this.unfinishedScanModules = unfinishedScanModules;
@@ -118,30 +149,32 @@ export class RoutingModuleFactory {
     this.checkImportsAndAppends(meta);
     this.importAndAppendModules();
 
-    const hasPath =
-      isModuleWithParams(meta.modRefId) &&
-      (meta.modRefId.path !== undefined || meta.modRefId.absolutePath !== undefined);
-
     let applyControllers = false;
-    if (isRootModule(meta) || isAppends || hasPath) {
+    if (isRootModule(meta) || isAppends || this.hasPath(meta)) {
       applyControllers = true;
     }
 
     let perRou: Map<any, RoutingImportObj>;
     let perReq: Map<any, RoutingImportObj>;
-    let multiPerRou: Map<ModuleType | ModuleWithParams, Provider[]>;
-    let multiPerReq: Map<ModuleType | ModuleWithParams, Provider[]>;
-    if (meta.isExternal) {
+    let multiPerRou: Map<RoutingModRefId, Provider[]>;
+    let multiPerReq: Map<RoutingModRefId, Provider[]>;
+    if (baseMeta.isExternal) {
       // External modules do not require global providers from the application.
       perRou = new Map([...this.importedProvidersPerRou]);
       perReq = new Map([...this.importedProvidersPerReq]);
       multiPerRou = new Map([...this.importedMultiProvidersPerRou]);
       multiPerReq = new Map([...this.importedMultiProvidersPerReq]);
     } else {
-      perRou = new Map([...this.glProviders.importedProvidersPerRou, ...this.importedProvidersPerRou]);
-      perReq = new Map([...this.glProviders.importedProvidersPerReq, ...this.importedProvidersPerReq]);
-      multiPerRou = new Map([...this.glProviders.importedMultiProvidersPerRou, ...this.importedMultiProvidersPerRou]);
-      multiPerReq = new Map([...this.glProviders.importedMultiProvidersPerReq, ...this.importedMultiProvidersPerReq]);
+      perRou = new Map([...this.routingGlProviders.importedProvidersPerRou, ...this.importedProvidersPerRou]);
+      perReq = new Map([...this.routingGlProviders.importedProvidersPerReq, ...this.importedProvidersPerReq]);
+      multiPerRou = new Map([
+        ...this.routingGlProviders.importedMultiProvidersPerRou,
+        ...this.importedMultiProvidersPerRou,
+      ]);
+      multiPerReq = new Map([
+        ...this.routingGlProviders.importedMultiProvidersPerReq,
+        ...this.importedMultiProvidersPerReq,
+      ]);
     }
 
     return this.appMetadataMap.set(modRefId, {
@@ -158,28 +191,36 @@ export class RoutingModuleFactory {
     });
   }
 
+  protected hasPath(meta: RoutingNormalizedMeta) {
+    const hasPath =
+      isAppendsWithParams(meta.modRefId) &&
+      (meta.modRefId.path !== undefined || meta.modRefId.absolutePath !== undefined);
+
+    return hasPath;
+  }
+
   protected importAndAppendModules() {
-    this.importOrAppendModules([...this.meta.importsModules, ...this.meta.importsWithParams], true);
+    this.importOrAppendModules([...this.baseMeta.importsModules, ...this.baseMeta.importsWithParams], true);
     this.importOrAppendModules([...this.meta.appendsModules, ...this.meta.appendsWithParams]);
     this.checkAllCollisionsWithLevelsMix();
   }
 
-  protected importOrAppendModules(inputs: ModRefId[], isImport?: boolean) {
-    for (const input of inputs) {
-      const meta = this.moduleManager.getMetadata(input, true);
+  protected importOrAppendModules(aModRefIds: ModRefId[], isImport?: boolean) {
+    for (const modRefId of aModRefIds) {
+      const meta = this.moduleManager.getMetadata(modRefId, true);
       if (isImport) {
         this.importProviders(meta);
       }
 
       let prefixPerMod = '';
       let guardsPerMod1: GuardPerMod1[] = [];
-      const hasModuleParams = isModuleWithParams(input);
+      const hasModuleParams = isModuleWithParams(modRefId);
       if (hasModuleParams || !isImport) {
-        if (hasModuleParams && typeof input.absolutePath == 'string') {
+        if (hasModuleParams && typeof modRefId.absolutePath == 'string') {
           // Allow slash for absolutePath.
-          prefixPerMod = input.absolutePath.startsWith('/') ? input.absolutePath.slice(1) : input.absolutePath;
+          prefixPerMod = modRefId.absolutePath.startsWith('/') ? modRefId.absolutePath.slice(1) : modRefId.absolutePath;
         } else {
-          const path = hasModuleParams ? input.path : '';
+          const path = hasModuleParams ? modRefId.path : '';
           prefixPerMod = [this.prefixPerMod, ''].filter((s) => s).join('/');
         }
         const impGuradsPerMod1 = meta.guardsPerMod.map<GuardPerMod1>((g) => ({ ...g, meta: this.meta }));
@@ -188,23 +229,23 @@ export class RoutingModuleFactory {
         prefixPerMod = this.prefixPerMod;
       }
 
-      if (this.unfinishedScanModules.has(input)) {
+      if (this.unfinishedScanModules.has(modRefId)) {
         continue;
       }
 
-      const moduleFactory = new ModuleFactory();
-      this.unfinishedScanModules.add(input);
+      const moduleFactory = new RoutingModuleFactory();
+      this.unfinishedScanModules.add(modRefId);
       const appMetadataMap = moduleFactory.bootstrap(
         this.providersPerApp,
         this.glProviders,
-        input,
+        modRefId,
         this.moduleManager,
         this.unfinishedScanModules,
         prefixPerMod,
         guardsPerMod1,
         !isImport,
       );
-      this.unfinishedScanModules.delete(input);
+      this.unfinishedScanModules.delete(modRefId);
 
       this.appMetadataMap = new Map([...this.appMetadataMap, ...appMetadataMap]);
     }
@@ -225,24 +266,6 @@ export class RoutingModuleFactory {
       this.importedMultiProvidersPerReq.set(meta1.modRefId, meta1.exportedMultiProvidersPerReq);
     }
     this.throwIfTryResolvingMultiprovidersCollisions(moduleName);
-  }
-
-  protected throwIfTryResolvingMultiprovidersCollisions(moduleName: string) {
-    const levels: Level[] = ['Rou', 'Req'];
-    levels.forEach((level) => {
-      const tokens: any[] = [];
-      this[`importedMultiProvidersPer${level}`].forEach((providers) => tokens.push(...getTokens(providers)));
-      this.meta[`resolvedCollisionsPer${level}`].some(([token]) => {
-        if (tokens.includes(token)) {
-          const tokenName = token.name || token;
-          const errorMsg =
-            `Resolving collisions for providersPer${level} in ${this.moduleName} failed: ` +
-            `${tokenName} mapped with ${moduleName}, but ${tokenName} is a token of the multi providers, ` +
-            `and in this case it should not be included in resolvedCollisionsPer${level}.`;
-          throw new Error(errorMsg);
-        }
-      });
-    });
   }
 
   protected addProviders(level: Level, meta: RoutingNormalizedMeta) {
@@ -305,6 +328,24 @@ export class RoutingModuleFactory {
     }
 
     return { module2: modRefId2, providers };
+  }
+
+  protected throwIfTryResolvingMultiprovidersCollisions(moduleName: string) {
+    const levels: Level[] = ['Rou', 'Req'];
+    levels.forEach((level) => {
+      const tokens: any[] = [];
+      this[`importedMultiProvidersPer${level}`].forEach((providers) => tokens.push(...getTokens(providers)));
+      this.meta[`resolvedCollisionsPer${level}`].some(([token]) => {
+        if (tokens.includes(token)) {
+          const tokenName = token.name || token;
+          const errorMsg =
+            `Resolving collisions for providersPer${level} in ${this.moduleName} failed: ` +
+            `${tokenName} mapped with ${moduleName}, but ${tokenName} is a token of the multi providers, ` +
+            `and in this case it should not be included in resolvedCollisionsPer${level}.`;
+          throw new Error(errorMsg);
+        }
+      });
+    });
   }
 
   protected checkAllCollisionsWithLevelsMix() {
