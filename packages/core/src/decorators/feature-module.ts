@@ -1,5 +1,5 @@
-import { DecoratorAndValue, makeClassDecorator, Provider } from '#di';
-import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
+import { makeClassDecorator, Provider } from '#di';
+import { FeatureModuleWithParams, ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
 import { AnyFn, AnyObj, ModRefId, ModuleType, Override } from '#types/mix.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { Providers } from '#utils/providers.js';
@@ -35,41 +35,38 @@ export interface DecoratorParams<T extends AnyObj = AnyObj> {
   data: T;
 }
 
-function mergeModuleWithParams(modWitParams: ModuleWithParams, decorAndVal: DecoratorAndValue<AttachedMetadata>) {
-  const rawMeta = decorAndVal.value.metadata as RawMeta;
+function mergeModuleWithParams(modWitParams: FeatureModuleWithParams, rawMeta: RawMeta) {
   if (modWitParams.id) {
     rawMeta.id = modWitParams.id;
   }
-  for (const param of modWitParams.params || []) {
-    if (param.decorator !== decorAndVal.decorator) {
-      continue;
+  objectKeys(modWitParams).forEach((p) => {
+    // If here is object with [Symbol.iterator]() method, this transform it to an array.
+    if (Array.isArray(modWitParams[p]) || modWitParams[p] instanceof Providers) {
+      (rawMeta as any)[p] = mergeArrays((rawMeta as any)[p], modWitParams[p]);
     }
-    objectKeys(param.metadata).forEach((p) => {
-      // If here is object with [Symbol.iterator]() method, this transform it to an array.
-      if (Array.isArray(param.metadata[p]) || param.metadata[p] instanceof Providers) {
-        (rawMeta as any)[p] = mergeArrays((rawMeta as any)[p], param.metadata[p]);
-      }
-    });
+  });
 
-    rawMeta.extensionsMeta = { ...rawMeta.extensionsMeta, ...param.metadata.extensionsMeta };
-    break;
-  }
+  rawMeta.extensionsMeta = { ...rawMeta.extensionsMeta, ...modWitParams.extensionsMeta };
   return rawMeta;
 }
 
 export function transformModule(data?: ModuleMetadata): Override<AttachedMetadata, { metadata: RawMeta }> {
-  const metadata = Object.assign({}, data) as RawMeta;
-  objectKeys(metadata).forEach((p) => {
-    if (metadata[p] instanceof Providers) {
-      (metadata as any)[p] = [...metadata[p]];
-    } else if (Array.isArray(metadata[p])) {
-      (metadata as any)[p] = metadata[p].slice();
+  const rawMeta = Object.assign({}, data) as RawMeta;
+  objectKeys(rawMeta).forEach((p) => {
+    if (rawMeta[p] instanceof Providers) {
+      (rawMeta as any)[p] = [...rawMeta[p]];
+    } else if (Array.isArray(rawMeta[p])) {
+      (rawMeta as any)[p] = rawMeta[p].slice();
     }
   });
 
-  metadata.decorator = featureModule;
-  metadata.declaredInDir = CallsiteUtils.getCallerDir() || '.';
-  return { isAttachedMetadata: true, metadata, mergeModuleWithParams };
+  rawMeta.decorator = featureModule;
+  rawMeta.declaredInDir = CallsiteUtils.getCallerDir() || '.';
+  return {
+    isAttachedMetadata: true,
+    metadata: rawMeta,
+    mergeModuleWithParams: (modWithParams) => mergeModuleWithParams(modWithParams, rawMeta),
+  };
 }
 /**
  * A metadata attached to the `rootModule` or `featureModule` decorators.
@@ -77,7 +74,7 @@ export function transformModule(data?: ModuleMetadata): Override<AttachedMetadat
 export interface AttachedMetadata {
   isAttachedMetadata: true;
   metadata: AnyObj;
-  mergeModuleWithParams?: (modWithParams: ModuleWithParams, decorAndVal: DecoratorAndValue<AttachedMetadata>) => AnyObj;
+  mergeModuleWithParams?: (modWithParams: ModuleWithParams) => AnyObj;
   normalize?: (baseMeta: NormalizedMeta, metadata: AnyObj) => MetaAndImportsOrExports | undefined;
   exportGlobalProviders?: (moduleManager: ModuleManager, baseMeta: NormalizedMeta, providersPerApp: Provider[]) => any;
   bootstrap?: (

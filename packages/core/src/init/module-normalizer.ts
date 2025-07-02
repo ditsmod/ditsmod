@@ -72,8 +72,7 @@ export class ModuleNormalizer {
     modRefId = resolveForwardRef(modRefId);
     if (isModuleWithParams(modRefId)) {
       return reflector.getDecorators(modRefId.module, isModuleWithMetadata)?.map((decorAndVal) => {
-        decorAndVal.value.metadata =
-          decorAndVal.value.mergeModuleWithParams?.(modRefId, decorAndVal) || decorAndVal.value.metadata;
+        decorAndVal.value.metadata = decorAndVal.value.mergeModuleWithParams?.(modRefId) || decorAndVal.value.metadata;
         return decorAndVal;
       });
     } else {

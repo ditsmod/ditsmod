@@ -30,13 +30,6 @@ import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
  */
 export class RoutingMetadataNormalizer {
   normalize(baseMeta: NormalizedMeta, metaWithParams: RoutingMetadataWithParams): MetaAndImportsOrExports {
-    objectKeys(metaWithParams).forEach((p) => {
-      if (metaWithParams[p] instanceof Providers) {
-        (metaWithParams as any)[p] = [...metaWithParams[p]];
-      } else if (Array.isArray(metaWithParams[p])) {
-        (metaWithParams as any)[p] = metaWithParams[p].slice();
-      }
-    });
 
     const meta = new RoutingNormalizedMeta();
     metaWithParams.appends?.forEach((ap, i) => {

@@ -3,12 +3,10 @@ import {
   Providers,
   AttachedMetadata,
   mergeArrays,
-  DecoratorAndValue,
   ModuleManager,
   Provider,
   GlobalProviders,
   ModRefId,
-  ModuleParamItem,
   NormalizedMeta,
   ModuleWithParams,
   objectKeys,
@@ -20,31 +18,21 @@ import { RoutingModuleFactory } from '#module/routing-module-factory.js';
 
 export const routingMetadata: RoutingMetadataDecorator = makeClassDecorator(transformMetadata);
 
-export function routingMetadataParams<T extends { path: any }>(metadata: T): ModuleParamItem<T> {
-  return { decorator: routingMetadata, metadata };
-}
-
 export interface RoutingMetadataDecorator {
   (data?: RoutingMetadata): any;
 }
 
-function mergeModuleWithParams(modWitParams: ModuleWithParams, decorAndVal: DecoratorAndValue<AttachedMetadata>) {
-  const metadata = decorAndVal.value.metadata as RoutingMetadata;
+function mergeModuleWithParams(modWitParams: ModuleWithParams, metadata: RoutingMetadata) {
   const metadata1 = Object.assign({}, metadata) as RoutingMetadataWithParams;
-  for (const param of modWitParams.params || []) {
-    if (param.decorator !== decorAndVal.decorator) {
-      continue;
+  objectKeys(modWitParams).forEach((p) => {
+    // If here is object with [Symbol.iterator]() method, this transform it to an array.
+    if (Array.isArray(modWitParams[p]) || modWitParams[p] instanceof Providers) {
+      (metadata1 as any)[p] = mergeArrays((metadata1 as any)[p], modWitParams[p]);
     }
-    objectKeys(param.metadata).forEach((p) => {
-      // If here is object with [Symbol.iterator]() method, this transform it to an array.
-      if (Array.isArray(param.metadata[p]) || param.metadata[p] instanceof Providers) {
-        (metadata1 as any)[p] = mergeArrays((metadata1 as any)[p], param.metadata[p]);
-      }
-    });
-    metadata1.path = (param.metadata as RoutingModuleParams).path;
-    metadata1.absolutePath = (param.metadata as RoutingModuleParams).absolutePath;
-    break;
-  }
+  });
+  metadata1.path = (modWitParams as RoutingModuleParams).path;
+  metadata1.absolutePath = (modWitParams as RoutingModuleParams).absolutePath;
+
   return metadata1;
 }
 
@@ -53,7 +41,7 @@ export function transformMetadata(data?: RoutingMetadata): AttachedMetadata {
   return {
     isAttachedMetadata: true,
     metadata,
-    mergeModuleWithParams,
+    mergeModuleWithParams: (modWitParams) => mergeModuleWithParams(modWitParams, metadata),
     normalize: (baseMeta: NormalizedMeta, metadataWithParams: RoutingMetadataWithParams) =>
       new RoutingMetadataNormalizer().normalize(baseMeta, metadataWithParams),
     exportGlobalProviders: (moduleManager: ModuleManager, baseMeta: NormalizedMeta, providersPerApp: Provider[]) => {
