@@ -15,6 +15,26 @@ export interface FeatureModuleDecorator {
   (data?: ModuleMetadata): any;
 }
 
+/**
+ * This interface must be extended by interfaces that describe
+ * the type of data passed to custom module decorators.
+ */
+export interface ParamsTransferObj<T extends AnyObj> {
+  /**
+   * An array of parameters intended for modules with parameters that are added to
+   * the `imports` array in the `featureModule` or `rootModule` decorators.
+   */
+  params?: DecoratorParams<T>[];
+}
+
+/**
+ * The interface intended for `ModuleWithParams`.
+ */
+export interface DecoratorParams<T extends AnyObj = AnyObj> {
+  for: ModuleWithParams;
+  data: T;
+}
+
 function mergeModuleWithParams(modWitParams: ModuleWithParams, decorAndVal: DecoratorAndValue<AttachedMetadata>) {
   const rawMeta = decorAndVal.value.metadata as RawMeta;
   if (modWitParams.id) {

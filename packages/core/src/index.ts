@@ -12,7 +12,7 @@ export { defaultProvidersPerApp } from '#init/default-providers-per-app.js';
 export { OnModuleInit } from '#init/hooks.js';
 export { CustomError } from '#error/custom-error.js';
 export { ErrorInfo } from '#error/error-info.js';
-export { featureModule, AttachedMetadata } from '#decorators/feature-module.js';
+export { featureModule, AttachedMetadata, ParamsTransferObj, DecoratorParams } from '#decorators/feature-module.js';
 export { rootModule } from '#decorators/root-module.js';
 export {
   ExtensionCounters,
@@ -58,7 +58,7 @@ export {
   Override,
   UnionToIntersection,
 } from '#types/mix.js';
-export { ModuleMetadata, ModuleWithParams, ModuleParamItem } from '#types/module-metadata.js';
+export { ModuleMetadata, ModuleWithParams, FeatureModuleWithParams } from '#types/module-metadata.js';
 export { RootModuleMetadata } from '#types/root-module-metadata.js';
 export { ImportObj } from '#types/metadata-per-mod.js';
 export { mergeArrays } from '#utils/merge-arrays.js';
