@@ -1,9 +1,9 @@
-import { AnyObj, ModuleType, Class, Provider, Providers, ModuleWithParams } from '@ditsmod/core';
+import { AnyObj, ModuleType, Class, Provider, Providers, ModuleWithParams, ParamsTransferObj } from '@ditsmod/core';
 
 import { GuardItem } from '#interceptors/guard.js';
 import { RoutingProvidersMetadata } from '#types/routing-normalized-meta.js';
 
-export interface RoutingMetadata {
+export interface RoutingMetadata extends ParamsTransferObj<RoutingModuleParams> {
   /**
    * List of provider tokens exported by this module.
    */
