@@ -7,6 +7,7 @@ import {
   isMultiProvider,
   isNormalizedProvider,
   isProvider,
+  mergeArrays,
   MetaAndImportsOrExports,
   ModuleType,
   ModuleWithParams,
@@ -20,7 +21,7 @@ import {
   resolveForwardRef,
 } from '@ditsmod/core';
 
-import { RoutingMetadataWithParams } from '#module/module-metadata.js';
+import { RoutingMetadata, RoutingMetadataWithParams, RoutingModuleParams } from '#module/module-metadata.js';
 import { RoutingNormalizedMeta } from '#types/routing-normalized-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
@@ -30,7 +31,6 @@ import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
  */
 export class RoutingMetadataNormalizer {
   normalize(baseMeta: NormalizedMeta, metaWithParams: RoutingMetadataWithParams): MetaAndImportsOrExports {
-
     const meta = new RoutingNormalizedMeta();
     metaWithParams.appends?.forEach((ap, i) => {
       ap = resolveForwardRef(ap);
@@ -49,6 +49,20 @@ export class RoutingMetadataNormalizer {
     this.normalizeModule(metaWithParams, meta);
 
     return { meta: mergedMeta, importsOrExports: meta.appendsModules.concat(meta.appendsWithParams as any[]) };
+  }
+
+  protected mergeModuleWithParams(modWitParams: ModuleWithParams, metadata: RoutingMetadata) {
+    const metadata1 = Object.assign({}, metadata) as RoutingMetadataWithParams;
+    objectKeys(modWitParams).forEach((p) => {
+      // If here is object with [Symbol.iterator]() method, this transform it to an array.
+      if (Array.isArray(modWitParams[p]) || modWitParams[p] instanceof Providers) {
+        (metadata1 as any)[p] = mergeArrays((metadata1 as any)[p], modWitParams[p]);
+      }
+    });
+    metadata1.path = (modWitParams as RoutingModuleParams).path;
+    metadata1.absolutePath = (modWitParams as RoutingModuleParams).absolutePath;
+
+    return metadata1;
   }
 
   protected normalizeModule(metaWithParams: RoutingMetadataWithParams, meta: RoutingNormalizedMeta) {

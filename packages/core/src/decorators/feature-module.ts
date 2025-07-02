@@ -1,9 +1,8 @@
 import { makeClassDecorator, Provider } from '#di';
-import { FeatureModuleWithParams, ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
+import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
 import { AnyFn, AnyObj, ModRefId, ModuleType, Override } from '#types/mix.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { Providers } from '#utils/providers.js';
-import { mergeArrays } from '#utils/merge-arrays.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { GlobalProviders } from '#types/metadata-per-mod.js';
@@ -35,21 +34,6 @@ export interface DecoratorParams<T extends AnyObj = AnyObj> {
   data: T;
 }
 
-function mergeModuleWithParams(modWitParams: FeatureModuleWithParams, rawMeta: RawMeta) {
-  if (modWitParams.id) {
-    rawMeta.id = modWitParams.id;
-  }
-  objectKeys(modWitParams).forEach((p) => {
-    // If here is object with [Symbol.iterator]() method, this transform it to an array.
-    if (Array.isArray(modWitParams[p]) || modWitParams[p] instanceof Providers) {
-      (rawMeta as any)[p] = mergeArrays((rawMeta as any)[p], modWitParams[p]);
-    }
-  });
-
-  rawMeta.extensionsMeta = { ...rawMeta.extensionsMeta, ...modWitParams.extensionsMeta };
-  return rawMeta;
-}
-
 export function transformModule(data?: ModuleMetadata): Override<AttachedMetadata, { metadata: RawMeta }> {
   const rawMeta = Object.assign({}, data) as RawMeta;
   objectKeys(rawMeta).forEach((p) => {
@@ -65,7 +49,6 @@ export function transformModule(data?: ModuleMetadata): Override<AttachedMetadat
   return {
     isAttachedMetadata: true,
     metadata: rawMeta,
-    mergeModuleWithParams: (modWithParams) => mergeModuleWithParams(modWithParams, rawMeta),
   };
 }
 /**
@@ -74,7 +57,6 @@ export function transformModule(data?: ModuleMetadata): Override<AttachedMetadat
 export interface AttachedMetadata {
   isAttachedMetadata: true;
   metadata: AnyObj;
-  mergeModuleWithParams?: (modWithParams: ModuleWithParams) => AnyObj;
   normalize?: (baseMeta: NormalizedMeta, metadata: AnyObj) => MetaAndImportsOrExports | undefined;
   exportGlobalProviders?: (moduleManager: ModuleManager, baseMeta: NormalizedMeta, providersPerApp: Provider[]) => any;
   bootstrap?: (

@@ -25,6 +25,9 @@ import { Providers } from '#utils/providers.js';
 import { Extension, ExtensionClass } from '#extension/extension-types.js';
 import { NormalizedProvider, normalizeProviders } from '#utils/ng-utils.js';
 import { isExtensionConfig } from '#extension/type-guards.js';
+import { FeatureModuleWithParams } from '#types/module-metadata.js';
+import { mergeArrays } from '#utils/merge-arrays.js';
+import { objectKeys } from '#utils/object-keys.js';
 
 /**
  * Normalizes and validates module metadata.
@@ -40,12 +43,15 @@ export class ModuleNormalizer {
    */
   normalize(modRefId: ModRefId) {
     const aDecoratorMeta = this.getDecoratorMeta(modRefId) || [];
-    const rawMeta = aDecoratorMeta.find((d) => isModDecor(d))?.value;
+    let rawMeta = aDecoratorMeta.find((d) => isModDecor(d))?.value as RawMeta | undefined;
     const modName = getDebugClassName(modRefId);
     if (!rawMeta) {
       throw new Error(
         `Module build failed: module "${modName}" does not have the "@rootModule()" or "@featureModule()" decorator`,
       );
+    }
+    if (isModuleWithParams(modRefId)) {
+      rawMeta = this.mergeModuleWithParams(modRefId, rawMeta);
     }
 
     /**
@@ -70,14 +76,23 @@ export class ModuleNormalizer {
 
   protected getDecoratorMeta(modRefId: ModRefId) {
     modRefId = resolveForwardRef(modRefId);
-    if (isModuleWithParams(modRefId)) {
-      return reflector.getDecorators(modRefId.module, isModuleWithMetadata)?.map((decorAndVal) => {
-        decorAndVal.value.metadata = decorAndVal.value.mergeModuleWithParams?.(modRefId) || decorAndVal.value.metadata;
-        return decorAndVal;
-      });
-    } else {
-      return reflector.getDecorators(modRefId, isModuleWithMetadata);
+    const mod = isModuleWithParams(modRefId) ? modRefId.module : modRefId;
+    return reflector.getDecorators(mod, isModuleWithMetadata);
+  }
+
+  protected mergeModuleWithParams(modWitParams: FeatureModuleWithParams, rawMeta: RawMeta) {
+    if (modWitParams.id) {
+      rawMeta.id = modWitParams.id;
     }
+    objectKeys(modWitParams).forEach((p) => {
+      // If here is object with [Symbol.iterator]() method, this transform it to an array.
+      if (Array.isArray(modWitParams[p]) || modWitParams[p] instanceof Providers) {
+        (rawMeta as any)[p] = mergeArrays((rawMeta as any)[p], modWitParams[p]);
+      }
+    });
+
+    rawMeta.extensionsMeta = { ...rawMeta.extensionsMeta, ...modWitParams.extensionsMeta };
+    return rawMeta;
   }
 
   protected checkAndMarkExternalModule(isRootModule: boolean, meta: NormalizedMeta) {
