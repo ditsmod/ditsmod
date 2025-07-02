@@ -34,6 +34,9 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
    */
   resolvedCollisionsPerMod?: [any, ModuleType | FeatureModuleWithParams][];
 }
+/**
+ * The type of metadata passed to a module with the `featureModule` decorator.
+ */
 export type FeatureModuleWithParams = ModuleWithParams & FeatureModuleParams;
 
 export interface ModuleWithParams<M extends AnyObj = AnyObj> {
