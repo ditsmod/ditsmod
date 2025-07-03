@@ -39,7 +39,7 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
  * The type of metadata passed to a module with the `featureModule` decorator.
  */
 export interface ModuleWithParams extends BaseModuleWithParams, FeatureModuleParams {}
-export interface FeatureModuleWithParams1 extends ModuleWithParams {
+export interface ModuleWithParentMeta extends ModuleWithParams {
   parentMeta: NormalizedMeta;
 }
 

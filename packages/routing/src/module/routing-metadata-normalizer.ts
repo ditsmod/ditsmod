@@ -2,12 +2,12 @@ import {
   AnyObj,
   Class,
   CustomError,
-  FeatureModuleWithParams1,
+  ModuleWithParentMeta,
   getDebugClassName,
   getToken,
   getTokens,
   isFeatureModule,
-  isFeatureModuleWithParams1,
+  isModuleWithParentMeta,
   isModuleWithParams,
   isMultiProvider,
   isNormalizedProvider,
@@ -61,7 +61,7 @@ export class RoutingMetadataNormalizer {
 
   protected mergeModuleWithParams(baseMeta: NormalizedMeta, meta: RoutingNormalizedMeta): void {
     const { modRefId } = baseMeta;
-    if (!isFeatureModuleWithParams1(modRefId)) {
+    if (!isModuleWithParentMeta(modRefId)) {
       return;
     }
     let params: RoutingModuleParams | undefined;
@@ -99,7 +99,7 @@ export class RoutingMetadataNormalizer {
         const moduleName = getDebugClassName(param.for);
         throw new CustomError({ msg1: `${moduleName} not found`, level: 'fatal' });
       }
-      (param.for as FeatureModuleWithParams1).parentMeta ??= baseMeta;
+      (param.for as ModuleWithParentMeta).parentMeta ??= baseMeta;
     });
   }
 
