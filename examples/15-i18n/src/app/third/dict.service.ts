@@ -7,7 +7,7 @@ import {
   Logger,
 } from '@ditsmod/core';
 import { DictService, I18nErrorMediator, I18nLogMediator, I18nOptions, ISO639 } from '@ditsmod/i18n';
-import { QUERY_PARAMS, RAW_REQ, RawRequest } from '@ditsmod/routing';
+import { QUERY_PARAMS, RAW_REQ, RawRequest } from '@ditsmod/rest';
 
 @injectable()
 export class MyDictService extends DictService {

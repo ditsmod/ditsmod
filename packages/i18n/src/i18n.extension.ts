@@ -8,7 +8,7 @@ import {
   fromSelf,
   Stage1ExtensionMeta,
 } from '@ditsmod/core';
-import { MetadataPerMod3, RoutesExtension } from '@ditsmod/routing';
+import { MetadataPerMod3, RoutesExtension } from '@ditsmod/rest';
 
 import { I18nTransformer } from './i18n-transformer.js';
 import { I18nLogMediator } from './i18n-log-mediator.js';

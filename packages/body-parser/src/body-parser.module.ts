@@ -1,5 +1,5 @@
 import { featureModule, ModuleWithParams } from '@ditsmod/core';
-import { PreRouterExtension, RoutesExtension } from '@ditsmod/routing';
+import { PreRouterExtension, RoutesExtension } from '@ditsmod/rest';
 import { BodyParserGroup } from '@ts-stack/body-parser';
 import { Multer } from '@ts-stack/multer';
 

@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { TestApplication } from '@ditsmod/testing';
 import { Providers, Status } from '@ditsmod/core';
-import { HttpServer } from '@ditsmod/routing';
+import { HttpServer } from '@ditsmod/rest';
 import { BodyParserConfig } from '@ditsmod/body-parser';
 
 import { AppModule } from '#app/app.module.js';

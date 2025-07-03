@@ -1,4 +1,4 @@
-import { CanActivate, NormalizedGuard, RequestContext } from '@ditsmod/routing';
+import { CanActivate, NormalizedGuard, RequestContext } from '@ditsmod/rest';
 import { PerAppService, Status, Injector } from '@ditsmod/core';
 import {
   ComponentsObject,

@@ -1,5 +1,5 @@
 import { Injector, injectable } from '@ditsmod/core';
-import { RequestContext, HttpHandler, HttpInterceptor } from '@ditsmod/routing';
+import { RequestContext, HttpHandler, HttpInterceptor } from '@ditsmod/rest';
 import { BodyParserGroup } from '@ts-stack/body-parser';
 
 import { HTTP_BODY } from './body-parser-config.js';

@@ -1,5 +1,5 @@
 import { reflector } from '@ditsmod/core';
-import { RequestContext, CanActivate } from '@ditsmod/routing';
+import { RequestContext, CanActivate } from '@ditsmod/rest';
 
 import { oasGuard } from '#decorators/oas-guard.js';
 import { isOasGuard } from './type-guards.js';

@@ -1,5 +1,5 @@
 import { Injector } from '@ditsmod/core';
-import { Res } from '@ditsmod/routing';
+import { Res } from '@ditsmod/rest';
 import BunyanLogger from 'bunyan';
 import { jest } from '@jest/globals';
 

@@ -1,6 +1,6 @@
 import supertest from 'supertest';
 import { rootModule } from '@ditsmod/core';
-import { route, RoutingModule, RequestContext, controller, HttpServer } from '@ditsmod/routing';
+import { route, RestModule, RequestContext, controller, HttpServer } from '@ditsmod/rest';
 import { TestApplication } from '@ditsmod/testing';
 
 import credentials from '#mod/providers/credentials.js';
@@ -31,7 +31,7 @@ export class Controller1 {
 
 @rootModule({
   imports: [
-    RoutingModule,
+    RestModule,
     AuthjsModule.withConfig({ secret: 'secret', providers: [credentials] }),
   ],
   controllers: [Controller1],

@@ -1,7 +1,7 @@
 import supertest from 'supertest';
 import { Status, rootModule } from '@ditsmod/core';
-import { controller, RequestContext, RawRequest } from '@ditsmod/routing';
-import { route, RoutingModule, HttpServer } from '@ditsmod/routing';
+import { controller, RequestContext, RawRequest } from '@ditsmod/rest';
+import { route, RestModule, HttpServer } from '@ditsmod/rest';
 import { TestApplication } from '@ditsmod/testing';
 import { BodyParserModule } from '@ditsmod/body-parser';
 
@@ -32,7 +32,7 @@ export class Controller1 {
 }
 
 @rootModule({
-  imports: [RoutingModule, BodyParserModule],
+  imports: [RestModule, BodyParserModule],
   controllers: [Controller1],
 })
 export class AppModule {}

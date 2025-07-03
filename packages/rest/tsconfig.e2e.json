@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist-e2e",
+    "rootDir": "e2e",
+    "baseUrl": ".",
+    "tsBuildInfoFile": "dist-e2e/e2e.tsbuildinfo",
+  },
+  "include": ["e2e"],
+  "references": [
+    { "path": "./tsconfig.build.json" },
+    { "path": "./tsconfig.unit.json" },
+    { "path": "../testing/tsconfig.build.json" },
+    { "path": "../rest-testing/tsconfig.build.json" },
+  ]
+}

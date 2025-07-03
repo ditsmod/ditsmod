@@ -1,5 +1,5 @@
 import { Class, HttpMethod, makePropDecorator } from '@ditsmod/core';
-import { GuardItem, HttpInterceptor } from '@ditsmod/routing';
+import { GuardItem, HttpInterceptor } from '@ditsmod/rest';
 import { XOperationObject } from '@ts-stack/openapi-spec';
 
 /**

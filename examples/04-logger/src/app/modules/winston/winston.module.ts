@@ -1,11 +1,11 @@
 import { Logger, featureModule, Providers } from '@ditsmod/core';
-import { RoutingModule } from '@ditsmod/routing';
+import { RestModule } from '@ditsmod/rest';
 
 import { PatchLogger } from './patch-logger.js';
 import { WinstonController } from './winston.controller.js';
 
 @featureModule({
-  imports: [RoutingModule],
+  imports: [RestModule],
   controllers: [WinstonController],
   providersPerMod: new Providers()
     .useLogConfig({ level: 'debug' })

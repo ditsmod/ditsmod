@@ -1,5 +1,5 @@
 import { AnyObj, inject } from '@ditsmod/core';
-import { controller, route, PATH_PARAMS, Res } from '@ditsmod/routing';
+import { controller, route, PATH_PARAMS, Res } from '@ditsmod/rest';
 import { JwtService } from '@ditsmod/jwt';
 
 @controller()

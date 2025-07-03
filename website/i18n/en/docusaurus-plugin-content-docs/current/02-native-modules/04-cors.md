@@ -99,7 +99,7 @@ When you need the CORS HTTP response to contain cookies, and for those cookies t
 
 ```ts
 import { controller, Res } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+import { route } from '@ditsmod/rest';
 import { CorsService } from '@ditsmod/cors';
 
 @controller()

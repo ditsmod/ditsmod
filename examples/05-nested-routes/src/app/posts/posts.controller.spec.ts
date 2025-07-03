@@ -1,5 +1,5 @@
 import { Injector } from '@ditsmod/core';
-import { Res } from '@ditsmod/routing';
+import { Res } from '@ditsmod/rest';
 
 import { PostsController } from './posts.controller.js';
 

@@ -1,4 +1,4 @@
-import { Res, controller, route } from '@ditsmod/routing';
+import { Res, controller, route } from '@ditsmod/rest';
 import { RequestContextWithSession, SessionCookie } from '@ditsmod/session-cookie';
 
 @controller()

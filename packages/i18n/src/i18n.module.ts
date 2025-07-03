@@ -1,5 +1,5 @@
 import { featureModule } from '@ditsmod/core';
-import { PreRouterExtension, RoutesExtension } from '@ditsmod/routing';
+import { PreRouterExtension, RoutesExtension } from '@ditsmod/rest';
 
 import { DictService } from './dict.service.js';
 import { I18nLogMediator } from './i18n-log-mediator.js';

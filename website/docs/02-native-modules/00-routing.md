@@ -2,9 +2,9 @@
 sidebar_position: 0
 ---
 
-# @ditsmod/routing
+# @ditsmod/rest
 
-В модулі `@ditsmod/routing` реалізується маршрутизатор, що має інтерфейс `Router`:
+В модулі `@ditsmod/rest` реалізується маршрутизатор, що має інтерфейс `Router`:
 
 ```ts
 interface Router {
@@ -40,17 +40,17 @@ interface PathParam {
 Встановлення:
 
 ```bash
-npm i @ditsmod/routing
+npm i @ditsmod/rest
 ```
 
 Підключення:
 
 ```ts
 import { rootModule } from '@ditsmod/core';
-import { RoutingModule } from '@ditsmod/routing';
+import { RestModule } from '@ditsmod/rest';
 
 @rootModule({
-  imports: [RoutingModule],
+  imports: [RestModule],
   // ..
 })
 export class AppModule {}

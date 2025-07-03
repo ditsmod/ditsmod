@@ -218,7 +218,7 @@ TestApplication.createTestApp(AppModule)
   .overrideModuleMeta([]);
 ```
 
-Як бачите, після використання `$use()` інстанс `TestApplication` може використовувати методи плагінів. [Приклад використання такого плагіна в реальному житті][103] можна проглянути в модулі `@ditsmod/routing`.
+Як бачите, після використання `$use()` інстанс `TestApplication` може використовувати методи плагінів. [Приклад використання такого плагіна в реальному житті][103] можна проглянути в модулі `@ditsmod/rest`.
 
 
 ### `TestRoutingPlugin`
@@ -227,7 +227,7 @@ TestApplication.createTestApp(AppModule)
 
 ```ts
 import { Provider } from '@ditsmod/core';
-import { MetadataPerMod3, ROUTES_EXTENSIONS } from '@ditsmod/routing';
+import { MetadataPerMod3, ROUTES_EXTENSIONS } from '@ditsmod/rest';
 import { TestApplication, GroupMetaOverrider } from '@ditsmod/testing';
 
 export class TestRoutingPlugin extends TestApplication {
@@ -249,7 +249,7 @@ export class TestRoutingPlugin extends TestApplication {
 ```ts {14-15}
 import { Provider } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
-import { TestRoutingPlugin } from '@ditsmod/routing-testing';
+import { TestRoutingPlugin } from '@ditsmod/rest-testing';
 
 import { AppModule } from './app.module.js';
 import { Service1, Service2 } from './services.js';
@@ -279,5 +279,5 @@ const server = await TestApplication.createTestApp(AppModule)
 [100]: https://jestjs.io/
 [101]: https://jestjs.io/docs/mock-functions
 [102]: https://github.com/ladjs/supertest
-[103]: https://github.com/ditsmod/ditsmod/blob/c42c834cb9/packages/routing/e2e/main.spec.ts#L39
-[104]: https://github.com/ditsmod/ditsmod/blob/main/packages/routing-testing/src/test-routing.plugin.ts
+[103]: https://github.com/ditsmod/ditsmod/blob/c42c834cb9/packages/rest/e2e/main.spec.ts#L39
+[104]: https://github.com/ditsmod/ditsmod/blob/main/packages/rest-testing/src/test-rest.plugin.ts

@@ -7,7 +7,7 @@
     "paths": {
       "#app/*": ["./src/app/*"],
       "@ditsmod/core": ["../../packages/core/src/index.js"],
-      "@ditsmod/routing": ["../../packages/routing/src/index.js"],
+      "@ditsmod/rest": ["../../packages/rest/src/index.js"],
       "@ditsmod/body-parser": ["../../packages/body-parser/src/index.js"],
       "@ditsmod/testing": ["../../packages/testing/src/index.js"],
     }
@@ -16,7 +16,7 @@
   "references": [
     { "path": "../../packages/body-parser/tsconfig.build.json" },
     { "path": "../../packages/core/tsconfig.build.json" },
-    { "path": "../../packages/routing/tsconfig.build.json" },
+    { "path": "../../packages/rest/tsconfig.build.json" },
     { "path": "../../packages/testing/tsconfig.build.json" },
   ]
 }

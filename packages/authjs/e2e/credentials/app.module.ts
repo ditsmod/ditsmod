@@ -1,5 +1,5 @@
 import { rootModule, inject } from '@ditsmod/core';
-import { controller, route, RoutingModule, RequestContext } from '@ditsmod/routing';
+import { controller, route, RestModule, RequestContext } from '@ditsmod/rest';
 
 import { AuthjsModule } from '#mod/authjs.module.js';
 import { AUTHJS_SESSION } from '#mod/constants.js';
@@ -31,7 +31,7 @@ export class CtxScopedController {
 
 @rootModule({
   imports: [
-    RoutingModule,
+    RestModule,
     AuthjsModule.withConfig({
       token: AuthjsConfig,
       useFactory: [OverriddenAuthConfig, OverriddenAuthConfig.prototype.initAuthjsConfig],

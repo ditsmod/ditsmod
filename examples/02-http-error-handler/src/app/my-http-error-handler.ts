@@ -1,5 +1,5 @@
 import { injectable, isCustomError, Logger, Status } from '@ditsmod/core';
-import { HttpErrorHandler, RequestContext } from '@ditsmod/routing';
+import { HttpErrorHandler, RequestContext } from '@ditsmod/rest';
 import { randomUUID } from 'node:crypto';
 
 @injectable()

@@ -40,7 +40,7 @@ In most cases, the request handler calls the controller method.
 The mapping between the URL and the request handler is based on the metadata attached to the controller methods. A TypeScript class becomes a Ditsmod controller thanks to the `controller` decorator:
 
 ```ts {3}
-import { controller, route } from '@ditsmod/routing';
+import { controller, route } from '@ditsmod/rest';
 
 @controller()
 export class SomeController {
@@ -59,7 +59,7 @@ As can be seen from the previous example, any controller must have:
 2. The HTTP method name (`GET`, `POST`, `PATCH`, etc.).
 3. The URL to which the class method call will be bound (optionally).
 
-The combination of the second and third points must be unique across the entire application. In other words, if you define that `GET` + `/hello` is bound to a specific controller method, this combination must not be reused. Otherwise, the `@ditsmod/routing` module will throw an error with an appropriate message.
+The combination of the second and third points must be unique across the entire application. In other words, if you define that `GET` + `/hello` is bound to a specific controller method, this combination must not be reused. Otherwise, the `@ditsmod/rest` module will throw an error with an appropriate message.
 
 Ditsmod provides controllers in two alternative modes, which differ in particular in the mechanism for passing the HTTP request to the controller method:
 
@@ -73,7 +73,7 @@ The first mode is more convenient and safer when working within the context of t
 By default, Ditsmod works with the controller in injector-scoped mode. This means, first, that a separate controller instance will be created for each HTTP request. Second, any controller method that has a `route` decorator will receive an arbitrary number of arguments from the [DI injector][11]. The following example creates a single route that accepts a `GET` request at `/hello`:
 
 ```ts {5}
-import { controller, route, Res } from '@ditsmod/routing';
+import { controller, route, Res } from '@ditsmod/rest';
 import { Service1 } from './service-1';
 import { Service2 } from './service-2';
 
@@ -97,7 +97,7 @@ What we see here:
 Although in the previous example the class instances were injected into `method1`, we can request these instances in the constructor in the same way:
 
 ```ts {7}
-import { controller, Res, route } from '@ditsmod/routing';
+import { controller, Res, route } from '@ditsmod/rest';
 import { Service1 } from './service-1';
 import { Service2 } from './service-2';
 
@@ -122,13 +122,13 @@ The access modifier in the constructor can be any of the following: `private`, `
 
 #### Routing parameters {#routing-parameters}
 
-To pass path parameters to the router, you need to use a colon before the parameter name. For example, the URL `some-url/:param1/:param2` includes two path parameters. If you are using the `@ditsmod/routing` module for routing, only path parameters determine the routes, while query parameters are not taken into account.
+To pass path parameters to the router, you need to use a colon before the parameter name. For example, the URL `some-url/:param1/:param2` includes two path parameters. If you are using the `@ditsmod/rest` module for routing, only path parameters determine the routes, while query parameters are not taken into account.
 
 To access path or query parameters, you need to use the `inject` decorator along with the `PATH_PARAMS` and `QUERY_PARAMS` tokens:
 
 ```ts {8-9}
 import { inject, AnyObj } from '@ditsmod/core';
-import { controller, route, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/routing';
+import { controller, route, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/rest';
 
 @controller()
 export class SomeController {
@@ -150,7 +150,7 @@ Native Node.js request and response objects can be obtained by tokens, respectiv
 
 ```ts {7-8}
 import { inject } from '@ditsmod/core';
-import { controller, route, RAW_REQ, RAW_RES, RawRequest, RawResponse } from '@ditsmod/routing';
+import { controller, route, RAW_REQ, RAW_RES, RawRequest, RawResponse } from '@ditsmod/rest';
 
 @controller()
 export class HelloWorldController {
@@ -173,7 +173,7 @@ You may also be interested in [how to get the HTTP request body][5].
 To make a controller operate in the context-scoped mode, you need to specify `{ scope: 'ctx' }` in its metadata. Because the controller is instantiated in this mode only once, you will not be able to query in its constructor for class instances that are instantiated on each request. For example, if you request an instance of the `Res` class in the constructor, Ditsmod will throw an error:
 
 ```ts {3,5}
-import { RequestContext, controller, route } from '@ditsmod/routing';
+import { RequestContext, controller, route } from '@ditsmod/rest';
 
 @controller({ scope: 'ctx' })
 export class HelloWorldController {
@@ -189,7 +189,7 @@ export class HelloWorldController {
 The working case will be as follows:
 
 ```ts {3,6}
-import { controller, RequestContext, route } from '@ditsmod/routing';
+import { controller, RequestContext, route } from '@ditsmod/rest';
 
 @controller({ scope: 'ctx' })
 export class HelloWorldController {
@@ -208,7 +208,7 @@ Any controller should only be bound to the current module where it was declared,
 
 ```ts {5}
 import { featureModule } from '@ditsmod/core';
-import { restMetadata } from '@ditsmod/routing';
+import { restMetadata } from '@ditsmod/rest';
 import { SomeController } from './some.controller.js';
 
 @restMetadata({ controllers: [SomeController] })
@@ -220,7 +220,7 @@ After binding controllers to the host module, in order for Ditsmod to recognize 
 
 ```ts {6,10-15}
 import { featureModule } from '@ditsmod/core';
-import { restMetadata } from '@ditsmod/routing';
+import { restMetadata } from '@ditsmod/rest';
 import { SomeModule } from './some.module.js';
 
 @restMetadata({
@@ -289,7 +289,7 @@ To be able to use the newly created service classes, they must be passed in the 
 
 ```ts {9-10}
 import { featureModule } from '@ditsmod/core';
-import { restMetadata } from '@ditsmod/routing';
+import { restMetadata } from '@ditsmod/rest';
 
 import { FirstService } from './first.service.js';
 import { SecondService } from './second.service.js';
@@ -307,7 +307,7 @@ export class SomeModule {}
 Similarly, the services is passed in the controller metadata:
 
 ```ts {8-9}
-import { controller, Res, route } from '@ditsmod/routing';
+import { controller, Res, route } from '@ditsmod/rest';
 
 import { FirstService } from './first.service.js';
 import { SecondService } from './second.service.js';

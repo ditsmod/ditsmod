@@ -1,4 +1,4 @@
-import { Res, controller } from '@ditsmod/routing';
+import { Res, controller } from '@ditsmod/rest';
 import { oasRoute } from '@ditsmod/openapi';
 
 import { BearerGuard } from './bearer.guard.js';

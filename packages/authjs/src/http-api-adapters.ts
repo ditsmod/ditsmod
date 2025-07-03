@@ -1,5 +1,5 @@
 import { AnyObj } from '@ditsmod/core';
-import { RequestContext } from '@ditsmod/routing';
+import { RequestContext } from '@ditsmod/rest';
 
 /**
  * Adapts Ditsmod Request to a Web Request, returning the Web Request.

@@ -61,7 +61,7 @@ export class SomeModule {}
 
 ```ts {8}
 import { controller, Res } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+import { route } from '@ditsmod/rest';
 import { AuthGuard } from './auth.guard.js';
 
 @controller()
@@ -81,7 +81,7 @@ export class SomeController {
 
 ```ts {9}
 import { controller, Res } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+import { route } from '@ditsmod/rest';
 
 import { PermissionsGuard } from './permissions.guard.js';
 import { Permission } from './permission.js';
@@ -135,7 +135,7 @@ export const requirePermissions = createHelperForGuardWithParams<Permission>(Per
 
 ```ts {9}
 import { controller, Res } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+import { route } from '@ditsmod/rest';
 
 import { requirePermissions } from '../auth/guards-utils.js';
 import { Permission } from '../auth/types.js';
@@ -155,7 +155,7 @@ export class SomeController {
 
 ```ts {16}
 import { featureModule } from '@ditsmod/core';
-import { restMetadata } from '@ditsmod/routing';
+import { restMetadata } from '@ditsmod/rest';
 
 import { OtherModule } from '../other/other.module.js';
 import { AuthModule } from '../auth/auth.module.js';

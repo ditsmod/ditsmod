@@ -1,4 +1,4 @@
-import { Application } from '@ditsmod/routing';
+import { Application } from '@ditsmod/rest';
 import { AppModule } from './app/app.module.js';
 
 const authSecret = process.env.AUTH_SECRET;

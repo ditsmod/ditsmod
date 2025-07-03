@@ -11,6 +11,6 @@
   "references": [
     { "path": "../../packages/body-parser/tsconfig.build.json" },
     { "path": "../../packages/core/tsconfig.build.json" },
-    { "path": "../../packages/routing/tsconfig.build.json" },
+    { "path": "../../packages/rest/tsconfig.build.json" },
   ]
 }

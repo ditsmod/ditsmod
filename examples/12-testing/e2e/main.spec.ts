@@ -1,6 +1,6 @@
 import request from 'supertest';
-import { HttpServer } from '@ditsmod/routing';
-import { HttpErrorHandler } from '@ditsmod/routing';
+import { HttpServer } from '@ditsmod/rest';
+import { HttpErrorHandler } from '@ditsmod/rest';
 import { TestApplication } from '@ditsmod/testing';
 import { jest } from '@jest/globals';
 

@@ -1,6 +1,6 @@
 import supertest from 'supertest';
 import { rootModule } from '@ditsmod/core';
-import { controller, route, RoutingModule, applyResponse, Res, HttpServer } from '@ditsmod/routing';
+import { controller, route, RestModule, applyResponse, Res, HttpServer } from '@ditsmod/rest';
 import { TestApplication } from '@ditsmod/testing';
 
 let webResponse: Response = new Response();
@@ -22,7 +22,7 @@ export class Controller1 {
 }
 
 @rootModule({
-  imports: [RoutingModule],
+  imports: [RestModule],
   controllers: [Controller1],
 })
 export class AppModule {}

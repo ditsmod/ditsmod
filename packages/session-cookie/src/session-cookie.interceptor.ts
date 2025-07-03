@@ -1,5 +1,5 @@
 import { injectable, optional } from '@ditsmod/core';
-import { HttpHandler, HttpInterceptor } from '@ditsmod/routing';
+import { HttpHandler, HttpInterceptor } from '@ditsmod/rest';
 
 import { RequestContextWithSession, SessionCookieOptions } from './types.js';
 import { SessionCookie } from './session-cookie.js';

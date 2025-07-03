@@ -74,7 +74,7 @@ For example, if `SomeService` is exported from the `FirstModule`, then this serv
 
 ```ts {10}
 import { featureModule } from '@ditsmod/core';
-import { restMetadata } from '@ditsmod/routing';
+import { restMetadata } from '@ditsmod/rest';
 import { FirstModule } from './first.module';
 
 @featureModule({
@@ -116,7 +116,7 @@ To reduce the length of the code when importing an object of this type, it is so
 
 ```ts {10}
 import { featureModule } from '@ditsmod/core';
-import { restMetadata } from '@ditsmod/routing';
+import { restMetadata } from '@ditsmod/rest';
 import { FirstModule } from './first.module';
 
 @featureModule({
@@ -135,7 +135,7 @@ export class SecondModule {}
 If you declare `FirstModule` and knew that this module would make sense to be imported many times into different modules with different prefixes, then in this case you could write a static method in this class that returns an object specially designed for import:
 
 ```ts
-import { restMetadata } from '@ditsmod/routing';
+import { restMetadata } from '@ditsmod/rest';
 // ...
 export class FirstModule {
   static withPrefix(path: string) {

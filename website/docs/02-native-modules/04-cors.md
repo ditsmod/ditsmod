@@ -99,7 +99,7 @@ export class SomeModule {}
 
 ```ts
 import { controller, Res } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+import { route } from '@ditsmod/rest';
 import { CorsService } from '@ditsmod/cors';
 
 @controller()

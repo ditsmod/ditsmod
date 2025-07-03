@@ -3,7 +3,7 @@
     "outDir": "dist",
     "paths": {
       "@ditsmod/core": ["../core/src/index.js"],
-      "@ditsmod/routing": ["../routing/src/index.js"],
+      "@ditsmod/rest": ["../rest/src/index.js"],
       "#mod/*": ["./src/*"],
     },
     "module": "nodenext",
@@ -29,7 +29,7 @@
   "references": [
     { "path": "../core/tsconfig.build.json" },
     { "path": "../body-parser/tsconfig.build.json" },
-    { "path": "../routing/tsconfig.build.json" },
+    { "path": "../rest/tsconfig.build.json" },
     { "path": "../testing/tsconfig.build.json" },
   ]
 }

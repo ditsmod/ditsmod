@@ -1,5 +1,5 @@
 import { Injector, Logger } from '@ditsmod/core';
-import { Res } from '@ditsmod/routing';
+import { Res } from '@ditsmod/rest';
 import { jest } from '@jest/globals';
 
 import { SomeController } from './some.controller.js';

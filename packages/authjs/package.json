@@ -52,7 +52,7 @@
   "peerDependencies": {
     "@ditsmod/body-parser": "^3.0.0-alpha.3",
     "@ditsmod/core": "^3.0.0-alpha.3",
-    "@ditsmod/routing": "^3.0.0-alpha.3"
+    "@ditsmod/rest": "^3.0.0-alpha.3"
   },
   "dependencies": {
     "@auth/core": "^0.37.4"

@@ -40,7 +40,7 @@ if (handle) {
 Мапінг між URL та обробником запиту формується на основі метаданих, які закріпляються за методами контролерів. TypeScript клас стає контролером Ditsmod завдяки декоратору `controller`:
 
 ```ts {3}
-import { controller, route } from '@ditsmod/routing';
+import { controller, route } from '@ditsmod/rest';
 
 @controller()
 export class SomeController {
@@ -59,7 +59,7 @@ export class SomeController {
 2. назву HTTP-методу (`GET`, `POST`, `PATCH` і т.д.);
 3. URL до якого буде прив'язуватись виклик метода класу (опціонально).
 
-Комбінація другого та третього пункту повинна бути унікальною на весь застосунок. Тобто, якщо ви один раз визначили що `GET` + `/hello` будуть прив'язані до певного методу контролера, то другий раз ця сама комбінація не повинна повторюватись. В противному разі, модуль `@ditsmod/routing` кине помилку з відповідним повідомленням.
+Комбінація другого та третього пункту повинна бути унікальною на весь застосунок. Тобто, якщо ви один раз визначили що `GET` + `/hello` будуть прив'язані до певного методу контролера, то другий раз ця сама комбінація не повинна повторюватись. В противному разі, модуль `@ditsmod/rest` кине помилку з відповідним повідомленням.
 
 Ditsmod забезпечує роботу контролерів у двох альтернативних режимах, які зокрема відрізняються механізмом передачі HTTP-запиту у метод контролера:
 
@@ -73,7 +73,7 @@ Ditsmod забезпечує роботу контролерів у двох а�
 По-дефолту, Ditsmod працює з контролером у injector-scoped режимі. Це означає, по-перше, що для кожного HTTP-запиту буде створюватись окремий інстанс контролеру. По-друге, будь-який метод контролера, який має декоратор `route`, буде отримувати довільну кількість аргументів від [DI-інжектора][11]. В наступному прикладі створено єдиний маршрут, що приймає `GET` запит за адресою `/hello`:
 
 ```ts {5}
-import { controller, route, Res } from '@ditsmod/routing';
+import { controller, route, Res } from '@ditsmod/rest';
 import { Service1 } from './service-1';
 import { Service2 } from './service-2';
 
@@ -97,7 +97,7 @@ export class HelloWorldController {
 Хоча в попередньому прикладі інстанси класів запитувались через `method1`, але аналогічним чином ми можемо запитати ці інстанси і в конструкторі:
 
 ```ts {7}
-import { controller, Res, route } from '@ditsmod/routing';
+import { controller, Res, route } from '@ditsmod/rest';
 import { Service1 } from './service-1';
 import { Service2 } from './service-2';
 
@@ -122,13 +122,13 @@ export class HelloWorldController {
 
 #### Параметри в роутінгу {#routing-parameters}
 
-Щоб передати path-параметри для роутера, необхідно використовувати двокрапку перед іменем параметра. Наприклад, в URL `some-url/:param1/:param2` передано два path-параметри. Якщо для роутінгу ви використовуєте модуль `@ditsmod/routing`, лише path-параметри визначають роути, а query-параметри не беруться до уваги.
+Щоб передати path-параметри для роутера, необхідно використовувати двокрапку перед іменем параметра. Наприклад, в URL `some-url/:param1/:param2` передано два path-параметри. Якщо для роутінгу ви використовуєте модуль `@ditsmod/rest`, лише path-параметри визначають роути, а query-параметри не беруться до уваги.
 
 Щоб отримати path-параметри чи query-параметри, доведеться скористатись декоратором `inject` та токенами `PATH_PARAMS` і `QUERY_PARAMS`:
 
 ```ts {8-9}
 import { inject, AnyObj } from '@ditsmod/core';
-import { controller, route, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/routing';
+import { controller, route, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/rest';
 
 @controller()
 export class SomeController {
@@ -150,7 +150,7 @@ export class SomeController {
 
 ```ts {7-8}
 import { inject } from '@ditsmod/core';
-import { controller, route, RAW_REQ, RAW_RES, RawRequest, RawResponse } from '@ditsmod/routing';
+import { controller, route, RAW_REQ, RAW_RES, RawRequest, RawResponse } from '@ditsmod/rest';
 
 @controller()
 export class HelloWorldController {
@@ -173,7 +173,7 @@ export class HelloWorldController {
 Щоб контролер працював в режимі context-scoped, в його метаданих потрібно вказати `{ scope: 'ctx' }`. Через те, що інстанс контролера у цьому режимі створюється єдиний раз, ви не зможете запитувати у його конструкторі інстанси класів, які створюються за кожним запитом. Наприклад, якщо в конструкторі ви запросите інстанс класу `Res`, Ditsmod кине помилку:
 
 ```ts {3,5}
-import { RequestContext, controller, route } from '@ditsmod/routing';
+import { RequestContext, controller, route } from '@ditsmod/rest';
 
 @controller({ scope: 'ctx' })
 export class HelloWorldController {
@@ -189,7 +189,7 @@ export class HelloWorldController {
 Робочий варіант буде таким:
 
 ```ts {3,6}
-import { controller, RequestContext, route } from '@ditsmod/routing';
+import { controller, RequestContext, route } from '@ditsmod/rest';
 
 @controller({ scope: 'ctx' })
 export class HelloWorldController {
@@ -208,7 +208,7 @@ export class HelloWorldController {
 
 ```ts {5}
 import { featureModule } from '@ditsmod/core';
-import { restMetadata } from '@ditsmod/routing';
+import { restMetadata } from '@ditsmod/rest';
 import { SomeController } from './some.controller.js';
 
 @restMetadata({ controllers: [SomeController] })
@@ -220,7 +220,7 @@ export class SomeModule {}
 
 ```ts {6,10-15}
 import { featureModule } from '@ditsmod/core';
-import { restMetadata } from '@ditsmod/routing';
+import { restMetadata } from '@ditsmod/rest';
 import { SomeModule } from './some.module.js';
 
 @restMetadata({
@@ -289,7 +289,7 @@ export class SecondService {
 
 ```ts {9-10}
 import { featureModule } from '@ditsmod/core';
-import { restMetadata } from '@ditsmod/routing';
+import { restMetadata } from '@ditsmod/rest';
 
 import { FirstService } from './first.service.js';
 import { SecondService } from './second.service.js';
@@ -307,7 +307,7 @@ export class SomeModule {}
 Аналогічно сервіси передаються у метадані контролера:
 
 ```ts {8-9}
-import { controller, Res, route } from '@ditsmod/routing';
+import { controller, Res, route } from '@ditsmod/rest';
 
 import { FirstService } from './first.service.js';
 import { SecondService } from './second.service.js';

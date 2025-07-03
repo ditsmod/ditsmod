@@ -1,5 +1,5 @@
 import { featureModule, ModuleWithParams } from '@ditsmod/core';
-import { RoutesExtension } from '@ditsmod/routing';
+import { RoutesExtension } from '@ditsmod/rest';
 
 import { VersionsExtension } from './versions.extension.js';
 

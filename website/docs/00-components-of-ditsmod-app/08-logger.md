@@ -185,7 +185,7 @@ export class AppModule {}
 
 ```ts
 import { AnyObj, controller, inject, Logger, LogLevel, QUERY_PARAMS, Res } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+import { route } from '@ditsmod/rest';
 
 import { requirePermissions } from '../auth/guards-utils.js';
 import { Permission } from '../auth/types.js';

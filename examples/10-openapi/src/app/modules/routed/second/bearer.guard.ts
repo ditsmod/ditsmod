@@ -1,7 +1,7 @@
 import { Injector, Status } from '@ditsmod/core';
 import { JwtService, VerifyErrors, JWT_PAYLOAD } from '@ditsmod/jwt';
 import { oasGuard } from '@ditsmod/openapi';
-import { CanActivate, RequestContext } from '@ditsmod/routing';
+import { CanActivate, RequestContext } from '@ditsmod/rest';
 
 /**
  * If user successfully passed this guard, you can use JWT payload by `JwtPayload` token.

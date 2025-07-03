@@ -1,5 +1,5 @@
 import { Status } from '@ditsmod/core';
-import { RequestContext, CanActivate, guard } from '@ditsmod/routing';
+import { RequestContext, CanActivate, guard } from '@ditsmod/rest';
 
 const basicAuth = process.env.BASIC_AUTH;
 if (!basicAuth) {

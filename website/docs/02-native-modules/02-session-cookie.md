@@ -39,7 +39,7 @@ export class AppModule {}
 
 ```ts
 import { controller, Res } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+import { route } from '@ditsmod/rest';
 import { SessionCookie } from '@ditsmod/session-cookie';
 
 @controller()

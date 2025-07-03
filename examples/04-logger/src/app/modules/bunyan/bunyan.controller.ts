@@ -1,4 +1,4 @@
-import { Res, controller, route } from '@ditsmod/routing';
+import { Res, controller, route } from '@ditsmod/rest';
 import BunyanLogger from 'bunyan';
 
 @controller()

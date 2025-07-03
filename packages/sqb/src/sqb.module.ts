@@ -1,5 +1,5 @@
 import { featureModule, ModuleWithParams } from '@ditsmod/core';
-import { RoutesExtension } from '@ditsmod/routing';
+import { RoutesExtension } from '@ditsmod/rest';
 
 import { SqbExtension } from './sqb.extension.js';
 

@@ -1,10 +1,10 @@
 import { featureModule, Providers } from '@ditsmod/core';
-import { RoutingModule } from '@ditsmod/routing';
+import { RestModule } from '@ditsmod/rest';
 
 import { SomeController } from './some.controller.js';
 
 @featureModule({
-  imports: [RoutingModule],
+  imports: [RestModule],
   controllers: [SomeController],
   providersPerMod: new Providers().useLogConfig({ level: 'trace' }),
 })

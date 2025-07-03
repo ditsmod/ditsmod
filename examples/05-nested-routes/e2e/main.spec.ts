@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { TestApplication } from '@ditsmod/testing';
-import { HttpServer } from '@ditsmod/routing';
+import { HttpServer } from '@ditsmod/rest';
 
 import { AppModule } from '#app/app.module.js';
 

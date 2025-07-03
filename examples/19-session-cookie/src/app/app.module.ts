@@ -1,5 +1,5 @@
 import { Providers, rootModule } from '@ditsmod/core';
-import { RoutingModule } from '@ditsmod/routing';
+import { RestModule } from '@ditsmod/rest';
 import { SessionCookieModule } from '@ditsmod/session-cookie';
 
 import { HelloWorldController, HelloWorldController2 } from './hello-world.controller.js';
@@ -10,7 +10,7 @@ const sessionModuleWithParams = SessionCookieModule.withParams({
 });
 
 @rootModule({
-  imports: [RoutingModule, sessionModuleWithParams],
+  imports: [RestModule, sessionModuleWithParams],
   controllers: [HelloWorldController, HelloWorldController2],
   providersPerApp: new Providers().useLogConfig({ level: 'info' }),
   exports: [sessionModuleWithParams],

@@ -17,7 +17,7 @@ import {
   MetadataPerMod3,
   RouteMeta,
   RoutesExtension,
-} from '@ditsmod/routing';
+} from '@ditsmod/rest';
 
 import { CorsInterceptor } from './cors.interceptor.js';
 import { ALLOW_METHODS } from './constans.js';

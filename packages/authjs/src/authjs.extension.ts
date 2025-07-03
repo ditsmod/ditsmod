@@ -7,7 +7,7 @@ import {
   Injector,
   Stage1ExtensionMeta,
 } from '@ditsmod/core';
-import { MetadataPerMod3, RoutesExtension } from '@ditsmod/routing';
+import { MetadataPerMod3, RoutesExtension } from '@ditsmod/rest';
 import { LoggerInstance } from '@auth/core/types';
 
 import { AuthjsConfig } from '#mod/authjs.config.js';

@@ -1,5 +1,5 @@
 import { rootModule, Providers } from '@ditsmod/core';
-import { HttpErrorHandler } from '@ditsmod/routing';
+import { HttpErrorHandler } from '@ditsmod/rest';
 
 import { MyHttpErrorHandler } from './my-http-error-handler.js';
 import { SomeModule } from './modules/some/some.module.js';

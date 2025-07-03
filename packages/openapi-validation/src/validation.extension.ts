@@ -1,5 +1,5 @@
 import { Extension, ExtensionsManager, PerAppService, injectable, optional } from '@ditsmod/core';
-import { HTTP_INTERCEPTORS, RoutesExtension } from '@ditsmod/routing';
+import { HTTP_INTERCEPTORS, RoutesExtension } from '@ditsmod/rest';
 import { isReferenceObject } from '@ditsmod/openapi';
 
 import { ValidationRouteMeta } from './types.js';

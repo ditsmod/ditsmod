@@ -9,7 +9,7 @@ import {
   Class,
   MetadataPerMod2,
 } from '@ditsmod/core';
-import { ControllerMetadata, ControllerRawMetadata1, isCtrlDecor, MetadataPerMod3, RouteMeta, RoutesExtension } from '@ditsmod/routing';
+import { ControllerMetadata, ControllerRawMetadata1, isCtrlDecor, MetadataPerMod3, RouteMeta, RoutesExtension } from '@ditsmod/rest';
 import { ReferenceObject, XOperationObject, XParameterObject } from '@ts-stack/openapi-spec';
 
 import { isOasRoute, isReferenceObject } from '#utils/type-guards.js';

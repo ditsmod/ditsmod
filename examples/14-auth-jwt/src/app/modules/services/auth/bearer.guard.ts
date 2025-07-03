@@ -1,5 +1,5 @@
 import { Injector } from '@ditsmod/core';
-import { CanActivate, guard, RequestContext } from '@ditsmod/routing';
+import { CanActivate, guard, RequestContext } from '@ditsmod/rest';
 import { JwtService, JWT_PAYLOAD, VerifyErrors } from '@ditsmod/jwt';
 
 @guard()

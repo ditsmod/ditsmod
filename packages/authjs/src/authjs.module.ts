@@ -1,5 +1,5 @@
 import { featureModule, isProvider, ModuleWithParams, Provider } from '@ditsmod/core';
-import { RoutesExtension, RoutingModule, UseInterceptorExtension } from '@ditsmod/routing';
+import { RoutesExtension, RestModule, UseInterceptorExtension } from '@ditsmod/rest';
 import { BodyParserModule, BodyParserExtension } from '@ditsmod/body-parser';
 
 import { AUTHJS_SESSION } from './constants.js';
@@ -15,7 +15,7 @@ import { AuthjsConfig } from './authjs.config.js';
  * [1]: https://authjs.dev/
  */
 @featureModule({
-  imports: [RoutingModule, BodyParserModule],
+  imports: [RestModule, BodyParserModule],
   providersPerMod: [AuthjsLogMediator],
   providersPerRou: [{ token: AuthjsGuard, useClass: AuthjsPerRouGuard }],
   providersPerReq: [AuthjsGuard, { token: AUTHJS_SESSION }],

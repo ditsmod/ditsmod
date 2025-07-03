@@ -1,7 +1,7 @@
 import supertest from 'supertest';
 import { Status } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
-import { HttpServer } from '@ditsmod/routing';
+import { HttpServer } from '@ditsmod/rest';
 
 import { AppModule } from './app.module.js';
 

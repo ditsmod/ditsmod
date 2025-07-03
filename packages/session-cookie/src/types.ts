@@ -1,4 +1,4 @@
-import { RequestContext } from '@ditsmod/routing';
+import { RequestContext } from '@ditsmod/rest';
 import { CookieOptions } from '@ts-stack/cookies';
 import { SessionCookie } from './session-cookie.js';
 

@@ -1,0 +1,44 @@
+{
+  "name": "@ditsmod/rest-testing",
+  "type": "module",
+  "version": "3.0.0-alpha.3",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ditsmod/ditsmod.git"
+  },
+  "description": "Ditsmod module to support testing for @ditsmod/rest module",
+  "module": "dist/index.js",
+  "exports": {
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b tsconfig.build.json",
+    "clean": "rm -rf dist*",
+    "test": "tsc -b tsconfig.unit.json && vitest"
+  },
+  "keywords": [
+    "ditsmod",
+    "testing"
+  ],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "@ditsmod/core": "^3.0.0-alpha.3",
+    "@ditsmod/rest": "^3.0.0-alpha.3",
+    "@ditsmod/testing": "^3.0.0-alpha.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "jest": "^30.0.0",
+    "npm-run-all": "*",
+    "typescript": "*"
+  }
+}

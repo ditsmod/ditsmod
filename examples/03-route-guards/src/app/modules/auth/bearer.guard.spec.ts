@@ -1,5 +1,5 @@
 import { Injector } from '@ditsmod/core';
-import { RequestContext } from '@ditsmod/routing';
+import { RequestContext } from '@ditsmod/rest';
 
 import { BearerGuard } from './bearer.guard.js';
 import { SESSION } from './types.js';

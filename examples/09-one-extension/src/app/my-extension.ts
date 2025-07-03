@@ -1,5 +1,5 @@
 import { injectable, Extension, ExtensionsManager, Logger } from '@ditsmod/core';
-import { RoutesExtension } from '@ditsmod/routing';
+import { RoutesExtension } from '@ditsmod/rest';
 
 @injectable()
 export class MyExtension implements Extension<void> {

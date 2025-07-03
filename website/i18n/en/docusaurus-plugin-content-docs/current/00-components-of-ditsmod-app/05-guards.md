@@ -61,7 +61,7 @@ The guards are passed to the controllers in the array in the third parameter of 
 
 ```ts {7}
 import { controller, Res } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+import { route } from '@ditsmod/rest';
 import { AuthGuard } from './auth.guard.js';
 
 @controller()
@@ -81,7 +81,7 @@ Let's consider such an example:
 
 ```ts {9}
 import { controller, Res } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+import { route } from '@ditsmod/rest';
 
 import { PermissionsGuard } from './permissions.guard.js';
 import { Permission } from './permission.js';
@@ -135,7 +135,7 @@ In this example, `PermissionsGuard` is passed as an argument, which accepts para
 
 ```ts {9}
 import { controller, Res } from '@ditsmod/core';
-import { route } from '@ditsmod/routing';
+import { route } from '@ditsmod/rest';
 
 import { requirePermissions } from '../auth/guards-utils.js';
 import { Permission } from '../auth/types.js';
@@ -155,7 +155,7 @@ You can also centrally set guards at the module level:
 
 ```ts {16}
 import { featureModule } from '@ditsmod/core';
-import { restMetadata } from '@ditsmod/routing';
+import { restMetadata } from '@ditsmod/rest';
 
 import { OtherModule } from '../other/other.module.js';
 import { AuthModule } from '../auth/auth.module.js';

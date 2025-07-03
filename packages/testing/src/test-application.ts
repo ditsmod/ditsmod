@@ -9,7 +9,7 @@ import {
   ModRefId,
   Provider,
 } from '@ditsmod/core';
-import { RoutingApplication } from '@ditsmod/routing';
+import { RoutingApplication } from '@ditsmod/rest';
 
 import { GroupMetaOverrider, Meta } from './types.js';
 import { TestAppInitializer } from './test-app-initializer.js';

@@ -1,7 +1,7 @@
 import { injectable, Injector, skipSelf, Status, CustomError } from '@ditsmod/core';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
 import { DictService } from '@ditsmod/i18n';
-import { RawRequest, RawResponse, RequestContext, HttpHandler, HttpInterceptor, RouteMeta } from '@ditsmod/routing';
+import { RawRequest, RawResponse, RequestContext, HttpHandler, HttpInterceptor, RouteMeta } from '@ditsmod/rest';
 
 import { ValidationRouteMeta } from './types.js';
 import { AssertDict } from './locales/current/_base-en/assert.dict.js';

@@ -1,5 +1,5 @@
 import { featureModule, ModuleWithParams, optional } from '@ditsmod/core';
-import { PreRouterExtension, RoutesExtension } from '@ditsmod/routing';
+import { PreRouterExtension, RoutesExtension } from '@ditsmod/rest';
 
 import { SessionCookie } from './session-cookie.js';
 import { SessionLogMediator } from './session-log-mediator.js';

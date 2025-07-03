@@ -1,6 +1,6 @@
 import { Options } from 'ajv';
 import { featureModule, ModuleWithParams, Providers, Class } from '@ditsmod/core';
-import { PreRouterExtension, RoutesExtension } from '@ditsmod/routing';
+import { PreRouterExtension, RoutesExtension } from '@ditsmod/rest';
 import { DictGroup, Dictionary, I18nModule, I18nProviders, I18N_TRANSLATIONS } from '@ditsmod/i18n';
 import { BodyParserExtension } from '@ditsmod/body-parser';
 

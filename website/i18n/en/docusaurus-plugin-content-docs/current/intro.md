@@ -38,7 +38,7 @@ app.listen(3000, '0.0.0.0');
 
 ```ts
 import { rootModule } from '@ditsmod/core';
-import { route, restMetadata, RoutingModule, controller, Application } from '@ditsmod/routing';
+import { route, restMetadata, RestModule, controller, Application } from '@ditsmod/rest';
 
 @controller()
 class ExampleController {
@@ -49,7 +49,7 @@ class ExampleController {
 }
 
 @restMetadata({ controllers: [ExampleController] })
-@rootModule({ imports: [RoutingModule] })
+@rootModule({ imports: [RestModule] })
 class AppModule {}
 
 const app = await Application.create(AppModule);
@@ -164,7 +164,7 @@ Let's look at the `src/main.ts` file:
 
 ```ts
 import { ServerOptions } from 'node:http';
-import { Application } from '@ditsmod/routing';
+import { Application } from '@ditsmod/rest';
 
 import { AppModule } from './app/app.module.js';
 import { checkCliAndSetPort } from './app/utils/check-cli-and-set-port.js';

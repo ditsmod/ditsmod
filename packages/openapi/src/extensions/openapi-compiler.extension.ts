@@ -21,7 +21,7 @@ import {
   XSecurityRequirementObject,
 } from '@ts-stack/openapi-spec';
 import { stringify } from 'yaml';
-import { MetadataPerMod3, NormalizedGuard, RoutesExtension } from '@ditsmod/routing';
+import { MetadataPerMod3, NormalizedGuard, RoutesExtension } from '@ditsmod/rest';
 
 import { OasRouteMeta } from '#types/oas-route-meta.js';
 import { DEFAULT_OAS_OBJECT, defaultForNonOasGuard } from '#constants';

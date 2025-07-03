@@ -1,5 +1,5 @@
 import { Injector } from '@ditsmod/core';
-import { RawRequest, RawResponse, RAW_REQ, RAW_RES } from '@ditsmod/routing';
+import { RawRequest, RawResponse, RAW_REQ, RAW_RES } from '@ditsmod/rest';
 import { jest } from '@jest/globals';
 
 import { SessionCookie } from './session-cookie.js';

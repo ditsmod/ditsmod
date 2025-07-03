@@ -11,7 +11,7 @@
   "references": [
     { "path": "../../packages/body-parser/tsconfig.build.json" },
     { "path": "../../packages/core/tsconfig.build.json" },
-    { "path": "../../packages/routing/tsconfig.build.json" },
+    { "path": "../../packages/rest/tsconfig.build.json" },
     { "path": "../../packages/openapi/tsconfig.build.json" },
     { "path": "../../packages/i18n/tsconfig.build.json" },
     { "path": "../../packages/openapi-validation/tsconfig.build.json" },

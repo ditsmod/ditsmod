@@ -1,11 +1,11 @@
 import { Providers, rootModule } from '@ditsmod/core';
-import { RoutingModule } from '@ditsmod/routing';
+import { RestModule } from '@ditsmod/rest';
 import { CorsModule } from '@ditsmod/cors';
 
 import { FirstController, SecondController } from './controllers.js';
 
 @rootModule({
-  imports: [RoutingModule, CorsModule.withParams({ origin: 'https://example.com' })],
+  imports: [RestModule, CorsModule.withParams({ origin: 'https://example.com' })],
   controllers: [FirstController, SecondController],
   providersPerApp: new Providers().useLogConfig({ level: 'info' }),
 })

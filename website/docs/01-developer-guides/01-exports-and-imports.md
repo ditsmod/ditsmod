@@ -74,7 +74,7 @@ export class SecondModule {}
 
 ```ts {10}
 import { featureModule } from '@ditsmod/core';
-import { restMetadata } from '@ditsmod/routing';
+import { restMetadata } from '@ditsmod/rest';
 import { FirstModule } from './first.module';
 
 @featureModule({
@@ -116,7 +116,7 @@ interface ModuleParamItem<T extends AnyObj = AnyObj> {
 
 ```ts {10}
 import { featureModule } from '@ditsmod/core';
-import { restMetadata } from '@ditsmod/routing';
+import { restMetadata } from '@ditsmod/rest';
 import { FirstModule } from './first.module';
 
 @featureModule({
@@ -135,7 +135,7 @@ export class SecondModule {}
 Якщо б ви оголошували `FirstModule` і знали, що цей модуль є сенс імпортувати багато разів в різні модулі з різними префіксами, в такому разі в даному класі можна написати статичний метод, що повертає об'єкт, спеціально призначений для імпорту:
 
 ```ts
-import { restMetadata } from '@ditsmod/routing';
+import { restMetadata } from '@ditsmod/rest';
 // ...
 export class FirstModule {
   static withPrefix(path: string) {

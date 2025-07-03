@@ -1,6 +1,6 @@
 import supertest from 'supertest';
 import { Status, rootModule } from '@ditsmod/core';
-import { route, controller, RoutingModule, Req, HttpServer } from '@ditsmod/routing';
+import { route, controller, RestModule, Req, HttpServer } from '@ditsmod/rest';
 import { TestApplication } from '@ditsmod/testing';
 
 const sessionJson = {
@@ -47,7 +47,7 @@ export class Controller1 {
 }
 
 @rootModule({
-  imports: [RoutingModule],
+  imports: [RestModule],
   controllers: [Controller1],
 })
 export class AppModule {}

@@ -94,7 +94,7 @@ Depending on whether the controller works [in context-scoped or injector-scoped 
 
   ```ts {12}
   import { controller, Res, inject } from '@ditsmod/core';
-  import { route } from '@ditsmod/routing';
+  import { route } from '@ditsmod/rest';
   import { HTTP_BODY } from '@ditsmod/body-parser';
 
   interface Body {
@@ -113,7 +113,7 @@ Depending on whether the controller works [in context-scoped or injector-scoped 
 
   ```ts {7}
   import { controller, RequestContext } from '@ditsmod/core';
-  import { route } from '@ditsmod/routing';
+  import { route } from '@ditsmod/rest';
 
   @controller({ scope: 'ctx' })
   export class SomeController {
@@ -153,7 +153,7 @@ Depending on whether the controller works [in injector-scope or context-scope mo
   ```ts {10}
   import { createWriteStream } from 'node:fs';
   import { controller, Res } from '@ditsmod/core';
-  import { route } from '@ditsmod/routing';
+  import { route } from '@ditsmod/rest';
   import { MulterParsedForm, MulterParser } from '@ditsmod/body-parser';
 
   @controller()
@@ -186,7 +186,7 @@ Depending on whether the controller works [in injector-scope or context-scope mo
   ```ts {8,12}
   import { createWriteStream } from 'node:fs';
   import { controller, RequestContext } from '@ditsmod/core';
-  import { route } from '@ditsmod/routing';
+  import { route } from '@ditsmod/rest';
   import { MulterParsedForm, MulterCtxParser } from '@ditsmod/body-parser';
 
   @controller({ scope: 'ctx' })

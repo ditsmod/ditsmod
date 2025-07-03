@@ -1,11 +1,11 @@
 import { featureModule } from '@ditsmod/core';
-import { RoutingModule } from '@ditsmod/routing';
+import { RestModule } from '@ditsmod/rest';
 
 import { SomeLogMediator } from './some-log-mediator.js';
 import { SomeService } from './some.service.js';
 
 @featureModule({
-  imports: [RoutingModule],
+  imports: [RestModule],
   providersPerMod: [SomeLogMediator, SomeService],
   exports: [SomeService]
 })

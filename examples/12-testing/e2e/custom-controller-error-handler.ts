@@ -1,5 +1,5 @@
 import { injectable, Logger } from '@ditsmod/core';
-import { DefaultHttpErrorHandler, RequestContext } from '@ditsmod/routing';
+import { DefaultHttpErrorHandler, RequestContext } from '@ditsmod/rest';
 
 import { ErrorContainer } from './error-container.js';
 

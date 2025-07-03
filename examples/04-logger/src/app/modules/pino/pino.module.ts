@@ -1,11 +1,11 @@
 import { Logger, featureModule, Providers } from '@ditsmod/core';
-import { RoutingModule } from '@ditsmod/routing';
+import { RestModule } from '@ditsmod/rest';
 
 import { PatchLogger } from './patch-logger.js';
 import { PinoController } from './pino.controller.js';
 
 @featureModule({
-  imports: [RoutingModule],
+  imports: [RestModule],
   controllers: [PinoController],
   providersPerMod: new Providers().useFactory(Logger, [PatchLogger, PatchLogger.prototype.patchLogger]),
 })

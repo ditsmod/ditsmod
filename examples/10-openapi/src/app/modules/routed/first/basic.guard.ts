@@ -1,6 +1,6 @@
 import { Status } from '@ditsmod/core';
 import { oasGuard } from '@ditsmod/openapi';
-import { CanActivate, RequestContext } from '@ditsmod/routing';
+import { CanActivate, RequestContext } from '@ditsmod/rest';
 
 @oasGuard({
   tags: ['withBasicAuth'],

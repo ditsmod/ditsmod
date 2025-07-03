@@ -1,4 +1,4 @@
-import { Res, controller, route } from '@ditsmod/routing';
+import { Res, controller, route } from '@ditsmod/rest';
 import { CorsService } from '@ditsmod/cors';
 
 @controller()
