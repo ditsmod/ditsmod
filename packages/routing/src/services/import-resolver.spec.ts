@@ -27,7 +27,7 @@ import { CanActivate, guard } from '../interceptors/guard.js';
 import { defaultProvidersPerReq } from '../providers/default-providers-per-req.js';
 import { defaultProvidersPerRou } from '../providers/default-providers-per-rou.js';
 import { RequestContext } from './request-context.js';
-import { routingMetadata } from '#decorators/routing-metadata.js';
+import { restMetadata } from '#decorators/routing-metadata.js';
 
 type Level = 'Mod';
 
@@ -92,7 +92,7 @@ describe('resolve()', () => {
       constructor(public service1: Service1) {}
     }
 
-    @routingMetadata({ providersPerRou: [Service2] })
+    @restMetadata({ providersPerRou: [Service2] })
     @featureModule({ exports: [Service2] })
     class Module2 {}
 
@@ -109,7 +109,7 @@ describe('resolve()', () => {
     class Service2 {
       constructor(public service1: Service1) {}
     }
-    @routingMetadata({ providersPerRou: [Service2] })
+    @restMetadata({ providersPerRou: [Service2] })
     @featureModule({ exports: [Service2] })
     class Module2 {}
 
@@ -147,7 +147,7 @@ describe('resolve()', () => {
       constructor(public service3: Service3) {}
     }
 
-    @routingMetadata({ providersPerRou: [Service3, Service4] })
+    @restMetadata({ providersPerRou: [Service3, Service4] })
     @featureModule({
       imports: [Module1],
       providersPerMod: [Service2],
@@ -195,7 +195,7 @@ describe('resolve()', () => {
       constructor(public service3: Service3) {}
     }
 
-    @routingMetadata({ providersPerRou: [Service3, Service4] })
+    @restMetadata({ providersPerRou: [Service3, Service4] })
     @featureModule({
       imports: [Module1],
       providersPerMod: [Service2],
@@ -220,7 +220,7 @@ describe('resolve()', () => {
       constructor(@inject(forwardRef(() => Service4)) public service4: any) {}
     }
 
-    @routingMetadata({ providersPerRou: [Service1] })
+    @restMetadata({ providersPerRou: [Service1] })
     @featureModule({
       imports: [forwardRef(() => Module2)],
       exports: [Service1],
@@ -242,7 +242,7 @@ describe('resolve()', () => {
       constructor(public service3: Service3) {}
     }
 
-    @routingMetadata({ providersPerRou: [Service2, Service3, Service4] })
+    @restMetadata({ providersPerRou: [Service2, Service3, Service4] })
     @featureModule({
       imports: [Module1],
       exports: [Service4],
@@ -273,7 +273,7 @@ describe('resolve()', () => {
       constructor(public service1: Service1) {}
     }
 
-    @routingMetadata({ providersPerRou: [Service2] })
+    @restMetadata({ providersPerRou: [Service2] })
     @featureModule({ exports: [Service2] })
     class Module2 {}
 
@@ -298,7 +298,7 @@ describe('resolve()', () => {
     @featureModule({ providersPerMod: [Service1], exports: [Service1] })
     class Module1 {}
 
-    @routingMetadata({ providersPerRou: [Service2] })
+    @restMetadata({ providersPerRou: [Service2] })
     @featureModule({ imports: [Module1], exports: [Service2] })
     class Module2 {}
 
@@ -333,7 +333,7 @@ describe('resolve()', () => {
     @featureModule({ providersPerMod: [Service1], exports: [Service1] })
     class Module1 {}
 
-    @routingMetadata({ providersPerRou: [Service2] })
+    @restMetadata({ providersPerRou: [Service2] })
     @featureModule({ imports: [Module1], exports: [Service2] })
     class Module2 {}
 
@@ -371,15 +371,15 @@ describe('resolve()', () => {
       constructor(public service2: Service2) {}
     }
 
-    @routingMetadata({ providersPerRou: [Service1] })
+    @restMetadata({ providersPerRou: [Service1] })
     @featureModule({ exports: [Service1] })
     class Module1 {}
 
-    @routingMetadata({ providersPerRou: [Service2] })
+    @restMetadata({ providersPerRou: [Service2] })
     @featureModule({ imports: [Module1], exports: [Service2] })
     class Module2 {}
 
-    @routingMetadata({ providersPerRou: [Service3] })
+    @restMetadata({ providersPerRou: [Service3] })
     @featureModule({
       imports: [Module2],
       exports: [Service3],
@@ -407,11 +407,11 @@ describe('resolve()', () => {
       }
     }
 
-    @routingMetadata({ providersPerRou: [Service1] })
+    @restMetadata({ providersPerRou: [Service1] })
     @featureModule({ exports: [Service1] })
     class Module1 {}
 
-    @routingMetadata({ providersPerRou: [Service2] })
+    @restMetadata({ providersPerRou: [Service2] })
     @featureModule({ imports: [Module1], exports: [Service2] })
     class Module2 {}
 
@@ -463,7 +463,7 @@ describe('resolve()', () => {
     const mod1WithParams = { module: Module1, guards: [BearerGuard1] };
     const provider: Provider = { token: BearerGuard1, useClass: BearerGuard2 };
 
-    @routingMetadata({ providersPerRou: [provider, Service0, Service2] })
+    @restMetadata({ providersPerRou: [provider, Service0, Service2] })
     @rootModule({ imports: [mod1WithParams] })
     class Module2 {}
 

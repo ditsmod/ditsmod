@@ -74,7 +74,7 @@ For example, if `SomeService` is exported from the `FirstModule`, then this serv
 
 ```ts {10}
 import { featureModule } from '@ditsmod/core';
-import { routingMetadata } from '@ditsmod/routing';
+import { restMetadata } from '@ditsmod/routing';
 import { FirstModule } from './first.module';
 
 @featureModule({
@@ -82,7 +82,7 @@ import { FirstModule } from './first.module';
     {
       module: FirstModule,
       params: [
-        { decorator: routingMetadata, metadata: { path: '' } }
+        { decorator: restMetadata, metadata: { path: '' } }
       ],
     }
   ]
@@ -116,7 +116,7 @@ To reduce the length of the code when importing an object of this type, it is so
 
 ```ts {10}
 import { featureModule } from '@ditsmod/core';
-import { routingMetadata } from '@ditsmod/routing';
+import { restMetadata } from '@ditsmod/routing';
 import { FirstModule } from './first.module';
 
 @featureModule({
@@ -124,7 +124,7 @@ import { FirstModule } from './first.module';
     {
       module: FirstModule,
       params: [
-        { decorator: routingMetadata, metadata: { path: '' } }
+        { decorator: restMetadata, metadata: { path: '' } }
       ],
     }
   ]
@@ -135,13 +135,13 @@ export class SecondModule {}
 If you declare `FirstModule` and knew that this module would make sense to be imported many times into different modules with different prefixes, then in this case you could write a static method in this class that returns an object specially designed for import:
 
 ```ts
-import { routingMetadata } from '@ditsmod/routing';
+import { restMetadata } from '@ditsmod/routing';
 // ...
 export class FirstModule {
   static withPrefix(path: string) {
     return {
       module: this,
-      params: [{ decorator: routingMetadata, metadata: { path } }],
+      params: [{ decorator: restMetadata, metadata: { path } }],
     };
   }
 }

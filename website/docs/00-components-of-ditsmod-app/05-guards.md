@@ -155,7 +155,7 @@ export class SomeController {
 
 ```ts {16}
 import { featureModule } from '@ditsmod/core';
-import { routingMetadata } from '@ditsmod/routing';
+import { restMetadata } from '@ditsmod/routing';
 
 import { OtherModule } from '../other/other.module.js';
 import { AuthModule } from '../auth/auth.module.js';
@@ -168,7 +168,7 @@ import { AuthGuard } from '../auth/auth.guard.js';
       module: OtherModule,
       params: [
         {
-          decorator: routingMetadata,
+          decorator: restMetadata,
           metadata: { path: '', guards: [AuthGuard] }
         }
       ]

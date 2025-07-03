@@ -208,10 +208,10 @@ export class HelloWorldController {
 
 ```ts {5}
 import { featureModule } from '@ditsmod/core';
-import { routingMetadata } from '@ditsmod/routing';
+import { restMetadata } from '@ditsmod/routing';
 import { SomeController } from './some.controller.js';
 
-@routingMetadata({ controllers: [SomeController] })
+@restMetadata({ controllers: [SomeController] })
 @featureModule()
 export class SomeModule {}
 ```
@@ -220,10 +220,10 @@ export class SomeModule {}
 
 ```ts {6,10-15}
 import { featureModule } from '@ditsmod/core';
-import { routingMetadata } from '@ditsmod/routing';
+import { restMetadata } from '@ditsmod/routing';
 import { SomeModule } from './some.module.js';
 
-@routingMetadata({
+@restMetadata({
   appends: [SomeModule]
 })
   // АБО
@@ -231,7 +231,7 @@ import { SomeModule } from './some.module.js';
   imports: [{
     module: SomeModule,
     params: [
-      { decorator: routingMetadata, metadata: { path: '' } }
+      { decorator: restMetadata, metadata: { path: '' } }
     ],
   }]
 })
@@ -289,12 +289,12 @@ export class SecondService {
 
 ```ts {9-10}
 import { featureModule } from '@ditsmod/core';
-import { routingMetadata } from '@ditsmod/routing';
+import { restMetadata } from '@ditsmod/routing';
 
 import { FirstService } from './first.service.js';
 import { SecondService } from './second.service.js';
 
-@routingMetadata({
+@restMetadata({
   providersPerReq: [
     FirstService,
     SecondService

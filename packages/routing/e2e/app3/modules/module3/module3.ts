@@ -1,11 +1,11 @@
 import { featureModule } from '@ditsmod/core';
-import { routingMetadata, RoutingModule } from '@ditsmod/routing';
+import { restMetadata, RoutingModule } from '@ditsmod/routing';
 
 import { Controller1, Controller2 } from './controllers.js';
 import { Module2 } from '../module2/module2.js';
 import { Guard, GuardPerRou } from '../../guards.js';
 
-@routingMetadata({
+@restMetadata({
   providersPerRou: [{ token: Guard, useClass: GuardPerRou }],
   providersPerReq: [Guard],
   appends: [

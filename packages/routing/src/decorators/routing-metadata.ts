@@ -12,7 +12,7 @@ import { RoutingMetadata } from '#module/module-metadata.js';
 import { RoutingMetadataNormalizer } from '#module/routing-metadata-normalizer.js';
 import { RoutingModuleFactory } from '#module/routing-module-factory.js';
 
-export const routingMetadata: RoutingMetadataDecorator = makeClassDecorator(transformMetadata);
+export const restMetadata: RoutingMetadataDecorator = makeClassDecorator(transformMetadata);
 
 export interface RoutingMetadataDecorator {
   (data?: RoutingMetadata): any;

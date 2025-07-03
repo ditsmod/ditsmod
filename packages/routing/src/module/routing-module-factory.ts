@@ -28,7 +28,7 @@ import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js'
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
 import { AppendsWithParams, RoutingModuleParams } from './module-metadata.js';
-import { routingMetadata } from '#decorators/routing-metadata.js';
+import { restMetadata } from '#decorators/routing-metadata.js';
 import { isAppendsWithParams } from '#types/type.guards.js';
 
 export class RoutingImportObj<T extends Provider = Provider> {
@@ -102,7 +102,7 @@ export class RoutingModuleFactory {
     this.moduleManager = moduleManager;
     this.moduleName = baseMeta.name;
     this.providersPerApp = providersPerApp;
-    const meta = baseMeta.metaPerDecorator.get(routingMetadata) as RoutingNormalizedMeta;
+    const meta = baseMeta.metaPerDecorator.get(restMetadata) as RoutingNormalizedMeta;
     this.importProviders(this.moduleName, meta);
     this.checkAllCollisionsWithLevelsMix();
 
@@ -131,7 +131,7 @@ export class RoutingModuleFactory {
   ) {
     const baseMeta = moduleManager.getMetadata(modRefId, true);
     this.baseMeta = baseMeta;
-    const meta = baseMeta.metaPerDecorator.get(routingMetadata) as RoutingNormalizedMeta;
+    const meta = baseMeta.metaPerDecorator.get(restMetadata) as RoutingNormalizedMeta;
     this.moduleManager = moduleManager;
     this.providersPerApp = providersPerApp;
     this.glProviders = globalProviders;

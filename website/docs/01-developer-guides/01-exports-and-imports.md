@@ -74,7 +74,7 @@ export class SecondModule {}
 
 ```ts {10}
 import { featureModule } from '@ditsmod/core';
-import { routingMetadata } from '@ditsmod/routing';
+import { restMetadata } from '@ditsmod/routing';
 import { FirstModule } from './first.module';
 
 @featureModule({
@@ -82,7 +82,7 @@ import { FirstModule } from './first.module';
     {
       module: FirstModule,
       params: [
-        { decorator: routingMetadata, metadata: { path: '' } }
+        { decorator: restMetadata, metadata: { path: '' } }
       ],
     }
   ]
@@ -116,7 +116,7 @@ interface ModuleParamItem<T extends AnyObj = AnyObj> {
 
 ```ts {10}
 import { featureModule } from '@ditsmod/core';
-import { routingMetadata } from '@ditsmod/routing';
+import { restMetadata } from '@ditsmod/routing';
 import { FirstModule } from './first.module';
 
 @featureModule({
@@ -124,7 +124,7 @@ import { FirstModule } from './first.module';
     {
       module: FirstModule,
       params: [
-        { decorator: routingMetadata, metadata: { path: '' } }
+        { decorator: restMetadata, metadata: { path: '' } }
       ],
     }
   ]
@@ -135,13 +135,13 @@ export class SecondModule {}
 Якщо б ви оголошували `FirstModule` і знали, що цей модуль є сенс імпортувати багато разів в різні модулі з різними префіксами, в такому разі в даному класі можна написати статичний метод, що повертає об'єкт, спеціально призначений для імпорту:
 
 ```ts
-import { routingMetadata } from '@ditsmod/routing';
+import { restMetadata } from '@ditsmod/routing';
 // ...
 export class FirstModule {
   static withPrefix(path: string) {
     return {
       module: this,
-      params: [{ decorator: routingMetadata, metadata: { path } }],
+      params: [{ decorator: restMetadata, metadata: { path } }],
     };
   }
 }

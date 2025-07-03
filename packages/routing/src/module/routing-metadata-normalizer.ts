@@ -31,7 +31,7 @@ import { RoutingMetadata, RoutingModuleParams } from '#module/module-metadata.js
 import { RoutingNormalizedMeta } from '#types/routing-normalized-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
-import { routingMetadata } from '#decorators/routing-metadata.js';
+import { restMetadata } from '#decorators/routing-metadata.js';
 
 /**
  * Normalizes and validates module metadata.
@@ -66,7 +66,7 @@ export class RoutingMetadataNormalizer {
     }
     let params: RoutingModuleParams | undefined;
     for (const [decorator, val] of modRefId.parentMeta.metaPerDecorator) {
-      if (decorator === routingMetadata) {
+      if (decorator === restMetadata) {
         params = (val?.meta as ParamsTransferObj<RoutingModuleParams>).params!.find((param) => {
           return param.for === modRefId;
         })?.data;

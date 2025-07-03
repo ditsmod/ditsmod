@@ -19,7 +19,7 @@ import {
 
 import { AppInitializer } from './app-initializer.js';
 import { Router } from './router.js';
-import { routingMetadata } from '#decorators/routing-metadata.js';
+import { restMetadata } from '#decorators/routing-metadata.js';
 
 function getImportedTokens(map: Map<any, ImportObj<Provider>> | undefined) {
   return [...(map || [])].map(([key]) => key);
@@ -90,7 +90,7 @@ describe('exports/imports', () => {
   class Module0 {}
 
   const obj1 = { token: Provider1, useClass: Provider1 };
-  @routingMetadata({ controllers: [Ctrl] })
+  @restMetadata({ controllers: [Ctrl] })
   @featureModule({
     providersPerMod: [obj1, Provider2],
     exports: [Provider1],
@@ -107,11 +107,11 @@ describe('exports/imports', () => {
     }
   }
 
-  @routingMetadata({ providersPerReq: [Provider5, Provider6, Provider7], exports: [Provider5, Provider6, Provider7] })
+  @restMetadata({ providersPerReq: [Provider5, Provider6, Provider7], exports: [Provider5, Provider6, Provider7] })
   @featureModule({})
   class Module3 {}
 
-  @routingMetadata({ providersPerReq: [Provider8, Provider9], exports: [Provider8, Provider9] })
+  @restMetadata({ providersPerReq: [Provider8, Provider9], exports: [Provider8, Provider9] })
   @featureModule()
   class Module4 {}
 
@@ -254,7 +254,7 @@ it('should works without providersPerApp', () => {
   @controller()
   class Controller1 {}
 
-  @routingMetadata({ controllers: [Controller1] })
+  @restMetadata({ controllers: [Controller1] })
   @featureModule()
   class Module7 {}
 
