@@ -1,4 +1,4 @@
-import { AnyObj, Provider, ModuleType, MultiProvider, Class, Providers, ModuleWithParams } from '@ditsmod/core';
+import { AnyObj, Provider, ModuleType, MultiProvider, Class, Providers, ModuleWithParams, DecoratorParams } from '@ditsmod/core';
 
 import { NormalizedGuard } from '#interceptors/guard.js';
 import { AppendsWithParams, RoutingModuleParams } from '#module/module-metadata.js';
@@ -31,6 +31,7 @@ export class RoutingNormalizedMeta<T extends AnyObj = AnyObj> extends RoutingPro
   appendsWithParams: AppendsWithParams[] = [];
   appendsModules: ModuleType[] = [];
   controllers: Class[] = [];
+  params: DecoratorParams<RoutingModuleParams>[] = [];
 }
 
 export type RoutingModRefId<T extends AnyObj = AnyObj> = ModuleType<T> | RoutingModuleParams | AppendsWithParams<T>;
