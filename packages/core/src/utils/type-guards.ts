@@ -75,7 +75,7 @@ export function isModuleWithParams(modRefId?: AnyObj): modRefId is ModuleWithPar
 }
 
 export function isFeatureModuleWithParams1(modRefId?: AnyObj): modRefId is FeatureModuleWithParams1 {
-  return modRefId?.decorator === featureModule && (modRefId as FeatureModuleWithParams1).parentMeta !== undefined;
+  return (modRefId as FeatureModuleWithParams1).parentMeta !== undefined;
 }
 
 export function isProvider(maybeProvider?: any): maybeProvider is Provider {
