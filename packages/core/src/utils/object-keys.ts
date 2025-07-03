@@ -5,6 +5,9 @@
  *
  * For more info, see https://github.com/microsoft/TypeScript/wiki/FAQ#indirect-excess-properties-are-ok
  */
-export function objectKeys<T extends object>(obj: T) {
+export function objectKeys<T extends object>(obj?: T) {
+  if (!obj) {
+    return [];
+  }
   return Object.keys(obj) as (keyof T)[];
 }
