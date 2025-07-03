@@ -1,9 +1,14 @@
 import {
   AnyObj,
   Class,
+  CustomError,
+  FeatureModuleWithParams1,
+  getDebugClassName,
   getToken,
   getTokens,
   isFeatureModule,
+  isFeatureModuleWithParams1,
+  isModuleWithParams,
   isMultiProvider,
   isNormalizedProvider,
   isProvider,
@@ -15,24 +20,27 @@ import {
   NormalizedMeta,
   NormalizedProvider,
   objectKeys,
+  ParamsTransferObj,
   Provider,
   Providers,
   reflector,
   resolveForwardRef,
 } from '@ditsmod/core';
 
-import { RoutingMetadata, RoutingMetadataWithParams, RoutingModuleParams } from '#module/module-metadata.js';
+import { RoutingMetadata, RoutingModuleParams } from '#module/module-metadata.js';
 import { RoutingNormalizedMeta } from '#types/routing-normalized-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
+import { routingMetadata } from '#decorators/routing-metadata.js';
 
 /**
  * Normalizes and validates module metadata.
  */
 export class RoutingMetadataNormalizer {
-  normalize(baseMeta: NormalizedMeta, metaWithParams: RoutingMetadataWithParams): MetaAndImportsOrExports {
+  normalize(baseMeta: NormalizedMeta, rawMeta: RoutingMetadata): MetaAndImportsOrExports {
     const meta = new RoutingNormalizedMeta();
-    metaWithParams.appends?.forEach((ap, i) => {
+    this.mergeModuleWithParams(baseMeta, meta);
+    rawMeta.appends?.forEach((ap, i) => {
       ap = resolveForwardRef(ap);
       this.throwIfUndefined(ap, i);
       if (isAppendsWithParams(ap)) {
@@ -41,45 +49,74 @@ export class RoutingMetadataNormalizer {
         meta.appendsModules.push(ap);
       }
     });
-
-    this.pickAndMergeMeta(meta, metaWithParams);
-    const mergedMeta = { ...metaWithParams, ...meta };
+    this.checkParams(baseMeta, rawMeta);
+    this.pickAndMergeMeta(meta, rawMeta);
+    const mergedMeta = { ...rawMeta, ...meta };
     this.quickCheckMetadata(baseMeta, mergedMeta);
     meta.controllers.forEach((Controller) => this.checkController(Controller));
-    this.normalizeModule(metaWithParams, meta);
+    this.normalizeModule(rawMeta, meta);
 
     return { meta: mergedMeta, importsOrExports: meta.appendsModules.concat(meta.appendsWithParams as any[]) };
   }
 
-  protected mergeModuleWithParams(modWitParams: ModuleWithParams, metadata: RoutingMetadata) {
-    const metadata1 = Object.assign({}, metadata) as RoutingMetadataWithParams;
-    objectKeys(modWitParams).forEach((p) => {
-      // If here is object with [Symbol.iterator]() method, this transform it to an array.
-      if (Array.isArray(modWitParams[p]) || modWitParams[p] instanceof Providers) {
-        (metadata1 as any)[p] = mergeArrays((metadata1 as any)[p], modWitParams[p]);
+  protected mergeModuleWithParams(baseMeta: NormalizedMeta, meta: RoutingNormalizedMeta): void {
+    const { modRefId } = baseMeta;
+    if (!isFeatureModuleWithParams1(modRefId)) {
+      return;
+    }
+    let params: RoutingModuleParams | undefined;
+    for (const [decorator, val] of modRefId.parentMeta.mMeta) {
+      if (decorator === routingMetadata) {
+        params = (val?.meta as ParamsTransferObj<RoutingModuleParams>).params!.find((param) => {
+          return param.for === modRefId;
+        })?.data;
+        break;
       }
-    });
-    metadata1.path = (modWitParams as RoutingModuleParams).path;
-    metadata1.absolutePath = (modWitParams as RoutingModuleParams).absolutePath;
+    }
 
-    return metadata1;
+    if (params) {
+      objectKeys(params).forEach((p) => {
+        // If here is object with [Symbol.iterator]() method, this transform it to an array.
+        if (Array.isArray((meta as any)[p]) && (Array.isArray(params[p]) || (params as any)[p] instanceof Providers)) {
+          (meta as any)[p] = mergeArrays((meta as any)[p], (params as any)[p]);
+        }
+      });
+      meta.params = params;
+      meta.guardsPerMod.push(...this.normalizeGuards(params.guards));
+    }
   }
 
-  protected normalizeModule(metaWithParams: RoutingMetadataWithParams, meta: RoutingNormalizedMeta) {
-    this.throwIfResolvingNormalizedProvider(metaWithParams);
-    this.exportFromReflectMetadata(metaWithParams, meta);
-    this.pickAndMergeMeta(meta, metaWithParams);
-    meta.guardsPerMod.push(...this.normalizeGuards(metaWithParams.guards));
+  /**
+   * @todo Write good error messages.
+   */
+  protected checkParams(baseMeta: NormalizedMeta, rawMeta: RoutingMetadata) {
+    rawMeta.params?.forEach((param) => {
+      if (!isModuleWithParams(param.for)) {
+        const moduleName = getDebugClassName(param.for);
+        throw new CustomError({ msg1: `!isModuleWithParams for ${moduleName}`, level: 'fatal' });
+      }
+      if (!baseMeta.importsWithParams.find((imp) => imp === param.for)) {
+        const moduleName = getDebugClassName(param.for);
+        throw new CustomError({ msg1: `${moduleName} not found`, level: 'fatal' });
+      }
+      (param.for as FeatureModuleWithParams1).parentMeta ??= baseMeta;
+    });
+  }
+
+  protected normalizeModule(rawMeta: RoutingMetadata, meta: RoutingNormalizedMeta) {
+    this.throwIfResolvingNormalizedProvider(rawMeta);
+    this.exportFromReflectMetadata(rawMeta, meta);
+    this.pickAndMergeMeta(meta, rawMeta);
     this.checkGuardsPerMod(meta.guardsPerMod);
   }
 
-  protected throwIfResolvingNormalizedProvider(metaWithParams: RoutingMetadataWithParams) {
+  protected throwIfResolvingNormalizedProvider(rawMeta: RoutingMetadata) {
     const resolvedCollisionsPerLevel: [any, ModuleType | ModuleWithParams][] = [];
-    if (Array.isArray(metaWithParams.resolvedCollisionsPerRou)) {
-      resolvedCollisionsPerLevel.push(...metaWithParams.resolvedCollisionsPerRou);
+    if (Array.isArray(rawMeta.resolvedCollisionsPerRou)) {
+      resolvedCollisionsPerLevel.push(...rawMeta.resolvedCollisionsPerRou);
     }
-    if (Array.isArray(metaWithParams.resolvedCollisionsPerReq)) {
-      resolvedCollisionsPerLevel.push(...metaWithParams.resolvedCollisionsPerReq);
+    if (Array.isArray(rawMeta.resolvedCollisionsPerReq)) {
+      resolvedCollisionsPerLevel.push(...rawMeta.resolvedCollisionsPerReq);
     }
 
     resolvedCollisionsPerLevel.forEach(([provider]) => {
@@ -91,21 +128,21 @@ export class RoutingMetadataNormalizer {
     });
   }
 
-  protected exportFromReflectMetadata(metaWithParams: RoutingMetadataWithParams, meta: RoutingNormalizedMeta) {
+  protected exportFromReflectMetadata(rawMeta: RoutingMetadata, meta: RoutingNormalizedMeta) {
     const providers: Provider[] = [];
-    if (Array.isArray(metaWithParams.providersPerRou)) {
-      providers.push(...metaWithParams.providersPerRou);
+    if (Array.isArray(rawMeta.providersPerRou)) {
+      providers.push(...rawMeta.providersPerRou);
     }
-    if (Array.isArray(metaWithParams.providersPerReq)) {
-      providers.push(...metaWithParams.providersPerReq);
+    if (Array.isArray(rawMeta.providersPerReq)) {
+      providers.push(...rawMeta.providersPerReq);
     }
 
-    metaWithParams.exports?.forEach((exp, i) => {
+    rawMeta.exports?.forEach((exp, i) => {
       exp = resolveForwardRef(exp);
       this.throwIfUndefined(exp, i);
       this.throwExportsIfNormalizedProvider(exp);
       if (isProvider(exp) || getTokens(providers).includes(exp)) {
-        this.findAndSetProviders(exp, metaWithParams, meta);
+        this.findAndSetProviders(exp, rawMeta, meta);
       } else {
         this.throwUnidentifiedToken(exp);
       }
@@ -129,10 +166,10 @@ export class RoutingMetadataNormalizer {
     }
   }
 
-  protected findAndSetProviders(token: any, metaWithParams: RoutingMetadataWithParams, meta: RoutingNormalizedMeta) {
+  protected findAndSetProviders(token: any, rawMeta: RoutingMetadata, meta: RoutingNormalizedMeta) {
     let found = false;
     (['Rou', 'Req'] as const).forEach((level) => {
-      const unfilteredProviders = [...(metaWithParams[`providersPer${level}`] || [])];
+      const unfilteredProviders = [...(rawMeta[`providersPer${level}`] || [])];
       const providers = unfilteredProviders.filter((p) => getToken(p) === token);
       if (providers.length) {
         found = true;
@@ -155,7 +192,7 @@ export class RoutingMetadataNormalizer {
     }
   }
 
-  protected pickAndMergeMeta(targetObject: RoutingNormalizedMeta, ...sourceObjects: RoutingMetadataWithParams[]) {
+  protected pickAndMergeMeta(targetObject: RoutingNormalizedMeta, ...sourceObjects: RoutingMetadata[]) {
     const trgtObj = targetObject as any;
     sourceObjects.forEach((sourceObj: AnyObj) => {
       sourceObj ??= {};
