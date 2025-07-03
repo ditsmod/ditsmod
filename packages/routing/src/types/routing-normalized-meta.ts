@@ -31,6 +31,10 @@ export class RoutingNormalizedMeta<T extends AnyObj = AnyObj> extends RoutingPro
   appendsWithParams: AppendsWithParams[] = [];
   appendsModules: ModuleType[] = [];
   controllers: Class[] = [];
+  /**
+   * An array of parameters intended for modules with parameters contained
+   * in the `imports` array of the `featureModule` decorator.
+   */
   params: DecoratorParams<RoutingModuleParams>[] = [];
 }
 
