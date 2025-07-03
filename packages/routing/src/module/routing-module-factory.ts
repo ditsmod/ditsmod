@@ -102,7 +102,7 @@ export class RoutingModuleFactory {
     this.moduleManager = moduleManager;
     this.moduleName = baseMeta.name;
     this.providersPerApp = providersPerApp;
-    const meta = baseMeta.mMeta.get(routingMetadata) as RoutingNormalizedMeta;
+    const meta = baseMeta.metaPerDecorator.get(routingMetadata) as RoutingNormalizedMeta;
     this.importProviders(this.moduleName, meta);
     this.checkAllCollisionsWithLevelsMix();
 
@@ -131,7 +131,7 @@ export class RoutingModuleFactory {
   ) {
     const baseMeta = moduleManager.getMetadata(modRefId, true);
     this.baseMeta = baseMeta;
-    const meta = baseMeta.mMeta.get(routingMetadata) as RoutingNormalizedMeta;
+    const meta = baseMeta.metaPerDecorator.get(routingMetadata) as RoutingNormalizedMeta;
     this.moduleManager = moduleManager;
     this.providersPerApp = providersPerApp;
     this.glProviders = globalProviders;

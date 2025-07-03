@@ -228,7 +228,7 @@ export class ModuleManager {
   protected scanRawModule(modRefId: ModRefId) {
     const meta = this.normalizeMetadata(modRefId);
     const importsOrExports: (ModuleWithParams | ModuleType)[] = [];
-    meta.mMeta.forEach((m) => {
+    meta.metaPerDecorator.forEach((m) => {
       if (m?.importsOrExports) {
         importsOrExports.push(...m.importsOrExports);
       }
