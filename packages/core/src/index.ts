@@ -61,7 +61,7 @@ export {
 export {
   ModuleMetadata,
   ModuleWithParams,
-  FeatureModuleWithParams,
+  BaseModuleWithParams,
   FeatureModuleWithParams1,
 } from '#types/module-metadata.js';
 export { RootModuleMetadata } from '#types/root-module-metadata.js';

@@ -1,5 +1,5 @@
 import { ProvidersMetadata } from '#types/providers-metadata.js';
-import { AnyObj, ModRefId, ModuleType } from '#types/mix.js';
+import { AnyObj, ModuleType } from '#types/mix.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { ExtensionClass } from '#extension/extension-types.js';
 import { NormalizedMeta } from './normalized-meta.js';
@@ -13,7 +13,7 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
    * List of modules or `ModuleWithParams` imported by this module.
    * Also you can imports modules and set some prefix per each the module.
    */
-  imports?: Array<ModuleType | FeatureModuleWithParams>;
+  imports?: Array<ModuleType | ModuleWithParams>;
   /**
    * List of modules, `ModuleWithParams` or tokens of providers exported by this
    * module.
@@ -33,15 +33,17 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  resolvedCollisionsPerMod?: [any, ModuleType | FeatureModuleWithParams][];
+  resolvedCollisionsPerMod?: [any, ModuleType | ModuleWithParams][];
 }
 /**
  * The type of metadata passed to a module with the `featureModule` decorator.
  */
-export type FeatureModuleWithParams = ModuleWithParams & FeatureModuleParams;
-export type FeatureModuleWithParams1 = FeatureModuleWithParams & { parentMeta: NormalizedMeta };
+export interface ModuleWithParams extends BaseModuleWithParams, FeatureModuleParams {}
+export interface FeatureModuleWithParams1 extends ModuleWithParams {
+  parentMeta: NormalizedMeta;
+}
 
-export interface ModuleWithParams<M extends AnyObj = AnyObj> {
+export interface BaseModuleWithParams<M extends AnyObj = AnyObj> {
   id?: string;
   module: ModuleType<M>;
 }

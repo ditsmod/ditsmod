@@ -25,7 +25,7 @@ import { Providers } from '#utils/providers.js';
 import { Extension, ExtensionClass } from '#extension/extension-types.js';
 import { NormalizedProvider, normalizeProviders } from '#utils/ng-utils.js';
 import { isExtensionConfig } from '#extension/type-guards.js';
-import { FeatureModuleWithParams } from '#types/module-metadata.js';
+import { ModuleWithParams } from '#types/module-metadata.js';
 import { mergeArrays } from '#utils/merge-arrays.js';
 import { objectKeys } from '#utils/object-keys.js';
 
@@ -80,7 +80,7 @@ export class ModuleNormalizer {
     return reflector.getDecorators(mod, isModuleWithMetadata);
   }
 
-  protected mergeModuleWithParams(modWitParams: FeatureModuleWithParams, rawMeta: RawMeta) {
+  protected mergeModuleWithParams(modWitParams: ModuleWithParams, rawMeta: RawMeta) {
     if (modWitParams.id) {
       rawMeta.id = modWitParams.id;
     }
