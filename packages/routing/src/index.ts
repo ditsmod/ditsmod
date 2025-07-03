@@ -11,7 +11,6 @@ export {
   BaseAppendsWithParams,
   RoutingMetadata,
   RoutingModuleParams,
-  RoutingMetadataWithParams,
 } from './module/module-metadata.js';
 export { RouteParam, MetadataPerMod3, RedirectStatusCodes } from './types/types.js';
 export { RoutingModule } from './module/routing.module.js';

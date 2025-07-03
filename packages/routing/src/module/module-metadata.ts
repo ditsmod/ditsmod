@@ -38,8 +38,6 @@ export interface RoutingMetadata extends ParamsTransferObj<RoutingModuleParams> 
   controllers?: Class[];
 }
 
-export type RoutingMetadataWithParams = RoutingMetadata & RoutingModuleParams;
-
 export type RoutingModuleParams = RoutingModuleParams1 | RoutingModuleParams2;
 
 export interface BaseModuleParams extends Partial<RoutingProvidersMetadata> {

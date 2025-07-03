@@ -8,7 +8,7 @@ import {
   NormalizedMeta,
 } from '@ditsmod/core';
 
-import { RoutingMetadata, RoutingMetadataWithParams } from '#module/module-metadata.js';
+import { RoutingMetadata } from '#module/module-metadata.js';
 import { RoutingMetadataNormalizer } from '#module/routing-metadata-normalizer.js';
 import { RoutingModuleFactory } from '#module/routing-module-factory.js';
 
@@ -23,7 +23,7 @@ export function transformMetadata(data?: RoutingMetadata): AttachedMetadata {
   return {
     isAttachedMetadata: true,
     metadata,
-    normalize: (baseMeta: NormalizedMeta, metadataWithParams: RoutingMetadataWithParams) =>
+    normalize: (baseMeta: NormalizedMeta, metadataWithParams: RoutingMetadata) =>
       new RoutingMetadataNormalizer().normalize(baseMeta, metadataWithParams),
     exportGlobalProviders: (moduleManager: ModuleManager, baseMeta: NormalizedMeta, providersPerApp: Provider[]) => {
       new RoutingModuleFactory().exportGlobalProviders(moduleManager, baseMeta, providersPerApp);
