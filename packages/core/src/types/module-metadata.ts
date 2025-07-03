@@ -39,6 +39,7 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
  * The type of metadata passed to a module with the `featureModule` decorator.
  */
 export type FeatureModuleWithParams = ModuleWithParams & FeatureModuleParams;
+export type FeatureModuleWithParams1 = FeatureModuleWithParams & { parentMeta: NormalizedMeta };
 
 export interface ModuleWithParams<M extends AnyObj = AnyObj> {
   id?: string;
@@ -56,5 +57,4 @@ export interface FeatureModuleParams<E extends AnyObj = AnyObj> extends Partial<
    * You must follow this rule: data for one extension - one key in `extensionsMeta` object.
    */
   extensionsMeta?: E;
-  parentMeta: NormalizedMeta;
 }
