@@ -2,7 +2,7 @@ import { ChainError } from '@ts-stack/chain-error';
 
 import { Provider, Class, DecoratorAndValue, reflector, isNormalizedProvider } from '#di';
 import { AnyObj, RequireProps } from '#types/mix.js';
-import { FeatureModuleWithParams, ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
+import { FeatureModuleWithParams1, ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
 import { RootModuleMetadata } from '#types/root-module-metadata.js';
 import { featureModule, AttachedMetadata, RawMeta } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
@@ -74,8 +74,8 @@ export function isModuleWithParams(modRefId?: AnyObj): modRefId is ModuleWithPar
   return (modRefId as ModuleWithParams)?.module !== undefined;
 }
 
-export function isFeatureModuleWithParams(modRefId?: AnyObj): modRefId is FeatureModuleWithParams {
-  return modRefId?.decorator === featureModule && (modRefId as FeatureModuleWithParams).parentMeta !== undefined;
+export function isFeatureModuleWithParams1(modRefId?: AnyObj): modRefId is FeatureModuleWithParams1 {
+  return modRefId?.decorator === featureModule && (modRefId as FeatureModuleWithParams1).parentMeta !== undefined;
 }
 
 export function isProvider(maybeProvider?: any): maybeProvider is Provider {

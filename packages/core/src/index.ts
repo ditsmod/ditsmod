@@ -79,7 +79,7 @@ export { RawMeta } from '#decorators/feature-module.js';
 export {
   isChainError,
   isModuleWithParams,
-  isFeatureModuleWithParams,
+  isFeatureModuleWithParams1,
   isModuleWithMetadata,
   isFeatureModule,
   isModDecor,
