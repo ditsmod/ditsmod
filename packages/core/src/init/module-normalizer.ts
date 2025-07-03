@@ -91,7 +91,9 @@ export class ModuleNormalizer {
       }
     });
 
-    rawMeta.extensionsMeta = { ...rawMeta.extensionsMeta, ...modWitParams.extensionsMeta };
+    if (modWitParams.extensionsMeta) {
+      rawMeta.extensionsMeta = { ...rawMeta.extensionsMeta, ...modWitParams.extensionsMeta };
+    }
     return rawMeta;
   }
 
