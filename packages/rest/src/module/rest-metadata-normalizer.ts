@@ -236,7 +236,7 @@ export class RoutingMetadataNormalizer {
     }
   }
 
-  protected quickCheckMetadata<T extends AnyObj>(baseMeta: NormalizedMeta, meta: RoutingNormalizedMeta<T>) {
+  protected quickCheckMetadata(baseMeta: NormalizedMeta, meta: RoutingNormalizedMeta) {
     if (
       isFeatureModule(meta) &&
       !baseMeta.exportedProvidersPerMod.length &&
