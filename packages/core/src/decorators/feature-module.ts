@@ -57,7 +57,7 @@ export function transformModule(data?: ModuleMetadata): Override<AttachedMetadat
 export interface AttachedMetadata {
   isAttachedMetadata: true;
   metadata: AnyObj;
-  normalize?: (baseMeta: NormalizedMeta, metadata: AnyObj) => MetaAndImportsOrExports | undefined;
+  normalize?: (baseMeta: NormalizedMeta, metadata: AnyObj) => AnyObj | undefined;
   exportGlobalProviders?: (moduleManager: ModuleManager, baseMeta: NormalizedMeta, providersPerApp: Provider[]) => any;
   bootstrap?: (
     providersPerApp: Provider[],
