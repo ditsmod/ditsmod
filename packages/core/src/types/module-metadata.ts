@@ -36,10 +36,14 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
   resolvedCollisionsPerMod?: [any, ModuleType | ModuleWithParams][];
 }
 /**
- * The type of metadata passed to a module with the `featureModule` decorator.
+ * An object with this type is passed into the `imports` array of
+ * the module with the `featureModule` or `rootModule` decorator.
  */
-export interface ModuleWithParams extends BaseModuleWithParams, FeatureModuleParams {}
-export interface ModuleWithParentMeta extends ModuleWithParams {
+export interface ModuleWithParams<M extends AnyObj = AnyObj> extends BaseModuleWithParams<M>, FeatureModuleParams {}
+/**
+ * Metadata with this type is created when the `parentMeta: NormalizedMeta` property is added to `BaseModuleWithParams`.
+ */
+export interface ModuleWithParentMeta extends BaseModuleWithParams {
   parentMeta: NormalizedMeta;
 }
 
