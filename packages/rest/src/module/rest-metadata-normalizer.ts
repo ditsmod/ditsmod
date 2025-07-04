@@ -61,7 +61,10 @@ export class RoutingMetadataNormalizer {
 
   protected mergeModuleWithParams(baseMeta: NormalizedMeta, meta: RoutingNormalizedMeta): void {
     const { modRefId } = baseMeta;
-    if (!isModuleWithParentMeta(modRefId)) {
+    if (isAppendsWithParams(modRefId)) {
+      meta.guardsPerMod.push(...this.normalizeGuards(modRefId.guards));
+      return;
+    } else if (!isModuleWithParentMeta(modRefId)) {
       return;
     }
     let params: RoutingModuleParams | undefined;
