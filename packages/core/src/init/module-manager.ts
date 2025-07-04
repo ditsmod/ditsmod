@@ -29,12 +29,7 @@ export class ModuleManager {
   protected unfinishedScanModules = new Set<ModRefId>();
   protected scanedModules = new Set<ModRefId>();
   protected moduleNormalizer = new ModuleNormalizer();
-  protected propsWithModules = [
-    'importsModules',
-    'importsWithParams',
-    'exportsModules',
-    'exportsWithParams',
-  ] as const;
+  protected propsWithModules = ['importsModules', 'importsWithParams', 'exportsModules', 'exportsWithParams'] as const;
 
   constructor(protected systemLogMediator: SystemLogMediator) {}
 
@@ -228,9 +223,12 @@ export class ModuleManager {
   protected scanRawModule(modRefId: ModRefId) {
     const meta = this.normalizeMetadata(modRefId);
     const importsOrExports: (ModuleWithParams | ModuleType)[] = [];
-    meta.perDecoratorMeta.forEach((m) => {
-      if (m?.importsOrExports) {
-        importsOrExports.push(...m.importsOrExports);
+    meta.aDecoratorMeta.forEach(({ decorator, value }) => {
+      if (value.getImportsOrExports) {
+        const meta2 = meta.perDecoratorMeta.get(decorator);
+        if (meta2) {
+          importsOrExports.push(...value.getImportsOrExports(meta2));
+        }
       }
     });
 
