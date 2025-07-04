@@ -1,7 +1,7 @@
 import { ChainError, ChainErrorOptions, ErrorMediator, HttpMethod, injectable } from '@ditsmod/core';
 
 @injectable()
-export class RoutingErrorMediator extends ErrorMediator {
+export class RestErrorMediator extends ErrorMediator {
   /**
    * Failed to apply HTTP interceptors to "${httpMethod} ${path}": expected the fourth parameter
    * of the route decorator to be an HttpInterceptor or an extension group token, but got: ${whatIsThis}.

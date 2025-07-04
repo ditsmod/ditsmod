@@ -25,8 +25,8 @@ import {
   resolveForwardRef,
 } from '@ditsmod/core';
 
-import { RoutingMetadata } from '#module/module-metadata.js';
-import { RoutingNormalizedMeta } from '#types/rest-normalized-meta.js';
+import { RestMetadata } from '#module/module-metadata.js';
+import { RestNormalizedMeta } from '#types/rest-normalized-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
 import { restMetadata } from '#decorators/rest-metadata.js';
@@ -34,9 +34,9 @@ import { restMetadata } from '#decorators/rest-metadata.js';
 /**
  * Normalizes and validates module metadata.
  */
-export class RoutingMetadataNormalizer {
-  normalize(baseMeta: NormalizedMeta, rawMeta: RoutingMetadata) {
-    const meta = new RoutingNormalizedMeta();
+export class RestMetadataNormalizer {
+  normalize(baseMeta: NormalizedMeta, rawMeta: RestMetadata) {
+    const meta = new RestNormalizedMeta();
     this.mergeModuleWithParams(baseMeta, meta);
     rawMeta.appends?.forEach((ap, i) => {
       ap = resolveForwardRef(ap);
@@ -50,7 +50,7 @@ export class RoutingMetadataNormalizer {
     this.checkParams(baseMeta, rawMeta);
     meta.importParams = rawMeta.params || [];
     this.pickAndMergeMeta(meta, rawMeta);
-    const mergedMeta = { ...rawMeta, ...meta } as RoutingNormalizedMeta;
+    const mergedMeta = { ...rawMeta, ...meta } as RestNormalizedMeta;
     this.quickCheckMetadata(baseMeta, mergedMeta);
     meta.controllers.forEach((Controller) => this.checkController(Controller));
     this.normalizeModule(rawMeta, meta);
@@ -58,7 +58,7 @@ export class RoutingMetadataNormalizer {
     return mergedMeta;
   }
 
-  protected mergeModuleWithParams(baseMeta: NormalizedMeta, meta: RoutingNormalizedMeta): void {
+  protected mergeModuleWithParams(baseMeta: NormalizedMeta, meta: RestNormalizedMeta): void {
     const { modRefId } = baseMeta;
     if (isAppendsWithParams(modRefId)) {
       meta.guardsPerMod.push(...this.normalizeGuards(modRefId.guards));
@@ -67,7 +67,7 @@ export class RoutingMetadataNormalizer {
       return;
     }
     const perDecoratorMeta = modRefId.parentMeta.perDecoratorMeta.get(restMetadata) as
-      | RoutingNormalizedMeta
+      | RestNormalizedMeta
       | undefined;
     const params = perDecoratorMeta?.importParams.find((param) => param.for === modRefId)?.data;
 
@@ -85,7 +85,7 @@ export class RoutingMetadataNormalizer {
   /**
    * @todo Write good error messages.
    */
-  protected checkParams(baseMeta: NormalizedMeta, rawMeta: RoutingMetadata) {
+  protected checkParams(baseMeta: NormalizedMeta, rawMeta: RestMetadata) {
     rawMeta.params?.forEach((param) => {
       if (!isModuleWithParams(param.for)) {
         const moduleName = getDebugClassName(param.for);
@@ -99,14 +99,14 @@ export class RoutingMetadataNormalizer {
     });
   }
 
-  protected normalizeModule(rawMeta: RoutingMetadata, meta: RoutingNormalizedMeta) {
+  protected normalizeModule(rawMeta: RestMetadata, meta: RestNormalizedMeta) {
     this.throwIfResolvingNormalizedProvider(rawMeta);
     this.exportFromReflectMetadata(rawMeta, meta);
     this.pickAndMergeMeta(meta, rawMeta);
     this.checkGuardsPerMod(meta.guardsPerMod);
   }
 
-  protected throwIfResolvingNormalizedProvider(rawMeta: RoutingMetadata) {
+  protected throwIfResolvingNormalizedProvider(rawMeta: RestMetadata) {
     const resolvedCollisionsPerLevel: [any, ModuleType | ModuleWithParams][] = [];
     if (Array.isArray(rawMeta.resolvedCollisionsPerRou)) {
       resolvedCollisionsPerLevel.push(...rawMeta.resolvedCollisionsPerRou);
@@ -124,7 +124,7 @@ export class RoutingMetadataNormalizer {
     });
   }
 
-  protected exportFromReflectMetadata(rawMeta: RoutingMetadata, meta: RoutingNormalizedMeta) {
+  protected exportFromReflectMetadata(rawMeta: RestMetadata, meta: RestNormalizedMeta) {
     const providers: Provider[] = [];
     if (Array.isArray(rawMeta.providersPerRou)) {
       providers.push(...rawMeta.providersPerRou);
@@ -162,7 +162,7 @@ export class RoutingMetadataNormalizer {
     }
   }
 
-  protected findAndSetProviders(token: any, rawMeta: RoutingMetadata, meta: RoutingNormalizedMeta) {
+  protected findAndSetProviders(token: any, rawMeta: RestMetadata, meta: RestNormalizedMeta) {
     let found = false;
     (['Rou', 'Req'] as const).forEach((level) => {
       const unfilteredProviders = [...(rawMeta[`providersPer${level}`] || [])];
@@ -188,7 +188,7 @@ export class RoutingMetadataNormalizer {
     }
   }
 
-  protected pickAndMergeMeta(targetObject: RoutingNormalizedMeta, ...sourceObjects: RoutingMetadata[]) {
+  protected pickAndMergeMeta(targetObject: RestNormalizedMeta, ...sourceObjects: RestMetadata[]) {
     const trgtObj = targetObject as any;
     sourceObjects.forEach((sourceObj: AnyObj) => {
       sourceObj ??= {};
@@ -229,7 +229,7 @@ export class RoutingMetadataNormalizer {
     }
   }
 
-  protected quickCheckMetadata(baseMeta: NormalizedMeta, meta: RoutingNormalizedMeta) {
+  protected quickCheckMetadata(baseMeta: NormalizedMeta, meta: RestNormalizedMeta) {
     if (
       isFeatureModule(meta) &&
       !baseMeta.exportedProvidersPerMod.length &&

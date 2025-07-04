@@ -27,7 +27,7 @@ import {
 
 import { MetadataPerMod3, PreparedRouteMeta } from '../types/types.js';
 import { A_PATH_PARAMS, HTTP_INTERCEPTORS, QUERY_STRING, RAW_REQ, RAW_RES } from '#types/constants.js';
-import { RoutingErrorMediator } from '../services/router-error-mediator.js';
+import { RestErrorMediator } from '../services/router-error-mediator.js';
 import { ControllerMetadata } from '../types/controller-metadata.js';
 import { InterceptorWithGuardsPerRou } from '#interceptors/interceptor-with-guards-per-rou.js';
 import { InterceptorWithGuards } from '#interceptors/interceptor-with-guards.js';
@@ -59,7 +59,7 @@ export class PreRouterExtension implements Extension<void> {
     protected moduleManager: ModuleManager,
     protected log: SystemLogMediator,
     protected extensionsContext: ExtensionsContext,
-    protected errorMediator: RoutingErrorMediator,
+    protected errorMediator: RestErrorMediator,
   ) {}
 
   async stage1() {

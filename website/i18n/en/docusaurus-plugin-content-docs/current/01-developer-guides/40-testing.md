@@ -186,7 +186,7 @@ interface GroupMetaOverrider<T = any> {
 
 That is, this callback accepts a single argument - an object with the `groupData` property, where you can find metadata from the specified group of extensions.
 
-[TestRoutingPlugin][4] is described below, which shows how to use `testApplication.overrideExtensionMeta()`.
+[TestRestPlugin][4] is described below, which shows how to use `testApplication.overrideExtensionMeta()`.
 
 ### `testApplication.$use()`
 
@@ -221,17 +221,17 @@ TestApplication.createTestApp(AppModule)
 As you can see, after using `$use()`, the `TestApplication` instance can use plugin methods. [An example of using such a plugin in real life][103] can be viewed in the `@ditsmod/rest` module.
 
 
-### `TestRoutingPlugin`
+### `TestRestPlugin`
 
-The `TestRoutingPlugin` class uses `testApplication.overrideExtensionMeta()` to override providers in the metadata added by the `ROUTES_EXTENSIONS` group:
+The `TestRestPlugin` class uses `testApplication.overrideExtensionMeta()` to override providers in the metadata added by the `ROUTES_EXTENSIONS` group:
 
 ```ts
 import { Provider } from '@ditsmod/core';
 import { MetadataPerMod3, ROUTES_EXTENSIONS } from '@ditsmod/rest';
 import { TestApplication, GroupMetaOverrider } from '@ditsmod/testing';
 
-export class TestRoutingPlugin extends TestApplication {
-  overrideGroupRoutingMeta(providersToOverride: Provider[]) {
+export class TestRestPlugin extends TestApplication {
+  overrideGroupRestMeta(providersToOverride: Provider[]) {
     const overrideRoutesMeta: GroupMetaOverrider<MetadataPerMod3> = (stage1GroupMeta) => {
       stage1GroupMeta.groupData?.forEach((metadataPerMod3) => {
         // ...
@@ -244,12 +244,12 @@ export class TestRoutingPlugin extends TestApplication {
 }
 ```
 
-You can use this example to create plugins that will replace providers for other groups of extensions. You can find a complete example with `TestRoutingPlugin` [in the Ditsmod repository][104]. Basically, you will need this plugin in tests if you need to replace the providers that you have added in the controller metadata in your application:
+You can use this example to create plugins that will replace providers for other groups of extensions. You can find a complete example with `TestRestPlugin` [in the Ditsmod repository][104]. Basically, you will need this plugin in tests if you need to replace the providers that you have added in the controller metadata in your application:
 
 ```ts {14-15}
 import { Provider } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
-import { TestRoutingPlugin } from '@ditsmod/rest-testing';
+import { TestRestPlugin } from '@ditsmod/rest-testing';
 
 import { AppModule } from './app.module.js';
 import { Service1, Service2 } from './services.js';
@@ -260,8 +260,8 @@ const providers: Provider[] = [
 ];
 
 const server = await TestApplication.createTestApp(AppModule)
-  .$use(TestRoutingPlugin)
-  .overrideGroupRoutingMeta(providers)
+  .$use(TestRestPlugin)
+  .overrideGroupRestMeta(providers)
   .getServer();
 ```
 
@@ -274,7 +274,7 @@ const server = await TestApplication.createTestApp(AppModule)
 [1]: /components-of-ditsmod-app/dependency-injection
 [2]: /components-of-ditsmod-app/dependency-injection#injector
 [3]: /components-of-ditsmod-app/dependency-injection#hierarchy-and-encapsulation-of-injectors
-[4]: #testroutingplugin
+[4]: #testrestplugin
 
 [100]: https://jestjs.io/
 [101]: https://jestjs.io/docs/mock-functions

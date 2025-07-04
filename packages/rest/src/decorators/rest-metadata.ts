@@ -8,30 +8,30 @@ import {
   NormalizedMeta,
 } from '@ditsmod/core';
 
-import { RoutingMetadata } from '#module/module-metadata.js';
-import { RoutingMetadataNormalizer } from '#module/rest-metadata-normalizer.js';
-import { RoutingModuleFactory } from '#module/rest-module-factory.js';
-import { RoutingNormalizedMeta } from '#types/rest-normalized-meta.js';
+import { RestMetadata } from '#module/module-metadata.js';
+import { RestMetadataNormalizer } from '#module/rest-metadata-normalizer.js';
+import { RestModuleFactory } from '#module/rest-module-factory.js';
+import { RestNormalizedMeta } from '#types/rest-normalized-meta.js';
 
-export const restMetadata: RoutingMetadataDecorator = makeClassDecorator(transformMetadata);
+export const restMetadata: RestMetadataDecorator = makeClassDecorator(transformMetadata);
 
-export interface RoutingMetadataDecorator {
-  (data?: RoutingMetadata): any;
+export interface RestMetadataDecorator {
+  (data?: RestMetadata): any;
 }
 
-export function transformMetadata(data?: RoutingMetadata): AttachedMetadata {
+export function transformMetadata(data?: RestMetadata): AttachedMetadata {
   const metadata = Object.assign({}, data);
   return {
     isAttachedMetadata: true,
     metadata,
-    normalize(baseMeta: NormalizedMeta, metadataWithParams: RoutingMetadata) {
-      return new RoutingMetadataNormalizer().normalize(baseMeta, metadataWithParams);
+    normalize(baseMeta: NormalizedMeta, metadataWithParams: RestMetadata) {
+      return new RestMetadataNormalizer().normalize(baseMeta, metadataWithParams);
     },
-    getImportsOrExports(meta: RoutingNormalizedMeta) {
+    getImportsOrExports(meta: RestNormalizedMeta) {
       return meta.appendsModules.concat(meta.appendsWithParams as any[]);
     },
     exportGlobalProviders(moduleManager: ModuleManager, baseMeta: NormalizedMeta, providersPerApp: Provider[]) {
-      return new RoutingModuleFactory().exportGlobalProviders(moduleManager, baseMeta, providersPerApp);
+      return new RestModuleFactory().exportGlobalProviders(moduleManager, baseMeta, providersPerApp);
     },
     bootstrap(
       ...args: [
@@ -42,7 +42,7 @@ export function transformMetadata(data?: RoutingMetadata): AttachedMetadata {
         unfinishedScanModules: Set<ModRefId>,
       ]
     ) {
-      return new RoutingModuleFactory().bootstrap(...args);
+      return new RestModuleFactory().bootstrap(...args);
     },
   };
 }

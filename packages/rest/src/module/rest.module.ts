@@ -1,7 +1,7 @@
 import { featureModule } from '@ditsmod/core';
 
 import { DefaultRouter, Router } from '#services/router.js';
-import { RoutingErrorMediator } from '#services/router-error-mediator.js';
+import { RestErrorMediator } from '#services/router-error-mediator.js';
 import { RoutesExtension } from '#extensions/routes.extension.js';
 import { PreRouterExtension } from '#extensions/pre-router.extension.js';
 import { RouteMeta } from '#types/route-data.js';
@@ -18,7 +18,7 @@ import { restMetadata } from '#decorators/rest-metadata.js';
   exports: [RouteMeta],
 })
 @featureModule({
-  providersPerApp: [{ token: Router, useClass: DefaultRouter }, RoutingErrorMediator],
+  providersPerApp: [{ token: Router, useClass: DefaultRouter }, RestErrorMediator],
   extensions: [
     { extension: RoutesExtension, beforeExtensions: [PreRouterExtension], exportOnly: true },
     { extension: PreRouterExtension, afterExtensions: [RoutesExtension], exportOnly: true },

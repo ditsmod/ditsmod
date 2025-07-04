@@ -1,9 +1,9 @@
 import { AnyObj, ModuleType, Class, Provider, Providers, ModuleWithParams, ParamsTransferObj } from '@ditsmod/core';
 
 import { GuardItem } from '#interceptors/guard.js';
-import { RoutingProvidersMetadata } from '#types/rest-normalized-meta.js';
+import { RestProvidersMetadata } from '#types/rest-normalized-meta.js';
 
-export interface RoutingMetadata extends ParamsTransferObj<RoutingModuleParams> {
+export interface RestMetadata extends ParamsTransferObj<RestModuleParams> {
   /**
    * List of provider tokens exported by this module.
    */
@@ -38,23 +38,23 @@ export interface RoutingMetadata extends ParamsTransferObj<RoutingModuleParams> 
   controllers?: Class[];
 }
 
-export type RoutingModuleParams = RoutingModuleParams1 | RoutingModuleParams2;
+export type RestModuleParams = RestModuleParams1 | RestModuleParams2;
 
-export interface BaseModuleParams extends Partial<RoutingProvidersMetadata> {
+export interface BaseModuleParams extends Partial<RestProvidersMetadata> {
   /**
-   * List of modules, `RoutingModuleParams` or tokens of providers exported by this
+   * List of modules, `RestModuleParams` or tokens of providers exported by this
    * module.
    */
   exports?: any[];
   guards?: GuardItem[];
 }
 
-export interface RoutingModuleParams1 extends BaseModuleParams {
+export interface RestModuleParams1 extends BaseModuleParams {
   path?: string;
   absolutePath?: never;
 }
 
-export interface RoutingModuleParams2 extends BaseModuleParams {
+export interface RestModuleParams2 extends BaseModuleParams {
   absolutePath?: string;
   path?: never;
 }

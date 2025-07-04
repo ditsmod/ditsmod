@@ -17,12 +17,12 @@ export class Application extends BaseApplication {
 
   /**
    * @param appModule The root module of the application.
-   * @param routingOptions Application options.
+   * @param restOptions Application options.
    */
-  static async create(appModule: ModuleType, routingOptions?: AppOptions) {
+  static async create(appModule: ModuleType, restOptions?: AppOptions) {
     const app = new this();
     try {
-      app.init(routingOptions);
+      app.init(restOptions);
       const moduleManager = app.scanRootModule(appModule);
       const appInitializer = new AppInitializer(app.appOptions, moduleManager, app.systemLogMediator);
       await app.bootstrapApplication(appInitializer);
@@ -36,9 +36,9 @@ export class Application extends BaseApplication {
     }
   }
 
-  protected override init(routingOptions?: AppOptions) {
-    this.appOptions = { ...routingOptions };
-    super.init(routingOptions);
+  protected override init(restOptions?: AppOptions) {
+    this.appOptions = { ...restOptions };
+    super.init(restOptions);
     this.checkSecureServerOption();
   }
 

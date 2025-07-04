@@ -18,13 +18,13 @@ import { RouteMeta } from '#types/route-data.js';
 import { GuardItem, GuardPerMod1 } from '#interceptors/guard.js';
 import { ControllerRawMetadata1 } from '#types/controller.js';
 import { AppOptions } from '#types/app-options.js';
-import { RoutingNormalizedMeta } from '#types/rest-normalized-meta.js';
+import { RestNormalizedMeta } from '#types/rest-normalized-meta.js';
 
 /**
  * This metadata returns from `ImportsResolver`. The target for this metadata is `RoutesExtension`.
  */
-export class RoutingMetadataPerMod2 extends MetadataPerMod2 {
-  declare meta: NormalizedMeta & RoutingNormalizedMeta;
+export class RestMetadataPerMod2 extends MetadataPerMod2 {
+  declare meta: NormalizedMeta & RestNormalizedMeta;
   applyControllers?: boolean;
   guardsPerMod1: GuardPerMod1[];
 }
@@ -35,7 +35,7 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
 
   constructor(
     protected appOptions: AppOptions,
-    protected metadataPerMod2: RoutingMetadataPerMod2,
+    protected metadataPerMod2: RestMetadataPerMod2,
   ) {}
 
   async stage1() {
@@ -49,7 +49,7 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
     return this.metadataPerMod3;
   }
 
-  protected getControllersMetadata(prefixPerApp: string = '', metadataPerMod2: RoutingMetadataPerMod2) {
+  protected getControllersMetadata(prefixPerApp: string = '', metadataPerMod2: RestMetadataPerMod2) {
     const { prefixPerMod, meta, applyControllers } = metadataPerMod2;
 
     const aControllerMetadata: ControllerMetadata[] = [];

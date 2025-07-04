@@ -11,21 +11,21 @@ import {
 } from '@ditsmod/core';
 
 import { NormalizedGuard } from '#interceptors/guard.js';
-import { AppendsWithParams, RoutingModuleParams } from '#module/module-metadata.js';
+import { AppendsWithParams, RestModuleParams } from '#module/module-metadata.js';
 
-export interface RoutingRawProvidersMetadata {
+export interface RestRawProvidersMetadata {
   providersPerApp?: Providers | Provider[];
   providersPerMod?: Providers | Provider[];
   providersPerRou?: Providers | Provider[];
   providersPerReq?: Providers | Provider[];
 }
 
-export class RoutingProvidersMetadata {
+export class RestProvidersMetadata {
   providersPerRou: Provider[] = [];
   providersPerReq: Provider[] = [];
 }
 
-export class RoutingNormalizedMeta extends RoutingProvidersMetadata {
+export class RestNormalizedMeta extends RestProvidersMetadata {
   exportedProvidersPerRou: Provider[] = [];
   exportedProvidersPerReq: Provider[] = [];
   exportedMultiProvidersPerRou: MultiProvider[] = [];
@@ -36,12 +36,12 @@ export class RoutingNormalizedMeta extends RoutingProvidersMetadata {
   appendsWithParams: AppendsWithParams[] = [];
   appendsModules: ModuleType[] = [];
   controllers: Class[] = [];
-  importParams: DecoratorParams<RoutingModuleParams>[] = [];
+  importParams: DecoratorParams<RestModuleParams>[] = [];
   /**
    * If the current `baseMeta.modRefId` has the type `ModuleWithParams`,
    * this property will label the parameters of the current module.
    */
-  params: RoutingModuleParams = {};
+  params: RestModuleParams = {};
 }
 
-export type RoutingModRefId<T extends AnyObj = AnyObj> = ModRefId | AppendsWithParams<T>;
+export type RestModRefId<T extends AnyObj = AnyObj> = ModRefId | AppendsWithParams<T>;

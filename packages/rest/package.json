@@ -4,7 +4,7 @@
   "version": "3.0.0-alpha.3",
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "homepage": "https://ditsmod.github.io/en/",
-  "description": "Routing module for Ditsmod applications",
+  "description": "Rest module for Ditsmod applications",
   "module": "dist/index.js",
   "exports": {
     "./package.json": {

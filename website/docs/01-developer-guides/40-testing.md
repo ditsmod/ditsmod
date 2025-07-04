@@ -186,7 +186,7 @@ interface GroupMetaOverrider<T = any> {
 
 Тобто даний колбек приймає єдиний аргумент - об'єкт з властивістю `groupData`, де ви можете знайти метадані, з указаної групи розширень.
 
-Нижче описано [TestRoutingPlugin][4], де показано як можна використовувати `testApplication.overrideExtensionMeta()`.
+Нижче описано [TestRestPlugin][4], де показано як можна використовувати `testApplication.overrideExtensionMeta()`.
 
 ### `testApplication.$use()`
 
@@ -221,17 +221,17 @@ TestApplication.createTestApp(AppModule)
 Як бачите, після використання `$use()` інстанс `TestApplication` може використовувати методи плагінів. [Приклад використання такого плагіна в реальному житті][103] можна проглянути в модулі `@ditsmod/rest`.
 
 
-### `TestRoutingPlugin`
+### `TestRestPlugin`
 
-В класі `TestRoutingPlugin` використовується `testApplication.overrideExtensionMeta()` для підміни провайдерів у метаданих, що додаються групою `ROUTES_EXTENSIONS`:
+В класі `TestRestPlugin` використовується `testApplication.overrideExtensionMeta()` для підміни провайдерів у метаданих, що додаються групою `ROUTES_EXTENSIONS`:
 
 ```ts
 import { Provider } from '@ditsmod/core';
 import { MetadataPerMod3, ROUTES_EXTENSIONS } from '@ditsmod/rest';
 import { TestApplication, GroupMetaOverrider } from '@ditsmod/testing';
 
-export class TestRoutingPlugin extends TestApplication {
-  overrideGroupRoutingMeta(providersToOverride: Provider[]) {
+export class TestRestPlugin extends TestApplication {
+  overrideGroupRestMeta(providersToOverride: Provider[]) {
     const overrideRoutesMeta: GroupMetaOverrider<MetadataPerMod3> = (stage1GroupMeta) => {
       stage1GroupMeta.groupData?.forEach((metadataPerMod3) => {
         // ...
@@ -244,12 +244,12 @@ export class TestRoutingPlugin extends TestApplication {
 }
 ```
 
-Ви можете використовувати цей приклад для створення плагінів, що будуть підміняти провайдери для інших груп розширень. Повний приклад з `TestRoutingPlugin` ви можете знайти [в репозиторії Ditsmod][104]. По-суті, цей плагін вам буде потрібен у тестах, якщо вам потрібно буде підмінити провайдери, які у вашому застосунку ви додали у метадані контролера:
+Ви можете використовувати цей приклад для створення плагінів, що будуть підміняти провайдери для інших груп розширень. Повний приклад з `TestRestPlugin` ви можете знайти [в репозиторії Ditsmod][104]. По-суті, цей плагін вам буде потрібен у тестах, якщо вам потрібно буде підмінити провайдери, які у вашому застосунку ви додали у метадані контролера:
 
 ```ts {14-15}
 import { Provider } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
-import { TestRoutingPlugin } from '@ditsmod/rest-testing';
+import { TestRestPlugin } from '@ditsmod/rest-testing';
 
 import { AppModule } from './app.module.js';
 import { Service1, Service2 } from './services.js';
@@ -260,8 +260,8 @@ const providers: Provider[] = [
 ];
 
 const server = await TestApplication.createTestApp(AppModule)
-  .$use(TestRoutingPlugin)
-  .overrideGroupRoutingMeta(providers)
+  .$use(TestRestPlugin)
+  .overrideGroupRestMeta(providers)
   .getServer();
 ```
 
@@ -274,7 +274,7 @@ const server = await TestApplication.createTestApp(AppModule)
 [1]: /components-of-ditsmod-app/dependency-injection
 [2]: /components-of-ditsmod-app/dependency-injection#injector
 [3]: /components-of-ditsmod-app/dependency-injection#hierarchy-and-encapsulation-of-injectors
-[4]: #testroutingplugin
+[4]: #testrestplugin
 
 [100]: https://jestjs.io/
 [101]: https://jestjs.io/docs/mock-functions

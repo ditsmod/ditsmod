@@ -9,13 +9,13 @@ import {
   ModRefId,
   Provider,
 } from '@ditsmod/core';
-import { RoutingApplication } from '@ditsmod/rest';
+import { RestApplication } from '@ditsmod/rest';
 
 import { GroupMetaOverrider, Meta } from './types.js';
 import { TestAppInitializer } from './test-app-initializer.js';
 import { TestModuleManager } from './test-module-manager.js';
 
-export class TestApplication extends RoutingApplication {
+export class TestApplication extends RestApplication {
   protected testAppInitializer: TestAppInitializer;
   protected testModuleManager: TestModuleManager;
   protected appModule: ModuleType;

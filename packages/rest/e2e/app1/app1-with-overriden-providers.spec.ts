@@ -2,7 +2,7 @@ import { jest } from '@jest/globals';
 import request from 'supertest';
 import { Providers } from '@ditsmod/core';
 import { TestApplication } from '@ditsmod/testing';
-import { TestRoutingPlugin } from '@ditsmod/rest-testing';
+import { TestRestPlugin } from '@ditsmod/rest-testing';
 
 import { AppModule } from './app.module.js';
 import {
@@ -34,8 +34,8 @@ describe('@ditsmod/rest/e2e', () => {
       .useValue<ServicePerReq2>(ServicePerReq2, { method: methodPerReq2 });
 
     const server = await TestApplication.createTestApp(AppModule)
-      .$use(TestRoutingPlugin)
-      .overrideGroupRoutingMeta(aProvidersToOverride)
+      .$use(TestRestPlugin)
+      .overrideGroupRestMeta(aProvidersToOverride)
       .overrideModuleMeta(
         new Providers()
           .useValue<ServicePerApp>(ServicePerApp, { method: methodPerApp })

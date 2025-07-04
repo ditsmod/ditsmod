@@ -9,13 +9,13 @@ export {
   AppendsWithParams1,
   AppendsWithParams2,
   BaseAppendsWithParams,
-  RoutingMetadata,
-  RoutingModuleParams,
+  RestMetadata,
+  RestModuleParams,
 } from './module/module-metadata.js';
 export { RouteParam, MetadataPerMod3, RedirectStatusCodes } from './types/types.js';
 export { RestModule } from './module/rest.module.js';
 export { RequestContext } from './services/request-context.js';
-export { RoutingErrorMediator } from './services/router-error-mediator.js';
+export { RestErrorMediator } from './services/router-error-mediator.js';
 export { RoutesExtension } from './extensions/routes.extension.js';
 export { PreRouterExtension } from './extensions/pre-router.extension.js';
 export { UseInterceptorExtension } from './extensions/use-interceptor.extension.js';

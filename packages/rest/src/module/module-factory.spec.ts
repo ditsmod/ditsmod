@@ -17,7 +17,7 @@ import {
 } from '@ditsmod/core';
 
 import { controller } from '#types/controller.js';
-import { AppendsWithParams, RoutingMetadata } from './module-metadata.js';
+import { AppendsWithParams, RestMetadata } from './module-metadata.js';
 import { restMetadata } from '#decorators/rest-metadata.js';
 
 type Level = 'Mod';

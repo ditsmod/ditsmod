@@ -1,1 +1,1 @@
-export { TestRoutingPlugin } from './test-rest.plugin.js';
+export { TestRestPlugin } from './test-rest.plugin.js';

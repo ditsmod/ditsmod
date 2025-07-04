@@ -2,7 +2,7 @@ import { AnyObj, Class, DecoratorAndValue, ModuleType, ModuleWithParams } from '
 
 import { route } from '#decorators/route.js';
 import { HttpInterceptor } from '#interceptors/tokens-and-types.js';
-import { AppendsWithParams, RoutingModuleParams } from '#module/module-metadata.js';
+import { AppendsWithParams, RestModuleParams } from '#module/module-metadata.js';
 import { controller, ControllerRawMetadata } from './controller.js';
 import { Http2SecureServerOptions, ServerOptions } from './server-options.js';
 
@@ -19,7 +19,7 @@ export function isInterceptor(cls?: Class): cls is Class<HttpInterceptor> {
 }
 
 export function isAppendsWithParams(
-  modRefId?: ModuleType | ModuleWithParams | RoutingModuleParams | AppendsWithParams,
+  modRefId?: ModuleType | ModuleWithParams | RestModuleParams | AppendsWithParams,
 ): modRefId is AppendsWithParams {
   return (
     (modRefId as AppendsWithParams)?.module !== undefined &&

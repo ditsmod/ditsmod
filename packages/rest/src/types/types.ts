@@ -1,18 +1,18 @@
 import { Class, HttpMethod, ModuleExtract, ModuleMetadata, ModuleType, Provider } from '@ditsmod/core';
 
-import { RoutingImportObj } from '#module/rest-module-factory.js';
+import { RestImportObj } from '#module/rest-module-factory.js';
 import { Tree } from '#services/tree.js';
 import { GuardPerMod1 } from '#interceptors/guard.js';
 import { RouteHandler } from '#services/router.js';
 import { AppendsWithParams } from '#module/module-metadata.js';
 import { ControllerMetadata } from './controller-metadata.js';
-import { RoutingModRefId, RoutingNormalizedMeta } from './rest-normalized-meta.js';
+import { RestModRefId, RestNormalizedMeta } from './rest-normalized-meta.js';
 
-export class RoutingGlobalProviders {
-  importedProvidersPerRou = new Map<any, RoutingImportObj>();
-  importedProvidersPerReq = new Map<any, RoutingImportObj>();
-  importedMultiProvidersPerRou = new Map<RoutingModRefId, Provider[]>();
-  importedMultiProvidersPerReq = new Map<RoutingModRefId, Provider[]>();
+export class RestGlobalProviders {
+  importedProvidersPerRou = new Map<any, RestImportObj>();
+  importedProvidersPerReq = new Map<any, RestImportObj>();
+  importedMultiProvidersPerRou = new Map<RestModRefId, Provider[]>();
+  importedMultiProvidersPerReq = new Map<RestModRefId, Provider[]>();
 }
 
 /**
@@ -38,7 +38,7 @@ interface ExtendedModuleMetadata extends ModuleMetadata {
  * that need set routes. The target for this metadata is `PreRouterExtension` group.
  */
 export class MetadataPerMod3 {
-  meta: RoutingNormalizedMeta;
+  meta: RestNormalizedMeta;
   aControllerMetadata: ControllerMetadata[];
   guardsPerMod1: GuardPerMod1[];
 }
@@ -87,6 +87,6 @@ export interface RouteParam {
 }
 export type Level = 'Rou' | 'Req';
 
-export class RoutingModuleExtract extends ModuleExtract {
+export class RestModuleExtract extends ModuleExtract {
   path: string;
 }
