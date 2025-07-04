@@ -58,6 +58,7 @@ export interface AttachedMetadata {
   isAttachedMetadata: true;
   metadata: AnyObj;
   normalize?: (baseMeta: NormalizedMeta, metadata: AnyObj) => AnyObj | undefined;
+  getImportsOrExports?(meta: AnyObj): ModRefId[];
   exportGlobalProviders?: (moduleManager: ModuleManager, baseMeta: NormalizedMeta, providersPerApp: Provider[]) => any;
   bootstrap?: (
     providersPerApp: Provider[],
