@@ -13,21 +13,19 @@ import {
   isNormalizedProvider,
   isProvider,
   mergeArrays,
-  MetaAndImportsOrExports,
   ModuleType,
   ModuleWithParams,
   MultiProvider,
   NormalizedMeta,
   NormalizedProvider,
   objectKeys,
-  ParamsTransferObj,
   Provider,
   Providers,
   reflector,
   resolveForwardRef,
 } from '@ditsmod/core';
 
-import { RoutingMetadata, RoutingModuleParams } from '#module/module-metadata.js';
+import { RoutingMetadata } from '#module/module-metadata.js';
 import { RoutingNormalizedMeta } from '#types/rest-normalized-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
@@ -37,7 +35,7 @@ import { restMetadata } from '#decorators/rest-metadata.js';
  * Normalizes and validates module metadata.
  */
 export class RoutingMetadataNormalizer {
-  normalize(baseMeta: NormalizedMeta, rawMeta: RoutingMetadata): MetaAndImportsOrExports {
+  normalize(baseMeta: NormalizedMeta, rawMeta: RoutingMetadata) {
     const meta = new RoutingNormalizedMeta();
     this.mergeModuleWithParams(baseMeta, meta);
     rawMeta.appends?.forEach((ap, i) => {
@@ -50,13 +48,14 @@ export class RoutingMetadataNormalizer {
       }
     });
     this.checkParams(baseMeta, rawMeta);
+    meta.importParams = rawMeta.params || [];
     this.pickAndMergeMeta(meta, rawMeta);
-    const mergedMeta = { ...rawMeta, ...meta };
+    const mergedMeta = { ...rawMeta, ...meta } as RoutingNormalizedMeta;
     this.quickCheckMetadata(baseMeta, mergedMeta);
     meta.controllers.forEach((Controller) => this.checkController(Controller));
     this.normalizeModule(rawMeta, meta);
 
-    return { meta: mergedMeta, importsOrExports: meta.appendsModules.concat(meta.appendsWithParams as any[]) };
+    return mergedMeta;
   }
 
   protected mergeModuleWithParams(baseMeta: NormalizedMeta, meta: RoutingNormalizedMeta): void {
@@ -67,15 +66,10 @@ export class RoutingMetadataNormalizer {
     } else if (!isModuleWithParentMeta(modRefId)) {
       return;
     }
-    let params: RoutingModuleParams | undefined;
-    for (const [decorator, val] of modRefId.parentMeta.perDecoratorMeta) {
-      if (decorator === restMetadata) {
-        params = (val?.meta as ParamsTransferObj<RoutingModuleParams>).params!.find((param) => {
-          return param.for === modRefId;
-        })?.data;
-        break;
-      }
-    }
+    const perDecoratorMeta = modRefId.parentMeta.perDecoratorMeta.get(restMetadata) as
+      | RoutingNormalizedMeta
+      | undefined;
+    const params = perDecoratorMeta?.importParams.find((param) => param.for === modRefId)?.data;
 
     if (params) {
       objectKeys(params).forEach((p) => {
@@ -84,7 +78,6 @@ export class RoutingMetadataNormalizer {
           (meta as any)[p] = mergeArrays((meta as any)[p], (params as any)[p]);
         }
       });
-      meta.params = params;
       meta.guardsPerMod.push(...this.normalizeGuards(params.guards));
     }
   }
