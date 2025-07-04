@@ -65,7 +65,7 @@ export class RoutingMetadataNormalizer {
       return;
     }
     let params: RoutingModuleParams | undefined;
-    for (const [decorator, val] of modRefId.parentMeta.metaPerDecorator) {
+    for (const [decorator, val] of modRefId.parentMeta.perDecoratorMeta) {
       if (decorator === restMetadata) {
         params = (val?.meta as ParamsTransferObj<RoutingModuleParams>).params!.find((param) => {
           return param.for === modRefId;

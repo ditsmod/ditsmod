@@ -45,7 +45,7 @@ export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj
    * This property contains normalized metadata collected from each additional
    * module decorator except `featureModule` and `rootModule`.
    */
-  metaPerDecorator = new Map<AnyFn, MetaAndImportsOrExports | undefined>();
+  perDecoratorMeta = new Map<AnyFn, MetaAndImportsOrExports | undefined>();
 
   importsModules: ModuleType[] = [];
   importsWithParams: ModuleWithParams[] = [];
