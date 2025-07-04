@@ -6,17 +6,6 @@ import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { ExtensionClass } from '#extension/extension-types.js';
 import { AttachedMetadata } from '#decorators/feature-module.js';
 
-export interface MetaAndImportsOrExports<T extends AnyObj = AnyObj> {
-  /**
-   * Normalized metadata.
-   */
-  meta?: T;
-  /**
-   * Properties in `meta` that imported or exported modules have (e.g. `importsModules` or `exportsModules`).
-   */
-  importsOrExports?: (ModuleWithParams | ModuleType)[];
-}
-
 export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> {
   /**
    * The module setted here must be identical to the module
@@ -45,7 +34,7 @@ export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj
    * This property contains normalized metadata collected from each additional
    * module decorator except `featureModule` and `rootModule`.
    */
-  perDecoratorMeta = new Map<AnyFn, MetaAndImportsOrExports | undefined>();
+  perDecoratorMeta = new Map<AnyFn, AnyObj | undefined>();
 
   importsModules: ModuleType[] = [];
   importsWithParams: ModuleWithParams[] = [];

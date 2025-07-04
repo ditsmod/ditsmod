@@ -6,7 +6,7 @@ import { Providers } from '#utils/providers.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { GlobalProviders } from '#types/metadata-per-mod.js';
-import { MetaAndImportsOrExports, NormalizedMeta } from '#types/normalized-meta.js';
+import { NormalizedMeta } from '#types/normalized-meta.js';
 
 export const featureModule: FeatureModuleDecorator = makeClassDecorator(transformModule);
 
