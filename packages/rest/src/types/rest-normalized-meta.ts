@@ -1,4 +1,14 @@
-import { AnyObj, Provider, ModuleType, MultiProvider, Class, Providers, ModuleWithParams, ModRefId } from '@ditsmod/core';
+import {
+  AnyObj,
+  Provider,
+  ModuleType,
+  MultiProvider,
+  Class,
+  Providers,
+  ModuleWithParams,
+  ModRefId,
+  DecoratorParams,
+} from '@ditsmod/core';
 
 import { NormalizedGuard } from '#interceptors/guard.js';
 import { AppendsWithParams, RoutingModuleParams } from '#module/module-metadata.js';
@@ -26,6 +36,11 @@ export class RoutingNormalizedMeta extends RoutingProvidersMetadata {
   appendsWithParams: AppendsWithParams[] = [];
   appendsModules: ModuleType[] = [];
   controllers: Class[] = [];
+  importParams: DecoratorParams<RoutingModuleParams>[] = [];
+  /**
+   * If the current `baseMeta.modRefId` has the type `ModuleWithParams`,
+   * this property will label the parameters of the current module.
+   */
   params: RoutingModuleParams = {};
 }
 
