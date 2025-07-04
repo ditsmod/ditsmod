@@ -1,9 +1,6 @@
 import {
   Provider,
-  ModuleType,
-  ModuleWithParams,
   ModRefId,
-  MetadataPerMod1,
   ModuleManager,
   ModuleExtract,
   isModuleWithParams,
@@ -18,21 +15,21 @@ import {
   getModule,
   NormalizedMeta,
   GlobalProviders,
-  ImportedTokensMap,
+  getLastProviders,
 } from '@ditsmod/core';
 
 import { GuardPerMod1 } from '#interceptors/guard.js';
-import { RoutingModRefId, RoutingNormalizedMeta } from '#types/rest-normalized-meta.js';
-import { Level, RoutingGlobalProviders, RoutingModuleExtract } from '#types/types.js';
+import { RestModRefId, RestNormalizedMeta } from '#types/rest-normalized-meta.js';
+import { Level, RestGlobalProviders, RestModuleExtract } from '#types/types.js';
 import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js';
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
-import { AppendsWithParams, RoutingModuleParams } from './module-metadata.js';
+import { AppendsWithParams } from './module-metadata.js';
 import { restMetadata } from '#decorators/rest-metadata.js';
 import { isAppendsWithParams } from '#types/type.guards.js';
 
-export class RoutingImportObj<T extends Provider = Provider> {
-  modRefId: RoutingModRefId;
+export class RestImportObj<T extends Provider = Provider> {
+  modRefId: RestModRefId;
   /**
    * This property can have more than one element for multi-providers only.
    */
@@ -42,26 +39,26 @@ export class RoutingImportObj<T extends Provider = Provider> {
 /**
  * Metadata collected using `ModuleFactory`. The target for this metadata is `ImportsResolver`.
  */
-export class RoutingMetadataPerMod1 {
+export class RestMetadataPerMod1 {
   prefixPerMod: string;
   guardsPerMod1: GuardPerMod1[];
   /**
-   * Snapshot of `RoutingNormalizedMeta`. If you modify any array in this object,
+   * Snapshot of `RestNormalizedMeta`. If you modify any array in this object,
    * the original array will remain unchanged.
    */
-  meta: RoutingNormalizedMeta;
+  meta: RestNormalizedMeta;
   /**
    * Map between a token and its ImportObj per level.
    */
-  importedTokensMap: RoutingImportedTokensMap;
+  importedTokensMap: RestImportedTokensMap;
   applyControllers?: boolean;
 }
 
-export interface RoutingImportedTokensMap {
-  perRou: Map<any, RoutingImportObj>;
-  perReq: Map<any, RoutingImportObj>;
-  multiPerRou: Map<RoutingModRefId, Provider[]>;
-  multiPerReq: Map<RoutingModRefId, Provider[]>;
+export interface RestImportedTokensMap {
+  perRou: Map<any, RestImportObj>;
+  perReq: Map<any, RestImportObj>;
+  multiPerRou: Map<RestModRefId, Provider[]>;
+  multiPerReq: Map<RestModRefId, Provider[]>;
 }
 
 /**
@@ -69,7 +66,7 @@ export interface RoutingImportedTokensMap {
  * - merges global and local providers;
  * - checks on providers collisions.
  */
-export class RoutingModuleFactory {
+export class RestModuleFactory {
   protected providersPerApp: Provider[];
   protected moduleName: string;
   protected prefixPerMod: string;
@@ -78,19 +75,19 @@ export class RoutingModuleFactory {
    * Module metadata.
    */
   protected baseMeta: NormalizedMeta;
-  protected meta: RoutingNormalizedMeta;
+  protected meta: RestNormalizedMeta;
 
-  protected importedProvidersPerRou = new Map<any, RoutingImportObj>();
-  protected importedProvidersPerReq = new Map<any, RoutingImportObj>();
-  protected importedMultiProvidersPerRou = new Map<ModuleType | RoutingModuleParams | AppendsWithParams, Provider[]>();
-  protected importedMultiProvidersPerReq = new Map<ModuleType | RoutingModuleParams | AppendsWithParams, Provider[]>();
+  protected importedProvidersPerRou = new Map<any, RestImportObj>();
+  protected importedProvidersPerReq = new Map<any, RestImportObj>();
+  protected importedMultiProvidersPerRou = new Map<ModRefId | AppendsWithParams, Provider[]>();
+  protected importedMultiProvidersPerReq = new Map<ModRefId | AppendsWithParams, Provider[]>();
 
   /**
    * GlobalProviders.
    */
   protected glProviders: GlobalProviders;
-  protected routingGlProviders = new RoutingGlobalProviders();
-  protected appMetadataMap = new Map<ModRefId, RoutingMetadataPerMod1>();
+  protected restGlProviders = new RestGlobalProviders();
+  protected appMetadataMap = new Map<ModRefId, RestMetadataPerMod1>();
   protected unfinishedScanModules = new Set<ModRefId>();
   protected moduleManager: ModuleManager;
 
@@ -98,12 +95,12 @@ export class RoutingModuleFactory {
     moduleManager: ModuleManager,
     baseMeta: NormalizedMeta,
     providersPerApp: Provider[],
-  ): RoutingGlobalProviders {
+  ): RestGlobalProviders {
     this.moduleManager = moduleManager;
     this.moduleName = baseMeta.name;
     this.providersPerApp = providersPerApp;
-    const meta = baseMeta.perDecoratorMeta.get(restMetadata) as RoutingNormalizedMeta;
-    this.importProviders(this.moduleName, meta);
+    this.baseMeta = baseMeta;
+    this.importProviders(baseMeta);
     this.checkAllCollisionsWithLevelsMix();
 
     return {
@@ -131,7 +128,10 @@ export class RoutingModuleFactory {
   ) {
     const baseMeta = moduleManager.getMetadata(modRefId, true);
     this.baseMeta = baseMeta;
-    const meta = baseMeta.perDecoratorMeta.get(restMetadata) as RoutingNormalizedMeta;
+    const meta = baseMeta.perDecoratorMeta.get(restMetadata) as RestNormalizedMeta | undefined;
+    if (!meta) {
+      return this.appMetadataMap;
+    }
     this.moduleManager = moduleManager;
     this.providersPerApp = providersPerApp;
     this.glProviders = globalProviders;
@@ -140,24 +140,24 @@ export class RoutingModuleFactory {
     this.guardsPerMod1 = guardsPerMod1 || [];
     this.unfinishedScanModules = unfinishedScanModules;
     this.meta = meta;
-    const moduleExtract: RoutingModuleExtract = {
+    const moduleExtract: RestModuleExtract = {
       path: this.prefixPerMod,
       moduleName: baseMeta.name,
       isExternal: baseMeta.isExternal,
     };
     baseMeta.providersPerMod.push({ token: ModuleExtract, useValue: moduleExtract });
-    this.checkImportsAndAppends(meta);
-    this.importAndAppendModules();
+    this.checkImportsAndAppends(baseMeta, meta);
+    this.importAndAppendModules(baseMeta);
 
     let applyControllers = false;
-    if (isRootModule(meta) || isAppends || this.hasPath(meta)) {
+    if (isRootModule(meta) || isAppends || this.hasPath(baseMeta)) {
       applyControllers = true;
     }
 
-    let perRou: Map<any, RoutingImportObj>;
-    let perReq: Map<any, RoutingImportObj>;
-    let multiPerRou: Map<RoutingModRefId, Provider[]>;
-    let multiPerReq: Map<RoutingModRefId, Provider[]>;
+    let perRou: Map<any, RestImportObj>;
+    let perReq: Map<any, RestImportObj>;
+    let multiPerRou: Map<RestModRefId, Provider[]>;
+    let multiPerReq: Map<RestModRefId, Provider[]>;
     if (baseMeta.isExternal) {
       // External modules do not require global providers from the application.
       perRou = new Map([...this.importedProvidersPerRou]);
@@ -165,14 +165,14 @@ export class RoutingModuleFactory {
       multiPerRou = new Map([...this.importedMultiProvidersPerRou]);
       multiPerReq = new Map([...this.importedMultiProvidersPerReq]);
     } else {
-      perRou = new Map([...this.routingGlProviders.importedProvidersPerRou, ...this.importedProvidersPerRou]);
-      perReq = new Map([...this.routingGlProviders.importedProvidersPerReq, ...this.importedProvidersPerReq]);
+      perRou = new Map([...this.restGlProviders.importedProvidersPerRou, ...this.importedProvidersPerRou]);
+      perReq = new Map([...this.restGlProviders.importedProvidersPerReq, ...this.importedProvidersPerReq]);
       multiPerRou = new Map([
-        ...this.routingGlProviders.importedMultiProvidersPerRou,
+        ...this.restGlProviders.importedMultiProvidersPerRou,
         ...this.importedMultiProvidersPerRou,
       ]);
       multiPerReq = new Map([
-        ...this.routingGlProviders.importedMultiProvidersPerReq,
+        ...this.restGlProviders.importedMultiProvidersPerReq,
         ...this.importedMultiProvidersPerReq,
       ]);
     }
@@ -191,25 +191,25 @@ export class RoutingModuleFactory {
     });
   }
 
-  protected hasPath(meta: RoutingNormalizedMeta) {
+  protected hasPath(baseMeta: NormalizedMeta) {
     const hasPath =
-      isAppendsWithParams(meta.modRefId) &&
-      (meta.modRefId.path !== undefined || meta.modRefId.absolutePath !== undefined);
+      isAppendsWithParams(baseMeta.modRefId) &&
+      (baseMeta.modRefId.path !== undefined || baseMeta.modRefId.absolutePath !== undefined);
 
     return hasPath;
   }
 
-  protected importAndAppendModules() {
-    this.importOrAppendModules([...this.baseMeta.importsModules, ...this.baseMeta.importsWithParams], true);
-    this.importOrAppendModules([...this.meta.appendsModules, ...this.meta.appendsWithParams]);
+  protected importAndAppendModules(baseMeta: NormalizedMeta) {
+    this.importOrAppendModules(baseMeta, [...this.baseMeta.importsModules, ...this.baseMeta.importsWithParams], true);
+    this.importOrAppendModules(baseMeta, [...this.meta.appendsModules, ...this.meta.appendsWithParams]);
     this.checkAllCollisionsWithLevelsMix();
   }
 
-  protected importOrAppendModules(aModRefIds: ModRefId[], isImport?: boolean) {
+  protected importOrAppendModules(baseMeta: NormalizedMeta, aModRefIds: ModRefId[], isImport?: boolean) {
     for (const modRefId of aModRefIds) {
       const meta = this.moduleManager.getMetadata(modRefId, true);
       if (isImport) {
-        this.importProviders(meta);
+        this.importProviders(baseMeta);
       }
 
       let prefixPerMod = '';
@@ -233,7 +233,7 @@ export class RoutingModuleFactory {
         continue;
       }
 
-      const moduleFactory = new RoutingModuleFactory();
+      const moduleFactory = new RestModuleFactory();
       this.unfinishedScanModules.add(modRefId);
       const appMetadataMap = moduleFactory.bootstrap(
         this.providersPerApp,
@@ -254,37 +254,50 @@ export class RoutingModuleFactory {
   /**
    * Recursively imports providers.
    *
-   * @param meta1 Module metadata from where imports providers.
+   * @param baseMeta1 Module metadata from where imports providers.
    */
-  protected importProviders(moduleName: string, meta1: RoutingNormalizedMeta) {
-    this.addProviders('Rou', meta1);
-    this.addProviders('Req', meta1);
-    if (meta1.exportedMultiProvidersPerRou.length) {
-      this.importedMultiProvidersPerRou.set(meta1.modRefId, meta1.exportedMultiProvidersPerRou);
+  protected importProviders(baseMeta1: NormalizedMeta) {
+    const { modRefId, exportsModules, exportsWithParams, perDecoratorMeta } = baseMeta1;
+
+    for (const modRefId2 of [...exportsModules, ...exportsWithParams]) {
+      const baseMeta2 = this.moduleManager.getMetadata(modRefId2, true);
+      // Reexported module
+      this.importProviders(baseMeta2);
     }
-    if (meta1.exportedMultiProvidersPerReq.length) {
-      this.importedMultiProvidersPerReq.set(meta1.modRefId, meta1.exportedMultiProvidersPerReq);
+
+    const meta = perDecoratorMeta.get(restMetadata) as RestNormalizedMeta | undefined;
+    if (!meta) {
+      return;
     }
-    this.throwIfTryResolvingMultiprovidersCollisions(moduleName);
+
+    this.addProviders('Rou', modRefId, meta);
+    this.addProviders('Req', modRefId, meta);
+    if (meta.exportedMultiProvidersPerRou.length) {
+      this.importedMultiProvidersPerRou.set(modRefId, meta.exportedMultiProvidersPerRou);
+    }
+    if (meta.exportedMultiProvidersPerReq.length) {
+      this.importedMultiProvidersPerReq.set(modRefId, meta.exportedMultiProvidersPerReq);
+    }
+    this.throwIfTryResolvingMultiprovidersCollisions(baseMeta1.name);
   }
 
-  protected addProviders(level: Level, meta: RoutingNormalizedMeta) {
+  protected addProviders(level: Level, modRefId: RestModRefId, meta: RestNormalizedMeta) {
     meta[`exportedProvidersPer${level}`].forEach((provider) => {
       const token1 = getToken(provider);
       const importObj = this[`importedProvidersPer${level}`].get(token1);
       if (importObj) {
-        this.checkCollisionsPerLevel(meta.modRefId, level, token1, provider, importObj);
+        this.checkCollisionsPerLevel(modRefId, level, token1, provider, importObj);
         const hasResolvedCollision = this.meta[`resolvedCollisionsPer${level}`].some(([token2]) => token2 === token1);
         if (hasResolvedCollision) {
           const { providers, module2 } = this.getResolvedCollisionsPerLevel(level, token1);
-          const newImportObj = new RoutingImportObj();
+          const newImportObj = new RestImportObj();
           newImportObj.modRefId = module2;
           newImportObj.providers.push(...providers);
           this[`importedProvidersPer${level}`].set(token1, newImportObj);
         }
       } else {
-        const newImportObj = new RoutingImportObj();
-        newImportObj.modRefId = meta.modRefId;
+        const newImportObj = new RestImportObj();
+        newImportObj.modRefId = modRefId;
         newImportObj.providers.push(provider);
         this[`importedProvidersPer${level}`].set(token1, newImportObj);
       }
@@ -292,11 +305,11 @@ export class RoutingModuleFactory {
   }
 
   protected checkCollisionsPerLevel(
-    modRefId: RoutingModRefId,
+    modRefId: RestModRefId,
     level: Level,
     token: NonNullable<unknown>,
     provider: Provider,
-    importObj: RoutingImportObj,
+    importObj: RestImportObj,
   ) {
     const declaredTokens = getTokens(this.meta[`providersPer${level}`]);
     const resolvedTokens = this.meta[`resolvedCollisionsPer${level}`].map(([token]) => token);
@@ -305,7 +318,13 @@ export class RoutingModuleFactory {
     if (collisions.length) {
       const moduleName1 = getDebugClassName(importObj.modRefId);
       const moduleName2 = getDebugClassName(modRefId);
-      throwProvidersCollisionError(this.moduleName, [token], [moduleName1, moduleName2], level, this.meta.isExternal);
+      throwProvidersCollisionError(
+        this.moduleName,
+        [token],
+        [moduleName1, moduleName2],
+        level,
+        this.baseMeta.isExternal,
+      );
     }
   }
 
@@ -313,12 +332,17 @@ export class RoutingModuleFactory {
     const [token2, modRefId2] = this.meta[`resolvedCollisionsPer${level}`].find(([token2]) => token1 === token2)!;
     const moduleName = getDebugClassName(modRefId2);
     const tokenName = token2.name || token2;
-    const meta2 = this.moduleManager.getMetadata(modRefId2);
+    const baseMeta2 = this.moduleManager.getMetadata(modRefId2);
+    const meta2 = baseMeta2?.perDecoratorMeta.get(restMetadata) as RestNormalizedMeta | undefined;
     let errorMsg =
       `Resolving collisions for providersPer${level} in ${this.moduleName} failed: ` +
       `${tokenName} mapped with ${moduleName}, but `;
-    if (!meta2) {
+    if (!baseMeta2) {
       errorMsg += `${moduleName} is not imported into the application.`;
+      throw new Error(errorMsg);
+    }
+    if (!meta2) {
+      errorMsg += `${moduleName} does not have a "restMetadata" decorator.`;
       throw new Error(errorMsg);
     }
     const providers = getLastProviders(meta2[`providersPer${level}`]).filter((p) => getToken(p) === token2);
@@ -380,7 +404,7 @@ export class RoutingModuleFactory {
             // Allow collisions in host modules.
           } else {
             const hostModuleName = getDebugClassName(importObj.modRefId);
-            throwProvidersCollisionError(this.moduleName, [token], [hostModuleName], level, this.meta.isExternal);
+            throwProvidersCollisionError(this.moduleName, [token], [hostModuleName], level, this.baseMeta.isExternal);
           }
         }
         this.resolveCollisionsWithLevelsMix(token, level, resolvedTokens);
@@ -391,7 +415,7 @@ export class RoutingModuleFactory {
   protected resolveCollisionsWithLevelsMix(token1: any, level: Level, resolvedTokens: any[]) {
     if (resolvedTokens.includes(token1)) {
       const [, module2] = this.meta[`resolvedCollisionsPer${level}`].find(([token2]) => token1 === token2)!;
-      if (this.meta.modRefId === module2) {
+      if (this.baseMeta.modRefId === module2) {
         if (!this[`importedProvidersPer${level}`].delete(token1)) {
           const tokenName = token1.name || token1;
           const errorMsg =
@@ -407,16 +431,17 @@ export class RoutingModuleFactory {
     }
   }
 
-  protected checkImportsAndAppends(meta: RoutingNormalizedMeta) {
-    [...meta.appendsModules].forEach((append) => {
-      const appendedMeta = this.moduleManager.getMetadata(append, true);
-      if (!appendedMeta.controllers.length) {
-        const msg = `Appends to "${meta.name}" failed: "${appendedMeta.name}" must have controllers.`;
+  protected checkImportsAndAppends(baseMeta: NormalizedMeta, meta1: RestNormalizedMeta) {
+    [...meta1.appendsModules].forEach((modRefId) => {
+      const appendedBaseMeta = this.moduleManager.getMetadata(modRefId, true);
+      const meta2 = appendedBaseMeta.perDecoratorMeta.get(restMetadata) as RestNormalizedMeta | undefined;
+      if (!meta2?.controllers.length) {
+        const msg = `Appends to "${baseMeta.name}" failed: "${appendedBaseMeta.name}" must have controllers.`;
         throw new Error(msg);
       }
-      const mod = getModule(append);
-      if (meta.importsModules.includes(mod) || meta.importsWithParams.some((imp) => imp.module === mod)) {
-        const msg = `Appends to "${meta.name}" failed: "${appendedMeta.name}" includes in both: imports and appends arrays.`;
+      const mod = getModule(modRefId);
+      if (baseMeta.importsModules.includes(mod) || baseMeta.importsWithParams.some((imp) => imp.module === mod)) {
+        const msg = `Appends to "${baseMeta.name}" failed: "${appendedBaseMeta.name}" includes in both: imports and appends arrays.`;
         throw new Error(msg);
       }
     });
