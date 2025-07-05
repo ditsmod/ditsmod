@@ -687,7 +687,7 @@ __metadata:
   peerDependencies:
     "@ditsmod/body-parser": ^3.0.0-alpha.3
     "@ditsmod/core": ^3.0.0-alpha.3
-    "@ditsmod/routing": ^3.0.0-alpha.3
+    "@ditsmod/rest": ^3.0.0-alpha.3
   languageName: unknown
   linkType: soft
 
@@ -702,7 +702,7 @@ __metadata:
     typescript: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.3
-    "@ditsmod/routing": ^3.0.0-alpha.3
+    "@ditsmod/rest": ^3.0.0-alpha.3
   languageName: unknown
   linkType: soft
 
@@ -730,7 +730,7 @@ __metadata:
     typescript: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.3
-    "@ditsmod/routing": ^3.0.0-alpha.3
+    "@ditsmod/rest": ^3.0.0-alpha.3
   languageName: unknown
   linkType: soft
 
@@ -743,7 +743,7 @@ __metadata:
     typescript: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.3
-    "@ditsmod/routing": ^3.0.0-alpha.3
+    "@ditsmod/rest": ^3.0.0-alpha.3
   languageName: unknown
   linkType: soft
 
@@ -773,7 +773,7 @@ __metadata:
     "@ditsmod/core": ^3.0.0-alpha.3
     "@ditsmod/i18n": ^3.0.0-alpha.3
     "@ditsmod/openapi": ^3.0.0-alpha.3
-    "@ditsmod/routing": ^3.0.0-alpha.3
+    "@ditsmod/rest": ^3.0.0-alpha.3
   languageName: unknown
   linkType: soft
 
@@ -796,40 +796,40 @@ __metadata:
     yaml-loader: "npm:^0.8.1"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.3
-    "@ditsmod/routing": ^3.0.0-alpha.3
+    "@ditsmod/rest": ^3.0.0-alpha.3
   languageName: unknown
   linkType: soft
 
-"@ditsmod/routing-diagnostics@workspace:packages/routing-diagnostics":
+"@ditsmod/rest-diagnostics@workspace:packages/rest-diagnostics":
   version: 0.0.0-use.local
-  resolution: "@ditsmod/routing-diagnostics@workspace:packages/routing-diagnostics"
+  resolution: "@ditsmod/rest-diagnostics@workspace:packages/rest-diagnostics"
   dependencies:
     jest: "npm:^30.0.0"
     npm-run-all: "npm:*"
     typescript: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.3
-    "@ditsmod/routing": ^3.0.0-alpha.3
+    "@ditsmod/rest": ^3.0.0-alpha.3
   languageName: unknown
   linkType: soft
 
-"@ditsmod/routing-testing@workspace:packages/routing-testing":
+"@ditsmod/rest-testing@workspace:packages/rest-testing":
   version: 0.0.0-use.local
-  resolution: "@ditsmod/routing-testing@workspace:packages/routing-testing"
+  resolution: "@ditsmod/rest-testing@workspace:packages/rest-testing"
   dependencies:
     jest: "npm:^30.0.0"
     npm-run-all: "npm:*"
     typescript: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.3
-    "@ditsmod/routing": ^3.0.0-alpha.3
+    "@ditsmod/rest": ^3.0.0-alpha.3
     "@ditsmod/testing": ^3.0.0-alpha.3
   languageName: unknown
   linkType: soft
 
-"@ditsmod/routing@workspace:packages/routing":
+"@ditsmod/rest@workspace:packages/rest":
   version: 0.0.0-use.local
-  resolution: "@ditsmod/routing@workspace:packages/routing"
+  resolution: "@ditsmod/rest@workspace:packages/rest"
   dependencies:
     find-my-way: "npm:^9.1.0"
     jest: "npm:^30.0.0"
@@ -852,7 +852,7 @@ __metadata:
     typescript: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.3
-    "@ditsmod/routing": ^3.0.0-alpha.3
+    "@ditsmod/rest": ^3.0.0-alpha.3
   languageName: unknown
   linkType: soft
 
@@ -865,7 +865,7 @@ __metadata:
     typescript: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.3
-    "@ditsmod/routing": ^3.0.0-alpha.3
+    "@ditsmod/rest": ^3.0.0-alpha.3
   languageName: unknown
   linkType: soft
 
@@ -890,7 +890,7 @@ __metadata:
     typescript: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.3
-    "@ditsmod/routing": ^3.0.0-alpha.3
+    "@ditsmod/rest": ^3.0.0-alpha.3
   languageName: unknown
   linkType: soft
 
