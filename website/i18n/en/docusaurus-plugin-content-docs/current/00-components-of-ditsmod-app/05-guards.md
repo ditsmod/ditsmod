@@ -153,27 +153,21 @@ export class SomeController {
 
 You can also centrally set guards at the module level:
 
-```ts {16}
-import { featureModule } from '@ditsmod/core';
+```ts {10}
+import { featureModule, ModuleWithParams } from '@ditsmod/core';
 import { restMetadata } from '@ditsmod/rest';
 
 import { OtherModule } from '../other/other.module.js';
 import { AuthModule } from '../auth/auth.module.js';
 import { AuthGuard } from '../auth/auth.guard.js';
 
+@restMetadata({
+  importsWithParams: [
+    { modRefId: OtherModule, path: '', guards: [AuthGuard] },
+  ],
+})
 @featureModule({
-  imports: [
-    AuthModule,
-    {
-      module: OtherModule,
-      params: [
-        {
-          decorator: restMetadata,
-          metadata: { path: '', guards: [AuthGuard] }
-        }
-      ]
-    }
-  ]
+  imports: [AuthModule],
 })
 export class SomeModule {}
 ```
