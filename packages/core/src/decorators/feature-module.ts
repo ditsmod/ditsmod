@@ -19,20 +19,19 @@ export interface FeatureModuleDecorator {
  * the type of data passed to custom module decorators.
  */
 export interface ParamsTransferObj<T extends AnyObj> {
-  /**
-   * An array of parameters intended for modules with parameters that are added to
-   * the `imports` array in the `featureModule` or `rootModule` decorators.
-   */
-  params?: DecoratorParams<T>[];
+  importsWithParams?: ImportWithParams<T>[];
 }
+
+export interface NormParamsTransferObj<T extends AnyObj> {
+  importsWithParams?: NormImportsWithParams<T>[];
+}
+
+export type NormImportsWithParams<T extends AnyObj> = Override<ImportWithParams<T>, { modRefId: ModuleWithParams }>;
 
 /**
  * The interface intended for `ModuleWithParams`.
  */
-export interface DecoratorParams<T extends AnyObj = AnyObj> {
-  for: ModuleWithParams;
-  data: T;
-}
+export type ImportWithParams<T extends AnyObj = AnyObj> = { modRefId: ModRefId } & T;
 
 export function transformModule(data?: ModuleMetadata): Override<AttachedMetadata, { metadata: RawMeta }> {
   const rawMeta = Object.assign({}, data) as RawMeta;
@@ -57,7 +56,10 @@ export function transformModule(data?: ModuleMetadata): Override<AttachedMetadat
 export interface AttachedMetadata {
   isAttachedMetadata: true;
   metadata: AnyObj;
-  normalize?: (baseMeta: NormalizedMeta, metadata: AnyObj) => AnyObj | undefined;
+  normalize?: (baseMeta: NormalizedMeta, metadata: AnyObj) => NormParamsTransferObj<AnyObj> | undefined;
+  /**
+   * The returned array will be scanned by `ModuleManager`.
+   */
   getImportsOrExports?(meta: AnyObj): ModRefId[];
   exportGlobalProviders?: (moduleManager: ModuleManager, baseMeta: NormalizedMeta, providersPerApp: Provider[]) => any;
   bootstrap?: (

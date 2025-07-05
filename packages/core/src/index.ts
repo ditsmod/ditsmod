@@ -12,7 +12,13 @@ export { defaultProvidersPerApp } from '#init/default-providers-per-app.js';
 export { OnModuleInit } from '#init/hooks.js';
 export { CustomError } from '#error/custom-error.js';
 export { ErrorInfo } from '#error/error-info.js';
-export { featureModule, AttachedMetadata, ParamsTransferObj, DecoratorParams } from '#decorators/feature-module.js';
+export {
+  featureModule,
+  AttachedMetadata,
+  ParamsTransferObj,
+  NormImportsWithParams,
+  ImportWithParams,
+} from '#decorators/feature-module.js';
 export { rootModule } from '#decorators/root-module.js';
 export {
   ExtensionCounters,
