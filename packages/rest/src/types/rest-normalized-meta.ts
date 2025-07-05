@@ -7,7 +7,8 @@ import {
   Providers,
   ModuleWithParams,
   ModRefId,
-  DecoratorParams,
+  NormImportsWithParams,
+  NormParamsTransferObj,
 } from '@ditsmod/core';
 
 import { NormalizedGuard } from '#interceptors/guard.js';
@@ -25,7 +26,7 @@ export class RestProvidersMetadata {
   providersPerReq: Provider[] = [];
 }
 
-export class RestNormalizedMeta extends RestProvidersMetadata {
+export class RestNormalizedMeta extends RestProvidersMetadata implements NormParamsTransferObj<RestModuleParams> {
   exportedProvidersPerRou: Provider[] = [];
   exportedProvidersPerReq: Provider[] = [];
   exportedMultiProvidersPerRou: MultiProvider[] = [];
@@ -36,7 +37,7 @@ export class RestNormalizedMeta extends RestProvidersMetadata {
   appendsWithParams: AppendsWithParams[] = [];
   appendsModules: ModuleType[] = [];
   controllers: Class[] = [];
-  importParams: DecoratorParams<RestModuleParams>[] = [];
+  importsWithParams: NormImportsWithParams<RestModuleParams>[] = [];
   /**
    * If the current `baseMeta.modRefId` has the type `ModuleWithParams`,
    * this property will label the parameters of the current module.
