@@ -128,7 +128,7 @@ export class RestModuleFactory {
   ) {
     const baseMeta = moduleManager.getMetadata(modRefId, true);
     this.baseMeta = baseMeta;
-    const meta = baseMeta.perDecoratorMeta.get(restMetadata) as RestNormalizedMeta | undefined;
+    const meta = baseMeta.normDecorMeta.get(restMetadata) as RestNormalizedMeta | undefined;
     if (!meta) {
       return this.appMetadataMap;
     }
@@ -205,7 +205,7 @@ export class RestModuleFactory {
     this.checkAllCollisionsWithLevelsMix();
   }
 
-  protected importOrAppendModules(aModRefIds: ModRefId[], isImport?: boolean) {
+  protected importOrAppendModules(aModRefIds: RestModRefId[], isImport?: boolean) {
     for (const modRefId of aModRefIds) {
       const baseMeta = this.moduleManager.getMetadata(modRefId, true);
       if (isImport) {
@@ -257,7 +257,7 @@ export class RestModuleFactory {
    * @param baseMeta1 Module metadata from where imports providers.
    */
   protected importProviders(baseMeta1: NormalizedMeta) {
-    const { modRefId, exportsModules, exportsWithParams, perDecoratorMeta } = baseMeta1;
+    const { modRefId, exportsModules, exportsWithParams, normDecorMeta } = baseMeta1;
 
     for (const modRefId2 of [...exportsModules, ...exportsWithParams]) {
       const baseMeta2 = this.moduleManager.getMetadata(modRefId2, true);
@@ -265,7 +265,7 @@ export class RestModuleFactory {
       this.importProviders(baseMeta2);
     }
 
-    const meta = perDecoratorMeta.get(restMetadata) as RestNormalizedMeta | undefined;
+    const meta = normDecorMeta.get(restMetadata) as RestNormalizedMeta | undefined;
     if (!meta) {
       return;
     }
@@ -333,7 +333,7 @@ export class RestModuleFactory {
     const moduleName = getDebugClassName(modRefId2);
     const tokenName = token2.name || token2;
     const baseMeta2 = this.moduleManager.getMetadata(modRefId2);
-    const meta2 = baseMeta2?.perDecoratorMeta.get(restMetadata) as RestNormalizedMeta | undefined;
+    const meta2 = baseMeta2?.normDecorMeta.get(restMetadata) as RestNormalizedMeta | undefined;
     let errorMsg =
       `Resolving collisions for providersPer${level} in ${this.moduleName} failed: ` +
       `${tokenName} mapped with ${moduleName}, but `;
@@ -434,7 +434,7 @@ export class RestModuleFactory {
   protected checkImportsAndAppends(baseMeta: NormalizedMeta, meta1: RestNormalizedMeta) {
     [...meta1.appendsModules].forEach((modRefId) => {
       const appendedBaseMeta = this.moduleManager.getMetadata(modRefId, true);
-      const meta2 = appendedBaseMeta.perDecoratorMeta.get(restMetadata) as RestNormalizedMeta | undefined;
+      const meta2 = appendedBaseMeta.normDecorMeta.get(restMetadata) as RestNormalizedMeta | undefined;
       if (!meta2?.controllers.length) {
         const msg = `Appends to "${baseMeta.name}" failed: "${appendedBaseMeta.name}" must have controllers.`;
         throw new Error(msg);
