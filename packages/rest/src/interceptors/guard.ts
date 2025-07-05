@@ -16,5 +16,6 @@ export interface NormalizedGuard {
 }
 
 export interface GuardPerMod1 extends NormalizedGuard {
-  meta: RestNormalizedMeta & NormalizedMeta;
+  meta: RestNormalizedMeta;
+  baseMeta: NormalizedMeta;
 }
