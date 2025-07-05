@@ -72,21 +72,17 @@ export class SecondModule {}
 
 Якщо з `FirstModule` експортується, наприклад, `SomeService`, то тепер цей сервіс можна використовувати у `SecondModule`. Разом з тим, якщо `FirstModule` має контролери, у такій формі імпорту вони будуть ігноруватись. Щоб Ditsmod брав до уваги контролери з імпортованого модуля, цей модуль потрібно імпортувати з префіксом, що передається у `path`:
 
-```ts {10}
+```ts {7}
 import { featureModule } from '@ditsmod/core';
 import { restMetadata } from '@ditsmod/rest';
 import { FirstModule } from './first.module';
 
-@featureModule({
-  imports: [
-    {
-      module: FirstModule,
-      params: [
-        { decorator: restMetadata, metadata: { path: '' } }
-      ],
-    }
+@restMetadata({
+  importsWithParams: [
+    { modRefId: FirstModule, path: '' }
   ]
 })
+@featureModule()
 export class SecondModule {}
 ```
 
@@ -100,48 +96,56 @@ export class SecondModule {}
 <a id="ModuleWithParams"></a>
 
 ```ts
-interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj> {
+interface ModuleWithParams {
   id?: string;
   module: ModuleType<M>;
-  params: ModuleParamItem[];
-}
-
-interface ModuleParamItem<T extends AnyObj = AnyObj> {
-  decorator: AnyFn;
-  metadata: T;
+  /**
+   * Providers per the application.
+   */
+  providersPerApp?: Providers | Provider[] = [];
+  /**
+   * Providers per a module.
+   */
+  providersPerMod?: Providers | Provider[] = [];
+  /**
+   * List of modules, `ModuleWithParams` or tokens of providers exported by this
+   * module.
+   */
+  exports?: any[];
+  /**
+   * This property allows you to pass any information to extensions.
+   *
+   * You must follow this rule: data for one extension - one key in `extensionsMeta` object.
+   */
+  extensionsMeta?: E;
 }
 ```
 
 Щоб скоротити довжину запису при імпорті об'єкту з цим типом, інколи доцільно написати статичний метод у модулі, який імпортується. Щоб наочно побачити це, давайте візьмемо знову попередній приклад:
 
-```ts {10}
+```ts {7}
 import { featureModule } from '@ditsmod/core';
 import { restMetadata } from '@ditsmod/rest';
 import { FirstModule } from './first.module';
 
-@featureModule({
-  imports: [
-    {
-      module: FirstModule,
-      params: [
-        { decorator: restMetadata, metadata: { path: '' } }
-      ],
-    }
+@restMetadata({
+  importsWithParams: [
+    { modRefId: FirstModule, path: '' }
   ]
 })
+@featureModule()
 export class SecondModule {}
 ```
 
 Якщо б ви оголошували `FirstModule` і знали, що цей модуль є сенс імпортувати багато разів в різні модулі з різними префіксами, в такому разі в даному класі можна написати статичний метод, що повертає об'єкт, спеціально призначений для імпорту:
 
 ```ts
-import { restMetadata } from '@ditsmod/rest';
 // ...
 export class FirstModule {
   static withPrefix(path: string) {
     return {
-      module: this,
-      params: [{ decorator: restMetadata, metadata: { path } }],
+      modRefId: this,
+      path,
     };
   }
 }
@@ -152,10 +156,11 @@ export class FirstModule {
 ```ts {4}
 // ...
 @featureModule({
-  imports: [
+  importsWithParams: [
     FirstModule.withPrefix('some-prefix')
   ]
 })
+@featureModule()
 export class SecondModule {}
 ```
 

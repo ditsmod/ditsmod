@@ -72,21 +72,17 @@ export class SecondModule {}
 
 For example, if `SomeService` is exported from the `FirstModule`, then this service can now be used in the `SecondModule`. However, if `FirstModule` has controllers, they will be ignored in this import form. For Ditsmod to take into account controllers from an imported module, the module must be imported with a prefix passed in `path`:
 
-```ts {10}
+```ts {7}
 import { featureModule } from '@ditsmod/core';
 import { restMetadata } from '@ditsmod/rest';
 import { FirstModule } from './first.module';
 
-@featureModule({
-  imports: [
-    {
-      module: FirstModule,
-      params: [
-        { decorator: restMetadata, metadata: { path: '' } }
-      ],
-    }
+@restMetadata({
+  importsWithParams: [
+    { modRefId: FirstModule, path: '' }
   ]
 })
+@featureModule()
 export class SecondModule {}
 ```
 
@@ -100,48 +96,56 @@ As you can see, in the previous example, this time neither the provider nor the 
 <a id="ModuleWithParams"></a>
 
 ```ts
-interface ModuleWithParams<M extends AnyObj = AnyObj, E extends AnyObj = AnyObj> {
+interface ModuleWithParams {
   id?: string;
   module: ModuleType<M>;
-  params: ModuleParamItem[];
-}
-
-interface ModuleParamItem<T extends AnyObj = AnyObj> {
-  decorator: AnyFn;
-  metadata: T;
+  /**
+   * Providers per the application.
+   */
+  providersPerApp?: Providers | Provider[] = [];
+  /**
+   * Providers per a module.
+   */
+  providersPerMod?: Providers | Provider[] = [];
+  /**
+   * List of modules, `ModuleWithParams` or tokens of providers exported by this
+   * module.
+   */
+  exports?: any[];
+  /**
+   * This property allows you to pass any information to extensions.
+   *
+   * You must follow this rule: data for one extension - one key in `extensionsMeta` object.
+   */
+  extensionsMeta?: E;
 }
 ```
 
 To reduce the length of the code when importing an object of this type, it is sometimes advisable to write a static method in the importing module. To see this clearly, let's take the previous example again:
 
-```ts {10}
+```ts {7}
 import { featureModule } from '@ditsmod/core';
 import { restMetadata } from '@ditsmod/rest';
 import { FirstModule } from './first.module';
 
-@featureModule({
-  imports: [
-    {
-      module: FirstModule,
-      params: [
-        { decorator: restMetadata, metadata: { path: '' } }
-      ],
-    }
+@restMetadata({
+  importsWithParams: [
+    { modRefId: FirstModule, path: '' }
   ]
 })
+@featureModule()
 export class SecondModule {}
 ```
 
 If you declare `FirstModule` and knew that this module would make sense to be imported many times into different modules with different prefixes, then in this case you could write a static method in this class that returns an object specially designed for import:
 
 ```ts
-import { restMetadata } from '@ditsmod/rest';
 // ...
 export class FirstModule {
   static withPrefix(path: string) {
     return {
-      module: this,
-      params: [{ decorator: restMetadata, metadata: { path } }],
+      modRefId: this,
+      path,
     };
   }
 }
@@ -152,10 +156,11 @@ Now the object returned by this method can be imported as follows:
 ```ts {4}
 // ...
 @featureModule({
-  imports: [
+  importsWithParams: [
     FirstModule.withPrefix('some-prefix')
   ]
 })
+@featureModule()
 export class SecondModule {}
 ```
 
