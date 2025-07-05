@@ -211,19 +211,31 @@ export class RestModuleFactory {
       if (isImport) {
         this.importProviders(baseMeta);
       }
+      const meta = baseMeta.normDecorMeta.get(restMetadata) as RestNormalizedMeta | undefined;
+      if (!meta) {
+        continue;
+      }
+
+      const { params } = meta;
 
       let prefixPerMod = '';
       let guardsPerMod1: GuardPerMod1[] = [];
       const hasModuleParams = isModuleWithParams(modRefId);
       if (hasModuleParams || !isImport) {
-        if (hasModuleParams && typeof modRefId.absolutePath == 'string') {
+        if (hasModuleParams && typeof params.absolutePath == 'string') {
           // Allow slash for absolutePath.
-          prefixPerMod = modRefId.absolutePath.startsWith('/') ? modRefId.absolutePath.slice(1) : modRefId.absolutePath;
+          prefixPerMod = params.absolutePath.startsWith('/') ? params.absolutePath.slice(1) : params.absolutePath;
         } else {
-          const path = hasModuleParams ? modRefId.path : '';
-          prefixPerMod = [this.prefixPerMod, ''].filter((s) => s).join('/');
+          const path = hasModuleParams ? params.path : '';
+          prefixPerMod = [this.prefixPerMod, path].filter((s) => s).join('/');
         }
-        const impGuradsPerMod1 = baseMeta.guardsPerMod.map<GuardPerMod1>((g) => ({ ...g, meta: this.meta }));
+        const impGuradsPerMod1 = meta.guardsPerMod.map<GuardPerMod1>((g) => {
+          return {
+            ...g,
+            meta: this.meta,
+            baseMeta: this.baseMeta,
+          };
+        });
         guardsPerMod1 = [...this.guardsPerMod1, ...impGuradsPerMod1];
       } else {
         prefixPerMod = this.prefixPerMod;
