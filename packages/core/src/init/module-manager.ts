@@ -225,7 +225,7 @@ export class ModuleManager {
     const importsOrExports: (ModuleWithParams | ModuleType)[] = [];
     meta.aDecoratorMeta.forEach(({ decorator, value }) => {
       if (value.getImportsOrExports) {
-        const meta2 = meta.perDecoratorMeta.get(decorator);
+        const meta2 = meta.normDecorMeta.get(decorator);
         if (meta2) {
           importsOrExports.push(...value.getImportsOrExports(meta2));
         }
