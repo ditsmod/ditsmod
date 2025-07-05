@@ -147,7 +147,7 @@ export class RestModuleFactory {
     };
     baseMeta.providersPerMod.push({ token: ModuleExtract, useValue: moduleExtract });
     this.checkImportsAndAppends(baseMeta, meta);
-    this.importAndAppendModules(baseMeta);
+    this.importAndAppendModules();
 
     let applyControllers = false;
     if (isRootModule(meta) || isAppends || this.hasPath(baseMeta)) {
@@ -199,15 +199,15 @@ export class RestModuleFactory {
     return hasPath;
   }
 
-  protected importAndAppendModules(baseMeta: NormalizedMeta) {
-    this.importOrAppendModules(baseMeta, [...this.baseMeta.importsModules, ...this.baseMeta.importsWithParams], true);
-    this.importOrAppendModules(baseMeta, [...this.meta.appendsModules, ...this.meta.appendsWithParams]);
+  protected importAndAppendModules() {
+    this.importOrAppendModules([...this.baseMeta.importsModules, ...this.baseMeta.importsWithParams], true);
+    this.importOrAppendModules([...this.meta.appendsModules, ...this.meta.appendsWithParams]);
     this.checkAllCollisionsWithLevelsMix();
   }
 
-  protected importOrAppendModules(baseMeta: NormalizedMeta, aModRefIds: ModRefId[], isImport?: boolean) {
+  protected importOrAppendModules(aModRefIds: ModRefId[], isImport?: boolean) {
     for (const modRefId of aModRefIds) {
-      const meta = this.moduleManager.getMetadata(modRefId, true);
+      const baseMeta = this.moduleManager.getMetadata(modRefId, true);
       if (isImport) {
         this.importProviders(baseMeta);
       }
@@ -223,7 +223,7 @@ export class RestModuleFactory {
           const path = hasModuleParams ? modRefId.path : '';
           prefixPerMod = [this.prefixPerMod, ''].filter((s) => s).join('/');
         }
-        const impGuradsPerMod1 = meta.guardsPerMod.map<GuardPerMod1>((g) => ({ ...g, meta: this.meta }));
+        const impGuradsPerMod1 = baseMeta.guardsPerMod.map<GuardPerMod1>((g) => ({ ...g, meta: this.meta }));
         guardsPerMod1 = [...this.guardsPerMod1, ...impGuradsPerMod1];
       } else {
         prefixPerMod = this.prefixPerMod;
