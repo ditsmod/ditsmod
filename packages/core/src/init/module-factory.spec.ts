@@ -869,7 +869,7 @@ describe('ModuleFactory', () => {
 
           moduleManager.scanRootModule(AppModule);
           const msg = 'AppModule failed: exports from Module1, Module2 causes collision with Provider2.';
-          expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
+          expect(() => mock.bootstrap([], new GlobalProviders(), AppModule, moduleManager, new Set())).toThrow(msg);
         });
 
         it('exporting duplicates of Provider2, but declared in resolvedCollisionsPerMod of root module', () => {
@@ -894,7 +894,7 @@ describe('ModuleFactory', () => {
 
           moduleManager.scanRootModule(AppModule);
           expect(() =>
-            mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set()),
+            mock.bootstrap([], new GlobalProviders(), AppModule, moduleManager, new Set()),
           ).not.toThrow();
           expect([...mock.importedProvidersPerMod]).toEqual([
             [Provider1, { modRefId: Module1, providers: [{ token: Provider1, useToken: Provider1 }] }],
@@ -923,7 +923,7 @@ describe('ModuleFactory', () => {
 
           moduleManager.scanRootModule(AppModule);
           const msg = 'AppModule failed: exports from Module0, Module1 causes collision with Provider1.';
-          expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
+          expect(() => mock.bootstrap([], new GlobalProviders(), AppModule, moduleManager, new Set())).toThrow(msg);
         });
 
         it('exporting duplicates of Provider1 from Module1 and Module2, but also includes in resolvedCollisionsPerMod of root module', () => {
@@ -953,7 +953,7 @@ describe('ModuleFactory', () => {
 
           moduleManager.scanRootModule(AppModule);
           expect(() =>
-            mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set()),
+            mock.bootstrap([], new GlobalProviders(), AppModule, moduleManager, new Set()),
           ).not.toThrow();
           expect([...mock.importedProvidersPerMod]).toEqual([
             [Provider1, { modRefId: Module2, providers: [{ token: Provider1, useToken: Provider1 }] }],

@@ -84,7 +84,7 @@ describe('type guards', () => {
         static withParams(): ModuleWithParams<Module1> {
           return {
             module: Module1,
-            params: [{ decorator: featureModule, metadata: { other: 123 } as ModuleMetadata }],
+            providersPerMod: []
           };
         }
       }

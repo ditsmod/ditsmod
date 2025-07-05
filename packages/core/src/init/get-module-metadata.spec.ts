@@ -90,7 +90,7 @@ describe('getModuleMetadata()', () => {
       static withParams(providersPerMod: Provider[]): ModuleWithParams<Module1> {
         return {
           module: Module1,
-          params: [{ decorator: featureModule, metadata: { providersPerMod } as ModuleMetadata }],
+          providersPerMod,
         };
       }
     }
@@ -113,7 +113,7 @@ describe('getModuleMetadata()', () => {
       static withParams(providersPerMod: Provider[]): ModuleWithParams<Module1> {
         return {
           module: Module1,
-          params: [{ decorator: featureModule, metadata: { providersPerMod } as ModuleMetadata }],
+          providersPerMod,
         };
       }
     }

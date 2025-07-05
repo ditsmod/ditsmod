@@ -11,7 +11,6 @@ describe('RootModule decorator', () => {
     expect(metadata.length).toBe(1);
     expect(metadata[0].value).toEqual<AttachedMetadata>({
       isAttachedMetadata: true,
-      mergeModuleWithParams: expect.any(Function),
       metadata: {
         decorator: rootModule,
         declaredInDir: expect.stringContaining('decorators'),
@@ -28,7 +27,6 @@ describe('RootModule decorator', () => {
     expect(metadata.length).toBe(1);
     expect(metadata[0].value).toEqual<AttachedMetadata>({
       isAttachedMetadata: true,
-      mergeModuleWithParams: expect.any(Function),
       metadata: {
         decorator: rootModule,
         declaredInDir: expect.stringContaining('decorators'),
@@ -45,7 +43,6 @@ describe('RootModule decorator', () => {
     expect(metadata.length).toBe(2);
     expect(metadata[0].value).toEqual<AttachedMetadata>({
       isAttachedMetadata: true,
-      mergeModuleWithParams: expect.any(Function),
       metadata: {
         decorator: rootModule,
         declaredInDir: expect.stringContaining('decorators'),
@@ -54,7 +51,6 @@ describe('RootModule decorator', () => {
 
     expect(metadata[1].value).toEqual<AttachedMetadata>({
       isAttachedMetadata: true,
-      mergeModuleWithParams: expect.any(Function),
       metadata: {
         decorator: rootModule,
         declaredInDir: expect.stringContaining('decorators'),
@@ -77,7 +73,6 @@ describe('RootModule decorator', () => {
     expect(metadata.length).toBe(1);
     expect(metadata[0].value).toEqual<AttachedMetadata>({
       isAttachedMetadata: true,
-      mergeModuleWithParams: expect.any(Function),
       metadata: {
         decorator: rootModule,
         declaredInDir: expect.stringContaining('decorators'),

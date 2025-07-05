@@ -360,7 +360,7 @@ describe('BaseAppInitializer', () => {
         static withParams(providers: Provider[]): ModuleWithParams<Module6> {
           return {
             module: Module6,
-            params: [{ decorator: featureModule, metadata: { providersPerApp: providers } as ModuleMetadata }],
+            providersPerApp: providers,
           };
         }
       }
