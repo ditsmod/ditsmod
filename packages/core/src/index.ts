@@ -16,6 +16,7 @@ export {
   featureModule,
   AttachedMetadata,
   ParamsTransferObj,
+  NormParamsTransferObj,
   NormImportsWithParams,
   ImportWithParams,
 } from '#decorators/feature-module.js';
