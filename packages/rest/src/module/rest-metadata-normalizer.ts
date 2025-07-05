@@ -1,9 +1,7 @@
 import {
   AnyObj,
   Class,
-  CustomError,
   ModuleWithParentMeta,
-  getDebugClassName,
   getToken,
   getTokens,
   isFeatureModule,
@@ -23,9 +21,10 @@ import {
   Providers,
   reflector,
   resolveForwardRef,
+  NormImportsWithParams,
 } from '@ditsmod/core';
 
-import { RestMetadata } from '#module/module-metadata.js';
+import { RestMetadata, RestModuleParams } from '#module/module-metadata.js';
 import { RestNormalizedMeta } from '#types/rest-normalized-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
@@ -47,8 +46,8 @@ export class RestMetadataNormalizer {
         meta.appendsModules.push(ap);
       }
     });
-    this.checkParams(baseMeta, rawMeta);
-    meta.importParams = rawMeta.params || [];
+    this.setParentMeta(baseMeta, rawMeta);
+    this.normalizeImportsWithParams(rawMeta, meta);
     this.pickAndMergeMeta(meta, rawMeta);
     const mergedMeta = { ...rawMeta, ...meta } as RestNormalizedMeta;
     this.quickCheckMetadata(baseMeta, mergedMeta);
@@ -66,10 +65,8 @@ export class RestMetadataNormalizer {
     } else if (!isModuleWithParentMeta(modRefId)) {
       return;
     }
-    const perDecoratorMeta = modRefId.parentMeta.perDecoratorMeta.get(restMetadata) as
-      | RestNormalizedMeta
-      | undefined;
-    const params = perDecoratorMeta?.importParams.find((param) => param.for === modRefId)?.data;
+    const normDecorMeta = modRefId.parentMeta.normDecorMeta.get(restMetadata) as RestNormalizedMeta | undefined;
+    const params = normDecorMeta?.importsWithParams.find((param) => param.modRefId === modRefId);
 
     if (params) {
       objectKeys(params).forEach((p) => {
@@ -80,23 +77,6 @@ export class RestMetadataNormalizer {
       });
       meta.guardsPerMod.push(...this.normalizeGuards(params.guards));
     }
-  }
-
-  /**
-   * @todo Write good error messages.
-   */
-  protected checkParams(baseMeta: NormalizedMeta, rawMeta: RestMetadata) {
-    rawMeta.params?.forEach((param) => {
-      if (!isModuleWithParams(param.for)) {
-        const moduleName = getDebugClassName(param.for);
-        throw new CustomError({ msg1: `!isModuleWithParams for ${moduleName}`, level: 'fatal' });
-      }
-      if (!baseMeta.importsWithParams.find((imp) => imp === param.for)) {
-        const moduleName = getDebugClassName(param.for);
-        throw new CustomError({ msg1: `${moduleName} not found`, level: 'fatal' });
-      }
-      (param.for as ModuleWithParentMeta).parentMeta ??= baseMeta;
-    });
   }
 
   protected normalizeModule(rawMeta: RestMetadata, meta: RestNormalizedMeta) {
@@ -218,6 +198,22 @@ export class RestMetadataNormalizer {
         '"forwardRef(() => YourModule)".';
       throw new Error(msg);
     }
+  }
+
+  protected setParentMeta(baseMeta: NormalizedMeta, rawMeta: RestMetadata) {
+    rawMeta.importsWithParams?.forEach((param) => {
+      (param.modRefId as ModuleWithParentMeta).parentMeta ??= baseMeta;
+    });
+  }
+
+  protected normalizeImportsWithParams(rawMeta: RestMetadata, meta: RestNormalizedMeta) {
+    meta.importsWithParams = (rawMeta.importsWithParams || []).map((params) => {
+      if (isModuleWithParams(params.modRefId)) {
+        return params;
+      }
+      params.modRefId = { module: params.modRefId } as ModuleWithParams;
+      return params;
+    }) as NormImportsWithParams<RestModuleParams>[];
   }
 
   protected checkController(Controller: Class) {
