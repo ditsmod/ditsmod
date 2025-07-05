@@ -60,7 +60,7 @@ export interface AttachedMetadata {
   /**
    * The returned array of modules will be scanned by `ModuleManager`.
    */
-  getImportsOrExports?(meta: AnyObj): ModRefId[];
+  addModulesToScan?(meta: AnyObj): ModRefId[];
   exportGlobalProviders?: (moduleManager: ModuleManager, baseMeta: NormalizedMeta, providersPerApp: Provider[]) => any;
   bootstrap?: (
     providersPerApp: Provider[],

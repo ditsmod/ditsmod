@@ -224,10 +224,10 @@ export class ModuleManager {
     const meta = this.normalizeMetadata(modRefId);
     const importsOrExports: (ModuleWithParams | ModuleType)[] = [];
     meta.aDecoratorMeta.forEach(({ decorator, value }) => {
-      if (value.getImportsOrExports) {
+      if (value.addModulesToScan) {
         const meta2 = meta.normDecorMeta.get(decorator);
         if (meta2) {
-          importsOrExports.push(...value.getImportsOrExports(meta2));
+          importsOrExports.push(...value.addModulesToScan(meta2));
         }
       }
     });

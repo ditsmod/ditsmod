@@ -27,7 +27,7 @@ export function transformMetadata(data?: RestMetadata): AttachedMetadata {
     normalize(baseMeta: NormalizedMeta, metadataWithParams: RestMetadata) {
       return new RestMetadataNormalizer().normalize(baseMeta, metadataWithParams);
     },
-    getImportsOrExports(meta: RestNormalizedMeta) {
+    addModulesToScan(meta: RestNormalizedMeta) {
       return meta.appendsModules.concat(meta.appendsWithParams as any[]);
     },
     exportGlobalProviders(moduleManager: ModuleManager, baseMeta: NormalizedMeta, providersPerApp: Provider[]) {
