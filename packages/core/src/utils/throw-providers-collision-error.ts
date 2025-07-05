@@ -1,10 +1,8 @@
-import { Level } from '#types/mix.js';
-
 export function throwProvidersCollisionError(
   moduleName: string,
   duplicates: any[],
   modulesNames: string[] = [],
-  level?: Level,
+  level?: string,
   isExternal?: boolean,
 ) {
   const namesArr = duplicates.map((p) => p.name || p);
