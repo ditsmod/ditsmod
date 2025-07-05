@@ -58,7 +58,7 @@ export interface AttachedMetadata {
   metadata: AnyObj;
   normalize?: (baseMeta: NormalizedMeta, metadata: AnyObj) => NormParamsTransferObj<AnyObj> | undefined;
   /**
-   * The returned array will be scanned by `ModuleManager`.
+   * The returned array of modules will be scanned by `ModuleManager`.
    */
   getImportsOrExports?(meta: AnyObj): ModRefId[];
   exportGlobalProviders?: (moduleManager: ModuleManager, baseMeta: NormalizedMeta, providersPerApp: Provider[]) => any;
