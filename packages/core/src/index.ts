@@ -67,6 +67,7 @@ export {
 export { RootModuleMetadata } from '#types/root-module-metadata.js';
 export { ImportObj } from '#types/metadata-per-mod.js';
 export { mergeArrays } from '#utils/merge-arrays.js';
+export { getLastProviders } from '#utils/get-last-providers.js';
 export { deepFreeze } from '#utils/deep-freeze.js';
 export { getCollisions } from '#utils/get-collisions.js';
 export { throwProvidersCollisionError } from '#utils/throw-providers-collision-error.js';
