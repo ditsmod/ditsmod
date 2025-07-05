@@ -120,7 +120,7 @@ export class PreRouterExtension implements Extension<void> {
         const countOfGuards = controllerMetadata.routeMeta.resolvedGuards!.length + guardsPerMod1.length;
 
         preparedRouteMeta.push({
-          moduleName: metadataPerMod3.meta.name,
+          moduleName: metadataPerMod3.baseMeta.name,
           httpMethods: controllerMetadata.httpMethods,
           fullPath: controllerMetadata.fullPath,
           handle,
@@ -281,7 +281,7 @@ export class PreRouterExtension implements Extension<void> {
     perReq?: boolean,
   ) {
     return guards.map((g) => {
-      const resolvedPerMod = Injector.resolve(g.meta.providersPerMod);
+      const resolvedPerMod = Injector.resolve(g.baseMeta.providersPerMod);
       const resolvedPerRou = Injector.resolve(g.meta.providersPerRou);
       const resolvedPerReq = Injector.resolve(g.meta.providersPerReq);
       const resolvedProviders = perReq
@@ -297,7 +297,7 @@ export class PreRouterExtension implements Extension<void> {
         }
         const levelNames = levels.join(' and ');
         let msg = `Could not find the required ${g.guard.name} in the context of`;
-        msg += ` ${g.meta.name} for route "${controllerName} -> ${httpMethod} /${path}".`;
+        msg += ` ${g.baseMeta.name} for route "${controllerName} -> ${httpMethod} /${path}".`;
         msg += ` Lookup in ${levelNames} was unsuccessful.`;
         if (!perReq) {
           msg += ` Notice that ${controllerName} has "{ scope: 'ctx' }" in its metadata.`;
@@ -305,7 +305,7 @@ export class PreRouterExtension implements Extension<void> {
         throw new Error(msg);
       }
 
-      const injectorPerMod = this.moduleManager.getInjectorPerMod(g.meta.modRefId);
+      const injectorPerMod = this.moduleManager.getInjectorPerMod(g.baseMeta.modRefId);
       const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou, 'Rou');
 
       const resolvedGuard: ResolvedGuardPerMod = {
