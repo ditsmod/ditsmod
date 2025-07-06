@@ -30,7 +30,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
   }
 
   protected override getControllersMetadata(prefixPerApp: string, metadataPerMod2: MetadataPerMod2) {
-    const { prefixPerMod, meta } = metadataPerMod2;
+    const { prefixPerMod, baseMeta: meta } = metadataPerMod2;
 
     const oasOptions = meta.extensionsMeta.oasOptions as OasOptions;
     const prefixParams = oasOptions?.paratemers;

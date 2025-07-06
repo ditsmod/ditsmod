@@ -32,7 +32,7 @@ export class MetadataPerMod1 {
    * the original array will remain unchanged.
    */
   baseMeta: NormalizedMeta;
-  bootstrapFromDecorators: Map<AnyFn, AnyObj | undefined>;
+  perDecorImportedTokensMap: Map<AnyFn, AnyObj | undefined>;
   /**
    * Map between a token and its ImportObj per level.
    */
@@ -49,8 +49,6 @@ export interface ImportedTokensMap {
  * This metadata returns from `ImportsResolver`. The target for this metadata is `RoutesExtension`.
  */
 export class MetadataPerMod2 {
-  // applyControllers?: boolean;
-  prefixPerMod: string;
-  meta: NormalizedMeta;
-  // guardsPerMod1: GuardPerMod1[];
+  baseMeta: NormalizedMeta;
+  resolveFromDecorators: Map<AnyFn, AnyObj | undefined>;
 }

@@ -24,7 +24,7 @@ import { RestNormalizedMeta } from '#types/rest-normalized-meta.js';
  * This metadata returns from `ImportsResolver`. The target for this metadata is `RoutesExtension`.
  */
 export class RestMetadataPerMod2 extends MetadataPerMod2 {
-  declare meta: NormalizedMeta & RestNormalizedMeta;
+  declare baseMeta: NormalizedMeta & RestNormalizedMeta;
   applyControllers?: boolean;
   guardsPerMod1: GuardPerMod1[];
 }
@@ -41,7 +41,7 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
   async stage1() {
     const { path: prefixPerApp } = this.appOptions;
     this.metadataPerMod3 = new MetadataPerMod3();
-    this.metadataPerMod3.meta = this.metadataPerMod2.meta;
+    this.metadataPerMod3.meta = this.metadataPerMod2.baseMeta;
     this.metadataPerMod3.aControllerMetadata = this.getControllersMetadata(prefixPerApp, this.metadataPerMod2);
     this.metadataPerMod3.guardsPerMod1 = this.metadataPerMod2.guardsPerMod1;
     this.metadataPerMod3.guardsPerMod1 = [];
@@ -50,11 +50,11 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
   }
 
   protected getControllersMetadata(prefixPerApp: string = '', metadataPerMod2: RestMetadataPerMod2) {
-    const { prefixPerMod, meta, applyControllers } = metadataPerMod2;
+    const { prefixPerMod, baseMeta: meta, applyControllers } = metadataPerMod2;
 
     const aControllerMetadata: ControllerMetadata[] = [];
     if (applyControllers)
-      for (const Controller of metadataPerMod2.meta.controllers as Class<Record<string | symbol, any>>[]) {
+      for (const Controller of metadataPerMod2.baseMeta.controllers as Class<Record<string | symbol, any>>[]) {
         const classMeta = reflector.getMetadata(Controller)!;
         for (const methodName of classMeta) {
           for (const decoratorAndValue of classMeta[methodName].decorators) {

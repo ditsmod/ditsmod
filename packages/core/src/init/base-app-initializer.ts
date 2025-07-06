@@ -252,12 +252,12 @@ export class BaseAppInitializer {
     const injectorPerApp = this.perAppService.reinitInjector([{ token: PerAppService, useValue: this.perAppService }]);
 
     for (const [, metadataPerMod2] of mMetadataPerMod2) {
-      let { meta } = metadataPerMod2;
-      meta = this.overrideMetaBeforeExtensionHanling(meta);
-      const injectorPerMod = injectorPerApp.resolveAndCreateChild(meta.providersPerMod, 'Mod');
+      let { baseMeta } = metadataPerMod2;
+      baseMeta = this.overrideMetaBeforeExtensionHanling(baseMeta);
+      const injectorPerMod = injectorPerApp.resolveAndCreateChild(baseMeta.providersPerMod, 'Mod');
       injectorPerMod.pullAndSave(Logger);
       const systemLogMediator = injectorPerMod.pullAndSave(SystemLogMediator) as SystemLogMediator;
-      const { extensionsProviders } = meta;
+      const { extensionsProviders } = baseMeta;
       if (!extensionsProviders.length) {
         systemLogMediator.skippingStartExtensions(this);
         continue;
@@ -268,7 +268,7 @@ export class BaseAppInitializer {
 
       systemLogMediator.startExtensions(this);
       this.decreaseExtensionsCounters(extensionCounters, extensionsProviders);
-      await this.handleExtensionsPerMod(meta, extensionsManager, systemLogMediator);
+      await this.handleExtensionsPerMod(baseMeta, extensionsManager, systemLogMediator);
       this.logExtensionsStatistic(injectorPerApp, systemLogMediator);
     }
     await this.perAppHandling(mMetadataPerMod2, extensionsContext);
@@ -292,7 +292,7 @@ export class BaseAppInitializer {
 
     for (const [modRefId, metadataPerMod2] of mMetadataPerMod2) {
       try {
-        const meta = this.overrideMetaAfterStage1(metadataPerMod2.meta);
+        const meta = this.overrideMetaAfterStage1(metadataPerMod2.baseMeta);
         const injectorPerMod = await this.initModuleAndGetInjectorPerMod(meta);
         this.moduleManager.setInjectorPerMod(modRefId, injectorPerMod);
       } catch (err: any) {
@@ -357,7 +357,7 @@ export class BaseAppInitializer {
       { token: ExtensionsContext, useValue: extensionsContext },
       { token: MetadataPerMod2, useValue: metadataPerMod2 },
       { token: ExtensionCounters, useValue: extensionCounters },
-      ...metadataPerMod2.meta.extensionsProviders,
+      ...metadataPerMod2.baseMeta.extensionsProviders,
     ];
   }
 
