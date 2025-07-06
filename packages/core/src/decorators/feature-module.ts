@@ -1,12 +1,14 @@
 import { makeClassDecorator, Provider } from '#di';
 import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
-import { AnyFn, AnyObj, ModRefId, ModuleType, Override } from '#types/mix.js';
+import { AnyFn, AnyObj, AppMetadataMap, ModRefId, ModuleType, Override } from '#types/mix.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { Providers } from '#utils/providers.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { GlobalProviders } from '#types/metadata-per-mod.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
+import { SystemLogMediator } from '#logger/system-log-mediator.js';
+import { SystemErrorMediator } from '#error/system-error-mediator.js';
 
 export const featureModule: FeatureModuleDecorator = makeClassDecorator(transformModule);
 
@@ -52,6 +54,9 @@ export function transformModule(data?: ModuleMetadata): Override<AttachedMetadat
 }
 /**
  * A metadata attached to the `rootModule` or `featureModule` decorators.
+ * 
+ * @todo Rename this to `perModAttachedMetadata` or some thing like this.
+ * This type should be an abstract class, not an interface.
  */
 export interface AttachedMetadata {
   isAttachedMetadata: true;
@@ -69,6 +74,14 @@ export interface AttachedMetadata {
     moduleManager: ModuleManager,
     unfinishedScanModules: Set<ModRefId>,
   ) => Map<ModRefId, AnyObj>;
+  importResolve?: (
+    moduleManager: ModuleManager,
+    appMetadataMap: AppMetadataMap,
+    providersPerApp: Provider[],
+    log: SystemLogMediator,
+    errorMediator: SystemErrorMediator,
+    metadataPerMod1?: AnyObj,
+  ) => any;
 }
 
 /**

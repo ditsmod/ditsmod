@@ -6,12 +6,17 @@ import {
   GlobalProviders,
   ModRefId,
   NormalizedMeta,
+  SystemErrorMediator,
+  SystemLogMediator,
+  AnyObj,
+  AppMetadataMap,
 } from '@ditsmod/core';
 
 import { RestMetadata } from '#module/module-metadata.js';
 import { RestMetadataNormalizer } from '#module/rest-metadata-normalizer.js';
-import { RestModuleFactory } from '#module/rest-module-factory.js';
+import { RestMetadataPerMod1, RestModuleFactory } from '#module/rest-module-factory.js';
 import { RestNormalizedMeta } from '#types/rest-normalized-meta.js';
+import { RestImportsResolver } from '#module/rest-imports-resolver.js';
 
 export const restMetadata: RestMetadataDecorator = makeClassDecorator(transformMetadata);
 
@@ -43,6 +48,24 @@ export function transformMetadata(data?: RestMetadata): AttachedMetadata {
       ]
     ) {
       return new RestModuleFactory().bootstrap(...args);
+    },
+    importResolve(
+      moduleManager: ModuleManager,
+      appMetadataMap: AppMetadataMap,
+      providersPerApp: Provider[],
+      log: SystemLogMediator,
+      errorMediator: SystemErrorMediator,
+      restMetadataPerMod1?: AnyObj,
+    ) {
+      const impResolver = new RestImportsResolver(
+        moduleManager,
+        appMetadataMap,
+        providersPerApp,
+        log,
+        errorMediator,
+        restMetadataPerMod1 as any,
+      );
+      return impResolver.resolve();
     },
   };
 }
