@@ -35,7 +35,7 @@ export type NormImportsWithParams<T extends AnyObj> = Override<ImportWithParams<
  */
 export type ImportWithParams<T extends AnyObj = AnyObj> = { modRefId: ModRefId } & T;
 
-export function transformModule(data?: ModuleMetadata): Override<AttachedMetadata, { metadata: RawMeta }> {
+export function transformModule(data?: ModuleMetadata): AttachedMetadata<RawMeta> {
   const rawMeta = Object.assign({}, data) as RawMeta;
   objectKeys(rawMeta).forEach((p) => {
     if (rawMeta[p] instanceof Providers) {
@@ -47,21 +47,17 @@ export function transformModule(data?: ModuleMetadata): Override<AttachedMetadat
 
   rawMeta.decorator = featureModule;
   rawMeta.declaredInDir = CallsiteUtils.getCallerDir() || '.';
-  return {
-    isAttachedMetadata: true,
-    metadata: rawMeta,
-  };
+  return new AttachedMetadata(rawMeta);
 }
 /**
  * A metadata attached to the `rootModule` or `featureModule` decorators.
- * 
+ *
  * @todo Rename this to `perModAttachedMetadata` or some thing like this.
- * This type should be an abstract class, not an interface.
  */
-export interface AttachedMetadata {
-  isAttachedMetadata: true;
-  metadata: AnyObj;
-  normalize?: (baseMeta: NormalizedMeta, metadata: AnyObj) => NormParamsTransferObj<AnyObj> | undefined;
+export class AttachedMetadata<T extends AnyObj = AnyObj> {
+  constructor(public metadata = {} as T) {}
+
+  normalize?: (baseMeta: NormalizedMeta, metadata: T) => NormParamsTransferObj<AnyObj> | undefined;
   /**
    * The returned array of modules will be scanned by `ModuleManager`.
    */

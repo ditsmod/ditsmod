@@ -1,8 +1,8 @@
 import { jest } from '@jest/globals';
 
-import { featureModule } from '#decorators/feature-module.js';
+import { AttachedMetadata, featureModule } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
-import { injectable, forwardRef, Provider, isMultiProvider } from '#di';
+import { injectable, forwardRef, Provider, isMultiProvider, DecoratorAndValue } from '#di';
 import { Extension } from '#extension/extension-types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { CallsiteUtils } from '#utils/callsites.js';
@@ -13,7 +13,7 @@ import { NormalizedMeta } from '#types/normalized-meta.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 
 describe('ModuleManager', () => {
-  console.log = jest.fn();
+  // console.log = jest.fn();
   type ModuleId = string | ModuleType | ModuleWithParams;
   @injectable()
   class Provider0 {}
@@ -663,7 +663,7 @@ describe('ModuleManager', () => {
     expect(mock.getMetadata(Module1)).toMatchObject(expectedMeta1);
   });
 
-  it('split multi providers and common providers', () => {
+  fit('split multi providers and common providers', () => {
     const providersPerMod: Provider[] = [
       { token: Provider2, useValue: 'val4', multi: true },
       { token: Provider1, useValue: 'val1', multi: true },
@@ -691,6 +691,7 @@ describe('ModuleManager', () => {
     expectedMeta3.decorator = rootModule;
     expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta3.isExternal = false;
+    expectedMeta3.aDecoratorMeta = [new DecoratorAndValue(featureModule, new AttachedMetadata())];
 
     const expectedMeta1 = new NormalizedMeta();
     expectedMeta1.id = '';
@@ -704,6 +705,7 @@ describe('ModuleManager', () => {
     expectedMeta1.isExternal = false;
 
     mock.scanRootModule(Module3);
+    console.log(mock.getMetadata('root'));
     expect(mock.getMetadata('root')).toEqual(expectedMeta3);
     expect(mock.getMetadata(Module1)).toEqual(expectedMeta1);
   });

@@ -24,10 +24,9 @@ export interface RestMetadataDecorator {
   (data?: RestMetadata): any;
 }
 
-export function transformMetadata(data?: RestMetadata): AttachedMetadata {
+export function transformMetadata(data?: RestMetadata): AttachedMetadata<RestMetadata> {
   const metadata = Object.assign({}, data);
   return {
-    isAttachedMetadata: true,
     metadata,
     normalize(baseMeta: NormalizedMeta, metadataWithParams: RestMetadata) {
       return new RestMetadataNormalizer().normalize(baseMeta, metadataWithParams);
