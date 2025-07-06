@@ -1,8 +1,8 @@
 import { jest } from '@jest/globals';
 
-import { PerModAttachedMetadata, RawMeta, featureModule } from '#decorators/feature-module.js';
+import { injectable, forwardRef, Provider, isMultiProvider } from '#di';
+import { featureModule } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
-import { injectable, forwardRef, Provider, isMultiProvider, DecoratorAndValue } from '#di';
 import { Extension } from '#extension/extension-types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { CallsiteUtils } from '#utils/callsites.js';

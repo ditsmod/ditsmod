@@ -42,6 +42,7 @@ describe('ModuleNormalizer', () => {
     expectedMeta.decorator = rootModule;
     expectedMeta.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta.isExternal = false;
+    expectedMeta.aDecoratorMeta = expect.any(Array);
 
     expect(new ModuleNormalizer().normalize(AppModule)).toEqual(expectedMeta);
   });

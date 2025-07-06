@@ -1,13 +1,14 @@
-import { forwardRef } from '#di';
+import { forwardRef, resolveForwardRef } from '#di';
 import { featureModule, RawMeta } from '#decorators/feature-module.js';
 import { Provider } from '#di/types-and-models.js';
-import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
+import { ModuleWithParams } from '#types/module-metadata.js';
 import { Providers } from '#utils/providers.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ModuleNormalizer } from './module-normalizer.js';
 import { ModRefId } from '#types/mix.js';
+import { isModuleWithParams } from '#utils/type-guards.js';
 
-describe('getModuleMetadata()', () => {
+describe('ModuleNormalizer.getDecoratorMeta()', () => {
   class Provider0 {}
   class Provider1 {}
   class Provider2 {}
@@ -16,15 +17,29 @@ describe('getModuleMetadata()', () => {
     override getDecoratorMeta(modRefId: ModRefId) {
       return super.getDecoratorMeta(modRefId);
     }
+    override mergeModuleWithParams(modWitParams: ModuleWithParams, rawMeta: RawMeta) {
+      return super.mergeModuleWithParams(modWitParams, rawMeta);
+    }
   }
   const mockModuleNormalizer = new MockModuleNormalizer();
-  const getModuleMetadata = mockModuleNormalizer.getDecoratorMeta.bind(mockModuleNormalizer);
+  function getModuleMetadata(modRefId: ModRefId) {
+    modRefId = resolveForwardRef(modRefId);
+    const aDecoratorMeta = mockModuleNormalizer.getDecoratorMeta(modRefId) || [];
+    const aRawMeta = aDecoratorMeta.map((d) => {
+      let rawMeta = d.value.metadata as RawMeta;
+      if (isModuleWithParams(modRefId)) {
+        rawMeta = mockModuleNormalizer.mergeModuleWithParams(modRefId, rawMeta);
+      }
+      return rawMeta;
+    });
+    return aRawMeta;
+  }
 
   it('module without decorator', () => {
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
-    expect(metadata).toBeUndefined();
+    expect(metadata).toEqual([]);
   });
 
   it('empty decorator', () => {
@@ -100,7 +115,6 @@ describe('getModuleMetadata()', () => {
       {
         decorator: featureModule,
         declaredInDir: CallsiteUtils.getCallerDir(),
-        extensionsMeta: {},
         providersPerApp: [Provider0], // From static metadata.
         providersPerMod: [Provider1, Provider2], // Merge from static and dynamic metadata.
       },
@@ -124,7 +138,6 @@ describe('getModuleMetadata()', () => {
       {
         decorator: featureModule,
         declaredInDir: CallsiteUtils.getCallerDir(),
-        extensionsMeta: {},
         providersPerMod: [Provider1],
       },
     ]);
