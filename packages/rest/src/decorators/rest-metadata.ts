@@ -1,6 +1,6 @@
 import {
   makeClassDecorator,
-  AttachedMetadata,
+  PerModAttachedMetadata,
   ModuleManager,
   Provider,
   GlobalProviders,
@@ -24,7 +24,7 @@ export interface RestMetadataDecorator {
   (data?: RestMetadata): any;
 }
 
-export function transformMetadata(data?: RestMetadata): AttachedMetadata<RestMetadata> {
+export function transformMetadata(data?: RestMetadata): PerModAttachedMetadata<RestMetadata> {
   const metadata = Object.assign({}, data);
   return {
     metadata,

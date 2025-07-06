@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 
-import { AttachedMetadata, featureModule } from '#decorators/feature-module.js';
+import { PerModAttachedMetadata, featureModule } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { injectable, forwardRef, Provider, isMultiProvider, DecoratorAndValue } from '#di';
 import { Extension } from '#extension/extension-types.js';
@@ -691,7 +691,7 @@ describe('ModuleManager', () => {
     expectedMeta3.decorator = rootModule;
     expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta3.isExternal = false;
-    expectedMeta3.aDecoratorMeta = [new DecoratorAndValue(featureModule, new AttachedMetadata())];
+    expectedMeta3.aDecoratorMeta = [new DecoratorAndValue(featureModule, new PerModAttachedMetadata())];
 
     const expectedMeta1 = new NormalizedMeta();
     expectedMeta1.id = '';

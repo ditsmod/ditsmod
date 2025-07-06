@@ -1,6 +1,5 @@
-
 import { reflector } from '#di';
-import { AttachedMetadata, featureModule } from './feature-module.js';
+import { PerModAttachedMetadata, RawMeta, featureModule } from './feature-module.js';
 
 describe('Module decorator', () => {
   it('empty decorator', () => {
@@ -10,13 +9,12 @@ describe('Module decorator', () => {
     const metadata = reflector.getDecorators(Module1)!;
     expect(metadata.length).toBe(1);
     expect(metadata[0].decorator).toBe(featureModule);
-    expect(metadata[0].value).toEqual<AttachedMetadata>({
-      isAttachedMetadata: true,
-      metadata: {
+    expect(metadata[0].value).toEqual<PerModAttachedMetadata<RawMeta>>(
+      new PerModAttachedMetadata({
         decorator: featureModule,
         declaredInDir: expect.stringContaining('decorators'),
-      },
-    });
+      }),
+    );
   });
 
   it('decorator with some data', () => {
@@ -25,13 +23,12 @@ describe('Module decorator', () => {
 
     const metadata = reflector.getDecorators(Module1)!;
     expect(metadata.length).toBe(1);
-    expect(metadata[0].value).toEqual<AttachedMetadata>({
-      isAttachedMetadata: true,
-      metadata: {
+    expect(metadata[0].value).toEqual<PerModAttachedMetadata<RawMeta>>(
+      new PerModAttachedMetadata({
         decorator: featureModule,
         declaredInDir: expect.stringContaining('decorators'),
-      },
-    });
+      }),
+    );
   });
 
   it('multi decorator with some data', () => {
@@ -41,22 +38,20 @@ describe('Module decorator', () => {
 
     const metadata = reflector.getDecorators(Module1)!;
     expect(metadata.length).toBe(2);
-    expect(metadata[0].value).toEqual<AttachedMetadata>({
-      isAttachedMetadata: true,
-      metadata: {
+    expect(metadata[0].value).toEqual<PerModAttachedMetadata<RawMeta>>(
+      new PerModAttachedMetadata({
         decorator: featureModule,
         declaredInDir: expect.stringContaining('decorators'),
-      },
-    });
+      }),
+    );
 
-    expect(metadata[1].value).toEqual<AttachedMetadata>({
-      isAttachedMetadata: true,
-      metadata: {
+    expect(metadata[1].value).toEqual<PerModAttachedMetadata<RawMeta>>(
+      new PerModAttachedMetadata({
         decorator: featureModule,
         declaredInDir: expect.stringContaining('decorators'),
         providersPerApp: [],
-      },
-    });
+      } as RawMeta),
+    );
   });
 
   it('decorator with all allowed properties', () => {
@@ -74,9 +69,7 @@ describe('Module decorator', () => {
 
     const metadata = reflector.getDecorators(Module1)!;
     expect(metadata.length).toBe(1);
-    expect(metadata[0].value).toEqual<AttachedMetadata>({
-      isAttachedMetadata: true,
-      metadata: {
+    expect(metadata[0].value).toEqual<PerModAttachedMetadata<RawMeta>>(new PerModAttachedMetadata({
         decorator: featureModule,
         declaredInDir: expect.stringContaining('decorators'),
         imports: [],
@@ -87,7 +80,6 @@ describe('Module decorator', () => {
         id: 'test-id',
         exports: [],
         extensions: [],
-      },
-    });
+      } as RawMeta));
   });
 });

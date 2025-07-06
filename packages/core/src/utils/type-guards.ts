@@ -4,7 +4,7 @@ import { Provider, Class, DecoratorAndValue, reflector, isNormalizedProvider } f
 import { AnyObj, RequireProps } from '#types/mix.js';
 import { ModuleWithParentMeta, ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
 import { RootModuleMetadata } from '#types/root-module-metadata.js';
-import { featureModule, AttachedMetadata, RawMeta } from '#decorators/feature-module.js';
+import { featureModule, PerModAttachedMetadata, RawMeta } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { CustomError } from '#error/custom-error.js';
@@ -48,15 +48,15 @@ export function isModDecor(arg?: any) {
   return isRootModule(arg) || isFeatureModule(arg);
 }
 
-export function isModuleWithMetadata(metadata?: AttachedMetadata): metadata is AttachedMetadata;
-export function isModuleWithMetadata(arg?: DecoratorAndValue): arg is DecoratorAndValue<AttachedMetadata>;
+export function isModuleWithMetadata(metadata?: PerModAttachedMetadata): metadata is PerModAttachedMetadata;
+export function isModuleWithMetadata(arg?: DecoratorAndValue): arg is DecoratorAndValue<PerModAttachedMetadata>;
 export function isModuleWithMetadata(
-  arg?: DecoratorAndValue | AttachedMetadata,
-): arg is DecoratorAndValue<AttachedMetadata> {
+  arg?: DecoratorAndValue | PerModAttachedMetadata,
+): arg is DecoratorAndValue<PerModAttachedMetadata> {
   if (arg instanceof DecoratorAndValue) {
-    return (arg as DecoratorAndValue<AttachedMetadata>).value.isAttachedMetadata === true;
+    return (arg as DecoratorAndValue<PerModAttachedMetadata>).value instanceof PerModAttachedMetadata;
   } else {
-    return arg?.isAttachedMetadata === true;
+    return arg instanceof PerModAttachedMetadata;
   }
 }
 

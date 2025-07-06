@@ -14,7 +14,7 @@ export { CustomError } from '#error/custom-error.js';
 export { ErrorInfo } from '#error/error-info.js';
 export {
   featureModule,
-  AttachedMetadata,
+  PerModAttachedMetadata,
   ParamsTransferObj,
   NormParamsTransferObj,
   NormImportsWithParams,

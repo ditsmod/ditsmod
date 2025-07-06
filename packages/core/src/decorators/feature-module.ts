@@ -35,7 +35,7 @@ export type NormImportsWithParams<T extends AnyObj> = Override<ImportWithParams<
  */
 export type ImportWithParams<T extends AnyObj = AnyObj> = { modRefId: ModRefId } & T;
 
-export function transformModule(data?: ModuleMetadata): AttachedMetadata<RawMeta> {
+export function transformModule(data?: ModuleMetadata): PerModAttachedMetadata<RawMeta> {
   const rawMeta = Object.assign({}, data) as RawMeta;
   objectKeys(rawMeta).forEach((p) => {
     if (rawMeta[p] instanceof Providers) {
@@ -47,14 +47,12 @@ export function transformModule(data?: ModuleMetadata): AttachedMetadata<RawMeta
 
   rawMeta.decorator = featureModule;
   rawMeta.declaredInDir = CallsiteUtils.getCallerDir() || '.';
-  return new AttachedMetadata(rawMeta);
+  return new PerModAttachedMetadata(rawMeta);
 }
 /**
  * A metadata attached to the `rootModule` or `featureModule` decorators.
- *
- * @todo Rename this to `perModAttachedMetadata` or some thing like this.
  */
-export class AttachedMetadata<T extends AnyObj = AnyObj> {
+export class PerModAttachedMetadata<T extends AnyObj = AnyObj> {
   constructor(public metadata = {} as T) {}
 
   normalize?: (baseMeta: NormalizedMeta, metadata: T) => NormParamsTransferObj<AnyObj> | undefined;
