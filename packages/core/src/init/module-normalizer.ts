@@ -44,7 +44,7 @@ export class ModuleNormalizer {
    */
   normalize(modRefId: ModRefId) {
     const aDecoratorMeta = this.getDecoratorMeta(modRefId) || [];
-    let rawMeta = aDecoratorMeta.find((d) => isModDecor(d))?.value as RawMeta | undefined;
+    let rawMeta = aDecoratorMeta.find((d) => isModDecor(d))?.value.metadata as RawMeta | undefined;
     const modName = getDebugClassName(modRefId);
     if (!rawMeta) {
       throw new Error(
@@ -321,6 +321,9 @@ export class ModuleNormalizer {
 
   protected normalizeDecoratorsMeta(meta1: NormalizedMeta, aDecoratorMeta: DecoratorAndValue<PerModAttachedMetadata>[]) {
     aDecoratorMeta.forEach((decorAndVal) => {
+      if (!decorAndVal.value.normalize) {
+        return;
+      }
       const meta2 = decorAndVal.value.normalize?.(meta1, decorAndVal.value.metadata);
       meta1.normDecorMeta.set(decorAndVal.decorator, meta2);
       const aModuleWithParams = meta2?.importsWithParams?.map((param) => param.modRefId);
