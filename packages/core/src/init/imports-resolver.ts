@@ -39,18 +39,18 @@ export class ImportsResolver {
     this.appMetadataMap.forEach((metadataPerMod1) => {
       const {
         //
-        meta,
+        baseMeta,
         importedTokensMap,
         // guardsPerMod1,
         prefixPerMod,
       } = metadataPerMod1;
-      mMetadataPerMod2.set(meta.modRefId, {
-        meta,
+      mMetadataPerMod2.set(baseMeta.modRefId, {
+        meta: baseMeta,
         // guardsPerMod1,
         prefixPerMod,
       });
-      this.resolveImportedProviders(meta, importedTokensMap, levels);
-      this.resolveProvidersForExtensions(meta, importedTokensMap);
+      this.resolveImportedProviders(baseMeta, importedTokensMap, levels);
+      this.resolveProvidersForExtensions(baseMeta, importedTokensMap);
       // meta.providersPerRou.unshift(...defaultProvidersPerRou);
       // meta.providersPerReq.unshift(...defaultProvidersPerReq);
     });
@@ -222,7 +222,7 @@ export class ImportsResolver {
     }
 
     if (!found && dep.required) {
-      this.throwError(metadataPerMod1.meta, importedProvider, path, dep.token, levels);
+      this.throwError(metadataPerMod1.baseMeta, importedProvider, path, dep.token, levels);
     }
   }
 

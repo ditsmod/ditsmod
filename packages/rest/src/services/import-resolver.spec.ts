@@ -162,15 +162,15 @@ describe('resolve()', () => {
 
     const appMetadataMap = bootstrap(Module3);
     expect(() => mock.resolve()).not.toThrow();
-    const { meta } = appMetadataMap.get(Module3)!;
-    expect(meta.providersPerReq).toEqual(defaultProvidersPerReq);
-    expect(meta.providersPerRou).toEqual([...defaultProvidersPerRou, Service3, Service4]);
+    const { baseMeta } = appMetadataMap.get(Module3)!;
+    expect(baseMeta.providersPerReq).toEqual(defaultProvidersPerReq);
+    expect(baseMeta.providersPerRou).toEqual([...defaultProvidersPerRou, Service3, Service4]);
     const moduleExtract: ModuleExtract = {
       path: '',
       moduleName: 'Module3',
       isExternal: false,
     };
-    expect(meta.providersPerMod).toEqual([Service1, Service2, { token: ModuleExtract, useValue: moduleExtract }]);
+    expect(baseMeta.providersPerMod).toEqual([Service1, Service2, { token: ModuleExtract, useValue: moduleExtract }]);
   });
 
   it('circular dependencies in one module', () => {
@@ -309,15 +309,15 @@ describe('resolve()', () => {
 
     const appMetadataMap = bootstrap(Module3);
     expect(() => mock.resolve()).not.toThrow();
-    const { meta } = appMetadataMap.get(Module3)!;
-    expect(meta.providersPerReq).toEqual(defaultProvidersPerReq);
-    expect(meta.providersPerRou).toEqual([...defaultProvidersPerRou, Service2]);
+    const { baseMeta } = appMetadataMap.get(Module3)!;
+    expect(baseMeta.providersPerReq).toEqual(defaultProvidersPerReq);
+    expect(baseMeta.providersPerRou).toEqual([...defaultProvidersPerRou, Service2]);
     const moduleExtract: ModuleExtract = {
       path: '',
       moduleName: 'Module3',
       isExternal: false,
     };
-    expect(meta.providersPerMod).toEqual([Service1, { token: ModuleExtract, useValue: moduleExtract }]);
+    expect(baseMeta.providersPerMod).toEqual([Service1, { token: ModuleExtract, useValue: moduleExtract }]);
   });
 
   it(`Module3 has a duplicate of Service1 in the imported providers because it imports Module1
@@ -344,15 +344,15 @@ describe('resolve()', () => {
 
     const appMetadataMap = bootstrap(Module3);
     expect(() => mock.resolve()).not.toThrow();
-    const { meta } = appMetadataMap.get(Module3)!;
-    expect(meta.providersPerReq).toEqual(defaultProvidersPerReq);
-    expect(meta.providersPerRou).toEqual([...defaultProvidersPerRou, Service2]);
+    const { baseMeta } = appMetadataMap.get(Module3)!;
+    expect(baseMeta.providersPerReq).toEqual(defaultProvidersPerReq);
+    expect(baseMeta.providersPerRou).toEqual([...defaultProvidersPerRou, Service2]);
     const moduleExtract: ModuleExtract = {
       path: '',
       moduleName: 'Module3',
       isExternal: false,
     };
-    expect(meta.providersPerMod).toEqual([Service1, Service1, { token: ModuleExtract, useValue: moduleExtract }]);
+    expect(baseMeta.providersPerMod).toEqual([Service1, Service1, { token: ModuleExtract, useValue: moduleExtract }]);
   });
 
   it('Module3 does not load the Service1 as dependency because Service2 does not declare this dependency', () => {
@@ -389,8 +389,8 @@ describe('resolve()', () => {
     const appMetadataMap = bootstrap(Module3);
 
     expect(() => mock.resolve()).not.toThrow();
-    const { meta } = appMetadataMap.get(Module3)!;
-    const injector = Injector.resolveAndCreate(meta.providersPerRou);
+    const { baseMeta } = appMetadataMap.get(Module3)!;
+    const injector = Injector.resolveAndCreate(baseMeta.providersPerRou);
     const msg = 'No provider for Service1!; this error during instantiation of Service2! (Service3 -> Service2)';
     expect(() => injector.get(Service3)).toThrow(msg);
   });
@@ -418,8 +418,8 @@ describe('resolve()', () => {
     const appMetadataMap = bootstrap(Module2);
 
     expect(() => mock.resolve()).not.toThrow();
-    const { meta } = appMetadataMap.get(Module2)!;
-    const injector = Injector.resolveAndCreate(meta.providersPerRou);
+    const { baseMeta } = appMetadataMap.get(Module2)!;
+    const injector = Injector.resolveAndCreate(baseMeta.providersPerRou);
     expect(() => injector.get(Service2)).not.toThrow();
   });
 

@@ -40,7 +40,7 @@ export class RestNormalizedMeta extends RestProvidersMetadata implements NormPar
   importsWithParams: NormImportsWithParams<RestModuleParams>[] = [];
   /**
    * If the current `baseMeta.modRefId` has the type `ModuleWithParams`,
-   * this property will label the parameters of the current module.
+   * this property will contain the parameters of the current module.
    */
   params: RestModuleParams = {};
 }

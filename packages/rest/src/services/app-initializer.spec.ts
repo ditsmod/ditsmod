@@ -175,43 +175,43 @@ describe('exports/imports', () => {
 
   it('Module0', async () => {
     const mod0 = appMetadataMap.get(Module0);
-    expect(mod0?.meta.providersPerApp).toEqual([]);
+    expect(mod0?.baseMeta.providersPerApp).toEqual([]);
     const moduleExtract: ModuleExtract = { path: '', moduleName: 'Module0', isExternal: false };
     const providerPerMod: Provider = { token: ModuleExtract, useValue: moduleExtract };
-    expect(mod0?.meta.providersPerMod).toEqual([providerPerMod, Provider0]);
-    expect(mod0?.meta.providersPerReq).toEqual([]);
+    expect(mod0?.baseMeta.providersPerMod).toEqual([providerPerMod, Provider0]);
+    expect(mod0?.baseMeta.providersPerReq).toEqual([]);
     checkGlobalProviders(mod0);
   });
 
   it('Module1', async () => {
     const mod1 = appMetadataMap.get(Module1);
-    expect(mod1?.meta.providersPerApp).toEqual([]);
+    expect(mod1?.baseMeta.providersPerApp).toEqual([]);
     const moduleExtract: ModuleExtract = { path: '', moduleName: 'Module1', isExternal: false };
     const providerPerMod: Provider = { token: ModuleExtract, useValue: moduleExtract };
-    expect(mod1?.meta.providersPerMod).toEqual([providerPerMod, obj1, Provider2]);
+    expect(mod1?.baseMeta.providersPerMod).toEqual([providerPerMod, obj1, Provider2]);
     checkGlobalProviders(mod1);
   });
 
   it('Module2', async () => {
     const mod2 = appMetadataMap.get(module2WithParams);
-    expect(mod2?.meta.providersPerApp).toEqual([]);
+    expect(mod2?.baseMeta.providersPerApp).toEqual([]);
     const moduleExtract: ModuleExtract = { path: '', moduleName: 'Module2', isExternal: false };
     const providerPerMod: Provider = { token: ModuleExtract, useValue: moduleExtract };
-    expect(mod2?.meta.providersPerMod).toEqual([providerPerMod, Provider3, Provider4]);
-    expect(mod2?.meta.providersPerReq).toEqual([]);
+    expect(mod2?.baseMeta.providersPerMod).toEqual([providerPerMod, Provider3, Provider4]);
+    expect(mod2?.baseMeta.providersPerReq).toEqual([]);
     checkGlobalProviders(mod2);
   });
 
   it('Module3', async () => {
     const mod3 = appMetadataMap.get(module3WithParams);
-    expect(mod3?.meta.providersPerApp).toEqual([]);
+    expect(mod3?.baseMeta.providersPerApp).toEqual([]);
     const moduleExtract: ModuleExtract = { path: 'one', moduleName: 'Module3', isExternal: false };
     const providerPerMod: Provider = {
       token: ModuleExtract,
       useValue: moduleExtract,
     };
-    expect(mod3?.meta.providersPerMod).toEqual([providerPerMod]);
-    expect(mod3?.meta.providersPerReq).toEqual([Provider5, Provider6, Provider7]);
+    expect(mod3?.baseMeta.providersPerMod).toEqual([providerPerMod]);
+    expect(mod3?.baseMeta.providersPerReq).toEqual([Provider5, Provider6, Provider7]);
     checkGlobalProviders(mod3);
   });
 
@@ -219,11 +219,11 @@ describe('exports/imports', () => {
     moduleManager.scanRootModule(AppModule);
     const appMetadataMap = mock.bootstrapModuleFactory(moduleManager);
     const mod4 = appMetadataMap.get(module4WithParams);
-    expect(mod4?.meta.providersPerApp).toEqual([]);
+    expect(mod4?.baseMeta.providersPerApp).toEqual([]);
     const moduleExtract: ModuleExtract = { path: '', moduleName: 'Module4', isExternal: false };
     const providerPerMod: Provider = { token: ModuleExtract, useValue: moduleExtract };
-    expect(mod4?.meta.providersPerMod).toEqual([providerPerMod]);
-    expect(mod4?.meta.providersPerReq).toEqual([Provider8, Provider9]);
+    expect(mod4?.baseMeta.providersPerMod).toEqual([providerPerMod]);
+    expect(mod4?.baseMeta.providersPerReq).toEqual([Provider8, Provider9]);
     checkGlobalProviders(mod4);
   });
 
@@ -231,14 +231,14 @@ describe('exports/imports', () => {
     moduleManager.scanRootModule(AppModule);
     const appMetadataMap = mock.bootstrapModuleFactory(moduleManager);
     const root1 = appMetadataMap.get(AppModule);
-    expect(root1?.meta.providersPerApp.slice(0, 2)).toEqual([Logger, { token: Router, useValue: 'fake' }]);
+    expect(root1?.baseMeta.providersPerApp.slice(0, 2)).toEqual([Logger, { token: Router, useValue: 'fake' }]);
     const moduleExtract: ModuleExtract = { path: '', moduleName: 'AppModule', isExternal: false };
     const providerPerMod: Provider = {
       token: ModuleExtract,
       useValue: moduleExtract,
     };
-    expect(root1?.meta.providersPerMod).toEqual([providerPerMod]);
-    expect(root1?.meta.providersPerReq).toEqual([]);
+    expect(root1?.baseMeta.providersPerMod).toEqual([providerPerMod]);
+    expect(root1?.baseMeta.providersPerReq).toEqual([]);
     checkGlobalProviders(root1);
     expect(getImportedTokens(root1?.importedTokensMap.perMod)).toEqual([Provider0, Provider3, Provider4, Provider1]);
     expect(getImportedTokens(root1?.importedTokensMap.perReq)).toEqual([

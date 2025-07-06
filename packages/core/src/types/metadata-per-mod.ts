@@ -20,7 +20,7 @@ export class GlobalProviders {
   importedMultiProvidersPerMod = new Map<ModuleType | ModuleWithParams, Provider[]>();
   importedExtensions = new Map<ModuleType | ModuleWithParams, Provider[]>();
   aImportedExtensionConfig: ExtensionConfig[] = [];
-  mGlobalProviders: Map<AnyFn, AnyObj | undefined>;
+  globalProvidersFromDecorators: Map<AnyFn, AnyObj | undefined>;
 }
 
 /**
@@ -31,8 +31,8 @@ export class MetadataPerMod1 {
    * Snapshot of NormalizedMeta. If you modify any array in this object,
    * the original array will remain unchanged.
    */
-  meta: NormalizedMeta;
-  mBootstrap: Map<AnyFn, AnyObj | undefined>;
+  baseMeta: NormalizedMeta;
+  bootstrapFromDecorators: Map<AnyFn, AnyObj | undefined>;
   /**
    * Map between a token and its ImportObj per level.
    */

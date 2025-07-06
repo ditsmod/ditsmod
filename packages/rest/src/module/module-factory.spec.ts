@@ -216,7 +216,7 @@ describe('appending modules', () => {
     expect(metadataPerMod1_3).toBeDefined();
 
     expect(metadataPerMod1_1.prefixPerMod).toBe('prefix1');
-    expect(metadataPerMod1_1.meta).toBeDefined();
+    expect(metadataPerMod1_1.baseMeta).toBeDefined();
     // expect(metadataPerMod1_1.applyControllers).toBe(true);
     expect(metadataPerMod1_1.importedTokensMap.perMod).toEqual(new Map());
     expect(metadataPerMod1_1.importedTokensMap.perRou).toEqual(new Map());
@@ -373,7 +373,7 @@ describe('appending modules', () => {
     expect(metadataPerMod1_3).toBeDefined();
 
     expect(metadataPerMod1_1.prefixPerMod).toBe('prefix1');
-    expect(metadataPerMod1_1.meta).toBeDefined();
+    expect(metadataPerMod1_1.baseMeta).toBeDefined();
     // expect(metadataPerMod1_1.applyControllers).toBe(true);
     expect(metadataPerMod1_1.importedTokensMap.perMod).toEqual(new Map());
     expect(metadataPerMod1_1.importedTokensMap.perRou).toEqual(new Map());
