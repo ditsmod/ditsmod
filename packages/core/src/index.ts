@@ -64,6 +64,7 @@ export {
   ModRefId,
   Override,
   UnionToIntersection,
+  AppMetadataMap,
 } from '#types/mix.js';
 export {
   ModuleMetadata,
