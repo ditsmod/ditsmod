@@ -4,23 +4,25 @@ sidebar_position: 9
 
 # Колізії провайдерів
 
-Уявіть, що у вас є `Module3`, куди ви імпортували `Module2` та `Module1`. Ви зробили такий імпорт, бо вам потрібні відповідно `Provider2` та `Provider1` із цих модулів. Ви проглядаєте результат роботи даних провайдерів, але по якійсь причині `Provider1` працює не так як очікується. Ви починаєте дебажити і виявляється, що `Provider1` експортується з обох модулів: `Module2` та `Module1`. Ви очікували, що `Provider1` експортуватиметься лише з `Module1`, але насправді спрацювала та версія, що експортується з `Module2`:
+Колізії провайдерів виникають тоді, коли у поточний модуль імпортуються різні провайдери, що надають один і той самий сервіс.
 
-```ts {8,14}
+Давайте розбиремо конкретний приклад. Уявіть, що у вас є `Module3`, куди ви імпортували `Module2` та `Module1`. Ви зробили такий імпорт, бо вам потрібні відповідно `Service2` та `Service1` із цих модулів. Ви проглядаєте результат роботи даних сервісів, але по якійсь причині `Service1` працює не так як очікується. Ви починаєте дебажити і виявляється, що `Service1` експортується з обох модулів: `Module2` та `Module1`. Ви очікували, що `Service1` експортуватиметься лише з `Module1`, але насправді спрацювала та версія, що експортується з `Module2`:
+
+```ts {8,14,19}
 import { featureModule, rootModule } from '@ditsmod/core';
 
-class Provider1 {}
-class Provider2 {}
+class Service1 {}
+class Service2 {}
 
 @featureModule({
-  providersPerReq: [Provider1],
-  exports: [Provider1]
+  providersPerMod: [Service1],
+  exports: [Service1]
 })
 class Module1 {}
 
 @featureModule({
-  providersPerReq: [{ token: Provider1, useValue: 'some value' }, Provider2],
-  exports: [Provider1, Provider2],
+  providersPerMod: [{ token: Service1, useValue: 'some value' }, Service2],
+  exports: [Service1, Service2],
 })
 class Module2 {}
 
@@ -32,13 +34,13 @@ class Module3 {}
 
 Щоб цього не сталось, якщо ви імпортуєте два або більше модулі, в яких експортуються неідентичні провайдери з однаковим токеном, Ditsmod кидатиме приблизно таку помилку:
 
-> Error: Importing providers to Module3 failed: exports from Module1, Module2 causes collision with Provider1. You should add Provider1 to resolvedCollisionsPerReq in this module. For example: resolvedCollisionsPerReq: [ [Provider1, Module1] ].
+> Error: Importing providers to Module3 failed: exports from Module1, Module2 causes collision with Service1. You should add Service1 to resolvedCollisionsPerMod in this module. For example: resolvedCollisionsPerMod: [ [Service1, Module1] ].
 
 Конкретно у цій ситуації:
 
-1. і `Module1` експортує провайдер з токеном `Provider1`;
-2. і `Module2` підмінює, а потім експортує провайдер з токеном `Provider1`;
-3. провайдери з токеном `Provider1` є неідентичними у `Module1` та `Module2`.
+1. і `Module1` експортує провайдер з токеном `Service1`;
+2. і `Module2` підмінює, а потім експортує провайдер з токеном `Service1`;
+3. провайдери з токеном `Service1` є неідентичними у `Module1` та `Module2`.
 
 І оскільки обидва ці модулі імпортуються у `Module3`, якраз тому і виникає "колізія провайдерів", розробник може не знати який провайдер буде працювати в `Module3`.
 
@@ -49,24 +51,24 @@ class Module3 {}
 ```ts {20}
 import { featureModule, rootModule } from '@ditsmod/core';
 
-class Provider1 {}
-class Provider2 {}
+class Service1 {}
+class Service2 {}
 
 @featureModule({
-  providersPerReq: [Provider1],
-  exports: [Provider1]
+  providersPerMod: [Service1],
+  exports: [Service1]
 })
 class Module1 {}
 
 @featureModule({
-  providersPerReq: [{ token: Provider1, useValue: 'some value' }, Provider2],
-  exports: [Provider1, Provider2],
+  providersPerMod: [{ token: Service1, useValue: 'some value' }, Service2],
+  exports: [Service1, Service2],
 })
 class Module2 {}
 
 @rootModule({
   imports: [Module1, Module2],
-  resolvedCollisionsPerReq: [ [Provider1, Module1] ]
+  resolvedCollisionsPerMod: [ [Service1, Module1] ]
 })
 class Module3 {}
 ```
