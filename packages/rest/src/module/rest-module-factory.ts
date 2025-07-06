@@ -86,7 +86,7 @@ export class RestModuleFactory {
    * GlobalProviders.
    */
   protected glProviders: GlobalProviders;
-  protected restGlProviders = new RestGlobalProviders();
+  protected restGlProviders: RestGlobalProviders;
   protected appMetadataMap = new Map<ModRefId, RestMetadataPerMod1>();
   protected unfinishedScanModules = new Set<ModRefId>();
   protected moduleManager: ModuleManager;
@@ -135,6 +135,7 @@ export class RestModuleFactory {
     this.moduleManager = moduleManager;
     this.providersPerApp = providersPerApp;
     this.glProviders = globalProviders;
+    this.restGlProviders = globalProviders.providersFromDecorators.get(restMetadata) as RestGlobalProviders;
     this.prefixPerMod = prefixPerMod;
     this.moduleName = baseMeta.name;
     this.guardsPerMod1 = guardsPerMod1 || [];
