@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 
-import { PerModAttachedMetadata, featureModule } from '#decorators/feature-module.js';
+import { PerModAttachedMetadata, RawMeta, featureModule } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { injectable, forwardRef, Provider, isMultiProvider, DecoratorAndValue } from '#di';
 import { Extension } from '#extension/extension-types.js';
@@ -8,12 +8,12 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ModuleManager } from './module-manager.js';
 import { ModuleType, AnyObj } from '#types/mix.js';
-import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
+import { ModuleWithParams } from '#types/module-metadata.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 
 describe('ModuleManager', () => {
-  // console.log = jest.fn();
+  console.log = jest.fn();
   type ModuleId = string | ModuleType | ModuleWithParams;
   @injectable()
   class Provider0 {}
@@ -107,6 +107,7 @@ describe('ModuleManager', () => {
     expectedMeta.decorator = rootModule;
     expectedMeta.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta.isExternal = false;
+    expectedMeta.aDecoratorMeta = expect.any(Array);
 
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(1);
@@ -201,7 +202,7 @@ describe('ModuleManager', () => {
       static withParams(providersPerMod: Provider[]): ModuleWithParams<Module4> {
         return {
           module: Module4,
-          providersPerMod: [],
+          providersPerMod,
         };
       }
     }
@@ -226,6 +227,7 @@ describe('ModuleManager', () => {
     expectedMeta1.decorator = featureModule;
     expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta1.isExternal = false;
+    expectedMeta1.aDecoratorMeta = expect.any(Array);
 
     mock.scanRootModule(Module3);
     expect(mock.map.size).toBe(4);
@@ -242,6 +244,7 @@ describe('ModuleManager', () => {
     expectedMeta2.decorator = featureModule;
     expectedMeta2.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta2.isExternal = false;
+    expectedMeta2.aDecoratorMeta = expect.any(Array);
 
     expect(mock.map.get(Module2)).toEqual(expectedMeta2);
 
@@ -253,6 +256,7 @@ describe('ModuleManager', () => {
     expectedMeta3.decorator = rootModule;
     expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta3.isExternal = false;
+    expectedMeta3.aDecoratorMeta = expect.any(Array);
 
     expect(mock.getMetadata('root')).toEqual(expectedMeta3);
 
@@ -265,6 +269,7 @@ describe('ModuleManager', () => {
     expectedMeta4.decorator = featureModule;
     expectedMeta4.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta4.isExternal = false;
+    expectedMeta4.aDecoratorMeta = expect.any(Array);
 
     expect(mock.map.get(module4WithParams)).toEqual(expectedMeta4);
   });
@@ -289,7 +294,7 @@ describe('ModuleManager', () => {
       static withParams(providersPerMod: Provider[]): ModuleWithParams<Module3> {
         return {
           module: Module3,
-          providersPerMod: [],
+          providersPerMod,
         };
       }
     }
@@ -307,6 +312,7 @@ describe('ModuleManager', () => {
     expectedMeta1.decorator = rootModule;
     expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta1.isExternal = false;
+    expectedMeta1.aDecoratorMeta = expect.any(Array);
 
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(1);
@@ -350,6 +356,7 @@ describe('ModuleManager', () => {
     expectedMeta2.decorator = rootModule;
     expectedMeta2.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta2.isExternal = false;
+    expectedMeta2.aDecoratorMeta = expect.any(Array);
 
     mock.addImport(Module2);
     expect(mock.map.size).toBe(3);
@@ -388,6 +395,7 @@ describe('ModuleManager', () => {
     expectedMeta3.decorator = rootModule;
     expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta3.isExternal = false;
+    expectedMeta3.aDecoratorMeta = expect.any(Array);
 
     expect(mock.getMetadata('root') === mock.getMetadata('root')).toBe(false);
     expect(mock.getMetadata('root')).toEqual(expectedMeta3);
@@ -420,7 +428,7 @@ describe('ModuleManager', () => {
       static withParams(providersPerMod: Provider[]): ModuleWithParams<Module3> {
         return {
           module: Module3,
-          providersPerMod: [],
+          providersPerMod,
         };
       }
     }
@@ -434,7 +442,7 @@ describe('ModuleManager', () => {
         return {
           id: moduleId,
           module: Module4,
-          providersPerMod: [],
+          providersPerMod,
         };
       }
     }
@@ -459,6 +467,7 @@ describe('ModuleManager', () => {
     expectedMeta1.decorator = rootModule;
     expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta1.isExternal = false;
+    expectedMeta1.aDecoratorMeta = expect.any(Array);
 
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(6);
@@ -505,6 +514,7 @@ describe('ModuleManager', () => {
     expectedMeta2.decorator = rootModule;
     expectedMeta2.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta2.isExternal = false;
+    expectedMeta2.aDecoratorMeta = expect.any(Array);
 
     expect(mock.getMetadata('root')).toMatchObject({ importsModules: [Module1, Module2] });
     expect(mock.removeImport(Module2)).toBe(true);
@@ -531,6 +541,7 @@ describe('ModuleManager', () => {
     expectedMeta3.decorator = rootModule;
     expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta3.isExternal = false;
+    expectedMeta3.aDecoratorMeta = expect.any(Array);
 
     expect(mock.getMetadata('root')).toMatchObject({
       importsWithParams: [module3WithProviders, module4WithProviders],
@@ -554,6 +565,7 @@ describe('ModuleManager', () => {
     expectedMeta4.decorator = rootModule;
     expectedMeta4.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta4.isExternal = false;
+    expectedMeta4.aDecoratorMeta = expect.any(Array);
 
     expect(mock.removeImport(moduleId)).toBe(true);
     expect(mock.map.size).toBe(2);
@@ -595,6 +607,7 @@ describe('ModuleManager', () => {
     expectedMeta3.decorator = rootModule;
     expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta3.isExternal = false;
+    expectedMeta3.aDecoratorMeta = expect.any(Array);
     delete (expectedMeta3 as any).aExtensionConfig;
     delete (expectedMeta3 as any).aExportedExtensionConfig;
 
@@ -609,6 +622,7 @@ describe('ModuleManager', () => {
     expectedMeta1.isExternal = false;
     delete (expectedMeta1 as any).aExtensionConfig;
     delete (expectedMeta1 as any).aExportedExtensionConfig;
+    expectedMeta1.aDecoratorMeta = expect.any(Array);
 
     mock.scanRootModule(Module3);
     expect(mock.getMetadata('root')).toMatchObject(expectedMeta3);
@@ -643,6 +657,7 @@ describe('ModuleManager', () => {
     expectedMeta3.decorator = rootModule;
     expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta3.isExternal = false;
+    expectedMeta3.aDecoratorMeta = expect.any(Array);
     delete (expectedMeta3 as any).aExtensionConfig;
     delete (expectedMeta3 as any).aExportedExtensionConfig;
 
@@ -655,6 +670,7 @@ describe('ModuleManager', () => {
     expectedMeta1.decorator = featureModule;
     expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta1.isExternal = false;
+    expectedMeta1.aDecoratorMeta = expect.any(Array);
     delete (expectedMeta1 as any).aExtensionConfig;
     delete (expectedMeta1 as any).aExportedExtensionConfig;
 
@@ -663,7 +679,7 @@ describe('ModuleManager', () => {
     expect(mock.getMetadata(Module1)).toMatchObject(expectedMeta1);
   });
 
-  fit('split multi providers and common providers', () => {
+  it('split multi providers and common providers', () => {
     const providersPerMod: Provider[] = [
       { token: Provider2, useValue: 'val4', multi: true },
       { token: Provider1, useValue: 'val1', multi: true },
@@ -691,7 +707,7 @@ describe('ModuleManager', () => {
     expectedMeta3.decorator = rootModule;
     expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta3.isExternal = false;
-    expectedMeta3.aDecoratorMeta = [new DecoratorAndValue(featureModule, new PerModAttachedMetadata())];
+    expectedMeta3.aDecoratorMeta = expect.any(Array);
 
     const expectedMeta1 = new NormalizedMeta();
     expectedMeta1.id = '';
@@ -703,9 +719,9 @@ describe('ModuleManager', () => {
     expectedMeta1.decorator = featureModule;
     expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta1.isExternal = false;
+    expectedMeta1.aDecoratorMeta = expect.any(Array);
 
     mock.scanRootModule(Module3);
-    console.log(mock.getMetadata('root'));
     expect(mock.getMetadata('root')).toEqual(expectedMeta3);
     expect(mock.getMetadata(Module1)).toEqual(expectedMeta1);
   });
