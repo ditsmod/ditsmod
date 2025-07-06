@@ -173,13 +173,13 @@ export class SystemLogMediator extends LogMediator {
   printGlobalProviders(self: object, globalProviders: GlobalProviders) {
     const className = self.constructor.name;
     const globalProvidersPerMod = this.getProvidersNames(globalProviders.importedProvidersPerMod);
-    const globalProvidersPerRou = this.getProvidersNames(globalProviders.importedProvidersPerRou);
-    const globalProvidersPerReq = this.getProvidersNames(globalProviders.importedProvidersPerReq);
+    // const globalProvidersPerRou = this.getProvidersNames(globalProviders.importedProvidersPerRou);
+    // const globalProvidersPerReq = this.getProvidersNames(globalProviders.importedProvidersPerReq);
     const prefix = `${className}: global providers per a`;
     this.setLog('debug', `${className}: global providers are collected.`);
     this.setLog('trace', `${prefix} module: [${globalProvidersPerMod}]`);
-    this.setLog('trace', `${prefix} route: [${globalProvidersPerRou}]`);
-    this.setLog('trace', `${prefix} request: [${globalProvidersPerReq}]`);
+    // this.setLog('trace', `${prefix} route: [${globalProvidersPerRou}]`);
+    // this.setLog('trace', `${prefix} request: [${globalProvidersPerReq}]`);
   }
 
   protected getProvidersNames(providersMap: Map<any, ImportObj<Provider>>) {
