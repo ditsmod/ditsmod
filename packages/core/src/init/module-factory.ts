@@ -59,10 +59,10 @@ export class ModuleFactory {
     this.providersPerApp = providersPerApp;
     this.importProvidersAndExtensions(meta);
     this.checkAllCollisionsWithLevelsMix();
-    const globalProvidersFromDecorators = new Map<AnyFn, AnyObj | undefined>();
+    const providersFromDecorators = new Map<AnyFn, AnyObj | undefined>();
 
     meta.aDecoratorMeta.forEach((decorAndVal) => {
-      globalProvidersFromDecorators.set(
+      providersFromDecorators.set(
         decorAndVal.decorator,
         decorAndVal.value.exportGlobalProviders?.(moduleManager, meta, providersPerApp),
       );
@@ -73,7 +73,7 @@ export class ModuleFactory {
       importedMultiProvidersPerMod: this.importedMultiProvidersPerMod,
       importedExtensions: this.importedExtensions,
       aImportedExtensionConfig: this.aImportedExtensionConfig,
-      globalProvidersFromDecorators,
+      providersFromDecorators,
     };
   }
 

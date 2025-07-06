@@ -20,7 +20,7 @@ export class GlobalProviders {
   importedMultiProvidersPerMod = new Map<ModuleType | ModuleWithParams, Provider[]>();
   importedExtensions = new Map<ModuleType | ModuleWithParams, Provider[]>();
   aImportedExtensionConfig: ExtensionConfig[] = [];
-  globalProvidersFromDecorators: Map<AnyFn, AnyObj | undefined>;
+  providersFromDecorators: Map<AnyFn, AnyObj | undefined>;
 }
 
 /**
