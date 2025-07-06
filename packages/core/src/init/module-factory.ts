@@ -59,10 +59,10 @@ export class ModuleFactory {
     this.providersPerApp = providersPerApp;
     this.importProvidersAndExtensions(meta);
     this.checkAllCollisionsWithLevelsMix();
-    const mGlobalProviders = new Map<AnyFn, AnyObj | undefined>();
+    const globalProvidersFromDecorators = new Map<AnyFn, AnyObj | undefined>();
 
     meta.aDecoratorMeta.forEach((decorAndVal) => {
-      mGlobalProviders.set(
+      globalProvidersFromDecorators.set(
         decorAndVal.decorator,
         decorAndVal.value.exportGlobalProviders?.(moduleManager, meta, providersPerApp),
       );
@@ -73,7 +73,7 @@ export class ModuleFactory {
       importedMultiProvidersPerMod: this.importedMultiProvidersPerMod,
       importedExtensions: this.importedExtensions,
       aImportedExtensionConfig: this.aImportedExtensionConfig,
-      mGlobalProviders,
+      globalProvidersFromDecorators,
     };
   }
 
@@ -123,18 +123,18 @@ export class ModuleFactory {
     const allExtensionConfigs = meta.aExtensionConfig.concat(aExtensionConfig);
     this.checkExtensionsGraph(allExtensionConfigs);
     meta.aOrderedExtensions = topologicalSort<ExtensionClass, ExtensionConfigBase>(allExtensionConfigs, true);
-    const mBootstrap = new Map<AnyFn, AnyObj | undefined>();
+    const bootstrapFromDecorators = new Map<AnyFn, AnyObj | undefined>();
 
     meta.aDecoratorMeta.forEach((decorAndVal) => {
-      mBootstrap.set(
+      bootstrapFromDecorators.set(
         decorAndVal.decorator,
         decorAndVal.value.bootstrap?.(providersPerApp, globalProviders, modRefId, moduleManager, unfinishedScanModules),
       );
     });
 
     return this.appMetadataMap.set(modRefId, {
-      meta: this.meta,
-      mBootstrap,
+      baseMeta: this.meta,
+      bootstrapFromDecorators,
       importedTokensMap: {
         perMod,
         multiPerMod,
