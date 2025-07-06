@@ -1,12 +1,11 @@
 import { Injector } from '#di';
-
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { defaultExtensionsProviders } from '#extension/default-extensions-providers.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { BaseAppOptions } from '#types/app-options.js';
 import { ImportedTokensMap, MetadataPerMod2 } from '#types/metadata-per-mod.js';
-import { AppMetadataMap, Level, ProvidersForMod, ModRefId } from '#types/mix.js';
+import { AppMetadataMap, Level, ProvidersForMod, ModRefId, AnyFn, AnyObj } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { ReflectiveDependency, getDependencies } from '#utils/get-dependecies.js';
@@ -37,22 +36,26 @@ export class ImportsResolver {
     const mMetadataPerMod2 = new Map<ModRefId, MetadataPerMod2>();
     this.tokensPerApp = getTokens(this.providersPerApp);
     this.appMetadataMap.forEach((metadataPerMod1) => {
-      const {
-        //
-        baseMeta,
-        importedTokensMap,
-        // guardsPerMod1,
-        prefixPerMod,
-      } = metadataPerMod1;
-      mMetadataPerMod2.set(baseMeta.modRefId, {
-        meta: baseMeta,
-        // guardsPerMod1,
-        prefixPerMod,
+      const { baseMeta, importedTokensMap, perDecorImportedTokensMap } = metadataPerMod1;
+      const resolveFromDecorators = new Map<AnyFn, AnyObj | undefined>();
+
+      baseMeta.aDecoratorMeta.forEach((decorAndVal) => {
+        resolveFromDecorators.set(
+          decorAndVal.decorator,
+          decorAndVal.value.importResolve?.(
+            this.moduleManager,
+            this.appMetadataMap,
+            this.providersPerApp,
+            this.log,
+            this.errorMediator,
+            perDecorImportedTokensMap.get(decorAndVal.decorator),
+          ),
+        );
       });
+
+      mMetadataPerMod2.set(baseMeta.modRefId, { baseMeta, resolveFromDecorators });
       this.resolveImportedProviders(baseMeta, importedTokensMap, levels);
       this.resolveProvidersForExtensions(baseMeta, importedTokensMap);
-      // meta.providersPerRou.unshift(...defaultProvidersPerRou);
-      // meta.providersPerReq.unshift(...defaultProvidersPerReq);
     });
 
     return { extensionCounters: this.extensionCounters, mMetadataPerMod2 };
@@ -80,10 +83,7 @@ export class ImportsResolver {
     });
   }
 
-  protected resolveProvidersForExtensions(
-    targetProviders: NormalizedMeta,
-    importedTokensMap: ImportedTokensMap,
-  ) {
+  protected resolveProvidersForExtensions(targetProviders: NormalizedMeta, importedTokensMap: ImportedTokensMap) {
     const currentExtensionsTokens: any[] = [];
     importedTokensMap.extensions.forEach((providers) => {
       currentExtensionsTokens.push(...getTokens(providers));

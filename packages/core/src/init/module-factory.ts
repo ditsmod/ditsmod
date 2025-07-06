@@ -123,10 +123,10 @@ export class ModuleFactory {
     const allExtensionConfigs = meta.aExtensionConfig.concat(aExtensionConfig);
     this.checkExtensionsGraph(allExtensionConfigs);
     meta.aOrderedExtensions = topologicalSort<ExtensionClass, ExtensionConfigBase>(allExtensionConfigs, true);
-    const bootstrapFromDecorators = new Map<AnyFn, AnyObj | undefined>();
+    const perDecorImportedTokensMap = new Map<AnyFn, AnyObj | undefined>();
 
     meta.aDecoratorMeta.forEach((decorAndVal) => {
-      bootstrapFromDecorators.set(
+      perDecorImportedTokensMap.set(
         decorAndVal.decorator,
         decorAndVal.value.bootstrap?.(providersPerApp, globalProviders, modRefId, moduleManager, unfinishedScanModules),
       );
@@ -134,7 +134,7 @@ export class ModuleFactory {
 
     return this.appMetadataMap.set(modRefId, {
       baseMeta: this.meta,
-      bootstrapFromDecorators,
+      perDecorImportedTokensMap,
       importedTokensMap: {
         perMod,
         multiPerMod,
