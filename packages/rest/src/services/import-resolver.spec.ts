@@ -12,7 +12,7 @@ import {
   MetadataPerMod1,
   ModRefId,
   ModuleExtract,
-  ModuleFactory,
+  ShallowProvidersCollector,
   ModuleManager,
   ModuleType,
   ModuleWithParams,
@@ -33,7 +33,7 @@ type Level = 'Mod';
 
 describe('resolve()', () => {
   let mock: ImportsResolverMock;
-  let moduleFactory: ModuleFactory;
+  let shallowProvidersCollector: ShallowProvidersCollector;
   let moduleManager: ModuleManager;
   let systemLogMediator: SystemLogMediator;
   let errorMediator: SystemErrorMediator;
@@ -68,15 +68,15 @@ describe('resolve()', () => {
 
   function bootstrap(mod: ModuleType) {
     expect(() => moduleManager.scanModule(mod)).not.toThrow();
-    const appMetadataMap = moduleFactory.bootstrap([], new GlobalProviders(), '', mod, moduleManager, new Set());
+    const appMetadataMap = shallowProvidersCollector.bootstrap([], new GlobalProviders(), '', mod, moduleManager, new Set());
     mock = new ImportsResolverMock(moduleManager, appMetadataMap, [], systemLogMediator, errorMediator);
     return appMetadataMap as Map<ModRefId, MetadataPerMod1>;
   }
 
   beforeEach(() => {
     clearDebugClassNames();
-    const injectorPerApp = Injector.resolveAndCreate([ModuleFactory]);
-    moduleFactory = injectorPerApp.get(ModuleFactory);
+    const injectorPerApp = Injector.resolveAndCreate([ShallowProvidersCollector]);
+    shallowProvidersCollector = injectorPerApp.get(ShallowProvidersCollector);
     systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
     errorMediator = new SystemErrorMediator({ moduleName: 'fakeName' });
     moduleManager = new ModuleManager(systemLogMediator);

@@ -30,7 +30,7 @@ import { ExtensionClass } from '#extension/extension-types.js';
  * - merges global and local providers;
  * - checks on providers collisions.
  */
-export class ModuleFactory {
+export class ShallowProvidersCollector {
   protected moduleName: string;
   /**
    * Module metadata.
@@ -152,9 +152,9 @@ export class ModuleFactory {
       if (this.unfinishedScanModules.has(modRefId)) {
         continue;
       }
-      const moduleFactory = new ModuleFactory();
+      const shallowProvidersCollector = new ShallowProvidersCollector();
       this.unfinishedScanModules.add(modRefId);
-      const appMetadataMap = moduleFactory.bootstrap(
+      const appMetadataMap = shallowProvidersCollector.bootstrap(
         this.glProviders,
         modRefId,
         this.moduleManager,

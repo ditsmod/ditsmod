@@ -52,8 +52,8 @@ class AppInitializerMock extends AppInitializer {
     return super.prepareProvidersPerApp();
   }
 
-  override bootstrapModuleFactory(moduleManager: ModuleManager) {
-    return super.bootstrapModuleFactory(moduleManager);
+  override bootstrapShallowProvidersCollector(moduleManager: ModuleManager) {
+    return super.bootstrapShallowProvidersCollector(moduleManager);
   }
 
   override getResolvedCollisionsPerApp() {
@@ -138,7 +138,7 @@ describe('exports/imports', () => {
     const appOptions = new AppOptions();
     mock = new AppInitializerMock(appOptions, moduleManager, systemLogMediator);
     moduleManager.scanRootModule(AppModule);
-    appMetadataMap = mock.bootstrapModuleFactory(moduleManager);
+    appMetadataMap = mock.bootstrapShallowProvidersCollector(moduleManager);
   });
 
   function checkGlobalProviders(metadataPerMod1: MetadataPerMod1 | undefined) {
@@ -217,7 +217,7 @@ describe('exports/imports', () => {
 
   it('Module4', async () => {
     moduleManager.scanRootModule(AppModule);
-    const appMetadataMap = mock.bootstrapModuleFactory(moduleManager);
+    const appMetadataMap = mock.bootstrapShallowProvidersCollector(moduleManager);
     const mod4 = appMetadataMap.get(module4WithParams);
     expect(mod4?.baseMeta.providersPerApp).toEqual([]);
     const moduleExtract: ModuleExtract = { path: '', moduleName: 'Module4', isExternal: false };
@@ -229,7 +229,7 @@ describe('exports/imports', () => {
 
   it('AppModule', async () => {
     moduleManager.scanRootModule(AppModule);
-    const appMetadataMap = mock.bootstrapModuleFactory(moduleManager);
+    const appMetadataMap = mock.bootstrapShallowProvidersCollector(moduleManager);
     const root1 = appMetadataMap.get(AppModule);
     expect(root1?.baseMeta.providersPerApp.slice(0, 2)).toEqual([Logger, { token: Router, useValue: 'fake' }]);
     const moduleExtract: ModuleExtract = { path: '', moduleName: 'AppModule', isExternal: false };

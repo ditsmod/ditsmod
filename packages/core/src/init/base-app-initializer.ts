@@ -8,7 +8,7 @@ import { LogMediator } from '#logger/log-mediator.js';
 import { PublicLogMediator, SystemLogMediator } from '#logger/system-log-mediator.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
-import { ModuleFactory } from '#init/module-factory.js';
+import { ShallowProvidersCollector } from '#init/shallow-providers-collector.js';
 import { Counter } from '#extension/counter.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ExtensionsContext } from '#extension/extensions-context.js';
@@ -125,7 +125,7 @@ export class BaseAppInitializer {
   }
 
   async bootstrapModulesAndExtensions() {
-    const appMetadataMap = this.bootstrapModuleFactory(this.moduleManager);
+    const appMetadataMap = this.bootstrapShallowProvidersCollector(this.moduleManager);
     const importsResolver = new ImportsResolver(
       this.moduleManager,
       appMetadataMap,
@@ -203,13 +203,13 @@ export class BaseAppInitializer {
     this.systemLogMediator = injectorPerApp.get(SystemLogMediator) as SystemLogMediator;
   }
 
-  protected bootstrapModuleFactory(moduleManager: ModuleManager) {
-    const moduleFactory1 = new ModuleFactory();
-    const globalProviders = moduleFactory1.exportGlobalProviders(moduleManager);
+  protected bootstrapShallowProvidersCollector(moduleManager: ModuleManager) {
+    const shallowProvidersCollector1 = new ShallowProvidersCollector();
+    const globalProviders = shallowProvidersCollector1.exportGlobalProviders(moduleManager);
     this.systemLogMediator.printGlobalProviders(this, globalProviders);
-    const moduleFactory2 = new ModuleFactory();
+    const shallowProvidersCollector2 = new ShallowProvidersCollector();
     const { modRefId } = moduleManager.getMetadata('root', true);
-    return moduleFactory2.bootstrap(globalProviders, modRefId, moduleManager, new Set());
+    return shallowProvidersCollector2.bootstrap(globalProviders, modRefId, moduleManager, new Set());
   }
 
   protected async handleExtensions(

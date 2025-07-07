@@ -14,7 +14,7 @@ import {
 
 import { RestMetadata } from '#module/module-metadata.js';
 import { RestMetadataNormalizer } from '#module/rest-metadata-normalizer.js';
-import { RestModuleFactory } from '#module/rest-module-factory.js';
+import { RestShallowProvidersCollector } from '#module/rest-module-factory.js';
 import { RestNormalizedMeta } from '#types/rest-normalized-meta.js';
 import { RestImportsResolver } from '#module/rest-imports-resolver.js';
 
@@ -34,7 +34,7 @@ class RestInitHooksAndMetadata extends InitHooksAndMetadata<RestMetadata> {
   }
 
   override exportGlobalProviders(moduleManager: ModuleManager, baseMeta: NormalizedMeta) {
-    return new RestModuleFactory().exportGlobalProviders(moduleManager, baseMeta);
+    return new RestShallowProvidersCollector().exportGlobalProviders(moduleManager, baseMeta);
   }
 
   override bootstrap(
@@ -45,7 +45,7 @@ class RestInitHooksAndMetadata extends InitHooksAndMetadata<RestMetadata> {
       unfinishedScanModules: Set<ModRefId>,
     ]
   ) {
-    return new RestModuleFactory().bootstrap(...args);
+    return new RestShallowProvidersCollector().bootstrap(...args);
   }
 
   override importResolve(

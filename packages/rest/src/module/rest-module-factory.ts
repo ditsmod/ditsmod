@@ -37,7 +37,7 @@ export class RestImportObj<T extends Provider = Provider> {
 }
 
 /**
- * Metadata collected using `ModuleFactory`. The target for this metadata is `ImportsResolver`.
+ * Metadata collected using `ShallowProvidersCollector`. The target for this metadata is `ImportsResolver`.
  */
 export class RestMetadataPerMod1 {
   prefixPerMod: string;
@@ -66,7 +66,7 @@ export interface RestImportedTokensMap {
  * - merges global and local providers;
  * - checks on providers collisions.
  */
-export class RestModuleFactory {
+export class RestShallowProvidersCollector {
   protected moduleName: string;
   protected prefixPerMod: string;
   protected guardsPerMod1: GuardPerMod1[];
@@ -241,9 +241,9 @@ export class RestModuleFactory {
         continue;
       }
 
-      const moduleFactory = new RestModuleFactory();
+      const shallowProvidersCollector = new RestShallowProvidersCollector();
       this.unfinishedScanModules.add(modRefId);
-      const appMetadataMap = moduleFactory.bootstrap(
+      const appMetadataMap = shallowProvidersCollector.bootstrap(
         this.glProviders,
         modRefId,
         this.moduleManager,

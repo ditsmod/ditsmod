@@ -2,7 +2,7 @@ import { injectable, Provider, Injector, makePropDecorator, FactoryProvider } fr
 import { featureModule } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
-import { ModuleFactory } from '#init/module-factory.js';
+import { ShallowProvidersCollector } from '#init/shallow-providers-collector.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { GlobalProviders, ImportObj, MetadataPerMod1 } from '#types/metadata-per-mod.js';
@@ -15,14 +15,14 @@ import { ModuleExtract } from '#types/module-extract.js';
 
 type ModRefId = ModuleType | ModuleWithParams;
 
-describe('ModuleFactory', () => {
+describe('ShallowProvidersCollector', () => {
   class Provider1 {}
   class Provider2 {}
   class Provider3 {}
   class Provider4 {}
 
   @injectable()
-  class MockModuleFactory extends ModuleFactory {
+  class MockShallowProvidersCollector extends ShallowProvidersCollector {
     injectorPerMod: Injector;
     // declare prefixPerMod: string;
     override moduleName = 'MockModule';
@@ -42,13 +42,13 @@ describe('ModuleFactory', () => {
     }
   }
 
-  let mock: MockModuleFactory;
+  let mock: MockShallowProvidersCollector;
   let moduleManager: ModuleManager;
 
   beforeEach(() => {
     clearDebugClassNames();
-    const injectorPerApp = Injector.resolveAndCreate([...defaultProvidersPerApp, MockModuleFactory]);
-    mock = injectorPerApp.get(MockModuleFactory);
+    const injectorPerApp = Injector.resolveAndCreate([...defaultProvidersPerApp, MockShallowProvidersCollector]);
+    mock = injectorPerApp.get(MockShallowProvidersCollector);
     moduleManager = new ModuleManager(new SystemLogMediator({ moduleName: 'fakeName' }));
   });
 
@@ -246,7 +246,7 @@ describe('ModuleFactory', () => {
       it('case 1', () => {
         const injectorPerApp = Injector.resolveAndCreate([...defaultProvidersPerApp]);
 
-        mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
+        mock = injectorPerApp.resolveAndInstantiate(MockShallowProvidersCollector) as MockShallowProvidersCollector;
         mock.injectorPerMod = injectorPerApp;
         moduleManager.scanModule(Module3);
         mock.bootstrap(new GlobalProviders(), Module3, moduleManager, new Set());
@@ -310,7 +310,7 @@ describe('ModuleFactory', () => {
         })
         class Module4 {}
         const injectorPerApp = Injector.resolveAndCreate(defaultProvidersPerApp as Provider[]);
-        mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
+        mock = injectorPerApp.resolveAndInstantiate(MockShallowProvidersCollector) as MockShallowProvidersCollector;
         mock.injectorPerMod = injectorPerApp;
         moduleManager.scanModule(Module4);
         mock.bootstrap(new GlobalProviders(), Module4, moduleManager, new Set());
@@ -377,7 +377,7 @@ describe('ModuleFactory', () => {
 
         const injectorPerApp = Injector.resolveAndCreate([...defaultProvidersPerApp]);
 
-        mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
+        mock = injectorPerApp.resolveAndInstantiate(MockShallowProvidersCollector) as MockShallowProvidersCollector;
         mock.injectorPerMod = injectorPerApp;
         moduleManager.scanModule(Module3);
         mock.bootstrap(new GlobalProviders(), Module3, moduleManager, new Set());
@@ -406,7 +406,7 @@ describe('ModuleFactory', () => {
         class Module7 {}
         const providers = [...defaultProvidersPerApp] as Provider[];
         const injectorPerApp = Injector.resolveAndCreate(providers);
-        mock = injectorPerApp.resolveAndInstantiate(MockModuleFactory) as MockModuleFactory;
+        mock = injectorPerApp.resolveAndInstantiate(MockShallowProvidersCollector) as MockShallowProvidersCollector;
         mock.injectorPerMod = injectorPerApp;
         const msg = 'Module6 failed: if "Provider2" is a provider';
         expect(() => moduleManager.scanModule(Module7)).toThrow(msg);

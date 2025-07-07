@@ -6,7 +6,7 @@ import { ImportedTokensMap } from '#types/metadata-per-mod.js';
 import { ModRefId, ModuleType, Level } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
-import { ModuleFactory } from '#init/module-factory.js';
+import { ShallowProvidersCollector } from '#init/module-factory.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { SystemErrorMediator } from '#error/system-error-mediator.js';
@@ -42,15 +42,15 @@ describe('ImportsResolver', () => {
   }
 
   let mock: ImportsResolverMock;
-  let moduleFactory: ModuleFactory;
+  let shallowProvidersCollector: ShallowProvidersCollector;
   let moduleManager: ModuleManager;
   let systemLogMediator: SystemLogMediator;
   let errorMediator: SystemErrorMediator;
 
   beforeEach(() => {
     clearDebugClassNames();
-    const injectorPerApp = Injector.resolveAndCreate([ModuleFactory]);
-    moduleFactory = injectorPerApp.get(ModuleFactory);
+    const injectorPerApp = Injector.resolveAndCreate([ShallowProvidersCollector]);
+    shallowProvidersCollector = injectorPerApp.get(ShallowProvidersCollector);
     systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
     errorMediator = new SystemErrorMediator({ moduleName: 'fakeName' });
     moduleManager = new ModuleManager(systemLogMediator);

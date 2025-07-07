@@ -24,7 +24,7 @@ export class GlobalProviders {
 }
 
 /**
- * Metadata collected using `ModuleFactory`. The target for this metadata is `ImportsResolver`.
+ * Metadata collected using `ShallowProvidersCollector`. The target for this metadata is `ImportsResolver`.
  */
 export class MetadataPerMod1 {
   /**

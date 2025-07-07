@@ -7,7 +7,7 @@ export { BaseAppOptions } from '#init/base-app-options.js';
 export { ImportsResolver } from '#init/imports-resolver.js';
 export { ImportedTokensMap } from '#types/metadata-per-mod.js';
 export { GlobalProviders } from '#types/metadata-per-mod.js';
-export { ModuleFactory } from '#init/module-factory.js';
+export { ShallowProvidersCollector } from '#init/shallow-providers-collector.js';
 export { defaultProvidersPerApp } from '#init/default-providers-per-app.js';
 export { OnModuleInit } from '#init/hooks.js';
 export { CustomError } from '#error/custom-error.js';
