@@ -1,6 +1,6 @@
 import { Class, HttpMethod, ModuleExtract, ModuleMetadata, ModuleType, NormalizedMeta, Provider } from '@ditsmod/core';
 
-import { RestImportObj } from '#module/rest-module-factory.js';
+import { RestImportObj } from '#module/rest-shallow-providers-collector.js';
 import { Tree } from '#services/tree.js';
 import { GuardPerMod1 } from '#interceptors/guard.js';
 import { RouteHandler } from '#services/router.js';

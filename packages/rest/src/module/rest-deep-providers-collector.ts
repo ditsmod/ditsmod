@@ -21,7 +21,7 @@ import {
 import { Level } from '#types/types.js';
 import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
-import { RestImportedTokensMap, AddRestPerMod1 } from './rest-module-factory.js';
+import { RestImportedTokensMap, AddRestPerMod1 } from './rest-shallow-providers-collector.js';
 import { RestNormalizedMeta } from '#types/rest-normalized-meta.js';
 import { addRest } from '#decorators/rest-metadata.js';
 
