@@ -33,7 +33,7 @@ import { getDebugClassName } from '#utils/get-debug-class-name.js';
 
 export class BaseAppInitializer {
   protected perAppService = new PerAppService();
-  protected meta: NormalizedMeta;
+  protected baseMeta: NormalizedMeta;
   protected unfinishedScanModules = new Set<ModuleType | ModuleWithParams>();
 
   constructor(
@@ -46,7 +46,7 @@ export class BaseAppInitializer {
    * _Note:_ after call this method, you need call `this.systemLogMediator.flush()`.
    */
   bootstrapProvidersPerApp() {
-    this.meta = this.moduleManager.getMetadata('root', true);
+    this.baseMeta = this.moduleManager.getMetadata('root', true);
     this.perAppService.providers = [];
     this.prepareProvidersPerApp();
     this.addDefaultProvidersPerApp();
@@ -62,13 +62,13 @@ export class BaseAppInitializer {
     // Here we work only with providers declared at the application level.
 
     this.unfinishedScanModules.clear();
-    const exportedProviders = this.collectProvidersPerApp(this.meta);
+    const exportedProviders = this.collectProvidersPerApp(this.baseMeta);
     const exportedNormProviders = normalizeProviders(exportedProviders);
     const exportedTokens = exportedNormProviders.map((np) => np.token);
     const exportedMultiTokens = exportedNormProviders.filter((np) => np.multi).map((np) => np.token);
-    const resolvedTokens = this.meta.resolvedCollisionsPerApp.map(([token]) => token);
+    const resolvedTokens = this.baseMeta.resolvedCollisionsPerApp.map(([token]) => token);
     const defaultTokens = getTokens(defaultProvidersPerApp);
-    const rootTokens = getTokens(this.meta.providersPerApp);
+    const rootTokens = getTokens(this.baseMeta.providersPerApp);
     const mergedTokens = [...exportedTokens, ...defaultTokens];
     const exportedTokensDuplicates = getDuplicates(mergedTokens).filter(
       (d) => ![...resolvedTokens, ...rootTokens, ...exportedMultiTokens].includes(d),
@@ -77,23 +77,23 @@ export class BaseAppInitializer {
     const collisions = getCollisions(exportedTokensDuplicates, mergedProviders);
     if (collisions.length) {
       const modulesNames = this.findModulesCausedCollisions(collisions);
-      throwProvidersCollisionError(this.meta.name, collisions, modulesNames);
+      throwProvidersCollisionError(this.baseMeta.name, collisions, modulesNames);
     }
     exportedProviders.push(...this.getResolvedCollisionsPerApp());
-    this.meta.providersPerApp.unshift(...getLastProviders(exportedProviders));
+    this.baseMeta.providersPerApp.unshift(...getLastProviders(exportedProviders));
   }
 
   /**
    * Recursively collects per app providers from feature modules.
    */
-  protected collectProvidersPerApp(meta1: NormalizedMeta) {
+  protected collectProvidersPerApp(baseMeta1: NormalizedMeta) {
     const aModRefId: ModRefId[] = [
-      // ...meta1.appendsModules,
-      // ...meta1.appendsWithParams,
-      ...meta1.importsModules,
-      ...meta1.importsWithParams,
-      ...meta1.exportsModules,
-      ...meta1.exportsWithParams,
+      // ...baseMeta1.appendsModules,
+      // ...baseMeta1.appendsWithParams,
+      ...baseMeta1.importsModules,
+      ...baseMeta1.importsWithParams,
+      ...baseMeta1.exportsModules,
+      ...baseMeta1.exportsWithParams,
     ];
     const providersPerApp: Provider[] = [];
     // Removes duplicate (because of reexports modules)
@@ -101,12 +101,12 @@ export class BaseAppInitializer {
       if (this.unfinishedScanModules.has(modRefId)) {
         continue;
       }
-      const meta2 = this.moduleManager.getMetadata(modRefId, true);
+      const baseMeta2 = this.moduleManager.getMetadata(modRefId, true);
       this.unfinishedScanModules.add(modRefId);
-      providersPerApp.push(...this.collectProvidersPerApp(meta2));
+      providersPerApp.push(...this.collectProvidersPerApp(baseMeta2));
       this.unfinishedScanModules.delete(modRefId);
     }
-    const currProvidersPerApp = isRootModule(meta1) ? [] : meta1.providersPerApp;
+    const currProvidersPerApp = isRootModule(baseMeta1) ? [] : baseMeta1.providersPerApp;
 
     return [...providersPerApp, ...currProvidersPerApp];
   }
@@ -128,7 +128,7 @@ export class BaseAppInitializer {
   protected getResolvedCollisionsPerApp() {
     const rootMeta = this.moduleManager.getMetadata('root', true);
     const resolvedProviders: Provider[] = [];
-    this.meta.resolvedCollisionsPerApp.forEach(([token, module]) => {
+    this.baseMeta.resolvedCollisionsPerApp.forEach(([token, module]) => {
       const moduleName = getDebugClassName(module);
       const tokenName = token.name || token;
       const meta = this.moduleManager.getMetadata(module);
@@ -161,9 +161,9 @@ export class BaseAppInitializer {
     const importsResolver = new ImportsResolver(
       this.moduleManager,
       appMetadataMap,
-      this.meta.providersPerApp,
+      this.baseMeta.providersPerApp,
       this.systemLogMediator,
-      new SystemErrorMediator({ moduleName: this.meta.name }),
+      new SystemErrorMediator({ moduleName: this.baseMeta.name }),
     );
     const { extensionCounters, mMetadataPerMod2 } = importsResolver.resolve();
     await this.handleExtensions(mMetadataPerMod2, extensionCounters);
@@ -219,7 +219,7 @@ export class BaseAppInitializer {
   }
 
   protected addDefaultProvidersPerApp() {
-    this.meta.providersPerApp.unshift(
+    this.baseMeta.providersPerApp.unshift(
       ...defaultProvidersPerApp,
       { token: BaseAppOptions, useValue: this.baseAppOptions },
       { token: ModuleManager, useValue: this.moduleManager },
@@ -231,17 +231,17 @@ export class BaseAppInitializer {
    * Creates injector per the application and sets log.
    */
   protected createInjectorAndSetLogMediator() {
-    const injectorPerApp = this.perAppService.reinitInjector(this.meta.providersPerApp);
+    const injectorPerApp = this.perAppService.reinitInjector(this.baseMeta.providersPerApp);
     this.systemLogMediator = injectorPerApp.get(SystemLogMediator) as SystemLogMediator;
   }
 
   protected bootstrapModuleFactory(moduleManager: ModuleManager) {
     const moduleFactory1 = new ModuleFactory();
-    const globalProviders = moduleFactory1.exportGlobalProviders(moduleManager, this.meta.providersPerApp);
+    const globalProviders = moduleFactory1.exportGlobalProviders(moduleManager, this.baseMeta.providersPerApp);
     this.systemLogMediator.printGlobalProviders(this, globalProviders);
     const moduleFactory2 = new ModuleFactory();
     const { modRefId } = moduleManager.getMetadata('root', true);
-    return moduleFactory2.bootstrap(this.meta.providersPerApp, globalProviders, modRefId, moduleManager, new Set());
+    return moduleFactory2.bootstrap(this.baseMeta.providersPerApp, globalProviders, modRefId, moduleManager, new Set());
   }
 
   protected async handleExtensions(

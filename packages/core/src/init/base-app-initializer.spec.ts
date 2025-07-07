@@ -23,7 +23,7 @@ describe('BaseAppInitializer', () => {
 
   @injectable()
   class AppInitializerMock extends BaseAppInitializer {
-    override meta = new NormalizedMeta();
+    override baseMeta = new NormalizedMeta();
 
     constructor(
       public override baseAppOptions: BaseAppOptions,
@@ -122,7 +122,7 @@ describe('BaseAppInitializer', () => {
       })
       class AppModule {}
 
-      mock.meta = moduleManager.scanRootModule(AppModule);
+      mock.baseMeta = moduleManager.scanRootModule(AppModule);
       const msg = 'AppModule failed: exports from Module1, Module2 causes collision with Provider1.';
       expect(() => mock.prepareProvidersPerApp()).toThrow(msg);
     });
@@ -143,11 +143,11 @@ describe('BaseAppInitializer', () => {
       })
       class AppModule {}
 
-      mock.meta = moduleManager.scanRootModule(AppModule);
+      mock.baseMeta = moduleManager.scanRootModule(AppModule);
       expect(() => mock.prepareProvidersPerApp()).not.toThrow();
       expect(mock.getResolvedCollisionsPerApp()).toEqual([{ token: Provider1, useClass: Provider2 }]);
-      expect(mock.meta.providersPerApp).toEqual([{ token: Provider1, useClass: Provider2 }]);
-      expect(mock.meta.resolvedCollisionsPerApp.length).toBe(1);
+      expect(mock.baseMeta.providersPerApp).toEqual([{ token: Provider1, useClass: Provider2 }]);
+      expect(mock.baseMeta.resolvedCollisionsPerApp.length).toBe(1);
     });
 
     it('should throw an error because resolvedCollisionsPerApp not properly setted', () => {
@@ -168,7 +168,7 @@ describe('BaseAppInitializer', () => {
       })
       class AppModule {}
 
-      mock.meta = moduleManager.scanRootModule(AppModule);
+      mock.baseMeta = moduleManager.scanRootModule(AppModule);
       const msg = 'AppModule failed: Provider1 mapped with Module0, but Module0 is not imported';
       expect(() => mock.prepareProvidersPerApp()).toThrow(msg);
     });
@@ -198,9 +198,9 @@ describe('BaseAppInitializer', () => {
       })
       class AppModule {}
 
-      mock.meta = moduleManager.scanRootModule(AppModule);
+      mock.baseMeta = moduleManager.scanRootModule(AppModule);
       expect(() => mock.prepareProvidersPerApp()).not.toThrow();
-      expect(mock.meta.providersPerApp).toEqual([
+      expect(mock.baseMeta.providersPerApp).toEqual([
         { token: Provider1, useValue: 'value1 of module1', multi: true },
         { token: Provider1, useValue: 'value1 of module2', multi: true },
       ]);
@@ -232,7 +232,7 @@ describe('BaseAppInitializer', () => {
       })
       class AppModule {}
 
-      mock.meta = moduleManager.scanRootModule(AppModule);
+      mock.baseMeta = moduleManager.scanRootModule(AppModule);
       expect(() => mock.prepareProvidersPerApp()).toThrow('Provider1 is a token of the multi providers');
     });
 
@@ -258,7 +258,7 @@ describe('BaseAppInitializer', () => {
       })
       class AppModule {}
 
-      mock.meta = moduleManager.scanRootModule(AppModule);
+      mock.baseMeta = moduleManager.scanRootModule(AppModule);
       const msg = 'AppModule failed: Provider1 mapped with Module0, but providersPerApp does not includes Provider1';
       expect(() => mock.prepareProvidersPerApp()).toThrow(msg);
     });
@@ -277,7 +277,7 @@ describe('BaseAppInitializer', () => {
       })
       class AppModule {}
 
-      mock.meta = moduleManager.scanRootModule(AppModule);
+      mock.baseMeta = moduleManager.scanRootModule(AppModule);
       expect(() => mock.prepareProvidersPerApp()).not.toThrow();
     });
 
@@ -287,15 +287,15 @@ describe('BaseAppInitializer', () => {
       @rootModule({ providersPerApp: [Provider1, Provider1, { token: Provider1, useClass: Provider1 }] })
       class AppModule {}
 
-      mock.meta = moduleManager.scanRootModule(AppModule);
+      mock.baseMeta = moduleManager.scanRootModule(AppModule);
       expect(() => mock.prepareProvidersPerApp()).not.toThrow();
-      expect(mock.meta.providersPerApp.length).toBe(3);
+      expect(mock.baseMeta.providersPerApp.length).toBe(3);
     });
 
     it('should works with empty "imports" array in root module', () => {
       @rootModule({ imports: [] })
       class AppModule {}
-      mock.meta = moduleManager.scanRootModule(AppModule);
+      mock.baseMeta = moduleManager.scanRootModule(AppModule);
       expect(() => mock.prepareProvidersPerApp()).not.toThrow();
     });
   });
@@ -343,14 +343,14 @@ describe('BaseAppInitializer', () => {
     });
 
     it('should collects providers from exports array without imports them', () => {
-      mock.meta = moduleManager.scanRootModule(AppModule);
-      const providersPerApp = mock.collectProvidersPerApp(mock.meta);
+      mock.baseMeta = moduleManager.scanRootModule(AppModule);
+      const providersPerApp = mock.collectProvidersPerApp(mock.baseMeta);
       expect(providersPerApp.includes(Provider0)).toBe(true);
     });
 
     it('should collects providers in particular order', () => {
-      mock.meta = moduleManager.scanRootModule(AppModule);
-      const providersPerApp = mock.collectProvidersPerApp(mock.meta);
+      mock.baseMeta = moduleManager.scanRootModule(AppModule);
+      const providersPerApp = mock.collectProvidersPerApp(mock.baseMeta);
       expect(providersPerApp).toEqual([Provider1, Provider2, Provider3, Provider4, Provider5, Provider6, Provider0]);
     });
 

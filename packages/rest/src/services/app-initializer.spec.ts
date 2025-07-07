@@ -29,7 +29,7 @@ type ModRefId = ModuleType | ModuleWithParams;
 
 @injectable()
 class AppInitializerMock extends AppInitializer {
-  override meta = new NormalizedMeta();
+  override baseMeta = new NormalizedMeta();
 
   constructor(
     public override appOptions: AppOptions,
