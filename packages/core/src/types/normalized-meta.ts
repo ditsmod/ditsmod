@@ -4,7 +4,7 @@ import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from './module-metadata.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { ExtensionClass } from '#extension/extension-types.js';
-import { PerModAttachedMetadata } from '#decorators/feature-module.js';
+import { InitHooksAndMetadata } from '#decorators/feature-module.js';
 
 export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> {
   /**
@@ -29,7 +29,7 @@ export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj
    * Indicates whether this module is external to the application.
    */
   isExternal: boolean;
-  aDecoratorMeta: DecoratorAndValue<PerModAttachedMetadata<AnyObj>>[] = [];
+  aDecoratorMeta: DecoratorAndValue<InitHooksAndMetadata<AnyObj>>[] = [];
   /**
    * This property contains normalized metadata collected from each additional
    * module decorator except `featureModule` and `rootModule`.

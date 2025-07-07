@@ -16,13 +16,13 @@ export interface FeatureModuleDecorator {
   (data?: ModuleMetadata): any;
 }
 /**
- * An object with this interface must return `perModAttachedMetadata.normalize()`.
+ * An object with this interface must return `initHooksAndMetadata.normalize()`.
  */
 export interface ParamsTransferObj<T extends AnyObj> {
   importsWithParams?: ({ modRefId: ModuleWithParams } & T)[];
 }
 
-export function transformModule(data?: ModuleMetadata): PerModAttachedMetadata<RawMeta> {
+export function transformModule(data?: ModuleMetadata): InitHooksAndMetadata<RawMeta> {
   const rawMeta = Object.assign({}, data) as RawMeta;
   objectKeys(rawMeta).forEach((p) => {
     if (rawMeta[p] instanceof Providers) {
@@ -34,12 +34,12 @@ export function transformModule(data?: ModuleMetadata): PerModAttachedMetadata<R
 
   rawMeta.decorator = featureModule;
   rawMeta.declaredInDir = CallsiteUtils.getCallerDir() || '.';
-  return new PerModAttachedMetadata(rawMeta);
+  return new InitHooksAndMetadata(rawMeta);
 }
 /**
  * A metadata attached to the `rootModule` or `featureModule` decorators.
  */
-export class PerModAttachedMetadata<T extends AnyObj> {
+export class InitHooksAndMetadata<T extends AnyObj> {
   constructor(public metadata = {} as T) {}
 
   normalize(baseMeta: NormalizedMeta, metadata: T): ParamsTransferObj<AnyObj> | undefined {

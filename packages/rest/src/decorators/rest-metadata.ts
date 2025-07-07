@@ -1,6 +1,6 @@
 import {
   makeClassDecorator,
-  PerModAttachedMetadata,
+  InitHooksAndMetadata,
   ModuleManager,
   Provider,
   GlobalProviders,
@@ -24,7 +24,7 @@ export interface RestMetadataDecorator {
   (data?: RestMetadata): any;
 }
 
-class RestPerModAttachedMetadata extends PerModAttachedMetadata<RestMetadata> {
+class RestInitHooksAndMetadata extends InitHooksAndMetadata<RestMetadata> {
   override normalize(baseMeta: NormalizedMeta, metadataWithParams: RestMetadata) {
     return new RestMetadataNormalizer().normalize(baseMeta, metadataWithParams);
   }
@@ -69,7 +69,7 @@ class RestPerModAttachedMetadata extends PerModAttachedMetadata<RestMetadata> {
   }
 }
 
-export function transformMetadata(data?: RestMetadata): PerModAttachedMetadata<RestMetadata> {
+export function transformMetadata(data?: RestMetadata): InitHooksAndMetadata<RestMetadata> {
   const metadata = Object.assign({}, data);
-  return new RestPerModAttachedMetadata(metadata);
+  return new RestInitHooksAndMetadata(metadata);
 }

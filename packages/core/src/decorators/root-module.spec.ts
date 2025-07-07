@@ -1,6 +1,6 @@
 import { reflector } from '#di';
 import { rootModule } from './root-module.js';
-import { PerModAttachedMetadata, RawMeta } from './feature-module.js';
+import { InitHooksAndMetadata, RawMeta } from './feature-module.js';
 
 describe('RootModule decorator', () => {
   it('empty decorator', () => {
@@ -9,8 +9,8 @@ describe('RootModule decorator', () => {
 
     const metadata = reflector.getDecorators(Module1)!;
     expect(metadata.length).toBe(1);
-    expect(metadata[0].value).toEqual<PerModAttachedMetadata<RawMeta>>(
-      new PerModAttachedMetadata({
+    expect(metadata[0].value).toEqual<InitHooksAndMetadata<RawMeta>>(
+      new InitHooksAndMetadata({
         decorator: rootModule,
         declaredInDir: expect.stringContaining('decorators'),
       }),
@@ -24,8 +24,8 @@ describe('RootModule decorator', () => {
 
     const metadata = reflector.getDecorators(Module1)!;
     expect(metadata.length).toBe(1);
-    expect(metadata[0].value).toEqual<PerModAttachedMetadata<RawMeta>>(
-      new PerModAttachedMetadata({
+    expect(metadata[0].value).toEqual<InitHooksAndMetadata<RawMeta>>(
+      new InitHooksAndMetadata({
         decorator: rootModule,
         declaredInDir: expect.stringContaining('decorators'),
       }),
@@ -39,15 +39,15 @@ describe('RootModule decorator', () => {
 
     const metadata = reflector.getDecorators(Module1)!;
     expect(metadata.length).toBe(2);
-    expect(metadata[0].value).toEqual<PerModAttachedMetadata<RawMeta>>(
-      new PerModAttachedMetadata({
+    expect(metadata[0].value).toEqual<InitHooksAndMetadata<RawMeta>>(
+      new InitHooksAndMetadata({
         decorator: rootModule,
         declaredInDir: expect.stringContaining('decorators'),
       }),
     );
 
-    expect(metadata[1].value).toEqual<PerModAttachedMetadata<RawMeta>>(
-      new PerModAttachedMetadata({
+    expect(metadata[1].value).toEqual<InitHooksAndMetadata<RawMeta>>(
+      new InitHooksAndMetadata({
         decorator: rootModule,
         declaredInDir: expect.stringContaining('decorators'),
         providersPerApp: [],
@@ -67,8 +67,8 @@ describe('RootModule decorator', () => {
 
     const metadata = reflector.getDecorators(Module1)!;
     expect(metadata.length).toBe(1);
-    expect(metadata[0].value).toEqual<PerModAttachedMetadata<RawMeta>>(
-      new PerModAttachedMetadata({
+    expect(metadata[0].value).toEqual<InitHooksAndMetadata<RawMeta>>(
+      new InitHooksAndMetadata({
         decorator: rootModule,
         declaredInDir: expect.stringContaining('decorators'),
         providersPerApp: [],

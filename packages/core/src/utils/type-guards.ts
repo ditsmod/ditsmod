@@ -4,7 +4,7 @@ import { Provider, Class, DecoratorAndValue, reflector, isNormalizedProvider } f
 import { AnyObj, RequireProps } from '#types/mix.js';
 import { ModuleWithParentMeta, ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
 import { RootModuleMetadata } from '#types/root-module-metadata.js';
-import { featureModule, PerModAttachedMetadata, RawMeta } from '#decorators/feature-module.js';
+import { featureModule, InitHooksAndMetadata, RawMeta } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { CustomError } from '#error/custom-error.js';
@@ -49,16 +49,16 @@ export function isModDecor(arg?: any) {
 }
 
 export function isModuleWithMetadata(
-  metadata?: PerModAttachedMetadata<AnyObj>,
-): metadata is PerModAttachedMetadata<AnyObj>;
-export function isModuleWithMetadata(arg?: DecoratorAndValue): arg is DecoratorAndValue<PerModAttachedMetadata<AnyObj>>;
+  metadata?: InitHooksAndMetadata<AnyObj>,
+): metadata is InitHooksAndMetadata<AnyObj>;
+export function isModuleWithMetadata(arg?: DecoratorAndValue): arg is DecoratorAndValue<InitHooksAndMetadata<AnyObj>>;
 export function isModuleWithMetadata(
-  arg?: DecoratorAndValue | PerModAttachedMetadata<AnyObj>,
-): arg is DecoratorAndValue<PerModAttachedMetadata<AnyObj>> {
+  arg?: DecoratorAndValue | InitHooksAndMetadata<AnyObj>,
+): arg is DecoratorAndValue<InitHooksAndMetadata<AnyObj>> {
   if (arg instanceof DecoratorAndValue) {
-    return (arg as DecoratorAndValue<PerModAttachedMetadata<AnyObj>>).value instanceof PerModAttachedMetadata;
+    return (arg as DecoratorAndValue<InitHooksAndMetadata<AnyObj>>).value instanceof InitHooksAndMetadata;
   } else {
-    return arg instanceof PerModAttachedMetadata;
+    return arg instanceof InitHooksAndMetadata;
   }
 }
 

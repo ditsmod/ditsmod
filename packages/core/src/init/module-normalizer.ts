@@ -16,7 +16,7 @@ import {
 } from '#extension/get-extension-provider.js';
 import { AnyObj, ModRefId } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
-import { PerModAttachedMetadata, RawMeta } from '#decorators/feature-module.js';
+import { InitHooksAndMetadata, RawMeta } from '#decorators/feature-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { resolveForwardRef } from '#di/forward-ref.js';
@@ -319,7 +319,7 @@ export class ModuleNormalizer {
     }
   }
 
-  protected normalizeDecoratorsMeta(meta1: NormalizedMeta, aDecoratorMeta: DecoratorAndValue<PerModAttachedMetadata<AnyObj>>[]) {
+  protected normalizeDecoratorsMeta(meta1: NormalizedMeta, aDecoratorMeta: DecoratorAndValue<InitHooksAndMetadata<AnyObj>>[]) {
     aDecoratorMeta.forEach((decorAndVal) => {
       const meta2 = decorAndVal.value.normalize(meta1, decorAndVal.value.metadata);
       if (meta2) {
