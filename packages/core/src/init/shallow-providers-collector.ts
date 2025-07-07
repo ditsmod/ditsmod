@@ -128,7 +128,7 @@ export class ShallowProvidersCollector {
         moduleManager,
         unfinishedScanModules,
       );
-      if (val) {
+      if (val.size) {
         perDecorImportedTokensMap.set(decorator, val);
       }
     });
