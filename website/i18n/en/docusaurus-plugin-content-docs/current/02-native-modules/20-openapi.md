@@ -368,7 +368,7 @@ The previous examples showed helpers that return parts of the [Operation Object]
 The `@ditsmod/openapi` module has a special `oasGuard` decorator that allows you to attach OpenAPI metadata behind guards:
 
 ```ts
-import { CanActivate } from '@ditsmod/core';
+import { CanActivate } from '@ditsmod/rest';
 import { oasGuard } from '@ditsmod/openapi';
 
 @oasGuard({

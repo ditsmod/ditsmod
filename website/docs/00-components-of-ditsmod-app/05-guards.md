@@ -16,8 +16,10 @@ interface CanActivate {
 
 Наприклад, це можна зробити так:
 
-```ts {8-10}
-import { guard, CanActivate, RequestContext } from '@ditsmod/core';
+```ts {10-12}
+import { guard, RequestContext } from '@ditsmod/core';
+import { CanActivate } from '@ditsmod/rest';
+
 import { AuthService } from './auth.service.js';
 
 @guard()
@@ -97,8 +99,9 @@ export class SomeController {
 
 Як бачите, на місці третього параметра у `route` передається масив в масиві, де на першому місці вказано `PermissionsGuard`, а далі йдуть аргументи для нього. В такому разі `PermissionsGuard` отримає ці аргументи у своєму методі `canActivate()`:
 
-```ts {10}
-import { injectable, CanActivate, Status, RequestContext } from '@ditsmod/core';
+```ts {11}
+import { injectable, Status, RequestContext } from '@ditsmod/core';
+import { CanActivate } from '@ditsmod/rest';
 
 import { AuthService } from './auth.service.js';
 import { Permission } from './permission.js';

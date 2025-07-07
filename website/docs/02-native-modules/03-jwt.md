@@ -38,8 +38,9 @@ export class AuthModule {}
 
 Тепер в межах `AuthModule` можете використовувати `JwtService`:
 
-```ts {7,18-21}
-import { injectable, CanActivate, Injector, RequestContext } from '@ditsmod/core';
+```ts {8,19-22}
+import { injectable, Injector, RequestContext } from '@ditsmod/core';
+import { CanActivate } from '@ditsmod/rest';
 import { JwtService, VerifyErrors, JWT_PAYLOAD } from '@ditsmod/jwt';
 
 @injectable()

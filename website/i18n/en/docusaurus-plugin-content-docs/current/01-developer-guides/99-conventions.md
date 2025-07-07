@@ -24,8 +24,8 @@ It is recommended to call the root module - `AppModule`.
 When importing, it is recommended not to mix import from local files and import from `node_modules`. At the top are imports from `node_modules`, and then retreating one line are local imports:
 
 ```ts
-import { injectable } from '@ditsmod/core';
-import { CanActivate, Status } from '@ditsmod/core';
+import { injectable, Status } from '@ditsmod/core';
+import { CanActivate } from '@ditsmod/rest';
 
 import { AuthService } from './auth.service.js';
 import { Permission } from './permission.js';

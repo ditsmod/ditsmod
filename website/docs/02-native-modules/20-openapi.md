@@ -371,7 +371,7 @@ export class I18nModule {}
 Модуль `@ditsmod/openapi` має спеціальний декоратор `oasGuard`, що дозволяє закріпити метадані OpenAPI за ґардами:
 
 ```ts
-import { CanActivate } from '@ditsmod/core';
+import { CanActivate } from '@ditsmod/rest';
 import { oasGuard } from '@ditsmod/openapi';
 
 @oasGuard({

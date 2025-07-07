@@ -16,8 +16,10 @@ interface CanActivate {
 
 For example, it can be done like this:
 
-```ts {8-10}
-import { guard, CanActivate, RequestContext } from '@ditsmod/core';
+```ts {10-12}
+import { guard, RequestContext } from '@ditsmod/core';
+import { CanActivate } from '@ditsmod/rest';
+
 import { AuthService } from './auth.service.js';
 
 @guard()
@@ -97,8 +99,9 @@ export class SomeController {
 
 As you can see, in place of the third parameter in `route`, an array is passed in an array, where `PermissionsGuard` is specified in the first place, followed by arguments for it. In this case, `PermissionsGuard` will receive these arguments in its `canActivate()` method:
 
-```ts {10}
-import { injectable, CanActivate, Status, RequestContext } from '@ditsmod/core';
+```ts {11}
+import { injectable, Status, RequestContext } from '@ditsmod/core';
+import { CanActivate } from '@ditsmod/rest';
 
 import { AuthService } from './auth.service.js';
 import { Permission } from './permission.js';
