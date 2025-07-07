@@ -62,10 +62,10 @@ export class ModuleFactory {
     const providersFromDecorators = new Map<AnyFn, AnyObj | undefined>();
 
     meta.aDecoratorMeta.forEach((decorAndVal) => {
-      providersFromDecorators.set(
-        decorAndVal.decorator,
-        decorAndVal.value.exportGlobalProviders?.(moduleManager, meta, providersPerApp),
-      );
+      const val = decorAndVal.value.exportGlobalProviders(moduleManager, meta, providersPerApp);
+      if (val) {
+        providersFromDecorators.set(decorAndVal.decorator, val);
+      }
     });
 
     return {
@@ -126,10 +126,16 @@ export class ModuleFactory {
     const perDecorImportedTokensMap = new Map<AnyFn, AnyObj | undefined>();
 
     meta.aDecoratorMeta.forEach((decorAndVal) => {
-      perDecorImportedTokensMap.set(
-        decorAndVal.decorator,
-        decorAndVal.value.bootstrap?.(providersPerApp, globalProviders, modRefId, moduleManager, unfinishedScanModules),
+      const val = decorAndVal.value.bootstrap(
+        providersPerApp,
+        globalProviders,
+        modRefId,
+        moduleManager,
+        unfinishedScanModules,
       );
+      if (val) {
+        perDecorImportedTokensMap.set(decorAndVal.decorator, val);
+      }
     });
 
     return this.appMetadataMap.set(modRefId, {

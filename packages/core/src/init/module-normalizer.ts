@@ -319,15 +319,14 @@ export class ModuleNormalizer {
     }
   }
 
-  protected normalizeDecoratorsMeta(meta1: NormalizedMeta, aDecoratorMeta: DecoratorAndValue<PerModAttachedMetadata>[]) {
+  protected normalizeDecoratorsMeta(meta1: NormalizedMeta, aDecoratorMeta: DecoratorAndValue<PerModAttachedMetadata<AnyObj>>[]) {
     aDecoratorMeta.forEach((decorAndVal) => {
-      if (!decorAndVal.value.normalize) {
-        return;
+      const meta2 = decorAndVal.value.normalize(meta1, decorAndVal.value.metadata);
+      if (meta2) {
+        meta1.normDecorMeta.set(decorAndVal.decorator, meta2);
+        const aModuleWithParams = meta2?.importsWithParams?.map((param) => param.modRefId);
+        meta1.importsWithParams.push(...(aModuleWithParams || []));
       }
-      const meta2 = decorAndVal.value.normalize?.(meta1, decorAndVal.value.metadata);
-      meta1.normDecorMeta.set(decorAndVal.decorator, meta2);
-      const aModuleWithParams = meta2?.importsWithParams?.map((param) => param.modRefId);
-      meta1.importsWithParams.push(...(aModuleWithParams || []));
     });
   }
 }

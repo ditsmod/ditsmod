@@ -48,13 +48,15 @@ export function isModDecor(arg?: any) {
   return isRootModule(arg) || isFeatureModule(arg);
 }
 
-export function isModuleWithMetadata(metadata?: PerModAttachedMetadata): metadata is PerModAttachedMetadata;
-export function isModuleWithMetadata(arg?: DecoratorAndValue): arg is DecoratorAndValue<PerModAttachedMetadata>;
 export function isModuleWithMetadata(
-  arg?: DecoratorAndValue | PerModAttachedMetadata,
-): arg is DecoratorAndValue<PerModAttachedMetadata> {
+  metadata?: PerModAttachedMetadata<AnyObj>,
+): metadata is PerModAttachedMetadata<AnyObj>;
+export function isModuleWithMetadata(arg?: DecoratorAndValue): arg is DecoratorAndValue<PerModAttachedMetadata<AnyObj>>;
+export function isModuleWithMetadata(
+  arg?: DecoratorAndValue | PerModAttachedMetadata<AnyObj>,
+): arg is DecoratorAndValue<PerModAttachedMetadata<AnyObj>> {
   if (arg instanceof DecoratorAndValue) {
-    return (arg as DecoratorAndValue<PerModAttachedMetadata>).value instanceof PerModAttachedMetadata;
+    return (arg as DecoratorAndValue<PerModAttachedMetadata<AnyObj>>).value instanceof PerModAttachedMetadata;
   } else {
     return arg instanceof PerModAttachedMetadata;
   }

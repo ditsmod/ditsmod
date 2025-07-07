@@ -29,7 +29,7 @@ export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj
    * Indicates whether this module is external to the application.
    */
   isExternal: boolean;
-  aDecoratorMeta: DecoratorAndValue<PerModAttachedMetadata>[] = [];
+  aDecoratorMeta: DecoratorAndValue<PerModAttachedMetadata<AnyObj>>[] = [];
   /**
    * This property contains normalized metadata collected from each additional
    * module decorator except `featureModule` and `rootModule`.

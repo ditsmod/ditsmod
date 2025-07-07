@@ -40,17 +40,18 @@ export class ImportsResolver {
       const resolveFromDecorators = new Map<AnyFn, AnyObj | undefined>();
 
       baseMeta.aDecoratorMeta.forEach((decorAndVal) => {
-        resolveFromDecorators.set(
-          decorAndVal.decorator,
-          decorAndVal.value.importResolve?.(
-            this.moduleManager,
-            this.appMetadataMap,
-            this.providersPerApp,
-            this.log,
-            this.errorMediator,
-            perDecorImportedTokensMap.get(decorAndVal.decorator),
-          ),
+        const val = decorAndVal.value.importResolve(
+          this.moduleManager,
+          this.appMetadataMap,
+          this.providersPerApp,
+          this.log,
+          this.errorMediator,
+          perDecorImportedTokensMap.get(decorAndVal.decorator),
         );
+
+        if (val) {
+          resolveFromDecorators.set(decorAndVal.decorator, val);
+        }
       });
 
       mMetadataPerMod2.set(baseMeta.modRefId, { baseMeta, resolveFromDecorators });

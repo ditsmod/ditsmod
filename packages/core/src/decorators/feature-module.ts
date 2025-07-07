@@ -39,30 +39,44 @@ export function transformModule(data?: ModuleMetadata): PerModAttachedMetadata<R
 /**
  * A metadata attached to the `rootModule` or `featureModule` decorators.
  */
-export class PerModAttachedMetadata<T extends AnyObj = AnyObj> {
+export class PerModAttachedMetadata<T extends AnyObj> {
   constructor(public metadata = {} as T) {}
 
-  normalize?: (baseMeta: NormalizedMeta, metadata: T) => ParamsTransferObj<AnyObj> | undefined;
+  normalize(baseMeta: NormalizedMeta, metadata: T): ParamsTransferObj<AnyObj> | undefined {
+    return;
+  }
+
   /**
    * The returned array of modules will be scanned by `ModuleManager`.
    */
-  addModulesToScan?(meta: AnyObj): ModRefId[];
-  exportGlobalProviders?: (moduleManager: ModuleManager, baseMeta: NormalizedMeta, providersPerApp: Provider[]) => any;
-  bootstrap?: (
+  addModulesToScan(meta: AnyObj): ModRefId[] {
+    return [];
+  }
+
+  exportGlobalProviders(moduleManager: ModuleManager, baseMeta: NormalizedMeta, providersPerApp: Provider[]): any {
+    return;
+  }
+
+  bootstrap(
     providersPerApp: Provider[],
     globalProviders: GlobalProviders,
     modRefId: ModRefId,
     moduleManager: ModuleManager,
     unfinishedScanModules: Set<ModRefId>,
-  ) => Map<ModRefId, AnyObj>;
-  importResolve?: (
+  ): Map<ModRefId, AnyObj> {
+    return new Map();
+  }
+
+  importResolve(
     moduleManager: ModuleManager,
     appMetadataMap: AppMetadataMap,
     providersPerApp: Provider[],
     log: SystemLogMediator,
     errorMediator: SystemErrorMediator,
     metadataPerMod1?: AnyObj,
-  ) => any;
+  ): any {
+    return;
+  }
 }
 
 /**

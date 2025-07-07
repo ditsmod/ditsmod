@@ -223,12 +223,10 @@ export class ModuleManager {
   protected scanRawModule(modRefId: ModRefId) {
     const meta = this.normalizeMetadata(modRefId);
     const importsOrExports: (ModuleWithParams | ModuleType)[] = [];
-    meta.aDecoratorMeta.forEach(({ decorator, value }) => {
-      if (value.addModulesToScan) {
-        const meta2 = meta.normDecorMeta.get(decorator);
-        if (meta2) {
-          importsOrExports.push(...value.addModulesToScan(meta2));
-        }
+    meta.aDecoratorMeta.forEach((decorAndVal) => {
+      const meta2 = meta.normDecorMeta.get(decorAndVal.decorator);
+      if (meta2) {
+        importsOrExports.push(...decorAndVal.value.addModulesToScan(meta2));
       }
     });
 
