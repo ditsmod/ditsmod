@@ -2,6 +2,7 @@
 {
   "files": [],
   "references": [
+    { "path": "00-init-modules-only/tsconfig.build.json" },
     { "path": "01-hello-world/tsconfig.json" },
     { "path": "02-http-error-handler/tsconfig.json" },
     { "path": "03-route-guards/tsconfig.json" },

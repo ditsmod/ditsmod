@@ -1,0 +1,16 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "baseUrl": "./",
+    "tsBuildInfoFile": "dist/ts.tsbuildinfo",
+    "paths": {
+      "#app/*": ["./src/app/*"],
+      "@ditsmod/core": ["../../packages/core/src/index.js"],
+    }
+  },
+  "include": ["src", "e2e"],
+  "references": [
+    { "path": "../../packages/core/tsconfig.build.json" },
+  ]
+}

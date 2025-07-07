@@ -5812,6 +5812,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"example00@workspace:examples/00-init-modules-only":
+  version: 0.0.0-use.local
+  resolution: "example00@workspace:examples/00-init-modules-only"
+  dependencies:
+    jest: "npm:^30.0.0"
+    npm-run-all: "npm:*"
+    typescript: "npm:*"
+  languageName: unknown
+  linkType: soft
+
 "example01@workspace:examples/01-hello-world":
   version: 0.0.0-use.local
   resolution: "example01@workspace:examples/01-hello-world"
