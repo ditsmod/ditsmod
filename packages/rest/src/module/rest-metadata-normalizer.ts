@@ -23,17 +23,17 @@ import {
   resolveForwardRef,
 } from '@ditsmod/core';
 
-import { RestMetadata, RestModuleParams } from '#module/module-metadata.js';
+import { AddRest, RestModuleParams } from '#module/module-metadata.js';
 import { RestNormalizedMeta } from '#types/rest-normalized-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
-import { restMetadata } from '#decorators/rest-metadata.js';
+import { addRest } from '#decorators/rest-metadata.js';
 
 /**
  * Normalizes and validates module metadata.
  */
-export class RestMetadataNormalizer {
-  normalize(baseMeta: NormalizedMeta, rawMeta: RestMetadata) {
+export class AddRestNormalizer {
+  normalize(baseMeta: NormalizedMeta, rawMeta: AddRest) {
     const meta = new RestNormalizedMeta();
     this.mergeModuleWithParams(baseMeta, meta);
     rawMeta.appends?.forEach((ap, i) => {
@@ -64,7 +64,7 @@ export class RestMetadataNormalizer {
     } else if (!isModuleWithParentMeta(modRefId)) {
       return;
     }
-    const normDecorMeta = modRefId.parentMeta.normDecorMeta.get(restMetadata) as RestNormalizedMeta | undefined;
+    const normDecorMeta = modRefId.parentMeta.normDecorMeta.get(addRest) as RestNormalizedMeta | undefined;
     const params = normDecorMeta?.importsWithParams.find((param) => param.modRefId === modRefId);
 
     if (params) {
@@ -78,14 +78,14 @@ export class RestMetadataNormalizer {
     }
   }
 
-  protected normalizeModule(rawMeta: RestMetadata, meta: RestNormalizedMeta) {
+  protected normalizeModule(rawMeta: AddRest, meta: RestNormalizedMeta) {
     this.throwIfResolvingNormalizedProvider(rawMeta);
     this.exportFromReflectMetadata(rawMeta, meta);
     this.pickAndMergeMeta(meta, rawMeta);
     this.checkGuardsPerMod(meta.guardsPerMod);
   }
 
-  protected throwIfResolvingNormalizedProvider(rawMeta: RestMetadata) {
+  protected throwIfResolvingNormalizedProvider(rawMeta: AddRest) {
     const resolvedCollisionsPerLevel: [any, ModuleType | ModuleWithParams][] = [];
     if (Array.isArray(rawMeta.resolvedCollisionsPerRou)) {
       resolvedCollisionsPerLevel.push(...rawMeta.resolvedCollisionsPerRou);
@@ -103,7 +103,7 @@ export class RestMetadataNormalizer {
     });
   }
 
-  protected exportFromReflectMetadata(rawMeta: RestMetadata, meta: RestNormalizedMeta) {
+  protected exportFromReflectMetadata(rawMeta: AddRest, meta: RestNormalizedMeta) {
     const providers: Provider[] = [];
     if (Array.isArray(rawMeta.providersPerRou)) {
       providers.push(...rawMeta.providersPerRou);
@@ -141,7 +141,7 @@ export class RestMetadataNormalizer {
     }
   }
 
-  protected findAndSetProviders(token: any, rawMeta: RestMetadata, meta: RestNormalizedMeta) {
+  protected findAndSetProviders(token: any, rawMeta: AddRest, meta: RestNormalizedMeta) {
     let found = false;
     (['Rou', 'Req'] as const).forEach((level) => {
       const unfilteredProviders = [...(rawMeta[`providersPer${level}`] || [])];
@@ -167,7 +167,7 @@ export class RestMetadataNormalizer {
     }
   }
 
-  protected pickAndMergeMeta(targetObject: RestNormalizedMeta, ...sourceObjects: RestMetadata[]) {
+  protected pickAndMergeMeta(targetObject: RestNormalizedMeta, ...sourceObjects: AddRest[]) {
     const trgtObj = targetObject as any;
     sourceObjects.forEach((sourceObj: AnyObj) => {
       sourceObj ??= {};
@@ -199,13 +199,13 @@ export class RestMetadataNormalizer {
     }
   }
 
-  protected setParentMeta(baseMeta: NormalizedMeta, rawMeta: RestMetadata) {
+  protected setParentMeta(baseMeta: NormalizedMeta, rawMeta: AddRest) {
     rawMeta.importsWithParams?.forEach((param) => {
       (param.modRefId as ModuleWithParentMeta).parentMeta ??= baseMeta;
     });
   }
 
-  protected normalizeImportsWithParams(rawMeta: RestMetadata, meta: RestNormalizedMeta) {
+  protected normalizeImportsWithParams(rawMeta: AddRest, meta: RestNormalizedMeta) {
     meta.importsWithParams = (rawMeta.importsWithParams || []).map((params) => {
       if (isModuleWithParams(params.modRefId)) {
         return params;

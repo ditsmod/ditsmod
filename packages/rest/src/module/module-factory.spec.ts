@@ -17,8 +17,8 @@ import {
 } from '@ditsmod/core';
 
 import { controller } from '#types/controller.js';
-import { AppendsWithParams, RestMetadata } from './module-metadata.js';
-import { restMetadata } from '#decorators/rest-metadata.js';
+import { AppendsWithParams, AddRest } from './module-metadata.js';
+import { addRest } from '#decorators/rest-metadata.js';
 
 type Level = 'Mod';
 /**
@@ -83,15 +83,15 @@ describe('appending modules', () => {
     })
     class Module0 {}
 
-    @restMetadata({ providersPerReq: [{ token: Provider1, useValue: 'some value' }] })
+    @addRest({ providersPerReq: [{ token: Provider1, useValue: 'some value' }] })
     @featureModule({ exports: [Provider1] })
     class Module1 {}
 
-    @restMetadata({ providersPerReq: [Provider1] })
+    @addRest({ providersPerReq: [Provider1] })
     @featureModule({ exports: [Provider1] })
     class Module2 {}
 
-    @restMetadata({ resolvedCollisionsPerReq: [[Provider1, Module0]] })
+    @addRest({ resolvedCollisionsPerReq: [[Provider1, Module0]] })
     @rootModule({ imports: [Module0, Module1, Module2] })
     class AppModule {}
 
@@ -103,15 +103,15 @@ describe('appending modules', () => {
     class Provider1 {}
     class Provider2 {}
 
-    @restMetadata({ providersPerReq: [Provider1] })
+    @addRest({ providersPerReq: [Provider1] })
     @featureModule({ exports: [Provider1] })
     class Module1 {}
 
-    @restMetadata({ providersPerReq: [Provider2] })
+    @addRest({ providersPerReq: [Provider2] })
     @featureModule({ exports: [Provider2] })
     class Module2 {}
 
-    @restMetadata({ resolvedCollisionsPerReq: [[Provider1, Module1]] })
+    @addRest({ resolvedCollisionsPerReq: [[Provider1, Module1]] })
     @rootModule({
       imports: [Module1, Module2],
     })
@@ -125,11 +125,11 @@ describe('appending modules', () => {
     class Provider1 {}
     class Provider2 {}
 
-    @restMetadata({ providersPerReq: [Provider1] })
+    @addRest({ providersPerReq: [Provider1] })
     @featureModule({ exports: [Provider1] })
     class Module1 {}
 
-    @restMetadata({ providersPerReq: [{ token: Provider1, useValue: 'some value' }, Provider2] })
+    @addRest({ providersPerReq: [{ token: Provider1, useValue: 'some value' }, Provider2] })
     @featureModule({ exports: [Provider1, Provider2] })
     class Module2 {}
 
@@ -147,15 +147,15 @@ describe('appending modules', () => {
   it('should work with resolved collision', () => {
     class Provider1 {}
 
-    @restMetadata({ providersPerReq: [{ token: Provider1, useValue: 'some value' }] })
+    @addRest({ providersPerReq: [{ token: Provider1, useValue: 'some value' }] })
     @featureModule({ exports: [Provider1] })
     class Module1 {}
 
-    @restMetadata({ providersPerReq: [Provider1] })
+    @addRest({ providersPerReq: [Provider1] })
     @featureModule({ exports: [Provider1] })
     class Module2 {}
 
-    @restMetadata({ resolvedCollisionsPerReq: [[Provider1, Module1]] })
+    @addRest({ resolvedCollisionsPerReq: [[Provider1, Module1]] })
     @rootModule({ imports: [Module1, Module2] })
     class AppModule {}
 
@@ -166,15 +166,15 @@ describe('appending modules', () => {
     @controller()
     class Controller1 {}
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule()
     class Module1 {}
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule()
     class Module2 {}
 
-    @restMetadata({
+    @addRest({
       appends: [Module1, { path: 'some-prefix', module: Module2 }],
       controllers: [Controller1],
     })
@@ -188,17 +188,17 @@ describe('appending modules', () => {
     @controller()
     class Controller1 {}
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule()
     class Module1 {}
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule()
     class Module2 {}
 
     const mod1: AppendsWithParams = { path: 'prefix1', module: Module1 };
     const mod2: AppendsWithParams = { path: 'prefix2', module: Module2 };
-    @restMetadata({
+    @addRest({
       appends: [mod1, mod2],
       controllers: [Controller1],
     })
@@ -235,11 +235,11 @@ describe('appending modules', () => {
     @controller()
     class Controller1 {}
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule()
     class Module1 {}
 
-    @restMetadata({
+    @addRest({
       appends: [Module1],
       controllers: [Controller1],
     })
@@ -262,7 +262,7 @@ describe('appending modules', () => {
     })
     class Module1 {}
 
-    @restMetadata({
+    @addRest({
       appends: [Module1],
       controllers: [Controller1],
     })
@@ -285,7 +285,7 @@ describe('appending modules', () => {
     })
     class Module1 {}
 
-    @restMetadata({
+    @addRest({
       appends: [{ path: '', module: Module1 }],
       controllers: [Controller1],
     })
@@ -302,14 +302,14 @@ describe('appending modules', () => {
     @controller()
     class Controller1 {}
 
-    @restMetadata({ controllers: [Controller1], })
+    @addRest({ controllers: [Controller1], })
     @featureModule({
       providersPerMod: [Provider1, Provider2],
       exports: [Provider1, Provider2],
     })
     class Module1 {}
 
-    @restMetadata({
+    @addRest({
       appends: [Module1],
       controllers: [Controller1],
     })
@@ -323,15 +323,15 @@ describe('appending modules', () => {
     @controller()
     class Controller1 {}
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule()
     class Module1 {}
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule()
     class Module2 {}
 
-    @restMetadata({
+    @addRest({
       appends: [Module1, { path: 'some-prefix', module: Module2 }],
       controllers: [Controller1],
     })
@@ -345,17 +345,17 @@ describe('appending modules', () => {
     @controller()
     class Controller1 {}
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule()
     class Module1 {}
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule()
     class Module2 {}
 
     const mod1: AppendsWithParams = { path: 'prefix1', module: Module1 };
     const mod2: AppendsWithParams = { path: 'prefix2', module: Module2 };
-    @restMetadata({
+    @addRest({
       appends: [mod1, mod2],
       controllers: [Controller1],
     })

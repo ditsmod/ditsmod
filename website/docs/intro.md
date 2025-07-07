@@ -38,7 +38,7 @@ app.listen(3000, '0.0.0.0');
 
 ```ts
 import { rootModule } from '@ditsmod/core';
-import { route, restMetadata, RestModule, controller, Application } from '@ditsmod/rest';
+import { route, addRest, RestModule, controller, Application } from '@ditsmod/rest';
 
 @controller()
 class ExampleController {
@@ -48,7 +48,7 @@ class ExampleController {
   }
 }
 
-@restMetadata({ controllers: [ExampleController] })
+@addRest({ controllers: [ExampleController] })
 @rootModule({ imports: [RestModule] })
 class AppModule {}
 

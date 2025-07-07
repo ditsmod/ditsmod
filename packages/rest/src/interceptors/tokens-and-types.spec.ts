@@ -24,7 +24,7 @@ import { HttpBackend, HttpFrontend, HttpHandler, HttpInterceptor } from './token
 import { HTTP_INTERCEPTORS } from '#types/constants.js';
 import { Req } from '#services/request.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
-import { restMetadata } from '#decorators/rest-metadata.js';
+import { addRest } from '#decorators/rest-metadata.js';
 
 describe('HttpInterceptor', () => {
   const jestFn = jest.fn((interceptorName: string) => interceptorName);
@@ -222,11 +222,11 @@ describe('mix per app, per mod or per req', () => {
   });
 
   it('case 2', () => {
-    @restMetadata({ providersPerReq: [{ token: Provider1, useClass: Provider1 }] })
+    @addRest({ providersPerReq: [{ token: Provider1, useClass: Provider1 }] })
     @featureModule({ exports: [Provider1] })
     class Module0 {}
 
-    @restMetadata({ providersPerReq: [] })
+    @addRest({ providersPerReq: [] })
     @rootModule({
       imports: [Module0],
       providersPerMod: [Provider1],
@@ -239,11 +239,11 @@ describe('mix per app, per mod or per req', () => {
   });
 
   it('resolved case 2', () => {
-    @restMetadata({ providersPerReq: [{ token: Provider1, useClass: Provider1 }], exports: [Provider1] })
+    @addRest({ providersPerReq: [{ token: Provider1, useClass: Provider1 }], exports: [Provider1] })
     @featureModule()
     class Module1 {}
 
-    @restMetadata({ resolvedCollisionsPerReq: [[Provider1, Module1]] })
+    @addRest({ resolvedCollisionsPerReq: [[Provider1, Module1]] })
     @rootModule({ imports: [Module1], providersPerMod: [Provider1] })
     class AppModule {}
 
@@ -255,7 +255,7 @@ describe('mix per app, per mod or per req', () => {
   });
 
   it('double resolve', () => {
-    @restMetadata({ providersPerReq: [Provider1] })
+    @addRest({ providersPerReq: [Provider1] })
     @featureModule({ exports: [Provider1] })
     class Module1 {}
 
@@ -265,7 +265,7 @@ describe('mix per app, per mod or per req', () => {
     })
     class Module2 {}
 
-    @restMetadata({ resolvedCollisionsPerReq: [[Provider1, Module1]] })
+    @addRest({ resolvedCollisionsPerReq: [[Provider1, Module1]] })
     @rootModule({
       imports: [Module1, Module2],
       providersPerApp: [Provider1],
@@ -282,11 +282,11 @@ describe('mix per app, per mod or per req', () => {
   });
 
   it('point to current module to increase scope and to resolve case 2', () => {
-    @restMetadata({ providersPerReq: [{ token: Provider1, useClass: Provider1 }] })
+    @addRest({ providersPerReq: [{ token: Provider1, useClass: Provider1 }] })
     @featureModule({ exports: [Provider1] })
     class Module1 {}
 
-    @restMetadata({ resolvedCollisionsPerReq: [[Provider1, AppModule]] })
+    @addRest({ resolvedCollisionsPerReq: [[Provider1, AppModule]] })
     @rootModule({ imports: [Module1], providersPerMod: [Provider1] })
     class AppModule {}
 
@@ -296,11 +296,11 @@ describe('mix per app, per mod or per req', () => {
   });
 
   it('wrong point to current module', () => {
-    @restMetadata({ providersPerReq: [{ token: Provider2, useClass: Provider1 }] })
+    @addRest({ providersPerReq: [{ token: Provider2, useClass: Provider1 }] })
     @featureModule({ exports: [Provider2] })
     class Module1 {}
 
-    @restMetadata({ resolvedCollisionsPerReq: [[Provider1, AppModule]] })
+    @addRest({ resolvedCollisionsPerReq: [[Provider1, AppModule]] })
     @rootModule({ imports: [Module1], providersPerMod: [Provider1] })
     class AppModule {}
 
@@ -316,7 +316,7 @@ describe('mix per app, per mod or per req', () => {
     })
     class Module0 {}
 
-    @restMetadata({ resolvedCollisionsPerReq: [[HttpBackend, AppModule]] })
+    @addRest({ resolvedCollisionsPerReq: [[HttpBackend, AppModule]] })
     @rootModule({ imports: [Module0] })
     class AppModule {}
 
@@ -326,11 +326,11 @@ describe('mix per app, per mod or per req', () => {
   });
 
   it('resolve 2 case 3', () => {
-    @restMetadata({ providersPerReq: [{ token: Req, useClass: Req }] })
+    @addRest({ providersPerReq: [{ token: Req, useClass: Req }] })
     @featureModule({ exports: [Req] })
     class Module1 {}
 
-    @restMetadata({ resolvedCollisionsPerReq: [[Req, Module1]] })
+    @addRest({ resolvedCollisionsPerReq: [[Req, Module1]] })
     @rootModule({ imports: [Module1] })
     class AppModule {}
 
@@ -365,7 +365,7 @@ describe('mix per app, per mod or per req', () => {
     })
     class Module0 {}
 
-    @restMetadata({ resolvedCollisionsPerReq: [[HttpBackend, AppModule]] })
+    @addRest({ resolvedCollisionsPerReq: [[HttpBackend, AppModule]] })
     @rootModule({ imports: [Module0] })
     class AppModule {}
 
@@ -375,11 +375,11 @@ describe('mix per app, per mod or per req', () => {
   });
 
   it('resolved case 4', () => {
-    @restMetadata({ providersPerReq: [{ token: HttpBackend, useValue: '' }] })
+    @addRest({ providersPerReq: [{ token: HttpBackend, useValue: '' }] })
     @featureModule({ exports: [HttpBackend] })
     class Module1 {}
 
-    @restMetadata({ resolvedCollisionsPerReq: [[HttpBackend, Module1]] })
+    @addRest({ resolvedCollisionsPerReq: [[HttpBackend, Module1]] })
     @rootModule({ imports: [Module1] })
     class AppModule {}
 

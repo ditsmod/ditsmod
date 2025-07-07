@@ -1,11 +1,11 @@
 import { featureModule } from '@ditsmod/core';
-import { restMetadata, RestModule } from '@ditsmod/rest';
+import { addRest, RestModule } from '@ditsmod/rest';
 
 import { Controller1, Controller2 } from './controllers.js';
 import { Module2 } from '../module2/module2.js';
 import { Guard, GuardPerRou } from '../../guards.js';
 
-@restMetadata({
+@addRest({
   providersPerRou: [{ token: Guard, useClass: GuardPerRou }],
   providersPerReq: [Guard],
   appends: [

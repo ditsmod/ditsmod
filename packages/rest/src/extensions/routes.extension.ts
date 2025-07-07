@@ -23,7 +23,7 @@ import { RestNormalizedMeta } from '#types/rest-normalized-meta.js';
 /**
  * This metadata returns from `DeepProvidersCollector`. The target for this metadata is `RoutesExtension`.
  */
-export class RestMetadataPerMod2 extends MetadataPerMod2 {
+export class AddRestPerMod2 extends MetadataPerMod2 {
   declare baseMeta: NormalizedMeta & RestNormalizedMeta;
   applyControllers?: boolean;
   guardsPerMod1: GuardPerMod1[];
@@ -35,7 +35,7 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
 
   constructor(
     protected appOptions: AppOptions,
-    protected metadataPerMod2: RestMetadataPerMod2,
+    protected metadataPerMod2: AddRestPerMod2,
   ) {}
 
   async stage1() {
@@ -49,7 +49,7 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
     return this.metadataPerMod3;
   }
 
-  protected getControllersMetadata(prefixPerApp: string = '', metadataPerMod2: RestMetadataPerMod2) {
+  protected getControllersMetadata(prefixPerApp: string = '', metadataPerMod2: AddRestPerMod2) {
     const { prefixPerMod, baseMeta: meta, applyControllers } = metadataPerMod2;
 
     const aControllerMetadata: ControllerMetadata[] = [];

@@ -12,21 +12,23 @@ import {
   AppMetadataMap,
 } from '@ditsmod/core';
 
-import { RestMetadata } from '#module/module-metadata.js';
-import { RestMetadataNormalizer } from '#module/rest-metadata-normalizer.js';
+import { AddRest } from '#module/module-metadata.js';
+import { AddRestNormalizer } from '#module/rest-metadata-normalizer.js';
 import { RestShallowProvidersCollector } from '#module/rest-module-factory.js';
 import { RestNormalizedMeta } from '#types/rest-normalized-meta.js';
 import { RestDeepProvidersCollector } from '#module/rest-imports-resolver.js';
+/**
+ * A decorator that adds REST metadata to a `featureModule` or `rootModule`.
+ */
+export const addRest: AddRestDecorator = makeClassDecorator(transformMetadata);
 
-export const restMetadata: RestMetadataDecorator = makeClassDecorator(transformMetadata);
-
-export interface RestMetadataDecorator {
-  (data?: RestMetadata): any;
+export interface AddRestDecorator {
+  (data?: AddRest): any;
 }
 
-class RestInitHooksAndMetadata extends InitHooksAndMetadata<RestMetadata> {
-  override normalize(baseMeta: NormalizedMeta, metadataWithParams: RestMetadata) {
-    return new RestMetadataNormalizer().normalize(baseMeta, metadataWithParams);
+class RestInitHooksAndMetadata extends InitHooksAndMetadata<AddRest> {
+  override normalize(baseMeta: NormalizedMeta, metadataWithParams: AddRest) {
+    return new AddRestNormalizer().normalize(baseMeta, metadataWithParams);
   }
 
   override addModulesToScan(meta: RestNormalizedMeta) {
@@ -54,7 +56,7 @@ class RestInitHooksAndMetadata extends InitHooksAndMetadata<RestMetadata> {
     providersPerApp: Provider[],
     log: SystemLogMediator,
     errorMediator: SystemErrorMediator,
-    restMetadataPerMod1?: AnyObj,
+    addRestPerMod1?: AnyObj,
   ) {
     const impResolver = new RestDeepProvidersCollector(
       moduleManager,
@@ -62,13 +64,13 @@ class RestInitHooksAndMetadata extends InitHooksAndMetadata<RestMetadata> {
       providersPerApp,
       log,
       errorMediator,
-      restMetadataPerMod1 as any,
+      addRestPerMod1 as any,
     );
     return impResolver.resolve();
   }
 }
 
-export function transformMetadata(data?: RestMetadata): InitHooksAndMetadata<RestMetadata> {
+export function transformMetadata(data?: AddRest): InitHooksAndMetadata<AddRest> {
   const metadata = Object.assign({}, data);
   return new RestInitHooksAndMetadata(metadata);
 }

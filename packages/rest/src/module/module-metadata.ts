@@ -3,7 +3,10 @@ import { AnyObj, ModuleType, Class, Provider, Providers, ModuleWithParams, ModRe
 import { GuardItem } from '#interceptors/guard.js';
 import { RestProvidersMetadata } from '#types/rest-normalized-meta.js';
 
-export interface RestMetadata {
+/**
+ * Metadata for the `addRest` decorator, which adds REST metadata to a `featureModule` or `rootModule`.
+ */
+export interface AddRest {
   /**
    * List of provider tokens exported by this module.
    */

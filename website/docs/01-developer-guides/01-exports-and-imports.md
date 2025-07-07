@@ -74,10 +74,10 @@ export class SecondModule {}
 
 ```ts {7}
 import { featureModule } from '@ditsmod/core';
-import { restMetadata } from '@ditsmod/rest';
+import { addRest } from '@ditsmod/rest';
 import { FirstModule } from './first.module';
 
-@restMetadata({
+@addRest({
   importsWithParams: [
     { modRefId: FirstModule, path: '' }
   ]
@@ -125,10 +125,10 @@ interface ModuleWithParams {
 
 ```ts {7}
 import { featureModule } from '@ditsmod/core';
-import { restMetadata } from '@ditsmod/rest';
+import { addRest } from '@ditsmod/rest';
 import { FirstModule } from './first.module';
 
-@restMetadata({
+@addRest({
   importsWithParams: [
     { modRefId: FirstModule, path: '' }
   ]

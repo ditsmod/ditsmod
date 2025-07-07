@@ -18,7 +18,7 @@ import {
 } from '@ditsmod/core';
 
 import { controller } from '../types/controller.js';
-import { restMetadata } from '#decorators/rest-metadata.js';
+import { addRest } from '#decorators/rest-metadata.js';
 
 describe('ModuleManager', () => {
   console.log = jest.fn();
@@ -76,7 +76,7 @@ describe('ModuleManager', () => {
       })
       class Version1Module {}
 
-      @restMetadata({ appends: [{ path: 'v1', module: Version1Module }] })
+      @addRest({ appends: [{ path: 'v1', module: Version1Module }] })
       @featureModule()
       class Module2 {}
 
@@ -102,7 +102,7 @@ describe('ModuleManager', () => {
       @controller()
       class Controller1 {}
 
-      @restMetadata({ controllers: [Controller1] })
+      @addRest({ controllers: [Controller1] })
       @featureModule({ providersPerMod: [Provider1, Provider2] })
       class Module1 {}
 
@@ -130,7 +130,7 @@ describe('ModuleManager', () => {
       class Provider1 {}
       class Provider2 {}
 
-      @restMetadata({ controllers: [Provider1] })
+      @addRest({ controllers: [Provider1] })
       @featureModule({ providersPerMod: [Provider1, Provider2] })
       class Module1 {}
 
@@ -166,15 +166,15 @@ describe('ModuleManager', () => {
     @featureModule({ providersPerApp: [Provider1], imports: [forwardRef(() => Module3)] })
     class Module1 {}
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule({ imports: [Module1] })
     class Module2 {}
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule({ imports: [Module2] })
     class Module3 {}
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule({ imports: [Module3] })
     class Module4 {}
 
@@ -201,7 +201,7 @@ describe('ModuleManager', () => {
     @injectable()
     class Provider1 {}
 
-    @restMetadata({ providersPerRou: [], providersPerReq: [Provider1], controllers: [] })
+    @addRest({ providersPerRou: [], providersPerReq: [Provider1], controllers: [] })
     @rootModule({
       imports: [],
       extensionsMeta: {},
@@ -252,11 +252,11 @@ describe('ModuleManager', () => {
     @controller()
     class Controller1 {}
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule()
     class Module1 {}
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule({
       imports: [Module1],
       exports: [Module1],
@@ -270,7 +270,7 @@ describe('ModuleManager', () => {
     @controller()
     class Controller1 {}
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule()
     class Module1 {
       static withParams(): ModuleWithParams<Module1> {
@@ -283,7 +283,7 @@ describe('ModuleManager', () => {
 
     const moduleWithParams = Module1.withParams();
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule({
       imports: [moduleWithParams],
       exports: [moduleWithParams],
@@ -298,7 +298,7 @@ describe('ModuleManager', () => {
 
     const exportedMultiProvidersPerMod = [{ token: Multi, useClass: Multi, multi: true }];
 
-    @restMetadata({})
+    @addRest({})
     @featureModule()
     class Module1 {
       static withParams(): ModuleWithParams<Module1> {
@@ -325,7 +325,7 @@ describe('ModuleManager', () => {
     @controller()
     class Controller1 {}
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule()
     class Module1 {
       static withParams(): ModuleWithParams<Module1> {
@@ -338,7 +338,7 @@ describe('ModuleManager', () => {
 
     const moduleWithParams = Module1.withParams();
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule({
       imports: [moduleWithParams],
       exports: [Module1],
@@ -352,11 +352,11 @@ describe('ModuleManager', () => {
     @controller()
     class Controller1 {}
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule()
     class Module1 {}
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule({ exports: [Module1] })
     class Module2 {}
 
@@ -377,7 +377,7 @@ describe('ModuleManager', () => {
     @injectable()
     class Provider1 {}
 
-    @restMetadata({ providersPerReq: [Provider1] })
+    @addRest({ providersPerReq: [Provider1] })
     @featureModule({ exports: [{ token: Provider1, useClass: Provider1 }] })
     class Module2 {}
 
@@ -411,7 +411,7 @@ describe('ModuleManager', () => {
     class Controller1 {}
 
     const fn = () => module4WithParams;
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule({ id: '1', imports: [forwardRef(fn)] })
     class Module1 {}
 
@@ -421,7 +421,7 @@ describe('ModuleManager', () => {
     @injectable()
     class Provider1 {}
 
-    @restMetadata({ providersPerRou: [Provider1], exports: [Provider1] })
+    @addRest({ providersPerRou: [Provider1], exports: [Provider1] })
     @featureModule({
       imports: [Module1],
       providersPerMod: [Provider0],
@@ -429,7 +429,7 @@ describe('ModuleManager', () => {
     })
     class Module2 {}
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule()
     class Module4 {
       static withParams(providersPerMod: Provider[]): ModuleWithParams<Module4> {
@@ -445,7 +445,7 @@ describe('ModuleManager', () => {
 
     const module4WithParams = Module4.withParams([Provider2]);
 
-    @restMetadata({ controllers: [] })
+    @addRest({ controllers: [] })
     @rootModule({
       imports: [Module1, Module2],
       providersPerApp: [],
@@ -517,7 +517,7 @@ describe('ModuleManager', () => {
     @controller()
     class Controller1 {}
 
-    @restMetadata({ controllers: [], providersPerReq: [Provider1] })
+    @addRest({ controllers: [], providersPerReq: [Provider1] })
     @rootModule({
       imports: [],
       extensionsMeta: {},
@@ -525,15 +525,15 @@ describe('ModuleManager', () => {
     })
     class AppModule {}
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule()
     class Module1 {}
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule()
     class Module2 {}
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule()
     class Module3 {
       static withParams(providersPerMod: Provider[]): ModuleWithParams<Module3> {
@@ -544,7 +544,7 @@ describe('ModuleManager', () => {
       }
     }
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule()
     class Module4 {}
 
@@ -666,19 +666,19 @@ describe('ModuleManager', () => {
     @controller()
     class Controller1 {}
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule()
     class Module0 {}
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule({ imports: [Module0] })
     class Module1 {}
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule({ imports: [Module0] })
     class Module2 {}
 
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule()
     class Module3 {
       static withParams(providersPerMod: Provider[]): ModuleWithParams<Module3> {
@@ -695,7 +695,7 @@ describe('ModuleManager', () => {
     const module3WithProviders = Module3.withParams([Provider2]);
 
     const moduleId = 'my-mix';
-    @restMetadata({ controllers: [Controller1] })
+    @addRest({ controllers: [Controller1] })
     @featureModule()
     class Module4 {
       static withParams(providersPerMod: Provider[]): ModuleWithParams<Module4> {
@@ -709,7 +709,7 @@ describe('ModuleManager', () => {
 
     const module4WithProviders = Module4.withParams([Provider2]);
 
-    @restMetadata({
+    @addRest({
       controllers: [],
       providersPerReq: [Provider1],
     })
@@ -974,7 +974,7 @@ describe('ModuleManager', () => {
       Provider3,
     ];
 
-    @restMetadata({ providersPerReq, exports: [Provider2, Provider1, Provider3] })
+    @addRest({ providersPerReq, exports: [Provider2, Provider1, Provider3] })
     @featureModule()
     class Module1 {}
 

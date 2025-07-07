@@ -21,9 +21,9 @@ import {
 import { Level } from '#types/types.js';
 import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
-import { RestImportedTokensMap, RestMetadataPerMod1 } from './rest-module-factory.js';
+import { RestImportedTokensMap, AddRestPerMod1 } from './rest-module-factory.js';
 import { RestNormalizedMeta } from '#types/rest-normalized-meta.js';
-import { restMetadata } from '#decorators/rest-metadata.js';
+import { addRest } from '#decorators/rest-metadata.js';
 
 export class RestProvidersForMod {
   // providersPerMod: Provider[] = [];
@@ -43,7 +43,7 @@ export class RestDeepProvidersCollector {
     protected providersPerApp: Provider[],
     protected log: SystemLogMediator,
     protected errorMediator: SystemErrorMediator,
-    protected metadataPerMod1?: RestMetadataPerMod1,
+    protected metadataPerMod1?: AddRestPerMod1,
   ) {}
 
   resolve() {
@@ -107,7 +107,7 @@ export class RestDeepProvidersCollector {
       }
 
       for (const level of levels) {
-        const meta = srcBaseMeta.normDecorMeta.get(restMetadata) as RestNormalizedMeta;
+        const meta = srcBaseMeta.normDecorMeta.get(addRest) as RestNormalizedMeta;
         const sourceProviders = getLastProviders(meta[`providersPer${level}`]);
 
         getTokens(sourceProviders).forEach((sourceToken, i) => {
@@ -149,8 +149,8 @@ export class RestDeepProvidersCollector {
     let found = false;
     const metadataPerMod1 = this.appMetadataMap.get(sourceModule1)!;
     for (const level of levels) {
-      const restMetadataPerMod1 = metadataPerMod1.perDecorImportedTokensMap.get(restMetadata) as RestMetadataPerMod1;
-      const importObj = restMetadataPerMod1.importedTokensMap[`per${level}`].get(dep.token);
+      const addRestPerMod1 = metadataPerMod1.perDecorImportedTokensMap.get(addRest) as AddRestPerMod1;
+      const importObj = addRestPerMod1.importedTokensMap[`per${level}`].get(dep.token);
       if (importObj) {
         found = true;
         path.push(dep.token);
@@ -192,7 +192,7 @@ export class RestDeepProvidersCollector {
       }
 
       forLevel: for (const level of levels) {
-        const meta = baseMeta.normDecorMeta.get(restMetadata) as RestNormalizedMeta;
+        const meta = baseMeta.normDecorMeta.get(addRest) as RestNormalizedMeta;
         const providers = getLastProviders(meta[`providersPer${level}`]);
 
         for (const token of getTokens(providers)) {
@@ -215,10 +215,10 @@ export class RestDeepProvidersCollector {
   protected hasUnresolvedImportedDependecies(module1: ModRefId, levels: Level[], dep: ReflectiveDependency) {
     let found = false;
     for (const level of levels) {
-      const restMetadataPerMod1 = this.appMetadataMap.get(module1)?.perDecorImportedTokensMap.get(restMetadata) as
-        | RestMetadataPerMod1
+      const addRestPerMod1 = this.appMetadataMap.get(module1)?.perDecorImportedTokensMap.get(addRest) as
+        | AddRestPerMod1
         | undefined;
-      const importObj = restMetadataPerMod1?.importedTokensMap[`per${level}`].get(dep.token);
+      const importObj = addRestPerMod1?.importedTokensMap[`per${level}`].get(dep.token);
       if (importObj) {
         found = true;
         const { modRefId: modRefId2, providers } = importObj;

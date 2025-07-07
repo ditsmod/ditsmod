@@ -208,10 +208,10 @@ export class HelloWorldController {
 
 ```ts {5}
 import { featureModule } from '@ditsmod/core';
-import { restMetadata } from '@ditsmod/rest';
+import { addRest } from '@ditsmod/rest';
 import { SomeController } from './some.controller.js';
 
-@restMetadata({ controllers: [SomeController] })
+@addRest({ controllers: [SomeController] })
 @featureModule()
 export class SomeModule {}
 ```
@@ -220,10 +220,10 @@ export class SomeModule {}
 
 ```ts {6,8}
 import { featureModule } from '@ditsmod/core';
-import { restMetadata } from '@ditsmod/rest';
+import { addRest } from '@ditsmod/rest';
 import { SomeModule } from './some.module.js';
 
-@restMetadata({
+@addRest({
   appends: [SomeModule],
   // АБО
   importsWithParams: [{ modRefId: SomeModule, path: '' }]
@@ -283,12 +283,12 @@ export class SecondService {
 
 ```ts {9-10}
 import { featureModule } from '@ditsmod/core';
-import { restMetadata } from '@ditsmod/rest';
+import { addRest } from '@ditsmod/rest';
 
 import { FirstService } from './first.service.js';
 import { SecondService } from './second.service.js';
 
-@restMetadata({
+@addRest({
   providersPerReq: [
     FirstService,
     SecondService

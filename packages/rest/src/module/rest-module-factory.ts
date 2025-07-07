@@ -25,7 +25,7 @@ import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js'
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
 import { AppendsWithParams } from './module-metadata.js';
-import { restMetadata } from '#decorators/rest-metadata.js';
+import { addRest } from '#decorators/rest-metadata.js';
 import { isAppendsWithParams } from '#types/type.guards.js';
 
 export class RestImportObj<T extends Provider = Provider> {
@@ -39,7 +39,7 @@ export class RestImportObj<T extends Provider = Provider> {
 /**
  * Metadata collected using `ShallowProvidersCollector`. The target for this metadata is `DeepProvidersCollector`.
  */
-export class RestMetadataPerMod1 {
+export class AddRestPerMod1 {
   prefixPerMod: string;
   guardsPerMod1: GuardPerMod1[];
   /**
@@ -86,7 +86,7 @@ export class RestShallowProvidersCollector {
    */
   protected glProviders: GlobalProviders;
   protected restGlProviders: RestGlobalProviders;
-  protected appMetadataMap = new Map<ModRefId, RestMetadataPerMod1>();
+  protected appMetadataMap = new Map<ModRefId, AddRestPerMod1>();
   protected unfinishedScanModules = new Set<ModRefId>();
   protected moduleManager: ModuleManager;
 
@@ -124,13 +124,13 @@ export class RestShallowProvidersCollector {
   ) {
     const baseMeta = moduleManager.getMetadata(modRefId, true);
     this.baseMeta = baseMeta;
-    const meta = baseMeta.normDecorMeta.get(restMetadata) as RestNormalizedMeta | undefined;
+    const meta = baseMeta.normDecorMeta.get(addRest) as RestNormalizedMeta | undefined;
     if (!meta) {
       return this.appMetadataMap;
     }
     this.moduleManager = moduleManager;
     this.glProviders = globalProviders;
-    this.restGlProviders = globalProviders.providersFromDecorators.get(restMetadata) as RestGlobalProviders;
+    this.restGlProviders = globalProviders.providersFromDecorators.get(addRest) as RestGlobalProviders;
     this.prefixPerMod = prefixPerMod;
     this.moduleName = baseMeta.name;
     this.guardsPerMod1 = guardsPerMod1 || [];
@@ -207,7 +207,7 @@ export class RestShallowProvidersCollector {
       if (isImport) {
         this.importProviders(baseMeta);
       }
-      const meta = baseMeta.normDecorMeta.get(restMetadata) as RestNormalizedMeta | undefined;
+      const meta = baseMeta.normDecorMeta.get(addRest) as RestNormalizedMeta | undefined;
       if (!meta) {
         continue;
       }
@@ -272,7 +272,7 @@ export class RestShallowProvidersCollector {
       this.importProviders(baseMeta2);
     }
 
-    const meta = normDecorMeta.get(restMetadata) as RestNormalizedMeta | undefined;
+    const meta = normDecorMeta.get(addRest) as RestNormalizedMeta | undefined;
     if (!meta) {
       return;
     }
@@ -340,7 +340,7 @@ export class RestShallowProvidersCollector {
     const moduleName = getDebugClassName(modRefId2);
     const tokenName = token2.name || token2;
     const baseMeta2 = this.moduleManager.getMetadata(modRefId2);
-    const meta2 = baseMeta2?.normDecorMeta.get(restMetadata) as RestNormalizedMeta | undefined;
+    const meta2 = baseMeta2?.normDecorMeta.get(addRest) as RestNormalizedMeta | undefined;
     let errorMsg =
       `Resolving collisions for providersPer${level} in ${this.moduleName} failed: ` +
       `${tokenName} mapped with ${moduleName}, but `;
@@ -349,7 +349,7 @@ export class RestShallowProvidersCollector {
       throw new Error(errorMsg);
     }
     if (!meta2) {
-      errorMsg += `${moduleName} does not have a "restMetadata" decorator.`;
+      errorMsg += `${moduleName} does not have a "addRest" decorator.`;
       throw new Error(errorMsg);
     }
     const providers = getLastProviders(meta2[`providersPer${level}`]).filter((p) => getToken(p) === token2);
@@ -441,7 +441,7 @@ export class RestShallowProvidersCollector {
   protected checkImportsAndAppends(baseMeta: NormalizedMeta, meta1: RestNormalizedMeta) {
     [...meta1.appendsModules].forEach((modRefId) => {
       const appendedBaseMeta = this.moduleManager.getMetadata(modRefId, true);
-      const meta2 = appendedBaseMeta.normDecorMeta.get(restMetadata) as RestNormalizedMeta | undefined;
+      const meta2 = appendedBaseMeta.normDecorMeta.get(addRest) as RestNormalizedMeta | undefined;
       if (!meta2?.controllers.length) {
         const msg = `Appends to "${baseMeta.name}" failed: "${appendedBaseMeta.name}" must have controllers.`;
         throw new Error(msg);
