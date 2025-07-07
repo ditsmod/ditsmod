@@ -17,6 +17,10 @@ import { SystemErrorMediator } from '#error/system-error-mediator.js';
 import { ExtensionCounters } from '#extension/extension-types.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 
+/**
+ * By analyzing the dependencies of the providers returned by `ShallowProvidersCollector`,
+ * recursively collects providers for them from the corresponding modules.
+ */
 export class DeepProvidersCollector {
   protected unfinishedSearchDependecies: [ModRefId, Provider][] = [];
   protected tokensPerApp: any[];
@@ -31,7 +35,7 @@ export class DeepProvidersCollector {
     protected errorMediator: SystemErrorMediator,
   ) {}
 
-  resolve() {
+  collectProvidersDeep() {
     const levels: Level[] = ['Mod'];
     const mMetadataPerMod2 = new Map<ModRefId, MetadataPerMod2>();
     this.tokensPerApp = getTokens(this.providersPerApp);
@@ -40,7 +44,7 @@ export class DeepProvidersCollector {
       const resolveFromDecorators = new Map<AnyFn, AnyObj | undefined>();
 
       baseMeta.rawDecorMeta.forEach((initHooksAndMetadata, decorator) => {
-        const val = initHooksAndMetadata.importResolve(
+        const val = initHooksAndMetadata.collectProvidersDeep(
           this.moduleManager,
           this.appMetadataMap,
           this.providersPerApp,

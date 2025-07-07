@@ -57,7 +57,11 @@ export class InitHooksAndMetadata<T extends AnyObj> {
     return;
   }
 
-  bootstrap(
+  /**
+   * Recursively collects providers taking into account module imports/exports,
+   * but does not take provider dependencies into account.
+   */
+  collectProvidersShallow(
     globalProviders: GlobalProviders,
     modRefId: ModRefId,
     moduleManager: ModuleManager,
@@ -66,7 +70,11 @@ export class InitHooksAndMetadata<T extends AnyObj> {
     return new Map();
   }
 
-  importResolve(
+  /**
+   * By analyzing the dependencies of the providers returned by `ShallowProvidersCollector`,
+   * recursively collects providers for them from the corresponding modules.
+   */
+  collectProvidersDeep(
     moduleManager: ModuleManager,
     appMetadataMap: AppMetadataMap,
     providersPerApp: Provider[],

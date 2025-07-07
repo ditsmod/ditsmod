@@ -133,7 +133,7 @@ export class BaseAppInitializer {
       this.systemLogMediator,
       new SystemErrorMediator({ moduleName: this.baseMeta.name }),
     );
-    const { extensionCounters, mMetadataPerMod2 } = deepProvidersCollector.resolve();
+    const { extensionCounters, mMetadataPerMod2 } = deepProvidersCollector.collectProvidersDeep();
     await this.handleExtensions(mMetadataPerMod2, extensionCounters);
     const injectorPerApp = this.perAppService.reinitInjector();
     this.systemLogMediator = injectorPerApp.get(SystemLogMediator) as SystemLogMediator;
@@ -209,7 +209,7 @@ export class BaseAppInitializer {
     this.systemLogMediator.printGlobalProviders(this, globalProviders);
     const shallowProvidersCollector2 = new ShallowProvidersCollector();
     const { modRefId } = moduleManager.getMetadata('root', true);
-    return shallowProvidersCollector2.bootstrap(globalProviders, modRefId, moduleManager, new Set());
+    return shallowProvidersCollector2.collectProvidersShallow(globalProviders, modRefId, moduleManager, new Set());
   }
 
   protected async handleExtensions(

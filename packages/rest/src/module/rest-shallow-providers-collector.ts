@@ -62,6 +62,10 @@ export interface RestImportedTokensMap {
 }
 
 /**
+ * Recursively collects providers taking into account module imports/exports,
+ * but does not take provider dependencies into account.
+ * 
+ * Also:
  * - exports global providers;
  * - merges global and local providers;
  * - checks on providers collisions.
@@ -113,7 +117,7 @@ export class RestShallowProvidersCollector {
    *
    * @param modRefId Module that will bootstrapped.
    */
-  bootstrap(
+  collectProvidersShallow(
     globalProviders: GlobalProviders,
     modRefId: ModRefId,
     moduleManager: ModuleManager,
@@ -243,7 +247,7 @@ export class RestShallowProvidersCollector {
 
       const shallowProvidersCollector = new RestShallowProvidersCollector();
       this.unfinishedScanModules.add(modRefId);
-      const appMetadataMap = shallowProvidersCollector.bootstrap(
+      const appMetadataMap = shallowProvidersCollector.collectProvidersShallow(
         this.glProviders,
         modRefId,
         this.moduleManager,

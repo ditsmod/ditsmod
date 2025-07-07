@@ -24,8 +24,11 @@ import { findCycle } from '#extension/tarjan-graph.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { topologicalSort } from '#extension/topological-sort.js';
 import { ExtensionClass } from '#extension/extension-types.js';
-
 /**
+ * Recursively collects providers taking into account module imports/exports,
+ * but does not take provider dependencies into account.
+ * 
+ * Also:
  * - exports global providers;
  * - merges global and local providers;
  * - checks on providers collisions.
@@ -80,7 +83,7 @@ export class ShallowProvidersCollector {
    *
    * @param modRefId Module that will bootstrapped.
    */
-  bootstrap(
+  collectProvidersShallow(
     globalProviders: GlobalProviders,
     modRefId: ModRefId,
     moduleManager: ModuleManager,
@@ -122,7 +125,7 @@ export class ShallowProvidersCollector {
     const perDecorImportedTokensMap = new Map<AnyFn, AnyObj | undefined>();
 
     meta.rawDecorMeta.forEach((initHooksAndMetadata, decorator) => {
-      const val = initHooksAndMetadata.bootstrap(
+      const val = initHooksAndMetadata.collectProvidersShallow(
         globalProviders,
         modRefId,
         moduleManager,
@@ -154,7 +157,7 @@ export class ShallowProvidersCollector {
       }
       const shallowProvidersCollector = new ShallowProvidersCollector();
       this.unfinishedScanModules.add(modRefId);
-      const appMetadataMap = shallowProvidersCollector.bootstrap(
+      const appMetadataMap = shallowProvidersCollector.collectProvidersShallow(
         this.glProviders,
         modRefId,
         this.moduleManager,

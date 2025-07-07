@@ -39,7 +39,7 @@ class RestInitHooksAndMetadata extends InitHooksAndMetadata<AddRest> {
     return new RestShallowProvidersCollector().exportGlobalProviders(moduleManager, baseMeta);
   }
 
-  override bootstrap(
+  override collectProvidersShallow(
     ...args: [
       globalProviders: GlobalProviders,
       modRefId: ModRefId,
@@ -47,10 +47,10 @@ class RestInitHooksAndMetadata extends InitHooksAndMetadata<AddRest> {
       unfinishedScanModules: Set<ModRefId>,
     ]
   ) {
-    return new RestShallowProvidersCollector().bootstrap(...args);
+    return new RestShallowProvidersCollector().collectProvidersShallow(...args);
   }
 
-  override importResolve(
+  override collectProvidersDeep(
     moduleManager: ModuleManager,
     appMetadataMap: AppMetadataMap,
     providersPerApp: Provider[],
@@ -66,7 +66,7 @@ class RestInitHooksAndMetadata extends InitHooksAndMetadata<AddRest> {
       errorMediator,
       addRestPerMod1 as any,
     );
-    return impResolver.resolve();
+    return impResolver.collectProvidersDeep();
   }
 }
 

@@ -194,7 +194,7 @@ describe('mix per app, per mod or per req', () => {
 
     moduleManager.scanRootModule(AppModule);
     const msg = 'AppModule failed: exports from Module0 causes collision with Provider0.';
-    expect(() => mock.bootstrap([Provider0], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(
+    expect(() => mock.collectProvidersShallow([Provider0], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(
       msg,
     );
   });
@@ -214,7 +214,7 @@ describe('mix per app, per mod or per req', () => {
     class AppModule {}
 
     moduleManager.scanRootModule(AppModule);
-    const callback = () => mock.bootstrap([Provider1], new GlobalProviders(), '', AppModule, moduleManager, new Set());
+    const callback = () => mock.collectProvidersShallow([Provider1], new GlobalProviders(), '', AppModule, moduleManager, new Set());
     expect(callback).not.toThrow();
     expect([...mock.importedProvidersPerMod]).toEqual([
       [Provider1, { modRefId: Module1, providers: [{ token: Provider1, useValue: 'fake' }] }],
@@ -235,7 +235,7 @@ describe('mix per app, per mod or per req', () => {
 
     moduleManager.scanRootModule(AppModule);
     const msg = 'AppModule failed: exports from Module0 causes collision with Provider1.';
-    expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
+    expect(() => mock.collectProvidersShallow([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
   });
 
   it('resolved case 2', () => {
@@ -248,7 +248,7 @@ describe('mix per app, per mod or per req', () => {
     class AppModule {}
 
     moduleManager.scanRootModule(AppModule);
-    expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).not.toThrow();
+    expect(() => mock.collectProvidersShallow([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).not.toThrow();
     expect([...mock.importedProvidersPerReq]).toEqual([
       [Provider1, { modRefId: Module1, providers: [{ token: Provider1, useClass: Provider1 }] }],
     ]);
@@ -275,7 +275,7 @@ describe('mix per app, per mod or per req', () => {
 
     moduleManager.scanRootModule(AppModule);
     expect(() => {
-      mock.bootstrap([Provider1], new GlobalProviders(), '', AppModule, moduleManager, new Set());
+      mock.collectProvidersShallow([Provider1], new GlobalProviders(), '', AppModule, moduleManager, new Set());
     }).not.toThrow();
     expect([...mock.importedProvidersPerMod]).toEqual([]);
     expect([...mock.importedProvidersPerReq]).toEqual([[Provider1, { modRefId: Module1, providers: [Provider1] }]]);
@@ -291,7 +291,7 @@ describe('mix per app, per mod or per req', () => {
     class AppModule {}
 
     moduleManager.scanRootModule(AppModule);
-    expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).not.toThrow();
+    expect(() => mock.collectProvidersShallow([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).not.toThrow();
     expect([...mock.importedProvidersPerReq]).toEqual([]);
   });
 
@@ -306,7 +306,7 @@ describe('mix per app, per mod or per req', () => {
 
     moduleManager.scanRootModule(AppModule);
     const msg = 'AppModule failed: Provider1 mapped with AppModule, but providersPerReq does not imports Provider1';
-    expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
+    expect(() => mock.collectProvidersShallow([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
   });
 
   xit('resolve case 3', () => {
@@ -321,7 +321,7 @@ describe('mix per app, per mod or per req', () => {
     class AppModule {}
 
     moduleManager.scanRootModule(AppModule);
-    expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).not.toThrow();
+    expect(() => mock.collectProvidersShallow([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).not.toThrow();
     expect([...mock.importedProvidersPerReq]).toEqual([]);
   });
 
@@ -335,7 +335,7 @@ describe('mix per app, per mod or per req', () => {
     class AppModule {}
 
     moduleManager.scanRootModule(AppModule);
-    expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).not.toThrow();
+    expect(() => mock.collectProvidersShallow([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).not.toThrow();
     expect([...mock.importedProvidersPerReq]).toEqual([
       [Req, { modRefId: Module1, providers: [{ token: Req, useClass: Req }] }],
     ]);
@@ -355,7 +355,7 @@ describe('mix per app, per mod or per req', () => {
 
     moduleManager.scanRootModule(AppModule);
     const msg = 'AppModule failed: exports from Module0 causes collision with HttpBackend.';
-    expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
+    expect(() => mock.collectProvidersShallow([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
   });
 
   xit('resolve case 4', () => {
@@ -370,7 +370,7 @@ describe('mix per app, per mod or per req', () => {
     class AppModule {}
 
     moduleManager.scanRootModule(AppModule);
-    expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).not.toThrow();
+    expect(() => mock.collectProvidersShallow([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).not.toThrow();
     expect([...mock.importedProvidersPerReq]).toEqual([]);
   });
 
@@ -384,7 +384,7 @@ describe('mix per app, per mod or per req', () => {
     class AppModule {}
 
     moduleManager.scanRootModule(AppModule);
-    expect(() => mock.bootstrap([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).not.toThrow();
+    expect(() => mock.collectProvidersShallow([], new GlobalProviders(), '', AppModule, moduleManager, new Set())).not.toThrow();
     expect([...mock.importedProvidersPerReq]).toEqual([
       [HttpBackend, { modRefId: Module1, providers: [{ token: HttpBackend, useValue: '' }] }],
     ]);

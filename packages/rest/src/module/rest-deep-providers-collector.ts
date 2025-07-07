@@ -31,6 +31,10 @@ export class RestProvidersForMod {
   providersPerReq: Provider[] = [];
 }
 
+/**
+ * By analyzing the dependencies of the providers returned by `ShallowProvidersCollector`,
+ * recursively collects providers for them from the corresponding modules.
+ */
 export class RestDeepProvidersCollector {
   protected unfinishedSearchDependecies: [ModRefId, Provider][] = [];
   protected tokensPerApp: any[];
@@ -46,7 +50,7 @@ export class RestDeepProvidersCollector {
     protected metadataPerMod1?: AddRestPerMod1,
   ) {}
 
-  resolve() {
+  collectProvidersDeep() {
     const levels: Level[] = ['Rou', 'Req'];
     this.tokensPerApp = getTokens(this.providersPerApp);
     if (!this.metadataPerMod1) {
