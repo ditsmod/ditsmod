@@ -1,7 +1,7 @@
 import { ChainError } from '@ts-stack/chain-error';
 
 import { Injector, isMultiProvider } from '#di';
-import { ImportsResolver } from '#init/imports-resolver.js';
+import { DeepProvidersCollector } from '#init/deep-providers-collector.js';
 import { Logger } from '#logger/logger.js';
 import { SystemErrorMediator } from '#error/system-error-mediator.js';
 import { LogMediator } from '#logger/log-mediator.js';
@@ -126,14 +126,14 @@ export class BaseAppInitializer {
 
   async bootstrapModulesAndExtensions() {
     const appMetadataMap = this.bootstrapShallowProvidersCollector(this.moduleManager);
-    const importsResolver = new ImportsResolver(
+    const deepProvidersCollector = new DeepProvidersCollector(
       this.moduleManager,
       appMetadataMap,
       this.baseMeta.providersPerApp,
       this.systemLogMediator,
       new SystemErrorMediator({ moduleName: this.baseMeta.name }),
     );
-    const { extensionCounters, mMetadataPerMod2 } = importsResolver.resolve();
+    const { extensionCounters, mMetadataPerMod2 } = deepProvidersCollector.resolve();
     await this.handleExtensions(mMetadataPerMod2, extensionCounters);
     const injectorPerApp = this.perAppService.reinitInjector();
     this.systemLogMediator = injectorPerApp.get(SystemLogMediator) as SystemLogMediator;

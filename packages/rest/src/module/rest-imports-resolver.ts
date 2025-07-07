@@ -31,7 +31,7 @@ export class RestProvidersForMod {
   providersPerReq: Provider[] = [];
 }
 
-export class RestImportsResolver {
+export class RestDeepProvidersCollector {
   protected unfinishedSearchDependecies: [ModRefId, Provider][] = [];
   protected tokensPerApp: any[];
   protected extensionsTokens: any[] = [];

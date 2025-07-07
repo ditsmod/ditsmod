@@ -13,7 +13,7 @@ import { restMetadata } from '#decorators/rest-metadata.js';
  */
 @restMetadata({
   providersPerRou: [
-    RouteMeta, // In fact, the provider with this token is added dynamically. This requires `ImportsResolver`.
+    RouteMeta, // In fact, the provider with this token is added dynamically. This requires `DeepProvidersCollector`.
   ],
   exports: [RouteMeta],
 })

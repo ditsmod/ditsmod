@@ -24,7 +24,7 @@ export class GlobalProviders {
 }
 
 /**
- * Metadata collected using `ShallowProvidersCollector`. The target for this metadata is `ImportsResolver`.
+ * Metadata collected using `ShallowProvidersCollector`. The target for this metadata is `DeepProvidersCollector`.
  */
 export class MetadataPerMod1 {
   /**
@@ -46,7 +46,7 @@ export interface ImportedTokensMap {
 }
 
 /**
- * This metadata returns from `ImportsResolver`. The target for this metadata is `RoutesExtension`.
+ * This metadata returns from `DeepProvidersCollector`. The target for this metadata is `RoutesExtension`.
  */
 export class MetadataPerMod2 {
   baseMeta: NormalizedMeta;

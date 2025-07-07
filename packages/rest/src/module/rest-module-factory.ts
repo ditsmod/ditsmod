@@ -37,7 +37,7 @@ export class RestImportObj<T extends Provider = Provider> {
 }
 
 /**
- * Metadata collected using `ShallowProvidersCollector`. The target for this metadata is `ImportsResolver`.
+ * Metadata collected using `ShallowProvidersCollector`. The target for this metadata is `DeepProvidersCollector`.
  */
 export class RestMetadataPerMod1 {
   prefixPerMod: string;

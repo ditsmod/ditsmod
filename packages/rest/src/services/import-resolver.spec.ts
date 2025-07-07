@@ -4,7 +4,7 @@ import {
   forwardRef,
   GlobalProviders,
   ImportedTokensMap,
-  ImportsResolver,
+  DeepProvidersCollector,
   inject,
   injectable,
   Injector,
@@ -32,14 +32,14 @@ import { restMetadata } from '#decorators/rest-metadata.js';
 type Level = 'Mod';
 
 describe('resolve()', () => {
-  let mock: ImportsResolverMock;
+  let mock: DeepProvidersCollectorMock;
   let shallowProvidersCollector: ShallowProvidersCollector;
   let moduleManager: ModuleManager;
   let systemLogMediator: SystemLogMediator;
   let errorMediator: SystemErrorMediator;
 
   @injectable()
-  class ImportsResolverMock extends ImportsResolver {
+  class DeepProvidersCollectorMock extends DeepProvidersCollector {
     declare unfinishedSearchDependecies: [ModuleType | ModuleWithParams, Provider][];
     override resolveImportedProviders(
       targetProviders: NormalizedMeta,
@@ -69,7 +69,7 @@ describe('resolve()', () => {
   function bootstrap(mod: ModuleType) {
     expect(() => moduleManager.scanModule(mod)).not.toThrow();
     const appMetadataMap = shallowProvidersCollector.bootstrap([], new GlobalProviders(), '', mod, moduleManager, new Set());
-    mock = new ImportsResolverMock(moduleManager, appMetadataMap, [], systemLogMediator, errorMediator);
+    mock = new DeepProvidersCollectorMock(moduleManager, appMetadataMap, [], systemLogMediator, errorMediator);
     return appMetadataMap as Map<ModRefId, MetadataPerMod1>;
   }
 
@@ -80,7 +80,7 @@ describe('resolve()', () => {
     systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
     errorMediator = new SystemErrorMediator({ moduleName: 'fakeName' });
     moduleManager = new ModuleManager(systemLogMediator);
-    mock = new ImportsResolverMock(moduleManager, null as any, null as any, null as any, null as any);
+    mock = new DeepProvidersCollectorMock(moduleManager, null as any, null as any, null as any, null as any);
   });
 
   it('No import and no error is thrown even though Service2 from Module2 depends on Service1 and Module2 does not import any modules', () => {
@@ -123,7 +123,7 @@ describe('resolve()', () => {
   });
 
   it(`There is the following dependency chain: Service4 -> Service3 -> Service2 -> Service1;
-    Module3 imports Module2, which exports only Service4, but ImportsResolver imports
+    Module3 imports Module2, which exports only Service4, but DeepProvidersCollector imports
     the entire dependency chain (both from Module2 and from Module1, which is imported
     into Module2)`, () => {
     @injectable()

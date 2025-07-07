@@ -1,6 +1,6 @@
 import { forwardRef, inject, injectable, Injector, KeyRegistry } from '#di';
 
-import { ImportsResolver } from '#init/imports-resolver.js';
+import { DeepProvidersCollector } from '#init/imports-resolver.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { ImportedTokensMap } from '#types/metadata-per-mod.js';
 import { ModRefId, ModuleType, Level } from '#types/mix.js';
@@ -12,9 +12,9 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { SystemErrorMediator } from '#error/system-error-mediator.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 
-describe('ImportsResolver', () => {
+describe('DeepProvidersCollector', () => {
   @injectable()
-  class ImportsResolverMock extends ImportsResolver {
+  class DeepProvidersCollectorMock extends DeepProvidersCollector {
     declare unfinishedSearchDependecies: [ModuleType | ModuleWithParams, Provider][];
     override resolveImportedProviders(
       targetProviders: NormalizedMeta,
@@ -41,7 +41,7 @@ describe('ImportsResolver', () => {
     }
   }
 
-  let mock: ImportsResolverMock;
+  let mock: DeepProvidersCollectorMock;
   let shallowProvidersCollector: ShallowProvidersCollector;
   let moduleManager: ModuleManager;
   let systemLogMediator: SystemLogMediator;
@@ -54,7 +54,7 @@ describe('ImportsResolver', () => {
     systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
     errorMediator = new SystemErrorMediator({ moduleName: 'fakeName' });
     moduleManager = new ModuleManager(systemLogMediator);
-    mock = new ImportsResolverMock(moduleManager, null as any, null as any, null as any, null as any);
+    mock = new DeepProvidersCollectorMock(moduleManager, null as any, null as any, null as any, null as any);
   });
 
   describe('resolveImportedProviders', () => {

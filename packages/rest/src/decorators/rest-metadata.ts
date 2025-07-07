@@ -16,7 +16,7 @@ import { RestMetadata } from '#module/module-metadata.js';
 import { RestMetadataNormalizer } from '#module/rest-metadata-normalizer.js';
 import { RestShallowProvidersCollector } from '#module/rest-module-factory.js';
 import { RestNormalizedMeta } from '#types/rest-normalized-meta.js';
-import { RestImportsResolver } from '#module/rest-imports-resolver.js';
+import { RestDeepProvidersCollector } from '#module/rest-imports-resolver.js';
 
 export const restMetadata: RestMetadataDecorator = makeClassDecorator(transformMetadata);
 
@@ -56,7 +56,7 @@ class RestInitHooksAndMetadata extends InitHooksAndMetadata<RestMetadata> {
     errorMediator: SystemErrorMediator,
     restMetadataPerMod1?: AnyObj,
   ) {
-    const impResolver = new RestImportsResolver(
+    const impResolver = new RestDeepProvidersCollector(
       moduleManager,
       appMetadataMap,
       providersPerApp,

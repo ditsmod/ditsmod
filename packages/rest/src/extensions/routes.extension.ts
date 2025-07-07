@@ -21,7 +21,7 @@ import { AppOptions } from '#types/app-options.js';
 import { RestNormalizedMeta } from '#types/rest-normalized-meta.js';
 
 /**
- * This metadata returns from `ImportsResolver`. The target for this metadata is `RoutesExtension`.
+ * This metadata returns from `DeepProvidersCollector`. The target for this metadata is `RoutesExtension`.
  */
 export class RestMetadataPerMod2 extends MetadataPerMod2 {
   declare baseMeta: NormalizedMeta & RestNormalizedMeta;

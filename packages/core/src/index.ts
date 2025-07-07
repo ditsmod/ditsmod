@@ -4,7 +4,7 @@ export * from '@ts-stack/chain-error';
 export { BaseAppInitializer } from '#init/base-app-initializer.js';
 export { BaseApplication } from '#init/base-application.js';
 export { BaseAppOptions } from '#init/base-app-options.js';
-export { ImportsResolver } from '#init/imports-resolver.js';
+export { DeepProvidersCollector } from '#init/deep-providers-collector.js';
 export { ImportedTokensMap } from '#types/metadata-per-mod.js';
 export { GlobalProviders } from '#types/metadata-per-mod.js';
 export { ShallowProvidersCollector } from '#init/shallow-providers-collector.js';
