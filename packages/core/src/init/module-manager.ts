@@ -44,21 +44,21 @@ export class ModuleManager {
       throw new Error(`Module scaning failed: "${appModule.name}" does not have the "@rootModule()" decorator`);
     }
 
-    const meta = this.scanRawModule(appModule);
+    const baseMeta = this.scanRawModule(appModule);
     this.injectorPerModMap.clear();
     this.unfinishedScanModules.clear();
     this.scanedModules.clear();
     clearDebugClassNames();
     this.mapId.set('root', appModule);
-    return this.copyMeta(meta);
+    return this.copyMeta(baseMeta);
   }
 
   /**
    * Returns a snapshot of `NormalizedMeta` for a module.
    */
   scanModule(modOrObj: ModuleType | ModuleWithParams) {
-    const meta = this.scanRawModule(modOrObj);
-    return this.copyMeta(meta);
+    const baseMeta = this.scanRawModule(modOrObj);
+    return this.copyMeta(baseMeta);
   }
 
   /**
@@ -75,9 +75,9 @@ export class ModuleManager {
     throwErrIfNotFound: true,
   ): NormalizedMeta;
   getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrIfNotFound?: boolean) {
-    const meta = this.getOriginMetadata<T, A>(moduleId, throwErrIfNotFound);
-    if (meta) {
-      return this.copyMeta(meta);
+    const baseMeta = this.getOriginMetadata<T, A>(moduleId, throwErrIfNotFound);
+    if (baseMeta) {
+      return this.copyMeta(baseMeta);
     } else {
       return;
     }
@@ -163,7 +163,7 @@ export class ModuleManager {
       return false;
     }
 
-    this.map.forEach((meta, key) => this.oldMap.set(key, this.copyMeta(meta)));
+    this.map.forEach((baseMeta, key) => this.oldMap.set(key, this.copyMeta(baseMeta)));
     this.oldMapId = new Map(this.mapId);
 
     return true;
@@ -257,14 +257,14 @@ export class ModuleManager {
     return baseMeta;
   }
 
-  protected copyMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(meta: NormalizedMeta) {
-    meta = { ...(meta || ({} as NormalizedMeta)) };
-    objectKeys(meta).forEach((p) => {
-      if (Array.isArray(meta[p])) {
-        (meta as any)[p] = meta[p].slice();
+  protected copyMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(baseMeta: NormalizedMeta) {
+    baseMeta = { ...(baseMeta || ({} as NormalizedMeta)) };
+    objectKeys(baseMeta).forEach((p) => {
+      if (Array.isArray(baseMeta[p])) {
+        (baseMeta as any)[p] = baseMeta[p].slice();
       }
     });
-    return meta;
+    return baseMeta;
   }
 
   /**
@@ -282,17 +282,17 @@ export class ModuleManager {
     moduleId: ModuleId,
     throwErrIfNotFound?: boolean,
   ) {
-    let meta: NormalizedMeta | undefined;
+    let baseMeta: NormalizedMeta | undefined;
     if (typeof moduleId == 'string') {
       const mapId = this.mapId.get(moduleId);
       if (mapId) {
-        meta = this.map.get(mapId) as NormalizedMeta;
+        baseMeta = this.map.get(mapId) as NormalizedMeta;
       }
     } else {
-      meta = this.map.get(moduleId) as NormalizedMeta;
+      baseMeta = this.map.get(moduleId) as NormalizedMeta;
     }
 
-    if (throwErrIfNotFound && !meta) {
+    if (throwErrIfNotFound && !baseMeta) {
       let moduleName: string;
       if (typeof moduleId == 'string') {
         moduleName = moduleId;
@@ -302,7 +302,7 @@ export class ModuleManager {
       throw new Error(`${moduleName} not found in ModuleManager.`);
     }
 
-    return meta;
+    return baseMeta;
   }
 
   /**

@@ -260,8 +260,8 @@ export class BaseAppInitializer {
 
     for (const [modRefId, metadataPerMod2] of mMetadataPerMod2) {
       try {
-        const meta = this.overrideMetaAfterStage1(metadataPerMod2.baseMeta);
-        const injectorPerMod = await this.initModuleAndGetInjectorPerMod(meta);
+        const baseMeta = this.overrideMetaAfterStage1(metadataPerMod2.baseMeta);
+        const injectorPerMod = await this.initModuleAndGetInjectorPerMod(baseMeta);
         this.moduleManager.setInjectorPerMod(modRefId, injectorPerMod);
       } catch (err: any) {
         const debugModuleName = getDebugClassName(modRefId);
@@ -302,9 +302,9 @@ export class BaseAppInitializer {
     }
   }
 
-  protected async initModuleAndGetInjectorPerMod(meta: NormalizedMeta): Promise<Injector> {
-    const Mod = getModule(meta.modRefId);
-    const extendedProvidersPerMod = [Mod, ...meta.providersPerMod];
+  protected async initModuleAndGetInjectorPerMod(baseMeta: NormalizedMeta): Promise<Injector> {
+    const Mod = getModule(baseMeta.modRefId);
+    const extendedProvidersPerMod = [Mod, ...baseMeta.providersPerMod];
     const injectorPerApp = this.perAppService.injector;
     const injectorPerMod = injectorPerApp.resolveAndCreateChild(extendedProvidersPerMod, 'Mod');
     await injectorPerMod.get(Mod).onModuleInit?.(); // Instantiate the class of the module and call the hook.
@@ -330,12 +330,12 @@ export class BaseAppInitializer {
   }
 
   protected async handleExtensionsPerMod(
-    meta: NormalizedMeta,
+    baseMeta: NormalizedMeta,
     extensionsManager: InternalExtensionsManager,
     systemLogMediator: SystemLogMediator,
   ) {
-    systemLogMediator.sequenceOfExtensionExtensions(this, meta.aOrderedExtensions);
-    await extensionsManager.internalStage1(meta);
+    systemLogMediator.sequenceOfExtensionExtensions(this, baseMeta.aOrderedExtensions);
+    await extensionsManager.internalStage1(baseMeta);
   }
 
   /**
@@ -343,8 +343,8 @@ export class BaseAppInitializer {
    *
    * See `TestAppInitializer` in `@ditsmod/testing` for more info.
    */
-  protected overrideMetaBeforeExtensionHanling(meta: NormalizedMeta) {
-    return meta;
+  protected overrideMetaBeforeExtensionHanling(baseMeta: NormalizedMeta) {
+    return baseMeta;
   }
 
   /**
@@ -352,8 +352,8 @@ export class BaseAppInitializer {
    *
    * See `TestAppInitializer` in `@ditsmod/testing` for more info.
    */
-  protected overrideMetaAfterStage1(meta: NormalizedMeta) {
-    return meta;
+  protected overrideMetaAfterStage1(baseMeta: NormalizedMeta) {
+    return baseMeta;
   }
 
   protected decreaseExtensionsCounters(extensionCounters: ExtensionCounters, providers: Provider[]) {

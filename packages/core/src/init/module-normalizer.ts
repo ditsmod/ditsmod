@@ -58,17 +58,17 @@ export class ModuleNormalizer {
     /**
      * Setting initial properties of metadata.
      */
-    const meta = new NormalizedMeta();
-    meta.name = modName;
-    meta.modRefId = modRefId;
+    const baseMeta = new NormalizedMeta();
+    baseMeta.name = modName;
+    baseMeta.modRefId = modRefId;
 
-    aDecoratorMeta.forEach((decorAndVal) => meta.rawDecorMeta.set(decorAndVal.decorator, decorAndVal.value));
-    meta.decorator = rawMeta.decorator;
-    meta.declaredInDir = rawMeta.declaredInDir;
-    this.checkAndMarkExternalModule(isRootModule(rawMeta), meta);
-    this.normalizeModule(modName, rawMeta, meta);
-    this.normalizeDecoratorsMeta(meta);
-    return meta;
+    aDecoratorMeta.forEach((decorAndVal) => baseMeta.rawDecorMeta.set(decorAndVal.decorator, decorAndVal.value));
+    baseMeta.decorator = rawMeta.decorator;
+    baseMeta.declaredInDir = rawMeta.declaredInDir;
+    this.checkAndMarkExternalModule(isRootModule(rawMeta), baseMeta);
+    this.normalizeModule(modName, rawMeta, baseMeta);
+    this.normalizeDecoratorsMeta(baseMeta);
+    return baseMeta;
   }
 
   protected getDecoratorMeta(modRefId: ModRefId) {
@@ -94,34 +94,34 @@ export class ModuleNormalizer {
     return rawMeta;
   }
 
-  protected checkAndMarkExternalModule(isRootModule: boolean, meta: NormalizedMeta) {
-    meta.isExternal = false;
+  protected checkAndMarkExternalModule(isRootModule: boolean, baseMeta: NormalizedMeta) {
+    baseMeta.isExternal = false;
     if (isRootModule) {
-      this.rootDeclaredInDir = meta.declaredInDir;
+      this.rootDeclaredInDir = baseMeta.declaredInDir;
     } else if (this.rootDeclaredInDir) {
-      const { declaredInDir } = meta;
+      const { declaredInDir } = baseMeta;
       if (this.rootDeclaredInDir !== '.' && declaredInDir !== '.') {
         // Case when CallsiteUtils.getCallerDir() works correctly.
-        meta.isExternal = !declaredInDir.startsWith(this.rootDeclaredInDir);
+        baseMeta.isExternal = !declaredInDir.startsWith(this.rootDeclaredInDir);
       }
     }
   }
 
-  protected normalizeModule(modName: string, rawMeta: RawMeta, meta: NormalizedMeta) {
+  protected normalizeModule(modName: string, rawMeta: RawMeta, baseMeta: NormalizedMeta) {
     rawMeta.imports?.forEach((imp, i) => {
       imp = resolveForwardRef(imp);
       this.throwIfUndefined(modName, 'Imports', imp, i);
       if (isModuleWithParams(imp)) {
-        meta.importsWithParams.push(imp);
+        baseMeta.importsWithParams.push(imp);
       } else {
         // @todo check type of imported symbol
-        meta.importsModules.push(imp);
+        baseMeta.importsModules.push(imp);
       }
     });
 
     this.throwIfResolvingNormalizedProvider(modName, rawMeta);
-    this.exportFromReflectMetadata(rawMeta, modName, meta);
-    this.checkReexportModules(meta);
+    this.exportFromReflectMetadata(rawMeta, modName, baseMeta);
+    this.checkReexportModules(baseMeta);
 
     rawMeta.extensions?.forEach((extensionOrConfig, i) => {
       if (!isExtensionConfig(extensionOrConfig)) {
@@ -131,16 +131,16 @@ export class ModuleNormalizer {
       const extensionObj = getExtensionProvider(extensionOrConfig);
       extensionObj.providers.forEach((p) => this.checkStageMethodsForExtension(modName, p));
       if (extensionObj.config) {
-        meta.aExtensionConfig.push(extensionObj.config);
+        baseMeta.aExtensionConfig.push(extensionObj.config);
       }
       if (extensionObj.exportedConfig) {
-        meta.aExportedExtensionConfig.push(extensionObj.exportedConfig);
+        baseMeta.aExportedExtensionConfig.push(extensionObj.exportedConfig);
       }
-      meta.extensionsProviders.push(...extensionObj.providers);
-      meta.exportedExtensionsProviders.push(...extensionObj.exportedProviders);
+      baseMeta.extensionsProviders.push(...extensionObj.providers);
+      baseMeta.exportedExtensionsProviders.push(...extensionObj.exportedProviders);
     });
 
-    this.pickAndMergeMeta(meta, rawMeta);
+    this.pickAndMergeMeta(baseMeta, rawMeta);
   }
 
   protected throwIfUndefined(modName: string, action: 'Imports' | 'Exports', imp: unknown, i: number) {
@@ -174,7 +174,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected exportFromReflectMetadata(rawMeta: RawMeta, modName: string, meta: NormalizedMeta) {
+  protected exportFromReflectMetadata(rawMeta: RawMeta, modName: string, baseMeta: NormalizedMeta) {
     const providers: Provider[] = [];
     if (Array.isArray(rawMeta.providersPerMod)) {
       providers.push(...rawMeta.providersPerMod);
@@ -185,31 +185,31 @@ export class ModuleNormalizer {
       this.throwIfUndefined(modName, 'Exports', exp, i);
       this.throwExportsIfNormalizedProvider(modName, exp);
       if (isModuleWithParams(exp)) {
-        meta.exportsWithParams.push(exp);
+        baseMeta.exportsWithParams.push(exp);
         // if (exp.exports?.length) {
         //   this.exportFromRawMeta(exp, modName, meta);
         // }
       } else if (isProvider(exp) || getTokens(providers).includes(exp)) {
         // @todo Why here is `getTokens(providers).includes(exp)`?
-        this.findAndSetProviders(exp, rawMeta, meta);
+        this.findAndSetProviders(exp, rawMeta, baseMeta);
       } else if (this.getDecoratorMeta(exp)) {
-        meta.exportsModules.push(exp);
+        baseMeta.exportsModules.push(exp);
       } else {
         this.throwUnidentifiedToken(modName, exp);
       }
     });
   }
 
-  protected checkReexportModules(meta: NormalizedMeta) {
-    const imports = [...meta.importsModules, ...meta.importsWithParams];
-    const exports = [...meta.exportsModules, ...meta.exportsWithParams];
+  protected checkReexportModules(baseMeta: NormalizedMeta) {
+    const imports = [...baseMeta.importsModules, ...baseMeta.importsWithParams];
+    const exports = [...baseMeta.exportsModules, ...baseMeta.exportsWithParams];
 
     exports.forEach((modRefId) => {
       if (!imports.includes(modRefId)) {
         const importedModuleName = getDebugClassName(modRefId);
         const msg =
-          `Reexport from ${meta.name} failed: ${importedModuleName} includes in exports, but not includes in imports. ` +
-          `If in ${meta.name} you imports ${importedModuleName} as module with params, same object you should export (if you need reexport).`;
+          `Reexport from ${baseMeta.name} failed: ${importedModuleName} includes in exports, but not includes in imports. ` +
+          `If in ${baseMeta.name} you imports ${importedModuleName} as module with params, same object you should export (if you need reexport).`;
         throw new Error(msg);
       }
     });
@@ -287,18 +287,18 @@ export class ModuleNormalizer {
     }
   }
 
-  protected findAndSetProviders(token: any, rawMeta: RawMeta, meta: NormalizedMeta) {
+  protected findAndSetProviders(token: any, rawMeta: RawMeta, baseMeta: NormalizedMeta) {
     let found = false;
     const unfilteredProviders = [...(rawMeta.providersPerMod || [])];
     const providers = unfilteredProviders.filter((p) => getToken(p) === token);
     if (providers.length) {
       found = true;
       if (providers.some(isMultiProvider)) {
-        meta.exportedMultiProvidersPerMod ??= [];
-        meta.exportedMultiProvidersPerMod.push(...(providers as MultiProvider[]));
+        baseMeta.exportedMultiProvidersPerMod ??= [];
+        baseMeta.exportedMultiProvidersPerMod.push(...(providers as MultiProvider[]));
       } else {
-        meta.exportedProvidersPerMod ??= [];
-        meta.exportedProvidersPerMod.push(...providers);
+        baseMeta.exportedProvidersPerMod ??= [];
+        baseMeta.exportedProvidersPerMod.push(...providers);
       }
     }
 
@@ -308,11 +308,11 @@ export class ModuleNormalizer {
       const providersPerApp = [...(rawMeta.providersPerApp || [])];
       if (providersPerApp.some((p) => getToken(p) === token)) {
         msg =
-          `Exported "${providerName}" includes in "providersPerApp" and "exports" of ${meta.name}. ` +
+          `Exported "${providerName}" includes in "providersPerApp" and "exports" of ${baseMeta.name}. ` +
           'This is an error, because "providersPerApp" is always exported automatically.';
       } else {
         msg =
-          `Exporting from ${meta.name} failed: if "${providerName}" is a provider, it must be included ` +
+          `Exporting from ${baseMeta.name} failed: if "${providerName}" is a provider, it must be included ` +
           'in "providersPerMod".';
       }
       throw new Error(msg);
