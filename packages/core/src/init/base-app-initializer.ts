@@ -7,7 +7,7 @@ import { SystemErrorMediator } from '#error/system-error-mediator.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { PublicLogMediator, SystemLogMediator } from '#logger/system-log-mediator.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
-import { BaseAppOptions } from '#types/app-options.js';
+import { BaseAppOptions } from '#init/base-app-options.js';
 import { ModuleFactory } from '#init/module-factory.js';
 import { Counter } from '#extension/counter.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';

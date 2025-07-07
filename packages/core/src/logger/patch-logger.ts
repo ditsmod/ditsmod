@@ -1,5 +1,5 @@
 import { factoryMethod, optional } from '#di/decorators.js';
-import { BaseAppOptions } from '#types/app-options.js';
+import { BaseAppOptions } from '#init/base-app-options.js';
 import { ConsoleLogger } from './console-logger.js';
 import { LoggerConfig } from './logger.js';
 

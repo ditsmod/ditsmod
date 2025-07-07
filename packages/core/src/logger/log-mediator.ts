@@ -3,7 +3,7 @@ import { ModuleExtract } from '#types/module-extract.js';
 import { ConsoleLogger } from '#logger/console-logger.js';
 import { Logger, LoggerConfig, InputLogLevel, OutputLogLevel } from '#logger/logger.js';
 import { LogItem } from '#logger/types.js';
-import { BaseAppOptions } from '#types/app-options.js';
+import { BaseAppOptions } from '#init/base-app-options.js';
 
 /**
  * Mediator between the core logger and the user's custom logger.

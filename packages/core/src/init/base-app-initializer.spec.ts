@@ -16,7 +16,7 @@ import { Extension, ExtensionCounters } from '#extension/extension-types.js';
 import { ModuleExtract } from '#types/module-extract.js';
 import { ImportObj, MetadataPerMod1 } from '#types/metadata-per-mod.js';
 import { Providers } from '#utils/providers.js';
-import { BaseAppOptions } from '#types/app-options.js';
+import { BaseAppOptions } from '#init/base-app-options.js';
 
 describe('BaseAppInitializer', () => {
   type ModRefId = ModuleType | ModuleWithParams;

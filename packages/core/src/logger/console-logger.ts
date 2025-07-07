@@ -1,7 +1,7 @@
 import { injectable, optional } from '#di';
 import { InputLogLevel, Logger, LoggerConfig, OutputLogLevel } from '#logger/logger.js';
 import { AnyFn } from '#types/mix.js';
-import { BaseAppOptions } from '#types/app-options.js';
+import { BaseAppOptions } from '#init/base-app-options.js';
 
 @injectable()
 export class ConsoleLogger implements Logger {
