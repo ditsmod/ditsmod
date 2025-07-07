@@ -1,9 +1,9 @@
-import { AnyObj, ModuleType, Class, Provider, Providers, ModuleWithParams, ParamsTransferObj } from '@ditsmod/core';
+import { AnyObj, ModuleType, Class, Provider, Providers, ModuleWithParams, ModRefId } from '@ditsmod/core';
 
 import { GuardItem } from '#interceptors/guard.js';
 import { RestProvidersMetadata } from '#types/rest-normalized-meta.js';
 
-export interface RestMetadata extends ParamsTransferObj<RestModuleParams> {
+export interface RestMetadata {
   /**
    * List of provider tokens exported by this module.
    */
@@ -36,6 +36,7 @@ export interface RestMetadata extends ParamsTransferObj<RestModuleParams> {
    * The application controllers.
    */
   controllers?: Class[];
+  importsWithParams?: ({ modRefId: ModRefId } & RestModuleParams)[];
 }
 
 export type RestModuleParams = RestModuleParams1 | RestModuleParams2;

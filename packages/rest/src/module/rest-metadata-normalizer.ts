@@ -21,7 +21,6 @@ import {
   Providers,
   reflector,
   resolveForwardRef,
-  NormImportsWithParams,
 } from '@ditsmod/core';
 
 import { RestMetadata, RestModuleParams } from '#module/module-metadata.js';
@@ -213,7 +212,7 @@ export class RestMetadataNormalizer {
       }
       params.modRefId = { module: params.modRefId } as ModuleWithParams;
       return params;
-    }) as NormImportsWithParams<RestModuleParams>[];
+    }) as ({ modRefId: ModuleWithParams } & RestModuleParams)[];
   }
 
   protected checkController(Controller: Class) {

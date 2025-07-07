@@ -1,6 +1,6 @@
 import { makeClassDecorator, Provider } from '#di';
 import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
-import { AnyFn, AnyObj, AppMetadataMap, ModRefId, ModuleType, Override } from '#types/mix.js';
+import { AnyFn, AnyObj, AppMetadataMap, ModRefId, ModuleType } from '#types/mix.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { Providers } from '#utils/providers.js';
 import { CallsiteUtils } from '#utils/callsites.js';
@@ -15,25 +15,12 @@ export const featureModule: FeatureModuleDecorator = makeClassDecorator(transfor
 export interface FeatureModuleDecorator {
   (data?: ModuleMetadata): any;
 }
-
 /**
- * This interface must be extended by interfaces that describe
- * the type of data passed to custom module decorators.
+ * An object with this interface must return `perModAttachedMetadata.normalize()`.
  */
 export interface ParamsTransferObj<T extends AnyObj> {
-  importsWithParams?: ImportWithParams<T>[];
+  importsWithParams?: ({ modRefId: ModuleWithParams } & T)[];
 }
-
-export interface NormParamsTransferObj<T extends AnyObj> {
-  importsWithParams?: NormImportsWithParams<T>[];
-}
-
-export type NormImportsWithParams<T extends AnyObj> = Override<ImportWithParams<T>, { modRefId: ModuleWithParams }>;
-
-/**
- * The interface intended for `ModuleWithParams`.
- */
-export type ImportWithParams<T extends AnyObj = AnyObj> = { modRefId: ModRefId } & T;
 
 export function transformModule(data?: ModuleMetadata): PerModAttachedMetadata<RawMeta> {
   const rawMeta = Object.assign({}, data) as RawMeta;
@@ -55,7 +42,7 @@ export function transformModule(data?: ModuleMetadata): PerModAttachedMetadata<R
 export class PerModAttachedMetadata<T extends AnyObj = AnyObj> {
   constructor(public metadata = {} as T) {}
 
-  normalize?: (baseMeta: NormalizedMeta, metadata: T) => NormParamsTransferObj<AnyObj> | undefined;
+  normalize?: (baseMeta: NormalizedMeta, metadata: T) => ParamsTransferObj<AnyObj> | undefined;
   /**
    * The returned array of modules will be scanned by `ModuleManager`.
    */
