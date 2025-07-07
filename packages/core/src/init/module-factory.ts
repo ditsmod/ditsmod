@@ -31,7 +31,6 @@ import { ExtensionClass } from '#extension/extension-types.js';
  * - checks on providers collisions.
  */
 export class ModuleFactory {
-  protected providersPerApp: Provider[];
   protected moduleName: string;
   /**
    * Module metadata.
@@ -51,18 +50,17 @@ export class ModuleFactory {
   protected unfinishedScanModules = new Set<ModRefId>();
   protected moduleManager: ModuleManager;
 
-  exportGlobalProviders(moduleManager: ModuleManager, providersPerApp: Provider[]): GlobalProviders {
+  exportGlobalProviders(moduleManager: ModuleManager): GlobalProviders {
     this.moduleManager = moduleManager;
     const meta = moduleManager.getMetadata('root', true);
     this.moduleName = meta.name;
     this.meta = meta;
-    this.providersPerApp = providersPerApp;
     this.importProvidersAndExtensions(meta);
     this.checkAllCollisionsWithLevelsMix();
     const providersFromDecorators = new Map<AnyFn, AnyObj | undefined>();
 
     meta.rawDecorMeta.forEach((initHooksAndMetadata, decorator) => {
-      const val = initHooksAndMetadata.exportGlobalProviders(moduleManager, meta, providersPerApp);
+      const val = initHooksAndMetadata.exportGlobalProviders(moduleManager, meta);
       if (val) {
         providersFromDecorators.set(decorator, val);
       }
@@ -83,7 +81,6 @@ export class ModuleFactory {
    * @param modRefId Module that will bootstrapped.
    */
   bootstrap(
-    providersPerApp: Provider[],
     globalProviders: GlobalProviders,
     modRefId: ModRefId,
     moduleManager: ModuleManager,
@@ -91,7 +88,6 @@ export class ModuleFactory {
   ) {
     const meta = moduleManager.getMetadata(modRefId, true);
     this.moduleManager = moduleManager;
-    this.providersPerApp = providersPerApp;
     this.glProviders = globalProviders;
     this.moduleName = meta.name;
     this.unfinishedScanModules = unfinishedScanModules;
@@ -127,7 +123,6 @@ export class ModuleFactory {
 
     meta.rawDecorMeta.forEach((initHooksAndMetadata, decorator) => {
       const val = initHooksAndMetadata.bootstrap(
-        providersPerApp,
         globalProviders,
         modRefId,
         moduleManager,
@@ -160,7 +155,6 @@ export class ModuleFactory {
       const moduleFactory = new ModuleFactory();
       this.unfinishedScanModules.add(modRefId);
       const appMetadataMap = moduleFactory.bootstrap(
-        this.providersPerApp,
         this.glProviders,
         modRefId,
         this.moduleManager,
@@ -294,7 +288,7 @@ export class ModuleFactory {
   }
 
   protected checkAllCollisionsWithLevelsMix() {
-    this.checkCollisionsWithLevelsMix(this.providersPerApp, ['Mod']);
+    this.checkCollisionsWithLevelsMix(this.moduleManager.providersPerApp, ['Mod']);
   }
 
   protected checkCollisionsWithLevelsMix(providers: any[], levels: Level[]) {

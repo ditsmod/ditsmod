@@ -53,12 +53,11 @@ export class InitHooksAndMetadata<T extends AnyObj> {
     return [];
   }
 
-  exportGlobalProviders(moduleManager: ModuleManager, baseMeta: NormalizedMeta, providersPerApp: Provider[]): any {
+  exportGlobalProviders(moduleManager: ModuleManager, baseMeta: NormalizedMeta): any {
     return;
   }
 
   bootstrap(
-    providersPerApp: Provider[],
     globalProviders: GlobalProviders,
     modRefId: ModRefId,
     moduleManager: ModuleManager,

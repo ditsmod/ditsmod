@@ -15,9 +15,8 @@ import { ExtensionsContext } from '#extension/extensions-context.js';
 import { ExtensionsManager, InternalExtensionsManager } from '#extension/extensions-manager.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { PerAppService } from '#services/per-app.service.js';
-import { ModRefId, ModuleType } from '#types/mix.js';
+import { ModRefId } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
 import { ExtensionCounters } from '#extension/extension-types.js';
 import { getCollisions } from '#utils/get-collisions.js';
 import { getDuplicates } from '#utils/get-duplicates.js';
@@ -25,7 +24,6 @@ import { getLastProviders } from '#utils/get-last-providers.js';
 import { getProvidersTargets, getToken, getTokens } from '#utils/get-tokens.js';
 import { normalizeProviders } from '#utils/ng-utils.js';
 import { throwProvidersCollisionError } from '#utils/throw-providers-collision-error.js';
-import { isRootModule } from '#utils/type-guards.js';
 import { MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { getModule } from '#utils/get-module.js';
@@ -34,7 +32,6 @@ import { getDebugClassName } from '#utils/get-debug-class-name.js';
 export class BaseAppInitializer {
   protected perAppService = new PerAppService();
   protected baseMeta: NormalizedMeta;
-  protected unfinishedScanModules = new Set<ModuleType | ModuleWithParams>();
 
   constructor(
     protected baseAppOptions: BaseAppOptions,
@@ -61,8 +58,7 @@ export class BaseAppInitializer {
   protected prepareProvidersPerApp() {
     // Here we work only with providers declared at the application level.
 
-    this.unfinishedScanModules.clear();
-    const exportedProviders = this.collectProvidersPerApp(this.baseMeta);
+    const exportedProviders = this.moduleManager.providersPerApp;
     const exportedNormProviders = normalizeProviders(exportedProviders);
     const exportedTokens = exportedNormProviders.map((np) => np.token);
     const exportedMultiTokens = exportedNormProviders.filter((np) => np.multi).map((np) => np.token);
@@ -81,34 +77,6 @@ export class BaseAppInitializer {
     }
     exportedProviders.push(...this.getResolvedCollisionsPerApp());
     this.baseMeta.providersPerApp.unshift(...getLastProviders(exportedProviders));
-  }
-
-  /**
-   * Recursively collects per app providers from feature modules.
-   */
-  protected collectProvidersPerApp(baseMeta1: NormalizedMeta) {
-    const aModRefId: ModRefId[] = [
-      // ...baseMeta1.appendsModules,
-      // ...baseMeta1.appendsWithParams,
-      ...baseMeta1.importsModules,
-      ...baseMeta1.importsWithParams,
-      ...baseMeta1.exportsModules,
-      ...baseMeta1.exportsWithParams,
-    ];
-    const providersPerApp: Provider[] = [];
-    // Removes duplicate (because of reexports modules)
-    for (const modRefId of new Set(aModRefId)) {
-      if (this.unfinishedScanModules.has(modRefId)) {
-        continue;
-      }
-      const baseMeta2 = this.moduleManager.getMetadata(modRefId, true);
-      this.unfinishedScanModules.add(modRefId);
-      providersPerApp.push(...this.collectProvidersPerApp(baseMeta2));
-      this.unfinishedScanModules.delete(modRefId);
-    }
-    const currProvidersPerApp = isRootModule(baseMeta1) ? [] : baseMeta1.providersPerApp;
-
-    return [...providersPerApp, ...currProvidersPerApp];
   }
 
   protected findModulesCausedCollisions(collisions: any[]) {
@@ -237,11 +205,11 @@ export class BaseAppInitializer {
 
   protected bootstrapModuleFactory(moduleManager: ModuleManager) {
     const moduleFactory1 = new ModuleFactory();
-    const globalProviders = moduleFactory1.exportGlobalProviders(moduleManager, this.baseMeta.providersPerApp);
+    const globalProviders = moduleFactory1.exportGlobalProviders(moduleManager);
     this.systemLogMediator.printGlobalProviders(this, globalProviders);
     const moduleFactory2 = new ModuleFactory();
     const { modRefId } = moduleManager.getMetadata('root', true);
-    return moduleFactory2.bootstrap(this.baseMeta.providersPerApp, globalProviders, modRefId, moduleManager, new Set());
+    return moduleFactory2.bootstrap(globalProviders, modRefId, moduleManager, new Set());
   }
 
   protected async handleExtensions(

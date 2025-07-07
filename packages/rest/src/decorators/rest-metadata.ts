@@ -33,13 +33,12 @@ class RestInitHooksAndMetadata extends InitHooksAndMetadata<RestMetadata> {
     return meta.appendsModules.concat(meta.appendsWithParams as any[]);
   }
 
-  override exportGlobalProviders(moduleManager: ModuleManager, baseMeta: NormalizedMeta, providersPerApp: Provider[]) {
-    return new RestModuleFactory().exportGlobalProviders(moduleManager, baseMeta, providersPerApp);
+  override exportGlobalProviders(moduleManager: ModuleManager, baseMeta: NormalizedMeta) {
+    return new RestModuleFactory().exportGlobalProviders(moduleManager, baseMeta);
   }
 
   override bootstrap(
     ...args: [
-      providersPerApp: Provider[],
       globalProviders: GlobalProviders,
       modRefId: ModRefId,
       moduleManager: ModuleManager,

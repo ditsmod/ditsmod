@@ -53,6 +53,70 @@ describe('ModuleManager', () => {
     mock = new MockModuleManager(systemLogMediator);
   });
 
+  describe('providersPerApp', () => {
+    class Provider0 {}
+    class Provider1 {}
+    class Provider2 {}
+    class Provider3 {}
+    class Provider4 {}
+    class Provider5 {}
+    class Provider6 {}
+    class Provider7 {}
+
+    @featureModule({ providersPerApp: [Provider0] })
+    class Module0 {}
+
+    @featureModule({ providersPerApp: [Provider1] })
+    class Module1 {}
+
+    @featureModule({
+      providersPerApp: [Provider2, Provider3, Provider4],
+      imports: [Module1],
+    })
+    class Module2 {}
+
+    @featureModule({
+      providersPerApp: [Provider5, Provider6],
+      imports: [Module2],
+    })
+    class Module3 {}
+
+    @rootModule({
+      imports: [Module3, Module0],
+      providersPerApp: [{ token: Provider1, useClass: Provider7 }],
+      exports: [Module0],
+    })
+    class AppModule {}
+
+    it('should collects providers from exports array without imports them', () => {
+      mock.scanRootModule(AppModule);
+      const providersPerApp = mock.providersPerApp;
+      expect(providersPerApp.includes(Provider0)).toBe(true);
+    });
+
+    it('should collects providers in particular order', () => {
+      mock.scanRootModule(AppModule);
+      const providersPerApp = mock.providersPerApp;
+      expect(providersPerApp).toEqual([Provider1, Provider2, Provider3, Provider4, Provider5, Provider6, Provider0]);
+    });
+
+    it('should works with baseModuleWithParams', () => {
+      @featureModule({})
+      class Module6 {
+        static withParams(providers: Provider[]): ModuleWithParams<Module6> {
+          return {
+            module: Module6,
+            providersPerApp: providers,
+          };
+        }
+      }
+      const modWithParams = Module6.withParams([Provider7]);
+      mock.scanModule(modWithParams);
+      const providersPerApp = mock.providersPerApp;
+      expect(providersPerApp).toEqual([Provider7]);
+    });
+  });
+
   it('circular imports modules "Module1 -> Module3 -> Module2 -> Module1" with forwardRef()', () => {
     @featureModule({ providersPerApp: [Provider1], imports: [forwardRef(() => Module3)] })
     class Module1 {}

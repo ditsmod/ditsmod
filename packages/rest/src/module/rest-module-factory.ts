@@ -67,7 +67,6 @@ export interface RestImportedTokensMap {
  * - checks on providers collisions.
  */
 export class RestModuleFactory {
-  protected providersPerApp: Provider[];
   protected moduleName: string;
   protected prefixPerMod: string;
   protected guardsPerMod1: GuardPerMod1[];
@@ -94,11 +93,9 @@ export class RestModuleFactory {
   exportGlobalProviders(
     moduleManager: ModuleManager,
     baseMeta: NormalizedMeta,
-    providersPerApp: Provider[],
   ): RestGlobalProviders {
     this.moduleManager = moduleManager;
     this.moduleName = baseMeta.name;
-    this.providersPerApp = providersPerApp;
     this.baseMeta = baseMeta;
     this.importProviders(baseMeta);
     this.checkAllCollisionsWithLevelsMix();
@@ -117,7 +114,6 @@ export class RestModuleFactory {
    * @param modRefId Module that will bootstrapped.
    */
   bootstrap(
-    providersPerApp: Provider[],
     globalProviders: GlobalProviders,
     modRefId: ModRefId,
     moduleManager: ModuleManager,
@@ -133,7 +129,6 @@ export class RestModuleFactory {
       return this.appMetadataMap;
     }
     this.moduleManager = moduleManager;
-    this.providersPerApp = providersPerApp;
     this.glProviders = globalProviders;
     this.restGlProviders = globalProviders.providersFromDecorators.get(restMetadata) as RestGlobalProviders;
     this.prefixPerMod = prefixPerMod;
@@ -249,7 +244,6 @@ export class RestModuleFactory {
       const moduleFactory = new RestModuleFactory();
       this.unfinishedScanModules.add(modRefId);
       const appMetadataMap = moduleFactory.bootstrap(
-        this.providersPerApp,
         this.glProviders,
         modRefId,
         this.moduleManager,
@@ -386,7 +380,7 @@ export class RestModuleFactory {
   }
 
   protected checkAllCollisionsWithLevelsMix() {
-    this.checkCollisionsWithLevelsMix(this.providersPerApp, ['Rou']);
+    this.checkCollisionsWithLevelsMix(this.moduleManager.providersPerApp, ['Rou']);
     const providersPerRou = [
       ...defaultProvidersPerRou,
       ...this.meta.providersPerRou,

@@ -1,7 +1,7 @@
 import { format } from 'util';
 import { ChainError } from '@ts-stack/chain-error';
 
-import { injectable, Injector, reflector } from '#di';
+import { injectable, Injector, Provider, reflector } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyObj, ModuleType, ModRefId } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
@@ -21,6 +21,7 @@ type ModuleId = string | ModRefId;
  */
 @injectable()
 export class ModuleManager {
+  providersPerApp: Provider[] = [];
   protected injectorPerModMap = new Map<ModRefId, Injector>();
   protected map: ModulesMap = new Map();
   protected mapId = new Map<'root' | (string & {}), ModRefId>();
@@ -38,6 +39,7 @@ export class ModuleManager {
    * You can also get the result this way: `moduleManager.getMetadata('root')`.
    */
   scanRootModule(appModule: ModuleType) {
+    this.providersPerApp = [];
     if (!reflector.getDecorators(appModule, isRootModule)) {
       throw new Error(`Module scaning failed: "${appModule.name}" does not have the "@rootModule()" decorator`);
     }
@@ -221,10 +223,10 @@ export class ModuleManager {
    * Here "raw" means that it returns "raw" normalized metadata (without `this.copyMeta()`).
    */
   protected scanRawModule(modRefId: ModRefId) {
-    const meta = this.normalizeMetadata(modRefId);
+    const baseMeta = this.normalizeMetadata(modRefId);
     const importsOrExports: (ModuleWithParams | ModuleType)[] = [];
-    meta.rawDecorMeta.forEach((initHooksAndMetadata, decorator) => {
-      const meta2 = meta.normDecorMeta.get(decorator);
+    baseMeta.rawDecorMeta.forEach((initHooksAndMetadata, decorator) => {
+      const meta2 = baseMeta.normDecorMeta.get(decorator);
       if (meta2) {
         importsOrExports.push(...initHooksAndMetadata.addModulesToScan(meta2));
       }
@@ -232,7 +234,7 @@ export class ModuleManager {
 
     // Merging arrays with this props in one array.
     const inputs = this.propsWithModules
-      .map((p) => meta[p])
+      .map((p) => baseMeta[p])
       .reduce<ModRefId[]>((prev, curr) => prev.concat(curr), importsOrExports);
 
     for (const input of inputs) {
@@ -245,12 +247,14 @@ export class ModuleManager {
       this.scanedModules.add(input);
     }
 
-    if (meta.id) {
-      this.mapId.set(meta.id, modRefId);
-      this.systemLogMediator.moduleHasId(this, meta.id);
+    if (baseMeta.id) {
+      this.mapId.set(baseMeta.id, modRefId);
+      this.systemLogMediator.moduleHasId(this, baseMeta.id);
     }
-    this.map.set(modRefId, meta);
-    return meta;
+    const providersPerApp = isRootModule(baseMeta) ? [] : baseMeta.providersPerApp;
+    this.providersPerApp.push(...providersPerApp);
+    this.map.set(modRefId, baseMeta);
+    return baseMeta;
   }
 
   protected copyMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(meta: NormalizedMeta) {
