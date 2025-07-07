@@ -10,7 +10,7 @@ In fact, unit testing is a testing method that allows you to verify that the sma
 
 One of the most popular frameworks for writing unit tests for JavaScript code is [jest][100]. In this section, we will use this framework.
 
-## Prerequisites for writing unit tests
+## Unit testing {#unit-testing}
 
 A good knowledge of the [Ditsmod DI][1] architecture will help you easily write unit tests for Ditsmod applications, as one of the main advantages of DI is the ease of testing. First, you need to learn how to work with [injectors][2] and the [injector hierarchy][3].
 
