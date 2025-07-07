@@ -61,10 +61,10 @@ export class ModuleFactory {
     this.checkAllCollisionsWithLevelsMix();
     const providersFromDecorators = new Map<AnyFn, AnyObj | undefined>();
 
-    meta.aDecoratorMeta.forEach((decorAndVal) => {
-      const val = decorAndVal.value.exportGlobalProviders(moduleManager, meta, providersPerApp);
+    meta.rawDecorMeta.forEach((initHooksAndMetadata, decorator) => {
+      const val = initHooksAndMetadata.exportGlobalProviders(moduleManager, meta, providersPerApp);
       if (val) {
-        providersFromDecorators.set(decorAndVal.decorator, val);
+        providersFromDecorators.set(decorator, val);
       }
     });
 
@@ -125,8 +125,8 @@ export class ModuleFactory {
     meta.aOrderedExtensions = topologicalSort<ExtensionClass, ExtensionConfigBase>(allExtensionConfigs, true);
     const perDecorImportedTokensMap = new Map<AnyFn, AnyObj | undefined>();
 
-    meta.aDecoratorMeta.forEach((decorAndVal) => {
-      const val = decorAndVal.value.bootstrap(
+    meta.rawDecorMeta.forEach((initHooksAndMetadata, decorator) => {
+      const val = initHooksAndMetadata.bootstrap(
         providersPerApp,
         globalProviders,
         modRefId,
@@ -134,7 +134,7 @@ export class ModuleFactory {
         unfinishedScanModules,
       );
       if (val) {
-        perDecorImportedTokensMap.set(decorAndVal.decorator, val);
+        perDecorImportedTokensMap.set(decorator, val);
       }
     });
 

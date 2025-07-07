@@ -14,7 +14,7 @@ import {
   getExtensionProvider,
   isConfigWithOverrideExtension,
 } from '#extension/get-extension-provider.js';
-import { AnyObj, ModRefId } from '#types/mix.js';
+import { AnyFn, AnyObj, ModRefId } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { InitHooksAndMetadata, RawMeta } from '#decorators/feature-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
@@ -62,12 +62,12 @@ export class ModuleNormalizer {
     meta.name = modName;
     meta.modRefId = modRefId;
 
-    meta.aDecoratorMeta = aDecoratorMeta;
+    aDecoratorMeta.forEach((decorAndVal) => meta.rawDecorMeta.set(decorAndVal.decorator, decorAndVal.value));
     meta.decorator = rawMeta.decorator;
     meta.declaredInDir = rawMeta.declaredInDir;
     this.checkAndMarkExternalModule(isRootModule(rawMeta), meta);
     this.normalizeModule(modName, rawMeta, meta);
-    this.normalizeDecoratorsMeta(meta, aDecoratorMeta);
+    this.normalizeDecoratorsMeta(meta);
     return meta;
   }
 
@@ -319,11 +319,11 @@ export class ModuleNormalizer {
     }
   }
 
-  protected normalizeDecoratorsMeta(meta1: NormalizedMeta, aDecoratorMeta: DecoratorAndValue<InitHooksAndMetadata<AnyObj>>[]) {
-    aDecoratorMeta.forEach((decorAndVal) => {
-      const meta2 = decorAndVal.value.normalize(meta1, decorAndVal.value.metadata);
+  protected normalizeDecoratorsMeta(meta1: NormalizedMeta) {
+    meta1.rawDecorMeta.forEach((initHooksAndMetadata, decorator) => {
+      const meta2 = initHooksAndMetadata.normalize(meta1, initHooksAndMetadata.metadata);
       if (meta2) {
-        meta1.normDecorMeta.set(decorAndVal.decorator, meta2);
+        meta1.normDecorMeta.set(decorator, meta2);
         const aModuleWithParams = meta2?.importsWithParams?.map((param) => param.modRefId);
         meta1.importsWithParams.push(...(aModuleWithParams || []));
       }

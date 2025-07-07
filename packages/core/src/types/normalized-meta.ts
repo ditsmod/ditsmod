@@ -29,10 +29,12 @@ export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj
    * Indicates whether this module is external to the application.
    */
   isExternal: boolean;
-  aDecoratorMeta: DecoratorAndValue<InitHooksAndMetadata<AnyObj>>[] = [];
   /**
-   * This property contains normalized metadata collected from each additional
-   * module decorator except `featureModule` and `rootModule`.
+   * Contains raw metadata collected from init module decorators.
+   */
+  rawDecorMeta = new Map<AnyFn, InitHooksAndMetadata<AnyObj>>();
+  /**
+   * Contains normalized metadata collected from init module decorators.
    */
   normDecorMeta = new Map<AnyFn, AnyObj | undefined>();
 

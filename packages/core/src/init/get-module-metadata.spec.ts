@@ -24,8 +24,8 @@ describe('ModuleNormalizer.getDecoratorMeta()', () => {
   const mockModuleNormalizer = new MockModuleNormalizer();
   function getModuleMetadata(modRefId: ModRefId) {
     modRefId = resolveForwardRef(modRefId);
-    const aDecoratorMeta = mockModuleNormalizer.getDecoratorMeta(modRefId) || [];
-    const aRawMeta = aDecoratorMeta.map((d) => {
+    const rawDecorMeta = mockModuleNormalizer.getDecoratorMeta(modRefId) || [];
+    const aRawMeta = rawDecorMeta.map((d) => {
       let rawMeta = d.value.metadata as RawMeta;
       if (isModuleWithParams(modRefId)) {
         rawMeta = mockModuleNormalizer.mergeModuleWithParams(modRefId, rawMeta);
