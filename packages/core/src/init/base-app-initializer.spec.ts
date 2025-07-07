@@ -42,8 +42,8 @@ describe('BaseAppInitializer', () => {
       return super.prepareProvidersPerApp();
     }
 
-    override bootstrapShallowProvidersCollector(moduleManager: ModuleManager) {
-      return super.bootstrapShallowProvidersCollector(moduleManager);
+    override collectProvidersShallow(moduleManager: ModuleManager) {
+      return super.collectProvidersShallow(moduleManager);
     }
 
     override getResolvedCollisionsPerApp() {

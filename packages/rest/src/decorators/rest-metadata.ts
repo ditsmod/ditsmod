@@ -51,20 +51,22 @@ class RestInitHooksAndMetadata extends InitHooksAndMetadata<AddRest> {
   }
 
   override collectProvidersDeep(
+    baseMeta: NormalizedMeta,
     moduleManager: ModuleManager,
     appMetadataMap: AppMetadataMap,
     providersPerApp: Provider[],
     log: SystemLogMediator,
     errorMediator: SystemErrorMediator,
-    addRestPerMod1?: AnyObj,
+    restMetadataPerMod1?: AnyObj,
   ) {
     const impResolver = new RestDeepProvidersCollector(
+      baseMeta,
       moduleManager,
       appMetadataMap,
       providersPerApp,
       log,
       errorMediator,
-      addRestPerMod1 as any,
+      restMetadataPerMod1 as any,
     );
     return impResolver.collectProvidersDeep();
   }

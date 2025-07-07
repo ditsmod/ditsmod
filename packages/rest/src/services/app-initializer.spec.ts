@@ -44,16 +44,12 @@ class AppInitializerMock extends AppInitializer {
     await this.bootstrapModulesAndExtensions();
   }
 
-  override collectProvidersPerApp(meta: NormalizedMeta) {
-    return super.collectProvidersPerApp(meta);
-  }
-
   override prepareProvidersPerApp() {
     return super.prepareProvidersPerApp();
   }
 
-  override bootstrapShallowProvidersCollector(moduleManager: ModuleManager) {
-    return super.bootstrapShallowProvidersCollector(moduleManager);
+  override collectProvidersShallow(moduleManager: ModuleManager) {
+    return super.collectProvidersShallow(moduleManager);
   }
 
   override getResolvedCollisionsPerApp() {
@@ -138,7 +134,7 @@ describe('exports/imports', () => {
     const appOptions = new AppOptions();
     mock = new AppInitializerMock(appOptions, moduleManager, systemLogMediator);
     moduleManager.scanRootModule(AppModule);
-    appMetadataMap = mock.bootstrapShallowProvidersCollector(moduleManager);
+    appMetadataMap = mock.collectProvidersShallow(moduleManager);
   });
 
   function checkGlobalProviders(metadataPerMod1: MetadataPerMod1 | undefined) {
@@ -217,7 +213,7 @@ describe('exports/imports', () => {
 
   it('Module4', async () => {
     moduleManager.scanRootModule(AppModule);
-    const appMetadataMap = mock.bootstrapShallowProvidersCollector(moduleManager);
+    const appMetadataMap = mock.collectProvidersShallow(moduleManager);
     const mod4 = appMetadataMap.get(module4WithParams);
     expect(mod4?.baseMeta.providersPerApp).toEqual([]);
     const moduleExtract: ModuleExtract = { path: '', moduleName: 'Module4', isExternal: false };
@@ -229,7 +225,7 @@ describe('exports/imports', () => {
 
   it('AppModule', async () => {
     moduleManager.scanRootModule(AppModule);
-    const appMetadataMap = mock.bootstrapShallowProvidersCollector(moduleManager);
+    const appMetadataMap = mock.collectProvidersShallow(moduleManager);
     const root1 = appMetadataMap.get(AppModule);
     expect(root1?.baseMeta.providersPerApp.slice(0, 2)).toEqual([Logger, { token: Router, useValue: 'fake' }]);
     const moduleExtract: ModuleExtract = { path: '', moduleName: 'AppModule', isExternal: false };

@@ -125,7 +125,7 @@ export class BaseAppInitializer {
   }
 
   async bootstrapModulesAndExtensions() {
-    const appMetadataMap = this.bootstrapShallowProvidersCollector(this.moduleManager);
+    const appMetadataMap = this.collectProvidersShallow(this.moduleManager);
     const deepProvidersCollector = new DeepProvidersCollector(
       this.moduleManager,
       appMetadataMap,
@@ -203,7 +203,7 @@ export class BaseAppInitializer {
     this.systemLogMediator = injectorPerApp.get(SystemLogMediator) as SystemLogMediator;
   }
 
-  protected bootstrapShallowProvidersCollector(moduleManager: ModuleManager) {
+  protected collectProvidersShallow(moduleManager: ModuleManager) {
     const shallowProvidersCollector1 = new ShallowProvidersCollector();
     const globalProviders = shallowProvidersCollector1.exportGlobalProviders(moduleManager);
     this.systemLogMediator.printGlobalProviders(this, globalProviders);

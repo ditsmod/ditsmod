@@ -75,6 +75,7 @@ export class InitHooksAndMetadata<T extends AnyObj> {
    * recursively collects providers for them from the corresponding modules.
    */
   collectProvidersDeep(
+    baseMeta: NormalizedMeta,
     moduleManager: ModuleManager,
     appMetadataMap: AppMetadataMap,
     providersPerApp: Provider[],

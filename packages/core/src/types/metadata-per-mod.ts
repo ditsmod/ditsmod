@@ -45,10 +45,7 @@ export interface ImportedTokensMap {
   extensions: Map<ModuleType | ModuleWithParams, Provider[]>;
 }
 
-/**
- * This metadata returns from `DeepProvidersCollector`. The target for this metadata is `RoutesExtension`.
- */
 export class MetadataPerMod2 {
   baseMeta: NormalizedMeta;
-  resolveFromDecorators: Map<AnyFn, AnyObj | undefined>;
+  deepCollectedProviders: Map<AnyFn, AnyObj | undefined>;
 }

@@ -1,14 +1,5 @@
 import { inspect } from 'node:util';
-import {
-  injectable,
-  Extension,
-  Provider,
-  reflector,
-  Class,
-  HttpMethod,
-  NormalizedMeta,
-  MetadataPerMod2,
-} from '@ditsmod/core';
+import { injectable, Extension, Provider, reflector, Class, HttpMethod, MetadataPerMod2 } from '@ditsmod/core';
 
 import { MetadataPerMod3 } from '#types/types.js';
 import { isCtrlDecor, isRoute } from '#types/type.guards.js';
@@ -18,16 +9,8 @@ import { RouteMeta } from '#types/route-data.js';
 import { GuardItem, GuardPerMod1 } from '#interceptors/guard.js';
 import { ControllerRawMetadata1 } from '#types/controller.js';
 import { AppOptions } from '#types/app-options.js';
-import { RestNormalizedMeta } from '#types/rest-normalized-meta.js';
-
-/**
- * This metadata returns from `DeepProvidersCollector`. The target for this metadata is `RoutesExtension`.
- */
-export class AddRestPerMod2 extends MetadataPerMod2 {
-  declare baseMeta: NormalizedMeta & RestNormalizedMeta;
-  applyControllers?: boolean;
-  guardsPerMod1: GuardPerMod1[];
-}
+import { addRest } from '#decorators/rest-metadata.js';
+import { RestMetadataPerMod2 } from '#module/rest-deep-providers-collector.js';
 
 @injectable()
 export class RoutesExtension implements Extension<MetadataPerMod3> {
@@ -35,26 +18,28 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
 
   constructor(
     protected appOptions: AppOptions,
-    protected metadataPerMod2: AddRestPerMod2,
+    protected metadataPerMod2: MetadataPerMod2,
   ) {}
 
   async stage1() {
+    const restMetadataPerMod2 = this.metadataPerMod2.deepCollectedProviders.get(addRest) as RestMetadataPerMod2;
+    this.metadataPerMod3.meta = restMetadataPerMod2.meta;
     const { path: prefixPerApp } = this.appOptions;
     this.metadataPerMod3 = new MetadataPerMod3();
-    this.metadataPerMod3.meta = this.metadataPerMod2.baseMeta;
-    this.metadataPerMod3.aControllerMetadata = this.getControllersMetadata(prefixPerApp, this.metadataPerMod2);
-    this.metadataPerMod3.guardsPerMod1 = this.metadataPerMod2.guardsPerMod1;
+    this.metadataPerMod3.baseMeta = this.metadataPerMod2.baseMeta;
+    this.metadataPerMod3.aControllerMetadata = this.getControllersMetadata(prefixPerApp, restMetadataPerMod2);
+    this.metadataPerMod3.guardsPerMod1 = restMetadataPerMod2.guardsPerMod1;
     this.metadataPerMod3.guardsPerMod1 = [];
 
     return this.metadataPerMod3;
   }
 
-  protected getControllersMetadata(prefixPerApp: string = '', metadataPerMod2: AddRestPerMod2) {
-    const { prefixPerMod, baseMeta: meta, applyControllers } = metadataPerMod2;
+  protected getControllersMetadata(prefixPerApp: string = '', restMetadataPerMod2: RestMetadataPerMod2) {
+    const { baseMeta, prefixPerMod, applyControllers } = restMetadataPerMod2;
 
     const aControllerMetadata: ControllerMetadata[] = [];
     if (applyControllers)
-      for (const Controller of metadataPerMod2.baseMeta.controllers as Class<Record<string | symbol, any>>[]) {
+      for (const Controller of restMetadataPerMod2.meta.controllers as Class<Record<string | symbol, any>>[]) {
         const classMeta = reflector.getMetadata(Controller)!;
         for (const methodName of classMeta) {
           for (const decoratorAndValue of classMeta[methodName].decorators) {
@@ -67,7 +52,7 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
             const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
             const scope = ctrlDecorator?.value.scope;
             if (scope == 'ctx') {
-              meta.providersPerMod.unshift(Controller);
+              baseMeta.providersPerMod.unshift(Controller);
             }
             const { path: controllerPath, httpMethod, interceptors } = route;
             const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');

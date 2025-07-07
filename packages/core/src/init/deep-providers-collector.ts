@@ -41,10 +41,11 @@ export class DeepProvidersCollector {
     this.tokensPerApp = getTokens(this.providersPerApp);
     this.appMetadataMap.forEach((metadataPerMod1) => {
       const { baseMeta, importedTokensMap, perDecorImportedTokensMap } = metadataPerMod1;
-      const resolveFromDecorators = new Map<AnyFn, AnyObj | undefined>();
+      const deepCollectedProviders = new Map<AnyFn, AnyObj | undefined>();
 
       baseMeta.rawDecorMeta.forEach((initHooksAndMetadata, decorator) => {
         const val = initHooksAndMetadata.collectProvidersDeep(
+          baseMeta,
           this.moduleManager,
           this.appMetadataMap,
           this.providersPerApp,
@@ -54,11 +55,11 @@ export class DeepProvidersCollector {
         );
 
         if (val) {
-          resolveFromDecorators.set(decorator, val);
+          deepCollectedProviders.set(decorator, val);
         }
       });
 
-      mMetadataPerMod2.set(baseMeta.modRefId, { baseMeta, resolveFromDecorators });
+      mMetadataPerMod2.set(baseMeta.modRefId, { baseMeta, deepCollectedProviders });
       this.resolveImportedProviders(baseMeta, importedTokensMap, levels);
       this.resolveProvidersForExtensions(baseMeta, importedTokensMap);
     });

@@ -21,14 +21,26 @@ import {
 import { Level } from '#types/types.js';
 import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
-import { RestImportedTokensMap, AddRestPerMod1 } from './rest-shallow-providers-collector.js';
+import { RestImportedTokensMap, RestMetadataPerMod1 } from './rest-shallow-providers-collector.js';
 import { RestNormalizedMeta } from '#types/rest-normalized-meta.js';
 import { addRest } from '#decorators/rest-metadata.js';
+import { GuardPerMod1 } from '#interceptors/guard.js';
 
 export class RestProvidersForMod {
   // providersPerMod: Provider[] = [];
   providersPerRou: Provider[] = [];
   providersPerReq: Provider[] = [];
+}
+
+/**
+ * This metadata returns from `DeepProvidersCollector`. The target for this metadata is `RoutesExtension`.
+ */
+export class RestMetadataPerMod2 {
+  baseMeta: NormalizedMeta;
+  meta: RestNormalizedMeta;
+  guardsPerMod1: GuardPerMod1[];
+  prefixPerMod: string;
+  applyControllers?: boolean;
 }
 
 /**
@@ -42,28 +54,31 @@ export class RestDeepProvidersCollector {
   protected extensionCounters = new ExtensionCounters();
 
   constructor(
-    private moduleManager: ModuleManager,
+    protected baseMeta: NormalizedMeta,
+    protected moduleManager: ModuleManager,
     protected appMetadataMap: AppMetadataMap,
     protected providersPerApp: Provider[],
     protected log: SystemLogMediator,
     protected errorMediator: SystemErrorMediator,
-    protected metadataPerMod1?: AddRestPerMod1,
+    protected metadataPerMod1?: RestMetadataPerMod1,
   ) {}
 
-  collectProvidersDeep() {
+  collectProvidersDeep(): RestMetadataPerMod2 | undefined {
     const levels: Level[] = ['Rou', 'Req'];
     this.tokensPerApp = getTokens(this.providersPerApp);
     if (!this.metadataPerMod1) {
       return;
     }
-    const { importedTokensMap, guardsPerMod1, prefixPerMod, meta } = this.metadataPerMod1;
+    const { importedTokensMap, guardsPerMod1, prefixPerMod, meta, applyControllers } = this.metadataPerMod1;
     this.resolveImportedProviders(meta, importedTokensMap, levels);
     meta.providersPerRou.unshift(...defaultProvidersPerRou);
     meta.providersPerReq.unshift(...defaultProvidersPerReq);
     return {
+      baseMeta: this.baseMeta,
       meta,
       guardsPerMod1,
       prefixPerMod,
+      applyControllers,
     };
   }
 
@@ -153,8 +168,8 @@ export class RestDeepProvidersCollector {
     let found = false;
     const metadataPerMod1 = this.appMetadataMap.get(sourceModule1)!;
     for (const level of levels) {
-      const addRestPerMod1 = metadataPerMod1.perDecorImportedTokensMap.get(addRest) as AddRestPerMod1;
-      const importObj = addRestPerMod1.importedTokensMap[`per${level}`].get(dep.token);
+      const restMetadataPerMod1 = metadataPerMod1.perDecorImportedTokensMap.get(addRest) as RestMetadataPerMod1;
+      const importObj = restMetadataPerMod1.importedTokensMap[`per${level}`].get(dep.token);
       if (importObj) {
         found = true;
         path.push(dep.token);
@@ -219,10 +234,10 @@ export class RestDeepProvidersCollector {
   protected hasUnresolvedImportedDependecies(module1: ModRefId, levels: Level[], dep: ReflectiveDependency) {
     let found = false;
     for (const level of levels) {
-      const addRestPerMod1 = this.appMetadataMap.get(module1)?.perDecorImportedTokensMap.get(addRest) as
-        | AddRestPerMod1
+      const restMetadataPerMod1 = this.appMetadataMap.get(module1)?.perDecorImportedTokensMap.get(addRest) as
+        | RestMetadataPerMod1
         | undefined;
-      const importObj = addRestPerMod1?.importedTokensMap[`per${level}`].get(dep.token);
+      const importObj = restMetadataPerMod1?.importedTokensMap[`per${level}`].get(dep.token);
       if (importObj) {
         found = true;
         const { modRefId: modRefId2, providers } = importObj;

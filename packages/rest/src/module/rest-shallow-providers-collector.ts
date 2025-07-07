@@ -39,7 +39,7 @@ export class RestImportObj<T extends Provider = Provider> {
 /**
  * Metadata collected using `ShallowProvidersCollector`. The target for this metadata is `DeepProvidersCollector`.
  */
-export class AddRestPerMod1 {
+export class RestMetadataPerMod1 {
   prefixPerMod: string;
   guardsPerMod1: GuardPerMod1[];
   /**
@@ -90,7 +90,7 @@ export class RestShallowProvidersCollector {
    */
   protected glProviders: GlobalProviders;
   protected restGlProviders: RestGlobalProviders;
-  protected appMetadataMap = new Map<ModRefId, AddRestPerMod1>();
+  protected appMetadataMap = new Map<ModRefId, RestMetadataPerMod1>();
   protected unfinishedScanModules = new Set<ModRefId>();
   protected moduleManager: ModuleManager;
 
