@@ -27,7 +27,7 @@ import { ExtensionClass } from '#extension/extension-types.js';
 /**
  * Recursively collects providers taking into account module imports/exports,
  * but does not take provider dependencies into account.
- * 
+ *
  * Also:
  * - exports global providers;
  * - merges global and local providers;
@@ -38,7 +38,7 @@ export class ShallowProvidersCollector {
   /**
    * Module metadata.
    */
-  protected meta: NormalizedMeta;
+  protected baseMeta: NormalizedMeta;
 
   protected importedProvidersPerMod = new Map<any, ImportObj>();
   protected importedMultiProvidersPerMod = new Map<ModuleType | ModuleWithParams, Provider[]>();
@@ -57,7 +57,7 @@ export class ShallowProvidersCollector {
     this.moduleManager = moduleManager;
     const meta = moduleManager.getMetadata('root', true);
     this.moduleName = meta.name;
-    this.meta = meta;
+    this.baseMeta = meta;
     this.importProvidersAndExtensions(meta);
     this.checkAllCollisionsWithLevelsMix();
     const providersFromDecorators = new Map<AnyFn, AnyObj | undefined>();
@@ -89,24 +89,24 @@ export class ShallowProvidersCollector {
     moduleManager: ModuleManager,
     unfinishedScanModules: Set<ModRefId>,
   ) {
-    const meta = moduleManager.getMetadata(modRefId, true);
+    const baseMeta = moduleManager.getMetadata(modRefId, true);
     this.moduleManager = moduleManager;
     this.glProviders = globalProviders;
-    this.moduleName = meta.name;
+    this.moduleName = baseMeta.name;
     this.unfinishedScanModules = unfinishedScanModules;
-    this.meta = meta;
+    this.baseMeta = baseMeta;
     this.importModules();
     const moduleExtract: ModuleExtract = {
-      moduleName: meta.name,
-      isExternal: meta.isExternal,
+      moduleName: baseMeta.name,
+      isExternal: baseMeta.isExternal,
     };
-    this.meta.providersPerMod.unshift({ token: ModuleExtract, useValue: moduleExtract });
+    this.baseMeta.providersPerMod.unshift({ token: ModuleExtract, useValue: moduleExtract });
 
     let perMod: Map<any, ImportObj>;
     let multiPerMod: Map<ModuleType | ModuleWithParams, Provider[]>;
     let extensions: Map<ModuleType | ModuleWithParams, Provider[]>;
     let aExtensionConfig: ExtensionConfig[];
-    if (meta.isExternal) {
+    if (baseMeta.isExternal) {
       // External modules do not require global providers and extensions from the application.
       perMod = new Map([...this.importedProvidersPerMod]);
       multiPerMod = new Map([...this.importedMultiProvidersPerMod]);
@@ -119,12 +119,12 @@ export class ShallowProvidersCollector {
       aExtensionConfig = [...this.glProviders.aImportedExtensionConfig, ...this.aImportedExtensionConfig];
     }
 
-    const allExtensionConfigs = meta.aExtensionConfig.concat(aExtensionConfig);
+    const allExtensionConfigs = baseMeta.aExtensionConfig.concat(aExtensionConfig);
     this.checkExtensionsGraph(allExtensionConfigs);
-    meta.aOrderedExtensions = topologicalSort<ExtensionClass, ExtensionConfigBase>(allExtensionConfigs, true);
+    baseMeta.aOrderedExtensions = topologicalSort<ExtensionClass, ExtensionConfigBase>(allExtensionConfigs, true);
     const perDecorImportedTokensMap = new Map<AnyFn, AnyObj | undefined>();
 
-    meta.rawDecorMeta.forEach((initHooksAndMetadata, decorator) => {
+    baseMeta.rawDecorMeta.forEach((initHooksAndMetadata, decorator) => {
       const val = initHooksAndMetadata.collectProvidersShallow(
         globalProviders,
         modRefId,
@@ -137,7 +137,7 @@ export class ShallowProvidersCollector {
     });
 
     return this.appMetadataMap.set(modRefId, {
-      baseMeta: this.meta,
+      baseMeta: this.baseMeta,
       perDecorImportedTokensMap,
       importedTokensMap: {
         perMod,
@@ -149,7 +149,9 @@ export class ShallowProvidersCollector {
 
   protected importModules() {
     // @todo Remove `as any[]` and `as ModRefId[]` after fixing https://github.com/microsoft/TypeScript/issues/36554#issuecomment-580924501
-    for (const modRefId of this.meta.importsModules.concat(this.meta.importsWithParams as any[]) as ModRefId[]) {
+    for (const modRefId of this.baseMeta.importsModules.concat(
+      this.baseMeta.importsWithParams as any[],
+    ) as ModRefId[]) {
       const meta = this.moduleManager.getMetadata(modRefId, true);
       this.importProvidersAndExtensions(meta);
       if (this.unfinishedScanModules.has(modRefId)) {
@@ -200,7 +202,9 @@ export class ShallowProvidersCollector {
       const importObj = this[`importedProvidersPer${level}`].get(token1);
       if (importObj) {
         this.checkCollisionsPerLevel(meta.modRefId, level, token1, provider, importObj);
-        const hasResolvedCollision = this.meta[`resolvedCollisionsPer${level}`].some(([token2]) => token2 === token1);
+        const hasResolvedCollision = this.baseMeta[`resolvedCollisionsPer${level}`].some(
+          ([token2]) => token2 === token1,
+        );
         if (hasResolvedCollision) {
           const { providers, module2 } = this.getResolvedCollisionsPerLevel(level, token1);
           const newImportObj = new ImportObj();
@@ -224,19 +228,25 @@ export class ShallowProvidersCollector {
     provider: Provider,
     importObj: ImportObj,
   ) {
-    const declaredTokens = getTokens(this.meta[`providersPer${level}`]);
-    const resolvedTokens = this.meta[`resolvedCollisionsPer${level}`].map(([token]) => token);
+    const declaredTokens = getTokens(this.baseMeta[`providersPer${level}`]);
+    const resolvedTokens = this.baseMeta[`resolvedCollisionsPer${level}`].map(([token]) => token);
     const duplImpTokens = [...declaredTokens, ...resolvedTokens].includes(token) ? [] : [token];
     const collisions = getCollisions(duplImpTokens, [...importObj.providers, provider]);
     if (collisions.length) {
       const moduleName1 = getDebugClassName(importObj.modRefId);
       const moduleName2 = getDebugClassName(modRefId);
-      throwProvidersCollisionError(this.moduleName, [token], [moduleName1, moduleName2], level, this.meta.isExternal);
+      throwProvidersCollisionError(
+        this.moduleName,
+        [token],
+        [moduleName1, moduleName2],
+        level,
+        this.baseMeta.isExternal,
+      );
     }
   }
 
   protected getResolvedCollisionsPerLevel(level: Level, token1: any) {
-    const [token2, modRefId2] = this.meta[`resolvedCollisionsPer${level}`].find(([token2]) => token1 === token2)!;
+    const [token2, modRefId2] = this.baseMeta[`resolvedCollisionsPer${level}`].find(([token2]) => token1 === token2)!;
     const moduleName = getDebugClassName(modRefId2);
     const tokenName = token2.name || token2;
     const meta2 = this.moduleManager.getMetadata(modRefId2);
@@ -277,7 +287,7 @@ export class ShallowProvidersCollector {
     levels.forEach((level) => {
       const tokens: any[] = [];
       this[`importedMultiProvidersPer${level}`].forEach((providers) => tokens.push(...getTokens(providers)));
-      this.meta[`resolvedCollisionsPer${level}`].some(([token]) => {
+      this.baseMeta[`resolvedCollisionsPer${level}`].some(([token]) => {
         if (tokens.includes(token)) {
           const tokenName = token.name || token;
           const errorMsg =
@@ -297,9 +307,9 @@ export class ShallowProvidersCollector {
   protected checkCollisionsWithLevelsMix(providers: any[], levels: Level[]) {
     getTokens(providers).forEach((token) => {
       for (const level of levels) {
-        const declaredTokens = getTokens(this.meta[`providersPer${level}`]);
+        const declaredTokens = getTokens(this.baseMeta[`providersPer${level}`]);
         const importedTokens = getImportedTokens(this[`importedProvidersPer${level}`]);
-        const resolvedTokens = this.meta[`resolvedCollisionsPer${level}`].map(([t]) => t);
+        const resolvedTokens = this.baseMeta[`resolvedCollisionsPer${level}`].map(([t]) => t);
         const collision = importedTokens.includes(token) && ![...declaredTokens, ...resolvedTokens].includes(token);
         if (collision) {
           const importObj = this[`importedProvidersPer${level}`].get(token)!;
@@ -310,7 +320,7 @@ export class ShallowProvidersCollector {
             // Allow collisions in host modules.
           } else {
             const hostModuleName = getDebugClassName(importObj.modRefId);
-            throwProvidersCollisionError(this.moduleName, [token], [hostModuleName], level, this.meta.isExternal);
+            throwProvidersCollisionError(this.moduleName, [token], [hostModuleName], level, this.baseMeta.isExternal);
           }
         }
         this.resolveCollisionsWithLevelsMix(token, level, resolvedTokens);
@@ -320,8 +330,8 @@ export class ShallowProvidersCollector {
 
   protected resolveCollisionsWithLevelsMix(token1: any, level: Level, resolvedTokens: any[]) {
     if (resolvedTokens.includes(token1)) {
-      const [, module2] = this.meta[`resolvedCollisionsPer${level}`].find(([token2]) => token1 === token2)!;
-      if (this.meta.modRefId === module2) {
+      const [, module2] = this.baseMeta[`resolvedCollisionsPer${level}`].find(([token2]) => token1 === token2)!;
+      if (this.baseMeta.modRefId === module2) {
         if (!this[`importedProvidersPer${level}`].delete(token1)) {
           const tokenName = token1.name || token1;
           const errorMsg =

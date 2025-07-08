@@ -149,7 +149,7 @@ describe('mix per app, per mod or per req', () => {
     injectorPerMod: Injector;
     declare prefixPerMod: string;
     override moduleName = 'MockModule';
-    override meta = new NormalizedMeta();
+    override baseMeta = new NormalizedMeta();
     override appMetadataMap = new Map<ModuleType, MetadataPerMod1>();
     override importedProvidersPerMod = new Map<any, ImportObj>();
     override importedProvidersPerRou = new Map<any, ImportObj>();

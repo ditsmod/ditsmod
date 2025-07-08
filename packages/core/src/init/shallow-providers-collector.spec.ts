@@ -26,7 +26,7 @@ describe('ShallowProvidersCollector', () => {
     injectorPerMod: Injector;
     // declare prefixPerMod: string;
     override moduleName = 'MockModule';
-    override meta = new NormalizedMeta();
+    override baseMeta = new NormalizedMeta();
     override appMetadataMap = new Map<ModuleType, MetadataPerMod1>();
     override importedProvidersPerMod = new Map<any, ImportObj>();
     override importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
@@ -320,7 +320,7 @@ describe('ShallowProvidersCollector', () => {
           token: ModuleExtract,
           useValue: moduleExtract,
         };
-        expect(mock.meta.providersPerMod).toEqual([providerPerMod]);
+        expect(mock.baseMeta.providersPerMod).toEqual([providerPerMod]);
 
         expect(mock?.importedProvidersPerMod).toBeDefined();
         const importObj = new ImportObj();
@@ -343,7 +343,7 @@ describe('ShallowProvidersCollector', () => {
         importObj.modRefId = Module2;
         importObj.providers = [Provider8];
         expect(mock?.importedProvidersPerMod.get(Provider8)).toEqual(importObj);
-        expect(mock.meta.decorator).toBe(rootModule);
+        expect(mock.baseMeta.decorator).toBe(rootModule);
       });
 
       it('importDependenciesOfImportedProviders() case 1', () => {
