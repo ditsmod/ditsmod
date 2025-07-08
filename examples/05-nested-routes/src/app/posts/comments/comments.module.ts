@@ -1,10 +1,10 @@
 import { featureModule } from '@ditsmod/core';
-import { RestModule } from '@ditsmod/rest';
+import { RestModule, addRest } from '@ditsmod/rest';
 
 import { CommentsController } from './comments.controller.js';
 
+@addRest({ controllers: [CommentsController] })
 @featureModule({
   imports: [RestModule],
-  controllers: [CommentsController],
 })
 export class CommentsModule {}
