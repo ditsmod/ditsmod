@@ -8,6 +8,7 @@ import {
   ModuleWithParams,
   ModRefId,
   ParamsTransferObj,
+  ModuleWithParentMeta,
 } from '@ditsmod/core';
 
 import { NormalizedGuard } from '#interceptors/guard.js';
@@ -36,7 +37,7 @@ export class RestNormalizedMeta extends RestProvidersMetadata implements ParamsT
   appendsWithParams: AppendsWithParams[] = [];
   appendsModules: ModuleType[] = [];
   controllers: Class[] = [];
-  importsWithParams: ({ modRefId: ModuleWithParams } & RestModuleParams)[] = [];
+  importsWithParams: ({ modRefId: ModuleWithParentMeta } & RestModuleParams)[] = [];
   /**
    * If the current `baseMeta.modRefId` has the type `ModuleWithParams`,
    * this property will contain the parameters of the current module.

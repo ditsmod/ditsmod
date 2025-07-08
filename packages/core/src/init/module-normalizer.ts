@@ -328,8 +328,11 @@ export class ModuleNormalizer {
       const meta2 = initHooksAndMetadata.normalize(meta1, initHooksAndMetadata.metadata);
       if (meta2) {
         meta1.normDecorMeta.set(decorator, meta2);
-        const aModuleWithParams = meta2?.importsWithParams?.map((param) => param.modRefId);
-        meta1.importsWithParams.push(...(aModuleWithParams || []));
+        meta2?.importsWithParams?.forEach((param) => {
+          if (!meta1.importsWithParams.includes(param.modRefId)) {
+            meta1.importsWithParams.push(param.modRefId);
+          }
+        });
       }
     });
   }

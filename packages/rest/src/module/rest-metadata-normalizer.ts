@@ -45,8 +45,8 @@ export class AddRestNormalizer {
         meta.appendsModules.push(ap);
       }
     });
-    this.setParentMeta(baseMeta, rawMeta);
     this.normalizeImportsWithParams(rawMeta, meta);
+    this.setParentMeta(baseMeta, meta);
     this.pickAndMergeMeta(meta, rawMeta);
     const mergedMeta = { ...rawMeta, ...meta } as RestNormalizedMeta;
     this.quickCheckMetadata(baseMeta, mergedMeta);
@@ -74,6 +74,7 @@ export class AddRestNormalizer {
           (meta as any)[p] = mergeArrays((meta as any)[p], (params as any)[p]);
         }
       });
+      meta.params = params;
       meta.guardsPerMod.push(...this.normalizeGuards(params.guards));
     }
   }
@@ -199,9 +200,9 @@ export class AddRestNormalizer {
     }
   }
 
-  protected setParentMeta(baseMeta: NormalizedMeta, rawMeta: AddRest) {
-    rawMeta.importsWithParams?.forEach((param) => {
-      (param.modRefId as ModuleWithParentMeta).parentMeta ??= baseMeta;
+  protected setParentMeta(baseMeta: NormalizedMeta, meta: RestNormalizedMeta) {
+    meta.importsWithParams?.forEach((param) => {
+      param.modRefId.parentMeta ??= baseMeta;
     });
   }
 
@@ -212,7 +213,7 @@ export class AddRestNormalizer {
       }
       params.modRefId = { module: params.modRefId } as ModuleWithParams;
       return params;
-    }) as ({ modRefId: ModuleWithParams } & RestModuleParams)[];
+    }) as ({ modRefId: ModuleWithParentMeta } & RestModuleParams)[];
   }
 
   protected checkController(Controller: Class) {
