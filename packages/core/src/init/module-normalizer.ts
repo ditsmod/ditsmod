@@ -62,9 +62,13 @@ export class ModuleNormalizer {
     baseMeta.name = modName;
     baseMeta.modRefId = modRefId;
 
-    aDecoratorMeta.forEach((decorAndVal) => baseMeta.rawDecorMeta.set(decorAndVal.decorator, decorAndVal.value));
     baseMeta.decorator = rawMeta.decorator;
     baseMeta.declaredInDir = rawMeta.declaredInDir;
+    aDecoratorMeta.forEach((decorAndVal) => {
+      if (rawMeta.decorator !== decorAndVal.decorator) {
+        baseMeta.rawDecorMeta.set(decorAndVal.decorator, decorAndVal.value);
+      }
+    });
     this.checkAndMarkExternalModule(isRootModule(rawMeta), baseMeta);
     this.normalizeModule(modName, rawMeta, baseMeta);
     this.normalizeDecoratorsMeta(baseMeta);
