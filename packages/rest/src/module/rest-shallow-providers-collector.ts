@@ -111,8 +111,6 @@ export class RestShallowProvidersCollector {
   }
 
   /**
-   * Bootstraps a module.
-   *
    * @param modRefId Module that will bootstrapped.
    */
   collectProvidersShallow(
@@ -209,40 +207,14 @@ export class RestShallowProvidersCollector {
       if (isImport) {
         this.importProviders(baseMeta);
       }
+      if (this.unfinishedScanModules.has(modRefId)) {
+        continue;
+      }
       const meta = baseMeta.normDecorMeta.get(addRest) as RestNormalizedMeta | undefined;
       if (!meta) {
         continue;
       }
-
-      const { params } = meta;
-
-      let prefixPerMod = '';
-      let guardsPerMod1: GuardPerMod1[] = [];
-      const hasModuleParams = isModuleWithParams(modRefId);
-      if (hasModuleParams || !isImport) {
-        if (hasModuleParams && typeof params.absolutePath == 'string') {
-          // Allow slash for absolutePath.
-          prefixPerMod = params.absolutePath.startsWith('/') ? params.absolutePath.slice(1) : params.absolutePath;
-        } else {
-          const path = hasModuleParams ? params.path : '';
-          prefixPerMod = [this.prefixPerMod, path].filter((s) => s).join('/');
-        }
-        const impGuradsPerMod1 = meta.guardsPerMod.map<GuardPerMod1>((g) => {
-          return {
-            ...g,
-            meta: this.meta,
-            baseMeta: this.baseMeta,
-          };
-        });
-        guardsPerMod1 = [...this.guardsPerMod1, ...impGuradsPerMod1];
-      } else {
-        prefixPerMod = this.prefixPerMod;
-      }
-
-      if (this.unfinishedScanModules.has(modRefId)) {
-        continue;
-      }
-
+      const { prefixPerMod, guardsPerMod1 } = this.getPrefixAndGuards(modRefId, meta, isImport);
       const shallowProvidersCollector = new RestShallowProvidersCollector();
       this.unfinishedScanModules.add(modRefId);
       const appMetadataMap = shallowProvidersCollector.collectProvidersShallow(
@@ -258,6 +230,33 @@ export class RestShallowProvidersCollector {
 
       this.appMetadataMap = new Map([...this.appMetadataMap, ...appMetadataMap]);
     }
+  }
+
+  protected getPrefixAndGuards(modRefId: RestModRefId, meta: RestNormalizedMeta, isImport?: boolean) {
+    const { params } = meta;
+    let prefixPerMod = '';
+    let guardsPerMod1: GuardPerMod1[] = [];
+    const hasModuleParams = isModuleWithParams(modRefId);
+    if (hasModuleParams || !isImport) {
+      if (hasModuleParams && typeof params.absolutePath == 'string') {
+        // Allow slash for absolutePath.
+        prefixPerMod = params.absolutePath.startsWith('/') ? params.absolutePath.slice(1) : params.absolutePath;
+      } else {
+        const path = hasModuleParams ? params.path : '';
+        prefixPerMod = [this.prefixPerMod, path].filter((s) => s).join('/');
+      }
+      const impGuradsPerMod1 = meta.guardsPerMod.map<GuardPerMod1>((g) => {
+        return {
+          ...g,
+          meta: this.meta,
+          baseMeta: this.baseMeta,
+        };
+      });
+      guardsPerMod1 = [...this.guardsPerMod1, ...impGuradsPerMod1];
+    } else {
+      prefixPerMod = this.prefixPerMod;
+    }
+    return { prefixPerMod, guardsPerMod1 };
   }
 
   /**
