@@ -64,7 +64,7 @@ export interface RestImportedTokensMap {
 /**
  * Recursively collects providers taking into account module imports/exports,
  * but does not take provider dependencies into account.
- * 
+ *
  * Also:
  * - exports global providers;
  * - merges global and local providers;
@@ -94,13 +94,11 @@ export class RestShallowProvidersCollector {
   protected unfinishedScanModules = new Set<ModRefId>();
   protected moduleManager: ModuleManager;
 
-  exportGlobalProviders(
-    moduleManager: ModuleManager,
-    baseMeta: NormalizedMeta,
-  ): RestGlobalProviders {
+  exportGlobalProviders(moduleManager: ModuleManager, baseMeta: NormalizedMeta): RestGlobalProviders {
     this.moduleManager = moduleManager;
     this.moduleName = baseMeta.name;
     this.baseMeta = baseMeta;
+    this.meta = baseMeta.normDecorMeta.get(addRest) as RestNormalizedMeta;
     this.importProviders(baseMeta);
     this.checkAllCollisionsWithLevelsMix();
 
