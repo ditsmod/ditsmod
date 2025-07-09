@@ -53,7 +53,6 @@ export {
   RequireProps,
   RequireOnlyProps,
   OptionalProps,
-  ProvidersForMod,
   ModRefId,
   Override,
   UnionToIntersection,
