@@ -66,7 +66,7 @@ export class InitHooksAndMetadata<T extends AnyObj> {
     modRefId: ModRefId,
     moduleManager: ModuleManager,
     unfinishedScanModules: Set<ModRefId>,
-  ): Map<ModRefId, AnyObj | undefined> {
+  ): Map<ModRefId, { baseMeta: NormalizedMeta } & AnyObj> {
     return new Map();
   }
 
@@ -75,13 +75,12 @@ export class InitHooksAndMetadata<T extends AnyObj> {
    * recursively collects providers for them from the corresponding modules.
    */
   collectProvidersDeep(
-    baseMeta: NormalizedMeta,
+    metadataPerMod1: { baseMeta: NormalizedMeta } & AnyObj,
     moduleManager: ModuleManager,
     appMetadataMap: AppMetadataMap,
     providersPerApp: Provider[],
     log: SystemLogMediator,
     errorMediator: SystemErrorMediator,
-    metadataPerMod1?: AnyObj,
   ): any {
     return;
   }

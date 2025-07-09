@@ -1,5 +1,4 @@
 import {
-  DecoratorAndValue,
   isClassProvider,
   isMultiProvider,
   isNormalizedProvider,
@@ -14,9 +13,9 @@ import {
   getExtensionProvider,
   isConfigWithOverrideExtension,
 } from '#extension/get-extension-provider.js';
-import { AnyFn, AnyObj, ModRefId } from '#types/mix.js';
+import { AnyObj, ModRefId } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
-import { InitHooksAndMetadata, RawMeta } from '#decorators/feature-module.js';
+import { RawMeta } from '#decorators/feature-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { resolveForwardRef } from '#di/forward-ref.js';

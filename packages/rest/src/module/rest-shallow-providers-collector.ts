@@ -40,6 +40,7 @@ export class RestImportObj<T extends Provider = Provider> {
  * Metadata collected using `ShallowProvidersCollector`. The target for this metadata is `DeepProvidersCollector`.
  */
 export class RestMetadataPerMod1 {
+  baseMeta: NormalizedMeta;
   prefixPerMod: string;
   guardsPerMod1: GuardPerMod1[];
   /**
@@ -176,6 +177,7 @@ export class RestShallowProvidersCollector {
     }
 
     return this.appMetadataMap.set(modRefId, {
+      baseMeta,
       prefixPerMod,
       guardsPerMod1: this.guardsPerMod1,
       meta: this.meta,
