@@ -230,7 +230,7 @@ export class RestShallowProvidersCollector {
       );
       this.unfinishedScanModules.delete(modRefId);
 
-      this.appMetadataMap = new Map([...this.appMetadataMap, ...appMetadataMap]);
+      appMetadataMap.forEach((val, key) => this.appMetadataMap.set(key, val));
     }
   }
 
