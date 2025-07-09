@@ -14,7 +14,7 @@ import {
 
 import { AddRest } from '#module/module-metadata.js';
 import { AddRestNormalizer } from '#module/rest-metadata-normalizer.js';
-import { RestShallowProvidersCollector } from '#module/rest-shallow-providers-collector.js';
+import { RestMetadataPerMod1, RestShallowProvidersCollector } from '#module/rest-shallow-providers-collector.js';
 import { RestNormalizedMeta } from '#types/rest-normalized-meta.js';
 import { RestDeepProvidersCollector } from '#module/rest-deep-providers-collector.js';
 /**
@@ -46,7 +46,7 @@ class RestInitHooksAndMetadata extends InitHooksAndMetadata<AddRest> {
       moduleManager: ModuleManager,
       unfinishedScanModules: Set<ModRefId>,
     ]
-  ) {
+  ): Map<ModRefId, RestMetadataPerMod1> {
     return new RestShallowProvidersCollector().collectProvidersShallow(...args);
   }
 
