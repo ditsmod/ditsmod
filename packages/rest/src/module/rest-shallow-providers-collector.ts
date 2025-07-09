@@ -98,7 +98,8 @@ export class RestShallowProvidersCollector {
     this.moduleManager = moduleManager;
     this.moduleName = baseMeta.name;
     this.baseMeta = baseMeta;
-    this.meta = baseMeta.normDecorMeta.get(addRest) as RestNormalizedMeta;
+    const meta = baseMeta.normDecorMeta.get(addRest) as RestNormalizedMeta | undefined;
+    this.meta = meta ? meta : new RestNormalizedMeta();
     this.importProviders(baseMeta);
     this.checkAllCollisionsWithLevelsMix();
 
@@ -121,13 +122,11 @@ export class RestShallowProvidersCollector {
     prefixPerMod: string = '',
     guardsPerMod1?: GuardPerMod1[],
     isAppends?: boolean,
-  ) {
+  ): Map<ModRefId, RestMetadataPerMod1> {
     const baseMeta = moduleManager.getMetadata(modRefId, true);
     this.baseMeta = baseMeta;
     const meta = baseMeta.normDecorMeta.get(addRest) as RestNormalizedMeta | undefined;
-    if (!meta) {
-      return this.appMetadataMap;
-    }
+    this.meta = meta ? meta : new RestNormalizedMeta();
     this.moduleManager = moduleManager;
     this.glProviders = globalProviders;
     this.restGlProviders = globalProviders.providersFromDecorators.get(addRest) as RestGlobalProviders;
@@ -135,18 +134,17 @@ export class RestShallowProvidersCollector {
     this.moduleName = baseMeta.name;
     this.guardsPerMod1 = guardsPerMod1 || [];
     this.unfinishedScanModules = unfinishedScanModules;
-    this.meta = meta;
     const moduleExtract: RestModuleExtract = {
       path: this.prefixPerMod,
       moduleName: baseMeta.name,
       isExternal: baseMeta.isExternal,
     };
     baseMeta.providersPerMod.push({ token: ModuleExtract, useValue: moduleExtract });
-    this.checkImportsAndAppends(baseMeta, meta);
+    this.checkImportsAndAppends(baseMeta, this.meta);
     this.importAndAppendModules();
 
     let applyControllers = false;
-    if (isRootModule(meta) || isAppends || this.hasPath(baseMeta)) {
+    if (isRootModule(baseMeta) || isAppends || this.hasPath(baseMeta)) {
       applyControllers = true;
     }
 
@@ -171,6 +169,10 @@ export class RestShallowProvidersCollector {
         ...this.restGlProviders.importedMultiProvidersPerReq,
         ...this.importedMultiProvidersPerReq,
       ]);
+    }
+
+    if (!meta) {
+      return this.appMetadataMap;
     }
 
     return this.appMetadataMap.set(modRefId, {
