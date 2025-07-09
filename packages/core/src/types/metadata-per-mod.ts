@@ -32,7 +32,6 @@ export class MetadataPerMod1 {
    * the original array will remain unchanged.
    */
   baseMeta: NormalizedMeta;
-  perDecorImportedTokensMap: Map<AnyFn, AnyObj | undefined>;
   /**
    * Map between a token and its ImportObj per level.
    */

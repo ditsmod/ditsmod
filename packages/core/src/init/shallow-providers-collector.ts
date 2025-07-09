@@ -4,7 +4,7 @@ import type { NormalizedMeta } from '#types/normalized-meta.js';
 import type { ModuleManager } from '#init/module-manager.js';
 import type { GlobalProviders, MetadataPerMod1 } from '#types/metadata-per-mod.js';
 import { ImportObj } from '#types/metadata-per-mod.js';
-import type { ModuleType, Level, ModRefId, AnyFn, AnyObj } from '#types/mix.js';
+import type { ModuleType, Level, ModRefId, AnyFn, AnyObj, AppMetadataMap } from '#types/mix.js';
 import type { Provider } from '#di/types-and-models.js';
 import type { ModuleWithParams } from '#types/module-metadata.js';
 import { getCollisions } from '#utils/get-collisions.js';
@@ -88,7 +88,7 @@ export class ShallowProvidersCollector {
     modRefId: ModRefId,
     moduleManager: ModuleManager,
     unfinishedScanModules: Set<ModRefId>,
-  ) {
+  ): AppMetadataMap {
     const baseMeta = moduleManager.getMetadata(modRefId, true);
     this.moduleManager = moduleManager;
     this.glProviders = globalProviders;
@@ -122,23 +122,9 @@ export class ShallowProvidersCollector {
     const allExtensionConfigs = baseMeta.aExtensionConfig.concat(aExtensionConfig);
     this.checkExtensionsGraph(allExtensionConfigs);
     baseMeta.aOrderedExtensions = topologicalSort<ExtensionClass, ExtensionConfigBase>(allExtensionConfigs, true);
-    const perDecorImportedTokensMap = new Map<AnyFn, AnyObj | undefined>();
-
-    baseMeta.rawDecorMeta.forEach((initHooksAndMetadata, decorator) => {
-      const val = initHooksAndMetadata.collectProvidersShallow(
-        globalProviders,
-        modRefId,
-        moduleManager,
-        unfinishedScanModules,
-      );
-      if (val.size) {
-        perDecorImportedTokensMap.set(decorator, val);
-      }
-    });
 
     return this.appMetadataMap.set(modRefId, {
       baseMeta: this.baseMeta,
-      perDecorImportedTokensMap,
       importedTokensMap: {
         perMod,
         multiPerMod,
