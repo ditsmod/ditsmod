@@ -66,7 +66,7 @@ export class InitHooksAndMetadata<T extends AnyObj> {
     modRefId: ModRefId,
     moduleManager: ModuleManager,
     unfinishedScanModules: Set<ModRefId>,
-  ): Map<ModRefId, AnyObj> {
+  ): Map<ModRefId, AnyObj | undefined> {
     return new Map();
   }
 
