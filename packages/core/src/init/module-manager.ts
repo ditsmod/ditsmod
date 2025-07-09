@@ -3,13 +3,14 @@ import { ChainError } from '@ts-stack/chain-error';
 
 import { injectable, Injector, Provider, reflector } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { AnyObj, ModuleType, ModRefId } from '#types/mix.js';
+import { AnyObj, ModuleType, ModRefId, AnyFn } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { isModuleWithParams, isRootModule } from '#utils/type-guards.js';
 import { clearDebugClassNames, getDebugClassName } from '#utils/get-debug-class-name.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { ModuleNormalizer } from '#init/module-normalizer.js';
+import { InitHooksAndMetadata } from '#decorators/feature-module.js';
 
 export type ModulesMap = Map<ModRefId, NormalizedMeta>;
 export type ModulesMapId = Map<string, ModRefId>;
@@ -22,6 +23,7 @@ type ModuleId = string | ModRefId;
 @injectable()
 export class ModuleManager {
   providersPerApp: Provider[] = [];
+  allInitHooks = new Map<AnyFn, InitHooksAndMetadata<AnyObj>>();
   protected injectorPerModMap = new Map<ModRefId, Injector>();
   protected map: ModulesMap = new Map();
   protected mapId = new Map<'root' | (string & {}), ModRefId>();
@@ -226,6 +228,9 @@ export class ModuleManager {
     const baseMeta = this.normalizeMetadata(modRefId);
     const importsOrExports: (ModuleWithParams | ModuleType)[] = [];
     baseMeta.rawDecorMeta.forEach((initHooksAndMetadata, decorator) => {
+      if (!this.allInitHooks.get(decorator)) {
+        this.allInitHooks.set(decorator, initHooksAndMetadata);
+      }
       const meta2 = baseMeta.normDecorMeta.get(decorator);
       if (meta2) {
         importsOrExports.push(...initHooksAndMetadata.addModulesToScan(meta2));
