@@ -23,7 +23,7 @@ type ModuleId = string | ModRefId;
 @injectable()
 export class ModuleManager {
   providersPerApp: Provider[] = [];
-  allInitHooks = new Map<AnyFn, InitHooksAndMetadata<AnyObj>>();
+  allInitHooks = new Map<AnyFn, Omit<InitHooksAndMetadata<AnyObj>, 'metadata'>>();
   protected injectorPerModMap = new Map<ModRefId, Injector>();
   protected map: ModulesMap = new Map();
   protected mapId = new Map<'root' | (string & {}), ModRefId>();
@@ -227,13 +227,13 @@ export class ModuleManager {
   protected scanRawModule(modRefId: ModRefId) {
     const baseMeta = this.normalizeMetadata(modRefId);
     const importsOrExports: (ModuleWithParams | ModuleType)[] = [];
-    baseMeta.rawDecorMeta.forEach((initHooksAndMetadata, decorator) => {
+    baseMeta.rawDecorMeta.forEach((initHooks, decorator) => {
       if (!this.allInitHooks.get(decorator)) {
-        this.allInitHooks.set(decorator, initHooksAndMetadata);
+        this.allInitHooks.set(decorator, initHooks);
       }
       const meta2 = baseMeta.normDecorMeta.get(decorator);
       if (meta2) {
-        importsOrExports.push(...initHooksAndMetadata.addModulesToScan(meta2));
+        importsOrExports.push(...initHooks.addModulesToScan(meta2));
       }
     });
 
