@@ -4,7 +4,10 @@ import { RestModule, addRest } from '@ditsmod/rest';
 import { CommentsModule } from './comments/comments.module.js';
 import { PostsController } from './posts.controller.js';
 
-@addRest({ controllers: [PostsController], appends: [{ path: 'comments/:commentId', module: CommentsModule }] })
+@addRest({
+  appends: [{ path: 'comments/:commentId', module: CommentsModule }],
+  controllers: [PostsController]
+})
 @featureModule({
   imports: [RestModule],
 })
