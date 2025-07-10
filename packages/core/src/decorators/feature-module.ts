@@ -38,7 +38,7 @@ export function transformModule(data?: ModuleMetadata): InitHooksAndMetadata<Raw
   return new InitHooksAndMetadata(rawMeta);
 }
 /**
- * Hooks and metadata attached to the `rootModule` or `featureModule` decorators.
+ * Init hooks and metadata attached to the `rootModule` or `featureModule` decorators.
  */
 export class InitHooksAndMetadata<T extends AnyObj> {
   constructor(public metadata = {} as T) {}
