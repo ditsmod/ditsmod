@@ -1,6 +1,5 @@
 import { Class, Injector, ResolvedProvider } from '#di';
 import { Provider } from '#di/types-and-models.js';
-import { MetadataPerMod1 } from '#types/metadata-per-mod.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 
 /**
@@ -70,8 +69,6 @@ export type AnyFn<Args extends any[] = any[], Return = any> = (...args: Args) =>
 export interface AnyObj {
   [key: string | symbol]: any;
 }
-
-export type ShallowImportsBase = Map<ModuleType | ModuleWithParams, MetadataPerMod1>;
 
 export class ProvidersForMod {
   providersPerMod: Provider[] = [];

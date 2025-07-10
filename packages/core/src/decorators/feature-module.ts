@@ -1,6 +1,7 @@
 import { makeClassDecorator, Provider } from '#di';
 import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
-import { AnyFn, AnyObj, ShallowImportsBase, ModRefId, ModuleType } from '#types/mix.js';
+import { AnyFn, AnyObj, ModRefId, ModuleType } from '#types/mix.js';
+import { ShallowImportsBase } from '#init/types.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { Providers } from '#utils/providers.js';
 import { CallsiteUtils } from '#utils/callsites.js';
