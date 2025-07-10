@@ -126,7 +126,7 @@ describe('exports/imports', () => {
   })
   class AppModule {}
 
-  let appMetadataMap: Map<ModRefId, MetadataPerMod1>;
+  let shallowImportsBase: Map<ModRefId, MetadataPerMod1>;
 
   beforeAll(() => {
     const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
@@ -134,7 +134,7 @@ describe('exports/imports', () => {
     const appOptions = new AppOptions();
     mock = new AppInitializerMock(appOptions, moduleManager, systemLogMediator);
     moduleManager.scanRootModule(AppModule);
-    appMetadataMap = mock.collectProvidersShallow(moduleManager);
+    shallowImportsBase = mock.collectProvidersShallow(moduleManager);
   });
 
   function checkGlobalProviders(metadataPerMod1: MetadataPerMod1 | undefined) {
@@ -170,7 +170,7 @@ describe('exports/imports', () => {
   }
 
   it('Module0', async () => {
-    const mod0 = appMetadataMap.get(Module0);
+    const mod0 = shallowImportsBase.get(Module0);
     expect(mod0?.baseMeta.providersPerApp).toEqual([]);
     const moduleExtract: ModuleExtract = { path: '', moduleName: 'Module0', isExternal: false };
     const providerPerMod: Provider = { token: ModuleExtract, useValue: moduleExtract };
@@ -180,7 +180,7 @@ describe('exports/imports', () => {
   });
 
   it('Module1', async () => {
-    const mod1 = appMetadataMap.get(Module1);
+    const mod1 = shallowImportsBase.get(Module1);
     expect(mod1?.baseMeta.providersPerApp).toEqual([]);
     const moduleExtract: ModuleExtract = { path: '', moduleName: 'Module1', isExternal: false };
     const providerPerMod: Provider = { token: ModuleExtract, useValue: moduleExtract };
@@ -189,7 +189,7 @@ describe('exports/imports', () => {
   });
 
   it('Module2', async () => {
-    const mod2 = appMetadataMap.get(module2WithParams);
+    const mod2 = shallowImportsBase.get(module2WithParams);
     expect(mod2?.baseMeta.providersPerApp).toEqual([]);
     const moduleExtract: ModuleExtract = { path: '', moduleName: 'Module2', isExternal: false };
     const providerPerMod: Provider = { token: ModuleExtract, useValue: moduleExtract };
@@ -199,7 +199,7 @@ describe('exports/imports', () => {
   });
 
   it('Module3', async () => {
-    const mod3 = appMetadataMap.get(module3WithParams);
+    const mod3 = shallowImportsBase.get(module3WithParams);
     expect(mod3?.baseMeta.providersPerApp).toEqual([]);
     const moduleExtract: ModuleExtract = { path: 'one', moduleName: 'Module3', isExternal: false };
     const providerPerMod: Provider = {
@@ -213,8 +213,8 @@ describe('exports/imports', () => {
 
   it('Module4', async () => {
     moduleManager.scanRootModule(AppModule);
-    const appMetadataMap = mock.collectProvidersShallow(moduleManager);
-    const mod4 = appMetadataMap.get(module4WithParams);
+    const shallowImportsBase = mock.collectProvidersShallow(moduleManager);
+    const mod4 = shallowImportsBase.get(module4WithParams);
     expect(mod4?.baseMeta.providersPerApp).toEqual([]);
     const moduleExtract: ModuleExtract = { path: '', moduleName: 'Module4', isExternal: false };
     const providerPerMod: Provider = { token: ModuleExtract, useValue: moduleExtract };
@@ -225,8 +225,8 @@ describe('exports/imports', () => {
 
   it('AppModule', async () => {
     moduleManager.scanRootModule(AppModule);
-    const appMetadataMap = mock.collectProvidersShallow(moduleManager);
-    const root1 = appMetadataMap.get(AppModule);
+    const shallowImportsBase = mock.collectProvidersShallow(moduleManager);
+    const root1 = shallowImportsBase.get(AppModule);
     expect(root1?.baseMeta.providersPerApp.slice(0, 2)).toEqual([Logger, { token: Router, useValue: 'fake' }]);
     const moduleExtract: ModuleExtract = { path: '', moduleName: 'AppModule', isExternal: false };
     const providerPerMod: Provider = {

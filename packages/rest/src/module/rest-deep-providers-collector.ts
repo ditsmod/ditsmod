@@ -15,13 +15,13 @@ import {
   getDebugClassName,
   ReflectiveDependency,
   getProviderName,
-  AppMetadataMap,
+  ShallowImportsBase,
 } from '@ditsmod/core';
 
 import { Level } from '#types/types.js';
 import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
-import { RestImportedTokensMap, RestMetadataPerMod1 } from './rest-shallow-providers-collector.js';
+import { RestImportedTokensMap, RestMetadataPerMod1 } from './types.js';
 import { RestNormalizedMeta } from '#types/rest-normalized-meta.js';
 import { addRest } from '#decorators/rest-metadata.js';
 import { GuardPerMod1 } from '#interceptors/guard.js';
@@ -54,13 +54,12 @@ export class RestDeepProvidersCollector {
   protected extensionCounters = new ExtensionCounters();
 
   constructor(
-    protected baseMeta: NormalizedMeta,
+    protected metadataPerMod1: RestMetadataPerMod1,
     protected moduleManager: ModuleManager,
-    protected appMetadataMap: AppMetadataMap,
+    protected shallowImportsBase: ShallowImportsBase,
     protected providersPerApp: Provider[],
     protected log: SystemLogMediator,
     protected errorMediator: SystemErrorMediator,
-    protected metadataPerMod1?: RestMetadataPerMod1,
   ) {}
 
   collectProvidersDeep(): RestMetadataPerMod2 | undefined {
@@ -74,7 +73,7 @@ export class RestDeepProvidersCollector {
     meta.providersPerRou.unshift(...defaultProvidersPerRou);
     meta.providersPerReq.unshift(...defaultProvidersPerReq);
     return {
-      baseMeta: this.baseMeta,
+      baseMeta: this.metadataPerMod1.baseMeta,
       meta,
       guardsPerMod1,
       prefixPerMod,
@@ -153,20 +152,20 @@ export class RestDeepProvidersCollector {
 
   /**
    * @param targetProviders These are metadata of the module where providers are imported.
-   * @param sourceModule1 Module from where imports providers.
+   * @param srcModRefId1 Module from where imports providers.
    * @param importedProvider Imported provider.
    * @param dep ReflectiveDependecy with token for dependecy of imported provider.
    */
   protected grabImportedDependecies(
     targetProviders: RestProvidersForMod,
-    sourceModule1: ModRefId,
+    srcModRefId1: ModRefId,
     importedProvider: Provider,
     levels: Level[],
     path: any[] = [],
     dep: ReflectiveDependency,
   ) {
     let found = false;
-    const metadataPerMod1 = this.appMetadataMap.get(sourceModule1)!;
+    const metadataPerMod1 = this.shallowImportsBase.get(srcModRefId1)!;
     for (const level of levels) {
       const restMetadataPerMod1 = metadataPerMod1.perDecorImportedTokensMap.get(addRest) as RestMetadataPerMod1;
       const importObj = restMetadataPerMod1.importedTokensMap[`per${level}`].get(dep.token);
@@ -231,10 +230,10 @@ export class RestDeepProvidersCollector {
     return false;
   }
 
-  protected hasUnresolvedImportedDependecies(module1: ModRefId, levels: Level[], dep: ReflectiveDependency) {
+  protected hasUnresolvedImportedDependecies(modRefId1: ModRefId, levels: Level[], dep: ReflectiveDependency) {
     let found = false;
     for (const level of levels) {
-      const restMetadataPerMod1 = this.appMetadataMap.get(module1)?.perDecorImportedTokensMap.get(addRest) as
+      const restMetadataPerMod1 = this.shallowImportsBase.get(modRefId1)?.perDecorImportedTokensMap.get(addRest) as
         | RestMetadataPerMod1
         | undefined;
       const importObj = restMetadataPerMod1?.importedTokensMap[`per${level}`].get(dep.token);

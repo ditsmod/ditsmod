@@ -58,7 +58,7 @@ export class RestShallowProvidersCollector {
    */
   protected glProviders: GlobalProviders;
   protected restGlProviders: RestGlobalProviders;
-  protected appMetadataMap = new Map<ModRefId, RestMetadataPerMod1>();
+  protected shallowImportsBase = new Map<ModRefId, RestMetadataPerMod1>();
   protected unfinishedScanModules = new Set<ModRefId>();
   protected moduleManager: ModuleManager;
 
@@ -140,10 +140,10 @@ export class RestShallowProvidersCollector {
     }
 
     if (!meta) {
-      return this.appMetadataMap;
+      return this.shallowImportsBase;
     }
 
-    return this.appMetadataMap.set(modRefId, {
+    return this.shallowImportsBase.set(modRefId, {
       baseMeta,
       prefixPerMod,
       guardsPerMod1: this.guardsPerMod1,
@@ -188,7 +188,7 @@ export class RestShallowProvidersCollector {
       const { prefixPerMod, guardsPerMod1 } = this.getPrefixAndGuards(modRefId, meta, isImport);
       const shallowProvidersCollector = new RestShallowProvidersCollector();
       this.unfinishedScanModules.add(modRefId);
-      const appMetadataMap = shallowProvidersCollector.collectProvidersShallow(
+      const shallowImportsBase = shallowProvidersCollector.collectProvidersShallow(
         this.glProviders,
         modRefId,
         this.moduleManager,
@@ -199,7 +199,7 @@ export class RestShallowProvidersCollector {
       );
       this.unfinishedScanModules.delete(modRefId);
 
-      appMetadataMap.forEach((val, key) => this.appMetadataMap.set(key, val));
+      shallowImportsBase.forEach((val, key) => this.shallowImportsBase.set(key, val));
     }
   }
 

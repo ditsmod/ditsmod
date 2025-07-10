@@ -56,7 +56,7 @@ export {
   ModRefId,
   Override,
   UnionToIntersection,
-  AppMetadataMap,
+  ShallowImportsBase,
 } from '#types/mix.js';
 export {
   ModuleMetadata,

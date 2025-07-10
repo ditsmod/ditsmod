@@ -71,7 +71,7 @@ export interface AnyObj {
   [key: string | symbol]: any;
 }
 
-export type AppMetadataMap = Map<ModuleType | ModuleWithParams, MetadataPerMod1>;
+export type ShallowImportsBase = Map<ModuleType | ModuleWithParams, MetadataPerMod1>;
 
 export class ProvidersForMod {
   providersPerMod: Provider[] = [];

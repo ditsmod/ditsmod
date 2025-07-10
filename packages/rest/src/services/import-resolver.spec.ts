@@ -68,9 +68,9 @@ describe('resolve()', () => {
 
   function bootstrap(mod: ModuleType) {
     expect(() => moduleManager.scanModule(mod)).not.toThrow();
-    const appMetadataMap = shallowProvidersCollector.collectProvidersShallow([], new GlobalProviders(), '', mod, moduleManager, new Set());
-    mock = new DeepProvidersCollectorMock(moduleManager, appMetadataMap, [], systemLogMediator, errorMediator);
-    return appMetadataMap as Map<ModRefId, MetadataPerMod1>;
+    const shallowImportsBase = shallowProvidersCollector.collectProvidersShallow([], new GlobalProviders(), '', mod, moduleManager, new Set());
+    mock = new DeepProvidersCollectorMock(moduleManager, shallowImportsBase, [], systemLogMediator, errorMediator);
+    return shallowImportsBase as Map<ModRefId, MetadataPerMod1>;
   }
 
   beforeEach(() => {
@@ -160,9 +160,9 @@ describe('resolve()', () => {
     })
     class Module3 {}
 
-    const appMetadataMap = bootstrap(Module3);
+    const shallowImportsBase = bootstrap(Module3);
     expect(() => mock.collectProvidersDeep()).not.toThrow();
-    const { baseMeta } = appMetadataMap.get(Module3)!;
+    const { baseMeta } = shallowImportsBase.get(Module3)!;
     expect(baseMeta.providersPerReq).toEqual(defaultProvidersPerReq);
     expect(baseMeta.providersPerRou).toEqual([...defaultProvidersPerRou, Service3, Service4]);
     const moduleExtract: ModuleExtract = {
@@ -307,9 +307,9 @@ describe('resolve()', () => {
     })
     class Module3 {}
 
-    const appMetadataMap = bootstrap(Module3);
+    const shallowImportsBase = bootstrap(Module3);
     expect(() => mock.collectProvidersDeep()).not.toThrow();
-    const { baseMeta } = appMetadataMap.get(Module3)!;
+    const { baseMeta } = shallowImportsBase.get(Module3)!;
     expect(baseMeta.providersPerReq).toEqual(defaultProvidersPerReq);
     expect(baseMeta.providersPerRou).toEqual([...defaultProvidersPerRou, Service2]);
     const moduleExtract: ModuleExtract = {
@@ -342,9 +342,9 @@ describe('resolve()', () => {
     })
     class Module3 {}
 
-    const appMetadataMap = bootstrap(Module3);
+    const shallowImportsBase = bootstrap(Module3);
     expect(() => mock.collectProvidersDeep()).not.toThrow();
-    const { baseMeta } = appMetadataMap.get(Module3)!;
+    const { baseMeta } = shallowImportsBase.get(Module3)!;
     expect(baseMeta.providersPerReq).toEqual(defaultProvidersPerReq);
     expect(baseMeta.providersPerRou).toEqual([...defaultProvidersPerRou, Service2]);
     const moduleExtract: ModuleExtract = {
@@ -386,10 +386,10 @@ describe('resolve()', () => {
     })
     class Module3 {}
 
-    const appMetadataMap = bootstrap(Module3);
+    const shallowImportsBase = bootstrap(Module3);
 
     expect(() => mock.collectProvidersDeep()).not.toThrow();
-    const { baseMeta } = appMetadataMap.get(Module3)!;
+    const { baseMeta } = shallowImportsBase.get(Module3)!;
     const injector = Injector.resolveAndCreate(baseMeta.providersPerRou);
     const msg = 'No provider for Service1!; this error during instantiation of Service2! (Service3 -> Service2)';
     expect(() => injector.get(Service3)).toThrow(msg);
@@ -415,10 +415,10 @@ describe('resolve()', () => {
     @featureModule({ imports: [Module1], exports: [Service2] })
     class Module2 {}
 
-    const appMetadataMap = bootstrap(Module2);
+    const shallowImportsBase = bootstrap(Module2);
 
     expect(() => mock.collectProvidersDeep()).not.toThrow();
-    const { baseMeta } = appMetadataMap.get(Module2)!;
+    const { baseMeta } = shallowImportsBase.get(Module2)!;
     const injector = Injector.resolveAndCreate(baseMeta.providersPerRou);
     expect(() => injector.get(Service2)).not.toThrow();
   });
@@ -467,14 +467,14 @@ describe('resolve()', () => {
     @rootModule({ imports: [mod1WithParams] })
     class Module2 {}
 
-    const appMetadataMap = bootstrap(Module2);
+    const shallowImportsBase = bootstrap(Module2);
     expect(() => mock.collectProvidersDeep()).not.toThrow();
 
-    const mod1 = appMetadataMap.get(mod1WithParams);
+    const mod1 = shallowImportsBase.get(mod1WithParams);
     // expect(mod1?.guardsPerMod1.at(0)?.guard).toBe(BearerGuard1);
 
     // Guards per a module must have ref to host module meta.
-    // expect(mod1?.guardsPerMod1.at(0)?.meta).toBe(appMetadataMap.get(Module2)!.meta);
+    // expect(mod1?.guardsPerMod1.at(0)?.meta).toBe(shallowImportsBase.get(Module2)!.meta);
 
     // The injector must have enough providers to create a guard instance.
     // const injector = Injector.resolveAndCreate(mod1?.guardsPerMod1.at(0)?.meta.providersPerRou || []);

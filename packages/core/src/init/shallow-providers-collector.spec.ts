@@ -27,7 +27,7 @@ describe('ShallowProvidersCollector', () => {
     // declare prefixPerMod: string;
     override moduleName = 'MockModule';
     override baseMeta = new NormalizedMeta();
-    override appMetadataMap = new Map<ModuleType, MetadataPerMod1>();
+    override shallowImportsBase = new Map<ModuleType, MetadataPerMod1>();
     override importedProvidersPerMod = new Map<any, ImportObj>();
     override importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
     override importedExtensions = new Map<ModRefId, Provider[]>();
@@ -240,7 +240,7 @@ describe('ShallowProvidersCollector', () => {
         expect(meta.providersPerMod).toEqual([]);
 
         mock.collectProvidersShallow(new GlobalProviders(), AppModule, moduleManager, new Set());
-        expect(mock.appMetadataMap.get(AppModule)?.baseMeta.exportedProvidersPerMod).toEqual([]);
+        expect(mock.shallowImportsBase.get(AppModule)?.baseMeta.exportedProvidersPerMod).toEqual([]);
       });
 
       it('case 1', () => {
@@ -251,7 +251,7 @@ describe('ShallowProvidersCollector', () => {
         moduleManager.scanModule(Module3);
         mock.collectProvidersShallow(new GlobalProviders(), Module3, moduleManager, new Set());
 
-        const mod0 = mock.appMetadataMap.get(Module0);
+        const mod0 = mock.shallowImportsBase.get(Module0);
         const moduleExtract: ModuleExtract = { moduleName: 'Module0', isExternal: false };
         const providerPerMod0: Provider = {
           token: ModuleExtract,
@@ -260,7 +260,7 @@ describe('ShallowProvidersCollector', () => {
         expect(mod0?.baseMeta.providersPerMod).toEqual([providerPerMod0, Provider0]);
         expect(mod0?.baseMeta.decorator).toBe(featureModule);
 
-        const mod1 = mock.appMetadataMap.get(Module1);
+        const mod1 = mock.shallowImportsBase.get(Module1);
         const moduleExtract2: ModuleExtract = { moduleName: 'Module1', isExternal: false };
         const providerPerMod1: Provider = {
           token: ModuleExtract,
@@ -272,7 +272,7 @@ describe('ShallowProvidersCollector', () => {
         expect(tokensPerMod).toEqual([Provider0]);
         expect(mod1?.baseMeta.decorator).toBe(featureModule);
 
-        const mod2 = mock.appMetadataMap.get(Module2);
+        const mod2 = mock.shallowImportsBase.get(Module2);
         const moduleExtract3: ModuleExtract = { moduleName: 'Module2', isExternal: false };
         const providerPerMod2: Provider = {
           token: ModuleExtract,
@@ -299,7 +299,7 @@ describe('ShallowProvidersCollector', () => {
         ]);
         expect(mod2?.baseMeta.decorator).toBe(featureModule);
 
-        const mod3 = mock.appMetadataMap.get(Module3);
+        const mod3 = mock.shallowImportsBase.get(Module3);
         expect(mod3?.baseMeta.providersPerMod.slice(1)).toEqual([Provider9, overriddenProvider8]);
         expect(mod3?.baseMeta.decorator).toBe(featureModule);
       });
@@ -382,7 +382,7 @@ describe('ShallowProvidersCollector', () => {
         moduleManager.scanModule(Module3);
         mock.collectProvidersShallow(new GlobalProviders(), Module3, moduleManager, new Set());
 
-        const mod3 = mock.appMetadataMap.get(Module3);
+        const mod3 = mock.shallowImportsBase.get(Module3);
         expect(mod3?.baseMeta.providersPerMod[1]).toEqual(Provider3);
 
         expect(mock?.importedProvidersPerMod).toBeDefined();
@@ -793,7 +793,7 @@ describe('ShallowProvidersCollector', () => {
           expect(() =>
             mock.collectProvidersShallow(new GlobalProviders(), AppModule, moduleManager, new Set()),
           ).not.toThrow();
-          const mod3 = mock.appMetadataMap.get(Module3)!;
+          const mod3 = mock.shallowImportsBase.get(Module3)!;
           expect([...mod3.importedTokensMap.perMod]).toEqual([
             [Provider1, { modRefId: Module1, providers: [Provider1] }],
           ]);

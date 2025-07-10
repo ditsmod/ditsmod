@@ -4,7 +4,7 @@ import type { NormalizedMeta } from '#types/normalized-meta.js';
 import type { ModuleManager } from '#init/module-manager.js';
 import type { GlobalProviders, MetadataPerMod1 } from '#types/metadata-per-mod.js';
 import { ImportObj } from '#types/metadata-per-mod.js';
-import type { ModuleType, Level, ModRefId, AnyFn, AnyObj, AppMetadataMap } from '#types/mix.js';
+import type { ModuleType, Level, ModRefId, AnyFn, AnyObj, ShallowImportsBase } from '#types/mix.js';
 import type { Provider } from '#di/types-and-models.js';
 import type { ModuleWithParams } from '#types/module-metadata.js';
 import { getCollisions } from '#utils/get-collisions.js';
@@ -49,7 +49,7 @@ export class ShallowProvidersCollector {
    * GlobalProviders.
    */
   protected glProviders: GlobalProviders;
-  protected appMetadataMap = new Map<ModRefId, MetadataPerMod1>();
+  protected shallowImportsBase = new Map<ModRefId, MetadataPerMod1>();
   protected unfinishedScanModules = new Set<ModRefId>();
   protected moduleManager: ModuleManager;
 
@@ -88,7 +88,7 @@ export class ShallowProvidersCollector {
     modRefId: ModRefId,
     moduleManager: ModuleManager,
     unfinishedScanModules: Set<ModRefId>,
-  ): AppMetadataMap {
+  ): ShallowImportsBase {
     const baseMeta = moduleManager.getMetadata(modRefId, true);
     this.moduleManager = moduleManager;
     this.glProviders = globalProviders;
@@ -123,7 +123,7 @@ export class ShallowProvidersCollector {
     this.checkExtensionsGraph(allExtensionConfigs);
     baseMeta.aOrderedExtensions = topologicalSort<ExtensionClass, ExtensionConfigBase>(allExtensionConfigs, true);
 
-    return this.appMetadataMap.set(modRefId, {
+    return this.shallowImportsBase.set(modRefId, {
       baseMeta: this.baseMeta,
       importedTokensMap: {
         perMod,
@@ -145,14 +145,14 @@ export class ShallowProvidersCollector {
       }
       const shallowProvidersCollector = new ShallowProvidersCollector();
       this.unfinishedScanModules.add(modRefId);
-      const appMetadataMap = shallowProvidersCollector.collectProvidersShallow(
+      const shallowImportsBase = shallowProvidersCollector.collectProvidersShallow(
         this.glProviders,
         modRefId,
         this.moduleManager,
         this.unfinishedScanModules,
       );
       this.unfinishedScanModules.delete(modRefId);
-      appMetadataMap.forEach((val, key) => this.appMetadataMap.set(key, val));
+      shallowImportsBase.forEach((val, key) => this.shallowImportsBase.set(key, val));
     }
     this.checkAllCollisionsWithLevelsMix();
   }
