@@ -15,7 +15,7 @@ import { ExtensionsContext } from '#extension/extensions-context.js';
 import { ExtensionsManager, InternalExtensionsManager } from '#extension/extensions-manager.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { PerAppService } from '#services/per-app.service.js';
-import { ModRefId } from '#types/mix.js';
+import { AnyFn, AnyObj, ModRefId } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ExtensionCounters } from '#extension/extension-types.js';
 import { getCollisions } from '#utils/get-collisions.js';
@@ -28,6 +28,7 @@ import { MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { getModule } from '#utils/get-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
+import { ShallowImportsPerDecor } from './types.js';
 
 export class BaseAppInitializer {
   protected perAppService = new PerAppService();
@@ -125,10 +126,11 @@ export class BaseAppInitializer {
   }
 
   async bootstrapModulesAndExtensions() {
-    const appMetadataMap = this.collectProvidersShallow(this.moduleManager);
+    const { shallowImportsBase, shallowImportsPerDecor } = this.collectProvidersShallow(this.moduleManager);
     const deepProvidersCollector = new DeepProvidersCollector(
       this.moduleManager,
-      appMetadataMap,
+      shallowImportsBase,
+      shallowImportsPerDecor,
       this.baseMeta.providersPerApp,
       this.systemLogMediator,
       new SystemErrorMediator({ moduleName: this.baseMeta.name }),
@@ -138,7 +140,6 @@ export class BaseAppInitializer {
     const injectorPerApp = this.perAppService.reinitInjector();
     this.systemLogMediator = injectorPerApp.get(SystemLogMediator) as SystemLogMediator;
     // this.preRouter = injectorPerApp.get(PreRouter) as PreRouter;
-    return appMetadataMap;
   }
 
   async reinit(autocommit: boolean = true): Promise<void | Error> {
@@ -209,7 +210,18 @@ export class BaseAppInitializer {
     this.systemLogMediator.printGlobalProviders(this, globalProviders);
     const shallowProvidersCollector2 = new ShallowProvidersCollector();
     const { modRefId } = moduleManager.getMetadata('root', true);
-    return shallowProvidersCollector2.collectProvidersShallow(globalProviders, modRefId, moduleManager, new Set());
+    const shallowImportsBase = shallowProvidersCollector2.collectProvidersShallow(
+      globalProviders,
+      modRefId,
+      moduleManager,
+      new Set(),
+    );
+    const shallowImportsPerDecor: ShallowImportsPerDecor = new Map();
+    moduleManager.allInitHooks.forEach((initHooks, decorator) => {
+      const val = initHooks.collectProvidersShallow(globalProviders, modRefId, moduleManager, new Set());
+      shallowImportsPerDecor.set(decorator, val);
+    });
+    return { shallowImportsBase, shallowImportsPerDecor };
   }
 
   protected async handleExtensions(
