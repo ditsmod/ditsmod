@@ -36,3 +36,21 @@ export interface RestImportedTokensMap {
   multiPerRou: Map<RestModRefId, Provider[]>;
   multiPerReq: Map<RestModRefId, Provider[]>;
 }
+
+export class RestProvidersForMod {
+  // providersPerMod: Provider[] = [];
+  providersPerRou: Provider[] = [];
+  providersPerReq: Provider[] = [];
+}
+/**
+ * This metadata returns from `DeepProvidersCollector`. The target for this metadata is `RoutesExtension`.
+ */
+
+export class RestMetadataPerMod2 {
+  baseMeta: NormalizedMeta;
+  meta: RestNormalizedMeta;
+  guardsPerMod1: GuardPerMod1[];
+  prefixPerMod: string;
+  applyControllers?: boolean;
+}
+

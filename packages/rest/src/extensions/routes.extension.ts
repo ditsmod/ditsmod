@@ -10,7 +10,7 @@ import { GuardItem, GuardPerMod1 } from '#interceptors/guard.js';
 import { ControllerRawMetadata1 } from '#types/controller.js';
 import { AppOptions } from '#types/app-options.js';
 import { addRest } from '#decorators/rest-metadata.js';
-import { RestMetadataPerMod2 } from '#module/rest-deep-providers-collector.js';
+import { RestMetadataPerMod2 } from '#module/types.js';
 
 @injectable()
 export class RoutesExtension implements Extension<MetadataPerMod3> {

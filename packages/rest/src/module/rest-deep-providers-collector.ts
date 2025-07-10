@@ -21,27 +21,9 @@ import {
 import { Level } from '#types/types.js';
 import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
-import { RestImportedTokensMap, RestMetadataPerMod1 } from './types.js';
+import { RestImportedTokensMap, RestMetadataPerMod1, RestMetadataPerMod2, RestProvidersForMod } from './types.js';
 import { RestNormalizedMeta } from '#types/rest-normalized-meta.js';
 import { addRest } from '#decorators/rest-metadata.js';
-import { GuardPerMod1 } from '#interceptors/guard.js';
-
-export class RestProvidersForMod {
-  // providersPerMod: Provider[] = [];
-  providersPerRou: Provider[] = [];
-  providersPerReq: Provider[] = [];
-}
-
-/**
- * This metadata returns from `DeepProvidersCollector`. The target for this metadata is `RoutesExtension`.
- */
-export class RestMetadataPerMod2 {
-  baseMeta: NormalizedMeta;
-  meta: RestNormalizedMeta;
-  guardsPerMod1: GuardPerMod1[];
-  prefixPerMod: string;
-  applyControllers?: boolean;
-}
 
 /**
  * By analyzing the dependencies of the providers returned by `ShallowProvidersCollector`,
