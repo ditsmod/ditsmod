@@ -27,40 +27,7 @@ import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js'
 import { AppendsWithParams } from './module-metadata.js';
 import { addRest } from '#decorators/rest-metadata.js';
 import { isAppendsWithParams } from '#types/type.guards.js';
-
-export class RestImportObj<T extends Provider = Provider> {
-  modRefId: RestModRefId;
-  /**
-   * This property can have more than one element for multi-providers only.
-   */
-  providers: T[] = [];
-}
-
-/**
- * Metadata collected using `ShallowProvidersCollector`. The target for this metadata is `DeepProvidersCollector`.
- */
-export class RestMetadataPerMod1 {
-  baseMeta: NormalizedMeta;
-  prefixPerMod: string;
-  guardsPerMod1: GuardPerMod1[];
-  /**
-   * Snapshot of `RestNormalizedMeta`. If you modify any array in this object,
-   * the original array will remain unchanged.
-   */
-  meta: RestNormalizedMeta;
-  /**
-   * Map between a token and its ImportObj per level.
-   */
-  importedTokensMap: RestImportedTokensMap;
-  applyControllers?: boolean;
-}
-
-export interface RestImportedTokensMap {
-  perRou: Map<any, RestImportObj>;
-  perReq: Map<any, RestImportObj>;
-  multiPerRou: Map<RestModRefId, Provider[]>;
-  multiPerReq: Map<RestModRefId, Provider[]>;
-}
+import { RestImportObj, RestMetadataPerMod1 } from './types.js';
 
 /**
  * Recursively collects providers taking into account module imports/exports,
