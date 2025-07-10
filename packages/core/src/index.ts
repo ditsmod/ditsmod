@@ -2,6 +2,7 @@ export * from '#di/public-api.js';
 export * from '@ts-stack/chain-error';
 
 export { BaseAppInitializer } from '#init/base-app-initializer.js';
+export { ShallowImportsBase } from '#init/types.js';
 export { BaseApplication } from '#init/base-application.js';
 export { BaseAppOptions } from '#init/base-app-options.js';
 export { DeepProvidersCollector } from '#init/deep-providers-collector.js';
@@ -56,7 +57,6 @@ export {
   ModRefId,
   Override,
   UnionToIntersection,
-  ShallowImportsBase,
 } from '#types/mix.js';
 export {
   ModuleMetadata,
