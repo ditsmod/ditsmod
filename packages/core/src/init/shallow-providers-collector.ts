@@ -135,12 +135,10 @@ export class ShallowProvidersCollector {
   }
 
   protected importModules() {
-    // @todo Remove `as any[]` and `as ModRefId[]` after fixing https://github.com/microsoft/TypeScript/issues/36554#issuecomment-580924501
-    for (const modRefId of this.baseMeta.importsModules.concat(
-      this.baseMeta.importsWithParams as any[],
-    ) as ModRefId[]) {
-      const meta = this.moduleManager.getMetadata(modRefId, true);
-      this.importProvidersAndExtensions(meta);
+    const aModRefIds = this.baseMeta.importsModules.concat(this.baseMeta.importsWithParams as any[]) as ModRefId[];
+    for (const modRefId of aModRefIds) {
+      const baseMeta = this.moduleManager.getMetadata(modRefId, true);
+      this.importProvidersAndExtensions(baseMeta);
       if (this.unfinishedScanModules.has(modRefId)) {
         continue;
       }
