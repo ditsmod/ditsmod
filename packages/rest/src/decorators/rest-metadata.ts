@@ -16,7 +16,7 @@ import { AddRest } from '#module/module-metadata.js';
 import { AddRestNormalizer } from '#module/rest-metadata-normalizer.js';
 import { RestShallowProvidersCollector } from '#module/rest-shallow-providers-collector.js';
 import { RestMetadataPerMod1 } from '#module/types.js';
-import { RestNormalizedMeta } from '#types/rest-normalized-meta.js';
+import { RestNormalizedMeta } from '#module/rest-normalized-meta.js';
 import { RestDeepProvidersCollector } from '#module/rest-deep-providers-collector.js';
 /**
  * A decorator that adds REST metadata to a `featureModule` or `rootModule`.

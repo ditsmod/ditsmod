@@ -1,6 +1,6 @@
 import { Class, makeClassDecorator, NormalizedMeta } from '@ditsmod/core';
 import { RequestContext } from '#services/request-context.js';
-import { RestNormalizedMeta } from '#types/rest-normalized-meta.js';
+import { RestNormalizedMeta } from '#module/rest-normalized-meta.js';
 
 export const guard = makeClassDecorator((data?: never) => data);
 

@@ -1,7 +1,7 @@
 import { Provider, NormalizedMeta } from '@ditsmod/core';
 
 import { GuardPerMod1 } from '#interceptors/guard.js';
-import { RestModRefId, RestNormalizedMeta } from '#types/rest-normalized-meta.js';
+import { RestModRefId, RestNormalizedMeta } from '#module/rest-normalized-meta.js';
 
 
 export class RestImportObj<T extends Provider = Provider> {

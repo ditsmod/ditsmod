@@ -6,7 +6,7 @@ import { GuardPerMod1 } from '#interceptors/guard.js';
 import { RouteHandler } from '#services/router.js';
 import { AppendsWithParams } from '#module/module-metadata.js';
 import { ControllerMetadata } from './controller-metadata.js';
-import { RestModRefId, RestNormalizedMeta } from './rest-normalized-meta.js';
+import { RestModRefId, RestNormalizedMeta } from '#module/rest-normalized-meta.js';
 
 export class RestGlobalProviders {
   importedProvidersPerRou = new Map<any, RestImportObj>();

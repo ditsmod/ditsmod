@@ -1,7 +1,7 @@
 import { AnyObj, ModuleType, Class, Provider, Providers, ModuleWithParams, ModRefId } from '@ditsmod/core';
 
 import { GuardItem } from '#interceptors/guard.js';
-import { RestProvidersMetadata } from '#types/rest-normalized-meta.js';
+import { RestProvidersMetadata } from '#module/rest-normalized-meta.js';
 
 /**
  * Metadata for the `addRest` decorator, which adds REST metadata to a `featureModule` or `rootModule`.
