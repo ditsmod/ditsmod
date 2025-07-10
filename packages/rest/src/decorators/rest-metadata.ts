@@ -32,7 +32,7 @@ class RestInitHooksAndMetadata extends InitHooksAndMetadata<AddRest> {
     return new AddRestNormalizer().normalize(baseMeta, metadataWithParams);
   }
 
-  override addModulesToScan(meta: RestNormalizedMeta) {
+  override getModulesToScan(meta: RestNormalizedMeta) {
     return meta.appendsModules.concat(meta.appendsWithParams as any[]);
   }
 

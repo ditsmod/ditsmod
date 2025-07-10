@@ -50,7 +50,7 @@ export class InitHooksAndMetadata<T extends AnyObj> {
   /**
    * The returned array of modules will be scanned by `ModuleManager`.
    */
-  addModulesToScan(meta: AnyObj): ModRefId[] {
+  getModulesToScan(meta: AnyObj): ModRefId[] {
     return [];
   }
 
