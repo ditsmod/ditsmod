@@ -23,8 +23,8 @@ import {
   resolveForwardRef,
 } from '@ditsmod/core';
 
-import { AddRest, RestModuleParams } from '#module/module-metadata.js';
-import { RestNormalizedMeta } from '#module/rest-normalized-meta.js';
+import { AddRest, RestModuleParams } from '#init/module-metadata.js';
+import { RestNormalizedMeta } from '#init/rest-normalized-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
 import { addRest } from '#decorators/rest-metadata.js';

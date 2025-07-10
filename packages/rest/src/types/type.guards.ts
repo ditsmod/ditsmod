@@ -2,7 +2,7 @@ import { AnyObj, Class, DecoratorAndValue, ModuleType, ModuleWithParams } from '
 
 import { route } from '#decorators/route.js';
 import { HttpInterceptor } from '#interceptors/tokens-and-types.js';
-import { AppendsWithParams, RestModuleParams } from '#module/module-metadata.js';
+import { AppendsWithParams, RestModuleParams } from '#init/module-metadata.js';
 import { controller, ControllerRawMetadata } from './controller.js';
 import { Http2SecureServerOptions, ServerOptions } from './server-options.js';
 

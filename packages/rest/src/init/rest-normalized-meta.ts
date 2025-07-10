@@ -12,7 +12,7 @@ import {
 } from '@ditsmod/core';
 
 import { NormalizedGuard } from '#interceptors/guard.js';
-import { AppendsWithParams, RestModuleParams } from '#module/module-metadata.js';
+import { AppendsWithParams, RestModuleParams } from '#init/module-metadata.js';
 
 export interface RestRawProvidersMetadata {
   providersPerApp?: Providers | Provider[];

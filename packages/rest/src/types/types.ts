@@ -1,12 +1,12 @@
 import { Class, HttpMethod, ModuleExtract, ModuleMetadata, ModuleType, NormalizedMeta, Provider } from '@ditsmod/core';
 
-import { RestImportObj } from '#module/types.js';
+import { RestImportObj } from '#init/types.js';
 import { Tree } from '#services/tree.js';
 import { GuardPerMod1 } from '#interceptors/guard.js';
 import { RouteHandler } from '#services/router.js';
-import { AppendsWithParams } from '#module/module-metadata.js';
+import { AppendsWithParams } from '#init/module-metadata.js';
 import { ControllerMetadata } from './controller-metadata.js';
-import { RestModRefId, RestNormalizedMeta } from '#module/rest-normalized-meta.js';
+import { RestModRefId, RestNormalizedMeta } from '#init/rest-normalized-meta.js';
 
 export class RestGlobalProviders {
   importedProvidersPerRou = new Map<any, RestImportObj>();

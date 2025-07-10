@@ -12,12 +12,12 @@ import {
   ShallowImportsBase,
 } from '@ditsmod/core';
 
-import { AddRest } from '#module/module-metadata.js';
-import { AddRestNormalizer } from '#module/rest-metadata-normalizer.js';
-import { RestShallowProvidersCollector } from '#module/rest-shallow-providers-collector.js';
-import { RestMetadataPerMod1 } from '#module/types.js';
-import { RestNormalizedMeta } from '#module/rest-normalized-meta.js';
-import { RestDeepProvidersCollector } from '#module/rest-deep-providers-collector.js';
+import { AddRest } from '#init/module-metadata.js';
+import { AddRestNormalizer } from '#init/rest-metadata-normalizer.js';
+import { RestShallowProvidersCollector } from '#init/rest-shallow-providers-collector.js';
+import { RestMetadataPerMod1 } from '#init/types.js';
+import { RestNormalizedMeta } from '#init/rest-normalized-meta.js';
+import { RestDeepProvidersCollector } from '#init/rest-deep-providers-collector.js';
 /**
  * A decorator that adds REST metadata to a `featureModule` or `rootModule`.
  */

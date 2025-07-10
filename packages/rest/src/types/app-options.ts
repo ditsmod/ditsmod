@@ -1,6 +1,6 @@
 import { BaseAppOptions } from '@ditsmod/core';
 
-import { HttpModule } from '#module/http-module.js';
+import { HttpModule } from '#init/http-module.js';
 import { ServerOptions } from '#types/server-options.js';
 
 export class AppOptions extends BaseAppOptions {

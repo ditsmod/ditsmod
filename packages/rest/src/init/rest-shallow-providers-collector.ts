@@ -19,7 +19,7 @@ import {
 } from '@ditsmod/core';
 
 import { GuardPerMod1 } from '#interceptors/guard.js';
-import { RestModRefId, RestNormalizedMeta } from '#module/rest-normalized-meta.js';
+import { RestModRefId, RestNormalizedMeta } from '#init/rest-normalized-meta.js';
 import { Level, RestGlobalProviders, RestModuleExtract } from '#types/types.js';
 import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js';
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';

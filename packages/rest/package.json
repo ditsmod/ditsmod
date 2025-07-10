@@ -20,7 +20,7 @@
   },
   "imports": {
     "#utils/*": "./dist/utils/*",
-    "#module/*": "./dist/module/*",
+    "#init/*": "./dist/init/*",
     "#types/*": "./dist/types/*",
     "#decorators/*": "./dist/decorators/*",
     "#services/*": "./dist/services/*",

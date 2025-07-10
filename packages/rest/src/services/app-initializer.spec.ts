@@ -1,4 +1,4 @@
-import { ImportObj } from '#module/rest-shallow-providers-collector.spec.js';
+import { ImportObj } from '#init/rest-shallow-providers-collector.spec.js';
 import { AppOptions } from '#types/app-options.js';
 import { controller } from '#types/controller.js';
 import {

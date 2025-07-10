@@ -11,9 +11,9 @@ export {
   BaseAppendsWithParams,
   AddRest,
   RestModuleParams,
-} from './module/module-metadata.js';
+} from './init/module-metadata.js';
 export { RouteParam, MetadataPerMod3, RedirectStatusCodes } from './types/types.js';
-export { RestModule } from './module/rest.module.js';
+export { RestModule } from './init/rest.module.js';
 export { RequestContext } from './services/request-context.js';
 export { RestErrorMediator } from './services/router-error-mediator.js';
 export { RoutesExtension } from './extensions/routes.extension.js';
