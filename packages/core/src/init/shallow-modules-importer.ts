@@ -61,12 +61,12 @@ export class ShallowModulesImporter {
     this.baseMeta = meta;
     this.importProvidersAndExtensions(meta);
     this.checkAllCollisionsWithLevelsMix();
-    const providersFromDecorators = new Map<AnyFn, AnyObj | undefined>();
+    const shallowImportedModules = new Map<AnyFn, AnyObj | undefined>();
 
     meta.rawDecorMeta.forEach((initHooksAndMetadata, decorator) => {
       const val = initHooksAndMetadata.exportGlobalProviders(moduleManager, meta);
       if (val) {
-        providersFromDecorators.set(decorator, val);
+        shallowImportedModules.set(decorator, val);
       }
     });
 
@@ -75,7 +75,7 @@ export class ShallowModulesImporter {
       importedMultiProvidersPerMod: this.importedMultiProvidersPerMod,
       importedExtensions: this.importedExtensions,
       aImportedExtensionConfig: this.aImportedExtensionConfig,
-      providersFromDecorators,
+      shallowImportedModules,
     };
   }
 

@@ -100,7 +100,7 @@ export class ShallowModulesImporter {
     const meta = baseMeta.normDecorMeta.get(addRest) as RestNormalizedMeta | undefined;
     this.meta = meta ? meta : new RestNormalizedMeta();
     this.glProviders = globalProviders;
-    this.restGlProviders = globalProviders.providersFromDecorators.get(addRest) as RestGlobalProviders;
+    this.restGlProviders = globalProviders.shallowImportedModules.get(addRest) as RestGlobalProviders;
     this.prefixPerMod = prefixPerMod;
     this.moduleName = baseMeta.name;
     this.guardsPerMod1 = guardsPerMod1 || [];
