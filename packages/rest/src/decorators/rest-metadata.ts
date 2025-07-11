@@ -13,11 +13,11 @@ import {
 } from '@ditsmod/core';
 
 import { AddRest } from '#init/module-metadata.js';
-import { AddRestNormalizer } from '#init/rest-metadata-normalizer.js';
-import { ShallowModulesImporter } from '#init/rest-shallow-providers-collector.js';
+import { ModuleNormalizer } from '#init/module-normalizer.js';
+import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import { RestMetadataPerMod1 } from '#init/types.js';
 import { RestNormalizedMeta } from '#init/rest-normalized-meta.js';
-import { DeepModulesImporter } from '#init/rest-deep-providers-collector.js';
+import { DeepModulesImporter } from '#init/deep-modules-importer.js';
 /**
  * A decorator that adds REST metadata to a `featureModule` or `rootModule`.
  */
@@ -29,7 +29,7 @@ export interface AddRestDecorator {
 
 class RestInitHooksAndMetadata extends InitHooksAndMetadata<AddRest> {
   override normalize(baseMeta: NormalizedMeta, metadataWithParams: AddRest) {
-    return new AddRestNormalizer().normalize(baseMeta, metadataWithParams);
+    return new ModuleNormalizer().normalize(baseMeta, metadataWithParams);
   }
 
   override getModulesToScan(meta?: RestNormalizedMeta) {

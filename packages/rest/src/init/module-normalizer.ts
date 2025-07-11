@@ -32,7 +32,7 @@ import { addRest } from '#decorators/rest-metadata.js';
 /**
  * Normalizes and validates module metadata.
  */
-export class AddRestNormalizer {
+export class ModuleNormalizer {
   normalize(baseMeta: NormalizedMeta, rawMeta: AddRest) {
     const meta = new RestNormalizedMeta();
     this.mergeModuleWithParams(baseMeta, meta);
