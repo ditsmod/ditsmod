@@ -41,9 +41,10 @@ class RestInitHooksAndMetadata extends InitHooksAndMetadata<RestMetadata> {
 
   override collectProvidersShallow(
     ...args: [
+      shallowImportsBase: ShallowImportsBase,
+      providersPerApp: Provider[],
       globalProviders: GlobalProviders,
       modRefId: ModRefId,
-      moduleManager: ModuleManager,
       unfinishedScanModules: Set<ModRefId>,
     ]
   ): Map<ModRefId, RestMetadataPerMod1> {

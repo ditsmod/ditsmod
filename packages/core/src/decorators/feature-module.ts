@@ -63,9 +63,10 @@ export class InitHooksAndMetadata<T extends AnyObj> {
    * but does not take provider dependencies into account.
    */
   collectProvidersShallow(
+    shallowImportsBase: ShallowImportsBase,
+    providersPerApp: Provider[],
     globalProviders: GlobalProviders,
     modRefId: ModRefId,
-    moduleManager: ModuleManager,
     unfinishedScanModules: Set<ModRefId>,
   ): Map<ModRefId, { baseMeta: NormalizedMeta } & AnyObj> {
     return new Map();

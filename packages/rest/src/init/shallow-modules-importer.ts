@@ -16,6 +16,7 @@ import {
   NormalizedMeta,
   GlobalProviders,
   getLastProviders,
+  ShallowImportsBase,
 } from '@ditsmod/core';
 
 import { GuardPerMod1 } from '#interceptors/guard.js';
@@ -42,11 +43,10 @@ export class ShallowModulesImporter {
   protected moduleName: string;
   protected prefixPerMod: string;
   protected guardsPerMod1: GuardPerMod1[];
-  /**
-   * Module metadata.
-   */
   protected baseMeta: NormalizedMeta;
   protected meta: RestNormalizedMeta;
+  protected shallowImportsBase: ShallowImportsBase;
+  protected providersPerApp: Provider[];
 
   protected importedProvidersPerRou = new Map<any, RestImportObj>();
   protected importedProvidersPerReq = new Map<any, RestImportObj>();
@@ -64,6 +64,7 @@ export class ShallowModulesImporter {
 
   exportGlobalProviders(moduleManager: ModuleManager, baseMeta: NormalizedMeta): RestGlobalProviders {
     this.moduleManager = moduleManager;
+    this.providersPerApp = moduleManager.providersPerApp;
     this.moduleName = baseMeta.name;
     this.baseMeta = baseMeta;
     const meta = baseMeta.normDecorMeta.get(addRest) as RestNormalizedMeta | undefined;
@@ -83,19 +84,21 @@ export class ShallowModulesImporter {
    * @param modRefId Module that will bootstrapped.
    */
   collectProvidersShallow(
+    shallowImportsBase: ShallowImportsBase,
+    providersPerApp: Provider[],
     globalProviders: GlobalProviders,
     modRefId: ModRefId,
-    moduleManager: ModuleManager,
     unfinishedScanModules: Set<ModRefId>,
     prefixPerMod: string = '',
     guardsPerMod1?: GuardPerMod1[],
     isAppends?: boolean,
   ): Map<ModRefId, RestMetadataPerMod1> {
-    const baseMeta = moduleManager.getMetadata(modRefId, true);
+    this.shallowImportsBase = shallowImportsBase;
+    this.providersPerApp = providersPerApp;
+    const baseMeta = this.getMetadata(modRefId, true);
     this.baseMeta = baseMeta;
     const meta = baseMeta.normDecorMeta.get(addRest) as RestNormalizedMeta | undefined;
     this.meta = meta ? meta : new RestNormalizedMeta();
-    this.moduleManager = moduleManager;
     this.glProviders = globalProviders;
     this.restGlProviders = globalProviders.providersFromDecorators.get(addRest) as RestGlobalProviders;
     this.prefixPerMod = prefixPerMod;
@@ -174,7 +177,7 @@ export class ShallowModulesImporter {
 
   protected importOrAppendModules(aModRefIds: RestModRefId[], isImport?: boolean) {
     for (const modRefId of aModRefIds) {
-      const baseMeta = this.moduleManager.getMetadata(modRefId, true);
+      const baseMeta = this.getMetadata(modRefId, true);
       if (isImport) {
         this.importProviders(baseMeta);
       }
@@ -189,9 +192,10 @@ export class ShallowModulesImporter {
       const shallowModulesImporter = new ShallowModulesImporter();
       this.unfinishedScanModules.add(modRefId);
       const shallowImportsBase = shallowModulesImporter.collectProvidersShallow(
+        this.shallowImportsBase,
+        this.providersPerApp,
         this.glProviders,
         modRefId,
-        this.moduleManager,
         this.unfinishedScanModules,
         prefixPerMod,
         guardsPerMod1,
@@ -239,7 +243,7 @@ export class ShallowModulesImporter {
     const { modRefId, exportsModules, exportsWithParams, normDecorMeta } = baseMeta1;
 
     for (const modRefId2 of [...exportsModules, ...exportsWithParams]) {
-      const baseMeta2 = this.moduleManager.getMetadata(modRefId2, true);
+      const baseMeta2 = this.getMetadata(modRefId2, true);
       // Reexported module
       this.importProviders(baseMeta2);
     }
@@ -311,7 +315,7 @@ export class ShallowModulesImporter {
     const [token2, modRefId2] = this.meta[`resolvedCollisionsPer${level}`].find(([token2]) => token1 === token2)!;
     const moduleName = getDebugClassName(modRefId2);
     const tokenName = token2.name || token2;
-    const baseMeta2 = this.moduleManager.getMetadata(modRefId2);
+    const baseMeta2 = this.getMetadata(modRefId2);
     const meta2 = baseMeta2?.normDecorMeta.get(addRest) as RestNormalizedMeta | undefined;
     let errorMsg =
       `Resolving collisions for providersPer${level} in ${this.moduleName} failed: ` +
@@ -352,7 +356,7 @@ export class ShallowModulesImporter {
   }
 
   protected checkAllCollisionsWithLevelsMix() {
-    this.checkCollisionsWithLevelsMix(this.moduleManager.providersPerApp, ['Rou']);
+    this.checkCollisionsWithLevelsMix(this.providersPerApp, ['Rou']);
     const providersPerRou = [
       ...defaultProvidersPerRou,
       ...this.meta.providersPerRou,
@@ -376,7 +380,7 @@ export class ShallowModulesImporter {
         const collision = importedTokens.includes(token) && ![...declaredTokens, ...resolvedTokens].includes(token);
         if (collision) {
           const importObj = this[`importedProvidersPer${level}`].get(token)!;
-          const hostModulePath = this.moduleManager.getMetadata(importObj.modRefId)?.declaredInDir || '.';
+          const hostModulePath = this.getMetadata(importObj.modRefId)?.declaredInDir || '.';
           const decorAndVal = reflector.getDecorators(token, hasDeclaredInDir)?.at(0);
           const collisionWithPath = decorAndVal?.declaredInDir || '.';
           if (hostModulePath !== '.' && collisionWithPath !== '.' && collisionWithPath.startsWith(hostModulePath)) {
@@ -412,7 +416,7 @@ export class ShallowModulesImporter {
 
   protected checkImportsAndAppends(baseMeta: NormalizedMeta, meta1: RestNormalizedMeta) {
     [...meta1.appendsModules].forEach((modRefId) => {
-      const appendedBaseMeta = this.moduleManager.getMetadata(modRefId, true);
+      const appendedBaseMeta = this.getMetadata(modRefId, true);
       const meta2 = appendedBaseMeta.normDecorMeta.get(addRest) as RestNormalizedMeta | undefined;
       if (!meta2?.controllers.length) {
         const msg = `Appends to "${baseMeta.name}" failed: "${appendedBaseMeta.name}" must have controllers.`;
@@ -424,5 +428,16 @@ export class ShallowModulesImporter {
         throw new Error(msg);
       }
     });
+  }
+
+  /**
+   * If this function is used via `exportGlobalProviders()`, `shallowImportsBase` is not available.
+   * So, you have to use `ModuleManager`.
+   */
+  protected getMetadata(modRefId: ModRefId, throwErrIfNotFound?: true): NormalizedMeta {
+    if (this.shallowImportsBase) {
+      return this.shallowImportsBase.get(modRefId)?.baseMeta!;
+    }
+    return this.moduleManager.getMetadata(modRefId, throwErrIfNotFound!);
   }
 }

@@ -218,7 +218,13 @@ export class BaseAppInitializer {
     );
     const shallowImportsPerDecor: ShallowImportsPerDecor = new Map();
     moduleManager.allInitHooks.forEach((initHooks, decorator) => {
-      const val = initHooks.collectProvidersShallow(globalProviders, modRefId, moduleManager, new Set());
+      const val = initHooks.collectProvidersShallow(
+        shallowImportsBase,
+        moduleManager.providersPerApp,
+        globalProviders,
+        modRefId,
+        new Set(),
+      );
       shallowImportsPerDecor.set(decorator, val);
     });
     return { shallowImportsBase, shallowImportsPerDecor };
