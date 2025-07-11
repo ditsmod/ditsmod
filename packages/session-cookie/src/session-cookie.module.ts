@@ -1,15 +1,14 @@
 import { featureModule, ModuleWithParams, optional } from '@ditsmod/core';
-import { PreRouterExtension, RoutesExtension } from '@ditsmod/rest';
+import { addRest, PreRouterExtension, RoutesExtension } from '@ditsmod/rest';
 
 import { SessionCookie } from './session-cookie.js';
 import { SessionLogMediator } from './session-log-mediator.js';
 import { SessionCookieOptions } from './types.js';
 import { SessionCookieExtension } from './session-cookie.extension.js';
 
+@addRest({ providersPerReq: [SessionCookie], exports: [SessionCookie] })
 @featureModule({
   providersPerMod: [SessionLogMediator],
-  providersPerReq: [SessionCookie],
-  exports: [SessionCookie],
   extensions: [
     {
       extension: SessionCookieExtension,
