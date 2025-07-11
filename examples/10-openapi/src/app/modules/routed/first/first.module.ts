@@ -4,8 +4,11 @@ import { addRest } from '@ditsmod/rest';
 import { openapiModuleWithParams } from '#service/openapi/openapi.module.js';
 import { FirstController, CtxController } from './first.controller.js';
 
-@addRest({ controllers: [FirstController, CtxController] })
+@addRest({
+  controllers: [FirstController, CtxController],
+  importsWithParams: [openapiModuleWithParams.restModuleParams],
+})
 @featureModule({
-  imports: [openapiModuleWithParams],
+  imports: [openapiModuleWithParams.moduleWithParams],
 })
 export class FirstModule {}

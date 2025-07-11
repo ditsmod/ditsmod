@@ -1,6 +1,6 @@
 import { XOasObject } from '@ts-stack/openapi-spec';
-import { featureModule, ModuleWithParams, Providers } from '@ditsmod/core';
-import { RestModule, PreRouterExtension, RoutesExtension } from '@ditsmod/rest';
+import { AnyFn, featureModule, ModuleWithParams, Providers, rootModule } from '@ditsmod/core';
+import { RestModule, PreRouterExtension, RoutesExtension, addRest, RestModuleParams } from '@ditsmod/rest';
 
 import { OpenapiCompilerExtension } from './extensions/openapi-compiler.extension.js';
 import { OpenapiRoutesExtension } from './extensions/openapi-routes.extension.js';
@@ -10,9 +10,9 @@ import { OasConfigFiles, OasExtensionConfig } from './types/oas-extension-option
 import { OpenapiLogMediator } from '#services/openapi-log-mediator.js';
 import { OpenapiErrorMediator } from '#services/openapi-error-mediator.js';
 
+@addRest({ controllers: [OpenapiController] })
 @featureModule({
   imports: [RestModule],
-  controllers: [OpenapiController],
   providersPerApp: [OasConfigFiles],
   providersPerMod: [OpenapiLogMediator, OpenapiErrorMediator],
   extensions: [
@@ -42,10 +42,11 @@ export class OpenapiModule {
       providersPerApp: new Providers().useValue<OasExtensionConfig>(OasExtensionConfig, oasExtensionConfig),
     };
 
+    const restModuleParams: RestModuleParams = { modRefId: moduleWithParams };
     if (typeof absolutePath == 'string') {
-      moduleWithParams.absolutePath = absolutePath;
+      restModuleParams.absolutePath = absolutePath;
     }
 
-    return moduleWithParams;
+    return { moduleWithParams, restModuleParams };
   }
 }
