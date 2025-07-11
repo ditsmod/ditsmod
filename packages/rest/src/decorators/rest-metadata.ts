@@ -12,7 +12,7 @@ import {
   ShallowImportsBase,
 } from '@ditsmod/core';
 
-import { AddRest } from '#init/module-metadata.js';
+import { RestMetadata } from '#init/module-metadata.js';
 import { ModuleNormalizer } from '#init/module-normalizer.js';
 import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import { RestMetadataPerMod1 } from '#init/types.js';
@@ -24,11 +24,11 @@ import { DeepModulesImporter } from '#init/deep-modules-importer.js';
 export const addRest: AddRestDecorator = makeClassDecorator(transformMetadata);
 
 export interface AddRestDecorator {
-  (data?: AddRest): any;
+  (data?: RestMetadata): any;
 }
 
-class RestInitHooksAndMetadata extends InitHooksAndMetadata<AddRest> {
-  override normalize(baseMeta: NormalizedMeta, metadataWithParams: AddRest) {
+class RestInitHooksAndMetadata extends InitHooksAndMetadata<RestMetadata> {
+  override normalize(baseMeta: NormalizedMeta, metadataWithParams: RestMetadata) {
     return new ModuleNormalizer().normalize(baseMeta, metadataWithParams);
   }
 
@@ -66,7 +66,7 @@ class RestInitHooksAndMetadata extends InitHooksAndMetadata<AddRest> {
   }
 }
 
-export function transformMetadata(data?: AddRest): InitHooksAndMetadata<AddRest> {
+export function transformMetadata(data?: RestMetadata): InitHooksAndMetadata<RestMetadata> {
   const metadata = Object.assign({}, data);
   return new RestInitHooksAndMetadata(metadata);
 }

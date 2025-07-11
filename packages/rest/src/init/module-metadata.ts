@@ -6,7 +6,7 @@ import { RestProvidersMetadata } from '#init/rest-normalized-meta.js';
 /**
  * Metadata for the `addRest` decorator, which adds REST metadata to a `featureModule` or `rootModule`.
  */
-export interface AddRest {
+export interface RestMetadata {
   /**
    * List of provider tokens exported by this module.
    */

@@ -23,7 +23,7 @@ import {
   resolveForwardRef,
 } from '@ditsmod/core';
 
-import { AddRest, RestModuleParams } from '#init/module-metadata.js';
+import { RestMetadata, RestModuleParams } from '#init/module-metadata.js';
 import { RestNormalizedMeta } from '#init/rest-normalized-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
@@ -33,7 +33,7 @@ import { addRest } from '#decorators/rest-metadata.js';
  * Normalizes and validates module metadata.
  */
 export class ModuleNormalizer {
-  normalize(baseMeta: NormalizedMeta, rawMeta: AddRest) {
+  normalize(baseMeta: NormalizedMeta, rawMeta: RestMetadata) {
     const meta = new RestNormalizedMeta();
     this.mergeModuleWithParams(baseMeta, meta);
     rawMeta.appends?.forEach((ap, i) => {
@@ -79,14 +79,14 @@ export class ModuleNormalizer {
     }
   }
 
-  protected normalizeModule(rawMeta: AddRest, meta: RestNormalizedMeta) {
+  protected normalizeModule(rawMeta: RestMetadata, meta: RestNormalizedMeta) {
     this.throwIfResolvingNormalizedProvider(rawMeta);
     this.exportFromReflectMetadata(rawMeta, meta);
     this.pickAndMergeMeta(meta, rawMeta);
     this.checkGuardsPerMod(meta.guardsPerMod);
   }
 
-  protected throwIfResolvingNormalizedProvider(rawMeta: AddRest) {
+  protected throwIfResolvingNormalizedProvider(rawMeta: RestMetadata) {
     const resolvedCollisionsPerLevel: [any, ModuleType | ModuleWithParams][] = [];
     if (Array.isArray(rawMeta.resolvedCollisionsPerRou)) {
       resolvedCollisionsPerLevel.push(...rawMeta.resolvedCollisionsPerRou);
@@ -104,7 +104,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected exportFromReflectMetadata(rawMeta: AddRest, meta: RestNormalizedMeta) {
+  protected exportFromReflectMetadata(rawMeta: RestMetadata, meta: RestNormalizedMeta) {
     const providers: Provider[] = [];
     if (Array.isArray(rawMeta.providersPerRou)) {
       providers.push(...rawMeta.providersPerRou);
@@ -142,7 +142,7 @@ export class ModuleNormalizer {
     }
   }
 
-  protected findAndSetProviders(token: any, rawMeta: AddRest, meta: RestNormalizedMeta) {
+  protected findAndSetProviders(token: any, rawMeta: RestMetadata, meta: RestNormalizedMeta) {
     let found = false;
     (['Rou', 'Req'] as const).forEach((level) => {
       const unfilteredProviders = [...(rawMeta[`providersPer${level}`] || [])];
@@ -168,7 +168,7 @@ export class ModuleNormalizer {
     }
   }
 
-  protected pickAndMergeMeta(targetObject: RestNormalizedMeta, ...sourceObjects: AddRest[]) {
+  protected pickAndMergeMeta(targetObject: RestNormalizedMeta, ...sourceObjects: RestMetadata[]) {
     const trgtObj = targetObject as any;
     sourceObjects.forEach((sourceObj: AnyObj) => {
       sourceObj ??= {};
@@ -206,7 +206,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected normalizeImportsWithParams(rawMeta: AddRest, meta: RestNormalizedMeta) {
+  protected normalizeImportsWithParams(rawMeta: RestMetadata, meta: RestNormalizedMeta) {
     meta.importsWithParams = (rawMeta.importsWithParams || []).map((params) => {
       if (isModuleWithParams(params.modRefId)) {
         return params;
