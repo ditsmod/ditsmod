@@ -46,5 +46,5 @@ export interface ImportedTokensMap {
 
 export class MetadataPerMod2<T extends AnyObj = AnyObj> {
   baseMeta: NormalizedMeta;
-  deepCollectedProviders: Map<AnyFn, T>;
+  deepImportedModules: Map<AnyFn, T>;
 }
