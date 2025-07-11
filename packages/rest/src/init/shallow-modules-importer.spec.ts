@@ -70,7 +70,7 @@ beforeEach(() => {
 describe('appending modules', () => {
   function bootstrap(mod: ModuleType) {
     expect(() => moduleManager.scanModule(mod)).not.toThrow();
-    return mock.collectProvidersShallow([], new GlobalProviders(), '', mod, moduleManager, new Set());
+    return mock.importModulesShallow([], new GlobalProviders(), '', mod, moduleManager, new Set());
   }
 
   it('should throw an error because resolvedCollisionsPerReq not properly setted provider', () => {

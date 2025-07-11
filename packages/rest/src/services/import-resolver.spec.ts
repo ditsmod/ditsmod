@@ -68,7 +68,7 @@ describe('resolve()', () => {
 
   function bootstrap(mod: ModuleType) {
     expect(() => moduleManager.scanModule(mod)).not.toThrow();
-    const shallowImportsBase = shallowModulesImporter.collectProvidersShallow([], new GlobalProviders(), '', mod, moduleManager, new Set());
+    const shallowImportsBase = shallowModulesImporter.importModulesShallow([], new GlobalProviders(), '', mod, moduleManager, new Set());
     mock = new DeepModulesImporterMock(moduleManager, shallowImportsBase, [], systemLogMediator, errorMediator);
     return shallowImportsBase as Map<ModRefId, MetadataPerMod1>;
   }
@@ -97,7 +97,7 @@ describe('resolve()', () => {
     class Module2 {}
 
     bootstrap(Module2);
-    expect(() => mock.collectProvidersDeep()).not.toThrow();
+    expect(() => mock.importModulesDeep()).not.toThrow();
   });
 
   it(`Module3 imports Module2, which has a dependency on Service1, but Module2 does not import any modules with Service1;
@@ -119,7 +119,7 @@ describe('resolve()', () => {
     bootstrap(Module3);
     let msg = 'Resolving imported dependecies for Module2 failed: no provider for Service1! (Service2 -> Service1';
     msg += ', searching in providersPerRou, providersPerMod';
-    expect(() => mock.collectProvidersDeep()).toThrow(msg);
+    expect(() => mock.importModulesDeep()).toThrow(msg);
   });
 
   it(`There is the following dependency chain: Service4 -> Service3 -> Service2 -> Service1;
@@ -161,7 +161,7 @@ describe('resolve()', () => {
     class Module3 {}
 
     const shallowImportsBase = bootstrap(Module3);
-    expect(() => mock.collectProvidersDeep()).not.toThrow();
+    expect(() => mock.importModulesDeep()).not.toThrow();
     const { baseMeta } = shallowImportsBase.get(Module3)!;
     expect(baseMeta.providersPerReq).toEqual(defaultProvidersPerReq);
     expect(baseMeta.providersPerRou).toEqual([...defaultProvidersPerRou, Service3, Service4]);
@@ -211,7 +211,7 @@ describe('resolve()', () => {
     bootstrap(Module3);
     let msg = 'Detected circular dependencies: [Service3 in Module2] -> [Service2 in Module2]';
     msg += ' -> [Service4 in Module2] -> [Service3 in Module2]';
-    expect(() => mock.collectProvidersDeep()).toThrow(msg);
+    expect(() => mock.importModulesDeep()).toThrow(msg);
   });
 
   it('circular dependencies in different modules', () => {
@@ -257,7 +257,7 @@ describe('resolve()', () => {
     bootstrap(Module3);
     let msg = 'Detected circular dependencies: [Service3 in Module2] -> [Service2 in Module2]';
     msg += ' -> [Service1 in Module1] -> [Service4 in Module2] -> [Service3 in Module2]';
-    expect(() => mock.collectProvidersDeep()).toThrow(msg);
+    expect(() => mock.importModulesDeep()).toThrow(msg);
   });
 
   it(`Module3 imports Module2, which has a dependency on Module1, but Module2 does not import Module1;
@@ -283,7 +283,7 @@ describe('resolve()', () => {
     bootstrap(Module3);
     let msg = 'Resolving imported dependecies for Module2 failed: no provider for Service1! (Service2 -> Service1';
     msg += ', searching in providersPerRou, providersPerMod';
-    expect(() => mock.collectProvidersDeep()).toThrow(msg);
+    expect(() => mock.importModulesDeep()).toThrow(msg);
   });
 
   it('Module3 imports Module2, which has a dependency on Module1, and Module2 import Module1', () => {
@@ -308,7 +308,7 @@ describe('resolve()', () => {
     class Module3 {}
 
     const shallowImportsBase = bootstrap(Module3);
-    expect(() => mock.collectProvidersDeep()).not.toThrow();
+    expect(() => mock.importModulesDeep()).not.toThrow();
     const { baseMeta } = shallowImportsBase.get(Module3)!;
     expect(baseMeta.providersPerReq).toEqual(defaultProvidersPerReq);
     expect(baseMeta.providersPerRou).toEqual([...defaultProvidersPerRou, Service2]);
@@ -343,7 +343,7 @@ describe('resolve()', () => {
     class Module3 {}
 
     const shallowImportsBase = bootstrap(Module3);
-    expect(() => mock.collectProvidersDeep()).not.toThrow();
+    expect(() => mock.importModulesDeep()).not.toThrow();
     const { baseMeta } = shallowImportsBase.get(Module3)!;
     expect(baseMeta.providersPerReq).toEqual(defaultProvidersPerReq);
     expect(baseMeta.providersPerRou).toEqual([...defaultProvidersPerRou, Service2]);
@@ -388,7 +388,7 @@ describe('resolve()', () => {
 
     const shallowImportsBase = bootstrap(Module3);
 
-    expect(() => mock.collectProvidersDeep()).not.toThrow();
+    expect(() => mock.importModulesDeep()).not.toThrow();
     const { baseMeta } = shallowImportsBase.get(Module3)!;
     const injector = Injector.resolveAndCreate(baseMeta.providersPerRou);
     const msg = 'No provider for Service1!; this error during instantiation of Service2! (Service3 -> Service2)';
@@ -417,7 +417,7 @@ describe('resolve()', () => {
 
     const shallowImportsBase = bootstrap(Module2);
 
-    expect(() => mock.collectProvidersDeep()).not.toThrow();
+    expect(() => mock.importModulesDeep()).not.toThrow();
     const { baseMeta } = shallowImportsBase.get(Module2)!;
     const injector = Injector.resolveAndCreate(baseMeta.providersPerRou);
     expect(() => injector.get(Service2)).not.toThrow();
@@ -468,7 +468,7 @@ describe('resolve()', () => {
     class Module2 {}
 
     const shallowImportsBase = bootstrap(Module2);
-    expect(() => mock.collectProvidersDeep()).not.toThrow();
+    expect(() => mock.importModulesDeep()).not.toThrow();
 
     const mod1 = shallowImportsBase.get(mod1WithParams);
     // expect(mod1?.guardsPerMod1.at(0)?.guard).toBe(BearerGuard1);

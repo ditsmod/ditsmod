@@ -44,7 +44,7 @@ export class DeepModulesImporter {
     protected errorMediator: SystemErrorMediator,
   ) {}
 
-  collectProvidersDeep(): RestMetadataPerMod2 | undefined {
+  importModulesDeep(): RestMetadataPerMod2 | undefined {
     const levels: Level[] = ['Rou', 'Req'];
     this.tokensPerApp = getTokens(this.providersPerApp);
     if (!this.metadataPerMod1) {

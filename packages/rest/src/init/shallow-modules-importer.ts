@@ -83,7 +83,7 @@ export class ShallowModulesImporter {
   /**
    * @param modRefId Module that will bootstrapped.
    */
-  collectProvidersShallow(
+  importModulesShallow(
     shallowImportsBase: ShallowImportsBase,
     providersPerApp: Provider[],
     globalProviders: GlobalProviders,
@@ -191,7 +191,7 @@ export class ShallowModulesImporter {
       const { prefixPerMod, guardsPerMod1 } = this.getPrefixAndGuards(modRefId, meta, isImport);
       const shallowModulesImporter = new ShallowModulesImporter();
       this.unfinishedScanModules.add(modRefId);
-      const shallowImportsBase = shallowModulesImporter.collectProvidersShallow(
+      const shallowImportsBase = shallowModulesImporter.importModulesShallow(
         this.shallowImportsBase,
         this.providersPerApp,
         this.glProviders,

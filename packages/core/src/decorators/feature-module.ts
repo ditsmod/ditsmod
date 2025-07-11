@@ -62,7 +62,7 @@ export class InitHooksAndMetadata<T extends AnyObj> {
    * Recursively collects providers taking into account module imports/exports,
    * but does not take provider dependencies into account.
    */
-  collectProvidersShallow(
+  importModulesShallow(
     shallowImportsBase: ShallowImportsBase,
     providersPerApp: Provider[],
     globalProviders: GlobalProviders,
@@ -76,7 +76,7 @@ export class InitHooksAndMetadata<T extends AnyObj> {
    * By analyzing the dependencies of the providers returned by `ShallowModulesImporter`,
    * recursively collects providers for them from the corresponding modules.
    */
-  collectProvidersDeep(
+  importModulesDeep(
     metadataPerMod1: { baseMeta: NormalizedMeta } & AnyObj,
     moduleManager: ModuleManager,
     shallowImportsBase: ShallowImportsBase,

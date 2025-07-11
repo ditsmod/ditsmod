@@ -39,7 +39,7 @@ class RestInitHooksAndMetadata extends InitHooksAndMetadata<RestMetadata> {
     return new ShallowModulesImporter().exportGlobalProviders(moduleManager, baseMeta);
   }
 
-  override collectProvidersShallow(
+  override importModulesShallow(
     ...args: [
       shallowImportsBase: ShallowImportsBase,
       providersPerApp: Provider[],
@@ -48,10 +48,10 @@ class RestInitHooksAndMetadata extends InitHooksAndMetadata<RestMetadata> {
       unfinishedScanModules: Set<ModRefId>,
     ]
   ): Map<ModRefId, RestMetadataPerMod1> {
-    return new ShallowModulesImporter().collectProvidersShallow(...args);
+    return new ShallowModulesImporter().importModulesShallow(...args);
   }
 
-  override collectProvidersDeep(
+  override importModulesDeep(
     ...args: [
       restMetadataPerMod1: RestMetadataPerMod1,
       moduleManager: ModuleManager,
@@ -62,7 +62,7 @@ class RestInitHooksAndMetadata extends InitHooksAndMetadata<RestMetadata> {
     ]
   ) {
     const impResolver = new DeepModulesImporter(...args);
-    return impResolver.collectProvidersDeep();
+    return impResolver.importModulesDeep();
   }
 }
 

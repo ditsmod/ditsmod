@@ -38,7 +38,7 @@ export class DeepModulesImporter {
     protected errorMediator: SystemErrorMediator,
   ) {}
 
-  collectProvidersDeep() {
+  importModulesDeep() {
     const levels: Level[] = ['Mod'];
     const mMetadataPerMod2 = new Map<ModRefId, MetadataPerMod2>();
     this.tokensPerApp = getTokens(this.providersPerApp);
@@ -53,7 +53,7 @@ export class DeepModulesImporter {
     this.moduleManager.allInitHooks.forEach((initHooks, decorator) => {
       const shallowImports = this.shallowImportsPerDecor.get(decorator);
       shallowImports?.forEach((metadataPerMod1, modRefId) => {
-        const deepCollectedProviders = initHooks.collectProvidersDeep(
+        const deepCollectedProviders = initHooks.importModulesDeep(
           metadataPerMod1,
           this.moduleManager,
           this.shallowImportsBase,

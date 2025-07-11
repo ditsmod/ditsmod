@@ -84,7 +84,7 @@ export class ShallowModulesImporter {
    *
    * @param modRefId Module that will bootstrapped.
    */
-  collectProvidersShallow(
+  importModulesShallow(
     globalProviders: GlobalProviders,
     modRefId: ModRefId,
     moduleManager: ModuleManager,
@@ -164,7 +164,7 @@ export class ShallowModulesImporter {
   protected scanModule(modRefId: ModRefId) {
     const shallowModulesImporter = new ShallowModulesImporter();
     this.unfinishedScanModules.add(modRefId);
-    const shallowImportsBase = shallowModulesImporter.collectProvidersShallow(
+    const shallowImportsBase = shallowModulesImporter.importModulesShallow(
       this.glProviders,
       modRefId,
       this.moduleManager,
