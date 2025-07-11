@@ -7,7 +7,7 @@ import {
   Injector,
   MetadataPerMod1,
   ModRefId,
-  ShallowProvidersCollector,
+  ShallowModulesImporter,
   ModuleManager,
   ModuleType,
   NormalizedMeta,
@@ -33,7 +33,7 @@ export class ImportObj<T extends Provider = Provider> {
 }
 
 @injectable()
-class MockShallowProvidersCollector extends ShallowProvidersCollector {
+class MockShallowModulesImporter extends ShallowModulesImporter {
   injectorPerMod: Injector;
   declare prefixPerMod: string;
   override moduleName = 'MockModule';
@@ -57,13 +57,13 @@ class MockShallowProvidersCollector extends ShallowProvidersCollector {
   }
 }
 
-let mock: MockShallowProvidersCollector;
+let mock: MockShallowModulesImporter;
 let moduleManager: ModuleManager;
 
 beforeEach(() => {
   clearDebugClassNames();
-  const injectorPerApp = Injector.resolveAndCreate([...defaultProvidersPerApp, MockShallowProvidersCollector]);
-  mock = injectorPerApp.get(MockShallowProvidersCollector);
+  const injectorPerApp = Injector.resolveAndCreate([...defaultProvidersPerApp, MockShallowModulesImporter]);
+  mock = injectorPerApp.get(MockShallowModulesImporter);
   moduleManager = new ModuleManager(new SystemLogMediator({ moduleName: 'fakeName' }));
 });
 

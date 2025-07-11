@@ -1,14 +1,14 @@
 import { ChainError } from '@ts-stack/chain-error';
 
 import { Injector, isMultiProvider } from '#di';
-import { DeepProvidersCollector } from '#init/deep-providers-collector.js';
+import { DeepModulesImporter } from '#init/deep-modules-importer.js';
 import { Logger } from '#logger/logger.js';
 import { SystemErrorMediator } from '#error/system-error-mediator.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { PublicLogMediator, SystemLogMediator } from '#logger/system-log-mediator.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
-import { ShallowProvidersCollector } from '#init/shallow-providers-collector.js';
+import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import { Counter } from '#extension/counter.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ExtensionsContext } from '#extension/extensions-context.js';
@@ -127,7 +127,7 @@ export class BaseAppInitializer {
 
   async bootstrapModulesAndExtensions() {
     const { shallowImportsBase, shallowImportsPerDecor } = this.collectProvidersShallow(this.moduleManager);
-    const deepProvidersCollector = new DeepProvidersCollector(
+    const deepModulesImporter = new DeepModulesImporter(
       this.moduleManager,
       shallowImportsBase,
       shallowImportsPerDecor,
@@ -135,7 +135,7 @@ export class BaseAppInitializer {
       this.systemLogMediator,
       new SystemErrorMediator({ moduleName: this.baseMeta.name }),
     );
-    const { extensionCounters, mMetadataPerMod2 } = deepProvidersCollector.collectProvidersDeep();
+    const { extensionCounters, mMetadataPerMod2 } = deepModulesImporter.collectProvidersDeep();
     await this.handleExtensions(mMetadataPerMod2, extensionCounters);
     const injectorPerApp = this.perAppService.reinitInjector();
     this.systemLogMediator = injectorPerApp.get(SystemLogMediator) as SystemLogMediator;
@@ -205,12 +205,12 @@ export class BaseAppInitializer {
   }
 
   protected collectProvidersShallow(moduleManager: ModuleManager) {
-    const shallowProvidersCollector1 = new ShallowProvidersCollector();
-    const globalProviders = shallowProvidersCollector1.exportGlobalProviders(moduleManager);
+    const shallowModulesImporter1 = new ShallowModulesImporter();
+    const globalProviders = shallowModulesImporter1.exportGlobalProviders(moduleManager);
     this.systemLogMediator.printGlobalProviders(this, globalProviders);
-    const shallowProvidersCollector2 = new ShallowProvidersCollector();
+    const shallowModulesImporter2 = new ShallowModulesImporter();
     const { modRefId } = moduleManager.getMetadata('root', true);
-    const shallowImportsBase = shallowProvidersCollector2.collectProvidersShallow(
+    const shallowImportsBase = shallowModulesImporter2.collectProvidersShallow(
       globalProviders,
       modRefId,
       moduleManager,

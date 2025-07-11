@@ -14,10 +14,10 @@ import {
 
 import { AddRest } from '#init/module-metadata.js';
 import { AddRestNormalizer } from '#init/rest-metadata-normalizer.js';
-import { RestShallowProvidersCollector } from '#init/rest-shallow-providers-collector.js';
+import { ShallowModulesImporter } from '#init/rest-shallow-providers-collector.js';
 import { RestMetadataPerMod1 } from '#init/types.js';
 import { RestNormalizedMeta } from '#init/rest-normalized-meta.js';
-import { RestDeepProvidersCollector } from '#init/rest-deep-providers-collector.js';
+import { DeepModulesImporter } from '#init/rest-deep-providers-collector.js';
 /**
  * A decorator that adds REST metadata to a `featureModule` or `rootModule`.
  */
@@ -37,7 +37,7 @@ class RestInitHooksAndMetadata extends InitHooksAndMetadata<AddRest> {
   }
 
   override exportGlobalProviders(moduleManager: ModuleManager, baseMeta: NormalizedMeta) {
-    return new RestShallowProvidersCollector().exportGlobalProviders(moduleManager, baseMeta);
+    return new ShallowModulesImporter().exportGlobalProviders(moduleManager, baseMeta);
   }
 
   override collectProvidersShallow(
@@ -48,7 +48,7 @@ class RestInitHooksAndMetadata extends InitHooksAndMetadata<AddRest> {
       unfinishedScanModules: Set<ModRefId>,
     ]
   ): Map<ModRefId, RestMetadataPerMod1> {
-    return new RestShallowProvidersCollector().collectProvidersShallow(...args);
+    return new ShallowModulesImporter().collectProvidersShallow(...args);
   }
 
   override collectProvidersDeep(
@@ -61,7 +61,7 @@ class RestInitHooksAndMetadata extends InitHooksAndMetadata<AddRest> {
       errorMediator: SystemErrorMediator,
     ]
   ) {
-    const impResolver = new RestDeepProvidersCollector(...args);
+    const impResolver = new DeepModulesImporter(...args);
     return impResolver.collectProvidersDeep();
   }
 }

@@ -13,7 +13,7 @@ import { addRest } from '#decorators/rest-metadata.js';
  */
 @addRest({
   providersPerRou: [
-    RouteMeta, // In fact, the provider with this token is added dynamically. This requires `DeepProvidersCollector`.
+    RouteMeta, // In fact, the provider with this token is added dynamically. This requires `DeepModulesImporter`.
   ],
   exports: [RouteMeta],
 })

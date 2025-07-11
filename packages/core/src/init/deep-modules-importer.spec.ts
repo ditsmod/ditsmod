@@ -1,19 +1,19 @@
 import { injectable, Injector } from '#di';
-import { DeepProvidersCollector } from '#init/deep-providers-collector.js';
+import { DeepModulesImporter } from '#init/deep-modules-importer.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { ImportedTokensMap } from '#types/metadata-per-mod.js';
 import { ModRefId, ModuleType, Level } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
-import { ShallowProvidersCollector } from '#init/shallow-providers-collector.js';
+import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { SystemErrorMediator } from '#error/system-error-mediator.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 
-describe('DeepProvidersCollector', () => {
+describe('DeepModulesImporter', () => {
   @injectable()
-  class DeepProvidersCollectorMock extends DeepProvidersCollector {
+  class DeepModulesImporterMock extends DeepModulesImporter {
     declare unfinishedSearchDependecies: [ModuleType | ModuleWithParams, Provider][];
     override resolveImportedProviders(
       targetProviders: NormalizedMeta,
@@ -40,20 +40,20 @@ describe('DeepProvidersCollector', () => {
     }
   }
 
-  let mock: DeepProvidersCollectorMock;
-  let shallowProvidersCollector: ShallowProvidersCollector;
+  let mock: DeepModulesImporterMock;
+  let shallowModulesImporter: ShallowModulesImporter;
   let moduleManager: ModuleManager;
   let systemLogMediator: SystemLogMediator;
   let errorMediator: SystemErrorMediator;
 
   beforeEach(() => {
     clearDebugClassNames();
-    const injectorPerApp = Injector.resolveAndCreate([ShallowProvidersCollector]);
-    shallowProvidersCollector = injectorPerApp.get(ShallowProvidersCollector);
+    const injectorPerApp = Injector.resolveAndCreate([ShallowModulesImporter]);
+    shallowModulesImporter = injectorPerApp.get(ShallowModulesImporter);
     systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
     errorMediator = new SystemErrorMediator({ moduleName: 'fakeName' });
     moduleManager = new ModuleManager(systemLogMediator);
-    mock = new DeepProvidersCollectorMock(moduleManager, null as any, null as any, null as any, null as any, null as any);
+    mock = new DeepModulesImporterMock(moduleManager, null as any, null as any, null as any, null as any, null as any);
   });
 
   describe('resolveImportedProviders', () => {

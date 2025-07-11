@@ -26,10 +26,10 @@ import { RestNormalizedMeta } from '#init/rest-normalized-meta.js';
 import { addRest } from '#decorators/rest-metadata.js';
 
 /**
- * By analyzing the dependencies of the providers returned by `ShallowProvidersCollector`,
+ * By analyzing the dependencies of the providers returned by `ShallowModulesImporter`,
  * recursively collects providers for them from the corresponding modules.
  */
-export class RestDeepProvidersCollector {
+export class DeepModulesImporter {
   protected unfinishedSearchDependecies: [ModRefId, Provider][] = [];
   protected tokensPerApp: any[];
   protected extensionsTokens: any[] = [];

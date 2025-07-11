@@ -20,10 +20,10 @@ import { ExtensionCounters } from '#extension/extension-types.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 
 /**
- * By analyzing the dependencies of the providers returned by `ShallowProvidersCollector`,
+ * By analyzing the dependencies of the providers returned by `ShallowModulesImporter`,
  * recursively collects providers for them from the corresponding modules.
  */
-export class DeepProvidersCollector {
+export class DeepModulesImporter {
   protected unfinishedSearchDependecies: [ModRefId, Provider][] = [];
   protected tokensPerApp: any[];
   protected extensionsTokens: any[] = [];

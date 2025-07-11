@@ -72,7 +72,7 @@ export class InitHooksAndMetadata<T extends AnyObj> {
   }
 
   /**
-   * By analyzing the dependencies of the providers returned by `ShallowProvidersCollector`,
+   * By analyzing the dependencies of the providers returned by `ShallowModulesImporter`,
    * recursively collects providers for them from the corresponding modules.
    */
   collectProvidersDeep(

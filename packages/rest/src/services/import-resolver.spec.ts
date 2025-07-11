@@ -4,7 +4,7 @@ import {
   forwardRef,
   GlobalProviders,
   ImportedTokensMap,
-  DeepProvidersCollector,
+  DeepModulesImporter,
   inject,
   injectable,
   Injector,
@@ -12,7 +12,7 @@ import {
   MetadataPerMod1,
   ModRefId,
   ModuleExtract,
-  ShallowProvidersCollector,
+  ShallowModulesImporter,
   ModuleManager,
   ModuleType,
   ModuleWithParams,
@@ -32,14 +32,14 @@ import { addRest } from '#decorators/rest-metadata.js';
 type Level = 'Mod';
 
 describe('resolve()', () => {
-  let mock: DeepProvidersCollectorMock;
-  let shallowProvidersCollector: ShallowProvidersCollector;
+  let mock: DeepModulesImporterMock;
+  let shallowModulesImporter: ShallowModulesImporter;
   let moduleManager: ModuleManager;
   let systemLogMediator: SystemLogMediator;
   let errorMediator: SystemErrorMediator;
 
   @injectable()
-  class DeepProvidersCollectorMock extends DeepProvidersCollector {
+  class DeepModulesImporterMock extends DeepModulesImporter {
     declare unfinishedSearchDependecies: [ModuleType | ModuleWithParams, Provider][];
     override resolveImportedProviders(
       targetProviders: NormalizedMeta,
@@ -68,19 +68,19 @@ describe('resolve()', () => {
 
   function bootstrap(mod: ModuleType) {
     expect(() => moduleManager.scanModule(mod)).not.toThrow();
-    const shallowImportsBase = shallowProvidersCollector.collectProvidersShallow([], new GlobalProviders(), '', mod, moduleManager, new Set());
-    mock = new DeepProvidersCollectorMock(moduleManager, shallowImportsBase, [], systemLogMediator, errorMediator);
+    const shallowImportsBase = shallowModulesImporter.collectProvidersShallow([], new GlobalProviders(), '', mod, moduleManager, new Set());
+    mock = new DeepModulesImporterMock(moduleManager, shallowImportsBase, [], systemLogMediator, errorMediator);
     return shallowImportsBase as Map<ModRefId, MetadataPerMod1>;
   }
 
   beforeEach(() => {
     clearDebugClassNames();
-    const injectorPerApp = Injector.resolveAndCreate([ShallowProvidersCollector]);
-    shallowProvidersCollector = injectorPerApp.get(ShallowProvidersCollector);
+    const injectorPerApp = Injector.resolveAndCreate([ShallowModulesImporter]);
+    shallowModulesImporter = injectorPerApp.get(ShallowModulesImporter);
     systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
     errorMediator = new SystemErrorMediator({ moduleName: 'fakeName' });
     moduleManager = new ModuleManager(systemLogMediator);
-    mock = new DeepProvidersCollectorMock(moduleManager, null as any, null as any, null as any, null as any);
+    mock = new DeepModulesImporterMock(moduleManager, null as any, null as any, null as any, null as any);
   });
 
   it('No import and no error is thrown even though Service2 from Module2 depends on Service1 and Module2 does not import any modules', () => {
@@ -123,7 +123,7 @@ describe('resolve()', () => {
   });
 
   it(`There is the following dependency chain: Service4 -> Service3 -> Service2 -> Service1;
-    Module3 imports Module2, which exports only Service4, but DeepProvidersCollector imports
+    Module3 imports Module2, which exports only Service4, but DeepModulesImporter imports
     the entire dependency chain (both from Module2 and from Module1, which is imported
     into Module2)`, () => {
     @injectable()

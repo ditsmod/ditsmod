@@ -38,7 +38,7 @@ import { RestImportObj, RestMetadataPerMod1 } from './types.js';
  * - merges global and local providers;
  * - checks on providers collisions.
  */
-export class RestShallowProvidersCollector {
+export class ShallowModulesImporter {
   protected moduleName: string;
   protected prefixPerMod: string;
   protected guardsPerMod1: GuardPerMod1[];
@@ -186,9 +186,9 @@ export class RestShallowProvidersCollector {
         continue;
       }
       const { prefixPerMod, guardsPerMod1 } = this.getPrefixAndGuards(modRefId, meta, isImport);
-      const shallowProvidersCollector = new RestShallowProvidersCollector();
+      const shallowModulesImporter = new ShallowModulesImporter();
       this.unfinishedScanModules.add(modRefId);
-      const shallowImportsBase = shallowProvidersCollector.collectProvidersShallow(
+      const shallowImportsBase = shallowModulesImporter.collectProvidersShallow(
         this.glProviders,
         modRefId,
         this.moduleManager,

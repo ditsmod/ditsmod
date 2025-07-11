@@ -9,7 +9,7 @@ import {
   Injector,
   MetadataPerMod1,
   ModRefId,
-  ShallowProvidersCollector,
+  ShallowModulesImporter,
   ModuleManager,
   ModuleType,
   ModuleWithParams,
@@ -145,7 +145,7 @@ describe('mix per app, per mod or per req', () => {
   }
 
   @injectable()
-  class MockShallowProvidersCollector extends ShallowProvidersCollector {
+  class MockShallowModulesImporter extends ShallowModulesImporter {
     injectorPerMod: Injector;
     declare prefixPerMod: string;
     override moduleName = 'MockModule';
@@ -165,13 +165,13 @@ describe('mix per app, per mod or per req', () => {
     }
   }
 
-  let mock: MockShallowProvidersCollector;
+  let mock: MockShallowModulesImporter;
   let moduleManager: ModuleManager;
 
   beforeEach(() => {
     clearDebugClassNames();
-    const injectorPerApp = Injector.resolveAndCreate([...defaultProvidersPerApp, MockShallowProvidersCollector]);
-    mock = injectorPerApp.get(MockShallowProvidersCollector);
+    const injectorPerApp = Injector.resolveAndCreate([...defaultProvidersPerApp, MockShallowModulesImporter]);
+    mock = injectorPerApp.get(MockShallowModulesImporter);
     moduleManager = new ModuleManager(new SystemLogMediator({ moduleName: 'fakeName' }));
   });
 

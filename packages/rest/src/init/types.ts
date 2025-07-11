@@ -12,7 +12,7 @@ export class RestImportObj<T extends Provider = Provider> {
   providers: T[] = [];
 }
 /**
- * Metadata collected using `ShallowProvidersCollector`. The target for this metadata is `DeepProvidersCollector`.
+ * Metadata collected using `ShallowModulesImporter`. The target for this metadata is `DeepModulesImporter`.
  */
 export class RestMetadataPerMod1 {
   baseMeta: NormalizedMeta;
@@ -43,7 +43,7 @@ export class RestProvidersForMod {
   providersPerReq: Provider[] = [];
 }
 /**
- * This metadata returns from `DeepProvidersCollector`. The target for this metadata is `RoutesExtension`.
+ * This metadata returns from `DeepModulesImporter`. The target for this metadata is `RoutesExtension`.
  */
 
 export class RestMetadataPerMod2 {

@@ -24,7 +24,7 @@ export class GlobalProviders {
 }
 
 /**
- * Metadata collected using `ShallowProvidersCollector`. The target for this metadata is `DeepProvidersCollector`.
+ * Metadata collected using `ShallowModulesImporter`. The target for this metadata is `DeepModulesImporter`.
  */
 export class MetadataPerMod1 {
   /**

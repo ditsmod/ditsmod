@@ -34,7 +34,7 @@ import { ExtensionClass } from '#extension/extension-types.js';
  * - merges global and local providers;
  * - checks on providers collisions.
  */
-export class ShallowProvidersCollector {
+export class ShallowModulesImporter {
   protected moduleName: string;
   /**
    * Module metadata.
@@ -162,9 +162,9 @@ export class ShallowProvidersCollector {
   }
 
   protected scanModule(modRefId: ModRefId) {
-    const shallowProvidersCollector = new ShallowProvidersCollector();
+    const shallowModulesImporter = new ShallowModulesImporter();
     this.unfinishedScanModules.add(modRefId);
-    const shallowImportsBase = shallowProvidersCollector.collectProvidersShallow(
+    const shallowImportsBase = shallowModulesImporter.collectProvidersShallow(
       this.glProviders,
       modRefId,
       this.moduleManager,
