@@ -96,7 +96,7 @@ export class ShallowProvidersCollector {
     this.moduleName = baseMeta.name;
     this.unfinishedScanModules = unfinishedScanModules;
     this.baseMeta = baseMeta;
-    this.importModules();
+    this.importAndScanModules();
     const moduleExtract: ModuleExtract = {
       moduleName: baseMeta.name,
       isExternal: baseMeta.isExternal,
@@ -134,6 +134,20 @@ export class ShallowProvidersCollector {
     });
   }
 
+  protected importAndScanModules() {
+    this.importModules();
+
+    this.moduleManager.allInitHooks.forEach((initHooks, decorator) => {
+      const meta = this.baseMeta.normDecorMeta.get(decorator);
+      for (const modRefId of initHooks.getModulesToScan(meta)) {
+        if (this.unfinishedScanModules.has(modRefId)) {
+          continue;
+        }
+        this.scanModule(modRefId);
+      }
+    });
+  }
+
   protected importModules() {
     const aModRefIds = this.baseMeta.importsModules.concat(this.baseMeta.importsWithParams as any[]) as ModRefId[];
     for (const modRefId of aModRefIds) {
@@ -142,18 +156,22 @@ export class ShallowProvidersCollector {
       if (this.unfinishedScanModules.has(modRefId)) {
         continue;
       }
-      const shallowProvidersCollector = new ShallowProvidersCollector();
-      this.unfinishedScanModules.add(modRefId);
-      const shallowImportsBase = shallowProvidersCollector.collectProvidersShallow(
-        this.glProviders,
-        modRefId,
-        this.moduleManager,
-        this.unfinishedScanModules,
-      );
-      this.unfinishedScanModules.delete(modRefId);
-      shallowImportsBase.forEach((val, key) => this.shallowImportsBase.set(key, val));
+      this.scanModule(modRefId);
     }
     this.checkAllCollisionsWithLevelsMix();
+  }
+
+  protected scanModule(modRefId: ModRefId) {
+    const shallowProvidersCollector = new ShallowProvidersCollector();
+    this.unfinishedScanModules.add(modRefId);
+    const shallowImportsBase = shallowProvidersCollector.collectProvidersShallow(
+      this.glProviders,
+      modRefId,
+      this.moduleManager,
+      this.unfinishedScanModules,
+    );
+    this.unfinishedScanModules.delete(modRefId);
+    shallowImportsBase.forEach((val, key) => this.shallowImportsBase.set(key, val));
   }
 
   /**
