@@ -39,12 +39,13 @@ export interface RestMetadata {
    * The application controllers.
    */
   controllers?: Class[];
-  importsWithParams?: ({ modRefId: ModRefId } & RestModuleParams)[];
+  importsWithParams?: RestModuleParams[];
 }
 
 export type RestModuleParams = RestModuleParams1 | RestModuleParams2;
 
 export interface BaseModuleParams extends Partial<RestProvidersMetadata> {
+  modRefId: ModRefId;
   /**
    * List of modules, `RestModuleParams` or tokens of providers exported by this
    * module.
