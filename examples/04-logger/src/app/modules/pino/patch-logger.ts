@@ -5,7 +5,7 @@ import {
   OutputLogLevel,
   factoryMethod,
   optional,
-  AppOptions,
+  BaseAppOptions,
 } from '@ditsmod/core';
 import pino from 'pino';
 
@@ -13,7 +13,7 @@ export class PatchLogger {
   @factoryMethod()
   patchLogger(
     @optional() config: LoggerConfig = new LoggerConfig(),
-    @optional() appOptions: AppOptions = new AppOptions(),
+    @optional() appOptions: BaseAppOptions = new BaseAppOptions(),
   ) {
     const logger = pino.default({ customLevels: { off: 100, all: 0 } });
     logger.level = appOptions.loggerConfig?.level || config.level || 'info';

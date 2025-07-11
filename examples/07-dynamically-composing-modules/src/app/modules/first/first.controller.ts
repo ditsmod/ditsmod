@@ -1,17 +1,17 @@
-import { AppInitializer, ModuleManager, ModuleWithParams, skipSelf } from '@ditsmod/core';
+import { BaseAppInitializer, ModuleManager, ModuleWithParams, skipSelf } from '@ditsmod/core';
 import { controller, route, Res } from '@ditsmod/rest';
 
 import { SecondModule } from '../second/second.module.js';
 import { ThirdModule } from '../third/third.module.js';
 
-const secondModuleWithParams: ModuleWithParams = { path: '', module: SecondModule };
-const thirdModuleWithParams: ModuleWithParams = { path: '', module: ThirdModule };
+const secondModuleWithParams: ModuleWithParams = { module: SecondModule };
+const thirdModuleWithParams: ModuleWithParams = { module: ThirdModule };
 
 @controller()
 export class FirstController {
   constructor(
     @skipSelf() private moduleManager: ModuleManager,
-    @skipSelf() private appInitializer: AppInitializer,
+    @skipSelf() private appInitializer: BaseAppInitializer,
   ) {}
 
   @route('GET')

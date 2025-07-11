@@ -1,11 +1,11 @@
-import { AppOptions, Logger, LoggerConfig, OutputLogLevel, factoryMethod, optional } from '@ditsmod/core';
+import { BaseAppOptions, Logger, LoggerConfig, OutputLogLevel, factoryMethod, optional } from '@ditsmod/core';
 import { createLogger, addColors, format, transports } from 'winston';
 
 export class PatchLogger {
   @factoryMethod()
   patchLogger(
     @optional() config: LoggerConfig = new LoggerConfig(),
-    @optional() appOptions: AppOptions = new AppOptions(),
+    @optional() appOptions: BaseAppOptions = new BaseAppOptions(),
   ) {
     const logger = createLogger();
 

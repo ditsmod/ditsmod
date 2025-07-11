@@ -5,7 +5,7 @@ import {
   OutputLogLevel,
   factoryMethod,
   optional,
-  AppOptions,
+  BaseAppOptions,
 } from '@ditsmod/core';
 import { createLogger, LogLevel as BunyanLogLevel } from 'bunyan';
 import * as BunyanLogger from 'bunyan';
@@ -14,7 +14,7 @@ export class PatchLogger {
   @factoryMethod()
   patchLogger(
     @optional() config: LoggerConfig = new LoggerConfig(),
-    @optional() appOptions: AppOptions = new AppOptions(),
+    @optional() appOptions: BaseAppOptions = new BaseAppOptions(),
   ) {
     const logger = createLogger({ name: 'bunyan-test' });
     this.setLogLeveL(appOptions, logger, config.level);
@@ -50,7 +50,7 @@ export class PatchLogger {
     return logger;
   }
 
-  protected setLogLeveL(appOptions: AppOptions, logger: BunyanLogger, logLevel?: OutputLogLevel) {
+  protected setLogLeveL(appOptions: BaseAppOptions, logger: BunyanLogger, logLevel?: OutputLogLevel) {
     const level = appOptions.loggerConfig?.level || logLevel;
     if (level == 'off') {
       logger.level(100);

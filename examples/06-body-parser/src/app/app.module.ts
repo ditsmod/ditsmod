@@ -1,4 +1,5 @@
 import { Providers, rootModule } from '@ditsmod/core';
+import { addRest } from '@ditsmod/rest';
 import { BodyParserModule } from '@ditsmod/body-parser';
 
 import { SomeModule } from './modules/routed/some/some.module.js';
@@ -8,9 +9,9 @@ const moduleWithBodyParserConfig = BodyParserModule.withParams({
   urlencodedOptions: { extended: true },
 });
 
+@addRest({ appends: [SomeModule] })
 @rootModule({
   imports: [moduleWithBodyParserConfig],
-  appends: [SomeModule],
   providersPerApp: new Providers().useLogConfig({ level: 'info' }),
   exports: [moduleWithBodyParserConfig],
 })

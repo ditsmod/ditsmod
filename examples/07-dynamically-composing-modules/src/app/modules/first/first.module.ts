@@ -1,10 +1,10 @@
 import { featureModule } from '@ditsmod/core';
-import { RestModule } from '@ditsmod/rest';
+import { RestModule, addRest } from '@ditsmod/rest';
 
 import { FirstController } from './first.controller.js';
 
+@addRest({ controllers: [FirstController] })
 @featureModule({
   imports: [RestModule],
-  controllers: [FirstController],
 })
 export class FirstModule {}
