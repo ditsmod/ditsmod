@@ -6,6 +6,8 @@
     "tsBuildInfoFile": "dist/ts.tsbuildinfo",
     "paths": {
       "#app/*": ["./src/app/*"],
+      "#dict/first/*": ["./src/app/first/locales/current/_base-en/*"],
+      "#dict/second/*": ["./src/app/second/locales/current/_base-en/*"],
       "@ditsmod/core": ["../../packages/core/src/index.js"],
       "@ditsmod/rest": ["../../packages/rest/src/index.js"],
       "@ditsmod/i18n": ["../../packages/i18n/src/index.js"],

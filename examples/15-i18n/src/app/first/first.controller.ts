@@ -1,5 +1,4 @@
 import { Res, controller, route } from '@ditsmod/rest';
-
 import { FirstService } from './first.service.js';
 
 @controller()
