@@ -9,6 +9,7 @@ import {
   ModRefId,
   ParamsTransferObj,
   ModuleWithParentMeta,
+  Override,
 } from '@ditsmod/core';
 
 import { NormalizedGuard } from '#interceptors/guard.js';
@@ -37,12 +38,12 @@ export class RestNormalizedMeta extends RestProvidersMetadata implements ParamsT
   appendsWithParams: AppendsWithParams[] = [];
   appendsModules: ModuleType[] = [];
   controllers: Class[] = [];
-  importsWithParams: ({ modRefId: ModuleWithParentMeta } & RestModuleParams)[] = [];
+  importsWithParams: Override<RestModuleParams, { modRefId: ModuleWithParentMeta }>[] = [];
   /**
    * If the current `baseMeta.modRefId` has the type `ModuleWithParams`,
    * this property will contain the parameters of the current module.
    */
-  params = {} as RestModuleParams;
+  params = {} as Override<RestModuleParams, { modRefId: ModuleWithParentMeta }>;
 }
 
 export type RestModRefId<T extends AnyObj = AnyObj> = ModRefId | AppendsWithParams<T>;
