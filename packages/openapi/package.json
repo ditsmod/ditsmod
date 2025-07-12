@@ -30,7 +30,8 @@
     "build-ui": "yarn build && node dist/swagger-ui/compile.js",
     "clean": "rm -rf dist*",
     "build-test": "tsc -b tsconfig.unit.json",
-    "test": "yarn build-test && vitest"
+    "test": "yarn build-test && yarn esm-jest",
+    "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)"
   },
   "keywords": [
     "ditsmod"

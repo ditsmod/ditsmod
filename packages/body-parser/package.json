@@ -19,7 +19,8 @@
   "scripts": {
     "build": "tsc -b tsconfig.build.json",
     "clean": "rm -rf dist*",
-    "test": "tsc -b tsconfig.unit.json && vitest"
+    "test": "tsc -b tsconfig.unit.json && yarn esm-jest",
+    "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)"
   },
   "keywords": [
     "ditsmod"
