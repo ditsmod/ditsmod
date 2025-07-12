@@ -42,7 +42,7 @@ export class RestNormalizedMeta extends RestProvidersMetadata implements ParamsT
    * If the current `baseMeta.modRefId` has the type `ModuleWithParams`,
    * this property will contain the parameters of the current module.
    */
-  params: RestModuleParams = {};
+  params = {} as RestModuleParams;
 }
 
 export type RestModRefId<T extends AnyObj = AnyObj> = ModRefId | AppendsWithParams<T>;
