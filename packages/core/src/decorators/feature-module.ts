@@ -1,7 +1,7 @@
 import { makeClassDecorator, Provider } from '#di';
 import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
 import { AnyFn, AnyObj, ModRefId, ModuleType } from '#types/mix.js';
-import { ShallowImportsBase } from '#init/types.js';
+import { ShallowImports, ShallowImportsBase } from '#init/types.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { Providers } from '#utils/providers.js';
 import { CallsiteUtils } from '#utils/callsites.js';
@@ -79,7 +79,7 @@ export class InitHooksAndMetadata<T extends AnyObj> {
   importModulesDeep(
     metadataPerMod1: { baseMeta: NormalizedMeta } & AnyObj,
     moduleManager: ModuleManager,
-    shallowImportsBase: ShallowImportsBase,
+    shallowImports: ShallowImports,
     providersPerApp: Provider[],
     log: SystemLogMediator,
     errorMediator: SystemErrorMediator,

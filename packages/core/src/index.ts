@@ -2,7 +2,7 @@ export * from '#di/public-api.js';
 export * from '@ts-stack/chain-error';
 
 export { BaseAppInitializer } from '#init/base-app-initializer.js';
-export { ShallowImportsBase } from '#init/types.js';
+export { ShallowImportsBase, ShallowImports } from '#init/types.js';
 export { BaseApplication } from '#init/base-application.js';
 export { BaseAppOptions } from '#init/base-app-options.js';
 export { DeepModulesImporter } from '#init/deep-modules-importer.js';

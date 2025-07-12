@@ -4,10 +4,9 @@ import { defaultExtensionsProviders } from '#extension/default-extensions-provid
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
-import { ShallowImportsPerDecor } from '#init/types.js';
+import { ShallowImports } from '#init/types.js';
 import { ImportedTokensMap, MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import { Level, ProvidersForMod, ModRefId, AnyFn, AnyObj } from '#types/mix.js';
-import { ShallowImportsBase } from './types.js';
 import { Provider } from '#di/types-and-models.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { ReflectiveDependency, getDependencies } from '#utils/get-dependecies.js';
@@ -30,9 +29,8 @@ export class DeepModulesImporter {
   protected extensionCounters = new ExtensionCounters();
 
   constructor(
-    private moduleManager: ModuleManager,
-    protected shallowImportsBase: ShallowImportsBase,
-    protected shallowImportsPerDecor: ShallowImportsPerDecor,
+    protected moduleManager: ModuleManager,
+    protected shallowImports: ShallowImports,
     protected providersPerApp: Provider[],
     protected log: SystemLogMediator,
     protected errorMediator: SystemErrorMediator,
@@ -42,33 +40,23 @@ export class DeepModulesImporter {
     const levels: Level[] = ['Mod'];
     const mMetadataPerMod2 = new Map<ModRefId, MetadataPerMod2>();
     this.tokensPerApp = getTokens(this.providersPerApp);
-    this.shallowImportsBase.forEach((metadataPerMod1) => {
-      const { baseMeta, importedTokensMap } = metadataPerMod1;
-      mMetadataPerMod2.set(baseMeta.modRefId, { baseMeta, deepImportedModules: new Map() });
-      this.resolveImportedProviders(baseMeta, importedTokensMap, levels);
-      this.resolveProvidersForExtensions(baseMeta, importedTokensMap);
-    });
-
-    const deepCollectedProvidersMap = new Map<ModRefId, Map<AnyFn, AnyObj | undefined>>();
-    this.moduleManager.allInitHooks.forEach((initHooks, decorator) => {
-      const shallowImports = this.shallowImportsPerDecor.get(decorator);
-      shallowImports?.forEach((metadataPerMod1, modRefId) => {
-        const deepCollectedProviders = initHooks.importModulesDeep(
-          metadataPerMod1,
+    this.shallowImports.forEach(({ baseMeta, importedTokensMap, shallowImportsPerDecor }, modRefId) => {
+      const deepImportedModules = new Map<AnyFn, AnyObj>();
+      this.moduleManager.allInitHooks.forEach((initHooks, decorator) => {
+        const shallowImportedModule = shallowImportsPerDecor.get(decorator)!;
+        const deepImports = initHooks.importModulesDeep(
+          shallowImportedModule,
           this.moduleManager,
-          this.shallowImportsBase,
+          this.shallowImports,
           this.providersPerApp,
           this.log,
           this.errorMediator,
         );
-
-        const map = deepCollectedProvidersMap.get(modRefId);
-        if (map) {
-          map.set(decorator, deepCollectedProviders);
-        } else {
-          deepCollectedProvidersMap.set(modRefId, new Map([[decorator, deepCollectedProviders]]));
-        }
+        deepImportedModules.set(decorator, deepImports);
       });
+      mMetadataPerMod2.set(modRefId, { baseMeta, deepImportedModules });
+      this.resolveImportedProviders(baseMeta, importedTokensMap, levels);
+      this.resolveProvidersForExtensions(baseMeta, importedTokensMap);
     });
 
     return { extensionCounters: this.extensionCounters, mMetadataPerMod2 };
@@ -217,7 +205,7 @@ export class DeepModulesImporter {
     dep: ReflectiveDependency,
   ) {
     let found = false;
-    const metadataPerMod1 = this.shallowImportsBase.get(sourceModule1)!;
+    const metadataPerMod1 = this.shallowImports.get(sourceModule1)!;
     for (const level of levels) {
       const importObj = metadataPerMod1.importedTokensMap[`per${level}`].get(dep.token);
       if (importObj) {
@@ -283,7 +271,7 @@ export class DeepModulesImporter {
   protected hasUnresolvedImportedDependecies(module1: ModRefId, levels: Level[], dep: ReflectiveDependency) {
     let found = false;
     for (const level of levels) {
-      const importObj = this.shallowImportsBase.get(module1)?.importedTokensMap[`per${level}`].get(dep.token);
+      const importObj = this.shallowImports.get(module1)?.importedTokensMap[`per${level}`].get(dep.token);
       if (importObj) {
         found = true;
         const { modRefId: modRefId2, providers } = importObj;

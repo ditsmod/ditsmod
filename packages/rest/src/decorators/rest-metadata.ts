@@ -9,6 +9,7 @@ import {
   SystemErrorMediator,
   SystemLogMediator,
   ShallowImportsBase,
+  ShallowImports,
 } from '@ditsmod/core';
 
 import { RestMetadata } from '#init/module-metadata.js';
@@ -55,7 +56,7 @@ class RestInitHooksAndMetadata extends InitHooksAndMetadata<RestMetadata> {
     ...args: [
       restMetadataPerMod1: RestMetadataPerMod1,
       moduleManager: ModuleManager,
-      shallowImportsBase: ShallowImportsBase,
+      shallowImports: ShallowImports,
       providersPerApp: Provider[],
       log: SystemLogMediator,
       errorMediator: SystemErrorMediator,

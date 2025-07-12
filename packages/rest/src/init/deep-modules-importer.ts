@@ -15,7 +15,7 @@ import {
   getDebugClassName,
   ReflectiveDependency,
   getProviderName,
-  ShallowImportsBase,
+  ShallowImports,
 } from '@ditsmod/core';
 
 import { Level } from '#types/types.js';
@@ -38,7 +38,7 @@ export class DeepModulesImporter {
   constructor(
     protected metadataPerMod1: RestMetadataPerMod1,
     protected moduleManager: ModuleManager,
-    protected shallowImportsBase: ShallowImportsBase,
+    protected shallowImports: ShallowImports,
     protected providersPerApp: Provider[],
     protected log: SystemLogMediator,
     protected errorMediator: SystemErrorMediator,
@@ -147,9 +147,9 @@ export class DeepModulesImporter {
     dep: ReflectiveDependency,
   ) {
     let found = false;
-    const metadataPerMod1 = this.shallowImportsBase.get(srcModRefId1)!;
+    const metadataPerMod1 = this.shallowImports.get(srcModRefId1)!;
     for (const level of levels) {
-      const restMetadataPerMod1 = metadataPerMod1.perDecorImportedTokensMap.get(addRest) as RestMetadataPerMod1;
+      const restMetadataPerMod1 = metadataPerMod1.shallowImportsPerDecor.get(addRest) as RestMetadataPerMod1;
       const importObj = restMetadataPerMod1.importedTokensMap[`per${level}`].get(dep.token);
       if (importObj) {
         found = true;
@@ -215,7 +215,7 @@ export class DeepModulesImporter {
   protected hasUnresolvedImportedDependecies(modRefId1: ModRefId, levels: Level[], dep: ReflectiveDependency) {
     let found = false;
     for (const level of levels) {
-      const restMetadataPerMod1 = this.shallowImportsBase.get(modRefId1)?.perDecorImportedTokensMap.get(addRest) as
+      const restMetadataPerMod1 = this.shallowImports.get(modRefId1)?.shallowImportsPerDecor.get(addRest) as
         | RestMetadataPerMod1
         | undefined;
       const importObj = restMetadataPerMod1?.importedTokensMap[`per${level}`].get(dep.token);

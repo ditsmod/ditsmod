@@ -53,7 +53,7 @@ describe('DeepModulesImporter', () => {
     systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
     errorMediator = new SystemErrorMediator({ moduleName: 'fakeName' });
     moduleManager = new ModuleManager(systemLogMediator);
-    mock = new DeepModulesImporterMock(moduleManager, null as any, null as any, null as any, null as any, null as any);
+    mock = new DeepModulesImporterMock(moduleManager, null as any, null as any, null as any, null as any);
   });
 
   describe('resolveImportedProviders', () => {
