@@ -1,6 +1,6 @@
 import { makeClassDecorator, Provider } from '#di';
-import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
-import { AnyFn, AnyObj, ModRefId, ModuleType } from '#types/mix.js';
+import { ModuleMetadata, ModuleWithParams, ModuleWithParentMeta } from '#types/module-metadata.js';
+import { AnyFn, AnyObj, ModRefId, ModuleType, Override } from '#types/mix.js';
 import { ShallowImports, ShallowImportsBase } from '#init/types.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { Providers } from '#utils/providers.js';
@@ -16,11 +16,8 @@ export const featureModule: FeatureModuleDecorator = makeClassDecorator(transfor
 export interface FeatureModuleDecorator {
   (data?: ModuleMetadata): any;
 }
-/**
- * An object with this interface must return `initHooksAndMetadata.normalize()`.
- */
 export interface ParamsTransferObj<T extends AnyObj> {
-  importsWithParams?: ({ modRefId: ModuleWithParams } & T)[];
+  importsWithParams?: Override<T, { modRefId: ModuleWithParentMeta }>[];
 }
 
 export function transformModule(data?: ModuleMetadata): InitHooksAndMetadata<RawMeta> {
