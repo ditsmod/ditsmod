@@ -1,6 +1,7 @@
 export * from '#di/public-api.js';
 export * from '@ts-stack/chain-error';
 
+export { defaultProvidersPerMod } from '#init/default-providers-per-mod.js';
 export { BaseAppInitializer } from '#init/base-app-initializer.js';
 export { ShallowImportsBase, ShallowImports } from '#init/types.js';
 export { BaseApplication } from '#init/base-application.js';
