@@ -277,14 +277,6 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * [print controller error]
-   */
-  controllerHasError(self: object, err: any) {
-    const className = self.constructor.name;
-    this.setLog('error', err.stack || err.message);
-  }
-
-  /**
    * [internal error]
    */
   internalServerError(self: object, err: any, hideConsoleLoggerMsg?: boolean) {
