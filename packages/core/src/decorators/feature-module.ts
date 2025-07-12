@@ -54,7 +54,7 @@ export class InitHooksAndMetadata<T extends AnyObj> {
     return [];
   }
 
-  exportGlobalProviders(moduleManager: ModuleManager, baseMeta: NormalizedMeta): any {
+  exportGlobalProviders(moduleManager: ModuleManager, globalProviders: GlobalProviders, baseMeta: NormalizedMeta): any {
     return;
   }
 

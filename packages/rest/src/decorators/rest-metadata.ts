@@ -36,8 +36,8 @@ class RestInitHooksAndMetadata extends InitHooksAndMetadata<RestMetadata> {
     return meta?.appendsModules.concat(meta.appendsWithParams as any[]) || [];
   }
 
-  override exportGlobalProviders(moduleManager: ModuleManager, baseMeta: NormalizedMeta) {
-    return new ShallowModulesImporter().exportGlobalProviders(moduleManager, baseMeta);
+  override exportGlobalProviders(moduleManager: ModuleManager, globalProviders: GlobalProviders, baseMeta: NormalizedMeta) {
+    return new ShallowModulesImporter().exportGlobalProviders(moduleManager, globalProviders, baseMeta);
   }
 
   override importModulesShallow(
