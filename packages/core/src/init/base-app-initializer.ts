@@ -15,7 +15,7 @@ import { ExtensionsContext } from '#extension/extensions-context.js';
 import { ExtensionsManager, InternalExtensionsManager } from '#extension/extensions-manager.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { PerAppService } from '#services/per-app.service.js';
-import { AnyFn, AnyObj, ModRefId } from '#types/mix.js';
+import { ModRefId } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ExtensionCounters } from '#extension/extension-types.js';
 import { getCollisions } from '#utils/get-collisions.js';
@@ -28,7 +28,7 @@ import { MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { getModule } from '#utils/get-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
-import { ShallowImportsPerDecor } from './types.js';
+import { ShallowImports } from './types.js';
 
 export class BaseAppInitializer {
   protected perAppService = new PerAppService();
@@ -126,11 +126,9 @@ export class BaseAppInitializer {
   }
 
   async bootstrapModulesAndExtensions() {
-    const { shallowImportsBase, shallowImportsPerDecor } = this.collectProvidersShallow(this.moduleManager);
     const deepModulesImporter = new DeepModulesImporter(
       this.moduleManager,
-      shallowImportsBase,
-      shallowImportsPerDecor,
+      this.collectProvidersShallow(this.moduleManager),
       this.baseMeta.providersPerApp,
       this.systemLogMediator,
       new SystemErrorMediator({ moduleName: this.baseMeta.name }),
@@ -216,7 +214,7 @@ export class BaseAppInitializer {
       moduleManager,
       new Set(),
     );
-    const shallowImportsPerDecor: ShallowImportsPerDecor = new Map();
+    const shallowImports: ShallowImports = new Map();
     moduleManager.allInitHooks.forEach((initHooks, decorator) => {
       const val = initHooks.importModulesShallow(
         shallowImportsBase,
@@ -225,9 +223,20 @@ export class BaseAppInitializer {
         modRefId,
         new Set(),
       );
-      shallowImportsPerDecor.set(decorator, val);
+      shallowImportsBase.forEach((metadataPerMod1, modRefId) => {
+        const shallowImportedModule = val.get(modRefId)!;
+        const mergedShallowImports = shallowImports.get(modRefId);
+        if (mergedShallowImports) {
+          mergedShallowImports.shallowImportsPerDecor.set(decorator, shallowImportedModule);
+        } else {
+          shallowImports.set(modRefId, {
+            ...metadataPerMod1,
+            shallowImportsPerDecor: new Map([[decorator, shallowImportedModule]]),
+          });
+        }
+      });
     });
-    return { shallowImportsBase, shallowImportsPerDecor };
+    return shallowImports;
   }
 
   protected async handleExtensions(
