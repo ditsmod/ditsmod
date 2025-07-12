@@ -137,7 +137,7 @@ export class BaseAppInitializer {
     await this.handleExtensions(mMetadataPerMod2, extensionCounters);
     const injectorPerApp = this.perAppService.reinitInjector();
     this.systemLogMediator = injectorPerApp.get(SystemLogMediator) as SystemLogMediator;
-    // this.preRouter = injectorPerApp.get(PreRouter) as PreRouter;
+    return injectorPerApp;
   }
 
   async reinit(autocommit: boolean = true): Promise<void | Error> {

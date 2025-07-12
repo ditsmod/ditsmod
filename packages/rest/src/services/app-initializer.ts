@@ -16,9 +16,13 @@ export class AppInitializer extends BaseAppInitializer {
   requestListener: RequestListener = (rawReq, rawRes) => this.preRouter.requestListener(rawReq, rawRes);
 
   protected override addDefaultProvidersPerApp() {
-    this.baseMeta.providersPerApp.unshift(
-      { token: SERVER, useFactory: () => this.server },
-    );
+    this.baseMeta.providersPerApp.unshift({ token: SERVER, useFactory: () => this.server });
     super.addDefaultProvidersPerApp();
+  }
+
+  override async bootstrapModulesAndExtensions() {
+    const injectorPerApp = await super.bootstrapModulesAndExtensions();
+    this.preRouter = injectorPerApp.get(PreRouter) as PreRouter;
+    return injectorPerApp;
   }
 }
