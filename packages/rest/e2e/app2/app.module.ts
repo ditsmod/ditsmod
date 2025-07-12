@@ -6,6 +6,7 @@ import { Module1 } from './module1/module1.js';
 import { Module2 } from './module2/module2.js';
 import { Module3 } from './module3/module3.js';
 import { controller } from '#types/controller.js';
+import { addRest } from '#decorators/rest-metadata.js';
 
 @controller()
 class Controller0 {
@@ -15,14 +16,16 @@ class Controller0 {
   }
 }
 
-@rootModule({
-  imports: [
-    RestModule,
-    // Allow slash for absolutePath.
-    { absolutePath: '/module1', module: Module1 },
-    { path: 'module3', module: Module3 },
-  ],
+@addRest({
   appends: [Module2, { path: 'module2', module: Module2 }],
   controllers: [Controller0],
+  importsWithParams: [
+    // Allow slash for absolutePath.
+    { absolutePath: '/module1', modRefId: Module1 },
+    { path: 'module3', modRefId: Module3 },
+  ],
+})
+@rootModule({
+  imports: [RestModule],
 })
 export class AppModule {}

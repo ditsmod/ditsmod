@@ -8,6 +8,7 @@ import {
   route,
   RestModule,
   RequestContext,
+  addRest,
 } from '@ditsmod/rest';
 
 import { Interceptor1 } from './interceptor1.js';
@@ -48,9 +49,9 @@ export class CtxController {
   }
 }
 
+@addRest({ controllers: [DefaultController, CtxController] })
 @rootModule({
   imports: [RestModule],
-  controllers: [DefaultController, CtxController],
   providersPerApp: new Providers().useLogConfig({ level: 'info' }),
 })
 export class AppModule {}
