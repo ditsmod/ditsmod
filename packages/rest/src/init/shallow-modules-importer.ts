@@ -17,12 +17,13 @@ import {
   GlobalProviders,
   getLastProviders,
   ShallowImportsBase,
+  defaultProvidersPerMod,
+  ImportObj,
 } from '@ditsmod/core';
 
 import { GuardPerMod1 } from '#interceptors/guard.js';
 import { RestModRefId, RestNormalizedMeta } from '#init/rest-normalized-meta.js';
 import { Level, RestGlobalProviders, RestModuleExtract } from '#types/types.js';
-import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js';
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
 import { AppendsWithParams } from './module-metadata.js';
@@ -62,8 +63,13 @@ export class ShallowModulesImporter {
   protected unfinishedScanModules = new Set<ModRefId>();
   protected moduleManager: ModuleManager;
 
-  exportGlobalProviders(moduleManager: ModuleManager, baseMeta: NormalizedMeta): RestGlobalProviders {
+  exportGlobalProviders(
+    moduleManager: ModuleManager,
+    globalProviders: GlobalProviders,
+    baseMeta: NormalizedMeta,
+  ): RestGlobalProviders {
     this.moduleManager = moduleManager;
+    this.glProviders = globalProviders;
     this.providersPerApp = moduleManager.providersPerApp;
     this.moduleName = baseMeta.name;
     this.baseMeta = baseMeta;
@@ -356,13 +362,22 @@ export class ShallowModulesImporter {
   }
 
   protected checkAllCollisionsWithLevelsMix() {
-    this.checkCollisionsWithLevelsMix(this.providersPerApp, ['Rou']);
-    const providersPerRou = [
-      ...defaultProvidersPerRou,
-      ...this.meta.providersPerRou,
-      ...getImportedProviders(this.importedProvidersPerRou),
+    let perMod: Map<any, ImportObj<Provider>>;
+    if (this.shallowImportsBase) {
+      // When calling this.importModulesShallow()
+      const metadataPerMod1 = this.shallowImportsBase.get(this.baseMeta.modRefId)!;
+      perMod = metadataPerMod1.importedTokensMap.perMod;
+    } else {
+      // When calling this.exportGlobalProviders()
+      perMod = this.glProviders.importedProvidersPerMod;
+    }
+
+    const providersPerMod = [
+      ...defaultProvidersPerMod,
+      ...this.baseMeta.providersPerMod,
+      ...getImportedProviders(perMod),
     ];
-    this.checkCollisionsWithLevelsMix(providersPerRou, ['Rou', 'Req']);
+    this.checkCollisionsWithLevelsMix(providersPerMod, ['Rou', 'Req']);
     const mergedProvidersAndTokens = [
       ...this.meta.providersPerRou,
       ...getImportedProviders(this.importedProvidersPerRou),

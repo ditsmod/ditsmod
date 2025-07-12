@@ -42,7 +42,7 @@ export class ShallowModulesImporter {
   protected baseMeta: NormalizedMeta;
 
   protected importedProvidersPerMod = new Map<any, ImportObj>();
-  protected importedMultiProvidersPerMod = new Map<ModuleType | ModuleWithParams, Provider[]>();
+  protected importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
   protected importedExtensions = new Map<ModuleType | ModuleWithParams, Provider[]>();
   protected aImportedExtensionConfig: ExtensionConfig[] = [];
 
@@ -62,21 +62,22 @@ export class ShallowModulesImporter {
     this.importProvidersAndExtensions(meta);
     this.checkAllCollisionsWithLevelsMix();
     const shallowImportedModules = new Map<AnyFn, AnyObj | undefined>();
-
-    meta.rawDecorMeta.forEach((initHooksAndMetadata, decorator) => {
-      const val = initHooksAndMetadata.exportGlobalProviders(moduleManager, meta);
-      if (val) {
-        shallowImportedModules.set(decorator, val);
-      }
-    });
-
-    return {
+    const globalProviders: GlobalProviders = {
       importedProvidersPerMod: this.importedProvidersPerMod,
       importedMultiProvidersPerMod: this.importedMultiProvidersPerMod,
       importedExtensions: this.importedExtensions,
       aImportedExtensionConfig: this.aImportedExtensionConfig,
       shallowImportedModules,
     };
+
+    meta.rawDecorMeta.forEach((initHooksAndMetadata, decorator) => {
+      const val = initHooksAndMetadata.exportGlobalProviders(moduleManager, globalProviders, meta);
+      if (val) {
+        shallowImportedModules.set(decorator, val);
+      }
+    });
+
+    return globalProviders;
   }
 
   /**

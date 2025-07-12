@@ -39,6 +39,9 @@ export class MetadataPerMod1 {
 }
 
 export interface ImportedTokensMap {
+  /**
+   * `Map<token, ImportObj>`
+   */
   perMod: Map<any, ImportObj>;
   multiPerMod: Map<ModuleType | ModuleWithParams, Provider[]>;
   extensions: Map<ModuleType | ModuleWithParams, Provider[]>;
