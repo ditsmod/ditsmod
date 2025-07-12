@@ -7,7 +7,7 @@
       "@ditsmod/testing": ["../testing/src/index.js"],
       "#interceptors/*": ["./src/interceptors/*"],
       "#utils/*": ["./utils/*"],
-      "#module/*": ["src/init/*"],
+      "#init/*": ["src/init/*"],
       "#decorators/*": ["./src/decorators/*"],
       "#types/*": ["./src/types/*"],
       "#services/*": ["./src/services/*"],

@@ -1,7 +1,7 @@
 import { rootModule } from '@ditsmod/core';
 
 import { route } from '#decorators/route.js';
-import { RestModule } from '#module/rest.module.js';
+import { RestModule } from '#init/rest.module.js';
 import { Module1 } from './module1/module1.js';
 import { Module2 } from './module2/module2.js';
 import { Module3 } from './module3/module3.js';
