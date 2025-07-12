@@ -4,7 +4,6 @@ import {
   forwardRef,
   GlobalProviders,
   ImportedTokensMap,
-  DeepModulesImporter,
   inject,
   injectable,
   Injector,
@@ -28,6 +27,7 @@ import { defaultProvidersPerReq } from '../providers/default-providers-per-req.j
 import { defaultProvidersPerRou } from '../providers/default-providers-per-rou.js';
 import { RequestContext } from './request-context.js';
 import { addRest } from '#decorators/rest-metadata.js';
+import { DeepModulesImporter } from '#init/deep-modules-importer.js';
 
 type Level = 'Mod';
 
@@ -68,7 +68,7 @@ describe('resolve()', () => {
 
   function bootstrap(mod: ModuleType) {
     expect(() => moduleManager.scanModule(mod)).not.toThrow();
-    const shallowImportsBase = shallowModulesImporter.importModulesShallow([], new GlobalProviders(), '', mod, moduleManager, new Set());
+    const shallowImportsBase = shallowModulesImporter.importModulesShallow(new GlobalProviders(), mod, moduleManager, new Set());
     mock = new DeepModulesImporterMock(moduleManager, shallowImportsBase, [], systemLogMediator, errorMediator);
     return shallowImportsBase as Map<ModRefId, MetadataPerMod1>;
   }

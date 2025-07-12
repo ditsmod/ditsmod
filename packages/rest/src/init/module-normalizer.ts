@@ -82,7 +82,7 @@ export class ModuleNormalizer {
   protected normalizeModule(rawMeta: RestMetadata, meta: RestNormalizedMeta) {
     this.throwIfResolvingNormalizedProvider(rawMeta);
     this.exportFromReflectMetadata(rawMeta, meta);
-    this.pickAndMergeMeta(meta, rawMeta);
+    // this.pickAndMergeMeta(meta, rawMeta);
     this.checkGuardsPerMod(meta.guardsPerMod);
   }
 

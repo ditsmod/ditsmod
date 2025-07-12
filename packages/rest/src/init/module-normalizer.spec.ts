@@ -1,16 +1,9 @@
-import {
-  clearDebugClassNames,
-  featureModule,
-  ModuleManager,
-  ModuleWithParams,
-  Provider,
-  rootModule,
-  SystemLogMediator,
-} from '@ditsmod/core';
+import { clearDebugClassNames, ModuleManager, rootModule, SystemLogMediator } from '@ditsmod/core';
 
 import { ModuleNormalizer } from './module-normalizer.js';
 import { addRest } from '#decorators/rest-metadata.js';
 import { controller } from '#types/controller.js';
+import { RestNormalizedMeta } from './rest-normalized-meta.js';
 
 describe('rest ModuleNormalizer', () => {
   class MockModuleNormalizer extends ModuleNormalizer {}
@@ -25,7 +18,7 @@ describe('rest ModuleNormalizer', () => {
     mock = new MockModuleNormalizer();
   });
 
-  fdescribe('case 1', () => {
+  describe('normalize root module only', () => {
     class Service1 {}
 
     @controller()
@@ -35,73 +28,15 @@ describe('rest ModuleNormalizer', () => {
     @rootModule()
     class AppModule {}
 
-    it('should collects providers from exports array without imports them', () => {
+    it('should contain correct metadata', () => {
       const baseMeta = moduleManager.scanRootModule(AppModule);
-      console.log(baseMeta);
-    });
-  });
-
-  describe('providersPerApp', () => {
-    class Provider0 {}
-    class Provider1 {}
-    class Provider2 {}
-    class Provider3 {}
-    class Provider4 {}
-    class Provider5 {}
-    class Provider6 {}
-    class Provider7 {}
-
-    @featureModule({ providersPerApp: [Provider0] })
-    class Module0 {}
-
-    @featureModule({ providersPerApp: [Provider1] })
-    class Module1 {}
-
-    @featureModule({
-      providersPerApp: [Provider2, Provider3, Provider4],
-      imports: [Module1],
-    })
-    class Module2 {}
-
-    @featureModule({
-      providersPerApp: [Provider5, Provider6],
-      imports: [Module2],
-    })
-    class Module3 {}
-
-    @rootModule({
-      imports: [Module3, Module0],
-      providersPerApp: [{ token: Provider1, useClass: Provider7 }],
-      exports: [Module0],
-    })
-    class AppModule {}
-
-    it('should collects providers from exports array without imports them', () => {
-      moduleManager.scanRootModule(AppModule);
-      const providersPerApp = moduleManager.providersPerApp;
-      expect(providersPerApp.includes(Provider0)).toBe(true);
-    });
-
-    it('should collects providers in particular order', () => {
-      moduleManager.scanRootModule(AppModule);
-      const providersPerApp = moduleManager.providersPerApp;
-      expect(providersPerApp).toEqual([Provider1, Provider2, Provider3, Provider4, Provider5, Provider6, Provider0]);
-    });
-
-    it('should works with baseModuleWithParams', () => {
-      @featureModule({})
-      class Module6 {
-        static withParams(providers: Provider[]): ModuleWithParams<Module6> {
-          return {
-            module: Module6,
-            providersPerApp: providers,
-          };
-        }
-      }
-      const modWithParams = Module6.withParams([Provider7]);
-      moduleManager.scanModule(modWithParams);
-      const providersPerApp = moduleManager.providersPerApp;
-      expect(providersPerApp).toEqual([Provider7]);
+      const meta = baseMeta.normDecorMeta.get(addRest) as RestNormalizedMeta;
+      expect(meta.controllers.length).toBe(1);
+      expect(meta.controllers).toEqual([Controller1]);
+      expect(meta.providersPerRou.length).toBe(1);
+      expect(meta.providersPerRou).toEqual([Service1]);
+      expect(meta.providersPerReq.length).toBe(0);
+      expect(meta.providersPerReq).toEqual([]);
     });
   });
 });
