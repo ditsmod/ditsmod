@@ -23,9 +23,9 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
 
   async stage1() {
     const restMetadataPerMod2 = this.metadataPerMod2.deepImportedModules.get(addRest)!;
+    this.metadataPerMod3 = new MetadataPerMod3();
     this.metadataPerMod3.meta = restMetadataPerMod2.meta;
     const { path: prefixPerApp } = this.appOptions;
-    this.metadataPerMod3 = new MetadataPerMod3();
     this.metadataPerMod3.baseMeta = this.metadataPerMod2.baseMeta;
     this.metadataPerMod3.aControllerMetadata = this.getControllersMetadata(prefixPerApp, restMetadataPerMod2);
     this.metadataPerMod3.guardsPerMod1 = restMetadataPerMod2.guardsPerMod1;

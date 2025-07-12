@@ -245,7 +245,7 @@ export class InternalExtensionsManager extends ExtensionsManager {
         this.updateExtensionPendingList();
       } catch (err: any) {
         const debugModuleName = getDebugClassName(meta.modRefId);
-        const msg = `${ExtCls} group in ${debugModuleName} failed`;
+        const msg = `${ExtCls.name} in ${debugModuleName} failed`;
         throw new ChainError(msg, { cause: err, name: 'Error' });
       }
     }

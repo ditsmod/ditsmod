@@ -217,14 +217,16 @@ export class ShallowModulesImporter {
     const { params } = meta;
     let prefixPerMod = '';
     let guardsPerMod1: GuardPerMod1[] = [];
+    const path1 = isAppendsWithParams(modRefId) ? modRefId.path : params.path;
+    const absolutePath = isAppendsWithParams(modRefId) ? modRefId.absolutePath : params.absolutePath;
     const hasModuleParams = isModuleWithParams(modRefId);
     if (hasModuleParams || !isImport) {
-      if (hasModuleParams && typeof params.absolutePath == 'string') {
+      if (hasModuleParams && typeof absolutePath == 'string') {
         // Allow slash for absolutePath.
-        prefixPerMod = params.absolutePath.startsWith('/') ? params.absolutePath.slice(1) : params.absolutePath;
+        prefixPerMod = absolutePath.startsWith('/') ? absolutePath.slice(1) : absolutePath;
       } else {
-        const path = hasModuleParams ? params.path : '';
-        prefixPerMod = [this.prefixPerMod, path].filter((s) => s).join('/');
+        const path2 = hasModuleParams ? path1 : '';
+        prefixPerMod = [this.prefixPerMod, path2].filter((s) => s).join('/');
       }
       const impGuradsPerMod1 = meta.guardsPerMod.map<GuardPerMod1>((g) => {
         return {
