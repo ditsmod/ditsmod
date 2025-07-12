@@ -38,6 +38,9 @@ describe('BaseApplication', () => {
       mock.init({ bufferLogs: false });
       expect(mock.baseAppOptions.bufferLogs).toBe(false);
       expect(LogMediator.bufferLogs).toBe(false);
+      mock.init({ bufferLogs: true });
+      expect(mock.baseAppOptions.bufferLogs).toBe(true);
+      expect(LogMediator.bufferLogs).toBe(true);
     });
   });
 
@@ -53,7 +56,6 @@ describe('BaseApplication', () => {
   describe('bootstrapApplication()', () => {
     @rootModule({
       providersPerApp: [
-        // { token: Router, useValue: {} },
         { token: LoggerConfig, useValue: { level: 'off' } },
       ],
     })
