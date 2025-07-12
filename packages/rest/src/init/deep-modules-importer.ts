@@ -149,7 +149,7 @@ export class DeepModulesImporter {
     let found = false;
     const metadataPerMod1 = this.shallowImports.get(srcModRefId1)!;
     for (const level of levels) {
-      const restMetadataPerMod1 = metadataPerMod1.shallowImportsPerDecor.get(addRest) as RestMetadataPerMod1;
+      const restMetadataPerMod1 = metadataPerMod1.shallowImportedModules.get(addRest) as RestMetadataPerMod1;
       const importObj = restMetadataPerMod1.importedTokensMap[`per${level}`].get(dep.token);
       if (importObj) {
         found = true;
@@ -215,7 +215,7 @@ export class DeepModulesImporter {
   protected hasUnresolvedImportedDependecies(modRefId1: ModRefId, levels: Level[], dep: ReflectiveDependency) {
     let found = false;
     for (const level of levels) {
-      const restMetadataPerMod1 = this.shallowImports.get(modRefId1)?.shallowImportsPerDecor.get(addRest) as
+      const restMetadataPerMod1 = this.shallowImports.get(modRefId1)?.shallowImportedModules.get(addRest) as
         | RestMetadataPerMod1
         | undefined;
       const importObj = restMetadataPerMod1?.importedTokensMap[`per${level}`].get(dep.token);

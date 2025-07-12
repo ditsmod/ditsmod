@@ -227,11 +227,11 @@ export class BaseAppInitializer {
         const shallowImportedModule = val.get(modRefId)!;
         const mergedShallowImports = shallowImports.get(modRefId);
         if (mergedShallowImports) {
-          mergedShallowImports.shallowImportsPerDecor.set(decorator, shallowImportedModule);
+          mergedShallowImports.shallowImportedModules.set(decorator, shallowImportedModule);
         } else {
           shallowImports.set(modRefId, {
             ...metadataPerMod1,
-            shallowImportsPerDecor: new Map([[decorator, shallowImportedModule]]),
+            shallowImportedModules: new Map([[decorator, shallowImportedModule]]),
           });
         }
       });
