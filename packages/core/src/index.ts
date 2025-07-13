@@ -70,6 +70,7 @@ export { ImportObj } from '#types/metadata-per-mod.js';
 export { mergeArrays } from '#utils/merge-arrays.js';
 export { getLastProviders } from '#utils/get-last-providers.js';
 export { deepFreeze } from '#utils/deep-freeze.js';
+export { getDuplicates } from '#utils/get-duplicates.js';
 export { getCollisions } from '#utils/get-collisions.js';
 export { throwProvidersCollisionError } from '#utils/throw-providers-collision-error.js';
 export { getDependencies, ReflectiveDependency } from '#utils/get-dependecies.js';

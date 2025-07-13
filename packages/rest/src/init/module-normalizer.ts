@@ -21,6 +21,8 @@ import {
   Providers,
   reflector,
   resolveForwardRef,
+  getDuplicates,
+  CustomError,
 } from '@ditsmod/core';
 
 import { RestMetadata, RestModuleParams } from '#init/module-metadata.js';
@@ -52,6 +54,13 @@ export class ModuleNormalizer {
     this.quickCheckMetadata(baseMeta, mergedMeta);
     meta.controllers.forEach((Controller) => this.checkController(Controller));
     this.normalizeModule(rawMeta, meta);
+    const controllerDuplicates = getDuplicates(meta.controllers).map((c) => c.name);
+    if (controllerDuplicates.length) {
+      throw new CustomError({
+        msg1: `Detected duplicate controllers - ${controllerDuplicates.join(', ')}`,
+        level: 'fatal',
+      });
+    }
 
     return mergedMeta;
   }
@@ -227,7 +236,7 @@ export class ModuleNormalizer {
 
   protected quickCheckMetadata(baseMeta: NormalizedMeta, meta: RestNormalizedMeta) {
     if (
-      isFeatureModule(meta) &&
+      isFeatureModule(baseMeta) &&
       !baseMeta.exportedProvidersPerMod.length &&
       !baseMeta.exportedMultiProvidersPerMod.length &&
       !baseMeta.exportsModules.length &&
