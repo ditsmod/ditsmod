@@ -50,10 +50,9 @@ export class ModuleNormalizer {
     this.normalizeImportsWithParams(rawMeta, meta);
     this.setParentMeta(baseMeta, meta);
     this.pickAndMergeMeta(meta, rawMeta);
-    const mergedMeta = { ...rawMeta, ...meta } as RestNormalizedMeta;
-    this.quickCheckMetadata(baseMeta, mergedMeta);
     meta.controllers.forEach((Controller) => this.checkController(Controller));
     this.normalizeModule(rawMeta, meta);
+    this.quickCheckMetadata(baseMeta, meta);
     const controllerDuplicates = getDuplicates(meta.controllers).map((c) => c.name);
     if (controllerDuplicates.length) {
       throw new CustomError({
@@ -62,7 +61,7 @@ export class ModuleNormalizer {
       });
     }
 
-    return mergedMeta;
+    return meta;
   }
 
   protected mergeModuleWithParams(baseMeta: NormalizedMeta, meta: RestNormalizedMeta): void {
