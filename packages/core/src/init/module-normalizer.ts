@@ -349,7 +349,7 @@ export class ModuleNormalizer {
       !baseMeta.exportedExtensionsProviders.length &&
       !baseMeta.extensionsProviders.length
     ) {
-      const msg = 'this module should have "providersPerApp" or some controllers, or exports, or extensions.';
+      const msg = 'this module should have "providersPerApp", or exports, or extensions.';
       throw new Error(msg);
     }
   }
