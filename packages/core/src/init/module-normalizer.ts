@@ -7,7 +7,7 @@ import {
   MultiProvider,
   reflector,
 } from '#di';
-import { isModuleWithParams, isRootModule, isProvider, isModDecor, isModuleWithMetadata } from '#utils/type-guards.js';
+import { isModuleWithParams, isRootModule, isProvider, isModDecor, isModuleWithMetadata, isFeatureModule } from '#utils/type-guards.js';
 import {
   ExtensionConfig,
   getExtensionProvider,
@@ -71,6 +71,7 @@ export class ModuleNormalizer {
     this.checkAndMarkExternalModule(isRootModule(rawMeta), baseMeta);
     this.normalizeModule(modName, rawMeta, baseMeta);
     this.normalizeDecoratorsMeta(baseMeta);
+    this.quickCheckMetadata(baseMeta);
     return baseMeta;
   }
 
@@ -334,5 +335,22 @@ export class ModuleNormalizer {
         });
       }
     });
+  }
+
+  protected quickCheckMetadata(baseMeta: NormalizedMeta) {
+    if (
+      isFeatureModule(baseMeta) &&
+      !baseMeta.rawDecorMeta.size &&
+      !baseMeta.exportedProvidersPerMod.length &&
+      !baseMeta.exportedMultiProvidersPerMod.length &&
+      !baseMeta.exportsModules.length &&
+      !baseMeta.providersPerApp.length &&
+      !baseMeta.exportsWithParams.length &&
+      !baseMeta.exportedExtensionsProviders.length &&
+      !baseMeta.extensionsProviders.length
+    ) {
+      const msg = 'this module should have "providersPerApp" or some controllers, or exports, or extensions.';
+      throw new Error(msg);
+    }
   }
 }
