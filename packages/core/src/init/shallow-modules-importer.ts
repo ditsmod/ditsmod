@@ -139,7 +139,7 @@ export class ShallowModulesImporter {
     this.importModules();
 
     this.moduleManager.allInitHooks.forEach((initHooks, decorator) => {
-      const meta = this.baseMeta.normDecorMeta.get(decorator);
+      const meta = this.baseMeta.normDecorMeta.get<any>(decorator);
       for (const modRefId of initHooks.getModulesToScan(meta)) {
         if (this.unfinishedScanModules.has(modRefId)) {
           continue;
