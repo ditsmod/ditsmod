@@ -8,8 +8,7 @@ import { InitHooksAndMetadata } from '#decorators/feature-module.js';
 
 export class NormDecorMeta extends Map {
   override set<T>(key: AddDecorator<any, T>, value: T) {
-    super.set(key, value);
-    return this;
+    return super.set(key, value);
   }
 
   override get<T>(key: AddDecorator<any, T>): T | undefined {
