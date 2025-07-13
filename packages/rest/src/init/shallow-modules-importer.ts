@@ -29,7 +29,7 @@ import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js'
 import { AppendsWithParams } from './module-metadata.js';
 import { addRest } from '#decorators/rest-metadata.js';
 import { isAppendsWithParams } from '#types/type.guards.js';
-import { RestImportObj, RestMetadataPerMod1 } from './types.js';
+import { ImportModulesShallowConfig, RestImportObj, RestMetadataPerMod1 } from './types.js';
 
 /**
  * Recursively collects providers taking into account module imports/exports,
@@ -63,11 +63,15 @@ export class ShallowModulesImporter {
   protected unfinishedScanModules = new Set<ModRefId>();
   protected moduleManager: ModuleManager;
 
-  exportGlobalProviders(
-    moduleManager: ModuleManager,
-    globalProviders: GlobalProviders,
-    baseMeta: NormalizedMeta,
-  ): RestGlobalProviders {
+  exportGlobalProviders({
+    moduleManager,
+    globalProviders,
+    baseMeta,
+  }: {
+    moduleManager: ModuleManager;
+    globalProviders: GlobalProviders;
+    baseMeta: NormalizedMeta;
+  }): RestGlobalProviders {
     this.moduleManager = moduleManager;
     this.glProviders = globalProviders;
     this.providersPerApp = moduleManager.providersPerApp;
@@ -89,16 +93,16 @@ export class ShallowModulesImporter {
   /**
    * @param modRefId Module that will bootstrapped.
    */
-  importModulesShallow(
-    shallowImportsBase: ShallowImportsBase,
-    providersPerApp: Provider[],
-    globalProviders: GlobalProviders,
-    modRefId: ModRefId,
-    unfinishedScanModules: Set<ModRefId>,
-    prefixPerMod: string = '',
-    guardsPerMod1?: GuardPerMod1[],
-    isAppends?: boolean,
-  ): Map<ModRefId, RestMetadataPerMod1> {
+  importModulesShallow({
+    shallowImportsBase,
+    providersPerApp,
+    globalProviders,
+    modRefId,
+    unfinishedScanModules,
+    prefixPerMod,
+    guardsPerMod1,
+    isAppends,
+  }: ImportModulesShallowConfig): Map<ModRefId, RestMetadataPerMod1> {
     this.shallowImportsBase = shallowImportsBase;
     this.providersPerApp = providersPerApp;
     const baseMeta = this.getMetadata(modRefId, true);
@@ -107,7 +111,7 @@ export class ShallowModulesImporter {
     this.meta = meta ? meta : new RestNormalizedMeta();
     this.glProviders = globalProviders;
     this.restGlProviders = globalProviders.shallowImportedModules.get(addRest) as RestGlobalProviders;
-    this.prefixPerMod = prefixPerMod;
+    this.prefixPerMod = prefixPerMod || '';
     this.moduleName = baseMeta.name;
     this.guardsPerMod1 = guardsPerMod1 || [];
     this.unfinishedScanModules = unfinishedScanModules;
@@ -197,16 +201,16 @@ export class ShallowModulesImporter {
       const { prefixPerMod, guardsPerMod1 } = this.getPrefixAndGuards(modRefId, meta, isImport);
       const shallowModulesImporter = new ShallowModulesImporter();
       this.unfinishedScanModules.add(modRefId);
-      const shallowImportsBase = shallowModulesImporter.importModulesShallow(
-        this.shallowImportsBase,
-        this.providersPerApp,
-        this.glProviders,
+      const shallowImportsBase = shallowModulesImporter.importModulesShallow({
+        shallowImportsBase: this.shallowImportsBase,
+        providersPerApp: this.providersPerApp,
+        globalProviders: this.glProviders,
         modRefId,
-        this.unfinishedScanModules,
+        unfinishedScanModules: this.unfinishedScanModules,
         prefixPerMod,
         guardsPerMod1,
-        !isImport,
-      );
+        isAppends: !isImport,
+      });
       this.unfinishedScanModules.delete(modRefId);
 
       shallowImportsBase.forEach((val, key) => this.shallowImports.set(key, val));

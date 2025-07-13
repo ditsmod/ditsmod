@@ -28,13 +28,31 @@ export class DeepModulesImporter {
   protected extensionsTokens: any[] = [];
   protected extensionCounters = new ExtensionCounters();
 
-  constructor(
-    protected moduleManager: ModuleManager,
-    protected shallowImports: ShallowImports,
-    protected providersPerApp: Provider[],
-    protected log: SystemLogMediator,
-    protected errorMediator: SystemErrorMediator,
-  ) {}
+  protected moduleManager: ModuleManager;
+  protected shallowImports: ShallowImports;
+  protected providersPerApp: Provider[];
+  protected log: SystemLogMediator;
+  protected errorMediator: SystemErrorMediator;
+
+  constructor({
+    moduleManager,
+    shallowImports,
+    providersPerApp,
+    log,
+    errorMediator,
+  }: {
+    moduleManager: ModuleManager;
+    shallowImports: ShallowImports;
+    providersPerApp: Provider[];
+    log: SystemLogMediator;
+    errorMediator: SystemErrorMediator;
+  }) {
+    this.moduleManager = moduleManager;
+    this.shallowImports = shallowImports;
+    this.providersPerApp = providersPerApp;
+    this.log = log;
+    this.errorMediator = errorMediator;
+  }
 
   importModulesDeep() {
     const levels: Level[] = ['Mod'];
@@ -44,14 +62,14 @@ export class DeepModulesImporter {
       const deepImportedModules = new Map<AnyFn, AnyObj>();
       this.moduleManager.allInitHooks.forEach((initHooks, decorator) => {
         const shallowImportedModule = shallowImportedModules.get(decorator)!;
-        const deepImports = initHooks.importModulesDeep(
-          shallowImportedModule,
-          this.moduleManager,
-          this.shallowImports,
-          this.providersPerApp,
-          this.log,
-          this.errorMediator,
-        );
+        const deepImports = initHooks.importModulesDeep({
+          metadataPerMod1: shallowImportedModule,
+          moduleManager: this.moduleManager,
+          shallowImports: this.shallowImports,
+          providersPerApp: this.providersPerApp,
+          log: this.log,
+          errorMediator: this.errorMediator,
+        });
         deepImportedModules.set(decorator, deepImports);
       });
       mMetadataPerMod2.set(modRefId, { baseMeta, deepImportedModules });

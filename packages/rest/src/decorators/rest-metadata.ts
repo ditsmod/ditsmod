@@ -1,22 +1,14 @@
-import {
-  makeClassDecorator,
-  InitHooksAndMetadata,
-  ModuleManager,
-  Provider,
-  GlobalProviders,
-  ModRefId,
-  NormalizedMeta,
-  SystemErrorMediator,
-  SystemLogMediator,
-  ShallowImportsBase,
-  ShallowImports,
-  AddDecorator,
-} from '@ditsmod/core';
+import { makeClassDecorator, InitHooksAndMetadata, ModRefId, NormalizedMeta, AddDecorator } from '@ditsmod/core';
 
 import { RestMetadata } from '#init/module-metadata.js';
 import { ModuleNormalizer } from '#init/module-normalizer.js';
 import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
-import { RestMetadataPerMod1 } from '#init/types.js';
+import {
+  DeepModulesImporterConfig,
+  ExportGlobalProvidersConfig,
+  ImportModulesShallowConfig,
+  RestMetadataPerMod1,
+} from '#init/types.js';
 import { RestNormalizedMeta } from '#init/rest-normalized-meta.js';
 import { DeepModulesImporter } from '#init/deep-modules-importer.js';
 /**
@@ -33,34 +25,16 @@ class RestInitHooksAndMetadata extends InitHooksAndMetadata<RestMetadata> {
     return meta?.appendsModules.concat(meta.appendsWithParams as any[]) || [];
   }
 
-  override exportGlobalProviders(moduleManager: ModuleManager, globalProviders: GlobalProviders, baseMeta: NormalizedMeta) {
-    return new ShallowModulesImporter().exportGlobalProviders(moduleManager, globalProviders, baseMeta);
+  override exportGlobalProviders(config: ExportGlobalProvidersConfig) {
+    return new ShallowModulesImporter().exportGlobalProviders(config);
   }
 
-  override importModulesShallow(
-    ...args: [
-      shallowImportsBase: ShallowImportsBase,
-      providersPerApp: Provider[],
-      globalProviders: GlobalProviders,
-      modRefId: ModRefId,
-      unfinishedScanModules: Set<ModRefId>,
-    ]
-  ): Map<ModRefId, RestMetadataPerMod1> {
-    return new ShallowModulesImporter().importModulesShallow(...args);
+  override importModulesShallow(config: ImportModulesShallowConfig): Map<ModRefId, RestMetadataPerMod1> {
+    return new ShallowModulesImporter().importModulesShallow(config);
   }
 
-  override importModulesDeep(
-    ...args: [
-      restMetadataPerMod1: RestMetadataPerMod1,
-      moduleManager: ModuleManager,
-      shallowImports: ShallowImports,
-      providersPerApp: Provider[],
-      log: SystemLogMediator,
-      errorMediator: SystemErrorMediator,
-    ]
-  ) {
-    const impResolver = new DeepModulesImporter(...args);
-    return impResolver.importModulesDeep();
+  override importModulesDeep(config: DeepModulesImporterConfig) {
+    return new DeepModulesImporter(config).importModulesDeep();
   }
 }
 

@@ -21,7 +21,13 @@ import {
 import { Level } from '#types/types.js';
 import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
-import { RestImportedTokensMap, RestMetadataPerMod1, RestMetadataPerMod2, RestProvidersForMod } from './types.js';
+import {
+  DeepModulesImporterConfig,
+  RestImportedTokensMap,
+  RestMetadataPerMod1,
+  RestMetadataPerMod2,
+  RestProvidersForMod,
+} from './types.js';
 import { RestNormalizedMeta } from '#init/rest-normalized-meta.js';
 import { addRest } from '#decorators/rest-metadata.js';
 
@@ -35,14 +41,28 @@ export class DeepModulesImporter {
   protected extensionsTokens: any[] = [];
   protected extensionCounters = new ExtensionCounters();
 
-  constructor(
-    protected metadataPerMod1: RestMetadataPerMod1,
-    protected moduleManager: ModuleManager,
-    protected shallowImports: ShallowImports,
-    protected providersPerApp: Provider[],
-    protected log: SystemLogMediator,
-    protected errorMediator: SystemErrorMediator,
-  ) {}
+  protected metadataPerMod1: RestMetadataPerMod1;
+  protected moduleManager: ModuleManager;
+  protected shallowImports: ShallowImports;
+  protected providersPerApp: Provider[];
+  protected log: SystemLogMediator;
+  protected errorMediator: SystemErrorMediator;
+
+  constructor({
+    metadataPerMod1,
+    moduleManager,
+    shallowImports,
+    providersPerApp,
+    log,
+    errorMediator,
+  }: DeepModulesImporterConfig) {
+    this.metadataPerMod1 = metadataPerMod1;
+    this.moduleManager = moduleManager;
+    this.shallowImports = shallowImports;
+    this.providersPerApp = providersPerApp;
+    this.log = log;
+    this.errorMediator = errorMediator;
+  }
 
   importModulesDeep(): RestMetadataPerMod2 | undefined {
     const levels: Level[] = ['Rou', 'Req'];

@@ -1,8 +1,17 @@
-import { Provider, NormalizedMeta } from '@ditsmod/core';
+import {
+  Provider,
+  NormalizedMeta,
+  GlobalProviders,
+  ModRefId,
+  ShallowImportsBase,
+  ModuleManager,
+  ShallowImports,
+  SystemErrorMediator,
+  SystemLogMediator,
+} from '@ditsmod/core';
 
 import { GuardPerMod1 } from '#interceptors/guard.js';
 import { RestModRefId, RestNormalizedMeta } from '#init/rest-normalized-meta.js';
-
 
 export class RestImportObj<T extends Provider = Provider> {
   modRefId: RestModRefId;
@@ -54,3 +63,28 @@ export class RestMetadataPerMod2 {
   applyControllers?: boolean;
 }
 
+export interface ExportGlobalProvidersConfig {
+  moduleManager: ModuleManager;
+  globalProviders: GlobalProviders;
+  baseMeta: NormalizedMeta;
+}
+
+export interface ImportModulesShallowConfig {
+  shallowImportsBase: ShallowImportsBase;
+  providersPerApp: Provider[];
+  globalProviders: GlobalProviders;
+  modRefId: ModRefId;
+  unfinishedScanModules: Set<ModRefId>;
+  prefixPerMod: string;
+  guardsPerMod1?: GuardPerMod1[];
+  isAppends?: boolean;
+}
+
+export interface DeepModulesImporterConfig {
+  metadataPerMod1: RestMetadataPerMod1;
+  moduleManager: ModuleManager;
+  shallowImports: ShallowImports;
+  providersPerApp: Provider[];
+  log: SystemLogMediator;
+  errorMediator: SystemErrorMediator;
+}

@@ -126,13 +126,13 @@ export class BaseAppInitializer {
   }
 
   async bootstrapModulesAndExtensions() {
-    const deepModulesImporter = new DeepModulesImporter(
-      this.moduleManager,
-      this.collectProvidersShallow(this.moduleManager),
-      this.baseMeta.providersPerApp,
-      this.systemLogMediator,
-      new SystemErrorMediator({ moduleName: this.baseMeta.name }),
-    );
+    const deepModulesImporter = new DeepModulesImporter({
+      moduleManager: this.moduleManager,
+      shallowImports: this.collectProvidersShallow(this.moduleManager),
+      providersPerApp: this.baseMeta.providersPerApp,
+      log: this.systemLogMediator,
+      errorMediator: new SystemErrorMediator({ moduleName: this.baseMeta.name }),
+    });
     const { extensionCounters, mMetadataPerMod2 } = deepModulesImporter.importModulesDeep();
     await this.handleExtensions(mMetadataPerMod2, extensionCounters);
     const injectorPerApp = this.perAppService.reinitInjector();
@@ -208,21 +208,21 @@ export class BaseAppInitializer {
     this.systemLogMediator.printGlobalProviders(this, globalProviders);
     const shallowModulesImporter2 = new ShallowModulesImporter();
     const { modRefId } = moduleManager.getMetadata('root', true);
-    const shallowImportsBase = shallowModulesImporter2.importModulesShallow(
+    const shallowImportsBase = shallowModulesImporter2.importModulesShallow({
       globalProviders,
       modRefId,
       moduleManager,
-      new Set(),
-    );
+      unfinishedScanModules: new Set(),
+    });
     const shallowImports: ShallowImports = new Map();
     moduleManager.allInitHooks.forEach((initHooks, decorator) => {
-      const val = initHooks.importModulesShallow(
+      const val = initHooks.importModulesShallow({
         shallowImportsBase,
-        moduleManager.providersPerApp,
+        providersPerApp: moduleManager.providersPerApp,
         globalProviders,
         modRefId,
-        new Set(),
-      );
+        unfinishedScanModules: new Set(),
+      });
       shallowImportsBase.forEach((metadataPerMod1, modRefId) => {
         const shallowImportedModule = val.get(modRefId)!;
         const mergedShallowImports = shallowImports.get(modRefId);

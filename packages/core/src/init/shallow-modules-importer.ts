@@ -56,10 +56,10 @@ export class ShallowModulesImporter {
 
   exportGlobalProviders(moduleManager: ModuleManager): GlobalProviders {
     this.moduleManager = moduleManager;
-    const meta = moduleManager.getMetadata('root', true);
-    this.moduleName = meta.name;
-    this.baseMeta = meta;
-    this.importProvidersAndExtensions(meta);
+    const baseMeta = moduleManager.getMetadata('root', true);
+    this.moduleName = baseMeta.name;
+    this.baseMeta = baseMeta;
+    this.importProvidersAndExtensions(baseMeta);
     this.checkAllCollisionsWithLevelsMix();
     const shallowImportedModules = new Map<AnyFn, AnyObj | undefined>();
     const globalProviders: GlobalProviders = {
@@ -70,8 +70,8 @@ export class ShallowModulesImporter {
       shallowImportedModules,
     };
 
-    meta.rawDecorMeta.forEach((initHooksAndMetadata, decorator) => {
-      const val = initHooksAndMetadata.exportGlobalProviders(moduleManager, globalProviders, meta);
+    baseMeta.rawDecorMeta.forEach((initHooksAndMetadata, decorator) => {
+      const val = initHooksAndMetadata.exportGlobalProviders({ moduleManager, globalProviders, baseMeta });
       if (val) {
         shallowImportedModules.set(decorator, val);
       }
@@ -85,12 +85,17 @@ export class ShallowModulesImporter {
    *
    * @param modRefId Module that will bootstrapped.
    */
-  importModulesShallow(
-    globalProviders: GlobalProviders,
-    modRefId: ModRefId,
-    moduleManager: ModuleManager,
-    unfinishedScanModules: Set<ModRefId>,
-  ): ShallowImportsBase {
+  importModulesShallow({
+    globalProviders,
+    modRefId,
+    moduleManager,
+    unfinishedScanModules,
+  }: {
+    globalProviders: GlobalProviders;
+    modRefId: ModRefId;
+    moduleManager: ModuleManager;
+    unfinishedScanModules: Set<ModRefId>;
+  }): ShallowImportsBase {
     const baseMeta = moduleManager.getMetadata(modRefId, true);
     this.moduleManager = moduleManager;
     this.glProviders = globalProviders;
@@ -165,12 +170,12 @@ export class ShallowModulesImporter {
   protected scanModule(modRefId: ModRefId) {
     const shallowModulesImporter = new ShallowModulesImporter();
     this.unfinishedScanModules.add(modRefId);
-    const shallowImportsBase = shallowModulesImporter.importModulesShallow(
-      this.glProviders,
+    const shallowImportsBase = shallowModulesImporter.importModulesShallow({
+      globalProviders: this.glProviders,
       modRefId,
-      this.moduleManager,
-      this.unfinishedScanModules,
-    );
+      moduleManager: this.moduleManager,
+      unfinishedScanModules: this.unfinishedScanModules,
+    });
     this.unfinishedScanModules.delete(modRefId);
     shallowImportsBase.forEach((val, key) => this.shallowImportsBase.set(key, val));
   }

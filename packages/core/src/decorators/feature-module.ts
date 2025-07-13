@@ -51,7 +51,11 @@ export class InitHooksAndMetadata<T extends AnyObj> {
     return [];
   }
 
-  exportGlobalProviders(moduleManager: ModuleManager, globalProviders: GlobalProviders, baseMeta: NormalizedMeta): any {
+  exportGlobalProviders(config: {
+    moduleManager: ModuleManager;
+    globalProviders: GlobalProviders;
+    baseMeta: NormalizedMeta;
+  }): any {
     return;
   }
 
@@ -59,13 +63,13 @@ export class InitHooksAndMetadata<T extends AnyObj> {
    * Recursively collects providers taking into account module imports/exports,
    * but does not take provider dependencies into account.
    */
-  importModulesShallow(
-    shallowImportsBase: ShallowImportsBase,
-    providersPerApp: Provider[],
-    globalProviders: GlobalProviders,
-    modRefId: ModRefId,
-    unfinishedScanModules: Set<ModRefId>,
-  ): Map<ModRefId, { baseMeta: NormalizedMeta } & AnyObj> {
+  importModulesShallow(config: {
+    shallowImportsBase: ShallowImportsBase;
+    providersPerApp: Provider[];
+    globalProviders: GlobalProviders;
+    modRefId: ModRefId;
+    unfinishedScanModules: Set<ModRefId>;
+  }): Map<ModRefId, { baseMeta: NormalizedMeta } & AnyObj> {
     return new Map();
   }
 
@@ -73,14 +77,14 @@ export class InitHooksAndMetadata<T extends AnyObj> {
    * By analyzing the dependencies of the providers returned by `ShallowModulesImporter`,
    * recursively collects providers for them from the corresponding modules.
    */
-  importModulesDeep(
-    metadataPerMod1: { baseMeta: NormalizedMeta } & AnyObj,
-    moduleManager: ModuleManager,
-    shallowImports: ShallowImports,
-    providersPerApp: Provider[],
-    log: SystemLogMediator,
-    errorMediator: SystemErrorMediator,
-  ): any {
+  importModulesDeep(config: {
+    metadataPerMod1: { baseMeta: NormalizedMeta } & AnyObj;
+    moduleManager: ModuleManager;
+    shallowImports: ShallowImports;
+    providersPerApp: Provider[];
+    log: SystemLogMediator;
+    errorMediator: SystemErrorMediator;
+  }): any {
     return;
   }
 }
