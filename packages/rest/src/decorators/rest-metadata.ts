@@ -10,6 +10,7 @@ import {
   SystemLogMediator,
   ShallowImportsBase,
   ShallowImports,
+  AddDecorator,
 } from '@ditsmod/core';
 
 import { RestMetadata } from '#init/module-metadata.js';
@@ -21,11 +22,7 @@ import { DeepModulesImporter } from '#init/deep-modules-importer.js';
 /**
  * A decorator that adds REST metadata to a `featureModule` or `rootModule`.
  */
-export const addRest: RestDecorator = makeClassDecorator(transformMetadata);
-
-export interface RestDecorator {
-  (data?: RestMetadata): any;
-}
+export const addRest: AddDecorator<RestMetadata, RestNormalizedMeta> = makeClassDecorator(transformMetadata);
 
 class RestInitHooksAndMetadata extends InitHooksAndMetadata<RestMetadata> {
   override normalize(baseMeta: NormalizedMeta, metadataWithParams: RestMetadata) {

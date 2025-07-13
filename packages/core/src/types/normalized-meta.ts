@@ -1,10 +1,61 @@
-import { DecoratorAndValue, MultiProvider } from '#di';
+import { MultiProvider } from '#di';
 import { AnyFn, AnyObj, ModuleType } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from './module-metadata.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { ExtensionClass } from '#extension/extension-types.js';
 import { InitHooksAndMetadata } from '#decorators/feature-module.js';
+
+export class NormDecorMeta extends Map {
+  override set<T>(key: AddDecorator<any, T>, value: T) {
+    super.set(key, value);
+    return this;
+  }
+
+  override get<T>(key: AddDecorator<any, T>): T | undefined {
+    return super.get(key) as T | undefined;
+  }
+}
+
+/**
+ * Use this interface to create decorators with init hooks.
+ * 
+ * ### Complete example with init hooks
+ * 
+ * In this example, `ReturnsType` is the type that will be returned in the case of the query:
+ * `normalizedMeta.normDecorMeta.get(addSome)`.
+ *
+```ts
+import { makeClassDecorator, AddDecorator, featureModule, InitHooksAndMetadata } from '@ditsmod/core';
+
+// Creating a decorator
+export const addSome: AddDecorator<ArgumentsType, ReturnsType> = makeClassDecorator(getInitHooksAndMetadata);
+
+// Using the newly created decorator
+\@addSome({ one: 1, two: 2 })
+\@featureModule()
+class MyModule {
+  // Your code here
+}
+
+interface ArgumentsType {
+  one?: number;
+  two?: number;
+}
+
+interface ReturnsType {}
+
+class MyInitHooksAndMetadata extends InitHooksAndMetadata<ArgumentsType> {}
+
+export function getInitHooksAndMetadata(data?: ArgumentsType): InitHooksAndMetadata<ArgumentsType> {
+  const metadata = Object.assign({}, data);
+  return new MyInitHooksAndMetadata(metadata);
+}
+```
+ */
+export interface AddDecorator<A, R> {
+  (data?: A): any;
+}
 
 export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> {
   /**
@@ -36,7 +87,7 @@ export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj
   /**
    * Contains normalized metadata collected from init module decorators.
    */
-  normDecorMeta = new Map<AnyFn, AnyObj | undefined>();
+  normDecorMeta = new NormDecorMeta();
 
   importsModules: ModuleType[] = [];
   importsWithParams: ModuleWithParams[] = [];
