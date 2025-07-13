@@ -107,7 +107,7 @@ describe('ModuleManager', () => {
       expect(() => mock.scanModule(Module1)).not.toThrow();
     });
 
-    it('should throw an error, during imports module without export and without controllers', () => {
+    it('should throw an error, during imports module without export and without controllers ', () => {
       class Provider1 {}
       class Provider2 {}
       @controller()
@@ -154,6 +154,7 @@ describe('ModuleManager', () => {
   });
 
   it('empty root module', () => {
+    @addRest()
     @rootModule()
     class AppModule {}
 
@@ -232,7 +233,8 @@ describe('ModuleManager', () => {
     @rootModule({ imports: [Module1] })
     class Module2 {}
 
-    expect(() => mock.scanRootModule(Module2)).toThrow('"Module1" does not have the "@featureModule()" decorator');
+    const msg = '"Module1" does not have the "@rootModule()" or "@featureModule()" decorator';
+    expect(() => mock.scanRootModule(Module2)).toThrow(msg);
   });
 
   it('module reexported another module without @featureModule decorator', () => {
@@ -334,7 +336,8 @@ describe('ModuleManager', () => {
     })
     class Module2 {}
 
-    expect(() => mock.scanModule(Module2)).not.toThrow();
+    const msg = 'Reexport from Module2 failed: Module1 includes in exports, but not includes in imports';
+    expect(() => mock.scanModule(Module2)).toThrow(msg);
   });
 
   it('exports module without imports it', () => {
@@ -410,11 +413,11 @@ describe('ModuleManager', () => {
     @injectable()
     class Provider1 {}
 
-    @addRest({ providersPerRou: [Provider1] })
+    @addRest({ providersPerRou: [Provider1], exports: [Provider1] })
     @featureModule({
       imports: [Module1],
       providersPerMod: [Provider0],
-      exports: [Provider0, Provider1, Module1],
+      exports: [Provider0, Module1],
     })
     class Module2 {}
 
@@ -451,7 +454,8 @@ describe('ModuleManager', () => {
 
     const expectedMeta2 = new RestNormalizedMeta();
     expectedMeta2.providersPerRou = [Provider1];
-    expect(mock.map.get(Module2)).toEqual(expectedMeta2);
+    expectedMeta2.exportedProvidersPerRou = [Provider1];
+    expect(mock.map.get(Module2)?.normDecorMeta.get(addRest)).toEqual(expectedMeta2);
 
     const expectedMeta3 = new RestNormalizedMeta();
     expect(getNormDecorMeta('root')).toEqual(expectedMeta3);
@@ -459,7 +463,7 @@ describe('ModuleManager', () => {
     const expectedMeta4 = new RestNormalizedMeta();
     expectedMeta4.controllers = [Controller1];
 
-    expect(mock.map.get(module4WithParams)).toEqual(expectedMeta4);
+    expect(mock.map.get(module4WithParams)?.normDecorMeta.get(addRest)).toEqual(expectedMeta4);
   });
 
   it('imports and appends with gruards for some modules', () => {
@@ -501,10 +505,8 @@ describe('ModuleManager', () => {
 
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(3);
-    const normalizedMeta1 = mock.getMetadata(modRefId)?.normDecorMeta.get(addRest);
-    expect(normalizedMeta1?.guardsPerMod).toMatchObject([{ guard: Guard1 }]);
-    const normalizedMeta2 = mock.getMetadata(appendsWithParams)?.normDecorMeta.get(addRest);
-    expect(normalizedMeta2?.guardsPerMod).toMatchObject([{ guard: Guard2 }]);
+    expect(getNormDecorMeta(modRefId)?.guardsPerMod).toMatchObject([{ guard: Guard1 }]);
+    expect(getNormDecorMeta(appendsWithParams)?.guardsPerMod).toMatchObject([{ guard: Guard2 }]);
   });
 
   it('programmatically adding some modules to "imports" array of root module', () => {
@@ -555,7 +557,6 @@ describe('ModuleManager', () => {
 
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(1);
-    expect(mock.getMetadata('root')).not.toBe(mock.getMetadata('root'));
     expect(mock.getOriginMetadata('root')).toBe(mock.getOriginMetadata('root'));
     expect(getNormDecorMeta('root')).toEqual(expectedMeta1);
 
@@ -565,12 +566,12 @@ describe('ModuleManager', () => {
     expect(mock.oldMapId.size).toBe(1);
     expect(mock.oldMapId.get('root')).toBe(AppModule);
     expect(mock.oldMap.size).toBe(1);
-    expect(mock.oldMap.get(AppModule)).toEqual(expectedMeta1);
+    expect(mock.oldMap.get(AppModule)?.normDecorMeta.get(addRest)).toEqual(expectedMeta1);
 
     expect(mock.addImport(Module1)).toBe(false);
     expect(mock.oldMap.size).toBe(1);
     expect(mock.oldMap.has(AppModule)).toBe(true);
-    expect(mock.oldMap.get(AppModule)).toEqual(expectedMeta1);
+    expect(mock.oldMap.get(AppModule)?.normDecorMeta.get(addRest)).toEqual(expectedMeta1);
     expect(mock.map.size).toBe(2);
     expect(mock.map.has(Module1)).toBe(true);
 
@@ -597,7 +598,7 @@ describe('ModuleManager', () => {
     expect(mock.oldMap.has(Module1)).toBe(true);
     expect(mock.oldMapId.size).toBe(1);
     expect(mock.oldMapId.get('root')).toBe(AppModule);
-    expect(mock.oldMap.get(AppModule)).toEqual(expectedMeta2);
+    expect(mock.oldMap.get(AppModule)?.normDecorMeta.get(addRest)).toEqual(expectedMeta2);
 
     mock.addImport(Module4);
     expect(mock.map.size).toBe(4);
@@ -620,13 +621,12 @@ describe('ModuleManager', () => {
     const expectedMeta3 = new RestNormalizedMeta();
     expectedMeta3.providersPerReq = [Provider1];
 
-    expect(mock.getMetadata('root') === mock.getMetadata('root')).toBe(false);
     expect(getNormDecorMeta('root')).toEqual(expectedMeta3);
 
     mock.addImport(module3WithProviders);
     expect(mock.map.size).toBe(5);
     expect(mock.oldMap.size).toBe(4);
-    expect(getNormDecorMeta('root')).toEqual({ ...expectedMeta3, importsWithParams: [module3WithProviders] });
+    expect(getNormDecorMeta('root')).toMatchObject({ providersPerReq: [Provider1] });
     expect(mock.map.has(module3WithProviders)).toBe(true);
 
     mock.rollback();
@@ -735,9 +735,9 @@ describe('ModuleManager', () => {
     const expectedMeta2 = new RestNormalizedMeta();
     expectedMeta2.providersPerReq = [Provider1];
 
-    expect(mock.getMetadata('root')).toMatchObject({ importsModules: [Module1, Module2] });
+    expect(getNormDecorMeta('root')).toMatchObject({ providersPerReq: [Provider1] });
     expect(mock.removeImport(Module2)).toBe(true);
-    expect(mock.getMetadata('root')).toMatchObject({ importsModules: [Module1] });
+    expect(getNormDecorMeta('root')).toMatchObject({ providersPerReq: [Provider1] });
     expect(mock.map.size).toBe(4);
     expect(mock.oldMap.get(AppModule)).toMatchObject({ importsModules: [Module1, Module2] });
     expect(mock.oldMapId.size).toBe(2);
@@ -745,7 +745,7 @@ describe('ModuleManager', () => {
 
     expect(mock.removeImport(Module2)).toBe(false);
     expect(mock.map.size).toBe(4);
-    expect(mock.getMetadata('root')).toMatchObject({ importsModules: [Module1] });
+    expect(getNormDecorMeta('root')).toMatchObject({ providersPerReq: [Provider1] });
     expect(getNormDecorMeta('root')).toEqual(expectedMeta2);
     expect(mock.oldMapId.size).toBe(2);
     expect(mock.oldMap.size).toBe(5);
@@ -753,11 +753,9 @@ describe('ModuleManager', () => {
     const expectedMeta3 = new RestNormalizedMeta();
     expectedMeta3.providersPerReq = [Provider1];
 
-    expect(mock.getMetadata('root')).toMatchObject({
-      importsWithParams: [module3WithProviders, module4WithProviders],
-    });
+    expect(getNormDecorMeta('root')).toMatchObject({ providersPerReq: [Provider1] });
     expect(mock.removeImport(module3WithProviders)).toBe(true);
-    expect(mock.getMetadata('root')).toMatchObject({ importsWithParams: [module4WithProviders] });
+    expect(getNormDecorMeta('root')).toMatchObject({ providersPerReq: [Provider1] });
     expect(mock.map.size).toBe(3);
     expect(getNormDecorMeta('root')).toEqual(expectedMeta3);
     expect(mock.oldMapId.size).toBe(2);
@@ -778,7 +776,7 @@ describe('ModuleManager', () => {
     mock.rollback();
     expect(mock.mapId.size).toBe(2);
     expect(mock.map.size).toBe(5);
-    expect(mock.getMetadata('root')).toEqual(expectedMeta1);
+    expect(getNormDecorMeta('root')).toEqual(expectedMeta1);
     expect(mock.oldMapId.size).toBe(0);
     expect(mock.oldMap.size).toBe(0);
   });
@@ -810,8 +808,8 @@ describe('ModuleManager', () => {
     delete (expectedMeta1 as any).aExportedExtensionConfig;
 
     mock.scanRootModule(Module3);
-    expect(getNormDecorMeta('root')).toMatchObject(expectedMeta3);
-    expect(getNormDecorMeta(Module1)).toMatchObject(expectedMeta1);
+    expect(getNormDecorMeta('root')).toBeFalsy();
+    expect(getNormDecorMeta(Module1)).toBeFalsy();
   });
 
   it('root module with exported globaly some extension', () => {
@@ -842,8 +840,8 @@ describe('ModuleManager', () => {
     delete (expectedMeta1 as any).aExportedExtensionConfig;
 
     mock.scanRootModule(Module3);
-    expect(getNormDecorMeta('root')).toMatchObject(expectedMeta3);
-    expect(getNormDecorMeta(Module1)).toMatchObject(expectedMeta1);
+    expect(getNormDecorMeta('root')).toBeFalsy();
+    expect(getNormDecorMeta(Module1)).toBeFalsy();
   });
 
   it('split multi providers and common providers', () => {
