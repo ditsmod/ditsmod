@@ -1,5 +1,4 @@
-import { format } from 'util';
-import { ChainError } from '@ts-stack/chain-error';
+import { format } from 'node:util';
 
 import { injectable, Injector, Provider, reflector } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
@@ -11,6 +10,7 @@ import { clearDebugClassNames, getDebugClassName } from '#utils/get-debug-class-
 import { objectKeys } from '#utils/object-keys.js';
 import { ModuleNormalizer } from '#init/module-normalizer.js';
 import { InitHooksAndMetadata } from '#decorators/feature-module.js';
+import { CustomError } from '#error/custom-error.js';
 
 export type ModulesMap = Map<ModRefId, NormalizedMeta>;
 export type ModulesMapId = Map<string, ModRefId>;
@@ -340,7 +340,7 @@ export class ModuleManager {
       const moduleName = getDebugClassName(modRefId);
       let path = [...this.unfinishedScanModules].map((id) => getDebugClassName(id)).join(' -> ');
       path = this.unfinishedScanModules.size > 1 ? `${moduleName} (${path})` : `${moduleName}`;
-      throw new ChainError(`Normalization of ${path} failed`, err);
+      throw new CustomError({ msg1: `Normalization of ${path} failed`, level: 'fatal' }, err);
     }
   }
 }

@@ -35,7 +35,6 @@ import { isExtensionConfig } from '#extension/type-guards.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { mergeArrays } from '#utils/merge-arrays.js';
 import { objectKeys } from '#utils/object-keys.js';
-import { CustomError } from '#error/custom-error.js';
 
 /**
  * Normalizes and validates module metadata.
@@ -54,8 +53,8 @@ export class ModuleNormalizer {
     let rawMeta = aDecoratorMeta.find((d) => isModDecor(d))?.value.metadata as RawMeta | undefined;
     const modName = getDebugClassName(modRefId);
     if (!rawMeta) {
-      const msg1 = `Module build failed: module "${modName}" does not have the "@rootModule()" or "@featureModule()" decorator`;
-      throw new CustomError({ msg1, level: 'fatal' });
+      const msg = `Module build failed: module "${modName}" does not have the "@rootModule()" or "@featureModule()" decorator`;
+      throw new Error(msg);
     }
     if (isModuleWithParams(modRefId)) {
       rawMeta = this.mergeModuleWithParams(modRefId, rawMeta);
@@ -156,11 +155,11 @@ export class ModuleNormalizer {
   protected throwIfUndefined(modName: string, action: 'Imports' | 'Exports', imp: unknown, i: number) {
     if (imp === undefined) {
       const lowerAction = action.toLowerCase();
-      const msg1 =
+      const msg =
         `${action} into "${modName}" failed: element at ${lowerAction}[${i}] has "undefined" type. ` +
         'This can be caused by circular dependency. Try to replace this element with this expression: ' +
         '"forwardRef(() => YourModule)".';
-      throw new CustomError({ msg1, level: 'fatal' });
+      throw new Error(msg);
     }
   }
 
@@ -176,10 +175,10 @@ export class ModuleNormalizer {
     resolvedCollisionsPerLevel.forEach(([provider]) => {
       if (isNormalizedProvider(provider)) {
         const providerName = provider.token.name || provider.token;
-        const msg1 =
+        const msg =
           `Resolving collisions in ${moduleName} failed: for ${providerName} inside ` +
           '"resolvedCollisionPer*" array must be includes tokens only.';
-        throw new CustomError({ msg1, level: 'fatal' });
+        throw new Error(msg);
       }
     });
   }
@@ -214,10 +213,10 @@ export class ModuleNormalizer {
     exports.forEach((modRefId) => {
       if (!imports.includes(modRefId)) {
         const importedModuleName = getDebugClassName(modRefId);
-        const msg1 =
+        const msg =
           `Reexport from ${baseMeta.name} failed: ${importedModuleName} includes in exports, but not includes in imports. ` +
           `If in ${baseMeta.name} you imports ${importedModuleName} as module with params, same object you should export (if you need reexport).`;
-        throw new CustomError({ msg1, level: 'fatal' });
+        throw new Error(msg);
       }
     });
   }
@@ -225,8 +224,8 @@ export class ModuleNormalizer {
   protected checkExtensionConfig(modName: string, extensionConfig: ExtensionConfig, i: number) {
     if (!isConfigWithOverrideExtension(extensionConfig)) {
       if (!extensionConfig.extension) {
-        const msg1 = `Export of "${modName}" failed: extension in [${i}] index must have "extension" property.`;
-        throw new CustomError({ msg1, level: 'fatal' });
+        const msg = `Export of "${modName}" failed: extension in [${i}] index must have "extension" property.`;
+        throw new Error(msg);
       }
     }
   }
@@ -250,8 +249,8 @@ export class ModuleNormalizer {
     ) {
       const token = getToken(extensionsProvider);
       const tokenName = token.name || token;
-      const msg1 = `Exporting "${tokenName}" from "${modName}" failed: all extensions must have stage1(), stage2() or stage3() method.`;
-      throw new CustomError({ msg1, level: 'fatal' });
+      const msg = `Exporting "${tokenName}" from "${modName}" failed: all extensions must have stage1(), stage2() or stage3() method.`;
+      throw new Error(msg);
     }
   }
 
@@ -279,18 +278,18 @@ export class ModuleNormalizer {
 
   protected throwUnidentifiedToken(modName: string, token: any) {
     const tokenName = token.name || token;
-    const msg1 =
+    const msg =
       `Exporting from ${modName} failed: if "${tokenName}" is a token of a provider, this provider ` +
       'must be included in providersPerMod. ' +
       `If "${tokenName}" is a token of extension, this extension must be included in "extensions" array.`;
-    throw new CustomError({ msg1, level: 'fatal' });
+    throw new Error(msg);
   }
 
   protected throwExportsIfNormalizedProvider(moduleName: string, provider: NormalizedProvider) {
     if (isNormalizedProvider(provider)) {
       const providerName = provider.token.name || provider.token;
-      const msg1 = `Exporting "${providerName}" from "${moduleName}" failed: in "exports" array must be includes tokens only.`;
-      throw new CustomError({ msg1, level: 'fatal' });
+      const msg = `Exporting "${providerName}" from "${moduleName}" failed: in "exports" array must be includes tokens only.`;
+      throw new Error(msg);
     }
   }
 
@@ -307,18 +306,18 @@ export class ModuleNormalizer {
     }
 
     const providerName = token.name || token;
-    let msg1 = '';
+    let msg = '';
     const providersPerApp = [...(rawMeta.providersPerApp || [])];
     if (providersPerApp.some((p) => getToken(p) === token)) {
-      msg1 =
+      msg =
         `Exported "${providerName}" includes in "providersPerApp" and "exports" of ${baseMeta.name}. ` +
         'This is an error, because "providersPerApp" is always exported automatically.';
     } else {
-      msg1 =
+      msg =
         `Exporting from ${baseMeta.name} failed: if "${providerName}" is a provider, it must be included ` +
         'in "providersPerMod".';
     }
-    throw new CustomError({ msg1, level: 'fatal' });
+    throw new Error(msg);
   }
 
   protected normalizeDecoratorsMeta(meta1: NormalizedMeta) {
@@ -347,8 +346,8 @@ export class ModuleNormalizer {
       !baseMeta.exportedExtensionsProviders.length &&
       !baseMeta.extensionsProviders.length
     ) {
-      const msg1 = 'this module should have "providersPerApp", or exports, or extensions.';
-      throw new CustomError({ msg1, level: 'fatal' });
+      const msg = 'this module should have "providersPerApp", or exports, or extensions.';
+      throw new Error(msg);
     }
   }
 }
