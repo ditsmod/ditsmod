@@ -47,13 +47,32 @@ describe('ModuleNormalizer', () => {
     expect(new ModuleNormalizer().normalize(AppModule)).toEqual(expectedMeta);
   });
 
+  it("module1 imports via static metadata into module2, but it's exports via module2 with params", () => {
+    class Service1 {}
+    class Service2 {}
+
+    @featureModule({ providersPerMod: [Service1] })
+    class Module1 {}
+
+    const moduleWithParams: ModuleWithParams = { module: Module1, exports: [Service1] };
+    @featureModule({ imports: [moduleWithParams], providersPerMod: [Service2] })
+    class Module2 {}
+
+    const result = new ModuleNormalizer().normalize({ module: Module2, exports: [moduleWithParams] });
+    expect(result.importsWithParams).toEqual([moduleWithParams]);
+    expect(result.exportsWithParams).toEqual([moduleWithParams]);
+    expect(result.providersPerMod).toEqual([Service2]);
+  });
+
   it('module reexports another a module without @featureModule decorator', () => {
     class Module1 {}
 
     @featureModule({ imports: [Module1], exports: [Module1] })
     class Module2 {}
 
-    expect(() => new ModuleNormalizer().normalize(Module2)).toThrow('if "Module1" is a provider, it must be included in');
+    expect(() => new ModuleNormalizer().normalize(Module2)).toThrow(
+      'if "Module1" is a provider, it must be included in',
+    );
   });
 
   it('imports module with params, but exports only a module class (without ref to module with params)', () => {
@@ -82,7 +101,9 @@ describe('ModuleNormalizer', () => {
     @featureModule({ providersPerMod: [Provider1], exports: [{ token: Provider1, useClass: Provider1 }] })
     class Module2 {}
 
-    expect(() => new ModuleNormalizer().normalize(Module2)).toThrow('failed: in "exports" array must be includes tokens only');
+    expect(() => new ModuleNormalizer().normalize(Module2)).toThrow(
+      'failed: in "exports" array must be includes tokens only',
+    );
   });
 
   it('exports module without imports it', () => {
@@ -92,7 +113,9 @@ describe('ModuleNormalizer', () => {
     @featureModule({ exports: [Module1] })
     class Module2 {}
 
-    expect(() => new ModuleNormalizer().normalize(Module2)).toThrow(/Reexport from Module2 failed: Module1 includes in exports/);
+    expect(() => new ModuleNormalizer().normalize(Module2)).toThrow(
+      /Reexport from Module2 failed: Module1 includes in exports/,
+    );
   });
 
   it('module exported invalid extension', () => {
