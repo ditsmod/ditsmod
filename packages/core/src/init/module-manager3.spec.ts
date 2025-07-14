@@ -5,10 +5,10 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { Module1 } from '#init/module-manager4.spec.js';
 
-@featureModule({ imports: [forwardRef(() => Module1)] })
+@featureModule({ imports: [forwardRef(() => Module1)], providersPerApp: [{ token: 'token2' }] })
 class Module2 {}
 
-@featureModule({ imports: [Module2] })
+@featureModule({ imports: [Module2], providersPerApp: [{ token: 'token3' }] })
 export class Module3 {}
 
 describe('ModuleManager', () => {
@@ -20,7 +20,7 @@ describe('ModuleManager', () => {
   });
 
   it('circular imports modules with forwardRef()', () => {
-    @featureModule({ imports: [Module3] })
+    @featureModule({ imports: [Module3], providersPerApp: [{ token: 'token4' }] })
     class Module4 {}
 
     @rootModule({

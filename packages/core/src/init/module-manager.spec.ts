@@ -121,13 +121,13 @@ describe('ModuleManager', () => {
     @featureModule({ providersPerApp: [Provider1], imports: [forwardRef(() => Module3)] })
     class Module1 {}
 
-    @featureModule({ imports: [Module1] })
+    @featureModule({ imports: [Module1], providersPerApp: [{ token: 'token2', useValue: 'value2' }] })
     class Module2 {}
 
-    @featureModule({ imports: [Module2] })
+    @featureModule({ imports: [Module2], providersPerApp: [{ token: 'token3', useValue: 'value3' }] })
     class Module3 {}
 
-    @featureModule({ imports: [Module3] })
+    @featureModule({ imports: [Module3], providersPerApp: [{ token: 'token4', useValue: 'value4' }] })
     class Module4 {}
 
     @rootModule({

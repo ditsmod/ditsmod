@@ -227,7 +227,9 @@ describe('ShallowModulesImporter', () => {
       class Module3 {}
 
       it('case 0', () => {
-        @featureModule({})
+        @featureModule({
+          providersPerApp: [{ token: 'token1', useValue: 'value1' }],
+        })
         class Module1 {}
 
         @rootModule({
@@ -361,7 +363,7 @@ describe('ShallowModulesImporter', () => {
         expect(mock.baseMeta.decorator).toBe(rootModule);
       });
 
-      it('importDependenciesOfImportedProviders() case 1', () => {
+      it('case 1', () => {
         class Provider1 {}
 
         @injectable()
@@ -387,6 +389,7 @@ describe('ShallowModulesImporter', () => {
         @featureModule({
           imports: [Module2],
           providersPerMod: [Provider3],
+          providersPerApp: [{ token: 'token1', useValue: 'value1' }],
         })
         class Module3 {}
 
@@ -883,6 +886,7 @@ describe('ShallowModulesImporter', () => {
           class Module2 {}
 
           @featureModule({
+            providersPerApp: [{ token: 'token1', useValue: 'value1' }],
             imports: [Module1, Module2],
           })
           class Module3 {}
