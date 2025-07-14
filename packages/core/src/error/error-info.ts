@@ -27,9 +27,6 @@ export class ErrorInfo {
    * HTTP status.
    */
   status?: Status = Status.BAD_REQUEST;
-  /**
-   * The parameters that came with the HTTP request.
-   */
   declare params?: any;
   /**
    * If specified, then the stack trace for this error ends at function `constructorOpt`.
