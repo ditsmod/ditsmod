@@ -239,7 +239,12 @@ describe('ShallowModulesImporter', () => {
         expect(meta.providersPerMod).toEqual(meta.exportedProvidersPerMod);
         expect(meta.providersPerMod).toEqual([]);
 
-        mock.importModulesShallow(new GlobalProviders(), AppModule, moduleManager, new Set());
+        mock.importModulesShallow({
+          globalProviders: new GlobalProviders(),
+          modRefId: AppModule,
+          moduleManager,
+          unfinishedScanModules: new Set(),
+        });
         expect(mock.shallowImportsBase.get(AppModule)?.baseMeta.exportedProvidersPerMod).toEqual([]);
       });
 
@@ -249,7 +254,12 @@ describe('ShallowModulesImporter', () => {
         mock = injectorPerApp.resolveAndInstantiate(MockShallowModulesImporter) as MockShallowModulesImporter;
         mock.injectorPerMod = injectorPerApp;
         moduleManager.scanModule(Module3);
-        mock.importModulesShallow(new GlobalProviders(), Module3, moduleManager, new Set());
+        mock.importModulesShallow({
+          globalProviders: new GlobalProviders(),
+          modRefId: Module3,
+          moduleManager,
+          unfinishedScanModules: new Set(),
+        });
 
         const mod0 = mock.shallowImportsBase.get(Module0);
         const moduleExtract: ModuleExtract = { moduleName: 'Module0', isExternal: false };
@@ -313,7 +323,12 @@ describe('ShallowModulesImporter', () => {
         mock = injectorPerApp.resolveAndInstantiate(MockShallowModulesImporter) as MockShallowModulesImporter;
         mock.injectorPerMod = injectorPerApp;
         moduleManager.scanModule(Module4);
-        mock.importModulesShallow(new GlobalProviders(), Module4, moduleManager, new Set());
+        mock.importModulesShallow({
+          globalProviders: new GlobalProviders(),
+          modRefId: Module4,
+          moduleManager,
+          unfinishedScanModules: new Set(),
+        });
 
         const moduleExtract: ModuleExtract = { moduleName: 'Module4', isExternal: false };
         const providerPerMod: Provider = {
@@ -380,7 +395,12 @@ describe('ShallowModulesImporter', () => {
         mock = injectorPerApp.resolveAndInstantiate(MockShallowModulesImporter) as MockShallowModulesImporter;
         mock.injectorPerMod = injectorPerApp;
         moduleManager.scanModule(Module3);
-        mock.importModulesShallow(new GlobalProviders(), Module3, moduleManager, new Set());
+        mock.importModulesShallow({
+          globalProviders: new GlobalProviders(),
+          modRefId: Module3,
+          moduleManager,
+          unfinishedScanModules: new Set(),
+        });
 
         const mod3 = mock.shallowImportsBase.get(Module3);
         expect(mod3?.baseMeta.providersPerMod[1]).toEqual(Provider3);
@@ -532,7 +552,14 @@ describe('ShallowModulesImporter', () => {
 
           moduleManager.scanRootModule(AppModule);
           const msg = 'AppModule failed: exports from Module1, Module2 causes collision with Provider2.';
-          expect(() => mock.importModulesShallow(new GlobalProviders(), AppModule, moduleManager, new Set())).toThrow(msg);
+          expect(() =>
+            mock.importModulesShallow({
+              globalProviders: new GlobalProviders(),
+              modRefId: AppModule,
+              moduleManager,
+              unfinishedScanModules: new Set(),
+            }),
+          ).toThrow(msg);
         });
 
         it('import Module2 and Module1 with collision - Provider1', () => {
@@ -565,7 +592,14 @@ describe('ShallowModulesImporter', () => {
 
           moduleManager.scanRootModule(AppModule);
           const msg = 'AppModule failed: exports from Module1, Module2 causes collision with Provider1.';
-          expect(() => mock.importModulesShallow(new GlobalProviders(), AppModule, moduleManager, new Set())).toThrow(msg);
+          expect(() =>
+            mock.importModulesShallow({
+              globalProviders: new GlobalProviders(),
+              modRefId: AppModule,
+              moduleManager,
+              unfinishedScanModules: new Set(),
+            }),
+          ).toThrow(msg);
         });
 
         it('import multi providers that has token Provider1', () => {
@@ -597,7 +631,13 @@ describe('ShallowModulesImporter', () => {
           class AppModule {}
 
           moduleManager.scanRootModule(AppModule);
-          const callback = () => mock.importModulesShallow(new GlobalProviders(), AppModule, moduleManager, new Set());
+          const callback = () =>
+            mock.importModulesShallow({
+              globalProviders: new GlobalProviders(),
+              modRefId: AppModule,
+              moduleManager,
+              unfinishedScanModules: new Set(),
+            });
           expect(callback).not.toThrow();
           expect([...mock.importedProvidersPerMod]).toEqual([
             [
@@ -650,7 +690,14 @@ describe('ShallowModulesImporter', () => {
 
           moduleManager.scanRootModule(AppModule);
           const msg = 'but Provider1 is a token of the multi providers,';
-          expect(() => mock.importModulesShallow(new GlobalProviders(), AppModule, moduleManager, new Set())).toThrow(msg);
+          expect(() =>
+            mock.importModulesShallow({
+              globalProviders: new GlobalProviders(),
+              modRefId: AppModule,
+              moduleManager,
+              unfinishedScanModules: new Set(),
+            }),
+          ).toThrow(msg);
         });
 
         it('exporting duplicates with "multi == true" not to throw', () => {
@@ -676,7 +723,12 @@ describe('ShallowModulesImporter', () => {
 
           moduleManager.scanRootModule(AppModule);
           expect(() =>
-            mock.importModulesShallow(new GlobalProviders(), AppModule, moduleManager, new Set()),
+            mock.importModulesShallow({
+              globalProviders: new GlobalProviders(),
+              modRefId: AppModule,
+              moduleManager,
+              unfinishedScanModules: new Set(),
+            }),
           ).not.toThrow();
         });
 
@@ -716,7 +768,12 @@ describe('ShallowModulesImporter', () => {
 
           moduleManager.scanRootModule(AppModule);
           expect(() =>
-            mock.importModulesShallow(new GlobalProviders(), AppModule, moduleManager, new Set()),
+            mock.importModulesShallow({
+              globalProviders: new GlobalProviders(),
+              modRefId: AppModule,
+              moduleManager,
+              unfinishedScanModules: new Set(),
+            }),
           ).not.toThrow();
           expect([...mock.importedProvidersPerMod]).toEqual([
             [Provider1, { modRefId: Module1, providers: [Provider1] }],
@@ -755,7 +812,12 @@ describe('ShallowModulesImporter', () => {
 
           moduleManager.scanRootModule(AppModule);
           expect(() =>
-            mock.importModulesShallow(new GlobalProviders(), AppModule, moduleManager, new Set()),
+            mock.importModulesShallow({
+              globalProviders: new GlobalProviders(),
+              modRefId: AppModule,
+              moduleManager,
+              unfinishedScanModules: new Set(),
+            }),
           ).not.toThrow();
           expect([...mock.importedProvidersPerMod]).toEqual([
             [Provider1, { modRefId: Module1, providers: [Provider1] }],
@@ -791,7 +853,12 @@ describe('ShallowModulesImporter', () => {
 
           moduleManager.scanRootModule(AppModule);
           expect(() =>
-            mock.importModulesShallow(new GlobalProviders(), AppModule, moduleManager, new Set()),
+            mock.importModulesShallow({
+              globalProviders: new GlobalProviders(),
+              modRefId: AppModule,
+              moduleManager,
+              unfinishedScanModules: new Set(),
+            }),
           ).not.toThrow();
           const mod3 = mock.shallowImportsBase.get(Module3)!;
           expect([...mod3.importedTokensMap.perMod]).toEqual([
@@ -827,7 +894,14 @@ describe('ShallowModulesImporter', () => {
 
           moduleManager.scanModule(AppModule);
           const msg = 'Module3 failed: exports from Module1, Module2 causes collision with Provider1.';
-          expect(() => mock.importModulesShallow(new GlobalProviders(), AppModule, moduleManager, new Set())).toThrow(msg);
+          expect(() =>
+            mock.importModulesShallow({
+              globalProviders: new GlobalProviders(),
+              modRefId: AppModule,
+              moduleManager,
+              unfinishedScanModules: new Set(),
+            }),
+          ).toThrow(msg);
         });
       });
 
@@ -853,7 +927,14 @@ describe('ShallowModulesImporter', () => {
 
           moduleManager.scanRootModule(AppModule);
           const msg = 'AppModule failed: exports from Module1, Module2 causes collision with Provider2.';
-          expect(() => mock.importModulesShallow(new GlobalProviders(), AppModule, moduleManager, new Set())).toThrow(msg);
+          expect(() =>
+            mock.importModulesShallow({
+              globalProviders: new GlobalProviders(),
+              modRefId: AppModule,
+              moduleManager,
+              unfinishedScanModules: new Set(),
+            }),
+          ).toThrow(msg);
         });
 
         it('exporting duplicates of Provider2, but declared in resolvedCollisionsPerMod of root module', () => {
@@ -877,7 +958,14 @@ describe('ShallowModulesImporter', () => {
           class AppModule {}
 
           moduleManager.scanRootModule(AppModule);
-          expect(() => mock.importModulesShallow(new GlobalProviders(), AppModule, moduleManager, new Set())).not.toThrow();
+          expect(() =>
+            mock.importModulesShallow({
+              globalProviders: new GlobalProviders(),
+              modRefId: AppModule,
+              moduleManager,
+              unfinishedScanModules: new Set(),
+            }),
+          ).not.toThrow();
           expect([...mock.importedProvidersPerMod]).toEqual([
             [Provider1, { modRefId: Module1, providers: [{ token: Provider1, useToken: Provider1 }] }],
             [Provider2, { modRefId: Module2, providers: [{ token: Provider2, useClass: Provider2 }] }],
@@ -905,7 +993,14 @@ describe('ShallowModulesImporter', () => {
 
           moduleManager.scanRootModule(AppModule);
           const msg = 'AppModule failed: exports from Module0, Module1 causes collision with Provider1.';
-          expect(() => mock.importModulesShallow(new GlobalProviders(), AppModule, moduleManager, new Set())).toThrow(msg);
+          expect(() =>
+            mock.importModulesShallow({
+              globalProviders: new GlobalProviders(),
+              modRefId: AppModule,
+              moduleManager,
+              unfinishedScanModules: new Set(),
+            }),
+          ).toThrow(msg);
         });
 
         it('exporting duplicates of Provider1 from Module1 and Module2, but also includes in resolvedCollisionsPerMod of root module', () => {
@@ -934,7 +1029,14 @@ describe('ShallowModulesImporter', () => {
           class AppModule {}
 
           moduleManager.scanRootModule(AppModule);
-          expect(() => mock.importModulesShallow(new GlobalProviders(), AppModule, moduleManager, new Set())).not.toThrow();
+          expect(() =>
+            mock.importModulesShallow({
+              globalProviders: new GlobalProviders(),
+              modRefId: AppModule,
+              moduleManager,
+              unfinishedScanModules: new Set(),
+            }),
+          ).not.toThrow();
           expect([...mock.importedProvidersPerMod]).toEqual([
             [Provider1, { modRefId: Module2, providers: [{ token: Provider1, useToken: Provider1 }] }],
             [Provider2, { modRefId: Module1, providers: [Provider2] }],
