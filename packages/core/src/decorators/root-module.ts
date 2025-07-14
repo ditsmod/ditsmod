@@ -6,7 +6,7 @@ export const rootModule: RootModuleDecorator = makeClassDecorator(function trans
   data?: RootModuleMetadata,
 ) {
   const initHooksAndMetadata = transformModule(data);
-  initHooksAndMetadata.metadata.decorator = rootModule;
+  initHooksAndMetadata.rawMeta.decorator = rootModule;
   return initHooksAndMetadata;
 });
 

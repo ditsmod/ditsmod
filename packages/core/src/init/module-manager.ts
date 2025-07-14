@@ -23,7 +23,7 @@ type ModuleId = string | ModRefId;
 @injectable()
 export class ModuleManager {
   providersPerApp: Provider[] = [];
-  allInitHooks = new Map<AnyFn, Omit<InitHooksAndMetadata<AnyObj>, 'metadata'>>();
+  allInitHooks = new Map<AnyFn, Omit<InitHooksAndMetadata<AnyObj>, 'rawMeta'>>();
   protected injectorPerModMap = new Map<ModRefId, Injector>();
   protected map: ModulesMap = new Map();
   protected mapId = new Map<'root' | (string & {}), ModRefId>();

@@ -50,7 +50,7 @@ export class ModuleNormalizer {
    */
   normalize(modRefId: ModRefId) {
     const aDecoratorMeta = this.getDecoratorMeta(modRefId) || [];
-    let rawMeta = aDecoratorMeta.find((d) => isModDecor(d))?.value.metadata as RawMeta | undefined;
+    let rawMeta = aDecoratorMeta.find((d) => isModDecor(d))?.value.rawMeta as RawMeta | undefined;
     const modName = getDebugClassName(modRefId);
     if (!rawMeta) {
       const msg = `Module build failed: module "${modName}" does not have the "@rootModule()" or "@featureModule()" decorator`;
@@ -320,14 +320,14 @@ export class ModuleNormalizer {
     throw new Error(msg);
   }
 
-  protected normalizeDecoratorsMeta(meta1: NormalizedMeta) {
-    meta1.rawDecorMeta.forEach((initHooksAndMetadata, decorator) => {
-      const meta2 = initHooksAndMetadata.normalize(meta1, initHooksAndMetadata.metadata);
-      if (meta2) {
-        meta1.normDecorMeta.set(decorator, meta2);
-        meta2?.importsWithParams?.forEach((param) => {
-          if (!meta1.importsWithParams.includes(param.modRefId)) {
-            meta1.importsWithParams.push(param.modRefId);
+  protected normalizeDecoratorsMeta(baseMeta: NormalizedMeta) {
+    baseMeta.rawDecorMeta.forEach((initHooksAndMetadata, decorator) => {
+      const meta = initHooksAndMetadata.normalize(baseMeta);
+      if (meta) {
+        baseMeta.normDecorMeta.set(decorator, meta);
+        meta?.importsWithParams?.forEach((param) => {
+          if (!baseMeta.importsWithParams.includes(param.modRefId)) {
+            baseMeta.importsWithParams.push(param.modRefId);
           }
         });
       }

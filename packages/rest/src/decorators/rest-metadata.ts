@@ -17,8 +17,8 @@ import { DeepModulesImporter } from '#init/deep-modules-importer.js';
 export const addRest: AddDecorator<RestMetadata, RestNormalizedMeta> = makeClassDecorator(transformMetadata);
 
 class RestInitHooksAndMetadata extends InitHooksAndMetadata<RestMetadata> {
-  override normalize(baseMeta: NormalizedMeta, metadataWithParams: RestMetadata) {
-    return new ModuleNormalizer().normalize(baseMeta, metadataWithParams);
+  override normalize(baseMeta: NormalizedMeta) {
+    return new ModuleNormalizer().normalize(baseMeta, this.rawMeta);
   }
 
   override getModulesToScan(meta?: RestNormalizedMeta) {

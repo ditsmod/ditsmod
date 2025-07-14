@@ -38,9 +38,9 @@ export function transformModule(data?: ModuleMetadata): InitHooksAndMetadata<Raw
  * Init hooks and metadata attached to the `rootModule` or `featureModule` decorators.
  */
 export class InitHooksAndMetadata<T extends AnyObj> {
-  constructor(public metadata = {} as T) {}
+  constructor(public rawMeta = {} as T) {}
 
-  normalize(baseMeta: NormalizedMeta, metadata: T): ParamsTransferObj<AnyObj> | undefined {
+  normalize(baseMeta: NormalizedMeta): ParamsTransferObj<AnyObj> | undefined {
     return;
   }
 
