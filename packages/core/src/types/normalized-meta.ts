@@ -21,8 +21,8 @@ export class NormDecorMeta extends Map {
  * 
  * ### Complete example with init hooks
  * 
- * In this example, `ReturnsType` is the type that will be returned in the case of the query:
- * `normalizedMeta.normDecorMeta.get(addSome)`.
+ * In this example, `ReturnsType` is the type that will be returned by
+ * `myInitHooksAndMetadata.normalize()` or `normalizedMeta.normDecorMeta.get(addSome)`.
  *
 ```ts
 import { makeClassDecorator, AddDecorator, featureModule, InitHooksAndMetadata } from '@ditsmod/core';
