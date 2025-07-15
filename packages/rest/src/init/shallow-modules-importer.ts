@@ -64,10 +64,12 @@ export class ShallowModulesImporter {
   protected moduleManager: ModuleManager;
 
   exportGlobalProviders({
+    meta,
     moduleManager,
     globalProviders,
     baseMeta,
   }: {
+    meta: RestNormalizedMeta;
     moduleManager: ModuleManager;
     globalProviders: GlobalProviders;
     baseMeta: NormalizedMeta;
@@ -77,8 +79,7 @@ export class ShallowModulesImporter {
     this.providersPerApp = moduleManager.providersPerApp;
     this.moduleName = baseMeta.name;
     this.baseMeta = baseMeta;
-    const meta = baseMeta.normDecorMeta.get(addRest) as RestNormalizedMeta | undefined;
-    this.meta = meta ? meta : new RestNormalizedMeta();
+    this.meta = meta;
     this.importProviders(baseMeta);
     this.checkAllCollisionsWithLevelsMix();
 

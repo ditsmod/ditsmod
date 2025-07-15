@@ -70,8 +70,8 @@ export class ShallowModulesImporter {
       shallowImportedModules,
     };
 
-    baseMeta.rawDecorMeta.forEach((initHooksAndMetadata, decorator) => {
-      const val = initHooksAndMetadata.exportGlobalProviders({ moduleManager, globalProviders, baseMeta });
+    baseMeta.rawDecorMeta.forEach((initHooks, decorator) => {
+      const val = initHooks.exportGlobalProviders({ meta: initHooks.meta, moduleManager, globalProviders, baseMeta });
       if (val) {
         shallowImportedModules.set(decorator, val);
       }

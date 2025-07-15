@@ -65,6 +65,7 @@ export class InitHooksAndMetadata<T extends AnyObj> {
    * This method gets metadata from `rootModule` to collect providers from the `exports` property.
    */
   exportGlobalProviders(config: {
+    meta: ParamsTransferObj;
     moduleManager: ModuleManager;
     globalProviders: GlobalProviders;
     baseMeta: NormalizedMeta;

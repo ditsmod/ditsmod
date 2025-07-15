@@ -18,7 +18,7 @@ import { RestGlobalProviders } from '#types/types.js';
 export const addRest: AddDecorator<RestMetadata, RestNormalizedMeta> = makeClassDecorator(transformMetadata);
 
 class RestInitHooksAndMetadata extends InitHooksAndMetadata<RestMetadata> {
-  override meta = {} as RestNormalizedMeta;
+  override meta = new RestNormalizedMeta();
 
   override normalize(baseMeta: NormalizedMeta): RestNormalizedMeta {
     return new ModuleNormalizer().normalize(baseMeta, this.rawMeta);
