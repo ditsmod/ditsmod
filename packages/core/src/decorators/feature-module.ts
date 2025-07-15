@@ -20,7 +20,7 @@ export interface ParamsTransferObj<T extends { modRefId: ModRefId } = { modRefId
   importsWithParams?: Override<T, { modRefId: ModuleWithParentMeta }>[];
 }
 
-export function transformModule(data?: ModuleMetadata): InitHooksAndMetadata<RawMeta> {
+export function transformModule(data?: ModuleMetadata): RawMeta {
   const rawMeta = Object.assign({}, data) as RawMeta;
   objectKeys(rawMeta).forEach((p) => {
     if (rawMeta[p] instanceof Providers) {
@@ -32,7 +32,7 @@ export function transformModule(data?: ModuleMetadata): InitHooksAndMetadata<Raw
 
   rawMeta.decorator = featureModule;
   rawMeta.declaredInDir = CallsiteUtils.getCallerDir() || '.';
-  return new InitHooksAndMetadata(rawMeta);
+  return rawMeta;
 }
 /**
  * Init hooks and metadata attached by additional decorators,

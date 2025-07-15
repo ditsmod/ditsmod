@@ -8,18 +8,11 @@ import {
   reflector,
 } from '#di';
 import {
-  isModuleWithParams,
-  isRootModule,
-  isProvider,
-  isModDecor,
-  isModuleWithMetadata,
-  isFeatureModule,
-} from '#utils/type-guards.js';
-import {
   ExtensionConfig,
   getExtensionProvider,
   isConfigWithOverrideExtension,
 } from '#extension/get-extension-provider.js';
+import { isModuleWithParams, isRootModule, isProvider, isModDecor, isFeatureModule, isModuleWithMetadata } from '#utils/type-guards.js';
 import { AnyObj, ModRefId } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { RawMeta } from '#decorators/feature-module.js';
@@ -50,7 +43,7 @@ export class ModuleNormalizer {
    */
   normalize(modRefId: ModRefId) {
     const aDecoratorMeta = this.getDecoratorMeta(modRefId) || [];
-    let rawMeta = aDecoratorMeta.find((d) => isModDecor(d))?.value.rawMeta as RawMeta | undefined;
+    let rawMeta = aDecoratorMeta.find((d) => isModDecor(d))?.value;
     const modName = getDebugClassName(modRefId);
     if (!rawMeta) {
       const msg = `Module build failed: module "${modName}" does not have the "@rootModule()" or "@featureModule()" decorator`;
@@ -69,10 +62,8 @@ export class ModuleNormalizer {
 
     baseMeta.decorator = rawMeta.decorator;
     baseMeta.declaredInDir = rawMeta.declaredInDir;
-    aDecoratorMeta.forEach((decorAndVal) => {
-      if (rawMeta.decorator !== decorAndVal.decorator) {
-        baseMeta.rawDecorMeta.set(decorAndVal.decorator, decorAndVal.value);
-      }
+    aDecoratorMeta.filter(isModuleWithMetadata).forEach((decorAndVal) => {
+      baseMeta.rawDecorMeta.set(decorAndVal.decorator, decorAndVal.value);
     });
     this.checkAndMarkExternalModule(rawMeta, baseMeta);
     this.normalizeModule(modName, rawMeta, baseMeta);
@@ -84,7 +75,7 @@ export class ModuleNormalizer {
   protected getDecoratorMeta(modRefId: ModRefId) {
     modRefId = resolveForwardRef(modRefId);
     const mod = isModuleWithParams(modRefId) ? modRefId.module : modRefId;
-    return reflector.getDecorators(mod, isModuleWithMetadata);
+    return reflector.getDecorators(mod);
   }
 
   protected mergeModuleWithParams(modWitParams: ModuleWithParams, rawMeta: RawMeta) {

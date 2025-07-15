@@ -5,9 +5,9 @@ import { transformModule } from './feature-module.js';
 export const rootModule: RootModuleDecorator = makeClassDecorator(function transformRootModule(
   data?: RootModuleMetadata,
 ) {
-  const initHooksAndMetadata = transformModule(data);
-  initHooksAndMetadata.rawMeta.decorator = rootModule;
-  return initHooksAndMetadata;
+  const rawMeta = transformModule(data);
+  rawMeta.decorator = rootModule;
+  return rawMeta;
 });
 
 export interface RootModuleDecorator {
