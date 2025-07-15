@@ -9,23 +9,24 @@ import {
   ImportModulesShallowConfig,
   RestMetadataPerMod1,
 } from '#init/types.js';
-import { RestNormalizedMeta } from '#init/rest-normalized-meta.js';
+import { RestModRefId, RestNormalizedMeta } from '#init/rest-normalized-meta.js';
 import { DeepModulesImporter } from '#init/deep-modules-importer.js';
+import { RestGlobalProviders } from '#types/types.js';
 /**
  * A decorator that adds REST metadata to a `featureModule` or `rootModule`.
  */
 export const addRest: AddDecorator<RestMetadata, RestNormalizedMeta> = makeClassDecorator(transformMetadata);
 
 class RestInitHooksAndMetadata extends InitHooksAndMetadata<RestMetadata> {
-  override normalize(baseMeta: NormalizedMeta) {
+  override normalize(baseMeta: NormalizedMeta): RestNormalizedMeta {
     return new ModuleNormalizer().normalize(baseMeta, this.rawMeta);
   }
 
-  override getModulesToScan(meta?: RestNormalizedMeta) {
+  override getModulesToScan(meta?: RestNormalizedMeta): RestModRefId[] {
     return meta?.appendsModules.concat(meta.appendsWithParams as any[]) || [];
   }
 
-  override exportGlobalProviders(config: ExportGlobalProvidersConfig) {
+  override exportGlobalProviders(config: ExportGlobalProvidersConfig): RestGlobalProviders {
     return new ShallowModulesImporter().exportGlobalProviders(config);
   }
 

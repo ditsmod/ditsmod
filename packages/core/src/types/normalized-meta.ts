@@ -1,18 +1,18 @@
 import { MultiProvider } from '#di';
-import { AnyFn, AnyObj, ModuleType } from '#types/mix.js';
+import { AnyFn, AnyObj, ModRefId, ModuleType } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from './module-metadata.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { ExtensionClass } from '#extension/extension-types.js';
-import { InitHooksAndMetadata } from '#decorators/feature-module.js';
+import { InitHooksAndMetadata, ParamsTransferObj } from '#decorators/feature-module.js';
 
 export class NormDecorMeta extends Map {
-  override set<T>(key: AddDecorator<any, T>, value: T) {
+  override set<T extends ParamsTransferObj>(key: AddDecorator<any, T>, value: T) {
     return super.set(key, value);
   }
 
-  override get<T>(key: AddDecorator<any, T>): T | undefined {
-    return super.get(key) as T | undefined;
+  override get<T extends ParamsTransferObj>(key: AddDecorator<any, T>): T | undefined {
+    return super.get(key);
   }
 }
 
@@ -52,8 +52,8 @@ export function getInitHooksAndMetadata(data?: ArgumentsType): InitHooksAndMetad
 }
 ```
  */
-export interface AddDecorator<A, R> {
-  (data?: A): any;
+export interface AddDecorator<T extends { importsWithParams?: { modRefId: ModRefId }[] }, R> {
+  (data?: T): any;
 }
 
 export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> {

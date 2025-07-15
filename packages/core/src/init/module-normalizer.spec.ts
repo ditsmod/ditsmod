@@ -151,7 +151,7 @@ describe('ModuleNormalizer', () => {
   });
 
   it('creating custom decorator with init hook (normalizer)', () => {
-    interface ReturnsType extends ParamsTransferObj<AnyObj> {
+    interface ReturnsType extends ParamsTransferObj {
       baseMeta: NormalizedMeta;
       rawMeta: any;
     }
@@ -167,14 +167,14 @@ describe('ModuleNormalizer', () => {
       return new InitHooksAndMetadata1(metadata);
     }
 
-    interface ArgumentsType {
+    interface ArgumentsType extends ParamsTransferObj {
       one?: number;
       two?: number;
     }
 
     // Creating a decorator
     const addSome: AddDecorator<ArgumentsType, ReturnsType> = makeClassDecorator(getInitHooksAndMetadata);
-    const rawMeta = { one: 1, two: 2 };
+    const rawMeta: ArgumentsType = { one: 1, two: 2 };
 
     // Using the newly created decorator
     @addSome(rawMeta)

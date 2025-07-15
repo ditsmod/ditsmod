@@ -16,7 +16,7 @@ export const featureModule: FeatureModuleDecorator = makeClassDecorator(transfor
 export interface FeatureModuleDecorator {
   (data?: ModuleMetadata): any;
 }
-export interface ParamsTransferObj<T extends AnyObj> {
+export interface ParamsTransferObj<T extends { modRefId: ModRefId } = { modRefId: ModRefId }> {
   importsWithParams?: Override<T, { modRefId: ModuleWithParentMeta }>[];
 }
 
@@ -43,10 +43,10 @@ export class InitHooksAndMetadata<T extends AnyObj> {
 
   /**
    * Normalizes the metadata from the current decorator. It is then inserted into `baseMeta.normDecorMeta`.
-   * 
+   *
    * @param baseMeta Normalized metadata that is passed to the `featureModule` or `rootModule` decorator.
    */
-  normalize(baseMeta: NormalizedMeta): ParamsTransferObj<AnyObj> | undefined {
+  normalize(baseMeta: NormalizedMeta): ParamsTransferObj | undefined {
     return;
   }
 
@@ -55,7 +55,7 @@ export class InitHooksAndMetadata<T extends AnyObj> {
    *
    * @param meta Metadata returned by the `this.normalize()` method.
    */
-  getModulesToScan(meta?: ParamsTransferObj<AnyObj>): ModRefId[] {
+  getModulesToScan(meta?: ParamsTransferObj): ModRefId[] {
     return [];
   }
 
