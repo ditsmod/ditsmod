@@ -150,7 +150,7 @@ describe('ModuleNormalizer', () => {
     expect(meta.exportedExtensionsProviders).toEqual([Extension1]);
   });
 
-  it('creating custom decorator with init hook (normalizer)', () => {
+  describe('creating custom decorator with init hook', () => {
     interface ReturnsType extends ParamsTransferObj {
       baseMeta: NormalizedMeta;
       rawMeta: any;
@@ -174,15 +174,23 @@ describe('ModuleNormalizer', () => {
 
     // Creating a decorator
     const addSome: AddDecorator<ArgumentsType, ReturnsType> = makeClassDecorator(getInitHooksAndMetadata);
-    const rawMeta: ArgumentsType = { one: 1, two: 2 };
 
-    // Using the newly created decorator
-    @addSome(rawMeta)
-    @featureModule()
-    class Module1 {}
+    it('normalizer()', () => {
+      const rawMeta: ArgumentsType = { one: 1, two: 2 };
 
-    const result = new ModuleNormalizer().normalize(Module1).normDecorMeta.get(addSome);
-    expect(result?.baseMeta.modRefId).toBe(Module1);
-    expect(result?.rawMeta).toEqual(rawMeta);
+      // Using the newly created decorator
+      @addSome(rawMeta)
+      @featureModule()
+      class Module1 {}
+
+      const result = new ModuleNormalizer().normalize(Module1).normDecorMeta.get(addSome);
+      expect(result?.baseMeta.modRefId).toBe(Module1);
+      expect(result?.rawMeta).toEqual(rawMeta);
+    });
+
+    it('getModulesToScan()', () => {});
+    it('exportGlobalProviders()', () => {});
+    it('importModulesShallow()', () => {});
+    it('importModulesDeep()', () => {});
   });
 });
