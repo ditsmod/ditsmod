@@ -35,22 +35,33 @@ export function transformModule(data?: ModuleMetadata): InitHooksAndMetadata<Raw
   return new InitHooksAndMetadata(rawMeta);
 }
 /**
- * Init hooks and metadata attached to the `rootModule` or `featureModule` decorators.
+ * Init hooks and metadata attached by additional decorators,
+ * apart from the base decorators - `rootModule` or `featureModule`.
  */
 export class InitHooksAndMetadata<T extends AnyObj> {
   constructor(public rawMeta = {} as T) {}
 
+  /**
+   * Normalizes the metadata from the current decorator. It is then inserted into `baseMeta.normDecorMeta`.
+   * 
+   * @param baseMeta Normalized metadata that is passed to the `featureModule` or `rootModule` decorator.
+   */
   normalize(baseMeta: NormalizedMeta): ParamsTransferObj<AnyObj> | undefined {
     return;
   }
 
   /**
-   * The returned array of modules will be scanned by `ModuleManager`.
+   * The returned array of `ModRefId` will be scanned by `ModuleManager`.
+   *
+   * @param meta Metadata returned by the `this.normalize()` method.
    */
-  getModulesToScan(meta?: AnyObj): ModRefId[] {
+  getModulesToScan(meta?: ParamsTransferObj<AnyObj>): ModRefId[] {
     return [];
   }
 
+  /**
+   * This method gets metadata from `rootModule` to collect providers from the `exports` property.
+   */
   exportGlobalProviders(config: {
     moduleManager: ModuleManager;
     globalProviders: GlobalProviders;
