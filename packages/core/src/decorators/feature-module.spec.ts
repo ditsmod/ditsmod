@@ -1,5 +1,5 @@
 import { reflector } from '#di';
-import { InitHooksAndMetadata, RawMeta, featureModule } from './feature-module.js';
+import { RawMeta, featureModule } from './feature-module.js';
 
 describe('Module decorator', () => {
   it('empty decorator', () => {

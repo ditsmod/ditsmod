@@ -4,7 +4,8 @@ import { Provider, Class, DecoratorAndValue, reflector, isNormalizedProvider } f
 import { AnyObj, RequireProps } from '#types/mix.js';
 import { ModuleWithParentMeta, ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
 import { RootModuleMetadata } from '#types/root-module-metadata.js';
-import { featureModule, InitHooksAndMetadata, RawMeta } from '#decorators/feature-module.js';
+import { featureModule, RawMeta } from '#decorators/feature-module.js';
+import { InitHooksAndMetadata } from '#decorators/init-hooks-and-metadata.js';
 import { rootModule } from '#decorators/root-module.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { CustomError } from '#error/custom-error.js';

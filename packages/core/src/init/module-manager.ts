@@ -9,7 +9,7 @@ import { isModuleWithParams, isRootModule } from '#utils/type-guards.js';
 import { clearDebugClassNames, getDebugClassName } from '#utils/get-debug-class-name.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { ModuleNormalizer } from '#init/module-normalizer.js';
-import { InitHooksAndMetadata } from '#decorators/feature-module.js';
+import { InitHooksAndMetadata } from '#decorators/init-hooks-and-metadata.js';
 import { CustomError } from '#error/custom-error.js';
 
 export type ModulesMap = Map<ModRefId, NormalizedMeta>;

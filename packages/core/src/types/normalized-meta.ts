@@ -4,7 +4,8 @@ import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from './module-metadata.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { ExtensionClass } from '#extension/extension-types.js';
-import { InitHooksAndMetadata, ParamsTransferObj } from '#decorators/feature-module.js';
+import { ParamsTransferObj } from '#decorators/feature-module.js';
+import { InitHooksAndMetadata } from '#decorators/init-hooks-and-metadata.js';
 
 export class NormDecorMeta extends Map {
   override set<T extends ParamsTransferObj>(key: AddDecorator<any, T>, value: T) {

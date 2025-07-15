@@ -1,4 +1,5 @@
-import { featureModule, InitHooksAndMetadata, ParamsTransferObj } from '#decorators/feature-module.js';
+import { featureModule, ParamsTransferObj } from '#decorators/feature-module.js';
+import { InitHooksAndMetadata } from '#decorators/init-hooks-and-metadata.js';
 import { rootModule } from '#decorators/root-module.js';
 import { injectable, makeClassDecorator } from '#di';
 import { Extension } from '#extension/extension-types.js';
