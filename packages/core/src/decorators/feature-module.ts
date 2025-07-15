@@ -42,7 +42,8 @@ export class InitHooksAndMetadata<T extends AnyObj> {
   /**
    * Normalized metadata available after `this.normalize()` is executed.
    */
-  meta: ParamsTransferObj;
+  meta: ParamsTransferObj = {};
+
   constructor(public rawMeta = {} as T) {}
 
   /**
