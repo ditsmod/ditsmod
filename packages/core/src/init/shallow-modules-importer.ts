@@ -70,8 +70,8 @@ export class ShallowModulesImporter {
       shallowImportedModules,
     };
 
-    baseMeta.rawDecorMeta.forEach((initHooks, decorator) => {
-      const val = initHooks.exportGlobalProviders({ meta: initHooks.meta, moduleManager, globalProviders, baseMeta });
+    moduleManager.allInitHooks.forEach((initHooks, decorator) => {
+      const val = initHooks.exportGlobalProviders({ moduleManager, globalProviders, baseMeta });
       if (val) {
         shallowImportedModules.set(decorator, val);
       }
@@ -143,8 +143,9 @@ export class ShallowModulesImporter {
   protected importAndScanModules() {
     this.importModules();
 
-    this.moduleManager.allInitHooks.forEach((initHooks) => {
-      for (const modRefId of initHooks.getModulesToScan()) {
+    this.moduleManager.allInitHooks.forEach((initHooks, decorator) => {
+      const meta = this.baseMeta.normDecorMeta.get(decorator);
+      for (const modRefId of initHooks.getModulesToScan(meta)) {
         if (this.unfinishedScanModules.has(modRefId)) {
           continue;
         }

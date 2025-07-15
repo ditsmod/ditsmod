@@ -64,7 +64,6 @@ export class RestMetadataPerMod2 {
 }
 
 export interface ExportGlobalProvidersConfig {
-  meta: RestNormalizedMeta;
   moduleManager: ModuleManager;
   globalProviders: GlobalProviders;
   baseMeta: NormalizedMeta;
