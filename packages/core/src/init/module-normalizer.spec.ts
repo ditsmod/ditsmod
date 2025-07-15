@@ -1,16 +1,13 @@
-import { featureModule, RawMeta } from '#decorators/feature-module.js';
+import { featureModule, InitHooksAndMetadata, ParamsTransferObj } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
-import { InjectionToken, injectable, forwardRef, Provider } from '#di';
+import { injectable, makeClassDecorator } from '#di';
 import { Extension } from '#extension/extension-types.js';
-import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { CallsiteUtils } from '#utils/callsites.js';
-import { ModuleManager } from './module-manager.js';
 import { ModuleType, AnyObj } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
-import { NormalizedMeta } from '#types/normalized-meta.js';
+import { AddDecorator, NormalizedMeta } from '#types/normalized-meta.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { ModuleNormalizer } from './module-normalizer.js';
-import { inspect } from 'node:util';
 
 describe('ModuleNormalizer', () => {
   type ModuleId = string | ModuleType | ModuleWithParams;
@@ -70,9 +67,8 @@ describe('ModuleNormalizer', () => {
     @featureModule({ imports: [Module1], exports: [Module1] })
     class Module2 {}
 
-    expect(() => new ModuleNormalizer().normalize(Module2)).toThrow(
-      'if "Module1" is a provider, it must be included in',
-    );
+    const msg = 'if "Module1" is a provider, it must be included in';
+    expect(() => new ModuleNormalizer().normalize(Module2)).toThrow(msg);
   });
 
   it('imports module with params, but exports only a module class (without ref to module with params)', () => {
@@ -152,5 +148,41 @@ describe('ModuleNormalizer', () => {
     const meta = new ModuleNormalizer().normalize(Module2);
     expect(meta.extensionsProviders).toEqual([Extension1]);
     expect(meta.exportedExtensionsProviders).toEqual([Extension1]);
+  });
+
+  it('creating custom decorator with init hook (normalizer)', () => {
+    interface ReturnsType extends ParamsTransferObj<AnyObj> {
+      baseMeta: NormalizedMeta;
+      rawMeta: any;
+    }
+
+    class InitHooksAndMetadata1 extends InitHooksAndMetadata<ArgumentsType> {
+      override normalize(baseMeta: NormalizedMeta): ReturnsType | undefined {
+        return { baseMeta, rawMeta: this.rawMeta };
+      }
+    }
+
+    function getInitHooksAndMetadata(data?: ArgumentsType): InitHooksAndMetadata<ArgumentsType> {
+      const metadata = Object.assign({}, data);
+      return new InitHooksAndMetadata1(metadata);
+    }
+
+    interface ArgumentsType {
+      one?: number;
+      two?: number;
+    }
+
+    // Creating a decorator
+    const addSome: AddDecorator<ArgumentsType, ReturnsType> = makeClassDecorator(getInitHooksAndMetadata);
+    const rawMeta = { one: 1, two: 2 };
+
+    // Using the newly created decorator
+    @addSome(rawMeta)
+    @featureModule()
+    class Module1 {}
+
+    const result = new ModuleNormalizer().normalize(Module1).normDecorMeta.get(addSome);
+    expect(result?.baseMeta.modRefId).toBe(Module1);
+    expect(result?.rawMeta).toEqual(rawMeta);
   });
 });
