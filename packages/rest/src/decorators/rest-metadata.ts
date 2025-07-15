@@ -18,12 +18,14 @@ import { RestGlobalProviders } from '#types/types.js';
 export const addRest: AddDecorator<RestMetadata, RestNormalizedMeta> = makeClassDecorator(transformMetadata);
 
 class RestInitHooksAndMetadata extends InitHooksAndMetadata<RestMetadata> {
+  override meta = {} as RestNormalizedMeta;
+
   override normalize(baseMeta: NormalizedMeta): RestNormalizedMeta {
     return new ModuleNormalizer().normalize(baseMeta, this.rawMeta);
   }
 
-  override getModulesToScan(meta?: RestNormalizedMeta): RestModRefId[] {
-    return meta?.appendsModules.concat(meta.appendsWithParams as any[]) || [];
+  override getModulesToScan(): RestModRefId[] {
+    return this.meta.appendsModules.concat(this.meta.appendsWithParams as any[]) || [];
   }
 
   override exportGlobalProviders(config: ExportGlobalProvidersConfig): RestGlobalProviders {

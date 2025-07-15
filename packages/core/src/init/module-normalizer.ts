@@ -324,6 +324,7 @@ export class ModuleNormalizer {
     baseMeta.rawDecorMeta.forEach((initHooksAndMetadata, decorator) => {
       const meta = initHooksAndMetadata.normalize(baseMeta);
       if (meta) {
+        initHooksAndMetadata.meta = meta;
         baseMeta.normDecorMeta.set(decorator, meta);
         meta?.importsWithParams?.forEach((param) => {
           if (!baseMeta.importsWithParams.includes(param.modRefId)) {

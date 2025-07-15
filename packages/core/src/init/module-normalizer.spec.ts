@@ -157,7 +157,7 @@ describe('ModuleNormalizer', () => {
     }
 
     class InitHooksAndMetadata1 extends InitHooksAndMetadata<ArgumentsType> {
-      override normalize(baseMeta: NormalizedMeta): ReturnsType | undefined {
+      override normalize(baseMeta: NormalizedMeta): ReturnsType {
         return { baseMeta, rawMeta: this.rawMeta };
       }
     }

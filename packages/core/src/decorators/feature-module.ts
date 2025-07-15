@@ -39,6 +39,10 @@ export function transformModule(data?: ModuleMetadata): InitHooksAndMetadata<Raw
  * apart from the base decorators - `rootModule` or `featureModule`.
  */
 export class InitHooksAndMetadata<T extends AnyObj> {
+  /**
+   * Normalized metadata available after `this.normalize()` is executed.
+   */
+  meta: ParamsTransferObj;
   constructor(public rawMeta = {} as T) {}
 
   /**
@@ -46,16 +50,14 @@ export class InitHooksAndMetadata<T extends AnyObj> {
    *
    * @param baseMeta Normalized metadata that is passed to the `featureModule` or `rootModule` decorator.
    */
-  normalize(baseMeta: NormalizedMeta): ParamsTransferObj | undefined {
-    return;
+  normalize(baseMeta: NormalizedMeta): ParamsTransferObj {
+    return {};
   }
 
   /**
    * The returned array of `ModRefId` will be scanned by `ModuleManager`.
-   *
-   * @param meta Metadata returned by the `this.normalize()` method.
    */
-  getModulesToScan(meta?: ParamsTransferObj): ModRefId[] {
+  getModulesToScan(): ModRefId[] {
     return [];
   }
 
