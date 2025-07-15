@@ -3,7 +3,7 @@ import { rootModule } from '#decorators/root-module.js';
 import { injectable, makeClassDecorator } from '#di';
 import { Extension } from '#extension/extension-types.js';
 import { CallsiteUtils } from '#utils/callsites.js';
-import { ModuleType, AnyObj } from '#types/mix.js';
+import { ModuleType, AnyObj, ModRefId } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { AddDecorator, NormalizedMeta } from '#types/normalized-meta.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
@@ -97,9 +97,8 @@ describe('ModuleNormalizer', () => {
     @featureModule({ providersPerMod: [Provider1], exports: [{ token: Provider1, useClass: Provider1 }] })
     class Module2 {}
 
-    expect(() => new ModuleNormalizer().normalize(Module2)).toThrow(
-      'failed: in "exports" array must be includes tokens only',
-    );
+    const msg = 'failed: in "exports" array must be includes tokens only';
+    expect(() => new ModuleNormalizer().normalize(Module2)).toThrow(msg);
   });
 
   it('exports module without imports it', () => {
@@ -109,9 +108,8 @@ describe('ModuleNormalizer', () => {
     @featureModule({ exports: [Module1] })
     class Module2 {}
 
-    expect(() => new ModuleNormalizer().normalize(Module2)).toThrow(
-      /Reexport from Module2 failed: Module1 includes in exports/,
-    );
+    const msg = 'Reexport from Module2 failed: Module1 includes in exports';
+    expect(() => new ModuleNormalizer().normalize(Module2)).toThrow(msg);
   });
 
   it('module exported invalid extension', () => {
@@ -153,7 +151,7 @@ describe('ModuleNormalizer', () => {
   describe('creating custom decorator with init hook', () => {
     interface ReturnsType extends ParamsTransferObj {
       baseMeta: NormalizedMeta;
-      rawMeta: any;
+      rawMeta: ArgumentsType;
     }
 
     class InitHooksAndMetadata1 extends InitHooksAndMetadata<ArgumentsType> {
@@ -170,6 +168,7 @@ describe('ModuleNormalizer', () => {
     interface ArgumentsType extends ParamsTransferObj {
       one?: number;
       two?: number;
+      appends?: ({ module: ModRefId } & AnyObj)[];
     }
 
     // Creating a decorator
@@ -187,10 +186,5 @@ describe('ModuleNormalizer', () => {
       expect(result?.baseMeta.modRefId).toBe(Module1);
       expect(result?.rawMeta).toEqual(rawMeta);
     });
-
-    it('getModulesToScan()', () => {});
-    it('exportGlobalProviders()', () => {});
-    it('importModulesShallow()', () => {});
-    it('importModulesDeep()', () => {});
   });
 });
