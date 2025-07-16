@@ -24,7 +24,7 @@ import { HttpBackend, HttpFrontend, HttpHandler, HttpInterceptor } from './token
 import { HTTP_INTERCEPTORS } from '#types/constants.js';
 import { Req } from '#services/request.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
-import { addRest } from '#decorators/rest-metadata.js';
+import { addRest } from '#decorators/rest-init-hooks-and-metadata.js';
 
 describe('HttpInterceptor', () => {
   const jestFn = jest.fn((interceptorName: string) => interceptorName);

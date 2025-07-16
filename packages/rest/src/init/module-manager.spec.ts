@@ -20,7 +20,7 @@ import {
 import { jest } from '@jest/globals';
 
 import { controller } from '../types/controller.js';
-import { addRest } from '#decorators/rest-metadata.js';
+import { addRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { AppendsWithParams, RestModuleParams } from './module-metadata.js';
 import { RestNormalizedMeta } from './rest-normalized-meta.js';
 import { CanActivate, guard } from '#interceptors/guard.js';

@@ -29,7 +29,7 @@ import { RestMetadata, RestModuleParams } from '#init/module-metadata.js';
 import { RestNormalizedMeta } from '#init/rest-normalized-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
-import { addRest } from '#decorators/rest-metadata.js';
+import { addRest } from '#decorators/rest-init-hooks-and-metadata.js';
 
 /**
  * Normalizes and validates module metadata.

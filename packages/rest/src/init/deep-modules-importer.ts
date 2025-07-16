@@ -29,7 +29,7 @@ import {
   RestProvidersForMod,
 } from './types.js';
 import { RestNormalizedMeta } from '#init/rest-normalized-meta.js';
-import { addRest } from '#decorators/rest-metadata.js';
+import { addRest } from '#decorators/rest-init-hooks-and-metadata.js';
 
 /**
  * By analyzing the dependencies of the providers returned by `ShallowModulesImporter`,

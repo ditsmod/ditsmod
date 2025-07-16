@@ -6,7 +6,7 @@ import { Module1 } from './module1/module1.js';
 import { Module2 } from './module2/module2.js';
 import { Module3 } from './module3/module3.js';
 import { controller } from '#types/controller.js';
-import { addRest } from '#decorators/rest-metadata.js';
+import { addRest } from '#decorators/rest-init-hooks-and-metadata.js';
 
 @controller()
 class Controller0 {

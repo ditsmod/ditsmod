@@ -19,7 +19,7 @@ import {
 
 import { AppInitializer } from './app-initializer.js';
 import { Router } from './router.js';
-import { addRest } from '#decorators/rest-metadata.js';
+import { addRest } from '#decorators/rest-init-hooks-and-metadata.js';
 
 function getImportedTokens(map: Map<any, ImportObj<Provider>> | undefined) {
   return [...(map || [])].map(([key]) => key);

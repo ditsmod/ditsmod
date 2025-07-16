@@ -9,7 +9,7 @@ import { RouteMeta } from '#types/route-data.js';
 import { GuardItem, GuardPerMod1 } from '#interceptors/guard.js';
 import { ControllerRawMetadata1 } from '#types/controller.js';
 import { AppOptions } from '#types/app-options.js';
-import { addRest } from '#decorators/rest-metadata.js';
+import { addRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { RestMetadataPerMod2 } from '#init/types.js';
 
 @injectable()

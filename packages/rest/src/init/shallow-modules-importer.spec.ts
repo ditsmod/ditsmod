@@ -18,7 +18,7 @@ import {
 
 import { controller } from '#types/controller.js';
 import { AppendsWithParams, RestMetadata } from './module-metadata.js';
-import { addRest } from '#decorators/rest-metadata.js';
+import { addRest } from '#decorators/rest-init-hooks-and-metadata.js';
 
 type Level = 'Mod';
 /**

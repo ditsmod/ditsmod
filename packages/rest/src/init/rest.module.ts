@@ -6,7 +6,7 @@ import { RoutesExtension } from '#extensions/routes.extension.js';
 import { PreRouterExtension } from '#extensions/pre-router.extension.js';
 import { RouteMeta } from '#types/route-data.js';
 import { UseInterceptorExtension } from '#extensions/use-interceptor.extension.js';
-import { addRest } from '#decorators/rest-metadata.js';
+import { addRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { AppOptions } from '#types/app-options.js';
 import { RequestContext } from '#services/request-context.js';
 import { PreRouter } from '#services/pre-router.js';

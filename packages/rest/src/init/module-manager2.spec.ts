@@ -14,7 +14,7 @@ import { CanActivate, guard } from '../interceptors/guard.js';
 import { controller } from '../types/controller.js';
 import { RequestContext } from '../services/request-context.js';
 import { AppendsWithParams } from './module-metadata.js';
-import { addRest } from '#decorators/rest-metadata.js';
+import { addRest } from '#decorators/rest-init-hooks-and-metadata.js';
 
 let mock: MockModuleManager;
 

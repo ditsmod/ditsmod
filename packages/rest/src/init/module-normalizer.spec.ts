@@ -1,7 +1,7 @@
 import { clearDebugClassNames, ModuleManager, rootModule, SystemLogMediator } from '@ditsmod/core';
 
 import { ModuleNormalizer } from './module-normalizer.js';
-import { addRest } from '#decorators/rest-metadata.js';
+import { addRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { controller } from '#types/controller.js';
 import { RestNormalizedMeta } from './rest-normalized-meta.js';
 

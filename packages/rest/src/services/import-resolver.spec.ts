@@ -26,7 +26,7 @@ import { CanActivate, guard } from '../interceptors/guard.js';
 import { defaultProvidersPerReq } from '../providers/default-providers-per-req.js';
 import { defaultProvidersPerRou } from '../providers/default-providers-per-rou.js';
 import { RequestContext } from './request-context.js';
-import { addRest } from '#decorators/rest-metadata.js';
+import { addRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { DeepModulesImporter } from '#init/deep-modules-importer.js';
 
 type Level = 'Mod';

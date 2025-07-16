@@ -19,7 +19,7 @@ export { RestErrorMediator } from './services/router-error-mediator.js';
 export { RoutesExtension } from './extensions/routes.extension.js';
 export { PreRouterExtension } from './extensions/pre-router.extension.js';
 export { UseInterceptorExtension } from './extensions/use-interceptor.extension.js';
-export { addRest } from './decorators/rest-metadata.js';
+export { addRest } from './decorators/rest-init-hooks-and-metadata.js';
 export { route, RouteMetadata } from './decorators/route.js';
 export { isRoute, isInterceptor, isAppendsWithParams, isCtrlDecor, isHttp2SecureServerOptions } from './types/type.guards.js';
 export { RouteMeta } from './types/route-data.js';
