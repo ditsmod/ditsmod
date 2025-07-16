@@ -56,15 +56,18 @@ describe('ModuleManager', () => {
 
   beforeEach(() => {
     clearDebugClassNames();
-    jest.resetAllMocks();
     const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
     mock = new MockModuleManager(systemLogMediator);
-    jest.spyOn(mock, 'normalizeMetadata');
   });
 
-  it('root module must scan very first (because of moduleNormalizer.checkAndMarkExternalModule())', () => {
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
+  it('root module should be scanned first among all modules (because of moduleNormalizer.checkAndMarkExternalModule())', () => {
     class Service1 {}
     class Service2 {}
+
     @featureModule({
       providersPerApp: [Service1],
       imports: [Module1],
@@ -82,6 +85,7 @@ describe('ModuleManager', () => {
     })
     class AppModule {}
 
+    jest.spyOn(mock, 'normalizeMetadata');
     mock.scanRootModule(AppModule);
     expect(mock.normalizeMetadata).toHaveBeenNthCalledWith(1, AppModule);
     expect(mock.normalizeMetadata).toHaveBeenNthCalledWith(2, Module2);
