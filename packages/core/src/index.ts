@@ -15,7 +15,7 @@ export { OnModuleInit } from '#init/hooks.js';
 export { CustomError } from '#error/custom-error.js';
 export { ErrorInfo } from '#error/error-info.js';
 export { featureModule, ParamsTransferObj } from '#decorators/feature-module.js';
-export { InitHooksAndMetadata } from '#decorators/init-hooks-and-metadata.js';
+export { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 export { rootModule } from '#decorators/root-module.js';
 export {
   ExtensionCounters,

@@ -5,7 +5,7 @@ import { ModuleWithParams } from './module-metadata.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { ExtensionClass } from '#extension/extension-types.js';
 import { ParamsTransferObj } from '#decorators/feature-module.js';
-import { InitHooksAndMetadata } from '#decorators/init-hooks-and-metadata.js';
+import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 
 export class NormDecorMeta extends Map {
   override set<T extends ParamsTransferObj>(key: AddDecorator<any, T>, value: T) {
@@ -23,13 +23,13 @@ export class NormDecorMeta extends Map {
  * ### Complete example with init hooks
  * 
  * In this example, `ReturnsType` is the type that will be returned by
- * `myInitHooksAndMetadata.normalize()` or `normalizedMeta.normDecorMeta.get(addSome)`.
+ * `myInitHooksAndRawMeta.normalize()` or `normalizedMeta.normDecorMeta.get(addSome)`.
  *
 ```ts
-import { makeClassDecorator, AddDecorator, featureModule, InitHooksAndMetadata } from '@ditsmod/core';
+import { makeClassDecorator, AddDecorator, featureModule, InitHooksAndRawMeta } from '@ditsmod/core';
 
 // Creating a decorator
-export const addSome: AddDecorator<ArgumentsType, ReturnsType> = makeClassDecorator(getInitHooksAndMetadata);
+export const addSome: AddDecorator<ArgumentsType, ReturnsType> = makeClassDecorator(getInitHooksAndRawMeta);
 
 // Using the newly created decorator
 \@addSome({ one: 1, two: 2 })
@@ -45,11 +45,11 @@ interface ArgumentsType {
 
 interface ReturnsType {}
 
-class MyInitHooksAndMetadata extends InitHooksAndMetadata<ArgumentsType> {}
+class MyInitHooksAndRawMeta extends InitHooksAndRawMeta<ArgumentsType> {}
 
-export function getInitHooksAndMetadata(data?: ArgumentsType): InitHooksAndMetadata<ArgumentsType> {
+export function getInitHooksAndRawMeta(data?: ArgumentsType): InitHooksAndRawMeta<ArgumentsType> {
   const metadata = Object.assign({}, data);
-  return new MyInitHooksAndMetadata(metadata);
+  return new MyInitHooksAndRawMeta(metadata);
 }
 ```
  */
@@ -83,7 +83,7 @@ export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj
   /**
    * Contains init hooks and raw metadata collected from init module decorators.
    */
-  initHooksAndRawMeta = new Map<AnyFn, InitHooksAndMetadata<AnyObj>>();
+  mInitHooksAndRawMeta = new Map<AnyFn, InitHooksAndRawMeta<AnyObj>>();
   /**
    * Contains normalized metadata collected from init module decorators.
    */

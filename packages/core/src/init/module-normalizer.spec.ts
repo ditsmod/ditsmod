@@ -1,5 +1,5 @@
 import { featureModule, ParamsTransferObj } from '#decorators/feature-module.js';
-import { InitHooksAndMetadata } from '#decorators/init-hooks-and-metadata.js';
+import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { rootModule } from '#decorators/root-module.js';
 import { injectable, makeClassDecorator } from '#di';
 import { Extension } from '#extension/extension-types.js';
@@ -41,7 +41,7 @@ describe('ModuleNormalizer', () => {
     expectedMeta.decorator = rootModule;
     expectedMeta.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta.isExternal = false;
-    expectedMeta.initHooksAndRawMeta = expect.any(Map);
+    expectedMeta.mInitHooksAndRawMeta = expect.any(Map);
 
     expect(new ModuleNormalizer().normalize(AppModule)).toEqual(expectedMeta);
   });
@@ -174,15 +174,15 @@ describe('ModuleNormalizer', () => {
       rawMeta: ArgumentsType;
     }
 
-    class InitHooksAndMetadata1 extends InitHooksAndMetadata<ArgumentsType> {
+    class InitHooksAndRawMeta1 extends InitHooksAndRawMeta<ArgumentsType> {
       override normalize(baseMeta: NormalizedMeta): ReturnsType {
         return { baseMeta, rawMeta: this.rawMeta };
       }
     }
 
-    function getInitHooksAndMetadata(data?: ArgumentsType): InitHooksAndMetadata<ArgumentsType> {
+    function getInitHooksAndRawMeta(data?: ArgumentsType): InitHooksAndRawMeta<ArgumentsType> {
       const metadata = Object.assign({}, data);
-      return new InitHooksAndMetadata1(metadata);
+      return new InitHooksAndRawMeta1(metadata);
     }
 
     interface ArgumentsType extends ParamsTransferObj {
@@ -192,7 +192,7 @@ describe('ModuleNormalizer', () => {
     }
 
     // Creating a decorator
-    const addSome: AddDecorator<ArgumentsType, ReturnsType> = makeClassDecorator(getInitHooksAndMetadata);
+    const addSome: AddDecorator<ArgumentsType, ReturnsType> = makeClassDecorator(getInitHooksAndRawMeta);
 
     it('normalizer()', () => {
       const rawMeta: ArgumentsType = { one: 1, two: 2 };

@@ -5,7 +5,7 @@ import { AnyObj, RequireProps } from '#types/mix.js';
 import { ModuleWithParentMeta, ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
 import { RootModuleMetadata } from '#types/root-module-metadata.js';
 import { featureModule, RawMeta } from '#decorators/feature-module.js';
-import { InitHooksAndMetadata } from '#decorators/init-hooks-and-metadata.js';
+import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { rootModule } from '#decorators/root-module.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { CustomError } from '#error/custom-error.js';
@@ -50,16 +50,16 @@ export function isModDecor(arg?: any) {
 }
 
 export function isModuleWithInitHooks(
-  metadata?: InitHooksAndMetadata<AnyObj>,
-): metadata is InitHooksAndMetadata<AnyObj>;
-export function isModuleWithInitHooks(arg?: DecoratorAndValue): arg is DecoratorAndValue<InitHooksAndMetadata<AnyObj>>;
+  metadata?: InitHooksAndRawMeta<AnyObj>,
+): metadata is InitHooksAndRawMeta<AnyObj>;
+export function isModuleWithInitHooks(arg?: DecoratorAndValue): arg is DecoratorAndValue<InitHooksAndRawMeta<AnyObj>>;
 export function isModuleWithInitHooks(
-  arg?: DecoratorAndValue | InitHooksAndMetadata<AnyObj>,
-): arg is DecoratorAndValue<InitHooksAndMetadata<AnyObj>> {
+  arg?: DecoratorAndValue | InitHooksAndRawMeta<AnyObj>,
+): arg is DecoratorAndValue<InitHooksAndRawMeta<AnyObj>> {
   if (arg instanceof DecoratorAndValue) {
-    return (arg as DecoratorAndValue<InitHooksAndMetadata<AnyObj>>).value instanceof InitHooksAndMetadata;
+    return (arg as DecoratorAndValue<InitHooksAndRawMeta<AnyObj>>).value instanceof InitHooksAndRawMeta;
   } else {
-    return arg instanceof InitHooksAndMetadata;
+    return arg instanceof InitHooksAndRawMeta;
   }
 }
 

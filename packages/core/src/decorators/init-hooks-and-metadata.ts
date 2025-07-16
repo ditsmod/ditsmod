@@ -12,7 +12,7 @@ import { ParamsTransferObj } from './feature-module.js';
  * Init hooks and metadata attached by additional decorators,
  * apart from the base decorators - `rootModule` or `featureModule`.
  */
-export class InitHooksAndMetadata<T extends AnyObj> {
+export class InitHooksAndRawMeta<T extends AnyObj> {
   constructor(public rawMeta = {} as T) { }
 
   /**

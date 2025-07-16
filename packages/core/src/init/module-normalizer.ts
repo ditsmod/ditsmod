@@ -65,10 +65,8 @@ export class ModuleNormalizer {
     const baseMeta = new NormalizedMeta();
     baseMeta.name = modName;
     baseMeta.modRefId = modRefId;
-    baseMeta.decorator = rawMeta.decorator;
-    baseMeta.declaredInDir = rawMeta.declaredInDir;
     aDecoratorMeta.filter(isModuleWithInitHooks).forEach((decorAndVal) => {
-      baseMeta.initHooksAndRawMeta.set(decorAndVal.decorator, decorAndVal.value);
+      baseMeta.mInitHooksAndRawMeta.set(decorAndVal.decorator, decorAndVal.value);
     });
     this.checkAndMarkExternalModule(rawMeta, baseMeta);
     this.normalizeModule(modName, rawMeta, baseMeta);
@@ -314,8 +312,8 @@ export class ModuleNormalizer {
   }
 
   protected normalizeDecoratorsMeta(baseMeta: NormalizedMeta) {
-    baseMeta.initHooksAndRawMeta.forEach((initHooksAndMetadata, decorator) => {
-      const meta = initHooksAndMetadata.normalize(baseMeta);
+    baseMeta.mInitHooksAndRawMeta.forEach((initHooksAndRawMeta, decorator) => {
+      const meta = initHooksAndRawMeta.normalize(baseMeta);
       if (meta) {
         baseMeta.normDecorMeta.set(decorator, meta);
         meta?.importsWithParams?.forEach((param) => {
@@ -330,7 +328,7 @@ export class ModuleNormalizer {
   protected quickCheckMetadata(baseMeta: NormalizedMeta) {
     if (
       isFeatureModule(baseMeta) &&
-      !baseMeta.initHooksAndRawMeta.size &&
+      !baseMeta.mInitHooksAndRawMeta.size &&
       !baseMeta.exportedProvidersPerMod.length &&
       !baseMeta.exportedMultiProvidersPerMod.length &&
       !baseMeta.exportsModules.length &&
