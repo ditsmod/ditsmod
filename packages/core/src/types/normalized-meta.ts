@@ -81,9 +81,9 @@ export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj
    */
   isExternal: boolean;
   /**
-   * Contains raw metadata collected from init module decorators.
+   * Contains init hooks and raw metadata collected from init module decorators.
    */
-  rawDecorMeta = new Map<AnyFn, InitHooksAndMetadata<AnyObj>>();
+  initHooksAndRawMeta = new Map<AnyFn, InitHooksAndMetadata<AnyObj>>();
   /**
    * Contains normalized metadata collected from init module decorators.
    */

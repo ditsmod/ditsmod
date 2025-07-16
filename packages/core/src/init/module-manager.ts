@@ -227,7 +227,7 @@ export class ModuleManager {
   protected scanRawModule(modRefId: ModRefId) {
     const baseMeta = this.normalizeMetadata(modRefId);
     const importsOrExports: (ModuleWithParams | ModuleType)[] = [];
-    baseMeta.rawDecorMeta.forEach((initHooks, decorator) => {
+    baseMeta.initHooksAndRawMeta.forEach((initHooks, decorator) => {
       if (!this.allInitHooks.get(decorator)) {
         this.allInitHooks.set(decorator, initHooks);
       }
