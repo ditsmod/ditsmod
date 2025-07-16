@@ -29,7 +29,7 @@ import { RestMetadata, RestModuleParams } from '#init/module-metadata.js';
 import { RestNormalizedMeta } from '#init/rest-normalized-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
-import { addRest } from '#decorators/rest-init-hooks-and-metadata.js';
+import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 
 /**
  * Normalizes and validates module metadata.
@@ -72,7 +72,7 @@ export class ModuleNormalizer {
     } else if (!isModuleWithParentMeta(modRefId)) {
       return;
     }
-    const normDecorMeta = modRefId.parentMeta.normDecorMeta.get(addRest) as RestNormalizedMeta | undefined;
+    const normDecorMeta = modRefId.parentMeta.normDecorMeta.get(initRest) as RestNormalizedMeta | undefined;
     const params = normDecorMeta?.importsWithParams.find((param) => param.modRefId === modRefId);
 
     if (params) {

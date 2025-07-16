@@ -14,7 +14,7 @@ import { CanActivate, guard } from '../interceptors/guard.js';
 import { controller } from '../types/controller.js';
 import { RequestContext } from '../services/request-context.js';
 import { AppendsWithParams } from './module-metadata.js';
-import { addRest } from '#decorators/rest-init-hooks-and-metadata.js';
+import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 
 let mock: MockModuleManager;
 
@@ -68,11 +68,11 @@ it('imports and appends with gruards for some modules', () => {
   @controller()
   class Controller2 {}
 
-  @addRest({ controllers: [Controller1] })
+  @initRest({ controllers: [Controller1] })
   @featureModule()
   class Module1 {}
 
-  @addRest({ controllers: [Controller2] })
+  @initRest({ controllers: [Controller2] })
   @featureModule()
   class Module2 {}
 
@@ -89,8 +89,8 @@ it('imports and appends with gruards for some modules', () => {
     // guards: [Guard2],
   };
 
-  @addRest({})
-  @addRest({ appends: [appendsWithParams] })
+  @initRest({})
+  @initRest({ appends: [appendsWithParams] })
   @rootModule({ imports: [ModuleWithParams] })
   class AppModule {}
 

@@ -1,9 +1,9 @@
 import { Providers, rootModule } from '@ditsmod/core';
-import { addRest } from '@ditsmod/rest';
+import { initRest } from '@ditsmod/rest';
 
 import { PostsModule } from './posts/posts.module.js';
 
-@addRest({
+@initRest({
   appends: [{ path: 'posts/:postId', module: PostsModule }]
 })
 @rootModule({

@@ -208,10 +208,10 @@ Any controller should only be bound to the current module where it was declared,
 
 ```ts {5}
 import { featureModule } from '@ditsmod/core';
-import { addRest } from '@ditsmod/rest';
+import { initRest } from '@ditsmod/rest';
 import { SomeController } from './some.controller.js';
 
-@addRest({ controllers: [SomeController] })
+@initRest({ controllers: [SomeController] })
 @featureModule()
 export class SomeModule {}
 ```
@@ -220,10 +220,10 @@ After binding controllers to the host module, in order for Ditsmod to recognize 
 
 ```ts {6,8}
 import { featureModule } from '@ditsmod/core';
-import { addRest } from '@ditsmod/rest';
+import { initRest } from '@ditsmod/rest';
 import { SomeModule } from './some.module.js';
 
-@addRest({
+@initRest({
   appends: [SomeModule],
   // OR
   importsWithParams: [{ modRefId: SomeModule, path: '' }]
@@ -283,12 +283,12 @@ To be able to use the newly created service classes, they must be passed in the 
 
 ```ts {9-10}
 import { featureModule } from '@ditsmod/core';
-import { addRest } from '@ditsmod/rest';
+import { initRest } from '@ditsmod/rest';
 
 import { FirstService } from './first.service.js';
 import { SecondService } from './second.service.js';
 
-@addRest({
+@initRest({
   providersPerReq: [
     FirstService,
     SecondService

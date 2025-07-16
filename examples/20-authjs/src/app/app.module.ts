@@ -1,4 +1,4 @@
-import { controller, route, RestModule, Res, addRest } from '@ditsmod/rest';
+import { controller, route, RestModule, Res, initRest } from '@ditsmod/rest';
 import { AuthjsConfig, AUTHJS_SESSION, AuthjsGuard, AuthjsModule, AuthjsInterceptor } from '@ditsmod/authjs';
 import { rootModule, inject } from '@ditsmod/core';
 
@@ -24,7 +24,7 @@ export class InjScopedController {
   }
 }
 
-@addRest({ controllers: [InjScopedController] })
+@initRest({ controllers: [InjScopedController] })
 @rootModule({
   imports: [
     RestModule,

@@ -29,7 +29,7 @@ import {
   RestProvidersForMod,
 } from './types.js';
 import { RestNormalizedMeta } from '#init/rest-normalized-meta.js';
-import { addRest } from '#decorators/rest-init-hooks-and-metadata.js';
+import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 
 /**
  * By analyzing the dependencies of the providers returned by `ShallowModulesImporter`,
@@ -127,7 +127,7 @@ export class DeepModulesImporter {
       }
 
       for (const level of levels) {
-        const meta = srcBaseMeta.normDecorMeta.get(addRest) as RestNormalizedMeta;
+        const meta = srcBaseMeta.normDecorMeta.get(initRest) as RestNormalizedMeta;
         const sourceProviders = getLastProviders(meta[`providersPer${level}`]);
 
         getTokens(sourceProviders).forEach((sourceToken, i) => {
@@ -169,7 +169,7 @@ export class DeepModulesImporter {
     let found = false;
     const metadataPerMod1 = this.shallowImports.get(srcModRefId1)!;
     for (const level of levels) {
-      const restMetadataPerMod1 = metadataPerMod1.shallowImportedModules.get(addRest) as RestMetadataPerMod1;
+      const restMetadataPerMod1 = metadataPerMod1.shallowImportedModules.get(initRest) as RestMetadataPerMod1;
       const importObj = restMetadataPerMod1.importedTokensMap[`per${level}`].get(dep.token);
       if (importObj) {
         found = true;
@@ -212,7 +212,7 @@ export class DeepModulesImporter {
       }
 
       forLevel: for (const level of levels) {
-        const meta = baseMeta.normDecorMeta.get(addRest) as RestNormalizedMeta;
+        const meta = baseMeta.normDecorMeta.get(initRest) as RestNormalizedMeta;
         const providers = getLastProviders(meta[`providersPer${level}`]);
 
         for (const token of getTokens(providers)) {
@@ -235,7 +235,7 @@ export class DeepModulesImporter {
   protected hasUnresolvedImportedDependecies(modRefId1: ModRefId, levels: Level[], dep: ReflectiveDependency) {
     let found = false;
     for (const level of levels) {
-      const restMetadataPerMod1 = this.shallowImports.get(modRefId1)?.shallowImportedModules.get(addRest) as
+      const restMetadataPerMod1 = this.shallowImports.get(modRefId1)?.shallowImportedModules.get(initRest) as
         | RestMetadataPerMod1
         | undefined;
       const importObj = restMetadataPerMod1?.importedTokensMap[`per${level}`].get(dep.token);

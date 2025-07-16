@@ -1,11 +1,11 @@
 import { rootModule, Providers } from '@ditsmod/core';
-import { addRest, RestModule } from '@ditsmod/rest';
+import { initRest, RestModule } from '@ditsmod/rest';
 
 import { MyLogMediator } from './my-log-mediator.js';
 import { SomeModule } from './modules/some/some.module.js';
 import { OtherModule } from './modules/other/other.module.js';
 
-@addRest({ appends: [OtherModule] })
+@initRest({ appends: [OtherModule] })
 @rootModule({
   imports: [RestModule, SomeModule],
   providersPerApp: new Providers()

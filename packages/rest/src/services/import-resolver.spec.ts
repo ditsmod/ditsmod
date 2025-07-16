@@ -26,7 +26,7 @@ import { CanActivate, guard } from '../interceptors/guard.js';
 import { defaultProvidersPerReq } from '../providers/default-providers-per-req.js';
 import { defaultProvidersPerRou } from '../providers/default-providers-per-rou.js';
 import { RequestContext } from './request-context.js';
-import { addRest } from '#decorators/rest-init-hooks-and-metadata.js';
+import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { DeepModulesImporter } from '#init/deep-modules-importer.js';
 
 type Level = 'Mod';
@@ -92,7 +92,7 @@ describe('resolve()', () => {
       constructor(public service1: Service1) {}
     }
 
-    @addRest({ providersPerRou: [Service2] })
+    @initRest({ providersPerRou: [Service2] })
     @featureModule({ exports: [Service2] })
     class Module2 {}
 
@@ -109,7 +109,7 @@ describe('resolve()', () => {
     class Service2 {
       constructor(public service1: Service1) {}
     }
-    @addRest({ providersPerRou: [Service2] })
+    @initRest({ providersPerRou: [Service2] })
     @featureModule({ exports: [Service2] })
     class Module2 {}
 
@@ -147,7 +147,7 @@ describe('resolve()', () => {
       constructor(public service3: Service3) {}
     }
 
-    @addRest({ providersPerRou: [Service3, Service4] })
+    @initRest({ providersPerRou: [Service3, Service4] })
     @featureModule({
       imports: [Module1],
       providersPerMod: [Service2],
@@ -195,7 +195,7 @@ describe('resolve()', () => {
       constructor(public service3: Service3) {}
     }
 
-    @addRest({ providersPerRou: [Service3, Service4] })
+    @initRest({ providersPerRou: [Service3, Service4] })
     @featureModule({
       imports: [Module1],
       providersPerMod: [Service2],
@@ -220,7 +220,7 @@ describe('resolve()', () => {
       constructor(@inject(forwardRef(() => Service4)) public service4: any) {}
     }
 
-    @addRest({ providersPerRou: [Service1] })
+    @initRest({ providersPerRou: [Service1] })
     @featureModule({
       imports: [forwardRef(() => Module2)],
       exports: [Service1],
@@ -242,7 +242,7 @@ describe('resolve()', () => {
       constructor(public service3: Service3) {}
     }
 
-    @addRest({ providersPerRou: [Service2, Service3, Service4] })
+    @initRest({ providersPerRou: [Service2, Service3, Service4] })
     @featureModule({
       imports: [Module1],
       exports: [Service4],
@@ -273,7 +273,7 @@ describe('resolve()', () => {
       constructor(public service1: Service1) {}
     }
 
-    @addRest({ providersPerRou: [Service2] })
+    @initRest({ providersPerRou: [Service2] })
     @featureModule({ exports: [Service2] })
     class Module2 {}
 
@@ -298,7 +298,7 @@ describe('resolve()', () => {
     @featureModule({ providersPerMod: [Service1], exports: [Service1] })
     class Module1 {}
 
-    @addRest({ providersPerRou: [Service2] })
+    @initRest({ providersPerRou: [Service2] })
     @featureModule({ imports: [Module1], exports: [Service2] })
     class Module2 {}
 
@@ -333,7 +333,7 @@ describe('resolve()', () => {
     @featureModule({ providersPerMod: [Service1], exports: [Service1] })
     class Module1 {}
 
-    @addRest({ providersPerRou: [Service2] })
+    @initRest({ providersPerRou: [Service2] })
     @featureModule({ imports: [Module1], exports: [Service2] })
     class Module2 {}
 
@@ -371,15 +371,15 @@ describe('resolve()', () => {
       constructor(public service2: Service2) {}
     }
 
-    @addRest({ providersPerRou: [Service1] })
+    @initRest({ providersPerRou: [Service1] })
     @featureModule({ exports: [Service1] })
     class Module1 {}
 
-    @addRest({ providersPerRou: [Service2] })
+    @initRest({ providersPerRou: [Service2] })
     @featureModule({ imports: [Module1], exports: [Service2] })
     class Module2 {}
 
-    @addRest({ providersPerRou: [Service3] })
+    @initRest({ providersPerRou: [Service3] })
     @featureModule({
       imports: [Module2],
       exports: [Service3],
@@ -407,11 +407,11 @@ describe('resolve()', () => {
       }
     }
 
-    @addRest({ providersPerRou: [Service1] })
+    @initRest({ providersPerRou: [Service1] })
     @featureModule({ exports: [Service1] })
     class Module1 {}
 
-    @addRest({ providersPerRou: [Service2] })
+    @initRest({ providersPerRou: [Service2] })
     @featureModule({ imports: [Module1], exports: [Service2] })
     class Module2 {}
 
@@ -463,7 +463,7 @@ describe('resolve()', () => {
     const mod1WithParams = { module: Module1, guards: [BearerGuard1] };
     const provider: Provider = { token: BearerGuard1, useClass: BearerGuard2 };
 
-    @addRest({ providersPerRou: [provider, Service0, Service2] })
+    @initRest({ providersPerRou: [provider, Service0, Service2] })
     @rootModule({ imports: [mod1WithParams] })
     class Module2 {}
 

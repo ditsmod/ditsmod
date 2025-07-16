@@ -1,10 +1,10 @@
 import { featureModule } from '@ditsmod/core';
-import { RestModule, addRest } from '@ditsmod/rest';
+import { RestModule, initRest } from '@ditsmod/rest';
 
 import { AuthModule } from '#auth';
 import { InjController, CtxController } from './controllers.js';
 
-@addRest({ controllers: [InjController, CtxController] })
+@initRest({ controllers: [InjController, CtxController] })
 @featureModule({
   imports: [RestModule, AuthModule],
 })

@@ -1,10 +1,10 @@
 import { featureModule } from '@ditsmod/core';
-import { addRest } from '@ditsmod/rest';
+import { initRest } from '@ditsmod/rest';
 
 import { openapiModuleWithParams } from '#service/openapi/openapi.module.js';
 import { FirstController, CtxController } from './first.controller.js';
 
-@addRest({
+@initRest({
   controllers: [FirstController, CtxController],
   importsWithParams: [openapiModuleWithParams.restModuleParams],
 })

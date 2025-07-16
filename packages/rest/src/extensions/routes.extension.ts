@@ -9,7 +9,7 @@ import { RouteMeta } from '#types/route-data.js';
 import { GuardItem, GuardPerMod1 } from '#interceptors/guard.js';
 import { ControllerRawMetadata1 } from '#types/controller.js';
 import { AppOptions } from '#types/app-options.js';
-import { addRest } from '#decorators/rest-init-hooks-and-metadata.js';
+import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { RestMetadataPerMod2 } from '#init/types.js';
 
 @injectable()
@@ -22,7 +22,7 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
   ) {}
 
   async stage1() {
-    const restMetadataPerMod2 = this.metadataPerMod2.deepImportedModules.get(addRest)!;
+    const restMetadataPerMod2 = this.metadataPerMod2.deepImportedModules.get(initRest)!;
     this.metadataPerMod3 = new MetadataPerMod3();
     this.metadataPerMod3.meta = restMetadataPerMod2.meta;
     const { path: prefixPerApp } = this.appOptions;

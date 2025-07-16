@@ -3,7 +3,7 @@ import { featureModule } from '@ditsmod/core';
 import { route } from '#decorators/route.js';
 import { RestModule } from '#init/rest.module.js';
 import { controller } from '#types/controller.js';
-import { addRest } from '#decorators/rest-init-hooks-and-metadata.js';
+import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 
 @controller()
 class Controller3 {
@@ -13,7 +13,7 @@ class Controller3 {
   }
 }
 
-@addRest({ controllers: [Controller3] })
+@initRest({ controllers: [Controller3] })
 @featureModule({
   imports: [RestModule],
 })

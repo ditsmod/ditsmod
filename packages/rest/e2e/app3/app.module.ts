@@ -1,5 +1,5 @@
 import { rootModule } from '@ditsmod/core';
-import { addRest, RestModule } from '@ditsmod/rest';
+import { initRest, RestModule } from '@ditsmod/rest';
 
 import { Module1 } from './modules/module1/module1.js';
 import { Module2 } from './modules/module2/module2.js';
@@ -7,7 +7,7 @@ import { Controller1 } from './controllers.js';
 import { Module3 } from './modules/module3/module3.js';
 import { Guard, GuardPerRou } from './guards.js';
 
-@addRest({
+@initRest({
   controllers: [Controller1],
   providersPerRou: [{ token: Guard, useClass: GuardPerRou }],
   providersPerReq: [Guard],

@@ -74,10 +74,10 @@ For example, if `SomeService` is exported from the `FirstModule`, then this serv
 
 ```ts {7}
 import { featureModule } from '@ditsmod/core';
-import { addRest } from '@ditsmod/rest';
+import { initRest } from '@ditsmod/rest';
 import { FirstModule } from './first.module';
 
-@addRest({
+@initRest({
   importsWithParams: [
     { modRefId: FirstModule, path: '' }
   ]
@@ -125,10 +125,10 @@ To reduce the length of the code when importing an object of this type, it is so
 
 ```ts {7}
 import { featureModule } from '@ditsmod/core';
-import { addRest } from '@ditsmod/rest';
+import { initRest } from '@ditsmod/rest';
 import { FirstModule } from './first.module';
 
-@addRest({
+@initRest({
   importsWithParams: [
     { modRefId: FirstModule, path: '' }
   ]

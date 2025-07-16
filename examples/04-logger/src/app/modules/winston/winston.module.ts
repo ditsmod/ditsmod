@@ -1,10 +1,10 @@
 import { Logger, featureModule, Providers } from '@ditsmod/core';
-import { RestModule, addRest } from '@ditsmod/rest';
+import { RestModule, initRest } from '@ditsmod/rest';
 
 import { PatchLogger } from './patch-logger.js';
 import { WinstonController } from './winston.controller.js';
 
-@addRest({ controllers: [WinstonController] })
+@initRest({ controllers: [WinstonController] })
 @featureModule({
   imports: [RestModule],
   providersPerMod: new Providers()

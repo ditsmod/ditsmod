@@ -1,6 +1,6 @@
 import { XOasObject } from '@ts-stack/openapi-spec';
 import { AnyFn, featureModule, ModuleWithParams, Providers, rootModule } from '@ditsmod/core';
-import { RestModule, PreRouterExtension, RoutesExtension, addRest, RestModuleParams } from '@ditsmod/rest';
+import { RestModule, PreRouterExtension, RoutesExtension, initRest, RestModuleParams } from '@ditsmod/rest';
 
 import { OpenapiCompilerExtension } from './extensions/openapi-compiler.extension.js';
 import { OpenapiRoutesExtension } from './extensions/openapi-routes.extension.js';
@@ -10,7 +10,7 @@ import { OasConfigFiles, OasExtensionConfig } from './types/oas-extension-option
 import { OpenapiLogMediator } from '#services/openapi-log-mediator.js';
 import { OpenapiErrorMediator } from '#services/openapi-error-mediator.js';
 
-@addRest({ controllers: [OpenapiController] })
+@initRest({ controllers: [OpenapiController] })
 @featureModule({
   imports: [RestModule],
   providersPerApp: [OasConfigFiles],

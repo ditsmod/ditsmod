@@ -20,7 +20,7 @@ import {
 import { jest } from '@jest/globals';
 
 import { controller } from '../types/controller.js';
-import { addRest } from '#decorators/rest-init-hooks-and-metadata.js';
+import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { AppendsWithParams, RestModuleParams } from './module-metadata.js';
 import { RestNormalizedMeta } from './rest-normalized-meta.js';
 import { CanActivate, guard } from '#interceptors/guard.js';
@@ -55,7 +55,7 @@ describe('ModuleManager', () => {
   function getNormDecorMeta(moduleId: ModuleId) {
     const baseMeta = mock.getMetadata(moduleId);
     // console.log(baseMeta);
-    return baseMeta?.normDecorMeta.get(addRest);
+    return baseMeta?.normDecorMeta.get(initRest);
   }
 
   beforeEach(() => {
@@ -87,7 +87,7 @@ describe('ModuleManager', () => {
       })
       class Version1Module {}
 
-      @addRest({ appends: [{ path: 'v1', module: Version1Module }] })
+      @initRest({ appends: [{ path: 'v1', module: Version1Module }] })
       @featureModule()
       class Module2 {}
 
@@ -113,7 +113,7 @@ describe('ModuleManager', () => {
       @controller()
       class Controller1 {}
 
-      @addRest({ controllers: [Controller1] })
+      @initRest({ controllers: [Controller1] })
       @featureModule({
         providersPerMod: [Provider1, Provider2],
       })
@@ -143,7 +143,7 @@ describe('ModuleManager', () => {
       class Provider1 {}
       class Provider2 {}
 
-      @addRest({ controllers: [Provider1] })
+      @initRest({ controllers: [Provider1] })
       @featureModule({
         providersPerMod: [Provider1, Provider2],
       })
@@ -154,7 +154,7 @@ describe('ModuleManager', () => {
   });
 
   it('empty root module', () => {
-    @addRest()
+    @initRest()
     @rootModule()
     class AppModule {}
 
@@ -174,15 +174,15 @@ describe('ModuleManager', () => {
     @featureModule({ providersPerApp: [Provider1], imports: [forwardRef(() => Module3)] })
     class Module1 {}
 
-    @addRest({ controllers: [Controller1] })
+    @initRest({ controllers: [Controller1] })
     @featureModule({ imports: [Module1] })
     class Module2 {}
 
-    @addRest({ controllers: [Controller1] })
+    @initRest({ controllers: [Controller1] })
     @featureModule({ imports: [Module2] })
     class Module3 {}
 
-    @addRest({ controllers: [Controller1] })
+    @initRest({ controllers: [Controller1] })
     @featureModule({ imports: [Module3] })
     class Module4 {}
 
@@ -209,7 +209,7 @@ describe('ModuleManager', () => {
     @injectable()
     class Provider1 {}
 
-    @addRest({ providersPerRou: [], providersPerReq: [Provider1] })
+    @initRest({ providersPerRou: [], providersPerReq: [Provider1] })
     @rootModule()
     class AppModule {}
 
@@ -250,11 +250,11 @@ describe('ModuleManager', () => {
     @controller()
     class Controller1 {}
 
-    @addRest({ controllers: [Controller1] })
+    @initRest({ controllers: [Controller1] })
     @featureModule()
     class Module1 {}
 
-    @addRest({ controllers: [Controller1] })
+    @initRest({ controllers: [Controller1] })
     @featureModule({
       imports: [Module1],
       exports: [Module1],
@@ -268,7 +268,7 @@ describe('ModuleManager', () => {
     @controller()
     class Controller1 {}
 
-    @addRest({ controllers: [Controller1] })
+    @initRest({ controllers: [Controller1] })
     @featureModule()
     class Module1 {
       static withParams(): ModuleWithParams<Module1> {
@@ -280,7 +280,7 @@ describe('ModuleManager', () => {
 
     const moduleWithParams = Module1.withParams();
 
-    @addRest({ controllers: [Controller1] })
+    @initRest({ controllers: [Controller1] })
     @featureModule({
       imports: [moduleWithParams],
       exports: [moduleWithParams],
@@ -317,7 +317,7 @@ describe('ModuleManager', () => {
     @controller()
     class Controller1 {}
 
-    @addRest({ controllers: [Controller1] })
+    @initRest({ controllers: [Controller1] })
     @featureModule()
     class Module1 {
       static withParams(): ModuleWithParams<Module1> {
@@ -329,7 +329,7 @@ describe('ModuleManager', () => {
 
     const moduleWithParams = Module1.withParams();
 
-    @addRest({ controllers: [Controller1] })
+    @initRest({ controllers: [Controller1] })
     @featureModule({
       imports: [moduleWithParams],
       exports: [Module1],
@@ -344,11 +344,11 @@ describe('ModuleManager', () => {
     @controller()
     class Controller1 {}
 
-    @addRest({ controllers: [Controller1] })
+    @initRest({ controllers: [Controller1] })
     @featureModule()
     class Module1 {}
 
-    @addRest({ controllers: [Controller1] })
+    @initRest({ controllers: [Controller1] })
     @featureModule({ exports: [Module1] })
     class Module2 {}
 
@@ -369,7 +369,7 @@ describe('ModuleManager', () => {
     @injectable()
     class Provider1 {}
 
-    @addRest({ providersPerReq: [Provider1] })
+    @initRest({ providersPerReq: [Provider1] })
     @featureModule({ exports: [{ token: Provider1, useClass: Provider1 }] })
     class Module2 {}
 
@@ -403,7 +403,7 @@ describe('ModuleManager', () => {
     class Controller1 {}
 
     const fn = () => module4WithParams;
-    @addRest({ controllers: [Controller1] })
+    @initRest({ controllers: [Controller1] })
     @featureModule({ id: '1', imports: [forwardRef(fn)] })
     class Module1 {}
 
@@ -413,7 +413,7 @@ describe('ModuleManager', () => {
     @injectable()
     class Provider1 {}
 
-    @addRest({ providersPerRou: [Provider1], exports: [Provider1] })
+    @initRest({ providersPerRou: [Provider1], exports: [Provider1] })
     @featureModule({
       imports: [Module1],
       providersPerMod: [Provider0],
@@ -421,7 +421,7 @@ describe('ModuleManager', () => {
     })
     class Module2 {}
 
-    @addRest({ controllers: [Controller1] })
+    @initRest({ controllers: [Controller1] })
     @featureModule()
     class Module4 {
       static withParams(providersPerMod: Provider[]): ModuleWithParams<Module4> {
@@ -437,7 +437,7 @@ describe('ModuleManager', () => {
 
     const module4WithParams = Module4.withParams([Provider2]);
 
-    @addRest({ controllers: [] })
+    @initRest({ controllers: [] })
     @rootModule({
       imports: [Module1, Module2],
       providersPerApp: [],
@@ -455,7 +455,7 @@ describe('ModuleManager', () => {
     const expectedMeta2 = new RestNormalizedMeta();
     expectedMeta2.providersPerRou = [Provider1];
     expectedMeta2.exportedProvidersPerRou = [Provider1];
-    expect(mock.map.get(Module2)?.normDecorMeta.get(addRest)).toEqual(expectedMeta2);
+    expect(mock.map.get(Module2)?.normDecorMeta.get(initRest)).toEqual(expectedMeta2);
 
     const expectedMeta3 = new RestNormalizedMeta();
     expect(getNormDecorMeta('root')).toEqual(expectedMeta3);
@@ -463,7 +463,7 @@ describe('ModuleManager', () => {
     const expectedMeta4 = new RestNormalizedMeta();
     expectedMeta4.controllers = [Controller1];
 
-    expect(mock.map.get(module4WithParams)?.normDecorMeta.get(addRest)).toEqual(expectedMeta4);
+    expect(mock.map.get(module4WithParams)?.normDecorMeta.get(initRest)).toEqual(expectedMeta4);
   });
 
   it('imports and appends with gruards for some modules', () => {
@@ -487,11 +487,11 @@ describe('ModuleManager', () => {
     @controller()
     class Controller2 {}
 
-    @addRest({ controllers: [Controller1] })
+    @initRest({ controllers: [Controller1] })
     @featureModule()
     class Module1 {}
 
-    @addRest({ controllers: [Controller2] })
+    @initRest({ controllers: [Controller2] })
     @featureModule()
     class Module2 {}
 
@@ -499,7 +499,7 @@ describe('ModuleManager', () => {
     const moduleWithParams: RestModuleParams = { path: 'module1', modRefId, guards: [Guard1] };
     const appendsWithParams: AppendsWithParams = { path: 'module2', module: Module2, guards: [Guard2] };
 
-    @addRest({ appends: [appendsWithParams], importsWithParams: [moduleWithParams] })
+    @initRest({ appends: [appendsWithParams], importsWithParams: [moduleWithParams] })
     @rootModule()
     class AppModule {}
 
@@ -516,7 +516,7 @@ describe('ModuleManager', () => {
     @controller()
     class Controller1 {}
 
-    @addRest({ providersPerReq: [Provider1], controllers: [] })
+    @initRest({ providersPerReq: [Provider1], controllers: [] })
     @rootModule({
       imports: [],
       extensionsMeta: {},
@@ -524,15 +524,15 @@ describe('ModuleManager', () => {
     })
     class AppModule {}
 
-    @addRest({ controllers: [Controller1] })
+    @initRest({ controllers: [Controller1] })
     @featureModule()
     class Module1 {}
 
-    @addRest({ controllers: [Controller1] })
+    @initRest({ controllers: [Controller1] })
     @featureModule()
     class Module2 {}
 
-    @addRest({ controllers: [Controller1] })
+    @initRest({ controllers: [Controller1] })
     @featureModule()
     class Module3 {
       static withParams(providersPerMod: Provider[]): ModuleWithParams<Module3> {
@@ -543,7 +543,7 @@ describe('ModuleManager', () => {
       }
     }
 
-    @addRest({ controllers: [Controller1] })
+    @initRest({ controllers: [Controller1] })
     @featureModule()
     class Module4 {}
 
@@ -566,12 +566,12 @@ describe('ModuleManager', () => {
     expect(mock.oldMapId.size).toBe(1);
     expect(mock.oldMapId.get('root')).toBe(AppModule);
     expect(mock.oldMap.size).toBe(1);
-    expect(mock.oldMap.get(AppModule)?.normDecorMeta.get(addRest)).toEqual(expectedMeta1);
+    expect(mock.oldMap.get(AppModule)?.normDecorMeta.get(initRest)).toEqual(expectedMeta1);
 
     expect(mock.addImport(Module1)).toBe(false);
     expect(mock.oldMap.size).toBe(1);
     expect(mock.oldMap.has(AppModule)).toBe(true);
-    expect(mock.oldMap.get(AppModule)?.normDecorMeta.get(addRest)).toEqual(expectedMeta1);
+    expect(mock.oldMap.get(AppModule)?.normDecorMeta.get(initRest)).toEqual(expectedMeta1);
     expect(mock.map.size).toBe(2);
     expect(mock.map.has(Module1)).toBe(true);
 
@@ -598,7 +598,7 @@ describe('ModuleManager', () => {
     expect(mock.oldMap.has(Module1)).toBe(true);
     expect(mock.oldMapId.size).toBe(1);
     expect(mock.oldMapId.get('root')).toBe(AppModule);
-    expect(mock.oldMap.get(AppModule)?.normDecorMeta.get(addRest)).toEqual(expectedMeta2);
+    expect(mock.oldMap.get(AppModule)?.normDecorMeta.get(initRest)).toEqual(expectedMeta2);
 
     mock.addImport(Module4);
     expect(mock.map.size).toBe(4);
@@ -643,19 +643,19 @@ describe('ModuleManager', () => {
     @controller()
     class Controller1 {}
 
-    @addRest({ controllers: [Controller1] })
+    @initRest({ controllers: [Controller1] })
     @featureModule()
     class Module0 {}
 
-    @addRest({ controllers: [Controller1] })
+    @initRest({ controllers: [Controller1] })
     @featureModule({ imports: [Module0] })
     class Module1 {}
 
-    @addRest({ controllers: [Controller1] })
+    @initRest({ controllers: [Controller1] })
     @featureModule({ imports: [Module0] })
     class Module2 {}
 
-    @addRest({ controllers: [Controller1] })
+    @initRest({ controllers: [Controller1] })
     @featureModule()
     class Module3 {
       static withParams(providersPerMod: Provider[]): ModuleWithParams<Module3> {
@@ -672,7 +672,7 @@ describe('ModuleManager', () => {
     const module3WithProviders = Module3.withParams([Provider2]);
 
     const moduleId = 'my-mix';
-    @addRest({ controllers: [Controller1] })
+    @initRest({ controllers: [Controller1] })
     @featureModule()
     class Module4 {
       static withParams(providersPerMod: Provider[]): ModuleWithParams<Module4> {
@@ -686,7 +686,7 @@ describe('ModuleManager', () => {
 
     const module4WithProviders = Module4.withParams([Provider2]);
 
-    @addRest({ providersPerReq: [Provider1], controllers: [] })
+    @initRest({ providersPerReq: [Provider1], controllers: [] })
     @rootModule({
       imports: [Module1, Module2, module3WithProviders, module4WithProviders],
       extensionsMeta: {},
@@ -857,7 +857,7 @@ describe('ModuleManager', () => {
       Provider3,
     ];
 
-    @addRest({ providersPerReq, exports: [Provider2, Provider1, Provider3] })
+    @initRest({ providersPerReq, exports: [Provider2, Provider1, Provider3] })
     @featureModule()
     class Module1 {}
 

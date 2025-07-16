@@ -158,13 +158,13 @@ export class SomeController {
 
 ```ts {10}
 import { featureModule, ModuleWithParams } from '@ditsmod/core';
-import { addRest } from '@ditsmod/rest';
+import { initRest } from '@ditsmod/rest';
 
 import { OtherModule } from '../other/other.module.js';
 import { AuthModule } from '../auth/auth.module.js';
 import { AuthGuard } from '../auth/auth.guard.js';
 
-@addRest({
+@initRest({
   importsWithParams: [
     { modRefId: OtherModule, path: '', guards: [AuthGuard] },
   ],

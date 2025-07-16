@@ -1,11 +1,11 @@
 import { featureModule, ModuleWithParams } from '@ditsmod/core';
-import { addRest } from '@ditsmod/rest';
+import { initRest } from '@ditsmod/rest';
 
 import { JWT_PAYLOAD } from './tokens.js';
 import { JwtService } from './jwt.service.js';
 import { JwtServiceOptions } from './models/jwt-service-options.js';
 
-@addRest({
+@initRest({
   providersPerReq: [JwtService, { token: JWT_PAYLOAD, useValue: {} }],
   exports: [JwtService, JWT_PAYLOAD],
 })

@@ -1,12 +1,12 @@
 import { featureModule } from '@ditsmod/core';
 import { I18nProviders, I18nModule, I18N_TRANSLATIONS } from '@ditsmod/i18n';
-import { addRest, RestModule } from '@ditsmod/rest';
+import { initRest, RestModule } from '@ditsmod/rest';
 
 import { current } from './locales/current/index.js';
 import { FirstService } from './first.service.js';
 import { FirstController } from './first.controller.js';
 
-@addRest({ controllers: [FirstController], providersPerReq: [FirstService], exports: [FirstService] })
+@initRest({ controllers: [FirstController], providersPerReq: [FirstService], exports: [FirstService] })
 @featureModule({
   imports: [RestModule, I18nModule],
   providersPerMod: new I18nProviders().i18n({ current }, { defaultLng: 'en' }),

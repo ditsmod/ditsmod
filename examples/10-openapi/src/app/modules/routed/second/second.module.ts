@@ -1,5 +1,5 @@
 import { featureModule } from '@ditsmod/core';
-import { addRest } from '@ditsmod/rest';
+import { initRest } from '@ditsmod/rest';
 import { JwtModule } from '@ditsmod/jwt';
 
 import { openapiModuleWithParams } from '#service/openapi/openapi.module.js';
@@ -8,7 +8,7 @@ import { SecondController } from './second.controller.js';
 
 const jwtModuleWithParams = JwtModule.withParams({ secret: process.env.JWT_SECRET, signOptions: { expiresIn: '1y' } });
 
-@addRest({
+@initRest({
   controllers: [SecondController],
   providersPerReq: [BearerGuard],
   importsWithParams: [openapiModuleWithParams.restModuleParams],

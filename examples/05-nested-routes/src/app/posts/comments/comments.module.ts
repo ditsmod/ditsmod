@@ -1,9 +1,9 @@
 import { featureModule } from '@ditsmod/core';
-import { RestModule, addRest } from '@ditsmod/rest';
+import { RestModule, initRest } from '@ditsmod/rest';
 
 import { CommentsController } from './comments.controller.js';
 
-@addRest({ controllers: [CommentsController] })
+@initRest({ controllers: [CommentsController] })
 @featureModule({
   imports: [RestModule],
 })

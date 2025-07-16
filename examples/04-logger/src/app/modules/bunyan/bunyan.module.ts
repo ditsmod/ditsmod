@@ -1,11 +1,11 @@
 import { Logger, featureModule, Providers } from '@ditsmod/core';
-import { RestModule, addRest } from '@ditsmod/rest';
+import { RestModule, initRest } from '@ditsmod/rest';
 import BunyanLogger from 'bunyan';
 
 import { BunyanController } from './bunyan.controller.js';
 import { PatchLogger } from './patch-logger.js';
 
-@addRest({ controllers: [BunyanController] })
+@initRest({ controllers: [BunyanController] })
 @featureModule({
   imports: [RestModule],
   providersPerMod: new Providers()

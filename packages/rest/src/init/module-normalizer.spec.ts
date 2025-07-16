@@ -1,7 +1,7 @@
 import { clearDebugClassNames, ModuleManager, rootModule, SystemLogMediator } from '@ditsmod/core';
 
 import { ModuleNormalizer } from './module-normalizer.js';
-import { addRest } from '#decorators/rest-init-hooks-and-metadata.js';
+import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { controller } from '#types/controller.js';
 import { RestNormalizedMeta } from './rest-normalized-meta.js';
 
@@ -24,13 +24,13 @@ describe('rest ModuleNormalizer', () => {
     @controller()
     class Controller1 {}
 
-    @addRest({ controllers: [Controller1], providersPerRou: [Service1] })
+    @initRest({ controllers: [Controller1], providersPerRou: [Service1] })
     @rootModule()
     class AppModule {}
 
     it('should contain correct metadata', () => {
       const baseMeta = moduleManager.scanRootModule(AppModule);
-      const meta = baseMeta.normDecorMeta.get(addRest) as RestNormalizedMeta;
+      const meta = baseMeta.normDecorMeta.get(initRest) as RestNormalizedMeta;
       expect(meta.controllers.length).toBe(1);
       expect(meta.controllers).toEqual([Controller1]);
       expect(meta.providersPerRou.length).toBe(1);

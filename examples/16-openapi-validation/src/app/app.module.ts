@@ -2,9 +2,9 @@ import { Providers, rootModule } from '@ditsmod/core';
 
 import { FirstModule } from './modules/routed/first/first.module.js';
 import { openapiModuleWithParams } from './modules/service/openapi/openapi.module.js';
-import { addRest } from '@ditsmod/rest';
+import { initRest } from '@ditsmod/rest';
 
-@addRest({
+@initRest({
   importsWithParams: [
     {modRefId: FirstModule, path: ''},
     openapiModuleWithParams.restModuleParams

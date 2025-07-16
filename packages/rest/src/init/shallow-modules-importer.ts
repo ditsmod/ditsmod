@@ -27,7 +27,7 @@ import { Level, RestGlobalProviders, RestModuleExtract } from '#types/types.js';
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
 import { AppendsWithParams } from './module-metadata.js';
-import { addRest } from '#decorators/rest-init-hooks-and-metadata.js';
+import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { isAppendsWithParams } from '#types/type.guards.js';
 import { ImportModulesShallowConfig, RestImportObj, RestMetadataPerMod1 } from './types.js';
 
@@ -77,7 +77,7 @@ export class ShallowModulesImporter {
     this.providersPerApp = moduleManager.providersPerApp;
     this.moduleName = baseMeta.name;
     this.baseMeta = baseMeta;
-    const meta = baseMeta.normDecorMeta.get(addRest) as RestNormalizedMeta | undefined;
+    const meta = baseMeta.normDecorMeta.get(initRest) as RestNormalizedMeta | undefined;
     this.meta = meta ? meta : new RestNormalizedMeta();
     this.importProviders(baseMeta);
     this.checkAllCollisionsWithLevelsMix();
@@ -107,10 +107,10 @@ export class ShallowModulesImporter {
     this.providersPerApp = providersPerApp;
     const baseMeta = this.getMetadata(modRefId, true);
     this.baseMeta = baseMeta;
-    const meta = baseMeta.normDecorMeta.get(addRest) as RestNormalizedMeta | undefined;
+    const meta = baseMeta.normDecorMeta.get(initRest) as RestNormalizedMeta | undefined;
     this.meta = meta ? meta : new RestNormalizedMeta();
     this.glProviders = globalProviders;
-    this.restGlProviders = globalProviders.shallowImportedModules.get(addRest) as RestGlobalProviders;
+    this.restGlProviders = globalProviders.shallowImportedModules.get(initRest) as RestGlobalProviders;
     this.prefixPerMod = prefixPerMod || '';
     this.moduleName = baseMeta.name;
     this.guardsPerMod1 = guardsPerMod1 || [];
@@ -194,7 +194,7 @@ export class ShallowModulesImporter {
       if (this.unfinishedScanModules.has(modRefId)) {
         continue;
       }
-      const meta = baseMeta.normDecorMeta.get(addRest) as RestNormalizedMeta | undefined;
+      const meta = baseMeta.normDecorMeta.get(initRest) as RestNormalizedMeta | undefined;
       if (!meta) {
         continue;
       }
@@ -260,7 +260,7 @@ export class ShallowModulesImporter {
       this.importProviders(baseMeta2);
     }
 
-    const meta = normDecorMeta.get(addRest) as RestNormalizedMeta | undefined;
+    const meta = normDecorMeta.get(initRest) as RestNormalizedMeta | undefined;
     if (!meta) {
       return;
     }
@@ -328,7 +328,7 @@ export class ShallowModulesImporter {
     const moduleName = getDebugClassName(modRefId2);
     const tokenName = token2.name || token2;
     const baseMeta2 = this.getMetadata(modRefId2);
-    const meta2 = baseMeta2?.normDecorMeta.get(addRest) as RestNormalizedMeta | undefined;
+    const meta2 = baseMeta2?.normDecorMeta.get(initRest) as RestNormalizedMeta | undefined;
     let errorMsg =
       `Resolving collisions for providersPer${level} in ${this.moduleName} failed: ` +
       `${tokenName} mapped with ${moduleName}, but `;
@@ -337,7 +337,7 @@ export class ShallowModulesImporter {
       throw new Error(errorMsg);
     }
     if (!meta2) {
-      errorMsg += `${moduleName} does not have a "addRest" decorator.`;
+      errorMsg += `${moduleName} does not have a "initRest" decorator.`;
       throw new Error(errorMsg);
     }
     const providers = getLastProviders(meta2[`providersPer${level}`]).filter((p) => getToken(p) === token2);
@@ -438,7 +438,7 @@ export class ShallowModulesImporter {
   protected checkImportsAndAppends(baseMeta: NormalizedMeta, meta1: RestNormalizedMeta) {
     [...meta1.appendsModules].forEach((modRefId) => {
       const appendedBaseMeta = this.getMetadata(modRefId, true);
-      const meta2 = appendedBaseMeta.normDecorMeta.get(addRest) as RestNormalizedMeta | undefined;
+      const meta2 = appendedBaseMeta.normDecorMeta.get(initRest) as RestNormalizedMeta | undefined;
       if (!meta2?.controllers.length) {
         const msg = `Appends to "${baseMeta.name}" failed: "${appendedBaseMeta.name}" must have controllers.`;
         throw new Error(msg);

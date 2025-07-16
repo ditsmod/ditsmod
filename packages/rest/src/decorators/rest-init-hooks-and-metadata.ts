@@ -15,7 +15,7 @@ import { RestGlobalProviders } from '#types/types.js';
 /**
  * A decorator that adds REST metadata to a `featureModule` or `rootModule`.
  */
-export const addRest: AddDecorator<RestMetadata, RestNormalizedMeta> = makeClassDecorator(transformMetadata);
+export const initRest: AddDecorator<RestMetadata, RestNormalizedMeta> = makeClassDecorator(transformMetadata);
 
 class RestInitHooksAndRawMeta extends InitHooksAndRawMeta<RestMetadata> {
   override normalize(baseMeta: NormalizedMeta): RestNormalizedMeta {
