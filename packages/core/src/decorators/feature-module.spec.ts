@@ -16,7 +16,7 @@ describe('Module decorator', () => {
   });
 
   it('decorator with some data', () => {
-    @featureModule()
+    @featureModule({ providersPerApp: [] })
     class Module1 {}
 
     const metadata = reflector.getDecorators(Module1)!;
@@ -24,6 +24,7 @@ describe('Module decorator', () => {
     expect(metadata[0].value).toEqual<RawMeta>({
       decorator: featureModule,
       declaredInDir: expect.stringContaining('decorators'),
+      providersPerApp: []
     });
   });
 

@@ -25,6 +25,7 @@ class RestInitHooksAndMetadata extends InitHooksAndMetadata<RestMetadata> {
   override getModulesToScan(meta?: RestNormalizedMeta): RestModRefId[] {
     return meta?.appendsModules.concat(meta?.appendsWithParams as any[]) || [];
   }
+
   override exportGlobalProviders(config: ExportGlobalProvidersConfig): RestGlobalProviders {
     return new ShallowModulesImporter().exportGlobalProviders(config);
   }
