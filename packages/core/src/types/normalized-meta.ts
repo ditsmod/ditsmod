@@ -7,7 +7,7 @@ import { ExtensionClass } from '#extension/extension-types.js';
 import { ParamsTransferObj } from '#decorators/feature-module.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 
-export class NormDecorMeta extends Map {
+export class NormDecorMetaMap extends Map {
   override set<T extends ParamsTransferObj>(key: AddDecorator<any, T>, value: T) {
     return super.set(key, value);
   }
@@ -87,7 +87,7 @@ export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj
   /**
    * Contains normalized metadata collected from init module decorators.
    */
-  normDecorMeta = new NormDecorMeta();
+  normDecorMeta = new NormDecorMetaMap();
 
   importsModules: ModuleType[] = [];
   importsWithParams: ModuleWithParams[] = [];
