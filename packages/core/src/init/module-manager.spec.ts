@@ -7,7 +7,7 @@ import { Extension } from '#extension/extension-types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ModuleManager } from './module-manager.js';
-import { ModuleType, AnyObj } from '#types/mix.js';
+import { ModuleType, AnyObj, ModRefId } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
@@ -29,19 +29,26 @@ describe('ModuleManager', () => {
     declare mapId: Map<string, ModuleType | ModuleWithParams>;
     declare oldMap: Map<ModuleType | ModuleWithParams, NormalizedMeta>;
     declare oldMapId: Map<string, ModuleType | ModuleWithParams>;
+
     override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
       moduleId: ModuleId,
       throwErrIfNotFound?: boolean,
     ): NormalizedMeta | undefined;
+
     override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
       moduleId: ModuleId,
       throwErrIfNotFound: true,
     ): NormalizedMeta;
+
     override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
       moduleId: ModuleId,
       throwErrOnNotFound?: boolean,
     ) {
       return super.getOriginMetadata<T, A>(moduleId, throwErrOnNotFound);
+    }
+
+    override normalizeMetadata(modRefId: ModRefId): NormalizedMeta {
+      return super.normalizeMetadata(modRefId);
     }
   }
 
@@ -49,8 +56,36 @@ describe('ModuleManager', () => {
 
   beforeEach(() => {
     clearDebugClassNames();
+    jest.resetAllMocks();
     const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
     mock = new MockModuleManager(systemLogMediator);
+    jest.spyOn(mock, 'normalizeMetadata');
+  });
+
+  it('root module must scan very first (because of moduleNormalizer.checkAndMarkExternalModule())', () => {
+    class Service1 {}
+    class Service2 {}
+    @featureModule({
+      providersPerApp: [Service1],
+      imports: [Module1],
+    })
+    class Module1 {}
+
+    @featureModule({
+      providersPerApp: [Service2],
+      imports: [Module1],
+    })
+    class Module2 {}
+
+    @rootModule({
+      imports: [Module2],
+    })
+    class AppModule {}
+
+    mock.scanRootModule(AppModule);
+    expect(mock.normalizeMetadata).toHaveBeenNthCalledWith(1, AppModule);
+    expect(mock.normalizeMetadata).toHaveBeenNthCalledWith(2, Module2);
+    expect(mock.normalizeMetadata).toHaveBeenNthCalledWith(3, Module1);
   });
 
   describe('providersPerApp', () => {
