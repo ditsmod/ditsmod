@@ -6,7 +6,7 @@ const debugClassNameCounters = new Map<string, number>();
 
 /**
  * Returns unique names (at the process level) for given
- * classes or modules in a Ditsmod application. If, for example, two modules with
+ * classes in a Ditsmod application. If, for example, two modules with
  * the same name are imported, this function will add an index to the name
  * of the second module, separated by a hyphen. Each import of `ModuleWithParams`
  * is distinguished by the reference to the object.
