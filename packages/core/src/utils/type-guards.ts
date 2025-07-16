@@ -49,11 +49,11 @@ export function isModDecor(arg?: any) {
   return isRootModule(arg) || isFeatureModule(arg);
 }
 
-export function isModuleWithMetadata(
+export function isModuleWithInitHooks(
   metadata?: InitHooksAndMetadata<AnyObj>,
 ): metadata is InitHooksAndMetadata<AnyObj>;
-export function isModuleWithMetadata(arg?: DecoratorAndValue): arg is DecoratorAndValue<InitHooksAndMetadata<AnyObj>>;
-export function isModuleWithMetadata(
+export function isModuleWithInitHooks(arg?: DecoratorAndValue): arg is DecoratorAndValue<InitHooksAndMetadata<AnyObj>>;
+export function isModuleWithInitHooks(
   arg?: DecoratorAndValue | InitHooksAndMetadata<AnyObj>,
 ): arg is DecoratorAndValue<InitHooksAndMetadata<AnyObj>> {
   if (arg instanceof DecoratorAndValue) {

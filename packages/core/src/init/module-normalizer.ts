@@ -12,7 +12,14 @@ import {
   getExtensionProvider,
   isConfigWithOverrideExtension,
 } from '#extension/get-extension-provider.js';
-import { isModuleWithParams, isRootModule, isProvider, isModDecor, isFeatureModule, isModuleWithMetadata } from '#utils/type-guards.js';
+import {
+  isModuleWithParams,
+  isRootModule,
+  isProvider,
+  isModDecor,
+  isFeatureModule,
+  isModuleWithInitHooks,
+} from '#utils/type-guards.js';
 import { AnyObj, ModRefId } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { RawMeta } from '#decorators/feature-module.js';
@@ -59,10 +66,9 @@ export class ModuleNormalizer {
     const baseMeta = new NormalizedMeta();
     baseMeta.name = modName;
     baseMeta.modRefId = modRefId;
-
     baseMeta.decorator = rawMeta.decorator;
     baseMeta.declaredInDir = rawMeta.declaredInDir;
-    aDecoratorMeta.filter(isModuleWithMetadata).forEach((decorAndVal) => {
+    aDecoratorMeta.filter(isModuleWithInitHooks).forEach((decorAndVal) => {
       baseMeta.rawDecorMeta.set(decorAndVal.decorator, decorAndVal.value);
     });
     this.checkAndMarkExternalModule(rawMeta, baseMeta);

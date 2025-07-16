@@ -90,7 +90,7 @@ export {
   isChainError,
   isModuleWithParams,
   isModuleWithParentMeta,
-  isModuleWithMetadata,
+  isModuleWithInitHooks,
   isFeatureModule,
   isModDecor,
   isRootModule,
