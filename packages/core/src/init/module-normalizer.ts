@@ -34,7 +34,6 @@ import { NormalizedProvider, normalizeProviders } from '#utils/ng-utils.js';
 import { isExtensionConfig } from '#extension/type-guards.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { mergeArrays } from '#utils/merge-arrays.js';
-import { objectKeys } from '#utils/object-keys.js';
 
 /**
  * Normalizes and validates module metadata.
@@ -88,13 +87,11 @@ export class ModuleNormalizer {
     if (modWitParams.id) {
       rawMeta.id = modWitParams.id;
     }
-    objectKeys(modWitParams).forEach((p) => {
-      // If here is object with [Symbol.iterator]() method, this transform it to an array.
-      if (Array.isArray(modWitParams[p]) || modWitParams[p] instanceof Providers) {
-        (rawMeta as any)[p] = mergeArrays((rawMeta as any)[p], modWitParams[p]);
+    (['exports', 'providersPerApp', 'providersPerMod'] as const).forEach((prop) => {
+      if (modWitParams[prop] instanceof Providers || modWitParams[prop]?.length) {
+        rawMeta[prop] = mergeArrays(rawMeta[prop], modWitParams[prop]);
       }
     });
-
     if (modWitParams.extensionsMeta) {
       rawMeta.extensionsMeta = { ...rawMeta.extensionsMeta, ...modWitParams.extensionsMeta };
     }
@@ -126,7 +123,7 @@ export class ModuleNormalizer {
     });
 
     this.throwIfResolvingNormalizedProvider(modName, rawMeta);
-    this.exportFromReflectMetadata(rawMeta, modName, baseMeta);
+    this.exportModules(rawMeta, modName, baseMeta);
     this.checkReexportModules(baseMeta);
 
     rawMeta.extensions?.forEach((extensionOrConfig, i) => {
@@ -180,7 +177,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected exportFromReflectMetadata(rawMeta: Partial<RawMeta>, modName: string, baseMeta: NormalizedMeta) {
+  protected exportModules(rawMeta: Partial<RawMeta>, modName: string, baseMeta: NormalizedMeta) {
     const providers: Provider[] = [];
     if (Array.isArray(rawMeta.providersPerMod)) {
       providers.push(...rawMeta.providersPerMod);
@@ -194,7 +191,7 @@ export class ModuleNormalizer {
         baseMeta.exportsWithParams.push(exp);
       } else if (isProvider(exp) || getTokens(providers).includes(exp)) {
         // Provider or token of provider
-        this.findAndSetProviders(exp, rawMeta, baseMeta);
+        this.exportProviders(exp, rawMeta, baseMeta);
       } else if (this.getDecoratorMeta(exp)) {
         baseMeta.exportsModules.push(exp);
       } else {
@@ -290,9 +287,8 @@ export class ModuleNormalizer {
     }
   }
 
-  protected findAndSetProviders(token: any, rawMeta: Partial<RawMeta>, baseMeta: NormalizedMeta): void {
-    const unfilteredProviders = [...(rawMeta.providersPerMod || [])];
-    const providers = unfilteredProviders.filter((p) => getToken(p) === token);
+  protected exportProviders(token: any, rawMeta: Partial<RawMeta>, baseMeta: NormalizedMeta): void {
+    const providers = [...(rawMeta.providersPerMod || [])].filter((p) => getToken(p) === token);
     if (providers.length) {
       if (providers.some(isMultiProvider)) {
         baseMeta.exportedMultiProvidersPerMod.push(...(providers as MultiProvider[]));
