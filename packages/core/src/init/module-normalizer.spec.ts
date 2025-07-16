@@ -9,6 +9,7 @@ import { ModuleWithParams } from '#types/module-metadata.js';
 import { AddDecorator, NormalizedMeta } from '#types/normalized-meta.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { ModuleNormalizer } from './module-normalizer.js';
+import { Providers } from '#utils/providers.js';
 
 describe('ModuleNormalizer', () => {
   type ModuleId = string | ModuleType | ModuleWithParams;
@@ -40,12 +41,39 @@ describe('ModuleNormalizer', () => {
     expectedMeta.decorator = rootModule;
     expectedMeta.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta.isExternal = false;
-    expectedMeta.rawDecorMeta = expect.any(Map);
+    expectedMeta.initHooksAndRawMeta = expect.any(Map);
 
     expect(new ModuleNormalizer().normalize(AppModule)).toEqual(expectedMeta);
   });
 
-  it("module1 imports via static metadata into module2, but it's exports via module2 with params", () => {
+  it('merge static metadata with params', () => {
+    class Service1 {}
+    class Service2 {}
+    class Service3 {}
+    class Service4 {}
+
+    @featureModule({
+      providersPerApp: new Providers().passThrough(Service1),
+      providersPerMod: [Service3],
+      exports: [Service3, Service4],
+      extensionsMeta: { one: 1 },
+    })
+    class Module1 {}
+
+    const result = new ModuleNormalizer().normalize({
+      id: 'some-id',
+      module: Module1,
+      providersPerApp: [Service2],
+      providersPerMod: [Service4],
+      extensionsMeta: { two: 2 },
+    });
+    expect(result.providersPerApp).toEqual([Service1, Service2]);
+    expect(result.providersPerMod).toEqual([Service3, Service4]);
+    expect(result.extensionsMeta).toEqual({ one: 1, two: 2 });
+    expect(result.id).toEqual('some-id');
+  });
+
+  it('import module via static metadata, but export via module params', () => {
     class Service1 {}
     class Service2 {}
 
@@ -117,20 +145,11 @@ describe('ModuleNormalizer', () => {
     @injectable()
     class Extension1 {}
 
-    @featureModule({ extensions: [{ extension: Extension1 as any, export: true }] })
+    @featureModule({ extensions: [{ extension: Extension1, export: true }] })
     class Module2 {}
 
-    expect(() => new ModuleNormalizer().normalize(Module2)).toThrow('must have stage1(), stage2() or stage3() method');
-  });
-
-  it('module exported invalid extension', () => {
-    @injectable()
-    class Extension1 {}
-
-    @featureModule({ extensions: [{ extension: Extension1 as any, export: true }] })
-    class Module2 {}
-
-    const msg = 'Exporting "Extension1" from "Module2" failed: all extensions must have stage1';
+    const msg =
+      'Exporting "Extension1" from "Module2" failed: all extensions must have stage1(), stage2() or stage3() method';
     expect(() => new ModuleNormalizer().normalize(Module2)).toThrow(msg);
   });
 
@@ -140,7 +159,7 @@ describe('ModuleNormalizer', () => {
       async stage1() {}
     }
 
-    @featureModule({ extensions: [{ extension: Extension1 as any, export: true }] })
+    @featureModule({ extensions: [{ extension: Extension1, export: true }] })
     class Module2 {}
 
     expect(() => new ModuleNormalizer().normalize(Module2)).not.toThrow();
