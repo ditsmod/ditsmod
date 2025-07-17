@@ -1,10 +1,10 @@
 import { featureModule, ParamsTransferObj } from '#decorators/feature-module.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { rootModule } from '#decorators/root-module.js';
-import { injectable, makeClassDecorator } from '#di';
+import { injectable, makeClassDecorator, Provider } from '#di';
 import { Extension } from '#extension/extension-types.js';
 import { CallsiteUtils } from '#utils/callsites.js';
-import { ModuleType, AnyObj, ModRefId } from '#types/mix.js';
+import { AnyObj, ModRefId } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { AddDecorator, NormalizedMeta } from '#types/normalized-meta.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
@@ -12,23 +12,11 @@ import { ModuleNormalizer } from './module-normalizer.js';
 import { Providers } from '#utils/providers.js';
 
 describe('ModuleNormalizer', () => {
-  type ModuleId = string | ModuleType | ModuleWithParams;
-  @injectable()
-  class Provider0 {}
-  @injectable()
-  class Provider1 {}
-  @injectable()
-  class Provider2 {}
-  @injectable()
-  class Provider3 {}
-
-  class MockModuleNormalizer extends ModuleNormalizer {}
-
-  let mock: MockModuleNormalizer;
+  let mock: ModuleNormalizer;
 
   beforeEach(() => {
     clearDebugClassNames();
-    mock = new MockModuleNormalizer();
+    mock = new ModuleNormalizer();
   });
 
   it('empty root module', () => {
@@ -94,6 +82,21 @@ describe('ModuleNormalizer', () => {
     expect(result.exportsModules).toEqual([Module2]);
   });
 
+  it('exports multi providers', () => {
+    class Multi {}
+
+    @featureModule()
+    class Module1 {}
+
+    const meta = mock.normalize({
+      module: Module1,
+      providersPerMod: [{ token: Multi, useClass: Multi, multi: true }],
+      exports: [Multi],
+    });
+    expect(meta.exportedProvidersPerMod.length).toBe(0);
+    expect(meta.exportedMultiProvidersPerMod).toEqual<Provider[]>([{ token: Multi, useClass: Multi, multi: true }]);
+  });
+
   it('import module via static metadata, but export via module params', () => {
     class Service1 {}
     class Service2 {}
@@ -122,7 +125,9 @@ describe('ModuleNormalizer', () => {
   });
 
   it('imports module with params, but exports only a module class (without ref to module with params)', () => {
-    @featureModule({ providersPerMod: [Provider1], exports: [Provider1] })
+    class Service1 {}
+
+    @featureModule({ providersPerMod: [Service1], exports: [Service1] })
     class Module1 {}
     const baseModuleWithParams: ModuleWithParams = { module: Module1, providersPerMod: [] };
 
@@ -137,14 +142,16 @@ describe('ModuleNormalizer', () => {
   });
 
   it('module exported provider from providersPerApp', () => {
-    @featureModule({ providersPerApp: [Provider1], exports: [Provider1] })
+    class Service1 {}
+    @featureModule({ providersPerApp: [Service1], exports: [Service1] })
     class Module2 {}
 
     expect(() => mock.normalize(Module2)).toThrow(/includes in "providersPerApp" and "exports" of/);
   });
 
   it('module exported normalized provider', () => {
-    @featureModule({ providersPerMod: [Provider1], exports: [{ token: Provider1, useClass: Provider1 }] })
+    class Service1 {}
+    @featureModule({ providersPerMod: [Service1], exports: [{ token: Service1, useClass: Service1 }] })
     class Module2 {}
 
     const msg = 'failed: in "exports" array must be includes tokens only';
@@ -152,7 +159,8 @@ describe('ModuleNormalizer', () => {
   });
 
   it('exports module without imports it', () => {
-    @featureModule({ providersPerMod: [Provider1], exports: [Provider1] })
+    class Service1 {}
+    @featureModule({ providersPerMod: [Service1], exports: [Service1] })
     class Module1 {}
 
     @featureModule({ exports: [Module1] })
