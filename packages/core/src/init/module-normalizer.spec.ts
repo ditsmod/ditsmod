@@ -28,6 +28,7 @@ describe('ModuleNormalizer', () => {
 
   beforeEach(() => {
     clearDebugClassNames();
+    mock = new MockModuleNormalizer();
   });
 
   it('empty root module', () => {
@@ -43,7 +44,7 @@ describe('ModuleNormalizer', () => {
     expectedMeta.isExternal = false;
     expectedMeta.mInitHooksAndRawMeta = expect.any(Map);
 
-    expect(new ModuleNormalizer().normalize(AppModule)).toEqual(expectedMeta);
+    expect(mock.normalize(AppModule)).toEqual(expectedMeta);
   });
 
   it('merge static metadata with params', () => {
@@ -60,13 +61,13 @@ describe('ModuleNormalizer', () => {
     })
     class Module1 {}
 
-    const result = new ModuleNormalizer().normalize({
+    const result = mock.normalize({
       id: 'some-id',
       module: Module1,
       providersPerApp: [Service2],
       providersPerMod: [Service4],
       extensionsMeta: { two: 2 },
-      exports: [Service4]
+      exports: [Service4],
     });
     expect(result.providersPerApp).toEqual([Service1, Service2]);
     expect(result.providersPerMod).toEqual([Service3, Service4]);
@@ -88,7 +89,7 @@ describe('ModuleNormalizer', () => {
     })
     class Module3 {}
 
-    const result = new ModuleNormalizer().normalize(Module3);
+    const result = mock.normalize(Module3);
     expect(result.importsModules).toEqual([Module1, Module2]);
     expect(result.exportsModules).toEqual([Module2]);
   });
@@ -104,7 +105,7 @@ describe('ModuleNormalizer', () => {
     @featureModule({ imports: [moduleWithParams], providersPerMod: [Service2] })
     class Module2 {}
 
-    const result = new ModuleNormalizer().normalize({ module: Module2, exports: [moduleWithParams] });
+    const result = mock.normalize({ module: Module2, exports: [moduleWithParams] });
     expect(result.importsWithParams).toEqual([moduleWithParams]);
     expect(result.exportsWithParams).toEqual([moduleWithParams]);
     expect(result.providersPerMod).toEqual([Service2]);
@@ -117,7 +118,7 @@ describe('ModuleNormalizer', () => {
     class Module2 {}
 
     const msg = 'if "Module1" is a provider, it must be included in';
-    expect(() => new ModuleNormalizer().normalize(Module2)).toThrow(msg);
+    expect(() => mock.normalize(Module2)).toThrow(msg);
   });
 
   it('imports module with params, but exports only a module class (without ref to module with params)', () => {
@@ -132,14 +133,14 @@ describe('ModuleNormalizer', () => {
     class Module2 {}
 
     const msg = 'Reexport from Module2 failed: Module1 includes in exports, but not includes in imports';
-    expect(() => new ModuleNormalizer().normalize(Module2)).toThrow(msg);
+    expect(() => mock.normalize(Module2)).toThrow(msg);
   });
 
   it('module exported provider from providersPerApp', () => {
     @featureModule({ providersPerApp: [Provider1], exports: [Provider1] })
     class Module2 {}
 
-    expect(() => new ModuleNormalizer().normalize(Module2)).toThrow(/includes in "providersPerApp" and "exports" of/);
+    expect(() => mock.normalize(Module2)).toThrow(/includes in "providersPerApp" and "exports" of/);
   });
 
   it('module exported normalized provider', () => {
@@ -147,7 +148,7 @@ describe('ModuleNormalizer', () => {
     class Module2 {}
 
     const msg = 'failed: in "exports" array must be includes tokens only';
-    expect(() => new ModuleNormalizer().normalize(Module2)).toThrow(msg);
+    expect(() => mock.normalize(Module2)).toThrow(msg);
   });
 
   it('exports module without imports it', () => {
@@ -158,7 +159,7 @@ describe('ModuleNormalizer', () => {
     class Module2 {}
 
     const msg = 'Reexport from Module2 failed: Module1 includes in exports';
-    expect(() => new ModuleNormalizer().normalize(Module2)).toThrow(msg);
+    expect(() => mock.normalize(Module2)).toThrow(msg);
   });
 
   it('module exported invalid extension', () => {
@@ -170,7 +171,7 @@ describe('ModuleNormalizer', () => {
 
     const msg =
       'Exporting "Extension1" from "Module2" failed: all extensions must have stage1(), stage2() or stage3() method';
-    expect(() => new ModuleNormalizer().normalize(Module2)).toThrow(msg);
+    expect(() => mock.normalize(Module2)).toThrow(msg);
   });
 
   it('module exported valid extension', () => {
@@ -182,8 +183,8 @@ describe('ModuleNormalizer', () => {
     @featureModule({ extensions: [{ extension: Extension1, export: true }] })
     class Module2 {}
 
-    expect(() => new ModuleNormalizer().normalize(Module2)).not.toThrow();
-    const meta = new ModuleNormalizer().normalize(Module2);
+    expect(() => mock.normalize(Module2)).not.toThrow();
+    const meta = mock.normalize(Module2);
     expect(meta.extensionsProviders).toEqual([Extension1]);
     expect(meta.exportedExtensionsProviders).toEqual([Extension1]);
   });
@@ -222,7 +223,7 @@ describe('ModuleNormalizer', () => {
       @featureModule()
       class Module1 {}
 
-      const result = new ModuleNormalizer().normalize(Module1).normDecorMeta.get(addSome);
+      const result = mock.normalize(Module1).normDecorMeta.get(addSome);
       expect(result?.baseMeta.modRefId).toBe(Module1);
       expect(result?.rawMeta).toEqual(rawMeta);
     });
