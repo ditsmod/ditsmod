@@ -8,12 +8,14 @@ import { AnyObj, ModRefId } from '#types/mix.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { ParamsTransferObj } from './feature-module.js';
 
+type ObjectWithImports = { importsWithParams?: { modRefId: ModRefId }[] };
+
 /**
  * Init hooks and metadata attached by additional decorators,
  * apart from the base decorators - `rootModule` or `featureModule`.
  */
-export class InitHooksAndRawMeta<T extends AnyObj> {
-  constructor(public rawMeta = {} as T) { }
+export class InitHooksAndRawMeta<T extends ObjectWithImports = ObjectWithImports> {
+  constructor(public rawMeta = {} as T) {}
 
   /**
    * Normalizes the metadata from the current decorator. It is then inserted into `baseMeta.normDecorMeta`.
@@ -54,7 +56,7 @@ export class InitHooksAndRawMeta<T extends AnyObj> {
     globalProviders: GlobalProviders;
     modRefId: ModRefId;
     unfinishedScanModules: Set<ModRefId>;
-  }): Map<ModRefId, { baseMeta: NormalizedMeta; } & AnyObj> {
+  }): Map<ModRefId, { baseMeta: NormalizedMeta } & AnyObj> {
     return new Map();
   }
 
@@ -63,7 +65,7 @@ export class InitHooksAndRawMeta<T extends AnyObj> {
    * recursively collects providers for them from the corresponding modules.
    */
   importModulesDeep(config: {
-    metadataPerMod1: { baseMeta: NormalizedMeta; } & AnyObj;
+    metadataPerMod1: { baseMeta: NormalizedMeta } & AnyObj;
     moduleManager: ModuleManager;
     shallowImports: ShallowImports;
     providersPerApp: Provider[];
