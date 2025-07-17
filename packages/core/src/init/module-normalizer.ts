@@ -9,6 +9,7 @@ import {
 } from '#di';
 import {
   ExtensionConfig,
+  ExtensionConfigBase,
   getExtensionProvider,
   isConfigWithOverrideExtension,
 } from '#extension/get-extension-provider.js';
@@ -126,9 +127,8 @@ export class ModuleNormalizer {
 
     rawMeta.extensions?.forEach((extensionOrConfig, i) => {
       if (!isExtensionConfig(extensionOrConfig)) {
-        extensionOrConfig = { extension: extensionOrConfig as ExtensionClass };
+        extensionOrConfig = { extension: extensionOrConfig } as ExtensionConfigBase;
       }
-      this.checkExtensionConfig(modName, extensionOrConfig, i);
       const extensionObj = getExtensionProvider(extensionOrConfig);
       extensionObj.providers.forEach((p) => this.checkStageMethodsForExtension(modName, p));
       if (extensionObj.config) {
@@ -211,15 +211,6 @@ export class ModuleNormalizer {
         throw new Error(msg);
       }
     });
-  }
-
-  protected checkExtensionConfig(modName: string, extensionConfig: ExtensionConfig, i: number) {
-    if (!isConfigWithOverrideExtension(extensionConfig)) {
-      if (!extensionConfig.extension) {
-        const msg = `Export of "${modName}" failed: extension in [${i}] index must have "extension" property.`;
-        throw new Error(msg);
-      }
-    }
   }
 
   protected checkStageMethodsForExtension(modName: string, extensionsProvider: Provider) {
