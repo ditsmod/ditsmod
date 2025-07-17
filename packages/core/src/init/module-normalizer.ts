@@ -71,7 +71,7 @@ export class ModuleNormalizer {
     });
     this.checkAndMarkExternalModule(rawMeta, baseMeta);
     this.normalizeModule(modName, rawMeta, baseMeta);
-    this.normalizeDecoratorsMeta(baseMeta);
+    this.callInitHooks(baseMeta);
     this.quickCheckMetadata(baseMeta);
     return baseMeta;
   }
@@ -303,7 +303,7 @@ export class ModuleNormalizer {
     throw new Error(msg);
   }
 
-  protected normalizeDecoratorsMeta(baseMeta: NormalizedMeta) {
+  protected callInitHooks(baseMeta: NormalizedMeta) {
     baseMeta.mInitHooksAndRawMeta.forEach((initHooksAndRawMeta, decorator) => {
       const meta = initHooksAndRawMeta.normalize(baseMeta);
       if (meta) {
