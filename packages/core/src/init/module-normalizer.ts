@@ -8,12 +8,6 @@ import {
   reflector,
 } from '#di';
 import {
-  ExtensionConfig,
-  ExtensionConfigBase,
-  getExtensionProvider,
-  isConfigWithOverrideExtension,
-} from '#extension/get-extension-provider.js';
-import {
   isModuleWithParams,
   isRootModule,
   isProvider,
@@ -21,6 +15,7 @@ import {
   isFeatureModule,
   isModuleWithInitHooks,
 } from '#utils/type-guards.js';
+import { ExtensionConfigBase, getExtensionProvider } from '#extension/get-extension-provider.js';
 import { AnyObj, ModRefId } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { RawMeta } from '#decorators/feature-module.js';
@@ -30,7 +25,7 @@ import { resolveForwardRef } from '#di/forward-ref.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
 import { Class } from '#di/types-and-models.js';
 import { Providers } from '#utils/providers.js';
-import { Extension, ExtensionClass } from '#extension/extension-types.js';
+import { Extension } from '#extension/extension-types.js';
 import { NormalizedProvider, normalizeProviders } from '#utils/ng-utils.js';
 import { isExtensionConfig } from '#extension/type-guards.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
@@ -304,8 +299,10 @@ export class ModuleNormalizer {
   }
 
   protected callInitHooks(baseMeta: NormalizedMeta) {
-    baseMeta.mInitHooksAndRawMeta.forEach((initHooksAndRawMeta, decorator) => {
-      const meta = initHooksAndRawMeta.normalize(baseMeta);
+    this.updateImportsWithParams(baseMeta);
+
+    baseMeta.mInitHooksAndRawMeta.forEach((initHooks, decorator) => {
+      const meta = initHooks.normalize(baseMeta);
       if (meta) {
         baseMeta.normDecorMeta.set(decorator, meta);
         meta?.importsWithParams?.forEach((param) => {
@@ -314,6 +311,40 @@ export class ModuleNormalizer {
           }
         });
       }
+    });
+  }
+
+  /**
+   * `importsWithParams` must have shallow copy of the params, and new `modRefId`.
+   */
+  protected updateImportsWithParams(baseMeta: NormalizedMeta) {
+    const map = new Map<ModuleWithParams, { modRefId: ModRefId }[]>();
+    baseMeta.mInitHooksAndRawMeta.forEach((initHooks) => {
+      if (!initHooks.rawMeta.importsWithParams) {
+        return;
+      }
+      initHooks.rawMeta.importsWithParams = initHooks.rawMeta.importsWithParams?.map((params) => {
+        // Later, modRefId will change in this object, so the reference to the original object must be broken.
+        const newParams = { ...params } as { modRefId: ModuleWithParams };
+
+        if (isModuleWithParams(params.modRefId)) {
+          const aParams = map.get(params.modRefId);
+          if (aParams) {
+            aParams.push(newParams);
+          } else {
+            map.set(params.modRefId, [newParams]);
+          }
+        } else {
+          newParams.modRefId = { module: params.modRefId } as ModuleWithParams;
+        }
+        return newParams;
+      });
+    });
+
+    map.forEach((aParams, moduleWithParams) => {
+      aParams.forEach((params) => {
+        params.modRefId = { ...moduleWithParams };
+      });
     });
   }
 
