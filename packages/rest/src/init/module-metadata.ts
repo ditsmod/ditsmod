@@ -1,5 +1,4 @@
 import { AnyObj, ModuleType, Class, Provider, Providers, ModuleWithParams, ModRefId } from '@ditsmod/core';
-
 import { GuardItem } from '#interceptors/guard.js';
 
 /**
