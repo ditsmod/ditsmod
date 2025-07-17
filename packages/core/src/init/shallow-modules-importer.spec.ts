@@ -68,7 +68,7 @@ describe('ShallowModulesImporter', () => {
       @rootModule({ imports: [Module2] })
       class AppModule {}
 
-      const msg = 'Module2 failed: if "Provider1" is a provider,';
+      const msg = 'Module2 failed: if "Provider1" is a module,';
       expect(() => moduleManager.scanRootModule(AppModule)).toThrow(msg);
     });
 
@@ -431,7 +431,7 @@ describe('ShallowModulesImporter', () => {
         const injectorPerApp = Injector.resolveAndCreate(providers);
         mock = injectorPerApp.resolveAndInstantiate(MockShallowModulesImporter) as MockShallowModulesImporter;
         mock.injectorPerMod = injectorPerApp;
-        const msg = 'Module6 failed: if "Provider2" is a provider';
+        const msg = 'Module6 failed: if "Provider2" is a module';
         expect(() => moduleManager.scanModule(Module7)).toThrow(msg);
       });
     });
