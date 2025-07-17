@@ -1,10 +1,10 @@
-import { InjectionToken, Provider } from '#di';
-import { ExtensionClass, Extension } from '#extension/extension-types.js';
+import { Provider } from '#di';
+import { ExtensionClass } from '#extension/extension-types.js';
 import { AnyObj } from '#types/mix.js';
 
 export class ExtensionObj {
-  exportedProviders: Provider[];
   providers: Provider[];
+  exportedProviders: Provider[];
   config?: ExtensionConfig;
   exportedConfig?: ExtensionConfig;
 }
@@ -12,11 +12,11 @@ export class ExtensionObj {
 export interface ExtensionConfigBase {
   extension: ExtensionClass;
   /**
-   * The array of tokens of the group before which this extension will be called.
+   * The array of extension classes before which this extension will be called.
    */
   beforeExtensions?: ExtensionClass[];
   /**
-   * The array of tokens of the group after which this extension will be called.
+   * The array of extension classes after which this extension will be called.
    */
   afterExtensions?: ExtensionClass[];
   overrideExtension?: never;
@@ -62,8 +62,7 @@ export function getExtensionProvider(extensionConfig: ExtensionConfig): Extensio
     };
   }
 
-  const { extension } = extensionConfig;
-  const providers: Provider[] = [extension];
+  const providers: Provider[] = [extensionConfig.extension];
   if (extensionConfig.exportOnly) {
     return {
       providers: [],
