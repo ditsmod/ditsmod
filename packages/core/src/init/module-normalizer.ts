@@ -264,6 +264,7 @@ export class ModuleNormalizer {
     const msg =
       `Exporting from ${modName} failed: if "${tokenName}" is a token of a provider, this provider ` +
       'must be included in providersPerMod. ' +
+      `If "${tokenName}" is a module, it must have "featureModule" decorator. ` +
       `If "${tokenName}" is a token of extension, this extension must be included in "extensions" array.`;
     throw new Error(msg);
   }
@@ -296,8 +297,8 @@ export class ModuleNormalizer {
         'This is an error, because "providersPerApp" is always exported automatically.';
     } else {
       msg =
-        `Exporting from ${baseMeta.name} failed: if "${providerName}" is a provider, it must be included ` +
-        'in "providersPerMod".';
+        `Exporting from ${baseMeta.name} failed: if "${providerName}" is a module, it must have "featureModule" decorator; ` +
+        `if "${providerName}" is a provider, it must be included in "providersPerMod".`;
     }
     throw new Error(msg);
   }
