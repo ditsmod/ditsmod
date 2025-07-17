@@ -1,7 +1,6 @@
 import { AnyObj, ModuleType, Class, Provider, Providers, ModuleWithParams, ModRefId } from '@ditsmod/core';
 
 import { GuardItem } from '#interceptors/guard.js';
-import { RestProvidersMetadata } from '#init/rest-normalized-meta.js';
 
 /**
  * Metadata for the `initRest` decorator, which adds REST metadata to a `featureModule` or `rootModule`.
@@ -44,7 +43,9 @@ export interface RestMetadata {
 
 export type RestModuleParams = RestModuleParams1 | RestModuleParams2;
 
-export interface BaseModuleParams extends Partial<RestProvidersMetadata> {
+export interface BaseModuleParams {
+  providersPerRou?: Providers | Provider[];
+  providersPerReq?: Providers | Provider[];
   modRefId: ModRefId;
   /**
    * List of modules, `RestModuleParams` or tokens of providers exported by this

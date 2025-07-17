@@ -4,7 +4,6 @@ import {
   ModuleType,
   MultiProvider,
   Class,
-  Providers,
   ModuleWithParams,
   ModRefId,
   ParamsTransferObj,
@@ -15,19 +14,9 @@ import {
 import { NormalizedGuard } from '#interceptors/guard.js';
 import { AppendsWithParams, RestModuleParams } from '#init/module-metadata.js';
 
-export interface RestRawProvidersMetadata {
-  providersPerApp?: Providers | Provider[];
-  providersPerMod?: Providers | Provider[];
-  providersPerRou?: Providers | Provider[];
-  providersPerReq?: Providers | Provider[];
-}
-
-export class RestProvidersMetadata {
+export class RestNormalizedMeta implements ParamsTransferObj<RestModuleParams> {
   providersPerRou: Provider[] = [];
   providersPerReq: Provider[] = [];
-}
-
-export class RestNormalizedMeta extends RestProvidersMetadata implements ParamsTransferObj<RestModuleParams> {
   exportedProvidersPerRou: Provider[] = [];
   exportedProvidersPerReq: Provider[] = [];
   exportedMultiProvidersPerRou: MultiProvider[] = [];
