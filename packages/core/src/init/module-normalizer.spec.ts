@@ -55,7 +55,7 @@ describe('ModuleNormalizer', () => {
     @featureModule({
       providersPerApp: new Providers().passThrough(Service1),
       providersPerMod: [Service3],
-      exports: [Service3, Service4],
+      exports: [Service3],
       extensionsMeta: { one: 1 },
     })
     class Module1 {}
@@ -66,11 +66,31 @@ describe('ModuleNormalizer', () => {
       providersPerApp: [Service2],
       providersPerMod: [Service4],
       extensionsMeta: { two: 2 },
+      exports: [Service4]
     });
     expect(result.providersPerApp).toEqual([Service1, Service2]);
     expect(result.providersPerMod).toEqual([Service3, Service4]);
+    expect(result.exportedProvidersPerMod).toEqual([Service3, Service4]);
     expect(result.extensionsMeta).toEqual({ one: 1, two: 2 });
     expect(result.id).toEqual('some-id');
+  });
+
+  it('proprtly works imports/exports of modules', () => {
+    @featureModule()
+    class Module1 {}
+
+    @featureModule()
+    class Module2 {}
+
+    @rootModule({
+      imports: [Module1, Module2],
+      exports: [Module2],
+    })
+    class Module3 {}
+
+    const result = new ModuleNormalizer().normalize(Module3);
+    expect(result.importsModules).toEqual([Module1, Module2]);
+    expect(result.exportsModules).toEqual([Module2]);
   });
 
   it('import module via static metadata, but export via module params', () => {
