@@ -257,7 +257,7 @@ describe('ModuleNormalizer', () => {
       expect(newModRefId1.module).toBe(modRefId.module);
       expect(newModRefId1).not.toBe(modRefId); // Not hard copy of ModuleWithParams
       expect(newModRefId1).not.toBe(newModRefId2);
-      expect(newModRefId1).toBe(newModRefId3);
+      expect(newModRefId1).toBe(newModRefId3); // new modRefId for group of params with same old modRefId
 
       // In the second element, `{ modRefId: Module 2 }` has been replaced with `{ modIfIed: { module: Module 2 } }`.
       expect(actualImportsWithParams?.at(1)).toEqual({ modRefId: { module: Module2 } });
