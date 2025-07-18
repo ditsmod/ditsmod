@@ -16,9 +16,9 @@ import {
   isModuleWithInitHooks,
 } from '#utils/type-guards.js';
 import { ExtensionConfigBase, getExtensionProvider } from '#extension/get-extension-provider.js';
-import { AnyObj, ModRefId } from '#types/mix.js';
+import { AnyFn, AnyObj, ModRefId } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
-import { RawMeta } from '#decorators/feature-module.js';
+import { ParamsTransferObj, RawMeta } from '#decorators/feature-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { resolveForwardRef } from '#di/forward-ref.js';
@@ -35,6 +35,7 @@ import { mergeArrays } from '#utils/merge-arrays.js';
  * Normalizes and validates module metadata.
  */
 export class ModuleNormalizer {
+  protected mapOfParams: Map<ModuleWithParentMeta, Map<AnyFn, ParamsTransferObj>>;
   /**
    * The directory in which the class was declared.
    */
@@ -299,9 +300,15 @@ export class ModuleNormalizer {
   }
 
   protected callInitHooks(baseMeta: NormalizedMeta) {
-    this.updateImportsWithParams(baseMeta);
-
     baseMeta.mInitHooksAndRawMeta.forEach((initHooks, decorator) => {
+      initHooks.rawMeta.importsWithParams?.forEach((params) => {
+        if (isModuleWithParams(params.modRefId)) {
+          (params.modRefId as ModuleWithParentMeta).srcInitMeta = baseMeta.initMeta;
+        } else {
+          params.modRefId = { module: params.modRefId, srcInitMeta: baseMeta.initMeta } as ModuleWithParentMeta;
+        }
+      });
+
       const meta = initHooks.normalize(baseMeta);
       if (meta) {
         baseMeta.initMeta.set(decorator, meta);
@@ -311,44 +318,6 @@ export class ModuleNormalizer {
           }
         });
       }
-    });
-  }
-
-  /**
-   * `importsWithParams` must have shallow copy of the params, and new `modRefId`.
-   */
-  protected updateImportsWithParams(baseMeta: NormalizedMeta) {
-    const map = new Map<ModuleWithParams, { modRefId: ModRefId }[]>();
-    baseMeta.mInitHooksAndRawMeta.forEach((initHooks) => {
-      if (!initHooks.rawMeta.importsWithParams) {
-        return;
-      }
-      initHooks.rawMeta.importsWithParams = initHooks.rawMeta.importsWithParams?.map((params) => {
-        // Later, modRefId will change in this object, so the reference to the original object must be broken.
-        const newParams = { ...params } as { modRefId: ModuleWithParams };
-
-        if (isModuleWithParams(params.modRefId)) {
-          const aParams = map.get(params.modRefId);
-          if (aParams) {
-            aParams.push(newParams);
-          } else {
-            map.set(params.modRefId, [newParams]);
-          }
-        } else {
-          newParams.modRefId = {
-            module: params.modRefId,
-            srcInitMeta: baseMeta.initMeta,
-          } as ModuleWithParentMeta;
-        }
-        return newParams;
-      });
-    });
-
-    map.forEach((aParams, moduleWithParams) => {
-      const newModRefId = { ...moduleWithParams, srcInitMeta: baseMeta.initMeta } as ModuleWithParentMeta;
-      aParams.forEach((params) => {
-        params.modRefId = newModRefId;
-      });
     });
   }
 

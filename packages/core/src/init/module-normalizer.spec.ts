@@ -244,7 +244,7 @@ describe('ModuleNormalizer', () => {
         providersPerApp: [Service1],
         srcInitMeta: expect.any(Map),
       };
-      const expectedImportsWithParams = [{ modRefId }, { modRefId: Module2 }, { modRefId, path: '' }];
+      const expectedImportsWithParams = [{ modRefId }, { modRefId: Module2 }];
 
       @initSome({ importsWithParams: expectedImportsWithParams })
       @featureModule()
@@ -252,16 +252,7 @@ describe('ModuleNormalizer', () => {
 
       const result = mock.normalize(Module3).initMeta.get(initSome);
       const actualImportsWithParams = result?.rawMeta.importsWithParams;
-      expect(actualImportsWithParams?.at(0)).toEqual(expectedImportsWithParams?.at(0)); // Shallow copy of params
-      expect(actualImportsWithParams?.at(0)).not.toBe(expectedImportsWithParams?.at(0)); // Not hard copy of params
-      const newModRefId1 = actualImportsWithParams?.at(0)?.modRefId as ModuleWithParams;
-      const newModRefId2 = actualImportsWithParams?.at(1)?.modRefId as ModuleWithParams;
-      const newModRefId3 = actualImportsWithParams?.at(2)?.modRefId as ModuleWithParams;
-      expect(newModRefId1).toEqual(modRefId); // Shallow copy of ModuleWithParams
-      expect(newModRefId1.module).toBe(modRefId.module);
-      expect(newModRefId1).not.toBe(modRefId); // Not hard copy of ModuleWithParams
-      expect(newModRefId1).not.toBe(newModRefId2);
-      expect(newModRefId1).toBe(newModRefId3); // new modRefId for group of params with same old modRefId
+      expect(actualImportsWithParams?.at(0)).toBe(expectedImportsWithParams?.at(0));
 
       // In the second element, `{ modRefId: Module 2 }` has been replaced with `{ modIfIed: { module: Module 2 } }`.
       expect(actualImportsWithParams?.at(1)).toEqual({
