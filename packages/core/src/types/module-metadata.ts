@@ -45,7 +45,7 @@ export interface ModuleWithParams<M extends AnyObj = AnyObj> extends BaseModuleW
  */
 export interface ModuleWithParentMeta extends BaseModuleWithParams {
   /**
-   * A reference to normalized metadata from module init decorators,
+   * Normalized metadata from module init decorators,
    * where you can find the parameters assigned to the current module.
    */
   srcInitMeta: InitMetaMap;
