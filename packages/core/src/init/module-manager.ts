@@ -231,7 +231,7 @@ export class ModuleManager {
       if (!this.allInitHooks.get(decorator)) {
         this.allInitHooks.set(decorator, initHooks);
       }
-      const meta = baseMeta.normDecorMeta.get(decorator);
+      const meta = baseMeta.initMeta.get(decorator);
       if (meta) {
         importsOrExports.push(...initHooks.getModulesToScan(meta));
       }

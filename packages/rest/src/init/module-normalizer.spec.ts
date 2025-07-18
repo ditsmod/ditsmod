@@ -30,7 +30,7 @@ describe('rest ModuleNormalizer', () => {
 
     it('should contain correct metadata', () => {
       const baseMeta = moduleManager.scanRootModule(AppModule);
-      const meta = baseMeta.normDecorMeta.get(initRest) as RestNormalizedMeta;
+      const meta = baseMeta.initMeta.get(initRest) as RestNormalizedMeta;
       expect(meta.controllers.length).toBe(1);
       expect(meta.controllers).toEqual([Controller1]);
       expect(meta.providersPerRou.length).toBe(1);

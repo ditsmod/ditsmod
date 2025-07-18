@@ -18,7 +18,7 @@ export class InitHooksAndRawMeta<T extends ObjectWithImports = ObjectWithImports
   constructor(public rawMeta = {} as T) {}
 
   /**
-   * Normalizes the metadata from the current decorator. It is then inserted into `baseMeta.normDecorMeta`.
+   * Normalizes the metadata from the current decorator. It is then inserted into `baseMeta.initMeta`.
    *
    * @param baseMeta Normalized metadata that is passed to the `featureModule` or `rootModule` decorator.
    */

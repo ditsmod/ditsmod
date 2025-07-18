@@ -2,7 +2,7 @@ import { ProvidersMetadata } from '#types/providers-metadata.js';
 import { AnyObj, ModuleType } from '#types/mix.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { ExtensionClass } from '#extension/extension-types.js';
-import { NormDecorMetaMap } from './normalized-meta.js';
+import { InitMetaMap } from './normalized-meta.js';
 
 export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<ProvidersMetadata> {
   /**
@@ -48,7 +48,7 @@ export interface ModuleWithParentMeta extends BaseModuleWithParams {
    * A reference to normalized metadata from module init decorators,
    * where you can find the parameters assigned to the current module.
    */
-  parentNormDecorMeta: NormDecorMetaMap;
+  srcInitMeta: InitMetaMap;
 }
 
 export interface BaseModuleWithParams<M extends AnyObj = AnyObj> {

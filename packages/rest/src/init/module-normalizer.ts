@@ -70,8 +70,8 @@ export class ModuleNormalizer {
     } else if (!isModuleWithParentMeta(modRefId)) {
       return;
     }
-    const normDecorMeta = modRefId.parentNormDecorMeta.get(initRest);
-    const params = normDecorMeta?.importsWithParams.find((param) => param.modRefId === modRefId);
+    const initMeta = modRefId.srcInitMeta.get(initRest);
+    const params = initMeta?.importsWithParams.find((param) => param.modRefId === modRefId);
 
     if (params) {
       (['providersPerRou', 'providersPerReq'] as const).forEach((prop) => {

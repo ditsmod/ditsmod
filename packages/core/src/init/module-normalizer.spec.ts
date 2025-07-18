@@ -230,7 +230,7 @@ describe('ModuleNormalizer', () => {
       @featureModule()
       class Module1 {}
 
-      const result = mock.normalize(Module1).normDecorMeta.get(initSome);
+      const result = mock.normalize(Module1).initMeta.get(initSome);
       expect(result?.baseMeta.modRefId).toBe(Module1);
       expect(result?.rawMeta).toEqual(rawMeta);
     });
@@ -242,7 +242,7 @@ describe('ModuleNormalizer', () => {
       const modRefId: ModuleWithParams & AnyObj = {
         module: Module1,
         providersPerApp: [Service1],
-        parentNormDecorMeta: expect.any(Map),
+        srcInitMeta: expect.any(Map),
       };
       const expectedImportsWithParams = [{ modRefId }, { modRefId: Module2 }, { modRefId, path: '' }];
 
@@ -250,7 +250,7 @@ describe('ModuleNormalizer', () => {
       @featureModule()
       class Module3 {}
 
-      const result = mock.normalize(Module3).normDecorMeta.get(initSome);
+      const result = mock.normalize(Module3).initMeta.get(initSome);
       const actualImportsWithParams = result?.rawMeta.importsWithParams;
       expect(actualImportsWithParams?.at(0)).toEqual(expectedImportsWithParams?.at(0)); // Shallow copy of params
       expect(actualImportsWithParams?.at(0)).not.toBe(expectedImportsWithParams?.at(0)); // Not hard copy of params
@@ -265,7 +265,7 @@ describe('ModuleNormalizer', () => {
 
       // In the second element, `{ modRefId: Module 2 }` has been replaced with `{ modIfIed: { module: Module 2 } }`.
       expect(actualImportsWithParams?.at(1)).toEqual({
-        modRefId: { module: Module2, parentNormDecorMeta: expect.any(Map) },
+        modRefId: { module: Module2, srcInitMeta: expect.any(Map) },
       });
     });
   });

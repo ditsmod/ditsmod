@@ -127,7 +127,7 @@ export class DeepModulesImporter {
       }
 
       for (const level of levels) {
-        const meta = srcBaseMeta.normDecorMeta.get(initRest) as RestNormalizedMeta;
+        const meta = srcBaseMeta.initMeta.get(initRest) as RestNormalizedMeta;
         const sourceProviders = getLastProviders(meta[`providersPer${level}`]);
 
         getTokens(sourceProviders).forEach((sourceToken, i) => {
@@ -212,7 +212,7 @@ export class DeepModulesImporter {
       }
 
       forLevel: for (const level of levels) {
-        const meta = baseMeta.normDecorMeta.get(initRest) as RestNormalizedMeta;
+        const meta = baseMeta.initMeta.get(initRest) as RestNormalizedMeta;
         const providers = getLastProviders(meta[`providersPer${level}`]);
 
         for (const token of getTokens(providers)) {

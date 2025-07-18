@@ -304,7 +304,7 @@ export class ModuleNormalizer {
     baseMeta.mInitHooksAndRawMeta.forEach((initHooks, decorator) => {
       const meta = initHooks.normalize(baseMeta);
       if (meta) {
-        baseMeta.normDecorMeta.set(decorator, meta);
+        baseMeta.initMeta.set(decorator, meta);
         meta?.importsWithParams?.forEach((param) => {
           if (!baseMeta.importsWithParams.includes(param.modRefId)) {
             baseMeta.importsWithParams.push(param.modRefId);
@@ -337,7 +337,7 @@ export class ModuleNormalizer {
         } else {
           newParams.modRefId = {
             module: params.modRefId,
-            parentNormDecorMeta: baseMeta.normDecorMeta,
+            srcInitMeta: baseMeta.initMeta,
           } as ModuleWithParentMeta;
         }
         return newParams;
@@ -345,7 +345,7 @@ export class ModuleNormalizer {
     });
 
     map.forEach((aParams, moduleWithParams) => {
-      const newModRefId = { ...moduleWithParams, parentNormDecorMeta: baseMeta.normDecorMeta } as ModuleWithParentMeta;
+      const newModRefId = { ...moduleWithParams, srcInitMeta: baseMeta.initMeta } as ModuleWithParentMeta;
       aParams.forEach((params) => {
         params.modRefId = newModRefId;
       });

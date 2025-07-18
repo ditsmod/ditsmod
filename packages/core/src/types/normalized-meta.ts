@@ -7,7 +7,7 @@ import { ExtensionClass } from '#extension/extension-types.js';
 import { ParamsTransferObj } from '#decorators/feature-module.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 
-export interface NormDecorMetaMap {
+export interface InitMetaMap {
   set<T extends ParamsTransferObj>(key: AddDecorator<any, T>, value: T): this;
   get<T extends ParamsTransferObj>(key: AddDecorator<any, T>): T | undefined;
 }
@@ -18,7 +18,7 @@ export interface NormDecorMetaMap {
  * ### Complete example with init hooks
  * 
  * In this example, `ReturnsType` is the type that will be returned by
- * `myInitHooksAndRawMeta.normalize()` or `normalizedMeta.normDecorMeta.get(addSome)`.
+ * `myInitHooksAndRawMeta.normalize()` or `normalizedMeta.initMeta.get(addSome)`.
  *
 ```ts
 import { makeClassDecorator, AddDecorator, featureModule, InitHooksAndRawMeta } from '@ditsmod/core';
@@ -80,9 +80,9 @@ export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj
    */
   mInitHooksAndRawMeta = new Map<AnyFn, InitHooksAndRawMeta>();
   /**
-   * Contains normalized metadata collected from init module decorators.
+   * Contains normalized metadata collected from module init decorators.
    */
-  normDecorMeta: NormDecorMetaMap = new Map();
+  initMeta: InitMetaMap = new Map();
 
   importsModules: ModuleType[] = [];
   importsWithParams: ModuleWithParams[] = [];
