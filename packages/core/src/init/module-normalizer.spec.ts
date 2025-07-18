@@ -218,7 +218,7 @@ describe('ModuleNormalizer', () => {
       one?: number;
       two?: number;
       appends?: ({ module: ModRefId } & AnyObj)[];
-      importsWithParams?: { modRefId: ModRefId, path?: string, guards?: any[] }[];
+      importsWithParams?: { modRefId: ModRefId; path?: string; guards?: any[] }[];
     }
 
     const initSome: AddDecorator<ArgumentsType, ReturnsType> = makeClassDecorator(getInitHooksAndRawMeta);
@@ -240,10 +240,9 @@ describe('ModuleNormalizer', () => {
       class Module2 {}
       class Service1 {}
       const modRefId: ModuleWithParams = { module: Module1, providersPerApp: [Service1] };
-      const expectedImportsWithParams = [{ modRefId }, { modRefId: Module2 }];
-      const rawMeta: ArgumentsType = { one: 1, two: 2, importsWithParams: expectedImportsWithParams };
+      const expectedImportsWithParams = [{ modRefId }, { modRefId: Module2 }, { modRefId, path: '' }];
 
-      @initSome(rawMeta)
+      @initSome({ importsWithParams: expectedImportsWithParams })
       @featureModule()
       class Module3 {}
 
@@ -251,10 +250,14 @@ describe('ModuleNormalizer', () => {
       const actualImportsWithParams = result?.rawMeta.importsWithParams;
       expect(actualImportsWithParams?.at(0)).toEqual(expectedImportsWithParams?.at(0)); // Shallow copy of params
       expect(actualImportsWithParams?.at(0)).not.toBe(expectedImportsWithParams?.at(0)); // Not hard copy of params
-      const newModRefId = actualImportsWithParams?.at(0)?.modRefId as ModuleWithParams;
-      expect(newModRefId).toEqual(modRefId); // Shallow copy of ModuleWithParams
-      expect(newModRefId.module).toBe(modRefId.module);
-      expect(newModRefId).not.toBe(modRefId); // Not hard copy of ModuleWithParams
+      const newModRefId1 = actualImportsWithParams?.at(0)?.modRefId as ModuleWithParams;
+      const newModRefId2 = actualImportsWithParams?.at(1)?.modRefId as ModuleWithParams;
+      const newModRefId3 = actualImportsWithParams?.at(2)?.modRefId as ModuleWithParams;
+      expect(newModRefId1).toEqual(modRefId); // Shallow copy of ModuleWithParams
+      expect(newModRefId1.module).toBe(modRefId.module);
+      expect(newModRefId1).not.toBe(modRefId); // Not hard copy of ModuleWithParams
+      expect(newModRefId1).not.toBe(newModRefId2);
+      expect(newModRefId1).toBe(newModRefId3);
 
       // In the second element, `{ modRefId: Module 2 }` has been replaced with `{ modIfIed: { module: Module 2 } }`.
       expect(actualImportsWithParams?.at(1)).toEqual({ modRefId: { module: Module2 } });

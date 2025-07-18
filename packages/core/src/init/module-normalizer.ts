@@ -342,8 +342,9 @@ export class ModuleNormalizer {
     });
 
     map.forEach((aParams, moduleWithParams) => {
+      const newModRefId = { ...moduleWithParams };
       aParams.forEach((params) => {
-        params.modRefId = { ...moduleWithParams };
+        params.modRefId = newModRefId;
       });
     });
   }
