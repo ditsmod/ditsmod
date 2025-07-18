@@ -1,5 +1,5 @@
 import { makeClassDecorator } from '#di';
-import { ModuleMetadata, ModuleWithParams, ModuleWithParentMeta } from '#types/module-metadata.js';
+import { ModuleMetadata, ModuleWithParams, ModuleWithSrcInitMeta } from '#types/module-metadata.js';
 import { AnyFn, ModRefId, ModuleType, Override } from '#types/mix.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { Providers } from '#utils/providers.js';
@@ -11,7 +11,7 @@ export interface FeatureModuleDecorator {
   (data?: ModuleMetadata): any;
 }
 export interface ParamsTransferObj<T extends { modRefId: ModRefId } = { modRefId: ModRefId }> {
-  importsWithParams?: Override<T, { modRefId: ModuleWithParentMeta }>[];
+  importsWithParams?: Override<T, { modRefId: ModuleWithSrcInitMeta }>[];
   params?: Omit<T, 'modRefId'>;
 }
 

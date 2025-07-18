@@ -7,7 +7,7 @@ import {
   ModuleWithParams,
   ModRefId,
   ParamsTransferObj,
-  ModuleWithParentMeta,
+  ModuleWithSrcInitMeta,
   Override,
 } from '@ditsmod/core';
 
@@ -27,7 +27,7 @@ export class RestNormalizedMeta implements ParamsTransferObj<RestModuleParams> {
   appendsWithParams: AppendsWithParams[] = [];
   appendsModules: ModuleType[] = [];
   controllers: Class[] = [];
-  importsWithParams: Override<RestModuleParams, { modRefId: ModuleWithParentMeta }>[] = [];
+  importsWithParams: Override<RestModuleParams, { modRefId: ModuleWithSrcInitMeta }>[] = [];
   params = {} as Omit<RestModuleParams, 'modRefId'>;
 }
 

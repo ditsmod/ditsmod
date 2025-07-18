@@ -64,7 +64,7 @@ export {
   ModuleMetadata,
   ModuleWithParams,
   BaseModuleWithParams,
-  ModuleWithParentMeta,
+  ModuleWithSrcInitMeta,
 } from '#types/module-metadata.js';
 export { RootModuleMetadata } from '#types/root-module-metadata.js';
 export { ImportObj } from '#types/metadata-per-mod.js';
@@ -89,7 +89,7 @@ export { RawMeta } from '#decorators/feature-module.js';
 export {
   isChainError,
   isModuleWithParams,
-  isModuleWithParentMeta,
+  isModuleWithSrcInitMeta,
   isModuleWithInitHooks,
   isFeatureModule,
   isModDecor,

@@ -28,14 +28,14 @@ import { Providers } from '#utils/providers.js';
 import { Extension } from '#extension/extension-types.js';
 import { NormalizedProvider, normalizeProviders } from '#utils/ng-utils.js';
 import { isExtensionConfig } from '#extension/type-guards.js';
-import { ModuleWithParams, ModuleWithParentMeta } from '#types/module-metadata.js';
+import { ModuleWithParams, ModuleWithSrcInitMeta } from '#types/module-metadata.js';
 import { mergeArrays } from '#utils/merge-arrays.js';
 
 /**
  * Normalizes and validates module metadata.
  */
 export class ModuleNormalizer {
-  protected mapOfParams: Map<ModuleWithParentMeta, Map<AnyFn, ParamsTransferObj>>;
+  protected mapOfParams: Map<ModuleWithSrcInitMeta, Map<AnyFn, ParamsTransferObj>>;
   /**
    * The directory in which the class was declared.
    */
@@ -303,9 +303,9 @@ export class ModuleNormalizer {
     baseMeta.mInitHooksAndRawMeta.forEach((initHooks, decorator) => {
       initHooks.rawMeta.importsWithParams?.forEach((params) => {
         if (isModuleWithParams(params.modRefId)) {
-          (params.modRefId as ModuleWithParentMeta).srcInitMeta = baseMeta.initMeta;
+          (params.modRefId as ModuleWithSrcInitMeta).srcInitMeta = baseMeta.initMeta;
         } else {
-          params.modRefId = { module: params.modRefId, srcInitMeta: baseMeta.initMeta } as ModuleWithParentMeta;
+          params.modRefId = { module: params.modRefId, srcInitMeta: baseMeta.initMeta } as ModuleWithSrcInitMeta;
         }
       });
 

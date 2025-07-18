@@ -4,7 +4,7 @@ import {
   getToken,
   getTokens,
   isFeatureModule,
-  isModuleWithParentMeta,
+  isModuleWithSrcInitMeta,
   isMultiProvider,
   isNormalizedProvider,
   isProvider,
@@ -64,7 +64,7 @@ export class ModuleNormalizer {
     if (isAppendsWithParams(modRefId)) {
       meta.guardsPerMod.push(...this.normalizeGuards(modRefId.guards));
       return;
-    } else if (!isModuleWithParentMeta(modRefId)) {
+    } else if (!isModuleWithSrcInitMeta(modRefId)) {
       return;
     }
     const initMeta = modRefId.srcInitMeta.get(initRest);
