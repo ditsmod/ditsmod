@@ -28,7 +28,7 @@ import { Providers } from '#utils/providers.js';
 import { Extension } from '#extension/extension-types.js';
 import { NormalizedProvider, normalizeProviders } from '#utils/ng-utils.js';
 import { isExtensionConfig } from '#extension/type-guards.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
+import { ModuleWithParams, ModuleWithParentMeta } from '#types/module-metadata.js';
 import { mergeArrays } from '#utils/merge-arrays.js';
 
 /**
@@ -335,14 +335,18 @@ export class ModuleNormalizer {
             map.set(params.modRefId, [newParams]);
           }
         } else {
-          newParams.modRefId = { module: params.modRefId } as ModuleWithParams;
+          newParams.modRefId = {
+            module: params.modRefId,
+            parentNormDecorMeta: baseMeta.normDecorMeta,
+          } as ModuleWithParentMeta;
         }
         return newParams;
       });
     });
 
     map.forEach((aParams, moduleWithParams) => {
-      const newModRefId = { ...moduleWithParams };
+      const newModRefId = { ...moduleWithParams } as ModuleWithParentMeta;
+      newModRefId.parentNormDecorMeta = baseMeta.normDecorMeta;
       aParams.forEach((params) => {
         params.modRefId = newModRefId;
       });

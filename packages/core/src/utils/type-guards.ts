@@ -78,7 +78,7 @@ export function isModuleWithParams(modRefId?: AnyObj): modRefId is ModuleWithPar
 }
 
 export function isModuleWithParentMeta(modRefId?: AnyObj): modRefId is ModuleWithParentMeta {
-  return (modRefId as ModuleWithParentMeta).parentMeta !== undefined;
+  return (modRefId as ModuleWithParentMeta).parentNormDecorMeta !== undefined;
 }
 
 export function isProvider(maybeProvider?: any): maybeProvider is Provider {

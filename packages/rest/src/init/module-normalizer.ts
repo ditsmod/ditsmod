@@ -47,8 +47,6 @@ export class ModuleNormalizer {
         meta.appendsModules.push(ap);
       }
     });
-    this.normalizeImportsWithParams(rawMeta, meta);
-    this.setParentMeta(baseMeta, meta);
     this.pickAndMergeMeta(meta, rawMeta);
     meta.controllers.forEach((Controller) => this.checkController(Controller));
     this.normalizeModule(rawMeta, meta);
@@ -72,16 +70,19 @@ export class ModuleNormalizer {
     } else if (!isModuleWithParentMeta(modRefId)) {
       return;
     }
-    const normDecorMeta = modRefId.parentMeta.normDecorMeta.get(initRest) as RestNormalizedMeta | undefined;
+    const normDecorMeta = modRefId.parentNormDecorMeta.get(initRest);
     const params = normDecorMeta?.importsWithParams.find((param) => param.modRefId === modRefId);
 
     if (params) {
-      objectKeys(params).forEach((p) => {
-        // If here is object with [Symbol.iterator]() method, this transform it to an array.
-        if (Array.isArray((meta as any)[p]) && (Array.isArray(params[p]) || (params as any)[p] instanceof Providers)) {
-          (meta as any)[p] = mergeArrays((meta as any)[p], (params as any)[p]);
+      (['providersPerRou', 'providersPerReq'] as const).forEach((prop) => {
+        if (params[prop] instanceof Providers || params[prop]?.length) {
+          meta[prop] = mergeArrays(meta[prop], params[prop]);
         }
       });
+
+      // if (params.exports?.length) {
+      //   meta[prop] = mergeArrays(meta[prop], params.exports);
+      // }
       meta.params = params;
       meta.guardsPerMod.push(...this.normalizeGuards(params.guards));
     }
@@ -206,22 +207,6 @@ export class ModuleNormalizer {
         '"forwardRef(() => YourModule)".';
       throw new Error(msg);
     }
-  }
-
-  protected setParentMeta(baseMeta: NormalizedMeta, meta: RestNormalizedMeta) {
-    meta.importsWithParams?.forEach((param) => {
-      param.modRefId.parentMeta ??= baseMeta;
-    });
-  }
-
-  protected normalizeImportsWithParams(rawMeta: RestMetadata, meta: RestNormalizedMeta) {
-    meta.importsWithParams = (rawMeta.importsWithParams || []).map((params) => {
-      if (isModuleWithParams(params.modRefId)) {
-        return params;
-      }
-      params.modRefId = { module: params.modRefId } as ModuleWithParams;
-      return params;
-    }) as ({ modRefId: ModuleWithParentMeta } & RestModuleParams)[];
   }
 
   protected checkController(Controller: Class) {
