@@ -345,8 +345,7 @@ export class ModuleNormalizer {
     });
 
     map.forEach((aParams, moduleWithParams) => {
-      const newModRefId = { ...moduleWithParams } as ModuleWithParentMeta;
-      newModRefId.parentNormDecorMeta = baseMeta.normDecorMeta;
+      const newModRefId = { ...moduleWithParams, parentNormDecorMeta: baseMeta.normDecorMeta } as ModuleWithParentMeta;
       aParams.forEach((params) => {
         params.modRefId = newModRefId;
       });

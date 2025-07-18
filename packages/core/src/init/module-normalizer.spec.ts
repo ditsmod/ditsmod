@@ -239,7 +239,11 @@ describe('ModuleNormalizer', () => {
       class Module1 {}
       class Module2 {}
       class Service1 {}
-      const modRefId: ModuleWithParams = { module: Module1, providersPerApp: [Service1] };
+      const modRefId: ModuleWithParams & AnyObj = {
+        module: Module1,
+        providersPerApp: [Service1],
+        parentNormDecorMeta: expect.any(Map),
+      };
       const expectedImportsWithParams = [{ modRefId }, { modRefId: Module2 }, { modRefId, path: '' }];
 
       @initSome({ importsWithParams: expectedImportsWithParams })
@@ -260,7 +264,9 @@ describe('ModuleNormalizer', () => {
       expect(newModRefId1).toBe(newModRefId3); // new modRefId for group of params with same old modRefId
 
       // In the second element, `{ modRefId: Module 2 }` has been replaced with `{ modIfIed: { module: Module 2 } }`.
-      expect(actualImportsWithParams?.at(1)).toEqual({ modRefId: { module: Module2 } });
+      expect(actualImportsWithParams?.at(1)).toEqual({
+        modRefId: { module: Module2, parentNormDecorMeta: expect.any(Map) },
+      });
     });
   });
 });
