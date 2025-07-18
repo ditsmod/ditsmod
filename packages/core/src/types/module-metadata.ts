@@ -44,6 +44,10 @@ export interface ModuleWithParams<M extends AnyObj = AnyObj> extends BaseModuleW
  * Metadata with this type is created when the `parentMeta: NormalizedMeta` property is added to `BaseModuleWithParams`.
  */
 export interface ModuleWithParentMeta extends BaseModuleWithParams {
+  /**
+   * A reference to normalized metadata from module init decorators,
+   * where you can find the parameters assigned to the current module.
+   */
   parentNormDecorMeta: NormDecorMetaMap;
 }
 

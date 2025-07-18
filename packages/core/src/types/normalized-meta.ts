@@ -9,7 +9,6 @@ import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 
 export interface NormDecorMetaMap {
   set<T extends ParamsTransferObj>(key: AddDecorator<any, T>, value: T): this;
-
   get<T extends ParamsTransferObj>(key: AddDecorator<any, T>): T | undefined;
 }
 
