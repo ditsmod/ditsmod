@@ -1,12 +1,10 @@
 import {
   AnyObj,
   Class,
-  ModuleWithParentMeta,
   getToken,
   getTokens,
   isFeatureModule,
   isModuleWithParentMeta,
-  isModuleWithParams,
   isMultiProvider,
   isNormalizedProvider,
   isProvider,
@@ -16,7 +14,6 @@ import {
   MultiProvider,
   NormalizedMeta,
   NormalizedProvider,
-  objectKeys,
   Provider,
   Providers,
   reflector,
@@ -25,7 +22,7 @@ import {
   CustomError,
 } from '@ditsmod/core';
 
-import { RestMetadata, RestModuleParams } from '#init/module-metadata.js';
+import { RestMetadata } from '#init/module-metadata.js';
 import { RestNormalizedMeta } from '#init/rest-normalized-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
@@ -37,7 +34,7 @@ import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 export class ModuleNormalizer {
   normalize(baseMeta: NormalizedMeta, rawMeta: RestMetadata) {
     const meta = new RestNormalizedMeta();
-    this.mergeModuleWithParams(baseMeta, meta);
+    this.mergeModuleWithParams(baseMeta, rawMeta, meta);
     rawMeta.appends?.forEach((ap, i) => {
       ap = resolveForwardRef(ap);
       this.throwIfUndefined(ap, i);
@@ -62,7 +59,7 @@ export class ModuleNormalizer {
     return meta;
   }
 
-  protected mergeModuleWithParams(baseMeta: NormalizedMeta, meta: RestNormalizedMeta): void {
+  protected mergeModuleWithParams(baseMeta: NormalizedMeta, rawMeta: RestMetadata, meta: RestNormalizedMeta): void {
     const { modRefId } = baseMeta;
     if (isAppendsWithParams(modRefId)) {
       meta.guardsPerMod.push(...this.normalizeGuards(modRefId.guards));
@@ -74,15 +71,12 @@ export class ModuleNormalizer {
     const params = initMeta?.importsWithParams.find((param) => param.modRefId === modRefId);
 
     if (params) {
-      (['providersPerRou', 'providersPerReq'] as const).forEach((prop) => {
+      (['exports', 'providersPerRou', 'providersPerReq'] as const).forEach((prop) => {
         if (params[prop] instanceof Providers || params[prop]?.length) {
-          meta[prop] = mergeArrays(meta[prop], params[prop]);
+          rawMeta[prop] = mergeArrays(rawMeta[prop], params[prop]);
         }
       });
 
-      // if (params.exports?.length) {
-      //   meta[prop] = mergeArrays(meta[prop], params.exports);
-      // }
       meta.params = params;
       meta.guardsPerMod.push(...this.normalizeGuards(params.guards));
     }
