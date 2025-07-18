@@ -7,14 +7,10 @@ import { ExtensionClass } from '#extension/extension-types.js';
 import { ParamsTransferObj } from '#decorators/feature-module.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 
-export class NormDecorMetaMap extends Map {
-  override set<T extends ParamsTransferObj>(key: AddDecorator<any, T>, value: T) {
-    return super.set(key, value);
-  }
+export interface NormDecorMetaMap {
+  set<T extends ParamsTransferObj>(key: AddDecorator<any, T>, value: T): this;
 
-  override get<T extends ParamsTransferObj>(key: AddDecorator<any, T>): T | undefined {
-    return super.get(key);
-  }
+  get<T extends ParamsTransferObj>(key: AddDecorator<any, T>): T | undefined;
 }
 
 /**
@@ -87,7 +83,7 @@ export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj
   /**
    * Contains normalized metadata collected from init module decorators.
    */
-  normDecorMeta = new NormDecorMetaMap();
+  normDecorMeta: NormDecorMetaMap = new Map();
 
   importsModules: ModuleType[] = [];
   importsWithParams: ModuleWithParams[] = [];
