@@ -70,14 +70,14 @@ export class DeepModulesImporter {
     if (!this.metadataPerMod1) {
       return;
     }
-    const { importedTokensMap, guardsPerMod1, prefixPerMod, meta, applyControllers } = this.metadataPerMod1;
+    const { importedTokensMap, guards1, prefixPerMod, meta, applyControllers } = this.metadataPerMod1;
     this.resolveImportedProviders(meta, importedTokensMap, levels);
     meta.providersPerRou.unshift(...defaultProvidersPerRou);
     meta.providersPerReq.unshift(...defaultProvidersPerReq);
     return {
       baseMeta: this.metadataPerMod1.baseMeta,
       meta,
-      guardsPerMod1,
+      guards1,
       prefixPerMod,
       applyControllers,
     };

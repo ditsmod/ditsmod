@@ -107,7 +107,7 @@ export class PreRouterExtension implements Extension<void> {
         return;
       }
 
-      const { aControllerMetadata, guardsPerMod1 } = metadataPerMod3;
+      const { aControllerMetadata, guards1 } = metadataPerMod3;
 
       aControllerMetadata.forEach((controllerMetadata) => {
         let handle: RouteHandler;
@@ -117,7 +117,7 @@ export class PreRouterExtension implements Extension<void> {
           handle = this.getHandlerPerReq(metadataPerMod3, this.injectorPerMod, controllerMetadata);
         }
 
-        const countOfGuards = controllerMetadata.routeMeta.resolvedGuards!.length + guardsPerMod1.length;
+        const countOfGuards = controllerMetadata.routeMeta.resolvedGuards!.length + guards1.length;
 
         preparedRouteMeta.push({
           moduleName: metadataPerMod3.baseMeta.name,
@@ -144,7 +144,7 @@ export class PreRouterExtension implements Extension<void> {
     mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
     const controllerName = getDebugClassName(routeMeta.Controller);
 
-    if (metadataPerMod3.guardsPerMod1.length || controllerMetadata.guards.length) {
+    if (metadataPerMod3.guards1.length || controllerMetadata.guards.length) {
       mergedPerRou.push(InterceptorWithGuardsPerRou);
       mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: InterceptorWithGuardsPerRou, multi: true });
     }
@@ -153,7 +153,7 @@ export class PreRouterExtension implements Extension<void> {
     const resolvedPerRou = Injector.resolve(mergedPerRou);
     routeMeta.resolvedGuards = this.getResolvedGuards(controllerMetadata.guards, resolvedPerRou);
     routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(
-      metadataPerMod3.guardsPerMod1,
+      metadataPerMod3.guards1,
       controllerName,
       httpMethods,
       fullPath,
@@ -223,7 +223,7 @@ export class PreRouterExtension implements Extension<void> {
 
     const mergedPerReq: Provider[] = [];
     mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
-    if (metadataPerMod3.guardsPerMod1.length || controllerMetadata.guards.length) {
+    if (metadataPerMod3.guards1.length || controllerMetadata.guards.length) {
       mergedPerReq.push(InterceptorWithGuards);
       mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: InterceptorWithGuards, multi: true });
     }
@@ -234,7 +234,7 @@ export class PreRouterExtension implements Extension<void> {
     const controllerName = getDebugClassName(routeMeta.Controller);
     routeMeta.resolvedGuards = this.getResolvedGuards(controllerMetadata.guards, resolvedPerReq);
     routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(
-      metadataPerMod3.guardsPerMod1,
+      metadataPerMod3.guards1,
       controllerName,
       httpMethod,
       fullPath,

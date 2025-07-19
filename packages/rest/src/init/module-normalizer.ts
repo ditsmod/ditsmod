@@ -62,10 +62,9 @@ export class ModuleNormalizer {
   protected mergeModuleWithParams(baseMeta: NormalizedMeta, rawMeta: RestMetadata, meta: RestNormalizedMeta): void {
     const { modRefId } = baseMeta;
     if (isAppendsWithParams(modRefId)) {
-      meta.guardsPerMod.push(...this.normalizeGuards(modRefId.guards));
       meta.params.absolutePath = modRefId.absolutePath;
       meta.params.path = modRefId.path;
-      meta.params.guards = modRefId.guards;
+      meta.params.guards.push(...this.normalizeGuards(modRefId.guards));
       return;
     } else if (!isModuleWithSrcInitMeta(modRefId)) {
       return;
@@ -82,8 +81,7 @@ export class ModuleNormalizer {
 
       meta.params.absolutePath = params.absolutePath;
       meta.params.path = params.path;
-      meta.params.guards = params.guards;
-      meta.guardsPerMod.push(...this.normalizeGuards(params.guards));
+      meta.params.guards.push(...this.normalizeGuards(params.guards));
     }
   }
 
@@ -91,7 +89,7 @@ export class ModuleNormalizer {
     this.throwIfResolvingNormalizedProvider(rawMeta);
     this.exportFromReflectMetadata(rawMeta, meta);
     // this.pickAndMergeMeta(meta, rawMeta);
-    this.checkGuardsPerMod(meta.guardsPerMod);
+    this.checkGuardsPerMod(meta.params.guards);
   }
 
   protected throwIfResolvingNormalizedProvider(rawMeta: RestMetadata) {

@@ -471,13 +471,13 @@ describe('resolve()', () => {
     expect(() => mock.importModulesDeep()).not.toThrow();
 
     const mod1 = shallowImportsBase.get(mod1WithParams);
-    // expect(mod1?.guardsPerMod1.at(0)?.guard).toBe(BearerGuard1);
+    // expect(mod1?.guards1.at(0)?.guard).toBe(BearerGuard1);
 
     // Guards per a module must have ref to host module meta.
-    // expect(mod1?.guardsPerMod1.at(0)?.meta).toBe(shallowImportsBase.get(Module2)!.meta);
+    // expect(mod1?.guards1.at(0)?.meta).toBe(shallowImportsBase.get(Module2)!.meta);
 
     // The injector must have enough providers to create a guard instance.
-    // const injector = Injector.resolveAndCreate(mod1?.guardsPerMod1.at(0)?.meta.providersPerRou || []);
+    // const injector = Injector.resolveAndCreate(mod1?.guards1.at(0)?.meta.providersPerRou || []);
     // expect(() => injector.get(BearerGuard1)).not.toThrow();
     // expect(injector.get(BearerGuard1)).toBeInstanceOf(BearerGuard2);
 

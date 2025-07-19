@@ -14,6 +14,12 @@ import {
 import { NormalizedGuard } from '#interceptors/guard.js';
 import { AppendsWithParams, RestModuleParams } from '#init/module-metadata.js';
 
+class NormalizedParams {
+  path?: string;
+  absolutePath?: string;
+  guards: NormalizedGuard[] = [];
+}
+
 export class RestNormalizedMeta implements ParamsTransferObj<RestModuleParams> {
   providersPerRou: Provider[] = [];
   providersPerReq: Provider[] = [];
@@ -21,14 +27,13 @@ export class RestNormalizedMeta implements ParamsTransferObj<RestModuleParams> {
   exportedProvidersPerReq: Provider[] = [];
   exportedMultiProvidersPerRou: MultiProvider[] = [];
   exportedMultiProvidersPerReq: MultiProvider[] = [];
-  guardsPerMod: NormalizedGuard[] = [];
   resolvedCollisionsPerRou: [any, ModuleType | ModuleWithParams][] = [];
   resolvedCollisionsPerReq: [any, ModuleType | ModuleWithParams][] = [];
   appendsWithParams: AppendsWithParams[] = [];
   appendsModules: ModuleType[] = [];
   controllers: Class[] = [];
   importsWithParams: Override<RestModuleParams, { modRefId: ModuleWithSrcInitMeta }>[] = [];
-  params = {} as RestModuleParams | AppendsWithParams;
+  params = new NormalizedParams();
 }
 
 export type RestModRefId<T extends AnyObj = AnyObj> = ModRefId | AppendsWithParams<T>;

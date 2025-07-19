@@ -43,7 +43,7 @@ import { ImportModulesShallowConfig, RestImportObj, RestMetadataPerMod1 } from '
 export class ShallowModulesImporter {
   protected moduleName: string;
   protected prefixPerMod: string;
-  protected guardsPerMod1: GuardPerMod1[];
+  protected guards1: GuardPerMod1[];
   protected baseMeta: NormalizedMeta;
   protected meta: RestNormalizedMeta;
   protected shallowImportsBase: ShallowImportsBase;
@@ -100,7 +100,7 @@ export class ShallowModulesImporter {
     modRefId,
     unfinishedScanModules,
     prefixPerMod,
-    guardsPerMod1,
+    guards1,
     isAppends,
   }: ImportModulesShallowConfig): Map<ModRefId, RestMetadataPerMod1> {
     this.shallowImportsBase = shallowImportsBase;
@@ -113,7 +113,7 @@ export class ShallowModulesImporter {
     this.restGlProviders = globalProviders.shallowImportedModules.get(initRest) as RestGlobalProviders;
     this.prefixPerMod = prefixPerMod || '';
     this.moduleName = baseMeta.name;
-    this.guardsPerMod1 = guardsPerMod1 || [];
+    this.guards1 = guards1 || [];
     this.unfinishedScanModules = unfinishedScanModules;
     const moduleExtract: RestModuleExtract = {
       path: this.prefixPerMod,
@@ -159,7 +159,7 @@ export class ShallowModulesImporter {
     return this.shallowImports.set(modRefId, {
       baseMeta,
       prefixPerMod,
-      guardsPerMod1: this.guardsPerMod1,
+      guards1: this.guards1,
       meta: this.meta,
       applyControllers,
       importedTokensMap: {
@@ -198,7 +198,7 @@ export class ShallowModulesImporter {
       if (!meta) {
         continue;
       }
-      const { prefixPerMod, guardsPerMod1 } = this.getPrefixAndGuards(modRefId, meta, isImport);
+      const { prefixPerMod, guards1 } = this.getPrefixAndGuards(modRefId, meta, isImport);
       const shallowModulesImporter = new ShallowModulesImporter();
       this.unfinishedScanModules.add(modRefId);
       const shallowImportsBase = shallowModulesImporter.importModulesShallow({
@@ -208,7 +208,7 @@ export class ShallowModulesImporter {
         modRefId,
         unfinishedScanModules: this.unfinishedScanModules,
         prefixPerMod,
-        guardsPerMod1,
+        guards1,
         isAppends: !isImport,
       });
       this.unfinishedScanModules.delete(modRefId);
@@ -219,7 +219,7 @@ export class ShallowModulesImporter {
 
   protected getPrefixAndGuards(modRefId: RestModRefId, meta: RestNormalizedMeta, isImport?: boolean) {
     let prefixPerMod = '';
-    let guardsPerMod1: GuardPerMod1[] = [];
+    let guards1: GuardPerMod1[] = [];
     const { absolutePath } = meta.params;
     const hasModuleParams = isModuleWithParams(modRefId);
     if (hasModuleParams || !isImport) {
@@ -230,18 +230,18 @@ export class ShallowModulesImporter {
         const path = hasModuleParams ? meta.params.path : '';
         prefixPerMod = [this.prefixPerMod, path].filter((s) => s).join('/');
       }
-      const impGuradsPerMod1 = meta.guardsPerMod.map<GuardPerMod1>((g) => {
+      const impGuradsPerMod1 = meta.params.guards.map<GuardPerMod1>((g) => {
         return {
           ...g,
           meta: this.meta,
           baseMeta: this.baseMeta,
         };
       });
-      guardsPerMod1 = [...this.guardsPerMod1, ...impGuradsPerMod1];
+      guards1 = [...this.guards1, ...impGuradsPerMod1];
     } else {
       prefixPerMod = this.prefixPerMod;
     }
-    return { prefixPerMod, guardsPerMod1 };
+    return { prefixPerMod, guards1 };
   }
 
   /**

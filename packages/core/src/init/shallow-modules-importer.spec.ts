@@ -31,7 +31,7 @@ describe('ShallowModulesImporter', () => {
     override importedProvidersPerMod = new Map<any, ImportObj>();
     override importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
     override importedExtensions = new Map<ModRefId, Provider[]>();
-    // override guardsPerMod1: GuardPerMod1[] = [];
+    // override guards1: GuardPerMod1[] = [];
 
     override exportGlobalProviders(moduleManager: ModuleManager) {
       return super.exportGlobalProviders(moduleManager);

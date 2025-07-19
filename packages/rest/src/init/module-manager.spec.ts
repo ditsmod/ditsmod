@@ -505,8 +505,8 @@ describe('ModuleManager', () => {
 
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(3);
-    expect(getInitMeta(modRefId)?.guardsPerMod).toMatchObject([{ guard: Guard1 }]);
-    expect(getInitMeta(appendsWithParams)?.guardsPerMod).toMatchObject([{ guard: Guard2 }]);
+    expect(getInitMeta(modRefId)?.params.guards).toMatchObject([{ guard: Guard1 }]);
+    expect(getInitMeta(appendsWithParams)?.params.guards).toMatchObject([{ guard: Guard2 }]);
   });
 
   it('programmatically adding some modules to "imports" array of root module', () => {

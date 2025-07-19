@@ -26,7 +26,7 @@ export class RestImportObj<T extends Provider = Provider> {
 export class RestMetadataPerMod1 {
   baseMeta: NormalizedMeta;
   prefixPerMod: string;
-  guardsPerMod1: GuardPerMod1[];
+  guards1: GuardPerMod1[];
   /**
    * Snapshot of `RestNormalizedMeta`. If you modify any array in this object,
    * the original array will remain unchanged.
@@ -58,7 +58,7 @@ export class RestProvidersForMod {
 export class RestMetadataPerMod2 {
   baseMeta: NormalizedMeta;
   meta: RestNormalizedMeta;
-  guardsPerMod1: GuardPerMod1[];
+  guards1: GuardPerMod1[];
   prefixPerMod: string;
   applyControllers?: boolean;
 }
@@ -76,7 +76,7 @@ export interface ImportModulesShallowConfig {
   modRefId: ModRefId;
   unfinishedScanModules: Set<ModRefId>;
   prefixPerMod: string;
-  guardsPerMod1?: GuardPerMod1[];
+  guards1?: GuardPerMod1[];
   isAppends?: boolean;
 }
 

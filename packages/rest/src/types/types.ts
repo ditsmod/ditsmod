@@ -41,7 +41,7 @@ export class MetadataPerMod3 {
   baseMeta: NormalizedMeta;
   meta: RestNormalizedMeta;
   aControllerMetadata: ControllerMetadata[];
-  guardsPerMod1: GuardPerMod1[];
+  guards1: GuardPerMod1[];
 }
 
 export interface ObjectAny {

@@ -96,6 +96,6 @@ it('imports and appends with gruards for some modules', () => {
 
   mock.scanRootModule(AppModule);
   expect(mock.map.size).toBe(3);
-  // expect(mock.getMetadata(ModuleWithParams)?.guardsPerMod).toMatchObject([{ guard: Guard1 }]);
-  // expect(mock.getMetadata(appendsWithParams)?.guardsPerMod).toMatchObject([{ guard: Guard2 }]);
+  // expect(mock.getMetadata(ModuleWithParams)?.guards).toMatchObject([{ guard: Guard1 }]);
+  // expect(mock.getMetadata(appendsWithParams)?.guards).toMatchObject([{ guard: Guard2 }]);
 });
