@@ -87,30 +87,11 @@ export class ModuleNormalizer {
 
   protected normalizeModule(rawMeta: RestMetadata, meta: RestNormalizedMeta) {
     this.throwIfResolvingNormalizedProvider(rawMeta);
-    this.exportFromReflectMetadata(rawMeta, meta);
-    // this.pickAndMergeMeta(meta, rawMeta);
+    this.exportModules(rawMeta, meta);
     this.checkGuardsPerMod(meta.params.guards);
   }
 
-  protected throwIfResolvingNormalizedProvider(rawMeta: RestMetadata) {
-    const resolvedCollisionsPerLevel: [any, ModuleType | ModuleWithParams][] = [];
-    if (Array.isArray(rawMeta.resolvedCollisionsPerRou)) {
-      resolvedCollisionsPerLevel.push(...rawMeta.resolvedCollisionsPerRou);
-    }
-    if (Array.isArray(rawMeta.resolvedCollisionsPerReq)) {
-      resolvedCollisionsPerLevel.push(...rawMeta.resolvedCollisionsPerReq);
-    }
-
-    resolvedCollisionsPerLevel.forEach(([provider]) => {
-      if (isNormalizedProvider(provider)) {
-        const providerName = provider.token.name || provider.token;
-        const msg = `for ${providerName} inside "resolvedCollisionPer*" array must be includes tokens only.`;
-        throw new TypeError(msg);
-      }
-    });
-  }
-
-  protected exportFromReflectMetadata(rawMeta: RestMetadata, meta: RestNormalizedMeta) {
+  protected exportModules(rawMeta: RestMetadata, meta: RestNormalizedMeta) {
     const providers: Provider[] = [];
     if (Array.isArray(rawMeta.providersPerRou)) {
       providers.push(...rawMeta.providersPerRou);
@@ -124,7 +105,8 @@ export class ModuleNormalizer {
       this.throwIfUndefined(exp, i);
       this.throwExportsIfNormalizedProvider(exp);
       if (isProvider(exp) || getTokens(providers).includes(exp)) {
-        this.findAndSetProviders(exp, rawMeta, meta);
+        // Provider or token of provider
+        this.exportProviders(exp, rawMeta, meta);
       } else {
         this.throwUnidentifiedToken(exp);
       }
@@ -135,8 +117,7 @@ export class ModuleNormalizer {
     const tokenName = token.name || token;
     const msg =
       `Exporting "${tokenName}" failed: if "${tokenName}" is a token of a provider, this provider ` +
-      'must be included in providersPerRou or providersPerReq. ' +
-      `If "${tokenName}" is a token of extension, this extension must be included in "extensions" array.`;
+      'must be included in providersPerRou or providersPerReq.';
     throw new TypeError(msg);
   }
 
@@ -148,7 +129,7 @@ export class ModuleNormalizer {
     }
   }
 
-  protected findAndSetProviders(token: any, rawMeta: RestMetadata, meta: RestNormalizedMeta) {
+  protected exportProviders(token: any, rawMeta: RestMetadata, meta: RestNormalizedMeta) {
     let found = false;
     (['Rou', 'Req'] as const).forEach((level) => {
       const unfilteredProviders = [...(rawMeta[`providersPer${level}`] || [])];
@@ -156,10 +137,8 @@ export class ModuleNormalizer {
       if (providers.length) {
         found = true;
         if (providers.some(isMultiProvider)) {
-          meta[`exportedMultiProvidersPer${level}`] ??= [];
           meta[`exportedMultiProvidersPer${level}`].push(...(providers as MultiProvider[]));
         } else {
-          meta[`exportedProvidersPer${level}`] ??= [];
           meta[`exportedProvidersPer${level}`].push(...providers);
         }
       }
@@ -204,6 +183,24 @@ export class ModuleNormalizer {
         '"forwardRef(() => YourModule)".';
       throw new Error(msg);
     }
+  }
+
+  protected throwIfResolvingNormalizedProvider(rawMeta: RestMetadata) {
+    const resolvedCollisionsPerLevel: [any, ModuleType | ModuleWithParams][] = [];
+    if (Array.isArray(rawMeta.resolvedCollisionsPerRou)) {
+      resolvedCollisionsPerLevel.push(...rawMeta.resolvedCollisionsPerRou);
+    }
+    if (Array.isArray(rawMeta.resolvedCollisionsPerReq)) {
+      resolvedCollisionsPerLevel.push(...rawMeta.resolvedCollisionsPerReq);
+    }
+
+    resolvedCollisionsPerLevel.forEach(([provider]) => {
+      if (isNormalizedProvider(provider)) {
+        const providerName = provider.token.name || provider.token;
+        const msg = `for ${providerName} inside "resolvedCollisionPer*" array must be includes tokens only.`;
+        throw new TypeError(msg);
+      }
+    });
   }
 
   protected checkController(Controller: Class) {
