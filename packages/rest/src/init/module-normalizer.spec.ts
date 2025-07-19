@@ -11,7 +11,6 @@ import {
 import { ModuleNormalizer } from './module-normalizer.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { controller } from '#types/controller.js';
-import { RestNormalizedMeta } from './rest-normalized-meta.js';
 import { CanActivate, NormalizedGuard } from '#interceptors/guard.js';
 import { RequestContext } from '#services/request-context.js';
 import { AppendsWithParams } from './module-metadata.js';
@@ -142,25 +141,68 @@ describe('rest ModuleNormalizer', () => {
     expect(meta2.exportedProvidersPerReq).toEqual([Service3, Service4]);
   });
 
-  describe('normalize root module only', () => {
+  it('normalize controllers, multi providers and resolved providers', () => {
     class Service1 {}
+    class Service2 {}
+    class Module1 {}
+    class Module2 {}
 
     @controller()
     class Controller1 {}
 
-    @initRest({ controllers: [Controller1], providersPerRou: [Service1] })
+    @initRest({
+      controllers: [Controller1],
+      providersPerRou: [Service1, { token: Service2, useClass: Service2, multi: true }],
+      resolvedCollisionsPerRou: [[Service1, Module1]],
+      resolvedCollisionsPerReq: [[Service2, Module2]],
+      exports: [Service1, Service2],
+    })
     @rootModule()
     class AppModule {}
 
-    it('should contain correct metadata', () => {
-      const baseMeta = moduleManager.scanRootModule(AppModule);
-      const meta = baseMeta.initMeta.get(initRest) as RestNormalizedMeta;
-      expect(meta.controllers.length).toBe(1);
-      expect(meta.controllers).toEqual([Controller1]);
-      expect(meta.providersPerRou.length).toBe(1);
-      expect(meta.providersPerRou).toEqual([Service1]);
-      expect(meta.providersPerReq.length).toBe(0);
-      expect(meta.providersPerReq).toEqual([]);
-    });
+    const baseMeta = moduleManager.scanRootModule(AppModule);
+    const meta = baseMeta.initMeta.get(initRest)!;
+    expect(meta.controllers).toEqual([Controller1]);
+    expect(meta.providersPerRou).toEqual([Service1, { token: Service2, useClass: Service2, multi: true }]);
+    expect(meta.exportedProvidersPerRou).toEqual([Service1]);
+    expect(meta.exportedMultiProvidersPerRou).toEqual([{ token: Service2, useClass: Service2, multi: true }]);
+    expect(meta.providersPerReq.length).toBe(0);
+    expect(meta.resolvedCollisionsPerRou).toEqual([[Service1, Module1]]);
+    expect(meta.resolvedCollisionsPerReq).toEqual([[Service2, Module2]]);
+  });
+
+  it('wrong imports/exports of modules', () => {
+    class Service1 {}
+
+    @featureModule({ providersPerApp: [Service1] })
+    class Module1 {}
+
+    @initRest({ exports: [{ module: Module1 }] })
+    @rootModule()
+    class AppModule {}
+
+    const msg = '"Module1" is listed in "export" but missing from the "importsWithParams" array';
+    expect(() => moduleManager.scanRootModule(AppModule)).toThrow(msg);
+  });
+
+  it('proprly works with imports/exports of modules', () => {
+    class Service1 {}
+
+    @featureModule({ providersPerApp: [Service1] })
+    class Module1 {}
+    const moduleWithParams: ModuleWithParams = { module: Module1 };
+
+    @initRest({
+      importsWithParams: [{ modRefId: moduleWithParams }],
+      exports: [moduleWithParams],
+    })
+    @rootModule()
+    class AppModule {}
+
+    const baseMeta = moduleManager.scanRootModule(AppModule);
+    expect(baseMeta.importsModules).toEqual([]);
+    expect(baseMeta.exportsModules).toEqual([]);
+    expect(baseMeta.importsWithParams).toEqual([moduleWithParams]);
+    expect(baseMeta.exportsWithParams).toEqual([moduleWithParams]);
   });
 });

@@ -20,6 +20,8 @@ import {
   resolveForwardRef,
   getDuplicates,
   CustomError,
+  isModuleWithParams,
+  getDebugClassName,
 } from '@ditsmod/core';
 
 import { RestMetadata } from '#init/module-metadata.js';
@@ -46,7 +48,7 @@ export class ModuleNormalizer {
     });
     this.pickAndMergeMeta(meta, rawMeta);
     meta.controllers.forEach((Controller) => this.checkController(Controller));
-    this.normalizeModule(rawMeta, meta);
+    this.normalizeModule(baseMeta, rawMeta, meta);
     this.quickCheckMetadata(baseMeta, meta);
     const controllerDuplicates = getDuplicates(meta.controllers).map((c) => c.name);
     if (controllerDuplicates.length) {
@@ -85,13 +87,13 @@ export class ModuleNormalizer {
     }
   }
 
-  protected normalizeModule(rawMeta: RestMetadata, meta: RestNormalizedMeta) {
+  protected normalizeModule(baseMeta: NormalizedMeta, rawMeta: RestMetadata, meta: RestNormalizedMeta) {
     this.throwIfResolvingNormalizedProvider(rawMeta);
-    this.exportModules(rawMeta, meta);
+    this.exportModules(baseMeta, rawMeta, meta);
     this.checkGuardsPerMod(meta.params.guards);
   }
 
-  protected exportModules(rawMeta: RestMetadata, meta: RestNormalizedMeta) {
+  protected exportModules(baseMeta: NormalizedMeta, rawMeta: RestMetadata, meta: RestNormalizedMeta) {
     const providers: Provider[] = [];
     if (Array.isArray(rawMeta.providersPerRou)) {
       providers.push(...rawMeta.providersPerRou);
@@ -104,13 +106,26 @@ export class ModuleNormalizer {
       exp = resolveForwardRef(exp);
       this.throwIfUndefined(exp, i);
       this.throwExportsIfNormalizedProvider(exp);
-      if (isProvider(exp) || getTokens(providers).includes(exp)) {
+      if (isModuleWithParams(exp)) {
+        if (!rawMeta.importsWithParams?.some((imp) => imp.modRefId === exp)) {
+          this.throwExportWithParams(exp);
+        }
+        if (!baseMeta.exportsWithParams.includes(exp)) {
+          baseMeta.exportsWithParams.push(exp);
+        }
+      } else if (isProvider(exp) || getTokens(providers).includes(exp)) {
         // Provider or token of provider
         this.exportProviders(exp, rawMeta, meta);
       } else {
         this.throwUnidentifiedToken(exp);
       }
     });
+  }
+
+  protected throwExportWithParams(moduleWithParams: ModuleWithParams) {
+    const moduleName = getDebugClassName(moduleWithParams.module);
+    const msg = `Exporting "${moduleName}" failed: "${moduleName}" is listed in "export" but missing from the "importsWithParams" array.`;
+    throw new TypeError(msg);
   }
 
   protected throwUnidentifiedToken(token: any) {
