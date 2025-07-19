@@ -6,7 +6,7 @@ import { GuardItem } from '#interceptors/guard.js';
  */
 export interface RestMetadata {
   /**
-   * List of provider tokens exported by this module.
+   * List of `ModuleWithParams` or provider tokens exported by this module.
    */
   exports?: any[];
   /**
