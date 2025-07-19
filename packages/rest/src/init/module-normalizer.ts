@@ -63,6 +63,9 @@ export class ModuleNormalizer {
     const { modRefId } = baseMeta;
     if (isAppendsWithParams(modRefId)) {
       meta.guardsPerMod.push(...this.normalizeGuards(modRefId.guards));
+      meta.params.absolutePath = modRefId.absolutePath;
+      meta.params.path = modRefId.path;
+      meta.params.guards = modRefId.guards;
       return;
     } else if (!isModuleWithSrcInitMeta(modRefId)) {
       return;
@@ -77,7 +80,9 @@ export class ModuleNormalizer {
         }
       });
 
-      meta.params = params;
+      meta.params.absolutePath = params.absolutePath;
+      meta.params.path = params.path;
+      meta.params.guards = params.guards;
       meta.guardsPerMod.push(...this.normalizeGuards(params.guards));
     }
   }

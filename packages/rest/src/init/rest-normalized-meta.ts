@@ -28,7 +28,7 @@ export class RestNormalizedMeta implements ParamsTransferObj<RestModuleParams> {
   appendsModules: ModuleType[] = [];
   controllers: Class[] = [];
   importsWithParams: Override<RestModuleParams, { modRefId: ModuleWithSrcInitMeta }>[] = [];
-  params = {} as Omit<RestModuleParams, 'modRefId'>;
+  params = {} as RestModuleParams | AppendsWithParams;
 }
 
 export type RestModRefId<T extends AnyObj = AnyObj> = ModRefId | AppendsWithParams<T>;
