@@ -78,11 +78,11 @@ export interface BaseAppendsWithParams<T extends AnyObj = AnyObj> {
 }
 
 export interface AppendsWithParams1<T extends AnyObj = AnyObj> extends BaseAppendsWithParams<T> {
-  path: string;
+  path?: string;
   absolutePath?: never;
 }
 
 export interface AppendsWithParams2<T extends AnyObj = AnyObj> extends BaseAppendsWithParams<T> {
-  absolutePath: string;
+  absolutePath?: string;
   path?: never;
 }
