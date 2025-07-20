@@ -241,7 +241,7 @@ describe('ModuleNormalizer', () => {
       expect(result?.rawMeta).toEqual(rawMeta);
     });
 
-    it('importsWithParams must have shallow copy of the params, and new modRefId', () => {
+    it('init hooks need srcInitMeta property in moduleWithParams', () => {
       class Module1 {}
       class Module2 {}
       class Service1 {}
