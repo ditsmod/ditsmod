@@ -40,7 +40,9 @@
         "--experimental-vm-modules",
         "--no-warnings=ExperimentalWarning"
       ],
-      "args": ["--runInBand"],
+      "args": [
+        "--runInBand"
+      ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "windows": {
@@ -51,20 +53,23 @@
       "name": "Jest Current File",
       "type": "node",
       "request": "launch",
-      "preLaunchTask": "npm: build-test",
-      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "preLaunchTask": "npm: build-test - packages/core",
+      "runtimeExecutable": "node",
       "runtimeArgs": [
+        "--enable-source-maps",
         "--experimental-vm-modules",
-        "--no-warnings=ExperimentalWarning"
+        "--no-warnings=ExperimentalWarning",
+        "${workspaceFolder}/node_modules/jest/bin/jest.js"
       ],
       "args": [
-        "${fileBasenameNoExtension}"
+        "${fileBasenameNoExtension}",
+        "--runInBand"
       ],
+      "env": {
+        "NODE_ENV": "test"
+      },
       "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen",
-      "windows": {
-        "program": "${workspaceFolder}/node_modules/jest/bin/jest",
-      }
+      "internalConsoleOptions": "neverOpen"
     }
   ]
 }
