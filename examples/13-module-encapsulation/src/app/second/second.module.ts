@@ -1,5 +1,5 @@
 import { featureModule } from '@ditsmod/core';
-import { initRest, RestModule } from '@ditsmod/rest';
+import { initRest } from '@ditsmod/rest';
 
 import { FirstModule } from '../first/first.module.js';
 import { SecondMultiProviderService } from './second-multi-provider.service.js';
@@ -12,6 +12,6 @@ import { SecondService } from './second.service.js';
   exports: [SecondService, 'multi-provider'],
 })
 @featureModule({
-  imports: [RestModule, FirstModule],
+  imports: [FirstModule],
 })
 export class SecondModule {}

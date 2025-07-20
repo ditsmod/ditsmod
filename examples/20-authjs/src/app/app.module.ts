@@ -1,4 +1,4 @@
-import { controller, route, RestModule, Res, initRest } from '@ditsmod/rest';
+import { controller, route, Res, initRest } from '@ditsmod/rest';
 import { AuthjsConfig, AUTHJS_SESSION, AuthjsGuard, AuthjsModule, AuthjsInterceptor } from '@ditsmod/authjs';
 import { rootModule, inject } from '@ditsmod/core';
 
@@ -27,7 +27,6 @@ export class InjScopedController {
 @initRest({ controllers: [InjScopedController] })
 @rootModule({
   imports: [
-    RestModule,
     AuthjsModule.withConfig({
       token: AuthjsConfig,
       useFactory: [OverriddenAuthConfig, OverriddenAuthConfig.prototype.initAuthjsConfig],

@@ -1,5 +1,5 @@
 import { Providers, rootModule } from '@ditsmod/core';
-import { initRest, RestModule } from '@ditsmod/rest';
+import { initRest } from '@ditsmod/rest';
 
 import { HelloWorldController } from './hello-world.controller.js';
 import { MyService } from './my.service.js';
@@ -8,7 +8,6 @@ import { Controller1 } from './bad.controllers.js';
 
 @initRest({ controllers: [HelloWorldController, Controller1], providersPerReq: [MyService, OtherService] })
 @rootModule({
-  imports: [RestModule],
   providersPerApp: new Providers().useLogConfig({ level: 'info' }),
 })
 export class AppModule {}

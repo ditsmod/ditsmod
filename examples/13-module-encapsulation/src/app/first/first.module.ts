@@ -1,6 +1,6 @@
 import { featureModule } from '@ditsmod/core';
 import { BodyParserModule } from '@ditsmod/body-parser';
-import { initRest, RestModule } from '@ditsmod/rest';
+import { initRest } from '@ditsmod/rest';
 
 import { FirstController } from './first.controler.js';
 import { FirstPerRouService } from './first-per-rou.service.js';
@@ -14,6 +14,6 @@ import { FirstMultiProviderService } from './first-multi-provider.service.js';
   exports: [FirstService, FirstPerRouService, BodyParserModule, 'multi-provider'],
 })
 @featureModule({
-  imports: [RestModule, BodyParserModule],
+  imports: [BodyParserModule],
 })
 export class FirstModule {}

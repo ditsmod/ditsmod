@@ -1,5 +1,5 @@
 import { featureModule } from '@ditsmod/core';
-import { RestModule, initRest } from '@ditsmod/rest';
+import { initRest } from '@ditsmod/rest';
 import { BodyParserModule, MulterExtendedOptions } from '@ditsmod/body-parser';
 
 import { SomeController } from './some.controller.js';
@@ -9,7 +9,7 @@ const multerOptions: MulterExtendedOptions = { limits: { files: 20 }, errorLogLe
 
 @initRest({ controllers: [SomeController, CtxController] })
 @featureModule({
-  imports: [RestModule, BodyParserModule],
+  imports: [BodyParserModule],
   providersPerMod: [{ token: MulterExtendedOptions, useValue: multerOptions }],
 })
 export class SomeModule {}

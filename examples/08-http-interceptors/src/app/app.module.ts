@@ -1,5 +1,5 @@
 import { Providers, rootModule } from '@ditsmod/core';
-import { initRest, HTTP_INTERCEPTORS, RestModule } from '@ditsmod/rest';
+import { initRest, HTTP_INTERCEPTORS } from '@ditsmod/rest';
 
 import { HelloWorldController, HelloWorldController2 } from './hello-world.controller.js';
 import { MyHttpInterceptor } from './my-http-interceptor.js';
@@ -10,7 +10,6 @@ import { MyHttpInterceptor } from './my-http-interceptor.js';
   providersPerReq: [{ token: HTTP_INTERCEPTORS, useClass: MyHttpInterceptor, multi: true }],
 })
 @rootModule({
-  imports: [RestModule],
   providersPerApp: new Providers().useLogConfig({ level: 'info' }),
 })
 export class AppModule {}

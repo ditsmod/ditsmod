@@ -1,5 +1,5 @@
 import { featureModule } from '@ditsmod/core';
-import { RestModule, initRest } from '@ditsmod/rest';
+import { initRest } from '@ditsmod/rest';
 
 import { CommentsModule } from './comments/comments.module.js';
 import { PostsController } from './posts.controller.js';
@@ -8,7 +8,5 @@ import { PostsController } from './posts.controller.js';
   appends: [{ path: 'comments/:commentId', module: CommentsModule }],
   controllers: [PostsController]
 })
-@featureModule({
-  imports: [RestModule],
-})
+@featureModule()
 export class PostsModule {}

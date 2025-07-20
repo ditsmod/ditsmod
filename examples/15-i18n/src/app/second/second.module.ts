@@ -1,6 +1,6 @@
 import { featureModule } from '@ditsmod/core';
 import { I18nModule, I18nProviders, I18N_TRANSLATIONS } from '@ditsmod/i18n';
-import { initRest, RestModule } from '@ditsmod/rest';
+import { initRest } from '@ditsmod/rest';
 
 import { FirstModule } from '../first/first.module.js';
 import { SecondController } from './second.controller.js';
@@ -9,7 +9,7 @@ import { imported } from './locales/imported/index.js';
 
 @initRest({ controllers: [SecondController] })
 @featureModule({
-  imports: [RestModule, I18nModule, FirstModule],
+  imports: [I18nModule, FirstModule],
   providersPerMod: new I18nProviders().i18n({ current, imported }, { defaultLng: 'uk' }),
   exports: [I18N_TRANSLATIONS],
 })

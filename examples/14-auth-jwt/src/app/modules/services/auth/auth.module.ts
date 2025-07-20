@@ -1,6 +1,6 @@
 import { featureModule } from '@ditsmod/core';
 import { JwtModule } from '@ditsmod/jwt';
-import { initRest, RestModule } from '@ditsmod/rest';
+import { initRest } from '@ditsmod/rest';
 
 import { AuthController } from './auth.controller.js';
 import { BearerGuard } from './bearer.guard.js';
@@ -9,7 +9,7 @@ const moduleWithParams = JwtModule.withParams({ secret: 'hard-to-guess-secret', 
 
 @initRest({ controllers: [AuthController], providersPerReq: [BearerGuard], exports: [BearerGuard] })
 @featureModule({
-  imports: [RestModule, moduleWithParams],
+  imports: [moduleWithParams],
   exports: [moduleWithParams],
 })
 export class AuthModule {}
