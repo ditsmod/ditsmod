@@ -616,7 +616,7 @@ describe('ModuleManager', () => {
     expect(mock.getMetadata(Module1)).toEqual(expectedMeta1);
   });
 
-  it('allInitHooks should only contain init hooks imported into the current module', () => {
+  it('import hostModules; allInitHooks should only contain init hooks imported into the current module', () => {
     class Service1 {}
     @featureModule()
     class HostModule1 {}
@@ -677,10 +677,21 @@ describe('ModuleManager', () => {
     class Module4 {}
 
     mock.scanRootModule(Module4);
+
     const mod1 = mock.getMetadata(Module1, true);
     const mod2 = mock.getMetadata(Module2, true);
     const mod3 = mock.getMetadata(Module3, true);
     const mod4 = mock.getMetadata(Module4, true);
+
+    mod1.importsModules.includes(HostModule1);
+    mod2.importsModules.includes(HostModule2);
+    mod3.importsModules.includes(HostModule3);
+    mod4.importsModules.includes(HostModule4);
+
+    expect(mock.getMetadata(HostModule1, true).modRefId).toBe(HostModule1);
+    expect(mock.getMetadata(HostModule2, true).modRefId).toBe(HostModule2);
+    expect(mock.getMetadata(HostModule3, true).modRefId).toBe(HostModule3);
+    expect(mock.getMetadata(HostModule4, true).modRefId).toBe(HostModule4);
 
     expect(mod1.allInitHooks.size).toBe(1);
     expect(mod1.allInitHooks.get(initSome1)?.hostModule).toBe(HostModule1);
