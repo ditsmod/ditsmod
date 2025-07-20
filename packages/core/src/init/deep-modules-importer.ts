@@ -60,7 +60,7 @@ export class DeepModulesImporter {
     this.tokensPerApp = getTokens(this.providersPerApp);
     this.shallowImports.forEach(({ baseMeta, importedTokensMap, shallowImportedModules }, modRefId) => {
       const deepImportedModules = new Map<AnyFn, AnyObj>();
-      this.moduleManager.allInitHooks.forEach((initHooks, decorator) => {
+      baseMeta.allInitHooks.forEach((initHooks, decorator) => {
         const shallowImportedModule = shallowImportedModules.get(decorator)!;
         const deepImports = initHooks.importModulesDeep({
           metadataPerMod1: shallowImportedModule,

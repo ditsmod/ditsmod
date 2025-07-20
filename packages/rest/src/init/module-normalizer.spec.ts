@@ -65,7 +65,7 @@ describe('rest ModuleNormalizer', () => {
 
     const baseMeta = moduleManager.scanRootModule(AppModule);
     const meta1 = moduleManager.getMetadata(AppModule, true).initMeta.get(initRest)!;
-    const modRefIds = moduleManager.allInitHooks.get(initRest)?.getModulesToScan(meta1);
+    const modRefIds = baseMeta.allInitHooks.get(initRest)?.getModulesToScan(meta1);
     expect(modRefIds).toEqual([appendsWithParams]);
     expect(baseMeta.importsModules).toEqual([RestModule]);
     expect(baseMeta.importsWithParams).toEqual([]);
@@ -125,7 +125,7 @@ describe('rest ModuleNormalizer', () => {
 
     const baseMeta = moduleManager.scanRootModule(AppModule);
     const meta1 = moduleManager.getMetadata(AppModule, true).initMeta.get(initRest)!;
-    const modRefIds = moduleManager.allInitHooks.get(initRest)?.getModulesToScan(meta1);
+    const modRefIds = baseMeta.allInitHooks.get(initRest)?.getModulesToScan(meta1);
     expect(modRefIds).toEqual([]);
     expect(baseMeta.importsModules).toEqual([RestModule]);
     expect(baseMeta.importsWithParams).toEqual([moduleWithParams]);

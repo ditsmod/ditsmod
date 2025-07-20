@@ -1,16 +1,17 @@
 import { jest } from '@jest/globals';
 
-import { injectable, forwardRef, Provider, isMultiProvider } from '#di';
+import { injectable, forwardRef, Provider, isMultiProvider, makeClassDecorator } from '#di';
 import { featureModule } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { Extension } from '#extension/extension-types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { CallsiteUtils } from '#utils/callsites.js';
-import { ModuleManager } from './module-manager.js';
+import { AllInitHooks, ModuleManager } from './module-manager.js';
 import { ModuleType, AnyObj, ModRefId } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
-import { NormalizedMeta } from '#types/normalized-meta.js';
+import { AddDecorator, NormalizedMeta } from '#types/normalized-meta.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
+import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 
 describe('ModuleManager', () => {
   console.log = jest.fn();
@@ -45,8 +46,8 @@ describe('ModuleManager', () => {
       return super.getOriginMetadata<T, A>(moduleId, throwErrOnNotFound);
     }
 
-    override normalizeMetadata(modRefId: ModRefId): NormalizedMeta {
-      return super.normalizeMetadata(modRefId);
+    override normalizeMetadata(modRefId: ModRefId, allInitHooks: AllInitHooks): NormalizedMeta {
+      return super.normalizeMetadata(modRefId, allInitHooks);
     }
   }
 
@@ -85,9 +86,9 @@ describe('ModuleManager', () => {
 
     jest.spyOn(mock, 'normalizeMetadata');
     mock.scanRootModule(AppModule);
-    expect(mock.normalizeMetadata).toHaveBeenNthCalledWith(1, AppModule);
-    expect(mock.normalizeMetadata).toHaveBeenNthCalledWith(2, Module2);
-    expect(mock.normalizeMetadata).toHaveBeenNthCalledWith(3, Module1);
+    expect(mock.normalizeMetadata).toHaveBeenNthCalledWith(1, AppModule, new Map());
+    expect(mock.normalizeMetadata).toHaveBeenNthCalledWith(2, Module2, new Map());
+    expect(mock.normalizeMetadata).toHaveBeenNthCalledWith(3, Module1, new Map());
   });
 
   describe('providersPerApp', () => {
@@ -133,15 +134,7 @@ describe('ModuleManager', () => {
 
     it('should collects providers in particular order', () => {
       mock.scanRootModule(AppModule);
-      expect(mock.providersPerApp).toEqual([
-        Service1,
-        Service2,
-        Service3,
-        Service4,
-        Service5,
-        Service6,
-        Service0,
-      ]);
+      expect(mock.providersPerApp).toEqual([Service1, Service2, Service3, Service4, Service5, Service6, Service0]);
     });
 
     it('should works with moduleWithParams', () => {
@@ -621,5 +614,90 @@ describe('ModuleManager', () => {
     mock.scanRootModule(Module3);
     expect(mock.getMetadata('root')).toEqual(expectedMeta3);
     expect(mock.getMetadata(Module1)).toEqual(expectedMeta1);
+  });
+
+  it('allInitHooks should only contain init hooks imported into the current module', () => {
+    class Service1 {}
+    @featureModule()
+    class HostModule1 {}
+    @featureModule()
+    class HostModule2 {}
+    @featureModule()
+    class HostModule3 {}
+    @featureModule()
+    class HostModule4 {}
+
+    class InitHooksAndRawMeta1 extends InitHooksAndRawMeta<any> {
+      override hostModule = HostModule1;
+      override getHostInitHooks() {
+        return new InitHooksAndRawMeta1({ one: 1 });
+      }
+    }
+
+    class InitHooksAndRawMeta2 extends InitHooksAndRawMeta<any> {
+      override hostModule = HostModule2;
+      override getHostInitHooks() {
+        return new InitHooksAndRawMeta2({ two: 2 });
+      }
+    }
+
+    class InitHooksAndRawMeta3 extends InitHooksAndRawMeta<any> {
+      override hostModule = HostModule3;
+      override getHostInitHooks() {
+        return new InitHooksAndRawMeta3({ three: 3 });
+      }
+    }
+
+    class InitHooksAndRawMeta4 extends InitHooksAndRawMeta<any> {
+      override hostModule = HostModule4;
+      override getHostInitHooks() {
+        return new InitHooksAndRawMeta4({ four: 4 });
+      }
+    }
+
+    const initSome1: AddDecorator<any, any> = makeClassDecorator((data) => new InitHooksAndRawMeta1(data));
+    const initSome2: AddDecorator<any, any> = makeClassDecorator((data) => new InitHooksAndRawMeta2(data));
+    const initSome3: AddDecorator<any, any> = makeClassDecorator((data) => new InitHooksAndRawMeta3(data));
+    const initSome4: AddDecorator<any, any> = makeClassDecorator((data) => new InitHooksAndRawMeta4(data));
+
+    @initSome1({ name: '1' })
+    @featureModule()
+    class Module1 {}
+
+    @initSome2({ name: '2' })
+    @featureModule({ imports: [Module1], providersPerApp: [Service1] })
+    class Module2 {}
+
+    @initSome3({ name: '3' })
+    @featureModule({ imports: [Module2], providersPerApp: [Service1] })
+    class Module3 {}
+
+    @initSome4({ name: '4' })
+    @rootModule({ imports: [Module3], providersPerApp: [Service1] })
+    class Module4 {}
+
+    mock.scanRootModule(Module4);
+    const mod1 = mock.getMetadata(Module1, true);
+    const mod2 = mock.getMetadata(Module2, true);
+    const mod3 = mock.getMetadata(Module3, true);
+    const mod4 = mock.getMetadata(Module4, true);
+
+    expect(mod1.allInitHooks.size).toBe(1);
+    expect(mod1.allInitHooks.get(initSome1)?.hostModule).toBe(HostModule1);
+
+    expect(mod2.allInitHooks.size).toBe(2);
+    expect(mod2.allInitHooks.get(initSome1)?.hostModule).toBe(HostModule1);
+    expect(mod2.allInitHooks.get(initSome2)?.hostModule).toBe(HostModule2);
+
+    expect(mod3.allInitHooks.size).toBe(3);
+    expect(mod3.allInitHooks.get(initSome1)?.hostModule).toBe(HostModule1);
+    expect(mod3.allInitHooks.get(initSome2)?.hostModule).toBe(HostModule2);
+    expect(mod3.allInitHooks.get(initSome3)?.hostModule).toBe(HostModule3);
+
+    expect(mod4.allInitHooks.size).toBe(4);
+    expect(mod4.allInitHooks.get(initSome1)?.hostModule).toBe(HostModule1);
+    expect(mod4.allInitHooks.get(initSome2)?.hostModule).toBe(HostModule2);
+    expect(mod4.allInitHooks.get(initSome3)?.hostModule).toBe(HostModule3);
+    expect(mod4.allInitHooks.get(initSome4)?.hostModule).toBe(HostModule4);
   });
 });

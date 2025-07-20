@@ -24,7 +24,6 @@ type ModuleId = string | ModRefId;
 @injectable()
 export class ModuleManager {
   providersPerApp: Provider[] = [];
-  allInitHooks: AllInitHooks = new Map();
   protected injectorPerModMap = new Map<ModRefId, Injector>();
   protected map: ModulesMap = new Map();
   protected mapId = new Map<'root' | (string & {}), ModRefId>();
@@ -225,13 +224,11 @@ export class ModuleManager {
   /**
    * Here "raw" means that it returns "raw" normalized metadata (without `this.copyMeta()`).
    */
-  protected scanRawModule(modRefId: ModRefId) {
-    const baseMeta = this.normalizeMetadata(modRefId);
+  protected scanRawModule(modRefId: ModRefId, allInitHooks?: AllInitHooks) {
+    allInitHooks ??= new Map();
+    const baseMeta = this.normalizeMetadata(modRefId, allInitHooks);
     const importsOrExports: (ModuleWithParams | ModuleType)[] = [];
     baseMeta.mInitHooksAndRawMeta.forEach((initHooks, decorator) => {
-      if (!this.allInitHooks.get(decorator)) {
-        this.allInitHooks.set(decorator, initHooks);
-      }
       const meta = baseMeta.initMeta.get(decorator);
       if (meta) {
         importsOrExports.push(...initHooks.getModulesToScan(meta));
@@ -248,7 +245,7 @@ export class ModuleManager {
         continue;
       }
       this.unfinishedScanModules.add(input);
-      this.scanRawModule(input);
+      this.scanRawModule(input, baseMeta.allInitHooks);
       this.unfinishedScanModules.delete(input);
       this.scanedModules.add(input);
     }
@@ -260,6 +257,7 @@ export class ModuleManager {
     const providersPerApp = isRootModule(baseMeta) ? [] : baseMeta.providersPerApp;
     this.providersPerApp.push(...providersPerApp);
     this.map.set(modRefId, baseMeta);
+    baseMeta.allInitHooks.forEach((initHooks, decorator) => allInitHooks.set(decorator, initHooks));
     return baseMeta;
   }
 
@@ -334,9 +332,9 @@ export class ModuleManager {
     );
   }
 
-  protected normalizeMetadata(modRefId: ModRefId): NormalizedMeta {
+  protected normalizeMetadata(modRefId: ModRefId, allInitHooks: AllInitHooks): NormalizedMeta {
     try {
-      return this.moduleNormalizer.normalize(modRefId, this.allInitHooks);
+      return this.moduleNormalizer.normalize(modRefId, allInitHooks);
     } catch (err: any) {
       const moduleName = getDebugClassName(modRefId);
       let path = [...this.unfinishedScanModules].map((id) => getDebugClassName(id)).join(' -> ');

@@ -50,7 +50,7 @@ export class ModuleNormalizer {
     let rawMeta = aDecoratorMeta.find((d) => isModDecor(d))?.value;
     const modName = getDebugClassName(modRefId);
     if (!rawMeta) {
-      const msg = `Module build failed: module "${modName}" does not have the "@rootModule()" or "@featureModule()" decorator`;
+      const msg = `module "${modName}" does not have the "@rootModule()" or "@featureModule()" decorator`;
       throw new Error(msg);
     }
     if (isModuleWithParams(modRefId)) {
@@ -301,8 +301,20 @@ export class ModuleNormalizer {
   }
 
   protected callInitHooks(baseMeta: NormalizedMeta, allInitHooks: AllInitHooks) {
+    allInitHooks.forEach((initHooks, decorator) => {
+      if (initHooks.hostModule === baseMeta.modRefId) {
+        const newInitHooksAndRawMeta = initHooks.getHostInitHooks();
+        if (newInitHooksAndRawMeta) {
+          baseMeta.mInitHooksAndRawMeta.set(decorator, newInitHooksAndRawMeta);
+        }
+      }
+    });
+
     baseMeta.mInitHooksAndRawMeta.forEach((initHooks, decorator) => {
-      if (isModuleWithParams(initHooks.hostModule)) {
+      baseMeta.allInitHooks.set(decorator, initHooks);
+      if (initHooks.hostModule === baseMeta.modRefId) {
+        // Skip import
+      } else if (isModuleWithParams(initHooks.hostModule)) {
         if (!baseMeta.importsWithParams.includes(initHooks.hostModule)) {
           baseMeta.importsWithParams.push(initHooks.hostModule);
         }
@@ -326,15 +338,6 @@ export class ModuleNormalizer {
             baseMeta.importsWithParams.push(param.modRefId);
           }
         });
-      }
-    });
-
-    allInitHooks.forEach((initHooks, decorator) => {
-      if (initHooks.hostModule === baseMeta.modRefId) {
-        const newInitHooksAndRawMeta = initHooks.getHostInitHooks();
-        if (newInitHooksAndRawMeta) {
-          baseMeta.mInitHooksAndRawMeta.set(decorator, newInitHooksAndRawMeta);
-        }
       }
     });
   }

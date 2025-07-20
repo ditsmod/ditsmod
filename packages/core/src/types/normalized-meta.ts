@@ -6,6 +6,7 @@ import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { ExtensionClass } from '#extension/extension-types.js';
 import { ParamsTransferObj } from '#decorators/feature-module.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
+import { AllInitHooks } from '#init/module-manager.js';
 
 export interface InitMetaMap {
   set<T extends ParamsTransferObj>(key: AddDecorator<any, T>, value: T): this;
@@ -83,6 +84,10 @@ export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj
    * Contains normalized metadata collected from module init decorators.
    */
   initMeta: InitMetaMap = new Map();
+  /**
+   * List of unique init hooks found in the current module and all imported modules.
+   */
+  allInitHooks: AllInitHooks = new Map();
 
   importsModules: ModuleType[] = [];
   importsWithParams: ModuleWithParams[] = [];
