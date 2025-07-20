@@ -14,6 +14,7 @@ import { controller } from '#types/controller.js';
 import { CanActivate, NormalizedGuard } from '#interceptors/guard.js';
 import { RequestContext } from '#services/request-context.js';
 import { AppendsWithParams } from './module-metadata.js';
+import { RestModule } from './rest.module.js';
 
 describe('rest ModuleNormalizer', () => {
   class MockModuleNormalizer extends ModuleNormalizer {}
@@ -66,7 +67,7 @@ describe('rest ModuleNormalizer', () => {
     const meta1 = moduleManager.getMetadata(AppModule, true).initMeta.get(initRest)!;
     const modRefIds = moduleManager.allInitHooks.get(initRest)?.getModulesToScan(meta1);
     expect(modRefIds).toEqual([appendsWithParams]);
-    expect(baseMeta.importsModules).toEqual([]);
+    expect(baseMeta.importsModules).toEqual([RestModule]);
     expect(baseMeta.importsWithParams).toEqual([]);
 
     const meta2 = moduleManager.getMetadata(appendsWithParams, true).initMeta.get(initRest)!;
@@ -126,7 +127,7 @@ describe('rest ModuleNormalizer', () => {
     const meta1 = moduleManager.getMetadata(AppModule, true).initMeta.get(initRest)!;
     const modRefIds = moduleManager.allInitHooks.get(initRest)?.getModulesToScan(meta1);
     expect(modRefIds).toEqual([]);
-    expect(baseMeta.importsModules).toEqual([]);
+    expect(baseMeta.importsModules).toEqual([RestModule]);
     expect(baseMeta.importsWithParams).toEqual([moduleWithParams]);
 
     const meta2 = moduleManager.getMetadata(moduleWithParams, true).initMeta.get(initRest)!;
@@ -200,7 +201,7 @@ describe('rest ModuleNormalizer', () => {
     class AppModule {}
 
     const baseMeta = moduleManager.scanRootModule(AppModule);
-    expect(baseMeta.importsModules).toEqual([]);
+    expect(baseMeta.importsModules).toEqual([RestModule]);
     expect(baseMeta.exportsModules).toEqual([]);
     expect(baseMeta.importsWithParams).toEqual([moduleWithParams]);
     expect(baseMeta.exportsWithParams).toEqual([moduleWithParams]);

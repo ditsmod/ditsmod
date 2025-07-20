@@ -30,6 +30,7 @@ import { NormalizedProvider, normalizeProviders } from '#utils/ng-utils.js';
 import { isExtensionConfig } from '#extension/type-guards.js';
 import { ModuleWithParams, ModuleWithSrcInitMeta } from '#types/module-metadata.js';
 import { mergeArrays } from '#utils/merge-arrays.js';
+import { AllInitHooks } from './module-manager.js';
 
 /**
  * Normalizes and validates module metadata.
@@ -44,7 +45,7 @@ export class ModuleNormalizer {
   /**
    * Returns normalized module metadata.
    */
-  normalize(modRefId: ModRefId) {
+  normalize(modRefId: ModRefId, allInitHooks: AllInitHooks) {
     const aDecoratorMeta = this.getDecoratorMeta(modRefId) || [];
     let rawMeta = aDecoratorMeta.find((d) => isModDecor(d))?.value;
     const modName = getDebugClassName(modRefId);
@@ -67,7 +68,7 @@ export class ModuleNormalizer {
     });
     this.checkAndMarkExternalModule(rawMeta, baseMeta);
     this.normalizeModule(modName, rawMeta, baseMeta);
-    this.callInitHooks(baseMeta);
+    this.callInitHooks(baseMeta, allInitHooks);
     this.quickCheckMetadata(baseMeta);
     return baseMeta;
   }
@@ -299,8 +300,16 @@ export class ModuleNormalizer {
     throw new Error(msg);
   }
 
-  protected callInitHooks(baseMeta: NormalizedMeta) {
+  protected callInitHooks(baseMeta: NormalizedMeta, allInitHooks: AllInitHooks) {
     baseMeta.mInitHooksAndRawMeta.forEach((initHooks, decorator) => {
+      if (isModuleWithParams(initHooks.hostModule)) {
+        if (!baseMeta.importsWithParams.includes(initHooks.hostModule)) {
+          baseMeta.importsWithParams.push(initHooks.hostModule);
+        }
+      } else if (initHooks.hostModule && !baseMeta.importsModules.includes(initHooks.hostModule)) {
+        baseMeta.importsModules.push(initHooks.hostModule);
+      }
+
       initHooks.rawMeta.importsWithParams?.forEach((params) => {
         if (isModuleWithParams(params.modRefId)) {
           (params.modRefId as ModuleWithSrcInitMeta).srcInitMeta = baseMeta.initMeta;
@@ -317,6 +326,15 @@ export class ModuleNormalizer {
             baseMeta.importsWithParams.push(param.modRefId);
           }
         });
+      }
+    });
+
+    allInitHooks.forEach((initHooks, decorator) => {
+      if (initHooks.hostModule === baseMeta.modRefId) {
+        const newInitHooksAndRawMeta = initHooks.getHostInitHooks();
+        if (newInitHooksAndRawMeta) {
+          baseMeta.mInitHooksAndRawMeta.set(decorator, newInitHooksAndRawMeta);
+        }
       }
     });
   }

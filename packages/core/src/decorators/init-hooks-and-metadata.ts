@@ -11,11 +11,46 @@ import { ParamsTransferObj } from './feature-module.js';
 type ObjectWithImports = { importsWithParams?: { modRefId: ModRefId }[] };
 
 /**
- * Init hooks and metadata attached by additional decorators,
+ * Init hooks and metadata attached by init decorators,
  * apart from the base decorators - `rootModule` or `featureModule`.
  */
 export class InitHooksAndRawMeta<T extends ObjectWithImports = ObjectWithImports> {
-  constructor(public rawMeta = {} as T) {}
+  /**
+   * The host module where the current init decorator is declared. If you add this module,
+   * it will be imported into the module where the corresponding init decorator is used.
+   */
+  hostModule?: ModRefId;
+
+  constructor(public rawMeta: T) {}
+
+  /**
+   * Returns new an instance of the current class. Allows you to prevent a circular dependency between
+   * the module you assign to `this.hostModule` and the decorator for which the current class with
+   * init hooks is intended. A circular dependency may occur if `this.hostModule` requires metadata
+   * from the decorator that the current class is meant for.
+   *
+   * For example, if the current class with hooks is created for the `initSomeThing` decorator,
+   * which is declared in the host module `SomeModule`, then it's not allowed to simultaneously:
+   *
+   * 1. annotate `SomeModule` using the `initSomeThing` decorator;
+   * 2. assign `this.hostModule = SomeModule` in the class with hooks for `initSomeThing`.
+   *
+   * This would result in a circular dependency, since `SomeModule` depends on `initSomeThing`, and
+   * `initSomeThing` depends on `SomeModule`. To avoid this, point 1 must not be performed. Instead,
+   * the following method should be used in the current class with init hooks:
+   *
+```ts
+override getHostInitHooks() {
+  return new CurrentInitHooksAndRawMeta({ one: 1, two: 2 });
+}
+```
+   *
+   * Here, `CurrentInitHooksAndRawMeta` is the same class where `this.hostModule = SomeModule` is assigned,
+   * and `{ one: 1, two: 2 }` represents the placeholder metadata that needs to be passed to `SomeModule`.
+   */
+  getHostInitHooks(): InitHooksAndRawMeta<T> | undefined {
+    return;
+  }
 
   /**
    * Normalizes the metadata from the current decorator. It is then inserted into `baseMeta.initMeta`.

@@ -12,11 +12,17 @@ import { ModuleNormalizer } from './module-normalizer.js';
 import { Providers } from '#utils/providers.js';
 
 describe('ModuleNormalizer', () => {
-  let mock: ModuleNormalizer;
+  class MockModuleNormalizer extends ModuleNormalizer {
+    override normalize(modRefId: ModRefId): NormalizedMeta<AnyObj, AnyObj> {
+      return super.normalize(modRefId, new Map());
+    }
+  }
+
+  let mock: MockModuleNormalizer;
 
   beforeEach(() => {
     clearDebugClassNames();
-    mock = new ModuleNormalizer();
+    mock = new MockModuleNormalizer();
   });
 
   it('empty root module', () => {

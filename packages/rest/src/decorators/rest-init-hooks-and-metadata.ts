@@ -12,12 +12,16 @@ import {
 import { RestModRefId, RestNormalizedMeta } from '#init/rest-normalized-meta.js';
 import { DeepModulesImporter } from '#init/deep-modules-importer.js';
 import { RestGlobalProviders } from '#types/types.js';
+import { RestModule } from '#init/rest.module.js';
+
 /**
  * A decorator that adds REST metadata to a `featureModule` or `rootModule`.
  */
 export const initRest: AddDecorator<RestMetadata, RestNormalizedMeta> = makeClassDecorator(transformMetadata);
 
 class RestInitHooksAndRawMeta extends InitHooksAndRawMeta<RestMetadata> {
+  override hostModule = RestModule;
+
   override normalize(baseMeta: NormalizedMeta): RestNormalizedMeta {
     return new ModuleNormalizer().normalize(baseMeta, this.rawMeta);
   }

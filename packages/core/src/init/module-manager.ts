@@ -14,6 +14,7 @@ import { CustomError } from '#error/custom-error.js';
 
 export type ModulesMap = Map<ModRefId, NormalizedMeta>;
 export type ModulesMapId = Map<string, ModRefId>;
+export type AllInitHooks = Map<AnyFn, Omit<InitHooksAndRawMeta, 'rawMeta'>>;
 type ModuleId = string | ModRefId;
 
 /**
@@ -23,7 +24,7 @@ type ModuleId = string | ModRefId;
 @injectable()
 export class ModuleManager {
   providersPerApp: Provider[] = [];
-  allInitHooks = new Map<AnyFn, Omit<InitHooksAndRawMeta<AnyObj>, 'rawMeta'>>();
+  allInitHooks: AllInitHooks = new Map();
   protected injectorPerModMap = new Map<ModRefId, Injector>();
   protected map: ModulesMap = new Map();
   protected mapId = new Map<'root' | (string & {}), ModRefId>();
@@ -335,7 +336,7 @@ export class ModuleManager {
 
   protected normalizeMetadata(modRefId: ModRefId): NormalizedMeta {
     try {
-      return this.moduleNormalizer.normalize(modRefId);
+      return this.moduleNormalizer.normalize(modRefId, this.allInitHooks);
     } catch (err: any) {
       const moduleName = getDebugClassName(modRefId);
       let path = [...this.unfinishedScanModules].map((id) => getDebugClassName(id)).join(' -> ');
