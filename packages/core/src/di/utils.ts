@@ -1,3 +1,4 @@
+import { ModRefId } from '#types/mix.js';
 import { InjectionToken } from './injection-token.js';
 import {
   Class,
@@ -127,7 +128,7 @@ export function isTypeProvider(provider: Provider): provider is TypeProvider {
   return provider instanceof Class;
 }
 
-export function isValueProvider(provider?: Provider): provider is ValueProvider {
+export function isValueProvider(provider?: Provider | ModRefId): provider is ValueProvider {
   return (
     provider?.hasOwnProperty('useValue') ||
     (Boolean(provider?.hasOwnProperty('token')) &&
@@ -137,14 +138,14 @@ export function isValueProvider(provider?: Provider): provider is ValueProvider 
   );
 }
 
-export function isClassProvider(provider?: Provider): provider is ClassProvider {
+export function isClassProvider(provider?: Provider | ModRefId): provider is ClassProvider {
   return (provider as ClassProvider)?.useClass !== undefined;
 }
-export function isTokenProvider(provider?: Provider): provider is TokenProvider {
+export function isTokenProvider(provider?: Provider | ModRefId): provider is TokenProvider {
   return (provider as TokenProvider)?.useToken !== undefined;
 }
 
-export function isFactoryProvider(provider?: Provider): provider is FactoryProvider {
+export function isFactoryProvider(provider?: Provider | ModRefId): provider is FactoryProvider {
   return (provider as FactoryProvider)?.useFactory !== undefined;
 }
 
@@ -175,7 +176,7 @@ export function isMultiProvider(provider?: Provider): provider is MultiProvider 
  * { token: SomeClas, useClass: OtherClass }
  * ```
  */
-export function isNormalizedProvider(provider?: Provider): provider is NormalizedProvider {
+export function isNormalizedProvider(provider?: Provider | ModRefId): provider is NormalizedProvider {
   return (
     isValueProvider(provider) || isClassProvider(provider) || isTokenProvider(provider) || isFactoryProvider(provider)
   );
