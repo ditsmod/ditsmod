@@ -14,7 +14,6 @@ import {
   MultiProvider,
   NormalizedMeta,
   NormalizedProvider,
-  Provider,
   Providers,
   reflector,
   resolveForwardRef,
@@ -37,27 +36,9 @@ export class ModuleNormalizer {
   normalize(baseMeta: NormalizedMeta, rawMeta: RestMetadata) {
     const meta = new RestNormalizedMeta();
     this.mergeModuleWithParams(baseMeta, rawMeta, meta);
-    rawMeta.appends?.forEach((ap, i) => {
-      ap = resolveForwardRef(ap);
-      this.throwIfUndefined(ap, i);
-      if (isAppendsWithParams(ap)) {
-        meta.appendsWithParams.push(ap);
-      } else {
-        meta.appendsModules.push(ap);
-      }
-    });
-    this.pickAndMergeMeta(meta, rawMeta);
-    meta.controllers.forEach((Controller) => this.checkController(Controller));
-    this.normalizeModule(baseMeta, rawMeta, meta);
-    this.quickCheckMetadata(baseMeta, meta);
-    const controllerDuplicates = getDuplicates(meta.controllers).map((c) => c.name);
-    if (controllerDuplicates.length) {
-      throw new CustomError({
-        msg1: `Detected duplicate controllers - ${controllerDuplicates.join(', ')}`,
-        level: 'fatal',
-      });
-    }
-
+    this.normalizeMetadata(baseMeta, rawMeta, meta);
+    this.exportModulesAndProviders(baseMeta, rawMeta, meta);
+    this.checkMetadata(baseMeta, meta);
     return meta;
   }
 
@@ -87,21 +68,43 @@ export class ModuleNormalizer {
     }
   }
 
-  protected normalizeModule(baseMeta: NormalizedMeta, rawMeta: RestMetadata, meta: RestNormalizedMeta) {
-    this.throwIfResolvingNormalizedProvider(rawMeta);
-    this.exportModules(baseMeta, rawMeta, meta);
-    this.checkGuardsPerMod(meta.params.guards);
+  protected normalizeMetadata(baseMeta: NormalizedMeta, rawMeta: RestMetadata, meta: RestNormalizedMeta) {
+    rawMeta.appends?.forEach((ap, i) => {
+      ap = resolveForwardRef(ap);
+      this.throwIfUndefined(ap, i);
+      if (isAppendsWithParams(ap)) {
+        meta.appendsWithParams.push(ap);
+      } else {
+        meta.appendsModules.push(ap);
+      }
+    });
+    this.pickAndMergeMeta(meta, rawMeta);
   }
 
-  protected exportModules(baseMeta: NormalizedMeta, rawMeta: RestMetadata, meta: RestNormalizedMeta) {
-    const providers: Provider[] = [];
-    if (Array.isArray(rawMeta.providersPerRou)) {
-      providers.push(...rawMeta.providersPerRou);
-    }
-    if (Array.isArray(rawMeta.providersPerReq)) {
-      providers.push(...rawMeta.providersPerReq);
-    }
+  protected pickAndMergeMeta(targetObject: RestNormalizedMeta, ...sourceObjects: RestMetadata[]) {
+    const trgtObj = targetObject as any;
+    sourceObjects.forEach((sourceObj: AnyObj) => {
+      sourceObj ??= {};
+      for (const prop in targetObject) {
+        if (Array.isArray(sourceObj[prop])) {
+          trgtObj[prop] ??= [];
+          trgtObj[prop].push(...sourceObj[prop].slice());
+        } else if (sourceObj[prop] instanceof Providers) {
+          trgtObj[prop] ??= [];
+          trgtObj[prop].push(...sourceObj[prop]);
+        } else if (sourceObj[prop] && typeof sourceObj[prop] == 'object') {
+          trgtObj[prop] = { ...trgtObj[prop], ...(sourceObj[prop] as any) };
+        } else if (sourceObj[prop] !== undefined) {
+          trgtObj[prop] = sourceObj[prop];
+        }
+      }
+    });
 
+    return trgtObj;
+  }
+
+  protected exportModulesAndProviders(baseMeta: NormalizedMeta, rawMeta: RestMetadata, meta: RestNormalizedMeta) {
+    const providers = meta.providersPerRou.concat(meta.providersPerReq);
     rawMeta.exports?.forEach((exp, i) => {
       exp = resolveForwardRef(exp);
       this.throwIfUndefined(exp, i);
@@ -168,28 +171,6 @@ export class ModuleNormalizer {
     }
   }
 
-  protected pickAndMergeMeta(targetObject: RestNormalizedMeta, ...sourceObjects: RestMetadata[]) {
-    const trgtObj = targetObject as any;
-    sourceObjects.forEach((sourceObj: AnyObj) => {
-      sourceObj ??= {};
-      for (const prop in targetObject) {
-        if (Array.isArray(sourceObj[prop])) {
-          trgtObj[prop] ??= [];
-          trgtObj[prop].push(...sourceObj[prop].slice());
-        } else if (sourceObj[prop] instanceof Providers) {
-          trgtObj[prop] ??= [];
-          trgtObj[prop].push(...sourceObj[prop]);
-        } else if (sourceObj[prop] && typeof sourceObj[prop] == 'object') {
-          trgtObj[prop] = { ...trgtObj[prop], ...(sourceObj[prop] as any) };
-        } else if (sourceObj[prop] !== undefined) {
-          trgtObj[prop] = sourceObj[prop];
-        }
-      }
-    });
-
-    return trgtObj;
-  }
-
   protected throwIfUndefined(imp: unknown, i: number) {
     if (imp === undefined) {
       const msg =
@@ -200,13 +181,13 @@ export class ModuleNormalizer {
     }
   }
 
-  protected throwIfResolvingNormalizedProvider(rawMeta: RestMetadata) {
+  protected throwIfResolvingNormalizedProvider(meta: RestNormalizedMeta) {
     const resolvedCollisionsPerLevel: [any, ModuleType | ModuleWithParams][] = [];
-    if (Array.isArray(rawMeta.resolvedCollisionsPerRou)) {
-      resolvedCollisionsPerLevel.push(...rawMeta.resolvedCollisionsPerRou);
+    if (Array.isArray(meta.resolvedCollisionsPerRou)) {
+      resolvedCollisionsPerLevel.push(...meta.resolvedCollisionsPerRou);
     }
-    if (Array.isArray(rawMeta.resolvedCollisionsPerReq)) {
-      resolvedCollisionsPerLevel.push(...rawMeta.resolvedCollisionsPerReq);
+    if (Array.isArray(meta.resolvedCollisionsPerReq)) {
+      resolvedCollisionsPerLevel.push(...meta.resolvedCollisionsPerReq);
     }
 
     resolvedCollisionsPerLevel.forEach(([provider]) => {
@@ -227,7 +208,18 @@ export class ModuleNormalizer {
     }
   }
 
-  protected quickCheckMetadata(baseMeta: NormalizedMeta, meta: RestNormalizedMeta) {
+  protected checkMetadata(baseMeta: NormalizedMeta, meta: RestNormalizedMeta) {
+    this.checkGuards(meta.params.guards);
+    this.throwIfResolvingNormalizedProvider(meta);
+    meta.controllers.forEach((Controller) => this.checkController(Controller));
+    const controllerDuplicates = getDuplicates(meta.controllers).map((c) => c.name);
+    if (controllerDuplicates.length) {
+      throw new CustomError({
+        msg1: `Detected duplicate controllers - ${controllerDuplicates.join(', ')}`,
+        level: 'fatal',
+      });
+    }
+
     if (
       isFeatureModule(baseMeta) &&
       !baseMeta.exportedProvidersPerMod.length &&
@@ -259,7 +251,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected checkGuardsPerMod(guards: NormalizedGuard[]) {
+  protected checkGuards(guards: NormalizedGuard[]) {
     for (const Guard of guards.map((n) => n.guard)) {
       const type = typeof Guard?.prototype.canActivate;
       if (type != 'function') {
