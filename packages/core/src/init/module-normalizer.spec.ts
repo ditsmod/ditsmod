@@ -1,7 +1,7 @@
 import { featureModule, ParamsTransferObj } from '#decorators/feature-module.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { rootModule } from '#decorators/root-module.js';
-import { injectable, makeClassDecorator, Provider } from '#di';
+import { forwardRef, injectable, makeClassDecorator, Provider } from '#di';
 import { Extension } from '#extension/extension-types.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { AnyObj, ModRefId } from '#types/mix.js';
@@ -153,6 +153,36 @@ describe('ModuleNormalizer', () => {
     class Module2 {}
 
     expect(() => mock.normalize(Module2)).toThrow(/includes in "providersPerApp" and "exports" of/);
+  });
+
+  it('providers or modules with forwardRef', () => {
+    class Service0 {}
+    class Service1 {}
+    class Service2 {}
+
+    @featureModule({ providersPerApp: [Service0] })
+    class Module1 {}
+
+    @featureModule({ providersPerApp: [Service0] })
+    class Module2 {}
+
+    const moduleWithParams = { module: forwardRef(() => Module2) };
+    @featureModule({
+      imports: [forwardRef(() => Module1), moduleWithParams],
+      providersPerApp: [forwardRef(() => Service1)],
+      providersPerMod: [forwardRef(() => Service2)],
+      exports: [forwardRef(() => Service2), forwardRef(() => Module1), moduleWithParams],
+    })
+    class AppModule {}
+
+    const mod = mock.normalize(AppModule);
+    expect(mod.importsModules).toEqual([Module1]);
+    expect(mod.exportsModules).toEqual([Module1]);
+    expect(mod.importsWithParams).toEqual([{ module: Module2 }]);
+    expect(mod.exportsWithParams).toEqual([{ module: Module2 }]);
+    expect(mod.providersPerApp).toEqual([Service1]);
+    expect(mod.providersPerMod).toEqual([Service2]);
+    expect(mod.exportedProvidersPerMod).toEqual([Service2]);
   });
 
   it('module exported normalized provider', () => {

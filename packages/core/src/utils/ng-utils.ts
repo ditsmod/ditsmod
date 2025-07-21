@@ -35,7 +35,7 @@ export function flatten<T = any>(list: any[], dst?: any[]): T[] {
 }
 
 /**
- * Flatten and normalize an array of arrays DI Providers
+ * Normalize an array of DI Providers
  */
 export function normalizeProviders(providers: Provider[], arrayOfProviders: NormalizedProvider[] = []) {
   providers.forEach((provider) => {

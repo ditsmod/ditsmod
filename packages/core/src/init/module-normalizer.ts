@@ -179,7 +179,7 @@ export class ModuleNormalizer {
     }
 
     rawMeta.exports?.forEach((exp, i) => {
-      exp = resolveForwardRef(exp);
+      exp = this.resolveForwardRef([exp])[0];
       this.throwIfUndefined(modName, 'Exports', exp, i);
       this.throwExportsIfNormalizedProvider(modName, exp);
       if (isModuleWithParams(exp)) {
@@ -242,9 +242,11 @@ export class ModuleNormalizer {
         if (Array.isArray(sourceObj[prop])) {
           trgtObj[prop] ??= [];
           trgtObj[prop].push(...sourceObj[prop].slice());
+          trgtObj[prop] = this.resolveForwardRef(trgtObj[prop]);
         } else if (sourceObj[prop] instanceof Providers) {
           trgtObj[prop] ??= [];
           trgtObj[prop].push(...sourceObj[prop]);
+          trgtObj[prop] = this.resolveForwardRef(trgtObj[prop]);
         } else if (sourceObj[prop] && typeof sourceObj[prop] == 'object') {
           trgtObj[prop] = { ...trgtObj[prop], ...(sourceObj[prop] as any) };
         } else if (sourceObj[prop] !== undefined) {
@@ -254,6 +256,19 @@ export class ModuleNormalizer {
     });
 
     return trgtObj;
+  }
+
+  protected resolveForwardRef<T extends ModRefId | Provider>(arr: T[]) {
+    return arr.map((item) => {
+      item = resolveForwardRef(item);
+      if (isNormalizedProvider(item)) {
+        item.token = resolveForwardRef(item.token);
+      }
+      if (isModuleWithParams(item)) {
+        item.module = resolveForwardRef(item.module);
+      }
+      return item;
+    });
   }
 
   protected throwUnidentifiedToken(modName: string, token: any) {
@@ -275,7 +290,8 @@ export class ModuleNormalizer {
   }
 
   protected exportProviders(token: any, rawMeta: Partial<RawMeta>, baseMeta: NormalizedMeta): void {
-    const providers = [...(rawMeta.providersPerMod || [])].filter((p) => getToken(p) === token);
+    let providers = [...(rawMeta.providersPerMod || [])].filter((p) => getToken(p) === token);
+    providers = this.resolveForwardRef(providers);
     if (providers.length) {
       if (providers.some(isMultiProvider)) {
         baseMeta.exportedMultiProvidersPerMod.push(...(providers as MultiProvider[]));
