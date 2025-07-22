@@ -629,30 +629,22 @@ describe('ModuleManager', () => {
 
     class InitHooksAndRawMeta1 extends InitHooksAndRawMeta<any> {
       override hostModule = HostModule1;
-      override getHostInitHooks() {
-        return new InitHooksAndRawMeta1({ one: 1 });
-      }
+      override hostRawMeta = { one: 1 };
     }
 
     class InitHooksAndRawMeta2 extends InitHooksAndRawMeta<any> {
       override hostModule = HostModule2;
-      override getHostInitHooks() {
-        return new InitHooksAndRawMeta2({ two: 2 });
-      }
+      override hostRawMeta = { two: 2 };
     }
 
     class InitHooksAndRawMeta3 extends InitHooksAndRawMeta<any> {
       override hostModule = HostModule3;
-      override getHostInitHooks() {
-        return new InitHooksAndRawMeta3({ three: 3 });
-      }
+      override hostRawMeta = { three: 3 };
     }
 
     class InitHooksAndRawMeta4 extends InitHooksAndRawMeta<any> {
       override hostModule = HostModule4;
-      override getHostInitHooks() {
-        return new InitHooksAndRawMeta4({ four: 4 });
-      }
+      override hostRawMeta = { four: 4 };
     }
 
     const initSome1: AddDecorator<any, any> = makeClassDecorator((data) => new InitHooksAndRawMeta1(data));

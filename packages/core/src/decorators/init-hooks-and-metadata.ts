@@ -24,7 +24,7 @@ export class InitHooksAndRawMeta<T extends ObjectWithImports = ObjectWithImports
   constructor(public rawMeta: T) {}
 
   /**
-   * Returns new an instance of the current class. Allows you to prevent a circular dependency between
+   * Allows you to prevent a circular dependency between
    * the module you assign to `this.hostModule` and the decorator for which the current class with
    * init hooks is intended. A circular dependency may occur if `this.hostModule` requires metadata
    * from the decorator that the current class is meant for.
@@ -37,23 +37,21 @@ export class InitHooksAndRawMeta<T extends ObjectWithImports = ObjectWithImports
    *
    * This would result in a circular dependency, since `SomeModule` depends on `initSomeThing`, and
    * `initSomeThing` depends on `SomeModule`. To avoid this, point 1 must not be performed. Instead,
-   * the following method should be used in the current class with init hooks:
+   * set metadata in this way:
    *
 ```ts
-override getHostInitHooks() {
-  return new CurrentInitHooksAndRawMeta({ one: 1, two: 2 });
-}
+override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
 ```
    *
-   * Here, `CurrentInitHooksAndRawMeta` is the same class where `this.hostModule = SomeModule` is assigned,
-   * and `{ one: 1, two: 2 }` represents the placeholder metadata that needs to be passed to `SomeModule`.
+   * Here, `{ one: 1, two: 2 }` represents the placeholder metadata that needs to be passed to `SomeModule`.
    */
-  getHostInitHooks(): InitHooksAndRawMeta<T> | undefined {
-    return;
-  }
+  hostRawMeta?: T;
 
-  clone<R extends this>() {
-    return new (this.constructor as { new (arg: object): R })({});
+  /**
+   * You no need override this method.
+   */
+  clone<R extends this>(rawMeta?: T) {
+    return new (this.constructor as { new (arg: object): R })(rawMeta || {});
   }
 
   /**
