@@ -48,7 +48,7 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
   hostRawMeta?: T;
 
   /**
-   * You no need override this method.
+   * Returns a new instance of the current class. Most likely, you don't need to override this method.
    */
   clone<R extends this>(rawMeta?: T) {
     return new (this.constructor as { new (arg: object): R })(rawMeta || {});
