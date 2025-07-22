@@ -52,6 +52,10 @@ override getHostInitHooks() {
     return;
   }
 
+  clone<R extends this>() {
+    return new (this.constructor as { new (arg: object): R })({});
+  }
+
   /**
    * Normalizes the metadata from the current decorator. It is then inserted into `baseMeta.initMeta`.
    *
