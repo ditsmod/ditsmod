@@ -15,8 +15,8 @@ import { NormalizedGuard } from '#interceptors/guard.js';
 import { AppendsWithParams, RestModuleParams } from '#init/module-metadata.js';
 
 class NormalizedParams {
-  path?: string;
-  absolutePath?: string;
+  declare path?: string;
+  declare absolutePath?: string;
   guards: NormalizedGuard[] = [];
 }
 

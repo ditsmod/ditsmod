@@ -45,8 +45,12 @@ export class ModuleNormalizer {
 
   protected mergeModuleWithParams(modRefId: RestModRefId, rawMeta: RestMetadata, meta: RestNormalizedMeta): void {
     if (isAppendsWithParams(modRefId)) {
-      meta.params.absolutePath = modRefId.absolutePath;
-      meta.params.path = modRefId.path;
+      if (modRefId.absolutePath !== undefined) {
+        meta.params.absolutePath = modRefId.absolutePath;
+      }
+      if (modRefId.path !== undefined) {
+        meta.params.path = modRefId.path;
+      }
       meta.params.guards.push(...this.normalizeGuards(modRefId.guards));
       return;
     } else if (!isModuleWithSrcInitMeta(modRefId)) {
@@ -62,8 +66,12 @@ export class ModuleNormalizer {
         }
       });
 
-      meta.params.absolutePath = params.absolutePath;
-      meta.params.path = params.path;
+      if (params.absolutePath !== undefined) {
+        meta.params.absolutePath = params.absolutePath;
+      }
+      if (params.path !== undefined) {
+        meta.params.path = params.path;
+      }
       meta.params.guards.push(...this.normalizeGuards(params.guards));
     }
   }
