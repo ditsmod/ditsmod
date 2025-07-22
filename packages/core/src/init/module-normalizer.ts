@@ -317,6 +317,7 @@ export class ModuleNormalizer {
   }
 
   protected callInitHooks(baseMeta: NormalizedMeta, allInitHooks: AllInitHooks) {
+    // Add init hooks from host decorator.
     allInitHooks.forEach((initHooks, decorator) => {
       if (initHooks.hostModule === baseMeta.modRefId) {
         const newInitHooksAndRawMeta = initHooks.getHostInitHooks();
@@ -328,8 +329,10 @@ export class ModuleNormalizer {
 
     baseMeta.mInitHooksAndRawMeta.forEach((initHooks, decorator) => {
       baseMeta.allInitHooks.set(decorator, initHooks);
+
+      // Importing host module.
       if (initHooks.hostModule === baseMeta.modRefId) {
-        // Skip import
+        // Skiping import.
       } else if (isModuleWithParams(initHooks.hostModule)) {
         if (!baseMeta.importsWithParams.includes(initHooks.hostModule)) {
           baseMeta.importsWithParams.push(initHooks.hostModule);
@@ -338,6 +341,7 @@ export class ModuleNormalizer {
         baseMeta.importsModules.push(initHooks.hostModule);
       }
 
+      // Setting params for imported modules.
       initHooks.rawMeta.importsWithParams?.forEach((params) => {
         if (isModuleWithParams(params.modRefId)) {
           (params.modRefId as ModuleWithSrcInitMeta).srcInitMeta = baseMeta.initMeta;
@@ -346,6 +350,7 @@ export class ModuleNormalizer {
         }
       });
 
+      // Calling init hook.
       const meta = initHooks.normalize(baseMeta);
       if (meta) {
         baseMeta.initMeta.set(decorator, meta);

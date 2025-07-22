@@ -21,10 +21,11 @@ import {
   CustomError,
   isModuleWithParams,
   getDebugClassName,
+  Provider,
 } from '@ditsmod/core';
 
 import { RestMetadata } from '#init/module-metadata.js';
-import { RestNormalizedMeta } from '#init/rest-normalized-meta.js';
+import { RestModRefId, RestNormalizedMeta } from '#init/rest-normalized-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
@@ -37,7 +38,7 @@ export class ModuleNormalizer {
     const meta = new RestNormalizedMeta();
     this.mergeModuleWithParams(baseMeta, rawMeta, meta);
     this.normalizeMetadata(baseMeta, rawMeta, meta);
-    this.exportModulesAndProviders(baseMeta, rawMeta, meta);
+    this.exportModules(baseMeta, rawMeta, meta);
     this.checkMetadata(baseMeta, meta);
     return meta;
   }
@@ -89,9 +90,11 @@ export class ModuleNormalizer {
         if (Array.isArray(sourceObj[prop])) {
           trgtObj[prop] ??= [];
           trgtObj[prop].push(...sourceObj[prop].slice());
+          trgtObj[prop] = this.resolveForwardRef(trgtObj[prop]);
         } else if (sourceObj[prop] instanceof Providers) {
           trgtObj[prop] ??= [];
           trgtObj[prop].push(...sourceObj[prop]);
+          trgtObj[prop] = this.resolveForwardRef(trgtObj[prop]);
         } else if (sourceObj[prop] && typeof sourceObj[prop] == 'object') {
           trgtObj[prop] = { ...trgtObj[prop], ...(sourceObj[prop] as any) };
         } else if (sourceObj[prop] !== undefined) {
@@ -103,10 +106,23 @@ export class ModuleNormalizer {
     return trgtObj;
   }
 
-  protected exportModulesAndProviders(baseMeta: NormalizedMeta, rawMeta: RestMetadata, meta: RestNormalizedMeta) {
+  protected resolveForwardRef<T extends RestModRefId | Provider>(arr: T[]) {
+    return arr.map((item) => {
+      item = resolveForwardRef(item);
+      if (isNormalizedProvider(item)) {
+        item.token = resolveForwardRef(item.token);
+      }
+      if (isModuleWithParams(item)) {
+        item.module = resolveForwardRef(item.module);
+      }
+      return item;
+    });
+  }
+
+  protected exportModules(baseMeta: NormalizedMeta, rawMeta: RestMetadata, meta: RestNormalizedMeta) {
     const providers = meta.providersPerRou.concat(meta.providersPerReq);
     rawMeta.exports?.forEach((exp, i) => {
-      exp = resolveForwardRef(exp);
+      exp = this.resolveForwardRef([exp])[0];
       this.throwIfUndefined(exp, i);
       this.throwExportsIfNormalizedProvider(exp);
       if (isModuleWithParams(exp)) {
@@ -151,7 +167,8 @@ export class ModuleNormalizer {
     let found = false;
     (['Rou', 'Req'] as const).forEach((level) => {
       const unfilteredProviders = [...(rawMeta[`providersPer${level}`] || [])];
-      const providers = unfilteredProviders.filter((p) => getToken(p) === token);
+      let providers = unfilteredProviders.filter((p) => getToken(p) === token);
+      providers = this.resolveForwardRef(providers);
       if (providers.length) {
         found = true;
         if (providers.some(isMultiProvider)) {
