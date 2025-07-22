@@ -9,8 +9,16 @@ import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { AllInitHooks } from '#init/module-manager.js';
 
 export interface InitMetaMap {
-  set<T extends ParamsTransferObj>(key: AddDecorator<any, T>, value: T): this;
-  get<T extends ParamsTransferObj>(key: AddDecorator<any, T>): T | undefined;
+  set<T extends ParamsTransferObj>(decorator: AddDecorator<any, T>, params: T): this;
+  get<T extends ParamsTransferObj>(decorator: AddDecorator<any, T>): T | undefined;
+  forEach<T extends ParamsTransferObj>(
+    callbackfn: (params: T, decorator: AnyFn, map: Map<AnyFn, T>) => void,
+    thisArg?: any,
+  ): void;
+  /**
+   * Returns an iterable of keys in the map
+   */
+  keys(): MapIterator<AnyFn>;
 }
 
 /**
