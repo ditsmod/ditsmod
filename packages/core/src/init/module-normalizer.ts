@@ -31,6 +31,7 @@ import { isExtensionConfig } from '#extension/type-guards.js';
 import { ModuleWithParams, ModuleWithSrcInitMeta } from '#types/module-metadata.js';
 import { mergeArrays } from '#utils/merge-arrays.js';
 import { AllInitHooks } from './module-manager.js';
+import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 
 /**
  * Normalizes and validates module metadata.
@@ -68,7 +69,9 @@ export class ModuleNormalizer {
     });
     this.checkAndMarkExternalModule(rawMeta, baseMeta);
     this.normalizeModule(modName, rawMeta, baseMeta);
-    this.callInitHooks(baseMeta, allInitHooks);
+    this.addInitHooksForHostDecorator(baseMeta, allInitHooks);
+    this.callInitHooksFromCurrentModule(baseMeta, allInitHooks);
+    this.addInitHooksFromModuleUsageContext(baseMeta, allInitHooks);
     this.quickCheckMetadata(baseMeta);
     return baseMeta;
   }
@@ -316,23 +319,24 @@ export class ModuleNormalizer {
     throw new Error(msg);
   }
 
-  protected callInitHooks(baseMeta: NormalizedMeta, allInitHooks: AllInitHooks) {
-    // Add init hooks from host decorator.
+  protected addInitHooksForHostDecorator(baseMeta: NormalizedMeta, allInitHooks: AllInitHooks) {
     allInitHooks.forEach((initHooks, decorator) => {
       if (initHooks.hostModule === baseMeta.modRefId) {
-        const newInitHooksAndRawMeta = initHooks.getHostInitHooks();
-        if (newInitHooksAndRawMeta) {
+        if (initHooks.hostRawMeta) {
+          const newInitHooksAndRawMeta = initHooks.clone(initHooks.hostRawMeta);
           baseMeta.mInitHooksAndRawMeta.set(decorator, newInitHooksAndRawMeta);
         }
       }
     });
+  }
 
+  protected callInitHooksFromCurrentModule(baseMeta: NormalizedMeta, allInitHooks: AllInitHooks) {
     baseMeta.mInitHooksAndRawMeta.forEach((initHooks, decorator) => {
       baseMeta.allInitHooks.set(decorator, initHooks);
 
       // Importing host module.
       if (initHooks.hostModule === baseMeta.modRefId) {
-        // Skiping import.
+        // No need import host module in host module.
       } else if (isModuleWithParams(initHooks.hostModule)) {
         if (!baseMeta.importsWithParams.includes(initHooks.hostModule)) {
           baseMeta.importsWithParams.push(initHooks.hostModule);
@@ -350,17 +354,36 @@ export class ModuleNormalizer {
         }
       });
 
-      // Calling init hook.
-      const meta = initHooks.normalize(baseMeta);
-      if (meta) {
-        baseMeta.initMeta.set(decorator, meta);
-        meta?.importsWithParams?.forEach((param) => {
-          if (!baseMeta.importsWithParams.includes(param.modRefId)) {
-            baseMeta.importsWithParams.push(param.modRefId);
-          }
-        });
+      this.callInitHook(baseMeta, decorator, initHooks);
+    });
+  }
+
+  /**
+   * If the current module was used with parameters in the context of init decorators, but
+   * the class of the current module is not annotated with those decorators, then retrieve
+   * the corresponding init hooks (for reading parameters) from the `allInitHooks`.
+   */
+  protected addInitHooksFromModuleUsageContext(baseMeta: NormalizedMeta, allInitHooks: AllInitHooks) {
+    (baseMeta.modRefId as ModuleWithSrcInitMeta).srcInitMeta?.forEach((params, decorator) => {
+      if (!baseMeta.mInitHooksAndRawMeta.get(decorator)) {
+        const initHooks = allInitHooks.get(decorator)!;
+        const newInitHooksAndRawMeta = initHooks.clone();
+        this.callInitHook(baseMeta, decorator, newInitHooksAndRawMeta);
+        baseMeta.mInitHooksAndRawMeta.set(decorator, newInitHooksAndRawMeta);
       }
     });
+  }
+
+  protected callInitHook(baseMeta: NormalizedMeta, decorator: AnyFn, initHooks: InitHooksAndRawMeta) {
+    const meta = initHooks.normalize(baseMeta);
+    if (meta) {
+      baseMeta.initMeta.set(decorator, meta);
+      meta?.importsWithParams?.forEach((param) => {
+        if (!baseMeta.importsWithParams.includes(param.modRefId)) {
+          baseMeta.importsWithParams.push(param.modRefId);
+        }
+      });
+    }
   }
 
   protected quickCheckMetadata(baseMeta: NormalizedMeta) {
