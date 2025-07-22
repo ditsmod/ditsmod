@@ -1,6 +1,7 @@
 import {
   clearDebugClassNames,
   featureModule,
+  forwardRef,
   ModuleManager,
   ModuleWithParams,
   Providers,
@@ -27,6 +28,54 @@ describe('rest ModuleNormalizer', () => {
     const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
     moduleManager = new ModuleManager(systemLogMediator);
     mock = new MockModuleNormalizer();
+  });
+
+  it('providers or modules with forwardRef', () => {
+    class Service0 {}
+    class Service1 {}
+    class Service2 {}
+    class Service3 {}
+    class Service4 {}
+
+    @featureModule({ providersPerApp: [Service0] })
+    class Module1 {}
+
+    @featureModule({ providersPerApp: [Service0] })
+    class Module2 {}
+
+    const moduleWithParams: ModuleWithParams = { module: forwardRef(() => Module2) };
+    @initRest({
+      importsWithParams: [{ modRefId: moduleWithParams, path: 'test1' }],
+      providersPerRou: [forwardRef(() => Service3)],
+      providersPerReq: [forwardRef(() => Service4)],
+      exports: [forwardRef(() => Service3), forwardRef(() => Service4)],
+    })
+    @rootModule({
+      imports: [forwardRef(() => Module1), moduleWithParams],
+      providersPerApp: [forwardRef(() => Service1)],
+      providersPerMod: [forwardRef(() => Service2)],
+      exports: [forwardRef(() => Service2), forwardRef(() => Module1), moduleWithParams],
+    })
+    class AppModule {}
+
+    const baseMeta = moduleManager.scanRootModule(AppModule);
+
+    const meta1 = moduleManager.getMetadata(AppModule, true).initMeta.get(initRest)!;
+    expect(meta1.providersPerRou).toEqual([Service3]);
+    expect(meta1.providersPerReq).toEqual([Service4]);
+    expect(meta1.exportedProvidersPerRou).toEqual([Service3]);
+    expect(meta1.exportedProvidersPerReq).toEqual([Service4]);
+
+    const meta2 = moduleManager.getMetadata(moduleWithParams, true).initMeta.get(initRest)!;
+    expect(meta2.params.path).toEqual('test1');
+
+    expect(baseMeta.importsModules).toEqual([Module1, RestModule]);
+    expect(baseMeta.exportsModules).toEqual([Module1]);
+    expect(baseMeta.importsWithParams).toEqual([{ module: Module2, srcInitMeta: expect.any(Map) }]);
+    expect(baseMeta.exportsWithParams).toEqual([{ module: Module2, srcInitMeta: expect.any(Map) }]);
+    expect(baseMeta.providersPerApp).toEqual([Service1]);
+    expect(baseMeta.providersPerMod).toEqual([Service2]);
+    expect(baseMeta.exportedProvidersPerMod).toEqual([Service2]);
   });
 
   it('merge static metadata with append params', () => {
