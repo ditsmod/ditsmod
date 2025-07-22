@@ -36,15 +36,14 @@ import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 export class ModuleNormalizer {
   normalize(baseMeta: NormalizedMeta, rawMeta: RestMetadata) {
     const meta = new RestNormalizedMeta();
-    this.mergeModuleWithParams(baseMeta, rawMeta, meta);
-    this.normalizeMetadata(baseMeta, rawMeta, meta);
+    this.mergeModuleWithParams(baseMeta.modRefId, rawMeta, meta);
+    this.normalizeMetadata(rawMeta, meta);
     this.exportModules(baseMeta, rawMeta, meta);
     this.checkMetadata(baseMeta, meta);
     return meta;
   }
 
-  protected mergeModuleWithParams(baseMeta: NormalizedMeta, rawMeta: RestMetadata, meta: RestNormalizedMeta): void {
-    const { modRefId } = baseMeta;
+  protected mergeModuleWithParams(modRefId: RestModRefId, rawMeta: RestMetadata, meta: RestNormalizedMeta): void {
     if (isAppendsWithParams(modRefId)) {
       meta.params.absolutePath = modRefId.absolutePath;
       meta.params.path = modRefId.path;
@@ -69,7 +68,7 @@ export class ModuleNormalizer {
     }
   }
 
-  protected normalizeMetadata(baseMeta: NormalizedMeta, rawMeta: RestMetadata, meta: RestNormalizedMeta) {
+  protected normalizeMetadata(rawMeta: RestMetadata, meta: RestNormalizedMeta) {
     rawMeta.appends?.forEach((ap, i) => {
       ap = resolveForwardRef(ap);
       this.throwIfUndefined(ap, i);
@@ -120,8 +119,11 @@ export class ModuleNormalizer {
   }
 
   protected exportModules(baseMeta: NormalizedMeta, rawMeta: RestMetadata, meta: RestNormalizedMeta) {
+    if (!rawMeta.exports) {
+      return;
+    }
     const providers = meta.providersPerRou.concat(meta.providersPerReq);
-    rawMeta.exports?.forEach((exp, i) => {
+    rawMeta.exports.forEach((exp, i) => {
       exp = this.resolveForwardRef([exp])[0];
       this.throwIfUndefined(exp, i);
       this.throwExportsIfNormalizedProvider(exp);
