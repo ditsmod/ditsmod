@@ -43,7 +43,7 @@ expect(door.lock instanceof Lock).toBeTruthy();
  */
 export function forwardRef(forwardRefFn: ForwardRefFn): Class {
   (forwardRefFn as any)[FORWARD_REF] = true;
-  (forwardRefFn as any).toString = function () {
+  forwardRefFn.toString = function () {
     return stringify(this());
   };
   return forwardRefFn as any as Class;
