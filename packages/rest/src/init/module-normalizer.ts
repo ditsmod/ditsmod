@@ -24,6 +24,8 @@ import {
   Provider,
   isClassProvider,
   isTokenProvider,
+  ModuleWithSrcInitMeta,
+  InitMetaMap,
 } from '@ditsmod/core';
 
 import { RestMetadata } from '#init/module-metadata.js';
@@ -83,6 +85,11 @@ export class ModuleNormalizer {
       ap = this.resolveForwardRef([ap])[0];
       this.throwIfUndefined(ap, i);
       if (isAppendsWithParams(ap)) {
+        if ((ap as ModuleWithSrcInitMeta).srcInitMeta) {
+          (ap as ModuleWithSrcInitMeta).srcInitMeta.set(initRest, meta);
+        } else {
+          (ap as ModuleWithSrcInitMeta).srcInitMeta = new Map([[initRest, meta]]) as InitMetaMap;
+        }
         meta.appendsWithParams.push(ap);
       } else {
         meta.appendsModules.push(ap);

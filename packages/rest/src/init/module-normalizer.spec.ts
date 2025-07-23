@@ -49,9 +49,17 @@ describe('rest ModuleNormalizer', () => {
     @featureModule({ providersPerApp: [Service0] })
     class Module4 {}
 
+    @featureModule({ providersPerApp: [Service0] })
+    class Module5 {}
+
+    @featureModule({ providersPerApp: [Service0] })
+    class Module6 {}
+
     const module2WithParams: ModuleWithParams = { module: forwardRef(() => Module2) };
     const module4WithParams: ModuleWithParams = { module: forwardRef(() => Module4) };
+    const appendWithParams: AppendsWithParams = { module: forwardRef(() => Module6), path: 'test2' };
     @initRest({
+      appends: [forwardRef(() => Module5), appendWithParams],
       importsWithParams: [{ modRefId: module2WithParams, path: 'test1' }],
       providersPerRou: [
         forwardRef(() => Service1),
@@ -86,9 +94,14 @@ describe('rest ModuleNormalizer', () => {
     expect(meta1.exportedMultiProvidersPerReq).toEqual([{ token: Service4, useToken: Service4, multi: true }]);
     expect(meta1.resolvedCollisionsPerRou).toEqual([[Service1, Module3]]);
     expect(meta1.resolvedCollisionsPerReq).toEqual([[Service2, { module: Module4 }]]);
+    expect(meta1.appendsModules).toEqual([Module5]);
+    expect(meta1.appendsWithParams).toEqual([appendWithParams]);
 
     const meta2 = moduleManager.getMetadata(module2WithParams, true).initMeta.get(initRest)!;
     expect(meta2.params.path).toEqual('test1');
+
+    const meta3 = moduleManager.getMetadata(appendWithParams, true).initMeta.get(initRest)!;
+    expect(meta3.params.path).toEqual('test2');
 
     expect(baseMeta.importsModules).toEqual([Module1, RestModule]);
     expect(baseMeta.importsWithParams).toEqual([{ module: Module2, srcInitMeta: expect.any(Map) }]);
