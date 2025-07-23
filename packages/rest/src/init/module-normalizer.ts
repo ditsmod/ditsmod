@@ -22,6 +22,8 @@ import {
   isModuleWithParams,
   getDebugClassName,
   Provider,
+  isClassProvider,
+  isTokenProvider,
 } from '@ditsmod/core';
 
 import { RestMetadata } from '#init/module-metadata.js';
@@ -94,12 +96,20 @@ export class ModuleNormalizer {
     sourceObjects.forEach((sourceObj: AnyObj) => {
       sourceObj ??= {};
       for (const prop in targetObject) {
-        if (Array.isArray(sourceObj[prop])) {
-          trgtObj[prop] ??= [];
+        if (prop.startsWith('resolvedCollisions') && Array.isArray(sourceObj[prop])) {
+          trgtObj[prop].push(...sourceObj[prop].slice());
+          trgtObj[prop] = (trgtObj[prop] as [any, ModuleWithParams | ModuleType][]).map(([token, module]) => {
+            token = resolveForwardRef(token);
+            module = resolveForwardRef(module);
+            if (isModuleWithParams(module)) {
+              module.module = resolveForwardRef(module.module);
+            }
+            return [token, module];
+          });
+        } else if (Array.isArray(sourceObj[prop])) {
           trgtObj[prop].push(...sourceObj[prop].slice());
           trgtObj[prop] = this.resolveForwardRef(trgtObj[prop]);
         } else if (sourceObj[prop] instanceof Providers) {
-          trgtObj[prop] ??= [];
           trgtObj[prop].push(...sourceObj[prop]);
           trgtObj[prop] = this.resolveForwardRef(trgtObj[prop]);
         } else if (sourceObj[prop] && typeof sourceObj[prop] == 'object') {
@@ -118,8 +128,12 @@ export class ModuleNormalizer {
       item = resolveForwardRef(item);
       if (isNormalizedProvider(item)) {
         item.token = resolveForwardRef(item.token);
-      }
-      if (isModuleWithParams(item)) {
+        if (isClassProvider(item)) {
+          item.useClass = resolveForwardRef(item.useClass);
+        } else if (isTokenProvider(item)) {
+          item.useToken = resolveForwardRef(item.useToken);
+        }
+      } else if (isModuleWithParams(item)) {
         item.module = resolveForwardRef(item.module);
       }
       return item;

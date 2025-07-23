@@ -16,7 +16,7 @@ import {
   isModuleWithInitHooks,
 } from '#utils/type-guards.js';
 import { ExtensionConfigBase, getExtensionProvider } from '#extension/get-extension-provider.js';
-import { AnyFn, AnyObj, ModRefId } from '#types/mix.js';
+import { AnyFn, AnyObj, ModRefId, ModuleType } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ParamsTransferObj, RawMeta } from '#decorators/feature-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
@@ -242,12 +242,20 @@ export class ModuleNormalizer {
     sourceObjects.forEach((sourceObj: AnyObj) => {
       sourceObj ??= {};
       for (const prop in targetObject) {
-        if (Array.isArray(sourceObj[prop])) {
-          trgtObj[prop] ??= [];
+        if (prop.startsWith('resolvedCollisions') && Array.isArray(sourceObj[prop])) {
+          trgtObj[prop].push(...sourceObj[prop].slice());
+          trgtObj[prop] = (trgtObj[prop] as [any, ModuleWithParams | ModuleType][]).map(([token, module]) => {
+            token = resolveForwardRef(token);
+            module = resolveForwardRef(module);
+            if (isModuleWithParams(module)) {
+              module.module = resolveForwardRef(module.module);
+            }
+            return [token, module];
+          });
+        } else if (Array.isArray(sourceObj[prop])) {
           trgtObj[prop].push(...sourceObj[prop].slice());
           trgtObj[prop] = this.resolveForwardRef(trgtObj[prop]);
         } else if (sourceObj[prop] instanceof Providers) {
-          trgtObj[prop] ??= [];
           trgtObj[prop].push(...sourceObj[prop]);
           trgtObj[prop] = this.resolveForwardRef(trgtObj[prop]);
         } else if (sourceObj[prop] && typeof sourceObj[prop] == 'object') {
@@ -266,8 +274,12 @@ export class ModuleNormalizer {
       item = resolveForwardRef(item);
       if (isNormalizedProvider(item)) {
         item.token = resolveForwardRef(item.token);
-      }
-      if (isModuleWithParams(item)) {
+        if (isClassProvider(item)) {
+          item.useClass = resolveForwardRef(item.useClass);
+        } else if (isTokenProvider(item)) {
+          item.useToken = resolveForwardRef(item.useToken);
+        }
+      } else if (isModuleWithParams(item)) {
         item.module = resolveForwardRef(item.module);
       }
       return item;
