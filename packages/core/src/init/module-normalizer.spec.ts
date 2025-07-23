@@ -159,6 +159,8 @@ describe('ModuleNormalizer', () => {
     class Service0 {}
     class Service1 {}
     class Service2 {}
+    class Service3 {}
+    class Service4 {}
 
     @featureModule({ providersPerApp: [Service0] })
     class Module1 {}
@@ -166,23 +168,30 @@ describe('ModuleNormalizer', () => {
     @featureModule({ providersPerApp: [Service0] })
     class Module2 {}
 
-    const moduleWithParams = { module: forwardRef(() => Module2) };
-    @featureModule({
-      imports: [forwardRef(() => Module1), moduleWithParams],
-      providersPerApp: [forwardRef(() => Service1)],
-      providersPerMod: [forwardRef(() => Service2)],
-      exports: [forwardRef(() => Service2), forwardRef(() => Module1), moduleWithParams],
+    const module2WithParams: ModuleWithParams = { module: forwardRef(() => Module2) };
+    @rootModule({
+      imports: [forwardRef(() => Module1), module2WithParams],
+      providersPerApp: [
+        forwardRef(() => Service1),
+        { token: forwardRef(() => Service3), useClass: forwardRef(() => Service3), multi: true },
+      ],
+      providersPerMod: [
+        forwardRef(() => Service2),
+        { token: forwardRef(() => Service4), useToken: forwardRef(() => Service4), multi: true },
+      ],
+      exports: [forwardRef(() => Service2), forwardRef(() => Service4), forwardRef(() => Module1), module2WithParams],
     })
     class AppModule {}
 
-    const mod = mock.normalize(AppModule);
-    expect(mod.importsModules).toEqual([Module1]);
-    expect(mod.exportsModules).toEqual([Module1]);
-    expect(mod.importsWithParams).toEqual([{ module: Module2 }]);
-    expect(mod.exportsWithParams).toEqual([{ module: Module2 }]);
-    expect(mod.providersPerApp).toEqual([Service1]);
-    expect(mod.providersPerMod).toEqual([Service2]);
-    expect(mod.exportedProvidersPerMod).toEqual([Service2]);
+    const baseMeta = mock.normalize(AppModule);
+    expect(baseMeta.importsModules).toEqual([Module1]);
+    expect(baseMeta.exportsModules).toEqual([Module1]);
+    expect(baseMeta.importsWithParams).toEqual([{ module: Module2 }]);
+    expect(baseMeta.exportsWithParams).toEqual([{ module: Module2 }]);
+    expect(baseMeta.providersPerApp).toEqual([Service1, { token: Service3, useClass: Service3, multi: true }]);
+    expect(baseMeta.providersPerMod).toEqual([Service2, { token: Service4, useToken: Service4, multi: true }]);
+    expect(baseMeta.exportedProvidersPerMod).toEqual([Service2]);
+    expect(baseMeta.exportedMultiProvidersPerMod).toEqual([{ token: Service4, useToken: Service4, multi: true }]);
   });
 
   it('module exported normalized provider', () => {
