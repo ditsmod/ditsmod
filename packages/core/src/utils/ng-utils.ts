@@ -6,7 +6,18 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { Provider, Class, ValueProvider, ClassProvider, TokenProvider, FactoryProvider, resolveForwardRef, isNormalizedProvider } from '#di';
+import {
+  Provider,
+  Class,
+  ValueProvider,
+  ClassProvider,
+  TokenProvider,
+  FactoryProvider,
+  resolveForwardRef,
+  isNormalizedProvider,
+  isClassProvider,
+  isTokenProvider,
+} from '#di';
 import { format } from 'util';
 
 /**
@@ -43,6 +54,12 @@ export function normalizeProviders(providers: Provider[], arrayOfProviders: Norm
     if (provider instanceof Class) {
       arrayOfProviders.push({ token: provider, useClass: provider });
     } else if (isNormalizedProvider(provider)) {
+      provider.token = resolveForwardRef(provider.token);
+      if (isClassProvider(provider)) {
+        provider.useClass = resolveForwardRef(provider.useClass);
+      } else if (isTokenProvider(provider)) {
+        provider.useToken = resolveForwardRef(provider.useToken);
+      }
       arrayOfProviders.push(provider as NormalizedProvider);
     } else {
       throw new Error(format('Invalid provider - only instances of Provider and Class are allowed, got:', provider));
