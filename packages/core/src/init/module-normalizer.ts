@@ -69,6 +69,7 @@ export class ModuleNormalizer {
     });
     this.checkAndMarkExternalModule(rawMeta, baseMeta);
     this.normalizeModule(modName, rawMeta, baseMeta);
+    this.pickAndMergeMeta(baseMeta, rawMeta);
     this.addInitHooksForHostDecorator(baseMeta, allInitHooks);
     this.callInitHooksFromCurrentModule(baseMeta, allInitHooks);
     this.addInitHooksFromModuleUsageContext(baseMeta, allInitHooks);
@@ -140,8 +141,6 @@ export class ModuleNormalizer {
       baseMeta.extensionsProviders.push(...extensionObj.providers);
       baseMeta.exportedExtensionsProviders.push(...extensionObj.exportedProviders);
     });
-
-    this.pickAndMergeMeta(baseMeta, rawMeta);
   }
 
   protected throwIfUndefined(modName: string, action: 'Imports' | 'Exports', imp: unknown, i: number) {

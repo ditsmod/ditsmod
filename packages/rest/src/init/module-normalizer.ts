@@ -42,6 +42,7 @@ export class ModuleNormalizer {
     const meta = new RestNormalizedMeta();
     this.mergeModuleWithParams(baseMeta.modRefId, rawMeta, meta);
     this.appendModules(rawMeta, meta);
+    this.pickAndMergeMeta(meta, rawMeta);
     this.exportModules(baseMeta, rawMeta, meta);
     this.checkMetadata(baseMeta, meta);
     return meta;
@@ -95,7 +96,6 @@ export class ModuleNormalizer {
         meta.appendsModules.push(ap);
       }
     });
-    this.pickAndMergeMeta(meta, rawMeta);
   }
 
   protected pickAndMergeMeta(targetObject: RestNormalizedMeta, ...sourceObjects: RestMetadata[]) {
