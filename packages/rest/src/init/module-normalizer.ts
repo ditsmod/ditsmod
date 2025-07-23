@@ -80,7 +80,7 @@ export class ModuleNormalizer {
 
   protected normalizeMetadata(rawMeta: RestMetadata, meta: RestNormalizedMeta) {
     rawMeta.appends?.forEach((ap, i) => {
-      ap = resolveForwardRef(ap);
+      ap = this.resolveForwardRef([ap])[0];
       this.throwIfUndefined(ap, i);
       if (isAppendsWithParams(ap)) {
         meta.appendsWithParams.push(ap);
