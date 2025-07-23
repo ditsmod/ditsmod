@@ -112,7 +112,7 @@ export class ModuleNormalizer {
 
   protected normalizeModule(modName: string, rawMeta: RawMeta, baseMeta: NormalizedMeta) {
     rawMeta.imports?.forEach((imp, i) => {
-      imp = resolveForwardRef(imp);
+      imp = this.resolveForwardRef([imp])[0];
       this.throwIfUndefined(modName, 'Imports', imp, i);
       if (isModuleWithParams(imp)) {
         baseMeta.importsWithParams.push(imp);
