@@ -30,6 +30,42 @@ describe('rest ModuleNormalizer', () => {
     mock = new MockModuleNormalizer();
   });
 
+  it('module and append - both with params without init decorator', () => {
+    class Service0 {}
+
+    @featureModule({ providersPerApp: [Service0] })
+    class Module1 {}
+
+    @featureModule({ providersPerApp: [Service0] })
+    class Module2 {}
+
+    const moduleWithParams: ModuleWithParams = { module: Module1 };
+    const appendWithParams: AppendsWithParams = { module: Module2, path: 'test2' };
+
+    // Although in `AppModule` `appendWithParams` and `moduleWithParams` are used in the context of the `initRest` decorator, `Module1` and `Module2`
+    // themselves do not have this decorator, so it's important that `Module1` and `Module2` are processed using the init hooks taken from `AppModule`.
+    @initRest({
+      appends: [appendWithParams],
+      importsWithParams: [{ modRefId: moduleWithParams, path: 'test1' }],
+    })
+    @rootModule({
+      imports: [moduleWithParams],
+    })
+    class AppModule {}
+
+    const meta1 = moduleManager.scanRootModule(AppModule).initMeta.get(initRest)!;
+    expect(meta1.importsWithParams).toEqual([
+      { path: 'test1', modRefId: { module: Module1, srcInitMeta: expect.any(Map) } },
+    ]);
+    expect(meta1.appendsWithParams).toEqual([appendWithParams]);
+
+    const meta2 = moduleManager.getMetadata(moduleWithParams, true).initMeta.get(initRest)!;
+    expect(meta2.params.path).toEqual('test1');
+
+    const meta3 = moduleManager.getMetadata(appendWithParams, true).initMeta.get(initRest)!;
+    expect(meta3.params.path).toEqual('test2');
+  });
+
   it('providers or modules with forwardRef', () => {
     class Service0 {}
     class Service1 {}

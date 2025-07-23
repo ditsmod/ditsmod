@@ -19,6 +19,7 @@ export interface InitMetaMap {
    * Returns an iterable of keys in the map
    */
   keys(): MapIterator<AnyFn>;
+  readonly size: number;
 }
 
 /**
