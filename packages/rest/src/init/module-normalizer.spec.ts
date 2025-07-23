@@ -30,7 +30,7 @@ describe('rest ModuleNormalizer', () => {
     mock = new MockModuleNormalizer();
   });
 
-  it('module and append - both with params without init decorator', () => {
+  it('module and append - both with params and without init decorator', () => {
     class Service0 {}
 
     @featureModule({ providersPerApp: [Service0] })

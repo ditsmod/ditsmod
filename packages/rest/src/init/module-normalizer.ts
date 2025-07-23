@@ -41,7 +41,7 @@ export class ModuleNormalizer {
   normalize(baseMeta: NormalizedMeta, rawMeta: RestMetadata) {
     const meta = new RestNormalizedMeta();
     this.mergeModuleWithParams(baseMeta.modRefId, rawMeta, meta);
-    this.normalizeMetadata(rawMeta, meta);
+    this.appendModules(rawMeta, meta);
     this.exportModules(baseMeta, rawMeta, meta);
     this.checkMetadata(baseMeta, meta);
     return meta;
@@ -80,7 +80,7 @@ export class ModuleNormalizer {
     }
   }
 
-  protected normalizeMetadata(rawMeta: RestMetadata, meta: RestNormalizedMeta) {
+  protected appendModules(rawMeta: RestMetadata, meta: RestNormalizedMeta) {
     rawMeta.appends?.forEach((ap, i) => {
       ap = this.resolveForwardRef([ap])[0];
       this.throwIfUndefined(ap, i);
