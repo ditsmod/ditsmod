@@ -36,6 +36,8 @@ describe('rest ModuleNormalizer', () => {
     class Service2 {}
     class Service3 {}
     class Service4 {}
+    class Service5 {}
+    class Service6 {}
 
     @featureModule({ providersPerApp: [Service0] })
     class Module1 {}
@@ -43,39 +45,70 @@ describe('rest ModuleNormalizer', () => {
     @featureModule({ providersPerApp: [Service0] })
     class Module2 {}
 
-    const moduleWithParams: ModuleWithParams = { module: forwardRef(() => Module2) };
+    @featureModule({ providersPerApp: [Service0] })
+    class Module3 {}
+
+    @featureModule({ providersPerApp: [Service0] })
+    class Module4 {}
+
+    const module2WithParams: ModuleWithParams = { module: forwardRef(() => Module2) };
+    const module4WithParams: ModuleWithParams = { module: forwardRef(() => Module4) };
     @initRest({
-      importsWithParams: [{ modRefId: moduleWithParams, path: 'test1' }],
-      providersPerRou: [forwardRef(() => Service3)],
-      providersPerReq: [forwardRef(() => Service4)],
-      exports: [forwardRef(() => Service3), forwardRef(() => Service4)],
+      importsWithParams: [{ modRefId: module2WithParams, path: 'test1' }],
+      providersPerRou: [
+        forwardRef(() => Service3),
+        { token: forwardRef(() => Service5), useClass: forwardRef(() => Service5), multi: true },
+      ],
+      providersPerReq: [
+        forwardRef(() => Service4),
+        { token: forwardRef(() => Service6), useToken: forwardRef(() => Service6), multi: true },
+      ],
+      resolvedCollisionsPerRou: [[forwardRef(() => Service3), forwardRef(() => Module3)]],
+      resolvedCollisionsPerReq: [[forwardRef(() => Service4), module4WithParams]],
+      exports: [
+        forwardRef(() => Service3),
+        forwardRef(() => Service4),
+        forwardRef(() => Service5),
+        forwardRef(() => Service6),
+      ],
     })
     @rootModule({
-      imports: [forwardRef(() => Module1), moduleWithParams],
-      providersPerApp: [forwardRef(() => Service1)],
-      providersPerMod: [forwardRef(() => Service2)],
-      exports: [forwardRef(() => Service2), forwardRef(() => Module1), moduleWithParams],
+      imports: [forwardRef(() => Module1), module2WithParams],
+      providersPerApp: [
+        forwardRef(() => Service1),
+        { token: forwardRef(() => Service5), useClass: forwardRef(() => Service5), multi: true },
+      ],
+      providersPerMod: [
+        forwardRef(() => Service2),
+        { token: forwardRef(() => Service6), useToken: forwardRef(() => Service6), multi: true },
+      ],
+      exports: [forwardRef(() => Service2), forwardRef(() => Service6), forwardRef(() => Module1), module2WithParams],
     })
     class AppModule {}
 
     const baseMeta = moduleManager.scanRootModule(AppModule);
 
     const meta1 = moduleManager.getMetadata(AppModule, true).initMeta.get(initRest)!;
-    expect(meta1.providersPerRou).toEqual([Service3]);
-    expect(meta1.providersPerReq).toEqual([Service4]);
+    expect(meta1.providersPerRou).toEqual([Service3, { token: Service5, useClass: Service5, multi: true }]);
+    expect(meta1.providersPerReq).toEqual([Service4, { token: Service6, useToken: Service6, multi: true }]);
     expect(meta1.exportedProvidersPerRou).toEqual([Service3]);
     expect(meta1.exportedProvidersPerReq).toEqual([Service4]);
+    expect(meta1.exportedMultiProvidersPerRou).toEqual([{ token: Service5, useClass: Service5, multi: true }]);
+    expect(meta1.exportedMultiProvidersPerReq).toEqual([{ token: Service6, useToken: Service6, multi: true }]);
+    expect(meta1.resolvedCollisionsPerRou).toEqual([[Service3, Module3]]);
+    expect(meta1.resolvedCollisionsPerReq).toEqual([[Service4, { module: Module4 }]]);
 
-    const meta2 = moduleManager.getMetadata(moduleWithParams, true).initMeta.get(initRest)!;
+    const meta2 = moduleManager.getMetadata(module2WithParams, true).initMeta.get(initRest)!;
     expect(meta2.params.path).toEqual('test1');
 
     expect(baseMeta.importsModules).toEqual([Module1, RestModule]);
     expect(baseMeta.exportsModules).toEqual([Module1]);
     expect(baseMeta.importsWithParams).toEqual([{ module: Module2, srcInitMeta: expect.any(Map) }]);
     expect(baseMeta.exportsWithParams).toEqual([{ module: Module2, srcInitMeta: expect.any(Map) }]);
-    expect(baseMeta.providersPerApp).toEqual([Service1]);
-    expect(baseMeta.providersPerMod).toEqual([Service2]);
+    expect(baseMeta.providersPerApp).toEqual([Service1, { token: Service5, useClass: Service5, multi: true }]);
+    expect(baseMeta.providersPerMod).toEqual([Service2, { token: Service6, useToken: Service6, multi: true }]);
     expect(baseMeta.exportedProvidersPerMod).toEqual([Service2]);
+    expect(baseMeta.exportedMultiProvidersPerMod).toEqual([{ token: Service6, useToken: Service6, multi: true }]);
   });
 
   it('merge static metadata with append params', () => {
