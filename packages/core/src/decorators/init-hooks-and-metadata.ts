@@ -21,8 +21,6 @@ export class InitHooksAndRawMeta<T extends ObjectWithImports = ObjectWithImports
    */
   hostModule?: ModRefId;
 
-  constructor(public rawMeta: T) {}
-
   /**
    * Allows you to prevent a circular dependency between
    * the module you assign to `this.hostModule` and the decorator for which the current class with
@@ -46,6 +44,8 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
    * Here, `{ one: 1, two: 2 }` represents the placeholder metadata that needs to be passed to `SomeModule`.
    */
   hostRawMeta?: T;
+
+  constructor(public rawMeta: T) {}
 
   /**
    * Returns a new instance of the current class. Most likely, you don't need to override this method.
