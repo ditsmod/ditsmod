@@ -1,4 +1,4 @@
-import { injectable, Provider, Injector, makePropDecorator, FactoryProvider } from '#di';
+import { injectable, Provider, Injector, makePropDecorator, FactoryProvider, forwardRef } from '#di';
 import { featureModule } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
@@ -130,6 +130,87 @@ describe('ShallowModulesImporter', () => {
       @rootModule({
         imports: [Module2],
         exports: [Module2],
+      })
+      class AppModule {}
+
+      expect(() => moduleManager.scanRootModule(AppModule)).not.toThrow();
+      expect(() => mock.exportGlobalProviders(moduleManager)).not.toThrow();
+      expect(getImportedProviders(mock.importedProvidersPerMod)).toEqual([Provider1, Provider2]);
+    });
+
+    it('throw collisions per module (import first and second module in paralel)', () => {
+      @featureModule({
+        providersPerMod: [Provider1],
+        exports: [Provider1],
+      })
+      class Module1 {}
+
+      @featureModule({
+        providersPerMod: [{ token: Provider1, useClass: Provider2 }],
+        exports: [Provider1],
+      })
+      class Module2 {}
+
+      @rootModule({
+        imports: [Module1, Module2],
+        exports: [Module1, Module2],
+      })
+      class AppModule {}
+
+      expect(() => moduleManager.scanRootModule(AppModule)).not.toThrow();
+      const msg = 'exports from Module1, Module2 causes collision with Provider1';
+      expect(() => mock.exportGlobalProviders(moduleManager)).toThrow(msg);
+    });
+
+    it('throw collisions per module (import firs module with nested second module)', () => {
+      @featureModule({
+        providersPerMod: [Provider1],
+        exports: [Provider1],
+      })
+      class Module1 {}
+
+      @featureModule({
+        imports: [Module1],
+        providersPerMod: [{ token: Provider1, useClass: Provider2 }],
+        exports: [Provider1, Module1],
+      })
+      class Module2 {}
+
+      @rootModule({
+        imports: [Module2],
+        exports: [Module2],
+      })
+      class AppModule {}
+
+      expect(() => moduleManager.scanRootModule(AppModule)).not.toThrow();
+      const msg = 'exports from Module1, Module2 causes collision with Provider1';
+      expect(() => mock.exportGlobalProviders(moduleManager)).toThrow(msg);
+    });
+
+    it('cyclic dependecies between modules', () => {
+      @featureModule({
+        imports: [forwardRef(() => Module3)],
+        exports: [forwardRef(() => Module3)],
+      })
+      class Module1 {}
+
+      @featureModule({
+        imports: [Module1],
+        providersPerMod: [Provider1],
+        exports: [Provider1, Module1],
+      })
+      class Module2 {}
+
+      @featureModule({
+        imports: [Module2],
+        providersPerMod: [Provider2],
+        exports: [Provider2, Module2],
+      })
+      class Module3 {}
+
+      @rootModule({
+        imports: [Module3],
+        exports: [Module3],
       })
       class AppModule {}
 
