@@ -102,6 +102,9 @@ export class ModuleNormalizer {
     return rawMeta;
   }
 
+  /**
+   * For this method to work properly, the root module must be scanned first.
+   */
   protected checkAndMarkExternalModule(rawMeta: RawMeta, baseMeta: NormalizedMeta) {
     baseMeta.isExternal = false;
     if (isRootModule(rawMeta)) {
