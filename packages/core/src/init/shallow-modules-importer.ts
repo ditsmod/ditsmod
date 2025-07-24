@@ -52,6 +52,7 @@ export class ShallowModulesImporter {
   protected glProviders: GlobalProviders;
   protected shallowImportsBase = new Map<ModRefId, MetadataPerMod1>();
   protected unfinishedScanModules = new Set<ModRefId>();
+  protected unfinishedExportModules = new Set<ModRefId>();
   protected moduleManager: ModuleManager;
 
   exportGlobalProviders(moduleManager: ModuleManager): GlobalProviders {
@@ -188,10 +189,15 @@ export class ShallowModulesImporter {
   protected importProvidersAndExtensions(baseMeta1: NormalizedMeta) {
     const { modRefId, exportsModules, exportsWithParams } = baseMeta1;
 
-    for (const modRefId of [...exportsModules, ...exportsWithParams]) {
-      const baseMeta2 = this.moduleManager.getMetadata(modRefId, true);
+    for (const modRefId2 of [...exportsModules, ...exportsWithParams]) {
+      if (this.unfinishedExportModules.has(modRefId2)) {
+        continue;
+      }
+      const baseMeta2 = this.moduleManager.getMetadata(modRefId2, true);
       // Reexported module
+      this.unfinishedExportModules.add(baseMeta2.modRefId);
       this.importProvidersAndExtensions(baseMeta2);
+      this.unfinishedExportModules.delete(baseMeta2.modRefId);
     }
 
     this.addProviders('Mod', baseMeta1);

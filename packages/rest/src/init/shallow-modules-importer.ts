@@ -61,6 +61,7 @@ export class ShallowModulesImporter {
   protected restGlProviders: RestGlobalProviders;
   protected shallowImports = new Map<ModRefId, RestMetadataPerMod1>();
   protected unfinishedScanModules = new Set<ModRefId>();
+  protected unfinishedExportModules = new Set<ModRefId>();
   protected moduleManager: ModuleManager;
 
   exportGlobalProviders({
@@ -253,9 +254,14 @@ export class ShallowModulesImporter {
     const { modRefId, exportsModules, exportsWithParams, initMeta } = baseMeta1;
 
     for (const modRefId2 of [...exportsModules, ...exportsWithParams]) {
+      if (this.unfinishedExportModules.has(modRefId2)) {
+        continue;
+      }
       const baseMeta2 = this.getMetadata(modRefId2, true);
       // Reexported module
+      this.unfinishedExportModules.add(baseMeta2.modRefId);
       this.importProviders(baseMeta2);
+      this.unfinishedExportModules.delete(baseMeta2.modRefId);
     }
 
     const meta = initMeta.get(initRest) as RestNormalizedMeta | undefined;

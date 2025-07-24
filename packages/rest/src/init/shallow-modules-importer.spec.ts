@@ -3,6 +3,7 @@ import {
   clearDebugClassNames,
   defaultProvidersPerApp,
   featureModule,
+  forwardRef,
   GlobalProviders,
   injectable,
   Injector,
@@ -22,6 +23,7 @@ import { AppendsWithParams, RestMetadata } from './module-metadata.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { ShallowModulesImporter } from './shallow-modules-importer.js';
 import { Level, RestGlobalProviders } from '#types/types.js';
+import { getImportedProviders } from '../utils/get-imports.js';
 
 /**
  * @todo Rename this.
@@ -85,6 +87,52 @@ describe('appending modules', () => {
       prefixPerMod: '',
     });
   }
+
+  it('cyclic dependecies between modules', () => {
+    class Provider1 {}
+    class Provider2 {}
+
+    const moduleWithParams0: ModuleWithParams = { module: forwardRef(() => Module3) };
+    @initRest({
+      importsWithParams: [{ modRefId: moduleWithParams0 }],
+      exports: [moduleWithParams0],
+    })
+    @featureModule()
+    class Module1 {}
+
+    const moduleWithParams1: ModuleWithParams = { module: Module1 };
+    @initRest({
+      importsWithParams: [{ modRefId: moduleWithParams1 }],
+      providersPerReq: [Provider1],
+      exports: [Provider1, moduleWithParams1],
+    })
+    @featureModule()
+    class Module2 {}
+
+    const moduleWithParams2: ModuleWithParams = { module: Module2 };
+    @initRest({
+      importsWithParams: [{ modRefId: moduleWithParams2 }],
+      providersPerReq: [Provider2],
+      exports: [Provider2, moduleWithParams2],
+    })
+    @featureModule()
+    class Module3 {}
+
+    @rootModule({
+      imports: [Module3],
+      exports: [Module3],
+    })
+    class AppModule {}
+
+    const baseMeta = moduleManager.scanRootModule(AppModule);
+    const initHooks = baseMeta.allInitHooks.get(initRest)!;
+    const val: RestGlobalProviders = initHooks.exportGlobalProviders({
+      moduleManager,
+      globalProviders: new GlobalProviders(),
+      baseMeta,
+    });
+    expect(getImportedProviders(val.importedProvidersPerReq)).toEqual([Provider2, Provider1]);
+  });
 
   it('should throw an error because resolvedCollisionsPerReq not properly setted provider', () => {
     class Provider1 {}
