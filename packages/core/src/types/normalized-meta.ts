@@ -67,7 +67,7 @@ export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj
    * The module setted here must be identical to the module
    * passed to "imports", "exports" array of `@featureModule` metadata.
    */
-  modRefId: ModuleType<T> | ModuleWithParams<T>;
+  modRefId: ModRefId<T>;
   /**
    * The module name.
    */

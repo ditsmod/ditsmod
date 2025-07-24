@@ -34,7 +34,7 @@ export type ModuleType<T extends AnyObj = AnyObj> = Class<T>;
 /**
  * Module reference ID.
  */
-export type ModRefId = ModuleType | ModuleWithParams;
+export type ModRefId<T extends AnyObj = AnyObj> = ModuleType<T> | ModuleWithParams<T>;
 /**
  * Require only specified properties from the `K` list for `T`.
  * 
