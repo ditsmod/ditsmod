@@ -72,7 +72,7 @@ export class ExtensionsManager {
     const stageIteration = this.stageIterationMap.get(ExtCls);
     if (stageIteration) {
       if (stageIteration.index > currStageIteration.index) {
-        const extensionName = this.getItemName([...this.unfinishedInit].at(-1)!);
+        const extensionName = this.getItemName([...this.unfinishedInit].at(-1)!) || 'unknown';
         this.systemLogMediator.throwEarlyExtensionCalling(`${ExtCls}`, extensionName);
       } else if (this.unfinishedInit.has(ExtCls)) {
         await stageIteration.promise;

@@ -11,10 +11,12 @@ const debugClassNameCounters = new Map<string, number>();
  * of the second module, separated by a hyphen. Each import of `ModuleWithParams`
  * is distinguished by the reference to the object.
  * 
+ * Returns `undefined` if the passed argument is not a class and is not a module with parameters.
+ * 
  * If you use this function in tests, remember to run
  * the `clearDebugClassNames()` function before each test.
  */
-export function getDebugClassName(modRefId: ModRefId): string {
+export function getDebugClassName(modRefId: ModRefId): string | undefined {
   const debugClassName = debugClassNames.get(modRefId);
   if (debugClassName) {
     return debugClassName;
@@ -25,6 +27,9 @@ export function getDebugClassName(modRefId: ModRefId): string {
     className = modRefId.id || modRefId.module.name;
   } else {
     className = modRefId.name;
+  }
+  if (!className) {
+    return;
   }
   const count = debugClassNameCounters.get(className);
   let newDebugClassName: string;

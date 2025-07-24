@@ -301,7 +301,7 @@ export class ModuleManager {
       if (typeof moduleId == 'string') {
         moduleName = moduleId;
       } else {
-        moduleName = getDebugClassName(moduleId);
+        moduleName = getDebugClassName(moduleId) || 'unknown';
       }
       throw new Error(`${moduleName} not found in ModuleManager.`);
     }

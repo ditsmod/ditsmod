@@ -50,6 +50,10 @@ export class ModuleNormalizer {
     const aDecoratorMeta = this.getDecoratorMeta(modRefId) || [];
     let rawMeta = aDecoratorMeta.find((d) => isModDecor(d))?.value;
     const modName = getDebugClassName(modRefId);
+    if (!modName) {
+      const msg = 'The passed argument modRefId is not a class, and is not a module with a parameter.';
+      throw new TypeError(msg);
+    }
     if (!rawMeta) {
       const msg = `module "${modName}" does not have the "@rootModule()" or "@featureModule()" decorator`;
       throw new Error(msg);

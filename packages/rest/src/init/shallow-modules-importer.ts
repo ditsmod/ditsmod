@@ -309,8 +309,8 @@ export class ShallowModulesImporter {
     const duplImpTokens = [...declaredTokens, ...resolvedTokens].includes(token) ? [] : [token];
     const collisions = getCollisions(duplImpTokens, [...importObj.providers, provider]);
     if (collisions.length) {
-      const moduleName1 = getDebugClassName(importObj.modRefId);
-      const moduleName2 = getDebugClassName(modRefId);
+      const moduleName1 = getDebugClassName(importObj.modRefId) || 'unknown-1';
+      const moduleName2 = getDebugClassName(modRefId) || 'unknown-2';
       throwProvidersCollisionError(
         this.moduleName,
         [token],
@@ -405,7 +405,7 @@ export class ShallowModulesImporter {
           if (hostModulePath !== '.' && collisionWithPath !== '.' && collisionWithPath.startsWith(hostModulePath)) {
             // Allow collisions in host modules.
           } else {
-            const hostModuleName = getDebugClassName(importObj.modRefId);
+            const hostModuleName = getDebugClassName(importObj.modRefId) || 'unknown';
             throwProvidersCollisionError(this.moduleName, [token], [hostModuleName], level, this.baseMeta.isExternal);
           }
         }

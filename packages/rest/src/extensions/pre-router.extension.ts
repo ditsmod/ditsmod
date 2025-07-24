@@ -142,7 +142,7 @@ export class PreRouterExtension implements Extension<void> {
     const routeMeta = baseRouteMeta as RequireProps<typeof baseRouteMeta, 'routeHandler'>;
     const mergedPerRou: Provider[] = [];
     mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
-    const controllerName = getDebugClassName(routeMeta.Controller);
+    const controllerName = getDebugClassName(routeMeta.Controller) || 'unknown';
 
     if (metadataPerMod3.guards1.length || controllerMetadata.guards.length) {
       mergedPerRou.push(InterceptorWithGuardsPerRou);
@@ -231,7 +231,7 @@ export class PreRouterExtension implements Extension<void> {
 
     const resolvedPerReq = Injector.resolve(mergedPerReq);
     const resolvedPerRou = Injector.resolve(mergedPerRou);
-    const controllerName = getDebugClassName(routeMeta.Controller);
+    const controllerName = getDebugClassName(routeMeta.Controller) || 'unknown';
     routeMeta.resolvedGuards = this.getResolvedGuards(controllerMetadata.guards, resolvedPerReq);
     routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(
       metadataPerMod3.guards1,
