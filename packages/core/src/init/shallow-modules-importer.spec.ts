@@ -24,14 +24,12 @@ describe('ShallowModulesImporter', () => {
   @injectable()
   class MockShallowModulesImporter extends ShallowModulesImporter {
     injectorPerMod: Injector;
-    // declare prefixPerMod: string;
     override moduleName = 'MockModule';
     override baseMeta = new NormalizedMeta();
     override shallowImportsBase = new Map<ModuleType, MetadataPerMod1>();
     override importedProvidersPerMod = new Map<any, ImportObj>();
     override importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
     override importedExtensions = new Map<ModRefId, Provider[]>();
-    // override guards1: GuardPerMod1[] = [];
 
     override exportGlobalProviders(moduleManager: ModuleManager) {
       return super.exportGlobalProviders(moduleManager);
@@ -53,6 +51,93 @@ describe('ShallowModulesImporter', () => {
   });
 
   describe('exportGlobalProviders()', () => {
+    it('exported providers order', () => {
+      @featureModule({
+        providersPerMod: [Provider1, Provider2],
+        exports: [Provider1, Provider2],
+      })
+      class Module1 {}
+
+      @featureModule({
+        imports: [Module1],
+        providersPerMod: [Provider3, Provider4],
+        exports: [Module1, Provider3, Provider4],
+      })
+      class Module2 {}
+
+      @rootModule({
+        imports: [Module2],
+        exports: [Module2],
+      })
+      class AppModule {}
+
+      expect(() => moduleManager.scanRootModule(AppModule)).not.toThrow();
+      expect(() => mock.exportGlobalProviders(moduleManager)).not.toThrow();
+      expect(getImportedProviders(mock.importedProvidersPerMod)).toEqual([Provider1, Provider2, Provider3, Provider4]);
+    });
+
+    it('saving map between token and modules from where need import providers for it', () => {
+      @featureModule({
+        providersPerMod: [Provider1],
+        exports: [Provider1],
+      })
+      class Module1 {}
+
+      @featureModule({
+        imports: [Module1],
+        providersPerMod: [Provider2],
+        exports: [Provider2, Module1],
+      })
+      class Module2 {}
+
+      @rootModule({
+        imports: [Module2],
+        providersPerMod: [Provider3],
+        exports: [Module2, Provider3],
+      })
+      class AppModule {}
+
+      expect(() => moduleManager.scanRootModule(AppModule)).not.toThrow();
+      expect(() => mock.exportGlobalProviders(moduleManager)).not.toThrow();
+      expect(getImportedProviders(mock.importedProvidersPerMod)).toEqual([Provider1, Provider2, Provider3]);
+
+      const importObj = new ImportObj();
+      importObj.modRefId = Module1;
+      importObj.providers = [Provider1];
+      expect(mock?.importedProvidersPerMod.get(Provider1)).toEqual(importObj);
+      importObj.modRefId = Module2;
+      importObj.providers = [Provider2];
+      expect(mock?.importedProvidersPerMod.get(Provider2)).toEqual(importObj);
+      importObj.modRefId = AppModule;
+      importObj.providers = [Provider3];
+      expect(mock?.importedProvidersPerMod.get(Provider3)).toEqual(importObj);
+    });
+
+    it('merge providers from reexported modules', () => {
+      @featureModule({
+        providersPerMod: [Provider1],
+        exports: [Provider1],
+      })
+      class Module1 {}
+
+      @featureModule({
+        providersPerMod: [Provider2],
+        imports: [Module1],
+        exports: [Provider2, Module1],
+      })
+      class Module2 {}
+
+      @rootModule({
+        imports: [Module2],
+        exports: [Module2],
+      })
+      class AppModule {}
+
+      expect(() => moduleManager.scanRootModule(AppModule)).not.toThrow();
+      expect(() => mock.exportGlobalProviders(moduleManager)).not.toThrow();
+      expect(getImportedProviders(mock.importedProvidersPerMod)).toEqual([Provider1, Provider2]);
+    });
+
     it('forbidden reexports providers', () => {
       @featureModule({
         providersPerMod: [Provider1],
@@ -91,101 +176,9 @@ describe('ShallowModulesImporter', () => {
       })
       class AppModule {}
 
-      moduleManager.scanRootModule(AppModule);
+      expect(() => moduleManager.scanRootModule(AppModule)).not.toThrow();
       expect(() => mock.exportGlobalProviders(moduleManager)).not.toThrow();
       expect(getImportedProviders(mock.importedProvidersPerMod)).toEqual([Provider1]);
-    });
-
-    it('merge providers from reexported modules', () => {
-      @featureModule({
-        providersPerMod: [Provider1],
-        exports: [Provider1],
-      })
-      class Module1 {}
-
-      @featureModule({
-        providersPerMod: [Provider2],
-        imports: [Module1],
-        exports: [Provider2, Module1],
-      })
-      class Module2 {}
-
-      @rootModule({
-        imports: [Module2],
-        exports: [Module2],
-      })
-      class AppModule {}
-
-      moduleManager.scanRootModule(AppModule);
-      expect(() => mock.exportGlobalProviders(moduleManager)).not.toThrow();
-      expect(getImportedProviders(mock.importedProvidersPerMod)).toEqual([Provider1, Provider2]);
-    });
-
-    it('exported providers order', () => {
-      @featureModule({
-        providersPerMod: [Provider1, Provider2],
-        exports: [Provider1, Provider2],
-      })
-      class Module1 {}
-
-      @featureModule({
-        imports: [Module1],
-        providersPerMod: [Provider3, Provider4],
-        exports: [Module1, Provider3, Provider4],
-      })
-      class Module2 {}
-
-      @rootModule({
-        imports: [Module2],
-        exports: [Module2],
-      })
-      class AppModule {}
-
-      moduleManager.scanRootModule(AppModule);
-      expect(() => mock.exportGlobalProviders(moduleManager)).not.toThrow();
-      expect(getImportedProviders(mock.importedProvidersPerMod)).toEqual([Provider1, Provider2, Provider3, Provider4]);
-    });
-
-    it('import dependencies of global imported providers', () => {
-      @injectable()
-      class Provider2 {
-        constructor(provider1: Provider1) {}
-      }
-
-      @featureModule({
-        providersPerMod: [Provider1],
-        exports: [Provider1],
-      })
-      class Module1 {}
-
-      @featureModule({
-        imports: [Module1],
-        providersPerMod: [Provider2],
-        exports: [Provider2, Module1],
-      })
-      class Module2 {}
-
-      @rootModule({
-        imports: [Module2],
-        providersPerMod: [Provider3],
-        exports: [Module2, Provider3],
-      })
-      class AppModule {}
-
-      moduleManager.scanRootModule(AppModule);
-      expect(() => mock.exportGlobalProviders(moduleManager)).not.toThrow();
-      expect(getImportedProviders(mock.importedProvidersPerMod)).toEqual([Provider1, Provider2, Provider3]);
-
-      const importObj = new ImportObj();
-      importObj.modRefId = Module1;
-      importObj.providers = [Provider1];
-      expect(mock?.importedProvidersPerMod.get(Provider1)).toEqual(importObj);
-      importObj.modRefId = Module2;
-      importObj.providers = [Provider2];
-      expect(mock?.importedProvidersPerMod.get(Provider2)).toEqual(importObj);
-      importObj.modRefId = AppModule;
-      importObj.providers = [Provider3];
-      expect(mock?.importedProvidersPerMod.get(Provider3)).toEqual(importObj);
     });
   });
 
