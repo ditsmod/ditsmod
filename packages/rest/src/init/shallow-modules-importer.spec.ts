@@ -1,4 +1,5 @@
 import {
+  AnyObj,
   clearDebugClassNames,
   defaultProvidersPerApp,
   featureModule,
@@ -7,9 +8,9 @@ import {
   Injector,
   MetadataPerMod1,
   ModRefId,
-  ShallowModulesImporter,
   ModuleManager,
   ModuleType,
+  ModuleWithParams,
   NormalizedMeta,
   Provider,
   rootModule,
@@ -19,8 +20,9 @@ import {
 import { controller } from '#types/controller.js';
 import { AppendsWithParams, RestMetadata } from './module-metadata.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
+import { ShallowModulesImporter } from './shallow-modules-importer.js';
+import { Level, RestGlobalProviders } from '#types/types.js';
 
-type Level = 'Mod';
 /**
  * @todo Rename this.
  */
@@ -39,20 +41,24 @@ class MockShallowModulesImporter extends ShallowModulesImporter {
   override moduleName = 'MockModule';
   override baseMeta = new NormalizedMeta();
   override shallowImportsBase = new Map<ModuleType, MetadataPerMod1>();
-  override importedProvidersPerMod = new Map<any, ImportObj>();
   override importedProvidersPerRou = new Map<any, ImportObj>();
   override importedProvidersPerReq = new Map<any, ImportObj>();
-  override importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
   override importedMultiProvidersPerRou = new Map<ModRefId, Provider[]>();
   override importedMultiProvidersPerReq = new Map<ModRefId, Provider[]>();
-  override importedExtensions = new Map<ModRefId, Provider[]>();
   // override guards1: GuardPerMod1[] = [];
 
-  override exportGlobalProviders(moduleManager: ModuleManager, providersPerApp: Provider[]) {
-    return super.exportGlobalProviders(moduleManager, providersPerApp);
+  override exportGlobalProviders(config: {
+    moduleManager: ModuleManager;
+    globalProviders: GlobalProviders;
+    baseMeta: NormalizedMeta;
+  }): RestGlobalProviders {
+    return super.exportGlobalProviders(config);
   }
 
-  override getResolvedCollisionsPerLevel(level: Level, token1: any) {
+  protected override getResolvedCollisionsPerLevel(
+    level: Level,
+    token1: any,
+  ): { module2: ModuleType | ModuleWithParams<AnyObj>; providers: Provider[] } {
     return super.getResolvedCollisionsPerLevel(level, token1);
   }
 }
@@ -68,9 +74,16 @@ beforeEach(() => {
 });
 
 describe('appending modules', () => {
-  function bootstrap(mod: ModuleType) {
-    expect(() => moduleManager.scanModule(mod)).not.toThrow();
-    return mock.importModulesShallow([], new GlobalProviders(), '', mod, moduleManager, new Set());
+  function bootstrap(modRefId: ModuleType) {
+    expect(() => moduleManager.scanModule(modRefId)).not.toThrow();
+    return mock.importModulesShallow({
+      modRefId: modRefId,
+      globalProviders: new GlobalProviders(),
+      providersPerApp: [],
+      unfinishedScanModules: new Set(),
+      shallowImportsBase: new Map(),
+      prefixPerMod: '',
+    });
   }
 
   it('should throw an error because resolvedCollisionsPerReq not properly setted provider', () => {
@@ -83,12 +96,12 @@ describe('appending modules', () => {
     })
     class Module0 {}
 
-    @initRest({ providersPerReq: [{ token: Provider1, useValue: 'some value' }] })
-    @featureModule({ exports: [Provider1] })
+    @initRest({ providersPerReq: [{ token: Provider1, useValue: 'some value' }], exports: [Provider1] })
+    @featureModule()
     class Module1 {}
 
-    @initRest({ providersPerReq: [Provider1] })
-    @featureModule({ exports: [Provider1] })
+    @initRest({ providersPerReq: [Provider1], exports: [Provider1] })
+    @featureModule()
     class Module2 {}
 
     @initRest({ resolvedCollisionsPerReq: [[Provider1, Module0]] })
@@ -218,10 +231,8 @@ describe('appending modules', () => {
     expect(metadataPerMod1_1.prefixPerMod).toBe('prefix1');
     expect(metadataPerMod1_1.baseMeta).toBeDefined();
     // expect(metadataPerMod1_1.applyControllers).toBe(true);
-    expect(metadataPerMod1_1.importedTokensMap.perMod).toEqual(new Map());
     expect(metadataPerMod1_1.importedTokensMap.perRou).toEqual(new Map());
     expect(metadataPerMod1_1.importedTokensMap.perReq).toEqual(new Map());
-    expect(metadataPerMod1_1.importedTokensMap.multiPerMod).toEqual(new Map());
     expect(metadataPerMod1_1.importedTokensMap.multiPerRou).toEqual(new Map());
     expect(metadataPerMod1_1.importedTokensMap.multiPerReq).toEqual(new Map());
 
@@ -302,7 +313,7 @@ describe('appending modules', () => {
     @controller()
     class Controller1 {}
 
-    @initRest({ controllers: [Controller1], })
+    @initRest({ controllers: [Controller1] })
     @featureModule({
       providersPerMod: [Provider1, Provider2],
       exports: [Provider1, Provider2],
@@ -375,10 +386,8 @@ describe('appending modules', () => {
     expect(metadataPerMod1_1.prefixPerMod).toBe('prefix1');
     expect(metadataPerMod1_1.baseMeta).toBeDefined();
     // expect(metadataPerMod1_1.applyControllers).toBe(true);
-    expect(metadataPerMod1_1.importedTokensMap.perMod).toEqual(new Map());
     expect(metadataPerMod1_1.importedTokensMap.perRou).toEqual(new Map());
     expect(metadataPerMod1_1.importedTokensMap.perReq).toEqual(new Map());
-    expect(metadataPerMod1_1.importedTokensMap.multiPerMod).toEqual(new Map());
     expect(metadataPerMod1_1.importedTokensMap.multiPerRou).toEqual(new Map());
     expect(metadataPerMod1_1.importedTokensMap.multiPerReq).toEqual(new Map());
 
