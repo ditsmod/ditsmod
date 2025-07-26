@@ -58,7 +58,7 @@ export function getInitHooksAndRawMeta(data?: ArgumentsType): InitHooksAndRawMet
 }
 ```
  */
-export interface AddDecorator<T extends { importsWithParams?: { modRefId: ModRefId }[] }, R> {
+export interface AddDecorator<T extends { imports?: (ModRefId | { modRefId: ModRefId })[] }, R> {
   (data?: T): any;
 }
 

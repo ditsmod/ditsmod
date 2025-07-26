@@ -19,7 +19,7 @@ class Controller0 {
 @initRest({
   appends: [Module2, { path: 'module2', module: Module2 }],
   controllers: [Controller0],
-  importsWithParams: [
+  imports: [
     // Allow slash for absolutePath.
     { absolutePath: '/module1', modRefId: Module1 },
     { path: 'module3', modRefId: Module3 },

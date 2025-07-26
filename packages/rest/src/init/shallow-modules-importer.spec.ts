@@ -1,12 +1,10 @@
 import {
   AnyObj,
   clearDebugClassNames,
-  defaultProvidersPerApp,
   featureModule,
   forwardRef,
   GlobalProviders,
   injectable,
-  Injector,
   MetadataPerMod1,
   ModRefId,
   ModuleManager,
@@ -16,10 +14,11 @@ import {
   Provider,
   rootModule,
   SystemLogMediator,
+  ShallowModulesImporter as ShallowModulesImporterBase,
 } from '@ditsmod/core';
 
 import { controller } from '#types/controller.js';
-import { AppendsWithParams, RestMetadata } from './module-metadata.js';
+import { AppendsWithParams } from './module-metadata.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { ShallowModulesImporter } from './shallow-modules-importer.js';
 import { Level, RestGlobalProviders } from '#types/types.js';
@@ -38,7 +37,6 @@ export class ImportObj<T extends Provider = Provider> {
 
 @injectable()
 class MockShallowModulesImporter extends ShallowModulesImporter {
-  injectorPerMod: Injector;
   declare prefixPerMod: string;
   override moduleName = 'MockModule';
   override baseMeta = new NormalizedMeta();
@@ -70,20 +68,26 @@ let moduleManager: ModuleManager;
 
 beforeEach(() => {
   clearDebugClassNames();
-  const injectorPerApp = Injector.resolveAndCreate([...defaultProvidersPerApp, MockShallowModulesImporter]);
-  mock = injectorPerApp.get(MockShallowModulesImporter);
+  mock = new MockShallowModulesImporter();
   moduleManager = new ModuleManager(new SystemLogMediator({ moduleName: 'fakeName' }));
 });
 
 describe('appending modules', () => {
-  function bootstrap(modRefId: ModuleType) {
-    expect(() => moduleManager.scanModule(modRefId)).not.toThrow();
+  function importModulesShallow(modRefId: ModuleType) {
+    expect(() => moduleManager.scanRootModule(modRefId)).not.toThrow();
+    const shallowImportsBase = new ShallowModulesImporterBase().importModulesShallow({
+      globalProviders: new GlobalProviders(),
+      modRefId,
+      moduleManager,
+      unfinishedScanModules: new Set(),
+    });
+    const globalProviders = new ShallowModulesImporterBase().exportGlobalProviders(moduleManager);
     return mock.importModulesShallow({
       modRefId: modRefId,
-      globalProviders: new GlobalProviders(),
+      globalProviders,
       providersPerApp: [],
       unfinishedScanModules: new Set(),
-      shallowImportsBase: new Map(),
+      shallowImportsBase,
       prefixPerMod: '',
     });
   }
@@ -94,7 +98,7 @@ describe('appending modules', () => {
 
     const moduleWithParams0: ModuleWithParams = { module: forwardRef(() => Module3) };
     @initRest({
-      importsWithParams: [{ modRefId: moduleWithParams0 }],
+      imports: [{ modRefId: moduleWithParams0 }],
       exports: [moduleWithParams0],
     })
     @featureModule()
@@ -102,7 +106,7 @@ describe('appending modules', () => {
 
     const moduleWithParams1: ModuleWithParams = { module: Module1 };
     @initRest({
-      importsWithParams: [{ modRefId: moduleWithParams1 }],
+      imports: [{ modRefId: moduleWithParams1 }],
       providersPerReq: [Provider1],
       exports: [Provider1, moduleWithParams1],
     })
@@ -111,7 +115,7 @@ describe('appending modules', () => {
 
     const moduleWithParams2: ModuleWithParams = { module: Module2 };
     @initRest({
-      importsWithParams: [{ modRefId: moduleWithParams2 }],
+      imports: [{ modRefId: moduleWithParams2 }],
       providersPerReq: [Provider2],
       exports: [Provider2, moduleWithParams2],
     })
@@ -152,12 +156,15 @@ describe('appending modules', () => {
     @featureModule()
     class Module2 {}
 
-    @initRest({ resolvedCollisionsPerReq: [[Provider1, Module0]] })
-    @rootModule({ imports: [Module0, Module1, Module2] })
+    @initRest({
+      imports: [Module0, Module1, Module2],
+      resolvedCollisionsPerReq: [[Provider1, Module0]],
+    })
+    @rootModule()
     class AppModule {}
 
-    const msg = 'AppModule failed: Provider1 mapped with Module0, but providersPerReq does not includes Provider1';
-    expect(() => bootstrap(AppModule)).toThrow(msg);
+    const msg = 'Provider1 mapped with Module0, but Module0 is not imported into the application';
+    expect(() => importModulesShallow(AppModule)).toThrow(msg);
   });
 
   it('should throw an error because AppModule have resolvedCollisionsPerReq when there is no collisions', () => {
@@ -179,7 +186,7 @@ describe('appending modules', () => {
     class AppModule {}
 
     const msg = 'no collision';
-    expect(() => bootstrap(AppModule)).toThrow(msg);
+    expect(() => importModulesShallow(AppModule)).toThrow(msg);
   });
 
   it('should work with resolved collision', () => {
@@ -197,30 +204,36 @@ describe('appending modules', () => {
     @rootModule({
       imports: [Module1, Module2],
     })
-    class Module3 {}
+    class AppModule {}
 
-    let msg = 'Importing providers to Module3 failed: exports from Module1, Module2 causes collision with Provider1. ';
+    let msg =
+      'Importing providers to AppModule failed: exports from Module1, Module2 causes collision with Provider1. ';
     msg += 'You should add Provider1 to resolvedCollisionsPerReq in this module. ';
     msg += 'For example: resolvedCollisionsPerReq: [ [Provider1, Module1] ].';
-    expect(() => bootstrap(Module3)).toThrow(msg);
+    expect(() => importModulesShallow(AppModule)).toThrow(msg);
   });
 
   it('should work with resolved collision', () => {
     class Provider1 {}
 
-    @initRest({ providersPerReq: [{ token: Provider1, useValue: 'some value' }] })
-    @featureModule({ exports: [Provider1] })
+    @initRest({ providersPerReq: [{ token: Provider1, useValue: 'some value' }], exports: [Provider1] })
+    @featureModule()
     class Module1 {}
 
-    @initRest({ providersPerReq: [Provider1] })
-    @featureModule({ exports: [Provider1] })
+    @initRest({ providersPerReq: [Provider1], exports: [Provider1] })
+    @featureModule()
     class Module2 {}
 
-    @initRest({ resolvedCollisionsPerReq: [[Provider1, Module1]] })
-    @rootModule({ imports: [Module1, Module2] })
+    const modRefId1: ModuleWithParams = { module: Module1 };
+    const modRefId2: ModuleWithParams = { module: Module2 };
+    @initRest({
+      imports: [modRefId1, modRefId2],
+      resolvedCollisionsPerReq: [[Provider1, modRefId1]],
+    })
+    @rootModule()
     class AppModule {}
 
-    expect(() => bootstrap(AppModule)).not.toThrow();
+    expect(() => importModulesShallow(AppModule)).not.toThrow();
   });
 
   it('should not throw an error during appending modules', () => {
@@ -239,10 +252,10 @@ describe('appending modules', () => {
       appends: [Module1, { path: 'some-prefix', module: Module2 }],
       controllers: [Controller1],
     })
-    @featureModule()
-    class Module3 {}
+    @rootModule()
+    class AppModule {}
 
-    expect(() => bootstrap(Module3)).not.toThrow();
+    expect(() => importModulesShallow(AppModule)).not.toThrow();
   });
 
   it('map should have some properties', () => {
@@ -263,15 +276,15 @@ describe('appending modules', () => {
       appends: [mod1, mod2],
       controllers: [Controller1],
     })
-    @featureModule()
-    class Module3 {}
+    @rootModule()
+    class AppModule {}
 
-    const map = bootstrap(Module3);
+    const map = importModulesShallow(AppModule);
     expect(map.size).toBe(3);
 
     const metadataPerMod1_1 = map.get(mod1)!;
     const metadataPerMod1_2 = map.get(mod2)!;
-    const metadataPerMod1_3 = map.get(Module3)!;
+    const metadataPerMod1_3 = map.get(AppModule)!;
     expect(metadataPerMod1_1).toBeDefined();
     expect(metadataPerMod1_2).toBeDefined();
     expect(metadataPerMod1_3).toBeDefined();
@@ -302,11 +315,11 @@ describe('appending modules', () => {
       appends: [Module1],
       controllers: [Controller1],
     })
-    @featureModule({ imports: [Module1] })
-    class Module2 {}
+    @rootModule({ imports: [Module1] })
+    class AppModule {}
 
-    const msg = 'Appends to "Module2" failed: "Module1" includes in both: imports and appends arrays';
-    expect(() => bootstrap(Module2)).toThrow(msg);
+    const msg = 'Appends to "AppModule" failed: "Module1" includes in both: imports and appends arrays';
+    expect(() => importModulesShallow(AppModule)).toThrow(msg);
   });
 
   it('should throw an error during appending module without controllers (common module)', () => {
@@ -325,18 +338,16 @@ describe('appending modules', () => {
       appends: [Module1],
       controllers: [Controller1],
     })
-    @featureModule()
-    class Module2 {}
+    @rootModule()
+    class AppModule {}
 
-    const msg = 'Appends to "Module2" failed: "Module1" must have controllers';
-    expect(() => bootstrap(Module2)).toThrow(msg);
+    const msg = 'Appends to "AppModule" failed: "Module1" must have controllers';
+    expect(() => importModulesShallow(AppModule)).toThrow(msg);
   });
 
   it('should throw an error during appending module without controllers (AppendsWithParams)', () => {
     class Provider1 {}
     class Provider2 {}
-    @controller()
-    class Controller1 {}
 
     @featureModule({
       providersPerMod: [Provider1, Provider2],
@@ -346,13 +357,12 @@ describe('appending modules', () => {
 
     @initRest({
       appends: [{ path: '', module: Module1 }],
-      controllers: [Controller1],
     })
-    @featureModule()
-    class Module2 {}
+    @rootModule()
+    class AppModule {}
 
-    const msg = 'Appends to "Module2" failed: "Module1" must have controllers';
-    expect(() => bootstrap(Module2)).toThrow('Appends to "Module2" failed: "Module1" must have controllers');
+    const msg = 'Appends to "AppModule" failed: "Module1" must have controllers';
+    expect(() => importModulesShallow(AppModule)).toThrow(msg);
   });
 
   it('should not throw an error during appending module with controllers', () => {
@@ -372,10 +382,10 @@ describe('appending modules', () => {
       appends: [Module1],
       controllers: [Controller1],
     })
-    @featureModule()
-    class Module2 {}
+    @rootModule()
+    class AppModule {}
 
-    expect(() => bootstrap(Module2)).not.toThrow();
+    expect(() => importModulesShallow(AppModule)).not.toThrow();
   });
 
   it('should not throw an error during appending modules', () => {
@@ -394,10 +404,10 @@ describe('appending modules', () => {
       appends: [Module1, { path: 'some-prefix', module: Module2 }],
       controllers: [Controller1],
     })
-    @featureModule()
-    class Module3 {}
+    @rootModule()
+    class AppModule {}
 
-    expect(() => bootstrap(Module3)).not.toThrow();
+    expect(() => importModulesShallow(AppModule)).not.toThrow();
   });
 
   it('map should have some properties', () => {
@@ -418,15 +428,15 @@ describe('appending modules', () => {
       appends: [mod1, mod2],
       controllers: [Controller1],
     })
-    @featureModule()
-    class Module3 {}
+    @rootModule()
+    class AppModule {}
 
-    const map = bootstrap(Module3);
+    const map = importModulesShallow(AppModule);
     expect(map.size).toBe(3);
 
     const metadataPerMod1_1 = map.get(mod1)!;
     const metadataPerMod1_2 = map.get(mod2)!;
-    const metadataPerMod1_3 = map.get(Module3)!;
+    const metadataPerMod1_3 = map.get(AppModule)!;
     expect(metadataPerMod1_1).toBeDefined();
     expect(metadataPerMod1_2).toBeDefined();
     expect(metadataPerMod1_3).toBeDefined();

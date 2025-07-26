@@ -8,7 +8,7 @@ import { AnyObj, ModRefId } from '#types/mix.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { ParamsTransferObj } from './feature-module.js';
 
-type ObjectWithImports = { importsWithParams?: { modRefId: ModRefId }[] };
+type ObjectWithImports = { imports?: (ModRefId | { modRefId: ModRefId })[] };
 
 /**
  * Init hooks and metadata attached by init decorators,

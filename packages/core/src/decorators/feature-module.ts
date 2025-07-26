@@ -11,6 +11,7 @@ export interface FeatureModuleDecorator {
   (data?: ModuleMetadata): any;
 }
 export interface ParamsTransferObj<T extends { modRefId: ModRefId } = { modRefId: ModRefId }> {
+  importsModules?: ModuleType[];
   importsWithParams?: Override<T, { modRefId: ModuleWithSrcInitMeta }>[];
 }
 

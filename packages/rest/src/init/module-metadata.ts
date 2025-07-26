@@ -5,10 +5,7 @@ import { GuardItem } from '#interceptors/guard.js';
  * Metadata for the `initRest` decorator, which adds REST metadata to a `featureModule` or `rootModule`.
  */
 export interface RestMetadata {
-  /**
-   * List of `ModuleWithParams` or provider tokens exported by this module.
-   */
-  exports?: any[];
+  imports?: (ModRefId | RestModuleParams)[];
   /**
    * Providers per route.
    */
@@ -37,7 +34,10 @@ export interface RestMetadata {
    * The application controllers.
    */
   controllers?: Class[];
-  importsWithParams?: RestModuleParams[];
+  /**
+   * List of `ModuleWithParams` or provider tokens exported by this module.
+   */
+  exports?: any[];
 }
 
 export type RestModuleParams = RestModuleParams1 | RestModuleParams2;

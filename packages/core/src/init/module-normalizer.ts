@@ -14,6 +14,7 @@ import {
   isModDecor,
   isFeatureModule,
   isModuleWithInitHooks,
+  isParamsWithModRefId,
 } from '#utils/type-guards.js';
 import { ExtensionConfigBase, getExtensionProvider } from '#extension/get-extension-provider.js';
 import { AnyFn, AnyObj, ModRefId, ModuleType } from '#types/mix.js';
@@ -364,13 +365,20 @@ export class ModuleNormalizer {
       }
 
       // Setting params for imported modules.
-      initHooks.rawMeta.importsWithParams?.forEach((params) => {
-        if (isModuleWithParams(params.modRefId)) {
-          (params.modRefId as ModuleWithSrcInitMeta).srcInitMeta = baseMeta.initMeta;
-        } else {
-          params.modRefId = { module: params.modRefId, srcInitMeta: baseMeta.initMeta } as ModuleWithSrcInitMeta;
-        }
-      });
+      if (initHooks.rawMeta.imports) {
+        initHooks.rawMeta.imports = initHooks.rawMeta.imports.map((imp) => {
+          if (isParamsWithModRefId(imp)) {
+            if (isModuleWithParams(imp.modRefId)) {
+              (imp.modRefId as ModuleWithSrcInitMeta).srcInitMeta = baseMeta.initMeta;
+            } else {
+              imp.modRefId = { module: imp.modRefId, srcInitMeta: baseMeta.initMeta } as ModuleWithSrcInitMeta;
+            }
+          } else if (isModuleWithParams(imp)) {
+            (imp as ModuleWithSrcInitMeta).srcInitMeta = baseMeta.initMeta;
+          }
+          return imp;
+        });
+      }
 
       this.callInitHook(baseMeta, decorator, initHooks);
     });
@@ -396,6 +404,11 @@ export class ModuleNormalizer {
     const meta = initHooks.normalize(baseMeta);
     if (meta) {
       baseMeta.initMeta.set(decorator, meta);
+      meta?.importsModules?.forEach((imp) => {
+        if (!baseMeta.importsModules.includes(imp)) {
+          baseMeta.importsModules.push(imp);
+        }
+      });
       meta?.importsWithParams?.forEach((param) => {
         if (!baseMeta.importsWithParams.includes(param.modRefId)) {
           baseMeta.importsWithParams.push(param.modRefId);

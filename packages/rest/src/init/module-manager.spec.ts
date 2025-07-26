@@ -495,7 +495,7 @@ describe('ModuleManager', () => {
     const moduleWithParams: RestModuleParams = { path: 'module1', modRefId, guards: [Guard1] };
     const appendsWithParams: AppendsWithParams = { path: 'module2', module: Module2, guards: [Guard2] };
 
-    @initRest({ appends: [appendsWithParams], importsWithParams: [moduleWithParams] })
+    @initRest({ appends: [appendsWithParams], imports: [moduleWithParams] })
     @rootModule()
     class AppModule {}
 

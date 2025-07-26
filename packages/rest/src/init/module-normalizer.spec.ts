@@ -4,6 +4,7 @@ import {
   forwardRef,
   ModuleManager,
   ModuleWithParams,
+  ModuleWithSrcInitMeta,
   Providers,
   rootModule,
   SystemLogMediator,
@@ -46,7 +47,7 @@ describe('rest ModuleNormalizer', () => {
     // themselves do not have this decorator, so it's important that `Module1` and `Module2` are processed using the init hooks taken from `AppModule`.
     @initRest({
       appends: [appendWithParams],
-      importsWithParams: [{ modRefId: moduleWithParams, path: 'test1' }],
+      imports: [{ modRefId: moduleWithParams, path: 'test1' }],
     })
     @rootModule({
       imports: [moduleWithParams],
@@ -96,7 +97,7 @@ describe('rest ModuleNormalizer', () => {
     const appendWithParams: AppendsWithParams = { module: forwardRef(() => Module6), path: 'test2' };
     @initRest({
       appends: [forwardRef(() => Module5), appendWithParams],
-      importsWithParams: [{ modRefId: module2WithParams, path: 'test1' }],
+      imports: [{ modRefId: module2WithParams, path: 'test1' }],
       providersPerRou: [
         forwardRef(() => Service1),
         { token: forwardRef(() => Service3), useClass: forwardRef(() => Service3), multi: true },
@@ -223,7 +224,7 @@ describe('rest ModuleNormalizer', () => {
     const moduleWithParams: ModuleWithParams = { module: Module1 };
 
     @initRest({
-      importsWithParams: [
+      imports: [
         {
           path: 'one',
           guards: [Guard1, [Guard2, { property1: 'some-value' }]],
@@ -296,7 +297,7 @@ describe('rest ModuleNormalizer', () => {
     @rootModule()
     class AppModule {}
 
-    const msg = '"Module1" is listed in "export" but missing from the "importsWithParams" array';
+    const msg = '"Module1" is listed in "export" but missing from the "imports" array';
     expect(() => moduleManager.scanRootModule(AppModule)).toThrow(msg);
   });
 
@@ -305,19 +306,33 @@ describe('rest ModuleNormalizer', () => {
 
     @featureModule({ providersPerApp: [Service1] })
     class Module1 {}
-    const moduleWithParams: ModuleWithParams = { module: Module1 };
+
+    @featureModule({ providersPerApp: [Service1] })
+    class Module2 {}
+    const moduleWithParams2: ModuleWithParams = { module: Module2 };
+
+    @featureModule({ providersPerApp: [Service1] })
+    class Module3 {}
+
+    @featureModule({ providersPerApp: [Service1] })
+    class Module4 {}
+    const moduleWithParams4: ModuleWithParams = { module: Module4 };
 
     @initRest({
-      importsWithParams: [{ modRefId: moduleWithParams }],
-      exports: [moduleWithParams],
+      imports: [Module1, moduleWithParams2, { modRefId: Module3 }, { modRefId: moduleWithParams4 }],
+      exports: [Module1, moduleWithParams2, moduleWithParams4],
     })
     @rootModule()
     class AppModule {}
 
     const baseMeta = moduleManager.scanRootModule(AppModule);
-    expect(baseMeta.importsModules).toEqual([RestModule]);
-    expect(baseMeta.exportsModules).toEqual([]);
-    expect(baseMeta.importsWithParams).toEqual([moduleWithParams]);
-    expect(baseMeta.exportsWithParams).toEqual([moduleWithParams]);
+    expect(baseMeta.importsModules).toEqual([RestModule, Module1]);
+    expect(baseMeta.exportsModules).toEqual([Module1]);
+    expect(baseMeta.importsWithParams).toEqual([
+      moduleWithParams2,
+      { module: Module3, srcInitMeta: expect.any(Map) } as ModuleWithSrcInitMeta,
+      moduleWithParams4,
+    ]);
+    expect(baseMeta.exportsWithParams).toEqual([moduleWithParams2, moduleWithParams4]);
   });
 });

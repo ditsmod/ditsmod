@@ -263,7 +263,7 @@ describe('ModuleNormalizer', () => {
       one?: number;
       two?: number;
       appends?: ({ module: ModRefId } & AnyObj)[];
-      importsWithParams?: { modRefId: ModRefId; path?: string; guards?: any[] }[];
+      imports?: { modRefId: ModRefId; path?: string; guards?: any[] }[];
     }
 
     const initSome: AddDecorator<ArgumentsType, ReturnsType> = makeClassDecorator(getInitHooksAndRawMeta);
@@ -291,12 +291,12 @@ describe('ModuleNormalizer', () => {
       };
       const expectedImportsWithParams = [{ modRefId }, { modRefId: Module2 }];
 
-      @initSome({ importsWithParams: expectedImportsWithParams })
+      @initSome({ imports: expectedImportsWithParams })
       @featureModule()
       class Module3 {}
 
       const result = mock.normalize(Module3).initMeta.get(initSome);
-      const actualImportsWithParams = result?.rawMeta.importsWithParams;
+      const actualImportsWithParams = result?.rawMeta.imports;
       expect(actualImportsWithParams?.at(0)).toBe(expectedImportsWithParams?.at(0));
 
       // In the second element, `{ modRefId: Module 2 }` has been replaced with `{ modIfIed: { module: Module 2 } }`.
