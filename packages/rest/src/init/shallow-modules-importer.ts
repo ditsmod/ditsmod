@@ -440,7 +440,7 @@ export class ShallowModulesImporter {
   }
 
   protected checkImportsAndAppends(baseMeta: NormalizedMeta, meta1: RestNormalizedMeta) {
-    [...meta1.appendsModules].forEach((modRefId) => {
+    meta1.appendsModules.concat(meta1.appendsWithParams as any[]).forEach((modRefId) => {
       const appendedBaseMeta = this.getMetadata(modRefId, true);
       const meta2 = appendedBaseMeta.initMeta.get(initRest) as RestNormalizedMeta | undefined;
       if (!meta2?.controllers.length) {
