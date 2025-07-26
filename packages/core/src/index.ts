@@ -95,6 +95,7 @@ export {
   isModDecor,
   isRootModule,
   isProvider,
+  isParamsWithModRefId,
   hasDeclaredInDir,
   isCustomError,
   TypeGuard,
