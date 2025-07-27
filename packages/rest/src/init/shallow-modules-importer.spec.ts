@@ -163,7 +163,7 @@ describe('appending modules', () => {
     @rootModule()
     class AppModule {}
 
-    const msg = 'Provider1 mapped with Module0, but Module0 is not imported into the application';
+    const msg = 'Provider1 mapped with Module0, but Module0 does not exports Provider1';
     expect(() => importModulesShallow(AppModule)).toThrow(msg);
   });
 
@@ -171,21 +171,19 @@ describe('appending modules', () => {
     class Provider1 {}
     class Provider2 {}
 
-    @initRest({ providersPerReq: [Provider1] })
-    @featureModule({ exports: [Provider1] })
+    @initRest({ providersPerReq: [Provider1], exports: [Provider1] })
+    @featureModule()
     class Module1 {}
 
-    @initRest({ providersPerReq: [Provider2] })
-    @featureModule({ exports: [Provider2] })
+    @initRest({ providersPerReq: [Provider2], exports: [Provider2] })
+    @featureModule()
     class Module2 {}
 
-    @initRest({ resolvedCollisionsPerReq: [[Provider1, Module1]] })
-    @rootModule({
-      imports: [Module1, Module2],
-    })
+    @initRest({ imports: [Module1, Module2], resolvedCollisionsPerReq: [[Provider1, Module1]] })
+    @rootModule()
     class AppModule {}
 
-    const msg = 'no collision';
+    const msg = 'Provider1 mapped with Module1, but there are no collisions with Provider1 in the providersPerReq';
     expect(() => importModulesShallow(AppModule)).toThrow(msg);
   });
 
@@ -193,12 +191,15 @@ describe('appending modules', () => {
     class Provider1 {}
     class Provider2 {}
 
-    @initRest({ providersPerReq: [Provider1] })
-    @featureModule({ exports: [Provider1] })
+    @initRest({ providersPerReq: [Provider1], exports: [Provider1] })
+    @featureModule()
     class Module1 {}
 
-    @initRest({ providersPerReq: [{ token: Provider1, useValue: 'some value' }, Provider2] })
-    @featureModule({ exports: [Provider1, Provider2] })
+    @initRest({
+      providersPerReq: [{ token: Provider1, useValue: 'some value' }, Provider2],
+      exports: [Provider1, Provider2],
+    })
+    @featureModule()
     class Module2 {}
 
     @rootModule({

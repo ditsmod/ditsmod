@@ -26,6 +26,7 @@ import {
   ModuleWithSrcInitMeta,
   InitMetaMap,
   isParamsWithModRefId,
+  InitImportsExports,
 } from '@ditsmod/core';
 
 import { RestMetadata } from '#init/module-metadata.js';
@@ -38,14 +39,21 @@ import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
  * Normalizes and validates module metadata.
  */
 export class ModuleNormalizer {
-  normalize(baseMeta: NormalizedMeta, rawMeta: RestMetadata) {
+  normalize(baseMeta: NormalizedMeta, rawMeta: RestMetadata, initImportsExports?: InitImportsExports) {
     const meta = new RestNormalizedMeta();
     this.mergeModuleWithParams(baseMeta.modRefId, rawMeta, meta);
     this.appendModules(rawMeta, meta);
-    this.pickAndMergeMeta(meta, rawMeta);
-    this.exportModules(baseMeta, rawMeta, meta);
+    this.normalizeDeclaredAndResolvedProviders(meta, rawMeta);
+    this.normalizeExports(rawMeta, meta);
+    this.setImportsWithModRefId(meta, initImportsExports);
     this.checkMetadata(baseMeta, meta);
     return meta;
+  }
+
+  protected setImportsWithModRefId(meta: RestNormalizedMeta, initImportsExports?: InitImportsExports) {
+    if (initImportsExports?.importsWithModRefId) {
+      meta.importsWithModRefId = initImportsExports?.importsWithModRefId;
+    }
   }
 
   protected mergeModuleWithParams(modRefId: RestModRefId, rawMeta: RestMetadata, meta: RestNormalizedMeta): void {
@@ -98,7 +106,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected pickAndMergeMeta(meta: RestNormalizedMeta, rawMeta: RestMetadata) {
+  protected normalizeDeclaredAndResolvedProviders(meta: RestNormalizedMeta, rawMeta: RestMetadata) {
     if (rawMeta.controllers) {
       meta.controllers.push(...rawMeta.controllers);
     }
@@ -141,7 +149,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected exportModules(baseMeta: NormalizedMeta, rawMeta: RestMetadata, meta: RestNormalizedMeta) {
+  protected normalizeExports(rawMeta: RestMetadata, meta: RestNormalizedMeta) {
     if (!rawMeta.exports) {
       return;
     }
@@ -151,9 +159,7 @@ export class ModuleNormalizer {
       this.throwIfUndefined(exp, i);
       this.throwExportsIfNormalizedProvider(exp);
       if (reflector.getDecorators(exp, isFeatureModule)) {
-        if (!baseMeta.exportsModules.includes(exp)) {
-          baseMeta.exportsModules.push(exp);
-        }
+        //
       } else if (isModuleWithParams(exp)) {
         const hasExportWithoutImport = !rawMeta.imports?.some((imp) => {
           if (isParamsWithModRefId(imp)) {
@@ -166,9 +172,6 @@ export class ModuleNormalizer {
 
         if (hasExportWithoutImport) {
           this.throwExportWithParams(exp);
-        }
-        if (!baseMeta.exportsWithParams.includes(exp)) {
-          baseMeta.exportsWithParams.push(exp);
         }
       } else if (isProvider(exp) || getTokens(providers).includes(exp)) {
         // Provider or token of provider

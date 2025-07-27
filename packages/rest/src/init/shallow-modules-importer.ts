@@ -63,6 +63,7 @@ export class ShallowModulesImporter {
   protected unfinishedScanModules = new Set<ModRefId>();
   protected unfinishedExportModules = new Set<ModRefId>();
   protected moduleManager: ModuleManager;
+  protected resolvedCollisions = new Map<any, Set<Level>>();
 
   exportGlobalProviders({
     moduleManager,
@@ -156,6 +157,7 @@ export class ShallowModulesImporter {
     if (!meta) {
       return this.shallowImports;
     }
+    this.checkFalseResolvingCollisions();
 
     return this.shallowImports.set(modRefId, {
       baseMeta,
@@ -341,7 +343,7 @@ export class ShallowModulesImporter {
       throw new Error(errorMsg);
     }
     if (!meta2) {
-      errorMsg += `${moduleName} does not have a "initRest" decorator.`;
+      errorMsg += `${moduleName} does not exports ${tokenName}.`;
       throw new Error(errorMsg);
     }
     const providers = getLastProviders(meta2[`providersPer${level}`]).filter((p) => getToken(p) === token2);
@@ -350,7 +352,34 @@ export class ShallowModulesImporter {
       throw new Error(errorMsg);
     }
 
+    this.setResolvedCollisions(token2, level);
     return { module2: modRefId2, providers };
+  }
+
+  protected setResolvedCollisions(token: any, level: Level) {
+    const levels = this.resolvedCollisions.get(token);
+    if (!levels) {
+      this.resolvedCollisions.set(token, new Set([level]));
+    } else {
+      levels.add(level);
+    }
+  }
+
+  protected checkFalseResolvingCollisions() {
+    (['Rou', 'Req'] as const).forEach((level) => {
+      this.meta[`resolvedCollisionsPer${level}`].forEach(([token, module]) => {
+        const levels = this.resolvedCollisions.get(token);
+        if (!levels || !levels.has(level)) {
+          const moduleName = getDebugClassName(module);
+          const tokenName = token.name || token;
+          const errorMsg =
+            `Resolving collisions for providersPer${level} in ${this.moduleName} failed: ` +
+            `${tokenName} mapped with ${moduleName}, but there are no collisions ` +
+            `with ${tokenName} in the providersPer${level} array.`;
+          throw new Error(errorMsg);
+        }
+      });
+    });
   }
 
   protected throwIfTryResolvingMultiprovidersCollisions(moduleName: string) {

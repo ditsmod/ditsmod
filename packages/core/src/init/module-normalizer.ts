@@ -441,29 +441,6 @@ export class ModuleNormalizer {
     const meta = initHooks.normalize(baseMeta);
     if (meta) {
       baseMeta.initMeta.set(decorator, meta);
-      if (!initHooks.initImportsExports) {
-        return;
-      }
-
-      initHooks.initImportsExports.importsModules?.forEach((imp) => {
-        meta.importsModules?.push(imp);
-      });
-      initHooks.initImportsExports.importsWithParams?.forEach((imp) => {
-        meta.importsWithParams?.push(imp);
-      });
-      initHooks.initImportsExports.importsWithModRefId?.forEach((param) => {
-        meta.importsWithModRefId?.push(param);
-      });
-
-      initHooks.initImportsExports.exportsModules?.forEach((exp) => {
-        meta.exportsModules?.push(exp);
-      });
-      initHooks.initImportsExports.exportsWithParams?.forEach((exp) => {
-        meta.exportsWithParams?.push(exp);
-      });
-      initHooks.initImportsExports.exportsWithModRefId?.forEach((param) => {
-        meta.exportsWithModRefId?.push(param);
-      });
     }
   }
 

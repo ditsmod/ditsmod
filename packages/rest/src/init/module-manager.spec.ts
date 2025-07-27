@@ -440,13 +440,13 @@ describe('ModuleManager', () => {
       extensionsMeta: {},
       exports: [],
     })
-    class Module3 {}
+    class AppModule {}
 
     const expectedMeta1 = new RestNormalizedMeta();
     expectedMeta1.controllers = [Controller1];
-    mock.scanRootModule(Module3);
+    mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(5);
-    expect(getInitMeta('1')).toEqual(expectedMeta1);
+    expect(getInitMeta(Module1)).toEqual(expectedMeta1);
 
     const expectedMeta2 = new RestNormalizedMeta();
     expectedMeta2.providersPerRou = [Provider1];
