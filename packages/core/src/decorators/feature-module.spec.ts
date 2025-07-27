@@ -55,7 +55,6 @@ describe('Module decorator', () => {
       exports: [],
       extensions: [],
       extensionsMeta: {},
-      id: 'test-id',
       resolvedCollisionsPerMod: [],
     })
     class Module1 {}
@@ -70,7 +69,6 @@ describe('Module decorator', () => {
       providersPerMod: [],
       extensionsMeta: {},
       resolvedCollisionsPerMod: [],
-      id: 'test-id',
       exports: [],
       extensions: [],
     } as RawMeta);

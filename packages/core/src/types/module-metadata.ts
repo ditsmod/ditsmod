@@ -6,10 +6,6 @@ import { InitMetaMap } from './normalized-meta.js';
 
 export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<ProvidersMetadata> {
   /**
-   * The module ID.
-   */
-  id?: string;
-  /**
    * List of modules or `ModuleWithParams` imported by this module.
    * Also you can imports modules and set some prefix per each the module.
    */
@@ -52,6 +48,9 @@ export interface ModuleWithSrcInitMeta extends BaseModuleWithParams {
 }
 
 export interface BaseModuleWithParams<M extends AnyObj = AnyObj> {
+  /**
+   * The module ID.
+   */
   id?: string;
   module: ModuleType<M>;
 }

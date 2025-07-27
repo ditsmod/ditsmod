@@ -7,6 +7,7 @@ import { CallsiteUtils } from '#utils/callsites.js';
 import { ModuleNormalizer } from './module-normalizer.js';
 import { ModRefId } from '#types/mix.js';
 import { isModuleWithParams } from '#utils/type-guards.js';
+import { NormalizedMeta } from '#types/normalized-meta.js';
 
 describe('ModuleNormalizer.getDecoratorMeta()', () => {
   class Provider0 {}
@@ -17,8 +18,8 @@ describe('ModuleNormalizer.getDecoratorMeta()', () => {
     override getDecoratorMeta(modRefId: ModRefId) {
       return super.getDecoratorMeta(modRefId);
     }
-    override mergeModuleWithParams(modWitParams: ModuleWithParams, rawMeta: RawMeta) {
-      return super.mergeModuleWithParams(modWitParams, rawMeta);
+    override mergeModuleWithParams(rawMeta: RawMeta, modWitParams: ModuleWithParams, baseMeta: NormalizedMeta) {
+      return super.mergeModuleWithParams(rawMeta, modWitParams, baseMeta);
     }
   }
   const mockModuleNormalizer = new MockModuleNormalizer();
@@ -28,7 +29,7 @@ describe('ModuleNormalizer.getDecoratorMeta()', () => {
     const aRawMeta = mInitHooksAndRawMeta.map((d) => {
       let rawMeta = d.value as RawMeta;
       if (isModuleWithParams(modRefId)) {
-        rawMeta = mockModuleNormalizer.mergeModuleWithParams(modRefId, rawMeta);
+        rawMeta = mockModuleNormalizer.mergeModuleWithParams(rawMeta, modRefId, new NormalizedMeta());
       }
       return rawMeta;
     });
@@ -51,28 +52,26 @@ describe('ModuleNormalizer.getDecoratorMeta()', () => {
   });
 
   it('@featureModule() decorator with id', () => {
-    @featureModule({ id: 'someId' })
+    @featureModule()
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
     expect(metadata).toEqual<RawMeta[]>([
       {
         decorator: featureModule,
-        id: 'someId',
         declaredInDir: CallsiteUtils.getCallerDir(),
       },
     ]);
   });
 
   it('decorator with some data', () => {
-    @featureModule({ id: 'test-id' })
+    @featureModule()
     class Module1 {}
 
     const metadata = getModuleMetadata(Module1);
     expect(metadata).toEqual<RawMeta[]>([
       {
         decorator: featureModule,
-        id: 'test-id',
         declaredInDir: CallsiteUtils.getCallerDir(),
       },
     ]);
