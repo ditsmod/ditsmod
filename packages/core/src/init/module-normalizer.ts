@@ -19,7 +19,7 @@ import {
 import { ExtensionConfigBase, getExtensionProvider } from '#extension/get-extension-provider.js';
 import { AnyFn, ModRefId } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
-import { ParamsTransferObj, RawMeta } from '#decorators/feature-module.js';
+import { RawMeta } from '#decorators/feature-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { resolveForwardRef } from '#di/forward-ref.js';
@@ -38,7 +38,6 @@ import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
  * Normalizes and validates module metadata.
  */
 export class ModuleNormalizer {
-  protected mapOfParams: Map<ModuleWithSrcInitMeta, Map<AnyFn, ParamsTransferObj>>;
   /**
    * The directory in which the class was declared.
    */

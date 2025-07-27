@@ -6,7 +6,7 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { GlobalProviders } from '#types/metadata-per-mod.js';
 import { AnyObj, ModRefId } from '#types/mix.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
-import { ParamsTransferObj } from './feature-module.js';
+import { InitImports } from './feature-module.js';
 
 type ObjectWithImports = { imports?: (ModRefId | { modRefId: ModRefId })[] };
 
@@ -45,6 +45,8 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
    */
   hostRawMeta?: T;
 
+  meta: InitImports;
+
   constructor(public rawMeta: T) {}
 
   /**
@@ -59,7 +61,7 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
    *
    * @param baseMeta Normalized metadata that is passed to the `featureModule` or `rootModule` decorator.
    */
-  normalize(baseMeta: NormalizedMeta): ParamsTransferObj {
+  normalize(baseMeta: NormalizedMeta): InitImports {
     return {};
   }
 
@@ -68,7 +70,7 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
    *
    * @param meta Metadata returned by the `this.normalize()` method.
    */
-  getModulesToScan(meta?: ParamsTransferObj): ModRefId[] {
+  getModulesToScan(meta?: InitImports): ModRefId[] {
     return [];
   }
 

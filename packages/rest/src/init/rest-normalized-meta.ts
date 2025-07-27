@@ -6,7 +6,7 @@ import {
   Class,
   ModuleWithParams,
   ModRefId,
-  ParamsTransferObj,
+  InitImports,
   ModuleWithSrcInitMeta,
   Override,
 } from '@ditsmod/core';
@@ -20,7 +20,7 @@ class NormalizedParams {
   guards: NormalizedGuard[] = [];
 }
 
-export class RestNormalizedMeta implements ParamsTransferObj<RestModuleParams> {
+export class RestNormalizedMeta implements InitImports<RestModuleParams> {
   providersPerRou: Provider[] = [];
   providersPerReq: Provider[] = [];
   exportedProvidersPerRou: Provider[] = [];

@@ -4,14 +4,14 @@ import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from './module-metadata.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { ExtensionClass } from '#extension/extension-types.js';
-import { ParamsTransferObj } from '#decorators/feature-module.js';
+import { InitImports } from '#decorators/feature-module.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { AllInitHooks } from '#init/module-manager.js';
 
 export interface InitMetaMap {
-  set<T extends ParamsTransferObj>(decorator: AddDecorator<any, T>, params: T): this;
-  get<T extends ParamsTransferObj>(decorator: AddDecorator<any, T>): T | undefined;
-  forEach<T extends ParamsTransferObj>(
+  set<T extends InitImports>(decorator: AddDecorator<any, T>, params: T): this;
+  get<T extends InitImports>(decorator: AddDecorator<any, T>): T | undefined;
+  forEach<T extends InitImports>(
     callbackfn: (params: T, decorator: AnyFn, map: Map<AnyFn, T>) => void,
     thisArg?: any,
   ): void;
