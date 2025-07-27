@@ -45,7 +45,7 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
    */
   hostRawMeta?: T;
 
-  meta: InitImports;
+  initImports: InitImports;
 
   constructor(public rawMeta: T) {}
 

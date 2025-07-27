@@ -362,17 +362,23 @@ export class ModuleNormalizer {
 
       // Setting params for imported modules.
       if (initHooks.rawMeta.imports) {
-        initHooks.rawMeta.imports = initHooks.rawMeta.imports.map((imp) => {
+        initHooks.initImports ??= {};
+        initHooks.rawMeta.imports.forEach((imp) => {
           if (isParamsWithModRefId(imp)) {
             if (isModuleWithParams(imp.modRefId)) {
               (imp.modRefId as ModuleWithSrcInitMeta).srcInitMeta = baseMeta.initMeta;
             } else {
               imp.modRefId = { module: imp.modRefId, srcInitMeta: baseMeta.initMeta } as ModuleWithSrcInitMeta;
             }
+            initHooks.initImports.importsWithModRefId ??= [];
+            initHooks.initImports.importsWithModRefId.push(imp as { modRefId: ModuleWithSrcInitMeta });
           } else if (isModuleWithParams(imp)) {
-            (imp as ModuleWithSrcInitMeta).srcInitMeta = baseMeta.initMeta;
+            initHooks.initImports.importsWithParams ??= [];
+            initHooks.initImports.importsWithParams.push(imp);
+          } else {
+            initHooks.initImports.importsModules ??= [];
+            initHooks.initImports.importsModules.push(imp);
           }
-          return imp;
         });
       }
 
@@ -400,12 +406,24 @@ export class ModuleNormalizer {
     const meta = initHooks.normalize(baseMeta);
     if (meta) {
       baseMeta.initMeta.set(decorator, meta);
-      meta?.importsModules?.forEach((imp) => {
+      if (!initHooks.initImports) {
+        return;
+      }
+
+      initHooks.initImports.importsModules?.forEach((imp) => {
+        meta.importsModules?.push(imp);
         if (!baseMeta.importsModules.includes(imp)) {
           baseMeta.importsModules.push(imp);
         }
       });
-      meta?.importsWithParams?.forEach((param) => {
+      initHooks.initImports.importsWithParams?.forEach((imp) => {
+        meta.importsWithParams?.push(imp);
+        if (!baseMeta.importsWithParams.includes(imp)) {
+          baseMeta.importsWithParams.push(imp);
+        }
+      });
+      initHooks.initImports.importsWithModRefId?.forEach((param) => {
+        meta.importsWithModRefId?.push(param);
         if (!baseMeta.importsWithParams.includes(param.modRefId)) {
           baseMeta.importsWithParams.push(param.modRefId);
         }

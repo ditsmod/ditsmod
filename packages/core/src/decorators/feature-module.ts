@@ -12,7 +12,8 @@ export interface FeatureModuleDecorator {
 }
 export interface InitImports<T extends { modRefId: ModRefId } = { modRefId: ModRefId }> {
   importsModules?: ModuleType[];
-  importsWithParams?: Override<T, { modRefId: ModuleWithSrcInitMeta }>[];
+  importsWithParams?: ModuleWithParams[];
+  importsWithModRefId?: Override<T, { modRefId: ModuleWithSrcInitMeta }>[];
 }
 
 export function transformModule(data?: ModuleMetadata): RawMeta {

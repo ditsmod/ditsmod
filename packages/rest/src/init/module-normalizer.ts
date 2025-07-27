@@ -1,5 +1,4 @@
 import {
-  AnyObj,
   Class,
   getToken,
   getTokens,
@@ -27,10 +26,9 @@ import {
   ModuleWithSrcInitMeta,
   InitMetaMap,
   isParamsWithModRefId,
-  Override,
 } from '@ditsmod/core';
 
-import { RestMetadata, RestModuleParams } from '#init/module-metadata.js';
+import { RestMetadata } from '#init/module-metadata.js';
 import { RestModRefId, RestNormalizedMeta } from '#init/rest-normalized-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
@@ -64,7 +62,7 @@ export class ModuleNormalizer {
       return;
     }
     const initMeta = modRefId.srcInitMeta.get(initRest);
-    const params = initMeta?.importsWithParams.find((param) => param.modRefId === modRefId);
+    const params = initMeta?.importsWithModRefId.find((param) => param.modRefId === modRefId);
 
     if (params) {
       (['exports', 'providersPerRou', 'providersPerReq'] as const).forEach((prop) => {
@@ -120,18 +118,6 @@ export class ModuleNormalizer {
           }
           return [token, module];
         });
-      }
-    });
-
-    rawMeta.imports?.forEach((imp) => {
-      if (isParamsWithModRefId(imp)) {
-        meta.importsWithParams.push(imp as Override<RestModuleParams, { modRefId: ModuleWithSrcInitMeta }>);
-      } else {
-        if (isModuleWithParams(imp)) {
-          meta.importsWithParams.push({ modRefId: imp as ModuleWithSrcInitMeta });
-        } else {
-          meta.importsModules.push(imp);
-        }
       }
     });
 

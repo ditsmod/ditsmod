@@ -55,7 +55,7 @@ describe('rest ModuleNormalizer', () => {
     class AppModule {}
 
     const meta1 = moduleManager.scanRootModule(AppModule).initMeta.get(initRest)!;
-    expect(meta1.importsWithParams).toEqual([
+    expect(meta1.importsWithModRefId).toEqual([
       { path: 'test1', modRefId: { module: Module1, srcInitMeta: expect.any(Map) } },
     ]);
     expect(meta1.appendsWithParams).toEqual([appendWithParams]);
