@@ -1,11 +1,11 @@
 import { featureModule, ParamsTransferObj } from '#decorators/feature-module.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { rootModule } from '#decorators/root-module.js';
-import { forwardRef, injectable, makeClassDecorator, Provider } from '#di';
+import { forwardRef, injectable, makeClassDecorator, MultiProvider, Provider } from '#di';
 import { Extension } from '#extension/extension-types.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { AnyObj, ModRefId } from '#types/mix.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
+import { ModuleWithParams, ModuleWithSrcInitMeta } from '#types/module-metadata.js';
 import { AddDecorator, NormalizedMeta } from '#types/normalized-meta.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { ModuleNormalizer } from './module-normalizer.js';
@@ -41,6 +41,55 @@ describe('ModuleNormalizer', () => {
     expect(mock.normalize(AppModule)).toEqual(expectedMeta);
   });
 
+  it('rawMeta -> baseMeta: transformation of raw metadata into normalized metadata', () => {
+    class Service1 {}
+    class Service2 {}
+    class Service3 {}
+    @injectable()
+    class Extension1 implements Extension {
+      async stage1() {
+        return;
+      }
+    }
+
+    @featureModule()
+    class Module1 {}
+
+    @featureModule()
+    class Module2 {}
+
+    const moduleWithParams: ModuleWithParams = { module: Module2, id: 'some-id' };
+    const multiProvider: MultiProvider = { token: Service3, useValue: 'some-value', multi: true };
+  
+    @rootModule({
+      imports: [Module1, moduleWithParams],
+      providersPerApp: new Providers().passThrough(Service1),
+      providersPerMod: [Service2, multiProvider],
+      resolvedCollisionsPerApp: [[Service1, Module1]],
+      resolvedCollisionsPerMod: [[Service2, Module2]],
+      extensions: [{ extension: Extension1, export: true }],
+      extensionsMeta: { one: 1 },
+      exports: [Service2, Service3, Module1],
+    })
+    class AppModule {}
+
+    const baseMeta = mock.normalize(AppModule);
+    expect(baseMeta.decorator).toBe(rootModule);
+    expect(baseMeta.declaredInDir).toEqual(expect.any(String));
+    expect(baseMeta.importsModules).toEqual([Module1]);
+    expect(baseMeta.exportsModules).toEqual([Module1]);
+    expect(baseMeta.importsWithParams).toEqual([moduleWithParams]);
+    expect(baseMeta.providersPerApp).toEqual([Service1]);
+    expect(baseMeta.providersPerMod).toEqual([Service2, multiProvider]);
+    expect(baseMeta.exportedProvidersPerMod).toEqual([Service2]);
+    expect(baseMeta.exportedMultiProvidersPerMod).toEqual([multiProvider]);
+    expect(baseMeta.resolvedCollisionsPerApp).toEqual([[Service1, Module1]]);
+    expect(baseMeta.resolvedCollisionsPerMod).toEqual([[Service2, Module2]]);
+    expect(baseMeta.extensionsProviders).toEqual([Extension1]);
+    expect(baseMeta.exportedExtensionsProviders).toEqual([Extension1]);
+    expect(baseMeta.extensionsMeta).toEqual({ one: 1 });
+  });
+
   it('merge static metadata with params', () => {
     class Service1 {}
     class Service2 {}
@@ -55,7 +104,7 @@ describe('ModuleNormalizer', () => {
     })
     class Module1 {}
 
-    const result = mock.normalize({
+    const baseMeta = mock.normalize({
       id: 'some-id',
       module: Module1,
       providersPerApp: [Service2],
@@ -63,44 +112,11 @@ describe('ModuleNormalizer', () => {
       extensionsMeta: { two: 2 },
       exports: [Service4],
     });
-    expect(result.providersPerApp).toEqual([Service1, Service2]);
-    expect(result.providersPerMod).toEqual([Service3, Service4]);
-    expect(result.exportedProvidersPerMod).toEqual([Service3, Service4]);
-    expect(result.extensionsMeta).toEqual({ one: 1, two: 2 });
-    expect(result.id).toEqual('some-id');
-  });
-
-  it('proprtly works imports/exports of modules', () => {
-    @featureModule()
-    class Module1 {}
-
-    @featureModule()
-    class Module2 {}
-
-    @rootModule({
-      imports: [Module1, Module2],
-      exports: [Module2],
-    })
-    class Module3 {}
-
-    const result = mock.normalize(Module3);
-    expect(result.importsModules).toEqual([Module1, Module2]);
-    expect(result.exportsModules).toEqual([Module2]);
-  });
-
-  it('exports multi providers', () => {
-    class Multi {}
-
-    @featureModule()
-    class Module1 {}
-
-    const meta = mock.normalize({
-      module: Module1,
-      providersPerMod: [{ token: Multi, useClass: Multi, multi: true }],
-      exports: [Multi],
-    });
-    expect(meta.exportedProvidersPerMod.length).toBe(0);
-    expect(meta.exportedMultiProvidersPerMod).toEqual<Provider[]>([{ token: Multi, useClass: Multi, multi: true }]);
+    expect(baseMeta.providersPerApp).toEqual([Service1, Service2]);
+    expect(baseMeta.providersPerMod).toEqual([Service3, Service4]);
+    expect(baseMeta.exportedProvidersPerMod).toEqual([Service3, Service4]);
+    expect(baseMeta.extensionsMeta).toEqual({ one: 1, two: 2 });
+    expect(baseMeta.id).toEqual('some-id');
   });
 
   it('import module via static metadata, but export via module params', () => {
@@ -114,10 +130,10 @@ describe('ModuleNormalizer', () => {
     @featureModule({ imports: [moduleWithParams], providersPerMod: [Service2] })
     class Module2 {}
 
-    const result = mock.normalize({ module: Module2, exports: [moduleWithParams] });
-    expect(result.importsWithParams).toEqual([moduleWithParams]);
-    expect(result.exportsWithParams).toEqual([moduleWithParams]);
-    expect(result.providersPerMod).toEqual([Service2]);
+    const baseMeta = mock.normalize({ module: Module2, exports: [moduleWithParams] });
+    expect(baseMeta.importsWithParams).toEqual([moduleWithParams]);
+    expect(baseMeta.exportsWithParams).toEqual([moduleWithParams]);
+    expect(baseMeta.providersPerMod).toEqual([Service2]);
   });
 
   it('module reexports another a module without @featureModule decorator', () => {
@@ -179,6 +195,7 @@ describe('ModuleNormalizer', () => {
         forwardRef(() => Service2),
         { token: forwardRef(() => Service4), useToken: forwardRef(() => Service4), multi: true },
       ],
+      resolvedCollisionsPerMod: [[forwardRef(() => Service2), forwardRef(() => Module1)]],
       exports: [forwardRef(() => Service2), forwardRef(() => Service4), forwardRef(() => Module1), module2WithParams],
     })
     class AppModule {}
@@ -191,6 +208,7 @@ describe('ModuleNormalizer', () => {
     expect(baseMeta.providersPerApp).toEqual([Service1, { token: Service3, useClass: Service3, multi: true }]);
     expect(baseMeta.providersPerMod).toEqual([Service2, { token: Service4, useToken: Service4, multi: true }]);
     expect(baseMeta.exportedProvidersPerMod).toEqual([Service2]);
+    expect(baseMeta.resolvedCollisionsPerMod).toEqual([[Service2, Module1]]);
     expect(baseMeta.exportedMultiProvidersPerMod).toEqual([{ token: Service4, useToken: Service4, multi: true }]);
   });
 
@@ -237,9 +255,9 @@ describe('ModuleNormalizer', () => {
     class Module2 {}
 
     expect(() => mock.normalize(Module2)).not.toThrow();
-    const meta = mock.normalize(Module2);
-    expect(meta.extensionsProviders).toEqual([Extension1]);
-    expect(meta.exportedExtensionsProviders).toEqual([Extension1]);
+    const baseMeta = mock.normalize(Module2);
+    expect(baseMeta.extensionsProviders).toEqual([Extension1]);
+    expect(baseMeta.exportedExtensionsProviders).toEqual([Extension1]);
   });
 
   describe('creating custom decorator with init hook', () => {
@@ -263,7 +281,8 @@ describe('ModuleNormalizer', () => {
       one?: number;
       two?: number;
       appends?: ({ module: ModRefId } & AnyObj)[];
-      imports?: { modRefId: ModRefId; path?: string; guards?: any[] }[];
+      imports?: (ModRefId | { modRefId: ModRefId; path?: string; guards?: any[] })[];
+      exports?: any[];
     }
 
     const initSome: AddDecorator<ArgumentsType, ReturnsType> = makeClassDecorator(getInitHooksAndRawMeta);
@@ -275,9 +294,9 @@ describe('ModuleNormalizer', () => {
       @featureModule()
       class Module1 {}
 
-      const result = mock.normalize(Module1).initMeta.get(initSome);
-      expect(result?.baseMeta.modRefId).toBe(Module1);
-      expect(result?.rawMeta).toEqual(rawMeta);
+      const baseMeta = mock.normalize(Module1).initMeta.get(initSome);
+      expect(baseMeta?.baseMeta.modRefId).toBe(Module1);
+      expect(baseMeta?.rawMeta).toEqual(rawMeta);
     });
 
     it('init hooks need srcInitMeta property in moduleWithParams', () => {
@@ -295,14 +314,49 @@ describe('ModuleNormalizer', () => {
       @featureModule()
       class Module3 {}
 
-      const result = mock.normalize(Module3).initMeta.get(initSome);
-      const actualImportsWithParams = result?.rawMeta.imports;
+      const baseMeta = mock.normalize(Module3).initMeta.get(initSome);
+      const actualImportsWithParams = baseMeta?.rawMeta.imports;
       expect(actualImportsWithParams?.at(0)).toBe(expectedImportsWithParams?.at(0));
 
       // In the second element, `{ modRefId: Module 2 }` has been replaced with `{ modIfIed: { module: Module 2 } }`.
       expect(actualImportsWithParams?.at(1)).toEqual({
         modRefId: { module: Module2, srcInitMeta: expect.any(Map) },
       });
+    });
+
+    it('proprly works with imports/exports of modules', () => {
+      class Service1 {}
+
+      @featureModule({ providersPerApp: [Service1] })
+      class Module1 {}
+
+      @featureModule({ providersPerApp: [Service1] })
+      class Module2 {}
+      const moduleWithParams2: ModuleWithParams = { module: Module2 };
+
+      @featureModule({ providersPerApp: [Service1] })
+      class Module3 {}
+
+      @featureModule({ providersPerApp: [Service1] })
+      class Module4 {}
+      const moduleWithParams4: ModuleWithParams = { module: Module4 };
+
+      @initSome({
+        imports: [Module1, moduleWithParams2, { modRefId: Module3 }, { modRefId: moduleWithParams4 }],
+        exports: [Module1, moduleWithParams2, moduleWithParams4],
+      })
+      @rootModule()
+      class AppModule {}
+
+      const baseMeta = mock.normalize(AppModule);
+      expect(baseMeta.importsModules).toEqual([Module1]);
+      expect(baseMeta.exportsModules).toEqual([Module1]);
+      expect(baseMeta.importsWithParams).toEqual([
+        moduleWithParams2,
+        { module: Module3, srcInitMeta: expect.any(Map) } as ModuleWithSrcInitMeta,
+        moduleWithParams4,
+      ]);
+      expect(baseMeta.exportsWithParams).toEqual([moduleWithParams2, moduleWithParams4]);
     });
   });
 });

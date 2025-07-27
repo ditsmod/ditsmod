@@ -17,7 +17,7 @@ import {
   isParamsWithModRefId,
 } from '#utils/type-guards.js';
 import { ExtensionConfigBase, getExtensionProvider } from '#extension/get-extension-provider.js';
-import { AnyFn, AnyObj, ModRefId, ModuleType } from '#types/mix.js';
+import { AnyFn, ModRefId } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ParamsTransferObj, RawMeta } from '#decorators/feature-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
@@ -59,9 +59,6 @@ export class ModuleNormalizer {
       const msg = `module "${modName}" does not have the "@rootModule()" or "@featureModule()" decorator`;
       throw new Error(msg);
     }
-    if (isModuleWithParams(modRefId)) {
-      rawMeta = this.mergeModuleWithParams(modRefId, rawMeta);
-    }
 
     /**
      * Setting initial properties of metadata.
@@ -69,12 +66,20 @@ export class ModuleNormalizer {
     const baseMeta = new NormalizedMeta();
     baseMeta.name = modName;
     baseMeta.modRefId = modRefId;
+    baseMeta.declaredInDir = rawMeta.declaredInDir;
+    baseMeta.decorator = rawMeta.decorator;
+    if (isModuleWithParams(modRefId)) {
+      rawMeta = this.mergeModuleWithParams(rawMeta, modRefId, baseMeta);
+    }
     aDecoratorMeta.filter(isModuleWithInitHooks).forEach((decorAndVal) => {
       baseMeta.mInitHooksAndRawMeta.set(decorAndVal.decorator, decorAndVal.value);
     });
     this.checkAndMarkExternalModule(rawMeta, baseMeta);
-    this.normalizeModule(modName, rawMeta, baseMeta);
-    this.pickAndMergeMeta(baseMeta, rawMeta);
+    this.normalizeImports(rawMeta, baseMeta);
+    this.normalizeExports(rawMeta, baseMeta);
+    this.checkReexportModules(baseMeta);
+    this.normalizeDeclaredAndResolvedProviders(rawMeta, baseMeta);
+    this.normalizeExtensions(rawMeta, baseMeta);
     this.addInitHooksForHostDecorator(baseMeta, allInitHooks);
     this.callInitHooksFromCurrentModule(baseMeta, allInitHooks);
     this.addInitHooksFromModuleUsageContext(baseMeta, allInitHooks);
@@ -88,9 +93,9 @@ export class ModuleNormalizer {
     return reflector.getDecorators(mod);
   }
 
-  protected mergeModuleWithParams(modWitParams: ModuleWithParams, rawMeta: RawMeta) {
+  protected mergeModuleWithParams(rawMeta: RawMeta, modWitParams: ModuleWithParams, baseMeta: NormalizedMeta) {
     if (modWitParams.id) {
-      rawMeta.id = modWitParams.id;
+      baseMeta.id = modWitParams.id;
     }
     (['exports', 'providersPerApp', 'providersPerMod'] as const).forEach((prop) => {
       if (modWitParams[prop] instanceof Providers || modWitParams[prop]?.length) {
@@ -119,47 +124,38 @@ export class ModuleNormalizer {
     }
   }
 
-  protected normalizeModule(modName: string, rawMeta: RawMeta, baseMeta: NormalizedMeta) {
+  protected normalizeImports(rawMeta: RawMeta, baseMeta: NormalizedMeta) {
     rawMeta.imports?.forEach((imp, i) => {
       imp = this.resolveForwardRef([imp])[0];
-      this.throwIfUndefined(modName, 'Imports', imp, i);
+      this.throwIfUndefined(baseMeta.name, 'Imports', imp, i);
       if (isModuleWithParams(imp)) {
         baseMeta.importsWithParams.push(imp);
       } else {
         baseMeta.importsModules.push(imp);
       }
     });
-
-    this.throwIfResolvingNormalizedProvider(modName, rawMeta);
-    this.exportModules(rawMeta, modName, baseMeta);
-    this.checkReexportModules(baseMeta);
-
-    rawMeta.extensions?.forEach((extensionOrConfig, i) => {
-      if (!isExtensionConfig(extensionOrConfig)) {
-        extensionOrConfig = { extension: extensionOrConfig } as ExtensionConfigBase;
-      }
-      const extensionObj = getExtensionProvider(extensionOrConfig);
-      extensionObj.providers.forEach((p) => this.checkStageMethodsForExtension(modName, p));
-      if (extensionObj.config) {
-        baseMeta.aExtensionConfig.push(extensionObj.config);
-      }
-      if (extensionObj.exportedConfig) {
-        baseMeta.aExportedExtensionConfig.push(extensionObj.exportedConfig);
-      }
-      baseMeta.extensionsProviders.push(...extensionObj.providers);
-      baseMeta.exportedExtensionsProviders.push(...extensionObj.exportedProviders);
-    });
   }
 
-  protected throwIfUndefined(modName: string, action: 'Imports' | 'Exports', imp: unknown, i: number) {
-    if (imp === undefined) {
-      const lowerAction = action.toLowerCase();
-      const msg =
-        `${action} into "${modName}" failed: element at ${lowerAction}[${i}] has "undefined" type. ` +
-        'This can be caused by circular dependency. Try to replace this element with this expression: ' +
-        '"forwardRef(() => YourModule)".';
-      throw new Error(msg);
-    }
+  protected normalizeDeclaredAndResolvedProviders(rawMeta: RawMeta, baseMeta: NormalizedMeta) {
+    (['App', 'Mod'] as const).forEach((level) => {
+      if (rawMeta[`providersPer${level}`]) {
+        baseMeta[`providersPer${level}`].push(...rawMeta[`providersPer${level}`]!);
+        baseMeta[`providersPer${level}`] = this.resolveForwardRef(baseMeta[`providersPer${level}`]);
+      }
+
+      if (rawMeta[`resolvedCollisionsPer${level}`]) {
+        baseMeta[`resolvedCollisionsPer${level}`].push(...rawMeta[`resolvedCollisionsPer${level}`]!);
+        baseMeta[`resolvedCollisionsPer${level}`] = baseMeta[`resolvedCollisionsPer${level}`].map(([token, module]) => {
+          token = resolveForwardRef(token);
+          module = resolveForwardRef(module);
+          if (isModuleWithParams(module)) {
+            module.module = resolveForwardRef(module.module);
+          }
+          return [token, module];
+        });
+      }
+    });
+    this.throwIfResolvingNormalizedProvider(baseMeta.name, rawMeta);
   }
 
   protected throwIfResolvingNormalizedProvider(moduleName: string, rawMeta: RawMeta) {
@@ -182,7 +178,40 @@ export class ModuleNormalizer {
     });
   }
 
-  protected exportModules(rawMeta: Partial<RawMeta>, modName: string, baseMeta: NormalizedMeta) {
+  protected normalizeExtensions(rawMeta: RawMeta, baseMeta: NormalizedMeta) {
+    if (rawMeta.extensionsMeta) {
+      baseMeta.extensionsMeta = { ...rawMeta.extensionsMeta };
+    }
+
+    rawMeta.extensions?.forEach((extensionOrConfig) => {
+      if (!isExtensionConfig(extensionOrConfig)) {
+        extensionOrConfig = { extension: extensionOrConfig } as ExtensionConfigBase;
+      }
+      const extensionObj = getExtensionProvider(extensionOrConfig);
+      extensionObj.providers.forEach((p) => this.checkStageMethodsForExtension(baseMeta.name, p));
+      if (extensionObj.config) {
+        baseMeta.aExtensionConfig.push(extensionObj.config);
+      }
+      if (extensionObj.exportedConfig) {
+        baseMeta.aExportedExtensionConfig.push(extensionObj.exportedConfig);
+      }
+      baseMeta.extensionsProviders.push(...extensionObj.providers);
+      baseMeta.exportedExtensionsProviders.push(...extensionObj.exportedProviders);
+    });
+  }
+
+  protected throwIfUndefined(modName: string, action: 'Imports' | 'Exports', imp: unknown, i: number) {
+    if (imp === undefined) {
+      const lowerAction = action.toLowerCase();
+      const msg =
+        `${action} into "${modName}" failed: element at ${lowerAction}[${i}] has "undefined" type. ` +
+        'This can be caused by circular dependency. Try to replace this element with this expression: ' +
+        '"forwardRef(() => YourModule)".';
+      throw new Error(msg);
+    }
+  }
+
+  protected normalizeExports(rawMeta: Partial<RawMeta>, baseMeta: NormalizedMeta) {
     const providers: Provider[] = [];
     if (Array.isArray(rawMeta.providersPerMod)) {
       providers.push(...rawMeta.providersPerMod);
@@ -190,8 +219,8 @@ export class ModuleNormalizer {
 
     rawMeta.exports?.forEach((exp, i) => {
       exp = this.resolveForwardRef([exp])[0];
-      this.throwIfUndefined(modName, 'Exports', exp, i);
-      this.throwExportsIfNormalizedProvider(modName, exp);
+      this.throwIfUndefined(baseMeta.name, 'Exports', exp, i);
+      this.throwExportsIfNormalizedProvider(baseMeta.name, exp);
       if (isModuleWithParams(exp)) {
         baseMeta.exportsWithParams.push(exp);
       } else if (isProvider(exp) || getTokens(providers).includes(exp)) {
@@ -200,7 +229,7 @@ export class ModuleNormalizer {
       } else if (this.getDecoratorMeta(exp)) {
         baseMeta.exportsModules.push(exp);
       } else {
-        this.throwUnidentifiedToken(modName, exp);
+        this.throwUnidentifiedToken(baseMeta.name, exp);
       }
     });
   }
@@ -242,38 +271,6 @@ export class ModuleNormalizer {
       const msg = `Exporting "${tokenName}" from "${modName}" failed: all extensions must have stage1(), stage2() or stage3() method.`;
       throw new Error(msg);
     }
-  }
-
-  protected pickAndMergeMeta(targetObject: NormalizedMeta, ...sourceObjects: AnyObj[]) {
-    const trgtObj = targetObject as any;
-    sourceObjects.forEach((sourceObj: AnyObj) => {
-      sourceObj ??= {};
-      for (const prop in targetObject) {
-        if (prop.startsWith('resolvedCollisions') && Array.isArray(sourceObj[prop])) {
-          trgtObj[prop].push(...sourceObj[prop].slice());
-          trgtObj[prop] = (trgtObj[prop] as [any, ModuleWithParams | ModuleType][]).map(([token, module]) => {
-            token = resolveForwardRef(token);
-            module = resolveForwardRef(module);
-            if (isModuleWithParams(module)) {
-              module.module = resolveForwardRef(module.module);
-            }
-            return [token, module];
-          });
-        } else if (Array.isArray(sourceObj[prop])) {
-          trgtObj[prop].push(...sourceObj[prop].slice());
-          trgtObj[prop] = this.resolveForwardRef(trgtObj[prop]);
-        } else if (sourceObj[prop] instanceof Providers) {
-          trgtObj[prop].push(...sourceObj[prop]);
-          trgtObj[prop] = this.resolveForwardRef(trgtObj[prop]);
-        } else if (sourceObj[prop] && typeof sourceObj[prop] == 'object') {
-          trgtObj[prop] = { ...trgtObj[prop], ...(sourceObj[prop] as any) };
-        } else if (sourceObj[prop] !== undefined) {
-          trgtObj[prop] = sourceObj[prop];
-        }
-      }
-    });
-
-    return trgtObj;
   }
 
   protected resolveForwardRef<T extends ModRefId | Provider>(arr: T[]) {

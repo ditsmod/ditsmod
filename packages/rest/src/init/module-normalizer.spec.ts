@@ -300,39 +300,4 @@ describe('rest ModuleNormalizer', () => {
     const msg = '"Module1" is listed in "export" but missing from the "imports" array';
     expect(() => moduleManager.scanRootModule(AppModule)).toThrow(msg);
   });
-
-  it('proprly works with imports/exports of modules', () => {
-    class Service1 {}
-
-    @featureModule({ providersPerApp: [Service1] })
-    class Module1 {}
-
-    @featureModule({ providersPerApp: [Service1] })
-    class Module2 {}
-    const moduleWithParams2: ModuleWithParams = { module: Module2 };
-
-    @featureModule({ providersPerApp: [Service1] })
-    class Module3 {}
-
-    @featureModule({ providersPerApp: [Service1] })
-    class Module4 {}
-    const moduleWithParams4: ModuleWithParams = { module: Module4 };
-
-    @initRest({
-      imports: [Module1, moduleWithParams2, { modRefId: Module3 }, { modRefId: moduleWithParams4 }],
-      exports: [Module1, moduleWithParams2, moduleWithParams4],
-    })
-    @rootModule()
-    class AppModule {}
-
-    const baseMeta = moduleManager.scanRootModule(AppModule);
-    expect(baseMeta.importsModules).toEqual([RestModule, Module1]);
-    expect(baseMeta.exportsModules).toEqual([Module1]);
-    expect(baseMeta.importsWithParams).toEqual([
-      moduleWithParams2,
-      { module: Module3, srcInitMeta: expect.any(Map) } as ModuleWithSrcInitMeta,
-      moduleWithParams4,
-    ]);
-    expect(baseMeta.exportsWithParams).toEqual([moduleWithParams2, moduleWithParams4]);
-  });
 });
