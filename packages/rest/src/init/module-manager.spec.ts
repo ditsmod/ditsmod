@@ -400,7 +400,7 @@ describe('ModuleManager', () => {
 
     const fn = () => module4WithParams;
     @initRest({ controllers: [Controller1] })
-    @featureModule({ id: '1', imports: [forwardRef(fn)] })
+    @featureModule({ imports: [forwardRef(fn)] })
     class Module1 {}
 
     @injectable()

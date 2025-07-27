@@ -1,4 +1,4 @@
-import { featureModule, InitImports } from '#decorators/feature-module.js';
+import { featureModule, InitImportsExports } from '#decorators/feature-module.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { rootModule } from '#decorators/root-module.js';
 import { forwardRef, injectable, makeClassDecorator, MultiProvider, Provider } from '#di';
@@ -261,7 +261,7 @@ describe('ModuleNormalizer', () => {
   });
 
   describe('creating custom decorator with init hook', () => {
-    interface ReturnsType extends InitImports {
+    interface ReturnsType extends InitImportsExports {
       baseMeta: NormalizedMeta;
       rawMeta: ArgumentsType;
     }

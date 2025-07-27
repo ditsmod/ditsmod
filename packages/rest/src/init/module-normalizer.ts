@@ -150,7 +150,7 @@ export class ModuleNormalizer {
       exp = this.resolveForwardRef([exp])[0];
       this.throwIfUndefined(exp, i);
       this.throwExportsIfNormalizedProvider(exp);
-      if (reflector.getDecorators(exp)) {
+      if (reflector.getDecorators(exp, isFeatureModule)) {
         if (!baseMeta.exportsModules.includes(exp)) {
           baseMeta.exportsModules.push(exp);
         }

@@ -80,7 +80,7 @@ export class ModuleNormalizer {
     this.normalizeDeclaredAndResolvedProviders(rawMeta, baseMeta);
     this.normalizeExtensions(rawMeta, baseMeta);
     this.addInitHooksForHostDecorator(baseMeta, allInitHooks);
-    this.callInitHooksFromCurrentModule(baseMeta, allInitHooks);
+    this.callInitHooksFromCurrentModule(baseMeta);
     this.addInitHooksFromModuleUsageContext(baseMeta, allInitHooks);
     this.quickCheckMetadata(baseMeta);
     return baseMeta;
@@ -345,7 +345,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected callInitHooksFromCurrentModule(baseMeta: NormalizedMeta, allInitHooks: AllInitHooks) {
+  protected callInitHooksFromCurrentModule(baseMeta: NormalizedMeta) {
     baseMeta.mInitHooksAndRawMeta.forEach((initHooks, decorator) => {
       baseMeta.allInitHooks.set(decorator, initHooks);
 
@@ -360,30 +360,65 @@ export class ModuleNormalizer {
         baseMeta.importsModules.push(initHooks.hostModule);
       }
 
-      // Setting params for imported modules.
-      if (initHooks.rawMeta.imports) {
-        initHooks.initImports ??= {};
-        initHooks.rawMeta.imports.forEach((imp) => {
-          if (isParamsWithModRefId(imp)) {
-            if (isModuleWithParams(imp.modRefId)) {
-              (imp.modRefId as ModuleWithSrcInitMeta).srcInitMeta = baseMeta.initMeta;
-            } else {
-              imp.modRefId = { module: imp.modRefId, srcInitMeta: baseMeta.initMeta } as ModuleWithSrcInitMeta;
-            }
-            initHooks.initImports.importsWithModRefId ??= [];
-            initHooks.initImports.importsWithModRefId.push(imp as { modRefId: ModuleWithSrcInitMeta });
-          } else if (isModuleWithParams(imp)) {
-            initHooks.initImports.importsWithParams ??= [];
-            initHooks.initImports.importsWithParams.push(imp);
-          } else {
-            initHooks.initImports.importsModules ??= [];
-            initHooks.initImports.importsModules.push(imp);
-          }
-        });
-      }
-
+      this.setInitImportsExports(baseMeta, initHooks);
       this.callInitHook(baseMeta, decorator, initHooks);
     });
+  }
+
+  protected setInitImportsExports(baseMeta: NormalizedMeta, initHooks: InitHooksAndRawMeta) {
+    if (initHooks.rawMeta.imports) {
+      initHooks.initImportsExports ??= {};
+      initHooks.rawMeta.imports.forEach((imp) => {
+        if (isParamsWithModRefId(imp)) {
+          if (isModuleWithParams(imp.modRefId)) {
+            (imp.modRefId as ModuleWithSrcInitMeta).srcInitMeta = baseMeta.initMeta;
+          } else {
+            imp.modRefId = { module: imp.modRefId, srcInitMeta: baseMeta.initMeta } as ModuleWithSrcInitMeta;
+          }
+          initHooks.initImportsExports.importsWithModRefId ??= [];
+          initHooks.initImportsExports.importsWithModRefId.push(imp as { modRefId: ModuleWithSrcInitMeta });
+          if (!baseMeta.importsWithParams.includes(imp.modRefId)) {
+            baseMeta.importsWithParams.push(imp.modRefId);
+          }
+        } else if (isModuleWithParams(imp)) {
+          initHooks.initImportsExports.importsWithParams ??= [];
+          initHooks.initImportsExports.importsWithParams.push(imp);
+          if (!baseMeta.importsWithParams.includes(imp)) {
+            baseMeta.importsWithParams.push(imp);
+          }
+        } else {
+          initHooks.initImportsExports.importsModules ??= [];
+          initHooks.initImportsExports.importsModules.push(imp);
+          if (!baseMeta.importsModules.includes(imp)) {
+            baseMeta.importsModules.push(imp);
+          }
+        }
+      });
+    }
+    if (initHooks.rawMeta.exports) {
+      initHooks.initImportsExports ??= {};
+      initHooks.rawMeta.exports.forEach((exp) => {
+        if (isParamsWithModRefId(exp)) {
+          initHooks.initImportsExports.exportsWithModRefId ??= [];
+          initHooks.initImportsExports.exportsWithModRefId.push(exp as { modRefId: ModuleWithSrcInitMeta });
+          if (!baseMeta.exportsWithParams.includes((exp as { modRefId: ModuleWithSrcInitMeta }).modRefId)) {
+            baseMeta.exportsWithParams.push((exp as { modRefId: ModuleWithSrcInitMeta }).modRefId);
+          }
+        } else if (isModuleWithParams(exp)) {
+          initHooks.initImportsExports.exportsWithParams ??= [];
+          initHooks.initImportsExports.exportsWithParams.push(exp);
+          if (!baseMeta.exportsWithParams.includes(exp)) {
+            baseMeta.exportsWithParams.push(exp);
+          }
+        } else if (reflector.getDecorators(exp, isFeatureModule)) {
+          initHooks.initImportsExports.exportsModules ??= [];
+          initHooks.initImportsExports.exportsModules.push(exp);
+          if (!baseMeta.exportsModules.includes(exp)) {
+            baseMeta.exportsModules.push(exp);
+          }
+        }
+      });
+    }
   }
 
   /**
@@ -406,27 +441,28 @@ export class ModuleNormalizer {
     const meta = initHooks.normalize(baseMeta);
     if (meta) {
       baseMeta.initMeta.set(decorator, meta);
-      if (!initHooks.initImports) {
+      if (!initHooks.initImportsExports) {
         return;
       }
 
-      initHooks.initImports.importsModules?.forEach((imp) => {
+      initHooks.initImportsExports.importsModules?.forEach((imp) => {
         meta.importsModules?.push(imp);
-        if (!baseMeta.importsModules.includes(imp)) {
-          baseMeta.importsModules.push(imp);
-        }
       });
-      initHooks.initImports.importsWithParams?.forEach((imp) => {
+      initHooks.initImportsExports.importsWithParams?.forEach((imp) => {
         meta.importsWithParams?.push(imp);
-        if (!baseMeta.importsWithParams.includes(imp)) {
-          baseMeta.importsWithParams.push(imp);
-        }
       });
-      initHooks.initImports.importsWithModRefId?.forEach((param) => {
+      initHooks.initImportsExports.importsWithModRefId?.forEach((param) => {
         meta.importsWithModRefId?.push(param);
-        if (!baseMeta.importsWithParams.includes(param.modRefId)) {
-          baseMeta.importsWithParams.push(param.modRefId);
-        }
+      });
+
+      initHooks.initImportsExports.exportsModules?.forEach((exp) => {
+        meta.exportsModules?.push(exp);
+      });
+      initHooks.initImportsExports.exportsWithParams?.forEach((exp) => {
+        meta.exportsWithParams?.push(exp);
+      });
+      initHooks.initImportsExports.exportsWithModRefId?.forEach((param) => {
+        meta.exportsWithModRefId?.push(param);
       });
     }
   }

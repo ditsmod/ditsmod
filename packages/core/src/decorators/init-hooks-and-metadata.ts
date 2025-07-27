@@ -6,15 +6,15 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { GlobalProviders } from '#types/metadata-per-mod.js';
 import { AnyObj, ModRefId } from '#types/mix.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
-import { InitImports } from './feature-module.js';
+import { InitImportsExports } from './feature-module.js';
 
-type ObjectWithImports = { imports?: (ModRefId | { modRefId: ModRefId })[] };
+type ObjectWithImportsExports = { imports?: (ModRefId | { modRefId: ModRefId })[], exports?: any[] };
 
 /**
  * Init hooks and metadata attached by init decorators,
  * apart from the base decorators - `rootModule` or `featureModule`.
  */
-export class InitHooksAndRawMeta<T extends ObjectWithImports = ObjectWithImports> {
+export class InitHooksAndRawMeta<T extends ObjectWithImportsExports = ObjectWithImportsExports> {
   /**
    * The host module where the current init decorator is declared. If you add this module,
    * it will be imported into the module where the corresponding init decorator is used.
@@ -45,7 +45,7 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
    */
   hostRawMeta?: T;
 
-  initImports: InitImports;
+  initImportsExports: InitImportsExports;
 
   constructor(public rawMeta: T) {}
 
@@ -61,7 +61,7 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
    *
    * @param baseMeta Normalized metadata that is passed to the `featureModule` or `rootModule` decorator.
    */
-  normalize(baseMeta: NormalizedMeta): InitImports {
+  normalize(baseMeta: NormalizedMeta): InitImportsExports {
     return {};
   }
 
@@ -70,7 +70,7 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
    *
    * @param meta Metadata returned by the `this.normalize()` method.
    */
-  getModulesToScan(meta?: InitImports): ModRefId[] {
+  getModulesToScan(meta?: InitImportsExports): ModRefId[] {
     return [];
   }
 
