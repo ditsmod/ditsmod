@@ -1,4 +1,5 @@
-import { featureModule, InitImportExport } from '#decorators/feature-module.js';
+import { featureModule } from '#decorators/feature-module.js';
+import { InitImportExport } from '#decorators/init-hooks-and-metadata.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { rootModule } from '#decorators/root-module.js';
 import { forwardRef, injectable, makeClassDecorator, MultiProvider, Provider } from '#di';

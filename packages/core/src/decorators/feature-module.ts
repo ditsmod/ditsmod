@@ -1,6 +1,6 @@
 import { makeClassDecorator } from '#di';
-import { ModuleMetadata, ModuleWithParams, ModuleWithSrcInitMeta } from '#types/module-metadata.js';
-import { AnyFn, ModRefId, ModuleType, Override } from '#types/mix.js';
+import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
+import { AnyFn, ModuleType } from '#types/mix.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { Providers } from '#utils/providers.js';
 import { CallsiteUtils } from '#utils/callsites.js';
@@ -9,15 +9,6 @@ export const featureModule: FeatureModuleDecorator = makeClassDecorator(transfor
 
 export interface FeatureModuleDecorator {
   (data?: ModuleMetadata): any;
-}
-export interface InitImportExport<T extends { modRefId: ModRefId } = { modRefId: ModRefId }> {
-  importsModules?: ModuleType[];
-  importsWithParams?: ModuleWithParams[];
-  importsWithModRefId?: Override<T, { modRefId: ModuleWithSrcInitMeta }>[];
-
-  exportsModules?: ModuleType[];
-  exportsWithParams?: ModuleWithParams[];
-  exportsWithModRefId?: Override<T, { modRefId: ModuleWithSrcInitMeta }>[];
 }
 
 export function transformModule(data?: ModuleMetadata): RawMeta {

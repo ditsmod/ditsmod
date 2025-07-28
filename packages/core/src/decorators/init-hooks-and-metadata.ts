@@ -4,11 +4,11 @@ import { ModuleManager } from '#init/module-manager.js';
 import { ShallowImportsBase, ShallowImports } from '#init/types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { GlobalProviders } from '#types/metadata-per-mod.js';
-import { AnyObj, ModRefId } from '#types/mix.js';
+import { AnyObj, ModRefId, ModuleType, Override } from '#types/mix.js';
+import { ModuleWithParams, ModuleWithSrcInitMeta } from '#types/module-metadata.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
-import { InitImportExport } from './feature-module.js';
 
-type ObjectWithImportsExports = { imports?: (ModRefId | { modRefId: ModRefId })[], exports?: any[] };
+type ObjectWithImportsExports = { imports?: (ModRefId | { modRefId: ModRefId })[]; exports?: any[] };
 
 /**
  * Init hooks and metadata attached by init decorators,
@@ -113,4 +113,17 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
   }): any {
     return;
   }
+}
+
+/**
+ * Assigned to the `initHooksAndRawMeta.importExport` property.
+ */
+export interface InitImportExport<T extends { modRefId: ModRefId } = { modRefId: ModRefId }> {
+  importsModules?: ModuleType[];
+  importsWithParams?: ModuleWithParams[];
+  importsWithModRefId?: Override<T, { modRefId: ModuleWithSrcInitMeta }>[];
+
+  exportsModules?: ModuleType[];
+  exportsWithParams?: ModuleWithParams[];
+  exportsWithModRefId?: Override<T, { modRefId: ModuleWithSrcInitMeta }>[];
 }
