@@ -15,7 +15,6 @@ import {
   isFeatureModule,
   isModuleWithInitHooks,
   isParamsWithModRefId,
-  isModuleWithSrcInitMeta,
 } from '#utils/type-guards.js';
 import { ExtensionConfigBase, getExtensionProvider } from '#extension/get-extension-provider.js';
 import { AnyFn, ModRefId } from '#types/mix.js';

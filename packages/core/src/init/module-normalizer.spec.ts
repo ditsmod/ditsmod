@@ -169,7 +169,7 @@ describe('ModuleNormalizer', () => {
     @featureModule({ providersPerApp: [Service1], exports: [Service1] })
     class Module2 {}
 
-    expect(() => mock.normalize(Module2)).toThrow(/includes in "providersPerApp" and "exports" of/);
+    expect(() => mock.normalize(Module2)).toThrow('includes in "providersPerApp" and "exports" of');
   });
 
   it('providers or modules with forwardRef', () => {
@@ -213,7 +213,7 @@ describe('ModuleNormalizer', () => {
     expect(baseMeta.exportedMultiProvidersPerMod).toEqual([{ token: Service4, useToken: Service4, multi: true }]);
   });
 
-  it('module exported normalized provider', () => {
+  it('module exports a normalized provider', () => {
     class Service1 {}
     @featureModule({ providersPerMod: [Service1], exports: [{ token: Service1, useClass: Service1 }] })
     class Module2 {}
@@ -234,7 +234,7 @@ describe('ModuleNormalizer', () => {
     expect(() => mock.normalize(Module2)).toThrow(msg);
   });
 
-  it('module exported invalid extension', () => {
+  it('module exports an invalid extension', () => {
     @injectable()
     class Extension1 {}
 
@@ -246,7 +246,7 @@ describe('ModuleNormalizer', () => {
     expect(() => mock.normalize(Module2)).toThrow(msg);
   });
 
-  it('module exported valid extension', () => {
+  it('module exports a valid extension', () => {
     @injectable()
     class Extension1 implements Extension {
       async stage1() {}
@@ -261,7 +261,7 @@ describe('ModuleNormalizer', () => {
     expect(baseMeta.exportedExtensionsProviders).toEqual([Extension1]);
   });
 
-  describe('creating custom decorator with init hook', () => {
+  describe('creating custom decorator with init hooks', () => {
     interface ReturnsType extends InitImportExport {
       baseMeta: NormalizedMeta;
       rawMeta: ArgumentsType;

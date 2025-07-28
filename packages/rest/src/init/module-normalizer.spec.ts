@@ -226,9 +226,9 @@ describe('rest ModuleNormalizer', () => {
     @initRest({
       imports: [
         {
+          modRefId: moduleWithParams,
           path: 'one',
           guards: [Guard1, [Guard2, { property1: 'some-value' }]],
-          modRefId: moduleWithParams,
           providersPerRou: [Service2],
           providersPerReq: [Service4],
           exports: [Service2, Service4],
