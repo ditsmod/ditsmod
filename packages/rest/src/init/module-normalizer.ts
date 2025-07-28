@@ -39,9 +39,9 @@ import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
  * Normalizes and validates module metadata.
  */
 export class ModuleNormalizer {
-  normalize(baseMeta: NormalizedMeta, rawMeta: RestMetadata, initImportExport?: InitImportExport) {
+  normalize(baseMeta: NormalizedMeta, rawMeta: RestMetadata, importExport?: InitImportExport) {
     const meta = new RestNormalizedMeta();
-    this.setImportsWithModRefId(meta, initImportExport);
+    this.setImportsWithModRefId(meta, importExport);
     this.mergeModuleWithParams(baseMeta.modRefId, rawMeta, meta);
     this.appendModules(rawMeta, meta);
     this.normalizeDeclaredAndResolvedProviders(meta, rawMeta);
@@ -50,15 +50,15 @@ export class ModuleNormalizer {
     return meta;
   }
 
-  protected setImportsWithModRefId(meta: RestNormalizedMeta, initImportExport?: InitImportExport) {
-    if (initImportExport?.importsModules) {
-      meta.importsModules = initImportExport.importsModules;
+  protected setImportsWithModRefId(meta: RestNormalizedMeta, importExport?: InitImportExport) {
+    if (importExport?.importsModules) {
+      meta.importsModules = importExport.importsModules;
     }
-    if (initImportExport?.importsWithParams) {
-      meta.importsWithParams = initImportExport.importsWithParams;
+    if (importExport?.importsWithParams) {
+      meta.importsWithParams = importExport.importsWithParams;
     }
-    if (initImportExport?.importsWithModRefId) {
-      meta.importsWithModRefId = initImportExport.importsWithModRefId;
+    if (importExport?.importsWithModRefId) {
+      meta.importsWithModRefId = importExport.importsWithModRefId;
     }
   }
 

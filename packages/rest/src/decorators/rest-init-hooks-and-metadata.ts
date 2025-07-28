@@ -23,7 +23,7 @@ class RestInitHooksAndRawMeta extends InitHooksAndRawMeta<RestMetadata> {
   override hostModule = RestModule;
 
   override normalize(baseMeta: NormalizedMeta): RestNormalizedMeta {
-    return new ModuleNormalizer().normalize(baseMeta, this.rawMeta, this.initImportExport);
+    return new ModuleNormalizer().normalize(baseMeta, this.rawMeta, this.importExport);
   }
 
   override getModulesToScan(meta?: RestNormalizedMeta): RestModRefId[] {
