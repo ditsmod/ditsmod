@@ -32,6 +32,8 @@ export class RestNormalizedMeta implements InitImportExport<RestModuleParams> {
   appendsWithParams: AppendsWithParams[] = [];
   appendsModules: ModuleType[] = [];
   controllers: Class[] = [];
+  importsModules: ModuleType[] = [];
+  importsWithParams: ModuleWithParams[] = [];
   importsWithModRefId: Override<RestModuleParams, { modRefId: ModuleWithSrcInitMeta }>[] = [];
   params = new NormalizedParams();
 }

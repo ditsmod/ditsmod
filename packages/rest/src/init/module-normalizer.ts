@@ -51,8 +51,14 @@ export class ModuleNormalizer {
   }
 
   protected setImportsWithModRefId(meta: RestNormalizedMeta, initImportExport?: InitImportExport) {
+    if (initImportExport?.importsModules) {
+      meta.importsModules = initImportExport.importsModules;
+    }
+    if (initImportExport?.importsWithParams) {
+      meta.importsWithParams = initImportExport.importsWithParams;
+    }
     if (initImportExport?.importsWithModRefId) {
-      meta.importsWithModRefId = initImportExport?.importsWithModRefId;
+      meta.importsWithModRefId = initImportExport.importsWithModRefId;
     }
   }
 
