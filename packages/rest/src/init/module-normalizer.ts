@@ -26,7 +26,7 @@ import {
   ModuleWithSrcInitMeta,
   InitMetaMap,
   isParamsWithModRefId,
-  InitImportsExports,
+  InitImportExport,
 } from '@ditsmod/core';
 
 import { RestMetadata } from '#init/module-metadata.js';
@@ -39,20 +39,20 @@ import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
  * Normalizes and validates module metadata.
  */
 export class ModuleNormalizer {
-  normalize(baseMeta: NormalizedMeta, rawMeta: RestMetadata, initImportsExports?: InitImportsExports) {
+  normalize(baseMeta: NormalizedMeta, rawMeta: RestMetadata, initImportExport?: InitImportExport) {
     const meta = new RestNormalizedMeta();
+    this.setImportsWithModRefId(meta, initImportExport);
     this.mergeModuleWithParams(baseMeta.modRefId, rawMeta, meta);
     this.appendModules(rawMeta, meta);
     this.normalizeDeclaredAndResolvedProviders(meta, rawMeta);
     this.normalizeExports(rawMeta, meta);
-    this.setImportsWithModRefId(meta, initImportsExports);
     this.checkMetadata(baseMeta, meta);
     return meta;
   }
 
-  protected setImportsWithModRefId(meta: RestNormalizedMeta, initImportsExports?: InitImportsExports) {
-    if (initImportsExports?.importsWithModRefId) {
-      meta.importsWithModRefId = initImportsExports?.importsWithModRefId;
+  protected setImportsWithModRefId(meta: RestNormalizedMeta, initImportExport?: InitImportExport) {
+    if (initImportExport?.importsWithModRefId) {
+      meta.importsWithModRefId = initImportExport?.importsWithModRefId;
     }
   }
 

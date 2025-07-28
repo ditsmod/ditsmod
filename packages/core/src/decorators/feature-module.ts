@@ -10,7 +10,7 @@ export const featureModule: FeatureModuleDecorator = makeClassDecorator(transfor
 export interface FeatureModuleDecorator {
   (data?: ModuleMetadata): any;
 }
-export interface InitImportsExports<T extends { modRefId: ModRefId } = { modRefId: ModRefId }> {
+export interface InitImportExport<T extends { modRefId: ModRefId } = { modRefId: ModRefId }> {
   importsModules?: ModuleType[];
   importsWithParams?: ModuleWithParams[];
   importsWithModRefId?: Override<T, { modRefId: ModuleWithSrcInitMeta }>[];
