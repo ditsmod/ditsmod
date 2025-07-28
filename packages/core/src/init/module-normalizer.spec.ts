@@ -61,7 +61,7 @@ describe('ModuleNormalizer', () => {
 
     const moduleWithParams: ModuleWithParams = { module: Module2, id: 'some-id' };
     const multiProvider: MultiProvider = { token: Service3, useValue: 'some-value', multi: true };
-  
+
     @rootModule({
       imports: [Module1, moduleWithParams],
       providersPerApp: new Providers().passThrough(Service1),
@@ -269,7 +269,16 @@ describe('ModuleNormalizer', () => {
 
     class InitHooksAndRawMeta1 extends InitHooksAndRawMeta<ArgumentsType> {
       override normalize(baseMeta: NormalizedMeta): ReturnsType {
-        return { baseMeta, rawMeta: this.rawMeta };
+        return {
+          baseMeta,
+          rawMeta: this.rawMeta,
+          importsModules: this.importExport?.importsModules,
+          importsWithParams: this.importExport?.importsWithParams,
+          importsWithModRefId: this.importExport?.importsWithModRefId,
+          exportsModules: this.importExport?.exportsModules,
+          exportsWithParams: this.importExport?.exportsWithParams,
+          exportsWithModRefId: this.importExport?.exportsWithModRefId,
+        };
       }
     }
 
@@ -358,6 +367,51 @@ describe('ModuleNormalizer', () => {
         moduleWithParams4,
       ]);
       expect(baseMeta.exportsWithParams).toEqual([moduleWithParams2, moduleWithParams4]);
+    });
+
+    it('proprly works with imports/exports and forwardRef() with modules', () => {
+      class Service1 {}
+
+      @featureModule({ providersPerApp: [Service1] })
+      class Module1 {}
+
+      @featureModule({ providersPerApp: [Service1] })
+      class Module2 {}
+      const moduleWithParams2: ModuleWithParams = { module: forwardRef(() => Module2) };
+
+      @featureModule({ providersPerApp: [Service1] })
+      class Module3 {}
+
+      @featureModule({ providersPerApp: [Service1] })
+      class Module4 {}
+      const moduleWithParams4: ModuleWithParams = { module: forwardRef(() => Module4) };
+
+      @initSome({
+        imports: [
+          forwardRef(() => Module1),
+          moduleWithParams2,
+          { modRefId: forwardRef(() => Module3) },
+          { modRefId: moduleWithParams4 },
+        ],
+        exports: [forwardRef(() => Module1), moduleWithParams2, moduleWithParams4],
+      })
+      @rootModule()
+      class AppModule {}
+
+      const baseMeta = mock.normalize(AppModule);
+      expect(baseMeta.importsModules).toEqual([Module1]);
+      expect(baseMeta.importsWithParams).toEqual([
+        moduleWithParams2,
+        { module: Module3, srcInitMeta: expect.any(Map) } as ModuleWithSrcInitMeta,
+        moduleWithParams4,
+      ]);
+      expect(baseMeta.exportsModules).toEqual([Module1]);
+      expect(baseMeta.exportsWithParams).toEqual([moduleWithParams2, moduleWithParams4]);
+      expect(moduleWithParams2.module).toBe(Module2);
+      expect(moduleWithParams4.module).toBe(Module4);
+      const initMeta = baseMeta.initMeta.get(initSome)!;
+      expect(initMeta.exportsModules).toEqual([Module1]);
+      expect(initMeta.exportsWithParams).toEqual([moduleWithParams2, moduleWithParams4]);
     });
   });
 });
