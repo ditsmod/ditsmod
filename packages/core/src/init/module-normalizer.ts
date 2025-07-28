@@ -378,20 +378,20 @@ export class ModuleNormalizer {
           } else {
             imp.modRefId = { module: imp.modRefId, srcInitMeta: baseMeta.initMeta } as ModuleWithSrcInitMeta;
           }
-          initHooks.importExport.importsWithModRefId ??= [];
-          initHooks.importExport.importsWithModRefId.push(imp as { modRefId: ModuleWithSrcInitMeta });
+          initHooks.importExport!.importsWithModRefId ??= [];
+          initHooks.importExport!.importsWithModRefId.push(imp as { modRefId: ModuleWithSrcInitMeta });
           if (!baseMeta.importsWithParams.includes(imp.modRefId)) {
             baseMeta.importsWithParams.push(imp.modRefId);
           }
         } else if (isModuleWithParams(imp)) {
-          initHooks.importExport.importsWithParams ??= [];
-          initHooks.importExport.importsWithParams.push(imp);
+          initHooks.importExport!.importsWithParams ??= [];
+          initHooks.importExport!.importsWithParams.push(imp);
           if (!baseMeta.importsWithParams.includes(imp)) {
             baseMeta.importsWithParams.push(imp);
           }
         } else {
-          initHooks.importExport.importsModules ??= [];
-          initHooks.importExport.importsModules.push(imp);
+          initHooks.importExport!.importsModules ??= [];
+          initHooks.importExport!.importsModules.push(imp);
           if (!baseMeta.importsModules.includes(imp)) {
             baseMeta.importsModules.push(imp);
           }
@@ -402,20 +402,20 @@ export class ModuleNormalizer {
       initHooks.importExport ??= {};
       this.resolveForwardRef(initHooks.rawMeta.exports).forEach((exp) => {
         if (isParamsWithModRefId(exp)) {
-          initHooks.importExport.exportsWithModRefId ??= [];
-          initHooks.importExport.exportsWithModRefId.push(exp as { modRefId: ModuleWithSrcInitMeta });
+          initHooks.importExport!.exportsWithModRefId ??= [];
+          initHooks.importExport!.exportsWithModRefId.push(exp as { modRefId: ModuleWithSrcInitMeta });
           if (!baseMeta.exportsWithParams.includes((exp as { modRefId: ModuleWithSrcInitMeta }).modRefId)) {
             baseMeta.exportsWithParams.push((exp as { modRefId: ModuleWithSrcInitMeta }).modRefId);
           }
         } else if (isModuleWithParams(exp)) {
-          initHooks.importExport.exportsWithParams ??= [];
-          initHooks.importExport.exportsWithParams.push(exp);
+          initHooks.importExport!.exportsWithParams ??= [];
+          initHooks.importExport!.exportsWithParams.push(exp);
           if (!baseMeta.exportsWithParams.includes(exp)) {
             baseMeta.exportsWithParams.push(exp);
           }
         } else if (reflector.getDecorators(exp, isFeatureModule)) {
-          initHooks.importExport.exportsModules ??= [];
-          initHooks.importExport.exportsModules.push(exp);
+          initHooks.importExport!.exportsModules ??= [];
+          initHooks.importExport!.exportsModules.push(exp);
           if (!baseMeta.exportsModules.includes(exp)) {
             baseMeta.exportsModules.push(exp);
           }

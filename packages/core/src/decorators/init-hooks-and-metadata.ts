@@ -45,7 +45,7 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
    */
   hostRawMeta?: T;
 
-  importExport: InitImportExport;
+  importExport?: InitImportExport;
 
   constructor(public rawMeta: T) {}
 
