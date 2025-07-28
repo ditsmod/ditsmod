@@ -72,7 +72,7 @@ beforeEach(() => {
   moduleManager = new ModuleManager(new SystemLogMediator({ moduleName: 'fakeName' }));
 });
 
-describe('appending modules', () => {
+describe('shallow importing modules', () => {
   function importModulesShallow(modRefId: ModuleType) {
     expect(() => moduleManager.scanRootModule(modRefId)).not.toThrow();
     const shallowImportsBase = new ShallowModulesImporterBase().importModulesShallow({
@@ -232,6 +232,26 @@ describe('appending modules', () => {
       resolvedCollisionsPerReq: [[Provider1, modRefId1]],
     })
     @rootModule()
+    class AppModule {}
+
+    expect(() => importModulesShallow(AppModule)).not.toThrow();
+  });
+
+  it('should work with resolved collision in initRest and import a module in rootModule', () => {
+    class Provider1 {}
+
+    @initRest({ providersPerReq: [{ token: Provider1, useValue: 'some value' }], exports: [Provider1] })
+    @featureModule()
+    class Module1 {}
+
+    @initRest({ providersPerReq: [Provider1], exports: [Provider1] })
+    @featureModule()
+    class Module2 {}
+
+    const modRefId1: ModuleWithParams = { module: Module1 };
+    const modRefId2: ModuleWithParams = { module: Module2 };
+    @initRest({ resolvedCollisionsPerReq: [[Provider1, modRefId1]] })
+    @rootModule({ imports: [modRefId1, modRefId2] })
     class AppModule {}
 
     expect(() => importModulesShallow(AppModule)).not.toThrow();
