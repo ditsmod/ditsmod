@@ -4,17 +4,17 @@ import { ModuleManager } from '#init/module-manager.js';
 import { ShallowImportsBase, ShallowImports } from '#init/types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { GlobalProviders } from '#types/metadata-per-mod.js';
-import { AnyObj, ModRefId, ModuleType, Override } from '#types/mix.js';
+import { AnyFn, AnyObj, ModRefId, ModuleType, Override } from '#types/mix.js';
 import { ModuleWithParams, ModuleWithSrcInitMeta } from '#types/module-metadata.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 
-type ObjectWithImportsExports = { imports?: (ModRefId | { modRefId: ModRefId })[]; exports?: any[] };
+export type BaseInitRawMeta = { imports?: (ModRefId | { modRefId: ModRefId })[]; exports?: any[] };
 
 /**
  * Init hooks and metadata attached by init decorators,
  * apart from the base decorators - `rootModule` or `featureModule`.
  */
-export class InitHooksAndRawMeta<T extends ObjectWithImportsExports = ObjectWithImportsExports> {
+export class InitHooksAndRawMeta<T extends BaseInitRawMeta = BaseInitRawMeta> {
   /**
    * The host module where the current init decorator is declared. If you add this module,
    * it will be imported into the module where the corresponding init decorator is used.
@@ -127,3 +127,58 @@ export interface InitImportExport<T extends { modRefId: ModRefId } = { modRefId:
   exportsWithParams?: ModuleWithParams[];
   exportsWithModRefId?: Override<T, { modRefId: ModuleWithSrcInitMeta }>[];
 }
+
+export interface InitMetaMap {
+  set<T extends InitImportExport>(decorator: AddDecorator<any, T>, params: T): this;
+  get<T extends InitImportExport>(decorator: AddDecorator<any, T>): T | undefined;
+  forEach<T extends InitImportExport>(
+    callbackfn: (params: T, decorator: AnyFn, map: Map<AnyFn, T>) => void,
+    thisArg?: any
+  ): void;
+  /**
+   * Returns an iterable of keys in the map
+   */
+  keys(): MapIterator<AnyFn>;
+  readonly size: number;
+}
+/**
+ * Use this interface to create decorators with init hooks.
+ *
+ * ### Complete example with init hooks
+ *
+ * In this example, `ReturnsType` is the type that will be returned by
+ * `myInitHooksAndRawMeta.normalize()` or `normalizedMeta.initMeta.get(addSome)`.
+ *
+```ts
+import { makeClassDecorator, AddDecorator, featureModule, InitHooksAndRawMeta, BaseInitRawMeta } from '@ditsmod/core';
+
+// Creating a decorator
+export const addSome: AddDecorator<ArgumentsType, ReturnsType> = makeClassDecorator(getInitHooksAndRawMeta);
+
+// Using the newly created decorator
+\@addSome({ one: 1, two: 2 })
+\@featureModule()
+class MyModule {
+  // Your code here
+}
+
+interface ArgumentsType extends BaseInitRawMeta {
+  one?: number;
+  two?: number;
+}
+
+interface ReturnsType {}
+
+class MyInitHooksAndRawMeta extends InitHooksAndRawMeta<ArgumentsType> {}
+
+export function getInitHooksAndRawMeta(data?: ArgumentsType): InitHooksAndRawMeta<ArgumentsType> {
+  const metadata = Object.assign({}, data);
+  return new MyInitHooksAndRawMeta(metadata);
+}
+```
+ */
+
+export interface AddDecorator<T extends { imports?: (ModRefId | { modRefId: ModRefId; })[]; }, R> {
+  (data?: T): any;
+}
+

@@ -15,7 +15,13 @@ export { OnModuleInit } from '#init/hooks.js';
 export { CustomError } from '#error/custom-error.js';
 export { ErrorInfo } from '#error/error-info.js';
 export { featureModule } from '#decorators/feature-module.js';
-export { InitHooksAndRawMeta, InitImportExport } from '#decorators/init-hooks-and-metadata.js';
+export {
+  InitHooksAndRawMeta,
+  InitImportExport,
+  AddDecorator,
+  InitMetaMap,
+  BaseInitRawMeta,
+} from '#decorators/init-hooks-and-metadata.js';
 export { rootModule } from '#decorators/root-module.js';
 export {
   ExtensionCounters,
@@ -32,7 +38,7 @@ export { getExtensionProvider } from './extension/get-extension-provider.js';
 export { isExtensionProvider, isExtensionConfig } from '#extension/type-guards.js';
 export { ModuleExtract } from '#types/module-extract.js';
 export { Counter } from '#extension/counter.js';
-export { NormalizedMeta, AddDecorator, InitMetaMap } from '#types/normalized-meta.js';
+export { NormalizedMeta } from '#types/normalized-meta.js';
 export { ProvidersMetadata } from '#types/providers-metadata.js';
 export { ConsoleLogger } from '#logger/console-logger.js';
 export { ExtensionsContext } from '#extension/extensions-context.js';

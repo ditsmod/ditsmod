@@ -4,63 +4,9 @@ import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from './module-metadata.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { ExtensionClass } from '#extension/extension-types.js';
-import { InitImportExport } from '#decorators/init-hooks-and-metadata.js';
+import { InitMetaMap } from '#decorators/init-hooks-and-metadata.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { AllInitHooks } from '#init/module-manager.js';
-
-export interface InitMetaMap {
-  set<T extends InitImportExport>(decorator: AddDecorator<any, T>, params: T): this;
-  get<T extends InitImportExport>(decorator: AddDecorator<any, T>): T | undefined;
-  forEach<T extends InitImportExport>(
-    callbackfn: (params: T, decorator: AnyFn, map: Map<AnyFn, T>) => void,
-    thisArg?: any,
-  ): void;
-  /**
-   * Returns an iterable of keys in the map
-   */
-  keys(): MapIterator<AnyFn>;
-  readonly size: number;
-}
-
-/**
- * Use this interface to create decorators with init hooks.
- * 
- * ### Complete example with init hooks
- * 
- * In this example, `ReturnsType` is the type that will be returned by
- * `myInitHooksAndRawMeta.normalize()` or `normalizedMeta.initMeta.get(addSome)`.
- *
-```ts
-import { makeClassDecorator, AddDecorator, featureModule, InitHooksAndRawMeta } from '@ditsmod/core';
-
-// Creating a decorator
-export const addSome: AddDecorator<ArgumentsType, ReturnsType> = makeClassDecorator(getInitHooksAndRawMeta);
-
-// Using the newly created decorator
-\@addSome({ one: 1, two: 2 })
-\@featureModule()
-class MyModule {
-  // Your code here
-}
-
-interface ArgumentsType {
-  one?: number;
-  two?: number;
-}
-
-interface ReturnsType {}
-
-class MyInitHooksAndRawMeta extends InitHooksAndRawMeta<ArgumentsType> {}
-
-export function getInitHooksAndRawMeta(data?: ArgumentsType): InitHooksAndRawMeta<ArgumentsType> {
-  const metadata = Object.assign({}, data);
-  return new MyInitHooksAndRawMeta(metadata);
-}
-```
- */
-export interface AddDecorator<T extends { imports?: (ModRefId | { modRefId: ModRefId })[] }, R> {
-  (data?: T): any;
-}
 
 export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> {
   /**
