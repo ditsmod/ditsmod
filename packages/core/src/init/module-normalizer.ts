@@ -15,6 +15,7 @@ import {
   isFeatureModule,
   isModuleWithInitHooks,
   isParamsWithModRefId,
+  isModuleWithSrcInitMeta,
 } from '#utils/type-guards.js';
 import { ExtensionConfigBase, getExtensionProvider } from '#extension/get-extension-provider.js';
 import { AnyFn, ModRefId } from '#types/mix.js';
@@ -272,10 +273,12 @@ export class ModuleNormalizer {
     }
   }
 
-  protected resolveForwardRef<T extends ModRefId | Provider>(arr: T[]) {
+  protected resolveForwardRef<T extends ModRefId | Provider | { modRefId: ModRefId }>(arr: T[]) {
     return arr.map((item) => {
       item = resolveForwardRef(item);
-      if (isNormalizedProvider(item)) {
+      if (isParamsWithModRefId(item)) {
+        item.modRefId = resolveForwardRef(item.modRefId);
+      } else if (isNormalizedProvider(item)) {
         item.token = resolveForwardRef(item.token);
         if (isClassProvider(item)) {
           item.useClass = resolveForwardRef(item.useClass);
@@ -368,7 +371,7 @@ export class ModuleNormalizer {
   protected setInitImportExport(baseMeta: NormalizedMeta, initHooks: InitHooksAndRawMeta) {
     if (initHooks.rawMeta.imports) {
       initHooks.initImportExport ??= {};
-      initHooks.rawMeta.imports.forEach((imp) => {
+      this.resolveForwardRef(initHooks.rawMeta.imports).forEach((imp) => {
         if (isParamsWithModRefId(imp)) {
           if (isModuleWithParams(imp.modRefId)) {
             (imp.modRefId as ModuleWithSrcInitMeta).srcInitMeta = baseMeta.initMeta;
@@ -397,7 +400,7 @@ export class ModuleNormalizer {
     }
     if (initHooks.rawMeta.exports) {
       initHooks.initImportExport ??= {};
-      initHooks.rawMeta.exports.forEach((exp) => {
+      this.resolveForwardRef(initHooks.rawMeta.exports).forEach((exp) => {
         if (isParamsWithModRefId(exp)) {
           initHooks.initImportExport.exportsWithModRefId ??= [];
           initHooks.initImportExport.exportsWithModRefId.push(exp as { modRefId: ModuleWithSrcInitMeta });
