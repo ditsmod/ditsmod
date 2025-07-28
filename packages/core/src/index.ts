@@ -62,6 +62,8 @@ export {
   RequireProps,
   RequireOnlyProps,
   OptionalProps,
+  Without,
+  XOR,
   ModRefId,
   Override,
   UnionToIntersection,

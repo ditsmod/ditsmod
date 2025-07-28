@@ -60,6 +60,26 @@ export type RequireProps<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K
 export type RequireOnlyProps<T, K extends keyof T> = Partial<Omit<T, K>> & Required<Pick<T, K>>;
 
 export type OptionalProps<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+/**
+ * Constructs a type by removing all keys from type `T` that are present in `K`,
+ * and setting them as optional with type `never`.
+ * 
+ * This is typically used to prevent overlapping properties when combining types,
+ * especially in mutual exclusivity patterns like XOR.
+ */
+export type Without<T, K> = { [P in Exclude<keyof T, K>]?: never };
+
+/**
+ * Creates a mutually exclusive union (XOR) between two types `T` and `U`.
+ * 
+ * The result allows either `T` or `U`, but not both at the same time.
+ * If a value includes properties from both `T` and `U`, TypeScript will raise a type error.
+ * 
+ * This is useful when you want to model "either-or" behavior between two object shapes.
+ */
+export type XOR<T, U> =
+  | (T & Without<U, keyof T>)
+  | (U & Without<T, keyof U>);
 
 export type AnyFn<Args extends any[] = any[], Return = any> = (...args: Args) => Return;
 
