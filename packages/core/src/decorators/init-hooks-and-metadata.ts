@@ -4,11 +4,14 @@ import { ModuleManager } from '#init/module-manager.js';
 import { ShallowImportsBase, ShallowImports } from '#init/types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { GlobalProviders } from '#types/metadata-per-mod.js';
-import { AnyFn, AnyObj, ModRefId, ModuleType, Override } from '#types/mix.js';
+import { AnyFn, AnyObj, ModRefId, ModuleType, Override, XOR } from '#types/mix.js';
 import { ModuleWithParams, ModuleWithSrcInitMeta } from '#types/module-metadata.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 
-export type BaseInitRawMeta = { imports?: (ModRefId | { modRefId: ModRefId })[]; exports?: any[] };
+export type BaseInitRawMeta<T extends object = object> = {
+  imports?: XOR<ModRefId, { modRefId: ModRefId } & T>[];
+  exports?: any[];
+};
 
 /**
  * Init hooks and metadata attached by init decorators,
@@ -133,7 +136,7 @@ export interface InitMetaMap {
   get<T extends InitImportExport>(decorator: AddDecorator<any, T>): T | undefined;
   forEach<T extends InitImportExport>(
     callbackfn: (params: T, decorator: AnyFn, map: Map<AnyFn, T>) => void,
-    thisArg?: any
+    thisArg?: any,
   ): void;
   /**
    * Returns an iterable of keys in the map
@@ -178,7 +181,6 @@ export function getInitHooksAndRawMeta(data?: ArgumentsType): InitHooksAndRawMet
 ```
  */
 
-export interface AddDecorator<T extends { imports?: (ModRefId | { modRefId: ModRefId; })[]; }, R> {
+export interface AddDecorator<T extends { imports?: (ModRefId | { modRefId: ModRefId })[] }, R> {
   (data?: T): any;
 }
-
