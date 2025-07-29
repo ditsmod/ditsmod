@@ -124,8 +124,7 @@ export class ModuleNormalizer {
   }
 
   protected normalizeImports(rawMeta: RawMeta, baseMeta: NormalizedMeta) {
-    rawMeta.imports?.forEach((imp, i) => {
-      imp = this.resolveForwardRef([imp])[0];
+    this.resolveForwardRef(rawMeta.imports).forEach((imp, i) => {
       this.throwIfUndefined(baseMeta.name, 'Imports', imp, i);
       if (isModuleWithParams(imp)) {
         baseMeta.importsWithParams.push(imp);
@@ -216,8 +215,7 @@ export class ModuleNormalizer {
       providers.push(...rawMeta.providersPerMod);
     }
 
-    rawMeta.exports?.forEach((exp, i) => {
-      exp = this.resolveForwardRef([exp])[0];
+    this.resolveForwardRef(rawMeta.exports).forEach((exp, i) => {
       this.throwIfUndefined(baseMeta.name, 'Exports', exp, i);
       this.throwExportsIfNormalizedProvider(baseMeta.name, exp);
       if (isModuleWithParams(exp)) {
@@ -272,7 +270,7 @@ export class ModuleNormalizer {
     }
   }
 
-  protected resolveForwardRef<T extends ModRefId | Provider | { modRefId: ModRefId }>(arr: T[]) {
+  protected resolveForwardRef<T extends ModRefId | Provider | { modRefId: ModRefId }>(arr = [] as T[]) {
     return arr.map((item) => {
       item = resolveForwardRef(item);
       if (isParamsWithModRefId(item)) {
@@ -336,13 +334,15 @@ export class ModuleNormalizer {
     throw new Error(msg);
   }
 
+  /**
+   * If the instance with init hooks has `hostRawMeta`, this method
+   * inserts a hook that can add `hostRawMeta` to the host module.
+   */
   protected addInitHooksForHostDecorator(baseMeta: NormalizedMeta, allInitHooks: AllInitHooks) {
     allInitHooks.forEach((initHooks, decorator) => {
-      if (initHooks.hostModule === baseMeta.modRefId) {
-        if (initHooks.hostRawMeta) {
-          const newInitHooksAndRawMeta = initHooks.clone(initHooks.hostRawMeta);
-          baseMeta.mInitHooksAndRawMeta.set(decorator, newInitHooksAndRawMeta);
-        }
+      if (initHooks.hostModule === baseMeta.modRefId && initHooks.hostRawMeta) {
+        const newInitHooksAndRawMeta = initHooks.clone(initHooks.hostRawMeta);
+        baseMeta.mInitHooksAndRawMeta.set(decorator, newInitHooksAndRawMeta);
       }
     });
   }
@@ -373,7 +373,7 @@ export class ModuleNormalizer {
       this.resolveForwardRef(initHooks.rawMeta.imports).forEach((imp) => {
         if (isParamsWithModRefId(imp)) {
           if (isModuleWithParams(imp.modRefId)) {
-            (imp.modRefId as ModuleWithSrcInitMeta).srcInitMeta = baseMeta.initMeta;
+            (imp.modRefId as ModuleWithSrcInitMeta).srcInitMeta ??= baseMeta.initMeta;
           } else {
             imp.modRefId = { module: imp.modRefId, srcInitMeta: baseMeta.initMeta } as ModuleWithSrcInitMeta;
           }
@@ -427,6 +427,24 @@ export class ModuleNormalizer {
    * If the current module was used with parameters in the context of init decorators, but
    * the class of the current module is not annotated with those decorators, then retrieve
    * the corresponding init hooks (for reading parameters) from the `allInitHooks`.
+   * 
+   * ### Example
+   * 
+```ts
+import { featureModule, rootModule } from '@ditsmod/core';
+import { initRest } from '@ditsmod/rest';
+
+\@featureModule()
+class Module1 {}
+
+\@initRest({ imports: [{ modRefId: Module1, path: 'some-prefix' }] })
+\@rootModule()
+export class AppModule {}
+```
+   * 
+   * As you can see, `Module1` is imported in the context of the `initRest` decorator,
+   * but `Module1` itself does not have an annotation with `initRest`. For such cases,
+   * this method adds hooks so that the import of `Module1` with parameters can be properly handled.
    */
   protected addInitHooksFromModuleUsageContext(baseMeta: NormalizedMeta, allInitHooks: AllInitHooks) {
     (baseMeta.modRefId as ModuleWithSrcInitMeta).srcInitMeta?.forEach((params, decorator) => {
@@ -434,6 +452,8 @@ export class ModuleNormalizer {
         const initHooks = allInitHooks.get(decorator)!;
         const newInitHooksAndRawMeta = initHooks.clone();
         this.callInitHook(baseMeta, decorator, newInitHooksAndRawMeta);
+
+        // For `this.quickCheckMetadata()` only.
         baseMeta.mInitHooksAndRawMeta.set(decorator, newInitHooksAndRawMeta);
       }
     });

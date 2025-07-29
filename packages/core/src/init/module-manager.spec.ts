@@ -8,10 +8,12 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { AllInitHooks, ModuleManager } from './module-manager.js';
 import { ModuleType, AnyObj, ModRefId } from '#types/mix.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
-import { AddDecorator, NormalizedMeta } from '#types/normalized-meta.js';
+import { ModuleWithParams, ModuleWithSrcInitMeta } from '#types/module-metadata.js';
+import { NormalizedMeta } from '#types/normalized-meta.js';
+import { AddDecorator, InitImportExport } from '#decorators/init-hooks-and-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
-import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
+import { BaseInitRawMeta, InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
+import { isModuleWithSrcInitMeta } from '#utils/type-guards.js';
 
 describe('ModuleManager', () => {
   console.log = jest.fn();
@@ -702,5 +704,42 @@ describe('ModuleManager', () => {
     expect(mod4.allInitHooks.get(initSome2)?.hostModule).toBe(HostModule2);
     expect(mod4.allInitHooks.get(initSome3)?.hostModule).toBe(HostModule3);
     expect(mod4.allInitHooks.get(initSome4)?.hostModule).toBe(HostModule4);
+  });
+
+  it('Module1 does not have an annotation with initRest, but imported in AppModule with this decorator', () => {
+    interface RawMeta extends BaseInitRawMeta<{ path?: string }> {
+      one?: string;
+      two?: string;
+    }
+    interface InitMeta extends InitImportExport<{ modRefId: ModuleWithSrcInitMeta; path?: string }> {
+      [key: string]: any;
+    }
+    const initSome: AddDecorator<RawMeta, InitMeta> = makeClassDecorator((d) => new InitHooksAndRawMeta1(d));
+
+    class InitHooksAndRawMeta1 extends InitHooksAndRawMeta<RawMeta> {
+      override normalize({ modRefId }: NormalizedMeta): InitMeta {
+        const baseInitMeta = { importsWithModRefId: this.importExport?.importsWithModRefId };
+        if (isModuleWithSrcInitMeta(modRefId)) {
+          const initMeta = modRefId.srcInitMeta.get(initSome);
+          const params = initMeta?.importsWithModRefId?.find((param) => param.modRefId === modRefId);
+          return { path: params?.path };
+        }
+
+        return baseInitMeta;
+      }
+    }
+
+    @featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
+    class Module1 {}
+
+    const moduleWithParams: ModuleWithParams = { module: Module1 };
+
+    @initSome({ imports: [{ modRefId: moduleWithParams, path: 'some-prefix' }], one: 'some-here' })
+    @rootModule()
+    class AppModule {}
+
+    mock.scanRootModule(AppModule);
+    const mod1 = mock.getMetadata(moduleWithParams)!;
+    expect(mod1.initMeta.get(initSome)).toMatchObject({ path: 'some-prefix' });
   });
 });
