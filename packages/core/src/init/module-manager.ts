@@ -14,7 +14,7 @@ import { CustomError } from '#error/custom-error.js';
 
 export type ModulesMap = Map<ModRefId, NormalizedMeta>;
 export type ModulesMapId = Map<string, ModRefId>;
-export type AllInitHooks = Map<AnyFn, Omit<InitHooksAndRawMeta, 'rawMeta' | 'importExport'>>;
+export type AllInitHooks = Map<AnyFn, Omit<InitHooksAndRawMeta, 'rawMeta' | 'baseInitMeta'>>;
 type ModuleId = string | ModRefId;
 
 /**

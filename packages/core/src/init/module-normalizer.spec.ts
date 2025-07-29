@@ -1,5 +1,5 @@
 import { featureModule } from '#decorators/feature-module.js';
-import { InitImportExport } from '#decorators/init-hooks-and-metadata.js';
+import { BaseInitMeta } from '#decorators/init-hooks-and-metadata.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { rootModule } from '#decorators/root-module.js';
 import { forwardRef, injectable, makeClassDecorator, MultiProvider, Provider } from '#di';
@@ -263,7 +263,7 @@ describe('ModuleNormalizer', () => {
   });
 
   describe('creating custom decorator with init hooks', () => {
-    interface ReturnsType extends InitImportExport {
+    interface ReturnsType extends BaseInitMeta {
       baseMeta: NormalizedMeta;
       rawMeta: ArgumentsType;
     }
@@ -273,12 +273,12 @@ describe('ModuleNormalizer', () => {
         return {
           baseMeta,
           rawMeta: this.rawMeta,
-          importsModules: this.importExport?.importsModules,
-          importsWithParams: this.importExport?.importsWithParams,
-          importsWithModRefId: this.importExport?.importsWithModRefId,
-          exportsModules: this.importExport?.exportsModules,
-          exportsWithParams: this.importExport?.exportsWithParams,
-          exportsWithModRefId: this.importExport?.exportsWithModRefId,
+          importsModules: this.baseInitMeta?.importsModules,
+          importsWithParams: this.baseInitMeta?.importsWithParams,
+          importsWithModRefId: this.baseInitMeta?.importsWithModRefId,
+          exportsModules: this.baseInitMeta?.exportsModules,
+          exportsWithParams: this.baseInitMeta?.exportsWithParams,
+          exportsWithModRefId: this.baseInitMeta?.exportsWithModRefId,
         };
       }
     }

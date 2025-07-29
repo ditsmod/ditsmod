@@ -26,7 +26,7 @@ import {
   ModuleWithSrcInitMeta,
   InitMetaMap,
   isParamsWithModRefId,
-  InitImportExport,
+  BaseInitMeta,
 } from '@ditsmod/core';
 
 import { RestMetadata } from '#init/module-metadata.js';
@@ -39,9 +39,9 @@ import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
  * Normalizes and validates module metadata.
  */
 export class ModuleNormalizer {
-  normalize(baseMeta: NormalizedMeta, rawMeta: RestMetadata, importExport?: InitImportExport) {
+  normalize(baseMeta: NormalizedMeta, rawMeta: RestMetadata, baseInitMeta?: BaseInitMeta) {
     const meta = new RestNormalizedMeta();
-    this.setImportsWithModRefId(meta, importExport);
+    this.setImportsWithModRefId(meta, baseInitMeta);
     this.mergeModuleWithParams(baseMeta.modRefId, rawMeta, meta);
     this.appendModules(rawMeta, meta);
     this.normalizeDeclaredAndResolvedProviders(meta, rawMeta);
@@ -50,14 +50,14 @@ export class ModuleNormalizer {
     return meta;
   }
 
-  protected setImportsWithModRefId(meta: RestNormalizedMeta, importExport?: InitImportExport) {
-    meta.importsModules = importExport?.importsModules ?? [];
-    meta.importsWithParams = importExport?.importsWithParams ?? [];
-    meta.importsWithModRefId = importExport?.importsWithModRefId ?? [];
+  protected setImportsWithModRefId(meta: RestNormalizedMeta, baseInitMeta?: BaseInitMeta) {
+    meta.importsModules = baseInitMeta?.importsModules ?? [];
+    meta.importsWithParams = baseInitMeta?.importsWithParams ?? [];
+    meta.importsWithModRefId = baseInitMeta?.importsWithModRefId ?? [];
 
-    meta.exportsModules = importExport?.exportsModules ?? [];
-    meta.exportsWithParams = importExport?.exportsWithParams ?? [];
-    meta.exportsWithModRefId = importExport?.exportsWithModRefId ?? [];
+    meta.exportsModules = baseInitMeta?.exportsModules ?? [];
+    meta.exportsWithParams = baseInitMeta?.exportsWithParams ?? [];
+    meta.exportsWithModRefId = baseInitMeta?.exportsWithModRefId ?? [];
   }
 
   protected mergeModuleWithParams(modRefId: RestModRefId, rawMeta: RestMetadata, meta: RestNormalizedMeta): void {

@@ -10,7 +10,7 @@ import { AllInitHooks, ModuleManager } from './module-manager.js';
 import { ModuleType, AnyObj, ModRefId } from '#types/mix.js';
 import { ModuleWithParams, ModuleWithSrcInitMeta } from '#types/module-metadata.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
-import { AddDecorator, InitImportExport } from '#decorators/init-hooks-and-metadata.js';
+import { AddDecorator, BaseInitMeta } from '#decorators/init-hooks-and-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { BaseInitRawMeta, InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { isModuleWithSrcInitMeta } from '#utils/type-guards.js';
@@ -706,19 +706,19 @@ describe('ModuleManager', () => {
     expect(mod4.allInitHooks.get(initSome4)?.hostModule).toBe(HostModule4);
   });
 
-  it('Module1 does not have an annotation with initRest, but imported in AppModule with this decorator', () => {
+  it('Module1 does not have an annotation with initSome, but imported in AppModule with this decorator', () => {
     interface RawMeta extends BaseInitRawMeta<{ path?: string }> {
       one?: string;
       two?: string;
     }
-    interface InitMeta extends InitImportExport<{ modRefId: ModuleWithSrcInitMeta; path?: string }> {
-      [key: string]: any;
+    interface InitMeta extends BaseInitMeta<{ modRefId: ModuleWithSrcInitMeta; path?: string }> {
+      path?: string;
     }
     const initSome: AddDecorator<RawMeta, InitMeta> = makeClassDecorator((d) => new InitHooksAndRawMeta1(d));
 
     class InitHooksAndRawMeta1 extends InitHooksAndRawMeta<RawMeta> {
       override normalize({ modRefId }: NormalizedMeta): InitMeta {
-        const baseInitMeta = { importsWithModRefId: this.importExport?.importsWithModRefId };
+        const baseInitMeta = { importsWithModRefId: this.baseInitMeta?.importsWithModRefId };
         if (isModuleWithSrcInitMeta(modRefId)) {
           const initMeta = modRefId.srcInitMeta.get(initSome);
           const params = initMeta?.importsWithModRefId?.find((param) => param.modRefId === modRefId);

@@ -48,7 +48,7 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
    */
   declare hostRawMeta?: T;
 
-  declare importExport?: InitImportExport;
+  declare baseInitMeta?: BaseInitMeta;
 
   constructor(public rawMeta: T) {
     this.rawMeta ??= {} as T;
@@ -66,7 +66,7 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
    *
    * @param baseMeta Normalized metadata that is passed to the `featureModule` or `rootModule` decorator.
    */
-  normalize(baseMeta: NormalizedMeta): InitImportExport {
+  normalize(baseMeta: NormalizedMeta): BaseInitMeta {
     return {};
   }
 
@@ -75,7 +75,7 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
    *
    * @param meta Metadata returned by the `this.normalize()` method.
    */
-  getModulesToScan(meta?: InitImportExport): ModRefId[] {
+  getModulesToScan(meta?: BaseInitMeta): ModRefId[] {
     return [];
   }
 
@@ -121,9 +121,9 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
 }
 
 /**
- * Assigned to the `initHooksAndRawMeta.importExport` property.
+ * Assigned to the `initHooksAndRawMeta.baseInitMeta` property.
  */
-export interface InitImportExport<T extends { modRefId: ModRefId } = { modRefId: ModRefId }> {
+export interface BaseInitMeta<T extends { modRefId: ModRefId } = { modRefId: ModRefId }> {
   importsModules?: ModuleType[];
   importsWithParams?: ModuleWithParams[];
   importsWithModRefId?: Override<T, { modRefId: ModuleWithSrcInitMeta }>[];
@@ -134,9 +134,9 @@ export interface InitImportExport<T extends { modRefId: ModRefId } = { modRefId:
 }
 
 export interface InitMetaMap {
-  set<T extends InitImportExport>(decorator: AddDecorator<any, T>, params: T): this;
-  get<T extends InitImportExport>(decorator: AddDecorator<any, T>): T | undefined;
-  forEach<T extends InitImportExport>(
+  set<T extends BaseInitMeta>(decorator: AddDecorator<any, T>, params: T): this;
+  get<T extends BaseInitMeta>(decorator: AddDecorator<any, T>): T | undefined;
+  forEach<T extends BaseInitMeta>(
     callbackfn: (params: T, decorator: AnyFn, map: Map<AnyFn, T>) => void,
     thisArg?: any,
   ): void;
