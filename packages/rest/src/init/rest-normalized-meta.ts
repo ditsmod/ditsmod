@@ -20,10 +20,8 @@ class NormalizedParams {
   guards: NormalizedGuard[] = [];
 }
 
-export class RestNormalizedMeta implements BaseInitMeta<RestModuleParams> {
-  importsModules: ModuleType[] = [];
-  importsWithParams: ModuleWithParams[] = [];
-  importsWithModRefId: Override<RestModuleParams, { modRefId: ModuleWithSrcInitMeta }>[] = [];
+export class RestNormalizedMeta extends BaseInitMeta<RestModuleParams> {
+  override importsWithModRefId: ({ modRefId: ModuleWithSrcInitMeta } & RestModuleParams)[] = [];
   providersPerRou: Provider[] = [];
   providersPerReq: Provider[] = [];
   exportedProvidersPerRou: Provider[] = [];
@@ -36,9 +34,7 @@ export class RestNormalizedMeta implements BaseInitMeta<RestModuleParams> {
   appendsModules: ModuleType[] = [];
   controllers: Class[] = [];
   params = new NormalizedParams();
-  exportsModules: ModuleType[] = [];
-  exportsWithParams: ModuleWithParams[] = [];
-  exportsWithModRefId: Override<RestModuleParams, { modRefId: ModuleWithSrcInitMeta }>[] = [];
+  override exportsWithModRefId: ({ modRefId: ModuleWithSrcInitMeta } & RestModuleParams)[] = [];
 }
 
 export type RestModRefId<T extends AnyObj = AnyObj> = ModRefId | AppendsWithParams<T>;
