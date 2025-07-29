@@ -22,7 +22,7 @@ export class InitHooksAndRawMeta<T extends BaseInitRawMeta = BaseInitRawMeta> {
    * The host module where the current init decorator is declared. If you add this module,
    * it will be imported into the module where the corresponding init decorator is used.
    */
-  hostModule?: ModRefId;
+  declare hostModule?: ModRefId;
 
   /**
    * Allows you to prevent a circular dependency between
@@ -46,11 +46,13 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
    *
    * Here, `{ one: 1, two: 2 }` represents the placeholder metadata that needs to be passed to `SomeModule`.
    */
-  hostRawMeta?: T;
+  declare hostRawMeta?: T;
 
-  importExport?: InitImportExport;
+  declare importExport?: InitImportExport;
 
-  constructor(public rawMeta: T) {}
+  constructor(public rawMeta: T) {
+    this.rawMeta ??= {} as T;
+  }
 
   /**
    * Returns a new instance of the current class. Most likely, you don't need to override this method.
