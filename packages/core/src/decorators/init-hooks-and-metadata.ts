@@ -123,14 +123,14 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
 /**
  * Assigned to the `initHooksAndRawMeta.baseInitMeta` property.
  */
-export interface BaseInitMeta<T extends { modRefId: ModRefId } = { modRefId: ModRefId }> {
+export class BaseInitMeta<T extends object = AnyObj> {
   importsModules?: ModuleType[];
   importsWithParams?: ModuleWithParams[];
-  importsWithModRefId?: Override<T, { modRefId: ModuleWithSrcInitMeta }>[];
+  importsWithModRefId?: ({ modRefId: ModuleWithSrcInitMeta } & T)[];
 
   exportsModules?: ModuleType[];
   exportsWithParams?: ModuleWithParams[];
-  exportsWithModRefId?: Override<T, { modRefId: ModuleWithSrcInitMeta }>[];
+  exportsWithModRefId?: ({ modRefId: ModuleWithSrcInitMeta } & T)[];
 }
 
 export interface InitMetaMap {
@@ -155,31 +155,41 @@ export interface InitMetaMap {
  * `myInitHooksAndRawMeta.normalize()` or `normalizedMeta.initMeta.get(addSome)`.
  *
 ```ts
-import { makeClassDecorator, AddDecorator, featureModule, InitHooksAndRawMeta, BaseInitRawMeta } from '@ditsmod/core';
+import {
+  makeClassDecorator,
+  AddDecorator,
+  featureModule,
+  InitHooksAndRawMeta,
+  BaseInitRawMeta,
+  BaseInitMeta,
+} from '@ditsmod/core';
 
-// Creating a decorator
-export const addSome: AddDecorator<ArgumentsType, ReturnsType> = makeClassDecorator(getInitHooksAndRawMeta);
+interface RawMeta extends BaseInitRawMeta<{ path?: string }> {
+  one?: number;
+  two?: number;
+}
+interface InitMeta extends BaseInitMeta<{ path?: string }> {
+  other?: string;
+}
 
-// Using the newly created decorator
-\@addSome({ one: 1, two: 2 })
+function getInitHooksAndRawMeta(data?: RawMeta): InitHooksAndRawMeta<RawMeta> {
+  const metadata = Object.assign({}, data);
+  return new MyInitHooksAndRawMeta(metadata);
+}
+// Creating an init decorator
+export const initSome: AddDecorator<RawMeta, InitMeta> = makeClassDecorator(getInitHooksAndRawMeta);
+
+\@featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
+class Module1 {}
+
+// Using the newly created init decorator
+\@initSome({ one: 1, two: 2, imports: [{ modRefId: Module1, path: 'some-prefix' }] })
 \@featureModule()
 class MyModule {
   // Your code here
 }
 
-interface ArgumentsType extends BaseInitRawMeta {
-  one?: number;
-  two?: number;
-}
-
-interface ReturnsType {}
-
-class MyInitHooksAndRawMeta extends InitHooksAndRawMeta<ArgumentsType> {}
-
-export function getInitHooksAndRawMeta(data?: ArgumentsType): InitHooksAndRawMeta<ArgumentsType> {
-  const metadata = Object.assign({}, data);
-  return new MyInitHooksAndRawMeta(metadata);
-}
+class MyInitHooksAndRawMeta extends InitHooksAndRawMeta<RawMeta> {}
 ```
  */
 
