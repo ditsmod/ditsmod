@@ -1,6 +1,6 @@
 import { XOasObject } from '@ts-stack/openapi-spec';
-import { AnyFn, featureModule, ModuleWithParams, Providers, rootModule } from '@ditsmod/core';
-import { RestModule, PreRouterExtension, RoutesExtension, initRest, RestModuleParams } from '@ditsmod/rest';
+import { featureModule, InitParamsMap, ModuleWithParams, Providers } from '@ditsmod/core';
+import { RestModule, PreRouterExtension, RoutesExtension, initRest } from '@ditsmod/rest';
 
 import { OpenapiCompilerExtension } from './extensions/openapi-compiler.extension.js';
 import { OpenapiRoutesExtension } from './extensions/openapi-routes.extension.js';
@@ -31,22 +31,25 @@ export class OpenapiModule {
    * @param oasObject This object used for OpenAPI per application.
    * @param absolutePath This absolute path used for OpenAPI module with params.
    */
-  static withParams(oasObject: XOasObject<any>, absolutePath?: string, swaggerOAuthOptions?: SwaggerOAuthOptions) {
+  static withParams(
+    oasObject: XOasObject<any>,
+    absolutePath?: string,
+    swaggerOAuthOptions?: SwaggerOAuthOptions,
+  ): ModuleWithParams<OpenapiModule> {
     const oasExtensionConfig: OasExtensionConfig = {
       oasObject,
       swaggerOAuthOptions,
     };
 
-    const moduleWithParams: ModuleWithParams<OpenapiModule> = {
-      module: this,
-      providersPerApp: new Providers().useValue<OasExtensionConfig>(OasExtensionConfig, oasExtensionConfig),
-    };
-
-    const restModuleParams: RestModuleParams = { modRefId: moduleWithParams };
-    if (typeof absolutePath == 'string') {
-      restModuleParams.absolutePath = absolutePath;
+    const initParams: InitParamsMap = new Map();
+    if (absolutePath !== undefined) {
+      initParams.set(initRest, { absolutePath });
     }
 
-    return { moduleWithParams, restModuleParams };
+    return {
+      module: this,
+      providersPerApp: new Providers().useValue<OasExtensionConfig>(OasExtensionConfig, oasExtensionConfig),
+      initParams,
+    };
   }
 }

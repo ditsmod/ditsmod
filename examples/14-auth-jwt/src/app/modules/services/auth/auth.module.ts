@@ -1,4 +1,4 @@
-import { featureModule } from '@ditsmod/core';
+import { featureModule, InitParamsMap, ModuleWithInitParams } from '@ditsmod/core';
 import { JwtModule } from '@ditsmod/jwt';
 import { initRest } from '@ditsmod/rest';
 
@@ -12,4 +12,14 @@ const moduleWithParams = JwtModule.withParams({ secret: 'hard-to-guess-secret', 
   imports: [moduleWithParams],
   exports: [moduleWithParams],
 })
-export class AuthModule {}
+export class AuthModule {
+  static withPath(path?: string): ModuleWithInitParams<AuthModule> {
+    const initParams: InitParamsMap = new Map();
+    initParams.set(initRest, { path });
+
+    return {
+      module: this,
+      initParams,
+    };
+  }
+}

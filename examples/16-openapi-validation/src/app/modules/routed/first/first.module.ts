@@ -1,4 +1,4 @@
-import { featureModule } from '@ditsmod/core';
+import { featureModule, InitParamsMap, ModuleWithInitParams } from '@ditsmod/core';
 import { I18nProviders } from '@ditsmod/i18n';
 import { ValidationModule } from '@ditsmod/openapi-validation';
 import { BodyParserModule } from '@ditsmod/body-parser';
@@ -13,4 +13,14 @@ import { imported } from './locales/imported/index.js';
   imports: [BodyParserModule, ValidationModule.withParams(current)],
   providersPerMod: new I18nProviders().i18n({ imported }),
 })
-export class FirstModule {}
+export class FirstModule {
+  static withPath(path?: string): ModuleWithInitParams<FirstModule> {
+    const initParams: InitParamsMap = new Map();
+    initParams.set(initRest, { path });
+
+    return {
+      module: this,
+      initParams,
+    };
+  }
+}

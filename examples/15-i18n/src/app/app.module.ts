@@ -6,13 +6,10 @@ import { FirstModule } from './first/first.module.js';
 import { ThirdModule } from './third/third.module.js';
 
 @initRest({
-  importsWithParams: [
-    { modRefId: FirstModule, path: '' },
-    { modRefId: SecondModule, path: '' },
-  ],
   appends: [ThirdModule],
 })
 @rootModule({
+  imports: [FirstModule.withPath(''), SecondModule.withPath('')],
   providersPerApp: new Providers().useLogConfig({ level: 'info' }),
 })
 export class AppModule {}

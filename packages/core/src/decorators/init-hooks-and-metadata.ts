@@ -149,10 +149,10 @@ import {
   InitDecorator,
   featureModule,
   InitHooksAndRawMeta,
-  BaseInitRawMeta,
+  ModuleWithInitParams,
 } from '@ditsmod/core';
 
-interface RawMeta extends BaseInitRawMeta<{ path?: string }> {
+interface RawMeta {
   one?: number;
   two?: number;
 }
@@ -165,14 +165,24 @@ function getInitHooksAndRawMeta(data?: RawMeta): InitHooksAndRawMeta<RawMeta> {
   return new MyInitHooksAndRawMeta(metadata);
 }
 // Creating an init decorator
-export const initSome: InitDecorator<RawMeta, InitMeta> = makeClassDecorator(getInitHooksAndRawMeta);
+export const initSome: InitDecorator<RawMeta, { path?: string }, InitMeta> = makeClassDecorator(getInitHooksAndRawMeta);
 
 \@featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
-class Module1 {}
+class Module1 {
+  static withParams(): ModuleWithInitParams<Module1> {
+    return {
+      module: this,
+      initParams: new Map(),
+    };
+  }
+}
+
+const moduleWithParams = Module1.withParams();
+moduleWithParams.initParams.set(initSome, { path: 'some-prefix' });
 
 // Using the newly created init decorator
-\@initSome({ one: 1, two: 2, imports: [{ modRefId: Module1, path: 'some-prefix' }] })
-\@featureModule()
+\@initSome({ one: 1, two: 2 })
+\@featureModule({ imports: [moduleWithParams] })
 class MyModule {
   // Your code here
 }
