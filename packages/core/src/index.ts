@@ -15,7 +15,7 @@ export { OnModuleInit } from '#init/hooks.js';
 export { CustomError } from '#error/custom-error.js';
 export { ErrorInfo } from '#error/error-info.js';
 export { featureModule } from '#decorators/feature-module.js';
-export { InitHooksAndRawMeta, InitDecorator, InitMetaMap } from '#decorators/init-hooks-and-metadata.js';
+export { InitHooksAndRawMeta, InitDecorator, InitMetaMap, InitParamsMap } from '#decorators/init-hooks-and-metadata.js';
 export { rootModule } from '#decorators/root-module.js';
 export {
   ExtensionCounters,
