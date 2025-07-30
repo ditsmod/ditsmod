@@ -4,8 +4,8 @@ import { ModuleManager } from '#init/module-manager.js';
 import { ShallowImportsBase, ShallowImports } from '#init/types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { GlobalProviders } from '#types/metadata-per-mod.js';
-import { AnyFn, AnyObj, ModRefId, ModuleType, Override, XOR } from '#types/mix.js';
-import { ModuleWithParams, ModuleWithSrcInitMeta } from '#types/module-metadata.js';
+import { AnyFn, AnyObj, ModRefId, ModuleType, XOR } from '#types/mix.js';
+import { ModuleWithParams } from '#types/module-metadata.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 
 export type BaseInitRawMeta<T extends object = object> = {
@@ -126,11 +126,11 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
 export class BaseInitMeta<T extends object = AnyObj> {
   importsModules?: ModuleType[];
   importsWithParams?: ModuleWithParams[];
-  importsWithModRefId?: ({ modRefId: ModuleWithSrcInitMeta } & T)[];
+  importsWithModRefId?: ({ modRefId: ModuleWithParams } & T)[];
 
   exportsModules?: ModuleType[];
   exportsWithParams?: ModuleWithParams[];
-  exportsWithModRefId?: ({ modRefId: ModuleWithSrcInitMeta } & T)[];
+  exportsWithModRefId?: ({ modRefId: ModuleWithParams } & T)[];
 }
 
 export interface InitMetaMap {
@@ -144,6 +144,7 @@ export interface InitMetaMap {
    * Returns an iterable of keys in the map
    */
   keys(): MapIterator<AnyFn>;
+  values<T extends BaseInitMeta>(): MapIterator<T>;
   readonly size: number;
 }
 /**

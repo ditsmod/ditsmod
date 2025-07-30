@@ -1,5 +1,5 @@
 import { ProvidersMetadata } from '#types/providers-metadata.js';
-import { AnyObj, ModuleType } from '#types/mix.js';
+import { AnyFn, AnyObj, ModuleType } from '#types/mix.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { ExtensionClass } from '#extension/extension-types.js';
 import { InitMetaMap } from '#decorators/init-hooks-and-metadata.js';
@@ -35,17 +35,12 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
  * An object with this type is passed into the `imports` array of
  * the module with the `featureModule` or `rootModule` decorator.
  */
-export interface ModuleWithParams<M extends AnyObj = AnyObj> extends BaseModuleWithParams<M>, FeatureModuleParams {}
+export interface ModuleWithParams<M extends AnyObj = AnyObj> extends BaseModuleWithParams<M>, FeatureModuleParams {
+  initParams?: Map<AnyFn, any>;
+}
 /**
  * Metadata with this type is created when the `parentMeta: NormalizedMeta` property is added to `BaseModuleWithParams`.
  */
-export interface ModuleWithSrcInitMeta extends BaseModuleWithParams {
-  /**
-   * Normalized metadata from module init decorators,
-   * where you can find the parameters assigned to the current module.
-   */
-  srcInitMeta: InitMetaMap;
-}
 
 export interface BaseModuleWithParams<M extends AnyObj = AnyObj> {
   /**

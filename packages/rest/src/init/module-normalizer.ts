@@ -3,7 +3,6 @@ import {
   getToken,
   getTokens,
   isFeatureModule,
-  isModuleWithSrcInitMeta,
   isMultiProvider,
   isNormalizedProvider,
   isProvider,
@@ -23,13 +22,11 @@ import {
   Provider,
   isClassProvider,
   isTokenProvider,
-  ModuleWithSrcInitMeta,
-  InitMetaMap,
   isParamsWithModRefId,
   BaseInitMeta,
 } from '@ditsmod/core';
 
-import { RestMetadata } from '#init/module-metadata.js';
+import { AppendsWithParams, RestMetadata } from '#init/module-metadata.js';
 import { RestModRefId, RestNormalizedMeta } from '#init/rest-normalized-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
@@ -70,11 +67,10 @@ export class ModuleNormalizer {
       }
       meta.params.guards.push(...this.normalizeGuards(modRefId.guards));
       return;
-    } else if (!isModuleWithSrcInitMeta(modRefId)) {
+    } else if (!isModuleWithParams(modRefId)) {
       return;
     }
-    const initMeta = modRefId.srcInitMeta.get(initRest);
-    const params = initMeta?.importsWithModRefId.find((param) => param.modRefId === modRefId);
+    const params = modRefId.initParams?.get(initRest);
 
     if (params) {
       (['exports', 'providersPerRou', 'providersPerReq'] as const).forEach((prop) => {
@@ -98,10 +94,12 @@ export class ModuleNormalizer {
       ap = this.resolveForwardRef([ap])[0];
       this.throwIfUndefined(ap, i);
       if (isAppendsWithParams(ap)) {
-        if ((ap as ModuleWithSrcInitMeta).srcInitMeta) {
-          (ap as ModuleWithSrcInitMeta).srcInitMeta.set(initRest, meta);
+        const params = { ...ap } as Partial<AppendsWithParams>;
+        delete params.module;
+        if (ap.initParams) {
+          ap.initParams.set(initRest, params);
         } else {
-          (ap as ModuleWithSrcInitMeta).srcInitMeta = new Map([[initRest, meta]]) as InitMetaMap;
+          ap.initParams = new Map([[initRest, params]]);
         }
         meta.appendsWithParams.push(ap);
       } else {

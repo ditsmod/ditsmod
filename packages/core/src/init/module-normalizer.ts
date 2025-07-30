@@ -29,7 +29,7 @@ import { Providers } from '#utils/providers.js';
 import { Extension } from '#extension/extension-types.js';
 import { NormalizedProvider, normalizeProviders } from '#utils/ng-utils.js';
 import { isExtensionConfig } from '#extension/type-guards.js';
-import { ModuleWithParams, ModuleWithSrcInitMeta } from '#types/module-metadata.js';
+import { ModuleWithParams } from '#types/module-metadata.js';
 import { mergeArrays } from '#utils/merge-arrays.js';
 import { AllInitHooks } from './module-manager.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
@@ -362,23 +362,26 @@ export class ModuleNormalizer {
         baseMeta.importsModules.push(initHooks.hostModule);
       }
 
-      this.setBaseInitMeta(baseMeta, initHooks);
+      this.setBaseInitMeta(baseMeta, decorator, initHooks);
       this.callInitHook(baseMeta, decorator, initHooks);
     });
   }
 
-  protected setBaseInitMeta(baseMeta: NormalizedMeta, initHooks: InitHooksAndRawMeta) {
+  protected setBaseInitMeta(baseMeta: NormalizedMeta, decorator: AnyFn, initHooks: InitHooksAndRawMeta) {
     if (initHooks.rawMeta.imports) {
       initHooks.baseInitMeta ??= {};
       this.resolveForwardRef(initHooks.rawMeta.imports).forEach((imp) => {
         if (isParamsWithModRefId(imp)) {
+          const params = { ...imp } as { modRefId?: ModRefId };
+          delete params.modRefId;
           if (isModuleWithParams(imp.modRefId)) {
-            (imp.modRefId as ModuleWithSrcInitMeta).srcInitMeta ??= baseMeta.initMeta;
+            imp.modRefId.initParams ??= new Map();
+            imp.modRefId.initParams.set(decorator, params);
           } else {
-            imp.modRefId = { module: imp.modRefId, srcInitMeta: baseMeta.initMeta } as ModuleWithSrcInitMeta;
+            imp.modRefId = { module: imp.modRefId, initParams: new Map([[decorator, params]]) };
           }
           initHooks.baseInitMeta!.importsWithModRefId ??= [];
-          initHooks.baseInitMeta!.importsWithModRefId.push(imp as { modRefId: ModuleWithSrcInitMeta });
+          initHooks.baseInitMeta!.importsWithModRefId.push(imp as { modRefId: ModuleWithParams });
           if (!baseMeta.importsWithParams.includes(imp.modRefId)) {
             baseMeta.importsWithParams.push(imp.modRefId);
           }
@@ -402,9 +405,9 @@ export class ModuleNormalizer {
       this.resolveForwardRef(initHooks.rawMeta.exports).forEach((exp) => {
         if (isParamsWithModRefId(exp)) {
           initHooks.baseInitMeta!.exportsWithModRefId ??= [];
-          initHooks.baseInitMeta!.exportsWithModRefId.push(exp as { modRefId: ModuleWithSrcInitMeta });
-          if (!baseMeta.exportsWithParams.includes((exp as { modRefId: ModuleWithSrcInitMeta }).modRefId)) {
-            baseMeta.exportsWithParams.push((exp as { modRefId: ModuleWithSrcInitMeta }).modRefId);
+          initHooks.baseInitMeta!.exportsWithModRefId.push(exp as { modRefId: ModuleWithParams });
+          if (!baseMeta.exportsWithParams.includes(exp.modRefId as ModuleWithParams)) {
+            baseMeta.exportsWithParams.push(exp.modRefId as ModuleWithParams);
           }
         } else if (isModuleWithParams(exp)) {
           initHooks.baseInitMeta!.exportsWithParams ??= [];
@@ -447,7 +450,7 @@ export class AppModule {}
    * this method adds hooks so that the import of `Module1` with parameters can be properly handled.
    */
   protected addInitHooksFromModuleUsageContext(baseMeta: NormalizedMeta, allInitHooks: AllInitHooks) {
-    (baseMeta.modRefId as ModuleWithSrcInitMeta).srcInitMeta?.forEach((params, decorator) => {
+    (baseMeta.modRefId as ModuleWithParams).initParams?.forEach((params, decorator) => {
       if (!baseMeta.mInitHooksAndRawMeta.get(decorator)) {
         const initHooks = allInitHooks.get(decorator)!;
         const newInitHooksAndRawMeta = initHooks.clone();

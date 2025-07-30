@@ -1,4 +1,4 @@
-import { AnyObj, ModuleType, Class, Provider, Providers, ModuleWithParams, ModRefId } from '@ditsmod/core';
+import { AnyObj, ModuleType, Class, Provider, Providers, ModuleWithParams, ModRefId, AnyFn } from '@ditsmod/core';
 import { GuardItem } from '#interceptors/guard.js';
 
 /**
@@ -75,6 +75,7 @@ export interface BaseAppendsWithParams<T extends AnyObj = AnyObj> {
   id?: string;
   module: ModuleType<T>;
   guards?: GuardItem[];
+  initParams?: Map<AnyFn, any>;
 }
 
 export interface AppendsWithParams1<T extends AnyObj = AnyObj> extends BaseAppendsWithParams<T> {

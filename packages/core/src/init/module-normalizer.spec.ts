@@ -2,11 +2,11 @@ import { featureModule } from '#decorators/feature-module.js';
 import { BaseInitMeta } from '#decorators/init-hooks-and-metadata.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { rootModule } from '#decorators/root-module.js';
-import { forwardRef, injectable, makeClassDecorator, MultiProvider, Provider } from '#di';
+import { forwardRef, injectable, makeClassDecorator, MultiProvider } from '#di';
 import { Extension } from '#extension/extension-types.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { AnyObj, ModRefId } from '#types/mix.js';
-import { ModuleWithParams, ModuleWithSrcInitMeta } from '#types/module-metadata.js';
+import { ModuleWithParams } from '#types/module-metadata.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { AddDecorator } from '#decorators/init-hooks-and-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
@@ -362,9 +362,9 @@ describe('ModuleNormalizer', () => {
       const baseMeta = mock.normalize(AppModule);
       expect(baseMeta.importsModules).toEqual([Module1]);
       expect(baseMeta.exportsModules).toEqual([Module1]);
-      expect(baseMeta.importsWithParams).toEqual([
+      expect(baseMeta.importsWithParams).toEqual<ModuleWithParams[]>([
         moduleWithParams2,
-        { module: Module3, srcInitMeta: expect.any(Map) } as ModuleWithSrcInitMeta,
+        { module: Module3, initParams: expect.any(Map) },
         moduleWithParams4,
       ]);
       expect(baseMeta.exportsWithParams).toEqual([moduleWithParams2, moduleWithParams4]);
@@ -401,9 +401,9 @@ describe('ModuleNormalizer', () => {
 
       const baseMeta = mock.normalize(AppModule);
       expect(baseMeta.importsModules).toEqual([Module1]);
-      expect(baseMeta.importsWithParams).toEqual([
+      expect(baseMeta.importsWithParams).toEqual<ModuleWithParams[]>([
         moduleWithParams2,
-        { module: Module3, srcInitMeta: expect.any(Map) } as ModuleWithSrcInitMeta,
+        { module: Module3, initParams: expect.any(Map) },
         moduleWithParams4,
       ]);
       expect(baseMeta.exportsModules).toEqual([Module1]);

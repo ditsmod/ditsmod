@@ -4,7 +4,6 @@ import {
   forwardRef,
   ModuleManager,
   ModuleWithParams,
-  ModuleWithSrcInitMeta,
   Providers,
   rootModule,
   SystemLogMediator,

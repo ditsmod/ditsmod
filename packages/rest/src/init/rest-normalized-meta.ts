@@ -7,8 +7,6 @@ import {
   ModuleWithParams,
   ModRefId,
   BaseInitMeta,
-  ModuleWithSrcInitMeta,
-  Override,
 } from '@ditsmod/core';
 
 import { NormalizedGuard } from '#interceptors/guard.js';
@@ -21,7 +19,7 @@ class NormalizedParams {
 }
 
 export class RestNormalizedMeta extends BaseInitMeta<RestModuleParams> {
-  override importsWithModRefId: ({ modRefId: ModuleWithSrcInitMeta } & RestModuleParams)[] = [];
+  override importsWithModRefId: ({ modRefId: ModuleWithParams } & RestModuleParams)[] = [];
   providersPerRou: Provider[] = [];
   providersPerReq: Provider[] = [];
   exportedProvidersPerRou: Provider[] = [];
@@ -34,7 +32,7 @@ export class RestNormalizedMeta extends BaseInitMeta<RestModuleParams> {
   appendsModules: ModuleType[] = [];
   controllers: Class[] = [];
   params = new NormalizedParams();
-  override exportsWithModRefId: ({ modRefId: ModuleWithSrcInitMeta } & RestModuleParams)[] = [];
+  override exportsWithModRefId: ({ modRefId: ModuleWithParams } & RestModuleParams)[] = [];
 }
 
 export type RestModRefId<T extends AnyObj = AnyObj> = ModRefId | AppendsWithParams<T>;
