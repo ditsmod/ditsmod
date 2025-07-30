@@ -10,7 +10,7 @@ import { AllInitHooks, ModuleManager } from './module-manager.js';
 import { ModuleType, AnyObj, ModRefId } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
-import { AddDecorator } from '#decorators/init-hooks-and-metadata.js';
+import { InitDecorator } from '#decorators/init-hooks-and-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { BaseInitRawMeta, InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { isModuleWithParams } from '#utils/type-guards.js';
@@ -649,10 +649,10 @@ describe('ModuleManager', () => {
       override hostRawMeta = { four: 4 };
     }
 
-    const initSome1: AddDecorator<any, any> = makeClassDecorator((data) => new InitHooksAndRawMeta1(data));
-    const initSome2: AddDecorator<any, any> = makeClassDecorator((data) => new InitHooksAndRawMeta2(data));
-    const initSome3: AddDecorator<any, any> = makeClassDecorator((data) => new InitHooksAndRawMeta3(data));
-    const initSome4: AddDecorator<any, any> = makeClassDecorator((data) => new InitHooksAndRawMeta4(data));
+    const initSome1: InitDecorator<any, any> = makeClassDecorator((data) => new InitHooksAndRawMeta1(data));
+    const initSome2: InitDecorator<any, any> = makeClassDecorator((data) => new InitHooksAndRawMeta2(data));
+    const initSome3: InitDecorator<any, any> = makeClassDecorator((data) => new InitHooksAndRawMeta3(data));
+    const initSome4: InitDecorator<any, any> = makeClassDecorator((data) => new InitHooksAndRawMeta4(data));
 
     @initSome1({ name: '1' })
     @featureModule()
@@ -714,7 +714,7 @@ describe('ModuleManager', () => {
     interface InitMeta {
       path?: string;
     }
-    const initSome: AddDecorator<RawMeta, InitMeta> = makeClassDecorator((d) => new InitHooksAndRawMeta1(d));
+    const initSome: InitDecorator<RawMeta, InitMeta> = makeClassDecorator((d) => new InitHooksAndRawMeta1(d));
 
     class InitHooksAndRawMeta1 extends InitHooksAndRawMeta<RawMeta> {
       override normalize({ modRefId }: NormalizedMeta): InitMeta {
@@ -752,8 +752,8 @@ describe('ModuleManager', () => {
     }
     class InitHooksAndRawMeta1 extends InitHooksAndRawMeta<RawMeta1> {}
     class InitHooksAndRawMeta2 extends InitHooksAndRawMeta<RawMeta2> {}
-    const initSome1: AddDecorator<RawMeta1, InitMeta1> = makeClassDecorator((d) => new InitHooksAndRawMeta1(d));
-    const initSome2: AddDecorator<RawMeta2, InitMeta2> = makeClassDecorator((d) => new InitHooksAndRawMeta2(d));
+    const initSome1: InitDecorator<RawMeta1, InitMeta1> = makeClassDecorator((d) => new InitHooksAndRawMeta1(d));
+    const initSome2: InitDecorator<RawMeta2, InitMeta2> = makeClassDecorator((d) => new InitHooksAndRawMeta2(d));
 
     @featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
     class Module1 {}

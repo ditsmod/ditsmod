@@ -8,7 +8,7 @@ import { CallsiteUtils } from '#utils/callsites.js';
 import { AnyObj, ModRefId } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
-import { AddDecorator } from '#decorators/init-hooks-and-metadata.js';
+import { InitDecorator } from '#decorators/init-hooks-and-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { ModuleNormalizer } from './module-normalizer.js';
 import { Providers } from '#utils/providers.js';
@@ -288,7 +288,7 @@ describe('ModuleNormalizer', () => {
       appends?: ({ module: ModRefId } & AnyObj)[];
     }
 
-    const initSome: AddDecorator<RawMeta, InitMeta> = makeClassDecorator(getInitHooksAndRawMeta);
+    const initSome: InitDecorator<RawMeta, InitMeta> = makeClassDecorator(getInitHooksAndRawMeta);
 
     it('initHooks.normalize() correctly works', () => {
       const rawMeta: RawMeta = { one: 1, two: 2 };

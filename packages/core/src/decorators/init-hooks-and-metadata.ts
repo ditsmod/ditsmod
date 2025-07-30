@@ -118,8 +118,8 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
 }
 
 export interface InitMetaMap {
-  set<T extends AnyObj>(decorator: AddDecorator<any, T>, params: T): this;
-  get<T extends AnyObj>(decorator: AddDecorator<any, T>): T | undefined;
+  set<T extends AnyObj>(decorator: InitDecorator<any, T>, params: T): this;
+  get<T extends AnyObj>(decorator: InitDecorator<any, T>): T | undefined;
   forEach<T extends AnyObj>(callbackfn: (params: T, decorator: AnyFn, map: Map<AnyFn, T>) => void, thisArg?: any): void;
   /**
    * Returns an iterable of keys in the map
@@ -130,8 +130,8 @@ export interface InitMetaMap {
 }
 
 export interface InitParamsMap {
-  set<T extends AnyObj>(decorator: AddDecorator<BaseInitRawMeta<T>, any>, params: T): this;
-  get<T extends AnyObj>(decorator: AddDecorator<BaseInitRawMeta<T>, any>): T | undefined;
+  set<T extends AnyObj>(decorator: InitDecorator<BaseInitRawMeta<T>, any>, params: T): this;
+  get<T extends AnyObj>(decorator: InitDecorator<BaseInitRawMeta<T>, any>): T | undefined;
   forEach<T extends AnyObj>(callbackfn: (params: T, decorator: AnyFn, map: Map<AnyFn, T>) => void, thisArg?: any): void;
   /**
    * Returns an iterable of keys in the map
@@ -151,7 +151,7 @@ export interface InitParamsMap {
 ```ts
 import {
   makeClassDecorator,
-  AddDecorator,
+  InitDecorator,
   featureModule,
   InitHooksAndRawMeta,
   BaseInitRawMeta,
@@ -170,7 +170,7 @@ function getInitHooksAndRawMeta(data?: RawMeta): InitHooksAndRawMeta<RawMeta> {
   return new MyInitHooksAndRawMeta(metadata);
 }
 // Creating an init decorator
-export const initSome: AddDecorator<RawMeta, InitMeta> = makeClassDecorator(getInitHooksAndRawMeta);
+export const initSome: InitDecorator<RawMeta, InitMeta> = makeClassDecorator(getInitHooksAndRawMeta);
 
 \@featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
 class Module1 {}
@@ -186,6 +186,6 @@ class MyInitHooksAndRawMeta extends InitHooksAndRawMeta<RawMeta> {}
 ```
  */
 
-export interface AddDecorator<T extends BaseInitRawMeta, R> {
+export interface InitDecorator<T extends BaseInitRawMeta, R> {
   (data?: T): any;
 }

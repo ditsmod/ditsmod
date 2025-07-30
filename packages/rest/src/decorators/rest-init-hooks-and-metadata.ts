@@ -1,4 +1,4 @@
-import { makeClassDecorator, InitHooksAndRawMeta, ModRefId, NormalizedMeta, AddDecorator } from '@ditsmod/core';
+import { makeClassDecorator, InitHooksAndRawMeta, ModRefId, NormalizedMeta, InitDecorator } from '@ditsmod/core';
 
 import { RestInitRawMeta } from '#init/rest-init-raw-meta.js';
 import { ModuleNormalizer } from '#init/module-normalizer.js';
@@ -17,7 +17,7 @@ import { RestModule } from '#init/rest.module.js';
 /**
  * A decorator that adds REST metadata to a `featureModule` or `rootModule`.
  */
-export const initRest: AddDecorator<RestInitRawMeta, RestInitMeta> = makeClassDecorator(transformMetadata);
+export const initRest: InitDecorator<RestInitRawMeta, RestInitMeta> = makeClassDecorator(transformMetadata);
 
 class RestInitHooksAndRawMeta extends InitHooksAndRawMeta<RestInitRawMeta> {
   override hostModule = RestModule;

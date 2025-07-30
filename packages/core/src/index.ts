@@ -17,7 +17,7 @@ export { ErrorInfo } from '#error/error-info.js';
 export { featureModule } from '#decorators/feature-module.js';
 export {
   InitHooksAndRawMeta,
-  AddDecorator,
+  InitDecorator,
   InitMetaMap,
   BaseInitRawMeta,
 } from '#decorators/init-hooks-and-metadata.js';
