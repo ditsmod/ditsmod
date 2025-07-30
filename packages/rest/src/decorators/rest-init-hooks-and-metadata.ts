@@ -1,6 +1,6 @@
 import { makeClassDecorator, InitHooksAndRawMeta, ModRefId, NormalizedMeta, AddDecorator } from '@ditsmod/core';
 
-import { RestInitRawMeta } from '#init/module-metadata.js';
+import { RestInitRawMeta } from '#init/rest-init-raw-meta.js';
 import { ModuleNormalizer } from '#init/module-normalizer.js';
 import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import {

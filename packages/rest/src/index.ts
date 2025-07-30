@@ -11,7 +11,7 @@ export {
   BaseAppendsWithParams,
   RestInitRawMeta,
   RestModuleParams,
-} from './init/module-metadata.js';
+} from './init/rest-init-raw-meta.js';
 export { RouteParam, MetadataPerMod3, RedirectStatusCodes } from './types/types.js';
 export { RestModule } from './init/rest.module.js';
 export { RequestContext } from './services/request-context.js';

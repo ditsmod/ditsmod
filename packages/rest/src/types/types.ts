@@ -4,7 +4,7 @@ import { RestImportObj } from '#init/types.js';
 import { Tree } from '#services/tree.js';
 import { GuardPerMod1 } from '#interceptors/guard.js';
 import { RouteHandler } from '#services/router.js';
-import { AppendsWithParams } from '#init/module-metadata.js';
+import { AppendsWithParams } from '#init/rest-init-raw-meta.js';
 import { ControllerMetadata } from './controller-metadata.js';
 import { RestModRefId, RestInitMeta } from '#init/rest-normalized-meta.js';
 

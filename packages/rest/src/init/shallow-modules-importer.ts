@@ -26,7 +26,7 @@ import { RestModRefId, RestInitMeta } from '#init/rest-normalized-meta.js';
 import { Level, RestGlobalProviders, RestModuleExtract } from '#types/types.js';
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
-import { AppendsWithParams } from './module-metadata.js';
+import { AppendsWithParams } from './rest-init-raw-meta.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { isAppendsWithParams } from '#types/type.guards.js';
 import { ImportModulesShallowConfig, RestImportObj, RestMetadataPerMod1 } from './types.js';

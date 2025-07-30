@@ -13,7 +13,7 @@ import {
 import { CanActivate, guard } from '../interceptors/guard.js';
 import { controller } from '../types/controller.js';
 import { RequestContext } from '../services/request-context.js';
-import { AppendsWithParams } from './module-metadata.js';
+import { AppendsWithParams } from './rest-init-raw-meta.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 
 let mock: MockModuleManager;
