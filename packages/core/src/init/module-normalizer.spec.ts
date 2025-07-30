@@ -304,29 +304,21 @@ describe('ModuleNormalizer', () => {
       expect(baseMeta?.rawMeta).toEqual(rawMeta);
     });
 
-    it('init hooks need srcInitMeta property in moduleWithParams', () => {
+    it('init hooks need initParams property in moduleWithParams', () => {
       class Module1 {}
       class Module2 {}
-      class Service1 {}
-      const modRefId: ModuleWithParams & AnyObj = {
-        module: Module1,
-        providersPerApp: [Service1],
-        srcInitMeta: expect.any(Map),
-      };
-      const expectedImportsWithParams = [{ modRefId }, { modRefId: Module2 }];
 
-      @initSome({ imports: expectedImportsWithParams })
+      @initSome({ imports: [{ modRefId: { module: Module1 } }, { modRefId: Module2 }] })
       @featureModule()
       class Module3 {}
 
       const baseMeta = mock.normalize(Module3).initMeta.get(initSome);
-      const actualImportsWithParams = baseMeta?.rawMeta.imports;
-      expect(actualImportsWithParams?.at(0)).toBe(expectedImportsWithParams?.at(0));
+      expect(baseMeta?.rawMeta.imports).toEqual<{ modRefId: ModuleWithParams }[]>([
+        { modRefId: { module: Module1, initParams: expect.any(Map) } },
 
-      // In the second element, `{ modRefId: Module 2 }` has been replaced with `{ modIfIed: { module: Module 2 } }`.
-      expect(actualImportsWithParams?.at(1)).toEqual({
-        modRefId: { module: Module2, initParams: expect.any(Map) },
-      });
+        // In the second element, `{ modRefId: Module 2 }` has been replaced with `{ modIfIed: { module: Module 2 } }`.
+        { modRefId: { module: Module2, initParams: expect.any(Map) } },
+      ]);
     });
 
     it('proprly works with imports/exports of modules', () => {
@@ -385,7 +377,10 @@ describe('ModuleNormalizer', () => {
         imports: [{ modRefId: forwardRef(() => Module3) }, { modRefId: moduleWithParams4 }],
         exports: [moduleWithParams4],
       })
-      @rootModule({ imports: [forwardRef(() => Module1), moduleWithParams2], exports: [forwardRef(() => Module1), moduleWithParams2], })
+      @rootModule({
+        imports: [forwardRef(() => Module1), moduleWithParams2],
+        exports: [forwardRef(() => Module1), moduleWithParams2],
+      })
       class AppModule {}
 
       const baseMeta = mock.normalize(AppModule);
