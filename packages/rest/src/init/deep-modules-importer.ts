@@ -28,7 +28,7 @@ import {
   RestMetadataPerMod2,
   RestProvidersForMod,
 } from './types.js';
-import { RestNormalizedMeta } from '#init/rest-normalized-meta.js';
+import { RestInitMeta } from '#init/rest-normalized-meta.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 
 /**
@@ -84,7 +84,7 @@ export class DeepModulesImporter {
   }
 
   protected resolveImportedProviders(
-    targetProviders: RestNormalizedMeta,
+    targetProviders: RestInitMeta,
     importedTokensMap: RestImportedTokensMap,
     levels: Level[],
   ) {
@@ -127,7 +127,7 @@ export class DeepModulesImporter {
       }
 
       for (const level of levels) {
-        const meta = srcBaseMeta.initMeta.get(initRest) as RestNormalizedMeta;
+        const meta = srcBaseMeta.initMeta.get(initRest) as RestInitMeta;
         const sourceProviders = getLastProviders(meta[`providersPer${level}`]);
 
         getTokens(sourceProviders).forEach((sourceToken, i) => {
@@ -212,7 +212,7 @@ export class DeepModulesImporter {
       }
 
       forLevel: for (const level of levels) {
-        const meta = baseMeta.initMeta.get(initRest) as RestNormalizedMeta;
+        const meta = baseMeta.initMeta.get(initRest) as RestInitMeta;
         const providers = getLastProviders(meta[`providersPer${level}`]);
 
         for (const token of getTokens(providers)) {

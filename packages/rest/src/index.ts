@@ -9,7 +9,7 @@ export {
   AppendsWithParams1,
   AppendsWithParams2,
   BaseAppendsWithParams,
-  RestMetadata,
+  RestInitRawMeta,
   RestModuleParams,
 } from './init/module-metadata.js';
 export { RouteParam, MetadataPerMod3, RedirectStatusCodes } from './types/types.js';

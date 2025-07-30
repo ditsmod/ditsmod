@@ -26,8 +26,8 @@ import {
   BaseInitMeta,
 } from '@ditsmod/core';
 
-import { AppendsWithParams, RestMetadata } from '#init/module-metadata.js';
-import { RestModRefId, RestNormalizedMeta } from '#init/rest-normalized-meta.js';
+import { AppendsWithParams, RestInitRawMeta } from '#init/module-metadata.js';
+import { RestModRefId, RestInitMeta } from '#init/rest-normalized-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
@@ -36,8 +36,8 @@ import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
  * Normalizes and validates module metadata.
  */
 export class ModuleNormalizer {
-  normalize(baseMeta: NormalizedMeta, rawMeta: RestMetadata, baseInitMeta?: BaseInitMeta) {
-    const meta = new RestNormalizedMeta();
+  normalize(baseMeta: NormalizedMeta, rawMeta: RestInitRawMeta, baseInitMeta?: BaseInitMeta) {
+    const meta = new RestInitMeta();
     this.setImportsWithModRefId(meta, baseInitMeta);
     this.mergeModuleWithParams(baseMeta.modRefId, rawMeta, meta);
     this.appendModules(rawMeta, meta);
@@ -47,12 +47,12 @@ export class ModuleNormalizer {
     return meta;
   }
 
-  protected setImportsWithModRefId(meta: RestNormalizedMeta, baseInitMeta?: BaseInitMeta) {
+  protected setImportsWithModRefId(meta: RestInitMeta, baseInitMeta?: BaseInitMeta) {
     meta.importsWithModRefId = baseInitMeta?.importsWithModRefId ?? [];
     meta.exportsWithModRefId = baseInitMeta?.exportsWithModRefId ?? [];
   }
 
-  protected mergeModuleWithParams(modRefId: RestModRefId, rawMeta: RestMetadata, meta: RestNormalizedMeta): void {
+  protected mergeModuleWithParams(modRefId: RestModRefId, rawMeta: RestInitRawMeta, meta: RestInitMeta): void {
     if (isAppendsWithParams(modRefId)) {
       if (modRefId.absolutePath !== undefined) {
         meta.params.absolutePath = modRefId.absolutePath;
@@ -84,7 +84,7 @@ export class ModuleNormalizer {
     }
   }
 
-  protected appendModules(rawMeta: RestMetadata, meta: RestNormalizedMeta) {
+  protected appendModules(rawMeta: RestInitRawMeta, meta: RestInitMeta) {
     rawMeta.appends?.forEach((ap, i) => {
       ap = this.resolveForwardRef([ap])[0];
       this.throwIfUndefined(ap, i);
@@ -103,7 +103,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected normalizeDeclaredAndResolvedProviders(meta: RestNormalizedMeta, rawMeta: RestMetadata) {
+  protected normalizeDeclaredAndResolvedProviders(meta: RestInitMeta, rawMeta: RestInitRawMeta) {
     if (rawMeta.controllers) {
       meta.controllers.push(...rawMeta.controllers);
     }
@@ -146,7 +146,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected normalizeExports(rawMeta: RestMetadata, meta: RestNormalizedMeta) {
+  protected normalizeExports(rawMeta: RestInitRawMeta, meta: RestInitMeta) {
     if (!rawMeta.exports) {
       return;
     }
@@ -201,7 +201,7 @@ export class ModuleNormalizer {
     }
   }
 
-  protected exportProviders(token: any, rawMeta: RestMetadata, meta: RestNormalizedMeta) {
+  protected exportProviders(token: any, rawMeta: RestInitRawMeta, meta: RestInitMeta) {
     let found = false;
     (['Rou', 'Req'] as const).forEach((level) => {
       const unfilteredProviders = [...(rawMeta[`providersPer${level}`] || [])];
@@ -236,7 +236,7 @@ export class ModuleNormalizer {
     }
   }
 
-  protected throwIfResolvingNormalizedProvider(meta: RestNormalizedMeta) {
+  protected throwIfResolvingNormalizedProvider(meta: RestInitMeta) {
     const resolvedCollisionsPerLevel: [any, ModuleType | ModuleWithParams][] = [];
     if (Array.isArray(meta.resolvedCollisionsPerRou)) {
       resolvedCollisionsPerLevel.push(...meta.resolvedCollisionsPerRou);
@@ -263,7 +263,7 @@ export class ModuleNormalizer {
     }
   }
 
-  protected checkMetadata(baseMeta: NormalizedMeta, meta: RestNormalizedMeta) {
+  protected checkMetadata(baseMeta: NormalizedMeta, meta: RestInitMeta) {
     this.checkGuards(meta.params.guards);
     this.throwIfResolvingNormalizedProvider(meta);
     meta.controllers.forEach((Controller) => this.checkController(Controller));

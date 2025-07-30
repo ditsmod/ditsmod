@@ -18,7 +18,7 @@ class NormalizedParams {
   guards: NormalizedGuard[] = [];
 }
 
-export class RestNormalizedMeta extends BaseInitMeta<RestModuleParams> {
+export class RestInitMeta extends BaseInitMeta<RestModuleParams> {
   override importsWithModRefId: ({ modRefId: ModuleWithParams } & RestModuleParams)[] = [];
   providersPerRou: Provider[] = [];
   providersPerReq: Provider[] = [];

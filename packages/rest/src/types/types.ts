@@ -6,7 +6,7 @@ import { GuardPerMod1 } from '#interceptors/guard.js';
 import { RouteHandler } from '#services/router.js';
 import { AppendsWithParams } from '#init/module-metadata.js';
 import { ControllerMetadata } from './controller-metadata.js';
-import { RestModRefId, RestNormalizedMeta } from '#init/rest-normalized-meta.js';
+import { RestModRefId, RestInitMeta } from '#init/rest-normalized-meta.js';
 
 export class RestGlobalProviders {
   importedProvidersPerRou = new Map<any, RestImportObj>();
@@ -39,7 +39,7 @@ interface ExtendedModuleMetadata extends ModuleMetadata {
  */
 export class MetadataPerMod3 {
   baseMeta: NormalizedMeta;
-  meta: RestNormalizedMeta;
+  meta: RestInitMeta;
   aControllerMetadata: ControllerMetadata[];
   guards1: GuardPerMod1[];
 }

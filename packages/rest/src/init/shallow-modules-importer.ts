@@ -22,7 +22,7 @@ import {
 } from '@ditsmod/core';
 
 import { GuardPerMod1 } from '#interceptors/guard.js';
-import { RestModRefId, RestNormalizedMeta } from '#init/rest-normalized-meta.js';
+import { RestModRefId, RestInitMeta } from '#init/rest-normalized-meta.js';
 import { Level, RestGlobalProviders, RestModuleExtract } from '#types/types.js';
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
@@ -45,7 +45,7 @@ export class ShallowModulesImporter {
   protected prefixPerMod: string;
   protected guards1: GuardPerMod1[];
   protected baseMeta: NormalizedMeta;
-  protected meta: RestNormalizedMeta;
+  protected meta: RestInitMeta;
   protected shallowImportsBase: ShallowImportsBase;
   protected providersPerApp: Provider[];
 
@@ -79,8 +79,8 @@ export class ShallowModulesImporter {
     this.providersPerApp = moduleManager.providersPerApp;
     this.moduleName = baseMeta.name;
     this.baseMeta = baseMeta;
-    const meta = baseMeta.initMeta.get(initRest) as RestNormalizedMeta | undefined;
-    this.meta = meta ? meta : new RestNormalizedMeta();
+    const meta = baseMeta.initMeta.get(initRest) as RestInitMeta | undefined;
+    this.meta = meta ? meta : new RestInitMeta();
     this.importProviders(baseMeta);
     this.checkAllCollisionsWithLevelsMix();
 
@@ -109,8 +109,8 @@ export class ShallowModulesImporter {
     this.providersPerApp = providersPerApp;
     const baseMeta = this.getMetadata(modRefId, true);
     this.baseMeta = baseMeta;
-    const meta = baseMeta.initMeta.get(initRest) as RestNormalizedMeta | undefined;
-    this.meta = meta ? meta : new RestNormalizedMeta();
+    const meta = baseMeta.initMeta.get(initRest) as RestInitMeta | undefined;
+    this.meta = meta ? meta : new RestInitMeta();
     this.glProviders = globalProviders;
     this.restGlProviders = globalProviders.shallowImportedModules.get(initRest) as RestGlobalProviders;
     this.prefixPerMod = prefixPerMod || '';
@@ -197,7 +197,7 @@ export class ShallowModulesImporter {
       if (this.unfinishedScanModules.has(modRefId)) {
         continue;
       }
-      const meta = baseMeta.initMeta.get(initRest) as RestNormalizedMeta | undefined;
+      const meta = baseMeta.initMeta.get(initRest) as RestInitMeta | undefined;
       if (!meta) {
         continue;
       }
@@ -220,7 +220,7 @@ export class ShallowModulesImporter {
     }
   }
 
-  protected getPrefixAndGuards(modRefId: RestModRefId, meta: RestNormalizedMeta, isImport?: boolean) {
+  protected getPrefixAndGuards(modRefId: RestModRefId, meta: RestInitMeta, isImport?: boolean) {
     let prefixPerMod = '';
     let guards1: GuardPerMod1[] = [];
     const { absolutePath } = meta.params;
@@ -266,7 +266,7 @@ export class ShallowModulesImporter {
       this.unfinishedExportModules.delete(baseMeta2.modRefId);
     }
 
-    const meta = initMeta.get(initRest) as RestNormalizedMeta | undefined;
+    const meta = initMeta.get(initRest) as RestInitMeta | undefined;
     if (!meta) {
       return;
     }
@@ -282,7 +282,7 @@ export class ShallowModulesImporter {
     this.throwIfTryResolvingMultiprovidersCollisions(baseMeta1.name);
   }
 
-  protected addProviders(level: Level, modRefId: RestModRefId, meta: RestNormalizedMeta) {
+  protected addProviders(level: Level, modRefId: RestModRefId, meta: RestInitMeta) {
     meta[`exportedProvidersPer${level}`].forEach((provider) => {
       const token1 = getToken(provider);
       const importObj = this[`importedProvidersPer${level}`].get(token1);
@@ -334,7 +334,7 @@ export class ShallowModulesImporter {
     const moduleName = getDebugClassName(modRefId2);
     const tokenName = token2.name || token2;
     const baseMeta2 = this.getMetadata(modRefId2);
-    const meta2 = baseMeta2?.initMeta.get(initRest) as RestNormalizedMeta | undefined;
+    const meta2 = baseMeta2?.initMeta.get(initRest) as RestInitMeta | undefined;
     let errorMsg =
       `Resolving collisions for providersPer${level} in ${this.moduleName} failed: ` +
       `${tokenName} mapped with ${moduleName}, but `;
@@ -468,10 +468,10 @@ export class ShallowModulesImporter {
     }
   }
 
-  protected checkImportsAndAppends(baseMeta: NormalizedMeta, meta1: RestNormalizedMeta) {
+  protected checkImportsAndAppends(baseMeta: NormalizedMeta, meta1: RestInitMeta) {
     meta1.appendsModules.concat(meta1.appendsWithParams as any[]).forEach((modRefId) => {
       const appendedBaseMeta = this.getMetadata(modRefId, true);
-      const meta2 = appendedBaseMeta.initMeta.get(initRest) as RestNormalizedMeta | undefined;
+      const meta2 = appendedBaseMeta.initMeta.get(initRest) as RestInitMeta | undefined;
       if (!meta2?.controllers.length) {
         const msg = `Appends to "${baseMeta.name}" failed: "${appendedBaseMeta.name}" must have controllers.`;
         throw new Error(msg);

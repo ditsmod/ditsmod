@@ -1,6 +1,6 @@
 import { makeClassDecorator, InitHooksAndRawMeta, ModRefId, NormalizedMeta, AddDecorator, BaseInitMeta } from '@ditsmod/core';
 
-import { RestMetadata } from '#init/module-metadata.js';
+import { RestInitRawMeta } from '#init/module-metadata.js';
 import { ModuleNormalizer } from '#init/module-normalizer.js';
 import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import {
@@ -9,7 +9,7 @@ import {
   ImportModulesShallowConfig,
   RestMetadataPerMod1,
 } from '#init/types.js';
-import { RestModRefId, RestNormalizedMeta } from '#init/rest-normalized-meta.js';
+import { RestModRefId, RestInitMeta } from '#init/rest-normalized-meta.js';
 import { DeepModulesImporter } from '#init/deep-modules-importer.js';
 import { RestGlobalProviders } from '#types/types.js';
 import { RestModule } from '#init/rest.module.js';
@@ -17,16 +17,16 @@ import { RestModule } from '#init/rest.module.js';
 /**
  * A decorator that adds REST metadata to a `featureModule` or `rootModule`.
  */
-export const initRest: AddDecorator<RestMetadata, RestNormalizedMeta> = makeClassDecorator(transformMetadata);
+export const initRest: AddDecorator<RestInitRawMeta, RestInitMeta> = makeClassDecorator(transformMetadata);
 
-class RestInitHooksAndRawMeta extends InitHooksAndRawMeta<RestMetadata> {
+class RestInitHooksAndRawMeta extends InitHooksAndRawMeta<RestInitRawMeta> {
   override hostModule = RestModule;
 
-  override normalize(baseMeta: NormalizedMeta): RestNormalizedMeta {
+  override normalize(baseMeta: NormalizedMeta): RestInitMeta {
     return new ModuleNormalizer().normalize(baseMeta, this.rawMeta, this.baseInitMeta);
   }
 
-  override getModulesToScan(meta?: RestNormalizedMeta): RestModRefId[] {
+  override getModulesToScan(meta?: RestInitMeta): RestModRefId[] {
     return meta?.appendsModules.concat(meta?.appendsWithParams as any[]) || [];
   }
 
@@ -43,7 +43,7 @@ class RestInitHooksAndRawMeta extends InitHooksAndRawMeta<RestMetadata> {
   }
 }
 
-export function transformMetadata(data?: RestMetadata): InitHooksAndRawMeta<RestMetadata> {
+export function transformMetadata(data?: RestInitRawMeta): InitHooksAndRawMeta<RestInitRawMeta> {
   const metadata = Object.assign({}, data);
   return new RestInitHooksAndRawMeta(metadata);
 }

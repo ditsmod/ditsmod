@@ -11,7 +11,7 @@ import {
 } from '@ditsmod/core';
 
 import { GuardPerMod1 } from '#interceptors/guard.js';
-import { RestModRefId, RestNormalizedMeta } from '#init/rest-normalized-meta.js';
+import { RestModRefId, RestInitMeta } from '#init/rest-normalized-meta.js';
 
 export class RestImportObj<T extends Provider = Provider> {
   modRefId: RestModRefId;
@@ -28,10 +28,10 @@ export class RestMetadataPerMod1 {
   prefixPerMod: string;
   guards1: GuardPerMod1[];
   /**
-   * Snapshot of `RestNormalizedMeta`. If you modify any array in this object,
+   * Snapshot of `RestInitMeta`. If you modify any array in this object,
    * the original array will remain unchanged.
    */
-  meta: RestNormalizedMeta;
+  meta: RestInitMeta;
   /**
    * Map between a token and its ImportObj per level.
    */
@@ -57,7 +57,7 @@ export class RestProvidersForMod {
 
 export class RestMetadataPerMod2 {
   baseMeta: NormalizedMeta;
-  meta: RestNormalizedMeta;
+  meta: RestInitMeta;
   guards1: GuardPerMod1[];
   prefixPerMod: string;
   applyControllers?: boolean;

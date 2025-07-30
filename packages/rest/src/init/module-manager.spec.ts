@@ -17,7 +17,7 @@ import {
 import { controller } from '../types/controller.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { AppendsWithParams, RestModuleParams } from './module-metadata.js';
-import { RestNormalizedMeta } from './rest-normalized-meta.js';
+import { RestInitMeta } from './rest-normalized-meta.js';
 import { CanActivate, guard } from '#interceptors/guard.js';
 import { RequestContext } from '#services/request-context.js';
 import { RestModule } from './rest.module.js';
@@ -154,7 +154,7 @@ describe('ModuleManager', () => {
     @rootModule()
     class AppModule {}
 
-    const expectedMeta = new RestNormalizedMeta();
+    const expectedMeta = new RestInitMeta();
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(2);
     expect(getInitMeta('root')).toEqual(expectedMeta);
@@ -209,7 +209,7 @@ describe('ModuleManager', () => {
     @rootModule()
     class AppModule {}
 
-    const expectedMeta = new RestNormalizedMeta();
+    const expectedMeta = new RestInitMeta();
     expectedMeta.providersPerReq = [Provider1];
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(2);
@@ -442,21 +442,21 @@ describe('ModuleManager', () => {
     })
     class AppModule {}
 
-    const expectedMeta1 = new RestNormalizedMeta();
+    const expectedMeta1 = new RestInitMeta();
     expectedMeta1.controllers = [Controller1];
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(5);
     expect(getInitMeta(Module1)).toEqual(expectedMeta1);
 
-    const expectedMeta2 = new RestNormalizedMeta();
+    const expectedMeta2 = new RestInitMeta();
     expectedMeta2.providersPerRou = [Provider1];
     expectedMeta2.exportedProvidersPerRou = [Provider1];
     expect(mock.map.get(Module2)?.initMeta.get(initRest)).toEqual(expectedMeta2);
 
-    const expectedMeta3 = new RestNormalizedMeta();
+    const expectedMeta3 = new RestInitMeta();
     expect(getInitMeta('root')).toEqual(expectedMeta3);
 
-    const expectedMeta4 = new RestNormalizedMeta();
+    const expectedMeta4 = new RestInitMeta();
     expectedMeta4.controllers = [Controller1];
 
     expect(mock.map.get(module4WithParams)?.initMeta.get(initRest)).toEqual(expectedMeta4);
@@ -548,7 +548,7 @@ describe('ModuleManager', () => {
 
     const module3WithProviders = Module3.withParams([Provider2]);
 
-    const expectedMeta1 = new RestNormalizedMeta();
+    const expectedMeta1 = new RestInitMeta();
     expectedMeta1.providersPerReq = [Provider1];
 
     mock.scanRootModule(AppModule);
@@ -583,7 +583,7 @@ describe('ModuleManager', () => {
     expect(mock.oldMapId.size).toBe(0);
     expect(mock.oldMap.size).toBe(0);
 
-    const expectedMeta2 = new RestNormalizedMeta();
+    const expectedMeta2 = new RestInitMeta();
     expectedMeta2.providersPerReq = [Provider1];
 
     mock.addImport(Module2);
@@ -614,7 +614,7 @@ describe('ModuleManager', () => {
     expect(mock.oldMapId.size).toBe(0);
     expect(mock.oldMap.has(AppModule)).toBe(false);
 
-    const expectedMeta3 = new RestNormalizedMeta();
+    const expectedMeta3 = new RestInitMeta();
     expectedMeta3.providersPerReq = [Provider1];
 
     expect(getInitMeta('root')).toEqual(expectedMeta3);
@@ -690,7 +690,7 @@ describe('ModuleManager', () => {
     })
     class AppModule {}
 
-    const expectedMeta1 = new RestNormalizedMeta();
+    const expectedMeta1 = new RestInitMeta();
     expectedMeta1.providersPerReq = [Provider1];
 
     mock.scanRootModule(AppModule);
@@ -728,7 +728,7 @@ describe('ModuleManager', () => {
     expect(mock.oldMapId.size).toBe(0);
     expect(mock.oldMap.size).toBe(0);
 
-    const expectedMeta2 = new RestNormalizedMeta();
+    const expectedMeta2 = new RestInitMeta();
     expectedMeta2.providersPerReq = [Provider1];
 
     expect(getInitMeta('root')).toMatchObject({ providersPerReq: [Provider1] });
@@ -746,7 +746,7 @@ describe('ModuleManager', () => {
     expect(mock.oldMapId.size).toBe(2);
     expect(mock.oldMap.size).toBe(6);
 
-    const expectedMeta3 = new RestNormalizedMeta();
+    const expectedMeta3 = new RestInitMeta();
     expectedMeta3.providersPerReq = [Provider1];
 
     expect(getInitMeta('root')).toMatchObject({ providersPerReq: [Provider1] });
@@ -760,7 +760,7 @@ describe('ModuleManager', () => {
       importsWithParams: [module3WithProviders, module4WithProviders],
     });
 
-    const expectedMeta4 = new RestNormalizedMeta();
+    const expectedMeta4 = new RestInitMeta();
     expectedMeta4.providersPerReq = [Provider1];
 
     expect(mock.removeImport(moduleId)).toBe(true);
@@ -795,11 +795,11 @@ describe('ModuleManager', () => {
     })
     class Module3 {}
 
-    const expectedMeta3 = new RestNormalizedMeta();
+    const expectedMeta3 = new RestInitMeta();
     delete (expectedMeta3 as any).aExtensionConfig;
     delete (expectedMeta3 as any).aExportedExtensionConfig;
 
-    const expectedMeta1 = new RestNormalizedMeta();
+    const expectedMeta1 = new RestInitMeta();
     delete (expectedMeta1 as any).aExtensionConfig;
     delete (expectedMeta1 as any).aExportedExtensionConfig;
 
@@ -827,11 +827,11 @@ describe('ModuleManager', () => {
     })
     class Module3 {}
 
-    const expectedMeta3 = new RestNormalizedMeta();
+    const expectedMeta3 = new RestInitMeta();
     delete (expectedMeta3 as any).aExtensionConfig;
     delete (expectedMeta3 as any).aExportedExtensionConfig;
 
-    const expectedMeta1 = new RestNormalizedMeta();
+    const expectedMeta1 = new RestInitMeta();
     delete (expectedMeta1 as any).aExtensionConfig;
     delete (expectedMeta1 as any).aExportedExtensionConfig;
 
@@ -862,7 +862,7 @@ describe('ModuleManager', () => {
     })
     class Module3 {}
 
-    const expectedMeta1 = new RestNormalizedMeta();
+    const expectedMeta1 = new RestInitMeta();
     expectedMeta1.exportedProvidersPerReq = [Provider3];
     expectedMeta1.providersPerReq = providersPerReq;
     expectedMeta1.exportedMultiProvidersPerReq = [
