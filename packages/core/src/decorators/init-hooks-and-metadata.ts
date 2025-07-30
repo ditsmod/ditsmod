@@ -7,16 +7,11 @@ import { GlobalProviders } from '#types/metadata-per-mod.js';
 import { AnyFn, AnyObj, ModRefId } from '#types/mix.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 
-export type BaseInitRawMeta<T extends object = object> = {
-  imports?: ({ modRefId: ModRefId } & T)[];
-  exports?: any[];
-};
-
 /**
  * Init hooks and metadata attached by init decorators,
  * apart from the base decorators - `rootModule` or `featureModule`.
  */
-export class InitHooksAndRawMeta<T1 extends BaseInitRawMeta = BaseInitRawMeta, T2 extends AnyObj = AnyObj> {
+export class InitHooksAndRawMeta<T1 extends AnyObj = AnyObj, T2 extends AnyObj = AnyObj> {
   /**
    * The host module where the current init decorator is declared. If you add this module,
    * it will be imported into the module where the corresponding init decorator is used.
@@ -118,8 +113,8 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
 }
 
 export interface InitMetaMap {
-  set<T extends AnyObj>(decorator: InitDecorator<any, T>, params: T): this;
-  get<T extends AnyObj>(decorator: InitDecorator<any, T>): T | undefined;
+  set<T extends AnyObj>(decorator: InitDecorator<any, any, T>, params: T): this;
+  get<T extends AnyObj>(decorator: InitDecorator<any, any, T>): T | undefined;
   forEach<T extends AnyObj>(callbackfn: (params: T, decorator: AnyFn, map: Map<AnyFn, T>) => void, thisArg?: any): void;
   /**
    * Returns an iterable of keys in the map
@@ -130,8 +125,8 @@ export interface InitMetaMap {
 }
 
 export interface InitParamsMap {
-  set<T extends AnyObj>(decorator: InitDecorator<BaseInitRawMeta<T>, any>, params: T): this;
-  get<T extends AnyObj>(decorator: InitDecorator<BaseInitRawMeta<T>, any>): T | undefined;
+  set<T extends AnyObj>(decorator: InitDecorator<any, T, any>, params: T): this;
+  get<T extends AnyObj>(decorator: InitDecorator<any, T, any>): T | undefined;
   forEach<T extends AnyObj>(callbackfn: (params: T, decorator: AnyFn, map: Map<AnyFn, T>) => void, thisArg?: any): void;
   /**
    * Returns an iterable of keys in the map
@@ -186,6 +181,6 @@ class MyInitHooksAndRawMeta extends InitHooksAndRawMeta<RawMeta> {}
 ```
  */
 
-export interface InitDecorator<T extends BaseInitRawMeta, R> {
-  (data?: T): any;
+export interface InitDecorator<T1 extends AnyObj, T2, T3> {
+  (data?: T1): any;
 }

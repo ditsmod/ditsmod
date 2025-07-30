@@ -3,6 +3,7 @@ import {
   featureModule,
   forwardRef,
   ModuleManager,
+  ModuleWithInitParams,
   ModuleWithParams,
   Providers,
   rootModule,
@@ -34,19 +35,26 @@ describe('rest ModuleNormalizer', () => {
     class Service0 {}
 
     @featureModule({ providersPerApp: [Service0] })
-    class Module1 {}
+    class Module1 {
+      static withParams(): ModuleWithInitParams<Module1> {
+        return {
+          module: this,
+          initParams: new Map(),
+        };
+      }
+    }
 
     @featureModule({ providersPerApp: [Service0] })
     class Module2 {}
 
-    const moduleWithParams: ModuleWithParams = { module: Module1 };
+    const moduleWithParams = Module1.withParams();
+    moduleWithParams.initParams.set(initRest, { path: 'test1' });
     const appendWithParams: AppendsWithParams = { module: Module2, path: 'test2' };
 
     // Although in `AppModule` `appendWithParams` and `moduleWithParams` are used in the context of the `initRest` decorator, `Module1` and `Module2`
     // themselves do not have this decorator, so it's important that `Module1` and `Module2` are processed using the init hooks taken from `AppModule`.
     @initRest({
       appends: [appendWithParams],
-      imports: [{ modRefId: moduleWithParams, path: 'test1' }],
     })
     @rootModule({
       imports: [moduleWithParams],
@@ -75,7 +83,15 @@ describe('rest ModuleNormalizer', () => {
     class Module1 {}
 
     @featureModule({ providersPerApp: [Service0] })
-    class Module2 {}
+    class Module2 {
+      static withParams(id: string): ModuleWithInitParams<Module2> {
+        return {
+          id,
+          module: this,
+          initParams: new Map(),
+        };
+      }
+    }
 
     @featureModule({ providersPerApp: [Service0] })
     class Module3 {}
@@ -89,12 +105,15 @@ describe('rest ModuleNormalizer', () => {
     @featureModule({ providersPerApp: [Service0] })
     class Module6 {}
 
-    const module2WithParams: ModuleWithParams = { module: forwardRef(() => Module2) };
+    const module2WithParams = forwardRef(() => {
+      const module2WithParams = Module2.withParams('test-id');
+      module2WithParams.initParams.set(initRest, { path: 'test1' });
+      return module2WithParams;
+    });
     const module4WithParams: ModuleWithParams = { module: forwardRef(() => Module4) };
     const appendWithParams: AppendsWithParams = { module: forwardRef(() => Module6), path: 'test2' };
     @initRest({
       appends: [forwardRef(() => Module5), appendWithParams],
-      imports: [{ modRefId: module2WithParams, path: 'test1' }],
       providersPerRou: [
         forwardRef(() => Service1),
         { token: forwardRef(() => Service3), useClass: forwardRef(() => Service3), multi: true },
@@ -131,14 +150,14 @@ describe('rest ModuleNormalizer', () => {
     expect(meta1.appendsModules).toEqual([Module5]);
     expect(meta1.appendsWithParams).toEqual([appendWithParams]);
 
-    const meta2 = moduleManager.getMetadata(module2WithParams, true).initMeta.get(initRest)!;
+    const meta2 = moduleManager.getMetadata('test-id', true).initMeta.get(initRest)!;
     expect(meta2.params.path).toEqual('test1');
 
     const meta3 = moduleManager.getMetadata(appendWithParams, true).initMeta.get(initRest)!;
     expect(meta3.params.path).toEqual('test2');
 
     expect(baseMeta.importsModules).toEqual([Module1, RestModule]);
-    expect(baseMeta.importsWithParams).toEqual([{ module: Module2, initParams: expect.any(Map) }]);
+    expect(baseMeta.importsWithParams).toEqual([{ id: 'test-id', module: Module2, initParams: expect.any(Map) }]);
   });
 
   it('merge static metadata with append params', () => {
@@ -216,23 +235,26 @@ describe('rest ModuleNormalizer', () => {
       exports: [Service1, Service3],
     })
     @featureModule()
-    class Module1 {}
+    class Module1 {
+      static withParams(): ModuleWithInitParams<Module1> {
+        return {
+          module: this,
+          initParams: new Map(),
+        };
+      }
+    }
 
-    const moduleWithParams: ModuleWithParams = { module: Module1 };
+    const moduleWithParams = Module1.withParams();
+    moduleWithParams.initParams.set(initRest, {
+      path: 'one',
+      guards: [Guard1, [Guard2, { property1: 'some-value' }]],
+      providersPerRou: [Service2],
+      providersPerReq: [Service4],
+      exports: [Service2, Service4],
+    });
 
-    @initRest({
-      imports: [
-        {
-          modRefId: moduleWithParams,
-          path: 'one',
-          guards: [Guard1, [Guard2, { property1: 'some-value' }]],
-          providersPerRou: [Service2],
-          providersPerReq: [Service4],
-          exports: [Service2, Service4],
-        },
-      ],
-    })
-    @rootModule()
+    @initRest()
+    @rootModule({ imports: [moduleWithParams] })
     class AppModule {}
 
     const baseMeta = moduleManager.scanRootModule(AppModule);

@@ -12,6 +12,7 @@ import {
   injectable,
   forwardRef,
   Provider,
+  ModuleWithInitParams,
 } from '@ditsmod/core';
 
 import { controller } from '../types/controller.js';
@@ -485,23 +486,30 @@ describe('ModuleManager', () => {
 
     @initRest({ controllers: [Controller1] })
     @featureModule()
-    class Module1 {}
+    class Module1 {
+      static withParams(): ModuleWithInitParams<Module1> {
+        return {
+          module: this,
+          initParams: new Map(),
+        };
+      }
+    }
 
     @initRest({ controllers: [Controller2] })
     @featureModule()
     class Module2 {}
 
-    const modRefId: ModuleWithParams = { module: Module1 };
-    const moduleWithParams: RestModuleParams = { path: 'module1', modRefId, guards: [Guard1] };
+    const moduleWithParams = Module1.withParams();
+    moduleWithParams.initParams.set(initRest, { path: 'module1', guards: [Guard1] });
     const appendsWithParams: AppendsWithParams = { path: 'module2', module: Module2, guards: [Guard2] };
 
-    @initRest({ appends: [appendsWithParams], imports: [moduleWithParams] })
-    @rootModule()
+    @initRest({ appends: [appendsWithParams] })
+    @rootModule({ imports: [moduleWithParams] })
     class AppModule {}
 
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(4);
-    expect(getInitMeta(modRefId)?.params.guards).toMatchObject([{ guard: Guard1 }]);
+    expect(getInitMeta(moduleWithParams)?.params.guards).toMatchObject([{ guard: Guard1 }]);
     expect(getInitMeta(appendsWithParams)?.params.guards).toMatchObject([{ guard: Guard2 }]);
   });
 

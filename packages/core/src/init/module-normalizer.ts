@@ -14,7 +14,6 @@ import {
   isModDecor,
   isFeatureModule,
   isModuleWithInitHooks,
-  isParamsWithModRefId,
 } from '#utils/type-guards.js';
 import { ExtensionConfigBase, getExtensionProvider } from '#extension/get-extension-provider.js';
 import { AnyFn, ModRefId } from '#types/mix.js';
@@ -270,12 +269,10 @@ export class ModuleNormalizer {
     }
   }
 
-  protected resolveForwardRef<T extends ModRefId | Provider | { modRefId: ModRefId }>(arr = [] as T[]) {
+  protected resolveForwardRef<T extends ModRefId | Provider>(arr = [] as T[]) {
     return arr.map((item) => {
       item = resolveForwardRef(item);
-      if (isParamsWithModRefId(item)) {
-        item.modRefId = resolveForwardRef(item.modRefId);
-      } else if (isNormalizedProvider(item)) {
+      if (isNormalizedProvider(item)) {
         item.token = resolveForwardRef(item.token);
         if (isClassProvider(item)) {
           item.useClass = resolveForwardRef(item.useClass);
@@ -362,36 +359,8 @@ export class ModuleNormalizer {
         baseMeta.importsModules.push(initHooks.hostModule);
       }
 
-      this.setBaseInitMeta(baseMeta, decorator, initHooks);
       this.callInitHook(baseMeta, decorator, initHooks);
     });
-  }
-
-  protected setBaseInitMeta(baseMeta: NormalizedMeta, decorator: AnyFn, initHooks: InitHooksAndRawMeta) {
-    if (initHooks.rawMeta.imports) {
-      this.resolveForwardRef(initHooks.rawMeta.imports).forEach((imp) => {
-        const params = { ...imp } as { modRefId?: ModRefId };
-        delete params.modRefId;
-        if (isModuleWithParams(imp.modRefId)) {
-          imp.modRefId.initParams ??= new Map();
-          imp.modRefId.initParams.set(decorator, params);
-        } else {
-          imp.modRefId = { module: imp.modRefId, initParams: new Map([[decorator, params]]) as InitParamsMap };
-        }
-        if (!baseMeta.importsWithParams.includes(imp.modRefId)) {
-          baseMeta.importsWithParams.push(imp.modRefId);
-        }
-      });
-    }
-    if (initHooks.rawMeta.exports) {
-      this.resolveForwardRef(initHooks.rawMeta.exports).forEach((exp) => {
-        if (isModuleWithParams(exp)) {
-          if (!baseMeta.exportsWithParams.includes(exp)) {
-            baseMeta.exportsWithParams.push(exp);
-          }
-        }
-      });
-    }
   }
 
   /**

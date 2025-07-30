@@ -22,7 +22,6 @@ import {
   Provider,
   isClassProvider,
   isTokenProvider,
-  isParamsWithModRefId,
 } from '@ditsmod/core';
 
 import { AppendsWithParams, RestInitRawMeta } from '#init/rest-init-raw-meta.js';
@@ -40,7 +39,7 @@ export class ModuleNormalizer {
     this.mergeModuleWithParams(baseMeta.modRefId, rawMeta, meta);
     this.appendModules(rawMeta, meta);
     this.normalizeDeclaredAndResolvedProviders(meta, rawMeta);
-    this.normalizeExports(rawMeta, meta);
+    this.normalizeExports(baseMeta, rawMeta, meta);
     this.checkMetadata(baseMeta, meta);
     return meta;
   }
@@ -138,7 +137,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected normalizeExports(rawMeta: RestInitRawMeta, meta: RestInitMeta) {
+  protected normalizeExports(baseMeta: NormalizedMeta, rawMeta: RestInitRawMeta, meta: RestInitMeta) {
     if (!rawMeta.exports) {
       return;
     }
@@ -150,16 +149,7 @@ export class ModuleNormalizer {
       if (reflector.getDecorators(exp, isFeatureModule)) {
         //
       } else if (isModuleWithParams(exp)) {
-        const hasExportWithoutImport = !rawMeta.imports?.some((imp) => {
-          if (isParamsWithModRefId(imp)) {
-            return imp.modRefId === exp;
-          } else if (isModuleWithParams(imp)) {
-            return imp === exp;
-          }
-          return false;
-        });
-
-        if (hasExportWithoutImport) {
+        if (!baseMeta.importsWithParams?.includes(exp)) {
           this.throwExportWithParams(exp);
         }
       } else if (isProvider(exp) || getTokens(providers).includes(exp)) {

@@ -97,29 +97,27 @@ describe('shallow importing modules', () => {
     class Provider2 {}
 
     const moduleWithParams0: ModuleWithParams = { module: forwardRef(() => Module3) };
-    @initRest({
-      imports: [{ modRefId: moduleWithParams0 }],
+    @initRest()
+    @featureModule({
+      imports: [moduleWithParams0],
       exports: [moduleWithParams0],
     })
-    @featureModule()
     class Module1 {}
-
     const moduleWithParams1: ModuleWithParams = { module: Module1 };
-    @initRest({
-      imports: [{ modRefId: moduleWithParams1 }],
-      providersPerReq: [Provider1],
-      exports: [Provider1, moduleWithParams1],
-    })
-    @featureModule()
-    class Module2 {}
 
-    const moduleWithParams2: ModuleWithParams = { module: Module2 };
     @initRest({
-      imports: [{ modRefId: moduleWithParams2 }],
-      providersPerReq: [Provider2],
-      exports: [Provider2, moduleWithParams2],
+      providersPerReq: [Provider1],
+      exports: [Provider1],
     })
-    @featureModule()
+    @featureModule({ imports: [moduleWithParams1], exports: [moduleWithParams1] })
+    class Module2 {}
+    const moduleWithParams2: ModuleWithParams = { module: Module2 };
+
+    @initRest({
+      providersPerReq: [Provider2],
+      exports: [Provider2],
+    })
+    @featureModule({ imports: [moduleWithParams2], exports: [moduleWithParams2] })
     class Module3 {}
 
     @rootModule({
