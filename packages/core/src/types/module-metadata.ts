@@ -39,6 +39,13 @@ export interface ModuleWithParams<M extends AnyObj = AnyObj> extends BaseModuleW
   initParams?: InitParamsMap;
 }
 /**
+ * This interface differs from `ModuleWithParams` only in that it requires the presence of the `initParams` property.
+ * It is convenient to use in static module methods that return `ModuleWithParams`.
+ */
+export interface ModuleWithInitParams<M extends AnyObj = AnyObj> extends ModuleWithParams<M> {
+  initParams: InitParamsMap;
+}
+/**
  * Metadata with this type is created when the `parentMeta: NormalizedMeta` property is added to `BaseModuleWithParams`.
  */
 
