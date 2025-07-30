@@ -2,7 +2,6 @@ import { ProvidersMetadata } from '#types/providers-metadata.js';
 import { AnyFn, AnyObj, ModuleType } from '#types/mix.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { ExtensionClass } from '#extension/extension-types.js';
-import { InitMetaMap } from '#decorators/init-hooks-and-metadata.js';
 
 export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<ProvidersMetadata> {
   /**

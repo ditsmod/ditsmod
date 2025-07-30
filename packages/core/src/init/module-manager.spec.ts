@@ -10,7 +10,7 @@ import { AllInitHooks, ModuleManager } from './module-manager.js';
 import { ModuleType, AnyObj, ModRefId } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
-import { AddDecorator, BaseInitMeta } from '#decorators/init-hooks-and-metadata.js';
+import { AddDecorator } from '#decorators/init-hooks-and-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { BaseInitRawMeta, InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { isModuleWithParams } from '#utils/type-guards.js';
@@ -711,20 +711,19 @@ describe('ModuleManager', () => {
       one?: string;
       two?: string;
     }
-    interface InitMeta extends BaseInitMeta<{ path?: string }> {
+    interface InitMeta {
       path?: string;
     }
     const initSome: AddDecorator<RawMeta, InitMeta> = makeClassDecorator((d) => new InitHooksAndRawMeta1(d));
 
     class InitHooksAndRawMeta1 extends InitHooksAndRawMeta<RawMeta> {
       override normalize({ modRefId }: NormalizedMeta): InitMeta {
-        const baseInitMeta = { importsWithModRefId: this.baseInitMeta?.importsWithModRefId };
         if (isModuleWithParams(modRefId)) {
           const params = modRefId.initParams?.get(initSome);
           return { path: params?.path };
         }
 
-        return baseInitMeta;
+        return {};
       }
     }
 
@@ -744,11 +743,11 @@ describe('ModuleManager', () => {
 
   it('get initParams for three different modules with params', () => {
     interface RawMeta1 extends BaseInitRawMeta<{ one?: string }> {}
-    interface InitMeta1 extends BaseInitMeta<{ two?: string }> {
+    interface InitMeta1 {
       paramsForInitMeta1?: any;
     }
     interface RawMeta2 extends BaseInitRawMeta<{ three?: string }> {}
-    interface InitMeta2 extends BaseInitMeta<{ four?: string }> {
+    interface InitMeta2 {
       paramsForInitMeta2?: any;
     }
     class InitHooksAndRawMeta1 extends InitHooksAndRawMeta<RawMeta1> {}

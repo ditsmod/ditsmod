@@ -369,7 +369,6 @@ export class ModuleNormalizer {
 
   protected setBaseInitMeta(baseMeta: NormalizedMeta, decorator: AnyFn, initHooks: InitHooksAndRawMeta) {
     if (initHooks.rawMeta.imports) {
-      initHooks.baseInitMeta ??= {};
       this.resolveForwardRef(initHooks.rawMeta.imports).forEach((imp) => {
         const params = { ...imp } as { modRefId?: ModRefId };
         delete params.modRefId;
@@ -379,19 +378,14 @@ export class ModuleNormalizer {
         } else {
           imp.modRefId = { module: imp.modRefId, initParams: new Map([[decorator, params]]) };
         }
-        initHooks.baseInitMeta!.importsWithModRefId ??= [];
-        initHooks.baseInitMeta!.importsWithModRefId.push(imp as { modRefId: ModuleWithParams });
         if (!baseMeta.importsWithParams.includes(imp.modRefId)) {
           baseMeta.importsWithParams.push(imp.modRefId);
         }
       });
     }
     if (initHooks.rawMeta.exports) {
-      initHooks.baseInitMeta ??= {};
       this.resolveForwardRef(initHooks.rawMeta.exports).forEach((exp) => {
         if (isModuleWithParams(exp)) {
-          initHooks.baseInitMeta!.exportsWithModRefId ??= [];
-          initHooks.baseInitMeta!.exportsWithModRefId.push(exp);
           if (!baseMeta.exportsWithParams.includes(exp)) {
             baseMeta.exportsWithParams.push(exp);
           }

@@ -23,7 +23,6 @@ import {
   isClassProvider,
   isTokenProvider,
   isParamsWithModRefId,
-  BaseInitMeta,
 } from '@ditsmod/core';
 
 import { AppendsWithParams, RestInitRawMeta } from '#init/module-metadata.js';
@@ -36,9 +35,8 @@ import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
  * Normalizes and validates module metadata.
  */
 export class ModuleNormalizer {
-  normalize(baseMeta: NormalizedMeta, rawMeta: RestInitRawMeta, baseInitMeta?: BaseInitMeta) {
+  normalize(baseMeta: NormalizedMeta, rawMeta: RestInitRawMeta) {
     const meta = new RestInitMeta();
-    this.setImportsWithModRefId(meta, baseInitMeta);
     this.mergeModuleWithParams(baseMeta.modRefId, rawMeta, meta);
     this.appendModules(rawMeta, meta);
     this.normalizeDeclaredAndResolvedProviders(meta, rawMeta);
@@ -46,12 +44,6 @@ export class ModuleNormalizer {
     this.checkMetadata(baseMeta, meta);
     return meta;
   }
-
-  protected setImportsWithModRefId(meta: RestInitMeta, baseInitMeta?: BaseInitMeta) {
-    meta.importsWithModRefId = baseInitMeta?.importsWithModRefId ?? [];
-    meta.exportsWithModRefId = baseInitMeta?.exportsWithModRefId ?? [];
-  }
-
   protected mergeModuleWithParams(modRefId: RestModRefId, rawMeta: RestInitRawMeta, meta: RestInitMeta): void {
     if (isAppendsWithParams(modRefId)) {
       if (modRefId.absolutePath !== undefined) {

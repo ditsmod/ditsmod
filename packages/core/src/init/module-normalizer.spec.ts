@@ -1,5 +1,5 @@
 import { featureModule } from '#decorators/feature-module.js';
-import { BaseInitMeta, BaseInitRawMeta } from '#decorators/init-hooks-and-metadata.js';
+import { BaseInitRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { rootModule } from '#decorators/root-module.js';
 import { forwardRef, injectable, makeClassDecorator, MultiProvider } from '#di';
@@ -263,7 +263,7 @@ describe('ModuleNormalizer', () => {
   });
 
   describe('creating custom decorator with init hooks', () => {
-    interface InitMeta extends BaseInitMeta {
+    interface InitMeta {
       baseMeta: NormalizedMeta;
       rawMeta: RawMeta;
     }
@@ -273,8 +273,6 @@ describe('ModuleNormalizer', () => {
         return {
           baseMeta,
           rawMeta: this.rawMeta,
-          importsWithModRefId: this.baseInitMeta?.importsWithModRefId,
-          exportsWithModRefId: this.baseInitMeta?.exportsWithModRefId,
         };
       }
     }
@@ -394,8 +392,6 @@ describe('ModuleNormalizer', () => {
       expect(baseMeta.exportsWithParams).toEqual([moduleWithParams2, moduleWithParams4]);
       expect(moduleWithParams2.module).toBe(Module2);
       expect(moduleWithParams4.module).toBe(Module4);
-      const initMeta = baseMeta.initMeta.get(initSome)!;
-      expect(initMeta.exportsWithModRefId).toEqual([moduleWithParams4]);
     });
   });
 });

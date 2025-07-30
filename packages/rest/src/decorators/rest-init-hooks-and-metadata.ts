@@ -1,4 +1,4 @@
-import { makeClassDecorator, InitHooksAndRawMeta, ModRefId, NormalizedMeta, AddDecorator, BaseInitMeta } from '@ditsmod/core';
+import { makeClassDecorator, InitHooksAndRawMeta, ModRefId, NormalizedMeta, AddDecorator } from '@ditsmod/core';
 
 import { RestInitRawMeta } from '#init/module-metadata.js';
 import { ModuleNormalizer } from '#init/module-normalizer.js';
@@ -23,7 +23,7 @@ class RestInitHooksAndRawMeta extends InitHooksAndRawMeta<RestInitRawMeta> {
   override hostModule = RestModule;
 
   override normalize(baseMeta: NormalizedMeta): RestInitMeta {
-    return new ModuleNormalizer().normalize(baseMeta, this.rawMeta, this.baseInitMeta);
+    return new ModuleNormalizer().normalize(baseMeta, this.rawMeta);
   }
 
   override getModulesToScan(meta?: RestInitMeta): RestModRefId[] {

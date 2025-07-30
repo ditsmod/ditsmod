@@ -4,8 +4,7 @@ import { ModuleManager } from '#init/module-manager.js';
 import { ShallowImportsBase, ShallowImports } from '#init/types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { GlobalProviders } from '#types/metadata-per-mod.js';
-import { AnyFn, AnyObj, ModRefId, ModuleType, XOR } from '#types/mix.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
+import { AnyFn, AnyObj, ModRefId } from '#types/mix.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 
 export type BaseInitRawMeta<T extends object = object> = {
@@ -17,7 +16,7 @@ export type BaseInitRawMeta<T extends object = object> = {
  * Init hooks and metadata attached by init decorators,
  * apart from the base decorators - `rootModule` or `featureModule`.
  */
-export class InitHooksAndRawMeta<T extends BaseInitRawMeta = BaseInitRawMeta> {
+export class InitHooksAndRawMeta<T1 extends BaseInitRawMeta = BaseInitRawMeta, T2 extends AnyObj = AnyObj> {
   /**
    * The host module where the current init decorator is declared. If you add this module,
    * it will be imported into the module where the corresponding init decorator is used.
@@ -46,18 +45,16 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
    *
    * Here, `{ one: 1, two: 2 }` represents the placeholder metadata that needs to be passed to `SomeModule`.
    */
-  declare hostRawMeta?: T;
+  declare hostRawMeta?: T1;
 
-  declare baseInitMeta?: BaseInitMeta;
-
-  constructor(public rawMeta: T) {
-    this.rawMeta ??= {} as T;
+  constructor(public rawMeta: T1) {
+    this.rawMeta ??= {} as T1;
   }
 
   /**
    * Returns a new instance of the current class. Most likely, you don't need to override this method.
    */
-  clone<R extends this>(rawMeta?: T) {
+  clone<R extends this>(rawMeta?: T1) {
     return new (this.constructor as { new (arg: object): R })(rawMeta || {});
   }
 
@@ -66,8 +63,8 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
    *
    * @param baseMeta Normalized metadata that is passed to the `featureModule` or `rootModule` decorator.
    */
-  normalize(baseMeta: NormalizedMeta): BaseInitMeta {
-    return {};
+  normalize(baseMeta: NormalizedMeta) {
+    return {} as T2;
   }
 
   /**
@@ -75,7 +72,7 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
    *
    * @param meta Metadata returned by the `this.normalize()` method.
    */
-  getModulesToScan(meta?: BaseInitMeta): ModRefId[] {
+  getModulesToScan(meta?: T2): ModRefId[] {
     return [];
   }
 
@@ -120,18 +117,10 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
   }
 }
 
-/**
- * Assigned to the `initHooksAndRawMeta.baseInitMeta` property.
- */
-export class BaseInitMeta<T extends object = AnyObj> {
-  importsWithModRefId?: ({ modRefId: ModuleWithParams } & T)[];
-  exportsWithModRefId?: ModuleWithParams[];
-}
-
 export interface InitMetaMap {
-  set<T extends BaseInitMeta>(decorator: AddDecorator<any, T>, params: T): this;
-  get<T extends BaseInitMeta>(decorator: AddDecorator<any, T>): T | undefined;
-  forEach<T extends BaseInitMeta>(
+  set<T extends AnyObj>(decorator: AddDecorator<any, T>, params: T): this;
+  get<T extends AnyObj>(decorator: AddDecorator<any, T>): T | undefined;
+  forEach<T extends AnyObj>(
     callbackfn: (params: T, decorator: AnyFn, map: Map<AnyFn, T>) => void,
     thisArg?: any,
   ): void;
@@ -139,7 +128,7 @@ export interface InitMetaMap {
    * Returns an iterable of keys in the map
    */
   keys(): MapIterator<AnyFn>;
-  values<T extends BaseInitMeta>(): MapIterator<T>;
+  values<T extends AnyObj>(): MapIterator<T>;
   readonly size: number;
 }
 /**
@@ -157,14 +146,13 @@ import {
   featureModule,
   InitHooksAndRawMeta,
   BaseInitRawMeta,
-  BaseInitMeta,
 } from '@ditsmod/core';
 
 interface RawMeta extends BaseInitRawMeta<{ path?: string }> {
   one?: number;
   two?: number;
 }
-interface InitMeta extends BaseInitMeta<{ path?: string }> {
+interface InitMeta {
   other?: string;
 }
 
