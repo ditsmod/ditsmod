@@ -32,7 +32,7 @@ export class RestNormalizedMeta extends BaseInitMeta<RestModuleParams> {
   appendsModules: ModuleType[] = [];
   controllers: Class[] = [];
   params = new NormalizedParams();
-  override exportsWithModRefId: ({ modRefId: ModuleWithParams } & RestModuleParams)[] = [];
+  override exportsWithModRefId: ModuleWithParams[] = [];
 }
 
 export type RestModRefId<T extends AnyObj = AnyObj> = ModRefId | AppendsWithParams<T>;

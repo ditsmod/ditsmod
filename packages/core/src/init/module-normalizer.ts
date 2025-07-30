@@ -371,55 +371,29 @@ export class ModuleNormalizer {
     if (initHooks.rawMeta.imports) {
       initHooks.baseInitMeta ??= {};
       this.resolveForwardRef(initHooks.rawMeta.imports).forEach((imp) => {
-        if (isParamsWithModRefId(imp)) {
-          const params = { ...imp } as { modRefId?: ModRefId };
-          delete params.modRefId;
-          if (isModuleWithParams(imp.modRefId)) {
-            imp.modRefId.initParams ??= new Map();
-            imp.modRefId.initParams.set(decorator, params);
-          } else {
-            imp.modRefId = { module: imp.modRefId, initParams: new Map([[decorator, params]]) };
-          }
-          initHooks.baseInitMeta!.importsWithModRefId ??= [];
-          initHooks.baseInitMeta!.importsWithModRefId.push(imp as { modRefId: ModuleWithParams });
-          if (!baseMeta.importsWithParams.includes(imp.modRefId)) {
-            baseMeta.importsWithParams.push(imp.modRefId);
-          }
-        } else if (isModuleWithParams(imp)) {
-          initHooks.baseInitMeta!.importsWithParams ??= [];
-          initHooks.baseInitMeta!.importsWithParams.push(imp);
-          if (!baseMeta.importsWithParams.includes(imp)) {
-            baseMeta.importsWithParams.push(imp);
-          }
+        const params = { ...imp } as { modRefId?: ModRefId };
+        delete params.modRefId;
+        if (isModuleWithParams(imp.modRefId)) {
+          imp.modRefId.initParams ??= new Map();
+          imp.modRefId.initParams.set(decorator, params);
         } else {
-          initHooks.baseInitMeta!.importsModules ??= [];
-          initHooks.baseInitMeta!.importsModules.push(imp);
-          if (!baseMeta.importsModules.includes(imp)) {
-            baseMeta.importsModules.push(imp);
-          }
+          imp.modRefId = { module: imp.modRefId, initParams: new Map([[decorator, params]]) };
+        }
+        initHooks.baseInitMeta!.importsWithModRefId ??= [];
+        initHooks.baseInitMeta!.importsWithModRefId.push(imp as { modRefId: ModuleWithParams });
+        if (!baseMeta.importsWithParams.includes(imp.modRefId)) {
+          baseMeta.importsWithParams.push(imp.modRefId);
         }
       });
     }
     if (initHooks.rawMeta.exports) {
       initHooks.baseInitMeta ??= {};
       this.resolveForwardRef(initHooks.rawMeta.exports).forEach((exp) => {
-        if (isParamsWithModRefId(exp)) {
+        if (isModuleWithParams(exp)) {
           initHooks.baseInitMeta!.exportsWithModRefId ??= [];
-          initHooks.baseInitMeta!.exportsWithModRefId.push(exp as { modRefId: ModuleWithParams });
-          if (!baseMeta.exportsWithParams.includes(exp.modRefId as ModuleWithParams)) {
-            baseMeta.exportsWithParams.push(exp.modRefId as ModuleWithParams);
-          }
-        } else if (isModuleWithParams(exp)) {
-          initHooks.baseInitMeta!.exportsWithParams ??= [];
-          initHooks.baseInitMeta!.exportsWithParams.push(exp);
+          initHooks.baseInitMeta!.exportsWithModRefId.push(exp);
           if (!baseMeta.exportsWithParams.includes(exp)) {
             baseMeta.exportsWithParams.push(exp);
-          }
-        } else if (reflector.getDecorators(exp, isFeatureModule)) {
-          initHooks.baseInitMeta!.exportsModules ??= [];
-          initHooks.baseInitMeta!.exportsModules.push(exp);
-          if (!baseMeta.exportsModules.includes(exp)) {
-            baseMeta.exportsModules.push(exp);
           }
         }
       });

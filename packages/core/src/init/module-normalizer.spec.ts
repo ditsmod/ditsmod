@@ -1,5 +1,5 @@
 import { featureModule } from '#decorators/feature-module.js';
-import { BaseInitMeta } from '#decorators/init-hooks-and-metadata.js';
+import { BaseInitMeta, BaseInitRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { rootModule } from '#decorators/root-module.js';
 import { forwardRef, injectable, makeClassDecorator, MultiProvider } from '#di';
@@ -263,43 +263,37 @@ describe('ModuleNormalizer', () => {
   });
 
   describe('creating custom decorator with init hooks', () => {
-    interface ReturnsType extends BaseInitMeta {
+    interface InitMeta extends BaseInitMeta {
       baseMeta: NormalizedMeta;
-      rawMeta: ArgumentsType;
+      rawMeta: RawMeta;
     }
 
-    class InitHooksAndRawMeta1 extends InitHooksAndRawMeta<ArgumentsType> {
-      override normalize(baseMeta: NormalizedMeta): ReturnsType {
+    class InitHooksAndRawMeta1 extends InitHooksAndRawMeta<RawMeta> {
+      override normalize(baseMeta: NormalizedMeta): InitMeta {
         return {
           baseMeta,
           rawMeta: this.rawMeta,
-          importsModules: this.baseInitMeta?.importsModules,
-          importsWithParams: this.baseInitMeta?.importsWithParams,
           importsWithModRefId: this.baseInitMeta?.importsWithModRefId,
-          exportsModules: this.baseInitMeta?.exportsModules,
-          exportsWithParams: this.baseInitMeta?.exportsWithParams,
           exportsWithModRefId: this.baseInitMeta?.exportsWithModRefId,
         };
       }
     }
 
-    function getInitHooksAndRawMeta(data?: ArgumentsType): InitHooksAndRawMeta<ArgumentsType> {
+    function getInitHooksAndRawMeta(data?: RawMeta): InitHooksAndRawMeta<RawMeta> {
       const metadata = Object.assign({}, data);
       return new InitHooksAndRawMeta1(metadata);
     }
 
-    interface ArgumentsType {
+    interface RawMeta extends BaseInitRawMeta<{ path?: string; guards?: any[] }> {
       one?: number;
       two?: number;
       appends?: ({ module: ModRefId } & AnyObj)[];
-      imports?: (ModRefId | { modRefId: ModRefId; path?: string; guards?: any[] })[];
-      exports?: any[];
     }
 
-    const initSome: AddDecorator<ArgumentsType, ReturnsType> = makeClassDecorator(getInitHooksAndRawMeta);
+    const initSome: AddDecorator<RawMeta, InitMeta> = makeClassDecorator(getInitHooksAndRawMeta);
 
     it('initHooks.normalize() correctly works', () => {
-      const rawMeta: ArgumentsType = { one: 1, two: 2 };
+      const rawMeta: RawMeta = { one: 1, two: 2 };
 
       @initSome(rawMeta)
       @featureModule()
@@ -331,7 +325,7 @@ describe('ModuleNormalizer', () => {
 
       // In the second element, `{ modRefId: Module 2 }` has been replaced with `{ modIfIed: { module: Module 2 } }`.
       expect(actualImportsWithParams?.at(1)).toEqual({
-        modRefId: { module: Module2, srcInitMeta: expect.any(Map) },
+        modRefId: { module: Module2, initParams: expect.any(Map) },
       });
     });
 
@@ -353,10 +347,10 @@ describe('ModuleNormalizer', () => {
       const moduleWithParams4: ModuleWithParams = { module: Module4 };
 
       @initSome({
-        imports: [Module1, moduleWithParams2, { modRefId: Module3 }, { modRefId: moduleWithParams4 }],
-        exports: [Module1, moduleWithParams2, moduleWithParams4],
+        imports: [{ modRefId: Module3 }, { modRefId: moduleWithParams4 }],
+        exports: [moduleWithParams4],
       })
-      @rootModule()
+      @rootModule({ imports: [Module1, moduleWithParams2], exports: [Module1, moduleWithParams2] })
       class AppModule {}
 
       const baseMeta = mock.normalize(AppModule);
@@ -388,15 +382,10 @@ describe('ModuleNormalizer', () => {
       const moduleWithParams4: ModuleWithParams = { module: forwardRef(() => Module4) };
 
       @initSome({
-        imports: [
-          forwardRef(() => Module1),
-          moduleWithParams2,
-          { modRefId: forwardRef(() => Module3) },
-          { modRefId: moduleWithParams4 },
-        ],
-        exports: [forwardRef(() => Module1), moduleWithParams2, moduleWithParams4],
+        imports: [{ modRefId: forwardRef(() => Module3) }, { modRefId: moduleWithParams4 }],
+        exports: [moduleWithParams4],
       })
-      @rootModule()
+      @rootModule({ imports: [forwardRef(() => Module1), moduleWithParams2], exports: [forwardRef(() => Module1), moduleWithParams2], })
       class AppModule {}
 
       const baseMeta = mock.normalize(AppModule);
@@ -411,8 +400,7 @@ describe('ModuleNormalizer', () => {
       expect(moduleWithParams2.module).toBe(Module2);
       expect(moduleWithParams4.module).toBe(Module4);
       const initMeta = baseMeta.initMeta.get(initSome)!;
-      expect(initMeta.exportsModules).toEqual([Module1]);
-      expect(initMeta.exportsWithParams).toEqual([moduleWithParams2, moduleWithParams4]);
+      expect(initMeta.exportsWithModRefId).toEqual([moduleWithParams4]);
     });
   });
 });

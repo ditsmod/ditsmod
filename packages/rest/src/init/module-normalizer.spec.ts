@@ -55,7 +55,7 @@ describe('rest ModuleNormalizer', () => {
 
     const meta1 = moduleManager.scanRootModule(AppModule).initMeta.get(initRest)!;
     expect(meta1.importsWithModRefId).toEqual([
-      { path: 'test1', modRefId: { module: Module1, srcInitMeta: expect.any(Map) } },
+      { path: 'test1', modRefId: { module: Module1, initParams: expect.any(Map) } },
     ]);
     expect(meta1.appendsWithParams).toEqual([appendWithParams]);
 
@@ -140,7 +140,7 @@ describe('rest ModuleNormalizer', () => {
     expect(meta3.params.path).toEqual('test2');
 
     expect(baseMeta.importsModules).toEqual([Module1, RestModule]);
-    expect(baseMeta.importsWithParams).toEqual([{ module: Module2, srcInitMeta: expect.any(Map) }]);
+    expect(baseMeta.importsWithParams).toEqual([{ module: Module2, initParams: expect.any(Map) }]);
   });
 
   it('merge static metadata with append params', () => {

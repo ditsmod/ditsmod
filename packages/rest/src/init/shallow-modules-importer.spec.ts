@@ -157,10 +157,9 @@ describe('shallow importing modules', () => {
     class Module2 {}
 
     @initRest({
-      imports: [Module0, Module1, Module2],
       resolvedCollisionsPerReq: [[Provider1, Module0]],
     })
-    @rootModule()
+    @rootModule({ imports: [Module0, Module1, Module2] })
     class AppModule {}
 
     const msg = 'Provider1 mapped with Module0, but Module0 does not exports Provider1';
@@ -179,8 +178,8 @@ describe('shallow importing modules', () => {
     @featureModule()
     class Module2 {}
 
-    @initRest({ imports: [Module1, Module2], resolvedCollisionsPerReq: [[Provider1, Module1]] })
-    @rootModule()
+    @initRest({ resolvedCollisionsPerReq: [[Provider1, Module1]] })
+    @rootModule({ imports: [Module1, Module2] })
     class AppModule {}
 
     const msg = 'Provider1 mapped with Module1, but there are no collisions with Provider1 in the providersPerReq';
@@ -228,10 +227,9 @@ describe('shallow importing modules', () => {
     const modRefId1: ModuleWithParams = { module: Module1 };
     const modRefId2: ModuleWithParams = { module: Module2 };
     @initRest({
-      imports: [modRefId1, modRefId2],
       resolvedCollisionsPerReq: [[Provider1, modRefId1]],
     })
-    @rootModule()
+    @rootModule({ imports: [modRefId1, modRefId2] })
     class AppModule {}
 
     expect(() => importModulesShallow(AppModule)).not.toThrow();

@@ -48,12 +48,7 @@ export class ModuleNormalizer {
   }
 
   protected setImportsWithModRefId(meta: RestNormalizedMeta, baseInitMeta?: BaseInitMeta) {
-    meta.importsModules = baseInitMeta?.importsModules ?? [];
-    meta.importsWithParams = baseInitMeta?.importsWithParams ?? [];
     meta.importsWithModRefId = baseInitMeta?.importsWithModRefId ?? [];
-
-    meta.exportsModules = baseInitMeta?.exportsModules ?? [];
-    meta.exportsWithParams = baseInitMeta?.exportsWithParams ?? [];
     meta.exportsWithModRefId = baseInitMeta?.exportsWithModRefId ?? [];
   }
 

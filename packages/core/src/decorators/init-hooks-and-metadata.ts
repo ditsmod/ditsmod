@@ -9,7 +9,7 @@ import { ModuleWithParams } from '#types/module-metadata.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 
 export type BaseInitRawMeta<T extends object = object> = {
-  imports?: XOR<ModRefId, { modRefId: ModRefId } & T>[];
+  imports?: ({ modRefId: ModRefId } & T)[];
   exports?: any[];
 };
 
@@ -124,13 +124,8 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
  * Assigned to the `initHooksAndRawMeta.baseInitMeta` property.
  */
 export class BaseInitMeta<T extends object = AnyObj> {
-  importsModules?: ModuleType[];
-  importsWithParams?: ModuleWithParams[];
   importsWithModRefId?: ({ modRefId: ModuleWithParams } & T)[];
-
-  exportsModules?: ModuleType[];
-  exportsWithParams?: ModuleWithParams[];
-  exportsWithModRefId?: ({ modRefId: ModuleWithParams } & T)[];
+  exportsWithModRefId?: ModuleWithParams[];
 }
 
 export interface InitMetaMap {
