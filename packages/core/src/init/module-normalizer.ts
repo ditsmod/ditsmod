@@ -32,7 +32,7 @@ import { isExtensionConfig } from '#extension/type-guards.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { mergeArrays } from '#utils/merge-arrays.js';
 import { AllInitHooks } from './module-manager.js';
-import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
+import { InitHooksAndRawMeta, InitParamsMap } from '#decorators/init-hooks-and-metadata.js';
 
 /**
  * Normalizes and validates module metadata.
@@ -376,7 +376,7 @@ export class ModuleNormalizer {
           imp.modRefId.initParams ??= new Map();
           imp.modRefId.initParams.set(decorator, params);
         } else {
-          imp.modRefId = { module: imp.modRefId, initParams: new Map([[decorator, params]]) };
+          imp.modRefId = { module: imp.modRefId, initParams: new Map([[decorator, params]]) as InitParamsMap };
         }
         if (!baseMeta.importsWithParams.includes(imp.modRefId)) {
           baseMeta.importsWithParams.push(imp.modRefId);

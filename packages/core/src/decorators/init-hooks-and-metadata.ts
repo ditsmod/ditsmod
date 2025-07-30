@@ -120,10 +120,19 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
 export interface InitMetaMap {
   set<T extends AnyObj>(decorator: AddDecorator<any, T>, params: T): this;
   get<T extends AnyObj>(decorator: AddDecorator<any, T>): T | undefined;
-  forEach<T extends AnyObj>(
-    callbackfn: (params: T, decorator: AnyFn, map: Map<AnyFn, T>) => void,
-    thisArg?: any,
-  ): void;
+  forEach<T extends AnyObj>(callbackfn: (params: T, decorator: AnyFn, map: Map<AnyFn, T>) => void, thisArg?: any): void;
+  /**
+   * Returns an iterable of keys in the map
+   */
+  keys(): MapIterator<AnyFn>;
+  values<T extends AnyObj>(): MapIterator<T>;
+  readonly size: number;
+}
+
+export interface InitParamsMap {
+  set<T extends AnyObj>(decorator: AddDecorator<BaseInitRawMeta<T>, any>, params: T): this;
+  get<T extends AnyObj>(decorator: AddDecorator<BaseInitRawMeta<T>, any>): T | undefined;
+  forEach<T extends AnyObj>(callbackfn: (params: T, decorator: AnyFn, map: Map<AnyFn, T>) => void, thisArg?: any): void;
   /**
    * Returns an iterable of keys in the map
    */
@@ -177,6 +186,6 @@ class MyInitHooksAndRawMeta extends InitHooksAndRawMeta<RawMeta> {}
 ```
  */
 
-export interface AddDecorator<T extends { imports?: (ModRefId | { modRefId: ModRefId })[] }, R> {
+export interface AddDecorator<T extends BaseInitRawMeta, R> {
   (data?: T): any;
 }

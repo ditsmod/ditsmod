@@ -1,7 +1,8 @@
 import { ProvidersMetadata } from '#types/providers-metadata.js';
-import { AnyFn, AnyObj, ModuleType } from '#types/mix.js';
+import { AnyObj, ModuleType } from '#types/mix.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { ExtensionClass } from '#extension/extension-types.js';
+import { InitParamsMap } from '#decorators/init-hooks-and-metadata.js';
 
 export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<ProvidersMetadata> {
   /**
@@ -35,7 +36,7 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
  * the module with the `featureModule` or `rootModule` decorator.
  */
 export interface ModuleWithParams<M extends AnyObj = AnyObj> extends BaseModuleWithParams<M>, FeatureModuleParams {
-  initParams?: Map<AnyFn, any>;
+  initParams?: InitParamsMap;
 }
 /**
  * Metadata with this type is created when the `parentMeta: NormalizedMeta` property is added to `BaseModuleWithParams`.
