@@ -13,7 +13,7 @@ import { NormalizedMeta } from '#types/normalized-meta.js';
 import { AddDecorator, BaseInitMeta } from '#decorators/init-hooks-and-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { BaseInitRawMeta, InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
-import { isModuleWithSrcInitMeta } from '#utils/type-guards.js';
+import { isModuleWithParams } from '#utils/type-guards.js';
 
 describe('ModuleManager', () => {
   console.log = jest.fn();
@@ -719,9 +719,8 @@ describe('ModuleManager', () => {
     class InitHooksAndRawMeta1 extends InitHooksAndRawMeta<RawMeta> {
       override normalize({ modRefId }: NormalizedMeta): InitMeta {
         const baseInitMeta = { importsWithModRefId: this.baseInitMeta?.importsWithModRefId };
-        if (isModuleWithSrcInitMeta(modRefId)) {
-          const initMeta = modRefId.srcInitMeta.get(initSome);
-          const params = initMeta?.importsWithModRefId?.find((param) => param.modRefId === modRefId);
+        if (isModuleWithParams(modRefId)) {
+          const params = modRefId.initParams?.get(initSome);
           return { path: params?.path };
         }
 
@@ -741,5 +740,57 @@ describe('ModuleManager', () => {
     mock.scanRootModule(AppModule);
     const mod1 = mock.getMetadata(moduleWithParams)!;
     expect(mod1.initMeta.get(initSome)).toMatchObject({ path: 'some-prefix' });
+  });
+
+  it('get initParams for three different modules with params', () => {
+    interface RawMeta1 extends BaseInitRawMeta<{ one?: string }> {}
+    interface InitMeta1 extends BaseInitMeta<{ two?: string }> {
+      paramsForInitMeta1?: any;
+    }
+    interface RawMeta2 extends BaseInitRawMeta<{ three?: string }> {}
+    interface InitMeta2 extends BaseInitMeta<{ four?: string }> {
+      paramsForInitMeta2?: any;
+    }
+    class InitHooksAndRawMeta1 extends InitHooksAndRawMeta<RawMeta1> {}
+    class InitHooksAndRawMeta2 extends InitHooksAndRawMeta<RawMeta2> {}
+    const initSome1: AddDecorator<RawMeta1, InitMeta1> = makeClassDecorator((d) => new InitHooksAndRawMeta1(d));
+    const initSome2: AddDecorator<RawMeta2, InitMeta2> = makeClassDecorator((d) => new InitHooksAndRawMeta2(d));
+
+    @featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
+    class Module1 {}
+
+    @featureModule({ providersPerApp: [{ token: 'token2', useValue: 'value2' }] })
+    class Module2 {}
+
+    @featureModule({ providersPerApp: [{ token: 'token3', useValue: 'value3' }] })
+    class Module3 {}
+
+    const moduleWithParams1: ModuleWithParams = { module: Module1 };
+    const moduleWithParams2: ModuleWithParams = { module: Module2 };
+    const moduleWithParams3: ModuleWithParams = { module: Module3 };
+
+    @initSome1({
+      imports: [
+        { modRefId: moduleWithParams1, one: 'initSome1-1' },
+        { modRefId: moduleWithParams3, one: 'initSome1-3' },
+      ],
+    })
+    @initSome2({
+      imports: [
+        { modRefId: moduleWithParams2, three: 'initSome2-2' },
+        { modRefId: moduleWithParams3, three: 'initSome2-3' },
+      ],
+    })
+    @rootModule()
+    class AppModule {}
+
+    mock.scanRootModule(AppModule);
+
+    function getParams(moduleWithParams: ModuleWithParams) {
+      return [...(moduleWithParams.initParams?.values() || [])];
+    }
+    expect(getParams(moduleWithParams1)).toEqual([{ one: 'initSome1-1' }]);
+    expect(getParams(moduleWithParams2)).toEqual([{ three: 'initSome2-2' }]);
+    expect(getParams(moduleWithParams3)).toEqual([{ three: 'initSome2-3' }, { one: 'initSome1-3' }]);
   });
 });
