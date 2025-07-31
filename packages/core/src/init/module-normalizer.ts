@@ -388,7 +388,7 @@ export class AppModule {}
    */
   protected addInitHooksFromModuleUsageContext(baseMeta: NormalizedMeta, allInitHooks: AllInitHooks) {
     (baseMeta.modRefId as ModuleWithParams).initParams?.forEach((params, decorator) => {
-      if (!baseMeta.mInitHooksAndRawMeta.get(decorator)) {
+      if (!baseMeta.mInitHooksAndRawMeta.has(decorator)) {
         const initHooks = allInitHooks.get(decorator)!;
         const newInitHooksAndRawMeta = initHooks.clone();
         baseMeta.allInitHooks.set(decorator, newInitHooksAndRawMeta);

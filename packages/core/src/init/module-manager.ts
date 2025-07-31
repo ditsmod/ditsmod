@@ -250,6 +250,8 @@ export class ModuleManager {
       this.scanedModules.add(input);
     }
 
+    this.callInitHooksAfterScan(baseMeta);
+
     if (baseMeta.id) {
       this.mapId.set(baseMeta.id, modRefId);
       this.systemLogMediator.moduleHasId(this, baseMeta.id);
@@ -259,6 +261,23 @@ export class ModuleManager {
     this.map.set(modRefId, baseMeta);
     baseMeta.allInitHooks.forEach((initHooks, decorator) => allInitHooks.set(decorator, initHooks));
     return baseMeta;
+  }
+
+  /**
+   * The current module may sometimes lack the init decorators that are present in imported modules.
+   * In such cases, after scanning all imported modules, the collected init hooks from them are also
+   * executed for the current module. The result of executing these init hooks is objects with initialized
+   * properties, into which certain metadata can later be imported.
+   */
+  protected callInitHooksAfterScan(baseMeta: NormalizedMeta) {
+    baseMeta.allInitHooks.forEach((initHooks, decorator) => {
+      if (!baseMeta.mInitHooksAndRawMeta.has(decorator)) {
+        const meta = initHooks.clone().normalize(baseMeta);
+        if (meta) {
+          baseMeta.initMeta.set(decorator, meta);
+        }
+      }
+    });
   }
 
   protected copyMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(baseMeta: NormalizedMeta) {
