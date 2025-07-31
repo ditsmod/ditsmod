@@ -2,18 +2,13 @@ import {
   clearDebugClassNames,
   featureModule,
   forwardRef,
-  GlobalProviders,
   inject,
   injectable,
   Injector,
   KeyRegistry,
-  MetadataPerMod1,
-  ModRefId,
   ModuleExtract,
-  ShallowModulesImporter as ShallowModulesImporterBase,
   ModuleManager,
   ModuleType,
-  ModuleWithParams,
   Provider,
   rootModule,
   SystemErrorMediator,
@@ -23,6 +18,8 @@ import {
   ExtensionCounters,
   NormalizedMeta,
   DeepModulesImporter as DeepModulesImporterBase,
+  ModuleWithParams,
+  ModuleWithInitParams,
 } from '@ditsmod/core';
 
 import { CanActivate, guard } from '#interceptors/guard.js';
@@ -30,17 +27,9 @@ import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js'
 import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js';
 import { RequestContext } from '#services/request-context.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
-import { DeepModulesImporter } from '#init/rest-deep-modules-importer.js';
-import { RestInitMeta } from './rest-normalized-meta.js';
-import { RestImportedTokensMap, RestProvidersForMod } from './types.js';
-import { Level } from '#types/types.js';
-import { ShallowModulesImporter } from './shallow-modules-importer.js';
+import { RestMetadataPerMod2 } from './types.js';
 
 describe('DeepModulesImporter', () => {
-  let mock: DeepModulesImporterMock;
-  let systemLogMediator: SystemLogMediator;
-  let errorMediator: SystemErrorMediator;
-
   class AppInitializerMock extends BaseAppInitializer {
     override baseMeta = new NormalizedMeta();
 
@@ -74,33 +63,6 @@ describe('DeepModulesImporter', () => {
     }
   }
 
-  class DeepModulesImporterMock extends DeepModulesImporter {
-    declare unfinishedSearchDependecies: [ModuleType | ModuleWithParams, Provider][];
-    override resolveImportedProviders(
-      targetProviders: RestInitMeta,
-      importedTokensMap: RestImportedTokensMap,
-      levels: Level[],
-    ) {
-      return super.resolveImportedProviders(targetProviders, importedTokensMap, levels);
-    }
-    override addToUnfinishedSearchDependecies(module: ModuleType | ModuleWithParams, provider: Provider) {
-      return super.addToUnfinishedSearchDependecies(module, provider);
-    }
-    override deleteFromUnfinishedSearchDependecies(module: ModuleType | ModuleWithParams, provider: Provider) {
-      return super.deleteFromUnfinishedSearchDependecies(module, provider);
-    }
-
-    override grabDependecies(
-      targetMeta: RestProvidersForMod,
-      sourceModule: ModRefId,
-      importedProvider: Provider,
-      levels: Level[],
-      path: any[] = [],
-    ) {
-      return super.grabDependecies(targetMeta, sourceModule, importedProvider, levels, path);
-    }
-  }
-
   function getMetadataPerMod2(mod: ModuleType) {
     const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
     const errorMediator = new SystemErrorMediator({ moduleName: 'fakeName' });
@@ -114,7 +76,7 @@ describe('DeepModulesImporter', () => {
     const deepModulesImporter = new DeepModulesImporterBase({
       moduleManager,
       shallowImports,
-      providersPerApp: moduleManager.providersPerApp,
+      providersPerApp: initializer.baseMeta.providersPerApp,
       log: systemLogMediator,
       errorMediator,
     });
@@ -319,10 +281,9 @@ describe('DeepModulesImporter', () => {
       constructor(public service3: Service3) {}
     }
 
-    @initRest({ providersPerRou: [Service2, Service3, Service4] })
+    @initRest({ providersPerRou: [Service2, Service3, Service4], exports: [Service4] })
     @featureModule({
       imports: [Module1],
-      exports: [Service4],
     })
     class Module2 {}
 
@@ -373,8 +334,8 @@ describe('DeepModulesImporter', () => {
     @featureModule({ providersPerMod: [Service1], exports: [Service1] })
     class Module1 {}
 
-    @initRest({ providersPerRou: [Service2] })
-    @featureModule({ imports: [Module1], exports: [Service2] })
+    @initRest({ providersPerRou: [Service2], exports: [Service2] })
+    @featureModule({ imports: [Module1] })
     class Module2 {}
 
     @rootModule({
@@ -408,8 +369,8 @@ describe('DeepModulesImporter', () => {
     @featureModule({ providersPerMod: [Service1], exports: [Service1] })
     class Module1 {}
 
-    @initRest({ providersPerRou: [Service2] })
-    @featureModule({ imports: [Module1], exports: [Service2] })
+    @initRest({ providersPerRou: [Service2], exports: [Service2] })
+    @featureModule({ imports: [Module1] })
     class Module2 {}
 
     @rootModule({
@@ -446,18 +407,17 @@ describe('DeepModulesImporter', () => {
       constructor(public service2: Service2) {}
     }
 
-    @initRest({ providersPerRou: [Service1] })
-    @featureModule({ exports: [Service1] })
+    @initRest({ providersPerRou: [Service1], exports: [Service1] })
+    @featureModule()
     class Module1 {}
 
-    @initRest({ providersPerRou: [Service2] })
-    @featureModule({ imports: [Module1], exports: [Service2] })
+    @initRest({ providersPerRou: [Service2], exports: [Service2] })
+    @featureModule({ imports: [Module1] })
     class Module2 {}
 
-    @initRest({ providersPerRou: [Service3] })
+    @initRest({ providersPerRou: [Service3], exports: [Service3] })
     @rootModule({
       imports: [Module2],
-      exports: [Service3],
     })
     class Module3 {}
 
@@ -481,12 +441,12 @@ describe('DeepModulesImporter', () => {
       }
     }
 
-    @initRest({ providersPerRou: [Service1] })
-    @featureModule({ exports: [Service1] })
+    @initRest({ providersPerRou: [Service1], exports: [Service1] })
+    @featureModule()
     class Module1 {}
 
-    @initRest({ providersPerRou: [Service2] })
-    @rootModule({ imports: [Module1], exports: [Service2] })
+    @initRest({ providersPerRou: [Service2], exports: [Service2] })
+    @rootModule({ imports: [Module1] })
     class Module2 {}
 
     const mMetadataPerMod2 = getMetadataPerMod2(Module2);
@@ -503,6 +463,7 @@ describe('DeepModulesImporter', () => {
     @injectable()
     class Service1 {}
 
+    @initRest()
     @featureModule({ providersPerMod: [Service1], exports: [Service1] })
     class Module1 {}
 
@@ -533,27 +494,29 @@ describe('DeepModulesImporter', () => {
       }
     }
 
-    const mod1WithParams = { module: Module1, guards: [BearerGuard1] };
+    const mod1WithParams: ModuleWithInitParams = { module: Module1, initParams: new Map() };
+    mod1WithParams.initParams.set(initRest, { guards: [BearerGuard1] });
     const provider: Provider = { token: BearerGuard1, useClass: BearerGuard2 };
 
     @initRest({ providersPerRou: [provider, Service0, Service2] })
     @rootModule({ imports: [mod1WithParams] })
-    class Module2 {}
+    class AppModule {}
 
-    const mMetadataPerMod2 = getMetadataPerMod2(Module2);
+    const mMetadataPerMod2 = getMetadataPerMod2(AppModule);
     const mod1 = mMetadataPerMod2.get(mod1WithParams);
-    // expect(mod1?.guards1.at(0)?.guard).toBe(BearerGuard1);
+    const restMetadataPerMod2 = mod1?.deepImportedModules.get(initRest) as RestMetadataPerMod2;
+    expect(restMetadataPerMod2.guards1.at(0)?.guard).toBe(BearerGuard1);
 
     // Guards per a module must have ref to host module meta.
-    // expect(mod1?.guards1.at(0)?.meta).toBe(shallowImportsBase.get(Module2)!.meta);
+    expect(restMetadataPerMod2.guards1.at(0)?.baseMeta).toBe(mMetadataPerMod2.get(AppModule)!.baseMeta);
 
     // The injector must have enough providers to create a guard instance.
-    // const injector = Injector.resolveAndCreate(mod1?.guards1.at(0)?.meta.providersPerRou || []);
-    // expect(() => injector.get(BearerGuard1)).not.toThrow();
-    // expect(injector.get(BearerGuard1)).toBeInstanceOf(BearerGuard2);
+    const injector = Injector.resolveAndCreate(restMetadataPerMod2.guards1.at(0)?.meta.providersPerRou || []);
+    expect(() => injector.get(BearerGuard1)).not.toThrow();
+    expect(injector.get(BearerGuard1)).toBeInstanceOf(BearerGuard2);
 
     // Corresponding values are created for the entire chain of dependencies.
     const { id } = KeyRegistry.get(Service0);
-    // expect(injector.getValue(id)).toBeInstanceOf(Service0);
+    expect(injector.getValue(id)).toBeInstanceOf(Service0);
   });
 });
