@@ -21,7 +21,6 @@ import { BaseAppOptions } from '#init/base-app-options.js';
 describe('BaseAppInitializer', () => {
   type ModRefId = ModuleType | ModuleWithParams;
 
-  @injectable()
   class AppInitializerMock extends BaseAppInitializer {
     override baseMeta = new NormalizedMeta();
 

@@ -1,7 +1,6 @@
 import {
   ModRefId,
   Provider,
-  ExtensionCounters,
   ModuleManager,
   SystemLogMediator,
   SystemErrorMediator,
@@ -39,7 +38,6 @@ export class DeepModulesImporter {
   protected unfinishedSearchDependecies: [ModRefId, Provider][] = [];
   protected tokensPerApp: any[];
   protected extensionsTokens: any[] = [];
-  protected extensionCounters = new ExtensionCounters();
 
   protected metadataPerMod1: RestMetadataPerMod1;
   protected moduleManager: ModuleManager;

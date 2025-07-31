@@ -10,7 +10,7 @@ import {
   RestMetadataPerMod1,
 } from '#init/types.js';
 import { RestModRefId, RestInitMeta } from '#init/rest-normalized-meta.js';
-import { DeepModulesImporter } from '#init/deep-modules-importer.js';
+import { DeepModulesImporter } from '#init/rest-deep-modules-importer.js';
 import { RestGlobalProviders } from '#types/types.js';
 import { RestModule } from '#init/rest.module.js';
 
