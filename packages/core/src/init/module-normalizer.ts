@@ -391,9 +391,10 @@ export class AppModule {}
       if (!baseMeta.mInitHooksAndRawMeta.get(decorator)) {
         const initHooks = allInitHooks.get(decorator)!;
         const newInitHooksAndRawMeta = initHooks.clone();
+        baseMeta.allInitHooks.set(decorator, newInitHooksAndRawMeta);
         this.callInitHook(baseMeta, decorator, newInitHooksAndRawMeta);
 
-        // For `this.quickCheckMetadata()` only.
+        // This is need for `this.quickCheckMetadata()` only.
         baseMeta.mInitHooksAndRawMeta.set(decorator, newInitHooksAndRawMeta);
       }
     });
