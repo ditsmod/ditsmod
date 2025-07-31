@@ -9,7 +9,6 @@ import {
   Injector,
   MetadataPerMod1,
   ModRefId,
-  ShallowModulesImporter,
   ModuleManager,
   ModuleType,
   ModuleWithParams,
@@ -25,6 +24,7 @@ import { HTTP_INTERCEPTORS } from '#types/constants.js';
 import { Req } from '#services/request.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
+import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 
 describe('HttpInterceptor', () => {
   const jestFn = jest.fn((interceptorName: string) => interceptorName);
@@ -151,18 +151,15 @@ describe('mix per app, per mod or per req', () => {
     override moduleName = 'MockModule';
     override baseMeta = new NormalizedMeta();
     override shallowImportsBase = new Map<ModuleType, MetadataPerMod1>();
-    override importedProvidersPerMod = new Map<any, ImportObj>();
     override importedProvidersPerRou = new Map<any, ImportObj>();
     override importedProvidersPerReq = new Map<any, ImportObj>();
-    override importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
     override importedMultiProvidersPerRou = new Map<ModRefId, Provider[]>();
     override importedMultiProvidersPerReq = new Map<ModRefId, Provider[]>();
-    override importedExtensions = new Map<ModRefId, Provider[]>();
     // override guards1: GuardPerMod1[] = [];
 
-    override exportGlobalProviders(moduleManager: ModuleManager, providersPerApp: Provider[]) {
-      return super.exportGlobalProviders(moduleManager, providersPerApp);
-    }
+    // override exportGlobalProviders(moduleManager: ModuleManager, providersPerApp: Provider[]) {
+    //   return super.exportGlobalProviders(moduleManager, providersPerApp);
+    // }
   }
 
   let mock: MockShallowModulesImporter;

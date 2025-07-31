@@ -43,7 +43,7 @@ class MockModuleManager extends ModuleManager {
 
 beforeEach(() => {
   clearDebugClassNames();
-  const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName', path: '' });
+  const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
   mock = new MockModuleManager(systemLogMediator);
 });
 
@@ -78,7 +78,7 @@ it('imports and appends with gruards for some modules', () => {
 
   const ModuleWithParams: ModuleWithParams = {
     //
-    path: 'module1',
+    // path: 'module1',
     module: Module1,
     // guards: [Guard1],
   };

@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals';
 import {
   ModuleType,
   ModuleWithParams,
@@ -24,7 +25,7 @@ import { RequestContext } from '#services/request-context.js';
 import { RestModule } from './rest.module.js';
 
 describe('ModuleManager', () => {
-  // console.log = jest.fn();
+  console.log = jest.fn();
   type ModuleId = string | ModuleType | ModuleWithParams;
 
   class MockModuleManager extends ModuleManager {
