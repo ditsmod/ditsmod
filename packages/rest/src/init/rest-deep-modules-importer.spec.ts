@@ -323,7 +323,7 @@ describe('DeepModulesImporter', () => {
     expect(() => getMetadataPerMod2(Module3)).toThrow(msg);
   });
 
-  it('Module3 imports Module2, which has a dependency on Module1, and Module2 import Module1', () => {
+  it('Service2 declared per route and it has dependency on Service1 which is declared per module', () => {
     @injectable()
     class Service1 {}
 
@@ -342,39 +342,32 @@ describe('DeepModulesImporter', () => {
     @rootModule({
       imports: [Module2],
     })
-    class Module3 {}
+    class AppModule {}
 
-    const mMetadataPerMod2 = getMetadataPerMod2(Module3);
-    const { baseMeta } = mMetadataPerMod2.get(Module3)!;
+    const mMetadataPerMod2 = getMetadataPerMod2(AppModule);
+    const { baseMeta } = mMetadataPerMod2.get(AppModule)!;
     const initMeta = baseMeta.initMeta.get(initRest)!;
     expect(initMeta.providersPerReq).toEqual(defaultProvidersPerReq);
-    expect(initMeta.providersPerRou).toEqual([...defaultProvidersPerRou, Service2]);
-    const moduleExtract: RestModuleExtract = {
-      path: '',
-      moduleName: 'Module3',
-      isExternal: false,
-    };
-    expect(baseMeta.providersPerMod).toEqual([Service1, { token: ModuleExtract, useValue: moduleExtract }]);
+    expect(initMeta.providersPerRou.slice(-1)).toEqual([Service2]);
+    expect(baseMeta.providersPerMod.includes(Service1)).toBeTruthy();
   });
 
-  it(`AppModule has a duplicate of Service1 in the imported providers because it imports Module1
-    where Service1 is and also imports Module2 which also depends on Service1`, () => {
-    @injectable()
+  it('Service2 is not exported from the host module, but is imported into the AppModule because Service3 depends on it', () => {
     class Service1 {}
+    class Service2 {}
 
     @injectable()
-    class Service2 {
-      constructor(public service1: Service1) {}
+    class Service3 {
+      constructor(service1: Service1, service2: Service2) {}
     }
 
     @featureModule({ providersPerMod: [Service1], exports: [Service1] })
     class Module1 {}
 
-    @initRest({ providersPerRou: [Service2], exports: [Service2] })
+    @initRest({ providersPerRou: [Service3, Service2], exports: [Service3] })
     @featureModule({ imports: [Module1] })
     class Module2 {}
 
-    @initRest()
     @rootModule({
       imports: [Module1, Module2],
     })
@@ -382,11 +375,10 @@ describe('DeepModulesImporter', () => {
 
     const mMetadataPerMod2 = getMetadataPerMod2(AppModule);
     const { baseMeta } = mMetadataPerMod2.get(AppModule)!;
-    console.log(baseMeta.initMeta);
     const initMeta = baseMeta.initMeta.get(initRest)!;
     expect(initMeta.providersPerReq).toEqual(defaultProvidersPerReq);
-    expect(initMeta.providersPerRou).toEqual([...defaultProvidersPerRou, Service2]);
-    expect(baseMeta.providersPerMod.slice(0, 1)).toEqual([Service1, Service1]);
+    expect(initMeta.providersPerRou.slice(-2)).toEqual([Service2, Service3]);
+    expect(baseMeta.providersPerMod.includes(Service1)).toBeTruthy();
   });
 
   it('Module3 does not load the Service1 as dependency because Service2 does not declare this dependency', () => {

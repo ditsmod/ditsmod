@@ -101,6 +101,7 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
    * recursively collects providers for them from the corresponding modules.
    */
   importModulesDeep(config: {
+    parent: AnyObj;
     metadataPerMod1: { baseMeta: NormalizedMeta } & AnyObj;
     moduleManager: ModuleManager;
     shallowImports: ShallowImports;

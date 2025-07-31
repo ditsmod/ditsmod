@@ -66,6 +66,7 @@ export class DeepModulesImporter {
       baseMeta.allInitHooks.forEach((initHooks, decorator) => {
         const shallowImportedModule = shallowImportedModules.get(decorator)!;
         const deepImports = initHooks.importModulesDeep({
+          parent: this,
           metadataPerMod1: shallowImportedModule,
           moduleManager: this.moduleManager,
           shallowImports: this.shallowImports,
@@ -214,7 +215,7 @@ export class DeepModulesImporter {
    * @param importedProvider Imported provider.
    * @param dep ReflectiveDependecy with token for dependecy of imported provider.
    */
-  protected grabImportedDependecies(
+  grabImportedDependecies(
     targetProviders: ProvidersForMod,
     sourceModule1: ModRefId,
     importedProvider: Provider,

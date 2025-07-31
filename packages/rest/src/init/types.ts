@@ -8,6 +8,7 @@ import {
   ShallowImports,
   SystemErrorMediator,
   SystemLogMediator,
+  DeepModulesImporter,
 } from '@ditsmod/core';
 
 import { GuardPerMod1 } from '#interceptors/guard.js';
@@ -81,6 +82,7 @@ export interface ImportModulesShallowConfig {
 }
 
 export interface DeepModulesImporterConfig {
+  parent: DeepModulesImporter;
   metadataPerMod1: RestMetadataPerMod1;
   moduleManager: ModuleManager;
   shallowImports: ShallowImports;

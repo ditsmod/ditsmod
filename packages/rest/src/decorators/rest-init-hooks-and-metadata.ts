@@ -10,7 +10,7 @@ import {
   RestMetadataPerMod1,
 } from '#init/types.js';
 import { RestModRefId, RestInitMeta } from '#init/rest-normalized-meta.js';
-import { DeepModulesImporter } from '#init/rest-deep-modules-importer.js';
+import { RestDeepModulesImporter } from '#init/rest-deep-modules-importer.js';
 import { RestGlobalProviders } from '#types/types.js';
 import { RestModule } from '#init/rest.module.js';
 
@@ -39,7 +39,7 @@ class RestInitHooksAndRawMeta extends InitHooksAndRawMeta<RestInitRawMeta> {
   }
 
   override importModulesDeep(config: DeepModulesImporterConfig) {
-    return new DeepModulesImporter(config).importModulesDeep();
+    return new RestDeepModulesImporter(config).importModulesDeep();
   }
 }
 

@@ -15,6 +15,7 @@ import {
   ReflectiveDependency,
   getProviderName,
   ShallowImports,
+  DeepModulesImporter,
 } from '@ditsmod/core';
 
 import { Level } from '#types/types.js';
@@ -34,10 +35,9 @@ import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
  * By analyzing the dependencies of the providers returned by `ShallowModulesImporter`,
  * recursively collects providers for them from the corresponding modules.
  */
-export class DeepModulesImporter {
+export class RestDeepModulesImporter {
   protected unfinishedSearchDependecies: [ModRefId, Provider][] = [];
   protected tokensPerApp: any[];
-  protected tokensPerMod: any[];
 
   protected metadataPerMod1: RestMetadataPerMod1;
   protected moduleManager: ModuleManager;
@@ -45,8 +45,10 @@ export class DeepModulesImporter {
   protected providersPerApp: Provider[];
   protected log: SystemLogMediator;
   protected errorMediator: SystemErrorMediator;
+  protected parent: DeepModulesImporter;
 
   constructor({
+    parent,
     metadataPerMod1,
     moduleManager,
     shallowImports,
@@ -54,6 +56,7 @@ export class DeepModulesImporter {
     log,
     errorMediator,
   }: DeepModulesImporterConfig) {
+    this.parent = parent;
     this.metadataPerMod1 = metadataPerMod1;
     this.moduleManager = moduleManager;
     this.shallowImports = shallowImports;
@@ -63,11 +66,8 @@ export class DeepModulesImporter {
   }
 
   importModulesDeep(): RestMetadataPerMod2 | undefined {
-    const levels: Level[] = ['Rou', 'Req'];
+    const levels: Level[] = ['Req', 'Rou'];
     this.tokensPerApp = getTokens(this.providersPerApp);
-    this.tokensPerMod = getTokens(this.metadataPerMod1.baseMeta.providersPerMod).concat(
-      getTokens(this.metadataPerMod1.baseMeta.exportedMultiProvidersPerMod),
-    );
     if (!this.metadataPerMod1) {
       return;
     }
@@ -140,7 +140,7 @@ export class DeepModulesImporter {
         }
       }
 
-      if (!found && !this.tokensPerMod.includes(dep.token) && !this.tokensPerApp.includes(dep.token)) {
+      if (!found && !this.hasTokenPerMod(srcBaseMeta, dep.token) && !this.tokensPerApp.includes(dep.token)) {
         this.grabImportedDependecies(targetProviders, srcModRefId, importedProvider, levels, path, dep);
       }
     }
@@ -179,8 +179,8 @@ export class DeepModulesImporter {
       }
     }
 
-    if (!found && dep.required) {
-      this.throwError(metadataPerMod1.baseMeta, importedProvider, path, dep.token, levels);
+    if (!found) {
+      this.parent.grabImportedDependecies(this.metadataPerMod1.baseMeta, srcModRefId1, importedProvider, ['Mod'], path, dep);
     }
   }
 
@@ -214,7 +214,7 @@ export class DeepModulesImporter {
         }
       }
 
-      if (!found && !this.tokensPerMod.includes(dep.token) && !this.tokensPerApp.includes(dep.token)) {
+      if (!found && !this.hasTokenPerMod(baseMeta, dep.token) && !this.tokensPerApp.includes(dep.token)) {
         if (this.hasUnresolvedImportedDependecies(module, levels, dep)) {
           return true;
         }
@@ -251,22 +251,6 @@ export class DeepModulesImporter {
       return true;
     }
     return false;
-  }
-
-  protected throwError(baseMeta: NormalizedMeta, provider: Provider, path: any[], token: any, levels: Level[]) {
-    path = [provider, ...path, token];
-    const strPath = getTokens(path)
-      .map((t) => t.name || t)
-      .join(' -> ');
-
-    const levelsPath = levels
-      .concat('App' as any, 'Mod' as any)
-      .map((level) => `providersPer${level}`)
-      .join(', ');
-    const partMsg = path.length > 1 ? `(${strPath}, searching in ${levelsPath})` : levelsPath;
-    // this.log.showProvidersInLogs(this, meta.name, meta.providersPerReq, meta.providersPerRou, meta.providersPerMod);
-
-    this.errorMediator.throwNoProviderDuringResolveImports(baseMeta.name, token.name || token, partMsg);
   }
 
   protected getDependencies(provider: Provider) {
@@ -325,5 +309,9 @@ export class DeepModulesImporter {
       msg += ` It is started from ${prefixNames}.`;
     }
     throw new Error(msg);
+  }
+
+  protected hasTokenPerMod(baseMeta: NormalizedMeta, token: any) {
+    return getTokens(baseMeta.providersPerMod).concat(getTokens(baseMeta.exportedMultiProvidersPerMod)).includes(token);
   }
 }
