@@ -325,7 +325,7 @@ export class DeepModulesImporter {
       .concat('App' as any)
       .map((level) => `providersPer${level}`)
       .join(', ');
-    const partMsg = path.length > 1 ? `(${strPath}, searching in ${levelsPath})` : levelsPath;
+    const partMsg = path.length > 1 ? `(required by ${strPath}). Searched in ${levelsPath}` : levelsPath;
     // this.log.showProvidersInLogs(this, meta.name, meta.providersPerReq, meta.providersPerRou, meta.providersPerMod);
 
     this.errorMediator.throwNoProviderDuringResolveImports(meta.name, token.name || token, partMsg);

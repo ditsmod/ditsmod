@@ -17,8 +17,7 @@ import {
   BaseAppOptions,
   ExtensionCounters,
   NormalizedMeta,
-  DeepModulesImporter as DeepModulesImporterBase,
-  ModuleWithParams,
+  DeepModulesImporter,
   ModuleWithInitParams,
 } from '@ditsmod/core';
 
@@ -74,7 +73,7 @@ describe('DeepModulesImporter', () => {
     initializer.bootstrapProvidersPerApp();
     systemLogMediator.flush();
     const shallowImports = initializer.collectProvidersShallow(moduleManager);
-    const deepModulesImporter = new DeepModulesImporterBase({
+    const deepModulesImporter = new DeepModulesImporter({
       moduleManager,
       shallowImports,
       providersPerApp: initializer.baseMeta.providersPerApp,
@@ -318,8 +317,8 @@ describe('DeepModulesImporter', () => {
     @rootModule({ imports: [Module1, Module2] })
     class AppModule {}
 
-    let msg = 'Resolving imported dependencies for Module2 failed: no provider for Service1! (Service2 -> Service1';
-    msg += ', searching in providersPerRou, providersPerMod, providersPerApp';
+    let msg = 'for Module2: no provider for Service1! (required by Service2 -> Service1). ';
+    msg += 'Searched in providersPerRou, providersPerMod, providersPerApp';
     expect(() => getMetadataPerMod2(AppModule)).toThrow(msg);
   });
 
