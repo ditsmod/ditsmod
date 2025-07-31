@@ -222,6 +222,7 @@ export class DeepModulesImporter {
     levels: Level[],
     path: any[] = [],
     dep: ReflectiveDependency,
+    childLevels: string[] = [],
   ) {
     let found = false;
     const metadataPerMod1 = this.shallowImports.get(sourceModule1)!;
@@ -242,7 +243,7 @@ export class DeepModulesImporter {
     }
 
     if (!found && dep.required) {
-      this.throwError(metadataPerMod1.baseMeta, importedProvider, path, dep.token, levels);
+      this.throwError(metadataPerMod1.baseMeta, importedProvider, path, dep.token, [...childLevels, ...levels]);
     }
   }
 
@@ -314,7 +315,7 @@ export class DeepModulesImporter {
     return false;
   }
 
-  protected throwError(meta: NormalizedMeta, provider: Provider, path: any[], token: any, levels: Level[]) {
+  protected throwError(meta: NormalizedMeta, provider: Provider, path: any[], token: any, levels: string[]) {
     path = [provider, ...path, token];
     const strPath = getTokens(path)
       .map((t) => t.name || t)

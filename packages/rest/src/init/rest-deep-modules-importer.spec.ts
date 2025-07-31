@@ -298,8 +298,8 @@ describe('DeepModulesImporter', () => {
     expect(() => getMetadataPerMod2(Module3)).toThrow(msg);
   });
 
-  it(`Module3 imports Module2, which has a dependency on Module1, but Module2 does not import Module1;
-    although Module3 imports Module1, an error should be thrown`, () => {
+  it(`AppModule imports Module2, which has a dependency on Module1, but Module2 does not import Module1;
+    although AppModule imports Module1, an error should be thrown`, () => {
     @injectable()
     class Service1 {}
 
@@ -311,16 +311,16 @@ describe('DeepModulesImporter', () => {
       constructor(public service1: Service1) {}
     }
 
-    @initRest({ providersPerRou: [Service2] })
-    @featureModule({ exports: [Service2] })
+    @initRest({ providersPerRou: [Service2], exports: [Service2] })
+    @featureModule()
     class Module2 {}
 
     @rootModule({ imports: [Module1, Module2] })
-    class Module3 {}
+    class AppModule {}
 
     let msg = 'Resolving imported dependecies for Module2 failed: no provider for Service1! (Service2 -> Service1';
-    msg += ', searching in providersPerRou, providersPerMod';
-    expect(() => getMetadataPerMod2(Module3)).toThrow(msg);
+    msg += ', searching in providersPerRou, providersPerMod, providersPerApp';
+    expect(() => getMetadataPerMod2(AppModule)).toThrow(msg);
   });
 
   it('Service2 declared per route and it has dependency on Service1 which is declared per module', () => {

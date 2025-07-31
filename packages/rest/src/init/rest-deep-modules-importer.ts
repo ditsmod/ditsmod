@@ -180,7 +180,15 @@ export class RestDeepModulesImporter {
     }
 
     if (!found) {
-      this.parent.grabImportedDependecies(this.metadataPerMod1.baseMeta, srcModRefId1, importedProvider, ['Mod'], path, dep);
+      this.parent.grabImportedDependecies(
+        this.metadataPerMod1.baseMeta,
+        srcModRefId1,
+        importedProvider,
+        ['Mod'],
+        path,
+        dep,
+        levels,
+      );
     }
   }
 
