@@ -9,7 +9,7 @@ import { ImportedTokensMap, MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import { Level, ProvidersForMod, ModRefId, AnyFn, AnyObj } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
-import { ReflectiveDependency, getDependencies } from '#utils/get-dependecies.js';
+import { ReflectiveDependency, getDependencies } from '#utils/get-dependencies.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { getProvidersTargets, getTokens } from '#utils/get-tokens.js';
@@ -23,7 +23,7 @@ import { getDebugClassName } from '#utils/get-debug-class-name.js';
  * recursively collects providers for them from the corresponding modules.
  */
 export class DeepModulesImporter {
-  protected unfinishedSearchDependecies: [ModRefId, Provider][] = [];
+  protected unfinishedSearchDependencies: [ModRefId, Provider][] = [];
   protected tokensPerApp: any[];
   protected extensionsTokens: any[] = [];
   protected extensionCounters = new ExtensionCounters();
@@ -90,14 +90,14 @@ export class DeepModulesImporter {
       importedTokensMap[`per${level}`].forEach((importObj) => {
         targetProviders[`providersPer${level}`].unshift(...importObj.providers);
         importObj.providers.forEach((importedProvider) => {
-          this.grabDependecies(targetProviders, importObj.modRefId, importedProvider, levels.slice(i));
+          this.grabDependencies(targetProviders, importObj.modRefId, importedProvider, levels.slice(i));
         });
       });
 
       importedTokensMap[`multiPer${level}`].forEach((multiProviders, sourceModule) => {
         targetProviders[`providersPer${level}`].unshift(...multiProviders);
         multiProviders.forEach((importedProvider) => {
-          this.grabDependecies(targetProviders, sourceModule, importedProvider, levels.slice(i));
+          this.grabDependencies(targetProviders, sourceModule, importedProvider, levels.slice(i));
         });
       });
     });
@@ -145,8 +145,8 @@ export class DeepModulesImporter {
       });
       targetProviders.extensionsProviders.unshift(...newProviders);
       importedProviders.forEach((importedProvider) => {
-        if (this.hasUnresolvedDependecies(targetProviders.modRefId, importedProvider, ['Mod'])) {
-          this.grabDependecies(targetProviders, sourceModule, importedProvider, ['Mod']);
+        if (this.hasUnresolvedDependencies(targetProviders.modRefId, importedProvider, ['Mod'])) {
+          this.grabDependencies(targetProviders, sourceModule, importedProvider, ['Mod']);
         }
       });
     });
@@ -169,7 +169,7 @@ export class DeepModulesImporter {
    * @param importedProvider Imported provider.
    * @param levels Search in this levels. The level order is important.
    */
-  protected grabDependecies(
+  protected grabDependencies(
     targetProviders: ProvidersForMod,
     sourceModule: ModRefId,
     importedProvider: Provider,
@@ -192,7 +192,7 @@ export class DeepModulesImporter {
             const importedProvider2 = sourceProviders[i];
             targetProviders[`providersPer${level}`].unshift(importedProvider2);
             found = true;
-            this.grabDependeciesAgain(targetProviders, sourceModule, importedProvider2, levels, path);
+            this.grabDependenciesAgain(targetProviders, sourceModule, importedProvider2, levels, path);
 
             // The loop does not breaks because there may be multi providers.
           }
@@ -204,7 +204,7 @@ export class DeepModulesImporter {
       }
 
       if (!found && !this.tokensPerApp.includes(dep.token)) {
-        this.grabImportedDependecies(targetProviders, sourceModule, importedProvider, levels, path, dep);
+        this.grabImportedDependencies(targetProviders, sourceModule, importedProvider, levels, path, dep);
       }
     }
   }
@@ -215,7 +215,7 @@ export class DeepModulesImporter {
    * @param importedProvider Imported provider.
    * @param dep ReflectiveDependecy with token for dependecy of imported provider.
    */
-  grabImportedDependecies(
+  grabImportedDependencies(
     targetProviders: ProvidersForMod,
     sourceModule1: ModRefId,
     importedProvider: Provider,
@@ -236,7 +236,7 @@ export class DeepModulesImporter {
 
         // Loop for multi providers.
         for (const sourceProvider2 of sourceProviders2) {
-          this.grabDependeciesAgain(targetProviders, modRefId2, sourceProvider2, levels, path);
+          this.grabDependenciesAgain(targetProviders, modRefId2, sourceProvider2, levels, path);
         }
         break;
       }
@@ -247,19 +247,19 @@ export class DeepModulesImporter {
     }
   }
 
-  protected grabDependeciesAgain(
+  protected grabDependenciesAgain(
     targetProviders: ProvidersForMod,
     sourceModule: ModRefId,
     importedProvider: Provider,
     levels: Level[],
     path: any[],
   ) {
-    this.addToUnfinishedSearchDependecies(sourceModule, importedProvider);
-    this.grabDependecies(targetProviders, sourceModule, importedProvider, levels, path);
-    this.deleteFromUnfinishedSearchDependecies(sourceModule, importedProvider);
+    this.addToUnfinishedSearchDependencies(sourceModule, importedProvider);
+    this.grabDependencies(targetProviders, sourceModule, importedProvider, levels, path);
+    this.deleteFromUnfinishedSearchDependencies(sourceModule, importedProvider);
   }
 
-  protected hasUnresolvedDependecies(module: ModRefId, provider: Provider, levels: Level[]) {
+  protected hasUnresolvedDependencies(module: ModRefId, provider: Provider, levels: Level[]) {
     const meta = this.moduleManager.getMetadata(module, true);
 
     for (const dep of this.getDependencies(provider)) {
@@ -280,7 +280,7 @@ export class DeepModulesImporter {
       }
 
       if (!found && !this.tokensPerApp.includes(dep.token)) {
-        if (this.hasUnresolvedImportedDependecies(module, levels, dep)) {
+        if (this.hasUnresolvedImportedDependencies(module, levels, dep)) {
           return true;
         }
       }
@@ -288,7 +288,7 @@ export class DeepModulesImporter {
     return false;
   }
 
-  protected hasUnresolvedImportedDependecies(module1: ModRefId, levels: Level[], dep: ReflectiveDependency) {
+  protected hasUnresolvedImportedDependencies(module1: ModRefId, levels: Level[], dep: ReflectiveDependency) {
     let found = false;
     for (const level of levels) {
       const importObj = this.shallowImports.get(module1)?.importedTokensMap[`per${level}`].get(dep.token);
@@ -298,9 +298,9 @@ export class DeepModulesImporter {
 
         // Loop for multi providers.
         for (const provider of providers) {
-          this.addToUnfinishedSearchDependecies(modRefId2, provider);
-          found = !this.hasUnresolvedDependecies(modRefId2, provider, levels);
-          this.deleteFromUnfinishedSearchDependecies(modRefId2, provider);
+          this.addToUnfinishedSearchDependencies(modRefId2, provider);
+          found = !this.hasUnresolvedDependencies(modRefId2, provider, levels);
+          this.deleteFromUnfinishedSearchDependencies(modRefId2, provider);
           if (!found) {
             return true;
           }
@@ -347,21 +347,21 @@ export class DeepModulesImporter {
     return deps.filter((d) => !defaultTokens.includes(d.token));
   }
 
-  protected addToUnfinishedSearchDependecies(module: ModRefId, provider: Provider) {
-    const index = this.unfinishedSearchDependecies.findIndex(([m, p]) => m === module && p === provider);
+  protected addToUnfinishedSearchDependencies(module: ModRefId, provider: Provider) {
+    const index = this.unfinishedSearchDependencies.findIndex(([m, p]) => m === module && p === provider);
     if (index != -1) {
       this.throwCircularDependencies(index);
     }
-    this.unfinishedSearchDependecies.push([module, provider]);
+    this.unfinishedSearchDependencies.push([module, provider]);
   }
 
-  protected deleteFromUnfinishedSearchDependecies(module: ModRefId, provider: Provider) {
-    const index = this.unfinishedSearchDependecies.findIndex(([m, p]) => m === module && p === provider);
-    this.unfinishedSearchDependecies.splice(index, 1);
+  protected deleteFromUnfinishedSearchDependencies(module: ModRefId, provider: Provider) {
+    const index = this.unfinishedSearchDependencies.findIndex(([m, p]) => m === module && p === provider);
+    this.unfinishedSearchDependencies.splice(index, 1);
   }
 
   protected throwCircularDependencies(index: number) {
-    const items = this.unfinishedSearchDependecies;
+    const items = this.unfinishedSearchDependencies;
     const prefixChain = items.slice(0, index);
     const circularChain = items.slice(index);
 

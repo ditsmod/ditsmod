@@ -36,7 +36,7 @@ import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
  * recursively collects providers for them from the corresponding modules.
  */
 export class RestDeepModulesImporter {
-  protected unfinishedSearchDependecies: [ModRefId, Provider][] = [];
+  protected unfinishedSearchDependencies: [ModRefId, Provider][] = [];
   protected tokensPerApp: any[];
 
   protected metadataPerMod1: RestMetadataPerMod1;
@@ -89,14 +89,14 @@ export class RestDeepModulesImporter {
       importedTokensMap[`per${level}`].forEach((importObj) => {
         meta[`providersPer${level}`].unshift(...importObj.providers);
         importObj.providers.forEach((importedProvider) => {
-          this.grabDependecies(meta, importObj.modRefId, importedProvider, levels.slice(i));
+          this.grabDependencies(meta, importObj.modRefId, importedProvider, levels.slice(i));
         });
       });
 
       importedTokensMap[`multiPer${level}`].forEach((multiProviders, sourceModule) => {
         meta[`providersPer${level}`].unshift(...multiProviders);
         multiProviders.forEach((importedProvider) => {
-          this.grabDependecies(meta, sourceModule, importedProvider, levels.slice(i));
+          this.grabDependencies(meta, sourceModule, importedProvider, levels.slice(i));
         });
       });
     });
@@ -108,7 +108,7 @@ export class RestDeepModulesImporter {
    * @param importedProvider Imported provider.
    * @param levels Search in this levels. The level order is important.
    */
-  protected grabDependecies(
+  protected grabDependencies(
     targetProviders: RestProvidersForMod,
     srcModRefId: ModRefId,
     importedProvider: Provider,
@@ -129,7 +129,7 @@ export class RestDeepModulesImporter {
             const importedProvider2 = srcProviders[i];
             targetProviders[`providersPer${level}`].unshift(importedProvider2);
             found = true;
-            this.grabDependeciesAgain(targetProviders, srcModRefId, importedProvider2, levels, path);
+            this.grabDependenciesAgain(targetProviders, srcModRefId, importedProvider2, levels, path);
 
             // The loop does not breaks because there may be multi providers.
           }
@@ -141,7 +141,7 @@ export class RestDeepModulesImporter {
       }
 
       if (!found && !this.hasTokenPerMod(srcBaseMeta, dep.token) && !this.tokensPerApp.includes(dep.token)) {
-        this.grabImportedDependecies(targetProviders, srcModRefId, importedProvider, levels, path, dep);
+        this.grabImportedDependencies(targetProviders, srcModRefId, importedProvider, levels, path, dep);
       }
     }
   }
@@ -152,7 +152,7 @@ export class RestDeepModulesImporter {
    * @param importedProvider Imported provider.
    * @param dep ReflectiveDependecy with token for dependecy of imported provider.
    */
-  protected grabImportedDependecies(
+  protected grabImportedDependencies(
     targetProviders: RestProvidersForMod,
     srcModRefId1: ModRefId,
     importedProvider: Provider,
@@ -173,14 +173,14 @@ export class RestDeepModulesImporter {
 
         // Loop for multi providers.
         for (const sourceProvider2 of sourceProviders2) {
-          this.grabDependeciesAgain(targetProviders, modRefId2, sourceProvider2, levels, path);
+          this.grabDependenciesAgain(targetProviders, modRefId2, sourceProvider2, levels, path);
         }
         break;
       }
     }
 
     if (!found) {
-      this.parent.grabImportedDependecies(
+      this.parent.grabImportedDependencies(
         this.metadataPerMod1.baseMeta,
         srcModRefId1,
         importedProvider,
@@ -192,19 +192,19 @@ export class RestDeepModulesImporter {
     }
   }
 
-  protected grabDependeciesAgain(
+  protected grabDependenciesAgain(
     targetProviders: RestProvidersForMod,
     sourceModule: ModRefId,
     importedProvider: Provider,
     levels: Level[],
     path: any[],
   ) {
-    this.addToUnfinishedSearchDependecies(sourceModule, importedProvider);
-    this.grabDependecies(targetProviders, sourceModule, importedProvider, levels, path);
-    this.deleteFromUnfinishedSearchDependecies(sourceModule, importedProvider);
+    this.addToUnfinishedSearchDependencies(sourceModule, importedProvider);
+    this.grabDependencies(targetProviders, sourceModule, importedProvider, levels, path);
+    this.deleteFromUnfinishedSearchDependencies(sourceModule, importedProvider);
   }
 
-  protected hasUnresolvedDependecies(module: ModRefId, provider: Provider, levels: Level[]) {
+  protected hasUnresolvedDependencies(module: ModRefId, provider: Provider, levels: Level[]) {
     const baseMeta = this.moduleManager.getMetadata(module, true);
 
     for (const dep of this.getDependencies(provider)) {
@@ -223,7 +223,7 @@ export class RestDeepModulesImporter {
       }
 
       if (!found && !this.hasTokenPerMod(baseMeta, dep.token) && !this.tokensPerApp.includes(dep.token)) {
-        if (this.hasUnresolvedImportedDependecies(module, levels, dep)) {
+        if (this.hasUnresolvedImportedDependencies(module, levels, dep)) {
           return true;
         }
       }
@@ -231,7 +231,7 @@ export class RestDeepModulesImporter {
     return false;
   }
 
-  protected hasUnresolvedImportedDependecies(modRefId1: ModRefId, levels: Level[], dep: ReflectiveDependency) {
+  protected hasUnresolvedImportedDependencies(modRefId1: ModRefId, levels: Level[], dep: ReflectiveDependency) {
     let found = false;
     for (const level of levels) {
       const restMetadataPerMod1 = this.shallowImports.get(modRefId1)?.shallowImportedModules.get(initRest) as
@@ -244,9 +244,9 @@ export class RestDeepModulesImporter {
 
         // Loop for multi providers.
         for (const provider of providers) {
-          this.addToUnfinishedSearchDependecies(modRefId2, provider);
-          found = !this.hasUnresolvedDependecies(modRefId2, provider, levels);
-          this.deleteFromUnfinishedSearchDependecies(modRefId2, provider);
+          this.addToUnfinishedSearchDependencies(modRefId2, provider);
+          found = !this.hasUnresolvedDependencies(modRefId2, provider, levels);
+          this.deleteFromUnfinishedSearchDependencies(modRefId2, provider);
           if (!found) {
             return true;
           }
@@ -277,21 +277,21 @@ export class RestDeepModulesImporter {
     return deps.filter((d) => !defaultTokens.includes(d.token));
   }
 
-  protected addToUnfinishedSearchDependecies(module: ModRefId, provider: Provider) {
-    const index = this.unfinishedSearchDependecies.findIndex(([m, p]) => m === module && p === provider);
+  protected addToUnfinishedSearchDependencies(module: ModRefId, provider: Provider) {
+    const index = this.unfinishedSearchDependencies.findIndex(([m, p]) => m === module && p === provider);
     if (index != -1) {
       this.throwCircularDependencies(index);
     }
-    this.unfinishedSearchDependecies.push([module, provider]);
+    this.unfinishedSearchDependencies.push([module, provider]);
   }
 
-  protected deleteFromUnfinishedSearchDependecies(module: ModRefId, provider: Provider) {
-    const index = this.unfinishedSearchDependecies.findIndex(([m, p]) => m === module && p === provider);
-    this.unfinishedSearchDependecies.splice(index, 1);
+  protected deleteFromUnfinishedSearchDependencies(module: ModRefId, provider: Provider) {
+    const index = this.unfinishedSearchDependencies.findIndex(([m, p]) => m === module && p === provider);
+    this.unfinishedSearchDependencies.splice(index, 1);
   }
 
   protected throwCircularDependencies(index: number) {
-    const items = this.unfinishedSearchDependecies;
+    const items = this.unfinishedSearchDependencies;
     const prefixChain = items.slice(0, index);
     const circularChain = items.slice(index);
 

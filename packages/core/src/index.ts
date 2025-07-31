@@ -76,7 +76,7 @@ export { deepFreeze } from '#utils/deep-freeze.js';
 export { getDuplicates } from '#utils/get-duplicates.js';
 export { getCollisions } from '#utils/get-collisions.js';
 export { throwProvidersCollisionError } from '#utils/throw-providers-collision-error.js';
-export { getDependencies, ReflectiveDependency } from '#utils/get-dependecies.js';
+export { getDependencies, ReflectiveDependency } from '#utils/get-dependencies.js';
 export { getProviderName } from '#utils/get-provider-name.js';
 export { ExtensionConfig, isConfigWithOverrideExtension } from '#extension/get-extension-provider.js';
 export { getModule } from '#utils/get-module.js';

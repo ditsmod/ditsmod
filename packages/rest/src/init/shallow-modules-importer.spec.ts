@@ -92,7 +92,7 @@ describe('shallow importing modules', () => {
     });
   }
 
-  it('cyclic dependecies between modules', () => {
+  it('cyclic dependencies between modules', () => {
     class Provider1 {}
     class Provider2 {}
 

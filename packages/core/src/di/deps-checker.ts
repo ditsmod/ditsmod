@@ -5,7 +5,7 @@ import { DualKey, KeyRegistry } from './key-registry.js';
 import { Dependency, ID, ResolvedProvider, Visibility } from './types-and-models.js';
 
 /**
- * Allow check dependecies for given provider.
+ * Allow check dependencies for given provider.
  */
 export class DepsChecker {
   static checkForResolved(injector: Injector, provider: ResolvedProvider, ignoreDeps?: any[]): any {

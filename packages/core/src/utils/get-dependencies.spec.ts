@@ -1,5 +1,5 @@
 import { FactoryProvider, TokenProvider, ValueProvider, inject, injectable, factoryMethod, optional } from '#di';
-import { getDependencies } from './get-dependecies.js';
+import { getDependencies } from './get-dependencies.js';
 
 describe('getDependencies()', () => {
   class Dep1 {}

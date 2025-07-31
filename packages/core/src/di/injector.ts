@@ -568,7 +568,7 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
   /**
    * Resolves a provider and instantiates an object in the context of the injector.
    *
-   * The created object does not get cached by the injector, but create the cache of its dependecies.
+   * The created object does not get cached by the injector, but create the cache of its dependencies.
    *
    * ### Example
    *

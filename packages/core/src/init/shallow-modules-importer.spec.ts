@@ -193,7 +193,7 @@ describe('ShallowModulesImporter', () => {
       expect(() => mock.exportGlobalProviders(moduleManager)).toThrow(msg);
     });
 
-    it('cyclic dependecies between modules', () => {
+    it('cyclic dependencies between modules', () => {
       @featureModule({
         imports: [forwardRef(() => Module3)],
         exports: [forwardRef(() => Module3)],

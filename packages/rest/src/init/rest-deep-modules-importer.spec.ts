@@ -90,7 +90,7 @@ describe('DeepModulesImporter', () => {
   });
 
   // describe('resolveImportedProviders', () => {
-  //   describe('addToUnfinishedSearchDependecies(), deleteFromUnfinishedSearchDependecies() and throwCircularDependencies()', () => {
+  //   describe('addToUnfinishedSearchDependencies(), deleteFromUnfinishedSearchDependencies() and throwCircularDependencies()', () => {
   //     class Module1 {}
   //     class Provider1 {}
   //     class Module2 {}
@@ -98,31 +98,31 @@ describe('DeepModulesImporter', () => {
   //     class Module3 {}
   //     class Provider3 {}
 
-  //     it('adding and removing dependecies', () => {
-  //       expect(mock.unfinishedSearchDependecies).toEqual([]);
-  //       mock.addToUnfinishedSearchDependecies(Module1, Provider1);
-  //       mock.addToUnfinishedSearchDependecies(Module2, Provider2);
-  //       mock.addToUnfinishedSearchDependecies(Module3, Provider3);
-  //       expect(mock.unfinishedSearchDependecies).toEqual([
+  //     it('adding and removing dependencies', () => {
+  //       expect(mock.unfinishedSearchDependencies).toEqual([]);
+  //       mock.addToUnfinishedSearchDependencies(Module1, Provider1);
+  //       mock.addToUnfinishedSearchDependencies(Module2, Provider2);
+  //       mock.addToUnfinishedSearchDependencies(Module3, Provider3);
+  //       expect(mock.unfinishedSearchDependencies).toEqual([
   //         [Module1, Provider1],
   //         [Module2, Provider2],
   //         [Module3, Provider3],
   //       ]);
-  //       mock.deleteFromUnfinishedSearchDependecies(Module2, Provider2);
-  //       expect(mock.unfinishedSearchDependecies).toEqual([
+  //       mock.deleteFromUnfinishedSearchDependencies(Module2, Provider2);
+  //       expect(mock.unfinishedSearchDependencies).toEqual([
   //         [Module1, Provider1],
   //         [Module3, Provider3],
   //       ]);
   //     });
 
   //     it('throw properly message', () => {
-  //       expect(mock.unfinishedSearchDependecies).toEqual([]);
-  //       mock.addToUnfinishedSearchDependecies(Module1, Provider1);
-  //       mock.addToUnfinishedSearchDependecies(Module2, Provider2);
-  //       mock.addToUnfinishedSearchDependecies(Module3, Provider3);
+  //       expect(mock.unfinishedSearchDependencies).toEqual([]);
+  //       mock.addToUnfinishedSearchDependencies(Module1, Provider1);
+  //       mock.addToUnfinishedSearchDependencies(Module2, Provider2);
+  //       mock.addToUnfinishedSearchDependencies(Module3, Provider3);
   //       const msg =
   //         'Detected circular dependencies: [Provider2 in Module2] -> [Provider3 in Module3] -> [Provider2 in Module2]. It is started from [Provider1 in Module1].';
-  //       expect(() => mock.addToUnfinishedSearchDependecies(Module2, Provider2)).toThrow(msg);
+  //       expect(() => mock.addToUnfinishedSearchDependencies(Module2, Provider2)).toThrow(msg);
   //     });
   //   });
   // });
@@ -159,7 +159,7 @@ describe('DeepModulesImporter', () => {
     @rootModule({ imports: [Module2] })
     class Module3 {}
 
-    let msg = 'Resolving imported dependecies for Module2 failed: no provider for Service1! (Service2 -> Service1';
+    let msg = 'Resolving imported dependencies for Module2 failed: no provider for Service1! (Service2 -> Service1';
     msg += ', searching in providersPerRou, providersPerMod';
     expect(() => getMetadataPerMod2(Module3)).toThrow(msg);
   });
@@ -318,7 +318,7 @@ describe('DeepModulesImporter', () => {
     @rootModule({ imports: [Module1, Module2] })
     class AppModule {}
 
-    let msg = 'Resolving imported dependecies for Module2 failed: no provider for Service1! (Service2 -> Service1';
+    let msg = 'Resolving imported dependencies for Module2 failed: no provider for Service1! (Service2 -> Service1';
     msg += ', searching in providersPerRou, providersPerMod, providersPerApp';
     expect(() => getMetadataPerMod2(AppModule)).toThrow(msg);
   });
