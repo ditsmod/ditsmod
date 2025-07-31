@@ -37,7 +37,7 @@ import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 export class DeepModulesImporter {
   protected unfinishedSearchDependecies: [ModRefId, Provider][] = [];
   protected tokensPerApp: any[];
-  protected extensionsTokens: any[] = [];
+  protected tokensPerMod: any[];
 
   protected metadataPerMod1: RestMetadataPerMod1;
   protected moduleManager: ModuleManager;
@@ -65,6 +65,9 @@ export class DeepModulesImporter {
   importModulesDeep(): RestMetadataPerMod2 | undefined {
     const levels: Level[] = ['Rou', 'Req'];
     this.tokensPerApp = getTokens(this.providersPerApp);
+    this.tokensPerMod = getTokens(this.metadataPerMod1.baseMeta.providersPerMod).concat(
+      getTokens(this.metadataPerMod1.baseMeta.exportedMultiProvidersPerMod),
+    );
     if (!this.metadataPerMod1) {
       return;
     }
@@ -81,23 +84,19 @@ export class DeepModulesImporter {
     };
   }
 
-  protected resolveImportedProviders(
-    targetProviders: RestInitMeta,
-    importedTokensMap: RestImportedTokensMap,
-    levels: Level[],
-  ) {
+  protected resolveImportedProviders(meta: RestInitMeta, importedTokensMap: RestImportedTokensMap, levels: Level[]) {
     levels.forEach((level, i) => {
       importedTokensMap[`per${level}`].forEach((importObj) => {
-        targetProviders[`providersPer${level}`].unshift(...importObj.providers);
+        meta[`providersPer${level}`].unshift(...importObj.providers);
         importObj.providers.forEach((importedProvider) => {
-          this.grabDependecies(targetProviders, importObj.modRefId, importedProvider, levels.slice(i));
+          this.grabDependecies(meta, importObj.modRefId, importedProvider, levels.slice(i));
         });
       });
 
       importedTokensMap[`multiPer${level}`].forEach((multiProviders, sourceModule) => {
-        targetProviders[`providersPer${level}`].unshift(...multiProviders);
+        meta[`providersPer${level}`].unshift(...multiProviders);
         multiProviders.forEach((importedProvider) => {
-          this.grabDependecies(targetProviders, sourceModule, importedProvider, levels.slice(i));
+          this.grabDependecies(meta, sourceModule, importedProvider, levels.slice(i));
         });
       });
     });
@@ -117,20 +116,17 @@ export class DeepModulesImporter {
     path: any[] = [],
   ) {
     const srcBaseMeta = this.moduleManager.getMetadata(srcModRefId, true);
+    const meta = srcBaseMeta.initMeta.get(initRest) as RestInitMeta;
 
     for (const dep of this.getDependencies(importedProvider)) {
       let found: boolean = false;
-      if (this.extensionsTokens.includes(dep.token)) {
-        continue;
-      }
 
       for (const level of levels) {
-        const meta = srcBaseMeta.initMeta.get(initRest) as RestInitMeta;
-        const sourceProviders = getLastProviders(meta[`providersPer${level}`]);
+        const srcProviders = getLastProviders(meta[`providersPer${level}`]);
 
-        getTokens(sourceProviders).forEach((sourceToken, i) => {
+        getTokens(srcProviders).forEach((sourceToken, i) => {
           if (sourceToken === dep.token) {
-            const importedProvider2 = sourceProviders[i];
+            const importedProvider2 = srcProviders[i];
             targetProviders[`providersPer${level}`].unshift(importedProvider2);
             found = true;
             this.grabDependeciesAgain(targetProviders, srcModRefId, importedProvider2, levels, path);
@@ -144,7 +140,7 @@ export class DeepModulesImporter {
         }
       }
 
-      if (!found && !this.tokensPerApp.includes(dep.token)) {
+      if (!found && !this.tokensPerMod.includes(dep.token) && !this.tokensPerApp.includes(dep.token)) {
         this.grabImportedDependecies(targetProviders, srcModRefId, importedProvider, levels, path, dep);
       }
     }
@@ -205,9 +201,6 @@ export class DeepModulesImporter {
 
     for (const dep of this.getDependencies(provider)) {
       let found: boolean = false;
-      if (this.extensionsTokens.includes(dep.token)) {
-        continue;
-      }
 
       forLevel: for (const level of levels) {
         const meta = baseMeta.initMeta.get(initRest) as RestInitMeta;
@@ -221,7 +214,7 @@ export class DeepModulesImporter {
         }
       }
 
-      if (!found && !this.tokensPerApp.includes(dep.token)) {
+      if (!found && !this.tokensPerMod.includes(dep.token) && !this.tokensPerApp.includes(dep.token)) {
         if (this.hasUnresolvedImportedDependecies(module, levels, dep)) {
           return true;
         }
@@ -260,20 +253,20 @@ export class DeepModulesImporter {
     return false;
   }
 
-  protected throwError(meta: NormalizedMeta, provider: Provider, path: any[], token: any, levels: Level[]) {
+  protected throwError(baseMeta: NormalizedMeta, provider: Provider, path: any[], token: any, levels: Level[]) {
     path = [provider, ...path, token];
     const strPath = getTokens(path)
       .map((t) => t.name || t)
       .join(' -> ');
 
     const levelsPath = levels
-      .concat('App' as any)
+      .concat('App' as any, 'Mod' as any)
       .map((level) => `providersPer${level}`)
       .join(', ');
     const partMsg = path.length > 1 ? `(${strPath}, searching in ${levelsPath})` : levelsPath;
     // this.log.showProvidersInLogs(this, meta.name, meta.providersPerReq, meta.providersPerRou, meta.providersPerMod);
 
-    this.errorMediator.throwNoProviderDuringResolveImports(meta.name, token.name || token, partMsg);
+    this.errorMediator.throwNoProviderDuringResolveImports(baseMeta.name, token.name || token, partMsg);
   }
 
   protected getDependencies(provider: Provider) {
