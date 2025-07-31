@@ -48,7 +48,7 @@ export function flatten<T = any>(list: any[], dst?: any[]): T[] {
 /**
  * Normalize an array of DI Providers
  */
-export function normalizeProviders(providers: Provider[], arrayOfProviders: NormalizedProvider[] = []) {
+export function normalizeProviders(providers: Provider[] | ReadonlyArray<Provider>, arrayOfProviders: NormalizedProvider[] = []) {
   providers.forEach((provider) => {
     provider = resolveForwardRef(provider);
     if (provider instanceof Class) {
