@@ -882,7 +882,7 @@ describe('ModuleManager', () => {
     ];
 
     mock.scanRootModule(Module3);
-    expect(getInitMeta('root')).toBeFalsy();
+    expect(getInitMeta('root')).toEqual(new RestInitMeta());
     expect(getInitMeta(Module1)).toEqual(expectedMeta1);
   });
 });

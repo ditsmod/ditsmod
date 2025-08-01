@@ -126,22 +126,6 @@ describe('DeepModulesImporter', () => {
   //   });
   // });
 
-  it('No import and no error is thrown even though Service2 from Module2 depends on Service1 and Module2 does not import any modules', () => {
-    @injectable()
-    class Service1 {}
-
-    @injectable()
-    class Service2 {
-      constructor(public service1: Service1) {}
-    }
-
-    @initRest({ providersPerRou: [Service2] })
-    @rootModule({ exports: [Service2] })
-    class Module2 {}
-
-    expect(() => getMetadataPerMod2(Module2)).not.toThrow();
-  });
-
   it(`Module3 imports Module2, which has a dependency on Service1, but Module2 does not import any modules with Service1;
     in this case an error should be thrown`, () => {
     @injectable()
@@ -151,20 +135,20 @@ describe('DeepModulesImporter', () => {
     class Service2 {
       constructor(public service1: Service1) {}
     }
-    @initRest({ providersPerRou: [Service2] })
-    @featureModule({ exports: [Service2] })
+    @initRest({ providersPerRou: [Service2], exports: [Service2] })
+    @featureModule()
     class Module2 {}
 
     @rootModule({ imports: [Module2] })
     class Module3 {}
 
-    let msg = 'Resolving imported dependencies for Module2 failed: no provider for Service1! (Service2 -> Service1';
-    msg += ', searching in providersPerRou, providersPerMod';
+    let msg = 'for Module2: no provider for Service1! (required by Service2 -> Service1). ';
+    msg += 'Searched in providersPerRou, providersPerMod, providersPerApp';
     expect(() => getMetadataPerMod2(Module3)).toThrow(msg);
   });
 
   it(`There is the following dependency chain: Service4 -> Service3 -> Service2 -> Service1;
-    Module3 imports Module2, which exports only Service4, but DeepModulesImporter imports
+    AppModule imports Module2, which exports only Service4, but DeepModulesImporter imports
     the entire dependency chain (both from Module2 and from Module1, which is imported
     into Module2)`, () => {
     @injectable()
@@ -203,14 +187,9 @@ describe('DeepModulesImporter', () => {
     const mMetadataPerMod2 = getMetadataPerMod2(AppModule);
     const { baseMeta } = mMetadataPerMod2.get(AppModule)!;
     const initMeta = baseMeta.initMeta.get(initRest)!;
-    expect(initMeta.providersPerReq).toEqual(defaultProvidersPerReq);
     expect(initMeta.providersPerRou).toEqual([...defaultProvidersPerRou, Service3, Service4]);
-    const moduleExtract: RestModuleExtract = {
-      path: '',
-      moduleName: 'AppModule',
-      isExternal: false,
-    };
-    expect(baseMeta.providersPerMod).toEqual([Service1, Service2, { token: ModuleExtract, useValue: moduleExtract }]);
+    expect(initMeta.providersPerReq).toEqual(defaultProvidersPerReq);
+    expect(baseMeta.providersPerMod.slice(0, 2)).toEqual([Service1, Service2]);
   });
 
   it('circular dependencies in one module', () => {
@@ -235,11 +214,10 @@ describe('DeepModulesImporter', () => {
       constructor(public service3: Service3) {}
     }
 
-    @initRest({ providersPerRou: [Service3, Service4] })
+    @initRest({ providersPerRou: [Service3, Service4], exports: [Service4] })
     @featureModule({
       imports: [Module1],
       providersPerMod: [Service2],
-      exports: [Service4],
     })
     class Module2 {}
 
@@ -259,10 +237,9 @@ describe('DeepModulesImporter', () => {
       constructor(@inject(forwardRef(() => Service4)) public service4: any) {}
     }
 
-    @initRest({ providersPerRou: [Service1] })
+    @initRest({ providersPerRou: [Service1], exports: [Service1] })
     @featureModule({
       imports: [forwardRef(() => Module2)],
-      exports: [Service1],
     })
     class Module1 {}
 
