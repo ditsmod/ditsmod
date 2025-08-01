@@ -169,7 +169,7 @@ export class DeepModulesImporter {
    * @param importedProvider Imported provider.
    * @param levels Search in this levels. The level order is important.
    */
-  protected grabDependencies(
+  grabDependencies(
     targetProviders: ProvidersForMod,
     sourceModule: ModRefId,
     importedProvider: Provider,

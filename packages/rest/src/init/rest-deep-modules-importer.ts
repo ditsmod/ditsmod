@@ -5,7 +5,6 @@ import {
   SystemLogMediator,
   SystemErrorMediator,
   getTokens,
-  NormalizedMeta,
   getLastProviders,
   getDependencies,
   defaultProvidersPerApp,
@@ -38,6 +37,7 @@ import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 export class RestDeepModulesImporter {
   protected unfinishedSearchDependencies: [ModRefId, Provider][] = [];
   protected tokensPerApp: any[];
+  protected tokensPerMod: any[];
 
   protected metadataPerMod1: RestMetadataPerMod1;
   protected moduleManager: ModuleManager;
@@ -68,9 +68,7 @@ export class RestDeepModulesImporter {
   importModulesDeep(): RestMetadataPerMod2 | undefined {
     const levels: Level[] = ['Req', 'Rou'];
     this.tokensPerApp = getTokens(this.providersPerApp);
-    if (!this.metadataPerMod1) {
-      return;
-    }
+    this.tokensPerMod = getTokens(this.metadataPerMod1.baseMeta.providersPerMod);
     const { importedTokensMap, guards1, prefixPerMod, meta, applyControllers } = this.metadataPerMod1;
     this.resolveImportedProviders(meta, importedTokensMap, levels);
     meta.providersPerRou.unshift(...defaultProvidersPerRou);
@@ -140,7 +138,7 @@ export class RestDeepModulesImporter {
         }
       }
 
-      if (!found && !this.hasTokenPerMod(srcBaseMeta, dep.token) && !this.tokensPerApp.includes(dep.token)) {
+      if (!found && !this.tokensPerMod.includes(dep.token) && !this.tokensPerApp.includes(dep.token)) {
         this.grabImportedDependencies(targetProviders, srcModRefId, importedProvider, levels, path, dep);
       }
     }
@@ -180,15 +178,7 @@ export class RestDeepModulesImporter {
     }
 
     if (!found) {
-      this.parent.grabImportedDependencies(
-        this.metadataPerMod1.baseMeta,
-        srcModRefId1,
-        importedProvider,
-        ['Mod'],
-        path,
-        dep,
-        levels,
-      );
+      this.parent.grabDependencies(this.metadataPerMod1.baseMeta, srcModRefId1, importedProvider, ['Mod'], path);
     }
   }
 
@@ -222,7 +212,7 @@ export class RestDeepModulesImporter {
         }
       }
 
-      if (!found && !this.hasTokenPerMod(baseMeta, dep.token) && !this.tokensPerApp.includes(dep.token)) {
+      if (!found && !this.tokensPerMod.includes(dep.token) && !this.tokensPerApp.includes(dep.token)) {
         if (this.hasUnresolvedImportedDependencies(module, levels, dep)) {
           return true;
         }
@@ -317,9 +307,5 @@ export class RestDeepModulesImporter {
       msg += ` It is started from ${prefixNames}.`;
     }
     throw new Error(msg);
-  }
-
-  protected hasTokenPerMod(baseMeta: NormalizedMeta, token: any) {
-    return getTokens(baseMeta.providersPerMod).concat(getTokens(baseMeta.exportedMultiProvidersPerMod)).includes(token);
   }
 }
