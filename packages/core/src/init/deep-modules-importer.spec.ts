@@ -14,7 +14,6 @@ import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 describe('DeepModulesImporter', () => {
   @injectable()
   class DeepModulesImporterMock extends DeepModulesImporter {
-    declare unfinishedSearchDependencies: [ModuleType | ModuleWithParams, Provider][];
     override resolveImportedProviders(
       targetProviders: NormalizedMeta,
       importedTokensMap: ImportedTokensMap,
@@ -72,24 +71,24 @@ describe('DeepModulesImporter', () => {
       class Provider3 {}
 
       it('adding and removing dependencies', () => {
-        expect(mock.unfinishedSearchDependencies).toEqual([]);
+        expect(mock.dependencyChain).toEqual([]);
         mock.addToUnfinishedSearchDependencies(Module1, Provider1);
         mock.addToUnfinishedSearchDependencies(Module2, Provider2);
         mock.addToUnfinishedSearchDependencies(Module3, Provider3);
-        expect(mock.unfinishedSearchDependencies).toEqual([
+        expect(mock.dependencyChain).toEqual([
           [Module1, Provider1],
           [Module2, Provider2],
           [Module3, Provider3],
         ]);
         mock.deleteFromUnfinishedSearchDependencies(Module2, Provider2);
-        expect(mock.unfinishedSearchDependencies).toEqual([
+        expect(mock.dependencyChain).toEqual([
           [Module1, Provider1],
           [Module3, Provider3],
         ]);
       });
 
       it('throw properly message', () => {
-        expect(mock.unfinishedSearchDependencies).toEqual([]);
+        expect(mock.dependencyChain).toEqual([]);
         mock.addToUnfinishedSearchDependencies(Module1, Provider1);
         mock.addToUnfinishedSearchDependencies(Module2, Provider2);
         mock.addToUnfinishedSearchDependencies(Module3, Provider3);

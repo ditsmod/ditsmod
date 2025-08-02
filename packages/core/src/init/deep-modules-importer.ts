@@ -23,7 +23,7 @@ import { getDebugClassName } from '#utils/get-debug-class-name.js';
  * recursively collects providers for them from the corresponding modules.
  */
 export class DeepModulesImporter {
-  protected unfinishedSearchDependencies: [ModRefId, Provider][] = [];
+  dependencyChain: [ModRefId, Provider][] = [];
   protected tokensPerApp: any[];
   protected extensionsTokens: any[] = [];
   protected extensionCounters = new ExtensionCounters();
@@ -348,20 +348,20 @@ export class DeepModulesImporter {
   }
 
   protected addToUnfinishedSearchDependencies(module: ModRefId, provider: Provider) {
-    const index = this.unfinishedSearchDependencies.findIndex(([m, p]) => m === module && p === provider);
+    const index = this.dependencyChain.findIndex(([m, p]) => m === module && p === provider);
     if (index != -1) {
       this.throwCircularDependencies(index);
     }
-    this.unfinishedSearchDependencies.push([module, provider]);
+    this.dependencyChain.push([module, provider]);
   }
 
   protected deleteFromUnfinishedSearchDependencies(module: ModRefId, provider: Provider) {
-    const index = this.unfinishedSearchDependencies.findIndex(([m, p]) => m === module && p === provider);
-    this.unfinishedSearchDependencies.splice(index, 1);
+    const index = this.dependencyChain.findIndex(([m, p]) => m === module && p === provider);
+    this.dependencyChain.splice(index, 1);
   }
 
   protected throwCircularDependencies(index: number) {
-    const items = this.unfinishedSearchDependencies;
+    const items = this.dependencyChain;
     const prefixChain = items.slice(0, index);
     const circularChain = items.slice(index);
 

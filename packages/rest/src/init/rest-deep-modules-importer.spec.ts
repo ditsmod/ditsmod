@@ -214,21 +214,20 @@ describe('DeepModulesImporter', () => {
       constructor(public service3: Service3) {}
     }
 
-    @initRest({ providersPerRou: [Service3, Service4], exports: [Service4] })
+    @initRest({ providersPerRou: [Service2, Service3, Service4], exports: [Service4] })
     @featureModule({
       imports: [Module1],
-      providersPerMod: [Service2],
     })
     class Module2 {}
 
     @rootModule({
       imports: [Module2],
     })
-    class Module3 {}
+    class AppModule {}
 
     let msg = 'Detected circular dependencies: [Service3 in Module2] -> [Service2 in Module2]';
     msg += ' -> [Service4 in Module2] -> [Service3 in Module2]';
-    expect(() => getMetadataPerMod2(Module3)).toThrow(msg);
+    expect(() => getMetadataPerMod2(AppModule)).toThrow(msg);
   });
 
   it('circular dependencies in different modules', () => {

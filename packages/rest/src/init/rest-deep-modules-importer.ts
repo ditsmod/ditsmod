@@ -35,7 +35,6 @@ import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
  * recursively collects providers for them from the corresponding modules.
  */
 export class RestDeepModulesImporter {
-  protected unfinishedSearchDependencies: [ModRefId, Provider][] = [];
   protected tokensPerApp: any[];
   protected tokensPerMod: any[];
 
@@ -268,20 +267,20 @@ export class RestDeepModulesImporter {
   }
 
   protected addToUnfinishedSearchDependencies(module: ModRefId, provider: Provider) {
-    const index = this.unfinishedSearchDependencies.findIndex(([m, p]) => m === module && p === provider);
+    const index = this.parent.dependencyChain.findIndex(([m, p]) => m === module && p === provider);
     if (index != -1) {
       this.throwCircularDependencies(index);
     }
-    this.unfinishedSearchDependencies.push([module, provider]);
+    this.parent.dependencyChain.push([module, provider]);
   }
 
   protected deleteFromUnfinishedSearchDependencies(module: ModRefId, provider: Provider) {
-    const index = this.unfinishedSearchDependencies.findIndex(([m, p]) => m === module && p === provider);
-    this.unfinishedSearchDependencies.splice(index, 1);
+    const index = this.parent.dependencyChain.findIndex(([m, p]) => m === module && p === provider);
+    this.parent.dependencyChain.splice(index, 1);
   }
 
   protected throwCircularDependencies(index: number) {
-    const items = this.unfinishedSearchDependencies;
+    const items = this.parent.dependencyChain;
     const prefixChain = items.slice(0, index);
     const circularChain = items.slice(index);
 
