@@ -47,7 +47,7 @@ export interface RestImportedTokensMap {
   multiPerReq: Map<RestModRefId, Provider[]>;
 }
 
-export class RestTargetProviders {
+export class RestProvidersOnly {
   providersPerRou: Provider[] = [];
   providersPerReq: Provider[] = [];
 }

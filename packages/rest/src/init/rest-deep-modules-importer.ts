@@ -25,7 +25,7 @@ import {
   RestImportedTokensMap,
   RestMetadataPerMod1,
   RestMetadataPerMod2,
-  RestTargetProviders,
+  RestProvidersOnly,
 } from './types.js';
 import { RestInitMeta } from '#init/rest-normalized-meta.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
@@ -104,7 +104,7 @@ export class RestDeepModulesImporter {
    * @param levels Search in this levels. The level order is important.
    */
   protected grabDependencies(
-    targetProviders: RestTargetProviders,
+    targetProviders: RestProvidersOnly,
     srcModRefId: ModRefId,
     importedProvider: Provider,
     levels: Level[],
@@ -148,7 +148,7 @@ export class RestDeepModulesImporter {
    * @param dep ReflectiveDependecy with token for dependecy of imported provider.
    */
   protected grabImportedDependencies(
-    targetProviders: RestTargetProviders,
+    targetProviders: RestProvidersOnly,
     srcModRefId1: ModRefId,
     importedProvider: Provider,
     levels: Level[],
@@ -187,7 +187,7 @@ export class RestDeepModulesImporter {
   }
 
   protected grabDependenciesAgain(
-    targetProviders: RestTargetProviders,
+    targetProviders: RestProvidersOnly,
     srcModRefId: ModRefId,
     importedProvider: Provider,
     levels: Level[],

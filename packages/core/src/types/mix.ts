@@ -90,7 +90,7 @@ export interface AnyObj {
   [key: string | symbol]: any;
 }
 
-export class TargetProviders {
+export class ProvidersOnly {
   providersPerMod: Provider[] = [];
 }
 

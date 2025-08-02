@@ -6,7 +6,7 @@ import { ModuleManager } from '#init/module-manager.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
 import { ShallowImports } from '#init/types.js';
 import { ImportedTokensMap, MetadataPerMod2 } from '#types/metadata-per-mod.js';
-import { Level, TargetProviders, ModRefId, AnyFn, AnyObj } from '#types/mix.js';
+import { Level, ProvidersOnly, ModRefId, AnyFn, AnyObj } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { ReflectiveDependency, getDependencies } from '#utils/get-dependencies.js';
@@ -82,7 +82,7 @@ export class DeepModulesImporter {
   }
 
   protected resolveImportedProviders(
-    targetProviders: TargetProviders,
+    targetProviders: ProvidersOnly,
     importedTokensMap: ImportedTokensMap,
     levels: Level[],
   ) {
@@ -170,7 +170,7 @@ export class DeepModulesImporter {
    * @param levels Search in this levels. The level order is important.
    */
   grabDependencies(
-    targetProviders: TargetProviders,
+    targetProviders: ProvidersOnly,
     srcModRefId: ModRefId,
     importedProvider: Provider,
     levels: Level[],
@@ -217,7 +217,7 @@ export class DeepModulesImporter {
    * @param dep ReflectiveDependecy with token for dependecy of imported provider.
    */
   grabImportedDependencies(
-    targetProviders: TargetProviders,
+    targetProviders: ProvidersOnly,
     srcModRefId1: ModRefId,
     importedProvider: Provider,
     levels: Level[],
@@ -232,12 +232,12 @@ export class DeepModulesImporter {
       if (importObj) {
         found = true;
         path.push(dep.token);
-        const { modRefId: modRefId2, providers: sourceProviders2 } = importObj;
-        targetProviders[`providersPer${level}`].unshift(...sourceProviders2);
+        const { modRefId: modRefId2, providers: srcProviders2 } = importObj;
+        targetProviders[`providersPer${level}`].unshift(...srcProviders2);
 
         // Loop for multi providers.
-        for (const sourceProvider2 of sourceProviders2) {
-          this.grabDependenciesAgain(targetProviders, modRefId2, sourceProvider2, levels, path);
+        for (const srcProvider2 of srcProviders2) {
+          this.grabDependenciesAgain(targetProviders, modRefId2, srcProvider2, levels, path);
         }
         break;
       }
@@ -249,15 +249,15 @@ export class DeepModulesImporter {
   }
 
   protected grabDependenciesAgain(
-    targetProviders: TargetProviders,
-    sourceModule: ModRefId,
+    targetProviders: ProvidersOnly,
+    srcModRefId: ModRefId,
     importedProvider: Provider,
     levels: Level[],
     path: any[],
   ) {
-    this.addToUnfinishedSearchDependencies(sourceModule, importedProvider);
-    this.grabDependencies(targetProviders, sourceModule, importedProvider, levels, path);
-    this.deleteFromUnfinishedSearchDependencies(sourceModule, importedProvider);
+    this.addToUnfinishedSearchDependencies(srcModRefId, importedProvider);
+    this.grabDependencies(targetProviders, srcModRefId, importedProvider, levels, path);
+    this.deleteFromUnfinishedSearchDependencies(srcModRefId, importedProvider);
   }
 
   protected hasUnresolvedDependencies(module: ModRefId, provider: Provider, levels: Level[]) {
@@ -348,12 +348,12 @@ export class DeepModulesImporter {
     return deps.filter((d) => !defaultTokens.includes(d.token));
   }
 
-  protected addToUnfinishedSearchDependencies(module: ModRefId, provider: Provider) {
-    const index = this.dependencyChain.findIndex(([m, p]) => m === module && p === provider);
+  protected addToUnfinishedSearchDependencies(modRefId: ModRefId, provider: Provider) {
+    const index = this.dependencyChain.findIndex(([m, p]) => m === modRefId && p === provider);
     if (index != -1) {
       this.throwCircularDependencies(index);
     }
-    this.dependencyChain.push([module, provider]);
+    this.dependencyChain.push([modRefId, provider]);
   }
 
   protected deleteFromUnfinishedSearchDependencies(module: ModRefId, provider: Provider) {
