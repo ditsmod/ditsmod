@@ -71,6 +71,8 @@ During you run the following command:
 corepack enable
 corepack install
 yarn install
+cd packages/openapi
+yarn build-ui
 ```
 
 yarn will create symlinks in `node_modules` for all packages listed in the `packages/*` and `examples/*` folders. Also, modules in the `packages/*` folder are linked to the applications in the `examples/*` folder thanks to [compilerOptions.paths][2] as well as [Project References][3]. So, after any change in the source files in `packages/*`, these changes are automatically reflected in `examples/*`.
