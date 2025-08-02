@@ -175,6 +175,7 @@ export class DeepModulesImporter {
     importedProvider: Provider,
     levels: Level[],
     path: any[] = [],
+    childLevels: string[] = [],
   ) {
     const sourceMeta = this.moduleManager.getMetadata(sourceModule, true);
 
@@ -204,7 +205,7 @@ export class DeepModulesImporter {
       }
 
       if (!found && !this.tokensPerApp.includes(dep.token)) {
-        this.grabImportedDependencies(targetProviders, sourceModule, importedProvider, levels, path, dep);
+        this.grabImportedDependencies(targetProviders, sourceModule, importedProvider, levels, path, dep, childLevels);
       }
     }
   }

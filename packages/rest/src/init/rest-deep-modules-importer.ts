@@ -36,7 +36,6 @@ import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
  */
 export class RestDeepModulesImporter {
   protected tokensPerApp: any[];
-  protected tokensPerMod: any[];
 
   protected metadataPerMod1: RestMetadataPerMod1;
   protected moduleManager: ModuleManager;
@@ -67,7 +66,6 @@ export class RestDeepModulesImporter {
   importModulesDeep(): RestMetadataPerMod2 | undefined {
     const levels: Level[] = ['Req', 'Rou'];
     this.tokensPerApp = getTokens(this.providersPerApp);
-    this.tokensPerMod = getTokens(this.metadataPerMod1.baseMeta.providersPerMod);
     const { importedTokensMap, guards1, prefixPerMod, meta, applyControllers } = this.metadataPerMod1;
     this.resolveImportedProviders(meta, importedTokensMap, levels);
     meta.providersPerRou.unshift(...defaultProvidersPerRou);
@@ -137,7 +135,7 @@ export class RestDeepModulesImporter {
         }
       }
 
-      if (!found && !this.tokensPerMod.includes(dep.token) && !this.tokensPerApp.includes(dep.token)) {
+      if (!found && !this.tokensPerApp.includes(dep.token)) {
         this.grabImportedDependencies(targetProviders, srcModRefId, importedProvider, levels, path, dep);
       }
     }
@@ -177,7 +175,14 @@ export class RestDeepModulesImporter {
     }
 
     if (!found) {
-      this.parent.grabDependencies(this.metadataPerMod1.baseMeta, srcModRefId1, importedProvider, ['Mod'], path);
+      this.parent.grabDependencies(
+        this.metadataPerMod1.baseMeta,
+        srcModRefId1,
+        importedProvider,
+        ['Mod'],
+        path,
+        levels,
+      );
     }
   }
 
@@ -211,7 +216,7 @@ export class RestDeepModulesImporter {
         }
       }
 
-      if (!found && !this.tokensPerMod.includes(dep.token) && !this.tokensPerApp.includes(dep.token)) {
+      if (!found && !this.tokensPerApp.includes(dep.token)) {
         if (this.hasUnresolvedImportedDependencies(module, levels, dep)) {
           return true;
         }
