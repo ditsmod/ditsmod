@@ -6,7 +6,7 @@ import { ModuleManager } from '#init/module-manager.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
 import { ShallowImports } from '#init/types.js';
 import { ImportedTokensMap, MetadataPerMod2 } from '#types/metadata-per-mod.js';
-import { Level, ProvidersForMod, ModRefId, AnyFn, AnyObj } from '#types/mix.js';
+import { Level, TargetProviders, ModRefId, AnyFn, AnyObj } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { NormalizedMeta } from '#types/normalized-meta.js';
 import { ReflectiveDependency, getDependencies } from '#utils/get-dependencies.js';
@@ -82,7 +82,7 @@ export class DeepModulesImporter {
   }
 
   protected resolveImportedProviders(
-    targetProviders: NormalizedMeta,
+    targetProviders: TargetProviders,
     importedTokensMap: ImportedTokensMap,
     levels: Level[],
   ) {
@@ -165,19 +165,19 @@ export class DeepModulesImporter {
 
   /**
    * @param targetProviders These are metadata of the module where providers are imported.
-   * @param sourceModule Module from where imports providers.
+   * @param srcModRefId Module from where imports providers.
    * @param importedProvider Imported provider.
    * @param levels Search in this levels. The level order is important.
    */
   grabDependencies(
-    targetProviders: ProvidersForMod,
-    sourceModule: ModRefId,
+    targetProviders: TargetProviders,
+    srcModRefId: ModRefId,
     importedProvider: Provider,
     levels: Level[],
     path: any[] = [],
     childLevels: string[] = [],
   ) {
-    const sourceMeta = this.moduleManager.getMetadata(sourceModule, true);
+    const sourceMeta = this.moduleManager.getMetadata(srcModRefId, true);
 
     for (const dep of this.getDependencies(importedProvider)) {
       let found: boolean = false;
@@ -193,7 +193,7 @@ export class DeepModulesImporter {
             const importedProvider2 = sourceProviders[i];
             targetProviders[`providersPer${level}`].unshift(importedProvider2);
             found = true;
-            this.grabDependenciesAgain(targetProviders, sourceModule, importedProvider2, levels, path);
+            this.grabDependenciesAgain(targetProviders, srcModRefId, importedProvider2, levels, path);
 
             // The loop does not breaks because there may be multi providers.
           }
@@ -205,20 +205,20 @@ export class DeepModulesImporter {
       }
 
       if (!found && !this.tokensPerApp.includes(dep.token)) {
-        this.grabImportedDependencies(targetProviders, sourceModule, importedProvider, levels, path, dep, childLevels);
+        this.grabImportedDependencies(targetProviders, srcModRefId, importedProvider, levels, path, dep, childLevels);
       }
     }
   }
 
   /**
    * @param targetProviders These are metadata of the module where providers are imported.
-   * @param sourceModule1 Module from where imports providers.
+   * @param srcModRefId1 Module from where imports providers.
    * @param importedProvider Imported provider.
    * @param dep ReflectiveDependecy with token for dependecy of imported provider.
    */
   grabImportedDependencies(
-    targetProviders: ProvidersForMod,
-    sourceModule1: ModRefId,
+    targetProviders: TargetProviders,
+    srcModRefId1: ModRefId,
     importedProvider: Provider,
     levels: Level[],
     path: any[] = [],
@@ -226,7 +226,7 @@ export class DeepModulesImporter {
     childLevels: string[] = [],
   ) {
     let found = false;
-    const metadataPerMod1 = this.shallowImports.get(sourceModule1)!;
+    const metadataPerMod1 = this.shallowImports.get(srcModRefId1)!;
     for (const level of levels) {
       const importObj = metadataPerMod1.importedTokensMap[`per${level}`].get(dep.token);
       if (importObj) {
@@ -249,7 +249,7 @@ export class DeepModulesImporter {
   }
 
   protected grabDependenciesAgain(
-    targetProviders: ProvidersForMod,
+    targetProviders: TargetProviders,
     sourceModule: ModRefId,
     importedProvider: Provider,
     levels: Level[],

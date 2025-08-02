@@ -25,7 +25,7 @@ import {
   RestImportedTokensMap,
   RestMetadataPerMod1,
   RestMetadataPerMod2,
-  RestProvidersForMod,
+  RestTargetProviders,
 } from './types.js';
 import { RestInitMeta } from '#init/rest-normalized-meta.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
@@ -104,7 +104,7 @@ export class RestDeepModulesImporter {
    * @param levels Search in this levels. The level order is important.
    */
   protected grabDependencies(
-    targetProviders: RestProvidersForMod,
+    targetProviders: RestTargetProviders,
     srcModRefId: ModRefId,
     importedProvider: Provider,
     levels: Level[],
@@ -148,7 +148,7 @@ export class RestDeepModulesImporter {
    * @param dep ReflectiveDependecy with token for dependecy of imported provider.
    */
   protected grabImportedDependencies(
-    targetProviders: RestProvidersForMod,
+    targetProviders: RestTargetProviders,
     srcModRefId1: ModRefId,
     importedProvider: Provider,
     levels: Level[],
@@ -187,15 +187,15 @@ export class RestDeepModulesImporter {
   }
 
   protected grabDependenciesAgain(
-    targetProviders: RestProvidersForMod,
-    sourceModule: ModRefId,
+    targetProviders: RestTargetProviders,
+    srcModRefId: ModRefId,
     importedProvider: Provider,
     levels: Level[],
     path: any[],
   ) {
-    this.addToUnfinishedSearchDependencies(sourceModule, importedProvider);
-    this.grabDependencies(targetProviders, sourceModule, importedProvider, levels, path);
-    this.deleteFromUnfinishedSearchDependencies(sourceModule, importedProvider);
+    this.addToUnfinishedSearchDependencies(srcModRefId, importedProvider);
+    this.grabDependencies(targetProviders, srcModRefId, importedProvider, levels, path);
+    this.deleteFromUnfinishedSearchDependencies(srcModRefId, importedProvider);
   }
 
   protected hasUnresolvedDependencies(module: ModRefId, provider: Provider, levels: Level[]) {

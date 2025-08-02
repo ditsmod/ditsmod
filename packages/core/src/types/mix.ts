@@ -90,10 +90,8 @@ export interface AnyObj {
   [key: string | symbol]: any;
 }
 
-export class ProvidersForMod {
+export class TargetProviders {
   providersPerMod: Provider[] = [];
-  // providersPerRou: Provider[] = [];
-  // providersPerReq: Provider[] = [];
 }
 
 export interface ResolvedGuardPerMod {
