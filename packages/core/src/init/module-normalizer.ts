@@ -20,7 +20,7 @@ import { AnyFn, ModRefId } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { RawMeta } from '#decorators/feature-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
-import { NormalizedMeta } from '#types/normalized-meta.js';
+import { BaseMeta } from '#types/base-meta.js';
 import { resolveForwardRef } from '#di/forward-ref.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
 import { Class } from '#di/types-and-models.js';
@@ -61,7 +61,7 @@ export class ModuleNormalizer {
     /**
      * Setting initial properties of metadata.
      */
-    const baseMeta = new NormalizedMeta();
+    const baseMeta = new BaseMeta();
     baseMeta.name = modName;
     baseMeta.modRefId = modRefId;
     baseMeta.declaredInDir = rawMeta.declaredInDir;
@@ -91,7 +91,7 @@ export class ModuleNormalizer {
     return reflector.getDecorators(mod);
   }
 
-  protected mergeModuleWithParams(rawMeta: RawMeta, modWitParams: ModuleWithParams, baseMeta: NormalizedMeta) {
+  protected mergeModuleWithParams(rawMeta: RawMeta, modWitParams: ModuleWithParams, baseMeta: BaseMeta) {
     if (modWitParams.id) {
       baseMeta.id = modWitParams.id;
     }
@@ -109,7 +109,7 @@ export class ModuleNormalizer {
   /**
    * For this method to work properly, the root module must be scanned first.
    */
-  protected checkAndMarkExternalModule(rawMeta: RawMeta, baseMeta: NormalizedMeta) {
+  protected checkAndMarkExternalModule(rawMeta: RawMeta, baseMeta: BaseMeta) {
     baseMeta.isExternal = false;
     if (isRootModule(rawMeta)) {
       this.rootDeclaredInDir = baseMeta.declaredInDir;
@@ -122,7 +122,7 @@ export class ModuleNormalizer {
     }
   }
 
-  protected normalizeImports(rawMeta: RawMeta, baseMeta: NormalizedMeta) {
+  protected normalizeImports(rawMeta: RawMeta, baseMeta: BaseMeta) {
     this.resolveForwardRef(rawMeta.imports).forEach((imp, i) => {
       this.throwIfUndefined(baseMeta.name, 'Imports', imp, i);
       if (isModuleWithParams(imp)) {
@@ -133,7 +133,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected normalizeDeclaredAndResolvedProviders(rawMeta: RawMeta, baseMeta: NormalizedMeta) {
+  protected normalizeDeclaredAndResolvedProviders(rawMeta: RawMeta, baseMeta: BaseMeta) {
     (['App', 'Mod'] as const).forEach((level) => {
       if (rawMeta[`providersPer${level}`]) {
         baseMeta[`providersPer${level}`].push(...rawMeta[`providersPer${level}`]!);
@@ -175,7 +175,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected normalizeExtensions(rawMeta: RawMeta, baseMeta: NormalizedMeta) {
+  protected normalizeExtensions(rawMeta: RawMeta, baseMeta: BaseMeta) {
     if (rawMeta.extensionsMeta) {
       baseMeta.extensionsMeta = { ...rawMeta.extensionsMeta };
     }
@@ -208,7 +208,7 @@ export class ModuleNormalizer {
     }
   }
 
-  protected normalizeExports(rawMeta: Partial<RawMeta>, baseMeta: NormalizedMeta) {
+  protected normalizeExports(rawMeta: Partial<RawMeta>, baseMeta: BaseMeta) {
     const providers: Provider[] = [];
     if (Array.isArray(rawMeta.providersPerMod)) {
       providers.push(...rawMeta.providersPerMod);
@@ -230,7 +230,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected checkReexportModules(baseMeta: NormalizedMeta) {
+  protected checkReexportModules(baseMeta: BaseMeta) {
     const imports = [...baseMeta.importsModules, ...baseMeta.importsWithParams];
     const exports = [...baseMeta.exportsModules, ...baseMeta.exportsWithParams];
 
@@ -304,7 +304,7 @@ export class ModuleNormalizer {
     }
   }
 
-  protected exportProviders(token: any, rawMeta: Partial<RawMeta>, baseMeta: NormalizedMeta): void {
+  protected exportProviders(token: any, rawMeta: Partial<RawMeta>, baseMeta: BaseMeta): void {
     let providers = [...(rawMeta.providersPerMod || [])].filter((p) => getToken(p) === token);
     providers = this.resolveForwardRef(providers);
     if (providers.length) {
@@ -335,7 +335,7 @@ export class ModuleNormalizer {
    * If the instance with init hooks has `hostRawMeta`, this method
    * inserts a hook that can add `hostRawMeta` to the host module.
    */
-  protected addInitHooksForHostDecorator(baseMeta: NormalizedMeta, allInitHooks: AllInitHooks) {
+  protected addInitHooksForHostDecorator(baseMeta: BaseMeta, allInitHooks: AllInitHooks) {
     allInitHooks.forEach((initHooks, decorator) => {
       if (initHooks.hostModule === baseMeta.modRefId && initHooks.hostRawMeta) {
         const newInitHooksAndRawMeta = initHooks.clone(initHooks.hostRawMeta);
@@ -344,7 +344,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected callInitHooksFromCurrentModule(baseMeta: NormalizedMeta) {
+  protected callInitHooksFromCurrentModule(baseMeta: BaseMeta) {
     baseMeta.mInitHooksAndRawMeta.forEach((initHooks, decorator) => {
       baseMeta.allInitHooks.set(decorator, initHooks);
 
@@ -386,7 +386,7 @@ export class AppModule {}
    * but `Module1` itself does not have an annotation with `initRest`. For such cases,
    * this method adds hooks so that the import of `Module1` with parameters can be properly handled.
    */
-  protected addInitHooksFromModuleUsageContext(baseMeta: NormalizedMeta, allInitHooks: AllInitHooks) {
+  protected addInitHooksFromModuleUsageContext(baseMeta: BaseMeta, allInitHooks: AllInitHooks) {
     (baseMeta.modRefId as ModuleWithParams).initParams?.forEach((params, decorator) => {
       if (!baseMeta.mInitHooksAndRawMeta.has(decorator)) {
         const initHooks = allInitHooks.get(decorator)!;
@@ -400,14 +400,14 @@ export class AppModule {}
     });
   }
 
-  protected callInitHook(baseMeta: NormalizedMeta, decorator: AnyFn, initHooks: InitHooksAndRawMeta) {
+  protected callInitHook(baseMeta: BaseMeta, decorator: AnyFn, initHooks: InitHooksAndRawMeta) {
     const meta = initHooks.normalize(baseMeta);
     if (meta) {
       baseMeta.initMeta.set(decorator, meta);
     }
   }
 
-  protected quickCheckMetadata(baseMeta: NormalizedMeta) {
+  protected quickCheckMetadata(baseMeta: BaseMeta) {
     if (
       isFeatureModule(baseMeta) &&
       !baseMeta.mInitHooksAndRawMeta.size &&

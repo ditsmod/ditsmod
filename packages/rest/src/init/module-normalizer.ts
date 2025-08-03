@@ -10,7 +10,7 @@ import {
   ModuleType,
   ModuleWithParams,
   MultiProvider,
-  NormalizedMeta,
+  BaseMeta,
   NormalizedProvider,
   Providers,
   reflector,
@@ -34,7 +34,7 @@ import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
  * Normalizes and validates module metadata.
  */
 export class ModuleNormalizer {
-  normalize(baseMeta: NormalizedMeta, rawMeta: RestInitRawMeta) {
+  normalize(baseMeta: BaseMeta, rawMeta: RestInitRawMeta) {
     const meta = new RestInitMeta();
     this.mergeModuleWithParams(baseMeta.modRefId, rawMeta, meta);
     this.appendModules(rawMeta, meta);
@@ -137,7 +137,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected normalizeExports(baseMeta: NormalizedMeta, rawMeta: RestInitRawMeta, meta: RestInitMeta) {
+  protected normalizeExports(baseMeta: BaseMeta, rawMeta: RestInitRawMeta, meta: RestInitMeta) {
     if (!rawMeta.exports) {
       return;
     }
@@ -245,7 +245,7 @@ export class ModuleNormalizer {
     }
   }
 
-  protected checkMetadata(baseMeta: NormalizedMeta, meta: RestInitMeta) {
+  protected checkMetadata(baseMeta: BaseMeta, meta: RestInitMeta) {
     this.checkGuards(meta.params.guards);
     this.throwIfResolvingNormalizedProvider(meta);
     meta.controllers.forEach((Controller) => this.checkController(Controller));

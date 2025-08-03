@@ -1,7 +1,7 @@
 import { injectable, Provider, makePropDecorator, FactoryProvider, forwardRef } from '#di';
 import { featureModule } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
-import { NormalizedMeta } from '#types/normalized-meta.js';
+import { BaseMeta } from '#types/base-meta.js';
 import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { GlobalProviders, ImportObj, MetadataPerMod1 } from '#types/metadata-per-mod.js';
@@ -22,7 +22,7 @@ describe('ShallowModulesImporter', () => {
   @injectable()
   class MockShallowModulesImporter extends ShallowModulesImporter {
     override moduleName = 'MockModule';
-    override baseMeta = new NormalizedMeta();
+    override baseMeta = new BaseMeta();
     override shallowImportsBase = new Map<ModuleType, MetadataPerMod1>();
     override importedProvidersPerMod = new Map<any, ImportObj>();
     override importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();

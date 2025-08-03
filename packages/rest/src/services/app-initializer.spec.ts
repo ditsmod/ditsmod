@@ -11,7 +11,7 @@ import {
   ModuleManager,
   ModuleType,
   ModuleWithParams,
-  NormalizedMeta,
+  BaseMeta,
   Provider,
   rootModule,
   SystemLogMediator,
@@ -29,7 +29,7 @@ type ModRefId = ModuleType | ModuleWithParams;
 
 @injectable()
 class AppInitializerMock extends AppInitializer {
-  override baseMeta = new NormalizedMeta();
+  override baseMeta = new BaseMeta();
 
   constructor(
     public override appOptions: AppOptions,

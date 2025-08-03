@@ -46,7 +46,7 @@ export interface ModuleWithInitParams<M extends AnyObj = AnyObj> extends ModuleW
   initParams: InitParamsMap;
 }
 /**
- * Metadata with this type is created when the `parentMeta: NormalizedMeta` property is added to `BaseModuleWithParams`.
+ * Metadata with this type is created when the `parentMeta: BaseMeta` property is added to `BaseModuleWithParams`.
  */
 
 export interface BaseModuleWithParams<M extends AnyObj = AnyObj> {

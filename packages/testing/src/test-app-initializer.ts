@@ -5,7 +5,7 @@ import {
   InternalExtensionsManager,
   MetadataPerMod2,
   ModRefId,
-  NormalizedMeta,
+  BaseMeta,
   Provider,
   Providers,
 } from '@ditsmod/core';
@@ -45,7 +45,7 @@ export class TestAppInitializer extends AppInitializer {
     this.providersToOverride.push(...providers);
   }
 
-  protected override overrideMetaAfterStage1(meta: NormalizedMeta) {
+  protected override overrideMetaAfterStage1(meta: BaseMeta) {
     const providersMeta = this.providersMetaForAdding.get(meta.modRefId);
     if (providersMeta) {
       (['App', 'Mod', 'Rou', 'Req'] satisfies Level[]).forEach((level) => {

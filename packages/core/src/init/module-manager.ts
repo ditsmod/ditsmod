@@ -4,7 +4,7 @@ import { injectable, Injector, Provider, reflector } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyObj, ModuleType, ModRefId, AnyFn } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
-import { NormalizedMeta } from '#types/normalized-meta.js';
+import { BaseMeta } from '#types/base-meta.js';
 import { isModuleWithParams, isRootModule } from '#utils/type-guards.js';
 import { clearDebugClassNames, getDebugClassName } from '#utils/get-debug-class-name.js';
 import { objectKeys } from '#utils/object-keys.js';
@@ -12,7 +12,7 @@ import { ModuleNormalizer } from '#init/module-normalizer.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { CustomError } from '#error/custom-error.js';
 
-export type ModulesMap = Map<ModRefId, NormalizedMeta>;
+export type ModulesMap = Map<ModRefId, BaseMeta>;
 export type ModulesMapId = Map<string, ModRefId>;
 export type AllInitHooks = Map<AnyFn, Omit<InitHooksAndRawMeta, 'rawMeta' | 'baseInitMeta'>>;
 type ModuleId = string | ModRefId;
@@ -37,7 +37,7 @@ export class ModuleManager {
   constructor(protected systemLogMediator: SystemLogMediator) {}
 
   /**
-   * Creates a snapshot of `NormalizedMeta` for the root module, stores locally and returns it.
+   * Creates a snapshot of `BaseMeta` for the root module, stores locally and returns it.
    * You can also get the result this way: `moduleManager.getMetadata('root')`.
    */
   scanRootModule(appModule: ModuleType) {
@@ -56,7 +56,7 @@ export class ModuleManager {
   }
 
   /**
-   * Returns a snapshot of `NormalizedMeta` for a module.
+   * Returns a snapshot of `BaseMeta` for a module.
    */
   scanModule(modOrObj: ModuleType | ModuleWithParams) {
     const baseMeta = this.scanRawModule(modOrObj);
@@ -64,18 +64,18 @@ export class ModuleManager {
   }
 
   /**
-   * Returns a snapshot of `NormalizedMeta` for given module or module ID.
+   * Returns a snapshot of `BaseMeta` for given module or module ID.
    * If this snapshot is later mutated outside of `ModuleManager`, it does not affect
    * the new snapshot that later returns this method.
    */
   getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound?: false,
-  ): NormalizedMeta | undefined;
+  ): BaseMeta | undefined;
   getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound: true,
-  ): NormalizedMeta;
+  ): BaseMeta;
   getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrIfNotFound?: boolean) {
     const baseMeta = this.getOriginMetadata<T, A>(moduleId, throwErrIfNotFound);
     if (baseMeta) {
@@ -269,7 +269,7 @@ export class ModuleManager {
    * executed for the current module. The result of executing these init hooks is objects with initialized
    * properties, into which certain metadata can later be imported.
    */
-  protected callInitHooksAfterScan(baseMeta: NormalizedMeta) {
+  protected callInitHooksAfterScan(baseMeta: BaseMeta) {
     baseMeta.allInitHooks.forEach((initHooks, decorator) => {
       if (!baseMeta.mInitHooksAndRawMeta.has(decorator)) {
         const meta = initHooks.clone().normalize(baseMeta);
@@ -280,8 +280,8 @@ export class ModuleManager {
     });
   }
 
-  protected copyMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(baseMeta: NormalizedMeta) {
-    baseMeta = { ...(baseMeta || ({} as NormalizedMeta)) };
+  protected copyMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(baseMeta: BaseMeta) {
+    baseMeta = { ...(baseMeta || ({} as BaseMeta)) };
     objectKeys(baseMeta).forEach((p) => {
       if (Array.isArray(baseMeta[p])) {
         (baseMeta as any)[p] = baseMeta[p].slice();
@@ -296,23 +296,23 @@ export class ModuleManager {
   protected getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound?: boolean,
-  ): NormalizedMeta | undefined;
+  ): BaseMeta | undefined;
   protected getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound: true,
-  ): NormalizedMeta;
+  ): BaseMeta;
   protected getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound?: boolean,
   ) {
-    let baseMeta: NormalizedMeta | undefined;
+    let baseMeta: BaseMeta | undefined;
     if (typeof moduleId == 'string') {
       const mapId = this.mapId.get(moduleId);
       if (mapId) {
-        baseMeta = this.map.get(mapId) as NormalizedMeta;
+        baseMeta = this.map.get(mapId) as BaseMeta;
       }
     } else {
-      baseMeta = this.map.get(moduleId) as NormalizedMeta;
+      baseMeta = this.map.get(moduleId) as BaseMeta;
     }
 
     if (throwErrIfNotFound && !baseMeta) {
@@ -351,7 +351,7 @@ export class ModuleManager {
     );
   }
 
-  protected normalizeMetadata(modRefId: ModRefId, allInitHooks: AllInitHooks): NormalizedMeta {
+  protected normalizeMetadata(modRefId: ModRefId, allInitHooks: AllInitHooks): BaseMeta {
     try {
       return this.moduleNormalizer.normalize(modRefId, allInitHooks);
     } catch (err: any) {

@@ -6,7 +6,7 @@ import { LogMediator } from '#logger/log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { featureModule } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
-import { NormalizedMeta } from '#types/normalized-meta.js';
+import { BaseMeta } from '#types/base-meta.js';
 import { BaseAppInitializer } from '#init/base-app-initializer.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { ModuleType } from '#types/mix.js';
@@ -22,7 +22,7 @@ describe('BaseAppInitializer', () => {
   type ModRefId = ModuleType | ModuleWithParams;
 
   class AppInitializerMock extends BaseAppInitializer {
-    override baseMeta = new NormalizedMeta();
+    override baseMeta = new BaseMeta();
 
     constructor(
       public override baseAppOptions: BaseAppOptions,

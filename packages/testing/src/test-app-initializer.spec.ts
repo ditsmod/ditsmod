@@ -1,4 +1,4 @@
-import { ModRefId, NormalizedMeta, Provider, Providers } from '@ditsmod/core';
+import { ModRefId, BaseMeta, Provider, Providers } from '@ditsmod/core';
 
 import { TestAppInitializer } from '#app/test-app-initializer.js';
 import { Meta } from '#app/types.js';
@@ -7,7 +7,7 @@ describe('TestAppInitializer', () => {
   class MockTestAppInitializer extends TestAppInitializer {
     override providersMetaForAdding = new Map<ModRefId, Meta<Provider[]>>();
 
-    override overrideMetaAfterStage1(meta: NormalizedMeta) {
+    override overrideMetaAfterStage1(meta: BaseMeta) {
       return super.overrideMetaAfterStage1(meta);
     }
   }
@@ -57,7 +57,7 @@ describe('TestAppInitializer', () => {
         providersPerMod: [Provider1],
       };
       mock.addProvidersToModule(modRefId, providersMeta1);
-      const meta = new NormalizedMeta();
+      const meta = new BaseMeta();
       meta.providersPerApp.push(Provider0);
       meta.providersPerMod.push(Provider0);
 

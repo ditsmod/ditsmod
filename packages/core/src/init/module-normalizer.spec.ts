@@ -6,7 +6,7 @@ import { Extension } from '#extension/extension-types.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { AnyObj, ModRefId } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
-import { NormalizedMeta } from '#types/normalized-meta.js';
+import { BaseMeta } from '#types/base-meta.js';
 import { InitDecorator } from '#decorators/init-hooks-and-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { ModuleNormalizer } from './module-normalizer.js';
@@ -14,7 +14,7 @@ import { Providers } from '#utils/providers.js';
 
 describe('ModuleNormalizer', () => {
   class MockModuleNormalizer extends ModuleNormalizer {
-    override normalize(modRefId: ModRefId): NormalizedMeta<AnyObj, AnyObj> {
+    override normalize(modRefId: ModRefId): BaseMeta<AnyObj, AnyObj> {
       return super.normalize(modRefId, new Map());
     }
   }
@@ -30,7 +30,7 @@ describe('ModuleNormalizer', () => {
     @rootModule()
     class AppModule {}
 
-    const expectedMeta = new NormalizedMeta();
+    const expectedMeta = new BaseMeta();
     expectedMeta.id = '';
     expectedMeta.name = 'AppModule';
     expectedMeta.modRefId = AppModule;
@@ -263,12 +263,12 @@ describe('ModuleNormalizer', () => {
 
   describe('creating custom decorator with init hooks', () => {
     interface InitMeta {
-      baseMeta: NormalizedMeta;
+      baseMeta: BaseMeta;
       rawMeta: RawMeta;
     }
 
     class InitHooksAndRawMeta1 extends InitHooksAndRawMeta<RawMeta> {
-      override normalize(baseMeta: NormalizedMeta): InitMeta {
+      override normalize(baseMeta: BaseMeta): InitMeta {
         return {
           baseMeta,
           rawMeta: this.rawMeta,

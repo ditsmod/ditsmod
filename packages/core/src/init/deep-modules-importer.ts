@@ -8,7 +8,7 @@ import { ShallowImports } from '#init/types.js';
 import { ImportedTokensMap, MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import { Level, ProvidersOnly, ModRefId, AnyFn, AnyObj } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
-import { NormalizedMeta } from '#types/normalized-meta.js';
+import { BaseMeta } from '#types/base-meta.js';
 import { ReflectiveDependency, getDependencies } from '#utils/get-dependencies.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
 import { getProviderName } from '#utils/get-provider-name.js';
@@ -103,7 +103,7 @@ export class DeepModulesImporter {
     });
   }
 
-  protected resolveProvidersForExtensions(targetProviders: NormalizedMeta, importedTokensMap: ImportedTokensMap) {
+  protected resolveProvidersForExtensions(targetProviders: BaseMeta, importedTokensMap: ImportedTokensMap) {
     const currentExtensionsTokens: any[] = [];
     importedTokensMap.extensions.forEach((providers) => {
       currentExtensionsTokens.push(...getTokens(providers));
@@ -153,7 +153,7 @@ export class DeepModulesImporter {
     this.increaseExtensionCounters(targetProviders);
   }
 
-  protected increaseExtensionCounters(baseMeta: NormalizedMeta) {
+  protected increaseExtensionCounters(baseMeta: BaseMeta) {
     const extensionsProviders = [...baseMeta.extensionsProviders];
     const uniqTargets = new Set<Provider>(getProvidersTargets(extensionsProviders));
 
@@ -317,7 +317,7 @@ export class DeepModulesImporter {
     return false;
   }
 
-  protected throwError(baseMeta: NormalizedMeta, provider: Provider, path: any[], token: any, levels: string[]) {
+  protected throwError(baseMeta: BaseMeta, provider: Provider, path: any[], token: any, levels: string[]) {
     path = [provider, ...path, token];
     const strPath = getTokens(path)
       .map((t) => t.name || t)

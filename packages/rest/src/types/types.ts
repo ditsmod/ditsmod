@@ -1,4 +1,4 @@
-import { Class, HttpMethod, ModuleExtract, ModuleMetadata, ModuleType, NormalizedMeta, Provider } from '@ditsmod/core';
+import { Class, HttpMethod, ModuleExtract, ModuleMetadata, ModuleType, BaseMeta, Provider } from '@ditsmod/core';
 
 import { RestImportObj } from '#init/types.js';
 import { Tree } from '#services/tree.js';
@@ -38,7 +38,7 @@ interface ExtendedModuleMetadata extends ModuleMetadata {
  * that need set routes. The target for this metadata is `PreRouterExtension` group.
  */
 export class MetadataPerMod3 {
-  baseMeta: NormalizedMeta;
+  baseMeta: BaseMeta;
   meta: RestInitMeta;
   aControllerMetadata: ControllerMetadata[];
   guards1: GuardPerMod1[];

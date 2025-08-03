@@ -6,7 +6,7 @@ import { Logger } from '#logger/logger.js';
 import { SystemErrorMediator } from '#error/system-error-mediator.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { PublicLogMediator, SystemLogMediator } from '#logger/system-log-mediator.js';
-import { NormalizedMeta } from '#types/normalized-meta.js';
+import { BaseMeta } from '#types/base-meta.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
 import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import { Counter } from '#extension/counter.js';
@@ -32,7 +32,7 @@ import { ShallowImports } from './types.js';
 
 export class BaseAppInitializer {
   protected perAppService = new PerAppService();
-  protected baseMeta: NormalizedMeta;
+  protected baseMeta: BaseMeta;
 
   constructor(
     protected baseAppOptions: BaseAppOptions,
@@ -329,7 +329,7 @@ export class BaseAppInitializer {
     }
   }
 
-  protected async initModuleAndGetInjectorPerMod(baseMeta: NormalizedMeta): Promise<Injector> {
+  protected async initModuleAndGetInjectorPerMod(baseMeta: BaseMeta): Promise<Injector> {
     const Mod = getModule(baseMeta.modRefId);
     const extendedProvidersPerMod = [Mod, ...baseMeta.providersPerMod];
     const injectorPerApp = this.perAppService.injector;
@@ -357,7 +357,7 @@ export class BaseAppInitializer {
   }
 
   protected async handleExtensionsPerMod(
-    baseMeta: NormalizedMeta,
+    baseMeta: BaseMeta,
     extensionsManager: InternalExtensionsManager,
     systemLogMediator: SystemLogMediator,
   ) {
@@ -370,7 +370,7 @@ export class BaseAppInitializer {
    *
    * See `TestAppInitializer` in `@ditsmod/testing` for more info.
    */
-  protected overrideMetaBeforeExtensionHanling(baseMeta: NormalizedMeta) {
+  protected overrideMetaBeforeExtensionHanling(baseMeta: BaseMeta) {
     return baseMeta;
   }
 
@@ -379,7 +379,7 @@ export class BaseAppInitializer {
    *
    * See `TestAppInitializer` in `@ditsmod/testing` for more info.
    */
-  protected overrideMetaAfterStage1(baseMeta: NormalizedMeta) {
+  protected overrideMetaAfterStage1(baseMeta: BaseMeta) {
     return baseMeta;
   }
 

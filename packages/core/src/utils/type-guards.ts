@@ -7,7 +7,7 @@ import { RootModuleMetadata } from '#types/root-module-metadata.js';
 import { featureModule, RawMeta } from '#decorators/feature-module.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { rootModule } from '#decorators/root-module.js';
-import { NormalizedMeta } from '#types/normalized-meta.js';
+import { BaseMeta } from '#types/base-meta.js';
 import { CustomError } from '#error/custom-error.js';
 
 export interface TypeGuard<T> {
@@ -24,27 +24,27 @@ export function isCustomError(err: any): err is CustomError {
 
 export function isRootModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<RawMeta>;
 export function isRootModule(arg?: RawMeta): arg is RawMeta;
-export function isRootModule(meta?: NormalizedMeta): meta is NormalizedMeta<RootModuleMetadata>;
+export function isRootModule(meta?: BaseMeta): meta is BaseMeta<RootModuleMetadata>;
 export function isRootModule(arg?: AnyObj): arg is { decorator: typeof rootModule } & AnyObj;
 export function isRootModule(
-  arg?: DecoratorAndValue | RawMeta | NormalizedMeta | AnyObj,
+  arg?: DecoratorAndValue | RawMeta | BaseMeta | AnyObj,
 ): arg is DecoratorAndValue<RawMeta> {
   return arg?.decorator === rootModule;
 }
 
 export function isFeatureModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<RawMeta>;
 export function isFeatureModule(arg?: RawMeta): arg is RawMeta;
-export function isFeatureModule(meta?: NormalizedMeta): meta is NormalizedMeta<ModuleMetadata>;
+export function isFeatureModule(meta?: BaseMeta): meta is BaseMeta<ModuleMetadata>;
 export function isFeatureModule(arg?: AnyObj): arg is { decorator: typeof featureModule } & AnyObj;
 export function isFeatureModule(
-  arg?: DecoratorAndValue | RawMeta | NormalizedMeta | AnyObj,
+  arg?: DecoratorAndValue | RawMeta | BaseMeta | AnyObj,
 ): arg is DecoratorAndValue<RawMeta> {
   return arg?.decorator === featureModule;
 }
 
 export function isModDecor(arg?: DecoratorAndValue): arg is DecoratorAndValue<RawMeta>;
 export function isModDecor(arg?: RawMeta): arg is RawMeta;
-export function isModDecor(meta?: NormalizedMeta): meta is NormalizedMeta<RootModuleMetadata>;
+export function isModDecor(meta?: BaseMeta): meta is BaseMeta<RootModuleMetadata>;
 export function isModDecor(arg?: any) {
   return isRootModule(arg) || isFeatureModule(arg);
 }

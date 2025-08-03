@@ -1,4 +1,4 @@
-import { Class, makeClassDecorator, NormalizedMeta } from '@ditsmod/core';
+import { Class, makeClassDecorator, BaseMeta } from '@ditsmod/core';
 import { RequestContext } from '#services/request-context.js';
 import { RestInitMeta } from '#init/rest-normalized-meta.js';
 
@@ -17,5 +17,5 @@ export interface NormalizedGuard {
 
 export interface GuardPerMod1 extends NormalizedGuard {
   meta: RestInitMeta;
-  baseMeta: NormalizedMeta;
+  baseMeta: BaseMeta;
 }

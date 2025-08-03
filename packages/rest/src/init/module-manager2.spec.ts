@@ -5,7 +5,7 @@ import {
   ModuleManager,
   ModuleType,
   ModuleWithParams,
-  NormalizedMeta,
+  BaseMeta,
   rootModule,
   SystemLogMediator,
 } from '@ditsmod/core';
@@ -21,18 +21,18 @@ let mock: MockModuleManager;
 type ModuleId = string | ModuleType | ModuleWithParams;
 
 class MockModuleManager extends ModuleManager {
-  override map = new Map<ModuleType | ModuleWithParams, NormalizedMeta>();
+  override map = new Map<ModuleType | ModuleWithParams, BaseMeta>();
   override mapId = new Map<string, ModuleType | ModuleWithParams>();
-  override oldMap = new Map<ModuleType | ModuleWithParams, NormalizedMeta>();
+  override oldMap = new Map<ModuleType | ModuleWithParams, BaseMeta>();
   override oldMapId = new Map<string, ModuleType | ModuleWithParams>();
   override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound?: boolean,
-  ): NormalizedMeta<T, A> | undefined;
+  ): BaseMeta<T, A> | undefined;
   override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound: true,
-  ): NormalizedMeta<T, A>;
+  ): BaseMeta<T, A>;
   override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrOnNotFound?: boolean,

@@ -8,7 +8,10 @@ import { InitMetaMap } from '#decorators/init-hooks-and-metadata.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { AllInitHooks } from '#init/module-manager.js';
 
-export class NormalizedMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> {
+/**
+ * Normalized metadata taken from the `rootModule` or `featureModule` decorator.
+ */
+export class BaseMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> {
   /**
    * The module setted here must be identical to the module
    * passed to "imports", "exports" array of `@featureModule` metadata.

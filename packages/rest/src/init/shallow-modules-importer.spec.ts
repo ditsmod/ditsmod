@@ -10,7 +10,7 @@ import {
   ModuleManager,
   ModuleType,
   ModuleWithParams,
-  NormalizedMeta,
+  BaseMeta,
   Provider,
   rootModule,
   SystemLogMediator,
@@ -39,7 +39,7 @@ export class ImportObj<T extends Provider = Provider> {
 class MockShallowModulesImporter extends ShallowModulesImporter {
   declare prefixPerMod: string;
   override moduleName = 'MockModule';
-  override baseMeta = new NormalizedMeta();
+  override baseMeta = new BaseMeta();
   override shallowImportsBase = new Map<ModuleType, MetadataPerMod1>();
   override importedProvidersPerRou = new Map<any, ImportObj>();
   override importedProvidersPerReq = new Map<any, ImportObj>();
@@ -50,7 +50,7 @@ class MockShallowModulesImporter extends ShallowModulesImporter {
   override exportGlobalProviders(config: {
     moduleManager: ModuleManager;
     globalProviders: GlobalProviders;
-    baseMeta: NormalizedMeta;
+    baseMeta: BaseMeta;
   }): RestGlobalProviders {
     return super.exportGlobalProviders(config);
   }

@@ -16,7 +16,7 @@ import {
   BaseAppInitializer,
   BaseAppOptions,
   ExtensionCounters,
-  NormalizedMeta,
+  BaseMeta,
   DeepModulesImporter,
   ModuleWithInitParams,
 } from '@ditsmod/core';
@@ -31,7 +31,7 @@ import { RestModuleExtract } from '#types/types.js';
 
 describe('DeepModulesImporter', () => {
   class AppInitializerMock extends BaseAppInitializer {
-    override baseMeta = new NormalizedMeta();
+    override baseMeta = new BaseMeta();
 
     constructor(
       public override baseAppOptions: BaseAppOptions,

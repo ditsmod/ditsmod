@@ -1,4 +1,4 @@
-import { NormalizedMeta } from '#types/normalized-meta.js';
+import { BaseMeta } from '#types/base-meta.js';
 import { AnyFn, AnyObj, ModRefId, ModuleType } from './mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from './module-metadata.js';
@@ -28,10 +28,10 @@ export class GlobalProviders {
  */
 export class MetadataPerMod1 {
   /**
-   * Snapshot of NormalizedMeta. If you modify any array in this object,
+   * Snapshot of BaseMeta. If you modify any array in this object,
    * the original array will remain unchanged.
    */
-  baseMeta: NormalizedMeta;
+  baseMeta: BaseMeta;
   /**
    * Map between a token and its ImportObj per level.
    */
@@ -48,6 +48,6 @@ export interface ImportedTokensMap {
 }
 
 export class MetadataPerMod2<T extends AnyObj = AnyObj> {
-  baseMeta: NormalizedMeta;
+  baseMeta: BaseMeta;
   deepImportedModules: Map<AnyFn, T>;
 }

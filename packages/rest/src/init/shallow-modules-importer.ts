@@ -13,7 +13,7 @@ import {
   throwProvidersCollisionError,
   isRootModule,
   getModule,
-  NormalizedMeta,
+  BaseMeta,
   GlobalProviders,
   getLastProviders,
   ShallowImportsBase,
@@ -44,7 +44,7 @@ export class ShallowModulesImporter {
   protected moduleName: string;
   protected prefixPerMod: string;
   protected guards1: GuardPerMod1[];
-  protected baseMeta: NormalizedMeta;
+  protected baseMeta: BaseMeta;
   protected meta: RestInitMeta;
   protected shallowImportsBase: ShallowImportsBase;
   protected providersPerApp: Provider[];
@@ -72,7 +72,7 @@ export class ShallowModulesImporter {
   }: {
     moduleManager: ModuleManager;
     globalProviders: GlobalProviders;
-    baseMeta: NormalizedMeta;
+    baseMeta: BaseMeta;
   }): RestGlobalProviders {
     this.moduleManager = moduleManager;
     this.glProviders = globalProviders;
@@ -174,7 +174,7 @@ export class ShallowModulesImporter {
     });
   }
 
-  protected hasPath(baseMeta: NormalizedMeta) {
+  protected hasPath(baseMeta: BaseMeta) {
     const hasPath =
       isAppendsWithParams(baseMeta.modRefId) &&
       (baseMeta.modRefId.path !== undefined || baseMeta.modRefId.absolutePath !== undefined);
@@ -252,7 +252,7 @@ export class ShallowModulesImporter {
    *
    * @param baseMeta1 Module metadata from where imports providers.
    */
-  protected importProviders(baseMeta1: NormalizedMeta) {
+  protected importProviders(baseMeta1: BaseMeta) {
     const { modRefId, exportsModules, exportsWithParams, initMeta } = baseMeta1;
 
     for (const modRefId2 of [...exportsModules, ...exportsWithParams]) {
@@ -468,7 +468,7 @@ export class ShallowModulesImporter {
     }
   }
 
-  protected checkImportsAndAppends(baseMeta: NormalizedMeta, meta1: RestInitMeta) {
+  protected checkImportsAndAppends(baseMeta: BaseMeta, meta1: RestInitMeta) {
     meta1.appendsModules.concat(meta1.appendsWithParams as any[]).forEach((modRefId) => {
       const appendedBaseMeta = this.getMetadata(modRefId, true);
       const meta2 = appendedBaseMeta.initMeta.get(initRest) as RestInitMeta | undefined;
@@ -488,7 +488,7 @@ export class ShallowModulesImporter {
    * If this function is used via `exportGlobalProviders()`, `shallowImportsBase` is not available.
    * So, you have to use `ModuleManager`.
    */
-  protected getMetadata(modRefId: ModRefId, throwErrIfNotFound?: true): NormalizedMeta {
+  protected getMetadata(modRefId: ModRefId, throwErrIfNotFound?: true): BaseMeta {
     if (this.shallowImportsBase) {
       return this.shallowImportsBase.get(modRefId)?.baseMeta!;
     }

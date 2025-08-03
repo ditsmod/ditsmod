@@ -7,7 +7,7 @@ import { CallsiteUtils } from '#utils/callsites.js';
 import { ModuleNormalizer } from './module-normalizer.js';
 import { ModRefId } from '#types/mix.js';
 import { isModuleWithParams } from '#utils/type-guards.js';
-import { NormalizedMeta } from '#types/normalized-meta.js';
+import { BaseMeta } from '#types/base-meta.js';
 
 describe('ModuleNormalizer.getDecoratorMeta()', () => {
   class Provider0 {}
@@ -18,7 +18,7 @@ describe('ModuleNormalizer.getDecoratorMeta()', () => {
     override getDecoratorMeta(modRefId: ModRefId) {
       return super.getDecoratorMeta(modRefId);
     }
-    override mergeModuleWithParams(rawMeta: RawMeta, modWitParams: ModuleWithParams, baseMeta: NormalizedMeta) {
+    override mergeModuleWithParams(rawMeta: RawMeta, modWitParams: ModuleWithParams, baseMeta: BaseMeta) {
       return super.mergeModuleWithParams(rawMeta, modWitParams, baseMeta);
     }
   }
@@ -29,7 +29,7 @@ describe('ModuleNormalizer.getDecoratorMeta()', () => {
     const aRawMeta = mInitHooksAndRawMeta.map((d) => {
       let rawMeta = d.value as RawMeta;
       if (isModuleWithParams(modRefId)) {
-        rawMeta = mockModuleNormalizer.mergeModuleWithParams(rawMeta, modRefId, new NormalizedMeta());
+        rawMeta = mockModuleNormalizer.mergeModuleWithParams(rawMeta, modRefId, new BaseMeta());
       }
       return rawMeta;
     });

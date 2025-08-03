@@ -1,6 +1,6 @@
 import { injectable, Injector } from '#di';
 import { DeepModulesImporter } from '#init/deep-modules-importer.js';
-import { NormalizedMeta } from '#types/normalized-meta.js';
+import { BaseMeta } from '#types/base-meta.js';
 import { ImportedTokensMap } from '#types/metadata-per-mod.js';
 import { ModRefId, ModuleType, Level } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
@@ -15,7 +15,7 @@ describe('DeepModulesImporter', () => {
   @injectable()
   class DeepModulesImporterMock extends DeepModulesImporter {
     override resolveImportedProviders(
-      targetProviders: NormalizedMeta,
+      targetProviders: BaseMeta,
       importedTokensMap: ImportedTokensMap,
       levels: Level[],
     ) {
@@ -29,7 +29,7 @@ describe('DeepModulesImporter', () => {
     }
 
     override grabDependencies(
-      targetMeta: NormalizedMeta,
+      targetMeta: BaseMeta,
       sourceModule: ModRefId,
       importedProvider: Provider,
       levels: Level[],

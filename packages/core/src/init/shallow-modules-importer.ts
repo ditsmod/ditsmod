@@ -1,6 +1,6 @@
 import { reflector } from '#di';
 import { ModuleExtract } from '#types/module-extract.js';
-import type { NormalizedMeta } from '#types/normalized-meta.js';
+import type { BaseMeta } from '#types/base-meta.js';
 import type { ModuleManager } from '#init/module-manager.js';
 import type { GlobalProviders, MetadataPerMod1 } from '#types/metadata-per-mod.js';
 import { ImportObj } from '#types/metadata-per-mod.js';
@@ -39,7 +39,7 @@ export class ShallowModulesImporter {
   /**
    * Module metadata.
    */
-  protected baseMeta: NormalizedMeta;
+  protected baseMeta: BaseMeta;
 
   protected importedProvidersPerMod = new Map<any, ImportObj>();
   protected importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
@@ -186,7 +186,7 @@ export class ShallowModulesImporter {
    *
    * @param baseMeta1 Module metadata from where imports providers.
    */
-  protected importProvidersAndExtensions(baseMeta1: NormalizedMeta) {
+  protected importProvidersAndExtensions(baseMeta1: BaseMeta) {
     const { modRefId, exportsModules, exportsWithParams } = baseMeta1;
 
     for (const modRefId2 of [...exportsModules, ...exportsWithParams]) {
@@ -211,7 +211,7 @@ export class ShallowModulesImporter {
     this.throwIfTryResolvingMultiprovidersCollisions(baseMeta1.name);
   }
 
-  protected addProviders(level: Level, baseMeta: NormalizedMeta) {
+  protected addProviders(level: Level, baseMeta: BaseMeta) {
     baseMeta[`exportedProvidersPer${level}`].forEach((provider) => {
       const token1 = getToken(provider);
       const importObj = this[`importedProvidersPer${level}`].get(token1);

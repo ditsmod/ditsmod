@@ -5,7 +5,7 @@ import { ShallowImportsBase, ShallowImports } from '#init/types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { GlobalProviders } from '#types/metadata-per-mod.js';
 import { AnyFn, AnyObj, ModRefId } from '#types/mix.js';
-import { NormalizedMeta } from '#types/normalized-meta.js';
+import { BaseMeta } from '#types/base-meta.js';
 
 /**
  * Init hooks and metadata attached by init decorators,
@@ -58,7 +58,7 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
    *
    * @param baseMeta Normalized metadata that is passed to the `featureModule` or `rootModule` decorator.
    */
-  normalize(baseMeta: NormalizedMeta) {
+  normalize(baseMeta: BaseMeta) {
     return {} as T2;
   }
 
@@ -77,7 +77,7 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
   exportGlobalProviders(config: {
     moduleManager: ModuleManager;
     globalProviders: GlobalProviders;
-    baseMeta: NormalizedMeta;
+    baseMeta: BaseMeta;
   }): any {
     return;
   }
@@ -92,7 +92,7 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
     globalProviders: GlobalProviders;
     modRefId: ModRefId;
     unfinishedScanModules: Set<ModRefId>;
-  }): Map<ModRefId, { baseMeta: NormalizedMeta } & AnyObj> {
+  }): Map<ModRefId, { baseMeta: BaseMeta } & AnyObj> {
     return new Map();
   }
 
@@ -102,7 +102,7 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
    */
   importModulesDeep(config: {
     parent: AnyObj;
-    metadataPerMod1: { baseMeta: NormalizedMeta } & AnyObj;
+    metadataPerMod1: { baseMeta: BaseMeta } & AnyObj;
     moduleManager: ModuleManager;
     shallowImports: ShallowImports;
     providersPerApp: Provider[];
@@ -142,7 +142,7 @@ export interface InitParamsMap {
  * ### Complete example with init hooks
  *
  * In this example, `ReturnsType` is the type that will be returned by
- * `myInitHooksAndRawMeta.normalize()` or `normalizedMeta.initMeta.get(addSome)`.
+ * `myInitHooksAndRawMeta.normalize()` or `baseMeta.initMeta.get(addSome)`.
  *
 ```ts
 import {
