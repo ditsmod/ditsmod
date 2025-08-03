@@ -6,9 +6,8 @@ import { FirstController, CtxController } from './first.controller.js';
 
 @initRest({
   controllers: [FirstController, CtxController],
-  importsWithParams: [openapiModuleWithParams.restModuleParams],
 })
 @featureModule({
-  imports: [openapiModuleWithParams.moduleWithParams],
+  imports: [openapiModuleWithParams],
 })
 export class FirstModule {}

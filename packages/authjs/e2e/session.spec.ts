@@ -2,6 +2,7 @@ import supertest from 'supertest';
 import { Status, rootModule } from '@ditsmod/core';
 import { route, controller, RestModule, Req, HttpServer } from '@ditsmod/rest';
 import { TestApplication } from '@ditsmod/testing';
+import { jest } from '@jest/globals';
 
 const sessionJson = {
   user: {
@@ -17,7 +18,7 @@ jest.mock('@auth/core', async (importOriginal) => {
   const mod = await importOriginal<typeof import('@auth/core')>();
   return {
     ...mod,
-    Auth: vi.fn((request, config) => {
+    Auth: jest.fn((request, config) => {
       return new Response(JSON.stringify(sessionJson), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },

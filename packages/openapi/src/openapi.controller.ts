@@ -66,7 +66,7 @@ export class OpenapiController {
   })
   getJavaScript() {
     this.res.setContentType('text/javascript; charset=utf-8');
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       createReadStream(`${webpackDist}/openapi.bundle.js`)
         .on('close', resolve)
         .on('error', reject)

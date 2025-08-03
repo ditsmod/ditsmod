@@ -78,7 +78,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
               paths[`/${oasPath}`] = { ...(paths[`/${oasPath}`] || {}), ...pathItemObject };
             } else {
               if (!method) {
-                const moduleName = metadataPerMod3.meta.name;
+                const moduleName = metadataPerMod3.baseMeta.name;
                 const msg = `[${moduleName}]: OpenapiCompilerExtension: OasRouteMeta not found.`;
                 throw new Error(msg);
               }

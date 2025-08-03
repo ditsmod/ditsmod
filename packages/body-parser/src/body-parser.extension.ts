@@ -16,7 +16,7 @@ export class BodyParserExtension implements Extension<void> {
     const stage1ExtensionMeta = await this.extensionManager.stage1(RoutesExtension);
     stage1ExtensionMeta.groupData.forEach((metadataPerMod3) => {
       const { aControllerMetadata } = metadataPerMod3;
-      const { providersPerMod } = metadataPerMod3.meta;
+      const { providersPerMod } = metadataPerMod3.baseMeta;
       aControllerMetadata.forEach(({ providersPerRou, providersPerReq, httpMethods, scope }) => {
         // Merging the providers from a module and a controller
         const mergedProvidersPerRou = [...metadataPerMod3.meta.providersPerRou, ...providersPerRou];

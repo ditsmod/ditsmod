@@ -26,7 +26,7 @@ export class ValidationExtension implements Extension<void> {
 
     stage1ExtensionMeta.groupData.forEach((metadataPerMod3) => {
       const { aControllerMetadata } = metadataPerMod3;
-      const { providersPerMod } = metadataPerMod3.meta;
+      const { providersPerMod } = metadataPerMod3.baseMeta;
       providersPerMod.push({ token: AjvService, useValue: this.ajvService });
 
       aControllerMetadata.forEach(({ providersPerReq, routeMeta }) => {

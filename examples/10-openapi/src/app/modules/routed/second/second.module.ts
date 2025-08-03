@@ -11,9 +11,8 @@ const jwtModuleWithParams = JwtModule.withParams({ secret: process.env.JWT_SECRE
 @initRest({
   controllers: [SecondController],
   providersPerReq: [BearerGuard],
-  importsWithParams: [openapiModuleWithParams.restModuleParams],
 })
 @featureModule({
-  imports: [openapiModuleWithParams.moduleWithParams, jwtModuleWithParams],
+  imports: [openapiModuleWithParams, jwtModuleWithParams],
 })
 export class SecondModule {}

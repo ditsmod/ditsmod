@@ -6,7 +6,7 @@ import { oasOptions } from './oas-options.js';
 
 export const openapiModuleWithParams = OpenapiModule.withParams(oasObject, '');
 
-openapiModuleWithParams.moduleWithParams.providersPerApp = [
-  ...(openapiModuleWithParams.moduleWithParams.providersPerApp || []),
+openapiModuleWithParams.providersPerApp = [
+  ...(openapiModuleWithParams.providersPerApp || []),
   { token: ExtensionsMetaPerApp, useValue: { oasOptions } },
 ];
