@@ -105,13 +105,13 @@ export class RestDeepModulesImporter {
     path: any[] = [],
   ) {
     const srcBaseMeta = this.moduleManager.getMetadata(srcModRefId, true);
-    const meta = srcBaseMeta.initMeta.get(initRest) as RestInitMeta;
+    const srcMeta = srcBaseMeta.initMeta.get(initRest) as RestInitMeta;
 
     for (const dep of this.parent.getDependencies(importedProvider)) {
       let found: boolean = false;
 
       for (const level of levels) {
-        const srcProviders = getLastProviders(meta[`providersPer${level}`]);
+        const srcProviders = getLastProviders(srcMeta[`providersPer${level}`]);
 
         getTokens(srcProviders).forEach((srcToken, i) => {
           if (srcToken === dep.token) {
@@ -129,6 +129,20 @@ export class RestDeepModulesImporter {
         }
       }
 
+      if (!found) {
+        // Above - fetch deps per request and per route, here - per module
+        const srcProviders = getLastProviders(srcBaseMeta.providersPerMod);
+        getTokens(srcProviders).forEach((srcToken, i) => {
+          if (srcToken === dep.token) {
+            const importedProvider2 = srcProviders[i];
+            this.metadataPerMod1.baseMeta.providersPerMod.unshift(importedProvider2);
+            found = true;
+            this.fetchDependenciesAgain(targetProviders, srcModRefId, importedProvider2, levels, path);
+
+            // The loop does not breaks because there may be multi providers.
+          }
+        });
+      }
       if (!found && !this.tokensPerApp.includes(dep.token)) {
         this.fetchImportedDependencies(targetProviders, srcModRefId, importedProvider, levels, path, dep);
       }
@@ -169,14 +183,23 @@ export class RestDeepModulesImporter {
     }
 
     if (!found) {
-      this.parent.fetchDependencies(
-        this.metadataPerMod1.baseMeta,
-        srcModRefId1,
-        importedProvider,
-        ['Mod'],
-        path,
-        levels,
-      );
+      // Above - fetch deps per request and per route, here - per module
+      const importObj = metadataPerMod1.importedTokensMap.perMod.get(dep.token);
+      if (importObj) {
+        found = true;
+        path.push(dep.token);
+        const { modRefId: modRefId2, providers: srcProviders2 } = importObj;
+        this.metadataPerMod1.baseMeta.providersPerMod.unshift(...srcProviders2);
+
+        // Loop for multi providers.
+        for (const srcProvider2 of srcProviders2) {
+          this.fetchDependenciesAgain(targetProviders, modRefId2, srcProvider2, levels, path);
+        }
+      }
+    }
+
+    if (!found && dep.required) {
+      this.parent.throwError(metadataPerMod1.baseMeta, importedProvider, path, dep.token, [...levels, 'Mod']);
     }
   }
 
