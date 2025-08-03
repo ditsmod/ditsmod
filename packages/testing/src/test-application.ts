@@ -11,7 +11,7 @@ import {
 } from '@ditsmod/core';
 import { Application } from '@ditsmod/rest';
 
-import { ExtensionMetaOverrider, Meta } from './types.js';
+import { ExtensionMetaOverrider, ProvidersOnly } from './types.js';
 import { TestAppInitializer } from './test-app-initializer.js';
 import { TestModuleManager } from './test-module-manager.js';
 
@@ -45,7 +45,7 @@ export class TestApplication extends Application {
    * Adds providers to module metadata at any level. Use this method only if the `overrideModuleMeta()`
    * method is not suitable for you.
    */
-  addProvidersToModule(modRefId: ModRefId, providersMeta: Meta) {
+  addProvidersToModule(modRefId: ModRefId, providersMeta: ProvidersOnly) {
     this.testAppInitializer.addProvidersToModule(modRefId, providersMeta);
     return this;
   }

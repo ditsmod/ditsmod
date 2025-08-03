@@ -1,8 +1,8 @@
 import { normalizeProviders, Provider, PerAppService, Providers } from '@ditsmod/core';
-import { Meta, Level } from './types.js';
+import { ProvidersOnly, Level } from './types.js';
 
 export class TestOverrider {
-  static overrideAllProviders(perAppService: PerAppService, metadata: Meta, providersToOverride: Provider[]) {
+  static overrideAllProviders(perAppService: PerAppService, metadata: ProvidersOnly, providersToOverride: Provider[]) {
     providersToOverride.forEach((provider) => {
       const providersPerApp = perAppService.providers;
       this.overrideProvider(['App'], { providersPerApp }, provider);
@@ -19,7 +19,7 @@ export class TestOverrider {
    * If the token of the `provider` that needs to be overridden is found in the `metadata`,
    * that `provider` is added to the `metadata` array last in the same scope.
    */
-  static overrideProvider(levels: Level[], metadata: Meta, provider: Provider) {
+  static overrideProvider(levels: Level[], metadata: ProvidersOnly, provider: Provider) {
     levels.forEach((level) => {
       const providers = [...(metadata[`providersPer${level}`] || [])];
       const normExistingProviders = normalizeProviders(providers);

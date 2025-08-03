@@ -11,12 +11,12 @@ import {
 import { AppInitializer, initRest } from '@ditsmod/rest';
 
 import { TestOverrider } from './test-overrider.js';
-import { Meta, OverriderConfig, Level } from './types.js';
+import { ProvidersOnly, OverriderConfig, Level } from './types.js';
 import { TestExtensionsManager } from './test-extensions-manager.js';
 import { OVERRIDERS_CONFIG } from './constants.js';
 
 export class TestAppInitializer extends AppInitializer {
-  protected providersMetaForAdding = new Map<ModRefId, Meta<Provider[]>>();
+  protected providersMetaForAdding = new Map<ModRefId, ProvidersOnly<Provider[]>>();
   protected providersToOverride: Provider[] = [];
   protected aOverriderConfig: OverriderConfig[] = [];
 
@@ -24,7 +24,7 @@ export class TestAppInitializer extends AppInitializer {
     this.aOverriderConfig.push(config);
   }
 
-  addProvidersToModule(modRefId: ModRefId, providersMeta: Meta) {
+  addProvidersToModule(modRefId: ModRefId, providersMeta: ProvidersOnly) {
     const existingProvidersMeta = this.providersMetaForAdding.get(modRefId);
     const levels: Level[] = ['App', 'Mod', 'Rou', 'Req'];
     if (existingProvidersMeta) {
@@ -37,7 +37,7 @@ export class TestAppInitializer extends AppInitializer {
         const providers = [...(providersMeta[`providersPer${level}`] || [])];
         providersMeta[`providersPer${level}`] = providers;
       });
-      this.providersMetaForAdding.set(modRefId, providersMeta as Meta<Provider[]>);
+      this.providersMetaForAdding.set(modRefId, providersMeta as ProvidersOnly<Provider[]>);
     }
   }
 

@@ -1,8 +1,10 @@
 import { Class, Extension, Provider, Providers } from '@ditsmod/core';
 
-export type Level = 'App' | 'Mod' | 'Rou' | 'Req';
+export type Level = BaseLevel | RestLevel;
+export type BaseLevel = 'App' | 'Mod';
+export type RestLevel = 'Rou' | 'Req';
 
-export interface Meta <T = Providers | Provider[]> {
+export interface ProvidersOnly <T = Providers | Provider[]> {
   providersPerApp?: T;
   providersPerMod?: T;
   providersPerRou?: T;

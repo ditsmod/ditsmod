@@ -1,11 +1,11 @@
 import { ModRefId, BaseMeta, Provider, Providers } from '@ditsmod/core';
 
 import { TestAppInitializer } from '#app/test-app-initializer.js';
-import { Meta } from '#app/types.js';
+import { ProvidersOnly } from '#app/types.js';
 
 describe('TestAppInitializer', () => {
   class MockTestAppInitializer extends TestAppInitializer {
-    override providersMetaForAdding = new Map<ModRefId, Meta<Provider[]>>();
+    override providersMetaForAdding = new Map<ModRefId, ProvidersOnly<Provider[]>>();
 
     override overrideMetaAfterStage1(meta: BaseMeta) {
       return super.overrideMetaAfterStage1(meta);
@@ -18,7 +18,7 @@ describe('TestAppInitializer', () => {
       const modRefId = {} as ModRefId;
       class Provider1 {}
 
-      const providersMeta1: Meta = {
+      const providersMeta1: ProvidersOnly = {
         providersPerApp: [Provider1],
         providersPerMod: [Provider1],
       };
@@ -32,11 +32,11 @@ describe('TestAppInitializer', () => {
       class Provider1 {}
       class Provider2 {}
 
-      const providersMeta1: Meta = {
+      const providersMeta1: ProvidersOnly = {
         providersPerApp: [Provider1],
       };
 
-      const providersMeta2: Meta = {
+      const providersMeta2: ProvidersOnly = {
         providersPerApp: new Providers().passThrough(Provider2),
       };
       mock.addProvidersToModule(modRefId, providersMeta1);
@@ -52,7 +52,7 @@ describe('TestAppInitializer', () => {
       class Provider0 {}
       class Provider1 {}
 
-      const providersMeta1: Meta = {
+      const providersMeta1: ProvidersOnly = {
         providersPerApp: [Provider1],
         providersPerMod: [Provider1],
       };
