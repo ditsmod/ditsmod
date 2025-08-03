@@ -127,7 +127,7 @@ export class ShallowModulesImporter {
     this.importAndAppendModules();
 
     let applyControllers = false;
-    if (isRootModule(baseMeta) || isAppends || this.hasPath(baseMeta)) {
+    if (isRootModule(baseMeta) || isAppends || this.hasPath()) {
       applyControllers = true;
     }
 
@@ -174,12 +174,8 @@ export class ShallowModulesImporter {
     });
   }
 
-  protected hasPath(baseMeta: BaseMeta) {
-    const hasPath =
-      isAppendsWithParams(baseMeta.modRefId) &&
-      (baseMeta.modRefId.path !== undefined || baseMeta.modRefId.absolutePath !== undefined);
-
-    return hasPath;
+  protected hasPath() {
+    return (this.meta.params.path !== undefined || this.meta.params.absolutePath !== undefined);
   }
 
   protected importAndAppendModules() {
