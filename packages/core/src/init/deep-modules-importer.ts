@@ -145,7 +145,7 @@ export class DeepModulesImporter {
       });
       targetProviders.extensionsProviders.unshift(...newProviders);
       importedProviders.forEach((importedProvider) => {
-        if (this.hasUnresolvedDependencies(targetProviders.modRefId, importedProvider, ['Mod'])) {
+        if (this.hasUnresolvedDeps(targetProviders.modRefId, importedProvider, ['Mod'])) {
           this.fetchDependencies(targetProviders, srcModule, importedProvider, ['Mod']);
         }
       });
@@ -261,8 +261,15 @@ export class DeepModulesImporter {
     this.deleteFromUnfinishedSearchDependencies(srcModRefId, importedProvider);
   }
 
-  protected hasUnresolvedDependencies(modRefId: ModRefId, provider: Provider, levels: Level[]) {
-    const meta = this.moduleManager.getMetadata(modRefId, true);
+  protected nextHasUnresolvedDeps(srcModRefId: ModRefId, importedProvider: Provider, levels: Level[]) {
+    this.addToUnfinishedSearchDependencies(srcModRefId, importedProvider);
+    const hasUnresolvedDeps = this.hasUnresolvedDeps(srcModRefId, importedProvider, levels);
+    this.deleteFromUnfinishedSearchDependencies(srcModRefId, importedProvider);
+    return hasUnresolvedDeps;
+  }
+
+  protected hasUnresolvedDeps(srcModRefId: ModRefId, provider: Provider, levels: Level[]) {
+    const baseMeta = this.moduleManager.getMetadata(srcModRefId, true);
 
     for (const dep of this.getDependencies(provider)) {
       let found: boolean = false;
@@ -271,18 +278,31 @@ export class DeepModulesImporter {
       }
 
       forLevel: for (const level of levels) {
-        const providers = getLastProviders(meta[`providersPer${level}`]);
+        const srcProviders = getLastProviders(baseMeta[`providersPer${level}`]);
+        const srcTokens = getTokens(srcProviders);
 
-        for (const token of getTokens(providers)) {
-          if (token === dep.token) {
+        for (let i = 0; i < srcTokens.length; i++) {
+          const srcToken = srcTokens[i];
+          if (srcToken === dep.token) {
             found = true;
-            break forLevel;
+            const importedProvider2 = srcProviders[i];
+            const hasUnresolvedDeps = this.nextHasUnresolvedDeps(srcModRefId, importedProvider2, levels);
+            if (hasUnresolvedDeps) {
+              found = false;
+              break forLevel;
+            }
+
+            // The loop does not breaks because there may be multi providers.
           }
+        }
+
+        if (found) {
+          break;
         }
       }
 
       if (!found && !this.tokensPerApp.includes(dep.token)) {
-        if (this.hasUnresolvedImportedDependencies(modRefId, levels, dep)) {
+        if (this.hasUnresolvedImportedDeps(srcModRefId, levels, dep)) {
           return true;
         }
       }
@@ -290,21 +310,21 @@ export class DeepModulesImporter {
     return false;
   }
 
-  protected hasUnresolvedImportedDependencies(modRefId1: ModRefId, levels: Level[], dep: ReflectiveDependency) {
+  protected hasUnresolvedImportedDeps(srcModRefId1: ModRefId, levels: Level[], dep: ReflectiveDependency) {
     let found = false;
-    for (const level of levels) {
-      const importObj = this.shallowImports.get(modRefId1)?.importedTokensMap[`per${level}`].get(dep.token);
+    const metadataPerMod1 = this.shallowImports.get(srcModRefId1)!;
+    forLevel: for (const level of levels) {
+      const importObj = metadataPerMod1.importedTokensMap[`per${level}`].get(dep.token);
       if (importObj) {
         found = true;
-        const { modRefId: modRefId2, providers } = importObj;
+        const { modRefId: modRefId2, providers: srcProviders2 } = importObj;
 
         // Loop for multi providers.
-        for (const provider of providers) {
-          this.addToUnfinishedSearchDependencies(modRefId2, provider);
-          found = !this.hasUnresolvedDependencies(modRefId2, provider, levels);
-          this.deleteFromUnfinishedSearchDependencies(modRefId2, provider);
-          if (!found) {
-            return true;
+        for (const srcProvider2 of srcProviders2) {
+          const hasUnresolvedDeps = this.nextHasUnresolvedDeps(modRefId2, srcProvider2, levels);
+          if (hasUnresolvedDeps) {
+            found = false;
+            break forLevel;
           }
         }
         break;
