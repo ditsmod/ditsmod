@@ -61,8 +61,10 @@ export class DeepModulesImporter {
     this.shallowImports.forEach(({ baseMeta, importedTokensMap, shallowImportedModules }, modRefId) => {
       const deepImportedModules = new Map<AnyFn, AnyObj>();
       mMetadataPerMod2.set(modRefId, { baseMeta, deepImportedModules });
+      const targetProviders = new ProvidersOnly();
       this.resolveImportedProviders(baseMeta, importedTokensMap, levels);
       this.resolveProvidersForExtensions(baseMeta, importedTokensMap);
+      baseMeta.providersPerMod.unshift(...targetProviders.providersPerMod);
       baseMeta.allInitHooks.forEach((initHooks, decorator) => {
         const shallowImportedModule = shallowImportedModules.get(decorator)!;
         const deepImports = initHooks.importModulesDeep({
@@ -90,14 +92,14 @@ export class DeepModulesImporter {
       importedTokensMap[`per${level}`].forEach((importObj) => {
         targetProviders[`providersPer${level}`].unshift(...importObj.providers);
         importObj.providers.forEach((importedProvider) => {
-          this.fetchDependencies(targetProviders, importObj.modRefId, importedProvider, levels.slice(i));
+          this.fetchDeps(targetProviders, importObj.modRefId, importedProvider, levels.slice(i));
         });
       });
 
       importedTokensMap[`multiPer${level}`].forEach((multiProviders, srcModule) => {
         targetProviders[`providersPer${level}`].unshift(...multiProviders);
         multiProviders.forEach((importedProvider) => {
-          this.fetchDependencies(targetProviders, srcModule, importedProvider, levels.slice(i));
+          this.fetchDeps(targetProviders, srcModule, importedProvider, levels.slice(i));
         });
       });
     });
@@ -146,7 +148,7 @@ export class DeepModulesImporter {
       targetProviders.extensionsProviders.unshift(...newProviders);
       importedProviders.forEach((importedProvider) => {
         if (this.hasUnresolvedDeps(targetProviders.modRefId, importedProvider, ['Mod'])) {
-          this.fetchDependencies(targetProviders, srcModule, importedProvider, ['Mod']);
+          this.fetchDeps(targetProviders, srcModule, importedProvider, ['Mod']);
         }
       });
     });
@@ -169,7 +171,7 @@ export class DeepModulesImporter {
    * @param importedProvider Imported provider.
    * @param levels Search in this levels. The level order is important.
    */
-  fetchDependencies(
+  fetchDeps(
     targetProviders: ProvidersOnly,
     srcModRefId: ModRefId,
     importedProvider: Provider,
@@ -205,7 +207,7 @@ export class DeepModulesImporter {
       }
 
       if (!found && !this.tokensPerApp.includes(dep.token)) {
-        this.fetchImportedDependencies(targetProviders, srcModRefId, importedProvider, levels, path, dep, childLevels);
+        this.fetchImportedDeps(targetProviders, srcModRefId, importedProvider, levels, path, dep, childLevels);
       }
     }
   }
@@ -216,7 +218,7 @@ export class DeepModulesImporter {
    * @param importedProvider Imported provider.
    * @param dep ReflectiveDependecy with token for dependecy of imported provider.
    */
-  fetchImportedDependencies(
+  fetchImportedDeps(
     targetProviders: ProvidersOnly,
     srcModRefId1: ModRefId,
     importedProvider: Provider,
@@ -257,7 +259,7 @@ export class DeepModulesImporter {
     childLevels: string[] = [],
   ) {
     this.addToUnfinishedSearchDependencies(srcModRefId, importedProvider);
-    this.fetchDependencies(targetProviders, srcModRefId, importedProvider, levels, path, childLevels);
+    this.fetchDeps(targetProviders, srcModRefId, importedProvider, levels, path, childLevels);
     this.deleteFromUnfinishedSearchDependencies(srcModRefId, importedProvider);
   }
 
