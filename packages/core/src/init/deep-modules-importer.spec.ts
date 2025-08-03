@@ -27,16 +27,6 @@ describe('DeepModulesImporter', () => {
     override deleteFromUnfinishedSearchDependencies(module: ModuleType | ModuleWithParams, provider: Provider) {
       return super.deleteFromUnfinishedSearchDependencies(module, provider);
     }
-
-    override grabDependencies(
-      targetMeta: BaseMeta,
-      sourceModule: ModRefId,
-      importedProvider: Provider,
-      levels: Level[],
-      path: any[] = [],
-    ) {
-      return super.grabDependencies(targetMeta, sourceModule, importedProvider, levels, path);
-    }
   }
 
   let mock: DeepModulesImporterMock;

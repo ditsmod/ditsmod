@@ -90,14 +90,14 @@ export class DeepModulesImporter {
       importedTokensMap[`per${level}`].forEach((importObj) => {
         targetProviders[`providersPer${level}`].unshift(...importObj.providers);
         importObj.providers.forEach((importedProvider) => {
-          this.grabDependencies(targetProviders, importObj.modRefId, importedProvider, levels.slice(i));
+          this.fetchDependencies(targetProviders, importObj.modRefId, importedProvider, levels.slice(i));
         });
       });
 
       importedTokensMap[`multiPer${level}`].forEach((multiProviders, srcModule) => {
         targetProviders[`providersPer${level}`].unshift(...multiProviders);
         multiProviders.forEach((importedProvider) => {
-          this.grabDependencies(targetProviders, srcModule, importedProvider, levels.slice(i));
+          this.fetchDependencies(targetProviders, srcModule, importedProvider, levels.slice(i));
         });
       });
     });
@@ -146,7 +146,7 @@ export class DeepModulesImporter {
       targetProviders.extensionsProviders.unshift(...newProviders);
       importedProviders.forEach((importedProvider) => {
         if (this.hasUnresolvedDependencies(targetProviders.modRefId, importedProvider, ['Mod'])) {
-          this.grabDependencies(targetProviders, srcModule, importedProvider, ['Mod']);
+          this.fetchDependencies(targetProviders, srcModule, importedProvider, ['Mod']);
         }
       });
     });
@@ -169,7 +169,7 @@ export class DeepModulesImporter {
    * @param importedProvider Imported provider.
    * @param levels Search in this levels. The level order is important.
    */
-  grabDependencies(
+  fetchDependencies(
     targetProviders: ProvidersOnly,
     srcModRefId: ModRefId,
     importedProvider: Provider,
@@ -193,7 +193,7 @@ export class DeepModulesImporter {
             const importedProvider2 = srcProviders[i];
             targetProviders[`providersPer${level}`].unshift(importedProvider2);
             found = true;
-            this.grabDependenciesAgain(targetProviders, srcModRefId, importedProvider2, levels, path, childLevels);
+            this.fetchDependenciesAgain(targetProviders, srcModRefId, importedProvider2, levels, path, childLevels);
 
             // The loop does not breaks because there may be multi providers.
           }
@@ -205,7 +205,7 @@ export class DeepModulesImporter {
       }
 
       if (!found && !this.tokensPerApp.includes(dep.token)) {
-        this.grabImportedDependencies(targetProviders, srcModRefId, importedProvider, levels, path, dep, childLevels);
+        this.fetchImportedDependencies(targetProviders, srcModRefId, importedProvider, levels, path, dep, childLevels);
       }
     }
   }
@@ -216,7 +216,7 @@ export class DeepModulesImporter {
    * @param importedProvider Imported provider.
    * @param dep ReflectiveDependecy with token for dependecy of imported provider.
    */
-  grabImportedDependencies(
+  fetchImportedDependencies(
     targetProviders: ProvidersOnly,
     srcModRefId1: ModRefId,
     importedProvider: Provider,
@@ -237,7 +237,7 @@ export class DeepModulesImporter {
 
         // Loop for multi providers.
         for (const srcProvider2 of srcProviders2) {
-          this.grabDependenciesAgain(targetProviders, modRefId2, srcProvider2, levels, path, childLevels);
+          this.fetchDependenciesAgain(targetProviders, modRefId2, srcProvider2, levels, path, childLevels);
         }
         break;
       }
@@ -248,7 +248,7 @@ export class DeepModulesImporter {
     }
   }
 
-  protected grabDependenciesAgain(
+  protected fetchDependenciesAgain(
     targetProviders: ProvidersOnly,
     srcModRefId: ModRefId,
     importedProvider: Provider,
@@ -257,7 +257,7 @@ export class DeepModulesImporter {
     childLevels: string[] = [],
   ) {
     this.addToUnfinishedSearchDependencies(srcModRefId, importedProvider);
-    this.grabDependencies(targetProviders, srcModRefId, importedProvider, levels, path, childLevels);
+    this.fetchDependencies(targetProviders, srcModRefId, importedProvider, levels, path, childLevels);
     this.deleteFromUnfinishedSearchDependencies(srcModRefId, importedProvider);
   }
 
