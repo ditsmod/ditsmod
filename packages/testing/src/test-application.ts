@@ -1,5 +1,4 @@
 import {
-  BaseAppOptions,
   ModuleType,
   SystemLogMediator,
   Providers,
@@ -9,7 +8,7 @@ import {
   ModRefId,
   Provider,
 } from '@ditsmod/core';
-import { Application } from '@ditsmod/rest';
+import { Application, AppOptions } from '@ditsmod/rest';
 
 import { ExtensionMetaOverrider, ProvidersOnly } from './types.js';
 import { TestAppInitializer } from './test-app-initializer.js';
@@ -24,7 +23,7 @@ export class TestApplication extends Application {
    * @param appModule The root module of the application.
    * @param appOptions Application options.
    */
-  static createTestApp(appModule: ModuleType, appOptions?: BaseAppOptions) {
+  static createTestApp(appModule: ModuleType, appOptions?: AppOptions) {
     const app = new this();
     try {
       app.init(appOptions);
