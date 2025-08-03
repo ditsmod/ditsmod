@@ -30,7 +30,7 @@ import { NormalizedProvider, normalizeProviders } from '#utils/ng-utils.js';
 import { isExtensionConfig } from '#extension/type-guards.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { mergeArrays } from '#utils/merge-arrays.js';
-import { AllInitHooks } from './module-manager.js';
+import { AllInitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { InitHooksAndRawMeta, InitParamsMap } from '#decorators/init-hooks-and-metadata.js';
 
 /**

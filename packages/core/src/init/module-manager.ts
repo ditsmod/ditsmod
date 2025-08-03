@@ -2,19 +2,18 @@ import { format } from 'node:util';
 
 import { injectable, Injector, Provider, reflector } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { AnyObj, ModuleType, ModRefId, AnyFn } from '#types/mix.js';
+import { AnyObj, ModuleType, ModRefId } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { BaseMeta } from '#types/base-meta.js';
 import { isModuleWithParams, isRootModule } from '#utils/type-guards.js';
 import { clearDebugClassNames, getDebugClassName } from '#utils/get-debug-class-name.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { ModuleNormalizer } from '#init/module-normalizer.js';
-import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
+import { AllInitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { CustomError } from '#error/custom-error.js';
 
 export type ModulesMap = Map<ModRefId, BaseMeta>;
 export type ModulesMapId = Map<string, ModRefId>;
-export type AllInitHooks = Map<AnyFn, Omit<InitHooksAndRawMeta, 'rawMeta' | 'baseInitMeta'>>;
 type ModuleId = string | ModRefId;
 
 /**

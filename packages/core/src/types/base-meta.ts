@@ -6,7 +6,7 @@ import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { ExtensionClass } from '#extension/extension-types.js';
 import { InitMetaMap } from '#decorators/init-hooks-and-metadata.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
-import { AllInitHooks } from '#init/module-manager.js';
+import { AllInitHooks } from '#decorators/init-hooks-and-metadata.js';
 
 /**
  * Normalized metadata taken from the `rootModule` or `featureModule` decorator.

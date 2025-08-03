@@ -7,6 +7,8 @@ import { GlobalProviders } from '#types/metadata-per-mod.js';
 import { AnyFn, AnyObj, ModRefId } from '#types/mix.js';
 import { BaseMeta } from '#types/base-meta.js';
 
+export type AllInitHooks = Map<AnyFn, Omit<InitHooksAndRawMeta, 'rawMeta' | 'baseInitMeta'>>;
+
 /**
  * Init hooks and metadata attached by init decorators,
  * apart from the base decorators - `rootModule` or `featureModule`.
