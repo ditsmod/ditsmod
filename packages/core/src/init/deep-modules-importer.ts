@@ -317,7 +317,7 @@ export class DeepModulesImporter {
     return false;
   }
 
-  protected throwError(baseMeta: BaseMeta, provider: Provider, path: any[], token: any, levels: string[]) {
+  throwError(baseMeta: BaseMeta, provider: Provider, path: any[], token: any, levels: string[]) {
     path = [provider, ...path, token];
     const strPath = getTokens(path)
       .map((t) => t.name || t)
@@ -333,7 +333,7 @@ export class DeepModulesImporter {
     this.errorMediator.throwNoProviderDuringResolveImports(baseMeta.name, token.name || token, partMsg);
   }
 
-  protected getDependencies(provider: Provider) {
+  getDependencies(provider: Provider) {
     const deps = getDependencies(provider);
 
     const defaultTokens = [
@@ -349,7 +349,7 @@ export class DeepModulesImporter {
     return deps.filter((d) => !defaultTokens.includes(d.token));
   }
 
-  protected addToUnfinishedSearchDependencies(modRefId: ModRefId, provider: Provider) {
+  addToUnfinishedSearchDependencies(modRefId: ModRefId, provider: Provider) {
     const index = this.dependencyChain.findIndex(([m, p]) => m === modRefId && p === provider);
     if (index != -1) {
       this.throwCircularDependencies(index);
@@ -357,12 +357,12 @@ export class DeepModulesImporter {
     this.dependencyChain.push([modRefId, provider]);
   }
 
-  protected deleteFromUnfinishedSearchDependencies(modRefId: ModRefId, provider: Provider) {
+  deleteFromUnfinishedSearchDependencies(modRefId: ModRefId, provider: Provider) {
     const index = this.dependencyChain.findIndex(([m, p]) => m === modRefId && p === provider);
     this.dependencyChain.splice(index, 1);
   }
 
-  protected throwCircularDependencies(index: number) {
+  throwCircularDependencies(index: number) {
     const items = this.dependencyChain;
     const prefixChain = items.slice(0, index);
     const circularChain = items.slice(index);

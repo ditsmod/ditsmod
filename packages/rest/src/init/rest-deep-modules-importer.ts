@@ -6,13 +6,7 @@ import {
   SystemErrorMediator,
   getTokens,
   getLastProviders,
-  getDependencies,
-  defaultProvidersPerApp,
-  Injector,
-  BaseAppOptions,
-  getDebugClassName,
   ReflectiveDependency,
-  getProviderName,
   ShallowImports,
   DeepModulesImporter,
 } from '@ditsmod/core';
@@ -113,7 +107,7 @@ export class RestDeepModulesImporter {
     const srcBaseMeta = this.moduleManager.getMetadata(srcModRefId, true);
     const meta = srcBaseMeta.initMeta.get(initRest) as RestInitMeta;
 
-    for (const dep of this.getDependencies(importedProvider)) {
+    for (const dep of this.parent.getDependencies(importedProvider)) {
       let found: boolean = false;
 
       for (const level of levels) {
@@ -193,123 +187,8 @@ export class RestDeepModulesImporter {
     levels: Level[],
     path: any[],
   ) {
-    this.addToUnfinishedSearchDependencies(srcModRefId, importedProvider);
+    this.parent.addToUnfinishedSearchDependencies(srcModRefId, importedProvider);
     this.fetchDependencies(targetProviders, srcModRefId, importedProvider, levels, path);
-    this.deleteFromUnfinishedSearchDependencies(srcModRefId, importedProvider);
-  }
-
-  protected hasUnresolvedDependencies(modRefId: ModRefId, provider: Provider, levels: Level[]) {
-    const baseMeta = this.moduleManager.getMetadata(modRefId, true);
-
-    for (const dep of this.getDependencies(provider)) {
-      let found: boolean = false;
-
-      forLevel: for (const level of levels) {
-        const meta = baseMeta.initMeta.get(initRest) as RestInitMeta;
-        const providers = getLastProviders(meta[`providersPer${level}`]);
-
-        for (const token of getTokens(providers)) {
-          if (token === dep.token) {
-            found = true;
-            break forLevel;
-          }
-        }
-      }
-
-      if (!found && !this.tokensPerApp.includes(dep.token)) {
-        if (this.hasUnresolvedImportedDependencies(modRefId, levels, dep)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  protected hasUnresolvedImportedDependencies(modRefId1: ModRefId, levels: Level[], dep: ReflectiveDependency) {
-    let found = false;
-    for (const level of levels) {
-      const restMetadataPerMod1 = this.shallowImports.get(modRefId1)?.shallowImportedModules.get(initRest) as
-        | RestMetadataPerMod1
-        | undefined;
-      const importObj = restMetadataPerMod1?.importedTokensMap[`per${level}`].get(dep.token);
-      if (importObj) {
-        found = true;
-        const { modRefId: modRefId2, providers } = importObj;
-
-        // Loop for multi providers.
-        for (const provider of providers) {
-          this.addToUnfinishedSearchDependencies(modRefId2, provider);
-          found = !this.hasUnresolvedDependencies(modRefId2, provider, levels);
-          this.deleteFromUnfinishedSearchDependencies(modRefId2, provider);
-          if (!found) {
-            return true;
-          }
-        }
-        break;
-      }
-    }
-
-    if (!found && dep.required) {
-      return true;
-    }
-    return false;
-  }
-
-  protected getDependencies(provider: Provider) {
-    const deps = getDependencies(provider);
-
-    const defaultTokens = [
-      ...getTokens([
-        //
-        ...defaultProvidersPerApp,
-        // ...defaultProvidersPerReq,
-      ]),
-      Injector,
-      BaseAppOptions,
-    ];
-
-    return deps.filter((d) => !defaultTokens.includes(d.token));
-  }
-
-  protected addToUnfinishedSearchDependencies(modRefId: ModRefId, provider: Provider) {
-    const index = this.parent.dependencyChain.findIndex(([m, p]) => m === modRefId && p === provider);
-    if (index != -1) {
-      this.throwCircularDependencies(index);
-    }
-    this.parent.dependencyChain.push([modRefId, provider]);
-  }
-
-  protected deleteFromUnfinishedSearchDependencies(modRefId: ModRefId, provider: Provider) {
-    const index = this.parent.dependencyChain.findIndex(([m, p]) => m === modRefId && p === provider);
-    this.parent.dependencyChain.splice(index, 1);
-  }
-
-  protected throwCircularDependencies(index: number) {
-    const items = this.parent.dependencyChain;
-    const prefixChain = items.slice(0, index);
-    const circularChain = items.slice(index);
-
-    const prefixNames = prefixChain
-      .map(([m, p]) => {
-        const debugModuleName = getDebugClassName(m);
-        return `[${getProviderName(p)} in ${debugModuleName}]`;
-      })
-      .join(' -> ');
-
-    const [modRefId, provider] = items[index];
-    let circularNames = circularChain
-      .map(([m, p]) => {
-        const debugModuleName = getDebugClassName(m);
-        return `[${getProviderName(p)} in ${debugModuleName}]`;
-      })
-      .join(' -> ');
-
-    const debugModuleName = getDebugClassName(modRefId);
-    circularNames += ` -> [${getProviderName(provider)} in ${debugModuleName}]`;
-    let msg = `Detected circular dependencies: ${circularNames}.`;
-    if (prefixNames) {
-      msg += ` It is started from ${prefixNames}.`;
-    }
-    throw new Error(msg);
+    this.parent.deleteFromUnfinishedSearchDependencies(srcModRefId, importedProvider);
   }
 }
