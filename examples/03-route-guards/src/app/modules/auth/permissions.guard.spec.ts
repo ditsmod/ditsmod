@@ -1,5 +1,6 @@
 import { Injector, Status } from '@ditsmod/core';
 import { RequestContext } from '@ditsmod/rest';
+import { jest } from '@jest/globals';
 
 import { PermissionsGuard } from './permissions.guard.js';
 import { AuthService } from './auth.service.js';

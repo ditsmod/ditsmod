@@ -1,5 +1,6 @@
 import { Injector } from '@ditsmod/core';
 import { Res } from '@ditsmod/rest';
+import { jest } from '@jest/globals';
 
 import { PostsController } from './posts.controller.js';
 
