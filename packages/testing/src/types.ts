@@ -1,4 +1,4 @@
-import { Provider, Stage1GroupMeta, Stage1GroupMeta2, ExtensionsGroupToken, Providers } from '@ditsmod/core';
+import { Class, Extension, Provider, Providers } from '@ditsmod/core';
 
 export type Level = 'App' | 'Mod' | 'Rou' | 'Req';
 
@@ -12,11 +12,11 @@ export interface Meta <T = Providers | Provider[]> {
 /**
  * The callback that is passed as the second argument to the `testApplication.overrideExtensionMeta()` method.
  */
-export interface GroupMetaOverrider<T = any> {
-  (stage1GroupMeta: Stage1GroupMeta<T> | Stage1GroupMeta2<T>): void;
+export interface ExtensionMetaOverrider<T = any> {
+  (stage1ExtensionMeta: any): void;
 }
 
 export interface OverriderConfig {
-  ExtCls: ExtensionsGroupToken;
-  override: GroupMetaOverrider;
+  ExtCls: Class<Extension>;
+  override: ExtensionMetaOverrider;
 }

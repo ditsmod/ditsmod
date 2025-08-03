@@ -1,5 +1,4 @@
 import {
-  AppInitializer,
   ExtensionCounters,
   ExtensionsContext,
   InternalExtensionsManager,
@@ -9,6 +8,7 @@ import {
   Provider,
   Providers,
 } from '@ditsmod/core';
+import { AppInitializer, initRest } from '@ditsmod/rest';
 
 import { TestOverrider } from './test-overrider.js';
 import { Meta, OverriderConfig, Level } from './types.js';
@@ -45,15 +45,19 @@ export class TestAppInitializer extends AppInitializer {
     this.providersToOverride.push(...providers);
   }
 
-  protected override overrideMetaAfterStage1(meta: BaseMeta) {
-    const providersMeta = this.providersMetaForAdding.get(meta.modRefId);
+  protected override overrideMetaAfterStage1(baseMeta: BaseMeta) {
+    const providersMeta = this.providersMetaForAdding.get(baseMeta.modRefId);
     if (providersMeta) {
-      (['App', 'Mod', 'Rou', 'Req'] satisfies Level[]).forEach((level) => {
+      (['App', 'Mod'] satisfies Level[]).forEach((level) => {
+        baseMeta[`providersPer${level}`].push(...providersMeta[`providersPer${level}`]!);
+      });
+      (['Rou', 'Req'] satisfies Level[]).forEach((level) => {
+        const meta = baseMeta.initMeta.get(initRest)!;
         meta[`providersPer${level}`].push(...providersMeta[`providersPer${level}`]!);
       });
     }
-    TestOverrider.overrideAllProviders(this.perAppService, meta, this.providersToOverride);
-    return meta;
+    TestOverrider.overrideAllProviders(this.perAppService, baseMeta, this.providersToOverride);
+    return baseMeta;
   }
 
   protected override getProvidersForExtensions(

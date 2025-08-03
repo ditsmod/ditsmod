@@ -1,4 +1,4 @@
-import { AppOptions, ModuleType, rootModule } from '@ditsmod/core';
+import { BaseAppOptions, ModuleType, rootModule } from '@ditsmod/core';
 import { Router } from '@ditsmod/rest';
 import { Server } from 'node:http';
 
@@ -7,7 +7,7 @@ import { TestApplication } from './test-application.js';
 describe('TestApplication', () => {
   class TestApplicationMock extends TestApplication {
     declare preTestApplication: TestApplicationMock;
-    static override async create(appModule: ModuleType, appOptions?: AppOptions) {
+    static override async create(appModule: ModuleType, appOptions?: BaseAppOptions) {
       return super.createTestApp(appModule, appOptions) as unknown as TestApplicationMock;
     }
   }

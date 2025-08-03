@@ -1,3 +1,3 @@
-## @ditsmod/routing
+## @ditsmod/rest
 
 Module for [Ditsmod](https://ditsmod.github.io/en/) applications.

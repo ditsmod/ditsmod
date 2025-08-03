@@ -1,5 +1,5 @@
 import {
-  AppOptions,
+  BaseAppOptions,
   ModuleType,
   SystemLogMediator,
   Providers,
@@ -9,13 +9,13 @@ import {
   ModRefId,
   Provider,
 } from '@ditsmod/core';
-import { RestApplication } from '@ditsmod/rest';
+import { Application } from '@ditsmod/rest';
 
-import { GroupMetaOverrider, Meta } from './types.js';
+import { ExtensionMetaOverrider, Meta } from './types.js';
 import { TestAppInitializer } from './test-app-initializer.js';
 import { TestModuleManager } from './test-module-manager.js';
 
-export class TestApplication extends RestApplication {
+export class TestApplication extends Application {
   protected testAppInitializer: TestAppInitializer;
   protected testModuleManager: TestModuleManager;
   protected appModule: ModuleType;
@@ -24,7 +24,7 @@ export class TestApplication extends RestApplication {
    * @param appModule The root module of the application.
    * @param appOptions Application options.
    */
-  static createTestApp(appModule: ModuleType, appOptions?: AppOptions) {
+  static createTestApp(appModule: ModuleType, appOptions?: BaseAppOptions) {
     const app = new this();
     try {
       app.init(appOptions);
@@ -79,7 +79,7 @@ export class TestApplication extends RestApplication {
    *
    * @param providers Providers to override.
    */
-  overrideExtensionMeta<T>(ExtCls: ExtensionClass<T>, override: GroupMetaOverrider<T>) {
+  overrideExtensionMeta<T>(ExtCls: ExtensionClass<T>, override: ExtensionMetaOverrider<T>) {
     this.testAppInitializer.setOverriderConfig({ ExtCls, override });
     return this;
   }
