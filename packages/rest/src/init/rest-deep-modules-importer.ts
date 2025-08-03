@@ -88,10 +88,10 @@ export class RestDeepModulesImporter {
         });
       });
 
-      importedTokensMap[`multiPer${level}`].forEach((multiProviders, sourceModule) => {
+      importedTokensMap[`multiPer${level}`].forEach((multiProviders, srcModule) => {
         meta[`providersPer${level}`].unshift(...multiProviders);
         multiProviders.forEach((importedProvider) => {
-          this.grabDependencies(meta, sourceModule, importedProvider, levels.slice(i));
+          this.grabDependencies(meta, srcModule, importedProvider, levels.slice(i));
         });
       });
     });
@@ -119,8 +119,8 @@ export class RestDeepModulesImporter {
       for (const level of levels) {
         const srcProviders = getLastProviders(meta[`providersPer${level}`]);
 
-        getTokens(srcProviders).forEach((sourceToken, i) => {
-          if (sourceToken === dep.token) {
+        getTokens(srcProviders).forEach((srcToken, i) => {
+          if (srcToken === dep.token) {
             const importedProvider2 = srcProviders[i];
             targetProviders[`providersPer${level}`].unshift(importedProvider2);
             found = true;
@@ -163,12 +163,12 @@ export class RestDeepModulesImporter {
       if (importObj) {
         found = true;
         path.push(dep.token);
-        const { modRefId: modRefId2, providers: sourceProviders2 } = importObj;
-        targetProviders[`providersPer${level}`].unshift(...sourceProviders2);
+        const { modRefId: modRefId2, providers: srcProviders2 } = importObj;
+        targetProviders[`providersPer${level}`].unshift(...srcProviders2);
 
         // Loop for multi providers.
-        for (const sourceProvider2 of sourceProviders2) {
-          this.grabDependenciesAgain(targetProviders, modRefId2, sourceProvider2, levels, path);
+        for (const srcProvider2 of srcProviders2) {
+          this.grabDependenciesAgain(targetProviders, modRefId2, srcProvider2, levels, path);
         }
         break;
       }
@@ -198,8 +198,8 @@ export class RestDeepModulesImporter {
     this.deleteFromUnfinishedSearchDependencies(srcModRefId, importedProvider);
   }
 
-  protected hasUnresolvedDependencies(module: ModRefId, provider: Provider, levels: Level[]) {
-    const baseMeta = this.moduleManager.getMetadata(module, true);
+  protected hasUnresolvedDependencies(modRefId: ModRefId, provider: Provider, levels: Level[]) {
+    const baseMeta = this.moduleManager.getMetadata(modRefId, true);
 
     for (const dep of this.getDependencies(provider)) {
       let found: boolean = false;
@@ -217,7 +217,7 @@ export class RestDeepModulesImporter {
       }
 
       if (!found && !this.tokensPerApp.includes(dep.token)) {
-        if (this.hasUnresolvedImportedDependencies(module, levels, dep)) {
+        if (this.hasUnresolvedImportedDependencies(modRefId, levels, dep)) {
           return true;
         }
       }
@@ -271,16 +271,16 @@ export class RestDeepModulesImporter {
     return deps.filter((d) => !defaultTokens.includes(d.token));
   }
 
-  protected addToUnfinishedSearchDependencies(module: ModRefId, provider: Provider) {
-    const index = this.parent.dependencyChain.findIndex(([m, p]) => m === module && p === provider);
+  protected addToUnfinishedSearchDependencies(modRefId: ModRefId, provider: Provider) {
+    const index = this.parent.dependencyChain.findIndex(([m, p]) => m === modRefId && p === provider);
     if (index != -1) {
       this.throwCircularDependencies(index);
     }
-    this.parent.dependencyChain.push([module, provider]);
+    this.parent.dependencyChain.push([modRefId, provider]);
   }
 
-  protected deleteFromUnfinishedSearchDependencies(module: ModRefId, provider: Provider) {
-    const index = this.parent.dependencyChain.findIndex(([m, p]) => m === module && p === provider);
+  protected deleteFromUnfinishedSearchDependencies(modRefId: ModRefId, provider: Provider) {
+    const index = this.parent.dependencyChain.findIndex(([m, p]) => m === modRefId && p === provider);
     this.parent.dependencyChain.splice(index, 1);
   }
 
