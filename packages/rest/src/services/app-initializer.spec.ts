@@ -1,8 +1,6 @@
-import { ImportObj } from '#init/rest-shallow-providers-collector.spec.js';
 import { AppOptions } from '#types/app-options.js';
 import { controller } from '#types/controller.js';
 import {
-  ExtensionCounters,
   featureModule,
   injectable,
   Logger,
@@ -11,10 +9,11 @@ import {
   ModuleManager,
   ModuleType,
   ModuleWithParams,
-  BaseMeta,
   Provider,
   rootModule,
   SystemLogMediator,
+  ImportObj,
+  ModuleWithInitParams,
 } from '@ditsmod/core';
 
 import { AppInitializer } from './app-initializer.js';
@@ -29,35 +28,8 @@ type ModRefId = ModuleType | ModuleWithParams;
 
 @injectable()
 class AppInitializerMock extends AppInitializer {
-  override baseMeta = new BaseMeta();
-
-  constructor(
-    public override appOptions: AppOptions,
-    public override moduleManager: ModuleManager,
-    public override systemLogMediator: SystemLogMediator,
-  ) {
-    super(appOptions, moduleManager, systemLogMediator);
-  }
-
-  async init() {
-    this.bootstrapProvidersPerApp();
-    await this.bootstrapModulesAndExtensions();
-  }
-
-  override prepareProvidersPerApp() {
-    return super.prepareProvidersPerApp();
-  }
-
   override collectProvidersShallow(moduleManager: ModuleManager) {
     return super.collectProvidersShallow(moduleManager);
-  }
-
-  override getResolvedCollisionsPerApp() {
-    return super.getResolvedCollisionsPerApp();
-  }
-
-  override decreaseExtensionsCounters(extensionCounters: ExtensionCounters, providers: Provider[]) {
-    return super.decreaseExtensionsCounters(extensionCounters, providers);
   }
 }
 
@@ -117,7 +89,8 @@ describe('exports/imports', () => {
   class Module5 {}
 
   const module2WithParams: ModuleWithParams = Module2.withParams();
-  const module3WithParams: ModuleWithParams = { path: 'one', module: Module3 };
+  const module3WithParams: ModuleWithInitParams = { module: Module3, initParams: new Map() };
+  module3WithParams.initParams.set(initRest, { path: 'one' });
   const module4WithParams: ModuleWithParams = { module: Module4 };
   @rootModule({
     imports: [Module0, Module1, module2WithParams, Module5, module3WithParams, module4WithParams],

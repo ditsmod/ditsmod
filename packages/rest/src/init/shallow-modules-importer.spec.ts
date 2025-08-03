@@ -15,6 +15,7 @@ import {
   rootModule,
   SystemLogMediator,
   ShallowModulesImporter as ShallowModulesImporterBase,
+  ImportObj,
 } from '@ditsmod/core';
 
 import { controller } from '#types/controller.js';
@@ -23,17 +24,6 @@ import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { ShallowModulesImporter } from './shallow-modules-importer.js';
 import { Level, RestGlobalProviders } from '#types/types.js';
 import { getImportedProviders } from '../utils/get-imports.js';
-
-/**
- * @todo Rename this.
- */
-export class ImportObj<T extends Provider = Provider> {
-  modRefId: ModRefId;
-  /**
-   * This property can have more than one element for multi-providers only.
-   */
-  providers: T[] = [];
-}
 
 @injectable()
 class MockShallowModulesImporter extends ShallowModulesImporter {
