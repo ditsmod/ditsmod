@@ -1,5 +1,5 @@
 import { featureModule } from '#decorators/feature-module.js';
-import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
+import { BaseInitRawMeta, InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { rootModule } from '#decorators/root-module.js';
 import { forwardRef, injectable, makeClassDecorator, MultiProvider } from '#di';
 import { Extension } from '#extension/extension-types.js';
@@ -281,7 +281,7 @@ describe('ModuleNormalizer', () => {
       return new InitHooksAndRawMeta1(metadata);
     }
 
-    interface RawMeta {
+    interface RawMeta extends BaseInitRawMeta {
       one?: number;
       two?: number;
       appends?: ({ module: ModRefId } & AnyObj)[];

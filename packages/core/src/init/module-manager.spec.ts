@@ -7,9 +7,9 @@ import { Extension } from '#extension/extension-types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ModuleManager } from './module-manager.js';
-import { AllInitHooks } from '#decorators/init-hooks-and-metadata.js';
+import { AllInitHooks, BaseInitRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { ModuleType, AnyObj, ModRefId } from '#types/mix.js';
-import { ModuleWithInitParams, ModuleWithParams } from '#types/module-metadata.js';
+import { ModuleWithParams } from '#types/module-metadata.js';
 import { BaseMeta } from '#types/base-meta.js';
 import { InitDecorator } from '#decorators/init-hooks-and-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
@@ -708,10 +708,9 @@ describe('ModuleManager', () => {
   });
 
   it('Module1 does not have an annotation with initSome, but imported in AppModule with this decorator', () => {
-    interface RawMeta {
+    interface RawMeta extends BaseInitRawMeta<{ path?: string }> {
       one?: string;
       two?: string;
-      path?: string;
     }
     interface InitMeta {
       path?: string;
@@ -732,35 +731,27 @@ describe('ModuleManager', () => {
     }
 
     @featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
-    class Module1 {
-      static withParams(): ModuleWithInitParams<Module1> {
-        return {
-          module: this,
-          initParams: new Map(),
-        };
-      }
-    }
+    class Module1 {}
 
-    const moduleWithParams = Module1.withParams();
-    moduleWithParams.initParams.set(initSome, { path: 'some-prefix' });
+    const moduleWithParams: ModuleWithParams = { module: Module1 };
 
-    @initSome({ one: 'some-here' })
-    @rootModule({ imports: [moduleWithParams] })
+    @initSome({ one: 'some-here', imports: [{ mwp: moduleWithParams, path: 'some-prefix' }] })
+    @rootModule()
     class AppModule {}
 
     mock.scanRootModule(AppModule);
     const mod1 = mock.getMetadata(moduleWithParams)!;
-    expect(mod1.initMeta.get(initSome)).toMatchObject({ path: 'some-prefix' });
+    expect(mod1.initMeta.get(initSome)).toEqual({ path: 'some-prefix' });
   });
 
   it('get initParams for three different modules with params', () => {
-    interface RawMeta1 {
+    interface RawMeta1 extends BaseInitRawMeta<{ one?: string }> {
       one?: string;
     }
     interface InitMeta1 {
       paramsForInitMeta1?: any;
     }
-    interface RawMeta2 {
+    interface RawMeta2 extends BaseInitRawMeta<{ three?: string }> {
       three?: string;
     }
     interface InitMeta2 {
@@ -772,47 +763,31 @@ describe('ModuleManager', () => {
     const initSome2: InitDecorator<RawMeta2, {}, InitMeta2> = makeClassDecorator((d) => new InitHooksAndRawMeta2(d));
 
     @featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
-    class Module1 {
-      static withParams(): ModuleWithInitParams<Module1> {
-        return {
-          module: this,
-          initParams: new Map(),
-        };
-      }
-    }
+    class Module1 {}
 
     @featureModule({ providersPerApp: [{ token: 'token2', useValue: 'value2' }] })
-    class Module2 {
-      static withParams(): ModuleWithInitParams<Module2> {
-        return {
-          module: this,
-          initParams: new Map(),
-        };
-      }
-    }
+    class Module2 {}
 
     @featureModule({ providersPerApp: [{ token: 'token3', useValue: 'value3' }] })
-    class Module3 {
-      static withParams(): ModuleWithInitParams<Module3> {
-        return {
-          module: this,
-          initParams: new Map(),
-        };
-      }
-    }
+    class Module3 {}
 
-    const moduleWithParams1 = Module1.withParams();
-    moduleWithParams1.initParams.set(initSome1, { one: 'initSome1-1' });
+    const moduleWithParams1: ModuleWithParams = { module: Module1 };
+    const moduleWithParams2: ModuleWithParams = { module: Module2 };
+    const moduleWithParams3: ModuleWithParams = { module: Module3 };
 
-    const moduleWithParams2 = Module2.withParams();
-    moduleWithParams2.initParams.set(initSome2, { three: 'initSome2-2' });
-
-    const moduleWithParams3 = Module3.withParams();
-    moduleWithParams3.initParams.set(initSome1, { one: 'initSome1-3' }).set(initSome2, { three: 'initSome2-3' });
-
-    @initSome1()
-    @initSome2()
-    @rootModule({ imports: [moduleWithParams1, moduleWithParams2, moduleWithParams3] })
+    @initSome1({
+      imports: [
+        { mwp: moduleWithParams1, one: 'initSome1-1' },
+        { mwp: moduleWithParams3, one: 'initSome1-3' },
+      ],
+    })
+    @initSome2({
+      imports: [
+        { mwp: moduleWithParams2, three: 'initSome2-2' },
+        { mwp: moduleWithParams3, three: 'initSome2-3' },
+      ],
+    })
+    @rootModule()
     class AppModule {}
 
     mock.scanRootModule(AppModule);
@@ -822,6 +797,6 @@ describe('ModuleManager', () => {
     }
     expect(getParams(moduleWithParams1)).toEqual([{ one: 'initSome1-1' }]);
     expect(getParams(moduleWithParams2)).toEqual([{ three: 'initSome2-2' }]);
-    expect(getParams(moduleWithParams3)).toEqual([{ one: 'initSome1-3' }, { three: 'initSome2-3' }]);
+    expect(getParams(moduleWithParams3)).toEqual([{ three: 'initSome2-3' }, { one: 'initSome1-3' }]);
   });
 });

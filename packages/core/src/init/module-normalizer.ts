@@ -14,9 +14,10 @@ import {
   isModDecor,
   isFeatureModule,
   isModuleWithInitHooks,
+  isParamsWithMwp,
 } from '#utils/type-guards.js';
 import { ExtensionConfigBase, getExtensionProvider } from '#extension/get-extension-provider.js';
-import { AnyFn, ModRefId } from '#types/mix.js';
+import { AnyFn, ModRefId, ModuleType } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { RawMeta } from '#decorators/feature-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
@@ -269,10 +270,12 @@ export class ModuleNormalizer {
     }
   }
 
-  protected resolveForwardRef<T extends ModRefId | Provider>(arr = [] as T[]) {
+  protected resolveForwardRef<T extends ModRefId | Provider | { mwp: ModuleWithParams }>(arr = [] as T[]) {
     return arr.map((item) => {
       item = resolveForwardRef(item);
-      if (isNormalizedProvider(item)) {
+      if (isParamsWithMwp(item)) {
+        item.mwp.module = resolveForwardRef(item.mwp.module);
+      } else if (isNormalizedProvider(item)) {
         item.token = resolveForwardRef(item.token);
         if (isClassProvider(item)) {
           item.useClass = resolveForwardRef(item.useClass);
@@ -284,6 +287,43 @@ export class ModuleNormalizer {
       }
       return item;
     });
+  }
+
+  protected setBaseInitMeta(baseMeta: BaseMeta, decorator: AnyFn, initHooks: InitHooksAndRawMeta) {
+    if (initHooks.rawMeta.imports) {
+      this.resolveForwardRef(initHooks.rawMeta.imports).forEach((imp) => {
+        if (isModuleWithParams(imp)) {
+          const params = { ...imp } as { module?: ModuleType };
+          delete params.module;
+          imp.initParams ??= new Map();
+          imp.initParams.set(decorator, params);
+          if (!baseMeta.importsWithParams.includes(imp)) {
+            baseMeta.importsWithParams.push(imp);
+          }
+        } else if (isParamsWithMwp(imp)) {
+          const params = { ...imp } as { mwp?: ModuleWithParams };
+          delete params.mwp;
+          imp.mwp.initParams ??= new Map();
+          imp.mwp.initParams.set(decorator, params);
+          if (!baseMeta.importsWithParams.includes(imp.mwp)) {
+            baseMeta.importsWithParams.push(imp.mwp);
+          }
+        } else {
+          if (!baseMeta.importsModules.includes(imp)) {
+            baseMeta.importsModules.push(imp);
+          }
+        }
+      });
+    }
+    if (initHooks.rawMeta.exports) {
+      this.resolveForwardRef(initHooks.rawMeta.exports).forEach((exp) => {
+        if (isModuleWithParams(exp)) {
+          if (!baseMeta.exportsWithParams.includes(exp)) {
+            baseMeta.exportsWithParams.push(exp);
+          }
+        }
+      });
+    }
   }
 
   protected throwUnidentifiedToken(modName: string, token: any) {
@@ -359,6 +399,7 @@ export class ModuleNormalizer {
         baseMeta.importsModules.push(initHooks.hostModule);
       }
 
+      this.setBaseInitMeta(baseMeta, decorator, initHooks);
       this.callInitHook(baseMeta, decorator, initHooks);
     });
   }
