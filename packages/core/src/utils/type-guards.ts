@@ -21,14 +21,15 @@ export function isChainError<T extends AnyObj>(err: any): err is ChainError<T> {
 export function isCustomError(err: any): err is CustomError {
   return err instanceof CustomError;
 }
+export function isParamsWithMwp(arg?: AnyObj): arg is { mwp: ModuleWithParams } {
+  return isModuleWithParams((arg as { mwp: ModuleWithParams } | undefined)?.mwp);
+}
 
 export function isRootModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<RawMeta>;
 export function isRootModule(arg?: RawMeta): arg is RawMeta;
 export function isRootModule(meta?: BaseMeta): meta is BaseMeta<RootModuleMetadata>;
 export function isRootModule(arg?: AnyObj): arg is { decorator: typeof rootModule } & AnyObj;
-export function isRootModule(
-  arg?: DecoratorAndValue | RawMeta | BaseMeta | AnyObj,
-): arg is DecoratorAndValue<RawMeta> {
+export function isRootModule(arg?: DecoratorAndValue | RawMeta | BaseMeta | AnyObj): arg is DecoratorAndValue<RawMeta> {
   return arg?.decorator === rootModule;
 }
 
@@ -49,9 +50,7 @@ export function isModDecor(arg?: any) {
   return isRootModule(arg) || isFeatureModule(arg);
 }
 
-export function isModuleWithInitHooks(
-  metadata?: InitHooksAndRawMeta<AnyObj>,
-): metadata is InitHooksAndRawMeta<AnyObj>;
+export function isModuleWithInitHooks(metadata?: InitHooksAndRawMeta<AnyObj>): metadata is InitHooksAndRawMeta<AnyObj>;
 export function isModuleWithInitHooks(arg?: DecoratorAndValue): arg is DecoratorAndValue<InitHooksAndRawMeta<AnyObj>>;
 export function isModuleWithInitHooks(
   arg?: DecoratorAndValue | InitHooksAndRawMeta<AnyObj>,

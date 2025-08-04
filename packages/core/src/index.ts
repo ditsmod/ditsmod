@@ -100,6 +100,7 @@ export {
   isFeatureModule,
   isModDecor,
   isRootModule,
+  isParamsWithMwp,
   isProvider,
   hasDeclaredInDir,
   isCustomError,
