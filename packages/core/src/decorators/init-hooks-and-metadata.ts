@@ -4,10 +4,19 @@ import { ModuleManager } from '#init/module-manager.js';
 import { ShallowImportsBase, ShallowImports } from '#init/types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { GlobalProviders } from '#types/metadata-per-mod.js';
-import { AnyFn, AnyObj, ModRefId } from '#types/mix.js';
+import { AnyFn, AnyObj, ModRefId, ModuleType } from '#types/mix.js';
 import { BaseMeta } from '#types/base-meta.js';
+import { ModuleWithParams } from '#types/module-metadata.js';
 
 export type AllInitHooks = Map<AnyFn, Omit<InitHooksAndRawMeta, 'rawMeta' | 'baseInitMeta'>>;
+
+export interface BaseInitRawMeta<T extends object = object> {
+  imports?: ((({ mwp: ModuleWithParams; module?: never } | ModuleWithParams) & T) | ModuleType)[];
+  /**
+   * List of `ModuleWithParams` or provider tokens exported by this module.
+   */
+  exports?: any[];
+}
 
 /**
  * Init hooks and metadata attached by init decorators,
