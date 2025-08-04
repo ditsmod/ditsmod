@@ -72,7 +72,7 @@ The first mode is more convenient and safer when working within the context of t
 
 By default, Ditsmod works with the controller in injector-scoped mode. This means, first, that a separate controller instance will be created for each HTTP request. Second, any controller method that has a `route` decorator will receive an arbitrary number of arguments from the [DI injector][11]. The following example creates a single route that accepts a `GET` request at `/hello`:
 
-```ts {5}
+```ts {7}
 import { controller, route, Res } from '@ditsmod/rest';
 import { Service1 } from './service-1';
 import { Service2 } from './service-2';
@@ -226,7 +226,7 @@ import { SomeModule } from './some.module.js';
 @initRest({
   appends: [SomeModule],
   // OR
-  importsWithParams: [{ modRefId: SomeModule, path: '' }]
+  { module: SomeModule, path: '' }
 })
 @featureModule()
 export class OtherModule {}
