@@ -1,10 +1,10 @@
-import { ProvidersMetadata } from '#types/providers-metadata.js';
+import { ProvidersOnly } from '#types/providers-metadata.js';
 import { AnyObj, ModuleType } from '#types/mix.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { ExtensionClass } from '#extension/extension-types.js';
 import { InitParamsMap } from '#decorators/init-hooks-and-metadata.js';
 
-export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<ProvidersMetadata> {
+export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<ProvidersOnly> {
   /**
    * List of modules or `ModuleWithParams` imported by this module.
    * Also you can imports modules and set some prefix per each the module.
@@ -56,7 +56,7 @@ export interface BaseModuleWithParams<M extends AnyObj = AnyObj> {
   id?: string;
   module: ModuleType<M>;
 }
-export interface FeatureModuleParams<E extends AnyObj = AnyObj> extends Partial<ProvidersMetadata> {
+export interface FeatureModuleParams<E extends AnyObj = AnyObj> extends Partial<ProvidersOnly> {
   /**
    * List of modules, `ModuleWithParams` or tokens of providers exported by this
    * module.
