@@ -1,11 +1,11 @@
 import { Provider, Providers } from '@ditsmod/core';
 import { MetadataPerMod3, RoutesExtension } from '@ditsmod/rest';
-import { TestApplication, GroupMetaOverrider, TestOverrider } from '@ditsmod/testing';
+import { TestApplication, ExtensionMetaOverrider, TestOverrider } from '@ditsmod/testing';
 
 export class TestRestPlugin extends TestApplication {
   overrideGroupRestMeta(providersToOverride: Providers | Provider[]) {
     const aProvidersToOverride: Provider[] = [...providersToOverride];
-    const overrideRoutesMeta: GroupMetaOverrider<MetadataPerMod3> = (stage1ExtensionMeta) => {
+    const overrideRoutesMeta: ExtensionMetaOverrider<MetadataPerMod3> = (stage1ExtensionMeta) => {
       if (!aProvidersToOverride.length) {
         return;
       }

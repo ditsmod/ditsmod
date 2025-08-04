@@ -179,7 +179,7 @@ server = await TestApplication.createTestApp(AppModule, { path: 'api' }).getServ
 Колбек у другому аргументі має наступний тип:
 
 ```ts
-interface GroupMetaOverrider<T = any> {
+interface ExtensionMetaOverrider<T = any> {
   (stage1GroupMeta: Stage1GroupMeta<T> | Stage1GroupMeta2<T>): void;
 }
 ```
@@ -228,11 +228,11 @@ TestApplication.createTestApp(AppModule)
 ```ts
 import { Provider } from '@ditsmod/core';
 import { MetadataPerMod3, ROUTES_EXTENSIONS } from '@ditsmod/rest';
-import { TestApplication, GroupMetaOverrider } from '@ditsmod/testing';
+import { TestApplication, ExtensionMetaOverrider } from '@ditsmod/testing';
 
 export class TestRestPlugin extends TestApplication {
   overrideGroupRestMeta(providersToOverride: Provider[]) {
-    const overrideRoutesMeta: GroupMetaOverrider<MetadataPerMod3> = (stage1GroupMeta) => {
+    const overrideRoutesMeta: ExtensionMetaOverrider<MetadataPerMod3> = (stage1GroupMeta) => {
       stage1GroupMeta.groupData?.forEach((metadataPerMod3) => {
         // ...
       });
