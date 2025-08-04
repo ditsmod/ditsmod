@@ -1,10 +1,21 @@
-import { AnyObj, ModuleType, Class, Provider, Providers, ModuleWithParams, ModRefId, AnyFn } from '@ditsmod/core';
+import {
+  AnyObj,
+  ModuleType,
+  Class,
+  Provider,
+  Providers,
+  ModuleWithParams,
+  AnyFn,
+  ModuleMetadata,
+  BaseInitRawMeta,
+} from '@ditsmod/core';
+
 import { GuardItem } from '#interceptors/guard.js';
 
 /**
  * Metadata for the `initRest` decorator, which adds REST metadata to a `featureModule` or `rootModule`.
  */
-export interface RestInitRawMeta {
+export interface RestInitRawMeta extends Omit<ModuleMetadata, 'imports'>, BaseInitRawMeta<RestModuleParams> {
   /**
    * Providers per route.
    */
@@ -33,10 +44,6 @@ export interface RestInitRawMeta {
    * The application controllers.
    */
   controllers?: Class[];
-  /**
-   * List of `ModuleWithParams` or provider tokens exported by this module.
-   */
-  exports?: any[];
 }
 
 export type RestModuleParams = RestModuleParams1 | RestModuleParams2;
