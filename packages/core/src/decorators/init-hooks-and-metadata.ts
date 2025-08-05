@@ -46,8 +46,6 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
    */
   declare hostRawMeta?: T1;
 
-  baseInitMeta = new BaseInitMeta();
-
   constructor(public rawMeta: T1) {
     this.rawMeta ??= {} as T1;
   }

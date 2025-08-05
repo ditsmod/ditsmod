@@ -24,7 +24,7 @@ import { HTTP_INTERCEPTORS } from '#types/constants.js';
 import { Req } from '#services/request.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
-import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
+import { ShallowModulesImporter } from '#init/rest-shallow-modules-importer.js';
 
 describe('HttpInterceptor', () => {
   const jestFn = jest.fn((interceptorName: string) => interceptorName);

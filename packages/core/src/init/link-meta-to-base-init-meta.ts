@@ -21,6 +21,10 @@ export function linkMetaToBaseInitMeta(baseInitMeta: BaseInitMeta, meta: BaseIni
       'extensionsMeta',
     ] satisfies (keyof BaseInitMeta)[]
   ).forEach(<T extends keyof BaseInitMeta>(prop: T) => {
-    meta[prop] = baseInitMeta[prop];
+    if (Array.isArray(baseInitMeta[prop])) {
+      meta[prop].push(...baseInitMeta[prop]);
+    } else {
+      Object.assign(meta[prop], baseInitMeta[prop]);
+    }
   });
 }

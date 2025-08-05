@@ -33,7 +33,6 @@ import { ModuleWithParams } from '#types/module-metadata.js';
 import { mergeArrays } from '#utils/merge-arrays.js';
 import { AllInitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
-import { linkMetaToBaseInitMeta } from './link-meta-to-base-init-meta.js';
 
 /**
  * Normalizes and validates module metadata.
@@ -408,7 +407,6 @@ export class ModuleNormalizer {
         baseMeta.importsModules.push(initHooks.hostModule);
       }
 
-      linkMetaToBaseInitMeta(baseMeta, initHooks.baseInitMeta);
       this.setInitParamsAndBaseInitMeta(baseMeta, decorator, initHooks);
       this.callInitHook(baseMeta, decorator, initHooks);
     });

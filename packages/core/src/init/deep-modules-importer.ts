@@ -62,7 +62,7 @@ export class DeepModulesImporter {
       const deepImportedModules = new Map<AnyFn, AnyObj>();
       mMetadataPerMod2.set(modRefId, { baseMeta, deepImportedModules });
       const targetProviders = new ProvidersOnly();
-      this.resolveImportedProviders(baseMeta, importedTokensMap, levels);
+      this.resolveImportedProviders(targetProviders, importedTokensMap, levels);
       this.resolveProvidersForExtensions(baseMeta, importedTokensMap);
       baseMeta.providersPerMod.unshift(...targetProviders.providersPerMod);
       baseMeta.allInitHooks.forEach((initHooks, decorator) => {

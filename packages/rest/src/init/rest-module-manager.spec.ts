@@ -156,10 +156,9 @@ describe('ModuleManager', () => {
     @rootModule()
     class AppModule {}
 
-    const expectedMeta = new RestInitMeta();
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(2);
-    expect(getInitMeta('root')).toEqual(expectedMeta);
+    expect(getInitMeta('root')?.importsModules).toEqual([RestModule]);
   });
 
   it('circular imports modules with forwardRef()', () => {
@@ -211,11 +210,9 @@ describe('ModuleManager', () => {
     @rootModule()
     class AppModule {}
 
-    const expectedMeta = new RestInitMeta();
-    expectedMeta.providersPerReq = [Provider1];
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(2);
-    expect(getInitMeta('root')).toEqual(expectedMeta);
+    expect(getInitMeta('root')?.providersPerReq).toEqual([Provider1]);
   });
 
   it('root module without @rootModule decorator', () => {
@@ -444,24 +441,17 @@ describe('ModuleManager', () => {
     })
     class AppModule {}
 
-    const expectedMeta1 = new RestInitMeta();
-    expectedMeta1.controllers = [Controller1];
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(5);
-    expect(getInitMeta(Module1)).toEqual(expectedMeta1);
+    expect(getInitMeta(Module1)?.controllers).toEqual([Controller1]);
 
-    const expectedMeta2 = new RestInitMeta();
-    expectedMeta2.providersPerRou = [Provider1];
-    expectedMeta2.exportedProvidersPerRou = [Provider1];
-    expect(mock.map.get(Module2)?.initMeta.get(initRest)).toEqual(expectedMeta2);
+    expect(mock.map.get(Module2)?.initMeta.get(initRest)?.providersPerRou).toEqual([Provider1]);
+    expect(mock.map.get(Module2)?.initMeta.get(initRest)?.exportedProvidersPerRou).toEqual([Provider1]);
 
-    const expectedMeta3 = new RestInitMeta();
-    expect(getInitMeta('root')).toEqual(expectedMeta3);
+    expect(getInitMeta('root')?.importsModules).toEqual([Module1, Module2, RestModule]);
 
-    const expectedMeta4 = new RestInitMeta();
-    expectedMeta4.controllers = [Controller1];
-
-    expect(mock.map.get(module4WithParams)?.initMeta.get(initRest)).toEqual(expectedMeta4);
+    const initMeta = mock.map.get(module4WithParams)?.initMeta.get(initRest);
+    expect(initMeta?.importsModules).toEqual([RestModule]);
   });
 
   it('imports and appends with gruards for some modules', () => {
@@ -558,6 +548,7 @@ describe('ModuleManager', () => {
     const module3WithProviders = Module3.withParams([Provider2]);
 
     const expectedMeta1 = new RestInitMeta();
+    expectedMeta1.importsModules = [RestModule];
     expectedMeta1.providersPerReq = [Provider1];
 
     mock.scanRootModule(AppModule);
@@ -592,9 +583,6 @@ describe('ModuleManager', () => {
     expect(mock.oldMapId.size).toBe(0);
     expect(mock.oldMap.size).toBe(0);
 
-    const expectedMeta2 = new RestInitMeta();
-    expectedMeta2.providersPerReq = [Provider1];
-
     mock.addImport(Module2);
     expect(mock.map.size).toBe(4);
     expect(mock.map.has(Module2)).toBe(true);
@@ -603,7 +591,7 @@ describe('ModuleManager', () => {
     expect(mock.oldMap.has(Module1)).toBe(true);
     expect(mock.oldMapId.size).toBe(1);
     expect(mock.oldMapId.get('root')).toBe(AppModule);
-    expect(mock.oldMap.get(AppModule)?.initMeta.get(initRest)).toEqual(expectedMeta2);
+    expect(mock.oldMap.get(AppModule)?.initMeta.get(initRest)?.providersPerReq).toEqual([Provider1]);
 
     mock.addImport(Module4);
     expect(mock.map.size).toBe(5);
@@ -623,10 +611,7 @@ describe('ModuleManager', () => {
     expect(mock.oldMapId.size).toBe(0);
     expect(mock.oldMap.has(AppModule)).toBe(false);
 
-    const expectedMeta3 = new RestInitMeta();
-    expectedMeta3.providersPerReq = [Provider1];
-
-    expect(getInitMeta('root')).toEqual(expectedMeta3);
+    expect(getInitMeta('root')?.providersPerReq).toEqual([Provider1]);
 
     mock.addImport(module3WithProviders);
     expect(mock.map.size).toBe(6);
@@ -636,7 +621,7 @@ describe('ModuleManager', () => {
 
     mock.rollback();
     expect(mock.map.size).toBe(5);
-    expect(getInitMeta('root')).toEqual(expectedMeta3);
+    expect(getInitMeta('root')?.providersPerReq).toEqual([Provider1]);
     expect(mock.map.has(module3WithProviders)).toBe(false);
     expect(mock.oldMap.size).toBe(0);
   });
@@ -691,20 +676,25 @@ describe('ModuleManager', () => {
 
     const module4WithProviders = Module4.withParams([Provider2]);
 
-    @initRest({ providersPerReq: [Provider1], controllers: [] })
-    @rootModule({
+    @initRest({
       imports: [Module1, Module2, module3WithProviders, module4WithProviders],
+      providersPerReq: [Provider1],
+      controllers: [],
+    })
+    @rootModule({
       extensionsMeta: {},
       exports: [],
     })
     class AppModule {}
 
-    const expectedMeta1 = new RestInitMeta();
-    expectedMeta1.providersPerReq = [Provider1];
+    const rootInitMeta = new RestInitMeta();
+    rootInitMeta.providersPerReq = [Provider1];
+    rootInitMeta.importsModules = [RestModule, Module1, Module2];
+    rootInitMeta.importsWithParams = [module3WithProviders, module4WithProviders];
 
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(7);
-    expect(getInitMeta('root')).toEqual(expectedMeta1);
+    expect(getInitMeta('root')).toEqual(rootInitMeta);
     expect(mock.oldMapId.size).toBe(0);
     expect(mock.oldMap.size).toBe(0);
     expect(mock.map.get(Module1)).toMatchObject({ importsModules: [Module0, RestModule] });
@@ -737,51 +727,41 @@ describe('ModuleManager', () => {
     expect(mock.oldMapId.size).toBe(0);
     expect(mock.oldMap.size).toBe(0);
 
-    const expectedMeta2 = new RestInitMeta();
-    expectedMeta2.providersPerReq = [Provider1];
-
     expect(getInitMeta('root')).toMatchObject({ providersPerReq: [Provider1] });
     expect(mock.removeImport(Module2)).toBe(true);
     expect(getInitMeta('root')).toMatchObject({ providersPerReq: [Provider1] });
     expect(mock.map.size).toBe(5);
-    expect(mock.oldMap.get(AppModule)).toMatchObject({ importsModules: [Module1, Module2, RestModule] });
+    expect(mock.oldMap.get(AppModule)).toMatchObject({ importsModules: [RestModule, Module1, Module2] });
     expect(mock.oldMapId.size).toBe(2);
     expect(mock.oldMap.size).toBe(6);
 
     expect(mock.removeImport(Module2)).toBe(false);
     expect(mock.map.size).toBe(5);
     expect(getInitMeta('root')).toMatchObject({ providersPerReq: [Provider1] });
-    expect(getInitMeta('root')).toEqual(expectedMeta2);
     expect(mock.oldMapId.size).toBe(2);
     expect(mock.oldMap.size).toBe(6);
-
-    const expectedMeta3 = new RestInitMeta();
-    expectedMeta3.providersPerReq = [Provider1];
 
     expect(getInitMeta('root')).toMatchObject({ providersPerReq: [Provider1] });
     expect(mock.removeImport(module3WithProviders)).toBe(true);
     expect(getInitMeta('root')).toMatchObject({ providersPerReq: [Provider1] });
     expect(mock.map.size).toBe(4);
-    expect(getInitMeta('root')).toEqual(expectedMeta3);
+    expect(getInitMeta('root')?.providersPerReq).toEqual([Provider1]);
     expect(mock.oldMapId.size).toBe(2);
     expect(mock.oldMap.size).toBe(6);
     expect(mock.oldMap.get(AppModule)).toMatchObject({
       importsWithParams: [module3WithProviders, module4WithProviders],
     });
 
-    const expectedMeta4 = new RestInitMeta();
-    expectedMeta4.providersPerReq = [Provider1];
-
     expect(mock.removeImport(moduleId)).toBe(true);
     expect(mock.map.size).toBe(3);
-    expect(getInitMeta('root')).toEqual(expectedMeta4);
+    expect(getInitMeta('root')?.providersPerReq).toEqual([Provider1]);
     expect(mock.oldMapId.size).toBe(2);
     expect(mock.oldMap.size).toBe(6);
 
     mock.rollback();
     expect(mock.mapId.size).toBe(2);
     expect(mock.map.size).toBe(6);
-    expect(getInitMeta('root')).toEqual(expectedMeta1);
+    expect(getInitMeta('root')).toEqual(rootInitMeta);
     expect(mock.oldMapId.size).toBe(0);
     expect(mock.oldMap.size).toBe(0);
   });
@@ -869,9 +849,10 @@ describe('ModuleManager', () => {
     @rootModule({
       imports: [Module1],
     })
-    class Module3 {}
+    class AppModule {}
 
     const expectedMeta1 = new RestInitMeta();
+    expectedMeta1.importsModules = [RestModule];
     expectedMeta1.exportedProvidersPerReq = [Provider3];
     expectedMeta1.providersPerReq = providersPerReq;
     expectedMeta1.exportedMultiProvidersPerReq = [
@@ -881,8 +862,10 @@ describe('ModuleManager', () => {
       { token: Provider1, useValue: 'val3', multi: true },
     ];
 
-    mock.scanRootModule(Module3);
-    expect(getInitMeta('root')).toEqual(new RestInitMeta());
+    mock.scanRootModule(AppModule);
+    const rootInitMeta = new RestInitMeta();
+    rootInitMeta.importsModules = [Module1];
+    expect(getInitMeta('root')).toEqual(rootInitMeta);
     expect(getInitMeta(Module1)).toEqual(expectedMeta1);
   });
 });

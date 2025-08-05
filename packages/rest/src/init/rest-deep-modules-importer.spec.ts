@@ -189,7 +189,7 @@ describe('DeepModulesImporter', () => {
     const initMeta = baseMeta.initMeta.get(initRest)!;
     expect(initMeta.providersPerRou).toEqual([...defaultProvidersPerRou, Service3, Service4]);
     expect(initMeta.providersPerReq).toEqual(defaultProvidersPerReq);
-    expect(baseMeta.providersPerMod.slice(0, 2)).toEqual([Service1, Service2]);
+    expect(initMeta.providersPerMod.slice(-2)).toEqual([Service1, Service2]);
   });
 
   it('circular dependencies in one module', () => {
@@ -310,13 +310,11 @@ describe('DeepModulesImporter', () => {
     @featureModule({ providersPerMod: [Service1], exports: [Service1] })
     class Module1 {}
 
-    @initRest({ providersPerRou: [Service2], exports: [Service2] })
-    @featureModule({ imports: [Module1] })
+    @initRest({ imports: [Module1], providersPerRou: [Service2], exports: [Service2] })
+    @featureModule()
     class Module2 {}
 
-    @rootModule({
-      imports: [Module2],
-    })
+    @rootModule({ imports: [Module2] })
     class AppModule {}
 
     const mMetadataPerMod2 = getMetadataPerMod2(AppModule);
@@ -324,7 +322,7 @@ describe('DeepModulesImporter', () => {
     const initMeta = baseMeta.initMeta.get(initRest)!;
     expect(initMeta.providersPerReq).toEqual(defaultProvidersPerReq);
     expect(initMeta.providersPerRou.slice(-1)).toEqual([Service2]);
-    expect(baseMeta.providersPerMod.includes(Service1)).toBeTruthy();
+    expect(initMeta.providersPerMod.includes(Service1)).toBeTruthy();
   });
 
   it('Service2 is not exported from the host module, but is imported into the AppModule because Service3 depends on it', () => {
@@ -339,8 +337,8 @@ describe('DeepModulesImporter', () => {
     @featureModule({ providersPerMod: [Service1], exports: [Service1] })
     class Module1 {}
 
-    @initRest({ providersPerRou: [Service3, Service2], exports: [Service3] })
-    @featureModule({ imports: [Module1] })
+    @initRest({ imports: [Module1], providersPerRou: [Service3, Service2], exports: [Service3] })
+    @featureModule()
     class Module2 {}
 
     @rootModule({

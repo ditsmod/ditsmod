@@ -22,6 +22,8 @@ import {
   Provider,
   isClassProvider,
   isTokenProvider,
+  BaseInitMeta,
+  linkMetaToBaseInitMeta,
 } from '@ditsmod/core';
 
 import { AppendsWithParams, RestInitRawMeta } from '#init/rest-init-raw-meta.js';
@@ -29,6 +31,7 @@ import { RestModRefId, RestInitMeta } from '#init/rest-normalized-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
+import { Level } from '#types/types.js';
 
 /**
  * Normalizes and validates module metadata.
@@ -36,6 +39,7 @@ import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 export class RestModuleNormalizer {
   normalize(baseMeta: BaseMeta, rawMeta: RestInitRawMeta) {
     const meta = new RestInitMeta();
+    linkMetaToBaseInitMeta(baseMeta, meta);
     this.mergeModuleWithParams(baseMeta.modRefId, rawMeta, meta);
     this.appendModules(rawMeta, meta);
     this.normalizeDeclaredAndResolvedProviders(meta, rawMeta);
@@ -43,6 +47,7 @@ export class RestModuleNormalizer {
     this.checkMetadata(baseMeta, meta);
     return meta;
   }
+
   protected mergeModuleWithParams(modRefId: RestModRefId, rawMeta: RestInitRawMeta, meta: RestInitMeta): void {
     if (isAppendsWithParams(modRefId)) {
       if (modRefId.absolutePath !== undefined) {
@@ -59,7 +64,7 @@ export class RestModuleNormalizer {
     const params = modRefId.initParams?.get(initRest);
 
     if (params) {
-      (['exports', 'providersPerRou', 'providersPerReq'] as const).forEach((prop) => {
+      (['exports', 'providersPerMod', 'providersPerRou', 'providersPerReq'] as const).forEach((prop) => {
         if (params[prop] instanceof Providers || params[prop]?.length) {
           rawMeta[prop] = mergeArrays(rawMeta[prop], params[prop]);
         }
@@ -98,7 +103,7 @@ export class RestModuleNormalizer {
     if (rawMeta.controllers) {
       meta.controllers.push(...rawMeta.controllers);
     }
-    (['Rou', 'Req'] as const).forEach((level) => {
+    (['Mod', 'Rou', 'Req'] satisfies Level[]).forEach((level) => {
       if (rawMeta[`providersPer${level}`]) {
         meta[`providersPer${level}`].push(...rawMeta[`providersPer${level}`]!);
         meta[`providersPer${level}`] = this.resolveForwardRef(meta[`providersPer${level}`]);
@@ -185,7 +190,7 @@ export class RestModuleNormalizer {
 
   protected exportProviders(token: any, rawMeta: RestInitRawMeta, meta: RestInitMeta) {
     let found = false;
-    (['Rou', 'Req'] as const).forEach((level) => {
+    (['Mod', 'Rou', 'Req'] satisfies Level[]).forEach((level) => {
       const unfilteredProviders = [...(rawMeta[`providersPer${level}`] || [])];
       let providers = unfilteredProviders.filter((p) => getToken(p) === token);
       providers = this.resolveForwardRef(providers);

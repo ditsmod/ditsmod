@@ -41,13 +41,16 @@ export class RestMetadataPerMod1 {
 }
 
 export interface RestImportedTokensMap {
+  perMod: Map<any, RestImportObj>;
   perRou: Map<any, RestImportObj>;
   perReq: Map<any, RestImportObj>;
+  multiPerMod: Map<RestModRefId, Provider[]>;
   multiPerRou: Map<RestModRefId, Provider[]>;
   multiPerReq: Map<RestModRefId, Provider[]>;
 }
 
 export class RestProvidersOnly {
+  providersPerMod: Provider[] = [];
   providersPerRou: Provider[] = [];
   providersPerReq: Provider[] = [];
 }

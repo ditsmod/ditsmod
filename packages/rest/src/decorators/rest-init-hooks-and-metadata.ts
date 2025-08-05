@@ -2,7 +2,7 @@ import { makeClassDecorator, InitHooksAndRawMeta, ModRefId, BaseMeta, InitDecora
 
 import { RestInitRawMeta, RestModuleParams } from '#init/rest-init-raw-meta.js';
 import { RestModuleNormalizer } from '#init/rest-module-normalizer.js';
-import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
+import { ShallowModulesImporter } from '#init/rest-shallow-modules-importer.js';
 import {
   DeepModulesImporterConfig,
   ExportGlobalProvidersConfig,

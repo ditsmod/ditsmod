@@ -21,7 +21,7 @@ import {
 import { controller } from '#types/controller.js';
 import { AppendsWithParams } from './rest-init-raw-meta.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
-import { ShallowModulesImporter } from './shallow-modules-importer.js';
+import { ShallowModulesImporter } from './rest-shallow-modules-importer.js';
 import { Level, RestGlobalProviders } from '#types/types.js';
 import { getImportedProviders } from '../utils/get-imports.js';
 
