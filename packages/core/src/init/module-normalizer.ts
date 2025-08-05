@@ -33,6 +33,7 @@ import { ModuleWithParams } from '#types/module-metadata.js';
 import { mergeArrays } from '#utils/merge-arrays.js';
 import { AllInitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
+import { linkMetaToBaseInitMeta } from './link-meta-to-base-init-meta.js';
 
 /**
  * Normalizes and validates module metadata.
@@ -289,31 +290,6 @@ export class ModuleNormalizer {
     });
   }
 
-  protected linkBaseMetaToBaseInitMeta(baseMeta: BaseMeta, initHooks: InitHooksAndRawMeta) {
-    (
-      [
-        'importsModules',
-        'importsWithParams',
-        'providersPerApp',
-        'providersPerMod',
-        'exportsModules',
-        'exportsWithParams',
-        'exportedProvidersPerMod',
-        'exportedMultiProvidersPerMod',
-        'resolvedCollisionsPerApp',
-        'resolvedCollisionsPerMod',
-        'extensionsProviders',
-        'exportedExtensionsProviders',
-        'aExtensionConfig',
-        'aOrderedExtensions',
-        'aExportedExtensionConfig',
-        'extensionsMeta',
-      ] satisfies (keyof BaseInitMeta)[]
-    ).forEach(<T extends keyof BaseInitMeta>(prop: T) => {
-      initHooks.baseInitMeta[prop] = baseMeta[prop];
-    });
-  }
-
   protected setInitParamsAndBaseInitMeta(baseMeta: BaseMeta, decorator: AnyFn, initHooks: InitHooksAndRawMeta) {
     if (initHooks.rawMeta.imports) {
       this.resolveForwardRef(initHooks.rawMeta.imports).forEach((imp) => {
@@ -432,7 +408,7 @@ export class ModuleNormalizer {
         baseMeta.importsModules.push(initHooks.hostModule);
       }
 
-      this.linkBaseMetaToBaseInitMeta(baseMeta, initHooks);
+      linkMetaToBaseInitMeta(baseMeta, initHooks.baseInitMeta);
       this.setInitParamsAndBaseInitMeta(baseMeta, decorator, initHooks);
       this.callInitHook(baseMeta, decorator, initHooks);
     });
@@ -452,7 +428,7 @@ import { initRest } from '@ditsmod/rest';
 \@featureModule()
 class Module1 {}
 
-\@initRest({ imports: [{ modRefId: Module1, path: 'some-prefix' }] })
+\@initRest({ imports: [{ module: Module1, path: 'some-prefix' }] })
 \@rootModule()
 export class AppModule {}
 ```

@@ -6,6 +6,7 @@ export { BaseAppInitializer } from '#init/base-app-initializer.js';
 export { ShallowImportsBase, ShallowImports } from '#init/types.js';
 export { BaseApplication } from '#init/base-application.js';
 export { BaseAppOptions } from '#init/base-app-options.js';
+export { linkMetaToBaseInitMeta } from '#init/link-meta-to-base-init-meta.js';
 export { DeepModulesImporter } from '#init/deep-modules-importer.js';
 export { ImportedTokensMap } from '#types/metadata-per-mod.js';
 export { GlobalProviders } from '#types/metadata-per-mod.js';
