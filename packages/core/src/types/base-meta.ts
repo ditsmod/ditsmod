@@ -35,7 +35,7 @@ export class BaseInitMeta<A extends AnyObj = AnyObj> {
 /**
  * Normalized metadata taken from the `rootModule` or `featureModule` decorator.
  */
-export class BaseMeta<T extends AnyObj = AnyObj> extends BaseInitMeta {
+export class BaseMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> extends BaseInitMeta<A> {
   /**
    * The module setted here must be identical to the module
    * passed to "imports", "exports" array of `@featureModule` metadata.
