@@ -1,4 +1,13 @@
-import { AnyObj, Provider, ModuleType, MultiProvider, Class, ModuleWithParams, ModRefId } from '@ditsmod/core';
+import {
+  AnyObj,
+  Provider,
+  ModuleType,
+  MultiProvider,
+  Class,
+  ModuleWithParams,
+  ModRefId,
+  BaseInitMeta,
+} from '@ditsmod/core';
 
 import { NormalizedGuard } from '#interceptors/guard.js';
 import { AppendsWithParams } from '#init/rest-init-raw-meta.js';
@@ -9,7 +18,7 @@ class NormalizedParams {
   guards: NormalizedGuard[] = [];
 }
 
-export class RestInitMeta {
+export class RestInitMeta extends BaseInitMeta {
   providersPerRou: Provider[] = [];
   providersPerReq: Provider[] = [];
   exportedProvidersPerRou: Provider[] = [];

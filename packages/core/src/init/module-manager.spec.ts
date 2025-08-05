@@ -8,6 +8,7 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ModuleManager } from './module-manager.js';
 import { AllInitHooks, BaseInitRawMeta } from '#decorators/init-hooks-and-metadata.js';
+import { BaseInitMeta } from '#types/base-meta.js';
 import { ModuleType, AnyObj, ModRefId } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { BaseMeta } from '#types/base-meta.js';
@@ -712,7 +713,7 @@ describe('ModuleManager', () => {
       one?: string;
       two?: string;
     }
-    interface InitMeta {
+    interface InitMeta extends BaseInitMeta {
       path?: string;
     }
     const initSome: InitDecorator<RawMeta, { path?: string }, InitMeta> = makeClassDecorator(
@@ -723,10 +724,10 @@ describe('ModuleManager', () => {
       override normalize({ modRefId }: BaseMeta): InitMeta {
         if (isModuleWithParams(modRefId)) {
           const params = modRefId.initParams?.get(initSome);
-          return { path: params?.path };
+          return { path: params?.path } as InitMeta;
         }
 
-        return {};
+        return {} as InitMeta;
       }
     }
 
