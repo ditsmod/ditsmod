@@ -33,7 +33,7 @@ import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 /**
  * Normalizes and validates module metadata.
  */
-export class ModuleNormalizer {
+export class RestModuleNormalizer {
   normalize(baseMeta: BaseMeta, rawMeta: RestInitRawMeta) {
     const meta = new RestInitMeta();
     this.mergeModuleWithParams(baseMeta.modRefId, rawMeta, meta);

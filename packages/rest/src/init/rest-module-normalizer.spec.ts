@@ -10,7 +10,7 @@ import {
   SystemLogMediator,
 } from '@ditsmod/core';
 
-import { ModuleNormalizer } from './module-normalizer.js';
+import { RestModuleNormalizer } from './rest-module-normalizer.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { controller } from '#types/controller.js';
 import { CanActivate, NormalizedGuard } from '#interceptors/guard.js';
@@ -19,7 +19,7 @@ import { AppendsWithParams } from './rest-init-raw-meta.js';
 import { RestModule } from './rest.module.js';
 
 describe('rest ModuleNormalizer', () => {
-  class MockModuleNormalizer extends ModuleNormalizer {}
+  class MockModuleNormalizer extends RestModuleNormalizer {}
 
   let mock: MockModuleNormalizer;
   let moduleManager: ModuleManager;
