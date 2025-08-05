@@ -21,7 +21,7 @@ import { AnyFn, ModRefId, ModuleType } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { RawMeta } from '#decorators/feature-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
-import { BaseMeta } from '#types/base-meta.js';
+import { BaseInitMeta, BaseMeta } from '#types/base-meta.js';
 import { resolveForwardRef } from '#di/forward-ref.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
 import { Class } from '#di/types-and-models.js';
@@ -32,7 +32,7 @@ import { isExtensionConfig } from '#extension/type-guards.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { mergeArrays } from '#utils/merge-arrays.js';
 import { AllInitHooks } from '#decorators/init-hooks-and-metadata.js';
-import { InitHooksAndRawMeta, InitParamsMap } from '#decorators/init-hooks-and-metadata.js';
+import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 
 /**
  * Normalizes and validates module metadata.
@@ -289,7 +289,32 @@ export class ModuleNormalizer {
     });
   }
 
-  protected setBaseInitMeta(baseMeta: BaseMeta, decorator: AnyFn, initHooks: InitHooksAndRawMeta) {
+  protected linkBaseMetaToBaseInitMeta(baseMeta: BaseMeta, initHooks: InitHooksAndRawMeta) {
+    (
+      [
+        'importsModules',
+        'importsWithParams',
+        'providersPerApp',
+        'providersPerMod',
+        'exportsModules',
+        'exportsWithParams',
+        'exportedProvidersPerMod',
+        'exportedMultiProvidersPerMod',
+        'resolvedCollisionsPerApp',
+        'resolvedCollisionsPerMod',
+        'extensionsProviders',
+        'exportedExtensionsProviders',
+        'aExtensionConfig',
+        'aOrderedExtensions',
+        'aExportedExtensionConfig',
+        'extensionsMeta',
+      ] satisfies (keyof BaseInitMeta)[]
+    ).forEach(<T extends keyof BaseInitMeta>(prop: T) => {
+      initHooks.baseInitMeta[prop] = baseMeta[prop];
+    });
+  }
+
+  protected setInitParamsAndBaseInitMeta(baseMeta: BaseMeta, decorator: AnyFn, initHooks: InitHooksAndRawMeta) {
     if (initHooks.rawMeta.imports) {
       this.resolveForwardRef(initHooks.rawMeta.imports).forEach((imp) => {
         if (isModuleWithParams(imp)) {
@@ -320,6 +345,14 @@ export class ModuleNormalizer {
         if (isModuleWithParams(exp)) {
           if (!baseMeta.exportsWithParams.includes(exp)) {
             baseMeta.exportsWithParams.push(exp);
+          }
+        } else if (isParamsWithMwp(exp)) {
+          if (!baseMeta.exportsWithParams.includes(exp.mwp)) {
+            baseMeta.exportsWithParams.push(exp.mwp);
+          }
+        } else if (reflector.getDecorators(exp, isFeatureModule)) {
+          if (!baseMeta.exportsModules.includes(exp)) {
+            baseMeta.exportsModules.push(exp);
           }
         }
       });
@@ -399,7 +432,8 @@ export class ModuleNormalizer {
         baseMeta.importsModules.push(initHooks.hostModule);
       }
 
-      this.setBaseInitMeta(baseMeta, decorator, initHooks);
+      this.linkBaseMetaToBaseInitMeta(baseMeta, initHooks);
+      this.setInitParamsAndBaseInitMeta(baseMeta, decorator, initHooks);
       this.callInitHook(baseMeta, decorator, initHooks);
     });
   }
