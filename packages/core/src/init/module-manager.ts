@@ -55,7 +55,7 @@ export class ModuleManager {
     this.scanedModules.clear();
     clearDebugClassNames();
     this.mapId.set('root', appModule);
-    return this.copyMeta(baseMeta);
+    return this.copyBaseMeta(baseMeta);
   }
 
   /**
@@ -63,7 +63,7 @@ export class ModuleManager {
    */
   scanModule(modOrObj: ModuleType | ModuleWithParams) {
     const baseMeta = this.scanRawModule(modOrObj);
-    return this.copyMeta(baseMeta);
+    return this.copyBaseMeta(baseMeta);
   }
 
   /**
@@ -82,7 +82,7 @@ export class ModuleManager {
   getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrIfNotFound?: boolean) {
     const baseMeta = this.getOriginMetadata<T, A>(moduleId, throwErrIfNotFound);
     if (baseMeta) {
-      return this.copyMeta(baseMeta);
+      return this.copyBaseMeta(baseMeta);
     } else {
       return;
     }
@@ -98,14 +98,14 @@ export class ModuleManager {
     const targetMeta = this.getOriginMetadata(targetModuleId);
     if (!targetMeta) {
       const modName = getDebugClassName(inputModule);
-      const modIdStr = format(targetModuleId);
+      const modIdStr = format(targetModuleId).slice(0, 50);
       const msg = `Failed adding ${modName} to imports: target module with ID "${modIdStr}" not found.`;
       throw new Error(msg);
     }
 
     const prop = isModuleWithParams(inputModule) ? 'importsWithParams' : 'importsModules';
     if (targetMeta[prop].some((imp: ModRefId) => imp === inputModule)) {
-      const modIdStr = format(targetModuleId);
+      const modIdStr = format(targetModuleId).slice(0, 50);
       this.systemLogMediator.moduleAlreadyImported(this, inputModule, modIdStr);
       return false;
     }
@@ -127,21 +127,21 @@ export class ModuleManager {
   removeImport(inputModuleId: ModuleId, targetModuleId: ModuleId = 'root'): boolean | void {
     const inputMeta = this.getOriginMetadata(inputModuleId);
     if (!inputMeta) {
-      const modIdStr = format(inputModuleId);
+      const modIdStr = format(inputModuleId).slice(0, 50);
       this.systemLogMediator.moduleNotFound(this, modIdStr);
       return false;
     }
 
     const targetMeta = this.getOriginMetadata(targetModuleId);
     if (!targetMeta) {
-      const modIdStr = format(targetModuleId);
+      const modIdStr = format(targetModuleId).slice(0, 50);
       const msg = `Failed removing ${inputMeta.name} from "imports" array: target module with ID "${modIdStr}" not found.`;
       throw new Error(msg);
     }
     const prop = isModuleWithParams(inputMeta.modRefId) ? 'importsWithParams' : 'importsModules';
     const index = targetMeta[prop].findIndex((imp: ModRefId) => imp === inputMeta.modRefId);
     if (index == -1) {
-      const modIdStr = format(inputModuleId);
+      const modIdStr = format(inputModuleId).slice(0, 50);
       this.systemLogMediator.moduleNotFound(this, modIdStr);
       return false;
     }
@@ -168,7 +168,7 @@ export class ModuleManager {
       return false;
     }
 
-    this.map.forEach((baseMeta, key) => this.oldMap.set(key, this.copyMeta(baseMeta)));
+    this.map.forEach((baseMeta, key) => this.oldMap.set(key, this.copyBaseMeta(baseMeta)));
     this.oldMapId = new Map(this.mapId);
 
     return true;
@@ -283,7 +283,7 @@ export class ModuleManager {
     });
   }
 
-  protected copyMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(baseMeta: BaseMeta) {
+  protected copyBaseMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(baseMeta: BaseMeta) {
     baseMeta = { ...(baseMeta || ({} as BaseMeta)) };
     objectKeys(baseMeta).forEach((p) => {
       if (Array.isArray(baseMeta[p])) {
