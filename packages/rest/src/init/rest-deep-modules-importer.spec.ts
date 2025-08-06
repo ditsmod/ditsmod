@@ -6,7 +6,6 @@ import {
   injectable,
   Injector,
   KeyRegistry,
-  ModuleExtract,
   ModuleManager,
   ModuleType,
   Provider,
@@ -15,11 +14,14 @@ import {
   SystemLogMediator,
   BaseAppInitializer,
   BaseAppOptions,
-  ExtensionCounters,
   BaseMeta,
   DeepModulesImporter,
   ModuleWithInitParams,
+  ModRefId,
+  MetadataPerMod2,
+  ModuleWithParams,
 } from '@ditsmod/core';
+import { inspect } from 'node:util';
 
 import { CanActivate, guard } from '#interceptors/guard.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
@@ -27,47 +29,22 @@ import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js'
 import { RequestContext } from '#services/request-context.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { RestMetadataPerMod2 } from './types.js';
-import { RestModuleExtract } from '#types/types.js';
+import { RestModuleParams } from './rest-init-raw-meta.js';
 
 describe('DeepModulesImporter', () => {
   class AppInitializerMock extends BaseAppInitializer {
     override baseMeta = new BaseMeta();
 
-    constructor(
-      public override baseAppOptions: BaseAppOptions,
-      public override moduleManager: ModuleManager,
-      public override systemLogMediator: SystemLogMediator,
-    ) {
-      super(baseAppOptions, moduleManager, systemLogMediator);
-    }
-
-    async init() {
-      this.bootstrapProvidersPerApp();
-      await this.bootstrapModulesAndExtensions();
-    }
-
-    override prepareProvidersPerApp() {
-      return super.prepareProvidersPerApp();
-    }
-
     override collectProvidersShallow(moduleManager: ModuleManager) {
       return super.collectProvidersShallow(moduleManager);
     }
-
-    override getResolvedCollisionsPerApp() {
-      return super.getResolvedCollisionsPerApp();
-    }
-
-    override decreaseExtensionsCounters(extensionCounters: ExtensionCounters, providers: Provider[]) {
-      return super.decreaseExtensionsCounters(extensionCounters, providers);
-    }
   }
 
-  function getMetadataPerMod2(mod: ModuleType) {
+  function getMetadataPerMod2(rootModule: ModuleType) {
     const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
     const errorMediator = new SystemErrorMediator({ moduleName: 'fakeName' });
     const moduleManager = new ModuleManager(systemLogMediator);
-    moduleManager.scanRootModule(mod);
+    moduleManager.scanRootModule(rootModule);
     const baseAppOptions = new BaseAppOptions();
     const initializer = new AppInitializerMock(baseAppOptions, moduleManager, systemLogMediator);
     initializer.bootstrapProvidersPerApp();
@@ -81,7 +58,11 @@ describe('DeepModulesImporter', () => {
       errorMediator,
     });
     const { extensionCounters, mMetadataPerMod2 } = deepModulesImporter.importModulesDeep();
-    return mMetadataPerMod2;
+    return mMetadataPerMod2 as Map<ModRefId, MetadataPerMod2<RestMetadataPerMod2>>;
+  }
+
+  function getRestMetadataPerMod2(rootModule: ModuleType) {
+    return getMetadataPerMod2(rootModule).get(rootModule)?.deepImportedModules.get(initRest);
   }
 
   beforeEach(() => {
@@ -125,6 +106,109 @@ describe('DeepModulesImporter', () => {
   //     });
   //   });
   // });
+
+  it('root module without initRest decorator imports Module1 with initRest decorator', () => {
+    class Provider1 {}
+
+    @initRest({
+      providersPerRou: [Provider1],
+      exports: [Provider1],
+    })
+    @featureModule()
+    class Module1 {}
+
+    @rootModule({ imports: [Module1] })
+    class AppModule {}
+
+    const restMetadataPerMod2 = getRestMetadataPerMod2(AppModule);
+    expect(restMetadataPerMod2?.meta.providersPerRou.includes(Provider1)).toBeTruthy();
+  });
+
+  xit('root module with initRest decorator imports Module1 without initRest decorator, and exports Provider2', () => {
+    class Provider1 {}
+    class Provider2 {}
+
+    @featureModule({ providersPerApp: [Provider1] })
+    class Module1 {}
+
+    @initRest({ imports: [Module1], providersPerReq: [Provider2], exports: [Provider2] })
+    @rootModule()
+    class AppModule {}
+
+    const map = getMetadataPerMod2(AppModule);
+    const mod1 = map.get(Module1)?.deepImportedModules.get(initRest)!;
+    expect(mod1).toBeDefined();
+    expect(mod1.meta.providersPerReq.includes(Provider2)).toBeTruthy();
+  });
+
+  it('root module with initRest decorator imports Module1 with params, but without initRest decorator', () => {
+    class Provider1 {}
+    class Guard1 implements CanActivate {
+      async canActivate(ctx: RequestContext, params?: any[]) {
+        return false;
+      }
+    }
+    class Guard2 implements CanActivate {
+      async canActivate(ctx: RequestContext, params?: any[]) {
+        return false;
+      }
+    }
+
+    @featureModule({ providersPerApp: [Provider1] })
+    class Module1 {}
+
+    const moduleWithParams: RestModuleParams & ModuleWithParams = {
+      path: 'test-prefix',
+      guards: [Guard1, [Guard2, { one: 1 }]],
+      module: Module1,
+    };
+
+    @initRest({ imports: [moduleWithParams] })
+    @rootModule()
+    class AppModule {}
+
+    const map = getMetadataPerMod2(AppModule);
+    const rootMod = map.get(AppModule)?.deepImportedModules.get(initRest)!;
+    const mod1 = map.get(moduleWithParams)?.deepImportedModules.get(initRest)!;
+    expect(mod1.prefixPerMod).toBe('test-prefix');
+    expect(mod1.guards1[0].guard).toBe(Guard1);
+    expect(mod1.guards1[0].meta).toBe(rootMod.meta);
+    expect(mod1.guards1[1].params).toEqual([{ one: 1 }]);
+  });
+
+  it('circular imports modules with forwardRef()', () => {
+    class Provider1 {}
+    class Provider2 {}
+
+    @initRest({
+      imports: [forwardRef(() => Module3)],
+      providersPerReq: [Provider1],
+      exports: [Provider1],
+    })
+    @featureModule()
+    class Module1 {}
+
+    @initRest({ imports: [Module1], exports: [Module1] })
+    @featureModule()
+    class Module2 {}
+
+    @initRest({
+      imports: [Module2],
+      providersPerRou: [Provider2],
+      exports: [Provider2],
+    })
+    @featureModule()
+    class Module3 {}
+
+    @rootModule({ imports: [Module3] })
+    class AppModule {}
+
+    const map = getMetadataPerMod2(AppModule);
+    const mod1 = map.get(Module1)?.deepImportedModules.get(initRest)!;
+    const mod3 = map.get(Module3)?.deepImportedModules.get(initRest)!;
+    expect(mod1.meta.providersPerRou.includes(Provider2));
+    expect(mod3.meta.providersPerRou.includes(Provider1));
+  });
 
   it(`Module3 imports Module2, which has a dependency on Service1, but Module2 does not import any modules with Service1;
     in this case an error should be thrown`, () => {
@@ -184,9 +268,7 @@ describe('DeepModulesImporter', () => {
     })
     class AppModule {}
 
-    const mMetadataPerMod2 = getMetadataPerMod2(AppModule);
-    const { baseMeta } = mMetadataPerMod2.get(AppModule)!;
-    const initMeta = baseMeta.initMeta.get(initRest)!;
+    const initMeta = getRestMetadataPerMod2(AppModule)!.meta!;
     expect(initMeta.providersPerRou).toEqual([...defaultProvidersPerRou, Service3, Service4]);
     expect(initMeta.providersPerReq).toEqual(defaultProvidersPerReq);
     expect(initMeta.providersPerMod.slice(-2)).toEqual([Service1, Service2]);
@@ -317,9 +399,7 @@ describe('DeepModulesImporter', () => {
     @rootModule({ imports: [Module2] })
     class AppModule {}
 
-    const mMetadataPerMod2 = getMetadataPerMod2(AppModule);
-    const { baseMeta } = mMetadataPerMod2.get(AppModule)!;
-    const initMeta = baseMeta.initMeta.get(initRest)!;
+    const initMeta = getRestMetadataPerMod2(AppModule)!.meta!;
     expect(initMeta.providersPerReq).toEqual(defaultProvidersPerReq);
     expect(initMeta.providersPerRou.slice(-1)).toEqual([Service2]);
     expect(initMeta.providersPerMod.includes(Service1)).toBeTruthy();
@@ -346,12 +426,10 @@ describe('DeepModulesImporter', () => {
     })
     class AppModule {}
 
-    const mMetadataPerMod2 = getMetadataPerMod2(AppModule);
-    const { baseMeta } = mMetadataPerMod2.get(AppModule)!;
-    const initMeta = baseMeta.initMeta.get(initRest)!;
+    const initMeta = getRestMetadataPerMod2(AppModule)!.meta!;
     expect(initMeta.providersPerReq).toEqual(defaultProvidersPerReq);
     expect(initMeta.providersPerRou.slice(-2)).toEqual([Service2, Service3]);
-    expect(baseMeta.providersPerMod.includes(Service1)).toBeTruthy();
+    expect(initMeta.providersPerMod.includes(Service1)).toBeTruthy();
   });
 
   it('Module3 does not load the Service1 as dependency because Service2 does not declare this dependency', () => {
@@ -382,17 +460,15 @@ describe('DeepModulesImporter', () => {
     @rootModule({
       imports: [Module2],
     })
-    class Module3 {}
+    class AppModule {}
 
-    const mMetadataPerMod2 = getMetadataPerMod2(Module3);
-    const { baseMeta } = mMetadataPerMod2.get(Module3)!;
-    const initMeta = baseMeta.initMeta.get(initRest)!;
+    const initMeta = getRestMetadataPerMod2(AppModule)!.meta!;
     const injector = Injector.resolveAndCreate(initMeta.providersPerRou);
     const msg = 'No provider for Service1!; this error during instantiation of Service2! (Service3 -> Service2)';
     expect(() => injector.get(Service3)).toThrow(msg);
   });
 
-  it(`By directly importing Module1, Module2 adds all providers from that module,
+  it(`By directly importing Module1, AppModule adds all providers from that module,
     regardless of whether those providers resolve the declared dependency or not`, () => {
     @injectable()
     class Service1 {}
@@ -410,11 +486,9 @@ describe('DeepModulesImporter', () => {
 
     @initRest({ providersPerRou: [Service2], exports: [Service2] })
     @rootModule({ imports: [Module1] })
-    class Module2 {}
+    class AppModule {}
 
-    const mMetadataPerMod2 = getMetadataPerMod2(Module2);
-    const { baseMeta } = mMetadataPerMod2.get(Module2)!;
-    const initMeta = baseMeta.initMeta.get(initRest)!;
+    const initMeta = getRestMetadataPerMod2(AppModule)!.meta!;
     const injector = Injector.resolveAndCreate(initMeta.providersPerRou);
     expect(() => injector.get(Service2)).not.toThrow();
   });
@@ -456,12 +530,11 @@ describe('DeepModulesImporter', () => {
       }
     }
 
-    const mod1WithParams: ModuleWithInitParams = { module: Module1, initParams: new Map() };
-    mod1WithParams.initParams.set(initRest, { guards: [BearerGuard1] });
+    const mod1WithParams: ModuleWithParams & RestModuleParams = { module: Module1, guards: [BearerGuard1] };
     const provider: Provider = { token: BearerGuard1, useClass: BearerGuard2 };
 
-    @initRest({ providersPerRou: [provider, Service0, Service2] })
-    @rootModule({ imports: [mod1WithParams] })
+    @initRest({ imports: [mod1WithParams], providersPerRou: [provider, Service0, Service2] })
+    @rootModule()
     class AppModule {}
 
     const mMetadataPerMod2 = getMetadataPerMod2(AppModule);
