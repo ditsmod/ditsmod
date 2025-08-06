@@ -1,6 +1,6 @@
 import { BaseInitMeta } from '#types/base-meta.js';
 
-export function linkMetaToBaseInitMeta(baseInitMeta: BaseInitMeta, meta: BaseInitMeta) {
+export function copyMetaToBaseInitMeta(baseInitMeta: BaseInitMeta, meta: BaseInitMeta) {
   (
     [
       'importsModules',

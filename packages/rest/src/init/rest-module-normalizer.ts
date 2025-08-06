@@ -23,7 +23,7 @@ import {
   isClassProvider,
   isTokenProvider,
   BaseInitMeta,
-  linkMetaToBaseInitMeta,
+  copyMetaToBaseInitMeta,
 } from '@ditsmod/core';
 
 import { AppendsWithParams, RestInitRawMeta } from '#init/rest-init-raw-meta.js';
@@ -39,7 +39,7 @@ import { Level } from '#types/types.js';
 export class RestModuleNormalizer {
   normalize(baseMeta: BaseMeta, rawMeta: RestInitRawMeta) {
     const meta = new RestInitMeta();
-    linkMetaToBaseInitMeta(baseMeta, meta);
+    copyMetaToBaseInitMeta(baseMeta, meta);
     this.mergeModuleWithParams(baseMeta.modRefId, rawMeta, meta);
     this.appendModules(rawMeta, meta);
     this.normalizeDeclaredAndResolvedProviders(meta, rawMeta);
