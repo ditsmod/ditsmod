@@ -17,8 +17,12 @@ export type ModulesMapId = Map<string, ModRefId>;
 type ModuleId = string | ModRefId;
 
 /**
- * Scans modules, normalizes, stores and checks their metadata for correctness,
- * adds and removes imports of one module into another.
+ * Recursively scans metadata attached to module classes via decorators, normalizes it, and validates it.
+ * As a result of this process, a mapping is created between the class's `modRefId` and its normalized data.
+ * Essentially, `modRefId` is the form in which a module is passed in the `imports` array — that is,
+ * either the module class itself or an object containing the module with parameters.
+ * 
+ * The `ModuleManager` can also add or remove modules from the imports.
  */
 @injectable()
 export class ModuleManager {
