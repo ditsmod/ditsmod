@@ -107,6 +107,26 @@ describe('DeepModulesImporter', () => {
   //   });
   // });
 
+  it('reexport module that has initRest decorator', () => {
+    class Service1 {}
+
+    @initRest({ providersPerReq: [Service1], exports: [Service1] })
+    @featureModule()
+    class Module1 {}
+
+    @featureModule({ imports: [Module1], exports: [Module1] })
+    class Module2 {}
+
+    @rootModule({ imports: [Module2] })
+    class AppModule {}
+
+    const map = getMetadataPerMod2(AppModule);
+    const rootMod = map.get(AppModule)?.deepImportedModules.get(initRest)!;
+    const mod2 = map.get(Module2)?.deepImportedModules.get(initRest)!;
+    expect(rootMod?.meta.providersPerReq.includes(Service1)).toBeTruthy();
+    expect(mod2?.meta.providersPerReq.includes(Service1)).toBeTruthy();
+  });
+
   it('root module without initRest decorator imports Module1 that has initRest decorator', () => {
     class Provider1 {}
 

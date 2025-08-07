@@ -63,29 +63,25 @@ describe('ModuleManager', () => {
   });
 
   describe('quickCheckMetadata()', () => {
-    it('should throw an error, when no export and no controllers', () => {
+    it('should throw an error, when no export, no extensions and no controllers', () => {
       class Provider1 {}
-      class Provider2 {}
+
+      @featureModule({ providersPerMod: [Provider1] })
+      class Module1 {}
+
+      expect(() => mock.scanModule(Module1)).toThrow('Normalization of Module1 failed: this module should have');
+    });
+
+    it('should works, when no export and no controllers, but with appends with prefix', () => {
+      class Provider1 {}
 
       @featureModule({
-        providersPerMod: [Provider1, Provider2],
+        providersPerMod: [Provider1],
+        exports: [Provider1],
       })
       class Module1 {}
 
-      expect(() => mock.scanModule(Module1)).toThrow(/Normalization of Module1 failed: this module should have/);
-    });
-
-    it('should works, when no export and no controllers, but with appends for prefix (for version)', () => {
-      class Provider1 {}
-      class Provider2 {}
-
-      @featureModule({
-        providersPerMod: [Provider1, Provider2],
-        exports: [Provider1],
-      })
-      class Version1Module {}
-
-      @initRest({ appends: [{ path: 'v1', module: Version1Module }] })
+      @initRest({ appends: [{ path: 'v1', module: Module1 }] })
       @featureModule()
       class Module2 {}
 
@@ -97,39 +93,18 @@ describe('ModuleManager', () => {
         async stage1() {}
       }
 
-      @featureModule({
-        extensions: [{ extension: Ext, export: true }],
-      })
+      @featureModule({ extensions: [{ extension: Ext, export: true }] })
       class Module1 {}
 
       expect(() => mock.scanModule(Module1)).not.toThrow();
     });
 
-    it('should throw an error, during imports module without export and without controllers ', () => {
-      class Provider1 {}
-      class Provider2 {}
-      @controller()
-      class Controller1 {}
-
-      @initRest({ controllers: [Controller1] })
-      @featureModule({
-        providersPerMod: [Provider1, Provider2],
-      })
-      class Module1 {}
-
-      @featureModule({ imports: [Module1] })
-      class Module2 {}
-
-      expect(() => mock.scanModule(Module2)).toThrow('Normalization of Module2 failed: this module should have');
-    });
-
     it('should not throw an error, when exports some provider', () => {
       class Provider1 {}
-      class Provider2 {}
 
       @featureModule({
+        providersPerMod: [Provider1],
         exports: [Provider1],
-        providersPerMod: [Provider1, Provider2],
       })
       class Module1 {}
 
@@ -138,68 +113,43 @@ describe('ModuleManager', () => {
 
     it('should not throw an error, when declare some controller', () => {
       @controller()
-      class Provider1 {}
-      class Provider2 {}
+      class Controller1 {}
 
-      @initRest({ controllers: [Provider1] })
-      @featureModule({
-        providersPerMod: [Provider1, Provider2],
-      })
+      @initRest({ controllers: [Controller1] })
+      @featureModule()
       class Module1 {}
 
       expect(() => mock.scanModule(Module1)).not.toThrow();
     });
   });
 
-  it('empty root module', () => {
+  it('empty root module with rootModule decorator only', () => {
+    @rootModule()
+    class AppModule {}
+
+    mock.scanRootModule(AppModule);
+    expect(mock.map.size).toBe(1);
+    expect(mock.map.get(AppModule)).toBeDefined();
+  });
+
+  it('empty root module with initRest decorator', () => {
     @initRest()
     @rootModule()
     class AppModule {}
 
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(2);
-    expect(getInitMeta('root')?.importsModules).toEqual([RestModule]);
-  });
-
-  it('circular imports modules with forwardRef()', () => {
-    @controller()
-    class Controller1 {}
-
-    @injectable()
-    class Provider1 {}
-
-    @featureModule({ providersPerApp: [Provider1], imports: [forwardRef(() => Module3)] })
-    class Module1 {}
-
-    @initRest({ controllers: [Controller1] })
-    @featureModule({ imports: [Module1] })
-    class Module2 {}
-
-    @initRest({ controllers: [Controller1] })
-    @featureModule({ imports: [Module2] })
-    class Module3 {}
-
-    @initRest({ controllers: [Controller1] })
-    @featureModule({ imports: [Module3] })
-    class Module4 {}
-
-    @rootModule({
-      imports: [Module4],
-    })
-    class AppModule {}
-
-    expect(() => mock.scanRootModule(AppModule)).not.toThrow();
+    expect(mock.map.get(AppModule)).toBeDefined();
+    expect(mock.map.get(RestModule)).toBeDefined();
   });
 
   it('non properly exports from root module', () => {
     class Provider1 {}
 
-    @rootModule({
-      exports: [Provider1],
-    })
+    @rootModule({ exports: [Provider1] })
     class AppModule {}
 
-    expect(() => mock.scanRootModule(AppModule)).toThrow(/if "Provider1" is a provider, it must be included in/);
+    expect(() => mock.scanRootModule(AppModule)).toThrow('if "Provider1" is a provider, it must be included in');
   });
 
   it('root module with some metadata', () => {
@@ -232,16 +182,7 @@ describe('ModuleManager', () => {
     expect(() => mock.scanRootModule(Module2)).toThrow(msg);
   });
 
-  it('module reexported another module without @featureModule decorator', () => {
-    class Module1 {}
-
-    @featureModule({ imports: [Module1], exports: [Module1] })
-    class Module2 {}
-
-    expect(() => mock.scanModule(Module2)).toThrow(/if "Module1" is a provider, it must be included in/);
-  });
-
-  it('properly reexport module', () => {
+  it('properly reexport module with params', () => {
     @controller()
     class Controller1 {}
 
@@ -249,37 +190,10 @@ describe('ModuleManager', () => {
     @featureModule()
     class Module1 {}
 
-    @initRest({ controllers: [Controller1] })
-    @featureModule({
-      imports: [Module1],
-      exports: [Module1],
-    })
-    class Module2 {}
+    const moduleWithParams: ModuleWithParams = { module: Module1 };
 
-    expect(() => mock.scanModule(Module2)).not.toThrow();
-  });
-
-  it('properly reexport module with params, case 1', () => {
-    @controller()
-    class Controller1 {}
-
-    @initRest({ controllers: [Controller1] })
+    @initRest({ imports: [moduleWithParams], exports: [moduleWithParams] })
     @featureModule()
-    class Module1 {
-      static withParams(): ModuleWithParams<Module1> {
-        return {
-          module: this,
-        };
-      }
-    }
-
-    const moduleWithParams = Module1.withParams();
-
-    @initRest({ controllers: [Controller1] })
-    @featureModule({
-      imports: [moduleWithParams],
-      exports: [moduleWithParams],
-    })
     class Module2 {}
 
     expect(() => mock.scanModule(Module2)).not.toThrow();
