@@ -18,7 +18,7 @@ import {
   getLastProviders,
   ShallowImportsBase,
   defaultProvidersPerMod,
-  copyMetaToBaseInitMeta,
+  copyBaseInitMeta,
 } from '@ditsmod/core';
 
 import { GuardPerMod1 } from '#interceptors/guard.js';
@@ -80,8 +80,7 @@ export class ShallowModulesImporter {
     this.providersPerApp = moduleManager.providersPerApp;
     this.moduleName = baseMeta.name;
     this.baseMeta = baseMeta;
-    const meta = baseMeta.initMeta.get(initRest) as RestInitMeta | undefined;
-    this.meta = meta ? meta : new RestInitMeta();
+    this.meta = this.getInitMeta(baseMeta);
     this.importProviders(baseMeta);
     this.checkAllCollisionsWithLevelsMix();
 
@@ -188,7 +187,7 @@ export class ShallowModulesImporter {
     let meta = baseMeta.initMeta.get(initRest);
     if (!meta) {
       meta = new RestInitMeta();
-      copyMetaToBaseInitMeta(baseMeta, meta);
+      copyBaseInitMeta(baseMeta, meta);
     }
     return meta;
   }
