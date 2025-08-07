@@ -20,7 +20,7 @@ export class GlobalProviders {
   importedMultiProvidersPerMod = new Map<ModuleType | ModuleWithParams, Provider[]>();
   importedExtensions = new Map<ModuleType | ModuleWithParams, Provider[]>();
   aImportedExtensionConfig: ExtensionConfig[] = [];
-  shallowImportedModules = new Map<AnyFn, AnyObj | undefined>();
+  initMeta = new Map<AnyFn, AnyObj | undefined>();
 }
 
 /**
