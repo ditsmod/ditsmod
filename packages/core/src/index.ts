@@ -9,7 +9,7 @@ export { BaseAppOptions } from '#init/base-app-options.js';
 export { copyBaseInitMeta } from '#init/copy-base-init-meta.js';
 export { DeepModulesImporter } from '#init/deep-modules-importer.js';
 export { ImportedTokensMap } from '#types/metadata-per-mod.js';
-export { GlobalProviders } from '#types/metadata-per-mod.js';
+export { GlobalProviders, GlobalInitHooks } from '#types/metadata-per-mod.js';
 export { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 export { defaultProvidersPerApp } from '#init/default-providers-per-app.js';
 export { OnModuleInit } from '#init/hooks.js';

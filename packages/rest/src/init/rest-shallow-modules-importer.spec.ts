@@ -118,11 +118,11 @@ describe('shallow importing modules', () => {
 
     const baseMeta = moduleManager.scanRootModule(AppModule);
     const initHooks = baseMeta.allInitHooks.get(initRest)!;
-    const val: RestGlobalProviders = initHooks.exportGlobalProviders({
+    const val = initHooks.exportGlobalProviders({
       moduleManager,
       globalProviders: new GlobalProviders(),
       baseMeta,
-    });
+    }) as RestGlobalProviders;
     expect(getImportedProviders(val.importedProvidersPerReq)).toEqual([Provider2, Provider1]);
   });
 

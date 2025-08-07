@@ -3,7 +3,7 @@ import { SystemErrorMediator } from '#error/system-error-mediator.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { ShallowImportsBase, ShallowImports } from '#init/types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { GlobalProviders } from '#types/metadata-per-mod.js';
+import { GlobalInitHooks, GlobalProviders } from '#types/metadata-per-mod.js';
 import { AnyFn, AnyObj, ModRefId, ModuleType } from '#types/mix.js';
 import { BaseMeta } from '#types/base-meta.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
@@ -82,8 +82,8 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
     moduleManager: ModuleManager;
     globalProviders: GlobalProviders;
     baseMeta: BaseMeta;
-  }): any {
-    return;
+  }) {
+    return new GlobalInitHooks();
   }
 
   /**

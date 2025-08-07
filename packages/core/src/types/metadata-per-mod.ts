@@ -3,6 +3,7 @@ import { AnyFn, AnyObj, ModRefId, ModuleType } from './mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from './module-metadata.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
+import { BaseInitRawMeta, InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 
 /**
  * @todo Rename this.
@@ -15,12 +16,16 @@ export class ImportObj<T extends Provider = Provider> {
   providers: T[] = [];
 }
 
+export class GlobalInitHooks<T extends BaseInitRawMeta = BaseInitRawMeta> {
+  initHooks?: InitHooksAndRawMeta<T>;
+}
+
 export class GlobalProviders {
   importedProvidersPerMod = new Map<any, ImportObj>();
   importedMultiProvidersPerMod = new Map<ModuleType | ModuleWithParams, Provider[]>();
   importedExtensions = new Map<ModuleType | ModuleWithParams, Provider[]>();
   aImportedExtensionConfig: ExtensionConfig[] = [];
-  initMeta = new Map<AnyFn, AnyObj | undefined>();
+  mInitHooks = new Map<AnyFn, GlobalInitHooks>();
 }
 
 /**

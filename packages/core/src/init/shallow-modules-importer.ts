@@ -62,19 +62,20 @@ export class ShallowModulesImporter {
     this.baseMeta = baseMeta;
     this.importProvidersAndExtensions(baseMeta);
     this.checkAllCollisionsWithLevelsMix();
-    const initMeta = new Map<AnyFn, AnyObj>();
+    const mInitHooks = new Map<AnyFn, AnyObj>();
     const globalProviders: GlobalProviders = {
       importedProvidersPerMod: this.importedProvidersPerMod,
       importedMultiProvidersPerMod: this.importedMultiProvidersPerMod,
       importedExtensions: this.importedExtensions,
       aImportedExtensionConfig: this.aImportedExtensionConfig,
-      initMeta,
+      mInitHooks,
     };
 
     baseMeta.allInitHooks.forEach((initHooks, decorator) => {
       const val = initHooks.exportGlobalProviders({ moduleManager, globalProviders, baseMeta });
       if (val) {
-        initMeta.set(decorator, val);
+        val.initHooks = initHooks.clone();
+        mInitHooks.set(decorator, val);
       }
     });
 
@@ -121,6 +122,11 @@ export class ShallowModulesImporter {
       extensions = new Map([...this.importedExtensions]);
       aExtensionConfig = [...this.aImportedExtensionConfig];
     } else {
+      this.glProviders.mInitHooks.forEach(({ initHooks }, decorator) => {
+        if (!baseMeta.allInitHooks.has(decorator)) {
+          baseMeta.allInitHooks.set(decorator, initHooks!);
+        }
+      });
       perMod = new Map([...this.glProviders.importedProvidersPerMod, ...this.importedProvidersPerMod]);
       multiPerMod = new Map([...this.glProviders.importedMultiProvidersPerMod, ...this.importedMultiProvidersPerMod]);
       extensions = new Map([...this.glProviders.importedExtensions, ...this.importedExtensions]);
