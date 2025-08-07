@@ -9,7 +9,7 @@ import { BaseMeta } from '#types/base-meta.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { BaseInitMeta } from '#types/base-meta.js';
 
-export type AllInitHooks = Map<AnyFn, Omit<InitHooksAndRawMeta, 'rawMeta' | 'baseInitMeta'>>;
+export type AllInitHooks = Map<AnyFn, Omit<InitHooksAndRawMeta, 'rawMeta'>>;
 
 /**
  * Init hooks and metadata attached by init decorators,
