@@ -19,7 +19,7 @@ import { RestModule } from '#init/rest.module.js';
  */
 export const initRest: InitDecorator<RestInitRawMeta, RestModuleParams, RestInitMeta> = makeClassDecorator(transformMetadata);
 
-class RestInitHooksAndRawMeta extends InitHooksAndRawMeta<RestInitRawMeta> {
+export class RestInitHooksAndRawMeta extends InitHooksAndRawMeta<RestInitRawMeta> {
   override hostModule = RestModule;
 
   override normalize(baseMeta: BaseMeta): RestInitMeta {
