@@ -302,7 +302,7 @@ export class SystemLogMediator extends LogMediator {
     const className = self.constructor.name;
     const msg =
       `${className}: The sequence of extension group operations: ` +
-      `${aOrderedExtensions.map((g, i) => `${i + 1}. ${g}`).join(', ')}.`;
+      `${aOrderedExtensions.map((e, i) => `${i + 1}. ${getDebugClassName(e)}`).join(', ')}.`;
     this.setLog('trace', msg);
   }
 
