@@ -7,11 +7,10 @@ import { SecondController } from './second.controler.js';
 import { SecondService } from './second.service.js';
 
 @initRest({
+  imports: [FirstModule],
   controllers: [SecondController],
   providersPerReq: [SecondService, { token: 'multi-provider', useClass: SecondMultiProviderService, multi: true }],
   exports: [SecondService, 'multi-provider'],
 })
-@featureModule({
-  imports: [FirstModule],
-})
+@featureModule()
 export class SecondModule {}

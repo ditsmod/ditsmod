@@ -17,6 +17,9 @@ export class CtxController {
   }
 }
 
-@initRest({ controllers: [DefaultController, CtxController] })
-@rootModule({ providersPerApp: new Providers().useLogConfig({ level: 'info' }) })
+@initRest({
+  controllers: [DefaultController, CtxController],
+  providersPerApp: new Providers().useLogConfig({ level: 'trace' }),
+})
+@rootModule()
 export class AppModule {}

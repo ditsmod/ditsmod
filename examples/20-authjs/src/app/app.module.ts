@@ -24,13 +24,14 @@ export class InjScopedController {
   }
 }
 
-@initRest({ controllers: [InjScopedController] })
-@rootModule({
+@initRest({
   imports: [
     AuthjsModule.withConfig({
       token: AuthjsConfig,
       useFactory: [OverriddenAuthConfig, OverriddenAuthConfig.prototype.initAuthjsConfig],
     }),
   ],
+  controllers: [InjScopedController],
 })
+@rootModule()
 export class AppModule {}

@@ -9,10 +9,11 @@ const sessionModuleWithParams = SessionCookieModule.withParams({
   httpOnly: true,
 });
 
-@initRest({controllers: [HelloWorldController, HelloWorldController2],})
-@rootModule({
+@initRest({
   imports: [sessionModuleWithParams],
   providersPerApp: new Providers().useLogConfig({ level: 'info' }),
+  controllers: [HelloWorldController, HelloWorldController2],
   exports: [sessionModuleWithParams],
 })
+@rootModule()
 export class AppModule {}

@@ -1,8 +1,8 @@
 import { featureModule } from '@ditsmod/core';
 import { RestModule } from '@ditsmod/rest';
 
-import { SomeLogMediator } from './some-log-mediator.js';
-import { SomeService } from './some.service.js';
+import { SomeLogMediator } from './some/some-log-mediator.js';
+import { SomeService } from './some/some.service.js';
 
 @featureModule({
   imports: [RestModule],

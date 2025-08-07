@@ -2,16 +2,18 @@ import { featureModule, InitParamsMap, ModuleWithInitParams } from '@ditsmod/cor
 import { JwtModule } from '@ditsmod/jwt';
 import { initRest } from '@ditsmod/rest';
 
-import { AuthController } from './auth.controller.js';
-import { BearerGuard } from './bearer.guard.js';
+import { AuthController } from './auth/auth.controller.js';
+import { BearerGuard } from './auth/bearer.guard.js';
 
 const moduleWithParams = JwtModule.withParams({ secret: 'hard-to-guess-secret', signOptions: { expiresIn: '2m' } });
 
-@initRest({ controllers: [AuthController], providersPerReq: [BearerGuard], exports: [BearerGuard] })
-@featureModule({
+@initRest({
   imports: [moduleWithParams],
-  exports: [moduleWithParams],
+  controllers: [AuthController],
+  providersPerReq: [BearerGuard],
+  exports: [moduleWithParams, BearerGuard],
 })
+@featureModule()
 export class AuthModule {
   static withPath(path?: string): ModuleWithInitParams<AuthModule> {
     const initParams: InitParamsMap = new Map();

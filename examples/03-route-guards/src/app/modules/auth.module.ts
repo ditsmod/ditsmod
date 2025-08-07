@@ -1,12 +1,12 @@
 import { featureModule } from '@ditsmod/core';
 import { initRest } from '@ditsmod/rest';
 
-import { BearerGuard, BearerCtxGuard } from './bearer.guard.js';
-import { AuthService } from './auth.service.js';
-import { PermissionsGuard } from './permissions.guard.js';
-import { CtxAuthService } from './ctx-auth.service.js';
-import { CtxPermissionsGuard } from './ctx-permissions.guard.js';
-import { BasicGuard } from './basic.guard.js';
+import { BearerGuard, BearerCtxGuard } from './auth/bearer.guard.js';
+import { AuthService } from './auth/auth.service.js';
+import { PermissionsGuard } from './auth/permissions.guard.js';
+import { CtxAuthService } from './auth/ctx-auth.service.js';
+import { CtxPermissionsGuard } from './auth/ctx-permissions.guard.js';
+import { BasicGuard } from './auth/basic.guard.js';
 
 @initRest({
   // This array allows the tokens to be used for context scoped routes.

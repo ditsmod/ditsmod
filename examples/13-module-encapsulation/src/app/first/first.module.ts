@@ -8,12 +8,11 @@ import { FirstService } from './first.service.js';
 import { FirstMultiProviderService } from './first-multi-provider.service.js';
 
 @initRest({
+  imports: [BodyParserModule],
   controllers: [FirstController],
   providersPerRou: [FirstPerRouService],
   providersPerReq: [FirstService, { token: 'multi-provider', useClass: FirstMultiProviderService, multi: true }],
   exports: [FirstService, FirstPerRouService, BodyParserModule, 'multi-provider'],
 })
-@featureModule({
-  imports: [BodyParserModule],
-})
+@featureModule()
 export class FirstModule {}

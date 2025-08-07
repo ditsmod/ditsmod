@@ -5,11 +5,10 @@ import { HelloWorldController, HelloWorldController2 } from './hello-world.contr
 import { MyHttpInterceptor } from './my-http-interceptor.js';
 
 @initRest({
+  providersPerApp: new Providers().useLogConfig({ level: 'info' }),
   controllers: [HelloWorldController, HelloWorldController2],
   providersPerRou: [{ token: HTTP_INTERCEPTORS, useClass: MyHttpInterceptor, multi: true }],
   providersPerReq: [{ token: HTTP_INTERCEPTORS, useClass: MyHttpInterceptor, multi: true }],
 })
-@rootModule({
-  providersPerApp: new Providers().useLogConfig({ level: 'info' }),
-})
+@rootModule()
 export class AppModule {}

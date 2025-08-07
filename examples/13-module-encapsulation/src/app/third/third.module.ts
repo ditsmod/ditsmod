@@ -5,8 +5,11 @@ import { SecondModule } from '../second/second.module.js';
 import { ThirdController } from './third.controler.js';
 import { ThirdService } from './three.service.js';
 
-@initRest({ controllers: [ThirdController], providersPerReq: [ThirdService], exports: [ThirdService] })
-@featureModule({
+@initRest({
   imports: [SecondModule],
+  controllers: [ThirdController],
+  providersPerReq: [ThirdService],
+  exports: [ThirdService],
 })
+@featureModule()
 export class ThirdModule {}

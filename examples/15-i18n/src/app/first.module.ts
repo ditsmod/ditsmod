@@ -2,16 +2,18 @@ import { featureModule, InitParamsMap, ModuleWithInitParams } from '@ditsmod/cor
 import { I18nProviders, I18nModule, I18N_TRANSLATIONS } from '@ditsmod/i18n';
 import { initRest } from '@ditsmod/rest';
 
-import { current } from './locales/current/index.js';
-import { FirstService } from './first.service.js';
-import { FirstController } from './first.controller.js';
+import { current } from './first/locales/current/index.js';
+import { FirstService } from './first/first.service.js';
+import { FirstController } from './first/first.controller.js';
 
-@initRest({ controllers: [FirstController], providersPerReq: [FirstService], exports: [FirstService] })
-@featureModule({
+@initRest({
   imports: [I18nModule],
   providersPerMod: new I18nProviders().i18n({ current }, { defaultLng: 'en' }),
-  exports: [I18nModule, I18N_TRANSLATIONS],
+  controllers: [FirstController],
+  providersPerReq: [FirstService],
+  exports: [I18nModule, I18N_TRANSLATIONS, FirstService],
 })
+@featureModule()
 export class FirstModule {
   static withPath(path?: string): ModuleWithInitParams<FirstModule> {
     const initParams: InitParamsMap = new Map();

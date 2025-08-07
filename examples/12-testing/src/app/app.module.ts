@@ -6,8 +6,10 @@ import { MyService } from './my.service.js';
 import { OtherService } from './other.service.js';
 import { Controller1 } from './bad.controllers.js';
 
-@initRest({ controllers: [HelloWorldController, Controller1], providersPerReq: [MyService, OtherService] })
-@rootModule({
+@initRest({
   providersPerApp: new Providers().useLogConfig({ level: 'info' }),
+  controllers: [HelloWorldController, Controller1],
+  providersPerReq: [MyService, OtherService],
 })
+@rootModule()
 export class AppModule {}

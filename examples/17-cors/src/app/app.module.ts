@@ -4,9 +4,10 @@ import { CorsModule } from '@ditsmod/cors';
 
 import { FirstController, SecondController } from './controllers.js';
 
-@initRest({ controllers: [FirstController, SecondController] })
-@rootModule({
+@initRest({
   imports: [CorsModule.withParams({ origin: 'https://example.com' })],
   providersPerApp: new Providers().useLogConfig({ level: 'info' }),
+  controllers: [FirstController, SecondController],
 })
+@rootModule()
 export class AppModule {}
