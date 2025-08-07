@@ -287,7 +287,7 @@ describe('shallow importing modules', () => {
     class AppModule {}
 
     const map = importModulesShallow(AppModule);
-    expect(map.size).toBe(3);
+    expect(map.size).toBe(4);
 
     const metadataPerMod1_1 = map.get(mod1)!;
     const metadataPerMod1_2 = map.get(mod2)!;
@@ -439,7 +439,7 @@ describe('shallow importing modules', () => {
     class AppModule {}
 
     const map = importModulesShallow(AppModule);
-    expect(map.size).toBe(3);
+    expect(map.size).toBe(4);
 
     const metadataPerMod1_1 = map.get(mod1)!;
     const metadataPerMod1_2 = map.get(mod2)!;

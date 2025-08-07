@@ -27,7 +27,7 @@ import { Level, RestGlobalProviders, RestModuleExtract } from '#types/types.js';
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
 import { AppendsWithParams } from './rest-init-raw-meta.js';
-import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
+import { initRest, RestInitHooksAndRawMeta } from '#decorators/rest-init-hooks-and-metadata.js';
 import { ImportModulesShallowConfig, RestImportObj, RestMetadataPerMod1 } from './types.js';
 
 /**
@@ -188,6 +188,8 @@ export class ShallowModulesImporter {
     if (!meta) {
       meta = new RestInitMeta();
       copyBaseInitMeta(baseMeta, meta);
+      baseMeta.initMeta.set(initRest, meta);
+      baseMeta.allInitHooks.set(initRest, new RestInitHooksAndRawMeta({}));
     }
     return meta;
   }
@@ -342,7 +344,7 @@ export class ShallowModulesImporter {
     const moduleName = getDebugClassName(modRefId2);
     const tokenName = token2.name || token2;
     const baseMeta2 = this.getMetadata(modRefId2);
-    const meta2 = baseMeta2?.initMeta.get(initRest) as RestInitMeta | undefined;
+    const meta2 = baseMeta2?.initMeta.get(initRest);
     let errorMsg =
       `Resolving collisions for providersPer${level} in ${this.moduleName} failed: ` +
       `${tokenName} mapped with ${moduleName}, but `;
@@ -350,7 +352,7 @@ export class ShallowModulesImporter {
       errorMsg += `${moduleName} is not imported into the application.`;
       throw new Error(errorMsg);
     }
-    if (!meta2) {
+    if (!meta2?.[`exportedProvidersPer${level}`].some((p) => getToken(p) === token2)) {
       errorMsg += `${moduleName} does not exports ${tokenName}.`;
       throw new Error(errorMsg);
     }

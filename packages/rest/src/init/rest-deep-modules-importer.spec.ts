@@ -124,15 +124,35 @@ describe('DeepModulesImporter', () => {
     expect(restMetadataPerMod2?.meta.providersPerRou.includes(Provider1)).toBeTruthy();
   });
 
-  xit('root module with initRest decorator imports Module1 without initRest decorator, and exports Provider2', () => {
+  it('root module with initRest decorator imports Module1 without initRest decorator, and exports Provider2', () => {
     class Provider1 {}
     class Provider2 {}
 
     @featureModule({ providersPerApp: [Provider1] })
     class Module1 {}
 
-    @initRest({ imports: [Module1], providersPerReq: [Provider2], exports: [Provider2] })
-    @rootModule()
+    @initRest({ providersPerReq: [Provider2], exports: [Provider2] })
+    @rootModule({ imports: [Module1] })
+    class AppModule {}
+
+    const map = getMetadataPerMod2(AppModule);
+    const mod1 = map.get(Module1)?.deepImportedModules.get(initRest)!;
+    expect(mod1).toBeDefined();
+    expect(mod1.meta.providersPerReq.includes(Provider2)).toBeTruthy();
+  });
+
+  it('root module without initRest decorator imports Module1 also without initRest, and exports Module2 with initRest', () => {
+    class Provider1 {}
+    class Provider2 {}
+
+    @featureModule({ providersPerApp: [Provider1] })
+    class Module1 {}
+
+    @initRest({ providersPerReq: [Provider2], exports: [Provider2] })
+    @featureModule({ providersPerApp: [Provider1] })
+    class Module2 {}
+
+    @rootModule({ imports: [Module1, Module2], exports: [Module2] })
     class AppModule {}
 
     const map = getMetadataPerMod2(AppModule);
