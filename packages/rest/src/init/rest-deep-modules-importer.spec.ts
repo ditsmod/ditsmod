@@ -107,7 +107,7 @@ describe('DeepModulesImporter', () => {
   //   });
   // });
 
-  it('root module without initRest decorator imports Module1 with initRest decorator', () => {
+  it('root module without initRest decorator imports Module1 that has initRest decorator', () => {
     class Provider1 {}
 
     @initRest({
@@ -124,7 +124,7 @@ describe('DeepModulesImporter', () => {
     expect(restMetadataPerMod2?.meta.providersPerRou.includes(Provider1)).toBeTruthy();
   });
 
-  it('root module with initRest decorator imports Module1 without initRest decorator, and exports Provider2', () => {
+  it('root module with initRest decorator exports Provider2 and imports Module1 that has not initRest decorator', () => {
     class Provider1 {}
     class Provider2 {}
 
@@ -141,7 +141,7 @@ describe('DeepModulesImporter', () => {
     expect(mod1.meta.providersPerReq.includes(Provider2)).toBeTruthy();
   });
 
-  it('root module without initRest decorator imports Module1 also without initRest, and exports Module2 with initRest', () => {
+  it('root module without initRest decorator exports Module2 that has initRest and imports Module1 also that has not initRest', () => {
     class Provider1 {}
     class Provider2 {}
 
@@ -161,7 +161,7 @@ describe('DeepModulesImporter', () => {
     expect(mod1.meta.providersPerReq.includes(Provider2)).toBeTruthy();
   });
 
-  it('root module with initRest decorator imports Module1 with params, but without initRest decorator', () => {
+  it('root module with initRest decorator imports Module1 that has params, but has not initRest decorator', () => {
     class Provider1 {}
     class Guard1 implements CanActivate {
       async canActivate(ctx: RequestContext, params?: any[]) {
