@@ -289,7 +289,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected setInitParamsAndBaseInitMeta(baseMeta: BaseMeta, decorator: AnyFn, initHooks: InitHooksAndRawMeta) {
+  protected setInitParams(baseMeta: BaseMeta, decorator: AnyFn, initHooks: InitHooksAndRawMeta) {
     if (initHooks.rawMeta.imports) {
       this.resolveForwardRef(initHooks.rawMeta.imports).forEach((imp) => {
         if (isModuleWithParams(imp)) {
@@ -407,7 +407,7 @@ export class ModuleNormalizer {
         baseMeta.importsModules.push(initHooks.hostModule);
       }
 
-      this.setInitParamsAndBaseInitMeta(baseMeta, decorator, initHooks);
+      this.setInitParams(baseMeta, decorator, initHooks);
       this.callInitHook(baseMeta, decorator, initHooks);
     });
   }
