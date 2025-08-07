@@ -81,7 +81,7 @@ export class ModuleNormalizer {
     this.normalizeExtensions(rawMeta, baseMeta);
     this.addInitHooksForHostDecorator(baseMeta, allInitHooks);
     this.callInitHooksFromCurrentModule(baseMeta);
-    this.addInitHooksFromModuleUsageContext(baseMeta, allInitHooks);
+    this.addInitHooksForImportedMwp(baseMeta, allInitHooks);
     this.quickCheckMetadata(baseMeta);
     return baseMeta;
   }
@@ -435,7 +435,7 @@ export class AppModule {}
    * but `Module1` itself does not have an annotation with `initRest`. For such cases,
    * this method adds hooks so that the import of `Module1` with parameters can be properly handled.
    */
-  protected addInitHooksFromModuleUsageContext(baseMeta: BaseMeta, allInitHooks: AllInitHooks) {
+  protected addInitHooksForImportedMwp(baseMeta: BaseMeta, allInitHooks: AllInitHooks) {
     (baseMeta.modRefId as ModuleWithParams).initParams?.forEach((params, decorator) => {
       if (!baseMeta.mInitHooksAndRawMeta.has(decorator)) {
         const initHooks = allInitHooks.get(decorator)!;
