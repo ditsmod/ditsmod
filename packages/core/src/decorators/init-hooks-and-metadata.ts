@@ -76,7 +76,7 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
   }
 
   /**
-   * This method gets metadata from `rootModule` to collect providers from the `exports` property.
+   * This method gets metadata from `rootModule` decorator to collect providers from the `exports` property.
    */
   exportGlobalProviders(config: {
     moduleManager: ModuleManager;
