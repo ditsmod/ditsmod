@@ -36,6 +36,9 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
  * the module with the `featureModule` or `rootModule` decorator.
  */
 export interface ModuleWithParams<M extends AnyObj = AnyObj> extends BaseModuleWithParams<M>, FeatureModuleParams {
+  /**
+   * If the current module has this property populated, this means it was used in the context of init decorators.
+   */
   initParams?: InitParamsMap;
 }
 /**
