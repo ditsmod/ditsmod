@@ -50,10 +50,32 @@
       }
     },
     {
-      "name": "Jest Current File",
+      "name": "Jest Current Core File",
       "type": "node",
       "request": "launch",
       "preLaunchTask": "npm: build-test - packages/core",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "--enable-source-maps",
+        "--experimental-vm-modules",
+        "--no-warnings=ExperimentalWarning",
+        "${workspaceFolder}/node_modules/jest/bin/jest.js"
+      ],
+      "args": [
+        "${fileBasenameNoExtension}",
+        "--runInBand"
+      ],
+      "env": {
+        "NODE_ENV": "test"
+      },
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "name": "Jest Current Rest File",
+      "type": "node",
+      "request": "launch",
+      "preLaunchTask": "npm: build-unit - packages/rest",
       "runtimeExecutable": "node",
       "runtimeArgs": [
         "--enable-source-maps",

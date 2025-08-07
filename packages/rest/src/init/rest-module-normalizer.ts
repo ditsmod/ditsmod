@@ -22,7 +22,6 @@ import {
   Provider,
   isClassProvider,
   isTokenProvider,
-  BaseInitMeta,
   copyMetaToBaseInitMeta,
 } from '@ditsmod/core';
 
