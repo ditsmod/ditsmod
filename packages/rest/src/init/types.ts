@@ -12,7 +12,7 @@ import {
 } from '@ditsmod/core';
 
 import { GuardPerMod1 } from '#interceptors/guard.js';
-import { RestModRefId, RestInitMeta } from '#init/rest-normalized-meta.js';
+import { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
 
 export class RestImportObj<T extends Provider = Provider> {
   modRefId: RestModRefId;

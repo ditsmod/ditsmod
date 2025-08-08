@@ -5,7 +5,7 @@ import { Tree } from '#services/tree.js';
 import { GuardPerMod1 } from '#interceptors/guard.js';
 import { RouteHandler } from '#services/router.js';
 import { ControllerMetadata } from './controller-metadata.js';
-import { RestModRefId, RestInitMeta } from '#init/rest-normalized-meta.js';
+import { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
 
 export class RestGlobalProviders extends GlobalInitHooks {
   importedProvidersPerMod = new Map<any, RestImportObj>();

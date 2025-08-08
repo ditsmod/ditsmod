@@ -19,7 +19,7 @@ import {
 import { controller } from '../types/controller.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { AppendsWithParams, RestModuleParams } from './rest-init-raw-meta.js';
-import { RestInitMeta } from './rest-normalized-meta.js';
+import { RestInitMeta } from './rest-init-meta.js';
 import { CanActivate, guard } from '#interceptors/guard.js';
 import { RequestContext } from '#services/request-context.js';
 import { RestModule } from './rest.module.js';

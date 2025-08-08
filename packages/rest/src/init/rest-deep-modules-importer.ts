@@ -21,7 +21,7 @@ import {
   RestMetadataPerMod2,
   RestProvidersOnly,
 } from './types.js';
-import { RestInitMeta } from '#init/rest-normalized-meta.js';
+import { RestInitMeta } from '#init/rest-init-meta.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 
 /**

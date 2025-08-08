@@ -9,7 +9,7 @@ import {
   ImportModulesShallowConfig,
   RestMetadataPerMod1,
 } from '#init/types.js';
-import { RestModRefId, RestInitMeta } from '#init/rest-normalized-meta.js';
+import { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
 import { RestDeepModulesImporter } from '#init/rest-deep-modules-importer.js';
 import { RestGlobalProviders } from '#types/types.js';
 import { RestModule } from '#init/rest.module.js';

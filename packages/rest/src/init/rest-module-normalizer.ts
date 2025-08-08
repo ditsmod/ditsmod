@@ -26,7 +26,7 @@ import {
 } from '@ditsmod/core';
 
 import { AppendsWithParams, RestInitRawMeta } from '#init/rest-init-raw-meta.js';
-import { RestModRefId, RestInitMeta } from '#init/rest-normalized-meta.js';
+import { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
