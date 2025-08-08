@@ -16,12 +16,10 @@ import {
   BaseAppOptions,
   BaseMeta,
   DeepModulesImporter,
-  ModuleWithInitParams,
   ModRefId,
   MetadataPerMod2,
   ModuleWithParams,
 } from '@ditsmod/core';
-import { inspect } from 'node:util';
 
 import { CanActivate, guard } from '#interceptors/guard.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
@@ -68,44 +66,6 @@ describe('DeepModulesImporter', () => {
   beforeEach(() => {
     clearDebugClassNames();
   });
-
-  // describe('resolveImportedProviders', () => {
-  //   describe('addToUnfinishedSearchDependencies(), deleteFromUnfinishedSearchDependencies() and throwCircularDependencies()', () => {
-  //     class Module1 {}
-  //     class Provider1 {}
-  //     class Module2 {}
-  //     class Provider2 {}
-  //     class Module3 {}
-  //     class Provider3 {}
-
-  //     it('adding and removing dependencies', () => {
-  //       expect(mock.unfinishedSearchDependencies).toEqual([]);
-  //       mock.addToUnfinishedSearchDependencies(Module1, Provider1);
-  //       mock.addToUnfinishedSearchDependencies(Module2, Provider2);
-  //       mock.addToUnfinishedSearchDependencies(Module3, Provider3);
-  //       expect(mock.unfinishedSearchDependencies).toEqual([
-  //         [Module1, Provider1],
-  //         [Module2, Provider2],
-  //         [Module3, Provider3],
-  //       ]);
-  //       mock.deleteFromUnfinishedSearchDependencies(Module2, Provider2);
-  //       expect(mock.unfinishedSearchDependencies).toEqual([
-  //         [Module1, Provider1],
-  //         [Module3, Provider3],
-  //       ]);
-  //     });
-
-  //     it('throw properly message', () => {
-  //       expect(mock.unfinishedSearchDependencies).toEqual([]);
-  //       mock.addToUnfinishedSearchDependencies(Module1, Provider1);
-  //       mock.addToUnfinishedSearchDependencies(Module2, Provider2);
-  //       mock.addToUnfinishedSearchDependencies(Module3, Provider3);
-  //       const msg =
-  //         'Detected circular dependencies: [Provider2 in Module2] -> [Provider3 in Module3] -> [Provider2 in Module2]. It is started from [Provider1 in Module1].';
-  //       expect(() => mock.addToUnfinishedSearchDependencies(Module2, Provider2)).toThrow(msg);
-  //     });
-  //   });
-  // });
 
   it('reexport module that has initRest decorator', () => {
     class Service1 {}
