@@ -160,12 +160,14 @@ describe('ModuleManager', () => {
     expect(rootBaseMeta?.providersPerMod.includes(Service6)).toBeTruthy();
 
     const mod1InitMeta = baseMeta1?.initMeta.get(initRest);
-    expect(mod1InitMeta?.providersPerApp).toEqual([Service1, Service3]);
+    expect(mod1InitMeta?.providersPerApp).toEqual(baseMeta1?.providersPerApp);
+    expect(mod1InitMeta?.providersPerMod).toEqual(baseMeta1?.providersPerMod);
     expect(mod1InitMeta?.providersPerMod.includes(Service2)).toBeTruthy();
     expect(mod1InitMeta?.providersPerMod.includes(Service4)).toBeTruthy();
 
     const rootInitMeta = rootBaseMeta?.initMeta.get(initRest);
-    expect(rootInitMeta?.providersPerApp).toEqual([Service5]);
+    expect(rootInitMeta?.providersPerApp).toEqual(rootBaseMeta?.providersPerApp);
+    expect(rootInitMeta?.providersPerMod).toEqual(rootBaseMeta?.providersPerMod);
     expect(rootInitMeta?.providersPerMod.includes(Service6)).toBeTruthy();
   });
 

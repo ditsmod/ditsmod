@@ -127,6 +127,7 @@ export interface InitMetaMap {
   keys(): MapIterator<AnyFn>;
   values<T extends AnyObj>(): MapIterator<T>;
   readonly size: number;
+  [Symbol.iterator](): any;
 }
 
 export interface InitParamsMap {

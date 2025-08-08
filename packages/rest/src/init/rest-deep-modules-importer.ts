@@ -60,10 +60,12 @@ export class RestDeepModulesImporter {
   importModulesDeep(): RestMetadataPerMod2 | undefined {
     const levels: Level[] = ['Req', 'Rou', 'Mod'];
     this.tokensPerApp = getTokens(this.providersPerApp);
-    const { importedTokensMap, guards1, prefixPerMod, meta, applyControllers } = this.metadataPerMod1;
+    const { importedTokensMap, guards1, prefixPerMod, meta, applyControllers, baseMeta } = this.metadataPerMod1;
     const targetProviders = new RestProvidersOnly();
     this.resolveImportedProviders(targetProviders, importedTokensMap, levels);
-    meta.providersPerMod.unshift(...defaultProvidersPerRou, ...targetProviders.providersPerMod);
+    baseMeta.providersPerMod.unshift(...targetProviders.providersPerMod);
+    meta.providersPerMod.splice(0);
+    meta.providersPerMod.push(...baseMeta.providersPerMod);
     meta.providersPerRou.unshift(...defaultProvidersPerRou, ...targetProviders.providersPerRou);
     meta.providersPerReq.unshift(...defaultProvidersPerReq, ...targetProviders.providersPerReq);
     return {

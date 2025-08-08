@@ -67,6 +67,56 @@ describe('DeepModulesImporter', () => {
     clearDebugClassNames();
   });
 
+  it('synchronization between baseMeta and initMeta remains', () => {
+    class Service1 {}
+    class Service2 {}
+    class Service3 {}
+    class Service4 {}
+    class Service5 {}
+    class Service6 {}
+
+    @initRest({
+      providersPerApp: [Service3],
+      providersPerMod: [Service4],
+    })
+    @featureModule({
+      providersPerApp: [Service1],
+      providersPerMod: [Service2],
+    })
+    class Module1 {}
+
+    @initRest({
+      imports: [Module1],
+      providersPerApp: [Service5],
+      providersPerMod: [Service6],
+    })
+    @rootModule()
+    class AppModule {}
+
+    const map = getMetadataPerMod2(AppModule);
+    const rootBaseMeta = map.get(AppModule)?.baseMeta;
+    const baseMeta1 = map.get(Module1)?.baseMeta;
+
+    expect(baseMeta1?.providersPerApp).toEqual([Service1, Service3]);
+    expect(baseMeta1?.providersPerMod.includes(Service2)).toBeTruthy();
+    expect(baseMeta1?.providersPerMod.includes(Service4)).toBeTruthy();
+    expect(rootBaseMeta?.providersPerApp).toEqual([Service5]);
+    expect(rootBaseMeta?.providersPerMod.includes(Service6)).toBeTruthy();
+
+    const mod1InitMeta = baseMeta1?.initMeta.get(initRest);
+    expect(baseMeta1?.providersPerApp).toEqual(mod1InitMeta?.providersPerApp);
+    expect(baseMeta1?.providersPerMod).toEqual(mod1InitMeta?.providersPerMod);
+    expect(mod1InitMeta?.providersPerApp).toEqual([Service1, Service3]);
+    expect(mod1InitMeta?.providersPerMod.includes(Service2)).toBeTruthy();
+    expect(mod1InitMeta?.providersPerMod.includes(Service4)).toBeTruthy();
+
+    const rootInitMeta = rootBaseMeta?.initMeta.get(initRest);
+    expect(rootBaseMeta?.providersPerApp).toEqual(rootInitMeta?.providersPerApp);
+    expect(rootBaseMeta?.providersPerMod).toEqual(rootInitMeta?.providersPerMod);
+    expect(rootInitMeta?.providersPerApp).toEqual([Service5]);
+    expect(rootInitMeta?.providersPerMod.includes(Service6)).toBeTruthy();
+  });
+
   it('reexport module that has initRest decorator', () => {
     class Service1 {}
 
@@ -271,7 +321,8 @@ describe('DeepModulesImporter', () => {
     const initMeta = getRestMetadataPerMod2(AppModule)!.meta!;
     expect(initMeta.providersPerRou).toEqual([...defaultProvidersPerRou, Service3, Service4]);
     expect(initMeta.providersPerReq).toEqual(defaultProvidersPerReq);
-    expect(initMeta.providersPerMod.slice(-2)).toEqual([Service1, Service2]);
+    expect(initMeta.providersPerMod.includes(Service1)).toBeTruthy();
+    expect(initMeta.providersPerMod.includes(Service2)).toBeTruthy();
   });
 
   it('circular dependencies in one module', () => {
