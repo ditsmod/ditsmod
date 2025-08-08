@@ -5,7 +5,7 @@ import { HelloWorldController } from './hello-world.controller.js';
 import { AuthModule } from './modules/services/auth.module.js';
 
 @initRest({
-  imports: [AuthModule.withPath('')],
+  imports: [{ path: '', module: AuthModule }],
   providersPerApp: new Providers().useLogConfig({ level: 'info' }),
   controllers: [HelloWorldController],
 })
