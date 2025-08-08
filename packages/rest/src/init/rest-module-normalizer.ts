@@ -41,7 +41,7 @@ export class RestModuleNormalizer {
     copyBaseInitMeta(baseMeta, meta);
     this.mergeModuleWithParams(baseMeta.modRefId, rawMeta, meta);
     this.appendModules(rawMeta, meta);
-    this.normalizeDeclaredAndResolvedProviders(meta, rawMeta);
+    this.normalizeDeclaredAndResolvedProviders(baseMeta, meta, rawMeta);
     this.normalizeExports(baseMeta, rawMeta, meta);
     this.checkMetadata(baseMeta, meta);
     return meta;
@@ -98,17 +98,20 @@ export class RestModuleNormalizer {
     });
   }
 
-  protected normalizeDeclaredAndResolvedProviders(meta: RestInitMeta, rawMeta: RestInitRawMeta) {
+  protected normalizeDeclaredAndResolvedProviders(baseMeta: BaseMeta, meta: RestInitMeta, rawMeta: RestInitRawMeta) {
     if (rawMeta.controllers) {
       meta.controllers.push(...rawMeta.controllers);
     }
-    (['Mod', 'Rou', 'Req'] satisfies Level[]).forEach((level) => {
+    (['App', 'Mod', 'Rou', 'Req'] satisfies (Level | 'App')[]).forEach((level) => {
       if (rawMeta[`providersPer${level}`]) {
-        meta[`providersPer${level}`].push(...rawMeta[`providersPer${level}`]!);
-        meta[`providersPer${level}`] = this.resolveForwardRef(meta[`providersPer${level}`]);
+        const providersPerLevel = this.resolveForwardRef([...rawMeta[`providersPer${level}`]!]);
+        meta[`providersPer${level}`].push(...providersPerLevel);
+        if (level == 'App' || level == 'Mod') {
+          baseMeta[`providersPer${level}`].push(...providersPerLevel);
+        }
       }
 
-      if (rawMeta[`resolvedCollisionsPer${level}`]) {
+      if (level != 'App' && rawMeta[`resolvedCollisionsPer${level}`]) {
         meta[`resolvedCollisionsPer${level}`].push(...rawMeta[`resolvedCollisionsPer${level}`]!);
         meta[`resolvedCollisionsPer${level}`] = meta[`resolvedCollisionsPer${level}`].map(([token, module]) => {
           token = resolveForwardRef(token);
@@ -263,13 +266,13 @@ export class RestModuleNormalizer {
 
     if (
       isFeatureModule(baseMeta) &&
-      !baseMeta.exportedProvidersPerMod.length &&
-      !baseMeta.exportedMultiProvidersPerMod.length &&
-      !baseMeta.exportsModules.length &&
-      !baseMeta.providersPerApp.length &&
-      !baseMeta.exportsWithParams.length &&
-      !baseMeta.exportedExtensionsProviders.length &&
-      !baseMeta.extensionsProviders.length &&
+      !meta.exportedProvidersPerMod.length &&
+      !meta.exportedMultiProvidersPerMod.length &&
+      !meta.exportsModules.length &&
+      !meta.providersPerApp.length &&
+      !meta.exportsWithParams.length &&
+      !meta.exportedExtensionsProviders.length &&
+      !meta.extensionsProviders.length &&
       !meta.exportedProvidersPerReq.length &&
       !meta.exportedProvidersPerRou.length &&
       !meta.exportedMultiProvidersPerRou.length &&
@@ -277,7 +280,7 @@ export class RestModuleNormalizer {
       !meta.controllers.length &&
       !meta.appendsWithParams.length
     ) {
-      const msg = 'this module should have "providersPerApp" or some controllers, or exports, or extensions.';
+      const msg = 'this module must have "providersPerApp" or some controllers, or exports, or extensions.';
       throw new Error(msg);
     }
   }

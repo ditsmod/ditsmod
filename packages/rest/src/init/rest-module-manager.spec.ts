@@ -72,7 +72,7 @@ describe('ModuleManager', () => {
       expect(() => mock.scanModule(Module1)).toThrow('Normalization of Module1 failed: this module should have');
     });
 
-    it('should works, when no export and no controllers, but with appends with prefix', () => {
+    it('should works, when no export and no controllers, but appends with prefix', () => {
       class Provider1 {}
 
       @featureModule({
@@ -121,6 +121,52 @@ describe('ModuleManager', () => {
 
       expect(() => mock.scanModule(Module1)).not.toThrow();
     });
+  });
+
+  it('populate in initRest providers per a module and per an application', () => {
+    class Service1 {}
+    class Service2 {}
+    class Service3 {}
+    class Service4 {}
+    class Service5 {}
+    class Service6 {}
+
+    @initRest({
+      providersPerApp: [Service3],
+      providersPerMod: [Service4],
+    })
+    @featureModule({
+      providersPerApp: [Service1],
+      providersPerMod: [Service2],
+    })
+    class Module1 {}
+
+    @initRest({
+      imports: [Module1],
+      providersPerApp: [Service5],
+      providersPerMod: [Service6],
+    })
+    @rootModule()
+    class AppModule {}
+
+    mock.scanRootModule(AppModule);
+    const rootBaseMeta = mock.map.get(AppModule);
+    const baseMeta1 = mock.map.get(Module1);
+
+    expect(baseMeta1?.providersPerApp).toEqual([Service1, Service3]);
+    expect(baseMeta1?.providersPerMod.includes(Service2)).toBeTruthy();
+    expect(baseMeta1?.providersPerMod.includes(Service4)).toBeTruthy();
+    expect(rootBaseMeta?.providersPerApp).toEqual([Service5]);
+    expect(rootBaseMeta?.providersPerMod.includes(Service6)).toBeTruthy();
+
+    const mod1InitMeta = baseMeta1?.initMeta.get(initRest);
+    expect(mod1InitMeta?.providersPerApp).toEqual([Service1, Service3]);
+    expect(mod1InitMeta?.providersPerMod.includes(Service2)).toBeTruthy();
+    expect(mod1InitMeta?.providersPerMod.includes(Service4)).toBeTruthy();
+
+    const rootInitMeta = rootBaseMeta?.initMeta.get(initRest);
+    expect(rootInitMeta?.providersPerApp).toEqual([Service5]);
+    expect(rootInitMeta?.providersPerMod.includes(Service6)).toBeTruthy();
   });
 
   it('empty root module with rootModule decorator only', () => {
