@@ -1,5 +1,5 @@
-import { BaseAppOptions, ModuleType, rootModule } from '@ditsmod/core';
-import { Router } from '@ditsmod/rest';
+import { ModuleType, rootModule } from '@ditsmod/core';
+import { AppOptions, initRest, Router } from '@ditsmod/rest';
 import { Server } from 'node:http';
 
 import { TestApplication } from './test-application.js';
@@ -7,7 +7,7 @@ import { TestApplication } from './test-application.js';
 describe('TestApplication', () => {
   class TestApplicationMock extends TestApplication {
     declare preTestApplication: TestApplicationMock;
-    static override async create(appModule: ModuleType, appOptions?: BaseAppOptions) {
+    static override async create(appModule: ModuleType, appOptions?: AppOptions) {
       return super.createTestApp(appModule, appOptions) as unknown as TestApplicationMock;
     }
   }
@@ -15,25 +15,24 @@ describe('TestApplication', () => {
   const path = 'some-prefix';
   class Service1 {}
 
-  @rootModule({
-    providersPerApp: [Service1, { token: Router, useValue: {} }],
-  })
+  @initRest({ providersPerApp: [Service1, { token: Router, useValue: {} }] })
+  @rootModule()
   class RootModule1 {}
 
   describe('create()', () => {
     it('not throw an error', async () => {
-      await expect(TestApplicationMock.create(RootModule1)).resolves.not.toThrow();
+      await expect(TestApplicationMock.create(RootModule1, { path })).resolves.not.toThrow();
     });
   });
 
   describe('getServer()', () => {
     it('not to throw an error', async () => {
-      const mock = await TestApplicationMock.create(RootModule1);
+      const mock = await TestApplicationMock.create(RootModule1, { path });
       await expect(mock.getServer()).resolves.not.toThrow();
     });
 
     it('returns instance of http.Server', async () => {
-      const mock = await TestApplicationMock.create(RootModule1);
+      const mock = await TestApplicationMock.create(RootModule1, { path });
       const server = await mock.getServer();
       expect(server).toBeInstanceOf(Server);
     });

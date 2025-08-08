@@ -27,18 +27,15 @@ export class TestAppInitializer extends AppInitializer {
   addProvidersToModule(modRefId: ModRefId, providersMeta: ProvidersOnly) {
     const existingProvidersMeta = this.providersMetaForAdding.get(modRefId);
     const levels: Level[] = ['App', 'Mod', 'Rou', 'Req'];
-    if (existingProvidersMeta) {
-      levels.forEach((level) => {
-        const providers = [...(providersMeta[`providersPer${level}`] || [])];
+    levels.forEach((level) => {
+      const providers = [...(providersMeta[`providersPer${level}`] || [])];
+      if (existingProvidersMeta) {
         existingProvidersMeta[`providersPer${level}`]!.push(...providers);
-      });
-    } else {
-      levels.forEach((level) => {
-        const providers = [...(providersMeta[`providersPer${level}`] || [])];
+      } else {
         providersMeta[`providersPer${level}`] = providers;
-      });
-      this.providersMetaForAdding.set(modRefId, providersMeta as ProvidersOnly<Provider[]>);
-    }
+        this.providersMetaForAdding.set(modRefId, providersMeta as ProvidersOnly<Provider[]>);
+      }
+    });
   }
 
   overrideModuleMeta(providers: Providers | Provider[]) {
@@ -48,12 +45,12 @@ export class TestAppInitializer extends AppInitializer {
   protected override overrideMetaAfterStage1(baseMeta: BaseMeta) {
     const providersMeta = this.providersMetaForAdding.get(baseMeta.modRefId);
     if (providersMeta) {
-      (['App', 'Mod'] satisfies Level[]).forEach((level) => {
-        baseMeta[`providersPer${level}`].push(...providersMeta[`providersPer${level}`]!);
-      });
-      (['Rou', 'Req'] satisfies Level[]).forEach((level) => {
+      (['App', 'Mod', 'Rou', 'Req'] satisfies Level[]).forEach((level) => {
         const meta = baseMeta.initMeta.get(initRest)!;
         meta[`providersPer${level}`].push(...providersMeta[`providersPer${level}`]!);
+        if (level == 'App' || level == 'Mod') {
+          baseMeta[`providersPer${level}`].push(...providersMeta[`providersPer${level}`]!);
+        }
       });
     }
     TestOverrider.overrideAllProviders(this.perAppService, baseMeta, this.providersToOverride);

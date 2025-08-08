@@ -11,11 +11,11 @@ export class TestModuleManager extends ModuleManager {
   }
 
   protected override normalizeMetadata(modRefId: ModRefId, allInitHooks: AllInitHooks): BaseMeta {
-    const meta = super.normalizeMetadata(modRefId, allInitHooks);
+    const baseMeta = super.normalizeMetadata(modRefId, allInitHooks);
     const mod = getModule(modRefId);
     if (this.externalModules.has(mod)) {
-      meta.isExternal = true;
+      baseMeta.isExternal = true;
     }
-    return meta;
+    return baseMeta;
   }
 }

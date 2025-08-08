@@ -1,4 +1,5 @@
 import { ModRefId, BaseMeta, Provider, Providers } from '@ditsmod/core';
+import { RestInitMeta, initRest } from '@ditsmod/rest';
 
 import { TestAppInitializer } from '#app/test-app-initializer.js';
 import { ProvidersOnly } from '#app/types.js';
@@ -7,8 +8,8 @@ describe('TestAppInitializer', () => {
   class MockTestAppInitializer extends TestAppInitializer {
     override providersMetaForAdding = new Map<ModRefId, ProvidersOnly<Provider[]>>();
 
-    override overrideMetaAfterStage1(meta: BaseMeta) {
-      return super.overrideMetaAfterStage1(meta);
+    override overrideMetaAfterStage1(baseMeta: BaseMeta) {
+      return super.overrideMetaAfterStage1(baseMeta);
     }
   }
   const mock = new MockTestAppInitializer(null as any, null as any, null as any);
@@ -57,19 +58,20 @@ describe('TestAppInitializer', () => {
         providersPerMod: [Provider1],
       };
       mock.addProvidersToModule(modRefId, providersMeta1);
-      const meta = new BaseMeta();
-      meta.providersPerApp.push(Provider0);
-      meta.providersPerMod.push(Provider0);
+      const baseMeta = new BaseMeta();
+      baseMeta.initMeta.set(initRest, new RestInitMeta());
+      baseMeta.providersPerApp.push(Provider0);
+      baseMeta.providersPerMod.push(Provider0);
 
-      meta.modRefId = fakeModRefId;
-      mock.overrideMetaAfterStage1(meta);
-      expect(meta.providersPerApp).toEqual([Provider0]);
-      expect(meta.providersPerMod).toEqual([Provider0]);
+      baseMeta.modRefId = fakeModRefId;
+      mock.overrideMetaAfterStage1(baseMeta);
+      expect(baseMeta.providersPerApp).toEqual([Provider0]);
+      expect(baseMeta.providersPerMod).toEqual([Provider0]);
 
-      meta.modRefId = modRefId;
-      mock.overrideMetaAfterStage1(meta);
-      expect(meta.providersPerApp).toEqual([Provider0, Provider1]);
-      expect(meta.providersPerMod).toEqual([Provider0, Provider1]);
+      baseMeta.modRefId = modRefId;
+      mock.overrideMetaAfterStage1(baseMeta);
+      expect(baseMeta.providersPerApp).toEqual([Provider0, Provider1]);
+      expect(baseMeta.providersPerMod).toEqual([Provider0, Provider1]);
     });
   });
 });
