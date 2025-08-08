@@ -84,7 +84,20 @@ export class ShallowModulesImporter {
     this.importProviders(baseMeta);
     this.checkAllCollisionsWithLevelsMix();
 
+    let initHooks: RestInitHooksAndRawMeta | undefined;
+    if (
+      this.importedProvidersPerMod.size ||
+      this.importedProvidersPerRou.size ||
+      this.importedProvidersPerReq.size ||
+      this.importedMultiProvidersPerMod.size ||
+      this.importedMultiProvidersPerRou.size ||
+      this.importedMultiProvidersPerReq.size
+    ) {
+      initHooks = new RestInitHooksAndRawMeta({});
+    }
+
     return {
+      initHooks,
       importedProvidersPerMod: this.importedProvidersPerMod,
       importedProvidersPerRou: this.importedProvidersPerRou,
       importedProvidersPerReq: this.importedProvidersPerReq,

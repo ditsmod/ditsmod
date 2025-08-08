@@ -17,6 +17,9 @@ export class ImportObj<T extends Provider = Provider> {
 }
 
 export class GlobalInitHooks<T extends BaseInitRawMeta = BaseInitRawMeta> {
+  /**
+   * The presence of this property indicates whether at least one global provider is exported.
+   */
   initHooks?: InitHooksAndRawMeta<T>;
 }
 

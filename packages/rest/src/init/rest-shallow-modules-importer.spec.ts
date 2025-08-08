@@ -37,14 +37,6 @@ class MockShallowModulesImporter extends ShallowModulesImporter {
   override importedMultiProvidersPerReq = new Map<ModRefId, Provider[]>();
   // override guards1: GuardPerMod1[] = [];
 
-  override exportGlobalProviders(config: {
-    moduleManager: ModuleManager;
-    globalProviders: GlobalProviders;
-    baseMeta: BaseMeta;
-  }): RestGlobalProviders {
-    return super.exportGlobalProviders(config);
-  }
-
   protected override getResolvedCollisionsPerLevel(
     level: Level,
     token1: any,

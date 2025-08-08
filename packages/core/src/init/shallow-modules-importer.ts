@@ -73,10 +73,7 @@ export class ShallowModulesImporter {
 
     baseMeta.allInitHooks.forEach((initHooks, decorator) => {
       const val = initHooks.exportGlobalProviders({ moduleManager, globalProviders, baseMeta });
-      if (val) {
-        val.initHooks = initHooks.clone();
-        mInitHooks.set(decorator, val);
-      }
+      mInitHooks.set(decorator, val);
     });
 
     return globalProviders;
@@ -123,8 +120,8 @@ export class ShallowModulesImporter {
       aExtensionConfig = [...this.aImportedExtensionConfig];
     } else {
       this.glProviders.mInitHooks.forEach(({ initHooks }, decorator) => {
-        if (!baseMeta.allInitHooks.has(decorator)) {
-          baseMeta.allInitHooks.set(decorator, initHooks!);
+        if (initHooks && !baseMeta.allInitHooks.has(decorator)) {
+          baseMeta.allInitHooks.set(decorator, initHooks);
         }
       });
       perMod = new Map([...this.glProviders.importedProvidersPerMod, ...this.importedProvidersPerMod]);

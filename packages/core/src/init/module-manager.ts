@@ -21,7 +21,7 @@ type ModuleId = string | ModRefId;
  * As a result of this process, a mapping is created between the class's `modRefId` and its normalized data.
  * Essentially, `modRefId` is the form in which a module is passed in the `imports` array — that is,
  * either the module class itself or an object containing the module with parameters.
- * 
+ *
  * The `ModuleManager` can also add or remove modules from the imports.
  */
 @injectable()
