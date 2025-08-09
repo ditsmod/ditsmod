@@ -1,6 +1,7 @@
 import { Class, Injector, ResolvedProvider } from '#di';
 import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
+import { Providers } from '#utils/providers.js';
 
 /**
  * Help type for combining interfaces.
@@ -68,8 +69,8 @@ export interface AnyObj {
   [key: string | symbol]: any;
 }
 
-export class ProvidersOnly {
-  providersPerMod: Provider[] = [];
+export class ProvidersOnly <T = Providers | Provider[]> {
+  providersPerMod?: T;
 }
 
 export interface ResolvedGuardPerMod {
