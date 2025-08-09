@@ -35,7 +35,7 @@ describe('@ditsmod/rest/e2e', () => {
 
     const server = await TestApplication.createTestApp(AppModule)
       .$use(TestRestPlugin)
-      .overrideGroupRestMeta(aProvidersToOverride)
+      .overrideExtensionRestMeta(aProvidersToOverride)
       .overrideModuleMeta(
         new Providers()
           .useValue<ServicePerApp>(ServicePerApp, { method: methodPerApp })

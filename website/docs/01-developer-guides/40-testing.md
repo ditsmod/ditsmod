@@ -231,7 +231,7 @@ import { MetadataPerMod3, ROUTES_EXTENSIONS } from '@ditsmod/rest';
 import { TestApplication, ExtensionMetaOverrider } from '@ditsmod/testing';
 
 export class TestRestPlugin extends TestApplication {
-  overrideGroupRestMeta(providersToOverride: Provider[]) {
+  overrideExtensionRestMeta(providersToOverride: Provider[]) {
     const overrideRoutesMeta: ExtensionMetaOverrider<MetadataPerMod3> = (stage1ExtensionMeta) => {
       stage1ExtensionMeta.groupData?.forEach((metadataPerMod3) => {
         // ...
@@ -261,7 +261,7 @@ const providers: Provider[] = [
 
 const server = await TestApplication.createTestApp(AppModule)
   .$use(TestRestPlugin)
-  .overrideGroupRestMeta(providers)
+  .overrideExtensionRestMeta(providers)
   .getServer();
 ```
 
