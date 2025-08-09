@@ -7,6 +7,7 @@ import { ExtensionClass } from '#extension/extension-types.js';
 import { InitMetaMap } from '#decorators/init-hooks-and-metadata.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { AllInitHooks } from '#decorators/init-hooks-and-metadata.js';
+import { copyBaseInitMeta } from '#init/copy-base-init-meta.js';
 
 export class BaseInitMeta<A extends AnyObj = AnyObj> {
   importsModules: ModuleType[] = [];
@@ -30,6 +31,12 @@ export class BaseInitMeta<A extends AnyObj = AnyObj> {
    * You must follow this rule: data for one extension - one key in `extensionsMeta` object.
    */
   extensionsMeta = {} as A;
+
+  constructor(baseMeta?: BaseMeta) {
+    if (baseMeta) {
+      copyBaseInitMeta(baseMeta, this);
+    }
+  }
 }
 
 /**

@@ -18,7 +18,6 @@ import {
   getLastProviders,
   ShallowImportsBase,
   defaultProvidersPerMod,
-  copyBaseInitMeta,
 } from '@ditsmod/core';
 
 import { GuardPerMod1 } from '#interceptors/guard.js';
@@ -199,8 +198,7 @@ export class ShallowModulesImporter {
   protected getInitMeta(baseMeta: BaseMeta): RestInitMeta {
     let meta = baseMeta.initMeta.get(initRest);
     if (!meta) {
-      meta = new RestInitMeta();
-      copyBaseInitMeta(baseMeta, meta);
+      meta = new RestInitMeta(baseMeta);
       baseMeta.initMeta.set(initRest, meta);
     }
     return meta;

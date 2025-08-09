@@ -4,16 +4,19 @@ import { ModuleManager } from '#init/module-manager.js';
 import { ShallowImportsBase, ShallowImports } from '#init/types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { GlobalInitHooks, GlobalProviders } from '#types/metadata-per-mod.js';
-import { AnyFn, AnyObj, ModRefId, ModuleType } from '#types/mix.js';
+import { AnyFn, AnyObj, ModRefId, ModuleType, ProvidersOnly } from '#types/mix.js';
 import { BaseMeta } from '#types/base-meta.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
+import { ModuleWithParams, type ModuleMetadata } from '#types/module-metadata.js';
 import { BaseInitMeta } from '#types/base-meta.js';
+import type { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
+import type { featureModule } from './feature-module.js';
+import type { rootModule } from './root-module.js';
 
 export type AllInitHooks = Map<AnyFn, Omit<InitHooksAndRawMeta, 'rawMeta'>>;
 
 /**
  * Init hooks and metadata attached by init decorators,
- * apart from the base decorators - `rootModule` or `featureModule`.
+ * apart from the base decorators - {@link featureModule} or {@link rootModule}.
  */
 export class InitHooksAndRawMeta<T1 extends BaseInitRawMeta = BaseInitRawMeta> {
   /**
@@ -23,13 +26,15 @@ export class InitHooksAndRawMeta<T1 extends BaseInitRawMeta = BaseInitRawMeta> {
   declare hostModule?: ModRefId;
 
   /**
-   * Allows you to prevent a circular dependency between
-   * the module you assign to `this.hostModule` and the decorator for which the current class with
-   * init hooks is intended. A circular dependency may occur if `this.hostModule` requires metadata
-   * from the decorator that the current class is meant for.
+   * Raw metadata intended for the host module.
+   * 
+   * A module where the class with init hooks is declared (the host module) sometimes requires annotation
+   * using its own init decorators, but this can be problematic if you also additionally pass the host module
+   * to the {@link hostModule | this.hostModule} property. This causes a circular dependency. To avoid this,
+   * you should not annotate the host module using its own decorators. Instead, pass the metadata to this property.
    *
-   * For example, if the current class with hooks is created for the `initSomeThing` decorator,
-   * which is declared in the host module `SomeModule`, then it's not allowed to simultaneously:
+   * For example, if the decorator `initSomeThing` is declared in `SomeModule`,
+   * in that case you cannot simultaneously:
    *
    * 1. annotate `SomeModule` using the `initSomeThing` decorator;
    * 2. assign `this.hostModule = SomeModule` in the class with hooks for `initSomeThing`.
@@ -58,25 +63,27 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
   }
 
   /**
-   * Normalizes the metadata from the current decorator. It is then inserted into `baseMeta.initMeta`.
+   * Normalizes the metadata from the current decorator. It is then inserted into {@link BaseMeta.initMeta | baseMeta.initMeta}.
    *
-   * @param baseMeta Normalized metadata that is passed to the `featureModule` or `rootModule` decorator.
+   * @param baseMeta Normalized metadata that is passed
+   * to the {@link featureModule} or {@link rootModule} decorator.
    */
   normalize(baseMeta: BaseMeta) {
     return {} as BaseInitMeta;
   }
 
   /**
-   * The returned array of `ModRefId` will be scanned by `ModuleManager`.
+   * The returned array of {@link ModRefId} will be scanned by {@link ModuleManager}.
    *
-   * @param meta Metadata returned by the `this.normalize()` method.
+   * @param meta Metadata returned by the {@link normalize | this.normalize()} method.
    */
   getModulesToScan(meta?: BaseInitMeta): ModRefId[] {
     return [];
   }
 
   /**
-   * This method gets metadata from `rootModule` decorator to collect providers from the `exports` property.
+   * This method gets metadata from {@link rootModule} decorator to collect
+   * providers from the {@link ModuleMetadata.exports | exports } property.
    */
   exportGlobalProviders(config: {
     moduleManager: ModuleManager;
@@ -101,7 +108,7 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
   }
 
   /**
-   * By analyzing the dependencies of the providers returned by `ShallowModulesImporter`,
+   * By analyzing the dependencies of the providers returned by {@link ShallowModulesImporter },
    * recursively collects providers for them from the corresponding modules.
    */
   importModulesDeep(config: {
@@ -114,6 +121,10 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
     errorMediator: SystemErrorMediator;
   }): any {
     return;
+  }
+
+  overrideProviders(baseMeta: BaseMeta, meta: BaseInitMeta) {
+    return new ProvidersOnly<Provider[]>() as Required<ProvidersOnly<Provider[]>>;
   }
 }
 
@@ -141,13 +152,14 @@ export interface InitParamsMap {
   values<T extends AnyObj>(): MapIterator<T>;
   readonly size: number;
 }
+
 /**
  * Use this interface to create decorators with init hooks.
  *
  * ### Complete example with init hooks
  *
  * In this example, `ReturnsType` is the type that will be returned by
- * `myInitHooksAndRawMeta.normalize()` or `baseMeta.initMeta.get(addSome)`.
+ * {@link InitHooksAndRawMeta.normalize} or {@link BaseMeta.initMeta | baseMeta.initMeta.get(addSome)}.
  *
 ```ts
 import {
@@ -215,7 +227,7 @@ export interface ParamsWithMwp {
 export interface BaseInitRawMeta<T extends object = object> {
   imports?: (((ParamsWithMwp | ModuleWithParams) & T) | ModuleType)[];
   /**
-   * List of `ModuleWithParams` or provider tokens exported by this module.
+   * List of {@link ModuleWithParams} or provider tokens exported by this module.
    */
   exports?: any[];
 }

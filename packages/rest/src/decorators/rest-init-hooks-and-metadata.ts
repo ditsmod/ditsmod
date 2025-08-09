@@ -17,7 +17,8 @@ import { RestModule } from '#init/rest.module.js';
 /**
  * A decorator that adds REST metadata to a `featureModule` or `rootModule`.
  */
-export const initRest: InitDecorator<RestInitRawMeta, RestModuleParams, RestInitMeta> = makeClassDecorator(transformMetadata);
+export const initRest: InitDecorator<RestInitRawMeta, RestModuleParams, RestInitMeta> =
+  makeClassDecorator(transformMetadata);
 
 export class RestInitHooksAndRawMeta extends InitHooksAndRawMeta<RestInitRawMeta> {
   override hostModule = RestModule;
