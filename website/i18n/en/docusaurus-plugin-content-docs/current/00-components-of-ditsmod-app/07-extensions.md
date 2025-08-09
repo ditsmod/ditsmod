@@ -138,9 +138,9 @@ export class MyExtension implements Extension<void> {
   constructor(private extensionsManager: ExtensionsManager) {}
 
   async stage1() {
-    const stage1GroupMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS);
+    const stage1ExtensionMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS);
 
-    stage1GroupMeta.groupData.forEach((stage1Meta) => {
+    stage1ExtensionMeta.groupData.forEach((stage1Meta) => {
       const someData = stage1Meta;
       // Do something here.
       // ...
@@ -152,10 +152,10 @@ export class MyExtension implements Extension<void> {
 The `ExtensionsManager` will sequentially initialize all extensions from a given group and return the result in an object that follows this interface:
 
 ```ts
-interface Stage1GroupMeta<T = any> {
+interface Stage1ExtensionMeta<T = any> {
   delay: boolean;
   countdown = 0;
-  groupDataPerApp: Stage1GroupMetaPerApp<T>[];
+  groupDataPerApp: Stage1ExtensionMetaPerApp<T>[];
   groupData: T[],
   moduleName: string;
 }
@@ -180,12 +180,12 @@ export class MyExtension implements Extension<void> {
   constructor(private extensionsManager: ExtensionsManager) {}
 
   async stage1() {
-    const stage1GroupMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, this, true);
-    if (stage1GroupMeta.delay) {
+    const stage1ExtensionMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, this, true);
+    if (stage1ExtensionMeta.delay) {
       return;
     }
 
-    stage1GroupMeta.groupDataPerApp.forEach((totaStage1Meta) => {
+    stage1ExtensionMeta.groupDataPerApp.forEach((totaStage1Meta) => {
       totaStage1Meta.groupData.forEach((metadataPerMod3) => {
         // Do something here.
         // ...
@@ -198,7 +198,7 @@ export class MyExtension implements Extension<void> {
 Thus, when you need `MyExtension` to receive data from the `OTHER_EXTENSIONS` group throughout the application, you need to pass `true` as the third argument to the `stage1` method:
 
 ```ts
-const stage1GroupMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, this, true);
+const stage1ExtensionMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, this, true);
 ```
 
 In this case, it is guaranteed that the `MyExtension` instance will receive data from all modules where `OTHER_EXTENSIONS` is imported. Even if `MyExtension` is imported into a module without any extensions from the `OTHER_EXTENSIONS` group, but these extensions exist in other modules, the `stage1` method of this extension will still be called after all extensions are initialized, ensuring that `MyExtension` receives data from `OTHER_EXTENSIONS` across all modules.
@@ -218,8 +218,8 @@ export class BodyParserExtension implements Extension<void> {
   ) {}
 
   async stage1() {
-    const stage1GroupMeta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
-    stage1GroupMeta.groupData.forEach((metadataPerMod3) => {
+    const stage1ExtensionMeta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
+    stage1ExtensionMeta.groupData.forEach((metadataPerMod3) => {
       const { aControllerMetadata, providersPerMod } = metadataPerMod3;
       aControllerMetadata.forEach(({ providersPerRou, providersPerReq, httpMethod, singleton }) => {
         // Merging the providers from a module and a controller

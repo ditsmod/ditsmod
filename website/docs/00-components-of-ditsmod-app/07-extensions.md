@@ -138,9 +138,9 @@ export class MyExtension implements Extension<void> {
   constructor(private extensionsManager: ExtensionsManager) {}
 
   async stage1() {
-    const stage1GroupMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS);
+    const stage1ExtensionMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS);
 
-    stage1GroupMeta.groupData.forEach((stage1Meta) => {
+    stage1ExtensionMeta.groupData.forEach((stage1Meta) => {
       const someData = stage1Meta;
       // Do something here.
       // ...
@@ -152,10 +152,10 @@ export class MyExtension implements Extension<void> {
 `ExtensionsManager` буде послідовно викликати ініціалізацію усіх розширень з указаної групи, а результат їхньої роботи повертатиме в об'єкті, що має наступний інтерфейс:
 
 ```ts
-interface Stage1GroupMeta<T = any> {
+interface Stage1ExtensionMeta<T = any> {
   delay: boolean;
   countdown = 0;
-  groupDataPerApp: Stage1GroupMetaPerApp<T>[];
+  groupDataPerApp: Stage1ExtensionMetaPerApp<T>[];
   groupData: T[],
   moduleName: string;
 }
@@ -180,12 +180,12 @@ export class MyExtension implements Extension<void> {
   constructor(private extensionsManager: ExtensionsManager) {}
 
   async stage1() {
-    const stage1GroupMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, this, true);
-    if (stage1GroupMeta.delay) {
+    const stage1ExtensionMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, this, true);
+    if (stage1ExtensionMeta.delay) {
       return;
     }
 
-    stage1GroupMeta.groupDataPerApp.forEach((totaStage1Meta) => {
+    stage1ExtensionMeta.groupDataPerApp.forEach((totaStage1Meta) => {
       totaStage1Meta.groupData.forEach((metadataPerMod3) => {
         // Do something here.
         // ...
@@ -198,7 +198,7 @@ export class MyExtension implements Extension<void> {
 Тобто коли вам потрібно щоб `MyExtension` отримало дані з групи `OTHER_EXTENSIONS` з усього застосунку, третім аргументом для методу `stage1` потрібно передавати `true`:
 
 ```ts
-const stage1GroupMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, this, true);
+const stage1ExtensionMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, this, true);
 ```
 
 В такому разі гарантується, що інстанс `MyExtension` отримає дані з усіх модулів, куди імпортовано `OTHER_EXTENSIONS`. Навіть якщо `MyExtension` буде імпортовано у певний модуль, в якому немає розширень із групи `OTHER_EXTENSIONS`, але ці розширення є в інших модулях, все-одно метод `stage1` даного розширення буде викликано після ініціалізації усіх розширень, тому `MyExtension` отримає дані від `OTHER_EXTENSIONS` з усіх модулів.
@@ -218,8 +218,8 @@ export class BodyParserExtension implements Extension<void> {
   ) {}
 
   async stage1() {
-    const stage1GroupMeta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
-    stage1GroupMeta.groupData.forEach((metadataPerMod3) => {
+    const stage1ExtensionMeta = await this.extensionManager.stage1(ROUTES_EXTENSIONS);
+    stage1ExtensionMeta.groupData.forEach((metadataPerMod3) => {
       const { aControllerMetadata, providersPerMod } = metadataPerMod3;
       aControllerMetadata.forEach(({ providersPerRou, providersPerReq, httpMethod, singleton }) => {
         // Merging the providers from a module and a controller

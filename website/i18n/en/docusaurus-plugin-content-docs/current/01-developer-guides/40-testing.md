@@ -171,16 +171,16 @@ The `testApplication.overrideModuleMeta()` method replaces providers in module m
 
 ### `testApplication.overrideExtensionMeta()`
 
-The `testApplication.overrideExtensionMeta()` method overrides providers in metadata added by extension groups. This method takes two arguments:
+The `testApplication.overrideExtensionMeta()` method overrides providers in the metadata added by an extension. This method takes two arguments:
 
-1. token of the group of extensions from which metadata is returned, where it will be necessary to replace providers for tests;
-2. a callback that will work with the metadata returned by the extension group (specified in the first argument).
+1. the extension class that returns the metadata where providers need to be overridden for tests;
+2. a callback that will work with the metadata returned by the extension (specified in the first argument).
 
 The callback in the second argument has the following type:
 
 ```ts
 interface ExtensionMetaOverrider<T = any> {
- (stage1GroupMeta: Stage1GroupMeta<T> | Stage1GroupMeta2<T>): void;
+ (stage1ExtensionMeta: Stage1ExtensionMeta<T> | Stage1ExtensionMeta2<T>): void;
 }
 ```
 
@@ -232,8 +232,8 @@ import { TestApplication, ExtensionMetaOverrider } from '@ditsmod/testing';
 
 export class TestRestPlugin extends TestApplication {
   overrideGroupRestMeta(providersToOverride: Provider[]) {
-    const overrideRoutesMeta: ExtensionMetaOverrider<MetadataPerMod3> = (stage1GroupMeta) => {
-      stage1GroupMeta.groupData?.forEach((metadataPerMod3) => {
+    const overrideRoutesMeta: ExtensionMetaOverrider<MetadataPerMod3> = (stage1ExtensionMeta) => {
+      stage1ExtensionMeta.groupData?.forEach((metadataPerMod3) => {
         // ...
       });
     };

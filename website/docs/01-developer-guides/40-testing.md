@@ -171,16 +171,16 @@ server = await TestApplication.createTestApp(AppModule, { path: 'api' }).getServ
 
 ### `testApplication.overrideExtensionMeta()`
 
-Метод `testApplication.overrideExtensionMeta()` підміняє провайдери у метаданих, що додаються групами розширень. Цей метод приймає два аргументи:
+Метод `testApplication.overrideExtensionMeta()` підміняє провайдери у метаданих, що додаються розширеннями. Цей метод приймає два аргументи:
 
-1. токен групи розширень, від яких повертаються метадані, де потрібно буде підмінити провайдери для тестів;
-2. колбек, що буде працювати з метаданими, які повертає група розширень (указана у першому аргументі).
+1. клас розширення, від якого повертаються метадані, де потрібно буде підмінити провайдери для тестів;
+2. колбек, що буде працювати з метаданими, які повертає розширення (вказане у першому аргументі).
 
 Колбек у другому аргументі має наступний тип:
 
 ```ts
 interface ExtensionMetaOverrider<T = any> {
-  (stage1GroupMeta: Stage1GroupMeta<T> | Stage1GroupMeta2<T>): void;
+  (stage1ExtensionMeta: Stage1ExtensionMeta<T> | Stage1ExtensionMeta2<T>): void;
 }
 ```
 
@@ -232,8 +232,8 @@ import { TestApplication, ExtensionMetaOverrider } from '@ditsmod/testing';
 
 export class TestRestPlugin extends TestApplication {
   overrideGroupRestMeta(providersToOverride: Provider[]) {
-    const overrideRoutesMeta: ExtensionMetaOverrider<MetadataPerMod3> = (stage1GroupMeta) => {
-      stage1GroupMeta.groupData?.forEach((metadataPerMod3) => {
+    const overrideRoutesMeta: ExtensionMetaOverrider<MetadataPerMod3> = (stage1ExtensionMeta) => {
+      stage1ExtensionMeta.groupData?.forEach((metadataPerMod3) => {
         // ...
       });
     };

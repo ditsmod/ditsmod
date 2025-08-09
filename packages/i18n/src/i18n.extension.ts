@@ -33,13 +33,13 @@ export class I18nExtension implements Extension<void> {
       return;
     }
 
-    const stage1GroupMeta = await this.extensionsManager.stage1(RoutesExtension);
-    this.addI18nProviders(stage1GroupMeta, isLastModule);
+    const stage1ExtensionMeta = await this.extensionsManager.stage1(RoutesExtension);
+    this.addI18nProviders(stage1ExtensionMeta, isLastModule);
 
     this.#inited = true;
   }
 
-  protected addI18nProviders(stage1GroupMeta: Stage1ExtensionMeta<MetadataPerMod3>, isLastModule?: boolean) {
+  protected addI18nProviders(stage1ExtensionMeta: Stage1ExtensionMeta<MetadataPerMod3>, isLastModule?: boolean) {
     const injectorPerApp = this.perAppService.injector;
 
     const translationsPerApp = injectorPerApp.get(I18N_TRANSLATIONS, undefined, null);
@@ -49,7 +49,7 @@ export class I18nExtension implements Extension<void> {
       this.perAppService.providers.push(...providers);
     }
 
-    for (const metadataPerMod3 of stage1GroupMeta.groupData) {
+    for (const metadataPerMod3 of stage1ExtensionMeta.groupData) {
       const { aControllerMetadata } = metadataPerMod3;
       const { providersPerMod } = metadataPerMod3.baseMeta;
       const { providersPerRou, providersPerReq } = metadataPerMod3.meta;
