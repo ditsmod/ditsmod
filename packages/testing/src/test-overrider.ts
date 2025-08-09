@@ -20,8 +20,8 @@ export class TestOverrider {
   }
 
   /**
-   * If the token of the `provider` that needs to be overridden is found in the `providersOnly`,
-   * that `provider` is added to the `providersOnly` array last in the same scope.
+   * If the token of the {@link provider} that needs to be overridden is found in the {@link providersOnly},
+   * that {@link provider} is added to the {@link providersOnly} array last in the same scope.
    */
   static overrideProvider(levels: Level[], providersOnly: ProvidersOnly, provider: Provider) {
     levels.forEach((level) => {

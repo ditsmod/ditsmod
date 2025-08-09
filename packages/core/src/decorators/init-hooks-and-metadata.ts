@@ -137,7 +137,7 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
   }
 
   overrideProviders(baseMeta: BaseMeta, meta: BaseInitMeta) {
-    return new ProvidersOnly<Provider[]>() as Required<ProvidersOnly<Provider[]>>;
+    return new ProvidersOnly<Provider[]>();
   }
 }
 

@@ -4,11 +4,10 @@ import {
   InternalExtensionsManager,
   MetadataPerMod2,
   ModRefId,
-  BaseMeta,
   Provider,
   Providers,
 } from '@ditsmod/core';
-import { AppInitializer, initRest } from '@ditsmod/rest';
+import { AppInitializer } from '@ditsmod/rest';
 
 import { TestOverrider } from './test-overrider.js';
 import { ProvidersOnly, OverriderConfig, Level } from './types.js';
@@ -16,45 +15,39 @@ import { TestExtensionsManager } from './test-extensions-manager.js';
 import { OVERRIDERS_CONFIG } from './constants.js';
 
 export class TestAppInitializer extends AppInitializer {
-  protected providersMetaForAdding = new Map<ModRefId, ProvidersOnly<Provider[]>>();
-  protected providersToOverride: Provider[] = [];
+  protected mAdditionalProviders = new Map<ModRefId, ProvidersOnly<Provider[]>>();
+  protected providersForOverride: Provider[] = [];
   protected aOverriderConfig: OverriderConfig[] = [];
 
   setOverriderConfig(config: OverriderConfig) {
     this.aOverriderConfig.push(config);
   }
 
-  addProvidersToModule(modRefId: ModRefId, providersMeta: ProvidersOnly) {
-    const existingProvidersMeta = this.providersMetaForAdding.get(modRefId);
-    const levels: Level[] = ['App', 'Mod', 'Rou', 'Req'];
-    levels.forEach((level) => {
-      const providers = [...(providersMeta[`providersPer${level}`] || [])];
-      if (existingProvidersMeta) {
-        existingProvidersMeta[`providersPer${level}`]!.push(...providers);
-      } else {
-        providersMeta[`providersPer${level}`] = providers;
-        this.providersMetaForAdding.set(modRefId, providersMeta as ProvidersOnly<Provider[]>);
-      }
+  addProvidersToModule(modRefId: ModRefId, providersOnly: ProvidersOnly) {
+    const objWithProviders = this.mAdditionalProviders.get(modRefId) || new ProvidersOnly<Provider[]>();
+    if (!this.mAdditionalProviders.has(modRefId)) {
+      this.mAdditionalProviders.set(modRefId, objWithProviders);
+    }
+    (['App', 'Mod', 'Rou', 'Req'] satisfies Level[]).forEach((level) => {
+      objWithProviders[`providersPer${level}`]!.push(...(providersOnly[`providersPer${level}`] || []));
     });
   }
 
   overrideModuleMeta(providers: Providers | Provider[]) {
-    this.providersToOverride.push(...providers);
+    this.providersForOverride.push(...providers);
   }
 
-  protected override overrideMetaAfterStage1(baseMeta: BaseMeta) {
-    const providersMeta = this.providersMetaForAdding.get(baseMeta.modRefId);
-    if (providersMeta) {
+  protected override overrideMetaAfterStage1(modRefId: ModRefId, providersOnly: ProvidersOnly) {
+    const additionalProviders = this.mAdditionalProviders.get(modRefId);
+    if (additionalProviders) {
       (['App', 'Mod', 'Rou', 'Req'] satisfies Level[]).forEach((level) => {
-        const meta = baseMeta.initMeta.get(initRest)!;
-        meta[`providersPer${level}`].push(...providersMeta[`providersPer${level}`]!);
-        if (level == 'App' || level == 'Mod') {
-          baseMeta[`providersPer${level}`].push(...providersMeta[`providersPer${level}`]!);
-        }
+        const providersPerLevel = [...(providersOnly[`providersPer${level}`] || [])];
+        providersPerLevel.push(...(additionalProviders[`providersPer${level}`] || []));
+        providersOnly[`providersPer${level}`] = providersPerLevel;
       });
     }
-    TestOverrider.overrideAllProviders(this.perAppService, baseMeta, this.providersToOverride);
-    return baseMeta;
+    TestOverrider.overrideAllProviders(this.perAppService, providersOnly, this.providersForOverride);
+    return providersOnly;
   }
 
   protected override getProvidersForExtensions(
