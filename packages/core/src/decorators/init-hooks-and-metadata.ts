@@ -63,6 +63,19 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
   }
 
   /**
+   * If a certain module is not annotated with an init decorator, in some scenarios it is necessary to create
+   * an instance of a class that extends {@link BaseInitMeta}. In essence, this method returns the same type of object
+   * as {@link normalize | this.normalize()}, but without using {@link rawMeta | this.rawMeta} (which contains
+   * the raw metadata obtained from the init decorator).
+   *
+   * @param baseMeta Normalized metadata that is passed
+   * to the {@link featureModule} or {@link rootModule} decorator.
+   */
+  cloneMeta(baseMeta?: BaseMeta) {
+    return new BaseInitMeta(baseMeta);
+  }
+
+  /**
    * Normalizes the metadata from the current decorator. It is then inserted into {@link BaseMeta.initMeta | baseMeta.initMeta}.
    *
    * @param baseMeta Normalized metadata that is passed
