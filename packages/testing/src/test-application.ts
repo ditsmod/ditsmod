@@ -21,7 +21,7 @@ export class TestApplication extends Application {
 
   /**
    * @param appModule The root module of the application.
-   * @param appOptions Application options.
+   * @param appOptions REST application options.
    */
   static createTestApp(appModule: ModuleType, appOptions?: AppOptions) {
     const app = new this();
@@ -41,8 +41,8 @@ export class TestApplication extends Application {
   }
 
   /**
-   * Adds providers to module metadata at any level. Use this method only if the `overrideModuleMeta()`
-   * method is not suitable for you.
+   * Adds providers to module metadata at any level. Use this method only if the
+   * {@link overrideModuleMeta | this.overrideModuleMeta()} method is not suitable for you.
    */
   addProvidersToModule(modRefId: ModRefId, providersMeta: ProvidersOnly) {
     this.testAppInitializer.addProvidersToModule(modRefId, providersMeta);
@@ -58,7 +58,7 @@ export class TestApplication extends Application {
    * it is this object that must be passed to this method.
    */
   markModuleAsExternal(...modRefId: ModRefId[]) {
-    this.testModuleManager.markModuleAsExternal(modRefId);
+    this.testModuleManager.markModuleAsExternal(...modRefId);
     return this;
   }
 

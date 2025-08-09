@@ -3,7 +3,7 @@ import { getModule, ModRefId, ModuleManager, BaseMeta, AllInitHooks } from '@dit
 export class TestModuleManager extends ModuleManager {
   protected externalModules = new Set<ModRefId>();
 
-  markModuleAsExternal(aModRefId: ModRefId[]) {
+  markModuleAsExternal(...aModRefId: ModRefId[]) {
     aModRefId.forEach((modRefId) => {
       const mod = getModule(modRefId);
       this.externalModules.add(mod);
