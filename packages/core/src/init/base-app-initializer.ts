@@ -15,7 +15,7 @@ import { ExtensionsContext } from '#extension/extensions-context.js';
 import { ExtensionsManager, InternalExtensionsManager } from '#extension/extensions-manager.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { PerAppService } from '#services/per-app.service.js';
-import { ModRefId, ProvidersOnly } from '#types/mix.js';
+import { ModRefId } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ExtensionCounters } from '#extension/extension-types.js';
 import { getCollisions } from '#utils/get-collisions.js';
@@ -29,6 +29,7 @@ import { getProviderName } from '#utils/get-provider-name.js';
 import { getModule } from '#utils/get-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { ShallowImports } from './types.js';
+import { ProvidersOnly } from '#types/providers-metadata.js';
 
 export class BaseAppInitializer {
   protected perAppService = new PerAppService();

@@ -69,10 +69,6 @@ export interface AnyObj {
   [key: string | symbol]: any;
 }
 
-export class ProvidersOnly {
-  providersPerMod: Provider[] = [];
-}
-
 export interface ResolvedGuardPerMod {
   guard: ResolvedProvider;
   injectorPerRou: Injector;

@@ -1,13 +1,13 @@
 import { Provider } from '#di/types-and-models.js';
 import { Providers } from '#utils/providers.js';
 
-export class ProvidersOnly {
+export class ProvidersOnly<T = Providers | Provider[]> {
   /**
    * Providers per the application.
    */
-  providersPerApp: Providers | Provider[] = [];
+  providersPerApp = [] as T;
   /**
    * Providers per a module.
    */
-  providersPerMod: Providers | Provider[] = [];
+  providersPerMod = [] as T;
 }
