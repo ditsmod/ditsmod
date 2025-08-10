@@ -138,8 +138,8 @@ export interface InitMetaMap {
 }
 
 export interface InitParamsMap {
-  set<T extends AnyObj>(decorator: InitDecorator<any, BaseInitRawMeta<T>, any>, params: T): this;
-  get<T extends AnyObj>(decorator: InitDecorator<any, BaseInitRawMeta<T>, any>): T | undefined;
+  set<T extends AnyObj>(decorator: InitDecorator<any, T, any>, params: T): this;
+  get<T extends AnyObj>(decorator: InitDecorator<any, T, any>): T | undefined;
   forEach<T extends AnyObj>(callbackfn: (params: T, decorator: AnyFn, map: Map<AnyFn, T>) => void, thisArg?: any): void;
   /**
    * Returns an iterable of keys in the map
