@@ -8,6 +8,7 @@ import {
   AnyFn,
   ModuleMetadata,
   BaseInitRawMeta,
+  FeatureModuleParams,
 } from '@ditsmod/core';
 
 import { GuardItem } from '#interceptors/guard.js';
@@ -48,7 +49,7 @@ export interface RestInitRawMeta extends Omit<ModuleMetadata, 'imports'>, BaseIn
 
 export type RestModuleParams = RestModuleParams1 | RestModuleParams2;
 
-export interface BaseModuleParams {
+export interface BaseRestModuleParams extends FeatureModuleParams {
   providersPerRou?: Providers | Provider[];
   providersPerReq?: Providers | Provider[];
   /**
@@ -59,12 +60,12 @@ export interface BaseModuleParams {
   guards?: GuardItem[];
 }
 
-export interface RestModuleParams1 extends BaseModuleParams {
+export interface RestModuleParams1 extends BaseRestModuleParams {
   path?: string;
   absolutePath?: never;
 }
 
-export interface RestModuleParams2 extends BaseModuleParams {
+export interface RestModuleParams2 extends BaseRestModuleParams {
   absolutePath?: string;
   path?: never;
 }
