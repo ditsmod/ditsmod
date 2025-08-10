@@ -1,4 +1,4 @@
-import { featureModule, InitParamsMap, ModuleWithInitParams } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 import { I18nModule, I18nProviders, I18N_TRANSLATIONS } from '@ditsmod/i18n';
 import { initRest } from '@ditsmod/rest';
 
@@ -14,14 +14,4 @@ import { imported } from './second/locales/imported/index.js';
   exports: [I18N_TRANSLATIONS],
 })
 @featureModule()
-export class SecondModule {
-  static withPath(path?: string): ModuleWithInitParams<SecondModule> {
-    const initParams: InitParamsMap = new Map();
-    initParams.set(initRest, { path });
-
-    return {
-      module: this,
-      initParams,
-    };
-  }
-}
+export class SecondModule {}

@@ -1,4 +1,4 @@
-import { Providers, rootModule } from '@ditsmod/core';
+import { rootModule } from '@ditsmod/core';
 import { initRest } from '@ditsmod/rest';
 
 import { SecondModule } from './second.module.js';
@@ -7,8 +7,10 @@ import { ThirdModule } from './third.module.js';
 
 @initRest({
   appends: [ThirdModule],
-  imports: [FirstModule.withPath(''), SecondModule.withPath('')],
-  providersPerApp: new Providers().useLogConfig({ level: 'info' }),
+  imports: [
+    { path: '', module: FirstModule },
+    { path: '', module: SecondModule },
+  ],
 })
 @rootModule()
 export class AppModule {}
