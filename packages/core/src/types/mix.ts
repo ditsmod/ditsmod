@@ -69,8 +69,8 @@ export interface AnyObj {
   [key: string | symbol]: any;
 }
 
-export class ProvidersOnly <T = Providers | Provider[]> {
-  providersPerMod?: T;
+export class ProvidersOnly {
+  providersPerMod: Provider[] = [];
 }
 
 export interface ResolvedGuardPerMod {
