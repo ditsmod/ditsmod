@@ -73,6 +73,7 @@ export {
   ModuleWithParams,
   ModuleWithInitParams,
   BaseModuleWithParams,
+  FeatureModuleParams,
 } from '#types/module-metadata.js';
 export { RootModuleMetadata } from '#types/root-module-metadata.js';
 export { ImportObj } from '#types/metadata-per-mod.js';
