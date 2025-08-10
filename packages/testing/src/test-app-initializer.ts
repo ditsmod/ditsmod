@@ -37,7 +37,7 @@ export class TestAppInitializer extends AppInitializer {
     this.providersForOverride.push(...providers);
   }
 
-  protected override overrideMetaAfterStage1(modRefId: ModRefId, providersOnly: ProvidersOnly) {
+  protected override overrideMetaAfterStage1<T extends ProvidersOnly>(modRefId: ModRefId, providersOnly: T) {
     const additionalProviders = this.mAdditionalProviders.get(modRefId);
     if (additionalProviders) {
       (['App', 'Mod', 'Rou', 'Req'] satisfies Level[]).forEach((level) => {

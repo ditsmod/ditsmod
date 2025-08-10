@@ -8,7 +8,7 @@ describe('TestAppInitializer', () => {
   class MockTestAppInitializer extends TestAppInitializer {
     override mAdditionalProviders = new Map<ModRefId, ProvidersOnly<Provider[]>>();
 
-    override overrideMetaAfterStage1(modRefId: ModRefId, providersOnly: ProvidersOnly) {
+    override overrideMetaAfterStage1<T extends ProvidersOnly>(modRefId: ModRefId, providersOnly: T) {
       return super.overrideMetaAfterStage1(modRefId, providersOnly);
     }
   }
