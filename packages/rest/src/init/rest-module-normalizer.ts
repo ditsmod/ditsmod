@@ -37,8 +37,7 @@ import { Level } from '#types/types.js';
  */
 export class RestModuleNormalizer {
   normalize(baseMeta: BaseMeta, rawMeta: RestInitRawMeta) {
-    const meta = new RestInitMeta();
-    copyBaseInitMeta(baseMeta, meta);
+    const meta = new RestInitMeta(baseMeta);
     this.mergeModuleWithParams(baseMeta.modRefId, rawMeta, meta);
     this.appendModules(rawMeta, meta);
     this.normalizeDeclaredAndResolvedProviders(baseMeta, meta, rawMeta);
@@ -148,7 +147,7 @@ export class RestModuleNormalizer {
     if (!rawMeta.exports) {
       return;
     }
-    const providers = meta.providersPerRou.concat(meta.providersPerReq);
+    const providers = meta.providersPerMod.concat(meta.providersPerRou, meta.providersPerReq);
     rawMeta.exports.forEach((exp, i) => {
       exp = this.resolveForwardRef([exp])[0];
       this.throwIfUndefined(exp, i);
@@ -161,7 +160,7 @@ export class RestModuleNormalizer {
         }
       } else if (isProvider(exp) || getTokens(providers).includes(exp)) {
         // Provider or token of provider
-        this.exportProviders(exp, rawMeta, meta);
+        this.exportProviders(exp, meta);
       } else {
         this.throwUnidentifiedToken(exp);
       }
@@ -178,7 +177,7 @@ export class RestModuleNormalizer {
     const tokenName = token.name || token;
     const msg =
       `Exporting "${tokenName}" failed: if "${tokenName}" is a token of a provider, this provider ` +
-      'must be included in providersPerRou or providersPerReq.';
+      'must be included in providersPerMod, providersPerRou or providersPerReq.';
     throw new TypeError(msg);
   }
 
@@ -190,11 +189,10 @@ export class RestModuleNormalizer {
     }
   }
 
-  protected exportProviders(token: any, rawMeta: RestInitRawMeta, meta: RestInitMeta) {
+  protected exportProviders(token: any, meta: RestInitMeta) {
     let found = false;
     (['Mod', 'Rou', 'Req'] satisfies Level[]).forEach((level) => {
-      const unfilteredProviders = [...(rawMeta[`providersPer${level}`] || [])];
-      let providers = unfilteredProviders.filter((p) => getToken(p) === token);
+      let providers = meta[`providersPer${level}`].filter((p) => getToken(p) === token);
       providers = this.resolveForwardRef(providers);
       if (providers.length) {
         found = true;
