@@ -15,7 +15,7 @@ import { ExtensionsContext } from '#extension/extensions-context.js';
 import { ExtensionsManager, InternalExtensionsManager } from '#extension/extensions-manager.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { PerAppService } from '#services/per-app.service.js';
-import { ModRefId } from '#types/mix.js';
+import { ModRefId, ProvidersOnly } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ExtensionCounters } from '#extension/extension-types.js';
 import { getCollisions } from '#utils/get-collisions.js';
@@ -285,9 +285,10 @@ export class BaseAppInitializer {
       }
     }
 
-    for (const [modRefId, metadataPerMod2] of mMetadataPerMod2) {
+    for (const [modRefId, { baseMeta }] of mMetadataPerMod2) {
       try {
-        const baseMeta = this.overrideMetaAfterStage1(metadataPerMod2.baseMeta);
+        this.overrideMetaAfterStage1(baseMeta.modRefId, baseMeta);
+        baseMeta.initMeta.forEach((meta) => this.overrideMetaAfterStage1(baseMeta.modRefId, meta));
         const injectorPerMod = await this.initModuleAndGetInjectorPerMod(baseMeta);
         this.moduleManager.setInjectorPerMod(modRefId, injectorPerMod);
       } catch (err: any) {
@@ -379,8 +380,8 @@ export class BaseAppInitializer {
    *
    * See `TestAppInitializer` in `@ditsmod/testing` for more info.
    */
-  protected overrideMetaAfterStage1(baseMeta: BaseMeta) {
-    return baseMeta;
+  protected overrideMetaAfterStage1(modRefId: ModRefId, providersOnly: ProvidersOnly) {
+    return providersOnly;
   }
 
   protected decreaseExtensionsCounters(extensionCounters: ExtensionCounters, providers: Provider[]) {
