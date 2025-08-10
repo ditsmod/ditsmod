@@ -10,8 +10,7 @@ import { OasConfigFiles, OasExtensionConfig } from './types/oas-extension-option
 import { OpenapiLogMediator } from '#services/openapi-log-mediator.js';
 import { OpenapiErrorMediator } from '#services/openapi-error-mediator.js';
 
-@initRest({ controllers: [OpenapiController] })
-@featureModule({
+@initRest({
   imports: [RestModule],
   providersPerApp: [OasConfigFiles],
   providersPerMod: [OpenapiLogMediator, OpenapiErrorMediator],
@@ -24,8 +23,10 @@ import { OpenapiErrorMediator } from '#services/openapi-error-mediator.js';
       export: true,
     },
   ],
+  controllers: [OpenapiController],
   exports: [RestModule],
 })
+@featureModule()
 export class OpenapiModule {
   /**
    * @param oasObject This object used for OpenAPI per application.
