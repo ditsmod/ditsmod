@@ -23,10 +23,6 @@ export const initRest: InitDecorator<RestInitRawMeta, RestModuleParams, RestInit
 export class RestInitHooksAndRawMeta extends InitHooksAndRawMeta<RestInitRawMeta> {
   override hostModule = RestModule;
 
-  override cloneMeta(baseMeta: BaseMeta) {
-    return new RestInitMeta(baseMeta);
-  }
-
   override normalize(baseMeta: BaseMeta): RestInitMeta {
     return new RestModuleNormalizer().normalize(baseMeta, this.rawMeta);
   }
