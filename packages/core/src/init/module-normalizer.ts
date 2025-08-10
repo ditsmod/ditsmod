@@ -17,11 +17,11 @@ import {
   isParamsWithMwp,
 } from '#utils/type-guards.js';
 import { ExtensionConfigBase, getExtensionProvider } from '#extension/get-extension-provider.js';
-import { AnyFn, ModRefId, ModuleType } from '#types/mix.js';
+import { AnyFn, ModRefId } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { RawMeta } from '#decorators/feature-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
-import { BaseInitMeta, BaseMeta } from '#types/base-meta.js';
+import { BaseMeta } from '#types/base-meta.js';
 import { resolveForwardRef } from '#di/forward-ref.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
 import { Class } from '#di/types-and-models.js';
@@ -293,10 +293,16 @@ export class ModuleNormalizer {
     if (initHooks.rawMeta.imports) {
       this.resolveForwardRef(initHooks.rawMeta.imports).forEach((imp) => {
         if (isModuleWithParams(imp)) {
-          const params = { ...imp } as { module?: ModuleType };
+          const params = { ...imp } as { module?: any; initParams?: any };
           delete params.module;
+          delete params.initParams;
           imp.initParams ??= new Map();
-          imp.initParams.set(decorator, params);
+          if (imp.initParams.has(decorator)) {
+            const existingParams = imp.initParams?.get(decorator)!;
+            Object.assign(existingParams, params);
+          } else {
+            imp.initParams.set(decorator, params);
+          }
           if (!baseMeta.importsWithParams.includes(imp)) {
             baseMeta.importsWithParams.push(imp);
           }
@@ -304,7 +310,12 @@ export class ModuleNormalizer {
           const params = { ...imp } as { mwp?: ModuleWithParams };
           delete params.mwp;
           imp.mwp.initParams ??= new Map();
-          imp.mwp.initParams.set(decorator, params);
+          if (imp.mwp.initParams.has(decorator)) {
+            const existingParams = imp.mwp.initParams?.get(decorator)!;
+            Object.assign(existingParams, params);
+          } else {
+            imp.mwp.initParams.set(decorator, params);
+          }
           if (!baseMeta.importsWithParams.includes(imp.mwp)) {
             baseMeta.importsWithParams.push(imp.mwp);
           }
