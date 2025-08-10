@@ -7,8 +7,11 @@ import { SecondModule } from './second/second.module.js';
 import { ThirdModule } from './third/third.module.js';
 
 @initRest({
-  providersPerApp: new Providers().useLogConfig({ level: 'info' }),
-  appends: [FirstModule, SecondModule, ThirdModule],
+  imports: [
+    { path: '', module: FirstModule },
+    { path: '', module: SecondModule },
+    { path: '', module: ThirdModule },
+  ],
   controllers: [AppController],
 })
 @rootModule()
