@@ -6,7 +6,7 @@ import { forwardRef, injectable, makeClassDecorator, MultiProvider } from '#di';
 import { Extension } from '#extension/extension-types.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { AnyObj, ModRefId } from '#types/mix.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
+import { FeatureModuleParams, ModuleWithInitParams, ModuleWithParams } from '#types/module-metadata.js';
 import { BaseMeta } from '#types/base-meta.js';
 import { InitDecorator } from '#decorators/init-hooks-and-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
@@ -282,13 +282,75 @@ describe('ModuleNormalizer', () => {
       return new InitHooksAndRawMeta1(metadata);
     }
 
-    interface RawMeta extends BaseInitRawMeta {
+    interface InitParams extends FeatureModuleParams {
+      path?: string;
+      num?: number;
+    }
+
+    interface RawMeta extends BaseInitRawMeta<InitParams> {
       one?: number;
       two?: number;
       appends?: ({ module: ModRefId } & AnyObj)[];
     }
 
-    const initSome: InitDecorator<RawMeta, any, InitMeta> = makeClassDecorator(getInitHooksAndRawMeta);
+    const initSome: InitDecorator<RawMeta, InitParams, InitMeta> = makeClassDecorator(getInitHooksAndRawMeta);
+
+    it('during import MWP, merge existing init params with new init params', () => {
+      class Service1 {}
+      class Service2 {}
+      class Service3 {}
+
+      @featureModule()
+      class Module1 {}
+
+      @featureModule()
+      class Module2 {}
+
+      const mwp: ModuleWithInitParams & InitParams = {
+        module: Module1,
+        providersPerMod: [Service1],
+        providersPerApp: [Service3],
+        extensionsMeta: { one: 1 },
+        num: 4,
+        initParams: new Map(),
+      };
+      mwp.initParams.set(initSome, { path: 'path-1' });
+
+      const mwp1: ModuleWithInitParams & InitParams = {
+        module: Module2,
+        providersPerApp: [Service2],
+        num: 12,
+        extensionsMeta: { four: 4 },
+        initParams: new Map(),
+      };
+      mwp1.initParams.set(initSome, {
+        path: 'path-2',
+        providersPerApp: [Service1],
+        num: 11,
+        extensionsMeta: { three: 3 },
+      });
+
+      @initSome({
+        imports: [{ mwp: mwp, providersPerMod: [Service2], extensionsMeta: { two: 2 }, num: 5 }, mwp1],
+      })
+      @featureModule()
+      class AppModule {}
+
+      mock.normalize(AppModule);
+      expect(mwp.initParams?.get(initSome)).toEqual({
+        path: 'path-1',
+        providersPerMod: [Service1, Service2],
+        extensionsMeta: { one: 1, two: 2 },
+        num: 5,
+        providersPerApp: [Service3],
+      });
+      expect(mwp1.initParams?.get(initSome)).toEqual({
+        providersPerApp: [Service1, Service2],
+        num: 12,
+        extensionsMeta: { three: 3, four: 4 },
+        path: 'path-2',
+      });
+    });
 
     it('initHooks.normalize() correctly works', () => {
       const rawMeta: RawMeta = { one: 1, two: 2 };

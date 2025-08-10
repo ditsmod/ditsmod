@@ -17,7 +17,7 @@ import {
   isParamsWithMwp,
 } from '#utils/type-guards.js';
 import { ExtensionConfigBase, getExtensionProvider } from '#extension/get-extension-provider.js';
-import { AnyFn, ModRefId } from '#types/mix.js';
+import { AnyFn, AnyObj, ModRefId } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { RawMeta } from '#decorators/feature-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
@@ -33,6 +33,7 @@ import { ModuleWithParams } from '#types/module-metadata.js';
 import { mergeArrays } from '#utils/merge-arrays.js';
 import { AllInitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
+import { objectKeys } from '#utils/object-keys.js';
 
 /**
  * Normalizes and validates module metadata.
@@ -293,32 +294,13 @@ export class ModuleNormalizer {
     if (initHooks.rawMeta.imports) {
       this.resolveForwardRef(initHooks.rawMeta.imports).forEach((imp) => {
         if (isModuleWithParams(imp)) {
-          const params = { ...imp } as { module?: any; initParams?: any };
-          delete params.module;
-          delete params.initParams;
-          imp.initParams ??= new Map();
-          if (imp.initParams.has(decorator)) {
-            const existingParams = imp.initParams?.get(decorator)!;
-            Object.assign(existingParams, params);
-          } else {
-            imp.initParams.set(decorator, params);
-          }
-          if (!baseMeta.importsWithParams.includes(imp)) {
-            baseMeta.importsWithParams.push(imp);
-          }
+          const params = { ...imp };
+          this.mergeInitParams(baseMeta, decorator, params, imp);
         } else if (isParamsWithMwp(imp)) {
           const params = { ...imp } as { mwp?: ModuleWithParams };
+          this.mergeObjects(params, imp.mwp);
           delete params.mwp;
-          imp.mwp.initParams ??= new Map();
-          if (imp.mwp.initParams.has(decorator)) {
-            const existingParams = imp.mwp.initParams?.get(decorator)!;
-            Object.assign(existingParams, params);
-          } else {
-            imp.mwp.initParams.set(decorator, params);
-          }
-          if (!baseMeta.importsWithParams.includes(imp.mwp)) {
-            baseMeta.importsWithParams.push(imp.mwp);
-          }
+          this.mergeInitParams(baseMeta, decorator, params, imp.mwp);
         } else {
           if (!baseMeta.importsModules.includes(imp)) {
             baseMeta.importsModules.push(imp);
@@ -342,6 +324,40 @@ export class ModuleNormalizer {
           }
         }
       });
+    }
+  }
+
+  protected mergeObjects(dstn: AnyObj, src: AnyObj) {
+    objectKeys(src).forEach((prop) => {
+      if (prop == 'initParams' || prop == 'module') {
+        // ignore
+      } else if (Array.isArray(src[prop])) {
+        if (src[prop].length) {
+          dstn[prop] = [...src[prop], ...(dstn[prop] || [])];
+        }
+      } else if (src[prop] !== null && typeof src[prop] == 'object') {
+        dstn[prop] ??= {};
+        dstn[prop] = Object.assign(src[prop], dstn[prop]);
+      } else {
+        dstn[prop] ??= src[prop];
+      }
+    });
+
+    return dstn;
+  }
+
+  protected mergeInitParams(baseMeta: BaseMeta, decorator: AnyFn, params: AnyObj, mwp: ModuleWithParams) {
+    delete params.module;
+    delete params.initParams;
+    mwp.initParams ??= new Map();
+    if (mwp.initParams.has(decorator)) {
+      const existingParams = mwp.initParams?.get(decorator)!;
+      mwp.initParams.set(decorator, this.mergeObjects(params, existingParams));
+    } else {
+      mwp.initParams.set(decorator, params);
+    }
+    if (!baseMeta.importsWithParams.includes(mwp)) {
+      baseMeta.importsWithParams.push(mwp);
     }
   }
 
