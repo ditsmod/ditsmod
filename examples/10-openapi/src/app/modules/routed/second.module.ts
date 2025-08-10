@@ -9,7 +9,7 @@ import { SecondController } from './second/second.controller.js';
 const jwtModuleWithParams = JwtModule.withParams({ secret: process.env.JWT_SECRET, signOptions: { expiresIn: '1y' } });
 
 @initRest({
-  imports: [openapiModuleWithParams, jwtModuleWithParams],
+  imports: [{ ...openapiModuleWithParams }, jwtModuleWithParams],
   controllers: [SecondController],
   providersPerReq: [BearerGuard],
 })

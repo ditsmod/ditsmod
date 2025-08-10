@@ -5,7 +5,7 @@ import { openapiModuleWithParams } from '#service/openapi/openapi.module.js';
 import { FirstController, CtxController } from './first/first.controller.js';
 
 @initRest({
-  imports: [openapiModuleWithParams],
+  imports: [{ ...openapiModuleWithParams }],
   controllers: [FirstController, CtxController],
 })
 @featureModule()
