@@ -22,10 +22,9 @@ import {
   Provider,
   isClassProvider,
   isTokenProvider,
-  copyBaseInitMeta,
 } from '@ditsmod/core';
 
-import { AppendsWithParams, RestInitRawMeta } from '#init/rest-init-raw-meta.js';
+import { AppendsWithParams, RestInitRawMeta, RestModuleParams } from '#init/rest-init-raw-meta.js';
 import { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
@@ -62,9 +61,18 @@ export class RestModuleNormalizer {
     const params = modRefId.initParams?.get(initRest);
 
     if (params) {
-      (['exports', 'providersPerMod', 'providersPerRou', 'providersPerReq'] as const).forEach((prop) => {
-        if (params[prop] instanceof Providers || params[prop]?.length) {
+      (
+        [
+          'exports',
+          'providersPerApp',
+          'providersPerMod',
+          'providersPerRou',
+          'providersPerReq',
+        ] satisfies (keyof RestModuleParams)[]
+      ).forEach((prop) => {
+        if (params[prop] instanceof Providers || (Array.isArray(params[prop]) && params[prop].length)) {
           rawMeta[prop] = mergeArrays(rawMeta[prop], params[prop]);
+          params[prop] = rawMeta[prop].slice();
         }
       });
 
