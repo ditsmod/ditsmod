@@ -51,8 +51,7 @@ export class I18nExtension implements Extension<void> {
 
     for (const metadataPerMod3 of stage1ExtensionMeta.groupData) {
       const { aControllerMetadata } = metadataPerMod3;
-      const { providersPerMod } = metadataPerMod3.baseMeta;
-      const { providersPerRou, providersPerReq } = metadataPerMod3.meta;
+      const { providersPerMod, providersPerRou, providersPerReq } = metadataPerMod3.meta;
       if (!aControllerMetadata.length) {
         continue;
       }

@@ -11,8 +11,6 @@ import {
   ExtensionClass,
 } from '#extension/extension-types.js';
 import { ModRefId, OptionalProps } from '#types/mix.js';
-import { getProviderName } from '#utils/get-provider-name.js';
-import { isInjectionToken } from '#di';
 import { Counter } from '#extension/counter.js';
 import { ExtensionsContext } from '#extension/extensions-context.js';
 import { createDeferred } from '#utils/create-deferred.js';
