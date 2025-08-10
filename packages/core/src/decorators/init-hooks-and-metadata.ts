@@ -127,7 +127,10 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
 export interface InitMetaMap {
   set<T extends BaseInitMeta>(decorator: InitDecorator<any, any, T>, params: T): this;
   get<T extends BaseInitMeta>(decorator: InitDecorator<any, any, T>): T | undefined;
-  forEach<T extends BaseInitMeta>(callbackfn: (params: T, decorator: AnyFn, map: Map<AnyFn, T>) => void, thisArg?: any): void;
+  forEach<T extends BaseInitMeta>(
+    callbackfn: (params: T, decorator: AnyFn, map: Map<AnyFn, T>) => void,
+    thisArg?: any,
+  ): void;
   /**
    * Returns an iterable of keys in the map
    */
@@ -147,6 +150,10 @@ export interface InitParamsMap {
   keys(): MapIterator<AnyFn>;
   values<T extends AnyObj>(): MapIterator<T>;
   readonly size: number;
+  /**
+   * @returns boolean indicating whether an element with the specified key exists or not.
+   */
+  has(key: InitDecorator<any, any, any>): boolean;
 }
 
 /**
