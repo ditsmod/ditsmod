@@ -17,7 +17,7 @@ import {
   isParamsWithMwp,
 } from '#utils/type-guards.js';
 import { ExtensionConfigBase, getExtensionProvider } from '#extension/get-extension-provider.js';
-import { AnyFn, AnyObj, ModRefId } from '#types/mix.js';
+import { AnyFn, AnyObj, ModRefId, Reduce } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { RawMeta } from '#decorators/feature-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
@@ -29,9 +29,9 @@ import { Providers } from '#utils/providers.js';
 import { Extension } from '#extension/extension-types.js';
 import { NormalizedProvider, normalizeProviders } from '#utils/ng-utils.js';
 import { isExtensionConfig } from '#extension/type-guards.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
+import { ModuleWithParams, ModuleMetadata } from '#types/module-metadata.js';
 import { mergeArrays } from '#utils/merge-arrays.js';
-import { AllInitHooks } from '#decorators/init-hooks-and-metadata.js';
+import { AllInitHooks, BaseInitRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { objectKeys } from '#utils/object-keys.js';
 
@@ -177,7 +177,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected normalizeExtensions(rawMeta: RawMeta, baseMeta: BaseMeta) {
+  protected normalizeExtensions(rawMeta: Reduce<ModuleMetadata, 'extensions' | 'extensionsMeta'>, baseMeta: BaseMeta) {
     if (rawMeta.extensionsMeta) {
       baseMeta.extensionsMeta = { ...rawMeta.extensionsMeta };
     }
@@ -290,43 +290,6 @@ export class ModuleNormalizer {
     });
   }
 
-  protected setInitParams(baseMeta: BaseMeta, decorator: AnyFn, initHooks: InitHooksAndRawMeta) {
-    if (initHooks.rawMeta.imports) {
-      this.resolveForwardRef(initHooks.rawMeta.imports).forEach((imp) => {
-        if (isModuleWithParams(imp)) {
-          const params = { ...imp };
-          this.mergeInitParams(baseMeta, decorator, params, imp);
-        } else if (isParamsWithMwp(imp)) {
-          const params = { ...imp } as { mwp?: ModuleWithParams };
-          this.mergeObjects(params, imp.mwp);
-          delete params.mwp;
-          this.mergeInitParams(baseMeta, decorator, params, imp.mwp);
-        } else {
-          if (!baseMeta.importsModules.includes(imp)) {
-            baseMeta.importsModules.push(imp);
-          }
-        }
-      });
-    }
-    if (initHooks.rawMeta.exports) {
-      this.resolveForwardRef(initHooks.rawMeta.exports).forEach((exp) => {
-        if (isModuleWithParams(exp)) {
-          if (!baseMeta.exportsWithParams.includes(exp)) {
-            baseMeta.exportsWithParams.push(exp);
-          }
-        } else if (isParamsWithMwp(exp)) {
-          if (!baseMeta.exportsWithParams.includes(exp.mwp)) {
-            baseMeta.exportsWithParams.push(exp.mwp);
-          }
-        } else if (reflector.getDecorators(exp, isFeatureModule)) {
-          if (!baseMeta.exportsModules.includes(exp)) {
-            baseMeta.exportsModules.push(exp);
-          }
-        }
-      });
-    }
-  }
-
   protected mergeObjects(dstn: AnyObj, src: AnyObj) {
     objectKeys(src).forEach((prop) => {
       if (prop == 'initParams' || prop == 'module') {
@@ -434,9 +397,58 @@ export class ModuleNormalizer {
         baseMeta.importsModules.push(initHooks.hostModule);
       }
 
-      this.setInitParams(baseMeta, decorator, initHooks);
+      this.fetchInitRawMeta(baseMeta, decorator, initHooks.rawMeta);
       this.callInitHook(baseMeta, decorator, initHooks);
     });
+  }
+
+  protected fetchInitRawMeta(baseMeta: BaseMeta, decorator: AnyFn, initRawMeta: BaseInitRawMeta) {
+    this.fetchImports(baseMeta, decorator, initRawMeta);
+    this.fetchExports(baseMeta, initRawMeta);
+    this.normalizeExtensions(initRawMeta, baseMeta);
+    baseMeta.providersPerApp.push(...(initRawMeta.providersPerApp || []));
+    baseMeta.providersPerMod.push(...(initRawMeta.providersPerMod || []));
+    baseMeta.resolvedCollisionsPerMod.push(...(initRawMeta.resolvedCollisionsPerMod || []));
+  }
+
+  protected fetchImports(baseMeta: BaseMeta, decorator: AnyFn, initRawMeta: BaseInitRawMeta) {
+    if (initRawMeta.imports) {
+      this.resolveForwardRef(initRawMeta.imports).forEach((imp) => {
+        if (isModuleWithParams(imp)) {
+          const params = { ...imp };
+          this.mergeInitParams(baseMeta, decorator, params, imp);
+        } else if (isParamsWithMwp(imp)) {
+          const params = { ...imp } as { mwp?: ModuleWithParams };
+          this.mergeObjects(params, imp.mwp);
+          delete params.mwp;
+          this.mergeInitParams(baseMeta, decorator, params, imp.mwp);
+        } else {
+          if (!baseMeta.importsModules.includes(imp)) {
+            baseMeta.importsModules.push(imp);
+          }
+        }
+      });
+    }
+  }
+
+  protected fetchExports(baseMeta: BaseMeta, initRawMeta: BaseInitRawMeta) {
+    if (initRawMeta.exports) {
+      this.resolveForwardRef(initRawMeta.exports).forEach((exp) => {
+        if (isModuleWithParams(exp)) {
+          if (!baseMeta.exportsWithParams.includes(exp)) {
+            baseMeta.exportsWithParams.push(exp);
+          }
+        } else if (isParamsWithMwp(exp)) {
+          if (!baseMeta.exportsWithParams.includes(exp.mwp)) {
+            baseMeta.exportsWithParams.push(exp.mwp);
+          }
+        } else if (reflector.getDecorators(exp, isFeatureModule)) {
+          if (!baseMeta.exportsModules.includes(exp)) {
+            baseMeta.exportsModules.push(exp);
+          }
+        }
+      });
+    }
   }
 
   /**
