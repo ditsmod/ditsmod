@@ -35,12 +35,12 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * ${extensionName} attempted to call "extensionsManager.stage1(${ExtCls})", but ${ExtCls}
-   * not declared in "afterExtensions" array in this module.
+   * {@link extensionName1} attempted to call "extensionsManager.stage1({@link extensionName2})",
+   * but {@link extensionName2} not declared in "afterExtensions" array in this module.
    */
-  throwEarlyExtensionCalling(ExtCls: string, extensionName: string) {
+  throwEarlyExtensionCalling(extensionName1: string, extensionName2: string) {
     const msg =
-      `${extensionName} attempted to call "extensionsManager.stage1(${ExtCls})", but ${ExtCls} ` +
+      `${extensionName1} attempted to call "extensionsManager.stage1(${extensionName2})", but ${extensionName2} ` +
       'not declared in "afterExtensions" array in this module.';
     throw new Error(msg);
   }
