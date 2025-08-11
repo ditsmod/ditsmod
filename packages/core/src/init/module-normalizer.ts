@@ -77,13 +77,13 @@ export class ModuleNormalizer {
     this.checkAndMarkExternalModule(rawMeta, baseMeta);
     this.normalizeImports(rawMeta, baseMeta);
     this.normalizeExports(rawMeta, baseMeta);
+    this.normalizeExtensions(rawMeta, baseMeta);
     this.checkReexportModules(baseMeta);
     this.normalizeDeclaredAndResolvedProviders(rawMeta, baseMeta);
-    this.normalizeExtensions(rawMeta, baseMeta);
     this.addInitHooksForHostDecorator(baseMeta, allInitHooks);
     this.callInitHooksFromCurrentModule(baseMeta);
     this.addInitHooksForImportedMwp(baseMeta, allInitHooks);
-    this.quickCheckMetadata(baseMeta);
+    this.quickCheckMetadata(rawMeta, baseMeta);
     return baseMeta;
   }
 
@@ -135,11 +135,14 @@ export class ModuleNormalizer {
     });
   }
 
-  protected normalizeDeclaredAndResolvedProviders(rawMeta: RawMeta, baseMeta: BaseMeta) {
+  protected normalizeDeclaredAndResolvedProviders(
+    rawMeta: BaseInitRawMeta & Reduce<RawMeta, 'resolvedCollisionsPerApp'>,
+    baseMeta: BaseMeta,
+  ) {
     (['App', 'Mod'] as const).forEach((level) => {
       if (rawMeta[`providersPer${level}`]) {
-        baseMeta[`providersPer${level}`].push(...rawMeta[`providersPer${level}`]!);
-        baseMeta[`providersPer${level}`] = this.resolveForwardRef(baseMeta[`providersPer${level}`]);
+        const providersPerLevel = this.resolveForwardRef([...rawMeta[`providersPer${level}`]!]);
+        baseMeta[`providersPer${level}`].push(...providersPerLevel);
       }
 
       if (rawMeta[`resolvedCollisionsPer${level}`]) {
@@ -154,10 +157,12 @@ export class ModuleNormalizer {
         });
       }
     });
-    this.throwIfResolvingNormalizedProvider(baseMeta.name, rawMeta);
   }
 
-  protected throwIfResolvingNormalizedProvider(moduleName: string, rawMeta: RawMeta) {
+  protected throwIfResolvingNormalizedProvider(
+    moduleName: string,
+    rawMeta: BaseInitRawMeta & Reduce<RawMeta, 'resolvedCollisionsPerApp'>,
+  ) {
     const resolvedCollisionsPerLevel: [any, ModRefId][] = [];
     if (Array.isArray(rawMeta.resolvedCollisionsPerApp)) {
       resolvedCollisionsPerLevel.push(...rawMeta.resolvedCollisionsPerApp);
@@ -406,9 +411,7 @@ export class ModuleNormalizer {
     this.fetchImports(baseMeta, decorator, initRawMeta);
     this.fetchExports(baseMeta, initRawMeta);
     this.normalizeExtensions(initRawMeta, baseMeta);
-    baseMeta.providersPerApp.push(...(initRawMeta.providersPerApp || []));
-    baseMeta.providersPerMod.push(...(initRawMeta.providersPerMod || []));
-    baseMeta.resolvedCollisionsPerMod.push(...(initRawMeta.resolvedCollisionsPerMod || []));
+    this.normalizeDeclaredAndResolvedProviders(initRawMeta, baseMeta);
   }
 
   protected fetchImports(baseMeta: BaseMeta, decorator: AnyFn, initRawMeta: BaseInitRawMeta) {
@@ -495,7 +498,8 @@ export class AppModule {}
     }
   }
 
-  protected quickCheckMetadata(baseMeta: BaseMeta) {
+  protected quickCheckMetadata(rawMeta: RawMeta, baseMeta: BaseMeta) {
+    this.throwIfResolvingNormalizedProvider(baseMeta.name, rawMeta);
     if (
       isFeatureModule(baseMeta) &&
       !baseMeta.mInitHooksAndRawMeta.size &&

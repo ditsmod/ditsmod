@@ -22,9 +22,9 @@ export function copyBaseInitMeta(src: BaseInitMeta, dstn: BaseInitMeta) {
     ] satisfies (keyof BaseInitMeta)[]
   ).forEach(<T extends keyof BaseInitMeta>(prop: T) => {
     if (Array.isArray(src[prop])) {
-      dstn[prop].push(...src[prop]);
+      dstn[prop] = src[prop].slice();
     } else {
-      Object.assign(dstn[prop], src[prop]);
+      dstn[prop] = { ...src[prop] };
     }
   });
 }

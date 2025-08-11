@@ -39,7 +39,7 @@ export class RestModuleNormalizer {
     const meta = new RestInitMeta(baseMeta);
     this.mergeModuleWithParams(baseMeta.modRefId, rawMeta, meta);
     this.appendModules(rawMeta, meta);
-    this.normalizeDeclaredAndResolvedProviders(baseMeta, meta, rawMeta);
+    this.normalizeDeclaredAndResolvedProviders(meta, rawMeta);
     this.normalizeExports(baseMeta, rawMeta, meta);
     this.checkMetadata(baseMeta, meta);
     return meta;
@@ -105,20 +105,17 @@ export class RestModuleNormalizer {
     });
   }
 
-  protected normalizeDeclaredAndResolvedProviders(baseMeta: BaseMeta, meta: RestInitMeta, rawMeta: RestInitRawMeta) {
+  protected normalizeDeclaredAndResolvedProviders(meta: RestInitMeta, rawMeta: RestInitRawMeta) {
     if (rawMeta.controllers) {
       meta.controllers.push(...rawMeta.controllers);
     }
-    (['App', 'Mod', 'Rou', 'Req'] satisfies (Level | 'App')[]).forEach((level) => {
+    (['Rou', 'Req'] satisfies Level[]).forEach((level) => {
       if (rawMeta[`providersPer${level}`]) {
         const providersPerLevel = this.resolveForwardRef([...rawMeta[`providersPer${level}`]!]);
         meta[`providersPer${level}`].push(...providersPerLevel);
-        if (level == 'App' || level == 'Mod') {
-          baseMeta[`providersPer${level}`].push(...providersPerLevel);
-        }
       }
 
-      if (level != 'App' && rawMeta[`resolvedCollisionsPer${level}`]) {
+      if (rawMeta[`resolvedCollisionsPer${level}`]) {
         meta[`resolvedCollisionsPer${level}`].push(...rawMeta[`resolvedCollisionsPer${level}`]!);
         meta[`resolvedCollisionsPer${level}`] = meta[`resolvedCollisionsPer${level}`].map(([token, module]) => {
           token = resolveForwardRef(token);
@@ -199,7 +196,7 @@ export class RestModuleNormalizer {
 
   protected exportProviders(token: any, meta: RestInitMeta) {
     let found = false;
-    (['Mod', 'Rou', 'Req'] satisfies Level[]).forEach((level) => {
+    (['Rou', 'Req'] satisfies Level[]).forEach((level) => {
       let providers = meta[`providersPer${level}`].filter((p) => getToken(p) === token);
       providers = this.resolveForwardRef(providers);
       if (providers.length) {
