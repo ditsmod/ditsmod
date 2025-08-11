@@ -47,69 +47,69 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
 
     const aControllerMetadata: ControllerMetadata[] = [];
     if (applyControllers)
-    for (const Controller of meta.controllers as Class<Record<string | symbol, any>>[]) {
-      const classMeta = reflector.getMetadata(Controller)!;
-      for (const methodName of classMeta) {
-        for (const decoratorAndValue of classMeta[methodName].decorators) {
-          if (!isOasRoute(decoratorAndValue)) {
-            continue;
+      for (const Controller of meta.controllers as Class<Record<string | symbol, any>>[]) {
+        const classMeta = reflector.getMetadata(Controller)!;
+        for (const methodName of classMeta) {
+          for (const decoratorAndValue of classMeta[methodName].decorators) {
+            if (!isOasRoute(decoratorAndValue)) {
+              continue;
+            }
+            const oasRoute = decoratorAndValue.value;
+            const providersPerRou: Provider[] = [];
+            const providersPerReq: Provider[] = [];
+            const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
+            const scope = ctrlDecorator?.value.scope;
+            if (scope == 'ctx') {
+              baseMeta.providersPerMod.unshift(Controller);
+            }
+            const guards = [];
+            const { httpMethod, path: controllerPath, operationObject, interceptors } = oasRoute;
+            const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
+            const fullPath = this.getPath(prefix, controllerPath);
+            guards.push(...this.normalizeGuards(httpMethod, fullPath, decoratorAndValue.value.guards));
+            const controllerFactory: FactoryProvider = { useFactory: [Controller, Controller.prototype[methodName]] };
+            providersPerReq.push(
+              ...((ctrlDecorator?.value as ControllerRawMetadata1).providersPerReq || []),
+              controllerFactory,
+            );
+            const clonedOperationObject = { ...(operationObject || {}) } as XOperationObject;
+            const { parameters } = clonedOperationObject;
+            const httpMethods = Array.isArray(httpMethod) ? httpMethod : [httpMethod];
+
+            const { paramsRefs, paramsInPath, paramsNonPath } = this.mergeParams(
+              httpMethods,
+              fullPath,
+              Controller.name,
+              prefixParams,
+              parameters,
+            );
+            clonedOperationObject.parameters = [...paramsRefs, ...paramsInPath, ...paramsNonPath];
+            clonedOperationObject.tags = [...(clonedOperationObject.tags || []), ...(prefixTags || [])];
+            // For now, here ReferenceObjects is ignored, if it is intended for a path.
+            const oasPath = this.transformToOasPath(baseMeta.name, fullPath, paramsInPath);
+            providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
+            const routeMeta: OasRouteMeta = {
+              oasPath,
+              operationObject: clonedOperationObject,
+              Controller,
+              methodName,
+            };
+
+            providersPerRou.push({ token: RouteMeta, useValue: routeMeta });
+
+            aControllerMetadata.push({
+              providersPerRou,
+              providersPerReq,
+              fullPath,
+              httpMethods,
+              routeMeta,
+              scope,
+              guards,
+              interceptors,
+            });
           }
-          const oasRoute = decoratorAndValue.value;
-          const providersPerRou: Provider[] = [];
-          const providersPerReq: Provider[] = [];
-          const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
-          const scope = ctrlDecorator?.value.scope;
-          if (scope == 'ctx') {
-            baseMeta.providersPerMod.unshift(Controller);
-          }
-          const guards = [];
-          const { httpMethod, path: controllerPath, operationObject, interceptors } = oasRoute;
-          const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
-          const fullPath = this.getPath(prefix, controllerPath);
-          guards.push(...this.normalizeGuards(httpMethod, fullPath, decoratorAndValue.value.guards));
-          const controllerFactory: FactoryProvider = { useFactory: [Controller, Controller.prototype[methodName]] };
-          providersPerReq.push(
-            ...((ctrlDecorator?.value as ControllerRawMetadata1).providersPerReq || []),
-            controllerFactory,
-          );
-          const clonedOperationObject = { ...(operationObject || {}) } as XOperationObject;
-          const { parameters } = clonedOperationObject;
-          const httpMethods = Array.isArray(httpMethod) ? httpMethod : [httpMethod];
-
-          const { paramsRefs, paramsInPath, paramsNonPath } = this.mergeParams(
-            httpMethods,
-            fullPath,
-            Controller.name,
-            prefixParams,
-            parameters,
-          );
-          clonedOperationObject.parameters = [...paramsRefs, ...paramsInPath, ...paramsNonPath];
-          clonedOperationObject.tags = [...(clonedOperationObject.tags || []), ...(prefixTags || [])];
-          // For now, here ReferenceObjects is ignored, if it is intended for a path.
-          const oasPath = this.transformToOasPath(baseMeta.name, fullPath, paramsInPath);
-          providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
-          const routeMeta: OasRouteMeta = {
-            oasPath,
-            operationObject: clonedOperationObject,
-            Controller,
-            methodName,
-          };
-
-          providersPerRou.push({ token: RouteMeta, useValue: routeMeta });
-
-          aControllerMetadata.push({
-            providersPerRou,
-            providersPerReq,
-            fullPath,
-            httpMethods,
-            routeMeta,
-            scope,
-            guards,
-            interceptors
-          });
         }
       }
-    }
 
     return aControllerMetadata;
   }
