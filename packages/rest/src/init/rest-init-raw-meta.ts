@@ -6,7 +6,6 @@ import {
   Providers,
   ModuleWithParams,
   AnyFn,
-  ModuleMetadata,
   BaseInitRawMeta,
   FeatureModuleParams,
 } from '@ditsmod/core';
@@ -16,7 +15,7 @@ import { GuardItem } from '#interceptors/guard.js';
 /**
  * Metadata for the `initRest` decorator, which adds REST metadata to a `featureModule` or `rootModule`.
  */
-export interface RestInitRawMeta extends Omit<ModuleMetadata, 'imports'>, BaseInitRawMeta<RestModuleParams> {
+export interface RestInitRawMeta extends BaseInitRawMeta<RestModuleParams> {
   /**
    * Providers per route.
    */

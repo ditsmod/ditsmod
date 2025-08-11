@@ -3,7 +3,12 @@ import { AnyObj, ModRefId, ModuleType } from '#types/mix.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { ExtensionClass } from '#extension/extension-types.js';
 import { InitParamsMap } from '#decorators/init-hooks-and-metadata.js';
+import type { rootModule } from '#decorators/root-module.js';
+import type { featureModule } from '#decorators/feature-module.js';
 
+/**
+ * Raw metadata for {@link rootModule} and {@link featureModule} decorator.
+ */
 export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<ProvidersOnly> {
   /**
    * List of modules or `ModuleWithParams` imported by this module.
@@ -11,7 +16,7 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
    */
   imports?: ModRefId[];
   /**
-   * List of modules, `ModuleWithParams` or tokens of providers exported by this
+   * List of modules, {@link ModuleWithParams} or tokens of providers exported by this
    * module.
    */
   exports?: any[];

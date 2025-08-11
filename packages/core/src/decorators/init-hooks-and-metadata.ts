@@ -227,10 +227,6 @@ export interface ParamsWithMwp {
   module?: never;
 }
 
-export interface BaseInitRawMeta<InitParams extends object = object> {
+export interface BaseInitRawMeta<InitParams extends object = object> extends Omit<ModuleMetadata, 'imports'> {
   imports?: (((ParamsWithMwp | ModuleWithParams) & InitParams) | ModuleType)[];
-  /**
-   * List of {@link ModuleWithParams} or provider tokens exported by this module.
-   */
-  exports?: any[];
 }
