@@ -1,6 +1,6 @@
 import { BaseInitMeta } from '#types/base-meta.js';
 
-export function copyBaseInitMeta(baseInitMeta: BaseInitMeta, meta: BaseInitMeta) {
+export function copyBaseInitMeta(src: BaseInitMeta, dstn: BaseInitMeta) {
   (
     [
       'importsModules',
@@ -13,18 +13,18 @@ export function copyBaseInitMeta(baseInitMeta: BaseInitMeta, meta: BaseInitMeta)
       'exportedMultiProvidersPerMod',
       'resolvedCollisionsPerApp',
       'resolvedCollisionsPerMod',
-      'extensionsProviders',
-      'exportedExtensionsProviders',
-      'aExtensionConfig',
-      'aOrderedExtensions',
-      'aExportedExtensionConfig',
-      'extensionsMeta',
+      // 'extensionsProviders',
+      // 'exportedExtensionsProviders',
+      // 'aExtensionConfig',
+      // 'aOrderedExtensions',
+      // 'aExportedExtensionConfig',
+      // 'extensionsMeta',
     ] satisfies (keyof BaseInitMeta)[]
   ).forEach(<T extends keyof BaseInitMeta>(prop: T) => {
-    if (Array.isArray(baseInitMeta[prop])) {
-      meta[prop].push(...baseInitMeta[prop]);
+    if (Array.isArray(src[prop])) {
+      dstn[prop].push(...src[prop]);
     } else {
-      Object.assign(meta[prop], baseInitMeta[prop]);
+      Object.assign(dstn[prop], src[prop]);
     }
   });
 }
