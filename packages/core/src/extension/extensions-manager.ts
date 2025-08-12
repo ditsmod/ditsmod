@@ -71,7 +71,7 @@ export class ExtensionsManager {
     if (stageIteration) {
       if (stageIteration.index > currStageIteration.index) {
         const extensionName = this.getItemName([...this.unfinishedInit].at(-1)!) || 'unknown';
-        this.systemLogMediator.throwEarlyExtensionCalling(extensionName, getDebugClassName(ExtCls)!);
+        this.systemLogMediator.throwEarlyExtensionCalling(extensionName, ExtCls.name);
       } else if (this.unfinishedInit.has(ExtCls)) {
         await stageIteration.promise;
       }
