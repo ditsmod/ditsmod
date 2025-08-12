@@ -17,7 +17,7 @@ import { AppOptions } from '../types/app-options.js';
 describe('Application', () => {
   class ApplicationMock extends Application {
     override appOptions = new AppOptions();
-    declare systemLogMediator: SystemLogMediator;
+    declare log: SystemLogMediator;
 
     override init(appOptions?: AppOptions) {
       return super.init(appOptions);
@@ -104,9 +104,9 @@ describe('Application', () => {
         moduleManager,
         new SystemLogMediator({ moduleName: '' }),
       );
-      const { systemLogMediator } = mock;
+      const { log } = mock;
       await mock.bootstrapApplication(appInitializer);
-      expect(mock.systemLogMediator !== systemLogMediator).toBe(true);
+      expect(mock.log !== log).toBe(true);
     });
   });
 });

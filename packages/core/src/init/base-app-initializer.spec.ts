@@ -28,9 +28,9 @@ describe('BaseAppInitializer', () => {
     constructor(
       public override baseAppOptions: BaseAppOptions,
       public override moduleManager: ModuleManager,
-      public override systemLogMediator: SystemLogMediator,
+      public override log: SystemLogMediator,
     ) {
-      super(baseAppOptions, moduleManager, systemLogMediator);
+      super(baseAppOptions, moduleManager, log);
     }
 
     async init() {
@@ -370,15 +370,15 @@ describe('BaseAppInitializer', () => {
 
     it('logs should collects between two init()', async () => {
       expect(LogMediator.buffer).toHaveLength(0);
-      expect(mock.systemLogMediator).toBeInstanceOf(SystemLogMediator);
-      expect(mock.systemLogMediator).not.toBeInstanceOf(LogMediatorMock1);
+      expect(mock.log).toBeInstanceOf(SystemLogMediator);
+      expect(mock.log).not.toBeInstanceOf(LogMediatorMock1);
       moduleManager.scanRootModule(AppModule);
 
       // First init
       await mock.init();
       const { buffer } = LogMediator;
-      expect(mock.systemLogMediator).toBeInstanceOf(LogMediatorMock1);
-      (mock.systemLogMediator as LogMediatorMock1).testMethod('debug', 'one', 'two');
+      expect(mock.log).toBeInstanceOf(LogMediatorMock1);
+      (mock.log as LogMediatorMock1).testMethod('debug', 'one', 'two');
       const msgIndex1 = buffer.length - 1;
       expect(buffer[msgIndex1].inputLogLevel).toBe('debug');
       expect(buffer[msgIndex1].msg).toBe('one,two');
@@ -386,8 +386,8 @@ describe('BaseAppInitializer', () => {
 
       // Second init
       await mock.init();
-      expect(mock.systemLogMediator).toBeInstanceOf(LogMediatorMock1);
-      (mock.systemLogMediator as LogMediatorMock1).testMethod('info', 'three', 'four');
+      expect(mock.log).toBeInstanceOf(LogMediatorMock1);
+      (mock.log as LogMediatorMock1).testMethod('info', 'three', 'four');
       // Logs from first init() still here
       expect(buffer[msgIndex1].inputLogLevel).toBe('debug');
       expect(buffer[msgIndex1].msg).toBe('one,two');
@@ -395,7 +395,7 @@ describe('BaseAppInitializer', () => {
       expect(buffer[msgIndex2].inputLogLevel).toBe('info');
       expect(buffer[msgIndex2].msg).toBe('three,four');
       expect(testMethodSpy.mock.calls.length).toBe(2);
-      mock.systemLogMediator.flush();
+      mock.log.flush();
       expect(buffer.length).toBe(0);
     });
   });

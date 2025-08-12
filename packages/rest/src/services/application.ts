@@ -24,13 +24,13 @@ export class Application extends BaseApplication {
     try {
       app.init(restOptions);
       const moduleManager = app.scanRootModule(appModule);
-      const appInitializer = new AppInitializer(app.appOptions, moduleManager, app.systemLogMediator);
+      const appInitializer = new AppInitializer(app.appOptions, moduleManager, app.log);
       await app.bootstrapApplication(appInitializer);
       await app.createServerAndBindToListening(appInitializer);
       return app;
     } catch (err: any) {
-      (app.systemLogMediator as PublicLogMediator).updateOutputLogLevel();
-      app.systemLogMediator.internalServerError(app, err, true);
+      (app.log as PublicLogMediator).updateOutputLogLevel();
+      app.log.internalServerError(app, err, true);
       app.flushLogs();
       throw err;
     }
@@ -55,7 +55,7 @@ export class Application extends BaseApplication {
     appInitializer.setServer(this.server);
     this.server.on('listening', () => {
       const info = this.server.address() as AddressInfo;
-      this.systemLogMediator.serverListen(this, info.address, info.port);
+      this.log.serverListen(this, info.address, info.port);
     });
   }
 

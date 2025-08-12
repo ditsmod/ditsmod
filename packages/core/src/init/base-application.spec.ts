@@ -12,7 +12,7 @@ import { LoggerConfig } from '#logger/logger.js';
 describe('BaseApplication', () => {
   class ApplicationMock extends BaseApplication {
     override baseAppOptions = new BaseAppOptions();
-    declare systemLogMediator: SystemLogMediator;
+    declare log: SystemLogMediator;
 
     override init(baseAppOptions?: BaseAppOptions) {
       return super.init(baseAppOptions);
@@ -68,9 +68,9 @@ describe('BaseApplication', () => {
         moduleManager,
         new SystemLogMediator({ moduleName: '' }),
       );
-      const { systemLogMediator } = mock;
+      const { log: systemLogMediator } = mock;
       await mock.bootstrapApplication(baseAppInitializer);
-      expect(mock.systemLogMediator !== systemLogMediator).toBe(true);
+      expect(mock.log !== systemLogMediator).toBe(true);
     });
   });
 });

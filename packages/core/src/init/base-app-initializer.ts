@@ -38,7 +38,7 @@ export class BaseAppInitializer {
   constructor(
     protected baseAppOptions: BaseAppOptions,
     protected moduleManager: ModuleManager,
-    public systemLogMediator: SystemLogMediator,
+    public log: SystemLogMediator,
   ) {}
 
   /**
@@ -131,58 +131,58 @@ export class BaseAppInitializer {
       moduleManager: this.moduleManager,
       shallowImports: this.collectProvidersShallow(this.moduleManager),
       providersPerApp: this.baseMeta.providersPerApp,
-      log: this.systemLogMediator,
+      log: this.log,
       errorMediator: new SystemErrorMediator({ moduleName: this.baseMeta.name }),
     });
     const { extensionCounters, mMetadataPerMod2 } = deepModulesImporter.importModulesDeep();
     await this.handleExtensions(mMetadataPerMod2, extensionCounters);
     const injectorPerApp = this.perAppService.reinitInjector();
-    this.systemLogMediator = injectorPerApp.get(SystemLogMediator) as SystemLogMediator;
+    this.log = injectorPerApp.get(SystemLogMediator) as SystemLogMediator;
     return injectorPerApp;
   }
 
   async reinit(autocommit: boolean = true): Promise<void | Error> {
-    this.systemLogMediator.flush();
+    this.log.flush();
     LogMediator.bufferLogs = true;
-    this.systemLogMediator.preserveLogger();
-    this.systemLogMediator.startReinitApp(this);
+    this.log.preserveLogger();
+    this.log.startReinitApp(this);
     // Before init new logger, works previous logger.
     try {
       this.bootstrapProvidersPerApp();
-      (this.systemLogMediator as PublicLogMediator).updateOutputLogLevel();
+      (this.log as PublicLogMediator).updateOutputLogLevel();
     } catch (err) {
-      this.systemLogMediator.restorePreviousLogger();
-      (this.systemLogMediator as PublicLogMediator).updateOutputLogLevel();
+      this.log.restorePreviousLogger();
+      (this.log as PublicLogMediator).updateOutputLogLevel();
       LogMediator.bufferLogs = false;
-      this.systemLogMediator.flush();
+      this.log.flush();
       return this.handleReinitError(err);
     }
     // After init new logger, works new logger.
     try {
       await this.bootstrapModulesAndExtensions();
-      (this.systemLogMediator as PublicLogMediator).updateOutputLogLevel();
+      (this.log as PublicLogMediator).updateOutputLogLevel();
       if (autocommit) {
         this.moduleManager.commit();
       } else {
-        this.systemLogMediator.skippingAutocommitModulesConfig(this);
+        this.log.skippingAutocommitModulesConfig(this);
       }
-      this.systemLogMediator.finishReinitApp(this);
+      this.log.finishReinitApp(this);
     } catch (err) {
       return this.handleReinitError(err);
     } finally {
       LogMediator.bufferLogs = false;
-      this.systemLogMediator.flush();
+      this.log.flush();
     }
   }
 
   protected async handleReinitError(err: unknown) {
-    this.systemLogMediator.printReinitError(this, err);
-    this.systemLogMediator.startRollbackModuleConfigChanges(this);
+    this.log.printReinitError(this, err);
+    this.log.startRollbackModuleConfigChanges(this);
     this.moduleManager.rollback();
     this.bootstrapProvidersPerApp();
     await this.bootstrapModulesAndExtensions();
-    (this.systemLogMediator as PublicLogMediator).updateOutputLogLevel();
-    this.systemLogMediator.successfulRollbackModuleConfigChanges(this);
+    (this.log as PublicLogMediator).updateOutputLogLevel();
+    this.log.successfulRollbackModuleConfigChanges(this);
     return err as Error;
   }
 
@@ -200,13 +200,13 @@ export class BaseAppInitializer {
    */
   protected createInjectorAndSetLogMediator() {
     const injectorPerApp = this.perAppService.reinitInjector(this.baseMeta.providersPerApp);
-    this.systemLogMediator = injectorPerApp.get(SystemLogMediator) as SystemLogMediator;
+    this.log = injectorPerApp.get(SystemLogMediator) as SystemLogMediator;
   }
 
   protected collectProvidersShallow(moduleManager: ModuleManager) {
     const shallowModulesImporter1 = new ShallowModulesImporter();
     const globalProviders = shallowModulesImporter1.exportGlobalProviders(moduleManager);
-    this.systemLogMediator.printGlobalProviders(this, globalProviders);
+    this.log.printGlobalProviders(this, globalProviders);
     const shallowModulesImporter2 = new ShallowModulesImporter();
     const { modRefId, allInitHooks } = moduleManager.getMetadata('root', true);
     const shallowImportsBase = shallowModulesImporter2.importModulesShallow({
