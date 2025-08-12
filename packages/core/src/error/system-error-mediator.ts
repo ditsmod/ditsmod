@@ -11,6 +11,7 @@ export class SystemErrorMediator extends ErrorMediator {
     throw new CustomError({
       code: this.throwNoProviderDuringResolveImports.name,
       msg1: `Failed to resolve imported dependencies for ${moduleName}: no provider for ${tokenName}! ${partMsg}.`,
+      level: 'fatal'
     });
   }
   /**
@@ -20,6 +21,7 @@ export class SystemErrorMediator extends ErrorMediator {
     return new CustomError({
       code: this.rootNotHaveDecorator.name,
       msg1: `Module scaning failed: "${rootModuleName}" does not have the "@rootModule()" decorator.`,
+      level: 'fatal'
     });
   }
   /**
@@ -29,6 +31,7 @@ export class SystemErrorMediator extends ErrorMediator {
     return new CustomError({
       code: this.failAddingToImports.name,
       msg1: `Failed adding ${modName} to imports: target module with ID "${modIdStr}" not found.`,
+      level: 'warn'
     });
   }
   /**
@@ -38,6 +41,7 @@ export class SystemErrorMediator extends ErrorMediator {
     return new CustomError({
       code: this.failRemovingImport.name,
       msg1: `Failed removing ${inputModName} from "imports" array: target module with ID "${modIdStr}" not found.`,
+      level: 'warn'
     });
   }
   /**
@@ -47,6 +51,7 @@ export class SystemErrorMediator extends ErrorMediator {
     return new CustomError({
       code: this.forbiddenRollbackEemptyState.name,
       msg1: 'It is forbidden for rollback() to an empty state.',
+      level: 'warn',
     });
   }
   /**
@@ -56,6 +61,7 @@ export class SystemErrorMediator extends ErrorMediator {
     return new CustomError({
       code: this.moduleIdNotFoundInModuleManager.name,
       msg1: `${moduleId} not found in ModuleManager.`,
+      level: 'warn',
     });
   }
   /**
