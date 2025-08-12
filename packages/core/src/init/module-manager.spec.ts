@@ -16,7 +16,6 @@ import { InitDecorator } from '#decorators/init-hooks-and-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { isModuleWithParams } from '#utils/type-guards.js';
-import { SystemErrorMediator } from '#error/system-error-mediator.js';
 
 describe('ModuleManager', () => {
   console.log = jest.fn();
@@ -61,8 +60,7 @@ describe('ModuleManager', () => {
   beforeEach(() => {
     clearDebugClassNames();
     const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
-    const systemErrMediator = new SystemErrorMediator({ moduleName: 'fakeName' });
-    mock = new MockModuleManager(systemLogMediator, systemErrMediator);
+    mock = new MockModuleManager(systemLogMediator);
   });
 
   afterEach(() => {

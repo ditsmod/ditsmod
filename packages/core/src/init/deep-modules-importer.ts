@@ -14,10 +14,10 @@ import { getLastProviders } from '#utils/get-last-providers.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { getProvidersTargets, getTokens } from '#utils/get-tokens.js';
 import { isClassProvider, isFactoryProvider, isTokenProvider, isValueProvider } from '#di';
-import { SystemErrorMediator } from '#error/system-error-mediator.js';
 import { ExtensionCounters } from '#extension/extension-types.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { ProvidersOnly } from '#types/providers-metadata.js';
+import { noProviderDuringResolveImports } from '#error/errors.js';
 
 /**
  * By analyzing the dependencies of the providers returned by `ShallowModulesImporter`,
@@ -33,26 +33,22 @@ export class DeepModulesImporter {
   protected shallowImports: ShallowImports;
   protected providersPerApp: Provider[];
   protected log: SystemLogMediator;
-  protected err: SystemErrorMediator;
 
   constructor({
     moduleManager,
     shallowImports,
     providersPerApp,
     log,
-    errorMediator,
   }: {
     moduleManager: ModuleManager;
     shallowImports: ShallowImports;
     providersPerApp: Provider[];
     log: SystemLogMediator;
-    errorMediator: SystemErrorMediator;
   }) {
     this.moduleManager = moduleManager;
     this.shallowImports = shallowImports;
     this.providersPerApp = providersPerApp;
     this.log = log;
-    this.err = errorMediator;
   }
 
   importModulesDeep() {
@@ -75,7 +71,6 @@ export class DeepModulesImporter {
           shallowImports: this.shallowImports,
           providersPerApp: this.providersPerApp,
           log: this.log,
-          errorMediator: this.err,
         });
         deepImportedModules.set(decorator, deepImports);
       });
@@ -353,7 +348,7 @@ export class DeepModulesImporter {
     const partMsg = path.length > 1 ? `(required by ${strPath}). Searched in ${levelsPath}` : levelsPath;
     // this.log.showProvidersInLogs(this, meta.name, meta.providersPerReq, meta.providersPerRou, meta.providersPerMod);
 
-    throw this.err.noProviderDuringResolveImports(baseMeta.name, token.name || token, partMsg);
+    throw noProviderDuringResolveImports(baseMeta.name, token.name || token, partMsg);
   }
 
   getDependencies(provider: Provider) {

@@ -4,7 +4,6 @@ import { forwardRef } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { Module1 } from '#init/module-manager4.spec.js';
-import { SystemErrorMediator } from '#error/system-error-mediator.js';
 
 @featureModule({ imports: [forwardRef(() => Module1)], providersPerApp: [{ token: 'token2' }] })
 class Module2 {}
@@ -17,8 +16,7 @@ describe('ModuleManager', () => {
 
   beforeEach(() => {
     const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
-    const systemErrMediator = new SystemErrorMediator({ moduleName: 'fakeName' });
-    mock = new ModuleManager(systemLogMediator, systemErrMediator);
+    mock = new ModuleManager(systemLogMediator);
   });
 
   it('circular imports modules with forwardRef()', () => {

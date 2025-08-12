@@ -48,7 +48,6 @@ export { ExtensionsManager, InternalExtensionsManager } from '#extension/extensi
 export { LogMediator } from '#logger/log-mediator.js';
 export { LogItem } from '#logger/types.js';
 export { SystemLogMediator } from '#logger/system-log-mediator.js';
-export { ErrorMediator } from '#error/error-mediator.js';
 export { SystemErrorMediator } from '#error/system-error-mediator.js';
 export { ModuleManager } from '#init/module-manager.js';
 export { PerAppService } from '#services/per-app.service.js';

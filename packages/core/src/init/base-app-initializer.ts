@@ -3,7 +3,6 @@ import { ChainError } from '@ts-stack/chain-error';
 import { Injector, isMultiProvider } from '#di';
 import { DeepModulesImporter } from '#init/deep-modules-importer.js';
 import { Logger } from '#logger/logger.js';
-import { SystemErrorMediator } from '#error/system-error-mediator.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { PublicLogMediator, SystemLogMediator } from '#logger/system-log-mediator.js';
 import { BaseMeta } from '#types/base-meta.js';
@@ -39,7 +38,6 @@ export class BaseAppInitializer {
     protected baseAppOptions: BaseAppOptions,
     protected moduleManager: ModuleManager,
     public log: SystemLogMediator,
-    protected err: SystemErrorMediator,
   ) {}
 
   /**
@@ -133,7 +131,6 @@ export class BaseAppInitializer {
       shallowImports: this.collectProvidersShallow(this.moduleManager),
       providersPerApp: this.baseMeta.providersPerApp,
       log: this.log,
-      errorMediator: new SystemErrorMediator({ moduleName: this.baseMeta.name }),
     });
     const { extensionCounters, mMetadataPerMod2 } = deepModulesImporter.importModulesDeep();
     await this.handleExtensions(mMetadataPerMod2, extensionCounters);

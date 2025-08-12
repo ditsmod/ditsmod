@@ -3,7 +3,6 @@ import {
   Provider,
   ModuleManager,
   SystemLogMediator,
-  SystemErrorMediator,
   getTokens,
   getLastProviders,
   ReflectiveDependency,
@@ -36,7 +35,6 @@ export class RestDeepModulesImporter {
   protected shallowImports: ShallowImports;
   protected providersPerApp: Provider[];
   protected log: SystemLogMediator;
-  protected errorMediator: SystemErrorMediator;
   protected parent: DeepModulesImporter;
 
   constructor({
@@ -46,7 +44,6 @@ export class RestDeepModulesImporter {
     shallowImports,
     providersPerApp,
     log,
-    errorMediator,
   }: DeepModulesImporterConfig) {
     this.parent = parent;
     this.metadataPerMod1 = metadataPerMod1;
@@ -54,7 +51,6 @@ export class RestDeepModulesImporter {
     this.shallowImports = shallowImports;
     this.providersPerApp = providersPerApp;
     this.log = log;
-    this.errorMediator = errorMediator;
   }
 
   importModulesDeep(): RestMetadataPerMod2 | undefined {

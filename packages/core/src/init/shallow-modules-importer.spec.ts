@@ -10,7 +10,6 @@ import { ModuleWithParams } from '#types/module-metadata.js';
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
-import { SystemErrorMediator } from '#error/system-error-mediator.js';
 
 type ModRefId = ModuleType | ModuleWithParams;
 
@@ -56,7 +55,6 @@ describe('ShallowModulesImporter', () => {
     mock = new MockShallowModulesImporter();
     moduleManager = new ModuleManager(
       new SystemLogMediator({ moduleName: 'fakeName' }),
-      new SystemErrorMediator({ moduleName: 'fakeName' }),
     );
   });
 

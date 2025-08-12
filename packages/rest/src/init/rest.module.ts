@@ -1,7 +1,6 @@
 import { BaseAppOptions, featureModule } from '@ditsmod/core';
 
 import { DefaultRouter, Router } from '#services/router.js';
-import { RestErrorMediator } from '#services/router-error-mediator.js';
 import { RoutesExtension } from '#extensions/routes.extension.js';
 import { PreRouterExtension } from '#extensions/pre-router.extension.js';
 import { UseInterceptorExtension } from '#extensions/use-interceptor.extension.js';
@@ -18,7 +17,6 @@ import { PreRouter } from '#services/pre-router.js';
     { token: AppOptions, useToken: BaseAppOptions },
     { token: RequestContext, useValue: RequestContext },
     PreRouter,
-    RestErrorMediator,
   ],
   extensions: [
     { extension: RoutesExtension, beforeExtensions: [PreRouterExtension], exportOnly: true },

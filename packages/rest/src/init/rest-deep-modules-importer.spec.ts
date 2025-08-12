@@ -10,7 +10,6 @@ import {
   ModuleType,
   Provider,
   rootModule,
-  SystemErrorMediator,
   SystemLogMediator,
   BaseAppInitializer,
   BaseAppOptions,
@@ -40,11 +39,10 @@ describe('DeepModulesImporter', () => {
 
   function getMetadataPerMod2(rootModule: ModuleType) {
     const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
-    const errorMediator = new SystemErrorMediator({ moduleName: 'fakeName' });
-    const moduleManager = new ModuleManager(systemLogMediator, errorMediator);
+    const moduleManager = new ModuleManager(systemLogMediator);
     moduleManager.scanRootModule(rootModule);
     const baseAppOptions = new BaseAppOptions();
-    const initializer = new AppInitializerMock(baseAppOptions, moduleManager, systemLogMediator, errorMediator);
+    const initializer = new AppInitializerMock(baseAppOptions, moduleManager, systemLogMediator);
     initializer.bootstrapProvidersPerApp();
     systemLogMediator.flush();
     const shallowImports = initializer.collectProvidersShallow(moduleManager);
@@ -53,7 +51,6 @@ describe('DeepModulesImporter', () => {
       shallowImports,
       providersPerApp: initializer.baseMeta.providersPerApp,
       log: systemLogMediator,
-      errorMediator,
     });
     const { extensionCounters, mMetadataPerMod2 } = deepModulesImporter.importModulesDeep();
     return mMetadataPerMod2 as Map<ModRefId, MetadataPerMod2<RestMetadataPerMod2>>;

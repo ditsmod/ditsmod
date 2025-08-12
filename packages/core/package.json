@@ -41,6 +41,10 @@
     "./di": {
       "types": "./dist/di/public-api.d.ts",
       "default": "./dist.di/public-api.js"
+    },
+    "./errors": {
+      "types": "./dist/error/errors.d.ts",
+      "default": "./dist/error/errors.js"
     }
   },
   "keywords": [

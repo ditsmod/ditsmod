@@ -8,7 +8,6 @@ import { ModuleWithParams } from '#types/module-metadata.js';
 import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { SystemErrorMediator } from '#error/system-error-mediator.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 
 describe('DeepModulesImporter', () => {
@@ -33,18 +32,15 @@ describe('DeepModulesImporter', () => {
   let shallowModulesImporter: ShallowModulesImporter;
   let moduleManager: ModuleManager;
   let systemLogMediator: SystemLogMediator;
-  let errorMediator: SystemErrorMediator;
 
   beforeEach(() => {
     clearDebugClassNames();
     const injectorPerApp = Injector.resolveAndCreate([ShallowModulesImporter]);
     shallowModulesImporter = injectorPerApp.get(ShallowModulesImporter);
     systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
-    errorMediator = new SystemErrorMediator({ moduleName: 'fakeName' });
-    moduleManager = new ModuleManager(systemLogMediator, errorMediator);
+    moduleManager = new ModuleManager(systemLogMediator);
     mock = new DeepModulesImporterMock({
       moduleManager,
-      errorMediator: null as any,
       log: null as any,
       providersPerApp: null as any,
       shallowImports: null as any,

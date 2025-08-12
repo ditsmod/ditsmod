@@ -16,6 +16,10 @@
     },
     "./diagnostics-channel": {
       "default": "./dist/diagnostics-channel.js"
+    },
+    "./errors": {
+      "types": "./dist/init/errors.d.ts",
+      "default": "./dist/init/errors.js"
     }
   },
   "imports": {

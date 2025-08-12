@@ -8,7 +8,6 @@ import {
   BaseMeta,
   rootModule,
   SystemLogMediator,
-  SystemErrorMediator,
 } from '@ditsmod/core';
 
 import { CanActivate, guard } from '../interceptors/guard.js';
@@ -45,8 +44,7 @@ class MockModuleManager extends ModuleManager {
 beforeEach(() => {
   clearDebugClassNames();
   const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
-  const systemErrMediator = new SystemErrorMediator({ moduleName: 'fakeName' });
-  mock = new MockModuleManager(systemLogMediator, systemErrMediator);
+  mock = new MockModuleManager(systemLogMediator);
 });
 
 it('imports and appends with gruards for some modules', () => {

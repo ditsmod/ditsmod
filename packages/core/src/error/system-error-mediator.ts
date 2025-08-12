@@ -1,15 +1,12 @@
-import { injectable } from '#di';
-import { ErrorMediator } from '#error/error-mediator.js';
 import { CustomError } from './custom-error.js';
 
-@injectable()
-export class SystemErrorMediator extends ErrorMediator {
+export class SystemErrorMediator {
   /**
    * The logger was not previously seted.
    */
-  loggerWasNotPreviouslySeted() {
+  static loggerWasNotPreviouslySeted() {
     return new CustomError({
-      code: this.loggerWasNotPreviouslySeted.name,
+      code: SystemErrorMediator.loggerWasNotPreviouslySeted.name,
       msg1: 'The logger was not previously seted.',
       level: 'warn',
     });
@@ -17,10 +14,10 @@ export class SystemErrorMediator extends ErrorMediator {
   /**
    * `${ExtCls.name} in ${moduleName} failed`
    */
-  extensionIsFailed(extensionName: string, moduleName: string, cause: Error) {
+  static extensionIsFailed(extensionName: string, moduleName: string, cause: Error) {
     return new CustomError(
       {
-        code: this.extensionIsFailed.name,
+        code: SystemErrorMediator.extensionIsFailed.name,
         msg1: `${extensionName} in ${moduleName} is failed`,
         level: 'fatal',
       },
@@ -30,13 +27,13 @@ export class SystemErrorMediator extends ErrorMediator {
   /**
    * `Detected circular dependencies: ${circularNames}.`
    */
-  detectedCircularDependenciesForExtensions(prefixNames: string, circularNames: string) {
+  static detectedCircularDependenciesForExtensions(prefixNames: string, circularNames: string) {
     let msg1 = `Detected circular dependencies: ${circularNames}.`;
     if (prefixNames) {
       msg1 += ` It is started from ${prefixNames}.`;
     }
     return new CustomError({
-      code: this.detectedCircularDependenciesForExtensions.name,
+      code: SystemErrorMediator.detectedCircularDependenciesForExtensions.name,
       msg1,
       level: 'fatal',
     });
@@ -45,9 +42,9 @@ export class SystemErrorMediator extends ErrorMediator {
    * {@link extensionName1} attempted to call "extensionsManager.stage1({@link extensionName2})",
    * but {@link extensionName2} not declared in "afterExtensions" array in this module.
    */
-  notDeclaredInAfterExtensionList(extensionName1: string, extensionName2: string) {
+  static notDeclaredInAfterExtensionList(extensionName1: string, extensionName2: string) {
     return new CustomError({
-      code: this.notDeclaredInAfterExtensionList.name,
+      code: SystemErrorMediator.notDeclaredInAfterExtensionList.name,
       msg1:
         `${extensionName1} attempted to call "extensionsManager.stage1(${extensionName2})", ` +
         `but ${extensionName2} not declared in "afterExtensions" array in this module.`,
@@ -57,9 +54,9 @@ export class SystemErrorMediator extends ErrorMediator {
   /**
    * `Failed to resolve imported dependencies for ${moduleName}: no provider for ${tokenName}! ${partMsg}.`
    */
-  noProviderDuringResolveImports(moduleName: string, tokenName: string, partMsg: string) {
+  static noProviderDuringResolveImports(moduleName: string, tokenName: string, partMsg: string) {
     return new CustomError({
-      code: this.noProviderDuringResolveImports.name,
+      code: SystemErrorMediator.noProviderDuringResolveImports.name,
       msg1: `Failed to resolve imported dependencies for ${moduleName}: no provider for ${tokenName}! ${partMsg}.`,
       level: 'fatal',
     });
@@ -67,9 +64,9 @@ export class SystemErrorMediator extends ErrorMediator {
   /**
    * `Module scaning failed: "${rootModuleName}" does not have the "@rootModule()" decorator`.
    */
-  rootNotHaveDecorator(rootModuleName: string) {
+  static rootNotHaveDecorator(rootModuleName: string) {
     return new CustomError({
-      code: this.rootNotHaveDecorator.name,
+      code: SystemErrorMediator.rootNotHaveDecorator.name,
       msg1: `Module scaning failed: "${rootModuleName}" does not have the "@rootModule()" decorator.`,
       level: 'fatal',
     });
@@ -77,9 +74,9 @@ export class SystemErrorMediator extends ErrorMediator {
   /**
    * `Failed adding ${modName} to imports: target module with ID "${modIdStr}" not found.`
    */
-  failAddingToImports(modName?: string, modIdStr?: string) {
+  static failAddingToImports(modName?: string, modIdStr?: string) {
     return new CustomError({
-      code: this.failAddingToImports.name,
+      code: SystemErrorMediator.failAddingToImports.name,
       msg1: `Failed adding ${modName} to imports: target module with ID "${modIdStr}" not found.`,
       level: 'warn',
     });
@@ -87,9 +84,9 @@ export class SystemErrorMediator extends ErrorMediator {
   /**
    * `Failed removing ${inputMeta.name} from "imports" array: target module with ID "${modIdStr}" not found.`
    */
-  failRemovingImport(inputModName: string, modIdStr: string) {
+  static failRemovingImport(inputModName: string, modIdStr: string) {
     return new CustomError({
-      code: this.failRemovingImport.name,
+      code: SystemErrorMediator.failRemovingImport.name,
       msg1: `Failed removing ${inputModName} from "imports" array: target module with ID "${modIdStr}" not found.`,
       level: 'warn',
     });
@@ -97,9 +94,9 @@ export class SystemErrorMediator extends ErrorMediator {
   /**
    * 'It is forbidden for rollback() to an empty state.'
    */
-  forbiddenRollbackEemptyState() {
+  static forbiddenRollbackEemptyState() {
     return new CustomError({
-      code: this.forbiddenRollbackEemptyState.name,
+      code: SystemErrorMediator.forbiddenRollbackEemptyState.name,
       msg1: 'It is forbidden for rollback() to an empty state.',
       level: 'warn',
     });
@@ -107,9 +104,9 @@ export class SystemErrorMediator extends ErrorMediator {
   /**
    * `${moduleId} not found in ModuleManager.`
    */
-  moduleIdNotFoundInModuleManager(moduleId: string) {
+  static moduleIdNotFoundInModuleManager(moduleId: string) {
     return new CustomError({
-      code: this.moduleIdNotFoundInModuleManager.name,
+      code: SystemErrorMediator.moduleIdNotFoundInModuleManager.name,
       msg1: `${moduleId} not found in ModuleManager.`,
       level: 'warn',
     });
@@ -117,10 +114,10 @@ export class SystemErrorMediator extends ErrorMediator {
   /**
    * `Normalization of ${path} failed`
    */
-  normalizationFailed(path: string, err: Error) {
+  static normalizationFailed(path: string, err: Error) {
     return new CustomError(
       {
-        code: this.normalizationFailed.name,
+        code: SystemErrorMediator.normalizationFailed.name,
         msg1: `Normalization of ${path} failed`,
         level: 'fatal',
       },

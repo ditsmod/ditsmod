@@ -15,7 +15,11 @@ import { createDeferred } from '#utils/create-deferred.js';
 import { BaseMeta } from '#types/base-meta.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { isExtensionProvider } from './type-guards.js';
-import { SystemErrorMediator } from '#error/system-error-mediator.js';
+import {
+  detectedCircularDependenciesForExtensions,
+  extensionIsFailed,
+  notDeclaredInAfterExtensionList,
+} from '#error/errors.js';
 
 export class StageIteration {
   promise: Promise<void>;
@@ -60,18 +64,29 @@ export class ExtensionsManager {
     protected counter: Counter,
     protected extensionsContext: ExtensionsContext,
     protected extensionCounters: ExtensionCounters,
-    protected err: SystemErrorMediator,
   ) {}
 
-  async stage1<T>(ExtCls: ExtensionClass<T>, pendingExtension?: Extension, parApp?: false): Promise<Stage1ExtensionMeta<T>>;
-  async stage1<T>(ExtCls: ExtensionClass<T>, pendingExtension: Extension, parApp: true): Promise<Stage1ExtensionMeta2<T>>;
-  async stage1<T>(ExtCls: ExtensionClass<T>, pendingExtension?: Extension, parApp?: boolean): Promise<Stage1ExtensionMeta<T>> {
+  async stage1<T>(
+    ExtCls: ExtensionClass<T>,
+    pendingExtension?: Extension,
+    parApp?: false,
+  ): Promise<Stage1ExtensionMeta<T>>;
+  async stage1<T>(
+    ExtCls: ExtensionClass<T>,
+    pendingExtension: Extension,
+    parApp: true,
+  ): Promise<Stage1ExtensionMeta2<T>>;
+  async stage1<T>(
+    ExtCls: ExtensionClass<T>,
+    pendingExtension?: Extension,
+    parApp?: boolean,
+  ): Promise<Stage1ExtensionMeta<T>> {
     const currStageIteration = this.currStageIteration;
     const stageIteration = this.stageIterationMap.get(ExtCls);
     if (stageIteration) {
       if (stageIteration.index > currStageIteration.index) {
         const extensionName = this.getItemName([...this.unfinishedInit].at(-1)!) || 'unknown';
-        throw this.err.notDeclaredInAfterExtensionList(extensionName, ExtCls.name);
+        throw notDeclaredInAfterExtensionList(extensionName, ExtCls.name);
       } else if (this.unfinishedInit.has(ExtCls)) {
         await stageIteration.promise;
       }
@@ -97,7 +112,7 @@ export class ExtensionsManager {
     ExtCls: ExtensionClass,
     stage1ExtensionMeta: Stage1ExtensionMeta,
     pendingExtension?: Extension,
-    parApp?: boolean
+    parApp?: boolean,
   ) {
     stage1ExtensionMeta = this.prepareStage1ExtensionMetaPerApp(stage1ExtensionMeta, parApp);
     if (parApp) {
@@ -112,7 +127,7 @@ export class ExtensionsManager {
 
   protected prepareStage1ExtensionMetaPerApp(
     stage1ExtensionMeta: Stage1ExtensionMeta2,
-    parApp?: boolean
+    parApp?: boolean,
   ): Stage1ExtensionMeta {
     if (parApp && !stage1ExtensionMeta.delay) {
       const copystage1ExtensionMeta = { ...stage1ExtensionMeta };
@@ -171,28 +186,28 @@ export class ExtensionsManager {
     const stage1ExtensionMeta = new Stage1ExtensionMeta<T>(this.moduleName, [], []);
     this.updateExtensionCounters(ExtCls, stage1ExtensionMeta);
 
-      if (this.unfinishedInit.has(extension)) {
-        this.throwCircularDeps(extension);
-      }
-      const debugMetaCache = this.debugMetaCache.get(extension);
-      if (debugMetaCache) {
-        stage1ExtensionMeta.addDebugMeta(debugMetaCache);
-        return stage1ExtensionMeta;
-      }
+    if (this.unfinishedInit.has(extension)) {
+      this.throwCircularDeps(extension);
+    }
+    const debugMetaCache = this.debugMetaCache.get(extension);
+    if (debugMetaCache) {
+      stage1ExtensionMeta.addDebugMeta(debugMetaCache);
+      return stage1ExtensionMeta;
+    }
 
-      this.unfinishedInit.add(extension);
-      this.log.startInitExtension(this, this.unfinishedInit);
-      const ExtensionClass = extension.constructor as Class<Extension<T>>;
-      const countdown = this.extensionCounters.mExtensions.get(ExtensionClass) || 0;
-      const isLastModule = countdown === 0;
-      const data = (await extension.stage1?.(isLastModule)) as T;
-      this.extensionsListForStage2.add(extension);
-      this.log.finishInitExtension(this, this.unfinishedInit, data);
-      this.counter.addInitedExtensions(extension);
-      this.unfinishedInit.delete(extension);
-      const debugMeta = new Stage1DebugMeta<T>(extension, data, !isLastModule, countdown);
-      this.debugMetaCache.set(extension, debugMeta);
-      stage1ExtensionMeta.addDebugMeta(debugMeta);
+    this.unfinishedInit.add(extension);
+    this.log.startInitExtension(this, this.unfinishedInit);
+    const ExtensionClass = extension.constructor as Class<Extension<T>>;
+    const countdown = this.extensionCounters.mExtensions.get(ExtensionClass) || 0;
+    const isLastModule = countdown === 0;
+    const data = (await extension.stage1?.(isLastModule)) as T;
+    this.extensionsListForStage2.add(extension);
+    this.log.finishInitExtension(this, this.unfinishedInit, data);
+    this.counter.addInitedExtensions(extension);
+    this.unfinishedInit.delete(extension);
+    const debugMeta = new Stage1DebugMeta<T>(extension, data, !isLastModule, countdown);
+    this.debugMetaCache.set(extension, debugMeta);
+    stage1ExtensionMeta.addDebugMeta(debugMeta);
 
     return stage1ExtensionMeta;
   }
@@ -210,7 +225,7 @@ export class ExtensionsManager {
     const prefixNames = prefixChain.map(this.getItemName).join(' -> ');
     let circularNames = circularChain.map(this.getItemName).join(' -> ');
     circularNames += ` -> ${this.getItemName(item)}`;
-    throw this.err.detectedCircularDependenciesForExtensions(prefixNames, circularNames);
+    throw detectedCircularDependenciesForExtensions(prefixNames, circularNames);
   }
 
   protected getItemName(classOrInstance: Extension | ExtensionClass) {
@@ -239,7 +254,7 @@ export class InternalExtensionsManager extends ExtensionsManager {
         this.updateExtensionPendingList();
       } catch (err: any) {
         const moduleName = getDebugClassName(meta.modRefId) || '""';
-        throw this.err.extensionIsFailed(ExtCls.name, moduleName, err);
+        throw extensionIsFailed(ExtCls.name, moduleName, err);
       }
     }
     this.setExtensionsToStage2(meta.modRefId);

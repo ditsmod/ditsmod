@@ -27,7 +27,6 @@ import {
 
 import { MetadataPerMod3, PreparedRouteMeta } from '../types/types.js';
 import { A_PATH_PARAMS, HTTP_INTERCEPTORS, QUERY_STRING, RAW_REQ, RAW_RES } from '#types/constants.js';
-import { RestErrorMediator } from '../services/router-error-mediator.js';
 import { ControllerMetadata } from '../types/controller-metadata.js';
 import { InterceptorWithGuardsPerRou } from '#interceptors/interceptor-with-guards-per-rou.js';
 import { InterceptorWithGuards } from '#interceptors/interceptor-with-guards.js';
@@ -45,6 +44,7 @@ import { RouteHandler, Router } from '#services/router.js';
 import { HttpErrorHandler } from '#services/http-error-handler.js';
 import { RequestContext } from '#services/request-context.js';
 import { RoutesExtension } from './routes.extension.js';
+import { checkingDepsInSandboxFailed } from '#init/errors.js';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
@@ -59,7 +59,6 @@ export class PreRouterExtension implements Extension<void> {
     protected moduleManager: ModuleManager,
     protected log: SystemLogMediator,
     protected extensionsContext: ExtensionsContext,
-    protected errorMediator: RestErrorMediator,
   ) {}
 
   async stage1() {
@@ -362,11 +361,14 @@ export class PreRouterExtension implements Extension<void> {
       }
       DepsChecker.check(inj, HTTP_INTERCEPTORS, fromSelf, ignoreDeps);
     } catch (cause: any) {
-      this.errorMediator.checkingDepsInSandboxFailed(cause, controllerName, httpMethod, path);
+      checkingDepsInSandboxFailed(cause, controllerName, httpMethod, path);
     }
   }
 
-  protected setRoutes(stage1ExtensionMeta: Stage1ExtensionMeta<MetadataPerMod3>, preparedRouteMeta: PreparedRouteMeta[]) {
+  protected setRoutes(
+    stage1ExtensionMeta: Stage1ExtensionMeta<MetadataPerMod3>,
+    preparedRouteMeta: PreparedRouteMeta[],
+  ) {
     if (!stage1ExtensionMeta.delay) {
       const appHasRoutes = this.checkPresenceOfRoutesInApplication(stage1ExtensionMeta.groupDataPerApp);
       if (!appHasRoutes) {

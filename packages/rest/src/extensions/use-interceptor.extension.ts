@@ -1,20 +1,17 @@
 import { inspect } from 'node:util';
 import { Extension, ExtensionsManager, injectable } from '@ditsmod/core';
 
-import { RestErrorMediator } from '#services/router-error-mediator.js';
 import { HTTP_INTERCEPTORS } from '#types/constants.js';
 import { isInterceptor } from '#types/type.guards.js';
 import { RoutesExtension } from './routes.extension.js';
+import { invalidInterceptor } from '#init/errors.js';
 
 /**
  * A group of extensions that allows you to set the order of launching different interceptors.
  */
 @injectable()
 export class UseInterceptorExtension implements Extension {
-  constructor(
-    protected extensionManager: ExtensionsManager,
-    protected errorMediator: RestErrorMediator,
-  ) {}
+  constructor(protected extensionManager: ExtensionsManager) {}
 
   async stage1() {
     const stage1ExtensionMeta = await this.extensionManager.stage1(RoutesExtension);
@@ -31,7 +28,7 @@ export class UseInterceptorExtension implements Extension {
               }
             } else {
               const whatIsThis = inspect(interceptor, false, 3);
-              this.errorMediator.invalidInterceptor(meta.httpMethods.join(', '), meta.fullPath, whatIsThis);
+              throw invalidInterceptor(meta.httpMethods.join(', '), meta.fullPath, whatIsThis);
             }
           }
       }

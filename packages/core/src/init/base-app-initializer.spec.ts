@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 
-import { injectable, InjectionToken } from '#di';
-import { InputLogLevel, Logger } from '#logger/logger.js';
+import { injectable } from '#di';
+import { InputLogLevel } from '#logger/logger.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { featureModule } from '#decorators/feature-module.js';
@@ -11,13 +11,10 @@ import { BaseAppInitializer } from '#init/base-app-initializer.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { ModuleType } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
-import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
+import { ModuleWithParams } from '#types/module-metadata.js';
 import { Extension, ExtensionCounters } from '#extension/extension-types.js';
-import { ModuleExtract } from '#types/module-extract.js';
-import { ImportObj, MetadataPerMod1 } from '#types/metadata-per-mod.js';
 import { Providers } from '#utils/providers.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
-import { SystemErrorMediator } from '#error/system-error-mediator.js';
 
 describe('BaseAppInitializer', () => {
   type ModRefId = ModuleType | ModuleWithParams;
@@ -29,9 +26,8 @@ describe('BaseAppInitializer', () => {
       public override baseAppOptions: BaseAppOptions,
       public override moduleManager: ModuleManager,
       public override log: SystemLogMediator,
-      public override err: SystemErrorMediator,
     ) {
-      super(baseAppOptions, moduleManager, log, err);
+      super(baseAppOptions, moduleManager, log);
     }
 
     async init() {
@@ -62,10 +58,9 @@ describe('BaseAppInitializer', () => {
   describe('decreaseExtensionsCounters()', () => {
     beforeEach(() => {
       const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
-      const systemErrMediator = new SystemErrorMediator({ moduleName: 'fakeName' });
-      moduleManager = new ModuleManager(systemLogMediator, systemErrMediator);
+      moduleManager = new ModuleManager(systemLogMediator);
       const baseAppOptions = new BaseAppOptions();
-      mock = new AppInitializerMock(baseAppOptions, moduleManager, systemLogMediator, systemErrMediator);
+      mock = new AppInitializerMock(baseAppOptions, moduleManager, systemLogMediator);
     });
 
     class Extension1 {}
@@ -101,10 +96,9 @@ describe('BaseAppInitializer', () => {
 
     beforeEach(() => {
       const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
-      const systemErrMediator = new SystemErrorMediator({ moduleName: 'fakeName' });
-      moduleManager = new ModuleManager(systemLogMediator, systemErrMediator);
+      moduleManager = new ModuleManager(systemLogMediator);
       const baseAppOptions = new BaseAppOptions();
-      mock = new AppInitializerMock(baseAppOptions, moduleManager, systemLogMediator, systemErrMediator);
+      mock = new AppInitializerMock(baseAppOptions, moduleManager, systemLogMediator);
     });
 
     it('should throw an error about collision', () => {
@@ -313,10 +307,9 @@ describe('BaseAppInitializer', () => {
 
       // Simulation of a call from the Application
       const logMediator = new LogMediatorMock({ moduleName: 'fakeName' });
-      const systemErrMediator = new SystemErrorMediator({ moduleName: 'fakeName' });
-      moduleManager = new ModuleManager(logMediator, systemErrMediator);
+      moduleManager = new ModuleManager(logMediator);
       const baseAppOptions = new BaseAppOptions();
-      mock = new AppInitializerMock(baseAppOptions, moduleManager, logMediator, systemErrMediator);
+      mock = new AppInitializerMock(baseAppOptions, moduleManager, logMediator);
 
       // Simulation of a call from the AppModule
       @rootModule({
@@ -363,10 +356,9 @@ describe('BaseAppInitializer', () => {
       LogMediator.bufferLogs = true;
       LogMediator.buffer = [];
       const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
-      const systemErrMediator = new SystemErrorMediator({ moduleName: 'fakeName' });
-      moduleManager = new ModuleManager(systemLogMediator, systemErrMediator);
+      moduleManager = new ModuleManager(systemLogMediator);
       const baseAppOptions = new BaseAppOptions();
-      mock = new AppInitializerMock(baseAppOptions, moduleManager, systemLogMediator, systemErrMediator);
+      mock = new AppInitializerMock(baseAppOptions, moduleManager, systemLogMediator);
     });
 
     it('logs should collects between two init()', async () => {
@@ -407,10 +399,9 @@ describe('BaseAppInitializer', () => {
     beforeEach(() => {
       jest.restoreAllMocks();
       const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
-      const systemErrMediator = new SystemErrorMediator({ moduleName: 'fakeName' });
-      moduleManager = new ModuleManager(systemLogMediator, systemErrMediator);
+      moduleManager = new ModuleManager(systemLogMediator);
       const baseAppOptions = new BaseAppOptions();
-      mock = new AppInitializerMock(baseAppOptions, moduleManager, systemLogMediator, systemErrMediator);
+      mock = new AppInitializerMock(baseAppOptions, moduleManager, systemLogMediator);
     });
 
     @injectable()

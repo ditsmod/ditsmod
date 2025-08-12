@@ -6,7 +6,6 @@ import {
   ShallowImportsBase,
   ModuleManager,
   ShallowImports,
-  SystemErrorMediator,
   SystemLogMediator,
   DeepModulesImporter,
 } from '@ditsmod/core';
@@ -90,5 +89,4 @@ export interface DeepModulesImporterConfig {
   shallowImports: ShallowImports;
   providersPerApp: Provider[];
   log: SystemLogMediator;
-  errorMediator: SystemErrorMediator;
 }

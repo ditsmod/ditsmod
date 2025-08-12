@@ -1,5 +1,4 @@
 import { Provider } from '#di';
-import { SystemErrorMediator } from '#error/system-error-mediator.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { ShallowImportsBase, ShallowImports } from '#init/types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
@@ -118,7 +117,6 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
     shallowImports: ShallowImports;
     providersPerApp: Provider[];
     log: SystemLogMediator;
-    errorMediator: SystemErrorMediator;
   }): any {
     return;
   }

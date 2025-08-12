@@ -9,7 +9,6 @@ import {
   rootModule,
   ModuleManager,
   LoggerConfig,
-  SystemErrorMediator,
 } from '@ditsmod/core';
 
 import { Application } from './application.js';
@@ -104,7 +103,6 @@ describe('Application', () => {
         new AppOptions(),
         moduleManager,
         new SystemLogMediator({ moduleName: '' }),
-        new SystemErrorMediator({ moduleName: '' }),
       );
       const { log } = mock;
       await mock.bootstrapApplication(appInitializer);

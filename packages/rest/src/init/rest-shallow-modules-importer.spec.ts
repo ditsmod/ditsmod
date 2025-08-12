@@ -16,7 +16,6 @@ import {
   SystemLogMediator,
   ShallowModulesImporter as ShallowModulesImporterBase,
   ImportObj,
-  SystemErrorMediator,
 } from '@ditsmod/core';
 
 import { controller } from '#types/controller.js';
@@ -53,8 +52,7 @@ beforeEach(() => {
   clearDebugClassNames();
   mock = new MockShallowModulesImporter();
   const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
-  const systemErrMediator = new SystemErrorMediator({ moduleName: 'fakeName' });
-  moduleManager = new ModuleManager(systemLogMediator, systemErrMediator);
+  moduleManager = new ModuleManager(systemLogMediator);
 });
 
 describe('shallow importing modules', () => {

@@ -1,7 +1,17 @@
 import { injectable, optional } from '@ditsmod/core';
 
-import { RestErrorMediator } from './router-error-mediator.js';
 import { Fn, TreeConfig, RouteType, RouteParam } from '../types/types.js';
+import {
+  catchAllConflictWithExistingHandle,
+  catchAllRoutesOnlyAtEnd,
+  conflictsWithExistingWildcard,
+  handleAlreadyRegistered,
+  invalidNodeType,
+  noBeforeCatchAll,
+  onlyOneWildcardPerPath,
+  wildcardRouteConflicts,
+  wildcardsMustNonEmpty,
+} from '#init/errors.js';
 
 @injectable()
 export class Tree {
@@ -13,10 +23,7 @@ export class Tree {
   protected indices: string;
   protected priority: number;
 
-  constructor(
-    private errMediator: RestErrorMediator,
-    @optional() treeConfig?: TreeConfig,
-  ) {
+  constructor(@optional() treeConfig?: TreeConfig) {
     Object.assign(this, new TreeConfig(), treeConfig);
   }
 
@@ -104,7 +111,7 @@ export class Tree {
     } else if (i == path.length) {
       // Make node a (in-path leaf)
       if (tree.handle !== null) {
-        this.errMediator.throwHandleAlreadyRegistered(fullPath);
+        throw handleAlreadyRegistered(fullPath);
       }
       tree.handle = handle;
     }
@@ -126,7 +133,7 @@ export class Tree {
       let end = i + 1;
       while (end < max && path[end] != '/') {
         if (path[end] == ':' || path[end] == '*') {
-          this.errMediator.throwOnlyOneWildcardPerPath(path.slice(i), fullPath);
+          throw onlyOneWildcardPerPath(path.slice(i), fullPath);
         } else {
           end++;
         }
@@ -135,12 +142,12 @@ export class Tree {
       // Check if this Tree existing children which would be unreachable
       // if we insert the wildcard here
       if (tree.children.length > 0) {
-        this.errMediator.throwWildcardRouteConflicts(path.slice(i, end), fullPath);
+        throw wildcardRouteConflicts(path.slice(i, end), fullPath);
       }
 
       // check if the wildcard has a name
       if (end - i < 2) {
-        this.errMediator.throwWildcardsMustNonEmpty(fullPath);
+        throw wildcardsMustNonEmpty(fullPath);
       }
 
       if (c == ':') {
@@ -176,16 +183,16 @@ export class Tree {
         }
       } else {
         if (end != max || numParams > 1) {
-          this.errMediator.throwCatchAllRoutesOnlyAtEnd(fullPath);
+          throw catchAllRoutesOnlyAtEnd(fullPath);
         }
 
         if (tree.path.length > 0 && tree.path[tree.path.length - 1] == '/') {
-          this.errMediator.throwCatchAllConflictWithExistingHandle(fullPath);
+          throw catchAllConflictWithExistingHandle(fullPath);
         }
 
         i--;
         if (path[i] != '/') {
-          this.errMediator.throwNoBeforeCatchAll(fullPath);
+          throw noBeforeCatchAll(fullPath);
         }
 
         tree.path = path.slice(offset, i);
@@ -236,7 +243,7 @@ export class Tree {
     ) {
       this.mergeTree(tree, fullPath, path, numParams, handle);
     } else {
-      this.throwWildcardConflict(tree, path, fullPath);
+      throw this.throwWildcardConflict(tree, path, fullPath);
     }
   }
 
@@ -246,7 +253,7 @@ export class Tree {
       pathSeg = path.split('/')[0];
     }
     const prefix = fullPath.slice(0, fullPath.indexOf(pathSeg)) + tree.path;
-    this.errMediator.throwConflictsWithExistingWildcard(pathSeg, fullPath, tree.path, prefix);
+    throw conflictsWithExistingWildcard(pathSeg, fullPath, tree.path, prefix);
   }
 
   protected splitAdge(tree: this, path: string, i: number) {
@@ -331,7 +338,7 @@ export class Tree {
               return { handle, params };
 
             default:
-              this.errMediator.throwInvalidNodeType();
+              throw invalidNodeType();
           }
         }
       } else if (path == tree.path) {
@@ -343,7 +350,7 @@ export class Tree {
   }
 
   protected newTree(treeConfig?: TreeConfig) {
-    return new (this.constructor as typeof Tree)(this.errMediator, treeConfig) as this;
+    return new (this.constructor as typeof Tree)(treeConfig) as this;
   }
 
   protected addPriority(pos: number) {

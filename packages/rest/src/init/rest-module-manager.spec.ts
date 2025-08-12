@@ -14,12 +14,11 @@ import {
   forwardRef,
   Provider,
   ModuleWithInitParams,
-  SystemErrorMediator,
 } from '@ditsmod/core';
 
 import { controller } from '../types/controller.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
-import { AppendsWithParams, RestModuleParams } from './rest-init-raw-meta.js';
+import { AppendsWithParams } from './rest-init-raw-meta.js';
 import { RestInitMeta } from './rest-init-meta.js';
 import { CanActivate, guard } from '#interceptors/guard.js';
 import { RequestContext } from '#services/request-context.js';
@@ -60,8 +59,7 @@ describe('ModuleManager', () => {
   beforeEach(() => {
     clearDebugClassNames();
     const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
-    const systemErrMediator = new SystemErrorMediator({ moduleName: 'fakeName' });
-    mock = new MockModuleManager(systemLogMediator, systemErrMediator);
+    mock = new MockModuleManager(systemLogMediator);
   });
 
   describe('quickCheckMetadata()', () => {
