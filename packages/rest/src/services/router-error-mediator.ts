@@ -1,6 +1,5 @@
-import { CustomError, HttpMethod, injectable } from '@ditsmod/core';
+import { CustomError, HttpMethod } from '@ditsmod/core';
 
-@injectable()
 export class RestErrorMediator {
   /**
    * Failed to apply HTTP interceptors to "${httpMethod} ${path}": expected the fourth parameter
