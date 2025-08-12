@@ -8,12 +8,11 @@ import { OpenapiController } from './openapi.controller.js';
 import { SwaggerOAuthOptions } from './swagger-ui/o-auth-options.js';
 import { OasConfigFiles, OasExtensionConfig } from './types/oas-extension-options.js';
 import { OpenapiLogMediator } from '#services/openapi-log-mediator.js';
-import { OpenapiErrorMediator } from '#services/openapi-error-mediator.js';
 
 @initRest({
   imports: [RestModule],
   providersPerApp: [OasConfigFiles],
-  providersPerMod: [OpenapiLogMediator, OpenapiErrorMediator],
+  providersPerMod: [OpenapiLogMediator],
   extensions: [
     { extension: OpenapiRoutesExtension, export: true },
     {
