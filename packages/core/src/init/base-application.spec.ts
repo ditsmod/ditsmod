@@ -8,6 +8,7 @@ import { BaseApplication } from '#init/base-application.js';
 import { rootModule } from '#decorators/root-module.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { LoggerConfig } from '#logger/logger.js';
+import { SystemErrorMediator } from '#error/system-error-mediator.js';
 
 describe('BaseApplication', () => {
   class ApplicationMock extends BaseApplication {
@@ -55,9 +56,7 @@ describe('BaseApplication', () => {
 
   describe('bootstrapApplication()', () => {
     @rootModule({
-      providersPerApp: [
-        { token: LoggerConfig, useValue: { level: 'off' } },
-      ],
+      providersPerApp: [{ token: LoggerConfig, useValue: { level: 'off' } }],
     })
     class AppModule {}
 
@@ -67,6 +66,7 @@ describe('BaseApplication', () => {
         new BaseAppOptions(),
         moduleManager,
         new SystemLogMediator({ moduleName: '' }),
+        new SystemErrorMediator({ moduleName: '' }),
       );
       const { log: systemLogMediator } = mock;
       await mock.bootstrapApplication(baseAppInitializer);

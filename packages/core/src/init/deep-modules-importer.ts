@@ -33,7 +33,7 @@ export class DeepModulesImporter {
   protected shallowImports: ShallowImports;
   protected providersPerApp: Provider[];
   protected log: SystemLogMediator;
-  protected errorMediator: SystemErrorMediator;
+  protected err: SystemErrorMediator;
 
   constructor({
     moduleManager,
@@ -52,7 +52,7 @@ export class DeepModulesImporter {
     this.shallowImports = shallowImports;
     this.providersPerApp = providersPerApp;
     this.log = log;
-    this.errorMediator = errorMediator;
+    this.err = errorMediator;
   }
 
   importModulesDeep() {
@@ -75,7 +75,7 @@ export class DeepModulesImporter {
           shallowImports: this.shallowImports,
           providersPerApp: this.providersPerApp,
           log: this.log,
-          errorMediator: this.errorMediator,
+          errorMediator: this.err,
         });
         deepImportedModules.set(decorator, deepImports);
       });
@@ -353,7 +353,7 @@ export class DeepModulesImporter {
     const partMsg = path.length > 1 ? `(required by ${strPath}). Searched in ${levelsPath}` : levelsPath;
     // this.log.showProvidersInLogs(this, meta.name, meta.providersPerReq, meta.providersPerRou, meta.providersPerMod);
 
-    this.errorMediator.throwNoProviderDuringResolveImports(baseMeta.name, token.name || token, partMsg);
+    throw this.err.noProviderDuringResolveImports(baseMeta.name, token.name || token, partMsg);
   }
 
   getDependencies(provider: Provider) {

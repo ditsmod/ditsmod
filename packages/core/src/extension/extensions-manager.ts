@@ -1,5 +1,3 @@
-import { ChainError } from '@ts-stack/chain-error';
-
 import { Class, Injector, injectable } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import {
@@ -17,6 +15,7 @@ import { createDeferred } from '#utils/create-deferred.js';
 import { BaseMeta } from '#types/base-meta.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { isExtensionProvider } from './type-guards.js';
+import { SystemErrorMediator } from '#error/system-error-mediator.js';
 
 export class StageIteration {
   promise: Promise<void>;
@@ -57,10 +56,11 @@ export class ExtensionsManager {
 
   constructor(
     protected injector: Injector,
-    protected systemLogMediator: SystemLogMediator,
+    protected log: SystemLogMediator,
     protected counter: Counter,
     protected extensionsContext: ExtensionsContext,
     protected extensionCounters: ExtensionCounters,
+    protected err: SystemErrorMediator,
   ) {}
 
   async stage1<T>(ExtCls: ExtensionClass<T>, pendingExtension?: Extension, parApp?: false): Promise<Stage1ExtensionMeta<T>>;
@@ -71,7 +71,7 @@ export class ExtensionsManager {
     if (stageIteration) {
       if (stageIteration.index > currStageIteration.index) {
         const extensionName = this.getItemName([...this.unfinishedInit].at(-1)!) || 'unknown';
-        this.systemLogMediator.throwEarlyExtensionCalling(extensionName, ExtCls.name);
+        throw this.err.notDeclaredInAfterExtensionList(extensionName, ExtCls.name);
       } else if (this.unfinishedInit.has(ExtCls)) {
         await stageIteration.promise;
       }
@@ -149,9 +149,9 @@ export class ExtensionsManager {
 
   protected async prepareAndInitExtension<T>(ExtCls: ExtensionClass<T>) {
     this.unfinishedInit.add(ExtCls);
-    this.systemLogMediator.startExtensionsExtensionInit(this, this.unfinishedInit);
+    this.log.startExtensionsExtensionInit(this, this.unfinishedInit);
     const stage1ExtensionMeta = await this.initExtension(ExtCls);
-    this.systemLogMediator.finishExtensionsExtensionInit(this, this.unfinishedInit);
+    this.log.finishExtensionsExtensionInit(this, this.unfinishedInit);
     this.unfinishedInit.delete(ExtCls);
     this.stage1ExtensionMetaCache.set(ExtCls, stage1ExtensionMeta);
     this.setStage1ExtensionMetaPerApp(ExtCls, stage1ExtensionMeta);
@@ -181,13 +181,13 @@ export class ExtensionsManager {
       }
 
       this.unfinishedInit.add(extension);
-      this.systemLogMediator.startInitExtension(this, this.unfinishedInit);
+      this.log.startInitExtension(this, this.unfinishedInit);
       const ExtensionClass = extension.constructor as Class<Extension<T>>;
       const countdown = this.extensionCounters.mExtensions.get(ExtensionClass) || 0;
       const isLastModule = countdown === 0;
       const data = (await extension.stage1?.(isLastModule)) as T;
       this.extensionsListForStage2.add(extension);
-      this.systemLogMediator.finishInitExtension(this, this.unfinishedInit, data);
+      this.log.finishInitExtension(this, this.unfinishedInit, data);
       this.counter.addInitedExtensions(extension);
       this.unfinishedInit.delete(extension);
       const debugMeta = new Stage1DebugMeta<T>(extension, data, !isLastModule, countdown);
@@ -210,11 +210,7 @@ export class ExtensionsManager {
     const prefixNames = prefixChain.map(this.getItemName).join(' -> ');
     let circularNames = circularChain.map(this.getItemName).join(' -> ');
     circularNames += ` -> ${this.getItemName(item)}`;
-    let msg = `Detected circular dependencies: ${circularNames}.`;
-    if (prefixNames) {
-      msg += ` It is started from ${prefixNames}.`;
-    }
-    throw new Error(msg);
+    throw this.err.detectedCircularDependenciesForExtensions(prefixNames, circularNames);
   }
 
   protected getItemName(classOrInstance: Extension | ExtensionClass) {
@@ -242,9 +238,8 @@ export class InternalExtensionsManager extends ExtensionsManager {
         await this.stage1(ExtCls);
         this.updateExtensionPendingList();
       } catch (err: any) {
-        const debugModuleName = getDebugClassName(meta.modRefId);
-        const msg = `${ExtCls.name} in ${debugModuleName} failed`;
-        throw new ChainError(msg, { cause: err, name: 'Error' });
+        const moduleName = getDebugClassName(meta.modRefId) || '""';
+        throw this.err.extensionIsFailed(ExtCls.name, moduleName, err);
       }
     }
     this.setExtensionsToStage2(meta.modRefId);

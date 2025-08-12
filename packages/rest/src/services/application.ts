@@ -24,7 +24,7 @@ export class Application extends BaseApplication {
     try {
       app.init(restOptions);
       const moduleManager = app.scanRootModule(appModule);
-      const appInitializer = new AppInitializer(app.appOptions, moduleManager, app.log);
+      const appInitializer = new AppInitializer(app.appOptions, moduleManager, app.log, app.err);
       await app.bootstrapApplication(appInitializer);
       await app.createServerAndBindToListening(appInitializer);
       return app;

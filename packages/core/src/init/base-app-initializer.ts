@@ -39,6 +39,7 @@ export class BaseAppInitializer {
     protected baseAppOptions: BaseAppOptions,
     protected moduleManager: ModuleManager,
     public log: SystemLogMediator,
+    protected err: SystemErrorMediator,
   ) {}
 
   /**
