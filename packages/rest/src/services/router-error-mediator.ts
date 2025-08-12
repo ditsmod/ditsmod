@@ -61,7 +61,7 @@ export class RestErrorMediator {
    */
   static wildcardRouteConflicts(path: string, fullPath: string) {
     return new CustomError({
-      code: RestErrorMediator.onlyOneWildcardPerPath.name,
+      code: RestErrorMediator.wildcardRouteConflicts.name,
       msg1: `wildcard route '${path}' conflicts with existing children in path '${fullPath}'`,
       level: 'fatal',
     });
@@ -71,7 +71,7 @@ export class RestErrorMediator {
    */
   static wildcardsMustNonEmpty(fullPath: string) {
     return new CustomError({
-      code: RestErrorMediator.onlyOneWildcardPerPath.name,
+      code: RestErrorMediator.wildcardsMustNonEmpty.name,
       msg1: `wildcards must be named with a non-empty name in path '${fullPath}'`,
       level: 'fatal',
     });
@@ -81,7 +81,7 @@ export class RestErrorMediator {
    */
   static catchAllRoutesOnlyAtEnd(fullPath: string) {
     return new CustomError({
-      code: RestErrorMediator.onlyOneWildcardPerPath.name,
+      code: RestErrorMediator.catchAllRoutesOnlyAtEnd.name,
       msg1: `catch-all routes are only allowed at the end of the path in path '${fullPath}'`,
       level: 'fatal',
     });
@@ -91,7 +91,7 @@ export class RestErrorMediator {
    */
   static catchAllConflictWithExistingHandle(fullPath: string) {
     return new CustomError({
-      code: RestErrorMediator.onlyOneWildcardPerPath.name,
+      code: RestErrorMediator.catchAllConflictWithExistingHandle.name,
       msg1: `catch-all conflicts with existing handle for the path segment root in path '${fullPath}'`,
       level: 'fatal',
     });
@@ -101,7 +101,7 @@ export class RestErrorMediator {
    */
   static noBeforeCatchAll(fullPath: string) {
     return new CustomError({
-      code: RestErrorMediator.onlyOneWildcardPerPath.name,
+      code: RestErrorMediator.noBeforeCatchAll.name,
       msg1: `no / before catch-all in path '${fullPath}'`,
       level: 'fatal',
     });
@@ -111,7 +111,7 @@ export class RestErrorMediator {
    */
   static conflictsWithExistingWildcard(pathSeg: string, fullPath: string, treePath: string, prefix: string) {
     return new CustomError({
-      code: RestErrorMediator.onlyOneWildcardPerPath.name,
+      code: RestErrorMediator.conflictsWithExistingWildcard.name,
       msg1: `'${pathSeg}' in new path '${fullPath}' conflicts with existing wildcard '${treePath}' in existing prefix '${prefix}'`,
       level: 'fatal',
     });
@@ -121,7 +121,7 @@ export class RestErrorMediator {
    */
   static invalidNodeType() {
     return new CustomError({
-      code: RestErrorMediator.onlyOneWildcardPerPath.name,
+      code: RestErrorMediator.invalidNodeType.name,
       msg1: 'invalid node type',
       level: 'fatal',
     });
