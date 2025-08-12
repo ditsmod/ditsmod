@@ -6,7 +6,7 @@ import {
   optional,
   Logger,
 } from '@ditsmod/core';
-import { DictService, I18nErrorMediator, I18nLogMediator, I18nOptions, ISO639 } from '@ditsmod/i18n';
+import { DictService, I18nLogMediator, I18nOptions, ISO639 } from '@ditsmod/i18n';
 import { QUERY_PARAMS, RAW_REQ, RawRequest } from '@ditsmod/rest';
 
 @injectable()
@@ -14,13 +14,12 @@ export class MyDictService extends DictService {
   constructor(
     protected override injector: Injector,
     protected override log: I18nLogMediator,
-    protected override errMediator: I18nErrorMediator,
     protected logger: Logger,
     @optional() protected override i18nOptions?: I18nOptions,
     @inject(QUERY_PARAMS) protected override queryParams?: AnyObj,
     @optional() @inject(RAW_REQ) protected rawReq?: RawRequest,
   ) {
-    super(injector, log, errMediator, i18nOptions, queryParams);
+    super(injector, log, i18nOptions, queryParams);
   }
 
   override set lng(lng: ISO639) {
