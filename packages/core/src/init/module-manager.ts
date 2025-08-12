@@ -4,7 +4,7 @@ import { injectable, Injector, Provider, reflector } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyObj, ModuleType, ModRefId } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
-import { BaseMeta } from '#types/base-meta.js';
+import { BaseInitMeta, BaseMeta } from '#types/base-meta.js';
 import { isModuleWithParams, isRootModule } from '#utils/type-guards.js';
 import { clearDebugClassNames, getDebugClassName } from '#utils/get-debug-class-name.js';
 import { objectKeys } from '#utils/object-keys.js';
@@ -35,7 +35,12 @@ export class ModuleManager {
   protected unfinishedScanModules = new Set<ModRefId>();
   protected scanedModules = new Set<ModRefId>();
   protected moduleNormalizer = new ModuleNormalizer();
-  protected propsWithModules = ['importsModules', 'importsWithParams', 'exportsModules', 'exportsWithParams'] as const;
+  protected propsWithModules = [
+    'importsModules',
+    'importsWithParams',
+    'exportsModules',
+    'exportsWithParams',
+  ] satisfies (keyof BaseInitMeta)[];
 
   constructor(protected systemLogMediator: SystemLogMediator) {}
 
