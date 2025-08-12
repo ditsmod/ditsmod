@@ -4,7 +4,7 @@ import { QUERY_PARAMS } from '@ditsmod/rest';
 import { I18nLogMediator } from './i18n-log-mediator.js';
 import { ISO639 } from './types/iso-639.js';
 import { Dictionary, I18nOptions } from './types/mix.js';
-import { throwDictionaryMustBeDefined, throwDictionaryNotFound } from './errors.js';
+import { dictionaryMustBeDefined, dictionaryNotFound } from './errors.js';
 
 @injectable()
 export class DictService {
@@ -24,7 +24,7 @@ export class DictService {
 
   getDictionary<T extends Class<Dictionary>>(token: T, lng?: ISO639) {
     if (!token) {
-      throwDictionaryMustBeDefined();
+      throw dictionaryMustBeDefined();
     }
     const dictionaries = this.getAllDictionaries(token);
     lng = lng || this.lng;
@@ -38,7 +38,7 @@ export class DictService {
       dictionary = dictionaries.find((t) => t.getLng() == tryLng);
     }
     if (!dictionary) {
-      throwDictionaryNotFound(token.name, lng);
+      throw dictionaryNotFound(token.name, lng);
     }
     return dictionary!;
   }
