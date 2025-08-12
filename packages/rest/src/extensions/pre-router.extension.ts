@@ -361,7 +361,7 @@ export class PreRouterExtension implements Extension<void> {
       }
       DepsChecker.check(inj, HTTP_INTERCEPTORS, fromSelf, ignoreDeps);
     } catch (cause: any) {
-      checkingDepsInSandboxFailed(cause, controllerName, httpMethod, path);
+      throw checkingDepsInSandboxFailed(cause, controllerName, httpMethod, path);
     }
   }
 
