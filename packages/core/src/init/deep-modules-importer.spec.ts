@@ -41,7 +41,7 @@ describe('DeepModulesImporter', () => {
     shallowModulesImporter = injectorPerApp.get(ShallowModulesImporter);
     systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
     errorMediator = new SystemErrorMediator({ moduleName: 'fakeName' });
-    moduleManager = new ModuleManager(systemLogMediator);
+    moduleManager = new ModuleManager(systemLogMediator, errorMediator);
     mock = new DeepModulesImporterMock({
       moduleManager,
       errorMediator: null as any,

@@ -10,7 +10,7 @@ import { clearDebugClassNames, getDebugClassName } from '#utils/get-debug-class-
 import { objectKeys } from '#utils/object-keys.js';
 import { ModuleNormalizer } from '#init/module-normalizer.js';
 import { AllInitHooks } from '#decorators/init-hooks-and-metadata.js';
-import { CustomError } from '#error/custom-error.js';
+import { SystemErrorMediator } from '#error/system-error-mediator.js';
 
 export type ModulesMap = Map<ModRefId, BaseMeta>;
 export type ModulesMapId = Map<string, ModRefId>;
@@ -42,7 +42,10 @@ export class ModuleManager {
     'exportsWithParams',
   ] satisfies (keyof BaseInitMeta)[];
 
-  constructor(protected systemLogMediator: SystemLogMediator) {}
+  constructor(
+    protected systemLogMediator: SystemLogMediator,
+    protected err: SystemErrorMediator,
+  ) {}
 
   /**
    * Creates a snapshot of `BaseMeta` for the root module, stores locally and returns it.
@@ -51,7 +54,7 @@ export class ModuleManager {
   scanRootModule(appModule: ModuleType) {
     this.providersPerApp = [];
     if (!reflector.getDecorators(appModule, isRootModule)) {
-      throw new Error(`Module scaning failed: "${appModule.name}" does not have the "@rootModule()" decorator`);
+      throw this.err.rootNotHaveDecorator(appModule.name);
     }
 
     const baseMeta = this.scanRawModule(appModule);
@@ -104,8 +107,7 @@ export class ModuleManager {
     if (!targetMeta) {
       const modName = getDebugClassName(inputModule);
       const modIdStr = format(targetModuleId).slice(0, 50);
-      const msg = `Failed adding ${modName} to imports: target module with ID "${modIdStr}" not found.`;
-      throw new Error(msg);
+      throw this.err.failAddingToImports(modName, modIdStr);
     }
 
     const prop = isModuleWithParams(inputModule) ? 'importsWithParams' : 'importsModules';
@@ -140,8 +142,7 @@ export class ModuleManager {
     const targetMeta = this.getOriginMetadata(targetModuleId);
     if (!targetMeta) {
       const modIdStr = format(targetModuleId).slice(0, 50);
-      const msg = `Failed removing ${inputMeta.name} from "imports" array: target module with ID "${modIdStr}" not found.`;
-      throw new Error(msg);
+      throw this.err.failRemovingImport(inputMeta.name, modIdStr);
     }
     const prop = isModuleWithParams(inputMeta.modRefId) ? 'importsWithParams' : 'importsModules';
     const index = targetMeta[prop].findIndex((imp: ModRefId) => imp === inputMeta.modRefId);
@@ -181,7 +182,7 @@ export class ModuleManager {
 
   rollback(err?: Error) {
     if (!this.oldMapId.size) {
-      throw new Error('It is forbidden for rollback() to an empty state.');
+      throw this.err.forbiddenRollbackEemptyState();
     }
     this.mapId = this.oldMapId;
     this.map = this.oldMap;
@@ -209,7 +210,7 @@ export class ModuleManager {
       if (mapId) {
         this.injectorPerModMap.set(mapId, injectorPerMod);
       } else {
-        throw new Error(`${moduleId} not found in ModuleManager.`);
+        throw this.err.moduleIdNotFoundInModuleManager(moduleId);
       }
     } else {
       this.injectorPerModMap.set(moduleId, injectorPerMod);
@@ -222,7 +223,7 @@ export class ModuleManager {
       if (mapId) {
         return this.injectorPerModMap.get(mapId)!;
       } else {
-        throw new Error(`${moduleId} not found in ModuleManager.`);
+        throw this.err.moduleIdNotFoundInModuleManager(moduleId);
       }
     } else {
       return this.injectorPerModMap.get(moduleId)!;
@@ -330,7 +331,7 @@ export class ModuleManager {
       } else {
         moduleName = getDebugClassName(moduleId) || 'unknown';
       }
-      throw new Error(`${moduleName} not found in ModuleManager.`);
+      throw this.err.moduleIdNotFoundInModuleManager(moduleName);
     }
 
     return baseMeta;
@@ -366,7 +367,7 @@ export class ModuleManager {
       const moduleName = getDebugClassName(modRefId);
       let path = [...this.unfinishedScanModules].map((id) => getDebugClassName(id)).join(' -> ');
       path = this.unfinishedScanModules.size > 1 ? `${moduleName} (${path})` : `${moduleName}`;
-      throw new CustomError({ msg1: `Normalization of ${path} failed`, level: 'fatal' }, err);
+      throw this.err.normalizationFailed(path, err);
     }
   }
 }

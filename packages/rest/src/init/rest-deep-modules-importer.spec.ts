@@ -41,7 +41,7 @@ describe('DeepModulesImporter', () => {
   function getMetadataPerMod2(rootModule: ModuleType) {
     const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
     const errorMediator = new SystemErrorMediator({ moduleName: 'fakeName' });
-    const moduleManager = new ModuleManager(systemLogMediator);
+    const moduleManager = new ModuleManager(systemLogMediator, errorMediator);
     moduleManager.scanRootModule(rootModule);
     const baseAppOptions = new BaseAppOptions();
     const initializer = new AppInitializerMock(baseAppOptions, moduleManager, systemLogMediator);

@@ -14,6 +14,7 @@ import {
   forwardRef,
   Provider,
   ModuleWithInitParams,
+  SystemErrorMediator,
 } from '@ditsmod/core';
 
 import { controller } from '../types/controller.js';
@@ -59,7 +60,8 @@ describe('ModuleManager', () => {
   beforeEach(() => {
     clearDebugClassNames();
     const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
-    mock = new MockModuleManager(systemLogMediator);
+    const systemErrMediator = new SystemErrorMediator({ moduleName: 'fakeName' });
+    mock = new MockModuleManager(systemLogMediator, systemErrMediator);
   });
 
   describe('quickCheckMetadata()', () => {

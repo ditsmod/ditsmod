@@ -7,6 +7,7 @@ import {
   ModuleWithParams,
   Providers,
   rootModule,
+  SystemErrorMediator,
   SystemLogMediator,
 } from '@ditsmod/core';
 
@@ -27,7 +28,8 @@ describe('rest ModuleNormalizer', () => {
   beforeEach(() => {
     clearDebugClassNames();
     const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
-    moduleManager = new ModuleManager(systemLogMediator);
+    const systemErrMediator = new SystemErrorMediator({ moduleName: 'fakeName' });
+    moduleManager = new ModuleManager(systemLogMediator, systemErrMediator);
     mock = new MockModuleNormalizer();
   });
 
