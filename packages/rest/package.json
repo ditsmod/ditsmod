@@ -23,6 +23,7 @@
     }
   },
   "imports": {
+    "#diagnostics-channel": "./dist/diagnostics-channel.js",
     "#errors": "./dist/errors.js",
     "#utils/*": "./dist/utils/*",
     "#init/*": "./dist/init/*",
