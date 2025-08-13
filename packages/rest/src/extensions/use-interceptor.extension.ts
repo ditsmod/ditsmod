@@ -4,7 +4,7 @@ import { Extension, ExtensionsManager, injectable } from '@ditsmod/core';
 import { HTTP_INTERCEPTORS } from '#types/constants.js';
 import { isInterceptor } from '#types/type.guards.js';
 import { RoutesExtension } from './routes.extension.js';
-import { invalidInterceptor } from '#init/errors.js';
+import { invalidInterceptor } from '#errors';
 
 /**
  * A group of extensions that allows you to set the order of launching different interceptors.

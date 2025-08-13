@@ -44,7 +44,7 @@ import { RouteHandler, Router } from '#services/router.js';
 import { HttpErrorHandler } from '#services/http-error-handler.js';
 import { RequestContext } from '#services/request-context.js';
 import { RoutesExtension } from './routes.extension.js';
-import { checkingDepsInSandboxFailed } from '#init/errors.js';
+import { checkingDepsInSandboxFailed } from '#errors';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {

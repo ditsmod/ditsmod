@@ -18,11 +18,12 @@
       "default": "./dist/diagnostics-channel.js"
     },
     "./errors": {
-      "types": "./dist/init/errors.d.ts",
-      "default": "./dist/init/errors.js"
+      "types": "./dist/errors.d.ts",
+      "default": "./dist/errors.js"
     }
   },
   "imports": {
+    "#errors": "./dist/errors.js",
     "#utils/*": "./dist/utils/*",
     "#init/*": "./dist/init/*",
     "#types/*": "./dist/types/*",

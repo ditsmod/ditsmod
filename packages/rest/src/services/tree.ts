@@ -11,7 +11,7 @@ import {
   onlyOneWildcardPerPath,
   wildcardRouteConflicts,
   wildcardsMustNonEmpty,
-} from '#init/errors.js';
+} from '#errors';
 
 @injectable()
 export class Tree {
