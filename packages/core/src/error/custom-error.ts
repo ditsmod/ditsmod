@@ -12,7 +12,7 @@ export class CustomError extends ChainError {
 
     super(
       `${info.msg1}`,
-      { info, cause, constructorOpt: info.constructorOpt, name: info.name || 'CustomError' },
+      { info, cause, constructorOpt: info.constructorOpt, name: info.name || new.target.constructor.name },
       info.skipCauseMessage,
     );
   }
