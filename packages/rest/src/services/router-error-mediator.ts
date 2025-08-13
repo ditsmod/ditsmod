@@ -1,25 +1,25 @@
 import { CustomError, HttpMethod } from '@ditsmod/core';
 
-export class RestErrorMediator {
+export const restErrors = {
   /**
    * Failed to apply HTTP interceptors to "${httpMethod} ${path}": expected the fourth parameter
    * of the route decorator to be an HttpInterceptor or an extension group token, but got: ${whatIsThis}.
    *
    */
-  static invalidInterceptor(httpMethods: string, path: string, whatIsThis: string) {
+  invalidInterceptor(httpMethods: string, path: string, whatIsThis: string) {
     return new CustomError({
-      code: RestErrorMediator.invalidInterceptor.name,
+      code: restErrors.invalidInterceptor.name,
       msg1:
         `Failed to apply HTTP interceptors to "[${httpMethods}] ${path}": ` +
         'expected the fourth parameter of the route decorator to be an HttpInterceptor ' +
         `or an extension group token, but got: ${whatIsThis}.`,
       level: 'fatal',
     });
-  }
+  },
   /**
    * `Checking deps in "sandbox" for failed`.
    */
-  static checkingDepsInSandboxFailed(
+  checkingDepsInSandboxFailed(
     cause: Error,
     controllerName: string,
     httpMethod: HttpMethod | HttpMethod[],
@@ -27,102 +27,102 @@ export class RestErrorMediator {
   ) {
     return new CustomError(
       {
-        code: RestErrorMediator.checkingDepsInSandboxFailed.name,
+        code: restErrors.checkingDepsInSandboxFailed.name,
         msg1: `Checking deps in sandbox for route "${controllerName} -> ${httpMethod} ${path}" failed`,
         level: 'fatal',
-        constructorOpt: RestErrorMediator.checkingDepsInSandboxFailed,
+        constructorOpt: restErrors.checkingDepsInSandboxFailed,
       },
       cause,
     );
-  }
+  },
   /**
    * Setting route '${fullPath}' failed: a handle is already registered for this path.
    */
-  static handleAlreadyRegistered(fullPath: string) {
+  handleAlreadyRegistered(fullPath: string) {
     return new CustomError({
-      code: RestErrorMediator.handleAlreadyRegistered.name,
+      code: restErrors.handleAlreadyRegistered.name,
       msg1: `Setting route '${fullPath}' failed: a handle is already registered for this path.`,
       level: 'fatal',
     });
-  }
+  },
   /**
    * Only one wildcard per path segment is allowed, has: '${path}' in path '${fullPath}'
    */
-  static onlyOneWildcardPerPath(path: string, fullPath: string) {
+  onlyOneWildcardPerPath(path: string, fullPath: string) {
     return new CustomError({
-      code: RestErrorMediator.onlyOneWildcardPerPath.name,
+      code: restErrors.onlyOneWildcardPerPath.name,
       msg1: `Only one wildcard per path segment is allowed, has: '${path}' in path '${fullPath}'`,
       level: 'fatal',
     });
-  }
+  },
   /**
    * wildcard route '${path}' conflicts with existing children in path '${fullPath}'
    */
-  static wildcardRouteConflicts(path: string, fullPath: string) {
+  wildcardRouteConflicts(path: string, fullPath: string) {
     return new CustomError({
-      code: RestErrorMediator.wildcardRouteConflicts.name,
+      code: restErrors.wildcardRouteConflicts.name,
       msg1: `wildcard route '${path}' conflicts with existing children in path '${fullPath}'`,
       level: 'fatal',
     });
-  }
+  },
   /**
    * wildcards must be named with a non-empty name in path '${fullPath}'
    */
-  static wildcardsMustNonEmpty(fullPath: string) {
+  wildcardsMustNonEmpty(fullPath: string) {
     return new CustomError({
-      code: RestErrorMediator.wildcardsMustNonEmpty.name,
+      code: restErrors.wildcardsMustNonEmpty.name,
       msg1: `wildcards must be named with a non-empty name in path '${fullPath}'`,
       level: 'fatal',
     });
-  }
+  },
   /**
    *
    */
-  static catchAllRoutesOnlyAtEnd(fullPath: string) {
+  catchAllRoutesOnlyAtEnd(fullPath: string) {
     return new CustomError({
-      code: RestErrorMediator.catchAllRoutesOnlyAtEnd.name,
+      code: restErrors.catchAllRoutesOnlyAtEnd.name,
       msg1: `catch-all routes are only allowed at the end of the path in path '${fullPath}'`,
       level: 'fatal',
     });
-  }
+  },
   /**
    * catch-all conflicts with existing handle for the path segment root in path '${fullPath}'
    */
-  static catchAllConflictWithExistingHandle(fullPath: string) {
+  catchAllConflictWithExistingHandle(fullPath: string) {
     return new CustomError({
-      code: RestErrorMediator.catchAllConflictWithExistingHandle.name,
+      code: restErrors.catchAllConflictWithExistingHandle.name,
       msg1: `catch-all conflicts with existing handle for the path segment root in path '${fullPath}'`,
       level: 'fatal',
     });
-  }
+  },
   /**
    * no / before catch-all in path '${fullPath}'
    */
-  static noBeforeCatchAll(fullPath: string) {
+  noBeforeCatchAll(fullPath: string) {
     return new CustomError({
-      code: RestErrorMediator.noBeforeCatchAll.name,
+      code: restErrors.noBeforeCatchAll.name,
       msg1: `no / before catch-all in path '${fullPath}'`,
       level: 'fatal',
     });
-  }
+  },
   /**
    * '${pathSeg}' in new path '${fullPath}' conflicts with existing wildcard '${treePath}' in existing prefix '${prefix}'
    */
-  static conflictsWithExistingWildcard(pathSeg: string, fullPath: string, treePath: string, prefix: string) {
+  conflictsWithExistingWildcard(pathSeg: string, fullPath: string, treePath: string, prefix: string) {
     return new CustomError({
-      code: RestErrorMediator.conflictsWithExistingWildcard.name,
+      code: restErrors.conflictsWithExistingWildcard.name,
       msg1: `'${pathSeg}' in new path '${fullPath}' conflicts with existing wildcard '${treePath}' in existing prefix '${prefix}'`,
       level: 'fatal',
     });
-  }
+  },
   /**
    * invalid node type
    */
-  static invalidNodeType() {
+  invalidNodeType() {
     return new CustomError({
-      code: RestErrorMediator.invalidNodeType.name,
+      code: restErrors.invalidNodeType.name,
       msg1: 'invalid node type',
       level: 'fatal',
     });
-  }
-}
+  },
+};
