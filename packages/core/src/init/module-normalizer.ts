@@ -17,7 +17,7 @@ import {
   isParamsWithMwp,
 } from '#utils/type-guards.js';
 import { ExtensionConfigBase, getExtensionProvider } from '#extension/get-extension-provider.js';
-import { AnyFn, AnyObj, ModRefId, Reduce } from '#types/mix.js';
+import { AnyFn, AnyObj, ModRefId, PickProps } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { RawMeta } from '#decorators/feature-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
@@ -136,7 +136,7 @@ export class ModuleNormalizer {
   }
 
   protected normalizeDeclaredAndResolvedProviders(
-    rawMeta: BaseInitRawMeta & Reduce<RawMeta, 'resolvedCollisionsPerApp'>,
+    rawMeta: BaseInitRawMeta & PickProps<RawMeta, 'resolvedCollisionsPerApp'>,
     baseMeta: BaseMeta,
   ) {
     (['App', 'Mod'] as const).forEach((level) => {
@@ -161,7 +161,7 @@ export class ModuleNormalizer {
 
   protected throwIfResolvingNormalizedProvider(
     moduleName: string,
-    rawMeta: BaseInitRawMeta & Reduce<RawMeta, 'resolvedCollisionsPerApp'>,
+    rawMeta: BaseInitRawMeta & PickProps<RawMeta, 'resolvedCollisionsPerApp'>,
   ) {
     const resolvedCollisionsPerLevel: [any, ModRefId][] = [];
     if (Array.isArray(rawMeta.resolvedCollisionsPerApp)) {
@@ -182,7 +182,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected normalizeExtensions(rawMeta: Reduce<ModuleMetadata, 'extensions' | 'extensionsMeta'>, baseMeta: BaseMeta) {
+  protected normalizeExtensions(rawMeta: PickProps<ModuleMetadata, 'extensions' | 'extensionsMeta'>, baseMeta: BaseMeta) {
     if (rawMeta.extensionsMeta) {
       baseMeta.extensionsMeta = { ...rawMeta.extensionsMeta };
     }

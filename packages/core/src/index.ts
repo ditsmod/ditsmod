@@ -61,7 +61,7 @@ export {
   ResolvedGuardPerMod,
   AnyFn,
   RequireProps,
-  Reduce,
+  PickProps,
   RequireOnlyProps,
   OptionalProps,
   ModRefId,
