@@ -11,7 +11,7 @@ export const systemErrors = {
     });
   },
   /**
-   * `${ExtCls.name} in ${moduleName} failed`
+   * `${ExtCls.name} in ${moduleName} is failed`
    */
   extensionIsFailed(extensionName: string, moduleName: string, cause: Error) {
     return newCustomError(
