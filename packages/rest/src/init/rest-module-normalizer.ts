@@ -196,11 +196,14 @@ export class RestModuleNormalizer {
 
   protected exportProviders(token: any, meta: RestInitMeta) {
     let found = false;
-    (['Rou', 'Req'] satisfies Level[]).forEach((level) => {
+    (['Mod', 'Rou', 'Req'] satisfies Level[]).forEach((level) => {
       let providers = meta[`providersPer${level}`].filter((p) => getToken(p) === token);
       providers = this.resolveForwardRef(providers);
       if (providers.length) {
         found = true;
+        if (level == 'Mod') {
+          return;
+        }
         if (providers.some(isMultiProvider)) {
           meta[`exportedMultiProvidersPer${level}`].push(...(providers as MultiProvider[]));
         } else {
