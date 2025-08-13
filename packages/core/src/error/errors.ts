@@ -1,4 +1,4 @@
-import { systemErrors } from '#error/system-error-mediator.js';
+import { systemErrors } from '#error/system-errors.js';
 export const {
   extensionIsFailed,
   loggerWasNotPreviouslySeted,
