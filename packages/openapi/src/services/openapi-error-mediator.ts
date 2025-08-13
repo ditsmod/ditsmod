@@ -1,15 +1,14 @@
-import { CustomError, injectable } from '@ditsmod/core';
+import { CustomError } from '@ditsmod/core';
 
-@injectable()
-export class OpenapiErrorMediator {
+export const openapiErrors = {
   /**
    * Settings OpenAPI parameters in ${controllerName} failed: parameter "${paramName}" not found in "${path}".
    */
-  static throwParamNotFoundInPath(controllerName: string, paramName: string, path: string) {
+  throwParamNotFoundInPath(controllerName: string, paramName: string, path: string) {
     return new CustomError({
-      code: OpenapiErrorMediator.throwParamNotFoundInPath.name,
+      code: openapiErrors.throwParamNotFoundInPath.name,
       msg1: `Settings OpenAPI parameters in ${controllerName} failed: parameter "${paramName}" not found in "${path}".`,
       level: 'warn',
     });
-  }
-}
+  },
+};

@@ -1,3 +1,3 @@
-import { OpenapiErrorMediator } from '#services/openapi-error-mediator.js';
+import { openapiErrors } from '#services/openapi-error-mediator.js';
 
-export const { throwParamNotFoundInPath } = OpenapiErrorMediator;
+export const { throwParamNotFoundInPath } = openapiErrors;

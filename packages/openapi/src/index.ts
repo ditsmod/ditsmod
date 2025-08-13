@@ -12,4 +12,4 @@ export * from '#utils/content.js';
 export { Parameters, getParams } from '#utils/parameters.js';
 export * from '#utils/type-guards.js';
 export { OpenapiLogMediator } from '#services/openapi-log-mediator.js';
-export { OpenapiErrorMediator } from '#services/openapi-error-mediator.js';
+export { openapiErrors } from '#services/openapi-error-mediator.js';
