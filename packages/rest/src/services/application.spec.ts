@@ -11,11 +11,11 @@ import {
   LoggerConfig,
 } from '@ditsmod/core';
 
-import { Application } from './application.js';
+import { RestApplication } from './application.js';
 import { AppOptions } from '../types/app-options.js';
 
-describe('Application', () => {
-  class ApplicationMock extends Application {
+describe('RestApplication', () => {
+  class ApplicationMock extends RestApplication {
     override appOptions = new AppOptions();
     declare log: SystemLogMediator;
 

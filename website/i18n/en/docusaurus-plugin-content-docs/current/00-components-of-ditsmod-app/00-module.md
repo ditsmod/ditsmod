@@ -38,7 +38,7 @@ import { rootModule } from '@ditsmod/core';
 
 @rootModule({
   imports: [], // Import modules
-  providersPerApp: [], // Application-level providers
+  providersPerApp: [], // RestApplication-level providers
   providersPerMod: [], // Module-level providers
   exports: [], // Export modules and providers from the current module
   extensions: [],

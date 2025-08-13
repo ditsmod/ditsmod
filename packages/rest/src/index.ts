@@ -1,4 +1,4 @@
-export { Application } from './services/application.js';
+export { RestApplication } from './services/application.js';
 export { HttpServer } from './types/server-options.js';
 export { AppOptions } from './types/app-options.js';
 export { RestAppInitializer } from './services/app-initializer.js';

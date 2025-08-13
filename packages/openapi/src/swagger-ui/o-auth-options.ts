@@ -16,7 +16,7 @@ export class SwaggerOAuthOptions {
    */
   realm?: string;
   /**
-   * Application name, displayed in authorization popup.
+   * RestApplication name, displayed in authorization popup.
    */
   appName?: string;
   /**

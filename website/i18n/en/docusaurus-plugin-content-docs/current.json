@@ -16,7 +16,7 @@
     "description": "The label for category Extensions in sidebar tutorialSidebar"
   },
   "sidebar.tutorialSidebar.category.Приклади застосунків": {
-    "message": "Application examples",
+    "message": "RestApplication examples",
     "description": "The label for category Приклади застосунків in sidebar tutorialSidebar"
   }
 }

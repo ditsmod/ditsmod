@@ -57,7 +57,7 @@ As you can see, `MyLogMediator` extends `LogMediator` and the `serverListen()` m
 
 The result can be seen if you run the application with the `npm start` command, after which you should receive exactly the message that was generated in this `myLogMediator.serverListen()` method.
 
-## Application-level substitute of LogMediator
+## RestApplication-level substitute of LogMediator
 
 If you look at `AppModule`, you can see how `LogMediator` is substituted by `MyLogMediator`:
 

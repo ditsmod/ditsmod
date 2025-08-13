@@ -52,7 +52,7 @@ export abstract class LogMediator {
 
   /**
    * This method is needed only for those cases when logs are written to the buffer before
-   * the `OutputLogLevel` is known. At the moment, it is needed only for the `Application` and `BaseAppInitializer`
+   * the `OutputLogLevel` is known. At the moment, it is needed only for the `RestApplication` and `BaseAppInitializer`
    * classes, ater initializing providers at the application level, and after init extensions.
    */
   protected updateOutputLogLevel() {
@@ -97,6 +97,6 @@ export abstract class LogMediator {
   }
 
   protected msgAboutSingletonLogger =
-    'Either set "new Application().bootstrap(AppModule, { bufferLogs: false })" in main.ts, ' +
+    'Either set "new RestApplication().bootstrap(AppModule, { bufferLogs: false })" in main.ts, ' +
     "or don't pass the logger as a singleton that should write logs in the context of different OutputLogLevels.";
 }

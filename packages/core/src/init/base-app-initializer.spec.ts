@@ -294,7 +294,7 @@ describe('BaseAppInitializer', () => {
   });
 
   describe('bootstrapProvidersPerApp()', () => {
-    it('logMediator should has different instances in contexts of Application and RestAppInitializer', () => {
+    it('logMediator should has different instances in contexts of RestApplication and RestAppInitializer', () => {
       const loggerSpy = jest.fn();
 
       class LogMediatorMock extends SystemLogMediator {
@@ -305,7 +305,7 @@ describe('BaseAppInitializer', () => {
         }
       }
 
-      // Simulation of a call from the Application
+      // Simulation of a call from the RestApplication
       const logMediator = new LogMediatorMock({ moduleName: 'fakeName' });
       moduleManager = new ModuleManager(logMediator);
       const baseAppOptions = new BaseAppOptions();
@@ -322,7 +322,7 @@ describe('BaseAppInitializer', () => {
 
       moduleManager.scanRootModule(AppModule);
       mock.bootstrapProvidersPerApp();
-      // Here logMediator used from Application
+      // Here logMediator used from RestApplication
       logMediator.flush();
       // mock.flushLogs();
       expect(loggerSpy).toHaveBeenNthCalledWith(1, 'info');

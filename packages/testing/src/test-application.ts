@@ -8,13 +8,13 @@ import {
   ModRefId,
   Provider,
 } from '@ditsmod/core';
-import { Application, AppOptions } from '@ditsmod/rest';
+import { RestApplication, AppOptions } from '@ditsmod/rest';
 
 import { ExtensionMetaOverrider, ProvidersOnly } from './types.js';
 import { TestAppInitializer } from './test-app-initializer.js';
 import { TestModuleManager } from './test-module-manager.js';
 
-export class TestApplication extends Application {
+export class TestApplication extends RestApplication {
   protected testAppInitializer: TestAppInitializer;
   protected testModuleManager: TestModuleManager;
   protected appModule: ModuleType;

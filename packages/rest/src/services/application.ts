@@ -11,13 +11,13 @@ import { isHttp2SecureServerOptions } from '#types/type.guards.js';
 import { RequestListener } from '#services/request.js';
 import { RestAppInitializer } from './app-initializer.js';
 
-export class Application extends BaseApplication {
+export class RestApplication extends BaseApplication {
   server: HttpServer;
   declare protected appOptions: AppOptions;
 
   /**
    * @param appModule The root module of the application.
-   * @param restOptions Application options.
+   * @param restOptions RestApplication options.
    */
   static async create(appModule: ModuleType, restOptions?: AppOptions) {
     const app = new this();
