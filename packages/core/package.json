@@ -17,7 +17,7 @@
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)"
   },
   "imports": {
-    "#di": "./dist/di/index.js",
+    "#di": "./dist/di.js",
     "#di/*": "./dist/di/*",
     "#init/*": "./dist/init/*",
     "#types/*": "./dist/types/*",
@@ -25,6 +25,7 @@
     "#models/*": "./dist/models/*",
     "#decorators/*": "./dist/decorators/*",
     "#logger/*": "./dist/logger/*",
+    "#errors": "./dist/errors.js",
     "#error/*": "./dist/error/*",
     "#services/*": "./dist/services/*",
     "#extension/*": "./dist/extension/*",
@@ -39,12 +40,12 @@
       "default": "./dist/index.js"
     },
     "./di": {
-      "types": "./dist/di/public-api.d.ts",
-      "default": "./dist.di/public-api.js"
+      "types": "./dist/di.d.ts",
+      "default": "./dist/di.js"
     },
     "./errors": {
-      "types": "./dist/error/errors.d.ts",
-      "default": "./dist/error/errors.js"
+      "types": "./dist/errors.d.ts",
+      "default": "./dist/errors.js"
     }
   },
   "keywords": [

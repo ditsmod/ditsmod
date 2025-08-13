@@ -11,7 +11,7 @@ import { getImportedTokens } from '#utils/get-imports.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { isInjectionToken } from '#di';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
-import { loggerWasNotPreviouslySeted } from '#error/errors.js';
+import { loggerWasNotPreviouslySeted } from '#errors';
 
 /**
  * Mediator between core logger and custom user's logger.

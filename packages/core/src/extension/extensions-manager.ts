@@ -16,10 +16,10 @@ import { BaseMeta } from '#types/base-meta.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { isExtensionProvider } from './type-guards.js';
 import {
+  notDeclaredInAfterExtensionList,
   detectedCircularDependenciesForExtensions,
   extensionIsFailed,
-  notDeclaredInAfterExtensionList,
-} from '#error/errors.js';
+} from '#errors';
 
 export class StageIteration {
   promise: Promise<void>;

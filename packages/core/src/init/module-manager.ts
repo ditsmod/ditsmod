@@ -17,7 +17,7 @@ import {
   moduleIdNotFoundInModuleManager,
   normalizationFailed,
   rootNotHaveDecorator,
-} from '#error/errors.js';
+} from '#errors';
 
 export type ModulesMap = Map<ModRefId, BaseMeta>;
 export type ModulesMapId = Map<string, ModRefId>;

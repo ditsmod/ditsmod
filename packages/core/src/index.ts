@@ -1,4 +1,4 @@
-export * from '#di/public-api.js';
+export * from '#di';
 export * from '@ts-stack/chain-error';
 
 export { defaultProvidersPerMod } from '#init/default-providers-per-mod.js';

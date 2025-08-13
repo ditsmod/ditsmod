@@ -17,7 +17,7 @@ import { isClassProvider, isFactoryProvider, isTokenProvider, isValueProvider } 
 import { ExtensionCounters } from '#extension/extension-types.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { ProvidersOnly } from '#types/providers-metadata.js';
-import { noProviderDuringResolveImports } from '#error/errors.js';
+import { noProviderDuringResolveImports } from '#errors';
 
 /**
  * By analyzing the dependencies of the providers returned by `ShallowModulesImporter`,
