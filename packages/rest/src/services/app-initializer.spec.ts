@@ -16,7 +16,7 @@ import {
   ModuleWithInitParams,
 } from '@ditsmod/core';
 
-import { AppInitializer } from './app-initializer.js';
+import { RestAppInitializer } from './app-initializer.js';
 import { Router } from './router.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 
@@ -27,7 +27,7 @@ function getImportedTokens(map: Map<any, ImportObj<Provider>> | undefined) {
 type ModRefId = ModuleType | ModuleWithParams;
 
 @injectable()
-class AppInitializerMock extends AppInitializer {
+class AppInitializerMock extends RestAppInitializer {
   override collectProvidersShallow(moduleManager: ModuleManager) {
     return super.collectProvidersShallow(moduleManager);
   }

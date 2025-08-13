@@ -9,7 +9,7 @@ import { HttpServerModule, HttpsServerModule } from '#init/http-module.js';
 import { Http2SecureServerOptions, HttpServer } from '#types/server-options.js';
 import { isHttp2SecureServerOptions } from '#types/type.guards.js';
 import { RequestListener } from '#services/request.js';
-import { AppInitializer } from './app-initializer.js';
+import { RestAppInitializer } from './app-initializer.js';
 
 export class Application extends BaseApplication {
   server: HttpServer;
@@ -24,7 +24,7 @@ export class Application extends BaseApplication {
     try {
       app.init(restOptions);
       const moduleManager = app.scanRootModule(appModule);
-      const appInitializer = new AppInitializer(app.appOptions, moduleManager, app.log);
+      const appInitializer = new RestAppInitializer(app.appOptions, moduleManager, app.log);
       await app.bootstrapApplication(appInitializer);
       await app.createServerAndBindToListening(appInitializer);
       return app;
@@ -49,7 +49,7 @@ export class Application extends BaseApplication {
     }
   }
 
-  protected async createServerAndBindToListening(appInitializer: AppInitializer) {
+  protected async createServerAndBindToListening(appInitializer: RestAppInitializer) {
     this.flushLogs();
     this.server = await this.createServer(appInitializer.requestListener);
     appInitializer.setServer(this.server);

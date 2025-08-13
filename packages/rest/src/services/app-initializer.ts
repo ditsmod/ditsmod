@@ -5,7 +5,7 @@ import { PreRouter } from './pre-router.js';
 import { HttpServer } from '#types/server-options.js';
 import { SERVER } from '#types/constants.js';
 
-export class AppInitializer extends BaseAppInitializer {
+export class RestAppInitializer extends BaseAppInitializer {
   protected preRouter: PreRouter;
   protected server: HttpServer;
 

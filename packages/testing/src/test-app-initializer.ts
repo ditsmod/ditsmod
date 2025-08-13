@@ -7,14 +7,14 @@ import {
   Provider,
   Providers,
 } from '@ditsmod/core';
-import { AppInitializer } from '@ditsmod/rest';
+import { RestAppInitializer } from '@ditsmod/rest';
 
 import { TestOverrider } from './test-overrider.js';
 import { ProvidersOnly, OverriderConfig, Level } from './types.js';
 import { TestExtensionsManager } from './test-extensions-manager.js';
 import { OVERRIDERS_CONFIG } from './constants.js';
 
-export class TestAppInitializer extends AppInitializer {
+export class TestAppInitializer extends RestAppInitializer {
   protected mAdditionalProviders = new Map<ModRefId, ProvidersOnly<Provider[]>>();
   protected providersForOverride: Provider[] = [];
   protected aOverriderConfig: OverriderConfig[] = [];
