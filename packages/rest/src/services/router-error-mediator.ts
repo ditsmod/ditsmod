@@ -1,4 +1,5 @@
-import { CustomError, HttpMethod } from '@ditsmod/core';
+import { HttpMethod } from '@ditsmod/core';
+import { newCustomError } from '@ditsmod/core/errors';
 
 export const restErrors = {
   /**
@@ -7,8 +8,7 @@ export const restErrors = {
    *
    */
   invalidInterceptor(httpMethods: string, path: string, whatIsThis: string) {
-    return new CustomError({
-      code: restErrors.invalidInterceptor.name,
+    return newCustomError(restErrors.invalidInterceptor, {
       msg1:
         `Failed to apply HTTP interceptors to "[${httpMethods}] ${path}": ` +
         'expected the fourth parameter of the route decorator to be an HttpInterceptor ' +
@@ -25,12 +25,11 @@ export const restErrors = {
     httpMethod: HttpMethod | HttpMethod[],
     path: string,
   ) {
-    return new CustomError(
+    return newCustomError(
+      restErrors.checkingDepsInSandboxFailed,
       {
-        code: restErrors.checkingDepsInSandboxFailed.name,
         msg1: `Checking deps in sandbox for route "${controllerName} -> ${httpMethod} ${path}" failed`,
         level: 'fatal',
-        constructorOpt: restErrors.checkingDepsInSandboxFailed,
       },
       cause,
     );
@@ -39,8 +38,7 @@ export const restErrors = {
    * Setting route '${fullPath}' failed: a handle is already registered for this path.
    */
   handleAlreadyRegistered(fullPath: string) {
-    return new CustomError({
-      code: restErrors.handleAlreadyRegistered.name,
+    return newCustomError(restErrors.handleAlreadyRegistered, {
       msg1: `Setting route '${fullPath}' failed: a handle is already registered for this path.`,
       level: 'fatal',
     });
@@ -49,8 +47,7 @@ export const restErrors = {
    * Only one wildcard per path segment is allowed, has: '${path}' in path '${fullPath}'
    */
   onlyOneWildcardPerPath(path: string, fullPath: string) {
-    return new CustomError({
-      code: restErrors.onlyOneWildcardPerPath.name,
+    return newCustomError(restErrors.onlyOneWildcardPerPath, {
       msg1: `Only one wildcard per path segment is allowed, has: '${path}' in path '${fullPath}'`,
       level: 'fatal',
     });
@@ -59,8 +56,7 @@ export const restErrors = {
    * wildcard route '${path}' conflicts with existing children in path '${fullPath}'
    */
   wildcardRouteConflicts(path: string, fullPath: string) {
-    return new CustomError({
-      code: restErrors.wildcardRouteConflicts.name,
+    return newCustomError(restErrors.wildcardRouteConflicts, {
       msg1: `wildcard route '${path}' conflicts with existing children in path '${fullPath}'`,
       level: 'fatal',
     });
@@ -69,8 +65,7 @@ export const restErrors = {
    * wildcards must be named with a non-empty name in path '${fullPath}'
    */
   wildcardsMustNonEmpty(fullPath: string) {
-    return new CustomError({
-      code: restErrors.wildcardsMustNonEmpty.name,
+    return newCustomError(restErrors.wildcardsMustNonEmpty, {
       msg1: `wildcards must be named with a non-empty name in path '${fullPath}'`,
       level: 'fatal',
     });
@@ -79,8 +74,7 @@ export const restErrors = {
    *
    */
   catchAllRoutesOnlyAtEnd(fullPath: string) {
-    return new CustomError({
-      code: restErrors.catchAllRoutesOnlyAtEnd.name,
+    return newCustomError(restErrors.catchAllRoutesOnlyAtEnd, {
       msg1: `catch-all routes are only allowed at the end of the path in path '${fullPath}'`,
       level: 'fatal',
     });
@@ -89,8 +83,7 @@ export const restErrors = {
    * catch-all conflicts with existing handle for the path segment root in path '${fullPath}'
    */
   catchAllConflictWithExistingHandle(fullPath: string) {
-    return new CustomError({
-      code: restErrors.catchAllConflictWithExistingHandle.name,
+    return newCustomError(restErrors.catchAllConflictWithExistingHandle, {
       msg1: `catch-all conflicts with existing handle for the path segment root in path '${fullPath}'`,
       level: 'fatal',
     });
@@ -99,8 +92,7 @@ export const restErrors = {
    * no / before catch-all in path '${fullPath}'
    */
   noBeforeCatchAll(fullPath: string) {
-    return new CustomError({
-      code: restErrors.noBeforeCatchAll.name,
+    return newCustomError(restErrors.noBeforeCatchAll, {
       msg1: `no / before catch-all in path '${fullPath}'`,
       level: 'fatal',
     });
@@ -109,8 +101,7 @@ export const restErrors = {
    * '${pathSeg}' in new path '${fullPath}' conflicts with existing wildcard '${treePath}' in existing prefix '${prefix}'
    */
   conflictsWithExistingWildcard(pathSeg: string, fullPath: string, treePath: string, prefix: string) {
-    return new CustomError({
-      code: restErrors.conflictsWithExistingWildcard.name,
+    return newCustomError(restErrors.conflictsWithExistingWildcard, {
       msg1: `'${pathSeg}' in new path '${fullPath}' conflicts with existing wildcard '${treePath}' in existing prefix '${prefix}'`,
       level: 'fatal',
     });
@@ -119,8 +110,7 @@ export const restErrors = {
    * invalid node type
    */
   invalidNodeType() {
-    return new CustomError({
-      code: restErrors.invalidNodeType.name,
+    return newCustomError(restErrors.invalidNodeType, {
       msg1: 'invalid node type',
       level: 'fatal',
     });

@@ -58,6 +58,7 @@ const obj: ModifiedInterface = {
 ```
  */
 export type RequireProps<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>;
+export type OmitProps<T extends AnyObj, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 /**
  * Allows shortening the list of an object's properties.
  */

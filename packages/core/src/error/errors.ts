@@ -1,4 +1,6 @@
 import { systemErrors } from '#error/system-errors.js';
+export { newCustomError } from '#error/custom-error.js';
+
 export const {
   extensionIsFailed,
   loggerWasNotPreviouslySeted,
@@ -10,5 +12,5 @@ export const {
   noProviderDuringResolveImports,
   normalizationFailed,
   notDeclaredInAfterExtensionList,
-  rootNotHaveDecorator
+  rootNotHaveDecorator,
 } = systemErrors;
