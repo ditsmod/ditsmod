@@ -1,3 +1,3 @@
-import { I18nErrorMediator } from './i18n-error-mediator.js';
+import { i18nErrors } from './i18n-error-mediator.js';
 
-export const { dictionaryMustBeDefined, dictionaryNotFound } = I18nErrorMediator;
+export const { dictionaryMustBeDefined, dictionaryNotFound } = i18nErrors;
