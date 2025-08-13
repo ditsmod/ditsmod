@@ -31,8 +31,8 @@ export class TestApplication extends RestApplication {
       if (!app.appOptions.loggerConfig) {
         app.appOptions.loggerConfig = { level: 'off' };
       }
-      app.testModuleManager = new TestModuleManager(app.systemLogMediator);
-      app.testAppInitializer = new TestAppInitializer(app.appOptions, app.testModuleManager, app.systemLogMediator);
+      app.testModuleManager = new TestModuleManager(app.log);
+      app.testAppInitializer = new TestAppInitializer(app.appOptions, app.testModuleManager, app.log);
       return app;
     } catch (err: any) {
       app.handleError(err);
@@ -144,8 +144,8 @@ TestApplication.createTestApp(AppModule)
   }
 
   protected handleError(err: any) {
-    (this.systemLogMediator as PublicLogMediator).updateOutputLogLevel();
-    this.systemLogMediator.internalServerError(this, err, true);
+    (this.log as PublicLogMediator).updateOutputLogLevel();
+    this.log.internalServerError(this, err, true);
     this.flushLogs();
   }
 }
