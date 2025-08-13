@@ -10,19 +10,22 @@ export class CustomError extends ChainError {
     // Merge with default options
     info = new ErrorInfo(info);
 
-    super(`${info.msg1}`, { info, cause, constructorOpt: info.constructorOpt, name: info.name }, info.skipCauseMessage);
+    super(
+      `${info.msg1}`,
+      { info, cause, constructorOpt: info.constructorOpt, name: info.name || 'CustomError' },
+      info.skipCauseMessage,
+    );
   }
 }
 
 /**
  * Used to create an instance of {@link CustomError} for system messages.
- * 
- * @param constructorOpt The function whose name will be used as the error code and,
+ *
+ * @param fnAsErrCode The function whose name will be used as the error code and,
  * if no corresponding option is specified, as {@link ErrorInfo.constructorOpt}.
  */
-export function newCustomError(constructorOpt: AnyFn, info: OmitProps<ErrorInfo, 'code'>, cause?: Error) {
-  (info as ErrorInfo).code = constructorOpt.name;
-  info.constructorOpt ??= constructorOpt;
-  info.name ??= 'CustomError';
+export function newCustomError(fnAsErrCode: AnyFn, info: OmitProps<ErrorInfo, 'code'>, cause?: Error) {
+  (info as ErrorInfo).code = fnAsErrCode.name;
+  info.constructorOpt ??= fnAsErrCode;
   return new CustomError(info, cause);
 }
