@@ -1,4 +1,4 @@
-import { SystemErrorMediator } from '#error/system-error-mediator.js';
+import { systemErrors } from '#error/system-error-mediator.js';
 export const {
   extensionIsFailed,
   loggerWasNotPreviouslySeted,
@@ -11,4 +11,4 @@ export const {
   normalizationFailed,
   notDeclaredInAfterExtensionList,
   rootNotHaveDecorator
-} = SystemErrorMediator;
+} = systemErrors;
