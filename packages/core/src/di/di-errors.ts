@@ -1,11 +1,53 @@
-import { inspect } from 'node:util';
+import { inspect, format } from 'node:util';
 
 import { newCustomError } from '#error/custom-error.js';
 import { stringify } from '#di/utils.js';
 import { AnyFn } from '#types/mix.js';
 import { Class } from './types-and-models.js';
+import { LevelOfInjector } from './injector.js';
 
 export const diErrors = {
+  /**
+   * `Setting value by token failed: cannot find token "%s" in register, in providersPer%s.`
+   */
+  settingValueByTokenFailed(displayToken: string, level?: LevelOfInjector) {
+    let msg1 = 'Setting value by token failed: cannot find token "%s" in register, in providersPer%s.';
+    msg1 = format(msg1, displayToken, level);
+    return newCustomError(diErrors.settingValueByTokenFailed, {
+      msg1,
+      level: 'fatal',
+    });
+  },
+  /**
+   * `Setting value by ID failed: cannot find ID "%d" in register, in providersPer%s. Try use injector.setByToken()`
+   */
+  settingValueByIdFailed(id: number, level?: LevelOfInjector) {
+    let msg1 =
+      'Setting value by ID failed: cannot find ID "%d" in register, in providersPer%s. Try use injector.setByToken()';
+    msg1 = format(msg1, id, level);
+    return newCustomError(diErrors.settingValueByIdFailed, {
+      msg1,
+      level: 'fatal',
+    });
+  },
+  /**
+   * `Cannot find method in "${className}".`
+   */
+  cannotFindMethodInClass(className: string) {
+    return newCustomError(diErrors.cannotFindMethodInClass, {
+      msg1: `Cannot find method in "${className}".`,
+      level: 'fatal',
+    });
+  },
+  /**
+   * `Cannot find "${factory.name}()" as method in "${className}".`
+   */
+  cannotFindFactoryAsMethod(factoryName: string, className: string) {
+    return newCustomError(diErrors.cannotFindFactoryAsMethod, {
+      msg1: `Cannot find "${factoryName || 'anonymous'}()" as method in "${className}".`,
+      level: 'fatal',
+    });
+  },
   /**
    * Thrown when a multi provider and a regular provider are bound to the same token.
    *

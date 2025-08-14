@@ -8,4 +8,8 @@ export const {
   invalidProviderError,
   noAnnotationError,
   mixMultiProvidersWithRegularProvidersError,
+  cannotFindFactoryAsMethod,
+  cannotFindMethodInClass,
+  settingValueByIdFailed,
+  settingValueByTokenFailed,
 } = diErrors;

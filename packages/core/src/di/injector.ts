@@ -10,6 +10,10 @@ import {
   mixMultiProvidersWithRegularProvidersError,
   noAnnotationError,
   noProviderError,
+  cannotFindFactoryAsMethod,
+  cannotFindMethodInClass,
+  settingValueByIdFailed,
+  settingValueByTokenFailed,
 } from './errors.js';
 import { resolveForwardRef } from './forward-ref.js';
 import { InjectionToken } from './injection-token.js';
@@ -20,7 +24,6 @@ import {
   Class,
   DecoratorAndValue,
   Dependency,
-  DiError,
   ID,
   NormalizedProvider,
   ParamsMeta,
@@ -43,12 +46,9 @@ import {
 } from './utils.js';
 import { DEPS_KEY } from './decorator-factories.js';
 
-type LevelOfInjector = 'App' | 'Mod' | 'Rou' | 'Req' | (string & {});
+export type LevelOfInjector = 'App' | 'Mod' | 'Rou' | 'Req' | (string & {});
 
 const NoDefaultValue = Symbol();
-const msg1 =
-  'Setting value by ID failed: cannot find ID "%d" in register, in providersPer%s. Try use injector.setByToken()';
-const msg2 = 'Setting value by token failed: cannot find token "%s" in register, in providersPer%s.';
 
 /**
  * A dependency injection container used for instantiating objects and resolving
@@ -319,12 +319,10 @@ expect(injector.get(Car) instanceof Car).toBe(true);
         }
       }
 
-      const msg = `Cannot find "${factory.name || 'anonymous'}()" as method in "${Cls.name}".`;
-      throw new DiError(msg);
+      throw cannotFindFactoryAsMethod(factory.name, Cls.name);
     }
 
-    const msg = `Cannot find method in "${Cls.name}".`;
-    throw new DiError(msg);
+    throw cannotFindMethodInClass(Cls.name);
   }
 
   protected static getDependencies(Cls: Class, propertyKey?: string | symbol): Dependency[] {
@@ -516,7 +514,7 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
       return this;
     }
 
-    throw new DiError(format(msg1, id, this.#level));
+    throw settingValueByIdFailed(id, this.#level);
   }
 
   /**
@@ -532,7 +530,7 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
     }
 
     const displayToken = stringify(token);
-    throw new DiError(format(msg2, displayToken, this.#level));
+    throw settingValueByTokenFailed(displayToken, this.#level);
   }
 
   /**
