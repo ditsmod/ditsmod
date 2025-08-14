@@ -3,13 +3,14 @@ import { format } from 'node:util';
 import { AnyFn } from '#types/mix.js';
 import { fromSelf, inject, optional, skipSelf } from './decorators.js';
 import {
+  failedCreateFactoryProvider,
   cyclicDependencyError,
   instantiationError,
   invalidProviderError,
   mixMultiProvidersWithRegularProvidersError,
   noAnnotationError,
   noProviderError,
-} from './error-handling.js';
+} from './errors.js';
 import { resolveForwardRef } from './forward-ref.js';
 import { InjectionToken } from './injection-token.js';
 import { DualKey, KeyRegistry } from './key-registry.js';
@@ -265,10 +266,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       if (typeof factory == 'function') {
         (factory as any)[DEBUG_NAME] = `${Cls.name}.prototype.${factory.name}`;
       } else {
-        const msg =
-          `Failed to create factory provider for ${stringify(token)}:` +
-          `second argument in tuple of useFactory must be a function, got ${typeof factory}`;
-        throw new DiError(msg);
+        throw failedCreateFactoryProvider(token, factory);
       }
       const factoryKey = this.getFactoryKey(Cls, factory);
       const resolvedDeps1 = this.getDependencies(Cls);

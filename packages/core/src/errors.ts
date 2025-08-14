@@ -1,6 +1,7 @@
 import { systemErrors } from '#error/system-errors.js';
-export { newCustomError } from '#error/custom-error.js';
 
+export { newCustomError } from '#error/custom-error.js';
+export * from '#di/errors.js';
 export const {
   extensionIsFailed,
   loggerWasNotPreviouslySeted,

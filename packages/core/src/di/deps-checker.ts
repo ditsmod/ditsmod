@@ -1,5 +1,5 @@
 import { fromSelf, skipSelf } from './decorators.js';
-import { cyclicDependencyError, noProviderError } from './error-handling.js';
+import { cyclicDependencyError, noProviderError } from './errors.js';
 import { Injector } from './injector.js';
 import { DualKey, KeyRegistry } from './key-registry.js';
 import { Dependency, ID, ResolvedProvider, Visibility } from './types-and-models.js';

@@ -924,7 +924,7 @@ describe('injector', () => {
       injector.get(Car);
       throw new Error('Must throw');
     } catch (e: any) {
-      expect(e.message).toContain('Broken Engine; this error during instantiation of Engine! (Car -> Engine)');
+      expect(e.message).toContain('Failed instantiation of Engine! (Car -> Engine): Broken Engine');
     }
   });
 
@@ -941,7 +941,7 @@ describe('injector', () => {
       { token: Engine, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
     ]);
 
-    const msg = 'Broken Engine; this error during instantiation of Engine! (Car -> Engine)';
+    const msg = 'Failed instantiation of Engine! (Car -> Engine): Broken Engine';
     expect(() => injector.get(Car)).toThrow(msg);
 
     isBroken = false;

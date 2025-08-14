@@ -12,7 +12,6 @@ export {
   ClassFactoryProvider,
   ClassProvider,
   DecoratorAndValue,
-  DiError,
   FactoryProvider,
   FunctionFactoryProvider,
   NormalizedProvider,
