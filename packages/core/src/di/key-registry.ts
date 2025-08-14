@@ -1,3 +1,4 @@
+import { tokenMustBeDdefined } from './errors.js';
 import { resolveForwardRef } from './forward-ref.js';
 import { InjectionToken } from './injection-token.js';
 
@@ -42,7 +43,7 @@ export class KeyRegistry {
     }
 
     if (!token) {
-      throw new TypeError('Token must be defined!');
+      throw tokenMustBeDdefined();
     }
     const newKey = new DualKey(token, this.numberOfKeys);
     this.#allKeys.set(token, newKey);

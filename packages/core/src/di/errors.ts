@@ -12,4 +12,5 @@ export const {
   cannotFindMethodInClass,
   settingValueByIdFailed,
   settingValueByTokenFailed,
+  tokenMustBeDdefined,
 } = diErrors;

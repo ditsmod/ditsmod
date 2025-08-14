@@ -8,6 +8,15 @@ import { LevelOfInjector } from './injector.js';
 
 export const diErrors = {
   /**
+   * `Token must be defined!`
+   */
+  tokenMustBeDdefined() {
+    return newCustomError(diErrors.tokenMustBeDdefined, {
+      msg1: 'Token must be defined!',
+      level: 'fatal',
+    });
+  },
+  /**
    * `Setting value by token failed: cannot find token "%s" in register, in providersPer%s.`
    */
   settingValueByTokenFailed(displayToken: string, level?: LevelOfInjector) {

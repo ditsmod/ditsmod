@@ -18,7 +18,7 @@ import {
   isClassProvider,
   isTokenProvider,
 } from '#di';
-import { format } from 'util';
+import { invalidProviderError } from '#errors';
 
 /**
  * Flattens an array.
@@ -48,7 +48,10 @@ export function flatten<T = any>(list: any[], dst?: any[]): T[] {
 /**
  * Normalize an array of DI Providers
  */
-export function normalizeProviders(providers: Provider[] | ReadonlyArray<Provider>, arrayOfProviders: NormalizedProvider[] = []) {
+export function normalizeProviders(
+  providers: Provider[] | ReadonlyArray<Provider>,
+  arrayOfProviders: NormalizedProvider[] = [],
+) {
   providers.forEach((provider) => {
     provider = resolveForwardRef(provider);
     if (provider instanceof Class) {
@@ -62,7 +65,7 @@ export function normalizeProviders(providers: Provider[] | ReadonlyArray<Provide
       }
       arrayOfProviders.push(provider as NormalizedProvider);
     } else {
-      throw new Error(format('Invalid provider - only instances of Provider and Class are allowed, got:', provider));
+      throw invalidProviderError(provider);
     }
   });
 

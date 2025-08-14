@@ -34,6 +34,18 @@ import { mergeArrays } from '#utils/merge-arrays.js';
 import { AllInitHooks, BaseInitRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { objectKeys } from '#utils/object-keys.js';
+import {
+  moduleIsUndefined,
+  inResolvedCollisionTokensOnly,
+  moduleDoesNotHaveDecorator,
+  wrongModRefId,
+  reexportFailed,
+  wrongExtension,
+  exportingUnknownSymbol,
+  forbiddenExportNormalizedProvider,
+  forbiddenExportProvidersPerApp,
+  moduleShouldHaveValue,
+} from '#errors';
 
 /**
  * Normalizes and validates module metadata.
@@ -52,12 +64,10 @@ export class ModuleNormalizer {
     let rawMeta = aDecoratorMeta.find((d) => isModDecor(d))?.value;
     const modName = getDebugClassName(modRefId);
     if (!modName) {
-      const msg = 'The passed argument modRefId is not a class, and is not a module with a parameter.';
-      throw new TypeError(msg);
+      throw wrongModRefId();
     }
     if (!rawMeta) {
-      const msg = `module "${modName}" does not have the "@rootModule()" or "@featureModule()" decorator`;
-      throw new Error(msg);
+      throw moduleDoesNotHaveDecorator(modName);
     }
 
     /**
@@ -174,15 +184,15 @@ export class ModuleNormalizer {
     resolvedCollisionsPerLevel.forEach(([provider]) => {
       if (isNormalizedProvider(provider)) {
         const providerName = provider.token.name || provider.token;
-        const msg =
-          `Resolving collisions in ${moduleName} failed: for ${providerName} inside ` +
-          '"resolvedCollisionPer*" array must be includes tokens only.';
-        throw new Error(msg);
+        throw inResolvedCollisionTokensOnly(moduleName, providerName);
       }
     });
   }
 
-  protected normalizeExtensions(rawMeta: PickProps<ModuleMetadata, 'extensions' | 'extensionsMeta'>, baseMeta: BaseMeta) {
+  protected normalizeExtensions(
+    rawMeta: PickProps<ModuleMetadata, 'extensions' | 'extensionsMeta'>,
+    baseMeta: BaseMeta,
+  ) {
     if (rawMeta.extensionsMeta) {
       baseMeta.extensionsMeta = { ...rawMeta.extensionsMeta };
     }
@@ -204,14 +214,9 @@ export class ModuleNormalizer {
     });
   }
 
-  protected throwIfUndefined(modName: string, action: 'Imports' | 'Exports', imp: unknown, i: number) {
+  protected throwIfUndefined(moduleName: string, action: 'Imports' | 'Exports', imp: unknown, i: number) {
     if (imp === undefined) {
-      const lowerAction = action.toLowerCase();
-      const msg =
-        `${action} into "${modName}" failed: element at ${lowerAction}[${i}] has "undefined" type. ` +
-        'This can be caused by circular dependency. Try to replace this element with this expression: ' +
-        '"forwardRef(() => YourModule)".';
-      throw new Error(msg);
+      throw moduleIsUndefined(action, moduleName, i);
     }
   }
 
@@ -232,7 +237,7 @@ export class ModuleNormalizer {
       } else if (this.getDecoratorMeta(exp)) {
         baseMeta.exportsModules.push(exp);
       } else {
-        this.throwUnidentifiedToken(baseMeta.name, exp);
+        throw exportingUnknownSymbol(baseMeta.name, exp.name || exp);
       }
     });
   }
@@ -243,16 +248,12 @@ export class ModuleNormalizer {
 
     exports.forEach((modRefId) => {
       if (!imports.includes(modRefId)) {
-        const importedModuleName = getDebugClassName(modRefId);
-        const msg =
-          `Reexport from ${baseMeta.name} failed: ${importedModuleName} includes in exports, but not includes in imports. ` +
-          `If in ${baseMeta.name} you imports ${importedModuleName} as module with params, same object you should export (if you need reexport).`;
-        throw new Error(msg);
+        throw reexportFailed(baseMeta.name, getDebugClassName(modRefId) || '""');
       }
     });
   }
 
-  protected checkStageMethodsForExtension(modName: string, extensionsProvider: Provider) {
+  protected checkStageMethodsForExtension(moduleName: string, extensionsProvider: Provider) {
     const np = normalizeProviders([extensionsProvider])[0];
     let extensionClass: Class<Extension> | undefined;
     if (isClassProvider(np)) {
@@ -270,9 +271,7 @@ export class ModuleNormalizer {
         typeof extensionClass.prototype?.stage3 != 'function')
     ) {
       const token = getToken(extensionsProvider);
-      const tokenName = token.name || token;
-      const msg = `Exporting "${tokenName}" from "${modName}" failed: all extensions must have stage1(), stage2() or stage3() method.`;
-      throw new Error(msg);
+      throw wrongExtension(moduleName, token.name || token);
     }
   }
 
@@ -329,21 +328,9 @@ export class ModuleNormalizer {
     }
   }
 
-  protected throwUnidentifiedToken(modName: string, token: any) {
-    const tokenName = token.name || token;
-    const msg =
-      `Exporting from ${modName} failed: if "${tokenName}" is a token of a provider, this provider ` +
-      'must be included in providersPerMod. ' +
-      `If "${tokenName}" is a module, it must have "featureModule" decorator. ` +
-      `If "${tokenName}" is a token of extension, this extension must be included in "extensions" array.`;
-    throw new Error(msg);
-  }
-
   protected throwExportsIfNormalizedProvider(moduleName: string, provider: NormalizedProvider) {
     if (isNormalizedProvider(provider)) {
-      const providerName = provider.token.name || provider.token;
-      const msg = `Exporting "${providerName}" from "${moduleName}" failed: in "exports" array must be includes tokens only.`;
-      throw new Error(msg);
+      throw forbiddenExportNormalizedProvider(moduleName, provider.token.name || provider.token);
     }
   }
 
@@ -360,18 +347,12 @@ export class ModuleNormalizer {
     }
 
     const providerName = token.name || token;
-    let msg = '';
     const providersPerApp = [...(rawMeta.providersPerApp || [])];
     if (providersPerApp.some((p) => getToken(p) === token)) {
-      msg =
-        `Exported "${providerName}" includes in "providersPerApp" and "exports" of ${baseMeta.name}. ` +
-        'This is an error, because "providersPerApp" is always exported automatically.';
+      throw forbiddenExportProvidersPerApp(baseMeta.name, providerName);
     } else {
-      msg =
-        `Exporting from ${baseMeta.name} failed: if "${providerName}" is a module, it must have "featureModule" decorator; ` +
-        `if "${providerName}" is a provider, it must be included in "providersPerMod".`;
+      throw exportingUnknownSymbol(baseMeta.name, providerName);
     }
-    throw new Error(msg);
   }
 
   /**
@@ -511,8 +492,7 @@ export class AppModule {}
       !baseMeta.exportedExtensionsProviders.length &&
       !baseMeta.extensionsProviders.length
     ) {
-      const msg = 'this module should have "providersPerApp", or exports, or extensions.';
-      throw new Error(msg);
+      throw moduleShouldHaveValue();
     }
   }
 }

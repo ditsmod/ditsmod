@@ -1,5 +1,3 @@
-import { ChainError } from '@ts-stack/chain-error';
-
 import { Injector, isMultiProvider } from '#di';
 import { DeepModulesImporter } from '#init/deep-modules-importer.js';
 import { Logger } from '#logger/logger.js';
@@ -29,6 +27,15 @@ import { getModule } from '#utils/get-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { ShallowImports } from './types.js';
 import { ProvidersOnly } from '#types/providers-metadata.js';
+import {
+  failedCollectingMetadata,
+  failedCreateInjectorPerMod,
+  failedStage2,
+  failedStage3,
+  moduleNotImportedInApplication,
+  multiProviderShouldNotBIncludedInResolvedCollisionsPerApp,
+  providersPerAppDoesNotIncludesTokenName,
+} from '#errors';
 
 export class BaseAppInitializer {
   protected perAppService = new PerAppService();
@@ -98,26 +105,18 @@ export class BaseAppInitializer {
     const rootMeta = this.moduleManager.getMetadata('root', true);
     const resolvedProviders: Provider[] = [];
     this.baseMeta.resolvedCollisionsPerApp.forEach(([token, module]) => {
-      const moduleName = getDebugClassName(module);
+      const moduleName = getDebugClassName(module) || '""';
       const tokenName = token.name || token;
       const meta = this.moduleManager.getMetadata(module);
-      let errorMsg =
-        `Resolving collisions for providersPerApp in ${rootMeta.name} failed: ` +
-        `${tokenName} mapped with ${moduleName}, but `;
       if (!meta) {
-        errorMsg += `${moduleName} is not imported into the application.`;
-        throw new Error(errorMsg);
+        throw moduleNotImportedInApplication(rootMeta.name, moduleName, tokenName);
       }
       const provider = getLastProviders(meta.providersPerApp).find((p) => getToken(p) === token);
       if (!provider) {
-        errorMsg += `providersPerApp does not includes ${tokenName} in this module.`;
-        throw new Error(errorMsg);
+        throw providersPerAppDoesNotIncludesTokenName(rootMeta.name, moduleName, tokenName);
       }
       if (isMultiProvider(provider)) {
-        errorMsg +=
-          `${tokenName} is a token of the multi providers, and in this case ` +
-          'it should not be included in resolvedCollisionsPerApp.';
-        throw new Error(errorMsg);
+        throw multiProviderShouldNotBIncludedInResolvedCollisionsPerApp(rootMeta.name, moduleName, tokenName);
       }
       resolvedProviders.push(provider);
     });
@@ -278,8 +277,7 @@ export class BaseAppInitializer {
           await extension.stage1?.(true);
         } catch (err: any) {
           const groupName = getProviderName(ExtCls);
-          const msg = `Metadata collection from all modules for ${groupName} failed`;
-          throw new ChainError(msg, err);
+          throw failedCollectingMetadata(groupName, err);
         }
       }
     }
@@ -291,9 +289,8 @@ export class BaseAppInitializer {
         const injectorPerMod = await this.initModuleAndGetInjectorPerMod(baseMeta);
         this.moduleManager.setInjectorPerMod(modRefId, injectorPerMod);
       } catch (err: any) {
-        const debugModuleName = getDebugClassName(modRefId);
-        const msg = `${debugModuleName} initialization failed`;
-        throw new ChainError(msg, err);
+        const debugModuleName = getDebugClassName(modRefId) || '""';
+        throw failedCreateInjectorPerMod(debugModuleName, err);
       }
     }
 
@@ -306,9 +303,8 @@ export class BaseAppInitializer {
           const injectorPerMod = this.moduleManager.getInjectorPerMod(modRefId);
           await ext.stage2(injectorPerMod);
         } catch (err: any) {
-          const debugModuleName = getDebugClassName(modRefId);
-          const msg = `Initialization in ${debugModuleName} -> ${ext.constructor.name} at stage 2 failed`;
-          throw new ChainError(msg, err);
+          const debugModuleName = getDebugClassName(modRefId) || '""';
+          throw failedStage2(debugModuleName, ext.constructor.name, err);
         }
       }
     }
@@ -321,9 +317,8 @@ export class BaseAppInitializer {
           }
           await ext.stage3();
         } catch (err: any) {
-          const debugModuleName = getDebugClassName(modRefId);
-          const msg = `Initialization failed in ${debugModuleName} -> ${ext.constructor.name} at stage 3`;
-          throw new ChainError(msg, err);
+          const debugModuleName = getDebugClassName(modRefId) || '""';
+          throw failedStage3(debugModuleName, ext.constructor.name, err);
         }
       }
     }

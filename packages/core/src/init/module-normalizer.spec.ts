@@ -144,7 +144,7 @@ describe('ModuleNormalizer', () => {
     @featureModule({ imports: [Module1], exports: [Module1] })
     class Module2 {}
 
-    const msg = 'if "Module1" is a provider, it must be included in';
+    const msg = 'if "Module1" is a token of a provider, this provider must be included in providersPerMod';
     expect(() => mock.normalize(Module2)).toThrow(msg);
   });
 

@@ -242,7 +242,7 @@ describe('ShallowModulesImporter', () => {
       @rootModule({ imports: [Module2] })
       class AppModule {}
 
-      const msg = 'Module2 failed: if "Provider1" is a module,';
+      const msg = 'Module2 failed: if "Provider1" is a token of a provider, this provider must be included in providersPerMod';
       expect(() => moduleManager.scanRootModule(AppModule)).toThrow(msg);
     });
 

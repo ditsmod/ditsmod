@@ -17,7 +17,7 @@ import { isClassProvider, isFactoryProvider, isTokenProvider, isValueProvider } 
 import { ExtensionCounters } from '#extension/extension-types.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { ProvidersOnly } from '#types/providers-metadata.js';
-import { noProviderDuringResolveImports } from '#errors';
+import { circularDepsInImports, noProviderDuringResolveImports } from '#errors';
 
 /**
  * By analyzing the dependencies of the providers returned by `ShallowModulesImporter`,
@@ -402,10 +402,6 @@ export class DeepModulesImporter {
 
     const debugModuleName = getDebugClassName(modRefId);
     circularNames += ` -> [${getProviderName(provider)} in ${debugModuleName}]`;
-    let msg = `Detected circular dependencies: ${circularNames}.`;
-    if (prefixNames) {
-      msg += ` It is started from ${prefixNames}.`;
-    }
-    throw new Error(msg);
+    throw circularDepsInImports(circularNames, prefixNames);
   }
 }

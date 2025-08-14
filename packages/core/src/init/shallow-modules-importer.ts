@@ -25,6 +25,13 @@ import { findCycle } from '#extension/tarjan-graph.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { topologicalSort } from '#extension/topological-sort.js';
 import { ExtensionClass } from '#extension/extension-types.js';
+import {
+  extensionConfigCauseCyclicDeps,
+  resolvingCollisionsNotExistsOnThisLevel,
+  resolvingCollisionsNotImportedInModule,
+  resolvingCollisionsNotImportedInApplication,
+  tryResolvingMultiprovidersCollisions,
+} from '#errors';
 /**
  * Recursively collects providers taking into account module imports/exports,
  * but does not take provider dependencies into account.
@@ -265,20 +272,15 @@ export class ShallowModulesImporter {
 
   protected getResolvedCollisionsPerLevel(level: Level, token1: any) {
     const [token2, modRefId2] = this.baseMeta[`resolvedCollisionsPer${level}`].find(([token2]) => token1 === token2)!;
-    const moduleName = getDebugClassName(modRefId2);
+    const moduleName = getDebugClassName(modRefId2) || '""';
     const tokenName = token2.name || token2;
     const meta2 = this.moduleManager.getMetadata(modRefId2);
-    let errorMsg =
-      `Resolving collisions for providersPer${level} in ${this.moduleName} failed: ` +
-      `${tokenName} mapped with ${moduleName}, but `;
     if (!meta2) {
-      errorMsg += `${moduleName} is not imported into the application.`;
-      throw new Error(errorMsg);
+      throw resolvingCollisionsNotImportedInApplication(this.moduleName, moduleName, level, tokenName);
     }
     const providers = getLastProviders(meta2[`providersPer${level}`]).filter((p) => getToken(p) === token2);
     if (!providers.length) {
-      errorMsg += `providersPer${level} does not includes ${tokenName} in this module.`;
-      throw new Error(errorMsg);
+      throw resolvingCollisionsNotExistsOnThisLevel(this.moduleName, moduleName, level, tokenName);
     }
 
     return { module2: modRefId2, providers };
@@ -293,9 +295,7 @@ export class ShallowModulesImporter {
       const path = findCycle(extensionWithBeforeExtension);
       if (path) {
         const strPath = path.map(getProviderName).join(' -> ');
-        let msg = `A configuration of extensions detected in ${this.moduleName}`;
-        msg += ` creates a cyclic dependency in the startup sequence of different groups: ${strPath}.`;
-        throw new Error(msg);
+        throw extensionConfigCauseCyclicDeps(this.moduleName, strPath);
       }
     }
   }
@@ -308,11 +308,7 @@ export class ShallowModulesImporter {
       this.baseMeta[`resolvedCollisionsPer${level}`].some(([token]) => {
         if (tokens.includes(token)) {
           const tokenName = token.name || token;
-          const errorMsg =
-            `Resolving collisions for providersPer${level} in ${this.moduleName} failed: ` +
-            `${tokenName} mapped with ${moduleName}, but ${tokenName} is a token of the multi providers, ` +
-            `and in this case it should not be included in resolvedCollisionsPer${level}.`;
-          throw new Error(errorMsg);
+          throw tryResolvingMultiprovidersCollisions(this.moduleName, moduleName, level, tokenName);
         }
       });
     });
@@ -352,11 +348,7 @@ export class ShallowModulesImporter {
       if (this.baseMeta.modRefId === module2) {
         if (!this[`importedProvidersPer${level}`].delete(token1)) {
           const tokenName = token1.name || token1;
-          const errorMsg =
-            `Resolving collisions for providersPer${level} in ${this.moduleName} failed: ` +
-            `${tokenName} mapped with ${this.moduleName}, but ` +
-            `providersPer${level} does not imports ${tokenName} in this module.`;
-          throw new Error(errorMsg);
+          throw resolvingCollisionsNotImportedInModule(this.moduleName, level, tokenName);
         }
       } else {
         // Only check that the correct data is specified.
