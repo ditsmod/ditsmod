@@ -1,4 +1,4 @@
-import { restErrors } from '#services/router-error-mediator.js';
+import { restErrors } from '#services/router-errors.js';
 
 export const {
   checkingDepsInSandboxFailed,

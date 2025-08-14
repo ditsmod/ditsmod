@@ -21,8 +21,8 @@ class Controller0 {
   controllers: [Controller0],
   imports: [
     // Allow slash for absolutePath.
-    { absolutePath: '/module1', modRefId: Module1 },
-    { path: 'module3', modRefId: Module3 },
+    { absolutePath: '/module1', module: Module1 },
+    { path: 'module3', module: Module3 },
   ],
 })
 @rootModule({

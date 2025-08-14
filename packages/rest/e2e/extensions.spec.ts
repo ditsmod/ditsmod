@@ -195,7 +195,7 @@ describe('extensions e2e', () => {
     })
     class AppModule {}
 
-    const msg = ': Extension2 -> Extension1 -> Extension3 -> Extension2';
+    const msg = 'Extension2 -> Extension1 -> Extension3 -> Extension2';
     await expect(TestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
   });
 
