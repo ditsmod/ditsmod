@@ -12,6 +12,7 @@ import { InitDecorator } from '#decorators/init-hooks-and-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { ModuleNormalizer } from './module-normalizer.js';
 import { Providers } from '#utils/providers.js';
+import { systemErrors } from '#error/system-errors.js';
 
 describe('ModuleNormalizer', () => {
   class MockModuleNormalizer extends ModuleNormalizer {
@@ -144,8 +145,7 @@ describe('ModuleNormalizer', () => {
     @featureModule({ imports: [Module1], exports: [Module1] })
     class Module2 {}
 
-    const msg = 'if "Module1" is a token of a provider, this provider must be included in providersPerMod';
-    expect(() => mock.normalize(Module2)).toThrow(msg);
+    expect(() => mock.normalize(Module2)).toThrowCode(systemErrors.exportingUnknownSymbol, 'Module1');
   });
 
   it('imports module with params, but exports only a module class (without ref to module with params)', () => {
@@ -161,8 +161,8 @@ describe('ModuleNormalizer', () => {
     })
     class Module2 {}
 
-    const msg = 'Reexport from Module2 failed: Module1 includes in exports, but not includes in imports';
-    expect(() => mock.normalize(Module2)).toThrow(msg);
+    const msg = 'Module2 failed: Module1 includes';
+    expect(() => mock.normalize(Module2)).toThrowCode(systemErrors.reexportFailed, msg);
   });
 
   it('module exported provider from providersPerApp', () => {
@@ -170,7 +170,7 @@ describe('ModuleNormalizer', () => {
     @featureModule({ providersPerApp: [Service1], exports: [Service1] })
     class Module2 {}
 
-    expect(() => mock.normalize(Module2)).toThrow('includes in "providersPerApp" and "exports" of');
+    expect(() => mock.normalize(Module2)).toThrowCode(systemErrors.forbiddenExportProvidersPerApp);
   });
 
   it('providers or modules with forwardRef', () => {
@@ -219,8 +219,7 @@ describe('ModuleNormalizer', () => {
     @featureModule({ providersPerMod: [Service1], exports: [{ token: Service1, useClass: Service1 }] })
     class Module2 {}
 
-    const msg = 'failed: in "exports" array must be includes tokens only';
-    expect(() => mock.normalize(Module2)).toThrow(msg);
+    expect(() => mock.normalize(Module2)).toThrowCode(systemErrors.forbiddenExportNormalizedProvider, 'Service1');
   });
 
   it('exports module without imports it', () => {
@@ -231,8 +230,7 @@ describe('ModuleNormalizer', () => {
     @featureModule({ exports: [Module1] })
     class Module2 {}
 
-    const msg = 'Reexport from Module2 failed: Module1 includes in exports';
-    expect(() => mock.normalize(Module2)).toThrow(msg);
+    expect(() => mock.normalize(Module2)).toThrowCode(systemErrors.reexportFailed, 'Module2 failed: Module1');
   });
 
   it('module exports an invalid extension', () => {
@@ -242,9 +240,7 @@ describe('ModuleNormalizer', () => {
     @featureModule({ extensions: [{ extension: Extension1, export: true }] })
     class Module2 {}
 
-    const msg =
-      'Exporting "Extension1" from "Module2" failed: all extensions must have stage1(), stage2() or stage3() method';
-    expect(() => mock.normalize(Module2)).toThrow(msg);
+    expect(() => mock.normalize(Module2)).toThrowCode(systemErrors.wrongExtension, '"Extension1" from "Module2"');
   });
 
   it('module exports a valid extension', () => {

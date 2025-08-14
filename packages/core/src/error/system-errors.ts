@@ -253,12 +253,12 @@ export const systemErrors = {
    * ${tokenName} mapped with ${moduleName}, but ${tokenName} is a token of the multi providers,
    * and in this case it should not be included in resolvedCollisionsPerApp.`
    */
-  multiProviderShouldNotBIncludedInResolvedCollisionsPerApp(
+  donotResolveCollisionForMultiProvider(
     rootModuleName: string,
     moduleName: string,
     tokenName: string,
   ) {
-    return newCustomError(systemErrors.multiProviderShouldNotBIncludedInResolvedCollisionsPerApp, {
+    return newCustomError(systemErrors.donotResolveCollisionForMultiProvider, {
       msg1:
         `Resolving collisions for providersPerApp in ${rootModuleName} failed: ` +
         `${tokenName} mapped with ${moduleName}, but ${tokenName} is a token of the multi providers, and in this case ` +

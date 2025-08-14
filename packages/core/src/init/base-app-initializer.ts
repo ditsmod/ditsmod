@@ -33,7 +33,7 @@ import {
   failedStage2,
   failedStage3,
   moduleNotImportedInApplication,
-  multiProviderShouldNotBIncludedInResolvedCollisionsPerApp,
+  donotResolveCollisionForMultiProvider,
   providersPerAppDoesNotIncludesTokenName,
 } from '#errors';
 
@@ -116,7 +116,7 @@ export class BaseAppInitializer {
         throw providersPerAppDoesNotIncludesTokenName(rootMeta.name, moduleName, tokenName);
       }
       if (isMultiProvider(provider)) {
-        throw multiProviderShouldNotBIncludedInResolvedCollisionsPerApp(rootMeta.name, moduleName, tokenName);
+        throw donotResolveCollisionForMultiProvider(rootMeta.name, moduleName, tokenName);
       }
       resolvedProviders.push(provider);
     });

@@ -1,5 +1,5 @@
 import { fromSelf, skipSelf } from './decorators.js';
-import { cyclicDependencyError, noProviderError } from './errors.js';
+import { cyclicDependency, noProvider } from './errors.js';
 import { Injector } from './injector.js';
 import { DualKey, KeyRegistry } from './key-registry.js';
 import { Dependency, ID, ResolvedProvider, Visibility } from './types-and-models.js';
@@ -70,7 +70,7 @@ export class DepsChecker {
       // This is an alternative to the "instanceof ResolvedProvider" expression.
       if (meta?.[ID]) {
         if (parentTokens.includes(dualKey.token)) {
-          throw cyclicDependencyError([dualKey.token, ...parentTokens]);
+          throw cyclicDependency([dualKey.token, ...parentTokens]);
         }
         this.checkMultiOrRegularProvider({ injector, provider: meta, parentTokens, ignoreDeps });
         return;
@@ -87,7 +87,7 @@ export class DepsChecker {
       }
     }
     if (!isOptional) {
-      throw noProviderError([dualKey.token, ...parentTokens]);
+      throw noProvider([dualKey.token, ...parentTokens]);
     }
   }
 

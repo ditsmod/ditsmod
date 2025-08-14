@@ -4,12 +4,12 @@ import { AnyFn } from '#types/mix.js';
 import { fromSelf, inject, optional, skipSelf } from './decorators.js';
 import {
   failedCreateFactoryProvider,
-  cyclicDependencyError,
+  cyclicDependency,
   instantiationError,
-  invalidProviderError,
-  mixMultiProvidersWithRegularProvidersError,
-  noAnnotationError,
-  noProviderError,
+  invalidProvider,
+  mixMultiWithRegularProviders,
+  noAnnotation,
+  noProvider,
   cannotFindFactoryAsMethod,
   cannotFindMethodInClass,
   settingValueByIdFailed,
@@ -231,7 +231,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       } else if (isNormalizedProvider(provider)) {
         normProviders.push(provider);
       } else {
-        throw invalidProviderError(provider);
+        throw invalidProvider(provider);
       }
     });
 
@@ -336,14 +336,14 @@ expect(injector.get(Car) instanceof Car).toBe(true);
     }
     const aParamsMeta = classPropMeta.params;
     if (aParamsMeta.includes(null)) {
-      throw noAnnotationError(Cls, aParamsMeta, propertyKey);
+      throw noAnnotation(Cls, aParamsMeta, propertyKey);
     }
     const deps = aParamsMeta.map((paramsMeta) => {
       const { token, ctx, isOptional, visibility } = this.extractPayload(paramsMeta!);
       if (token != null) {
         return new Dependency(KeyRegistry.get(token), isOptional, visibility, ctx);
       } else {
-        throw noAnnotationError(Cls, aParamsMeta, propertyKey);
+        throw noAnnotation(Cls, aParamsMeta, propertyKey);
       }
     });
 
@@ -395,7 +395,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       const existing = normalizedProvidersMap.get(provider.dualKey.id);
       if (existing) {
         if (provider.multi !== existing.multi) {
-          throw mixMultiProvidersWithRegularProvidersError(existing.dualKey.token);
+          throw mixMultiWithRegularProviders(existing.dualKey.token);
         }
         if (provider.multi) {
           for (let j = 0; j < provider.resolvedFactories.length; j++) {
@@ -630,7 +630,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
         if (meta?.[ID]) {
           // This is an alternative to the "instanceof ResolvedProvider" expression.
           if (parentTokens.includes(dualKey.token)) {
-            throw cyclicDependencyError([dualKey.token, ...parentTokens]);
+            throw cyclicDependency([dualKey.token, ...parentTokens]);
           }
           const value = injector.instantiateResolved(meta, parentTokens);
           return (injector.#registry[dualKey.id] = value);
@@ -648,7 +648,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
       }
     }
     if (defaultValue === NoDefaultValue) {
-      throw noProviderError([dualKey.token, ...parentTokens]);
+      throw noProvider([dualKey.token, ...parentTokens]);
     } else {
       return defaultValue;
     }
@@ -769,7 +769,7 @@ child.pull(Service).config; // pulls Service in current injector: { one: 11, two
       }
     }
     if (defaultValue === NoDefaultValue) {
-      throw noProviderError([dualKey.token]);
+      throw noProvider([dualKey.token]);
     } else {
       return defaultValue;
     }

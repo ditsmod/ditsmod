@@ -18,7 +18,7 @@ import {
   isClassProvider,
   isTokenProvider,
 } from '#di';
-import { invalidProviderError } from '#errors';
+import { invalidProvider } from '#errors';
 
 /**
  * Flattens an array.
@@ -65,7 +65,7 @@ export function normalizeProviders(
       }
       arrayOfProviders.push(provider as NormalizedProvider);
     } else {
-      throw invalidProviderError(provider);
+      throw invalidProvider(provider);
     }
   });
 

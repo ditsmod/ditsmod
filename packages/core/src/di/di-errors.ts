@@ -69,9 +69,9 @@ expect(() => Injector.resolveAndCreate([
 ])).toThrow();
 ```
    */
-  mixMultiProvidersWithRegularProvidersError(token: NonNullable<unknown>) {
+  mixMultiWithRegularProviders(token: NonNullable<unknown>) {
     const multiProvider = stringify(token);
-    return newCustomError(diErrors.mixMultiProvidersWithRegularProvidersError, {
+    return newCustomError(diErrors.mixMultiWithRegularProviders, {
       msg1: `Cannot mix multi providers and regular providers for "${multiProvider}"`,
       level: 'fatal',
     });
@@ -104,7 +104,7 @@ class A {
 expect(() => Injector.resolveAndCreate([A,B])).toThrow();
 ```
    */
-  noAnnotationError(Cls: Class, params: any[], propertyKey?: string | symbol) {
+  noAnnotation(Cls: Class, params: any[], propertyKey?: string | symbol) {
     let msg1: string;
     const signature = getSignature(params);
     if (propertyKey) {
@@ -119,7 +119,7 @@ expect(() => Injector.resolveAndCreate([A,B])).toThrow();
         'Make sure that all the parameters are decorated with inject or have valid type annotations' +
         ` and that '${stringify(Cls)}' is decorated with some class decorator.`;
     }
-    return newCustomError(diErrors.noAnnotationError, {
+    return newCustomError(diErrors.noAnnotation, {
       msg1,
       level: 'fatal',
     });
@@ -134,9 +134,9 @@ expect(() => Injector.resolveAndCreate([A,B])).toThrow();
 expect(() => Injector.resolveAndCreate(["not a type"])).toThrow();
 ```
  */
-  invalidProviderError(provider: any) {
+  invalidProvider(provider: any) {
     const obj = inspect(provider, false, 2);
-    return newCustomError(diErrors.invalidProviderError, {
+    return newCustomError(diErrors.invalidProvider, {
       msg1: `Invalid provider - only instances of Provider and Class are allowed, got: ${obj}`,
       level: 'fatal',
     });
@@ -200,8 +200,8 @@ class B {
  *
  * Retrieving `A` or `B` throws a `CyclicDependencyError` as the graph above cannot be constructed.
  */
-  cyclicDependencyError(tokens: any[]) {
-    return newCustomError(diErrors.cyclicDependencyError, {
+  cyclicDependency(tokens: any[]) {
+    return newCustomError(diErrors.cyclicDependency, {
       msg1: `Cannot instantiate cyclic dependency!${constructResolvingPath(tokens)}`,
       level: 'fatal',
     });
@@ -221,9 +221,9 @@ class B {
   expect(() => Injector.resolveAndCreate([A])).toThrow();
   ```
    */
-  noProviderError(tokens: any[]) {
+  noProvider(tokens: any[]) {
     const first = stringify(tokens[0]);
-    return newCustomError(diErrors.noProviderError, {
+    return newCustomError(diErrors.noProvider, {
       msg1: `No provider for ${first}!${constructResolvingPath(tokens)}`,
       level: 'fatal',
     });

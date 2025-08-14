@@ -15,6 +15,8 @@ import { ModuleWithParams } from '#types/module-metadata.js';
 import { Extension, ExtensionCounters } from '#extension/extension-types.js';
 import { Providers } from '#utils/providers.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
+import { diErrors } from '#di/di-errors.js';
+import { systemErrors } from '#error/system-errors.js';
 
 describe('BaseAppInitializer', () => {
   type ModRefId = ModuleType | ModuleWithParams;
@@ -226,7 +228,7 @@ describe('BaseAppInitializer', () => {
       class AppModule {}
 
       mock.baseMeta = moduleManager.scanRootModule(AppModule);
-      expect(() => mock.prepareProvidersPerApp()).toThrow('Provider1 is a token of the multi providers');
+      expect(() => mock.prepareProvidersPerApp()).toThrowCode(systemErrors.donotResolveCollisionForMultiProvider, 'Provider1');
     });
 
     it('should throw an error because resolvedCollisionsPerApp not properly setted provider', () => {

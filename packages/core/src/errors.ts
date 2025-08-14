@@ -18,7 +18,7 @@ export const {
   rootNotHaveDecorator,
   moduleNotImportedInApplication,
   providersPerAppDoesNotIncludesTokenName,
-  multiProviderShouldNotBIncludedInResolvedCollisionsPerApp,
+  donotResolveCollisionForMultiProvider,
   failedCollectingMetadata,
   failedCreateInjectorPerMod,
   failedStage2,

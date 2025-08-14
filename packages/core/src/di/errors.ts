@@ -2,12 +2,12 @@ import { diErrors } from './di-errors.js';
 
 export const {
   failedCreateFactoryProvider,
-  noProviderError,
-  cyclicDependencyError,
+  noProvider,
+  cyclicDependency,
   instantiationError,
-  invalidProviderError,
-  noAnnotationError,
-  mixMultiProvidersWithRegularProvidersError,
+  invalidProvider,
+  noAnnotation,
+  mixMultiWithRegularProviders,
   cannotFindFactoryAsMethod,
   cannotFindMethodInClass,
   settingValueByIdFailed,

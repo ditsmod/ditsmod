@@ -11,6 +11,7 @@ import { InjectionToken } from './injection-token.js';
 import { Injector } from './injector.js';
 import { forwardRef } from './forward-ref.js';
 import { reflector } from './reflection.js';
+import { diErrors } from './di-errors.js';
 
 class Engine {}
 
@@ -227,7 +228,7 @@ describe('injector', () => {
     it('child injector pull provider from parent injector, and instatiate it', () => {
       const parent = Injector.resolveAndCreate([Car]);
       const child = parent.resolveAndCreateChild([Engine]);
-      expect(() => child.get(Car)).toThrow('No provider for Engine! (Car -> Engine)');
+      expect(() => child.get(Car)).toThrowCode(diErrors.noProvider, 'Car -> Engine');
       expect(child.pull(Car)).toBeInstanceOf(Car);
       expect(child.pull(Car).engine).toBeInstanceOf(Engine);
     });
@@ -247,7 +248,7 @@ describe('injector', () => {
         constructor(a: A) {}
       }
       const injector = Injector.resolveAndCreate([A, B]);
-      expect(() => injector.pull(A, 'defaultValue')).toThrow('Cannot instantiate cyclic dependency! (A -> B -> A)');
+      expect(() => injector.pull(A, 'defaultValue')).toThrowCode(diErrors.cyclicDependency, 'A -> B -> A');
     });
 
     it('cyclic dependency (A -> B -> C -> A)', () => {
@@ -264,8 +265,8 @@ describe('injector', () => {
         constructor(a: A) {}
       }
       const injector = Injector.resolveAndCreate([A, B, C]);
-      const msg = 'Cannot instantiate cyclic dependency! (A -> B -> C -> A)';
-      expect(() => injector.pull(A, 'defaultValue')).toThrow(msg);
+      const msg = 'A -> B -> C -> A';
+      expect(() => injector.pull(A, 'defaultValue')).toThrowCode(diErrors.cyclicDependency, msg);
     });
   });
 
@@ -545,8 +546,7 @@ describe('injector', () => {
   });
 
   it('should throw when no type and not @inject (class case)', () => {
-    const msg = "Cannot resolve all parameters for 'NoAnnotations(?)";
-    expect(() => createInjector([NoAnnotations])).toThrow(msg);
+    expect(() => createInjector([NoAnnotations])).toThrowCode(diErrors.noAnnotation);
   });
 
   it('should throw when no type and not @inject (factory case)', () => {
@@ -556,11 +556,10 @@ describe('injector', () => {
         return one;
       }
     }
-    const msg = /Cannot resolve all parameters for 'ClassWithFactory.method1/;
     const providers: Provider[] = [
       { token: 'someToken', useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
     ];
-    expect(() => createInjector(providers)).toThrow(msg);
+    expect(() => createInjector(providers)).toThrowCode(diErrors.noAnnotation, 'ClassWithFactory.method1');
   });
 
   it('should throw when there no decorator for ClassWithFactory', () => {
@@ -573,8 +572,7 @@ describe('injector', () => {
     const providers: Provider[] = [
       { token: 'someToken', useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
     ];
-    const msg = /Cannot resolve all parameters for 'ClassWithFactory.method1/;
-    expect(() => createInjector(providers)).toThrow(msg);
+    expect(() => createInjector(providers)).toThrowCode(diErrors.noAnnotation, 'ClassWithFactory.method1');
   });
 
   it('should throw when passing anonymous function to useFactory', () => {
@@ -587,8 +585,7 @@ describe('injector', () => {
     }
 
     const providers: Provider[] = [{ token: 'someToken', useFactory: [ClassWithFactory, () => ({})] }];
-    const msg = 'Cannot find "anonymous()" as method in "ClassWithFactory".';
-    expect(() => createInjector(providers)).toThrow(msg);
+    expect(() => createInjector(providers)).toThrowCode(diErrors.cannotFindFactoryAsMethod, 'ClassWithFactory');
   });
 
   it('should throw when passing fake value to useFactory', () => {
@@ -601,8 +598,7 @@ describe('injector', () => {
     }
 
     const providers: Provider[] = [{ token: 'someToken', useFactory: [ClassWithFactory, 'fakeValue' as any] }];
-    const msg = 'Failed to create factory provider for someToken';
-    expect(() => createInjector(providers)).toThrow(msg);
+    expect(() => createInjector(providers)).toThrowCode(diErrors.failedCreateFactoryProvider, 'someToken');
   });
 
   it('should cache instances', () => {
@@ -822,8 +818,7 @@ describe('injector', () => {
   it('should throw when the aliased provider does not exist', () => {
     const carToken = new InjectionToken('carToken');
     const injector = createInjector([{ token: carToken, useToken: SportsCar }]);
-    const msg = 'No provider for SportsCar! (carToken -> SportsCar)';
-    expect(() => injector.get(carToken)).toThrow(msg);
+    expect(() => injector.get(carToken)).toThrowCode(diErrors.noProvider, 'carToken -> SportsCar');
   });
 
   it('should handle forwardRef in useToken', () => {
@@ -903,7 +898,7 @@ describe('injector', () => {
 
   it('should throw when no provider defined', () => {
     const injector = createInjector([]);
-    expect(() => injector.get('NonExisting')).toThrow('No provider for NonExisting!');
+    expect(() => injector.get('NonExisting')).toThrowCode(diErrors.noProvider, 'NonExisting');
   });
 
   it('should show the full path when no provider', () => {
@@ -941,8 +936,7 @@ describe('injector', () => {
       { token: Engine, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
     ]);
 
-    const msg = 'Failed instantiation of Engine! (Car -> Engine): Broken Engine';
-    expect(() => injector.get(Car)).toThrow(msg);
+    expect(() => injector.get(Car)).toThrowCode(diErrors.instantiationError, 'Car -> Engine');
 
     isBroken = false;
 
@@ -1065,8 +1059,7 @@ describe('depedency resolution', () => {
         { token: Car, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
       ]);
 
-      const msg = 'No provider for Engine! (Car -> Engine)';
-      expect(() => child.get(Car)).toThrow(msg);
+      expect(() => child.get(Car)).toThrowCode(diErrors.noProvider, 'Car -> Engine');
     });
   });
 
@@ -1244,8 +1237,7 @@ describe("null as provider's value", () => {
 
     const injector = Injector.resolveAndCreate([Dashboard, { token: Car, useFactory: [Car, Car.prototype.method1] }]);
 
-    const msg = 'No provider for DashboardSoftware! (Car -> Dashboard -> DashboardSoftware)';
-    expect(() => injector.get(Car)).toThrow(msg);
+    expect(() => injector.get(Car)).toThrowCode(diErrors.noProvider, 'Car -> Dashboard -> DashboardSoftware');
   });
 
   it('useFactory should work', () => {
@@ -1294,6 +1286,6 @@ describe("null as provider's value", () => {
     const parent = Injector.resolveAndCreate([]);
     const child = parent.resolveAndCreateChild([A, { token, useValue: "child's value" }]);
     const msg = 'No provider for token! (A -> token)';
-    expect(() => child.get(A)).toThrow(msg);
+    expect(() => child.get(A)).toThrowCode(diErrors.noProvider, 'A -> token');
   });
 });
