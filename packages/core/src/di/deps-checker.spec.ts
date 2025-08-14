@@ -13,6 +13,7 @@ import {
   optional,
   skipSelf
 } from './index.js';
+import { diErrors } from './di-errors.js';
 
 class Engine {}
 
@@ -122,7 +123,7 @@ describe("null as provider's value", () => {
 
       const injector = Injector.resolveAndCreate([Dependecy2]);
       const msg = 'No provider for Dependecy1! (Dependecy2 -> Dependecy1)';
-      expect(() => DepsChecker.check(injector, Dependecy2)).toThrow(msg);
+      expect(() => DepsChecker.check(injector, Dependecy2)).toThrowCode(diErrors.noProviderError, msg);
       expect(spy).toHaveBeenCalledTimes(0);
     });
 
@@ -130,8 +131,8 @@ describe("null as provider's value", () => {
       const injector = createInjector([Car, { token: Engine, useClass: CyclicEngine }]);
       const msg = 'Cannot instantiate cyclic dependency! (Car -> Engine -> Car)';
   
-      expect(() => DepsChecker.check(injector, Car)).toThrow(msg);
-      expect(() => injector.get(Car)).toThrow(msg);
+      expect(() => DepsChecker.check(injector, Car)).toThrowCode(diErrors.cyclicDependencyError, msg);
+      expect(() => injector.get(Car)).toThrowCode(diErrors.cyclicDependencyError, msg);
     });
 
     it('should work with simple dependency', () => {
@@ -175,7 +176,7 @@ describe("null as provider's value", () => {
         { token: Dependecy2, useFactory: [Dependecy2, Dependecy2.prototype.method1] },
       ]);
       const msg = 'No provider for Dependecy1! (Dependecy2 -> Dependecy1)';
-      expect(() => DepsChecker.check(injector, Dependecy2)).toThrow(msg);
+      expect(() => DepsChecker.check(injector, Dependecy2)).toThrowCode(diErrors.noProviderError, msg);
       expect(spy).toHaveBeenCalledTimes(0);
     });
 
@@ -208,7 +209,7 @@ describe("null as provider's value", () => {
         { token: Dependecy2, useFactory: [Dependecy2, Dependecy2.prototype.method1] },
       ]);
       const msg = 'No provider for Dependecy3! (Dependecy2 -> Dependecy3)';
-      expect(() => DepsChecker.check(injector, Dependecy2)).toThrow(msg);
+      expect(() => DepsChecker.check(injector, Dependecy2)).toThrowCode(diErrors.noProviderError, msg);
       expect(spy).toHaveBeenCalledTimes(0);
     });
 
@@ -281,7 +282,7 @@ describe("null as provider's value", () => {
       const parent = Injector.resolveAndCreate([]);
       const injector = parent.resolveAndCreateChild([Dependecy2]);
       const msg = 'No provider for Dependecy1! (Dependecy2 -> Dependecy1)';
-      expect(() => DepsChecker.check(injector, Dependecy2)).toThrow(msg);
+      expect(() => DepsChecker.check(injector, Dependecy2)).toThrowCode(diErrors.noProviderError, msg);
       expect(spy).toHaveBeenCalledTimes(0);
     });
 
@@ -330,7 +331,7 @@ describe("null as provider's value", () => {
       const parent = Injector.resolveAndCreate([]);
       const child = parent.resolveAndCreateChild([A, { token, useValue: "child's value" }]);
       const msg = 'No provider for token! (A -> token)';
-      expect(() => DepsChecker.check(child, A)).toThrow(msg);
+      expect(() => DepsChecker.check(child, A)).toThrowCode(diErrors.noProviderError, msg);
       expect(spy).toHaveBeenCalledTimes(0);
     });
 
