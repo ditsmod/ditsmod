@@ -57,7 +57,7 @@
     "node": ">= 20.6.0"
   },
   "dependencies": {
-    "@ts-stack/chain-error": "^1.4.1",
+    "@ts-stack/chain-error": "^1.4.2",
     "@ts-stack/stack-utils": "^1.1.0",
     "reflect-metadata": "^0.2.2"
   },

@@ -710,7 +710,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ditsmod/core@workspace:packages/core"
   dependencies:
-    "@ts-stack/chain-error": "npm:^1.4.1"
+    "@ts-stack/chain-error": "npm:^1.4.2"
     "@ts-stack/stack-utils": "npm:^1.1.0"
     jest: "npm:^30.0.0"
     npm-run-all: "npm:*"
@@ -878,6 +878,7 @@ __metadata:
     typescript: "npm:*"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.3
+    "@ditsmod/rest": ^3.0.0-alpha.3
   languageName: unknown
   linkType: soft
 
@@ -2497,12 +2498,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ts-stack/chain-error@npm:^1.4.1":
-  version: 1.4.1
-  resolution: "@ts-stack/chain-error@npm:1.4.1"
+"@ts-stack/chain-error@npm:^1.4.2":
+  version: 1.4.2
+  resolution: "@ts-stack/chain-error@npm:1.4.2"
   dependencies:
     assert-plus: "npm:^1.0.0"
-  checksum: 10c0/30bac8451c0ad694a27e72867ee221d82a4d3d3372917afbf7020dc3dd639bdffbcc4c67845776138df036f7a3a922bbda6ca1215eb9896d721ac87951ad7ddf
+  checksum: 10c0/566ad8ed4d753e611bd12a789f1db0f1f325e605ba1ce2ac51cd4296362842a09fc6fb44abf66b1db5746481e89b1be01a8d772a5caa1ffcaacb30d112708d02
   languageName: node
   linkType: hard
 
