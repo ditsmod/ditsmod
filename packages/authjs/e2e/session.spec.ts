@@ -1,8 +1,8 @@
 import supertest from 'supertest';
+import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import { Status, rootModule } from '@ditsmod/core';
-import { route, controller, RestModule, Req, HttpServer } from '@ditsmod/rest';
+import { route, controller, RestModule, Req, HttpServer, initRest } from '@ditsmod/rest';
 import { TestApplication } from '@ditsmod/testing';
-import { jest } from '@jest/globals';
 
 const sessionJson = {
   user: {
@@ -14,11 +14,11 @@ const sessionJson = {
   expires: '',
 };
 
-jest.mock('@auth/core', async (importOriginal) => {
+vi.mock('@auth/core', async (importOriginal) => {
   const mod = await importOriginal<typeof import('@auth/core')>();
   return {
     ...mod,
-    Auth: jest.fn((request, config) => {
+    Auth: vi.fn((request, config) => {
       return new Response(JSON.stringify(sessionJson), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
@@ -47,10 +47,11 @@ export class Controller1 {
   }
 }
 
-@rootModule({
+@initRest({
   imports: [RestModule],
   controllers: [Controller1],
 })
+@rootModule()
 export class AppModule {}
 
 describe('getSession', () => {

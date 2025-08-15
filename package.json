@@ -13,12 +13,14 @@
   ],
   "scripts": {
     "test": "yarn build-test && yarn esm-jest",
+    "test-authjs": "yarn build-authjs-test && vitest",
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",
     "test-examples": "tsc -b examples/tsconfig.e2e.json && yarn esm-jest -c examples/jest.config.ts",
-    "test-all": "yarn test && yarn test-examples && yarn build-vscode",
+    "test-all": "yarn test && yarn test-authjs && yarn test-examples && yarn build-vscode",
     "pub": "lerna publish from-package --no-git-tag-version",
     "build": "tsc -b packages",
     "build-test": "tsc -b packages/tsconfig.test.json",
+    "build-authjs-test": "tsc -b packages/authjs/tsconfig.e2e.json",
     "build-examples": "tsc -b examples/tsconfig.build.json",
     "build-exam-test": "tsc -b examples/tsconfig.e2e.json",
     "build-vscode": "tsc -b examples/tsconfig.vscode.json",
@@ -54,7 +56,8 @@
     "supertest": "^7.1.1",
     "ts-node": "^10.9.2",
     "typescript": "~5.8.3",
-    "typescript-eslint": "^8.32.1"
+    "typescript-eslint": "^8.32.1",
+    "vitest": "^3.2.4"
   },
   "resolutions": {
     "@swagger-api/apidom-ns-asyncapi-2": "npm:-@0.0.1",

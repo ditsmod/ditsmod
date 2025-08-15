@@ -1,6 +1,7 @@
 import supertest from 'supertest';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { rootModule } from '@ditsmod/core';
-import { controller, route, RestModule, applyResponse, Res, HttpServer } from '@ditsmod/rest';
+import { controller, route, RestModule, applyResponse, Res, HttpServer, initRest } from '@ditsmod/rest';
 import { TestApplication } from '@ditsmod/testing';
 
 let webResponse: Response = new Response();
@@ -21,10 +22,11 @@ export class Controller1 {
   }
 }
 
-@rootModule({
+@initRest({
   imports: [RestModule],
   controllers: [Controller1],
 })
+@rootModule()
 export class AppModule {}
 
 function expectMatchingResponseHeaders(response: Response, res: supertest.Response) {

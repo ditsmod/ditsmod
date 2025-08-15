@@ -1,5 +1,5 @@
 import { rootModule, inject } from '@ditsmod/core';
-import { controller, route, RestModule, RequestContext } from '@ditsmod/rest';
+import { controller, route, RestModule, RequestContext, initRest } from '@ditsmod/rest';
 
 import { AuthjsModule } from '#mod/authjs.module.js';
 import { AUTHJS_SESSION } from '#mod/constants.js';
@@ -29,7 +29,7 @@ export class CtxScopedController {
   }
 }
 
-@rootModule({
+@initRest({
   imports: [
     RestModule,
     AuthjsModule.withConfig({
@@ -39,4 +39,5 @@ export class CtxScopedController {
   ],
   controllers: [InjScopedController, CtxScopedController],
 })
+@rootModule()
 export class AppModule {}

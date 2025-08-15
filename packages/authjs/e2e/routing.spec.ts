@@ -1,6 +1,7 @@
 import supertest from 'supertest';
+import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import { rootModule } from '@ditsmod/core';
-import { route, RestModule, RequestContext, controller, HttpServer } from '@ditsmod/rest';
+import { route, RestModule, RequestContext, controller, HttpServer, initRest } from '@ditsmod/rest';
 import { TestApplication } from '@ditsmod/testing';
 
 import credentials from '#mod/providers/credentials.js';
@@ -8,7 +9,7 @@ import { AuthjsModule } from '#mod/authjs.module.js';
 import { AuthjsInterceptor } from '#mod/authjs.interceptor.js';
 
 // mock the toWebRequest, make it throw if "X-Test-Header" = 'throw'
-jest.mock('#mod/http-api-adapters.js', async (importOriginal) => {
+vi.mock('#mod/http-api-adapters.js', async (importOriginal) => {
   const mod = await importOriginal<typeof import('#mod/http-api-adapters.js')>();
   return {
     ...mod,
@@ -29,13 +30,14 @@ export class Controller1 {
   }
 }
 
-@rootModule({
+@initRest({
   imports: [
     RestModule,
     AuthjsModule.withConfig({ secret: 'secret', providers: [credentials] }),
   ],
   controllers: [Controller1],
 })
+@rootModule()
 export class AppModule {}
 
 describe('Middleware behaviour', () => {

@@ -4,6 +4,7 @@ spec
 *.spec.*
 yarn.lock
 jest.config.ts
+vitest.config.ts
 .*
 nodemon.json
 CHANGELOG.md
