@@ -5,10 +5,13 @@ import { ServicePerApp, ServicePerMod, ServicePerReq, ServicePerRou } from './se
 import { RestModule } from '#init/rest.module.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 
-@initRest({ providersPerRou: [ServicePerRou], providersPerReq: [ServicePerReq], controllers: [Controller1] })
-@rootModule({
+@initRest({
   imports: [RestModule],
   providersPerApp: [ServicePerApp],
   providersPerMod: [ServicePerMod],
+  providersPerRou: [ServicePerRou],
+  providersPerReq: [ServicePerReq],
+  controllers: [Controller1],
 })
+@rootModule()
 export class AppModule {}

@@ -9,7 +9,9 @@ export class TestOverrider {
   ) {
     providersToOverride.forEach((provider) => {
       const providersPerApp = perAppService.providers;
-      this.overrideProvider(['App'], { providersPerApp }, provider);
+      const providersOnly = { providersPerApp };
+      this.overrideProvider(['App'], providersOnly, provider);
+      perAppService.providers = providersOnly.providersPerApp;
     });
 
     perAppService.reinitInjector();
