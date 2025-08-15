@@ -11,6 +11,7 @@ import { REQUIRED } from '#constants';
 import { AnyEnum, PropertyDecoratorMetadata, CustomType } from '#decorators/property.js';
 import { mediaTypeName } from '#types/media-types.js';
 import { isProperty } from './type-guards.js';
+import { arrayTypeDefinitionConflict, enumTypeDefinitionConflict } from '#errors';
 
 export interface ContentOptions<T extends mediaTypeName = mediaTypeName> {
   mediaType: T;
@@ -116,13 +117,11 @@ export class Content {
     customType?: CustomType,
   ) {
     if ((type == 'array' || customType?.array) && propertyType.name != 'Array') {
-      const msg = `Wrong definition for ${modelName}: property '${property}' is an array or not array?`;
-      throw new TypeError(msg);
+      throw arrayTypeDefinitionConflict(modelName, property);
     }
 
     if ((propertyType.name == 'Array' || customType?.array) && customType?.enum) {
-      const msg = `Wrong definition for ${modelName}: property '${property}' is an enum or an array?`;
-      throw new TypeError(msg);
+      throw enumTypeDefinitionConflict(modelName, property);
     }
   }
 

@@ -27,7 +27,7 @@ describe('OpenapiRoutesExtension', () => {
 
   let mock: MockOpenapiRoutesExtension;
   beforeEach(() => {
-    mock = new MockOpenapiRoutesExtension(null as any, null as any, null as any);
+    mock = new MockOpenapiRoutesExtension(null as any, null as any);
   });
 
   describe('mergeParams()', () => {

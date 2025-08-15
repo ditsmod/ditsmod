@@ -14,7 +14,8 @@
     "#utils/*": "./dist/utils/*",
     "#decorators/*": "./dist/decorators/*",
     "#services/*": "./dist/services/*",
-    "#constants": "./dist/constants.js"
+    "#constants": "./dist/constants.js",
+    "#errors": "./dist/errors.js"
   },
   "exports": {
     "./package.json": {

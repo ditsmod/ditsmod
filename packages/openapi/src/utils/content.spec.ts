@@ -4,6 +4,7 @@ import { property } from '#decorators/property.js';
 import { Content } from './content.js';
 import { REQUIRED } from '#constants';
 import { inspect } from 'util';
+import { oasErrors } from '#services/openapi-error-mediator.js';
 
 function print(obj: any) {
   console.log(inspect(obj, undefined, null));
@@ -28,11 +29,11 @@ describe('Content', () => {
           properties: {
             property1: {
               type: 'string',
-              'x-required': true
+              'x-required': true,
             },
             property2: {
               type: 'number',
-              'x-required': true
+              'x-required': true,
             },
             property3: {
               type: 'number',
@@ -261,8 +262,8 @@ describe('Content', () => {
       property1: (number | string)[];
     }
 
-    const msg = "Wrong definition for Model1: property 'property1' is an enum or an array?";
-    expect(() => new Content().get({ mediaType: 'application/json', model: Model1 })).toThrow(msg);
+    const err = oasErrors.enumTypeDefinitionConflict('Model1', 'property1');
+    expect(() => new Content().get({ mediaType: 'application/json', model: Model1 })).toThrow(err);
   });
 
   it('array of Model1', () => {
@@ -311,8 +312,8 @@ describe('Content', () => {
       property1: Model1;
     }
 
-    const msg = "Wrong definition for Model1: property 'property1' is an array or not array?";
-    expect(() => new Content().get({ mediaType: 'application/json', model: Model1 })).toThrow(msg);
+    const err = oasErrors.arrayTypeDefinitionConflict('Model1', 'property1');
+    expect(() => new Content().get({ mediaType: 'application/json', model: Model1 })).toThrow(err);
   });
 
   it('array of Model1 with circular references', () => {

@@ -12,7 +12,6 @@ import {
   AppOptions,
   ControllerMetadata,
   ControllerRawMetadata1,
-  initRest,
   isCtrlDecor,
   MetadataPerMod3,
   RestMetadataPerMod2,
@@ -26,7 +25,7 @@ import { BOUND_TO_HTTP_METHOD, BOUND_TO_PATH_PARAM } from '#utils/parameters.js'
 import { OasRouteMeta } from '#types/oas-route-meta.js';
 import { getLastParameterObjects, getLastReferenceObjects } from '#utils/get-last-params.js';
 import { OasOptions } from '#types/oas-options.js';
-import { throwParamNotFoundInPath } from '../errors.js';
+import { compilingOasRoutesFailed, throwParamNotFoundInPath } from '#errors';
 
 @injectable()
 export class OpenapiRoutesExtension extends RoutesExtension implements Extension<MetadataPerMod3> {
@@ -189,7 +188,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
       if (path.includes(`{${name}}`)) {
         let msg = `Compiling OAS routes failed: ${moduleName} have a route with param: "{${name}}"`;
         msg += `, you must convert this to ":${name}"`;
-        throw new Error(msg);
+        throw compilingOasRoutesFailed(moduleName, name);
       }
       path = path.replace(`:${name}`, `{${name}}`);
     });

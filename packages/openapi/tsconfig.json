@@ -10,6 +10,7 @@
       "#decorators/*": ["./src/decorators/*"],
       "#services/*": ["./src/services/*"],
       "#constants": ["./src/constants.js"],
+      "#errors": ["./src/errors.js"],
     },
     "module": "nodenext",
     // "moduleResolution": "nodenext",

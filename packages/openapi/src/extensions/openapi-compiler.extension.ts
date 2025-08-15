@@ -28,6 +28,7 @@ import { DEFAULT_OAS_OBJECT, defaultForNonOasGuard } from '#constants';
 import { OasConfigFiles, OasExtensionConfig } from '#types/oas-extension-options.js';
 import { OasOptions } from '#types/oas-options.js';
 import { OpenapiLogMediator } from '#services/openapi-log-mediator.js';
+import { oasRouteMetaNotFound } from '#errors';
 
 @injectable()
 export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
@@ -78,9 +79,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
               paths[`/${oasPath}`] = { ...(paths[`/${oasPath}`] || {}), ...pathItemObject };
             } else {
               if (!method) {
-                const moduleName = metadataPerMod3.baseMeta.name;
-                const msg = `[${moduleName}]: OpenapiCompilerExtension: OasRouteMeta not found.`;
-                throw new Error(msg);
+                throw oasRouteMetaNotFound(metadataPerMod3.baseMeta.name);
               }
               this.applyNonOasRoute(fullPath, paths, method, guards);
             }
