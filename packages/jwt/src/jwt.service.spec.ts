@@ -97,12 +97,16 @@ describe('JwtService', () => {
     describe('secret must have a value', function () {
       [undefined, '', 0].forEach(function (secret) {
         it(
-          'should return an error if the secret is falsy and algorithm is not set to none: ' + (typeof secret === 'string' ? '(empty string)' : secret), async () => {
+          'should return an error if the secret is falsy and algorithm is not set to none: ' +
+            (typeof secret === 'string' ? '(empty string)' : secret),
+          async () => {
             const payload: SignPayload = 'string';
             const options: SignOptions = { algorithm: 'PS256' };
             // This is needed since jws will not answer for falsy secrets
-            await expect(jwtService.signWithSecret(payload, { secret: secret as any, ...options })).rejects.toThrow('secretOrPrivateKey must have a value');
-          }
+            await expect(jwtService.signWithSecret(payload, { secret: secret as any, ...options })).rejects.toThrow(
+              'secretOrPrivateKey must have a value',
+            );
+          },
         );
       });
     });
