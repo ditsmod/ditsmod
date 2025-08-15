@@ -230,13 +230,13 @@ class B {
   },
   /**
    * `Failed to create factory provider for ${stringify(token)}:
-   * second argument in tuple of useFactory must be a function, got ${typeof factory}`
+   * second argument in tuple of useFactory must be a function, got ${factoryType}`
    */
-  failedCreateFactoryProvider(token: string, factory: AnyFn) {
+  failedCreateFactoryProvider(token: string, factoryType: string) {
     return newCustomError(diErrors.failedCreateFactoryProvider, {
       msg1:
         `Failed to create factory provider for ${stringify(token)}:` +
-        `second argument in tuple of useFactory must be a function, got ${typeof factory}`,
+        `second argument in tuple of useFactory must be a function, got ${factoryType}`,
       level: 'warn',
     });
   },

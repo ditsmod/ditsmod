@@ -16,7 +16,7 @@ import { Extension, ExtensionCounters } from '#extension/extension-types.js';
 import { Providers } from '#utils/providers.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
 import { diErrors } from '#di/di-errors.js';
-import { systemErrors } from '#error/system-errors.js';
+import { coreErrors } from '#error/system-errors.js';
 
 describe('BaseAppInitializer', () => {
   type ModRefId = ModuleType | ModuleWithParams;
@@ -228,7 +228,8 @@ describe('BaseAppInitializer', () => {
       class AppModule {}
 
       mock.baseMeta = moduleManager.scanRootModule(AppModule);
-      expect(() => mock.prepareProvidersPerApp()).toThrowCode(systemErrors.donotResolveCollisionForMultiProvider, 'Provider1');
+      const err = coreErrors.donotResolveCollisionForMultiProvider('AppModule', 'Module1', 'Provider1');
+      expect(() => mock.prepareProvidersPerApp()).toThrow(err);
     });
 
     it('should throw an error because resolvedCollisionsPerApp not properly setted provider', () => {

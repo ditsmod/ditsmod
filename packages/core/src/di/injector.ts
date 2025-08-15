@@ -266,7 +266,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       if (typeof factory == 'function') {
         (factory as any)[DEBUG_NAME] = `${Cls.name}.prototype.${factory.name}`;
       } else {
-        throw failedCreateFactoryProvider(token, factory);
+        throw failedCreateFactoryProvider(token, typeof factory);
       }
       const factoryKey = this.getFactoryKey(Cls, factory);
       const resolvedDeps1 = this.getDependencies(Cls);

@@ -1,13 +1,13 @@
 import { newCustomError } from './custom-error.js';
 
-export const systemErrors = {
+export const coreErrors = {
   /**
    * `Resolving collisions for providersPer${level} in ${moduleName} failed:
    * ${tokenName} mapped with ${moduleName}, but
    * providersPer${level} does not imports ${tokenName} in this module.`
    */
   resolvingCollisionsNotImportedInModule(moduleName: string, level: string, tokenName: string) {
-    return newCustomError(systemErrors.resolvingCollisionsNotImportedInModule, {
+    return newCustomError(coreErrors.resolvingCollisionsNotImportedInModule, {
       msg1:
         `Resolving collisions for providersPer${level} in ${moduleName} failed: ` +
         `${tokenName} mapped with ${moduleName}, but ` +
@@ -21,7 +21,7 @@ export const systemErrors = {
    * and in this case it should not be included in resolvedCollisionsPer${level}.`
    */
   tryResolvingMultiprovidersCollisions(moduleName1: string, moduleName2: string, level: string, tokenName: string) {
-    return newCustomError(systemErrors.tryResolvingMultiprovidersCollisions, {
+    return newCustomError(coreErrors.tryResolvingMultiprovidersCollisions, {
       msg1:
         `Resolving collisions for providersPer${level} in ${moduleName1} failed: ` +
         `${tokenName} mapped with ${moduleName2}, but ${tokenName} is a token of the multi providers, ` +
@@ -34,7 +34,7 @@ export const systemErrors = {
    * creates a cyclic dependency in the startup sequence of different groups: ${strPath}.`
    */
   extensionConfigCauseCyclicDeps(moduleName: string, strPath: string) {
-    return newCustomError(systemErrors.extensionConfigCauseCyclicDeps, {
+    return newCustomError(coreErrors.extensionConfigCauseCyclicDeps, {
       msg1:
         `A configuration of extensions in ${moduleName} ` +
         `creates a cyclic dependency in the startup sequence of different groups: ${strPath}.`,
@@ -46,7 +46,7 @@ export const systemErrors = {
    * ${tokenName} mapped with ${moduleName2}, but providersPer${level} does not includes ${tokenName} in this module.`
    */
   resolvingCollisionsNotExistsOnThisLevel(moduleName1: string, moduleName2: string, level: string, tokenName: string) {
-    return newCustomError(systemErrors.resolvingCollisionsNotExistsOnThisLevel, {
+    return newCustomError(coreErrors.resolvingCollisionsNotExistsOnThisLevel, {
       msg1:
         `Resolving collisions for providersPer${level} in ${moduleName1} failed: ` +
         `${tokenName} mapped with ${moduleName2}, but providersPer${level} does not includes ${tokenName} in this module.`,
@@ -63,7 +63,7 @@ export const systemErrors = {
     level: string,
     tokenName: string,
   ) {
-    return newCustomError(systemErrors.resolvingCollisionsNotImportedInApplication, {
+    return newCustomError(coreErrors.resolvingCollisionsNotImportedInApplication, {
       msg1:
         `Resolving collisions for providersPer${level} in ${moduleName1} failed: ` +
         `${tokenName} mapped with ${moduleName2}, but ${moduleName1} is not imported into the application.`,
@@ -74,7 +74,7 @@ export const systemErrors = {
    * `this module should have "providersPerApp", or exports, or extensions.`
    */
   moduleShouldHaveValue() {
-    return newCustomError(systemErrors.moduleShouldHaveValue, {
+    return newCustomError(coreErrors.moduleShouldHaveValue, {
       msg1: 'this module should have "providersPerApp", or exports, or extensions.',
       level: 'fatal',
     });
@@ -84,7 +84,7 @@ export const systemErrors = {
    * This is an error, because "providersPerApp" is always exported automatically.`
    */
   forbiddenExportProvidersPerApp(moduleName: string, providerName: string) {
-    return newCustomError(systemErrors.forbiddenExportProvidersPerApp, {
+    return newCustomError(coreErrors.forbiddenExportProvidersPerApp, {
       msg1:
         `Exported "${providerName}" includes in "providersPerApp" and "exports" of ${moduleName}. ` +
         'This is an error, because "providersPerApp" is always exported automatically.',
@@ -95,7 +95,7 @@ export const systemErrors = {
    * `Exporting "${providerName}" from "${moduleName}" failed: in "exports" array must be includes tokens only.`
    */
   forbiddenExportNormalizedProvider(moduleName: string, providerName: string) {
-    return newCustomError(systemErrors.forbiddenExportNormalizedProvider, {
+    return newCustomError(coreErrors.forbiddenExportNormalizedProvider, {
       msg1: `Exporting "${providerName}" from "${moduleName}" failed: in "exports" array must be includes tokens only.`,
       level: 'fatal',
     });
@@ -106,7 +106,7 @@ export const systemErrors = {
    * If "${tokenName}" is a token of extension, this extension must be included in "extensions" array.`
    */
   exportingUnknownSymbol(moduleName: string, tokenName: string) {
-    return newCustomError(systemErrors.exportingUnknownSymbol, {
+    return newCustomError(coreErrors.exportingUnknownSymbol, {
       msg1:
         `Exporting from ${moduleName} failed: if "${tokenName}" is a token of a provider, this provider ` +
         'must be included in providersPerMod. ' +
@@ -119,7 +119,7 @@ export const systemErrors = {
    * `Exporting "${tokenName}" from "${moduleName}" failed: all extensions must have stage1(), stage2() or stage3() method.`
    */
   wrongExtension(moduleName: string, tokenName: string) {
-    return newCustomError(systemErrors.wrongExtension, {
+    return newCustomError(coreErrors.wrongExtension, {
       msg1: `Exporting "${tokenName}" from "${moduleName}" failed: all extensions must have stage1(), stage2() or stage3() method.`,
       level: 'fatal',
     });
@@ -130,7 +130,7 @@ export const systemErrors = {
    * module with params, same object you should export (if you need reexport).`
    */
   reexportFailed(moduleName: string, importedModuleName: string) {
-    return newCustomError(systemErrors.reexportFailed, {
+    return newCustomError(coreErrors.reexportFailed, {
       msg1:
         `Reexport from ${moduleName} failed: ${importedModuleName} includes in exports, ` +
         `but not includes in imports. If in ${moduleName} you imports ${importedModuleName} as ` +
@@ -145,7 +145,7 @@ export const systemErrors = {
    */
   moduleIsUndefined(action: string, moduleName: string, i: number) {
     const lowerAction = action.toLowerCase();
-    return newCustomError(systemErrors.moduleIsUndefined, {
+    return newCustomError(coreErrors.moduleIsUndefined, {
       msg1:
         `${action} into "${moduleName}" failed: element at ${lowerAction}[${i}] has "undefined" type. ` +
         'This can be caused by circular dependency. Try to replace this element with this expression: ' +
@@ -158,7 +158,7 @@ export const systemErrors = {
    * "resolvedCollisionPer*" array must be includes tokens only.`
    */
   inResolvedCollisionTokensOnly(moduleName: string, providerName: string) {
-    return newCustomError(systemErrors.inResolvedCollisionTokensOnly, {
+    return newCustomError(coreErrors.inResolvedCollisionTokensOnly, {
       msg1:
         `Resolving collisions in ${moduleName} failed: for ${providerName} inside ` +
         '"resolvedCollisionPer*" array must be includes tokens only.',
@@ -169,7 +169,7 @@ export const systemErrors = {
    * `module "${modName}" does not have the "@rootModule()" or "@featureModule()" decorator`
    */
   moduleDoesNotHaveDecorator(modName: string) {
-    return newCustomError(systemErrors.moduleDoesNotHaveDecorator, {
+    return newCustomError(coreErrors.moduleDoesNotHaveDecorator, {
       msg1: `module "${modName}" does not have the "@rootModule()" or "@featureModule()" decorator`,
       level: 'fatal',
     });
@@ -178,7 +178,7 @@ export const systemErrors = {
    * `The passed argument - modRefId - is not a class, and is not a module with a parameter.`
    */
   wrongModRefId() {
-    return newCustomError(systemErrors.wrongModRefId, {
+    return newCustomError(coreErrors.wrongModRefId, {
       msg1: 'The passed argument - modRefId - is not a class, and is not a module with a parameter.',
       level: 'fatal',
     });
@@ -191,7 +191,7 @@ export const systemErrors = {
     if (prefixNames) {
       msg1 += ` It is started from ${prefixNames}.`;
     }
-    return newCustomError(systemErrors.circularDepsInImports, {
+    return newCustomError(coreErrors.circularDepsInImports, {
       msg1,
       level: 'fatal',
     });
@@ -201,7 +201,7 @@ export const systemErrors = {
    */
   failedStage3(debugModuleName: string, extensionName: string, cause: any) {
     return newCustomError(
-      systemErrors.failedStage3,
+      coreErrors.failedStage3,
       {
         msg1: `Initialization failed in ${debugModuleName} -> ${extensionName} at stage 3`,
         level: 'fatal',
@@ -214,7 +214,7 @@ export const systemErrors = {
    */
   failedStage2(debugModuleName: string, extensionName: string, cause: any) {
     return newCustomError(
-      systemErrors.failedStage2,
+      coreErrors.failedStage2,
       {
         msg1: `Initialization in ${debugModuleName} -> ${extensionName} at stage 2 failed`,
         level: 'fatal',
@@ -227,7 +227,7 @@ export const systemErrors = {
    */
   failedCreateInjectorPerMod(debugModuleName: string, cause: any) {
     return newCustomError(
-      systemErrors.failedCreateInjectorPerMod,
+      coreErrors.failedCreateInjectorPerMod,
       {
         msg1: `Failed create injector per module for ${debugModuleName}`,
         level: 'fatal',
@@ -240,7 +240,7 @@ export const systemErrors = {
    */
   failedCollectingMetadata(groupName: string, cause: any) {
     return newCustomError(
-      systemErrors.failedCollectingMetadata,
+      coreErrors.failedCollectingMetadata,
       {
         msg1: `Metadata collection from all modules for ${groupName} failed`,
         level: 'fatal',
@@ -258,7 +258,7 @@ export const systemErrors = {
     moduleName: string,
     tokenName: string,
   ) {
-    return newCustomError(systemErrors.donotResolveCollisionForMultiProvider, {
+    return newCustomError(coreErrors.donotResolveCollisionForMultiProvider, {
       msg1:
         `Resolving collisions for providersPerApp in ${rootModuleName} failed: ` +
         `${tokenName} mapped with ${moduleName}, but ${tokenName} is a token of the multi providers, and in this case ` +
@@ -271,7 +271,7 @@ export const systemErrors = {
    * ${tokenName} mapped with ${moduleName}, but providersPerApp does not includes ${tokenName} in this module.`
    */
   providersPerAppDoesNotIncludesTokenName(rootModuleName: string, moduleName: string, tokenName: string) {
-    return newCustomError(systemErrors.providersPerAppDoesNotIncludesTokenName, {
+    return newCustomError(coreErrors.providersPerAppDoesNotIncludesTokenName, {
       msg1:
         `Resolving collisions for providersPerApp in ${rootModuleName} failed: ` +
         `${tokenName} mapped with ${moduleName}, but providersPerApp does not includes ${tokenName} in this module.`,
@@ -283,7 +283,7 @@ export const systemErrors = {
    * ${tokenName} mapped with ${moduleName}, but ${moduleName} is not imported into the application.`
    */
   moduleNotImportedInApplication(rootModuleName: string, moduleName: string, tokenName: string) {
-    return newCustomError(systemErrors.moduleNotImportedInApplication, {
+    return newCustomError(coreErrors.moduleNotImportedInApplication, {
       msg1:
         `Resolving collisions for providersPerApp in ${rootModuleName} failed: ` +
         `${tokenName} mapped with ${moduleName}, but ${moduleName} is not imported into the application.`,
@@ -294,7 +294,7 @@ export const systemErrors = {
    * The logger was not previously seted.
    */
   loggerWasNotPreviouslySeted() {
-    return newCustomError(systemErrors.loggerWasNotPreviouslySeted, {
+    return newCustomError(coreErrors.loggerWasNotPreviouslySeted, {
       msg1: 'The logger was not previously seted.',
       level: 'warn',
     });
@@ -304,7 +304,7 @@ export const systemErrors = {
    */
   extensionIsFailed(extensionName: string, moduleName: string, cause: Error) {
     return newCustomError(
-      systemErrors.extensionIsFailed,
+      coreErrors.extensionIsFailed,
       {
         msg1: `${extensionName} in ${moduleName} is failed`,
         level: 'fatal',
@@ -320,7 +320,7 @@ export const systemErrors = {
     if (prefixNames) {
       msg1 += ` It is started from ${prefixNames}.`;
     }
-    return newCustomError(systemErrors.detectedCircularDependenciesForExtensions, {
+    return newCustomError(coreErrors.detectedCircularDependenciesForExtensions, {
       msg1,
       level: 'fatal',
     });
@@ -330,7 +330,7 @@ export const systemErrors = {
    * but {@link extensionName2} not declared in "afterExtensions" array in this module.
    */
   notDeclaredInAfterExtensionList(extensionName1: string, extensionName2: string) {
-    return newCustomError(systemErrors.notDeclaredInAfterExtensionList, {
+    return newCustomError(coreErrors.notDeclaredInAfterExtensionList, {
       msg1:
         `${extensionName1} attempted to call "extensionsManager.stage1(${extensionName2})", ` +
         `but ${extensionName2} not declared in "afterExtensions" array in this module.`,
@@ -341,7 +341,7 @@ export const systemErrors = {
    * `Failed to resolve imported dependencies for ${moduleName}: no provider for ${tokenName}! ${partMsg}.`
    */
   noProviderDuringResolveImports(moduleName: string, tokenName: string, partMsg: string) {
-    return newCustomError(systemErrors.noProviderDuringResolveImports, {
+    return newCustomError(coreErrors.noProviderDuringResolveImports, {
       msg1: `Failed to resolve imported dependencies for ${moduleName}: no provider for ${tokenName}! ${partMsg}.`,
       level: 'fatal',
     });
@@ -350,7 +350,7 @@ export const systemErrors = {
    * `Module scaning failed: "${rootModuleName}" does not have the "@rootModule()" decorator`.
    */
   rootNotHaveDecorator(rootModuleName: string) {
-    return newCustomError(systemErrors.rootNotHaveDecorator, {
+    return newCustomError(coreErrors.rootNotHaveDecorator, {
       msg1: `Module scaning failed: "${rootModuleName}" does not have the "@rootModule()" decorator.`,
       level: 'fatal',
     });
@@ -359,7 +359,7 @@ export const systemErrors = {
    * `Failed adding ${modName} to imports: target module with ID "${modIdStr}" not found.`
    */
   failAddingToImports(modName?: string, modIdStr?: string) {
-    return newCustomError(systemErrors.failAddingToImports, {
+    return newCustomError(coreErrors.failAddingToImports, {
       msg1: `Failed adding ${modName} to imports: target module with ID "${modIdStr}" not found.`,
       level: 'warn',
     });
@@ -368,7 +368,7 @@ export const systemErrors = {
    * `Failed removing ${inputMeta.name} from "imports" array: target module with ID "${modIdStr}" not found.`
    */
   failRemovingImport(inputModName: string, modIdStr: string) {
-    return newCustomError(systemErrors.failRemovingImport, {
+    return newCustomError(coreErrors.failRemovingImport, {
       msg1: `Failed removing ${inputModName} from "imports" array: target module with ID "${modIdStr}" not found.`,
       level: 'warn',
     });
@@ -377,7 +377,7 @@ export const systemErrors = {
    * 'It is forbidden for rollback() to an empty state.'
    */
   forbiddenRollbackEemptyState() {
-    return newCustomError(systemErrors.forbiddenRollbackEemptyState, {
+    return newCustomError(coreErrors.forbiddenRollbackEemptyState, {
       msg1: 'It is forbidden for rollback() to an empty state.',
       level: 'warn',
     });
@@ -386,7 +386,7 @@ export const systemErrors = {
    * `${moduleId} not found in ModuleManager.`
    */
   moduleIdNotFoundInModuleManager(moduleId: string) {
-    return newCustomError(systemErrors.moduleIdNotFoundInModuleManager, {
+    return newCustomError(coreErrors.moduleIdNotFoundInModuleManager, {
       msg1: `${moduleId} not found in ModuleManager.`,
       level: 'warn',
     });
@@ -396,7 +396,7 @@ export const systemErrors = {
    */
   normalizationFailed(path: string, err: Error) {
     return newCustomError(
-      systemErrors.normalizationFailed,
+      coreErrors.normalizationFailed,
       {
         msg1: `Normalization of ${path} failed`,
         level: 'fatal',

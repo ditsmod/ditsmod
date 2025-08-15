@@ -12,7 +12,7 @@ import { InitDecorator } from '#decorators/init-hooks-and-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { ModuleNormalizer } from './module-normalizer.js';
 import { Providers } from '#utils/providers.js';
-import { systemErrors } from '#error/system-errors.js';
+import { coreErrors } from '#error/system-errors.js';
 
 describe('ModuleNormalizer', () => {
   class MockModuleNormalizer extends ModuleNormalizer {
@@ -145,7 +145,7 @@ describe('ModuleNormalizer', () => {
     @featureModule({ imports: [Module1], exports: [Module1] })
     class Module2 {}
 
-    expect(() => mock.normalize(Module2)).toThrowCode(systemErrors.exportingUnknownSymbol, 'Module1');
+    expect(() => mock.normalize(Module2)).toThrow(coreErrors.exportingUnknownSymbol('Module2', 'Module1'));
   });
 
   it('imports module with params, but exports only a module class (without ref to module with params)', () => {
@@ -161,8 +161,7 @@ describe('ModuleNormalizer', () => {
     })
     class Module2 {}
 
-    const msg = 'Module2 failed: Module1 includes';
-    expect(() => mock.normalize(Module2)).toThrowCode(systemErrors.reexportFailed, msg);
+    expect(() => mock.normalize(Module2)).toThrow(coreErrors.reexportFailed('Module2', 'Module1'));
   });
 
   it('module exported provider from providersPerApp', () => {
@@ -170,7 +169,7 @@ describe('ModuleNormalizer', () => {
     @featureModule({ providersPerApp: [Service1], exports: [Service1] })
     class Module2 {}
 
-    expect(() => mock.normalize(Module2)).toThrowCode(systemErrors.forbiddenExportProvidersPerApp);
+    expect(() => mock.normalize(Module2)).toThrow(coreErrors.forbiddenExportProvidersPerApp('Module2', 'Service1'));
   });
 
   it('providers or modules with forwardRef', () => {
@@ -219,7 +218,7 @@ describe('ModuleNormalizer', () => {
     @featureModule({ providersPerMod: [Service1], exports: [{ token: Service1, useClass: Service1 }] })
     class Module2 {}
 
-    expect(() => mock.normalize(Module2)).toThrowCode(systemErrors.forbiddenExportNormalizedProvider, 'Service1');
+    expect(() => mock.normalize(Module2)).toThrow(coreErrors.forbiddenExportNormalizedProvider('Module2', 'Service1'));
   });
 
   it('exports module without imports it', () => {
@@ -230,7 +229,7 @@ describe('ModuleNormalizer', () => {
     @featureModule({ exports: [Module1] })
     class Module2 {}
 
-    expect(() => mock.normalize(Module2)).toThrowCode(systemErrors.reexportFailed, 'Module2 failed: Module1');
+    expect(() => mock.normalize(Module2)).toThrow(coreErrors.reexportFailed('Module2', 'Module1'));
   });
 
   it('module exports an invalid extension', () => {
@@ -240,7 +239,7 @@ describe('ModuleNormalizer', () => {
     @featureModule({ extensions: [{ extension: Extension1, export: true }] })
     class Module2 {}
 
-    expect(() => mock.normalize(Module2)).toThrowCode(systemErrors.wrongExtension, '"Extension1" from "Module2"');
+    expect(() => mock.normalize(Module2)).toThrow(coreErrors.wrongExtension('Module2', 'Extension1'));
   });
 
   it('module exports a valid extension', () => {
