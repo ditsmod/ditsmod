@@ -14,6 +14,7 @@ import {
   forwardRef,
   Provider,
   ModuleWithInitParams,
+  coreErrors,
 } from '@ditsmod/core';
 
 import { controller } from '../types/controller.js';
@@ -69,7 +70,8 @@ describe('ModuleManager', () => {
       @featureModule({ providersPerMod: [Provider1] })
       class Module1 {}
 
-      expect(() => mock.scanModule(Module1)).toThrow('Normalization of Module1 failed: this module should have');
+      const err = coreErrors.normalizationFailed('Module1', coreErrors.moduleShouldHaveValue());
+      expect(() => mock.scanModule(Module1)).toThrow(err);
     });
 
     it('should works, when no export and no controllers, but appends with prefix', () => {
@@ -197,7 +199,11 @@ describe('ModuleManager', () => {
     @rootModule({ exports: [Provider1] })
     class AppModule {}
 
-    expect(() => mock.scanRootModule(AppModule)).toThrow('if "Provider1" is a provider, it must be included in');
+    const err = coreErrors.normalizationFailed(
+      'AppModule',
+      coreErrors.exportingUnknownSymbol('AppModule', 'Provider1'),
+    );
+    expect(() => mock.scanRootModule(AppModule)).toThrow(err);
   });
 
   it('root module with some metadata', () => {
@@ -217,7 +223,8 @@ describe('ModuleManager', () => {
     @featureModule()
     class Module1 {}
 
-    expect(() => mock.scanRootModule(Module1)).toThrow('"Module1" does not have the "@rootModule()" decorator');
+    const err = coreErrors.rootNotHaveDecorator('Module1');
+    expect(() => mock.scanRootModule(Module1)).toThrow(err);
   });
 
   it('root module imported module without @featureModule decorator', () => {
@@ -330,7 +337,11 @@ describe('ModuleManager', () => {
     @featureModule({ exports: [{ token: Provider1, useClass: Provider1 }] })
     class Module2 {}
 
-    expect(() => mock.scanModule(Module2)).toThrow('failed: in "exports" array must be includes tokens only');
+    const err = coreErrors.normalizationFailed(
+      'Module2',
+      coreErrors.forbiddenExportNormalizedProvider('Module2', 'Provider1'),
+    );
+    expect(() => mock.scanModule(Module2)).toThrow(err);
   });
 
   it('module exported invalid extension', () => {
@@ -340,7 +351,11 @@ describe('ModuleManager', () => {
     @featureModule({ extensions: [{ extension: Extension1 as any, export: true }] })
     class Module2 {}
 
-    expect(() => mock.scanModule(Module2)).toThrow('must have stage1(), stage2() or stage3() method');
+    const err = coreErrors.normalizationFailed(
+      'Module2',
+      coreErrors.wrongExtension('Module2', 'Extension1'),
+    );
+    expect(() => mock.scanModule(Module2)).toThrow(err);
   });
 
   it('module exported valid extension', () => {
@@ -540,7 +555,8 @@ describe('ModuleManager', () => {
     expect(mock.map.has(AppModule)).toBe(true);
     expect(mock.map.has(Module1)).toBe(true);
 
-    expect(() => mock.addImport(Module2, 'fakeId')).toThrow('Failed adding Module2 to imports');
+    const err = coreErrors.failAddingToImports('Module2', 'fakeId');
+    expect(() => mock.addImport(Module2, 'fakeId')).toThrow(err);
     expect(mock.map.size).toBe(3);
     expect(mock.oldMapId.size).toBe(0);
     expect(mock.oldMap.size).toBe(0);

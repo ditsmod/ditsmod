@@ -10,7 +10,6 @@ import {
   reflector,
   hasDeclaredInDir,
   getCollisions,
-  throwProvidersCollisionError,
   isRootModule,
   getModule,
   BaseMeta,
@@ -19,6 +18,7 @@ import {
   ShallowImportsBase,
   defaultProvidersPerMod,
 } from '@ditsmod/core';
+import { providersCollision } from '@ditsmod/core/errors';
 
 import { GuardPerMod1 } from '#interceptors/guard.js';
 import { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
@@ -339,7 +339,7 @@ export class ShallowModulesImporter {
     if (collisions.length) {
       const moduleName1 = getDebugClassName(importObj.modRefId) || 'unknown-1';
       const moduleName2 = getDebugClassName(modRefId) || 'unknown-2';
-      throwProvidersCollisionError(
+      throw providersCollision(
         this.moduleName,
         [token],
         [moduleName1, moduleName2],
@@ -463,7 +463,7 @@ export class ShallowModulesImporter {
             // Allow collisions in host modules.
           } else {
             const hostModuleName = getDebugClassName(importObj.modRefId) || 'unknown';
-            throwProvidersCollisionError(this.moduleName, [token], [hostModuleName], level, this.baseMeta.isExternal);
+            throw providersCollision(this.moduleName, [token], [hostModuleName], level, this.baseMeta.isExternal);
           }
         }
         this.resolveCollisionsWithLevelsMix(token, level, resolvedTokens);
