@@ -14,8 +14,8 @@ import {
   forwardRef,
   Provider,
   ModuleWithInitParams,
-  coreErrors,
 } from '@ditsmod/core';
+import { coreErrors } from '@ditsmod/core/errors';
 
 import { controller } from '../types/controller.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
@@ -351,10 +351,7 @@ describe('ModuleManager', () => {
     @featureModule({ extensions: [{ extension: Extension1 as any, export: true }] })
     class Module2 {}
 
-    const err = coreErrors.normalizationFailed(
-      'Module2',
-      coreErrors.wrongExtension('Module2', 'Extension1'),
-    );
+    const err = coreErrors.normalizationFailed('Module2', coreErrors.wrongExtension('Module2', 'Extension1'));
     expect(() => mock.scanModule(Module2)).toThrow(err);
   });
 

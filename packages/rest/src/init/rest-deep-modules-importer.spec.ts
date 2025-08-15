@@ -19,6 +19,7 @@ import {
   MetadataPerMod2,
   ModuleWithParams,
 } from '@ditsmod/core';
+import { coreErrors } from '@ditsmod/core/errors';
 
 import { CanActivate, guard } from '#interceptors/guard.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
@@ -513,7 +514,9 @@ describe('DeepModulesImporter', () => {
     const initMeta = getRestMetadataPerMod2(AppModule)!.meta!;
     const injector = Injector.resolveAndCreate(initMeta.providersPerRou);
     const msg = 'No provider for Service1!; this error during instantiation of Service2! (Service3 -> Service2)';
-    expect(() => injector.get(Service3)).toThrow(msg);
+    const cause = coreErrors.noProvider([Service1]);
+    const err = coreErrors.instantiationError(cause, [Service2, Service3]);
+    expect(() => injector.get(Service3)).toThrow(err);
   });
 
   it(`By directly importing Module1, AppModule adds all providers from that module,
