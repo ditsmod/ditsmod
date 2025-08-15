@@ -1,5 +1,5 @@
 import { diErrors } from '#di/di-errors.js';
-import { coreErrors } from '#error/system-errors.js';
+import { coreErrors } from '#error/core-errors.js';
 
 export type ErrorCodes = keyof typeof diErrors | keyof typeof coreErrors;
 export { newCustomError } from '#error/custom-error.js';
@@ -18,7 +18,7 @@ export const {
   rootNotHaveDecorator,
   moduleNotImportedInApplication,
   providersPerAppDoesNotIncludesTokenName,
-  donotResolveCollisionForMultiProvider,
+  donotResolveCollisionForMultiProviderPerApp,
   failedCollectingMetadata,
   failedCreateInjectorPerMod,
   failedStage2,
@@ -36,7 +36,8 @@ export const {
   moduleShouldHaveValue,
   resolvingCollisionsNotExistsOnThisLevel,
   extensionConfigCauseCyclicDeps,
-  tryResolvingMultiprovidersCollisions,
+  donotResolveCollisionForMultiProviderPerLevel,
   resolvingCollisionsNotImportedInApplication,
   resolvingCollisionsNotImportedInModule,
+  providersCollision,
 } = coreErrors;

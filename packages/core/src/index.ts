@@ -48,7 +48,7 @@ export { ExtensionsManager, InternalExtensionsManager } from '#extension/extensi
 export { LogMediator } from '#logger/log-mediator.js';
 export { LogItem } from '#logger/types.js';
 export { SystemLogMediator } from '#logger/system-log-mediator.js';
-export { coreErrors } from '#error/system-errors.js';
+export { coreErrors } from '#error/core-errors.js';
 export { ModuleManager } from '#init/module-manager.js';
 export { PerAppService } from '#services/per-app.service.js';
 export { Logger, LoggerConfig, InputLogLevel, OutputLogLevel } from '#logger/logger.js';
@@ -82,7 +82,6 @@ export { getLastProviders } from '#utils/get-last-providers.js';
 export { deepFreeze } from '#utils/deep-freeze.js';
 export { getDuplicates } from '#utils/get-duplicates.js';
 export { getCollisions } from '#utils/get-collisions.js';
-export { throwProvidersCollisionError } from '#utils/throw-providers-collision-error.js';
 export { getDependencies, ReflectiveDependency } from '#utils/get-dependencies.js';
 export { getProviderName } from '#utils/get-provider-name.js';
 export { ExtensionConfig, isConfigWithOverrideExtension } from '#extension/get-extension-provider.js';

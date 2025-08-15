@@ -10,6 +10,8 @@ import { ModuleWithParams } from '#types/module-metadata.js';
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
+import { coreErrors } from '#error/core-errors.js';
+import { CustomError } from '#error/custom-error.js';
 
 type ModRefId = ModuleType | ModuleWithParams;
 
@@ -53,9 +55,7 @@ describe('ShallowModulesImporter', () => {
   beforeEach(() => {
     clearDebugClassNames();
     mock = new MockShallowModulesImporter();
-    moduleManager = new ModuleManager(
-      new SystemLogMediator({ moduleName: 'fakeName' }),
-    );
+    moduleManager = new ModuleManager(new SystemLogMediator({ moduleName: 'fakeName' }));
   });
 
   describe('exportGlobalProviders()', () => {
@@ -166,8 +166,8 @@ describe('ShallowModulesImporter', () => {
       class AppModule {}
 
       expect(() => moduleManager.scanRootModule(AppModule)).not.toThrow();
-      const msg = 'exports from Module1, Module2 causes collision with Provider1';
-      expect(() => mock.exportGlobalProviders(moduleManager)).toThrow(msg);
+      const err = coreErrors.providersCollision('AppModule', [Provider1], ['Module1', 'Module2'], 'Mod');
+      expect(() => mock.exportGlobalProviders(moduleManager)).toThrow(err);
     });
 
     it('throw collisions per module (import firs module with nested second module)', () => {
@@ -191,8 +191,8 @@ describe('ShallowModulesImporter', () => {
       class AppModule {}
 
       expect(() => moduleManager.scanRootModule(AppModule)).not.toThrow();
-      const msg = 'exports from Module1, Module2 causes collision with Provider1';
-      expect(() => mock.exportGlobalProviders(moduleManager)).toThrow(msg);
+      const err = coreErrors.providersCollision('AppModule', [Provider1], ['Module1', 'Module2'], 'Mod');
+      expect(() => mock.exportGlobalProviders(moduleManager)).toThrow(err);
     });
 
     it('cyclic dependencies between modules', () => {
@@ -242,8 +242,12 @@ describe('ShallowModulesImporter', () => {
       @rootModule({ imports: [Module2] })
       class AppModule {}
 
-      const msg = 'Module2 failed: if "Provider1" is a token of a provider, this provider must be included in providersPerMod';
-      expect(() => moduleManager.scanRootModule(AppModule)).toThrow(msg);
+      const cause = coreErrors.exportingUnknownSymbol('Module2', 'Provider1');
+      const err = new CustomError(
+        { msg1: 'Normalization of Module2 failed', code: 'normalizationFailed', level: 'fatal' },
+        cause,
+      );
+      expect(() => moduleManager.scanRootModule(AppModule)).toThrow(err);
     });
 
     it('allow reexports module', () => {
@@ -458,8 +462,8 @@ describe('ShallowModulesImporter', () => {
       })
       class AppModule {}
 
-      const msg = 'AppModule failed: exports from Module1, Module2 causes collision with Provider2.';
-      expect(() => importModulesShallow(AppModule)).toThrow(msg);
+      const err = coreErrors.providersCollision('AppModule', [Provider2], ['Module1', 'Module2'], 'Mod');
+      expect(() => importModulesShallow(AppModule)).toThrow(err);
     });
 
     it('import Module2 and Module1 with collision - Provider1', () => {
@@ -490,8 +494,8 @@ describe('ShallowModulesImporter', () => {
       @rootModule({ imports: [Module1, Module2] })
       class AppModule {}
 
-      const msg = 'AppModule failed: exports from Module1, Module2 causes collision with Provider1.';
-      expect(() => importModulesShallow(AppModule)).toThrow(msg);
+      const err = coreErrors.providersCollision('AppModule', [Provider1], ['Module1', 'Module2'], 'Mod');
+      expect(() => importModulesShallow(AppModule)).toThrow(err);
     });
 
     it('import multi providers that has token Provider1', () => {
@@ -572,8 +576,8 @@ describe('ShallowModulesImporter', () => {
       })
       class AppModule {}
 
-      const msg = 'but Provider1 is a token of the multi providers,';
-      expect(() => importModulesShallow(AppModule)).toThrow(msg);
+      const err = coreErrors.donotResolveCollisionForMultiProviderPerLevel('AppModule', 'Module1', 'Mod', 'Provider1');
+      expect(() => importModulesShallow(AppModule)).toThrow(err);
     });
 
     it('exporting duplicates with "multi == true" not to throw', () => {
@@ -735,8 +739,8 @@ describe('ShallowModulesImporter', () => {
       })
       class AppModule {}
 
-      const msg = 'Module3 failed: exports from Module1, Module2 causes collision with Provider1.';
-      expect(() => importModulesShallow(AppModule)).toThrow(msg);
+      const err = coreErrors.providersCollision('Module3', [Provider1], ['Module1', 'Module2'], 'Mod');
+      expect(() => importModulesShallow(AppModule)).toThrow(err);
     });
 
     it('exporting duplicates of Provider2', () => {
@@ -758,8 +762,8 @@ describe('ShallowModulesImporter', () => {
       })
       class AppModule {}
 
-      const msg = 'AppModule failed: exports from Module1, Module2 causes collision with Provider2.';
-      expect(() => importModulesShallow(AppModule)).toThrow(msg);
+      const err = coreErrors.providersCollision('AppModule', [Provider2], ['Module1', 'Module2'], 'Mod');
+      expect(() => importModulesShallow(AppModule)).toThrow(err);
     });
 
     it('exporting duplicates of Provider2, but declared in resolvedCollisionsPerMod of root module', () => {
@@ -808,8 +812,8 @@ describe('ShallowModulesImporter', () => {
       })
       class AppModule {}
 
-      const msg = 'AppModule failed: exports from Module0, Module1 causes collision with Provider1.';
-      expect(() => importModulesShallow(AppModule)).toThrow(msg);
+      const err = coreErrors.providersCollision('AppModule', [Provider1], ['Module0', 'Module1'], 'Mod');
+      expect(() => importModulesShallow(AppModule)).toThrow(err);
     });
 
     it('exporting duplicates of Provider1 from Module1 and Module2, but also includes in resolvedCollisionsPerMod of root module', () => {

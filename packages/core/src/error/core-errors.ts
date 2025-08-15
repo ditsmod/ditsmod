@@ -2,6 +2,34 @@ import { newCustomError } from './custom-error.js';
 
 export const coreErrors = {
   /**
+   * `Importing providers to ${moduleName} failed: exports ${fromModules}causes collision with ${namesStr}. `
+   */
+  providersCollision(
+    moduleName: string,
+    duplicates: any[],
+    fromModuleNames: string[] = [],
+    level?: string,
+    isExternal?: boolean,
+  ) {
+    const aTokens = duplicates.map((p) => p.name || p);
+    const tokenNames = aTokens.join(', ');
+    let fromModules = 'from several modules ';
+    let example = '';
+    if (fromModuleNames.length) {
+      fromModules = `from ${fromModuleNames.join(', ')} `;
+      example = ` For example: resolvedCollisionsPer${level || 'App'}: [ [${aTokens[0]}, ${fromModuleNames[0]}] ].`;
+    }
+    const resolvedCollisionsPer = level ? `resolvedCollisionsPer${level}` : 'resolvedCollisionsPer*';
+    let msg1 = `Importing providers to ${moduleName} failed: exports ${fromModules}causes collision with ${tokenNames}. `;
+    if (!isExternal) {
+      msg1 += `You should add ${tokenNames} to ${resolvedCollisionsPer} in this module.${example}`;
+    }
+    return newCustomError(coreErrors.providersCollision, {
+      msg1,
+      level: 'fatal',
+    });
+  },
+  /**
    * `Resolving collisions for providersPer${level} in ${moduleName} failed:
    * ${tokenName} mapped with ${moduleName}, but
    * providersPer${level} does not imports ${tokenName} in this module.`
@@ -20,12 +48,26 @@ export const coreErrors = {
    * ${tokenName} mapped with ${moduleName2}, but ${tokenName} is a token of the multi providers,
    * and in this case it should not be included in resolvedCollisionsPer${level}.`
    */
-  tryResolvingMultiprovidersCollisions(moduleName1: string, moduleName2: string, level: string, tokenName: string) {
-    return newCustomError(coreErrors.tryResolvingMultiprovidersCollisions, {
+  donotResolveCollisionForMultiProviderPerLevel(moduleName1: string, moduleName2: string, level: string, tokenName: string) {
+    return newCustomError(coreErrors.donotResolveCollisionForMultiProviderPerLevel, {
       msg1:
         `Resolving collisions for providersPer${level} in ${moduleName1} failed: ` +
         `${tokenName} mapped with ${moduleName2}, but ${tokenName} is a token of the multi providers, ` +
         `and in this case it should not be included in resolvedCollisionsPer${level}.`,
+      level: 'fatal',
+    });
+  },
+  /**
+   * `Resolving collisions for providersPerApp in ${rootModuleName} failed:
+   * ${tokenName} mapped with ${moduleName}, but ${tokenName} is a token of the multi providers,
+   * and in this case it should not be included in resolvedCollisionsPerApp.`
+   */
+  donotResolveCollisionForMultiProviderPerApp(rootModuleName: string, moduleName: string, tokenName: string) {
+    return newCustomError(coreErrors.donotResolveCollisionForMultiProviderPerApp, {
+      msg1:
+        `Resolving collisions for providersPerApp in ${rootModuleName} failed: ` +
+        `${tokenName} mapped with ${moduleName}, but ${tokenName} is a token of the multi providers, and in this case ` +
+        'it should not be included in resolvedCollisionsPerApp.',
       level: 'fatal',
     });
   },
@@ -50,6 +92,18 @@ export const coreErrors = {
       msg1:
         `Resolving collisions for providersPer${level} in ${moduleName1} failed: ` +
         `${tokenName} mapped with ${moduleName2}, but providersPer${level} does not includes ${tokenName} in this module.`,
+      level: 'fatal',
+    });
+  },
+  /**
+   * `Resolving collisions for providersPerApp in ${rootModuleName} failed:
+   * ${tokenName} mapped with ${moduleName}, but providersPerApp does not includes ${tokenName} in this module.`
+   */
+  providersPerAppDoesNotIncludesTokenName(rootModuleName: string, moduleName: string, tokenName: string) {
+    return newCustomError(coreErrors.providersPerAppDoesNotIncludesTokenName, {
+      msg1:
+        `Resolving collisions for providersPerApp in ${rootModuleName} failed: ` +
+        `${tokenName} mapped with ${moduleName}, but providersPerApp does not includes ${tokenName} in this module.`,
       level: 'fatal',
     });
   },
@@ -250,36 +304,6 @@ export const coreErrors = {
   },
   /**
    * `Resolving collisions for providersPerApp in ${rootModuleName} failed:
-   * ${tokenName} mapped with ${moduleName}, but ${tokenName} is a token of the multi providers,
-   * and in this case it should not be included in resolvedCollisionsPerApp.`
-   */
-  donotResolveCollisionForMultiProvider(
-    rootModuleName: string,
-    moduleName: string,
-    tokenName: string,
-  ) {
-    return newCustomError(coreErrors.donotResolveCollisionForMultiProvider, {
-      msg1:
-        `Resolving collisions for providersPerApp in ${rootModuleName} failed: ` +
-        `${tokenName} mapped with ${moduleName}, but ${tokenName} is a token of the multi providers, and in this case ` +
-        'it should not be included in resolvedCollisionsPerApp.',
-      level: 'fatal',
-    });
-  },
-  /**
-   * `Resolving collisions for providersPerApp in ${rootModuleName} failed:
-   * ${tokenName} mapped with ${moduleName}, but providersPerApp does not includes ${tokenName} in this module.`
-   */
-  providersPerAppDoesNotIncludesTokenName(rootModuleName: string, moduleName: string, tokenName: string) {
-    return newCustomError(coreErrors.providersPerAppDoesNotIncludesTokenName, {
-      msg1:
-        `Resolving collisions for providersPerApp in ${rootModuleName} failed: ` +
-        `${tokenName} mapped with ${moduleName}, but providersPerApp does not includes ${tokenName} in this module.`,
-      level: 'fatal',
-    });
-  },
-  /**
-   * `Resolving collisions for providersPerApp in ${rootModuleName} failed:
    * ${tokenName} mapped with ${moduleName}, but ${moduleName} is not imported into the application.`
    */
   moduleNotImportedInApplication(rootModuleName: string, moduleName: string, tokenName: string) {
@@ -392,13 +416,13 @@ export const coreErrors = {
     });
   },
   /**
-   * `Normalization of ${path} failed`
+   * `Normalization of ${moduleName} failed`
    */
-  normalizationFailed(path: string, err: Error) {
+  normalizationFailed(moduleName: string, err: Error) {
     return newCustomError(
       coreErrors.normalizationFailed,
       {
-        msg1: `Normalization of ${path} failed`,
+        msg1: `Normalization of ${moduleName} failed`,
         level: 'fatal',
       },
       err,

@@ -9,6 +9,7 @@ import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
+import { coreErrors } from '#error/core-errors.js';
 
 describe('DeepModulesImporter', () => {
   @injectable()
@@ -78,9 +79,11 @@ describe('DeepModulesImporter', () => {
         mock.addToUnfinishedSearchDependencies(Module1, Provider1);
         mock.addToUnfinishedSearchDependencies(Module2, Provider2);
         mock.addToUnfinishedSearchDependencies(Module3, Provider3);
-        const msg =
-          'Detected circular dependencies: [Provider2 in Module2] -> [Provider3 in Module3] -> [Provider2 in Module2]. It is started from [Provider1 in Module1].';
-        expect(() => mock.addToUnfinishedSearchDependencies(Module2, Provider2)).toThrow(msg);
+        const err = coreErrors.circularDepsInImports(
+          '[Provider2 in Module2] -> [Provider3 in Module3] -> [Provider2 in Module2]',
+          '[Provider1 in Module1]',
+        );
+        expect(() => mock.addToUnfinishedSearchDependencies(Module2, Provider2)).toThrow(err);
       });
     });
   });

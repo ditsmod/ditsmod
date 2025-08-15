@@ -12,7 +12,6 @@ import { getCollisions } from '#utils/get-collisions.js';
 import { getImportedTokens } from '#utils/get-imports.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
-import { throwProvidersCollisionError } from '#utils/throw-providers-collision-error.js';
 import { hasDeclaredInDir } from '#utils/type-guards.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import {
@@ -30,7 +29,8 @@ import {
   resolvingCollisionsNotExistsOnThisLevel,
   resolvingCollisionsNotImportedInModule,
   resolvingCollisionsNotImportedInApplication,
-  tryResolvingMultiprovidersCollisions,
+  donotResolveCollisionForMultiProviderPerLevel,
+  providersCollision,
 } from '#errors';
 /**
  * Recursively collects providers taking into account module imports/exports,
@@ -260,7 +260,7 @@ export class ShallowModulesImporter {
     if (collisions.length) {
       const moduleName1 = getDebugClassName(importObj.modRefId) || 'unknown-1';
       const moduleName2 = getDebugClassName(modRefId) || 'unknown-2';
-      throwProvidersCollisionError(
+      throw providersCollision(
         this.moduleName,
         [token],
         [moduleName1, moduleName2],
@@ -308,7 +308,7 @@ export class ShallowModulesImporter {
       this.baseMeta[`resolvedCollisionsPer${level}`].some(([token]) => {
         if (tokens.includes(token)) {
           const tokenName = token.name || token;
-          throw tryResolvingMultiprovidersCollisions(this.moduleName, moduleName, level, tokenName);
+          throw donotResolveCollisionForMultiProviderPerLevel(this.moduleName, moduleName, level, tokenName);
         }
       });
     });
@@ -334,7 +334,7 @@ export class ShallowModulesImporter {
             // Allow collisions in host modules.
           } else {
             const hostModuleName = getDebugClassName(importObj.modRefId) || 'unknown';
-            throwProvidersCollisionError(this.moduleName, [token], [hostModuleName], level, this.baseMeta.isExternal);
+            throw providersCollision(this.moduleName, [token], [hostModuleName], level, this.baseMeta.isExternal);
           }
         }
         this.resolveCollisionsWithLevelsMix(token, level, resolvedTokens);

@@ -230,7 +230,7 @@ export class ExtensionsManager {
 
   protected getItemName(classOrInstance: Extension | ExtensionClass) {
     if (isExtensionProvider(classOrInstance)) {
-      return getDebugClassName(classOrInstance);
+      return `[group of ${getDebugClassName(classOrInstance)}]`;
     } else {
       return classOrInstance.constructor.name;
     }

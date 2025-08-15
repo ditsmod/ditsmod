@@ -12,7 +12,7 @@ import { InitDecorator } from '#decorators/init-hooks-and-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { ModuleNormalizer } from './module-normalizer.js';
 import { Providers } from '#utils/providers.js';
-import { coreErrors } from '#error/system-errors.js';
+import { coreErrors } from '#error/core-errors.js';
 
 describe('ModuleNormalizer', () => {
   class MockModuleNormalizer extends ModuleNormalizer {

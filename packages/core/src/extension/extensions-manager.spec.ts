@@ -4,6 +4,7 @@ import { getExtensionProviderList } from '#extension/get-extension-provider.js';
 import { defaultProvidersPerApp } from '#init/default-providers-per-app.js';
 import { ExtensionsContext } from '#extension/extensions-context.js';
 import { StageIteration, ExtensionsManager } from '#extension/extensions-manager.js';
+import { coreErrors } from '#error/core-errors.js';
 
 describe('ExtensionsManager', () => {
   describe('stage1', () => {});
@@ -69,21 +70,25 @@ describe('ExtensionsManager', () => {
     });
 
     it('Extension2 has circular dependencies', async () => {
-      const msg =
-        'Detected circular dependencies: Extension3 -> Extension3 -> Extension4 -> Extension4 -> Extension3. It is started from Extension2 -> Extension2.';
-      await expect(mock.stage1(Extension2)).rejects.toThrow(msg);
+      const err = coreErrors.circularDepsInImports(
+        '[group of Extension3] -> Extension3 -> [group of Extension4] -> Extension4 -> [group of Extension3]',
+        '[group of Extension2] -> Extension2',
+      );
+      await expect(mock.stage1(Extension2)).rejects.toThrow(err);
     });
 
     it('Extension3 has circular dependencies', async () => {
-      const msg =
-        'Detected circular dependencies: Extension3 -> Extension3 -> Extension4 -> Extension4 -> Extension3.';
-      await expect(mock.stage1(Extension3)).rejects.toThrow(msg);
+      const err = coreErrors.circularDepsInImports(
+        '[group of Extension3] -> Extension3 -> [group of Extension4] -> Extension4 -> [group of Extension3]',
+      );
+      await expect(mock.stage1(Extension3)).rejects.toThrow(err);
     });
 
     it('Extension4 has circular dependencies', async () => {
-      const msg =
-        'Detected circular dependencies: Extension4 -> Extension4 -> Extension3 -> Extension3 -> Extension4.';
-      await expect(mock.stage1(Extension4)).rejects.toThrow(msg);
+      const err = coreErrors.circularDepsInImports(
+        '[group of Extension4] -> Extension4 -> [group of Extension3] -> Extension3 -> [group of Extension4]',
+      );
+      await expect(mock.stage1(Extension4)).rejects.toThrow(err);
     });
   });
 });

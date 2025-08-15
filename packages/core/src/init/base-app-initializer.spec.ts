@@ -15,8 +15,7 @@ import { ModuleWithParams } from '#types/module-metadata.js';
 import { Extension, ExtensionCounters } from '#extension/extension-types.js';
 import { Providers } from '#utils/providers.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
-import { diErrors } from '#di/di-errors.js';
-import { coreErrors } from '#error/system-errors.js';
+import { coreErrors } from '#error/core-errors.js';
 
 describe('BaseAppInitializer', () => {
   type ModRefId = ModuleType | ModuleWithParams;
@@ -118,8 +117,8 @@ describe('BaseAppInitializer', () => {
       class AppModule {}
 
       mock.baseMeta = moduleManager.scanRootModule(AppModule);
-      const msg = 'AppModule failed: exports from Module1, Module2 causes collision with Provider1.';
-      expect(() => mock.prepareProvidersPerApp()).toThrow(msg);
+      const err = coreErrors.providersCollision('AppModule', [Provider1], ['Module1', 'Module2']);
+      expect(() => mock.prepareProvidersPerApp()).toThrow(err);
     });
 
     it('should works with collision and resolvedCollisionsPerApp', () => {
@@ -164,8 +163,8 @@ describe('BaseAppInitializer', () => {
       class AppModule {}
 
       mock.baseMeta = moduleManager.scanRootModule(AppModule);
-      const msg = 'AppModule failed: Provider1 mapped with Module0, but Module0 is not imported';
-      expect(() => mock.prepareProvidersPerApp()).toThrow(msg);
+      const err = coreErrors.moduleNotImportedInApplication('AppModule', 'Module0', 'Provider1');
+      expect(() => mock.prepareProvidersPerApp()).toThrow(err);
     });
 
     it('multi providers should not causes collisions', () => {
@@ -228,7 +227,7 @@ describe('BaseAppInitializer', () => {
       class AppModule {}
 
       mock.baseMeta = moduleManager.scanRootModule(AppModule);
-      const err = coreErrors.donotResolveCollisionForMultiProvider('AppModule', 'Module1', 'Provider1');
+      const err = coreErrors.donotResolveCollisionForMultiProviderPerApp('AppModule', 'Module1', 'Provider1');
       expect(() => mock.prepareProvidersPerApp()).toThrow(err);
     });
 
@@ -255,8 +254,8 @@ describe('BaseAppInitializer', () => {
       class AppModule {}
 
       mock.baseMeta = moduleManager.scanRootModule(AppModule);
-      const msg = 'AppModule failed: Provider1 mapped with Module0, but providersPerApp does not includes Provider1';
-      expect(() => mock.prepareProvidersPerApp()).toThrow(msg);
+      const err = coreErrors.providersPerAppDoesNotIncludesTokenName('AppModule', 'Module0', 'Provider1');
+      expect(() => mock.prepareProvidersPerApp()).toThrow(err);
     });
 
     it('should works with identical duplicates', () => {

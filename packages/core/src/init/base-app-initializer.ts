@@ -20,7 +20,6 @@ import { getDuplicates } from '#utils/get-duplicates.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
 import { getProvidersTargets, getToken, getTokens } from '#utils/get-tokens.js';
 import { normalizeProviders } from '#utils/ng-utils.js';
-import { throwProvidersCollisionError } from '#utils/throw-providers-collision-error.js';
 import { MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { getModule } from '#utils/get-module.js';
@@ -33,8 +32,9 @@ import {
   failedStage2,
   failedStage3,
   moduleNotImportedInApplication,
-  donotResolveCollisionForMultiProvider,
+  donotResolveCollisionForMultiProviderPerApp,
   providersPerAppDoesNotIncludesTokenName,
+  providersCollision,
 } from '#errors';
 
 export class BaseAppInitializer {
@@ -81,7 +81,7 @@ export class BaseAppInitializer {
     const collisions = getCollisions(exportedTokensDuplicates, mergedProviders);
     if (collisions.length) {
       const modulesNames = this.findModulesCausedCollisions(collisions);
-      throwProvidersCollisionError(this.baseMeta.name, collisions, modulesNames);
+      throw providersCollision(this.baseMeta.name, collisions, modulesNames);
     }
     exportedProviders.push(...this.getResolvedCollisionsPerApp());
     this.baseMeta.providersPerApp.unshift(...getLastProviders(exportedProviders));
@@ -116,7 +116,7 @@ export class BaseAppInitializer {
         throw providersPerAppDoesNotIncludesTokenName(rootMeta.name, moduleName, tokenName);
       }
       if (isMultiProvider(provider)) {
-        throw donotResolveCollisionForMultiProvider(rootMeta.name, moduleName, tokenName);
+        throw donotResolveCollisionForMultiProviderPerApp(rootMeta.name, moduleName, tokenName);
       }
       resolvedProviders.push(provider);
     });

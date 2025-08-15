@@ -14,7 +14,7 @@ import {
   skipSelf
 } from './index.js';
 import { diErrors } from './di-errors.js';
-import { coreErrors } from '#error/system-errors.js';
+import { coreErrors } from '#error/core-errors.js';
 
 class Engine {}
 
