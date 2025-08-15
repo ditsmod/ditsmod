@@ -1,6 +1,7 @@
 import { diErrors } from '#di/di-errors.js';
-import { coreErrors } from '#error/core-errors.js';
+import { coreErrors as coreErrs } from '#error/core-errors.js';
 
+export const coreErrors = { ...coreErrs, ...diErrors };
 export type ErrorCodes = keyof typeof diErrors | keyof typeof coreErrors;
 export { newCustomError } from '#error/custom-error.js';
 export * from '#di/errors.js';
@@ -40,4 +41,4 @@ export const {
   resolvingCollisionsNotImportedInApplication,
   resolvingCollisionsNotImportedInModule,
   providersCollision,
-} = coreErrors;
+} = coreErrs;
