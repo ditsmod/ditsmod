@@ -1,11 +1,12 @@
 /// <reference path="../src/types/jsonwebtoken.d.ts" />
+import jwt from 'jsonwebtoken';
+export const TokenExpiredError = jwt.TokenExpiredError;
+export const JsonWebTokenError = jwt.JsonWebTokenError;
+export const NotBeforeError = jwt.NotBeforeError;
 export {
   SignPayload,
   VerifyPayload,
   VerifyErrors,
-  TokenExpiredError,
-  JsonWebTokenError,
-  NotBeforeError,
   SecretOrPublicKey,
   SecretOrPrivateKey,
 } from 'jsonwebtoken';

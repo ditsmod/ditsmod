@@ -36,7 +36,7 @@ declare module 'jsonwebtoken' {
   export function sign(
     payload: string | Buffer | object,
     secretOrPrivateKey: SecretOrPrivateKey,
-    options?: SignOptions
+    options?: SignOptions,
   ): string;
   /**
    * If a callback is supplied, the callback is called with the err or the JWT.
@@ -60,31 +60,9 @@ declare module 'jsonwebtoken' {
     payload: string | Buffer | object,
     secretOrPrivateKey: SecretOrPrivateKey,
     options?: SignOptions,
-    callback?: SignCallback
+    callback?: SignCallback,
   ): void;
 
-  /**
-   * (Synchronous) If a callback is not supplied, function acts synchronously. Returns the payload
-   * decoded if the signature is valid and optional expiration, audience, or issuer are valid. If
-   * not, it will throw the error.
-   *
-   * __Warning__: When the token comes from an untrusted source (e.g. user input or external
-   * requests), the returned decoded payload should be treated like any other user input; please
-   * make sure to sanitize and only work with properties that are expected.
-   *
-   * @param token Is the JsonWebToken string.
-   * @param secretOrPublicKey Is a string or buffer containing either the secret for HMAC
-   * algorithms, or the PEM encoded public key for RSA and ECDSA.
-   *
-   * As mentioned in [this comment][1], there are other libraries that expect base64 encoded secrets
-   * (random bytes encoded using base64), if that is your case you can pass
-   * `Buffer.from(secret, 'base64')`, by doing this the secret will be decoded using base64 and
-   * the token verification will use the original random bytes.
-   * @param options
-   *
-   * [1]: https://github.com/auth0/node-jsonwebtoken/issues/208#issuecomment-231861138
-   */
-  export function verify(token: string, secretOrPublicKey: SecretOrPublicKey, options: VerifyOptions): VerifyPayload | string;
   /**
    * (Synchronous) If a callback is not supplied, function acts synchronously. Returns the payload
    * decoded if the signature is valid and optional expiration, audience, or issuer are valid. If
@@ -109,7 +87,33 @@ declare module 'jsonwebtoken' {
   export function verify(
     token: string,
     secretOrPublicKey: SecretOrPublicKey,
-    options: VerifyOptions & { complete: true }
+    options: VerifyOptions,
+  ): VerifyPayload | string;
+  /**
+   * (Synchronous) If a callback is not supplied, function acts synchronously. Returns the payload
+   * decoded if the signature is valid and optional expiration, audience, or issuer are valid. If
+   * not, it will throw the error.
+   *
+   * __Warning__: When the token comes from an untrusted source (e.g. user input or external
+   * requests), the returned decoded payload should be treated like any other user input; please
+   * make sure to sanitize and only work with properties that are expected.
+   *
+   * @param token Is the JsonWebToken string.
+   * @param secretOrPublicKey Is a string or buffer containing either the secret for HMAC
+   * algorithms, or the PEM encoded public key for RSA and ECDSA.
+   *
+   * As mentioned in [this comment][1], there are other libraries that expect base64 encoded secrets
+   * (random bytes encoded using base64), if that is your case you can pass
+   * `Buffer.from(secret, 'base64')`, by doing this the secret will be decoded using base64 and
+   * the token verification will use the original random bytes.
+   * @param options
+   *
+   * [1]: https://github.com/auth0/node-jsonwebtoken/issues/208#issuecomment-231861138
+   */
+  export function verify(
+    token: string,
+    secretOrPublicKey: SecretOrPublicKey,
+    options: VerifyOptions & { complete: true },
   ): Jwt | string;
   /**
    * (Asynchronous) If a callback is supplied, function acts asynchronously. The callback is
@@ -138,7 +142,7 @@ declare module 'jsonwebtoken' {
     token: string,
     secretOrPublicKey: SecretOrPublicKey | GetKeyCallback,
     options: VerifyOptions,
-    callback: VerifyCallback<T>
+    callback: VerifyCallback<T>,
   ): void;
   /**
    * (Asynchronous) If a callback is supplied, function acts asynchronously. The callback is
@@ -167,7 +171,7 @@ declare module 'jsonwebtoken' {
     token: string,
     secretOrPublicKey: SecretOrPublicKey | GetKeyCallback,
     options: VerifyOptions & { complete: true },
-    callback: VerifyCallback<Jwt>
+    callback: VerifyCallback<Jwt>,
   ): void;
 
   /**
@@ -384,12 +388,12 @@ declare module 'jsonwebtoken' {
   /**
    * Thrown error if the token is expired.
    */
-  export interface TokenExpiredError extends Error {
+  declare class TokenExpiredError extends Error {
     name: 'TokenExpiredError';
     message: 'jwt expired';
     expiredAt: number;
   }
-  export interface JsonWebTokenError extends Error {
+  declare class JsonWebTokenError extends Error {
     name: 'JsonWebTokenError';
     message:
       | 'invalid token' // the header or payload could not be parsed
@@ -404,7 +408,7 @@ declare module 'jsonwebtoken' {
   /**
    * Thrown if current time is before the nbf claim.
    */
-  export interface NotBeforeError extends Error {
+  declare class NotBeforeError extends Error {
     name: 'NotBeforeError';
     message: 'jwt not active';
     date: Date;
@@ -731,4 +735,13 @@ declare module 'jsonwebtoken' {
      */
     jti?: string;
   }
+
+  export default {
+    decode,
+    verify,
+    sign,
+    JsonWebTokenError,
+    NotBeforeError,
+    TokenExpiredError,
+  };
 }
