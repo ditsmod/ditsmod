@@ -9,7 +9,7 @@ export class VersionsExtension implements Extension<void> {
     const stage1ExtensionMeta = await this.extensionManager.stage1(RoutesExtension);
     stage1ExtensionMeta.groupData.forEach((metadataPerMod3) => {
       const { aControllerMetadata } = metadataPerMod3;
-      console.log('-'.repeat(50), metadataPerMod3.meta.name);
+      console.log('-'.repeat(50), metadataPerMod3.meta);
 
       aControllerMetadata.forEach(({ providersPerRou, providersPerReq }) => {
         console.log(metadataPerMod3.meta.providersPerMod, providersPerRou, providersPerReq);
