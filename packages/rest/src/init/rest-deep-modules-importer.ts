@@ -155,7 +155,7 @@ export class RestDeepModulesImporter {
     let found = false;
     const metadataPerMod1 = this.shallowImports.get(srcModRefId1)!;
     for (const level of levels) {
-      const restMetadataPerMod1 = metadataPerMod1.shallowImportedModules.get(initRest) as RestMetadataPerMod1;
+      const restMetadataPerMod1 = metadataPerMod1.initMap.get(initRest) as RestMetadataPerMod1;
       const providerImport = restMetadataPerMod1.importedTokensMap[`per${level}`].get(dep.token);
       if (providerImport) {
         found = true;

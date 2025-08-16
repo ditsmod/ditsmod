@@ -55,7 +55,7 @@ export class DeepModulesImporter {
     const levels: Level[] = ['Mod'];
     const mMetadataPerMod2 = new Map<ModRefId, MetadataPerMod2>();
     this.tokensPerApp = getTokens(this.providersPerApp);
-    this.shallowImports.forEach(({ baseMeta, importedTokensMap, shallowImportedModules }, modRefId) => {
+    this.shallowImports.forEach(({ baseMeta, importedTokensMap, initMap }, modRefId) => {
       const deepImportedModules = new Map<AnyFn, AnyObj>();
       mMetadataPerMod2.set(modRefId, { baseMeta, deepImportedModules });
       const targetProviders = new ProvidersOnly<Provider[]>();
@@ -63,7 +63,7 @@ export class DeepModulesImporter {
       this.resolveProvidersForExtensions(baseMeta, importedTokensMap);
       baseMeta.providersPerMod.unshift(...targetProviders.providersPerMod);
       baseMeta.allInitHooks.forEach((initHooks, decorator) => {
-        const shallowImportedModule = shallowImportedModules.get(decorator)!;
+        const shallowImportedModule = initMap.get(decorator)!;
         const deepImports = initHooks.importModulesDeep({
           parent: this,
           metadataPerMod1: shallowImportedModule,

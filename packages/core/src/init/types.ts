@@ -17,7 +17,7 @@ export class NewShallowImports<T extends AnyObj = AnyObj> {
    * Map between a token and its ProviderImport per level.
    */
   importedTokensMap: ImportedTokensMap;
-  shallowImportedModules = new Map<AnyFn, { baseMeta: BaseMeta } & T>();
+  initMap = new Map<AnyFn, { baseMeta: BaseMeta } & T>();
 
   constructor(baseMeta?: BaseMeta, importedTokensMap?: ImportedTokensMap) {
     if (baseMeta) {
