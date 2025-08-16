@@ -69,28 +69,23 @@ export class ShallowModulesImporter {
     this.baseMeta = baseMeta;
     this.importProvidersAndExtensions(baseMeta);
     this.checkAllCollisionsWithLevelsMix();
-    const mInitHooks = new Map<AnyFn, AnyObj>();
+    const mInitValue = new Map<AnyFn, AnyObj>();
     const globalProviders: GlobalProviders = {
       importedProvidersPerMod: this.importedProvidersPerMod,
       importedMultiProvidersPerMod: this.importedMultiProvidersPerMod,
       importedExtensions: this.importedExtensions,
       aImportedExtensionConfig: this.aImportedExtensionConfig,
-      mInitHooks,
+      mInitValue,
     };
 
     baseMeta.allInitHooks.forEach((initHooks, decorator) => {
       const val = initHooks.exportGlobalProviders({ moduleManager, globalProviders, baseMeta });
-      mInitHooks.set(decorator, val);
+      mInitValue.set(decorator, val);
     });
 
     return globalProviders;
   }
 
-  /**
-   * Bootstraps a module.
-   *
-   * @param modRefId Module that will bootstrapped.
-   */
   importModulesShallow({
     globalProviders,
     modRefId,
@@ -126,7 +121,7 @@ export class ShallowModulesImporter {
       extensions = new Map([...this.importedExtensions]);
       aExtensionConfig = [...this.aImportedExtensionConfig];
     } else {
-      this.glProviders.mInitHooks.forEach(({ initHooks }, decorator) => {
+      this.glProviders.mInitValue.forEach(({ initHooks }, decorator) => {
         if (initHooks && !baseMeta.allInitHooks.has(decorator)) {
           baseMeta.allInitHooks.set(decorator, initHooks);
         }

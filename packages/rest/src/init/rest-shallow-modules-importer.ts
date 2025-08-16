@@ -125,7 +125,7 @@ export class ShallowModulesImporter {
     this.baseMeta = baseMeta;
     this.meta = this.getInitMeta(baseMeta);
     this.glProviders = globalProviders;
-    this.restGlProviders = globalProviders.mInitHooks.get(initRest) as RestGlobalProviders;
+    this.restGlProviders = globalProviders.mInitValue.get(initRest) as RestGlobalProviders;
     this.prefixPerMod = prefixPerMod || '';
     this.moduleName = baseMeta.name;
     this.guards1 = guards1 || [];

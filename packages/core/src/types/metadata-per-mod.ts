@@ -27,7 +27,7 @@ export class GlobalProviders {
   importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
   importedExtensions = new Map<ModRefId, Provider[]>();
   aImportedExtensionConfig: ExtensionConfig[] = [];
-  mInitHooks = new Map<AnyFn, GlobalInitHooks>();
+  mInitValue = new Map<AnyFn, GlobalInitHooks>();
 }
 
 /**
