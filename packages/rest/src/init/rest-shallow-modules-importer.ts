@@ -44,7 +44,6 @@ export class ShallowModulesImporter {
   protected guards1: GuardPerMod1[];
   protected baseMeta: BaseMeta;
   protected meta: RestInitMeta;
-  protected shallowImportsMap: Map<ModRefId, NewShallowImports>;
   protected providersPerApp: Provider[];
 
   protected importedProvidersPerMod = new Map<any, RestProviderImport>();
@@ -110,7 +109,7 @@ export class ShallowModulesImporter {
    * @param modRefId Module that will bootstrapped.
    */
   importModulesShallow({
-    shallowImportsMap,
+    moduleManager,
     providersPerApp,
     globalProviders,
     modRefId,
@@ -119,9 +118,9 @@ export class ShallowModulesImporter {
     guards1,
     isAppends,
   }: ImportModulesShallowConfig): Map<ModRefId, RestMetadataPerMod1> {
-    this.shallowImportsMap = shallowImportsMap;
+    this.moduleManager = moduleManager;
     this.providersPerApp = providersPerApp;
-    const baseMeta = this.getBaseMeta(modRefId, true);
+    const baseMeta = this.moduleManager.getBaseMeta(modRefId, true);
     this.baseMeta = baseMeta;
     this.meta = this.getInitMeta(baseMeta);
     this.glProviders = globalProviders;
@@ -216,7 +215,7 @@ export class ShallowModulesImporter {
 
   protected importOrAppendModules(aModRefIds: RestModRefId[], isImport?: boolean) {
     for (const modRefId of aModRefIds) {
-      const baseMeta = this.getBaseMeta(modRefId, true);
+      const baseMeta = this.moduleManager.getBaseMeta(modRefId, true);
       if (isImport) {
         this.importProviders(baseMeta);
       }
@@ -228,7 +227,7 @@ export class ShallowModulesImporter {
       const shallowModulesImporter = new ShallowModulesImporter();
       this.unfinishedScanModules.add(modRefId);
       const shallowImportsBase = shallowModulesImporter.importModulesShallow({
-        shallowImportsMap: this.shallowImportsMap,
+        moduleManager: this.moduleManager,
         providersPerApp: this.providersPerApp,
         globalProviders: this.glProviders,
         modRefId,
@@ -282,7 +281,7 @@ export class ShallowModulesImporter {
       if (this.unfinishedExportModules.has(modRefId2)) {
         continue;
       }
-      const baseMeta2 = this.getBaseMeta(modRefId2, true);
+      const baseMeta2 = this.moduleManager.getBaseMeta(modRefId2, true);
       // Reexported module
       this.unfinishedExportModules.add(baseMeta2.modRefId);
       this.importProviders(baseMeta2);
@@ -353,7 +352,7 @@ export class ShallowModulesImporter {
     const [token2, modRefId2] = this.meta[`resolvedCollisionsPer${level}`].find(([token2]) => token1 === token2)!;
     const moduleName = getDebugClassName(modRefId2);
     const tokenName = token2.name || token2;
-    const baseMeta2 = this.getBaseMeta(modRefId2);
+    const baseMeta2 = this.moduleManager.getBaseMeta(modRefId2);
     const meta2 = baseMeta2?.initMeta.get(initRest);
     let errorMsg =
       `Resolving collisions for providersPer${level} in ${this.moduleName} failed: ` +
@@ -456,7 +455,7 @@ export class ShallowModulesImporter {
         const collision = importedTokens.includes(token) && ![...declaredTokens, ...resolvedTokens].includes(token);
         if (collision) {
           const providerImport = this[`importedProvidersPer${level}`].get(token)!;
-          const hostModulePath = this.getBaseMeta(providerImport.modRefId)?.declaredInDir || '.';
+          const hostModulePath = this.moduleManager.getBaseMeta(providerImport.modRefId)?.declaredInDir || '.';
           const decorAndVal = reflector.getDecorators(token, hasDeclaredInDir)?.at(0);
           const collisionWithPath = decorAndVal?.declaredInDir || '.';
           if (hostModulePath !== '.' && collisionWithPath !== '.' && collisionWithPath.startsWith(hostModulePath)) {
@@ -492,7 +491,7 @@ export class ShallowModulesImporter {
 
   protected checkImportsAndAppends(baseMeta: BaseMeta, meta1: RestInitMeta) {
     meta1.appendsModules.concat(meta1.appendsWithParams as any[]).forEach((modRefId) => {
-      const appendedBaseMeta = this.getBaseMeta(modRefId, true);
+      const appendedBaseMeta = this.moduleManager.getBaseMeta(modRefId, true);
       const meta2 = this.getInitMeta(appendedBaseMeta);
       if (!meta2.controllers.length) {
         const msg = `Appends to "${baseMeta.name}" failed: "${appendedBaseMeta.name}" must have controllers.`;
@@ -504,16 +503,5 @@ export class ShallowModulesImporter {
         throw new Error(msg);
       }
     });
-  }
-
-  /**
-   * If this function is used via `exportGlobalProviders()`, `shallowImportsBase` is not available.
-   * So, you have to use `ModuleManager`.
-   */
-  protected getBaseMeta(modRefId: ModRefId, throwErrIfNotFound?: true): BaseMeta {
-    if (this.shallowImportsMap) {
-      return this.shallowImportsMap.get(modRefId)?.baseMeta!;
-    }
-    return this.moduleManager.getBaseMeta(modRefId, throwErrIfNotFound!);
   }
 }

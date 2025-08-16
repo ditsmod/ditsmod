@@ -72,7 +72,7 @@ export interface ExportGlobalProvidersConfig {
 }
 
 export interface ImportModulesShallowConfig {
-  shallowImportsMap: Map<ModRefId, NewShallowImports>;
+  moduleManager: ModuleManager;
   providersPerApp: Provider[];
   globalProviders: GlobalProviders;
   modRefId: ModRefId;

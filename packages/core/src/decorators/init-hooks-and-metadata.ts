@@ -97,7 +97,7 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
    * but does not take provider dependencies into account.
    */
   importModulesShallow(config: {
-    shallowImportsMap: Map<ModRefId, NewShallowImports>;
+    moduleManager: ModuleManager;
     providersPerApp: Provider[];
     globalProviders: GlobalProviders;
     modRefId: ModRefId;

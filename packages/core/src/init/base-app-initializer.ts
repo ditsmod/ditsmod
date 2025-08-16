@@ -215,7 +215,7 @@ export class BaseAppInitializer {
     const shallowImports: ShallowImports = new Map();
     allInitHooks.forEach((initHooks, decorator) => {
       const val = initHooks.importModulesShallow({
-        shallowImportsMap,
+        moduleManager,
         providersPerApp: moduleManager.providersPerApp,
         globalProviders,
         modRefId,
