@@ -3,11 +3,11 @@ import {
   BaseMeta,
   GlobalProviders,
   ModRefId,
-  ShallowImportsBase,
   ModuleManager,
   ShallowImports,
   SystemLogMediator,
   DeepModulesImporter,
+  NewShallowImports,
 } from '@ditsmod/core';
 
 import { GuardPerMod1 } from '#interceptors/guard.js';
@@ -72,7 +72,7 @@ export interface ExportGlobalProvidersConfig {
 }
 
 export interface ImportModulesShallowConfig {
-  shallowImportsBase: ShallowImportsBase;
+  shallowImportsBase: Map<ModRefId, NewShallowImports>;
   providersPerApp: Provider[];
   globalProviders: GlobalProviders;
   modRefId: ModRefId;

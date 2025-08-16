@@ -15,8 +15,8 @@ import {
   BaseMeta,
   GlobalProviders,
   getLastProviders,
-  ShallowImportsBase,
   defaultProvidersPerMod,
+  NewShallowImports,
 } from '@ditsmod/core';
 import { providersCollision } from '@ditsmod/core/errors';
 
@@ -44,7 +44,7 @@ export class ShallowModulesImporter {
   protected guards1: GuardPerMod1[];
   protected baseMeta: BaseMeta;
   protected meta: RestInitMeta;
-  protected shallowImportsBase: ShallowImportsBase;
+  protected shallowImportsBase: Map<ModRefId, NewShallowImports>;
   protected providersPerApp: Provider[];
 
   protected importedProvidersPerMod = new Map<any, RestProviderImport>();

@@ -2,12 +2,11 @@ import { reflector } from '#di';
 import { ModuleExtract } from '#types/module-extract.js';
 import type { BaseMeta } from '#types/base-meta.js';
 import type { ModuleManager } from '#init/module-manager.js';
-import type { GlobalProviders, MetadataPerMod1 } from '#types/metadata-per-mod.js';
+import type { GlobalProviders } from '#types/metadata-per-mod.js';
 import { ProviderImport } from '#types/metadata-per-mod.js';
-import type { ModuleType, Level, ModRefId, AnyFn, AnyObj } from '#types/mix.js';
-import type { ShallowImportsBase } from '#init/types.js';
+import type { Level, ModRefId, AnyFn, AnyObj } from '#types/mix.js';
+import { NewShallowImports } from '#init/types.js';
 import type { Provider } from '#di/types-and-models.js';
-import type { ModuleWithParams } from '#types/module-metadata.js';
 import { getCollisions } from '#utils/get-collisions.js';
 import { getImportedTokens } from '#utils/get-imports.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
@@ -57,7 +56,7 @@ export class ShallowModulesImporter {
    * GlobalProviders.
    */
   protected glProviders: GlobalProviders;
-  protected shallowImportsBase = new Map<ModRefId, MetadataPerMod1>();
+  protected shallowImportsMap = new Map<ModRefId, NewShallowImports>();
   protected unfinishedScanModules = new Set<ModRefId>();
   protected unfinishedExportModules = new Set<ModRefId>();
   protected moduleManager: ModuleManager;
@@ -96,7 +95,7 @@ export class ShallowModulesImporter {
     modRefId: ModRefId;
     moduleManager: ModuleManager;
     unfinishedScanModules: Set<ModRefId>;
-  }): ShallowImportsBase {
+  }): Map<ModRefId, NewShallowImports> {
     const baseMeta = moduleManager.getMetadata(modRefId, true);
     this.moduleManager = moduleManager;
     this.glProviders = globalProviders;
@@ -135,15 +134,13 @@ export class ShallowModulesImporter {
     const allExtensionConfigs = baseMeta.aExtensionConfig.concat(aExtensionConfig);
     this.checkExtensionsGraph(allExtensionConfigs);
     baseMeta.aOrderedExtensions = topologicalSort<ExtensionClass, ExtensionConfigBase>(allExtensionConfigs, true);
-
-    return this.shallowImportsBase.set(modRefId, {
-      baseMeta: this.baseMeta,
-      importedTokensMap: {
-        perMod,
-        multiPerMod,
-        extensions,
-      },
+    const newShallowImports = new NewShallowImports(this.baseMeta, {
+      perMod,
+      multiPerMod,
+      extensions,
     });
+
+    return this.shallowImportsMap.set(modRefId, newShallowImports);
   }
 
   protected importAndScanModules() {
@@ -176,14 +173,14 @@ export class ShallowModulesImporter {
   protected scanModule(modRefId: ModRefId) {
     const shallowModulesImporter = new ShallowModulesImporter();
     this.unfinishedScanModules.add(modRefId);
-    const shallowImportsBase = shallowModulesImporter.importModulesShallow({
+    const shallowImportsMap = shallowModulesImporter.importModulesShallow({
       globalProviders: this.glProviders,
       modRefId,
       moduleManager: this.moduleManager,
       unfinishedScanModules: this.unfinishedScanModules,
     });
     this.unfinishedScanModules.delete(modRefId);
-    shallowImportsBase.forEach((val, key) => this.shallowImportsBase.set(key, val));
+    shallowImportsMap.forEach((val, key) => this.shallowImportsMap.set(key, val));
   }
 
   /**

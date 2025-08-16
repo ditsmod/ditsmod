@@ -11,6 +11,7 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { coreErrors } from '#error/core-errors.js';
 import { CustomError } from '#error/custom-error.js';
+import { NewShallowImports } from './types.js';
 
 describe('ShallowModulesImporter', () => {
   class Provider1 {}
@@ -22,7 +23,7 @@ describe('ShallowModulesImporter', () => {
   class MockShallowModulesImporter extends ShallowModulesImporter {
     override moduleName = 'MockModule';
     override baseMeta = new BaseMeta();
-    override shallowImportsBase = new Map<ModuleType, MetadataPerMod1>();
+    override shallowImportsMap = new Map<ModuleType, NewShallowImports>();
     override importedProvidersPerMod = new Map<any, ProviderImport>();
     override importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
     override importedExtensions = new Map<ModRefId, Provider[]>();
@@ -366,25 +367,25 @@ describe('ShallowModulesImporter', () => {
 
     it('exporting providers order', () => {
       importModulesShallow(Module3);
-      const mod0 = mock.shallowImportsBase.get(Module0);
+      const mod0 = mock.shallowImportsMap.get(Module0);
       expect(mod0?.baseMeta.providersPerMod.slice(1)).toEqual([Provider0]);
       expect(mod0?.baseMeta.decorator).toBe(featureModule);
 
-      const mod1 = mock.shallowImportsBase.get(Module1);
+      const mod1 = mock.shallowImportsMap.get(Module1);
       expect(mod1?.baseMeta.providersPerMod.slice(1)).toEqual([Provider1, Provider2, Provider3]);
 
       const tokensPerMod = getImportedTokens(mod1?.importedTokensMap.perMod);
       expect(tokensPerMod).toEqual([Provider0]);
       expect(mod1?.baseMeta.decorator).toBe(featureModule);
 
-      const mod2 = mock.shallowImportsBase.get(Module2);
+      const mod2 = mock.shallowImportsMap.get(Module2);
       expect(mod2?.baseMeta.decorator).toBe(featureModule);
       expect(mod2?.baseMeta.providersPerMod.slice(1)).toEqual([Provider4, Provider5, Provider6, Provider7, Provider8]);
 
       const tokensPerMod2 = getImportedTokens(mod2?.importedTokensMap.perMod);
       expect(tokensPerMod2).toEqual([Provider0, Provider1, Provider2, Provider3]);
 
-      const mod3 = mock.shallowImportsBase.get(Module3);
+      const mod3 = mock.shallowImportsMap.get(Module3);
       expect(getImportedTokens(mod3?.importedTokensMap.perMod)).toEqual([
         Provider0,
         Provider1,
@@ -705,7 +706,7 @@ describe('ShallowModulesImporter', () => {
       class AppModule {}
 
       expect(() => importModulesShallow(AppModule)).not.toThrow();
-      const mod3 = mock.shallowImportsBase.get(Module3)!;
+      const mod3 = mock.shallowImportsMap.get(Module3)!;
       expect([...mod3.importedTokensMap.perMod]).toEqual([[Provider1, { modRefId: Module1, providers: [Provider1] }]]);
       expect([...mock.importedProvidersPerMod]).toEqual([
         [Provider1, { modRefId: Module2, providers: [{ token: Provider1, useValue: 'one' }] }],

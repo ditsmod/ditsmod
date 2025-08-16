@@ -16,6 +16,7 @@ import {
   SystemLogMediator,
   ShallowModulesImporter as ShallowModulesImporterBase,
   ProviderImport,
+  NewShallowImports,
 } from '@ditsmod/core';
 
 import { controller } from '#types/controller.js';
@@ -30,7 +31,7 @@ class MockShallowModulesImporter extends ShallowModulesImporter {
   declare prefixPerMod: string;
   override moduleName = 'MockModule';
   override baseMeta = new BaseMeta();
-  override shallowImportsBase = new Map<ModuleType, MetadataPerMod1>();
+  override shallowImportsBase = new Map<ModuleType, NewShallowImports>();
   override importedProvidersPerRou = new Map<any, ProviderImport>();
   override importedProvidersPerReq = new Map<any, ProviderImport>();
   override importedMultiProvidersPerRou = new Map<ModRefId, Provider[]>();

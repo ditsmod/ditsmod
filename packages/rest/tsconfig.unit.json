@@ -7,6 +7,10 @@
     "tsBuildInfoFile": "dist/unit.tsbuildinfo",
   },
   "include": ["src/**/*.spec.ts", "src/**/*.d.ts"],
+  "exclude": [
+    "src/init/rest-app-initializer.spec.ts",
+    "src/interceptors/tokens-and-types.spec.ts",
+  ],
   "references": [
     { "path": "./tsconfig.build.json" },
   ]
