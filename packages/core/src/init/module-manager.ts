@@ -54,7 +54,7 @@ export class ModuleManager {
   ) {}
 
   /**
-   * Creates a snapshot of `BaseMeta` for the root module, stores locally and returns it.
+   * Creates a snapshot of {@link BaseMeta} for the root module, stores locally and returns it.
    * You can also get the result this way: `moduleManager.getMetadata('root')`.
    */
   scanRootModule(appModule: ModuleType) {
@@ -73,7 +73,7 @@ export class ModuleManager {
   }
 
   /**
-   * Returns a snapshot of `BaseMeta` for a module.
+   * Returns a snapshot of {@link BaseMeta} for a module.
    */
   scanModule(modOrObj: ModRefId) {
     const baseMeta = this.scanRawModule(modOrObj);
@@ -81,8 +81,8 @@ export class ModuleManager {
   }
 
   /**
-   * Returns a snapshot of `BaseMeta` for given module or module ID.
-   * If this snapshot is later mutated outside of `ModuleManager`, it does not affect
+   * Returns a snapshot of {@link BaseMeta} for given module or module ID.
+   * If this snapshot is later mutated outside of {@link ModuleManager}, it does not affect
    * the new snapshot that later returns this method.
    */
   getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
@@ -237,7 +237,7 @@ export class ModuleManager {
   }
 
   /**
-   * Here "raw" means that it returns "raw" normalized metadata (without `this.copyMeta()`).
+   * Here "raw" means that it returns "raw" normalized metadata (without {@link copyBaseMeta | this.copyBaseMeta()}).
    */
   protected scanRawModule(modRefId: ModRefId, allInitHooks?: AllInitHooks) {
     allInitHooks ??= new Map();
@@ -306,7 +306,7 @@ export class ModuleManager {
   }
 
   /**
-   * Returns normalized metadata, but without `this.copyMeta()`.
+   * Returns normalized metadata, but without {@link copyBaseMeta | this.copyBaseMeta()}.
    */
   protected getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
