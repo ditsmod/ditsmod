@@ -284,7 +284,7 @@ export class SystemLogMediator extends LogMediator {
   /**
    * `${className}: The sequence of extension group operations: ...`
    */
-  sequenceOfExtensionExtensions(self: object, aOrderedExtensions: ExtensionClass[]) {
+  sequenceOfExtensions(self: object, aOrderedExtensions: ExtensionClass[]) {
     const className = self.constructor.name;
     const msg =
       `${className}: The sequence of extension group operations: ` +

@@ -356,7 +356,7 @@ export class BaseAppInitializer {
     extensionsManager: InternalExtensionsManager,
     systemLogMediator: SystemLogMediator,
   ) {
-    systemLogMediator.sequenceOfExtensionExtensions(this, baseMeta.aOrderedExtensions);
+    systemLogMediator.sequenceOfExtensions(this, baseMeta.aOrderedExtensions);
     await extensionsManager.internalStage1(baseMeta);
   }
 
