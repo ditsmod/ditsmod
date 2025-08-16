@@ -79,10 +79,10 @@ export class RestDeepModulesImporter {
     levels: Level[],
   ) {
     levels.forEach((level, i) => {
-      importedTokensMap[`per${level}`].forEach((importObj) => {
-        meta[`providersPer${level}`].unshift(...importObj.providers);
-        importObj.providers.forEach((importedProvider) => {
-          this.fetchDeps(meta, importObj.modRefId, importedProvider, levels.slice(i));
+      importedTokensMap[`per${level}`].forEach((providerImport) => {
+        meta[`providersPer${level}`].unshift(...providerImport.providers);
+        providerImport.providers.forEach((importedProvider) => {
+          this.fetchDeps(meta, providerImport.modRefId, importedProvider, levels.slice(i));
         });
       });
 
@@ -156,11 +156,11 @@ export class RestDeepModulesImporter {
     const metadataPerMod1 = this.shallowImports.get(srcModRefId1)!;
     for (const level of levels) {
       const restMetadataPerMod1 = metadataPerMod1.shallowImportedModules.get(initRest) as RestMetadataPerMod1;
-      const importObj = restMetadataPerMod1.importedTokensMap[`per${level}`].get(dep.token);
-      if (importObj) {
+      const providerImport = restMetadataPerMod1.importedTokensMap[`per${level}`].get(dep.token);
+      if (providerImport) {
         found = true;
         path.push(dep.token);
-        const { modRefId: modRefId2, providers: srcProviders2 } = importObj;
+        const { modRefId: modRefId2, providers: srcProviders2 } = providerImport;
         targetProviders[`providersPer${level}`].unshift(...srcProviders2);
 
         // Loop for multi providers.

@@ -2,7 +2,7 @@ import { injectable } from '#di';
 import { ConsoleLogger } from '#logger/console-logger.js';
 import { Logger } from '#logger/logger.js';
 import { LogMediator } from '#logger/log-mediator.js';
-import { GlobalProviders, ImportObj } from '#types/metadata-per-mod.js';
+import { GlobalProviders, ProviderImport } from '#types/metadata-per-mod.js';
 import { ModRefId } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ExtensionClass, Extension } from '#extension/extension-types.js';
@@ -168,7 +168,7 @@ export class SystemLogMediator extends LogMediator {
     // this.setLog('trace', `${prefix} request: [${globalProvidersPerReq}]`);
   }
 
-  protected getProvidersNames(providersMap: Map<any, ImportObj<Provider>>) {
+  protected getProvidersNames(providersMap: Map<any, ProviderImport<Provider>>) {
     return getImportedTokens(providersMap).map(getProviderName).join(', ');
   }
 

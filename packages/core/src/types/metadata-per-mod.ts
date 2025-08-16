@@ -5,9 +5,9 @@ import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { BaseInitRawMeta, InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 
 /**
- * @todo Rename this.
+ * Used to create a mapping between a provider and the module from which it was imported.
  */
-export class ImportObj<T extends Provider = Provider> {
+export class ProviderImport<T extends Provider = Provider> {
   modRefId: ModRefId;
   /**
    * This property can have more than one element for multi-providers only.
@@ -23,7 +23,7 @@ export class GlobalInitHooks<T extends BaseInitRawMeta = BaseInitRawMeta> {
 }
 
 export class GlobalProviders {
-  importedProvidersPerMod = new Map<any, ImportObj>();
+  importedProvidersPerMod = new Map<any, ProviderImport>();
   importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
   importedExtensions = new Map<ModRefId, Provider[]>();
   aImportedExtensionConfig: ExtensionConfig[] = [];
@@ -40,16 +40,16 @@ export class MetadataPerMod1 {
    */
   baseMeta: BaseMeta;
   /**
-   * Map between a token and its ImportObj per level.
+   * Map between a token and its ProviderImport per level.
    */
   importedTokensMap: ImportedTokensMap;
 }
 
 export interface ImportedTokensMap {
   /**
-   * `Map<token, ImportObj>`
+   * `Map<token, ProviderImport>`
    */
-  perMod: Map<any, ImportObj>;
+  perMod: Map<any, ProviderImport>;
   multiPerMod: Map<ModRefId, Provider[]>;
   extensions: Map<ModRefId, Provider[]>;
 }

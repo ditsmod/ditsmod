@@ -11,7 +11,7 @@ import {
   Provider,
   rootModule,
   SystemLogMediator,
-  ImportObj,
+  ProviderImport,
   ModuleWithInitParams,
   ModRefId,
 } from '@ditsmod/core';
@@ -19,7 +19,7 @@ import { RestAppInitializer } from './rest-app-initializer.js';
 import { Router } from '../services/router.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 
-function getImportedTokens(map: Map<any, ImportObj<Provider>> | undefined) {
+function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) {
   return [...(map || [])].map(([key]) => key);
 
 @injectable()
@@ -114,7 +114,7 @@ describe('exports/imports', () => {
 
     // Global providers per a module
     const perMod = metadataPerMod1?.importedTokensMap?.perMod!;
-    const expectedPerMod = new ImportObj();
+    const expectedPerMod = new ProviderImport();
 
     expectedPerMod.modRefId = Module0;
     expectedPerMod.providers = [Provider0];
@@ -128,7 +128,7 @@ describe('exports/imports', () => {
 
     // Global providers per a request
     const perReq = metadataPerMod1?.importedTokensMap.perReq!;
-    const expectedPerReq = new ImportObj();
+    const expectedPerReq = new ProviderImport();
     expectedPerReq.modRefId = module3WithParams;
     expectedPerReq.providers = [Provider5];
     expect(perReq.get(Provider5)).toEqual(expectedPerReq);

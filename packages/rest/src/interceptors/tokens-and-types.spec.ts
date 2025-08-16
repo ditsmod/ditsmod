@@ -124,7 +124,7 @@ describe('HttpInterceptor', () => {
 });
 
 describe('mix per app, per mod or per req', () => {
-  class ImportObj<T extends Provider = Provider> {
+  class ProviderImport<T extends Provider = Provider> {
     modRefId: ModRefId;
     /**
      * This property can have more than one element for multi-providers only.
@@ -133,9 +133,9 @@ describe('mix per app, per mod or per req', () => {
   }
 
   class GlobalProviders {
-    importedProvidersPerMod = new Map<any, ImportObj>();
-    importedProvidersPerRou = new Map<any, ImportObj>();
-    importedProvidersPerReq = new Map<any, ImportObj>();
+    importedProvidersPerMod = new Map<any, ProviderImport>();
+    importedProvidersPerRou = new Map<any, ProviderImport>();
+    importedProvidersPerReq = new Map<any, ProviderImport>();
     importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
     importedMultiProvidersPerRou = new Map<ModRefId, Provider[]>();
     importedMultiProvidersPerReq = new Map<ModRefId, Provider[]>();
@@ -150,8 +150,8 @@ describe('mix per app, per mod or per req', () => {
     override moduleName = 'MockModule';
     override baseMeta = new BaseMeta();
     override shallowImportsBase = new Map<ModuleType, MetadataPerMod1>();
-    override importedProvidersPerRou = new Map<any, ImportObj>();
-    override importedProvidersPerReq = new Map<any, ImportObj>();
+    override importedProvidersPerRou = new Map<any, ProviderImport>();
+    override importedProvidersPerReq = new Map<any, ProviderImport>();
     override importedMultiProvidersPerRou = new Map<ModRefId, Provider[]>();
     override importedMultiProvidersPerReq = new Map<ModRefId, Provider[]>();
     // override guards1: GuardPerMod1[] = [];

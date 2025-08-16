@@ -13,7 +13,7 @@ import {
 import { GuardPerMod1 } from '#interceptors/guard.js';
 import { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
 
-export class RestImportObj<T extends Provider = Provider> {
+export class RestProviderImport<T extends Provider = Provider> {
   modRefId: RestModRefId;
   /**
    * This property can have more than one element for multi-providers only.
@@ -33,16 +33,16 @@ export class RestMetadataPerMod1 {
    */
   meta: RestInitMeta;
   /**
-   * Map between a token and its ImportObj per level.
+   * Map between a token and its ProviderImport per level.
    */
   importedTokensMap: RestImportedTokensMap;
   applyControllers?: boolean;
 }
 
 export interface RestImportedTokensMap {
-  perMod: Map<any, RestImportObj>;
-  perRou: Map<any, RestImportObj>;
-  perReq: Map<any, RestImportObj>;
+  perMod: Map<any, RestProviderImport>;
+  perRou: Map<any, RestProviderImport>;
+  perReq: Map<any, RestProviderImport>;
   multiPerMod: Map<RestModRefId, Provider[]>;
   multiPerRou: Map<RestModRefId, Provider[]>;
   multiPerReq: Map<RestModRefId, Provider[]>;

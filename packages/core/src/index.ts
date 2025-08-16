@@ -75,7 +75,7 @@ export {
   FeatureModuleParams,
 } from '#types/module-metadata.js';
 export { RootModuleMetadata } from '#types/root-module-metadata.js';
-export { ImportObj } from '#types/metadata-per-mod.js';
+export { ProviderImport } from '#types/metadata-per-mod.js';
 export { mergeArrays } from '#utils/merge-arrays.js';
 export { getLastProviders } from '#utils/get-last-providers.js';
 export { deepFreeze } from '#utils/deep-freeze.js';

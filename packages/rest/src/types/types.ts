@@ -1,6 +1,6 @@
 import { HttpMethod, ModuleExtract, GlobalInitHooks, BaseMeta, Provider } from '@ditsmod/core';
 
-import { RestImportObj } from '#init/types.js';
+import { RestProviderImport } from '#init/types.js';
 import { Tree } from '#services/tree.js';
 import { GuardPerMod1 } from '#interceptors/guard.js';
 import { RouteHandler } from '#services/router.js';
@@ -8,9 +8,9 @@ import { ControllerMetadata } from './controller-metadata.js';
 import { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
 
 export class RestGlobalProviders extends GlobalInitHooks {
-  importedProvidersPerMod = new Map<any, RestImportObj>();
-  importedProvidersPerRou = new Map<any, RestImportObj>();
-  importedProvidersPerReq = new Map<any, RestImportObj>();
+  importedProvidersPerMod = new Map<any, RestProviderImport>();
+  importedProvidersPerRou = new Map<any, RestProviderImport>();
+  importedProvidersPerReq = new Map<any, RestProviderImport>();
   importedMultiProvidersPerMod = new Map<RestModRefId, Provider[]>();
   importedMultiProvidersPerRou = new Map<RestModRefId, Provider[]>();
   importedMultiProvidersPerReq = new Map<RestModRefId, Provider[]>();

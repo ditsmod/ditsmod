@@ -27,7 +27,7 @@ import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
 import { AppendsWithParams } from './rest-init-raw-meta.js';
 import { initRest, RestInitHooksAndRawMeta } from '#decorators/rest-init-hooks-and-metadata.js';
-import { ImportModulesShallowConfig, RestImportObj, RestMetadataPerMod1 } from './types.js';
+import { ImportModulesShallowConfig, RestProviderImport, RestMetadataPerMod1 } from './types.js';
 
 /**
  * Recursively collects providers taking into account module imports/exports,
@@ -47,9 +47,9 @@ export class ShallowModulesImporter {
   protected shallowImportsBase: ShallowImportsBase;
   protected providersPerApp: Provider[];
 
-  protected importedProvidersPerMod = new Map<any, RestImportObj>();
-  protected importedProvidersPerRou = new Map<any, RestImportObj>();
-  protected importedProvidersPerReq = new Map<any, RestImportObj>();
+  protected importedProvidersPerMod = new Map<any, RestProviderImport>();
+  protected importedProvidersPerRou = new Map<any, RestProviderImport>();
+  protected importedProvidersPerReq = new Map<any, RestProviderImport>();
   protected importedMultiProvidersPerMod = new Map<ModRefId | AppendsWithParams, Provider[]>();
   protected importedMultiProvidersPerRou = new Map<ModRefId | AppendsWithParams, Provider[]>();
   protected importedMultiProvidersPerReq = new Map<ModRefId | AppendsWithParams, Provider[]>();
@@ -144,9 +144,9 @@ export class ShallowModulesImporter {
       applyControllers = true;
     }
 
-    let perMod: Map<any, RestImportObj>;
-    let perRou: Map<any, RestImportObj>;
-    let perReq: Map<any, RestImportObj>;
+    let perMod: Map<any, RestProviderImport>;
+    let perRou: Map<any, RestProviderImport>;
+    let perReq: Map<any, RestProviderImport>;
     let multiPerMod: Map<RestModRefId, Provider[]>;
     let multiPerRou: Map<RestModRefId, Provider[]>;
     let multiPerReq: Map<RestModRefId, Provider[]>;
@@ -305,22 +305,22 @@ export class ShallowModulesImporter {
   protected addProviders(level: Level, modRefId: RestModRefId, meta: RestInitMeta) {
     meta[`exportedProvidersPer${level}`].forEach((provider) => {
       const token1 = getToken(provider);
-      const importObj = this[`importedProvidersPer${level}`].get(token1);
-      if (importObj) {
-        this.checkCollisionsPerLevel(modRefId, level, token1, provider, importObj);
+      const providerImport = this[`importedProvidersPer${level}`].get(token1);
+      if (providerImport) {
+        this.checkCollisionsPerLevel(modRefId, level, token1, provider, providerImport);
         const hasResolvedCollision = this.meta[`resolvedCollisionsPer${level}`].some(([token2]) => token2 === token1);
         if (hasResolvedCollision) {
           const { providers, module2 } = this.getResolvedCollisionsPerLevel(level, token1);
-          const newImportObj = new RestImportObj();
-          newImportObj.modRefId = module2;
-          newImportObj.providers.push(...providers);
-          this[`importedProvidersPer${level}`].set(token1, newImportObj);
+          const newProviderImport = new RestProviderImport();
+          newProviderImport.modRefId = module2;
+          newProviderImport.providers.push(...providers);
+          this[`importedProvidersPer${level}`].set(token1, newProviderImport);
         }
       } else {
-        const newImportObj = new RestImportObj();
-        newImportObj.modRefId = modRefId;
-        newImportObj.providers.push(provider);
-        this[`importedProvidersPer${level}`].set(token1, newImportObj);
+        const newProviderImport = new RestProviderImport();
+        newProviderImport.modRefId = modRefId;
+        newProviderImport.providers.push(provider);
+        this[`importedProvidersPer${level}`].set(token1, newProviderImport);
       }
     });
   }
@@ -330,14 +330,14 @@ export class ShallowModulesImporter {
     level: Level,
     token: NonNullable<unknown>,
     provider: Provider,
-    importObj: RestImportObj,
+    providerImport: RestProviderImport,
   ) {
     const declaredTokens = getTokens(this.meta[`providersPer${level}`]);
     const resolvedTokens = this.meta[`resolvedCollisionsPer${level}`].map(([token]) => token);
     const duplImpTokens = [...declaredTokens, ...resolvedTokens].includes(token) ? [] : [token];
-    const collisions = getCollisions(duplImpTokens, [...importObj.providers, provider]);
+    const collisions = getCollisions(duplImpTokens, [...providerImport.providers, provider]);
     if (collisions.length) {
-      const moduleName1 = getDebugClassName(importObj.modRefId) || 'unknown-1';
+      const moduleName1 = getDebugClassName(providerImport.modRefId) || 'unknown-1';
       const moduleName2 = getDebugClassName(modRefId) || 'unknown-2';
       throw providersCollision(
         this.moduleName,
@@ -421,7 +421,7 @@ export class ShallowModulesImporter {
   }
 
   protected checkAllCollisionsWithLevelsMix() {
-    // let perMod: Map<any, ImportObj<Provider>>;
+    // let perMod: Map<any, ProviderImport<Provider>>;
     // if (this.shallowImportsBase) {
     //   // When calling this.importModulesShallow()
     //   const metadataPerMod1 = this.shallowImportsBase.get(this.baseMeta.modRefId)!;
@@ -455,14 +455,14 @@ export class ShallowModulesImporter {
         const resolvedTokens = this.meta[`resolvedCollisionsPer${level}`].map(([t]) => t);
         const collision = importedTokens.includes(token) && ![...declaredTokens, ...resolvedTokens].includes(token);
         if (collision) {
-          const importObj = this[`importedProvidersPer${level}`].get(token)!;
-          const hostModulePath = this.getMetadata(importObj.modRefId)?.declaredInDir || '.';
+          const providerImport = this[`importedProvidersPer${level}`].get(token)!;
+          const hostModulePath = this.getMetadata(providerImport.modRefId)?.declaredInDir || '.';
           const decorAndVal = reflector.getDecorators(token, hasDeclaredInDir)?.at(0);
           const collisionWithPath = decorAndVal?.declaredInDir || '.';
           if (hostModulePath !== '.' && collisionWithPath !== '.' && collisionWithPath.startsWith(hostModulePath)) {
             // Allow collisions in host modules.
           } else {
-            const hostModuleName = getDebugClassName(importObj.modRefId) || 'unknown';
+            const hostModuleName = getDebugClassName(providerImport.modRefId) || 'unknown';
             throw providersCollision(this.moduleName, [token], [hostModuleName], level, this.baseMeta.isExternal);
           }
         }
