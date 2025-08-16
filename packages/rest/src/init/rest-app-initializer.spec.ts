@@ -15,9 +15,8 @@ import {
   ImportObj,
   ModuleWithInitParams,
 } from '@ditsmod/core';
-
-import { RestAppInitializer } from './app-initializer.js';
-import { Router } from './router.js';
+import { RestAppInitializer } from './rest-app-initializer.js';
+import { Router } from '../services/router.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 
 function getImportedTokens(map: Map<any, ImportObj<Provider>> | undefined) {

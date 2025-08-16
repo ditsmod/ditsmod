@@ -1,7 +1,7 @@
 import { BaseAppInitializer } from '@ditsmod/core';
 
-import { RequestListener } from './request.js';
-import { PreRouter } from './pre-router.js';
+import { RequestListener } from '../services/request.js';
+import { PreRouter } from '../services/pre-router.js';
 import { HttpServer } from '#types/server-options.js';
 import { SERVER } from '#types/constants.js';
 

@@ -1,7 +1,7 @@
-export { RestApplication } from './services/application.js';
+export { RestApplication } from './init/rest-application.js';
 export { HttpServer } from './types/server-options.js';
 export { AppOptions } from './types/app-options.js';
-export { RestAppInitializer } from './services/app-initializer.js';
+export { RestAppInitializer } from './init/rest-app-initializer.js';
 export { DefaultRouter, PathParam, RouteHandler, Router, RouterReturns } from './services/router.js';
 export { Tree } from './services/tree.js';
 export {

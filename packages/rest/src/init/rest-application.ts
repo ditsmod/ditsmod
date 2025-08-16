@@ -9,7 +9,7 @@ import { HttpServerModule, HttpsServerModule } from '#init/http-module.js';
 import { Http2SecureServerOptions, HttpServer } from '#types/server-options.js';
 import { isHttp2SecureServerOptions } from '#types/type.guards.js';
 import { RequestListener } from '#services/request.js';
-import { RestAppInitializer } from './app-initializer.js';
+import { RestAppInitializer } from './rest-app-initializer.js';
 
 export class RestApplication extends BaseApplication {
   server: HttpServer;

@@ -11,7 +11,7 @@ import {
   LoggerConfig,
 } from '@ditsmod/core';
 
-import { RestApplication } from './application.js';
+import { RestApplication } from './rest-application.js';
 import { AppOptions } from '../types/app-options.js';
 
 describe('RestApplication', () => {
