@@ -149,7 +149,7 @@ describe('mix per app, per mod or per req', () => {
     declare prefixPerMod: string;
     override moduleName = 'MockModule';
     override baseMeta = new BaseMeta();
-    override shallowImportsBase = new Map<ModuleType, NewShallowImports>();
+    override shallowImportsMap = new Map<ModuleType, NewShallowImports>();
     override importedProvidersPerRou = new Map<any, ProviderImport>();
     override importedProvidersPerReq = new Map<any, ProviderImport>();
     override importedMultiProvidersPerRou = new Map<ModRefId, Provider[]>();

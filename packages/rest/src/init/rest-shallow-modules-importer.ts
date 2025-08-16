@@ -44,7 +44,7 @@ export class ShallowModulesImporter {
   protected guards1: GuardPerMod1[];
   protected baseMeta: BaseMeta;
   protected meta: RestInitMeta;
-  protected shallowImportsBase: Map<ModRefId, NewShallowImports>;
+  protected shallowImportsMap: Map<ModRefId, NewShallowImports>;
   protected providersPerApp: Provider[];
 
   protected importedProvidersPerMod = new Map<any, RestProviderImport>();
@@ -110,7 +110,7 @@ export class ShallowModulesImporter {
    * @param modRefId Module that will bootstrapped.
    */
   importModulesShallow({
-    shallowImportsBase,
+    shallowImportsMap,
     providersPerApp,
     globalProviders,
     modRefId,
@@ -119,7 +119,7 @@ export class ShallowModulesImporter {
     guards1,
     isAppends,
   }: ImportModulesShallowConfig): Map<ModRefId, RestMetadataPerMod1> {
-    this.shallowImportsBase = shallowImportsBase;
+    this.shallowImportsMap = shallowImportsMap;
     this.providersPerApp = providersPerApp;
     const baseMeta = this.getMetadata(modRefId, true);
     this.baseMeta = baseMeta;
@@ -228,7 +228,7 @@ export class ShallowModulesImporter {
       const shallowModulesImporter = new ShallowModulesImporter();
       this.unfinishedScanModules.add(modRefId);
       const shallowImportsBase = shallowModulesImporter.importModulesShallow({
-        shallowImportsBase: this.shallowImportsBase,
+        shallowImportsMap: this.shallowImportsMap,
         providersPerApp: this.providersPerApp,
         globalProviders: this.glProviders,
         modRefId,
@@ -511,8 +511,8 @@ export class ShallowModulesImporter {
    * So, you have to use `ModuleManager`.
    */
   protected getMetadata(modRefId: ModRefId, throwErrIfNotFound?: true): BaseMeta {
-    if (this.shallowImportsBase) {
-      return this.shallowImportsBase.get(modRefId)?.baseMeta!;
+    if (this.shallowImportsMap) {
+      return this.shallowImportsMap.get(modRefId)?.baseMeta!;
     }
     return this.moduleManager.getMetadata(modRefId, throwErrIfNotFound!);
   }

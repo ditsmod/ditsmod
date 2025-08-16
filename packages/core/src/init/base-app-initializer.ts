@@ -206,7 +206,7 @@ export class BaseAppInitializer {
     this.log.printGlobalProviders(this, globalProviders);
     const shallowModulesImporter2 = new ShallowModulesImporter();
     const { modRefId, allInitHooks } = moduleManager.getMetadata('root', true);
-    const shallowImportsBase = shallowModulesImporter2.importModulesShallow({
+    const shallowImportsMap = shallowModulesImporter2.importModulesShallow({
       globalProviders,
       modRefId,
       moduleManager,
@@ -215,13 +215,13 @@ export class BaseAppInitializer {
     const shallowImports: ShallowImports = new Map();
     allInitHooks.forEach((initHooks, decorator) => {
       const val = initHooks.importModulesShallow({
-        shallowImportsBase,
+        shallowImportsMap,
         providersPerApp: moduleManager.providersPerApp,
         globalProviders,
         modRefId,
         unfinishedScanModules: new Set(),
       });
-      shallowImportsBase.forEach((metadataPerMod1, modRefId) => {
+      shallowImportsMap.forEach((metadataPerMod1, modRefId) => {
         const shallowImportedModule = val.get(modRefId)!;
         const mergedShallowImports = shallowImports.get(modRefId);
         if (mergedShallowImports) {
