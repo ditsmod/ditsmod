@@ -175,7 +175,7 @@ export class DeepModulesImporter {
     path: any[] = [],
     childLevels: string[] = [],
   ) {
-    const srcBaseMeta = this.moduleManager.getMetadata(srcModRefId, true);
+    const srcBaseMeta = this.moduleManager.getBaseMeta(srcModRefId, true);
 
     for (const dep of this.getDependencies(importedProvider)) {
       let found: boolean = false;
@@ -267,7 +267,7 @@ export class DeepModulesImporter {
   }
 
   protected hasUnresolvedDeps(srcModRefId: ModRefId, provider: Provider, levels: Level[]) {
-    const baseMeta = this.moduleManager.getMetadata(srcModRefId, true);
+    const baseMeta = this.moduleManager.getBaseMeta(srcModRefId, true);
 
     for (const dep of this.getDependencies(provider)) {
       let found: boolean = false;

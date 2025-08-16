@@ -63,7 +63,7 @@ export class ShallowModulesImporter {
 
   exportGlobalProviders(moduleManager: ModuleManager): GlobalProviders {
     this.moduleManager = moduleManager;
-    const baseMeta = moduleManager.getMetadata('root', true);
+    const baseMeta = moduleManager.getBaseMeta('root', true);
     this.moduleName = baseMeta.name;
     this.baseMeta = baseMeta;
     this.importProvidersAndExtensions(baseMeta);
@@ -96,7 +96,7 @@ export class ShallowModulesImporter {
     moduleManager: ModuleManager;
     unfinishedScanModules: Set<ModRefId>;
   }): Map<ModRefId, NewShallowImports> {
-    const baseMeta = moduleManager.getMetadata(modRefId, true);
+    const baseMeta = moduleManager.getBaseMeta(modRefId, true);
     this.moduleManager = moduleManager;
     this.glProviders = globalProviders;
     this.moduleName = baseMeta.name;
@@ -162,7 +162,7 @@ export class ShallowModulesImporter {
   protected importModules() {
     const aModRefIds = this.baseMeta.importsModules.concat(this.baseMeta.importsWithParams as any[]) as ModRefId[];
     for (const modRefId of aModRefIds) {
-      const baseMeta = this.moduleManager.getMetadata(modRefId, true);
+      const baseMeta = this.moduleManager.getBaseMeta(modRefId, true);
       this.importProvidersAndExtensions(baseMeta);
       if (this.unfinishedScanModules.has(modRefId)) {
         continue;
@@ -197,7 +197,7 @@ export class ShallowModulesImporter {
       if (this.unfinishedExportModules.has(modRefId2)) {
         continue;
       }
-      const baseMeta2 = this.moduleManager.getMetadata(modRefId2, true);
+      const baseMeta2 = this.moduleManager.getBaseMeta(modRefId2, true);
       // Reexported module
       this.unfinishedExportModules.add(baseMeta2.modRefId);
       this.importProvidersAndExtensions(baseMeta2);
@@ -262,7 +262,7 @@ export class ShallowModulesImporter {
     const [token2, modRefId2] = this.baseMeta[`resolvedCollisionsPer${level}`].find(([token2]) => token1 === token2)!;
     const moduleName = getDebugClassName(modRefId2) || '""';
     const tokenName = token2.name || token2;
-    const meta2 = this.moduleManager.getMetadata(modRefId2);
+    const meta2 = this.moduleManager.getBaseMeta(modRefId2);
     if (!meta2) {
       throw resolvingCollisionsNotImportedInApplication(this.moduleName, moduleName, level, tokenName);
     }
@@ -315,7 +315,7 @@ export class ShallowModulesImporter {
         const collision = importedTokens.includes(token) && ![...declaredTokens, ...resolvedTokens].includes(token);
         if (collision) {
           const providerImport = this[`importedProvidersPer${level}`].get(token)!;
-          const hostModulePath = this.moduleManager.getMetadata(providerImport.modRefId)?.declaredInDir || '.';
+          const hostModulePath = this.moduleManager.getBaseMeta(providerImport.modRefId)?.declaredInDir || '.';
           const decorAndVal = reflector.getDecorators(token, hasDeclaredInDir)?.at(0);
           const collisionWithPath = decorAndVal?.declaredInDir || '.';
           if (hostModulePath !== '.' && collisionWithPath !== '.' && collisionWithPath.startsWith(hostModulePath)) {

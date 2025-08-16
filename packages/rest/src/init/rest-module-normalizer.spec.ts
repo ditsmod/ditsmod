@@ -65,10 +65,10 @@ describe('rest ModuleNormalizer', () => {
     expect(moduleWithParams.initParams?.get(initRest)).toEqual({ path: 'test1' });
     expect(meta1.appendsWithParams).toEqual([appendWithParams]);
 
-    const meta2 = moduleManager.getMetadata(moduleWithParams, true).initMeta.get(initRest)!;
+    const meta2 = moduleManager.getBaseMeta(moduleWithParams, true).initMeta.get(initRest)!;
     expect(meta2.params.path).toEqual('test1');
 
-    const meta3 = moduleManager.getMetadata(appendWithParams, true).initMeta.get(initRest)!;
+    const meta3 = moduleManager.getBaseMeta(appendWithParams, true).initMeta.get(initRest)!;
     expect(meta3.params.path).toEqual('test2');
   });
 
@@ -138,7 +138,7 @@ describe('rest ModuleNormalizer', () => {
 
     const baseMeta = moduleManager.scanRootModule(AppModule);
 
-    const meta1 = moduleManager.getMetadata(AppModule, true).initMeta.get(initRest)!;
+    const meta1 = moduleManager.getBaseMeta(AppModule, true).initMeta.get(initRest)!;
     expect(meta1.providersPerRou).toEqual([Service1, { token: Service3, useClass: Service3, multi: true }]);
     expect(meta1.providersPerReq).toEqual([Service2, { token: Service4, useToken: Service4, multi: true }]);
     expect(meta1.exportedProvidersPerRou).toEqual([Service1]);
@@ -150,10 +150,10 @@ describe('rest ModuleNormalizer', () => {
     expect(meta1.appendsModules).toEqual([Module5]);
     expect(meta1.appendsWithParams).toEqual([appendWithParams]);
 
-    const meta2 = moduleManager.getMetadata('test-id', true).initMeta.get(initRest)!;
+    const meta2 = moduleManager.getBaseMeta('test-id', true).initMeta.get(initRest)!;
     expect(meta2.params.path).toEqual('test1');
 
-    const meta3 = moduleManager.getMetadata(appendWithParams, true).initMeta.get(initRest)!;
+    const meta3 = moduleManager.getBaseMeta(appendWithParams, true).initMeta.get(initRest)!;
     expect(meta3.params.path).toEqual('test2');
 
     expect(baseMeta.importsModules).toEqual([Module1, RestModule]);
@@ -195,13 +195,13 @@ describe('rest ModuleNormalizer', () => {
     class AppModule {}
 
     const baseMeta = moduleManager.scanRootModule(AppModule);
-    const meta1 = moduleManager.getMetadata(AppModule, true).initMeta.get(initRest)!;
+    const meta1 = moduleManager.getBaseMeta(AppModule, true).initMeta.get(initRest)!;
     const modRefIds = baseMeta.allInitHooks.get(initRest)?.getModulesToScan(meta1);
     expect(modRefIds).toEqual([appendsWithParams]);
     expect(baseMeta.importsModules).toEqual([RestModule]);
     expect(baseMeta.importsWithParams).toEqual([]);
 
-    const meta2 = moduleManager.getMetadata(appendsWithParams, true).initMeta.get(initRest)!;
+    const meta2 = moduleManager.getBaseMeta(appendsWithParams, true).initMeta.get(initRest)!;
     expect(meta2.params.path).toBe('one');
     expect(meta2.params.guards).toEqual<NormalizedGuard[]>([
       { guard: Guard1 },
@@ -258,13 +258,13 @@ describe('rest ModuleNormalizer', () => {
     class AppModule {}
 
     const baseMeta = moduleManager.scanRootModule(AppModule);
-    const meta1 = moduleManager.getMetadata(AppModule, true).initMeta.get(initRest)!;
+    const meta1 = moduleManager.getBaseMeta(AppModule, true).initMeta.get(initRest)!;
     const modRefIds = baseMeta.allInitHooks.get(initRest)?.getModulesToScan(meta1);
     expect(modRefIds).toEqual([]);
     expect(baseMeta.importsModules).toEqual([RestModule]);
     expect(baseMeta.importsWithParams).toEqual([moduleWithParams]);
 
-    const meta2 = moduleManager.getMetadata(moduleWithParams, true).initMeta.get(initRest)!;
+    const meta2 = moduleManager.getBaseMeta(moduleWithParams, true).initMeta.get(initRest)!;
     expect(meta2.params.path).toBe('one');
     expect(meta2.params.guards).toEqual<NormalizedGuard[]>([
       { guard: Guard1 },

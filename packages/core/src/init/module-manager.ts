@@ -85,15 +85,15 @@ export class ModuleManager {
    * If this snapshot is later mutated outside of {@link ModuleManager}, it does not affect
    * the new snapshot that later returns this method.
    */
-  getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
+  getBaseMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound?: false,
   ): BaseMeta | undefined;
-  getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
+  getBaseMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound: true,
   ): BaseMeta;
-  getMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrIfNotFound?: boolean) {
+  getBaseMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrIfNotFound?: boolean) {
     const baseMeta = this.getOriginMetadata<T, A>(moduleId, throwErrIfNotFound);
     if (baseMeta) {
       return this.copyBaseMeta(baseMeta);

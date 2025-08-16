@@ -108,7 +108,7 @@ export class RestDeepModulesImporter {
     levels: Level[],
     path: any[] = [],
   ) {
-    const srcBaseMeta = this.moduleManager.getMetadata(srcModRefId, true);
+    const srcBaseMeta = this.moduleManager.getBaseMeta(srcModRefId, true);
     const srcMeta = srcBaseMeta.initMeta.get(initRest) as RestInitMeta;
 
     for (const dep of this.parent.getDependencies(importedProvider)) {

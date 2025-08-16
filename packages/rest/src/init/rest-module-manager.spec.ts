@@ -52,7 +52,7 @@ describe('ModuleManager', () => {
 
   let mock: MockModuleManager;
   function getInitMeta(moduleId: ModuleId) {
-    const baseMeta = mock.getMetadata(moduleId);
+    const baseMeta = mock.getBaseMeta(moduleId);
     // console.log(baseMeta);
     return baseMeta?.initMeta.get(initRest);
   }
