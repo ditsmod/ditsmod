@@ -1,7 +1,6 @@
 import { BaseMeta } from '#types/base-meta.js';
-import { AnyFn, AnyObj, ModRefId, ModuleType } from './mix.js';
+import { AnyFn, AnyObj, ModRefId } from './mix.js';
 import { Provider } from '#di/types-and-models.js';
-import { ModuleWithParams } from './module-metadata.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { BaseInitRawMeta, InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 
@@ -25,8 +24,8 @@ export class GlobalInitHooks<T extends BaseInitRawMeta = BaseInitRawMeta> {
 
 export class GlobalProviders {
   importedProvidersPerMod = new Map<any, ImportObj>();
-  importedMultiProvidersPerMod = new Map<ModuleType | ModuleWithParams, Provider[]>();
-  importedExtensions = new Map<ModuleType | ModuleWithParams, Provider[]>();
+  importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
+  importedExtensions = new Map<ModRefId, Provider[]>();
   aImportedExtensionConfig: ExtensionConfig[] = [];
   mInitHooks = new Map<AnyFn, GlobalInitHooks>();
 }
@@ -51,8 +50,8 @@ export interface ImportedTokensMap {
    * `Map<token, ImportObj>`
    */
   perMod: Map<any, ImportObj>;
-  multiPerMod: Map<ModuleType | ModuleWithParams, Provider[]>;
-  extensions: Map<ModuleType | ModuleWithParams, Provider[]>;
+  multiPerMod: Map<ModRefId, Provider[]>;
+  extensions: Map<ModRefId, Provider[]>;
 }
 
 export class MetadataPerMod2<T extends AnyObj = AnyObj> {

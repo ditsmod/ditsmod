@@ -1,6 +1,5 @@
 import { jest } from '@jest/globals';
 import {
-  ModuleType,
   ModuleWithParams,
   ModuleManager,
   BaseMeta,
@@ -14,6 +13,7 @@ import {
   forwardRef,
   Provider,
   ModuleWithInitParams,
+  ModRefId,
 } from '@ditsmod/core';
 import { coreErrors } from '@ditsmod/core/errors';
 
@@ -27,13 +27,13 @@ import { RestModule } from './rest.module.js';
 
 describe('ModuleManager', () => {
   console.log = jest.fn();
-  type ModuleId = string | ModuleType | ModuleWithParams;
+  type ModuleId = string | ModRefId;
 
   class MockModuleManager extends ModuleManager {
-    override map = new Map<ModuleType | ModuleWithParams, BaseMeta>();
-    override mapId = new Map<string, ModuleType | ModuleWithParams>();
-    override oldMap = new Map<ModuleType | ModuleWithParams, BaseMeta>();
-    override oldMapId = new Map<string, ModuleType | ModuleWithParams>();
+    override map = new Map<ModRefId, BaseMeta>();
+    override mapId = new Map<string, ModRefId>();
+    override oldMap = new Map<ModRefId, BaseMeta>();
+    override oldMapId = new Map<string, ModRefId>();
     override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
       moduleId: ModuleId,
       throwErrIfNotFound?: boolean,

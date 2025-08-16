@@ -2,9 +2,8 @@ import { injectable, Injector } from '#di';
 import { DeepModulesImporter } from '#init/deep-modules-importer.js';
 import { BaseMeta } from '#types/base-meta.js';
 import { ImportedTokensMap } from '#types/metadata-per-mod.js';
-import { ModRefId, ModuleType, Level } from '#types/mix.js';
+import { ModRefId, Level } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
 import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
@@ -21,10 +20,10 @@ describe('DeepModulesImporter', () => {
     ) {
       return super.resolveImportedProviders(targetProviders, importedTokensMap, levels);
     }
-    override addToUnfinishedSearchDependencies(module: ModuleType | ModuleWithParams, provider: Provider) {
+    override addToUnfinishedSearchDependencies(module: ModRefId, provider: Provider) {
       return super.addToUnfinishedSearchDependencies(module, provider);
     }
-    override deleteFromUnfinishedSearchDependencies(module: ModuleType | ModuleWithParams, provider: Provider) {
+    override deleteFromUnfinishedSearchDependencies(module: ModRefId, provider: Provider) {
       return super.deleteFromUnfinishedSearchDependencies(module, provider);
     }
   }

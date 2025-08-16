@@ -5,15 +5,12 @@ import { BaseMeta } from '#types/base-meta.js';
 import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { GlobalProviders, ImportObj, MetadataPerMod1 } from '#types/metadata-per-mod.js';
-import { ModuleType, Level } from '#types/mix.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
+import { ModuleType, Level, ModRefId } from '#types/mix.js';
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { coreErrors } from '#error/core-errors.js';
 import { CustomError } from '#error/custom-error.js';
-
-type ModRefId = ModuleType | ModuleWithParams;
 
 describe('ShallowModulesImporter', () => {
   class Provider1 {}

@@ -3,9 +3,8 @@ import { ConsoleLogger } from '#logger/console-logger.js';
 import { Logger } from '#logger/logger.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { GlobalProviders, ImportObj } from '#types/metadata-per-mod.js';
-import { ModuleType } from '#types/mix.js';
+import { ModRefId } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
 import { ExtensionClass, Extension } from '#extension/extension-types.js';
 import { getImportedTokens } from '#utils/get-imports.js';
 import { getProviderName } from '#utils/get-provider-name.js';
@@ -54,7 +53,7 @@ export class SystemLogMediator extends LogMediator {
   /**
    * `"${moduleName}" has already been imported into "${moduleId}".`
    */
-  moduleAlreadyImported(self: object, inputModule: ModuleType | ModuleWithParams, targetModuleId: string) {
+  moduleAlreadyImported(self: object, inputModule: ModRefId, targetModuleId: string) {
     const className = self.constructor.name;
     const inputModuleId = getDebugClassName(inputModule);
     const msg = `${className}: "${inputModuleId}" has already been imported into "${targetModuleId}".`;
@@ -122,7 +121,7 @@ export class SystemLogMediator extends LogMediator {
   /**
    * `successful added "${inputModuleName}" to "${targetMetaName}".`
    */
-  successfulAddedModuleToImport(self: object, inputModule: ModuleType | ModuleWithParams, targetMetaName: string) {
+  successfulAddedModuleToImport(self: object, inputModule: ModRefId, targetMetaName: string) {
     const className = self.constructor.name;
     const inputModuleName = getDebugClassName(inputModule);
     this.setLog('debug', `${className}: successful added "${inputModuleName}" to "${targetMetaName}".`);

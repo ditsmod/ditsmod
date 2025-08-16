@@ -9,7 +9,7 @@ import { CallsiteUtils } from '#utils/callsites.js';
 import { ModuleManager } from './module-manager.js';
 import { AllInitHooks, BaseInitRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { BaseInitMeta } from '#types/base-meta.js';
-import { ModuleType, AnyObj, ModRefId } from '#types/mix.js';
+import { AnyObj, ModRefId } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { BaseMeta } from '#types/base-meta.js';
 import { InitDecorator } from '#decorators/init-hooks-and-metadata.js';
@@ -19,7 +19,7 @@ import { isModuleWithParams } from '#utils/type-guards.js';
 
 describe('ModuleManager', () => {
   console.log = jest.fn();
-  type ModuleId = string | ModuleType | ModuleWithParams;
+  type ModuleId = string | ModRefId;
   @injectable()
   class Service1 {}
   @injectable()
@@ -28,10 +28,10 @@ describe('ModuleManager', () => {
   class Service3 {}
 
   class MockModuleManager extends ModuleManager {
-    declare map: Map<ModuleType | ModuleWithParams, BaseMeta>;
-    declare mapId: Map<string, ModuleType | ModuleWithParams>;
-    declare oldMap: Map<ModuleType | ModuleWithParams, BaseMeta>;
-    declare oldMapId: Map<string, ModuleType | ModuleWithParams>;
+    declare map: Map<ModRefId, BaseMeta>;
+    declare mapId: Map<string, ModRefId>;
+    declare oldMap: Map<ModRefId, BaseMeta>;
+    declare oldMapId: Map<string, ModRefId>;
 
     override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
       moduleId: ModuleId,

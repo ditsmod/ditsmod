@@ -50,7 +50,7 @@ export class ShallowModulesImporter {
 
   protected importedProvidersPerMod = new Map<any, ImportObj>();
   protected importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
-  protected importedExtensions = new Map<ModuleType | ModuleWithParams, Provider[]>();
+  protected importedExtensions = new Map<ModRefId, Provider[]>();
   protected aImportedExtensionConfig: ExtensionConfig[] = [];
 
   /**
@@ -116,8 +116,8 @@ export class ShallowModulesImporter {
     this.baseMeta.providersPerMod.unshift({ token: ModuleExtract, useValue: moduleExtract });
 
     let perMod: Map<any, ImportObj>;
-    let multiPerMod: Map<ModuleType | ModuleWithParams, Provider[]>;
-    let extensions: Map<ModuleType | ModuleWithParams, Provider[]>;
+    let multiPerMod: Map<ModRefId, Provider[]>;
+    let extensions: Map<ModRefId, Provider[]>;
     let aExtensionConfig: ExtensionConfig[];
     if (baseMeta.isExternal) {
       // External modules do not require global providers and extensions from the application.
@@ -260,13 +260,7 @@ export class ShallowModulesImporter {
     if (collisions.length) {
       const moduleName1 = getDebugClassName(importObj.modRefId) || 'unknown-1';
       const moduleName2 = getDebugClassName(modRefId) || 'unknown-2';
-      throw providersCollision(
-        this.moduleName,
-        [token],
-        [moduleName1, moduleName2],
-        level,
-        this.baseMeta.isExternal,
-      );
+      throw providersCollision(this.moduleName, [token], [moduleName1, moduleName2], level, this.baseMeta.isExternal);
     }
   }
 

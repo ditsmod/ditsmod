@@ -11,7 +11,6 @@ import {
   ModRefId,
   ModuleManager,
   ModuleType,
-  ModuleWithParams,
   BaseMeta,
   rootModule,
   SystemLogMediator,
@@ -137,10 +136,10 @@ describe('mix per app, per mod or per req', () => {
     importedProvidersPerMod = new Map<any, ImportObj>();
     importedProvidersPerRou = new Map<any, ImportObj>();
     importedProvidersPerReq = new Map<any, ImportObj>();
-    importedMultiProvidersPerMod = new Map<ModuleType | ModuleWithParams, Provider[]>();
-    importedMultiProvidersPerRou = new Map<ModuleType | ModuleWithParams, Provider[]>();
-    importedMultiProvidersPerReq = new Map<ModuleType | ModuleWithParams, Provider[]>();
-    importedExtensions = new Map<ModuleType | ModuleWithParams, Provider[]>();
+    importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
+    importedMultiProvidersPerRou = new Map<ModRefId, Provider[]>();
+    importedMultiProvidersPerReq = new Map<ModRefId, Provider[]>();
+    importedExtensions = new Map<ModRefId, Provider[]>();
     aImportedExtensionConfig: ExtensionConfig[] = [];
   }
 

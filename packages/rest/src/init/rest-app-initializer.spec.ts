@@ -7,13 +7,13 @@ import {
   MetadataPerMod1,
   ModuleExtract,
   ModuleManager,
-  ModuleType,
   ModuleWithParams,
   Provider,
   rootModule,
   SystemLogMediator,
   ImportObj,
   ModuleWithInitParams,
+  ModRefId,
 } from '@ditsmod/core';
 import { RestAppInitializer } from './rest-app-initializer.js';
 import { Router } from '../services/router.js';
@@ -21,9 +21,6 @@ import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 
 function getImportedTokens(map: Map<any, ImportObj<Provider>> | undefined) {
   return [...(map || [])].map(([key]) => key);
-}
-
-type ModRefId = ModuleType | ModuleWithParams;
 
 @injectable()
 class AppInitializerMock extends RestAppInitializer {

@@ -18,8 +18,6 @@ import { BaseAppOptions } from '#init/base-app-options.js';
 import { coreErrors } from '#error/core-errors.js';
 
 describe('BaseAppInitializer', () => {
-  type ModRefId = ModuleType | ModuleWithParams;
-
   class AppInitializerMock extends BaseAppInitializer {
     override baseMeta = new BaseMeta();
 

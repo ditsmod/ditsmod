@@ -40,7 +40,7 @@ class MockShallowModulesImporter extends ShallowModulesImporter {
   protected override getResolvedCollisionsPerLevel(
     level: Level,
     token1: any,
-  ): { module2: ModuleType | ModuleWithParams<AnyObj>; providers: Provider[] } {
+  ): { module2: ModRefId<AnyObj>; providers: Provider[] } {
     return super.getResolvedCollisionsPerLevel(level, token1);
   }
 }

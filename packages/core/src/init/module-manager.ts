@@ -75,7 +75,7 @@ export class ModuleManager {
   /**
    * Returns a snapshot of `BaseMeta` for a module.
    */
-  scanModule(modOrObj: ModuleType | ModuleWithParams) {
+  scanModule(modOrObj: ModRefId) {
     const baseMeta = this.scanRawModule(modOrObj);
     return this.copyBaseMeta(baseMeta);
   }

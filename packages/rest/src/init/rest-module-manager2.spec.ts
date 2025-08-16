@@ -3,11 +3,11 @@ import {
   clearDebugClassNames,
   featureModule,
   ModuleManager,
-  ModuleType,
   ModuleWithParams,
   BaseMeta,
   rootModule,
   SystemLogMediator,
+  ModRefId,
 } from '@ditsmod/core';
 
 import { CanActivate, guard } from '../interceptors/guard.js';
@@ -18,13 +18,13 @@ import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 
 let mock: MockModuleManager;
 
-type ModuleId = string | ModuleType | ModuleWithParams;
+type ModuleId = string | ModRefId;
 
 class MockModuleManager extends ModuleManager {
-  override map = new Map<ModuleType | ModuleWithParams, BaseMeta>();
-  override mapId = new Map<string, ModuleType | ModuleWithParams>();
-  override oldMap = new Map<ModuleType | ModuleWithParams, BaseMeta>();
-  override oldMapId = new Map<string, ModuleType | ModuleWithParams>();
+  override map = new Map<ModRefId, BaseMeta>();
+  override mapId = new Map<string, ModRefId>();
+  override oldMap = new Map<ModRefId, BaseMeta>();
+  override oldMapId = new Map<string, ModRefId>();
   override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound?: boolean,

@@ -7,7 +7,6 @@ import {
   isNormalizedProvider,
   isProvider,
   mergeArrays,
-  ModuleType,
   ModuleWithParams,
   MultiProvider,
   BaseMeta,
@@ -22,6 +21,7 @@ import {
   Provider,
   isClassProvider,
   isTokenProvider,
+  ModRefId,
 } from '@ditsmod/core';
 
 import { AppendsWithParams, RestInitRawMeta, RestModuleParams } from '#init/rest-init-raw-meta.js';
@@ -232,7 +232,7 @@ export class RestModuleNormalizer {
   }
 
   protected throwIfResolvingNormalizedProvider(meta: RestInitMeta) {
-    const resolvedCollisionsPerLevel: [any, ModuleType | ModuleWithParams][] = [];
+    const resolvedCollisionsPerLevel: [any, ModRefId][] = [];
     if (Array.isArray(meta.resolvedCollisionsPerRou)) {
       resolvedCollisionsPerLevel.push(...meta.resolvedCollisionsPerRou);
     }

@@ -4,10 +4,10 @@ import {
   Class,
   Provider,
   Providers,
-  ModuleWithParams,
   AnyFn,
   BaseInitRawMeta,
   FeatureModuleParams,
+  ModRefId,
 } from '@ditsmod/core';
 
 import { GuardItem } from '#interceptors/guard.js';
@@ -28,12 +28,12 @@ export interface RestInitRawMeta extends BaseInitRawMeta<RestModuleParams> {
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  resolvedCollisionsPerRou?: [any, ModuleType | ModuleWithParams][];
+  resolvedCollisionsPerRou?: [any, ModRefId][];
   /**
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  resolvedCollisionsPerReq?: [any, ModuleType | ModuleWithParams][];
+  resolvedCollisionsPerReq?: [any, ModRefId][];
   /**
    * List of modules that contain controllers. Providers from these modules
    * are not imported into the current module. If the current module has a prefix path,
