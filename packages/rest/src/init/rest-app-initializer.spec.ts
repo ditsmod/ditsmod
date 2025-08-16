@@ -107,13 +107,13 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
     });
 
     function checkGlobalProviders(metadataPerMod1: NewShallowImports | undefined) {
-      const tokensPerMod = getImportedTokens(metadataPerMod1?.importedTokensMap.perMod).slice(0, 3);
+      const tokensPerMod = getImportedTokens(metadataPerMod1?.baseImportRegistry.perMod).slice(0, 3);
       expect(tokensPerMod).toEqual([Provider0, Provider3, Provider4]);
-      const tokensPerReq = getImportedTokens(metadataPerMod1?.importedTokensMap.perReq).slice(0, 3);
+      const tokensPerReq = getImportedTokens(metadataPerMod1?.baseImportRegistry.perReq).slice(0, 3);
       expect(tokensPerReq).toEqual([Provider5, Provider6, Provider7]);
 
       // Global providers per a module
-      const perMod = metadataPerMod1?.importedTokensMap?.perMod!;
+      const perMod = metadataPerMod1?.baseImportRegistry?.perMod!;
       const expectedPerMod = new ProviderImport();
 
       expectedPerMod.modRefId = Module0;
@@ -127,7 +127,7 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
       expect(perMod.get(Provider4)).toEqual(expectedPerMod);
 
       // Global providers per a request
-      const perReq = metadataPerMod1?.importedTokensMap.perReq!;
+      const perReq = metadataPerMod1?.baseImportRegistry.perReq!;
       const expectedPerReq = new ProviderImport();
       expectedPerReq.modRefId = module3WithParams;
       expectedPerReq.providers = [Provider5];
@@ -205,8 +205,8 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
       expect(root1?.baseMeta.providersPerMod).toEqual([providerPerMod]);
       expect(root1?.baseMeta.providersPerReq).toEqual([]);
       checkGlobalProviders(root1);
-      expect(getImportedTokens(root1?.importedTokensMap.perMod)).toEqual([Provider0, Provider3, Provider4, Provider1]);
-      expect(getImportedTokens(root1?.importedTokensMap.perReq)).toEqual([
+      expect(getImportedTokens(root1?.baseImportRegistry.perMod)).toEqual([Provider0, Provider3, Provider4, Provider1]);
+      expect(getImportedTokens(root1?.baseImportRegistry.perReq)).toEqual([
         Provider5,
         Provider6,
         Provider7,

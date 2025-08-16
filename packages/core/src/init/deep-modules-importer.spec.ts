@@ -8,17 +8,17 @@ import { ModuleManager } from '#init/module-manager.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { coreErrors } from '#error/core-errors.js';
-import { ImportedTokensMap } from './types.js';
+import { BaseImportRegistry } from './types.js';
 
 describe('DeepModulesImporter', () => {
   @injectable()
   class DeepModulesImporterMock extends DeepModulesImporter {
     override resolveImportedProviders(
       targetProviders: BaseMeta,
-      importedTokensMap: ImportedTokensMap,
+      baseImportRegistry: BaseImportRegistry,
       levels: Level[],
     ) {
-      return super.resolveImportedProviders(targetProviders, importedTokensMap, levels);
+      return super.resolveImportedProviders(targetProviders, baseImportRegistry, levels);
     }
     override addToUnfinishedSearchDependencies(module: ModRefId, provider: Provider) {
       return super.addToUnfinishedSearchDependencies(module, provider);

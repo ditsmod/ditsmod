@@ -184,7 +184,7 @@ export class ShallowModulesImporter {
       guards1: this.guards1,
       meta: this.meta,
       applyControllers,
-      importedTokensMap: {
+      baseImportRegistry: {
         perMod,
         perRou,
         perReq,
@@ -425,7 +425,7 @@ export class ShallowModulesImporter {
     // if (this.shallowImportsBase) {
     //   // When calling this.importModulesShallow()
     //   const metadataPerMod1 = this.shallowImportsBase.get(this.baseMeta.modRefId)!;
-    //   perMod = metadataPerMod1.importedTokensMap.perMod;
+    //   perMod = metadataPerMod1.baseImportRegistry.perMod;
     // } else {
     //   // When calling this.exportGlobalProviders()
     //   perMod = this.glProviders.importedProvidersPerMod;

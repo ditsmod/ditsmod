@@ -35,11 +35,11 @@ export class RestMetadataPerMod1 {
   /**
    * Map between a token and its ProviderImport per level.
    */
-  importedTokensMap: RestImportedTokensMap;
+  baseImportRegistry: RestBaseImportRegistry;
   applyControllers?: boolean;
 }
 
-export interface RestImportedTokensMap {
+export interface RestBaseImportRegistry {
   perMod: Map<any, RestProviderImport>;
   perRou: Map<any, RestProviderImport>;
   perReq: Map<any, RestProviderImport>;

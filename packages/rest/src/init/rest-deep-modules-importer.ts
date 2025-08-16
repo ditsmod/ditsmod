@@ -15,7 +15,7 @@ import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js'
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
 import {
   DeepModulesImporterConfig,
-  RestImportedTokensMap,
+  RestBaseImportRegistry,
   RestMetadataPerMod1,
   RestMetadataPerMod2,
   RestProvidersOnly,
@@ -56,9 +56,9 @@ export class RestDeepModulesImporter {
   importModulesDeep(): RestMetadataPerMod2 | undefined {
     const levels: Level[] = ['Req', 'Rou', 'Mod'];
     this.tokensPerApp = getTokens(this.providersPerApp);
-    const { importedTokensMap, guards1, prefixPerMod, meta, applyControllers, baseMeta } = this.metadataPerMod1;
+    const { baseImportRegistry, guards1, prefixPerMod, meta, applyControllers, baseMeta } = this.metadataPerMod1;
     const targetProviders = new RestProvidersOnly();
-    this.resolveImportedProviders(targetProviders, importedTokensMap, levels);
+    this.resolveImportedProviders(targetProviders, baseImportRegistry, levels);
     baseMeta.providersPerMod.unshift(...targetProviders.providersPerMod);
     meta.providersPerMod.splice(0);
     meta.providersPerMod.push(...baseMeta.providersPerMod);
@@ -75,18 +75,18 @@ export class RestDeepModulesImporter {
 
   protected resolveImportedProviders(
     meta: RestProvidersOnly,
-    importedTokensMap: RestImportedTokensMap,
+    baseImportRegistry: RestBaseImportRegistry,
     levels: Level[],
   ) {
     levels.forEach((level, i) => {
-      importedTokensMap[`per${level}`].forEach((providerImport) => {
+      baseImportRegistry[`per${level}`].forEach((providerImport) => {
         meta[`providersPer${level}`].unshift(...providerImport.providers);
         providerImport.providers.forEach((importedProvider) => {
           this.fetchDeps(meta, providerImport.modRefId, importedProvider, levels.slice(i));
         });
       });
 
-      importedTokensMap[`multiPer${level}`].forEach((multiProviders, srcModule) => {
+      baseImportRegistry[`multiPer${level}`].forEach((multiProviders, srcModule) => {
         meta[`providersPer${level}`].unshift(...multiProviders);
         multiProviders.forEach((importedProvider) => {
           this.fetchDeps(meta, srcModule, importedProvider, levels.slice(i));
@@ -155,8 +155,8 @@ export class RestDeepModulesImporter {
     let found = false;
     const metadataPerMod1 = this.shallowImports.get(srcModRefId1)!;
     for (const level of levels) {
-      const restMetadataPerMod1 = metadataPerMod1.initMap.get(initRest) as RestMetadataPerMod1;
-      const providerImport = restMetadataPerMod1.importedTokensMap[`per${level}`].get(dep.token);
+      const restMetadataPerMod1 = metadataPerMod1.initImportRegistryMap.get(initRest) as RestMetadataPerMod1;
+      const providerImport = restMetadataPerMod1.baseImportRegistry[`per${level}`].get(dep.token);
       if (providerImport) {
         found = true;
         path.push(dep.token);

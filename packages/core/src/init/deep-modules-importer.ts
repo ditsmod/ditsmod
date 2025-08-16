@@ -4,7 +4,7 @@ import { defaultExtensionsProviders } from '#extension/default-extensions-provid
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
-import { ImportedTokensMap, ShallowImports } from '#init/types.js';
+import { BaseImportRegistry, ShallowImports } from '#init/types.js';
 import { MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import { Level, ModRefId, AnyFn, AnyObj } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
@@ -55,15 +55,15 @@ export class DeepModulesImporter {
     const levels: Level[] = ['Mod'];
     const mMetadataPerMod2 = new Map<ModRefId, MetadataPerMod2>();
     this.tokensPerApp = getTokens(this.providersPerApp);
-    this.shallowImports.forEach(({ baseMeta, importedTokensMap, initMap }, modRefId) => {
+    this.shallowImports.forEach(({ baseMeta, baseImportRegistry, initImportRegistryMap }, modRefId) => {
       const deepImportedModules = new Map<AnyFn, AnyObj>();
       mMetadataPerMod2.set(modRefId, { baseMeta, deepImportedModules });
       const targetProviders = new ProvidersOnly<Provider[]>();
-      this.resolveImportedProviders(targetProviders, importedTokensMap, levels);
-      this.resolveProvidersForExtensions(baseMeta, importedTokensMap);
+      this.resolveImportedProviders(targetProviders, baseImportRegistry, levels);
+      this.resolveProvidersForExtensions(baseMeta, baseImportRegistry);
       baseMeta.providersPerMod.unshift(...targetProviders.providersPerMod);
       baseMeta.allInitHooks.forEach((initHooks, decorator) => {
-        const shallowImportedModule = initMap.get(decorator)!;
+        const shallowImportedModule = initImportRegistryMap.get(decorator)!;
         const deepImports = initHooks.importModulesDeep({
           parent: this,
           metadataPerMod1: shallowImportedModule,
@@ -81,18 +81,18 @@ export class DeepModulesImporter {
 
   protected resolveImportedProviders(
     targetProviders: ProvidersOnly<Provider[]>,
-    importedTokensMap: ImportedTokensMap,
+    baseImportRegistry: BaseImportRegistry,
     levels: Level[],
   ) {
     levels.forEach((level, i) => {
-      importedTokensMap[`per${level}`].forEach((providerImport) => {
+      baseImportRegistry[`per${level}`].forEach((providerImport) => {
         targetProviders[`providersPer${level}`].unshift(...providerImport.providers);
         providerImport.providers.forEach((importedProvider) => {
           this.fetchDeps(targetProviders, providerImport.modRefId, importedProvider, levels.slice(i));
         });
       });
 
-      importedTokensMap[`multiPer${level}`].forEach((multiProviders, srcModule) => {
+      baseImportRegistry[`multiPer${level}`].forEach((multiProviders, srcModule) => {
         targetProviders[`providersPer${level}`].unshift(...multiProviders);
         multiProviders.forEach((importedProvider) => {
           this.fetchDeps(targetProviders, srcModule, importedProvider, levels.slice(i));
@@ -101,14 +101,14 @@ export class DeepModulesImporter {
     });
   }
 
-  protected resolveProvidersForExtensions(targetProviders: BaseMeta, importedTokensMap: ImportedTokensMap) {
+  protected resolveProvidersForExtensions(targetProviders: BaseMeta, baseImportRegistry: BaseImportRegistry) {
     const currentExtensionsTokens: any[] = [];
-    importedTokensMap.extensions.forEach((providers) => {
+    baseImportRegistry.extensions.forEach((providers) => {
       currentExtensionsTokens.push(...getTokens(providers));
     });
     this.extensionsTokens = getTokens([...defaultExtensionsProviders, ...currentExtensionsTokens]);
 
-    importedTokensMap.extensions.forEach((importedProviders, srcModule) => {
+    baseImportRegistry.extensions.forEach((importedProviders, srcModule) => {
       const newProviders = importedProviders.filter((np) => {
         for (const ep of targetProviders.extensionsProviders) {
           if (ep === np) {
@@ -226,7 +226,7 @@ export class DeepModulesImporter {
     let found = false;
     const metadataPerMod1 = this.shallowImports.get(srcModRefId1)!;
     for (const level of levels) {
-      const providerImport = metadataPerMod1.importedTokensMap[`per${level}`].get(dep.token);
+      const providerImport = metadataPerMod1.baseImportRegistry[`per${level}`].get(dep.token);
       if (providerImport) {
         found = true;
         path.push(dep.token);
@@ -312,7 +312,7 @@ export class DeepModulesImporter {
     let found = false;
     const metadataPerMod1 = this.shallowImports.get(srcModRefId1)!;
     forLevel: for (const level of levels) {
-      const providerImport = metadataPerMod1.importedTokensMap[`per${level}`].get(dep.token);
+      const providerImport = metadataPerMod1.baseImportRegistry[`per${level}`].get(dep.token);
       if (providerImport) {
         found = true;
         const { modRefId: modRefId2, providers: srcProviders2 } = providerImport;

@@ -17,20 +17,20 @@ export class NewShallowImports<T extends AnyObj = AnyObj> {
   /**
    * Map between a token and its ProviderImport per level.
    */
-  importedTokensMap: ImportedTokensMap;
-  initMap = new Map<AnyFn, { baseMeta: BaseMeta } & T>();
+  baseImportRegistry: BaseImportRegistry;
+  initImportRegistryMap = new Map<AnyFn, { baseMeta: BaseMeta } & T>();
 
-  constructor(baseMeta?: BaseMeta, importedTokensMap?: ImportedTokensMap) {
+  constructor(baseMeta?: BaseMeta, baseImportRegistry?: BaseImportRegistry) {
     if (baseMeta) {
       this.baseMeta = baseMeta;
     }
-    if (importedTokensMap) {
-      this.importedTokensMap = importedTokensMap;
+    if (baseImportRegistry) {
+      this.baseImportRegistry = baseImportRegistry;
     }
   }
 }
 
-export interface ImportedTokensMap {
+export interface BaseImportRegistry {
   /**
    * `Map<token, ProviderImport>`
    */

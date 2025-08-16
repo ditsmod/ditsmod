@@ -292,10 +292,10 @@ describe('shallow importing modules', () => {
     expect(metadataPerMod1_1.prefixPerMod).toBe('prefix1');
     expect(metadataPerMod1_1.baseMeta).toBeDefined();
     // expect(metadataPerMod1_1.applyControllers).toBe(true);
-    expect(metadataPerMod1_1.importedTokensMap.perRou).toEqual(new Map());
-    expect(metadataPerMod1_1.importedTokensMap.perReq).toEqual(new Map());
-    expect(metadataPerMod1_1.importedTokensMap.multiPerRou).toEqual(new Map());
-    expect(metadataPerMod1_1.importedTokensMap.multiPerReq).toEqual(new Map());
+    expect(metadataPerMod1_1.baseImportRegistry.perRou).toEqual(new Map());
+    expect(metadataPerMod1_1.baseImportRegistry.perReq).toEqual(new Map());
+    expect(metadataPerMod1_1.baseImportRegistry.multiPerRou).toEqual(new Map());
+    expect(metadataPerMod1_1.baseImportRegistry.multiPerReq).toEqual(new Map());
 
     expect(metadataPerMod1_2.prefixPerMod).toBe('prefix2');
     expect(metadataPerMod1_3.prefixPerMod).toBe('');
@@ -444,10 +444,10 @@ describe('shallow importing modules', () => {
     expect(metadataPerMod1_1.prefixPerMod).toBe('prefix1');
     expect(metadataPerMod1_1.baseMeta).toBeDefined();
     // expect(metadataPerMod1_1.applyControllers).toBe(true);
-    expect(metadataPerMod1_1.importedTokensMap.perRou).toEqual(new Map());
-    expect(metadataPerMod1_1.importedTokensMap.perReq).toEqual(new Map());
-    expect(metadataPerMod1_1.importedTokensMap.multiPerRou).toEqual(new Map());
-    expect(metadataPerMod1_1.importedTokensMap.multiPerReq).toEqual(new Map());
+    expect(metadataPerMod1_1.baseImportRegistry.perRou).toEqual(new Map());
+    expect(metadataPerMod1_1.baseImportRegistry.perReq).toEqual(new Map());
+    expect(metadataPerMod1_1.baseImportRegistry.multiPerRou).toEqual(new Map());
+    expect(metadataPerMod1_1.baseImportRegistry.multiPerReq).toEqual(new Map());
 
     expect(metadataPerMod1_2.prefixPerMod).toBe('prefix2');
     expect(metadataPerMod1_3.prefixPerMod).toBe('');
