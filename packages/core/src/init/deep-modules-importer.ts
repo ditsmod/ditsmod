@@ -4,8 +4,8 @@ import { defaultExtensionsProviders } from '#extension/default-extensions-provid
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
-import { ShallowImports } from '#init/types.js';
-import { ImportedTokensMap, MetadataPerMod2 } from '#types/metadata-per-mod.js';
+import { ImportedTokensMap, ShallowImports } from '#init/types.js';
+import { MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import { Level, ModRefId, AnyFn, AnyObj } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { BaseMeta } from '#types/base-meta.js';

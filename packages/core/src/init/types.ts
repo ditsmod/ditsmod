@@ -1,6 +1,7 @@
 import { AnyFn, AnyObj, ModRefId } from '#types/mix.js';
 import { BaseMeta } from '#types/base-meta.js';
-import { ImportedTokensMap } from '#types/metadata-per-mod.js';
+import { ProviderImport } from '#types/metadata-per-mod.js';
+import { Provider } from '#di/types-and-models.js';
 
 export type ShallowImports<T extends AnyObj = AnyObj> = Map<ModRefId, NewShallowImports<T>>;
 
@@ -27,4 +28,13 @@ export class NewShallowImports<T extends AnyObj = AnyObj> {
       this.importedTokensMap = importedTokensMap;
     }
   }
+}
+
+export interface ImportedTokensMap {
+  /**
+   * `Map<token, ProviderImport>`
+   */
+  perMod: Map<any, ProviderImport>;
+  multiPerMod: Map<ModRefId, Provider[]>;
+  extensions: Map<ModRefId, Provider[]>;
 }

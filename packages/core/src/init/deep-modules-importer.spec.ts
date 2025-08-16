@@ -1,7 +1,6 @@
 import { injectable, Injector } from '#di';
 import { DeepModulesImporter } from '#init/deep-modules-importer.js';
 import { BaseMeta } from '#types/base-meta.js';
-import { ImportedTokensMap } from '#types/metadata-per-mod.js';
 import { ModRefId, Level } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
@@ -9,6 +8,7 @@ import { ModuleManager } from '#init/module-manager.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { coreErrors } from '#error/core-errors.js';
+import { ImportedTokensMap } from './types.js';
 
 describe('DeepModulesImporter', () => {
   @injectable()

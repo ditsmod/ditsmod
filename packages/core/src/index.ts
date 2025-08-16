@@ -3,12 +3,11 @@ export * from '@ts-stack/chain-error';
 
 export { defaultProvidersPerMod } from '#init/default-providers-per-mod.js';
 export { BaseAppInitializer } from '#init/base-app-initializer.js';
-export { ShallowImports, NewShallowImports } from '#init/types.js';
+export { ShallowImports, NewShallowImports, ImportedTokensMap } from '#init/types.js';
 export { BaseApplication } from '#init/base-application.js';
 export { BaseAppOptions } from '#init/base-app-options.js';
 export { copyBaseInitMeta } from '#init/copy-base-init-meta.js';
 export { DeepModulesImporter } from '#init/deep-modules-importer.js';
-export { ImportedTokensMap } from '#types/metadata-per-mod.js';
 export { GlobalProviders, GlobalInitHooks } from '#types/metadata-per-mod.js';
 export { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 export { defaultProvidersPerApp } from '#init/default-providers-per-app.js';

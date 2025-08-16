@@ -30,15 +30,6 @@ export class GlobalProviders {
   mInitValue = new Map<AnyFn, GlobalInitHooks>();
 }
 
-export interface ImportedTokensMap {
-  /**
-   * `Map<token, ProviderImport>`
-   */
-  perMod: Map<any, ProviderImport>;
-  multiPerMod: Map<ModRefId, Provider[]>;
-  extensions: Map<ModRefId, Provider[]>;
-}
-
 export class MetadataPerMod2<T extends AnyObj = AnyObj> {
   baseMeta: BaseMeta;
   deepImportedModules: Map<AnyFn, T>;
