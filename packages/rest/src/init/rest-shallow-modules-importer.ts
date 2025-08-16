@@ -134,7 +134,9 @@ export class ShallowModulesImporter {
       moduleName: baseMeta.name,
       isExternal: baseMeta.isExternal,
     };
-    baseMeta.providersPerMod.push({ token: ModuleExtract, useValue: moduleExtract });
+    const provider = { token: ModuleExtract, useValue: moduleExtract };
+    baseMeta.providersPerMod.push(provider);
+    this.meta.providersPerMod.push(provider);
     this.checkImportsAndAppends(baseMeta, this.meta);
     this.importAndAppendModules();
 
@@ -338,13 +340,7 @@ export class ShallowModulesImporter {
     if (collisions.length) {
       const moduleName1 = getDebugClassName(providerImport.modRefId) || 'unknown-1';
       const moduleName2 = getDebugClassName(modRefId) || 'unknown-2';
-      throw providersCollision(
-        this.moduleName,
-        [token],
-        [moduleName1, moduleName2],
-        level,
-        this.baseMeta.isExternal,
-      );
+      throw providersCollision(this.moduleName, [token], [moduleName1, moduleName2], level, this.baseMeta.isExternal);
     }
   }
 

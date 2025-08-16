@@ -593,8 +593,8 @@ describe('DeepModulesImporter', () => {
     const restMetadataPerMod2 = mod1?.deepImportedModules.get(initRest) as RestMetadataPerMod2;
     expect(restMetadataPerMod2.guards1.at(0)?.guard).toBe(BearerGuard1);
 
-    // Guards per a module must have ref to host module meta.
-    expect(restMetadataPerMod2.guards1.at(0)?.baseMeta).toBe(mMetadataPerMod2.get(AppModule)!.baseMeta);
+    // Guards per a module must have ref to host module baseMeta.
+    expect(restMetadataPerMod2.guards1.at(0)?.baseMeta.modRefId === AppModule).toBe(true);
 
     // The injector must have enough providers to create a guard instance.
     const injector = Injector.resolveAndCreate(restMetadataPerMod2.guards1.at(0)?.meta.providersPerRou || []);

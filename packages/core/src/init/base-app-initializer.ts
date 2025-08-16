@@ -14,7 +14,7 @@ import { ModuleManager } from '#init/module-manager.js';
 import { PerAppService } from '#services/per-app.service.js';
 import { ModRefId } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
-import { ExtensionCounters } from '#extension/extension-types.js';
+import { ExtensionClass, ExtensionCounters } from '#extension/extension-types.js';
 import { getCollisions } from '#utils/get-collisions.js';
 import { getDuplicates } from '#utils/get-duplicates.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
@@ -245,8 +245,10 @@ export class BaseAppInitializer {
     const injectorPerApp = this.perAppService.reinitInjector([{ token: PerAppService, useValue: this.perAppService }]);
 
     for (const [, metadataPerMod2] of mMetadataPerMod2) {
-      let { baseMeta } = metadataPerMod2;
-      baseMeta = this.overrideMetaBeforeExtensionHanling(baseMeta);
+      const { baseMeta, aOrderedExtensions } = this.overrideMetaBeforeExtensionHanling(
+        metadataPerMod2.baseMeta,
+        metadataPerMod2.aOrderedExtensions,
+      );
       const injectorPerMod = injectorPerApp.resolveAndCreateChild(baseMeta.providersPerMod, 'Mod');
       injectorPerMod.pullAndSave(Logger);
       const systemLogMediator = injectorPerMod.pullAndSave(SystemLogMediator) as SystemLogMediator;
@@ -261,7 +263,7 @@ export class BaseAppInitializer {
 
       systemLogMediator.startExtensions(this);
       this.decreaseExtensionsCounters(extensionCounters, extensionsProviders);
-      await this.handleExtensionsPerMod(baseMeta, extensionsManager, systemLogMediator);
+      await this.handleExtensionsPerMod(baseMeta, aOrderedExtensions, extensionsManager, systemLogMediator);
       this.logExtensionsStatistic(injectorPerApp, systemLogMediator);
     }
     await this.perAppHandling(mMetadataPerMod2, extensionsContext);
@@ -353,11 +355,12 @@ export class BaseAppInitializer {
 
   protected async handleExtensionsPerMod(
     baseMeta: BaseMeta,
+    aOrderedExtensions: ExtensionClass[],
     extensionsManager: InternalExtensionsManager,
     systemLogMediator: SystemLogMediator,
   ) {
-    systemLogMediator.sequenceOfExtensions(this, baseMeta.aOrderedExtensions);
-    await extensionsManager.internalStage1(baseMeta);
+    systemLogMediator.sequenceOfExtensions(this, aOrderedExtensions);
+    await extensionsManager.internalStage1(baseMeta, aOrderedExtensions);
   }
 
   /**
@@ -365,8 +368,8 @@ export class BaseAppInitializer {
    *
    * See `TestAppInitializer` in `@ditsmod/testing` for more info.
    */
-  protected overrideMetaBeforeExtensionHanling(baseMeta: BaseMeta) {
-    return baseMeta;
+  protected overrideMetaBeforeExtensionHanling(baseMeta: BaseMeta, aOrderedExtensions: ExtensionClass[]) {
+    return { baseMeta, aOrderedExtensions };
   }
 
   /**

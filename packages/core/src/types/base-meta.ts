@@ -23,7 +23,6 @@ export class BaseInitMeta<A extends AnyObj = AnyObj> {
   extensionsProviders: Provider[] = [];
   exportedExtensionsProviders: Provider[] = [];
   aExtensionConfig: ExtensionConfig[] = [];
-  aOrderedExtensions: ExtensionClass[] = [];
   aExportedExtensionConfig: ExtensionConfig[] = [];
   /**
    * This property allows you to pass any information to extensions.

@@ -2,6 +2,7 @@ import { AnyFn, AnyObj, ModRefId } from '#types/mix.js';
 import { BaseMeta } from '#types/base-meta.js';
 import { ProviderImport } from '#types/metadata-per-mod.js';
 import { Provider } from '#di/types-and-models.js';
+import { ExtensionClass } from '#extension/extension-types.js';
 
 export type ShallowImports<T extends AnyObj = AnyObj> = Map<ModRefId, NewShallowImports<T>>;
 
@@ -19,10 +20,14 @@ export class NewShallowImports<T extends AnyObj = AnyObj> {
    */
   baseImportRegistry: BaseImportRegistry;
   initImportRegistryMap = new Map<AnyFn, { baseMeta: BaseMeta } & T>();
+  aOrderedExtensions: ExtensionClass[] = [];
 
-  constructor(baseMeta?: BaseMeta, baseImportRegistry?: BaseImportRegistry) {
+  constructor(baseMeta?: BaseMeta, aOrderedExtensions?: ExtensionClass[], baseImportRegistry?: BaseImportRegistry) {
     if (baseMeta) {
       this.baseMeta = baseMeta;
+    }
+    if (aOrderedExtensions) {
+      this.aOrderedExtensions = aOrderedExtensions;
     }
     if (baseImportRegistry) {
       this.baseImportRegistry = baseImportRegistry;

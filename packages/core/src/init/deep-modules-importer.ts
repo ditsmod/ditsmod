@@ -55,26 +55,28 @@ export class DeepModulesImporter {
     const levels: Level[] = ['Mod'];
     const mMetadataPerMod2 = new Map<ModRefId, MetadataPerMod2>();
     this.tokensPerApp = getTokens(this.providersPerApp);
-    this.shallowImports.forEach(({ baseMeta, baseImportRegistry, initImportRegistryMap }, modRefId) => {
-      const deepImportedModules = new Map<AnyFn, AnyObj>();
-      mMetadataPerMod2.set(modRefId, { baseMeta, deepImportedModules });
-      const targetProviders = new ProvidersOnly<Provider[]>();
-      this.resolveImportedProviders(targetProviders, baseImportRegistry, levels);
-      this.resolveProvidersForExtensions(baseMeta, baseImportRegistry);
-      baseMeta.providersPerMod.unshift(...targetProviders.providersPerMod);
-      baseMeta.allInitHooks.forEach((initHooks, decorator) => {
-        const shallowImportedModule = initImportRegistryMap.get(decorator)!;
-        const deepImports = initHooks.importModulesDeep({
-          parent: this,
-          metadataPerMod1: shallowImportedModule,
-          moduleManager: this.moduleManager,
-          shallowImports: this.shallowImports,
-          providersPerApp: this.providersPerApp,
-          log: this.log,
+    this.shallowImports.forEach(
+      ({ baseMeta, aOrderedExtensions, baseImportRegistry, initImportRegistryMap }, modRefId) => {
+        const deepImportedModules = new Map<AnyFn, AnyObj>();
+        mMetadataPerMod2.set(modRefId, { baseMeta, aOrderedExtensions, deepImportedModules });
+        const targetProviders = new ProvidersOnly<Provider[]>();
+        this.resolveImportedProviders(targetProviders, baseImportRegistry, levels);
+        this.resolveProvidersForExtensions(baseMeta, baseImportRegistry);
+        baseMeta.providersPerMod.unshift(...targetProviders.providersPerMod);
+        baseMeta.allInitHooks.forEach((initHooks, decorator) => {
+          const shallowImportedModule = initImportRegistryMap.get(decorator)!;
+          const deepImports = initHooks.importModulesDeep({
+            parent: this,
+            metadataPerMod1: shallowImportedModule,
+            moduleManager: this.moduleManager,
+            shallowImports: this.shallowImports,
+            providersPerApp: this.providersPerApp,
+            log: this.log,
+          });
+          deepImportedModules.set(decorator, deepImports);
         });
-        deepImportedModules.set(decorator, deepImports);
-      });
-    });
+      },
+    );
 
     return { extensionCounters: this.extensionCounters, mMetadataPerMod2 };
   }

@@ -133,11 +133,11 @@ export class ShallowModulesImporter {
 
     const allExtensionConfigs = baseMeta.aExtensionConfig.concat(aExtensionConfig);
     this.checkExtensionsGraph(allExtensionConfigs);
-    baseMeta.aOrderedExtensions = topologicalSort<ExtensionClass, ExtensionConfigBase>(allExtensionConfigs, true);
+    const aOrderedExtensions = topologicalSort<ExtensionClass, ExtensionConfigBase>(allExtensionConfigs, true);
 
     return this.shallowImportsMap.set(
       modRefId,
-      new NewShallowImports(this.baseMeta, {
+      new NewShallowImports(this.baseMeta, aOrderedExtensions, {
         perMod,
         multiPerMod,
         extensions,

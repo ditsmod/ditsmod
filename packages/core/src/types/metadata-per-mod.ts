@@ -3,6 +3,7 @@ import { AnyFn, AnyObj, ModRefId } from './mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { BaseInitRawMeta, InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
+import { ExtensionClass } from '#extension/extension-types.js';
 
 /**
  * Used to create a mapping between a provider and the module from which it was imported.
@@ -32,5 +33,6 @@ export class GlobalProviders {
 
 export class MetadataPerMod2<T extends AnyObj = AnyObj> {
   baseMeta: BaseMeta;
+  aOrderedExtensions: ExtensionClass[];
   deepImportedModules: Map<AnyFn, T>;
 }

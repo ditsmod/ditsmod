@@ -239,11 +239,11 @@ export class ExtensionsManager {
 
 @injectable()
 export class InternalExtensionsManager extends ExtensionsManager {
-  async internalStage1(meta: BaseMeta) {
-    this.moduleName = meta.name;
+  async internalStage1(baseMeta: BaseMeta, aOrderedExtensions: ExtensionClass[]) {
+    this.moduleName = baseMeta.name;
     const stageIterationMap = new Map() as StageIterationMap;
     this.stageIterationMap = stageIterationMap;
-    meta.aOrderedExtensions.forEach((ExtCls, index) => {
+    aOrderedExtensions.forEach((ExtCls, index) => {
       stageIterationMap.set(ExtCls, new StageIteration(index));
     });
 
@@ -253,11 +253,11 @@ export class InternalExtensionsManager extends ExtensionsManager {
         await this.stage1(ExtCls);
         this.updateExtensionPendingList();
       } catch (err: any) {
-        const moduleName = getDebugClassName(meta.modRefId) || '""';
+        const moduleName = getDebugClassName(baseMeta.modRefId) || '""';
         throw extensionIsFailed(ExtCls.name, moduleName, err);
       }
     }
-    this.setExtensionsToStage2(meta.modRefId);
+    this.setExtensionsToStage2(baseMeta.modRefId);
   }
 
   protected setExtensionsToStage2(modRefId: ModRefId) {
