@@ -30,21 +30,6 @@ export class GlobalProviders {
   mInitValue = new Map<AnyFn, GlobalInitHooks>();
 }
 
-/**
- * Metadata collected using `ShallowModulesImporter`. The target for this metadata is `DeepModulesImporter`.
- */
-export class MetadataPerMod1 {
-  /**
-   * Snapshot of BaseMeta. If you modify any array in this object,
-   * the original array will remain unchanged.
-   */
-  baseMeta: BaseMeta;
-  /**
-   * Map between a token and its ProviderImport per level.
-   */
-  importedTokensMap: ImportedTokensMap;
-}
-
 export interface ImportedTokensMap {
   /**
    * `Map<token, ProviderImport>`

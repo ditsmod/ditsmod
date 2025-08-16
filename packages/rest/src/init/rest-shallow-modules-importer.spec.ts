@@ -5,7 +5,6 @@ import {
   forwardRef,
   GlobalProviders,
   injectable,
-  MetadataPerMod1,
   ModRefId,
   ModuleManager,
   ModuleType,

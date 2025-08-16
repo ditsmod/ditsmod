@@ -4,7 +4,7 @@ import { rootModule } from '#decorators/root-module.js';
 import { BaseMeta } from '#types/base-meta.js';
 import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import { ModuleManager } from '#init/module-manager.js';
-import { GlobalProviders, ProviderImport, MetadataPerMod1 } from '#types/metadata-per-mod.js';
+import { GlobalProviders, ProviderImport } from '#types/metadata-per-mod.js';
 import { ModuleType, Level, ModRefId } from '#types/mix.js';
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';

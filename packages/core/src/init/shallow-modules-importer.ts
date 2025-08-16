@@ -134,13 +134,15 @@ export class ShallowModulesImporter {
     const allExtensionConfigs = baseMeta.aExtensionConfig.concat(aExtensionConfig);
     this.checkExtensionsGraph(allExtensionConfigs);
     baseMeta.aOrderedExtensions = topologicalSort<ExtensionClass, ExtensionConfigBase>(allExtensionConfigs, true);
-    const newShallowImports = new NewShallowImports(this.baseMeta, {
-      perMod,
-      multiPerMod,
-      extensions,
-    });
 
-    return this.shallowImportsMap.set(modRefId, newShallowImports);
+    return this.shallowImportsMap.set(
+      modRefId,
+      new NewShallowImports(this.baseMeta, {
+        perMod,
+        multiPerMod,
+        extensions,
+      }),
+    );
   }
 
   protected importAndScanModules() {
