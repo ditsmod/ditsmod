@@ -2,7 +2,6 @@ import {
   Provider,
   ModRefId,
   ModuleManager,
-  ModuleExtract,
   isModuleWithParams,
   getTokens,
   getToken,
@@ -21,7 +20,7 @@ import { providersCollision } from '@ditsmod/core/errors';
 
 import { GuardPerMod1 } from '#interceptors/guard.js';
 import { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
-import { Level, RestGlobalProviders, RestModuleExtract } from '#types/types.js';
+import { Level, RestGlobalProviders } from '#types/types.js';
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
 import { AppendsWithParams } from './rest-init-raw-meta.js';

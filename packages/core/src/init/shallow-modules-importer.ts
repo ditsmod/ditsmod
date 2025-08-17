@@ -1,5 +1,4 @@
 import { reflector } from '#di';
-import { ModuleExtract } from '#types/module-extract.js';
 import type { BaseMeta } from '#types/base-meta.js';
 import type { ModuleManager } from '#init/module-manager.js';
 import type { GlobalProviders } from '#types/metadata-per-mod.js';
