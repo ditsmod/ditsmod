@@ -59,6 +59,10 @@ export class ModuleManager {
    * You can also get the result this way: `moduleManager.getMetadata('root')`.
    */
   scanRootModule(appModule: ModuleType) {
+    if (this.snapshotMap.size) {
+      this.systemLogMediator.forbiddenRescanRootModule(this);
+      return this.snapshotMapId.get('root');
+    }
     this.providersPerApp = [];
     if (!reflector.getDecorators(appModule, isRootModule)) {
       throw rootNotHaveDecorator(appModule.name);
@@ -70,9 +74,7 @@ export class ModuleManager {
     this.scanedModules.clear();
     clearDebugClassNames();
     this.mapId.set('root', appModule);
-    if (!this.snapshotMap.size) {
-      this.saveSnapshot();
-    }
+    this.saveSnapshot();
     return baseMeta;
   }
 
@@ -121,22 +123,22 @@ export class ModuleManager {
   getBaseMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound?: boolean,
-    fromSnapshot?: boolean,
+    withoutState?: boolean,
   ): BaseMeta | undefined;
   getBaseMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound: true,
-    fromSnapshot?: boolean,
+    withoutState?: boolean,
   ): BaseMeta;
-  getBaseMeta(moduleId: ModuleId, throwErrIfNotFound?: boolean, fromSnapshot?: boolean) {
+  getBaseMeta(moduleId: ModuleId, throwErrIfNotFound?: boolean, withoutState?: boolean) {
     let baseMeta: BaseMeta | undefined;
     if (typeof moduleId == 'string') {
-      const mapId = fromSnapshot ? this.snapshotMapId.get(moduleId) : this.mapId.get(moduleId);
+      const mapId = withoutState ? this.snapshotMapId.get(moduleId) : this.mapId.get(moduleId);
       if (mapId) {
-        baseMeta = fromSnapshot ? this.snapshotMap.get(mapId) : this.map.get(mapId);
+        baseMeta = withoutState ? this.snapshotMap.get(mapId) : this.map.get(mapId);
       }
     } else {
-      baseMeta = fromSnapshot ? this.snapshotMap.get(moduleId) : this.map.get(moduleId);
+      baseMeta = withoutState ? this.snapshotMap.get(moduleId) : this.map.get(moduleId);
     }
 
     if (throwErrIfNotFound && !baseMeta) {

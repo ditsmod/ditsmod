@@ -51,6 +51,14 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
+   * `${className}: Rescan of root module is forbidden: it must only be loaded once at startup.`
+   */
+  forbiddenRescanRootModule(self: object) {
+    const className = self.constructor.name;
+    this.setLog('warn', `${className}: Rescan of root module is forbidden: it must only be loaded once at startup.`);
+  }
+
+  /**
    * `"${moduleName}" has already been imported into "${moduleId}".`
    */
   moduleAlreadyImported(self: object, inputModule: ModRefId, targetModuleId: string) {
