@@ -281,25 +281,25 @@ describe('shallow importing modules', () => {
     const map = importModulesShallow(AppModule);
     expect(map.size).toBe(4);
 
-    const metadataPerMod1_1 = map.get(mod1)!;
-    const metadataPerMod1_2 = map.get(mod2)!;
-    const metadataPerMod1_3 = map.get(AppModule)!;
-    expect(metadataPerMod1_1).toBeDefined();
-    expect(metadataPerMod1_2).toBeDefined();
-    expect(metadataPerMod1_3).toBeDefined();
+    const shallowImports_1 = map.get(mod1)!;
+    const shallowImports_2 = map.get(mod2)!;
+    const shallowImports_3 = map.get(AppModule)!;
+    expect(shallowImports_1).toBeDefined();
+    expect(shallowImports_2).toBeDefined();
+    expect(shallowImports_3).toBeDefined();
 
-    expect(metadataPerMod1_1.prefixPerMod).toBe('prefix1');
-    expect(metadataPerMod1_1.baseMeta).toBeDefined();
-    // expect(metadataPerMod1_1.applyControllers).toBe(true);
-    expect(metadataPerMod1_1.baseImportRegistry.perRou).toEqual(new Map());
-    expect(metadataPerMod1_1.baseImportRegistry.perReq).toEqual(new Map());
-    expect(metadataPerMod1_1.baseImportRegistry.multiPerRou).toEqual(new Map());
-    expect(metadataPerMod1_1.baseImportRegistry.multiPerReq).toEqual(new Map());
+    expect(shallowImports_1.prefixPerMod).toBe('prefix1');
+    expect(shallowImports_1.baseMeta).toBeDefined();
+    // expect(shallowImports_1.applyControllers).toBe(true);
+    expect(shallowImports_1.baseImportRegistry.perRou).toEqual(new Map());
+    expect(shallowImports_1.baseImportRegistry.perReq).toEqual(new Map());
+    expect(shallowImports_1.baseImportRegistry.multiPerRou).toEqual(new Map());
+    expect(shallowImports_1.baseImportRegistry.multiPerReq).toEqual(new Map());
 
-    expect(metadataPerMod1_2.prefixPerMod).toBe('prefix2');
-    expect(metadataPerMod1_3.prefixPerMod).toBe('');
-    // expect(metadataPerMod1_2.applyControllers).toBe(true);
-    // expect(metadataPerMod1_3.applyControllers).toBe(false);
+    expect(shallowImports_2.prefixPerMod).toBe('prefix2');
+    expect(shallowImports_3.prefixPerMod).toBe('');
+    // expect(shallowImports_2.applyControllers).toBe(true);
+    // expect(shallowImports_3.applyControllers).toBe(false);
   });
 
   it('should throw an error during importing and appending same module', () => {
@@ -433,24 +433,24 @@ describe('shallow importing modules', () => {
     const map = importModulesShallow(AppModule);
     expect(map.size).toBe(4);
 
-    const metadataPerMod1_1 = map.get(mod1)!;
-    const metadataPerMod1_2 = map.get(mod2)!;
-    const metadataPerMod1_3 = map.get(AppModule)!;
-    expect(metadataPerMod1_1).toBeDefined();
-    expect(metadataPerMod1_2).toBeDefined();
-    expect(metadataPerMod1_3).toBeDefined();
+    const shallowImports_1 = map.get(mod1)!;
+    const shallowImports_2 = map.get(mod2)!;
+    const shallowImports_3 = map.get(AppModule)!;
+    expect(shallowImports_1).toBeDefined();
+    expect(shallowImports_2).toBeDefined();
+    expect(shallowImports_3).toBeDefined();
 
-    expect(metadataPerMod1_1.prefixPerMod).toBe('prefix1');
-    expect(metadataPerMod1_1.baseMeta).toBeDefined();
-    // expect(metadataPerMod1_1.applyControllers).toBe(true);
-    expect(metadataPerMod1_1.baseImportRegistry.perRou).toEqual(new Map());
-    expect(metadataPerMod1_1.baseImportRegistry.perReq).toEqual(new Map());
-    expect(metadataPerMod1_1.baseImportRegistry.multiPerRou).toEqual(new Map());
-    expect(metadataPerMod1_1.baseImportRegistry.multiPerReq).toEqual(new Map());
+    expect(shallowImports_1.prefixPerMod).toBe('prefix1');
+    expect(shallowImports_1.baseMeta).toBeDefined();
+    // expect(shallowImports_1.applyControllers).toBe(true);
+    expect(shallowImports_1.baseImportRegistry.perRou).toEqual(new Map());
+    expect(shallowImports_1.baseImportRegistry.perReq).toEqual(new Map());
+    expect(shallowImports_1.baseImportRegistry.multiPerRou).toEqual(new Map());
+    expect(shallowImports_1.baseImportRegistry.multiPerReq).toEqual(new Map());
 
-    expect(metadataPerMod1_2.prefixPerMod).toBe('prefix2');
-    expect(metadataPerMod1_3.prefixPerMod).toBe('');
-    // expect(metadataPerMod1_2.applyControllers).toBe(true);
-    // expect(metadataPerMod1_3.applyControllers).toBe(false);
+    expect(shallowImports_2.prefixPerMod).toBe('prefix2');
+    expect(shallowImports_3.prefixPerMod).toBe('');
+    // expect(shallowImports_2.applyControllers).toBe(true);
+    // expect(shallowImports_3.applyControllers).toBe(false);
   });
 });

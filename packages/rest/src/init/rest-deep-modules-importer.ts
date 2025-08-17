@@ -16,7 +16,7 @@ import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js'
 import {
   DeepModulesImporterConfig,
   RestBaseImportRegistry,
-  RestMetadataPerMod1,
+  RestShallowImports,
   RestMetadataPerMod2,
   RestProvidersOnly,
 } from './types.js';
@@ -30,7 +30,7 @@ import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 export class RestDeepModulesImporter {
   protected tokensPerApp: any[];
 
-  protected metadataPerMod1: RestMetadataPerMod1;
+  protected shallowImports: RestShallowImports;
   protected moduleManager: ModuleManager;
   protected shallowImportsMap: Map<ModRefId, ShallowImports>;
   protected providersPerApp: Provider[];
@@ -39,14 +39,14 @@ export class RestDeepModulesImporter {
 
   constructor({
     parent,
-    metadataPerMod1,
+    shallowImports,
     moduleManager,
     shallowImportsMap,
     providersPerApp,
     log,
   }: DeepModulesImporterConfig) {
     this.parent = parent;
-    this.metadataPerMod1 = metadataPerMod1;
+    this.shallowImports = shallowImports;
     this.moduleManager = moduleManager;
     this.shallowImportsMap = shallowImportsMap;
     this.providersPerApp = providersPerApp;
@@ -56,7 +56,7 @@ export class RestDeepModulesImporter {
   importModulesDeep(): RestMetadataPerMod2 | undefined {
     const levels: Level[] = ['Req', 'Rou', 'Mod'];
     this.tokensPerApp = getTokens(this.providersPerApp);
-    const { baseImportRegistry, guards1, prefixPerMod, meta, applyControllers, baseMeta } = this.metadataPerMod1;
+    const { baseImportRegistry, guards1, prefixPerMod, meta, applyControllers, baseMeta } = this.shallowImports;
     const targetProviders = new RestProvidersOnly();
     this.resolveImportedProviders(targetProviders, baseImportRegistry, levels);
     baseMeta.providersPerMod.unshift(...targetProviders.providersPerMod);
@@ -65,7 +65,7 @@ export class RestDeepModulesImporter {
     meta.providersPerRou.unshift(...defaultProvidersPerRou, ...targetProviders.providersPerRou);
     meta.providersPerReq.unshift(...defaultProvidersPerReq, ...targetProviders.providersPerReq);
     return {
-      baseMeta: this.metadataPerMod1.baseMeta,
+      baseMeta: this.shallowImports.baseMeta,
       meta,
       guards1,
       prefixPerMod,
@@ -153,10 +153,10 @@ export class RestDeepModulesImporter {
     dep: ReflectiveDependency,
   ) {
     let found = false;
-    const metadataPerMod1 = this.shallowImportsMap.get(srcModRefId1)!;
+    const shallowImports = this.shallowImportsMap.get(srcModRefId1)!;
     for (const level of levels) {
-      const restMetadataPerMod1 = metadataPerMod1.initImportRegistryMap.get(initRest) as RestMetadataPerMod1;
-      const providerImport = restMetadataPerMod1.baseImportRegistry[`per${level}`].get(dep.token);
+      const restShallowImports = shallowImports.initImportRegistryMap.get(initRest) as RestShallowImports;
+      const providerImport = restShallowImports.baseImportRegistry[`per${level}`].get(dep.token);
       if (providerImport) {
         found = true;
         path.push(dep.token);
@@ -172,7 +172,7 @@ export class RestDeepModulesImporter {
     }
 
     if (!found && dep.required) {
-      this.parent.throwError(metadataPerMod1.baseMeta, importedProvider, path, dep.token, levels);
+      this.parent.throwError(shallowImports.baseMeta, importedProvider, path, dep.token, levels);
     }
   }
 

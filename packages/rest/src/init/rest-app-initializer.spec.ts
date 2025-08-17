@@ -106,14 +106,14 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
       shallowImportsBase = mock.collectProvidersShallow(moduleManager);
     });
 
-    function checkGlobalProviders(metadataPerMod1: ShallowImports | undefined) {
-      const tokensPerMod = getImportedTokens(metadataPerMod1?.baseImportRegistry.perMod).slice(0, 3);
+    function checkGlobalProviders(shallowImports: ShallowImports | undefined) {
+      const tokensPerMod = getImportedTokens(shallowImports?.baseImportRegistry.perMod).slice(0, 3);
       expect(tokensPerMod).toEqual([Provider0, Provider3, Provider4]);
-      const tokensPerReq = getImportedTokens(metadataPerMod1?.baseImportRegistry.perReq).slice(0, 3);
+      const tokensPerReq = getImportedTokens(shallowImports?.baseImportRegistry.perReq).slice(0, 3);
       expect(tokensPerReq).toEqual([Provider5, Provider6, Provider7]);
 
       // Global providers per a module
-      const perMod = metadataPerMod1?.baseImportRegistry?.perMod!;
+      const perMod = shallowImports?.baseImportRegistry?.perMod!;
       const expectedPerMod = new ProviderImport();
 
       expectedPerMod.modRefId = Module0;
@@ -127,7 +127,7 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
       expect(perMod.get(Provider4)).toEqual(expectedPerMod);
 
       // Global providers per a request
-      const perReq = metadataPerMod1?.baseImportRegistry.perReq!;
+      const perReq = shallowImports?.baseImportRegistry.perReq!;
       const expectedPerReq = new ProviderImport();
       expectedPerReq.modRefId = module3WithParams;
       expectedPerReq.providers = [Provider5];

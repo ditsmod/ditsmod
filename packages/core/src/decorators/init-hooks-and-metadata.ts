@@ -112,7 +112,7 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
    */
   importModulesDeep(config: {
     parent: AnyObj;
-    metadataPerMod1: { baseMeta: BaseMeta } & AnyObj;
+    shallowImports: { baseMeta: BaseMeta } & AnyObj;
     moduleManager: ModuleManager;
     shallowImportsMap: Map<ModRefId, ShallowImports>;
     providersPerApp: Provider[];

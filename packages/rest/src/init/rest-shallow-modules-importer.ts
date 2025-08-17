@@ -25,7 +25,7 @@ import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
 import { AppendsWithParams } from './rest-init-raw-meta.js';
 import { initRest, RestInitHooksAndRawMeta } from '#decorators/rest-init-hooks-and-metadata.js';
-import { ImportModulesShallowConfig, RestProviderImport, RestMetadataPerMod1 } from './types.js';
+import { ImportModulesShallowConfig, RestProviderImport, RestShallowImports } from './types.js';
 
 /**
  * Recursively collects providers taking into account module imports/exports,
@@ -56,7 +56,7 @@ export class ShallowModulesImporter {
    */
   protected glProviders: GlobalProviders;
   protected restGlProviders: RestGlobalProviders;
-  protected shallowImportsMap = new Map<ModRefId, RestMetadataPerMod1>();
+  protected shallowImportsMap = new Map<ModRefId, RestShallowImports>();
   protected unfinishedScanModules = new Set<ModRefId>();
   protected unfinishedExportModules = new Set<ModRefId>();
   protected moduleManager: ModuleManager;
@@ -115,7 +115,7 @@ export class ShallowModulesImporter {
     prefixPerMod,
     guards1,
     isAppends,
-  }: ImportModulesShallowConfig): Map<ModRefId, RestMetadataPerMod1> {
+  }: ImportModulesShallowConfig): Map<ModRefId, RestShallowImports> {
     this.moduleManager = moduleManager;
     this.providersPerApp = providersPerApp;
     const baseMeta = this.moduleManager.getBaseMeta(modRefId, true);
@@ -409,8 +409,8 @@ export class ShallowModulesImporter {
     // let perMod: Map<any, ProviderImport<Provider>>;
     // if (this.shallowImportsBase) {
     //   // When calling this.importModulesShallow()
-    //   const metadataPerMod1 = this.shallowImportsBase.get(this.baseMeta.modRefId)!;
-    //   perMod = metadataPerMod1.baseImportRegistry.perMod;
+    //   const shallowImports = this.shallowImportsBase.get(this.baseMeta.modRefId)!;
+    //   perMod = shallowImports.baseImportRegistry.perMod;
     // } else {
     //   // When calling this.exportGlobalProviders()
     //   perMod = this.glProviders.importedProvidersPerMod;

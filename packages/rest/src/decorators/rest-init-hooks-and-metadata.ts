@@ -7,7 +7,7 @@ import {
   DeepModulesImporterConfig,
   ExportGlobalProvidersConfig,
   ImportModulesShallowConfig,
-  RestMetadataPerMod1,
+  RestShallowImports,
 } from '#init/types.js';
 import { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
 import { RestDeepModulesImporter } from '#init/rest-deep-modules-importer.js';
@@ -35,7 +35,7 @@ export class RestInitHooksAndRawMeta extends InitHooksAndRawMeta<RestInitRawMeta
     return new ShallowModulesImporter().exportGlobalProviders(config);
   }
 
-  override importModulesShallow(config: ImportModulesShallowConfig): Map<ModRefId, RestMetadataPerMod1> {
+  override importModulesShallow(config: ImportModulesShallowConfig): Map<ModRefId, RestShallowImports> {
     return new ShallowModulesImporter().importModulesShallow(config);
   }
 

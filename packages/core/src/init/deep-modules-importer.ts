@@ -67,7 +67,7 @@ export class DeepModulesImporter {
           const shallowImportedModule = initImportRegistryMap.get(decorator)!;
           const deepImports = initHooks.importModulesDeep({
             parent: this,
-            metadataPerMod1: shallowImportedModule,
+            shallowImports: shallowImportedModule,
             moduleManager: this.moduleManager,
             shallowImportsMap: this.shallowImportsMap,
             providersPerApp: this.providersPerApp,
@@ -226,9 +226,9 @@ export class DeepModulesImporter {
     childLevels: string[] = [],
   ) {
     let found = false;
-    const metadataPerMod1 = this.shallowImportsMap.get(srcModRefId1)!;
+    const shallowImports = this.shallowImportsMap.get(srcModRefId1)!;
     for (const level of levels) {
-      const providerImport = metadataPerMod1.baseImportRegistry[`per${level}`].get(dep.token);
+      const providerImport = shallowImports.baseImportRegistry[`per${level}`].get(dep.token);
       if (providerImport) {
         found = true;
         path.push(dep.token);
@@ -244,7 +244,7 @@ export class DeepModulesImporter {
     }
 
     if (!found && dep.required) {
-      this.throwError(metadataPerMod1.baseMeta, importedProvider, path, dep.token, [...childLevels, ...levels]);
+      this.throwError(shallowImports.baseMeta, importedProvider, path, dep.token, [...childLevels, ...levels]);
     }
   }
 
@@ -312,9 +312,9 @@ export class DeepModulesImporter {
 
   protected hasUnresolvedImportedDeps(srcModRefId1: ModRefId, levels: Level[], dep: ReflectiveDependency) {
     let found = false;
-    const metadataPerMod1 = this.shallowImportsMap.get(srcModRefId1)!;
+    const shallowImports = this.shallowImportsMap.get(srcModRefId1)!;
     forLevel: for (const level of levels) {
-      const providerImport = metadataPerMod1.baseImportRegistry[`per${level}`].get(dep.token);
+      const providerImport = shallowImports.baseImportRegistry[`per${level}`].get(dep.token);
       if (providerImport) {
         found = true;
         const { modRefId: modRefId2, providers: srcProviders2 } = providerImport;

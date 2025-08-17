@@ -22,7 +22,7 @@ export class RestProviderImport<T extends Provider = Provider> {
 /**
  * Metadata collected using `ShallowModulesImporter`. The target for this metadata is `DeepModulesImporter`.
  */
-export class RestMetadataPerMod1 {
+export class RestShallowImports {
   baseMeta: BaseMeta;
   prefixPerMod: string;
   guards1: GuardPerMod1[];
@@ -83,7 +83,7 @@ export interface ImportModulesShallowConfig {
 
 export interface DeepModulesImporterConfig {
   parent: DeepModulesImporter;
-  metadataPerMod1: RestMetadataPerMod1;
+  shallowImports: RestShallowImports;
   moduleManager: ModuleManager;
   shallowImportsMap: Map<ModRefId, ShallowImports>;
   providersPerApp: Provider[];

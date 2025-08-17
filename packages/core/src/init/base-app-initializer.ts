@@ -221,14 +221,14 @@ export class BaseAppInitializer {
         modRefId,
         unfinishedScanModules: new Set(),
       });
-      shallowImportsMap.forEach((metadataPerMod1, modRefId) => {
+      shallowImportsMap.forEach((shallowImports, modRefId) => {
         const shallowImportedModule = val.get(modRefId)!;
         const mergedShallowImports = mergedShallowImportsMap.get(modRefId);
         if (mergedShallowImports) {
           mergedShallowImports.initImportRegistryMap.set(decorator, shallowImportedModule);
         } else {
           mergedShallowImportsMap.set(modRefId, {
-            ...metadataPerMod1,
+            ...shallowImports,
             initImportRegistryMap: new Map([[decorator, shallowImportedModule]]),
           });
         }
