@@ -103,11 +103,6 @@ export class ShallowModulesImporter {
     this.unfinishedScanModules = unfinishedScanModules;
     this.baseMeta = baseMeta;
     this.importAndScanModules();
-    const moduleExtract: ModuleExtract = {
-      moduleName: baseMeta.name,
-      isExternal: baseMeta.isExternal,
-    };
-    this.baseMeta.providersPerMod.unshift({ token: ModuleExtract, useValue: moduleExtract });
 
     let perMod: Map<any, ProviderImport>;
     let multiPerMod: Map<ModRefId, Provider[]>;

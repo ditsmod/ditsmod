@@ -16,7 +16,6 @@ import {
   GlobalProviders,
   getLastProviders,
   defaultProvidersPerMod,
-  NewShallowImports,
 } from '@ditsmod/core';
 import { providersCollision } from '@ditsmod/core/errors';
 
@@ -129,14 +128,6 @@ export class ShallowModulesImporter {
     this.moduleName = baseMeta.name;
     this.guards1 = guards1 || [];
     this.unfinishedScanModules = unfinishedScanModules;
-    const moduleExtract: RestModuleExtract = {
-      path: this.prefixPerMod,
-      moduleName: baseMeta.name,
-      isExternal: baseMeta.isExternal,
-    };
-    const provider = { token: ModuleExtract, useValue: moduleExtract };
-    baseMeta.providersPerMod.push(provider);
-    this.meta.providersPerMod.push(provider);
     this.checkImportsAndAppends(baseMeta, this.meta);
     this.importAndAppendModules();
 

@@ -7,7 +7,6 @@ import {
   ShallowImports,
   SystemLogMediator,
   DeepModulesImporter,
-  NewShallowImports,
 } from '@ditsmod/core';
 
 import { GuardPerMod1 } from '#interceptors/guard.js';
