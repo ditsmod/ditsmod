@@ -26,6 +26,7 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
     this.metadataPerMod3 = new MetadataPerMod3();
     this.metadataPerMod3.meta = restMetadataPerMod2.meta;
     const { path: prefixPerApp } = this.appOptions;
+    this.metadataPerMod3.prefixPerMod = restMetadataPerMod2.prefixPerMod;
     this.metadataPerMod3.baseMeta = this.metadataPerMod2.baseMeta;
     this.metadataPerMod3.aControllerMetadata = this.getControllersMetadata(prefixPerApp, restMetadataPerMod2);
     this.metadataPerMod3.guards1 = restMetadataPerMod2.guards1;

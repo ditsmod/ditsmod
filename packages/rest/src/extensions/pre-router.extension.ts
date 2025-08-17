@@ -23,10 +23,11 @@ import {
   ModuleManager,
   HttpMethod,
   getDebugClassName,
+  ModuleExtract,
 } from '@ditsmod/core';
 
 import { routeChannel } from '#diagnostics-channel';
-import { MetadataPerMod3, PreparedRouteMeta } from '../types/types.js';
+import { MetadataPerMod3, PreparedRouteMeta, RestModuleExtract } from '../types/types.js';
 import { A_PATH_PARAMS, HTTP_INTERCEPTORS, QUERY_STRING, RAW_REQ, RAW_RES } from '#types/constants.js';
 import { ControllerMetadata } from '../types/controller-metadata.js';
 import { InterceptorWithGuardsPerRou } from '#interceptors/interceptor-with-guards-per-rou.js';
@@ -76,25 +77,35 @@ export class PreRouterExtension implements Extension<void> {
     this.setRoutes(this.stage1ExtensionMeta, preparedRouteMeta);
   }
 
-  protected getMeta(aMetadataPerMod3: MetadataPerMod3[]) {
+  protected addDefaultProviders(aMetadataPerMod3: MetadataPerMod3[]) {
     // Since each extension received the same `meta` array and not a copy of it,
     // we can take `meta` from any element in the `groupData` array.
-    return aMetadataPerMod3.at(0)!.meta;
-  }
+    const metadataPerMod3 = aMetadataPerMod3.at(0);
+    if (!metadataPerMod3) {
+      return;
+    }
 
-  protected addDefaultProviders(aMetadataPerMod3: MetadataPerMod3[]) {
-    const meta = this.getMeta(aMetadataPerMod3);
-    meta.providersPerReq.unshift(
+    metadataPerMod3.meta.providersPerReq.unshift(
       { token: HttpBackend, useClass: DefaultHttpBackend },
       { token: HttpFrontend, useClass: DefaultHttpFrontend },
       ChainMaker,
     );
 
-    meta.providersPerRou.unshift(
+    metadataPerMod3.meta.providersPerRou.unshift(
       { token: HttpBackend, useClass: DefaultCtxHttpBackend },
       { token: ChainMaker, useClass: DefaultCtxChainMaker },
       { token: HttpFrontend, useClass: DefaultCtxHttpFrontend },
     );
+
+    const { baseMeta, prefixPerMod } = metadataPerMod3;
+    metadataPerMod3.meta.providersPerMod.unshift({
+      token: ModuleExtract,
+      useValue: {
+        path: prefixPerMod,
+        moduleName: baseMeta.name,
+        isExternal: baseMeta.isExternal,
+      } satisfies RestModuleExtract,
+    });
   }
 
   protected prepareRoutesMeta(aMetadataPerMod3: MetadataPerMod3[]) {
