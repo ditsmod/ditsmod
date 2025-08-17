@@ -58,10 +58,10 @@ export class ModuleManager {
    * Creates a snapshot of {@link BaseMeta} for the root module, stores locally and returns it.
    * You can also get the result this way: `moduleManager.getMetadata('root')`.
    */
-  scanRootModule(appModule: ModuleType) {
+  scanRootModule(appModule: ModuleType): BaseMeta {
     if (this.snapshotMap.size) {
       this.systemLogMediator.forbiddenRescanRootModule(this);
-      return this.snapshotMapId.get('root');
+      return this.getBaseMeta('root', true);
     }
     this.providersPerApp = [];
     if (!reflector.getDecorators(appModule, isRootModule)) {
