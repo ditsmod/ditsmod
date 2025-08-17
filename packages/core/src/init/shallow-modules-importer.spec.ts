@@ -368,11 +368,11 @@ describe('ShallowModulesImporter', () => {
     it('exporting providers order', () => {
       importModulesShallow(Module3);
       const mod0 = mock.shallowImportsMap.get(Module0);
-      expect(mod0?.baseMeta.providersPerMod.slice(1)).toEqual([Provider0]);
+      expect(mod0?.baseMeta.providersPerMod).toEqual([Provider0]);
       expect(mod0?.baseMeta.decorator).toBe(featureModule);
 
       const mod1 = mock.shallowImportsMap.get(Module1);
-      expect(mod1?.baseMeta.providersPerMod.slice(1)).toEqual([Provider1, Provider2, Provider3]);
+      expect(mod1?.baseMeta.providersPerMod).toEqual([Provider1, Provider2, Provider3]);
 
       const tokensPerMod = getImportedTokens(mod1?.baseImportRegistry.perMod);
       expect(tokensPerMod).toEqual([Provider0]);
@@ -380,7 +380,7 @@ describe('ShallowModulesImporter', () => {
 
       const mod2 = mock.shallowImportsMap.get(Module2);
       expect(mod2?.baseMeta.decorator).toBe(featureModule);
-      expect(mod2?.baseMeta.providersPerMod.slice(1)).toEqual([Provider4, Provider5, Provider6, Provider7, Provider8]);
+      expect(mod2?.baseMeta.providersPerMod).toEqual([Provider4, Provider5, Provider6, Provider7, Provider8]);
 
       const tokensPerMod2 = getImportedTokens(mod2?.baseImportRegistry.perMod);
       expect(tokensPerMod2).toEqual([Provider0, Provider1, Provider2, Provider3]);
@@ -394,7 +394,7 @@ describe('ShallowModulesImporter', () => {
         Provider5,
         Provider8,
       ]);
-      expect(mod3?.baseMeta.providersPerMod.slice(1)).toEqual([Provider9, overriddenProvider8]);
+      expect(mod3?.baseMeta.providersPerMod).toEqual([Provider9, overriddenProvider8]);
       expect(mod3?.baseMeta.decorator).toBe(featureModule);
     });
 
@@ -404,7 +404,7 @@ describe('ShallowModulesImporter', () => {
       })
       class Module4 {}
       importModulesShallow(Module4);
-      expect(mock.baseMeta.providersPerMod.slice(1)).toEqual([]);
+      expect(mock.baseMeta.providersPerMod).toEqual([]);
 
       expect(mock?.importedProvidersPerMod).toBeDefined();
       const providerImport = new ProviderImport();
