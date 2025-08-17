@@ -20,8 +20,6 @@ let mock: MockModuleManager;
 class MockModuleManager extends ModuleManager {
   override map = new Map<ModRefId, BaseMeta>();
   override mapId = new Map<string, ModRefId>();
-  override oldMap = new Map<ModRefId, BaseMeta>();
-  override oldMapId = new Map<string, ModRefId>();
 }
 
 beforeEach(() => {
