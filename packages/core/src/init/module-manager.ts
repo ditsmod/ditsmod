@@ -16,6 +16,7 @@ import {
   forbiddenRollbackEemptyState,
   moduleIdNotFoundInModuleManager,
   normalizationFailed,
+  prohibitSavingModulesSnapshot,
   rootNotHaveDecorator,
 } from '#errors';
 
@@ -36,9 +37,11 @@ export class ModuleManager {
   providersPerApp: Provider[] = [];
   protected injectorPerModMap = new Map<ModRefId, Injector>();
   protected map: ModulesMap = new Map();
+  protected snapshotMap: ModulesMap = new Map();
+  protected snapshotMapId = new Map<string, ModRefId>();
+  protected oldSnapshotMap: ModulesMap = new Map();
+  protected oldSnapshotMapId = new Map<string, ModRefId>();
   protected mapId = new Map<'root' | (string & {}), ModRefId>();
-  protected oldMap: ModulesMap = new Map();
-  protected oldMapId = new Map<string, ModRefId>();
   protected unfinishedScanModules = new Set<ModRefId>();
   protected scanedModules = new Set<ModRefId>();
   protected moduleNormalizer = new ModuleNormalizer();
@@ -49,9 +52,7 @@ export class ModuleManager {
     'exportsWithParams',
   ] satisfies (keyof BaseInitMeta)[];
 
-  constructor(
-    protected systemLogMediator: SystemLogMediator,
-  ) {}
+  constructor(protected systemLogMediator: SystemLogMediator) {}
 
   /**
    * Creates a snapshot of {@link BaseMeta} for the root module, stores locally and returns it.
@@ -69,7 +70,10 @@ export class ModuleManager {
     this.scanedModules.clear();
     clearDebugClassNames();
     this.mapId.set('root', appModule);
-    return this.copyBaseMeta(baseMeta);
+    if (!this.snapshotMap.size) {
+      this.saveSnapshot();
+    }
+    return baseMeta;
   }
 
   /**
@@ -77,29 +81,44 @@ export class ModuleManager {
    */
   scanModule(modOrObj: ModRefId) {
     const baseMeta = this.scanRawModule(modOrObj);
-    return this.copyBaseMeta(baseMeta);
+    return baseMeta;
   }
 
   /**
-   * Returns a snapshot of {@link BaseMeta} for given module or module ID.
-   * If this snapshot is later mutated outside of {@link ModuleManager}, it does not affect
-   * the new snapshot that later returns this method.
+   * Returns normalized metadata.
    */
   getBaseMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
-    throwErrIfNotFound?: false,
+    throwErrIfNotFound?: boolean,
+    fromSnapshot?: boolean,
   ): BaseMeta | undefined;
   getBaseMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
     moduleId: ModuleId,
     throwErrIfNotFound: true,
+    fromSnapshot?: boolean,
   ): BaseMeta;
-  getBaseMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(moduleId: ModuleId, throwErrIfNotFound?: boolean) {
-    const baseMeta = this.getOriginMetadata<T, A>(moduleId, throwErrIfNotFound);
-    if (baseMeta) {
-      return this.copyBaseMeta(baseMeta);
+  getBaseMeta(moduleId: ModuleId, throwErrIfNotFound?: boolean, fromSnapshot?: boolean) {
+    let baseMeta: BaseMeta | undefined;
+    if (typeof moduleId == 'string') {
+      const mapId = fromSnapshot ? this.snapshotMapId.get(moduleId) : this.mapId.get(moduleId);
+      if (mapId) {
+        baseMeta = fromSnapshot ? this.snapshotMap.get(mapId) : this.map.get(mapId);
+      }
     } else {
-      return;
+      baseMeta = fromSnapshot ? this.snapshotMap.get(moduleId) : this.map.get(moduleId);
     }
+
+    if (throwErrIfNotFound && !baseMeta) {
+      let moduleName: string;
+      if (typeof moduleId == 'string') {
+        moduleName = moduleId;
+      } else {
+        moduleName = getDebugClassName(moduleId) || 'unknown';
+      }
+      throw moduleIdNotFoundInModuleManager(moduleName);
+    }
+
+    return baseMeta;
   }
 
   /**
@@ -109,7 +128,7 @@ export class ModuleManager {
    * @param targetModuleId Module ID to which the input module will be added.
    */
   addImport(inputModule: ModRefId, targetModuleId: ModuleId = 'root'): boolean | void {
-    const targetMeta = this.getOriginMetadata(targetModuleId);
+    const targetMeta = this.getBaseMeta(targetModuleId, false, true);
     if (!targetMeta) {
       const modName = getDebugClassName(inputModule);
       const modIdStr = format(targetModuleId).slice(0, 50);
@@ -138,14 +157,14 @@ export class ModuleManager {
    * @param targetModuleId Module ID from where the input module will be removed.
    */
   removeImport(inputModuleId: ModuleId, targetModuleId: ModuleId = 'root'): boolean | void {
-    const inputMeta = this.getOriginMetadata(inputModuleId);
+    const inputMeta = this.getBaseMeta(inputModuleId, false, true);
     if (!inputMeta) {
       const modIdStr = format(inputModuleId).slice(0, 50);
       this.systemLogMediator.moduleNotFound(this, modIdStr);
       return false;
     }
 
-    const targetMeta = this.getOriginMetadata(targetModuleId);
+    const targetMeta = this.getBaseMeta(targetModuleId, false, true);
     if (!targetMeta) {
       const modIdStr = format(targetModuleId).slice(0, 50);
       throw failRemovingImport(inputMeta.name, modIdStr);
@@ -163,9 +182,9 @@ export class ModuleManager {
       targetMeta[prop].splice(index, 1);
       if (!this.includesInSomeModule(inputModuleId, 'root')) {
         if (inputMeta.id) {
-          this.mapId.delete(inputMeta.id);
+          this.snapshotMapId.delete(inputMeta.id);
         }
-        this.map.delete(inputMeta.modRefId);
+        this.snapshotMap.delete(inputMeta.modRefId);
       }
       this.systemLogMediator.moduleSuccessfulRemoved(this, inputMeta.name, targetMeta.name);
       return true;
@@ -175,23 +194,23 @@ export class ModuleManager {
   }
 
   protected startTransaction() {
-    if (this.oldMapId.has('root')) {
+    if (this.oldSnapshotMapId.has('root')) {
       // Transaction already started.
       return false;
     }
 
-    this.map.forEach((baseMeta, key) => this.oldMap.set(key, this.copyBaseMeta(baseMeta)));
-    this.oldMapId = new Map(this.mapId);
+    this.snapshotMap.forEach((baseMeta, key) => this.oldSnapshotMap.set(key, this.copyBaseMeta(baseMeta)));
+    this.oldSnapshotMapId = new Map(this.snapshotMapId);
 
     return true;
   }
 
   rollback(err?: Error) {
-    if (!this.oldMapId.size) {
+    if (!this.oldSnapshotMapId.size) {
       throw forbiddenRollbackEemptyState();
     }
-    this.mapId = this.oldMapId;
-    this.map = this.oldMap;
+    this.snapshotMapId = this.oldSnapshotMapId;
+    this.snapshotMap = this.oldSnapshotMap;
     this.commit();
     if (err) {
       throw err;
@@ -199,8 +218,8 @@ export class ModuleManager {
   }
 
   commit() {
-    this.oldMapId = new Map();
-    this.oldMap = new Map();
+    this.oldSnapshotMapId = new Map();
+    this.oldSnapshotMap = new Map();
   }
 
   /**
@@ -295,51 +314,13 @@ export class ModuleManager {
     });
   }
 
-  protected copyBaseMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(baseMeta: BaseMeta) {
+  protected copyBaseMeta(baseMeta: BaseMeta) {
     baseMeta = { ...(baseMeta || ({} as BaseMeta)) };
     objectKeys(baseMeta).forEach((p) => {
       if (Array.isArray(baseMeta[p])) {
         (baseMeta as any)[p] = baseMeta[p].slice();
       }
     });
-    return baseMeta;
-  }
-
-  /**
-   * Returns normalized metadata, but without {@link copyBaseMeta | this.copyBaseMeta()}.
-   */
-  protected getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
-    moduleId: ModuleId,
-    throwErrIfNotFound?: boolean,
-  ): BaseMeta | undefined;
-  protected getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
-    moduleId: ModuleId,
-    throwErrIfNotFound: true,
-  ): BaseMeta;
-  protected getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
-    moduleId: ModuleId,
-    throwErrIfNotFound?: boolean,
-  ) {
-    let baseMeta: BaseMeta | undefined;
-    if (typeof moduleId == 'string') {
-      const mapId = this.mapId.get(moduleId);
-      if (mapId) {
-        baseMeta = this.map.get(mapId) as BaseMeta;
-      }
-    } else {
-      baseMeta = this.map.get(moduleId) as BaseMeta;
-    }
-
-    if (throwErrIfNotFound && !baseMeta) {
-      let moduleName: string;
-      if (typeof moduleId == 'string') {
-        moduleName = moduleId;
-      } else {
-        moduleName = getDebugClassName(moduleId) || 'unknown';
-      }
-      throw moduleIdNotFoundInModuleManager(moduleName);
-    }
-
     return baseMeta;
   }
 
@@ -351,7 +332,7 @@ export class ModuleManager {
    * @param targetModuleId Module where to search `inputModule`.
    */
   protected includesInSomeModule(inputModuleId: ModuleId, targetModuleId: ModuleId): boolean {
-    const targetMeta = this.getOriginMetadata(targetModuleId);
+    const targetMeta = this.getBaseMeta(targetModuleId);
     if (!targetMeta) {
       return false;
     }
@@ -374,6 +355,15 @@ export class ModuleManager {
       let path = [...this.unfinishedScanModules].map((id) => getDebugClassName(id)).join(' -> ');
       path = this.unfinishedScanModules.size > 1 ? `${moduleName} (${path})` : `${moduleName}`;
       throw normalizationFailed(path, err);
+    }
+  }
+
+  protected saveSnapshot() {
+    if (this.snapshotMap.size) {
+      throw prohibitSavingModulesSnapshot();
+    } else {
+      this.map.forEach((baseMeta, modRefId) => this.snapshotMap.set(modRefId, this.copyBaseMeta(baseMeta)));
+      this.snapshotMapId = new Map(this.mapId);
     }
   }
 }

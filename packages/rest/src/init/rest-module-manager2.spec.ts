@@ -1,5 +1,4 @@
 import {
-  AnyObj,
   clearDebugClassNames,
   featureModule,
   ModuleManager,
@@ -18,27 +17,11 @@ import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 
 let mock: MockModuleManager;
 
-type ModuleId = string | ModRefId;
-
 class MockModuleManager extends ModuleManager {
   override map = new Map<ModRefId, BaseMeta>();
   override mapId = new Map<string, ModRefId>();
   override oldMap = new Map<ModRefId, BaseMeta>();
   override oldMapId = new Map<string, ModRefId>();
-  override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
-    moduleId: ModuleId,
-    throwErrIfNotFound?: boolean,
-  ): BaseMeta<T, A> | undefined;
-  override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
-    moduleId: ModuleId,
-    throwErrIfNotFound: true,
-  ): BaseMeta<T, A>;
-  override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
-    moduleId: ModuleId,
-    throwErrOnNotFound?: boolean,
-  ) {
-    return super.getOriginMetadata<T, A>(moduleId, throwErrOnNotFound);
-  }
 }
 
 beforeEach(() => {

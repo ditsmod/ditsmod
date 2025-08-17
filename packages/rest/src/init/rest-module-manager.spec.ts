@@ -3,7 +3,6 @@ import {
   ModuleWithParams,
   ModuleManager,
   BaseMeta,
-  AnyObj,
   clearDebugClassNames,
   SystemLogMediator,
   featureModule,
@@ -34,20 +33,6 @@ describe('ModuleManager', () => {
     override mapId = new Map<string, ModRefId>();
     override oldMap = new Map<ModRefId, BaseMeta>();
     override oldMapId = new Map<string, ModRefId>();
-    override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
-      moduleId: ModuleId,
-      throwErrIfNotFound?: boolean,
-    ): BaseMeta<T, A> | undefined;
-    override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
-      moduleId: ModuleId,
-      throwErrIfNotFound: true,
-    ): BaseMeta<T, A>;
-    override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
-      moduleId: ModuleId,
-      throwErrOnNotFound?: boolean,
-    ) {
-      return super.getOriginMetadata<T, A>(moduleId, throwErrOnNotFound);
-    }
   }
 
   let mock: MockModuleManager;
@@ -527,7 +512,7 @@ describe('ModuleManager', () => {
 
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(2);
-    expect(mock.getOriginMetadata('root')).toBe(mock.getOriginMetadata('root'));
+    expect(mock.getBaseMeta('root')).toBe(mock.getBaseMeta('root'));
     expect(getInitMeta('root')).toEqual(expectedMeta1);
 
     expect(mock.addImport(Module1)).toBe(true);

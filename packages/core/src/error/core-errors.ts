@@ -2,6 +2,15 @@ import { newCustomError } from './custom-error.js';
 
 export const coreErrors = {
   /**
+   * `Repeated saving of module metadata snapshots is prohibited. It is done only once—after their normalization.`
+   */
+  prohibitSavingModulesSnapshot() {
+    return newCustomError(coreErrors.prohibitSavingModulesSnapshot, {
+      msg1: 'Repeated saving of module metadata snapshots is prohibited. It is done only once—after their normalization.',
+      level: 'warn',
+    });
+  },
+  /**
    * `Importing providers to ${moduleName} failed: exports ${fromModules}causes collision with ${namesStr}. `
    */
   providersCollision(
@@ -48,7 +57,12 @@ export const coreErrors = {
    * ${tokenName} mapped with ${moduleName2}, but ${tokenName} is a token of the multi providers,
    * and in this case it should not be included in resolvedCollisionsPer${level}.`
    */
-  donotResolveCollisionForMultiProviderPerLevel(moduleName1: string, moduleName2: string, level: string, tokenName: string) {
+  donotResolveCollisionForMultiProviderPerLevel(
+    moduleName1: string,
+    moduleName2: string,
+    level: string,
+    tokenName: string,
+  ) {
     return newCustomError(coreErrors.donotResolveCollisionForMultiProviderPerLevel, {
       msg1:
         `Resolving collisions for providersPer${level} in ${moduleName1} failed: ` +

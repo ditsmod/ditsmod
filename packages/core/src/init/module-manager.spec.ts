@@ -9,7 +9,7 @@ import { CallsiteUtils } from '#utils/callsites.js';
 import { ModuleManager } from './module-manager.js';
 import { AllInitHooks, BaseInitRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { BaseInitMeta } from '#types/base-meta.js';
-import { AnyObj, ModRefId } from '#types/mix.js';
+import { ModRefId } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
 import { BaseMeta } from '#types/base-meta.js';
 import { InitDecorator } from '#decorators/init-hooks-and-metadata.js';
@@ -19,7 +19,6 @@ import { isModuleWithParams } from '#utils/type-guards.js';
 
 describe('ModuleManager', () => {
   console.log = jest.fn();
-  type ModuleId = string | ModRefId;
   @injectable()
   class Service1 {}
   @injectable()
@@ -30,25 +29,8 @@ describe('ModuleManager', () => {
   class MockModuleManager extends ModuleManager {
     declare map: Map<ModRefId, BaseMeta>;
     declare mapId: Map<string, ModRefId>;
-    declare oldMap: Map<ModRefId, BaseMeta>;
-    declare oldMapId: Map<string, ModRefId>;
-
-    override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
-      moduleId: ModuleId,
-      throwErrIfNotFound?: boolean,
-    ): BaseMeta | undefined;
-
-    override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
-      moduleId: ModuleId,
-      throwErrIfNotFound: true,
-    ): BaseMeta;
-
-    override getOriginMetadata<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
-      moduleId: ModuleId,
-      throwErrOnNotFound?: boolean,
-    ) {
-      return super.getOriginMetadata<T, A>(moduleId, throwErrOnNotFound);
-    }
+    declare oldSnapshotMap: Map<ModRefId, BaseMeta>;
+    declare oldSnapshotMapId: Map<string, ModRefId>;
 
     override normalizeMetadata(modRefId: ModRefId, allInitHooks: AllInitHooks): BaseMeta {
       return super.normalizeMetadata(modRefId, allInitHooks);
@@ -210,36 +192,35 @@ describe('ModuleManager', () => {
 
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(1);
-    expect(mock.getBaseMeta('root')).not.toBe(mock.getBaseMeta('root'));
-    expect(mock.getOriginMetadata('root')).toBe(mock.getOriginMetadata('root'));
+    expect(mock.getBaseMeta('root')).toBe(mock.getBaseMeta('root'));
     expect(mock.getBaseMeta('root')).toEqual(expectedMeta1);
 
     expect(mock.addImport(Module1)).toBe(true);
     expect(mock.map.size).toBe(2);
     expect(mock.map.has(Module1)).toBe(true);
-    expect(mock.oldMapId.size).toBe(1);
-    expect(mock.oldMapId.get('root')).toBe(AppModule);
-    expect(mock.oldMap.size).toBe(1);
-    expect(mock.oldMap.get(AppModule)).toEqual(expectedMeta1);
+    expect(mock.oldSnapshotMapId.size).toBe(1);
+    expect(mock.oldSnapshotMapId.get('root')).toBe(AppModule);
+    expect(mock.oldSnapshotMap.size).toBe(1);
+    expect(mock.oldSnapshotMap.get(AppModule)).toEqual(expectedMeta1);
 
     expect(mock.addImport(Module1)).toBe(false);
-    expect(mock.oldMap.size).toBe(1);
-    expect(mock.oldMap.has(AppModule)).toBe(true);
-    expect(mock.oldMap.get(AppModule)).toEqual(expectedMeta1);
+    expect(mock.oldSnapshotMap.size).toBe(1);
+    expect(mock.oldSnapshotMap.has(AppModule)).toBe(true);
+    expect(mock.oldSnapshotMap.get(AppModule)).toEqual(expectedMeta1);
     expect(mock.map.size).toBe(2);
     expect(mock.map.has(Module1)).toBe(true);
 
     mock.commit();
-    expect(mock.oldMapId.size).toBe(0);
-    expect(mock.oldMap.size).toBe(0);
+    expect(mock.oldSnapshotMapId.size).toBe(0);
+    expect(mock.oldSnapshotMap.size).toBe(0);
     expect(mock.map.size).toBe(2);
     expect(mock.map.has(AppModule)).toBe(true);
     expect(mock.map.has(Module1)).toBe(true);
 
     expect(() => mock.addImport(Module2, 'fakeId')).toThrow(/Failed adding Module2 to imports/);
     expect(mock.map.size).toBe(2);
-    expect(mock.oldMapId.size).toBe(0);
-    expect(mock.oldMap.size).toBe(0);
+    expect(mock.oldSnapshotMapId.size).toBe(0);
+    expect(mock.oldSnapshotMap.size).toBe(0);
 
     const expectedMeta2 = new BaseMeta();
     expectedMeta2.id = '';
@@ -255,21 +236,21 @@ describe('ModuleManager', () => {
     mock.addImport(Module2);
     expect(mock.map.size).toBe(3);
     expect(mock.map.has(Module2)).toBe(true);
-    expect(mock.oldMap.size).toBe(2);
-    expect(mock.oldMap.has(AppModule)).toBe(true);
-    expect(mock.oldMap.has(Module1)).toBe(true);
-    expect(mock.oldMapId.size).toBe(1);
-    expect(mock.oldMapId.get('root')).toBe(AppModule);
-    expect(mock.oldMap.get(AppModule)).toEqual(expectedMeta2);
+    expect(mock.oldSnapshotMap.size).toBe(2);
+    expect(mock.oldSnapshotMap.has(AppModule)).toBe(true);
+    expect(mock.oldSnapshotMap.has(Module1)).toBe(true);
+    expect(mock.oldSnapshotMapId.size).toBe(1);
+    expect(mock.oldSnapshotMapId.get('root')).toBe(AppModule);
+    expect(mock.oldSnapshotMap.get(AppModule)).toEqual(expectedMeta2);
 
     mock.addImport(Module4);
     expect(mock.map.size).toBe(4);
     expect(mock.map.has(Module4)).toBe(true);
-    expect(mock.oldMap.size).toBe(2);
-    expect(mock.oldMap.has(AppModule)).toBe(true);
-    expect(mock.oldMap.has(Module1)).toBe(true);
-    expect(mock.oldMapId.size).toBe(1);
-    expect(mock.oldMapId.get('root')).toBe(AppModule);
+    expect(mock.oldSnapshotMap.size).toBe(2);
+    expect(mock.oldSnapshotMap.has(AppModule)).toBe(true);
+    expect(mock.oldSnapshotMap.has(Module1)).toBe(true);
+    expect(mock.oldSnapshotMapId.size).toBe(1);
+    expect(mock.oldSnapshotMapId.get('root')).toBe(AppModule);
 
     mock.commit();
     expect(mock.map.size).toBe(4);
@@ -277,8 +258,8 @@ describe('ModuleManager', () => {
     expect(mock.map.has(Module1)).toBe(true);
     expect(mock.map.has(Module2)).toBe(true);
     expect(mock.map.has(Module4)).toBe(true);
-    expect(mock.oldMapId.size).toBe(0);
-    expect(mock.oldMap.has(AppModule)).toBe(false);
+    expect(mock.oldSnapshotMapId.size).toBe(0);
+    expect(mock.oldSnapshotMap.has(AppModule)).toBe(false);
 
     const expectedMeta3 = new BaseMeta();
     expectedMeta3.id = '';
@@ -291,12 +272,12 @@ describe('ModuleManager', () => {
     expectedMeta3.isExternal = false;
     expectedMeta3.mInitHooksAndRawMeta = expect.any(Map);
 
-    expect(mock.getBaseMeta('root') === mock.getBaseMeta('root')).toBe(false);
+    expect(mock.getBaseMeta('root') === mock.getBaseMeta('root')).toBe(true);
     expect(mock.getBaseMeta('root')).toEqual(expectedMeta3);
 
     mock.addImport(module3WithProviders);
     expect(mock.map.size).toBe(5);
-    expect(mock.oldMap.size).toBe(4);
+    expect(mock.oldSnapshotMap.size).toBe(4);
     expect(mock.getBaseMeta('root')).toEqual({ ...expectedMeta3, importsWithParams: [module3WithProviders] });
     expect(mock.map.has(module3WithProviders)).toBe(true);
 
@@ -304,7 +285,7 @@ describe('ModuleManager', () => {
     expect(mock.map.size).toBe(4);
     expect(mock.getBaseMeta('root')).toEqual(expectedMeta3);
     expect(mock.map.has(module3WithProviders)).toBe(false);
-    expect(mock.oldMap.size).toBe(0);
+    expect(mock.oldSnapshotMap.size).toBe(0);
   });
 
   it('programmatically removing some modules from "imports" array of root module', () => {
@@ -366,37 +347,37 @@ describe('ModuleManager', () => {
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(6);
     expect(mock.getBaseMeta('root')).toEqual(expectedMeta1);
-    expect(mock.oldMapId.size).toBe(0);
-    expect(mock.oldMap.size).toBe(0);
+    expect(mock.oldSnapshotMapId.size).toBe(0);
+    expect(mock.oldSnapshotMap.size).toBe(0);
     expect(mock.map.get(Module1)).toMatchObject({ importsModules: [Module0] });
 
     expect(mock.removeImport(Module0, Module1)).toBe(true);
     expect(mock.map.get(Module1)).toMatchObject({ importsModules: [] });
     expect(mock.map.size).toBe(6);
     expect(mock.map.has(Module0)).toBe(true);
-    expect(mock.oldMap.size).toBe(6);
-    expect(mock.oldMap.get(Module1)).toMatchObject({ importsModules: [Module0] });
-    expect(mock.oldMap.has(Module0)).toBe(true);
-    expect(mock.oldMapId.size).toBe(2);
-    expect(mock.oldMapId.has(moduleId)).toBe(true);
-    expect(mock.oldMapId.get('root')).toBe(AppModule);
+    expect(mock.oldSnapshotMap.size).toBe(6);
+    expect(mock.oldSnapshotMap.get(Module1)).toMatchObject({ importsModules: [Module0] });
+    expect(mock.oldSnapshotMap.has(Module0)).toBe(true);
+    expect(mock.oldSnapshotMapId.size).toBe(2);
+    expect(mock.oldSnapshotMapId.has(moduleId)).toBe(true);
+    expect(mock.oldSnapshotMapId.get('root')).toBe(AppModule);
 
     expect(mock.map.get(Module2)).toMatchObject({ importsModules: [Module0] });
     expect(mock.removeImport(Module0, Module2)).toBe(true);
     expect(mock.map.get(Module2)).toMatchObject({ importsModules: [] });
     expect(mock.map.size).toBe(5);
     expect(mock.map.has(Module0)).toBe(false);
-    expect(mock.oldMap.size).toBe(6);
-    expect(mock.oldMap.get(Module2)).toMatchObject({ importsModules: [Module0] });
-    expect(mock.oldMap.has(Module0)).toBe(true);
-    expect(mock.oldMapId.size).toBe(2);
-    expect(mock.oldMapId.has(moduleId)).toBe(true);
-    expect(mock.oldMapId.get('root')).toBe(AppModule);
+    expect(mock.oldSnapshotMap.size).toBe(6);
+    expect(mock.oldSnapshotMap.get(Module2)).toMatchObject({ importsModules: [Module0] });
+    expect(mock.oldSnapshotMap.has(Module0)).toBe(true);
+    expect(mock.oldSnapshotMapId.size).toBe(2);
+    expect(mock.oldSnapshotMapId.has(moduleId)).toBe(true);
+    expect(mock.oldSnapshotMapId.get('root')).toBe(AppModule);
 
     mock.commit();
     expect(mock.map.size).toBe(5);
-    expect(mock.oldMapId.size).toBe(0);
-    expect(mock.oldMap.size).toBe(0);
+    expect(mock.oldSnapshotMapId.size).toBe(0);
+    expect(mock.oldSnapshotMap.size).toBe(0);
 
     const expectedMeta2 = new BaseMeta();
     expectedMeta2.id = '';
@@ -414,16 +395,16 @@ describe('ModuleManager', () => {
     expect(mock.removeImport(Module2)).toBe(true);
     expect(mock.getBaseMeta('root')).toMatchObject({ importsModules: [Module1] });
     expect(mock.map.size).toBe(4);
-    expect(mock.oldMap.get(AppModule)).toMatchObject({ importsModules: [Module1, Module2] });
-    expect(mock.oldMapId.size).toBe(2);
-    expect(mock.oldMap.size).toBe(5);
+    expect(mock.oldSnapshotMap.get(AppModule)).toMatchObject({ importsModules: [Module1, Module2] });
+    expect(mock.oldSnapshotMapId.size).toBe(2);
+    expect(mock.oldSnapshotMap.size).toBe(5);
 
     expect(mock.removeImport(Module2)).toBe(false);
     expect(mock.map.size).toBe(4);
     expect(mock.getBaseMeta('root')).toMatchObject({ importsModules: [Module1] });
     expect(mock.getBaseMeta('root')).toEqual(expectedMeta2);
-    expect(mock.oldMapId.size).toBe(2);
-    expect(mock.oldMap.size).toBe(5);
+    expect(mock.oldSnapshotMapId.size).toBe(2);
+    expect(mock.oldSnapshotMap.size).toBe(5);
 
     const expectedMeta3 = new BaseMeta();
     expectedMeta3.id = '';
@@ -444,9 +425,9 @@ describe('ModuleManager', () => {
     expect(mock.getBaseMeta('root')).toMatchObject({ importsWithParams: [module4WithProviders] });
     expect(mock.map.size).toBe(3);
     expect(mock.getBaseMeta('root')).toEqual(expectedMeta3);
-    expect(mock.oldMapId.size).toBe(2);
-    expect(mock.oldMap.size).toBe(5);
-    expect(mock.oldMap.get(AppModule)).toMatchObject({
+    expect(mock.oldSnapshotMapId.size).toBe(2);
+    expect(mock.oldSnapshotMap.size).toBe(5);
+    expect(mock.oldSnapshotMap.get(AppModule)).toMatchObject({
       importsWithParams: [module3WithProviders, module4WithProviders],
     });
 
@@ -464,15 +445,15 @@ describe('ModuleManager', () => {
     expect(mock.removeImport(moduleId)).toBe(true);
     expect(mock.map.size).toBe(2);
     expect(mock.getBaseMeta('root')).toEqual(expectedMeta4);
-    expect(mock.oldMapId.size).toBe(2);
-    expect(mock.oldMap.size).toBe(5);
+    expect(mock.oldSnapshotMapId.size).toBe(2);
+    expect(mock.oldSnapshotMap.size).toBe(5);
 
     mock.rollback();
     expect(mock.mapId.size).toBe(2);
     expect(mock.map.size).toBe(5);
     expect(mock.getBaseMeta('root')).toEqual(expectedMeta1);
-    expect(mock.oldMapId.size).toBe(0);
-    expect(mock.oldMap.size).toBe(0);
+    expect(mock.oldSnapshotMapId.size).toBe(0);
+    expect(mock.oldSnapshotMap.size).toBe(0);
   });
 
   it('root module with imported some extension', () => {
