@@ -4,8 +4,6 @@ import { ProviderImport } from '#types/metadata-per-mod.js';
 import { Provider } from '#di/types-and-models.js';
 import { ExtensionClass } from '#extension/extension-types.js';
 
-export type ShallowImports<T extends AnyObj = AnyObj> = Map<ModRefId, NewShallowImports<T>>;
-
 /**
  * Metadata collected using `ShallowModulesImporter`. The target for this metadata is `DeepModulesImporter`.
  */

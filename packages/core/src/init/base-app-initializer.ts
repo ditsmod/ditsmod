@@ -24,7 +24,7 @@ import { MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { getModule } from '#utils/get-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
-import { ShallowImports } from './types.js';
+import { NewShallowImports } from './types.js';
 import { ProvidersOnly } from '#types/providers-metadata.js';
 import {
   failedCollectingMetadata,
@@ -127,7 +127,7 @@ export class BaseAppInitializer {
   async bootstrapModulesAndExtensions() {
     const deepModulesImporter = new DeepModulesImporter({
       moduleManager: this.moduleManager,
-      shallowImports: this.collectProvidersShallow(this.moduleManager),
+      shallowImportsMap: this.collectProvidersShallow(this.moduleManager),
       providersPerApp: this.baseMeta.providersPerApp,
       log: this.log,
     });
@@ -212,7 +212,7 @@ export class BaseAppInitializer {
       moduleManager,
       unfinishedScanModules: new Set(),
     });
-    const shallowImports: ShallowImports = new Map();
+    const mergedShallowImportsMap: Map<ModRefId, NewShallowImports> = new Map();
     allInitHooks.forEach((initHooks, decorator) => {
       const val = initHooks.importModulesShallow({
         moduleManager,
@@ -223,18 +223,18 @@ export class BaseAppInitializer {
       });
       shallowImportsMap.forEach((metadataPerMod1, modRefId) => {
         const shallowImportedModule = val.get(modRefId)!;
-        const mergedShallowImports = shallowImports.get(modRefId);
+        const mergedShallowImports = mergedShallowImportsMap.get(modRefId);
         if (mergedShallowImports) {
           mergedShallowImports.initImportRegistryMap.set(decorator, shallowImportedModule);
         } else {
-          shallowImports.set(modRefId, {
+          mergedShallowImportsMap.set(modRefId, {
             ...metadataPerMod1,
             initImportRegistryMap: new Map([[decorator, shallowImportedModule]]),
           });
         }
       });
     });
-    return shallowImports;
+    return mergedShallowImportsMap;
   }
 
   protected async handleExtensions(

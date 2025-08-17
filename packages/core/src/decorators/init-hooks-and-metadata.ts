@@ -1,6 +1,6 @@
 import { Provider } from '#di';
 import { ModuleManager } from '#init/module-manager.js';
-import { ShallowImports, NewShallowImports } from '#init/types.js';
+import { NewShallowImports } from '#init/types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { GlobalInitHooks, GlobalProviders } from '#types/metadata-per-mod.js';
 import { AnyFn, AnyObj, ModRefId, ModuleType } from '#types/mix.js';
@@ -114,7 +114,7 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
     parent: AnyObj;
     metadataPerMod1: { baseMeta: BaseMeta } & AnyObj;
     moduleManager: ModuleManager;
-    shallowImports: ShallowImports;
+    shallowImportsMap: Map<ModRefId, NewShallowImports>;
     providersPerApp: Provider[];
     log: SystemLogMediator;
   }): any {

@@ -6,8 +6,8 @@ import {
   getTokens,
   getLastProviders,
   ReflectiveDependency,
-  ShallowImports,
   DeepModulesImporter,
+  NewShallowImports,
 } from '@ditsmod/core';
 
 import { Level } from '#types/types.js';
@@ -32,7 +32,7 @@ export class RestDeepModulesImporter {
 
   protected metadataPerMod1: RestMetadataPerMod1;
   protected moduleManager: ModuleManager;
-  protected shallowImports: ShallowImports;
+  protected shallowImportsMap: Map<ModRefId, NewShallowImports>;
   protected providersPerApp: Provider[];
   protected log: SystemLogMediator;
   protected parent: DeepModulesImporter;
@@ -41,14 +41,14 @@ export class RestDeepModulesImporter {
     parent,
     metadataPerMod1,
     moduleManager,
-    shallowImports,
+    shallowImportsMap,
     providersPerApp,
     log,
   }: DeepModulesImporterConfig) {
     this.parent = parent;
     this.metadataPerMod1 = metadataPerMod1;
     this.moduleManager = moduleManager;
-    this.shallowImports = shallowImports;
+    this.shallowImportsMap = shallowImportsMap;
     this.providersPerApp = providersPerApp;
     this.log = log;
   }
@@ -153,7 +153,7 @@ export class RestDeepModulesImporter {
     dep: ReflectiveDependency,
   ) {
     let found = false;
-    const metadataPerMod1 = this.shallowImports.get(srcModRefId1)!;
+    const metadataPerMod1 = this.shallowImportsMap.get(srcModRefId1)!;
     for (const level of levels) {
       const restMetadataPerMod1 = metadataPerMod1.initImportRegistryMap.get(initRest) as RestMetadataPerMod1;
       const providerImport = restMetadataPerMod1.baseImportRegistry[`per${level}`].get(dep.token);

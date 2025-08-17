@@ -4,7 +4,7 @@ import { defaultExtensionsProviders } from '#extension/default-extensions-provid
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
-import { BaseImportRegistry, ShallowImports } from '#init/types.js';
+import { BaseImportRegistry, NewShallowImports } from '#init/types.js';
 import { MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import { Level, ModRefId, AnyFn, AnyObj } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
@@ -30,23 +30,23 @@ export class DeepModulesImporter {
   protected extensionCounters = new ExtensionCounters();
 
   protected moduleManager: ModuleManager;
-  protected shallowImports: ShallowImports;
+  protected shallowImportsMap: Map<ModRefId, NewShallowImports>;
   protected providersPerApp: Provider[];
   protected log: SystemLogMediator;
 
   constructor({
     moduleManager,
-    shallowImports,
+    shallowImportsMap,
     providersPerApp,
     log,
   }: {
     moduleManager: ModuleManager;
-    shallowImports: ShallowImports;
+    shallowImportsMap: Map<ModRefId, NewShallowImports>;
     providersPerApp: Provider[];
     log: SystemLogMediator;
   }) {
     this.moduleManager = moduleManager;
-    this.shallowImports = shallowImports;
+    this.shallowImportsMap = shallowImportsMap;
     this.providersPerApp = providersPerApp;
     this.log = log;
   }
@@ -55,7 +55,7 @@ export class DeepModulesImporter {
     const levels: Level[] = ['Mod'];
     const mMetadataPerMod2 = new Map<ModRefId, MetadataPerMod2>();
     this.tokensPerApp = getTokens(this.providersPerApp);
-    this.shallowImports.forEach(
+    this.shallowImportsMap.forEach(
       ({ baseMeta, aOrderedExtensions, baseImportRegistry, initImportRegistryMap }, modRefId) => {
         const deepImportedModules = new Map<AnyFn, AnyObj>();
         mMetadataPerMod2.set(modRefId, { baseMeta, aOrderedExtensions, deepImportedModules });
@@ -69,7 +69,7 @@ export class DeepModulesImporter {
             parent: this,
             metadataPerMod1: shallowImportedModule,
             moduleManager: this.moduleManager,
-            shallowImports: this.shallowImports,
+            shallowImportsMap: this.shallowImportsMap,
             providersPerApp: this.providersPerApp,
             log: this.log,
           });
@@ -226,7 +226,7 @@ export class DeepModulesImporter {
     childLevels: string[] = [],
   ) {
     let found = false;
-    const metadataPerMod1 = this.shallowImports.get(srcModRefId1)!;
+    const metadataPerMod1 = this.shallowImportsMap.get(srcModRefId1)!;
     for (const level of levels) {
       const providerImport = metadataPerMod1.baseImportRegistry[`per${level}`].get(dep.token);
       if (providerImport) {
@@ -312,7 +312,7 @@ export class DeepModulesImporter {
 
   protected hasUnresolvedImportedDeps(srcModRefId1: ModRefId, levels: Level[], dep: ReflectiveDependency) {
     let found = false;
-    const metadataPerMod1 = this.shallowImports.get(srcModRefId1)!;
+    const metadataPerMod1 = this.shallowImportsMap.get(srcModRefId1)!;
     forLevel: for (const level of levels) {
       const providerImport = metadataPerMod1.baseImportRegistry[`per${level}`].get(dep.token);
       if (providerImport) {

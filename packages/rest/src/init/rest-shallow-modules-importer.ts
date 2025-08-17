@@ -56,7 +56,7 @@ export class ShallowModulesImporter {
    */
   protected glProviders: GlobalProviders;
   protected restGlProviders: RestGlobalProviders;
-  protected shallowImports = new Map<ModRefId, RestMetadataPerMod1>();
+  protected shallowImportsMap = new Map<ModRefId, RestMetadataPerMod1>();
   protected unfinishedScanModules = new Set<ModRefId>();
   protected unfinishedExportModules = new Set<ModRefId>();
   protected moduleManager: ModuleManager;
@@ -169,7 +169,7 @@ export class ShallowModulesImporter {
 
     this.checkFalseResolvingCollisions();
 
-    return this.shallowImports.set(modRefId, {
+    return this.shallowImportsMap.set(modRefId, {
       baseMeta,
       prefixPerMod,
       guards1: this.guards1,
@@ -230,7 +230,7 @@ export class ShallowModulesImporter {
       });
       this.unfinishedScanModules.delete(modRefId);
 
-      shallowImportsBase.forEach((val, key) => this.shallowImports.set(key, val));
+      shallowImportsBase.forEach((val, key) => this.shallowImportsMap.set(key, val));
     }
   }
 

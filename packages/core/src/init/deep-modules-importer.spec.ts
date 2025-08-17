@@ -43,7 +43,7 @@ describe('DeepModulesImporter', () => {
       moduleManager,
       log: null as any,
       providersPerApp: null as any,
-      shallowImports: null as any,
+      shallowImportsMap: null as any,
     });
   });
 
