@@ -13,7 +13,7 @@ import {
   ProviderImport,
   ModuleWithInitParams,
   ModRefId,
-  NewShallowImports,
+  ShallowImports,
 } from '@ditsmod/core';
 import { RestAppInitializer } from './rest-app-initializer.js';
 import { Router } from '../services/router.js';
@@ -95,7 +95,7 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
     })
     class AppModule {}
 
-    let shallowImportsBase: Map<ModRefId, NewShallowImports>;
+    let shallowImportsBase: Map<ModRefId, ShallowImports>;
 
     beforeAll(() => {
       const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
@@ -106,7 +106,7 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
       shallowImportsBase = mock.collectProvidersShallow(moduleManager);
     });
 
-    function checkGlobalProviders(metadataPerMod1: NewShallowImports | undefined) {
+    function checkGlobalProviders(metadataPerMod1: ShallowImports | undefined) {
       const tokensPerMod = getImportedTokens(metadataPerMod1?.baseImportRegistry.perMod).slice(0, 3);
       expect(tokensPerMod).toEqual([Provider0, Provider3, Provider4]);
       const tokensPerReq = getImportedTokens(metadataPerMod1?.baseImportRegistry.perReq).slice(0, 3);

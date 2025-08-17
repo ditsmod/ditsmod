@@ -4,7 +4,7 @@ import type { ModuleManager } from '#init/module-manager.js';
 import type { GlobalProviders } from '#types/metadata-per-mod.js';
 import { ProviderImport } from '#types/metadata-per-mod.js';
 import type { Level, ModRefId, AnyFn, AnyObj } from '#types/mix.js';
-import { NewShallowImports } from '#init/types.js';
+import { ShallowImports } from '#init/types.js';
 import type { Provider } from '#di/types-and-models.js';
 import { getCollisions } from '#utils/get-collisions.js';
 import { getImportedTokens } from '#utils/get-imports.js';
@@ -55,7 +55,7 @@ export class ShallowModulesImporter {
    * GlobalProviders.
    */
   protected glProviders: GlobalProviders;
-  protected shallowImportsMap = new Map<ModRefId, NewShallowImports>();
+  protected shallowImportsMap = new Map<ModRefId, ShallowImports>();
   protected unfinishedScanModules = new Set<ModRefId>();
   protected unfinishedExportModules = new Set<ModRefId>();
   protected moduleManager: ModuleManager;
@@ -94,7 +94,7 @@ export class ShallowModulesImporter {
     modRefId: ModRefId;
     moduleManager: ModuleManager;
     unfinishedScanModules: Set<ModRefId>;
-  }): Map<ModRefId, NewShallowImports> {
+  }): Map<ModRefId, ShallowImports> {
     const baseMeta = moduleManager.getBaseMeta(modRefId, true);
     this.moduleManager = moduleManager;
     this.glProviders = globalProviders;
@@ -131,7 +131,7 @@ export class ShallowModulesImporter {
 
     return this.shallowImportsMap.set(
       modRefId,
-      new NewShallowImports(this.baseMeta, aOrderedExtensions, {
+      new ShallowImports(this.baseMeta, aOrderedExtensions, {
         perMod,
         multiPerMod,
         extensions,

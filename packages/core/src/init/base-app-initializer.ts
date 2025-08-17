@@ -24,7 +24,7 @@ import { MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { getModule } from '#utils/get-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
-import { NewShallowImports } from './types.js';
+import { ShallowImports } from './types.js';
 import { ProvidersOnly } from '#types/providers-metadata.js';
 import {
   failedCollectingMetadata,
@@ -212,7 +212,7 @@ export class BaseAppInitializer {
       moduleManager,
       unfinishedScanModules: new Set(),
     });
-    const mergedShallowImportsMap: Map<ModRefId, NewShallowImports> = new Map();
+    const mergedShallowImportsMap: Map<ModRefId, ShallowImports> = new Map();
     allInitHooks.forEach((initHooks, decorator) => {
       const val = initHooks.importModulesShallow({
         moduleManager,

@@ -4,7 +4,7 @@ import { defaultExtensionsProviders } from '#extension/default-extensions-provid
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
-import { BaseImportRegistry, NewShallowImports } from '#init/types.js';
+import { BaseImportRegistry, ShallowImports } from '#init/types.js';
 import { MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import { Level, ModRefId, AnyFn, AnyObj } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
@@ -30,7 +30,7 @@ export class DeepModulesImporter {
   protected extensionCounters = new ExtensionCounters();
 
   protected moduleManager: ModuleManager;
-  protected shallowImportsMap: Map<ModRefId, NewShallowImports>;
+  protected shallowImportsMap: Map<ModRefId, ShallowImports>;
   protected providersPerApp: Provider[];
   protected log: SystemLogMediator;
 
@@ -41,7 +41,7 @@ export class DeepModulesImporter {
     log,
   }: {
     moduleManager: ModuleManager;
-    shallowImportsMap: Map<ModRefId, NewShallowImports>;
+    shallowImportsMap: Map<ModRefId, ShallowImports>;
     providersPerApp: Provider[];
     log: SystemLogMediator;
   }) {

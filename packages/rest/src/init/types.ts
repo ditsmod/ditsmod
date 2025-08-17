@@ -6,7 +6,7 @@ import {
   ModuleManager,
   SystemLogMediator,
   DeepModulesImporter,
-  NewShallowImports,
+  ShallowImports,
 } from '@ditsmod/core';
 
 import { GuardPerMod1 } from '#interceptors/guard.js';
@@ -85,7 +85,7 @@ export interface DeepModulesImporterConfig {
   parent: DeepModulesImporter;
   metadataPerMod1: RestMetadataPerMod1;
   moduleManager: ModuleManager;
-  shallowImportsMap: Map<ModRefId, NewShallowImports>;
+  shallowImportsMap: Map<ModRefId, ShallowImports>;
   providersPerApp: Provider[];
   log: SystemLogMediator;
 }

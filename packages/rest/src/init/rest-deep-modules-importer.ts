@@ -7,7 +7,7 @@ import {
   getLastProviders,
   ReflectiveDependency,
   DeepModulesImporter,
-  NewShallowImports,
+  ShallowImports,
 } from '@ditsmod/core';
 
 import { Level } from '#types/types.js';
@@ -32,7 +32,7 @@ export class RestDeepModulesImporter {
 
   protected metadataPerMod1: RestMetadataPerMod1;
   protected moduleManager: ModuleManager;
-  protected shallowImportsMap: Map<ModRefId, NewShallowImports>;
+  protected shallowImportsMap: Map<ModRefId, ShallowImports>;
   protected providersPerApp: Provider[];
   protected log: SystemLogMediator;
   protected parent: DeepModulesImporter;

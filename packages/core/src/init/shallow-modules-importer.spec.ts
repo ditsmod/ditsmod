@@ -11,7 +11,7 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { coreErrors } from '#error/core-errors.js';
 import { CustomError } from '#error/custom-error.js';
-import { NewShallowImports } from './types.js';
+import { ShallowImports } from './types.js';
 
 describe('ShallowModulesImporter', () => {
   class Provider1 {}
@@ -23,7 +23,7 @@ describe('ShallowModulesImporter', () => {
   class MockShallowModulesImporter extends ShallowModulesImporter {
     override moduleName = 'MockModule';
     override baseMeta = new BaseMeta();
-    override shallowImportsMap = new Map<ModuleType, NewShallowImports>();
+    override shallowImportsMap = new Map<ModuleType, ShallowImports>();
     override importedProvidersPerMod = new Map<any, ProviderImport>();
     override importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
     override importedExtensions = new Map<ModRefId, Provider[]>();

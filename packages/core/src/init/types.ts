@@ -7,7 +7,7 @@ import { ExtensionClass } from '#extension/extension-types.js';
 /**
  * Metadata collected using `ShallowModulesImporter`. The target for this metadata is `DeepModulesImporter`.
  */
-export class NewShallowImports<T extends AnyObj = AnyObj> {
+export class ShallowImports<T extends AnyObj = AnyObj> {
   /**
    * Snapshot of BaseMeta. If you modify any array in this object,
    * the original array will remain unchanged.

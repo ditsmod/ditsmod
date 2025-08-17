@@ -3,7 +3,7 @@ export * from '@ts-stack/chain-error';
 
 export { defaultProvidersPerMod } from '#init/default-providers-per-mod.js';
 export { BaseAppInitializer } from '#init/base-app-initializer.js';
-export { NewShallowImports, BaseImportRegistry } from '#init/types.js';
+export { ShallowImports, BaseImportRegistry } from '#init/types.js';
 export { BaseApplication } from '#init/base-application.js';
 export { BaseAppOptions } from '#init/base-app-options.js';
 export { copyBaseInitMeta } from '#init/copy-base-init-meta.js';

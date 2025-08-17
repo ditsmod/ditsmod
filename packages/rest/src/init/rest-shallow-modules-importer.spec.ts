@@ -15,7 +15,7 @@ import {
   SystemLogMediator,
   ShallowModulesImporter as ShallowModulesImporterBase,
   ProviderImport,
-  NewShallowImports,
+  ShallowImports,
 } from '@ditsmod/core';
 
 import { controller } from '#types/controller.js';
