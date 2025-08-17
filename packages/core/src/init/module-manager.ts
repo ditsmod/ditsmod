@@ -64,7 +64,7 @@ export class ModuleManager {
       throw rootNotHaveDecorator(appModule.name);
     }
 
-    const baseMeta = this.scanRawModule(appModule);
+    const baseMeta = this.scanModule(appModule);
     this.injectorPerModMap.clear();
     this.unfinishedScanModules.clear();
     this.scanedModules.clear();
@@ -76,11 +76,42 @@ export class ModuleManager {
     return baseMeta;
   }
 
-  /**
-   * Returns a snapshot of {@link BaseMeta} for a module.
-   */
-  scanModule(modOrObj: ModRefId) {
-    const baseMeta = this.scanRawModule(modOrObj);
+  scanModule(modRefId: ModRefId, allInitHooks?: AllInitHooks) {
+    allInitHooks ??= new Map();
+    const baseMeta = this.normalizeMetadata(modRefId, allInitHooks);
+    const importsOrExports: (ModuleWithParams | ModuleType)[] = [];
+    baseMeta.mInitHooksAndRawMeta.forEach((initHooks, decorator) => {
+      const meta = baseMeta.initMeta.get(decorator);
+      if (meta) {
+        importsOrExports.push(...initHooks.getModulesToScan(meta));
+      }
+    });
+
+    // Merging arrays with this props in one array.
+    const inputs = this.propsWithModules
+      .map((p) => baseMeta[p])
+      .reduce<ModRefId[]>((prev, curr) => prev.concat(curr), importsOrExports);
+
+    for (const input of inputs) {
+      if (this.unfinishedScanModules.has(input) || this.scanedModules.has(input)) {
+        continue;
+      }
+      this.unfinishedScanModules.add(input);
+      this.scanModule(input, baseMeta.allInitHooks);
+      this.unfinishedScanModules.delete(input);
+      this.scanedModules.add(input);
+    }
+
+    this.callInitHooksAfterScan(baseMeta);
+
+    if (baseMeta.id) {
+      this.mapId.set(baseMeta.id, modRefId);
+      this.systemLogMediator.moduleHasId(this, baseMeta.id);
+    }
+    const providersPerApp = isRootModule(baseMeta) ? [] : baseMeta.providersPerApp;
+    this.providersPerApp.push(...providersPerApp);
+    this.map.set(modRefId, baseMeta);
+    baseMeta.allInitHooks.forEach((initHooks, decorator) => allInitHooks.set(decorator, initHooks));
     return baseMeta;
   }
 
@@ -145,7 +176,7 @@ export class ModuleManager {
     this.startTransaction();
     try {
       (targetMeta[prop] as ModRefId[]).push(inputModule);
-      this.scanRawModule(inputModule);
+      this.scanModule(inputModule);
       this.systemLogMediator.successfulAddedModuleToImport(this, inputModule, targetMeta.name);
       return true;
     } catch (err) {
@@ -253,48 +284,6 @@ export class ModuleManager {
     } else {
       return this.injectorPerModMap.get(moduleId)!;
     }
-  }
-
-  /**
-   * Here "raw" means that it returns "raw" normalized metadata (without {@link copyBaseMeta | this.copyBaseMeta()}).
-   */
-  protected scanRawModule(modRefId: ModRefId, allInitHooks?: AllInitHooks) {
-    allInitHooks ??= new Map();
-    const baseMeta = this.normalizeMetadata(modRefId, allInitHooks);
-    const importsOrExports: (ModuleWithParams | ModuleType)[] = [];
-    baseMeta.mInitHooksAndRawMeta.forEach((initHooks, decorator) => {
-      const meta = baseMeta.initMeta.get(decorator);
-      if (meta) {
-        importsOrExports.push(...initHooks.getModulesToScan(meta));
-      }
-    });
-
-    // Merging arrays with this props in one array.
-    const inputs = this.propsWithModules
-      .map((p) => baseMeta[p])
-      .reduce<ModRefId[]>((prev, curr) => prev.concat(curr), importsOrExports);
-
-    for (const input of inputs) {
-      if (this.unfinishedScanModules.has(input) || this.scanedModules.has(input)) {
-        continue;
-      }
-      this.unfinishedScanModules.add(input);
-      this.scanRawModule(input, baseMeta.allInitHooks);
-      this.unfinishedScanModules.delete(input);
-      this.scanedModules.add(input);
-    }
-
-    this.callInitHooksAfterScan(baseMeta);
-
-    if (baseMeta.id) {
-      this.mapId.set(baseMeta.id, modRefId);
-      this.systemLogMediator.moduleHasId(this, baseMeta.id);
-    }
-    const providersPerApp = isRootModule(baseMeta) ? [] : baseMeta.providersPerApp;
-    this.providersPerApp.push(...providersPerApp);
-    this.map.set(modRefId, baseMeta);
-    baseMeta.allInitHooks.forEach((initHooks, decorator) => allInitHooks.set(decorator, initHooks));
-    return baseMeta;
   }
 
   /**
