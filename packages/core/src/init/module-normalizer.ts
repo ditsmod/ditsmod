@@ -294,40 +294,6 @@ export class ModuleNormalizer {
     });
   }
 
-  protected mergeObjects(dstn: AnyObj, src: AnyObj) {
-    objectKeys(src).forEach((prop) => {
-      if (prop == 'initParams' || prop == 'module') {
-        // ignore
-      } else if (Array.isArray(src[prop])) {
-        if (src[prop].length) {
-          dstn[prop] = [...src[prop], ...(dstn[prop] || [])];
-        }
-      } else if (src[prop] !== null && typeof src[prop] == 'object') {
-        dstn[prop] ??= {};
-        dstn[prop] = Object.assign(src[prop], dstn[prop]);
-      } else {
-        dstn[prop] ??= src[prop];
-      }
-    });
-
-    return dstn;
-  }
-
-  protected mergeInitParams(baseMeta: BaseMeta, decorator: AnyFn, params: AnyObj, mwp: ModuleWithParams) {
-    delete params.module;
-    delete params.initParams;
-    mwp.initParams ??= new Map();
-    if (mwp.initParams.has(decorator)) {
-      const existingParams = mwp.initParams?.get(decorator)!;
-      mwp.initParams.set(decorator, this.mergeObjects(params, existingParams));
-    } else {
-      mwp.initParams.set(decorator, params);
-    }
-    if (!baseMeta.importsWithParams.includes(mwp)) {
-      baseMeta.importsWithParams.push(mwp);
-    }
-  }
-
   protected throwExportsIfNormalizedProvider(moduleName: string, provider: NormalizedProvider) {
     if (isNormalizedProvider(provider)) {
       throw forbiddenExportNormalizedProvider(moduleName, provider.token.name || provider.token);
@@ -389,13 +355,13 @@ export class ModuleNormalizer {
   }
 
   protected fetchInitRawMeta(baseMeta: BaseMeta, decorator: AnyFn, initRawMeta: BaseInitRawMeta) {
-    this.fetchImports(baseMeta, decorator, initRawMeta);
-    this.fetchExports(baseMeta, initRawMeta);
+    this.fetchInitImports(baseMeta, decorator, initRawMeta);
+    this.fetchInitExports(baseMeta, initRawMeta);
     this.normalizeExtensions(initRawMeta, baseMeta);
     this.normalizeDeclaredAndResolvedProviders(initRawMeta, baseMeta);
   }
 
-  protected fetchImports(baseMeta: BaseMeta, decorator: AnyFn, initRawMeta: BaseInitRawMeta) {
+  protected fetchInitImports(baseMeta: BaseMeta, decorator: AnyFn, initRawMeta: BaseInitRawMeta) {
     if (initRawMeta.imports) {
       this.resolveForwardRef(initRawMeta.imports).forEach((imp) => {
         if (isModuleWithParams(imp)) {
@@ -415,7 +381,41 @@ export class ModuleNormalizer {
     }
   }
 
-  protected fetchExports(baseMeta: BaseMeta, initRawMeta: BaseInitRawMeta) {
+  protected mergeInitParams(baseMeta: BaseMeta, decorator: AnyFn, params: AnyObj, mwp: ModuleWithParams) {
+    delete params.module;
+    delete params.initParams;
+    mwp.initParams ??= new Map();
+    if (mwp.initParams.has(decorator)) {
+      const existingParams = mwp.initParams.get(decorator)!;
+      mwp.initParams.set(decorator, this.mergeObjects(params, existingParams));
+    } else {
+      mwp.initParams.set(decorator, params);
+    }
+    if (!baseMeta.importsWithParams.includes(mwp)) {
+      baseMeta.importsWithParams.push(mwp);
+    }
+  }
+
+  protected mergeObjects(dstn: AnyObj, src: AnyObj) {
+    objectKeys(src).forEach((prop) => {
+      if (prop == 'initParams' || prop == 'module') {
+        // ignore
+      } else if (Array.isArray(src[prop])) {
+        if (src[prop].length) {
+          dstn[prop] = [...src[prop], ...(dstn[prop] || [])];
+        }
+      } else if (src[prop] !== null && typeof src[prop] == 'object') {
+        dstn[prop] ??= {};
+        dstn[prop] = Object.assign(src[prop], dstn[prop]);
+      } else {
+        dstn[prop] ??= src[prop];
+      }
+    });
+
+    return dstn;
+  }
+
+  protected fetchInitExports(baseMeta: BaseMeta, initRawMeta: BaseInitRawMeta) {
     if (initRawMeta.exports) {
       this.resolveForwardRef(initRawMeta.exports).forEach((exp) => {
         if (isModuleWithParams(exp)) {
