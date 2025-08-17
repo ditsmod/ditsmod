@@ -156,16 +156,14 @@ export const coreErrors = {
   },
   /**
    * `Exporting from ${moduleName} failed: if "${tokenName}" is a token of a provider, this provider
-   * must be included in providersPerMod. If "${tokenName}" is a module, it must have "featureModule" decorator.
-   * If "${tokenName}" is a token of extension, this extension must be included in "extensions" array.`
+   * must be included in providersPerMod. If "${tokenName}" is a module, it must have "featureModule" decorator.`
    */
   exportingUnknownSymbol(moduleName: string, tokenName: string) {
     return newCustomError(coreErrors.exportingUnknownSymbol, {
       msg1:
         `Exporting from ${moduleName} failed: if "${tokenName}" is a token of a provider, this provider ` +
         'must be included in providersPerMod. ' +
-        `If "${tokenName}" is a module, it must have "featureModule" decorator. ` +
-        `If "${tokenName}" is a token of extension, this extension must be included in "extensions" array.`,
+        `If "${tokenName}" is a module, it must have "featureModule" decorator.`,
       level: 'fatal',
     });
   },
