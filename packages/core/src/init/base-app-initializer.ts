@@ -51,7 +51,7 @@ export class BaseAppInitializer {
    * _Note:_ after call this method, you need call `this.systemLogMediator.flush()`.
    */
   bootstrapProvidersPerApp() {
-    this.baseMeta = this.moduleManager.getBaseMeta('root', true);
+    this.baseMeta = this.moduleManager.getBaseMeta('root', true, true);
     this.perAppService.providers = [];
     this.prepareProvidersPerApp();
     this.addDefaultProvidersPerApp();
@@ -102,21 +102,21 @@ export class BaseAppInitializer {
   }
 
   protected getResolvedCollisionsPerApp() {
-    const rootMeta = this.moduleManager.getBaseMeta('root', true);
+    const rootModuleName = this.moduleManager.getBaseMeta('root', true, true).name;
     const resolvedProviders: Provider[] = [];
     this.baseMeta.resolvedCollisionsPerApp.forEach(([token, module]) => {
       const moduleName = getDebugClassName(module) || '""';
       const tokenName = token.name || token;
-      const meta = this.moduleManager.getBaseMeta(module);
-      if (!meta) {
-        throw moduleNotImportedInApplication(rootMeta.name, moduleName, tokenName);
+      const baseMeta = this.moduleManager.getBaseMeta(module, false, true);
+      if (!baseMeta) {
+        throw moduleNotImportedInApplication(rootModuleName, moduleName, tokenName);
       }
-      const provider = getLastProviders(meta.providersPerApp).find((p) => getToken(p) === token);
+      const provider = getLastProviders(baseMeta.providersPerApp).find((p) => getToken(p) === token);
       if (!provider) {
-        throw providersPerAppDoesNotIncludesTokenName(rootMeta.name, moduleName, tokenName);
+        throw providersPerAppDoesNotIncludesTokenName(rootModuleName, moduleName, tokenName);
       }
       if (isMultiProvider(provider)) {
-        throw donotResolveCollisionForMultiProviderPerApp(rootMeta.name, moduleName, tokenName);
+        throw donotResolveCollisionForMultiProviderPerApp(rootModuleName, moduleName, tokenName);
       }
       resolvedProviders.push(provider);
     });
@@ -205,7 +205,7 @@ export class BaseAppInitializer {
     const globalProviders = shallowModulesImporter1.exportGlobalProviders(moduleManager);
     this.log.printGlobalProviders(this, globalProviders);
     const shallowModulesImporter2 = new ShallowModulesImporter();
-    const { modRefId, allInitHooks } = moduleManager.getBaseMeta('root', true);
+    const { modRefId, allInitHooks } = moduleManager.getBaseMeta('root', true, true);
     const shallowImportsMap = shallowModulesImporter2.importModulesShallow({
       globalProviders,
       modRefId,
