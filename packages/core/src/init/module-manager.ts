@@ -78,7 +78,7 @@ export class ModuleManager {
     return baseMeta;
   }
 
-  scanModule(modRefId: ModRefId, allInitHooks?: AllInitHooks) {
+  scanModule(modRefId: ModRefId, allInitHooks?: AllInitHooks, saveToShapshot?: boolean) {
     allInitHooks ??= new Map();
     const baseMeta = this.normalizeMetadata(modRefId, allInitHooks);
     const importsOrExports: (ModuleWithParams | ModuleType)[] = [];
@@ -99,7 +99,7 @@ export class ModuleManager {
         continue;
       }
       this.unfinishedScanModules.add(input);
-      this.scanModule(input, baseMeta.allInitHooks);
+      this.scanModule(input, baseMeta.allInitHooks, saveToShapshot);
       this.unfinishedScanModules.delete(input);
       this.scanedModules.add(input);
     }
@@ -112,7 +112,11 @@ export class ModuleManager {
     }
     const providersPerApp = isRootModule(baseMeta) ? [] : baseMeta.providersPerApp;
     this.providersPerApp.push(...providersPerApp);
-    this.map.set(modRefId, baseMeta);
+    if (saveToShapshot) {
+      this.snapshotMap.set(modRefId, baseMeta);
+    } else {
+      this.map.set(modRefId, baseMeta);
+    }
     baseMeta.allInitHooks.forEach((initHooks, decorator) => allInitHooks.set(decorator, initHooks));
     return baseMeta;
   }
@@ -161,15 +165,15 @@ export class ModuleManager {
    * @param targetModuleId Module ID to which the input module will be added.
    */
   addImport(inputModule: ModRefId, targetModuleId: ModuleId = 'root'): boolean | void {
-    const targetMeta = this.getBaseMeta(targetModuleId, false, true);
-    if (!targetMeta) {
+    const targetBaseMeta = this.getBaseMeta(targetModuleId, false, true);
+    if (!targetBaseMeta) {
       const modName = getDebugClassName(inputModule);
       const modIdStr = format(targetModuleId).slice(0, 50);
       throw failAddingToImports(modName, modIdStr);
     }
 
     const prop = isModuleWithParams(inputModule) ? 'importsWithParams' : 'importsModules';
-    if (targetMeta[prop].some((imp: ModRefId) => imp === inputModule)) {
+    if (targetBaseMeta[prop].some((imp: ModRefId) => imp === inputModule)) {
       const modIdStr = format(targetModuleId).slice(0, 50);
       this.systemLogMediator.moduleAlreadyImported(this, inputModule, modIdStr);
       return false;
@@ -177,9 +181,9 @@ export class ModuleManager {
 
     this.startTransaction();
     try {
-      (targetMeta[prop] as ModRefId[]).push(inputModule);
-      this.scanModule(inputModule);
-      this.systemLogMediator.successfulAddedModuleToImport(this, inputModule, targetMeta.name);
+      (targetBaseMeta[prop] as ModRefId[]).push(inputModule);
+      this.scanModule(inputModule, undefined, true);
+      this.systemLogMediator.successfulAddedModuleToImport(this, inputModule, targetBaseMeta.name);
       return true;
     } catch (err) {
       this.rollback(err as Error);
@@ -190,8 +194,8 @@ export class ModuleManager {
    * @param targetModuleId Module ID from where the input module will be removed.
    */
   removeImport(inputModuleId: ModuleId, targetModuleId: ModuleId = 'root'): boolean | void {
-    const inputMeta = this.getBaseMeta(inputModuleId, false, true);
-    if (!inputMeta) {
+    const inputBaseMeta = this.getBaseMeta(inputModuleId, false, true);
+    if (!inputBaseMeta) {
       const modIdStr = format(inputModuleId).slice(0, 50);
       this.systemLogMediator.moduleNotFound(this, modIdStr);
       return false;
@@ -200,10 +204,10 @@ export class ModuleManager {
     const targetMeta = this.getBaseMeta(targetModuleId, false, true);
     if (!targetMeta) {
       const modIdStr = format(targetModuleId).slice(0, 50);
-      throw failRemovingImport(inputMeta.name, modIdStr);
+      throw failRemovingImport(inputBaseMeta.name, modIdStr);
     }
-    const prop = isModuleWithParams(inputMeta.modRefId) ? 'importsWithParams' : 'importsModules';
-    const index = targetMeta[prop].findIndex((imp: ModRefId) => imp === inputMeta.modRefId);
+    const prop = isModuleWithParams(inputBaseMeta.modRefId) ? 'importsWithParams' : 'importsModules';
+    const index = targetMeta[prop].findIndex((imp: ModRefId) => imp === inputBaseMeta.modRefId);
     if (index == -1) {
       const modIdStr = format(inputModuleId).slice(0, 50);
       this.systemLogMediator.moduleNotFound(this, modIdStr);
@@ -214,12 +218,12 @@ export class ModuleManager {
     try {
       targetMeta[prop].splice(index, 1);
       if (!this.includesInSomeModule(inputModuleId, 'root')) {
-        if (inputMeta.id) {
-          this.snapshotMapId.delete(inputMeta.id);
+        if (inputBaseMeta.id) {
+          this.snapshotMapId.delete(inputBaseMeta.id);
         }
-        this.snapshotMap.delete(inputMeta.modRefId);
+        this.snapshotMap.delete(inputBaseMeta.modRefId);
       }
-      this.systemLogMediator.moduleSuccessfulRemoved(this, inputMeta.name, targetMeta.name);
+      this.systemLogMediator.moduleSuccessfulRemoved(this, inputBaseMeta.name, targetMeta.name);
       return true;
     } catch (err) {
       this.rollback(err as Error);

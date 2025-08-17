@@ -16,6 +16,7 @@ import { InitDecorator } from '#decorators/init-hooks-and-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { isModuleWithParams } from '#utils/type-guards.js';
+import { failAddingToImports } from '#errors';
 
 describe('ModuleManager', () => {
   console.log = jest.fn();
@@ -199,8 +200,10 @@ describe('ModuleManager', () => {
     expect(mock.getBaseMeta('root')).toEqual(expectedMeta1);
 
     expect(mock.addImport(Module1)).toBe(true);
-    expect(mock.map.size).toBe(2);
-    expect(mock.map.has(Module1)).toBe(true);
+    expect(mock.snapshotMap.size).toBe(2);
+    expect(mock.map.size).toBe(1);
+    expect(mock.snapshotMap.has(Module1)).toBe(true);
+    expect(mock.map.has(Module1)).toBe(false);
     expect(mock.oldSnapshotMapId.size).toBe(1);
     expect(mock.oldSnapshotMapId.get('root')).toBe(AppModule);
     expect(mock.oldSnapshotMap.size).toBe(1);
@@ -210,20 +213,40 @@ describe('ModuleManager', () => {
     expect(mock.oldSnapshotMap.size).toBe(1);
     expect(mock.oldSnapshotMap.has(AppModule)).toBe(true);
     expect(mock.oldSnapshotMap.get(AppModule)).toEqual(expectedMeta1);
-    expect(mock.map.size).toBe(2);
-    expect(mock.map.has(Module1)).toBe(true);
+    expect(mock.snapshotMap.size).toBe(2);
+    expect(mock.map.size).toBe(1);
+    expect(mock.snapshotMap.has(Module1)).toBe(true);
+    expect(mock.map.has(Module1)).toBe(false);
 
     mock.commit();
+    expect(mock.oldSnapshotMapId.size).toBe(0);
+    expect(mock.oldSnapshotMap.size).toBe(0);
+    expect(mock.snapshotMap.size).toBe(2);
+    expect(mock.snapshotMap.has(AppModule)).toBe(true);
+    expect(mock.snapshotMap.has(Module1)).toBe(true);
+
+    mock.reset();
     expect(mock.oldSnapshotMapId.size).toBe(0);
     expect(mock.oldSnapshotMap.size).toBe(0);
     expect(mock.map.size).toBe(2);
     expect(mock.map.has(AppModule)).toBe(true);
     expect(mock.map.has(Module1)).toBe(true);
 
-    expect(() => mock.addImport(Module2, 'fakeId')).toThrow(/Failed adding Module2 to imports/);
+    expect(() => mock.addImport(Module2, 'fakeId')).toThrow(failAddingToImports('Module2', 'fakeId'));
     expect(mock.map.size).toBe(2);
     expect(mock.oldSnapshotMapId.size).toBe(0);
     expect(mock.oldSnapshotMap.size).toBe(0);
+
+    mock.addImport(Module2);
+    expect(mock.snapshotMap.size).toBe(3);
+    expect(mock.map.size).toBe(2);
+    expect(mock.snapshotMap.has(Module2)).toBe(true);
+    expect(mock.map.has(Module2)).toBe(false);
+    expect(mock.oldSnapshotMap.size).toBe(2);
+    expect(mock.oldSnapshotMap.has(AppModule)).toBe(true);
+    expect(mock.oldSnapshotMap.has(Module1)).toBe(true);
+    expect(mock.oldSnapshotMapId.size).toBe(1);
+    expect(mock.oldSnapshotMapId.get('root')).toBe(AppModule);
 
     const expectedMeta2 = new BaseMeta();
     expectedMeta2.id = '';
@@ -235,20 +258,13 @@ describe('ModuleManager', () => {
     expectedMeta2.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta2.isExternal = false;
     expectedMeta2.mInitHooksAndRawMeta = expect.any(Map);
-
-    mock.addImport(Module2);
-    expect(mock.map.size).toBe(3);
-    expect(mock.map.has(Module2)).toBe(true);
-    expect(mock.oldSnapshotMap.size).toBe(2);
-    expect(mock.oldSnapshotMap.has(AppModule)).toBe(true);
-    expect(mock.oldSnapshotMap.has(Module1)).toBe(true);
-    expect(mock.oldSnapshotMapId.size).toBe(1);
-    expect(mock.oldSnapshotMapId.get('root')).toBe(AppModule);
     expect(mock.oldSnapshotMap.get(AppModule)).toEqual(expectedMeta2);
 
     mock.addImport(Module4);
-    expect(mock.map.size).toBe(4);
-    expect(mock.map.has(Module4)).toBe(true);
+    expect(mock.snapshotMap.size).toBe(4);
+    expect(mock.map.size).toBe(2);
+    expect(mock.snapshotMap.has(Module4)).toBe(true);
+    expect(mock.map.has(Module4)).toBe(false);
     expect(mock.oldSnapshotMap.size).toBe(2);
     expect(mock.oldSnapshotMap.has(AppModule)).toBe(true);
     expect(mock.oldSnapshotMap.has(Module1)).toBe(true);
@@ -256,6 +272,15 @@ describe('ModuleManager', () => {
     expect(mock.oldSnapshotMapId.get('root')).toBe(AppModule);
 
     mock.commit();
+    expect(mock.snapshotMap.size).toBe(4);
+    expect(mock.snapshotMap.has(AppModule)).toBe(true);
+    expect(mock.snapshotMap.has(Module1)).toBe(true);
+    expect(mock.snapshotMap.has(Module2)).toBe(true);
+    expect(mock.snapshotMap.has(Module4)).toBe(true);
+    expect(mock.oldSnapshotMapId.size).toBe(0);
+    expect(mock.oldSnapshotMap.has(AppModule)).toBe(false);
+
+    mock.reset();
     expect(mock.map.size).toBe(4);
     expect(mock.map.has(AppModule)).toBe(true);
     expect(mock.map.has(Module1)).toBe(true);
@@ -276,17 +301,26 @@ describe('ModuleManager', () => {
     expectedMeta3.mInitHooksAndRawMeta = expect.any(Map);
 
     expect(mock.getBaseMeta('root') === mock.getBaseMeta('root')).toBe(true);
+    expect(mock.getBaseMeta('root') !== mock.getBaseMeta('root', false, true)).toBe(true);
     expect(mock.getBaseMeta('root')).toEqual(expectedMeta3);
 
     mock.addImport(module3WithProviders);
-    expect(mock.map.size).toBe(5);
+    expect(mock.snapshotMap.size).toBe(5);
+    expect(mock.map.size).toBe(4);
     expect(mock.oldSnapshotMap.size).toBe(4);
-    expect(mock.getBaseMeta('root')).toEqual({ ...expectedMeta3, importsWithParams: [module3WithProviders] });
-    expect(mock.map.has(module3WithProviders)).toBe(true);
+    expect(mock.getBaseMeta('root', false, true)).toEqual({
+      ...expectedMeta3,
+      importsWithParams: [module3WithProviders],
+    });
+    expect(mock.snapshotMap.has(module3WithProviders)).toBe(true);
+    expect(mock.map.has(module3WithProviders)).toBe(false);
 
     mock.rollback();
+    expect(mock.snapshotMap.size).toBe(4);
     expect(mock.map.size).toBe(4);
+    expect(mock.getBaseMeta('root', false, true)).toEqual(expectedMeta3);
     expect(mock.getBaseMeta('root')).toEqual(expectedMeta3);
+    expect(mock.snapshotMap.has(module3WithProviders)).toBe(false);
     expect(mock.map.has(module3WithProviders)).toBe(false);
     expect(mock.oldSnapshotMap.size).toBe(0);
   });
