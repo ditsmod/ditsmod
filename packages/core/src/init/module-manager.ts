@@ -248,11 +248,20 @@ export class ModuleManager {
     if (err) {
       throw err;
     }
+    return this;
   }
 
   commit() {
     this.oldSnapshotMapId = new Map();
     this.oldSnapshotMap = new Map();
+    return this;
+  }
+
+  reset() {
+    this.map.clear();
+    this.snapshotMap.forEach((baseMeta, key) => this.map.set(key, this.copyBaseMeta(baseMeta)));
+    this.mapId = new Map(this.snapshotMapId);
+    return this;
   }
 
   /**
@@ -323,7 +332,7 @@ export class ModuleManager {
    * @param targetModuleId Module where to search `inputModule`.
    */
   protected includesInSomeModule(inputModuleId: ModuleId, targetModuleId: ModuleId): boolean {
-    const targetMeta = this.getBaseMeta(targetModuleId);
+    const targetMeta = this.getBaseMeta(targetModuleId, false, true);
     if (!targetMeta) {
       return false;
     }
