@@ -15,16 +15,6 @@ import { MulterCtxParser } from './multer-ctx.parser.js';
  * This is done using `BodyParserExtension`.
  */
 @initRest({
-  providersPerRou: [
-    {
-      token: BodyParserGroup,
-      useFactory: [BodyParserGroupFactory, BodyParserGroupFactory.prototype.getBodyParserGroup],
-    },
-  ],
-  providersPerReq: [{ token: HTTP_BODY }, MulterParser],
-  exports: [HTTP_BODY, BodyParserGroup, MulterParser],
-})
-@featureModule({
   providersPerMod: [
     MulterCtxParser,
     {
@@ -32,7 +22,13 @@ import { MulterCtxParser } from './multer-ctx.parser.js';
       useFactory: [MulterFactory, MulterFactory.prototype.getMulter],
     },
   ],
-  exports: [MulterCtxParser],
+  providersPerRou: [
+    {
+      token: BodyParserGroup,
+      useFactory: [BodyParserGroupFactory, BodyParserGroupFactory.prototype.getBodyParserGroup],
+    },
+  ],
+  providersPerReq: [{ token: HTTP_BODY }, MulterParser],
   extensions: [
     {
       extension: BodyParserExtension,
@@ -41,7 +37,9 @@ import { MulterCtxParser } from './multer-ctx.parser.js';
       exportOnly: true,
     },
   ],
+  exports: [MulterCtxParser, HTTP_BODY, BodyParserGroup, MulterParser],
 })
+@featureModule()
 export class BodyParserModule {
   static withParams(config: BodyParserConfig): ModuleWithParams<BodyParserModule> {
     return {

@@ -6,10 +6,11 @@ import { JwtService } from './jwt.service.js';
 import { JwtServiceOptions } from './models/jwt-service-options.js';
 
 @initRest({
+  providersPerApp: [JwtServiceOptions],
   providersPerReq: [JwtService, { token: JWT_PAYLOAD, useValue: {} }],
   exports: [JwtService, JWT_PAYLOAD],
 })
-@featureModule({ providersPerApp: [JwtServiceOptions] })
+@featureModule()
 export class JwtModule {
   static withParams(jwtServiceOptions: JwtServiceOptions): ModuleWithParams<JwtModule> {
     return {

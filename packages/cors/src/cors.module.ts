@@ -5,8 +5,8 @@ import { CorsOptions } from '@ts-stack/cors';
 import { CorsExtension } from './cors.extension.js';
 import { CorsService } from './cors.service.js';
 
-@initRest({ providersPerReq: [CorsService] })
-@featureModule({
+@initRest({
+  providersPerReq: [CorsService],
   exports: [CorsService],
   extensions: [
     {
@@ -17,6 +17,7 @@ import { CorsService } from './cors.service.js';
     },
   ],
 })
+@featureModule()
 export class CorsModule {
   static withParams(options: CorsOptions): ModuleWithParams<CorsModule> {
     return {

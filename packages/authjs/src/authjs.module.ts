@@ -15,13 +15,10 @@ import { AuthjsConfig } from './authjs.config.js';
  * [1]: https://authjs.dev/
  */
 @initRest({
-  providersPerRou: [{ token: AuthjsGuard, useClass: AuthjsPerRouGuard }],
-  providersPerReq: [AuthjsGuard, { token: AUTHJS_SESSION }],
-  exports: [AUTHJS_SESSION, AuthjsGuard],
-})
-@featureModule({
   imports: [RestModule, BodyParserModule],
   providersPerMod: [AuthjsLogMediator],
+  providersPerRou: [{ token: AuthjsGuard, useClass: AuthjsPerRouGuard }],
+  providersPerReq: [AuthjsGuard, { token: AUTHJS_SESSION }],
   extensions: [
     {
       extension: AuthjsExtension,
@@ -30,8 +27,9 @@ import { AuthjsConfig } from './authjs.config.js';
       exportOnly: true,
     },
   ],
-  exports: [BodyParserModule],
+  exports: [BodyParserModule, AUTHJS_SESSION, AuthjsGuard],
 })
+@featureModule()
 export class AuthjsModule {
   /**
    * You can pass either a ready-made configuration or a provider that returns the configuration.

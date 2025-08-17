@@ -6,9 +6,9 @@ import { SessionLogMediator } from './session-log-mediator.js';
 import { SessionCookieOptions } from './types.js';
 import { SessionCookieExtension } from './session-cookie.extension.js';
 
-@initRest({ providersPerReq: [SessionCookie], exports: [SessionCookie] })
-@featureModule({
+@initRest({
   providersPerMod: [SessionLogMediator],
+  providersPerReq: [SessionCookie],
   extensions: [
     {
       extension: SessionCookieExtension,
@@ -17,7 +17,9 @@ import { SessionCookieExtension } from './session-cookie.extension.js';
       exportOnly: true,
     },
   ],
+  exports: [SessionCookie],
 })
+@featureModule()
 export class SessionCookieModule {
   static withParams(opts: SessionCookieOptions): ModuleWithParams<SessionCookieModule> {
     return {
