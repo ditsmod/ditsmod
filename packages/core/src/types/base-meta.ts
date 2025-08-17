@@ -3,7 +3,6 @@ import { AnyFn, AnyObj, ModRefId, ModuleType } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from './module-metadata.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
-import { ExtensionClass } from '#extension/extension-types.js';
 import { InitMetaMap } from '#decorators/init-hooks-and-metadata.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { AllInitHooks } from '#decorators/init-hooks-and-metadata.js';
@@ -33,7 +32,7 @@ export class BaseInitMeta<A extends AnyObj = AnyObj> {
 
   constructor(baseMeta?: BaseMeta) {
     if (baseMeta) {
-      copyBaseInitMeta(baseMeta, this);
+      copyBaseInitMeta(this, baseMeta);
     }
   }
 }
