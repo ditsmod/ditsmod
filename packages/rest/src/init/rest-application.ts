@@ -30,9 +30,9 @@ export class RestApplication extends BaseApplication {
       return app;
     } catch (err: any) {
       (app.log as PublicLogMediator).updateOutputLogLevel();
-      app.log.internalServerError(app, err, true);
+      app.log.internalServerError(app, err);
       app.flushLogs();
-      throw err;
+      process.exit(1);
     }
   }
 

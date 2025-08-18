@@ -1,4 +1,5 @@
 import { diErrors } from '#di/di-errors.js';
+export { cleanErrorTrace } from '#error/clean-error-trace.js';
 import { coreErrors as coreErrs } from '#error/core-errors.js';
 
 export const coreErrors = { ...coreErrs, ...diErrors };

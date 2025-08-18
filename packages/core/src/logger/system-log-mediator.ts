@@ -11,6 +11,7 @@ import { getProviderName } from '#utils/get-provider-name.js';
 import { isInjectionToken } from '#di';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { loggerWasNotPreviouslySeted } from '#errors';
+import { CustomError } from '#error/custom-error.js';
 
 /**
  * Mediator between core logger and custom user's logger.
@@ -273,14 +274,13 @@ export class SystemLogMediator extends LogMediator {
   /**
    * [internal error]
    */
-  internalServerError(self: object, err: any, hideConsoleLoggerMsg?: boolean) {
-    if (hideConsoleLoggerMsg && this.logger instanceof ConsoleLogger) {
-      return;
+  internalServerError(self: object, err: any) {
+    if (err instanceof CustomError) {
+      this.setLog(err.info.level || 'fatal', CustomError.getFullStack(err)!);
+    } else {
+      this.setLog('error', err.stack || err.message);
     }
-    const className = self.constructor.name;
-    this.setLog('error', err.stack || err.message);
   }
-
   /**
    * `can not activate the route with URL: ${httpMethod} ${url}.`
    */

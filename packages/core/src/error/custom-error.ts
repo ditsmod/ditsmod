@@ -2,6 +2,7 @@ import { ChainError } from '@ts-stack/chain-error';
 
 import { ErrorInfo } from './error-info.js';
 import { AnyFn, OmitProps } from '#types/mix.js';
+import { Status } from '#utils/http-status-codes.js';
 
 export class CustomError extends ChainError {
   declare info: ErrorInfo;
@@ -10,9 +11,10 @@ export class CustomError extends ChainError {
   constructor(info: ErrorInfo, cause?: Error) {
     // Merge with default options
     info = new ErrorInfo(info);
+    const fnName = info.name || new.target.name;
     super(
       `${info.msg1}`,
-      { info, cause, constructorOpt: info.constructorOpt, name: info.name || new.target.constructor.name },
+      { info, cause, constructorOpt: info.constructorOpt, name: `${fnName}(code: ${info.code})` },
       info.skipCauseMessage,
     );
     this.code = info.code;
@@ -28,5 +30,6 @@ export class CustomError extends ChainError {
 export function newCustomError(fnAsErrCode: AnyFn, info: OmitProps<ErrorInfo, 'code'>, cause?: Error) {
   (info as ErrorInfo).code = fnAsErrCode.name;
   info.constructorOpt ??= fnAsErrCode;
+  info.status ??= Status.INTERNAL_SERVER_ERROR;
   return new CustomError(info, cause);
 }
