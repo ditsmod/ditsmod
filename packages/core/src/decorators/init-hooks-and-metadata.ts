@@ -4,7 +4,7 @@ import { ShallowImports } from '#init/types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { GlobalInitHooks, GlobalProviders } from '#types/metadata-per-mod.js';
 import { AnyFn, AnyObj, ModRefId, ModuleType } from '#types/mix.js';
-import { BaseMeta } from '#types/base-meta.js';
+import { BaseMeta, getProxyForInitMeta } from '#types/base-meta.js';
 import { ModuleWithParams, type ModuleMetadata } from '#types/module-metadata.js';
 import { BaseInitMeta } from '#types/base-meta.js';
 import type { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
@@ -68,7 +68,7 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
    * to the {@link featureModule} or {@link rootModule} decorator.
    */
   normalize(baseMeta: BaseMeta) {
-    return {} as BaseInitMeta;
+    return getProxyForInitMeta(baseMeta, BaseInitMeta);
   }
 
   /**

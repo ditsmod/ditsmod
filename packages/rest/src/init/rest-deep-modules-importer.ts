@@ -56,7 +56,7 @@ export class RestDeepModulesImporter {
   importModulesDeep(): RestMetadataPerMod2 | undefined {
     const levels: Level[] = ['Req', 'Rou', 'Mod'];
     this.tokensPerApp = getTokens(this.providersPerApp);
-    const { baseImportRegistry, guards1, prefixPerMod, meta, applyControllers, baseMeta } = this.shallowImports;
+    const { baseImportRegistry, guards1, prefixPerMod, meta, applyControllers } = this.shallowImports;
     const targetProviders = new RestProvidersOnly();
     this.resolveImportedProviders(targetProviders, baseImportRegistry, levels);
     meta.providersPerMod.push(...targetProviders.providersPerMod);
