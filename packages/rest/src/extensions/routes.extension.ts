@@ -52,6 +52,9 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
             const route = decoratorAndValue.value;
             const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
             const scope = ctrlDecorator?.value.scope;
+            if (scope == 'ctx') {
+              baseMeta.providersPerMod.unshift(Controller);
+            }
             const { path: controllerPath, httpMethod, interceptors } = route;
             const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
             const fullPath = this.getPath(prefix, controllerPath);

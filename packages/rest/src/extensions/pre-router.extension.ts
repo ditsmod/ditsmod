@@ -173,7 +173,7 @@ export class PreRouterExtension implements Extension<void> {
     const resolvedChainMaker = resolvedPerRou.find((rp) => rp.dualKey.token === ChainMaker)!;
     const resolvedErrHandler = resolvedPerRou.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
     const chainMaker = injectorPerRou.instantiateResolved<DefaultCtxChainMaker>(resolvedChainMaker);
-    const ctrl = injectorPerMod.resolveAndCreateChild([routeMeta.Controller]).get(routeMeta.Controller);
+    const ctrl = injectorPerMod.get(routeMeta.Controller);
     const routeHandler = ctrl[routeMeta.methodName].bind(ctrl) as typeof routeMeta.routeHandler;
     routeMeta.routeHandler = routeHandler;
     const errorHandler = injectorPerRou.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
