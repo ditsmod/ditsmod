@@ -6,7 +6,6 @@ import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { InitMetaMap } from '#decorators/init-hooks-and-metadata.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { AllInitHooks } from '#decorators/init-hooks-and-metadata.js';
-import { copyBaseInitMeta } from '#init/copy-base-init-meta.js';
 
 export class BaseInitMeta<A extends AnyObj = AnyObj> {
   importsModules: ModuleType[] = [];
@@ -30,10 +29,24 @@ export class BaseInitMeta<A extends AnyObj = AnyObj> {
    */
   extensionsMeta = {} as A;
 
-  constructor(baseMeta?: BaseMeta) {
-    if (baseMeta) {
-      copyBaseInitMeta(this, baseMeta);
-    }
+  getProxy(baseMeta: BaseInitMeta) {
+    return new Proxy(this, {
+      get(target, prop: keyof BaseInitMeta) {
+        if (prop in baseMeta) {
+          return baseMeta[prop];
+        } else {
+          return target[prop];
+        }
+      },
+      set(target, prop: keyof BaseInitMeta, value) {
+        if (prop in baseMeta) {
+          baseMeta[prop] = value;
+        } else {
+          target[prop] = value;
+        }
+        return true;
+      },
+    });
   }
 }
 

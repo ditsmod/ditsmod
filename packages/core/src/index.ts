@@ -6,7 +6,6 @@ export { BaseAppInitializer } from '#init/base-app-initializer.js';
 export { ShallowImports, BaseImportRegistry } from '#init/types.js';
 export { BaseApplication } from '#init/base-application.js';
 export { BaseAppOptions } from '#init/base-app-options.js';
-export { copyBaseInitMeta } from '#init/copy-base-init-meta.js';
 export { DeepModulesImporter } from '#init/deep-modules-importer.js';
 export { GlobalProviders, GlobalInitHooks } from '#types/metadata-per-mod.js';
 export { ShallowModulesImporter } from '#init/shallow-modules-importer.js';

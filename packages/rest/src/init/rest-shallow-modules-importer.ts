@@ -189,7 +189,7 @@ export class ShallowModulesImporter {
   protected getInitMeta(baseMeta: BaseMeta): RestInitMeta {
     let meta = baseMeta.initMeta.get(initRest);
     if (!meta) {
-      meta = new RestInitMeta(baseMeta);
+      meta = new RestInitMeta().getProxy(baseMeta);
       baseMeta.initMeta.set(initRest, meta);
     }
     return meta;

@@ -329,7 +329,8 @@ export class ModuleManager {
   }
 
   protected copyBaseMeta(baseMeta: BaseMeta) {
-    baseMeta = { ...(baseMeta || ({} as BaseMeta)) };
+    baseMeta = Object.assign(Object.create(Object.getPrototypeOf(baseMeta)), baseMeta);
+
     objectKeys(baseMeta).forEach((p) => {
       if (Array.isArray(baseMeta[p])) {
         (baseMeta as any)[p] = baseMeta[p].slice();

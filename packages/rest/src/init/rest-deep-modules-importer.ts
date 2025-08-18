@@ -59,9 +59,7 @@ export class RestDeepModulesImporter {
     const { baseImportRegistry, guards1, prefixPerMod, meta, applyControllers, baseMeta } = this.shallowImports;
     const targetProviders = new RestProvidersOnly();
     this.resolveImportedProviders(targetProviders, baseImportRegistry, levels);
-    baseMeta.providersPerMod.unshift(...targetProviders.providersPerMod);
-    meta.providersPerMod.splice(0);
-    meta.providersPerMod.push(...baseMeta.providersPerMod);
+    meta.providersPerMod.push(...targetProviders.providersPerMod);
     meta.providersPerRou.unshift(...defaultProvidersPerRou, ...targetProviders.providersPerRou);
     meta.providersPerReq.unshift(...defaultProvidersPerReq, ...targetProviders.providersPerReq);
     return {

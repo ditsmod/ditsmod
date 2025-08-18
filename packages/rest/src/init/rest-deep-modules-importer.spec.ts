@@ -102,16 +102,16 @@ describe('DeepModulesImporter', () => {
     expect(rootBaseMeta?.providersPerMod.includes(Service6)).toBeTruthy();
 
     const mod1InitMeta = mod1BaseMeta?.initMeta.get(initRest);
-    expect(mod1BaseMeta?.providersPerApp).toEqual(mod1InitMeta?.providersPerApp);    
-    expect(mod1BaseMeta?.providersPerMod).toEqual(mod1InitMeta?.providersPerMod);
+    expect(mod1BaseMeta?.providersPerApp).toBe(mod1InitMeta?.providersPerApp);
+    expect(mod1BaseMeta?.providersPerMod).toBe(mod1InitMeta?.providersPerMod);
     expect(mod1InitMeta?.providersPerApp).toEqual([Service1, Service3]);
     expect(mod1InitMeta?.providersPerMod.includes(Service2)).toBeTruthy();
     expect(mod1InitMeta?.providersPerMod.includes(Service4)).toBeTruthy();
 
     const rootInitMeta = rootBaseMeta?.initMeta.get(initRest);
-    expect(rootBaseMeta?.providersPerApp).toEqual(rootInitMeta?.providersPerApp);
-    expect(rootBaseMeta?.providersPerMod).toEqual(rootInitMeta?.providersPerMod);
-    expect(rootInitMeta?.providersPerApp).toEqual([Service5]);
+    expect(rootBaseMeta?.providersPerApp).toBe(rootInitMeta?.providersPerApp);
+    expect(rootBaseMeta?.providersPerMod).toBe(rootInitMeta?.providersPerMod);
+    expect(rootInitMeta?.providersPerApp.includes(Service5)).toBeTruthy();
     expect(rootInitMeta?.providersPerMod.includes(Service6)).toBeTruthy();
   });
 
@@ -477,7 +477,8 @@ describe('DeepModulesImporter', () => {
 
     const initMeta = getRestMetadataPerMod2(AppModule)!.meta!;
     expect(initMeta.providersPerReq).toEqual(defaultProvidersPerReq);
-    expect(initMeta.providersPerRou.slice(-2)).toEqual([Service2, Service3]);
+    expect(initMeta.providersPerRou.includes(Service2)).toBeTruthy();
+    expect(initMeta.providersPerRou.includes(Service3)).toBeTruthy();
     expect(initMeta.providersPerMod.includes(Service1)).toBeTruthy();
   });
 

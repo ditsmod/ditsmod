@@ -36,7 +36,7 @@ import { Level } from '#types/types.js';
  */
 export class RestModuleNormalizer {
   normalize(baseMeta: BaseMeta, rawMeta: RestInitRawMeta) {
-    const meta = new RestInitMeta(baseMeta);
+    const meta = new RestInitMeta().getProxy(baseMeta);
     this.mergeModuleWithParams(baseMeta.modRefId, rawMeta, meta);
     this.appendModules(rawMeta, meta);
     this.normalizeDeclaredAndResolvedProviders(meta, rawMeta);
