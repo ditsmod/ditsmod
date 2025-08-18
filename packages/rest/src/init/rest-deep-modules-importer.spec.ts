@@ -98,7 +98,7 @@ describe('DeepModulesImporter', () => {
     expect(mod1BaseMeta?.providersPerApp).toEqual([Service1, Service3]);
     expect(mod1BaseMeta?.providersPerMod.includes(Service2)).toBeTruthy();
     expect(mod1BaseMeta?.providersPerMod.includes(Service4)).toBeTruthy();
-    expect(rootBaseMeta?.providersPerApp).toEqual([Service5]);
+    expect(rootBaseMeta?.providersPerApp.includes(Service5)).toBeTruthy();
     expect(rootBaseMeta?.providersPerMod.includes(Service6)).toBeTruthy();
 
     const mod1InitMeta = mod1BaseMeta?.initMeta.get(initRest);

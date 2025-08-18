@@ -51,7 +51,7 @@ export class BaseAppInitializer {
    * _Note:_ after call this method, you need call `this.systemLogMediator.flush()`.
    */
   bootstrapProvidersPerApp() {
-    this.baseMeta = this.moduleManager.getBaseMeta('root', true, true);
+    this.baseMeta = this.moduleManager.getBaseMeta('root', true);
     this.perAppService.providers = [];
     this.prepareProvidersPerApp();
     this.addDefaultProvidersPerApp();
@@ -102,12 +102,12 @@ export class BaseAppInitializer {
   }
 
   protected getResolvedCollisionsPerApp() {
-    const rootModuleName = this.moduleManager.getBaseMeta('root', true, true).name;
+    const rootModuleName = this.moduleManager.getBaseMeta('root', true).name;
     const resolvedProviders: Provider[] = [];
     this.baseMeta.resolvedCollisionsPerApp.forEach(([token, module]) => {
       const moduleName = getDebugClassName(module) || '""';
       const tokenName = token.name || token;
-      const baseMeta = this.moduleManager.getBaseMeta(module, false, true);
+      const baseMeta = this.moduleManager.getBaseMeta(module);
       if (!baseMeta) {
         throw moduleNotImportedInApplication(rootModuleName, moduleName, tokenName);
       }
@@ -205,7 +205,7 @@ export class BaseAppInitializer {
     const globalProviders = shallowModulesImporter1.exportGlobalProviders(moduleManager);
     this.log.printGlobalProviders(this, globalProviders);
     const shallowModulesImporter2 = new ShallowModulesImporter();
-    const { modRefId, allInitHooks } = moduleManager.getBaseMeta('root', true, true);
+    const { modRefId, allInitHooks } = moduleManager.getBaseMeta('root', true);
     const shallowImportsMap = shallowModulesImporter2.importModulesShallow({
       globalProviders,
       modRefId,

@@ -22,7 +22,7 @@ import {
 
 export type ModulesMap = Map<ModRefId, BaseMeta>;
 export type ModulesMapId = Map<string, ModRefId>;
-type ModuleId = string | ModRefId;
+export type ModuleId = string | ModRefId;
 
 /**
  * Recursively scans metadata attached to module classes via decorators, normalizes it, and validates it.
@@ -122,27 +122,20 @@ export class ModuleManager {
   }
 
   /**
-   * Returns normalized metadata.
+   * Returns a mutable {@link BaseMeta}. Therefore, if you retrieve a {@link BaseMeta} from this method and then modify it,
+   * the next call to this method will return the already modified {@link BaseMeta}.
    */
-  getBaseMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
-    moduleId: ModuleId,
-    throwErrIfNotFound?: boolean,
-    withoutState?: boolean,
-  ): BaseMeta | undefined;
-  getBaseMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj>(
-    moduleId: ModuleId,
-    throwErrIfNotFound: true,
-    withoutState?: boolean,
-  ): BaseMeta;
-  getBaseMeta(moduleId: ModuleId, throwErrIfNotFound?: boolean, withoutState?: boolean) {
+  getBaseMeta(moduleId: ModuleId, throwErrIfNotFound?: boolean): BaseMeta | undefined;
+  getBaseMeta(moduleId: ModuleId, throwErrIfNotFound: true): BaseMeta;
+  getBaseMeta(moduleId: ModuleId, throwErrIfNotFound?: boolean) {
     let baseMeta: BaseMeta | undefined;
     if (typeof moduleId == 'string') {
-      const mapId = withoutState ? this.snapshotMapId.get(moduleId) : this.mapId.get(moduleId);
+      const mapId = this.mapId.get(moduleId);
       if (mapId) {
-        baseMeta = withoutState ? this.snapshotMap.get(mapId) : this.map.get(mapId);
+        baseMeta = this.map.get(mapId);
       }
     } else {
-      baseMeta = withoutState ? this.snapshotMap.get(moduleId) : this.map.get(moduleId);
+      baseMeta = this.map.get(moduleId);
     }
 
     if (throwErrIfNotFound && !baseMeta) {
@@ -165,7 +158,7 @@ export class ModuleManager {
    * @param targetModuleId Module ID to which the input module will be added.
    */
   addImport(inputModule: ModRefId, targetModuleId: ModuleId = 'root'): boolean | void {
-    const targetBaseMeta = this.getBaseMeta(targetModuleId, false, true);
+    const targetBaseMeta = this.getBaseMetaFromSnapshot(targetModuleId);
     if (!targetBaseMeta) {
       const modName = getDebugClassName(inputModule);
       const modIdStr = format(targetModuleId).slice(0, 50);
@@ -194,14 +187,14 @@ export class ModuleManager {
    * @param targetModuleId Module ID from where the input module will be removed.
    */
   removeImport(inputModuleId: ModuleId, targetModuleId: ModuleId = 'root'): boolean | void {
-    const inputBaseMeta = this.getBaseMeta(inputModuleId, false, true);
+    const inputBaseMeta = this.getBaseMetaFromSnapshot(inputModuleId);
     if (!inputBaseMeta) {
       const modIdStr = format(inputModuleId).slice(0, 50);
       this.systemLogMediator.moduleNotFound(this, modIdStr);
       return false;
     }
 
-    const targetMeta = this.getBaseMeta(targetModuleId, false, true);
+    const targetMeta = this.getBaseMetaFromSnapshot(targetModuleId);
     if (!targetMeta) {
       const modIdStr = format(targetModuleId).slice(0, 50);
       throw failRemovingImport(inputBaseMeta.name, modIdStr);
@@ -261,8 +254,11 @@ export class ModuleManager {
     return this;
   }
 
+  /**
+   * Видаляє зміни {@link BaseMeta} усіх модулів.
+   */
   reset() {
-    this.map.clear();
+    this.map = new Map();
     this.snapshotMap.forEach((baseMeta, key) => this.map.set(key, this.copyBaseMeta(baseMeta)));
     this.mapId = new Map(this.snapshotMapId);
     return this;
@@ -301,6 +297,20 @@ export class ModuleManager {
     }
   }
 
+  protected getBaseMetaFromSnapshot(moduleId: ModuleId) {
+    let baseMeta: BaseMeta | undefined;
+    if (typeof moduleId == 'string') {
+      const mapId = this.snapshotMapId.get(moduleId);
+      if (mapId) {
+        baseMeta = this.snapshotMap.get(mapId);
+      }
+    } else {
+      baseMeta = this.snapshotMap.get(moduleId);
+    }
+
+    return baseMeta;
+  }
+
   /**
    * The current module may sometimes lack the init decorators that are present in imported modules.
    * In such cases, after scanning all imported modules, the collected init hooks from them are also
@@ -336,7 +346,7 @@ export class ModuleManager {
    * @param targetModuleId Module where to search `inputModule`.
    */
   protected includesInSomeModule(inputModuleId: ModuleId, targetModuleId: ModuleId): boolean {
-    const targetMeta = this.getBaseMeta(targetModuleId, false, true);
+    const targetMeta = this.getBaseMetaFromSnapshot(targetModuleId);
     if (!targetMeta) {
       return false;
     }
