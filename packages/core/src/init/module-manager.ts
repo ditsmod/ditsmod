@@ -329,7 +329,7 @@ export class ModuleManager {
   }
 
   protected copyBaseMeta(baseMeta: BaseMeta) {
-    baseMeta = Object.assign(Object.create(Object.getPrototypeOf(baseMeta)), baseMeta);
+    baseMeta = { ...(baseMeta || ({} as BaseMeta)) };
 
     objectKeys(baseMeta).forEach((p) => {
       if (Array.isArray(baseMeta[p])) {

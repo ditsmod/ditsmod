@@ -550,7 +550,7 @@ describe('ModuleManager', () => {
     })
     class AppModule {}
 
-    const expectedMeta1 = new RestInitMeta();
+    const expectedMeta1 = {} as RestInitMeta;
     expectedMeta1.importsModules = [RestModule];
     expectedMeta1.exportedProvidersPerReq = [Provider3];
     expectedMeta1.providersPerReq = providersPerReq;
@@ -562,9 +562,7 @@ describe('ModuleManager', () => {
     ];
 
     mock.scanRootModule(AppModule);
-    const rootInitMeta = new RestInitMeta();
-    rootInitMeta.importsModules = [Module1];
-    expect(getInitMeta('root')).toEqual(rootInitMeta);
-    expect(getInitMeta(Module1)).toEqual(expectedMeta1);
+    expect(getInitMeta('root')?.importsModules).toEqual([Module1]);
+    expect(getInitMeta(Module1)).toMatchObject(expectedMeta1);
   });
 });

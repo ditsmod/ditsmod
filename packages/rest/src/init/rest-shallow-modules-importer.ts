@@ -15,6 +15,7 @@ import {
   GlobalProviders,
   getLastProviders,
   defaultProvidersPerMod,
+  getProxyForInitMeta,
 } from '@ditsmod/core';
 import { providersCollision } from '@ditsmod/core/errors';
 
@@ -189,7 +190,7 @@ export class ShallowModulesImporter {
   protected getInitMeta(baseMeta: BaseMeta): RestInitMeta {
     let meta = baseMeta.initMeta.get(initRest);
     if (!meta) {
-      meta = new RestInitMeta().getProxy(baseMeta);
+      meta = getProxyForInitMeta(baseMeta, RestInitMeta);
       baseMeta.initMeta.set(initRest, meta);
     }
     return meta;
