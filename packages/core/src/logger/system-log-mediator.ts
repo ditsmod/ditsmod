@@ -280,15 +280,17 @@ export class SystemLogMediator extends LogMediator {
   /**
    * [internal error]
    */
-  internalServerError(self: object, err: any) {
+  internalServerError(self: object, err: Error, appendMsg?: string) {
+    const className = self.constructor.name;
     if (err instanceof CustomError) {
       let stack = CustomError.getFullStack(err)!;
+      stack = appendMsg ? `${appendMsg}: ${stack}` : stack;
       if (!LogMediator.bufferLogs && this.logger instanceof ConsoleLogger) {
         stack = this.formatStackTrace(stack);
       }
-      this.setLog(err.info.level || 'fatal', stack);
+      this.setLog(err.info.level || 'fatal', `${className}: ${stack}`);
     } else {
-      this.setLog('error', err.stack || err.message);
+      this.setLog('error', `${className}: ${err.stack || err.message}`);
     }
   }
 
