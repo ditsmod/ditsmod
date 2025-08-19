@@ -8,9 +8,12 @@ import {
   ReflectiveDependency,
   DeepModulesImporter,
   ShallowImports,
+  ModuleExtract,
+  BaseMeta,
+  isValueProvider,
 } from '@ditsmod/core';
 
-import { Level } from '#types/types.js';
+import { Level, RestModuleExtract } from '#types/types.js';
 import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
 import {
@@ -56,9 +59,10 @@ export class RestDeepModulesImporter {
   importModulesDeep(): RestMetadataPerMod2 | undefined {
     const levels: Level[] = ['Req', 'Rou', 'Mod'];
     this.tokensPerApp = getTokens(this.providersPerApp);
-    const { baseImportRegistry, guards1, prefixPerMod, meta, applyControllers } = this.shallowImports;
+    const { baseImportRegistry, guards1, prefixPerMod, meta, applyControllers, baseMeta } = this.shallowImports;
     const targetProviders = new RestProvidersOnly();
     this.resolveImportedProviders(targetProviders, baseImportRegistry, levels);
+    this.patchModuleExtract(baseMeta, prefixPerMod);
     meta.providersPerMod.unshift(...targetProviders.providersPerMod);
     meta.providersPerRou.unshift(...defaultProvidersPerRou, ...targetProviders.providersPerRou);
     meta.providersPerReq.unshift(...defaultProvidersPerReq, ...targetProviders.providersPerReq);
@@ -69,6 +73,19 @@ export class RestDeepModulesImporter {
       prefixPerMod,
       applyControllers,
     };
+  }
+
+  protected patchModuleExtract(baseMeta: BaseMeta, prefixPerMod: string) {
+    const moduleExtract: RestModuleExtract = {
+      moduleName: baseMeta.name,
+      isExternal: baseMeta.isExternal,
+      path: prefixPerMod,
+    };
+    baseMeta.providersPerMod.some((p) => {
+      if (isValueProvider(p) && p.token === ModuleExtract) {
+        p.useValue = moduleExtract;
+      }
+    });
   }
 
   protected resolveImportedProviders(

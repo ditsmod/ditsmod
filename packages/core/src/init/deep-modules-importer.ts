@@ -18,6 +18,7 @@ import { ExtensionCounters } from '#extension/extension-types.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { ProvidersOnly } from '#types/providers-metadata.js';
 import { circularDepsInImports, noProviderDuringResolveImports } from '#errors';
+import { ModuleExtract } from '#types/module-extract.js';
 
 /**
  * By analyzing the dependencies of the providers returned by `ShallowModulesImporter`,
@@ -62,6 +63,11 @@ export class DeepModulesImporter {
         const targetProviders = new ProvidersOnly<Provider[]>();
         this.resolveImportedProviders(targetProviders, baseImportRegistry, levels);
         this.resolveProvidersForExtensions(baseMeta, baseImportRegistry);
+        const useValue: ModuleExtract = {
+          moduleName: baseMeta.name,
+          isExternal: baseMeta.isExternal,
+        };
+        baseMeta.providersPerMod.unshift({ token: ModuleExtract, useValue });
         baseMeta.providersPerMod.unshift(...targetProviders.providersPerMod);
         baseMeta.allInitHooks.forEach((initHooks, decorator) => {
           const shallowImportedModule = initImportRegistryMap.get(decorator)!;
