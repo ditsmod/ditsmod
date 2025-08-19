@@ -31,5 +31,5 @@ export class BaseAppOptions {
   /**
    * Log level (trace, debug, info etc.)
    */
-  level?: OutputLogLevel;
+  logLevel?: OutputLogLevel;
 }

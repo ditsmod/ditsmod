@@ -16,7 +16,7 @@ export class PatchLogger {
     @optional() appOptions: BaseAppOptions = new BaseAppOptions(),
   ) {
     const logger = pino.default({ customLevels: { off: 100, all: 0 } });
-    logger.level = appOptions.level || config.level || 'info';
+    logger.level = appOptions.logLevel || config.level || 'info';
 
     // Logger must have `log` method.
     (logger as unknown as Logger).log = (level: InputLogLevel, ...args: any[]) => {
@@ -26,12 +26,12 @@ export class PatchLogger {
 
     // Logger must have `setLevel` method.
     (logger as unknown as Logger).setLevel = (value: OutputLogLevel) => {
-      logger.level = appOptions.level || value;
+      logger.level = appOptions.logLevel || value;
     };
 
     // Logger must have `getLevel` method.
     (logger as unknown as Logger).getLevel = () => {
-      return appOptions.level || (logger.level as OutputLogLevel);
+      return appOptions.logLevel || (logger.level as OutputLogLevel);
     };
 
     return logger;

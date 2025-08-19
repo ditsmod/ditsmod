@@ -42,7 +42,7 @@ export class PatchLogger {
         { level: 60, name: 'fatal' },
         { level: 100, name: 'off' },
       ];
-      const levelNumber = appOptions.level || logger.level();
+      const levelNumber = appOptions.logLevel || logger.level();
       const levelName = bunyanLevels.find((i) => i.level == levelNumber)?.name || config.level || 'info';
       return levelName;
     };
@@ -51,7 +51,7 @@ export class PatchLogger {
   }
 
   protected setLogLeveL(appOptions: BaseAppOptions, logger: BunyanLogger, logLevel?: OutputLogLevel) {
-    const level = appOptions.level || logLevel;
+    const level = appOptions.logLevel || logLevel;
     if (level == 'off') {
       logger.level(100);
     } else if (level == 'all') {

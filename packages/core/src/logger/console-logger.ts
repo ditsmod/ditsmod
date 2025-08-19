@@ -14,7 +14,7 @@ export class ConsoleLogger implements Logger {
     @optional() baseAppOptions: BaseAppOptions = new BaseAppOptions(),
   ) {
     this.baseAppOptions = baseAppOptions;
-    this.level = this.baseAppOptions.level || config.level || 'info';
+    this.level = this.baseAppOptions.logLevel || config.level || 'info';
   }
 
   log(level: InputLogLevel, ...args: any[]) {
@@ -40,10 +40,10 @@ export class ConsoleLogger implements Logger {
   }
 
   setLevel(value: OutputLogLevel) {
-    this.level = this.baseAppOptions.level || value;
+    this.level = this.baseAppOptions.logLevel || value;
   }
 
   getLevel(): OutputLogLevel {
-    return this.baseAppOptions.level || this.level || 'info';
+    return this.baseAppOptions.logLevel || this.level || 'info';
   }
 }
