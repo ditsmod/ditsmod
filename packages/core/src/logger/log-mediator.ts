@@ -30,8 +30,7 @@ export abstract class LogMediator {
   ) {}
 
   protected setLog(inputLogLevel: InputLogLevel, msg: string) {
-    const showExternalLogs =
-      this.baseAppOptions?.showExternalLogs ?? this.loggerConfig.showExternalLogs ?? true;
+    const showExternalLogs = this.baseAppOptions?.showExternalLogs ?? this.loggerConfig.showExternalLogs ?? true;
     if (LogMediator.bufferLogs) {
       LogMediator.checkDiffLogLevels(this.loggerConfig.level);
       LogMediator.buffer.push({
@@ -79,7 +78,8 @@ export abstract class LogMediator {
    */
   protected writeLogs(logItems: LogItem[]) {
     // A separate instance of the logger is created so that changing the OutputLogLevel does not affect other loggers.
-    const logger: Logger = this.injector?.resolveAndCreateChild([], 'child of logger').pull(Logger) || new ConsoleLogger();
+    const logger: Logger =
+      this.injector?.resolveAndCreateChild([], 'child of logger').pull(Logger) || new ConsoleLogger();
 
     if (LogMediator.hasDiffLogLevels && logger === this.logger) {
       logger.log('warn', this.msgAboutSingletonLogger);

@@ -1,12 +1,12 @@
-import { LoggerConfig, OutputLogLevel } from '#logger/logger.js';
+import { OutputLogLevel } from '#logger/logger.js';
 
 /**
- * This logger config is not added to the providers array as a separate provider but can be directly
+ * Configs of logger is not added to the providers array as a separate provider but can be directly
  * used by end consumers (i.e., the loggers).
  *
  * If you want this option to have higher priority for your loggers at any level, it is recommended
  * to [create your logger using a `FactoryProvider`][1], where you override the logger methods to set
- * the `OutputLogLevel` based on `baseAppOptions.loggerConfig?.level`.
+ * the `OutputLogLevel` based on `baseAppOptions.level`.
  *
  * [1]: https://github.com/ditsmod/ditsmod/blob/main/examples/04-logger/src/app/modules/pino/patch-logger.ts
  */
@@ -23,7 +23,9 @@ export class BaseAppOptions {
   bufferLogs?: boolean = true;
   /**
    * Specifies whether to show logs from external modules. An external module
-   * is a module that you install using package managers (npm, yarn, etc.)
+   * is a module that you install using package managers (npm, yarn, etc.).
+   * 
+   * Default - false.
    */
   showExternalLogs?: boolean;
   /**
