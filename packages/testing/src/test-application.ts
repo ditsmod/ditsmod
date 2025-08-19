@@ -145,7 +145,7 @@ TestApplication.createTestApp(AppModule)
 
   protected handleError(err: any) {
     (this.log as PublicLogMediator).updateOutputLogLevel();
-    this.log.internalServerError(this, err, true);
+    this.log.internalServerError(this, err);
     this.flushLogs();
   }
 }
