@@ -23,6 +23,13 @@ import { CustomError } from '#error/custom-error.js';
 @injectable()
 export class SystemLogMediator extends LogMediator {
   protected static previousLogger: Logger;
+  protected colors = {
+    reset: '\x1b[0m',
+    red: '\x1b[31m',
+    white: '\x1b[37m',
+    gray: '\x1b[90m',
+    green: '\x1b[32m',
+  };
 
   flush() {
     const { buffer } = LogMediator;
@@ -276,11 +283,36 @@ export class SystemLogMediator extends LogMediator {
    */
   internalServerError(self: object, err: any) {
     if (err instanceof CustomError) {
-      this.setLog(err.info.level || 'fatal', CustomError.getFullStack(err)!);
+      let stack = CustomError.getFullStack(err)!;
+      if (!LogMediator.bufferLogs && this.logger instanceof ConsoleLogger) {
+        stack = this.formatStackTrace(stack);
+      }
+      this.setLog(err.info.level || 'fatal', stack);
     } else {
       this.setLog('error', err.stack || err.message);
     }
   }
+
+  protected formatStackTrace(stack: string): string {
+    const lines = stack.split('\n');
+    const clr = this.colors;
+    const errorMessage = `${clr.red}${lines[0]}${clr.reset}`;
+    const formattedTrace = lines
+      .slice(1)
+      .map((line) => {
+        if (line.includes('caused by: ERR')) {
+          return `${clr.red}${line}${clr.reset}`;
+        }
+        if (line.includes('@ditsmod/') || line.includes('ditsmod/packages') || line.includes('Array.')) {
+          return `${clr.gray}${line}${clr.reset}`;
+        }
+        return line;
+      })
+      .join('\n');
+
+    return `${errorMessage}\n${formattedTrace}`;
+  }
+
   /**
    * `can not activate the route with URL: ${httpMethod} ${url}.`
    */
