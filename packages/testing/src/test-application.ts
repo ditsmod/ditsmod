@@ -28,9 +28,7 @@ export class TestApplication extends RestApplication {
     try {
       app.init(appOptions);
       app.appModule = appModule;
-      if (!app.appOptions.loggerConfig) {
-        app.appOptions.loggerConfig = { level: 'off' };
-      }
+      app.appOptions.level ??= 'off';
       app.testModuleManager = new TestModuleManager(app.log);
       app.testAppInitializer = new TestAppInitializer(app.appOptions, app.testModuleManager, app.log);
       return app;

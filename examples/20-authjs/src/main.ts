@@ -6,5 +6,5 @@ if (!authSecret) {
   throw new Error('You need setup AUTH_SECRET variable in ".env" file.');
 }
 
-const app = await RestApplication.create(AppModule, { loggerConfig: { showExternalLogs: true } });
+const app = await RestApplication.create(AppModule);
 app.server.listen(3000, '0.0.0.0');

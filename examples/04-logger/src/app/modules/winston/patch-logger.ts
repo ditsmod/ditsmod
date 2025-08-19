@@ -37,18 +37,18 @@ export class PatchLogger {
 
     logger.configure({
       levels: customLevels.levels,
-      level: appOptions.loggerConfig?.level || config.level,
+      level: appOptions.level || config.level,
       transports: [transport],
     });
 
     // Logger must have `setLevel` method.
     (logger as unknown as Logger).setLevel = (value: OutputLogLevel) => {
-      logger.level = appOptions.loggerConfig?.level || value;
+      logger.level = appOptions.level || value;
     };
 
     // Logger must have `getLevel` method.
     (logger as unknown as Logger).getLevel = () => {
-      return appOptions.loggerConfig?.level || (logger.level as OutputLogLevel);
+      return appOptions.level || (logger.level as OutputLogLevel);
     };
 
     addColors(customLevels.colors);
