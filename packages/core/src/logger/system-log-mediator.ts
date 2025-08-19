@@ -1,4 +1,4 @@
-import { injectable } from '#di';
+import { Class, injectable } from '#di';
 import { ConsoleLogger } from '#logger/console-logger.js';
 import { Logger } from '#logger/logger.js';
 import { LogMediator } from '#logger/log-mediator.js';
@@ -8,7 +8,6 @@ import { Provider } from '#di/types-and-models.js';
 import { ExtensionClass, Extension } from '#extension/extension-types.js';
 import { getImportedTokens } from '#utils/get-imports.js';
 import { getProviderName } from '#utils/get-provider-name.js';
-import { isInjectionToken } from '#di';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { loggerWasNotPreviouslySeted } from '#errors';
 import { CustomError } from '#error/custom-error.js';
@@ -215,11 +214,11 @@ export class SystemLogMediator extends LogMediator {
 
   protected getExtentionPath(unfinishedInit: Set<Extension | ExtensionClass>) {
     return [...unfinishedInit]
-      .map((tokenOrExtension) => {
-        if (isInjectionToken(tokenOrExtension)) {
-          return getProviderName(tokenOrExtension);
+      .map((extension) => {
+        if (extension.constructor.name == 'Function') {
+          return `[${(extension as Class).name} group]`;
         } else {
-          return tokenOrExtension.constructor.name;
+          return extension.constructor.name;
         }
       })
       .join(' -> ');
