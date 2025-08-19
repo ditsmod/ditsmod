@@ -24,7 +24,7 @@ export function getDebugClassName(modRefId: ModRefId): string | undefined {
 
   let className: string;
   if (isModuleWithParams(modRefId)) {
-    className = modRefId.id || modRefId.module.name;
+    className = modRefId.id || `${modRefId.module.name}-WithParams`;
   } else {
     className = modRefId.name;
   }
