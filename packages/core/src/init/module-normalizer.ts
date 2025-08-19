@@ -129,7 +129,8 @@ export class ModuleNormalizer {
       const { declaredInDir } = baseMeta;
       if (this.rootDeclaredInDir !== '.' && declaredInDir !== '.') {
         // Case when CallsiteUtils.getCallerDir() works correctly.
-        baseMeta.isExternal = !declaredInDir.startsWith(this.rootDeclaredInDir);
+        baseMeta.isExternal =
+          !declaredInDir.startsWith(this.rootDeclaredInDir) || declaredInDir.includes('ditsmod/ditsmod/packages');
       }
     }
   }
