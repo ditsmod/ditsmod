@@ -26,7 +26,7 @@ export class ErrorInfo {
   /**
    * HTTP status.
    */
-  status?: Status = Status.BAD_REQUEST;
+  status?: Status = Status.INTERNAL_SERVER_ERROR;
   declare params?: any;
   /**
    * If specified, then the stack trace for this error ends at function `constructorOpt`.
