@@ -1,11 +1,8 @@
-import { oasErrors } from '#services/openapi-error-mediator.js';
-export { oasErrors };
-
-export const {
-  throwParamNotFoundInPath,
-  oasRouteMetaNotFound,
-  compilingOasRoutesFailed,
-  arrayTypeDefinitionConflict,
-  enumTypeDefinitionConflict,
-  youCanNotSetThisAction,
-} = oasErrors;
+export {
+  YouCanNotSetThisAction,
+  ArrayTypeDefinitionConflict,
+  EnumTypeDefinitionConflict,
+  CompilingOasRoutesFailed,
+  OasRouteMetaNotFound,
+  ThrowParamNotFoundInPath
+} from '#services/openapi-errors.js';

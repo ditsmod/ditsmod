@@ -1,6 +1,6 @@
 import { SchemaObjectType, XParameterObject, XSchemaObject } from '@ts-stack/openapi-spec';
 import { AnyObj, HttpMethod, Class, reflector, isDecoratorAndValue, DecoratorAndValue } from '@ditsmod/core';
-import { youCanNotSetThisAction } from '#errors';
+import { YouCanNotSetThisAction } from '#errors';
 
 type RequiredParamsIn = 'query' | 'header' | 'path' | 'cookie';
 type OptionalParamsIn = 'query' | 'header' | 'cookie';
@@ -102,7 +102,7 @@ export class Parameters {
 
   protected getLastAddedParams() {
     if (!this.countOfLastPushedParams) {
-      throw youCanNotSetThisAction();
+      throw new YouCanNotSetThisAction();
     }
     return this.parameters.slice(-this.countOfLastPushedParams);
   }

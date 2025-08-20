@@ -25,7 +25,7 @@ import { BOUND_TO_HTTP_METHOD, BOUND_TO_PATH_PARAM } from '#utils/parameters.js'
 import { OasRouteMeta } from '#types/oas-route-meta.js';
 import { getLastParameterObjects, getLastReferenceObjects } from '#utils/get-last-params.js';
 import { OasOptions } from '#types/oas-options.js';
-import { compilingOasRoutesFailed, throwParamNotFoundInPath } from '#errors';
+import { CompilingOasRoutesFailed, ThrowParamNotFoundInPath } from '#errors';
 
 @injectable()
 export class OpenapiRoutesExtension extends RoutesExtension implements Extension<MetadataPerMod3> {
@@ -132,7 +132,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
           if (path.includes(paramName)) {
             paramsInPath.push(p);
           } else {
-            throw throwParamNotFoundInPath(controllerName, paramName, path);
+            throw new ThrowParamNotFoundInPath(controllerName, paramName, path);
           }
         } else {
           httpMethods.forEach((httpMethod) => this.bindParams(httpMethod, path, paramsNonPath, p));
@@ -188,7 +188,7 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
       if (path.includes(`{${name}}`)) {
         let msg = `Compiling OAS routes failed: ${moduleName} have a route with param: "{${name}}"`;
         msg += `, you must convert this to ":${name}"`;
-        throw compilingOasRoutesFailed(moduleName, name);
+        throw new CompilingOasRoutesFailed(moduleName, name);
       }
       path = path.replace(`:${name}`, `{${name}}`);
     });

@@ -140,11 +140,6 @@ export class ConflictsWithExistingWildcard extends CustomError {
     });
   }
 }
-// export class X extends CustomError {
-//   constructor() {
-//     super();
-//   }
-// }
 /**
  * invalid node type
  */

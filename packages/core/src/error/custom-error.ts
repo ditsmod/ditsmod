@@ -1,5 +1,4 @@
 import { ChainError } from '@ts-stack/chain-error';
-
 import { ErrorInfo } from './error-info.js';
 
 export class CustomError extends ChainError {

@@ -8,10 +8,10 @@ import {
 } from '@ts-stack/openapi-spec';
 
 import { REQUIRED } from '#constants';
-import { AnyEnum, PropertyDecoratorMetadata, CustomType } from '#decorators/property.js';
+import { AnyEnum, CustomType } from '#decorators/property.js';
 import { mediaTypeName } from '#types/media-types.js';
 import { isProperty } from './type-guards.js';
-import { arrayTypeDefinitionConflict, enumTypeDefinitionConflict } from '#errors';
+import { ArrayTypeDefinitionConflict, EnumTypeDefinitionConflict } from '#errors';
 
 export interface ContentOptions<T extends mediaTypeName = mediaTypeName> {
   mediaType: T;
@@ -117,11 +117,11 @@ export class Content {
     customType?: CustomType,
   ) {
     if ((type == 'array' || customType?.array) && propertyType.name != 'Array') {
-      throw arrayTypeDefinitionConflict(modelName, property);
+      throw new ArrayTypeDefinitionConflict(modelName, property);
     }
 
     if ((propertyType.name == 'Array' || customType?.array) && customType?.enum) {
-      throw enumTypeDefinitionConflict(modelName, property);
+      throw new EnumTypeDefinitionConflict(modelName, property);
     }
   }
 

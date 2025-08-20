@@ -4,7 +4,7 @@ import { property } from '#decorators/property.js';
 import { Content } from './content.js';
 import { REQUIRED } from '#constants';
 import { inspect } from 'util';
-import { oasErrors } from '#services/openapi-error-mediator.js';
+import { ArrayTypeDefinitionConflict, EnumTypeDefinitionConflict } from '#services/openapi-errors.js';
 
 function print(obj: any) {
   console.log(inspect(obj, undefined, null));
@@ -262,7 +262,7 @@ describe('Content', () => {
       property1: (number | string)[];
     }
 
-    const err = oasErrors.enumTypeDefinitionConflict('Model1', 'property1');
+    const err = new EnumTypeDefinitionConflict('Model1', 'property1');
     expect(() => new Content().get({ mediaType: 'application/json', model: Model1 })).toThrow(err);
   });
 
@@ -312,7 +312,7 @@ describe('Content', () => {
       property1: Model1;
     }
 
-    const err = oasErrors.arrayTypeDefinitionConflict('Model1', 'property1');
+    const err = new ArrayTypeDefinitionConflict('Model1', 'property1');
     expect(() => new Content().get({ mediaType: 'application/json', model: Model1 })).toThrow(err);
   });
 
