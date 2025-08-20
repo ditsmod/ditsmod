@@ -51,6 +51,7 @@ import {
  * Normalizes and validates module metadata.
  */
 export class ModuleNormalizer {
+  protected baseMeta: BaseMeta;
   /**
    * The directory in which the class was declared.
    */
@@ -74,26 +75,27 @@ export class ModuleNormalizer {
      * Setting initial properties of metadata.
      */
     const baseMeta = new BaseMeta();
+    this.baseMeta = baseMeta;
     baseMeta.name = modName;
     baseMeta.modRefId = modRefId;
     baseMeta.declaredInDir = rawMeta.declaredInDir;
     baseMeta.decorator = rawMeta.decorator;
     if (isModuleWithParams(modRefId)) {
-      rawMeta = this.mergeModuleWithParams(rawMeta, modRefId, baseMeta);
+      rawMeta = this.mergeModuleWithParams(rawMeta, modRefId);
     }
     aDecoratorMeta.filter(isModuleWithInitHooks).forEach((decorAndVal) => {
       baseMeta.mInitHooksAndRawMeta.set(decorAndVal.decorator, decorAndVal.value);
     });
-    this.checkAndMarkExternalModule(rawMeta, baseMeta);
-    this.normalizeImports(rawMeta, baseMeta);
-    this.normalizeExports(rawMeta, baseMeta);
-    this.normalizeExtensions(rawMeta, baseMeta);
-    this.checkReexportModules(baseMeta);
-    this.normalizeDeclaredAndResolvedProviders(rawMeta, baseMeta);
-    this.addInitHooksForHostDecorator(baseMeta, allInitHooks);
-    this.callInitHooksFromCurrentModule(baseMeta);
-    this.addInitHooksForImportedMwp(baseMeta, allInitHooks);
-    this.quickCheckMetadata(rawMeta, baseMeta);
+    this.checkAndMarkExternalModule(rawMeta);
+    this.normalizeImports(rawMeta);
+    this.normalizeExports(rawMeta);
+    this.normalizeExtensions(rawMeta);
+    this.checkReexportModules();
+    this.normalizeDeclaredAndResolvedProviders(rawMeta);
+    this.addInitHooksForHostDecorator(allInitHooks);
+    this.callInitHooksFromCurrentModule();
+    this.addInitHooksForImportedMwp(allInitHooks);
+    this.quickCheckMetadata(rawMeta);
     return baseMeta;
   }
 
@@ -103,9 +105,9 @@ export class ModuleNormalizer {
     return reflector.getDecorators(mod);
   }
 
-  protected mergeModuleWithParams(rawMeta: RawMeta, modWitParams: ModuleWithParams, baseMeta: BaseMeta) {
+  protected mergeModuleWithParams(rawMeta: RawMeta, modWitParams: ModuleWithParams) {
     if (modWitParams.id) {
-      baseMeta.id = modWitParams.id;
+      this.baseMeta.id = modWitParams.id;
     }
     (['exports', 'providersPerApp', 'providersPerMod'] as const).forEach((prop) => {
       if (modWitParams[prop] instanceof Providers || modWitParams[prop]?.length) {
@@ -121,44 +123,43 @@ export class ModuleNormalizer {
   /**
    * For this method to work properly, the root module must be scanned first.
    */
-  protected checkAndMarkExternalModule(rawMeta: RawMeta, baseMeta: BaseMeta) {
-    baseMeta.isExternal = false;
+  protected checkAndMarkExternalModule(rawMeta: RawMeta) {
+    this.baseMeta.isExternal = false;
     if (isRootModule(rawMeta)) {
-      this.rootDeclaredInDir = baseMeta.declaredInDir;
+      this.rootDeclaredInDir = this.baseMeta.declaredInDir;
     } else if (this.rootDeclaredInDir) {
-      const { declaredInDir } = baseMeta;
+      const { declaredInDir } = this.baseMeta;
       if (this.rootDeclaredInDir !== '.' && declaredInDir !== '.') {
         // Case when CallsiteUtils.getCallerDir() works correctly.
-        baseMeta.isExternal =
+        this.baseMeta.isExternal =
           !declaredInDir.startsWith(this.rootDeclaredInDir) || declaredInDir.includes('ditsmod/packages');
       }
     }
   }
 
-  protected normalizeImports(rawMeta: RawMeta, baseMeta: BaseMeta) {
+  protected normalizeImports(rawMeta: RawMeta) {
     this.resolveForwardRef(rawMeta.imports).forEach((imp, i) => {
-      this.throwIfUndefined(baseMeta.name, 'Imports', imp, i);
+      this.throwIfUndefined(this.baseMeta.name, 'Imports', imp, i);
       if (isModuleWithParams(imp)) {
-        baseMeta.importsWithParams.push(imp);
+        this.baseMeta.importsWithParams.push(imp);
       } else {
-        baseMeta.importsModules.push(imp);
+        this.baseMeta.importsModules.push(imp);
       }
     });
   }
 
   protected normalizeDeclaredAndResolvedProviders(
     rawMeta: BaseInitRawMeta & PickProps<RawMeta, 'resolvedCollisionsPerApp'>,
-    baseMeta: BaseMeta,
   ) {
     (['App', 'Mod'] as const).forEach((level) => {
       if (rawMeta[`providersPer${level}`]) {
         const providersPerLevel = this.resolveForwardRef([...rawMeta[`providersPer${level}`]!]);
-        baseMeta[`providersPer${level}`].push(...providersPerLevel);
+       this.baseMeta[`providersPer${level}`].push(...providersPerLevel);
       }
 
       if (rawMeta[`resolvedCollisionsPer${level}`]) {
-        baseMeta[`resolvedCollisionsPer${level}`].push(...rawMeta[`resolvedCollisionsPer${level}`]!);
-        baseMeta[`resolvedCollisionsPer${level}`] = baseMeta[`resolvedCollisionsPer${level}`].map(([token, module]) => {
+        this.baseMeta[`resolvedCollisionsPer${level}`].push(...rawMeta[`resolvedCollisionsPer${level}`]!);
+        this.baseMeta[`resolvedCollisionsPer${level}`] = this.baseMeta[`resolvedCollisionsPer${level}`].map(([token, module]) => {
           token = resolveForwardRef(token);
           module = resolveForwardRef(module);
           if (isModuleWithParams(module)) {
@@ -191,11 +192,10 @@ export class ModuleNormalizer {
   }
 
   protected normalizeExtensions(
-    rawMeta: PickProps<ModuleMetadata, 'extensions' | 'extensionsMeta'>,
-    baseMeta: BaseMeta,
+    rawMeta: PickProps<ModuleMetadata, 'extensions' | 'extensionsMeta'>
   ) {
     if (rawMeta.extensionsMeta) {
-      baseMeta.extensionsMeta = { ...rawMeta.extensionsMeta };
+      this.baseMeta.extensionsMeta = { ...rawMeta.extensionsMeta };
     }
 
     rawMeta.extensions?.forEach((extensionOrConfig) => {
@@ -203,15 +203,15 @@ export class ModuleNormalizer {
         extensionOrConfig = { extension: extensionOrConfig } as ExtensionConfigBase;
       }
       const extensionObj = getExtensionProvider(extensionOrConfig);
-      extensionObj.providers.forEach((p) => this.checkStageMethodsForExtension(baseMeta.name, p));
+      extensionObj.providers.forEach((p) => this.checkStageMethodsForExtension(this.baseMeta.name, p));
       if (extensionObj.config) {
-        baseMeta.aExtensionConfig.push(extensionObj.config);
+        this.baseMeta.aExtensionConfig.push(extensionObj.config);
       }
       if (extensionObj.exportedConfig) {
-        baseMeta.aExportedExtensionConfig.push(extensionObj.exportedConfig);
+        this.baseMeta.aExportedExtensionConfig.push(extensionObj.exportedConfig);
       }
-      baseMeta.extensionsProviders.push(...extensionObj.providers);
-      baseMeta.exportedExtensionsProviders.push(...extensionObj.exportedProviders);
+      this.baseMeta.extensionsProviders.push(...extensionObj.providers);
+      this.baseMeta.exportedExtensionsProviders.push(...extensionObj.exportedProviders);
     });
   }
 
@@ -221,35 +221,35 @@ export class ModuleNormalizer {
     }
   }
 
-  protected normalizeExports(rawMeta: Partial<RawMeta>, baseMeta: BaseMeta) {
+  protected normalizeExports(rawMeta: Partial<RawMeta>) {
     const providers: Provider[] = [];
     if (Array.isArray(rawMeta.providersPerMod)) {
       providers.push(...rawMeta.providersPerMod);
     }
 
     this.resolveForwardRef(rawMeta.exports).forEach((exp, i) => {
-      this.throwIfUndefined(baseMeta.name, 'Exports', exp, i);
-      this.throwExportsIfNormalizedProvider(baseMeta.name, exp);
+      this.throwIfUndefined(this.baseMeta.name, 'Exports', exp, i);
+      this.throwExportsIfNormalizedProvider(this.baseMeta.name, exp);
       if (isModuleWithParams(exp)) {
-        baseMeta.exportsWithParams.push(exp);
+        this.baseMeta.exportsWithParams.push(exp);
       } else if (isProvider(exp) || getTokens(providers).includes(exp)) {
         // Provider or token of provider
-        this.exportProviders(exp, rawMeta, baseMeta);
+        this.exportProviders(exp, rawMeta);
       } else if (this.getDecoratorMeta(exp)) {
-        baseMeta.exportsModules.push(exp);
+        this.baseMeta.exportsModules.push(exp);
       } else {
-        throw exportingUnknownSymbol(baseMeta.name, exp.name || exp);
+        throw exportingUnknownSymbol(this.baseMeta.name, exp.name || exp);
       }
     });
   }
 
-  protected checkReexportModules(baseMeta: BaseMeta) {
-    const imports = [...baseMeta.importsModules, ...baseMeta.importsWithParams];
-    const exports = [...baseMeta.exportsModules, ...baseMeta.exportsWithParams];
+  protected checkReexportModules() {
+    const imports = [...this.baseMeta.importsModules, ...this.baseMeta.importsWithParams];
+    const exports = [...this.baseMeta.exportsModules, ...this.baseMeta.exportsWithParams];
 
     exports.forEach((modRefId) => {
       if (!imports.includes(modRefId)) {
-        throw reexportFailed(baseMeta.name, getDebugClassName(modRefId) || '""');
+        throw reexportFailed(this.baseMeta.name, getDebugClassName(modRefId) || '""');
       }
     });
   }
@@ -301,14 +301,14 @@ export class ModuleNormalizer {
     }
   }
 
-  protected exportProviders(token: any, rawMeta: Partial<RawMeta>, baseMeta: BaseMeta): void {
+  protected exportProviders(token: any, rawMeta: Partial<RawMeta>): void {
     let providers = [...(rawMeta.providersPerMod || [])].filter((p) => getToken(p) === token);
     providers = this.resolveForwardRef(providers);
     if (providers.length) {
       if (providers.some(isMultiProvider)) {
-        baseMeta.exportedMultiProvidersPerMod.push(...(providers as MultiProvider[]));
+        this.baseMeta.exportedMultiProvidersPerMod.push(...(providers as MultiProvider[]));
       } else {
-        baseMeta.exportedProvidersPerMod.push(...providers);
+        this.baseMeta.exportedProvidersPerMod.push(...providers);
       }
       return;
     }
@@ -316,9 +316,9 @@ export class ModuleNormalizer {
     const providerName = token.name || token;
     const providersPerApp = [...(rawMeta.providersPerApp || [])];
     if (providersPerApp.some((p) => getToken(p) === token)) {
-      throw forbiddenExportProvidersPerApp(baseMeta.name, providerName);
+      throw forbiddenExportProvidersPerApp(this.baseMeta.name, providerName);
     } else {
-      throw exportingUnknownSymbol(baseMeta.name, providerName);
+      throw exportingUnknownSymbol(this.baseMeta.name, providerName);
     }
   }
 
@@ -326,63 +326,63 @@ export class ModuleNormalizer {
    * If the instance with init hooks has `hostRawMeta`, this method
    * inserts a hook that can add `hostRawMeta` to the host module.
    */
-  protected addInitHooksForHostDecorator(baseMeta: BaseMeta, allInitHooks: AllInitHooks) {
+  protected addInitHooksForHostDecorator(allInitHooks: AllInitHooks) {
     allInitHooks.forEach((initHooks, decorator) => {
-      if (initHooks.hostModule === baseMeta.modRefId && initHooks.hostRawMeta) {
+      if (initHooks.hostModule === this.baseMeta.modRefId && initHooks.hostRawMeta) {
         const newInitHooksAndRawMeta = initHooks.clone(initHooks.hostRawMeta);
-        baseMeta.mInitHooksAndRawMeta.set(decorator, newInitHooksAndRawMeta);
+        this.baseMeta.mInitHooksAndRawMeta.set(decorator, newInitHooksAndRawMeta);
       }
     });
   }
 
-  protected callInitHooksFromCurrentModule(baseMeta: BaseMeta) {
-    baseMeta.mInitHooksAndRawMeta.forEach((initHooks, decorator) => {
-      baseMeta.allInitHooks.set(decorator, initHooks);
+  protected callInitHooksFromCurrentModule() {
+    this.baseMeta.mInitHooksAndRawMeta.forEach((initHooks, decorator) => {
+      this.baseMeta.allInitHooks.set(decorator, initHooks);
 
       // Importing host module.
-      if (initHooks.hostModule === baseMeta.modRefId) {
+      if (initHooks.hostModule === this.baseMeta.modRefId) {
         // No need import host module in host module.
       } else if (isModuleWithParams(initHooks.hostModule)) {
-        if (!baseMeta.importsWithParams.includes(initHooks.hostModule)) {
-          baseMeta.importsWithParams.push(initHooks.hostModule);
+        if (!this.baseMeta.importsWithParams.includes(initHooks.hostModule)) {
+          this.baseMeta.importsWithParams.push(initHooks.hostModule);
         }
-      } else if (initHooks.hostModule && !baseMeta.importsModules.includes(initHooks.hostModule)) {
-        baseMeta.importsModules.push(initHooks.hostModule);
+      } else if (initHooks.hostModule && !this.baseMeta.importsModules.includes(initHooks.hostModule)) {
+        this.baseMeta.importsModules.push(initHooks.hostModule);
       }
 
-      this.fetchInitRawMeta(baseMeta, decorator, initHooks.rawMeta);
-      this.callInitHook(baseMeta, decorator, initHooks);
+      this.fetchInitRawMeta(decorator, initHooks.rawMeta);
+      this.callInitHook(decorator, initHooks);
     });
   }
 
-  protected fetchInitRawMeta(baseMeta: BaseMeta, decorator: AnyFn, initRawMeta: BaseInitRawMeta) {
-    this.fetchInitImports(baseMeta, decorator, initRawMeta);
-    this.fetchInitExports(baseMeta, initRawMeta);
-    this.normalizeExtensions(initRawMeta, baseMeta);
-    this.normalizeDeclaredAndResolvedProviders(initRawMeta, baseMeta);
+  protected fetchInitRawMeta(decorator: AnyFn, initRawMeta: BaseInitRawMeta) {
+    this.fetchInitImports(decorator, initRawMeta);
+    this.fetchInitExports(initRawMeta);
+    this.normalizeExtensions(initRawMeta);
+    this.normalizeDeclaredAndResolvedProviders(initRawMeta);
   }
 
-  protected fetchInitImports(baseMeta: BaseMeta, decorator: AnyFn, initRawMeta: BaseInitRawMeta) {
+  protected fetchInitImports(decorator: AnyFn, initRawMeta: BaseInitRawMeta) {
     if (initRawMeta.imports) {
       this.resolveForwardRef(initRawMeta.imports).forEach((imp) => {
         if (isModuleWithParams(imp)) {
           const params = { ...imp };
-          this.mergeInitParams(baseMeta, decorator, params, imp);
+          this.mergeInitParams(decorator, params, imp);
         } else if (isParamsWithMwp(imp)) {
           const params = { ...imp } as { mwp?: ModuleWithParams };
           this.mergeObjects(params, imp.mwp);
           delete params.mwp;
-          this.mergeInitParams(baseMeta, decorator, params, imp.mwp);
+          this.mergeInitParams(decorator, params, imp.mwp);
         } else {
-          if (!baseMeta.importsModules.includes(imp)) {
-            baseMeta.importsModules.push(imp);
+          if (!this.baseMeta.importsModules.includes(imp)) {
+            this.baseMeta.importsModules.push(imp);
           }
         }
       });
     }
   }
 
-  protected mergeInitParams(baseMeta: BaseMeta, decorator: AnyFn, params: AnyObj, mwp: ModuleWithParams) {
+  protected mergeInitParams(decorator: AnyFn, params: AnyObj, mwp: ModuleWithParams) {
     delete params.module;
     delete params.initParams;
     mwp.initParams ??= new Map();
@@ -392,8 +392,8 @@ export class ModuleNormalizer {
     } else {
       mwp.initParams.set(decorator, params);
     }
-    if (!baseMeta.importsWithParams.includes(mwp)) {
-      baseMeta.importsWithParams.push(mwp);
+    if (!this.baseMeta.importsWithParams.includes(mwp)) {
+      this.baseMeta.importsWithParams.push(mwp);
     }
   }
 
@@ -416,20 +416,20 @@ export class ModuleNormalizer {
     return dstn;
   }
 
-  protected fetchInitExports(baseMeta: BaseMeta, initRawMeta: BaseInitRawMeta) {
+  protected fetchInitExports(initRawMeta: BaseInitRawMeta) {
     if (initRawMeta.exports) {
       this.resolveForwardRef(initRawMeta.exports).forEach((exp) => {
         if (isModuleWithParams(exp)) {
-          if (!baseMeta.exportsWithParams.includes(exp)) {
-            baseMeta.exportsWithParams.push(exp);
+          if (!this.baseMeta.exportsWithParams.includes(exp)) {
+            this.baseMeta.exportsWithParams.push(exp);
           }
         } else if (isParamsWithMwp(exp)) {
-          if (!baseMeta.exportsWithParams.includes(exp.mwp)) {
-            baseMeta.exportsWithParams.push(exp.mwp);
+          if (!this.baseMeta.exportsWithParams.includes(exp.mwp)) {
+            this.baseMeta.exportsWithParams.push(exp.mwp);
           }
         } else if (reflector.getDecorators(exp, isFeatureModule)) {
-          if (!baseMeta.exportsModules.includes(exp)) {
-            baseMeta.exportsModules.push(exp);
+          if (!this.baseMeta.exportsModules.includes(exp)) {
+            this.baseMeta.exportsModules.push(exp);
           }
         }
       });
@@ -459,39 +459,39 @@ export class AppModule {}
    * but `Module1` itself does not have an annotation with `initRest`. For such cases,
    * this method adds hooks so that the import of `Module1` with parameters can be properly handled.
    */
-  protected addInitHooksForImportedMwp(baseMeta: BaseMeta, allInitHooks: AllInitHooks) {
-    (baseMeta.modRefId as ModuleWithParams).initParams?.forEach((params, decorator) => {
-      if (!baseMeta.mInitHooksAndRawMeta.has(decorator)) {
+  protected addInitHooksForImportedMwp(allInitHooks: AllInitHooks) {
+    (this.baseMeta.modRefId as ModuleWithParams).initParams?.forEach((params, decorator) => {
+      if (!this.baseMeta.mInitHooksAndRawMeta.has(decorator)) {
         const initHooks = allInitHooks.get(decorator)!;
         const newInitHooksAndRawMeta = initHooks.clone();
-        baseMeta.allInitHooks.set(decorator, newInitHooksAndRawMeta);
-        this.callInitHook(baseMeta, decorator, newInitHooksAndRawMeta);
+        this.baseMeta.allInitHooks.set(decorator, newInitHooksAndRawMeta);
+        this.callInitHook(decorator, newInitHooksAndRawMeta);
 
         // This is need for `this.quickCheckMetadata()` only.
-        baseMeta.mInitHooksAndRawMeta.set(decorator, newInitHooksAndRawMeta);
+        this.baseMeta.mInitHooksAndRawMeta.set(decorator, newInitHooksAndRawMeta);
       }
     });
   }
 
-  protected callInitHook(baseMeta: BaseMeta, decorator: AnyFn, initHooks: InitHooksAndRawMeta) {
-    const meta = initHooks.normalize(baseMeta);
+  protected callInitHook(decorator: AnyFn, initHooks: InitHooksAndRawMeta) {
+    const meta = initHooks.normalize(this.baseMeta);
     if (meta) {
-      baseMeta.initMeta.set(decorator, meta);
+      this.baseMeta.initMeta.set(decorator, meta);
     }
   }
 
-  protected quickCheckMetadata(rawMeta: RawMeta, baseMeta: BaseMeta) {
-    this.throwIfResolvingNormalizedProvider(baseMeta.name, rawMeta);
+  protected quickCheckMetadata(rawMeta: RawMeta) {
+    this.throwIfResolvingNormalizedProvider(this.baseMeta.name, rawMeta);
     if (
-      isFeatureModule(baseMeta) &&
-      !baseMeta.mInitHooksAndRawMeta.size &&
-      !baseMeta.exportedProvidersPerMod.length &&
-      !baseMeta.exportedMultiProvidersPerMod.length &&
-      !baseMeta.exportsModules.length &&
-      !baseMeta.providersPerApp.length &&
-      !baseMeta.exportsWithParams.length &&
-      !baseMeta.exportedExtensionsProviders.length &&
-      !baseMeta.extensionsProviders.length
+      isFeatureModule(this.baseMeta) &&
+      !this.baseMeta.mInitHooksAndRawMeta.size &&
+      !this.baseMeta.exportedProvidersPerMod.length &&
+      !this.baseMeta.exportedMultiProvidersPerMod.length &&
+      !this.baseMeta.exportsModules.length &&
+      !this.baseMeta.providersPerApp.length &&
+      !this.baseMeta.exportsWithParams.length &&
+      !this.baseMeta.exportedExtensionsProviders.length &&
+      !this.baseMeta.extensionsProviders.length
     ) {
       throw moduleShouldHaveValue();
     }

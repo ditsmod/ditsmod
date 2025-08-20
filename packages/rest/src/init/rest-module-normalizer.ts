@@ -36,13 +36,16 @@ import { Level } from '#types/types.js';
  * Normalizes and validates module metadata.
  */
 export class RestModuleNormalizer {
+  protected baseMeta: BaseMeta;
+
   normalize(baseMeta: BaseMeta, rawMeta: RestInitRawMeta) {
+    this.baseMeta = baseMeta;
     const meta = getProxyForInitMeta(baseMeta, RestInitMeta);
     this.mergeModuleWithParams(baseMeta.modRefId, rawMeta, meta);
     this.appendModules(rawMeta, meta);
     this.normalizeDeclaredAndResolvedProviders(meta, rawMeta);
-    this.normalizeExports(baseMeta, rawMeta, meta);
-    this.checkMetadata(baseMeta, meta);
+    this.normalizeExports(rawMeta, meta);
+    this.checkMetadata(meta);
     return meta;
   }
 
@@ -149,7 +152,7 @@ export class RestModuleNormalizer {
     });
   }
 
-  protected normalizeExports(baseMeta: BaseMeta, rawMeta: RestInitRawMeta, meta: RestInitMeta) {
+  protected normalizeExports(rawMeta: RestInitRawMeta, meta: RestInitMeta) {
     if (!rawMeta.exports) {
       return;
     }
@@ -161,7 +164,7 @@ export class RestModuleNormalizer {
       if (reflector.getDecorators(exp, isFeatureModule)) {
         //
       } else if (isModuleWithParams(exp)) {
-        if (!baseMeta.importsWithParams?.includes(exp)) {
+        if (!this.baseMeta.importsWithParams?.includes(exp)) {
           this.throwExportWithParams(exp);
         }
       } else if (isProvider(exp) || getTokens(providers).includes(exp)) {
@@ -259,7 +262,7 @@ export class RestModuleNormalizer {
     }
   }
 
-  protected checkMetadata(baseMeta: BaseMeta, meta: RestInitMeta) {
+  protected checkMetadata(meta: RestInitMeta) {
     this.checkGuards(meta.params.guards);
     this.throwIfResolvingNormalizedProvider(meta);
     meta.controllers.forEach((Controller) => this.checkController(Controller));
@@ -272,7 +275,7 @@ export class RestModuleNormalizer {
     }
 
     if (
-      isFeatureModule(baseMeta) &&
+      isFeatureModule(this.baseMeta) &&
       !meta.exportedProvidersPerMod.length &&
       !meta.exportedMultiProvidersPerMod.length &&
       !meta.exportsModules.length &&
