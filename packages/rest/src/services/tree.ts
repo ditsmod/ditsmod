@@ -2,15 +2,15 @@ import { injectable, optional } from '@ditsmod/core';
 
 import { Fn, TreeConfig, RouteType, RouteParam } from '../types/types.js';
 import {
-  catchAllConflictWithExistingHandle,
-  catchAllRoutesOnlyAtEnd,
-  conflictsWithExistingWildcard,
-  handleAlreadyRegistered,
-  invalidNodeType,
-  noBeforeCatchAll,
-  onlyOneWildcardPerPath,
-  wildcardRouteConflicts,
-  wildcardsMustNonEmpty,
+  CatchAllConflictWithExistingHandle,
+  CatchAllRoutesOnlyAtEnd,
+  ConflictsWithExistingWildcard,
+  HandleAlreadyRegistered,
+  InvalidNodeType,
+  NoBeforeCatchAll,
+  OnlyOneWildcardPerPath,
+  WildcardRouteConflicts,
+  WildcardsMustNonEmpty,
 } from '#errors';
 
 @injectable()
@@ -111,7 +111,7 @@ export class Tree {
     } else if (i == path.length) {
       // Make node a (in-path leaf)
       if (tree.handle !== null) {
-        throw handleAlreadyRegistered(fullPath);
+        throw new HandleAlreadyRegistered(fullPath);
       }
       tree.handle = handle;
     }
@@ -133,7 +133,7 @@ export class Tree {
       let end = i + 1;
       while (end < max && path[end] != '/') {
         if (path[end] == ':' || path[end] == '*') {
-          throw onlyOneWildcardPerPath(path.slice(i), fullPath);
+          throw new OnlyOneWildcardPerPath(path.slice(i), fullPath);
         } else {
           end++;
         }
@@ -142,12 +142,12 @@ export class Tree {
       // Check if this Tree existing children which would be unreachable
       // if we insert the wildcard here
       if (tree.children.length > 0) {
-        throw wildcardRouteConflicts(path.slice(i, end), fullPath);
+        throw new WildcardRouteConflicts(path.slice(i, end), fullPath);
       }
 
       // check if the wildcard has a name
       if (end - i < 2) {
-        throw wildcardsMustNonEmpty(fullPath);
+        throw new WildcardsMustNonEmpty(fullPath);
       }
 
       if (c == ':') {
@@ -183,16 +183,16 @@ export class Tree {
         }
       } else {
         if (end != max || numParams > 1) {
-          throw catchAllRoutesOnlyAtEnd(fullPath);
+          throw new CatchAllRoutesOnlyAtEnd(fullPath);
         }
 
         if (tree.path.length > 0 && tree.path[tree.path.length - 1] == '/') {
-          throw catchAllConflictWithExistingHandle(fullPath);
+          throw new CatchAllConflictWithExistingHandle(fullPath);
         }
 
         i--;
         if (path[i] != '/') {
-          throw noBeforeCatchAll(fullPath);
+          throw new NoBeforeCatchAll(fullPath);
         }
 
         tree.path = path.slice(offset, i);
@@ -253,7 +253,7 @@ export class Tree {
       pathSeg = path.split('/')[0];
     }
     const prefix = fullPath.slice(0, fullPath.indexOf(pathSeg)) + tree.path;
-    throw conflictsWithExistingWildcard(pathSeg, fullPath, tree.path, prefix);
+    throw new ConflictsWithExistingWildcard(pathSeg, fullPath, tree.path, prefix);
   }
 
   protected splitAdge(tree: this, path: string, i: number) {
@@ -338,7 +338,7 @@ export class Tree {
               return { handle, params };
 
             default:
-              throw invalidNodeType();
+              throw new InvalidNodeType();
           }
         }
       } else if (path == tree.path) {

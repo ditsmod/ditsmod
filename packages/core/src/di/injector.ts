@@ -1,19 +1,17 @@
-import { format } from 'node:util';
-
 import { AnyFn } from '#types/mix.js';
 import { fromSelf, inject, optional, skipSelf } from './decorators.js';
 import {
-  failedCreateFactoryProvider,
-  cyclicDependency,
+  FailedCreateFactoryProvider,
+  CyclicDependency,
   InstantiationError,
-  invalidProvider,
-  mixMultiWithRegularProviders,
-  noAnnotation,
+  InvalidProvider,
+  MixMultiWithRegularProviders,
+  NoAnnotation,
   NoProvider,
-  cannotFindFactoryAsMethod,
-  cannotFindMethodInClass,
-  settingValueByIdFailed,
-  settingValueByTokenFailed,
+  CannotFindFactoryAsMethod,
+  CannotFindMethodInClass,
+  SettingValueByIdFailed,
+  SettingValueByTokenFailed,
 } from './errors.js';
 import { resolveForwardRef } from './forward-ref.js';
 import { InjectionToken } from './injection-token.js';
@@ -231,7 +229,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       } else if (isNormalizedProvider(provider)) {
         normProviders.push(provider);
       } else {
-        throw invalidProvider(provider);
+        throw new InvalidProvider(provider);
       }
     });
 
@@ -266,7 +264,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       if (typeof factory == 'function') {
         (factory as any)[DEBUG_NAME] = `${Cls.name}.prototype.${factory.name}`;
       } else {
-        throw failedCreateFactoryProvider(token, typeof factory);
+        throw new FailedCreateFactoryProvider(token, typeof factory);
       }
       const factoryKey = this.getFactoryKey(Cls, factory);
       const resolvedDeps1 = this.getDependencies(Cls);
@@ -319,10 +317,10 @@ expect(injector.get(Car) instanceof Car).toBe(true);
         }
       }
 
-      throw cannotFindFactoryAsMethod(factory.name, Cls.name);
+      throw new CannotFindFactoryAsMethod(factory.name, Cls.name);
     }
 
-    throw cannotFindMethodInClass(Cls.name);
+    throw new CannotFindMethodInClass(Cls.name);
   }
 
   protected static getDependencies(Cls: Class, propertyKey?: string | symbol): Dependency[] {
@@ -336,14 +334,14 @@ expect(injector.get(Car) instanceof Car).toBe(true);
     }
     const aParamsMeta = classPropMeta.params;
     if (aParamsMeta.includes(null)) {
-      throw noAnnotation(Cls, aParamsMeta, propertyKey);
+      throw new NoAnnotation(Cls, aParamsMeta, propertyKey);
     }
     const deps = aParamsMeta.map((paramsMeta) => {
       const { token, ctx, isOptional, visibility } = this.extractPayload(paramsMeta!);
       if (token != null) {
         return new Dependency(KeyRegistry.get(token), isOptional, visibility, ctx);
       } else {
-        throw noAnnotation(Cls, aParamsMeta, propertyKey);
+        throw new NoAnnotation(Cls, aParamsMeta, propertyKey);
       }
     });
 
@@ -395,7 +393,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       const existing = normalizedProvidersMap.get(provider.dualKey.id);
       if (existing) {
         if (provider.multi !== existing.multi) {
-          throw mixMultiWithRegularProviders(existing.dualKey.token);
+          throw new MixMultiWithRegularProviders(existing.dualKey.token);
         }
         if (provider.multi) {
           for (let j = 0; j < provider.resolvedFactories.length; j++) {
@@ -514,7 +512,7 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
       return this;
     }
 
-    throw settingValueByIdFailed(id, this.#level);
+    throw new SettingValueByIdFailed(id, this.#level);
   }
 
   /**
@@ -530,7 +528,7 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
     }
 
     const displayToken = stringify(token);
-    throw settingValueByTokenFailed(displayToken, this.#level);
+    throw new SettingValueByTokenFailed(displayToken, this.#level);
   }
 
   /**
@@ -630,7 +628,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
         if (meta?.[ID]) {
           // This is an alternative to the "instanceof ResolvedProvider" expression.
           if (parentTokens.includes(dualKey.token)) {
-            throw cyclicDependency([dualKey.token, ...parentTokens]);
+            throw new CyclicDependency([dualKey.token, ...parentTokens]);
           }
           const value = injector.instantiateResolved(meta, parentTokens);
           return (injector.#registry[dualKey.id] = value);

@@ -45,7 +45,7 @@ import { RouteHandler, Router } from '#services/router.js';
 import { HttpErrorHandler } from '#services/http-error-handler.js';
 import { RequestContext } from '#services/request-context.js';
 import { RoutesExtension } from './routes.extension.js';
-import { checkingDepsInSandboxFailed } from '#errors';
+import { CheckingDepsInSandboxFailed } from '#errors';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
@@ -362,7 +362,7 @@ export class PreRouterExtension implements Extension<void> {
       }
       DepsChecker.check(inj, HTTP_INTERCEPTORS, fromSelf, ignoreDeps);
     } catch (cause: any) {
-      throw checkingDepsInSandboxFailed(cause, controllerName, httpMethod, path);
+      throw new CheckingDepsInSandboxFailed(cause, controllerName, httpMethod, path);
     }
   }
 

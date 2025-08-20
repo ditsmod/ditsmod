@@ -4,7 +4,7 @@ import { Extension, ExtensionsManager, injectable } from '@ditsmod/core';
 import { HTTP_INTERCEPTORS } from '#types/constants.js';
 import { isInterceptor } from '#types/type.guards.js';
 import { RoutesExtension } from './routes.extension.js';
-import { invalidInterceptor } from '#errors';
+import { InvalidInterceptor } from '#errors';
 
 /**
  * A group of extensions that allows you to set the order of launching different interceptors.
@@ -28,7 +28,7 @@ export class UseInterceptorExtension implements Extension {
               }
             } else {
               const whatIsThis = inspect(interceptor, false, 3);
-              throw invalidInterceptor(meta.httpMethods.join(', '), meta.fullPath, whatIsThis);
+              throw new InvalidInterceptor(meta.httpMethods.join(', '), meta.fullPath, whatIsThis);
             }
           }
       }

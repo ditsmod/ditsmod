@@ -1,4 +1,3 @@
-import { diErrors } from '#di/di-errors.js';
 export {
   ProhibitSavingModulesSnapshot,
   ProvidersCollision,

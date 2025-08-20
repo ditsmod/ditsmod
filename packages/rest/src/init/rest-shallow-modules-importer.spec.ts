@@ -23,7 +23,7 @@ import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { ShallowModulesImporter } from './rest-shallow-modules-importer.js';
 import { Level, RestGlobalProviders } from '#types/types.js';
 import { getImportedProviders } from '../utils/get-imports.js';
-import { restErrors } from '#services/rest-errors.js';
+import { ModuleMustHaveControllers } from '#services/rest-errors.js';
 
 @injectable()
 class MockShallowModulesImporter extends ShallowModulesImporter {
@@ -360,7 +360,7 @@ describe('shallow importing modules', () => {
     @rootModule()
     class AppModule {}
 
-    const err = restErrors.moduleMustHaveControllers('AppModule', 'Module1-WithParams');
+    const err = new ModuleMustHaveControllers('AppModule', 'Module1-WithParams');
     expect(() => importModulesShallow(AppModule)).toThrow(err);
   });
 

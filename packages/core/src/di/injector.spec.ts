@@ -11,7 +11,14 @@ import { InjectionToken } from './injection-token.js';
 import { Injector } from './injector.js';
 import { forwardRef } from './forward-ref.js';
 import { reflector } from './reflection.js';
-import { diErrors, InstantiationError, NoProvider } from './di-errors.js';
+import {
+  CannotFindFactoryAsMethod,
+  CyclicDependency,
+  FailedCreateFactoryProvider,
+  InstantiationError,
+  NoAnnotation,
+  NoProvider,
+} from './di-errors.js';
 
 class Engine {}
 
@@ -248,7 +255,7 @@ describe('injector', () => {
         constructor(a: A) {}
       }
       const injector = Injector.resolveAndCreate([A, B]);
-      expect(() => injector.pull(A, 'defaultValue')).toThrow(diErrors.cyclicDependency([A, B, A]));
+      expect(() => injector.pull(A, 'defaultValue')).toThrow(new CyclicDependency([A, B, A]));
     });
 
     it('cyclic dependency (A -> B -> C -> A)', () => {
@@ -265,7 +272,7 @@ describe('injector', () => {
         constructor(a: A) {}
       }
       const injector = Injector.resolveAndCreate([A, B, C]);
-      expect(() => injector.pull(A, 'defaultValue')).toThrow(diErrors.cyclicDependency([A, C, B, A]));
+      expect(() => injector.pull(A, 'defaultValue')).toThrow(new CyclicDependency([A, C, B, A]));
     });
   });
 
@@ -545,7 +552,7 @@ describe('injector', () => {
   });
 
   it('should throw when no type and not @inject (class case)', () => {
-    expect(() => createInjector([NoAnnotations])).toThrow(diErrors.noAnnotation(NoAnnotations, [[]]));
+    expect(() => createInjector([NoAnnotations])).toThrow(new NoAnnotation(NoAnnotations, [[]]));
   });
 
   it('should throw when no type and not @inject (factory case)', () => {
@@ -558,7 +565,7 @@ describe('injector', () => {
     const providers: Provider[] = [
       { token: 'someToken', useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
     ];
-    expect(() => createInjector(providers)).toThrow(diErrors.noAnnotation(ClassWithFactory, [[]], 'method1'));
+    expect(() => createInjector(providers)).toThrow(new NoAnnotation(ClassWithFactory, [[]], 'method1'));
   });
 
   it('should throw when there no decorator for ClassWithFactory', () => {
@@ -571,7 +578,7 @@ describe('injector', () => {
     const providers: Provider[] = [
       { token: 'someToken', useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
     ];
-    const err = diErrors.noAnnotation(ClassWithFactory, [[], []], 'method1');
+    const err = new NoAnnotation(ClassWithFactory, [[], []], 'method1');
     expect(() => createInjector(providers)).toThrow(err);
   });
 
@@ -585,9 +592,7 @@ describe('injector', () => {
     }
 
     const providers: Provider[] = [{ token: 'someToken', useFactory: [ClassWithFactory, () => ({})] }];
-    expect(() => createInjector(providers)).toThrow(
-      diErrors.cannotFindFactoryAsMethod('anonymous', 'ClassWithFactory'),
-    );
+    expect(() => createInjector(providers)).toThrow(new CannotFindFactoryAsMethod('anonymous', 'ClassWithFactory'));
   });
 
   it('should throw when passing fake value to useFactory', () => {
@@ -600,7 +605,7 @@ describe('injector', () => {
     }
 
     const providers: Provider[] = [{ token: 'someToken', useFactory: [ClassWithFactory, 'fakeValue' as any] }];
-    expect(() => createInjector(providers)).toThrow(diErrors.failedCreateFactoryProvider('someToken', 'string'));
+    expect(() => createInjector(providers)).toThrow(new FailedCreateFactoryProvider('someToken', 'string'));
   });
 
   it('should cache instances', () => {

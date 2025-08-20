@@ -13,7 +13,7 @@ import {
   optional,
   skipSelf
 } from './index.js';
-import { diErrors, NoProvider } from './di-errors.js';
+import { CyclicDependency, NoProvider } from './di-errors.js';
 
 class Engine {}
 
@@ -128,8 +128,8 @@ describe("null as provider's value", () => {
 
     it('should throw when trying to instantiate a cyclic dependency', () => {
       const injector = createInjector([Car, { token: Engine, useClass: CyclicEngine }]);
-      expect(() => DepsChecker.check(injector, Car)).toThrow(diErrors.cyclicDependency([Car, Engine, Car]));
-      expect(() => injector.get(Car)).toThrow(diErrors.cyclicDependency([Car, Engine, Car]));
+      expect(() => DepsChecker.check(injector, Car)).toThrow(new CyclicDependency([Car, Engine, Car]));
+      expect(() => injector.get(Car)).toThrow(new CyclicDependency([Car, Engine, Car]));
     });
 
     it('should work with simple dependency', () => {

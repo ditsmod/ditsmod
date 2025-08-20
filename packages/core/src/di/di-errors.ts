@@ -1,6 +1,6 @@
 import { inspect, format } from 'node:util';
 
-import { CustomError, newCustomError } from '#error/custom-error.js';
+import { CustomError } from '#error/custom-error.js';
 import { stringify } from '#di/utils.js';
 import { Class } from './types-and-models.js';
 import { LevelOfInjector } from './injector.js';
@@ -29,11 +29,6 @@ export class NoProvider extends CustomError {
     });
   }
 }
-// export class X extends CustomError {
-//   constructor() {
-//     super();
-//   }
-// }
 /**
  * Thrown when a constructing type returns with an Error.
  *
@@ -73,58 +68,67 @@ export class InstantiationError extends CustomError {
     );
   }
 }
-export const diErrors = {
-  /**
-   * `Token must be defined!`
-   */
-  tokenMustBeDefined() {
-    return newCustomError(diErrors.tokenMustBeDefined, {
+/**
+ * `Token must be defined!`
+ */
+export class TokenMustBeDefined extends CustomError {
+  constructor() {
+    super({
       msg1: 'Token must be defined!',
       level: 'fatal',
     });
-  },
-  /**
-   * `Setting value by token failed: cannot find token "%s" in register, in providersPer%s.`
-   */
-  settingValueByTokenFailed(displayToken: string, level?: LevelOfInjector) {
+  }
+}
+/**
+ * `Setting value by token failed: cannot find token "%s" in register, in providersPer%s.`
+ */
+export class SettingValueByTokenFailed extends CustomError {
+  constructor(displayToken: string, level?: LevelOfInjector) {
     let msg1 = 'Setting value by token failed: cannot find token "%s" in register, in providersPer%s.';
     msg1 = format(msg1, displayToken, level);
-    return newCustomError(diErrors.settingValueByTokenFailed, {
+    super({
       msg1,
       level: 'fatal',
     });
-  },
-  /**
-   * `Setting value by ID failed: cannot find ID "%d" in register, in providersPer%s. Try use injector.setByToken()`
-   */
-  settingValueByIdFailed(id: number, level?: LevelOfInjector) {
+  }
+}
+/**
+ * `Setting value by ID failed: cannot find ID "%d" in register, in providersPer%s. Try use injector.setByToken()`
+ */
+export class SettingValueByIdFailed extends CustomError {
+  constructor(id: number, level?: LevelOfInjector) {
     let msg1 =
       'Setting value by ID failed: cannot find ID "%d" in register, in providersPer%s. Try use injector.setByToken()';
     msg1 = format(msg1, id, level);
-    return newCustomError(diErrors.settingValueByIdFailed, {
+    super({
       msg1,
       level: 'fatal',
     });
-  },
-  /**
-   * `Cannot find method in "${className}".`
-   */
-  cannotFindMethodInClass(className: string) {
-    return newCustomError(diErrors.cannotFindMethodInClass, {
+  }
+}
+/**
+ * `Cannot find method in "${className}".`
+ */
+export class CannotFindMethodInClass extends CustomError {
+  constructor(className: string) {
+    super({
       msg1: `Cannot find method in "${className}".`,
       level: 'fatal',
     });
-  },
-  /**
-   * `Cannot find "${factory.name}()" as method in "${className}".`
-   */
-  cannotFindFactoryAsMethod(factoryName: string, className: string) {
-    return newCustomError(diErrors.cannotFindFactoryAsMethod, {
+  }
+}
+/**
+ * `Cannot find "${factory.name}()" as method in "${className}".`
+ */
+export class CannotFindFactoryAsMethod extends CustomError {
+  constructor(factoryName: string, className: string) {
+    super({
       msg1: `Cannot find "${factoryName || 'anonymous'}()" as method in "${className}".`,
       level: 'fatal',
     });
-  },
-  /**
+  }
+}
+/**
    * Thrown when a multi provider and a regular provider are bound to the same token.
    *
    * ### Example
@@ -136,14 +140,16 @@ expect(() => Injector.resolveAndCreate([
 ])).toThrow();
 ```
    */
-  mixMultiWithRegularProviders(token: NonNullable<unknown>) {
+export class MixMultiWithRegularProviders extends CustomError {
+  constructor(token: NonNullable<unknown>) {
     const multiProvider = stringify(token);
-    return newCustomError(diErrors.mixMultiWithRegularProviders, {
+    super({
       msg1: `Cannot mix multi providers and regular providers for "${multiProvider}"`,
       level: 'fatal',
     });
-  },
-  /**
+  }
+}
+/**
    * Thrown when the class has no annotation information.
    *
    * Lack of annotation information prevents the `Injector` from determining which dependencies
@@ -171,7 +177,8 @@ class A {
 expect(() => Injector.resolveAndCreate([A,B])).toThrow();
 ```
    */
-  noAnnotation(Cls: Class, params: any[], propertyKey?: string | symbol) {
+export class NoAnnotation extends CustomError {
+  constructor(Cls: Class, params: any[], propertyKey?: string | symbol) {
     let msg1: string;
     const signature = getSignature(params);
     if (propertyKey) {
@@ -186,12 +193,13 @@ expect(() => Injector.resolveAndCreate([A,B])).toThrow();
         'Make sure that all the parameters are decorated with inject or have valid type annotations' +
         ` and that '${stringify(Cls)}' is decorated with some class decorator.`;
     }
-    return newCustomError(diErrors.noAnnotation, {
+    super({
       msg1,
       level: 'fatal',
     });
-  },
-  /**
+  }
+}
+/**
  * Thrown when an object other then `Provider` (or `Class`) is passed to `Injector`
  * creation.
  *
@@ -201,14 +209,16 @@ expect(() => Injector.resolveAndCreate([A,B])).toThrow();
 expect(() => Injector.resolveAndCreate(["not a type"])).toThrow();
 ```
  */
-  invalidProvider(provider: any) {
+export class InvalidProvider extends CustomError {
+  constructor(provider: any) {
     const obj = inspect(provider, false, 2);
-    return newCustomError(diErrors.invalidProvider, {
+    super({
       msg1: `Invalid provider - only instances of Provider and Class are allowed, got: ${obj}`,
       level: 'fatal',
     });
-  },
-  /**
+  }
+}
+/**
    * `Cannot instantiate cyclic dependency!${constructResolvingPath(tokens)}`
    * 
    * Thrown when dependencies form a cycle.
@@ -229,25 +239,28 @@ class B {
  *
  * Retrieving `A` or `B` throws a `CyclicDependencyError` as the graph above cannot be constructed.
  */
-  cyclicDependency(tokens: any[]) {
-    return newCustomError(diErrors.cyclicDependency, {
+export class CyclicDependency extends CustomError {
+  constructor(tokens: any[]) {
+    super({
       msg1: `Cannot instantiate cyclic dependency!${constructResolvingPath(tokens)}`,
       level: 'fatal',
     });
-  },
-  /**
-   * `Failed to create factory provider for ${stringify(token)}:
-   * second argument in tuple of useFactory must be a function, got ${factoryType}`
-   */
-  failedCreateFactoryProvider(token: string, factoryType: string) {
-    return newCustomError(diErrors.failedCreateFactoryProvider, {
+  }
+}
+/**
+ * `Failed to create factory provider for ${stringify(token)}:
+ * second argument in tuple of useFactory must be a function, got ${factoryType}`
+ */
+export class FailedCreateFactoryProvider extends CustomError {
+  constructor(token: string, factoryType: string) {
+    super({
       msg1:
         `Failed to create factory provider for ${stringify(token)}:` +
         `second argument in tuple of useFactory must be a function, got ${factoryType}`,
       level: 'warn',
     });
-  },
-};
+  }
+}
 
 function findFirstClosedCycle(tokens: any[]): any[] {
   const res: any[] = [];

@@ -1,17 +1,15 @@
-import { restErrors } from '#services/router-errors.js';
-
-export const {
-  checkingDepsInSandboxFailed,
-  invalidInterceptor,
-  catchAllConflictWithExistingHandle,
-  catchAllRoutesOnlyAtEnd,
-  conflictsWithExistingWildcard,
-  handleAlreadyRegistered,
-  invalidNodeType,
-  noBeforeCatchAll,
-  onlyOneWildcardPerPath,
-  wildcardRouteConflicts,
-  wildcardsMustNonEmpty,
-  moduleMustHaveControllers,
-  moduleIncludesInImportsAndAppends,
-} = restErrors;
+export {
+  ModuleMustHaveControllers,
+  ModuleIncludesInImportsAndAppends,
+  InvalidInterceptor,
+  CheckingDepsInSandboxFailed,
+  HandleAlreadyRegistered,
+  OnlyOneWildcardPerPath,
+  WildcardRouteConflicts,
+  WildcardsMustNonEmpty,
+  CatchAllRoutesOnlyAtEnd,
+  CatchAllConflictWithExistingHandle,
+  NoBeforeCatchAll,
+  ConflictsWithExistingWildcard,
+  InvalidNodeType
+} from '#services/rest-errors.js';

@@ -1,15 +1,14 @@
-import { diErrors } from './di-errors.js';
-export { NoProvider, InstantiationError } from './di-errors.js';
-
-export const {
-  failedCreateFactoryProvider,
-  cyclicDependency,
-  invalidProvider,
-  noAnnotation,
-  mixMultiWithRegularProviders,
-  cannotFindFactoryAsMethod,
-  cannotFindMethodInClass,
-  settingValueByIdFailed,
-  settingValueByTokenFailed,
-  tokenMustBeDefined,
-} = diErrors;
+export {
+  NoProvider,
+  InstantiationError,
+  TokenMustBeDefined,
+  SettingValueByTokenFailed,
+  SettingValueByIdFailed,
+  CannotFindMethodInClass,
+  CannotFindFactoryAsMethod,
+  MixMultiWithRegularProviders,
+  NoAnnotation,
+  InvalidProvider,
+  CyclicDependency,
+  FailedCreateFactoryProvider,
+} from './di-errors.js';
