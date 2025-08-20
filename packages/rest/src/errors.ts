@@ -12,4 +12,6 @@ export const {
   onlyOneWildcardPerPath,
   wildcardRouteConflicts,
   wildcardsMustNonEmpty,
+  moduleMustHaveControllers,
+  moduleIncludesInImportsAndAppends,
 } = restErrors;

@@ -3,6 +3,24 @@ import { newCustomError } from '@ditsmod/core/errors';
 
 export const restErrors = {
   /**
+   * `Appends to "${moduleName}" failed: "${appendedModuleName}" must have controllers.`
+   */
+  moduleMustHaveControllers(moduleName: string, appendedModuleName: string) {
+    return newCustomError(restErrors.moduleMustHaveControllers, {
+      msg1: `Appends to "${moduleName}" failed: "${appendedModuleName}" must have controllers.`,
+      level: 'fatal',
+    });
+  },
+  /**
+   * `Appends to "${baseMeta.name}" failed: "${appendedBaseMeta.name}" includes in both: imports and appends arrays.`
+   */
+  moduleIncludesInImportsAndAppends(moduleName: string, appendedModuleName: string) {
+    return newCustomError(restErrors.moduleIncludesInImportsAndAppends, {
+      msg1: `Appends to "${moduleName}" failed: "${appendedModuleName}" includes in both: imports and appends arrays.`,
+      level: 'fatal',
+    });
+  },
+  /**
    * Failed to apply HTTP interceptors to "${httpMethod} ${path}": expected the fourth parameter
    * of the route decorator to be an HttpInterceptor or an extension group token, but got: ${whatIsThis}.
    *

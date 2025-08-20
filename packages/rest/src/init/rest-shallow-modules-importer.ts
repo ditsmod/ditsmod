@@ -27,6 +27,7 @@ import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js'
 import { AppendsWithParams } from './rest-init-raw-meta.js';
 import { initRest, RestInitHooksAndRawMeta } from '#decorators/rest-init-hooks-and-metadata.js';
 import { ImportModulesShallowConfig, RestProviderImport, RestShallowImports } from './types.js';
+import { moduleIncludesInImportsAndAppends, moduleMustHaveControllers } from '#errors';
 
 /**
  * Recursively collects providers taking into account module imports/exports,
@@ -481,13 +482,11 @@ export class ShallowModulesImporter {
       const appendedBaseMeta = this.moduleManager.getBaseMeta(modRefId, true);
       const meta2 = this.getInitMeta(appendedBaseMeta);
       if (!meta2.controllers.length) {
-        const msg = `Appends to "${baseMeta.name}" failed: "${appendedBaseMeta.name}" must have controllers.`;
-        throw new Error(msg);
+        throw moduleMustHaveControllers(baseMeta.name, appendedBaseMeta.name);
       }
       const mod = getModule(modRefId);
       if (baseMeta.importsModules.includes(mod) || baseMeta.importsWithParams.some((imp) => imp.module === mod)) {
-        const msg = `Appends to "${baseMeta.name}" failed: "${appendedBaseMeta.name}" includes in both: imports and appends arrays.`;
-        throw new Error(msg);
+        throw moduleIncludesInImportsAndAppends(baseMeta.name, appendedBaseMeta.name);
       }
     });
   }

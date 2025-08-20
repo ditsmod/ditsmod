@@ -24,6 +24,7 @@ import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { ShallowModulesImporter } from './rest-shallow-modules-importer.js';
 import { Level, RestGlobalProviders } from '#types/types.js';
 import { getImportedProviders } from '../utils/get-imports.js';
+import { restErrors } from '#services/router-errors.js';
 
 @injectable()
 class MockShallowModulesImporter extends ShallowModulesImporter {
@@ -360,8 +361,8 @@ describe('shallow importing modules', () => {
     @rootModule()
     class AppModule {}
 
-    const msg = 'Appends to "AppModule" failed: "Module1" must have controllers';
-    expect(() => importModulesShallow(AppModule)).toThrow(msg);
+    const err = restErrors.moduleMustHaveControllers('AppModule', 'Module1-WithParams');
+    expect(() => importModulesShallow(AppModule)).toThrow(err);
   });
 
   it('should not throw an error during appending module with controllers', () => {
