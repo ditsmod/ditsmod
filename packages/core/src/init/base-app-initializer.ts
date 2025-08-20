@@ -32,8 +32,8 @@ import {
   failedStage2,
   failedStage3,
   moduleNotImportedInApplication,
-  donotResolveCollisionForMultiProviderPerApp,
-  providersPerAppDoesNotIncludesTokenName,
+  cannotResolveCollisionForMultiProviderPerApp,
+  providersPerAppMissingTokenName,
   ProvidersCollision,
 } from '#errors';
 
@@ -113,10 +113,10 @@ export class BaseAppInitializer {
       }
       const provider = getLastProviders(baseMeta.providersPerApp).find((p) => getToken(p) === token);
       if (!provider) {
-        throw providersPerAppDoesNotIncludesTokenName(rootModuleName, moduleName, tokenName);
+        throw providersPerAppMissingTokenName(rootModuleName, moduleName, tokenName);
       }
       if (isMultiProvider(provider)) {
-        throw donotResolveCollisionForMultiProviderPerApp(rootModuleName, moduleName, tokenName);
+        throw cannotResolveCollisionForMultiProviderPerApp(rootModuleName, moduleName, tokenName);
       }
       resolvedProviders.push(provider);
     });

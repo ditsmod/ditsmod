@@ -223,7 +223,7 @@ describe('BaseAppInitializer', () => {
       class AppModule {}
 
       mock.baseMeta = moduleManager.scanRootModule(AppModule);
-      const err = coreErrors.donotResolveCollisionForMultiProviderPerApp('AppModule', 'Module1', 'Provider1');
+      const err = coreErrors.cannotResolveCollisionForMultiProviderPerApp('AppModule', 'Module1', 'Provider1');
       expect(() => mock.prepareProvidersPerApp()).toThrow(err);
     });
 
@@ -250,7 +250,7 @@ describe('BaseAppInitializer', () => {
       class AppModule {}
 
       mock.baseMeta = moduleManager.scanRootModule(AppModule);
-      const err = coreErrors.providersPerAppDoesNotIncludesTokenName('AppModule', 'Module0', 'Provider1');
+      const err = coreErrors.providersPerAppMissingTokenName('AppModule', 'Module0', 'Provider1');
       expect(() => mock.prepareProvidersPerApp()).toThrow(err);
     });
 

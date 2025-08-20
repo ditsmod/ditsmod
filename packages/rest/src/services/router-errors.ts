@@ -1,5 +1,5 @@
 import { HttpMethod } from '@ditsmod/core';
-import { newCustomError } from '@ditsmod/core/errors';
+import { newCustomError } from '@ditsmod/core/errors-helpers';
 
 export const restErrors = {
   /**

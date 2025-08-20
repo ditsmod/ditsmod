@@ -9,7 +9,7 @@ import { ExtensionClass, Extension } from '#extension/extension-types.js';
 import { getImportedTokens } from '#utils/get-imports.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
-import { loggerWasNotPreviouslySeted } from '#errors';
+import { loggerNotSet } from '#errors';
 import { CustomError } from '#error/custom-error.js';
 
 /**
@@ -43,7 +43,7 @@ export class SystemLogMediator extends LogMediator {
 
   restorePreviousLogger() {
     if (!SystemLogMediator.previousLogger) {
-      throw loggerWasNotPreviouslySeted();
+      throw loggerNotSet();
     }
     this.logger = SystemLogMediator.previousLogger;
   }

@@ -13,7 +13,7 @@ import { AllInitHooks } from '#decorators/init-hooks-and-metadata.js';
 import {
   failAddingToImports,
   failRemovingImport,
-  forbiddenRollbackEemptyState,
+  forbiddenRollbackEmptyState,
   moduleIdNotFoundInModuleManager,
   normalizationFailed,
   ProhibitSavingModulesSnapshot,
@@ -237,7 +237,7 @@ export class ModuleManager {
 
   rollback(err?: Error) {
     if (!this.oldSnapshotMapId.size) {
-      throw forbiddenRollbackEemptyState();
+      throw forbiddenRollbackEmptyState();
     }
     this.snapshotMapId = this.oldSnapshotMapId;
     this.snapshotMap = this.oldSnapshotMap;

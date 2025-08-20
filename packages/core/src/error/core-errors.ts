@@ -63,13 +63,13 @@ export const coreErrors = {
    * ${tokenName} mapped with ${moduleName2}, but ${tokenName} is a token of the multi providers,
    * and in this case it should not be included in resolvedCollisionsPer${level}.`
    */
-  donotResolveCollisionForMultiProviderPerLevel(
+  cannotResolveCollisionForMultiProviderPerLevel(
     moduleName1: string,
     moduleName2: string,
     level: string,
     tokenName: string,
   ) {
-    return newCustomError(coreErrors.donotResolveCollisionForMultiProviderPerLevel, {
+    return newCustomError(coreErrors.cannotResolveCollisionForMultiProviderPerLevel, {
       msg1:
         `Resolving collisions for providersPer${level} in ${moduleName1} failed: ` +
         `${tokenName} mapped with ${moduleName2}, but ${tokenName} is a token of the multi providers, ` +
@@ -82,8 +82,8 @@ export const coreErrors = {
    * ${tokenName} mapped with ${moduleName}, but ${tokenName} is a token of the multi providers,
    * and in this case it should not be included in resolvedCollisionsPerApp.`
    */
-  donotResolveCollisionForMultiProviderPerApp(rootModuleName: string, moduleName: string, tokenName: string) {
-    return newCustomError(coreErrors.donotResolveCollisionForMultiProviderPerApp, {
+  cannotResolveCollisionForMultiProviderPerApp(rootModuleName: string, moduleName: string, tokenName: string) {
+    return newCustomError(coreErrors.cannotResolveCollisionForMultiProviderPerApp, {
       msg1:
         `Resolving collisions for providersPerApp in ${rootModuleName} failed: ` +
         `${tokenName} mapped with ${moduleName}, but ${tokenName} is a token of the multi providers, and in this case ` +
@@ -119,8 +119,8 @@ export const coreErrors = {
    * `Resolving collisions for providersPerApp in ${rootModuleName} failed:
    * ${tokenName} mapped with ${moduleName}, but providersPerApp does not includes ${tokenName} in this module.`
    */
-  providersPerAppDoesNotIncludesTokenName(rootModuleName: string, moduleName: string, tokenName: string) {
-    return newCustomError(coreErrors.providersPerAppDoesNotIncludesTokenName, {
+  providersPerAppMissingTokenName(rootModuleName: string, moduleName: string, tokenName: string) {
+    return newCustomError(coreErrors.providersPerAppMissingTokenName, {
       msg1:
         `Resolving collisions for providersPerApp in ${rootModuleName} failed: ` +
         `${tokenName} mapped with ${moduleName}, but providersPerApp does not includes ${tokenName} in this module.`,
@@ -215,9 +215,9 @@ export const coreErrors = {
    * This can be caused by circular dependency. Try to replace this element with this expression:
    * "forwardRef(() => YourModule)".`
    */
-  moduleIsUndefined(action: string, moduleName: string, i: number) {
+  undefinedModule(action: string, moduleName: string, i: number) {
     const lowerAction = action.toLowerCase();
-    return newCustomError(coreErrors.moduleIsUndefined, {
+    return newCustomError(coreErrors.undefinedModule, {
       msg1:
         `${action} into "${moduleName}" failed: element at ${lowerAction}[${i}] has "undefined" type. ` +
         'This can be caused by circular dependency. Try to replace this element with this expression: ' +
@@ -229,8 +229,8 @@ export const coreErrors = {
    * `Resolving collisions in ${moduleName} failed: for ${providerName} inside
    * "resolvedCollisionPer*" array must be includes tokens only.`
    */
-  inResolvedCollisionTokensOnly(moduleName: string, providerName: string) {
-    return newCustomError(coreErrors.inResolvedCollisionTokensOnly, {
+  resolvedCollisionTokensOnly(moduleName: string, providerName: string) {
+    return newCustomError(coreErrors.resolvedCollisionTokensOnly, {
       msg1:
         `Resolving collisions in ${moduleName} failed: for ${providerName} inside ` +
         '"resolvedCollisionPer*" array must be includes tokens only.',
@@ -249,8 +249,8 @@ export const coreErrors = {
   /**
    * `The passed argument - modRefId - is not a class, and is not a module with a parameter.`
    */
-  wrongModRefId() {
-    return newCustomError(coreErrors.wrongModRefId, {
+  invalidModRefId() {
+    return newCustomError(coreErrors.invalidModRefId, {
       msg1: 'The passed argument - modRefId - is not a class, and is not a module with a parameter.',
       level: 'fatal',
     });
@@ -335,8 +335,8 @@ export const coreErrors = {
   /**
    * The logger was not previously seted.
    */
-  loggerWasNotPreviouslySeted() {
-    return newCustomError(coreErrors.loggerWasNotPreviouslySeted, {
+  loggerNotSet() {
+    return newCustomError(coreErrors.loggerNotSet, {
       msg1: 'The logger was not previously seted.',
       level: 'warn',
     });
@@ -344,9 +344,9 @@ export const coreErrors = {
   /**
    * `${ExtCls.name} is failed`
    */
-  extensionIsFailed(extensionName: string, moduleName: string, cause: Error) {
+  extensionFailed(extensionName: string, moduleName: string, cause: Error) {
     return newCustomError(
-      coreErrors.extensionIsFailed,
+      coreErrors.extensionFailed,
       {
         msg1: `${extensionName} in ${moduleName} is failed`,
         level: 'fatal',
@@ -357,12 +357,12 @@ export const coreErrors = {
   /**
    * `Detected circular dependencies: ${circularNames}.`
    */
-  detectedCircularDependenciesForExtensions(prefixNames: string, circularNames: string) {
+  circularDepsBetweenExtensions(prefixNames: string, circularNames: string) {
     let msg1 = `Detected circular dependencies: ${circularNames}.`;
     if (prefixNames) {
       msg1 += ` It is started from ${prefixNames}.`;
     }
-    return newCustomError(coreErrors.detectedCircularDependenciesForExtensions, {
+    return newCustomError(coreErrors.circularDepsBetweenExtensions, {
       msg1,
       level: 'fatal',
     });
@@ -418,8 +418,8 @@ export const coreErrors = {
   /**
    * 'It is forbidden for rollback() to an empty state.'
    */
-  forbiddenRollbackEemptyState() {
-    return newCustomError(coreErrors.forbiddenRollbackEemptyState, {
+  forbiddenRollbackEmptyState() {
+    return newCustomError(coreErrors.forbiddenRollbackEmptyState, {
       msg1: 'It is forbidden for rollback() to an empty state.',
       level: 'warn',
     });

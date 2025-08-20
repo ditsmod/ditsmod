@@ -17,8 +17,8 @@ import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { isExtensionProvider } from './type-guards.js';
 import {
   notDeclaredInAfterExtensionList,
-  detectedCircularDependenciesForExtensions,
-  extensionIsFailed,
+  circularDepsBetweenExtensions,
+  extensionFailed,
 } from '#errors';
 
 export class StageIteration {
@@ -225,7 +225,7 @@ export class ExtensionsManager {
     const prefixNames = prefixChain.map(this.getItemName).join(' -> ');
     let circularNames = circularChain.map(this.getItemName).join(' -> ');
     circularNames += ` -> ${this.getItemName(item)}`;
-    throw detectedCircularDependenciesForExtensions(prefixNames, circularNames);
+    throw circularDepsBetweenExtensions(prefixNames, circularNames);
   }
 
   protected getItemName(classOrInstance: Extension | ExtensionClass) {
@@ -254,7 +254,7 @@ export class InternalExtensionsManager extends ExtensionsManager {
         this.updateExtensionPendingList();
       } catch (err: any) {
         const moduleName = getDebugClassName(baseMeta.modRefId) || '""';
-        throw extensionIsFailed(ExtCls.name, moduleName, err);
+        throw extensionFailed(ExtCls.name, moduleName, err);
       }
     }
     this.setExtensionsToStage2(baseMeta.modRefId);

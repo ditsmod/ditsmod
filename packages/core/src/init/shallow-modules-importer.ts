@@ -27,7 +27,7 @@ import {
   resolvingCollisionsNotExistsOnThisLevel,
   resolvingCollisionsNotImportedInModule,
   resolvingCollisionsNotImportedInApplication,
-  donotResolveCollisionForMultiProviderPerLevel,
+  cannotResolveCollisionForMultiProviderPerLevel,
   ProvidersCollision,
 } from '#errors';
 /**
@@ -296,7 +296,7 @@ export class ShallowModulesImporter {
       this.baseMeta[`resolvedCollisionsPer${level}`].some(([token]) => {
         if (tokens.includes(token)) {
           const tokenName = token.name || token;
-          throw donotResolveCollisionForMultiProviderPerLevel(this.moduleName, moduleName, level, tokenName);
+          throw cannotResolveCollisionForMultiProviderPerLevel(this.moduleName, moduleName, level, tokenName);
         }
       });
     });

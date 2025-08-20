@@ -46,6 +46,10 @@
     "./errors": {
       "types": "./dist/errors.d.ts",
       "default": "./dist/errors.js"
+    },
+    "./errors-helpers": {
+      "types": "./dist/errors-helpers.d.ts",
+      "default": "./dist/errors-helpers.js"
     }
   },
   "keywords": [

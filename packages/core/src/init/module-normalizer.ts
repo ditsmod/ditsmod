@@ -35,10 +35,10 @@ import { AllInitHooks, BaseInitRawMeta } from '#decorators/init-hooks-and-metada
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { objectKeys } from '#utils/object-keys.js';
 import {
-  moduleIsUndefined,
-  inResolvedCollisionTokensOnly,
+  undefinedModule,
+  resolvedCollisionTokensOnly,
   moduleDoesNotHaveDecorator,
-  wrongModRefId,
+  invalidModRefId,
   reexportFailed,
   wrongExtension,
   exportingUnknownSymbol,
@@ -65,7 +65,7 @@ export class ModuleNormalizer {
     let rawMeta = aDecoratorMeta.find((d) => isModDecor(d))?.value;
     const modName = getDebugClassName(modRefId);
     if (!modName) {
-      throw wrongModRefId();
+      throw invalidModRefId();
     }
     if (!rawMeta) {
       throw moduleDoesNotHaveDecorator(modName);
@@ -189,7 +189,7 @@ export class ModuleNormalizer {
     resolvedCollisionsPerLevel.forEach(([provider]) => {
       if (isNormalizedProvider(provider)) {
         const providerName = provider.token.name || provider.token;
-        throw inResolvedCollisionTokensOnly(moduleName, providerName);
+        throw resolvedCollisionTokensOnly(moduleName, providerName);
       }
     });
   }
@@ -218,7 +218,7 @@ export class ModuleNormalizer {
 
   protected throwIfUndefined(moduleName: string, action: 'Imports' | 'Exports', imp: unknown, i: number) {
     if (imp === undefined) {
-      throw moduleIsUndefined(action, moduleName, i);
+      throw undefinedModule(action, moduleName, i);
     }
   }
 

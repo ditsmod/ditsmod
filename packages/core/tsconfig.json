@@ -12,6 +12,7 @@
       "#decorators/*": ["./src/decorators/*"],
       "#logger/*": ["./src/logger/*"],
       "#error/*": ["./src/error/*"],
+      "#errors-helpers/*": ["./src/errors-helpers/*"],
       "#errors": ["./src/errors.js"],
       "#services/*": ["./src/services/*"],
       "#interceptors/*": ["./src/interceptors/*"],

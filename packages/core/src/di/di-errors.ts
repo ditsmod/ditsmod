@@ -10,8 +10,8 @@ export const diErrors = {
   /**
    * `Token must be defined!`
    */
-  tokenMustBeDdefined() {
-    return newCustomError(diErrors.tokenMustBeDdefined, {
+  tokenMustBeDefined() {
+    return newCustomError(diErrors.tokenMustBeDefined, {
       msg1: 'Token must be defined!',
       level: 'fatal',
     });

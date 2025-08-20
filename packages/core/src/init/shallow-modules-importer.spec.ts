@@ -570,7 +570,7 @@ describe('ShallowModulesImporter', () => {
       })
       class AppModule {}
 
-      const err = coreErrors.donotResolveCollisionForMultiProviderPerLevel('AppModule', 'Module1', 'Mod', 'Provider1');
+      const err = coreErrors.cannotResolveCollisionForMultiProviderPerLevel('AppModule', 'Module1', 'Mod', 'Provider1');
       expect(() => importModulesShallow(AppModule)).toThrow(err);
     });
 
