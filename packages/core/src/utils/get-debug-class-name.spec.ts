@@ -7,14 +7,14 @@ describe('getDebugClassName()', () => {
     const modRefId2: ModuleWithParams = { module: Module1, providersPerMod: [] };
     const modRefId3: ModuleWithParams = { module: Module1, providersPerMod: [] };
     expect(getDebugClassName(Module1)).toBe('Module1');
-    expect(getDebugClassName(modRefId2)).toBe('Module1-2');
+    expect(getDebugClassName(modRefId2)).toBe('Module1-WithParams');
 
     // Repeat
     expect(getDebugClassName(Module1)).toBe('Module1');
-    expect(getDebugClassName(modRefId2)).toBe('Module1-2');
+    expect(getDebugClassName(modRefId2)).toBe('Module1-WithParams');
 
     // Other Name
-    expect(getDebugClassName(modRefId3)).toBe('Module1-3');
-    expect(getDebugClassName(modRefId3)).toBe('Module1-3');
+    expect(getDebugClassName(modRefId3)).toBe('Module1-WithParams-2');
+    expect(getDebugClassName(modRefId3)).toBe('Module1-WithParams-2');
   });
 });

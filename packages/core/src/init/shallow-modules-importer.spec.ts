@@ -241,10 +241,7 @@ describe('ShallowModulesImporter', () => {
       class AppModule {}
 
       const cause = coreErrors.exportingUnknownSymbol('Module2', 'Provider1');
-      const err = new CustomError(
-        { msg1: 'Normalization of Module2 failed', code: 'normalizationFailed', level: 'fatal' },
-        cause,
-      );
+      const err = coreErrors.normalizationFailed('Module2', cause);
       expect(() => moduleManager.scanRootModule(AppModule)).toThrow(err);
     });
 

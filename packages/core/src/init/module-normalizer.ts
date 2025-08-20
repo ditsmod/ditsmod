@@ -132,7 +132,8 @@ export class ModuleNormalizer {
       if (this.rootDeclaredInDir !== '.' && declaredInDir !== '.') {
         // Case when CallsiteUtils.getCallerDir() works correctly.
         this.baseMeta.isExternal =
-          !declaredInDir.startsWith(this.rootDeclaredInDir) || declaredInDir.includes('ditsmod/packages');
+          !declaredInDir.startsWith(this.rootDeclaredInDir) ||
+          (!this.rootDeclaredInDir.includes('ditsmod/packages') && declaredInDir.includes('ditsmod/packages'));
       }
     }
   }
@@ -154,19 +155,21 @@ export class ModuleNormalizer {
     (['App', 'Mod'] as const).forEach((level) => {
       if (rawMeta[`providersPer${level}`]) {
         const providersPerLevel = this.resolveForwardRef([...rawMeta[`providersPer${level}`]!]);
-       this.baseMeta[`providersPer${level}`].push(...providersPerLevel);
+        this.baseMeta[`providersPer${level}`].push(...providersPerLevel);
       }
 
       if (rawMeta[`resolvedCollisionsPer${level}`]) {
         this.baseMeta[`resolvedCollisionsPer${level}`].push(...rawMeta[`resolvedCollisionsPer${level}`]!);
-        this.baseMeta[`resolvedCollisionsPer${level}`] = this.baseMeta[`resolvedCollisionsPer${level}`].map(([token, module]) => {
-          token = resolveForwardRef(token);
-          module = resolveForwardRef(module);
-          if (isModuleWithParams(module)) {
-            module.module = resolveForwardRef(module.module);
-          }
-          return [token, module];
-        });
+        this.baseMeta[`resolvedCollisionsPer${level}`] = this.baseMeta[`resolvedCollisionsPer${level}`].map(
+          ([token, module]) => {
+            token = resolveForwardRef(token);
+            module = resolveForwardRef(module);
+            if (isModuleWithParams(module)) {
+              module.module = resolveForwardRef(module.module);
+            }
+            return [token, module];
+          },
+        );
       }
     });
   }
@@ -191,9 +194,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected normalizeExtensions(
-    rawMeta: PickProps<ModuleMetadata, 'extensions' | 'extensionsMeta'>
-  ) {
+  protected normalizeExtensions(rawMeta: PickProps<ModuleMetadata, 'extensions' | 'extensionsMeta'>) {
     if (rawMeta.extensionsMeta) {
       this.baseMeta.extensionsMeta = { ...rawMeta.extensionsMeta };
     }
