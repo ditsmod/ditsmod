@@ -1,4 +1,4 @@
-import { CustomError, newCustomError } from './custom-error.js';
+import { CustomError } from './custom-error.js';
 
 /**
  * `Repeated saving of module metadata snapshots is prohibited. It is done only once—after their normalization.`

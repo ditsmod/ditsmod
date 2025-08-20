@@ -1,5 +1,4 @@
 import { CustomError, HttpMethod } from '@ditsmod/core';
-import { newCustomError } from '@ditsmod/core/errors-helpers';
 
 /**
  * `Appends to "${moduleName}" failed: "${appendedModuleName}" must have controllers.`
