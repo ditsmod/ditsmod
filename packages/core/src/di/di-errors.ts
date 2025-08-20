@@ -1,11 +1,78 @@
 import { inspect, format } from 'node:util';
 
-import { newCustomError } from '#error/custom-error.js';
+import { CustomError, newCustomError } from '#error/custom-error.js';
 import { stringify } from '#di/utils.js';
-import { AnyFn } from '#types/mix.js';
 import { Class } from './types-and-models.js';
 import { LevelOfInjector } from './injector.js';
 
+/**
+   * Thrown when trying to retrieve a dependency by key from `Injector`, but the
+   * `Injector` does not have a `Provider` for the given key.
+   *
+   * ### Example
+   *
+  ```ts
+  @injectable()
+  class A {
+    constructor(b:B) {}
+  }
+  
+  expect(() => Injector.resolveAndCreate([A])).toThrow();
+  ```
+   */
+export class NoProvider extends CustomError {
+  constructor(tokens: any[]) {
+    const first = stringify(tokens[0]);
+    super({
+      msg1: `No provider for ${first}!${constructResolvingPath(tokens)}`,
+      level: 'fatal',
+    });
+  }
+}
+// export class X extends CustomError {
+//   constructor() {
+//     super();
+//   }
+// }
+/**
+ * Thrown when a constructing type returns with an Error.
+ *
+ * The `InstantiationError` class contains the original error plus the dependency graph which caused
+ * this object to be instantiated.
+ *
+ * ### Example
+ *
+```ts
+class A {
+  constructor() {
+    throw new Error('message');
+  }
+}
+
+let injector = Injector.resolveAndCreate([A]);
+
+try {
+  injector.get(A);
+} catch (e) {
+  expect(e instanceof InstantiationError).toBe(true);
+  expect(e.originalException.message).toEqual("message");
+  expect(e.originalStack).toBeDefined();
+}
+```
+  */
+export class InstantiationError extends CustomError {
+  constructor(originalException: any, tokens: any[]) {
+    const first = stringify(tokens[0]);
+    const action = first.includes('.prototype.') ? 'calling' : 'instantiation of';
+    super(
+      {
+        msg1: `Failed ${action} ${first}!${constructResolvingPath(tokens)}`,
+        level: 'fatal',
+      },
+      originalException,
+    );
+  }
+}
 export const diErrors = {
   /**
    * `Token must be defined!`
@@ -142,44 +209,6 @@ expect(() => Injector.resolveAndCreate(["not a type"])).toThrow();
     });
   },
   /**
-   * Thrown when a constructing type returns with an Error.
-   *
-   * The `InstantiationError` class contains the original error plus the dependency graph which caused
-   * this object to be instantiated.
-   *
-   * ### Example
-   *
-  ```ts
-  class A {
-    constructor() {
-      throw new Error('message');
-    }
-  }
-  
-  let injector = Injector.resolveAndCreate([A]);
-  
-  try {
-    injector.get(A);
-  } catch (e) {
-    expect(e instanceof InstantiationError).toBe(true);
-    expect(e.originalException.message).toEqual("message");
-    expect(e.originalStack).toBeDefined();
-  }
-  ```
-   */
-  instantiationError(originalException: any, tokens: any[]) {
-    const first = stringify(tokens[0]);
-    const action = first.includes('.prototype.') ? 'calling' : 'instantiation of';
-    return newCustomError(
-      diErrors.instantiationError,
-      {
-        msg1: `Failed ${action} ${first}!${constructResolvingPath(tokens)}`,
-        level: 'fatal',
-      },
-      originalException,
-    );
-  },
-  /**
    * `Cannot instantiate cyclic dependency!${constructResolvingPath(tokens)}`
    * 
    * Thrown when dependencies form a cycle.
@@ -203,28 +232,6 @@ class B {
   cyclicDependency(tokens: any[]) {
     return newCustomError(diErrors.cyclicDependency, {
       msg1: `Cannot instantiate cyclic dependency!${constructResolvingPath(tokens)}`,
-      level: 'fatal',
-    });
-  },
-  /**
-   * Thrown when trying to retrieve a dependency by key from `Injector`, but the
-   * `Injector` does not have a `Provider` for the given key.
-   *
-   * ### Example
-   *
-  ```ts
-  @injectable()
-  class A {
-    constructor(b:B) {}
-  }
-  
-  expect(() => Injector.resolveAndCreate([A])).toThrow();
-  ```
-   */
-  noProvider(tokens: any[]) {
-    const first = stringify(tokens[0]);
-    return newCustomError(diErrors.noProvider, {
-      msg1: `No provider for ${first}!${constructResolvingPath(tokens)}`,
       level: 'fatal',
     });
   },

@@ -5,11 +5,11 @@ import { fromSelf, inject, optional, skipSelf } from './decorators.js';
 import {
   failedCreateFactoryProvider,
   cyclicDependency,
-  instantiationError,
+  InstantiationError,
   invalidProvider,
   mixMultiWithRegularProviders,
   noAnnotation,
-  noProvider,
+  NoProvider,
   cannotFindFactoryAsMethod,
   cannotFindMethodInClass,
   settingValueByIdFailed,
@@ -648,7 +648,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
       }
     }
     if (defaultValue === NoDefaultValue) {
-      throw noProvider([dualKey.token, ...parentTokens]);
+      throw new NoProvider([dualKey.token, ...parentTokens]);
     } else {
       return defaultValue;
     }
@@ -710,7 +710,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     try {
       return resolvedFactory.factory(...deps);
     } catch (e: any) {
-      throw instantiationError(e, [token, ...parentTokens]);
+      throw new InstantiationError(e, [token, ...parentTokens]);
     }
   }
 
@@ -769,7 +769,7 @@ child.pull(Service).config; // pulls Service in current injector: { one: 11, two
       }
     }
     if (defaultValue === NoDefaultValue) {
-      throw noProvider([dualKey.token]);
+      throw new NoProvider([dualKey.token]);
     } else {
       return defaultValue;
     }

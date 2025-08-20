@@ -7,7 +7,7 @@ import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
-import { coreErrors } from '#error/core-errors.js';
+import { CircularDepsInImports } from '#error/core-errors.js';
 import { BaseImportRegistry } from './types.js';
 
 describe('DeepModulesImporter', () => {
@@ -78,7 +78,7 @@ describe('DeepModulesImporter', () => {
         mock.addToUnfinishedSearchDependencies(Module1, Provider1);
         mock.addToUnfinishedSearchDependencies(Module2, Provider2);
         mock.addToUnfinishedSearchDependencies(Module3, Provider3);
-        const err = coreErrors.circularDepsInImports(
+        const err = new CircularDepsInImports(
           '[Provider2 in Module2] -> [Provider3 in Module3] -> [Provider2 in Module2]',
           '[Provider1 in Module1]',
         );

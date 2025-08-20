@@ -1,5 +1,5 @@
 import { fromSelf, skipSelf } from './decorators.js';
-import { cyclicDependency, noProvider } from './errors.js';
+import { cyclicDependency, NoProvider } from './errors.js';
 import { Injector } from './injector.js';
 import { DualKey, KeyRegistry } from './key-registry.js';
 import { Dependency, ID, ResolvedProvider, Visibility } from './types-and-models.js';
@@ -87,7 +87,7 @@ export class DepsChecker {
       }
     }
     if (!isOptional) {
-      throw noProvider([dualKey.token, ...parentTokens]);
+      throw new NoProvider([dualKey.token, ...parentTokens]);
     }
   }
 

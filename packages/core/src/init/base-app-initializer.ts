@@ -27,13 +27,13 @@ import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { ShallowImports } from './types.js';
 import { ProvidersOnly } from '#types/providers-metadata.js';
 import {
-  failedCollectingMetadata,
-  failedCreateInjectorPerMod,
-  failedStage2,
-  failedStage3,
-  moduleNotImportedInApplication,
-  cannotResolveCollisionForMultiProviderPerApp,
-  providersPerAppMissingTokenName,
+  FailedCollectingMetadata,
+  FailedCreateInjectorPerMod,
+  FailedStage2,
+  FailedStage3,
+  ModuleNotImportedInApplication,
+  CannotResolveCollisionForMultiProviderPerApp,
+  ProvidersPerAppMissingTokenName,
   ProvidersCollision,
 } from '#errors';
 
@@ -109,14 +109,14 @@ export class BaseAppInitializer {
       const tokenName = token.name || token;
       const baseMeta = this.moduleManager.getBaseMeta(module);
       if (!baseMeta) {
-        throw moduleNotImportedInApplication(rootModuleName, moduleName, tokenName);
+        throw new ModuleNotImportedInApplication(rootModuleName, moduleName, tokenName);
       }
       const provider = getLastProviders(baseMeta.providersPerApp).find((p) => getToken(p) === token);
       if (!provider) {
-        throw providersPerAppMissingTokenName(rootModuleName, moduleName, tokenName);
+        throw new ProvidersPerAppMissingTokenName(rootModuleName, moduleName, tokenName);
       }
       if (isMultiProvider(provider)) {
-        throw cannotResolveCollisionForMultiProviderPerApp(rootModuleName, moduleName, tokenName);
+        throw new CannotResolveCollisionForMultiProviderPerApp(rootModuleName, moduleName, tokenName);
       }
       resolvedProviders.push(provider);
     });
@@ -279,7 +279,7 @@ export class BaseAppInitializer {
           await extension.stage1?.(true);
         } catch (err: any) {
           const groupName = getProviderName(ExtCls);
-          throw failedCollectingMetadata(groupName, err);
+          throw new FailedCollectingMetadata(groupName, err);
         }
       }
     }
@@ -292,7 +292,7 @@ export class BaseAppInitializer {
         this.moduleManager.setInjectorPerMod(modRefId, injectorPerMod);
       } catch (err: any) {
         const debugModuleName = getDebugClassName(modRefId) || '""';
-        throw failedCreateInjectorPerMod(debugModuleName, err);
+        throw new FailedCreateInjectorPerMod(debugModuleName, err);
       }
     }
 
@@ -306,7 +306,7 @@ export class BaseAppInitializer {
           await ext.stage2(injectorPerMod);
         } catch (err: any) {
           const debugModuleName = getDebugClassName(modRefId) || '""';
-          throw failedStage2(debugModuleName, ext.constructor.name, err);
+          throw new FailedStage2(debugModuleName, ext.constructor.name, err);
         }
       }
     }
@@ -320,7 +320,7 @@ export class BaseAppInitializer {
           await ext.stage3();
         } catch (err: any) {
           const debugModuleName = getDebugClassName(modRefId) || '""';
-          throw failedStage3(debugModuleName, ext.constructor.name, err);
+          throw new FailedStage3(debugModuleName, ext.constructor.name, err);
         }
       }
     }

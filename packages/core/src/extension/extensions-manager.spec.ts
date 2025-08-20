@@ -1,10 +1,10 @@
-import { injectable, InjectionToken, Injector } from '#di';
+import { injectable, Injector } from '#di';
 import { Extension, ExtensionCounters } from '#extension/extension-types.js';
 import { getExtensionProviderList } from '#extension/get-extension-provider.js';
 import { defaultProvidersPerApp } from '#init/default-providers-per-app.js';
 import { ExtensionsContext } from '#extension/extensions-context.js';
 import { StageIteration, ExtensionsManager } from '#extension/extensions-manager.js';
-import { coreErrors } from '#error/core-errors.js';
+import { CircularDepsBetweenExtensions } from '#error/core-errors.js';
 
 describe('ExtensionsManager', () => {
   describe('stage1', () => {});
@@ -70,7 +70,7 @@ describe('ExtensionsManager', () => {
     });
 
     it('Extension2 has circular dependencies', async () => {
-      const err = coreErrors.circularDepsInImports(
+      const err = new CircularDepsBetweenExtensions(
         '[group of Extension3] -> Extension3 -> [group of Extension4] -> Extension4 -> [group of Extension3]',
         '[group of Extension2] -> Extension2',
       );
@@ -78,14 +78,14 @@ describe('ExtensionsManager', () => {
     });
 
     it('Extension3 has circular dependencies', async () => {
-      const err = coreErrors.circularDepsInImports(
+      const err = new CircularDepsBetweenExtensions(
         '[group of Extension3] -> Extension3 -> [group of Extension4] -> Extension4 -> [group of Extension3]',
       );
       await expect(mock.stage1(Extension3)).rejects.toThrow(err);
     });
 
     it('Extension4 has circular dependencies', async () => {
-      const err = coreErrors.circularDepsInImports(
+      const err = new CircularDepsBetweenExtensions(
         '[group of Extension4] -> Extension4 -> [group of Extension3] -> Extension3 -> [group of Extension4]',
       );
       await expect(mock.stage1(Extension4)).rejects.toThrow(err);

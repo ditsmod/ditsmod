@@ -16,9 +16,9 @@ import { BaseMeta } from '#types/base-meta.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { isExtensionProvider } from './type-guards.js';
 import {
-  notDeclaredInAfterExtensionList,
-  circularDepsBetweenExtensions,
-  extensionFailed,
+  NotDeclaredInAfterExtensionList,
+  CircularDepsBetweenExtensions,
+  ExtensionFailed,
 } from '#errors';
 
 export class StageIteration {
@@ -86,7 +86,7 @@ export class ExtensionsManager {
     if (stageIteration) {
       if (stageIteration.index > currStageIteration.index) {
         const extensionName = this.getItemName([...this.unfinishedInit].at(-1)!) || 'unknown';
-        throw notDeclaredInAfterExtensionList(extensionName, ExtCls.name);
+        throw new NotDeclaredInAfterExtensionList(extensionName, ExtCls.name);
       } else if (this.unfinishedInit.has(ExtCls)) {
         await stageIteration.promise;
       }
@@ -225,7 +225,7 @@ export class ExtensionsManager {
     const prefixNames = prefixChain.map(this.getItemName).join(' -> ');
     let circularNames = circularChain.map(this.getItemName).join(' -> ');
     circularNames += ` -> ${this.getItemName(item)}`;
-    throw circularDepsBetweenExtensions(prefixNames, circularNames);
+    throw new CircularDepsBetweenExtensions(circularNames, prefixNames);
   }
 
   protected getItemName(classOrInstance: Extension | ExtensionClass) {
@@ -254,7 +254,7 @@ export class InternalExtensionsManager extends ExtensionsManager {
         this.updateExtensionPendingList();
       } catch (err: any) {
         const moduleName = getDebugClassName(baseMeta.modRefId) || '""';
-        throw extensionFailed(ExtCls.name, moduleName, err);
+        throw new ExtensionFailed(ExtCls.name, moduleName, err);
       }
     }
     this.setExtensionsToStage2(baseMeta.modRefId);

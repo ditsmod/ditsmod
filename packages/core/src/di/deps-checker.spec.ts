@@ -13,8 +13,7 @@ import {
   optional,
   skipSelf
 } from './index.js';
-import { diErrors } from './di-errors.js';
-import { coreErrors } from '#error/core-errors.js';
+import { diErrors, NoProvider } from './di-errors.js';
 
 class Engine {}
 
@@ -123,7 +122,7 @@ describe("null as provider's value", () => {
       }
 
       const injector = Injector.resolveAndCreate([Dependecy2]);
-      expect(() => DepsChecker.check(injector, Dependecy2)).toThrow(diErrors.noProvider([Dependecy1, Dependecy2]));
+      expect(() => DepsChecker.check(injector, Dependecy2)).toThrow(new NoProvider([Dependecy1, Dependecy2]));
       expect(spy).toHaveBeenCalledTimes(0);
     });
 
@@ -173,7 +172,7 @@ describe("null as provider's value", () => {
       const injector = Injector.resolveAndCreate([
         { token: Dependecy2, useFactory: [Dependecy2, Dependecy2.prototype.method1] },
       ]);
-      expect(() => DepsChecker.check(injector, Dependecy2)).toThrow(diErrors.noProvider([Dependecy1, Dependecy2]));
+      expect(() => DepsChecker.check(injector, Dependecy2)).toThrow(new NoProvider([Dependecy1, Dependecy2]));
       expect(spy).toHaveBeenCalledTimes(0);
     });
 
@@ -205,7 +204,7 @@ describe("null as provider's value", () => {
         Dependecy1,
         { token: Dependecy2, useFactory: [Dependecy2, Dependecy2.prototype.method1] },
       ]);
-      expect(() => DepsChecker.check(injector, Dependecy2)).toThrow(diErrors.noProvider([Dependecy3, Dependecy2]));
+      expect(() => DepsChecker.check(injector, Dependecy2)).toThrow(new NoProvider([Dependecy3, Dependecy2]));
       expect(spy).toHaveBeenCalledTimes(0);
     });
 
@@ -277,7 +276,7 @@ describe("null as provider's value", () => {
 
       const parent = Injector.resolveAndCreate([]);
       const injector = parent.resolveAndCreateChild([Dependecy2]);
-      expect(() => DepsChecker.check(injector, Dependecy2)).toThrow(diErrors.noProvider([Dependecy1, Dependecy2]));
+      expect(() => DepsChecker.check(injector, Dependecy2)).toThrow(new NoProvider([Dependecy1, Dependecy2]));
       expect(spy).toHaveBeenCalledTimes(0);
     });
 
@@ -325,7 +324,7 @@ describe("null as provider's value", () => {
       }
       const parent = Injector.resolveAndCreate([]);
       const child = parent.resolveAndCreateChild([A, { token, useValue: "child's value" }]);
-      expect(() => DepsChecker.check(child, A)).toThrow(diErrors.noProvider([token, A]));
+      expect(() => DepsChecker.check(child, A)).toThrow(new NoProvider([token, A]));
       expect(spy).toHaveBeenCalledTimes(0);
     });
 
@@ -357,7 +356,7 @@ describe("null as provider's value", () => {
 
     it('should throw when no provider defined', () => {
       const injector = createInjector([]);
-      expect(() => DepsChecker.check(injector, 'NonExisting')).toThrow(diErrors.noProvider(['NonExisting']));
+      expect(() => DepsChecker.check(injector, 'NonExisting')).toThrow(new NoProvider(['NonExisting']));
     });
   });
 });

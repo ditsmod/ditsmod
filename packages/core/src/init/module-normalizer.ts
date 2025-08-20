@@ -35,16 +35,16 @@ import { AllInitHooks, BaseInitRawMeta } from '#decorators/init-hooks-and-metada
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { objectKeys } from '#utils/object-keys.js';
 import {
-  undefinedModule,
-  resolvedCollisionTokensOnly,
-  moduleDoesNotHaveDecorator,
-  invalidModRefId,
-  reexportFailed,
-  wrongExtension,
-  exportingUnknownSymbol,
-  forbiddenExportNormalizedProvider,
-  forbiddenExportProvidersPerApp,
-  moduleShouldHaveValue,
+  UndefinedModule,
+  ResolvedCollisionTokensOnly,
+  ModuleDoesNotHaveDecorator,
+  InvalidModRefId,
+  ReexportFailed,
+  InvalidExtension,
+  ExportingUnknownSymbol,
+  ForbiddenExportNormalizedProvider,
+  ForbiddenExportProvidersPerApp,
+  ModuleShouldHaveValue,
 } from '#errors';
 
 /**
@@ -65,10 +65,10 @@ export class ModuleNormalizer {
     let rawMeta = aDecoratorMeta.find((d) => isModDecor(d))?.value;
     const modName = getDebugClassName(modRefId);
     if (!modName) {
-      throw invalidModRefId();
+      throw new InvalidModRefId();
     }
     if (!rawMeta) {
-      throw moduleDoesNotHaveDecorator(modName);
+      throw new ModuleDoesNotHaveDecorator(modName);
     }
 
     /**
@@ -189,7 +189,7 @@ export class ModuleNormalizer {
     resolvedCollisionsPerLevel.forEach(([provider]) => {
       if (isNormalizedProvider(provider)) {
         const providerName = provider.token.name || provider.token;
-        throw resolvedCollisionTokensOnly(moduleName, providerName);
+        throw new ResolvedCollisionTokensOnly(moduleName, providerName);
       }
     });
   }
@@ -218,7 +218,7 @@ export class ModuleNormalizer {
 
   protected throwIfUndefined(moduleName: string, action: 'Imports' | 'Exports', imp: unknown, i: number) {
     if (imp === undefined) {
-      throw undefinedModule(action, moduleName, i);
+      throw new UndefinedModule(action, moduleName, i);
     }
   }
 
@@ -239,7 +239,7 @@ export class ModuleNormalizer {
       } else if (this.getDecoratorMeta(exp)) {
         this.baseMeta.exportsModules.push(exp);
       } else {
-        throw exportingUnknownSymbol(this.baseMeta.name, exp.name || exp);
+        throw new ExportingUnknownSymbol(this.baseMeta.name, exp.name || exp);
       }
     });
   }
@@ -250,7 +250,7 @@ export class ModuleNormalizer {
 
     exports.forEach((modRefId) => {
       if (!imports.includes(modRefId)) {
-        throw reexportFailed(this.baseMeta.name, getDebugClassName(modRefId) || '""');
+        throw new ReexportFailed(this.baseMeta.name, getDebugClassName(modRefId) || '""');
       }
     });
   }
@@ -273,7 +273,7 @@ export class ModuleNormalizer {
         typeof extensionClass.prototype?.stage3 != 'function')
     ) {
       const token = getToken(extensionsProvider);
-      throw wrongExtension(moduleName, token.name || token);
+      throw new InvalidExtension(moduleName, token.name || token);
     }
   }
 
@@ -298,7 +298,7 @@ export class ModuleNormalizer {
 
   protected throwExportsIfNormalizedProvider(moduleName: string, provider: NormalizedProvider) {
     if (isNormalizedProvider(provider)) {
-      throw forbiddenExportNormalizedProvider(moduleName, provider.token.name || provider.token);
+      throw new ForbiddenExportNormalizedProvider(moduleName, provider.token.name || provider.token);
     }
   }
 
@@ -317,9 +317,9 @@ export class ModuleNormalizer {
     const providerName = token.name || token;
     const providersPerApp = [...(rawMeta.providersPerApp || [])];
     if (providersPerApp.some((p) => getToken(p) === token)) {
-      throw forbiddenExportProvidersPerApp(this.baseMeta.name, providerName);
+      throw new ForbiddenExportProvidersPerApp(this.baseMeta.name, providerName);
     } else {
-      throw exportingUnknownSymbol(this.baseMeta.name, providerName);
+      throw new ExportingUnknownSymbol(this.baseMeta.name, providerName);
     }
   }
 
@@ -494,7 +494,7 @@ export class AppModule {}
       !this.baseMeta.exportedExtensionsProviders.length &&
       !this.baseMeta.extensionsProviders.length
     ) {
-      throw moduleShouldHaveValue();
+      throw new ModuleShouldHaveValue();
     }
   }
 }

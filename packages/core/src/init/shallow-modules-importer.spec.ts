@@ -9,7 +9,12 @@ import { ModuleType, Level, ModRefId } from '#types/mix.js';
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
-import { coreErrors, ProvidersCollision } from '#error/core-errors.js';
+import {
+  CannotResolveCollisionForMultiProviderPerLevel,
+  ExportingUnknownSymbol,
+  NormalizationFailed,
+  ProvidersCollision,
+} from '#error/core-errors.js';
 import { ShallowImports } from './types.js';
 
 describe('ShallowModulesImporter', () => {
@@ -239,8 +244,8 @@ describe('ShallowModulesImporter', () => {
       @rootModule({ imports: [Module2] })
       class AppModule {}
 
-      const cause = coreErrors.exportingUnknownSymbol('Module2', 'Provider1');
-      const err = coreErrors.normalizationFailed('Module2', cause);
+      const cause = new ExportingUnknownSymbol('Module2', 'Provider1');
+      const err = new NormalizationFailed('Module2', cause);
       expect(() => moduleManager.scanRootModule(AppModule)).toThrow(err);
     });
 
@@ -570,7 +575,7 @@ describe('ShallowModulesImporter', () => {
       })
       class AppModule {}
 
-      const err = coreErrors.cannotResolveCollisionForMultiProviderPerLevel('AppModule', 'Module1', 'Mod', 'Provider1');
+      const err = new CannotResolveCollisionForMultiProviderPerLevel('AppModule', 'Module1', 'Mod', 'Provider1');
       expect(() => importModulesShallow(AppModule)).toThrow(err);
     });
 

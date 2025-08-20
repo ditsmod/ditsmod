@@ -17,7 +17,7 @@ import { isClassProvider, isFactoryProvider, isTokenProvider, isValueProvider } 
 import { ExtensionCounters } from '#extension/extension-types.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { ProvidersOnly } from '#types/providers-metadata.js';
-import { circularDepsInImports, noProviderDuringResolveImports } from '#errors';
+import { CircularDepsInImports, NoProviderDuringResolveImports } from '#errors';
 import { ModuleExtract } from '#types/module-extract.js';
 
 /**
@@ -356,7 +356,7 @@ export class DeepModulesImporter {
     const partMsg = path.length > 1 ? `(required by ${strPath}). Searched in ${levelsPath}` : levelsPath;
     // this.log.showProvidersInLogs(this, meta.name, meta.providersPerReq, meta.providersPerRou, meta.providersPerMod);
 
-    throw noProviderDuringResolveImports(baseMeta.name, token.name || token, partMsg);
+    throw new NoProviderDuringResolveImports(baseMeta.name, token.name || token, partMsg);
   }
 
   getDependencies(provider: Provider) {
@@ -410,6 +410,6 @@ export class DeepModulesImporter {
 
     const debugModuleName = getDebugClassName(modRefId);
     circularNames += ` -> [${getProviderName(provider)} in ${debugModuleName}]`;
-    throw circularDepsInImports(circularNames, prefixNames);
+    throw new CircularDepsInImports(circularNames, prefixNames);
   }
 }

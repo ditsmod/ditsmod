@@ -16,7 +16,7 @@ import { InitDecorator } from '#decorators/init-hooks-and-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { isModuleWithParams } from '#utils/type-guards.js';
-import { failAddingToImports } from '#errors';
+import { FailAddingToImports } from '#errors';
 
 describe('ModuleManager', () => {
   console.log = jest.fn();
@@ -236,7 +236,7 @@ describe('ModuleManager', () => {
     expect(mock.map.has(AppModule)).toBe(true);
     expect(mock.map.has(Module1)).toBe(true);
 
-    expect(() => mock.addImport(Module2, 'fakeId')).toThrow(failAddingToImports('Module2', 'fakeId'));
+    expect(() => mock.addImport(Module2, 'fakeId')).toThrow(new FailAddingToImports('Module2', 'fakeId'));
     expect(mock.map.size).toBe(2);
     expect(mock.oldSnapshotMapId.size).toBe(0);
     expect(mock.oldSnapshotMap.size).toBe(0);

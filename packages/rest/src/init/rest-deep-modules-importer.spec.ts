@@ -19,7 +19,6 @@ import {
   MetadataPerMod2,
   ModuleWithParams,
 } from '@ditsmod/core';
-import { coreErrors } from '@ditsmod/core/errors';
 
 import { CanActivate, guard } from '#interceptors/guard.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
@@ -28,6 +27,7 @@ import { RequestContext } from '#services/request-context.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { RestMetadataPerMod2 } from './types.js';
 import { RestModuleParams } from './rest-init-raw-meta.js';
+import { InstantiationError, NoProvider } from '@ditsmod/core/errors';
 
 describe('DeepModulesImporter', () => {
   class AppInitializerMock extends BaseAppInitializer {
@@ -515,8 +515,8 @@ describe('DeepModulesImporter', () => {
     const initMeta = getRestMetadataPerMod2(AppModule)!.meta!;
     const injector = Injector.resolveAndCreate(initMeta.providersPerRou);
     const msg = 'No provider for Service1!; this error during instantiation of Service2! (Service3 -> Service2)';
-    const cause = coreErrors.noProvider([Service1]);
-    const err = coreErrors.instantiationError(cause, [Service2, Service3]);
+    const cause = new NoProvider([Service1]);
+    const err = new InstantiationError(cause, [Service2, Service3]);
     expect(() => injector.get(Service3)).toThrow(err);
   });
 

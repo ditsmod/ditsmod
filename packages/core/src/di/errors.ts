@@ -1,10 +1,9 @@
 import { diErrors } from './di-errors.js';
+export { NoProvider, InstantiationError } from './di-errors.js';
 
 export const {
   failedCreateFactoryProvider,
-  noProvider,
   cyclicDependency,
-  instantiationError,
   invalidProvider,
   noAnnotation,
   mixMultiWithRegularProviders,

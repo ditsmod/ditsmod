@@ -22,7 +22,7 @@ export class CustomError extends ChainError {
       { info, cause, constructorOpt: info.constructorOpt, name: fnName },
       info.skipCauseMessage,
     );
-    this.code = info.code;
+    this.code = info.code || new.target.name;
   }
 }
 

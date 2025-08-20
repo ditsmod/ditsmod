@@ -14,7 +14,14 @@ import {
   ModuleWithInitParams,
   ModRefId,
 } from '@ditsmod/core';
-import { coreErrors } from '@ditsmod/core/errors';
+import {
+  ExportingUnknownSymbol,
+  ForbiddenExportNormalizedProvider,
+  InvalidExtension,
+  ModuleShouldHaveValue,
+  NormalizationFailed,
+  RootNotHaveDecorator,
+} from '@ditsmod/core/errors';
 
 import { controller } from '../types/controller.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
@@ -57,7 +64,7 @@ describe('ModuleManager', () => {
       @featureModule({ providersPerMod: [Provider1] })
       class Module1 {}
 
-      const err = coreErrors.normalizationFailed('Module1', coreErrors.moduleShouldHaveValue());
+      const err = new NormalizationFailed('Module1', new ModuleShouldHaveValue());
       expect(() => mock.scanModule(Module1)).toThrow(err);
     });
 
@@ -186,10 +193,7 @@ describe('ModuleManager', () => {
     @rootModule({ exports: [Provider1] })
     class AppModule {}
 
-    const err = coreErrors.normalizationFailed(
-      'AppModule',
-      coreErrors.exportingUnknownSymbol('AppModule', 'Provider1'),
-    );
+    const err = new NormalizationFailed('AppModule', new ExportingUnknownSymbol('AppModule', 'Provider1'));
     expect(() => mock.scanRootModule(AppModule)).toThrow(err);
   });
 
@@ -210,7 +214,7 @@ describe('ModuleManager', () => {
     @featureModule()
     class Module1 {}
 
-    const err = coreErrors.rootNotHaveDecorator('Module1');
+    const err = new RootNotHaveDecorator('Module1');
     expect(() => mock.scanRootModule(Module1)).toThrow(err);
   });
 
@@ -324,10 +328,7 @@ describe('ModuleManager', () => {
     @featureModule({ exports: [{ token: Provider1, useClass: Provider1 }] })
     class Module2 {}
 
-    const err = coreErrors.normalizationFailed(
-      'Module2',
-      coreErrors.forbiddenExportNormalizedProvider('Module2', 'Provider1'),
-    );
+    const err = new NormalizationFailed('Module2', new ForbiddenExportNormalizedProvider('Module2', 'Provider1'));
     expect(() => mock.scanModule(Module2)).toThrow(err);
   });
 
@@ -338,7 +339,7 @@ describe('ModuleManager', () => {
     @featureModule({ extensions: [{ extension: Extension1 as any, export: true }] })
     class Module2 {}
 
-    const err = coreErrors.normalizationFailed('Module2', coreErrors.wrongExtension('Module2', 'Extension1'));
+    const err = new NormalizationFailed('Module2', new InvalidExtension('Module2', 'Extension1'));
     expect(() => mock.scanModule(Module2)).toThrow(err);
   });
 
