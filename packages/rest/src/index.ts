@@ -16,7 +16,6 @@ export { RouteParam, MetadataPerMod3, RedirectStatusCodes } from './types/types.
 export { RestShallowImports, RestMetadataPerMod2 } from '#init/types.js';
 export { RestModule } from './init/rest.module.js';
 export { RequestContext } from './services/request-context.js';
-export { restErrors } from './services/router-errors.js';
 export { RoutesExtension } from './extensions/routes.extension.js';
 export { PreRouterExtension } from './extensions/pre-router.extension.js';
 export { UseInterceptorExtension } from './extensions/use-interceptor.extension.js';

@@ -15,7 +15,6 @@ import {
   SystemLogMediator,
   ShallowModulesImporter as ShallowModulesImporterBase,
   ProviderImport,
-  ShallowImports,
 } from '@ditsmod/core';
 
 import { controller } from '#types/controller.js';
@@ -24,7 +23,7 @@ import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { ShallowModulesImporter } from './rest-shallow-modules-importer.js';
 import { Level, RestGlobalProviders } from '#types/types.js';
 import { getImportedProviders } from '../utils/get-imports.js';
-import { restErrors } from '#services/router-errors.js';
+import { restErrors } from '#services/rest-errors.js';
 
 @injectable()
 class MockShallowModulesImporter extends ShallowModulesImporter {
