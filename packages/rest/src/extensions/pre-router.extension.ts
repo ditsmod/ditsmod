@@ -96,16 +96,6 @@ export class PreRouterExtension implements Extension<void> {
       { token: ChainMaker, useClass: DefaultCtxChainMaker },
       { token: HttpFrontend, useClass: DefaultCtxHttpFrontend },
     );
-
-    const { baseMeta, prefixPerMod } = metadataPerMod3;
-    metadataPerMod3.meta.providersPerMod.unshift({
-      token: ModuleExtract,
-      useValue: {
-        path: prefixPerMod,
-        moduleName: baseMeta.name,
-        isExternal: baseMeta.isExternal,
-      } satisfies RestModuleExtract,
-    });
   }
 
   protected prepareRoutesMeta(aMetadataPerMod3: MetadataPerMod3[]) {
