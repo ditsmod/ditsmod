@@ -52,7 +52,7 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
             const route = decoratorAndValue.value;
             const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
             const scope = ctrlDecorator?.value.scope;
-            if (scope == 'ctx') {
+            if (scope == 'ctx' && !baseMeta.providersPerMod.includes(Controller)) {
               baseMeta.providersPerMod.unshift(Controller);
             }
             const { path: controllerPath, httpMethod, interceptors } = route;
