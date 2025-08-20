@@ -1,19 +1,22 @@
-import { newCustomError } from './custom-error.js';
+import { CustomError, newCustomError } from './custom-error.js';
 
-export const coreErrors = {
-  /**
-   * `Repeated saving of module metadata snapshots is prohibited. It is done only once—after their normalization.`
-   */
-  prohibitSavingModulesSnapshot() {
-    return newCustomError(coreErrors.prohibitSavingModulesSnapshot, {
-      msg1: 'Repeated saving of module metadata snapshots is prohibited. It is done only once—after their normalization.',
+/**
+ * `Repeated saving of module metadata snapshots is prohibited. It is done only once—after their normalization.`
+ */
+export class ProhibitSavingModulesSnapshot extends CustomError {
+  constructor() {
+    super({
+      msg1: 'Repeated saving of module metadata snapshots is prohibited. It is done only once - after their normalization.',
       level: 'warn',
     });
-  },
-  /**
-   * `Importing providers to ${moduleName} failed: exports ${fromModules}causes collision with ${namesStr}. `
-   */
-  providersCollision(
+  }
+}
+/**
+ * `Importing providers to ${moduleName} failed: exports ${fromModules}causes collision with ${namesStr}.
+ * You should add ${tokenNames} to ${resolvedCollisionsPer} in this module.${example}`
+ */
+export class ProvidersCollision extends CustomError {
+  constructor(
     moduleName: string,
     duplicates: any[],
     fromModuleNames: string[] = [],
@@ -33,11 +36,14 @@ export const coreErrors = {
     if (!isExternal) {
       msg1 += `You should add ${tokenNames} to ${resolvedCollisionsPer} in this module.${example}`;
     }
-    return newCustomError(coreErrors.providersCollision, {
+    super({
       msg1,
       level: 'fatal',
     });
-  },
+  }
+}
+
+export const coreErrors = {
   /**
    * `Resolving collisions for providersPer${level} in ${moduleName} failed:
    * ${tokenName} mapped with ${moduleName}, but

@@ -16,7 +16,7 @@ import {
   forbiddenRollbackEemptyState,
   moduleIdNotFoundInModuleManager,
   normalizationFailed,
-  prohibitSavingModulesSnapshot,
+  ProhibitSavingModulesSnapshot,
   rootNotHaveDecorator,
 } from '#errors';
 
@@ -375,7 +375,7 @@ export class ModuleManager {
 
   protected saveSnapshot() {
     if (this.snapshotMap.size) {
-      throw prohibitSavingModulesSnapshot();
+      throw new ProhibitSavingModulesSnapshot();
     } else {
       this.map.forEach((baseMeta, modRefId) => this.snapshotMap.set(modRefId, this.copyBaseMeta(baseMeta)));
       this.snapshotMapId = new Map(this.mapId);

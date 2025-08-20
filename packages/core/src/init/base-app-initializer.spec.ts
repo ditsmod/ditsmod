@@ -9,13 +9,11 @@ import { rootModule } from '#decorators/root-module.js';
 import { BaseMeta } from '#types/base-meta.js';
 import { BaseAppInitializer } from '#init/base-app-initializer.js';
 import { ModuleManager } from '#init/module-manager.js';
-import { ModuleType } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
 import { Extension, ExtensionCounters } from '#extension/extension-types.js';
 import { Providers } from '#utils/providers.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
-import { coreErrors } from '#error/core-errors.js';
+import { coreErrors, ProvidersCollision } from '#error/core-errors.js';
 
 describe('BaseAppInitializer', () => {
   class AppInitializerMock extends BaseAppInitializer {
@@ -115,7 +113,7 @@ describe('BaseAppInitializer', () => {
       class AppModule {}
 
       mock.baseMeta = moduleManager.scanRootModule(AppModule);
-      const err = coreErrors.providersCollision('AppModule', [Provider1], ['Module1', 'Module2']);
+      const err = new ProvidersCollision('AppModule', [Provider1], ['Module1', 'Module2']);
       expect(() => mock.prepareProvidersPerApp()).toThrow(err);
     });
 

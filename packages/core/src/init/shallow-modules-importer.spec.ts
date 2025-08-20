@@ -9,8 +9,7 @@ import { ModuleType, Level, ModRefId } from '#types/mix.js';
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
-import { coreErrors } from '#error/core-errors.js';
-import { CustomError } from '#error/custom-error.js';
+import { coreErrors, ProvidersCollision } from '#error/core-errors.js';
 import { ShallowImports } from './types.js';
 
 describe('ShallowModulesImporter', () => {
@@ -164,7 +163,7 @@ describe('ShallowModulesImporter', () => {
       class AppModule {}
 
       expect(() => moduleManager.scanRootModule(AppModule)).not.toThrow();
-      const err = coreErrors.providersCollision('AppModule', [Provider1], ['Module1', 'Module2'], 'Mod');
+      const err = new ProvidersCollision('AppModule', [Provider1], ['Module1', 'Module2'], 'Mod');
       expect(() => mock.exportGlobalProviders(moduleManager)).toThrow(err);
     });
 
@@ -189,7 +188,7 @@ describe('ShallowModulesImporter', () => {
       class AppModule {}
 
       expect(() => moduleManager.scanRootModule(AppModule)).not.toThrow();
-      const err = coreErrors.providersCollision('AppModule', [Provider1], ['Module1', 'Module2'], 'Mod');
+      const err = new ProvidersCollision('AppModule', [Provider1], ['Module1', 'Module2'], 'Mod');
       expect(() => mock.exportGlobalProviders(moduleManager)).toThrow(err);
     });
 
@@ -457,7 +456,7 @@ describe('ShallowModulesImporter', () => {
       })
       class AppModule {}
 
-      const err = coreErrors.providersCollision('AppModule', [Provider2], ['Module1', 'Module2'], 'Mod');
+      const err = new ProvidersCollision('AppModule', [Provider2], ['Module1', 'Module2'], 'Mod');
       expect(() => importModulesShallow(AppModule)).toThrow(err);
     });
 
@@ -489,7 +488,7 @@ describe('ShallowModulesImporter', () => {
       @rootModule({ imports: [Module1, Module2] })
       class AppModule {}
 
-      const err = coreErrors.providersCollision('AppModule', [Provider1], ['Module1', 'Module2'], 'Mod');
+      const err = new ProvidersCollision('AppModule', [Provider1], ['Module1', 'Module2'], 'Mod');
       expect(() => importModulesShallow(AppModule)).toThrow(err);
     });
 
@@ -734,7 +733,7 @@ describe('ShallowModulesImporter', () => {
       })
       class AppModule {}
 
-      const err = coreErrors.providersCollision('Module3', [Provider1], ['Module1', 'Module2'], 'Mod');
+      const err = new ProvidersCollision('Module3', [Provider1], ['Module1', 'Module2'], 'Mod');
       expect(() => importModulesShallow(AppModule)).toThrow(err);
     });
 
@@ -757,7 +756,7 @@ describe('ShallowModulesImporter', () => {
       })
       class AppModule {}
 
-      const err = coreErrors.providersCollision('AppModule', [Provider2], ['Module1', 'Module2'], 'Mod');
+      const err = new ProvidersCollision('AppModule', [Provider2], ['Module1', 'Module2'], 'Mod');
       expect(() => importModulesShallow(AppModule)).toThrow(err);
     });
 
@@ -807,7 +806,7 @@ describe('ShallowModulesImporter', () => {
       })
       class AppModule {}
 
-      const err = coreErrors.providersCollision('AppModule', [Provider1], ['Module0', 'Module1'], 'Mod');
+      const err = new ProvidersCollision('AppModule', [Provider1], ['Module0', 'Module1'], 'Mod');
       expect(() => importModulesShallow(AppModule)).toThrow(err);
     });
 

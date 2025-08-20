@@ -28,7 +28,7 @@ import {
   resolvingCollisionsNotImportedInModule,
   resolvingCollisionsNotImportedInApplication,
   donotResolveCollisionForMultiProviderPerLevel,
-  providersCollision,
+  ProvidersCollision,
 } from '#errors';
 /**
  * Recursively collects providers taking into account module imports/exports,
@@ -248,7 +248,13 @@ export class ShallowModulesImporter {
     if (collisions.length) {
       const moduleName1 = getDebugClassName(providerImport.modRefId) || 'unknown-1';
       const moduleName2 = getDebugClassName(modRefId) || 'unknown-2';
-      throw providersCollision(this.moduleName, [token], [moduleName1, moduleName2], level, this.baseMeta.isExternal);
+      throw new ProvidersCollision(
+        this.moduleName,
+        [token],
+        [moduleName1, moduleName2],
+        level,
+        this.baseMeta.isExternal,
+      );
     }
   }
 
@@ -316,7 +322,7 @@ export class ShallowModulesImporter {
             // Allow collisions in host modules.
           } else {
             const hostModuleName = getDebugClassName(providerImport.modRefId) || 'unknown';
-            throw providersCollision(this.moduleName, [token], [hostModuleName], level, this.baseMeta.isExternal);
+            throw new ProvidersCollision(this.moduleName, [token], [hostModuleName], level, this.baseMeta.isExternal);
           }
         }
         this.resolveCollisionsWithLevelsMix(token, level, resolvedTokens);

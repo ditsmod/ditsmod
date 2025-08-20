@@ -34,7 +34,7 @@ import {
   moduleNotImportedInApplication,
   donotResolveCollisionForMultiProviderPerApp,
   providersPerAppDoesNotIncludesTokenName,
-  providersCollision,
+  ProvidersCollision,
 } from '#errors';
 
 export class BaseAppInitializer {
@@ -81,7 +81,7 @@ export class BaseAppInitializer {
     const collisions = getCollisions(exportedTokensDuplicates, mergedProviders);
     if (collisions.length) {
       const modulesNames = this.findModulesCausedCollisions(collisions);
-      throw providersCollision(this.baseMeta.name, collisions, modulesNames);
+      throw new ProvidersCollision(this.baseMeta.name, collisions, modulesNames);
     }
     exportedProviders.push(...this.getResolvedCollisionsPerApp());
     this.baseMeta.providersPerApp.unshift(...getLastProviders(exportedProviders));

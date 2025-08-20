@@ -17,7 +17,7 @@ import {
   defaultProvidersPerMod,
   getProxyForInitMeta,
 } from '@ditsmod/core';
-import { providersCollision } from '@ditsmod/core/errors';
+import { ProvidersCollision } from '@ditsmod/core/errors';
 
 import { GuardPerMod1 } from '#interceptors/guard.js';
 import { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
@@ -332,7 +332,13 @@ export class ShallowModulesImporter {
     if (collisions.length) {
       const moduleName1 = getDebugClassName(providerImport.modRefId) || 'unknown-1';
       const moduleName2 = getDebugClassName(modRefId) || 'unknown-2';
-      throw providersCollision(this.moduleName, [token], [moduleName1, moduleName2], level, this.baseMeta.isExternal);
+      throw new ProvidersCollision(
+        this.moduleName,
+        [token],
+        [moduleName1, moduleName2],
+        level,
+        this.baseMeta.isExternal,
+      );
     }
   }
 
@@ -450,7 +456,7 @@ export class ShallowModulesImporter {
             // Allow collisions in host modules.
           } else {
             const hostModuleName = getDebugClassName(providerImport.modRefId) || 'unknown';
-            throw providersCollision(this.moduleName, [token], [hostModuleName], level, this.baseMeta.isExternal);
+            throw new ProvidersCollision(this.moduleName, [token], [hostModuleName], level, this.baseMeta.isExternal);
           }
         }
         this.resolveCollisionsWithLevelsMix(token, level, resolvedTokens);
