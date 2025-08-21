@@ -25,6 +25,6 @@
     "@types/bunyan": "^1.8.11",
     "jest": "^30.0.0",
     "npm-run-all": "*",
-    "typescript": "*"
+    "typescript": "^5.9.2"
   }
 }

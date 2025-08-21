@@ -37,6 +37,6 @@
   "devDependencies": {
     "jest": "^30.0.0",
     "npm-run-all": "*",
-    "typescript": "*"
+    "typescript": "^5.9.2"
   }
 }
