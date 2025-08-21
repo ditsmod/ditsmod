@@ -52,6 +52,63 @@ export class RestModuleNormalizer {
     return meta;
   }
 
+  protected normalizeDeclaredAndResolvedProviders(meta: RestInitMeta, rawMeta: RestInitRawMeta) {
+    if (rawMeta.controllers) {
+      meta.controllers.push(...rawMeta.controllers);
+    }
+    (['Rou', 'Req'] satisfies Level[]).forEach((level) => {
+      if (rawMeta[`providersPer${level}`]) {
+        const providersPerLevel = this.resolveForwardRef(rawMeta[`providersPer${level}`]!);
+        meta[`providersPer${level}`].push(...providersPerLevel);
+      }
+
+      if (rawMeta[`resolvedCollisionsPer${level}`]) {
+        rawMeta[`resolvedCollisionsPer${level}`]!.forEach(([token, module]) => {
+          token = resolveForwardRef(token);
+          module = resolveForwardRef(module);
+          if (isModuleWithParams(module)) {
+            module.module = resolveForwardRef(module.module);
+          }
+          meta[`resolvedCollisionsPer${level}`].push([token, module]);
+        });
+      }
+    });
+
+    return meta;
+  }
+
+  protected normalizeExports(rawMeta: RestInitRawMeta, action: 'Exports' | 'Exports with params') {
+    if (!rawMeta.exports) {
+      return;
+    }
+    const providers = this.meta.providersPerMod.concat(this.meta.providersPerRou, this.meta.providersPerReq);
+    let tokens: any[] = [];
+    if (providers.length) {
+      tokens = getTokens(providers);
+    }
+
+    this.resolveForwardRef(rawMeta.exports).forEach((exp, i) => {
+      if (exp === undefined) {
+        throw new UndefinedSymbol(action, this.baseMeta.name, i);
+      }
+      if (isNormalizedProvider(exp)) {
+        throw new ForbiddenExportNormalizedProvider(this.baseMeta.name, exp.token.name || exp.token);
+      }
+      if (reflector.getDecorators(exp, isFeatureModule)) {
+        //
+      } else if (isModuleWithParams(exp)) {
+        if (!this.baseMeta.importsWithParams?.includes(exp)) {
+          this.throwExportWithParams(exp);
+        }
+      } else if (isProvider(exp) || tokens.includes(exp)) {
+        // Provider or token of provider
+        this.exportProviders(exp);
+      } else {
+        throw new ExportingUnknownSymbol(this.baseMeta.name, exp.name || exp);
+      }
+    });
+  }
+
   protected mergeModuleWithParams(modRefId: RestModRefId, rawMeta: RestInitRawMeta, meta: RestInitMeta): void {
     if (isAppendsWithParams(modRefId)) {
       if (modRefId.absolutePath !== undefined) {
@@ -113,31 +170,6 @@ export class RestModuleNormalizer {
     });
   }
 
-  protected normalizeDeclaredAndResolvedProviders(meta: RestInitMeta, rawMeta: RestInitRawMeta) {
-    if (rawMeta.controllers) {
-      meta.controllers.push(...rawMeta.controllers);
-    }
-    (['Rou', 'Req'] satisfies Level[]).forEach((level) => {
-      if (rawMeta[`providersPer${level}`]) {
-        const providersPerLevel = this.resolveForwardRef(rawMeta[`providersPer${level}`]!);
-        meta[`providersPer${level}`].push(...providersPerLevel);
-      }
-
-      if (rawMeta[`resolvedCollisionsPer${level}`]) {
-        rawMeta[`resolvedCollisionsPer${level}`]!.forEach(([token, module]) => {
-          token = resolveForwardRef(token);
-          module = resolveForwardRef(module);
-          if (isModuleWithParams(module)) {
-            module.module = resolveForwardRef(module.module);
-          }
-          meta[`resolvedCollisionsPer${level}`].push([token, module]);
-        });
-      }
-    });
-
-    return meta;
-  }
-
   protected resolveForwardRef<T extends RestModRefId | Provider | ForwardRefFn<ModuleType | Provider>>(
     arr: T[] | Providers,
   ) {
@@ -155,38 +187,6 @@ export class RestModuleNormalizer {
       }
       return item;
     }) as Exclude<T, ForwardRefFn>[];
-  }
-
-  protected normalizeExports(rawMeta: RestInitRawMeta, action: 'Exports' | 'Exports with params') {
-    if (!rawMeta.exports) {
-      return;
-    }
-    const providers = this.meta.providersPerMod.concat(this.meta.providersPerRou, this.meta.providersPerReq);
-    let tokens: any[] = [];
-    if (providers.length) {
-      tokens = getTokens(providers);
-    }
-
-    this.resolveForwardRef(rawMeta.exports).forEach((exp, i) => {
-      if (exp === undefined) {
-        throw new UndefinedSymbol(action, this.baseMeta.name, i);
-      }
-      if (isNormalizedProvider(exp)) {
-        throw new ForbiddenExportNormalizedProvider(this.baseMeta.name, exp.token.name || exp.token);
-      }
-      if (reflector.getDecorators(exp, isFeatureModule)) {
-        //
-      } else if (isModuleWithParams(exp)) {
-        if (!this.baseMeta.importsWithParams?.includes(exp)) {
-          this.throwExportWithParams(exp);
-        }
-      } else if (isProvider(exp) || tokens.includes(exp)) {
-        // Provider or token of provider
-        this.exportProviders(exp);
-      } else {
-        throw new ExportingUnknownSymbol(this.baseMeta.name, exp.name || exp);
-      }
-    });
   }
 
   protected throwExportWithParams(moduleWithParams: ModuleWithParams) {
