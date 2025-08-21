@@ -104,22 +104,6 @@ export class ModuleNormalizer {
     return reflector.getDecorators(mod);
   }
 
-  protected mergeModuleWithParams(rawMeta: RawMeta, modWitParams: ModuleWithParams) {
-    if (modWitParams.id) {
-      this.baseMeta.id = modWitParams.id;
-    }
-    (['providersPerApp', 'providersPerMod'] as const).forEach((prop) => {
-      if (modWitParams[prop] instanceof Providers || (Array.isArray(modWitParams[prop]) && modWitParams[prop].length)) {
-        this.baseMeta[prop].push(...this.resolveForwardRef(modWitParams[prop]));
-      }
-    });
-    this.normalizeExports(modWitParams, 'Exports with params');
-    if (modWitParams.extensionsMeta) {
-      this.baseMeta.extensionsMeta = { ...modWitParams.extensionsMeta };
-    }
-    return rawMeta;
-  }
-
   /**
    * For this method to work properly, the root module must be scanned first.
    */
@@ -136,19 +120,6 @@ export class ModuleNormalizer {
           (!this.rootDeclaredInDir.includes('ditsmod/packages') && declaredInDir.includes('ditsmod/packages'));
       }
     }
-  }
-
-  protected normalizeImports(rawMeta: RawMeta) {
-    this.resolveForwardRef(rawMeta.imports).forEach((imp, i) => {
-      if (imp === undefined) {
-        throw new UndefinedSymbol('Imports', this.baseMeta.name, i);
-      }
-      if (isModuleWithParams(imp)) {
-        this.baseMeta.importsWithParams.push(imp);
-      } else {
-        this.baseMeta.importsModules.push(imp);
-      }
-    });
   }
 
   protected normalizeDeclaredAndResolvedProviders(
@@ -169,6 +140,64 @@ export class ModuleNormalizer {
           }
           this.baseMeta[`resolvedCollisionsPer${level}`].push([token, module]);
         });
+      }
+    });
+  }
+
+  protected normalizeExports(rawMeta: Partial<RawMeta>, action: 'Exports' | 'Exports with params') {
+    if (!rawMeta.exports) {
+      return;
+    }
+    let tokens: any[] = [];
+    if (this.baseMeta.providersPerMod.length) {
+      tokens = getTokens(this.baseMeta.providersPerMod);
+    }
+
+    this.resolveForwardRef(rawMeta.exports).forEach((exp, i) => {
+      if (exp === undefined) {
+        throw new UndefinedSymbol(action, this.baseMeta.name, i);
+      }
+      if (isNormalizedProvider(exp)) {
+        throw new ForbiddenExportNormalizedProvider(this.baseMeta.name, exp.token.name || exp.token);
+      }
+      if (isModuleWithParams(exp)) {
+        this.baseMeta.exportsWithParams.push(exp);
+      } else if (isProvider(exp) || tokens.includes(exp)) {
+        // Provider or token of provider
+        this.exportProviders(exp);
+      } else if (this.getDecoratorMeta(exp)) {
+        this.baseMeta.exportsModules.push(exp);
+      } else {
+        throw new ExportingUnknownSymbol(this.baseMeta.name, exp.name || exp);
+      }
+    });
+  }
+
+  protected mergeModuleWithParams(rawMeta: RawMeta, modWitParams: ModuleWithParams) {
+    if (modWitParams.id) {
+      this.baseMeta.id = modWitParams.id;
+    }
+    (['providersPerApp', 'providersPerMod'] as const).forEach((prop) => {
+      if (modWitParams[prop] instanceof Providers || (Array.isArray(modWitParams[prop]) && modWitParams[prop].length)) {
+        this.baseMeta[prop].push(...this.resolveForwardRef(modWitParams[prop]));
+      }
+    });
+    this.normalizeExports(modWitParams, 'Exports with params');
+    if (modWitParams.extensionsMeta) {
+      this.baseMeta.extensionsMeta = { ...modWitParams.extensionsMeta };
+    }
+    return rawMeta;
+  }
+
+  protected normalizeImports(rawMeta: RawMeta) {
+    this.resolveForwardRef(rawMeta.imports).forEach((imp, i) => {
+      if (imp === undefined) {
+        throw new UndefinedSymbol('Imports', this.baseMeta.name, i);
+      }
+      if (isModuleWithParams(imp)) {
+        this.baseMeta.importsWithParams.push(imp);
+      } else {
+        this.baseMeta.importsModules.push(imp);
       }
     });
   }
@@ -215,46 +244,6 @@ export class ModuleNormalizer {
     });
   }
 
-  protected normalizeExports(rawMeta: Partial<RawMeta>, action: 'Exports' | 'Exports with params') {
-    if (!rawMeta.exports) {
-      return;
-    }
-    let tokens: any[] = [];
-    if (this.baseMeta.providersPerMod.length) {
-      tokens = getTokens(this.baseMeta.providersPerMod);
-    }
-
-    this.resolveForwardRef(rawMeta.exports).forEach((exp, i) => {
-      if (exp === undefined) {
-        throw new UndefinedSymbol(action, this.baseMeta.name, i);
-      }
-      if (isNormalizedProvider(exp)) {
-        throw new ForbiddenExportNormalizedProvider(this.baseMeta.name, exp.token.name || exp.token);
-      }
-      if (isModuleWithParams(exp)) {
-        this.baseMeta.exportsWithParams.push(exp);
-      } else if (isProvider(exp) || tokens.includes(exp)) {
-        // Provider or token of provider
-        this.exportProviders(exp);
-      } else if (this.getDecoratorMeta(exp)) {
-        this.baseMeta.exportsModules.push(exp);
-      } else {
-        throw new ExportingUnknownSymbol(this.baseMeta.name, exp.name || exp);
-      }
-    });
-  }
-
-  protected checkReexportModules() {
-    const imports = [...this.baseMeta.importsModules, ...this.baseMeta.importsWithParams];
-    const exports = [...this.baseMeta.exportsModules, ...this.baseMeta.exportsWithParams];
-
-    exports.forEach((modRefId) => {
-      if (!imports.includes(modRefId)) {
-        throw new ReexportFailed(this.baseMeta.name, getDebugClassName(modRefId) || '""');
-      }
-    });
-  }
-
   protected checkStageMethodsForExtension(moduleName: string, extensionsProvider: Provider) {
     const np = normalizeProviders([extensionsProvider])[0];
     let extensionClass: Class<Extension> | undefined;
@@ -275,6 +264,87 @@ export class ModuleNormalizer {
       const token = getToken(extensionsProvider);
       throw new InvalidExtension(moduleName, token.name || token);
     }
+  }
+
+  protected checkReexportModules() {
+    const imports = [...this.baseMeta.importsModules, ...this.baseMeta.importsWithParams];
+    const exports = [...this.baseMeta.exportsModules, ...this.baseMeta.exportsWithParams];
+
+    exports.forEach((modRefId) => {
+      if (!imports.includes(modRefId)) {
+        throw new ReexportFailed(this.baseMeta.name, getDebugClassName(modRefId) || '""');
+      }
+    });
+  }
+
+  /**
+   * If the instance with init hooks has `hostRawMeta`, this method
+   * inserts a hook that can add `hostRawMeta` to the host module.
+   */
+  protected addInitHooksForHostDecorator(allInitHooks: AllInitHooks) {
+    allInitHooks.forEach((initHooks, decorator) => {
+      if (initHooks.hostModule === this.baseMeta.modRefId && initHooks.hostRawMeta) {
+        const newInitHooksAndRawMeta = initHooks.clone(initHooks.hostRawMeta);
+        this.baseMeta.mInitHooksAndRawMeta.set(decorator, newInitHooksAndRawMeta);
+      }
+    });
+  }
+
+  protected callInitHooksFromCurrentModule() {
+    this.baseMeta.mInitHooksAndRawMeta.forEach((initHooks, decorator) => {
+      this.baseMeta.allInitHooks.set(decorator, initHooks);
+
+      // Importing host module.
+      if (initHooks.hostModule === this.baseMeta.modRefId) {
+        // No need import host module in host module.
+      } else if (isModuleWithParams(initHooks.hostModule)) {
+        if (!this.baseMeta.importsWithParams.includes(initHooks.hostModule)) {
+          this.baseMeta.importsWithParams.push(initHooks.hostModule);
+        }
+      } else if (initHooks.hostModule && !this.baseMeta.importsModules.includes(initHooks.hostModule)) {
+        this.baseMeta.importsModules.push(initHooks.hostModule);
+      }
+
+      this.fetchInitRawMeta(decorator, initHooks.rawMeta);
+      this.callInitHook(decorator, initHooks);
+    });
+  }
+
+  /**
+   * If the current module was used with parameters in the context of init decorators, but
+   * the class of the current module is not annotated with those decorators, then retrieve
+   * the corresponding init hooks (for reading parameters) from the `allInitHooks`.
+   * 
+   * ### Example
+   * 
+```ts
+import { featureModule, rootModule } from '@ditsmod/core';
+import { initRest } from '@ditsmod/rest';
+
+\@featureModule()
+class Module1 {}
+
+\@initRest({ imports: [{ module: Module1, path: 'some-prefix' }] })
+\@rootModule()
+export class AppModule {}
+```
+   * 
+   * As you can see, `Module1` is imported in the context of the `initRest` decorator,
+   * but `Module1` itself does not have an annotation with `initRest`. For such cases,
+   * this method adds hooks so that the import of `Module1` with parameters can be properly handled.
+   */
+  protected addInitHooksForImportedMwp(allInitHooks: AllInitHooks) {
+    (this.baseMeta.modRefId as ModuleWithParams).initParams?.forEach((params, decorator) => {
+      if (!this.baseMeta.mInitHooksAndRawMeta.has(decorator)) {
+        const initHooks = allInitHooks.get(decorator)!;
+        const newInitHooksAndRawMeta = initHooks.clone();
+        this.baseMeta.allInitHooks.set(decorator, newInitHooksAndRawMeta);
+        this.callInitHook(decorator, newInitHooksAndRawMeta);
+
+        // This is need for `this.quickCheckMetadata()` only.
+        this.baseMeta.mInitHooksAndRawMeta.set(decorator, newInitHooksAndRawMeta);
+      }
+    });
   }
 
   // prettier-ignore
@@ -314,39 +384,6 @@ export class ModuleNormalizer {
     } else {
       throw new ExportingUnknownSymbol(this.baseMeta.name, providerName);
     }
-  }
-
-  /**
-   * If the instance with init hooks has `hostRawMeta`, this method
-   * inserts a hook that can add `hostRawMeta` to the host module.
-   */
-  protected addInitHooksForHostDecorator(allInitHooks: AllInitHooks) {
-    allInitHooks.forEach((initHooks, decorator) => {
-      if (initHooks.hostModule === this.baseMeta.modRefId && initHooks.hostRawMeta) {
-        const newInitHooksAndRawMeta = initHooks.clone(initHooks.hostRawMeta);
-        this.baseMeta.mInitHooksAndRawMeta.set(decorator, newInitHooksAndRawMeta);
-      }
-    });
-  }
-
-  protected callInitHooksFromCurrentModule() {
-    this.baseMeta.mInitHooksAndRawMeta.forEach((initHooks, decorator) => {
-      this.baseMeta.allInitHooks.set(decorator, initHooks);
-
-      // Importing host module.
-      if (initHooks.hostModule === this.baseMeta.modRefId) {
-        // No need import host module in host module.
-      } else if (isModuleWithParams(initHooks.hostModule)) {
-        if (!this.baseMeta.importsWithParams.includes(initHooks.hostModule)) {
-          this.baseMeta.importsWithParams.push(initHooks.hostModule);
-        }
-      } else if (initHooks.hostModule && !this.baseMeta.importsModules.includes(initHooks.hostModule)) {
-        this.baseMeta.importsModules.push(initHooks.hostModule);
-      }
-
-      this.fetchInitRawMeta(decorator, initHooks.rawMeta);
-      this.callInitHook(decorator, initHooks);
-    });
   }
 
   protected fetchInitRawMeta(decorator: AnyFn, initRawMeta: BaseInitRawMeta) {
@@ -428,43 +465,6 @@ export class ModuleNormalizer {
         }
       });
     }
-  }
-
-  /**
-   * If the current module was used with parameters in the context of init decorators, but
-   * the class of the current module is not annotated with those decorators, then retrieve
-   * the corresponding init hooks (for reading parameters) from the `allInitHooks`.
-   * 
-   * ### Example
-   * 
-```ts
-import { featureModule, rootModule } from '@ditsmod/core';
-import { initRest } from '@ditsmod/rest';
-
-\@featureModule()
-class Module1 {}
-
-\@initRest({ imports: [{ module: Module1, path: 'some-prefix' }] })
-\@rootModule()
-export class AppModule {}
-```
-   * 
-   * As you can see, `Module1` is imported in the context of the `initRest` decorator,
-   * but `Module1` itself does not have an annotation with `initRest`. For such cases,
-   * this method adds hooks so that the import of `Module1` with parameters can be properly handled.
-   */
-  protected addInitHooksForImportedMwp(allInitHooks: AllInitHooks) {
-    (this.baseMeta.modRefId as ModuleWithParams).initParams?.forEach((params, decorator) => {
-      if (!this.baseMeta.mInitHooksAndRawMeta.has(decorator)) {
-        const initHooks = allInitHooks.get(decorator)!;
-        const newInitHooksAndRawMeta = initHooks.clone();
-        this.baseMeta.allInitHooks.set(decorator, newInitHooksAndRawMeta);
-        this.callInitHook(decorator, newInitHooksAndRawMeta);
-
-        // This is need for `this.quickCheckMetadata()` only.
-        this.baseMeta.mInitHooksAndRawMeta.set(decorator, newInitHooksAndRawMeta);
-      }
-    });
   }
 
   protected callInitHook(decorator: AnyFn, initHooks: InitHooksAndRawMeta) {
