@@ -22,20 +22,19 @@ import { Provider } from '#di/types-and-models.js';
 import { RawMeta } from '#decorators/feature-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { BaseMeta } from '#types/base-meta.js';
-import { resolveForwardRef } from '#di/forward-ref.js';
+import { ForwardRefFn, resolveForwardRef } from '#di/forward-ref.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
 import { Class } from '#di/types-and-models.js';
 import { Providers } from '#utils/providers.js';
 import { Extension } from '#extension/extension-types.js';
-import { NormalizedProvider, normalizeProviders } from '#utils/ng-utils.js';
+import { normalizeProviders } from '#utils/ng-utils.js';
 import { isExtensionConfig } from '#extension/type-guards.js';
 import { ModuleWithParams, ModuleMetadata } from '#types/module-metadata.js';
-import { mergeArrays } from '#utils/merge-arrays.js';
 import { AllInitHooks, BaseInitRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { objectKeys } from '#utils/object-keys.js';
 import {
-  UndefinedModule,
+  UndefinedSymbol,
   ResolvedCollisionTokensOnly,
   ModuleDoesNotHaveDecorator,
   InvalidModRefId,
@@ -46,6 +45,7 @@ import {
   ForbiddenExportProvidersPerApp,
   ModuleShouldHaveValue,
 } from '#errors';
+import { ProvidersOnly } from '#types/providers-metadata.js';
 
 /**
  * Normalizes and validates module metadata.
@@ -80,18 +80,18 @@ export class ModuleNormalizer {
     baseMeta.modRefId = modRefId;
     baseMeta.declaredInDir = rawMeta.declaredInDir;
     baseMeta.decorator = rawMeta.decorator;
+    this.checkAndMarkExternalModule(rawMeta);
+    this.normalizeDeclaredAndResolvedProviders(rawMeta);
+    this.normalizeExports(rawMeta, 'Exports');
     if (isModuleWithParams(modRefId)) {
       rawMeta = this.mergeModuleWithParams(rawMeta, modRefId);
     }
     aDecoratorMeta.filter(isModuleWithInitHooks).forEach((decorAndVal) => {
       baseMeta.mInitHooksAndRawMeta.set(decorAndVal.decorator, decorAndVal.value);
     });
-    this.checkAndMarkExternalModule(rawMeta);
     this.normalizeImports(rawMeta);
-    this.normalizeExports(rawMeta);
     this.normalizeExtensions(rawMeta);
     this.checkReexportModules();
-    this.normalizeDeclaredAndResolvedProviders(rawMeta);
     this.addInitHooksForHostDecorator(allInitHooks);
     this.callInitHooksFromCurrentModule();
     this.addInitHooksForImportedMwp(allInitHooks);
@@ -109,13 +109,14 @@ export class ModuleNormalizer {
     if (modWitParams.id) {
       this.baseMeta.id = modWitParams.id;
     }
-    (['exports', 'providersPerApp', 'providersPerMod'] as const).forEach((prop) => {
+    (['providersPerApp', 'providersPerMod'] as const).forEach((prop) => {
       if (modWitParams[prop] instanceof Providers || modWitParams[prop]?.length) {
-        rawMeta[prop] = mergeArrays(rawMeta[prop], modWitParams[prop]);
+        this.baseMeta[prop].push(...this.resolveForwardRef(modWitParams[prop]));
       }
     });
+    this.normalizeExports(modWitParams, 'Exports with params');
     if (modWitParams.extensionsMeta) {
-      rawMeta.extensionsMeta = { ...rawMeta.extensionsMeta, ...modWitParams.extensionsMeta };
+      this.baseMeta.extensionsMeta = { ...modWitParams.extensionsMeta };
     }
     return rawMeta;
   }
@@ -140,7 +141,9 @@ export class ModuleNormalizer {
 
   protected normalizeImports(rawMeta: RawMeta) {
     this.resolveForwardRef(rawMeta.imports).forEach((imp, i) => {
-      this.throwIfUndefined(this.baseMeta.name, 'Imports', imp, i);
+      if (imp === undefined) {
+        throw new UndefinedSymbol('Imports', this.baseMeta.name, i);
+      }
       if (isModuleWithParams(imp)) {
         this.baseMeta.importsWithParams.push(imp);
       } else {
@@ -154,31 +157,27 @@ export class ModuleNormalizer {
   ) {
     (['App', 'Mod'] as const).forEach((level) => {
       if (rawMeta[`providersPer${level}`]) {
-        const providersPerLevel = this.resolveForwardRef([...rawMeta[`providersPer${level}`]!]);
+        const providersPerLevel = this.resolveForwardRef(rawMeta[`providersPer${level}`]);
         this.baseMeta[`providersPer${level}`].push(...providersPerLevel);
       }
 
       if (rawMeta[`resolvedCollisionsPer${level}`]) {
-        this.baseMeta[`resolvedCollisionsPer${level}`].push(...rawMeta[`resolvedCollisionsPer${level}`]!);
-        this.baseMeta[`resolvedCollisionsPer${level}`] = this.baseMeta[`resolvedCollisionsPer${level}`].map(
-          ([token, module]) => {
-            token = resolveForwardRef(token);
-            module = resolveForwardRef(module);
-            if (isModuleWithParams(module)) {
-              module.module = resolveForwardRef(module.module);
-            }
-            return [token, module];
-          },
-        );
+        rawMeta[`resolvedCollisionsPer${level}`]!.forEach(([token, module]) => {
+          token = resolveForwardRef(token);
+          module = resolveForwardRef(module);
+          if (isModuleWithParams(module)) {
+            module.module = resolveForwardRef(module.module);
+          }
+          this.baseMeta[`resolvedCollisionsPer${level}`].push([token, module]);
+        });
       }
     });
   }
 
   protected throwIfResolvingNormalizedProvider(
-    moduleName: string,
     rawMeta: BaseInitRawMeta & PickProps<RawMeta, 'resolvedCollisionsPerApp'>,
   ) {
-    const resolvedCollisionsPerLevel: [any, ModRefId][] = [];
+    const resolvedCollisionsPerLevel: [any, ModRefId | ForwardRefFn<ModRefId>][] = [];
     if (Array.isArray(rawMeta.resolvedCollisionsPerApp)) {
       resolvedCollisionsPerLevel.push(...rawMeta.resolvedCollisionsPerApp);
     }
@@ -187,16 +186,17 @@ export class ModuleNormalizer {
     }
 
     resolvedCollisionsPerLevel.forEach(([provider]) => {
+      provider = resolveForwardRef(provider);
       if (isNormalizedProvider(provider)) {
         const providerName = provider.token.name || provider.token;
-        throw new ResolvedCollisionTokensOnly(moduleName, providerName);
+        throw new ResolvedCollisionTokensOnly(this.baseMeta.name, providerName);
       }
     });
   }
 
   protected normalizeExtensions(rawMeta: PickProps<ModuleMetadata, 'extensions' | 'extensionsMeta'>) {
     if (rawMeta.extensionsMeta) {
-      this.baseMeta.extensionsMeta = { ...rawMeta.extensionsMeta };
+      this.baseMeta.extensionsMeta = { ...rawMeta.extensionsMeta, ...this.baseMeta.extensionsMeta };
     }
 
     rawMeta.extensions?.forEach((extensionOrConfig) => {
@@ -216,24 +216,25 @@ export class ModuleNormalizer {
     });
   }
 
-  protected throwIfUndefined(moduleName: string, action: 'Imports' | 'Exports', imp: unknown, i: number) {
-    if (imp === undefined) {
-      throw new UndefinedModule(action, moduleName, i);
+  protected normalizeExports(rawMeta: Partial<RawMeta>, action: 'Exports' | 'Exports with params') {
+    if (!rawMeta.exports) {
+      return;
     }
-  }
-
-  protected normalizeExports(rawMeta: Partial<RawMeta>) {
-    const providers: Provider[] = [];
-    if (Array.isArray(rawMeta.providersPerMod)) {
-      providers.push(...rawMeta.providersPerMod);
+    let tokens: any[] = [];
+    if (this.baseMeta.providersPerMod.length) {
+      tokens = getTokens(this.baseMeta.providersPerMod);
     }
 
     this.resolveForwardRef(rawMeta.exports).forEach((exp, i) => {
-      this.throwIfUndefined(this.baseMeta.name, 'Exports', exp, i);
-      this.throwExportsIfNormalizedProvider(this.baseMeta.name, exp);
+      if (exp === undefined) {
+        throw new UndefinedSymbol(action, this.baseMeta.name, i);
+      }
+      if (isNormalizedProvider(exp)) {
+        throw new ForbiddenExportNormalizedProvider(this.baseMeta.name, exp.token.name || exp.token);
+      }
       if (isModuleWithParams(exp)) {
         this.baseMeta.exportsWithParams.push(exp);
-      } else if (isProvider(exp) || getTokens(providers).includes(exp)) {
+      } else if (isProvider(exp) || tokens.includes(exp)) {
         // Provider or token of provider
         this.exportProviders(exp, rawMeta);
       } else if (this.getDecoratorMeta(exp)) {
@@ -259,7 +260,7 @@ export class ModuleNormalizer {
     const np = normalizeProviders([extensionsProvider])[0];
     let extensionClass: Class<Extension> | undefined;
     if (isClassProvider(np)) {
-      extensionClass = np.useClass;
+      extensionClass = resolveForwardRef(np.useClass);
     } else if (isTokenProvider(np) && np.useToken instanceof Class) {
       extensionClass = np.useToken;
     } else if (isValueProvider(np) && np.useValue.constructor instanceof Class) {
@@ -277,8 +278,9 @@ export class ModuleNormalizer {
     }
   }
 
-  protected resolveForwardRef<T extends ModRefId | Provider | { mwp: ModuleWithParams }>(arr = [] as T[]) {
-    return arr.map((item) => {
+  // prettier-ignore
+  protected resolveForwardRef<T extends ModRefId | Provider | ForwardRefFn | { mwp: ModuleWithParams }>(arr = [] as T[] | Providers) {
+    return [...arr].map((item) => {
       item = resolveForwardRef(item);
       if (isParamsWithMwp(item)) {
         item.mwp.module = resolveForwardRef(item.mwp.module);
@@ -293,18 +295,11 @@ export class ModuleNormalizer {
         item.module = resolveForwardRef(item.module);
       }
       return item;
-    });
+    }) as Exclude<T, ForwardRefFn>[];
   }
 
-  protected throwExportsIfNormalizedProvider(moduleName: string, provider: NormalizedProvider) {
-    if (isNormalizedProvider(provider)) {
-      throw new ForbiddenExportNormalizedProvider(moduleName, provider.token.name || provider.token);
-    }
-  }
-
-  protected exportProviders(token: any, rawMeta: Partial<RawMeta>): void {
-    let providers = [...(rawMeta.providersPerMod || [])].filter((p) => getToken(p) === token);
-    providers = this.resolveForwardRef(providers);
+  protected exportProviders(token: any, rawMeta: Partial<ProvidersOnly>): void {
+    const providers = this.baseMeta.providersPerMod.filter((p) => getToken(p) === token);
     if (providers.length) {
       if (providers.some(isMultiProvider)) {
         this.baseMeta.exportedMultiProvidersPerMod.push(...(providers as MultiProvider[]));
@@ -315,8 +310,7 @@ export class ModuleNormalizer {
     }
 
     const providerName = token.name || token;
-    const providersPerApp = [...(rawMeta.providersPerApp || [])];
-    if (providersPerApp.some((p) => getToken(p) === token)) {
+    if (this.baseMeta.providersPerApp.some((p) => getToken(p) === token)) {
       throw new ForbiddenExportProvidersPerApp(this.baseMeta.name, providerName);
     } else {
       throw new ExportingUnknownSymbol(this.baseMeta.name, providerName);
@@ -482,7 +476,7 @@ export class AppModule {}
   }
 
   protected quickCheckMetadata(rawMeta: RawMeta) {
-    this.throwIfResolvingNormalizedProvider(this.baseMeta.name, rawMeta);
+    this.throwIfResolvingNormalizedProvider(rawMeta);
     if (
       isFeatureModule(this.baseMeta) &&
       !this.baseMeta.mInitHooksAndRawMeta.size &&

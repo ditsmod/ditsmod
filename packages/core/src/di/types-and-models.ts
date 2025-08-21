@@ -1,5 +1,6 @@
 import { AnyFn } from '#types/mix.js';
 import type { fromSelf, skipSelf } from './decorators.js';
+import { ForwardRefFn } from './forward-ref.js';
 import { InjectionToken } from './injection-token.js';
 import { DualKey } from './key-registry.js';
 
@@ -342,7 +343,7 @@ export interface ClassProvider extends BaseNormalizedProvider {
   /**
    * Class to instantiate for the `token`.
    */
-  useClass: Class;
+  useClass: Class | ForwardRefFn<Class>;
 }
 
 /**

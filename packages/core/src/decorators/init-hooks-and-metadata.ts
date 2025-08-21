@@ -1,4 +1,4 @@
-import { Provider } from '#di';
+import { ForwardRefFn, Provider } from '#di';
 import { ModuleManager } from '#init/module-manager.js';
 import { ShallowImports } from '#init/types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
@@ -226,5 +226,5 @@ export interface ParamsWithMwp {
 }
 
 export interface BaseInitRawMeta<InitParams extends object = object> extends Omit<ModuleMetadata, 'imports'> {
-  imports?: (((ParamsWithMwp | ModuleWithParams) & InitParams) | ModuleType)[];
+  imports?: (((ParamsWithMwp | ModuleWithParams) & InitParams) | ModuleType | ForwardRefFn<ModuleType>)[];
 }

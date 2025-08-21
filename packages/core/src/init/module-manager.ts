@@ -1,6 +1,6 @@
 import { format } from 'node:util';
 
-import { injectable, Injector, Provider, reflector } from '#di';
+import { ForwardRefFn, injectable, Injector, Provider, reflector, resolveForwardRef } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyObj, ModuleType, ModRefId } from '#types/mix.js';
 import { ModuleWithParams } from '#types/module-metadata.js';
@@ -78,8 +78,9 @@ export class ModuleManager {
     return baseMeta;
   }
 
-  scanModule(modRefId: ModRefId, allInitHooks?: AllInitHooks, saveToShapshot?: boolean) {
+  scanModule(modRefId: ModRefId | ForwardRefFn<ModRefId>, allInitHooks?: AllInitHooks, saveToShapshot?: boolean) {
     allInitHooks ??= new Map();
+    modRefId = resolveForwardRef(modRefId);
     const baseMeta = this.normalizeMetadata(modRefId, allInitHooks);
     const importsOrExports: (ModuleWithParams | ModuleType)[] = [];
     baseMeta.mInitHooksAndRawMeta.forEach((initHooks, decorator) => {

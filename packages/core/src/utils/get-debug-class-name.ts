@@ -1,3 +1,4 @@
+import { ForwardRefFn, resolveForwardRef } from '#di';
 import { ModRefId } from '#types/mix.js';
 import { isModuleWithParams } from './type-guards.js';
 
@@ -10,13 +11,14 @@ const debugClassNameCounters = new Map<string, number>();
  * the same name are imported, this function will add an index to the name
  * of the second module, separated by a hyphen. Each import of `ModuleWithParams`
  * is distinguished by the reference to the object.
- * 
+ *
  * Returns `undefined` if the passed argument is not a class and is not a module with parameters.
- * 
+ *
  * If you use this function in tests, remember to run
  * the `clearDebugClassNames()` function before each test.
  */
-export function getDebugClassName(modRefId: ModRefId): string | undefined {
+export function getDebugClassName(modRefId: ModRefId | ForwardRefFn<ModRefId>): string | undefined {
+  modRefId = resolveForwardRef(modRefId);
   const debugClassName = debugClassNames.get(modRefId);
   if (debugClassName) {
     return debugClassName;

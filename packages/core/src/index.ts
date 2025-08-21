@@ -102,7 +102,6 @@ export {
   isProvider,
   hasDeclaredInDir,
   isCustomError,
-  isForwardRef,
   TypeGuard,
 } from '#utils/type-guards.js';
 

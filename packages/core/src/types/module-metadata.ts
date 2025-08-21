@@ -5,6 +5,7 @@ import { ExtensionClass } from '#extension/extension-types.js';
 import { InitParamsMap } from '#decorators/init-hooks-and-metadata.js';
 import type { rootModule } from '#decorators/root-module.js';
 import type { featureModule } from '#decorators/feature-module.js';
+import { ForwardRefFn } from '#di';
 
 /**
  * Raw metadata for {@link rootModule} and {@link featureModule} decorator.
@@ -14,7 +15,7 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
    * List of modules or `ModuleWithParams` imported by this module.
    * Also you can imports modules and set some prefix per each the module.
    */
-  imports?: ModRefId[];
+  imports?: (ModRefId | ForwardRefFn<ModuleType>)[];
   /**
    * List of modules, {@link ModuleWithParams} or tokens of providers exported by this
    * module.
@@ -34,7 +35,7 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  resolvedCollisionsPerMod?: [any, ModRefId][];
+  resolvedCollisionsPerMod?: [any, ModRefId | ForwardRefFn<ModRefId>][];
 }
 /**
  * An object with this type is passed into the `imports` array of
@@ -62,7 +63,7 @@ export interface BaseModuleWithParams<M extends AnyObj = AnyObj> {
    * The module ID.
    */
   id?: string;
-  module: ModuleType<M>;
+  module: ModuleType<M> | ForwardRefFn<ModuleType<M>>;
 }
 export interface FeatureModuleParams<E extends AnyObj = AnyObj> extends Partial<ProvidersOnly> {
   /**

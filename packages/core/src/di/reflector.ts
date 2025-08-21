@@ -11,6 +11,7 @@ import {
   getParamKey,
   getRawMetadata,
 } from './decorator-factories.js';
+import { ForwardRefFn, resolveForwardRef } from './forward-ref.js';
 import { Class, DecoratorAndValue, ParamsMeta, ClassMeta, ClassPropMeta, UnknownType } from './types-and-models.js';
 import { isType, newArray } from './utils.js';
 
@@ -53,7 +54,7 @@ export class Reflector {
    * or `undefined` if no appropriate decorators.
    */
   getDecorators<T extends DecoratorAndValue>(
-    Cls: Class,
+    Cls: Class | ForwardRefFn<Class>,
     typeGuard: TypeGuard<T>,
   ): (T extends DecoratorAndValue<infer V> ? DecoratorAndValue<V> : never)[] | undefined;
   /**
@@ -62,8 +63,9 @@ export class Reflector {
    * @returns Returns an array of `DecoratorAndValue` for the passed `Cls`,
    * or `undefined` if no appropriate decorators.
    */
-  getDecorators<T = any>(Cls: Class): DecoratorAndValue<T>[] | undefined;
-  getDecorators<T extends DecoratorAndValue>(Cls: Class, typeGuard?: TypeGuard<T>) {
+  getDecorators<T = any>(Cls: Class | ForwardRefFn<Class>): DecoratorAndValue<T>[] | undefined;
+  getDecorators<T extends DecoratorAndValue>(Cls: Class | ForwardRefFn<Class>, typeGuard?: TypeGuard<T>) {
+    Cls = resolveForwardRef(Cls);
     let decorators = this.getMetadata(Cls)?.constructor.decorators || [];
     if (typeGuard) {
       decorators = decorators.filter(typeGuard);

@@ -2,7 +2,7 @@ import 'reflect-metadata/lite';
 
 export { makeClassDecorator, makeParamDecorator, makePropDecorator } from './decorator-factories.js';
 export * from './decorators.js';
-export { ForwardRefFn, forwardRef, resolveForwardRef } from './forward-ref.js';
+export { ForwardRefFn, forwardRef, resolveForwardRef, isForwardRef } from './forward-ref.js';
 export { InjectionToken } from './injection-token.js';
 export { Injector } from './injector.js';
 export { DualKey, KeyRegistry, ParamToken } from './key-registry.js';
@@ -28,7 +28,7 @@ export {
   ClassMeta,
   ClassPropMeta,
   SymbolIterator,
-  UnknownType
+  UnknownType,
 } from './types-and-models.js';
 export {
   isClassFactoryProvider,

@@ -1,6 +1,6 @@
 import { ChainError } from '@ts-stack/chain-error';
 
-import { Provider, Class, DecoratorAndValue, reflector, isNormalizedProvider, ForwardRefFn } from '#di';
+import { Provider, Class, DecoratorAndValue, reflector, isNormalizedProvider } from '#di';
 import { AnyObj, RequireProps } from '#types/mix.js';
 import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
 import { RootModuleMetadata } from '#types/root-module-metadata.js';
@@ -9,7 +9,6 @@ import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { rootModule } from '#decorators/root-module.js';
 import { BaseMeta } from '#types/base-meta.js';
 import { CustomError } from '#error/custom-error.js';
-import { FORWARD_REF } from '#di/forward-ref.js';
 
 export interface TypeGuard<T> {
   (arg: any): arg is T;
@@ -83,8 +82,4 @@ export function isProvider(maybeProvider?: any): maybeProvider is Provider {
   }
   const isSomeModule = reflector.getDecorators(maybeProvider, isModDecor);
   return (maybeProvider instanceof Class && !isSomeModule) || isNormalizedProvider(maybeProvider);
-}
-
-export function isForwardRef(arg?: any): arg is ForwardRefFn {
-  return Boolean((arg as any)?.[FORWARD_REF]);
 }

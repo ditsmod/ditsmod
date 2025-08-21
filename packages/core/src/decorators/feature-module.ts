@@ -1,4 +1,4 @@
-import { makeClassDecorator } from '#di';
+import { ForwardRefFn, makeClassDecorator } from '#di';
 import { ModuleMetadata } from '#types/module-metadata.js';
 import { AnyFn, ModRefId } from '#types/mix.js';
 import { objectKeys } from '#utils/object-keys.js';
@@ -35,5 +35,5 @@ export interface RawMeta extends ModuleMetadata {
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  resolvedCollisionsPerApp?: [any, ModRefId][];
+  resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<ModRefId>][];
 }

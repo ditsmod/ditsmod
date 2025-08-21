@@ -13,7 +13,7 @@ import {
   SettingValueByIdFailed,
   SettingValueByTokenFailed,
 } from './errors.js';
-import { resolveForwardRef } from './forward-ref.js';
+import { ForwardRefFn, resolveForwardRef } from './forward-ref.js';
 import { InjectionToken } from './injection-token.js';
 import { DualKey, KeyRegistry } from './key-registry.js';
 import { reflector } from './reflection.js';
@@ -129,7 +129,7 @@ console.log(providers[0].resolvedFactories[0].dependencies);
    *
    * See `fromResolvedProviders` for more info.
    */
-  static resolve(providers: Provider[]): ResolvedProvider[] {
+  static resolve(providers: (Provider | ForwardRefFn<Provider>)[]): ResolvedProvider[] {
     const normalized = this.normalizeProviders(providers, []);
     const aResolvedProviders: ResolvedProvider[] = [];
     normalized.forEach((normProvider) => {
@@ -220,10 +220,11 @@ expect(injector.get(Car) instanceof Car).toBe(true);
   }
 
   protected static normalizeProviders(
-    providers: Provider[],
+    providers: (Provider | ForwardRefFn<Provider>)[],
     normProviders: NormalizedProvider[],
   ): NormalizedProvider[] {
     providers.forEach((provider) => {
+      provider = resolveForwardRef(provider);
       if (isTypeProvider(provider)) {
         normProviders.push({ token: provider, useClass: provider });
       } else if (isNormalizedProvider(provider)) {

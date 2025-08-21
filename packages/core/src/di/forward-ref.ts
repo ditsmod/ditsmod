@@ -1,5 +1,3 @@
-import { isForwardRef } from '#utils/type-guards.js';
-import { Class } from './types-and-models.js';
 import { stringify } from './utils.js';
 
 export const FORWARD_REF = Symbol();
@@ -13,7 +11,7 @@ export const FORWARD_REF = Symbol();
 const ref = forwardRef(() => Lock);
 ```
  */
-export type ForwardRefFn = () => Class;
+export type ForwardRefFn<T = any> = () => T;
 
 /**
  * Allows to refer to references which are not yet defined.
@@ -67,3 +65,8 @@ expect(resolveForwardRef('regularValue')).toEqual('regularValue');
 export function resolveForwardRef<T>(fn: T) {
   return (isForwardRef(fn) ? fn() : fn) as Exclude<T, ForwardRefFn>;
 }
+
+export function isForwardRef(arg?: any): arg is ForwardRefFn {
+  return Boolean((arg as any)?.[FORWARD_REF]);
+}
+
