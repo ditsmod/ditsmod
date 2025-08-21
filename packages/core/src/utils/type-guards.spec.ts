@@ -8,11 +8,12 @@ import {
   reflector,
   isInjectionToken,
   MultiProvider,
+  forwardRef,
 } from '#di';
 import { featureModule } from '#decorators/feature-module.js';
-import { isFeatureModule, isModuleWithParams, isProvider, isRootModule } from './type-guards.js';
+import { isFeatureModule, isForwardRef, isModuleWithParams, isProvider, isRootModule } from './type-guards.js';
 import { rootModule } from '#decorators/root-module.js';
-import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
+import { ModuleWithParams } from '#types/module-metadata.js';
 import { ModuleNormalizer } from '#init/module-normalizer.js';
 import { ModRefId } from '#types/mix.js';
 
@@ -24,6 +25,11 @@ describe('type guards', () => {
   }
   const mockModuleNormalizer = new MockModuleNormalizer();
   const getModuleMetadata = mockModuleNormalizer.getDecoratorMeta.bind(mockModuleNormalizer);
+
+  it('isForwardRef()', () => {
+    const fn = forwardRef(() => class {});
+    expect(isForwardRef(fn)).toBe(true);
+  });
 
   describe('isModule()', () => {
     it('class with decorator', () => {
@@ -84,7 +90,7 @@ describe('type guards', () => {
         static withParams(): ModuleWithParams<Module1> {
           return {
             module: Module1,
-            providersPerMod: []
+            providersPerMod: [],
           };
         }
       }
