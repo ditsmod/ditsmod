@@ -1,4 +1,4 @@
-import { Provider, PerAppService, getToken, getTokens } from '@ditsmod/core';
+import { Provider, PerAppService, getToken, getTokens, resolveForwardRef } from '@ditsmod/core';
 import { ProvidersOnly, Level } from './types.js';
 
 export class TestOverrider {
@@ -27,7 +27,7 @@ export class TestOverrider {
    */
   static overrideProvider(levels: Level[], providersOnly: ProvidersOnly, provider: Provider) {
     levels.forEach((level) => {
-      const providers = [...(providersOnly[`providersPer${level}`] || [])];
+      const providers = [...(providersOnly[`providersPer${level}`] || [])].map(resolveForwardRef);
       const token = getToken(provider);
       if (getTokens(providers).some((t) => t === token)) {
         providers.push(provider);

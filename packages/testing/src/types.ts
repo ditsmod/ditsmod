@@ -1,9 +1,9 @@
-import { Provider, Providers, Stage1ExtensionMeta, Stage1ExtensionMeta2, Extension, Class } from '@ditsmod/core';
+import { Provider, Providers, Stage1ExtensionMeta, Stage1ExtensionMeta2, Extension, Class, ForwardRefFn } from '@ditsmod/core';
 import { TestApplication } from './test-application.js';
 
 export type Level = 'App' | 'Mod' | 'Rou' | 'Req';
 
-export class ProvidersOnly <T = Providers | Provider[]> {
+export class ProvidersOnly <T = Providers | (Provider | ForwardRefFn<Provider>)[]> {
   providersPerApp? = [] as T;
   providersPerMod? = [] as T;
   providersPerRou? = [] as T;

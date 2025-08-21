@@ -1,6 +1,7 @@
 import {
   ExtensionCounters,
   ExtensionsContext,
+  ForwardRefFn,
   InternalExtensionsManager,
   MetadataPerMod2,
   ModRefId,
@@ -15,7 +16,7 @@ import { TestExtensionsManager } from './test-extensions-manager.js';
 import { OVERRIDERS_CONFIG } from './constants.js';
 
 export class TestAppInitializer extends RestAppInitializer {
-  protected mAdditionalProviders = new Map<ModRefId, ProvidersOnly<Provider[]>>();
+  protected mAdditionalProviders = new Map<ModRefId, ProvidersOnly<(Provider | ForwardRefFn<Provider>)[]>>();
   protected providersForOverride: Provider[] = [];
   protected aOverriderConfig: OverriderConfig[] = [];
 
@@ -24,7 +25,8 @@ export class TestAppInitializer extends RestAppInitializer {
   }
 
   addProvidersToModule(modRefId: ModRefId, providersOnly: ProvidersOnly) {
-    const objWithProviders = this.mAdditionalProviders.get(modRefId) || new ProvidersOnly<Provider[]>();
+    const objWithProviders =
+      this.mAdditionalProviders.get(modRefId) || new ProvidersOnly<(Provider | ForwardRefFn<Provider>)[]>();
     if (!this.mAdditionalProviders.has(modRefId)) {
       this.mAdditionalProviders.set(modRefId, objWithProviders);
     }
