@@ -45,7 +45,6 @@ import {
   ForbiddenExportProvidersPerApp,
   ModuleShouldHaveValue,
 } from '#errors';
-import { ProvidersOnly } from '#types/providers-metadata.js';
 
 /**
  * Normalizes and validates module metadata.
@@ -110,7 +109,7 @@ export class ModuleNormalizer {
       this.baseMeta.id = modWitParams.id;
     }
     (['providersPerApp', 'providersPerMod'] as const).forEach((prop) => {
-      if (modWitParams[prop] instanceof Providers || modWitParams[prop]?.length) {
+      if (modWitParams[prop] instanceof Providers || (Array.isArray(modWitParams[prop]) && modWitParams[prop].length)) {
         this.baseMeta[prop].push(...this.resolveForwardRef(modWitParams[prop]));
       }
     });
@@ -236,7 +235,7 @@ export class ModuleNormalizer {
         this.baseMeta.exportsWithParams.push(exp);
       } else if (isProvider(exp) || tokens.includes(exp)) {
         // Provider or token of provider
-        this.exportProviders(exp, rawMeta);
+        this.exportProviders(exp);
       } else if (this.getDecoratorMeta(exp)) {
         this.baseMeta.exportsModules.push(exp);
       } else {
@@ -298,7 +297,7 @@ export class ModuleNormalizer {
     }) as Exclude<T, ForwardRefFn>[];
   }
 
-  protected exportProviders(token: any, rawMeta: Partial<ProvidersOnly>): void {
+  protected exportProviders(token: any): void {
     const providers = this.baseMeta.providersPerMod.filter((p) => getToken(p) === token);
     if (providers.length) {
       if (providers.some(isMultiProvider)) {

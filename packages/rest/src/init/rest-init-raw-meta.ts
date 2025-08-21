@@ -8,6 +8,7 @@ import {
   BaseInitRawMeta,
   FeatureModuleParams,
   ModRefId,
+  ForwardRefFn,
 } from '@ditsmod/core';
 
 import { GuardItem } from '#interceptors/guard.js';
@@ -19,27 +20,27 @@ export interface RestInitRawMeta extends BaseInitRawMeta<RestModuleParams> {
   /**
    * Providers per route.
    */
-  providersPerRou?: Providers | Provider[];
+  providersPerRou?: Providers | (Provider | ForwardRefFn<Provider>)[];
   /**
    * Providers per HTTP request.
    */
-  providersPerReq?: Providers | Provider[];
+  providersPerReq?: Providers | (Provider | ForwardRefFn<Provider>)[];
   /**
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  resolvedCollisionsPerRou?: [any, ModRefId][];
+  resolvedCollisionsPerRou?: [any, ModRefId | ForwardRefFn<ModuleType>][];
   /**
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  resolvedCollisionsPerReq?: [any, ModRefId][];
+  resolvedCollisionsPerReq?: [any, ModRefId | ForwardRefFn<ModuleType>][];
   /**
    * List of modules that contain controllers. Providers from these modules
    * are not imported into the current module. If the current module has a prefix path,
    * that path will be added to each controller route from the appended modules.
    */
-  appends?: Array<ModuleType | AppendsWithParams>;
+  appends?: Array<ModuleType | AppendsWithParams | ForwardRefFn<ModuleType>>;
   /**
    * The application controllers.
    */
@@ -78,7 +79,7 @@ export interface BaseAppendsWithParams<T extends AnyObj = AnyObj> {
    * The module ID.
    */
   id?: string;
-  module: ModuleType<T>;
+  module: ModuleType<T> | ForwardRefFn<ModuleType<T>>;
   guards?: GuardItem[];
   initParams?: Map<AnyFn, any>;
 }

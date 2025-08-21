@@ -47,7 +47,7 @@ describe('DefaultHttpErrorHandler', () => {
     const msg1 = 'one';
     const err = new CustomError({ msg1 });
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
-    expect(rawRes.statusCode).toBe(Status.BAD_REQUEST);
+    expect(rawRes.statusCode).toBe(Status.INTERNAL_SERVER_ERROR);
     expect(rawRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'one' }));
     expect(rawRes.end).toHaveBeenCalledTimes(1);
     expect(logger.log).toHaveBeenCalledWith('warn', { err, requestId: expect.any(String) });
@@ -69,7 +69,7 @@ describe('DefaultHttpErrorHandler', () => {
     const msg1 = 'one two';
     const err = new CustomError({ msg1 });
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
-    expect(rawRes.statusCode).toBe(Status.BAD_REQUEST);
+    expect(rawRes.statusCode).toBe(Status.INTERNAL_SERVER_ERROR);
     expect(rawRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'one two' }));
     expect(rawRes.end).toHaveBeenCalledTimes(1);
     expect(logger.log).toHaveBeenCalledWith('warn', { err, requestId: expect.any(String) });
@@ -80,7 +80,7 @@ describe('DefaultHttpErrorHandler', () => {
     const msg2 = 'one';
     const err = new CustomError({ msg2 });
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
-    expect(rawRes.statusCode).toBe(Status.BAD_REQUEST);
+    expect(rawRes.statusCode).toBe(Status.INTERNAL_SERVER_ERROR);
     expect(rawRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'Internal server error' }));
     expect(rawRes.end).toHaveBeenCalledTimes(1);
     expect(logger.log).toHaveBeenCalledWith('warn', expect.stringContaining('Error: one'));
@@ -92,7 +92,7 @@ describe('DefaultHttpErrorHandler', () => {
     const msg2 = 'one %s three';
     const err = new CustomError({ msg2 });
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
-    expect(rawRes.statusCode).toBe(Status.BAD_REQUEST);
+    expect(rawRes.statusCode).toBe(Status.INTERNAL_SERVER_ERROR);
     expect(rawRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'Internal server error' }));
     expect(logger.log).toHaveBeenCalledWith('warn', expect.stringContaining('Error: one %s three'));
     expect(logger.log).toHaveBeenCalledWith('warn', expect.stringContaining('requestId:'));
@@ -104,7 +104,7 @@ describe('DefaultHttpErrorHandler', () => {
     const msg2 = 'four six';
     const err = new CustomError({ msg1, msg2 });
     expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
-    expect(rawRes.statusCode).toBe(Status.BAD_REQUEST);
+    expect(rawRes.statusCode).toBe(Status.INTERNAL_SERVER_ERROR);
     expect(rawRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'one two' }));
     expect(rawRes.end).toHaveBeenCalledTimes(1);
     expect(logger.log).toHaveBeenCalledWith('warn', expect.stringContaining('Error: four six'));
