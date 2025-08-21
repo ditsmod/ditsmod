@@ -41,12 +41,12 @@ expect(door instanceof Door).toBeTruthy();
 expect(door.lock instanceof Lock).toBeTruthy();
 ```
  */
-export function forwardRef(forwardRefFn: ForwardRefFn): Class {
+export function forwardRef(forwardRefFn: ForwardRefFn) {
   (forwardRefFn as any)[FORWARD_REF] = true;
   forwardRefFn.toString = function () {
     return stringify(this());
   };
-  return forwardRefFn as any as Class;
+  return forwardRefFn;
 }
 
 /**
