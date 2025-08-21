@@ -78,7 +78,7 @@ export class ModuleManager {
     return baseMeta;
   }
 
-  scanModule(modRefId: ModRefId | ForwardRefFn<ModRefId>, allInitHooks?: AllInitHooks, saveToShapshot?: boolean) {
+  scanModule(modRefId: ModRefId | ForwardRefFn<ModuleType>, allInitHooks?: AllInitHooks, saveToShapshot?: boolean) {
     allInitHooks ??= new Map();
     modRefId = resolveForwardRef(modRefId);
     const baseMeta = this.normalizeMetadata(modRefId, allInitHooks);

@@ -1,5 +1,5 @@
 import { ForwardRefFn, resolveForwardRef } from '#di';
-import { ModRefId } from '#types/mix.js';
+import { ModRefId, ModuleType } from '#types/mix.js';
 import { isModuleWithParams } from './type-guards.js';
 
 const debugClassNames = new Map<ModRefId, string>();
@@ -17,7 +17,7 @@ const debugClassNameCounters = new Map<string, number>();
  * If you use this function in tests, remember to run
  * the `clearDebugClassNames()` function before each test.
  */
-export function getDebugClassName(modRefId: ModRefId | ForwardRefFn<ModRefId>): string | undefined {
+export function getDebugClassName(modRefId: ModRefId | ForwardRefFn<ModuleType>): string | undefined {
   modRefId = resolveForwardRef(modRefId);
   const debugClassName = debugClassNames.get(modRefId);
   if (debugClassName) {

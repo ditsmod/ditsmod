@@ -17,7 +17,7 @@ import {
   isParamsWithMwp,
 } from '#utils/type-guards.js';
 import { ExtensionConfigBase, getExtensionProvider } from '#extension/get-extension-provider.js';
-import { AnyFn, AnyObj, ModRefId, PickProps } from '#types/mix.js';
+import { AnyFn, AnyObj, ModRefId, ModuleType, PickProps } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { RawMeta } from '#decorators/feature-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
@@ -177,7 +177,7 @@ export class ModuleNormalizer {
   protected throwIfResolvingNormalizedProvider(
     rawMeta: BaseInitRawMeta & PickProps<RawMeta, 'resolvedCollisionsPerApp'>,
   ) {
-    const resolvedCollisionsPerLevel: [any, ModRefId | ForwardRefFn<ModRefId>][] = [];
+    const resolvedCollisionsPerLevel: [any, ModRefId | ForwardRefFn<ModuleType>][] = [];
     if (Array.isArray(rawMeta.resolvedCollisionsPerApp)) {
       resolvedCollisionsPerLevel.push(...rawMeta.resolvedCollisionsPerApp);
     }
