@@ -229,8 +229,8 @@ export class ReexportFailed extends CustomError {
  * This can be caused by circular dependency. Try to replace this element with this expression:
  * "forwardRef(() => YourModule)".`
  */
-export class UndefinedModule extends CustomError {
-  constructor(action: string, moduleName: string, i: number) {
+export class UndefinedSymbol extends CustomError {
+  constructor(action: 'Exports' | 'Exports with params' | 'Imports', moduleName: string, i: number) {
     const lowerAction = action.toLowerCase();
     super({
       msg1:

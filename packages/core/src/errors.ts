@@ -14,7 +14,7 @@ export {
   ExportingUnknownSymbol,
   InvalidExtension,
   ReexportFailed,
-  UndefinedModule,
+  UndefinedSymbol,
   ResolvedCollisionTokensOnly,
   ModuleDoesNotHaveDecorator,
   InvalidModRefId,
