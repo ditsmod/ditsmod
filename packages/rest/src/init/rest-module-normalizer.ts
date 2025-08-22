@@ -13,7 +13,6 @@ import {
   reflector,
   resolveForwardRef,
   getDuplicates,
-  CustomError,
   isModuleWithParams,
   getDebugClassName,
   Provider,
@@ -52,22 +51,22 @@ export class RestModuleNormalizer {
     this.baseMeta = baseMeta;
     const meta = getProxyForInitMeta(baseMeta, RestInitMeta);
     this.meta = meta;
-    this.normalizeDeclaredAndResolvedProviders(meta, rawMeta);
+    this.normalizeDeclaredAndResolvedProviders(rawMeta);
     this.normalizeExports(rawMeta, 'Exports');
-    this.mergeModuleWithParams(baseMeta.modRefId, rawMeta, meta);
-    this.appendModules(rawMeta, meta);
-    this.checkMetadata(meta);
+    this.mergeModuleWithParams(baseMeta.modRefId);
+    this.appendModules(rawMeta);
+    this.checkMetadata();
     return meta;
   }
 
-  protected normalizeDeclaredAndResolvedProviders(meta: RestInitMeta, rawMeta: RestInitRawMeta) {
+  protected normalizeDeclaredAndResolvedProviders(rawMeta: RestInitRawMeta) {
     if (rawMeta.controllers) {
-      meta.controllers.push(...rawMeta.controllers);
+      this.meta.controllers.push(...rawMeta.controllers);
     }
     (['Rou', 'Req'] satisfies Level[]).forEach((level) => {
       if (rawMeta[`providersPer${level}`]) {
         const providersPerLevel = this.resolveForwardRef(rawMeta[`providersPer${level}`]!);
-        meta[`providersPer${level}`].push(...providersPerLevel);
+        this.meta[`providersPer${level}`].push(...providersPerLevel);
       }
 
       if (rawMeta[`resolvedCollisionsPer${level}`]) {
@@ -77,12 +76,10 @@ export class RestModuleNormalizer {
           if (isModuleWithParams(module)) {
             module.module = resolveForwardRef(module.module);
           }
-          meta[`resolvedCollisionsPer${level}`].push([token, module]);
+          this.meta[`resolvedCollisionsPer${level}`].push([token, module]);
         });
       }
     });
-
-    return meta;
   }
 
   protected normalizeExports(rawMeta: RestInitRawMeta, action: 'Exports' | 'Exports with params') {
@@ -137,15 +134,15 @@ export class RestModuleNormalizer {
     }
   }
 
-  protected mergeModuleWithParams(modRefId: RestModRefId, rawMeta: RestInitRawMeta, meta: RestInitMeta): void {
+  protected mergeModuleWithParams(modRefId: RestModRefId): void {
     if (isAppendsWithParams(modRefId)) {
       if (modRefId.absolutePath !== undefined) {
-        meta.params.absolutePath = modRefId.absolutePath;
+        this.meta.params.absolutePath = modRefId.absolutePath;
       }
       if (modRefId.path !== undefined) {
-        meta.params.path = modRefId.path;
+        this.meta.params.path = modRefId.path;
       }
-      meta.params.guards.push(...this.normalizeGuards(modRefId.guards));
+      this.meta.params.guards.push(...this.normalizeGuards(modRefId.guards));
       return;
     } else if (!isModuleWithParams(modRefId)) {
       return;
@@ -162,22 +159,22 @@ export class RestModuleNormalizer {
         ] satisfies (keyof RestModuleParams)[]
       ).forEach((prop) => {
         if (params[prop] instanceof Providers || (Array.isArray(params[prop]) && params[prop].length)) {
-          meta[prop].push(...this.resolveForwardRef(params[prop]));
+          this.meta[prop].push(...this.resolveForwardRef(params[prop]));
         }
       });
       this.normalizeExports(params, 'Exports with params');
 
       if (params.absolutePath !== undefined) {
-        meta.params.absolutePath = params.absolutePath;
+        this.meta.params.absolutePath = params.absolutePath;
       }
       if (params.path !== undefined) {
-        meta.params.path = params.path;
+        this.meta.params.path = params.path;
       }
-      meta.params.guards.push(...this.normalizeGuards(params.guards));
+      this.meta.params.guards.push(...this.normalizeGuards(params.guards));
     }
   }
 
-  protected appendModules(rawMeta: RestInitRawMeta, meta: RestInitMeta) {
+  protected appendModules(rawMeta: RestInitRawMeta) {
     rawMeta.appends?.forEach((ap, i) => {
       ap = this.resolveForwardRef([ap])[0];
       if (isNormalizedProvider(ap)) {
@@ -191,9 +188,9 @@ export class RestModuleNormalizer {
         } else {
           ap.initParams = new Map([[initRest, params]]);
         }
-        meta.appendsWithParams.push(ap);
+        this.meta.appendsWithParams.push(ap);
       } else {
-        meta.appendsModules.push(ap);
+        this.meta.appendsModules.push(ap);
       }
     });
   }
@@ -245,7 +242,8 @@ export class RestModuleNormalizer {
     }
   }
 
-  protected checkMetadata(meta: RestInitMeta) {
+  protected checkMetadata() {
+    const meta = this.meta;
     this.checkGuards(meta.params.guards);
     this.throwIfResolvingNormalizedProvider(meta);
     meta.controllers.forEach((Controller) => this.checkController(Controller));
