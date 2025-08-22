@@ -204,7 +204,7 @@ export class ExportingUnknownSymbol extends CustomError {
   constructor(moduleName: string, tokenName: string) {
     super({
       msg1:
-        `Exporting from ${moduleName} failed: if "${tokenName}" is a token of a provider, this provider ` +
+        `Exporting "${tokenName}" from ${moduleName} failed: if "${tokenName}" is a token of a provider, this provider ` +
         'must be included in one of providersPer* array. ' +
         `If "${tokenName}" is a module, it must have "featureModule" decorator.`,
       level: 'fatal',
