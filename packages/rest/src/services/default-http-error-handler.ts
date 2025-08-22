@@ -19,7 +19,7 @@ export class DefaultHttpErrorHandler implements HttpErrorHandler {
         this.logger.log(level || 'debug', errObj);
       }
       ctx.rawRes.statusCode = status || Status.INTERNAL_SERVER_ERROR;
-      this.sendError(err.message, ctx, requestId);
+      this.sendError(err.message, ctx, requestId, err.code);
     } else {
       this.logger.log('error', errObj);
       const msg = err.message || 'Internal server error';
@@ -32,10 +32,14 @@ export class DefaultHttpErrorHandler implements HttpErrorHandler {
     this.logger.log(err.info.level || 'debug', `Error: ${err.info.msg2}\nrequestId: ${requestId}\n${err.stack}`);
   }
 
-  protected sendError(error: string, ctx: RequestContext, requestId: string) {
+  protected sendError(error: string, ctx: RequestContext, requestId: string, code?: string) {
     if (!ctx.rawRes.headersSent) {
       this.addRequestIdToHeader(requestId, ctx);
-      ctx.sendJson({ error });
+      if (code) {
+        ctx.sendJson({ error, code });
+      } else {
+        ctx.sendJson({ error });
+      }
     }
   }
 
