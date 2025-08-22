@@ -1,10 +1,10 @@
 import { BaseAppInitializer, ModuleManager, ModuleWithParams, skipSelf } from '@ditsmod/core';
-import { controller, route, Res } from '@ditsmod/rest';
+import { controller, route, Res, RestModuleParams } from '@ditsmod/rest';
 
 import { SecondModule } from '../second.module.js';
 import { ThirdModule } from '../third/third.module.js';
 
-const secondModuleWithParams: ModuleWithParams = { module: SecondModule };
+const secondModuleWithParams: ModuleWithParams & RestModuleParams = { path: '', module: SecondModule };
 const thirdModuleWithParams: ModuleWithParams = { module: ThirdModule };
 
 @controller()
