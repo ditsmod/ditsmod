@@ -173,6 +173,25 @@ export class ModuleNormalizer {
     });
   }
 
+  protected exportProviders(token: any): void {
+    const providers = this.baseMeta.providersPerMod.filter((p) => getToken(p) === token);
+    if (providers.length) {
+      if (providers.some(isMultiProvider)) {
+        this.baseMeta.exportedMultiProvidersPerMod.push(...(providers as MultiProvider[]));
+      } else {
+        this.baseMeta.exportedProvidersPerMod.push(...providers);
+      }
+      return;
+    }
+
+    const providerName = token.name || token;
+    if (this.baseMeta.providersPerApp.some((p) => getToken(p) === token)) {
+      throw new ForbiddenExportProvidersPerApp(this.baseMeta.name, providerName);
+    } else {
+      throw new ExportingUnknownSymbol(this.baseMeta.name, providerName);
+    }
+  }
+
   protected mergeModuleWithParams(rawMeta: RawMeta, modWitParams: ModuleWithParams) {
     if (modWitParams.id) {
       this.baseMeta.id = modWitParams.id;
@@ -365,25 +384,6 @@ export class AppModule {}
       }
       return item;
     }) as Exclude<T, ForwardRefFn>[];
-  }
-
-  protected exportProviders(token: any): void {
-    const providers = this.baseMeta.providersPerMod.filter((p) => getToken(p) === token);
-    if (providers.length) {
-      if (providers.some(isMultiProvider)) {
-        this.baseMeta.exportedMultiProvidersPerMod.push(...(providers as MultiProvider[]));
-      } else {
-        this.baseMeta.exportedProvidersPerMod.push(...providers);
-      }
-      return;
-    }
-
-    const providerName = token.name || token;
-    if (this.baseMeta.providersPerApp.some((p) => getToken(p) === token)) {
-      throw new ForbiddenExportProvidersPerApp(this.baseMeta.name, providerName);
-    } else {
-      throw new ExportingUnknownSymbol(this.baseMeta.name, providerName);
-    }
   }
 
   protected fetchInitRawMeta(decorator: AnyFn, initRawMeta: BaseInitRawMeta) {

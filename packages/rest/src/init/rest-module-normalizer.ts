@@ -117,6 +117,26 @@ export class RestModuleNormalizer {
     });
   }
 
+  protected exportProviders(token: any) {
+    let found = false;
+    (['Mod', 'Rou', 'Req'] satisfies Level[]).forEach((level) => {
+      const providers = this.meta[`providersPer${level}`].filter((p) => getToken(p) === token);
+      if (providers.length) {
+        found = true;
+        if (providers.some(isMultiProvider)) {
+          this.meta[`exportedMultiProvidersPer${level}`].push(...(providers as MultiProvider[]));
+        } else {
+          this.meta[`exportedProvidersPer${level}`].push(...providers);
+        }
+      }
+    });
+
+    if (!found) {
+      const providerName = token.name || token;
+      throw new ExportingUnknownSymbol(this.baseMeta.name, providerName);
+    }
+  }
+
   protected mergeModuleWithParams(modRefId: RestModRefId, rawMeta: RestInitRawMeta, meta: RestInitMeta): void {
     if (isAppendsWithParams(modRefId)) {
       if (modRefId.absolutePath !== undefined) {
@@ -200,26 +220,6 @@ export class RestModuleNormalizer {
   protected throwExportWithParams(moduleWithParams: ModuleWithParams) {
     const importedModuleName = getDebugClassName(moduleWithParams.module) || '""';
     throw new ReexportFailed(this.baseMeta.name, importedModuleName);
-  }
-
-  protected exportProviders(token: any) {
-    let found = false;
-    (['Mod', 'Rou', 'Req'] satisfies Level[]).forEach((level) => {
-      const providers = this.meta[`providersPer${level}`].filter((p) => getToken(p) === token);
-      if (providers.length) {
-        found = true;
-        if (providers.some(isMultiProvider)) {
-          this.meta[`exportedMultiProvidersPer${level}`].push(...(providers as MultiProvider[]));
-        } else {
-          this.meta[`exportedProvidersPer${level}`].push(...providers);
-        }
-      }
-    });
-
-    if (!found) {
-      const providerName = token.name || token;
-      throw new ExportingUnknownSymbol(this.baseMeta.name, providerName);
-    }
   }
 
   protected throwIfResolvingNormalizedProvider(meta: RestInitMeta) {
