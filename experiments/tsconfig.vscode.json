@@ -1,0 +1,7 @@
+// This configuration is used to ensure that VS Code does not show errors.
+{
+  "files": [],
+  "references": [
+    { "path": "01-trpc/tsconfig.build.json" },
+  ]
+}
