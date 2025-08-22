@@ -24,6 +24,7 @@ import { ShallowModulesImporter } from './rest-shallow-modules-importer.js';
 import { Level, RestGlobalProviders } from '#types/types.js';
 import { getImportedProviders } from '../utils/get-imports.js';
 import { ModuleMustHaveControllers } from '#services/rest-errors.js';
+import { ResolvingCollisionsNotExistsOnThisLevel } from '@ditsmod/core/errors';
 
 @injectable()
 class MockShallowModulesImporter extends ShallowModulesImporter {
@@ -142,8 +143,8 @@ describe('shallow importing modules', () => {
     @rootModule({ imports: [Module0, Module1, Module2] })
     class AppModule {}
 
-    const msg = 'Provider1 mapped with Module0, but Module0 does not exports Provider1';
-    expect(() => importModulesShallow(AppModule)).toThrow(msg);
+    const err = new ResolvingCollisionsNotExistsOnThisLevel('AppModule', 'Module0', 'Req', 'Provider1');
+    expect(() => importModulesShallow(AppModule)).toThrow(err);
   });
 
   it('should throw an error because AppModule have resolvedCollisionsPerReq when there is no collisions', () => {
