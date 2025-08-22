@@ -145,6 +145,8 @@ export class BaseAppInitializer {
     this.log.startReinitApp(this);
     // Before init new logger, works previous logger.
     try {
+      this.moduleManager.startTransaction();
+      this.moduleManager.reset();
       this.bootstrapProvidersPerApp();
       (this.log as PublicLogMediator).updateOutputLogLevel();
     } catch (err) {

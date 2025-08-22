@@ -224,7 +224,7 @@ export class ModuleManager {
     }
   }
 
-  protected startTransaction() {
+  startTransaction() {
     if (this.oldSnapshotMapId.has('root')) {
       // Transaction already started.
       return false;
@@ -256,7 +256,7 @@ export class ModuleManager {
   }
 
   /**
-   * Видаляє зміни {@link BaseMeta} усіх модулів.
+   * Resets changes made to {@link BaseMeta} after normalization.
    */
   reset() {
     this.map = new Map();
