@@ -262,11 +262,11 @@ export class ShallowModulesImporter {
     const [token2, modRefId2] = this.baseMeta[`resolvedCollisionsPer${level}`].find(([token2]) => token1 === token2)!;
     const moduleName = getDebugClassName(modRefId2) || '""';
     const tokenName = token2.name || token2;
-    const meta2 = this.moduleManager.getBaseMeta(modRefId2);
-    if (!meta2) {
+    const baseMeta2 = this.moduleManager.getBaseMeta(modRefId2);
+    if (!baseMeta2) {
       throw new ResolvingCollisionsNotImportedInApplication(this.moduleName, moduleName, level, tokenName);
     }
-    const providers = getLastProviders(meta2[`providersPer${level}`]).filter((p) => getToken(p) === token2);
+    const providers = getLastProviders(baseMeta2[`providersPer${level}`]).filter((p) => getToken(p) === token2);
     if (!providers.length) {
       throw new ResolvingCollisionsNotExistsOnThisLevel(this.moduleName, moduleName, level, tokenName);
     }

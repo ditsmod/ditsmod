@@ -17,6 +17,7 @@ import { CanActivate, NormalizedGuard } from '#interceptors/guard.js';
 import { RequestContext } from '#services/request-context.js';
 import { AppendsWithParams } from './rest-init-raw-meta.js';
 import { RestModule } from './rest.module.js';
+import { NormalizationFailed, ReexportFailed } from '@ditsmod/core/errors';
 
 describe('rest ModuleNormalizer', () => {
   class MockModuleNormalizer extends RestModuleNormalizer {}
@@ -316,7 +317,8 @@ describe('rest ModuleNormalizer', () => {
     @rootModule()
     class AppModule {}
 
-    const msg = '"Module1" is listed in "export" but missing from the "imports" array';
-    expect(() => moduleManager.scanRootModule(AppModule)).toThrow(msg);
+    const cause = new ReexportFailed('AppModule', 'Module1');
+    const err = new NormalizationFailed('AppModule', cause);
+    expect(() => moduleManager.scanRootModule(AppModule)).toThrow(err);
   });
 });

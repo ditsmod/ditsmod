@@ -23,11 +23,10 @@ import {
   ModuleManager,
   HttpMethod,
   getDebugClassName,
-  ModuleExtract,
 } from '@ditsmod/core';
 
 import { routeChannel } from '#diagnostics-channel';
-import { MetadataPerMod3, PreparedRouteMeta, RestModuleExtract } from '../types/types.js';
+import { MetadataPerMod3, PreparedRouteMeta } from '../types/types.js';
 import { A_PATH_PARAMS, HTTP_INTERCEPTORS, QUERY_STRING, RAW_REQ, RAW_RES } from '#types/constants.js';
 import { ControllerMetadata } from '../types/controller-metadata.js';
 import { InterceptorWithGuardsPerRou } from '#interceptors/interceptor-with-guards-per-rou.js';
@@ -45,7 +44,7 @@ import { RouteHandler, Router } from '#services/router.js';
 import { HttpErrorHandler } from '#services/http-error-handler.js';
 import { RequestContext } from '#services/request-context.js';
 import { RoutesExtension } from './routes.extension.js';
-import { CheckingDepsInSandboxFailed } from '#errors';
+import { CheckingDepsInSandboxFailed, GuardNotFound, InvalidConfigurationOfRoute } from '#errors';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
@@ -296,13 +295,7 @@ export class PreRouterExtension implements Extension<void> {
           levels.push('providersPerReq');
         }
         const levelNames = levels.join(' and ');
-        let msg = `Could not find the required ${g.guard.name} in the context of`;
-        msg += ` ${g.baseMeta.name} for route "${controllerName} -> ${httpMethod} /${path}".`;
-        msg += ` Lookup in ${levelNames} was unsuccessful.`;
-        if (!perReq) {
-          msg += ` Notice that ${controllerName} has "{ scope: 'ctx' }" in its metadata.`;
-        }
-        throw new Error(msg);
+        throw new GuardNotFound(g.baseMeta.name, controllerName, g.guard.name, httpMethod, path, levelNames, perReq);
       }
 
       const injectorPerMod = this.moduleManager.getInjectorPerMod(g.baseMeta.modRefId);
@@ -382,9 +375,7 @@ export class PreRouterExtension implements Extension<void> {
       const { moduleName, fullPath, httpMethods, handle, countOfGuards } = data;
 
       if (fullPath?.charAt(0) == '/') {
-        let msg = `Invalid configuration of route '${fullPath}'`;
-        msg += ` (in ${moduleName}): path cannot start with a slash`;
-        throw new Error(msg);
+        throw new InvalidConfigurationOfRoute(moduleName, fullPath);
       }
 
       httpMethods.forEach((httpMethod) => {

@@ -17,7 +17,14 @@ import {
   defaultProvidersPerMod,
   getProxyForInitMeta,
 } from '@ditsmod/core';
-import { ProvidersCollision } from '@ditsmod/core/errors';
+import {
+  CannotResolveCollisionForMultiProviderPerLevel,
+  FalseResolvedCollisions,
+  ProvidersCollision,
+  ResolvingCollisionsNotExistsOnThisLevel,
+  ResolvingCollisionsNotImportedInApplication,
+  ResolvingCollisionsNotImportedInModule,
+} from '@ditsmod/core/errors';
 
 import { GuardPerMod1 } from '#interceptors/guard.js';
 import { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
@@ -345,25 +352,16 @@ export class ShallowModulesImporter {
 
   protected getResolvedCollisionsPerLevel(level: Level, token1: any) {
     const [token2, modRefId2] = this.meta[`resolvedCollisionsPer${level}`].find(([token2]) => token1 === token2)!;
-    const moduleName = getDebugClassName(modRefId2);
+    const moduleName = getDebugClassName(modRefId2) || '""';
     const tokenName = token2.name || token2;
     const baseMeta2 = this.moduleManager.getBaseMeta(modRefId2);
     const meta2 = baseMeta2?.initMeta.get(initRest);
-    let errorMsg =
-      `Resolving collisions for providersPer${level} in ${this.moduleName} failed: ` +
-      `${tokenName} mapped with ${moduleName}, but `;
     if (!baseMeta2) {
-      errorMsg += `${moduleName} is not imported into the application.`;
-      throw new Error(errorMsg);
+      throw new ResolvingCollisionsNotImportedInApplication(this.moduleName, moduleName, level, tokenName);
     }
-    if (!meta2?.[`exportedProvidersPer${level}`].some((p) => getToken(p) === token2)) {
-      errorMsg += `${moduleName} does not exports ${tokenName}.`;
-      throw new Error(errorMsg);
-    }
-    const providers = getLastProviders(meta2[`providersPer${level}`]).filter((p) => getToken(p) === token2);
+    const providers = getLastProviders(meta2?.[`providersPer${level}`] || []).filter((p) => getToken(p) === token2);
     if (!providers.length) {
-      errorMsg += `providersPer${level} does not includes ${tokenName} in this module.`;
-      throw new Error(errorMsg);
+      throw new ResolvingCollisionsNotExistsOnThisLevel(this.moduleName, moduleName, level, tokenName);
     }
 
     this.setResolvedCollisions(token2, level);
@@ -384,13 +382,9 @@ export class ShallowModulesImporter {
       this.meta[`resolvedCollisionsPer${level}`].forEach(([token, module]) => {
         const levels = this.resolvedCollisions.get(token);
         if (!levels || !levels.has(level)) {
-          const moduleName = getDebugClassName(module);
+          const moduleName = getDebugClassName(module) || 'unknown';
           const tokenName = token.name || token;
-          const errorMsg =
-            `Resolving collisions for providersPer${level} in ${this.moduleName} failed: ` +
-            `${tokenName} mapped with ${moduleName}, but there are no collisions ` +
-            `with ${tokenName} in the providersPer${level} array.`;
-          throw new Error(errorMsg);
+          throw new FalseResolvedCollisions(this.moduleName, moduleName, level, tokenName);
         }
       });
     });
@@ -404,11 +398,7 @@ export class ShallowModulesImporter {
       this.meta[`resolvedCollisionsPer${level}`].some(([token]) => {
         if (tokens.includes(token)) {
           const tokenName = token.name || token;
-          const errorMsg =
-            `Resolving collisions for providersPer${level} in ${this.moduleName} failed: ` +
-            `${tokenName} mapped with ${moduleName}, but ${tokenName} is a token of the multi providers, ` +
-            `and in this case it should not be included in resolvedCollisionsPer${level}.`;
-          throw new Error(errorMsg);
+          throw new CannotResolveCollisionForMultiProviderPerLevel(this.moduleName, moduleName, level, tokenName);
         }
       });
     });
@@ -471,11 +461,7 @@ export class ShallowModulesImporter {
       if (this.baseMeta.modRefId === module2) {
         if (!this[`importedProvidersPer${level}`].delete(token1)) {
           const tokenName = token1.name || token1;
-          const errorMsg =
-            `Resolving collisions for providersPer${level} in ${this.moduleName} failed: ` +
-            `${tokenName} mapped with ${this.moduleName}, but ` +
-            `providersPer${level} does not imports ${tokenName} in this module.`;
-          throw new Error(errorMsg);
+          throw new ResolvingCollisionsNotImportedInModule(this.moduleName, level, tokenName);
         }
       } else {
         // Only check that the correct data is specified.

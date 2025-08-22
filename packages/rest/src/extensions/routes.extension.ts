@@ -11,6 +11,7 @@ import { ControllerRawMetadata1 } from '#types/controller.js';
 import { AppOptions } from '#types/app-options.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { RestMetadataPerMod2 } from '#init/types.js';
+import { FailedValidationOfRoute } from '#errors';
 
 @injectable()
 export class RoutesExtension implements Extension<MetadataPerMod3> {
@@ -117,9 +118,7 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
     if (type != 'function') {
       const methods = Array.isArray(httpMethod) ? httpMethod.join(', ') : httpMethod;
       const whatIsThis = inspect(Guard, false, 3);
-      throw new TypeError(
-        `Validation of route "${methods} ${path}" failed: Guard.prototype.canActivate must be a function, got: ${type} (in ${whatIsThis})`,
-      );
+      throw new FailedValidationOfRoute(methods, path, type, whatIsThis);
     }
   }
 }

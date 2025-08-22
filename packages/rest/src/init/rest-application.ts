@@ -10,6 +10,7 @@ import { Http2SecureServerOptions, HttpServer } from '#types/server-options.js';
 import { isHttp2SecureServerOptions } from '#types/type.guards.js';
 import { RequestListener } from '#services/request.js';
 import { RestAppInitializer } from './rest-app-initializer.js';
+import { CreateSecureServerInHttp2NotFound } from '#errors';
 
 export class RestApplication extends BaseApplication {
   server: HttpServer;
@@ -45,7 +46,7 @@ export class RestApplication extends BaseApplication {
   protected checkSecureServerOption() {
     const serverOptions = this.appOptions.serverOptions as Http2SecureServerOptions;
     if (serverOptions?.isHttp2SecureServer && !(this.appOptions.httpModule as typeof http2).createSecureServer) {
-      throw new TypeError('http2.createSecureServer() not found (see the settings in main.ts)');
+      throw new CreateSecureServerInHttp2NotFound();
     }
   }
 

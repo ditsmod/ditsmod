@@ -6,6 +6,7 @@ export {
   CannotResolveCollisionForMultiProviderPerApp,
   ExtensionConfigCauseCyclicDeps,
   ResolvingCollisionsNotExistsOnThisLevel,
+  FalseResolvedCollisions,
   ProvidersPerAppMissingTokenName,
   ResolvingCollisionsNotImportedInApplication,
   ModuleShouldHaveValue,

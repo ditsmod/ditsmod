@@ -24,7 +24,14 @@ import {
   ForwardRefFn,
   ModuleType,
 } from '@ditsmod/core';
-import { ExportingUnknownSymbol, ForbiddenExportNormalizedProvider, UndefinedSymbol } from '@ditsmod/core/errors';
+import {
+  ExportingUnknownSymbol,
+  ForbiddenExportNormalizedProvider,
+  ModuleShouldHaveValue,
+  ReexportFailed,
+  ResolvedCollisionTokensOnly,
+  UndefinedSymbol,
+} from '@ditsmod/core/errors';
 
 import { AppendsWithParams, RestInitRawMeta, RestModuleParams } from '#init/rest-init-raw-meta.js';
 import { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
@@ -32,6 +39,7 @@ import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { Level } from '#types/types.js';
+import { ControllerDoesNotHaveDecorator, DuplicateOfControllers, InvalidGuard } from '#errors';
 
 /**
  * Normalizes and validates module metadata.
@@ -190,9 +198,8 @@ export class RestModuleNormalizer {
   }
 
   protected throwExportWithParams(moduleWithParams: ModuleWithParams) {
-    const moduleName = getDebugClassName(moduleWithParams.module);
-    const msg = `Exporting "${moduleName}" failed: "${moduleName}" is listed in "export" but missing from the "imports" array.`;
-    throw new TypeError(msg);
+    const importedModuleName = getDebugClassName(moduleWithParams.module) || '""';
+    throw new ReexportFailed(this.baseMeta.name, importedModuleName);
   }
 
   protected exportProviders(token: any) {
@@ -227,18 +234,14 @@ export class RestModuleNormalizer {
     resolvedCollisionsPerLevel.forEach(([provider]) => {
       if (isNormalizedProvider(provider)) {
         const providerName = provider.token.name || provider.token;
-        const msg = `for ${providerName} inside "resolvedCollisionPer*" array must be includes tokens only.`;
-        throw new TypeError(msg);
+        throw new ResolvedCollisionTokensOnly(this.baseMeta.name, providerName);
       }
     });
   }
 
   protected checkController(Controller: Class) {
     if (!reflector.getDecorators(Controller, isCtrlDecor)) {
-      throw new Error(
-        "Collecting controller's metadata failed: class " +
-          `"${Controller.name}" does not have the "@controller()" decorator.`,
-      );
+      throw new ControllerDoesNotHaveDecorator(Controller.name);
     }
   }
 
@@ -248,10 +251,7 @@ export class RestModuleNormalizer {
     meta.controllers.forEach((Controller) => this.checkController(Controller));
     const controllerDuplicates = getDuplicates(meta.controllers).map((c) => c.name);
     if (controllerDuplicates.length) {
-      throw new CustomError({
-        msg1: `Detected duplicate controllers - ${controllerDuplicates.join(', ')}`,
-        level: 'fatal',
-      });
+      throw new DuplicateOfControllers(controllerDuplicates.join(', '));
     }
 
     if (
@@ -270,8 +270,7 @@ export class RestModuleNormalizer {
       !meta.controllers.length &&
       !meta.appendsWithParams.length
     ) {
-      const msg = 'this module must have "providersPerApp" or some controllers, or exports, or extensions.';
-      throw new Error(msg);
+      throw new ModuleShouldHaveValue();
     }
   }
 
@@ -289,7 +288,7 @@ export class RestModuleNormalizer {
     for (const Guard of guards.map((n) => n.guard)) {
       const type = typeof Guard?.prototype.canActivate;
       if (type != 'function') {
-        throw new TypeError(`Import with guards failed: Guard.prototype.canActivate must be a function, got: ${type}`);
+        throw new InvalidGuard(type);
       }
     }
   }

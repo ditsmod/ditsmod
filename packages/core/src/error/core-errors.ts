@@ -43,9 +43,8 @@ export class ProvidersCollision extends CustomError {
   }
 }
 /**
- * `Resolving collisions for providersPer${level} in ${moduleName} failed:
- * ${tokenName} mapped with ${moduleName}, but
- * providersPer${level} does not imports ${tokenName} in this module.`
+ * `Resolving collisions for providersPer${level} in ${moduleName} failed: ${tokenName}
+ * mapped with ${moduleName}, but providersPer${level} does not imports ${tokenName} in this module.`
  */
 export class ResolvingCollisionsNotImportedInModule extends CustomError {
   constructor(moduleName: string, level: string, tokenName: string) {
@@ -106,14 +105,29 @@ export class ExtensionConfigCauseCyclicDeps extends CustomError {
 }
 /**
  * `Resolving collisions for providersPer${level} in ${moduleName1} failed:
- * ${tokenName} mapped with ${moduleName2}, but providersPer${level} does not includes ${tokenName} in this module.`
+ * ${tokenName} mapped with ${moduleName2}, but ${tokenName} does not exists in providersPer${level} of this module.`
  */
 export class ResolvingCollisionsNotExistsOnThisLevel extends CustomError {
   constructor(moduleName1: string, moduleName2: string, level: string, tokenName: string) {
     super({
       msg1:
+        `Resolving collisions for providersPer${level} in ${moduleName1} failed: ${tokenName} mapped ` +
+        `with ${moduleName2}, but ${tokenName} does not exists in providersPer${level} of this module.`,
+      level: 'fatal',
+    });
+  }
+}
+/**
+ * `Resolving collisions for providersPer${level} in ${moduleName1} failed: ${tokenName} mapped with
+ * ${moduleName2}, but there are no collisions with ${tokenName} in the providersPer${level} array.`,
+ */
+export class FalseResolvedCollisions extends CustomError {
+  constructor(moduleName1: string, moduleName2: string, level: string, tokenName: string) {
+    super({
+      msg1:
         `Resolving collisions for providersPer${level} in ${moduleName1} failed: ` +
-        `${tokenName} mapped with ${moduleName2}, but providersPer${level} does not includes ${tokenName} in this module.`,
+        `${tokenName} mapped with ${moduleName2}, but there are no collisions ` +
+        `with ${tokenName} in the providersPer${level} array.`,
       level: 'fatal',
     });
   }
@@ -486,13 +500,13 @@ export class ModuleIdNotFoundInModuleManager extends CustomError {
  * `Normalization of ${moduleName} failed`
  */
 export class NormalizationFailed extends CustomError {
-  constructor(moduleName: string, err: Error) {
+  constructor(moduleName: string, cause: Error) {
     super(
       {
         msg1: `Normalization of ${moduleName} failed`,
         level: 'fatal',
       },
-      err,
+      cause,
     );
   }
 }

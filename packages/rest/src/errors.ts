@@ -11,5 +11,12 @@ export {
   CatchAllConflictWithExistingHandle,
   NoBeforeCatchAll,
   ConflictsWithExistingWildcard,
-  InvalidNodeType
+  InvalidNodeType,
+  GuardNotFound,
+  InvalidConfigurationOfRoute,
+  FailedValidationOfRoute,
+  CreateSecureServerInHttp2NotFound,
+  ControllerDoesNotHaveDecorator,
+  DuplicateOfControllers,
+  InvalidGuard,
 } from '#services/rest-errors.js';
