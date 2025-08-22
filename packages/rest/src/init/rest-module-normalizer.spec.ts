@@ -219,6 +219,10 @@ describe('rest ModuleNormalizer', () => {
     class Service2 {}
     class Service3 {}
     class Service4 {}
+    class Service5 {}
+    class Service6 {}
+    class Service7 {}
+    class Service8 {}
     class Guard1 implements CanActivate {
       canActivate(ctx: RequestContext, params?: any[]): boolean | Response | Promise<boolean | Response> {
         return false;
@@ -231,11 +235,12 @@ describe('rest ModuleNormalizer', () => {
     }
 
     @initRest({
+      providersPerApp: [Service7],
       providersPerRou: new Providers().passThrough(Service1),
       providersPerReq: [Service3],
       exports: [Service1, Service3],
     })
-    @featureModule()
+    @featureModule({ providersPerMod: [Service5] })
     class Module1 {
       static withParams(): ModuleWithInitParams<Module1> {
         return {
@@ -249,9 +254,13 @@ describe('rest ModuleNormalizer', () => {
     moduleWithParams.initParams.set(initRest, {
       path: 'one',
       guards: [Guard1, [Guard2, { property1: 'some-value' }]],
+      providersPerApp: [Service8],
+      providersPerMod: [Service6],
       providersPerRou: [Service2],
       providersPerReq: [Service4],
-      exports: [Service2, Service4],
+
+      // Here Service5 exports from static metadata
+      exports: [Service2, Service4, Service5, Service6],
     });
 
     @initRest()
@@ -271,8 +280,11 @@ describe('rest ModuleNormalizer', () => {
       { guard: Guard1 },
       { guard: Guard2, params: [{ property1: 'some-value' }] },
     ]);
+    expect(meta2.providersPerApp).toEqual([Service7, Service8]);
+    expect(meta2.providersPerMod).toEqual([Service5, Service6]);
     expect(meta2.providersPerRou).toEqual([Service1, Service2]);
     expect(meta2.providersPerReq).toEqual([Service3, Service4]);
+    expect(meta2.exportedProvidersPerMod).toEqual([Service5, Service6]);
     expect(meta2.exportedProvidersPerRou).toEqual([Service1, Service2]);
     expect(meta2.exportedProvidersPerReq).toEqual([Service3, Service4]);
   });
