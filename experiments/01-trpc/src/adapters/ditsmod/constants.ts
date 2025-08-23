@@ -1,5 +1,4 @@
 import { InjectionToken } from '@ditsmod/core';
-import { AnyTRPCRouter } from '@trpc/server';
-import { NodeHTTPHandlerOptions } from '@trpc/server/adapters/node-http';
+import { TrcpOpts } from './types.js';
 
-export const TRPC_OPTS = new InjectionToken<NodeHTTPHandlerOptions<AnyTRPCRouter, any, any>>('TRPC_OPTS');
+export const TRPC_OPTS = new InjectionToken<TrcpOpts>('TRPC_OPTS');

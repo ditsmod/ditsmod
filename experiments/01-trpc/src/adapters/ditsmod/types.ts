@@ -1,4 +1,6 @@
 import { BaseAppOptions, InjectionToken } from '@ditsmod/core';
+import { AnyTRPCRouter } from '@trpc/server';
+import { NodeHTTPCreateContextFnOptions, NodeHTTPHandlerOptions, NodeHTTPRequest, NodeHTTPResponse } from '@trpc/server/adapters/node-http';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 
 export class TrpcAppOptions extends BaseAppOptions {}
@@ -9,3 +11,5 @@ export const SERVER = new InjectionToken<Server>('SERVER');
 
 export type RawRequest = IncomingMessage;
 export type RawResponse = ServerResponse;
+export type TrcpOpts = NodeHTTPHandlerOptions<AnyTRPCRouter, NodeHTTPRequest, NodeHTTPResponse>;
+export type TrcpCreateCtxOpts = NodeHTTPCreateContextFnOptions<NodeHTTPRequest, NodeHTTPResponse>;

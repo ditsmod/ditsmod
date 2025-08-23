@@ -1,10 +1,10 @@
 import { EventEmitter } from 'events';
 import { initTRPC, TRPCError } from '@trpc/server';
-import type { AnyTRPCRouter } from '@trpc/server';
 import { z } from 'zod';
-import { NodeHTTPCreateContextFnOptions, NodeHTTPHandlerOptions } from '@trpc/server/adapters/node-http';
 
-const createContext = ({ req, res }: NodeHTTPCreateContextFnOptions<any, any>) => {
+import { TrcpCreateCtxOpts, TrcpOpts } from '../adapters/ditsmod/types.js';
+
+const createContext = ({ req, res }: TrcpCreateCtxOpts) => {
   const getUser = () => {
     if (req.headers.authorization !== 'secret') {
       return null;
@@ -101,7 +101,7 @@ const appRouter = router({
 
 export type AppRouter = typeof appRouter;
 
-export const trpcOpts: NodeHTTPHandlerOptions<AnyTRPCRouter, any, any> = {
+export const trpcOpts: TrcpOpts = {
   router: appRouter,
   createContext,
 };

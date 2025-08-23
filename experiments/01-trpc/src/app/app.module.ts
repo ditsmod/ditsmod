@@ -6,7 +6,7 @@ import { TRPC_OPTS } from '../adapters/ditsmod/constants.js';
 import { trpcOpts } from './server.js';
 
 @rootModule({
-  providersPerApp: [PreRouter, { token: TRPC_OPTS, useValue: trpcOpts }],
   imports: [Module1],
+  providersPerApp: [PreRouter, { token: TRPC_OPTS, useValue: trpcOpts }],
 })
 export class AppModule {}
