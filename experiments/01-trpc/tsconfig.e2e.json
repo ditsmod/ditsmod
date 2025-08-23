@@ -10,6 +10,5 @@
   "references": [
     { "path": "./tsconfig.build.json" },
     { "path": "./tsconfig.unit.json" },
-    { "path": "../../packages/testing/tsconfig.build.json" },
   ]
 }

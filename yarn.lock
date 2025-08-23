@@ -2812,6 +2812,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@trpc/client@npm:^11.5.0":
+  version: 11.5.0
+  resolution: "@trpc/client@npm:11.5.0"
+  peerDependencies:
+    "@trpc/server": 11.5.0
+    typescript: ">=5.7.2"
+  checksum: 10c0/608959dcb8c8fe2fa244c4fdc0b13e41c17a3f42bbc00ea7fd750450e6a581711b8eed7bd883dfd87494f7ef1cb5cf66b0e801e2385ace3ed3d885b9bacaaa4a
+  languageName: node
+  linkType: hard
+
+"@trpc/server@npm:^11.5.0":
+  version: 11.5.0
+  resolution: "@trpc/server@npm:11.5.0"
+  peerDependencies:
+    typescript: ">=5.7.2"
+  checksum: 10c0/8563d339027b374c13d638e43c27786dee4f0e7cee0d396fc62c03f73e7b6ae624379f173f153046b8937c7e4a5096c7e080e297fbe8f82a5703800c4fd38504
+  languageName: node
+  linkType: hard
+
 "@ts-stack/body-parser@npm:^1.2.0":
   version: 1.2.0
   resolution: "@ts-stack/body-parser@npm:1.2.0"
@@ -6724,6 +6743,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "experiment01@workspace:experiments/01-trpc"
   dependencies:
+    "@trpc/client": "npm:^11.5.0"
+    "@trpc/server": "npm:^11.5.0"
     jest: "npm:^30.0.0"
     npm-run-all: "npm:*"
     typescript: "npm:^5.9.2"

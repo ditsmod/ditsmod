@@ -20,5 +20,9 @@
     "jest": "^30.0.0",
     "npm-run-all": "*",
     "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@trpc/client": "^11.5.0",
+    "@trpc/server": "^11.5.0"
   }
 }

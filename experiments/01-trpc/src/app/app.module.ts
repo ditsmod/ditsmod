@@ -1,25 +1,5 @@
-import { rootModule, Providers } from '@ditsmod/core';
-import { controller, route, initRest } from '@ditsmod/rest';
+import { rootModule } from '@ditsmod/core';
+import { Module1 } from './module1/module1.js';
 
-@controller()
-export class DefaultController {
-  @route('GET', 'injector-scoped')
-  tellHello() {
-    return 'ok1';
-  }
-}
-
-@controller({ scope: 'ctx' })
-export class CtxController {
-  @route('GET', 'context-scoped')
-  tellHello() {
-    return 'ok2';
-  }
-}
-
-@initRest({
-  controllers: [DefaultController, CtxController],
-  providersPerApp: new Providers().useLogConfig({ level: 'info' }),
-})
-@rootModule()
+@rootModule({ imports: [Module1] })
 export class AppModule {}
