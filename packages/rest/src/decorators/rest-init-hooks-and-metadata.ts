@@ -1,4 +1,4 @@
-import { makeClassDecorator, InitHooksAndRawMeta, ModRefId, BaseMeta, InitDecorator } from '@ditsmod/core';
+import { makeClassDecorator, InitHooksAndRawMeta, ModRefId, BaseMeta, InitDecorator, Provider } from '@ditsmod/core';
 
 import { RestInitRawMeta, RestModuleParams } from '#init/rest-init-raw-meta.js';
 import { RestModuleNormalizer } from '#init/rest-module-normalizer.js';
@@ -41,6 +41,13 @@ export class RestInitHooksAndRawMeta extends InitHooksAndRawMeta<RestInitRawMeta
 
   override importModulesDeep(config: DeepModulesImporterConfig) {
     return new RestDeepModulesImporter(config).importModulesDeep();
+  }
+
+  override getProvidersToOverride(meta: RestInitMeta): Provider[][] {
+    return [
+      meta.providersPerRou,
+      meta.providersPerReq,
+    ];
   }
 }
 

@@ -35,7 +35,7 @@ export class DefaultHttpErrorHandler implements HttpErrorHandler {
   protected sendError(error: string, ctx: RequestContext, requestId: string, code?: string) {
     if (!ctx.rawRes.headersSent) {
       this.addRequestIdToHeader(requestId, ctx);
-      if (code) {
+      if (code && code != 'CustomError') {
         ctx.sendJson({ error, code });
       } else {
         ctx.sendJson({ error });
