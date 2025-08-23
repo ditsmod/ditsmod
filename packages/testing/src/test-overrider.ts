@@ -1,23 +1,15 @@
-import { Provider, PerAppService, getToken, getTokens, resolveForwardRef } from '@ditsmod/core';
-import { ProvidersOnly, Level } from './types.js';
+import { Provider, PerAppService, getToken, getTokens } from '@ditsmod/core';
 
 export class TestOverrider {
-  static overrideAllProviders(
-    perAppService: PerAppService,
-    providersOnly: ProvidersOnly,
-    providersToOverride: Provider[],
-  ) {
+  static overrideAllProviders(perAppService: PerAppService, aProviders: Provider[][], providersToOverride: Provider[]) {
     providersToOverride.forEach((provider) => {
-      const providersPerApp = perAppService.providers;
-      const providersOnly = { providersPerApp };
-      this.overrideProvider(['App'], providersOnly, provider);
-      perAppService.providers = providersOnly.providersPerApp;
+      this.overrideProvider([perAppService.providers], provider);
     });
 
     perAppService.reinitInjector();
 
     providersToOverride.forEach((provider) => {
-      this.overrideProvider(['Mod', 'Rou', 'Req'], providersOnly, provider);
+      this.overrideProvider(aProviders, provider);
     });
   }
 
@@ -25,13 +17,11 @@ export class TestOverrider {
    * If the token of the {@link provider} that needs to be overridden is found in the {@link providersOnly},
    * that {@link provider} is added to the {@link providersOnly} array last in the same scope.
    */
-  static overrideProvider(levels: Level[], providersOnly: ProvidersOnly, provider: Provider) {
-    levels.forEach((level) => {
-      const providers = [...(providersOnly[`providersPer${level}`] || [])].map(resolveForwardRef);
+  static overrideProvider(aProviders: Provider[][], provider: Provider) {
+    aProviders.forEach((providers) => {
       const token = getToken(provider);
       if (getTokens(providers).some((t) => t === token)) {
         providers.push(provider);
-        providersOnly[`providersPer${level}`] = providers;
       }
     });
   }

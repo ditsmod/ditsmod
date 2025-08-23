@@ -8,7 +8,7 @@ describe('TestAppInitializer', () => {
   class MockTestAppInitializer extends TestAppInitializer {
     override mAdditionalProviders = new Map<ModRefId, ProvidersOnly<Provider[]>>();
 
-    override overrideMetaAfterStage1<T extends ProvidersOnly>(modRefId: ModRefId, providersOnly: T) {
+    override overrideMetaAfterStage1(modRefId: ModRefId, providersOnly: BaseMeta) {
       return super.overrideMetaAfterStage1(modRefId, providersOnly);
     }
   }
@@ -19,7 +19,7 @@ describe('TestAppInitializer', () => {
       const modRefId = {} as ModRefId;
       class Provider1 {}
 
-      const providersMeta1: ProvidersOnly = {
+      const providersMeta1: Partial<ProvidersOnly> = {
         providersPerApp: [Provider1],
         providersPerMod: [Provider1],
       };
@@ -33,11 +33,11 @@ describe('TestAppInitializer', () => {
       class Provider1 {}
       class Provider2 {}
 
-      const providersMeta1: ProvidersOnly = {
+      const providersMeta1: Partial<ProvidersOnly> = {
         providersPerApp: [Provider1],
       };
 
-      const providersMeta2: ProvidersOnly = {
+      const providersMeta2: Partial<ProvidersOnly> = {
         providersPerApp: new Providers().passThrough(Provider2),
       };
       mock.addProvidersToModule(modRefId, providersMeta1);
@@ -53,7 +53,7 @@ describe('TestAppInitializer', () => {
       class Provider0 {}
       class Provider1 {}
 
-      const providersMeta1: ProvidersOnly = {
+      const providersMeta1: Partial<ProvidersOnly> = {
         providersPerApp: [Provider1],
         providersPerMod: [Provider1],
       };

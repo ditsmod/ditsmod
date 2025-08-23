@@ -1,4 +1,5 @@
 import {
+  BaseMeta,
   ExtensionCounters,
   ExtensionsContext,
   ForwardRefFn,
@@ -7,16 +8,17 @@ import {
   ModRefId,
   Provider,
   Providers,
+  resolveForwardRef,
 } from '@ditsmod/core';
 import { RestAppInitializer } from '@ditsmod/rest';
 
 import { TestOverrider } from './test-overrider.js';
-import { ProvidersOnly, OverriderConfig, Level } from './types.js';
+import { OverriderConfig } from './types.js';
 import { TestExtensionsManager } from './test-extensions-manager.js';
 import { OVERRIDERS_CONFIG } from './constants.js';
 
 export class TestAppInitializer extends RestAppInitializer {
-  protected mAdditionalProviders = new Map<ModRefId, ProvidersOnly<(Provider | ForwardRefFn<Provider>)[]>>();
+  protected mAdditionalProviders = new Map<ModRefId, Provider[]>();
   protected providersForOverride: Provider[] = [];
   protected aOverriderConfig: OverriderConfig[] = [];
 
@@ -24,32 +26,37 @@ export class TestAppInitializer extends RestAppInitializer {
     this.aOverriderConfig.push(config);
   }
 
-  addProvidersToModule(modRefId: ModRefId, providersOnly: ProvidersOnly) {
-    const objWithProviders =
-      this.mAdditionalProviders.get(modRefId) || new ProvidersOnly<(Provider | ForwardRefFn<Provider>)[]>();
+  addProvidersToModule(modRefId: ModRefId, rawProviders: Providers | (Provider | ForwardRefFn<Provider>)[]) {
+    const aProviders = this.mAdditionalProviders.get(modRefId) || [];
     if (!this.mAdditionalProviders.has(modRefId)) {
-      this.mAdditionalProviders.set(modRefId, objWithProviders);
+      this.mAdditionalProviders.set(modRefId, aProviders);
     }
-    (['App', 'Mod', 'Rou', 'Req'] satisfies Level[]).forEach((level) => {
-      objWithProviders[`providersPer${level}`]!.push(...(providersOnly[`providersPer${level}`] || []));
-    });
+    const normalizedProviders = [...rawProviders].map(resolveForwardRef);
+    aProviders.push(...normalizedProviders);
   }
 
-  overrideModuleMeta(providers: Providers | Provider[]) {
+  overrideModuleMeta(rawProviders: Providers | (Provider | ForwardRefFn<Provider>)[]) {
+    const providers = [...rawProviders].map(resolveForwardRef);
     this.providersForOverride.push(...providers);
   }
 
-  protected override overrideMetaAfterStage1<T extends ProvidersOnly>(modRefId: ModRefId, providersOnly: T) {
+  protected override overrideMetaAfterStage1(modRefId: ModRefId, baseMeta: BaseMeta) {
     const additionalProviders = this.mAdditionalProviders.get(modRefId);
+    this.addAndOverrideProviders([baseMeta.providersPerApp, baseMeta.providersPerMod], additionalProviders);
+    baseMeta.mInitHooksAndRawMeta.forEach((initHooks, decorator) => {
+      const meta = baseMeta.initMeta.get(decorator);
+      if (meta) {
+        this.addAndOverrideProviders(initHooks.getProvidersToOverride(meta), additionalProviders);
+      }
+    });
+    return baseMeta;
+  }
+
+  protected addAndOverrideProviders(aProviders: Provider[][], additionalProviders?: Provider[]) {
     if (additionalProviders) {
-      (['App', 'Mod', 'Rou', 'Req'] satisfies Level[]).forEach((level) => {
-        const providersPerLevel = [...(providersOnly[`providersPer${level}`] || [])];
-        providersPerLevel.push(...(additionalProviders[`providersPer${level}`] || []));
-        providersOnly[`providersPer${level}`] = providersPerLevel;
-      });
+      aProviders.forEach((arr) => arr.push(...additionalProviders));
     }
-    TestOverrider.overrideAllProviders(this.perAppService, providersOnly, this.providersForOverride);
-    return providersOnly;
+    TestOverrider.overrideAllProviders(this.perAppService, aProviders, this.providersForOverride);
   }
 
   protected override getProvidersForExtensions(

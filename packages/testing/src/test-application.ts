@@ -10,7 +10,7 @@ import {
 } from '@ditsmod/core';
 import { RestApplication, AppOptions } from '@ditsmod/rest';
 
-import { ExtensionMetaOverrider, ProvidersOnly } from './types.js';
+import { ExtensionMetaOverrider } from './types.js';
 import { TestAppInitializer } from './test-app-initializer.js';
 import { TestModuleManager } from './test-module-manager.js';
 
@@ -42,8 +42,8 @@ export class TestApplication extends RestApplication {
    * Adds providers to module metadata at any level. Use this method only if the
    * {@link overrideModuleMeta | this.overrideModuleMeta()} method is not suitable for you.
    */
-  addProvidersToModule(modRefId: ModRefId, providersMeta: ProvidersOnly) {
-    this.testAppInitializer.addProvidersToModule(modRefId, providersMeta);
+  addProvidersToModule(modRefId: ModRefId, aProviders: Provider[]) {
+    this.testAppInitializer.addProvidersToModule(modRefId, aProviders);
     return this;
   }
 
