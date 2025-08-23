@@ -14,6 +14,6 @@ export class CustomHttpErrorHandler extends DefaultHttpErrorHandler {
 
   override async handleError(err: Error, ctx: RequestContext) {
     await super.handleError(err, ctx);
-    this.errorContainer.setError(err.message, err.stack);
+    this.errorContainer.setError(err);
   }
 }

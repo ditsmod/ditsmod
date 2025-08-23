@@ -1,3 +1,3 @@
 export class ErrorContainer {
-  setError(message: string, stack?: string) {}
+  setError(err: Error) {}
 }
