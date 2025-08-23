@@ -6,7 +6,7 @@ import type { AppRouter } from './server.js';
 const sleep = (ms = 100) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function main() {
-  const url = 'http://localhost:3000/trpc';
+  const url = 'http://localhost:2021/trpc';
 
   const trpc = createTRPCClient<AppRouter>({
     links: [
