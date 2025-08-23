@@ -214,7 +214,11 @@ export class BaseAppInitializer {
       moduleManager,
       unfinishedScanModules: new Set(),
     });
+    if (allInitHooks.size == 0) {
+      return shallowImportsMap;
+    }
     const mergedShallowImportsMap: Map<ModRefId, ShallowImports> = new Map();
+    // @todo Refactor this.
     allInitHooks.forEach((initHooks, decorator) => {
       const val = initHooks.importModulesShallow({
         moduleManager,
