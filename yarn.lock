@@ -6748,6 +6748,7 @@ __metadata:
     jest: "npm:^30.0.0"
     npm-run-all: "npm:*"
     typescript: "npm:^5.9.2"
+    zod: "npm:^4.1.0"
   languageName: unknown
   linkType: soft
 
@@ -14836,5 +14837,12 @@ __metadata:
   version: 4.0.2
   resolution: "zenscroll@npm:4.0.2"
   checksum: 10c0/419e87ebe3a22a3b2ac22cd02aeccb900c9c330f539efdb1efc382090157d466373ee615812caef5bbe2da140e3c7df222236c8cfd8e697e97d4d91cf3f81c63
+  languageName: node
+  linkType: hard
+
+"zod@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "zod@npm:4.1.0"
+  checksum: 10c0/b39bce830cf9864e33b00da2e3fee008e1abb96fff169936ba779648276b6a031d35ed5438d7659ac5d5e09b932d40dce6c255344184794d56f8bd22e501561b
   languageName: node
   linkType: hard
