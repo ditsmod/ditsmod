@@ -61,7 +61,7 @@ export class InstantiationError extends CustomError {
     const action = first.includes('.prototype.') ? 'calling' : 'instantiation of';
     super(
       {
-        msg1: `Failed ${action} ${first}!${constructResolvingPath(tokens)}`,
+        msg1: `Failed ${action} ${first}${constructResolvingPath(tokens)}`,
         level: 'fatal',
       },
       originalException,

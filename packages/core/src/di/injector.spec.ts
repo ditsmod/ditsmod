@@ -921,13 +921,8 @@ describe('injector', () => {
     const providers = Injector.resolve([Car, { token: Engine, useClass: BrokenEngine }]);
     const Registry = Injector.prepareRegistry(providers);
     const injector = new Injector(Registry);
-
-    try {
-      injector.get(Car);
-      throw new Error('Must throw');
-    } catch (e: any) {
-      expect(e.message).toContain('Failed instantiation of Engine! (Car -> Engine): Broken Engine');
-    }
+    const err = new InstantiationError(new Error('Broken Engine'), ['Engine (Car -> Engine)']);
+    expect(() => injector.get(Car)).toThrow(err);
   });
 
   it('should instantiate an object after a failed attempt', () => {

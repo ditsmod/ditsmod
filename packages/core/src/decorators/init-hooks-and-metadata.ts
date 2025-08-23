@@ -120,13 +120,19 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
   }): any {
     return;
   }
+  /**
+   * This method must return a mutable array of {@link Provider} arrays, which can be overridden during testing.
+   */
+  getProvidersToOverride(meta: BaseInitMeta): Provider[][] {
+    return [];
+  }
 }
 
 export interface InitMetaMap {
-  set<T extends BaseInitMeta>(decorator: InitDecorator<any, any, T>, params: T): this;
+  set<T extends BaseInitMeta>(decorator: InitDecorator<any, any, T>, meta: T): this;
   get<T extends BaseInitMeta>(decorator: InitDecorator<any, any, T>): T | undefined;
   forEach<T extends BaseInitMeta>(
-    callbackfn: (params: T, decorator: AnyFn, map: Map<AnyFn, T>) => void,
+    callbackfn: (meta: T, decorator: AnyFn, map: Map<AnyFn, T>) => void,
     thisArg?: any,
   ): void;
   /**
