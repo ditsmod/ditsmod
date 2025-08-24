@@ -43,8 +43,6 @@ export class PreRouter {
           ...this.opts,
         })(err);
       }
-      // request logger
-      console.log('⬅️ ', req.method, path, (req as any).body ?? search);
     } else {
       res.end(JSON.stringify({ method, path: fullPath, search }));
     }
