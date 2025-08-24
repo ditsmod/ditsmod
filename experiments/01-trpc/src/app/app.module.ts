@@ -13,7 +13,7 @@ import {
   TRPC_CREATE_CALLER_FACTORY,
 } from './root-rpc-object.js';
 import { TrcpOpts } from '../adapter/types.js';
-import { awaitTokens } from './utils.js';
+import { awaitTokens, TrpcRootModule } from './utils.js';
 import { PostService } from './post-module/post.service.js';
 import { AuthModule } from './auth-module/auth.module.js';
 import { AuthService } from './auth-module/auth.service.js';
@@ -32,7 +32,7 @@ import { MessageService } from './message-module/message.service.js';
     ...awaitTokens(TRPC_OPTS),
   ],
 })
-export class AppModule implements OnModuleInit {
+export class AppModule implements OnModuleInit, TrpcRootModule {
   constructor(
     private injectorPerMod: Injector,
     private preRouter: PreRouter,

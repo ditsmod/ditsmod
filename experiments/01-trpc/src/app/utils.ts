@@ -1,4 +1,5 @@
 import { FunctionFactoryProvider, type DeepModulesImporter } from '@ditsmod/core';
+import { AnyRootTypes, BuiltRouter, RouterRecord } from '@trpc/server/unstable-core-do-not-import';
 
 /**
  * Since {@link DeepModulesImporter} runs before extensions, and it does not know which providers will be added
@@ -19,4 +20,8 @@ export function awaitTokens(tokens: any): FunctionFactoryProvider[] {
     };
     return p;
   });
+}
+
+export interface TrpcRootModule {
+  getAppRouter<TRoot extends AnyRootTypes, TRecord extends RouterRecord>(): BuiltRouter<TRoot, any>;
 }
