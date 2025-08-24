@@ -1,12 +1,18 @@
+import type * as http from 'node:http';
+import type * as http2 from 'node:http2';
+import type * as https from 'node:https';
 import type { AddressInfo } from 'node:net';
-import { createServer, RequestListener, type Server } from 'node:http';
 import { ModuleType, SystemLogMediator, BaseApplication } from '@ditsmod/core';
 
-import { TrpcAppOptions } from './types.js';
+import { RequestListener, TrpcAppOptions } from './types.js';
 import { TrpcAppInitializer } from './trpc-app-initializer.js';
+import { Http2SecureServerOptions, HttpServer } from './server-options.js';
+import { CreateSecureServerInHttp2NotFound } from './trpc-errors.js';
+import { isHttp2SecureServerOptions } from './type.guards.js';
+import { HttpServerModule, HttpsServerModule } from './http-module.js';
 
 export class TrpcApplication extends BaseApplication {
-  server: Server;
+  server: HttpServer;
   declare protected appOptions: TrpcAppOptions;
 
   /**
@@ -33,6 +39,7 @@ export class TrpcApplication extends BaseApplication {
   protected override init(trpcOptions?: TrpcAppOptions) {
     this.appOptions = { ...trpcOptions };
     super.init(trpcOptions);
+    this.checkSecureServerOption();
   }
 
   protected async createServerAndBindToListening(appInitializer: TrpcAppInitializer) {
@@ -45,8 +52,24 @@ export class TrpcApplication extends BaseApplication {
     });
   }
 
-  protected async createServer(requestListener: RequestListener) {
-    return createServer(requestListener);
+  protected checkSecureServerOption() {
+    const serverOptions = this.appOptions.serverOptions as Http2SecureServerOptions;
+    if (serverOptions?.isHttp2SecureServer && !(this.appOptions.httpModule as typeof http2).createSecureServer) {
+      throw new CreateSecureServerInHttp2NotFound();
+    }
+  }
+
+  protected async createServer(requestListener: RequestListener): Promise<HttpServer> {
+    if (isHttp2SecureServerOptions(this.appOptions.serverOptions || {})) {
+      const serverModule = this.appOptions.httpModule as typeof http2;
+      return serverModule.createSecureServer(this.appOptions.serverOptions || {}, requestListener);
+    } else {
+      const serverModule = (this.appOptions.httpModule || (await import('http'))) as
+        | HttpServerModule
+        | HttpsServerModule;
+      const serverOptions = this.appOptions.serverOptions as http.ServerOptions | https.ServerOptions;
+      return serverModule.createServer(serverOptions, requestListener);
+    }
   }
 }
 

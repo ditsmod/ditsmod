@@ -3,6 +3,7 @@
     "outDir": "dist",
       "paths": {
       "@ditsmod/core": ["../core/src/index.js"],
+      "#errors": ["./src/errors.js"],
     },
     "module": "nodenext",
     // "moduleResolution": "nodenext",

@@ -1,9 +1,8 @@
 import { HttpMethod, injectable, Injector, SystemLogMediator } from '@ditsmod/core';
-import { RequestListener } from 'node:http';
 import { internal_exceptionHandler, nodeHTTPRequestHandler } from '@trpc/server/adapters/node-http';
 
 import { TRPC_OPTS } from './constants.js';
-import { TrcpOpts } from './types.js';
+import { RequestListener, TrcpOpts } from './types.js';
 
 @injectable()
 export class PreRouter {

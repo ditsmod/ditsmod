@@ -16,7 +16,14 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./errors": {
+      "types": "./dist/errors.d.ts",
+      "default": "./dist/errors.js"
     }
+  },
+  "imports": {
+    "#errors": "./dist/errors.js"
   },
   "scripts": {
     "build": "tsc -b tsconfig.build.json",
