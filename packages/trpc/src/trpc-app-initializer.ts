@@ -4,6 +4,7 @@ import { RequestListener, SERVER } from './types.js';
 import { PreRouter } from './pre-router.js';
 import { HttpServer } from './server-options.js';
 import { t, TRPC_OPTS, TRPC_ROOT } from './constants.js';
+import { TrpcService } from './trpc.service.js';
 
 export class TrpcAppInitializer extends BaseAppInitializer {
   protected preRouter: PreRouter;
@@ -21,6 +22,9 @@ export class TrpcAppInitializer extends BaseAppInitializer {
       { token: SERVER, useFactory: () => this.server },
       { token: TRPC_ROOT, useValue: t },
       ...awaitTokens(TRPC_OPTS),
+    );
+    this.baseMeta.providersPerMod.unshift(
+      TrpcService
     );
     super.addDefaultProvidersPerApp();
   }

@@ -3,6 +3,7 @@ export { PreRouter } from './pre-router.js';
 export { TrpcAppInitializer } from './trpc-app-initializer.js';
 export { TrpcApplication } from './trpc-application.js';
 export { TrpcRootModule } from './utils.js';
+export { TrpcService } from './trpc.service.js';
 export {
   SERVER,
   RawRequest,
