@@ -6,8 +6,11 @@ import { FunctionFactoryProvider, type DeepModulesImporter } from '@ditsmod/core
  * avoided by using this helper to pass fake non-functional providers to DI, which should later be replaced
  * through extensions.
  */
-export function awaitTokens(tokens: any[]): FunctionFactoryProvider[] {
-  return tokens.map((t) => {
+export function awaitTokens(tokens: any): FunctionFactoryProvider[] {
+  if (!Array.isArray(tokens)) {
+    tokens = [tokens];
+  }
+  return (tokens as any[]).map((t) => {
     const p: FunctionFactoryProvider = {
       token: t,
       useFactory: () => {

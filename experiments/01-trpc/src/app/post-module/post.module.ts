@@ -4,6 +4,7 @@ import { Db } from './db.js';
 import { PostService } from './post.service.js';
 
 @featureModule({
-  providersPerApp: [Db, PostService],
+  providersPerMod: [Db, PostService],
+  exports: [Db, PostService],
 })
 export class PostModule {}

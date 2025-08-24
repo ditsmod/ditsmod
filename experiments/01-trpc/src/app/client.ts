@@ -1,7 +1,9 @@
 import { createTRPCClient, httpBatchLink, loggerLink } from '@trpc/client';
 import { tap } from '@trpc/server/observable';
 
-import type { AppRouter } from './my-extension.js';
+import { AppModule } from './app.module.js';
+
+type AppRouter = ReturnType<typeof AppModule.prototype.getAppRouter>;
 
 const sleep = (ms = 100) => new Promise((resolve) => setTimeout(resolve, ms));
 
