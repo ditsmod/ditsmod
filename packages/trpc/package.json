@@ -1,0 +1,45 @@
+{
+  "name": "@ditsmod/trpc",
+  "type": "module",
+  "version": "3.0.0-alpha.4",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ditsmod/ditsmod.git"
+  },
+  "homepage": "https://ditsmod.github.io/en/",
+  "description": "Ditsmod module to support tRPC.",
+  "module": "dist/index.js",
+  "exports": {
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b tsconfig.build.json",
+    "clean": "rm -rf dist*",
+    "test": "tsc -b tsconfig.unit.json && yarn esm-jest",
+    "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)"
+  },
+  "keywords": [
+    "ditsmod"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@trpc/client": "^11.5.0",
+    "@trpc/server": "^11.5.0",
+    "zod": "^4.1.0"
+  },
+  "peerDependencies": {
+    "@ditsmod/core": "^3.0.0-alpha.4"
+  },
+  "devDependencies": {
+    "jest": "^30.0.0",
+    "npm-run-all": "*",
+    "typescript": "^5.9.2"
+  }
+}

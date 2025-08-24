@@ -14,6 +14,7 @@
     { "path": "rest-testing/tsconfig.unit.json" },
     { "path": "session-cookie/tsconfig.unit.json" },
     { "path": "sqb/tsconfig.unit.json" },
+    { "path": "trpc/tsconfig.unit.json" },
     { "path": "testing/tsconfig.unit.json" },
     { "path": "versions/tsconfig.unit.json" },
   ]

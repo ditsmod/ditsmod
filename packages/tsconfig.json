@@ -15,6 +15,7 @@
     { "path": "session-cookie/tsconfig.build.json" },
     { "path": "sqb/tsconfig.build.json" },
     { "path": "testing/tsconfig.build.json" },
+    { "path": "trpc/tsconfig.build.json" },
     { "path": "versions/tsconfig.build.json" },
   ]
 }
