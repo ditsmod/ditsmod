@@ -1,8 +1,6 @@
 import { TRPCError } from '@trpc/server';
 import { inject } from '@ditsmod/core';
-import { TrcpCreateCtxOpts } from '@ditsmod/trpc';
-
-import { TrcpProcedureFn, TrcpRouterFn, TRPC_PROCEDURE, TRPC_ROUTER } from '#app/root-rpc-object.js';
+import { TrcpCreateCtxOpts, TrcpProcedureFn, TrcpRouterFn, TRPC_PROCEDURE, TRPC_ROUTER } from '@ditsmod/trpc';
 
 export class AuthService {
   constructor(

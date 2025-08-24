@@ -1,17 +1,9 @@
 import { Injector, OnModuleInit, rootModule } from '@ditsmod/core';
-import { PreRouter, TRPC_OPTS, TrcpOpts } from '@ditsmod/trpc';
+import { PreRouter, TRPC_OPTS, TrcpOpts, t } from '@ditsmod/trpc';
 import z from 'zod';
 
 import { PostModule } from './post-module/post.module.js';
-import {
-  TRPC_ROOT,
-  t,
-  TRPC_ROUTER,
-  TRPC_PROCEDURE,
-  TRPC_MERGE_ROUTERS,
-  TRPC_CREATE_CALLER_FACTORY,
-} from './root-rpc-object.js';
-import { awaitTokens, TrpcRootModule } from './utils.js';
+import { TrpcRootModule } from './utils.js';
 import { PostService } from './post-module/post.service.js';
 import { AuthModule } from './auth-module/auth.module.js';
 import { AuthService } from './auth-module/auth.service.js';
@@ -20,15 +12,6 @@ import { MessageService } from './message-module/message.service.js';
 
 @rootModule({
   imports: [PostModule, AuthModule, MessageModule],
-  providersPerApp: [
-    PreRouter,
-    { token: TRPC_ROOT, useValue: t },
-    { token: TRPC_ROUTER, useValue: t.router },
-    { token: TRPC_PROCEDURE, useValue: t.procedure },
-    { token: TRPC_MERGE_ROUTERS, useValue: t.mergeRouters },
-    { token: TRPC_CREATE_CALLER_FACTORY, useValue: t.createCallerFactory },
-    ...awaitTokens(TRPC_OPTS),
-  ],
 })
 export class AppModule implements OnModuleInit, TrpcRootModule {
   constructor(

@@ -1,7 +1,7 @@
+import { TrcpProcedureFn, TrcpRouterFn, TRPC_PROCEDURE, TRPC_ROUTER } from '@ditsmod/trpc';
 import { inject, injectable } from '@ditsmod/core';
 import { z } from 'zod';
 
-import { TrcpProcedureFn, TrcpRouterFn, TRPC_PROCEDURE, TRPC_ROUTER } from '#app/root-rpc-object.js';
 import { DbService } from '../db-module/db.service.js';
 import { MessageService } from '#app/message-module/message.service.js';
 
