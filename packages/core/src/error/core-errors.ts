@@ -1,6 +1,17 @@
 import { CustomError } from './custom-error.js';
 
 /**
+ * `Cannot reinit injector after stage1`
+ */
+export class CannotReinitInjectorAfterStage1 extends CustomError {
+  constructor() {
+    super({
+      msg1: 'Cannot reinit injector after stage1',
+      level: 'fatal',
+    });
+  }
+}
+/**
  * `Repeated saving of module metadata snapshots is prohibited. It is done only once—after their normalization.`
  */
 export class ProhibitSavingModulesSnapshot extends CustomError {
@@ -342,6 +353,20 @@ export class FailedCreateInjectorPerMod extends CustomError {
     super(
       {
         msg1: `Failed create injector per module for ${debugModuleName}`,
+        level: 'fatal',
+      },
+      cause,
+    );
+  }
+}
+/**
+ * `Failed override metadata after stage1 for ${debugModuleName}`
+ */
+export class FailedOverrideMetaAfterStage1 extends CustomError {
+  constructor(debugModuleName: string, cause: any) {
+    super(
+      {
+        msg1: `Failed override metadata after stage1 for ${debugModuleName}`,
         level: 'fatal',
       },
       cause,

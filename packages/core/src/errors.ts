@@ -36,6 +36,8 @@ export {
   ForbiddenRollbackEmptyState,
   ModuleIdNotFoundInModuleManager,
   NormalizationFailed,
+  FailedOverrideMetaAfterStage1,
+  CannotReinitInjectorAfterStage1,
 } from '#error/core-errors.js';
 
 export * from '#di/errors.js';

@@ -35,6 +35,7 @@ import {
   CannotResolveCollisionForMultiProviderPerApp,
   ProvidersPerAppMissingTokenName,
   ProvidersCollision,
+  FailedOverrideMetaAfterStage1,
 } from '#errors';
 
 export class BaseAppInitializer {
@@ -52,7 +53,7 @@ export class BaseAppInitializer {
    */
   bootstrapProvidersPerApp() {
     this.baseMeta = this.moduleManager.getBaseMeta('root', true);
-    this.perAppService.providers = [];
+    this.perAppService = new PerAppService();
     this.prepareProvidersPerApp();
     this.addDefaultProvidersPerApp();
     this.createInjectorAndSetLogMediator();
@@ -105,7 +106,7 @@ export class BaseAppInitializer {
     const rootModuleName = this.moduleManager.getBaseMeta('root', true).name;
     const resolvedProviders: Provider[] = [];
     this.baseMeta.resolvedCollisionsPerApp.forEach(([token, module]) => {
-      const moduleName = getDebugClassName(module) || '""';
+      const moduleName = getDebugClassName(module) || 'unknown';
       const tokenName = token.name || token;
       const baseMeta = this.moduleManager.getBaseMeta(module);
       if (!baseMeta) {
@@ -133,9 +134,8 @@ export class BaseAppInitializer {
     });
     const { extensionCounters, mMetadataPerMod2 } = deepModulesImporter.importModulesDeep();
     await this.handleExtensions(mMetadataPerMod2, extensionCounters);
-    const injectorPerApp = this.perAppService.reinitInjector();
-    this.log = injectorPerApp.get(SystemLogMediator) as SystemLogMediator;
-    return injectorPerApp;
+    this.log = this.perAppService.injector.get(SystemLogMediator) as SystemLogMediator;
+    return this.perAppService.injector;
   }
 
   async reinit(autocommit: boolean = true): Promise<void | Error> {
@@ -294,10 +294,22 @@ export class BaseAppInitializer {
       try {
         this.overrideMetaAfterStage1(baseMeta.modRefId, baseMeta);
         baseMeta.initMeta.forEach((meta) => this.overrideMetaAfterStage1(baseMeta.modRefId, meta));
+      } catch (err: any) {
+        const debugModuleName = getDebugClassName(modRefId) || 'unknown';
+        throw new FailedOverrideMetaAfterStage1(debugModuleName, err);
+      }
+    }
+
+    // After the extensions have added new providers, injectorPerApp needs to be recreated one last time.
+    this.perAppService.reinitInjector();
+    this.perAppService.close();
+
+    for (const [modRefId, { baseMeta }] of mMetadataPerMod2) {
+      try {
         const injectorPerMod = await this.initModuleAndGetInjectorPerMod(baseMeta);
         this.moduleManager.setInjectorPerMod(modRefId, injectorPerMod);
       } catch (err: any) {
-        const debugModuleName = getDebugClassName(modRefId) || '""';
+        const debugModuleName = getDebugClassName(modRefId) || 'unknown';
         throw new FailedCreateInjectorPerMod(debugModuleName, err);
       }
     }
@@ -311,7 +323,7 @@ export class BaseAppInitializer {
           const injectorPerMod = this.moduleManager.getInjectorPerMod(modRefId);
           await ext.stage2(injectorPerMod);
         } catch (err: any) {
-          const debugModuleName = getDebugClassName(modRefId) || '""';
+          const debugModuleName = getDebugClassName(modRefId) || 'unknown';
           throw new FailedStage2(debugModuleName, ext.constructor.name, err);
         }
       }
@@ -325,7 +337,7 @@ export class BaseAppInitializer {
           }
           await ext.stage3();
         } catch (err: any) {
-          const debugModuleName = getDebugClassName(modRefId) || '""';
+          const debugModuleName = getDebugClassName(modRefId) || 'unknown';
           throw new FailedStage3(debugModuleName, ext.constructor.name, err);
         }
       }
