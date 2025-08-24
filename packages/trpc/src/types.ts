@@ -1,5 +1,5 @@
-import { BaseAppOptions, InjectionToken } from '@ditsmod/core';
-import { AnyTRPCRouter } from '@trpc/server';
+import { AnyObj, BaseAppOptions, InjectionToken } from '@ditsmod/core';
+import type { AnyTRPCRouter, initTRPC } from '@trpc/server';
 import {
   NodeHTTPCreateContextFnOptions,
   NodeHTTPHandlerOptions,
@@ -26,3 +26,4 @@ export type TrcpCreateCtxOpts = NodeHTTPCreateContextFnOptions<NodeHTTPRequest, 
 export type RawRequest = http.IncomingMessage | Http2ServerRequest;
 export type RawResponse = http.ServerResponse | Http2ServerResponse;
 export type RequestListener = (request: RawRequest, response: RawResponse) => void | Promise<void>;
+export type TrcpRootObject<T extends AnyObj> = ReturnType<ReturnType<typeof initTRPC.context<T>>['create']>;

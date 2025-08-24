@@ -1,4 +1,4 @@
-import { initTRPC } from '@trpc/server';
+import { TrcpRootObject } from '@ditsmod/trpc';
 import { NodeHTTPRequest, NodeHTTPResponse } from '@trpc/server/adapters/node-http';
 
 type Context = {
@@ -8,4 +8,4 @@ type Context = {
     name: string;
   } | null;
 };
-export type TrcpRootObj = ReturnType<ReturnType<typeof initTRPC.context<Context>>['create']>
+export type TrcpRootObj = TrcpRootObject<Context>;
