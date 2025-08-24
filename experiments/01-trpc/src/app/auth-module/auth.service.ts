@@ -1,16 +1,13 @@
 import { TRPCError } from '@trpc/server';
 import { inject } from '@ditsmod/core';
-import { TrcpCreateCtxOpts, TrcpProcedureFn, TrcpRouterFn, TRPC_PROCEDURE, TRPC_ROUTER } from '@ditsmod/trpc';
+import { TrcpCreateCtxOpts, TrcpRootObj, TRPC_ROOT } from '@ditsmod/trpc';
 
 export class AuthService {
-  constructor(
-    @inject(TRPC_ROUTER) protected router: TrcpRouterFn,
-    @inject(TRPC_PROCEDURE) protected procedure: TrcpProcedureFn,
-  ) {}
+  constructor(@inject(TRPC_ROOT) protected t: TrcpRootObj) {}
 
   getAdminRouter() {
-    return this.router({
-      secret: this.procedure.query(({ ctx }) => {
+    return this.t.router({
+      secret: this.t.procedure.query(({ ctx }) => {
         if (!ctx.user) {
           throw new TRPCError({ code: 'UNAUTHORIZED' });
         }

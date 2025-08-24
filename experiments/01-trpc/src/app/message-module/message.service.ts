@@ -1,4 +1,4 @@
-import { TRPC_ROUTER, TrcpRouterFn, TRPC_PROCEDURE, TrcpProcedureFn } from '@ditsmod/trpc';
+import { TRPC_ROOT, TrcpRootObj } from '@ditsmod/trpc';
 import { inject, injectable } from '@ditsmod/core';
 import z from 'zod';
 
@@ -8,8 +8,7 @@ import { DbService } from '#app/db-module/db.service.js';
 export class MessageService {
   constructor(
     protected db: DbService,
-    @inject(TRPC_ROUTER) protected router: TrcpRouterFn,
-    @inject(TRPC_PROCEDURE) protected procedure: TrcpProcedureFn,
+    @inject(TRPC_ROOT) protected t: TrcpRootObj,
   ) {}
 
   createMessage(text: string) {
@@ -27,14 +26,14 @@ export class MessageService {
   }
 
   getMessageRouter() {
-    return this.router({
-      addMessage: this.procedure.input(z.string()).mutation(({ input }) => {
+    return this.t.router({
+      addMessage: this.t.procedure.input(z.string()).mutation(({ input }) => {
         const msg = this.createMessage(input);
         this.db.messages.push(msg);
-    
+
         return msg;
       }),
-      listMessages: this.procedure.query(() => this.db.messages),
+      listMessages: this.t.procedure.query(() => this.db.messages),
     });
   }
 }
