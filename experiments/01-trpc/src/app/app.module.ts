@@ -11,53 +11,17 @@ import {
   TRPC_PROCEDURE,
   TRPC_MERGE_ROUTERS,
   TRPC_CREATE_CALLER_FACTORY,
-  TrcpRouterFn,
-  TrcpProcedureFn,
 } from './root-rpc-object.js';
 import { TrcpOpts } from '../adapter/types.js';
 import { awaitTokens } from './utils.js';
 import { PostService } from './post-module/post.service.js';
 import { AuthModule } from './auth-module/auth.module.js';
 import { AuthService } from './auth-module/auth.service.js';
-
-const router = t.router;
-const publicProcedure = t.procedure;
-
-// --------- create procedures etc
-
-let id = 0;
-
-const db = {
-  posts: [
-    {
-      id: ++id,
-      title: 'hello',
-    },
-  ],
-  messages: [createMessage('initial message')],
-};
-function createMessage(text: string) {
-  const msg = {
-    id: ++id,
-    text,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-  };
-  return msg;
-}
-
-const messageRouter = router({
-  addMessage: publicProcedure.input(z.string()).mutation(({ input }) => {
-    const msg = createMessage(input);
-    db.messages.push(msg);
-
-    return msg;
-  }),
-  listMessages: publicProcedure.query(() => db.messages),
-});
+import { MessageModule } from './message-module/message.module.js';
+import { MessageService } from './message-module/message.service.js';
 
 @rootModule({
-  imports: [PostModule, AuthModule],
+  imports: [PostModule, AuthModule, MessageModule],
   providersPerApp: [
     PreRouter,
     { token: TRPC_ROOT, useValue: t },
@@ -72,10 +36,9 @@ export class AppModule implements OnModuleInit {
   constructor(
     private injectorPerMod: Injector,
     private preRouter: PreRouter,
+    private messageService: MessageService,
     private postService: PostService,
     private authService: AuthService,
-    @inject(TRPC_ROUTER) private router: TrcpRouterFn,
-    @inject(TRPC_PROCEDURE) protected procedure: TrcpProcedureFn,
   ) {}
 
   onModuleInit(): void | Promise<void> {
@@ -97,15 +60,15 @@ export class AppModule implements OnModuleInit {
 
   getAppRouter() {
     // root router to call
-    return this.router({
+    return t.router({
       // merge predefined routers
       admin: this.authService.getAdminRouter(),
       post: this.postService.getPostRouter(),
-      message: messageRouter,
+      message: this.messageService.getMessageRouter(),
       // or individual procedures
-      hello: this.procedure.input(z.string().nullish()).query(({ input, ctx }) => {
+      hello: t.procedure.input(z.string().nullish()).query(({ input, ctx }) => {
         return `hello ${input ?? ctx.user?.name ?? 'world'}`;
-      })
+      }),
     });
   }
 }

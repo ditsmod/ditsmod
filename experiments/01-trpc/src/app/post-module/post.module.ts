@@ -1,10 +1,12 @@
 import { featureModule } from '@ditsmod/core';
 
-import { Db } from './db.js';
 import { PostService } from './post.service.js';
+import { MessageModule } from '#app/message-module/message.module.js';
+import { DbModule } from '#app/db-module/db.module.js';
 
 @featureModule({
-  providersPerMod: [Db, PostService],
-  exports: [Db, PostService],
+  imports: [MessageModule, DbModule],
+  providersPerMod: [PostService],
+  exports: [PostService],
 })
 export class PostModule {}

@@ -2,15 +2,19 @@ import { inject, injectable } from '@ditsmod/core';
 import { z } from 'zod';
 
 import { TrcpProcedureFn, TrcpRouterFn, TRPC_PROCEDURE, TRPC_ROUTER } from '#app/root-rpc-object.js';
-import { Db } from './db.js';
+import { DbService } from '../db-module/db.service.js';
+import { MessageService } from '#app/message-module/message.service.js';
 
 @injectable()
 export class PostService {
   constructor(
-    protected db: Db,
+    messageService: MessageService,
+    protected db: DbService,
     @inject(TRPC_ROUTER) protected router: TrcpRouterFn,
     @inject(TRPC_PROCEDURE) protected procedure: TrcpProcedureFn,
-  ) {}
+  ) {
+    messageService.setInitialMessage();
+  }
 
   getPostRouter() {
     return this.router({
