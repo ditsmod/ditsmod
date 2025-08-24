@@ -19,13 +19,12 @@ export class TrpcService {
     buildRouter: T,
     createContext?: NodeHTTPCreateContextFn<AnyRouter, NodeHTTPRequest, NodeHTTPResponse>,
   ) {
-    const injectorPerApp = this.injectorPerMod.parent!;
     const router = this.t.router(buildRouter);
-    const tRcpOpts = {
+    const injectorPerApp = this.injectorPerMod.parent!;
+    injectorPerApp.setByToken(TRPC_OPTS, {
       router,
       createContext,
-    };
-    injectorPerApp.setByToken(TRPC_OPTS, tRcpOpts);
+    });
 
     this.preRouter.setTrpcRequestListener();
     return router;
