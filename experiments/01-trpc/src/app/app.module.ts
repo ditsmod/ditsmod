@@ -1,9 +1,8 @@
 import { Injector, OnModuleInit, rootModule } from '@ditsmod/core';
-import { PreRouter, TRPC_OPTS, TrcpOpts, t } from '@ditsmod/trpc';
+import { PreRouter, TRPC_OPTS, TrcpOpts, TrpcRootModule, t } from '@ditsmod/trpc';
 import z from 'zod';
 
 import { PostModule } from './post-module/post.module.js';
-import { TrpcRootModule } from './utils.js';
 import { PostService } from './post-module/post.service.js';
 import { AuthModule } from './auth-module/auth.module.js';
 import { AuthService } from './auth-module/auth.service.js';
