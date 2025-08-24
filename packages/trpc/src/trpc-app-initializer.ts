@@ -1,10 +1,9 @@
-import { BaseAppInitializer } from '@ditsmod/core';
+import { BaseAppInitializer, awaitTokens } from '@ditsmod/core';
 
 import { RequestListener, SERVER } from './types.js';
 import { PreRouter } from './pre-router.js';
 import { HttpServer } from './server-options.js';
 import { t, TRPC_OPTS, TRPC_ROOT } from './constants.js';
-import { awaitTokens } from './utils.js';
 
 export class TrpcAppInitializer extends BaseAppInitializer {
   protected preRouter: PreRouter;

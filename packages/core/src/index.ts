@@ -1,6 +1,7 @@
 export * from '#di';
 export * from '@ts-stack/chain-error';
 
+export { awaitTokens } from '#utils/await-tokens.js';
 export { defaultProvidersPerMod } from '#init/default-providers-per-mod.js';
 export { BaseAppInitializer } from '#init/base-app-initializer.js';
 export { ShallowImports, BaseImportRegistry } from '#init/types.js';

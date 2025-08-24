@@ -1,16 +1,16 @@
-import { AnyObj, BaseAppOptions, InjectionToken } from '@ditsmod/core';
+import { type AnyObj, BaseAppOptions, InjectionToken } from '@ditsmod/core';
 import type { AnyTRPCRouter, initTRPC } from '@trpc/server';
-import {
+import type {
   NodeHTTPCreateContextFnOptions,
   NodeHTTPHandlerOptions,
   NodeHTTPRequest,
   NodeHTTPResponse,
 } from '@trpc/server/adapters/node-http';
 import type * as http from 'node:http';
-import { Http2ServerRequest, Http2ServerResponse } from 'http2';
+import type { Http2ServerRequest, Http2ServerResponse } from 'http2';
 
-import { HttpModule } from './http-module.js';
-import { ServerOptions } from './server-options.js';
+import type { HttpModule } from './http-module.js';
+import type { ServerOptions } from './server-options.js';
 
 export class TrpcAppOptions extends BaseAppOptions {
   httpModule?: HttpModule | null = null;
