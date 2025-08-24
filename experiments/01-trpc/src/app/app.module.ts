@@ -1,10 +1,9 @@
 import { inject, Injector, OnModuleInit, rootModule } from '@ditsmod/core';
-import { TRPCError } from '@trpc/server';
 import z from 'zod';
 
 import { PostModule } from './post-module/post.module.js';
-import { PreRouter } from '../adapters/ditsmod/pre-router.js';
-import { TRPC_OPTS } from '../adapters/ditsmod/constants.js';
+import { PreRouter } from '../adapter/pre-router.js';
+import { TRPC_OPTS } from '../adapter/constants.js';
 import {
   TRPC_ROOT,
   t,
@@ -15,7 +14,7 @@ import {
   TrcpRouterFn,
   TrcpProcedureFn,
 } from './root-rpc-object.js';
-import { TrcpOpts } from '../adapters/ditsmod/types.js';
+import { TrcpOpts } from '../adapter/types.js';
 import { awaitTokens } from './utils.js';
 import { PostService } from './post-module/post.service.js';
 import { AuthModule } from './auth-module/auth.module.js';
@@ -100,26 +99,13 @@ export class AppModule implements OnModuleInit {
     // root router to call
     return this.router({
       // merge predefined routers
+      admin: this.authService.getAdminRouter(),
       post: this.postService.getPostRouter(),
       message: messageRouter,
       // or individual procedures
       hello: this.procedure.input(z.string().nullish()).query(({ input, ctx }) => {
         return `hello ${input ?? ctx.user?.name ?? 'world'}`;
-      }),
-      // or inline a router
-      admin: this.router({
-        secret: this.procedure.query(({ ctx }) => {
-          if (!ctx.user) {
-            throw new TRPCError({ code: 'UNAUTHORIZED' });
-          }
-          if (ctx.user?.name !== 'alex') {
-            throw new TRPCError({ code: 'FORBIDDEN' });
-          }
-          return {
-            secret: 'sauce',
-          };
-        }),
-      }),
+      })
     });
   }
 }
