@@ -21,30 +21,22 @@ export class PreRouter {
   };
 
   readonly trpcRequestListener: RequestListener = async (req, res) => {
-    const [fullPath, search] = (req.url || '').split('?');
-    const method = req.method as HttpMethod;
-
-    if (fullPath == '/') {
-      res.end('hello');
-    } else if (fullPath?.startsWith('/trpc')) {
-      const path = fullPath.slice(fullPath.lastIndexOf('/') + 1);
-      try {
-        await nodeHTTPRequestHandler({
-          ...this.opts,
-          req,
-          res,
-          path,
-        });
-      } catch (err) {
-        internal_exceptionHandler({
-          req,
-          res,
-          path,
-          ...this.opts,
-        })(err);
-      }
-    } else {
-      res.end(JSON.stringify({ method, path: fullPath, search }));
+    const [fullPath] = (req.url || '').split('?');
+    const path = fullPath.slice(fullPath.lastIndexOf('/') + 1);
+    try {
+      await nodeHTTPRequestHandler({
+        ...this.opts,
+        req,
+        res,
+        path,
+      });
+    } catch (err) {
+      internal_exceptionHandler({
+        req,
+        res,
+        path,
+        ...this.opts,
+      })(err);
     }
   };
 
