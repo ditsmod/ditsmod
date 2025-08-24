@@ -7,10 +7,12 @@
     "paths": {
       "#app/*": ["./src/app/*"],
       "@ditsmod/core": ["../../packages/core/src/index.js"],
+      "@ditsmod/trpc": ["../../packages/trpc/src/index.js"],
     }
   },
   "include": ["src", "e2e"],
   "references": [
     { "path": "../../packages/core/tsconfig.build.json" },
+    { "path": "../../packages/trpc/tsconfig.build.json" },
   ]
 }

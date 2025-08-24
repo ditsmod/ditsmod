@@ -1,9 +1,8 @@
-import { inject, Injector, OnModuleInit, rootModule } from '@ditsmod/core';
+import { Injector, OnModuleInit, rootModule } from '@ditsmod/core';
+import { PreRouter, TRPC_OPTS, TrcpOpts } from '@ditsmod/trpc';
 import z from 'zod';
 
 import { PostModule } from './post-module/post.module.js';
-import { PreRouter } from '../adapter/pre-router.js';
-import { TRPC_OPTS } from '../adapter/constants.js';
 import {
   TRPC_ROOT,
   t,
@@ -12,7 +11,6 @@ import {
   TRPC_MERGE_ROUTERS,
   TRPC_CREATE_CALLER_FACTORY,
 } from './root-rpc-object.js';
-import { TrcpOpts } from '../adapter/types.js';
 import { awaitTokens, TrpcRootModule } from './utils.js';
 import { PostService } from './post-module/post.service.js';
 import { AuthModule } from './auth-module/auth.module.js';
