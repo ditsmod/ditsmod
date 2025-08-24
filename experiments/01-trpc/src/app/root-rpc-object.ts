@@ -1,4 +1,3 @@
-import { InjectionToken } from '@ditsmod/core';
 import { initTRPC } from '@trpc/server';
 import { NodeHTTPRequest, NodeHTTPResponse } from '@trpc/server/adapters/node-http';
 
@@ -9,7 +8,4 @@ type Context = {
     name: string;
   } | null;
 };
-export type TrcpRootObj = typeof t;
-
-export const t = initTRPC.context<Context>().create();
-export const TRPC_ROOT = new InjectionToken<TrcpRootObj>('TRPC_ROOT');
+export type TrcpRootObj = ReturnType<ReturnType<typeof initTRPC.context<Context>>['create']>

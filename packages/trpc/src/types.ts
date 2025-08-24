@@ -13,7 +13,6 @@ import { HttpModule } from './http-module.js';
 import { ServerOptions } from './server-options.js';
 
 export class TrpcAppOptions extends BaseAppOptions {
-
   httpModule?: HttpModule | null = null;
   serverOptions?: ServerOptions = {};
 }
@@ -21,7 +20,6 @@ export class TrpcAppOptions extends BaseAppOptions {
  * A DI token that allows you to obtain the instance of the server that is serving the current application.
  */
 export const SERVER = new InjectionToken<http.Server>('SERVER');
-
 
 export type TrcpOpts = NodeHTTPHandlerOptions<AnyTRPCRouter, NodeHTTPRequest, NodeHTTPResponse>;
 export type TrcpCreateCtxOpts = NodeHTTPCreateContextFnOptions<NodeHTTPRequest, NodeHTTPResponse>;

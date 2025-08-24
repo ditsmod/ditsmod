@@ -1,8 +1,9 @@
-import { TRPC_ROOT, TrcpRootObj } from '@ditsmod/trpc';
+import { TRPC_ROOT } from '@ditsmod/trpc';
 import { inject, injectable } from '@ditsmod/core';
 import z from 'zod';
 
 import { DbService } from '#app/db-module/db.service.js';
+import { TrcpRootObj } from '#app/root-rpc-object.js';
 
 @injectable()
 export class MessageService {

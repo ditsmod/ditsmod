@@ -3,9 +3,8 @@ import { BaseAppInitializer } from '@ditsmod/core';
 import { RequestListener, SERVER } from './types.js';
 import { PreRouter } from './pre-router.js';
 import { HttpServer } from './server-options.js';
-import { TRPC_OPTS } from './constants.js';
+import { t, TRPC_OPTS, TRPC_ROOT } from './constants.js';
 import { awaitTokens } from './utils.js';
-import { TRPC_ROOT, t } from './root-rpc-object.js';
 
 export class TrpcAppInitializer extends BaseAppInitializer {
   protected preRouter: PreRouter;

@@ -1,5 +1,5 @@
-import { Injector, OnModuleInit, rootModule } from '@ditsmod/core';
-import { PreRouter, TRPC_OPTS, TrcpOpts, TrpcRootModule, t } from '@ditsmod/trpc';
+import { inject, Injector, OnModuleInit, rootModule } from '@ditsmod/core';
+import { PreRouter, TRPC_OPTS, TRPC_ROOT, TrcpOpts, TrpcRootModule } from '@ditsmod/trpc';
 import z from 'zod';
 
 import { PostModule } from './post-module/post.module.js';
@@ -8,6 +8,7 @@ import { AuthModule } from './auth-module/auth.module.js';
 import { AuthService } from './auth-module/auth.service.js';
 import { MessageModule } from './message-module/message.module.js';
 import { MessageService } from './message-module/message.service.js';
+import { TrcpRootObj } from './root-rpc-object.js';
 
 @rootModule({
   imports: [PostModule, AuthModule, MessageModule],
@@ -19,6 +20,7 @@ export class AppModule implements OnModuleInit, TrpcRootModule {
     private messageService: MessageService,
     private postService: PostService,
     private authService: AuthService,
+    @inject(TRPC_ROOT) private t: TrcpRootObj,
   ) {}
 
   onModuleInit(): void | Promise<void> {
@@ -40,13 +42,13 @@ export class AppModule implements OnModuleInit, TrpcRootModule {
 
   getAppRouter() {
     // root router to call
-    return t.router({
+    return this.t.router({
       // merge predefined routers
       admin: this.authService.getAdminRouter(),
       post: this.postService.getPostRouter(),
       message: this.messageService.getMessageRouter(),
       // or individual procedures
-      hello: t.procedure.input(z.string().nullish()).query(({ input, ctx }) => {
+      hello: this.t.procedure.input(z.string().nullish()).query(({ input, ctx }) => {
         return `hello ${input ?? ctx.user?.name ?? 'world'}`;
       }),
     });
