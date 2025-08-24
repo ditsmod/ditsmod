@@ -10,5 +10,5 @@ export class DbService {
       title: 'hello',
     },
   ];
-  messages: ReturnType<typeof MessageService.prototype.createMessage>[] = [] as any;
+  messages: ReturnType<typeof MessageService.prototype.createMessage>[] = [];
 }
