@@ -886,14 +886,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ditsmod/trpc@workspace:packages/trpc"
   dependencies:
-    "@trpc/client": "npm:^11.5.0"
-    "@trpc/server": "npm:^11.5.0"
     jest: "npm:^30.0.0"
     npm-run-all: "npm:*"
     typescript: "npm:^5.9.2"
-    zod: "npm:^4.1.0"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.4
+    "@trpc/server": ^11.5.0
   languageName: unknown
   linkType: soft
 

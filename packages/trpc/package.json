@@ -36,13 +36,9 @@
   ],
   "author": "",
   "license": "MIT",
-  "dependencies": {
-    "@trpc/client": "^11.5.0",
-    "@trpc/server": "^11.5.0",
-    "zod": "^4.1.0"
-  },
   "peerDependencies": {
-    "@ditsmod/core": "^3.0.0-alpha.4"
+    "@ditsmod/core": "^3.0.0-alpha.4",
+    "@trpc/server": "^11.5.0"
   },
   "devDependencies": {
     "jest": "^30.0.0",
