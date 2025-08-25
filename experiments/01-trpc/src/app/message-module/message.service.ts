@@ -3,7 +3,7 @@ import { inject, injectable } from '@ditsmod/core';
 import z from 'zod';
 
 import { DbService } from '#app/db-module/db.service.js';
-import { TrcpRootObj } from '#app/root-rpc-object.js';
+import { TrcpRootObj } from '#app/types.js';
 
 @injectable()
 export class MessageService {

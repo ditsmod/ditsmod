@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 import { DbService } from '../db-module/db.service.js';
 import { MessageService } from '#app/message-module/message.service.js';
-import { TrcpRootObj } from '#app/root-rpc-object.js';
+import { TrcpRootObj } from '#app/types.js';
 
 @injectable()
 export class PostService {
