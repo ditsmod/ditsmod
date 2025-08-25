@@ -6,6 +6,7 @@
     "tsBuildInfoFile": "dist/ts.tsbuildinfo",
     "paths": {
       "#app/*": ["./src/app/*"],
+      "#modules/*": ["./src/app/modules/*"],
       "@ditsmod/core": ["../../packages/core/src/index.js"],
       "@ditsmod/trpc": ["../../packages/trpc/src/index.js"],
     }

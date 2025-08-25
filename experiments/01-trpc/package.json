@@ -16,7 +16,8 @@
     "build": "tsc -b tsconfig.build.json"
   },
   "imports": {
-    "#app/*": "./dist/app/*"
+    "#app/*": "./dist/app/*",
+    "#modules/*": "./dist/app/modules/*"
   },
   "devDependencies": {
     "jest": "^30.0.0",

@@ -1,12 +1,12 @@
 import { rootModule } from '@ditsmod/core';
 import { TrpcRootModule, TrpcService } from '@ditsmod/trpc';
 
-import { PostModule } from './modules/post/post.module.js';
-import { PostService } from './modules/post/post.service.js';
-import { AuthModule } from './modules/auth/auth.module.js';
-import { AuthService } from './modules/auth/auth.service.js';
-import { MessageModule } from './modules/message/message.module.js';
-import { MessageService } from './modules/message/message.service.js';
+import { PostModule } from '#modules/post/post.module.js';
+import { PostService } from '#modules/post/post.service.js';
+import { AuthModule } from '#modules/auth/auth.module.js';
+import { AuthService } from '#modules/auth/auth.service.js';
+import { MessageModule } from '#modules/message/message.module.js';
+import { MessageService } from '#modules/message/message.service.js';
 
 @rootModule({
   imports: [PostModule, AuthModule, MessageModule],
