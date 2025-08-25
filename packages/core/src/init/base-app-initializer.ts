@@ -37,6 +37,7 @@ import {
   ProvidersCollision,
   FailedOverrideMetaAfterStage1,
 } from '#errors';
+import { OnModuleInit } from './hooks.js';
 
 export class BaseAppInitializer {
   protected perAppService = new PerAppService();
@@ -349,7 +350,7 @@ export class BaseAppInitializer {
     const extendedProvidersPerMod = [Mod, ...baseMeta.providersPerMod];
     const injectorPerApp = this.perAppService.injector;
     const injectorPerMod = injectorPerApp.resolveAndCreateChild(extendedProvidersPerMod, 'Mod');
-    await injectorPerMod.get(Mod).onModuleInit?.(); // Instantiate the class of the module and call the hook.
+    await (injectorPerMod.get(Mod) as Partial<OnModuleInit>).onModuleInit?.(); // Instantiate the class of the module and call the hook.
     return injectorPerMod;
   }
 
