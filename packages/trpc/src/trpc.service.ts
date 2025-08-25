@@ -1,6 +1,4 @@
-import { inject, injectable, Injector } from '@ditsmod/core';
-import { AnyRouter } from '@trpc/server';
-import { NodeHTTPCreateContextFn, NodeHTTPRequest, NodeHTTPResponse } from '@trpc/server/adapters/node-http';
+import { inject, injectable, Injector, Override } from '@ditsmod/core';
 import { CreateRouterOptions } from '@trpc/server/unstable-core-do-not-import';
 
 import { TRPC_OPTS, TRPC_ROOT } from './constants.js';
@@ -18,15 +16,16 @@ export class TrpcService {
   /**
    * Passes tRPC options to DI, creates a tRPC router, and returns it.
    *
-   * @param routerConfig The configuration that will be passed to the tRPC router is `t.router(routerConfig)`.
-   * @param createContext Function for creating tRPC context.
+   * @param options Options for creating
+   * an [HTTP handler](https://trpc.io/docs/server/adapters/standalone#adding-a-handler-to-an-custom-http-server).
    */
   setOptsAndGetAppRouter<T extends CreateRouterOptions>(
-    routerConfig: T,
-    createContext?: NodeHTTPCreateContextFn<AnyRouter, NodeHTTPRequest, NodeHTTPResponse>,
+    options: Override<TrcpOpts, { router?: never }> & { routerConfig: T },
   ) {
-    const router = this.t.router(routerConfig);
-    this.injector.setByToken(TRPC_OPTS, { router, createContext } satisfies TrcpOpts);
+    const router = this.t.router(options.routerConfig);
+    const opts = { ...options } as unknown as TrcpOpts;
+    opts.router = router;
+    this.injector.setByToken(TRPC_OPTS, opts);
     this.preRouter.setTrpcRequestListener();
     return router;
   }

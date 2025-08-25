@@ -1,5 +1,5 @@
-import { HttpMethod, injectable, Injector, SystemLogMediator } from '@ditsmod/core';
-import { internal_exceptionHandler, nodeHTTPRequestHandler } from '@trpc/server/adapters/node-http';
+import { injectable, Injector, SystemLogMediator } from '@ditsmod/core';
+import { createHTTPHandler } from '@trpc/server/adapters/standalone';
 
 import { TRPC_OPTS } from './constants.js';
 import { RequestListener, TrcpOpts } from './types.js';
@@ -13,35 +13,13 @@ export class PreRouter {
     protected systemLogMediator: SystemLogMediator,
   ) {}
 
-  readonly preRequestListener: RequestListener = async (req, res) => {
-    const [fullPath, search] = (req.url || '').split('?');
-    const method = req.method as HttpMethod;
-    res.end(JSON.stringify({ method, path: fullPath, search }));
-  };
-
-  readonly trpcRequestListener: RequestListener = async (req, res) => {
-    const [fullPath] = (req.url || '').split('?');
-    const path = fullPath.slice(fullPath.lastIndexOf('/') + 1);
-    try {
-      await nodeHTTPRequestHandler({
-        ...this.opts,
-        req,
-        res,
-        path,
-      });
-    } catch (err) {
-      internal_exceptionHandler({
-        req,
-        res,
-        path,
-        ...this.opts,
-      })(err);
-    }
+  readonly preRequestListener: RequestListener = (req, res) => {
+    res.end('tRPC is initializing...');
   };
 
   setTrpcRequestListener() {
     this.opts = this.injectorPerApp.get(TRPC_OPTS);
-    this.requestListener = this.trpcRequestListener;
+    this.requestListener = createHTTPHandler(this.opts) as RequestListener;
   }
 
   requestListener: RequestListener = this.preRequestListener;
