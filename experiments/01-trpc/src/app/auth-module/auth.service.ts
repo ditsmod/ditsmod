@@ -1,9 +1,10 @@
 import { TRPCError } from '@trpc/server';
-import { inject } from '@ditsmod/core';
+import { inject, injectable } from '@ditsmod/core';
 import { TrcpCreateCtxOpts, TRPC_ROOT } from '@ditsmod/trpc';
 
 import { TrcpRootObj } from '#app/types.js';
 
+@injectable()
 export class AuthService {
   constructor(@inject(TRPC_ROOT) protected t: TrcpRootObj) {}
 
