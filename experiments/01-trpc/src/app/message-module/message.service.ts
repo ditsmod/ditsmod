@@ -10,7 +10,9 @@ export class MessageService {
   constructor(
     protected db: DbService,
     @inject(TRPC_ROOT) protected t: TrcpRootObj,
-  ) {}
+  ) {
+    db.messages.push(this.createMessage('initial message'));
+  }
 
   createMessage(text: string) {
     const msg = {
@@ -20,10 +22,6 @@ export class MessageService {
       updatedAt: Date.now(),
     };
     return msg;
-  }
-
-  setInitialMessage() {
-    this.db.messages.push(this.createMessage('initial message'));
   }
 
   getMessageRouter() {

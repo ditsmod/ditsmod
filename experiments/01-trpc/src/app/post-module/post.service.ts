@@ -3,18 +3,14 @@ import { inject, injectable } from '@ditsmod/core';
 import { z } from 'zod';
 
 import { DbService } from '../db-module/db.service.js';
-import { MessageService } from '#app/message-module/message.service.js';
 import { TrcpRootObj } from '#app/types.js';
 
 @injectable()
 export class PostService {
   constructor(
-    messageService: MessageService,
     protected db: DbService,
     @inject(TRPC_ROOT) protected t: TrcpRootObj,
-  ) {
-    messageService.setInitialMessage();
-  }
+  ) {}
 
   getPostRouter() {
     return this.t.router({
