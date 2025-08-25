@@ -2,7 +2,7 @@ import { TRPC_ROOT } from '@ditsmod/trpc';
 import { inject, injectable } from '@ditsmod/core';
 import { z } from 'zod';
 
-import { DbService } from '../db-module/db.service.js';
+import { DbService } from '../db/db.service.js';
 import { TrcpRootObj } from '#app/types.js';
 
 @injectable()

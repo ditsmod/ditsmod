@@ -14,7 +14,7 @@ export class AuthService {
         if (!ctx.user) {
           throw new TRPCError({ code: 'UNAUTHORIZED' });
         }
-        if (ctx.user?.name !== 'alex') {
+        if (ctx.user.name !== 'alex') {
           throw new TRPCError({ code: 'FORBIDDEN' });
         }
         return {

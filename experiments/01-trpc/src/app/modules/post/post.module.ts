@@ -1,7 +1,7 @@
 import { featureModule } from '@ditsmod/core';
 
 import { PostService } from './post.service.js';
-import { DbModule } from '#app/db-module/db.module.js';
+import { DbModule } from '#app/modules/db/db.module.js';
 
 @featureModule({
   imports: [DbModule],
