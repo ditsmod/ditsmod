@@ -19,7 +19,7 @@ export class TrpcService {
    * @param options Options for creating
    * an [HTTP handler](https://trpc.io/docs/server/adapters/standalone#adding-a-handler-to-an-custom-http-server).
    */
-  setOptsAndGetAppRouter<T extends CreateRouterOptions>(
+  setOptionsAndGetAppRouter<T extends CreateRouterOptions>(
     options: Override<TrcpOpts, { router?: never }> & { routerConfig: T },
   ) {
     const router = this.t.router(options.routerConfig);

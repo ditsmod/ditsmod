@@ -20,7 +20,7 @@ export class AppModule implements TrpcRootModule {
   ) {}
 
   getAppRouter() {
-    return this.trpcService.setOptsAndGetAppRouter({
+    return this.trpcService.setOptionsAndGetAppRouter({
       basePath: '/trpc/',
       createContext: this.authService.createContext,
       routerConfig: {
