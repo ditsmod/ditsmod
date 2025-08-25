@@ -38,7 +38,7 @@ export class MessageService {
     });
   }
 
-  getHello() {
+  getHelloRouter() {
     return this.t.procedure.input(z.string().nullish()).query(({ input, ctx }) => {
       return `hello ${input ?? ctx.user?.name ?? 'world'}`;
     });

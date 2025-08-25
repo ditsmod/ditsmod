@@ -14,9 +14,9 @@ import { MessageService } from './message-module/message.service.js';
 export class AppModule implements TrpcRootModule {
   constructor(
     private trpcService: TrpcService,
-    private messageService: MessageService,
-    private postService: PostService,
     private authService: AuthService,
+    private postService: PostService,
+    private messageService: MessageService,
   ) {}
 
   getAppRouter() {
@@ -25,7 +25,7 @@ export class AppModule implements TrpcRootModule {
         admin: this.authService.getAdminRouter(),
         post: this.postService.getPostRouter(),
         message: this.messageService.getMessageRouter(),
-        hello: this.messageService.getHello(),
+        hello: this.messageService.getHelloRouter(),
       },
       this.authService.createContext,
     );
