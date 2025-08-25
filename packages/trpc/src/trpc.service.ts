@@ -10,9 +10,9 @@ import { PreRouter } from './pre-router.js';
 @injectable()
 export class TrpcService {
   constructor(
-    private injectorPerMod: Injector,
-    private preRouter: PreRouter,
-    @inject(TRPC_ROOT) private t: TrcpRootObject<any>,
+    protected injector: Injector,
+    protected preRouter: PreRouter,
+    @inject(TRPC_ROOT) protected t: TrcpRootObject<any>,
   ) {}
 
   /**
@@ -26,8 +26,7 @@ export class TrpcService {
     createContext?: NodeHTTPCreateContextFn<AnyRouter, NodeHTTPRequest, NodeHTTPResponse>,
   ) {
     const router = this.t.router(routerConfig);
-    const injectorPerApp = this.injectorPerMod.parent!;
-    injectorPerApp.setByToken(TRPC_OPTS, { router, createContext } satisfies TrcpOpts);
+    this.injector.setByToken(TRPC_OPTS, { router, createContext } satisfies TrcpOpts);
     this.preRouter.setTrpcRequestListener();
     return router;
   }

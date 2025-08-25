@@ -27,11 +27,11 @@ export class TrpcAppInitializer extends BaseAppInitializer {
   protected override addDefaultProvidersPerApp() {
     this.baseMeta.providersPerApp.unshift(
       PreRouter,
+      TrpcService,
       { token: SERVER, useFactory: () => this.server },
       { token: TRPC_ROOT, useValue: t },
       ...awaitTokens(TRPC_OPTS),
     );
-    this.baseMeta.providersPerMod.unshift(TrpcService);
     super.addDefaultProvidersPerApp();
   }
 
