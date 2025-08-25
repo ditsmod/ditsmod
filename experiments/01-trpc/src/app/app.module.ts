@@ -1,4 +1,4 @@
-import { OnModuleInit, rootModule } from '@ditsmod/core';
+import { rootModule } from '@ditsmod/core';
 import { TrpcRootModule, TrpcService } from '@ditsmod/trpc';
 
 import { PostModule } from './post-module/post.module.js';
@@ -11,7 +11,7 @@ import { MessageService } from './message-module/message.service.js';
 @rootModule({
   imports: [PostModule, AuthModule, MessageModule],
 })
-export class AppModule implements OnModuleInit, TrpcRootModule {
+export class AppModule implements TrpcRootModule {
   constructor(
     private trpcService: TrpcService,
     private messageService: MessageService,
@@ -19,12 +19,8 @@ export class AppModule implements OnModuleInit, TrpcRootModule {
     private authService: AuthService,
   ) {}
 
-  onModuleInit(): void | Promise<void> {
-    this.getAppRouter();
-  }
-
   getAppRouter() {
-    return this.trpcService.getAppRouter(
+    return this.trpcService.setOptsAndGetAppRouter(
       {
         admin: this.authService.getAdminRouter(),
         post: this.postService.getPostRouter(),

@@ -4,7 +4,7 @@ import { NodeHTTPCreateContextFn, NodeHTTPRequest, NodeHTTPResponse } from '@trp
 import { CreateRouterOptions } from '@trpc/server/unstable-core-do-not-import';
 
 import { TRPC_OPTS, TRPC_ROOT } from './constants.js';
-import { TrcpRootObject } from './types.js';
+import { TrcpOpts, TrcpRootObject } from './types.js';
 import { PreRouter } from './pre-router.js';
 
 @injectable()
@@ -15,17 +15,19 @@ export class TrpcService {
     @inject(TRPC_ROOT) private t: TrcpRootObject<any>,
   ) {}
 
-  getAppRouter<T extends CreateRouterOptions>(
-    buildRouter: T,
+  /**
+   * Passes tRPC options to DI, creates a tRPC router, and returns it.
+   *
+   * @param routerConfig The configuration that will be passed to the tRPC router is `t.router(routerConfig)`.
+   * @param createContext Function for creating tRPC context.
+   */
+  setOptsAndGetAppRouter<T extends CreateRouterOptions>(
+    routerConfig: T,
     createContext?: NodeHTTPCreateContextFn<AnyRouter, NodeHTTPRequest, NodeHTTPResponse>,
   ) {
-    const router = this.t.router(buildRouter);
+    const router = this.t.router(routerConfig);
     const injectorPerApp = this.injectorPerMod.parent!;
-    injectorPerApp.setByToken(TRPC_OPTS, {
-      router,
-      createContext,
-    });
-
+    injectorPerApp.setByToken(TRPC_OPTS, { router, createContext } satisfies TrcpOpts);
     this.preRouter.setTrpcRequestListener();
     return router;
   }
