@@ -20,7 +20,7 @@ export class TrpcAppInitializer extends BaseAppInitializer {
   protected override async initModuleAndGetInjectorPerMod(baseMeta: BaseMeta): Promise<Injector> {
     const injectorPerMod = await super.initModuleAndGetInjectorPerMod(baseMeta);
     const Mod = getModule(baseMeta.modRefId);
-    (injectorPerMod.get(Mod) as Partial<TrpcRootModule>).getAppRouter?.();
+    (injectorPerMod.get(Mod) as Partial<TrpcRootModule>).getAppRouter?.(injectorPerMod.parent!);
     return injectorPerMod;
   }
 

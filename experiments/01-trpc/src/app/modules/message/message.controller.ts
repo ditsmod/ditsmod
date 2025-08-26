@@ -7,10 +7,7 @@ import { TrpcProc, TrpcRootObj } from '#app/types.js';
 
 @controller()
 export class MessageController {
-  constructor(
-    protected db: DbService,
-    @inject(TRPC_ROOT) protected t: TrpcRootObj,
-  ) {
+  constructor(protected db: DbService) {
     db.messages.push(this.createMessage('initial message'));
   }
 
@@ -25,8 +22,8 @@ export class MessageController {
   }
 
   @trpcRoute()
-  getMessageRouter(@proc() proc1: TrpcProc, @proc() proc2: TrpcProc) {
-    return this.t.router({
+  getMessageRouter(@inject(TRPC_ROOT) t: TrpcRootObj, @proc() proc1: TrpcProc, @proc() proc2: TrpcProc) {
+    return t.router({
       addMessage: proc1.input(z.string()).mutation(({ input }) => {
         const msg = this.createMessage(input);
         this.db.messages.push(msg);

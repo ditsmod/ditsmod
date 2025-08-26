@@ -16,18 +16,17 @@ export class AppModule implements TrpcRootModule {
   constructor(
     private trpcService: TrpcService,
     private authService: AuthService,
-    private inj: Injector,
   ) {}
 
-  getAppRouter() {
+  getAppRouter(inj: Injector) {
     return this.trpcService.setOptionsAndGetAppRouter({
       basePath: '/trpc/',
       createContext: this.authService.createContext,
       routerConfig: {
-        admin: this.inj.get(AuthController.prototype.getAdminRouter),
-        post: this.inj.get(PostController.prototype.getPostRouter),
-        message: this.inj.get(MessageController.prototype.getMessageRouter),
-        hello: this.inj.get(MessageController.prototype.getHelloRouter),
+        admin: inj.get(AuthController.prototype.getAdminRouter),
+        post: inj.get(PostController.prototype.getPostRouter),
+        message: inj.get(MessageController.prototype.getMessageRouter),
+        hello: inj.get(MessageController.prototype.getHelloRouter),
       },
     });
   }
