@@ -1,12 +1,12 @@
-import { TRPC_ROOT } from '@ditsmod/trpc';
-import { inject, injectable } from '@ditsmod/core';
+import { controller, proc, TRPC_ROOT, trpcRoute } from '@ditsmod/trpc';
+import { inject } from '@ditsmod/core';
 import z from 'zod';
 
 import { DbService } from '#modules/db/db.service.js';
-import { TrpcRootObj } from '#app/types.js';
+import { TrpcProc, TrpcRootObj } from '#app/types.js';
 
-@injectable()
-export class MessageService {
+@controller()
+export class MessageController {
   constructor(
     protected db: DbService,
     @inject(TRPC_ROOT) protected t: TrpcRootObj,
@@ -24,20 +24,21 @@ export class MessageService {
     return msg;
   }
 
-  getMessageRouter() {
+  @trpcRoute()
+  getMessageRouter(@proc() proc1: TrpcProc, @proc() proc2: TrpcProc) {
     return this.t.router({
-      addMessage: this.t.procedure.input(z.string()).mutation(({ input }) => {
+      addMessage: proc1.input(z.string()).mutation(({ input }) => {
         const msg = this.createMessage(input);
         this.db.messages.push(msg);
-
         return msg;
       }),
-      listMessages: this.t.procedure.query(() => this.db.messages),
+      listMessages: proc2.query(() => this.db.messages),
     });
   }
 
-  getHelloRouter() {
-    return this.t.procedure.input(z.string().nullish()).query(({ input, ctx }) => {
+  @trpcRoute()
+  getHelloRouter(@proc() proc: TrpcProc) {
+    return proc.input(z.string().nullish()).query(({ input, ctx }) => {
       return `hello ${input ?? ctx.user?.name ?? 'world'}`;
     });
   }

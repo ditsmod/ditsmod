@@ -1,11 +1,12 @@
 import { featureModule } from '@ditsmod/core';
+import { initTrpc } from '@ditsmod/trpc';
 
-import { MessageService } from './message.service.js';
+import { MessageController } from './message.controller.js';
 import { DbModule } from '#app/modules/db/db.module.js';
 
-@featureModule({
+@initTrpc({
   imports: [DbModule],
-  providersPerMod: [MessageService],
-  exports: [MessageService],
+  controllers: [MessageController],
 })
+@featureModule()
 export class MessageModule {}

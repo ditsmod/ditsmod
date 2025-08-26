@@ -1,5 +1,5 @@
 import { injectable } from '@ditsmod/core';
-import type { MessageService } from '#app/modules/message/message.service.js';
+import { MessageController } from '../message/message.controller.js';
 
 @injectable()
 export class DbService {
@@ -10,5 +10,5 @@ export class DbService {
       title: 'hello',
     },
   ];
-  messages: ReturnType<typeof MessageService.prototype.createMessage>[] = [];
+  messages: ReturnType<typeof MessageController.prototype.createMessage>[] = [];
 }

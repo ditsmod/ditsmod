@@ -1,11 +1,12 @@
 import { featureModule } from '@ditsmod/core';
+import { initTrpc } from '@ditsmod/trpc';
 
-import { PostService } from './post.service.js';
+import { PostController } from './post.controller.js';
 import { DbModule } from '#app/modules/db/db.module.js';
 
-@featureModule({
+@initTrpc({
   imports: [DbModule],
-  providersPerMod: [PostService],
-  exports: [PostService],
+  controllers: [PostController],
 })
+@featureModule()
 export class PostModule {}

@@ -1,12 +1,13 @@
-import { rootModule } from '@ditsmod/core';
+import { Injector, rootModule } from '@ditsmod/core';
 import { TrpcRootModule, TrpcService } from '@ditsmod/trpc';
 
 import { PostModule } from '#modules/post/post.module.js';
-import { PostService } from '#modules/post/post.service.js';
 import { AuthModule } from '#modules/auth/auth.module.js';
 import { AuthService } from '#modules/auth/auth.service.js';
 import { MessageModule } from '#modules/message/message.module.js';
-import { MessageService } from '#modules/message/message.service.js';
+import { AuthController } from './modules/auth/auth.controller.js';
+import { MessageController } from './modules/message/message.controller.js';
+import { PostController } from './modules/post/post.controller.js';
 
 @rootModule({
   imports: [PostModule, AuthModule, MessageModule],
@@ -15,8 +16,7 @@ export class AppModule implements TrpcRootModule {
   constructor(
     private trpcService: TrpcService,
     private authService: AuthService,
-    private postService: PostService,
-    private messageService: MessageService,
+    private inj: Injector,
   ) {}
 
   getAppRouter() {
@@ -24,10 +24,10 @@ export class AppModule implements TrpcRootModule {
       basePath: '/trpc/',
       createContext: this.authService.createContext,
       routerConfig: {
-        admin: this.authService.getAdminRouter(),
-        post: this.postService.getPostRouter(),
-        message: this.messageService.getMessageRouter(),
-        hello: this.messageService.getHelloRouter(),
+        admin: this.inj.get(AuthController.prototype.getAdminRouter),
+        post: this.inj.get(PostController.prototype.getPostRouter),
+        message: this.inj.get(MessageController.prototype.getMessageRouter),
+        hello: this.inj.get(MessageController.prototype.getHelloRouter),
       },
     });
   }
