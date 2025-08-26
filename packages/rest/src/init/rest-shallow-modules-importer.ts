@@ -46,7 +46,7 @@ import { ModuleMustHaveControllers } from '#services/rest-errors.js';
  * - merges global and local providers;
  * - checks on providers collisions.
  */
-export class ShallowModulesImporter {
+export class RestShallowModulesImporter {
   protected moduleName: string;
   protected prefixPerMod: string;
   protected guards1: GuardPerMod1[];
@@ -226,7 +226,7 @@ export class ShallowModulesImporter {
       }
       const meta = this.getInitMeta(baseMeta);
       const { prefixPerMod, guards1 } = this.getPrefixAndGuards(modRefId, meta, isImport);
-      const shallowModulesImporter = new ShallowModulesImporter();
+      const shallowModulesImporter = new RestShallowModulesImporter();
       this.unfinishedScanModules.add(modRefId);
       const shallowImportsBase = shallowModulesImporter.importModulesShallow({
         moduleManager: this.moduleManager,

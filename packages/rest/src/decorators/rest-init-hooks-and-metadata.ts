@@ -2,7 +2,7 @@ import { makeClassDecorator, InitHooksAndRawMeta, ModRefId, BaseMeta, InitDecora
 
 import { RestInitRawMeta, RestModuleParams } from '#init/rest-init-raw-meta.js';
 import { RestModuleNormalizer } from '#init/rest-module-normalizer.js';
-import { ShallowModulesImporter } from '#init/rest-shallow-modules-importer.js';
+import { RestShallowModulesImporter } from '#init/rest-shallow-modules-importer.js';
 import {
   DeepModulesImporterConfig,
   ExportGlobalProvidersConfig,
@@ -32,11 +32,11 @@ export class RestInitHooksAndRawMeta extends InitHooksAndRawMeta<RestInitRawMeta
   }
 
   override exportGlobalProviders(config: ExportGlobalProvidersConfig): RestGlobalProviders {
-    return new ShallowModulesImporter().exportGlobalProviders(config);
+    return new RestShallowModulesImporter().exportGlobalProviders(config);
   }
 
   override importModulesShallow(config: ImportModulesShallowConfig): Map<ModRefId, RestShallowImports> {
-    return new ShallowModulesImporter().importModulesShallow(config);
+    return new RestShallowModulesImporter().importModulesShallow(config);
   }
 
   override importModulesDeep(config: DeepModulesImporterConfig) {

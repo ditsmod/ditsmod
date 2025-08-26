@@ -20,14 +20,14 @@ import {
 import { controller } from '#types/controller.js';
 import { AppendsWithParams } from './rest-init-raw-meta.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
-import { ShallowModulesImporter } from './rest-shallow-modules-importer.js';
+import { RestShallowModulesImporter } from './rest-shallow-modules-importer.js';
 import { Level, RestGlobalProviders } from '#types/types.js';
 import { getImportedProviders } from '../utils/get-imports.js';
 import { ModuleMustHaveControllers } from '#services/rest-errors.js';
 import { ResolvingCollisionsNotExistsOnThisLevel } from '@ditsmod/core/errors';
 
 @injectable()
-class MockShallowModulesImporter extends ShallowModulesImporter {
+class MockShallowModulesImporter extends RestShallowModulesImporter {
   declare prefixPerMod: string;
   override moduleName = 'MockModule';
   override baseMeta = new BaseMeta();
