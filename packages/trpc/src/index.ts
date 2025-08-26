@@ -1,4 +1,5 @@
 export { proc } from './decorators/proc.js';
+export { trpcRoute } from './decorators/trpc-route.js';
 export { controller } from './decorators/controller.js';
 export { initTrpc } from './decorators/trpc-init-hooks-and-metadata.js';
 export { TRPC_ROOT, TRPC_OPTS } from './constants.js';
@@ -7,6 +8,7 @@ export { TrpcAppInitializer } from './trpc-app-initializer.js';
 export { TrpcApplication } from './trpc-application.js';
 export { TrpcRootModule } from './utils.js';
 export { TrpcService } from './trpc.service.js';
+export { TrpcExtension } from './extensions/trpc-extension.js';
 export {
   SERVER,
   RawRequest,

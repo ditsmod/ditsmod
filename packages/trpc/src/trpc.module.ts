@@ -1,5 +1,5 @@
 import { featureModule } from '@ditsmod/core';
-import { MyExtension } from './extensions/my-extension.js';
+import { TrpcExtension } from './extensions/trpc-extension.js';
 
-@featureModule({ extensions: [MyExtension] })
+@featureModule({ extensions: [{ extension: TrpcExtension, exportOnly: true }] })
 export class TrpcModule {}
