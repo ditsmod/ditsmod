@@ -71,6 +71,10 @@ async function main() {
   const msgs = await trpc.message.listMessages.query();
   console.log('msgs', msgs);
 
+  const addMessageResult = await trpc.message.addMessage.mutate('one more message!');
+  
+  console.log('addMessageResult', addMessageResult);
+
   console.log('👌 should be a clean exit if everything is working right');
 }
 

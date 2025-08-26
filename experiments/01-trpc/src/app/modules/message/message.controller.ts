@@ -7,9 +7,7 @@ import { TrpcProc, TrpcRootObj } from '#app/types.js';
 
 @controller()
 export class MessageController {
-  constructor(protected db: DbService) {
-    db.messages.push(this.createMessage('initial message'));
-  }
+  constructor(protected db: DbService) {}
 
   createMessage(text: string) {
     const msg = {
