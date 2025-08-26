@@ -21,9 +21,9 @@ export class TrpcAppOptions extends BaseAppOptions {
  */
 export const SERVER = new InjectionToken<http.Server>('SERVER');
 
-export type TrcpOpts = CreateHTTPHandlerOptions<AnyRouter>;
-export type TrcpCreateCtxOpts = NodeHTTPCreateContextFnOptions<NodeHTTPRequest, NodeHTTPResponse>;
+export type TrpcOpts = CreateHTTPHandlerOptions<AnyRouter>;
+export type TrpcCreateCtxOpts = NodeHTTPCreateContextFnOptions<NodeHTTPRequest, NodeHTTPResponse>;
 export type RawRequest = http.IncomingMessage | Http2ServerRequest;
 export type RawResponse = http.ServerResponse | Http2ServerResponse;
 export type RequestListener = (request: RawRequest, response: RawResponse) => void | Promise<void>;
-export type TrcpRootObject<T extends AnyObj> = ReturnType<ReturnType<typeof initTRPC.context<T>>['create']>;
+export type TrpcRootObject<T extends AnyObj> = ReturnType<ReturnType<typeof initTRPC.context<T>>['create']>;

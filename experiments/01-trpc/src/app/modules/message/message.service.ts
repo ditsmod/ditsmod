@@ -3,13 +3,13 @@ import { inject, injectable } from '@ditsmod/core';
 import z from 'zod';
 
 import { DbService } from '#modules/db/db.service.js';
-import { TrcpRootObj } from '#app/types.js';
+import { TrpcRootObj } from '#app/types.js';
 
 @injectable()
 export class MessageService {
   constructor(
     protected db: DbService,
-    @inject(TRPC_ROOT) protected t: TrcpRootObj,
+    @inject(TRPC_ROOT) protected t: TrpcRootObj,
   ) {
     db.messages.push(this.createMessage('initial message'));
   }

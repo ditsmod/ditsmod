@@ -2,11 +2,11 @@ import { injectable, Injector, SystemLogMediator } from '@ditsmod/core';
 import { createHTTPHandler } from '@trpc/server/adapters/standalone';
 
 import { TRPC_OPTS } from './constants.js';
-import { RequestListener, TrcpOpts } from './types.js';
+import { RequestListener, TrpcOpts } from './types.js';
 
 @injectable()
 export class PreRouter {
-  protected opts: TrcpOpts;
+  protected opts: TrpcOpts;
 
   constructor(
     protected injectorPerApp: Injector,

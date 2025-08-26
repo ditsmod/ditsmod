@@ -1,4 +1,4 @@
-import { TrcpRootObject } from '@ditsmod/trpc';
+import { TrpcRootObject } from '@ditsmod/trpc';
 import { NodeHTTPRequest, NodeHTTPResponse } from '@trpc/server/adapters/node-http';
 
 type Context = {
@@ -8,4 +8,4 @@ type Context = {
     name: string;
   } | null;
 };
-export type TrcpRootObj = TrcpRootObject<Context>;
+export type TrpcRootObj = TrpcRootObject<Context>;

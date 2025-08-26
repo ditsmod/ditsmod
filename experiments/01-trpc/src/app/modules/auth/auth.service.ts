@@ -1,12 +1,12 @@
 import { TRPCError } from '@trpc/server';
 import { inject, injectable } from '@ditsmod/core';
-import { TrcpCreateCtxOpts, TRPC_ROOT } from '@ditsmod/trpc';
+import { TrpcCreateCtxOpts, TRPC_ROOT } from '@ditsmod/trpc';
 
-import { TrcpRootObj } from '#app/types.js';
+import { TrpcRootObj } from '#app/types.js';
 
 @injectable()
 export class AuthService {
-  constructor(@inject(TRPC_ROOT) protected t: TrcpRootObj) {}
+  constructor(@inject(TRPC_ROOT) protected t: TrpcRootObj) {}
 
   getAdminRouter() {
     return this.t.router({
@@ -24,7 +24,7 @@ export class AuthService {
     });
   }
 
-  createContext = ({ req, res }: TrcpCreateCtxOpts) => {
+  createContext = ({ req, res }: TrpcCreateCtxOpts) => {
     const getUser = () => {
       if (req.headers.authorization !== 'secret') {
         return null;

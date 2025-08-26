@@ -1,3 +1,4 @@
+export { proc } from './decorators/proc.js';
 export { TRPC_ROOT, TRPC_OPTS } from './constants.js';
 export { PreRouter } from './pre-router.js';
 export { TrpcAppInitializer } from './trpc-app-initializer.js';
@@ -8,8 +9,8 @@ export {
   SERVER,
   RawRequest,
   RawResponse,
-  TrcpCreateCtxOpts,
-  TrcpOpts,
+  TrpcCreateCtxOpts,
+  TrpcOpts,
   TrpcAppOptions,
-  TrcpRootObject,
+  TrpcRootObject,
 } from './types.js';
