@@ -13,6 +13,9 @@ export class InvalidGuard extends CustomError {
     });
   }
 }
+/**
+ * `Detected duplicate controllers - ${controllersList}`.
+ */
 export class DuplicateOfControllers extends CustomError {
   constructor(controllersList: string) {
     super({
