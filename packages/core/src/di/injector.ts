@@ -1,5 +1,5 @@
 import { AnyFn } from '#types/mix.js';
-import { fromSelf, inject, optional, skipSelf } from './decorators.js';
+import { fromSelf, inject, InjectTransformResult, optional, skipSelf } from './decorators.js';
 import {
   FailedCreateFactoryProvider,
   CyclicDependency,
@@ -364,8 +364,8 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       if (paramsItem instanceof DecoratorAndValue) {
         const { decorator } = paramsItem;
         if (decorator === inject) {
-          token = paramsItem.value.token;
-          ctx = paramsItem.value.ctx;
+          token = (paramsItem.value as InjectTransformResult).token;
+          ctx = (paramsItem.value as InjectTransformResult).ctx;
         } else if (decorator === optional) {
           isOptional = true;
         } else if (decorator === fromSelf || decorator === skipSelf) {

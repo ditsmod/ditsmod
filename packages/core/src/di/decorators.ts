@@ -37,11 +37,18 @@ const injector = Injector.resolveAndCreate([Engine, Car]);
 expect(injector.get(Car).engine instanceof Engine).toBe(true);
 ```
    */
-export const inject: InjectDecorator = makeParamDecorator((token, ctx?) => ({ token, ctx }));
+export const inject: InjectDecorator = makeParamDecorator(
+  (token, ctx?) => ({ token, ctx }) satisfies InjectTransformResult,
+);
 
 export interface InjectDecorator {
   (token: NonNullable<unknown>): any;
   <T extends NonNullable<unknown>>(token: NonNullable<unknown>, ctx: T): any;
+}
+
+export interface InjectTransformResult {
+  token: NonNullable<unknown>;
+  ctx?: NonNullable<unknown>;
 }
 
 /**
