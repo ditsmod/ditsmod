@@ -1,12 +1,8 @@
-import { inject, injectable } from '@ditsmod/core';
-import { TrpcCreateCtxOpts, TRPC_ROOT } from '@ditsmod/trpc';
-
-import { TrpcRootObj } from '#app/types.js';
+import { injectable } from '@ditsmod/core';
+import { TrpcCreateCtxOpts } from '@ditsmod/trpc';
 
 @injectable()
 export class AuthService {
-  constructor(@inject(TRPC_ROOT) protected t: TrpcRootObj) {}
-
   createContext = ({ req, res }: TrpcCreateCtxOpts) => {
     const getUser = () => {
       if (req.headers.authorization !== 'secret') {
