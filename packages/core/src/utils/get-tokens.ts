@@ -4,7 +4,17 @@ import { normalizeProviders } from './ng-utils.js';
 import { isProvider } from './type-guards.js';
 
 export function getToken(provider: Provider): any {
-  return normalizeProviders([provider]).map((p) => p.token)[0];
+  return normalizeProviders([provider]).map((p) => {
+    if (p.token) {
+      return p.token;
+    } else if (isFactoryProvider(p)) {
+      if (Array.isArray(p.useFactory)) {
+        return p.useFactory[1];
+      } else {
+        return p.useFactory;
+      }
+    }
+  })[0];
 }
 
 export function getTokens<T = any>(providers: Provider[] | ReadonlyArray<Provider>): T[] {
