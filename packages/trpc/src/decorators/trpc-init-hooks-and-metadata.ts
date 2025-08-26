@@ -75,7 +75,7 @@ export interface TrpcModuleParams2 extends BaseTrpcModuleParams {
 }
 
 /**
- * Metadata for the `initTrpc` decorator, which adds TRPC metadata to a `featureModule` or `rootModule`.
+ * Metadata for the `initTrpcModule` decorator, which adds TRPC metadata to a `featureModule` or `rootModule`.
  */
 export interface TrpcInitRawMeta extends BaseInitRawMeta<TrpcModuleParams> {
   /**
@@ -105,7 +105,7 @@ export interface TrpcInitRawMeta extends BaseInitRawMeta<TrpcModuleParams> {
 /**
  * A decorator that adds tRPC metadata to a `featureModule` or `rootModule`.
  */
-export const initTrpc: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, TrpcInitMeta> =
+export const initTrpcModule: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, TrpcInitMeta> =
   makeClassDecorator(transformMetadata);
 
 export class TrpcInitHooksAndRawMeta extends InitHooksAndRawMeta<TrpcInitRawMeta> {

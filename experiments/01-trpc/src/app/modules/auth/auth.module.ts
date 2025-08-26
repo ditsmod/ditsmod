@@ -1,10 +1,10 @@
 import { featureModule } from '@ditsmod/core';
-import { initTrpc } from '@ditsmod/trpc';
+import { initTrpcModule } from '@ditsmod/trpc';
 
 import { AuthService } from './auth.service.js';
 import { AuthController } from './auth.controller.js';
 
-@initTrpc({
+@initTrpcModule({
   controllers: [AuthController],
   providersPerApp: [AuthService],
 })

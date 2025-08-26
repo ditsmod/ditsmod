@@ -13,7 +13,7 @@ import {
   isValueProvider,
 } from '@ditsmod/core';
 
-import { DeepModulesImporterConfig, initTrpc, TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
+import { DeepModulesImporterConfig, initTrpcModule, TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { TrpcBaseImportRegistry, TrpcProvidersOnly, TrpcShallowImports } from './trpc-shallow-modules-importer.js';
 import { Level } from './trpc-module-normalizer.js';
 
@@ -132,7 +132,7 @@ export class TrpcDeepModulesImporter {
     path: any[] = [],
   ) {
     const srcBaseMeta = this.moduleManager.getBaseMeta(srcModRefId, true);
-    const srcMeta = srcBaseMeta.initMeta.get(initTrpc) as TrpcInitMeta;
+    const srcMeta = srcBaseMeta.initMeta.get(initTrpcModule) as TrpcInitMeta;
 
     for (const dep of this.parent.getDependencies(importedProvider)) {
       let found: boolean = false;
@@ -178,7 +178,7 @@ export class TrpcDeepModulesImporter {
     let found = false;
     const shallowImports = this.shallowImportsMap.get(srcModRefId1)!;
     for (const level of levels) {
-      const trpcShallowImports = shallowImports.initImportRegistryMap.get(initTrpc) as TrpcShallowImports;
+      const trpcShallowImports = shallowImports.initImportRegistryMap.get(initTrpcModule) as TrpcShallowImports;
       const providerImport = trpcShallowImports.baseImportRegistry[`per${level}`].get(dep.token);
       if (providerImport) {
         found = true;

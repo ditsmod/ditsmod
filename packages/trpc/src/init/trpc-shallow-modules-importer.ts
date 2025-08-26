@@ -29,7 +29,7 @@ import {
 
 import {
   ImportModulesShallowConfig,
-  initTrpc,
+  initTrpcModule,
   TrpcInitHooksAndRawMeta,
   TrpcInitMeta,
   TrpcModRefId,
@@ -193,7 +193,7 @@ export class TrpcShallowModulesImporter {
     this.baseMeta = baseMeta;
     this.meta = this.getInitMeta(baseMeta);
     this.glProviders = globalProviders;
-    this.trpcGlProviders = globalProviders.mInitValue.get(initTrpc) as TrpcGlobalProviders;
+    this.trpcGlProviders = globalProviders.mInitValue.get(initTrpcModule) as TrpcGlobalProviders;
     this.prefixPerMod = prefixPerMod || '';
     this.moduleName = baseMeta.name;
     // this.guards1 = guards1 || [];
@@ -257,10 +257,10 @@ export class TrpcShallowModulesImporter {
   }
 
   protected getInitMeta(baseMeta: BaseMeta): TrpcInitMeta {
-    let meta = baseMeta.initMeta.get(initTrpc);
+    let meta = baseMeta.initMeta.get(initTrpcModule);
     if (!meta) {
       meta = getProxyForInitMeta(baseMeta, TrpcInitMeta);
-      baseMeta.initMeta.set(initTrpc, meta);
+      baseMeta.initMeta.set(initTrpcModule, meta);
     }
     return meta;
   }
@@ -416,7 +416,7 @@ export class TrpcShallowModulesImporter {
     const moduleName = getDebugClassName(modRefId2) || '""';
     const tokenName = token2.name || token2;
     const baseMeta2 = this.moduleManager.getBaseMeta(modRefId2);
-    const meta2 = baseMeta2?.initMeta.get(initTrpc);
+    const meta2 = baseMeta2?.initMeta.get(initTrpcModule);
     if (!baseMeta2) {
       throw new ResolvingCollisionsNotImportedInApplication(this.moduleName, moduleName, level, tokenName);
     }

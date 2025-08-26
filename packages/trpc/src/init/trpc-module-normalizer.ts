@@ -37,7 +37,7 @@ import {
 import {
   TrpcInitMeta,
   TrpcInitRawMeta,
-  initTrpc,
+  initTrpcModule,
   TrpcModuleParams,
   TrpcModRefId,
 } from '#decorators/trpc-init-hooks-and-metadata.js';
@@ -147,7 +147,7 @@ export class TrpcModuleNormalizer {
     if (!isModuleWithParams(modRefId)) {
       return;
     }
-    const params = modRefId.initParams?.get(initTrpc);
+    const params = modRefId.initParams?.get(initTrpcModule);
 
     if (params) {
       (

@@ -11,7 +11,7 @@ import {
 } from '@ditsmod/core';
 
 import { TrpcMetadataPerMod2 } from '#init/trpc-deep-modules-importer.js';
-import { initTrpc } from '#decorators/trpc-init-hooks-and-metadata.js';
+import { initTrpcModule } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { trpcRoute } from '#decorators/trpc-route.js';
 import { isCtrlDecor } from '#init/trpc-module-normalizer.js';
 
@@ -33,7 +33,7 @@ export class TrpcExtension implements Extension<void> {
   }
 
   protected setControllersToDi() {
-    const restMetadataPerMod2 = this.metadataPerMod2.deepImportedModules.get(initTrpc)!;
+    const restMetadataPerMod2 = this.metadataPerMod2.deepImportedModules.get(initTrpcModule)!;
     for (const Controller of restMetadataPerMod2.meta.controllers as Class<Record<string | symbol, any>>[]) {
       const classMeta = reflector.getMetadata(Controller)!;
       for (const methodName of classMeta) {

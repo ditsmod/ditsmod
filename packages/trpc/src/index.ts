@@ -1,7 +1,7 @@
 export { proc } from './decorators/proc.js';
 export { trpcRoute } from './decorators/trpc-route.js';
 export { controller } from './decorators/controller.js';
-export { initTrpc } from './decorators/trpc-init-hooks-and-metadata.js';
+export { initTrpcModule } from './decorators/trpc-init-hooks-and-metadata.js';
 export { TRPC_ROOT, TRPC_OPTS } from './constants.js';
 export { PreRouter } from './pre-router.js';
 export { TrpcAppInitializer } from './trpc-app-initializer.js';
