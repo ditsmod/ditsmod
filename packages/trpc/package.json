@@ -23,7 +23,9 @@
     }
   },
   "imports": {
-    "#errors": "./dist/errors.js"
+    "#errors": "./dist/errors.js",
+    "#decorators/*": "./dist/decorators/*",
+    "#init/*": "./dist/init/*"
   },
   "scripts": {
     "build": "tsc -b tsconfig.build.json",

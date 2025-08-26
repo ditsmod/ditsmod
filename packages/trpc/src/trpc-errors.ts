@@ -1,5 +1,29 @@
 import { CustomError } from '@ditsmod/core';
 
+
+/**
+ * `Detected duplicate controllers - ${controllersList}`.
+ */
+export class DuplicateOfControllers extends CustomError {
+  constructor(controllersList: string) {
+    super({
+      msg1: `Detected duplicate controllers - ${controllersList}`,
+      level: 'fatal',
+    });
+  }
+}
+/**
+ * `Collecting controller's metadata failed: class ${controllerName}" does not have the "@controller()" decorator.`
+ */
+export class ControllerDoesNotHaveDecorator extends CustomError {
+  constructor(controllerName: string) {
+    super({
+      msg1: `Collecting controller's metadata failed: class ${controllerName}" does not have the "@controller()" decorator.`,
+      level: 'fatal',
+    });
+  }
+}
+
 /**
  * `http2.createSecureServer() not found (see the settings in main.ts)`
  */

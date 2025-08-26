@@ -3,7 +3,9 @@
     "outDir": "dist",
       "paths": {
       "@ditsmod/core": ["../core/src/index.js"],
+      "#decorators/*": ["./src/decorators/*"],
       "#errors": ["./src/errors.js"],
+      "#init/*": ["./src/init/*"],
     },
     "module": "nodenext",
     // "moduleResolution": "nodenext",

@@ -3,7 +3,7 @@ import { BaseAppInitializer, BaseMeta, Injector, awaitTokens, getModule } from '
 import { RequestListener, SERVER } from './types.js';
 import { PreRouter } from './pre-router.js';
 import { HttpServer } from './server-options.js';
-import { t, TRPC_OPTS, TRPC_ROOT } from './constants.js';
+import { t, TRPC_OPTS, TRPC_PROC, TRPC_ROOT } from './constants.js';
 import { TrpcService } from './trpc.service.js';
 import { TrpcRootModule } from './utils.js';
 
@@ -30,6 +30,7 @@ export class TrpcAppInitializer extends BaseAppInitializer {
       TrpcService,
       { token: SERVER, useFactory: () => this.server },
       { token: TRPC_ROOT, useValue: t },
+      { token: TRPC_PROC, useValue: t.procedure },
       ...awaitTokens(TRPC_OPTS),
     );
     super.addDefaultProvidersPerApp();
