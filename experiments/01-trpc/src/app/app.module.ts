@@ -13,13 +13,10 @@ import { PostController } from './modules/post/post.controller.js';
   imports: [PostModule, AuthModule, MessageModule],
 })
 export class AppModule implements TrpcRootModule {
-  constructor(
-    private trpcService: TrpcService,
-    private authService: AuthService,
-  ) {}
+  constructor(private authService: AuthService) {}
 
-  getAppRouter(inj: Injector) {
-    return this.trpcService.setOptionsAndGetAppRouter({
+  getAppRouter(trpcService: TrpcService, inj: Injector) {
+    return trpcService.setOptionsAndGetAppRouter({
       basePath: '/trpc/',
       createContext: this.authService.createContext,
       routerConfig: {
