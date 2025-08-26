@@ -31,7 +31,7 @@ import { normalizeProviders } from '#utils/ng-utils.js';
 import { isExtensionConfig } from '#extension/type-guards.js';
 import { ModuleWithParams, ModuleMetadata } from '#types/module-metadata.js';
 import { AllInitHooks, BaseInitRawMeta } from '#decorators/init-hooks-and-metadata.js';
-import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
+import { InitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { objectKeys } from '#utils/object-keys.js';
 import {
   UndefinedSymbol,
@@ -86,7 +86,7 @@ export class ModuleNormalizer {
       this.mergeModuleWithParams(modRefId);
     }
     aDecoratorMeta.filter(isModuleWithInitHooks).forEach((decorAndVal) => {
-      baseMeta.mInitHooksAndRawMeta.set(decorAndVal.decorator, decorAndVal.value);
+      baseMeta.mInitHooks.set(decorAndVal.decorator, decorAndVal.value);
     });
     this.normalizeImports(rawMeta);
     this.normalizeExtensions(rawMeta);
@@ -302,14 +302,14 @@ export class ModuleNormalizer {
   protected addInitHooksForHostDecorator(allInitHooks: AllInitHooks) {
     allInitHooks.forEach((initHooks, decorator) => {
       if (initHooks.hostModule === this.baseMeta.modRefId && initHooks.hostRawMeta) {
-        const newInitHooksAndRawMeta = initHooks.clone(initHooks.hostRawMeta);
-        this.baseMeta.mInitHooksAndRawMeta.set(decorator, newInitHooksAndRawMeta);
+        const newInitHooks = initHooks.clone(initHooks.hostRawMeta);
+        this.baseMeta.mInitHooks.set(decorator, newInitHooks);
       }
     });
   }
 
   protected callInitHooksFromCurrentModule() {
-    this.baseMeta.mInitHooksAndRawMeta.forEach((initHooks, decorator) => {
+    this.baseMeta.mInitHooks.forEach((initHooks, decorator) => {
       this.baseMeta.allInitHooks.set(decorator, initHooks);
 
       // Importing host module.
@@ -353,14 +353,14 @@ export class AppModule {}
    */
   protected addInitHooksForImportedMwp(allInitHooks: AllInitHooks) {
     (this.baseMeta.modRefId as ModuleWithParams).initParams?.forEach((params, decorator) => {
-      if (!this.baseMeta.mInitHooksAndRawMeta.has(decorator)) {
+      if (!this.baseMeta.mInitHooks.has(decorator)) {
         const initHooks = allInitHooks.get(decorator)!;
-        const newInitHooksAndRawMeta = initHooks.clone();
-        this.baseMeta.allInitHooks.set(decorator, newInitHooksAndRawMeta);
-        this.callInitHook(decorator, newInitHooksAndRawMeta);
+        const newInitHooks = initHooks.clone();
+        this.baseMeta.allInitHooks.set(decorator, newInitHooks);
+        this.callInitHook(decorator, newInitHooks);
 
         // This is need for `this.quickCheckMetadata()` only.
-        this.baseMeta.mInitHooksAndRawMeta.set(decorator, newInitHooksAndRawMeta);
+        this.baseMeta.mInitHooks.set(decorator, newInitHooks);
       }
     });
   }
@@ -466,7 +466,7 @@ export class AppModule {}
     }
   }
 
-  protected callInitHook(decorator: AnyFn, initHooks: InitHooksAndRawMeta) {
+  protected callInitHook(decorator: AnyFn, initHooks: InitHooks) {
     const meta = initHooks.normalize(this.baseMeta);
     if (meta) {
       this.baseMeta.initMeta.set(decorator, meta);
@@ -477,7 +477,7 @@ export class AppModule {}
     this.throwIfResolvingNormalizedProvider(rawMeta);
     if (
       isFeatureModule(this.baseMeta) &&
-      !this.baseMeta.mInitHooksAndRawMeta.size &&
+      !this.baseMeta.mInitHooks.size &&
       !this.baseMeta.exportedProvidersPerMod.length &&
       !this.baseMeta.exportedMultiProvidersPerMod.length &&
       !this.baseMeta.exportsModules.length &&

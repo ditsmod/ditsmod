@@ -16,7 +16,7 @@ export { CustomError } from '#error/custom-error.js';
 export { ErrorInfo } from '#error/error-info.js';
 export { featureModule } from '#decorators/feature-module.js';
 export {
-  InitHooksAndRawMeta,
+  InitHooks,
   InitDecorator,
   InitMetaMap,
   InitParamsMap,

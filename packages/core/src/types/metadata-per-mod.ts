@@ -2,7 +2,7 @@ import { BaseMeta } from '#types/base-meta.js';
 import { AnyFn, AnyObj, ModRefId } from './mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
-import { BaseInitRawMeta, InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
+import { BaseInitRawMeta, InitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { ExtensionClass } from '#extension/extension-types.js';
 
 /**
@@ -20,7 +20,7 @@ export class GlobalInitHooks<T extends BaseInitRawMeta = BaseInitRawMeta> {
   /**
    * The presence of this property indicates whether at least one global provider is exported.
    */
-  initHooks?: InitHooksAndRawMeta<T>;
+  initHooks?: InitHooks<T>;
 }
 
 export class GlobalProviders {

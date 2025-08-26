@@ -4,7 +4,7 @@ import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from './module-metadata.js';
 import { ExtensionConfig } from '#extension/get-extension-provider.js';
 import { InitMetaMap } from '#decorators/init-hooks-and-metadata.js';
-import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
+import { InitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { AllInitHooks } from '#decorators/init-hooks-and-metadata.js';
 
 export class BaseInitMeta<A extends AnyObj = AnyObj> {
@@ -84,7 +84,7 @@ export class BaseMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> exte
   /**
    * Contains init hooks and raw metadata collected from init module decorators.
    */
-  mInitHooksAndRawMeta = new Map<AnyFn, InitHooksAndRawMeta>();
+  mInitHooks = new Map<AnyFn, InitHooks>();
   /**
    * Contains normalized metadata collected from module init decorators.
    */

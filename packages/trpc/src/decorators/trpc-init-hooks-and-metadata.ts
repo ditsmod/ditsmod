@@ -1,6 +1,6 @@
 import {
   makeClassDecorator,
-  InitHooksAndRawMeta,
+  InitHooks,
   ModRefId,
   BaseMeta,
   InitDecorator,
@@ -108,7 +108,7 @@ export interface TrpcInitRawMeta extends BaseInitRawMeta<TrpcModuleParams> {
 export const initTrpcModule: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, TrpcInitMeta> =
   makeClassDecorator(transformMetadata);
 
-export class TrpcInitHooksAndRawMeta extends InitHooksAndRawMeta<TrpcInitRawMeta> {
+export class TrpcInitHooks extends InitHooks<TrpcInitRawMeta> {
   override hostModule = TrpcModule;
 
   override normalize(baseMeta: BaseMeta): TrpcInitMeta {
@@ -136,9 +136,9 @@ export class TrpcInitHooksAndRawMeta extends InitHooksAndRawMeta<TrpcInitRawMeta
   }
 }
 
-export function transformMetadata(data?: TrpcInitRawMeta): InitHooksAndRawMeta<TrpcInitRawMeta> {
+export function transformMetadata(data?: TrpcInitRawMeta): InitHooks<TrpcInitRawMeta> {
   const metadata = Object.assign({}, data);
-  return new TrpcInitHooksAndRawMeta(metadata);
+  return new TrpcInitHooks(metadata);
 }
 
 export interface ExportGlobalProvidersConfig {

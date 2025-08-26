@@ -14,7 +14,7 @@ import { ModuleWithParams } from '#types/module-metadata.js';
 import { BaseMeta } from '#types/base-meta.js';
 import { InitDecorator } from '#decorators/init-hooks-and-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
-import { InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
+import { InitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { isModuleWithParams } from '#utils/type-guards.js';
 import { FailAddingToImports } from '#errors';
 
@@ -195,7 +195,7 @@ describe('ModuleManager', () => {
     expectedMeta1.decorator = rootModule;
     expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta1.isExternal = false;
-    expectedMeta1.mInitHooksAndRawMeta = expect.any(Map);
+    expectedMeta1.mInitHooks = expect.any(Map);
 
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(1);
@@ -261,7 +261,7 @@ describe('ModuleManager', () => {
     expectedMeta2.decorator = rootModule;
     expectedMeta2.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta2.isExternal = false;
-    expectedMeta2.mInitHooksAndRawMeta = expect.any(Map);
+    expectedMeta2.mInitHooks = expect.any(Map);
     expect(mock.oldSnapshotMap.get(AppModule)).toEqual(expectedMeta2);
 
     mock.addImport(Module4);
@@ -302,7 +302,7 @@ describe('ModuleManager', () => {
     expectedMeta3.decorator = rootModule;
     expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta3.isExternal = false;
-    expectedMeta3.mInitHooksAndRawMeta = expect.any(Map);
+    expectedMeta3.mInitHooks = expect.any(Map);
 
     expect(mock.getBaseMeta('root') === mock.getBaseMeta('root')).toBe(true);
     expect(mock.getBaseMeta('root') !== mock.getBaseMetaFromSnapshot('root')).toBe(true);
@@ -383,7 +383,7 @@ describe('ModuleManager', () => {
     expectedMeta1.decorator = rootModule;
     expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta1.isExternal = false;
-    expectedMeta1.mInitHooksAndRawMeta = expect.any(Map);
+    expectedMeta1.mInitHooks = expect.any(Map);
 
     mock.scanRootModule(AppModule);
     expect(mock.snapshotMap.size).toBe(6);
@@ -462,7 +462,7 @@ describe('ModuleManager', () => {
     expectedMeta2.decorator = rootModule;
     expectedMeta2.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta2.isExternal = false;
-    expectedMeta2.mInitHooksAndRawMeta = expect.any(Map);
+    expectedMeta2.mInitHooks = expect.any(Map);
 
     expect(mock.getBaseMetaFromSnapshot('root')).toEqual(expectedMeta2);
     expect(mock.oldSnapshotMapId.size).toBe(2);
@@ -489,7 +489,7 @@ describe('ModuleManager', () => {
     expectedMeta3.decorator = rootModule;
     expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta3.isExternal = false;
-    expectedMeta3.mInitHooksAndRawMeta = expect.any(Map);
+    expectedMeta3.mInitHooks = expect.any(Map);
 
     expect(mock.getBaseMetaFromSnapshot('root')).toEqual(expectedMeta3);
     expect(mock.oldSnapshotMapId.size).toBe(2);
@@ -505,7 +505,7 @@ describe('ModuleManager', () => {
     expectedMeta4.decorator = rootModule;
     expectedMeta4.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta4.isExternal = false;
-    expectedMeta4.mInitHooksAndRawMeta = expect.any(Map);
+    expectedMeta4.mInitHooks = expect.any(Map);
 
     expect(mock.removeImport(moduleId)).toBe(true);
     expect(mock.snapshotMap.size).toBe(2);
@@ -550,7 +550,7 @@ describe('ModuleManager', () => {
     expectedMeta3.decorator = rootModule;
     expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta3.isExternal = false;
-    expectedMeta3.mInitHooksAndRawMeta = expect.any(Map);
+    expectedMeta3.mInitHooks = expect.any(Map);
     delete (expectedMeta3 as any).aExtensionConfig;
     delete (expectedMeta3 as any).aExportedExtensionConfig;
 
@@ -565,7 +565,7 @@ describe('ModuleManager', () => {
     expectedMeta1.isExternal = false;
     delete (expectedMeta1 as any).aExtensionConfig;
     delete (expectedMeta1 as any).aExportedExtensionConfig;
-    expectedMeta1.mInitHooksAndRawMeta = expect.any(Map);
+    expectedMeta1.mInitHooks = expect.any(Map);
 
     mock.scanRootModule(Module3);
     expect(mock.getBaseMeta('root')).toMatchObject(expectedMeta3);
@@ -600,7 +600,7 @@ describe('ModuleManager', () => {
     expectedMeta3.decorator = rootModule;
     expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta3.isExternal = false;
-    expectedMeta3.mInitHooksAndRawMeta = expect.any(Map);
+    expectedMeta3.mInitHooks = expect.any(Map);
     delete (expectedMeta3 as any).aExtensionConfig;
     delete (expectedMeta3 as any).aExportedExtensionConfig;
 
@@ -613,7 +613,7 @@ describe('ModuleManager', () => {
     expectedMeta1.decorator = featureModule;
     expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta1.isExternal = false;
-    expectedMeta1.mInitHooksAndRawMeta = expect.any(Map);
+    expectedMeta1.mInitHooks = expect.any(Map);
     delete (expectedMeta1 as any).aExtensionConfig;
     delete (expectedMeta1 as any).aExportedExtensionConfig;
 
@@ -650,7 +650,7 @@ describe('ModuleManager', () => {
     expectedMeta3.decorator = rootModule;
     expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta3.isExternal = false;
-    expectedMeta3.mInitHooksAndRawMeta = expect.any(Map);
+    expectedMeta3.mInitHooks = expect.any(Map);
 
     const expectedMeta1 = new BaseMeta();
     expectedMeta1.id = '';
@@ -662,7 +662,7 @@ describe('ModuleManager', () => {
     expectedMeta1.decorator = featureModule;
     expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta1.isExternal = false;
-    expectedMeta1.mInitHooksAndRawMeta = expect.any(Map);
+    expectedMeta1.mInitHooks = expect.any(Map);
 
     mock.scanRootModule(Module3);
     expect(mock.getBaseMeta('root')).toEqual(expectedMeta3);
@@ -680,30 +680,30 @@ describe('ModuleManager', () => {
     @featureModule()
     class HostModule4 {}
 
-    class InitHooksAndRawMeta1 extends InitHooksAndRawMeta<any> {
+    class InitHooks1 extends InitHooks<any> {
       override hostModule = HostModule1;
       override hostRawMeta = { one: 1 };
     }
 
-    class InitHooksAndRawMeta2 extends InitHooksAndRawMeta<any> {
+    class InitHooks2 extends InitHooks<any> {
       override hostModule = HostModule2;
       override hostRawMeta = { two: 2 };
     }
 
-    class InitHooksAndRawMeta3 extends InitHooksAndRawMeta<any> {
+    class InitHooks3 extends InitHooks<any> {
       override hostModule = HostModule3;
       override hostRawMeta = { three: 3 };
     }
 
-    class InitHooksAndRawMeta4 extends InitHooksAndRawMeta<any> {
+    class InitHooks4 extends InitHooks<any> {
       override hostModule = HostModule4;
       override hostRawMeta = { four: 4 };
     }
 
-    const initSome1: InitDecorator<any, any, any> = makeClassDecorator((data) => new InitHooksAndRawMeta1(data));
-    const initSome2: InitDecorator<any, any, any> = makeClassDecorator((data) => new InitHooksAndRawMeta2(data));
-    const initSome3: InitDecorator<any, any, any> = makeClassDecorator((data) => new InitHooksAndRawMeta3(data));
-    const initSome4: InitDecorator<any, any, any> = makeClassDecorator((data) => new InitHooksAndRawMeta4(data));
+    const initSome1: InitDecorator<any, any, any> = makeClassDecorator((data) => new InitHooks1(data));
+    const initSome2: InitDecorator<any, any, any> = makeClassDecorator((data) => new InitHooks2(data));
+    const initSome3: InitDecorator<any, any, any> = makeClassDecorator((data) => new InitHooks3(data));
+    const initSome4: InitDecorator<any, any, any> = makeClassDecorator((data) => new InitHooks4(data));
 
     @initSome1({ name: '1' })
     @featureModule()
@@ -766,10 +766,10 @@ describe('ModuleManager', () => {
       path?: string;
     }
     const initSome: InitDecorator<RawMeta, { path?: string }, InitMeta> = makeClassDecorator(
-      (d) => new InitHooksAndRawMeta1(d),
+      (d) => new InitHooks1(d),
     );
 
-    class InitHooksAndRawMeta1 extends InitHooksAndRawMeta<RawMeta> {
+    class InitHooks1 extends InitHooks<RawMeta> {
       override normalize({ modRefId }: BaseMeta): InitMeta {
         if (isModuleWithParams(modRefId)) {
           const params = modRefId.initParams?.get(initSome);
@@ -807,10 +807,10 @@ describe('ModuleManager', () => {
     interface InitMeta2 {
       paramsForInitMeta2?: any;
     }
-    class InitHooksAndRawMeta1 extends InitHooksAndRawMeta<RawMeta1> {}
-    class InitHooksAndRawMeta2 extends InitHooksAndRawMeta<RawMeta2> {}
-    const initSome1: InitDecorator<RawMeta1, {}, InitMeta1> = makeClassDecorator((d) => new InitHooksAndRawMeta1(d));
-    const initSome2: InitDecorator<RawMeta2, {}, InitMeta2> = makeClassDecorator((d) => new InitHooksAndRawMeta2(d));
+    class InitHooks1 extends InitHooks<RawMeta1> {}
+    class InitHooks2 extends InitHooks<RawMeta2> {}
+    const initSome1: InitDecorator<RawMeta1, {}, InitMeta1> = makeClassDecorator((d) => new InitHooks1(d));
+    const initSome2: InitDecorator<RawMeta2, {}, InitMeta2> = makeClassDecorator((d) => new InitHooks2(d));
 
     @featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
     class Module1 {}

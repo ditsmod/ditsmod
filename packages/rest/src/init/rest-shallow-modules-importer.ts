@@ -32,7 +32,7 @@ import { Level, RestGlobalProviders } from '#types/types.js';
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
 import { AppendsWithParams } from './rest-init-raw-meta.js';
-import { initRest, RestInitHooksAndRawMeta } from '#decorators/rest-init-hooks-and-metadata.js';
+import { initRest, RestInitHooks } from '#decorators/rest-init-hooks-and-metadata.js';
 import { ImportModulesShallowConfig, RestProviderImport, RestShallowImports } from './types.js';
 import { ModuleIncludesInImportsAndAppends } from '#errors';
 import { ModuleMustHaveControllers } from '#services/rest-errors.js';
@@ -90,7 +90,7 @@ export class RestShallowModulesImporter {
     this.importProviders(baseMeta);
     this.checkAllCollisionsWithLevelsMix();
 
-    let initHooks: RestInitHooksAndRawMeta | undefined;
+    let initHooks: RestInitHooks | undefined;
     if (
       this.importedProvidersPerMod.size ||
       this.importedProvidersPerRou.size ||
@@ -99,7 +99,7 @@ export class RestShallowModulesImporter {
       this.importedMultiProvidersPerRou.size ||
       this.importedMultiProvidersPerReq.size
     ) {
-      initHooks = new RestInitHooksAndRawMeta({});
+      initHooks = new RestInitHooks({});
     }
 
     return {

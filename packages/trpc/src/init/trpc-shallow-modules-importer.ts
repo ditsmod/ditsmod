@@ -30,7 +30,7 @@ import {
 import {
   ImportModulesShallowConfig,
   initTrpcModule,
-  TrpcInitHooksAndRawMeta,
+  TrpcInitHooks,
   TrpcInitMeta,
   TrpcModRefId,
 } from '../decorators/trpc-init-hooks-and-metadata.js';
@@ -151,7 +151,7 @@ export class TrpcShallowModulesImporter {
     this.importProviders(baseMeta);
     this.checkAllCollisionsWithLevelsMix();
 
-    let initHooks: TrpcInitHooksAndRawMeta | undefined;
+    let initHooks: TrpcInitHooks | undefined;
     if (
       this.importedProvidersPerMod.size ||
       this.importedProvidersPerRou.size ||
@@ -160,7 +160,7 @@ export class TrpcShallowModulesImporter {
       this.importedMultiProvidersPerRou.size ||
       this.importedMultiProvidersPerReq.size
     ) {
-      initHooks = new TrpcInitHooksAndRawMeta({});
+      initHooks = new TrpcInitHooks({});
     }
 
     return {

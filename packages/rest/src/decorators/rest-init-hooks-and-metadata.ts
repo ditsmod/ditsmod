@@ -1,4 +1,4 @@
-import { makeClassDecorator, InitHooksAndRawMeta, ModRefId, BaseMeta, InitDecorator, Provider } from '@ditsmod/core';
+import { makeClassDecorator, InitHooks, ModRefId, BaseMeta, InitDecorator, Provider } from '@ditsmod/core';
 
 import { RestInitRawMeta, RestModuleParams } from '#init/rest-init-raw-meta.js';
 import { RestModuleNormalizer } from '#init/rest-module-normalizer.js';
@@ -20,7 +20,7 @@ import { RestModule } from '#init/rest.module.js';
 export const initRest: InitDecorator<RestInitRawMeta, RestModuleParams, RestInitMeta> =
   makeClassDecorator(transformMetadata);
 
-export class RestInitHooksAndRawMeta extends InitHooksAndRawMeta<RestInitRawMeta> {
+export class RestInitHooks extends InitHooks<RestInitRawMeta> {
   override hostModule = RestModule;
 
   override normalize(baseMeta: BaseMeta): RestInitMeta {
@@ -51,7 +51,7 @@ export class RestInitHooksAndRawMeta extends InitHooksAndRawMeta<RestInitRawMeta
   }
 }
 
-export function transformMetadata(data?: RestInitRawMeta): InitHooksAndRawMeta<RestInitRawMeta> {
+export function transformMetadata(data?: RestInitRawMeta): InitHooks<RestInitRawMeta> {
   const metadata = Object.assign({}, data);
-  return new RestInitHooksAndRawMeta(metadata);
+  return new RestInitHooks(metadata);
 }

@@ -83,7 +83,7 @@ export class ModuleManager {
     modRefId = resolveForwardRef(modRefId);
     const baseMeta = this.normalizeMetadata(modRefId, allInitHooks);
     const importsOrExports: (ModuleWithParams | ModuleType)[] = [];
-    baseMeta.mInitHooksAndRawMeta.forEach((initHooks, decorator) => {
+    baseMeta.mInitHooks.forEach((initHooks, decorator) => {
       const meta = baseMeta.initMeta.get(decorator);
       if (meta) {
         importsOrExports.push(...initHooks.getModulesToScan(meta));
@@ -320,7 +320,7 @@ export class ModuleManager {
    */
   protected callInitHooksAfterScan(baseMeta: BaseMeta) {
     baseMeta.allInitHooks.forEach((initHooks, decorator) => {
-      if (!baseMeta.mInitHooksAndRawMeta.has(decorator)) {
+      if (!baseMeta.mInitHooks.has(decorator)) {
         const meta = initHooks.clone().normalize(baseMeta);
         if (meta) {
           baseMeta.initMeta.set(decorator, meta);

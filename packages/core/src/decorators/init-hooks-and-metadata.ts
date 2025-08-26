@@ -11,13 +11,13 @@ import type { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import type { featureModule } from './feature-module.js';
 import type { rootModule } from './root-module.js';
 
-export type AllInitHooks = Map<AnyFn, Omit<InitHooksAndRawMeta, 'rawMeta'>>;
+export type AllInitHooks = Map<AnyFn, Omit<InitHooks, 'rawMeta'>>;
 
 /**
  * Init hooks and metadata attached by init decorators,
  * apart from the base decorators - {@link featureModule} or {@link rootModule}.
  */
-export class InitHooksAndRawMeta<T1 extends BaseInitRawMeta = BaseInitRawMeta> {
+export class InitHooks<T1 extends BaseInitRawMeta = BaseInitRawMeta> {
   /**
    * The host module where the current init decorator is declared. If you add this module,
    * it will be imported into the module where the corresponding init decorator is used.
@@ -166,14 +166,14 @@ export interface InitParamsMap {
  * ### Complete example with init hooks
  *
  * In this example, `ReturnsType` is the type that will be returned by
- * {@link InitHooksAndRawMeta.normalize} or {@link BaseMeta.initMeta | baseMeta.initMeta.get(addSome)}.
+ * {@link InitHooks.normalize} or {@link BaseMeta.initMeta | baseMeta.initMeta.get(addSome)}.
  *
 ```ts
 import {
   makeClassDecorator,
   InitDecorator,
   featureModule,
-  InitHooksAndRawMeta,
+  InitHooks,
   ModuleWithInitParams,
 } from '@ditsmod/core';
 
@@ -185,12 +185,12 @@ interface InitMeta {
   other?: string;
 }
 
-function getInitHooksAndRawMeta(data?: RawMeta): InitHooksAndRawMeta<RawMeta> {
+function getInitHooks(data?: RawMeta): InitHooks<RawMeta> {
   const metadata = Object.assign({}, data);
-  return new MyInitHooksAndRawMeta(metadata);
+  return new MyInitHooks(metadata);
 }
 // Creating an init decorator
-export const initSome: InitDecorator<RawMeta, { path?: string }, InitMeta> = makeClassDecorator(getInitHooksAndRawMeta);
+export const initSome: InitDecorator<RawMeta, { path?: string }, InitMeta> = makeClassDecorator(getInitHooks);
 
 \@featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
 class Module1 {
@@ -212,7 +212,7 @@ class MyModule {
   // Your code here
 }
 
-class MyInitHooksAndRawMeta extends InitHooksAndRawMeta<RawMeta> {}
+class MyInitHooks extends InitHooks<RawMeta> {}
 ```
  */
 

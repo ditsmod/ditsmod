@@ -1,5 +1,5 @@
 import { featureModule } from '#decorators/feature-module.js';
-import { BaseInitRawMeta, InitHooksAndRawMeta } from '#decorators/init-hooks-and-metadata.js';
+import { BaseInitRawMeta, InitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { BaseInitMeta } from '#types/base-meta.js';
 import { rootModule } from '#decorators/root-module.js';
 import { forwardRef, injectable, makeClassDecorator, MultiProvider } from '#di';
@@ -45,7 +45,7 @@ describe('ModuleNormalizer', () => {
     expectedMeta.decorator = rootModule;
     expectedMeta.declaredInDir = CallsiteUtils.getCallerDir();
     expectedMeta.isExternal = false;
-    expectedMeta.mInitHooksAndRawMeta = expect.any(Map);
+    expectedMeta.mInitHooks = expect.any(Map);
 
     expect(mock.normalize(AppModule)).toEqual(expectedMeta);
   });
@@ -269,7 +269,7 @@ describe('ModuleNormalizer', () => {
       rawMeta: RawMeta;
     }
 
-    class InitHooksAndRawMeta1 extends InitHooksAndRawMeta<RawMeta> {
+    class InitHooks1 extends InitHooks<RawMeta> {
       override normalize(baseMeta: BaseMeta) {
         return {
           baseMeta,
@@ -278,9 +278,9 @@ describe('ModuleNormalizer', () => {
       }
     }
 
-    function getInitHooksAndRawMeta(data?: RawMeta): InitHooksAndRawMeta<RawMeta> {
+    function getInitHooks(data?: RawMeta): InitHooks<RawMeta> {
       const metadata = Object.assign({}, data);
-      return new InitHooksAndRawMeta1(metadata);
+      return new InitHooks1(metadata);
     }
 
     interface InitParams extends FeatureModuleParams {
@@ -294,7 +294,7 @@ describe('ModuleNormalizer', () => {
       appends?: ({ module: ModRefId } & AnyObj)[];
     }
 
-    const initSome: InitDecorator<RawMeta, InitParams, InitMeta> = makeClassDecorator(getInitHooksAndRawMeta);
+    const initSome: InitDecorator<RawMeta, InitParams, InitMeta> = makeClassDecorator(getInitHooks);
 
     it('during import MWP, merge existing init params with new init params', () => {
       class Service1 {}

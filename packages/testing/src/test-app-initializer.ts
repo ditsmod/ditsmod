@@ -43,7 +43,7 @@ export class TestAppInitializer extends RestAppInitializer {
   protected override overrideMetaAfterStage1(modRefId: ModRefId, baseMeta: BaseMeta) {
     const additionalProviders = this.mAdditionalProviders.get(modRefId);
     this.addAndOverrideProviders([baseMeta.providersPerApp, baseMeta.providersPerMod], additionalProviders);
-    baseMeta.mInitHooksAndRawMeta.forEach((initHooks, decorator) => {
+    baseMeta.mInitHooks.forEach((initHooks, decorator) => {
       const meta = baseMeta.initMeta.get(decorator);
       if (meta) {
         this.addAndOverrideProviders(initHooks.getProvidersToOverride(meta), additionalProviders);
