@@ -1,5 +1,5 @@
-import { featureModule } from '@ditsmod/core';
-import { initTrpcModule } from '@ditsmod/trpc';
+import { featureModule, Injector } from '@ditsmod/core';
+import { initTrpcModule, TrpcModuleWithRouterConfig } from '@ditsmod/trpc';
 
 import { PostController } from './post.controller.js';
 import { DbModule } from '#app/modules/db/db.module.js';
@@ -9,4 +9,10 @@ import { DbModule } from '#app/modules/db/db.module.js';
   controllers: [PostController],
 })
 @featureModule()
-export class PostModule {}
+export class PostModule implements TrpcModuleWithRouterConfig {
+  constructor(private inj: Injector) {}
+
+  getRouterConfig() {
+    return { post: this.inj.get(PostController.prototype.getPostRouter) };
+  }
+}

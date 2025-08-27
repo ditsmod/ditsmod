@@ -1,5 +1,5 @@
-import { featureModule } from '@ditsmod/core';
-import { initTrpcModule } from '@ditsmod/trpc';
+import { featureModule, Injector } from '@ditsmod/core';
+import { initTrpcModule, TrpcModuleWithRouterConfig } from '@ditsmod/trpc';
 
 import { AuthService } from './auth.service.js';
 import { AuthController } from './auth.controller.js';
@@ -9,4 +9,10 @@ import { AuthController } from './auth.controller.js';
   providersPerApp: [AuthService],
 })
 @featureModule()
-export class AuthModule {}
+export class AuthModule implements TrpcModuleWithRouterConfig {
+  constructor(private inj: Injector) {}
+
+  getRouterConfig() {
+    return { admin: this.inj.get(AuthController.prototype.getAdminRouter) } as const;
+  }
+}

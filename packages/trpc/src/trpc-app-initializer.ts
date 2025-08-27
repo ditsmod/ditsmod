@@ -11,20 +11,6 @@ export class TrpcAppInitializer extends BaseAppInitializer {
   protected preRouter: PreRouter;
   protected server: HttpServer;
 
-  setServer(server: HttpServer) {
-    this.server = server;
-  }
-
-  requestListener: RequestListener = (rawReq, rawRes) => this.preRouter.requestListener(rawReq, rawRes);
-
-  protected override async initModuleAndGetInjectorPerMod(baseMeta: BaseMeta): Promise<Injector> {
-    const injectorPerMod = await super.initModuleAndGetInjectorPerMod(baseMeta);
-    const Mod = getModule(baseMeta.modRefId);
-    const trpcService = injectorPerMod.get(TrpcService) as TrpcService;
-    (injectorPerMod.get(Mod) as Partial<TrpcRootModule>).getAppRouter?.(trpcService, injectorPerMod.parent!);
-    return injectorPerMod;
-  }
-
   protected override addDefaultProvidersPerApp() {
     this.baseMeta.providersPerApp.unshift(
       PreRouter,
@@ -41,5 +27,20 @@ export class TrpcAppInitializer extends BaseAppInitializer {
     const injectorPerApp = await super.bootstrapModulesAndExtensions();
     this.preRouter = injectorPerApp.get(PreRouter) as PreRouter;
     return injectorPerApp;
+  }
+
+  requestListener: RequestListener = (rawReq, rawRes) => this.preRouter.requestListener(rawReq, rawRes);
+
+  protected override async initModuleAndGetInjectorPerMod(baseMeta: BaseMeta): Promise<Injector> {
+    const injectorPerMod = await super.initModuleAndGetInjectorPerMod(baseMeta);
+    const Mod = getModule(baseMeta.modRefId);
+    const trpcService = injectorPerMod.get(TrpcService) as TrpcService;
+    const trpcRootObj = injectorPerMod.get(TRPC_ROOT);
+    (injectorPerMod.get(Mod) as Partial<TrpcRootModule>).getAppRouter?.(trpcService, injectorPerMod.parent!, trpcRootObj);
+    return injectorPerMod;
+  }
+
+  setServer(server: HttpServer) {
+    this.server = server;
   }
 }

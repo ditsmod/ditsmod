@@ -5,26 +5,21 @@ import { PostModule } from '#modules/post/post.module.js';
 import { AuthModule } from '#modules/auth/auth.module.js';
 import { AuthService } from '#modules/auth/auth.service.js';
 import { MessageModule } from '#modules/message/message.module.js';
-import { AuthController } from '#modules/auth/auth.controller.js';
-import { MessageController } from '#modules/message/message.controller.js';
-import { PostController } from '#modules/post/post.controller.js';
+import { TrpcRootObj } from './types.js';
+
+const imports = [AuthModule, PostModule, MessageModule] as const;
 
 @rootModule({
-  imports: [PostModule, AuthModule, MessageModule],
+  imports: [...imports],
 })
 export class AppModule implements TrpcRootModule {
   constructor(private authService: AuthService) {}
 
-  getAppRouter(trpcService: TrpcService, inj: Injector) {
+  getAppRouter(trpcService: TrpcService, inj: Injector, t: TrpcRootObj) {
     return trpcService.setOptionsAndGetAppRouter({
       basePath: '/trpc/',
       createContext: this.authService.createContext,
-      routerConfig: {
-        admin: inj.get(AuthController.prototype.getAdminRouter),
-        post: inj.get(PostController.prototype.getPostRouter),
-        message: inj.get(MessageController.prototype.getMessageRouter),
-        hello: inj.get(MessageController.prototype.getHelloRouter),
-      },
+      router: t.mergeRouters(...trpcService.getRouters(imports)),
     });
   }
 }
