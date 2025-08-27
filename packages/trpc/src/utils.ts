@@ -1,5 +1,5 @@
 import { AnyRootTypes, BuiltRouter } from '@trpc/server/unstable-core-do-not-import';
-import { AnyObj, Injector } from '@ditsmod/core';
+import { AnyObj } from '@ditsmod/core';
 
 import type { TrpcService } from './trpc.service.js';
 

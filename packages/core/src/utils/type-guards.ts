@@ -25,9 +25,9 @@ export function isParamsWithMwp(arg?: AnyObj): arg is { mwp: ModuleWithParams } 
   return isModuleWithParams((arg as { mwp: ModuleWithParams } | undefined)?.mwp);
 }
 
-export function isRootModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<RawMeta>;
-export function isRootModule(arg?: RawMeta): arg is RawMeta;
-export function isRootModule(meta?: BaseMeta): meta is BaseMeta<RootModuleMetadata>;
+export function isRootModule(decorAndVal?: DecoratorAndValue): decorAndVal is DecoratorAndValue<RawMeta>;
+export function isRootModule(rawMeta?: RawMeta): rawMeta is RawMeta;
+export function isRootModule(baseMeta?: BaseMeta): baseMeta is BaseMeta<RootModuleMetadata>;
 export function isRootModule(arg?: AnyObj): arg is { decorator: typeof rootModule } & AnyObj;
 export function isRootModule(arg?: DecoratorAndValue | RawMeta | BaseMeta | AnyObj): arg is DecoratorAndValue<RawMeta> {
   return arg?.decorator === rootModule;
