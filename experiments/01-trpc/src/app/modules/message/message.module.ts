@@ -10,11 +10,14 @@ import { DbModule } from '#app/modules/db/db.module.js';
 })
 @featureModule()
 export class MessageModule implements TrpcModuleWithRouterConfig {
-  constructor(private inj: Injector) {}
+  constructor(protected inj: Injector) {}
 
   getRouterConfig() {
     return {
-      message: this.inj.get(MessageController.prototype.getMessageRouter),
+      message: {
+        listMessages: this.inj.get(MessageController.prototype.listMessages),
+        addMessage: this.inj.get(MessageController.prototype.addMessage),
+      },
       hello: this.inj.get(MessageController.prototype.getHelloRouter),
     };
   }

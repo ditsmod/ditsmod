@@ -13,6 +13,6 @@ export class AuthModule implements TrpcModuleWithRouterConfig {
   constructor(private inj: Injector) {}
 
   getRouterConfig() {
-    return { admin: this.inj.get(AuthController.prototype.getAdminRouter) } as const;
+    return { admin: { secret: this.inj.get(AuthController.prototype.getAdminRouter) } };
   }
 }

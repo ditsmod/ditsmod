@@ -13,6 +13,11 @@ export class PostModule implements TrpcModuleWithRouterConfig {
   constructor(private inj: Injector) {}
 
   getRouterConfig() {
-    return { post: this.inj.get(PostController.prototype.getPostRouter) };
+    return {
+      post: {
+        createPost: this.inj.get(PostController.prototype.createPost),
+        listPosts: this.inj.get(PostController.prototype.listPosts),
+      },
+    };
   }
 }

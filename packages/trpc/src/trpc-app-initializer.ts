@@ -35,8 +35,7 @@ export class TrpcAppInitializer extends BaseAppInitializer {
     const injectorPerMod = await super.initModuleAndGetInjectorPerMod(baseMeta);
     const Mod = getModule(baseMeta.modRefId);
     const trpcService = injectorPerMod.get(TrpcService) as TrpcService;
-    const trpcRootObj = injectorPerMod.get(TRPC_ROOT);
-    (injectorPerMod.get(Mod) as Partial<TrpcRootModule>).getAppRouter?.(trpcService, injectorPerMod.parent!, trpcRootObj);
+    (injectorPerMod.get(Mod) as Partial<TrpcRootModule>).getAppRouter?.(trpcService);
     return injectorPerMod;
   }
 

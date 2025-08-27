@@ -25,15 +25,27 @@ export class TrpcService {
     this.preRouter.setTrpcRequestListener();
     return opts.router;
   }
+  /**
+   * @param modRefIds List of modules with tRPC routers.
+   */
+  mergeModuleRouters<const T extends readonly ModRefId<TrpcModuleWithRouterConfig<any>>[]>(modRefIds: T) {
+    type RouterOf<I> =
+      I extends ModRefId<TrpcModuleWithRouterConfig<infer C>> ? ReturnType<typeof this.t.router<C>> : never;
+    type RoutersTuple = { [K in keyof T]: RouterOf<T[K]> };
+    type Mutable<T> = { -readonly [K in keyof T]: T[K] };
+
+    const routers = modRefIds.map((id) => this.t.router(this.getRouterConfig(id))) as unknown as Mutable<RoutersTuple>;
+    return this.t.mergeRouters(...routers);
+  }
 
   protected getRouterConfig<
     T extends TrpcModuleWithRouterConfig<any>,
     C = T extends TrpcModuleWithRouterConfig<infer U> ? U : never,
   >(modRefId: ModRefId<T>): C {
-    return (this.moduleManager.getInjectorPerMod(modRefId).get(modRefId) satisfies T).getRouterConfig();
+    return (this.moduleManager.getInjectorPerMod(modRefId).get(modRefId) as T).getRouterConfig();
   }
 
-  getRouters<T extends readonly ModRefId<TrpcModuleWithRouterConfig<any>>[]>(
+  protected getRouters<T extends readonly ModRefId<TrpcModuleWithRouterConfig<any>>[]>(
     modRefIds: T,
   ): {
     [K in keyof T]: T[K] extends ModRefId<TrpcModuleWithRouterConfig<infer C>>
