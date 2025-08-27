@@ -12,6 +12,6 @@ export interface TrpcRootModule {
   getAppRouter<TRoot extends AnyRootTypes>(trpcService: TrpcService): BuiltRouter<TRoot, any>;
 }
 
-export interface TrpcModuleWithRouterConfig<Config extends AnyObj = AnyObj> {
+export interface ModuleWithTrpcRoutes<Config extends AnyObj = AnyObj> {
   getRouterConfig(): Config;
 }

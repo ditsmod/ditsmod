@@ -1,5 +1,5 @@
 import { featureModule, Injector } from '@ditsmod/core';
-import { initTrpcModule, TrpcModuleWithRouterConfig } from '@ditsmod/trpc';
+import { initTrpcModule, ModuleWithTrpcRoutes } from '@ditsmod/trpc';
 
 import { MessageController } from './message.controller.js';
 import { DbModule } from '#app/modules/db/db.module.js';
@@ -9,7 +9,7 @@ import { DbModule } from '#app/modules/db/db.module.js';
   controllers: [MessageController],
 })
 @featureModule()
-export class MessageModule implements TrpcModuleWithRouterConfig {
+export class MessageModule implements ModuleWithTrpcRoutes {
   constructor(protected inj: Injector) {}
 
   getRouterConfig() {

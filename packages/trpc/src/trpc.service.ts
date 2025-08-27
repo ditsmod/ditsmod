@@ -3,7 +3,7 @@ import { inject, injectable, Injector, ModRefId, ModuleManager, Override } from 
 import { TRPC_OPTS, TRPC_ROOT } from './constants.js';
 import { TrpcOpts, TrpcRootObject } from './types.js';
 import { PreRouter } from './pre-router.js';
-import { TrpcModuleWithRouterConfig } from './utils.js';
+import { ModuleWithTrpcRoutes } from './utils.js';
 
 @injectable()
 export class TrpcService {
@@ -20,7 +20,7 @@ export class TrpcService {
    * @param options Options for creating
    * an [HTTP handler](https://trpc.io/docs/server/adapters/standalone#adding-a-handler-to-an-custom-http-server).
    */
-  setOptionsAndGetAppRouter<T extends readonly ModRefId<TrpcModuleWithRouterConfig<any>>[]>(
+  setOptionsAndGetAppRouter<T extends readonly ModRefId<ModuleWithTrpcRoutes<any>>[]>(
     options: Override<TrpcOpts, { router?: never }> & {
       modulesWithTrpcRoutes: T;
     },
@@ -37,9 +37,9 @@ export class TrpcService {
   /**
    * @param modRefIds List of modules with tRPC routers.
    */
-  protected mergeModuleRouters<const T extends readonly ModRefId<TrpcModuleWithRouterConfig<any>>[]>(modRefIds: T) {
+  protected mergeModuleRouters<const T extends readonly ModRefId<ModuleWithTrpcRoutes<any>>[]>(modRefIds: T) {
     type RouterOf<I> =
-      I extends ModRefId<TrpcModuleWithRouterConfig<infer C>> ? ReturnType<typeof this.t.router<C>> : never;
+      I extends ModRefId<ModuleWithTrpcRoutes<infer C>> ? ReturnType<typeof this.t.router<C>> : never;
     type RoutersTuple = { [K in keyof T]: RouterOf<T[K]> };
     type Mutable<T> = { -readonly [K in keyof T]: T[K] };
 
@@ -48,8 +48,8 @@ export class TrpcService {
   }
 
   protected getRouterConfig<
-    T extends TrpcModuleWithRouterConfig<any>,
-    C = T extends TrpcModuleWithRouterConfig<infer U> ? U : never,
+    T extends ModuleWithTrpcRoutes<any>,
+    C = T extends ModuleWithTrpcRoutes<infer U> ? U : never,
   >(modRefId: ModRefId<T>): C {
     return (this.moduleManager.getInjectorPerMod(modRefId).get(modRefId) as T).getRouterConfig();
   }
