@@ -1,4 +1,4 @@
-import { Injector, rootModule } from '@ditsmod/core';
+import { rootModule } from '@ditsmod/core';
 import { TrpcRootModule, TrpcService } from '@ditsmod/trpc';
 
 import { PostModule } from '#modules/post/post.module.js';
@@ -6,10 +6,10 @@ import { AuthModule } from '#modules/auth/auth.module.js';
 import { AuthService } from '#modules/auth/auth.service.js';
 import { MessageModule } from '#modules/message/message.module.js';
 
-const imports = [AuthModule, PostModule, MessageModule] as const;
+const modulesWithTrpcRoutes = [AuthModule, PostModule, MessageModule] as const;
 
 @rootModule({
-  imports: [...imports],
+  imports: [...modulesWithTrpcRoutes],
 })
 export class AppModule implements TrpcRootModule {
   constructor(private authService: AuthService) {}
@@ -18,7 +18,7 @@ export class AppModule implements TrpcRootModule {
     return trpcService.setOptionsAndGetAppRouter({
       basePath: '/trpc/',
       createContext: this.authService.createContext,
-      router: trpcService.mergeModuleRouters(imports),
+      modulesWithTrpcRoutes,
     });
   }
 }
