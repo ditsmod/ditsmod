@@ -1,4 +1,4 @@
-import { inject, injectable, Injector, ModRefId, ModuleManager, Override } from '@ditsmod/core';
+import { AnyObj, inject, injectable, Injector, ModRefId, ModuleManager, Override } from '@ditsmod/core';
 
 import { TRPC_OPTS, TRPC_ROOT } from './constants.js';
 import { TrpcOpts, TrpcRootObject } from './types.js';
@@ -29,9 +29,16 @@ export class TrpcService {
     const opts = { ...options } as unknown as TrpcOpts;
     delete (opts as any).modulesWithTrpc;
     opts.router = router;
-    this.injector.setByToken(TRPC_OPTS, opts);
+    this.injector.parent!.setByToken(TRPC_OPTS, opts);
     this.preRouter.setTrpcRequestListener();
     return router;
+  }
+
+  getRouterConfig<
+    T extends ModuleWithTrpcRoutes<any>,
+    C = T extends ModuleWithTrpcRoutes<infer U> ? U : never,
+  >(modRefId: ModRefId<T>): C {
+    return (this.moduleManager.getInstanceOf(modRefId)).getRouterConfig();
   }
 
   /**
@@ -44,12 +51,5 @@ export class TrpcService {
     };
 
     return this.t.mergeRouters(...routers);
-  }
-
-  protected getRouterConfig<
-    T extends ModuleWithTrpcRoutes<any>,
-    C = T extends ModuleWithTrpcRoutes<infer U> ? U : never,
-  >(modRefId: ModRefId<T>): C {
-    return (this.moduleManager.getInstanceOf(modRefId)).getRouterConfig();
   }
 }

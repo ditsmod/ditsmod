@@ -1,4 +1,12 @@
-import { BaseAppInitializer, BaseMeta, Injector, awaitTokens, isRootModule } from '@ditsmod/core';
+import {
+  BaseAppInitializer,
+  BaseMeta,
+  Injector,
+  ModRefId,
+  ProvidersOnly,
+  awaitTokens,
+  isRootModule,
+} from '@ditsmod/core';
 
 import { RequestListener, SERVER } from './types.js';
 import { PreRouter } from './pre-router.js';
@@ -14,7 +22,6 @@ export class TrpcAppInitializer extends BaseAppInitializer {
   protected override addDefaultProvidersPerApp() {
     this.baseMeta.providersPerApp.unshift(
       PreRouter,
-      TrpcService,
       { token: SERVER, useFactory: () => this.server },
       { token: TRPC_ROOT, useValue: t },
       { token: TRPC_PROC, useValue: t.procedure },
@@ -38,6 +45,13 @@ export class TrpcAppInitializer extends BaseAppInitializer {
       (injectorPerMod.get(baseMeta.modRefId) as Partial<TrpcRootModule>).getAppRouter?.(trpcService);
     }
     return injectorPerMod;
+  }
+
+  protected override overrideMetaAfterStage1(modRefId: ModRefId, baseMeta: ProvidersOnly): void {
+    if (baseMeta instanceof BaseMeta) {
+      baseMeta.providersPerMod.unshift(TrpcService);
+    }
+    super.overrideMetaAfterStage1(modRefId, baseMeta);
   }
 
   setServer(server: HttpServer) {
