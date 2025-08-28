@@ -426,6 +426,10 @@ export interface FunctionFactoryProvider extends BaseNormalizedProvider {
    * The function is invoked with resolved values of `token`s in the `deps` field.
    */
   useFactory: AnyFn;
+  /**
+   * An array of dependency tokens whose corresponding values need
+   * to be passed into the {@link useFactory} function.
+   */
   deps?: any[];
 }
 
