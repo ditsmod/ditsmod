@@ -3,25 +3,16 @@ import z from 'zod';
 
 import { DbService } from '#modules/db/db.service.js';
 import { TrpcProc } from '#app/types.js';
+import { MessageService } from './message.service.js';
 
 @controller()
 export class MessageController {
-  constructor(protected db: DbService) {}
-
-  createMessage(text: string) {
-    const msg = {
-      id: ++this.db.id,
-      text,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    };
-    return msg;
-  }
+  constructor(protected db: DbService, protected messageService: MessageService) {}
 
   @trpcRoute()
   addMessage(@proc() proc: TrpcProc) {
     return proc.input(z.string()).mutation(({ input }) => {
-      const msg = this.createMessage(input);
+      const msg = this.messageService.createMessage(input);
       this.db.messages.push(msg);
       return msg;
     });
