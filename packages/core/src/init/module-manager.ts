@@ -298,6 +298,15 @@ export class ModuleManager {
     }
   }
 
+  /**
+   * Returns instance of a module.
+   */
+  getInstanceOf<T extends AnyObj>(modRefId: ModRefId<T>): T;
+  getInstanceOf(moduleId: ModuleId): AnyObj;
+  getInstanceOf(moduleId: ModuleId) {
+    return this.getInjectorPerMod(moduleId).get(moduleId);
+  }
+
   protected getBaseMetaFromSnapshot(moduleId: ModuleId) {
     let baseMeta: BaseMeta | undefined;
     if (typeof moduleId == 'string') {

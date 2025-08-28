@@ -50,6 +50,6 @@ export class TrpcService {
     T extends ModuleWithTrpcRoutes<any>,
     C = T extends ModuleWithTrpcRoutes<infer U> ? U : never,
   >(modRefId: ModRefId<T>): C {
-    return (this.moduleManager.getInjectorPerMod(modRefId).get(modRefId) as T).getRouterConfig();
+    return (this.moduleManager.getInstanceOf(modRefId)).getRouterConfig();
   }
 }
