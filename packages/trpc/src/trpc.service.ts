@@ -38,12 +38,11 @@ export class TrpcService {
    * @param modRefIds List of modules with tRPC routers.
    */
   protected mergeModuleRouters<const T extends readonly ModRefId<ModuleWithTrpcRoutes<any>>[]>(modRefIds: T) {
-    type RouterOf<I> =
-      I extends ModRefId<ModuleWithTrpcRoutes<infer C>> ? ReturnType<typeof this.t.router<C>> : never;
-    type RoutersTuple = { [K in keyof T]: RouterOf<T[K]> };
-    type Mutable<T> = { -readonly [K in keyof T]: T[K] };
+    type RouterOf<I> = I extends ModRefId<ModuleWithTrpcRoutes<infer C>> ? ReturnType<typeof this.t.router<C>> : never;
+    const routers = modRefIds.map((id) => this.t.router(this.getRouterConfig(id))) as {
+      -readonly [K in keyof T]: RouterOf<T[K]>;
+    };
 
-    const routers = modRefIds.map((id) => this.t.router(this.getRouterConfig(id))) as unknown as Mutable<RoutersTuple>;
     return this.t.mergeRouters(...routers);
   }
 
