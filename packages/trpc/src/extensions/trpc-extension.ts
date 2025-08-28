@@ -1,14 +1,4 @@
-import {
-  injectable,
-  Extension,
-  ExtensionsManager,
-  Logger,
-  MetadataPerMod2,
-  Class,
-  reflector,
-  DecoratorAndValue,
-  PerAppService,
-} from '@ditsmod/core';
+import { injectable, Extension, MetadataPerMod2, Class, reflector, DecoratorAndValue } from '@ditsmod/core';
 
 import { TrpcMetadataPerMod2 } from '#init/trpc-deep-modules-importer.js';
 import { initTrpcModule } from '#decorators/trpc-init-hooks-and-metadata.js';
@@ -21,15 +11,10 @@ export function isTrpcRoute<T>(decoratorAndValue?: DecoratorAndValue<T>): decora
 
 @injectable()
 export class TrpcExtension implements Extension<void> {
-  constructor(
-    private extensionsManager: ExtensionsManager,
-    private perAppService: PerAppService,
-    protected metadataPerMod2: MetadataPerMod2<TrpcMetadataPerMod2>,
-  ) {}
+  constructor(protected metadataPerMod2: MetadataPerMod2<TrpcMetadataPerMod2>) {}
 
   async stage1() {
     this.setControllersToDi();
-    this.perAppService.reinitInjector();
   }
 
   protected setControllersToDi() {
@@ -43,7 +28,9 @@ export class TrpcExtension implements Extension<void> {
           }
           const route = decoratorAndValue.value;
           const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
-          this.perAppService.providers.push({ useFactory: [Controller, Controller.prototype[methodName]] });
+          restMetadataPerMod2.baseMeta.providersPerMod.push({
+            useFactory: [Controller, Controller.prototype[methodName]],
+          });
         }
       }
     }

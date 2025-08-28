@@ -8,7 +8,7 @@ import { MessageService } from './message.service.js';
 @initTrpcModule({
   imports: [DbModule],
   controllers: [MessageController],
-  providersPerApp: [MessageService]
+  providersPerMod: [MessageService]
 })
 @featureModule()
 export class MessageModule implements ModuleWithTrpcRoutes {

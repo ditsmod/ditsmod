@@ -6,7 +6,8 @@ import { AuthController } from './auth.controller.js';
 
 @initTrpcModule({
   controllers: [AuthController],
-  providersPerApp: [AuthService],
+  providersPerMod: [AuthService],
+  exports: [AuthService],
 })
 @featureModule()
 export class AuthModule implements ModuleWithTrpcRoutes {

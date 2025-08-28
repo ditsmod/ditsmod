@@ -2,6 +2,7 @@ import { featureModule } from '@ditsmod/core';
 import { DbService } from './db.service.js';
 
 @featureModule({
-  providersPerApp: [DbService],
+  providersPerMod: [DbService],
+  exports: [DbService],
 })
 export class DbModule {}
