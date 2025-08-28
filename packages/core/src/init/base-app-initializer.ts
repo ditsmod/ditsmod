@@ -396,9 +396,7 @@ export class BaseAppInitializer {
    *
    * See `TestAppInitializer` in `@ditsmod/testing` for more info.
    */
-  protected overrideMetaAfterStage1(modRefId: ModRefId, providersOnly: ProvidersOnly): any {
-    return providersOnly;
-  }
+  protected overrideMetaAfterStage1(modRefId: ModRefId, providersOnly: ProvidersOnly): void {}
 
   protected decreaseExtensionsCounters(extensionCounters: ExtensionCounters, providers: Provider[]) {
     const { mExtensions } = extensionCounters;
