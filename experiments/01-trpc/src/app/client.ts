@@ -45,6 +45,8 @@ async function main() {
 
   const postList = await trpc.post.listPosts.query();
   console.log('has posts', postList, 'first:', postList[0].title);
+  const commentList = await trpc.post.comments.listComments.query();
+  console.log('has comments', commentList, 'first:', postList[0].title);
   await sleep();
 
   try {
