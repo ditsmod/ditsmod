@@ -1,4 +1,4 @@
-import { AnyObj, inject, injectable, Injector, ModRefId, ModuleManager, Override } from '@ditsmod/core';
+import { inject, injectable, Injector, ModRefId, ModuleManager, Override } from '@ditsmod/core';
 
 import { TRPC_OPTS, TRPC_ROOT } from './constants.js';
 import { TrpcOpts, TrpcRootObject } from './types.js';

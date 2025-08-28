@@ -7,7 +7,10 @@ import { MessageService } from './message.service.js';
 
 @controller()
 export class MessageController {
-  constructor(protected db: DbService, protected messageService: MessageService) {}
+  constructor(
+    protected db: DbService,
+    protected messageService: MessageService,
+  ) {}
 
   @trpcRoute()
   addMessage(@proc() proc: TrpcProc) {
