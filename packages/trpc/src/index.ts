@@ -1,4 +1,5 @@
 export { proc } from './decorators/proc.js';
+export { isModuleWithTrpcRoutes } from './type.guards.js';
 export { trpcRoute } from './decorators/trpc-route.js';
 export { controller } from './decorators/controller.js';
 export { initTrpcModule } from './decorators/trpc-init-hooks-and-metadata.js';
