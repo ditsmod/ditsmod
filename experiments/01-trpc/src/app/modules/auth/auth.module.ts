@@ -1,4 +1,4 @@
-import { featureModule, Injector } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 import { initTrpcModule, ModuleWithTrpcRoutes } from '@ditsmod/trpc';
 
 import { AuthService } from './auth.service.js';
@@ -11,9 +11,7 @@ import { AuthController } from './auth.controller.js';
 })
 @featureModule()
 export class AuthModule implements ModuleWithTrpcRoutes {
-  constructor(private inj: Injector) {}
-
   getRouterConfig() {
-    return { admin: { secret: this.inj.get(AuthController.prototype.getAdminRouter) } };
+    return { admin: { secret: AuthController.prototype.getAdminRouter } };
   }
 }

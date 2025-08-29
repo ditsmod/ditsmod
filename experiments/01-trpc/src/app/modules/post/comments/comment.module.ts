@@ -1,4 +1,4 @@
-import { featureModule, Injector } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 import { initTrpcModule, ModuleWithTrpcRoutes } from '@ditsmod/trpc';
 
 import { CommentController } from './comment.controller.js';
@@ -10,12 +10,10 @@ import { DbModule } from '#app/modules/db/db.module.js';
 })
 @featureModule()
 export class CommentModule implements ModuleWithTrpcRoutes {
-  constructor(private inj: Injector) {}
-
   getRouterConfig() {
     return {
-      createComment: this.inj.get(CommentController.prototype.createComment),
-      listComments: this.inj.get(CommentController.prototype.listComments),
+      createComment: CommentController.prototype.createComment,
+      listComments: CommentController.prototype.listComments,
     };
   }
 }

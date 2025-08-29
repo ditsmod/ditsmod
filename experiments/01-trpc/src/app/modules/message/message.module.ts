@@ -1,4 +1,4 @@
-import { featureModule, Injector } from '@ditsmod/core';
+import { featureModule } from '@ditsmod/core';
 import { initTrpcModule, ModuleWithTrpcRoutes } from '@ditsmod/trpc';
 
 import { DbModule } from '#modules/db/db.module.js';
@@ -12,15 +12,13 @@ import { MessageService } from './message.service.js';
 })
 @featureModule()
 export class MessageModule implements ModuleWithTrpcRoutes {
-  constructor(protected inj: Injector) {}
-
   getRouterConfig() {
     return {
       message: {
-        listMessages: this.inj.get(MessageController.prototype.listMessages),
-        addMessage: this.inj.get(MessageController.prototype.addMessage),
+        listMessages: MessageController.prototype.listMessages,
+        addMessage: MessageController.prototype.addMessage,
       },
-      hello: this.inj.get(MessageController.prototype.getHelloRouter),
+      hello: MessageController.prototype.getHelloRouter,
     };
   }
 }

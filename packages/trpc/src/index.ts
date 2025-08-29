@@ -17,4 +17,5 @@ export {
   TrpcOpts,
   TrpcAppOptions,
   TrpcRootObject,
+  AppRouterHelper,
 } from './types.js';

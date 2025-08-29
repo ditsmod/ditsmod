@@ -1,5 +1,5 @@
 import { rootModule } from '@ditsmod/core';
-import { TrpcRootModule, TrpcService } from '@ditsmod/trpc';
+import { AppRouterHelper, TrpcRootModule, TrpcService } from '@ditsmod/trpc';
 
 import { PostModule } from '#modules/post/post.module.js';
 import { AuthModule } from '#modules/auth/auth.module.js';
@@ -22,3 +22,5 @@ export class AppModule implements TrpcRootModule {
     });
   }
 }
+
+export type AppRouter = AppRouterHelper<typeof modulesWithTrpcRoutes>;
