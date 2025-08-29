@@ -183,7 +183,7 @@ const providers = new Providers()
       Object.getOwnPropertyNames(Plugin.prototype)
         .filter((p) => p != 'constructor')
         .forEach((p) => {
-          (this as any)[p] = Plugin.prototype[p];
+          (this as any)[p] = (Plugin.prototype as any)[p];
         });
     });
 

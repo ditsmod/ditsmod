@@ -1,4 +1,4 @@
-import { controller, proc } from '@ditsmod/trpc';
+import { controller, proc, trpcRoute } from '@ditsmod/trpc';
 import z from 'zod';
 
 import { DbService } from '#modules/db/db.service.js';
@@ -12,6 +12,7 @@ export class MessageController {
     protected messageService: MessageService,
   ) {}
 
+  @trpcRoute()
   addMessage(@proc() proc: TrpcProc) {
     return proc.input(z.string()).mutation(({ input }) => {
       const msg = this.messageService.createMessage(input);
@@ -20,10 +21,12 @@ export class MessageController {
     });
   }
 
+  @trpcRoute()
   listMessages(@proc() proc: TrpcProc) {
     return proc.query(() => this.db.messages);
   }
 
+  @trpcRoute()
   getHelloRouter(@proc() proc: TrpcProc) {
     return proc.input(z.string().nullish()).query(({ input, ctx }) => {
       return `hello ${input ?? ctx.user?.name ?? 'world'}`;

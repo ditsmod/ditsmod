@@ -7,6 +7,7 @@ import { AuthService } from '#modules/auth/auth.service.js';
 import { MessageModule } from '#modules/message/message.module.js';
 
 const modulesWithTrpcRoutes = [AuthModule, PostModule, MessageModule] as const;
+export type AppRouter = AppRouterHelper<typeof modulesWithTrpcRoutes>;
 
 @rootModule({
   imports: [...modulesWithTrpcRoutes],
@@ -14,13 +15,11 @@ const modulesWithTrpcRoutes = [AuthModule, PostModule, MessageModule] as const;
 export class AppModule implements TrpcRootModule {
   constructor(private authService: AuthService) {}
 
-  getAppRouter(trpcService: TrpcService) {
-    return trpcService.setOptionsAndGetAppRouter({
+  setAppRouter(trpcService: TrpcService) {
+    trpcService.setOptionsAndGetAppRouter({
       basePath: '/trpc/',
       createContext: this.authService.createContext,
       modulesWithTrpcRoutes,
     });
   }
 }
-
-export type AppRouter = AppRouterHelper<typeof modulesWithTrpcRoutes>;
