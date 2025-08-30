@@ -1,6 +1,5 @@
 import { CustomError } from '@ditsmod/core';
 
-
 /**
  * `Detected duplicate controllers - ${controllersList}`.
  */

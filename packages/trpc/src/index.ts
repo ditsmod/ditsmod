@@ -20,4 +20,5 @@ export {
   AppRouterHelper,
   TrpcRootModule,
   ModuleWithTrpcRoutes,
+  SetAppRouterOptions
 } from './types.js';
