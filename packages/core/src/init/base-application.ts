@@ -35,6 +35,7 @@ export abstract class BaseApplication {
     // Here, after init extensions, reinit Logger with new config.
     this.log = baseAppInitializer.log;
     (this.log as PublicLogMediator).updateOutputLogLevel();
+    await baseAppInitializer.resetRequestListener();
   }
 
   protected flushLogs() {
