@@ -17,9 +17,11 @@ const debugClassNameCounters = new Map<string, number>();
  * If you use this function in tests, remember to run
  * the `clearDebugClassNames()` function before each test.
  */
-export function getDebugClassName(modRefId: ModRefId | ForwardRefFn<ModuleType>): string | undefined {
+export function getDebugClassName(modRefId: string | ModRefId | ForwardRefFn<ModuleType>): string | undefined {
   if (!modRefId) {
     return;
+  } else if (typeof modRefId == 'string') {
+    return modRefId;
   }
   modRefId = resolveForwardRef(modRefId);
   const debugClassName = debugClassNames.get(modRefId);
