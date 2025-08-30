@@ -1,10 +1,11 @@
-import { BaseAppInitializer, BaseMeta, ModRefId, ProvidersOnly, awaitTokens, isRootModule } from '@ditsmod/core';
+import { BaseAppInitializer, BaseMeta, ModRefId, ProvidersOnly, awaitTokens } from '@ditsmod/core';
 
-import { RequestListener, SERVER, TrpcRootModule } from './types.js';
+import { RequestListener, SERVER } from './types.js';
 import { PreRouter } from './pre-router.js';
 import { HttpServer } from './server-options.js';
 import { t, TRPC_OPTS, TRPC_PROC, TRPC_ROOT } from './constants.js';
 import { TrpcService } from './trpc.service.js';
+import { TrpcInternalService } from './trpc-internal.service.js';
 
 export class TrpcAppInitializer extends BaseAppInitializer {
   protected preRouter: PreRouter;
@@ -29,17 +30,17 @@ export class TrpcAppInitializer extends BaseAppInitializer {
 
   requestListener: RequestListener = (rawReq, rawRes) => this.preRouter.requestListener(rawReq, rawRes);
 
-  override async resetRequestListener() {
-    const injectorPerMod = this.moduleManager.getInjectorPerMod('root');
-    const trpcService = injectorPerMod.get(TrpcService) as TrpcService;
-    trpcService.setTrpcRouter(this.baseMeta);
-  }
-
   protected override overrideMetaAfterStage1(modRefId: ModRefId, baseMeta: ProvidersOnly): void {
     if (baseMeta instanceof BaseMeta) {
-      baseMeta.providersPerMod.unshift(TrpcService);
+      baseMeta.providersPerMod.unshift(TrpcService, TrpcInternalService);
     }
     super.overrideMetaAfterStage1(modRefId, baseMeta);
+  }
+
+  override async resetRequestListener() {
+    const injectorPerMod = this.moduleManager.getInjectorPerMod('root');
+    const trpcInternalService = injectorPerMod.get(TrpcInternalService) as TrpcInternalService;
+    trpcInternalService.setTrpcRouter(this.baseMeta);
   }
 
   setServer(server: HttpServer) {
