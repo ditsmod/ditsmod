@@ -7,20 +7,15 @@ import { RequestListener, TrpcOpts } from './types.js';
 @injectable()
 export class PreRouter {
   protected opts: TrpcOpts;
+  requestListener: RequestListener;
 
   constructor(
     protected injectorPerApp: Injector,
     protected systemLogMediator: SystemLogMediator,
   ) {}
 
-  readonly preRequestListener: RequestListener = (req, res) => {
-    res.end('tRPC is initializing...');
-  };
-
   setTrpcRequestListener() {
     this.opts = this.injectorPerApp.get(TRPC_OPTS);
     this.requestListener = createHTTPHandler(this.opts) as RequestListener;
   }
-
-  requestListener: RequestListener = this.preRequestListener;
 }

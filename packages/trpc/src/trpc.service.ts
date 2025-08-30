@@ -1,28 +1,29 @@
-import { AnyFn, AnyObj, getModule, inject, injectable, Injector, ModRefId, ModuleManager } from '@ditsmod/core';
+import { AnyFn, AnyObj, BaseMeta, getModule, inject, injectable, ModRefId, ModuleManager } from '@ditsmod/core';
 
 import { TRPC_OPTS, TRPC_ROOT } from './constants.js';
-import { TrpcOpts, TrpcRootObject, ModuleWithTrpcRoutes, RouterOptions } from './types.js';
+import { TrpcOpts, TrpcRootObject, ModuleWithTrpcRoutes, RouterOptions, TrpcRootModule } from './types.js';
 import { PreRouter } from './pre-router.js';
 import { isModuleWithTrpcRoutes } from './type.guards.js';
 
 @injectable()
 export class TrpcService {
   constructor(
-    protected injector: Injector,
     protected preRouter: PreRouter,
     protected moduleManager: ModuleManager,
     @inject(TRPC_ROOT) protected t: TrpcRootObject<any>,
   ) {}
 
   /**
-   * Passes tRPC options to DI, creates a tRPC router, and returns it.
+   * Passes tRPC options to DI, and set a tRPC router.
    *
    * @param options Options for creating
    * an [HTTP handler](https://trpc.io/docs/server/adapters/standalone#adding-a-handler-to-an-custom-http-server).
    */
-  setOptionsAndGetAppRouter(options: Omit<TrpcOpts, 'router'> = {}) {
+  setTrpcRouter(baseMeta: BaseMeta) {
+    const injectorPerMod = this.moduleManager.getInjectorPerMod('root');
+    const options = (injectorPerMod.get(baseMeta.modRefId) as Partial<TrpcRootModule>).setAppRouter?.();
     (options as TrpcOpts).router = this.t.mergeRouters(...this.getRouters());
-    this.injector.parent!.setByToken(TRPC_OPTS, options);
+    injectorPerMod.parent!.setByToken(TRPC_OPTS, options);
     this.preRouter.setTrpcRequestListener();
   }
 
