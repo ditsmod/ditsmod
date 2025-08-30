@@ -1,4 +1,4 @@
-import { AnyFn, type AnyObj, BaseAppOptions, InjectionToken, ModRefId } from '@ditsmod/core';
+import { AnyFn, AnyObj, BaseAppOptions, InjectionToken, ModRefId } from '@ditsmod/core';
 import type { AnyRouter, initTRPC } from '@trpc/server';
 import type { CreateHTTPHandlerOptions } from '@trpc/server/adapters/standalone';
 import type {
@@ -11,8 +11,8 @@ import type { Http2ServerRequest, Http2ServerResponse } from 'http2';
 
 import type { HttpModule } from './http-module.js';
 import type { ServerOptions } from './server-options.js';
-import { ModuleWithTrpcRoutes } from './utils.js';
-import { t } from './constants.js';
+import type { t } from './constants.js';
+import type { TrpcService } from './trpc.service.js';
 
 export class TrpcAppOptions extends BaseAppOptions {
   httpModule?: HttpModule | null = null;
@@ -29,6 +29,18 @@ export type RawRequest = http.IncomingMessage | Http2ServerRequest;
 export type RawResponse = http.ServerResponse | Http2ServerResponse;
 export type RequestListener = (request: RawRequest, response: RawResponse) => void | Promise<void>;
 export type TrpcRootObject<T extends AnyObj> = ReturnType<ReturnType<typeof initTRPC.context<T>>['create']>;
+export interface TrpcRootModule {
+  /**
+   * For the root application module (AppModule), this method is automatically invoked by `@ditsmod/trpc`, expecting that within
+   * it {@link TrpcService.setOptionsAndGetAppRouter | trpcService.setOptionsAndGetAppRouter()} will be called.
+   * This method is also used by the tRPC client to obtain the data type (`AppRouter`) that it returns.
+   */
+  setAppRouter(trpcService: TrpcService): void;
+}
+
+export interface ModuleWithTrpcRoutes<Config extends AnyObj = AnyObj> {
+  getRouterConfig(): Config;
+}
 
 export type AppRouterHelper<ArrOfRouterConfig extends readonly ModRefId<ModuleWithTrpcRoutes<any>>[]> = ReturnType<
   typeof t.mergeRouters<MutableArr<ArrOfRouterConfig>>
@@ -42,3 +54,4 @@ type GetRouterConfig<T> = {
   [K in keyof T]: T[K] extends AnyFn<any, infer R> ? CtrlOrModuleFn<R> : GetRouterConfig<T[K]>;
 };
 type CtrlOrModuleFn<F> = F extends AnyFn ? F : GetRouterConfig<F>;
+

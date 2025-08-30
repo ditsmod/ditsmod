@@ -13,9 +13,8 @@ import {
 import { CreateRouterOptions } from '@trpc/server/unstable-core-do-not-import';
 
 import { TRPC_OPTS, TRPC_ROOT } from './constants.js';
-import { TrpcOpts, TrpcRootObject } from './types.js';
+import { TrpcOpts, TrpcRootObject, ModuleWithTrpcRoutes } from './types.js';
 import { PreRouter } from './pre-router.js';
-import { ModuleWithTrpcRoutes } from './utils.js';
 import { isModuleWithTrpcRoutes } from './type.guards.js';
 
 @injectable()

@@ -7,7 +7,6 @@ export { TRPC_ROOT, TRPC_OPTS, TRPC_PROC } from './constants.js';
 export { PreRouter } from './pre-router.js';
 export { TrpcAppInitializer } from './trpc-app-initializer.js';
 export { TrpcApplication } from './trpc-application.js';
-export { TrpcRootModule, ModuleWithTrpcRoutes } from './utils.js';
 export { TrpcService } from './trpc.service.js';
 export { TrpcExtension } from './extensions/trpc-extension.js';
 export {
@@ -19,4 +18,6 @@ export {
   TrpcAppOptions,
   TrpcRootObject,
   AppRouterHelper,
+  TrpcRootModule,
+  ModuleWithTrpcRoutes,
 } from './types.js';
