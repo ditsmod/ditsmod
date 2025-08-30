@@ -324,7 +324,7 @@ export class BaseAppInitializer {
           if (!ext.stage2) {
             continue;
           }
-          const injectorPerMod = this.moduleManager.getInjectorPerMod(modRefId);
+          const injectorPerMod = this.moduleManager.getInjectorPerMod(modRefId, true);
           await ext.stage2(injectorPerMod);
         } catch (err: any) {
           const debugModuleName = getDebugClassName(modRefId) || 'unknown';

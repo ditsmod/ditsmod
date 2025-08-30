@@ -22,7 +22,7 @@ export class TrpcInternalService {
    * an [HTTP handler](https://trpc.io/docs/server/adapters/standalone#adding-a-handler-to-an-custom-http-server).
    */
   setTrpcRouter(baseMeta: BaseMeta) {
-    const injectorPerMod = this.moduleManager.getInjectorPerMod('root');
+    const injectorPerMod = this.moduleManager.getInjectorPerMod('root', true);
     const options = (injectorPerMod.get(baseMeta.modRefId) as Partial<TrpcRootModule>).setAppRouter?.();
     (options as TrpcOpts).router = this.t.mergeRouters(...this.getRouters());
     injectorPerMod.parent!.setByToken(TRPC_OPTS, options);
@@ -67,7 +67,7 @@ export class TrpcInternalService {
           trpcRouterConfig[prop] = this.getModuleTrpcConfigs(importedModRefId);
         } else {
           // Case with `{ property: ControllerClass.prototype.someMethod }`
-          const injectorPerMod = this.moduleManager.getInjectorPerMod(currentModRefId);
+          const injectorPerMod = this.moduleManager.getInjectorPerMod(currentModRefId, true);
           trpcRouterConfig[prop] = injectorPerMod.get(val);
         }
       } else {

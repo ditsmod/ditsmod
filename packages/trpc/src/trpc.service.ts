@@ -13,6 +13,6 @@ export class TrpcService {
   ) {}
 
   getModuleConfig<T extends ModuleWithTrpcRoutes<any>>(modRefId: ModRefId<T>) {
-    return this.moduleManager.getInstanceOf(modRefId).getRouterConfig();
+    return this.moduleManager.getInstanceOf(modRefId, true).getRouterConfig();
   }
 }

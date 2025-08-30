@@ -285,26 +285,38 @@ export class ModuleManager {
     }
   }
 
-  getInjectorPerMod(moduleId: ModuleId) {
+  getInjectorPerMod(moduleId: ModuleId, throwErrIfNotFound: true): Injector;
+  getInjectorPerMod(moduleId: ModuleId, throwErrIfNotFound?: false): Injector | undefined;
+  getInjectorPerMod(moduleId: ModuleId, throwErrIfNotFound?: boolean): Injector | undefined {
+    let inj: Injector | undefined;
     if (typeof moduleId == 'string') {
       const mapId = this.mapId.get(moduleId);
       if (mapId) {
-        return this.injectorPerModMap.get(mapId)!;
-      } else {
-        throw new ModuleIdNotFoundInModuleManager(moduleId);
+        inj = this.injectorPerModMap.get(mapId);
       }
     } else {
-      return this.injectorPerModMap.get(moduleId)!;
+      inj = this.injectorPerModMap.get(moduleId);
     }
+
+    if (!inj && throwErrIfNotFound) {
+      const moduleName = getDebugClassName(moduleId) || 'unknown';
+      throw new ModuleIdNotFoundInModuleManager(moduleName);
+    }
+    return inj;
   }
 
   /**
    * Returns instance of a module.
    */
-  getInstanceOf<T extends AnyObj>(modRefId: ModRefId<T>): T;
-  getInstanceOf(moduleId: ModuleId): AnyObj;
-  getInstanceOf(moduleId: ModuleId) {
-    return this.getInjectorPerMod(moduleId).get(moduleId);
+  getInstanceOf<T extends AnyObj>(modRefId: ModRefId<T>, throwErrIfNotFound: true): T;
+  getInstanceOf<T extends AnyObj>(modRefId: ModRefId<T>, throwErrIfNotFound?: false): T | undefined;
+  getInstanceOf(moduleId: ModuleId, throwErrIfNotFound: true): AnyObj;
+  getInstanceOf(moduleId: ModuleId, throwErrIfNotFound?: false): AnyObj | undefined;
+  getInstanceOf(moduleId: ModuleId, throwErrIfNotFound?: boolean) {
+    if (throwErrIfNotFound === true) { // Make TypeScript happy
+      return this.getInjectorPerMod(moduleId, true).get(moduleId);
+    }
+    return this.getInjectorPerMod(moduleId, throwErrIfNotFound)?.get(moduleId);
   }
 
   protected getBaseMetaFromSnapshot(moduleId: ModuleId) {
