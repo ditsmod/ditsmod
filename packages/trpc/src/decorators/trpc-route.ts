@@ -16,12 +16,12 @@ export interface RouteMetadata {
  * By default, any user can activate.
  */
 function routeFn(
-  ctx?: any,
+  meta?: any,
   // guards: GuardItem[] = [],
   // interceptors: Class<HttpInterceptor>[] = [],
 ) {
   // return { httpMethod, path, guards, interceptors };
-  return { ctx };
+  return { meta };
 }
 
 export const trpcRoute = makePropDecorator(routeFn);

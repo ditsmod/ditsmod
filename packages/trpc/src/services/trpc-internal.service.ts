@@ -1,10 +1,10 @@
 import { AnyFn, AnyObj, BaseMeta, getModule, inject, injectable, ModRefId, ModuleManager } from '@ditsmod/core';
 
-import { TRPC_OPTS, TRPC_ROOT } from './constants.js';
-import { TrpcOpts, TrpcRootObject, ModuleWithTrpcRoutes, RouterOptions, TrpcRootModule } from './types.js';
-import { PreRouter } from './pre-router.js';
-import { isModuleWithTrpcRoutes } from './type.guards.js';
-import { TrpcService } from './trpc.service.js';
+import { TRPC_OPTS, TRPC_ROOT } from '../constants.js';
+import { TrpcOpts, TrpcRootObject, ModuleWithTrpcRoutes, RouterOptions, TrpcRootModule } from '../types.js';
+import { PreRouter } from '../pre-router.js';
+import { isModuleWithTrpcRoutes } from '../type.guards.js';
+import { TrpcService } from '#services/trpc.service.js';
 
 @injectable()
 export class TrpcInternalService {

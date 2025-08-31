@@ -6,6 +6,7 @@
       "#decorators/*": ["./src/decorators/*"],
       "#errors": ["./src/errors.js"],
       "#init/*": ["./src/init/*"],
+      "#services/*": ["./src/services/*"],
     },
     "module": "nodenext",
     // "moduleResolution": "nodenext",
