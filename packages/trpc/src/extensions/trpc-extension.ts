@@ -45,8 +45,9 @@ export class TrpcExtension implements Extension<void> {
             {
               token: TRPC_PROC,
               useFactory: () => {
-                return t.procedure.use((opts) => {
-                  return opts.next();
+                return t.procedure.use(async (opts) => {
+                  const result = await opts.next();
+                  return result;
                 });
               },
             },
@@ -64,7 +65,7 @@ export class TrpcExtension implements Extension<void> {
             useFactory: (injectorPerMod: Injector) => {
               const mergedPerRou = meta.providersPerRou.concat(providersPerRou);
               const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'Rou');
-              return injectorPerRou.get(token, fromSelf); // Avoiding cyclic deps.
+              return injectorPerRou.get(token, fromSelf); // fromSelf - this allow avoiding cyclic deps.
             },
           });
         }

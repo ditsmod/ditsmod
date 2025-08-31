@@ -41,7 +41,7 @@ export interface ModuleWithTrpcRoutes<Config extends AnyObj = AnyObj> {
   getRouterConfig(): Config;
 }
 
-export type AppRouterHelper<ArrOfRouterConfig extends readonly ModRefId<ModuleWithTrpcRoutes<any>>[]> = ReturnType<
+export type AppRouterHelper<ArrOfRouterConfig extends readonly ModRefId<ModuleWithTrpcRoutes>[]> = ReturnType<
   typeof t.mergeRouters<MutableArr<ArrOfRouterConfig>>
 >;
 type MutableArr<ArrOfRouterConfig> = { -readonly [K in keyof ArrOfRouterConfig]: RouterOf<ArrOfRouterConfig[K]> };
