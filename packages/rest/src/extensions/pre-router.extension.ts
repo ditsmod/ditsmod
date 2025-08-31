@@ -19,7 +19,6 @@ import {
   ResolvedGuardPerMod,
   RequireProps,
   getToken,
-  getProviderTarget,
   ModuleManager,
   HttpMethod,
   getDebugClassName,
@@ -188,8 +187,7 @@ export class PreRouterExtension implements Extension<void> {
       .filter((p) => {
         const token = getToken(p);
         return token === HTTP_INTERCEPTORS || token === HttpBackend;
-      })
-      .map(getProviderTarget);
+      });
 
     // The application has two default interceptors.
     return interceptors.length > 2;
