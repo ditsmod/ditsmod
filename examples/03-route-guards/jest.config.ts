@@ -2,7 +2,7 @@ import type { Config } from 'jest';
 import * as path from 'path';
 import * as dotenv from 'dotenv';
 
-const dotenvPath = path.resolve(`${__dirname}/.env`);
+const dotenvPath = path.resolve(`${import.meta.dirname}/.env`);
 const output = dotenv.config({ path: dotenvPath });
 if (output.error) {
   throw output.error;
