@@ -18,10 +18,10 @@
     "#auth": "./dist/app/modules/auth/index.js"
   },
   "dependencies": {
-    "dotenv": "^16.4.7"
+    "dotenv": "^16.6.1"
   },
   "devDependencies": {
-    "jest": "^30.0.0",
+    "jest": "*",
     "npm-run-all": "*",
     "typescript": "^5.9.2"
   }

@@ -17,7 +17,7 @@
     "#app/*": "./dist/app/*"
   },
   "devDependencies": {
-    "jest": "^30.0.0",
+    "jest": "*",
     "npm-run-all": "*",
     "typescript": "^5.9.2"
   }
