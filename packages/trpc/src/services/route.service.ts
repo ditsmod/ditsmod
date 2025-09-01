@@ -9,7 +9,7 @@ export class RouteService<Context extends AnyObj = AnyObj> {
   procedure: TrpcRootObject<Context>['procedure'];
 
   constructor(
-    @inject(TRPC_ROOT) t: TrpcRootObject<any>,
+    @inject(TRPC_ROOT) public t: TrpcRootObject<any>,
     protected injectorPerRou: Injector,
     protected providersPerReq: Provider[],
   ) {
@@ -31,15 +31,15 @@ export class RouteService<Context extends AnyObj = AnyObj> {
    */
   mutation<R>(fn: AnyFn<any, R>) {
     return this.procedure.input(z.any()).mutation(() => {
-        const injectorPerReq = this.injectorPerRou.resolveAndCreateChild(this.providersPerReq);
-        return injectorPerReq.get(fn);
+      const injectorPerReq = this.injectorPerRou.resolveAndCreateChild(this.providersPerReq);
+      return injectorPerReq.get(fn);
     });
   }
 
   query<R>(fn: AnyFn<any, R>) {
     return this.procedure.query(() => {
-        const injectorPerReq = this.injectorPerRou.resolveAndCreateChild(this.providersPerReq);
-        return injectorPerReq.get(fn);
+      const injectorPerReq = this.injectorPerRou.resolveAndCreateChild(this.providersPerReq);
+      return injectorPerReq.get(fn);
     });
   }
 }

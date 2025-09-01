@@ -42,7 +42,7 @@ export class TrpcExtension implements Extension<void> {
             continue;
           }
           const tokenPerRou = Controller.prototype[methodName];
-          const providersPerRou: Provider[] = [RouteService, { useFactory: [Controller, tokenPerRou] }];
+          const providersPerRou: Provider[] = [{ useFactory: [Controller, tokenPerRou] }];
           const providersPerReq: Provider[] = [];
           const route = decoratorAndValue.value;
           const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
