@@ -1,4 +1,5 @@
 import { BaseAppInitializer, BaseMeta, ModRefId, ProvidersOnly, awaitTokens } from '@ditsmod/core';
+import { initTRPC } from '@trpc/server';
 
 import { RequestListener, SERVER, TrpcRootModule } from './types.js';
 import { PreRouter } from './pre-router.js';
@@ -6,7 +7,6 @@ import { HttpServer } from './server-options.js';
 import { TRPC_ROUTER_OPTS, TRPC_ROOT } from './constants.js';
 import { TrpcInternalService } from '#services/trpc-internal.service.js';
 import { TrpcService } from '#services/trpc.service.js';
-import { initTRPC } from '@trpc/server';
 
 export class TrpcAppInitializer extends BaseAppInitializer {
   protected preRouter: PreRouter;
@@ -18,16 +18,15 @@ export class TrpcAppInitializer extends BaseAppInitializer {
       { token: SERVER, useFactory: () => this.server },
       {
         token: TRPC_ROOT,
-        useFactory: () => this.getRootObject(),
+        useFactory: () => this.getTrpcRootObject(),
       },
       ...awaitTokens([TRPC_ROUTER_OPTS]),
     );
     super.addDefaultProvidersPerApp();
   }
 
-  protected getRootObject() {
-    const injectorPerMod = this.moduleManager.getInjectorPerMod('root', true);
-    const mod = injectorPerMod.get(this.baseMeta.modRefId) as Partial<TrpcRootModule>;
+  protected getTrpcRootObject() {
+    const mod = this.moduleManager.getInstanceOf('root', true) as Partial<TrpcRootModule>;
     return initTRPC.create(mod.setTrpcCreateOptions?.());
   }
 
