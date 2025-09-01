@@ -1,25 +1,51 @@
-import { controller, proc, trpcRoute } from '@ditsmod/trpc';
+import { controller, RouteService, trpcRoute } from '@ditsmod/trpc';
+import { injectable, factoryMethod } from '@ditsmod/core';
 import { z } from 'zod';
 
 import { DbService } from '#modules/db/db.service.js';
-import { TrpcProc } from '#app/types.js';
 
-@controller()
+@injectable()
+export class PostService {
+  @factoryMethod()
+  createPost(db: DbService) {
+    const post = {
+      id: ++db.id,
+      title: '123',
+    };
+    db.posts.push(post);
+    return post;
+  }
+
+  @factoryMethod()
+  listPosts(db: DbService) {
+    return db.posts;
+  }
+}
+
+@controller({
+  providersPerReq: [
+    { useFactory: [PostService, PostService.prototype.createPost] },
+    { useFactory: [PostService, PostService.prototype.listPosts] },
+  ],
+})
 export class PostController {
   @trpcRoute()
-  createPost(@proc() proc: TrpcProc, db: DbService) {
-    return proc.input(z.object({ title: z.string() })).mutation(({ input }) => {
-      const post = {
-        id: ++db.id,
-        ...input,
-      };
-      db.posts.push(post);
-      return post;
-    });
+  createPost2(routeService: RouteService) {
+    const { procedure, mutation } = routeService.getMutation(PostService.prototype.createPost);
+    return procedure.input(z.object({ title: z.string() })).mutation(mutation);
   }
 
   @trpcRoute()
-  listPosts(@proc() proc: TrpcProc, db: DbService) {
-    return proc.query(() => db.posts);
+  createPost(routeService: RouteService) {
+    return routeService.mutation(PostService.prototype.createPost);
   }
+
+  @trpcRoute()
+  listPosts(routeService: RouteService) {
+    return routeService.query(PostService.prototype.listPosts);
+  }
+}
+
+export interface InputPost {
+  title: string;
 }

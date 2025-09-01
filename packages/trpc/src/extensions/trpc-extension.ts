@@ -14,8 +14,10 @@ import { TrpcMetadataPerMod2 } from '#init/trpc-deep-modules-importer.js';
 import { initTrpcModule } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { trpcRoute } from '#decorators/trpc-route.js';
 import { isCtrlDecor } from '#init/trpc-module-normalizer.js';
-import { ControllerRawMetadata1 } from '#decorators/controller.js';
-import { t, TRPC_PROC } from '../constants.js';
+import { ControllerRawMetadata } from '#decorators/controller.js';
+import { TRPC_ROOT } from '../constants.js';
+import { RouteService } from '#services/route.service.js';
+import { TrpcRootObject } from '../types.js';
 
 export function isTrpcRoute<T>(decoratorAndValue?: DecoratorAndValue<T>): decoratorAndValue is DecoratorAndValue<T> {
   return (decoratorAndValue as DecoratorAndValue<T>)?.decorator === trpcRoute;
@@ -39,33 +41,29 @@ export class TrpcExtension implements Extension<void> {
           if (!isTrpcRoute(decoratorAndValue)) {
             continue;
           }
-          const token = Controller.prototype[methodName];
-          const providersPerRou: Provider[] = [
-            { useFactory: [Controller, token] },
-            {
-              token: TRPC_PROC,
-              useFactory: () => {
-                return t.procedure.use(async (opts) => {
-                  const result = await opts.next();
-                  return result;
-                });
-              },
-            },
-          ];
+          const tokenPerRou = Controller.prototype[methodName];
+          const providersPerRou: Provider[] = [RouteService, { useFactory: [Controller, tokenPerRou] }];
           const providersPerReq: Provider[] = [];
           const route = decoratorAndValue.value;
           const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
           const { interceptors } = route;
           providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
-          providersPerReq.push(...((ctrlDecorator?.value as ControllerRawMetadata1).providersPerReq || []));
+          providersPerReq.push(...((ctrlDecorator?.value as ControllerRawMetadata).providersPerReq || []));
 
           baseMeta.providersPerMod.unshift({
-            token,
+            token: tokenPerRou,
             deps: [Injector],
             useFactory: (injectorPerMod: Injector) => {
               const mergedPerRou = meta.providersPerRou.concat(providersPerRou);
+              mergedPerRou.push({
+                token: RouteService,
+                deps: [TRPC_ROOT, Injector],
+                useFactory: (t: TrpcRootObject<any>, injectorPerRou: Injector) => {
+                  return new RouteService(t, injectorPerRou, providersPerReq);
+                },
+              });
               const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'Rou');
-              return injectorPerRou.get(token, fromSelf); // fromSelf - this allow avoiding cyclic deps.
+              return injectorPerRou.get(tokenPerRou, fromSelf); // fromSelf - this allow avoiding cyclic deps.
             },
           });
         }

@@ -1,5 +1,5 @@
 import { AnyFn, AnyObj, BaseAppOptions, InjectionToken, ModRefId } from '@ditsmod/core';
-import type { AnyRouter, initTRPC } from '@trpc/server';
+import { AnyRouter, initTRPC } from '@trpc/server';
 import type { CreateHTTPHandlerOptions } from '@trpc/server/adapters/standalone';
 import type {
   NodeHTTPCreateContextFnOptions,
@@ -11,7 +11,8 @@ import type { Http2ServerRequest, Http2ServerResponse } from 'http2';
 
 import type { HttpModule } from './http-module.js';
 import type { ServerOptions } from './server-options.js';
-import type { t } from './constants.js';
+
+const t = initTRPC.create();
 
 export class TrpcAppOptions extends BaseAppOptions {
   httpModule?: HttpModule | null = null;
@@ -22,19 +23,21 @@ export class TrpcAppOptions extends BaseAppOptions {
  */
 export const SERVER = new InjectionToken<http.Server>('SERVER');
 
-export type TrpcOpts = CreateHTTPHandlerOptions<AnyRouter>;
+export type TrpcCreateOptions = Parameters<typeof initTRPC.create>[0];
+export type TrpcRouterOpts = CreateHTTPHandlerOptions<AnyRouter>;
 export type TrpcCreateCtxOpts = NodeHTTPCreateContextFnOptions<NodeHTTPRequest, NodeHTTPResponse>;
 export type RawRequest = http.IncomingMessage | Http2ServerRequest;
 export type RawResponse = http.ServerResponse | Http2ServerResponse;
 export type RequestListener = (request: RawRequest, response: RawResponse) => void | Promise<void>;
 export type TrpcRootObject<T extends AnyObj> = ReturnType<ReturnType<typeof initTRPC.context<T>>['create']>;
-export type SetAppRouterOptions = Omit<TrpcOpts, 'router'>;
+export type SetAppRouterOptions = Omit<TrpcRouterOpts, 'router'>;
 export type RouterOptions = Parameters<typeof t.router>[0];
 export interface TrpcRootModule {
   /**
    * For the root application module (AppModule), this method is automatically invoked by `@ditsmod/trpc`.
    */
   setAppRouter(): SetAppRouterOptions;
+  setTrpcCreateOptions?(): TrpcCreateOptions;
 }
 
 export interface ModuleWithTrpcRoutes<Config extends AnyObj = AnyObj> {

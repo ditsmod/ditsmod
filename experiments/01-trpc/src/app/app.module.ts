@@ -1,5 +1,5 @@
 import { rootModule } from '@ditsmod/core';
-import { AppRouterHelper, SetAppRouterOptions, TrpcRootModule } from '@ditsmod/trpc';
+import { AppRouterHelper, SetAppRouterOptions, TrpcCreateOptions, TrpcRootModule } from '@ditsmod/trpc';
 
 import { PostModule } from '#modules/post/post.module.js';
 import { AuthModule } from '#modules/auth/auth.module.js';
@@ -14,6 +14,10 @@ export type AppRouter = AppRouterHelper<typeof modulesWithTrpcRoutes>;
 })
 export class AppModule implements TrpcRootModule {
   constructor(private authService: AuthService) {}
+
+  setTrpcCreateOptions(): TrpcCreateOptions {
+    return { defaultMeta: {} };
+  }
 
   setAppRouter(): SetAppRouterOptions {
     return {

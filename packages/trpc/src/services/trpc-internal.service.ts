@@ -1,7 +1,23 @@
-import { AnyFn, AnyObj, BaseMeta, getModule, inject, injectable, ModRefId, ModuleManager } from '@ditsmod/core';
+import {
+  AnyFn,
+  AnyObj,
+  BaseMeta,
+  getModule,
+  inject,
+  injectable,
+  ModRefId,
+  ModuleManager,
+} from '@ditsmod/core';
+import { initTRPC } from '@trpc/server';
 
-import { TRPC_OPTS, TRPC_ROOT } from '../constants.js';
-import { TrpcOpts, TrpcRootObject, ModuleWithTrpcRoutes, RouterOptions, TrpcRootModule } from '../types.js';
+import { TRPC_ROUTER_OPTS, TRPC_ROOT } from '../constants.js';
+import {
+  TrpcRouterOpts,
+  TrpcRootObject,
+  ModuleWithTrpcRoutes,
+  RouterOptions,
+  TrpcRootModule,
+} from '../types.js';
 import { PreRouter } from '../pre-router.js';
 import { isModuleWithTrpcRoutes } from '../type.guards.js';
 import { TrpcService } from '#services/trpc.service.js';
@@ -23,9 +39,11 @@ export class TrpcInternalService {
    */
   setTrpcRouter(baseMeta: BaseMeta) {
     const injectorPerMod = this.moduleManager.getInjectorPerMod('root', true);
-    const options = (injectorPerMod.get(baseMeta.modRefId) as Partial<TrpcRootModule>).setAppRouter?.();
-    (options as TrpcOpts).router = this.t.mergeRouters(...this.getRouters());
-    injectorPerMod.parent!.setByToken(TRPC_OPTS, options);
+    const injectorPerApp = injectorPerMod.parent!;
+    const mod = injectorPerMod.get(baseMeta.modRefId) as Partial<TrpcRootModule>;
+    const routerOpts = mod.setAppRouter?.();
+    (routerOpts as TrpcRouterOpts).router = this.t.mergeRouters(...this.getRouters());
+    injectorPerApp.setByToken(TRPC_ROUTER_OPTS, routerOpts);
     this.preRouter.setTrpcRequestListener();
   }
 

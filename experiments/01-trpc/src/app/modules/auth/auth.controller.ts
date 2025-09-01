@@ -1,13 +1,13 @@
 import { TRPCError } from '@trpc/server';
-import { controller, proc, trpcRoute } from '@ditsmod/trpc';
+import { controller, RouteService, trpcRoute } from '@ditsmod/trpc';
 
-import { TrpcProc } from '#app/types.js';
+import { TrpcContext } from '#app/types.js';
 
 @controller()
 export class AuthController {
   @trpcRoute()
-  getAdminRouter(@proc() proc: TrpcProc) {
-    return proc.query(({ ctx }) => {
+  getAdminRouter(routeService: RouteService<TrpcContext>) {
+    return routeService.procedure.query(({ ctx }) => {
       if (!ctx.user) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
