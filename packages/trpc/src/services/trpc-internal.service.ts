@@ -8,7 +8,6 @@ import {
   ModRefId,
   ModuleManager,
 } from '@ditsmod/core';
-import { initTRPC } from '@trpc/server';
 
 import { TRPC_ROUTER_OPTS, TRPC_ROOT } from '../constants.js';
 import {

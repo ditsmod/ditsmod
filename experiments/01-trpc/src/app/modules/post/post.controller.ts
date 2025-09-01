@@ -1,5 +1,5 @@
-import { controller, RouteService, trpcRoute } from '@ditsmod/trpc';
-import { injectable, factoryMethod } from '@ditsmod/core';
+import { controller, RouteService, TRPC_OPTS, trpcRoute } from '@ditsmod/trpc';
+import { injectable, factoryMethod, inject } from '@ditsmod/core';
 import { z } from 'zod';
 
 import { DbService } from '#modules/db/db.service.js';
@@ -7,10 +7,10 @@ import { DbService } from '#modules/db/db.service.js';
 @injectable()
 export class PostService {
   @factoryMethod()
-  createPost(db: DbService) {
+  createPost(@inject(TRPC_OPTS) opts: any, db: DbService) {
     const post = {
       id: ++db.id,
-      title: '123',
+      ...opts.input?.title,
     };
     db.posts.push(post);
     return post;
@@ -36,7 +36,7 @@ export class PostController {
   }
 
   @trpcRoute()
-  createPost(routeService: RouteService) {
+  createPost(routeService: RouteService<any, { title: string }>) {
     return routeService.mutation(PostService.prototype.createPost);
   }
 
