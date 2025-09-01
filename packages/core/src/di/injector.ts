@@ -154,7 +154,7 @@ console.log(providers[0].resolvedFactories[0].dependencies);
       Registry = getNewRegistry();
     }
     providers.forEach((p) => {
-      Registry!.prototype[p.dualKey.id] = p;
+      Registry.prototype[p.dualKey.id] = p;
     });
     return Registry;
   }
