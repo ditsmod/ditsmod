@@ -274,9 +274,9 @@ export class ModuleManager {
 
   setInjectorPerMod(moduleId: ModuleId, injectorPerMod: Injector) {
     if (typeof moduleId == 'string') {
-      const mapId = this.mapId.get(moduleId);
-      if (mapId) {
-        this.injectorPerModMap.set(mapId, injectorPerMod);
+      const modRefId = this.mapId.get(moduleId);
+      if (modRefId) {
+        this.injectorPerModMap.set(modRefId, injectorPerMod);
       } else {
         throw new ModuleIdNotFoundInModuleManager(moduleId);
       }
@@ -290,9 +290,9 @@ export class ModuleManager {
   getInjectorPerMod(moduleId: ModuleId, throwErrIfNotFound?: boolean): Injector | undefined {
     let inj: Injector | undefined;
     if (typeof moduleId == 'string') {
-      const mapId = this.mapId.get(moduleId);
-      if (mapId) {
-        inj = this.injectorPerModMap.get(mapId);
+      const modRefId = this.mapId.get(moduleId);
+      if (modRefId) {
+        inj = this.injectorPerModMap.get(modRefId);
       }
     } else {
       inj = this.injectorPerModMap.get(moduleId);
@@ -313,10 +313,12 @@ export class ModuleManager {
   getInstanceOf(moduleId: ModuleId, throwErrIfNotFound: true): AnyObj;
   getInstanceOf(moduleId: ModuleId, throwErrIfNotFound?: false): AnyObj | undefined;
   getInstanceOf(moduleId: ModuleId, throwErrIfNotFound?: boolean) {
-    if (throwErrIfNotFound === true) { // Make TypeScript happy
-      return this.getInjectorPerMod(moduleId, true).get(moduleId);
+    const modRefId = typeof moduleId == 'string' ? this.mapId.get(moduleId)! : moduleId;
+    if (throwErrIfNotFound === true) {
+      // Make TypeScript happy
+      return this.getInjectorPerMod(moduleId, true).get(modRefId);
     }
-    return this.getInjectorPerMod(moduleId, throwErrIfNotFound)?.get(moduleId);
+    return this.getInjectorPerMod(moduleId, throwErrIfNotFound)?.get(modRefId);
   }
 
   protected getBaseMetaFromSnapshot(moduleId: ModuleId) {
