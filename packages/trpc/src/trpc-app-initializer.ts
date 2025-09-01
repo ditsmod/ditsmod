@@ -4,8 +4,8 @@ import { RequestListener, SERVER } from './types.js';
 import { PreRouter } from './pre-router.js';
 import { HttpServer } from './server-options.js';
 import { t, TRPC_OPTS, TRPC_PROC, TRPC_ROOT } from './constants.js';
-import { TrpcService } from './trpc.service.js';
-import { TrpcInternalService } from './services/trpc-internal.service.js';
+import { TrpcInternalService } from '#services/trpc-internal.service.js';
+import { TrpcService } from '#services/trpc.service.js';
 
 export class TrpcAppInitializer extends BaseAppInitializer {
   protected preRouter: PreRouter;

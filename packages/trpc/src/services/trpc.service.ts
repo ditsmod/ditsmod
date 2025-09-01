@@ -1,8 +1,8 @@
 import { inject, injectable, ModRefId, ModuleManager } from '@ditsmod/core';
 
-import { TRPC_ROOT } from './constants.js';
-import { TrpcRootObject, ModuleWithTrpcRoutes } from './types.js';
-import { PreRouter } from './pre-router.js';
+import { TRPC_ROOT } from '../constants.js';
+import { TrpcRootObject, ModuleWithTrpcRoutes } from '../types.js';
+import { PreRouter } from '../pre-router.js';
 
 @injectable()
 export class TrpcService {
