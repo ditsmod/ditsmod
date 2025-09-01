@@ -600,6 +600,13 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
     return this.selectInjectorAndGet(KeyRegistry.get(token), [], visibility, defaultValue);
   }
 
+  /**
+   * Works identically to {@link get | injector.get()}, but always returns type `any`.
+   */
+  getAny<T = any>(token: NonNullable<unknown>, visibility: Visibility = null, defaultValue: any = NoDefaultValue): T {
+    return this.selectInjectorAndGet(KeyRegistry.get(token), [], visibility, defaultValue);
+  }
+
   protected selectInjectorAndGet(
     dualKey: DualKey,
     parentTokens: any[],
