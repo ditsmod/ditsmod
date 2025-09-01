@@ -1,4 +1,4 @@
-import { BaseAppInitializer, BaseMeta, Injector, ModRefId, ProvidersOnly, awaitTokens } from '@ditsmod/core';
+import { BaseAppInitializer, BaseMeta, ModRefId, ProvidersOnly, awaitTokens } from '@ditsmod/core';
 
 import { RequestListener, SERVER, TrpcRootModule } from './types.js';
 import { PreRouter } from './pre-router.js';
@@ -18,10 +18,7 @@ export class TrpcAppInitializer extends BaseAppInitializer {
       { token: SERVER, useFactory: () => this.server },
       {
         token: TRPC_ROOT,
-        deps: [Injector],
-        useFactory: () => {
-          return this.getRootObject();
-        },
+        useFactory: () => this.getRootObject(),
       },
       ...awaitTokens([TRPC_ROUTER_OPTS]),
     );
