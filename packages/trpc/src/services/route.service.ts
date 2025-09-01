@@ -29,8 +29,8 @@ export class RouteService<Context extends AnyObj = AnyObj> {
   /**
    * @todo Implement a method so that `input()` occurs based on decorator metadata.
    */
-  mutation<R>(fn: AnyFn<any, R>) {
-    return this.procedure.input(z.any()).mutation(() => {
+  mutation<Input, R>(fn: AnyFn<any, R>) {
+    return this.procedure.input(z.object({ title: z.string() })).mutation(() => {
       const injectorPerReq = this.injectorPerRou.resolveAndCreateChild(this.providersPerReq);
       return injectorPerReq.get(fn);
     });
