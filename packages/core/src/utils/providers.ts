@@ -1,9 +1,10 @@
 import { Logger, LoggerConfig } from '#logger/logger.js';
-import { Class, FunctionFactoryProvider, Provider, UseFactoryTuple } from '#di';
+import { Class, FunctionFactoryProvider, Provider, reflector, UseFactoryTuple } from '#di';
 import { LogMediator } from '#logger/log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyFn, UnionToIntersection } from '#types/mix.js';
 import { NormalizedProvider } from './ng-utils.js';
+import { ClassForUseFactoriesWithoutDecorators } from '#error/core-errors.js';
 
 /**
  * This class has utilites to adding providers to DI in more type safe way.
@@ -77,6 +78,32 @@ export class Providers {
         this.pushProvider({ token, useFactory } as FunctionFactoryProvider, multi);
       }
     }
+
+    return this.self;
+  }
+
+  /**
+   * Each element passed to this method must have at least one method-level decorator.
+   */
+  useFactories(...Classes: Class<Record<string | symbol, any>>[]) {
+    if (!this.true) {
+      return this.self;
+    }
+
+    Classes.forEach((Cls, i) => {
+      const classMeta = reflector.getMetadata(Cls);
+      if (!classMeta) {
+        throw new ClassForUseFactoriesWithoutDecorators(i);
+      }
+      for (const methodName of classMeta) {
+        if (methodName == 'constructor') {
+          continue;
+        }
+        for (const decoratorAndValue of classMeta[methodName].decorators) {
+          this.pushProvider({ useFactory: [Cls, Cls.prototype[methodName]] });
+        }
+      }
+    });
 
     return this.self;
   }

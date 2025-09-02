@@ -38,6 +38,7 @@ export {
   NormalizationFailed,
   FailedOverrideMetaAfterStage1,
   CannotReinitInjectorAfterStage1,
+  ClassForUseFactoriesWithoutDecorators,
 } from '#error/core-errors.js';
 
 export * from '#di/errors.js';

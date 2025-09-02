@@ -1,6 +1,20 @@
 import { CustomError } from './custom-error.js';
 
 /**
+ * `You are trying to use the useFactories() method from the "Providers" helper,
+ * but the [${i}] element has no decorators or is not a class.`
+ */
+export class ClassForUseFactoriesWithoutDecorators extends CustomError {
+  constructor(i: number) {
+    super({
+      msg1:
+        'You are trying to use the useFactories() method from the "Providers" helper, ' +
+        `but the [${i}] element has no decorators or is not a class.`,
+      level: 'fatal',
+    });
+  }
+}
+/**
  * `Cannot reinit injector after stage1`
  */
 export class CannotReinitInjectorAfterStage1 extends CustomError {

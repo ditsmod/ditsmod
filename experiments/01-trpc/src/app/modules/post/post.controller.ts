@@ -1,5 +1,5 @@
 import { controller, RouteService, TRPC_OPTS, trpcRoute } from '@ditsmod/trpc';
-import { injectable, factoryMethod, inject } from '@ditsmod/core';
+import { injectable, factoryMethod, inject, Providers } from '@ditsmod/core';
 import { z } from 'zod';
 
 import { DbService } from '#modules/db/db.service.js';
@@ -23,10 +23,7 @@ export class PostService {
 }
 
 @controller({
-  providersPerReq: [
-    { useFactory: [PostService, PostService.prototype.createPost] },
-    { useFactory: [PostService, PostService.prototype.listPosts] },
-  ],
+  providersPerReq: new Providers().useFactories(PostService),
 })
 export class PostController {
   @trpcRoute()
