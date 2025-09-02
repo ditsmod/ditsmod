@@ -19,25 +19,15 @@ export class RouteService<Context extends AnyObj = AnyObj, Input = void> {
   getMutation<R>(fn: AnyFn<any, R>) {
     return {
       procedure: this.procedure,
-      mutation: (opts) => {
-      const injectorPerReq = this.injectorPerRou.resolveAndCreateChild(
-        this.providersPerReq.concat({ token: TRPC_OPTS, useValue: opts }),
-      );
-        return injectorPerReq.get(fn);
-      },
+      mutation: (opts) => this.handle(opts, fn),
     } as GetMutationType<Context>;
   }
 
   /**
    * @todo Implement a method so that `input()` occurs based on decorator metadata.
    */
-  mutation<R = any>(fn: AnyFn<any, R>) {
-    return this.procedure.mutation((opts) => {
-      const injectorPerReq = this.injectorPerRou.resolveAndCreateChild(
-        this.providersPerReq.concat({ token: TRPC_OPTS, useValue: opts }),
-      );
-      return injectorPerReq.get(fn);
-    }) as unknown as MutationProcedure<{
+  mutation<R>(fn: AnyFn<any, R>) {
+    return this.procedure.mutation((opts) => this.handle(opts, fn)) as unknown as MutationProcedure<{
       input: Input;
       output: R;
       meta: object;
@@ -45,12 +35,13 @@ export class RouteService<Context extends AnyObj = AnyObj, Input = void> {
   }
 
   query<R>(fn: AnyFn<any, R>) {
-    return this.procedure.query((opts) => {
-      const injectorPerReq = this.injectorPerRou.resolveAndCreateChild(
-        this.providersPerReq.concat({ token: TRPC_OPTS, useValue: opts }),
-      );
-      return injectorPerReq.get(fn);
-    });
+    return this.procedure.query((opts) => this.handle(opts, fn));
+  }
+
+  protected handle(opts: any, fn: AnyFn) {
+    return this.injectorPerRou
+      .resolveAndCreateChild(this.providersPerReq.concat({ token: TRPC_OPTS, useValue: opts }))
+      .get(fn);
   }
 }
 

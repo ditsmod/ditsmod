@@ -11,7 +11,7 @@ export class PostService {
     const post = {
       id: ++db.id,
       ...opts.input?.title,
-    };
+    } as (typeof db.posts)[0];
     db.posts.push(post);
     return post;
   }
