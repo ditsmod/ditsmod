@@ -288,7 +288,11 @@ export class SystemLogMediator extends LogMediator {
       if (!LogMediator.bufferLogs && this.logger instanceof ConsoleLogger) {
         stack = this.formatStackTrace(stack);
       }
-      this.setLog(err.info.level || 'fatal', `${className}: ${stack}`);
+      if (this.levelIndex('debug')) {
+        this.setLog(err.info.level || 'fatal', `${className}: ${stack}`);
+      } else {
+        this.setLog(err.info.level || 'fatal', stack);
+      }
     } else {
       this.setLog('error', `${className}: ${err.stack || err.message}`);
     }
