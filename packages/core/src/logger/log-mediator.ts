@@ -10,6 +10,7 @@ import { BaseAppOptions } from '#init/base-app-options.js';
  */
 @injectable()
 export abstract class LogMediator {
+  protected static allLevels: OutputLogLevel[] = ['off', 'fatal', 'error', 'warn', 'info', 'debug', 'trace', 'all'];
   /**
    * If `bufferLogs === true` then all messages will be buffered.
    *
@@ -28,6 +29,10 @@ export abstract class LogMediator {
     @optional() protected loggerConfig: LoggerConfig = new LoggerConfig(),
     @optional() protected baseAppOptions?: BaseAppOptions,
   ) {}
+
+  protected levelIndex(level: OutputLogLevel) {
+    return LogMediator.allLevels.indexOf(this.loggerConfig.level || 'info') >= LogMediator.allLevels.indexOf(level);
+  }
 
   protected setLog(inputLogLevel: InputLogLevel, msg: string) {
     const showExternalLogs = this.baseAppOptions?.showExternalLogs ?? this.loggerConfig.showExternalLogs ?? true;
