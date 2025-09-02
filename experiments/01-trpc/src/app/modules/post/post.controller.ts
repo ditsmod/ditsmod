@@ -10,7 +10,7 @@ export class PostService {
   createPost(@inject(TRPC_OPTS) opts: any, db: DbService) {
     const post = {
       id: ++db.id,
-      ...opts.input?.title,
+      ...opts.input,
     } as (typeof db.posts)[0];
     db.posts.push(post);
     return post;
