@@ -710,7 +710,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ditsmod/core@workspace:packages/core"
   dependencies:
-    "@ts-stack/chain-error": "npm:^1.5.0"
+    "@ts-stack/chain-error": "npm:^1.5.1"
     "@ts-stack/stack-utils": "npm:^1.1.0"
     jest: "npm:^30.1.1"
     npm-run-all: "npm:^4.1.5"
@@ -2880,12 +2880,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ts-stack/chain-error@npm:^1.5.0":
-  version: 1.5.0
-  resolution: "@ts-stack/chain-error@npm:1.5.0"
+"@ts-stack/chain-error@npm:^1.5.1":
+  version: 1.5.1
+  resolution: "@ts-stack/chain-error@npm:1.5.1"
   dependencies:
     assert-plus: "npm:^1.0.0"
-  checksum: 10c0/40a021e5493bf50a9a9f1390bc317d06dcb0a8cee5ff384baa865130b9115133fbe93dc9c5582222ff43b4c03a3857522a408dc65e829f12fced9db4120a33a7
+  checksum: 10c0/89140704b1eb79a6fedb455d1a93133f04d8977876c62b7f17236239afa7ceab3760b5143b1cb0483eac2b1bc4d2d2787318fd2aaa442cb1d3a31b14b5c38b78
   languageName: node
   linkType: hard
 
