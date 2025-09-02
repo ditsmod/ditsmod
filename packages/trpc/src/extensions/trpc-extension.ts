@@ -41,8 +41,17 @@ export class TrpcExtension implements Extension<void> {
           if (!isTrpcRoute(decoratorAndValue)) {
             continue;
           }
-          const tokenPerRou = Controller.prototype[methodName];
-          const providersPerRou: Provider[] = [{ useFactory: [Controller, tokenPerRou] }];
+          const routeHandler = Controller.prototype[methodName];
+          const providersPerRou: Provider[] = [
+            { useFactory: [Controller, routeHandler] },
+            {
+              token: RouteService,
+              deps: [TRPC_ROOT, Injector],
+              useFactory: (t: TrpcRootObject<any>, injectorPerRou: Injector) => {
+                return new RouteService(t, injectorPerRou, providersPerReq);
+              },
+            },
+          ];
           const providersPerReq: Provider[] = [];
           const route = decoratorAndValue.value;
           const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
@@ -51,19 +60,12 @@ export class TrpcExtension implements Extension<void> {
           providersPerReq.push(...((ctrlDecorator?.value as ControllerRawMetadata).providersPerReq || []));
 
           baseMeta.providersPerMod.unshift({
-            token: tokenPerRou,
+            token: routeHandler,
             deps: [Injector],
             useFactory: (injectorPerMod: Injector) => {
               const mergedPerRou = meta.providersPerRou.concat(providersPerRou);
-              mergedPerRou.push({
-                token: RouteService,
-                deps: [TRPC_ROOT, Injector],
-                useFactory: (t: TrpcRootObject<any>, injectorPerRou: Injector) => {
-                  return new RouteService(t, injectorPerRou, providersPerReq);
-                },
-              });
               const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'Rou');
-              return injectorPerRou.get(tokenPerRou, fromSelf); // fromSelf - this allow avoiding cyclic deps.
+              return injectorPerRou.get(routeHandler, fromSelf); // fromSelf - this allow avoiding cyclic deps.
             },
           });
         }
