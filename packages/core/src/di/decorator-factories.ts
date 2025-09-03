@@ -52,6 +52,8 @@ export function makeClassDecorator<T extends AnyFn>(transform?: T) {
 /**
  * @param transform Such a transformer should not use symbols that can be wrapped with `forwardRef()`,
  * because at this stage the `resolveForwardRef()` function will not work correctly.
+ * @param decoratorId If you pass an argument for this parameter, {@link transform} must
+ * return data of the same type as the {@link decoratorId} you specified.
  */
 export function makeParamDecorator<T extends AnyFn>(transform?: T, decoratorId?: AnyFn) {
   return function paramDecorFactory(...args: Parameters<T>) {
