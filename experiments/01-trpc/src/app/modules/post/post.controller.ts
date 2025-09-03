@@ -1,5 +1,15 @@
-import { CanActivate, controller, opts, RequestContext, RouteService, TrpcOpts, trpcRoute } from '@ditsmod/trpc';
-import { injectable, factoryMethod, Providers } from '@ditsmod/core';
+import {
+  CanActivate,
+  controller,
+  HttpHandler,
+  HttpInterceptor,
+  opts,
+  RequestContext,
+  RouteService,
+  TrpcOpts,
+  trpcRoute,
+} from '@ditsmod/trpc';
+import { injectable, factoryMethod, Providers, Logger } from '@ditsmod/core';
 import { z } from 'zod';
 
 import { DbService } from '#modules/db/db.service.js';
@@ -29,6 +39,16 @@ export class Guard implements CanActivate {
   }
 }
 
+@injectable()
+export class MyHttpInterceptor implements HttpInterceptor {
+  constructor(private logger: Logger) {}
+
+  async intercept(next: HttpHandler, ctx: RequestContext) {
+    const originalMsg = await next.handle(); // Handling request to `HelloWorldController`
+    return originalMsg;
+  }
+}
+
 @controller({
   providersPerReq: new Providers().useFactories(PostService),
 })
@@ -44,7 +64,7 @@ export class PostController {
     return routeService.mutation(PostService.prototype.createPost);
   }
 
-  @trpcRoute([Guard])
+  @trpcRoute([Guard], [MyHttpInterceptor])
   listPosts(routeService: RouteService) {
     return routeService.query(PostService.prototype.listPosts);
   }

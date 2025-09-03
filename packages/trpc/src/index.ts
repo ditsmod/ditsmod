@@ -26,3 +26,4 @@ export {
   SetAppRouterOptions,
   TrpcCreateOptions,
 } from './types.js';
+export { HttpInterceptor, HttpHandler } from '#interceptors/tokens-and-types.js';
