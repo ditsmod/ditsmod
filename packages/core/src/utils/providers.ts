@@ -83,7 +83,7 @@ export class Providers {
   }
 
   /**
-   * Each element passed to this method must have at least one method-level decorator.
+   * Each class passed to this method must have at least one method-level decorator.
    */
   useFactories(...Classes: Class<Record<string | symbol, any>>[]) {
     if (!this.true) {
