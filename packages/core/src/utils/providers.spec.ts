@@ -7,6 +7,7 @@ import { Providers } from './providers.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { factoryMethod, injectable } from '#di';
+import { ClassForUseFactoriesWithoutDecorators } from '#error/core-errors.js';
 
 describe('Providers', () => {
   it('call constuctor not to throw', () => {
@@ -114,7 +115,7 @@ describe('Providers', () => {
   });
 
   describe('useFactories()', () => {
-    it('case 1', () => {
+    it('classes with decorators per method', () => {
       @injectable()
       class A {
         constructor(one: any) {}
@@ -136,7 +137,7 @@ describe('Providers', () => {
       ]);
     });
 
-    it('case 2', () => {
+    it('works if(true)', () => {
       class A {
         constructor(one: any) {}
         @factoryMethod()
@@ -147,7 +148,7 @@ describe('Providers', () => {
       expect([...value]).toEqual<ClassFactoryProvider[]>([{ useFactory: [A, A.prototype.method1] }]);
     });
 
-    it('case 3', () => {
+    it('works if(false)', () => {
       class A {
         constructor(one: any) {}
         @factoryMethod()
@@ -156,6 +157,24 @@ describe('Providers', () => {
       }
       const value = new Providers().$if(false).useFactories(A);
       expect([...value]).toEqual<ClassFactoryProvider[]>([]);
+    });
+
+    it('throw an error when a class no decorators per method', () => {
+      @injectable()
+      class A {
+        constructor(one: any) {}
+        @factoryMethod()
+        method1() {}
+        method2() {}
+      }
+      @injectable()
+      class B {
+        constructor(one: any) {}
+        method3() {}
+        method4() {}
+      }
+      const err = new ClassForUseFactoriesWithoutDecorators(1);
+      expect(() => new Providers().useFactories(A, B)).toThrow(err);
     });
   });
 

@@ -95,13 +95,18 @@ export class Providers {
       if (!classMeta) {
         throw new ClassForUseFactoriesWithoutDecorators(i);
       }
+      let hasFactoryMethod = false;
       for (const methodName of classMeta) {
         if (methodName == 'constructor') {
           continue;
         }
         for (const decoratorAndValue of classMeta[methodName].decorators) {
+          hasFactoryMethod = true;
           this.pushProvider({ useFactory: [Cls, Cls.prototype[methodName]] });
         }
+      }
+      if (!hasFactoryMethod) {
+        throw new ClassForUseFactoriesWithoutDecorators(i);
       }
     });
 
