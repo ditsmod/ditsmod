@@ -16,6 +16,7 @@ import {
 import { DeepModulesImporterConfig, initTrpcModule, TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { TrpcBaseImportRegistry, TrpcProvidersOnly, TrpcShallowImports } from './trpc-shallow-modules-importer.js';
 import { Level } from './trpc-module-normalizer.js';
+import { GuardPerMod1 } from '#interceptors/guard.js';
 
 /**
  * This metadata returns from `DeepModulesImporter`. The target for this metadata is `RoutesExtension`.
@@ -24,7 +25,7 @@ import { Level } from './trpc-module-normalizer.js';
 export class TrpcMetadataPerMod2 {
   baseMeta: BaseMeta;
   meta: TrpcInitMeta;
-  // guards1: GuardPerMod1[];
+  guards1: GuardPerMod1[];
   prefixPerMod: string;
   applyControllers?: boolean;
 }
@@ -66,8 +67,7 @@ export class TrpcDeepModulesImporter {
   importModulesDeep(): TrpcMetadataPerMod2 | undefined {
     const levels: Level[] = ['Req', 'Rou', 'Mod'];
     this.tokensPerApp = getTokens(this.providersPerApp);
-    // const { baseImportRegistry, guards1, prefixPerMod, meta, applyControllers, baseMeta } = this.shallowImports;
-    const { baseImportRegistry, prefixPerMod, meta, applyControllers, baseMeta } = this.shallowImports;
+    const { baseImportRegistry, guards1, prefixPerMod, meta, applyControllers, baseMeta } = this.shallowImports;
     const targetProviders = new TrpcProvidersOnly();
     this.resolveImportedProviders(targetProviders, baseImportRegistry, levels);
     this.patchModuleExtract(baseMeta, prefixPerMod);
@@ -77,7 +77,7 @@ export class TrpcDeepModulesImporter {
     return {
       baseMeta: this.shallowImports.baseMeta,
       meta,
-      // guards1,
+      guards1,
       prefixPerMod,
       applyControllers,
     };

@@ -1,6 +1,17 @@
 import { CustomError } from '@ditsmod/core';
 
 /**
+ * `Import with guards failed: Guard.prototype.canActivate must be a function, got: ${type}`
+ */
+export class InvalidGuard extends CustomError {
+  constructor(type: string) {
+    super({
+      msg1: `Import with guards failed: Guard.prototype.canActivate must be a function, got: ${type}`,
+      level: 'fatal',
+    });
+  }
+}
+/**
  * `Detected duplicate controllers - ${controllersList}`.
  */
 export class DuplicateOfControllers extends CustomError {

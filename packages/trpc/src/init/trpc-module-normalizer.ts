@@ -42,7 +42,8 @@ import {
   TrpcModRefId,
 } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { controller, ControllerRawMetadata } from '#decorators/controller.js';
-import { ControllerDoesNotHaveDecorator, DuplicateOfControllers } from '../trpc-errors.js';
+import { ControllerDoesNotHaveDecorator, DuplicateOfControllers, InvalidGuard } from '../trpc-errors.js';
+import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
 
 export type Level = 'Req' | 'Rou' | 'Mod';
 
@@ -243,22 +244,22 @@ export class TrpcModuleNormalizer {
     }
   }
 
-  // protected normalizeGuards(guards?: GuardItem[]) {
-  //   return (guards || []).map((item) => {
-  //     if (Array.isArray(item)) {
-  //       return { guard: item[0], params: item.slice(1) } as NormalizedGuard;
-  //     } else {
-  //       return { guard: item } as NormalizedGuard;
-  //     }
-  //   });
-  // }
+  protected normalizeGuards(guards?: GuardItem[]) {
+    return (guards || []).map((item) => {
+      if (Array.isArray(item)) {
+        return { guard: item[0], params: item.slice(1) } as NormalizedGuard;
+      } else {
+        return { guard: item } as NormalizedGuard;
+      }
+    });
+  }
 
-  // protected checkGuards(guards: NormalizedGuard[]) {
-  //   for (const Guard of guards.map((n) => n.guard)) {
-  //     const type = typeof Guard?.prototype.canActivate;
-  //     if (type != 'function') {
-  //       throw new InvalidGuard(type);
-  //     }
-  //   }
-  // }
+  protected checkGuards(guards: NormalizedGuard[]) {
+    for (const Guard of guards.map((n) => n.guard)) {
+      const type = typeof Guard?.prototype.canActivate;
+      if (type != 'function') {
+        throw new InvalidGuard(type);
+      }
+    }
+  }
 }

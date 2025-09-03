@@ -28,13 +28,14 @@ import {
   TrpcShallowModulesImporter,
 } from '#init/trpc-shallow-modules-importer.js';
 import { TrpcDeepModulesImporter } from '#init/trpc-deep-modules-importer.js';
+import { GuardItem, GuardPerMod1, NormalizedGuard } from '#interceptors/guard.js';
 
 export type TrpcModRefId = ModRefId;
 
 class NormalizedParams {
   declare path?: string;
   declare absolutePath?: string;
-  // guards: NormalizedGuard[] = [];
+  guards: NormalizedGuard[] = [];
 }
 
 export class TrpcInitMeta extends BaseInitMeta {
@@ -59,7 +60,7 @@ export interface TrpcModuleParams extends FeatureModuleParams {
    * module.
    */
   exports?: any[];
-  // guards?: GuardItem[];
+  guards?: GuardItem[];
 }
 
 /**
@@ -142,7 +143,7 @@ export interface ImportModulesShallowConfig {
   modRefId: ModRefId;
   unfinishedScanModules: Set<ModRefId>;
   prefixPerMod: string;
-  // guards1?: GuardPerMod1[];
+  guards1?: GuardPerMod1[];
   isAppends?: boolean;
 }
 

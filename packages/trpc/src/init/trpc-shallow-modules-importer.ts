@@ -35,6 +35,7 @@ import {
   TrpcModRefId,
 } from '../decorators/trpc-init-hooks-and-metadata.js';
 import { Level } from './trpc-module-normalizer.js';
+import { GuardPerMod1 } from '#interceptors/guard.js';
 
 export function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) {
   return [...(map || []).keys()];
@@ -61,7 +62,7 @@ export class TrpcProviderImport<T extends Provider = Provider> {
 export class TrpcShallowImports {
   baseMeta: BaseMeta;
   prefixPerMod: string;
-  // guards1: GuardPerMod1[];
+  guards1: GuardPerMod1[];
   /**
    * Snapshot of `TrpcInitMeta`. If you modify any array in this object,
    * the original array will remain unchanged.
@@ -110,7 +111,7 @@ export class TrpcGlobalProviders extends GlobalInitHooks {
 export class TrpcShallowModulesImporter {
   protected moduleName: string;
   protected prefixPerMod: string;
-  // protected guards1: GuardPerMod1[];
+  protected guards1: GuardPerMod1[];
   protected baseMeta: BaseMeta;
   protected meta: TrpcInitMeta;
   protected providersPerApp: Provider[];
@@ -184,7 +185,7 @@ export class TrpcShallowModulesImporter {
     modRefId,
     unfinishedScanModules,
     prefixPerMod,
-    // guards1,
+    guards1,
     isAppends,
   }: ImportModulesShallowConfig): Map<ModRefId, TrpcShallowImports> {
     this.moduleManager = moduleManager;
@@ -196,7 +197,7 @@ export class TrpcShallowModulesImporter {
     this.trpcGlProviders = globalProviders.mInitValue.get(initTrpcModule) as TrpcGlobalProviders;
     this.prefixPerMod = prefixPerMod || '';
     this.moduleName = baseMeta.name;
-    // this.guards1 = guards1 || [];
+    this.guards1 = guards1 || [];
     this.unfinishedScanModules = unfinishedScanModules;
     this.importAndAppendModules();
 
@@ -242,7 +243,7 @@ export class TrpcShallowModulesImporter {
     return this.shallowImportsMap.set(modRefId, {
       baseMeta,
       prefixPerMod,
-      // guards1: this.guards1,
+      guards1: this.guards1,
       meta: this.meta,
       applyControllers,
       baseImportRegistry: {
@@ -284,8 +285,7 @@ export class TrpcShallowModulesImporter {
         continue;
       }
       const meta = this.getInitMeta(baseMeta);
-      // const { prefixPerMod, guards1 } = this.getPrefixAndGuards(modRefId, meta, isImport);
-      const { prefixPerMod } = this.getPrefixAndGuards(modRefId, meta, isImport);
+      const { prefixPerMod, guards1 } = this.getPrefixAndGuards(modRefId, meta, isImport);
       const shallowModulesImporter = new TrpcShallowModulesImporter();
       this.unfinishedScanModules.add(modRefId);
       const shallowImportsBase = shallowModulesImporter.importModulesShallow({
@@ -295,7 +295,7 @@ export class TrpcShallowModulesImporter {
         modRefId,
         unfinishedScanModules: this.unfinishedScanModules,
         prefixPerMod,
-        // guards1,
+        guards1,
         isAppends: !isImport,
       });
       this.unfinishedScanModules.delete(modRefId);
@@ -306,7 +306,7 @@ export class TrpcShallowModulesImporter {
 
   protected getPrefixAndGuards(modRefId: TrpcModRefId, meta: TrpcInitMeta, isImport?: boolean) {
     let prefixPerMod = '';
-    // let guards1: GuardPerMod1[] = [];
+    let guards1: GuardPerMod1[] = [];
     const { absolutePath } = meta.params;
     const hasModuleParams = isModuleWithParams(modRefId);
     if (hasModuleParams || !isImport) {
@@ -317,19 +317,18 @@ export class TrpcShallowModulesImporter {
         const path = hasModuleParams ? meta.params.path : '';
         prefixPerMod = [this.prefixPerMod, path].filter((s) => s).join('/');
       }
-      // const impGuradsPerMod1 = meta.params.guards.map<GuardPerMod1>((g) => {
-      //   return {
-      //     ...g,
-      //     meta: this.meta,
-      //     baseMeta: this.baseMeta,
-      //   };
-      // });
-      // guards1 = [...this.guards1, ...impGuradsPerMod1];
+      const impGuradsPerMod1 = meta.params.guards.map<GuardPerMod1>((g) => {
+        return {
+          ...g,
+          meta: this.meta,
+          baseMeta: this.baseMeta,
+        };
+      });
+      guards1 = [...this.guards1, ...impGuradsPerMod1];
     } else {
       prefixPerMod = this.prefixPerMod;
     }
-    // return { prefixPerMod, guards1 };
-    return { prefixPerMod };
+    return { prefixPerMod, guards1 };
   }
 
   /**

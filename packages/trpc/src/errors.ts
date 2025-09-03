@@ -1,1 +1,6 @@
-export { CreateSecureServerInHttp2NotFound, ControllerDoesNotHaveDecorator, DuplicateOfControllers } from './trpc-errors.js';
+export {
+  CreateSecureServerInHttp2NotFound,
+  ControllerDoesNotHaveDecorator,
+  DuplicateOfControllers,
+  InvalidGuard,
+} from './trpc-errors.js';

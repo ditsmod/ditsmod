@@ -1,4 +1,4 @@
-import { controller, opts, RouteService, TrpcOpts, trpcRoute } from '@ditsmod/trpc';
+import { CanActivate, controller, opts, RequestContext, RouteService, TrpcOpts, trpcRoute } from '@ditsmod/trpc';
 import { injectable, factoryMethod, Providers } from '@ditsmod/core';
 import { z } from 'zod';
 
@@ -22,6 +22,13 @@ export class PostService {
   }
 }
 
+export class Guard implements CanActivate {
+  canActivate(ctx: RequestContext) {
+    console.log('called Guard');
+    return true;
+  }
+}
+
 @controller({
   providersPerReq: new Providers().useFactories(PostService),
 })
@@ -37,7 +44,7 @@ export class PostController {
     return routeService.mutation(PostService.prototype.createPost);
   }
 
-  @trpcRoute()
+  @trpcRoute([Guard])
   listPosts(routeService: RouteService) {
     return routeService.query(PostService.prototype.listPosts);
   }

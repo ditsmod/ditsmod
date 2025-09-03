@@ -1,3 +1,5 @@
+export { CanActivate } from '#interceptors/guard.js';
+export { RequestContext } from '#services/request-context.js';
 export { isModuleWithTrpcRoutes } from './type.guards.js';
 export { trpcRoute } from '#decorators/trpc-route.js';
 export { opts } from '#decorators/opts.js';

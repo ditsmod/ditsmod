@@ -5,6 +5,9 @@ import { CustomError, HttpMethod } from '@ditsmod/core';
 //     super();
 //   }
 // }
+/**
+ * `Import with guards failed: Guard.prototype.canActivate must be a function, got: ${type}`
+ */
 export class InvalidGuard extends CustomError {
   constructor(type: string) {
     super({
