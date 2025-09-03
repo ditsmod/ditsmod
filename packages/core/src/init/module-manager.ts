@@ -19,6 +19,7 @@ import {
   ProhibitSavingModulesSnapshot,
   RootNotHaveDecorator,
 } from '#errors';
+import { getModule } from '#utils/get-module.js';
 
 export type ModulesMap = Map<ModRefId, BaseMeta>;
 export type ModulesMapId = Map<string, ModRefId>;
@@ -314,11 +315,12 @@ export class ModuleManager {
   getInstanceOf(moduleId: ModuleId, throwErrIfNotFound?: false): AnyObj | undefined;
   getInstanceOf(moduleId: ModuleId, throwErrIfNotFound?: boolean) {
     const modRefId = typeof moduleId == 'string' ? this.mapId.get(moduleId)! : moduleId;
+    const Mod = getModule(modRefId);
     if (throwErrIfNotFound === true) {
       // Make TypeScript happy
-      return this.getInjectorPerMod(moduleId, true).get(modRefId);
+      return this.getInjectorPerMod(moduleId, true).get(Mod);
     }
-    return this.getInjectorPerMod(moduleId, throwErrIfNotFound)?.get(modRefId);
+    return this.getInjectorPerMod(moduleId, throwErrIfNotFound)?.get(Mod);
   }
 
   protected getBaseMetaFromSnapshot(moduleId: ModuleId) {
