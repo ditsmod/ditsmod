@@ -33,15 +33,14 @@ import {
   getNewRegistry,
 } from './types-and-models.js';
 import {
-  DEBUG_NAME,
   isClassProvider,
   isFactoryProvider,
   isFunctionFactoryProvider,
   isNormalizedProvider,
   isTypeProvider,
   isValueProvider,
-  stringify,
 } from './utils.js';
+import { DEBUG_NAME, stringify } from './stringify.js';
 import { DEPS_KEY } from './decorator-factories.js';
 
 export type LevelOfInjector = 'App' | 'Mod' | 'Rou' | 'Req' | (string & {});

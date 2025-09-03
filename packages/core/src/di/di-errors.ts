@@ -1,7 +1,7 @@
 import { inspect, format } from 'node:util';
 
 import { CustomError } from '#error/custom-error.js';
-import { stringify } from '#di/utils.js';
+import { stringify } from '#di/stringify.js';
 import { Class } from './types-and-models.js';
 import { LevelOfInjector } from './injector.js';
 

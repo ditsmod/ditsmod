@@ -5,7 +5,7 @@ import { makeClassDecorator, makeParamDecorator, makePropDecorator } from './dec
 
 import { KeyRegistry } from './key-registry.js';
 import { Class, CTX_DATA, Dependency, getNewRegistry, Provider, ResolvedProvider } from './types-and-models.js';
-import { stringify } from './utils.js';
+import { stringify } from '#di/stringify.js';
 import { fromSelf, inject, injectable, factoryMethod, optional, skipSelf } from './decorators.js';
 import { InjectionToken } from './injection-token.js';
 import { Injector } from './injector.js';

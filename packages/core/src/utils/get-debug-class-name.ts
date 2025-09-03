@@ -1,4 +1,4 @@
-import { ForwardRefFn, resolveForwardRef } from '#di';
+import { ForwardRefFn, resolveForwardRef } from '#di/forward-ref.js';
 import { ModRefId, ModuleType } from '#types/mix.js';
 import { isModuleWithParams } from './type-guards.js';
 
