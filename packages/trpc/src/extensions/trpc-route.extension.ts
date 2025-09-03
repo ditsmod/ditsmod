@@ -5,7 +5,6 @@ import {
   MetadataPerMod2,
   type Class,
   reflector,
-  DecoratorAndValue,
   Provider,
   fromSelf,
 } from '@ditsmod/core';
@@ -13,7 +12,7 @@ import { inspect } from 'node:util';
 
 import { TrpcMetadataPerMod2 } from '#init/trpc-deep-modules-importer.js';
 import { initTrpcModule } from '#decorators/trpc-init-hooks-and-metadata.js';
-import { trpcRoute, TrpcRouteMetadata } from '#decorators/trpc-route.js';
+import { TrpcRouteMetadata } from '#decorators/trpc-route.js';
 import { isCtrlDecor } from '#init/trpc-module-normalizer.js';
 import { ControllerRawMetadata } from '#decorators/controller.js';
 import { TRPC_ROOT } from '../constants.js';
@@ -24,10 +23,7 @@ import { ControllerMetadata } from '#types/controller-metadata.js';
 import { RouteMeta } from '#types/route-data.js';
 import { FailedValidationOfRoute } from '../trpc-errors.js';
 import { GuardItem, GuardPerMod1 } from '#interceptors/guard.js';
-
-export function isTrpcRoute<T>(decoratorAndValue?: DecoratorAndValue<T>): decoratorAndValue is DecoratorAndValue<T> {
-  return (decoratorAndValue as DecoratorAndValue<T>)?.decorator === trpcRoute;
-}
+import { isTrpcRoute } from '#types/type.guards.js';
 
 @injectable()
 export class TrpcRouteExtension implements Extension<MetadataPerMod3> {

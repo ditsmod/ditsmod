@@ -9,14 +9,14 @@ export function isCtrlDecor(decoratorAndValue?: AnyObj): decoratorAndValue is De
   return decoratorAndValue?.decorator === controller;
 }
 
-export function isRoute<T>(decoratorAndValue?: DecoratorAndValue<T>): decoratorAndValue is DecoratorAndValue<T> {
-  return (decoratorAndValue as DecoratorAndValue<T>)?.decorator === trpcRoute;
-}
-
 export function isInterceptor(cls?: Class): cls is Class<HttpInterceptor> {
   return typeof (cls?.prototype as HttpInterceptor | undefined)?.intercept == 'function';
 }
 
 export function isHttp2SecureServerOptions(serverOptions: ServerOptions): serverOptions is Http2SecureServerOptions {
   return (serverOptions as Http2SecureServerOptions).isHttp2SecureServer;
+}
+
+export function isTrpcRoute<T>(decoratorAndValue?: DecoratorAndValue<T>): decoratorAndValue is DecoratorAndValue<T> {
+  return (decoratorAndValue as DecoratorAndValue<T>)?.decorator === trpcRoute;
 }
