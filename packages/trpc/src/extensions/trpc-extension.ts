@@ -32,9 +32,9 @@ export class TrpcExtension implements Extension<void> {
   }
 
   protected setControllersToDi() {
-    const restMetadataPerMod2 = this.metadataPerMod2.deepImportedModules.get(initTrpcModule)!;
-    for (const Controller of restMetadataPerMod2.meta.controllers as Class<Record<string | symbol, any>>[]) {
-      const { baseMeta, meta } = restMetadataPerMod2;
+    const trpcMetadataPerMod2 = this.metadataPerMod2.deepImportedModules.get(initTrpcModule)!;
+    for (const Controller of trpcMetadataPerMod2.meta.controllers as Class<Record<string | symbol, any>>[]) {
+      const { baseMeta, meta } = trpcMetadataPerMod2;
       const classMeta = reflector.getMetadata(Controller)!;
       for (const methodName of classMeta) {
         for (const decoratorAndValue of classMeta[methodName].decorators) {

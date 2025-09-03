@@ -3,10 +3,6 @@ import { Class, HttpMethod, makePropDecorator } from '@ditsmod/core';
 import { GuardItem } from '#interceptors/guard.js';
 import { HttpInterceptor } from '#interceptors/tokens-and-types.js';
 
-export interface RouteDecoratorMetadata {
-  [key: string]: RouteMetadata[];
-}
-
 export interface RouteMetadata {
   httpMethod: HttpMethod | [HttpMethod, ...HttpMethod[]];
   path: string;

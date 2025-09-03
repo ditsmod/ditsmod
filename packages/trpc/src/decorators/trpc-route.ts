@@ -1,14 +1,11 @@
-import { Class, HttpMethod, makePropDecorator } from '@ditsmod/core';
+import { Class, makePropDecorator } from '@ditsmod/core';
 
-export interface RouteDecoratorMetadata {
-  [key: string]: RouteMetadata[];
-}
+import { GuardItem } from '#interceptors/guard.js';
+import { HttpInterceptor } from '#interceptors/tokens-and-types.js';
 
 export interface RouteMetadata {
-  httpMethod: HttpMethod | [HttpMethod, ...HttpMethod[]];
-  path: string;
-  // guards: GuardItem[];
-  // interceptors: Class<HttpInterceptor>[];
+  guards: GuardItem[];
+  interceptors: Class<HttpInterceptor>[];
 }
 /**
  * @param guards An array of DI tokens used to look up `CanActivate()` handlers,
@@ -16,12 +13,10 @@ export interface RouteMetadata {
  * By default, any user can activate.
  */
 function routeFn(
-  meta?: any,
-  // guards: GuardItem[] = [],
-  // interceptors: Class<HttpInterceptor>[] = [],
+  guards: GuardItem[] = [],
+  interceptors: Class<HttpInterceptor>[] = [],
 ) {
-  // return { httpMethod, path, guards, interceptors };
-  return { meta };
+  return { guards, interceptors };
 }
 
 export const trpcRoute = makePropDecorator(routeFn);

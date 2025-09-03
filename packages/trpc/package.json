@@ -13,7 +13,9 @@
     "#errors": "./dist/errors.js",
     "#decorators/*": "./dist/decorators/*",
     "#init/*": "./dist/init/*",
-    "#services/*": "./dist/services/*"
+    "#types/*": "./dist/types/*",
+    "#services/*": "./dist/services/*",
+    "#interceptors/*": "./dist/interceptors/*"
   },
   "exports": {
     "./package.json": {
