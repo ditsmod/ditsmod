@@ -51,9 +51,7 @@ export class TrpcInitMeta extends BaseInitMeta {
   params = new NormalizedParams();
 }
 
-export type TrpcModuleParams = TrpcModuleParams1 | TrpcModuleParams2;
-
-export interface BaseTrpcModuleParams extends FeatureModuleParams {
+export interface TrpcModuleParams extends FeatureModuleParams {
   providersPerRou?: Providers | Provider[];
   providersPerReq?: Providers | Provider[];
   /**
@@ -62,16 +60,6 @@ export interface BaseTrpcModuleParams extends FeatureModuleParams {
    */
   exports?: any[];
   // guards?: GuardItem[];
-}
-
-export interface TrpcModuleParams1 extends BaseTrpcModuleParams {
-  path?: string;
-  absolutePath?: never;
-}
-
-export interface TrpcModuleParams2 extends BaseTrpcModuleParams {
-  absolutePath?: string;
-  path?: never;
 }
 
 /**

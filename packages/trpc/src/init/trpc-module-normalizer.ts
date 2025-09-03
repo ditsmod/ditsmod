@@ -163,13 +163,6 @@ export class TrpcModuleNormalizer {
         }
       });
       this.normalizeExports(params, 'Exports with params');
-
-      if (params.absolutePath !== undefined) {
-        this.meta.params.absolutePath = params.absolutePath;
-      }
-      if (params.path !== undefined) {
-        this.meta.params.path = params.path;
-      }
       // this.meta.params.guards.push(...this.normalizeGuards(params.guards));
     }
   }
