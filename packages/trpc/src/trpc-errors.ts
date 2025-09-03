@@ -1,6 +1,18 @@
 import { CustomError } from '@ditsmod/core';
 
 /**
+ * `Guard.prototype.canActivate must be a function, got: ${type} (in ${whatIsThis})`
+ */
+export class FailedValidationOfRoute extends CustomError {
+  constructor(type: string, whatIsThis: string) {
+    super({
+      msg1:
+        `Guard.prototype.canActivate must be a function, got: ${type} (in ${whatIsThis})`,
+      level: 'fatal',
+    });
+  }
+}
+/**
  * Failed to apply HTTP interceptors: expected the fourth parameter
  * of the route decorator to be an HttpInterceptor or an extension group token, but got: ${whatIsThis}.
  *

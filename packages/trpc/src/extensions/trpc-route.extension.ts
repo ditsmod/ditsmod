@@ -9,16 +9,21 @@ import {
   Provider,
   fromSelf,
 } from '@ditsmod/core';
+import { inspect } from 'node:util';
 
 import { TrpcMetadataPerMod2 } from '#init/trpc-deep-modules-importer.js';
 import { initTrpcModule } from '#decorators/trpc-init-hooks-and-metadata.js';
-import { trpcRoute } from '#decorators/trpc-route.js';
+import { trpcRoute, TrpcRouteMetadata } from '#decorators/trpc-route.js';
 import { isCtrlDecor } from '#init/trpc-module-normalizer.js';
 import { ControllerRawMetadata } from '#decorators/controller.js';
 import { TRPC_ROOT } from '../constants.js';
 import { RouteService } from '#services/route.service.js';
 import { TrpcRootObject } from '../types.js';
 import { MetadataPerMod3 } from '#types/types.js';
+import { ControllerMetadata } from '#types/controller-metadata.js';
+import { RouteMeta } from '#types/route-data.js';
+import { FailedValidationOfRoute } from '../trpc-errors.js';
+import { GuardItem, GuardPerMod1 } from '#interceptors/guard.js';
 
 export function isTrpcRoute<T>(decoratorAndValue?: DecoratorAndValue<T>): decoratorAndValue is DecoratorAndValue<T> {
   return (decoratorAndValue as DecoratorAndValue<T>)?.decorator === trpcRoute;
@@ -31,25 +36,20 @@ export class TrpcRouteExtension implements Extension<MetadataPerMod3> {
   constructor(protected metadataPerMod2: MetadataPerMod2<TrpcMetadataPerMod2>) {}
 
   async stage1() {
-    this.setControllersToDi();
-    const restMetadataPerMod2 = this.metadataPerMod2.deepImportedModules.get(initTrpcModule)!;
+    const trpcMetadataPerMod2 = this.metadataPerMod2.deepImportedModules.get(initTrpcModule)!;
     this.metadataPerMod3 = new MetadataPerMod3();
-    this.metadataPerMod3.meta = restMetadataPerMod2.meta;
+    this.metadataPerMod3.meta = trpcMetadataPerMod2.meta;
     this.metadataPerMod3.baseMeta = this.metadataPerMod2.baseMeta;
-    this.metadataPerMod3.aControllerMetadata = this.getControllersMetadata(restMetadataPerMod2);
-    this.metadataPerMod3.guards1 = restMetadataPerMod2.guards1;
+    this.metadataPerMod3.aControllerMetadata = this.getControllersMetadata(trpcMetadataPerMod2);
+    this.metadataPerMod3.guards1 = trpcMetadataPerMod2.guards1;
     // this.metadataPerMod3.guards1 = [];
 
     return this.metadataPerMod3;
   }
 
-  protected getControllersMetadata(restMetadataPerMod2: TrpcMetadataPerMod2) {
-    const { baseMeta } = restMetadataPerMod2;
-    return [];
-  }
+  protected getControllersMetadata(trpcMetadataPerMod2: TrpcMetadataPerMod2) {
+    const aControllerMetadata: ControllerMetadata[] = [];
 
-  protected setControllersToDi() {
-    const trpcMetadataPerMod2 = this.metadataPerMod2.deepImportedModules.get(initTrpcModule)!;
     for (const Controller of trpcMetadataPerMod2.meta.controllers as Class<Record<string | symbol, any>>[]) {
       const { baseMeta, meta } = trpcMetadataPerMod2;
       const classMeta = reflector.getMetadata(Controller)!;
@@ -70,11 +70,24 @@ export class TrpcRouteExtension implements Extension<MetadataPerMod3> {
             },
           ];
           const providersPerReq: Provider[] = [];
-          const route = decoratorAndValue.value;
+          const route = decoratorAndValue.value as TrpcRouteMetadata;
           const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
-          const { interceptors } = route;
+          const guards = this.normalizeGuards(route.guards).slice();
           providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
           providersPerReq.push(...((ctrlDecorator?.value as ControllerRawMetadata).providersPerReq || []));
+
+          const routeMeta: RouteMeta = {
+            Controller,
+            methodName,
+          };
+          providersPerRou.push({ token: RouteMeta, useValue: routeMeta });
+          aControllerMetadata.push({
+            providersPerRou,
+            providersPerReq,
+            routeMeta,
+            guards,
+            interceptors: route.interceptors,
+          });
 
           baseMeta.providersPerMod.unshift({
             token: routeHandler,
@@ -87,6 +100,28 @@ export class TrpcRouteExtension implements Extension<MetadataPerMod3> {
           });
         }
       }
+    }
+
+    return aControllerMetadata;
+  }
+
+  protected normalizeGuards(guards?: GuardItem[]) {
+    return (guards || []).map((item) => {
+      if (Array.isArray(item)) {
+        this.checkGuardsPerMod(item[0]);
+        return { guard: item[0], params: item.slice(1) } as GuardPerMod1;
+      } else {
+        this.checkGuardsPerMod(item);
+        return { guard: item } as GuardPerMod1;
+      }
+    });
+  }
+
+  protected checkGuardsPerMod(Guard: Class) {
+    const type = typeof Guard?.prototype.canActivate;
+    if (type != 'function') {
+      const whatIsThis = inspect(Guard, false, 3);
+      throw new FailedValidationOfRoute(type, whatIsThis);
     }
   }
 }

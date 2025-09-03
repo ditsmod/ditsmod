@@ -4,4 +4,5 @@ export {
   DuplicateOfControllers,
   InvalidGuard,
   InvalidInterceptor,
+  FailedValidationOfRoute,
 } from './trpc-errors.js';

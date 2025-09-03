@@ -3,7 +3,7 @@ import { Class, makePropDecorator } from '@ditsmod/core';
 import { GuardItem } from '#interceptors/guard.js';
 import { HttpInterceptor } from '#interceptors/tokens-and-types.js';
 
-export interface RouteMetadata {
+export interface TrpcRouteMetadata {
   guards: GuardItem[];
   interceptors: Class<HttpInterceptor>[];
 }
@@ -15,7 +15,7 @@ export interface RouteMetadata {
 function routeFn(
   guards: GuardItem[] = [],
   interceptors: Class<HttpInterceptor>[] = [],
-) {
+): TrpcRouteMetadata {
   return { guards, interceptors };
 }
 
