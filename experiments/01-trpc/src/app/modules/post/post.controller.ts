@@ -1,4 +1,4 @@
-import { controller, opts, RouteService, trpcRoute } from '@ditsmod/trpc';
+import { controller, opts, RouteService, TrpcOpts, trpcRoute } from '@ditsmod/trpc';
 import { injectable, factoryMethod, Providers } from '@ditsmod/core';
 import { z } from 'zod';
 
@@ -7,7 +7,7 @@ import { DbService } from '#modules/db/db.service.js';
 @injectable()
 export class PostService {
   @factoryMethod()
-  createPost(@opts opts: any, db: DbService) {
+  createPost(@opts opts: TrpcOpts<InputPost>, db: DbService) {
     const post = {
       id: ++db.id,
       ...opts.input,

@@ -8,7 +8,11 @@ export const TRPC_ROUTER_OPTS = new InjectionToken<TrpcRouterOpts>('TRPC_ROUTER_
 export type TrpcRootType = ReturnType<typeof initTRPC.create>;
 export const TRPC_ROOT = new InjectionToken<TrpcRootType>('TRPC_ROOT');
 /**
+ * Shortened version of {@link ProcedureResolverOptions}.
+ */
+export type TrpcOpts<Input = any> = ProcedureResolverOptions<any, any, any, Input>;
+/**
  * A token used to obtain {@link ProcedureResolverOptions} in service methods
  * that are passed to DI at the request level.
  */
-export const TRPC_OPTS = new InjectionToken<ProcedureResolverOptions<any, any, any, any>>('TRPC_OPTS');
+export const TRPC_OPTS = new InjectionToken<TrpcOpts>('TRPC_OPTS');
