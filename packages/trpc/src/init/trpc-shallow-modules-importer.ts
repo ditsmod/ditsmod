@@ -9,7 +9,6 @@ import {
   reflector,
   hasDeclaredInDir,
   getCollisions,
-  isRootModule,
   BaseMeta,
   GlobalProviders,
   getLastProviders,
@@ -61,7 +60,6 @@ export class TrpcProviderImport<T extends Provider = Provider> {
  */
 export class TrpcShallowImports {
   baseMeta: BaseMeta;
-  prefixPerMod: string;
   guards1: GuardPerMod1[];
   /**
    * Snapshot of `TrpcInitMeta`. If you modify any array in this object,
@@ -72,7 +70,6 @@ export class TrpcShallowImports {
    * Map between a token and its ProviderImport per level.
    */
   baseImportRegistry: TrpcBaseImportRegistry;
-  applyControllers?: boolean;
 }
 
 export interface TrpcBaseImportRegistry {
@@ -110,7 +107,6 @@ export class TrpcGlobalProviders extends GlobalInitHooks {
  */
 export class TrpcShallowModulesImporter {
   protected moduleName: string;
-  protected prefixPerMod: string;
   protected guards1: GuardPerMod1[];
   protected baseMeta: BaseMeta;
   protected meta: TrpcInitMeta;
@@ -184,9 +180,7 @@ export class TrpcShallowModulesImporter {
     globalProviders,
     modRefId,
     unfinishedScanModules,
-    prefixPerMod,
     guards1,
-    isAppends,
   }: ImportModulesShallowConfig): Map<ModRefId, TrpcShallowImports> {
     this.moduleManager = moduleManager;
     this.providersPerApp = providersPerApp;
@@ -195,16 +189,11 @@ export class TrpcShallowModulesImporter {
     this.meta = this.getInitMeta(baseMeta);
     this.glProviders = globalProviders;
     this.trpcGlProviders = globalProviders.mInitValue.get(initTrpcModule) as TrpcGlobalProviders;
-    this.prefixPerMod = prefixPerMod || '';
     this.moduleName = baseMeta.name;
     this.guards1 = guards1 || [];
     this.unfinishedScanModules = unfinishedScanModules;
-    this.importAndAppendModules();
-
-    let applyControllers = false;
-    if (isRootModule(baseMeta) || isAppends || this.hasPath()) {
-      applyControllers = true;
-    }
+    this.importModules([...this.baseMeta.importsModules, ...this.baseMeta.importsWithParams], true);
+    this.checkAllCollisionsWithLevelsMix();
 
     let perMod: Map<any, TrpcProviderImport>;
     let perRou: Map<any, TrpcProviderImport>;
@@ -242,10 +231,8 @@ export class TrpcShallowModulesImporter {
 
     return this.shallowImportsMap.set(modRefId, {
       baseMeta,
-      prefixPerMod,
       guards1: this.guards1,
       meta: this.meta,
-      applyControllers,
       baseImportRegistry: {
         perMod,
         perRou,
@@ -266,16 +253,7 @@ export class TrpcShallowModulesImporter {
     return meta;
   }
 
-  protected hasPath() {
-    return this.meta.params.path !== undefined || this.meta.params.absolutePath !== undefined;
-  }
-
-  protected importAndAppendModules() {
-    this.importOrAppendModules([...this.baseMeta.importsModules, ...this.baseMeta.importsWithParams], true);
-    this.checkAllCollisionsWithLevelsMix();
-  }
-
-  protected importOrAppendModules(aModRefIds: TrpcModRefId[], isImport?: boolean) {
+  protected importModules(aModRefIds: TrpcModRefId[], isImport?: boolean) {
     for (const modRefId of aModRefIds) {
       const baseMeta = this.moduleManager.getBaseMeta(modRefId, true);
       if (isImport) {
@@ -285,7 +263,7 @@ export class TrpcShallowModulesImporter {
         continue;
       }
       const meta = this.getInitMeta(baseMeta);
-      const { prefixPerMod, guards1 } = this.getPrefixAndGuards(modRefId, meta, isImport);
+      const { guards1 } = this.getPrefixAndGuards(modRefId, meta, isImport);
       const shallowModulesImporter = new TrpcShallowModulesImporter();
       this.unfinishedScanModules.add(modRefId);
       const shallowImportsBase = shallowModulesImporter.importModulesShallow({
@@ -294,9 +272,7 @@ export class TrpcShallowModulesImporter {
         globalProviders: this.glProviders,
         modRefId,
         unfinishedScanModules: this.unfinishedScanModules,
-        prefixPerMod,
         guards1,
-        isAppends: !isImport,
       });
       this.unfinishedScanModules.delete(modRefId);
 
@@ -305,18 +281,9 @@ export class TrpcShallowModulesImporter {
   }
 
   protected getPrefixAndGuards(modRefId: TrpcModRefId, meta: TrpcInitMeta, isImport?: boolean) {
-    let prefixPerMod = '';
     let guards1: GuardPerMod1[] = [];
-    const { absolutePath } = meta.params;
     const hasModuleParams = isModuleWithParams(modRefId);
     if (hasModuleParams || !isImport) {
-      if (hasModuleParams && typeof absolutePath == 'string') {
-        // Allow slash for absolutePath.
-        prefixPerMod = absolutePath.startsWith('/') ? absolutePath.slice(1) : absolutePath;
-      } else {
-        const path = hasModuleParams ? meta.params.path : '';
-        prefixPerMod = [this.prefixPerMod, path].filter((s) => s).join('/');
-      }
       const impGuradsPerMod1 = meta.params.guards.map<GuardPerMod1>((g) => {
         return {
           ...g,
@@ -325,10 +292,8 @@ export class TrpcShallowModulesImporter {
         };
       });
       guards1 = [...this.guards1, ...impGuradsPerMod1];
-    } else {
-      prefixPerMod = this.prefixPerMod;
     }
-    return { prefixPerMod, guards1 };
+    return { guards1 };
   }
 
   /**

@@ -33,8 +33,6 @@ import { GuardItem, GuardPerMod1, NormalizedGuard } from '#interceptors/guard.js
 export type TrpcModRefId = ModRefId;
 
 class NormalizedParams {
-  declare path?: string;
-  declare absolutePath?: string;
   guards: NormalizedGuard[] = [];
 }
 
@@ -142,9 +140,7 @@ export interface ImportModulesShallowConfig {
   globalProviders: GlobalProviders;
   modRefId: ModRefId;
   unfinishedScanModules: Set<ModRefId>;
-  prefixPerMod: string;
   guards1?: GuardPerMod1[];
-  isAppends?: boolean;
 }
 
 export interface DeepModulesImporterConfig {

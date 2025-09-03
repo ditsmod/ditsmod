@@ -15,7 +15,6 @@ import { Res } from './response.js';
  * An instance of this class is created without DI.
  */
 export class RequestContext extends Res {
-  declare pathParams?: AnyObj;
   declare queryParams?: AnyObj;
   declare body?: any;
   declare auth?: any;

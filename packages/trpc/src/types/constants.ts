@@ -13,7 +13,6 @@ export const RAW_REQ = new InjectionToken<RawRequest>('RAW_REQ');
  * DI token for native webserver response.
  */
 export const RAW_RES = new InjectionToken<RawResponse>('RAW_RES');
-export const PATH_PARAMS = new InjectionToken<AnyObj>('PATH_PARAMS');
 export const QUERY_PARAMS = new InjectionToken<AnyObj>('QUERY_PARAMS');
 /**
  * DI token for querystring that is returned by `PreRouter` after spliting `rawReq.url` by question mark.

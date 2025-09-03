@@ -28,9 +28,7 @@ export class TrpcMetadataPerMod2 {
   guards1: GuardPerMod1[];
 }
 
-export class TrpcModuleExtract extends ModuleExtract {
-  path: string;
-}
+export class TrpcModuleExtract extends ModuleExtract {}
 
 /**
  * By analyzing the dependencies of the providers returned by `ShallowModulesImporter`,
@@ -65,10 +63,9 @@ export class TrpcDeepModulesImporter {
   importModulesDeep(): TrpcMetadataPerMod2 | undefined {
     const levels: Level[] = ['Req', 'Rou', 'Mod'];
     this.tokensPerApp = getTokens(this.providersPerApp);
-    const { baseImportRegistry, guards1, prefixPerMod, meta, applyControllers, baseMeta } = this.shallowImports;
+    const { baseImportRegistry, guards1, meta } = this.shallowImports;
     const targetProviders = new TrpcProvidersOnly();
     this.resolveImportedProviders(targetProviders, baseImportRegistry, levels);
-    this.patchModuleExtract(baseMeta, prefixPerMod);
     meta.providersPerMod.unshift(...targetProviders.providersPerMod);
     // meta.providersPerRou.unshift(...defaultProvidersPerRou, ...targetProviders.providersPerRou);
     // meta.providersPerReq.unshift(...defaultProvidersPerReq, ...targetProviders.providersPerReq);
@@ -77,19 +74,6 @@ export class TrpcDeepModulesImporter {
       meta,
       guards1,
     };
-  }
-
-  protected patchModuleExtract(baseMeta: BaseMeta, prefixPerMod: string) {
-    const moduleExtract: TrpcModuleExtract = {
-      moduleName: baseMeta.name,
-      isExternal: baseMeta.isExternal,
-      path: prefixPerMod,
-    };
-    baseMeta.providersPerMod.some((p) => {
-      if (isValueProvider(p) && p.token === ModuleExtract) {
-        p.useValue = moduleExtract;
-      }
-    });
   }
 
   protected resolveImportedProviders(
