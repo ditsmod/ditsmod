@@ -11,7 +11,7 @@ export { PreRouter } from './pre-router.js';
 export { TrpcAppInitializer } from './trpc-app-initializer.js';
 export { TrpcApplication } from './trpc-application.js';
 export { TrpcService } from '#services/trpc.service.js';
-export { TrpcExtension } from './extensions/trpc-extension.js';
+export { TrpcRouteExtension } from './extensions/trpc-route.extension.js';
 export {
   SERVER,
   RawRequest,

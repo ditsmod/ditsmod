@@ -3,7 +3,7 @@ import { Extension, ExtensionsManager, injectable } from '@ditsmod/core';
 
 import { HTTP_INTERCEPTORS } from '#types/constants.js';
 import { isInterceptor } from '#types/type.guards.js';
-import { TrpcExtension } from './trpc-extension.js';
+import { TrpcRouteExtension } from './trpc-route.extension.js';
 import { InvalidInterceptor } from '#errors';
 
 /**
@@ -14,7 +14,7 @@ export class UseInterceptorExtension implements Extension {
   constructor(protected extensionManager: ExtensionsManager) {}
 
   async stage1() {
-    const stage1ExtensionMeta = await this.extensionManager.stage1(TrpcExtension);
+    const stage1ExtensionMeta = await this.extensionManager.stage1(TrpcRouteExtension);
     for (const metadataPerMod3 of stage1ExtensionMeta.groupData) {
       for (const ctrlMeta of metadataPerMod3.aControllerMetadata) {
         for (const Interceptor of ctrlMeta.interceptors) {

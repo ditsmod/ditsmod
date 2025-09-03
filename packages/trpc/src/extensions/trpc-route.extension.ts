@@ -25,7 +25,7 @@ export function isTrpcRoute<T>(decoratorAndValue?: DecoratorAndValue<T>): decora
 }
 
 @injectable()
-export class TrpcExtension implements Extension<MetadataPerMod3> {
+export class TrpcRouteExtension implements Extension<MetadataPerMod3> {
   protected metadataPerMod3: MetadataPerMod3;
 
   constructor(protected metadataPerMod2: MetadataPerMod2<TrpcMetadataPerMod2>) {}
