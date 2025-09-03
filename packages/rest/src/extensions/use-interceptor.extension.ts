@@ -16,21 +16,20 @@ export class UseInterceptorExtension implements Extension {
   async stage1() {
     const stage1ExtensionMeta = await this.extensionManager.stage1(RoutesExtension);
     for (const metadataPerMod3 of stage1ExtensionMeta.groupData) {
-      for (const meta of metadataPerMod3.aControllerMetadata) {
-        if (meta.interceptors)
-          for (const interceptor of meta.interceptors) {
-            if (isInterceptor(interceptor)) {
-              const provider = { token: HTTP_INTERCEPTORS, useClass: interceptor, multi: true };
-              if (meta.scope == 'ctx') {
-                meta.providersPerRou.push(provider);
-              } else {
-                meta.providersPerReq.push(provider);
-              }
+      for (const ctrlMeta of metadataPerMod3.aControllerMetadata) {
+        for (const Interceptor of ctrlMeta.interceptors) {
+          if (isInterceptor(Interceptor)) {
+            const provider = { token: HTTP_INTERCEPTORS, useClass: Interceptor, multi: true };
+            if (ctrlMeta.scope == 'ctx') {
+              ctrlMeta.providersPerRou.push(provider);
             } else {
-              const whatIsThis = inspect(interceptor, false, 3);
-              throw new InvalidInterceptor(meta.httpMethods.join(', '), meta.fullPath, whatIsThis);
+              ctrlMeta.providersPerReq.push(provider);
             }
+          } else {
+            const whatIsThis = inspect(Interceptor, false, 3);
+            throw new InvalidInterceptor(ctrlMeta.httpMethods.join(', '), ctrlMeta.fullPath, whatIsThis);
           }
+        }
       }
     }
   }
