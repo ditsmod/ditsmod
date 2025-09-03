@@ -1,6 +1,22 @@
 import { CustomError } from '@ditsmod/core';
 
 /**
+ * Failed to apply HTTP interceptors: expected the fourth parameter
+ * of the route decorator to be an HttpInterceptor or an extension group token, but got: ${whatIsThis}.
+ *
+ */
+export class InvalidInterceptor extends CustomError {
+  constructor(whatIsThis: string) {
+    super({
+      msg1:
+        'Failed to apply HTTP interceptors: ' +
+        'expected the fourth parameter of the route decorator to be an HttpInterceptor ' +
+        `or an extension group token, but got: ${whatIsThis}.`,
+      level: 'fatal',
+    });
+  }
+}
+/**
  * `Import with guards failed: Guard.prototype.canActivate must be a function, got: ${type}`
  */
 export class InvalidGuard extends CustomError {

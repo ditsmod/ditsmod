@@ -1,4 +1,4 @@
-import { HttpMethod, ModuleExtract, GlobalInitHooks, BaseMeta, Provider } from '@ditsmod/core';
+import { GlobalInitHooks, BaseMeta, Provider } from '@ditsmod/core';
 
 import { GuardPerMod1 } from '#interceptors/guard.js';
 import { TrpcProviderImport } from '#init/trpc-shallow-modules-importer.js';
@@ -25,14 +25,9 @@ export type RedirectStatusCodes = 300 | 301 | 302 | 303 | 307 | 308;
  */
 export class MetadataPerMod3 {
   baseMeta: BaseMeta;
-  prefixPerMod: string;
   meta: TrpcInitMeta;
   aControllerMetadata: ControllerMetadata[];
   guards1: GuardPerMod1[];
-}
-
-export interface ObjectAny {
-  [k: string]: any;
 }
 
 /**
@@ -40,38 +35,9 @@ export interface ObjectAny {
  */
 export interface PreparedRouteMeta {
   moduleName: string;
-  httpMethods: HttpMethod[];
-  fullPath: string;
   countOfGuards: number;
 }
 
 export type Fn = (...args: any[]) => any;
-
 export type Args<T> = T extends (...args: infer A) => any ? A : never;
-
-export enum RouteType {
-  static = 0,
-  root = 1,
-  param = 2,
-  catchAll = 3,
-}
-
-export class TreeConfig {
-  path?: string = '';
-  wildChild?: boolean = false;
-  type?: number = RouteType.static;
-  indices?: string = '';
-  children?: any[] = [];
-  handle?: Fn | null = null;
-  priority?: number = 0;
-}
-
-export interface RouteParam {
-  key: string;
-  value: string;
-}
 export type Level = 'Req' | 'Rou' | 'Mod';
-
-export class TrpcModuleExtract extends ModuleExtract {
-  path: string;
-}

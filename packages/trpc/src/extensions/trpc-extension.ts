@@ -18,17 +18,34 @@ import { ControllerRawMetadata } from '#decorators/controller.js';
 import { TRPC_ROOT } from '../constants.js';
 import { RouteService } from '#services/route.service.js';
 import { TrpcRootObject } from '../types.js';
+import { MetadataPerMod3 } from '#types/types.js';
 
 export function isTrpcRoute<T>(decoratorAndValue?: DecoratorAndValue<T>): decoratorAndValue is DecoratorAndValue<T> {
   return (decoratorAndValue as DecoratorAndValue<T>)?.decorator === trpcRoute;
 }
 
 @injectable()
-export class TrpcExtension implements Extension<void> {
+export class TrpcExtension implements Extension<MetadataPerMod3> {
+  protected metadataPerMod3: MetadataPerMod3;
+
   constructor(protected metadataPerMod2: MetadataPerMod2<TrpcMetadataPerMod2>) {}
 
   async stage1() {
     this.setControllersToDi();
+    const restMetadataPerMod2 = this.metadataPerMod2.deepImportedModules.get(initTrpcModule)!;
+    this.metadataPerMod3 = new MetadataPerMod3();
+    this.metadataPerMod3.meta = restMetadataPerMod2.meta;
+    this.metadataPerMod3.baseMeta = this.metadataPerMod2.baseMeta;
+    this.metadataPerMod3.aControllerMetadata = this.getControllersMetadata(restMetadataPerMod2);
+    this.metadataPerMod3.guards1 = restMetadataPerMod2.guards1;
+    // this.metadataPerMod3.guards1 = [];
+
+    return this.metadataPerMod3;
+  }
+
+  protected getControllersMetadata(restMetadataPerMod2: TrpcMetadataPerMod2) {
+    const { baseMeta } = restMetadataPerMod2;
+    return [];
   }
 
   protected setControllersToDi() {

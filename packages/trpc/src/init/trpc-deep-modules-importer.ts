@@ -26,8 +26,6 @@ export class TrpcMetadataPerMod2 {
   baseMeta: BaseMeta;
   meta: TrpcInitMeta;
   guards1: GuardPerMod1[];
-  prefixPerMod: string;
-  applyControllers?: boolean;
 }
 
 export class TrpcModuleExtract extends ModuleExtract {
@@ -78,8 +76,6 @@ export class TrpcDeepModulesImporter {
       baseMeta: this.shallowImports.baseMeta,
       meta,
       guards1,
-      prefixPerMod,
-      applyControllers,
     };
   }
 

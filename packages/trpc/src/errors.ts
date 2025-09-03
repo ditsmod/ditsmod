@@ -3,4 +3,5 @@ export {
   ControllerDoesNotHaveDecorator,
   DuplicateOfControllers,
   InvalidGuard,
+  InvalidInterceptor,
 } from './trpc-errors.js';
