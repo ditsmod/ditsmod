@@ -20,7 +20,7 @@ import { RouteService } from '#services/route.service.js';
 import { TrpcRootObject } from '../types.js';
 import { MetadataPerMod3 } from '#types/types.js';
 import { ControllerMetadata } from '#types/controller-metadata.js';
-import { RouteMeta } from '#types/route-data.js';
+import { TrpcRouteMeta } from '#types/trpc-route-data.js';
 import { FailedValidationOfRoute } from '../trpc-errors.js';
 import { GuardItem, GuardPerMod1 } from '#interceptors/guard.js';
 import { isTrpcRoute } from '#types/type.guards.js';
@@ -72,11 +72,11 @@ export class TrpcRouteExtension implements Extension<MetadataPerMod3> {
           providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
           providersPerReq.push(...((ctrlDecorator?.value as ControllerRawMetadata).providersPerReq || []));
 
-          const routeMeta: RouteMeta = {
+          const routeMeta: TrpcRouteMeta = {
             Controller,
             methodName,
           };
-          providersPerRou.push({ token: RouteMeta, useValue: routeMeta });
+          providersPerRou.push({ token: TrpcRouteMeta, useValue: routeMeta });
           aControllerMetadata.push({
             providersPerRou,
             providersPerReq,
