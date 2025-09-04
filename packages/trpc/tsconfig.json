@@ -8,6 +8,7 @@
       "#init/*": ["./src/init/*"],
       "#types/*": ["./src/types/*"],
       "#services/*": ["./src/services/*"],
+      "#extensions/*": ["./src/extensions/*"],
       "#interceptors/*": ["./src/interceptors/*"],
     },
     "module": "nodenext",

@@ -7,7 +7,12 @@ import { TrpcPreRouterExtension } from './extensions/trpc-pre-router.extension.j
 @featureModule({
   extensions: [
     { extension: TrpcRouteExtension, beforeExtensions: [TrpcPreRouterExtension], exportOnly: true },
-    { extension: UseInterceptorExtension, afterExtensions: [TrpcRouteExtension], exportOnly: true },
+    {
+      extension: UseInterceptorExtension,
+      afterExtensions: [TrpcRouteExtension],
+      beforeExtensions: [TrpcPreRouterExtension],
+      exportOnly: true,
+    },
     { extension: TrpcPreRouterExtension, afterExtensions: [TrpcRouteExtension], exportOnly: true },
   ],
 })

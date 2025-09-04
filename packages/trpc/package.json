@@ -15,6 +15,7 @@
     "#init/*": "./dist/init/*",
     "#types/*": "./dist/types/*",
     "#services/*": "./dist/services/*",
+    "#extensions/*": "./dist/extensions/*",
     "#interceptors/*": "./dist/interceptors/*"
   },
   "exports": {
