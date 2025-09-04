@@ -10,13 +10,13 @@ import {
   ShallowImports,
   ModuleExtract,
   BaseMeta,
-  isValueProvider,
 } from '@ditsmod/core';
 
 import { DeepModulesImporterConfig, initTrpcModule, TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { TrpcBaseImportRegistry, TrpcProvidersOnly, TrpcShallowImports } from './trpc-shallow-modules-importer.js';
 import { Level } from './trpc-module-normalizer.js';
 import { GuardPerMod1 } from '#interceptors/guard.js';
+import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js';
 
 /**
  * This metadata returns from `DeepModulesImporter`. The target for this metadata is `RoutesExtension`.
@@ -67,7 +67,7 @@ export class TrpcDeepModulesImporter {
     const targetProviders = new TrpcProvidersOnly();
     this.resolveImportedProviders(targetProviders, baseImportRegistry, levels);
     meta.providersPerMod.unshift(...targetProviders.providersPerMod);
-    // meta.providersPerRou.unshift(...defaultProvidersPerRou, ...targetProviders.providersPerRou);
+    meta.providersPerRou.unshift(...defaultProvidersPerRou, ...targetProviders.providersPerRou);
     // meta.providersPerReq.unshift(...defaultProvidersPerReq, ...targetProviders.providersPerReq);
     return {
       baseMeta: this.shallowImports.baseMeta,

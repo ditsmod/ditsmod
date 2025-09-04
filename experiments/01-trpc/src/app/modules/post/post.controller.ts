@@ -28,6 +28,7 @@ export class PostService {
 
   @factoryMethod()
   listPosts(db: DbService) {
+    console.log('-'.repeat(10), 'PostService works');
     return db.posts;
   }
 }
@@ -44,6 +45,7 @@ export class MyHttpInterceptor implements HttpInterceptor {
   constructor(private logger: Logger) {}
 
   async intercept(next: HttpHandler, ctx: RequestContext) {
+    console.log('>'.repeat(10), 'MyHttpInterceptor works!');
     const originalMsg = await next.handle(); // Handling request to `HelloWorldController`
     return originalMsg;
   }

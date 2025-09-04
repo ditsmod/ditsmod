@@ -14,6 +14,8 @@
     "#decorators/*": "./dist/decorators/*",
     "#init/*": "./dist/init/*",
     "#types/*": "./dist/types/*",
+    "#utils/*": "./dist/utils/*",
+    "#providers/*": "./dist/providers/*",
     "#services/*": "./dist/services/*",
     "#extensions/*": "./dist/extensions/*",
     "#interceptors/*": "./dist/interceptors/*"

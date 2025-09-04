@@ -1,4 +1,3 @@
-import { AnyObj } from '@ditsmod/core';
 import { TLSSocket } from 'node:tls';
 
 import { RawRequest, RawResponse } from './request.js';
@@ -15,14 +14,12 @@ import { Res } from './response.js';
  * An instance of this class is created without DI.
  */
 export class RequestContext extends Res {
-  declare queryParams?: AnyObj;
   declare body?: any;
   declare auth?: any;
 
   constructor(
     public rawReq: RawRequest,
     public override rawRes: RawResponse,
-    public queryString: string,
     /**
      * Indicates in which mode the controller methods work.
      * 

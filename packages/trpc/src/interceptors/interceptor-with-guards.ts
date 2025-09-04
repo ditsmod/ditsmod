@@ -1,0 +1,60 @@
+import { injectable, Injector, ResolvedGuardPerMod, skipSelf, Status, SystemLogMediator } from '@ditsmod/core';
+
+import { RequestContext } from '#services/request-context.js';
+import { RAW_REQ, RAW_RES } from '#types/constants.js';
+import { CanActivate } from './guard.js';
+import { HttpInterceptor, HttpHandler } from './tokens-and-types.js';
+import { TrpcRouteMeta } from '#types/trpc-route-data.js';
+import { applyResponse } from '#utils/apply-web-response.js';
+
+@injectable()
+export class InterceptorWithGuards implements HttpInterceptor {
+  constructor(
+    @skipSelf() protected routeMeta: TrpcRouteMeta,
+    private injector: Injector,
+  ) {}
+
+  async intercept(next: HttpHandler, ctx: RequestContext) {
+    if (this.routeMeta.resolvedGuardsPerMod)
+      for (const item of this.routeMeta.resolvedGuardsPerMod) {
+        const injectorPerReq = this.getInjectorPerReq(item);
+        const guard = injectorPerReq.instantiateResolved(item.guard) as CanActivate;
+        const result = await guard.canActivate(ctx, item.params);
+        if (result !== true) {
+          return this.sendResponse(ctx, result);
+        }
+      }
+    if (this.routeMeta.resolvedGuards)
+      for (const item of this.routeMeta.resolvedGuards) {
+        const guard = this.injector.instantiateResolved(item.guard) as CanActivate;
+        const result = await guard.canActivate(ctx, item.params);
+        if (result !== true) {
+          return this.sendResponse(ctx, result);
+        }
+      }
+
+    return next.handle();
+  }
+
+  protected async sendResponse(ctx: RequestContext, result: false | Response) {
+    if (result === false) {
+      this.prohibitActivation(ctx);
+      return;
+    }
+    await applyResponse(result, ctx.rawRes);
+    return result;
+  }
+
+  protected getInjectorPerReq(rg: ResolvedGuardPerMod) {
+    const inj = rg.injectorPerRou.createChildFromResolved(rg.resolvedPerReq!, 'Req');
+    this.injector.fill(inj, [RAW_REQ, RAW_RES]);
+    return inj;
+  }
+
+  protected prohibitActivation(ctx: RequestContext, status?: Status) {
+    const systemLogMediator = this.injector.get(SystemLogMediator) as SystemLogMediator;
+    systemLogMediator.youCannotActivateRoute(this, ctx.rawReq.method!, ctx.rawReq.url!);
+    ctx.rawRes.statusCode = Status.UNAUTHORIZED;
+    ctx.rawRes.end();
+  }
+}

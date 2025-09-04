@@ -5,4 +5,6 @@ export {
   InvalidGuard,
   InvalidInterceptor,
   FailedValidationOfRoute,
+  GuardNotFound,
+  CheckingDepsInSandboxFailed,
 } from './trpc-errors.js';

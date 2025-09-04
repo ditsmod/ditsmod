@@ -140,7 +140,7 @@ export class InvalidInterceptor extends CustomError {
   }
 }
 /**
- * `Checking deps in "sandbox" for failed`.
+ * `Checking deps in sandbox for route "${controllerName} -> ${httpMethod} ${path}" failed`.
  */
 export class CheckingDepsInSandboxFailed extends CustomError {
   constructor(cause: Error, controllerName: string, httpMethod: HttpMethod | HttpMethod[], path: string) {

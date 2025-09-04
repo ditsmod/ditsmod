@@ -7,6 +7,8 @@
       "#errors": ["./src/errors.js"],
       "#init/*": ["./src/init/*"],
       "#types/*": ["./src/types/*"],
+      "#utils/*": ["./src/utils/*"],
+      "#providers/*": ["./src/providers/*"],
       "#services/*": ["./src/services/*"],
       "#extensions/*": ["./src/extensions/*"],
       "#interceptors/*": ["./src/interceptors/*"],
