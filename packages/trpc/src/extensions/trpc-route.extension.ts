@@ -21,9 +21,10 @@ import { TrpcRootObject } from '../types.js';
 import { MetadataPerMod3 } from '#types/types.js';
 import { ControllerMetadata } from '#types/controller-metadata.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';
-import { FailedValidationOfRoute } from '../trpc-errors.js';
+import { FailedValidationOfRoute, InvalidInterceptor } from '../trpc-errors.js';
 import { GuardItem, GuardPerMod1 } from '#interceptors/guard.js';
-import { isTrpcRoute } from '#types/type.guards.js';
+import { isInterceptor, isTrpcRoute } from '#types/type.guards.js';
+import { HTTP_INTERCEPTORS } from '#types/constants.js';
 
 @injectable()
 export class TrpcRouteExtension implements Extension<MetadataPerMod3> {
@@ -71,6 +72,16 @@ export class TrpcRouteExtension implements Extension<MetadataPerMod3> {
           const guards = this.normalizeGuards(route.guards).slice();
           providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
           providersPerReq.push(...((ctrlDecorator?.value as ControllerRawMetadata).providersPerReq || []));
+
+          for (const Interceptor of route.interceptors) {
+            if (isInterceptor(Interceptor)) {
+              const provider = { token: HTTP_INTERCEPTORS, useClass: Interceptor, multi: true };
+              providersPerReq.push(provider);
+            } else {
+              const whatIsThis = inspect(Interceptor, false, 3);
+              throw new InvalidInterceptor(whatIsThis);
+            }
+          }
 
           const routeMeta: TrpcRouteMeta = {
             Controller,

@@ -13,7 +13,7 @@ export class FailedValidationOfRoute extends CustomError {
   }
 }
 /**
- * Failed to apply HTTP interceptors: expected the fourth parameter
+ * Failed to apply HTTP interceptors: expected the second parameter
  * of the route decorator to be an HttpInterceptor or an extension group token, but got: ${whatIsThis}.
  *
  */
@@ -22,7 +22,7 @@ export class InvalidInterceptor extends CustomError {
     super({
       msg1:
         'Failed to apply HTTP interceptors: ' +
-        'expected the fourth parameter of the route decorator to be an HttpInterceptor ' +
+        'expected the second parameter of the route decorator to be an HttpInterceptor ' +
         `or an extension group token, but got: ${whatIsThis}.`,
       level: 'fatal',
     });
