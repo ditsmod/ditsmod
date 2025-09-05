@@ -21,5 +21,5 @@ export function awaitTokens(tokens: any): FunctionFactoryProvider[] {
 }
 
 function throwUsingProvider() {
-  throw new Error('You must override this provider.');
+  throw new Error('You promised to override this provider, but you did not.');
 }
