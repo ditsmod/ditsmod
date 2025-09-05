@@ -1,12 +1,11 @@
 import {
   injectable,
   Extension,
-  Injector,
   MetadataPerMod2,
   type Class,
   reflector,
   Provider,
-  fromSelf,
+  awaitTokens,
 } from '@ditsmod/core';
 import { inspect } from 'node:util';
 
@@ -15,9 +14,6 @@ import { initTrpcModule } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { TrpcRouteMetadata } from '#decorators/trpc-route.js';
 import { isCtrlDecor } from '#init/trpc-module-normalizer.js';
 import { ControllerRawMetadata } from '#decorators/controller.js';
-import { TRPC_ROOT } from '../constants.js';
-import { RouteService } from '#services/route.service.js';
-import { TrpcRootObject } from '../types.js';
 import { MetadataPerMod3 } from '#types/types.js';
 import { ControllerMetadata } from '#types/controller-metadata.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';
@@ -25,6 +21,7 @@ import { FailedValidationOfRoute, InvalidInterceptor } from '../trpc-errors.js';
 import { GuardItem, GuardPerMod1 } from '#interceptors/guard.js';
 import { isInterceptor, isTrpcRoute } from '#types/type.guards.js';
 import { HTTP_INTERCEPTORS } from '#types/constants.js';
+import { RouteService } from '#services/route.service.js';
 
 @injectable()
 export class TrpcRouteExtension implements Extension<MetadataPerMod3> {
@@ -46,26 +43,21 @@ export class TrpcRouteExtension implements Extension<MetadataPerMod3> {
 
   protected getControllersMetadata(trpcMetadataPerMod2: TrpcMetadataPerMod2) {
     const aControllerMetadata: ControllerMetadata[] = [];
+    const { providersPerMod } = trpcMetadataPerMod2.baseMeta;
 
     for (const Controller of trpcMetadataPerMod2.meta.controllers as Class<Record<string | symbol, any>>[]) {
-      const { baseMeta, meta } = trpcMetadataPerMod2;
       const classMeta = reflector.getMetadata(Controller)!;
       for (const methodName of classMeta) {
         for (const decoratorAndValue of classMeta[methodName].decorators) {
           if (!isTrpcRoute(decoratorAndValue)) {
             continue;
           }
-          const routeHandler = Controller.prototype[methodName];
+          const methodAsToken = Controller.prototype[methodName];
           const providersPerRou: Provider[] = [
-            { useFactory: [Controller, routeHandler] },
-            {
-              token: RouteService,
-              deps: [TRPC_ROOT, Injector],
-              useFactory: (t: TrpcRootObject<any>, injectorPerRou: Injector) => {
-                return new RouteService(t, injectorPerRou, providersPerReq);
-              },
-            },
+            ...awaitTokens(RouteService),
+            { useFactory: [Controller, methodAsToken] },
           ];
+          providersPerMod.unshift(...awaitTokens(methodAsToken));
           const providersPerReq: Provider[] = [];
           const route = decoratorAndValue.value as TrpcRouteMetadata;
           const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
@@ -75,8 +67,7 @@ export class TrpcRouteExtension implements Extension<MetadataPerMod3> {
 
           for (const Interceptor of route.interceptors) {
             if (isInterceptor(Interceptor)) {
-              const provider = { token: HTTP_INTERCEPTORS, useClass: Interceptor, multi: true };
-              providersPerReq.push(provider);
+              providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: Interceptor, multi: true });
             } else {
               const whatIsThis = inspect(Interceptor, false, 3);
               throw new InvalidInterceptor(whatIsThis);
@@ -93,17 +84,6 @@ export class TrpcRouteExtension implements Extension<MetadataPerMod3> {
             providersPerReq,
             routeMeta,
             guards,
-            interceptors: route.interceptors,
-          });
-
-          baseMeta.providersPerMod.unshift({
-            token: routeHandler,
-            deps: [Injector],
-            useFactory: (injectorPerMod: Injector) => {
-              const mergedPerRou = meta.providersPerRou.concat(providersPerRou);
-              const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'Rou');
-              return injectorPerRou.get(routeHandler, fromSelf); // fromSelf - this allow avoiding cyclic deps.
-            },
           });
         }
       }

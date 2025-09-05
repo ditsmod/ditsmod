@@ -13,7 +13,6 @@ export interface ControllerMetadata {
    * Providers per a request.
    */
   providersPerReq: Provider[];
-  interceptors: Class<HttpInterceptor>[];
   routeMeta: TrpcRouteMeta;
   guards: NormalizedGuard[];
 }

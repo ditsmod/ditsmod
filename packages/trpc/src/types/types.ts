@@ -4,6 +4,7 @@ import { GuardPerMod1 } from '#interceptors/guard.js';
 import { TrpcProviderImport } from '#init/trpc-shallow-modules-importer.js';
 import { ControllerMetadata } from './controller-metadata.js';
 import { TrpcInitMeta, TrpcModRefId } from '#decorators/trpc-init-hooks-and-metadata.js';
+import { RawRequest, RawResponse } from '../types.js';
 
 export class TrpcGlobalProviders extends GlobalInitHooks {
   importedProvidersPerMod = new Map<any, TrpcProviderImport>();
@@ -35,6 +36,7 @@ export class MetadataPerMod3 {
  */
 export interface PreparedRouteMeta {
   moduleName: string;
+  handle: (rawReq: RawRequest, rawRes: RawResponse) => Promise<void>;
   countOfGuards: number;
 }
 

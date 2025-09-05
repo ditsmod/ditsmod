@@ -12,15 +12,15 @@ import {
   CTX_DATA,
   SystemLogMediator,
   fromSelf,
-  FactoryProvider,
   ResolvedGuard,
   ResolvedProvider,
   ResolvedGuardPerMod,
   ModuleManager,
+  ClassFactoryProvider,
 } from '@ditsmod/core';
 
 import { trpcRoute } from '#decorators/trpc-route.js';
-import { MetadataPerMod3 } from '#types/types.js';
+import { MetadataPerMod3, PreparedRouteMeta } from '#types/types.js';
 import { TrpcRouteExtension } from './trpc-route.extension.js';
 import { HttpBackend, HttpFrontend } from '#interceptors/tokens-and-types.js';
 import { RequestContext } from '#services/request-context.js';
@@ -33,6 +33,13 @@ import { GuardPerMod1, NormalizedGuard } from '#interceptors/guard.js';
 import { RawRequest, RawResponse } from '#services/request.js';
 import { HttpErrorHandler } from '#services/http-error-handler.js';
 import { CheckingDepsInSandboxFailed, GuardNotFound } from '../trpc-errors.js';
+import { DefaultCtxHttpFrontend } from '#interceptors/default-ctx-http-frontend.js';
+import { DefaultHttpBackend } from '#interceptors/default-http-backend.js';
+import { DefaultHttpFrontend } from '#interceptors/default-http-frontend.js';
+import { DefaultCtxHttpBackend } from '#interceptors/default-ctx-http-backend.js';
+import { DefaultCtxChainMaker } from '#interceptors/default-ctx-chain-maker.js';
+import { RouteService } from '#services/route.service.js';
+import { TRPC_ROOT } from '../constants.js';
 
 export function isTrpcRoute<T>(decoratorAndValue?: DecoratorAndValue<T>): decoratorAndValue is DecoratorAndValue<T> {
   return (decoratorAndValue as DecoratorAndValue<T>)?.decorator === trpcRoute;
@@ -41,6 +48,8 @@ export function isTrpcRoute<T>(decoratorAndValue?: DecoratorAndValue<T>): decora
 @injectable()
 export class TrpcPreRouterExtension implements Extension<void> {
   protected stage1ExtensionMeta: Stage1ExtensionMeta<MetadataPerMod3>;
+  protected injectorPerMod: Injector;
+  protected injectorPerApp: Injector;
 
   constructor(
     protected extensionsManager: ExtensionsManager,
@@ -49,15 +58,68 @@ export class TrpcPreRouterExtension implements Extension<void> {
 
   async stage1() {
     this.stage1ExtensionMeta = await this.extensionsManager.stage1(TrpcRouteExtension);
+    this.addDefaultProviders(this.stage1ExtensionMeta.groupData);
   }
 
-  protected getHandlerPerReq(
+  async stage2(injectorPerMod: Injector) {
+    this.injectorPerMod = injectorPerMod;
+  }
+
+  async stage3() {
+    this.prepareRoutesMeta(this.stage1ExtensionMeta.groupData);
+  }
+
+  protected addDefaultProviders(aMetadataPerMod3: MetadataPerMod3[]) {
+    // Since each extension received the same `meta` array and not a copy of it,
+    // we can take `meta` from any element in the `groupData` array.
+    const metadataPerMod3 = aMetadataPerMod3.at(0);
+    if (!metadataPerMod3) {
+      return;
+    }
+
+    metadataPerMod3.meta.providersPerReq.unshift(
+      { token: HttpBackend, useClass: DefaultHttpBackend },
+      { token: HttpFrontend, useClass: DefaultHttpFrontend },
+      ChainMaker,
+    );
+
+    metadataPerMod3.meta.providersPerRou.unshift(
+      { token: HttpBackend, useClass: DefaultCtxHttpBackend },
+      { token: ChainMaker, useClass: DefaultCtxChainMaker },
+      { token: HttpFrontend, useClass: DefaultCtxHttpFrontend },
+    );
+  }
+
+  protected prepareRoutesMeta(aMetadataPerMod3: MetadataPerMod3[]) {
+    aMetadataPerMod3.forEach((metadataPerMod3) => {
+      if (!metadataPerMod3.aControllerMetadata.length) {
+        // No routes from this extension.
+        return;
+      }
+
+      const { aControllerMetadata, guards1 } = metadataPerMod3;
+
+      aControllerMetadata.forEach((controllerMetadata) => {
+        // let handle: RouteHandler;
+        // if (controllerMetadata.scope == 'ctx') {
+        //   handle = this.getHandlerPerMod(metadataPerMod3, this.injectorPerMod, controllerMetadata);
+        // } else {
+        //   handle = this.getHandlerPerReq(metadataPerMod3, this.injectorPerMod, controllerMetadata);
+        // }
+        this.setHandlerPerReq(metadataPerMod3, this.injectorPerMod, controllerMetadata);
+
+        const countOfGuards = controllerMetadata.routeMeta.resolvedGuards!.length + guards1.length;
+      });
+    });
+  }
+
+  protected setHandlerPerReq(
     metadataPerMod3: MetadataPerMod3,
     injectorPerMod: Injector,
     controllerMetadata: ControllerMetadata,
   ) {
     const { providersPerRou, providersPerReq, routeMeta } = controllerMetadata;
-    const mergedPerRou = [...metadataPerMod3.meta.providersPerRou, ...providersPerRou];
+    const mergedPerRou: Provider[] = [...metadataPerMod3.meta.providersPerRou, ...providersPerRou];
     const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'Rou');
 
     const mergedPerReq: Provider[] = [];
@@ -84,8 +146,9 @@ export class TrpcPreRouterExtension implements Extension<void> {
     const RegistryPerReq = Injector.prepareRegistry(resolvedPerReq);
     const rawReqId = KeyRegistry.get(RAW_REQ).id;
     const rawResId = KeyRegistry.get(RAW_RES).id;
+    this.setRouteService(injectorPerRou, mergedPerReq);
 
-    return async (rawReq: RawRequest, rawRes: RawResponse) => {
+    const handler = async (rawReq: RawRequest, rawRes: RawResponse) => {
       const injector = new Injector(RegistryPerReq, 'Req', injectorPerRou);
       const ctx = new RequestContextClass(rawReq, rawRes);
       await injector
@@ -100,6 +163,17 @@ export class TrpcPreRouterExtension implements Extension<void> {
         })
         .finally(() => injector.clear());
     };
+
+    const methodAsToken = routeMeta.Controller.prototype[routeMeta.methodName];
+    injectorPerMod.setByToken(methodAsToken, injectorPerRou.get(methodAsToken));
+
+    return handler;
+  }
+
+  protected setRouteService(injectorPerRou: Injector, mergedPerReq: Provider[]) {
+    const t = injectorPerRou.get(TRPC_ROOT);
+    const val = new RouteService(t, injectorPerRou, mergedPerReq);
+    injectorPerRou.setByToken(RouteService, val);
   }
 
   /**
@@ -107,7 +181,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
    */
   protected checkDeps(inj: Injector, routeMeta: TrpcRouteMeta, controllerName: string) {
     try {
-      const ignoreDeps: any[] = [HTTP_INTERCEPTORS, CTX_DATA];
+      const ignoreDeps: any[] = [HTTP_INTERCEPTORS, CTX_DATA, RouteService];
       DepsChecker.check(inj, HttpErrorHandler, undefined, ignoreDeps);
       DepsChecker.check(inj, ChainMaker, undefined, ignoreDeps);
       DepsChecker.check(inj, HttpFrontend, undefined, ignoreDeps);
@@ -136,11 +210,13 @@ export class TrpcPreRouterExtension implements Extension<void> {
     });
   }
 
-  protected getResolvedHandler(routeMeta: TrpcRouteMeta, resolvedPerReq: ResolvedProvider[]) {
+  protected getResolvedHandler(routeMeta: TrpcRouteMeta, resolvedProviders: ResolvedProvider[]) {
     const { Controller, methodName } = routeMeta;
-    const factoryProvider: FactoryProvider = { useFactory: [Controller, Controller.prototype[methodName]] };
+    const factoryProvider: ClassFactoryProvider = { useFactory: [Controller, Controller.prototype[methodName]] };
     const resolvedHandler = Injector.resolve([factoryProvider])[0];
-    return resolvedPerReq.concat([resolvedHandler]).find((rp) => rp.dualKey.token === Controller.prototype[methodName]);
+    return resolvedProviders
+      .concat([resolvedHandler])
+      .find((rp) => rp.dualKey.token === Controller.prototype[methodName]);
   }
 
   protected getResolvedGuardsPerMod(guards: GuardPerMod1[], controllerName: string, perReq?: boolean) {
