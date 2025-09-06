@@ -38,8 +38,8 @@ import { DefaultHttpBackend } from '#interceptors/default-http-backend.js';
 import { DefaultHttpFrontend } from '#interceptors/default-http-frontend.js';
 import { DefaultCtxHttpBackend } from '#interceptors/default-ctx-http-backend.js';
 import { DefaultCtxChainMaker } from '#interceptors/default-ctx-chain-maker.js';
-import { RouteService } from '#services/route.service.js';
-import { TRPC_ROOT } from '../constants.js';
+import { PublicRouteService, RouteService } from '#services/route.service.js';
+import { TRPC_OPTS, TRPC_ROOT, TrpcOpts } from '../constants.js';
 
 export function isTrpcRoute<T>(decoratorAndValue?: DecoratorAndValue<T>): decoratorAndValue is DecoratorAndValue<T> {
   return (decoratorAndValue as DecoratorAndValue<T>)?.decorator === trpcRoute;
@@ -137,20 +137,24 @@ export class TrpcPreRouterExtension implements Extension<void> {
     routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(metadataPerMod3.guards1, controllerName, true);
     const injPerReq = injectorPerRou.createChildFromResolved(resolvedPerReq, 'Req');
     const RequestContextClass = injPerReq.get(RequestContext) as typeof RequestContext;
-    routeMeta.resolvedHandler = this.getResolvedHandler(routeMeta, resolvedPerReq);
+    // routeMeta.resolvedHandler = this.getResolvedHandler(routeMeta, resolvedPerReq);
     this.checkDeps(injPerReq, routeMeta, controllerName);
     const resolvedChainMaker = resolvedPerReq.find((rp) => rp.dualKey.token === ChainMaker)!;
     const resolvedErrHandler = resolvedPerReq
       .concat(resolvedPerRou)
       .find((rp) => rp.dualKey.token === HttpErrorHandler)!;
     const RegistryPerReq = Injector.prepareRegistry(resolvedPerReq);
+    const optsId = KeyRegistry.get(TRPC_OPTS).id;
     const rawReqId = KeyRegistry.get(RAW_REQ).id;
     const rawResId = KeyRegistry.get(RAW_RES).id;
 
-    const handler = async (rawReq: RawRequest, rawRes: RawResponse) => {
+    const handler = async <R>(opts: TrpcOpts) => {
+      const rawReq: RawRequest = opts.ctx.req;
+      const rawRes: RawResponse = opts.ctx.res;
       const injector = new Injector(RegistryPerReq, 'Req', injectorPerRou);
       const ctx = new RequestContextClass(rawReq, rawRes);
-      await injector
+      return injector
+        .setById(optsId, opts)
         .setById(rawReqId, rawReq)
         .setById(rawResId, rawRes)
         .instantiateResolved<ChainMaker>(resolvedChainMaker)
@@ -160,19 +164,14 @@ export class TrpcPreRouterExtension implements Extension<void> {
           const errorHandler = injector.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
           return errorHandler.handleError(err, ctx);
         })
-        .finally(() => injector.clear());
+        .finally(() => injector.clear()) as R;
     };
 
-    this.setRouteService(injectorPerRou, handler);
+    const routeService = injectorPerRou.get(RouteService) as PublicRouteService;
+    routeService.setMetadata(routeMeta, resolvedPerReq, handler);
 
     const methodAsToken = routeMeta.Controller.prototype[routeMeta.methodName];
     injectorPerMod.setByToken(methodAsToken, injectorPerRou.get(methodAsToken));
-  }
-
-  protected setRouteService(injectorPerRou: Injector, handler: (rawReq: RawRequest, rawRes: RawResponse) => Promise<void>) {
-    const routeService = injectorPerRou.get(RouteService) as RouteService;
-    routeService.handler = handler;
-    injectorPerRou.setByToken(RouteService, routeService);
   }
 
   /**

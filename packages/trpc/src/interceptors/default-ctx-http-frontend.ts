@@ -1,4 +1,4 @@
-import { CustomError, HttpMethod, injectable, Status } from '@ditsmod/core';
+import { CustomError, injectable, Status } from '@ditsmod/core';
 
 import { HttpFrontend, HttpHandler } from './tokens-and-types.js';
 import { RequestContext } from '#services/request-context.js';
@@ -6,7 +6,7 @@ import { RequestContext } from '#services/request-context.js';
 @injectable()
 export class DefaultCtxHttpFrontend implements HttpFrontend {
   async intercept(next: HttpHandler, ctx: RequestContext) {
-    this.before(ctx).after(ctx, await next.handle());
+    return this.before(ctx).after(ctx, await next.handle());
   }
 
   /**
@@ -20,28 +20,7 @@ export class DefaultCtxHttpFrontend implements HttpFrontend {
    * This method is called after `intercept()`.
    */
   after(ctx: RequestContext, val: any) {
-    if (ctx.rawRes.headersSent) {
-      return;
-    }
-    if (!ctx.rawRes.statusCode) {
-      const httpMethod = ctx.rawReq.method as HttpMethod;
-      if (httpMethod == 'GET') {
-        ctx.rawRes.statusCode = Status.OK;
-      } else if (httpMethod == 'POST') {
-        ctx.rawRes.statusCode = Status.CREATED;
-      } else if (httpMethod == 'OPTIONS') {
-        ctx.rawRes.statusCode = Status.NO_CONTENT;
-      }
-    }
-
-    const contentType = ctx.rawRes.getHeader('content-type');
-    if (typeof val == 'object' || contentType?.toString().includes('application/json')) {
-      ctx.sendJson(val);
-    } else if (contentType && !val) {
-      this.throwTypeError(ctx, contentType);
-    } else {
-      ctx.send(val);
-    }
+    return val;
   }
 
   protected throwTypeError(ctx: RequestContext, contentType?: string | number | string[]) {

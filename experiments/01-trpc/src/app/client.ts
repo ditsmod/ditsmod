@@ -34,6 +34,7 @@ async function main() {
     trpc.hello.query('client'),
   ]);
 
+  
   const postCreate = await trpc.post.createPost.mutate({
     title: 'hello client',
   });

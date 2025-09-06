@@ -54,7 +54,7 @@ export class TrpcRouteExtension implements Extension<MetadataPerMod3> {
           }
           const methodAsToken = Controller.prototype[methodName];
           const providersPerRou: Provider[] = [
-            ...awaitTokens(RouteService),
+            RouteService,
             { useFactory: [Controller, methodAsToken] },
           ];
           providersPerMod.unshift(...awaitTokens(methodAsToken));

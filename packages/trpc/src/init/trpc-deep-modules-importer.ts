@@ -17,6 +17,7 @@ import { TrpcBaseImportRegistry, TrpcProvidersOnly, TrpcShallowImports } from '.
 import { Level } from './trpc-module-normalizer.js';
 import { GuardPerMod1 } from '#interceptors/guard.js';
 import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js';
+import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
 
 /**
  * This metadata returns from `DeepModulesImporter`. The target for this metadata is `RoutesExtension`.
@@ -68,7 +69,7 @@ export class TrpcDeepModulesImporter {
     this.resolveImportedProviders(targetProviders, baseImportRegistry, levels);
     meta.providersPerMod.unshift(...targetProviders.providersPerMod);
     meta.providersPerRou.unshift(...defaultProvidersPerRou, ...targetProviders.providersPerRou);
-    // meta.providersPerReq.unshift(...defaultProvidersPerReq, ...targetProviders.providersPerReq);
+    meta.providersPerReq.unshift(...defaultProvidersPerReq, ...targetProviders.providersPerReq);
     return {
       baseMeta: this.shallowImports.baseMeta,
       meta,
