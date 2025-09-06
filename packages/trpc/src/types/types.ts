@@ -48,10 +48,13 @@ export type SetAppRouterOptions = Omit<TrpcRouterOpts, 'router'>;
 export type RouterOptions = Parameters<typeof t.router>[0];
 export interface TrpcRootModule {
   /**
+   * Passing options for {@link initTRPC.create | initTRPC.create()}
+   */
+  setTrpcCreateOptions?(): TrpcCreateOptions;
+  /**
    * For the root application module (AppModule), this method is automatically invoked by `@ditsmod/trpc`.
    */
   setAppRouter(): SetAppRouterOptions;
-  setTrpcCreateOptions?(): TrpcCreateOptions;
 }
 
 export interface ModuleWithTrpcRoutes<Config extends AnyObj = AnyObj> {

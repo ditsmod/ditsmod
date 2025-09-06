@@ -17,7 +17,9 @@ export class AppModule implements TrpcRootModule {
   constructor(private authService: AuthService) {}
 
   setTrpcCreateOptions(): TrpcCreateOptions {
-    return { defaultMeta: {} };
+    return {
+      // Passing options for initTRPC.create()
+    };
   }
 
   setAppRouter(): SetAppRouterOptions {
