@@ -1,11 +1,11 @@
-import { AnyTRPCRouter } from '@trpc/server';
+import type { AnyTRPCRouter } from '@trpc/server';
 import { createTRPCClient, httpBatchLink, loggerLink, TRPCClient } from '@trpc/client';
 import { tap } from '@trpc/server/observable';
+import { inspect } from 'node:util';
 
 import type { PostRouter } from './modules/post/post.module.js';
 import type { MessageRouter } from './modules/message/message.module.js';
-import { AuthRouter } from './modules/auth/auth.module.js';
-import { inspect } from 'node:util';
+import type { AuthRouter } from './modules/auth/auth.module.js';
 
 const url = 'http://localhost:2021/trpc';
 const trpc = createTRPCClient<AnyTRPCRouter>({
