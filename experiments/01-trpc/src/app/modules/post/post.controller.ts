@@ -9,9 +9,9 @@ import { Guard, MyHttpInterceptor } from './post.interceptors.js';
   providersPerReq: new Providers().useFactories(PostService),
 })
 export class PostController {
-  @trpcRoute()
-  createPost2(routeService: RouteService) {
-    return routeService.inputAndMutation(z.object({ title: z.string() }), PostService.prototype.createPost);
+  @trpcRoute([Guard], [MyHttpInterceptor])
+  listPosts(routeService: RouteService) {
+    return routeService.query(PostService.prototype.listPosts);
   }
 
   @trpcRoute()
@@ -19,8 +19,8 @@ export class PostController {
     return routeService.mutation(PostService.prototype.createPost);
   }
 
-  @trpcRoute([Guard], [MyHttpInterceptor])
-  listPosts(routeService: RouteService) {
-    return routeService.query(PostService.prototype.listPosts);
+  @trpcRoute()
+  alternativeCreatePost(routeService: RouteService) {
+    return routeService.inputAndMutation(z.object({ title: z.string() }), PostService.prototype.createPost);
   }
 }
