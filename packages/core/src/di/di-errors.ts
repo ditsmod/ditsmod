@@ -1,4 +1,4 @@
-import { inspect, format } from 'node:util';
+import { inspect } from 'node:util';
 
 import { CustomError } from '#error/custom-error.js';
 import { stringify } from '#di/stringify.js';
@@ -80,28 +80,23 @@ export class TokenMustBeDefined extends CustomError {
   }
 }
 /**
- * `Setting value by token failed: cannot find token "%s" in register, in providersPer%s.`
+ * `The injector is trying to set a value by token but cannot find "${displayToken}" in the registry, in providersPer${level}.`
  */
 export class SettingValueByTokenFailed extends CustomError {
   constructor(displayToken: string, level?: LevelOfInjector) {
-    let msg1 = 'Setting value by token failed: cannot find token "%s" in register, in providersPer%s.';
-    msg1 = format(msg1, displayToken, level);
     super({
-      msg1,
+      msg1: `The injector is trying to set a value by token but cannot find "${displayToken}" in the registry, in providersPer${level}.`,
       level: 'fatal',
     });
   }
 }
 /**
- * `Setting value by ID failed: cannot find ID "%d" in register, in providersPer%s. Try use injector.setByToken()`
+ * `The injector is trying to set a value by ID but cannot find "${id}" in the registry, in providersPer${level}.`
  */
 export class SettingValueByIdFailed extends CustomError {
   constructor(id: number, level?: LevelOfInjector) {
-    let msg1 =
-      'Setting value by ID failed: cannot find ID "%d" in register, in providersPer%s. Try use injector.setByToken()';
-    msg1 = format(msg1, id, level);
     super({
-      msg1,
+      msg1: `The injector is trying to set a value by ID but cannot find "${id}" in the registry, in providersPer${level}.`,
       level: 'fatal',
     });
   }
