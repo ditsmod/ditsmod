@@ -41,10 +41,10 @@ await Promise.all([
 await messageClient.message.addMessage.mutate('one more message!');
 await messageClient.message.listMessages.query();
 
-const trpcPost = trpc as TRPCClient<PostRouter>;
-await trpcPost.post.createPost.mutate({ title: 'hello client' });
-await trpcPost.post.listPosts.query();
-await trpcPost.post.comments.listComments.query();
+const postClient = trpc as TRPCClient<PostRouter>;
+await postClient.post.createPost.mutate({ title: 'hello client' });
+await postClient.post.listPosts.query();
+await postClient.post.comments.listComments.query();
 const authedClient = createTRPCClient<AnyTRPCRouter>({
   links: [
     // loggerLink(),
