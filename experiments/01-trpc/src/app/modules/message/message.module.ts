@@ -1,9 +1,12 @@
 import { featureModule } from '@ditsmod/core';
+import { RouterOf } from '@ditsmod/trpc/client';
 import { initTrpcModule, ModuleWithTrpcRoutes } from '@ditsmod/trpc';
 
 import { DbModule } from '#modules/db/db.module.js';
 import { MessageController } from './message.controller.js';
 import { MessageService } from './message.service.js';
+
+export type MessageRouter = RouterOf<typeof MessageModule>;
 
 @initTrpcModule({
   imports: [DbModule],

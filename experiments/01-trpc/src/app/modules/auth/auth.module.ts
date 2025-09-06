@@ -1,8 +1,11 @@
 import { featureModule } from '@ditsmod/core';
+import { RouterOf } from '@ditsmod/trpc/client';
 import { initTrpcModule, ModuleWithTrpcRoutes } from '@ditsmod/trpc';
 
 import { AuthService } from './auth.service.js';
 import { AuthController } from './auth.controller.js';
+
+export type AuthRouter = RouterOf<typeof AuthModule>;
 
 @initTrpcModule({
   controllers: [AuthController],

@@ -1,62 +1,61 @@
-import { createTRPCClient, httpBatchLink, loggerLink } from '@trpc/client';
+import { AnyTRPCRouter } from '@trpc/server';
+import { createTRPCClient, httpBatchLink, loggerLink, TRPCClient } from '@trpc/client';
 import { tap } from '@trpc/server/observable';
 
-import { AppRouter } from './app.module.js';
-
-const sleep = (ms = 100) => new Promise((resolve) => setTimeout(resolve, ms));
+import type { PostRouter } from './modules/post/post.module.js';
+import type { MessageRouter } from './modules/message/message.module.js';
+import { AuthRouter } from './modules/auth/auth.module.js';
+import { inspect } from 'node:util';
 
 async function main() {
   const url = 'http://localhost:2021/trpc';
-  const trpc = createTRPCClient<AppRouter>({
+  const trpc = createTRPCClient<AnyTRPCRouter>({
     links: [
-      () =>
-        ({ op, next }) => {
-          console.log('->', op.type, op.path, op.input);
+      function callback() {
+        return ({ op, next }) => {
+          // console.log('->', op.type, op.path, op.input);
 
           return next(op).pipe(
             tap({
               next(result) {
-                console.log('<-', op.type, op.path, op.input, ':', result);
+                console.log(
+                  `${op.path}.${op.type}(${inspect(op.input, false, 2)}) ->`,
+                  `\x1b[34m ${inspect(result.result.data, false, 2)}\x1b[0m`,
+                );
               },
             }),
           );
-        },
+        };
+      },
       httpBatchLink({ url }),
     ],
   });
 
-  await sleep();
+  const messageClient = trpc as TRPCClient<MessageRouter>;
 
   // parallel queries
   await Promise.all([
     //
-    trpc.hello.query(),
-    trpc.hello.query('client'),
+    messageClient.hello.query(),
+    messageClient.hello.query('client'),
   ]);
+  await messageClient.message.addMessage.mutate('one more message!');
+  await messageClient.message.listMessages.query();
 
-  
-  const postCreate = await trpc.post.createPost.mutate({
-    title: 'hello client',
-  });
-  console.log('created post', postCreate.title);
-  await sleep();
-
-  const postList = await trpc.post.listPosts.query();
-  console.log('has posts', postList, 'first:', postList[0].title);
-  const commentList = await trpc.post.comments.listComments.query();
-  console.log('has comments', commentList, 'first:', postList[0].title);
-  await sleep();
+  const trpcPost = trpc as TRPCClient<PostRouter>;
+  await trpcPost.post.createPost.mutate({ title: 'hello client' });
+  await trpcPost.post.listPosts.query();
+  await trpcPost.post.comments.listComments.query();
+  const authPublicClient = trpc as TRPCClient<AuthRouter>;
 
   try {
-    await trpc.admin.secret.query();
+    await authPublicClient.admin.secret.query();
   } catch (cause) {
     // will fail
   }
-  await sleep();
-
-  const authedClient = createTRPCClient<AppRouter>({
+  const authedClient = createTRPCClient<AnyTRPCRouter>({
     links: [
-      loggerLink(),
+      // loggerLink(),
       httpBatchLink({
         url,
         headers: () => ({
@@ -66,14 +65,8 @@ async function main() {
     ],
   });
 
-  await authedClient.admin.secret.query();
-
-  const msgs = await trpc.message.listMessages.query();
-  console.log('msgs', msgs);
-
-  const addMessageResult = await trpc.message.addMessage.mutate('one more message!');
-  console.log('addMessageResult', addMessageResult);
-
+  const authClient = authedClient as TRPCClient<AuthRouter>;
+  await authClient.admin.secret.query();
   console.log('👌 should be a clean exit if everything is working right');
 }
 
