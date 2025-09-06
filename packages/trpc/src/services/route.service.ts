@@ -23,7 +23,7 @@ export class RouteService<Context extends AnyObj = AnyObj, Input = void> {
 
   inputAndMutation<Input, Output, R>(input: ParserWithInputOutput<Input, Output>, fn: AnyFn<any, R>) {
     const mutation = this.getHandler<R>(fn);
-    return { input, mutation } as unknown as TRPCMutationProcedure<{
+    return this.procedure.input(input).mutation(mutation) as TRPCMutationProcedure<{
       input: Input;
       output: R;
       meta: AnyObj;
