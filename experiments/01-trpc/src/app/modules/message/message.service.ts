@@ -1,6 +1,6 @@
 import { injectable } from '@ditsmod/core';
 
-import { DbService } from '#modules/db/db.service.js';
+import { DbService } from '#db/db.service.js';
 
 @injectable()
 export class MessageService {

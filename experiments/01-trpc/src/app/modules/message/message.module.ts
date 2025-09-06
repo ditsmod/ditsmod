@@ -2,9 +2,9 @@ import { featureModule } from '@ditsmod/core';
 import { RouterOf } from '@ditsmod/trpc/client';
 import { initTrpcModule, ModuleWithTrpcRoutes } from '@ditsmod/trpc';
 
-import { DbModule } from '#modules/db/db.module.js';
-import { MessageController } from './message.controller.js';
-import { MessageService } from './message.service.js';
+import { DbModule } from '#db/db.module.js';
+import { MessageController } from '#message/message.controller.js';
+import { MessageService } from '#message/message.service.js';
 
 // For TRPCClient
 export type MessageRouter = RouterOf<typeof MessageModule>;

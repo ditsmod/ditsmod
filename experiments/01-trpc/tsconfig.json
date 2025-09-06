@@ -5,10 +5,14 @@
     "baseUrl": "./",
     "tsBuildInfoFile": "dist/ts.tsbuildinfo",
     "paths": {
-      "#app/*": ["./src/app/*"],
-      "#modules/*": ["./src/app/modules/*"],
       "@ditsmod/core": ["../../packages/core/src/index.js"],
       "@ditsmod/trpc": ["../../packages/trpc/src/index.js"],
+      "#app/*": ["./src/app/*"],
+      "#db/*": ["./src/app/modules/db/*"],
+      "#auth/*": ["./src/app/modules/auth/*"],
+      "#post/*": ["./src/app/modules/post/*"],
+      "#comments/*": ["./src/app/modules/post/comments/*"],
+      "#message/*": ["./src/app/modules/message/*"],
     }
   },
   "include": ["src", "e2e"],

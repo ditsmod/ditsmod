@@ -1,5 +1,5 @@
 import { featureModule } from '@ditsmod/core';
-import { DbService } from './db.service.js';
+import { DbService } from '#db/db.service.js';
 
 @featureModule({
   providersPerMod: [DbService],

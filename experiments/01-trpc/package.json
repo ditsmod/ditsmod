@@ -18,7 +18,11 @@
   },
   "imports": {
     "#app/*": "./dist/app/*",
-    "#modules/*": "./dist/app/modules/*"
+    "#post/*": "./dist/app/modules/post/*",
+    "#comments/*": "./dist/app/modules/post/comments/*",
+    "#db/*": "./dist/app/modules/db/*",
+    "#auth/*": "./dist/app/modules/auth/*",
+    "#message/*": "./dist/app/modules/message/*"
   },
   "devDependencies": {
     "jest": "^30.1.1",

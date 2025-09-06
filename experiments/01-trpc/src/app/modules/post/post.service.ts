@@ -1,7 +1,7 @@
 import { injectable, factoryMethod } from '@ditsmod/core';
 import { opts, TrpcOpts } from '@ditsmod/trpc';
 
-import { DbService } from '../db/db.service.js';
+import { DbService } from '#db/db.service.js';
 
 
 @injectable()

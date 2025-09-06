@@ -1,8 +1,8 @@
 import { controller, RouteService, trpcRoute } from '@ditsmod/trpc';
 import z from 'zod';
 
-import { DbService } from '#modules/db/db.service.js';
-import { MessageService } from './message.service.js';
+import { DbService } from '#db/db.service.js';
+import { MessageService } from '#message/message.service.js';
 import { TrpcContext } from '#app/types.js';
 
 @controller()

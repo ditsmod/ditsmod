@@ -2,9 +2,9 @@ import { featureModule } from '@ditsmod/core';
 import { initTrpcModule, ModuleWithTrpcRoutes } from '@ditsmod/trpc';
 import { RouterOf } from '@ditsmod/trpc/client';
 
-import { PostController } from './post.controller.js';
-import { DbModule } from '#modules/db/db.module.js';
-import { CommentModule } from './comments/comment.module.js';
+import { PostController } from '#post/post.controller.js';
+import { DbModule } from '#db/db.module.js';
+import { CommentModule } from '#post/comments/comment.module.js';
 
 // For TRPCClient
 export type PostRouter = RouterOf<typeof PostModule>;
