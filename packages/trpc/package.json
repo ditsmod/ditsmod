@@ -31,6 +31,10 @@
     "./errors": {
       "types": "./dist/errors.d.ts",
       "default": "./dist/errors.js"
+    },
+    "./client": {
+      "types": "./dist/client.d.ts",
+      "default": "./dist/client.js"
     }
   },
   "scripts": {

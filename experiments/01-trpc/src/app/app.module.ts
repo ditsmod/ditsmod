@@ -1,5 +1,6 @@
 import { rootModule } from '@ditsmod/core';
-import { AppRouterHelper, SetAppRouterOptions, TrpcCreateOptions, TrpcRootModule } from '@ditsmod/trpc';
+import type { SetAppRouterOptions, TrpcCreateOptions, TrpcRootModule } from '@ditsmod/trpc';
+import type { AppRouterHelper } from '@ditsmod/trpc/client';
 
 import { PostModule } from '#modules/post/post.module.js';
 import { AuthModule } from '#modules/auth/auth.module.js';

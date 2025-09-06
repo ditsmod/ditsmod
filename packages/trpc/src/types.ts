@@ -48,7 +48,7 @@ export type AppRouterHelper<ArrOfRouterConfig extends readonly ModRefId<ModuleWi
   typeof t.mergeRouters<MutableArr<ArrOfRouterConfig>>
 >;
 type MutableArr<ArrOfRouterConfig> = { -readonly [K in keyof ArrOfRouterConfig]: RouterOf<ArrOfRouterConfig[K]> };
-type RouterOf<I> =
+export type RouterOf<I> =
   I extends ModRefId<ModuleWithTrpcRoutes<infer RouterConfigOrFn>>
     ? ReturnType<typeof t.router<GetRouterConfig<RouterConfigOrFn>>>
     : never;

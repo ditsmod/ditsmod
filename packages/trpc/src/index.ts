@@ -20,7 +20,6 @@ export {
   TrpcRouterOpts,
   TrpcAppOptions,
   TrpcRootObject,
-  AppRouterHelper,
   TrpcRootModule,
   ModuleWithTrpcRoutes,
   SetAppRouterOptions,
