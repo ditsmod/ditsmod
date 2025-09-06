@@ -1,8 +1,8 @@
 import { injectable, Injector } from '@ditsmod/core';
 import { createHTTPHandler } from '@trpc/server/adapters/standalone';
 
-import { TRPC_ROUTER_OPTS } from './constants.js';
-import { RequestListener } from './types.js';
+import { TRPC_ROUTER_OPTS } from '#types/constants.js';
+import { RequestListener } from '#types/types.js';
 
 @injectable()
 export class PreRouter {

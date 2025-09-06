@@ -1,20 +1,18 @@
 import { InjectionToken } from '@ditsmod/core';
+import type { initTRPC } from '@trpc/server';
+import type { ProcedureResolverOptions } from '@trpc/server/unstable-core-do-not-import';
 
-import { HttpInterceptor } from '#interceptors/tokens-and-types.js';
-import { RawRequest, RawResponse } from '#services/request.js';
-import { HttpServer } from './server-options.js';
+import { TrpcRouterOpts } from '#types/types.js';
 
-export const HTTP_INTERCEPTORS = new InjectionToken<HttpInterceptor[]>('HTTP_INTERCEPTORS');
+export const TRPC_ROUTER_OPTS = new InjectionToken<TrpcRouterOpts>('TRPC_ROUTER_OPTS');
+export type TrpcRootType = ReturnType<typeof initTRPC.create>;
+export const TRPC_ROOT = new InjectionToken<TrpcRootType>('TRPC_ROOT');
 /**
- * DI token for native webserver request.
+ * Shortened version of {@link ProcedureResolverOptions}.
  */
-export const RAW_REQ = new InjectionToken<RawRequest>('RAW_REQ');
+export type TrpcOpts<Input = any> = ProcedureResolverOptions<any, any, any, Input>;
 /**
- * DI token for native webserver response.
+ * A token used to obtain {@link TrpcOpts} in service methods
+ * that are passed to DI at the request level.
  */
-export const RAW_RES = new InjectionToken<RawResponse>('RAW_RES');
-
-/**
- * A DI token that allows you to obtain the instance of the server that is serving the current application.
- */
-export const SERVER = new InjectionToken<HttpServer>('SERVER');
+export const TRPC_OPTS = new InjectionToken<TrpcOpts>('TRPC_OPTS');

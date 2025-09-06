@@ -1,6 +1,6 @@
 import { inject, injectable } from '@ditsmod/core';
 
-import { RAW_RES } from '#types/constants.js';
+import { RAW_RES } from '#types/types.js';
 import { RawResponse } from './request.js';
 import { RedirectStatusCodes } from '#types/types.js';
 

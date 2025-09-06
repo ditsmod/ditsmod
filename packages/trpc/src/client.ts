@@ -1,1 +1,1 @@
-export { AppRouterHelper, RouterOf } from './types.js';
+export { AppRouterHelper, RouterOf } from '#types/types.js';

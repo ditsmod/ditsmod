@@ -20,11 +20,11 @@ import {
 } from '@ditsmod/core';
 
 import { trpcRoute } from '#decorators/trpc-route.js';
-import { MetadataPerMod3, PreparedRouteMeta } from '#types/types.js';
+import { MetadataPerMod3 } from '#types/types.js';
 import { TrpcRouteExtension } from './trpc-route.extension.js';
 import { HttpBackend, HttpFrontend } from '#interceptors/tokens-and-types.js';
 import { RequestContext } from '#services/request-context.js';
-import { HTTP_INTERCEPTORS, RAW_REQ, RAW_RES } from '#types/constants.js';
+import { HTTP_INTERCEPTORS, RAW_REQ, RAW_RES } from '#types/types.js';
 import { ControllerMetadata } from '#types/controller-metadata.js';
 import { InterceptorWithGuards } from '#interceptors/interceptor-with-guards.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';
@@ -32,14 +32,14 @@ import { ChainMaker } from '#interceptors/chain-maker.js';
 import { GuardPerMod1, NormalizedGuard } from '#interceptors/guard.js';
 import { RawRequest, RawResponse } from '#services/request.js';
 import { HttpErrorHandler } from '#services/http-error-handler.js';
-import { CheckingDepsInSandboxFailed, GuardNotFound } from '../trpc-errors.js';
+import { CheckingDepsInSandboxFailed, GuardNotFound } from '../error/trpc-errors.js';
 import { DefaultCtxHttpFrontend } from '#interceptors/default-ctx-http-frontend.js';
 import { DefaultHttpBackend } from '#interceptors/default-http-backend.js';
 import { DefaultHttpFrontend } from '#interceptors/default-http-frontend.js';
 import { DefaultCtxHttpBackend } from '#interceptors/default-ctx-http-backend.js';
 import { DefaultCtxChainMaker } from '#interceptors/default-ctx-chain-maker.js';
 import { PublicRouteService, RouteService } from '#services/route.service.js';
-import { TRPC_OPTS, TRPC_ROOT, TrpcOpts } from '../constants.js';
+import { TRPC_OPTS, TRPC_ROOT, TrpcOpts } from '#types/constants.js';
 
 export function isTrpcRoute<T>(decoratorAndValue?: DecoratorAndValue<T>): decoratorAndValue is DecoratorAndValue<T> {
   return (decoratorAndValue as DecoratorAndValue<T>)?.decorator === trpcRoute;

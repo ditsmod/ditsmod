@@ -9,16 +9,16 @@ import {
   ModuleManager,
 } from '@ditsmod/core';
 
-import { TRPC_ROUTER_OPTS, TRPC_ROOT } from '../constants.js';
+import { TRPC_ROUTER_OPTS, TRPC_ROOT } from '#types/constants.js';
 import {
   TrpcRouterOpts,
   TrpcRootObject,
   ModuleWithTrpcRoutes,
   RouterOptions,
   TrpcRootModule,
-} from '../types.js';
-import { PreRouter } from '../pre-router.js';
-import { isModuleWithTrpcRoutes } from '../type.guards.js';
+} from '#types/types.js';
+import { PreRouter } from './pre-router.js';
+import { isModuleWithTrpcRoutes } from '#utils/type.guards.js';
 import { TrpcService } from '#services/trpc.service.js';
 
 @injectable()

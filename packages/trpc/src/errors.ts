@@ -7,4 +7,4 @@ export {
   FailedValidationOfRoute,
   GuardNotFound,
   CheckingDepsInSandboxFailed,
-} from './trpc-errors.js';
+} from './error/trpc-errors.js';

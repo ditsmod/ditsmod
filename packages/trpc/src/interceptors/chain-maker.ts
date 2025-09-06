@@ -1,7 +1,7 @@
 import { inject, injectable, optional } from '@ditsmod/core';
 
 import { HttpBackend, HttpInterceptor, HttpHandler, HttpInterceptorHandler } from './tokens-and-types.js';
-import { HTTP_INTERCEPTORS } from '#types/constants.js';
+import { HTTP_INTERCEPTORS } from '#types/types.js';
 import { RequestContext } from '#services/request-context.js';
 
 /**

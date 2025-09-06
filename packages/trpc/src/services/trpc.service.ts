@@ -1,5 +1,5 @@
 import { injectable, ModRefId, ModuleManager } from '@ditsmod/core';
-import { ModuleWithTrpcRoutes } from '../types.js';
+import { ModuleWithTrpcRoutes } from '#types/types.js';
 
 @injectable()
 export class TrpcService {

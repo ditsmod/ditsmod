@@ -1,17 +1,17 @@
 export { CanActivate } from '#interceptors/guard.js';
 export { RequestContext } from '#services/request-context.js';
-export { isModuleWithTrpcRoutes } from './type.guards.js';
+export { isModuleWithTrpcRoutes } from './utils/type.guards.js';
 export { trpcRoute } from '#decorators/trpc-route.js';
 export { opts } from '#decorators/opts.js';
 export { controller } from '#decorators/controller.js';
 export { RouteService } from '#services/route.service.js';
 export { initTrpcModule } from '#decorators/trpc-init-hooks-and-metadata.js';
-export { TRPC_ROOT, TRPC_ROUTER_OPTS, TRPC_OPTS, TrpcOpts } from './constants.js';
-export { PreRouter } from './pre-router.js';
-export { TrpcAppInitializer } from './trpc-app-initializer.js';
-export { TrpcApplication } from './trpc-application.js';
+export { TRPC_ROOT, TRPC_ROUTER_OPTS, TRPC_OPTS, TrpcOpts } from '#types/constants.js';
+export { PreRouter } from '#services/pre-router.js';
+export { TrpcAppInitializer } from '#init/trpc-app-initializer.js';
+export { TrpcApplication } from '#init/trpc-application.js';
 export { TrpcService } from '#services/trpc.service.js';
-export { TrpcRouteExtension } from './extensions/trpc-route.extension.js';
+export { TrpcRouteExtension } from '#extensions/trpc-route.extension.js';
 export {
   SERVER,
   RawRequest,
@@ -24,5 +24,5 @@ export {
   ModuleWithTrpcRoutes,
   SetAppRouterOptions,
   TrpcCreateOptions,
-} from './types.js';
+} from '#types/types.js';
 export { HttpInterceptor, HttpHandler } from '#interceptors/tokens-and-types.js';

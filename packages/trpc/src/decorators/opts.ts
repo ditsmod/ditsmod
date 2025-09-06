@@ -1,5 +1,5 @@
 import { inject, InjectTransformResult, makeParamDecorator } from '@ditsmod/core';
-import { TRPC_OPTS } from '../constants.js';
+import { TRPC_OPTS } from '#types/constants.js';
 
 /**
  * Intended for use in service method parameters to provide context data such as `ctx`, `input`, `path`, and `signal`.

@@ -17,10 +17,10 @@ import { ControllerRawMetadata } from '#decorators/controller.js';
 import { MetadataPerMod3 } from '#types/types.js';
 import { ControllerMetadata } from '#types/controller-metadata.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';
-import { FailedValidationOfRoute, InvalidInterceptor } from '../trpc-errors.js';
+import { FailedValidationOfRoute, InvalidInterceptor } from '../error/trpc-errors.js';
 import { GuardItem, GuardPerMod1 } from '#interceptors/guard.js';
 import { isInterceptor, isTrpcRoute } from '#types/type.guards.js';
-import { HTTP_INTERCEPTORS } from '#types/constants.js';
+import { HTTP_INTERCEPTORS } from '#types/types.js';
 import { RouteService } from '#services/route.service.js';
 
 @injectable()
