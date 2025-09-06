@@ -45,21 +45,12 @@ const trpcPost = trpc as TRPCClient<PostRouter>;
 await trpcPost.post.createPost.mutate({ title: 'hello client' });
 await trpcPost.post.listPosts.query();
 await trpcPost.post.comments.listComments.query();
-const authPublicClient = trpc as TRPCClient<AuthRouter>;
-
-try {
-  await authPublicClient.admin.secret.query();
-} catch (cause) {
-  // will fail
-}
 const authedClient = createTRPCClient<AnyTRPCRouter>({
   links: [
     // loggerLink(),
     httpBatchLink({
       url,
-      headers: () => ({
-        authorization: 'secret',
-      }),
+      headers: () => ({ authorization: 'secret' }),
     }),
   ],
 });
