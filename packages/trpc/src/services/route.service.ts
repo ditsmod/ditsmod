@@ -21,10 +21,10 @@ export class RouteService<Context extends AnyObj = AnyObj, Input = void> {
     this.procedure = t.procedure;
   }
 
-  inputAndMutation<Input, Output, R>(input: ParserWithInputOutput<Input, Output>, fn: AnyFn<any, R>) {
-    const mutation = this.getHandler<R>(fn);
-    return this.procedure.input(input).mutation(mutation) as TRPCMutationProcedure<{
-      input: Input;
+  query<R>(fn: AnyFn<any, R>) {
+    const query = this.getHandler<R>(fn);
+    return this.procedure.query(query) as TRPCQueryProcedure<{
+      input: void;
       output: R;
       meta: AnyObj;
     }>;
@@ -42,10 +42,10 @@ export class RouteService<Context extends AnyObj = AnyObj, Input = void> {
     }>;
   }
 
-  query<R>(fn: AnyFn<any, R>) {
-    const query = this.getHandler<R>(fn);
-    return this.procedure.query(query) as TRPCQueryProcedure<{
-      input: void;
+  inputAndMutation<Input, Output, R>(input: ParserWithInputOutput<Input, Output>, fn: AnyFn<any, R>) {
+    const mutation = this.getHandler<R>(fn);
+    return this.procedure.input(input).mutation(mutation) as TRPCMutationProcedure<{
+      input: Input;
       output: R;
       meta: AnyObj;
     }>;
