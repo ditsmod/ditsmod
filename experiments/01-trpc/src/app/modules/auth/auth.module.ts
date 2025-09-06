@@ -5,6 +5,7 @@ import { initTrpcModule, ModuleWithTrpcRoutes } from '@ditsmod/trpc';
 import { AuthService } from './auth.service.js';
 import { AuthController } from './auth.controller.js';
 
+// For TRPCClient
 export type AuthRouter = RouterOf<typeof AuthModule>;
 
 @initTrpcModule({

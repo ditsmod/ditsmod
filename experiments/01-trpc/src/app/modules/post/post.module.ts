@@ -6,6 +6,7 @@ import { PostController } from './post.controller.js';
 import { DbModule } from '#modules/db/db.module.js';
 import { CommentModule } from './comments/comment.module.js';
 
+// For TRPCClient
 export type PostRouter = RouterOf<typeof PostModule>;
 
 @initTrpcModule({

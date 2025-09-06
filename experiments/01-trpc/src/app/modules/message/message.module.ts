@@ -6,6 +6,7 @@ import { DbModule } from '#modules/db/db.module.js';
 import { MessageController } from './message.controller.js';
 import { MessageService } from './message.service.js';
 
+// For TRPCClient
 export type MessageRouter = RouterOf<typeof MessageModule>;
 
 @initTrpcModule({
