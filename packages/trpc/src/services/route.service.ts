@@ -1,51 +1,54 @@
 import { z } from 'zod';
-import { AnyFn, AnyObj, Injector, Provider } from '@ditsmod/core';
-import type { MutationProcedure } from '@trpc/server/unstable-core-do-not-import';
+import { AnyFn, AnyObj, inject, injectable, Injector } from '@ditsmod/core';
+import type { TRPCMutationProcedure, TRPCQueryProcedure } from '@trpc/server';
+import { ParserWithInputOutput } from '@trpc/server/unstable-core-do-not-import';
 
 import { TRPC_OPTS, TrpcOpts } from '../constants.js';
-import { TrpcRootObject } from '../types.js';
+import { RawRequest, RawResponse, TrpcRootObject } from '../types.js';
 
+@injectable()
 export class RouteService<Context extends AnyObj = AnyObj, Input = void> {
   procedure: TrpcRootObject<Context>['procedure'];
+  handler: (rawReq: RawRequest, rawRes: RawResponse) => Promise<void>;
 
   constructor(
-    public t: TrpcRootObject<any>,
+    @inject(TRPC_OPTS) public t: TrpcRootObject<any>,
     protected injectorPerRou: Injector,
-    protected providersPerReq: Provider[],
   ) {
     this.procedure = t.procedure;
   }
 
-  getMutation<R>(fn: AnyFn<any, R>) {
-    return {
-      procedure: this.procedure,
-      mutation: (opts: TrpcOpts) => this.handle<R>(opts, fn),
-    } as GetMutationType<Context, R>;
+  inputAndMutation<Input, Output, R>(input: ParserWithInputOutput<Input, Output>, fn: AnyFn<any, R>) {
+    const mutation = this.getHandler<R>(fn);
+    return { input, mutation } as unknown as TRPCMutationProcedure<{
+      input: Input;
+      output: R;
+      meta: AnyObj;
+    }>;
   }
 
   /**
    * @todo Implement a method so that `input()` occurs based on decorator metadata.
    */
   mutation<R>(fn: AnyFn<any, R>) {
-    return this.procedure.input(z.any()).mutation((opts) => this.handle<R>(opts, fn)) as MutationProcedure<{
+    const mutation = this.getHandler<R>(fn);
+    return this.procedure.input(z.any()).mutation(mutation) as TRPCMutationProcedure<{
       input: Input;
       output: R;
-      meta: object;
+      meta: AnyObj;
     }>;
   }
 
   query<R>(fn: AnyFn<any, R>) {
-    return this.procedure.query((opts) => this.handle<R>(opts, fn));
+    const query = this.getHandler<R>(fn);
+    return this.procedure.query(query) as TRPCQueryProcedure<{
+      input: void;
+      output: R;
+      meta: AnyObj;
+    }>;
   }
 
-  protected handle<R>(opts: TrpcOpts, fn: AnyFn<any, R>): R {
-    return this.injectorPerRou
-      .resolveAndCreateChild(this.providersPerReq.concat({ token: TRPC_OPTS, useValue: opts }))
-      .get(fn);
+  protected getHandler<R>(fn: AnyFn<any, R>) {
+    return (opts: TrpcOpts) => opts;
   }
-}
-
-export interface GetMutationType<Context extends AnyObj, R> {
-  procedure: TrpcRootObject<Context>['procedure'];
-  mutation: AnyFn<[TrpcOpts], R>;
 }

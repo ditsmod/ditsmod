@@ -146,7 +146,6 @@ export class TrpcPreRouterExtension implements Extension<void> {
     const RegistryPerReq = Injector.prepareRegistry(resolvedPerReq);
     const rawReqId = KeyRegistry.get(RAW_REQ).id;
     const rawResId = KeyRegistry.get(RAW_RES).id;
-    this.setRouteService(injectorPerRou, mergedPerReq);
 
     const handler = async (rawReq: RawRequest, rawRes: RawResponse) => {
       const injector = new Injector(RegistryPerReq, 'Req', injectorPerRou);
@@ -164,16 +163,16 @@ export class TrpcPreRouterExtension implements Extension<void> {
         .finally(() => injector.clear());
     };
 
+    this.setRouteService(injectorPerRou, handler);
+
     const methodAsToken = routeMeta.Controller.prototype[routeMeta.methodName];
     injectorPerMod.setByToken(methodAsToken, injectorPerRou.get(methodAsToken));
-
-    return handler;
   }
 
-  protected setRouteService(injectorPerRou: Injector, mergedPerReq: Provider[]) {
-    const t = injectorPerRou.get(TRPC_ROOT);
-    const val = new RouteService(t, injectorPerRou, mergedPerReq);
-    injectorPerRou.setByToken(RouteService, val);
+  protected setRouteService(injectorPerRou: Injector, handler: (rawReq: RawRequest, rawRes: RawResponse) => Promise<void>) {
+    const routeService = injectorPerRou.get(RouteService) as RouteService;
+    routeService.handler = handler;
+    injectorPerRou.setByToken(RouteService, routeService);
   }
 
   /**

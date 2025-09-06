@@ -12,7 +12,7 @@ export const TRPC_ROOT = new InjectionToken<TrpcRootType>('TRPC_ROOT');
  */
 export type TrpcOpts<Input = any> = ProcedureResolverOptions<any, any, any, Input>;
 /**
- * A token used to obtain {@link ProcedureResolverOptions} in service methods
+ * A token used to obtain {@link TrpcOpts} in service methods
  * that are passed to DI at the request level.
  */
 export const TRPC_OPTS = new InjectionToken<TrpcOpts>('TRPC_OPTS');
