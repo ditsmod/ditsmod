@@ -160,10 +160,10 @@ export class TrpcPreRouterExtension implements Extension<void> {
         .instantiateResolved<ChainMaker>(resolvedChainMaker)
         .makeChain(ctx)
         .handle() // First HTTP handler in the chain of HTTP interceptors.
-        .catch((err) => {
-          const errorHandler = injector.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
-          return errorHandler.handleError(err, ctx);
-        })
+        // .catch((err) => {
+        //   const errorHandler = injector.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
+        //   return errorHandler.handleError(err, ctx);
+        // })
         .finally(() => injector.clear()) as R;
     };
 

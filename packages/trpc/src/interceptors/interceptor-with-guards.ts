@@ -1,4 +1,5 @@
 import { injectable, Injector, ResolvedGuardPerMod, skipSelf, Status, SystemLogMediator } from '@ditsmod/core';
+import { TRPCError } from '@trpc/server';
 
 import { RequestContext } from '#services/request-context.js';
 import { RAW_REQ, RAW_RES } from '#types/constants.js';
@@ -54,7 +55,7 @@ export class InterceptorWithGuards implements HttpInterceptor {
   protected prohibitActivation(ctx: RequestContext, status?: Status) {
     const systemLogMediator = this.injector.get(SystemLogMediator) as SystemLogMediator;
     systemLogMediator.youCannotActivateRoute(this, ctx.rawReq.method!, ctx.rawReq.url!);
-    ctx.rawRes.statusCode = Status.UNAUTHORIZED;
-    ctx.rawRes.end();
+    // ctx.rawRes.statusCode = Status.UNAUTHORIZED;
+    throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
 }
