@@ -32,7 +32,7 @@ import { ChainMaker } from '#interceptors/chain-maker.js';
 import { GuardPerMod1 } from '#interceptors/guard.js';
 import { RawRequest, RawResponse } from '#services/request.js';
 import { HttpErrorHandler } from '#services/http-error-handler.js';
-import { CheckingDepsInSandboxFailed, GuardNotFound } from '../error/trpc-errors.js';
+import { CheckingDepsInSandboxFailed, GuardNotFound, InvalidInterceptor } from '../error/trpc-errors.js';
 import { DefaultCtxHttpFrontend } from '#interceptors/default-ctx-http-frontend.js';
 import { DefaultHttpBackend } from '#interceptors/default-http-backend.js';
 import { DefaultHttpFrontend } from '#interceptors/default-http-frontend.js';
@@ -42,6 +42,8 @@ import { PublicRouteService, RouteService } from '#services/route.service.js';
 import { TRPC_OPTS, TrpcOpts } from '#types/constants.js';
 import { getResolvedGuards } from '#utils/prepere-guards.js';
 import { InterceptorWithGuardsPerRou } from '#interceptors/interceptor-with-guards-per-rou.js';
+import { isInterceptor } from '#types/type.guards.js';
+import { inspect } from 'node:util';
 
 export function isTrpcRoute<T>(decoratorAndValue?: DecoratorAndValue<T>): decoratorAndValue is DecoratorAndValue<T> {
   return (decoratorAndValue as DecoratorAndValue<T>)?.decorator === trpcRoute;
@@ -131,6 +133,15 @@ export class TrpcPreRouterExtension implements Extension<void> {
       mergedPerRou.push(InterceptorWithGuardsPerRou);
       mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: InterceptorWithGuardsPerRou, multi: true });
     }
+
+    for (const Interceptor of controllerMetadata.interceptors) {
+      if (isInterceptor(Interceptor)) {
+        providersPerRou.push({ token: HTTP_INTERCEPTORS, useClass: Interceptor, multi: true });
+      } else {
+        const whatIsThis = inspect(Interceptor, false, 3).slice(0, 500);
+        throw new InvalidInterceptor(whatIsThis);
+      }
+    }
     mergedPerRou.push(...metadataPerMod3.meta.providersPerRou, ...providersPerRou);
 
     const resolvedPerRou = Injector.resolve(mergedPerRou);
@@ -170,10 +181,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
     return interceptors.length > 2;
   }
 
-  protected handleWithoutInterceptors(
-    RequestContextClass: typeof RequestContext,
-    errorHandler: HttpErrorHandler,
-  ) {
+  protected handleWithoutInterceptors(RequestContextClass: typeof RequestContext, errorHandler: HttpErrorHandler) {
     const interceptor = new DefaultCtxHttpFrontend();
     return async (opts: TrpcOpts) => {
       const rawReq: RawRequest = opts.ctx.req;

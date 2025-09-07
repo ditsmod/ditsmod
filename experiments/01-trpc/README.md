@@ -18,11 +18,11 @@ Start from first terminal:
 
 ```bash
 cd experiments/01*
-yarn start:dev
+yarn dev:server
 ```
 
 From second terminal:
 
 ```bash
-
+yarn dev:client
 ```
