@@ -1,6 +1,5 @@
 import { Class, ResolvedGuard, ResolvedGuardPerMod, ResolvedProvider } from '@ditsmod/core';
 
-import type { RequestContext } from '#services/request-context.js';
 import type { TrpcRouteExtension } from '#extensions/trpc-route.extension.js';
 
 /**
@@ -20,5 +19,5 @@ export class TrpcRouteMeta {
    */
   resolvedGuards?: ResolvedGuard[];
   resolvedGuardsPerMod?: ResolvedGuardPerMod[];
-  routeHandler?: (ctx: RequestContext) => Promise<any>;
+  // routeHandler?: (ctx: RequestContext) => Promise<any>;
 }

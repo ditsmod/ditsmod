@@ -3,6 +3,7 @@ import { CanActivate, RequestContext, HttpInterceptor, HttpHandler } from '@dits
 
 export class Guard implements CanActivate {
   canActivate(ctx: RequestContext) {
+    console.log('Guard works');
     return true;
   }
 }
@@ -12,6 +13,7 @@ export class MyHttpInterceptor implements HttpInterceptor {
   constructor(private logger: Logger) {}
 
   async intercept(next: HttpHandler, ctx: RequestContext) {
+    console.log('MyHttpInterceptor works');
     const originalMsg = await next.handle(); // Handling request to `HelloWorldController`
     return originalMsg;
   }

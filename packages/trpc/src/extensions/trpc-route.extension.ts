@@ -50,7 +50,7 @@ export class TrpcRouteExtension implements Extension<MetadataPerMod3> {
           const providersPerReq: Provider[] = [];
           const route = decoratorAndValue.value as TrpcRouteMetadata;
           const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
-          const guards = normalizeGuards(route.guards).slice();
+          const guards = normalizeGuards(route.guards);
           providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
           providersPerReq.push(...((ctrlDecorator?.value as ControllerRawMetadata).providersPerReq || []));
 
@@ -73,6 +73,7 @@ export class TrpcRouteExtension implements Extension<MetadataPerMod3> {
             providersPerReq,
             routeMeta,
             guards,
+            interceptors: route.interceptors
           });
         }
       }

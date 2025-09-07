@@ -15,4 +15,5 @@ export interface ControllerMetadata {
   providersPerReq: Provider[];
   routeMeta: TrpcRouteMeta;
   guards: NormalizedGuard[];
+  interceptors: Class<HttpInterceptor>[];
 }

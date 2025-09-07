@@ -12,11 +12,11 @@ import {
   CTX_DATA,
   SystemLogMediator,
   fromSelf,
-  ResolvedGuard,
   ResolvedProvider,
   ResolvedGuardPerMod,
   ModuleManager,
   ClassFactoryProvider,
+  getToken,
 } from '@ditsmod/core';
 
 import { trpcRoute } from '#decorators/trpc-route.js';
@@ -29,7 +29,7 @@ import { ControllerMetadata } from '#types/controller-metadata.js';
 import { InterceptorWithGuards } from '#interceptors/interceptor-with-guards.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';
 import { ChainMaker } from '#interceptors/chain-maker.js';
-import { GuardPerMod1, NormalizedGuard } from '#interceptors/guard.js';
+import { GuardPerMod1 } from '#interceptors/guard.js';
 import { RawRequest, RawResponse } from '#services/request.js';
 import { HttpErrorHandler } from '#services/http-error-handler.js';
 import { CheckingDepsInSandboxFailed, GuardNotFound } from '../error/trpc-errors.js';
@@ -39,8 +39,9 @@ import { DefaultHttpFrontend } from '#interceptors/default-http-frontend.js';
 import { DefaultCtxHttpBackend } from '#interceptors/default-ctx-http-backend.js';
 import { DefaultCtxChainMaker } from '#interceptors/default-ctx-chain-maker.js';
 import { PublicRouteService, RouteService } from '#services/route.service.js';
-import { TRPC_OPTS, TRPC_ROOT, TrpcOpts } from '#types/constants.js';
+import { TRPC_OPTS, TrpcOpts } from '#types/constants.js';
 import { getResolvedGuards } from '#utils/prepere-guards.js';
+import { InterceptorWithGuardsPerRou } from '#interceptors/interceptor-with-guards-per-rou.js';
 
 export function isTrpcRoute<T>(decoratorAndValue?: DecoratorAndValue<T>): decoratorAndValue is DecoratorAndValue<T> {
   return (decoratorAndValue as DecoratorAndValue<T>)?.decorator === trpcRoute;
@@ -114,6 +115,81 @@ export class TrpcPreRouterExtension implements Extension<void> {
     });
   }
 
+  protected getHandlerPerRou(
+    metadataPerMod3: MetadataPerMod3,
+    injectorPerMod: Injector,
+    controllerMetadata: ControllerMetadata,
+  ) {
+    const { providersPerRou, routeMeta: baseRouteMeta } = controllerMetadata;
+
+    const routeMeta = baseRouteMeta as typeof baseRouteMeta;
+    const mergedPerRou: Provider[] = [];
+    mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
+    const controllerName = getDebugClassName(routeMeta.Controller) || 'unknown';
+
+    if (metadataPerMod3.guards1.length || controllerMetadata.guards.length) {
+      mergedPerRou.push(InterceptorWithGuardsPerRou);
+      mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: InterceptorWithGuardsPerRou, multi: true });
+    }
+    mergedPerRou.push(...metadataPerMod3.meta.providersPerRou, ...providersPerRou);
+
+    const resolvedPerRou = Injector.resolve(mergedPerRou);
+    routeMeta.resolvedGuards = getResolvedGuards(controllerMetadata.guards, resolvedPerRou);
+    routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(metadataPerMod3.guards1, controllerName);
+    const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou, 'Rou');
+    this.checkDeps(injectorPerRou, routeMeta, controllerName);
+    const resolvedChainMaker = resolvedPerRou.find((rp) => rp.dualKey.token === ChainMaker)!;
+    const resolvedErrHandler = resolvedPerRou.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
+    const chainMaker = injectorPerRou.instantiateResolved<DefaultCtxChainMaker>(resolvedChainMaker);
+    const errorHandler = injectorPerRou.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
+    const RequestContextClass = injectorPerRou.get(RequestContext) as typeof RequestContext;
+
+    if (this.hasInterceptors(mergedPerRou)) {
+      return async (opts: TrpcOpts) => {
+        const rawReq: RawRequest = opts.ctx.req;
+        const rawRes: RawResponse = opts.ctx.res;
+        const ctx = new RequestContextClass(rawReq, rawRes, 'ctx');
+        const result = await chainMaker.makeChain(ctx).handle(); // First HTTP handler in the chain of HTTP interceptors.
+        // .catch((err) => {
+        //   return errorHandler.handleError(err, ctx);
+        // })
+        return opts.next(result);
+      };
+    } else {
+      return this.handleWithoutInterceptors(RequestContextClass, errorHandler);
+    }
+  }
+
+  protected hasInterceptors(mergedPerRou: Provider[]) {
+    const interceptors = mergedPerRou.filter((p) => {
+      const token = getToken(p);
+      return token === HTTP_INTERCEPTORS || token === HttpBackend;
+    });
+
+    // The application has two default interceptors.
+    return interceptors.length > 2;
+  }
+
+  protected handleWithoutInterceptors(
+    RequestContextClass: typeof RequestContext,
+    errorHandler: HttpErrorHandler,
+  ) {
+    const interceptor = new DefaultCtxHttpFrontend();
+    return async (opts: TrpcOpts) => {
+      const rawReq: RawRequest = opts.ctx.req;
+      const rawRes: RawResponse = opts.ctx.res;
+      const ctx = new RequestContextClass(rawReq, rawRes, 'ctx') as RequestContext;
+      // try {
+      //   interceptor.before(ctx).after(ctx, await routeHandler(ctx));
+      // } catch (err: any) {
+      //   await errorHandler.handleError(err, ctx);
+      // }
+      // const val = await routeHandler(opts);
+      // const result = await interceptor.before(ctx).after(ctx, val);
+      return opts.next();
+    };
+  }
+
   protected setHandlerPerReq(
     metadataPerMod3: MetadataPerMod3,
     injectorPerMod: Injector,
@@ -149,27 +225,30 @@ export class TrpcPreRouterExtension implements Extension<void> {
     const rawReqId = KeyRegistry.get(RAW_REQ).id;
     const rawResId = KeyRegistry.get(RAW_RES).id;
 
-    const handler = async (opts: TrpcOpts) => {
+    const handlerPerReq = async (opts: TrpcOpts) => {
       const rawReq: RawRequest = opts.ctx.req;
       const rawRes: RawResponse = opts.ctx.res;
       const injector = new Injector(RegistryPerReq, 'Req', injectorPerRou);
       const ctx = new RequestContextClass(rawReq, rawRes);
-      return injector
-        .setById(optsId, opts)
-        .setById(rawReqId, rawReq)
-        .setById(rawResId, rawRes)
-        .instantiateResolved<ChainMaker>(resolvedChainMaker)
-        .makeChain(ctx)
-        .handle() // First HTTP handler in the chain of HTTP interceptors.
-        // .catch((err) => {
-        //   const errorHandler = injector.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
-        //   return errorHandler.handleError(err, ctx);
-        // })
-        .finally(() => injector.clear());
+      return (
+        injector
+          .setById(optsId, opts)
+          .setById(rawReqId, rawReq)
+          .setById(rawResId, rawRes)
+          .instantiateResolved<ChainMaker>(resolvedChainMaker)
+          .makeChain(ctx)
+          .handle() // First HTTP handler in the chain of HTTP interceptors.
+          // .catch((err) => {
+          //   const errorHandler = injector.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
+          //   return errorHandler.handleError(err, ctx);
+          // })
+          .finally(() => injector.clear())
+      );
     };
 
     const routeService = injectorPerRou.get(RouteService) as PublicRouteService;
-    routeService.setMetadata(routeMeta, resolvedPerReq, handler);
+    const middlewarePerRou = () => this.getHandlerPerRou(metadataPerMod3, injectorPerMod, controllerMetadata);
+    routeService.setHandlerPerReq(routeMeta, resolvedPerReq, middlewarePerRou, handlerPerReq);
 
     const methodAsToken = routeMeta.Controller.prototype[routeMeta.methodName];
     injectorPerMod.setByToken(methodAsToken, injectorPerRou.get(methodAsToken));

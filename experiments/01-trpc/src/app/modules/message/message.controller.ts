@@ -4,6 +4,7 @@ import z from 'zod';
 import { DbService } from '#db/db.service.js';
 import { MessageService } from '#message/message.service.js';
 import { TrpcContext } from '#app/types.js';
+import { Guard, MyHttpInterceptor } from '#post/post.interceptors.js';
 
 @controller()
 export class MessageController {
@@ -21,7 +22,7 @@ export class MessageController {
     });
   }
 
-  @trpcRoute()
+  @trpcRoute([Guard], [MyHttpInterceptor])
   listMessages(routeService: RouteService) {
     return routeService.procedure.query(() => this.db.messages);
   }
