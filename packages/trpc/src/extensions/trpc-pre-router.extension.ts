@@ -40,6 +40,7 @@ import { DefaultCtxHttpBackend } from '#interceptors/default-ctx-http-backend.js
 import { DefaultCtxChainMaker } from '#interceptors/default-ctx-chain-maker.js';
 import { PublicRouteService, RouteService } from '#services/route.service.js';
 import { TRPC_OPTS, TRPC_ROOT, TrpcOpts } from '#types/constants.js';
+import { getResolvedGuards } from '#utils/prepere-guards.js';
 
 export function isTrpcRoute<T>(decoratorAndValue?: DecoratorAndValue<T>): decoratorAndValue is DecoratorAndValue<T> {
   return (decoratorAndValue as DecoratorAndValue<T>)?.decorator === trpcRoute;
@@ -133,7 +134,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
     const resolvedPerReq = Injector.resolve(mergedPerReq);
     const resolvedPerRou = Injector.resolve(mergedPerRou);
     const controllerName = getDebugClassName(routeMeta.Controller) || 'unknown';
-    routeMeta.resolvedGuards = this.getResolvedGuards(controllerMetadata.guards, resolvedPerReq);
+    routeMeta.resolvedGuards = getResolvedGuards(controllerMetadata.guards, resolvedPerReq);
     routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(metadataPerMod3.guards1, controllerName, true);
     const injPerReq = injectorPerRou.createChildFromResolved(resolvedPerReq, 'Req');
     const RequestContextClass = injPerReq.get(RequestContext) as typeof RequestContext;
@@ -148,7 +149,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
     const rawReqId = KeyRegistry.get(RAW_REQ).id;
     const rawResId = KeyRegistry.get(RAW_RES).id;
 
-    const handler = async <R>(opts: TrpcOpts) => {
+    const handler = async (opts: TrpcOpts) => {
       const rawReq: RawRequest = opts.ctx.req;
       const rawRes: RawResponse = opts.ctx.res;
       const injector = new Injector(RegistryPerReq, 'Req', injectorPerRou);
@@ -164,7 +165,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
         //   const errorHandler = injector.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
         //   return errorHandler.handleError(err, ctx);
         // })
-        .finally(() => injector.clear()) as R;
+        .finally(() => injector.clear());
     };
 
     const routeService = injectorPerRou.get(RouteService) as PublicRouteService;
@@ -193,19 +194,6 @@ export class TrpcPreRouterExtension implements Extension<void> {
     } catch (cause: any) {
       throw new CheckingDepsInSandboxFailed(cause, controllerName);
     }
-  }
-
-  protected getResolvedGuards(guards: NormalizedGuard[], resolvedProviders: ResolvedProvider[]) {
-    return guards.map((g) => {
-      const defaultResolvedGuard = Injector.resolve([g.guard])[0];
-
-      const resolvedGuard: ResolvedGuard = {
-        guard: resolvedProviders.concat([defaultResolvedGuard]).find((rp) => rp.dualKey.token === g.guard)!,
-        params: g.params,
-      };
-
-      return resolvedGuard;
-    });
   }
 
   protected getResolvedHandler(routeMeta: TrpcRouteMeta, resolvedProviders: ResolvedProvider[]) {

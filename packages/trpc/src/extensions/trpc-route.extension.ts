@@ -1,12 +1,4 @@
-import {
-  injectable,
-  Extension,
-  MetadataPerMod2,
-  type Class,
-  reflector,
-  Provider,
-  awaitTokens,
-} from '@ditsmod/core';
+import { injectable, Extension, MetadataPerMod2, type Class, reflector, Provider, awaitTokens } from '@ditsmod/core';
 import { inspect } from 'node:util';
 
 import { TrpcMetadataPerMod2 } from '#init/trpc-deep-modules-importer.js';
@@ -17,11 +9,11 @@ import { ControllerRawMetadata } from '#decorators/controller.js';
 import { MetadataPerMod3 } from '#types/types.js';
 import { ControllerMetadata } from '#types/controller-metadata.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';
-import { FailedValidationOfRoute, InvalidInterceptor } from '../error/trpc-errors.js';
-import { GuardItem, GuardPerMod1 } from '#interceptors/guard.js';
+import { InvalidInterceptor } from '../error/trpc-errors.js';
 import { isInterceptor, isTrpcRoute } from '#types/type.guards.js';
 import { HTTP_INTERCEPTORS } from '#types/types.js';
 import { RouteService } from '#services/route.service.js';
+import { normalizeGuards } from '#utils/prepere-guards.js';
 
 @injectable()
 export class TrpcRouteExtension implements Extension<MetadataPerMod3> {
@@ -53,15 +45,12 @@ export class TrpcRouteExtension implements Extension<MetadataPerMod3> {
             continue;
           }
           const methodAsToken = Controller.prototype[methodName];
-          const providersPerRou: Provider[] = [
-            RouteService,
-            { useFactory: [Controller, methodAsToken] },
-          ];
+          const providersPerRou: Provider[] = [RouteService, { useFactory: [Controller, methodAsToken] }];
           providersPerMod.unshift(...awaitTokens(methodAsToken));
           const providersPerReq: Provider[] = [];
           const route = decoratorAndValue.value as TrpcRouteMetadata;
           const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
-          const guards = this.normalizeGuards(route.guards).slice();
+          const guards = normalizeGuards(route.guards).slice();
           providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
           providersPerReq.push(...((ctrlDecorator?.value as ControllerRawMetadata).providersPerReq || []));
 
@@ -90,25 +79,5 @@ export class TrpcRouteExtension implements Extension<MetadataPerMod3> {
     }
 
     return aControllerMetadata;
-  }
-
-  protected normalizeGuards(guards?: GuardItem[]) {
-    return (guards || []).map((item) => {
-      if (Array.isArray(item)) {
-        this.checkGuardsPerMod(item[0]);
-        return { guard: item[0], params: item.slice(1) } as GuardPerMod1;
-      } else {
-        this.checkGuardsPerMod(item);
-        return { guard: item } as GuardPerMod1;
-      }
-    });
-  }
-
-  protected checkGuardsPerMod(Guard: Class) {
-    const type = typeof Guard?.prototype.canActivate;
-    if (type != 'function') {
-      const whatIsThis = inspect(Guard, false, 3);
-      throw new FailedValidationOfRoute(type, whatIsThis);
-    }
   }
 }
