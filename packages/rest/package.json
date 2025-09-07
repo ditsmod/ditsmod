@@ -56,9 +56,9 @@
     "typescript"
   ],
   "devDependencies": {
-    "find-my-way": "^9.1.0",
-    "jest": "^30.1.1",
-    "koa-tree-router": "^0.12.1",
+    "find-my-way": "^9.3.0",
+    "jest": "^30.1.3",
+    "koa-tree-router": "^0.13.1",
     "npm-run-all": "^4.1.5",
     "trek-router": "^1.2.0",
     "typescript": "^5.9.2"
