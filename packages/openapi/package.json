@@ -81,5 +81,6 @@
     "@swagger-api/apidom-parser-adapter-workflows-json-1": "npm:-@0.0.1",
     "@swagger-api/apidom-parser-adapter-workflows-yaml-1": "npm:-@0.0.1",
     "@swagger-api/apidom-parser-adapter-yaml-1-2": "npm:-@0.0.1"
-  }
+  },
+  "gitHead": "eaf8f20b4e75e38c7a51fd1c3174b691cea756fa"
 }

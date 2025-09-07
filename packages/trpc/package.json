@@ -44,7 +44,8 @@
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)"
   },
   "keywords": [
-    "ditsmod"
+    "ditsmod",
+    "trpc"
   ],
   "author": "",
   "license": "MIT",
@@ -59,5 +60,6 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "gitHead": "eaf8f20b4e75e38c7a51fd1c3174b691cea756fa"
 }

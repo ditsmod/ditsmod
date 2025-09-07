@@ -65,5 +65,9 @@
   },
   "peerDependencies": {
     "@ditsmod/core": "^3.0.0-alpha.3"
+  },
+  "gitHead": "eaf8f20b4e75e38c7a51fd1c3174b691cea756fa",
+  "publishConfig": {
+    "access": "public"
   }
 }

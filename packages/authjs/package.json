@@ -62,5 +62,6 @@
     "npm-run-all": "^4.1.5",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
-  }
+  },
+  "gitHead": "eaf8f20b4e75e38c7a51fd1c3174b691cea756fa"
 }
