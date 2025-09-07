@@ -12,7 +12,10 @@ export class TestRestPlugin extends TestApplication {
       stage1ExtensionMeta.groupData?.forEach((metadataPerMod3) => {
         metadataPerMod3.aControllerMetadata.forEach((controllerMetadata) => {
           aProvidersToOverride.forEach((providerToOverride) => {
-            TestOverrider.overrideProvider(['Rou', 'Req'], controllerMetadata, providerToOverride);
+            TestOverrider.overrideProvider(
+              [controllerMetadata.providersPerRou, controllerMetadata.providersPerReq],
+              providerToOverride,
+            );
           });
         });
       });
