@@ -6736,6 +6736,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"example18@workspace:examples/18-trpc":
+  version: 0.0.0-use.local
+  resolution: "example18@workspace:examples/18-trpc"
+  dependencies:
+    "@trpc/client": "npm:^11.5.0"
+    "@trpc/server": "npm:^11.5.0"
+    jest: "npm:^30.1.1"
+    npm-run-all: "npm:^4.1.5"
+    start-server-and-test: "npm:^2.0.13"
+    typescript: "npm:^5.9.2"
+    wait-port: "npm:^1.1.0"
+    zod: "npm:^4.1.5"
+  languageName: unknown
+  linkType: soft
+
 "example19@workspace:examples/19-session-cookie":
   version: 0.0.0-use.local
   resolution: "example19@workspace:examples/19-session-cookie"
@@ -6831,21 +6846,6 @@ __metadata:
   checksum: 10c0/6bb88a42d6fcacbd0b25d4f90c389e2e439cd1d3b68f4b708582bcfe4a9575d1584edb554921e21230bc484ae55f8d639fc8186545ba9e6070a83e82a18655d8
   languageName: node
   linkType: hard
-
-"experiment01@workspace:experiments/01-trpc":
-  version: 0.0.0-use.local
-  resolution: "experiment01@workspace:experiments/01-trpc"
-  dependencies:
-    "@trpc/client": "npm:^11.5.0"
-    "@trpc/server": "npm:^11.5.0"
-    jest: "npm:^30.1.1"
-    npm-run-all: "npm:^4.1.5"
-    start-server-and-test: "npm:^2.0.13"
-    typescript: "npm:^5.9.2"
-    wait-port: "npm:^1.1.0"
-    zod: "npm:^4.1.5"
-  languageName: unknown
-  linkType: soft
 
 "exponential-backoff@npm:^3.1.1":
   version: 3.1.1
