@@ -36,14 +36,16 @@ export const METHODS_WITH_PARAMS = Symbol();
 /**
  * @param transform Such a transformer should not use symbols that can be wrapped with `forwardRef()`,
  * because at this stage the `resolveForwardRef()` function will not work correctly.
+ * @param decoratorId If you pass an argument for this parameter, {@link transform} must
+ * return data of the same type as the {@link decoratorId} you specified.
  */
-export function makeClassDecorator<T extends AnyFn>(transform?: T) {
+export function makeClassDecorator<T extends AnyFn>(transform?: T, decoratorId?: AnyFn) {
   return function classDecorFactory(...args: Parameters<T>): any {
     const value = transform ? transform(...args) : [...args];
     const declaredInDir = CallsiteUtils.getCallerDir();
     return function classDecorator(Cls: Class): void {
       const annotations: any[] = getRawMetadata(Cls, CLASS_KEY, []);
-      const decoratorAndValue = new DecoratorAndValue(classDecorFactory, value, declaredInDir);
+      const decoratorAndValue = new DecoratorAndValue(decoratorId || classDecorFactory, value, declaredInDir);
       annotations.push(decoratorAndValue);
     };
   };
@@ -84,15 +86,17 @@ export function makeParamDecorator<T extends AnyFn>(transform?: T, decoratorId?:
 /**
  * @param transform Such a transformer should not use symbols that can be wrapped with `forwardRef()`,
  * because at this stage the `resolveForwardRef()` function will not work correctly.
+ * @param decoratorId If you pass an argument for this parameter, {@link transform} must
+ * return data of the same type as the {@link decoratorId} you specified.
  */
-export function makePropDecorator<T extends AnyFn>(transform?: T) {
+export function makePropDecorator<T extends AnyFn>(transform?: T, decoratorId?: AnyFn) {
   return function propDecorFactory(...args: Parameters<T>) {
     const value = transform ? transform(...args) : [...args];
     return function propDecorator(target: any, propertyKey: string | symbol): void {
       const Cls = target.constructor as Class;
       const meta = getRawMetadata(Cls, PROP_KEY, {} as { [key: string | symbol]: any });
       meta[propertyKey] = (meta.hasOwnProperty(propertyKey) && meta[propertyKey]) || [];
-      meta[propertyKey].push(new DecoratorAndValue(propDecorFactory, value));
+      meta[propertyKey].push(new DecoratorAndValue(decoratorId || propDecorFactory, value));
     };
   };
 }
