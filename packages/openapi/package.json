@@ -61,8 +61,8 @@
     "yaml-loader": "^0.8.1"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^3.0.0-alpha.3",
-    "@ditsmod/rest": "^3.0.0-alpha.3"
+    "@ditsmod/core": "^3.0.2-alpha.4",
+    "@ditsmod/rest": "^3.0.2-alpha.4"
   },
   "resolutions": {
     "@swagger-api/apidom-ns-asyncapi-2": "npm:-@0.0.1",
