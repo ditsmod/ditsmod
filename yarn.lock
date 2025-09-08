@@ -15,6 +15,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@auth/core@npm:^0.40.0":
+  version: 0.40.0
+  resolution: "@auth/core@npm:0.40.0"
+  dependencies:
+    "@panva/hkdf": "npm:^1.2.1"
+    jose: "npm:^6.0.6"
+    oauth4webapi: "npm:^3.3.0"
+    preact: "npm:10.24.3"
+    preact-render-to-string: "npm:6.5.11"
+  peerDependencies:
+    "@simplewebauthn/browser": ^9.0.1
+    "@simplewebauthn/server": ^9.0.2
+    nodemailer: ^6.8.0
+  peerDependenciesMeta:
+    "@simplewebauthn/browser":
+      optional: true
+    "@simplewebauthn/server":
+      optional: true
+    nodemailer:
+      optional: true
+  checksum: 10c0/25cd12f22611eedc21c17dc1908fa9428ae5f0e32eb32c1ab009642276c37099cce58f49ffbb7f8e8d6d6488d5101a24fb9808ec662eee5aca19d520750acaa3
+  languageName: node
+  linkType: hard
+
 "@babel/code-frame@npm:^7.0.0":
   version: 7.24.7
   resolution: "@babel/code-frame@npm:7.24.7"
@@ -648,11 +672,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ditsmod/authjs@workspace:packages/authjs"
   dependencies:
+    "@auth/core": "npm:^0.40.0"
     npm-run-all: "npm:^4.1.5"
     typescript: "npm:^5.9.2"
     vitest: "npm:^3.2.4"
   peerDependencies:
-    "@auth/core": ^0.40.0
     "@ditsmod/body-parser": ^3.0.0-alpha.3
     "@ditsmod/core": ^3.0.0-alpha.3
     "@ditsmod/rest": ^3.0.0-alpha.3
@@ -2297,6 +2321,13 @@ __metadata:
   dependencies:
     "@octokit/openapi-types": "npm:^24.2.0"
   checksum: 10c0/f66a401b89d653ec28e5c1529abdb7965752db4d9d40fa54c80e900af4c6bf944af6bd0a83f5b4f1eecb72e3d646899dfb27ffcf272ac243552de7e3b97a038d
+  languageName: node
+  linkType: hard
+
+"@panva/hkdf@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "@panva/hkdf@npm:1.2.1"
+  checksum: 10c0/1fabdec9bd2c19b8e88a3fa6fd0c25e25823c5000d9efdf4b6dfe32e9f370f8b9603cf776d120d160bec15fba17e079974cc34f0f52cebb24602cd832dfde19c
   languageName: node
   linkType: hard
 
@@ -6939,6 +6970,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"experiment01@workspace:experiments/01-graphql":
+  version: 0.0.0-use.local
+  resolution: "experiment01@workspace:experiments/01-graphql"
+  dependencies:
+    jest: "npm:^30.1.3"
+    npm-run-all: "npm:^4.1.5"
+    typescript: "npm:^5.9.2"
+  languageName: unknown
+  linkType: soft
+
 "exponential-backoff@npm:^3.1.1":
   version: 3.1.1
   resolution: "exponential-backoff@npm:3.1.1"
@@ -9271,6 +9312,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jose@npm:^6.0.6":
+  version: 6.1.0
+  resolution: "jose@npm:6.1.0"
+  checksum: 10c0/f4518579e907317e144facd15c7627acd06097bbea17735097437217498aa419564c039dd4020f6af5f2d024a7cee6b7be4648ccbbdc238aedb80a47c061217d
+  languageName: node
+  linkType: hard
+
 "js-file-download@npm:^0.4.12":
   version: 0.4.12
   resolution: "js-file-download@npm:0.4.12"
@@ -10921,6 +10969,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"oauth4webapi@npm:^3.3.0":
+  version: 3.8.1
+  resolution: "oauth4webapi@npm:3.8.1"
+  checksum: 10c0/2dad6d39d4830efe68d542e8e131fd5b15d5a864f96ad7189263da9763cad0e22481af72e50d64d58ab62887ba43488bff5d33952426c5d197089cc7c59b2a45
+  languageName: node
+  linkType: hard
+
 "object-assign@npm:^4.1.1":
   version: 4.1.1
   resolution: "object-assign@npm:4.1.1"
@@ -11651,6 +11706,22 @@ __metadata:
     picocolors: "npm:^1.1.1"
     source-map-js: "npm:^1.2.1"
   checksum: 10c0/5127cc7c91ed7a133a1b7318012d8bfa112da9ef092dddf369ae699a1f10ebbd89b1b9f25f3228795b84585c72aabd5ced5fc11f2ba467eedf7b081a66fad024
+  languageName: node
+  linkType: hard
+
+"preact-render-to-string@npm:6.5.11":
+  version: 6.5.11
+  resolution: "preact-render-to-string@npm:6.5.11"
+  peerDependencies:
+    preact: ">=10"
+  checksum: 10c0/a68b704c1343756022fb41322154b45e39f6021b940cbc97e86c292627d017d019700339a17d67b42c308b14fc5323fc120c798f785d6a3e993c8f273610bfe2
+  languageName: node
+  linkType: hard
+
+"preact@npm:10.24.3":
+  version: 10.24.3
+  resolution: "preact@npm:10.24.3"
+  checksum: 10c0/c863df6d7be6a660480189762d8a8f2d4148733fc2bb9efbd9d2fd27315d2c7ede850a16077d716c91666c915c0349bd3c9699733e4f08457226a0519f408761
   languageName: node
   linkType: hard
 
