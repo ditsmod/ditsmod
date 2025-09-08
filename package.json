@@ -18,7 +18,7 @@
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",
     "test-examples": "tsc -b examples/tsconfig.e2e.json && yarn esm-jest -c examples/jest.config.ts",
     "test-all": "yarn test && yarn test-authjs && yarn test-examples && yarn build-vscode",
-    "pub": "lerna publish from-package --pre-dist-tag next --otp",
+    "pub": "lerna publish from-package --pre-dist-tag next",
     "build": "tsc -b packages",
     "build-test": "tsc -b packages/tsconfig.test.json",
     "build-authjs-test": "tsc -b packages/authjs/tsconfig.e2e.json",
