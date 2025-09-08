@@ -8,7 +8,7 @@ import { openapiRoot, swaggerDist, webpackDist } from './constants.js';
 applyConfig();
 
 function applyConfig() {
-  webpack(getWebpackConfig()).run((err, statsOrUndefined) => {
+  webpack(getWebpackConfig())?.run((err, statsOrUndefined) => {
     if (err) {
       throw err;
     }

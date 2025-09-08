@@ -16,6 +16,7 @@
     { "path": "sqb/tsconfig.build.json" },
     { "path": "testing/tsconfig.build.json" },
     { "path": "trpc/tsconfig.build.json" },
+    { "path": "graphql/tsconfig.build.json" },
     { "path": "versions/tsconfig.build.json" },
   ]
 }

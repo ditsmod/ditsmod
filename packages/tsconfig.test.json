@@ -16,6 +16,7 @@
     { "path": "sqb/tsconfig.unit.json" },
     { "path": "trpc/tsconfig.unit.json" },
     { "path": "testing/tsconfig.unit.json" },
+    { "path": "graphql/tsconfig.unit.json" },
     { "path": "versions/tsconfig.unit.json" },
   ]
 }
