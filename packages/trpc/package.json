@@ -50,7 +50,7 @@
   "author": "",
   "license": "MIT",
   "peerDependencies": {
-    "@ditsmod/core": "^3.0.0-alpha.4",
+    "@ditsmod/core": "^3.0.2-alpha.4",
     "@trpc/server": "^11.5.0"
   },
   "devDependencies": {
