@@ -23,7 +23,6 @@ import { trpcRoute } from '#decorators/trpc-route.js';
 import { MetadataPerMod3 } from '#types/types.js';
 import { TrpcRouteExtension } from './trpc-route.extension.js';
 import { HttpBackend, HttpFrontend } from '#interceptors/tokens-and-types.js';
-import { RequestContext } from '#services/request-context.js';
 import { HTTP_INTERCEPTORS, RAW_REQ, RAW_RES } from '#types/types.js';
 import { ControllerMetadata } from '#types/controller-metadata.js';
 import { InterceptorWithGuards } from '#interceptors/interceptor-with-guards.js';
@@ -153,21 +152,17 @@ export class TrpcPreRouterExtension implements Extension<void> {
     const resolvedErrHandler = resolvedPerRou.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
     const chainMaker = injectorPerRou.instantiateResolved<DefaultCtxChainMaker>(resolvedChainMaker);
     const errorHandler = injectorPerRou.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
-    const RequestContextClass = injectorPerRou.get(RequestContext) as typeof RequestContext;
 
     if (this.hasInterceptors(mergedPerRou)) {
       return async (opts: TrpcOpts) => {
-        const rawReq: RawRequest = opts.ctx.req;
-        const rawRes: RawResponse = opts.ctx.res;
-        const ctx = new RequestContextClass(rawReq, rawRes, 'ctx');
-        const result = await chainMaker.makeChain(ctx).handle(); // First HTTP handler in the chain of HTTP interceptors.
+        const result = await chainMaker.makeChain(opts).handle(); // First HTTP handler in the chain of HTTP interceptors.
         // .catch((err) => {
         //   return errorHandler.handleError(err, ctx);
         // })
         return opts.next(result);
       };
     } else {
-      return this.handleWithoutInterceptors(RequestContextClass, errorHandler);
+      return this.handleWithoutInterceptors(errorHandler);
     }
   }
 
@@ -181,12 +176,9 @@ export class TrpcPreRouterExtension implements Extension<void> {
     return interceptors.length > 2;
   }
 
-  protected handleWithoutInterceptors(RequestContextClass: typeof RequestContext, errorHandler: HttpErrorHandler) {
-    const interceptor = new DefaultCtxHttpFrontend();
+  protected handleWithoutInterceptors(errorHandler: HttpErrorHandler) {
+    // const interceptor = new DefaultCtxHttpFrontend();
     return async (opts: TrpcOpts) => {
-      const rawReq: RawRequest = opts.ctx.req;
-      const rawRes: RawResponse = opts.ctx.res;
-      const ctx = new RequestContextClass(rawReq, rawRes, 'ctx') as RequestContext;
       // try {
       //   interceptor.before(ctx).after(ctx, await routeHandler(ctx));
       // } catch (err: any) {
@@ -221,7 +213,6 @@ export class TrpcPreRouterExtension implements Extension<void> {
     routeMeta.resolvedGuards = getResolvedGuards(controllerMetadata.guards, resolvedPerReq);
     routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(metadataPerMod3.guards1, controllerName, true);
     const injPerReq = injectorPerRou.createChildFromResolved(resolvedPerReq, 'Req');
-    const RequestContextClass = injPerReq.get(RequestContext) as typeof RequestContext;
     // routeMeta.resolvedHandler = this.getResolvedHandler(routeMeta, resolvedPerReq);
     this.checkDeps(injPerReq, routeMeta, controllerName);
     const resolvedChainMaker = resolvedPerReq.find((rp) => rp.dualKey.token === ChainMaker)!;
@@ -237,14 +228,13 @@ export class TrpcPreRouterExtension implements Extension<void> {
       const rawReq: RawRequest = opts.ctx.req;
       const rawRes: RawResponse = opts.ctx.res;
       const injector = new Injector(RegistryPerReq, 'Req', injectorPerRou);
-      const ctx = new RequestContextClass(rawReq, rawRes);
       return (
         injector
           .setById(optsId, opts)
           .setById(rawReqId, rawReq)
           .setById(rawResId, rawRes)
           .instantiateResolved<ChainMaker>(resolvedChainMaker)
-          .makeChain(ctx)
+          .makeChain(opts)
           .handle() // First HTTP handler in the chain of HTTP interceptors.
           // .catch((err) => {
           //   const errorHandler = injector.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;

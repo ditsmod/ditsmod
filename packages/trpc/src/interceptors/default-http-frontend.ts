@@ -1,7 +1,7 @@
 import { injectable, Injector } from '@ditsmod/core';
 
 import { DefaultCtxHttpFrontend } from './default-ctx-http-frontend.js';
-import { RequestContext } from '#services/request-context.js';
+import { TrpcOpts } from '#types/constants.js';
 
 @injectable()
 export class DefaultHttpFrontend extends DefaultCtxHttpFrontend {
@@ -9,7 +9,7 @@ export class DefaultHttpFrontend extends DefaultCtxHttpFrontend {
     super();
   }
 
-  override before(ctx: RequestContext) {
+  override before(opts: TrpcOpts) {
     return this;
   }
 }

@@ -1,11 +1,11 @@
-import { injectable, Injector, Status, SystemLogMediator } from '@ditsmod/core';
+import { injectable, Injector, SystemLogMediator } from '@ditsmod/core';
 import { TRPCError } from '@trpc/server';
 
 import { HttpHandler, HttpInterceptor } from './tokens-and-types.js';
 import { applyResponse } from '#utils/apply-web-response.js';
 import { CanActivate } from './guard.js';
-import { RequestContext } from '#services/request-context.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';
+import { TrpcOpts } from '#types/constants.js';
 
 @injectable()
 export class InterceptorWithGuardsPerRou implements IInterceptorWithGuardsPerRou {
@@ -18,20 +18,20 @@ export class InterceptorWithGuardsPerRou implements IInterceptorWithGuardsPerRou
     this.initGuards();
   }
 
-  async intercept(next: HttpHandler, ctx: RequestContext) {
+  async intercept(next: HttpHandler, opts: TrpcOpts) {
     if (this.routeMeta.resolvedGuardsPerMod) {
       for (const item of this.routeMeta.resolvedGuardsPerMod) {
         const guard = item.injectorPerRou.instantiateResolved(item.guard) as CanActivate;
-        const result = await guard.canActivate(ctx, item.params);
+        const result = await guard.canActivate(opts, item.params);
         if (result !== true) {
-          return this.sendResponse(ctx, result);
+          return this.sendResponse(opts, result);
         }
       }
     }
     for (const item of this.instantiatedGuards) {
-      const result = await item.guard.canActivate(ctx, item.params);
+      const result = await item.guard.canActivate(opts, item.params);
       if (result !== true) {
-        return this.sendResponse(ctx, result);
+        return this.sendResponse(opts, result);
       }
     }
 
@@ -45,18 +45,18 @@ export class InterceptorWithGuardsPerRou implements IInterceptorWithGuardsPerRou
     });
   }
 
-  protected async sendResponse(ctx: RequestContext, result: false | Response) {
+  protected async sendResponse(opts: TrpcOpts, result: false | Response) {
     if (result === false) {
-      this.prohibitActivation(ctx);
+      this.prohibitActivation(opts);
       return;
     }
-    await applyResponse(result, ctx.rawRes);
+    await applyResponse(result, opts.ctx.res);
     return result;
   }
 
-  protected prohibitActivation(ctx: RequestContext) {
+  protected prohibitActivation(opts: TrpcOpts) {
     const systemLogMediator = this.injector.get(SystemLogMediator) as SystemLogMediator;
-    systemLogMediator.youCannotActivateRoute(this, ctx.rawReq.method!, ctx.rawReq.url!);
+    systemLogMediator.youCannotActivateRoute(this, '', opts.ctx.req.url!);
     // ctx.rawRes.statusCode = Status.UNAUTHORIZED;
     // ctx.rawRes.end();
     throw new TRPCError({ code: 'UNAUTHORIZED' });

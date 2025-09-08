@@ -50,7 +50,7 @@ const authedClient = createTRPCClient<AnyTRPCRouter>({
     // loggerLink(),
     httpBatchLink({
       url,
-      headers: () => ({ authorization: 'secret' }),
+      headers: () => ({ authorization: 'Bearer secret' }),
     }),
   ],
 });

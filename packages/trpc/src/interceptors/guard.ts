@@ -1,11 +1,11 @@
 import { Class, makeClassDecorator, BaseMeta } from '@ditsmod/core';
-import { RequestContext } from '#services/request-context.js';
 import { TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
+import { TrpcOpts } from '#types/constants.js';
 
 export const trpcGuard = makeClassDecorator((data?: never) => data);
 
 export interface CanActivate {
-  canActivate(ctx: RequestContext, params?: any[]): boolean | Response | Promise<boolean | Response>;
+  canActivate(opts: TrpcOpts, params?: any[]): boolean | Response | Promise<boolean | Response>;
 }
 
 export type GuardItem = Class<CanActivate> | [Class<CanActivate>, any, ...any[]];

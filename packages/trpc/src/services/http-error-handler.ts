@@ -1,7 +1,7 @@
-import { RequestContext } from './request-context.js';
+import { TrpcOpts } from '#types/constants.js';
 
 export class HttpErrorHandler {
-  handleError(error: any, ctx: RequestContext): void | Promise<void> {
+  handleError(error: any, opts: TrpcOpts): void | Promise<void> {
     throw error;
   }
 }

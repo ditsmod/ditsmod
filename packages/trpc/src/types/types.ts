@@ -6,6 +6,7 @@ import {
   GlobalInitHooks,
   InjectionToken,
   ModRefId,
+  Override,
   Provider,
 } from '@ditsmod/core';
 import { AnyRouter, initTRPC } from '@trpc/server';
@@ -44,7 +45,7 @@ export type RawRequest = http.IncomingMessage | Http2ServerRequest;
 export type RawResponse = http.ServerResponse | Http2ServerResponse;
 export type RequestListener = (request: RawRequest, response: RawResponse) => void | Promise<void>;
 export type TrpcRootObject<T extends AnyObj> = ReturnType<ReturnType<typeof initTRPC.context<T>>['create']>;
-export type SetAppRouterOptions = Omit<TrpcRouterOpts, 'router'>;
+export type SetAppRouterOptions = Override<TrpcRouterOpts, { router?: never; createContext?: never }>;
 export type RouterOptions = Parameters<typeof t.router>[0];
 export interface TrpcRootModule {
   /**

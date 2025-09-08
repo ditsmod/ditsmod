@@ -1,4 +1,4 @@
-import { RequestContext } from '#services/request-context.js';
+import { TrpcOpts } from '#types/constants.js';
 
 /**
  * `HttpHandler` is injectable. When injected, the handler instance dispatches requests to the
@@ -12,18 +12,18 @@ export abstract class HttpHandler {
 }
 
 export interface HttpInterceptor {
-  intercept(next: HttpHandler, ctx: RequestContext): Promise<any>;
+  intercept(next: HttpHandler, opts: TrpcOpts): Promise<any>;
 }
 
 export class HttpInterceptorHandler implements HttpHandler {
   constructor(
     public interceptor: HttpInterceptor,
-    public ctx: RequestContext,
+    public opts: TrpcOpts,
     public next: HttpHandler,
   ) {}
 
   async handle(): Promise<any> {
-    return this.interceptor.intercept(this.next, this.ctx);
+    return this.interceptor.intercept(this.next, this.opts);
   }
 }
 
@@ -33,7 +33,7 @@ export class HttpInterceptorHandler implements HttpHandler {
  * Interceptors sit between the `HttpFrontend` and the `HttpBackend`.
  */
 export abstract class HttpFrontend implements HttpInterceptor {
-  abstract intercept(next: HttpHandler, ctx: RequestContext): Promise<any>;
+  abstract intercept(next: HttpHandler, opts: TrpcOpts): Promise<any>;
 }
 
 /**
@@ -49,5 +49,5 @@ export abstract class HttpBackend implements HttpHandler {
 }
 
 export abstract class CtxHttpBackend {
-  abstract handle(ctx: RequestContext): Promise<any>;
+  abstract handle(opts: TrpcOpts): Promise<any>;
 }

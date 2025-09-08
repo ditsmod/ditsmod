@@ -1,12 +1,12 @@
 import { injectable, Injector, ResolvedGuardPerMod, skipSelf, Status, SystemLogMediator } from '@ditsmod/core';
 import { TRPCError } from '@trpc/server';
 
-import { RequestContext } from '#services/request-context.js';
 import { RAW_REQ, RAW_RES } from '#types/types.js';
 import { CanActivate } from './guard.js';
 import { HttpInterceptor, HttpHandler } from './tokens-and-types.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';
 import { applyResponse } from '#utils/apply-web-response.js';
+import { TrpcOpts } from '#types/constants.js';
 
 @injectable()
 export class InterceptorWithGuards implements HttpInterceptor {
@@ -15,34 +15,34 @@ export class InterceptorWithGuards implements HttpInterceptor {
     private injector: Injector,
   ) {}
 
-  async intercept(next: HttpHandler, ctx: RequestContext) {
+  async intercept(next: HttpHandler, opts: TrpcOpts) {
     if (this.routeMeta.resolvedGuardsPerMod)
       for (const item of this.routeMeta.resolvedGuardsPerMod) {
         const injectorPerReq = this.getInjectorPerReq(item);
         const guard = injectorPerReq.instantiateResolved(item.guard) as CanActivate;
-        const result = await guard.canActivate(ctx, item.params);
+        const result = await guard.canActivate(opts, item.params);
         if (result !== true) {
-          return this.sendResponse(ctx, result);
+          return this.sendResponse(opts, result);
         }
       }
     if (this.routeMeta.resolvedGuards)
       for (const item of this.routeMeta.resolvedGuards) {
         const guard = this.injector.instantiateResolved(item.guard) as CanActivate;
-        const result = await guard.canActivate(ctx, item.params);
+        const result = await guard.canActivate(opts, item.params);
         if (result !== true) {
-          return this.sendResponse(ctx, result);
+          return this.sendResponse(opts, result);
         }
       }
 
     return next.handle();
   }
 
-  protected async sendResponse(ctx: RequestContext, result: false | Response) {
+  protected async sendResponse(opts: TrpcOpts, result: false | Response) {
     if (result === false) {
-      this.prohibitActivation(ctx);
+      this.prohibitActivation(opts);
       return;
     }
-    await applyResponse(result, ctx.rawRes);
+    await applyResponse(result, opts.ctx.res);
     return result;
   }
 
@@ -52,9 +52,9 @@ export class InterceptorWithGuards implements HttpInterceptor {
     return inj;
   }
 
-  protected prohibitActivation(ctx: RequestContext, status?: Status) {
+  protected prohibitActivation(opts: TrpcOpts, status?: Status) {
     const systemLogMediator = this.injector.get(SystemLogMediator) as SystemLogMediator;
-    systemLogMediator.youCannotActivateRoute(this, ctx.rawReq.method!, ctx.rawReq.url!);
+    systemLogMediator.youCannotActivateRoute(this, '', opts.ctx.req.url!);
     // ctx.rawRes.statusCode = Status.UNAUTHORIZED;
     throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
