@@ -1,7 +1,7 @@
 {
   "name": "@ditsmod/rest",
   "type": "module",
-  "version": "3.0.0-alpha.4",
+  "version": "3.0.1-alpha.4",
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "homepage": "https://ditsmod.github.io/en/",
   "description": "Rest module for Ditsmod applications",
