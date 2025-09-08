@@ -2,6 +2,6 @@
 {
   "files": [],
   "references": [
-    // { "path": "01-trpc/tsconfig.build.json" },
+    { "path": "01-graphql/tsconfig.build.json" },
   ]
 }

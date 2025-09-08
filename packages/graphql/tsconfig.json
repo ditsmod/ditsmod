@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+      "paths": {
+      "@ditsmod/core": ["../core/src/index.js"],
+      "@ditsmod/rest": ["../rest/src/index.js"],
+    },
+    "module": "nodenext",
+    // "moduleResolution": "nodenext",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "composite": true,
+    "noImplicitOverride": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitReturns": true,
+    "skipLibCheck": true,
+    "target": "es2023",
+    "strictPropertyInitialization": false,
+    "noImplicitAny": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "removeComments": false,
+  },
+  "include": ["src", "e2e"],
+  "files": [],
+  "references": [
+    { "path": "../core/tsconfig.build.json" },
+  ]
+}

@@ -78,5 +78,5 @@
     "@swagger-api/apidom-parser-adapter-workflows-yaml-1": "npm:-@0.0.1",
     "@swagger-api/apidom-parser-adapter-yaml-1-2": "npm:-@0.0.1"
   },
-  "packageManager": "yarn@4.9.3"
+  "packageManager": "yarn@4.9.4"
 }

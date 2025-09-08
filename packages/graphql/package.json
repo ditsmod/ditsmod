@@ -1,0 +1,46 @@
+{
+  "private": true,
+  "name": "graphql",
+  "type": "module",
+  "version": "3.0.0-alpha.4",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ditsmod/ditsmod.git"
+  },
+  "homepage": "https://ditsmod.github.io/en/",
+  "description": "Ditsmod module to support GraphQL",
+  "module": "dist/index.js",
+  "exports": {
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b tsconfig.build.json",
+    "clean": "rm -rf dist*",
+    "test": "tsc -b tsconfig.unit.json && yarn esm-jest",
+    "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)"
+  },
+  "keywords": [
+    "ditsmod"
+  ],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "@apollo/server": "^5.0.0",
+    "@ditsmod/core": "^3.0.0-alpha.3",
+    "graphql": "^16.11.0"
+  },
+  "devDependencies": {
+    "jest": "^30.1.3",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.9.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
