@@ -3,7 +3,7 @@ import { TRPCError } from '@trpc/server';
 
 import { HttpHandler, HttpInterceptor } from './tokens-and-types.js';
 import { applyResponse } from '#utils/apply-web-response.js';
-import { CanActivate } from './guard.js';
+import { CanActivate } from './trpc-guard.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';
 import { TrpcOpts } from '#types/constants.js';
 
@@ -57,8 +57,6 @@ export class InterceptorWithGuardsPerRou implements IInterceptorWithGuardsPerRou
   protected prohibitActivation(opts: TrpcOpts) {
     const systemLogMediator = this.injector.get(SystemLogMediator) as SystemLogMediator;
     systemLogMediator.youCannotActivateRoute(this, '', opts.ctx.req.url!);
-    // ctx.rawRes.statusCode = Status.UNAUTHORIZED;
-    // ctx.rawRes.end();
     throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
 }

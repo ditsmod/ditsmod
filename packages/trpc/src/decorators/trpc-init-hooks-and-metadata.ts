@@ -28,7 +28,7 @@ import {
   TrpcShallowModulesImporter,
 } from '#init/trpc-shallow-modules-importer.js';
 import { TrpcDeepModulesImporter } from '#init/trpc-deep-modules-importer.js';
-import { GuardItem, GuardPerMod1, NormalizedGuard } from '#interceptors/guard.js';
+import { GuardItem, GuardPerMod1, NormalizedGuard } from '#interceptors/trpc-guard.js';
 
 export type TrpcModRefId = ModRefId;
 

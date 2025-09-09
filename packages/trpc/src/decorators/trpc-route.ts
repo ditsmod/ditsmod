@@ -1,6 +1,6 @@
 import { Class, makePropDecorator } from '@ditsmod/core';
 
-import { GuardItem } from '#interceptors/guard.js';
+import { GuardItem } from '#interceptors/trpc-guard.js';
 import { HttpInterceptor } from '#interceptors/tokens-and-types.js';
 
 export interface TrpcRouteMetadata {

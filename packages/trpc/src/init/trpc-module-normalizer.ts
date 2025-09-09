@@ -43,7 +43,7 @@ import {
 } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { controller, ControllerRawMetadata } from '#decorators/controller.js';
 import { ControllerDoesNotHaveDecorator, DuplicateOfControllers, InvalidGuard } from '../error/trpc-errors.js';
-import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
+import { GuardItem, NormalizedGuard } from '#interceptors/trpc-guard.js';
 
 export type Level = 'Req' | 'Rou' | 'Mod';
 

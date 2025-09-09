@@ -2,7 +2,7 @@ import { injectable, Injector, ResolvedGuardPerMod, skipSelf, Status, SystemLogM
 import { TRPCError } from '@trpc/server';
 
 import { RAW_REQ, RAW_RES } from '#types/types.js';
-import { CanActivate } from './guard.js';
+import { CanActivate } from './trpc-guard.js';
 import { HttpInterceptor, HttpHandler } from './tokens-and-types.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';
 import { applyResponse } from '#utils/apply-web-response.js';

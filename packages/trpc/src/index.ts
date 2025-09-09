@@ -1,6 +1,7 @@
-export { CanActivate } from '#interceptors/guard.js';
+export { CanActivate } from '#interceptors/trpc-guard.js';
 export { isModuleWithTrpcRoutes } from './utils/type.guards.js';
 export { trpcRoute } from '#decorators/trpc-route.js';
+export { trpcGuard } from '#decorators/trpc-guard.js';
 export { opts } from '#decorators/opts.js';
 export { controller } from '#decorators/controller.js';
 export { RouteService } from '#services/route.service.js';

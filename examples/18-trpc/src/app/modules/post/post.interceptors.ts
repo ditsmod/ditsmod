@@ -1,6 +1,7 @@
 import { injectable, Logger } from '@ditsmod/core';
-import { CanActivate, HttpInterceptor, HttpHandler, TrpcOpts } from '@ditsmod/trpc';
+import { CanActivate, HttpInterceptor, HttpHandler, TrpcOpts, trpcGuard } from '@ditsmod/trpc';
 
+@trpcGuard()
 export class Guard implements CanActivate {
   canActivate(opts: TrpcOpts) {
     return true;

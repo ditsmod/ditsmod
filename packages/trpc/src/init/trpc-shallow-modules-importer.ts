@@ -34,7 +34,7 @@ import {
   TrpcModRefId,
 } from '../decorators/trpc-init-hooks-and-metadata.js';
 import { Level } from './trpc-module-normalizer.js';
-import { GuardPerMod1 } from '#interceptors/guard.js';
+import { GuardPerMod1 } from '#interceptors/trpc-guard.js';
 
 export function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) {
   return [...(map || []).keys()];

@@ -1,8 +1,6 @@
-import { Class, makeClassDecorator, BaseMeta } from '@ditsmod/core';
+import { Class, BaseMeta } from '@ditsmod/core';
 import { TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { TrpcOpts } from '#types/constants.js';
-
-export const trpcGuard = makeClassDecorator((data?: never) => data);
 
 export interface CanActivate {
   canActivate(opts: TrpcOpts, params?: any[]): boolean | Response | Promise<boolean | Response>;

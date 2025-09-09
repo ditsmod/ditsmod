@@ -28,7 +28,7 @@ import { ControllerMetadata } from '#types/controller-metadata.js';
 import { InterceptorWithGuards } from '#interceptors/interceptor-with-guards.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';
 import { ChainMaker } from '#interceptors/chain-maker.js';
-import { GuardPerMod1 } from '#interceptors/guard.js';
+import { GuardPerMod1 } from '#interceptors/trpc-guard.js';
 import { RawRequest, RawResponse } from '#services/request.js';
 import { HttpErrorHandler } from '#services/http-error-handler.js';
 import { CheckingDepsInSandboxFailed, GuardNotFound, InvalidInterceptor } from '../error/trpc-errors.js';
@@ -103,14 +103,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
       const { aControllerMetadata, guards1 } = metadataPerMod3;
 
       aControllerMetadata.forEach((controllerMetadata) => {
-        // let handle: RouteHandler;
-        // if (controllerMetadata.scope == 'ctx') {
-        //   handle = this.getHandlerPerMod(metadataPerMod3, this.injectorPerMod, controllerMetadata);
-        // } else {
-        //   handle = this.getHandlerPerReq(metadataPerMod3, this.injectorPerMod, controllerMetadata);
-        // }
         this.setHandlerPerReq(metadataPerMod3, this.injectorPerMod, controllerMetadata);
-
         const countOfGuards = controllerMetadata.routeMeta.resolvedGuards!.length + guards1.length;
       });
     });

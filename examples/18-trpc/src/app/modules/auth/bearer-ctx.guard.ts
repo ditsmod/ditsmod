@@ -1,10 +1,10 @@
-import { injectable, Injector } from '@ditsmod/core';
-import { CanActivate, TrpcOpts } from '@ditsmod/trpc';
+import { Injector } from '@ditsmod/core';
+import { CanActivate, trpcGuard, TrpcOpts } from '@ditsmod/trpc';
 
 /***
  * This guard works only per route.
  */
-@injectable()
+@trpcGuard()
 export class BearerCtxGuard implements CanActivate {
   constructor(protected injector: Injector) {}
 

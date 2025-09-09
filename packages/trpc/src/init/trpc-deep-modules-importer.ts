@@ -15,7 +15,7 @@ import {
 import { DeepModulesImporterConfig, initTrpcModule, TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { TrpcBaseImportRegistry, TrpcProvidersOnly, TrpcShallowImports } from './trpc-shallow-modules-importer.js';
 import { Level } from './trpc-module-normalizer.js';
-import { GuardPerMod1 } from '#interceptors/guard.js';
+import { GuardPerMod1 } from '#interceptors/trpc-guard.js';
 import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
 

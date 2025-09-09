@@ -23,7 +23,7 @@ import type { HttpModule } from '#types/http-module.js';
 import type { HttpServer, ServerOptions } from '#types/server-options.js';
 import { TrpcInitMeta, TrpcModRefId } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { TrpcProviderImport } from '#init/trpc-shallow-modules-importer.js';
-import { GuardPerMod1 } from '#interceptors/guard.js';
+import { GuardPerMod1 } from '#interceptors/trpc-guard.js';
 import { ControllerMetadata } from './controller-metadata.js';
 import { HttpInterceptor } from '#interceptors/tokens-and-types.js';
 
