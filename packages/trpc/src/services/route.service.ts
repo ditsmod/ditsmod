@@ -66,6 +66,34 @@ export class RouteService<Context extends AnyObj = AnyObj, Input = void> {
   }
 
   /**
+   * Performs a `query` request using the DI injector. This means that this method
+   * is not equivalent to `t.procedure.query()`. It also means that for this method to work correctly,
+   * you must first provide a {@link ClassFactoryProvider } to DI in the following format:
+   * 
+```ts
+{ useFactory: [YourService, YourService.prototype.methodName] }
+```
+   *
+   * Then you can use its token in this method: `routeService.diInputAndQuery(z.any(), YourService.prototype.methodName)`.
+   * In this case, DI will create an instance of `YourService` and execute the specified method on each request.
+   * 
+   * @see [Example on github](https://github.com/ditsmod/ditsmod/blob/main/examples/18-trpc/src/app/modules/post/post.controller.ts)
+   * 
+   * @param methodAsToken Class method as a DI token in the format `ClassName.prototype.methodName`.
+   */
+  diInputAndQuery<Input, Output, R>(
+    input: ParserWithInputOutput<Input, Output>,
+    methodAsToken: (...args: any[]) => R,
+  ) {
+    const query = this.getHandler<R>(methodAsToken);
+    return this.#procedure.input(input).query(query) as TRPCQueryProcedure<{
+      input: Input;
+      output: R;
+      meta: AnyObj;
+    }>;
+  }
+
+  /**
    * Performs a `mutation` request using the DI injector. This means that this method
    * is not equivalent to `t.procedure.mutation()`. It also means that for this method to work correctly,
    * you must first provide a {@link ClassFactoryProvider } to DI in the following format:
