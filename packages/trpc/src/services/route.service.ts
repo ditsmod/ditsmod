@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { AnyFn, AnyObj, inject, injectable, Injector, ResolvedProvider } from '@ditsmod/core';
-import type { TRPCMutationProcedure, TRPCQueryProcedure } from '@trpc/server';
+import type { AnyMiddlewareFunction, TRPCMutationProcedure, TRPCQueryProcedure } from '@trpc/server';
 import { ParserWithInputOutput } from '@trpc/server/unstable-core-do-not-import';
 
 import { TRPC_ROOT, TrpcOpts } from '#types/constants.js';
@@ -10,10 +10,10 @@ import { TrpcRouteMeta } from '#types/trpc-route-data.js';
 @injectable()
 export class RouteService<Context extends AnyObj = AnyObj, Input = void> {
   get procedure() {
-    return this.#procedure.use(this.middlewarePerRou() as any);
+    return this.#procedure.use(this.middlewarePerRou());
   }
-  protected middlewarePerRou: AnyFn<any, (opts: TrpcOpts) => Promise<any>>;
-  protected handlerPerReq: <R>(opts: TrpcOpts) => Promise<R>;
+  protected middlewarePerRou: () => AnyMiddlewareFunction;
+  protected handlerPerReq: (opts: TrpcOpts<any, any>) => any;
   protected resolvedPerReq: ResolvedProvider[];
   protected routeMeta: TrpcRouteMeta;
   #procedure: TrpcRootObject<Context>['procedure'];
@@ -27,7 +27,7 @@ export class RouteService<Context extends AnyObj = AnyObj, Input = void> {
 
   query<R>(fn: AnyFn<any, R>) {
     const query = this.getHandler<R>(fn);
-    return this.#procedure.query(query as any) as TRPCQueryProcedure<{
+    return this.#procedure.query(query) as TRPCQueryProcedure<{
       input: void;
       output: R;
       meta: AnyObj;
@@ -39,7 +39,7 @@ export class RouteService<Context extends AnyObj = AnyObj, Input = void> {
    */
   mutation<R>(fn: AnyFn<any, R>) {
     const mutation = this.getHandler<R>(fn);
-    return this.#procedure.input(z.any()).mutation(mutation as any) as TRPCMutationProcedure<{
+    return this.#procedure.input(z.any()).mutation(mutation) as TRPCMutationProcedure<{
       input: Input;
       output: R;
       meta: AnyObj;
@@ -48,7 +48,7 @@ export class RouteService<Context extends AnyObj = AnyObj, Input = void> {
 
   inputAndMutation<Input, Output, R>(input: ParserWithInputOutput<Input, Output>, fn: AnyFn<any, R>) {
     const mutation = this.getHandler<R>(fn);
-    return this.#procedure.input(input).mutation(mutation as any) as TRPCMutationProcedure<{
+    return this.#procedure.input(input).mutation(mutation) as TRPCMutationProcedure<{
       input: Input;
       output: R;
       meta: AnyObj;
@@ -62,14 +62,14 @@ export class RouteService<Context extends AnyObj = AnyObj, Input = void> {
     }
 
     this.routeMeta.resolvedHandler = resolvedHandler;
-    return this.handlerPerReq<R>;
+    return this.handlerPerReq;
   }
 
   protected setHandlerPerReq(
     routeMeta: TrpcRouteMeta,
     resolvedPerReq: ResolvedProvider[],
-    middlewarePerRou: AnyFn<any, (opts: TrpcOpts) => Promise<any>>,
-    handlerPerReq: typeof this.handlerPerReq,
+    middlewarePerRou: () => AnyMiddlewareFunction,
+    handlerPerReq: (opts: TrpcOpts<any, any>) => any,
   ) {
     this.routeMeta = routeMeta;
     this.resolvedPerReq = resolvedPerReq;
@@ -85,8 +85,8 @@ export class PublicRouteService extends RouteService {
   override setHandlerPerReq(
     routeMeta: TrpcRouteMeta,
     resolvedPerReq: ResolvedProvider[],
-    middlewarePerRou: AnyFn<any, (opts: TrpcOpts) => Promise<any>>,
-    handlerPerReq: typeof this.handlerPerReq,
+    middlewarePerRou: () => AnyMiddlewareFunction,
+    handlerPerReq: (opts: TrpcOpts<any, any>) => any,
   ) {
     return super.setHandlerPerReq(routeMeta, resolvedPerReq, middlewarePerRou, handlerPerReq);
   }

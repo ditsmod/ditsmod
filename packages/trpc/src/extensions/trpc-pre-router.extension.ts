@@ -18,6 +18,8 @@ import {
   ClassFactoryProvider,
   getToken,
 } from '@ditsmod/core';
+import { inspect } from 'node:util';
+import type { AnyMiddlewareFunction } from '@trpc/server';
 
 import { trpcRoute } from '#decorators/trpc-route.js';
 import { MetadataPerMod3 } from '#types/types.js';
@@ -42,7 +44,6 @@ import { TRPC_OPTS, TrpcOpts } from '#types/constants.js';
 import { getResolvedGuards } from '#utils/prepere-guards.js';
 import { InterceptorWithGuardsPerRou } from '#interceptors/interceptor-with-guards-per-rou.js';
 import { isInterceptor } from '#types/type.guards.js';
-import { inspect } from 'node:util';
 
 export function isTrpcRoute<T>(decoratorAndValue?: DecoratorAndValue<T>): decoratorAndValue is DecoratorAndValue<T> {
   return (decoratorAndValue as DecoratorAndValue<T>)?.decorator === trpcRoute;
@@ -113,7 +114,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
     metadataPerMod3: MetadataPerMod3,
     injectorPerMod: Injector,
     controllerMetadata: ControllerMetadata,
-  ) {
+  ): AnyMiddlewareFunction {
     const { providersPerRou, routeMeta: baseRouteMeta } = controllerMetadata;
 
     const routeMeta = baseRouteMeta as typeof baseRouteMeta;
@@ -147,13 +148,13 @@ export class TrpcPreRouterExtension implements Extension<void> {
     const errorHandler = injectorPerRou.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
 
     if (this.hasInterceptors(mergedPerRou)) {
-      return async (opts: TrpcOpts) => {
+      return (async (opts) => {
         const result = await chainMaker.makeChain(opts).handle(); // First HTTP handler in the chain of HTTP interceptors.
         // .catch((err) => {
         //   return errorHandler.handleError(err, ctx);
         // })
         return opts.next(result);
-      };
+      }) as AnyMiddlewareFunction;
     } else {
       return this.handleWithoutInterceptors(errorHandler);
     }
@@ -171,7 +172,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
 
   protected handleWithoutInterceptors(errorHandler: HttpErrorHandler) {
     // const interceptor = new DefaultCtxHttpFrontend();
-    return async (opts: TrpcOpts) => {
+    return (async (opts) => {
       // try {
       //   interceptor.before(ctx).after(ctx, await routeHandler(ctx));
       // } catch (err: any) {
@@ -180,7 +181,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
       // const val = await routeHandler(opts);
       // const result = await interceptor.before(ctx).after(ctx, val);
       return opts.next();
-    };
+    }) as AnyMiddlewareFunction;
   }
 
   protected setHandlerPerReq(
@@ -217,7 +218,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
     const rawReqId = KeyRegistry.get(RAW_REQ).id;
     const rawResId = KeyRegistry.get(RAW_RES).id;
 
-    const handlerPerReq = async (opts: TrpcOpts) => {
+    const handlerPerReq = async (opts: TrpcOpts<any, any>) => {
       const rawReq: RawRequest = opts.ctx.req;
       const rawRes: RawResponse = opts.ctx.res;
       const injector = new Injector(RegistryPerReq, 'Req', injectorPerRou);

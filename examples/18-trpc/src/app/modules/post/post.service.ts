@@ -7,7 +7,7 @@ import { DbService } from '#db/db.service.js';
 @injectable()
 export class PostService {
   @factoryMethod()
-  createPost(@opts opts: TrpcOpts<InputPost>, db: DbService) {
+  createPost(@opts opts: TrpcOpts<any, InputPost>, db: DbService) {
     const post = {
       id: ++db.id,
       ...opts.input,
