@@ -1,7 +1,12 @@
 import { z } from 'zod';
 import { AnyObj, inject, injectable, Injector, ResolvedProvider, ClassFactoryProvider } from '@ditsmod/core';
-import type { AnyMiddlewareFunction, TRPCMutationProcedure, TRPCQueryProcedure } from '@trpc/server';
-import { ParserWithInputOutput } from '@trpc/server/unstable-core-do-not-import';
+import type {
+  AnyMiddlewareFunction,
+  TRPCMutationProcedure,
+  TRPCQueryProcedure,
+  TRPCProcedureBuilder,
+} from '@trpc/server';
+import { ParserWithInputOutput, UnsetMarker } from '@trpc/server/unstable-core-do-not-import';
 
 import { TRPC_ROOT } from '#types/constants.js';
 import { TrpcOpts } from '#types/types.js';
@@ -10,8 +15,17 @@ import { TrpcRouteMeta } from '#types/trpc-route-data.js';
 
 @injectable()
 export class RouteService<Context extends AnyObj = AnyObj, Input = void> {
-  get procedure(): TrpcRootObject<Context>['procedure'] {
-    return this.#procedure.use(this.middlewarePerRou());
+  get procedure() {
+    return this.#procedure.use(this.middlewarePerRou()) as TRPCProcedureBuilder<
+      Context,
+      object,
+      object,
+      UnsetMarker,
+      Input extends void ? UnsetMarker : Input,
+      UnsetMarker,
+      UnsetMarker,
+      false
+    >;
   }
   protected middlewarePerRou: () => AnyMiddlewareFunction;
   protected handlerPerReq: (opts: TrpcOpts) => any;
@@ -92,7 +106,10 @@ export class RouteService<Context extends AnyObj = AnyObj, Input = void> {
    * 
    * @param methodAsToken Class method as a DI token in the format `ClassName.prototype.methodName`.
    */
-  diInputAndMutation<Input, Output, R>(input: ParserWithInputOutput<Input, Output>, methodAsToken: (...args: any[]) => R) {
+  diInputAndMutation<Input, Output, R>(
+    input: ParserWithInputOutput<Input, Output>,
+    methodAsToken: (...args: any[]) => R,
+  ) {
     const mutation = this.getHandler<R>(methodAsToken);
     return this.#procedure.input(input).mutation(mutation) as TRPCMutationProcedure<{
       input: Input;
