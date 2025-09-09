@@ -2,7 +2,7 @@ import { injectable, Logger, isCustomError, Status, CustomError } from '@ditsmod
 import { randomUUID } from 'node:crypto';
 
 import { HttpErrorHandler } from './http-error-handler.js';
-import { TrpcOpts } from '#types/constants.js';
+import { TrpcOpts } from '#types/types.js';
 
 @injectable()
 export class DefaultHttpErrorHandler implements HttpErrorHandler {

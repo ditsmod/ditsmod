@@ -3,7 +3,8 @@ import { AnyFn, AnyObj, inject, injectable, Injector, ResolvedProvider } from '@
 import type { AnyMiddlewareFunction, TRPCMutationProcedure, TRPCQueryProcedure } from '@trpc/server';
 import { ParserWithInputOutput } from '@trpc/server/unstable-core-do-not-import';
 
-import { TRPC_ROOT, TrpcOpts } from '#types/constants.js';
+import { TRPC_ROOT } from '#types/constants.js';
+import { TrpcOpts } from '#types/types.js';
 import { TrpcRootObject } from '#types/types.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';
 

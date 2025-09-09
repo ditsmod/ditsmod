@@ -122,3 +122,16 @@ export const RAW_REQ = new InjectionToken<RawRequest>('RAW_REQ');
  * DI token for native webserver response.
  */
 export const RAW_RES = new InjectionToken<RawResponse>('RAW_RES');
+
+export interface TrpcOpts<Context extends AnyObj = AnyObj, Input = void> {
+  ctx: { req: RawRequest; res: RawResponse } & Context;
+  input: Input;
+  /**
+   * The path of the procedure.
+   */
+  path: string;
+  /**
+   * The AbortSignal of the request.
+   */
+  signal: AbortSignal | undefined;
+}

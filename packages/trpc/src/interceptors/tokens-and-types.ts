@@ -1,4 +1,4 @@
-import { TrpcOpts } from '#types/constants.js';
+import { TrpcOpts } from '#types/types.js';
 
 /**
  * `HttpHandler` is injectable. When injected, the handler instance dispatches requests to the

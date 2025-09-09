@@ -8,7 +8,7 @@ import {
   CtxHttpBackend,
 } from './tokens-and-types.js';
 import { HTTP_INTERCEPTORS } from '#types/types.js';
-import { TrpcOpts } from '#types/constants.js';
+import { TrpcOpts } from '#types/types.js';
 
 class PreHttpBackend implements HttpBackend {
   constructor(

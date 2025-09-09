@@ -6,7 +6,7 @@ export { opts } from '#decorators/opts.js';
 export { controller } from '#decorators/controller.js';
 export { RouteService } from '#services/route.service.js';
 export { initTrpcModule } from '#decorators/trpc-init-hooks-and-metadata.js';
-export { TRPC_ROOT, TRPC_ROUTER_OPTS, TRPC_OPTS, TrpcOpts } from '#types/constants.js';
+export { TRPC_ROOT, TRPC_ROUTER_OPTS, TRPC_OPTS } from '#types/constants.js';
 export { PreRouter } from '#services/pre-router.js';
 export { TrpcAppInitializer } from '#init/trpc-app-initializer.js';
 export { TrpcApplication } from '#init/trpc-application.js';
@@ -24,5 +24,6 @@ export {
   ModuleWithTrpcRoutes,
   SetAppRouterOptions,
   TrpcCreateOptions,
+  TrpcOpts,
 } from '#types/types.js';
 export { HttpInterceptor, HttpHandler } from '#interceptors/tokens-and-types.js';

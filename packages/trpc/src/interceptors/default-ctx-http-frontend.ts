@@ -1,7 +1,7 @@
 import { CustomError, injectable, Status } from '@ditsmod/core';
 
 import { HttpFrontend, HttpHandler } from './tokens-and-types.js';
-import { TrpcOpts } from '#types/constants.js';
+import { TrpcOpts } from '#types/types.js';
 
 @injectable()
 export class DefaultCtxHttpFrontend implements HttpFrontend {

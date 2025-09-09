@@ -5,7 +5,7 @@ import { HttpHandler, HttpInterceptor } from './tokens-and-types.js';
 import { applyResponse } from '#utils/apply-web-response.js';
 import { CanActivate } from './trpc-guard.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';
-import { TrpcOpts } from '#types/constants.js';
+import { TrpcOpts } from '#types/types.js';
 
 @injectable()
 export class InterceptorWithGuardsPerRou implements IInterceptorWithGuardsPerRou {
