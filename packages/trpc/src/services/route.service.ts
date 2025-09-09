@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { AnyFn, AnyObj, inject, injectable, Injector, ResolvedProvider } from '@ditsmod/core';
+import { AnyObj, inject, injectable, Injector, ResolvedProvider, ClassFactoryProvider } from '@ditsmod/core';
 import type { AnyMiddlewareFunction, TRPCMutationProcedure, TRPCQueryProcedure } from '@trpc/server';
 import { ParserWithInputOutput } from '@trpc/server/unstable-core-do-not-import';
 
@@ -26,8 +26,24 @@ export class RouteService<Context extends AnyObj = AnyObj, Input = void> {
     this.#procedure = t.procedure;
   }
 
-  query<R>(fn: AnyFn<any, R>) {
-    const query = this.getHandler<R>(fn);
+  /**
+   * Performs a `query` request using the DI injector. This means that this method
+   * is not equivalent to `t.procedure.query()`. It also means that for this method to work correctly,
+   * you must first provide a {@link ClassFactoryProvider } to DI in the following format:
+   * 
+```ts
+{ useFactory: [YourService, YourService.prototype.methodName] }
+```
+   *
+   * Then you can use its token in this method: `routeService.diQuery(YourService.prototype.methodName)`.
+   * In this case, DI will create an instance of `YourService` and execute the specified method on each request.
+   * 
+   * @see [Example on github](https://github.com/ditsmod/ditsmod/blob/main/examples/18-trpc/src/app/modules/post/post.controller.ts)
+   * 
+   * @param methodAsToken Class method as a DI token in the format `ClassName.prototype.methodName`.
+   */
+  diQuery<R>(methodAsToken: (...args: any[]) => R) {
+    const query = this.getHandler<R>(methodAsToken);
     return this.#procedure.query(query) as TRPCQueryProcedure<{
       input: Input;
       output: R;
@@ -36,10 +52,23 @@ export class RouteService<Context extends AnyObj = AnyObj, Input = void> {
   }
 
   /**
-   * @todo Implement a method so that `input()` occurs based on decorator metadata.
+   * Performs a `mutation` request using the DI injector. This means that this method
+   * is not equivalent to `t.procedure.mutation()`. It also means that for this method to work correctly,
+   * you must first provide a {@link ClassFactoryProvider } to DI in the following format:
+   * 
+```ts
+{ useFactory: [YourService, YourService.prototype.methodName] }
+```
+   *
+   * Then you can use its token in this method: `routeService.diMutation(YourService.prototype.methodName)`.
+   * In this case, DI will create an instance of `YourService` and execute the specified method on each request.
+   * 
+   * @see [Example on github](https://github.com/ditsmod/ditsmod/blob/main/examples/18-trpc/src/app/modules/post/post.controller.ts)
+   * 
+   * @param methodAsToken Class method as a DI token in the format `ClassName.prototype.methodName`.
    */
-  mutation<R>(fn: AnyFn<any, R>) {
-    const mutation = this.getHandler<R>(fn);
+  diMutation<R>(methodAsToken: (...args: any[]) => R) {
+    const mutation = this.getHandler<R>(methodAsToken);
     return this.#procedure.input(z.any()).mutation(mutation) as TRPCMutationProcedure<{
       input: Input;
       output: R;
@@ -47,8 +76,24 @@ export class RouteService<Context extends AnyObj = AnyObj, Input = void> {
     }>;
   }
 
-  inputAndMutation<Input, Output, R>(input: ParserWithInputOutput<Input, Output>, fn: AnyFn<any, R>) {
-    const mutation = this.getHandler<R>(fn);
+  /**
+   * Performs a `mutation` request using the DI injector. This means that this method
+   * is not equivalent to `t.procedure.mutation()`. It also means that for this method to work correctly,
+   * you must first provide a {@link ClassFactoryProvider } to DI in the following format:
+   * 
+```ts
+{ useFactory: [YourService, YourService.prototype.methodName] }
+```
+   *
+   * Then you can use its token in this method: `routeService.diInputAndMutation(z.any(), YourService.prototype.methodName)`.
+   * In this case, DI will create an instance of `YourService` and execute the specified method on each request.
+   * 
+   * @see [Example on github](https://github.com/ditsmod/ditsmod/blob/main/examples/18-trpc/src/app/modules/post/post.controller.ts)
+   * 
+   * @param methodAsToken Class method as a DI token in the format `ClassName.prototype.methodName`.
+   */
+  diInputAndMutation<Input, Output, R>(input: ParserWithInputOutput<Input, Output>, methodAsToken: (...args: any[]) => R) {
+    const mutation = this.getHandler<R>(methodAsToken);
     return this.#procedure.input(input).mutation(mutation) as TRPCMutationProcedure<{
       input: Input;
       output: R;
@@ -56,7 +101,7 @@ export class RouteService<Context extends AnyObj = AnyObj, Input = void> {
     }>;
   }
 
-  protected getHandler<R>(fn: AnyFn<any, R>) {
+  protected getHandler<R>(fn: (...args: any[]) => R) {
     const resolvedHandler = this.resolvedPerReq.find((rp) => rp.dualKey.token === fn);
     if (!resolvedHandler) {
       throw new Error(`${fn.name} not found in "providersPerReq" array`);

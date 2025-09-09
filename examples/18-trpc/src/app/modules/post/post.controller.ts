@@ -11,16 +11,16 @@ import { Guard, MyHttpInterceptor } from '#post/post.interceptors.js';
 export class PostController {
   @trpcRoute([Guard], [MyHttpInterceptor])
   listPosts(routeService: RouteService) {
-    return routeService.query(PostService.prototype.listPosts);
+    return routeService.diQuery(PostService.prototype.listPosts);
   }
 
   @trpcRoute()
   createPost(routeService: RouteService<any, { title: string }>) {
-    return routeService.mutation(PostService.prototype.createPost);
+    return routeService.diMutation(PostService.prototype.createPost);
   }
 
   @trpcRoute()
   alternativeCreatePost(routeService: RouteService) {
-    return routeService.inputAndMutation(z.object({ title: z.string() }), PostService.prototype.createPost);
+    return routeService.diInputAndMutation(z.object({ title: z.string() }), PostService.prototype.createPost);
   }
 }
