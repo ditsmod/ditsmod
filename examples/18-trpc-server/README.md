@@ -10,15 +10,15 @@ yarn install
 
 ## tRPC
 
-Start from first terminal:
-
 ```bash
-cd examples/18*
+cd examples/18-trpc-server
 yarn dev:server
 ```
 
 From second terminal:
 
 ```bash
+cd examples/18-trpc-client
+yarn build
 yarn dev:client
 ```
