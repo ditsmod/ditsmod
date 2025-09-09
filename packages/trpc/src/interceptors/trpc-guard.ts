@@ -3,7 +3,7 @@ import { TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { TrpcOpts } from '#types/types.js';
 
 export interface CanActivate {
-  canActivate(opts: TrpcOpts, params?: any[]): boolean | Response | Promise<boolean | Response>;
+  canActivate(opts: TrpcOpts, params?: any[]): boolean | Promise<boolean>;
 }
 
 export type GuardItem = Class<CanActivate> | [Class<CanActivate>, any, ...any[]];

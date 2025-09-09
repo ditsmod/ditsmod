@@ -1,5 +1,6 @@
 export { CanActivate } from '#interceptors/trpc-guard.js';
-export { isModuleWithTrpcRoutes } from './utils/type.guards.js';
+export { isModuleWithTrpcRoutes } from '#utils/type.guards.js';
+export { createHelperForGuardWithParams, HelperForGuardWithParams } from '#utils/create-helper-for-guards-with-params.js';
 export { trpcRoute } from '#decorators/trpc-route.js';
 export { trpcGuard } from '#decorators/trpc-guard.js';
 export { opts } from '#decorators/opts.js';
