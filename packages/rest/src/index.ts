@@ -60,7 +60,7 @@ export {
 export { applyResponse, applyHeaders } from './utils/apply-web-response.js';
 export { Req, RawRequest, RawResponse, RequestListener } from './services/request.js';
 export { Res } from './services/response.js';
-export { createHelperForGuardWithParams } from './utils/create-helper-for-guards-with-params.js';
+export { createHelperForGuardWithParams, HelperForGuardWithParams } from './utils/create-helper-for-guards-with-params.js';
 export { controller, ControllerRawMetadata, ControllerRawMetadata1, ControllerRawMetadata2 } from './types/controller.js';
 export { defaultProvidersPerReq } from './providers/default-providers-per-req.js';
 export { HttpErrorHandler } from './services/http-error-handler.js';

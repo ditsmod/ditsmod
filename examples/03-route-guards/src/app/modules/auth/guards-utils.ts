@@ -1,4 +1,3 @@
-import '@ditsmod/core'; // @todo Why whitout this, throw the error: This is likely not portable. A type annotation is necessary.
 import { createHelperForGuardWithParams } from '@ditsmod/rest';
 
 import { PermissionsGuard } from './permissions.guard.js';

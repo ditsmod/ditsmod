@@ -31,8 +31,12 @@ export class SomeController {
 }
 ```
  */
-export function createHelperForGuardWithParams<T>(Guard: Class<CanActivate>) {
+export function createHelperForGuardWithParams<T>(Guard: Class<CanActivate>): HelperForGuardWithParams<T> {
   return function requireArgs(...args: [T, ...T[]]): [Class<CanActivate>, T, ...T[]] {
     return [Guard, ...args];
   };
+}
+
+export interface HelperForGuardWithParams<T> {
+  (...args: [T, ...T[]]): [Class<CanActivate>, T, ...T[]];
 }
