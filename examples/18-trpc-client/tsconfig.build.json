@@ -9,7 +9,6 @@
   "include": ["src"],
   "exclude": ["src/**/*.spec.ts"],
   "references": [
-    { "path": "../../packages/core/tsconfig.build.json" },
-    { "path": "../../packages/trpc/tsconfig.build.json" },
+    { "path": "../18-trpc-server/tsconfig.build.json" },
   ]
 }

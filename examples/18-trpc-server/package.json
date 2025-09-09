@@ -1,5 +1,5 @@
 {
-  "name": "example18",
+  "name": "18-trpc-server",
   "type": "module",
   "version": "1.0.0",
   "license": "MIT",
@@ -15,6 +15,15 @@
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",
     "build-test": "tsc -b tsconfig.e2e.json",
     "build": "tsc -b tsconfig.build.json"
+  },
+  "exports": {
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
   },
   "imports": {
     "#app/*": "./dist/app/*",

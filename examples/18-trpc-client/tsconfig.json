@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "baseUrl": "./",
+    "tsBuildInfoFile": "dist/ts.tsbuildinfo",
+  },
+  "include": ["src", "e2e"],
+  "references": [
+    { "path": "../18-trpc-server/tsconfig.build.json" },
+  ]
+}
