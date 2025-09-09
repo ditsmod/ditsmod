@@ -33,18 +33,18 @@ const trpc = createTRPCClient<AnyTRPCRouter>({
 const messageClient = trpc as TRPCClient<MessageRouter>;
 
 // parallel queries
-await Promise.all([
+const hello = await Promise.all([
   //
   messageClient.hello.query(),
   messageClient.hello.query('client'),
 ]);
-await messageClient.message.addMessage.mutate('one more message!');
-await messageClient.message.listMessages.query();
+const message = await messageClient.message.addMessage.mutate('one more message!');
+const messagesList = await messageClient.message.listMessages.query();
 
 const postClient = trpc as TRPCClient<PostRouter>;
-await postClient.post.createPost.mutate({ title: 'hello client' });
-await postClient.post.listPosts.query();
-await postClient.post.comments.listComments.query();
+const post = await postClient.post.createPost.mutate({ title: 'hello client' });
+const postList = await postClient.post.listPosts.query();
+const commentsList = await postClient.post.comments.listComments.query();
 const authedClient = createTRPCClient<AnyTRPCRouter>({
   links: [
     // loggerLink(),
@@ -56,5 +56,5 @@ const authedClient = createTRPCClient<AnyTRPCRouter>({
 });
 
 const authClient = authedClient as TRPCClient<AuthRouter>;
-await authClient.admin.secret.query();
+const authInfo = await authClient.admin.secret.query();
 console.log('👌 should be a clean exit if everything is working right');
