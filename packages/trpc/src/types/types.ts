@@ -44,7 +44,9 @@ export type TrpcCreateCtxOpts = NodeHTTPCreateContextFnOptions<NodeHTTPRequest, 
 export type RawRequest = http.IncomingMessage | Http2ServerRequest;
 export type RawResponse = http.ServerResponse | Http2ServerResponse;
 export type RequestListener = (request: RawRequest, response: RawResponse) => void | Promise<void>;
-export type TrpcRootObject<T extends AnyObj> = ReturnType<ReturnType<typeof initTRPC.context<T>>['create']>;
+export type TrpcRootObject<T extends AnyObj> = ReturnType<
+  ReturnType<typeof initTRPC.context<TrpcOpts['ctx'] & T>>['create']
+>;
 export type SetAppRouterOptions = Override<TrpcRouterOpts, { router?: never; createContext?: never }>;
 export type RouterOptions = Parameters<typeof t.router>[0];
 export interface TrpcRootModule {
@@ -123,7 +125,7 @@ export const RAW_REQ = new InjectionToken<RawRequest>('RAW_REQ');
  */
 export const RAW_RES = new InjectionToken<RawResponse>('RAW_RES');
 
-export interface TrpcOpts<Context extends AnyObj = AnyObj, Input = void> {
+export interface TrpcOpts<Context extends AnyObj = AnyObj, Input = unknown> {
   ctx: { req: RawRequest; res: RawResponse } & Context;
   input: Input;
   /**

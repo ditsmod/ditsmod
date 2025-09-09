@@ -10,11 +10,11 @@ import { TrpcRouteMeta } from '#types/trpc-route-data.js';
 
 @injectable()
 export class RouteService<Context extends AnyObj = AnyObj, Input = void> {
-  get procedure() {
+  get procedure(): TrpcRootObject<Context>['procedure'] {
     return this.#procedure.use(this.middlewarePerRou());
   }
   protected middlewarePerRou: () => AnyMiddlewareFunction;
-  protected handlerPerReq: (opts: TrpcOpts<any, any>) => any;
+  protected handlerPerReq: (opts: TrpcOpts) => any;
   protected resolvedPerReq: ResolvedProvider[];
   protected routeMeta: TrpcRouteMeta;
   #procedure: TrpcRootObject<Context>['procedure'];
@@ -29,7 +29,7 @@ export class RouteService<Context extends AnyObj = AnyObj, Input = void> {
   query<R>(fn: AnyFn<any, R>) {
     const query = this.getHandler<R>(fn);
     return this.#procedure.query(query) as TRPCQueryProcedure<{
-      input: void;
+      input: Input;
       output: R;
       meta: AnyObj;
     }>;
@@ -70,7 +70,7 @@ export class RouteService<Context extends AnyObj = AnyObj, Input = void> {
     routeMeta: TrpcRouteMeta,
     resolvedPerReq: ResolvedProvider[],
     middlewarePerRou: () => AnyMiddlewareFunction,
-    handlerPerReq: (opts: TrpcOpts<any, any>) => any,
+    handlerPerReq: (opts: TrpcOpts) => any,
   ) {
     this.routeMeta = routeMeta;
     this.resolvedPerReq = resolvedPerReq;
@@ -87,7 +87,7 @@ export class PublicRouteService extends RouteService {
     routeMeta: TrpcRouteMeta,
     resolvedPerReq: ResolvedProvider[],
     middlewarePerRou: () => AnyMiddlewareFunction,
-    handlerPerReq: (opts: TrpcOpts<any, any>) => any,
+    handlerPerReq: (opts: TrpcOpts) => any,
   ) {
     return super.setHandlerPerReq(routeMeta, resolvedPerReq, middlewarePerRou, handlerPerReq);
   }
