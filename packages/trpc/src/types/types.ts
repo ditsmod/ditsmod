@@ -57,7 +57,7 @@ export interface TrpcRootModule {
   /**
    * For the root application module (AppModule), this method is automatically invoked by `@ditsmod/trpc`.
    */
-  setAppRouter(): SetAppRouterOptions;
+  setAppRouterOptions(): SetAppRouterOptions;
 }
 
 export interface ModuleWithTrpcRoutes<Config extends AnyObj = AnyObj> {

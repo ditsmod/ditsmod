@@ -40,7 +40,7 @@ export class TrpcInternalService {
     const injectorPerMod = this.moduleManager.getInjectorPerMod('root', true);
     const injectorPerApp = injectorPerMod.parent!;
     const mod = injectorPerMod.get(baseMeta.modRefId) as Partial<TrpcRootModule>;
-    const routerOpts = mod.setAppRouter?.() || {};
+    const routerOpts = mod.setAppRouterOptions?.() || {};
     (routerOpts as unknown as TrpcRouterOpts).router = this.t.mergeRouters(...this.getRouters());
     (routerOpts as unknown as TrpcRouterOpts).createContext = (opts) => opts;
     injectorPerApp.setByToken(TRPC_ROUTER_OPTS, routerOpts);

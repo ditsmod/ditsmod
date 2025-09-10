@@ -79,7 +79,7 @@ export class AppModule implements TrpcRootModule {
     };
   }
 
-  setAppRouter(): SetAppRouterOptions {
+  setAppRouterOptions(): SetAppRouterOptions {
     return {
       basePath: '/trpc/',
     };
@@ -89,7 +89,7 @@ export class AppModule implements TrpcRootModule {
 
 Note that in `AppRouterHelper`, not just an array of imported modules is passed, but the array is also marked with `as const` — this is an important condition without which `AppRouterHelper` will not work correctly.
 
-Also note the `TrpcRootModule` interface, which requires mandatory implementation of the `setAppRouter()` method, and optionally you can implement `setTrpcCreateOptions()`. When your `setAppRouter()` method returns a router config, you cannot pass the `createContext` option, because Ditsmod automatically creates the context as an object `{ req, res }` to guarantee availability of these variables in the context. Of course, in procedures you can add any other context properties.
+Also note the `TrpcRootModule` interface, which requires mandatory implementation of the `setAppRouterOptions()` method, and optionally you can implement `setTrpcCreateOptions()`. When your `setAppRouterOptions()` method returns a router config, you cannot pass the `createContext` option, because Ditsmod automatically creates the context as an object `{ req, res }` to guarantee availability of these variables in the context. Of course, in procedures you can add any other context properties.
 
 ## How client types are formed at the controller level
 
