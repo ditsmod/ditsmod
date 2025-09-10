@@ -692,9 +692,9 @@ __metadata:
     typescript: "npm:^5.9.2"
     vitest: "npm:^3.2.4"
   peerDependencies:
-    "@ditsmod/body-parser": ^3.0.3-alpha.4
-    "@ditsmod/core": ^3.0.3-alpha.4
-    "@ditsmod/rest": ^3.0.3-alpha.4
+    "@ditsmod/body-parser": ^3.0.4-alpha.4
+    "@ditsmod/core": ^3.0.4-alpha.4
+    "@ditsmod/rest": ^3.0.4-alpha.4
   languageName: unknown
   linkType: soft
 
@@ -708,8 +708,8 @@ __metadata:
     npm-run-all: "npm:^4.1.5"
     typescript: "npm:^5.9.2"
   peerDependencies:
-    "@ditsmod/core": ^3.0.3-alpha.4
-    "@ditsmod/rest": ^3.0.3-alpha.4
+    "@ditsmod/core": ^3.0.4-alpha.4
+    "@ditsmod/rest": ^3.0.4-alpha.4
   languageName: unknown
   linkType: soft
 
@@ -736,8 +736,8 @@ __metadata:
     npm-run-all: "npm:^4.1.5"
     typescript: "npm:^5.9.2"
   peerDependencies:
-    "@ditsmod/core": ^3.0.3-alpha.4
-    "@ditsmod/rest": ^3.0.3-alpha.4
+    "@ditsmod/core": ^3.0.4-alpha.4
+    "@ditsmod/rest": ^3.0.4-alpha.4
   languageName: unknown
   linkType: soft
 
@@ -749,8 +749,8 @@ __metadata:
     npm-run-all: "npm:^4.1.5"
     typescript: "npm:^5.9.2"
   peerDependencies:
-    "@ditsmod/core": ^3.0.3-alpha.4
-    "@ditsmod/rest": ^3.0.3-alpha.4
+    "@ditsmod/core": ^3.0.4-alpha.4
+    "@ditsmod/rest": ^3.0.4-alpha.4
   languageName: unknown
   linkType: soft
 
@@ -763,7 +763,7 @@ __metadata:
     npm-run-all: "npm:^4.1.5"
     typescript: "npm:^5.9.2"
   peerDependencies:
-    "@ditsmod/core": ^3.0.3-alpha.4
+    "@ditsmod/core": ^3.0.4-alpha.4
   languageName: unknown
   linkType: soft
 
@@ -777,10 +777,10 @@ __metadata:
     npm-run-all: "npm:^4.1.5"
     typescript: "npm:^5.9.2"
   peerDependencies:
-    "@ditsmod/core": ^3.0.3-alpha.4
-    "@ditsmod/i18n": ^3.0.3-alpha.4
-    "@ditsmod/openapi": ^3.0.3-alpha.4
-    "@ditsmod/rest": ^3.0.3-alpha.4
+    "@ditsmod/core": ^3.0.4-alpha.4
+    "@ditsmod/i18n": ^3.0.4-alpha.4
+    "@ditsmod/openapi": ^3.0.4-alpha.4
+    "@ditsmod/rest": ^3.0.4-alpha.4
   languageName: unknown
   linkType: soft
 
@@ -802,8 +802,8 @@ __metadata:
     yaml: "npm:^2.8.1"
     yaml-loader: "npm:^0.8.1"
   peerDependencies:
-    "@ditsmod/core": ^3.0.3-alpha.4
-    "@ditsmod/rest": ^3.0.3-alpha.4
+    "@ditsmod/core": ^3.0.4-alpha.4
+    "@ditsmod/rest": ^3.0.4-alpha.4
   languageName: unknown
   linkType: soft
 
@@ -815,8 +815,8 @@ __metadata:
     npm-run-all: "npm:^4.1.5"
     typescript: "npm:^5.9.2"
   peerDependencies:
-    "@ditsmod/core": ^3.0.3-alpha.4
-    "@ditsmod/rest": ^3.0.3-alpha.4
+    "@ditsmod/core": ^3.0.4-alpha.4
+    "@ditsmod/rest": ^3.0.4-alpha.4
   languageName: unknown
   linkType: soft
 
@@ -828,9 +828,9 @@ __metadata:
     npm-run-all: "npm:^4.1.5"
     typescript: "npm:^5.9.2"
   peerDependencies:
-    "@ditsmod/core": ^3.0.3-alpha.4
-    "@ditsmod/rest": ^3.0.3-alpha.4
-    "@ditsmod/testing": ^3.0.3-alpha.4
+    "@ditsmod/core": ^3.0.4-alpha.4
+    "@ditsmod/rest": ^3.0.4-alpha.4
+    "@ditsmod/testing": ^3.0.4-alpha.4
   languageName: unknown
   linkType: soft
 
@@ -845,7 +845,7 @@ __metadata:
     trek-router: "npm:^1.2.0"
     typescript: "npm:^5.9.2"
   peerDependencies:
-    "@ditsmod/core": ^3.0.3-alpha.4
+    "@ditsmod/core": ^3.0.4-alpha.4
   languageName: unknown
   linkType: soft
 
@@ -858,8 +858,8 @@ __metadata:
     npm-run-all: "npm:^4.1.5"
     typescript: "npm:^5.9.2"
   peerDependencies:
-    "@ditsmod/core": ^3.0.3-alpha.4
-    "@ditsmod/rest": ^3.0.3-alpha.4
+    "@ditsmod/core": ^3.0.4-alpha.4
+    "@ditsmod/rest": ^3.0.4-alpha.4
   languageName: unknown
   linkType: soft
 
@@ -871,8 +871,8 @@ __metadata:
     npm-run-all: "npm:^4.1.5"
     typescript: "npm:^5.9.2"
   peerDependencies:
-    "@ditsmod/core": ^3.0.3-alpha.4
-    "@ditsmod/rest": ^3.0.3-alpha.4
+    "@ditsmod/core": ^3.0.4-alpha.4
+    "@ditsmod/rest": ^3.0.4-alpha.4
   languageName: unknown
   linkType: soft
 
@@ -884,8 +884,8 @@ __metadata:
     npm-run-all: "npm:^4.1.5"
     typescript: "npm:^5.9.2"
   peerDependencies:
-    "@ditsmod/core": ^3.0.3-alpha.4
-    "@ditsmod/rest": ^3.0.3-alpha.4
+    "@ditsmod/core": ^3.0.4-alpha.4
+    "@ditsmod/rest": ^3.0.4-alpha.4
   languageName: unknown
   linkType: soft
 
@@ -897,7 +897,7 @@ __metadata:
     npm-run-all: "npm:^4.1.5"
     typescript: "npm:^5.9.2"
   peerDependencies:
-    "@ditsmod/core": ^3.0.3-alpha.4
+    "@ditsmod/core": ^3.0.4-alpha.4
     "@trpc/server": ^11.5.0
   languageName: unknown
   linkType: soft
@@ -910,8 +910,8 @@ __metadata:
     npm-run-all: "npm:^4.1.5"
     typescript: "npm:^5.9.2"
   peerDependencies:
-    "@ditsmod/core": ^3.0.3-alpha.4
-    "@ditsmod/rest": ^3.0.3-alpha.4
+    "@ditsmod/core": ^3.0.4-alpha.4
+    "@ditsmod/rest": ^3.0.4-alpha.4
   languageName: unknown
   linkType: soft
 
@@ -7749,7 +7749,7 @@ __metadata:
     typescript: "npm:^5.9.2"
   peerDependencies:
     "@apollo/server": ^5.0.0
-    "@ditsmod/core": ^3.0.3-alpha.4
+    "@ditsmod/core": ^3.0.4-alpha.4
     graphql: ^16.11.0
   languageName: unknown
   linkType: soft
@@ -15066,7 +15066,7 @@ __metadata:
     npm-run-all: "npm:^4.1.5"
     typescript: "npm:^5.9.2"
   peerDependencies:
-    "@ditsmod/core": ^3.0.3-alpha.4
+    "@ditsmod/core": ^3.0.4-alpha.4
   languageName: unknown
   linkType: soft
 
