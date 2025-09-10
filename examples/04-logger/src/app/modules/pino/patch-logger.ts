@@ -15,7 +15,7 @@ export class PatchLogger {
     @optional() config: LoggerConfig = new LoggerConfig(),
     @optional() appOptions: BaseAppOptions = new BaseAppOptions(),
   ) {
-    const logger = pino.default({ customLevels: { off: 100, all: 0 } });
+    const logger = pino({ customLevels: { off: 100, all: 0 } });
     logger.level = appOptions.logLevel || config.level || 'info';
 
     // Logger must have `log` method.
