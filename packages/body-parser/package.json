@@ -32,8 +32,8 @@
     "@ts-stack/multer": "^1.0.0"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^3.0.3-alpha.4",
-    "@ditsmod/rest": "^3.0.3-alpha.4"
+    "@ditsmod/core": "^3.0.4-alpha.4",
+    "@ditsmod/rest": "^3.0.4-alpha.4"
   },
   "devDependencies": {
     "jest": "^30.1.3",
