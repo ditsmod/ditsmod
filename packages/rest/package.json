@@ -64,7 +64,7 @@
     "typescript": "^5.9.2"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^3.0.2-alpha.4"
+    "@ditsmod/core": "^3.0.3-alpha.4"
   },
   "gitHead": "eaf8f20b4e75e38c7a51fd1c3174b691cea756fa",
   "publishConfig": {

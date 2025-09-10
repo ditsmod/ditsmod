@@ -32,8 +32,8 @@
   "author": "",
   "license": "MIT",
   "peerDependencies": {
-    "@ditsmod/core": "^3.0.2-alpha.4",
-    "@ditsmod/rest": "^3.0.2-alpha.4"
+    "@ditsmod/core": "^3.0.3-alpha.4",
+    "@ditsmod/rest": "^3.0.3-alpha.4"
   },
   "publishConfig": {
     "access": "public"
