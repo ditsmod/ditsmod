@@ -53,9 +53,9 @@
     "@auth/core": "^0.40.0"
   },
   "peerDependencies": {
-    "@ditsmod/body-parser": "^3.0.4-alpha.4",
-    "@ditsmod/core": "^3.0.4-alpha.4",
-    "@ditsmod/rest": "^3.0.4-alpha.4"
+    "@ditsmod/body-parser": "^3.0.0-alpha.5",
+    "@ditsmod/core": "^3.0.0-alpha.5",
+    "@ditsmod/rest": "^3.0.0-alpha.5"
   },
   "publishConfig": {
     "access": "public"

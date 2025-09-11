@@ -30,9 +30,9 @@
   "author": "",
   "license": "MIT",
   "peerDependencies": {
-    "@ditsmod/core": "^3.0.4-alpha.4",
-    "@ditsmod/rest": "^3.0.4-alpha.4",
-    "@ditsmod/testing": "^3.0.4-alpha.4"
+    "@ditsmod/core": "^3.0.0-alpha.5",
+    "@ditsmod/rest": "^3.0.0-alpha.5",
+    "@ditsmod/testing": "^3.0.0-alpha.5"
   },
   "publishConfig": {
     "access": "public"
