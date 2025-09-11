@@ -9,12 +9,12 @@ export class TrpcRouteMeta {
   Controller: Class;
   methodName: string | symbol;
   /**
-   * A resolved provider that is assigned to call a method of a trpcController that is bound to a specific route.
+   * A resolved provider that is assigned to call a method of a controller that is bound to a specific route.
    */
   resolvedHandler?: ResolvedProvider;
   /**
    * An array of DI tokens used to look up `TrpcCanActivate()` handlers,
-   * in order to determine if the current user is allowed to activate the trpcController.
+   * in order to determine if the current user is allowed to activate the controller.
    * By default, any user can activate.
    */
   resolvedGuards?: ResolvedGuard[];
