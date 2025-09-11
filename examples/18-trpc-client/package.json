@@ -4,9 +4,11 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "run-p watch dev:client --print-label",
+    "start": "run-p dev:server dev:client --print-label",
     "start:dev": "run-p watch dev:client --print-label",
-    "dev:client": "yarn wait-port 2021 && node --watch --enable-source-maps dist/client.js",
+    "dev:server": "run-p watch start:server",
+    "dev:client": "yarn wait-port 2021 && node --watch-path=dist/client.js --watch-path=../18-trpc-server/dist/main.js --enable-source-maps dist/client.js",
+    "start:server": "yarn build && node --watch --enable-source-maps ../18-trpc-server/dist/main.js",
     "watch": "yarn build --watch",
     "clean": "rm -r dist*",
     "test": "yarn build-test && yarn esm-jest",

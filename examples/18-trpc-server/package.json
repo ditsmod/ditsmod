@@ -7,14 +7,14 @@
     "start": "run-p dev:server dev:client --print-label",
     "start:dev": "run-p dev:server dev:client --print-label",
     "dev:server": "run-p watch start:server",
-    "dev:client": "wait-port 2021 && node --watch --enable-source-maps ../18-trpc-client/dist/app/client.js",
+    "dev:client": "wait-port 2021 && node --enable-source-maps --watch ../18-trpc-client/dist/client.js",
     "start:server": "yarn build && node --watch --enable-source-maps dist/main.js",
     "watch": "yarn build --watch",
     "clean": "rm -r dist*",
     "test": "yarn build-test && yarn esm-jest",
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",
     "build-test": "tsc -b tsconfig.e2e.json",
-    "build": "tsc -b tsconfig.build.json"
+    "build": "tsc -b tsconfig.build.json ../18-trpc-client/tsconfig.build.json"
   },
   "exports": {
     "./package.json": {
