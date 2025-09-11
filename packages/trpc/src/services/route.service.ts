@@ -15,8 +15,26 @@ import { TrpcRouteMeta } from '#types/trpc-route-data.js';
 
 @injectable()
 export class TrpcRouteService<Context extends AnyObj = AnyObj, Input = void> {
+  /**
+   * This procedure builder should be used when you perform input validation directly in the code instead of in interceptors.
+   */
   get procedure() {
     return this.#procedure.use(this.middlewarePerRou()) as TRPCProcedureBuilder<
+      Context,
+      object,
+      object,
+      UnsetMarker,
+      Input extends void ? UnsetMarker : Input,
+      UnsetMarker,
+      UnsetMarker,
+      false
+    >;
+  }
+  /**
+   * This procedure builder should be used when input validation takes place automatically in interceptors.
+   */
+  get procedureAfterInput() {
+    return this.#procedure.input(z.any()).use(this.middlewarePerRou()) as TRPCProcedureBuilder<
       Context,
       object,
       object,

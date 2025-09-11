@@ -110,7 +110,7 @@ export class PostController {
 }
 ```
 
-That is, if you only need to use the benefits of DI at the route level (and not at the HTTP request level), your code will differ little from native tRPC code. The only practical difference is that you must take the initial procedure from `TrpcRouteService`, as shown in this example. By the way, `TrpcRouteService` can specify the context and input type — `TrpcRouteService<SomeContext, SomeInput>`. Keep in mind that if you plan to write `routeService.procedure.input(...)`, you do not need to pass the second generic, because input types will conflict. The second generic makes sense if validation is done automatically in interceptors, and not directly in the route code.
+That is, if you only need to use the benefits of DI at the route level (and not at the HTTP request level), your code will differ little from native tRPC code. The only practical difference is that you must take the initial procedure from `TrpcRouteService`, as shown in this example. By the way, `TrpcRouteService` can specify the context and input type — `TrpcRouteService<SomeContext, SomeInput>`. Keep in mind that if you plan to write `routeService.procedure.input(...)`, you do not need to pass the second generic, because input types will conflict. The second generic makes sense to use in combination with `routeService.procedureAfterInput`, which should be used in case you perform validation automatically in interceptors rather than directly in the route code.
 
 In addition to `TrpcRouteService`, you can request any other service at the route level in the controller method parameters, and the order of parameters does not matter:
 
