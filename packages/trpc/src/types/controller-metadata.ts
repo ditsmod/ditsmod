@@ -1,7 +1,7 @@
 import { Class, Provider } from '@ditsmod/core';
 
 import { TrpcRouteMeta } from './trpc-route-data.js';
-import { HttpInterceptor } from '#interceptors/tokens-and-types.js';
+import { TrpcHttpInterceptor } from '#interceptors/tokens-and-types.js';
 import { NormalizedGuard } from '../interceptors/trpc-guard.js';
 
 export interface ControllerMetadata {
@@ -15,5 +15,5 @@ export interface ControllerMetadata {
   providersPerReq: Provider[];
   routeMeta: TrpcRouteMeta;
   guards: NormalizedGuard[];
-  interceptors: Class<HttpInterceptor>[];
+  interceptors: Class<TrpcHttpInterceptor>[];
 }

@@ -1,11 +1,11 @@
 import { CustomError, injectable, Status } from '@ditsmod/core';
 
-import { HttpFrontend, HttpHandler } from './tokens-and-types.js';
+import { TrpcHttpFrontend, TrpcHttpHandler } from './tokens-and-types.js';
 import { TrpcOpts } from '#types/types.js';
 
 @injectable()
-export class DefaultCtxHttpFrontend implements HttpFrontend {
-  async intercept(next: HttpHandler, opts: TrpcOpts) {
+export class DefaultCtxTrpcHttpFrontend implements TrpcHttpFrontend {
+  async intercept(next: TrpcHttpHandler, opts: TrpcOpts) {
     return this.before(opts).after(opts, await next.handle());
   }
 

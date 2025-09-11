@@ -6,7 +6,7 @@ sidebar_position: 1
 
 Модуль `@ditsmod/trpc` забезпечує інтеграцію з [@trpc/server][1]. Готовий приклад застосунку з `@ditsmod/trpc` можна [проглянути у репозиторії Ditsmod][2]. Там ви можете знайти приклади застосування ґардів та інтерсепторів.
 
-## Швидкий старт
+## Швидкий старт {#quick-start}
 
 Ви також можете скористатись моно-репозиторієм, в якому є мінімальний код для швидкого старту:
 
@@ -14,7 +14,7 @@ sidebar_position: 1
 git clone --depth 1 https://github.com/ditsmod/trpc-monorepo-starter.git
 ```
 
-## Як формуються типи для клієнта на рівні модуля
+## Як формуються типи для клієнта на рівні модуля {#how-client-types-are-formed-at-the-module-level}
 
 Ditsmod намагається бути прозорим для `@trpc/client` надаючи можливість TypeScript виводити типи зі статичного коду, без необхідності додаткової компіляції для клієнта. Кожен модуль, що надає конфігурацію для tRPC-роутера, повинен це робити у методі `getRouterConfig()`:
 
@@ -91,18 +91,18 @@ export class AppModule implements TrpcRootModule {
 
 Також зверніть увагу на інтерфейс `TrpcRootModule`, який вимагає обов'язкового впровадження методу `setAppRouterOptions()`, також опціонально можна імплементувати `setTrpcCreateOptions()`. Коли ваш метод `setAppRouterOptions()` повертає конфіг для роутера, ви не зможете передати опцію `createContext`, оскільки Ditsmod автоматично створює контекст у вигляді об'єкту `{ req, res }` щоб гарантувати доступність цих змінних в контексті. Звичайно ж, в процедурах ви можете додавати будь-які інші властивості контекста.
 
-## Як формуються типи для клієнта на рівні метода контролера
+## Як формуються типи для клієнта на рівні метода контролера {#how-client-types-are-formed-at-the-controller-method-level}
 
 Кожен метод контролера, що створює роут, повинен мати декоратор `trpcRoute` та повинен поверти tRPC-процедуру:
 
 ```ts {8-10}
-import { trpcController, RouteService, trpcRoute } from '@ditsmod/trpc';
+import { trpcController, TrpcRouteService, trpcRoute } from '@ditsmod/trpc';
 import { z } from 'zod';
 
 @trpcController()
 export class PostController {
   @trpcRoute()
-  createPost(routeService: RouteService) {
+  createPost(routeService: TrpcRouteService) {
     return routeService.procedure.input(z.object({ title: z.string() })).mutation(({ input }) => {
       return { ...input, id: 1, body: 'post text' };
     });
@@ -110,15 +110,15 @@ export class PostController {
 }
 ```
 
-Тобто, якщо вам достатньо користуватись перевагами DI на рівні роуту (а не на рівні HTTP-запиту), то ваш код буде мало відрізнятись від нативного tRPC-коду. Практично єдина відмінність лише у тому, що вам початкову процедуру потрібно брати із `RouteService`, як показано у даному прикладі. До речі, `RouteService` можна вказувати тип контексту та інпуту - `RouteService<SomeContext, SomeInput>`. Майте на увазі, що якщо ви збираєтесь у коді писати `routeService.procedure.input(...)`, то вам не потрібно передавати другий дженерік, бо типи інпутів будуть конфліктувати. Другий дженерік є сенс використовувати у випадку, якщо валідацію ви робите автоматично в інтерсепторах, а не безпосередньо у коді роуту.
+Тобто, якщо вам достатньо користуватись перевагами DI на рівні роуту (а не на рівні HTTP-запиту), то ваш код буде мало відрізнятись від нативного tRPC-коду. Практично єдина відмінність лише у тому, що вам початкову процедуру потрібно брати із `TrpcRouteService`, як показано у даному прикладі. До речі, `TrpcRouteService` можна вказувати тип контексту та інпуту - `TrpcRouteService<SomeContext, SomeInput>`. Майте на увазі, що якщо ви збираєтесь у коді писати `routeService.procedure.input(...)`, то вам не потрібно передавати другий дженерік, бо типи інпутів будуть конфліктувати. Другий дженерік є сенс використовувати у випадку, якщо валідацію ви робите автоматично в інтерсепторах, а не безпосередньо у коді роуту.
 
-Окрім `RouteService`, у параметрах методу контролера ви можете запитувати будь-який інший сервіс на рівні роуту, причому порядок параметрів не має значення:
+Окрім `TrpcRouteService`, у параметрах методу контролера ви можете запитувати будь-який інший сервіс на рівні роуту, причому порядок параметрів не має значення:
 
 ```ts {4}
 @trpcController()
 export class PostController {
   @trpcRoute()
-  createPost(service1: Service1, service2: Service2, routeService: RouteService) {
+  createPost(service1: Service1, service2: Service2, routeService: TrpcRouteService) {
     // ...
   }
 }
@@ -127,7 +127,7 @@ export class PostController {
 У випадку, якщо вам потрібно буде використовувати ґарди чи інтерсептори, вам достатньо їх додати відповідно у перший та другий масив у декораторі `trpcRoute`:
 
 ```ts {9}
-import { trpcController, RouteService, trpcRoute } from '@ditsmod/trpc';
+import { trpcController, TrpcRouteService, trpcRoute } from '@ditsmod/trpc';
 import { z } from 'zod';
 
 import { BearerGuard } from '../auth/bearer.guard.js';
@@ -136,7 +136,7 @@ import { MyInterceptor } from './my.interceptor.js';
 @trpcController()
 export class PostController {
   @trpcRoute([BearerGuard], [MyInterceptor])
-  createPost(routeService: RouteService) {
+  createPost(routeService: TrpcRouteService) {
     return routeService.procedure.input(z.object({ title: z.string() })).mutation(({ input }) => {
       return { ...input, id: 1, body: 'post text' };
     });
@@ -144,7 +144,7 @@ export class PostController {
 }
 ```
 
-## Як користуватись типами роутера на клієнті
+## Як користуватись типами роутера на клієнті {#how-to-use-router-types-on-the-client}
 
 Як було сказано вище, щоб пом'якшити [проблеми з TypeScript-перформенсом][3], рекомендується виводити тип для кожного невкладеного(!) модуля. Під "невкладеним модулем" мається на увазі той модуль, який безпосередньо імпортується у кореневий модуль. Отже, під час створення клієнта, рекомендується використовувати узагальнений тип для роутера - `createTRPCClient<AnyTRPCRouter>()`, а потім уточнювати тип для кожного окремого модуля:
 

@@ -11,8 +11,8 @@ import { ControllerMetadata } from '#types/controller-metadata.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';
 import { InvalidInterceptor } from '../error/trpc-errors.js';
 import { isInterceptor, isTrpcRoute } from '#types/type.guards.js';
-import { HTTP_INTERCEPTORS } from '#types/types.js';
-import { RouteService } from '#services/route.service.js';
+import { TRPC_HTTP_INTERCEPTORS } from '#types/types.js';
+import { TrpcRouteService } from '#services/route.service.js';
 import { normalizeGuards } from '#utils/prepere-guards.js';
 
 @injectable()
@@ -45,7 +45,7 @@ export class TrpcRouteExtension implements Extension<MetadataPerMod3> {
             continue;
           }
           const methodAsToken = Controller.prototype[methodName];
-          const providersPerRou: Provider[] = [RouteService, { useFactory: [Controller, methodAsToken] }];
+          const providersPerRou: Provider[] = [TrpcRouteService, { useFactory: [Controller, methodAsToken] }];
           providersPerMod.unshift(...awaitTokens(methodAsToken));
           const providersPerReq: Provider[] = [];
           const route = decoratorAndValue.value as TrpcRouteMetadata;
@@ -56,7 +56,7 @@ export class TrpcRouteExtension implements Extension<MetadataPerMod3> {
 
           for (const Interceptor of route.interceptors) {
             if (isInterceptor(Interceptor)) {
-              providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: Interceptor, multi: true });
+              providersPerReq.push({ token: TRPC_HTTP_INTERCEPTORS, useClass: Interceptor, multi: true });
             } else {
               const whatIsThis = inspect(Interceptor, false, 3);
               throw new InvalidInterceptor(whatIsThis);

@@ -24,22 +24,22 @@ import type { AnyMiddlewareFunction } from '@trpc/server';
 import { trpcRoute } from '#decorators/trpc-route.js';
 import { MetadataPerMod3 } from '#types/types.js';
 import { TrpcRouteExtension } from './trpc-route.extension.js';
-import { HttpBackend, HttpFrontend } from '#interceptors/tokens-and-types.js';
-import { HTTP_INTERCEPTORS, RAW_REQ, RAW_RES } from '#types/types.js';
+import { TrpcHttpBackend, TrpcHttpFrontend } from '#interceptors/tokens-and-types.js';
+import { TRPC_HTTP_INTERCEPTORS, RAW_REQ, RAW_RES } from '#types/types.js';
 import { ControllerMetadata } from '#types/controller-metadata.js';
 import { InterceptorWithGuards } from '#interceptors/interceptor-with-guards.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';
-import { ChainMaker } from '#interceptors/chain-maker.js';
+import { TrpcChainMaker } from '#interceptors/chain-maker.js';
 import { GuardPerMod1 } from '#interceptors/trpc-guard.js';
 import { RawRequest, RawResponse } from '#services/request.js';
 import { HttpErrorHandler } from '#services/http-error-handler.js';
 import { CheckingDepsInSandboxFailed, GuardNotFound, InvalidInterceptor } from '../error/trpc-errors.js';
-import { DefaultCtxHttpFrontend } from '#interceptors/default-ctx-http-frontend.js';
-import { DefaultHttpBackend } from '#interceptors/default-http-backend.js';
-import { DefaultHttpFrontend } from '#interceptors/default-http-frontend.js';
-import { DefaultCtxHttpBackend } from '#interceptors/default-ctx-http-backend.js';
-import { DefaultCtxChainMaker } from '#interceptors/default-ctx-chain-maker.js';
-import { PublicRouteService, RouteService } from '#services/route.service.js';
+import { DefaultCtxTrpcHttpFrontend } from '#interceptors/default-ctx-http-frontend.js';
+import { DefaultTrpcHttpBackend } from '#interceptors/default-http-backend.js';
+import { DefaultTrpcHttpFrontend } from '#interceptors/default-http-frontend.js';
+import { DefaultCtxTrpcHttpBackend } from '#interceptors/default-ctx-http-backend.js';
+import { DefaultCtxTrpcChainMaker } from '#interceptors/default-ctx-chain-maker.js';
+import { PublicTrpcRouteService, TrpcRouteService } from '#services/route.service.js';
 import { TRPC_OPTS } from '#types/constants.js';
 import { TrpcOpts } from '#types/types.js';
 import { getResolvedGuards } from '#utils/prepere-guards.js';
@@ -83,15 +83,15 @@ export class TrpcPreRouterExtension implements Extension<void> {
     }
 
     metadataPerMod3.meta.providersPerReq.unshift(
-      { token: HttpBackend, useClass: DefaultHttpBackend },
-      { token: HttpFrontend, useClass: DefaultHttpFrontend },
-      ChainMaker,
+      { token: TrpcHttpBackend, useClass: DefaultTrpcHttpBackend },
+      { token: TrpcHttpFrontend, useClass: DefaultTrpcHttpFrontend },
+      TrpcChainMaker,
     );
 
     metadataPerMod3.meta.providersPerRou.unshift(
-      { token: HttpBackend, useClass: DefaultCtxHttpBackend },
-      { token: ChainMaker, useClass: DefaultCtxChainMaker },
-      { token: HttpFrontend, useClass: DefaultCtxHttpFrontend },
+      { token: TrpcHttpBackend, useClass: DefaultCtxTrpcHttpBackend },
+      { token: TrpcChainMaker, useClass: DefaultCtxTrpcChainMaker },
+      { token: TrpcHttpFrontend, useClass: DefaultCtxTrpcHttpFrontend },
     );
   }
 
@@ -120,17 +120,17 @@ export class TrpcPreRouterExtension implements Extension<void> {
 
     const routeMeta = baseRouteMeta as typeof baseRouteMeta;
     const mergedPerRou: Provider[] = [];
-    mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
+    mergedPerRou.push({ token: TRPC_HTTP_INTERCEPTORS, useToken: TrpcHttpFrontend as any, multi: true });
     const controllerName = getDebugClassName(routeMeta.Controller) || 'unknown';
 
     if (metadataPerMod3.guards1.length || controllerMetadata.guards.length) {
       mergedPerRou.push(InterceptorWithGuardsPerRou);
-      mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: InterceptorWithGuardsPerRou, multi: true });
+      mergedPerRou.push({ token: TRPC_HTTP_INTERCEPTORS, useToken: InterceptorWithGuardsPerRou, multi: true });
     }
 
     for (const Interceptor of controllerMetadata.interceptors) {
       if (isInterceptor(Interceptor)) {
-        providersPerRou.push({ token: HTTP_INTERCEPTORS, useClass: Interceptor, multi: true });
+        providersPerRou.push({ token: TRPC_HTTP_INTERCEPTORS, useClass: Interceptor, multi: true });
       } else {
         const whatIsThis = inspect(Interceptor, false, 3).slice(0, 500);
         throw new InvalidInterceptor(whatIsThis);
@@ -143,9 +143,9 @@ export class TrpcPreRouterExtension implements Extension<void> {
     routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(metadataPerMod3.guards1, controllerName);
     const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou, 'Rou');
     this.checkDeps(injectorPerRou, routeMeta, controllerName);
-    const resolvedChainMaker = resolvedPerRou.find((rp) => rp.dualKey.token === ChainMaker)!;
+    const resolvedTrpcChainMaker = resolvedPerRou.find((rp) => rp.dualKey.token === TrpcChainMaker)!;
     const resolvedErrHandler = resolvedPerRou.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
-    const chainMaker = injectorPerRou.instantiateResolved<DefaultCtxChainMaker>(resolvedChainMaker);
+    const chainMaker = injectorPerRou.instantiateResolved<DefaultCtxTrpcChainMaker>(resolvedTrpcChainMaker);
     const errorHandler = injectorPerRou.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
 
     if (this.hasInterceptors(mergedPerRou)) {
@@ -164,7 +164,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
   protected hasInterceptors(mergedPerRou: Provider[]) {
     const interceptors = mergedPerRou.filter((p) => {
       const token = getToken(p);
-      return token === HTTP_INTERCEPTORS || token === HttpBackend;
+      return token === TRPC_HTTP_INTERCEPTORS || token === TrpcHttpBackend;
     });
 
     // The application has two default interceptors.
@@ -172,7 +172,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
   }
 
   protected handleWithoutInterceptors(errorHandler: HttpErrorHandler) {
-    // const interceptor = new DefaultCtxHttpFrontend();
+    // const interceptor = new DefaultCtxTrpcHttpFrontend();
     return (async (opts) => {
       // try {
       //   interceptor.before(ctx).after(ctx, await routeHandler(ctx));
@@ -195,10 +195,10 @@ export class TrpcPreRouterExtension implements Extension<void> {
     const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'Rou');
 
     const mergedPerReq: Provider[] = [];
-    mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
+    mergedPerReq.push({ token: TRPC_HTTP_INTERCEPTORS, useToken: TrpcHttpFrontend as any, multi: true });
     if (metadataPerMod3.guards1.length || controllerMetadata.guards.length) {
       mergedPerReq.push(InterceptorWithGuards);
-      mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: InterceptorWithGuards, multi: true });
+      mergedPerReq.push({ token: TRPC_HTTP_INTERCEPTORS, useToken: InterceptorWithGuards, multi: true });
     }
     mergedPerReq.push(...metadataPerMod3.meta.providersPerReq, ...providersPerReq);
 
@@ -210,7 +210,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
     const injPerReq = injectorPerRou.createChildFromResolved(resolvedPerReq, 'Req');
     // routeMeta.resolvedHandler = this.getResolvedHandler(routeMeta, resolvedPerReq);
     this.checkDeps(injPerReq, routeMeta, controllerName);
-    const resolvedChainMaker = resolvedPerReq.find((rp) => rp.dualKey.token === ChainMaker)!;
+    const resolvedTrpcChainMaker = resolvedPerReq.find((rp) => rp.dualKey.token === TrpcChainMaker)!;
     const resolvedErrHandler = resolvedPerReq
       .concat(resolvedPerRou)
       .find((rp) => rp.dualKey.token === HttpErrorHandler)!;
@@ -228,7 +228,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
           .setById(optsId, opts)
           .setById(rawReqId, rawReq)
           .setById(rawResId, rawRes)
-          .instantiateResolved<ChainMaker>(resolvedChainMaker)
+          .instantiateResolved<TrpcChainMaker>(resolvedTrpcChainMaker)
           .makeChain(opts)
           .handle() // First HTTP handler in the chain of HTTP interceptors.
           // .catch((err) => {
@@ -239,7 +239,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
       );
     };
 
-    const routeService = injectorPerRou.get(RouteService) as PublicRouteService;
+    const routeService = injectorPerRou.get(TrpcRouteService) as PublicTrpcRouteService;
     const middlewarePerRou = () => this.getHandlerPerRou(metadataPerMod3, injectorPerMod, controllerMetadata);
     routeService.setHandlerPerReq(routeMeta, resolvedPerReq, middlewarePerRou, handlerPerReq);
 
@@ -252,17 +252,17 @@ export class TrpcPreRouterExtension implements Extension<void> {
    */
   protected checkDeps(inj: Injector, routeMeta: TrpcRouteMeta, controllerName: string) {
     try {
-      const ignoreDeps: any[] = [HTTP_INTERCEPTORS, CTX_DATA, RouteService];
+      const ignoreDeps: any[] = [TRPC_HTTP_INTERCEPTORS, CTX_DATA, TrpcRouteService];
       DepsChecker.check(inj, HttpErrorHandler, undefined, ignoreDeps);
-      DepsChecker.check(inj, ChainMaker, undefined, ignoreDeps);
-      DepsChecker.check(inj, HttpFrontend, undefined, ignoreDeps);
+      DepsChecker.check(inj, TrpcChainMaker, undefined, ignoreDeps);
+      DepsChecker.check(inj, TrpcHttpFrontend, undefined, ignoreDeps);
       DepsChecker.check(inj, SystemLogMediator, undefined, ignoreDeps);
       routeMeta.resolvedGuards!.forEach((item) => DepsChecker.checkForResolved(inj, item.guard, ignoreDeps));
-      DepsChecker.check(inj, HttpBackend, undefined, ignoreDeps);
+      DepsChecker.check(inj, TrpcHttpBackend, undefined, ignoreDeps);
       if (routeMeta?.resolvedHandler) {
         DepsChecker.checkForResolved(inj, routeMeta.resolvedHandler, ignoreDeps);
       }
-      DepsChecker.check(inj, HTTP_INTERCEPTORS, fromSelf, ignoreDeps);
+      DepsChecker.check(inj, TRPC_HTTP_INTERCEPTORS, fromSelf, ignoreDeps);
     } catch (cause: any) {
       throw new CheckingDepsInSandboxFailed(cause, controllerName);
     }

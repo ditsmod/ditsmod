@@ -1,7 +1,7 @@
 import { AnyObj, Class, DecoratorAndValue } from '@ditsmod/core';
 
 import { trpcRoute } from '#decorators/trpc-route.js';
-import { HttpInterceptor } from '#interceptors/tokens-and-types.js';
+import { TrpcHttpInterceptor } from '#interceptors/tokens-and-types.js';
 import { Http2SecureServerOptions, ServerOptions } from './server-options.js';
 import { trpcController, ControllerRawMetadata } from '#decorators/trpc-controller.js';
 
@@ -9,8 +9,8 @@ export function isCtrlDecor(decoratorAndValue?: AnyObj): decoratorAndValue is De
   return decoratorAndValue?.decorator === trpcController;
 }
 
-export function isInterceptor(cls?: Class): cls is Class<HttpInterceptor> {
-  return typeof (cls?.prototype as HttpInterceptor | undefined)?.intercept == 'function';
+export function isInterceptor(cls?: Class): cls is Class<TrpcHttpInterceptor> {
+  return typeof (cls?.prototype as TrpcHttpInterceptor | undefined)?.intercept == 'function';
 }
 
 export function isHttp2SecureServerOptions(serverOptions: ServerOptions): serverOptions is Http2SecureServerOptions {

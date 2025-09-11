@@ -2,24 +2,24 @@ import { injectable, Injector, ResolvedGuardPerMod, skipSelf, Status, SystemLogM
 import { TRPCError } from '@trpc/server';
 
 import { RAW_REQ, RAW_RES } from '#types/types.js';
-import { CanActivate } from './trpc-guard.js';
-import { HttpInterceptor, HttpHandler } from './tokens-and-types.js';
+import { TrpcCanActivate } from './trpc-guard.js';
+import { TrpcHttpInterceptor, TrpcHttpHandler } from './tokens-and-types.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';
 import { applyResponse } from '#utils/apply-web-response.js';
 import { TrpcOpts } from '#types/types.js';
 
 @injectable()
-export class InterceptorWithGuards implements HttpInterceptor {
+export class InterceptorWithGuards implements TrpcHttpInterceptor {
   constructor(
     @skipSelf() protected routeMeta: TrpcRouteMeta,
     private injector: Injector,
   ) {}
 
-  async intercept(next: HttpHandler, opts: TrpcOpts) {
+  async intercept(next: TrpcHttpHandler, opts: TrpcOpts) {
     if (this.routeMeta.resolvedGuardsPerMod)
       for (const item of this.routeMeta.resolvedGuardsPerMod) {
         const injectorPerReq = this.getInjectorPerReq(item);
-        const guard = injectorPerReq.instantiateResolved(item.guard) as CanActivate;
+        const guard = injectorPerReq.instantiateResolved(item.guard) as TrpcCanActivate;
         const result = await guard.canActivate(opts, item.params);
         if (result !== true) {
           return this.sendResponse(opts, result);
@@ -27,7 +27,7 @@ export class InterceptorWithGuards implements HttpInterceptor {
       }
     if (this.routeMeta.resolvedGuards)
       for (const item of this.routeMeta.resolvedGuards) {
-        const guard = this.injector.instantiateResolved(item.guard) as CanActivate;
+        const guard = this.injector.instantiateResolved(item.guard) as TrpcCanActivate;
         const result = await guard.canActivate(opts, item.params);
         if (result !== true) {
           return this.sendResponse(opts, result);

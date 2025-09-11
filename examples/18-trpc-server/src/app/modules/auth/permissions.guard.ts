@@ -1,11 +1,11 @@
-import { CanActivate, trpcGuard, TrpcOpts } from '@ditsmod/trpc';
+import { TrpcCanActivate, trpcGuard, TrpcOpts } from '@ditsmod/trpc';
 import { TRPCError } from '@trpc/server';
 
 import { AuthService } from './auth.service.js';
 import { Permission } from './types.js';
 
 @trpcGuard()
-export class PermissionsGuard implements CanActivate {
+export class PermissionsGuard implements TrpcCanActivate {
   constructor(private authService: AuthService) {}
 
   async canActivate(opts: TrpcOpts, params?: Permission[]) {

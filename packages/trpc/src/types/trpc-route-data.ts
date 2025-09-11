@@ -13,7 +13,7 @@ export class TrpcRouteMeta {
    */
   resolvedHandler?: ResolvedProvider;
   /**
-   * An array of DI tokens used to look up `CanActivate()` handlers,
+   * An array of DI tokens used to look up `TrpcCanActivate()` handlers,
    * in order to determine if the current user is allowed to activate the trpcController.
    * By default, any user can activate.
    */

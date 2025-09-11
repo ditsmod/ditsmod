@@ -1,4 +1,4 @@
-import { trpcController, RouteService, trpcRoute } from '@ditsmod/trpc';
+import { trpcController, TrpcRouteService, trpcRoute } from '@ditsmod/trpc';
 import { Providers } from '@ditsmod/core';
 import { z } from 'zod';
 
@@ -10,17 +10,17 @@ import { Guard, MyHttpInterceptor } from '#post/post.interceptors.js';
 })
 export class PostController {
   @trpcRoute([Guard], [MyHttpInterceptor])
-  listPosts(routeService: RouteService) {
+  listPosts(routeService: TrpcRouteService) {
     return routeService.diQuery(PostService.prototype.listPosts);
   }
 
   @trpcRoute()
-  createPost(routeService: RouteService<any, { title: string }>) {
+  createPost(routeService: TrpcRouteService<any, { title: string }>) {
     return routeService.diMutation(PostService.prototype.createPost);
   }
 
   @trpcRoute()
-  alternativeCreatePost(routeService: RouteService) {
+  alternativeCreatePost(routeService: TrpcRouteService) {
     return routeService.diInputAndMutation(z.object({ title: z.string() }), PostService.prototype.createPost);
   }
 }

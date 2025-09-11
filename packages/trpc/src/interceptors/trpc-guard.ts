@@ -2,14 +2,14 @@ import { Class, BaseMeta } from '@ditsmod/core';
 import { TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { TrpcOpts } from '#types/types.js';
 
-export interface CanActivate {
+export interface TrpcCanActivate {
   canActivate(opts: TrpcOpts, params?: any[]): boolean | Promise<boolean>;
 }
 
-export type GuardItem = Class<CanActivate> | [Class<CanActivate>, any, ...any[]];
+export type GuardItem = Class<TrpcCanActivate> | [Class<TrpcCanActivate>, any, ...any[]];
 
 export interface NormalizedGuard {
-  guard: Class<CanActivate>;
+  guard: Class<TrpcCanActivate>;
   params?: any[];
 }
 

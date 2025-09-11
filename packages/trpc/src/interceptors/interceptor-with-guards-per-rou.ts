@@ -1,9 +1,9 @@
 import { injectable, Injector, SystemLogMediator } from '@ditsmod/core';
 import { TRPCError } from '@trpc/server';
 
-import { HttpHandler, HttpInterceptor } from './tokens-and-types.js';
+import { TrpcHttpHandler, TrpcHttpInterceptor } from './tokens-and-types.js';
 import { applyResponse } from '#utils/apply-web-response.js';
-import { CanActivate } from './trpc-guard.js';
+import { TrpcCanActivate } from './trpc-guard.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';
 import { TrpcOpts } from '#types/types.js';
 
@@ -18,10 +18,10 @@ export class InterceptorWithGuardsPerRou implements IInterceptorWithGuardsPerRou
     this.initGuards();
   }
 
-  async intercept(next: HttpHandler, opts: TrpcOpts) {
+  async intercept(next: TrpcHttpHandler, opts: TrpcOpts) {
     if (this.routeMeta.resolvedGuardsPerMod) {
       for (const item of this.routeMeta.resolvedGuardsPerMod) {
-        const guard = item.injectorPerRou.instantiateResolved(item.guard) as CanActivate;
+        const guard = item.injectorPerRou.instantiateResolved(item.guard) as TrpcCanActivate;
         const result = await guard.canActivate(opts, item.params);
         if (result !== true) {
           return this.sendResponse(opts, result);
@@ -40,7 +40,7 @@ export class InterceptorWithGuardsPerRou implements IInterceptorWithGuardsPerRou
 
   protected initGuards() {
     this.routeMeta.resolvedGuards!.forEach((item) => {
-      const guard = this.injector.instantiateResolved(item.guard) as CanActivate;
+      const guard = this.injector.instantiateResolved(item.guard) as TrpcCanActivate;
       this.instantiatedGuards.push({ guard, params: item.params });
     });
   }
@@ -61,11 +61,11 @@ export class InterceptorWithGuardsPerRou implements IInterceptorWithGuardsPerRou
   }
 }
 
-export interface IInterceptorWithGuardsPerRou extends HttpInterceptor {
+export interface IInterceptorWithGuardsPerRou extends TrpcHttpInterceptor {
   instantiatedGuards: InstantiatedGuard[];
 }
 
 export interface InstantiatedGuard {
-  guard: CanActivate;
+  guard: TrpcCanActivate;
   params?: any[];
 }

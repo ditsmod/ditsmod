@@ -25,7 +25,7 @@ import { TrpcInitMeta, TrpcModRefId } from '#decorators/trpc-init-hooks-and-meta
 import { TrpcProviderImport } from '#init/trpc-shallow-modules-importer.js';
 import { GuardPerMod1 } from '#interceptors/trpc-guard.js';
 import { ControllerMetadata } from './controller-metadata.js';
-import { HttpInterceptor } from '#interceptors/tokens-and-types.js';
+import { TrpcHttpInterceptor } from '#interceptors/tokens-and-types.js';
 
 const t = initTRPC.create();
 
@@ -115,7 +115,7 @@ export interface PreparedRouteMeta {
 export type Fn = (...args: any[]) => any;
 export type Args<T> = T extends (...args: infer A) => any ? A : never;
 export type Level = 'Req' | 'Rou' | 'Mod';
-export const HTTP_INTERCEPTORS = new InjectionToken<HttpInterceptor[]>('HTTP_INTERCEPTORS');
+export const TRPC_HTTP_INTERCEPTORS = new InjectionToken<TrpcHttpInterceptor[]>('TRPC_HTTP_INTERCEPTORS');
 /**
  * DI token for native webserver request.
  */

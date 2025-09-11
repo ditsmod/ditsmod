@@ -14,7 +14,7 @@ import { TrpcRootObject } from '#types/types.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';
 
 @injectable()
-export class RouteService<Context extends AnyObj = AnyObj, Input = void> {
+export class TrpcRouteService<Context extends AnyObj = AnyObj, Input = void> {
   get procedure() {
     return this.#procedure.use(this.middlewarePerRou()) as TRPCProcedureBuilder<
       Context,
@@ -172,7 +172,7 @@ export class RouteService<Context extends AnyObj = AnyObj, Input = void> {
 /**
  * Opens protected properties.
  */
-export class PublicRouteService extends RouteService {
+export class PublicTrpcRouteService extends TrpcRouteService {
   override setHandlerPerReq(
     routeMeta: TrpcRouteMeta,
     resolvedPerReq: ResolvedProvider[],

@@ -1,5 +1,5 @@
 import { Class } from '@ditsmod/core';
-import { CanActivate } from '#interceptors/trpc-guard.js';
+import { TrpcCanActivate } from '#interceptors/trpc-guard.js';
 
 /**
  * This factory creates a helper that makes it easier to work with guards that have parameters.
@@ -31,12 +31,12 @@ export class SomeController {
 }
 ```
  */
-export function createHelperForGuardWithParams<T>(Guard: Class<CanActivate>): HelperForGuardWithParams<T> {
-  return function requireArgs(...args: [T, ...T[]]): [Class<CanActivate>, T, ...T[]] {
+export function createHelperForGuardWithParams<T>(Guard: Class<TrpcCanActivate>): HelperForGuardWithParams<T> {
+  return function requireArgs(...args: [T, ...T[]]): [Class<TrpcCanActivate>, T, ...T[]] {
     return [Guard, ...args];
   };
 }
 
 export interface HelperForGuardWithParams<T> {
-  (...args: [T, ...T[]]): [Class<CanActivate>, T, ...T[]];
+  (...args: [T, ...T[]]): [Class<TrpcCanActivate>, T, ...T[]];
 }

@@ -1,5 +1,5 @@
 import { AnyObj } from '@ditsmod/core';
-import { CanActivate, trpcGuard, TrpcOpts } from '@ditsmod/trpc';
+import { TrpcCanActivate, trpcGuard, TrpcOpts } from '@ditsmod/trpc';
 
 import { AuthService } from '#auth/auth.service.js';
 
@@ -7,7 +7,7 @@ import { AuthService } from '#auth/auth.service.js';
  * This guard works only per route.
  */
 @trpcGuard()
-export class BearerGuard implements CanActivate {
+export class BearerGuard implements TrpcCanActivate {
   constructor(protected authService: AuthService) {}
 
   async canActivate(opts: TrpcOpts<{ auth: AnyObj }>, params?: any[]) {

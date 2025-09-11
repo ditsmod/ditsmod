@@ -1,4 +1,4 @@
-import { trpcController, RouteService, trpcRoute } from '@ditsmod/trpc';
+import { trpcController, TrpcRouteService, trpcRoute } from '@ditsmod/trpc';
 import { z } from 'zod';
 
 import { DbService } from '#db/db.service.js';
@@ -6,7 +6,7 @@ import { DbService } from '#db/db.service.js';
 @trpcController()
 export class CommentController {
   @trpcRoute()
-  createComment(routeService: RouteService, db: DbService) {
+  createComment(routeService: TrpcRouteService, db: DbService) {
     return routeService.procedure.input(z.object({ title: z.string() })).mutation(({ input }) => {
       const comment = {
         id: ++db.commentId,
@@ -18,7 +18,7 @@ export class CommentController {
   }
 
   @trpcRoute()
-  listComments(routeService: RouteService, db: DbService) {
+  listComments(routeService: TrpcRouteService, db: DbService) {
     return routeService.procedure.query(() => db.comments);
   }
 }

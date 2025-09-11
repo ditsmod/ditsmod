@@ -2,19 +2,19 @@ import { BaseAppInitializer, BaseMeta, ModRefId, ProvidersOnly, awaitTokens } fr
 import { initTRPC } from '@trpc/server';
 
 import { RequestListener, SERVER, TrpcRootModule } from '../types/types.js';
-import { PreRouter } from '#services/pre-router.js';
+import { TrpcPreRouter } from '#services/pre-router.js';
 import { HttpServer } from '#types/server-options.js';
 import { TRPC_ROUTER_OPTS, TRPC_ROOT } from '#types/constants.js';
 import { TrpcInternalService } from '#services/trpc-internal.service.js';
 import { TrpcService } from '#services/trpc.service.js';
 
 export class TrpcAppInitializer extends BaseAppInitializer {
-  protected preRouter: PreRouter;
+  protected preRouter: TrpcPreRouter;
   protected server: HttpServer;
 
   protected override addDefaultProvidersPerApp() {
     this.baseMeta.providersPerApp.unshift(
-      PreRouter,
+      TrpcPreRouter,
       { token: SERVER, useFactory: () => this.server },
       {
         token: TRPC_ROOT,
@@ -32,7 +32,7 @@ export class TrpcAppInitializer extends BaseAppInitializer {
 
   override async bootstrapModulesAndExtensions() {
     const injectorPerApp = await super.bootstrapModulesAndExtensions();
-    this.preRouter = injectorPerApp.get(PreRouter) as PreRouter;
+    this.preRouter = injectorPerApp.get(TrpcPreRouter) as TrpcPreRouter;
     return injectorPerApp;
   }
 

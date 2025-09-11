@@ -1,4 +1,4 @@
-import { trpcController, RouteService, trpcRoute } from '@ditsmod/trpc';
+import { trpcController, TrpcRouteService, trpcRoute } from '@ditsmod/trpc';
 import z from 'zod';
 
 import { DbService } from '#db/db.service.js';
@@ -14,7 +14,7 @@ export class MessageController {
   ) {}
 
   @trpcRoute()
-  addMessage(routeService: RouteService) {
+  addMessage(routeService: TrpcRouteService) {
     return routeService.procedure.input(z.string()).mutation(({ input }) => {
       const msg = this.messageService.createMessage(input);
       this.db.messages.push(msg);
@@ -23,12 +23,12 @@ export class MessageController {
   }
 
   @trpcRoute([Guard], [MyHttpInterceptor])
-  listMessages(routeService: RouteService) {
+  listMessages(routeService: TrpcRouteService) {
     return routeService.procedure.query(() => this.db.messages);
   }
 
   @trpcRoute()
-  getHelloRouter(routeService: RouteService<TrpcContext>) {
+  getHelloRouter(routeService: TrpcRouteService<TrpcContext>) {
     return routeService.procedure.input(z.string().nullish()).query(({ input, ctx }) => {
       return `hello ${input ?? ctx.user?.name ?? 'world'}`;
     });

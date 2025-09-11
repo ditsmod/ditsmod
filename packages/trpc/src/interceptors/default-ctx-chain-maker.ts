@@ -1,18 +1,18 @@
 import { inject, injectable, optional } from '@ditsmod/core';
 
 import {
-  HttpBackend,
-  HttpHandler,
-  HttpInterceptor,
-  HttpInterceptorHandler,
-  CtxHttpBackend,
+  TrpcHttpBackend,
+  TrpcHttpHandler,
+  TrpcHttpInterceptor,
+  TrpcHttpInterceptorHandler,
+  CtxTrpcHttpBackend,
 } from './tokens-and-types.js';
-import { HTTP_INTERCEPTORS } from '#types/types.js';
+import { TRPC_HTTP_INTERCEPTORS } from '#types/types.js';
 import { TrpcOpts } from '#types/types.js';
 
-class PreHttpBackend implements HttpBackend {
+class PreTrpcHttpBackend implements TrpcHttpBackend {
   constructor(
-    protected backend: CtxHttpBackend,
+    protected backend: CtxTrpcHttpBackend,
     protected ctx: TrpcOpts,
   ) {}
 
@@ -25,16 +25,16 @@ class PreHttpBackend implements HttpBackend {
  * An injectable service that ties multiple interceptors in chain.
  */
 @injectable()
-export class DefaultCtxChainMaker {
+export class DefaultCtxTrpcChainMaker {
   constructor(
-    private backend: HttpBackend,
-    @inject(HTTP_INTERCEPTORS) @optional() private interceptors: HttpInterceptor[] = [],
+    private backend: TrpcHttpBackend,
+    @inject(TRPC_HTTP_INTERCEPTORS) @optional() private interceptors: TrpcHttpInterceptor[] = [],
   ) {}
 
-  makeChain(opts: TrpcOpts): HttpHandler {
+  makeChain(opts: TrpcOpts): TrpcHttpHandler {
     return this.interceptors.reduceRight(
-      (next, interceptor) => new HttpInterceptorHandler(interceptor, opts, next),
-      new PreHttpBackend(this.backend, opts) as HttpBackend,
+      (next, interceptor) => new TrpcHttpInterceptorHandler(interceptor, opts, next),
+      new PreTrpcHttpBackend(this.backend, opts) as TrpcHttpBackend,
     );
   }
 }

@@ -17,14 +17,14 @@ import {
   RouterOptions,
   TrpcRootModule,
 } from '#types/types.js';
-import { PreRouter } from './pre-router.js';
+import { TrpcPreRouter } from './pre-router.js';
 import { isModuleWithTrpcRoutes } from '#utils/type.guards.js';
 import { TrpcService } from '#services/trpc.service.js';
 
 @injectable()
 export class TrpcInternalService {
   constructor(
-    protected preRouter: PreRouter,
+    protected preRouter: TrpcPreRouter,
     protected trpcService: TrpcService,
     protected moduleManager: ModuleManager,
     @inject(TRPC_ROOT) protected t: TrpcRootObject<any>,

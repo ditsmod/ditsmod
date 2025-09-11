@@ -5,7 +5,7 @@ import { TRPC_ROUTER_OPTS } from '#types/constants.js';
 import { RequestListener } from '#types/types.js';
 
 @injectable()
-export class PreRouter {
+export class TrpcPreRouter {
   requestListener: RequestListener;
 
   constructor(protected injectorPerApp: Injector) {}

@@ -1,25 +1,25 @@
 import { TrpcOpts } from '#types/types.js';
 
 /**
- * `HttpHandler` is injectable. When injected, the handler instance dispatches requests to the
+ * `TrpcHttpHandler` is injectable. When injected, the handler instance dispatches requests to the
  * first interceptor in the chain, which dispatches to the second, etc, eventually reaching the
- * `HttpBackend` and trpcController's method bounded to some route.
+ * `TrpcHttpBackend` and trpcController's method bounded to some route.
  *
- * In an `HttpInterceptor`, the `HttpHandler` parameter is the next interceptor in the chain.
+ * In an `TrpcHttpInterceptor`, the `TrpcHttpHandler` parameter is the next interceptor in the chain.
  */
-export abstract class HttpHandler {
+export abstract class TrpcHttpHandler {
   abstract handle(): Promise<any>;
 }
 
-export interface HttpInterceptor {
-  intercept(next: HttpHandler, opts: TrpcOpts): Promise<any>;
+export interface TrpcHttpInterceptor {
+  intercept(next: TrpcHttpHandler, opts: TrpcOpts): Promise<any>;
 }
 
-export class HttpInterceptorHandler implements HttpHandler {
+export class TrpcHttpInterceptorHandler implements TrpcHttpHandler {
   constructor(
-    public interceptor: HttpInterceptor,
+    public interceptor: TrpcHttpInterceptor,
     public opts: TrpcOpts,
-    public next: HttpHandler,
+    public next: TrpcHttpHandler,
   ) {}
 
   async handle(): Promise<any> {
@@ -28,26 +28,26 @@ export class HttpInterceptorHandler implements HttpHandler {
 }
 
 /**
- * A first `HttpHandler` which will dispatch the request to next interceptor in the chain.
+ * A first `TrpcHttpHandler` which will dispatch the request to next interceptor in the chain.
  *
- * Interceptors sit between the `HttpFrontend` and the `HttpBackend`.
+ * Interceptors sit between the `TrpcHttpFrontend` and the `TrpcHttpBackend`.
  */
-export abstract class HttpFrontend implements HttpInterceptor {
-  abstract intercept(next: HttpHandler, opts: TrpcOpts): Promise<any>;
+export abstract class TrpcHttpFrontend implements TrpcHttpInterceptor {
+  abstract intercept(next: TrpcHttpHandler, opts: TrpcOpts): Promise<any>;
 }
 
 /**
- * A final `HttpHandler` which will dispatch the request to trpcController's route method.
+ * A final `TrpcHttpHandler` which will dispatch the request to trpcController's route method.
  *
- * Interceptors sit between the `HttpFrontend` and the `HttpBackend`.
+ * Interceptors sit between the `TrpcHttpFrontend` and the `TrpcHttpBackend`.
  *
- * When injected in an interceptor, `HttpBackend` can dispatches requests directly to
+ * When injected in an interceptor, `TrpcHttpBackend` can dispatches requests directly to
  * trpcController's route method, without going through the next interceptors in the chain.
  */
-export abstract class HttpBackend implements HttpHandler {
+export abstract class TrpcHttpBackend implements TrpcHttpHandler {
   abstract handle(): Promise<any>;
 }
 
-export abstract class CtxHttpBackend {
+export abstract class CtxTrpcHttpBackend {
   abstract handle(opts: TrpcOpts): Promise<any>;
 }
