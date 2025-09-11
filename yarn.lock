@@ -741,6 +741,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@ditsmod/graphql@workspace:packages/graphql":
+  version: 0.0.0-use.local
+  resolution: "@ditsmod/graphql@workspace:packages/graphql"
+  dependencies:
+    jest: "npm:^30.1.3"
+    npm-run-all: "npm:^4.1.5"
+    typescript: "npm:^5.9.2"
+  peerDependencies:
+    "@apollo/server": ^5.0.0
+    "@ditsmod/core": ^3.0.0-alpha.5
+    graphql: ^16.11.0
+  languageName: unknown
+  linkType: soft
+
 "@ditsmod/i18n@workspace:packages/i18n":
   version: 0.0.0-use.local
   resolution: "@ditsmod/i18n@workspace:packages/i18n"
@@ -7739,20 +7753,6 @@ __metadata:
   checksum: 10c0/e951259d8cd2e0d196c72ec711add7115d42eb9a8146c8eeda5b8d3ac91e5dd816b9cd68920726d9fd4490368e7ed86e9c423f40db87e2d8dfafa00fa17c3a31
   languageName: node
   linkType: hard
-
-"graphql@workspace:packages/graphql":
-  version: 0.0.0-use.local
-  resolution: "graphql@workspace:packages/graphql"
-  dependencies:
-    jest: "npm:^30.1.3"
-    npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
-  peerDependencies:
-    "@apollo/server": ^5.0.0
-    "@ditsmod/core": ^3.0.0-alpha.5
-    graphql: ^16.11.0
-  languageName: unknown
-  linkType: soft
 
 "handlebars@npm:^4.7.7":
   version: 4.7.8
