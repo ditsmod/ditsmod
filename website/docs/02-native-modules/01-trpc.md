@@ -161,6 +161,100 @@ const postClient = trpc as TRPCClient<PostRouter>;
 const post = await postClient.post.createPost.mutate({ title: 'hello client' });
 ```
 
+## Використання DI для провайдерів на рівні HTTP-запиту
+
+Коли ви пишете наступний код, DI вам забезпечить роботу провайдерів на рівні роуту:
+
+```ts
+@trpcController()
+export class PostController {
+  constructor(service1: Service1) {}
+
+  @trpcRoute()
+  listPosts(service2: Service2, routeService: TrpcRouteService) {
+    return routeService.procedure.query(() => this.service1.messages);
+  }
+}
+```
+
+В даному прикладі, DI вирішить залежність для `Service1`, `Service2` та `TrpcRouteService` на рівні роуту. Якщо ж ви хочете щоб DI працював також на рівні HTTP-запиту, вам треба зробити три кроки:
+
+1. Створити [ClassFactoryProvider][4], який буде працювати на рівні запиту.
+2. Передати новостворений провайдер до DI на рівні запиту.
+3. Використати новостворений провайдер з одним із методів `TrpcRouteService`, ім'я якого має префікс `di` (наприклад, `diQuery`, `diMutation` і т.д.).
+
+Давайте пройдемо ці кроки разом.
+
+### Крок перший
+
+```ts
+import { injectable, factoryMethod } from '@ditsmod/core';
+import { opts, TrpcOpts } from '@ditsmod/trpc';
+
+import { DbService } from '#db/db.service.js';
+import { InputPost } from '#models/post.js';
+
+
+@injectable()
+export class PostService {
+  @factoryMethod()
+  method1(@opts opts: TrpcOpts<any, InputPost>, db: DbService) {
+    // ...
+    return posts;
+  }
+}
+```
+
+Зверніть увагу, що на рівні методу даний провайдер має декоратор, причому не важливо який саме, головне, щоб він створювався за допомогою відповідних Ditsmod-хелперів.
+
+### Крок другий
+
+Найпростіше передати `ClassFactoryProvider` до DI - за допомогою хелпера `Providers`:
+
+```ts {6}
+import { trpcController } from '@ditsmod/trpc';
+import { Providers } from '@ditsmod/core';
+import { PostService } from '#post/post.service.js';
+// ...
+@trpcController({
+  providersPerReq: new Providers().useFactories(PostService),
+})
+export class PostController {
+  // ...
+}
+```
+
+До речі, в даному прикладі провайдери передаються у метадані контролера, але їх також можна передавати і у метадані модуля на рівні запиту.
+
+Метод `providers.useFactories()` автоматично сканує наявність методів з декораторами у переданому класі, і для кожного методу створює відповідний провайдер. Наприклад, якщо ви передаєте `providers.useFactories(PostService)`, і у `PostService` є три методи з декораторами на рівні методу, то `providers.useFactories(PostService)` передасть до DI приблизно такі провайдери:
+
+```ts
+[
+  { useFactory: [PostService, PostService.prototype.method1] },
+  { useFactory: [PostService, PostService.prototype.method2] },
+  { useFactory: [PostService, PostService.prototype.method3] },
+]
+```
+
+### Крок третій
+
+Після того, як провайдери передані до DI, їх можна використовувати у наступній формі:
+
+```ts {7}
+import { TrpcRouteService, trpcRoute } from '@ditsmod/trpc';
+import { PostService } from '#post/post.service.js';
+//...
+export class PostController {
+  @trpcRoute()
+  listPosts(routeService: TrpcRouteService) {
+    return routeService.diQuery(PostService.prototype.method1);
+  }
+}
+```
+
+Тобто, метод `routeService.diQuery()` приймає метод контролера, а DI у реєстрі шукає провайдера з таким токеном, і повертає його значення. В такому разі, під час кожного запиту буде створюватись інстанс `PostService` та викликатись його метод `method1`.
+
 [1]: https://trpc.io/docs/quickstart
 [2]: https://github.com/ditsmod/ditsmod/tree/main/examples/18-trpc-server
 [3]: https://github.com/trpc/trpc/discussions/2448
+[4]: /components-of-ditsmod-app/dependency-injection/#providers

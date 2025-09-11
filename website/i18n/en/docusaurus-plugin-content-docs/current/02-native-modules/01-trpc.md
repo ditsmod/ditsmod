@@ -161,6 +161,100 @@ const postClient = trpc as TRPCClient<PostRouter>;
 const post = await postClient.post.createPost.mutate({ title: 'hello client' });
 ```
 
+## Using DI for Providers at the HTTP Request Level
+
+When you write the following code, DI will provide route-level providers for you:
+
+```ts
+@trpcController()
+export class PostController {
+  constructor(service1: Service1) {}
+
+  @trpcRoute()
+  listPosts(service2: Service2, routeService: TrpcRouteService) {
+    return routeService.procedure.query(() => this.service1.messages);
+  }
+}
+```
+
+In this example, DI will resolve the dependencies for `Service1`, `Service2`, and `TrpcRouteService` at the route level. However, if you want DI to also work at the HTTP request level, you need to take three steps:
+
+1. Create a [ClassFactoryProvider][4] that works at the request level.
+2. Pass the newly created provider to DI at the request level.
+3. Use the newly created provider with one of the `TrpcRouteService` methods whose name has the `di` prefix (for example, `diQuery`, `diMutation`, etc.).
+
+Let’s go through these steps together.
+
+### Step One
+
+```ts
+import { injectable, factoryMethod } from '@ditsmod/core';
+import { opts, TrpcOpts } from '@ditsmod/trpc';
+
+import { DbService } from '#db/db.service.js';
+import { InputPost } from '#models/post.js';
+
+
+@injectable()
+export class PostService {
+  @factoryMethod()
+  method1(@opts opts: TrpcOpts<any, InputPost>, db: DbService) {
+    // ...
+    return posts;
+  }
+}
+```
+
+Note that at the method level, this provider has a decorator, and it doesn’t matter which one specifically — the important part is that it is created using the appropriate Ditsmod helpers.
+
+### Step Two
+
+The easiest way to pass a `ClassFactoryProvider` to DI is by using the `Providers` helper:
+
+```ts {6}
+import { trpcController } from '@ditsmod/trpc';
+import { Providers } from '@ditsmod/core';
+import { PostService } from '#post/post.service.js';
+// ...
+@trpcController({
+  providersPerReq: new Providers().useFactories(PostService),
+})
+export class PostController {
+  // ...
+}
+```
+
+By the way, in this example, the providers are passed into the controller metadata, but they can also be passed into the module metadata at the request level.
+
+The `providers.useFactories()` method automatically scans for methods with decorators in the given class and creates a provider for each such method. For example, if you pass `providers.useFactories(PostService)` and `PostService` has three methods with method-level decorators, then `providers.useFactories(PostService)` will pass to DI approximately the following providers:
+
+```ts
+[
+  { useFactory: [PostService, PostService.prototype.method1] },
+  { useFactory: [PostService, PostService.prototype.method2] },
+  { useFactory: [PostService, PostService.prototype.method3] },
+]
+```
+
+### Step Three
+
+Once the providers are passed to DI, they can be used in the following form:
+
+```ts {7}
+import { TrpcRouteService, trpcRoute } from '@ditsmod/trpc';
+import { PostService } from '#post/post.service.js';
+//...
+export class PostController {
+  @trpcRoute()
+  listPosts(routeService: TrpcRouteService) {
+    return routeService.diQuery(PostService.prototype.method1);
+  }
+}
+```
+
+That is, the `routeService.diQuery()` method takes the controller method, and DI looks up a provider with that token in the registry and returns its value. In this case, for each request, an instance of `PostService` will be created, and its `method1` will be called.
+
 [1]: https://trpc.io/docs/quickstart
 [2]: https://github.com/ditsmod/ditsmod/tree/main/examples/18-trpc-server
 [3]: https://github.com/trpc/trpc/discussions/2448
+[4]: /components-of-ditsmod-app/dependency-injection/#providers
