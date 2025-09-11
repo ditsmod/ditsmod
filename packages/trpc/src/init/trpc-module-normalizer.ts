@@ -41,14 +41,14 @@ import {
   TrpcModuleParams,
   TrpcModRefId,
 } from '#decorators/trpc-init-hooks-and-metadata.js';
-import { controller, ControllerRawMetadata } from '#decorators/controller.js';
+import { trpcController, ControllerRawMetadata } from '#decorators/trpc-controller.js';
 import { ControllerDoesNotHaveDecorator, DuplicateOfControllers, InvalidGuard } from '../error/trpc-errors.js';
 import { GuardItem, NormalizedGuard } from '#interceptors/trpc-guard.js';
 
 export type Level = 'Req' | 'Rou' | 'Mod';
 
 export function isCtrlDecor(decoratorAndValue?: AnyObj): decoratorAndValue is DecoratorAndValue<ControllerRawMetadata> {
-  return decoratorAndValue?.decorator === controller;
+  return decoratorAndValue?.decorator === trpcController;
 }
 
 /**

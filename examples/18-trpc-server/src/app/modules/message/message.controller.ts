@@ -1,4 +1,4 @@
-import { controller, RouteService, trpcRoute } from '@ditsmod/trpc';
+import { trpcController, RouteService, trpcRoute } from '@ditsmod/trpc';
 import z from 'zod';
 
 import { DbService } from '#db/db.service.js';
@@ -6,7 +6,7 @@ import { MessageService } from '#message/message.service.js';
 import { TrpcContext } from '#app/types.js';
 import { Guard, MyHttpInterceptor } from '#post/post.interceptors.js';
 
-@controller()
+@trpcController()
 export class MessageController {
   constructor(
     protected db: DbService,

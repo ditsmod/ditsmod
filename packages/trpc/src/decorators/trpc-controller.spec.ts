@@ -1,20 +1,20 @@
 import { reflector } from '@ditsmod/core';
-import { controller } from './controller.js';
+import { trpcController } from './trpc-controller.js';
 
 
 describe('Controller decorator', () => {
   it('empty decorator', () => {
-    @controller()
+    @trpcController()
     class Controller1 {}
 
     const metadata = reflector.getDecorators(Controller1)!;
     expect(metadata.length).toBe(1);
     expect(metadata[0].value).toEqual({});
-    expect(metadata[0].decorator).toBe(controller);
+    expect(metadata[0].decorator).toBe(trpcController);
   });
 
   it('decorator with some data', () => {
-    @controller({ providersPerReq: [] })
+    @trpcController({ providersPerReq: [] })
     class Controller1 {}
 
     const metadata = reflector.getDecorators(Controller1)!;
@@ -23,8 +23,8 @@ describe('Controller decorator', () => {
   });
 
   it('multi decorator with some data', () => {
-    @controller({ providersPerReq: [] })
-    @controller({ providersPerReq: [] })
+    @trpcController({ providersPerReq: [] })
+    @trpcController({ providersPerReq: [] })
     class Controller1 {}
 
     const metadata = reflector.getDecorators(Controller1)!;
@@ -34,7 +34,7 @@ describe('Controller decorator', () => {
   });
 
   it('decorator with all allowed properties', () => {
-    @controller({ providersPerRou: [], providersPerReq: [] })
+    @trpcController({ providersPerRou: [], providersPerReq: [] })
     class Controller1 {}
 
     const metadata = reflector.getDecorators(Controller1)!;

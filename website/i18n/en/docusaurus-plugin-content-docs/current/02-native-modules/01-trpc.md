@@ -96,10 +96,10 @@ Also note the `TrpcRootModule` interface, which requires mandatory implementatio
 Each controller method that creates a route must have the `trpcRoute` decorator and must return a tRPC procedure:
 
 ```ts {8-10}
-import { controller, RouteService, trpcRoute } from '@ditsmod/trpc';
+import { trpcController, RouteService, trpcRoute } from '@ditsmod/trpc';
 import { z } from 'zod';
 
-@controller()
+@trpcController()
 export class PostController {
   @trpcRoute()
   createPost(routeService: RouteService) {
@@ -115,7 +115,7 @@ That is, if you only need to use the benefits of DI at the route level (and not 
 In addition to `RouteService`, you can request any other service at the route level in the controller method parameters, and the order of parameters does not matter:
 
 ```ts {4}
-@controller()
+@trpcController()
 export class PostController {
   @trpcRoute()
   createPost(service1: Service1, service2: Service2, routeService: RouteService) {
@@ -127,13 +127,13 @@ export class PostController {
 If you need to use guards or interceptors, you just need to add them to the first and second arrays in the `trpcRoute` decorator, respectively:
 
 ```ts {9}
-import { controller, RouteService, trpcRoute } from '@ditsmod/trpc';
+import { trpcController, RouteService, trpcRoute } from '@ditsmod/trpc';
 import { z } from 'zod';
 
 import { BearerGuard } from '../auth/bearer.guard.js';
 import { MyInterceptor } from './my.interceptor.js';
 
-@controller()
+@trpcController()
 export class PostController {
   @trpcRoute([BearerGuard], [MyInterceptor])
   createPost(routeService: RouteService) {

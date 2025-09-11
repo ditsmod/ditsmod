@@ -4,7 +4,7 @@ export { createHelperForGuardWithParams, HelperForGuardWithParams } from '#utils
 export { trpcRoute } from '#decorators/trpc-route.js';
 export { trpcGuard } from '#decorators/trpc-guard.js';
 export { opts } from '#decorators/opts.js';
-export { controller } from '#decorators/controller.js';
+export { trpcController } from '#decorators/trpc-controller.js';
 export { RouteService } from '#services/route.service.js';
 export { initTrpcModule } from '#decorators/trpc-init-hooks-and-metadata.js';
 export { TRPC_ROOT, TRPC_ROUTER_OPTS, TRPC_OPTS } from '#types/constants.js';

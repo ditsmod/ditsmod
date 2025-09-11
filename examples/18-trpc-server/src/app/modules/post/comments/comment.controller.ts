@@ -1,9 +1,9 @@
-import { controller, RouteService, trpcRoute } from '@ditsmod/trpc';
+import { trpcController, RouteService, trpcRoute } from '@ditsmod/trpc';
 import { z } from 'zod';
 
 import { DbService } from '#db/db.service.js';
 
-@controller()
+@trpcController()
 export class CommentController {
   @trpcRoute()
   createComment(routeService: RouteService, db: DbService) {

@@ -82,12 +82,12 @@ export class DuplicateOfControllers extends CustomError {
   }
 }
 /**
- * `Collecting controller's metadata failed: class ${controllerName}" does not have the "@controller()" decorator.`
+ * `Collecting trpcController's metadata failed: class ${controllerName}" does not have the "@trpcController()" decorator.`
  */
 export class ControllerDoesNotHaveDecorator extends CustomError {
   constructor(controllerName: string) {
     super({
-      msg1: `Collecting controller's metadata failed: class ${controllerName}" does not have the "@controller()" decorator.`,
+      msg1: `Collecting trpcController's metadata failed: class ${controllerName}" does not have the "@trpcController()" decorator.`,
       level: 'fatal',
     });
   }

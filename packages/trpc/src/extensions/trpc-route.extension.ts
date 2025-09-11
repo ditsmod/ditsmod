@@ -5,7 +5,7 @@ import { TrpcMetadataPerMod2 } from '#init/trpc-deep-modules-importer.js';
 import { initTrpcModule } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { TrpcRouteMetadata } from '#decorators/trpc-route.js';
 import { isCtrlDecor } from '#init/trpc-module-normalizer.js';
-import { ControllerRawMetadata } from '#decorators/controller.js';
+import { ControllerRawMetadata } from '#decorators/trpc-controller.js';
 import { MetadataPerMod3 } from '#types/types.js';
 import { ControllerMetadata } from '#types/controller-metadata.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';

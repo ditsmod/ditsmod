@@ -52,7 +52,7 @@ export class RouteService<Context extends AnyObj = AnyObj, Input = void> {
    * Then you can use its token in this method: `routeService.diQuery(YourService.prototype.methodName)`.
    * In this case, DI will create an instance of `YourService` and execute the specified method on each request.
    * 
-   * @see [Example on github](https://github.com/ditsmod/ditsmod/blob/main/examples/18-trpc/src/app/modules/post/post.controller.ts)
+   * @see [Example on github](https://github.com/ditsmod/ditsmod/blob/main/examples/18-trpc/src/app/modules/post/post.trpcController.ts)
    * 
    * @param methodAsToken Class method as a DI token in the format `ClassName.prototype.methodName`.
    */
@@ -77,7 +77,7 @@ export class RouteService<Context extends AnyObj = AnyObj, Input = void> {
    * Then you can use its token in this method: `routeService.diInputAndQuery(z.any(), YourService.prototype.methodName)`.
    * In this case, DI will create an instance of `YourService` and execute the specified method on each request.
    * 
-   * @see [Example on github](https://github.com/ditsmod/ditsmod/blob/main/examples/18-trpc/src/app/modules/post/post.controller.ts)
+   * @see [Example on github](https://github.com/ditsmod/ditsmod/blob/main/examples/18-trpc/src/app/modules/post/post.trpcController.ts)
    * 
    * @param methodAsToken Class method as a DI token in the format `ClassName.prototype.methodName`.
    */
@@ -105,7 +105,7 @@ export class RouteService<Context extends AnyObj = AnyObj, Input = void> {
    * Then you can use its token in this method: `routeService.diMutation(YourService.prototype.methodName)`.
    * In this case, DI will create an instance of `YourService` and execute the specified method on each request.
    * 
-   * @see [Example on github](https://github.com/ditsmod/ditsmod/blob/main/examples/18-trpc/src/app/modules/post/post.controller.ts)
+   * @see [Example on github](https://github.com/ditsmod/ditsmod/blob/main/examples/18-trpc/src/app/modules/post/post.trpcController.ts)
    * 
    * @param methodAsToken Class method as a DI token in the format `ClassName.prototype.methodName`.
    */
@@ -130,7 +130,7 @@ export class RouteService<Context extends AnyObj = AnyObj, Input = void> {
    * Then you can use its token in this method: `routeService.diInputAndMutation(z.any(), YourService.prototype.methodName)`.
    * In this case, DI will create an instance of `YourService` and execute the specified method on each request.
    * 
-   * @see [Example on github](https://github.com/ditsmod/ditsmod/blob/main/examples/18-trpc/src/app/modules/post/post.controller.ts)
+   * @see [Example on github](https://github.com/ditsmod/ditsmod/blob/main/examples/18-trpc/src/app/modules/post/post.trpcController.ts)
    * 
    * @param methodAsToken Class method as a DI token in the format `ClassName.prototype.methodName`.
    */

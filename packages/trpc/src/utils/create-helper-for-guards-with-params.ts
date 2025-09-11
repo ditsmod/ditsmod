@@ -17,12 +17,12 @@ export const requirePermissions = createHelperForGuardWithParams<Permission>(Per
  * ### Usage
  * 
 ```ts
-import { controller, trpcRoute } from '@ditsmod/trpc';
+import { trpcController, trpcRoute } from '@ditsmod/trpc';
 
 import { requirePermissions } from '../auth/guards-utils.js';
 import { Permission } from '../auth/types.js';
 
-@controller()
+@trpcController()
 export class SomeController {
   @trpcRoute([requirePermissions(Permission.canActivateAdministration)])
   helloAdmin(res: Res) {

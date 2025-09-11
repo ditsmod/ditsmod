@@ -3,10 +3,10 @@ import { AnyObj, Class, DecoratorAndValue } from '@ditsmod/core';
 import { trpcRoute } from '#decorators/trpc-route.js';
 import { HttpInterceptor } from '#interceptors/tokens-and-types.js';
 import { Http2SecureServerOptions, ServerOptions } from './server-options.js';
-import { controller, ControllerRawMetadata } from '#decorators/controller.js';
+import { trpcController, ControllerRawMetadata } from '#decorators/trpc-controller.js';
 
 export function isCtrlDecor(decoratorAndValue?: AnyObj): decoratorAndValue is DecoratorAndValue<ControllerRawMetadata> {
-  return decoratorAndValue?.decorator === controller;
+  return decoratorAndValue?.decorator === trpcController;
 }
 
 export function isInterceptor(cls?: Class): cls is Class<HttpInterceptor> {

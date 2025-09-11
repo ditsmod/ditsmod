@@ -96,10 +96,10 @@ export class AppModule implements TrpcRootModule {
 Кожен метод контролера, що створює роут, повинен мати декоратор `trpcRoute` та повинен поверти tRPC-процедуру:
 
 ```ts {8-10}
-import { controller, RouteService, trpcRoute } from '@ditsmod/trpc';
+import { trpcController, RouteService, trpcRoute } from '@ditsmod/trpc';
 import { z } from 'zod';
 
-@controller()
+@trpcController()
 export class PostController {
   @trpcRoute()
   createPost(routeService: RouteService) {
@@ -115,7 +115,7 @@ export class PostController {
 Окрім `RouteService`, у параметрах методу контролера ви можете запитувати будь-який інший сервіс на рівні роуту, причому порядок параметрів не має значення:
 
 ```ts {4}
-@controller()
+@trpcController()
 export class PostController {
   @trpcRoute()
   createPost(service1: Service1, service2: Service2, routeService: RouteService) {
@@ -127,13 +127,13 @@ export class PostController {
 У випадку, якщо вам потрібно буде використовувати ґарди чи інтерсептори, вам достатньо їх додати відповідно у перший та другий масив у декораторі `trpcRoute`:
 
 ```ts {9}
-import { controller, RouteService, trpcRoute } from '@ditsmod/trpc';
+import { trpcController, RouteService, trpcRoute } from '@ditsmod/trpc';
 import { z } from 'zod';
 
 import { BearerGuard } from '../auth/bearer.guard.js';
 import { MyInterceptor } from './my.interceptor.js';
 
-@controller()
+@trpcController()
 export class PostController {
   @trpcRoute([BearerGuard], [MyInterceptor])
   createPost(routeService: RouteService) {
