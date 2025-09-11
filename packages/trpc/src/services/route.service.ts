@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import { AnyObj, inject, injectable, Injector, ResolvedProvider, ClassFactoryProvider } from '@ditsmod/core';
 import type {
   AnyMiddlewareFunction,
@@ -34,7 +33,7 @@ export class TrpcRouteService<Context extends AnyObj = AnyObj, Input = void> {
    * This procedure builder should be used when input validation takes place automatically in interceptors.
    */
   get procedureAfterInput() {
-    return this.#procedure.input(z.any()).use(this.middlewarePerRou()) as TRPCProcedureBuilder<
+    return this.#procedure.input((val) => val).use(this.middlewarePerRou()) as TRPCProcedureBuilder<
       Context,
       object,
       object,
@@ -129,7 +128,7 @@ export class TrpcRouteService<Context extends AnyObj = AnyObj, Input = void> {
    */
   diMutation<R>(methodAsToken: (...args: any[]) => R) {
     const mutation = this.getHandler<R>(methodAsToken);
-    return this.#procedure.input(z.any()).mutation(mutation) as TRPCMutationProcedure<{
+    return this.#procedure.input((val) => val).mutation(mutation) as TRPCMutationProcedure<{
       input: Input;
       output: R;
       meta: AnyObj;
