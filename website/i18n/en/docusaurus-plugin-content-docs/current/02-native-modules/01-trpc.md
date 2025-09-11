@@ -91,7 +91,7 @@ Note that in `AppRouterHelper`, not just an array of imported modules is passed,
 
 Also note the `TrpcRootModule` interface, which requires mandatory implementation of the `setAppRouterOptions()` method, and optionally you can implement `setTrpcCreateOptions()`. When your `setAppRouterOptions()` method returns a router config, you cannot pass the `createContext` option, because Ditsmod automatically creates the context as an object `{ req, res }` to guarantee availability of these variables in the context. Of course, in procedures you can add any other context properties.
 
-## How client types are formed at the controller level
+## How client types are formed at the controller method level
 
 Each controller method that creates a route must have the `trpcRoute` decorator and must return a tRPC procedure:
 
