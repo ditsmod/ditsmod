@@ -45,3 +45,4 @@ export {
   MultiProvider,
 } from './utils.js';
 export { DepsChecker } from './deps-checker.js';
+export { Equal, Expect } from './static-type-guards.js';
