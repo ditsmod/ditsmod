@@ -361,14 +361,13 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       const paramsItem = paramsMeta[i];
 
       if (paramsItem instanceof DecoratorAndValue) {
-        const { decorator } = paramsItem;
-        if (decorator === inject) {
-          token = (paramsItem.value as InjectTransformResult).token;
-          ctx = (paramsItem.value as InjectTransformResult).ctx;
-        } else if (decorator === optional) {
+        if (inject.appliedTo(paramsItem)) {
+          token = paramsItem.value.token;
+          ctx = paramsItem.value.ctx;
+        } else if (optional.appliedTo(paramsItem)) {
           isOptional = true;
-        } else if (decorator === fromSelf || decorator === skipSelf) {
-          visibility = decorator;
+        } else if (fromSelf.appliedTo(paramsItem) || skipSelf.appliedTo(paramsItem)) {
+          visibility = paramsItem.decorator;
         }
       } else {
         token = paramsItem;

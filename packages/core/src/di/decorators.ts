@@ -1,4 +1,5 @@
-import { makeClassDecorator, makePropDecorator, makeParamDecorator } from './decorator-factories.js';
+import { AnyFn } from '#types/mix.js';
+import { makeClassDecorator, makePropDecorator, makeParamDecorator, DecoratorWithGuard } from './decorator-factories.js';
 
 /**
  * Allows you to use an alternative token for a specific dependency.
@@ -39,9 +40,11 @@ expect(injector.get(Car).engine instanceof Engine).toBe(true);
    */
 export const inject: InjectDecorator = makeParamDecorator(
   (token, ctx?) => ({ token, ctx }) satisfies InjectTransformResult,
+  undefined,
+  'inject',
 );
 
-export interface InjectDecorator {
+export interface InjectDecorator extends DecoratorWithGuard<AnyFn, InjectTransformResult> {
   (token: NonNullable<unknown>): any;
   <T extends NonNullable<unknown>>(token: NonNullable<unknown>, ctx: T): any;
 }
@@ -69,7 +72,7 @@ const injector = Injector.resolveAndCreate([Car]);
 expect(injector.get(Car).engine).toBeNull();
 ```
  */
-export const optional = makeParamDecorator(() => undefined);
+export const optional = makeParamDecorator();
 
 /**
  * A marker metadata that marks a class as available to `Injector` for creation.
@@ -168,9 +171,9 @@ it('the child can instantiate Service2', () => {
 });
 ```
  */
-export const skipSelf = makeParamDecorator(() => undefined);
+export const skipSelf = makeParamDecorator();
 
 /**
  * Used to mark methods in a class for `FactoryProvider`.
  */
-export const factoryMethod = makePropDecorator(() => undefined);
+export const factoryMethod = makePropDecorator();
