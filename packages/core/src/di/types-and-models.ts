@@ -1,4 +1,5 @@
 import { AnyFn } from '#types/mix.js';
+import { DecoratorWithGuard } from './decorator-factories.js';
 import type { fromSelf, skipSelf } from './decorators.js';
 import { ForwardRefFn } from './forward-ref.js';
 import { InjectionToken } from './injection-token.js';
@@ -79,7 +80,7 @@ export class DecoratorAndValue<Value = any> {
    * @param decorator The decorator factory function.
    */
   constructor(
-    public decorator: (...args: any[]) => any,
+    public decorator: DecoratorWithGuard<AnyFn, Value>,
     public value: Value,
     /**
      * The directory in which the class was declared.

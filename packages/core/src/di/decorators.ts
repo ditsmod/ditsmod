@@ -135,7 +135,7 @@ it('child cannot create instance of Service2', () => {
 });
 ```
  */
-export const fromSelf = makeParamDecorator(() => undefined);
+export const fromSelf = makeParamDecorator();
 
 /**
  * ### Description
