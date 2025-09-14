@@ -214,9 +214,8 @@ class MyModule {
 class MyInitHooks extends InitHooks<RawMeta> {}
 ```
  */
-
-export interface InitDecorator<T1 extends BaseInitRawMeta, T2, T3> {
-  (data?: T1): any;
+export interface InitDecorator<InitRawMeta extends BaseInitRawMeta, ModuleParams, InitMeta> {
+  (data?: InitRawMeta): any;
 }
 
 /**
