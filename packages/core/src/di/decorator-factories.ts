@@ -35,7 +35,7 @@ export const METHODS_WITH_PARAMS = Symbol();
 
 export interface DecoratorWithGuard<T extends AnyFn, Value> {
   /**
-   * Class decorator factory.
+   * Decorator factory.
    */
   (...args: Parameters<T>): any;
   /**
