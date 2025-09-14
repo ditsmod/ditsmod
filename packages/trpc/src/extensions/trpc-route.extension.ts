@@ -13,7 +13,7 @@ import { InvalidInterceptor } from '../error/trpc-errors.js';
 import { isInterceptor, isTrpcRoute } from '#types/type.guards.js';
 import { TRPC_HTTP_INTERCEPTORS } from '#types/types.js';
 import { TrpcRouteService } from '#services/route.service.js';
-import { normalizeGuards } from '#utils/prepere-guards.js';
+import { normalizeGuards } from '#utils/prepare-guards.js';
 
 @injectable()
 export class TrpcRouteExtension implements Extension<MetadataPerMod3> {

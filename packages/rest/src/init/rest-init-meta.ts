@@ -10,14 +10,6 @@ class NormalizedParams {
 }
 
 export class RestInitMeta extends BaseInitMeta {
-  providersPerRou: Provider[] = [];
-  providersPerReq: Provider[] = [];
-  exportedProvidersPerRou: Provider[] = [];
-  exportedProvidersPerReq: Provider[] = [];
-  exportedMultiProvidersPerRou: MultiProvider[] = [];
-  exportedMultiProvidersPerReq: MultiProvider[] = [];
-  resolvedCollisionsPerRou: [any, ModRefId][] = [];
-  resolvedCollisionsPerReq: [any, ModRefId][] = [];
   appendsWithParams: AppendsWithParams[] = [];
   appendsModules: ModuleType[] = [];
   controllers: Class[] = [];

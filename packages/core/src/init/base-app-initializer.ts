@@ -226,7 +226,6 @@ export class BaseAppInitializer {
     allInitHooks.forEach((initHooks, decorator) => {
       const val = initHooks.importModulesShallow({
         moduleManager,
-        providersPerApp: moduleManager.providersPerApp,
         globalProviders,
         modRefId,
         unfinishedScanModules: new Set(),

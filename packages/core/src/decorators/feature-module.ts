@@ -1,4 +1,4 @@
-import { ForwardRefFn, makeClassDecorator } from '#di';
+import { DecoratorWithGuard, ForwardRefFn, makeClassDecorator } from '#di';
 import { ModuleMetadata } from '#types/module-metadata.js';
 import { AnyFn, ModRefId, ModuleType } from '#types/mix.js';
 import { objectKeys } from '#utils/object-keys.js';
@@ -7,7 +7,7 @@ import { CallsiteUtils } from '#utils/callsites.js';
 
 export const featureModule: FeatureModuleDecorator = makeClassDecorator(transformModule, undefined, 'featureModule');
 
-export interface FeatureModuleDecorator {
+export interface FeatureModuleDecorator extends DecoratorWithGuard<AnyFn, RawMeta> {
   (data?: ModuleMetadata): any;
 }
 

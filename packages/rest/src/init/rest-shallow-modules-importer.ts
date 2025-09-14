@@ -6,32 +6,23 @@ import {
   getTokens,
   getToken,
   getDebugClassName,
-  reflector,
-  hasDeclaredInDir,
   getCollisions,
   isRootModule,
   getModule,
   BaseMeta,
   GlobalProviders,
   getLastProviders,
-  defaultProvidersPerMod,
   getProxyForInitMeta,
 } from '@ditsmod/core';
 import {
-  CannotResolveCollisionForMultiProviderPerLevel,
-  FalseResolvedCollisions,
   ProvidersCollision,
   ResolvingCollisionsNotExistsOnThisLevel,
   ResolvingCollisionsNotImportedInApplication,
-  ResolvingCollisionsNotImportedInModule,
 } from '@ditsmod/core/errors';
 
 import { GuardPerMod1 } from '#interceptors/guard.js';
 import { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
 import { Level, RestGlobalProviders } from '#types/types.js';
-import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
-import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
-import { AppendsWithParams } from './rest-init-raw-meta.js';
 import { initRest, RestInitHooks } from '#decorators/rest-init-hooks-and-metadata.js';
 import { ImportModulesShallowConfig, RestProviderImport, RestShallowImports } from './types.js';
 import { ModuleIncludesInImportsAndAppends } from '#errors';
@@ -52,14 +43,6 @@ export class RestShallowModulesImporter {
   protected guards1: GuardPerMod1[];
   protected baseMeta: BaseMeta;
   protected meta: RestInitMeta;
-  protected providersPerApp: Provider[];
-
-  protected importedProvidersPerMod = new Map<any, RestProviderImport>();
-  protected importedProvidersPerRou = new Map<any, RestProviderImport>();
-  protected importedProvidersPerReq = new Map<any, RestProviderImport>();
-  protected importedMultiProvidersPerMod = new Map<ModRefId | AppendsWithParams, Provider[]>();
-  protected importedMultiProvidersPerRou = new Map<ModRefId | AppendsWithParams, Provider[]>();
-  protected importedMultiProvidersPerReq = new Map<ModRefId | AppendsWithParams, Provider[]>();
 
   /**
    * GlobalProviders.
@@ -70,7 +53,6 @@ export class RestShallowModulesImporter {
   protected unfinishedScanModules = new Set<ModRefId>();
   protected unfinishedExportModules = new Set<ModRefId>();
   protected moduleManager: ModuleManager;
-  protected resolvedCollisions = new Map<any, Set<Level>>();
 
   exportGlobalProviders({
     moduleManager,
@@ -83,33 +65,12 @@ export class RestShallowModulesImporter {
   }): RestGlobalProviders {
     this.moduleManager = moduleManager;
     this.glProviders = globalProviders;
-    this.providersPerApp = moduleManager.providersPerApp;
     this.moduleName = baseMeta.name;
     this.baseMeta = baseMeta;
     this.meta = this.getInitMeta(baseMeta);
-    this.importProviders(baseMeta);
-    this.checkAllCollisionsWithLevelsMix();
-
-    let initHooks: RestInitHooks | undefined;
-    if (
-      this.importedProvidersPerMod.size ||
-      this.importedProvidersPerRou.size ||
-      this.importedProvidersPerReq.size ||
-      this.importedMultiProvidersPerMod.size ||
-      this.importedMultiProvidersPerRou.size ||
-      this.importedMultiProvidersPerReq.size
-    ) {
-      initHooks = new RestInitHooks({});
-    }
 
     return {
-      initHooks,
-      importedProvidersPerMod: this.importedProvidersPerMod,
-      importedProvidersPerRou: this.importedProvidersPerRou,
-      importedProvidersPerReq: this.importedProvidersPerReq,
-      importedMultiProvidersPerMod: this.importedMultiProvidersPerMod,
-      importedMultiProvidersPerRou: this.importedMultiProvidersPerRou,
-      importedMultiProvidersPerReq: this.importedMultiProvidersPerReq,
+      initHooks: new RestInitHooks({}),
     };
   }
 
@@ -118,7 +79,6 @@ export class RestShallowModulesImporter {
    */
   importModulesShallow({
     moduleManager,
-    providersPerApp,
     globalProviders,
     modRefId,
     unfinishedScanModules,
@@ -127,7 +87,6 @@ export class RestShallowModulesImporter {
     isAppends,
   }: ImportModulesShallowConfig): Map<ModRefId, RestShallowImports> {
     this.moduleManager = moduleManager;
-    this.providersPerApp = providersPerApp;
     const baseMeta = this.moduleManager.getBaseMeta(modRefId, true);
     this.baseMeta = baseMeta;
     this.meta = this.getInitMeta(baseMeta);
@@ -145,54 +104,12 @@ export class RestShallowModulesImporter {
       applyControllers = true;
     }
 
-    let perMod: Map<any, RestProviderImport>;
-    let perRou: Map<any, RestProviderImport>;
-    let perReq: Map<any, RestProviderImport>;
-    let multiPerMod: Map<RestModRefId, Provider[]>;
-    let multiPerRou: Map<RestModRefId, Provider[]>;
-    let multiPerReq: Map<RestModRefId, Provider[]>;
-    if (baseMeta.isExternal) {
-      // External modules do not require global providers from the application.
-      perMod = new Map([...this.importedProvidersPerMod]);
-      perRou = new Map([...this.importedProvidersPerRou]);
-      perReq = new Map([...this.importedProvidersPerReq]);
-      multiPerMod = new Map([...this.importedMultiProvidersPerMod]);
-      multiPerRou = new Map([...this.importedMultiProvidersPerRou]);
-      multiPerReq = new Map([...this.importedMultiProvidersPerReq]);
-    } else {
-      perMod = new Map([...this.restGlProviders.importedProvidersPerMod, ...this.importedProvidersPerMod]);
-      perRou = new Map([...this.restGlProviders.importedProvidersPerRou, ...this.importedProvidersPerRou]);
-      perReq = new Map([...this.restGlProviders.importedProvidersPerReq, ...this.importedProvidersPerReq]);
-      multiPerMod = new Map([
-        ...this.restGlProviders.importedMultiProvidersPerMod,
-        ...this.importedMultiProvidersPerMod,
-      ]);
-      multiPerRou = new Map([
-        ...this.restGlProviders.importedMultiProvidersPerRou,
-        ...this.importedMultiProvidersPerRou,
-      ]);
-      multiPerReq = new Map([
-        ...this.restGlProviders.importedMultiProvidersPerReq,
-        ...this.importedMultiProvidersPerReq,
-      ]);
-    }
-
-    this.checkFalseResolvingCollisions();
-
     return this.shallowImportsMap.set(modRefId, {
       baseMeta,
       prefixPerMod,
       guards1: this.guards1,
       meta: this.meta,
       applyControllers,
-      baseImportRegistry: {
-        perMod,
-        perRou,
-        perReq,
-        multiPerMod,
-        multiPerRou,
-        multiPerReq,
-      },
     });
   }
 
@@ -212,15 +129,11 @@ export class RestShallowModulesImporter {
   protected importAndAppendModules() {
     this.importOrAppendModules([...this.baseMeta.importsModules, ...this.baseMeta.importsWithParams], true);
     this.importOrAppendModules([...this.meta.appendsModules, ...this.meta.appendsWithParams]);
-    this.checkAllCollisionsWithLevelsMix();
   }
 
   protected importOrAppendModules(aModRefIds: RestModRefId[], isImport?: boolean) {
     for (const modRefId of aModRefIds) {
       const baseMeta = this.moduleManager.getBaseMeta(modRefId, true);
-      if (isImport) {
-        this.importProviders(baseMeta);
-      }
       if (this.unfinishedScanModules.has(modRefId)) {
         continue;
       }
@@ -230,7 +143,6 @@ export class RestShallowModulesImporter {
       this.unfinishedScanModules.add(modRefId);
       const shallowImportsBase = shallowModulesImporter.importModulesShallow({
         moduleManager: this.moduleManager,
-        providersPerApp: this.providersPerApp,
         globalProviders: this.glProviders,
         modRefId,
         unfinishedScanModules: this.unfinishedScanModules,
@@ -271,61 +183,6 @@ export class RestShallowModulesImporter {
     return { prefixPerMod, guards1 };
   }
 
-  /**
-   * Recursively imports providers.
-   *
-   * @param baseMeta1 Module metadata from where imports providers.
-   */
-  protected importProviders(baseMeta1: BaseMeta) {
-    const { modRefId, exportsModules, exportsWithParams } = baseMeta1;
-
-    for (const modRefId2 of [...exportsModules, ...exportsWithParams]) {
-      if (this.unfinishedExportModules.has(modRefId2)) {
-        continue;
-      }
-      const baseMeta2 = this.moduleManager.getBaseMeta(modRefId2, true);
-      // Reexported module
-      this.unfinishedExportModules.add(baseMeta2.modRefId);
-      this.importProviders(baseMeta2);
-      this.unfinishedExportModules.delete(baseMeta2.modRefId);
-    }
-
-    const meta = this.getInitMeta(baseMeta1);
-    this.addProviders('Mod', modRefId, meta);
-    this.addProviders('Rou', modRefId, meta);
-    this.addProviders('Req', modRefId, meta);
-    if (meta.exportedMultiProvidersPerRou.length) {
-      this.importedMultiProvidersPerRou.set(modRefId, meta.exportedMultiProvidersPerRou);
-    }
-    if (meta.exportedMultiProvidersPerReq.length) {
-      this.importedMultiProvidersPerReq.set(modRefId, meta.exportedMultiProvidersPerReq);
-    }
-    this.throwIfTryResolvingMultiprovidersCollisions(baseMeta1.name);
-  }
-
-  protected addProviders(level: Level, modRefId: RestModRefId, meta: RestInitMeta) {
-    meta[`exportedProvidersPer${level}`].forEach((provider) => {
-      const token1 = getToken(provider);
-      const providerImport = this[`importedProvidersPer${level}`].get(token1);
-      if (providerImport) {
-        this.checkCollisionsPerLevel(modRefId, level, token1, provider, providerImport);
-        const hasResolvedCollision = this.meta[`resolvedCollisionsPer${level}`].some(([token2]) => token2 === token1);
-        if (hasResolvedCollision) {
-          const { providers, module2 } = this.getResolvedCollisionsPerLevel(level, token1);
-          const newProviderImport = new RestProviderImport();
-          newProviderImport.modRefId = module2;
-          newProviderImport.providers.push(...providers);
-          this[`importedProvidersPer${level}`].set(token1, newProviderImport);
-        }
-      } else {
-        const newProviderImport = new RestProviderImport();
-        newProviderImport.modRefId = modRefId;
-        newProviderImport.providers.push(provider);
-        this[`importedProvidersPer${level}`].set(token1, newProviderImport);
-      }
-    });
-  }
-
   protected checkCollisionsPerLevel(
     modRefId: RestModRefId,
     level: Level,
@@ -364,110 +221,7 @@ export class RestShallowModulesImporter {
       throw new ResolvingCollisionsNotExistsOnThisLevel(this.moduleName, moduleName, level, tokenName);
     }
 
-    this.setResolvedCollisions(token2, level);
     return { module2: modRefId2, providers };
-  }
-
-  protected setResolvedCollisions(token: any, level: Level) {
-    const levels = this.resolvedCollisions.get(token);
-    if (!levels) {
-      this.resolvedCollisions.set(token, new Set([level]));
-    } else {
-      levels.add(level);
-    }
-  }
-
-  protected checkFalseResolvingCollisions() {
-    (['Mod', 'Rou', 'Req'] as const).forEach((level) => {
-      this.meta[`resolvedCollisionsPer${level}`].forEach(([token, module]) => {
-        const levels = this.resolvedCollisions.get(token);
-        if (!levels || !levels.has(level)) {
-          const moduleName = getDebugClassName(module) || 'unknown';
-          const tokenName = token.name || token;
-          throw new FalseResolvedCollisions(this.moduleName, moduleName, level, tokenName);
-        }
-      });
-    });
-  }
-
-  protected throwIfTryResolvingMultiprovidersCollisions(moduleName: string) {
-    const levels: Level[] = ['Mod', 'Rou', 'Req'];
-    levels.forEach((level) => {
-      const tokens: any[] = [];
-      this[`importedMultiProvidersPer${level}`].forEach((providers) => tokens.push(...getTokens(providers)));
-      this.meta[`resolvedCollisionsPer${level}`].some(([token]) => {
-        if (tokens.includes(token)) {
-          const tokenName = token.name || token;
-          throw new CannotResolveCollisionForMultiProviderPerLevel(this.moduleName, moduleName, level, tokenName);
-        }
-      });
-    });
-  }
-
-  protected checkAllCollisionsWithLevelsMix() {
-    // let perMod: Map<any, ProviderImport<Provider>>;
-    // if (this.shallowImportsBase) {
-    //   // When calling this.importModulesShallow()
-    //   const shallowImports = this.shallowImportsBase.get(this.baseMeta.modRefId)!;
-    //   perMod = shallowImports.baseImportRegistry.perMod;
-    // } else {
-    //   // When calling this.exportGlobalProviders()
-    //   perMod = this.glProviders.importedProvidersPerMod;
-    // }
-
-    this.checkCollisionsWithLevelsMix(this.providersPerApp, ['Mod', 'Rou', 'Req']);
-    const providersPerMod = [
-      ...defaultProvidersPerMod,
-      ...this.baseMeta.providersPerMod,
-      ...getImportedProviders(this.importedProvidersPerMod),
-      // ...getImportedProviders(perMod),
-    ];
-    this.checkCollisionsWithLevelsMix(providersPerMod, ['Rou', 'Req']);
-    const mergedProvidersAndTokens = [
-      ...this.meta.providersPerRou,
-      ...getImportedProviders(this.importedProvidersPerRou),
-      ...defaultProvidersPerReq,
-    ];
-    this.checkCollisionsWithLevelsMix(mergedProvidersAndTokens, ['Req']);
-  }
-
-  protected checkCollisionsWithLevelsMix(providers: any[], levels: Level[]) {
-    getTokens(providers).forEach((token) => {
-      for (const level of levels) {
-        const declaredTokens = getTokens(this.meta[`providersPer${level}`]);
-        const importedTokens = getImportedTokens(this[`importedProvidersPer${level}`]);
-        const resolvedTokens = this.meta[`resolvedCollisionsPer${level}`].map(([t]) => t);
-        const collision = importedTokens.includes(token) && ![...declaredTokens, ...resolvedTokens].includes(token);
-        if (collision) {
-          const providerImport = this[`importedProvidersPer${level}`].get(token)!;
-          const hostModulePath = this.moduleManager.getBaseMeta(providerImport.modRefId)?.declaredInDir || '.';
-          const decorAndVal = reflector.getDecorators(token, hasDeclaredInDir)?.at(0);
-          const collisionWithPath = decorAndVal?.declaredInDir || '.';
-          if (hostModulePath !== '.' && collisionWithPath !== '.' && collisionWithPath.startsWith(hostModulePath)) {
-            // Allow collisions in host modules.
-          } else {
-            const hostModuleName = getDebugClassName(providerImport.modRefId) || 'unknown';
-            throw new ProvidersCollision(this.moduleName, [token], [hostModuleName], level, this.baseMeta.isExternal);
-          }
-        }
-        this.resolveCollisionsWithLevelsMix(token, level, resolvedTokens);
-      }
-    });
-  }
-
-  protected resolveCollisionsWithLevelsMix(token1: any, level: Level, resolvedTokens: any[]) {
-    if (resolvedTokens.includes(token1)) {
-      const [, module2] = this.meta[`resolvedCollisionsPer${level}`].find(([token2]) => token1 === token2)!;
-      if (this.baseMeta.modRefId === module2) {
-        if (!this[`importedProvidersPer${level}`].delete(token1)) {
-          const tokenName = token1.name || token1;
-          throw new ResolvingCollisionsNotImportedInModule(this.moduleName, level, tokenName);
-        }
-      } else {
-        // Only check that the correct data is specified.
-        this.getResolvedCollisionsPerLevel(level, token1);
-      }
-    }
   }
 
   protected checkImportsAndAppends(baseMeta: BaseMeta, meta1: RestInitMeta) {

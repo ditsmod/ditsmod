@@ -98,7 +98,6 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
    */
   importModulesShallow(config: {
     moduleManager: ModuleManager;
-    providersPerApp: Provider[];
     globalProviders: GlobalProviders;
     modRefId: ModRefId;
     unfinishedScanModules: Set<ModRefId>;

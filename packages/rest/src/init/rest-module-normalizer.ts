@@ -1,20 +1,13 @@
 import {
   Class,
-  getToken,
-  getTokens,
   isFeatureModule,
-  isMultiProvider,
   isNormalizedProvider,
-  isProvider,
-  ModuleWithParams,
-  MultiProvider,
   BaseMeta,
   Providers,
   reflector,
   resolveForwardRef,
   getDuplicates,
   isModuleWithParams,
-  getDebugClassName,
   Provider,
   isClassProvider,
   isTokenProvider,
@@ -24,20 +17,16 @@ import {
   ModuleType,
 } from '@ditsmod/core';
 import {
-  ExportingUnknownSymbol,
   ForbiddenExportNormalizedProvider,
   ModuleShouldHaveValue,
-  ReexportFailed,
   ResolvedCollisionTokensOnly,
-  UndefinedSymbol,
 } from '@ditsmod/core/errors';
 
-import { AppendsWithParams, RestInitRawMeta, RestModuleParams } from '#init/rest-init-raw-meta.js';
+import { AppendsWithParams, RestInitRawMeta } from '#init/rest-init-raw-meta.js';
 import { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
-import { Level } from '#types/types.js';
 import { ControllerDoesNotHaveDecorator, DuplicateOfControllers, InvalidGuard } from '#errors';
 
 /**
@@ -51,87 +40,10 @@ export class RestModuleNormalizer {
     this.baseMeta = baseMeta;
     const meta = getProxyForInitMeta(baseMeta, RestInitMeta);
     this.meta = meta;
-    this.normalizeDeclaredAndResolvedProviders(rawMeta);
-    this.normalizeExports(rawMeta, 'Exports');
     this.mergeModuleWithParams(baseMeta.modRefId);
     this.appendModules(rawMeta);
     this.checkMetadata();
     return meta;
-  }
-
-  protected normalizeDeclaredAndResolvedProviders(rawMeta: RestInitRawMeta) {
-    if (rawMeta.controllers) {
-      this.meta.controllers.push(...rawMeta.controllers);
-    }
-    (['Rou', 'Req'] satisfies Level[]).forEach((level) => {
-      if (rawMeta[`providersPer${level}`]) {
-        const providersPerLevel = this.resolveForwardRef(rawMeta[`providersPer${level}`]!);
-        this.meta[`providersPer${level}`].push(...providersPerLevel);
-      }
-
-      if (rawMeta[`resolvedCollisionsPer${level}`]) {
-        rawMeta[`resolvedCollisionsPer${level}`]!.forEach(([token, module]) => {
-          token = resolveForwardRef(token);
-          module = resolveForwardRef(module);
-          if (isModuleWithParams(module)) {
-            module.module = resolveForwardRef(module.module);
-          }
-          this.meta[`resolvedCollisionsPer${level}`].push([token, module]);
-        });
-      }
-    });
-  }
-
-  protected normalizeExports(rawMeta: RestInitRawMeta, action: 'Exports' | 'Exports with params') {
-    if (!rawMeta.exports) {
-      return;
-    }
-    const providers = this.meta.providersPerMod.concat(this.meta.providersPerRou, this.meta.providersPerReq);
-    let tokens: any[] = [];
-    if (providers.length) {
-      tokens = getTokens(providers);
-    }
-
-    this.resolveForwardRef(rawMeta.exports).forEach((exp, i) => {
-      if (exp === undefined) {
-        throw new UndefinedSymbol(action, this.baseMeta.name, i);
-      }
-      if (isNormalizedProvider(exp)) {
-        throw new ForbiddenExportNormalizedProvider(this.baseMeta.name, exp.token.name || exp.token);
-      }
-      if (reflector.getDecorators(exp, isFeatureModule)) {
-        //
-      } else if (isModuleWithParams(exp)) {
-        if (!this.baseMeta.importsWithParams?.includes(exp)) {
-          this.throwExportWithParams(exp);
-        }
-      } else if (isProvider(exp) || tokens.includes(exp)) {
-        // Provider or token of provider
-        this.exportProviders(exp);
-      } else {
-        throw new ExportingUnknownSymbol(this.baseMeta.name, exp.name || exp);
-      }
-    });
-  }
-
-  protected exportProviders(token: any) {
-    let found = false;
-    (['Mod', 'Rou', 'Req'] satisfies Level[]).forEach((level) => {
-      const providers = this.meta[`providersPer${level}`].filter((p) => getToken(p) === token);
-      if (providers.length) {
-        found = true;
-        if (providers.some(isMultiProvider)) {
-          this.meta[`exportedMultiProvidersPer${level}`].push(...(providers as MultiProvider[]));
-        } else {
-          this.meta[`exportedProvidersPer${level}`].push(...providers);
-        }
-      }
-    });
-
-    if (!found) {
-      const providerName = token.name || token;
-      throw new ExportingUnknownSymbol(this.baseMeta.name, providerName);
-    }
   }
 
   protected mergeModuleWithParams(modRefId: RestModRefId): void {
@@ -150,20 +62,6 @@ export class RestModuleNormalizer {
     const params = modRefId.initParams?.get(initRest);
 
     if (params) {
-      (
-        [
-          'providersPerApp',
-          'providersPerMod',
-          'providersPerRou',
-          'providersPerReq',
-        ] satisfies (keyof RestModuleParams)[]
-      ).forEach((prop) => {
-        if (params[prop] instanceof Providers || (Array.isArray(params[prop]) && params[prop].length)) {
-          this.meta[prop].push(...this.resolveForwardRef(params[prop]));
-        }
-      });
-      this.normalizeExports(params, 'Exports with params');
-
       if (params.absolutePath !== undefined) {
         this.meta.params.absolutePath = params.absolutePath;
       }
@@ -212,11 +110,6 @@ export class RestModuleNormalizer {
       }
       return item;
     }) as Exclude<T, ForwardRefFn>[];
-  }
-
-  protected throwExportWithParams(moduleWithParams: ModuleWithParams) {
-    const importedModuleName = getDebugClassName(moduleWithParams.module) || '""';
-    throw new ReexportFailed(this.baseMeta.name, importedModuleName);
   }
 
   protected throwIfResolvingNormalizedProvider(meta: RestInitMeta) {

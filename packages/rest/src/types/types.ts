@@ -7,14 +7,7 @@ import { RouteHandler } from '#services/router.js';
 import { ControllerMetadata } from './controller-metadata.js';
 import { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
 
-export class RestGlobalProviders extends GlobalInitHooks {
-  importedProvidersPerMod = new Map<any, RestProviderImport>();
-  importedProvidersPerRou = new Map<any, RestProviderImport>();
-  importedProvidersPerReq = new Map<any, RestProviderImport>();
-  importedMultiProvidersPerMod = new Map<RestModRefId, Provider[]>();
-  importedMultiProvidersPerRou = new Map<RestModRefId, Provider[]>();
-  importedMultiProvidersPerReq = new Map<RestModRefId, Provider[]>();
-}
+export class RestGlobalProviders extends GlobalInitHooks {}
 
 /**
  * See also https://en.wikipedia.org/wiki/URL_redirection#HTTP_status_codes_3xx

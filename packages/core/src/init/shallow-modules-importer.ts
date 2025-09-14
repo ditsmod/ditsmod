@@ -29,6 +29,7 @@ import {
   ResolvingCollisionsNotImportedInApplication,
   CannotResolveCollisionForMultiProviderPerLevel,
   ProvidersCollision,
+  FalseResolvedCollisions,
 } from '#errors';
 /**
  * Recursively collects providers taking into account module imports/exports,
@@ -45,6 +46,7 @@ export class ShallowModulesImporter {
    * Module metadata.
    */
   protected baseMeta: BaseMeta;
+  protected resolvedCollisions = new Map<any, Set<Level>>();
 
   protected importedProvidersPerMod = new Map<any, ProviderImport>();
   protected importedProvidersPerRou = new Map<any, ProviderImport>();
@@ -295,6 +297,7 @@ export class ShallowModulesImporter {
       throw new ResolvingCollisionsNotExistsOnThisLevel(this.moduleName, moduleName, level, tokenName);
     }
 
+    this.setResolvedCollisions(token2, level);
     return { module2: modRefId2, providers };
   }
 
@@ -367,5 +370,27 @@ export class ShallowModulesImporter {
         this.getResolvedCollisionsPerLevel(level, token1);
       }
     }
+  }
+
+  protected setResolvedCollisions(token: any, level: Level) {
+    const levels = this.resolvedCollisions.get(token);
+    if (!levels) {
+      this.resolvedCollisions.set(token, new Set([level]));
+    } else {
+      levels.add(level);
+    }
+  }
+
+  protected checkFalseResolvingCollisions() {
+    (['Mod', 'Rou', 'Req'] as const).forEach((level) => {
+      this.baseMeta[`resolvedCollisionsPer${level}`].forEach(([token, module]) => {
+        const levels = this.resolvedCollisions.get(token);
+        if (!levels || !levels.has(level)) {
+          const moduleName = getDebugClassName(module) || 'unknown';
+          const tokenName = token.name || token;
+          throw new FalseResolvedCollisions(this.moduleName, moduleName, level, tokenName);
+        }
+      });
+    });
   }
 }

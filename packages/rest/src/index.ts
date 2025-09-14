@@ -19,7 +19,7 @@ export { RequestContext } from './services/request-context.js';
 export { RoutesExtension } from './extensions/routes.extension.js';
 export { PreRouterExtension } from './extensions/pre-router.extension.js';
 export { UseInterceptorExtension } from './extensions/use-interceptor.extension.js';
-export { initRest } from './decorators/rest-init-hooks-and-metadata.js';
+export { initRest, restRootModule, restModule } from './decorators/rest-init-hooks-and-metadata.js';
 export { RestInitMeta } from './init/rest-init-meta.js';
 export { route, RouteMetadata } from './decorators/route.js';
 export { isRoute, isInterceptor, isAppendsWithParams, isCtrlDecor, isHttp2SecureServerOptions } from './types/type.guards.js';

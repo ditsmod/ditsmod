@@ -42,7 +42,7 @@ import { DefaultCtxTrpcChainMaker } from '#interceptors/default-ctx-chain-maker.
 import { PublicTrpcRouteService, TrpcRouteService } from '#services/route.service.js';
 import { TRPC_OPTS } from '#types/constants.js';
 import { TrpcOpts } from '#types/types.js';
-import { getResolvedGuards } from '#utils/prepere-guards.js';
+import { getResolvedGuards } from '#utils/prepare-guards.js';
 import { InterceptorWithGuardsPerRou } from '#interceptors/interceptor-with-guards-per-rou.js';
 import { isInterceptor } from '#types/type.guards.js';
 

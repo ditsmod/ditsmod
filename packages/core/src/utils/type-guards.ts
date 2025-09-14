@@ -30,7 +30,7 @@ export function isRootModule(rawMeta?: RawMeta): rawMeta is RawMeta;
 export function isRootModule(baseMeta?: BaseMeta): baseMeta is BaseMeta<RootModuleMetadata>;
 export function isRootModule(arg?: AnyObj): arg is { decorator: typeof rootModule } & AnyObj;
 export function isRootModule(arg?: DecoratorAndValue | RawMeta | BaseMeta | AnyObj): arg is DecoratorAndValue<RawMeta> {
-  return arg?.decorator === rootModule;
+  return rootModule.appliedTo(arg);
 }
 
 export function isFeatureModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<RawMeta>;
@@ -40,7 +40,7 @@ export function isFeatureModule(arg?: AnyObj): arg is { decorator: typeof featur
 export function isFeatureModule(
   arg?: DecoratorAndValue | RawMeta | BaseMeta | AnyObj,
 ): arg is DecoratorAndValue<RawMeta> {
-  return arg?.decorator === featureModule;
+  return featureModule.appliedTo(arg);
 }
 
 export function isModDecor(arg?: DecoratorAndValue): arg is DecoratorAndValue<RawMeta>;

@@ -31,10 +31,6 @@ export class RestShallowImports {
    * the original array will remain unchanged.
    */
   meta: RestInitMeta;
-  /**
-   * Map between a token and its ProviderImport per level.
-   */
-  baseImportRegistry: RestBaseImportRegistry;
   applyControllers?: boolean;
 }
 
@@ -72,7 +68,6 @@ export interface ExportGlobalProvidersConfig {
 
 export interface ImportModulesShallowConfig {
   moduleManager: ModuleManager;
-  providersPerApp: Provider[];
   globalProviders: GlobalProviders;
   modRefId: ModRefId;
   unfinishedScanModules: Set<ModRefId>;

@@ -7,17 +7,16 @@ import {
   Provider,
   BaseInitRawMeta,
   FeatureModuleParams,
-  Providers,
-  ForwardRefFn,
   ModuleType,
   Class,
   BaseInitMeta,
-  MultiProvider,
   ModuleManager,
   GlobalProviders,
   DeepModulesImporter,
   ShallowImports,
   SystemLogMediator,
+  rootModule,
+  featureModule,
 } from '@ditsmod/core';
 
 import { TrpcModule } from '../trpc.module.js';
@@ -27,7 +26,6 @@ import {
   TrpcShallowImports,
   TrpcShallowModulesImporter,
 } from '#init/trpc-shallow-modules-importer.js';
-import { TrpcDeepModulesImporter } from '#init/trpc-deep-modules-importer.js';
 import { GuardItem, GuardPerMod1, NormalizedGuard } from '#interceptors/trpc-guard.js';
 
 export type TrpcModRefId = ModRefId;
@@ -37,27 +35,12 @@ class NormalizedParams {
 }
 
 export class TrpcInitMeta extends BaseInitMeta {
-  providersPerRou: Provider[] = [];
-  providersPerReq: Provider[] = [];
-  exportedProvidersPerRou: Provider[] = [];
-  exportedProvidersPerReq: Provider[] = [];
-  exportedMultiProvidersPerRou: MultiProvider[] = [];
-  exportedMultiProvidersPerReq: MultiProvider[] = [];
-  resolvedCollisionsPerRou: [any, ModRefId][] = [];
-  resolvedCollisionsPerReq: [any, ModRefId][] = [];
   appendsModules: ModuleType[] = [];
   controllers: Class[] = [];
   params = new NormalizedParams();
 }
 
 export interface TrpcModuleParams extends FeatureModuleParams {
-  providersPerRou?: Providers | Provider[];
-  providersPerReq?: Providers | Provider[];
-  /**
-   * List of modules, `TrpcModuleParams` or tokens of providers exported by this
-   * module.
-   */
-  exports?: any[];
   guards?: GuardItem[];
 }
 
@@ -66,34 +49,23 @@ export interface TrpcModuleParams extends FeatureModuleParams {
  */
 export interface TrpcInitRawMeta extends BaseInitRawMeta<TrpcModuleParams> {
   /**
-   * Providers per route.
-   */
-  providersPerRou?: Providers | (Provider | ForwardRefFn<Provider>)[];
-  /**
-   * Providers per HTTP request.
-   */
-  providersPerReq?: Providers | (Provider | ForwardRefFn<Provider>)[];
-  /**
-   * An array of pairs, each of which is in the first place the provider's token,
-   * and in the second - the module from which to import the provider with the specified token.
-   */
-  resolvedCollisionsPerRou?: [any, ModRefId | ForwardRefFn<ModuleType>][];
-  /**
-   * An array of pairs, each of which is in the first place the provider's token,
-   * and in the second - the module from which to import the provider with the specified token.
-   */
-  resolvedCollisionsPerReq?: [any, ModRefId | ForwardRefFn<ModuleType>][];
-  /**
    * The application controllers.
    */
   controllers?: Class[];
 }
 
-/**
- * A decorator that adds tRPC metadata to a `featureModule` or `rootModule`.
- */
-export const initTrpcModule: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, TrpcInitMeta> =
-  makeClassDecorator(transformMetadata);
+export const trpcRootModule: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, TrpcInitMeta> = makeClassDecorator(
+  transformMetadata,
+  rootModule,
+  'trpcRootModule',
+);
+export const trpcModule: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, TrpcInitMeta> = makeClassDecorator(
+  transformMetadata,
+  featureModule,
+  'trpcModule',
+);
+
+export const initTrpcModule = trpcModule;
 
 export class TrpcInitHooks extends InitHooks<TrpcInitRawMeta> {
   override hostModule = TrpcModule;
@@ -114,10 +86,6 @@ export class TrpcInitHooks extends InitHooks<TrpcInitRawMeta> {
     return new TrpcShallowModulesImporter().importModulesShallow(config);
   }
 
-  override importModulesDeep(config: DeepModulesImporterConfig) {
-    return new TrpcDeepModulesImporter(config).importModulesDeep();
-  }
-
   override getProvidersToOverride(meta: TrpcInitMeta): Provider[][] {
     return [meta.providersPerRou, meta.providersPerReq];
   }
@@ -136,7 +104,6 @@ export interface ExportGlobalProvidersConfig {
 
 export interface ImportModulesShallowConfig {
   moduleManager: ModuleManager;
-  providersPerApp: Provider[];
   globalProviders: GlobalProviders;
   modRefId: ModRefId;
   unfinishedScanModules: Set<ModRefId>;

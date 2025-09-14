@@ -1,5 +1,5 @@
-import { rootModule, Providers } from '@ditsmod/core';
-import { controller, route, initRest } from '@ditsmod/rest';
+import { Providers } from '@ditsmod/core';
+import { controller, route, restRootModule } from '@ditsmod/rest';
 
 @controller()
 export class DefaultController {
@@ -17,9 +17,8 @@ export class CtxController {
   }
 }
 
-@initRest({
+@restRootModule({
   controllers: [DefaultController, CtxController],
   providersPerApp: new Providers().useLogConfig({ level: 'info' }),
 })
-@rootModule()
 export class AppModule {}
