@@ -5,7 +5,7 @@ import { objectKeys } from '#utils/object-keys.js';
 import { Providers } from '#utils/providers.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 
-export const featureModule: FeatureModuleDecorator = makeClassDecorator(transformModule);
+export const featureModule: FeatureModuleDecorator = makeClassDecorator(transformModule, undefined, 'featureModule');
 
 export interface FeatureModuleDecorator {
   (data?: ModuleMetadata): any;

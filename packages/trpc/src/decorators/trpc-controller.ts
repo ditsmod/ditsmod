@@ -14,7 +14,11 @@ export interface ControllerRawMetadata {
   providersPerReq?: Providers | Provider[];
 }
 
-export const trpcController: ControllerDecor = makeClassDecorator((data?: ControllerRawMetadata) => data || {});
+export const trpcController: ControllerDecor = makeClassDecorator(
+  (data?: ControllerRawMetadata) => data || {},
+  undefined,
+  'trpcController',
+);
 
 interface ControllerDecor {
   (meta?: ControllerRawMetadata): any;

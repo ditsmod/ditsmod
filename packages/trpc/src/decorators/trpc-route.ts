@@ -19,4 +19,4 @@ function routeFn(
   return { guards, interceptors };
 }
 
-export const trpcRoute = makePropDecorator(routeFn);
+export const trpcRoute = makePropDecorator(routeFn, undefined, 'trpcRoute');

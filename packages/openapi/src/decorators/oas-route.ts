@@ -69,7 +69,7 @@ function oasRouteCallback(
 /**
  * Open API Specification Route.
  */
-export const oasRoute: OasRouteInterface = makePropDecorator(oasRouteCallback);
+export const oasRoute: OasRouteInterface = makePropDecorator(oasRouteCallback, undefined, 'oasRoute');
 
 interface OasRouteInterface {
   (
