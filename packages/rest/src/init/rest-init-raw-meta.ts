@@ -1,40 +1,10 @@
-import {
-  AnyObj,
-  ModuleType,
-  Class,
-  Provider,
-  Providers,
-  AnyFn,
-  BaseInitRawMeta,
-  FeatureModuleParams,
-  ModRefId,
-  ForwardRefFn,
-} from '@ditsmod/core';
-
+import { AnyObj, ModuleType, Class, AnyFn, BaseInitRawMeta, FeatureModuleParams, ForwardRefFn } from '@ditsmod/core';
 import { GuardItem } from '#interceptors/guard.js';
 
 /**
  * Metadata for the `initRest` decorator, which adds REST metadata to a `featureModule` or `rootModule`.
  */
 export interface RestInitRawMeta extends BaseInitRawMeta<RestModuleParams> {
-  /**
-   * Providers per route.
-   */
-  providersPerRou?: Providers | (Provider | ForwardRefFn<Provider>)[];
-  /**
-   * Providers per HTTP request.
-   */
-  providersPerReq?: Providers | (Provider | ForwardRefFn<Provider>)[];
-  /**
-   * An array of pairs, each of which is in the first place the provider's token,
-   * and in the second - the module from which to import the provider with the specified token.
-   */
-  resolvedCollisionsPerRou?: [any, ModRefId | ForwardRefFn<ModuleType>][];
-  /**
-   * An array of pairs, each of which is in the first place the provider's token,
-   * and in the second - the module from which to import the provider with the specified token.
-   */
-  resolvedCollisionsPerReq?: [any, ModRefId | ForwardRefFn<ModuleType>][];
   /**
    * List of modules that contain controllers. Providers from these modules
    * are not imported into the current module. If the current module has a prefix path,
@@ -50,8 +20,6 @@ export interface RestInitRawMeta extends BaseInitRawMeta<RestModuleParams> {
 export type RestModuleParams = RestModuleParams1 | RestModuleParams2;
 
 export interface BaseRestModuleParams extends FeatureModuleParams {
-  providersPerRou?: Providers | Provider[];
-  providersPerReq?: Providers | Provider[];
   /**
    * List of modules, `RestModuleParams` or tokens of providers exported by this
    * module.
