@@ -6,7 +6,7 @@ describe('CallsiteUtils.getCallerDir()', function some1() {
   it('inside class method and common function', function some2() {
     class Test3 {
       method1() {
-        const path = CallsiteUtils.getCallerDir();
+        const path = CallsiteUtils.getCallerDir('method1');
         expect(path).toContain(expectedPath);
       }
     }
@@ -18,14 +18,14 @@ describe('CallsiteUtils.getCallerDir()', function some1() {
 
   it('inside common function', function some2() {
     expect(function some3() {
-      const path = CallsiteUtils.getCallerDir();
+      const path = CallsiteUtils.getCallerDir('some3');
       expect(path).toContain(expectedPath);
     }).not.toThrow();
   });
 
   it('inside narrow function', () => {
     expect(() => {
-      const path = CallsiteUtils.getCallerDir();
+      const path = CallsiteUtils.getCallerDir('anonymous');
       expect(path).toContain(expectedPath);
     }).not.toThrow();
   });

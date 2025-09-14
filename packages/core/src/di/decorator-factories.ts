@@ -58,7 +58,7 @@ export function makeClassDecorator<T extends AnyFn, Value>(
 ): DecoratorWithGuard<T, Value> {
   function classDecoratorFactory(...args: Parameters<T>): any {
     const value = transform ? transform(...args) : ([...args] as Value);
-    const declaredInDir = CallsiteUtils.getCallerDir();
+    const declaredInDir = CallsiteUtils.getCallerDir(classDecoratorFactory.name);
     return function classDecorator(Cls: Class): void {
       const annotations: any[] = getRawMetadata(Cls, CLASS_KEY, []);
       const decoratorAndValue = new DecoratorAndValue(decoratorId || classDecoratorFactory, value, declaredInDir);

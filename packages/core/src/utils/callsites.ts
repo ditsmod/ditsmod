@@ -6,21 +6,23 @@ import { dirname } from 'node:path';
 export class CallsiteUtils {
   /**
    * Use this method very carefully, it works unreliable.
+   * 
+   * @param functionName The name of the function inside which this method is called.
    */
-  static getCallerDir() {
-    const callsites = this.callerCallsite({ depth: 0 });
+  static getCallerDir(functionName: string) {
+    const callsites = this.callerCallsite(functionName, { depth: 0 });
     const rawPath = callsites?.getFileName() || '';
     const path = rawPath.startsWith('file:///') ? rawPath.slice(7) : rawPath;
     // console.log('=== result:', path);
     return dirname(path);
   }
 
-  protected static callerCallsite({ depth = 0 } = {}) {
+  protected static callerCallsite(functionName: string, { depth = 0 } = {}) {
     const callers = [];
     const callerFileSet = new Set();
     const sliceOfCallsites = this.callsites();
     let startListen = false;
-    const hasClassDecorFactory = sliceOfCallsites.some((c) => c.getFunctionName() == 'classDecorFactory');
+    const hasClassDecorFactory = sliceOfCallsites.some((c) => c.getFunctionName() == functionName);
     // this.debug(sliceOfCallsites);
 
     for (let i = 0; i < sliceOfCallsites.length; i++) {
@@ -32,7 +34,7 @@ export class CallsiteUtils {
         callers.unshift(callsite);
       }
 
-      if (callsite.getFunctionName() == 'classDecorFactory' || callsite.getFunctionName() == 'getCallerDir') {
+      if (callsite.getFunctionName() == functionName || callsite.getFunctionName() == 'getCallerDir') {
         startListen = true; // This mean - expect next row
         continue;
       }

@@ -22,7 +22,7 @@ export function transformModule(data?: ModuleMetadata): RawMeta {
   });
 
   rawMeta.decorator = featureModule;
-  rawMeta.declaredInDir = CallsiteUtils.getCallerDir() || '.';
+  rawMeta.declaredInDir = CallsiteUtils.getCallerDir(transformModule.name) || '.';
   return rawMeta;
 }
 /**

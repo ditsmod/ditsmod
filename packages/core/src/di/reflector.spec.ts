@@ -73,7 +73,7 @@ class TestObj {
 }
 
 describe('Reflector', () => {
-  const __dir = CallsiteUtils.getCallerDir();
+  const __dir = CallsiteUtils.getCallerDir('anonymous');
   let reflector: Reflector;
 
   beforeEach(() => {
@@ -351,13 +351,13 @@ describe('Reflector', () => {
 
   describe('annotations', () => {
     it('should return an array of annotations for a type', () => {
-      const declaredInDir = CallsiteUtils.getCallerDir();
+      const declaredInDir = CallsiteUtils.getCallerDir('anonymous');
       const p = reflector.getMetadata(ClassWithDecorators)!.constructor.decorators;
       expect(p).toEqual([new DecoratorAndValue(classDecorator, { value: 'class' }, declaredInDir)]);
     });
 
     it('should work for a class without metadata in annotation', () => {
-      const declaredInDir = CallsiteUtils.getCallerDir();
+      const declaredInDir = CallsiteUtils.getCallerDir('anonymous');
       @classDecorator()
       class ClassWithoutMetadata {}
       const p = reflector.getMetadata(ClassWithoutMetadata)!.constructor.decorators;
@@ -368,7 +368,7 @@ describe('Reflector', () => {
       @classDecoratorWithoutTransformator()
       class ClassWithoutMetadata {}
       const p = reflector.getMetadata(ClassWithoutMetadata)!.constructor.decorators;
-      const declaredInDir = CallsiteUtils.getCallerDir();
+      const declaredInDir = CallsiteUtils.getCallerDir('anonymous');
       expect(p).toEqual([new DecoratorAndValue(classDecoratorWithoutTransformator, [], declaredInDir)]);
     });
 
@@ -460,7 +460,7 @@ describe('Reflector', () => {
       class NoDecorators {}
 
       // Check that metadata for Parent was not changed!
-      const declaredInDir = CallsiteUtils.getCallerDir();
+      const declaredInDir = CallsiteUtils.getCallerDir('anonymous');
       expect(reflector.getMetadata(Parent)!.constructor.decorators).toEqual([
         new DecoratorAndValue(classDecorator, { value: 'parent' }, declaredInDir),
       ]);

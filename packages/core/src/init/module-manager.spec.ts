@@ -193,7 +193,7 @@ describe('ModuleManager', () => {
     expectedMeta1.modRefId = AppModule;
     expectedMeta1.providersPerMod = [Service1];
     expectedMeta1.decorator = rootModule;
-    expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
+    expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir('transformModule');
     expectedMeta1.isExternal = false;
     expectedMeta1.mInitHooks = expect.any(Map);
 
@@ -259,7 +259,7 @@ describe('ModuleManager', () => {
     expectedMeta2.importsModules = [Module1];
     expectedMeta2.providersPerMod = [Service1];
     expectedMeta2.decorator = rootModule;
-    expectedMeta2.declaredInDir = CallsiteUtils.getCallerDir();
+    expectedMeta2.declaredInDir = CallsiteUtils.getCallerDir('transformModule');
     expectedMeta2.isExternal = false;
     expectedMeta2.mInitHooks = expect.any(Map);
     expect(mock.oldSnapshotMap.get(AppModule)).toEqual(expectedMeta2);
@@ -300,7 +300,7 @@ describe('ModuleManager', () => {
     expectedMeta3.importsModules = [Module1, Module2, Module4];
     expectedMeta3.providersPerMod = [Service1];
     expectedMeta3.decorator = rootModule;
-    expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
+    expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir('transformModule');
     expectedMeta3.isExternal = false;
     expectedMeta3.mInitHooks = expect.any(Map);
 
@@ -381,7 +381,7 @@ describe('ModuleManager', () => {
     expectedMeta1.importsWithParams = [module3WithProviders, module4WithProviders];
     expectedMeta1.providersPerMod = [Service1];
     expectedMeta1.decorator = rootModule;
-    expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
+    expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir('transformModule');
     expectedMeta1.isExternal = false;
     expectedMeta1.mInitHooks = expect.any(Map);
 
@@ -460,7 +460,7 @@ describe('ModuleManager', () => {
     expectedMeta2.importsWithParams = [module3WithProviders, module4WithProviders];
     expectedMeta2.providersPerMod = [Service1];
     expectedMeta2.decorator = rootModule;
-    expectedMeta2.declaredInDir = CallsiteUtils.getCallerDir();
+    expectedMeta2.declaredInDir = CallsiteUtils.getCallerDir('transformModule');
     expectedMeta2.isExternal = false;
     expectedMeta2.mInitHooks = expect.any(Map);
 
@@ -487,7 +487,7 @@ describe('ModuleManager', () => {
     expectedMeta3.importsWithParams = [module4WithProviders];
     expectedMeta3.providersPerMod = [Service1];
     expectedMeta3.decorator = rootModule;
-    expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
+    expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir('transformModule');
     expectedMeta3.isExternal = false;
     expectedMeta3.mInitHooks = expect.any(Map);
 
@@ -503,7 +503,7 @@ describe('ModuleManager', () => {
     expectedMeta4.importsModules = [Module1];
     expectedMeta4.providersPerMod = [Service1];
     expectedMeta4.decorator = rootModule;
-    expectedMeta4.declaredInDir = CallsiteUtils.getCallerDir();
+    expectedMeta4.declaredInDir = CallsiteUtils.getCallerDir('transformModule');
     expectedMeta4.isExternal = false;
     expectedMeta4.mInitHooks = expect.any(Map);
 
@@ -548,7 +548,7 @@ describe('ModuleManager', () => {
     expectedMeta3.modRefId = Module3;
     expectedMeta3.importsModules = [Module1];
     expectedMeta3.decorator = rootModule;
-    expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
+    expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir('transformModule');
     expectedMeta3.isExternal = false;
     expectedMeta3.mInitHooks = expect.any(Map);
     delete (expectedMeta3 as any).aExtensionConfig;
@@ -561,7 +561,7 @@ describe('ModuleManager', () => {
     expectedMeta1.extensionsProviders = extensionsProviders;
     expectedMeta1.exportedExtensionsProviders = extensionsProviders;
     expectedMeta1.decorator = featureModule;
-    expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
+    expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir('transformModule');
     expectedMeta1.isExternal = false;
     delete (expectedMeta1 as any).aExtensionConfig;
     delete (expectedMeta1 as any).aExportedExtensionConfig;
@@ -598,7 +598,7 @@ describe('ModuleManager', () => {
     expectedMeta3.importsModules = [Module1];
     expectedMeta3.exportsModules = [Module1];
     expectedMeta3.decorator = rootModule;
-    expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
+    expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir('transformModule');
     expectedMeta3.isExternal = false;
     expectedMeta3.mInitHooks = expect.any(Map);
     delete (expectedMeta3 as any).aExtensionConfig;
@@ -611,7 +611,7 @@ describe('ModuleManager', () => {
     expectedMeta1.extensionsProviders = extensionsProviders;
     expectedMeta1.exportedExtensionsProviders = extensionsProviders;
     expectedMeta1.decorator = featureModule;
-    expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
+    expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir('transformModule');
     expectedMeta1.isExternal = false;
     expectedMeta1.mInitHooks = expect.any(Map);
     delete (expectedMeta1 as any).aExtensionConfig;
@@ -648,7 +648,7 @@ describe('ModuleManager', () => {
     expectedMeta3.modRefId = Module3;
     expectedMeta3.importsModules = [Module1];
     expectedMeta3.decorator = rootModule;
-    expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir();
+    expectedMeta3.declaredInDir = CallsiteUtils.getCallerDir('transformModule');
     expectedMeta3.isExternal = false;
     expectedMeta3.mInitHooks = expect.any(Map);
 
@@ -660,7 +660,7 @@ describe('ModuleManager', () => {
     expectedMeta1.exportedProvidersPerMod = [Service3];
     expectedMeta1.exportedMultiProvidersPerMod = providersPerMod.filter(isMultiProvider);
     expectedMeta1.decorator = featureModule;
-    expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir();
+    expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir('transformModule');
     expectedMeta1.isExternal = false;
     expectedMeta1.mInitHooks = expect.any(Map);
 

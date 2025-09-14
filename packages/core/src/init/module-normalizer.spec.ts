@@ -43,7 +43,7 @@ describe('ModuleNormalizer', () => {
     expectedMeta.name = 'AppModule';
     expectedMeta.modRefId = AppModule;
     expectedMeta.decorator = rootModule;
-    expectedMeta.declaredInDir = CallsiteUtils.getCallerDir();
+    expectedMeta.declaredInDir = CallsiteUtils.getCallerDir('transformModule');
     expectedMeta.isExternal = false;
     expectedMeta.mInitHooks = expect.any(Map);
 
