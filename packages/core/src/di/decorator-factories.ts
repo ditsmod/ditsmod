@@ -1,4 +1,4 @@
-import { AnyFn } from '#types/mix.js';
+import { AnyFn, AnyObj } from '#types/mix.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { DecoratorAndValue, type Class } from './types-and-models.js';
 import { isType } from './utils.js';
@@ -41,7 +41,8 @@ export interface DecoratorWithGuard<T extends AnyFn, Value> {
   /**
    * Type guard.
    */
-  appliedTo(arg: DecoratorAndValue): arg is DecoratorAndValue<Value>;
+  appliedTo(arg?: DecoratorAndValue): arg is DecoratorAndValue<Value>;
+  appliedTo<T extends AnyObj>(arg?: T): arg is { decorator: DecoratorWithGuard<AnyFn, Value> } & T;
 }
 
 /**
@@ -65,8 +66,8 @@ export function makeClassDecorator<T extends AnyFn, Value>(
       annotations.push(decoratorAndValue);
     };
   }
-  classDecoratorFactory.appliedTo = function appliedTo<T>(arg: DecoratorAndValue): arg is DecoratorAndValue<T> {
-    return arg.decorator === (decoratorId || classDecoratorFactory);
+  classDecoratorFactory.appliedTo = function appliedTo<T>(arg?: DecoratorAndValue): arg is DecoratorAndValue<T> {
+    return arg?.decorator === (decoratorId || classDecoratorFactory);
   };
   if (debugFactoryName) {
     Object.defineProperty(classDecoratorFactory, 'name', { value: debugFactoryName });
