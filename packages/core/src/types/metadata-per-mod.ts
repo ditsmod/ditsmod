@@ -25,7 +25,11 @@ export class GlobalInitHooks<T extends BaseInitRawMeta = BaseInitRawMeta> {
 
 export class GlobalProviders {
   importedProvidersPerMod = new Map<any, ProviderImport>();
+  importedProvidersPerRou = new Map<any, ProviderImport>();
+  importedProvidersPerReq = new Map<any, ProviderImport>();
   importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
+  importedMultiProvidersPerRou = new Map<ModRefId, Provider[]>();
+  importedMultiProvidersPerReq = new Map<ModRefId, Provider[]>();
   importedExtensions = new Map<ModRefId, Provider[]>();
   aImportedExtensionConfig: ExtensionConfig[] = [];
   mInitValue = new Map<AnyFn, GlobalInitHooks>();

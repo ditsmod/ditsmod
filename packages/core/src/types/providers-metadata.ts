@@ -11,4 +11,12 @@ export class ProvidersOnly<T = Providers | (Provider | ForwardRefFn<Provider>)[]
    * Providers per a module.
    */
   providersPerMod = [] as T;
+  /**
+   * Providers per a route.
+   */
+  providersPerRou = [] as T;
+  /**
+   * Providers per a request.
+   */
+  providersPerReq = [] as T;
 }

@@ -36,6 +36,16 @@ export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<Provi
    * and in the second - the module from which to import the provider with the specified token.
    */
   resolvedCollisionsPerMod?: [any, ModRefId | ForwardRefFn<ModuleType>][];
+  /**
+   * An array of pairs, each of which is in the first place the provider's token,
+   * and in the second - the module from which to import the provider with the specified token.
+   */
+  resolvedCollisionsPerRou?: [any, ModRefId | ForwardRefFn<ModuleType>][];
+  /**
+   * An array of pairs, each of which is in the first place the provider's token,
+   * and in the second - the module from which to import the provider with the specified token.
+   */
+  resolvedCollisionsPerReq?: [any, ModRefId | ForwardRefFn<ModuleType>][];
 }
 /**
  * An object with this type is passed into the `imports` array of

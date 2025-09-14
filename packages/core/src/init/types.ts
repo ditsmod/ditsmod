@@ -38,6 +38,10 @@ export interface BaseImportRegistry {
    * `Map<token, ProviderImport>`
    */
   perMod: Map<any, ProviderImport>;
+  perRou: Map<any, ProviderImport>;
+  perReq: Map<any, ProviderImport>;
   multiPerMod: Map<ModRefId, Provider[]>;
+  multiPerRou: Map<ModRefId, Provider[]>;
+  multiPerReq: Map<ModRefId, Provider[]>;
   extensions: Map<ModRefId, Provider[]>;
 }

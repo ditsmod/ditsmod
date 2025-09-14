@@ -47,7 +47,11 @@ export class ShallowModulesImporter {
   protected baseMeta: BaseMeta;
 
   protected importedProvidersPerMod = new Map<any, ProviderImport>();
+  protected importedProvidersPerRou = new Map<any, ProviderImport>();
+  protected importedProvidersPerReq = new Map<any, ProviderImport>();
   protected importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
+  protected importedMultiProvidersPerRou = new Map<ModRefId, Provider[]>();
+  protected importedMultiProvidersPerReq = new Map<ModRefId, Provider[]>();
   protected importedExtensions = new Map<ModRefId, Provider[]>();
   protected aImportedExtensionConfig: ExtensionConfig[] = [];
 
@@ -70,7 +74,11 @@ export class ShallowModulesImporter {
     const mInitValue = new Map<AnyFn, AnyObj>();
     const globalProviders: GlobalProviders = {
       importedProvidersPerMod: this.importedProvidersPerMod,
+      importedProvidersPerRou: this.importedProvidersPerRou,
+      importedProvidersPerReq: this.importedProvidersPerReq,
       importedMultiProvidersPerMod: this.importedMultiProvidersPerMod,
+      importedMultiProvidersPerRou: this.importedMultiProvidersPerRou,
+      importedMultiProvidersPerReq: this.importedMultiProvidersPerReq,
       importedExtensions: this.importedExtensions,
       aImportedExtensionConfig: this.aImportedExtensionConfig,
       mInitValue,
@@ -104,13 +112,21 @@ export class ShallowModulesImporter {
     this.importAndScanModules();
 
     let perMod: Map<any, ProviderImport>;
+    let perRou: Map<any, ProviderImport>;
+    let perReq: Map<any, ProviderImport>;
     let multiPerMod: Map<ModRefId, Provider[]>;
+    let multiPerRou: Map<ModRefId, Provider[]>;
+    let multiPerReq: Map<ModRefId, Provider[]>;
     let extensions: Map<ModRefId, Provider[]>;
     let aExtensionConfig: ExtensionConfig[];
     if (baseMeta.isExternal) {
       // External modules do not require global providers and extensions from the application.
       perMod = new Map([...this.importedProvidersPerMod]);
+      perRou = new Map([...this.importedProvidersPerRou]);
+      perReq = new Map([...this.importedProvidersPerReq]);
       multiPerMod = new Map([...this.importedMultiProvidersPerMod]);
+      multiPerRou = new Map([...this.importedMultiProvidersPerRou]);
+      multiPerReq = new Map([...this.importedMultiProvidersPerReq]);
       extensions = new Map([...this.importedExtensions]);
       aExtensionConfig = [...this.aImportedExtensionConfig];
     } else {
@@ -120,7 +136,11 @@ export class ShallowModulesImporter {
         }
       });
       perMod = new Map([...this.glProviders.importedProvidersPerMod, ...this.importedProvidersPerMod]);
+      perRou = new Map([...this.glProviders.importedProvidersPerRou, ...this.importedProvidersPerRou]);
+      perReq = new Map([...this.glProviders.importedProvidersPerReq, ...this.importedProvidersPerReq]);
       multiPerMod = new Map([...this.glProviders.importedMultiProvidersPerMod, ...this.importedMultiProvidersPerMod]);
+      multiPerRou = new Map([...this.glProviders.importedMultiProvidersPerRou, ...this.importedMultiProvidersPerRou]);
+      multiPerReq = new Map([...this.glProviders.importedMultiProvidersPerReq, ...this.importedMultiProvidersPerReq]);
       extensions = new Map([...this.glProviders.importedExtensions, ...this.importedExtensions]);
       aExtensionConfig = [...this.glProviders.aImportedExtensionConfig, ...this.aImportedExtensionConfig];
     }
@@ -133,7 +153,11 @@ export class ShallowModulesImporter {
       modRefId,
       new ShallowImports(this.baseMeta, aOrderedExtensions, {
         perMod,
+        perRou,
+        perReq,
         multiPerMod,
+        multiPerRou,
+        multiPerReq,
         extensions,
       }),
     );

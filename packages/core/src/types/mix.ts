@@ -87,9 +87,9 @@ export interface ResolvedGuard {
 }
 
 /**
- * Level imports/exports.
+ * Level of imports/exports.
  */
-export type Level = 'Mod';
+export type Level = 'Mod' | 'Rou' | 'Req';
 
 export type Override<T extends object, K extends { [P in keyof T]?: unknown }> = Omit<T, keyof K> & K;
 
