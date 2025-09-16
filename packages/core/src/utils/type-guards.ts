@@ -3,12 +3,12 @@ import { ChainError } from '@ts-stack/chain-error';
 import { Provider, Class, DecoratorAndValue, reflector, isNormalizedProvider } from '#di';
 import { AnyObj, RequireProps } from '#types/mix.js';
 import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
-import { RootModuleMetadata } from '#types/root-module-metadata.js';
 import { featureModule, RawMeta } from '#decorators/feature-module.js';
 import { InitHooks } from '#decorators/init-hooks-and-metadata.js';
-import { rootModule } from '#decorators/root-module.js';
-import { BaseMeta } from '#types/base-meta.js';
 import { CustomError } from '#error/custom-error.js';
+import { BaseMeta } from '#types/base-meta.js';
+import { RootModuleMetadata } from '#types/root-module-metadata.js';
+import { rootModule } from '#decorators/root-module.js';
 
 export interface TypeGuard<T> {
   (arg: any): arg is T;
@@ -30,7 +30,10 @@ export function isRootModule(rawMeta?: RawMeta): rawMeta is RawMeta;
 export function isRootModule(baseMeta?: BaseMeta): baseMeta is BaseMeta<RootModuleMetadata>;
 export function isRootModule(arg?: AnyObj): arg is { decorator: typeof rootModule } & AnyObj;
 export function isRootModule(arg?: DecoratorAndValue | RawMeta | BaseMeta | AnyObj): arg is DecoratorAndValue<RawMeta> {
-  return arg?.decorator === rootModule;
+  if (arg instanceof DecoratorAndValue) {
+    return arg.value instanceof RawMeta;
+  }
+  return arg instanceof RawMeta;
 }
 
 export function isFeatureModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<RawMeta>;
@@ -40,7 +43,10 @@ export function isFeatureModule(arg?: AnyObj): arg is { decorator: typeof featur
 export function isFeatureModule(
   arg?: DecoratorAndValue | RawMeta | BaseMeta | AnyObj,
 ): arg is DecoratorAndValue<RawMeta> {
-  return arg?.decorator === featureModule;
+  if (arg instanceof DecoratorAndValue) {
+    return arg.value instanceof RawMeta;
+  }
+  return arg instanceof RawMeta;
 }
 
 export function isModDecor(arg?: DecoratorAndValue): arg is DecoratorAndValue<RawMeta>;

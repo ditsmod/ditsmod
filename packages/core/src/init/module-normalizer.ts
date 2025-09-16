@@ -77,8 +77,6 @@ export class ModuleNormalizer {
     this.baseMeta = baseMeta;
     baseMeta.name = modName;
     baseMeta.modRefId = modRefId;
-    baseMeta.declaredInDir = rawMeta.declaredInDir;
-    baseMeta.decorator = rawMeta.decorator;
     this.checkAndMarkExternalModule(rawMeta);
     this.normalizeDeclaredAndResolvedProviders(rawMeta);
     this.normalizeExports(rawMeta, 'Exports');

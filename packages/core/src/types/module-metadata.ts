@@ -5,12 +5,29 @@ import { ExtensionClass } from '#extension/extension-types.js';
 import { InitParamsMap } from '#decorators/init-hooks-and-metadata.js';
 import type { rootModule } from '#decorators/root-module.js';
 import type { featureModule } from '#decorators/feature-module.js';
-import { ForwardRefFn } from '#di';
+import { ForwardRefFn, Provider } from '#di';
+import { Providers } from '#utils/providers.js';
 
 /**
  * Raw metadata for {@link rootModule} and {@link featureModule} decorator.
  */
-export interface ModuleMetadata<T extends AnyObj = AnyObj> extends Partial<ProvidersOnly> {
+export class ModuleMetadata<T extends AnyObj = AnyObj> {
+  /**
+   * Providers per the application.
+   */
+  providersPerApp?: Providers | (Provider | ForwardRefFn<Provider>)[];
+  /**
+   * Providers per a module.
+   */
+  providersPerMod?: Providers | (Provider | ForwardRefFn<Provider>)[];
+  /**
+   * Providers per a route.
+   */
+  providersPerRou?: Providers | (Provider | ForwardRefFn<Provider>)[];
+  /**
+   * Providers per a request.
+   */
+  providersPerReq?: Providers | (Provider | ForwardRefFn<Provider>)[];
   /**
    * List of modules or `ModuleWithParams` imported by this module.
    * Also you can imports modules and set some prefix per each the module.
