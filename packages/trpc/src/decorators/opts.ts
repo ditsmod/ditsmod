@@ -8,6 +8,5 @@ export const opts = makeParamDecorator(
   () => {
     return { token: TRPC_OPTS } satisfies InjectTransformResult;
   },
-  inject,
   'opts',
 )();

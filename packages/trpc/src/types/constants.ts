@@ -3,7 +3,6 @@ import type { initTRPC } from '@trpc/server';
 
 import type { TrpcOpts, TrpcRouterOpts } from '#types/types.js';
 
-export const TRPC_ROUTER_OPTS = new InjectionToken<TrpcRouterOpts>('TRPC_ROUTER_OPTS');
 export type TrpcRootType = ReturnType<typeof initTRPC.create>;
 export const TRPC_ROOT = new InjectionToken<TrpcRootType>('TRPC_ROOT');
 
