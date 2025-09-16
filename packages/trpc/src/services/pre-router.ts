@@ -4,11 +4,14 @@ import { RequestListener, TrpcRouterOpts } from '#types/types.js';
 
 @injectable()
 export class TrpcPreRouter {
+  trpcRouter: TrpcRouterOpts;
+
   requestListener: RequestListener;
 
   constructor(protected injectorPerApp: Injector) {}
 
-  setTrpcRequestListener(opts: TrpcRouterOpts) {
-    this.requestListener = createHTTPHandler(opts) as RequestListener;
+  setTrpcRequestListener(trpcRouter: TrpcRouterOpts) {
+    this.trpcRouter = trpcRouter;
+    this.requestListener = createHTTPHandler(trpcRouter) as RequestListener;
   }
 }
