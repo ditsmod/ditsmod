@@ -1,13 +1,4 @@
-import {
-  makeClassDecorator,
-  InitHooks,
-  ModRefId,
-  BaseMeta,
-  InitDecorator,
-  Provider,
-  featureModule,
-  rootModule,
-} from '@ditsmod/core';
+import { makeClassDecorator, InitHooks, ModRefId, BaseMeta, InitDecorator, Provider } from '@ditsmod/core';
 
 import { RestInitRawMeta, RestModuleParams } from '#init/rest-init-raw-meta.js';
 import { RestModuleNormalizer } from '#init/rest-module-normalizer.js';
@@ -19,12 +10,10 @@ import { RestModule } from '#init/rest.module.js';
 
 export const restModule: InitDecorator<RestInitRawMeta, RestModuleParams, RestInitMeta> = makeClassDecorator(
   transformMetadata,
-  featureModule,
   'restModule',
 );
 export const restRootModule: InitDecorator<RestInitRawMeta, RestModuleParams, RestInitMeta> = makeClassDecorator(
   transformMetadata,
-  rootModule,
   'restRootModule',
 );
 

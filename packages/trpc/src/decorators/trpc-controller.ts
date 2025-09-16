@@ -16,7 +16,6 @@ export interface ControllerRawMetadata {
 
 export const trpcController: ControllerDecor = makeClassDecorator(
   (data?: ControllerRawMetadata) => data || {},
-  undefined,
   'trpcController',
 );
 

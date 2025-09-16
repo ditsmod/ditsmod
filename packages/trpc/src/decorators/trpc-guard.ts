@@ -1,3 +1,3 @@
 import { makeClassDecorator } from '@ditsmod/core';
 
-export const trpcGuard = makeClassDecorator(undefined, undefined, 'trpcGuard');
+export const trpcGuard = makeClassDecorator(undefined, 'trpcGuard');

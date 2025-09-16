@@ -40,4 +40,4 @@ export interface OasGuardMetadata {
   tags?: string[];
 }
 
-export const oasGuard = makeClassDecorator((data: OasGuardMetadata) => data, undefined, 'oasGuard');
+export const oasGuard = makeClassDecorator((data: OasGuardMetadata) => data, 'oasGuard');

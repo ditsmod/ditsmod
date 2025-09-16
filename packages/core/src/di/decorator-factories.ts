@@ -1,4 +1,4 @@
-import { AnyFn, AnyObj } from '#types/mix.js';
+import { AnyFn } from '#types/mix.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { DecoratorAndValue, type Class } from './types-and-models.js';
 import { isType } from './utils.js';
@@ -33,42 +33,21 @@ export const DEPS_KEY = Symbol();
  */
 export const METHODS_WITH_PARAMS = Symbol();
 
-export interface DecoratorWithGuard<T extends AnyFn, Value> {
-  /**
-   * Decorator factory.
-   */
-  (...args: Parameters<T>): any;
-  /**
-   * Type guard.
-   */
-  appliedTo(arg?: DecoratorAndValue): arg is DecoratorAndValue<Value>;
-  appliedTo<T extends AnyObj>(arg?: T): arg is { decorator: DecoratorWithGuard<AnyFn, Value> } & T;
-}
-
 /**
  * @param transform Such a transformer should not use symbols that can be wrapped with `forwardRef()`,
  * because at this stage the `resolveForwardRef()` function will not work correctly.
- * @param decoratorId If you pass an argument for this parameter, {@link transform} must
- * return data of the same or extended type as the {@link decoratorId} you specified.
  * @param debugFactoryName Gives a name to the decorator that can be viewed during debugging.
  */
-export function makeClassDecorator<T extends AnyFn, Value>(
-  transform?: T,
-  decoratorId?: DecoratorWithGuard<T, Value>,
-  debugFactoryName?: string,
-): DecoratorWithGuard<T, Value> {
+export function makeClassDecorator<T extends AnyFn>(transform?: T, debugFactoryName?: string) {
   function classDecoratorFactory(...args: Parameters<T>): any {
-    const value = transform ? transform(...args) : ([...args] as Value);
+    const value = transform ? transform(...args) : [...args];
     const declaredInDir = CallsiteUtils.getCallerDir(classDecoratorFactory.name);
     return function classDecorator(Cls: Class): void {
       const annotations: any[] = getRawMetadata(Cls, CLASS_KEY, []);
-      const decoratorAndValue = new DecoratorAndValue(decoratorId || classDecoratorFactory, value, declaredInDir);
+      const decoratorAndValue = new DecoratorAndValue(classDecoratorFactory, value, declaredInDir);
       annotations.push(decoratorAndValue);
     };
   }
-  classDecoratorFactory.appliedTo = function appliedTo<T>(arg?: DecoratorAndValue): arg is DecoratorAndValue<T> {
-    return arg?.decorator === (decoratorId || classDecoratorFactory);
-  };
   if (debugFactoryName) {
     Object.defineProperty(classDecoratorFactory, 'name', { value: debugFactoryName });
   }
@@ -78,15 +57,9 @@ export function makeClassDecorator<T extends AnyFn, Value>(
 /**
  * @param transform Such a transformer should not use symbols that can be wrapped with `forwardRef()`,
  * because at this stage the `resolveForwardRef()` function will not work correctly.
- * @param decoratorId If you pass an argument for this parameter, {@link transform} must
- * return data of the same or extended type as the {@link decoratorId} you specified.
  * @param debugFactoryName Gives a name to the decorator that can be viewed during debugging.
  */
-export function makeParamDecorator<T extends AnyFn, Value>(
-  transform?: T,
-  decoratorId?: DecoratorWithGuard<T, Value>,
-  debugFactoryName?: string,
-): DecoratorWithGuard<T, Value> {
+export function makeParamDecorator<T extends AnyFn>(transform?: T, debugFactoryName?: string) {
   function paramDecorFactory(...args: Parameters<T>) {
     const value = transform ? transform(...args) : [...args];
     return function paramDecorator(
@@ -107,12 +80,9 @@ export function makeParamDecorator<T extends AnyFn, Value>(
         parameters.push(null);
       }
 
-      (parameters[index] ??= []).push(new DecoratorAndValue(decoratorId || paramDecorFactory, value));
+      (parameters[index] ??= []).push(new DecoratorAndValue(paramDecorFactory, value));
     };
   }
-  paramDecorFactory.appliedTo = function appliedTo<T>(arg: DecoratorAndValue): arg is DecoratorAndValue<T> {
-    return arg.decorator === (decoratorId || paramDecorFactory);
-  };
   if (paramDecorFactory) {
     Object.defineProperty(paramDecorFactory, 'name', { value: debugFactoryName });
   }
@@ -122,27 +92,18 @@ export function makeParamDecorator<T extends AnyFn, Value>(
 /**
  * @param transform Such a transformer should not use symbols that can be wrapped with `forwardRef()`,
  * because at this stage the `resolveForwardRef()` function will not work correctly.
- * @param decoratorId If you pass an argument for this parameter, {@link transform} must
- * return data of the same or extended type as the {@link decoratorId} you specified.
  * @param debugFactoryName Gives a name to the decorator that can be viewed during debugging.
  */
-export function makePropDecorator<T extends AnyFn, Value>(
-  transform?: T,
-  decoratorId?: DecoratorWithGuard<T, Value>,
-  debugFactoryName?: string,
-): DecoratorWithGuard<T, Value> {
+export function makePropDecorator<T extends AnyFn>(transform?: T, debugFactoryName?: string) {
   function propDecorFactory(...args: Parameters<T>) {
     const value = transform ? transform(...args) : [...args];
     return function propDecorator(target: any, propertyKey: string | symbol): void {
       const Cls = target.constructor as Class;
       const meta = getRawMetadata(Cls, PROP_KEY, {} as { [key: string | symbol]: any });
       meta[propertyKey] = (meta.hasOwnProperty(propertyKey) && meta[propertyKey]) || [];
-      meta[propertyKey].push(new DecoratorAndValue(decoratorId || propDecorFactory, value));
+      meta[propertyKey].push(new DecoratorAndValue(propDecorFactory, value));
     };
   }
-  propDecorFactory.appliedTo = function appliedTo<T>(arg: DecoratorAndValue): arg is DecoratorAndValue<T> {
-    return arg.decorator === (decoratorId || propDecorFactory);
-  };
   if (propDecorFactory) {
     Object.defineProperty(propDecorFactory, 'name', { value: debugFactoryName });
   }

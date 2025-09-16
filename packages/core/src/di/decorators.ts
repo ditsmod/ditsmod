@@ -1,5 +1,5 @@
 import { AnyFn } from '#types/mix.js';
-import { makeClassDecorator, makePropDecorator, makeParamDecorator, DecoratorWithGuard } from './decorator-factories.js';
+import { makeClassDecorator, makePropDecorator, makeParamDecorator } from './decorator-factories.js';
 
 /**
  * Allows you to use an alternative token for a specific dependency.
@@ -40,11 +40,10 @@ expect(injector.get(Car).engine instanceof Engine).toBe(true);
    */
 export const inject: InjectDecorator = makeParamDecorator(
   (token, ctx?) => ({ token, ctx }) satisfies InjectTransformResult,
-  undefined,
   'inject',
 );
 
-export interface InjectDecorator extends DecoratorWithGuard<AnyFn, InjectTransformResult> {
+export interface InjectDecorator {
   (token: NonNullable<unknown>): any;
   <T extends NonNullable<unknown>>(token: NonNullable<unknown>, ctx: T): any;
 }

@@ -15,8 +15,6 @@ import {
   DeepModulesImporter,
   ShallowImports,
   SystemLogMediator,
-  rootModule,
-  featureModule,
 } from '@ditsmod/core';
 
 import { TrpcModule } from '../trpc.module.js';
@@ -56,12 +54,10 @@ export interface TrpcInitRawMeta extends BaseInitRawMeta<TrpcModuleParams> {
 
 export const trpcRootModule: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, TrpcInitMeta> = makeClassDecorator(
   transformMetadata,
-  rootModule,
   'trpcRootModule',
 );
 export const trpcModule: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, TrpcInitMeta> = makeClassDecorator(
   transformMetadata,
-  featureModule,
   'trpcModule',
 );
 

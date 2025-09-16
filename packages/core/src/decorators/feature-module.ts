@@ -1,13 +1,13 @@
-import { DecoratorWithGuard, ForwardRefFn, makeClassDecorator } from '#di';
+import { ForwardRefFn, makeClassDecorator } from '#di';
 import { ModuleMetadata } from '#types/module-metadata.js';
 import { AnyFn, ModRefId, ModuleType } from '#types/mix.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { Providers } from '#utils/providers.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 
-export const featureModule: FeatureModuleDecorator = makeClassDecorator(transformModule, undefined, 'featureModule');
+export const featureModule: FeatureModuleDecorator = makeClassDecorator(transformModule, 'featureModule');
 
-export interface FeatureModuleDecorator extends DecoratorWithGuard<AnyFn, RawMeta> {
+export interface FeatureModuleDecorator {
   (data?: ModuleMetadata): any;
 }
 
@@ -37,3 +37,5 @@ export interface RawMeta extends ModuleMetadata {
    */
   resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][];
 }
+
+export class TransformedBaseModule {}
