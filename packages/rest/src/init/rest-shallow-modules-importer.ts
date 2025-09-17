@@ -23,7 +23,7 @@ import {
 import { GuardPerMod1 } from '#interceptors/guard.js';
 import { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
 import { Level, RestGlobalProviders } from '#types/types.js';
-import { initRest, RestInitHooks } from '#decorators/rest-init-hooks-and-metadata.js';
+import { initRest, RestInitHooks, restModule, restRootModule } from '#decorators/rest-init-hooks-and-metadata.js';
 import { ImportModulesShallowConfig, RestProviderImport, RestShallowImports } from './types.js';
 import { ModuleIncludesInImportsAndAppends } from '#errors';
 import { ModuleMustHaveControllers } from '#services/rest-errors.js';
@@ -114,10 +114,10 @@ export class RestShallowModulesImporter {
   }
 
   protected getInitMeta(baseMeta: BaseMeta): RestInitMeta {
-    let meta = baseMeta.initMeta.get(initRest);
+    let meta = baseMeta.initMeta.get(restRootModule) || baseMeta.initMeta.get(restModule);
     if (!meta) {
       meta = getProxyForInitMeta(baseMeta, RestInitMeta);
-      baseMeta.initMeta.set(initRest, meta);
+      baseMeta.initMeta.set(restModule, meta);
     }
     return meta;
   }

@@ -42,7 +42,6 @@ export class RoutesExtension implements Extension<MetadataPerMod3> {
     const { baseMeta, prefixPerMod, applyControllers } = restMetadataPerMod2;
 
     const aControllerMetadata: ControllerMetadata[] = [];
-    console.log('in extension controllers:', restMetadataPerMod2.meta.controllers);
     if (applyControllers)
       for (const Controller of restMetadataPerMod2.meta.controllers as Class<Record<string | symbol, any>>[]) {
         const classMeta = reflector.getMetadata(Controller)!;
