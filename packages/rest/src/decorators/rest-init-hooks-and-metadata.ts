@@ -8,13 +8,13 @@ import { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
 import { RestGlobalProviders } from '#types/types.js';
 import { RestModule } from '#init/rest.module.js';
 
-export const restModule: InitDecorator<RestInitRawMeta, RestModuleParams, RestInitMeta> = makeClassDecorator(
-  transformMetadata,
-  'restModule',
-);
 export const restRootModule: InitDecorator<RestInitRawMeta, RestModuleParams, RestInitMeta> = makeClassDecorator(
-  transformMetadata,
+  transformRootMeta,
   'restRootModule',
+);
+export const restModule: InitDecorator<RestInitRawMeta, RestModuleParams, RestInitMeta> = makeClassDecorator(
+  transformFeatureMeta,
+  'restModule',
 );
 
 export const initRest = restModule;
@@ -43,9 +43,15 @@ export class RestInitHooks extends InitHooks<RestInitRawMeta> {
   }
 }
 
-export function transformMetadata(data?: RestInitRawMeta): InitHooks<RestInitRawMeta> {
+export function transformRootMeta(data?: RestInitRawMeta): InitHooks<RestInitRawMeta> {
   const metadata = Object.assign({}, data);
   const initHooks = new RestInitHooks(metadata);
   initHooks.moduleRole = 'root';
   return initHooks;
+}
+
+export function transformFeatureMeta(data?: RestInitRawMeta): InitHooks<RestInitRawMeta> {
+  const metadata = transformRootMeta(data);
+  metadata.moduleRole = 'feature';
+  return metadata;
 }
