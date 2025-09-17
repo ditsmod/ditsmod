@@ -9,8 +9,8 @@ export interface FeatureModuleDecorator {
   (data?: ModuleRawMetadata): any;
 }
 
-export function transformModule(data?: ModuleRawMetadata): ModuleRawMetadata {
-  const rawMeta = Object.assign(new ModuleRawMetadata(), data) as ModuleRawMetadata;
+function transformModule(data?: ModuleRawMetadata): ModuleRawMetadata {
+  const rawMeta = Object.assign(new ModuleRawMetadata(), data);
   objectKeys(rawMeta).forEach((p) => {
     if (rawMeta[p] instanceof Providers) {
       (rawMeta as any)[p] = [...rawMeta[p]];

@@ -30,24 +30,26 @@ export function isRootModule(decorAndVal?: DecoratorAndValue): decorAndVal is De
 export function isRootModule(rawMeta?: RootRawMetadata): rawMeta is RootRawMetadata;
 export function isRootModule(baseMeta?: BaseMeta): baseMeta is BaseMeta<RootModuleMetadata>;
 export function isRootModule(arg?: AnyObj): arg is { decorator: typeof rootModule } & AnyObj;
-export function isRootModule(arg?: DecoratorAndValue | RootRawMetadata | BaseMeta | AnyObj): arg is DecoratorAndValue<RootRawMetadata> {
-  if (arg instanceof DecoratorAndValue) {
-    return arg.value instanceof RootRawMetadata;
-  }
-  return arg instanceof RootRawMetadata;
-}
-
-export function isFeatureModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<RootRawMetadata>;
-export function isFeatureModule(arg?: RootRawMetadata): arg is RootRawMetadata;
-export function isFeatureModule(meta?: BaseMeta): meta is BaseMeta<ModuleRawMetadata>;
-export function isFeatureModule(arg?: AnyObj): arg is { decorator: typeof featureModule } & AnyObj;
-export function isFeatureModule(
+export function isRootModule(
   arg?: DecoratorAndValue | RootRawMetadata | BaseMeta | AnyObj,
 ): arg is DecoratorAndValue<RootRawMetadata> {
   if (arg instanceof DecoratorAndValue) {
     return arg.value instanceof RootRawMetadata;
   }
   return arg instanceof RootRawMetadata;
+}
+
+export function isFeatureModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<ModuleRawMetadata>;
+export function isFeatureModule(arg?: ModuleRawMetadata): arg is ModuleRawMetadata;
+export function isFeatureModule(meta?: BaseMeta): meta is BaseMeta<ModuleRawMetadata>;
+export function isFeatureModule(arg?: AnyObj): arg is { decorator: typeof featureModule } & AnyObj;
+export function isFeatureModule(
+  arg?: DecoratorAndValue | ModuleRawMetadata | BaseMeta | AnyObj,
+): arg is DecoratorAndValue<ModuleRawMetadata> {
+  if (arg instanceof DecoratorAndValue) {
+    return arg.value instanceof ModuleRawMetadata;
+  }
+  return arg instanceof ModuleRawMetadata;
 }
 
 export function isModDecor(arg?: DecoratorAndValue): arg is DecoratorAndValue<RootRawMetadata>;
