@@ -61,7 +61,9 @@ export class ModuleNormalizer {
    */
   normalize(modRefId: ModRefId, allInitHooks: AllInitHooks) {
     const aDecoratorMeta = this.getDecoratorMeta(modRefId) || [];
-    const rawMeta = aDecoratorMeta.find((d) => isModDecor(d))?.value;
+    const decorAndVal =  aDecoratorMeta.find((d) => isModDecor(d));
+    const rawMeta = decorAndVal?.value;
+    const declaredInDir = decorAndVal?.declaredInDir;
     const modName = getDebugClassName(modRefId);
     if (!modName) {
       throw new InvalidModRefId();
@@ -77,6 +79,7 @@ export class ModuleNormalizer {
     this.baseMeta = baseMeta;
     baseMeta.name = modName;
     baseMeta.rawMeta = rawMeta;
+    baseMeta.declaredInDir = declaredInDir || '.';
     baseMeta.modRefId = modRefId;
     this.checkAndMarkExternalModule(rawMeta);
     this.normalizeDeclaredAndResolvedProviders(rawMeta);
@@ -480,7 +483,7 @@ export class AppModule {}
   protected quickCheckMetadata(rawMeta: RootRawMetadata) {
     this.throwIfResolvingNormalizedProvider(rawMeta);
     if (
-      isFeatureModule(this.baseMeta) &&
+      !isRootModule(this.baseMeta) &&
       !this.baseMeta.mInitHooks.size &&
       !this.baseMeta.exportedProvidersPerMod.length &&
       !this.baseMeta.exportedMultiProvidersPerMod.length &&

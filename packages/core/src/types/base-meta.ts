@@ -114,6 +114,8 @@ export class BaseMeta<
     this.importsWithParams = [];
     this.providersPerApp = [];
     this.providersPerMod = [];
+    this.providersPerRou = [];
+    this.providersPerReq = [];
     this.exportsModules = [];
     this.exportsWithParams = [];
     this.exportedProvidersPerMod = [];

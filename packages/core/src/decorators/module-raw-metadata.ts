@@ -15,54 +15,54 @@ export class ModuleRawMetadata<T extends AnyObj = AnyObj> {
   /**
    * Providers per the application.
    */
-  providersPerApp?: Providers | (Provider | ForwardRefFn<Provider>)[];
+  declare providersPerApp?: Providers | (Provider | ForwardRefFn<Provider>)[];
   /**
    * Providers per a module.
    */
-  providersPerMod?: Providers | (Provider | ForwardRefFn<Provider>)[];
+  declare providersPerMod?: Providers | (Provider | ForwardRefFn<Provider>)[];
   /**
    * Providers per a route.
    */
-  providersPerRou?: Providers | (Provider | ForwardRefFn<Provider>)[];
+  declare providersPerRou?: Providers | (Provider | ForwardRefFn<Provider>)[];
   /**
    * Providers per a request.
    */
-  providersPerReq?: Providers | (Provider | ForwardRefFn<Provider>)[];
+  declare providersPerReq?: Providers | (Provider | ForwardRefFn<Provider>)[];
   /**
    * List of modules or `ModuleWithParams` imported by this module.
    * Also you can imports modules and set some prefix per each the module.
    */
-  imports?: (ModRefId | ForwardRefFn<ModuleType>)[];
+  declare imports?: (ModRefId | ForwardRefFn<ModuleType>)[];
   /**
    * List of modules, {@link ModuleWithParams} or tokens of providers exported by this
    * module.
    */
-  exports?: any[];
+  declare exports?: any[];
   /**
    * The application extensions.
    */
-  extensions?: (ExtensionConfig | ExtensionClass)[];
+  declare extensions?: (ExtensionConfig | ExtensionClass)[];
   /**
    * This property allows you to pass any information to extensions.
    *
    * You must follow this rule: data for one extension - one key in `extensionsMeta` object.
    */
-  extensionsMeta?: T;
+  declare extensionsMeta?: T;
   /**
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  resolvedCollisionsPerMod?: [any, ModRefId | ForwardRefFn<ModuleType>][];
+  declare resolvedCollisionsPerMod?: [any, ModRefId | ForwardRefFn<ModuleType>][];
   /**
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  resolvedCollisionsPerRou?: [any, ModRefId | ForwardRefFn<ModuleType>][];
+  declare resolvedCollisionsPerRou?: [any, ModRefId | ForwardRefFn<ModuleType>][];
   /**
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  resolvedCollisionsPerReq?: [any, ModRefId | ForwardRefFn<ModuleType>][];
+  declare resolvedCollisionsPerReq?: [any, ModRefId | ForwardRefFn<ModuleType>][];
 }
 /**
  * An object with this type is passed into the `imports` array of
@@ -112,6 +112,6 @@ export class RootRawMetadata extends ModuleRawMetadata {
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][];
+  declare resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][];
 }
 

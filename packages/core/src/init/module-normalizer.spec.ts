@@ -6,7 +6,12 @@ import { forwardRef, injectable, makeClassDecorator, MultiProvider } from '#di';
 import { Extension } from '#extension/extension-types.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { AnyObj, ModRefId } from '#types/mix.js';
-import { FeatureModuleParams, ModuleWithInitParams, ModuleWithParams } from '#decorators/module-raw-metadata.js';
+import {
+  FeatureModuleParams,
+  ModuleWithInitParams,
+  ModuleWithParams,
+  RootRawMetadata,
+} from '#decorators/module-raw-metadata.js';
 import { BaseMeta } from '#types/base-meta.js';
 import { InitDecorator } from '#decorators/init-hooks-and-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
@@ -41,8 +46,9 @@ describe('ModuleNormalizer', () => {
     const expectedMeta = new BaseMeta();
     expectedMeta.id = '';
     expectedMeta.name = 'AppModule';
+    expectedMeta.rawMeta = new RootRawMetadata();
     expectedMeta.modRefId = AppModule;
-    expectedMeta.declaredInDir = CallsiteUtils.getCallerDir('transformModule');
+    expectedMeta.declaredInDir = CallsiteUtils.getCallerDir('rootModule');
     expectedMeta.isExternal = false;
     expectedMeta.mInitHooks = expect.any(Map);
 
