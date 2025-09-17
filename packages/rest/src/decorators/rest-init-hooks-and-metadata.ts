@@ -20,7 +20,6 @@ export const restRootModule: InitDecorator<RestInitRawMeta, RestModuleParams, Re
 export const initRest = restModule;
 
 export class RestInitHooks extends InitHooks<RestInitRawMeta> {
-  override moduleRole = 'root' as const;
   override hostModule = RestModule;
 
   override normalize(baseMeta: BaseMeta): RestInitMeta {
@@ -46,5 +45,7 @@ export class RestInitHooks extends InitHooks<RestInitRawMeta> {
 
 export function transformMetadata(data?: RestInitRawMeta): InitHooks<RestInitRawMeta> {
   const metadata = Object.assign({}, data);
-  return new RestInitHooks(metadata);
+  const initHooks = new RestInitHooks(metadata);
+  initHooks.moduleRole = 'root';
+  return initHooks;
 }
