@@ -23,4 +23,4 @@ function routeFn(
   return { httpMethod, path, guards, interceptors };
 }
 
-export const route = makePropDecorator(routeFn, undefined, 'route');
+export const route = makePropDecorator(routeFn, 'route');
