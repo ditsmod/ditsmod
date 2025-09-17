@@ -30,9 +30,17 @@ export function isRootModule(
   arg?: DecoratorAndValue | RootRawMetadata | BaseMeta,
 ): arg is DecoratorAndValue<RootRawMetadata> {
   if (arg instanceof DecoratorAndValue) {
+    if (arg.value instanceof InitHooks) {
+      return arg.value.moduleRole === 'root';
+    }
     return arg.value instanceof RootRawMetadata;
   } else if (arg instanceof BaseMeta) {
+    if (arg.rawMeta instanceof InitHooks) {
+      return arg.rawMeta.moduleRole === 'root';
+    }
     return arg.rawMeta instanceof RootRawMetadata;
+  } else if (arg instanceof InitHooks) {
+    return arg.moduleRole === 'root';
   }
   return arg instanceof RootRawMetadata;
 }
@@ -44,9 +52,17 @@ export function isFeatureModule(
   arg?: DecoratorAndValue | ModuleRawMetadata | BaseMeta,
 ): arg is DecoratorAndValue<ModuleRawMetadata> {
   if (arg instanceof DecoratorAndValue) {
+    if (arg.value instanceof InitHooks) {
+      return arg.value.moduleRole === 'feature';
+    }
     return arg.value instanceof ModuleRawMetadata;
   } else if (arg instanceof BaseMeta) {
+    if (arg.rawMeta instanceof InitHooks) {
+      return arg.rawMeta.moduleRole === 'feature';
+    }
     return arg.rawMeta instanceof ModuleRawMetadata;
+  } else if (arg instanceof InitHooks) {
+    return arg.moduleRole === 'feature';
   }
   return arg instanceof ModuleRawMetadata;
 }

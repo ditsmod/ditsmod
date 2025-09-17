@@ -18,6 +18,7 @@ export type AllInitHooks = Map<AnyFn, Omit<InitHooks, 'rawMeta'>>;
  * apart from the base decorators - {@link featureModule} or {@link rootModule}.
  */
 export class InitHooks<T1 extends BaseInitRawMeta = BaseInitRawMeta> {
+  declare moduleRole?: 'root' | 'feature';
   /**
    * The host module where the current init decorator is declared. If you add this module,
    * it will be imported into the module where the corresponding init decorator is used.

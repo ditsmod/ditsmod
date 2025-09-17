@@ -20,6 +20,7 @@ export const restRootModule: InitDecorator<RestInitRawMeta, RestModuleParams, Re
 export const initRest = restModule;
 
 export class RestInitHooks extends InitHooks<RestInitRawMeta> {
+  override moduleRole = 'root' as const;
   override hostModule = RestModule;
 
   override normalize(baseMeta: BaseMeta): RestInitMeta {
