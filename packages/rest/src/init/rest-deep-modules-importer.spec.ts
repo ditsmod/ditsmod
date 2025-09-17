@@ -19,6 +19,7 @@ import {
   MetadataPerMod2,
   ModuleWithParams,
 } from '@ditsmod/core';
+import { InstantiationError, NoProvider } from '@ditsmod/core/errors';
 
 import { CanActivate, guard } from '#interceptors/guard.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
@@ -27,7 +28,6 @@ import { RequestContext } from '#services/request-context.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { RestMetadataPerMod2 } from './types.js';
 import { RestModuleParams } from './rest-init-raw-meta.js';
-import { InstantiationError, NoProvider } from '@ditsmod/core/errors';
 
 describe('DeepModulesImporter', () => {
   class AppInitializerMock extends BaseAppInitializer {

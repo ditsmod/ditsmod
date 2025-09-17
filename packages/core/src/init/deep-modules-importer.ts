@@ -69,6 +69,8 @@ export class DeepModulesImporter {
         };
         baseMeta.providersPerMod.unshift({ token: ModuleExtract, useValue });
         baseMeta.providersPerMod.unshift(...targetProviders.providersPerMod);
+        baseMeta.providersPerRou.unshift(...targetProviders.providersPerRou);
+        baseMeta.providersPerReq.unshift(...targetProviders.providersPerReq);
         baseMeta.allInitHooks.forEach((initHooks, decorator) => {
           const shallowImportedModule = initImportRegistryMap.get(decorator)!;
           const deepImports = initHooks.importModulesDeep({
@@ -79,7 +81,11 @@ export class DeepModulesImporter {
             providersPerApp: this.providersPerApp,
             log: this.log,
           });
-          deepImportedModules.set(decorator, deepImports);
+          if (deepImports === undefined) {
+            deepImportedModules.set(decorator, shallowImportedModule);
+          } else {
+            deepImportedModules.set(decorator, deepImports);
+          }
         });
       },
     );

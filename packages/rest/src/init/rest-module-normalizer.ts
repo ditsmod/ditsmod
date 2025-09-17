@@ -40,6 +40,9 @@ export class RestModuleNormalizer {
     this.baseMeta = baseMeta;
     const meta = getProxyForInitMeta(baseMeta, RestInitMeta);
     this.meta = meta;
+    if (rawMeta.controllers) {
+      this.meta.controllers.push(...rawMeta.controllers);
+    }
     this.mergeModuleWithParams(baseMeta.modRefId);
     this.appendModules(rawMeta);
     this.checkMetadata();

@@ -61,7 +61,7 @@ export class ModuleNormalizer {
    */
   normalize(modRefId: ModRefId, allInitHooks: AllInitHooks) {
     const aDecoratorMeta = this.getDecoratorMeta(modRefId) || [];
-    const decorAndVal =  aDecoratorMeta.find((d) => isModDecor(d));
+    const decorAndVal = aDecoratorMeta.find((d) => isModDecor(d));
     const rawMeta = decorAndVal?.value;
     const declaredInDir = decorAndVal?.declaredInDir;
     const modName = getDebugClassName(modRefId);
