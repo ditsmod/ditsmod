@@ -104,4 +104,14 @@ export interface FeatureModuleParams<E extends AnyObj = AnyObj> extends Partial<
    * You must follow this rule: data for one extension - one key in `extensionsMeta` object.
    */
   extensionsMeta?: E;
+}/**
+ * Raw module metadata returned by reflector.
+ */
+export class RootRawMetadata extends ModuleRawMetadata {
+  /**
+   * An array of pairs, each of which is in the first place the provider's token,
+   * and in the second - the module from which to import the provider with the specified token.
+   */
+  resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][];
 }
+

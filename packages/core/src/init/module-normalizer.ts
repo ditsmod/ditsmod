@@ -19,7 +19,7 @@ import {
 import { ExtensionConfigBase, getExtensionProvider } from '#extension/get-extension-provider.js';
 import { AnyFn, AnyObj, Level, ModRefId, ModuleType, PickProps } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
-import { RawMeta } from '#decorators/feature-module.js';
+import { RootRawMetadata } from '#decorators/module-raw-metadata.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { BaseMeta } from '#types/base-meta.js';
 import { ForwardRefFn, resolveForwardRef } from '#di/forward-ref.js';
@@ -105,7 +105,7 @@ export class ModuleNormalizer {
   /**
    * For this method to work properly, the root module must be scanned first.
    */
-  protected checkAndMarkExternalModule(rawMeta: RawMeta) {
+  protected checkAndMarkExternalModule(rawMeta: RootRawMetadata) {
     this.baseMeta.isExternal = false;
     if (isRootModule(rawMeta)) {
       this.rootDeclaredInDir = this.baseMeta.declaredInDir;
@@ -121,7 +121,7 @@ export class ModuleNormalizer {
   }
 
   protected normalizeDeclaredAndResolvedProviders(
-    rawMeta: BaseInitRawMeta & PickProps<RawMeta, 'resolvedCollisionsPerApp'>,
+    rawMeta: BaseInitRawMeta & PickProps<RootRawMetadata, 'resolvedCollisionsPerApp'>,
   ) {
     (['App', 'Mod', 'Rou', 'Req'] as const).forEach((level) => {
       if (rawMeta[`providersPer${level}`]) {
@@ -142,7 +142,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected normalizeExports(rawMeta: Partial<RawMeta>, action: 'Exports' | 'Exports with params') {
+  protected normalizeExports(rawMeta: Partial<RootRawMetadata>, action: 'Exports' | 'Exports with params') {
     if (!rawMeta.exports) {
       return;
     }
@@ -210,7 +210,7 @@ export class ModuleNormalizer {
     }
   }
 
-  protected normalizeImports(rawMeta: RawMeta) {
+  protected normalizeImports(rawMeta: RootRawMetadata) {
     this.resolveForwardRef(rawMeta.imports).forEach((imp, i) => {
       if (imp === undefined) {
         throw new UndefinedSymbol('Imports', this.baseMeta.name, i);
@@ -224,7 +224,7 @@ export class ModuleNormalizer {
   }
 
   protected throwIfResolvingNormalizedProvider(
-    rawMeta: BaseInitRawMeta & PickProps<RawMeta, 'resolvedCollisionsPerApp'>,
+    rawMeta: BaseInitRawMeta & PickProps<RootRawMetadata, 'resolvedCollisionsPerApp'>,
   ) {
     const resolvedCollisionsPerLevel: [any, ModRefId | ForwardRefFn<ModuleType>][] = [];
     if (Array.isArray(rawMeta.resolvedCollisionsPerApp)) {
@@ -476,7 +476,7 @@ export class AppModule {}
     }
   }
 
-  protected quickCheckMetadata(rawMeta: RawMeta) {
+  protected quickCheckMetadata(rawMeta: RootRawMetadata) {
     this.throwIfResolvingNormalizedProvider(rawMeta);
     if (
       isFeatureModule(this.baseMeta) &&

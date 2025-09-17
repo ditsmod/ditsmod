@@ -3,7 +3,8 @@ import { ChainError } from '@ts-stack/chain-error';
 import { Provider, Class, DecoratorAndValue, reflector, isNormalizedProvider } from '#di';
 import { AnyObj, RequireProps } from '#types/mix.js';
 import { ModuleRawMetadata, ModuleWithParams } from '#decorators/module-raw-metadata.js';
-import { featureModule, RawMeta } from '#decorators/feature-module.js';
+import { featureModule } from '#decorators/feature-module.js';
+import { RootRawMetadata } from '#decorators/module-raw-metadata.js';
 import { InitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { CustomError } from '#error/custom-error.js';
 import { BaseMeta } from '#types/base-meta.js';
@@ -25,32 +26,32 @@ export function isParamsWithMwp(arg?: AnyObj): arg is { mwp: ModuleWithParams } 
   return isModuleWithParams((arg as { mwp: ModuleWithParams } | undefined)?.mwp);
 }
 
-export function isRootModule(decorAndVal?: DecoratorAndValue): decorAndVal is DecoratorAndValue<RawMeta>;
-export function isRootModule(rawMeta?: RawMeta): rawMeta is RawMeta;
+export function isRootModule(decorAndVal?: DecoratorAndValue): decorAndVal is DecoratorAndValue<RootRawMetadata>;
+export function isRootModule(rawMeta?: RootRawMetadata): rawMeta is RootRawMetadata;
 export function isRootModule(baseMeta?: BaseMeta): baseMeta is BaseMeta<RootModuleMetadata>;
 export function isRootModule(arg?: AnyObj): arg is { decorator: typeof rootModule } & AnyObj;
-export function isRootModule(arg?: DecoratorAndValue | RawMeta | BaseMeta | AnyObj): arg is DecoratorAndValue<RawMeta> {
+export function isRootModule(arg?: DecoratorAndValue | RootRawMetadata | BaseMeta | AnyObj): arg is DecoratorAndValue<RootRawMetadata> {
   if (arg instanceof DecoratorAndValue) {
-    return arg.value instanceof RawMeta;
+    return arg.value instanceof RootRawMetadata;
   }
-  return arg instanceof RawMeta;
+  return arg instanceof RootRawMetadata;
 }
 
-export function isFeatureModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<RawMeta>;
-export function isFeatureModule(arg?: RawMeta): arg is RawMeta;
+export function isFeatureModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<RootRawMetadata>;
+export function isFeatureModule(arg?: RootRawMetadata): arg is RootRawMetadata;
 export function isFeatureModule(meta?: BaseMeta): meta is BaseMeta<ModuleRawMetadata>;
 export function isFeatureModule(arg?: AnyObj): arg is { decorator: typeof featureModule } & AnyObj;
 export function isFeatureModule(
-  arg?: DecoratorAndValue | RawMeta | BaseMeta | AnyObj,
-): arg is DecoratorAndValue<RawMeta> {
+  arg?: DecoratorAndValue | RootRawMetadata | BaseMeta | AnyObj,
+): arg is DecoratorAndValue<RootRawMetadata> {
   if (arg instanceof DecoratorAndValue) {
-    return arg.value instanceof RawMeta;
+    return arg.value instanceof RootRawMetadata;
   }
-  return arg instanceof RawMeta;
+  return arg instanceof RootRawMetadata;
 }
 
-export function isModDecor(arg?: DecoratorAndValue): arg is DecoratorAndValue<RawMeta>;
-export function isModDecor(arg?: RawMeta): arg is RawMeta;
+export function isModDecor(arg?: DecoratorAndValue): arg is DecoratorAndValue<RootRawMetadata>;
+export function isModDecor(arg?: RootRawMetadata): arg is RootRawMetadata;
 export function isModDecor(meta?: BaseMeta): meta is BaseMeta<RootModuleMetadata>;
 export function isModDecor(arg?: any) {
   return isRootModule(arg) || isFeatureModule(arg);

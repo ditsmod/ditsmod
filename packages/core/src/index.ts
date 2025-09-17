@@ -68,6 +68,7 @@ export {
 } from '#types/mix.js';
 export {
   ModuleRawMetadata,
+  RootRawMetadata,
   ModuleWithParams,
   ModuleWithInitParams,
   BaseModuleWithParams,
@@ -91,7 +92,6 @@ export { Providers } from '#utils/providers.js';
 export { CallsiteUtils } from '#utils/callsites.js';
 export { getDebugClassName, clearDebugClassNames } from '#utils/get-debug-class-name.js';
 export { getProviderTarget, getProvidersTargets, getToken, getTokens } from '#utils/get-tokens.js';
-export { RawMeta } from '#decorators/feature-module.js';
 export {
   isChainError,
   isModuleWithParams,

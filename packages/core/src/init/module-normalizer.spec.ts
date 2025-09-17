@@ -266,10 +266,10 @@ describe('ModuleNormalizer', () => {
   describe('creating custom decorator with init hooks', () => {
     interface InitMeta extends BaseInitMeta {
       baseMeta: BaseMeta;
-      rawMeta: RawMeta;
+      rawMeta: RootRawMetadata;
     }
 
-    class InitHooks1 extends InitHooks<RawMeta> {
+    class InitHooks1 extends InitHooks<RootRawMetadata> {
       override normalize(baseMeta: BaseMeta) {
         return {
           baseMeta,
@@ -278,7 +278,7 @@ describe('ModuleNormalizer', () => {
       }
     }
 
-    function getInitHooks(data?: RawMeta): InitHooks<RawMeta> {
+    function getInitHooks(data?: RootRawMetadata): InitHooks<RootRawMetadata> {
       const metadata = Object.assign({}, data);
       return new InitHooks1(metadata);
     }
@@ -288,13 +288,13 @@ describe('ModuleNormalizer', () => {
       num?: number;
     }
 
-    interface RawMeta extends BaseInitRawMeta<InitParams> {
+    interface RootRawMetadata extends BaseInitRawMeta<InitParams> {
       one?: number;
       two?: number;
       appends?: ({ module: ModRefId } & AnyObj)[];
     }
 
-    const initSome: InitDecorator<RawMeta, InitParams, InitMeta> = makeClassDecorator(getInitHooks);
+    const initSome: InitDecorator<RootRawMetadata, InitParams, InitMeta> = makeClassDecorator(getInitHooks);
 
     it('during import MWP, merge existing init params with new init params', () => {
       class Service1 {}
@@ -354,7 +354,7 @@ describe('ModuleNormalizer', () => {
     });
 
     it('initHooks.normalize() correctly works', () => {
-      const rawMeta: RawMeta = { one: 1, two: 2 };
+      const rawMeta: RootRawMetadata = { one: 1, two: 2 };
 
       @initSome(rawMeta)
       @featureModule()

@@ -758,18 +758,18 @@ describe('ModuleManager', () => {
   });
 
   it('Module1 does not have an annotation with initSome, but imported in AppModule with this decorator', () => {
-    interface RawMeta extends BaseInitRawMeta<{ path?: string }> {
+    interface RootRawMetadata extends BaseInitRawMeta<{ path?: string }> {
       one?: string;
       two?: string;
     }
     interface InitMeta extends BaseInitMeta {
       path?: string;
     }
-    const initSome: InitDecorator<RawMeta, { path?: string }, InitMeta> = makeClassDecorator(
+    const initSome: InitDecorator<RootRawMetadata, { path?: string }, InitMeta> = makeClassDecorator(
       (d) => new InitHooks1(d),
     );
 
-    class InitHooks1 extends InitHooks<RawMeta> {
+    class InitHooks1 extends InitHooks<RootRawMetadata> {
       override normalize({ modRefId }: BaseMeta): InitMeta {
         if (isModuleWithParams(modRefId)) {
           const params = modRefId.initParams?.get(initSome);

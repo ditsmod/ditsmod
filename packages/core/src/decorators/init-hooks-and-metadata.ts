@@ -176,7 +176,7 @@ import {
   ModuleWithInitParams,
 } from '@ditsmod/core';
 
-interface RawMeta {
+interface RootRawMetadata {
   one?: number;
   two?: number;
 }
@@ -184,12 +184,12 @@ interface InitMeta {
   other?: string;
 }
 
-function getInitHooks(data?: RawMeta): InitHooks<RawMeta> {
+function getInitHooks(data?: RootRawMetadata): InitHooks<RootRawMetadata> {
   const metadata = Object.assign({}, data);
   return new MyInitHooks(metadata);
 }
 // Creating an init decorator
-export const initSome: InitDecorator<RawMeta, { path?: string }, InitMeta> = makeClassDecorator(getInitHooks);
+export const initSome: InitDecorator<RootRawMetadata, { path?: string }, InitMeta> = makeClassDecorator(getInitHooks);
 
 \@featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
 class Module1 {
@@ -211,7 +211,7 @@ class MyModule {
   // Your code here
 }
 
-class MyInitHooks extends InitHooks<RawMeta> {}
+class MyInitHooks extends InitHooks<RootRawMetadata> {}
 ```
  */
 export interface InitDecorator<InitRawMeta extends BaseInitRawMeta, ModuleParams, InitMeta> {

@@ -1,5 +1,6 @@
 import { reflector } from '#di';
-import { RawMeta, featureModule } from './feature-module.js';
+import { featureModule } from './feature-module.js';
+import { RootRawMetadata } from './module-raw-metadata.js';
 
 describe('Module decorator', () => {
   it('empty decorator', () => {
@@ -17,7 +18,7 @@ describe('Module decorator', () => {
 
     const metadata = reflector.getDecorators(Module1)!;
     expect(metadata.length).toBe(1);
-    expect(metadata[0].value).toEqual<RawMeta>({
+    expect(metadata[0].value).toEqual<RootRawMetadata>({
       providersPerApp: []
     });
   });
@@ -45,7 +46,7 @@ describe('Module decorator', () => {
 
     const metadata = reflector.getDecorators(Module1)!;
     expect(metadata.length).toBe(1);
-    expect(metadata[0].value).toEqual<RawMeta>({
+    expect(metadata[0].value).toEqual<RootRawMetadata>({
       imports: [],
       providersPerApp: [],
       providersPerMod: [],
@@ -53,6 +54,6 @@ describe('Module decorator', () => {
       resolvedCollisionsPerMod: [],
       exports: [],
       extensions: [],
-    } as RawMeta);
+    } as RootRawMetadata);
   });
 });

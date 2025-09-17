@@ -1,6 +1,6 @@
 import { reflector } from '#di';
 import { rootModule } from './root-module.js';
-import { RawMeta } from './feature-module.js';
+import { RootRawMetadata } from './module-raw-metadata.js';
 
 describe('RootModule decorator', () => {
   it('empty decorator', () => {
@@ -41,12 +41,12 @@ describe('RootModule decorator', () => {
 
     const metadata = reflector.getDecorators(Module1)!;
     expect(metadata.length).toBe(1);
-    expect(metadata[0].value).toEqual<RawMeta>({
+    expect(metadata[0].value).toEqual<RootRawMetadata>({
       providersPerApp: [],
       providersPerMod: [],
       imports: [],
       exports: [],
       extensions: [],
-    } as RawMeta);
+    } as RootRawMetadata);
   });
 });
