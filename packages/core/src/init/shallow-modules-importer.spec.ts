@@ -370,17 +370,14 @@ describe('ShallowModulesImporter', () => {
       importModulesShallow(Module3);
       const mod0 = mock.shallowImportsMap.get(Module0);
       expect(mod0?.baseMeta.providersPerMod).toEqual([Provider0]);
-      expect(mod0?.baseMeta.decorator).toBe(featureModule);
 
       const mod1 = mock.shallowImportsMap.get(Module1);
       expect(mod1?.baseMeta.providersPerMod).toEqual([Provider1, Provider2, Provider3]);
 
       const tokensPerMod = getImportedTokens(mod1?.baseImportRegistry.perMod);
       expect(tokensPerMod).toEqual([Provider0]);
-      expect(mod1?.baseMeta.decorator).toBe(featureModule);
 
       const mod2 = mock.shallowImportsMap.get(Module2);
-      expect(mod2?.baseMeta.decorator).toBe(featureModule);
       expect(mod2?.baseMeta.providersPerMod).toEqual([Provider4, Provider5, Provider6, Provider7, Provider8]);
 
       const tokensPerMod2 = getImportedTokens(mod2?.baseImportRegistry.perMod);
@@ -396,7 +393,6 @@ describe('ShallowModulesImporter', () => {
         Provider8,
       ]);
       expect(mod3?.baseMeta.providersPerMod).toEqual([Provider9, overriddenProvider8]);
-      expect(mod3?.baseMeta.decorator).toBe(featureModule);
     });
 
     it('mapping between token and module from where need to import appropriate provider', () => {
@@ -426,7 +422,6 @@ describe('ShallowModulesImporter', () => {
       expect(mock?.importedProvidersPerMod.get(Provider5)).toEqual(providerImport);
       providerImport.providers = [Provider8];
       expect(mock?.importedProvidersPerMod.get(Provider8)).toEqual(providerImport);
-      expect(mock.baseMeta.decorator).toBe(rootModule);
     });
 
     it('import Module2 and reexport Module1 with collision - Provider2', () => {

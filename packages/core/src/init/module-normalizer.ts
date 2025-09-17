@@ -76,6 +76,7 @@ export class ModuleNormalizer {
     const baseMeta = new BaseMeta();
     this.baseMeta = baseMeta;
     baseMeta.name = modName;
+    baseMeta.rawMeta = rawMeta;
     baseMeta.modRefId = modRefId;
     this.checkAndMarkExternalModule(rawMeta);
     this.normalizeDeclaredAndResolvedProviders(rawMeta);

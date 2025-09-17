@@ -66,12 +66,19 @@ export function getProxyForInitMeta<T extends BaseInitMeta>(baseMeta: BaseInitMe
 /**
  * Normalized metadata taken from the `rootModule` or `featureModule` decorator.
  */
-export class BaseMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> extends BaseInitMeta<A> {
+export class BaseMeta<
+  TypeOfModule extends AnyObj = AnyObj,
+  ExtensionMeta extends AnyObj = AnyObj,
+> extends BaseInitMeta<ExtensionMeta> {
+  /**
+   * Metadata returned by the decorator transformer for the module.
+   */
+  rawMeta: AnyObj;
   /**
    * The module setted here must be identical to the module
    * passed to "imports", "exports" array of `@featureModule` metadata.
    */
-  modRefId: ModRefId<T>;
+  modRefId: ModRefId<TypeOfModule>;
   /**
    * The module name.
    */
@@ -80,7 +87,6 @@ export class BaseMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> exte
    * The module ID.
    */
   id?: string = '';
-  decorator: AnyFn;
   /**
    * The directory in which the class was declared.
    */
@@ -118,6 +124,6 @@ export class BaseMeta<T extends AnyObj = AnyObj, A extends AnyObj = AnyObj> exte
     this.exportedExtensionsProviders = [];
     this.aExtensionConfig = [];
     this.aExportedExtensionConfig = [];
-    this.extensionsMeta = {} as A;
+    this.extensionsMeta = {} as ExtensionMeta;
   }
 }

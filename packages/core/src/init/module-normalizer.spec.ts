@@ -42,7 +42,6 @@ describe('ModuleNormalizer', () => {
     expectedMeta.id = '';
     expectedMeta.name = 'AppModule';
     expectedMeta.modRefId = AppModule;
-    expectedMeta.decorator = rootModule;
     expectedMeta.declaredInDir = CallsiteUtils.getCallerDir('transformModule');
     expectedMeta.isExternal = false;
     expectedMeta.mInitHooks = expect.any(Map);
@@ -83,7 +82,6 @@ describe('ModuleNormalizer', () => {
     class AppModule {}
 
     const baseMeta = mock.normalize(AppModule);
-    expect(baseMeta.decorator).toBe(rootModule);
     expect(baseMeta.declaredInDir).toEqual(expect.any(String));
     expect(baseMeta.importsModules).toEqual([Module1]);
     expect(baseMeta.exportsModules).toEqual([Module1]);
