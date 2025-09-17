@@ -9,7 +9,7 @@ export class CallsiteUtils {
    * 
    * @param functionName The name of the function inside which this method is called.
    */
-  static getCallerDir(functionName: string) {
+  static getCallerDir(functionName: string = '') {
     const callsites = this.callerCallsite(functionName, { depth: 0 });
     const rawPath = callsites?.getFileName() || '';
     const path = rawPath.startsWith('file:///') ? rawPath.slice(7) : rawPath;
