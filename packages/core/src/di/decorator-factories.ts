@@ -41,7 +41,7 @@ export const METHODS_WITH_PARAMS = Symbol();
 export function makeClassDecorator<T extends AnyFn>(transform?: T, debugFactoryName?: string) {
   function classDecoratorFactory(...args: Parameters<T>): any {
     const value = transform ? transform(...args) : [...args];
-    const declaredInDir = CallsiteUtils.getCallerDir(classDecoratorFactory.name);
+    const declaredInDir = CallsiteUtils.getCallerDir(debugFactoryName || classDecoratorFactory.name);
     return function classDecorator(Cls: Class): void {
       const annotations: any[] = getRawMetadata(Cls, CLASS_KEY, []);
       const decoratorAndValue = new DecoratorAndValue(classDecoratorFactory, value, declaredInDir);
