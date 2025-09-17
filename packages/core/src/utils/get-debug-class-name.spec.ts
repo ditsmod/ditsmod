@@ -1,5 +1,5 @@
 import { getDebugClassName } from './get-debug-class-name.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
+import { ModuleWithParams } from '#decorators/module-raw-metadata.js';
 
 describe('getDebugClassName()', () => {
   it('case1', () => {

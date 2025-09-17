@@ -1,7 +1,7 @@
 import { ModRefId } from './mix.js';
-import { ModuleMetadata } from './module-metadata.js';
+import { ModuleRawMetadata } from '../decorators/module-raw-metadata.js';
 
-export interface RootModuleMetadata extends ModuleMetadata {
+export interface RootModuleMetadata extends ModuleRawMetadata {
   /**
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.

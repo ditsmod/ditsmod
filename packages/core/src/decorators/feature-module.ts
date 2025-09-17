@@ -1,5 +1,5 @@
 import { ForwardRefFn, makeClassDecorator } from '#di';
-import { ModuleMetadata } from '#types/module-metadata.js';
+import { ModuleRawMetadata } from '#decorators/module-raw-metadata.js';
 import { ModRefId, ModuleType } from '#types/mix.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { Providers } from '#utils/providers.js';
@@ -7,10 +7,10 @@ import { Providers } from '#utils/providers.js';
 export const featureModule: FeatureModuleDecorator = makeClassDecorator(transformModule, 'featureModule');
 
 export interface FeatureModuleDecorator {
-  (data?: ModuleMetadata): any;
+  (data?: ModuleRawMetadata): any;
 }
 
-export function transformModule(data?: ModuleMetadata): RawMeta {
+export function transformModule(data?: ModuleRawMetadata): RawMeta {
   const rawMeta = Object.assign(new RawMeta(), data) as RawMeta;
   objectKeys(rawMeta).forEach((p) => {
     if (rawMeta[p] instanceof Providers) {
@@ -25,7 +25,7 @@ export function transformModule(data?: ModuleMetadata): RawMeta {
 /**
  * Raw module metadata returned by reflector.
  */
-export class RawMeta extends ModuleMetadata {
+export class RawMeta extends ModuleRawMetadata {
   /**
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.

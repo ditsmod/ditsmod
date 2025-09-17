@@ -2,7 +2,7 @@ import { ChainError } from '@ts-stack/chain-error';
 
 import { Provider, Class, DecoratorAndValue, reflector, isNormalizedProvider } from '#di';
 import { AnyObj, RequireProps } from '#types/mix.js';
-import { ModuleMetadata, ModuleWithParams } from '#types/module-metadata.js';
+import { ModuleRawMetadata, ModuleWithParams } from '#decorators/module-raw-metadata.js';
 import { featureModule, RawMeta } from '#decorators/feature-module.js';
 import { InitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { CustomError } from '#error/custom-error.js';
@@ -38,7 +38,7 @@ export function isRootModule(arg?: DecoratorAndValue | RawMeta | BaseMeta | AnyO
 
 export function isFeatureModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<RawMeta>;
 export function isFeatureModule(arg?: RawMeta): arg is RawMeta;
-export function isFeatureModule(meta?: BaseMeta): meta is BaseMeta<ModuleMetadata>;
+export function isFeatureModule(meta?: BaseMeta): meta is BaseMeta<ModuleRawMetadata>;
 export function isFeatureModule(arg?: AnyObj): arg is { decorator: typeof featureModule } & AnyObj;
 export function isFeatureModule(
   arg?: DecoratorAndValue | RawMeta | BaseMeta | AnyObj,

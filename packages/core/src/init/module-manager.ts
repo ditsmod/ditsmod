@@ -3,7 +3,7 @@ import { format } from 'node:util';
 import { ForwardRefFn, injectable, Injector, Provider, reflector, resolveForwardRef } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyObj, ModuleType, ModRefId } from '#types/mix.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
+import { ModuleWithParams } from '#decorators/module-raw-metadata.js';
 import { BaseInitMeta, BaseMeta } from '#types/base-meta.js';
 import { isModuleWithParams, isRootModule } from '#utils/type-guards.js';
 import { clearDebugClassNames, getDebugClassName } from '#utils/get-debug-class-name.js';

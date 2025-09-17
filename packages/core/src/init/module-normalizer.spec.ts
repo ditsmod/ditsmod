@@ -6,7 +6,7 @@ import { forwardRef, injectable, makeClassDecorator, MultiProvider } from '#di';
 import { Extension } from '#extension/extension-types.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { AnyObj, ModRefId } from '#types/mix.js';
-import { FeatureModuleParams, ModuleWithInitParams, ModuleWithParams } from '#types/module-metadata.js';
+import { FeatureModuleParams, ModuleWithInitParams, ModuleWithParams } from '#decorators/module-raw-metadata.js';
 import { BaseMeta } from '#types/base-meta.js';
 import { InitDecorator } from '#decorators/init-hooks-and-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';

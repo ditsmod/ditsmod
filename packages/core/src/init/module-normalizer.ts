@@ -29,7 +29,7 @@ import { Providers } from '#utils/providers.js';
 import { Extension } from '#extension/extension-types.js';
 import { normalizeProviders } from '#utils/ng-utils.js';
 import { isExtensionConfig } from '#extension/type-guards.js';
-import { ModuleWithParams, ModuleMetadata } from '#types/module-metadata.js';
+import { ModuleWithParams, ModuleRawMetadata } from '#decorators/module-raw-metadata.js';
 import { AllInitHooks, BaseInitRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { InitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { objectKeys } from '#utils/object-keys.js';
@@ -243,7 +243,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected normalizeExtensions(rawMeta: PickProps<ModuleMetadata, 'extensions' | 'extensionsMeta'>) {
+  protected normalizeExtensions(rawMeta: PickProps<ModuleRawMetadata, 'extensions' | 'extensionsMeta'>) {
     if (rawMeta.extensionsMeta) {
       this.baseMeta.extensionsMeta = { ...rawMeta.extensionsMeta, ...this.baseMeta.extensionsMeta };
     }

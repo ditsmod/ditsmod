@@ -10,7 +10,7 @@ import { ModuleId, ModuleManager } from './module-manager.js';
 import { AllInitHooks, BaseInitRawMeta } from '#decorators/init-hooks-and-metadata.js';
 import { BaseInitMeta } from '#types/base-meta.js';
 import { ModRefId } from '#types/mix.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
+import { ModuleWithParams } from '#decorators/module-raw-metadata.js';
 import { BaseMeta } from '#types/base-meta.js';
 import { InitDecorator } from '#decorators/init-hooks-and-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';

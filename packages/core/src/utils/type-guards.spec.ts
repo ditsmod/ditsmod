@@ -14,7 +14,7 @@ import { featureModule } from '#decorators/feature-module.js';
 import { isFeatureModule, isModuleWithParams, isProvider, isRootModule } from './type-guards.js';
 import { isForwardRef } from '#di/forward-ref.js';
 import { rootModule } from '#decorators/root-module.js';
-import { ModuleWithParams } from '#types/module-metadata.js';
+import { ModuleWithParams } from '#decorators/module-raw-metadata.js';
 import { ModuleNormalizer } from '#init/module-normalizer.js';
 import { ModRefId } from '#types/mix.js';
 

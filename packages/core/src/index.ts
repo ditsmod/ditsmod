@@ -67,12 +67,12 @@ export {
   UnionToIntersection,
 } from '#types/mix.js';
 export {
-  ModuleMetadata,
+  ModuleRawMetadata,
   ModuleWithParams,
   ModuleWithInitParams,
   BaseModuleWithParams,
   FeatureModuleParams,
-} from '#types/module-metadata.js';
+} from '#decorators/module-raw-metadata.js';
 export { RootModuleMetadata } from '#types/root-module-metadata.js';
 export { ProviderImport } from '#types/metadata-per-mod.js';
 export { mergeArrays } from '#utils/merge-arrays.js';

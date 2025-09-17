@@ -5,7 +5,7 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { GlobalInitHooks, GlobalProviders } from '#types/metadata-per-mod.js';
 import { AnyFn, AnyObj, ModRefId, ModuleType } from '#types/mix.js';
 import { BaseMeta, getProxyForInitMeta } from '#types/base-meta.js';
-import { ModuleWithParams, type ModuleMetadata } from '#types/module-metadata.js';
+import { ModuleWithParams, type ModuleRawMetadata } from '#decorators/module-raw-metadata.js';
 import { BaseInitMeta } from '#types/base-meta.js';
 import type { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import type { featureModule } from './feature-module.js';
@@ -82,7 +82,7 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
 
   /**
    * This method gets metadata from {@link rootModule} decorator to collect
-   * providers from the {@link ModuleMetadata.exports | exports } property.
+   * providers from the {@link ModuleRawMetadata.exports | exports } property.
    */
   exportGlobalProviders(config: {
     moduleManager: ModuleManager;
@@ -229,6 +229,6 @@ export interface ParamsWithMwp {
   module?: never;
 }
 
-export interface BaseInitRawMeta<InitParams extends object = object> extends Omit<ModuleMetadata, 'imports'> {
+export interface BaseInitRawMeta<InitParams extends object = object> extends Omit<ModuleRawMetadata, 'imports'> {
   imports?: (((ParamsWithMwp | ModuleWithParams) & InitParams) | ModuleType | ForwardRefFn<ModuleType>)[];
 }

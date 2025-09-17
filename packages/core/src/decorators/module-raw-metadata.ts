@@ -11,7 +11,7 @@ import { Providers } from '#utils/providers.js';
 /**
  * Raw metadata for {@link rootModule} and {@link featureModule} decorator.
  */
-export class ModuleMetadata<T extends AnyObj = AnyObj> {
+export class ModuleRawMetadata<T extends AnyObj = AnyObj> {
   /**
    * Providers per the application.
    */
