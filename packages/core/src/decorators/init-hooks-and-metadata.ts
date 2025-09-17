@@ -144,6 +144,10 @@ export interface InitMetaMap {
   keys(): MapIterator<AnyFn>;
   values<T extends BaseInitMeta>(): MapIterator<T>;
   readonly size: number;
+  /**
+   * @returns boolean indicating whether an element with the specified key exists or not.
+   */
+  has(key: AnyFn): boolean;
   [Symbol.iterator](): any;
 }
 
