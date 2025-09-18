@@ -5,7 +5,7 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyObj, ModuleType, ModRefId } from '#types/mix.js';
 import { ModuleWithParams } from '#decorators/module-raw-metadata.js';
 import { BaseInitMeta, BaseMeta } from '#types/base-meta.js';
-import { isModuleWithParams, isRootModule } from '#utils/type-guards.js';
+import { isModuleWithParams, isRootModule } from '#decorators/type-guards.js';
 import { clearDebugClassNames, getDebugClassName } from '#utils/get-debug-class-name.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { ModuleNormalizer } from '#init/module-normalizer.js';

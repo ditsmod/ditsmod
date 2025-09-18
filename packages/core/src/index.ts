@@ -93,17 +93,13 @@ export { CallsiteUtils } from '#utils/callsites.js';
 export { getDebugClassName, clearDebugClassNames } from '#utils/get-debug-class-name.js';
 export { getProviderTarget, getProvidersTargets, getToken, getTokens } from '#utils/get-tokens.js';
 export {
-  isChainError,
   isModuleWithParams,
   isModuleWithInitHooks,
   isFeatureModule,
   isModDecor,
   isRootModule,
   isParamsWithMwp,
-  isProvider,
   hasDeclaredInDir,
-  isCustomError,
-  TypeGuard,
-} from '#utils/type-guards.js';
-
+} from '#decorators/type-guards.js';
+export { isChainError, isProvider, isCustomError, TypeGuard } from '#utils/type-guards.js';
 export { objectKeys } from '#utils/object-keys.js';

@@ -15,7 +15,7 @@ import { BaseMeta } from '#types/base-meta.js';
 import { InitDecorator } from '#decorators/init-hooks-and-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { InitHooks } from '#decorators/init-hooks-and-metadata.js';
-import { isModuleWithParams } from '#utils/type-guards.js';
+import { isModuleWithParams } from '#decorators/type-guards.js';
 import { FailAddingToImports } from '#errors';
 
 describe('ModuleManager', () => {

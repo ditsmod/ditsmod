@@ -10,7 +10,7 @@ import { getCollisions } from '#utils/get-collisions.js';
 import { getImportedTokens } from '#utils/get-imports.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
-import { hasDeclaredInDir } from '#utils/type-guards.js';
+import { hasDeclaredInDir } from '#decorators/type-guards.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import {
   ExtensionConfig,

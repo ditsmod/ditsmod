@@ -10,12 +10,12 @@ import {
 import {
   isModuleWithParams,
   isRootModule,
-  isProvider,
   isModDecor,
   isFeatureModule,
   isModuleWithInitHooks,
   isParamsWithMwp,
-} from '#utils/type-guards.js';
+} from '#decorators/type-guards.js';
+import { isProvider } from '#utils/type-guards.js';
 import { ExtensionConfigBase, getExtensionProvider } from '#extension/get-extension-provider.js';
 import { AnyFn, AnyObj, Level, ModRefId, ModuleType, PickProps } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';

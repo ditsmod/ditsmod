@@ -11,7 +11,8 @@ import {
   forwardRef,
 } from '#di';
 import { featureModule } from '#decorators/feature-module.js';
-import { isFeatureModule, isModuleWithParams, isProvider, isRootModule } from './type-guards.js';
+import { isFeatureModule, isModuleWithParams, isRootModule } from '#decorators/type-guards.js';
+import { isProvider } from './type-guards.js';
 import { isForwardRef } from '#di/forward-ref.js';
 import { rootModule } from '#decorators/root-module.js';
 import { ModuleWithParams } from '#decorators/module-raw-metadata.js';

@@ -1,6 +1,6 @@
 import { ForwardRefFn, resolveForwardRef } from '#di/forward-ref.js';
 import { ModRefId, ModuleType } from '#types/mix.js';
-import { isModuleWithParams } from './type-guards.js';
+import { isModuleWithParams } from '#decorators/type-guards.js';
 
 const debugClassNames = new Map<ModRefId, string>();
 const debugClassNameCounters = new Map<string, number>();
