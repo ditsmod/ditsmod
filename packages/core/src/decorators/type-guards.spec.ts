@@ -1,39 +1,85 @@
-import { reflector } from '#di';
+import { DecoratorAndValue, reflector } from '#di';
 import { featureModule } from '#decorators/feature-module.js';
 import { isFeatureModule, isModuleWithParams, isRootModule } from '#decorators/type-guards.js';
 import { rootModule } from '#decorators/root-module.js';
-import { ModuleWithParams } from '#decorators/module-raw-metadata.js';
-import { ModuleNormalizer } from '#init/module-normalizer.js';
-import { ModRefId } from '#types/mix.js';
+import { ModuleRawMetadata, ModuleWithParams } from '#decorators/module-raw-metadata.js';
+import { BaseMeta } from '#types/base-meta.js';
+import { InitHooks } from './init-hooks-and-metadata.js';
 
 describe('type guards', () => {
-  describe('isModule()', () => {
-    it('class with decorator', () => {
-      @featureModule({})
+  describe('isFeatureModule()', () => {
+    it('class without decorator', () => {
+      class Module1 {}
+      const metadata = reflector.getMetadata(Module1);
+      expect(isFeatureModule(metadata)).toBe(false);
+    });
+
+    it('DecoratorAndValue', () => {
+      @featureModule()
       class Module1 {}
       const metadata = reflector.getDecorators(Module1)![0];
       expect(isFeatureModule(metadata)).toBe(true);
     });
 
-    it('class without decorator', () => {
-      class Module1 {}
-      const metadata = reflector.getMetadata(Module1) as any;
-      expect(isFeatureModule(metadata)).toBe(false);
+    it('initHooks in DecoratorAndValue false', () => {
+      const initHooks = new InitHooks({});
+      const decorAndVal = new DecoratorAndValue(featureModule, initHooks);
+      expect(isFeatureModule(decorAndVal)).toBe(false);
     });
-  });
 
-  describe('isRootModule()', () => {
-    it('class with decorator', () => {
-      @rootModule({})
-      class Module1 {}
+    it('initHooks in DecoratorAndValue true', () => {
+      const initHooks = new InitHooks({});
+      initHooks.moduleRole = 'feature';
+      const decorAndVal = new DecoratorAndValue(featureModule, initHooks);
+      expect(isFeatureModule(decorAndVal)).toBe(true);
+    });
+
+    it('BaseMeta true', () => {
+      @featureModule()
+      class Module1 {
+        method1() {}
+      }
+
+      const baseMeta = new BaseMeta();
       const metadata = reflector.getDecorators(Module1)![0];
-      expect(isRootModule(metadata)).toBe(true);
+      baseMeta.rawMeta = metadata.value;
+      expect(isFeatureModule(baseMeta)).toBe(true);
     });
 
-    it('class without decorator', () => {
-      class Module1 {}
-      const metadata = reflector.getMetadata(Module1) as any;
-      expect(isRootModule(metadata)).toBe(false);
+    it('BaseMeta false', () => {
+      const baseMeta = new BaseMeta();
+      baseMeta.rawMeta = {};
+      expect(isFeatureModule(baseMeta)).toBe(false);
+    });
+
+    it('initHooks in BaseMeta false', () => {
+      const initHooks = new InitHooks({});
+      const baseMeta = new BaseMeta();
+      baseMeta.rawMeta = initHooks;
+      expect(isFeatureModule(baseMeta)).toBe(false);
+    });
+
+    it('initHooks in BaseMeta true', () => {
+      const initHooks = new InitHooks({});
+      initHooks.moduleRole = 'feature';
+      const baseMeta = new BaseMeta();
+      baseMeta.rawMeta = initHooks;
+      expect(isFeatureModule(baseMeta)).toBe(true);
+    });
+
+    it('initHooks direct true', () => {
+      const initHooks = new InitHooks({});
+      initHooks.moduleRole = 'feature';
+      expect(isFeatureModule(initHooks)).toBe(true);
+    });
+
+    it('initHooks direct false', () => {
+      const initHooks = new InitHooks({});
+      expect(isFeatureModule(initHooks)).toBe(false);
+    });
+
+    it('ModuleRawMetadata', () => {
+      expect(isFeatureModule(new ModuleRawMetadata())).toBe(true);
     });
   });
 
@@ -41,21 +87,14 @@ describe('type guards', () => {
     it('class with decorator', () => {
       @rootModule({})
       class Module1 {}
-      const rawMeta = reflector.getDecorators(Module1, isRootModule)!;
+      const rawMeta = reflector.getDecorators(Module1, isRootModule);
       expect(rawMeta).toBeDefined();
     });
 
     it('class without decorator', () => {
-      class MockModuleNormalizer extends ModuleNormalizer {
-        override getDecoratorMeta(modRefId: ModRefId) {
-          return super.getDecoratorMeta(modRefId);
-        }
-      }
-      const mockModuleNormalizer = new MockModuleNormalizer();
-      const getModuleMetadata = mockModuleNormalizer.getDecoratorMeta.bind(mockModuleNormalizer);
       class Module1 {}
-      const rawMeta = getModuleMetadata(Module1)!;
-      expect(rawMeta).toBeUndefined();
+      const metadata = reflector.getMetadata(Module1);
+      expect(isRootModule(metadata)).toBe(false);
     });
   });
 

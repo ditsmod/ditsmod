@@ -12,7 +12,7 @@ export function isParamsWithMwp(arg?: AnyObj): arg is { mwp: ModuleWithParams } 
 
 export function isRootModule(decorAndVal?: DecoratorAndValue): decorAndVal is DecoratorAndValue<RootRawMetadata>;
 export function isRootModule(baseMeta?: BaseMeta): baseMeta is BaseMeta<RootRawMetadata>;
-export function isRootModule(rawMeta?: RootRawMetadata): rawMeta is RootRawMetadata;
+export function isRootModule(rawMeta?: AnyObj): rawMeta is RootRawMetadata;
 export function isRootModule(
   arg?: DecoratorAndValue | RootRawMetadata | BaseMeta,
 ): arg is DecoratorAndValue<RootRawMetadata> {
@@ -34,7 +34,7 @@ export function isRootModule(
 
 export function isFeatureModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<ModuleRawMetadata>;
 export function isFeatureModule(baseMeta?: BaseMeta): baseMeta is BaseMeta<ModuleRawMetadata>;
-export function isFeatureModule(arg?: ModuleRawMetadata): arg is ModuleRawMetadata;
+export function isFeatureModule(arg?: AnyObj): arg is ModuleRawMetadata;
 export function isFeatureModule(
   arg?: DecoratorAndValue | ModuleRawMetadata | BaseMeta,
 ): arg is DecoratorAndValue<ModuleRawMetadata> {
