@@ -1,16 +1,14 @@
 import {
   Class,
   isFeatureModule,
-  isNormalizedProvider,
   BaseMeta,
   reflector,
   getDuplicates,
-  ModRefId,
   getProxyForInitMeta,
   AnyObj,
   DecoratorAndValue,
 } from '@ditsmod/core';
-import { ModuleShouldHaveValue, ResolvedCollisionTokensOnly } from '@ditsmod/core/errors';
+import { ModuleShouldHaveValue } from '@ditsmod/core/errors';
 
 import { TrpcInitMeta, TrpcInitRawMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { trpcController, ControllerRawMetadata } from '#decorators/trpc-controller.js';
@@ -38,23 +36,6 @@ export class TrpcModuleNormalizer {
     return meta;
   }
 
-  protected throwIfResolvingNormalizedProvider(meta: TrpcInitMeta) {
-    const resolvedCollisionsPerLevel: [any, ModRefId][] = [];
-    if (Array.isArray(meta.resolvedCollisionsPerRou)) {
-      resolvedCollisionsPerLevel.push(...meta.resolvedCollisionsPerRou);
-    }
-    if (Array.isArray(meta.resolvedCollisionsPerReq)) {
-      resolvedCollisionsPerLevel.push(...meta.resolvedCollisionsPerReq);
-    }
-
-    resolvedCollisionsPerLevel.forEach(([provider]) => {
-      if (isNormalizedProvider(provider)) {
-        const providerName = provider.token.name || provider.token;
-        throw new ResolvedCollisionTokensOnly(this.baseMeta.name, providerName);
-      }
-    });
-  }
-
   protected checkController(Controller: Class) {
     if (!reflector.getDecorators(Controller, isCtrlDecor)) {
       throw new ControllerDoesNotHaveDecorator(Controller.name);
@@ -64,7 +45,6 @@ export class TrpcModuleNormalizer {
   protected checkMetadata() {
     const meta = this.meta;
     // this.checkGuards(meta.params.guards);
-    this.throwIfResolvingNormalizedProvider(meta);
     meta.controllers.forEach((Controller) => this.checkController(Controller));
     const controllerDuplicates = getDuplicates(meta.controllers).map((c) => c.name);
     if (controllerDuplicates.length) {

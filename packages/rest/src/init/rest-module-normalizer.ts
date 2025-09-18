@@ -11,16 +11,11 @@ import {
   Provider,
   isClassProvider,
   isTokenProvider,
-  ModRefId,
   getProxyForInitMeta,
   ForwardRefFn,
   ModuleType,
 } from '@ditsmod/core';
-import {
-  ForbiddenExportNormalizedProvider,
-  ModuleShouldHaveValue,
-  ResolvedCollisionTokensOnly,
-} from '@ditsmod/core/errors';
+import { ForbiddenExportNormalizedProvider, ModuleShouldHaveValue } from '@ditsmod/core/errors';
 
 import { AppendsWithParams, RestInitRawMeta } from '#init/rest-init-raw-meta.js';
 import { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
@@ -115,23 +110,6 @@ export class RestModuleNormalizer {
     }) as Exclude<T, ForwardRefFn>[];
   }
 
-  protected throwIfResolvingNormalizedProvider(meta: RestInitMeta) {
-    const resolvedCollisionsPerLevel: [any, ModRefId][] = [];
-    if (Array.isArray(meta.resolvedCollisionsPerRou)) {
-      resolvedCollisionsPerLevel.push(...meta.resolvedCollisionsPerRou);
-    }
-    if (Array.isArray(meta.resolvedCollisionsPerReq)) {
-      resolvedCollisionsPerLevel.push(...meta.resolvedCollisionsPerReq);
-    }
-
-    resolvedCollisionsPerLevel.forEach(([provider]) => {
-      if (isNormalizedProvider(provider)) {
-        const providerName = provider.token.name || provider.token;
-        throw new ResolvedCollisionTokensOnly(this.baseMeta.name, providerName);
-      }
-    });
-  }
-
   protected checkController(Controller: Class) {
     if (!reflector.getDecorators(Controller, isCtrlDecor)) {
       throw new ControllerDoesNotHaveDecorator(Controller.name);
@@ -141,7 +119,6 @@ export class RestModuleNormalizer {
   protected checkMetadata() {
     const meta = this.meta;
     this.checkGuards(meta.params.guards);
-    this.throwIfResolvingNormalizedProvider(meta);
     meta.controllers.forEach((Controller) => this.checkController(Controller));
     const controllerDuplicates = getDuplicates(meta.controllers).map((c) => c.name);
     if (controllerDuplicates.length) {
