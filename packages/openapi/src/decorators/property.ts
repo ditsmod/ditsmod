@@ -33,4 +33,4 @@ class Post {
 }
  * ```
  */
-export const property = makePropDecorator(transformPropertyMeta, undefined, 'property');
+export const property = makePropDecorator(transformPropertyMeta, 'property');
