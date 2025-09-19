@@ -61,6 +61,27 @@ export class ModuleNormalizer {
    * Returns normalized module metadata.
    */
   normalize(modRefId: ModRefId, allInitHooks: AllInitHooks) {
+    const { rawMeta, baseMeta, aDecoratorMeta } = this.init(modRefId);
+    this.checkAndMarkExternalModule(rawMeta);
+    this.normalizeDeclaredAndResolvedProviders(rawMeta);
+    this.normalizeExports(rawMeta, 'Exports');
+    if (isModuleWithParams(modRefId)) {
+      this.mergeModuleWithParams(modRefId);
+    }
+    aDecoratorMeta.filter(isModuleWithInitHooks).forEach((decorAndVal) => {
+      baseMeta.mInitHooks.set(decorAndVal.decorator, decorAndVal.value);
+    });
+    this.normalizeImports(rawMeta);
+    this.normalizeExtensions(rawMeta);
+    this.checkReexportModules();
+    this.addInitHooksForHostDecorator(allInitHooks);
+    this.callInitHooksFromCurrentModule();
+    this.addInitHooksForImportedMwp(allInitHooks);
+    this.quickCheckMetadata(rawMeta);
+    return baseMeta;
+  }
+
+  protected init(modRefId: ModRefId) {
     const aDecoratorMeta = this.getDecoratorMeta(modRefId) || [];
     const decorAndVal = aDecoratorMeta.find((d) => isModDecor(d));
     const rawMeta = decorAndVal?.value;
@@ -81,23 +102,7 @@ export class ModuleNormalizer {
     baseMeta.rawMeta = rawMeta;
     baseMeta.declaredInDir = decorAndVal?.declaredInDir || '.';
     baseMeta.modRefId = modRefId;
-    this.checkAndMarkExternalModule(rawMeta);
-    this.normalizeDeclaredAndResolvedProviders(rawMeta);
-    this.normalizeExports(rawMeta, 'Exports');
-    if (isModuleWithParams(modRefId)) {
-      this.mergeModuleWithParams(modRefId);
-    }
-    aDecoratorMeta.filter(isModuleWithInitHooks).forEach((decorAndVal) => {
-      baseMeta.mInitHooks.set(decorAndVal.decorator, decorAndVal.value);
-    });
-    this.normalizeImports(rawMeta);
-    this.normalizeExtensions(rawMeta);
-    this.checkReexportModules();
-    this.addInitHooksForHostDecorator(allInitHooks);
-    this.callInitHooksFromCurrentModule();
-    this.addInitHooksForImportedMwp(allInitHooks);
-    this.quickCheckMetadata(rawMeta);
-    return baseMeta;
+    return { rawMeta, baseMeta, aDecoratorMeta };
   }
 
   protected getDecoratorMeta(modRefId: ModRefId) {
