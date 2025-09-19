@@ -45,6 +45,7 @@ import {
   ForbiddenExportProvidersPerApp,
   ModuleShouldHaveValue,
 } from '#errors';
+import type { ModuleManager } from './module-manager.js';
 
 /**
  * Normalizes and validates module metadata.
@@ -63,7 +64,6 @@ export class ModuleNormalizer {
     const aDecoratorMeta = this.getDecoratorMeta(modRefId) || [];
     const decorAndVal = aDecoratorMeta.find((d) => isModDecor(d));
     const rawMeta = decorAndVal?.value;
-    const declaredInDir = decorAndVal?.declaredInDir;
     const modName = getDebugClassName(modRefId);
     if (!modName) {
       throw new InvalidModRefId();
@@ -79,7 +79,7 @@ export class ModuleNormalizer {
     this.baseMeta = baseMeta;
     baseMeta.name = modName;
     baseMeta.rawMeta = rawMeta;
-    baseMeta.declaredInDir = declaredInDir || '.';
+    baseMeta.declaredInDir = decorAndVal?.declaredInDir || '.';
     baseMeta.modRefId = modRefId;
     this.checkAndMarkExternalModule(rawMeta);
     this.normalizeDeclaredAndResolvedProviders(rawMeta);
@@ -107,10 +107,9 @@ export class ModuleNormalizer {
   }
 
   /**
-   * For this method to work properly, the root module must be scanned first.
+   * For this method to work properly, the root module must be scanned by {@link ModuleManager} first.
    */
   protected checkAndMarkExternalModule(rawMeta: RootRawMetadata) {
-    this.baseMeta.isExternal = false;
     if (isRootModule(rawMeta)) {
       this.rootDeclaredInDir = this.baseMeta.declaredInDir;
     } else if (this.rootDeclaredInDir) {
@@ -150,9 +149,13 @@ export class ModuleNormalizer {
     if (!rawMeta.exports) {
       return;
     }
+    const providers = this.baseMeta.providersPerMod.concat(
+      this.baseMeta.providersPerRou,
+      this.baseMeta.providersPerReq,
+    );
     let tokens: any[] = [];
-    if (this.baseMeta.providersPerMod.length) {
-      tokens = getTokens(this.baseMeta.providersPerMod);
+    if (providers.length) {
+      tokens = getTokens(providers);
     }
 
     this.resolveForwardRef(rawMeta.exports).forEach((exp, i) => {
@@ -231,12 +234,11 @@ export class ModuleNormalizer {
     rawMeta: BaseInitRawMeta & PickProps<RootRawMetadata, 'resolvedCollisionsPerApp'>,
   ) {
     const resolvedCollisionsPerLevel: [any, ModRefId | ForwardRefFn<ModuleType>][] = [];
-    if (Array.isArray(rawMeta.resolvedCollisionsPerApp)) {
-      resolvedCollisionsPerLevel.push(...rawMeta.resolvedCollisionsPerApp);
-    }
-    if (Array.isArray(rawMeta.resolvedCollisionsPerMod)) {
-      resolvedCollisionsPerLevel.push(...rawMeta.resolvedCollisionsPerMod);
-    }
+    (['App', 'Mod', 'Rou', 'Req'] as const).forEach((level) => {
+      if (Array.isArray(rawMeta[`resolvedCollisionsPer${level}`])) {
+        resolvedCollisionsPerLevel.push(...rawMeta[`resolvedCollisionsPer${level}`]!);
+      }
+    });
 
     resolvedCollisionsPerLevel.forEach(([provider]) => {
       provider = resolveForwardRef(provider);

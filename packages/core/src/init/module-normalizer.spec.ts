@@ -49,7 +49,7 @@ describe('ModuleNormalizer', () => {
     expectedMeta.rawMeta = new RootRawMetadata();
     expectedMeta.modRefId = AppModule;
     expectedMeta.declaredInDir = CallsiteUtils.getCallerDir('rootModule');
-    expectedMeta.isExternal = false;
+    expectedMeta.isExternal = undefined;
     expectedMeta.mInitHooks = expect.any(Map);
 
     expect(mock.normalize(AppModule)).toEqual(expectedMeta);
