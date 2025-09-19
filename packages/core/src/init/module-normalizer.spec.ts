@@ -59,6 +59,8 @@ describe('ModuleNormalizer', () => {
     class Service1 {}
     class Service2 {}
     class Service3 {}
+    class Service4 {}
+    class Service5 {}
     @injectable()
     class Extension1 implements Extension {
       async stage1() {
@@ -73,17 +75,19 @@ describe('ModuleNormalizer', () => {
     class Module2 {}
 
     const moduleWithParams: ModuleWithParams = { module: Module2, id: 'some-id' };
-    const multiProvider: MultiProvider = { token: Service3, useValue: 'some-value', multi: true };
+    const multiProvider: MultiProvider = { token: Service5, useValue: 'some-value', multi: true };
 
     @rootModule({
       imports: [Module1, moduleWithParams],
       providersPerApp: new Providers().passThrough(Service1),
       providersPerMod: [Service2, multiProvider],
+      providersPerRou: [Service3],
+      providersPerReq: [Service4],
       resolvedCollisionsPerApp: [[Service1, Module1]],
       resolvedCollisionsPerMod: [[Service2, Module2]],
       extensions: [{ extension: Extension1, export: true }],
       extensionsMeta: { one: 1 },
-      exports: [Service2, Service3, Module1],
+      exports: [Service2, Service3, Service4, Service5, Module1],
     })
     class AppModule {}
 
@@ -94,10 +98,18 @@ describe('ModuleNormalizer', () => {
     expect(baseMeta.importsWithParams).toEqual([moduleWithParams]);
     expect(baseMeta.providersPerApp).toEqual([Service1]);
     expect(baseMeta.providersPerMod).toEqual([Service2, multiProvider]);
+    expect(baseMeta.providersPerRou).toEqual([Service3]);
+    expect(baseMeta.providersPerReq).toEqual([Service4]);
     expect(baseMeta.exportedProvidersPerMod).toEqual([Service2]);
+    expect(baseMeta.exportedProvidersPerRou).toEqual([Service3]);
+    expect(baseMeta.exportedProvidersPerReq).toEqual([Service4]);
     expect(baseMeta.exportedMultiProvidersPerMod).toEqual([multiProvider]);
+    expect(baseMeta.exportedMultiProvidersPerRou).toEqual([]);
+    expect(baseMeta.exportedMultiProvidersPerReq).toEqual([]);
     expect(baseMeta.resolvedCollisionsPerApp).toEqual([[Service1, Module1]]);
     expect(baseMeta.resolvedCollisionsPerMod).toEqual([[Service2, Module2]]);
+    expect(baseMeta.resolvedCollisionsPerRou).toEqual([]);
+    expect(baseMeta.resolvedCollisionsPerReq).toEqual([]);
     expect(baseMeta.extensionsProviders).toEqual([Extension1]);
     expect(baseMeta.exportedExtensionsProviders).toEqual([Extension1]);
     expect(baseMeta.extensionsMeta).toEqual({ one: 1 });
