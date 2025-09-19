@@ -1,4 +1,3 @@
-
 import { DecoratorAndValue } from '#di';
 import { AnyObj, RequireProps } from '#types/mix.js';
 import { ModuleRawMetadata, ModuleWithParams } from '#decorators/module-raw-metadata.js';
@@ -54,8 +53,8 @@ export function isFeatureModule(
   return arg instanceof ModuleRawMetadata;
 }
 
-export function isModDecor(arg?: DecoratorAndValue): arg is DecoratorAndValue<RootRawMetadata>;
-export function isModDecor(arg?: RootRawMetadata): arg is RootRawMetadata;
+export function isModDecor(arg?: DecoratorAndValue): arg is DecoratorAndValue<RootRawMetadata | ModuleRawMetadata>;
+export function isModDecor(arg?: RootRawMetadata): arg is RootRawMetadata | ModuleRawMetadata;
 export function isModDecor(arg?: any) {
   return isRootModule(arg) || isFeatureModule(arg);
 }
@@ -85,5 +84,3 @@ export function hasDeclaredInDir(
 export function isModuleWithParams(modRefId?: AnyObj): modRefId is ModuleWithParams {
   return (modRefId as ModuleWithParams)?.module !== undefined;
 }
-
-
