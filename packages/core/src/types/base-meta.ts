@@ -94,7 +94,7 @@ export class BaseMeta<
   /**
    * Indicates whether this module is external to the application.
    */
-  isExternal: boolean;
+  isExternal?: boolean;
   /**
    * Contains init hooks and raw metadata collected from init module decorators.
    */
@@ -119,9 +119,15 @@ export class BaseMeta<
     this.exportsModules = [];
     this.exportsWithParams = [];
     this.exportedProvidersPerMod = [];
+    this.exportedProvidersPerRou = [];
+    this.exportedProvidersPerReq = [];
     this.exportedMultiProvidersPerMod = [];
+    this.exportedMultiProvidersPerRou = [];
+    this.exportedMultiProvidersPerReq = [];
     this.resolvedCollisionsPerApp = [];
     this.resolvedCollisionsPerMod = [];
+    this.resolvedCollisionsPerRou = [];
+    this.resolvedCollisionsPerReq = [];
     this.extensionsProviders = [];
     this.exportedExtensionsProviders = [];
     this.aExtensionConfig = [];
