@@ -21,7 +21,7 @@ import { AppendsWithParams, RestInitRawMeta } from '#init/rest-init-raw-meta.js'
 import { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
-import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
+import { restModule } from '#decorators/rest-init-hooks-and-metadata.js';
 import { ControllerDoesNotHaveDecorator, DuplicateOfControllers, InvalidGuard } from '#errors';
 
 /**
@@ -57,7 +57,7 @@ export class RestModuleNormalizer {
     } else if (!isModuleWithParams(modRefId)) {
       return;
     }
-    const params = modRefId.initParams?.get(initRest);
+    const params = modRefId.initParams?.get(restModule);
 
     if (params) {
       if (params.absolutePath !== undefined) {
@@ -80,9 +80,9 @@ export class RestModuleNormalizer {
         const params = { ...ap } as Partial<AppendsWithParams>;
         delete params.module;
         if (ap.initParams) {
-          ap.initParams.set(initRest, params);
+          ap.initParams.set(restModule, params);
         } else {
-          ap.initParams = new Map([[initRest, params]]);
+          ap.initParams = new Map([[restModule, params]]);
         }
         this.meta.appendsWithParams.push(ap);
       } else {

@@ -61,16 +61,11 @@ export class ModuleNormalizer {
    * Returns normalized module metadata.
    */
   normalize(modRefId: ModRefId, allInitHooks: AllInitHooks) {
-    const { rawMeta, baseMeta, aDecoratorMeta } = this.init(modRefId);
+    const { rawMeta, baseMeta } = this.init(modRefId);
     this.checkAndMarkExternalModule(rawMeta);
     this.normalizeDeclaredAndResolvedProviders(rawMeta);
     this.normalizeExports(rawMeta, 'Exports');
-    if (isModuleWithParams(modRefId)) {
-      this.mergeModuleWithParams(modRefId);
-    }
-    aDecoratorMeta.filter(isModuleWithInitHooks).forEach((decorAndVal) => {
-      baseMeta.mInitHooks.set(decorAndVal.decorator, decorAndVal.value);
-    });
+    this.mergeModuleWithParams(modRefId);
     this.normalizeImports(rawMeta);
     this.normalizeExtensions(rawMeta);
     this.checkReexportModules();
@@ -102,12 +97,15 @@ export class ModuleNormalizer {
     baseMeta.rawMeta = rawMeta;
     baseMeta.declaredInDir = decorAndVal?.declaredInDir || '.';
     baseMeta.modRefId = modRefId;
-    return { rawMeta, baseMeta, aDecoratorMeta };
+    aDecoratorMeta.filter(isModuleWithInitHooks).forEach(({ decorator, value }) => {
+      baseMeta.mInitHooks.set(decorator, value);
+    });
+    return { rawMeta, baseMeta };
   }
 
   protected getDecoratorMeta(modRefId: ModRefId) {
     modRefId = resolveForwardRef(modRefId);
-    const mod = isModuleWithParams(modRefId) ? modRefId.module : modRefId;
+    const mod = isModuleWithParams(modRefId) ? resolveForwardRef(modRefId.module) : modRefId;
     return reflector.getDecorators(mod);
   }
 
@@ -154,14 +152,9 @@ export class ModuleNormalizer {
     if (!rawMeta.exports) {
       return;
     }
-    const providers = this.baseMeta.providersPerMod.concat(
-      this.baseMeta.providersPerRou,
-      this.baseMeta.providersPerReq,
+    const declaredTokens = getTokens(
+      this.baseMeta.providersPerMod.concat(this.baseMeta.providersPerRou, this.baseMeta.providersPerReq),
     );
-    let tokens: any[] = [];
-    if (providers.length) {
-      tokens = getTokens(providers);
-    }
 
     this.resolveForwardRef(rawMeta.exports).forEach((exp, i) => {
       if (exp === undefined) {
@@ -172,7 +165,7 @@ export class ModuleNormalizer {
       }
       if (isModuleWithParams(exp)) {
         this.baseMeta.exportsWithParams.push(exp);
-      } else if (isProvider(exp) || tokens.includes(exp)) {
+      } else if (isProvider(exp) || declaredTokens.includes(exp)) {
         // Provider or token of provider
         this.exportProviders(exp);
       } else if (this.getDecoratorMeta(exp)) {
@@ -207,7 +200,10 @@ export class ModuleNormalizer {
     }
   }
 
-  protected mergeModuleWithParams(modWitParams: ModuleWithParams) {
+  protected mergeModuleWithParams(modWitParams: ModRefId) {
+    if (!isModuleWithParams(modWitParams)) {
+      return;
+    }
     if (modWitParams.id) {
       this.baseMeta.id = modWitParams.id;
     }
@@ -310,8 +306,8 @@ export class ModuleNormalizer {
   }
 
   /**
-   * If the instance with init hooks has `hostRawMeta`, this method
-   * inserts a hook that can add `hostRawMeta` to the host module.
+   * If {@link InitHooks} has {@link InitHooks.hostRawMeta | hostRawMeta}, this method
+   * inserts an init hook that can add `hostRawMeta` to the host module.
    */
   protected addInitHooksForHostDecorator(allInitHooks: AllInitHooks) {
     allInitHooks.forEach((initHooks, decorator) => {
