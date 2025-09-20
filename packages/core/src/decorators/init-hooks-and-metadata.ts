@@ -26,7 +26,7 @@ export class InitHooks<T1 extends BaseInitRawMeta = BaseInitRawMeta> {
    * The host module where the current init decorator is declared. If you add this module,
    * it will be imported into the module where the corresponding init decorator is used.
    */
-  declare hostModule?: ModRefId;
+  declare hostModule?: ModuleType;
 
   /**
    * Raw metadata intended for the host module.

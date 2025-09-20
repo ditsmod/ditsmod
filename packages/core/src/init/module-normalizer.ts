@@ -325,10 +325,6 @@ export class ModuleNormalizer {
       // Importing host module.
       if (initHooks.hostModule === this.baseMeta.modRefId) {
         // No need import host module in host module.
-      } else if (isModuleWithParams(initHooks.hostModule)) {
-        if (!this.baseMeta.importsWithParams.includes(initHooks.hostModule)) {
-          this.baseMeta.importsWithParams.push(initHooks.hostModule);
-        }
       } else if (initHooks.hostModule && !this.baseMeta.importsModules.includes(initHooks.hostModule)) {
         this.baseMeta.importsModules.push(initHooks.hostModule);
       }
