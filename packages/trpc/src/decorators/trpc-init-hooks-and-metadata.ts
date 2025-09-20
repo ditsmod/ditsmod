@@ -59,9 +59,10 @@ export const trpcRootModule: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, Tr
 export const trpcModule: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, TrpcInitMeta> = makeClassDecorator(
   transformMetadata,
   'trpcModule',
+  trpcRootModule
 );
 
-export const initTrpcModule = trpcModule;
+export const initTrpcModule = trpcRootModule;
 
 export class TrpcInitHooks extends InitHooks<TrpcInitRawMeta> {
   override hostModule = TrpcModule;

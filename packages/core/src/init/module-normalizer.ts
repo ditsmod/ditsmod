@@ -365,7 +365,9 @@ export class AppModule {}
         this.baseMeta.allInitHooks.set(decorator, newInitHooks);
         this.callInitHook(decorator, newInitHooks);
 
-        // This is need for `this.quickCheckMetadata()` only.
+        /**
+         * This is need for {@link quickCheckMetadata} only.
+         */
         this.baseMeta.mInitHooks.set(decorator, newInitHooks);
       }
     });
