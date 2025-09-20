@@ -37,14 +37,16 @@ export const METHODS_WITH_PARAMS = Symbol();
  * @param transform Such a transformer should not use symbols that can be wrapped with `forwardRef()`,
  * because at this stage the `resolveForwardRef()` function will not work correctly.
  * @param debugFactoryName Gives a name to the decorator that can be viewed during debugging.
+ * @param decoratorId Sometimes it is not enough to identify the metadata returned by a specific decorator
+ * using `instanceof`. Sometimes it is useful to have a single identifier for a certain group of decorators.
  */
-export function makeClassDecorator<T extends AnyFn>(transform?: T, debugFactoryName?: string) {
+export function makeClassDecorator<T extends AnyFn>(transform?: T, debugFactoryName?: string, decoratorId?: AnyFn) {
   function classDecoratorFactory(...args: Parameters<T>): any {
     const value = transform ? transform(...args) : [...args];
     const declaredInDir = CallsiteUtils.getCallerDir(debugFactoryName || classDecoratorFactory.name);
     return function classDecorator(Cls: Class): void {
       const annotations: any[] = getRawMetadata(Cls, CLASS_KEY, []);
-      const decoratorAndValue = new DecoratorAndValue(classDecoratorFactory, value, declaredInDir);
+      const decoratorAndValue = new DecoratorAndValue(decoratorId || classDecoratorFactory, value, declaredInDir);
       annotations.push(decoratorAndValue);
     };
   }
@@ -58,8 +60,10 @@ export function makeClassDecorator<T extends AnyFn>(transform?: T, debugFactoryN
  * @param transform Such a transformer should not use symbols that can be wrapped with `forwardRef()`,
  * because at this stage the `resolveForwardRef()` function will not work correctly.
  * @param debugFactoryName Gives a name to the decorator that can be viewed during debugging.
+ * @param decoratorId Sometimes it is not enough to identify the metadata returned by a specific decorator
+ * using `instanceof`. Sometimes it is useful to have a single identifier for a certain group of decorators.
  */
-export function makeParamDecorator<T extends AnyFn>(transform?: T, debugFactoryName?: string) {
+export function makeParamDecorator<T extends AnyFn>(transform?: T, debugFactoryName?: string, decoratorId?: AnyFn) {
   function paramDecorFactory(...args: Parameters<T>) {
     const value = transform ? transform(...args) : [...args];
     return function paramDecorator(
@@ -80,7 +84,7 @@ export function makeParamDecorator<T extends AnyFn>(transform?: T, debugFactoryN
         parameters.push(null);
       }
 
-      (parameters[index] ??= []).push(new DecoratorAndValue(paramDecorFactory, value));
+      (parameters[index] ??= []).push(new DecoratorAndValue(decoratorId || paramDecorFactory, value));
     };
   }
   if (paramDecorFactory) {
@@ -93,15 +97,17 @@ export function makeParamDecorator<T extends AnyFn>(transform?: T, debugFactoryN
  * @param transform Such a transformer should not use symbols that can be wrapped with `forwardRef()`,
  * because at this stage the `resolveForwardRef()` function will not work correctly.
  * @param debugFactoryName Gives a name to the decorator that can be viewed during debugging.
+ * @param decoratorId Sometimes it is not enough to identify the metadata returned by a specific decorator
+ * using `instanceof`. Sometimes it is useful to have a single identifier for a certain group of decorators.
  */
-export function makePropDecorator<T extends AnyFn>(transform?: T, debugFactoryName?: string) {
+export function makePropDecorator<T extends AnyFn>(transform?: T, debugFactoryName?: string, decoratorId?: AnyFn) {
   function propDecorFactory(...args: Parameters<T>) {
     const value = transform ? transform(...args) : [...args];
     return function propDecorator(target: any, propertyKey: string | symbol): void {
       const Cls = target.constructor as Class;
       const meta = getRawMetadata(Cls, PROP_KEY, {} as { [key: string | symbol]: any });
       meta[propertyKey] = (meta.hasOwnProperty(propertyKey) && meta[propertyKey]) || [];
-      meta[propertyKey].push(new DecoratorAndValue(propDecorFactory, value));
+      meta[propertyKey].push(new DecoratorAndValue(decoratorId || propDecorFactory, value));
     };
   }
   if (propDecorFactory) {
