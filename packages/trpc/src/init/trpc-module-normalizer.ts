@@ -1,25 +1,10 @@
-import {
-  Class,
-  isFeatureModule,
-  BaseMeta,
-  reflector,
-  getDuplicates,
-  getProxyForInitMeta,
-  AnyObj,
-  DecoratorAndValue,
-} from '@ditsmod/core';
+import { Class, isFeatureModule, BaseMeta, reflector, getDuplicates, getProxyForInitMeta } from '@ditsmod/core';
 import { ModuleShouldHaveValue } from '@ditsmod/core/errors';
 
 import { TrpcInitMeta, TrpcInitRawMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
-import { trpcController, ControllerRawMetadata } from '#decorators/trpc-controller.js';
 import { ControllerDoesNotHaveDecorator, DuplicateOfControllers, InvalidGuard } from '../error/trpc-errors.js';
 import { GuardItem, NormalizedGuard } from '#interceptors/trpc-guard.js';
-
-export type Level = 'Req' | 'Rou' | 'Mod';
-
-export function isCtrlDecor(decoratorAndValue?: AnyObj): decoratorAndValue is DecoratorAndValue<ControllerRawMetadata> {
-  return decoratorAndValue?.decorator === trpcController;
-}
+import { isCtrlDecor } from '#types/type.guards.js';
 
 /**
  * Normalizes and validates module metadata.
@@ -44,7 +29,7 @@ export class TrpcModuleNormalizer {
 
   protected checkMetadata() {
     const meta = this.meta;
-    // this.checkGuards(meta.params.guards);
+    this.checkGuards(meta.params.guards);
     meta.controllers.forEach((Controller) => this.checkController(Controller));
     const controllerDuplicates = getDuplicates(meta.controllers).map((c) => c.name);
     if (controllerDuplicates.length) {
