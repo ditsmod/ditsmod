@@ -53,7 +53,7 @@ export class DeepModulesImporter {
   }
 
   importModulesDeep() {
-    const levels: Level[] = ['Mod', 'Rou', 'Req'];
+    const levels: Level[] = ['Req', 'Rou', 'Mod'];
     const mMetadataPerMod2 = new Map<ModRefId, MetadataPerMod2>();
     this.tokensPerApp = getTokens(this.providersPerApp);
     this.shallowImportsMap.forEach(

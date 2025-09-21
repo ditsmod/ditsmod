@@ -24,7 +24,7 @@ export const restModule: InitDecorator<RestInitRawMeta, RestModuleParams, RestIn
   restRootModule,
 );
 
-export const initRest = restModule;
+export const initRest = restRootModule;
 
 export class RestInitHooks extends InitHooks<RestInitRawMeta> {
   override hostModule = RestModule;
