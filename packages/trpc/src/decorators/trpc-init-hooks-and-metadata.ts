@@ -62,7 +62,7 @@ export const trpcModule: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, TrpcIn
   trpcRootModule
 );
 
-export const initTrpcModule = trpcRootModule;
+export const initTrpcModule = trpcModule;
 
 export class TrpcInitHooks extends InitHooks<TrpcInitRawMeta> {
   override hostModule = TrpcModule;
