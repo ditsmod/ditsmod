@@ -1,57 +1,22 @@
 import {
-  Provider,
   ModRefId,
   ModuleManager,
   isModuleWithParams,
   BaseMeta,
   GlobalProviders,
   getProxyForInitMeta,
-  GlobalInitHooks,
-  ProviderImport,
 } from '@ditsmod/core';
 
 import {
   ImportModulesShallowConfig,
   initTrpcModule,
+  TrpcGlobalProviders,
   TrpcInitHooks,
   TrpcInitMeta,
   TrpcModRefId,
-} from '../decorators/trpc-init-hooks-and-metadata.js';
+  TrpcShallowImports,
+} from '#decorators/trpc-init-hooks-and-metadata.js';
 import { GuardPerMod1 } from '#interceptors/trpc-guard.js';
-
-export function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) {
-  return [...(map || []).keys()];
-}
-
-export function getImportedProviders(map: Map<any, ProviderImport<Provider>> | undefined) {
-  const providers: Provider[] = [];
-  for (const providerImport of (map || []).values()) {
-    providers.push(...providerImport.providers);
-  }
-  return providers;
-}
-
-export class TrpcProviderImport<T extends Provider = Provider> {
-  modRefId: TrpcModRefId;
-  /**
-   * This property can have more than one element for multi-providers only.
-   */
-  providers: T[] = [];
-}
-/**
- * Metadata collected using `ShallowModulesImporter`. The target for this metadata is `DeepModulesImporter`.
- */
-export class TrpcShallowImports {
-  baseMeta: BaseMeta;
-  guards1: GuardPerMod1[];
-  /**
-   * Snapshot of `TrpcInitMeta`. If you modify any array in this object,
-   * the original array will remain unchanged.
-   */
-  meta: TrpcInitMeta;
-}
-
-export class TrpcGlobalProviders extends GlobalInitHooks {}
 
 /**
  * Recursively collects providers taking into account module imports/exports,

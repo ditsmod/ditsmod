@@ -15,15 +15,12 @@ import {
   DeepModulesImporter,
   ShallowImports,
   SystemLogMediator,
+  GlobalInitHooks,
 } from '@ditsmod/core';
 
 import { TrpcModule } from '../trpc.module.js';
 import { TrpcModuleNormalizer } from '#init/trpc-module-normalizer.js';
-import {
-  TrpcGlobalProviders,
-  TrpcShallowImports,
-  TrpcShallowModulesImporter,
-} from '#init/trpc-shallow-modules-importer.js';
+import { TrpcShallowModulesImporter } from '#init/trpc-shallow-modules-importer.js';
 import { GuardItem, GuardPerMod1, NormalizedGuard } from '#interceptors/trpc-guard.js';
 
 export type TrpcModRefId = ModRefId;
@@ -59,7 +56,7 @@ export const trpcRootModule: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, Tr
 export const trpcModule: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, TrpcInitMeta> = makeClassDecorator(
   transformMetadata,
   'trpcModule',
-  trpcRootModule
+  trpcRootModule,
 );
 
 export const initTrpcModule = trpcModule;
@@ -114,4 +111,18 @@ export interface DeepModulesImporterConfig {
   shallowImportsMap: Map<ModRefId, ShallowImports>;
   providersPerApp: Provider[];
   log: SystemLogMediator;
+} /**
+ * Metadata collected using `ShallowModulesImporter`. The target for this metadata is `DeepModulesImporter`.
+ */
+
+export class TrpcShallowImports {
+  baseMeta: BaseMeta;
+  guards1: GuardPerMod1[];
+  /**
+   * Snapshot of `TrpcInitMeta`. If you modify any array in this object,
+   * the original array will remain unchanged.
+   */
+  meta: TrpcInitMeta;
 }
+
+export class TrpcGlobalProviders extends GlobalInitHooks {}

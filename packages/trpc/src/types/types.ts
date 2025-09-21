@@ -20,9 +20,8 @@ import type * as http from 'node:http';
 import type { Http2ServerRequest, Http2ServerResponse } from 'http2';
 
 import type { HttpModule } from '#types/http-module.js';
-import type { HttpServer, ServerOptions } from '#types/server-options.js';
+import type { ServerOptions } from '#types/server-options.js';
 import { TrpcInitMeta, TrpcModRefId } from '#decorators/trpc-init-hooks-and-metadata.js';
-import { TrpcProviderImport } from '#init/trpc-shallow-modules-importer.js';
 import { GuardPerMod1 } from '#interceptors/trpc-guard.js';
 import { ControllerMetadata } from './controller-metadata.js';
 import { TrpcHttpInterceptor } from '#interceptors/tokens-and-types.js';
@@ -136,4 +135,12 @@ export interface TrpcOpts<Context extends AnyObj = AnyObj, Input = unknown> {
    * The AbortSignal of the request.
    */
   signal: AbortSignal | undefined;
+}
+
+export class TrpcProviderImport<T extends Provider = Provider> {
+  modRefId: TrpcModRefId;
+  /**
+   * This property can have more than one element for multi-providers only.
+   */
+  providers: T[] = [];
 }

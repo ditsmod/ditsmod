@@ -10,7 +10,7 @@ import {
 } from '@ditsmod/core';
 
 import { DeepModulesImporterConfig, TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
-import { TrpcShallowImports } from './trpc-shallow-modules-importer.js';
+import { TrpcShallowImports } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { GuardPerMod1 } from '#interceptors/trpc-guard.js';
 
 /**
