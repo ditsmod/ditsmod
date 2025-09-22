@@ -14,17 +14,36 @@ import { RestGlobalProviders } from '#types/types.js';
 import { RestModule } from '#init/rest.module.js';
 import { RestDeepModulesImporter } from '#init/rest-deep-modules-importer.js';
 
+export const initRest: InitDecorator<RestInitRawMeta, RestModuleParams, RestInitMeta> = makeClassDecorator(
+  transformInitMeta,
+  'initRest',
+);
 export const restRootModule: InitDecorator<RestInitRawMeta, RestModuleParams, RestInitMeta> = makeClassDecorator(
   transformRootMeta,
   'restRootModule',
+  initRest
 );
 export const restModule: InitDecorator<RestInitRawMeta, RestModuleParams, RestInitMeta> = makeClassDecorator(
   transformFeatureMeta,
   'restModule',
-  restRootModule,
+  initRest,
 );
 
-export const initRest = restRootModule;
+export function transformInitMeta(data?: RestInitRawMeta): InitHooks<RestInitRawMeta> {
+  const metadata = Object.assign({}, data);
+  return new RestInitHooks(metadata);
+}
+export function transformRootMeta(data?: RestInitRawMeta): InitHooks<RestInitRawMeta> {
+  const metadata = Object.assign({}, data);
+  const initHooks = new RestInitHooks(metadata);
+  initHooks.moduleRole = 'root';
+  return initHooks;
+}
+export function transformFeatureMeta(data?: RestInitRawMeta): InitHooks<RestInitRawMeta> {
+  const metadata = transformRootMeta(data);
+  metadata.moduleRole = 'feature';
+  return metadata;
+}
 
 export class RestInitHooks extends InitHooks<RestInitRawMeta> {
   override hostModule = RestModule;
@@ -52,17 +71,4 @@ export class RestInitHooks extends InitHooks<RestInitRawMeta> {
   override getProvidersToOverride(meta: RestInitMeta): Provider[][] {
     return [meta.providersPerRou, meta.providersPerReq];
   }
-}
-
-export function transformRootMeta(data?: RestInitRawMeta): InitHooks<RestInitRawMeta> {
-  const metadata = Object.assign({}, data);
-  const initHooks = new RestInitHooks(metadata);
-  initHooks.moduleRole = 'root';
-  return initHooks;
-}
-
-export function transformFeatureMeta(data?: RestInitRawMeta): InitHooks<RestInitRawMeta> {
-  const metadata = transformRootMeta(data);
-  metadata.moduleRole = 'feature';
-  return metadata;
 }
