@@ -49,17 +49,36 @@ export interface TrpcInitRawMeta extends BaseInitRawMeta<TrpcModuleParams> {
   controllers?: Class[];
 }
 
+export const initTrpcModule: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, TrpcInitMeta> = makeClassDecorator(
+  transformInitMeta,
+  'initTrpcModule',
+);
 export const trpcRootModule: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, TrpcInitMeta> = makeClassDecorator(
-  transformMetadata,
+  transformRootMetadata,
   'trpcRootModule',
+  initTrpcModule
 );
 export const trpcModule: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, TrpcInitMeta> = makeClassDecorator(
-  transformMetadata,
+  transformFeatureMetadata,
   'trpcModule',
-  trpcRootModule,
+  initTrpcModule,
 );
 
-export const initTrpcModule = trpcModule;
+export function transformInitMeta(data?: TrpcInitRawMeta): InitHooks<TrpcInitRawMeta> {
+  const metadata = Object.assign({}, data);
+  return new TrpcInitHooks(metadata);
+}
+export function transformRootMetadata(data?: TrpcInitRawMeta): InitHooks<TrpcInitRawMeta> {
+  const metadata = Object.assign({}, data);
+  const initHooks = new TrpcInitHooks(metadata);
+  initHooks.moduleRole = 'root';
+  return initHooks;
+}
+export function transformFeatureMetadata(data?: TrpcInitRawMeta): InitHooks<TrpcInitRawMeta> {
+  const metadata = transformRootMetadata(data);
+  metadata.moduleRole = 'feature';
+  return metadata;
+}
 
 export class TrpcInitHooks extends InitHooks<TrpcInitRawMeta> {
   override hostModule = TrpcModule;
@@ -83,11 +102,6 @@ export class TrpcInitHooks extends InitHooks<TrpcInitRawMeta> {
   override getProvidersToOverride(meta: TrpcInitMeta): Provider[][] {
     return [meta.providersPerRou, meta.providersPerReq];
   }
-}
-
-export function transformMetadata(data?: TrpcInitRawMeta): InitHooks<TrpcInitRawMeta> {
-  const metadata = Object.assign({}, data);
-  return new TrpcInitHooks(metadata);
 }
 
 export interface ExportGlobalProvidersConfig {
