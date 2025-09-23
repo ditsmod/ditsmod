@@ -14,6 +14,7 @@ import {
   getProxyForInitMeta,
   ForwardRefFn,
   ModuleType,
+  isRootModule,
 } from '@ditsmod/core';
 import { ForbiddenExportNormalizedProvider, ModuleShouldHaveValue } from '@ditsmod/core/errors';
 
@@ -126,7 +127,7 @@ export class RestModuleNormalizer {
     }
 
     if (
-      isFeatureModule(this.baseMeta) &&
+      !isRootModule(this.baseMeta) &&
       !meta.exportedProvidersPerMod.length &&
       !meta.exportedMultiProvidersPerMod.length &&
       !meta.exportsModules.length &&
