@@ -148,7 +148,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected normalizeExports(rawMeta: Partial<RootRawMetadata>, action: 'Exports' | 'Exports with params') {
+  protected normalizeExports(rawMeta: { exports?: any[] }, action: 'Exports' | 'Exports with params') {
     if (!rawMeta.exports) {
       return;
     }
@@ -398,6 +398,7 @@ export class AppModule {}
     this.fetchInitExports(initRawMeta);
     this.normalizeExtensions(initRawMeta);
     this.normalizeDeclaredAndResolvedProviders(initRawMeta);
+    this.normalizeExports(initRawMeta, 'Exports');
   }
 
   protected fetchInitImports(decorator: AnyFn, initRawMeta: BaseInitRawMeta) {
