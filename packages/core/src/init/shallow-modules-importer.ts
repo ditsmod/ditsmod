@@ -7,7 +7,7 @@ import type { Level, ModRefId, AnyFn, AnyObj } from '#types/mix.js';
 import { ShallowImports } from '#init/types.js';
 import type { Provider } from '#di/types-and-models.js';
 import { getCollisions } from '#utils/get-collisions.js';
-import { getImportedTokens } from '#utils/get-imports.js';
+import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
 import { hasDeclaredInDir } from '#decorators/type-guards.js';
@@ -31,6 +31,7 @@ import {
   ProvidersCollision,
   FalseResolvedCollisions,
 } from '#errors';
+import { defaultProvidersPerMod } from './default-providers-per-mod.js';
 /**
  * Recursively collects providers taking into account module imports/exports,
  * but does not take provider dependencies into account.
@@ -225,8 +226,16 @@ export class ShallowModulesImporter {
     }
 
     this.addProviders('Mod', baseMeta1);
+    this.addProviders('Rou', baseMeta1);
+    this.addProviders('Req', baseMeta1);
     if (baseMeta1.exportedMultiProvidersPerMod.length) {
       this.importedMultiProvidersPerMod.set(modRefId, baseMeta1.exportedMultiProvidersPerMod);
+    }
+    if (baseMeta1.exportedMultiProvidersPerRou.length) {
+      this.importedMultiProvidersPerRou.set(modRefId, baseMeta1.exportedMultiProvidersPerRou);
+    }
+    if (baseMeta1.exportedMultiProvidersPerReq.length) {
+      this.importedMultiProvidersPerReq.set(modRefId, baseMeta1.exportedMultiProvidersPerReq);
     }
     if (baseMeta1.exportedExtensionsProviders.length) {
       this.importedExtensions.set(baseMeta1.modRefId, baseMeta1.exportedExtensionsProviders);
@@ -316,7 +325,7 @@ export class ShallowModulesImporter {
   }
 
   protected throwIfTryResolvingMultiprovidersCollisions(moduleName: string) {
-    const levels: Level[] = ['Mod'];
+    const levels: Level[] = ['Mod', 'Rou', 'Req'];
     levels.forEach((level) => {
       const tokens: any[] = [];
       this[`importedMultiProvidersPer${level}`].forEach((providers) => tokens.push(...getTokens(providers)));
@@ -330,7 +339,19 @@ export class ShallowModulesImporter {
   }
 
   protected checkAllCollisionsWithLevelsMix() {
-    this.checkCollisionsWithLevelsMix(this.moduleManager.providersPerApp, ['Mod']);
+    this.checkCollisionsWithLevelsMix(this.moduleManager.providersPerApp, ['Mod', 'Rou', 'Req']);
+    const providersPerMod = [
+      ...defaultProvidersPerMod,
+      ...this.baseMeta.providersPerMod,
+      ...getImportedProviders(this.importedProvidersPerMod),
+    ];
+    this.checkCollisionsWithLevelsMix(providersPerMod, ['Rou', 'Req']);
+    const mergedProvidersAndTokens = [
+      ...this.baseMeta.providersPerRou,
+      ...getImportedProviders(this.importedProvidersPerRou),
+      // ...defaultProvidersPerReq,
+    ];
+    this.checkCollisionsWithLevelsMix(mergedProvidersAndTokens, ['Req']);
   }
 
   protected checkCollisionsWithLevelsMix(providers: any[], levels: Level[]) {
