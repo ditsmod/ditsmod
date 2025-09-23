@@ -1,6 +1,5 @@
 import {
   Class,
-  isFeatureModule,
   isNormalizedProvider,
   BaseMeta,
   Providers,
