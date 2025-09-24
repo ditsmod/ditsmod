@@ -9,6 +9,8 @@ It’s understandable that mature frameworks with large ecosystems and user base
 So why should you give **Ditsmod** a try?  
 Earlier versions went through a lot of breaking changes, but as a result, Ditsmod now has a solid, modular, and flexible architecture designed for building modern, scalable applications. Its codebase is written in TypeScript and uses ESM natively. It comes with hierarchical Dependency Injection – a perfect match for modular applications. With built-in helpers for decorators and TypeScript-powered reflection, Ditsmod makes metaprogramming practical and productive, simplifying dependency management, module integration, and testing.
 
+For more info, see the documentation:
+
 - [The English version of the documentation](https://ditsmod.github.io/en/).
 - [Українська версія документації](https://ditsmod.github.io/).
 
