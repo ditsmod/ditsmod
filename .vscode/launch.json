@@ -7,11 +7,11 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch example 03",
-      "program": "${workspaceFolder}/examples/03-route-guards/dist/main.js",
+      "name": "Launch example 10",
+      "program": "${workspaceFolder}/examples/10-openapi/dist/main.js",
       "request": "launch",
-      "preLaunchTask": "npm: build - examples/03-route-guards",
-      "cwd": "${workspaceFolder}/examples/03-route-guards",
+      "preLaunchTask": "npm: build - examples/10-openapi",
+      "cwd": "${workspaceFolder}/examples/10-openapi",
       "runtimeArgs": [
         "--enable-source-maps",
         "-r",

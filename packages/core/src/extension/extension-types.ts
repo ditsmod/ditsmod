@@ -1,4 +1,4 @@
-import { Class, InjectionToken, Injector } from '#di';
+import { Class, Injector } from '#di';
 import { AnyObj, OptionalProps } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 
