@@ -13,7 +13,6 @@ Ditsmod is a Node.js-based web framework designed for building highly extensible
 
 - **Modular architecture** with decorators, enabling declarative application structure definition.
 - Support for creating custom extensions (sometimes referred to as plugins) that can initialize asynchronously and depend on one another.
-- Dynamic module addition and removal after the server starts, without requiring a restart.
 - Built-in **OpenAPI** support with request validation based on OpenAPI metadata.
 - As of today, [Ditsmod is one of the fastest Node.js web frameworks][14]:
 
@@ -37,8 +36,7 @@ app.listen(3000, '0.0.0.0');
 ```
 
 ```ts
-import { rootModule } from '@ditsmod/core';
-import { route, initRest, RestModule, controller, RestApplication } from '@ditsmod/rest';
+import { route, RestModule, controller, RestApplication, restRootModule } from '@ditsmod/rest';
 
 @controller()
 class ExampleController {
@@ -48,8 +46,7 @@ class ExampleController {
   }
 }
 
-@initRest({ controllers: [ExampleController] })
-@rootModule({ imports: [RestModule] })
+@restRootModule({ controllers: [ExampleController] })
 class AppModule {}
 
 const app = await RestApplication.create(AppModule);
@@ -78,10 +75,10 @@ Please make sure that Node.js >= v20.6.0 is installed on your operating system.
 
 ## Installation
 
-The basic set for running the application has a repository [ditsmod/starter][2]. Clone it and install the dependencies:
+The basic set for running the application has a repository [ditsmod/rest-starter][2]. Clone it and install the dependencies:
 
 ```bash
-git clone --depth 1 https://github.com/ditsmod/starter.git my-app
+git clone --depth 1 https://github.com/ditsmod/rest-starter.git my-app
 cd my-app
 npm i
 ```
@@ -89,7 +86,7 @@ npm i
 Alternatively, you can use the starter monorepo:
 
 ```bash
-git clone --depth 1 https://github.com/ditsmod/monorepo.git my-app
+git clone --depth 1 https://github.com/ditsmod/rest-monorepo-starter.git my-app
 cd my-app
 npm i
 ```
@@ -112,16 +109,16 @@ Or simply by going to [http://localhost:3000/api/hello](http://localhost:3000/ap
 
 By default, the application works with `info` log level. You can change it in the file `src/app/app.module.ts` or `apps/backend/src/app/app.module.ts` (in the monorepository).
 
-Thanks to [ditsmod/starter][2]'s use of the so-called [Project References][16] and `tsc -b` build mode, even very large projects compile very quickly.
+Thanks to [ditsmod/rest-starter][2]'s use of the so-called [Project References][16] and `tsc -b` build mode, even very large projects compile very quickly.
 
-Note that there are four config files for TypeScript in the `ditsmod/starter` repository:
+Note that there are four config files for TypeScript in the `ditsmod/rest-starter` repository:
 
 - `tsconfig.json` - the basic configuration used by your IDE (in most cases it is probably VS Code).
 - `tsconfig.build.json` - this configuration is used to compile the code from the `src` directory to the `dist` directory, it is intended for application code.
 - `tsconfig.e2e.json` - this configuration is used to compile end-to-end tests.
 - `tsconfig.unit.json` - this configuration is used to compile unit tests.
 
-Also, note that since `ditsmod/starter` is declared as an EcmaScript Module (ESM), you can use [native Node.js aliases][18] to shorten file paths. This is analogous to `compilerOptions.paths` in `tsconfig`. Such aliases are declared in `package.json` in the `imports` field:
+Also, note that since `ditsmod/rest-starter` is declared as an EcmaScript Module (ESM), you can use [native Node.js aliases][18] to shorten file paths. This is analogous to `compilerOptions.paths` in `tsconfig`. Such aliases are declared in `package.json` in the `imports` field:
 
 ```json {2}
 "imports": {
@@ -188,7 +185,7 @@ Looking at the file `src/main.ts`, you can see that an instance of the class `Re
 Ditsmod can run on [Bun][19]. However, as of version (v1.1.29), [Bun has a bug][20] that causes it to work incorrectly with TypeScript. If you download Ditsmod's starter, install the dependencies, and try to run the application:
 
 ```sh
-git clone --depth 1 https://github.com/ditsmod/starter.git my-app
+git clone --depth 1 https://github.com/ditsmod/rest-starter.git my-app
 cd my-app
 bun install
 bun run build
@@ -217,7 +214,7 @@ bun dist/main.js
 
 
 [1]: #installation
-[2]: https://github.com/ditsmod/starter
+[2]: https://github.com/ditsmod/rest-starter
 [4]: https://github.com/ditsmod/ditsmod/tree/main/examples
 [8]: https://en.wikipedia.org/wiki/Dependency_injection
 [9]: https://github.com/angular/angular
