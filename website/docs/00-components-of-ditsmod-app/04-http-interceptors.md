@@ -117,6 +117,6 @@ export class SomeModule {}
 [9]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.16.0/packages/body-parser/src/body-parser.extension.ts#L54
 
 [106]: /components-of-ditsmod-app/dependency-injection
-[107]: /components-of-ditsmod-app/dependency-injection#мульти-провайдери
+[107]: /components-of-ditsmod-app/dependency-injection#multi-providers
 [108]: /components-of-ditsmod-app/extensions
 [109]: /components-of-ditsmod-app/controllers-and-services/#what-is-a-controller

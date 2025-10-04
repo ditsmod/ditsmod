@@ -63,14 +63,14 @@ export class SomeController {
 
 Ditsmod забезпечує роботу контролерів у двох альтернативних режимах, які зокрема відрізняються механізмом передачі HTTP-запиту у метод контролера:
 
-1. **Injector-scoped контролер** (по-дефолту). Метод контролера може отримувати довільну кількість аргументів від [DI-інжектора][11]. Серед цих аргументів може бути HTTP-запит.
+1. **Injector-scoped контролер** (по-дефолту). Метод контролера може отримувати довільну кількість аргументів від [DI-інжектора][3]. Серед цих аргументів може бути HTTP-запит.
 2. **Context-scoped контролер**. Метод контролера отримує єдиний аргумент - контекст запиту, який зокрема містить HTTP-запит.
 
 Перший режим більш зручний і більш безпечний, коли потрібно працювати в контексті поточного HTTP-запиту (клієнт надає певний ідентифікатор, який необхідно враховувати для формування відповіді). Другий режим роботи помітно швидший (приблизно на 15-20%) і споживає менше пам'яті, але контекст запиту не можна зберігати у властивостях інстансу контролера, бо цей інстанс може одночасно використовуватись для інших клієнтів.
 
 ### Injector-scoped контролер {#injector-scoped-controller}
 
-По-дефолту, Ditsmod працює з контролером у injector-scoped режимі. Це означає, по-перше, що для кожного HTTP-запиту буде створюватись окремий інстанс контролеру. По-друге, будь-який метод контролера, який має декоратор `route`, буде отримувати довільну кількість аргументів від [DI-інжектора][11]. В наступному прикладі створено єдиний маршрут, що приймає `GET` запит за адресою `/hello`:
+По-дефолту, Ditsmod працює з контролером у injector-scoped режимі. Це означає, по-перше, що для кожного HTTP-запиту буде створюватись окремий інстанс контролеру. По-друге, будь-який метод контролера, який має декоратор `route`, буде отримувати довільну кількість аргументів від [DI-інжектора][3]. В наступному прикладі створено єдиний маршрут, що приймає `GET` запит за адресою `/hello`:
 
 ```ts {7}
 import { controller, route, Res } from '@ditsmod/rest';
@@ -142,7 +142,7 @@ export class SomeController {
 }
 ```
 
-Більше інформації про те, що таке **токен** та що саме робить декоратор `inject` ви можете отримати з розділу [Dependecy Injection][4].
+Більше інформації про те, що таке **токен** та що саме робить декоратор `inject` ви можете отримати з розділу [Dependecy Injection][3].
 
 Як бачите з попереднього прикладу, відповіді на HTTP-запити також можна відправляти завдяки звичайному `return`.
 
@@ -324,11 +324,8 @@ export class SomeController {
 
 [1]: /developer-guides/exports-and-imports#імпорт-модуля
 [2]: /developer-guides/exports-and-imports#ModuleWithParams
-[3]: /components-of-ditsmod-app/dependency-injection#провайдери
-[4]: /components-of-ditsmod-app/dependency-injection#токен-залежності
+[3]: /components-of-ditsmod-app/dependency-injection/#injector-and-providers
 [5]: /native-modules/body-parser#отримання-тіла-запиту
 [6]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/services/pre-router.ts
-[7]: /components-of-ditsmod-app/dependency-injection
+[7]: /components-of-ditsmod-app/dependency-injection/
 [9]: /components-of-ditsmod-app/extensions/
-[10]: /components-of-ditsmod-app/dependency-injection/
-[11]: /components-of-ditsmod-app/dependency-injection/#injector

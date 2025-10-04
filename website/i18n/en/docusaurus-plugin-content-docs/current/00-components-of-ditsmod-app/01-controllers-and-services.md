@@ -63,14 +63,14 @@ The combination of the second and third points must be unique across the entire 
 
 Ditsmod provides controllers in two alternative modes, which differ in particular in the mechanism for passing the HTTP request to the controller method:
 
-1. **Injector-scoped controller** (default). A controller method can receive any number of arguments from the [DI injector][11]. These arguments can include an HTTP request.
+1. **Injector-scoped controller** (default). A controller method can receive any number of arguments from the [DI injector][3]. These arguments can include an HTTP request.
 2. **Context-scoped controller**. The controller method receives a single argument - the request context, which includes the HTTP request.
 
 The first mode is more convenient and safer when working within the context of the current HTTP request (e.g., when the client provides a specific identifier that must be considered when forming the response). The second mode is noticeably faster (approximately 15–20%) and consumes less memory, but the request context cannot be stored in the instance properties of the controller, as this instance may be used simultaneously for other clients.
 
 ### Injector-scoped controller {#injector-scoped-controller}
 
-By default, Ditsmod works with the controller in injector-scoped mode. This means, first, that a separate controller instance will be created for each HTTP request. Second, any controller method that has a `route` decorator will receive an arbitrary number of arguments from the [DI injector][11]. The following example creates a single route that accepts a `GET` request at `/hello`:
+By default, Ditsmod works with the controller in injector-scoped mode. This means, first, that a separate controller instance will be created for each HTTP request. Second, any controller method that has a `route` decorator will receive an arbitrary number of arguments from the [DI injector][3]. The following example creates a single route that accepts a `GET` request at `/hello`:
 
 ```ts {7}
 import { controller, route, Res } from '@ditsmod/rest';
@@ -142,7 +142,7 @@ export class SomeController {
 }
 ```
 
-You can find more information about what a token is and what the `inject` decorator does in the [Dependency Injection][4] section.
+You can find more information about what a token is and what the `inject` decorator does in the [Dependency Injection][3] section.
 
 As you can see from the previous example, responses to HTTP requests can also be sent using the regular `return`.
 
@@ -324,11 +324,8 @@ In the last two examples, the services is passed to the `providersPerReq` array,
 
 [1]: /developer-guides/exports-and-imports#import-module
 [2]: /developer-guides/exports-and-imports#ModuleWithParams
-[3]: /components-of-ditsmod-app/dependency-injection#providers
-[4]: /components-of-ditsmod-app/dependency-injection#dependency-token
+[3]: /components-of-ditsmod-app/dependency-injection/#injector-and-providers
 [5]: /native-modules/body-parser#retrieving-the-request-body
 [6]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/services/pre-router.ts
-[7]: /components-of-ditsmod-app/dependency-injection
+[7]: /components-of-ditsmod-app/dependency-injection/
 [9]: /components-of-ditsmod-app/extensions/
-[10]: /components-of-ditsmod-app/dependency-injection/
-[11]: /components-of-ditsmod-app/dependency-injection/#injector

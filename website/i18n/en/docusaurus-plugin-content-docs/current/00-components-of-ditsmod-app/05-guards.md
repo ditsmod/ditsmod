@@ -179,5 +179,5 @@ In this case, `AuthGuard` will be automatically added to each route in `OtherMod
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/03-route-guards
 [2]: https://github.com/ditsmod/realworld/blob/main/packages/server/src/app/modules/service/auth/bearer.guard.ts
-[3]: /components-of-ditsmod-app/dependency-injection#providers
+[3]: /components-of-ditsmod-app/dependency-injection#injector-and-providers
 [4]: /components-of-ditsmod-app/controllers-and-services/#what-is-a-controller

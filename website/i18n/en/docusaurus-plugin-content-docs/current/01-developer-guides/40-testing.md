@@ -272,7 +272,7 @@ const server = await TestApplication.createTestApp(AppModule)
 
 
 [1]: /components-of-ditsmod-app/dependency-injection
-[2]: /components-of-ditsmod-app/dependency-injection#injector
+[2]: /components-of-ditsmod-app/dependency-injection#injector-and-providers
 [3]: /components-of-ditsmod-app/dependency-injection#hierarchy-and-encapsulation-of-injectors
 [4]: #testrestplugin
 

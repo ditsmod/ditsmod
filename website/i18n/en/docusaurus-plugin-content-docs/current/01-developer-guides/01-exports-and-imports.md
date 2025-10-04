@@ -4,9 +4,9 @@ sidebar_position: 1
 
 # Export, import, append
 
-The module where you declare certain [providers][4] is called the **host module** for those providers. And when you use those providers in an external module, that external module is called the **consumer module** of those providers.
+The module where you declare certain [providers][1] is called the **host module** for those providers. And when you use those providers in an external module, that external module is called the **consumer module** of those providers.
 
-In order for a consumer module to use providers from a host module, the corresponding provider [tokens][5] must first be exported from the host module. This is done in the metadata that is passed to the `featureModule` or `rootModule` decorator:
+In order for a consumer module to use providers from a host module, the corresponding provider [tokens][1] must first be exported from the host module. This is done in the metadata that is passed to the `featureModule` or `rootModule` decorator:
 
 ```ts {9}
 import { featureModule } from '@ditsmod/core';
@@ -294,8 +294,6 @@ export class SecondModule {}
 ```
 
 
-[1]: /components-of-ditsmod-app/dependency-injection#injector
+[1]: /components-of-ditsmod-app/dependency-injection#injector-and-providers
 [2]: /components-of-ditsmod-app/extensions
 [3]: https://en.wikipedia.org/wiki/Singleton_pattern
-[4]: /components-of-ditsmod-app/dependency-injection/#providers
-[5]: /components-of-ditsmod-app/dependency-injection/#dependency-token
