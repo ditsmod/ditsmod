@@ -124,12 +124,12 @@ As you can see, the `Injector.resolveAndCreate()` method takes an array of class
 
 What `injector.get()` does:
 
-* when `Service3` is requested, it inspects the constructor of that class and sees a dependency on `Service2`;
-* then it inspects the constructor of `Service2` and sees a dependency on `Service1`;
-* then it inspects the constructor of `Service1`, finds no dependencies there, and therefore creates an instance of `Service1` first;
-* then it creates an instance of `Service2` using the instance of `Service1`;
-* and finally it creates an instance of `Service3` using the instance of `Service2`;
-* if the instance `Service3` is requested again later, `injector.get()` will return the previously created `Service3` instance from this injector's cache.
+- when `Service3` is requested, it inspects the constructor of that class and sees a dependency on `Service2`;
+- then it inspects the constructor of `Service2` and sees a dependency on `Service1`;
+- then it inspects the constructor of `Service1`, finds no dependencies there, and therefore creates an instance of `Service1` first;
+- then it creates an instance of `Service2` using the instance of `Service1`;
+- and finally it creates an instance of `Service3` using the instance of `Service2`;
+- if the instance `Service3` is requested again later, `injector.get()` will return the previously created `Service3` instance from this injector's cache.
 
 An important feature here is that DI can read the dependency chain of `Service3` using the reflector without passing an array of the specified classes to the injector, but `injector.get()` will throw an error in such a case if you try to obtain an instance of a class:
 
@@ -201,20 +201,20 @@ type Provider = Class<any> |
 { token: any, useToken: any, multi?: boolean }
 ```
 
-**note that the token for a provider with the `useFactory` property is optional, because DI can use the function or the method of the specified class as a token.*
+*_note that the token for a provider with the `useFactory` property is optional, because DI can use the function or the method of the specified class as a token._
 
-If a provider is represented as an object, its properties may be of the following types:
+If the provider is represented as an object, it can have the following types:
 
 1. **ValueProvider** - this type of provider has the `useValue` property which receives any value except `undefined`; DI will return it unchanged. Example of such provider:
 
    ```ts
-   { token: 'token2', useValue: 'some value' }
+   { token: 'token1', useValue: 'some value' }
    ```
 
 2. **ClassProvider** - this type of provider has the `useClass` property which receives a class whose instance will be used as the value of this provider. Example of such provider:
 
    ```ts
-   { token: 'token1', useClass: SomeService }
+   { token: 'token2', useClass: SomeService }
    ```
 
 3. **FactoryProvider** - this type of provider has the `useFactory` property which can accept arguments of two types:
@@ -244,12 +244,12 @@ If a provider is represented as an object, its properties may be of the followin
    * **FunctionFactoryProvider** implies that a function can be passed to `useFactory`, which may have parameters — i.e., it may have dependencies. These dependencies must be explicitly specified in the `deps` property as an array of tokens, and the order of tokens is important:
 
      ```ts {6}
-     function fn1(service1: Service1, service2: Service2) {
+     function fn(service1: Service1, service2: Service2) {
        // ...
        return 'some value';
      }
 
-     { token: 'token3', deps: [Service1, Service2], useFactory: fn1 }
+     { token: 'token3', deps: [Service1, Service2], useFactory: fn }
      ```
 
      Note that the `deps` property should contain the *tokens* of providers, and DI interprets them as tokens, not as providers. That is, for these tokens you will still need to [provide the corresponding providers][100] in the DI registry. Also note that decorators for parameters (for example `optional`, `skipSelf`, etc.) are not passed in `deps`. If your factory requires parameter decorators, you need to use the `ClassFactoryProvider`.
@@ -262,7 +262,7 @@ If a provider is represented as an object, its properties may be of the followin
 
    you are telling DI: "When consumers request the token `SecondService`, use the value for the token `FirstService`". In other words, this directive creates an alias `SecondService` that points to `FirstService`.
 
-Now that you are familiar with the concept of a **provider**, it can be clarified that a **dependency** is a dependency on the **value of a provider**. Such a dependency is held by **consumers** of provider values either in service constructors, or in controllers' constructors or methods, or in the `get()` method of [injectors][102] (this will be mentioned later).
+Now that you are familiar with the concept of a **provider**, it can be clarified that a **dependency** is a dependency on the **value of a provider**. Such a dependency is held by **consumers** of provider values either in service constructors, or in controllers' constructors or methods, or in the `get()` method of [injectors][102].
 
 ## Hierarchy and encapsulation of injectors  {#hierarchy-and-encapsulation-of-injectors}
 
@@ -537,8 +537,9 @@ const locals = injector.get(LOCAL); // Error: Cannot mix multi providers and reg
 Child injectors can return values of multi-providers from the parent injector only if, during their creation, they were not passed providers with the same tokens:
 
 ```ts
-import { Injector } from '@ditsmod/core';
-import { LOCAL } from './tokens.js';
+import { InjectionToken, Injector } from '@ditsmod/core';
+
+const LOCAL = new InjectionToken('LOCAL');
 
 const parent = Injector.resolveAndCreate([
   { token: LOCAL, useValue: 'uk', multi: true },
@@ -573,7 +574,7 @@ const locals = child.get(LOCAL); // ['аа']
 To make it possible to substitute a specific multi-provider, you can do the following:
 
 1. pass a class to the multi-provider object using the `useToken` property;
-2. then pass that class as a regular provider;
+2. then pass that class as `ClassProvider`;
 3. next in the providers array add a provider that substitutes that class.
 
 ```ts
@@ -592,8 +593,6 @@ const locals = injector.get(HTTP_INTERCEPTORS); // [MyInterceptor]
 ```
 
 This construction makes sense, for example, if the first two points are executed in an external module that you cannot edit, and the third point is executed by the user of the current module.
-
-The `useClass` instruction differs from the `useValue` instruction in that for `useClass` the injector will try to create an instance of the class, while for `useValue` it will return the unchanged value.
 
 ## Transfer of providers to the DI registry {#transfer-of-providers-to-the-di-registry}
 
@@ -634,7 +633,7 @@ export class SomeModule {}
 And now let's additionally pass another provider with the same token, but this time in the controller metadata:
 
 ```ts {8}
-import { controller } from '@ditsmod/core';
+import { controller } from '@ditsmod/rest';
 
 import { SomeService } from './some.service.js';
 import { OtherService } from './other.service.js';
