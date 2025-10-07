@@ -18,9 +18,9 @@ Typically, interceptors are used to automate standard processing, such as:
 
 Interceptors can be centrally enabled or disabled without modifying the code of the controller methods they are attached to. Like controllers, interceptors can operate in either [injector-scoped or context-scoped mode][109]. Unlike the context-scoped mode, in the injector-scoped mode, interceptors have access to the request-level injector, allowing them to invoke services at the request level. On the other hand, in the context-scoped mode, their instances are created at the route level, which grants them access to services at the route, module, or application level.
 
-## HTTP request processing scheme
+## HTTP request processing scheme {#http-request-processing-scheme}
 
-### Injector-scoped mode
+### Injector-scoped mode {#injector-scoped-mode}
 
 HTTP request processing has the following workflow:
 
@@ -47,7 +47,7 @@ As `PreRouter`, `HttpFrontend`, `InterceptorWithGuards`, and `HttpBackend` insta
 
 Each call to the interceptor returns `Promise<any>`, and it eventually leads to a controller method tied to the corresponding route. This means that in the interceptor you can listen for the result of promise resolve, which returns the method of the controller.
 
-### Context-scoped mode
+### Context-scoped mode {#context-scoped-mode}
 
 A context-scoped interceptor operates very similarly to an injector-scoped interceptor but does not utilize the request-level injector. The workflow involving it differs at points 4 and 7, as the instance of a context-scoped interceptor is created at the route level:
 
@@ -59,7 +59,7 @@ A context-scoped interceptor operates very similarly to an injector-scoped inter
 6. Other interceptors may be launched next, depending on whether the previous interceptor in the queue will launch them.
 7. If all interceptors have worked, Ditsmod starts [HttpBackend][3], the instance of which is used at the route level. By default, `HttpBackend` runs directly the controller method responsible for processing the current request.
 
-## Creating an interceptor
+## Creating an interceptor {#creating-an-interceptor}
 
 Each interceptor should be a class implementing the [HttpInterceptor][1] interface and annotated with the `injectable` decorator:
 
@@ -76,7 +76,7 @@ export class MyHttpInterceptor implements HttpInterceptor {
 
 As you can see, the `intercept()` method has two parameters: the first is the handler instance that calls the next interceptor, and the second is `RequestContext` (native Node.js request and response objects). If the interceptor needs additional data for its work, it can be obtained in the constructor through DI, as in any service.
 
-## Passing interceptor to the injector
+## Passing interceptor to the injector {#passing-interceptor-to-the-injector}
 
 The interceptor for injector-scoped mode is passed to the injector at the request level using [multi-providers][107] with the `HTTP_INTERCEPTORS` token:
 

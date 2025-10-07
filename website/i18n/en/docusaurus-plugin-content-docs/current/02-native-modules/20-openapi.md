@@ -6,7 +6,7 @@ sidebar_position: 20
 
 You can use the `@ditsmod/openapi` module to create [OpenAPI][0] documentation.
 
-## Installation and Setup
+## Installation and Setup {#installation-and-setup}
 
 ```bash
 npm i @ditsmod/openapi
@@ -91,7 +91,7 @@ export const oasObject: XOasObject = {
 };
 ```
 
-## Creation of documentation
+## Creation of documentation {#creation-of-documentation}
 
 To create individual routes, use the `oasRoute` decorator, in which the fourth or third parameter (if there are no guards) is the so-called [Operation Object][1]:
 
@@ -123,7 +123,7 @@ export class SomeController {
 
 Ditsmod has good support for TypeScript models for OpenAPI v3.1.0, including Operation Object, but it is not necessary to manually write the entire Operation Object directly in the code for each route. It is better to use helpers that will generate the necessary code for you, and also reduce the number of errors due to even better TypeScript support. Ditsmod has several such helpers: `getParams()`, `getContent()`, `Parameters`, `Content`. They are all imported from the `@ditsmod/openapi` module.
 
-## Passing Operation Object parameters
+## Passing Operation Object parameters {#passing-operation-object-parameters}
 
 In the following example, with the helper `getParams()`, almost everything that we wrote manually for `parameters` in the previous example is recorded:
 
@@ -145,7 +145,7 @@ export class SomeController {
 
 The data type for the `username` parameter and its description are missing here. We recommend using a TypeScript class as a model so that you can then refer to it using helpers that can read its metadata and return ready-made JSON objects.
 
-## Creation of TypeScript models
+## Creation of TypeScript models {#creation-of-typescript-models}
 
 The following example shows a model with three parameters:
 
@@ -213,7 +213,7 @@ export class Model2 {
 }
 ```
 
-## Using TypeScript models
+## Using TypeScript models {#using-typescript-models}
 
 The `getParams()` helper allows you to use models, and if you make a mistake in a parameter name, TypeScript will tell you about it:
 
@@ -260,7 +260,7 @@ export class SomeController {
 }
 ```
 
-### requestBody and responses content
+### requestBody and responses content {#requestbody-and-responses-content}
 
 Data models are also used to describe the content of `requestBody`, but there is one slight difference compared to parameters. By default, all model properties are optional, and to mark a particular property as required, you need to use the `REQUIRED` constant:
 
@@ -340,7 +340,7 @@ export class SomeController {
 }
 ```
 
-## OpenAPI module-level options
+## OpenAPI module-level options {#openapi-module-level-options}
 
 Tags and parameters can be passed at the module level:
 
@@ -352,18 +352,21 @@ import { OasOptions } from '@ditsmod/openapi';
   extensionsMeta: {
     oasOptions: {
       tags: ['i18n'],
-      paratemers: new Parameters().optional('query', Params, 'lcl').describe('Internalization').getParams(),
+      paratemers: new Parameters()
+        .optional('query', Params, 'lcl')
+        .describe('Internalization')
+        .getParams(),
     } as OasOptions,
   },
 })
 export class I18nModule {}
 ```
 
-## Helpers that return an entire Operation Object
+## Helpers that return an entire Operation Object {#helpers-that-return-an-entire-operation-object}
 
 The previous examples showed helpers that return parts of the [Operation Object][1], but of course you can create your own helpers that return the entire Operation Object. One of the examples of the use of such helpers is shown in the [RealWorld][4] repository.
 
-## Special decorator for guards
+## Special decorator for guards {#special-decorator-for-guards}
 
 The `@ditsmod/openapi` module has a special `oasGuard` decorator that allows you to attach OpenAPI metadata behind guards:
 

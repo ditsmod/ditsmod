@@ -161,7 +161,7 @@ const postClient = trpc as TRPCClient<PostRouter>;
 const post = await postClient.post.createPost.mutate({ title: 'hello client' });
 ```
 
-## Using DI for Providers at the HTTP Request Level
+## Using DI for Providers at the HTTP Request Level {#using-di-for-providers-at-the-http-request-level}
 
 When you write the following code, DI will provide route-level providers for you:
 
@@ -185,7 +185,7 @@ In this example, DI will resolve the dependencies for `Service1`, `Service2`, an
 
 Let’s go through these steps together.
 
-### Step One
+### Step One {#step-one}
 
 ```ts
 import { injectable, factoryMethod } from '@ditsmod/core';
@@ -207,7 +207,7 @@ export class PostService {
 
 Note that at the method level, this provider has a decorator, and it doesn’t matter which one specifically — the important part is that it is created using the appropriate Ditsmod helpers.
 
-### Step Two
+### Step Two {#step-two}
 
 The easiest way to pass a `ClassFactoryProvider` to DI is by using the `Providers` helper:
 
@@ -236,7 +236,7 @@ The `providers.useFactories()` method automatically scans for methods with decor
 ]
 ```
 
-### Step Three
+### Step Three {#step-three}
 
 Once the providers are passed to DI, they can be used in the following form:
 

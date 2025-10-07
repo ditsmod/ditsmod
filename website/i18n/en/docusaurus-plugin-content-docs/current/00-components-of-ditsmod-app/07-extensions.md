@@ -4,7 +4,7 @@ sidebar_position: 7
 
 # Extensions
 
-## The purpose of Ditsmod extension
+## The purpose of Ditsmod extension {#the-purpose-of-ditsmod-extension}
 
 Typically, an extension does its work before the HTTP request handlers are created. To modify or extend the application's functionality, an extension uses static metadata that is attached to specific decorators. On the other hand, an extension can also dynamically add metadata of the same type as the static metadata. Extensions can initialize asynchronously, and can depend on each other.
 
@@ -20,7 +20,7 @@ For example, in the [@ditsmod/body-parser][5] module, there is an extension that
 
 Another example. The [@ditsmod/openapi][6] module allows you to create OpenAPI documentation using the new `@oasRoute` decorator. Without the extension working, Ditsmod will ignore the metadata from this new decorator. The extension from this module receives the aforementioned configuration array, finds the metadata from the `@oasRoute` decorator, and interprets this metadata by adding other metadata that will be used by another extension to set up routes.
 
-## What is "Ditsmod extension"
+## What is "Ditsmod extension" {#what-is-ditsmod-extension}
 
 In Ditsmod, **extension** is a class that implements the `Extension` interface:
 
@@ -42,7 +42,7 @@ Each extension needs to be registered, this will be mentioned later, and now let
 
 You can see a simple example in the folder [09-one-extension][1].
 
-## Group of extensions
+## Group of extensions {#group-of-extensions}
 
 Any extension must be a member of one or more groups. The concept of a **group of extensions** is similar to the concept of a group of [interceptors][10]. Note that group of interceptors performs a specific type of work: augmenting the processing of an HTTP request for a particular route. Similarly, each group of extensions represents a distinct type of work on specific metadata. As a rule, extensions in a particular group return metadata that has the same basic interface. Essentially, a group of extensions allows abstraction from specific extensions; instead, it makes only the type of work performed within this group important.
 
@@ -61,11 +61,11 @@ This is how the extension from `@ditsmod/body-parser` works, for example. You si
 
 This means that the `BodyParserModule` will take into account the routes set with the `@route()` or `@oasRoute()` decorators, or any other decorators from this group, since they are processed by the extensions that run before it in the `ROUTES_EXTENSIONS` group.
 
-## Extension registration
+## Extension registration {#extension-registration}
 
 [Register the extension][4] in an existing extension group, or create a new group, even if it has a single extension. You will need to create a new DI token for the new group.
 
-### Creating a new group token
+### Creating a new group token {#creating-a-new-group-token}
 
 The extension group token must be an instance of the `InjectionToken` class.
 
@@ -79,7 +79,7 @@ export const MY_EXTENSIONS = new InjectionToken<Extension<void>[]>('MY_EXTENSION
 
 As you can see, each extension group must specify that DI will return an array of extension instances: `Extension<void>[]`. This must be done, the only difference may be in the generic `Extension<T>[]`.
 
-### Registering an extension in a group
+### Registering an extension in a group {#registering-an-extension-in-a-group}
 
 Objects of the following type can be transferred to the `extensions` array, which is in the module's metadata:
 
@@ -121,7 +121,7 @@ export class SomeModule {}
 
 That is, the token of the group `MY_EXTENSIONS`, to which your extension belongs, is transferred to the `token` property. The token of the `ROUTES_EXTENSIONS` group, before which the `MY_EXTENSIONS` group should be started, is passed to the `beforeExtensions` property. Optionally, you can use the `exported` or `exportOnly` property to specify whether this extension should function in an external module that imports this module. Additionally, the `exportOnly` property indicates that this extension should not be executed in the so-called host module (i.e., the module where this extension is declared).
 
-## Using ExtensionsManager
+## Using ExtensionsManager {#using-extensionsmanager}
 
 If a certain extension has a dependency on another extension, it is recommended to specify that dependency indirectly through the extension group. To do this, you need `ExtensionsManager`, which initializes groups of extensions, throws errors about cyclic dependencies between extensions, and shows the entire chain of extensions that caused the loop. Additionally, `ExtensionsManager` allows you to collect extensions initialization results from the entire application, not just from a single module.
 
@@ -203,7 +203,7 @@ const stage1ExtensionMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS
 
 In this case, it is guaranteed that the `MyExtension` instance will receive data from all modules where `OTHER_EXTENSIONS` is imported. Even if `MyExtension` is imported into a module without any extensions from the `OTHER_EXTENSIONS` group, but these extensions exist in other modules, the `stage1` method of this extension will still be called after all extensions are initialized, ensuring that `MyExtension` receives data from `OTHER_EXTENSIONS` across all modules.
 
-## Dynamic addition of providers
+## Dynamic addition of providers {#dynamic-addition-of-providers}
 
 Any extension can specify a dependency on the `ROUTES_EXTENSIONS` group to dynamically add providers at any level. Extensions from this group use metadata with `MetadataPerMod2` interface and return metadata with `MetadataPerMod3` interface.
 

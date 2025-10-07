@@ -5,11 +5,11 @@ sidebar_position: 1
 
 # What is Ditsmod
 
-## Introduction to Ditsmod
+## Introduction to Ditsmod {#introduction-to-ditsmod}
 
 Ditsmod is a Node.js-based web framework designed for building highly extensible and fast applications. Its name combines **DI** + **TS** + **Mod** to highlight its key features: it includes **D**ependency **I**njection, is written in **T**ype**S**cript in ESM format, and is designed with strong **Mod**ularity in mind.
 
-### Key Features of Ditsmod
+### Key Features of Ditsmod {#key-features-of-ditsmod}
 
 - **Modular architecture** with decorators, enabling declarative application structure definition.
 - Support for creating custom extensions (sometimes referred to as plugins) that can initialize asynchronously and depend on one another.
@@ -20,7 +20,7 @@ Ditsmod is a Node.js-based web framework designed for building highly extensible
 
 Some architectural concepts in Ditsmod are inspired by [Angular][9], with its DI system built on Angular's native DI module.
 
-### ExpressJS vs. Ditsmod
+### ExpressJS vs. Ditsmod {#expressjs-vs-ditsmod}
 
 For comparison, the following examples demonstrate the minimal code needed to start applications with ExpressJS and Ditsmod.
 
@@ -69,11 +69,11 @@ P.S. Although a link to the repository with all the necessary settings for Ditsm
 }
 ```
 
-## Prerequisites
+## Prerequisites {#prerequisites}
 
 Please make sure that Node.js >= v20.6.0 is installed on your operating system.
 
-## Installation
+## Installation {#installation}
 
 The basic set for running the application has a repository [ditsmod/rest-starter][2]. Clone it and install the dependencies:
 
@@ -91,7 +91,7 @@ cd my-app
 npm i
 ```
 
-## Start in Development Mode
+## Start in Development Mode {#start-in-development-mode}
 
 You can start the application in development mode with the following command:
 
@@ -132,7 +132,7 @@ Now you can use it, for example in the `e2e` folder, like this:
 import { AppModule } from '#app/app.module.js';
 ```
 
-At the moment (2023-10-13) TypeScript does not yet fully support these aliases, so it is advisable to duplicate them in the `tsconfig.json` file:
+At the moment (2025-10-07) TypeScript does not yet fully support these aliases, so it is advisable to duplicate them in the `tsconfig.json` file:
 
 ```json
 // ...
@@ -144,7 +144,7 @@ At the moment (2023-10-13) TypeScript does not yet fully support these aliases, 
 
 Note that in `package.json` the aliases point to `dist`, while in `tsconfig.json` they point to `src`.
 
-## Start in product mode
+## Start in product mode {#start-in-product-mode}
 
 The application is compiled and the server is started in product mode using the command:
 
@@ -153,7 +153,7 @@ npm run build
 npm run start-prod
 ```
 
-## Entry file for Node.js
+## Entry file for Node.js {#entry-file-for-nodejs}
 
 After [installing Ditsmod starter][1], the first thing you need to know: all the application code is in the `src` folder, it is compiled using the TypeScript utility `tsc`, after compilation it goes to the `dist` folder, and then as JavaScript code it can be executed in Node.js.
 
@@ -180,7 +180,7 @@ node dist/main.js
 
 Looking at the file `src/main.ts`, you can see that an instance of the class `RestApplication` is created, and as an argument for the method `bootstrap()` is passed `AppModule`. Here `AppModule` is the root module to which other application modules then imports.
 
-## Ditsmod on Bun
+## Ditsmod on Bun {#ditsmod-on-bun}
 
 Ditsmod can run on [Bun][19]. However, as of version (v1.1.29), [Bun has a bug][20] that causes it to work incorrectly with TypeScript. If you download Ditsmod's starter, install the dependencies, and try to run the application:
 

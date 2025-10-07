@@ -4,7 +4,7 @@ sidebar_position: 40
 
 # Тестування
 
-## Що таке unit-тестування
+## Що таке unit-тестування {#what-is-unit-testing}
 
 По-суті, юніт-тестування - це метод тестування, який дозволяє перевірити чи правильно працюють окремі найменші частини застосунку, такі як функції та методи класів (які по-суті також є функціями). Для проведення тестування, почергово фокусуються на окремій функції, при цьому ізолюють усі інші частини програми, які взаємодіють з цією функцією. Правильно написані юніт-тести дозволяють читати їх як документацію до вашої програми.
 
@@ -106,7 +106,7 @@ describe('Service2', () => {
 
 Рекомендуємо тримати файли юніт-тестів поруч з тими файлами, які вони тестують. Тобто якщо файл називається `some.service.ts`, то файл тестів краще називати `some.service.spec.ts` або `some.service.test.ts`. Це суттєво спрощує роботу з тестами, а також дозволяє зразу бачити які файли ще не протестовані.
 
-## End-to-end тестування
+## End-to-end тестування {#end-to-end-testing}
 
 Під час end-to-end тестування перевіряють роботу цілого застосунку. Для цього можна використовувати, наприклад, [supertest][102]. Частіше за все, для такого тестування необхідно робити моки тільки для тих сервісів, які працюють із зовнішніми сервісами: з відправкою email, з базами даних і т.д. Решта застосунку працює так, як буде працювати у продуктовому режимі.
 
@@ -165,11 +165,11 @@ describe('End-to-end testing', () => {
 server = await TestApplication.createTestApp(AppModule, { path: 'api' }).getServer();
 ```
 
-### `testApplication.overrideModuleMeta()`
+### `testApplication.overrideModuleMeta()` {#testapplicationoverridemodulemeta}
 
 Метод `testApplication.overrideModuleMeta()` підміняє провайдери в метаданих модулів. Провайдери з моками передаються до DI на певний рівень ієрархії, тільки якщо у застосунку на цьому рівні є відповідні провайдери з такими самими токенами.
 
-### `testApplication.overrideExtensionMeta()`
+### `testApplication.overrideExtensionMeta()` {#testapplicationoverrideextensionmeta}
 
 Метод `testApplication.overrideExtensionMeta()` підміняє провайдери у метаданих, що додаються розширеннями. Цей метод приймає два аргументи:
 
@@ -188,7 +188,7 @@ interface ExtensionMetaOverrider<T = any> {
 
 Нижче описано [TestRestPlugin][4], де показано як можна використовувати `testApplication.overrideExtensionMeta()`.
 
-### `testApplication.$use()`
+### `testApplication.$use()` {#testapplicationuse}
 
 Даний метод призначений для створення плагінів, які можуть динамічно додавати методи та властивості до інстансу `TestApplication`:
 
@@ -221,7 +221,7 @@ TestApplication.createTestApp(AppModule)
 Як бачите, після використання `$use()` інстанс `TestApplication` може використовувати методи плагінів. [Приклад використання такого плагіна в реальному житті][103] можна проглянути в модулі `@ditsmod/rest`.
 
 
-### `TestRestPlugin`
+### `TestRestPlugin` {#testrestplugin}
 
 В класі `TestRestPlugin` використовується `testApplication.overrideExtensionMeta()` для підміни провайдерів у метаданих, що додаються групою `ROUTES_EXTENSIONS`:
 

@@ -30,11 +30,11 @@ Keep in mind that you only need to export providers from the host module that wi
 
 Exporting controllers does not make sense, since exporting only applies to providers.
 
-## Exporting providers from a `featureModule`
+## Exporting providers from a `featureModule` {#exporting-providers-from-a-featuremodule}
 
 By exporting tokens from a host module in the `featureModule` decorator metadata, you are declaring that the corresponding providers can be used in consumer modules if they import this host module.
 
-## Exporting providers from `rootModule`
+## Exporting providers from `rootModule` {#exporting-providers-from-rootmodule}
 
 Exporting providers from the root module means that these providers will automatically be added to every module in the application:
 
@@ -54,7 +54,7 @@ export class AppModule {}
 
 In this case, `SomeService` will be added to all application modules at the module level. As you can see, you can also export entire modules. In this case, all providers exported from `OtherModule` will also be added to each application module.
 
-## Import module
+## Import module {#import-module}
 
 You cannot import a single provider into a module, but you can import an entire module with all the providers and [extensions][2] exported from it:
 
@@ -181,7 +181,7 @@ export class SomeModule {
 }
 ```
 
-### Import classes or class instances?
+### Import classes or class instances? {#import-classes-or-class-instances}
 
 Let's consider a specific situation. In the following example, each provider is a class. Note what arrays these providers are passed to and what exactly is exported.
 
@@ -209,7 +209,7 @@ As a result of this import, the consumer module (`Module2`) will now have `Provi
 
 So it can be argued that classes are imported, not their instances.
 
-### Import and encapsulation
+### Import and encapsulation {#import-and-encapsulation}
 
 Let's consider a situation where only `Provider3` is exported from `Module1`, since only this provider is directly used in external modules:
 
@@ -224,7 +224,7 @@ export class Module1 {}
 
 Suppose `Provider3` has a dependency on `Provider1` and `Provider2`. What will Ditsmod do when importing this module into other modules? Ditsmod will import all three providers, since `Provider3` depends on the other two providers.
 
-## Appending of the module
+## Appending of the module {#appending-of-the-module}
 
 If you don't need to import providers and [extensions][2] into the current module, but just append the external module to the path prefix of the current module, you can use the `appends` array:
 
@@ -261,7 +261,7 @@ interface AppendsWithParams<T extends AnyObj = AnyObj> {
 }
 ```
 
-## Re-export of the module
+## Re-export of the module {#re-export-of-the-module}
 
 In addition to importing a specific module, the same module can be simultaneously exported:
 

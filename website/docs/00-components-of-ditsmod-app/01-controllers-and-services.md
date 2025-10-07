@@ -202,7 +202,7 @@ export class HelloWorldController {
 
 В режимі "context-scoped", методи контролерів, що прив'язані до певних роутів, отримують єдиний аргумент - контекст запиту. Тобто в цьому режимі ви вже не зможете запитати у Ditsmod, щоб він передавав у ці методи інстанси інших класів. Разом з тим, в конструкторі ви все ще можете запитувати інстанси певних класів, які створюються єдиний раз.
 
-## Прив'язка контролера до хост-модуля
+## Прив'язка контролера до хост-модуля {#binding-of-the-controller-to-the-host-module}
 
 Будь-який контролер повинен прив'язуватись лише до поточного модуля, де він був оголошений, тобто до хост-модуля. Така прив'язка робиться через масив `controllers`:
 
@@ -246,7 +246,7 @@ export class OtherModule {}
 
 Більш докладну інформацію ви можете прочитати у розділі [Експорт, імпорт та прикріплення модулів][1].
 
-## Сервіси
+## Сервіси {#services}
 
 Хоча з технічної точки зору, для обробки HTTP-запиту можна обійтись одним лише контролером, але об'ємний код з бізнес логікою краще виносити в окремі класи, щоб при потребі можна було повторно використовувати цей код, і щоб його можна було простіше тестувати. Ці окремі класи з бізнес логікою, як правило, називають _сервісами_.
 
@@ -322,10 +322,10 @@ export class SomeController {
 
 В останніх двох прикладах сервіси передаються у масив `providersPerReq`, але це не єдиний спосіб передачі сервісів. Більш докладну інформацію про правила роботи з DI можна отримати у розділі [Dependency Injection][7].
 
-[1]: /developer-guides/exports-and-imports#імпорт-модуля
+[1]: /developer-guides/exports-and-imports/#import-module
 [2]: /developer-guides/exports-and-imports#ModuleWithParams
 [3]: /components-of-ditsmod-app/dependency-injection/#injector-and-providers
-[5]: /native-modules/body-parser#отримання-тіла-запиту
+[5]: /native-modules/body-parser/#retrieving-the-request-body
 [6]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/services/pre-router.ts
 [7]: /components-of-ditsmod-app/dependency-injection/
 [9]: /components-of-ditsmod-app/extensions/

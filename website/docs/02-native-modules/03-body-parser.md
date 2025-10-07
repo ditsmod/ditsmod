@@ -22,13 +22,13 @@ sidebar_position: 3
 
 Готовий приклад використання `@ditsmod/body-parser` можете проглянути в [репозиторії Ditsmod][1].
 
-## Встановлення
+## Встановлення {#installation}
 
 ```bash
 npm i @ditsmod/body-parser
 ```
 
-## Підключення
+## Підключення {#importing}
 
 Щоб глобально підключити `@ditsmod/body-parser`, потрібно імпортувати та експортувати `BodyParserModule` в кореневому модулі:
 
@@ -86,7 +86,7 @@ import { BodyParserModule, BodyParserConfig } from '@ditsmod/body-parser';
 export class AppModule {}
 ```
 
-## Отримання тіла запиту
+## Отримання тіла запиту {#retrieving-the-request-body}
 
 В залежності від того, чи працює контролер [в context-scoped, чи injector-scoped режимі][3], результат роботи інтерсептора можна отримати двома способами:
 
@@ -124,7 +124,7 @@ export class AppModule {}
   }
   ```
 
-## Вимкнення парсера тіла запиту
+## Вимкнення парсера тіла запиту {#disabling-the-request-body-parser}
 
 Звичайно ж, перше, що можна зробити щоб перестав працювати парсер тіла запиту, це  - не імпортувати у ваш модуль `@ditsmod/body-parser` глобально чи локально. Також ви можете вимкнути парсер для конкретного контролера наступним чином:
 
@@ -144,7 +144,7 @@ export class SomeController {
 
 Тобто, таким чином ви передаєте пустий масив, замість дефолтного масиву `['POST', 'PUT', 'PATCH']`.
 
-## Завантаження файлів
+## Завантаження файлів {#file-uploads}
 
 В залежності від того, чи контролер працює [в режимі injector-scope, чи context-scope][3], спосіб отримання парсера, та сигнатури його методів трохи відрізняються:
 
@@ -265,7 +265,7 @@ export class SomeController {
   const textFields = await parse.textFields(ctx); // For context-scoped.
   ```
 
-### MulterExtendedOptions
+### MulterExtendedOptions {#multerextendedoptions}
 
 У модулях, де буде працювати `@ditsmod/body-parser` для форм з даними у форматі `multipart/form-data`, можете передавати до DI провайдер з токеном `MulterExtendedOptions`. Цей клас має на дві опції більше, ніж рідний для `@ts-stack/multer` клас `MulterOptions`:
 

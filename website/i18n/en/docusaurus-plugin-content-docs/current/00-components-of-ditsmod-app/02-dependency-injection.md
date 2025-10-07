@@ -763,7 +763,7 @@ The advantage of using the `injector.setById()` method is that it is faster than
 
 These decorators are used to control the behavior of the injector when searching for values for a given token.
 
-### optional
+### optional {#optional}
 
 Sometimes you may need to mark a dependency in the constructor as optional. Let's look at the following example where a question mark is placed after the `firstService` property, indicating to TypeScript that this property is optional:
 
@@ -791,7 +791,7 @@ export class SecondService {
 }
 ```
 
-### fromSelf
+### fromSelf {#fromSelf}
 
 The `fromSelf` and `skipSelf` decorators make sense when there is some hierarchy of injectors. The `fromSelf` decorator is used very rarely.
 
@@ -818,7 +818,7 @@ As you can see, `Service2` depends on `Service1`, and the `fromSelf` decorator t
 
 But when creating the child injector, `Service1` was not passed to it, so when requesting the token `Service2` it will not be able to resolve that service's dependency. If you remove the `fromSelf` decorator from the constructor, then the child injector will successfully resolve the dependency for `Service2`.
 
-### skipSelf
+### skipSelf {#skipSelf}
 
 The `skipSelf` decorator is used more often than `fromSelf`, but still rarely.
 

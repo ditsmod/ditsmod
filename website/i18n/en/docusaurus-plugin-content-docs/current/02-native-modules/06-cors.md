@@ -6,13 +6,13 @@ sidebar_position: 6
 
 If your application needs to use the [OPTIONS][1] HTTP method or the [CORS][2] or [CORS preflight][3] mechanisms, you can use the `@ditsmod/cors` module.
 
-## Install
+## Install {#install}
 
 ```bash
 npm i @ditsmod/cors
 ```
 
-## Work with default settings
+## Work with default settings {#work-with-default-settings}
 
 A finished example from `@ditsmod/cors` can be viewed [in the Ditsmod repository][4].
 
@@ -57,7 +57,7 @@ curl -i localhost:3000 \
 curl -i localhost:3000/credentials
 ```
 
-## Work with custom settings
+## Work with custom settings {#work-with-custom-settings}
 
 If you want to change the default settings, during import you can pass some options that will be taken into account at the module level:
 
@@ -93,7 +93,7 @@ import { CorsModule, CorsOptions } from '@ditsmod/cors';
 export class SomeModule {}
 ```
 
-## Working with cookies during CORS requests
+## Working with cookies during CORS requests {#working-with-cookies-during-cors-requests}
 
 When you need the CORS HTTP response to contain cookies, and for those cookies to be accepted by web browsers, you can use `CorsService`:
 

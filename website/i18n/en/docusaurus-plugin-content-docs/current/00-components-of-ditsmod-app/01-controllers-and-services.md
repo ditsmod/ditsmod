@@ -202,7 +202,7 @@ export class HelloWorldController {
 
 In the "context-scoped" mode, controller methods bound to specific routes receive a single argument - the request context. That is, in this mode, you will no longer be able to ask Ditsmod to pass instances of other classes to these methods. However, in the constructor you can still request instances of certain classes that are created only once.
 
-## Binding of the controller to the host module
+## Binding of the controller to the host module {#binding-of-the-controller-to-the-host-module}
 
 Any controller should only be bound to the current module where it was declared, i.e. the host module. This binding is done via the `controllers` array:
 
@@ -246,7 +246,7 @@ export class OtherModule {}
 
 You can read more detailed information in the section [Export, import and appends of modules][1].
 
-## Services
+## Services {#services}
 
 While it's technically possible to get by with just one controller to handle an HTTP request, it's better to separate the extensive business logic code into separate classes so that the code can be reused as needed and is easier to test. These separate classes with business logic are usually called _services_.
 

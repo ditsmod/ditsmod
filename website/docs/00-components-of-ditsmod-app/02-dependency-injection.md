@@ -763,7 +763,7 @@ injector.setById(id, 'value1');
 
 Ці декоратори використовуються для управління поведінкою інжектора під час пошуку значень для певного токена.
 
-### optional
+### optional {#optional}
 
 Інколи вам може знадобитись вказати опціональну (необов'язкову) залежність в конструкторі. Давайте розглянемо наступний приклад, де після властивості `firstService` поставлено знак питання, і таким чином вказано для TypeScript що ця властивість є опціональною:
 
@@ -791,8 +791,7 @@ export class SecondService {
 }
 ```
 
-
-### fromSelf
+### fromSelf {#fromSelf}
 
 Декоратори `fromSelf` та `skipSelf` мають сенс у випадку, коли існує певна ієрархія інжекторів. Декоратор `fromSelf` використовується дуже рідко.
 
@@ -819,7 +818,7 @@ child.get(Service2); // Error - Service1 not found
 
 А ось при створенні дочірнього інжектора, йому не передали `Service1`, тому при запиті токену `Service2` він не зможе вирішити залежність цього сервісу. Якщо прибрати декоратор `fromSelf` з конструктора, то дочірній іжектор успішно вирішить залежність `Service2`.
 
-### skipSelf
+### skipSelf {#skipSelf}
 
 Декоратор `skipSelf` використовується частіше, ніж `fromSelf`, але також рідко.
 
@@ -870,6 +869,6 @@ service2.service1 instanceof Service1; // true
 [101]: #hierarchy-and-encapsulation-of-injectors
 [102]: #injector-and-providers
 [103]: /components-of-ditsmod-app/controllers-and-services/#what-is-a-controller
-[104]: /components-of-ditsmod-app/extensions/#групи-розширень
+[104]: /components-of-ditsmod-app/extensions/#group-of-extensions
 [105]: /components-of-ditsmod-app/http-interceptors/
 [106]: /components-of-ditsmod-app/guards/

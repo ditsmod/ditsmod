@@ -40,7 +40,7 @@ If `canActivate()` returns:
 - `false` or `Promise<false>`, so the response to the request will contain a 401 status and the controller will not process the route;
 - `number` or `Promise<number>` is interpreted by Ditsmod as a status number (403, 401, etc.) that should be returned in response to an HTTP request.
 
-## Passing guards to injectors
+## Passing guards to injectors {#passing-guards-to-injectors}
 
 Guards can be passed in module or controller metadata:
 
@@ -57,7 +57,7 @@ export class SomeModule {}
 
 In this case, the guard will work at the request level, for injector-scoped controllers.
 
-## Use of guards
+## Use of guards {#use-of-guards}
 
 The guards are passed to the controllers in the array in the third parameter of the `route` decorator:
 
@@ -75,7 +75,7 @@ export class SomeController {
 }
 ```
 
-## Guards with parameters
+## Guards with parameters {#guards-with-parameters}
 
 The guard in the `canActivate()` method has two parameters. The arguments for the first parameter are automatically passed with the `RequestContext` datatype, and the arguments for the second parameter can be passed to the `route` decorator in an array where a certain guard comes first.
 
@@ -120,7 +120,7 @@ export class PermissionsGuard implements CanActivate {
 }
 ```
 
-## Helpers for guards with parameters
+## Helpers for guards with parameters {#helpers-for-guards-with-parameters}
 
 Because parameter guards must be passed as an array within an array, this makes readability and type safety worse. For such cases, it is better to create a helper using the `createHelperForGuardWithParams()` factory:
 
@@ -152,7 +152,7 @@ export class SomeController {
 }
 ```
 
-## Setting guards on the imported module
+## Setting guards on the imported module {#setting-guards-on-the-imported-module}
 
 You can also centrally set guards at the module level:
 

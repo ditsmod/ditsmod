@@ -6,13 +6,13 @@ sidebar_position: 6
 
 Якщо ваш застосунок потребує використання HTTP-методу [OPTIONS][1] чи механізмів [CORS][2] або [preflight CORS][3], можна використовувати модуль `@ditsmod/cors`.
 
-## Встановлення
+## Встановлення {#install}
 
 ```bash
 npm i @ditsmod/cors
 ```
 
-## Робота з дефолтними налаштуваннями
+## Робота з дефолтними налаштуваннями {#work-with-default-settings}
 
 Готовий приклад з `@ditsmod/cors` можна проглянути [в репозиторії Ditsmod][4].
 
@@ -57,7 +57,7 @@ curl -i localhost:3000 \
 curl -i localhost:3000/credentials
 ```
 
-## Робота з кастомними налаштуваннями
+## Робота з кастомними налаштуваннями {#work-with-custom-settings}
 
 Якщо ви хочете змінити дефолтні налаштування, при імпорті можете передати деякі опції, які будуть братись до уваги на рівні модуля:
 
@@ -93,7 +93,7 @@ import { CorsModule, CorsOptions } from '@ditsmod/cors';
 export class SomeModule {}
 ```
 
-## Робота з куками під час CORS-запитів
+## Робота з куками під час CORS-запитів {#working-with-cookies-during-cors-requests}
 
 Коли вам потрібно щоб CORS HTTP-відповідь містила куки, і ці куки приймались веб-браузерами, можна скористатись `CorsService`:
 

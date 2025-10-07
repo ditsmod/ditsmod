@@ -83,7 +83,7 @@ logger.setLevel('warn');
 logger.log('info', 'some message');
 ```
 
-## Підміна системного логера
+## Підміна системного логера {#substitution-the-system-logger}
 
 Якщо ви хочете щоб системні логи, які пише Ditsmod, писались вашим власним логером, він повинен впроваджувати інтерфейс [Logger][100]. Після чого його можна передавати до DI на рівні застосунку:
 
@@ -179,7 +179,7 @@ export class AppModule {}
 
 Готові приклади з логерами ви можете проглянути [в репозиторії Ditsmod][104].
 
-## Робота з логером в продуктовому режимі
+## Робота з логером в продуктовому режимі {#using-the-logger-in-production-mode}
 
 Щоб змінити рівень логування в продуктовому режимі (іншими словами - "на продакті"), не обов'язково заходити в скомпільований код. Для цієї мети ви можете створити спеціальний контролер, захистити його ґардом, а потім викликати відповідний роут для зміни рівня логування, який ви вкажете в URL:
 
@@ -211,7 +211,7 @@ export class SomeController {
 
 
 
-[1]: /components-of-ditsmod-app/guards#хелпери-для-ґардів-з-параметрами
+[1]: /components-of-ditsmod-app/guards#helpers-for-guards-with-parameters
 
 [100]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/logger/logger.ts
 [101]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/logger/console-logger.ts

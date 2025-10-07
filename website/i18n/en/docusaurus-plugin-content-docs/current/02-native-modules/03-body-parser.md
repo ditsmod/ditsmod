@@ -22,13 +22,13 @@ For parsing the first four formats, this module adds an interceptor to all route
 
 A ready-made example of using `@ditsmod/body-parser` can be viewed in the [Ditsmod repository][1].
 
-## Installation
+## Installation {#installation}
 
 ```bash
 npm i @ditsmod/body-parser
 ```
 
-## Importing
+## Importing {#importing}
 
 To enable `@ditsmod/body-parser` globally, you need to import and export `BodyParserModule` in the root module:
 
@@ -86,7 +86,7 @@ import { BodyParserModule, BodyParserConfig } from '@ditsmod/body-parser';
 export class AppModule {}
 ```
 
-## Retrieving the request body
+## Retrieving the request body {#retrieving-the-request-body}
 
 Depending on whether the controller works [in context-scoped or injector-scoped mode][3], the result of the interceptor can be obtained in two ways:
 
@@ -124,7 +124,7 @@ Depending on whether the controller works [in context-scoped or injector-scoped 
   }
   ```
 
-## Disabling the Request Body Parser
+## Disabling the Request Body Parser {#disabling-the-request-body-parser}
 
 Of course, the first thing you can do to disable the request body parser is to avoid importing `@ditsmod/body-parser` into your module, either globally or locally. Additionally, you can disable the parser for a specific controller as follows:
 
@@ -144,7 +144,7 @@ export class SomeController {
 
 That is, this way you pass an empty array, instead of the default array `['POST', 'PUT', 'PATCH']`.
 
-## File Uploads
+## File Uploads {#file-uploads}
 
 Depending on whether the controller works [in injector-scope or context-scope mode][3], the method of obtaining the parser and the signatures of its methods differ slightly:
 
@@ -265,7 +265,7 @@ A maximum of two properties from these four can be filled in one parsing: the `t
   const textFields = await parse.textFields(ctx); // For context-scoped.
   ```
 
-### MulterExtendedOptions
+### MulterExtendedOptions {#multerextendedoptions}
 
 In modules where `@ditsmod/body-parser` will be used for forms with data in `multipart/form-data` format, you can pass a provider with the token `MulterExtendedOptions` to DI. This class has two more options than the native `MulterOptions` class from `@ts-stack/multer`:
 

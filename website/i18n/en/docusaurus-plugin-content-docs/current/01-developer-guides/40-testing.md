@@ -4,7 +4,7 @@ sidebar_position: 40
 
 # Testing
 
-## What is unit testing
+## What is unit testing {#what-is-unit-testing}
 
 In fact, unit testing is a testing method that allows you to verify that the smallest parts of an application, such as functions and class methods (which are also essentially functions), work correctly. To perform testing, you alternately focus on a separate function while isolating all other parts of the program that interact with that function. Properly written unit tests allow you to read them as documentation for your program.
 
@@ -106,7 +106,7 @@ describe('Service2', () => {
 
 We recommend that you place your unit test files close to the files they test. That is, if the file is called `some.service.ts`, then the test file should be called `some.service.spec.ts` or `some.service.test.ts`. This makes working with tests much easier, and also allows you to immediately see which files have not yet been tested.
 
-## End-to-end testing
+## End-to-end testing {#end-to-end-testing}
 
 End-to-end testing checks the operation of the entire application. For this purpose, you can use, for example, [supertest][102]. Most often, for such tests, it is necessary to create mocks only for those services that work with external services: with sending email, with databases, etc. The rest of the application works as it would in production mode.
 
@@ -165,11 +165,11 @@ Note that these tests do not use the code from the `./src/main.ts` file, so any 
 server = await TestApplication.createTestApp(AppModule, { path: 'api' }).getServer();
 ```
 
-### `testApplication.overrideModuleMeta()`
+### `testApplication.overrideModuleMeta()` {#testapplicationoverridemodulemeta}
 
 The `testApplication.overrideModuleMeta()` method replaces providers in module metadata. Providers with mocks are only passed to DI at a particular level of the hierarchy if there are corresponding providers with the same tokens in application at that level.
 
-### `testApplication.overrideExtensionMeta()`
+### `testApplication.overrideExtensionMeta()` {#testapplicationoverrideextensionmeta}
 
 The `testApplication.overrideExtensionMeta()` method overrides providers in the metadata added by an extension. This method takes two arguments:
 
@@ -188,7 +188,7 @@ That is, this callback accepts a single argument - an object with the `groupData
 
 [TestRestPlugin][4] is described below, which shows how to use `testApplication.overrideExtensionMeta()`.
 
-### `testApplication.$use()`
+### `testApplication.$use()` {#testapplicationuse}
 
 This method is intended for creating plugins that can dynamically add methods and properties to the `TestApplication` instance:
 
@@ -221,7 +221,7 @@ TestApplication.createTestApp(AppModule)
 As you can see, after using `$use()`, the `TestApplication` instance can use plugin methods. [An example of using such a plugin in real life][103] can be viewed in the `@ditsmod/rest` module.
 
 
-### `TestRestPlugin`
+### `TestRestPlugin` {#testrestplugin}
 
 The `TestRestPlugin` class uses `testApplication.overrideExtensionMeta()` to override providers in the metadata added by the `ROUTES_EXTENSIONS` group:
 

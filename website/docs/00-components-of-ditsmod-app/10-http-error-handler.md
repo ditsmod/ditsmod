@@ -3,9 +3,7 @@ title: HttpErrorHandler
 sidebar_position: 10
 ---
 
-# CustomError та HttpErrorHandler
-
-## CustomError
+## CustomError {#customerror}
 
 Ditsmod надає два вбудовані класи - `CustomError` та `HttpErrorHandler` - які можна використовувати, відповідно, для кидання та ловіння помилок.
 
@@ -66,7 +64,7 @@ interface ErrorInfo {
 
 Конструктор класу `CustomError` другим аргументом може приймати cause error, якщо така є.
 
-## HttpErrorHandler
+## HttpErrorHandler {#httperrorhandler}
 
 Усі помилки, які виникають під час обробки HTTP-запиту, і які ви не зловили у контролерах, інтерсепторах, або сервісах, потрапляють до [DefaultHttpErrorHandler][100]. Цей обробник передається до реєстру DI на рівні роуту.
 

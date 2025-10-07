@@ -13,7 +13,7 @@ Currently, automatic validation only works for HTTP requests that have a media t
 - header
 - request's body.
 
-## Installation
+## Installation {#installation}
 
 After you create [OpenAPI documentation][2], you need to import two modules for automatic validation based on it:
 
@@ -21,7 +21,7 @@ After you create [OpenAPI documentation][2], you need to import two modules for 
 npm i @ditsmod/openapi-validation @ditsmod/i18n
 ```
 
-## Enable validation and set options
+## Enable validation and set options {#enable-validation-and-set-options}
 
 To enable automatic validation in a specific module, it is enough to import `ValidationModule` there. You can also pass `ValidationOptions` and `AJV_OPTIONS`:
 
@@ -40,7 +40,7 @@ import { Options } from 'ajv';
 export class SomeModule {}
 ```
 
-## Substituting of validation interceptors
+## Substituting of validation interceptors {#substituting-of-validation-interceptors}
 
 The `ParametersInterceptor` and `RequestBodyInterceptor` classes are responsible for validating the request body and request parameters. They can be substituted in the `providersPerReq` array at the module or controller level:
 

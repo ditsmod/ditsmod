@@ -161,7 +161,7 @@ const postClient = trpc as TRPCClient<PostRouter>;
 const post = await postClient.post.createPost.mutate({ title: 'hello client' });
 ```
 
-## Використання DI для провайдерів на рівні HTTP-запиту
+## Використання DI для провайдерів на рівні HTTP-запиту {#using-di-for-providers-at-the-http-request-level}
 
 Коли ви пишете наступний код, DI вам забезпечить роботу провайдерів на рівні роуту:
 
@@ -185,7 +185,7 @@ export class PostController {
 
 Давайте пройдемо ці кроки разом.
 
-### Крок перший
+### Крок перший {#step-one}
 
 ```ts
 import { injectable, factoryMethod } from '@ditsmod/core';
@@ -207,7 +207,7 @@ export class PostService {
 
 Зверніть увагу, що на рівні методу даний провайдер має декоратор, причому не важливо який саме, головне, щоб він створювався за допомогою відповідних Ditsmod-хелперів.
 
-### Крок другий
+### Крок другий {#step-two}
 
 Найпростіше передати `ClassFactoryProvider` до DI - за допомогою хелпера `Providers`:
 
@@ -236,7 +236,7 @@ export class PostController {
 ]
 ```
 
-### Крок третій
+### Крок третій {#step-three}
 
 Після того, як провайдери передані до DI, їх можна використовувати у наступній формі:
 

@@ -44,7 +44,7 @@ In this specific scenario:
 
 And because both of these modules are imported into `Module3`, a "provider collision" occurs, leaving the developer uncertain about which provider will be used in `Module3`.
 
-## Collision resolution
+## Collision resolution {#collision-resolution}
 
 If `Module3` is declared in your application (it is not imported from `node_modules`), the collision is resolved by adding to `resolvedCollisionsPer*` an array of two elements, with the provider's token in the first place and the module from which the provider needs to be taken in the second place:
 

@@ -13,7 +13,7 @@ sidebar_position: 21
 - header
 - тілі запиту.
 
-## Встановлення
+## Встановлення {#installation}
 
 Після того, як ви створите [OpenAPI-документацію][2], необхідно доставити два модулі для автоматичної валідації на її основі:
 
@@ -21,7 +21,7 @@ sidebar_position: 21
 npm i @ditsmod/openapi-validation @ditsmod/i18n
 ```
 
-## Підключення валідації та встановлення опцій
+## Підключення валідації та встановлення опцій {#enable-validation-and-set-options}
 
 Щоб підключити автоматичну валідацію у певному модулі, достатньо імпортувати туди `ValidationModule`. Також ви можете передати `ValidationOptions` та `AJV_OPTIONS`:
 
@@ -40,7 +40,7 @@ import { Options } from 'ajv';
 export class SomeModule {}
 ```
 
-## Підміна інтерсепторів валідації
+## Підміна інтерсепторів валідації {#substituting-of-validation-interceptors}
 
 Класи `ParametersInterceptor` та `RequestBodyInterceptor` відповідають за валідацію параметрів запиту та тіла запиту. Їх можна підмінити в масиві `providersPerReq` на рівні модуля чи контролера:
 

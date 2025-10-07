@@ -20,7 +20,7 @@ npm start
 
 After that, you can directly view and experiment with this example in your editor.
 
-## Extending LogMediator class
+## Extending LogMediator class {#extending-logmediator-class}
 
 Since this example extends the class, it uses the recommended TypeScript setting in `tsconfig.json`:
 
@@ -57,7 +57,7 @@ As you can see, `MyLogMediator` extends `LogMediator` and the `serverListen()` m
 
 The result can be seen if you run the application with the `npm start` command, after which you should receive exactly the message that was generated in this `myLogMediator.serverListen()` method.
 
-## RestApplication-level substitute of LogMediator
+## LogMediator substitution at the application level {#logmediator-substitution-at-the-application-level}
 
 If you look at `AppModule`, you can see how `LogMediator` is substituted by `MyLogMediator`:
 
@@ -80,7 +80,7 @@ In this case, the first element of the array `providersPerApp` will allow using 
 
 Keep in mind that such an application-level substitution works without additional settings only in the root module. If you do this in a feature module, you will additionally have [to resolve the provider collision][100] in the root module (although this is quite simple).
 
-## Module-level substitute of LogMediator
+## Module-level substitute of LogMediator {#module-level-substitute-of-logmediator}
 
 As mentioned at the beginning, if you plan to publish your module to other users, it is recommended to use `LogMediator` instead of `Logger`. In this case, users will be able to change the messages written by your module.
 

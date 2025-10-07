@@ -6,7 +6,7 @@ sidebar_position: 4
 
 The `@ditsmod/session-cookie` module simplifies working with the session cookie. A ready-made example of using this module can be found in the [Ditsmod repository][1].
 
-## Installation, importing and usage
+## Installation, importing and usage {#installation-importing-and-usage}
 
 Installation:
 

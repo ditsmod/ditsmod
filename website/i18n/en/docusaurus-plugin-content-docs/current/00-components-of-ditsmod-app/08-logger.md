@@ -83,7 +83,7 @@ logger.setLevel('warn');
 logger.log('info', 'some message');
 ```
 
-## Substitution the system logger
+## Substitution the system logger {#substitution-the-system-logger}
 
 If you want the system logs written by Ditsmod to be written by your own logger, it must implement the [Logger][100] interface. It can then be passed to DI at the application level:
 
@@ -179,7 +179,7 @@ export class AppModule {}
 
 You can view finished examples with loggers [in the Ditsmod repository][104].
 
-## Using the logger in production mode
+## Using the logger in production mode {#using-the-logger-in-production-mode}
 
 To change the logging level in production mode, you do not need to change the compiled code. You can create a custom controller, guard it, and then call the appropriate route to change the logging level that you specify in the URL:
 

@@ -20,7 +20,7 @@ Modules can contain:
 - decorators and extensions that allow you to add new rules and behaviors to the application;
 - other classes, interfaces, helpers, data types intended for the operation of the current module.
 
-## Root module
+## Root module {#root-module}
 
 Other modules are imported into the root module, it is the only one for the whole application, and its class is recommended to be called `AppModule`. The TypeScript class becomes the root module of Ditsmod with `rootModule` decorator:
 
@@ -50,7 +50,7 @@ import { rootModule } from '@ditsmod/core';
 export class AppModule {}
 ```
 
-## Feature module
+## Feature module {#feature-module}
 
 The TypeScript class becomes a feature Ditsmod module with the `featureModule` decorator:
 

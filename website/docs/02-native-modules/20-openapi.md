@@ -6,7 +6,7 @@ sidebar_position: 20
 
 Щоб створити документацію за специфікацією [OpenAPI][0], можна використовувати модуль `@ditsmod/openapi`.
 
-## Встановлення та підключення
+## Встановлення та підключення {#installation-and-setup}
 
 ```bash
 npm i @ditsmod/openapi
@@ -91,7 +91,7 @@ export const oasObject: XOasObject = {
 };
 ```
 
-## Створення документації
+## Створення документації {#creation-of-documentation}
 
 Щоб створювати окремі маршрути, користуйтесь декоратором `oasRoute`, в якому четвертим або третім параметром (якщо немає ґардів) йде так званий [Operation Object][1]:
 
@@ -123,7 +123,7 @@ export class SomeController {
 
 Ditsmod має хорошу підтримку TypeScript-моделей для OpenAPI v3.1.0, зокрема й Operation Object, але вручну прописувати весь Operation Object прямо в коді до кожного роуту - не обов'язково. Краще скористатись хелперами, які за вас згенерують необхідний код, та ще й зменшать кількість помилок за рахунок ще кращої пітримки TypeScript. Ditsmod має декілька таких хелперів: `getParams()`, `getContent()`, `Parameters`, `Content`. Усі вони імпортуються з модуля `@ditsmod/openapi`.
 
-## Передача параметрів Operation Object
+## Передача параметрів Operation Object {#passing-operation-object-parameters}
 
 В наступному прикладі за допомогою хелпера `getParams()` записано майже усе те, що у попередньому прикладі ми прописали вручну для `parameters`:
 
@@ -145,7 +145,7 @@ export class SomeController {
 
 Тут не вистачає ще вказання типу даних для параметра `username` та його опису. Рекомендуємо використовувати TypeScript-клас у якості моделі, щоб потім можна було на нього посилатись за допомогою хелперів, які вміють читати його метадані і повертати готові JSON-об'єкти.
 
-## Створення TypeScript-моделей
+## Створення TypeScript-моделей {#creation-of-typescript-models}
 
 В наступному прикладі показано модель з трьома параметрами:
 
@@ -213,7 +213,7 @@ export class Model2 {
 }
 ```
 
-## Використання TypeScript-моделей
+## Використання TypeScript-моделей {#using-typescript-models}
 
 Хелпер `getParams()` дозволяє використовувати моделі, і якщо ви зробите помилку у назві параметра, TypeScript скаже вам про це:
 
@@ -260,7 +260,7 @@ export class SomeController {
 }
 ```
 
-### requestBody та responses content
+### requestBody та responses content {#requestbody-and-responses-content}
 
 Моделі даних також використовуються щоб описати контент `requestBody`, але тут є одна невелика відмінність у порівнянні з параметрами. По дефолту, усі властивості моделі є необов'язковими, і щоб позначити певну властивість обов'язковою, необхідно скористатись константою `REQUIRED`:
 
@@ -340,7 +340,7 @@ export class SomeController {
 }
 ```
 
-## OpenAPI опції на рівні модуля
+## OpenAPI опції на рівні модуля {#openapi-module-level-options}
 
 Теги та параметри можна передавати на рівні модуля:
 
@@ -362,11 +362,11 @@ import { OasOptions } from '@ditsmod/openapi';
 export class I18nModule {}
 ```
 
-## Хелпери, що повертають цілий Operation Object
+## Хелпери, що повертають цілий Operation Object {#helpers-that-return-an-entire-operation-object}
 
 У попередніх прикладах були показані хелпери, що повертають частини [Operation Object][1], але, звичайно ж, ви можете створити власні хелпери, які повертають цілі Operation Object. Один із прикладів використання таких хелперів показаний в репозиторії [RealWorld][4].
 
-## Спеціальний декоратор для ґардів
+## Спеціальний декоратор для ґардів {#special-decorator-for-guards}
 
 Модуль `@ditsmod/openapi` має спеціальний декоратор `oasGuard`, що дозволяє закріпити метадані OpenAPI за ґардами:
 

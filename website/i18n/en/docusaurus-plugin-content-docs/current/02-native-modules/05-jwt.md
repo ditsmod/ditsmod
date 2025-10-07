@@ -6,7 +6,7 @@ sidebar_position: 5
 
 The `@ditsmod/jwt` module integrates [jsonwebtoken][1] into a Ditsmod authentication application based on [JSON Web Token][2]. You can view a finished example of using this module in the [Ditsmod repository][3].
 
-## Installation and importing
+## Installation and importing {#installation-and-importing}
 
 Installation:
 

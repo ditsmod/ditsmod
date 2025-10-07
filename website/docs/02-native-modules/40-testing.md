@@ -14,4 +14,4 @@ npm i -D @ditsmod/testing
 
 
 
-[1]: /developer-guides/testing#end-to-end-тестування
+[1]: /developer-guides/testing/#end-to-end-testing
