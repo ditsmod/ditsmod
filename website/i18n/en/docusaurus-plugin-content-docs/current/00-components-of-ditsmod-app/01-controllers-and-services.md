@@ -206,29 +206,25 @@ In the "context-scoped" mode, controller methods bound to specific routes receiv
 
 Any controller should only be bound to the current module where it was declared, i.e. the host module. This binding is done via the `controllers` array:
 
-```ts {5}
-import { featureModule } from '@ditsmod/core';
-import { initRest } from '@ditsmod/rest';
+```ts {4}
+import { restModule } from '@ditsmod/rest';
 import { SomeController } from './some.controller.js';
 
-@initRest({ controllers: [SomeController] })
-@featureModule()
+@restModule({ controllers: [SomeController] })
 export class SomeModule {}
 ```
 
 After binding controllers to the host module, in order for Ditsmod to recognize them in an external module, the host module must either be appended or imported as an object that implements the [ModuleWithParams][2] interface. The following example shows both appending and fully importing the host module (this is done only to demonstrate the possibility; in practice, there is no reason to do both at the same time):
 
-```ts {6,8}
-import { featureModule } from '@ditsmod/core';
-import { initRest } from '@ditsmod/rest';
+```ts {5,7}
+import { restModule } from '@ditsmod/rest';
 import { SomeModule } from './some.module.js';
 
-@initRest({
+@restModule({
   appends: [SomeModule],
   // OR
-  { module: SomeModule, path: '' }
+  imports: [{ module: SomeModule, path: '' }]
 })
-@featureModule()
 export class OtherModule {}
 ```
 
@@ -252,10 +248,10 @@ While it's technically possible to get by with just one controller to handle an 
 
 What services can do:
 
-- provide configuration;
-- validate the request;
-- parsing the request body;
 - check access rights;
+- validate the request;
+- provide configuration;
+- parsing the request body;
 - work with databases, with email;
 - etc.
 

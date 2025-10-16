@@ -206,29 +206,25 @@ export class HelloWorldController {
 
 Будь-який контролер повинен прив'язуватись лише до поточного модуля, де він був оголошений, тобто до хост-модуля. Така прив'язка робиться через масив `controllers`:
 
-```ts {5}
-import { featureModule } from '@ditsmod/core';
-import { initRest } from '@ditsmod/rest';
+```ts {4}
+import { restModule } from '@ditsmod/rest';
 import { SomeController } from './some.controller.js';
 
-@initRest({ controllers: [SomeController] })
-@featureModule()
+@restModule({ controllers: [SomeController] })
 export class SomeModule {}
 ```
 
 Після прив'язки контролерів до хост-модуля, щоб Ditsmod брав їх до уваги у зовнішньому модулі, хост-модуль потрібно або прикріпити, або імпортувати у формі об'єкта, що має інтерфейс [ModuleWithParams][2]. В наступному прикладі показано і прикріплення, і повний імпорт хост-модуля (це зроблено лише щоб продемонструвати можливість, на практиці немає сенсу робити одночасне прикріплення з імпортом):
 
-```ts {6,8}
-import { featureModule } from '@ditsmod/core';
-import { initRest } from '@ditsmod/rest';
+```ts {5,7}
+import { restModule } from '@ditsmod/rest';
 import { SomeModule } from './some.module.js';
 
-@initRest({
+@restModule({
   appends: [SomeModule],
-  // АБО
-  { module: SomeModule, path: '' }
+  // OR
+  imports: [{ module: SomeModule, path: '' }]
 })
-@featureModule()
 export class OtherModule {}
 ```
 
@@ -252,10 +248,10 @@ export class OtherModule {}
 
 Що можуть робити сервіси:
 
-- надавати конфігурацію;
-- робити валідацію запиту;
-- робити парсинг тіла запиту;
 - перевіряти права доступу;
+- робити валідацію запиту;
+- надавати конфігурацію;
+- робити парсинг тіла запиту;
 - парцювати з базами даних, з поштою;
 - і т.п.
 
