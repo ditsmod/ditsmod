@@ -36,7 +36,7 @@ app.listen(3000, '0.0.0.0');
 ```
 
 ```ts
-import { route, RestModule, controller, RestApplication, restRootModule } from '@ditsmod/rest';
+import { route, controller, RestApplication, restRootModule } from '@ditsmod/rest';
 
 @controller()
 class ExampleController {
@@ -178,7 +178,7 @@ app.server.listen(port, '0.0.0.0');
 node dist/main.js
 ```
 
-Проглядаючи файл `src/main.ts`, ви можете бачити, що створюється інстанс класу `RestApplication`, а у якості аргументу для методу `bootstrap()` передається `AppModule`. Тут `AppModule` є кореневим модулем, до якого вже підв'язуються інші модулі застосунку.
+Проглядаючи файл `src/main.ts`, ви можете бачити, що створюється інстанс класу `RestApplication`, а у якості аргументу для методу `create()` передається `AppModule`. Тут `AppModule` є кореневим модулем, до якого вже підв'язуються інші модулі застосунку.
 
 ## Ditsmod на Bun {#ditsmod-on-bun}
 

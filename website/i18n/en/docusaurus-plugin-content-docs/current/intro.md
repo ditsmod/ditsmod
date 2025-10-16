@@ -36,7 +36,7 @@ app.listen(3000, '0.0.0.0');
 ```
 
 ```ts
-import { route, RestModule, controller, RestApplication, restRootModule } from '@ditsmod/rest';
+import { route, controller, RestApplication, restRootModule } from '@ditsmod/rest';
 
 @controller()
 class ExampleController {
@@ -178,7 +178,7 @@ After compilation, it becomes `dist/main.js` and becomes the entry point for run
 node dist/main.js
 ```
 
-Looking at the file `src/main.ts`, you can see that an instance of the class `RestApplication` is created, and as an argument for the method `bootstrap()` is passed `AppModule`. Here `AppModule` is the root module to which other application modules then imports.
+Looking at the file `src/main.ts`, you can see that an instance of the class `RestApplication` is created, and as an argument for the method `create()` is passed `AppModule`. Here `AppModule` is the root module to which other application modules then imports.
 
 ## Ditsmod on Bun {#ditsmod-on-bun}
 

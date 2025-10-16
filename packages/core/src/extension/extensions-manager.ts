@@ -38,11 +38,11 @@ export type StageIterationMap = Map<ExtensionClass, StageIteration>;
 @injectable()
 export class ExtensionsManager {
   /**
-   * Settings by BaseAppInitializer.
+   * Settings by {@link InternalExtensionsManager}.
    */
   moduleName: string = '';
   /**
-   * Settings by BaseAppInitializer.
+   * Settings by {@link InternalExtensionsManager}.
    */
   protected stageIterationMap: StageIterationMap;
   protected currStageIteration: StageIteration;

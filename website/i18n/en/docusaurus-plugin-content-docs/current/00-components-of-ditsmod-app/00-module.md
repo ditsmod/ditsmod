@@ -13,7 +13,7 @@ However, modules can also have different types. Two types are most often used:
 - **service** - this type includes modules that provide certain services: a database module, a security module, a module for recording logs, a module for translating messages into different languages, etc.; such modules are rarely pinned to specific URLs.
 - **routed** - modules that serve a certain part of the URL should be assigned to this type: for example, one module can process all HTTP requests at the address `/api/users`, another module - at the address `/api/posts` .
 
-Modules can contain:
+Modules are the largest building blocks of an application, and their metadata declares such module components as:
 - controllers that accept HTTP requests and send HTTP responses;
 - services where the business logic of the application is described;
 - interceptors and guards that allow you to automate the processing of HTTP requests according to typical patterns;
@@ -38,13 +38,13 @@ import { rootModule } from '@ditsmod/core';
 
 @rootModule({
   imports: [], // Import modules
-  providersPerApp: [], // RestApplication-level providers
-  providersPerMod: [], // Module-level providers
+  providersPerApp: [], // Application level providers
+  providersPerMod: [], // Module level providers
   exports: [], // Export modules and providers from the current module
   extensions: [],
   extensionsMeta: {}, // Data for extensions
   resolvedCollisionsPerApp: [], // Collision resolution of imported classes at the application level
-  resolvedCollisionsPerMod: [], //                                    ...at the route level
+  resolvedCollisionsPerMod: [], //                                    ...at the module level
   id: '', // Can be used to dynamically add or remove modules
 })
 export class AppModule {}
@@ -63,6 +63,6 @@ export class SomeModule {}
 
 It is recommended that module files end with `*.module.ts` and that their class names end with `*Module`.
 
-It can contain exactly the same metadata as root modules, except for the `resolvedCollisionsPerApp` property.
+It can contain exactly the same metadata as root modules, except for the `resolvedCollisionsPerApp` property. In addition to being declared directly in the application, `featureModule` can also be published on npmjs.com.
 
 [1]: https://www.npmjs.com/package/reflect-metadata
