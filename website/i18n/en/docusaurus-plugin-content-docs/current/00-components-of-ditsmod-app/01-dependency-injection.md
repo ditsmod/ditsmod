@@ -3,11 +3,14 @@ sidebar_position: 1
 ---
 
 # Dependency Injection
-## Decorators and reflector {#decorators-and-reflector}
 
-Let's start with the obvious — TypeScript syntax partially differs from JavaScript syntax because it provides capabilities for static typing. JavaScript has no static typing at all, but during compilation of TypeScript code to JavaScript the compiler can emit additional JavaScript code that can be used to obtain information about a given static type.
+In the following examples of this section, it is assumed that you have cloned the [ditsmod/rest-starter][101] repository. This will allow you to get a basic configuration for the application and experiment in the `src/app` folder of that repository.
 
-Let's do a quick experiment. In the following code the constructor of `Service2` specifies a static type for the parameter `service1`:
+## Decorators and Reflector {#decorators-and-reflector}
+
+Let's start with the obvious — TypeScript syntax is slightly different from JavaScript syntax because it has static typing capabilities. JavaScript does not have static typing at all, but during the compilation of TypeScript code into JavaScript, the compiler can provide additional JavaScript code that can be used to obtain information about certain static types.
+
+Let's experiment a bit. Create a file `src/app/services.ts` and insert the following code:
 
 ```ts
 class Service1 {}
@@ -17,7 +20,13 @@ class Service2 {
 }
 ```
 
-After compilation this code will look like:
+As you can see, in the constructor of `Service2`, a static data type is specified for the `service1` parameter. If you run the command:
+
+```bash
+npm run build
+```
+
+This code will be compiled and placed into the `dist/app/services.js` file. It will look like this:
 
 ```ts
 class Service1 {
@@ -27,7 +36,7 @@ class Service2 {
 }
 ```
 
-That is, the information about the parameter type in the constructor of `Service2` is lost. But if we configure the TypeScript compiler in a certain way and use a class decorator, the TypeScript compiler will emit more JavaScript code with information about the static typing. For example, let's use the `injectable` decorator:
+That is, the information about the parameter type in the `Service2` constructor is lost. But if we use a class decorator, the TypeScript compiler will output more JavaScript code containing information about static typing. For example, let’s use the `injectable` decorator:
 
 ```ts {1,5}
 import { injectable } from '@ditsmod/core';
@@ -40,7 +49,7 @@ class Service2 {
 }
 ```
 
-Now the TypeScript compiler transforms this code into the following JavaScript code:
+Now, using the command `npm run build`, the TypeScript compiler transforms this code into the following JavaScript code:
 
 ```js {18}
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -64,11 +73,11 @@ Service2 = __decorate([
 ], Service2);
 ```
 
-Fortunately, you will rarely need to analyze compiled code, but to get a general idea of the mechanism of transferring static typing into JavaScript code, it can sometimes be useful to look at it. The most interesting part is located in the last four lines. Obviously, the TypeScript compiler now associates the array `[Service1]` with `Service2`. This array is the information about the static types of the parameters that the compiler found in the constructor of `Service2`.
+Fortunately, you will rarely need to inspect the `dist` folder and analyze compiled code, but it can sometimes be useful to glance at it for a general understanding of how static typing is transferred into JavaScript code. The most interesting part is found in the last four lines. It’s clear that the TypeScript compiler now associates the array `[Service1]` with `Service2`. This array contains information about the static parameter types detected by the compiler in the `Service2` constructor.
 
-Further analysis of the compiled code indicates that the `Reflect` class is used to preserve metadata about static typing. It is assumed that this class is imported from the [reflect-metadata][13] library. The API of that library is then used by Ditsmod to read the metadata shown above. This is handled by the so-called **reflector**.
+Further analysis of the compiled code shows that the `Reflect` class is used to store metadata with static typing. This class is assumed to be imported from the [reflect-metadata][13] library. The API of this library is then used by Ditsmod to read the above metadata. This process is handled by the so-called **reflector**.
 
-Let's see what tools Ditsmod has for working with the reflector. Let's complicate the previous example to see how metadata can be extracted and complex dependency chains formed. Consider three classes with the following dependency chain `Service3` -> `Service2` -> `Service1`:
+Let’s see what tools Ditsmod provides for working with the reflector. Let’s make the previous example more complex to see how metadata can be extracted and how complex dependency chains can be formed. Consider three classes with the following dependency: `Service3` -> `Service2` -> `Service1`. Insert the following code into `src/app/services.ts`:
 
 ```ts
 import { injectable, getDependencies } from '@ditsmod/core';
@@ -88,9 +97,29 @@ class Service3 {
 console.log(getDependencies(Service3)); // [ { token: [class Service2], required: true } ]
 ```
 
-The `getDependencies()` function uses the reflector and returns the array of direct dependencies of `Service3`. You probably guess that if you pass `Service2` to `getDependencies()` you'll see the dependency on `Service1`. Thus you can **automatically** compose the whole dependency chain `Service3` -> `Service2` -> `Service1`. This process in DI is called "dependency resolution". And the word "automatically" is purposely bolded here because it's a very important feature supported by DI. Users pass only `Service3` to the DI, and they don't need to manually investigate what this class depends on — DI can resolve the dependency automatically. By the way, even the `getDependencies()` function itself will rarely be used by users, except in some rare special cases.
+This code can be compiled and executed with the following command:
 
-Strictly speaking, the mechanism of saving and obtaining metadata from the reflector via decorators is not Dependency Injection. But Dependency Injection heavily uses decorators and the reflector in its operation, so sometimes this documentation may say that DI receives information about a class's dependencies, while in fact the reflector is responsible for that.
+```bash
+tput reset && npm run build && node dist/app/services.js
+```
+
+In the previous example, the `getDependencies()` function uses the reflector and returns an array of direct dependencies of `Service3`. You might guess that by passing `Service2` to `getDependencies()`, we’ll see the dependency on `Service1`. This way, you can **automatically** build the entire dependency chain `Service3` -> `Service2` -> `Service1`. This process in DI is called “dependency resolution.” And here the word “automatically” is intentionally bolded because it is a very important feature supported by DI. Users only pass `Service3` to DI, and they don’t need to manually explore what this class depends on — DI can resolve the dependency automatically. By the way, users will rarely need to use the `getDependencies()` function, except in a few rare cases.
+
+Strictly speaking, the mechanism of storing and retrieving metadata from the reflector using decorators is not yet Dependency Injection. However, Dependency Injection extensively uses decorators and the reflector in its operation, so in this documentation, you might sometimes see that DI "obtains information about class dependencies" although in reality, it’s the reflector that does this.
+
+To have the code automatically execute after every change, you can use two terminals. In the first terminal, you can run the command to compile the code:
+
+```bash
+npm run build -- --watch
+```
+
+And in the second terminal, you can run the command to execute the compiled code:
+
+```bash
+node --watch dist/app/services.js
+```
+
+Now, if in `src/app/services.ts` you pass `Service1` to the `getDependencies()` function, after a few seconds, you should see the output `[ { token: [class Service1], required: true } ]` in the second terminal.
 
 ## Injector and providers {#injector-and-providers}
 
@@ -862,6 +891,7 @@ Remember that when DI cannot find the required provider, there are only three po
 [16]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/body-parser/src/body-parser.interceptor.ts#L15
 [17]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/examples/14-auth-jwt/src/app/modules/services/auth/bearer.guard.ts#L24
 
+[101]: ../../#installation
 [107]: /developer-guides/exports-and-imports
 [121]: /components-of-ditsmod-app/providers-collisions
 [100]: #transfer-of-providers-to-the-di-registry
