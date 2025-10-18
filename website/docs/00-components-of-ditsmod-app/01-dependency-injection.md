@@ -1,125 +1,10 @@
 ---
-sidebar_position: 0
+sidebar_position: 1
 ---
 
 # Dependency Injection
 
 В наступних прикладах даного розділу припускається, що ви клонували репозиторій [ditsmod/rest-starter][101]. Це дасть вам змогу отримати базову конфігурацію для застосунку та експериментувати у теці `src/app` даного репозиторію.
-
-## Декоратори та рефлектор {#decorators-and-reflector}
-
-Давайте почнемо з очевидного - TypeScript-синтаксис частково відрізняється від JavaScript-синтаксису, бо має можливості для статичної типізації. У JavaScript взагалі немає статичної типізації, але під час компіляції TypeScript-коду у JavaScript-код компілятор може надати додатковий JavaScript-код, який можна використовувати для отримання інформації про певний статичний тип.
-
-Давайте спробуємо проекспериментувати. Створіть файл `src/app/services.ts` у [ditsmod/rest-starter][101], та вставте у нього наступний код:
-
-```ts
-class Service1 {}
-
-class Service2 {
-  constructor(service1: Service1) {}
-}
-```
-
-Як бачите, в конструкторі `Service2` вказано статичний тип даних для параметра `service1`. Якщо запустити команду:
-
-```bash
-npm run build
-```
-
-TypeScript-код скомпілюється і попаде у файл `dist/app/services.js`. Він матиме такий вигляд:
-
-```ts
-class Service1 {
-}
-class Service2 {
-    constructor(service1) { }
-}
-```
-
-Тобто інформація про тип параметра в конструкторі `Service2` втрачена. Але якщо ми використаємо декоратор класу, TypeScript-компілятор вивантажить більше JavaScript-коду з інформацією про статичну типізацію. Наприклад, давайте скористаємось декоратором `injectable`:
-
-```ts {1,5}
-import { injectable } from '@ditsmod/core';
-
-class Service1 {}
-
-@injectable()
-class Service2 {
-  constructor(service1: Service1) {}
-}
-```
-
-Тепер за допомогою команди `npm run build` TypeScript-компілятор перетворює цей код на наступний JavaScript-код і вставляє його у `dist/app/services.js`:
-
-```js {18}
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-import { injectable } from '@ditsmod/core';
-class Service1 {
-}
-let Service2 = class Service2 {
-    constructor(service1) { }
-};
-Service2 = __decorate([
-    injectable(),
-    __metadata("design:paramtypes", [Service1])
-], Service2);
-```
-
-На щастя, проглядати теку `dist` та аналізувати скомпільований код вам навряд чи прийдеться часто, але для загального уявлення про механізм перенесення статичної типізації у JavaScript-код, інколи буває корисним глянути на нього. Найцікавіша частина знаходиться в останніх чотирьох рядках. Очевидно, що TypeScript-компілятор тепер пов'язує масив `[Service1]` із `Service2`. Цей масив - це і є інформація про статичні типи параметрів, знайдені компілятором в конструкторі `Service2`.
-
-Подальший аналіз скомпільованого коду вказує нам, що для збереження метаданих зі статичною типізацію використовується клас `Reflect`. Передбачається що цей клас імпортується з бібліотеки [reflect-metadata][13]. API даної бібліотеки потім використовується Ditsmod, щоб зчитувати вищенаведені метадані. Цим займається так званий **рефлектор**.
-
-Давайте поглянемо, які інструменти має Ditsmod для роботи з рефлектором. Ускладнимо попередній приклад, щоб побачити як можна витягувати метадані та формувати складні ланцюжки залежностей. Розглянемо три класи з наступною залежністю `Service3` -> `Service2` -> `Service1`. Вставте у `src/app/services.ts` наступний код:
-
-```ts
-import { injectable, getDependencies } from '@ditsmod/core';
-
-class Service1 {}
-
-@injectable()
-class Service2 {
-  constructor(service1: Service1) {}
-}
-
-@injectable()
-class Service3 {
-  constructor(service2: Service2) {}
-}
-
-console.log(getDependencies(Service3)); // [ { token: [class Service2], required: true } ]
-```
-
-Даний код можна скопілювати та запустити наступною командою:
-
-```bash
-tput reset && npm run build && node dist/app/services.js
-```
-
-У попередньому прикладі, функція `getDependencies()` використовує рефлектор і повертає масив безпосередніх залежностей `Service3`. Мабуть ви здогадуєтесь, що передавши `Service2` до `getDependencies()`, ми побачимо залежність від `Service1`. Таким чином можна **автоматично** скласти весь ланцюжок залежностей `Service3` -> `Service2` -> `Service1`. Такий процес в DI називають "вирішенням залежностей". І тут слово "автоматично" спеціально виділено жирним шрифтом, бо це дуже важлива фіча, яку підтримує DI. Користувачі передають до DI всього лише `Service3`, і їм не треба вручну досліджувати від чого цей клас залежить, DI може вирішити залежність автоматично. До речі, користувачам навряд чи прийдеться користуватись функцією `getDependencies()`, за виключенням окремих рідких випадків.
-
-Строго кажучи, механізм збереження та отримання метаданих від рефлектора за допомогою декораторів - це ще не Dependecy Injection. Але Dependecy Injection широко використовує декоратори та рефлектор у своїй роботі, тому інколи в цій документації може говоритись, що DI отримує інформацію про залежності класу, хоча насправді за це відповідає рефлектор.
-
-Щоб після кожної зміни код автоматично виконувався, можна скористатись двома терміналами. У першому терміналі можна запустити команду для компіляції коду:
-
-```bash
-npm run build -- --watch
-```
-
-А в другому терміналі можна запустити команду для запуску скопільованого коду:
-
-```bash
-node --watch dist/app/services.js
-```
-
-Тепер, якщо у `src/app/services.ts`, у функцію `getDependencies()` передати `Service1`, через пару секунд у другому терміналі ви повинні побачити вивід `[ { token: [class Service1], required: true } ]`.
 
 ## Інжектор та провайдери {#injector-and-providers}
 
@@ -886,7 +771,6 @@ service2.service1 instanceof Service1; // true
 [1]: https://uk.wikipedia.org/wiki/%D0%92%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F_%D0%B7%D0%B0%D0%BB%D0%B5%D0%B6%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9
 [11]: https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types
 [12]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/tsconfig.json#L31
-[13]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/package.json#L53
 [14]: https://github.com/tc39/proposal-decorators
 [15]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) "Singleton"
 [16]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/body-parser/src/body-parser.interceptor.ts#L15
@@ -896,7 +780,6 @@ service2.service1 instanceof Service1; // true
 [107]: /developer-guides/exports-and-imports
 [121]: /components-of-ditsmod-app/providers-collisions
 [100]: #transfer-of-providers-to-the-di-registry
-[101]: #hierarchy-and-encapsulation-of-injectors
 [102]: #injector-and-providers
 [103]: /components-of-ditsmod-app/controllers-and-services/#what-is-a-controller
 [104]: /components-of-ditsmod-app/extensions/#group-of-extensions
