@@ -10,7 +10,7 @@ In the following examples of this section, it is assumed that you have cloned th
 
 Let's start with the obvious — TypeScript syntax is slightly different from JavaScript syntax because it has static typing capabilities. JavaScript does not have static typing at all, but during the compilation of TypeScript code into JavaScript, the compiler can provide additional JavaScript code that can be used to obtain information about certain static types.
 
-Let's experiment a bit. Create a file `src/app/services.ts` and insert the following code:
+Let's experiment a bit. Create a file `src/app/services.ts` in [ditsmod/rest-starter][101] and insert the following code:
 
 ```ts
 class Service1 {}
@@ -26,7 +26,7 @@ As you can see, in the constructor of `Service2`, a static data type is specifie
 npm run build
 ```
 
-This code will be compiled and placed into the `dist/app/services.js` file. It will look like this:
+TypeScript code will be compiled and placed into the `dist/app/services.js` file. It will look like this:
 
 ```ts
 class Service1 {
@@ -49,7 +49,7 @@ class Service2 {
 }
 ```
 
-Now, using the command `npm run build`, the TypeScript compiler transforms this code into the following JavaScript code:
+Now, using the `npm run build` command, the TypeScript compiler converts this code into the following JavaScript code and inserts it into `dist/app/services.js`:
 
 ```js {18}
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {

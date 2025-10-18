@@ -107,7 +107,7 @@ curl -i localhost:3000/api/hello
 
 Або просто перейшовши у браузері на [http://localhost:3000/api/hello](http://localhost:3000/api/hello).
 
-По дефолту, застосунок працює з деталізацією log level на рівні `info`. Змінити його можна у файлі `src/app/app.module.ts` або `apps/backend/src/app/app.module.ts` (у монорепозиторію).
+По дефолту, застосунок працює з деталізацією log level на рівні `info`. Змінити його можна у файлі `src/app/app.module.ts` (або `apps/backend/src/app/app.module.ts` у монорепозиторію).
 
 Завдяки використанню у [ditsmod/rest-starter][2] так званих [Project References][16] і режиму збірки `tsc -b`, навіть дуже великі проекти компілюються дуже швидко.
 

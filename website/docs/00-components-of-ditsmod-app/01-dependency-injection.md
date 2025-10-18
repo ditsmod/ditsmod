@@ -10,7 +10,7 @@ sidebar_position: 1
 
 Давайте почнемо з очевидного - TypeScript-синтаксис частково відрізняється від JavaScript-синтаксису, бо має можливості для статичної типізації. У JavaScript взагалі немає статичної типізації, але під час компіляції TypeScript-коду у JavaScript-код компілятор може надати додатковий JavaScript-код, який можна використовувати для отримання інформації про певний статичний тип.
 
-Давайте спробуємо проекспериментувати. Створіть файл `src/app/services.ts`, та вставте у нього наступний код:
+Давайте спробуємо проекспериментувати. Створіть файл `src/app/services.ts` у [ditsmod/rest-starter][101], та вставте у нього наступний код:
 
 ```ts
 class Service1 {}
@@ -26,7 +26,7 @@ class Service2 {
 npm run build
 ```
 
-Цей код скомпілюється і попаде у файл `dist/app/services.js`. Він матиме такий вигляд:
+TypeScript-код скомпілюється і попаде у файл `dist/app/services.js`. Він матиме такий вигляд:
 
 ```ts
 class Service1 {
@@ -49,7 +49,7 @@ class Service2 {
 }
 ```
 
-Тепер за допомогою команди `npm run build` TypeScript-компілятор перетворює цей код на наступний JavaScript-код:
+Тепер за допомогою команди `npm run build` TypeScript-компілятор перетворює цей код на наступний JavaScript-код і вставляє його у `dist/app/services.js`:
 
 ```js {18}
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {

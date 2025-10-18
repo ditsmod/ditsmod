@@ -107,7 +107,7 @@ curl -i localhost:3000/api/hello
 
 Or simply by going to [http://localhost:3000/api/hello](http://localhost:3000/api/hello) in your browser.
 
-By default, the application works with `info` log level. You can change it in the file `src/app/app.module.ts` or `apps/backend/src/app/app.module.ts` (in the monorepository).
+By default, the application works with `info` log level. You can change it in the file `src/app/app.module.ts` (or `apps/backend/src/app/app.module.ts` in the monorepository).
 
 Thanks to [ditsmod/rest-starter][2]'s use of the so-called [Project References][16] and `tsc -b` build mode, even very large projects compile very quickly.
 
