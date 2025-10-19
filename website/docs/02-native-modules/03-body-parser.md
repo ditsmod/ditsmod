@@ -33,15 +33,15 @@ npm i @ditsmod/body-parser
 Щоб глобально підключити `@ditsmod/body-parser`, потрібно імпортувати та експортувати `BodyParserModule` в кореневому модулі:
 
 ```ts
-import { rootModule } from '@ditsmod/core';
+import { restRootModule } from '@ditsmod/rest';
 import { BodyParserModule } from '@ditsmod/body-parser';
 
-@rootModule({
+@restRootModule({
   imports: [
     BodyParserModule,
     // ...
   ],
-  exports: [BodyParserModule]
+  exports: [BodyParserModule],
 })
 export class AppModule {}
 ```
@@ -49,7 +49,7 @@ export class AppModule {}
 В такому разі будуть працювати дефолтні налаштування. Якщо ж вам потрібно змінити деякі опції, можете це зробити наступним чином:
 
 ```ts {4-8,12,15}
-import { rootModule } from '@ditsmod/core';
+import { restRootModule } from '@ditsmod/rest';
 import { BodyParserModule } from '@ditsmod/body-parser';
 
 const moduleWithBodyParserConfig = BodyParserModule.withParams({
@@ -58,7 +58,7 @@ const moduleWithBodyParserConfig = BodyParserModule.withParams({
   urlencodedOptions: { extended: true },
 });
 
-@rootModule({
+@restRootModule({
   imports: [
     moduleWithBodyParserConfig,
     // ...
@@ -70,18 +70,19 @@ export class AppModule {}
 
 Ще один варіант передачі конфігурації:
 
-```ts {6,9-11}
-import { rootModule, Providers } from '@ditsmod/core';
+```ts {10}
+import { restRootModule } from '@ditsmod/rest';
 import { BodyParserModule, BodyParserConfig } from '@ditsmod/body-parser';
 
-@rootModule({
+@restRootModule({
   imports: [
     BodyParserModule,
     // ...
   ],
-  providersPerApp: new Providers()
-    .useValue<BodyParserConfig>(BodyParserConfig,  { acceptMethods: ['POST'] }),
-  exports: [BodyParserModule]
+  providersPerApp: [
+    { token: BodyParserConfig, useValue: { acceptMethods: ['POST'] } }
+  ],
+  exports: [BodyParserModule],
 })
 export class AppModule {}
 ```
@@ -93,8 +94,8 @@ export class AppModule {}
 1. Якщо контролер працює в режимі injector-scoped, результат можна отримати за допомогою токена `HTTP_BODY`:
 
   ```ts {12}
-  import { controller, Res, inject } from '@ditsmod/core';
-  import { route } from '@ditsmod/rest';
+  import { inject } from '@ditsmod/core';
+  import { controller, Res, route } from '@ditsmod/rest';
   import { HTTP_BODY } from '@ditsmod/body-parser';
 
   interface Body {
@@ -111,9 +112,8 @@ export class AppModule {}
   ```
 2. Якщо контролер працює в режимі context-scoped, результат можна отримати з контексту:
 
-  ```ts {7}
-  import { controller, RequestContext } from '@ditsmod/core';
-  import { route } from '@ditsmod/rest';
+  ```ts {6}
+  import { controller, RequestContext, route } from '@ditsmod/rest';
 
   @controller({ scope: 'ctx' })
   export class SomeController {
@@ -126,16 +126,14 @@ export class AppModule {}
 
 ## Вимкнення парсера тіла запиту {#disabling-the-request-body-parser}
 
-Звичайно ж, перше, що можна зробити щоб перестав працювати парсер тіла запиту, це  - не імпортувати у ваш модуль `@ditsmod/body-parser` глобально чи локально. Також ви можете вимкнути парсер для конкретного контролера наступним чином:
+Звичайно ж, перше, що можна зробити щоб перестав працювати парсер тіла запиту, це - не імпортувати у ваш модуль `@ditsmod/body-parser` глобально чи локально. Також ви можете вимкнути парсер для конкретного контролера наступним чином:
 
-```ts {6}
-import { controller } from '@ditsmod/core';
+```ts {5}
+import { controller } from '@ditsmod/rest';
 import { BodyParserConfig } from '@ditsmod/body-parser';
 
 @controller({
-  providersPerRou: [
-    { token: BodyParserConfig, useValue: { acceptMethods: [] } }
-  ],
+  providersPerRou: [{ token: BodyParserConfig, useValue: { acceptMethods: [] } }],
 })
 export class SomeController {
   // ...
@@ -150,10 +148,9 @@ export class SomeController {
 
 1. Якщо контролер працює в режимі injector-scope, через DI необхідно запитати `MulterParser`, після чого можете користуватись його методами:
 
-  ```ts {10}
+  ```ts {9}
   import { createWriteStream } from 'node:fs';
-  import { controller, Res } from '@ditsmod/core';
-  import { route } from '@ditsmod/rest';
+  import { controller, Res, route } from '@ditsmod/rest';
   import { MulterParsedForm, MulterParser } from '@ditsmod/body-parser';
 
   @controller()
@@ -183,10 +180,9 @@ export class SomeController {
   ```
 2. Якщо контролер працює в режимі context-scoped, через DI необхідно запитати `MulterCtxParser`, після чого можете користуватись його методами:
 
-  ```ts {8,12}
+  ```ts {7,11}
   import { createWriteStream } from 'node:fs';
-  import { controller, RequestContext } from '@ditsmod/core';
-  import { route } from '@ditsmod/rest';
+  import { controller, RequestContext, route } from '@ditsmod/rest';
   import { MulterParsedForm, MulterCtxParser } from '@ditsmod/body-parser';
 
   @controller({ scope: 'ctx' })
@@ -224,9 +220,10 @@ export class SomeController {
 3. `files` міститиме масив об'єктів, кожен елемент якого має тип, указаний в другому пункті.
 4. `groups` міститиме об'єкт, де кожен ключ відповідає назві поля у HTML-формі, а вміст кожної властивості - це масив файлів, що має тип, указаний у третьому пункті.
 
-За один парсинг може бути заповнено максимум дві властивості із чотирьох - це властивість `textFields` і одна із властивостей: `file`, `files` або `groups`. Яка із властивостей буде заповнюватись, залежить від використаного методу парсера. 
+За один парсинг може бути заповнено максимум дві властивості із чотирьох - це властивість `textFields` і одна із властивостей: `file`, `files` або `groups`. Яка із властивостей буде заповнюватись, залежить від використаного методу парсера.
 
 - метод `single` приймає єдиний файл з указаного поля форми; зверніть увагу на назви властивостей під час деструкції об'єкта (інші властивості, в даному випадку, є незаповненими):
+
   ```ts
   const { textFields, file } = await parse.single('fieldName');
   // OR
@@ -240,6 +237,7 @@ export class SomeController {
   const { textFields, files } = await parse.array(ctx, 'fieldName', 5); // For context-scoped.
   ```
 - метод `any` повертає такий самий тип даних, що і метод `array`, але він приймає файли з будь-якими назвами полів форми, а також він не має параметрів для обмеження максимальної кількості файлів (вона обмежується лише загальною конфігурацією, про яку буде йти мова згодом):
+
   ```ts
   const { textFields, files } = await parse.any();
   // OR
@@ -293,7 +291,7 @@ const multerOptions: MulterExtendedOptions = { limits: { files: 20 }, errorLogLe
     BodyParserModule
   ],
   providersPerMod: [
-    { token: MulterExtendedOptions, useValue: multerOptions },
+    { token: MulterExtendedOptions, useValue: multerOptions }
   ],
 })
 export class SomeModule {}

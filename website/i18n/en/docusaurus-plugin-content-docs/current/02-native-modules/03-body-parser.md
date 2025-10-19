@@ -33,10 +33,10 @@ npm i @ditsmod/body-parser
 To enable `@ditsmod/body-parser` globally, you need to import and export `BodyParserModule` in the root module:
 
 ```ts
-import { rootModule } from '@ditsmod/core';
+import { restRootModule } from '@ditsmod/rest';
 import { BodyParserModule } from '@ditsmod/body-parser';
 
-@rootModule({
+@restRootModule({
   imports: [
     BodyParserModule,
     // ...
@@ -49,7 +49,7 @@ export class AppModule {}
 In this case, the default settings will work. If you need to change some options, you can do it as follows:
 
 ```ts {4-8,12,15}
-import { rootModule } from '@ditsmod/core';
+import { restRootModule } from '@ditsmod/rest';
 import { BodyParserModule } from '@ditsmod/body-parser';
 
 const moduleWithBodyParserConfig = BodyParserModule.withParams({
@@ -58,7 +58,7 @@ const moduleWithBodyParserConfig = BodyParserModule.withParams({
   urlencodedOptions: { extended: true },
 });
 
-@rootModule({
+@restRootModule({
   imports: [
     moduleWithBodyParserConfig,
     // ...
@@ -70,18 +70,19 @@ export class AppModule {}
 
 Another option for passing the configuration:
 
-```ts {6,9-11}
-import { rootModule, Providers } from '@ditsmod/core';
+```ts {10}
+import { restRootModule } from '@ditsmod/rest';
 import { BodyParserModule, BodyParserConfig } from '@ditsmod/body-parser';
 
-@rootModule({
+@restRootModule({
   imports: [
     BodyParserModule,
     // ...
   ],
-  providersPerApp: new Providers()
-    .useValue<BodyParserConfig>(BodyParserConfig,  { acceptMethods: ['POST'] }),
-  exports: [BodyParserModule]
+  providersPerApp: [
+    { token: BodyParserConfig, useValue: { acceptMethods: ['POST'] } }
+  ],
+  exports: [BodyParserModule],
 })
 export class AppModule {}
 ```
@@ -93,8 +94,8 @@ Depending on whether the controller works [in context-scoped or injector-scoped 
 1. If the controller works in injector-scoped mode, the result can be obtained using the `HTTP_BODY` token:
 
   ```ts {12}
-  import { controller, Res, inject } from '@ditsmod/core';
-  import { route } from '@ditsmod/rest';
+  import { inject } from '@ditsmod/core';
+  import { controller, Res, route } from '@ditsmod/rest';
   import { HTTP_BODY } from '@ditsmod/body-parser';
 
   interface Body {
@@ -111,9 +112,8 @@ Depending on whether the controller works [in context-scoped or injector-scoped 
   ```
 2. If the controller is in context-scoped mode, the result can be obtained from the context:
 
-  ```ts {7}
-  import { controller, RequestContext } from '@ditsmod/core';
-  import { route } from '@ditsmod/rest';
+  ```ts {6}
+  import { controller, RequestContext, route } from '@ditsmod/rest';
 
   @controller({ scope: 'ctx' })
   export class SomeController {
@@ -128,14 +128,12 @@ Depending on whether the controller works [in context-scoped or injector-scoped 
 
 Of course, the first thing you can do to disable the request body parser is to avoid importing `@ditsmod/body-parser` into your module, either globally or locally. Additionally, you can disable the parser for a specific controller as follows:
 
-```ts {6}
-import { controller } from '@ditsmod/core';
+```ts {5}
+import { controller } from '@ditsmod/rest';
 import { BodyParserConfig } from '@ditsmod/body-parser';
 
 @controller({
-  providersPerRou: [
-    { token: BodyParserConfig, useValue: { acceptMethods: [] } }
-  ],
+  providersPerRou: [{ token: BodyParserConfig, useValue: { acceptMethods: [] } }],
 })
 export class SomeController {
   // ...
@@ -150,10 +148,9 @@ Depending on whether the controller works [in injector-scope or context-scope mo
 
 1. If the controller is running in injector-scope mode, `MulterParser` must be requested via DI, after which you can use its methods:
 
-  ```ts {10}
+  ```ts {9}
   import { createWriteStream } from 'node:fs';
-  import { controller, Res } from '@ditsmod/core';
-  import { route } from '@ditsmod/rest';
+  import { controller, Res, route } from '@ditsmod/rest';
   import { MulterParsedForm, MulterParser } from '@ditsmod/body-parser';
 
   @controller()
@@ -183,10 +180,9 @@ Depending on whether the controller works [in injector-scope or context-scope mo
   ```
 2. If the controller works in context-scoped mode, `MulterCtxParser` must be requested via DI, after which you can use its methods:
 
-  ```ts {8,12}
+  ```ts {7,11}
   import { createWriteStream } from 'node:fs';
-  import { controller, RequestContext } from '@ditsmod/core';
-  import { route } from '@ditsmod/rest';
+  import { controller, RequestContext, route } from '@ditsmod/rest';
   import { MulterParsedForm, MulterCtxParser } from '@ditsmod/body-parser';
 
   @controller({ scope: 'ctx' })
