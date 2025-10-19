@@ -223,6 +223,7 @@ The `parsedForm` object returned by the parser methods will have four properties
 A maximum of two properties from these four can be filled in one parsing: the `textFields` property and one of the properties: `file`, `files`, or `groups`. Which property will be filled depends on the parser method used.
 
 - The `single` method accepts a single file from the specified form field; note the property names during object destructuring (other properties will be unfilled in this case):
+
   ```ts
   const { textFields, file } = await parse.single('fieldName');
   // OR
@@ -236,6 +237,7 @@ A maximum of two properties from these four can be filled in one parsing: the `t
   const { textFields, files } = await parse.array(ctx, 'fieldName', 5); // For context-scoped.
   ```
 - The `any` method returns the same type of data as the `array` method, but it accepts files with any form field names and does not have parameters to limit the maximum number of files (this limit is determined by the general configuration, which will be discussed later):
+
   ```ts
   const { textFields, files } = await parse.any();
   // OR
