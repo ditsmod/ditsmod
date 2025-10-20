@@ -231,10 +231,10 @@ export class OtherModule {}
 Якщо модуль імпортується без властивості `path`, Ditsmod буде імпортувати лише його [провайдери][3] та [розширення][9]:
 
 ```ts {5}
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 import { SomeModule } from './some.module.js';
 
-@featureModule({
+@restModule({
   imports: [SomeModule]
 })
 export class OtherModule {}
@@ -277,20 +277,18 @@ export class SecondService {
 
 Щоб можна було користуватись новоствореними класами сервісів, їх потрібно передати у метадані **поточного** модуля чи контролера. Передати сервіси у метадані модуля можна наступним чином:
 
-```ts {9-10}
-import { featureModule } from '@ditsmod/core';
-import { initRest } from '@ditsmod/rest';
+```ts {8-9}
+import { restModule } from '@ditsmod/rest';
 
 import { FirstService } from './first.service.js';
 import { SecondService } from './second.service.js';
 
-@initRest({
+@restModule({
   providersPerReq: [
     FirstService,
     SecondService
   ],
 })
-@featureModule()
 export class SomeModule {}
 ```
 

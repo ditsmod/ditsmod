@@ -9,24 +9,24 @@ Provider collisions occur when different providers that offer the same service a
 Let's take a closer look at a specific example. Imagine you have `Module3`, where you import `Module2` and `Module1`. You made these imports because you need `Service2` and `Service1` from these modules, respectively. You review the results of these services operations, but for some reason, `Service1` does not behave as expected. You start debugging and discover that `Service1` is exported from both `Module2` and `Module1`. You expected `Service1` to be exported only from `Module1`, but in reality, the version exported by `Module2` is being used:
 
 ```ts {8,14,19}
-import { featureModule, rootModule } from '@ditsmod/core';
+import { restModule, restRootModule } from '@ditsmod/rest';
 
 class Service1 {}
 class Service2 {}
 
-@featureModule({
+@restModule({
   providersPerMod: [Service1],
   exports: [Service1]
 })
 class Module1 {}
 
-@featureModule({
+@restModule({
   providersPerMod: [{ token: Service1, useValue: 'some value' }, Service2],
   exports: [Service1, Service2],
 })
 class Module2 {}
 
-@rootModule({
+@restRootModule({
   imports: [Module1, Module2],
 })
 class Module3 {}
@@ -49,24 +49,24 @@ And because both of these modules are imported into `Module3`, a "provider colli
 If `Module3` is declared in your application (it is not imported from `node_modules`), the collision is resolved by adding to `resolvedCollisionsPer*` an array of two elements, with the provider's token in the first place and the module from which the provider needs to be taken in the second place:
 
 ```ts {20}
-import { featureModule, rootModule } from '@ditsmod/core';
+import { restModule, restRootModule } from '@ditsmod/rest';
 
 class Service1 {}
 class Service2 {}
 
-@featureModule({
+@restModule({
   providersPerMod: [Service1],
   exports: [Service1]
 })
 class Module1 {}
 
-@featureModule({
+@restModule({
   providersPerMod: [{ token: Service1, useValue: 'some value' }, Service2],
   exports: [Service1, Service2],
 })
 class Module2 {}
 
-@rootModule({
+@restRootModule({
   imports: [Module1, Module2],
   resolvedCollisionsPerMod: [ [Service1, Module1] ]
 })

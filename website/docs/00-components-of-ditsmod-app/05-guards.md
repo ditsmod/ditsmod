@@ -16,10 +16,8 @@ interface CanActivate {
 
 Наприклад, це можна зробити так:
 
-```ts {10-12}
-import { guard, RequestContext } from '@ditsmod/core';
-import { CanActivate } from '@ditsmod/rest';
-
+```ts {8-10}
+import { guard, RequestContext, CanActivate } from '@ditsmod/rest';
 import { AuthService } from './auth.service.js';
 
 @guard()
@@ -44,12 +42,11 @@ export class AuthGuard implements CanActivate {
 
 Ґарди можна передавати у метаданих модуля чи контролера:
 
-```ts {6}
-import { featureModule } from '@ditsmod/core';
-
+```ts {5}
+import { restModule } from '@ditsmod/rest';
 import { AuthGuard } from 'auth.guard';
 
-@featureModule({
+@restModule({
   providersPerReq: [AuthGuard],
 })
 export class SomeModule {}
@@ -61,9 +58,8 @@ export class SomeModule {}
 
 Ґарди передаються до контролерів в масиві у третьому параметрі декоратора `route`:
 
-```ts {8}
-import { controller, Res } from '@ditsmod/core';
-import { route } from '@ditsmod/rest';
+```ts {7}
+import { controller, Res, route } from '@ditsmod/rest';
 import { AuthGuard } from './auth.guard.js';
 
 @controller()
@@ -81,9 +77,8 @@ export class SomeController {
 
 Давайте розглянемо такий приклад:
 
-```ts {9}
-import { controller, Res } from '@ditsmod/core';
-import { route } from '@ditsmod/rest';
+```ts {8}
+import { controller, Res, route } from '@ditsmod/rest';
 
 import { PermissionsGuard } from './permissions.guard.js';
 import { Permission } from './permission.js';
@@ -100,8 +95,8 @@ export class SomeController {
 Як бачите, на місці третього параметра у `route` передається масив в масиві, де на першому місці вказано `PermissionsGuard`, а далі йдуть аргументи для нього. В такому разі `PermissionsGuard` отримає ці аргументи у своєму методі `canActivate()`:
 
 ```ts {11}
-import { injectable, Status, RequestContext } from '@ditsmod/core';
-import { CanActivate } from '@ditsmod/rest';
+import { injectable, Status } from '@ditsmod/core';
+import { CanActivate, RequestContext } from '@ditsmod/rest';
 
 import { AuthService } from './auth.service.js';
 import { Permission } from './permission.js';
@@ -114,7 +109,7 @@ export class PermissionsGuard implements CanActivate {
     if (await this.authService.hasPermissions(params)) {
       return true;
     } else {
-      return Status.FORBIDDEN;
+      return new Response(null, { status: Status.FORBIDDEN });
     }
   }
 }
@@ -125,7 +120,7 @@ export class PermissionsGuard implements CanActivate {
 Оскільки ґарди з параметрами повинні передаватись у вигляді масива в масиві, це ускладнює читабельність та погіршує безпечність типів. Для таких випадків краще створити хелпер за допомогою фабрики `createHelperForGuardWithParams()`:
 
 ```ts {5}
-import { createHelperForGuardWithParams } from '@ditsmod/core';
+import { createHelperForGuardWithParams } from '@ditsmod/rest';
 import { Permission } from './types.js';
 import { PermissionsGuard } from './permissions-guard.js';
 
@@ -136,9 +131,8 @@ export const requirePermissions = createHelperForGuardWithParams<Permission>(Per
 
 Тепер `requirePermissions()` можна використовувати для створення роутів:
 
-```ts {9}
-import { controller, Res } from '@ditsmod/core';
-import { route } from '@ditsmod/rest';
+```ts {8}
+import { controller, Res, route } from '@ditsmod/rest';
 
 import { requirePermissions } from '../auth/guards-utils.js';
 import { Permission } from '../auth/types.js';
@@ -157,20 +151,17 @@ export class SomeController {
 Можна також централізовано підключати ґарди на рівні модуля:
 
 ```ts {10}
-import { featureModule, ModuleWithParams } from '@ditsmod/core';
-import { initRest } from '@ditsmod/rest';
+import { restModule } from '@ditsmod/rest';
 
 import { OtherModule } from '../other/other.module.js';
 import { AuthModule } from '../auth/auth.module.js';
 import { AuthGuard } from '../auth/auth.guard.js';
 
-@initRest({
-  importsWithParams: [
-    { modRefId: OtherModule, path: '', guards: [AuthGuard] },
+@restModule({
+  imports: [
+    AuthModule, 
+    { module: OtherModule, path: '', guards: [AuthGuard] },
   ],
-})
-@featureModule({
-  imports: [AuthModule],
 })
 export class SomeModule {}
 ```

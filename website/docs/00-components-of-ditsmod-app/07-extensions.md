@@ -108,12 +108,12 @@ class ExtensionConfig {
 Властивість `beforeExtensions` використовується, коли вашу групу розширень потрібно запускати перед іншою групою розширень:
 
 ```ts
-import { featureModule, ROUTES_EXTENSIONS } from '@ditsmod/core';
-import { MyExtension, MY_EXTENSIONS } from './my.extension.js';
+import { restModule, RoutesExtension } from '@ditsmod/rest';
+import { MyExtension } from './my.extension.js';
 
-@featureModule({
+@restModule({
   extensions: [
-    { extension: MyExtension, group: MY_EXTENSIONS, beforeExtensions: [ROUTES_EXTENSIONS], export: true }
+    { extension: MyExtension, beforeExtensions: [RoutesExtension], export: true }
   ],
 })
 export class SomeModule {}

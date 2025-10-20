@@ -30,11 +30,12 @@ export class AppModule {}
 
 Як бачите, тут `LoggerConfig` передається на рівні застосунку. Якщо вам потрібно щоб у певному модулі діяв інший рівень логування, разом з конфігом для логування необхідно передавати й провайдер з токеном `Logger`:
 
-```ts {6-8}
-import { Logger, featureModule, Providers } from '@ditsmod/core';
+```ts {7-9}
+import { Logger, Providers } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 import { PatchLogger } from './patch-logger.js';
 // ...
-@featureModule({
+@restModule({
   // ...
   providersPerMod: new Providers()
     .useFactory(Logger, [PatchLogger, PatchLogger.prototype.patchLogger])

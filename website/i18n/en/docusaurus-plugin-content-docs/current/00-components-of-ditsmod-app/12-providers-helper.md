@@ -6,10 +6,11 @@ sidebar_position: 12
 
 This class simplifies the addition of providers to DI while simultaneously controlling their types. Since this class implements the so-called [Iteration protocols][1], it facilitates the conversion of itself into an array (note the spread operator):
 
-```ts {8}
-import { featureModule, Providers } from '@ditsmod/core';
+```ts {9}
+import { Providers } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 // ...
-@featureModule({
+@restModule({
   // ...
   providersPerRou: [
     Provider1,
@@ -25,9 +26,10 @@ export class SomeModule {}
 Starting from v2.55, Ditsmod allows passing an instance of `Providers` directly into the `providersPer*` properties of the module or controller metadata:
 
 ```ts
-import { featureModule, Providers } from '@ditsmod/core';
+import { Providers } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 // ...
-@featureModule({
+@restModule({
   // ...
   providersPerRou: new Providers()
     .passThrough(Provider1)
@@ -42,10 +44,11 @@ The `providers.passThrough()` method allows providers to be passed without type 
 
 In addition, `Providers` has a special method `$if()`, which allows providers to be passed only if it receives a truthy value:
 
-```ts {7}
-import { featureModule, Providers } from '@ditsmod/core';
+```ts {8}
+import { Providers } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 // ...
-@featureModule({
+@restModule({
   // ...
   providersPerRou: new Providers()
     .passThrough(Provider1)

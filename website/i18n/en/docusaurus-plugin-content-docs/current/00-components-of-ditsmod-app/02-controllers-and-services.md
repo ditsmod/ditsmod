@@ -231,10 +231,10 @@ export class OtherModule {}
 If the module is imported without the `path` property, Ditsmod will only import [providers][3] and [extensions][9] from it:
 
 ```ts {5}
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 import { SomeModule } from './some.module.js';
 
-@featureModule({
+@restModule({
   imports: [SomeModule]
 })
 export class OtherModule {}
@@ -277,20 +277,18 @@ As you can see, the rules for getting a class instance in the constructor are th
 
 To be able to use the newly created service classes, they must be passed in the metadata of the **current** module or controller. You can pass the services in the module metadata as follows:
 
-```ts {9-10}
-import { featureModule } from '@ditsmod/core';
-import { initRest } from '@ditsmod/rest';
+```ts {8-9}
+import { restModule } from '@ditsmod/rest';
 
 import { FirstService } from './first.service.js';
 import { SecondService } from './second.service.js';
 
-@initRest({
+@restModule({
   providersPerReq: [
     FirstService,
     SecondService
   ],
 })
-@featureModule()
 export class SomeModule {}
 ```
 

@@ -346,9 +346,12 @@ export class SomeController {
 Теги та параметри можна передавати на рівні модуля:
 
 ```ts
-import { OasOptions } from '@ditsmod/openapi';
+import { OasOptions, Parameters } from '@ditsmod/openapi';
+import { restModule } from '@ditsmod/rest';
 
-@featureModule({
+import { Params } from './params.js';
+
+@restModule({
   // ...
   extensionsMeta: {
     oasOptions: {

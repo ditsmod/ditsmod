@@ -81,10 +81,10 @@ As you can see, the `intercept()` method has two parameters: the first is the ha
 The interceptor for injector-scoped mode is passed to the injector at the request level using [multi-providers][107] with the `HTTP_INTERCEPTORS` token:
 
 ```ts
-import { HTTP_INTERCEPTORS, featureModule } from '@ditsmod/core';
+import { HTTP_INTERCEPTORS, restModule } from '@ditsmod/rest';
 import { MyHttpInterceptor } from './my-http-interceptor.js';
 
-@featureModule({
+@restModule({
   // ...
   providersPerReq: [{ token: HTTP_INTERCEPTORS, useClass: MyHttpInterceptor, multi: true }],
 })
@@ -94,12 +94,12 @@ export class SomeModule {}
 Passing an interceptor for context-scoped mode happens in exactly the same way, but at the route, module, or application level:
 
 ```ts
-import { HTTP_INTERCEPTORS, featureModule } from '@ditsmod/core';
+import { HTTP_INTERCEPTORS, restModule } from '@ditsmod/rest';
 import { MyHttpInterceptor } from './my-http-interceptor.js';
 
-@featureModule({
+@restModule({
   // ...
-  providersPerApp: [{ token: HTTP_INTERCEPTORS, useClass: MyHttpInterceptor, multi: true }],
+  providersPerRou: [{ token: HTTP_INTERCEPTORS, useClass: MyHttpInterceptor, multi: true }],
 })
 export class SomeModule {}
 ```

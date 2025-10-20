@@ -9,24 +9,24 @@ sidebar_position: 9
 Давайте розбиремо конкретний приклад. Уявіть, що у вас є `Module3`, куди ви імпортували `Module2` та `Module1`. Ви зробили такий імпорт, бо вам потрібні відповідно `Service2` та `Service1` із цих модулів. Ви проглядаєте результат роботи даних сервісів, але по якійсь причині `Service1` працює не так як очікується. Ви починаєте дебажити і виявляється, що `Service1` експортується з обох модулів: `Module2` та `Module1`. Ви очікували, що `Service1` експортуватиметься лише з `Module1`, але насправді спрацювала та версія, що експортується з `Module2`:
 
 ```ts {8,14,19}
-import { featureModule, rootModule } from '@ditsmod/core';
+import { restModule, restRootModule } from '@ditsmod/rest';
 
 class Service1 {}
 class Service2 {}
 
-@featureModule({
+@restModule({
   providersPerMod: [Service1],
   exports: [Service1]
 })
 class Module1 {}
 
-@featureModule({
+@restModule({
   providersPerMod: [{ token: Service1, useValue: 'some value' }, Service2],
   exports: [Service1, Service2],
 })
 class Module2 {}
 
-@rootModule({
+@restRootModule({
   imports: [Module1, Module2],
 })
 class Module3 {}
@@ -49,24 +49,24 @@ class Module3 {}
 Якщо `Module3` оголошено у вашому застосунку (тобто не імпортовано з `node_modules`), колізія вирішується шляхом додавання до `resolvedCollisionsPer*` масиву з двох елементів, де на першому місці йде токен провайдера, а на другому - модуль, з якого потрібно брати відповідний провайдер:
 
 ```ts {20}
-import { featureModule, rootModule } from '@ditsmod/core';
+import { restModule, restRootModule } from '@ditsmod/rest';
 
 class Service1 {}
 class Service2 {}
 
-@featureModule({
+@restModule({
   providersPerMod: [Service1],
   exports: [Service1]
 })
 class Module1 {}
 
-@featureModule({
+@restModule({
   providersPerMod: [{ token: Service1, useValue: 'some value' }, Service2],
   exports: [Service1, Service2],
 })
 class Module2 {}
 
-@rootModule({
+@restRootModule({
   imports: [Module1, Module2],
   resolvedCollisionsPerMod: [ [Service1, Module1] ]
 })

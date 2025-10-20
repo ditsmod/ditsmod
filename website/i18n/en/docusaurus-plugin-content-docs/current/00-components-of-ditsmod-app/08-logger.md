@@ -30,11 +30,12 @@ export class AppModule {}
 
 As you can see, `LoggerConfig` is provided at the application level. If you need a different logging level in a specific module, you should provide both the logging configuration and a provider with the `Logger` token:
 
-```ts {6-8}
-import { Logger, featureModule, Providers } from '@ditsmod/core';
+```ts {7-9}
+import { Logger, Providers } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 import { PatchLogger } from './patch-logger.js';
 // ...
-@featureModule({
+@restModule({
   // ...
   providersPerMod: new Providers()
     .useFactory(Logger, [PatchLogger, PatchLogger.prototype.patchLogger])

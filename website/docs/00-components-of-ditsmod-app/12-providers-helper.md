@@ -6,10 +6,11 @@ sidebar_position: 12
 
 Даний клас спрощує додавання провайдерів до DI з одночасним контролем їх типів. Оскільки даний клас впроваджує так званий [Iteration protocols][1], це спрощує перетворення його на масив (зверніть увагу на трикрапку):
 
-```ts {8}
-import { featureModule, Providers } from '@ditsmod/core';
+```ts {9}
+import { Providers } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 // ...
-@featureModule({
+@restModule({
   // ...
   providersPerRou: [
     Provider1,
@@ -25,9 +26,10 @@ export class SomeModule {}
 Починаючи з v2.55, Ditsmod дозволяє передавати інстанс `Providers` безпосередньо у властивості `providersPer*` метаданих модуля чи контролера:
 
 ```ts
-import { featureModule, Providers } from '@ditsmod/core';
+import { Providers } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 // ...
-@featureModule({
+@restModule({
   // ...
   providersPerRou: new Providers()
     .passThrough(Provider1)
@@ -42,10 +44,11 @@ export class SomeModule {}
 
 Окрім цього, `Providers` має спеціальний метод `$if()`, що дозволяє передавати провайдери лише у випадку, якщо він отримує правдиве значення:
 
-```ts {7}
-import { featureModule, Providers } from '@ditsmod/core';
+```ts {8}
+import { Providers } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 // ...
-@featureModule({
+@restModule({
   // ...
   providersPerRou: new Providers()
     .passThrough(Provider1)

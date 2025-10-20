@@ -280,12 +280,12 @@ export class MulterExtendedOptions extends MulterOptions {
 Рекомендуємо передавати провайдер з цим токеном на рівні модуля, щоб він діяв як для `MulterParser` так і для `MulterCtxParser`:
 
 ```ts {4,12}
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 import { BodyParserModule, MulterExtendedOptions } from '@ditsmod/body-parser';
 
 const multerOptions: MulterExtendedOptions = { limits: { files: 20 }, errorLogLevel: 'debug' };
 
-@featureModule({
+@restModule({
   imports: [
     // ...
     BodyParserModule

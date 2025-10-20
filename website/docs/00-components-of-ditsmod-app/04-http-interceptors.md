@@ -81,10 +81,10 @@ export class MyHttpInterceptor implements HttpInterceptor {
 Інтерсептор для режиму injector-scoped передається в інжектор на рівні запиту за допомогою [мульти-провайдерів][107] з токеном `HTTP_INTERCEPTORS`:
 
 ```ts
-import { HTTP_INTERCEPTORS, featureModule } from '@ditsmod/core';
+import { HTTP_INTERCEPTORS, restModule } from '@ditsmod/rest';
 import { MyHttpInterceptor } from './my-http-interceptor.js';
 
-@featureModule({
+@restModule({
   // ...
   providersPerReq: [{ token: HTTP_INTERCEPTORS, useClass: MyHttpInterceptor, multi: true }],
 })
@@ -94,12 +94,12 @@ export class SomeModule {}
 Передача інтерсептора для режиму context-scoped відбувається точно таким же чином, але на рівні роуту, модуля чи застосунку:
 
 ```ts
-import { HTTP_INTERCEPTORS, featureModule } from '@ditsmod/core';
+import { HTTP_INTERCEPTORS, restModule } from '@ditsmod/rest';
 import { MyHttpInterceptor } from './my-http-interceptor.js';
 
-@featureModule({
+@restModule({
   // ...
-  providersPerApp: [{ token: HTTP_INTERCEPTORS, useClass: MyHttpInterceptor, multi: true }],
+  providersPerRou: [{ token: HTTP_INTERCEPTORS, useClass: MyHttpInterceptor, multi: true }],
 })
 export class SomeModule {}
 ```

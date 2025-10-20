@@ -513,12 +513,12 @@ const locals = injector.get(HTTP_INTERCEPTORS); // [MyInterceptor]
 На одну залежність, в реєстр DI потрібно передавати один або декілька провайдерів. Частіше за все, провайдери передаються в реєстр DI через метадані модулів, хоча інколи вони передаються через метадані контролерів, або навіть напряму в [інжектори][102]. В наступному прикладі `SomeService` передається в масив `providersPerMod`:
 
 ```ts {9}
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 
 import { SomeService } from './some.service.js';
 import { SomeController } from './some.controller.js';
 
-@featureModule({
+@restModule({
   controllers: [SomeController],
   providersPerMod: [
     SomeService
@@ -530,12 +530,12 @@ export class SomeModule {}
 Після такої передачі, споживачі провайдерів можуть використовувати `SomeService` в межах `SomeModule`. Ідентичний результат буде, якщо ми цей же провайдер передамо у форматі об'єкта:
 
 ```ts {9}
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 
 import { SomeService } from './some.service.js';
 import { SomeController } from './some.controller.js';
 
-@featureModule({
+@restModule({
   controllers: [SomeController],
   providersPerMod: [
     { token: SomeService, useClass: SomeService }
@@ -582,10 +582,10 @@ export class AppModule {}
 І вже у певному модулі підмінюємо `ConfigService` на довільне значення:
 
 ```ts {6}
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 import { ConfigService } from './config.service.js';
 
-@featureModule({
+@restModule({
   providersPerMod: [
     { token: ConfigService, useValue: { propery1: 'some value' } }
   ],
@@ -598,9 +598,9 @@ export class SomeModule {}
 Різні провайдери з одним і тим самим токеном можна додавати багато разів в метадані модуля чи контролера, але DI вибере той із провайдерів, що додано останнім (виключення з цього правила є, але це стосується лише мульти-провайдерів):
 
 ```ts
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 
-@featureModule({
+@restModule({
   providersPerMod: [
     { token: 'token1', useValue: 'value1' },
     { token: 'token1', useValue: 'value2' },
@@ -615,9 +615,9 @@ export class SomeModule {}
 Окрім цього, різні провайдери з одним і тим самим токеном можна передавати одночасно на декількох різних рівнях ієрархії, але DI завжди буде вибирати найближчі інжектори (тобто, якщо значення для провайдера запитується на рівні запиту, то спочатку буде проглядатись інжектор на рівні запиту, і лише якщо там немає потрібного провайдера, DI буде підніматись до батьківських інжекторів):
 
 ```ts
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 
-@featureModule({
+@restModule({
   providersPerMod: [{ token: 'token1', useValue: 'value1' }],
   providersPerRou: [{ token: 'token1', useValue: 'value2' }],
   providersPerReq: [{ token: 'token1', useValue: 'value3' }],

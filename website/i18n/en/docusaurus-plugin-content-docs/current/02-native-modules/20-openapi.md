@@ -346,9 +346,12 @@ export class SomeController {
 Tags and parameters can be passed at the module level:
 
 ```ts
-import { OasOptions } from '@ditsmod/openapi';
+import { OasOptions, Parameters } from '@ditsmod/openapi';
+import { restModule } from '@ditsmod/rest';
 
-@featureModule({
+import { Params } from './params.js';
+
+@restModule({
   // ...
   extensionsMeta: {
     oasOptions: {

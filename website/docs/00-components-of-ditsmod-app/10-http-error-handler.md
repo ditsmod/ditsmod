@@ -125,12 +125,12 @@ export class AppModule {}
 Якщо ви додаєте такий обробник у метадані некореневого модуля, то навряд чи вам треба його експортувати. З іншого боку, якщо ви захочете написати спеціальний модуль для обробки помилок і захочете все-таки експортувати з нього `HttpErrorHandler`, то майте на увазі, що імпорт його у будь-який модуль вимагатиме вирішення [колізії провайдерів][1]. Ця особливість виникає через те, що дефолтний обробник помилок вже додано у кожен модуль вашого застосунку, і при імпортуванні модуля, зі своїм новим обробником помилок, виникає колізія двох обробників помилок. Її можна вирішити досить просто:
 
 ```ts {8}
-import { featureModule, HttpErrorHandler } from '@ditsmod/core';
+import { restModule, HttpErrorHandler } from '@ditsmod/rest';
 import { ErrorHandlerModule } from './error-handler.module.js';
 
-@featureModule({
+@restModule({
   // ...
-  import: [ErrorHandlerModule]
+  imports: [ErrorHandlerModule],
   resolvedCollisionsPerRou: [
     [HttpErrorHandler, ErrorHandlerModule],
   ],

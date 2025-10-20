@@ -280,18 +280,18 @@ export class MulterExtendedOptions extends MulterOptions {
 It is recommended to pass the provider with this token at the module level so that it applies to both `MulterParser` and `MulterCtxParser`:
 
 ```ts {4,12}
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 import { BodyParserModule, MulterExtendedOptions } from '@ditsmod/body-parser';
 
 const multerOptions: MulterExtendedOptions = { limits: { files: 20 }, errorLogLevel: 'debug' };
 
-@featureModule({
+@restModule({
   imports: [
     // ...
     BodyParserModule
   ],
   providersPerMod: [
-    { token: MulterExtendedOptions, useValue: multerOptions },
+    { token: MulterExtendedOptions, useValue: multerOptions }
   ],
 })
 export class SomeModule {}

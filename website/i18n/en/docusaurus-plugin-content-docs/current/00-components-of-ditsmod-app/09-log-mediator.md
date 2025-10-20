@@ -87,14 +87,14 @@ As mentioned at the beginning, if you plan to publish your module to other users
 To change messages from an external service, `SomeLogMediator` has been extended in `OtherModule` and the method that works in `SomeService` has been overrided. After that, `SomeLogMediator` was substituted to `OtherLogMediator`:
 
 ```ts
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 
 import { SomeModule } from '../some/some.module.js';
 import { SomeLogMediator } from '../some/some-log-mediator.js';
 import { OtherController } from './other.controller.js';
 import { OtherLogMediator } from './other-log-mediator.js';
 
-@featureModule({
+@restModule({
   imports: [SomeModule],
   controllers: [OtherController],
   providersPerMod: [{ token: SomeLogMediator, useClass: OtherLogMediator }],
