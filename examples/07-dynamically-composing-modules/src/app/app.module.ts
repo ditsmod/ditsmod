@@ -1,8 +1,5 @@
-import { rootModule } from '@ditsmod/core';
-import { initRest } from '@ditsmod/rest';
-
+import { restRootModule } from '@ditsmod/rest';
 import { FirstModule } from './modules/first.module.js';
 
-@initRest({ appends: [FirstModule] })
-@rootModule()
+@restRootModule({ appends: [FirstModule] })
 export class AppModule {}

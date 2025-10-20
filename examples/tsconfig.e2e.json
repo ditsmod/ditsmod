@@ -18,6 +18,7 @@
     { "path": "15-i18n/tsconfig.e2e.json" },
     { "path": "16-openapi-validation/tsconfig.e2e.json" },
     { "path": "17-cors/tsconfig.e2e.json" },
+    { "path": "18-trpc-server/tsconfig.e2e.json" },
     { "path": "19-session-cookie/tsconfig.e2e.json" },
     { "path": "20-authjs/tsconfig.e2e.json" },
   ]

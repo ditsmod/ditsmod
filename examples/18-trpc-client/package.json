@@ -11,7 +11,6 @@
     "start:server": "yarn build && node --watch --enable-source-maps ../18-trpc-server/dist/main.js",
     "watch": "yarn build --watch",
     "clean": "rm -r dist*",
-    "test": "yarn build-test && yarn esm-jest",
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",
     "build-test": "tsc -b tsconfig.e2e.json",
     "build": "tsc -b tsconfig.build.json"

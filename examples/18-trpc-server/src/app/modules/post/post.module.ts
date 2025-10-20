@@ -1,4 +1,3 @@
-import { featureModule } from '@ditsmod/core';
 import { initTrpcModule, ModuleWithTrpcRoutes } from '@ditsmod/trpc';
 import { RouterOf } from '@ditsmod/trpc/client';
 
@@ -13,7 +12,6 @@ export type PostRouter = RouterOf<typeof PostModule>;
   imports: [DbModule, CommentModule],
   controllers: [PostController],
 })
-@featureModule()
 export class PostModule implements ModuleWithTrpcRoutes {
   getRouterConfig() {
     return {

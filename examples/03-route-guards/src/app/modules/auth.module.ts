@@ -1,5 +1,4 @@
-import { featureModule } from '@ditsmod/core';
-import { initRest } from '@ditsmod/rest';
+import { restModule } from '@ditsmod/rest';
 
 import { BearerGuard, BearerCtxGuard } from './auth/bearer.guard.js';
 import { AuthService } from './auth/auth.service.js';
@@ -8,7 +7,7 @@ import { CtxAuthService } from './auth/ctx-auth.service.js';
 import { CtxPermissionsGuard } from './auth/ctx-permissions.guard.js';
 import { BasicGuard } from './auth/basic.guard.js';
 
-@initRest({
+@restModule({
   // This array allows the tokens to be used for context scoped routes.
   providersPerRou: [
     CtxAuthService,
@@ -23,5 +22,4 @@ import { BasicGuard } from './auth/basic.guard.js';
   providersPerReq: [BearerGuard, BasicGuard, PermissionsGuard],
   exports: [BasicGuard, BearerGuard, PermissionsGuard, CtxPermissionsGuard],
 })
-@featureModule()
 export class AuthModule {}

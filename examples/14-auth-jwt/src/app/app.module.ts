@@ -1,13 +1,12 @@
-import { Providers, rootModule } from '@ditsmod/core';
-import { initRest } from '@ditsmod/rest';
+import { Providers } from '@ditsmod/core';
+import { restRootModule } from '@ditsmod/rest';
 
 import { HelloWorldController } from './hello-world.controller.js';
 import { AuthModule } from './modules/services/auth.module.js';
 
-@initRest({
+@restRootModule({
   imports: [{ path: '', module: AuthModule }],
   providersPerApp: new Providers().useLogConfig({ level: 'info' }),
   controllers: [HelloWorldController],
 })
-@rootModule()
 export class AppModule {}

@@ -1,4 +1,3 @@
-import { featureModule } from '@ditsmod/core';
 import { RouterOf } from '@ditsmod/trpc/client';
 import { initTrpcModule, ModuleWithTrpcRoutes } from '@ditsmod/trpc';
 
@@ -14,7 +13,6 @@ export type MessageRouter = RouterOf<typeof MessageModule>;
   controllers: [MessageController],
   providersPerMod: [MessageService]
 })
-@featureModule()
 export class MessageModule implements ModuleWithTrpcRoutes {
   getRouterConfig() {
     return {

@@ -1,4 +1,3 @@
-import { featureModule } from '@ditsmod/core';
 import { RouterOf } from '@ditsmod/trpc/client';
 import { initTrpcModule, ModuleWithTrpcRoutes } from '@ditsmod/trpc';
 
@@ -12,7 +11,6 @@ export type AuthRouter = RouterOf<typeof AuthModule>;
   controllers: [AuthController],
   providersPerRou: [AuthService],
 })
-@featureModule()
 export class AuthModule implements ModuleWithTrpcRoutes {
   getRouterConfig() {
     return { admin: { secret: AuthController.prototype.getAdminRouter } };
