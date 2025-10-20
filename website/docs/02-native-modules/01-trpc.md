@@ -18,9 +18,8 @@ git clone --depth 1 https://github.com/ditsmod/trpc-monorepo-starter.git
 
 Ditsmod намагається бути прозорим для `@trpc/client` надаючи можливість TypeScript виводити типи зі статичного коду, без необхідності додаткової компіляції для клієнта. Кожен модуль, що надає конфігурацію для tRPC-роутера, повинен це робити у методі `getRouterConfig()`:
 
-```ts {9,18-23}
-import { featureModule } from '@ditsmod/core';
-import { initTrpcModule, ModuleWithTrpcRoutes } from '@ditsmod/trpc';
+```ts {8,16-21}
+import { ModuleWithTrpcRoutes, trpcRootModule } from '@ditsmod/trpc';
 import { RouterOf } from '@ditsmod/trpc/client';
 
 import { CommentModule } from './comments/comment.module.js';
@@ -29,11 +28,10 @@ import { PostController } from './post.controller.js';
 // For TRPCClient
 export type PostRouter = RouterOf<typeof PostModule>;
 
-@initTrpcModule({
+@trpcRootModule({
   imports: [CommentModule],
   controllers: [PostController],
 })
-@featureModule()
 export class PostModule implements ModuleWithTrpcRoutes {
   getRouterConfig() {
     return {
@@ -57,9 +55,8 @@ export class PostModule implements ModuleWithTrpcRoutes {
 
 Також ви можете централізовано виводити єдиний тип для змердженого tRPC-роутера на рівні застосунку, але це рекомендується робити лише у випадку, якщо у вас немає планів створювати складні моделі, аналізуючи які TypeScript буде "помирати". Щоб централізовано вивести єдиний роутер на увесь застосунок, треба скористатись `AppRouterHelper`:
 
-```ts {9-10,13}
-import { rootModule } from '@ditsmod/core';
-import type { SetAppRouterOptions, TrpcCreateOptions, TrpcRootModule } from '@ditsmod/trpc';
+```ts {8-9,12}
+import { trpcRootModule, type SetAppRouterOptions, type TrpcCreateOptions, type TrpcRootModule } from '@ditsmod/trpc';
 import type { AppRouterHelper } from '@ditsmod/trpc/client';
 
 import { PostModule } from '#post/post.module.js';
@@ -69,7 +66,7 @@ import { MessageModule } from '#message/message.module.js';
 const modulesWithTrpcRoutes = [AuthModule, PostModule, MessageModule] as const;
 export type AppRouter = AppRouterHelper<typeof modulesWithTrpcRoutes>;
 
-@rootModule({
+@trpcRootModule({
   imports: [...modulesWithTrpcRoutes],
 })
 export class AppModule implements TrpcRootModule {

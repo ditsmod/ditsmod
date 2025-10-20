@@ -15,10 +15,10 @@ npm i @ditsmod/openapi
 To get `OpenapiModule` with default settings, simply import it into any module:
 
 ```ts {5}
-import { featureModule } from '@ditsmod/core';
 import { OpenapiModule } from '@ditsmod/openapi';
+import { restModule } from '@ditsmod/rest';
 
-@featureModule({
+@restModule({
   imports: [{ absolutePath: '', module: OpenapiModule }],
   // ...
 })
@@ -30,7 +30,7 @@ In this case, the documentation will be generated for the entire application at 
 You can also use the static method `OpenapiModule.withParams` to specify additional parameters for importing `OpenapiModule`:
 
 ```ts {11,14}
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 import { OpenapiModule, SwaggerOAuthOptions } from '@ditsmod/openapi';
 import { oasObject } from './oas-object.js';
 
@@ -42,7 +42,7 @@ const swaggerOAuthOptions: SwaggerOAuthOptions = {
 
 const moduleWithParams = OpenapiModule.withParams(oasObject, 'absolute-path', swaggerOAuthOptions);
 
-@featureModule({
+@restModule({
   imports: [moduleWithParams],
   // ...
 })
@@ -128,7 +128,7 @@ Ditsmod has good support for TypeScript models for OpenAPI v3.1.0, including Ope
 In the following example, with the helper `getParams()`, almost everything that we wrote manually for `parameters` in the previous example is recorded:
 
 ```ts {8}
-import { controller } from '@ditsmod/core';
+import { controller } from '@ditsmod/rest';
 import { oasRoute, getParams } from '@ditsmod/openapi';
 
 @controller()
@@ -218,7 +218,7 @@ export class Model2 {
 The `getParams()` helper allows you to use models, and if you make a mistake in a parameter name, TypeScript will tell you about it:
 
 ```ts {10}
-import { controller } from '@ditsmod/core';
+import { controller } from '@ditsmod/rest';
 import { oasRoute, getParams } from '@ditsmod/openapi';
 
 import { Params } from './params.js';
@@ -240,7 +240,7 @@ Here `Params` is a class used as a parameter model.
 But the helper `getParams()` is not intended to be used simultaneously for mandatory and optional parameters. It also cannot pass a parameter description that differs from the parameter description in the parameter model. For such purposes, you can use another helper - `Parameters`:
 
 ```ts {10-13}
-import { controller } from '@ditsmod/core';
+import { controller } from '@ditsmod/rest';
 import { oasRoute, Parameters } from '@ditsmod/openapi';
 
 import { Params } from './params.js';
@@ -292,7 +292,7 @@ class SomeController {
 To describe the content in `requestBody` and `responses`, there is also a helper `getContent()`:
 
 ```ts {12}
-import { controller, Status } from '@ditsmod/core';
+import { controller } from '@ditsmod/rest';
 import { oasRoute, getContent } from '@ditsmod/openapi';
 
 import { SomeModel } from '#models/some.js';
@@ -302,8 +302,8 @@ export class SomeController {
   // ...
   @oasRoute('POST', '', {
     requestBody: {
-      description: 'All properties are taken from Model1.',
-      content: getContent({ mediaType: 'application/json', model: Model1 }),
+      description: 'All properties are taken from SomeModel.',
+      content: getContent({ mediaType: 'application/json', model: SomeModel }),
     },
   })
   async postSome() {
@@ -314,8 +314,9 @@ export class SomeController {
 
 The `getContent()` helper accepts a shortened version of the data when describing a single `mediaType` variant. If you need to describe a larger number of `mediaType`, you can use the `Content` class:
 
-```ts {10-18}
-import { controller, Status } from '@ditsmod/core';
+```ts {11-19}
+import { Status } from '@ditsmod/core';
+import { controller } from '@ditsmod/rest';
 import { oasRoute, Content } from '@ditsmod/openapi';
 
 import { SomeModel } from '#models/some.js';
@@ -326,7 +327,7 @@ export class SomeController {
   @oasRoute('GET', '', {
     responses: {
       [Status.OK]: {
-        description: 'Description of content with this status',
+        description: 'Опис контенту із даним статусом',
         content: new Content()
           .set({ mediaType: 'application/xml', model: SomeModel })
           .set({ mediaType: 'application/json', model: SomeModel })
@@ -409,7 +410,7 @@ Where `securitySchemeObject` is of type [Security Scheme Object][5] and `respons
 This guards are used in exactly the same way as "normal" guards:
 
 ```ts
-import { controller } from '@ditsmod/core';
+import { controller } from '@ditsmod/rest';
 import { oasRoute } from '@ditsmod/openapi';
 
 @controller()

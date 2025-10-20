@@ -26,11 +26,12 @@ npm i @ditsmod/openapi-validation @ditsmod/i18n
 To enable automatic validation in a specific module, it is enough to import `ValidationModule` there. You can also pass `ValidationOptions` and `AJV_OPTIONS`:
 
 ```ts
-import { featureModule, Providers, Status } from '@ditsmod/core';
+import { Providers, Status } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 import { ValidationModule, ValidationOptions, AJV_OPTIONS } from '@ditsmod/openapi-validation';
 import { Options } from 'ajv';
 
-@featureModule({
+@restModule({
   imports: [ValidationModule],
   providersPerApp: new Providers()
     .useValue<ValidationOptions>(ValidationOptions, { invalidStatus: Status.UNPROCESSABLE_ENTRY })
@@ -45,12 +46,12 @@ export class SomeModule {}
 The `ParametersInterceptor` and `RequestBodyInterceptor` classes are responsible for validating the request body and request parameters. They can be substituted in the `providersPerReq` array at the module or controller level:
 
 ```ts
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 import { ParametersInterceptor } from '@ditsmod/openapi-validation';
 
 import { MyInterceptor } from './my.interceptor.js';
 
-@featureModule({
+@restModule({
   // ...
   providersPerReq: [
     { token: ParametersInterceptor, useClass: MyInterceptor }

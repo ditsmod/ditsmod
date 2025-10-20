@@ -19,10 +19,10 @@ A finished example from `@ditsmod/cors` can be viewed [in the Ditsmod repository
 The module can work with default settings immediately after import:
 
 ```ts
-import { featureModule } from '@ditsmod/core';
+import { restRootModule } from '@ditsmod/rest';
 import { CorsModule } from '@ditsmod/cors';
 
-@featureModule({
+@restRootModule({
   imports: [
     CorsModule,
     // ...
@@ -62,10 +62,10 @@ curl -i localhost:3000/credentials
 If you want to change the default settings, during import you can pass some options that will be taken into account at the module level:
 
 ```ts
-import { featureModule } from '@ditsmod/core';
+import { restRootModule } from '@ditsmod/rest';
 import { CorsModule } from '@ditsmod/cors';
 
-@featureModule({
+@restRootModule({
   imports: [
     CorsModule.withParams({ origin: 'https://example.com' }),
     // ...
@@ -78,10 +78,11 @@ export class SomeModule {}
 It is also possible to pass CORS options at the route level:
 
 ```ts
-import { featureModule, Providers } from '@ditsmod/core';
+import { Providers } from '@ditsmod/core';
 import { CorsModule, CorsOptions } from '@ditsmod/cors';
+import { restRootModule } from '@ditsmod/rest';
 
-@featureModule({
+@restRootModule({
   imports: [
     CorsModule,
     // ...
@@ -98,8 +99,7 @@ export class SomeModule {}
 When you need the CORS HTTP response to contain cookies, and for those cookies to be accepted by web browsers, you can use `CorsService`:
 
 ```ts
-import { controller, Res } from '@ditsmod/core';
-import { route } from '@ditsmod/rest';
+import { controller, Res, route } from '@ditsmod/rest';
 import { CorsService } from '@ditsmod/cors';
 
 @controller()

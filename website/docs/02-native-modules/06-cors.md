@@ -19,10 +19,10 @@ npm i @ditsmod/cors
 Модуль може працювати з дефолтними налаштуваннями зразу після імпорту:
 
 ```ts
-import { featureModule } from '@ditsmod/core';
+import { restRootModule } from '@ditsmod/rest';
 import { CorsModule } from '@ditsmod/cors';
 
-@featureModule({
+@restRootModule({
   imports: [
     CorsModule,
     // ...
@@ -62,10 +62,10 @@ curl -i localhost:3000/credentials
 Якщо ви хочете змінити дефолтні налаштування, при імпорті можете передати деякі опції, які будуть братись до уваги на рівні модуля:
 
 ```ts
-import { featureModule } from '@ditsmod/core';
+import { restRootModule } from '@ditsmod/rest';
 import { CorsModule } from '@ditsmod/cors';
 
-@featureModule({
+@restRootModule({
   imports: [
     CorsModule.withParams({ origin: 'https://example.com' }),
     // ...
@@ -78,10 +78,11 @@ export class SomeModule {}
 Також є можливість передати CORS-опції на рівні роуту:
 
 ```ts
-import { featureModule, Providers } from '@ditsmod/core';
+import { Providers } from '@ditsmod/core';
 import { CorsModule, CorsOptions } from '@ditsmod/cors';
+import { restRootModule } from '@ditsmod/rest';
 
-@featureModule({
+@restRootModule({
   imports: [
     CorsModule,
     // ...
@@ -98,8 +99,7 @@ export class SomeModule {}
 Коли вам потрібно щоб CORS HTTP-відповідь містила куки, і ці куки приймались веб-браузерами, можна скористатись `CorsService`:
 
 ```ts
-import { controller, Res } from '@ditsmod/core';
-import { route } from '@ditsmod/rest';
+import { controller, Res, route } from '@ditsmod/rest';
 import { CorsService } from '@ditsmod/cors';
 
 @controller()

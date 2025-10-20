@@ -15,10 +15,10 @@ npm i @ditsmod/openapi
 Щоб підключити `OpenapiModule` з дефолтними налаштуваннями, достатньо імпортувати його у будь-який модуль:
 
 ```ts {5}
-import { featureModule } from '@ditsmod/core';
 import { OpenapiModule } from '@ditsmod/openapi';
+import { restModule } from '@ditsmod/rest';
 
-@featureModule({
+@restModule({
   imports: [{ absolutePath: '', module: OpenapiModule }],
   // ...
 })
@@ -30,7 +30,7 @@ export class SomeModule {}
 Також можна використовувати статичний метод `OpenapiModule.withParams` щоб вказати додаткові параметри для імпорту `OpenapiModule`:
 
 ```ts {11,14}
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 import { OpenapiModule, SwaggerOAuthOptions } from '@ditsmod/openapi';
 import { oasObject } from './oas-object.js';
 
@@ -42,7 +42,7 @@ const swaggerOAuthOptions: SwaggerOAuthOptions = {
 
 const moduleWithParams = OpenapiModule.withParams(oasObject, 'absolute-path', swaggerOAuthOptions);
 
-@featureModule({
+@restModule({
   imports: [moduleWithParams],
   // ...
 })
@@ -128,7 +128,7 @@ Ditsmod має хорошу підтримку TypeScript-моделей для 
 В наступному прикладі за допомогою хелпера `getParams()` записано майже усе те, що у попередньому прикладі ми прописали вручну для `parameters`:
 
 ```ts {8}
-import { controller } from '@ditsmod/core';
+import { controller } from '@ditsmod/rest';
 import { oasRoute, getParams } from '@ditsmod/openapi';
 
 @controller()
@@ -218,7 +218,7 @@ export class Model2 {
 Хелпер `getParams()` дозволяє використовувати моделі, і якщо ви зробите помилку у назві параметра, TypeScript скаже вам про це:
 
 ```ts {10}
-import { controller } from '@ditsmod/core';
+import { controller } from '@ditsmod/rest';
 import { oasRoute, getParams } from '@ditsmod/openapi';
 
 import { Params } from './params.js';
@@ -240,7 +240,7 @@ export class SomeController {
 Але хелпер `getParams()` не призначений щоб його використовували одночасно для обов'язкових та необов'язкових параметрів. Також через нього не можна передавати опис параметрів, який відрізняється від опису параметрів у моделі параметрів. Для таких цілей можна скористатись іншим хелпером - `Parameters`:
 
 ```ts {10-13}
-import { controller } from '@ditsmod/core';
+import { controller } from '@ditsmod/rest';
 import { oasRoute, Parameters } from '@ditsmod/openapi';
 
 import { Params } from './params.js';
@@ -292,7 +292,7 @@ class SomeController {
 Для опису контента в `requestBody` та `responses` існує також хелпер `getContent()`:
 
 ```ts {12}
-import { controller, Status } from '@ditsmod/core';
+import { controller } from '@ditsmod/rest';
 import { oasRoute, getContent } from '@ditsmod/openapi';
 
 import { SomeModel } from '#models/some.js';
@@ -302,8 +302,8 @@ export class SomeController {
   // ...
   @oasRoute('POST', '', {
     requestBody: {
-      description: 'All properties are taken from Model1.',
-      content: getContent({ mediaType: 'application/json', model: Model1 }),
+      description: 'All properties are taken from SomeModel.',
+      content: getContent({ mediaType: 'application/json', model: SomeModel }),
     },
   })
   async postSome() {
@@ -314,8 +314,9 @@ export class SomeController {
 
 Хелпер `getContent()` приймає скорочену версію даних, коли потрібно описати єдиний варіант `mediaType`. Якщо ж вам потрібно описати більшу кількість `mediaType`, можна скористатись класом `Content`:
 
-```ts {10-18}
-import { controller, Status } from '@ditsmod/core';
+```ts {11-19}
+import { Status } from '@ditsmod/core';
+import { controller } from '@ditsmod/rest';
 import { oasRoute, Content } from '@ditsmod/openapi';
 
 import { SomeModel } from '#models/some.js';
@@ -409,7 +410,7 @@ interface OasGuardMetadata {
 Використовуються такі ґарди точно так само, як і "звичайні" ґарди:
 
 ```ts
-import { controller } from '@ditsmod/core';
+import { controller } from '@ditsmod/rest';
 import { oasRoute } from '@ditsmod/openapi';
 
 @controller()

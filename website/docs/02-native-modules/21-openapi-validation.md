@@ -26,11 +26,12 @@ npm i @ditsmod/openapi-validation @ditsmod/i18n
 Щоб підключити автоматичну валідацію у певному модулі, достатньо імпортувати туди `ValidationModule`. Також ви можете передати `ValidationOptions` та `AJV_OPTIONS`:
 
 ```ts
-import { featureModule, Providers, Status } from '@ditsmod/core';
+import { Providers, Status } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 import { ValidationModule, ValidationOptions, AJV_OPTIONS } from '@ditsmod/openapi-validation';
 import { Options } from 'ajv';
 
-@featureModule({
+@restModule({
   imports: [ValidationModule],
   providersPerApp: new Providers()
     .useValue<ValidationOptions>(ValidationOptions, { invalidStatus: Status.UNPROCESSABLE_ENTRY })
@@ -45,12 +46,12 @@ export class SomeModule {}
 Класи `ParametersInterceptor` та `RequestBodyInterceptor` відповідають за валідацію параметрів запиту та тіла запиту. Їх можна підмінити в масиві `providersPerReq` на рівні модуля чи контролера:
 
 ```ts
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 import { ParametersInterceptor } from '@ditsmod/openapi-validation';
 
 import { MyInterceptor } from './my.interceptor.js';
 
-@featureModule({
+@restModule({
   // ...
   providersPerReq: [
     { token: ParametersInterceptor, useClass: MyInterceptor }

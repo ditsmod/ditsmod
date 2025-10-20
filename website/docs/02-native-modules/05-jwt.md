@@ -17,7 +17,7 @@ npm i @ditsmod/jwt
 Підключення:
 
 ```ts {7,10}
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 import { JwtModule } from '@ditsmod/jwt';
 
 import { AuthController } from './auth.controller.js';
@@ -25,7 +25,7 @@ import { BearerGuard } from './bearer.guard.js';
 
 const moduleWithParams = JwtModule.withParams({ secret: 'hard-to-guess-secret', signOptions: { expiresIn: '2m' } });
 
-@featureModule({
+@restModule({
   imports: [moduleWithParams],
   controllers: [AuthController],
   providersPerReq: [BearerGuard],
@@ -39,8 +39,8 @@ export class AuthModule {}
 Тепер в межах `AuthModule` можете використовувати `JwtService`:
 
 ```ts {8,19-22}
-import { injectable, Injector, RequestContext } from '@ditsmod/core';
-import { CanActivate } from '@ditsmod/rest';
+import { injectable, Injector } from '@ditsmod/core';
+import { CanActivate, RequestContext } from '@ditsmod/rest';
 import { JwtService, VerifyErrors, JWT_PAYLOAD } from '@ditsmod/jwt';
 
 @injectable()

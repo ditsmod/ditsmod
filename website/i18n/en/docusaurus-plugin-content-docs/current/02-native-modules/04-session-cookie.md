@@ -17,7 +17,7 @@ npm i @ditsmod/session-cookie
 Importing:
 
 ```ts
-import { rootModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 import { SessionCookieModule } from '@ditsmod/session-cookie';
 
 const sessionModuleWithParams = SessionCookieModule.withParams({
@@ -25,7 +25,7 @@ const sessionModuleWithParams = SessionCookieModule.withParams({
   httpOnly: true,
 });
 
-@rootModule({
+@restModule({
   imports: [
     sessionModuleWithParams,
     // ...
@@ -38,8 +38,7 @@ export class AppModule {}
 Usage:
 
 ```ts
-import { controller, Res } from '@ditsmod/core';
-import { route } from '@ditsmod/rest';
+import { controller, Res, route } from '@ditsmod/rest';
 import { SessionCookie } from '@ditsmod/session-cookie';
 
 @controller()

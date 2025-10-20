@@ -46,11 +46,9 @@ npm i @ditsmod/rest
 Підключення:
 
 ```ts
-import { rootModule } from '@ditsmod/core';
-import { RestModule } from '@ditsmod/rest';
+import { restModule } from '@ditsmod/rest';
 
-@rootModule({
-  imports: [RestModule],
+@restModule({
   // ..
 })
 export class AppModule {}
@@ -61,11 +59,10 @@ export class AppModule {}
 Якщо ви хочете інтегрувати кастомний роутер для застосунку Ditsmod, достатньо щоб ваш роутер імплементував вищезазначений інтерфейс `Router`, після чого його можна додавати в провайдери на рівні застосунку:
 
 ```ts
-import { featureModule, Router } from '@ditsmod/core';
-
+import { restModule, Router } from '@ditsmod/rest';
 import { MyRouter } from './my-router.js';
 
-@featureModule({
+@restModule({
   providersPerApp: [{ token: Router, useClass: MyRouter }],
 })
 export class MyCustomRouterModule {}
