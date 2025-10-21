@@ -3,15 +3,13 @@ import { controller, route, PATH_PARAMS, Res } from '@ditsmod/rest';
 import { DictService } from '@ditsmod/i18n';
 
 import { FirstService } from '../first/first.service.js';
-import { SecondDict } from '#dict/second/second.dict.js';
+import { SecondDict } from '#app/second/i18n/current/_base-en/second.dict.js';
 
 @controller()
 export class SecondController {
-  constructor(private dictService: DictService, private firstService: FirstService) {}
-
   @route('GET', 'second/:userName')
-  tellHello(@inject(PATH_PARAMS) pathParams: AnyObj, res: Res) {
-    const dict = this.dictService.getDictionary(SecondDict);
+  tellHello(@inject(PATH_PARAMS) pathParams: AnyObj, dictService: DictService, res: Res) {
+    const dict = dictService.getDictionary(SecondDict);
     const { userName } = pathParams;
     const msg = dict.hello(userName);
 
@@ -19,7 +17,7 @@ export class SecondController {
   }
 
   @route('GET', 'first-extended')
-  tellHefllo(res: Res) {
-    res.send(this.firstService.countToThree());
+  tellHefllo(res: Res, firstService: FirstService) {
+    res.send(firstService.countToThree());
   }
 }

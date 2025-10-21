@@ -41,7 +41,7 @@ describe('15-i18n', () => {
       await testAgent
       .get('/first-extended?lng=uk')
       .expect(200)
-      .expect('extended: один, два, три');
+      .expect('overrided: один, два, три');
 
       await testAgent
       .get('/second/Kostia?lng=en')

@@ -5,8 +5,8 @@
   "license": "MIT",
   "imports": {
     "#app/*": "./dist/app/*",
-    "#dict/first/*": "./dist/app/first/locales/current/_base-en/*",
-    "#dict/second/*": "./dist/app/second/locales/current/_base-en/*"
+    "#dict/first/*": "./dist/app/first/i18n/current/_base-en/*",
+    "#dict/second/*": "./dist/app/second/i18n/current/_base-en/*"
   },
   "scripts": {
     "start": "yarn build && node --watch --enable-source-maps dist/main.js",

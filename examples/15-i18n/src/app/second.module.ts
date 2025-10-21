@@ -3,8 +3,8 @@ import { I18nModule, I18nProviders, I18N_TRANSLATIONS } from '@ditsmod/i18n';
 
 import { FirstModule } from './first.module.js';
 import { SecondController } from './second/second.controller.js';
-import { current } from './second/locales/current/index.js';
-import { imported } from './second/locales/imported/index.js';
+import { current } from './second/i18n/current/index.js';
+import { imported } from './second/i18n/imported/index.js';
 
 @restModule({
   imports: [I18nModule, FirstModule],

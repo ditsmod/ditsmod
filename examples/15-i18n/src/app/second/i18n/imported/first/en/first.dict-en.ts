@@ -4,12 +4,12 @@ import { injectable } from '@ditsmod/core';
 import { FirstDict } from '#dict/first/first.dict.js';
 
 @injectable()
-export class FirstPlDict extends FirstDict {
+export class FirstDictEn extends FirstDict {
   override getLng(): ISO639 {
-    return 'pl';
+    return 'en';
   }
   /**
-   * nie, dwa, trzy
+   * overrided: one, two, three
    */
-  override countToThree = 'nie, dwa, trzy';
+  override countToThree = 'overrided: one, two, three';
 }

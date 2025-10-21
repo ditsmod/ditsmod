@@ -1,10 +1,10 @@
 import { ISO639 } from '@ditsmod/i18n';
 import { injectable } from '@ditsmod/core';
 
-import { ErrorsDict } from '#dict/second/errors.dict.js';
+import { ErrorsDict } from '#app/second/i18n/current/_base-en/errors.dict.js';
 
 @injectable()
-export class ErrorsUkDict extends ErrorsDict {
+export class ErrorsDictUk extends ErrorsDict {
   override getLng(): ISO639 {
     return 'uk';
   }
