@@ -64,7 +64,8 @@ A context-scoped interceptor operates very similarly to an injector-scoped inter
 Each interceptor should be a class implementing the [HttpInterceptor][1] interface and annotated with the `injectable` decorator:
 
 ```ts
-import { injectable, RequestContext, HttpHandler, HttpInterceptor } from '@ditsmod/core';
+import { injectable } from '@ditsmod/core';
+import { RequestContext, HttpHandler, HttpInterceptor } from '@ditsmod/rest';
 
 @injectable()
 export class MyHttpInterceptor implements HttpInterceptor {

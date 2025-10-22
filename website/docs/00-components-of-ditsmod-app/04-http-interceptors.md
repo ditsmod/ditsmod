@@ -20,7 +20,7 @@ sidebar_position: 4
 
 ## Схема обробки HTTP-запиту {#http-request-processing-scheme}
 
-### Injector-scoped режим {#injector-scoped-mode}
+### Робота в режимі injector-scoped {#injector-scoped-mode}
 
 Обробка HTTP-запиту має наступний робочий потік:
 
@@ -47,7 +47,7 @@ sidebar_position: 4
 
 Кожен виклик інтерсептора повертає `Promise<any>`, і в кінцевому підсумку він приводить до метода контролера, прив'язаного до відповідного роута. Це означає, що в інтерсепторі ви можете слухати результат резолву проміса, що повертає метод контролера.
 
-### Context-scoped режим {#context-scoped-mode}
+### Робота в режимі context-scoped {#context-scoped-mode}
 
 Інтерсептор в режимі context-scoped працює дуже подібним чином до режиму injector-scoped, але при цьому він не використовує інжектор на рівні запиту. Робочий потік за його участі відрізняється у пункті 4 та 7, оскільки інстанс інтерсептора в режимі context-scoped створюється на рівні роуту:
 
@@ -64,7 +64,8 @@ sidebar_position: 4
 Кожен інтерсептор повинен бути класом, що впроваджує інтерфейс [HttpInterceptor][1], та має анотацію з декоратором `injectable`:
 
 ```ts
-import { injectable, RequestContext, HttpHandler, HttpInterceptor } from '@ditsmod/core';
+import { injectable } from '@ditsmod/core';
+import { RequestContext, HttpHandler, HttpInterceptor } from '@ditsmod/rest';
 
 @injectable()
 export class MyHttpInterceptor implements HttpInterceptor {
