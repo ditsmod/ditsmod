@@ -6,16 +6,16 @@ sidebar_position: 1
 
 Модуль, де ви декларуєте певні [провайдери][1], називається **модулем-хостом** для цих провайдерів. А коли ви використовуєте дані провайдери у зовнішньому модулі, то цей зовнішній модуль називається **модулем-споживачем** даних провайдерів.
 
-Для того, щоб модуль-споживач міг використовувати провайдери з модуля-хоста, спочатку необхідно експортувати відповідні [токени][1] провайдерів з модуля-хоста. Робиться це у метаданих, які передаються у декоратор `featureModule` або `rootModule`:
+Для того, щоб модуль-споживач міг використовувати провайдери з модуля-хоста, спочатку необхідно експортувати відповідні [токени][1] провайдерів з модуля-хоста. Робиться це у метаданих, які передаються у декоратор в модуль фіч чи кореневий модуль. Наприклад, якщо ви використовуєте REST, це робиться наступним чином:
 
 ```ts {9}
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 
 import { FirstService } from './first.service.js';
 import { SecondService } from './second.service.js';
 import { ThirdService } from './third.service.js';
 
-@featureModule({
+@restModule({
   providersPerMod: [FirstService, { token: SecondService, useClass: ThirdService }],
   exports: [SecondService],
 })
@@ -30,21 +30,21 @@ export class SomeModule {}
 
 Експортувати контролери не має сенсу, оскільки експорт стосується тільки провайдерів.
 
-## Експорт провайдерів з `featureModule` {#exporting-providers-from-a-featuremodule}
+## Експорт провайдерів з модуля фіч {#exporting-providers-from-a-featuremodule}
 
-Експортуючи токени з модуля-хоста у метаданих декоратора `featureModule`, ви тим самим декларуєте, що відповідні провайдери можуть використовуватись у модулях-споживачах, якщо вони імпортуватимуть даний модуль-хост.
+Експортуючи токени з модуля-хоста, ви тим самим декларуєте, що відповідні провайдери можуть використовуватись у модулях-споживачах, якщо вони імпортуватимуть даний модуль-хост.
 
-## Експорт провайдерів з `rootModule` {#exporting-providers-from-rootmodule}
+## Експорт провайдерів з кореневого модуля {#exporting-providers-from-rootmodule}
 
-Експорт провайдерів з кореневого модуля означає, що ці провайдери будуть автоматично додаватись до кожного модуля, що є в застосунку:
+Експорт провайдерів з кореневого модуля означає, що ці провайдери будуть автоматично додаватись до кожного модуля, що є в застосунку. Наприклад, якщо ви використовуєте REST, це робиться наступним чином:
 
 ```ts {9}
-import { rootModule } from '@ditsmod/core';
+import { restRootModule } from '@ditsmod/rest';
 
 import { SomeService } from './some.service.js';
 import { OtherModule } from './other.module.js';
 
-@rootModule({
+@restRootModule({
   imports: [OtherModule],
   providersPerMod: [SomeService],
   exports: [SomeService, OtherModule],
@@ -56,13 +56,13 @@ export class AppModule {}
 
 ## Імпорт модуля {#import-module}
 
-Імпортувати окремий провайдер в модуль не можна, але можна імпортувати цілий модуль з усіма провайдерами та [розширеннями][2], що експортуються з нього:
+Імпортувати окремий провайдер в модуль не можна, але можна імпортувати цілий модуль з усіма провайдерами та [розширеннями][2], що експортуються з нього. Наприклад, якщо ви використовуєте REST, це робиться наступним чином:
 
 ```ts {6}
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 import { FirstModule } from './first.module.js';
 
-@featureModule({
+@restModule({
   imports: [
     FirstModule
   ]
@@ -72,17 +72,15 @@ export class SecondModule {}
 
 Якщо з `FirstModule` експортується, наприклад, `SomeService`, то тепер цей сервіс можна використовувати у `SecondModule`. Разом з тим, якщо `FirstModule` має контролери, у такій формі імпорту вони будуть ігноруватись. Щоб Ditsmod брав до уваги контролери з імпортованого модуля, цей модуль потрібно імпортувати з префіксом, що передається у `path`:
 
-```ts {7}
-import { featureModule } from '@ditsmod/core';
-import { initRest } from '@ditsmod/rest';
+```ts {6}
+import { restModule } from '@ditsmod/rest';
 import { FirstModule } from './first.module';
 
-@initRest({
-  importsWithParams: [
-    { modRefId: FirstModule, path: '' }
+@restModule({
+  imports: [
+    { module: FirstModule, path: '' }
   ]
 })
-@featureModule()
 export class SecondModule {}
 ```
 
@@ -123,17 +121,15 @@ interface ModuleWithParams {
 
 Щоб скоротити довжину запису при імпорті об'єкту з цим типом, інколи доцільно написати статичний метод у модулі, який імпортується. Щоб наочно побачити це, давайте візьмемо знову попередній приклад:
 
-```ts {7}
-import { featureModule } from '@ditsmod/core';
-import { initRest } from '@ditsmod/rest';
+```ts {6}
+import { restModule } from '@ditsmod/rest';
 import { FirstModule } from './first.module';
 
-@initRest({
-  importsWithParams: [
-    { modRefId: FirstModule, path: '' }
+@restModule({
+  imports: [
+    { module: FirstModule, path: '' }
   ]
 })
-@featureModule()
 export class SecondModule {}
 ```
 
@@ -144,7 +140,7 @@ export class SecondModule {}
 export class FirstModule {
   static withPrefix(path: string) {
     return {
-      modRefId: this,
+      module: this,
       path,
     };
   }
@@ -155,12 +151,11 @@ export class FirstModule {
 
 ```ts {4}
 // ...
-@featureModule({
-  importsWithParams: [
+@restModule({
+  imports: [
     FirstModule.withPrefix('some-prefix')
   ]
 })
-@featureModule()
 export class SecondModule {}
 ```
 
@@ -187,7 +182,7 @@ export class SomeModule {
 
 ```ts
 // ...
-@featureModule({
+@restModule({
   providersPerMod: [Provider1],
   exports: [Provider1],
 })
@@ -198,7 +193,7 @@ export class Module1 {}
 
 ```ts
 // ...
-@featureModule({
+@restModule({
   imports: [Module1]
   // ...
 })
@@ -215,7 +210,7 @@ export class Module2 {}
 
 ```ts
 // ...
-@featureModule({
+@restModule({
   providersPerMod: [Provider3, Provider2, Provider1],
   exports: [Provider3],
 })
@@ -229,10 +224,10 @@ export class Module1 {}
 Якщо вам не потрібно імпортувати провайдери та [розширення][2] в поточний модуль, а потрібно всього лиш прикріпити зовнішній модуль до path-префікса поточного модуля, можна скористатись масивом `appends`:
 
 ```ts {5}
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 import { FirstModule } from './first.module.js';
 
-@featureModule({
+@restModule({
   appends: [FirstModule]
 })
 export class SecondModule {}
@@ -244,7 +239,7 @@ export class SecondModule {}
 
 ```ts {3}
 // ...
-@featureModule({
+@restModule({
   appends: [{ path: 'some-path', module: FirstModule }]
 })
 export class SecondModule {}
@@ -266,10 +261,10 @@ interface AppendsWithParams<T extends AnyObj = AnyObj> {
 Окрім імпорту певного модуля, цей же модуль можна одночасно й експортувати:
 
 ```ts
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 import { FirstModule } from './first.module.js';
 
-@featureModule({
+@restModule({
   imports: [FirstModule],
   exports: [FirstModule],
 })
@@ -281,12 +276,14 @@ export class SecondModule {}
 Зверніть увагу! Якщо під час реекспорту ви імпортуєте об'єкт з інтерфейсом `ModuleWithParams`, цей же об'єкт потрібно й експортувати:
 
 ```ts
-import { featureModule, ModuleWithParams } from '@ditsmod/core';
+import { ModuleWithParams } from '@ditsmod/core';
+import { restModule, RestModuleParams } from '@ditsmod/rest';
+
 import { FirstModule } from './first.module.js';
 
-const firstModuleWithParams: ModuleWithParams = { path: 'some-path', module: FirstModule };
+const firstModuleWithParams: ModuleWithParams & RestModuleParams = { path: 'some-path', module: FirstModule };
 
-@featureModule({
+@restModule({
   imports: [firstModuleWithParams],
   exports: [firstModuleWithParams],
 })

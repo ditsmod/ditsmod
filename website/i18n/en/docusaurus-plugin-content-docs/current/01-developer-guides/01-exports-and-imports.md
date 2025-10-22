@@ -6,16 +6,16 @@ sidebar_position: 1
 
 The module where you declare certain [providers][1] is called the **host module** for those providers. And when you use those providers in an external module, that external module is called the **consumer module** of those providers.
 
-In order for a consumer module to use providers from a host module, the corresponding provider [tokens][1] must first be exported from the host module. This is done in the metadata that is passed to the `featureModule` or `rootModule` decorator:
+In order for a consumer module to use providers from a host module, the corresponding provider [tokens][1] must first be exported from the host module. This is done in the metadata that is passed to the decorator in the feature module or root module. For example, if you are using REST, this is done as follows:
 
 ```ts {9}
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 
 import { FirstService } from './first.service.js';
 import { SecondService } from './second.service.js';
 import { ThirdService } from './third.service.js';
 
-@featureModule({
+@restModule({
   providersPerMod: [FirstService, { token: SecondService, useClass: ThirdService }],
   exports: [SecondService],
 })
@@ -30,21 +30,21 @@ Keep in mind that you only need to export providers from the host module that wi
 
 Exporting controllers does not make sense, since exporting only applies to providers.
 
-## Exporting providers from a `featureModule` {#exporting-providers-from-a-featuremodule}
+## Exporting providers from a feature module {#exporting-providers-from-a-featuremodule}
 
-By exporting tokens from a host module in the `featureModule` decorator metadata, you are declaring that the corresponding providers can be used in consumer modules if they import this host module.
+By exporting tokens from a host module, you are declaring that the corresponding providers can be used in consumer modules if they import this host module.
 
-## Exporting providers from `rootModule` {#exporting-providers-from-rootmodule}
+## Exporting providers from root module {#exporting-providers-from-rootmodule}
 
-Exporting providers from the root module means that these providers will automatically be added to every module in the application:
+Exporting providers from the root module means that these providers will automatically be added to every module in the application. For example, if you are using REST, this is done as follows:
 
 ```ts {9}
-import { rootModule } from '@ditsmod/core';
+import { restRootModule } from '@ditsmod/rest';
 
 import { SomeService } from './some.service.js';
 import { OtherModule } from './other.module.js';
 
-@rootModule({
+@restRootModule({
   imports: [OtherModule],
   providersPerMod: [SomeService],
   exports: [SomeService, OtherModule],
@@ -56,13 +56,13 @@ In this case, `SomeService` will be added to all application modules at the modu
 
 ## Import module {#import-module}
 
-You cannot import a single provider into a module, but you can import an entire module with all the providers and [extensions][2] exported from it:
+You cannot import a single provider into a module, but you can import an entire module with all the providers and [extensions][2] exported from it. For example, if you are using REST, this is done as follows:
 
 ```ts {6}
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 import { FirstModule } from './first.module.js';
 
-@featureModule({
+@restModule({
   imports: [
     FirstModule
   ]
@@ -72,17 +72,15 @@ export class SecondModule {}
 
 For example, if `SomeService` is exported from the `FirstModule`, then this service can now be used in the `SecondModule`. However, if `FirstModule` has controllers, they will be ignored in this import form. For Ditsmod to take into account controllers from an imported module, the module must be imported with a prefix passed in `path`:
 
-```ts {7}
-import { featureModule } from '@ditsmod/core';
-import { initRest } from '@ditsmod/rest';
+```ts {6}
+import { restModule } from '@ditsmod/rest';
 import { FirstModule } from './first.module';
 
-@initRest({
-  importsWithParams: [
-    { modRefId: FirstModule, path: '' }
+@restModule({
+  imports: [
+    { module: FirstModule, path: '' }
   ]
 })
-@featureModule()
 export class SecondModule {}
 ```
 
@@ -123,17 +121,15 @@ interface ModuleWithParams {
 
 To reduce the length of the code when importing an object of this type, it is sometimes advisable to write a static method in the importing module. To see this clearly, let's take the previous example again:
 
-```ts {7}
-import { featureModule } from '@ditsmod/core';
-import { initRest } from '@ditsmod/rest';
+```ts {6}
+import { restModule } from '@ditsmod/rest';
 import { FirstModule } from './first.module';
 
-@initRest({
-  importsWithParams: [
-    { modRefId: FirstModule, path: '' }
+@restModule({
+  imports: [
+    { module: FirstModule, path: '' }
   ]
 })
-@featureModule()
 export class SecondModule {}
 ```
 
@@ -144,7 +140,7 @@ If you declare `FirstModule` and knew that this module would make sense to be im
 export class FirstModule {
   static withPrefix(path: string) {
     return {
-      modRefId: this,
+      module: this,
       path,
     };
   }
@@ -155,12 +151,11 @@ Now the object returned by this method can be imported as follows:
 
 ```ts {4}
 // ...
-@featureModule({
-  importsWithParams: [
+@restModule({
+  imports: [
     FirstModule.withPrefix('some-prefix')
   ]
 })
-@featureModule()
 export class SecondModule {}
 ```
 
@@ -187,7 +182,7 @@ Let's consider a specific situation. In the following example, each provider is 
 
 ```ts
 // ...
-@featureModule({
+@restModule({
   providersPerMod: [Provider1],
   exports: [Provider1],
 })
@@ -198,7 +193,7 @@ Suppose we import this module into `Module2`, which has no providers of its own:
 
 ```ts
 // ...
-@featureModule({
+@restModule({
   imports: [Module1]
   // ...
 })
@@ -215,7 +210,7 @@ Let's consider a situation where only `Provider3` is exported from `Module1`, si
 
 ```ts
 // ...
-@featureModule({
+@restModule({
   providersPerMod: [Provider3, Provider2, Provider1],
   exports: [Provider3],
 })
@@ -229,10 +224,10 @@ Suppose `Provider3` has a dependency on `Provider1` and `Provider2`. What will D
 If you don't need to import providers and [extensions][2] into the current module, but just append the external module to the path prefix of the current module, you can use the `appends` array:
 
 ```ts {5}
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 import { FirstModule } from './first.module.js';
 
-@featureModule({
+@restModule({
   appends: [FirstModule]
 })
 export class SecondModule {}
@@ -244,7 +239,7 @@ You can also attach an additional path prefix to `FirstModule`:
 
 ```ts {3}
 // ...
-@featureModule({
+@restModule({
   appends: [{ path: 'some-path', module: FirstModule }]
 })
 export class SecondModule {}
@@ -266,10 +261,10 @@ interface AppendsWithParams<T extends AnyObj = AnyObj> {
 In addition to importing a specific module, the same module can be simultaneously exported:
 
 ```ts
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 import { FirstModule } from './first.module.js';
 
-@featureModule({
+@restModule({
   imports: [FirstModule],
   exports: [FirstModule],
 })
@@ -281,12 +276,14 @@ What is the meaning of this? - Now if you import `SecondModule` into some other 
 Pay attention! If during re-export you import an object with `ModuleWithParams` interface, the same object must also be exported:
 
 ```ts
-import { featureModule, ModuleWithParams } from '@ditsmod/core';
+import { ModuleWithParams } from '@ditsmod/core';
+import { restModule, RestModuleParams } from '@ditsmod/rest';
+
 import { FirstModule } from './first.module.js';
 
-const firstModuleWithParams: ModuleWithParams = { path: 'some-path', module: FirstModule };
+const firstModuleWithParams: ModuleWithParams & RestModuleParams = { path: 'some-path', module: FirstModule };
 
-@featureModule({
+@restModule({
   imports: [firstModuleWithParams],
   exports: [firstModuleWithParams],
 })
