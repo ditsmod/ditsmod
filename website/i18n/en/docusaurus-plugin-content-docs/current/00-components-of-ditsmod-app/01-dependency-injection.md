@@ -513,12 +513,12 @@ This construction makes sense, for example, if the first two points are executed
 For a single dependency, one or more providers must be passed to the DI registry. Usually providers are passed to the DI registry via module metadata, although sometimes they are passed via controller metadata or even directly to [injectors][102]. In the following example `SomeService` is passed into the `providersPerMod` array:
 
 ```ts {9}
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 
 import { SomeService } from './some.service.js';
 import { SomeController } from './some.controller.js';
 
-@featureModule({
+@restModule({
   controllers: [SomeController],
   providersPerMod: [
     SomeService
@@ -530,12 +530,12 @@ export class SomeModule {}
 After such a transfer, consumers of providers can use `SomeService` within `SomeModule`. The result will be identical if we pass the same provider in the object format:
 
 ```ts {9}
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 
 import { SomeService } from './some.service.js';
 import { SomeController } from './some.controller.js';
 
-@featureModule({
+@restModule({
   controllers: [SomeController],
   providersPerMod: [
     { token: SomeService, useClass: SomeService }
@@ -582,10 +582,10 @@ export class AppModule {}
 And then in some module substitute `ConfigService` with an arbitrary value:
 
 ```ts {6}
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 import { ConfigService } from './config.service.js';
 
-@featureModule({
+@restModule({
   providersPerMod: [
     { token: ConfigService, useValue: { propery1: 'some value' } }
   ],
@@ -598,9 +598,9 @@ export class SomeModule {}
 Different providers with the same token can be added many times in module or controller metadata, but DI will choose the provider that was added last (exceptions to this rule apply only for multi-providers):
 
 ```ts
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 
-@featureModule({
+@restModule({
   providersPerMod: [
     { token: 'token1', useValue: 'value1' },
     { token: 'token1', useValue: 'value2' },
@@ -615,9 +615,9 @@ In this case, within `SomeModule` the `token1` will return `value3` at the modul
 Additionally, different providers with the same token can be provided at multiple different hierarchy levels simultaneously, but DI will always choose the nearest injector (i.e., if a provider value is requested at the request level, the injector at the request level will be inspected first, and only if the required provider is not found there will DI ascend to parent injectors):
 
 ```ts
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 
-@featureModule({
+@restModule({
   providersPerMod: [{ token: 'token1', useValue: 'value1' }],
   providersPerRou: [{ token: 'token1', useValue: 'value2' }],
   providersPerReq: [{ token: 'token1', useValue: 'value3' }],
