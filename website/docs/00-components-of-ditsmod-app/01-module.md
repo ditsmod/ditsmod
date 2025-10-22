@@ -57,7 +57,7 @@ export class AppModule {}
 
 ## Feature module {#feature-module}
 
-TypeScript клас стає feature модулем Ditsmod завдяки декоратору `featureModule`, `restModule`, `trpcModule` і т.д., в залежності від модуля, який ви використовуєте:
+TypeScript клас стає feature модулем Ditsmod завдяки одному з таких декораторів як `featureModule`, `restModule`, `trpcModule` і т.д., в залежності від модуля, який ви використовуєте. Наприклад, якщо ви використовуєте REST, кореневий модуль оголошується наступним чином:
 
 ```ts
 import { restModule } from '@ditsmod/rest';
