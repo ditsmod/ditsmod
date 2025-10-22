@@ -1,4 +1,13 @@
-import { makeClassDecorator, InitHooks, ModRefId, BaseMeta, InitDecorator, Provider } from '@ditsmod/core';
+import {
+  makeClassDecorator,
+  InitHooks,
+  ModRefId,
+  BaseMeta,
+  InitDecorator,
+  Provider,
+  ForwardRefFn,
+  ModuleType,
+} from '@ditsmod/core';
 
 import { RestInitRawMeta, RestModuleParams } from '#init/rest-init-raw-meta.js';
 import { RestModuleNormalizer } from '#init/rest-module-normalizer.js';
@@ -18,11 +27,11 @@ export const initRest: InitDecorator<RestInitRawMeta, RestModuleParams, RestInit
   transformInitMeta,
   'initRest',
 );
-export const restRootModule: InitDecorator<RestInitRawMeta, RestModuleParams, RestInitMeta> = makeClassDecorator(
-  transformRootMeta,
-  'restRootModule',
-  initRest
-);
+export const restRootModule: InitDecorator<
+  RestInitRawMeta & { resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][] },
+  RestModuleParams,
+  RestInitMeta
+> = makeClassDecorator(transformRootMeta, 'restRootModule', initRest);
 export const restModule: InitDecorator<RestInitRawMeta, RestModuleParams, RestInitMeta> = makeClassDecorator(
   transformFeatureMeta,
   'restModule',

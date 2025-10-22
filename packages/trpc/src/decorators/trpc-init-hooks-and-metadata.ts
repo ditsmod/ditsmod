@@ -16,6 +16,7 @@ import {
   ShallowImports,
   SystemLogMediator,
   GlobalInitHooks,
+  ForwardRefFn,
 } from '@ditsmod/core';
 
 import { TrpcModule } from '../trpc.module.js';
@@ -53,11 +54,11 @@ export const initTrpcModule: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, Tr
   transformInitMeta,
   'initTrpcModule',
 );
-export const trpcRootModule: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, TrpcInitMeta> = makeClassDecorator(
-  transformRootMetadata,
-  'trpcRootModule',
-  initTrpcModule
-);
+export const trpcRootModule: InitDecorator<
+  TrpcInitRawMeta & { resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][] },
+  TrpcModuleParams,
+  TrpcInitMeta
+> = makeClassDecorator(transformRootMetadata, 'trpcRootModule', initTrpcModule);
 export const trpcModule: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, TrpcInitMeta> = makeClassDecorator(
   transformFeatureMetadata,
   'trpcModule',
