@@ -1,5 +1,4 @@
-import { rootModule } from '@ditsmod/core';
-import type { SetAppRouterOptions, TrpcCreateOptions, TrpcRootModule } from '@ditsmod/trpc';
+import { trpcRootModule, type SetAppRouterOptions, type TrpcCreateOptions, type TrpcRootModule } from '@ditsmod/trpc';
 import type { AppRouterHelper } from '@ditsmod/trpc/client';
 
 import { PostModule } from '#post/post.module.js';
@@ -9,7 +8,7 @@ import { MessageModule } from '#message/message.module.js';
 const modulesWithTrpcRoutes = [AuthModule, PostModule, MessageModule] as const;
 export type AppRouter = AppRouterHelper<typeof modulesWithTrpcRoutes>;
 
-@rootModule({
+@trpcRootModule({
   imports: [...modulesWithTrpcRoutes],
 })
 export class AppModule implements TrpcRootModule {

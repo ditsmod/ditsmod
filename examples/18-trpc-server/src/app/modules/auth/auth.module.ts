@@ -1,5 +1,5 @@
 import { RouterOf } from '@ditsmod/trpc/client';
-import { initTrpcModule, ModuleWithTrpcRoutes } from '@ditsmod/trpc';
+import { ModuleWithTrpcRoutes, trpcModule } from '@ditsmod/trpc';
 
 import { AuthController } from '#auth/auth.controller.js';
 import { AuthService } from './auth.service.js';
@@ -7,7 +7,7 @@ import { AuthService } from './auth.service.js';
 // For TRPCClient
 export type AuthRouter = RouterOf<typeof AuthModule>;
 
-@initTrpcModule({
+@trpcModule({
   controllers: [AuthController],
   providersPerRou: [AuthService],
 })
