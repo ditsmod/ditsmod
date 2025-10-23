@@ -99,7 +99,7 @@ import { MyLogger } from './my-loggegr.js';
 export class AppModule {}
 ```
 
-But, most likely, you will want to use some ready-made, well-known logger. And there is a good chance that its interface is different from that of [Logger][100]. But, as a rule, this is also not a problem, because before transferring the logger instance to DI, it can be patched so that it implements the necessary interface. For this, a provider with the `useFactory` property is used.
+But, most likely, you will want to use some ready-made, well-known logger. And there is a good chance that its interface is different from that of [Logger][100]. However, as a rule, this is not a problem either, because before passing the logger instance to DI, it can be patched using a `FactoryProvider` in such a way that it implements the required interface.
 
 Let's write the code for this provider first. At the moment (2023-09-02), one of the most popular Node.js loggers is [winston][103]. For patching, we wrote a class method before which we added the `factoryMethod` decorator:
 

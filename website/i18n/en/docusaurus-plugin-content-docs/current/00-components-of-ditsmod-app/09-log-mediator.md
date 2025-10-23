@@ -69,7 +69,7 @@ import { MyLogMediator } from './my-log-mediator.js';
 @rootModule({
 // ...
   providersPerApp: [
-    { token: SystemLogMediator, useClass: MyLogMediator },
+    { token: SystemLogMediator, useToken: MyLogMediator },
     MyLogMediator,
   ],
 })
