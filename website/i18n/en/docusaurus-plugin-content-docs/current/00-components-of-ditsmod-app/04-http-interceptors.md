@@ -41,11 +41,9 @@ So, the approximate order of processing the request is as follows:
 5. `HttpBackend`;
 6. controller method.
 
-Given that starting from `PreRouter` and to the controller method, a promise is passed, then the same promise will be resolved in the reverse order - from the controller method to `PreRouter`.
+Since the promise chain starts with `PreRouter` and ends with the controller method, this chain will be resolved in reverse order - from the controller method to `PreRouter`. This means that in the interceptor you can listen for the result of promise resolve, which returns the method of the controller.
 
-As `PreRouter`, `HttpFrontend`, `InterceptorWithGuards`, and `HttpBackend` instances are created using DI, you can replace them with your own version of the respective classes. For example, if you don't just want to send a 501 status when the required route is missing, but also want to add some text or change headers, you can substitute [PreRouter][7] with your own class.
-
-Each call to the interceptor returns `Promise<any>`, and it eventually leads to a controller method tied to the corresponding route. This means that in the interceptor you can listen for the result of promise resolve, which returns the method of the controller.
+In addition, because `PreRouter`, `HttpFrontend`, `InterceptorWithGuards`, and `HttpBackend` instances are created using DI, you can replace them with your own version of the respective classes. For example, if you don't just want to send a 501 status when the required route is missing, but also want to add some text or change headers, you can substitute [PreRouter][7] with your own class.
 
 ### Context-scoped mode {#context-scoped-mode}
 
@@ -100,7 +98,7 @@ import { MyHttpInterceptor } from './my-http-interceptor.js';
 
 @restModule({
   // ...
-  providersPerRou: [{ token: HTTP_INTERCEPTORS, useClass: MyHttpInterceptor, multi: true }],
+  providersPerApp: [{ token: HTTP_INTERCEPTORS, useClass: MyHttpInterceptor, multi: true }],
 })
 export class SomeModule {}
 ```
