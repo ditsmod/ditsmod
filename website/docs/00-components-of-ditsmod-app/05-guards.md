@@ -10,7 +10,7 @@ sidebar_position: 5
 
 ```ts
 interface CanActivate {
-  canActivate(ctx: RequestContext, params?: any[]): boolean | number | Promise<boolean | number>;
+  canActivate(ctx: RequestContext, params?: any[]): boolean | Response | Promise<boolean | Response>;
 }
 ```
 
@@ -30,17 +30,42 @@ export class AuthGuard implements CanActivate {
 }
 ```
 
+Або так:
+
+```ts {11-17}
+import { Status } from '@ditsmod/core';
+import { RequestContext, CanActivate, guard } from '@ditsmod/rest';
+
+import { AuthService } from './auth.service.js';
+import { Permission } from './types.js';
+
+@guard()
+export class PermissionsGuard implements CanActivate {
+  constructor(private authService: AuthService) {}
+
+  async canActivate(ctx: RequestContext, params?: Permission[]) {
+    if (await this.authService.hasPermissions(params)) {
+      return true;
+    } else {
+      return new Response(null, { status: Status.FORBIDDEN });
+    }
+  }
+}
+```
+
+Зверніть увагу, що ґарди можуть повертати інстанс стандартного класу [Response][5].
+
 Файли ґардів рекомендується називати із закінченням `*.guard.ts`, а імена їхніх класів - із закінченням `*Guard`.
 
 Якщо `canActivate()` повертає:
 
 - `true` чи `Promise<true>`, значить Ditsmod буде обробляти відповідний маршрут із цим ґардом;
 - `false` чи `Promise<false>`, значить відповідь на запит міститиме 401 статус і обробки маршруту з боку контролера не буде;
-- `number` чи `Promise<number>` Ditsmod інтерпретує як номер статусу (403, 401 і т.п.), який треба повернути у відповіді на HTTP-запит.
+- інстанс [Response][5] чи `Promise<Response>`, які в даному контексті Ditsmod інтерпретує як відповідь на HTTP-запит.
 
 ## Передача ґардів до інжекторів {#passing-guards-to-injectors}
 
-Ґарди можна передавати у метаданих модуля чи контролера:
+Ґарди можна передавати у метадані модуля чи контролера:
 
 ```ts {5}
 import { restModule } from '@ditsmod/rest';
@@ -52,13 +77,13 @@ import { AuthGuard } from 'auth.guard';
 export class SomeModule {}
 ```
 
-В даному разі ґард буде працювати на рівні запиту, для контролерів неодинаків.
+В даному разі ґард буде працювати на рівні запиту, для контролерів в режимі injector-scoped.
 
 ## Використання ґардів {#use-of-guards}
 
-Ґарди передаються до контролерів в масиві у третьому параметрі декоратора `route`:
+Якщо ви використовуєте модуль `@ditsmod/rest`, ґарди передаються до контролерів в масиві у третьому параметрі декоратора `route`:
 
-```ts {7}
+```ts {6}
 import { controller, Res, route } from '@ditsmod/rest';
 import { AuthGuard } from './auth.guard.js';
 
@@ -172,3 +197,4 @@ export class SomeModule {}
 [2]: https://github.com/ditsmod/realworld/blob/main/packages/server/src/app/modules/service/auth/bearer.guard.ts
 [3]: /components-of-ditsmod-app/dependency-injection#injector-and-providers
 [4]: /components-of-ditsmod-app/controllers-and-services/#what-is-a-controller
+[5]: https://developer.mozilla.org/en-US/docs/Web/API/Response

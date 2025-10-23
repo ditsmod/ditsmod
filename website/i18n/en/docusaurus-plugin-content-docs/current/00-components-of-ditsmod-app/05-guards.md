@@ -10,7 +10,7 @@ Any guard is a [DI provider][3] passed to injectors at the request level [in inj
 
 ```ts
 interface CanActivate {
-  canActivate(ctx: RequestContext, params?: any[]): boolean | number | Promise<boolean | number>;
+  canActivate(ctx: RequestContext, params?: any[]): boolean | Response | Promise<boolean | Response>;
 }
 ```
 
@@ -30,13 +30,38 @@ export class AuthGuard implements CanActivate {
 }
 ```
 
+Or like this:
+
+```ts {11-17}
+import { Status } from '@ditsmod/core';
+import { RequestContext, CanActivate, guard } from '@ditsmod/rest';
+
+import { AuthService } from './auth.service.js';
+import { Permission } from './types.js';
+
+@guard()
+export class PermissionsGuard implements CanActivate {
+  constructor(private authService: AuthService) {}
+
+  async canActivate(ctx: RequestContext, params?: Permission[]) {
+    if (await this.authService.hasPermissions(params)) {
+      return true;
+    } else {
+      return new Response(null, { status: Status.FORBIDDEN });
+    }
+  }
+}
+```
+
+Note that guards can return an instance of the standard [Response][5] class.
+
 It is recommended that guard files end with `*.guard.ts` and their class names end with `*Guard`.
 
 If `canActivate()` returns:
 
 - `true` or `Promise<true>`, means Ditsmod will process the corresponding route with this guard;
 - `false` or `Promise<false>`, so the response to the request will contain a 401 status and the controller will not process the route;
-- `number` or `Promise<number>` is interpreted by Ditsmod as a status number (403, 401, etc.) that should be returned in response to an HTTP request.
+- an instance of [Response][5] or `Promise<Response>`, which in this context Ditsmod interprets as a response to an HTTP request.
 
 ## Passing guards to injectors {#passing-guards-to-injectors}
 
@@ -52,13 +77,13 @@ import { AuthGuard } from 'auth.guard';
 export class SomeModule {}
 ```
 
-In this case, the guard will work at the request level, for injector-scoped controllers.
+In this case, the guard will work at the request level, for controllers in injector-scoped mode.
 
 ## Use of guards {#use-of-guards}
 
-The guards are passed to the controllers in the array in the third parameter of the `route` decorator:
+If you use the `@ditsmod/rest` module, the guards are passed to the controllers in an array in the third parameter of the `route` decorator:
 
-```ts {7}
+```ts {6}
 import { controller, Res, route } from '@ditsmod/rest';
 import { AuthGuard } from './auth.guard.js';
 
@@ -172,3 +197,4 @@ In this case, `AuthGuard` will be automatically added to each route in `OtherMod
 [2]: https://github.com/ditsmod/realworld/blob/main/packages/server/src/app/modules/service/auth/bearer.guard.ts
 [3]: /components-of-ditsmod-app/dependency-injection#injector-and-providers
 [4]: /components-of-ditsmod-app/controllers-and-services/#what-is-a-controller
+[5]: https://developer.mozilla.org/en-US/docs/Web/API/Response
