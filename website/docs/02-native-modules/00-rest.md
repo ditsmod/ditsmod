@@ -4,14 +4,16 @@ sidebar_position: 0
 
 # @ditsmod/rest
 
-В модулі `@ditsmod/rest` реалізується маршрутизатор, що має інтерфейс `Router`:
+Як видно з назви, модуль `@ditsmod/rest` забезпечує підтримку [REST][0]. Він містить зокрема:
+
+- ініт-декоратори для кореневого модуля та модуля фіч - `restRootModule`, `restModule`;
+- розширення, які забезпечують створення REST-роутів - `RoutesExtension`, `PreRouterExtension`;
+- роутер, що має наступний тип:
 
 ```ts
 interface Router {
   on(method: HttpMethod, path: string, handle: RouteHandler): this;
-
   all(path: string, handle: RouteHandler): this;
-
   find(method: HttpMethod, path: string): RouterReturns;
 }
 
@@ -33,7 +35,7 @@ interface PathParam {
 }
 ```
 
-Готовий приклад використання даного модуля можна знайти в будь-якому прикладі в [репозиторії Ditsmod][1].
+Готовий приклад використання даного модуля можна знайти в прикладах [репозиторія Ditsmod][1].
 
 ## Встановлення та підключення {#installation-and-importing}
 
@@ -76,6 +78,7 @@ export class MyCustomRouterModule {}
 
 З даного модуля також експортується токен групи розширень `PRE_ROUTER_EXTENSIONS`. Розширення з цієї групи використовує метадані, які повертає група розширень `ROUTES_EXTENSIONS`, щоб створювати обробники HTTP-запитів.
 
-[1]: https://github.com/ditsmod/ditsmod/tree/main/examples
+[0]: https://uk.wikipedia.org/wiki/REST
+[1]: https://github.com/ditsmod/ditsmod/tree/main/examples/01-hello-world
 [2]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/types/metadata-per-mod.ts#L58-L74
 [3]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.16.0/packages/body-parser/src/body-parser.extension.ts#L54

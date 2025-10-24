@@ -4,14 +4,16 @@ sidebar_position: 0
 
 # @ditsmod/rest
 
-The `@ditsmod/rest` module implements a router with the `Router` interface:
+As the name suggests, the `@ditsmod/rest` module provides support for [REST][0]. It includes:
+
+- init decorators for the root module and the feature module - `restRootModule`, `restModule`;
+- extensions that provide REST route creation - `RoutesExtension`, `PreRouterExtension`;
+- a router of the following type:
 
 ```ts
 interface Router {
   on(method: HttpMethod, path: string, handle: RouteHandler): this;
-
   all(path: string, handle: RouteHandler): this;
-
   find(method: HttpMethod, path: string): RouterReturns;
 }
 
@@ -33,7 +35,7 @@ interface PathParam {
 }
 ```
 
-A ready-made example of using this module can be found in any example in the [Ditsmod repository][1].
+A ready-made example of using this module can be found in the examples [Ditsmod repository][1].
 
 ## Installation and importing {#installation-and-importing}
 
@@ -76,6 +78,7 @@ The extensions group token `ROUTES_EXTENSIONS` is exported from this module. Ext
 
 The extensions group token `PRE_ROUTER_EXTENSIONS` is also exported from this module. An extension from this group uses the metadata returned by the `ROUTES_EXTENSIONS` extension group to create HTTP request handlers.
 
-[1]: https://github.com/ditsmod/ditsmod/tree/main/examples
+[0]: https://en.wikipedia.org/wiki/REST
+[1]: https://github.com/ditsmod/ditsmod/tree/main/examples/01-hello-world
 [2]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/types/metadata-per-mod.ts#L58-L74
 [3]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.16.0/packages/body-parser/src/body-parser.extension.ts#L54
