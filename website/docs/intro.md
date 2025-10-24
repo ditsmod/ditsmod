@@ -36,7 +36,7 @@ app.listen(3000, '0.0.0.0');
 ```
 
 ```ts
-import { route, controller, RestApplication, restRootModule } from '@ditsmod/rest';
+import { controller, route, restRootModule, RestApplication } from '@ditsmod/rest';
 
 @controller()
 class ExampleController {
@@ -52,6 +52,12 @@ class AppModule {}
 const app = await RestApplication.create(AppModule);
 app.server.listen(3000, '0.0.0.0');
 ```
+
+Але чому Ditsmod не такий мінімалістичний, як ExpressJS? Як бачите в прикладі, ExpressJS явно створює єдиний раз об'єкт застосунку, в якому потім додає роути. В об'єкті `app` представлено API різних окремих складових, зокрема: налаштування роутера, налаштування обробки помилок, налаштування системи рендерінгу, HTTP-сервера і т.д. Такий код у простих прикладах виглядає дуже компактно, але у ньому по-суті порушується [Принцип єдиної відповідальності][21]. Натомість в Ditsmod чітко розмежовано:
+
+- роль класу (контролера), в якому створюється роут;
+- роль модуля, в якому задекларовано контролери;
+- роль застосунку, який містить HTTP-сервер.
 
 Оцінюючи об'єм коду, можна припустити, що через свою багатослівність, Ditsmod є повільнішим за ExpressJS. Але насправді трохи повільнішим є лише холодний старт Ditsmod (на моєму ноутбуку він стартує за 34 ms, тоді як ExpressJS стартує за 4 ms). Що стосується швидкості обробки запитів, то [Ditsmod більш ніж удвічі швидший за ExpressJS][14].
 
@@ -227,3 +233,4 @@ bun dist/main.js
 [18]: https://nodejs.org/api/packages.html#imports
 [19]: https://bun.sh/
 [20]: https://github.com/oven-sh/bun/issues/10438
+[21]: https://uk.wikipedia.org/wiki/%D0%9F%D1%80%D0%B8%D0%BD%D1%86%D0%B8%D0%BF_%D1%94%D0%B4%D0%B8%D0%BD%D0%BE%D1%97_%D0%B2%D1%96%D0%B4%D0%BF%D0%BE%D0%B2%D1%96%D0%B4%D0%B0%D0%BB%D1%8C%D0%BD%D0%BE%D1%81%D1%82%D1%96

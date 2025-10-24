@@ -36,7 +36,7 @@ app.listen(3000, '0.0.0.0');
 ```
 
 ```ts
-import { route, controller, RestApplication, restRootModule } from '@ditsmod/rest';
+import { controller, route, restRootModule, RestApplication } from '@ditsmod/rest';
 
 @controller()
 class ExampleController {
@@ -52,6 +52,12 @@ class AppModule {}
 const app = await RestApplication.create(AppModule);
 app.server.listen(3000, '0.0.0.0');
 ```
+
+But why isn’t Ditsmod as minimalistic as ExpressJS? As you can see in the example, ExpressJS explicitly creates an application object once, to which routes are then added. The `app` object represents the API of various separate components, including router configuration, error handling setup, rendering system configuration, HTTP server setup, etc. Such code looks very compact in simple examples, but in essence, it violates the [Single Responsibility Principle][21]. In contrast, Ditsmod clearly distinguishes between:
+
+- the role of the class (controller) where the route is created;
+- the role of the module where the controllers are declared;
+- the role of the application that contains the HTTP server.
 
 Looking at the amount of code, you might think that Ditsmod is slower than ExpressJS because of its verbosity. But in fact, only Ditsmod's cold start is slightly slower (it starts in 34 ms on my laptop, while ExpressJS starts in 4 ms). In terms of request processing speed, [Ditsmod is more than twice as fast as ExpressJS][14].
 
@@ -228,3 +234,4 @@ bun dist/main.js
 [18]: https://nodejs.org/api/packages.html#imports
 [19]: https://bun.sh/
 [20]: https://github.com/oven-sh/bun/issues/10438
+[21]: https://en.wikipedia.org/wiki/Single-responsibility_principle
