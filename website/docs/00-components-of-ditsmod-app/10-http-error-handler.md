@@ -59,6 +59,8 @@ interface ErrorInfo {
    * The parameters that came with the HTTP request.
    */
   params?: any;
+  name?: string;
+  code?: string;
 }
 ```
 

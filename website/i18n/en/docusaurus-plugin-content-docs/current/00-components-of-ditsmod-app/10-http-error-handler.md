@@ -59,10 +59,12 @@ interface ErrorInfo {
    * The parameters that came with the HTTP request.
    */
   params?: any;
+  name?: string;
+  code?: string;
 }
 ```
 
-The `CustomError' class constructor can accept cause error as the second argument, if there is one.
+The `CustomError` class constructor can accept cause error as the second argument, if there is one.
 
 ## HttpErrorHandler {#httperrorhandler}
 
