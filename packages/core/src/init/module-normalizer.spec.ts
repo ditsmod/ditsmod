@@ -280,11 +280,34 @@ describe('ModuleNormalizer', () => {
   });
 
   describe('creating custom decorator with init hooks', () => {
+    /**
+     * An object with this type will be passed in the module metadata as a so-called "module with parameters".
+     */
+    interface InitParams extends FeatureModuleParams {
+      path?: string;
+      num?: number;
+    }
+
+    /**
+     * An object with this type will be passed directly to the init decorator.
+     */
+    interface RootRawMetadata extends BaseInitRawMeta<InitParams> {
+      one?: number;
+      two?: number;
+      appends?: ({ module: ModRefId } & AnyObj)[];
+    }
+
+    /**
+     * Init hooks transform an object of type {@link RootRawMetadata} into an object of that type.
+     */
     interface InitMeta extends BaseInitMeta {
       baseMeta: BaseMeta;
       rawMeta: RootRawMetadata;
     }
 
+    /**
+     * The methods of this class will normalize and validate the metadata passed to the init decorator.
+     */
     class InitHooks1 extends InitHooks<RootRawMetadata> {
       override normalize(baseMeta: BaseMeta) {
         return {
@@ -294,20 +317,12 @@ describe('ModuleNormalizer', () => {
       }
     }
 
+    /**
+     * Init decorator transformer.
+     */
     function getInitHooks(data?: RootRawMetadata): InitHooks<RootRawMetadata> {
       const metadata = Object.assign({}, data);
       return new InitHooks1(metadata);
-    }
-
-    interface InitParams extends FeatureModuleParams {
-      path?: string;
-      num?: number;
-    }
-
-    interface RootRawMetadata extends BaseInitRawMeta<InitParams> {
-      one?: number;
-      two?: number;
-      appends?: ({ module: ModRefId } & AnyObj)[];
     }
 
     const initSome: InitDecorator<RootRawMetadata, InitParams, InitMeta> = makeClassDecorator(getInitHooks);
