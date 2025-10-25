@@ -6,7 +6,7 @@ sidebar_position: 0
 
 Як видно з назви, модуль `@ditsmod/rest` забезпечує підтримку [REST][0]. Він містить зокрема:
 
-- ініт-декоратори для кореневого модуля та модуля фіч - `restRootModule`, `restModule`;
+- [ініт-декоратори][4] для кореневого модуля та модуля фіч - `restRootModule`, `restModule`;
 - розширення, які забезпечують створення REST-роутів - `RoutesExtension`, `PreRouterExtension`;
 - роутер, що має наступний тип:
 
@@ -82,3 +82,4 @@ export class MyCustomRouterModule {}
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/01-hello-world
 [2]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/types/metadata-per-mod.ts#L58-L74
 [3]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.16.0/packages/body-parser/src/body-parser.extension.ts#L54
+[4]: /components-of-ditsmod-app/init-decorators/

@@ -6,7 +6,7 @@ sidebar_position: 0
 
 As the name suggests, the `@ditsmod/rest` module provides support for [REST][0]. It includes:
 
-- init decorators for the root module and the feature module - `restRootModule`, `restModule`;
+- [init decorators][4] for the root module and the feature module - `restRootModule`, `restModule`;
 - extensions that provide REST route creation - `RoutesExtension`, `PreRouterExtension`;
 - a router of the following type:
 
@@ -82,3 +82,4 @@ The extensions group token `PRE_ROUTER_EXTENSIONS` is also exported from this mo
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/01-hello-world
 [2]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/types/metadata-per-mod.ts#L58-L74
 [3]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.16.0/packages/body-parser/src/body-parser.extension.ts#L54
+[4]: /components-of-ditsmod-app/init-decorators/
