@@ -8,7 +8,7 @@ In the following examples of this section, it is assumed that you have cloned th
 
 ## Injector and providers {#injector-and-providers}
 
-Let's look at the following example with an injector and providers:
+Let's look at the following example:
 
 ```ts {15-19}
 import { Injector, injectable } from '@ditsmod/core';
@@ -34,9 +34,9 @@ const service3 = injector.get(Service3); // Instance of Service3
 service3 === injector.get(Service3); // true
 ```
 
-As you can see, the `Injector.resolveAndCreate()` method takes an array of classes as input and returns an injector that can create an instance of each provided class via the `injector.get()` method, taking into account the entire dependency chain (`Service3` -> `Service2` -> `Service1`).
+As you can see, the `Injector.resolveAndCreate()` method takes an array of classes as input and returns an **injector** that can create an instance of each provided class via the `injector.get()` method, taking into account the entire dependency chain (`Service3` -> `Service2` -> `Service1`).
 
-What `injector.get()` does:
+So, what are the tasks of the injector, and what exactly does its `injector.get()` method do:
 
 - when `Service3` is requested, it inspects the constructor of that class and sees a dependency on `Service2`;
 - then it inspects the constructor of `Service2` and sees a dependency on `Service1`;
@@ -52,7 +52,7 @@ const injector = Injector.resolveAndCreate([]);
 const service3 = injector.get(Service3); // Error: No provider for Service3!
 ```
 
-Why does this happen? To better understand this, let's rewrite the previous example by passing providers to the injector in another form:
+As the error message tells us, it refers to some **providers**. But what are they, and why is the error thrown? At the very least, we already understand that the injector requires not the dependencies of `Service3`, which the reflector can read on its own, but the providers for this class. To better understand what providers are and why the injector requires them, let’s rewrite the previous example by passing the providers to the injector in a different form:
 
 ```ts {16-18}
 import { Injector, injectable } from '@ditsmod/core';
@@ -85,9 +85,16 @@ As you can see, now when creating the injector, instead of classes we passed an 
 2. If the token `Service2` is requested, create an instance of `Service2` first and then return it.
 3. If the token `Service3` is requested, create an instance of `Service3` first and then return it.
 
-Now that we passed providers to the injector as instructions, it becomes clearer that the injector needs instructions for mapping between what is requested (the token) and what it returns (the value). In the documentation this mapping may also be called the **provider registry**, because the instructions for mapping are supplied by providers. As for tokens — for the injector a token is an identifier used to find a value in the provider registry.
+Now that we passed providers to the injector as instructions, it becomes clearer that the injector needs instructions for mapping between what is requested (the token) and what it returns (the value). In the documentation this mapping may also be called the **provider registry**. As for tokens — for the injector a token is an identifier used to find a value in the provider registry. In addition, we can now infer that during the scanning of a class’s dependencies, the [reflector][108] returns tokens rather than providers, which is why the injector cannot rely solely on the reflector without receiving providers. Therefore, when creating the injector, it is necessary to pass in providers that contain the tokens that will be requested from it, particularly through `injector.get()`.
 
-By the way, in the previous example, when we passed an array of classes, the injector treated them as providers as well. That is, providers can be in two forms: either a class, or an object with instructions for creating a particular value. This means both of the following injectors receive configurations with equivalent instructions:
+It’s important to remember that tokens operate in JavaScript code, not in TypeScript code, which means entities declared with keywords such as `interface`, `type`, `declare`, `enum`, etc. cannot be used as tokens, since they will not exist in the JavaScript code after compilation. In addition, tokens cannot be imported using the `type` keyword, because such an import will not appear in the JavaScript code.
+
+Provider tokens can have the following data types:
+
+1. Any object except `null` and arrays. It is recommended to use an instance of the `InjectionToken<T>` class as a token, since it is a generic that accepts a type parameter `T`. This parameter can be used to associate the given token with the value that will be returned from the provider registry.
+2. Tokens of the following types also work well: `string`, `number`, or `symbol`.
+
+By the way, in the previous code example, when we passed an array of classes, the injector treated them as providers as well. That is, providers can be in two forms: either a class, or an object with instructions for creating a particular value. This means both of the following injectors receive configurations with equivalent instructions:
 
 ```ts
 const injector1 = Injector.resolveAndCreate([
@@ -776,11 +783,12 @@ Remember that when DI cannot find the required provider, there are only three po
 [17]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/examples/14-auth-jwt/src/app/modules/services/auth/bearer.guard.ts#L24
 
 [101]: ../../#installation
-[107]: /developer-guides/exports-and-imports
-[121]: /components-of-ditsmod-app/providers-collisions
 [100]: #transfer-of-providers-to-the-di-registry
 [102]: #injector-and-providers
 [103]: /components-of-ditsmod-app/controllers-and-services/#what-is-a-controller
 [104]: /components-of-ditsmod-app/extensions/#group-of-extensions
 [105]: /components-of-ditsmod-app/http-interceptors/
 [106]: /components-of-ditsmod-app/guards/
+[107]: /developer-guides/exports-and-imports/
+[108]: /components-of-ditsmod-app/decorators-and-reflector/
+[121]: /components-of-ditsmod-app/providers-collisions/
