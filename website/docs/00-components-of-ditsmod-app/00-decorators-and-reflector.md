@@ -115,7 +115,7 @@ npm run build -- --watch
 node --watch dist/app/services.js
 ```
 
-Тепер, якщо у `src/app/services.ts`, у функцію `getDependencies()` передати `Service1`, через пару секунд у другому терміналі ви повинні побачити вивід `[ { token: [class Service1], required: true } ]`.
+Тепер, якщо у `src/app/services.ts`, у функцію `getDependencies()` передати `Service2`, через пару секунд у другому терміналі ви повинні побачити вивід `[ { token: [class Service1], required: true } ]`.
 
 
 [13]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/package.json#L53

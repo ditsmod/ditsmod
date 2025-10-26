@@ -115,7 +115,7 @@ And in the second terminal, you can run the command to execute the compiled code
 node --watch dist/app/services.js
 ```
 
-Now, if in `src/app/services.ts` you pass `Service1` to the `getDependencies()` function, after a few seconds, you should see the output `[ { token: [class Service1], required: true } ]` in the second terminal.
+Now, if in `src/app/services.ts` you pass `Service2` to the `getDependencies()` function, after a few seconds, you should see the output `[ { token: [class Service1], required: true } ]` in the second terminal.
 
 
 [13]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/package.json#L53
