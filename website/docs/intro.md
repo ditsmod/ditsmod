@@ -140,12 +140,16 @@ import { AppModule } from '#app/app.module.js';
 
 На даний момент (2025-10-07) TypeScript ще не у повній мірі підтримує ці аліаси, тому бажано їх продублювати у файлі `tsconfig.json`:
 
-```json
+```json {6}
 // ...
-  "paths": {
-    "#app/*": ["./src/app/*"]
+{
+  "compilerOptions": {
+    // ...
+    "paths": {
+      "#app/*": ["./src/app/*"]
+    }
   }
-// ...
+}
 ```
 
 Зверніть увагу, що у `package.json` аліаси вказують на `dist`, тоді як у `tsconfig.json` - на `src`.

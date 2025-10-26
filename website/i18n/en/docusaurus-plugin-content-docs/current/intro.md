@@ -140,12 +140,16 @@ import { AppModule } from '#app/app.module.js';
 
 At the moment (2025-10-07) TypeScript does not yet fully support these aliases, so it is advisable to duplicate them in the `tsconfig.json` file:
 
-```json
+```json {6}
 // ...
-  "paths": {
-    "#app/*": ["./src/app/*"]
+{
+  "compilerOptions": {
+    // ...
+    "paths": {
+      "#app/*": ["./src/app/*"]
+    }
   }
-// ...
+}
 ```
 
 Note that in `package.json` the aliases point to `dist`, while in `tsconfig.json` they point to `src`.
