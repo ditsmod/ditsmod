@@ -45,14 +45,14 @@ So, what are the tasks of the injector, and what exactly does its `injector.get(
 - and finally it creates an instance of `Service3` using the instance of `Service2`;
 - if the instance `Service3` is requested again later, `injector.get()` will return the previously created `Service3` instance from this injector's cache.
 
-An important feature here is that DI can read the dependency chain of `Service3` using the reflector without passing an array of the specified classes to the injector, but `injector.get()` will throw an error in such a case if you try to obtain an instance of a class:
+Let's now try to pass an empty array to the injector when creating it. In this case, calling `injector.get()` will throw an error:
 
 ```ts
 const injector = Injector.resolveAndCreate([]);
 const service3 = injector.get(Service3); // Error: No provider for Service3!
 ```
 
-As the error message tells us, it refers to some **providers**. But what are they, and why is the error thrown? At the very least, we already understand that the injector requires not the dependencies of `Service3`, which the reflector can read on its own, but the providers for this class. To better understand what providers are and why the injector requires them, let’s rewrite the previous example by passing the providers to the injector in a different form:
+As the error tells us, the injector requires a **provider** for `Service3`. But what exactly are providers? To better understand this, let's rewrite the previous example by passing the injector an array of providers in a different form:
 
 ```ts {16-18}
 import { Injector, injectable } from '@ditsmod/core';
@@ -85,14 +85,22 @@ As you can see, now when creating the injector, instead of classes we passed an 
 2. If the token `Service2` is requested, create an instance of `Service2` first and then return it.
 3. If the token `Service3` is requested, create an instance of `Service3` first and then return it.
 
-Now that we passed providers to the injector as instructions, it becomes clearer that the injector needs instructions for mapping between what is requested (the token) and what it returns (the value). In the documentation this mapping may also be called the **provider registry**. As for tokens — for the injector a token is an identifier used to find a value in the provider registry. In addition, we can now infer that during the scanning of a class’s dependencies, the [reflector][108] returns tokens rather than providers, which is why the injector cannot rely solely on the reflector without receiving providers. Therefore, when creating the injector, it is necessary to pass in providers that contain the tokens that will be requested from it, particularly through `injector.get()`.
+Now that we have passed the providers to the injector in the form of instructions, it becomes clearer that the injector needs these instructions to map what it is being asked for (the token) to what it should provide (the value). In the documentation, such a mapping may also be referred to as the **injector registry**. For the injector, a **token** is an identifier used to look up a value in its registry. While scanning a class's dependencies, the [reflector][108] returns tokens rather than providers, which means the injector cannot rely solely on the reflector without also being given the providers. Therefore, when creating an injector, you must supply providers containing the tokens that will be requested from it, particularly through `injector.get()`.
 
-It’s important to remember that tokens operate in JavaScript code, not in TypeScript code, which means entities declared with keywords such as `interface`, `type`, `declare`, `enum`, etc. cannot be used as tokens, since they will not exist in the JavaScript code after compilation. In addition, tokens cannot be imported using the `type` keyword, because such an import will not appear in the JavaScript code.
+Since this is very important, let's restate how DI works, but in different words. When the injector is created, it receives providers that serve as instructions mapping tokens to the values that should be returned for those tokens. As you can see in the previous code example, providers are passed to `Injector.resolveAndCreate()`, and as the name of this method suggests, dependency **resolution** happens first. And what is "dependency resolution"? This is the process of scanning each provider using the [reflector][108] and determining the list of tokens whose values that provider depends on. Once the injector has been created, the reflector is no longer used, which is why `injector.get()` in the following example throws an error:
 
-Provider tokens can have the following data types:
+```ts
+const injector = Injector.resolveAndCreate([]);
+const service3 = injector.get(Service3); // Error: No provider for Service3!
+```
 
-1. Any object except `null` and arrays. It is recommended to use an instance of the `InjectionToken<T>` class as a token, since it is a generic that accepts a type parameter `T`. This parameter can be used to associate the given token with the value that will be returned from the provider registry.
-2. Tokens of the following types also work well: `string`, `number`, or `symbol`.
+By the way, another reason why the reflector is not used during `injector.get()` calls is that a provider token can be something other than a class — for example, it can be a primitive type. The complete list of possible token types is as follows:
+
+1. A class.
+2. Any object, except for `null` and arrays. It is recommended to use an instance of the `InjectionToken<T>` class as a token, since it is a generic that takes a type parameter `T`. This parameter can be used to associate the token with the value that will be returned from the injector registry.
+3. A `string`, `number`, or `symbol`.
+
+It's important to remember that tokens exist in JavaScript code, not TypeScript code. Therefore, entities declared with `interface`, `type`, `declare`, `enum`, etc. cannot be used as tokens, since they do not exist in the compiled JavaScript output. Additionally, tokens cannot be imported using the `type` keyword, because such imports are removed during compilation and will not exist in the JavaScript code.
 
 By the way, in the previous code example, when we passed an array of classes, the injector treated them as providers as well. That is, providers can be in two forms: either a class, or an object with instructions for creating a particular value. This means both of the following injectors receive configurations with equivalent instructions:
 
@@ -189,25 +197,7 @@ Now that you are familiar with the concept of a **provider**, it can be clarifie
 
 DI provides the ability to create a hierarchy and encapsulation of injectors, involving parent and child injectors. It is thanks to hierarchy and encapsulation that the structure and modularity of an application are built. On the other hand, when encapsulation exists, there are rules that need to be learned to understand when one service can access a certain provider and when it cannot.
 
-Let's consider the following situation. Imagine you need to create a default configuration for the entire application and a custom configuration for certain modules. This means that at the level of some modules you will change the configuration, and you need it not to affect the default value and other modules. The following pseudo-code shows the basic concept that provides such behavior:
-
-```ts
-// Parent injector
-class PerApplicationInjector {
-  locale = 'en'
-  token1 = 'value1'
-  token2 = 'value2'
-  // ...
-}
-
-// Child injector
-class PerModuleInjector {
-  parent: perApplicationInjector;
-  locale = 'uk'
-}
-```
-
-A child injector can refer to a parent injector because it has the corresponding `parent` property with an instance of the parent injector. On the other hand, a parent injector has no access to a child injector, so it can only find values for those providers that were passed directly to it. This is a very important feature in the injector hierarchy, so we'll repeat it once more: child injectors can refer to parent injectors, and parent injectors cannot refer to child injectors.
+Let’s consider the following situation. Imagine that you need to create a default configuration for a logger that will be used throughout the entire application. However, for a specific module, you need to increase the log level, for example, to debug that particular module. This means that at the module level, you will modify the configuration, and you need to ensure that it does not affect the default value or other modules. This is exactly what the injector hierarchy is designed for. The highest level in the hierarchy is the application-level injector, from which the injectors for each module branch out. An important feature is that the higher-level injector does not have access to the lower-level injectors in the hierarchy. However, lower-level injectors can access higher-level ones. That’s why module-level injectors can, for example, obtain the logger configuration from the application-level injector if they do not receive an overridden configuration at the module level.
 
 Let's look at the following example. For simplicity, decorators are not used at all here, because none of the classes has dependencies:
 
