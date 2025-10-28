@@ -73,7 +73,7 @@ export class MyHttpInterceptor implements HttpInterceptor {
 }
 ```
 
-As you can see, the `intercept()` method has two parameters: the first is the handler instance that calls the next interceptor, and the second is `RequestContext` (native Node.js request and response objects). If the interceptor needs additional data for its work, it can be obtained in the constructor through DI, as in any service.
+As you can see, the `intercept()` method has two parameters: the first one receives an instance of the handler that invokes the next interceptor, and the second one is `RequestContext`, which contains the native request and response objects from Node.js. If the interceptor needs additional data for its work, it can be obtained in the constructor through DI, as in any service.
 
 ## Passing interceptor to the injector {#passing-interceptor-to-the-injector}
 
