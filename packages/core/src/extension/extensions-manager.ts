@@ -54,7 +54,7 @@ export class ExtensionsManager {
   protected excludedExtensionPendingList = new Map<ExtensionClass, Set<Class<Extension>>>();
   protected extensionsListForStage2 = new Set<Extension>();
   /**
-   * The cache for ExtCls in the current module.
+   * The cache for {@link ExtensionClass} in the current module.
    */
   protected stage1ExtensionMetaCache = new Map<ExtensionClass, Stage1ExtensionMeta>();
 
@@ -164,21 +164,13 @@ export class ExtensionsManager {
 
   protected async prepareAndInitExtension<T>(ExtCls: ExtensionClass<T>) {
     this.unfinishedInit.add(ExtCls);
-    this.log.startExtensionsExtensionInit(this, this.unfinishedInit);
+    this.log.startExtensionInit(this, this.unfinishedInit);
     const stage1ExtensionMeta = await this.initExtension(ExtCls);
-    this.log.finishExtensionsExtensionInit(this, this.unfinishedInit);
+    this.log.finishExtensionInit(this, this.unfinishedInit);
     this.unfinishedInit.delete(ExtCls);
     this.stage1ExtensionMetaCache.set(ExtCls, stage1ExtensionMeta);
     this.setStage1ExtensionMetaPerApp(ExtCls, stage1ExtensionMeta);
     return stage1ExtensionMeta;
-  }
-
-  protected setStage1ExtensionMetaPerApp(ExtCls: ExtensionClass, stage1ExtensionMeta: Stage1ExtensionMeta) {
-    const copyStage1ExtensionMeta = { ...stage1ExtensionMeta } as Stage1ExtensionMeta;
-    delete (copyStage1ExtensionMeta as OptionalProps<Stage1ExtensionMeta, 'groupDataPerApp'>).groupDataPerApp;
-    const aStage1ExtensionMeta = this.extensionsContext.mStage1ExtensionMeta.get(ExtCls) || [];
-    aStage1ExtensionMeta.push(copyStage1ExtensionMeta);
-    this.extensionsContext.mStage1ExtensionMeta.set(ExtCls, aStage1ExtensionMeta);
   }
 
   protected async initExtension<T>(ExtCls: ExtensionClass): Promise<Stage1ExtensionMeta> {
@@ -210,6 +202,14 @@ export class ExtensionsManager {
     stage1ExtensionMeta.addDebugMeta(debugMeta);
 
     return stage1ExtensionMeta;
+  }
+
+  protected setStage1ExtensionMetaPerApp(ExtCls: ExtensionClass, stage1ExtensionMeta: Stage1ExtensionMeta) {
+    const copyStage1ExtensionMeta = { ...stage1ExtensionMeta } as Stage1ExtensionMeta;
+    delete (copyStage1ExtensionMeta as OptionalProps<Stage1ExtensionMeta, 'groupDataPerApp'>).groupDataPerApp;
+    const aStage1ExtensionMeta = this.extensionsContext.mStage1ExtensionMeta.get(ExtCls) || [];
+    aStage1ExtensionMeta.push(copyStage1ExtensionMeta);
+    this.extensionsContext.mStage1ExtensionMeta.set(ExtCls, aStage1ExtensionMeta);
   }
 
   protected updateExtensionCounters(ExtCls: ExtensionClass, stage1ExtensionMeta: Stage1ExtensionMeta) {
