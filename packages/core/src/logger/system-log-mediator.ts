@@ -206,7 +206,7 @@ export class SystemLogMediator extends LogMediator {
   /**
    * `${tokenName} start init.`
    */
-  startExtensionsExtensionInit(self: object, unfinishedInit: Set<Extension | ExtensionClass>) {
+  startExtensionInit(self: object, unfinishedInit: Set<Extension | ExtensionClass>) {
     const className = self.constructor.name;
     const path = this.getExtentionPath(unfinishedInit);
     this.setLog('trace', `${className}: ${path}: start init.`);
@@ -227,7 +227,7 @@ export class SystemLogMediator extends LogMediator {
   /**
    * `finish init ${tokenName}.`
    */
-  finishExtensionsExtensionInit(self: object, unfinishedInit: Set<Extension | ExtensionClass>) {
+  finishExtensionInit(self: object, unfinishedInit: Set<Extension | ExtensionClass>) {
     const className = self.constructor.name;
     const path = this.getExtentionPath(unfinishedInit);
     this.setLog('trace', `${className}: ${path}: finish init.`);
