@@ -6,6 +6,8 @@ sidebar_position: 1
 
 В наступних прикладах даного розділу припускається, що ви клонували репозиторій [ditsmod/rest-starter][101]. Це дасть вам змогу отримати базову конфігурацію для застосунку та експериментувати у теці `src/app` даного репозиторію.
 
+Окрім цього, якщо ви ще не знаєте, що саме робить рефлектор і що таке "вирішення залежностей", рекомендуємо вам спочатку прочитати попередній розділ [Декоратори та рефлектор][108].
+
 ## Інжектор та провайдери {#injector-and-providers}
 
 Давайте розглянемо наступний приклад:
@@ -52,38 +54,36 @@ const injector = Injector.resolveAndCreate([]);
 const service3 = injector.get(Service3); // Error: No provider for Service3!
 ```
 
-Як говорить нам помилка, інжектор вимагає **провайдер** для `Service3`. Але що саме являють собою провайдери? Щоб краще зрозуміти це, давайте перепишемо попередній приклад передавши інжектору масив провайдерів в іншій формі:
+Як говорить нам помилка, інжектор вимагає **провайдер** для `Service3`. Але що саме являють собою провайдери? Щоб краще зрозуміти це, давайте передамо інжектору масив провайдерів в наступній формі:
 
-```ts {16-18}
-import { Injector, injectable } from '@ditsmod/core';
+```ts {9-12}
+import { Injector } from '@ditsmod/core';
 
 class Service1 {}
-
-@injectable()
-class Service2 {
-  constructor(service1: Service1) {}
-}
-
-@injectable()
-class Service3 {
-  constructor(service2: Service2) {}
-}
+class Service2 {}
+class Service3 {}
+class Service4 {}
 
 const injector = Injector.resolveAndCreate([
-  { token: Service1, useClass: Service1 },
+  { token: Service1, useValue: 'value for Service1' },
   { token: Service2, useClass: Service2 },
-  { token: Service3, useClass: Service3 },
+  { token: Service3, useFactory: () => 'value for Service3' },
+  { token: Service4, useToken: Service3 },
 ]);
-const service1 = injector.get(Service1); // instance of Service1
-const service2 = injector.get(Service2); // instance of Service2
-const service3 = injector.get(Service3); // instance of Service3
+injector.get(Service1); // value for Service1
+injector.get(Service2); // instance of Service2
+injector.get(Service3); // value for Service3
+injector.get(Service4); // value for Service3
 ```
+
+Зверніть увагу, що у цьому прикладі не використовується декоратор `injectable`, оскільки кожен представлений тут клас не має конструктора, де б можна було вказати залежності.
 
 Як бачите, тепер під час створення інжектора, замість класів ми передали масив з об'єктами. Ці об'єкти також називаються **провайдерами**. Кожен провайдер представляє собою інструкцію для DI:
 
-1. Якщо запитується токен `Service1`, треба спочатку створити інстанс `Service1`, а потім видати його.
+1. Якщо запитується токен `Service1`, потрібно видавати текст `value for Service1`.
 2. Якщо запитується токен `Service2`, треба спочатку створити інстанс `Service2`, а потім видати його.
-3. Якщо запитується токен `Service3`, треба спочатку створити інстанс `Service3`, а потім видати його.
+3. Якщо запитується токен `Service3`, треба запустити надану функцію, яка видає текст `value for Service3`.
+4. Якщо запитується токен `Service4`, треба видати значення для токену `Service3`, тобто треба видати текст `value for Service3`.
 
 Тепер, коли ми передали до інжектора провайдери у вигляді інструкцій, стає більш зрозуміло, що інжектору необхідні інструкції для мапінгу між тим, що у нього запитують (токеном), та тим що він видає (значенням). В документації такий мапінг також може називатись **реєстром інжектора**. Для інжектора **токен** - це ідентифікатор для пошуку значення у його реєстрі. Під час сканування залежностей класу, [рефлектор][108] повертає саме токени, а не провайдери, тому інжектор не може задовільнитись використанням лише рефлектора, без передачі провайдерів. Тому під час створення інжектора, йому необхідно передавати провайдери з тими токенами, які у нього будуть запитуватись зокрема через `injector.get()`.
 
@@ -181,7 +181,7 @@ type Provider = Class<any> |
       { token: 'token3', deps: [Service1, Service2], useFactory: fn }
       ```
 
-      Зверніть увагу, що у властивість `deps` передаються саме _токени_ провайдерів, і DI їх сприймає саме як токени, а не як провайдери. Тобто для цих токенів до реєстру DI ще треба буде [передати відповідні провайдери][100]. Також зверніть увагу, що у `deps` не передаються декоратори для параметрів (наприклад `optional`, `skipSelf` і т.д.). Якщо для вашої фабрики необхідні декоратори параметрів - вам потрібно скористатись `ClassFactoryProvider`.
+      Зверніть увагу, що у властивість `deps` передаються саме _токени_ провайдерів, і DI їх сприймає саме як токени, а не як провайдери. Тобто для цих токенів до реєстру DI ще треба буде передати відповідні провайдери. Також зверніть увагу, що у `deps` не передаються декоратори для параметрів (наприклад `optional`, `skipSelf` і т.д.). Якщо для вашої фабрики необхідні декоратори параметрів - вам потрібно скористатись `ClassFactoryProvider`.
 
 4. **TokenProvider** - цей тип провайдера має властивість `useToken`, в яку передається інший токен. Якщо ви записуєте таке:
 
@@ -274,77 +274,11 @@ const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
 
 Під капотом, Ditsmod робить аналогічну процедуру багато разів для різних модулів, роутів та запитів. Наприклад, якщо застосунок Ditsmod має два модулі, і десять роутів, відповідно буде створено один інжектор на рівні застосунку, по одному інжектору для кожного модуля (2 шт.), по одному інжектору для кожного роуту (10 шт.), і по одному інжектору на кожен запит. Інжектори на рівні запиту видаляються автоматично кожен раз після завершення обробки запиту.
 
-Нагадаємо, що вищі в ієрархії інжектори не мають доступу до нижчих в ієрархії інжекторів. Це означає, що **при передачі класу у певний інжектор, потрібно враховувати мінімальний рівень ієрархії його залежностей**.
+Нагадаємо, що вищі в ієрархії інжектори не мають доступу до нижчих в ієрархії інжекторів. Це означає, що **при передачі класу у певний інжектор, потрібно знати найнижчий рівень ієрархії його залежностей**.
 
 Наприклад, якщо ви напишете клас, що має залежність від HTTP-запиту, ви зможете його передати тільки у масив `providersPerReq`, бо тільки з цього масиву формується інжектор, до якого Ditsmod буде автоматично додавати провайдер з об'єктом HTTP-запиту. З іншого боку, інстанс цього класу матиме доступ до усіх своїх батьківських інжекторів: на рівні роуту, модуля, та застосунку. Тому даний клас може залежати від провайдерів на будь-якому рівні.
 
 Також ви можете написати певний клас і передати його в масив `providersPerMod`, в такому разі він може залежати тільки від провайдерів на рівні модуля, або на рівні застосунку. Якщо він буде залежати від провайдерів, які ви передали в масив `providersPerRou` чи `providersPerReq`, ви отримаєте помилку про те, що ці провайдери не знайдені.
-
-### Ієрархія інжекторів контролера {#controller-injector-hierarchy}
-
-Контролер [в режимі injector-scoped][103], окрім свого власного інжектора на рівні запиту, має ще й три батьківські інжектори: на рівні роута, модуля та застосунка. Ці інжектори також формуються на основі провайдерів, які ви передаєте в наступні масиви:
-
-- `providersPerApp`;
-- `providersPerMod`;
-- `providersPerRou`;
-- `providersPerReq` (це масив, з якого формується інжектор для контролера в режимі injector-scoped).
-
-Тобто контролер в режимі injector-scoped може залежати від сервісів на будь-якому рівні.
-
-Якщо ж контролер є [в режимі context-scoped][103], його власний інжектор знаходиться на рівні модуля, і він має один батьківський інжектор на рівні застосунку:
-
-- `providersPerApp`;
-- `providersPerMod` (це масив, з якого формується інжектор для контролера в режимі context-scoped).
-
-### Ієрархія інжекторів сервіса {#service-injector-hierarchy}
-
-На відміну від контролера, інжектор певного сервіса може бути на будь-якому рівні: на рівні застосунку, модуля, роуту, чи запиту. На практиці це означає, що провайдер для даного сервіса передається в один (або в декілька) із вищезазначених масивів. Наприклад, в наступному прикладі `SomeService` передається в інжектор на рівні роуту, а `OtherService` - на рівні модуля:
-
-```ts {5-6}
-import { Injector } from '@ditsmod/core';
-// ...
-
-const providersPerApp = [];
-const providersPerMod = [OtherService];
-const providersPerRou = [SomeService];
-const providersPerReq = [];
-
-const injectorPerApp = Injector.resolveAndCreate(providersPerApp);
-const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
-const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
-const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
-```
-
-В даному разі, якщо `SomeService` матиме залежність від `OtherService`, DI зможе створити інстанс `SomeService`, оскільки інжектор на рівні роуту може отримати інстанс `OtherService` від свого батьківського інжектора на рівні модуля. А от якщо навпаки - `OtherService` матиме залежність від `SomeService` - DI не зможе створити інстансу `OtherService`, оскільки інжектор на рівні модуля не бачить свого дочірнього інжектора на рівні роуту.
-
-В наступному прикладі показано чотири різні варіанти запиту інстансу `SomeService` за допомогою методу `injectorPer*.get()` напряму або через параметри методу класу:
-
-```ts
-injectorPerRou.get(SomeService); // Injector per route.
-// OR
-injectorPerReq.get(SomeService); // Injector per request.
-// OR
-@injectable()
-class Service1 {
-  constructor(private someService: SomeService) {} // Constructor's parameters.
-}
-// OR
-@controller()
-class controller1 {
-  @route('GET', 'some-path')
-  method1(someService: SomeService) {} // Method's parameters.
-}
-```
-
-Тут важливо пам'ятати про наступне правило: значення для `SomeService` створюється в тому інжекторі, в який передається даний провайдер, причому це значення створюється лише один раз при першому запиті. В нашому прикладі, клас `SomeService` фактично передається до `injectorPerRou`, отже саме в `injectorPerRou` буде створюватись інстанс класу `SomeService`, навіть якщо цей інстанс запитується у дочірньому `injectorPerReq`.
-
-Це правило є дуже важливим, оскільки воно чітко показує:
-
-1. в якому саме інжекторі створюється значення для певного провайдера;
-2. якщо взяти окремий інжектор, то лише один раз у ньому створюється значення для певного провайдера (за певним токеном);
-3. якщо у дочірнього інжектора бракує певного провайдера, то він може звернутись до батьківського інжектора за _значенням_ цього провайдера (тобто дочірній інжектор запитує у батьківсього інжектора _значення_ провайдера, а не сам провайдер).
-
-Це правило працює для методу `injector.get()`, але не для `injector.pull()` чи `injector.resolveAndInstantiate()`.
 
 ### Метод `injector.pull()` {#method-injector-pull}
 
@@ -429,7 +363,7 @@ const injector = Injector.resolveAndCreate([
 const locals = injector.get(LOCAL); // ['uk', 'en']
 ```
 
-По-суті, мульти-провайдери дозволяють створювати групи провайдерів, що мають спільний токен. Ця можливість зокрема використовується для створення групи `HTTP_INTERCEPTORS`, а також для створення різних [груп розширень][104].
+По-суті, мульти-провайдери дозволяють створювати групи провайдерів, що мають спільний токен. Ця можливість зокрема використовується для створення групи `HTTP_INTERCEPTORS`.
 
 Не допускається щоб в одному інжекторі однаковий токен мали і звичайні, і мульти-провайдери:
 
@@ -504,127 +438,6 @@ const locals = injector.get(HTTP_INTERCEPTORS); // [MyInterceptor]
 ```
 
 Така конструкція має сенс, наприклад, якщо перші два пункти виконуються десь у зовнішньому модулі, до якого у вас немає доступу на редагування, а третій пункт виконує вже користувач поточного модуля.
-
-## Передача провайдерів в реєстр DI {#transfer-of-providers-to-the-di-registry}
-
-На одну залежність, в реєстр DI потрібно передавати один або декілька провайдерів. Частіше за все, провайдери передаються в реєстр DI через метадані модулів, хоча інколи вони передаються через метадані контролерів, або навіть напряму в [інжектори][102]. В наступному прикладі `SomeService` передається в масив `providersPerMod`:
-
-```ts {9}
-import { restModule } from '@ditsmod/rest';
-
-import { SomeService } from './some.service.js';
-import { SomeController } from './some.controller.js';
-
-@restModule({
-  controllers: [SomeController],
-  providersPerMod: [
-    SomeService
-  ],
-})
-export class SomeModule {}
-```
-
-Після такої передачі, споживачі провайдерів можуть використовувати `SomeService` в межах `SomeModule`. Ідентичний результат буде, якщо ми цей же провайдер передамо у форматі об'єкта:
-
-```ts {9}
-import { restModule } from '@ditsmod/rest';
-
-import { SomeService } from './some.service.js';
-import { SomeController } from './some.controller.js';
-
-@restModule({
-  controllers: [SomeController],
-  providersPerMod: [
-    { token: SomeService, useClass: SomeService }
-  ],
-})
-export class SomeModule {}
-```
-
-І тепер давайте додатково з цим же токеном передамо інший провайдер, але на цей раз у метадані контролера:
-
-```ts {8}
-import { controller } from '@ditsmod/rest';
-
-import { SomeService } from './some.service.js';
-import { OtherService } from './other.service.js';
-
-@controller({
-  providersPerReq: [
-    { token: SomeService, useClass: OtherService }
-  ]
-})
-export class SomeController {
-  constructor(private someService: SomeService) {}
-  // ...
-}
-```
-
-Зверніть увагу на виділений рядок. Таким чином ми говоримо DI: "Якщо даний контролер має залежність від провайдера з токеном `SomeService`, її потрібно підмінити інстансом класу `OtherService`". Ця підміна буде діяти тільки для даного контролера. Усі інші контролери в `SomeModule` по токену `SomeService` будуть отримувати інстанси класу `SomeService`.
-
-Аналогічну підміну можна робити на рівні застосунку та на рівні модуля. Це інколи може знадобитись, наприклад коли ви хочете мати дефолтні значення конфігурації на рівні застосунку, але кастомні значення цієї конфігурації на рівні конкретного модуля. В такому разі передамо спочатку дефолтний конфіг в кореневому модулі:
-
-```ts {6}
-import { rootModule } from '@ditsmod/core';
-import { ConfigService } from './config.service.js';
-
-@rootModule({
-  providersPerApp: [
-    ConfigService
-  ],
-})
-export class AppModule {}
-```
-
-І вже у певному модулі підмінюємо `ConfigService` на довільне значення:
-
-```ts {6}
-import { restModule } from '@ditsmod/rest';
-import { ConfigService } from './config.service.js';
-
-@restModule({
-  providersPerMod: [
-    { token: ConfigService, useValue: { propery1: 'some value' } }
-  ],
-})
-export class SomeModule {}
-```
-
-## Повторне додавання провайдерів {#re-adding-providers}
-
-Різні провайдери з одним і тим самим токеном можна додавати багато разів в метадані модуля чи контролера, але DI вибере той із провайдерів, що додано останнім (виключення з цього правила є, але це стосується лише мульти-провайдерів):
-
-```ts
-import { restModule } from '@ditsmod/rest';
-
-@restModule({
-  providersPerMod: [
-    { token: 'token1', useValue: 'value1' },
-    { token: 'token1', useValue: 'value2' },
-    { token: 'token1', useValue: 'value3' },
-  ],
-})
-export class SomeModule {}
-```
-
-В даному разі, в межах `SomeModule` по `token1` буде видаватись `value3` на рівні модуля, роуту чи запиту.
-
-Окрім цього, різні провайдери з одним і тим самим токеном можна передавати одночасно на декількох різних рівнях ієрархії, але DI завжди буде вибирати найближчі інжектори (тобто, якщо значення для провайдера запитується на рівні запиту, то спочатку буде проглядатись інжектор на рівні запиту, і лише якщо там немає потрібного провайдера, DI буде підніматись до батьківських інжекторів):
-
-```ts
-import { restModule } from '@ditsmod/rest';
-
-@restModule({
-  providersPerMod: [{ token: 'token1', useValue: 'value1' }],
-  providersPerRou: [{ token: 'token1', useValue: 'value2' }],
-  providersPerReq: [{ token: 'token1', useValue: 'value3' }],
-})
-export class SomeModule {}
-```
-
-В даному разі, в межах `SomeModule` по `token1` буде видаватись `value3` на рівні запиту, `value2` - на рівні роуту, і `value1` - на рівні модуля.
-
-Також, якщо ви імпортуєте певний провайдер із зовнішнього модуля, і у вас у поточному модулі є провайдер з таким же токеном, то локальний провайдер матиме вищій пріоритет, при умові, що вони передавались на однаковому рівні ієрархії інжекторів.
 
 ## Редагування значень в реєстрі DI {#editing-values-​​in-the-di-register}
 
@@ -774,9 +587,7 @@ service2.service1 instanceof Service1; // true
 [17]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/examples/14-auth-jwt/src/app/modules/services/auth/bearer.guard.ts#L24
 
 [101]: ../../#installation
-[100]: #transfer-of-providers-to-the-di-registry
 [102]: #injector-and-providers
-[103]: /components-of-ditsmod-app/controllers-and-services/#what-is-a-controller
 [104]: /components-of-ditsmod-app/extensions/#group-of-extensions
 [105]: /components-of-ditsmod-app/http-interceptors/
 [106]: /components-of-ditsmod-app/guards/

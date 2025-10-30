@@ -202,6 +202,22 @@ export class HelloWorldController {
 
 In the "context-scoped" mode, controller methods bound to specific routes receive a single argument - the request context. That is, in this mode, you will no longer be able to ask Ditsmod to pass instances of other classes to these methods. However, in the constructor you can still request instances of certain classes that are created only once.
 
+### Controller injector hierarchy {#controller-injector-hierarchy}
+
+A controller [in injector-scoped mode][10], besides its own injector at the request level, also has three parent injectors: at the route level, module level and application level. These injectors are also formed based on the providers that you pass into the following arrays:
+
+* `providersPerApp`;
+* `providersPerMod`;
+* `providersPerRou`;
+* `providersPerReq` (this array forms the injector for a controller in injector-scoped mode).
+
+Thus a controller in injector-scoped mode can depend on services at any level.
+
+If a controller is [in context-scoped mode][10], its own injector is located at the module level, and it has one parent injector at the application level:
+
+* `providersPerApp`;
+* `providersPerMod` (this array forms the injector for a controller in context-scoped mode).
+
 ## Binding of the controller to the host module {#binding-of-the-controller-to-the-host-module}
 
 Any controller should only be bound to the current module where it was declared, i.e. the host module. This binding is done via the `controllers` array:
@@ -316,6 +332,56 @@ export class SomeController {
 
 In the last two examples, the services is passed to the `providersPerReq` array, but this is not the only way to pass services. For more information about the rules of working with DI, see [Dependency Injection][7].
 
+### Service injector hierarchy {#service-injector-hierarchy}
+
+Unlike a controller, the injector of a given service can be at any level: at the application level, module level, route level, or request level. In practice this means that the provider for this service is passed into one (or several) of the above arrays. For example, in the following example `SomeService` is passed into the injector at the route level, and `OtherService` — into the module level:
+
+```ts {5-6}
+import { Injector } from '@ditsmod/core';
+// ...
+
+const providersPerApp = [];
+const providersPerMod = [OtherService];
+const providersPerRou = [SomeService];
+const providersPerReq = [];
+
+const injectorPerApp = Injector.resolveAndCreate(providersPerApp);
+const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
+const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
+const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
+```
+
+In this case, if `SomeService` has a dependency on `OtherService`, DI will be able to create an instance of `SomeService`, because the injector at the route level can obtain an instance of `OtherService` from its parent injector at the module level. However, if `OtherService` depends on `SomeService`, DI will not be able to create an instance of `OtherService`, because the injector at the module level does not see its child injector at the route level.
+
+The following example shows four different ways to request an instance of `SomeService` using `injectorPer*.get()` directly or via class method parameters:
+
+```ts
+injectorPerRou.get(SomeService); // Injector per route.
+// OR
+injectorPerReq.get(SomeService); // Injector per request.
+// OR
+@injectable()
+class Service1 {
+  constructor(private someService: SomeService) {} // Constructor's parameters.
+}
+// OR
+@controller()
+class controller1 {
+  @route('GET', 'some-path')
+  method1(someService: SomeService) {} // Method's parameters.
+}
+```
+
+Here it is important to remember the following rule: the value for `SomeService` is created in the injector where the provider was passed, and this value is created only once on the first request. In our example, the `SomeService` class is actually passed to `injectorPerRou`, so the instance of the class `SomeService` will be created in `injectorPerRou`, even if this instance is requested in the child `injectorPerReq`.
+
+This rule is very important because it clearly shows:
+
+1. in which injector the value for a given provider is created;
+2. that if you take a single injector, the value for a given provider (for a given token) is created only once in it;
+3. that if the child injector lacks a provider, it can ask the parent injector for the *value* of that provider (i.e., the child injector asks the parent injector for the *value*, not for the provider itself).
+
+This rule applies to the `injector.get()` method, but not to `injector.pull()` or `injector.resolveAndInstantiate()`.
+
 [1]: /developer-guides/exports-and-imports#import-module
 [2]: /developer-guides/exports-and-imports#ModuleWithParams
 [3]: /components-of-ditsmod-app/dependency-injection/#injector-and-providers
@@ -323,3 +389,4 @@ In the last two examples, the services is passed to the `providersPerReq` array,
 [6]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/services/pre-router.ts
 [7]: /components-of-ditsmod-app/dependency-injection/
 [9]: /components-of-ditsmod-app/extensions/
+[10]: #what-is-a-controller

@@ -202,6 +202,22 @@ export class HelloWorldController {
 
 В режимі "context-scoped", методи контролерів, що прив'язані до певних роутів, отримують єдиний аргумент - контекст запиту. Тобто в цьому режимі ви вже не зможете запитати у Ditsmod, щоб він передавав у ці методи інстанси інших класів. Разом з тим, в конструкторі ви все ще можете запитувати інстанси певних класів, які створюються єдиний раз.
 
+### Ієрархія інжекторів контролера {#controller-injector-hierarchy}
+
+Контролер [в режимі injector-scoped][10], окрім свого власного інжектора на рівні запиту, має ще й три батьківські інжектори: на рівні роута, модуля та застосунка. Ці інжектори також формуються на основі провайдерів, які ви передаєте в наступні масиви:
+
+- `providersPerApp`;
+- `providersPerMod`;
+- `providersPerRou`;
+- `providersPerReq` (це масив, з якого формується інжектор для контролера в режимі injector-scoped).
+
+Тобто контролер в режимі injector-scoped може залежати від сервісів на будь-якому рівні.
+
+Якщо ж контролер є [в режимі context-scoped][10], його власний інжектор знаходиться на рівні модуля, і він має один батьківський інжектор на рівні застосунку:
+
+- `providersPerApp`;
+- `providersPerMod` (це масив, з якого формується інжектор для контролера в режимі context-scoped).
+
 ## Прив'язка контролера до хост-модуля {#binding-of-the-controller-to-the-host-module}
 
 Будь-який контролер повинен прив'язуватись лише до поточного модуля, де він був оголошений, тобто до хост-модуля. Така прив'язка робиться через масив `controllers`:
@@ -316,6 +332,56 @@ export class SomeController {
 
 В останніх двох прикладах сервіси передаються у масив `providersPerReq`, але це не єдиний спосіб передачі сервісів. Більш докладну інформацію про правила роботи з DI можна отримати у розділі [Dependency Injection][7].
 
+### Ієрархія інжекторів сервіса {#service-injector-hierarchy}
+
+На відміну від контролера, інжектор певного сервіса може бути на будь-якому рівні: на рівні застосунку, модуля, роуту, чи запиту. На практиці це означає, що провайдер для даного сервіса передається в один (або в декілька) із вищезазначених масивів. Наприклад, в наступному прикладі `SomeService` передається в інжектор на рівні роуту, а `OtherService` - на рівні модуля:
+
+```ts {5-6}
+import { Injector } from '@ditsmod/core';
+// ...
+
+const providersPerApp = [];
+const providersPerMod = [OtherService];
+const providersPerRou = [SomeService];
+const providersPerReq = [];
+
+const injectorPerApp = Injector.resolveAndCreate(providersPerApp);
+const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
+const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
+const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
+```
+
+В даному разі, якщо `SomeService` матиме залежність від `OtherService`, DI зможе створити інстанс `SomeService`, оскільки інжектор на рівні роуту може отримати інстанс `OtherService` від свого батьківського інжектора на рівні модуля. А от якщо навпаки - `OtherService` матиме залежність від `SomeService` - DI не зможе створити інстансу `OtherService`, оскільки інжектор на рівні модуля не бачить свого дочірнього інжектора на рівні роуту.
+
+В наступному прикладі показано чотири різні варіанти запиту інстансу `SomeService` за допомогою методу `injectorPer*.get()` напряму або через параметри методу класу:
+
+```ts
+injectorPerRou.get(SomeService); // Injector per route.
+// OR
+injectorPerReq.get(SomeService); // Injector per request.
+// OR
+@injectable()
+class Service1 {
+  constructor(private someService: SomeService) {} // Constructor's parameters.
+}
+// OR
+@controller()
+class controller1 {
+  @route('GET', 'some-path')
+  method1(someService: SomeService) {} // Method's parameters.
+}
+```
+
+Тут важливо пам'ятати про наступне правило: значення для `SomeService` створюється в тому інжекторі, в який передається даний провайдер, причому це значення створюється лише один раз при першому запиті. В нашому прикладі, клас `SomeService` фактично передається до `injectorPerRou`, отже саме в `injectorPerRou` буде створюватись інстанс класу `SomeService`, навіть якщо цей інстанс запитується у дочірньому `injectorPerReq`.
+
+Це правило є дуже важливим, оскільки воно чітко показує:
+
+1. в якому саме інжекторі створюється значення для певного провайдера;
+2. якщо взяти окремий інжектор, то лише один раз у ньому створюється значення для певного провайдера (за певним токеном);
+3. якщо у дочірнього інжектора бракує певного провайдера, то він може звернутись до батьківського інжектора за _значенням_ цього провайдера (тобто дочірній інжектор запитує у батьківсього інжектора _значення_ провайдера, а не сам провайдер).
+
+Це правило працює для методу `injector.get()`, але не для `injector.pull()` чи `injector.resolveAndInstantiate()`.
+
 [1]: /developer-guides/exports-and-imports/#import-module
 [2]: /developer-guides/exports-and-imports#ModuleWithParams
 [3]: /components-of-ditsmod-app/dependency-injection/#injector-and-providers
@@ -323,3 +389,4 @@ export class SomeController {
 [6]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/services/pre-router.ts
 [7]: /components-of-ditsmod-app/dependency-injection/
 [9]: /components-of-ditsmod-app/extensions/
+[10]: #what-is-a-controller
