@@ -200,7 +200,7 @@ export class HelloWorldController {
 }
 ```
 
-In the "context-scoped" mode, controller methods bound to specific routes receive a single argument - the request context. That is, in this mode, you will no longer be able to ask Ditsmod to pass instances of other classes to these methods. However, in the constructor you can still request instances of certain classes that are created only once.
+In the "context-scoped" mode, controller methods bound to specific routes receive a single argument - the request context. That is, in this mode you will no longer be able to declare other method parameters. However, in the constructor you can still declare an arbitrary number of parameters that are created only once.
 
 ### Controller injector hierarchy {#controller-injector-hierarchy}
 
@@ -213,7 +213,7 @@ A controller [in injector-scoped mode][10], besides its own injector at the requ
 
 Thus a controller in injector-scoped mode can depend on services at any level.
 
-If a controller is [in context-scoped mode][10], its own injector is located at the module level, and it has one parent injector at the application level:
+If a controller is [in context-scoped mode][11], its own injector is located at the module level, and it has one parent injector at the application level:
 
 * `providersPerApp`;
 * `providersPerMod` (this array forms the injector for a controller in context-scoped mode).
@@ -334,7 +334,7 @@ In the last two examples, the services is passed to the `providersPerReq` array,
 
 ### Service injector hierarchy {#service-injector-hierarchy}
 
-Unlike a controller, the injector of a given service can be at any level: at the application level, module level, route level, or request level. In practice this means that the provider for this service is passed into one (or several) of the above arrays. For example, in the following example `SomeService` is passed into the injector at the route level, and `OtherService` — into the module level:
+Unlike a controller, the injector of a given service can be at any level: at the application level, module level, route level, or request level. In practice, this means that the provider for a given service is passed into one (or several) `providersPer*` arrays. For example, in the following example `SomeService` is passed into the injector at the route level, and `OtherService` — into the module level:
 
 ```ts {5-6}
 import { Injector } from '@ditsmod/core';
@@ -389,4 +389,5 @@ This rule applies to the `injector.get()` method, but not to `injector.pull()` o
 [6]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/services/pre-router.ts
 [7]: /components-of-ditsmod-app/dependency-injection/
 [9]: /components-of-ditsmod-app/extensions/
-[10]: #what-is-a-controller
+[10]: #injector-scoped-controller
+[11]: #context-scoped-controller
