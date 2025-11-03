@@ -4,9 +4,7 @@ sidebar_position: 4
 
 # HTTP Interceptors
 
-The interceptors are very similar in functionality to controllers, but they do not create routes, they are attached to existing routes. Multiple interceptors can work on a single route, launching one after another. Interceptors are analogous to [middleware in ExpressJS][5], but interceptors can use [DI][106]. Additionally, interceptors can work before and after the controller's operation. 
-
-Given that interceptors do the same job that controllers can do, you can work without interceptors. But in this case, you will have to call various services in the controllers much more often.
+The interceptors are very similar in functionality to controllers, but they do not create routes, they are attached to existing routes. Multiple interceptors can work on a single route, launching one after another. Interceptors are analogous to [middleware in ExpressJS][5], but interceptors can use [DI][106].
 
 Typically, interceptors are used to automate standard processing, such as:
 
@@ -16,7 +14,7 @@ Typically, interceptors are used to automate standard processing, such as:
 - caching;
 - etc.
 
-Interceptors can be centrally enabled or disabled without modifying the code of the controller methods they are attached to. Like controllers, interceptors can operate in either [injector-scoped or context-scoped mode][109]. Unlike the context-scoped mode, in the injector-scoped mode, interceptors have access to the request-level injector, allowing them to invoke services at the request level. On the other hand, in the context-scoped mode, their instances are created at the route level, which grants them access to services at the route, module, or application level.
+Interceptors can be centrally enabled or disabled without modifying the code of the controller methods they are attached to. Like controllers, interceptors can operate in either [injector-scoped or context-scoped mode][109]. Unlike the context-scoped mode, in the injector-scoped mode, interceptors have access to the request-level injector, allowing them to invoke services at the request, route, module, or application level. On the other hand, in the context-scoped mode, their instances are created at the route level, which grants them access to services at the route, module, or application level.
 
 ## HTTP request processing scheme {#http-request-processing-scheme}
 
@@ -38,8 +36,7 @@ So, the approximate order of processing the request is as follows:
 2. `HttpFrontend`;
 3. `InterceptorWithGuards`;
 4. other interceptors;
-5. `HttpBackend`;
-6. controller method.
+5. `HttpBackend`, which runs the controller method.
 
 Since the promise chain starts with `PreRouter` and ends with the controller method, this chain will be resolved in reverse order - from the controller method to `PreRouter`. This means that in the interceptor you can listen for the result of promise resolve, which returns the method of the controller.
 
