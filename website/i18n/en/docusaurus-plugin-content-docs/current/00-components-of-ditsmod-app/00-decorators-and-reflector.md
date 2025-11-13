@@ -4,9 +4,13 @@ sidebar_position: 0
 
 # Decorators and Reflector {#decorators-and-reflector}
 
-Let's start with the obvious — TypeScript syntax is slightly different from JavaScript syntax because it has static typing capabilities. During the compilation of TypeScript code into JavaScript, the compiler can provide additional JavaScript code that can be used to obtain information about static types.
+Let's start with the obvious — TypeScript syntax differs slightly from JavaScript syntax because it provides static typing capabilities. During the compilation of TypeScript code into JavaScript, the compiler can emit additional JavaScript code that can be used to obtain information about the static types of class properties or the static types of parameters in class methods. In other words, when working with TypeScript code, you can first define static types in classes, and then, by using a special API, access information about these static types in the resulting JavaScript code. Decorators signal the TypeScript compiler to emit information about the static types of a class, while the reflector stores and provides access to this information.
 
-Let's experiment a bit. Create a file `src/app/services.ts` in the [ditsmod/rest-starter][101] repository, and paste the following code into it:
+In addition to static TypeScript types, decorators also allow you to store additional metadata that can be passed to decorators at the class level, class properties, or method parameters.
+
+In Ditsmod, decorators and the reflector are fundamental components that are used constantly and allow the application to be described declaratively. That's why learning Ditsmod should start with this topic.
+
+Let's try experimenting with preserving static class types. Create a file `src/app/services.ts` in the [ditsmod/rest-starter][101] repository, and paste the following code into it:
 
 ```ts
 class Service1 {}
@@ -32,7 +36,7 @@ class Service2 {
 }
 ```
 
-That is, the information about the parameter type in the `Service2` constructor is lost. But if we use a class decorator, the TypeScript compiler will output more JavaScript code containing information about static typing. For example, let’s use the `injectable` decorator:
+That is, the information about the parameter type in the `Service2` constructor is lost. But if we use a class decorator, the TypeScript compiler will output more JavaScript code containing information about static typing. For example, let's use the `injectable` decorator:
 
 ```ts {1,5}
 import { injectable } from '@ditsmod/core';
@@ -69,11 +73,11 @@ Service2 = __decorate([
 ], Service2);
 ```
 
-Fortunately, you will rarely need to inspect the `dist` folder and analyze compiled code, but it can sometimes be useful to glance at it for a general understanding of how static typing is transferred into JavaScript code. The most interesting part is found in the last four lines. It’s clear that the TypeScript compiler now associates the array `[Service1]` with `Service2`. This array contains information about the static parameter types detected by the compiler in the `Service2` constructor.
+Fortunately, you will rarely need to inspect the `dist` folder and analyze compiled code, but it can sometimes be useful to glance at it for a general understanding of how static typing is transferred into JavaScript code. The most interesting part is found in the last four lines. It's clear that the TypeScript compiler now associates the array `[Service1]` with `Service2`. This array contains information about the static parameter types detected by the compiler in the `Service2` constructor.
 
 Further analysis of the compiled code shows that the `Reflect` class is used to store metadata with static typing. This class is assumed to be imported from the [reflect-metadata][13] library. The API of this library is then used by Ditsmod to read the above metadata. This process is handled by the so-called **reflector**.
 
-Let’s see what tools Ditsmod provides for working with the reflector. Let’s make the previous example more complex to see how metadata can be extracted and how complex dependency chains can be formed. Consider three classes with the following dependency: `Service3` -> `Service2` -> `Service1`. Insert the following code into `src/app/services.ts`:
+Let's see what tools Ditsmod provides for working with the reflector. Let's make the previous example more complex to see how metadata can be extracted and how complex dependency chains can be formed. Consider three classes with the following dependency: `Service3` -> `Service2` -> `Service1`. Insert the following code into `src/app/services.ts`:
 
 ```ts
 import { injectable, getDependencies } from '@ditsmod/core';
@@ -93,9 +97,9 @@ class Service3 {
 console.log(getDependencies(Service3)); // [ { token: [class Service2], required: true } ]
 ```
 
-The `getDependencies()` function uses the reflector and returns an array of direct dependencies of `Service3`. You might guess that by passing `Service2` to `getDependencies()`, we’ll see the dependency on `Service1`. This way, you can **automatically** build the entire dependency chain `Service3` -> `Service2` -> `Service1`. This process in DI is called "dependency resolution". And here the word "automatically" is intentionally bolded because it is a very important feature supported by DI. Users only pass `Service3` to DI, and they don’t need to manually explore what this class depends on — DI can resolve the dependency automatically. By the way, users will rarely need to use the `getDependencies()` function, except in a few rare cases.
+The `getDependencies()` function uses the reflector and returns an array of direct dependencies of `Service3`. You might guess that by passing `Service2` to `getDependencies()`, we'll see the dependency on `Service1`. This way, you can **automatically** build the entire dependency chain `Service3` -> `Service2` -> `Service1`. This process in DI is called "dependency resolution". And here the word "automatically" is intentionally bolded because it is a very important feature supported by DI. Users only pass `Service3` to DI, and they don't need to manually explore what this class depends on — DI can resolve the dependency automatically. By the way, users will rarely need to use the `getDependencies()` function, except in a few rare cases.
 
-Strictly speaking, the mechanism of storing and retrieving metadata from the reflector using decorators is not yet Dependency Injection. However, Dependency Injection extensively uses decorators and the reflector in its operation, so in this documentation, you might sometimes see that DI "obtains information about class dependencies" although in reality, it’s the reflector that does this.
+Strictly speaking, the mechanism of storing and retrieving metadata from the reflector using decorators is not yet Dependency Injection. However, Dependency Injection extensively uses decorators and the reflector in its operation, so in this documentation, you might sometimes see that DI "obtains information about class dependencies" although in reality, it's the reflector that does this.
 
 The code in the last example can be compiled and run with the following command:
 
@@ -119,5 +123,6 @@ Now, if in `src/app/services.ts` you pass `Service2` to the `getDependencies()` 
 
 
 [13]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/package.json#L53
+[14]: https://github.com/tc39/proposal-decorators
 
 [101]: ../../#installation
