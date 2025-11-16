@@ -4,13 +4,21 @@ sidebar_position: 1
 
 # Dependency Injection
 
+## Prerequisites {#prerequisites}
+
 In the following examples of this section, it is assumed that you have cloned the [ditsmod/rest-starter][101] repository. This will allow you to get a basic configuration for the application and experiment in the `src/app` folder of that repository.
 
 Additionally, if you don't yet know what exactly Reflector does and what "dependency resolution" is, we recommend that you first read the previous section [Decorators and Reflector][108].
 
 ## Injector and providers {#injector-and-providers}
 
-Let's look at the following example:
+The injector is the main mechanism that implements the Dependency Injection pattern in Ditsmod. Its key functions are:
+
+1. **Storing providers**: The injector contains a registry of providers, which are essentially instructions on how to create values for those providers (for example, `useValue`, `useClass`, `useFactory`, `useToken`).
+2. **Creating provider values**: Following the provider instructions, the injector creates the values of providers.
+3. **Resolving dependencies**: When a provider requests the value of another provider (for example, through a constructor), the injector finds the corresponding provider, creates that value (if it doesn’t exist yet), and ultimately creates the value for the requesting provider.
+
+Let's look at the following example, which slightly expands on the last example from the [Decorators and Reflector][108] section:
 
 ```ts {15-19}
 import { Injector, injectable } from '@ditsmod/core';
@@ -580,7 +588,6 @@ Remember that when DI cannot find the required provider, there are only three po
 [1]: https://en.wikipedia.org/wiki/Dependency_injection
 [11]: https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types
 [12]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/tsconfig.json#L31
-[14]: https://github.com/tc39/proposal-decorators
 [15]: https://en.wikipedia.org/wiki/Singleton_pattern
 [16]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/body-parser/src/body-parser.interceptor.ts#L15
 [17]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/examples/14-auth-jwt/src/app/modules/services/auth/bearer.guard.ts#L24

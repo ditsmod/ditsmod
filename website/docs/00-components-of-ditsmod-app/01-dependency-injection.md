@@ -4,13 +4,21 @@ sidebar_position: 1
 
 # Dependency Injection
 
+## Підготовка {#prerequisites}
+
 В наступних прикладах даного розділу припускається, що ви клонували репозиторій [ditsmod/rest-starter][101]. Це дасть вам змогу отримати базову конфігурацію для застосунку та експериментувати у теці `src/app` даного репозиторію.
 
 Окрім цього, якщо ви ще не знаєте, що саме робить рефлектор і що таке "вирішення залежностей", рекомендуємо вам спочатку прочитати попередній розділ [Декоратори та рефлектор][108].
 
 ## Інжектор та провайдери {#injector-and-providers}
 
-Давайте розглянемо наступний приклад:
+Інжектор - це основний механізм, який реалізує патерн Dependency Injection в Ditsmod. Його головні функції:
+
+1. **Зберігання провайдерів**: Інжектор містить реєстр провайдерів, які по-суті є інструкціями про те, як створити значення для цих провайдерів (наприклад, `useValue`, `useClass`, `useFactory`, `useToken`).
+2. **Створення значень провайдерів**: Дотримуючись інструкцій провайдерів, інжектор створює значення повайдерів.
+3. **Вирішення залежностей**: Коли певний провайдер запитує значення для іншого провайдера (наприклад, через конструктор), інжектор знаходить відповідний провайдер, створює таке значення (якщо воно ще не існує) і зрештою створює значення для даного провайдера.
+
+Давайте розглянемо наступний приклад, який трохи розширює останній приклад з розділу [Декоратори та рефлектор][108]:
 
 ```ts {15-19}
 import { Injector, injectable } from '@ditsmod/core';
@@ -577,11 +585,9 @@ service2.service1 instanceof Service1; // true
 2. ви не імпортували модуль, де передається потрібний вам провайдер, або ж цей провайдер не експортується;
 3. ви запитуєте у батьківському інжекторі провайдер з дочірнього інжектора.
 
-
 [1]: https://uk.wikipedia.org/wiki/%D0%92%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F_%D0%B7%D0%B0%D0%BB%D0%B5%D0%B6%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9
 [11]: https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types
 [12]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/tsconfig.json#L31
-[14]: https://github.com/tc39/proposal-decorators
 [15]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) "Singleton"
 [16]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/body-parser/src/body-parser.interceptor.ts#L15
 [17]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/examples/14-auth-jwt/src/app/modules/services/auth/bearer.guard.ts#L24
