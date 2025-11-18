@@ -75,9 +75,9 @@ Service2 = __decorate([
 
 Fortunately, you will rarely need to inspect the `dist` folder and analyze compiled code, but it can sometimes be useful to glance at it for a general understanding of how static typing is transferred into JavaScript code. The most interesting part is found in the last four lines. It's clear that the TypeScript compiler now associates the array `[Service1]` with `Service2`. This array contains information about the static parameter types detected by the compiler in the `Service2` constructor.
 
-Further analysis of the compiled code shows that the `Reflect` class is used to store metadata with static typing. This class is assumed to be imported from the [reflect-metadata][13] library. The API of this library is then used by Ditsmod to read the above metadata. This process is handled by the so-called **reflector**.
+Further analysis of the compiled code shows that the `Reflect` class is used to store metadata related to static typing. At the initial stage of learning Ditsmod, you don’t need to dive deeply into how `Reflect` works, because Ditsmod provides higher-level tools that simplify working with storing and using class metadata. At this point, it’s enough to know that `Reflect` is imported from the [reflect-metadata][13] library, and the API of this library is then used by Ditsmod to read the metadata described above. This is handled by the so-called **reflector**.
 
-Let's see what tools Ditsmod provides for working with the reflector. Let's make the previous example more complex to see how metadata can be extracted and how complex dependency chains can be formed. Consider three classes with the following dependency: `Service3` -> `Service2` -> `Service1`. Insert the following code into `src/app/services.ts`:
+Let's see what higher-level tools Ditsmod provides for working with the reflector. Let's make the previous example more complex to see how metadata can be extracted and how complex dependency chains can be formed. Consider three classes with the following dependency: `Service3` -> `Service2` -> `Service1`. Insert the following code into `src/app/services.ts`:
 
 ```ts
 import { injectable, getDependencies } from '@ditsmod/core';
