@@ -12,11 +12,12 @@ Additionally, if you don't yet know what exactly Reflector does and what "depend
 
 ## Injector and providers {#injector-and-providers}
 
-The injector is the main mechanism that implements the Dependency Injection pattern in Ditsmod. Its key functions are:
+The injector is the main mechanism that implements the Dependency Injection pattern in Ditsmod. The ultimate goal of the injector is to provide values based on specific identifiers called **tokens**. The injector has the following components:
 
-1. **Storing providers**: The injector contains a registry of providers, which are essentially instructions on how to create values for those providers (for example, `useValue`, `useClass`, `useFactory`, `useToken`).
-2. **Creating provider values**: Following the provider instructions, the injector creates the values of providers.
-3. **Resolving dependencies**: When a provider requests the value of another provider (for example, through a constructor), the injector finds the corresponding provider, creates that value (if it doesn’t exist yet), and ultimately creates the value for the requesting provider.
+1. **Storing providers**: The injector contains a registry of providers, which are essentially instructions on how to create values for tokens.
+2. **Creating values for tokens**: By following the provider instructions, the injector creates values for tokens.
+3. **Storing the mapping between tokens and their values**: With provider tokens and their values, Ditsmod forms the corresponding mapping.
+4. **Automatically resolving provider dependencies**: To create a value for a specific token, the injector must first create values for all dependencies of its providers. Therefore, the injector can recursively traverse each provider’s dependencies, build a dependency graph, and then sequentially create the values for each dependency in the chain.
 
 Let's look at the following example, which slightly expands on the last example from the [Decorators and Reflector][108] section:
 
