@@ -8,7 +8,7 @@ sidebar_position: 1
 
 In the following examples of this section, it is assumed that you have cloned the [ditsmod/rest-starter][101] repository. This will allow you to get a basic configuration for the application and experiment in the `src/app` folder of that repository.
 
-Additionally, if you don't yet know what exactly Reflector does and what "dependency resolution" is, we recommend that you first read the previous section [Decorators and Reflector][108].
+Additionally, if you don't yet know what exactly reflector does and what "dependency resolution" is, we recommend that you first read the previous section [Decorators and Reflector][108].
 
 ## Injector and providers {#injector-and-providers}
 

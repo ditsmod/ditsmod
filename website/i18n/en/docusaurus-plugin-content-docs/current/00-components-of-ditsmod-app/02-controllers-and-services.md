@@ -382,6 +382,107 @@ This rule is very important because it clearly shows:
 
 This rule applies to the `injector.get()` method, but not to `injector.pull()` or `injector.resolveAndInstantiate()`.
 
+## Transfer of providers to the DI registry {#transfer-of-providers-to-the-di-registry}
+
+For a single dependency, one or more [providers][3] must be passed to the DI registry. Usually providers are passed to the DI registry via module metadata, although sometimes they are passed via controller metadata or even directly to [injectors][3]. In the following example `SomeService` is passed into the `providersPerMod` array:
+
+```ts {6}
+import { restModule } from '@ditsmod/rest';
+import { SomeService } from './some.service.js';
+
+@restModule({
+  providersPerMod: [
+    SomeService
+  ],
+})
+export class SomeModule {}
+```
+
+After such a transfer, consumers of providers can use `SomeService` within `SomeModule`. And now let's additionally pass another provider with the same token, but this time in the controller metadata:
+
+```ts {8}
+import { controller } from '@ditsmod/rest';
+
+import { SomeService } from './some.service.js';
+import { OtherService } from './other.service.js';
+
+@controller({
+  providersPerReq: [
+    { token: SomeService, useClass: OtherService }
+  ]
+})
+export class SomeController {
+  constructor(private someService: SomeService) {}
+  // ...
+}
+```
+
+Pay attention to the highlighted line. Thus we tell DI: "If this controller has a dependency on the provider with the token `SomeService`, it should be substituted with an instance of the class `OtherService`". This substitution will apply only to this controller. All other controllers in `SomeModule` will receive instances of `SomeService` for the `SomeService` token.
+
+You can perform a similar substitution at the application or module level. This can sometimes be useful, for example when you want to have default configuration values at the application level but custom values for that configuration at a specific module level. In that case, first pass the default configuration in the root module:
+
+```ts {6}
+import { rootModule } from '@ditsmod/core';
+import { ConfigService } from './config.service.js';
+
+@rootModule({
+  providersPerApp: [
+    ConfigService
+  ],
+})
+export class AppModule {}
+```
+
+And then in some module substitute `ConfigService` with an arbitrary value:
+
+```ts {6}
+import { restModule } from '@ditsmod/rest';
+import { ConfigService } from './config.service.js';
+
+@restModule({
+  providersPerMod: [
+    { token: ConfigService, useValue: { propery1: 'some value' } }
+  ],
+})
+export class SomeModule {}
+```
+
+## Re-adding providers {#re-adding-providers}
+
+Different providers with the same token can be added many times in module or controller metadata, but DI will choose the provider that was added last (exceptions to this rule apply only for multi-providers):
+
+```ts
+import { restModule } from '@ditsmod/rest';
+
+@restModule({
+  providersPerMod: [
+    { token: 'token1', useValue: 'value1' },
+    { token: 'token1', useValue: 'value2' },
+    { token: 'token1', useValue: 'value3' },
+  ],
+})
+export class SomeModule {}
+```
+
+In this case, within `SomeModule` the `token1` will return `value3` at the module, route or request level.
+
+Additionally, different providers with the same token can be provided at multiple different hierarchy levels simultaneously, but DI will always choose the nearest injector (i.e., if a provider value is requested at the request level, the injector at the request level will be inspected first, and only if the required provider is not found there will DI ascend to parent injectors):
+
+```ts
+import { restModule } from '@ditsmod/rest';
+
+@restModule({
+  providersPerMod: [{ token: 'token1', useValue: 'value1' }],
+  providersPerRou: [{ token: 'token1', useValue: 'value2' }],
+  providersPerReq: [{ token: 'token1', useValue: 'value3' }],
+})
+export class SomeModule {}
+```
+
+In this case, within `SomeModule` for `token1` the value `value3` will be returned at the request level, `value2` at the route level, and `value1` at the module level.
+
+Also, if you import a provider from an external module and you have a provider with the same token in your current module, the local provider will have higher priority provided they were passed at the same hierarchy level.
+
 [1]: /developer-guides/exports-and-imports#import-module
 [2]: /developer-guides/exports-and-imports#ModuleWithParams
 [3]: /components-of-ditsmod-app/dependency-injection/#injector-and-providers

@@ -382,6 +382,107 @@ class controller1 {
 
 Це правило працює для методу `injector.get()`, але не для `injector.pull()` чи `injector.resolveAndInstantiate()`.
 
+## Передача провайдерів в реєстр DI {#transfer-of-providers-to-the-di-registry}
+
+На одну залежність, в реєстр DI потрібно передавати один або декілька [провайдерів][3]. Частіше за все, провайдери передаються в реєстр DI через метадані модулів, хоча інколи вони передаються через метадані контролерів, або навіть напряму в [інжектори][3]. В наступному прикладі `SomeService` передається в масив `providersPerMod`:
+
+```ts {6}
+import { restModule } from '@ditsmod/rest';
+import { SomeService } from './some.service.js';
+
+@restModule({
+  providersPerMod: [
+    SomeService
+  ],
+})
+export class SomeModule {}
+```
+
+Після такої передачі, споживачі провайдерів можуть використовувати `SomeService` в межах `SomeModule`. І тепер давайте додатково з цим же токеном передамо інший провайдер, але на цей раз у метадані контролера:
+
+```ts {8}
+import { controller } from '@ditsmod/rest';
+
+import { SomeService } from './some.service.js';
+import { OtherService } from './other.service.js';
+
+@controller({
+  providersPerReq: [
+    { token: SomeService, useClass: OtherService }
+  ]
+})
+export class SomeController {
+  constructor(private someService: SomeService) {}
+  // ...
+}
+```
+
+Зверніть увагу на виділений рядок. Таким чином ми говоримо DI: "Якщо даний контролер має залежність від провайдера з токеном `SomeService`, її потрібно підмінити інстансом класу `OtherService`". Ця підміна буде діяти тільки для даного контролера. Усі інші контролери в `SomeModule` по токену `SomeService` будуть отримувати інстанси класу `SomeService`.
+
+Аналогічну підміну можна робити на рівні застосунку та на рівні модуля. Це інколи може знадобитись, наприклад коли ви хочете мати дефолтні значення конфігурації на рівні застосунку, але кастомні значення цієї конфігурації на рівні конкретного модуля. В такому разі передамо спочатку дефолтний конфіг в кореневому модулі:
+
+```ts {6}
+import { rootModule } from '@ditsmod/core';
+import { ConfigService } from './config.service.js';
+
+@rootModule({
+  providersPerApp: [
+    ConfigService
+  ],
+})
+export class AppModule {}
+```
+
+І вже у певному модулі підмінюємо `ConfigService` на довільне значення:
+
+```ts {6}
+import { restModule } from '@ditsmod/rest';
+import { ConfigService } from './config.service.js';
+
+@restModule({
+  providersPerMod: [
+    { token: ConfigService, useValue: { propery1: 'some value' } }
+  ],
+})
+export class SomeModule {}
+```
+
+## Повторне додавання провайдерів {#re-adding-providers}
+
+Різні провайдери з одним і тим самим токеном можна додавати багато разів в метадані модуля чи контролера, але DI вибере той із провайдерів, що додано останнім (виключення з цього правила є, але це стосується лише мульти-провайдерів):
+
+```ts
+import { restModule } from '@ditsmod/rest';
+
+@restModule({
+  providersPerMod: [
+    { token: 'token1', useValue: 'value1' },
+    { token: 'token1', useValue: 'value2' },
+    { token: 'token1', useValue: 'value3' },
+  ],
+})
+export class SomeModule {}
+```
+
+В даному разі, в межах `SomeModule` по `token1` буде видаватись `value3` на рівні модуля, роуту чи запиту.
+
+Окрім цього, різні провайдери з одним і тим самим токеном можна передавати одночасно на декількох різних рівнях ієрархії, але DI завжди буде вибирати найближчі інжектори (тобто, якщо значення для провайдера запитується на рівні запиту, то спочатку буде проглядатись інжектор на рівні запиту, і лише якщо там немає потрібного провайдера, DI буде підніматись до батьківських інжекторів):
+
+```ts
+import { restModule } from '@ditsmod/rest';
+
+@restModule({
+  providersPerMod: [{ token: 'token1', useValue: 'value1' }],
+  providersPerRou: [{ token: 'token1', useValue: 'value2' }],
+  providersPerReq: [{ token: 'token1', useValue: 'value3' }],
+})
+export class SomeModule {}
+```
+
+В даному разі, в межах `SomeModule` по `token1` буде видаватись `value3` на рівні запиту, `value2` - на рівні роуту, і `value1` - на рівні модуля.
+
+Також, якщо ви імпортуєте певний провайдер із зовнішнього модуля, і у вас у поточному модулі є провайдер з таким же токеном, то локальний провайдер матиме вищій пріоритет, при умові, що вони передавались на однаковому рівні ієрархії інжекторів.
+
 [1]: /developer-guides/exports-and-imports/#import-module
 [2]: /developer-guides/exports-and-imports#ModuleWithParams
 [3]: /components-of-ditsmod-app/dependency-injection/#injector-and-providers
