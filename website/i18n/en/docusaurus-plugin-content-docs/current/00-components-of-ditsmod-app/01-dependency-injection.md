@@ -10,7 +10,7 @@ In the following examples of this section, it is assumed that you have cloned th
 
 Additionally, if you don't yet know what exactly reflector does and what "dependency resolution" is, we recommend that you first read the previous section [Decorators and Reflector][108].
 
-## Injector and providers {#injector-and-providers}
+## Injector, tokens and providers {#injector-and-providers}
 
 The injector is the main mechanism that implements the Dependency Injection pattern in Ditsmod. The ultimate goal of the injector is to return a value for a specific identifier called a **token**. In other words, the injector works very simply: it receives a token and returns the value associated with that token. Obviously, such functionality requires instructions that map what is being requested from the injector to what it should return. These instructions are provided by the so-called **providers**.
 
@@ -101,13 +101,68 @@ const injector = Injector.resolveAndCreate([]);
 const service3 = injector.get(Service3); // Error: No provider for Service3!
 ```
 
-By the way, another reason why the reflector is not used during `injector.get()` calls is that a provider token can be something other than a class — for example, it can be a primitive type. The complete list of possible token types is as follows:
+By the way, another reason why the reflector is not used when calling `injector.get()` is that the token requested in this method can be not only a class, but also, for example, a primitive type.
 
-1. A class.
-2. Any object, except for `null` and arrays. It is recommended to use an instance of the `InjectionToken<T>` class as a token, since it is a generic that takes a type parameter `T`. This parameter can be used to associate the token with the value that will be returned from the injector registry.
-3. A `string`, `number`, or `symbol`.
+### Short and long form of token passing in class methods {#short-and-long-form-of-token-passing-in-class-methods}
 
-It’s important to remember that tokens operate in JavaScript code, not in TypeScript code, which means entities declared with keywords such as `interface`, `type`, `declare`, `enum`, etc. cannot be used as tokens, since they will not exist in the JavaScript code after compilation. In addition, tokens cannot be imported using the `type` keyword, because such an import will not appear in the JavaScript code.
+If a class is used as a token, it can also be used simultaneously as a type:
+
+```ts {6}
+import { injectable } from '@ditsmod/core';
+import { FirstService } from './first.service.js';
+
+@injectable()
+export class SecondService {
+  constructor(private firstService: FirstService) {}
+  // ...
+}
+```
+
+Here it is implied that `FirstService` is a class, and therefore it can be used both as a TypeScript type and as a **token**. But what exactly does “used as a token” mean? — Essentially, by declaring the constructor parameters in this way, we are telling DI: “Take the `FirstService` token, look up the corresponding value in the provider registry, and substitute it as the value for this parameter”.
+
+Recall that a token is an identifier associated with the corresponding dependency. It is very important to understand that the token mechanism is needed for the JavaScript runtime, so you cannot use types declared in TypeScript with the keywords `interface`, `type`, `enum`, `declare`, etc. as tokens, because they do not exist in the JavaScript code. Additionally, tokens cannot be imported using the `type` keyword, because such an import will not appear in the JavaScript code.
+
+Unlike a class, an array cannot be used simultaneously as a TypeScript type and as a token. On the other hand, a token may have a type completely unrelated to the dependency it is associated with, so, for example, a string-type token can be associated with a dependency that has any TypeScript type, including arrays, interfaces, enums, etc.
+
+A token can be passed in the short or long form of specifying a dependency. The last example uses the **short form** of specifying a dependency, which has significant limitations because it allows specifying a dependency only on a particular *class*.
+
+There is also a **long form** of specifying a dependency using the `inject` decorator, which allows using an alternative token:
+
+```ts {6}
+import { injectable, inject } from '@ditsmod/core';
+import { InterfaceOfItem } from './types.js';
+
+@injectable()
+export class SecondService {
+  constructor(@inject('some-string') private someArray: InterfaceOfItem[]) {}
+  // ...
+}
+```
+
+When `inject` is used, DI considers only the token passed into it. In this case, DI ignores the variable type `InterfaceOfItem[]`, using the string `some-string` as the token instead. In other words, DI uses `some-string` as the key for looking up the corresponding value for the dependency that has the type `InterfaceOfItem[]`. Thus, DI allows separating the token and the variable type, enabling you to receive any type of dependency in the constructor, including various array types or enums.
+
+A token can be a reference to a class, object, or function; you can also use string or numeric values, as well as symbols, as tokens. For the long form of specifying dependencies, we recommend using an instance of the `InjectionToken<T>` class as the token, since the `InjectionToken<T>` class has a parameterized type `T` that allows specifying the type of data associated with the given token:
+
+```ts {5,14}
+// tokens.ts
+import { InjectionToken } from '@ditsmod/core';
+import { InterfaceOfItem } from './types.js';
+
+const SOME_TOKEN = new InjectionToken<InterfaceOfItem[]>('SOME_TOKEN');
+
+// second-service.ts
+import { injectable, inject } from '@ditsmod/core';
+import { InterfaceOfItem } from './types.js';
+import { SOME_TOKEN } from './tokens.js';
+
+@injectable()
+export class SecondService {
+  constructor(@inject(SOME_TOKEN) private someArray: InterfaceOfItem[]) {}
+  // ...
+}
+```
+
+### Provider {#provider}
 
 Formally, the provider type is represented by the following declaration:
 
