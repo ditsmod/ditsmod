@@ -44,8 +44,8 @@ As you can see, the `Injector.resolveAndCreate()` method takes an array of class
 
 So, what are the tasks of the injector, and what exactly does its `injector.get()` method do:
 
-1. When creating an injector, you pass it an array of providers — that is, an array of instructions mapping what is requested from it (the token) to what it should return (the value). In this case, the providers are the classes `[Service1, Service2, Service3]`. But where are the “instructions”? The point is that when creating an injector, the most compact way is to pass providers in the form of classes, which under the hood are then transformed into instructions like this: `[{ token: Service1, useClass: Service1 }, { token: Service2, useClass: Service2 }, { token: Service3, useClass: Service3 }]`. This step is very important for the injector’s further operation. If you don’t pass all the required providers, the injector will not have the corresponding instructions when you request a specific token.
-2. When the injector is asked for the `Service3` token, it inspects the constructor of this class and sees a dependency on `Service2`.
+1. When creating an injector, it is given an array of providers — that is, an array of instructions mapping what is being requested (the token) to what should be returned (the value). In this case, the providers are the classes in the array `[Service1, Service2, Service3]`. But where exactly are these “instructions” mentioned? The point is that under the hood, the DI system transforms this array of classes into an array of instructions like this: `[{ token: Service1, useClass: Service1 }, { token: Service2, useClass: Service2 }, { token: Service3, useClass: Service3 }]`. This step is crucial for the injector’s further operation. If you do not pass all the required providers, the injector will not have the necessary instructions when you request a particular token.
+2. After creating the injector, when it is asked for the `Service3` token, it looks at the constructor of this class and sees a dependency on `Service2`.
 3. Then it inspects the constructor of `Service2` and sees a dependency on `Service1`.
 4. Then it inspects the constructor of `Service1`, finds no dependencies, and therefore first creates an instance of `Service1`.
 5. Next, it creates an instance of `Service2` using the `Service1` instance.
@@ -92,7 +92,7 @@ As you can see, now when creating the injector, instead of classes we passed an 
 3. If the token `Service3` is requested, execute the provided function that returns the text `value for Service3`.
 4. If the token `Service4` is requested, return the value for the `Service3` token, meaning the text `value for Service3`.
 
-Now that we have passed the providers to the injector in the form of instructions, it becomes clearer that the injector needs these instructions to map what it is being asked for (the token) to what it should provide (the value). In the documentation, such a mapping may also be referred to as the **injector registry**. For the injector, a **token** is an identifier used to look up a value in its registry. While scanning a class's dependencies, the [reflector][108] returns tokens rather than providers, which means the injector cannot rely solely on the reflector without also being given the providers. Therefore, when creating an injector, you must supply providers containing the tokens that will be requested from it, particularly through `injector.get()`.
+Now that we have passed the providers to the injector in the form of instructions, it becomes clearer that the injector needs these instructions to map what it is being asked for (the token) to what it should provide (the value). In the documentation, such a mapping may also be referred to as an **injector registry** or a **provider registry**. For the injector, a **token** is an identifier used to look up a value in its registry. While scanning a class's dependencies, the [reflector][108] returns tokens rather than providers, which means the injector cannot rely solely on the reflector without also being given the providers. Therefore, when creating an injector, you must supply providers containing the tokens that will be requested from it, particularly through `injector.get()`.
 
 Since this is very important, let's restate how DI works, but in different words. When the injector is created, it receives providers that serve as instructions mapping tokens to the values that should be returned for those tokens. As you can see in the previous code example, providers are passed to `Injector.resolveAndCreate()`, and as the name of this method suggests, dependency **resolution** happens first. And what is "dependency resolution"? This is the process of scanning each provider using the [reflector][108] and determining the list of tokens whose values that provider depends on. Once the injector has been created, the reflector is no longer used, which is why `injector.get()` in the following example throws an error:
 
@@ -105,22 +105,20 @@ By the way, another reason why the reflector is not used when calling `injector.
 
 ### Short and long form of token passing in class methods {#short-and-long-form-of-token-passing-in-class-methods}
 
-If a class is used as a token, it can also be used simultaneously as a type:
+If a class is used as the constructor parameter type, it can also be used as a token:
 
-```ts {6}
+```ts {7}
 import { injectable } from '@ditsmod/core';
-import { FirstService } from './first.service.js';
+
+class Service1 {}
 
 @injectable()
-export class SecondService {
-  constructor(private firstService: FirstService) {}
-  // ...
+class Service2 {
+  constructor(service1: Service1) {}
 }
 ```
 
-Here it is implied that `FirstService` is a class, and therefore it can be used both as a TypeScript type and as a **token**. But what exactly does “used as a token” mean? — Essentially, by declaring the constructor parameters in this way, we are telling DI: “Take the `FirstService` token, look up the corresponding value in the provider registry, and substitute it as the value for this parameter”.
-
-Recall that a token is an identifier associated with the corresponding dependency. It is very important to understand that the token mechanism is needed for the JavaScript runtime, so you cannot use types declared in TypeScript with the keywords `interface`, `type`, `enum`, `declare`, etc. as tokens, because they do not exist in the JavaScript code. Additionally, tokens cannot be imported using the `type` keyword, because such an import will not appear in the JavaScript code.
+It is very important to understand that the token mechanism is needed for the JavaScript runtime, so you cannot use types declared in TypeScript with the keywords `interface`, `type`, `enum`, `declare`, etc. as tokens, because they do not exist in the JavaScript code. Additionally, tokens cannot be imported using the `type` keyword, because such an import will not appear in the JavaScript code.
 
 Unlike a class, an array cannot be used simultaneously as a TypeScript type and as a token. On the other hand, a token may have a type completely unrelated to the dependency it is associated with, so, for example, a string-type token can be associated with a dependency that has any TypeScript type, including arrays, interfaces, enums, etc.
 
@@ -128,12 +126,16 @@ A token can be passed in the short or long form of specifying a dependency. The 
 
 There is also a **long form** of specifying a dependency using the `inject` decorator, which allows using an alternative token:
 
-```ts {6}
+```ts {10}
 import { injectable, inject } from '@ditsmod/core';
-import { InterfaceOfItem } from './types.js';
+
+interface InterfaceOfItem {
+  one: string;
+  two: number;
+}
 
 @injectable()
-export class SecondService {
+export class Service1 {
   constructor(@inject('some-string') private someArray: InterfaceOfItem[]) {}
   // ...
 }
@@ -156,7 +158,7 @@ import { InterfaceOfItem } from './types.js';
 import { SOME_TOKEN } from './tokens.js';
 
 @injectable()
-export class SecondService {
+export class Service1 {
   constructor(@inject(SOME_TOKEN) private someArray: InterfaceOfItem[]) {}
   // ...
 }
