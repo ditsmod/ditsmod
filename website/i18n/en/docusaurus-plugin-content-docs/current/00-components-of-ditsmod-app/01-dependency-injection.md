@@ -141,7 +141,7 @@ export class Service1 {
 }
 ```
 
-When `inject` is used, DI considers only the token passed into it. In this case, DI ignores the variable type `InterfaceOfItem[]`, using the string `some-string` as the token instead. In other words, DI uses `some-string` as the key for looking up the corresponding value for the dependency that has the type `InterfaceOfItem[]`. Thus, DI allows separating the token and the variable type, enabling you to receive any type of dependency in the constructor, including various array types or enums.
+When `inject` is used, DI considers only the token passed to it. In this case, DI ignores the variable type `InterfaceOfItem[]` and uses the string `some-string` as the token. In other words, DI uses `some-string` as the key to look up the corresponding value for the dependency, and the parameter’s type — `InterfaceOfItem[]` — has no significance for DI at all. Thus, DI makes it possible to separate the token from the variable type, allowing the constructor to receive any type of dependency, including various array types or enums.
 
 A token can be a reference to a class, object, or function; you can also use string or numeric values, as well as symbols, as tokens. For the long form of specifying dependencies, we recommend using an instance of the `InjectionToken<T>` class as the token, since the `InjectionToken<T>` class has a parameterized type `T` that allows specifying the type of data associated with the given token:
 
@@ -181,7 +181,13 @@ type Provider = Class<any> |
 
 *_note that the token for a provider with the `useFactory` property is optional, because DI can use the function or the method of the specified class as a token._
 
-If the provider is represented as an object, it can have the following types:
+If the provider is represented as an object, its types can be imported from `@ditsmod/core`:
+
+```ts
+import { ValueProvider, ClassProvider, FactoryProvider, TokenProvider } from '@ditsmod/core';
+```
+
+More details about each of these types:
 
 1. **ValueProvider** - this type of provider has the `useValue` property which receives any value except `undefined`; DI will return it unchanged. Example of such provider:
 
@@ -232,13 +238,53 @@ If the provider is represented as an object, it can have the following types:
 
      Note that the `deps` property should contain the *tokens* of providers, and DI interprets them as tokens, not as providers. That is, for these tokens you will still need to provide the corresponding providers in the DI registry. Also note that decorators for parameters (for example `optional`, `skipSelf`, etc.) are not passed in `deps`. If your factory requires parameter decorators, you need to use the `ClassFactoryProvider`.
 
-4. **TokenProvider** - this type of provider has the `useToken` property which receives another token. If you write:
+4. **TokenProvider** — this provider type has a `useToken` property, into which another token is passed. If you write something like this:
 
    ```ts
-   { token: SecondService, useToken: FirstService }
+   { token: Service2, useToken: Service1 }
    ```
 
-   you are telling DI: "When consumers request the token `SecondService`, use the value for the token `FirstService`". In other words, this directive creates an alias `SecondService` that points to `FirstService`.
+   You are telling DI: “When provider consumers request the `Service2` token, the value for the `Service1` token should be used”. In other words, this directive creates an alias `Service2` that points to `Service1`. Therefore, a `TokenProvider` is not self-sufficient, unlike other provider types, and it must ultimately point to another provider type — a `ValueProvider`, `ClassProvider`, or `FactoryProvider`:
+
+   ```ts {4}
+   import { Injector } from '@ditsmod/core';
+
+   const injector = Injector.resolveAndCreate([
+     { token: 'token1', useValue: 'some value for token1' }, // <-- non TokenProvider
+     { token: 'token2', useToken: 'token1' },
+   ]);
+   console.log(injector.get('token1')); // some value for token1
+   console.log(injector.get('token2')); // some value for token1
+   ```
+
+   Here, when creating the injector, a `TokenProvider` is passed that points to a `ValueProvider`, which is why this code will work. If you don’t do this, DI will throw an error:
+
+   ```ts
+   import { Injector } from '@ditsmod/core';
+
+   const injector = Injector.resolveAndCreate([
+     { token: 'token1', useToken: 'token2' },
+   ]);
+   injector.get('token1'); // Error! No provider for token2! (token1 -> token2)
+   // OR
+   injector.get('token2'); // Error! No provider for token2!
+   ```
+
+   This happens because you are telling DI: “If someone requests `token1`, use the value for `token2`”, but you do not provide a value for `token2`.
+
+   On the other hand, your `TokenProvider` may point to another `TokenProvider` as an intermediate value, but ultimately a `TokenProvider` must always point to a provider of a different type:
+
+   ```ts {4}
+   import { Injector } from '@ditsmod/core';
+
+   const injector = Injector.resolveAndCreate([
+     { token: 'token1', useValue: 'some value for token1' }, // <-- non TokenProvider
+     { token: 'token2', useToken: 'token1' },
+     { token: 'token3', useToken: 'token2' },
+     { token: 'token4', useToken: 'token3' },
+   ]);
+   console.log(injector.get('token4')); // some value for token1
+   ```
 
 Now that you are familiar with the concept of a **provider**, it can be clarified that a **dependency** is a dependency on the **value of a provider**. Such a dependency is held by **consumers** of provider values either in service constructors, or in controllers' constructors or methods, or in the `get()` method of [injectors][102].
 
@@ -325,7 +371,7 @@ Under the hood, Ditsmod performs a similar procedure many times for different mo
 
 Recall that higher-level injectors in the hierarchy have no access to lower-level injectors. This means that **when passing a class to a specific injector, it’s necessary to know the lowest level in the hierarchy of its dependencies**.
 
-For example, if you write a class that depends on the HTTP request, you will be able to pass it only to the `providersPerReq` array, because only from this array Ditsmod forms the injector to which Ditsmod will automatically add a provider with the HTTP-request object. On the other hand, an instance of this class will have access to all its parent injectors: at the route level, module level, and application level. Therefore this class can depend on providers at any level.
+For example, if you write a class that depends on the HTTP request, you will be able to pass it only to the `providersPerReq` array, because only from this array Ditsmod forms the injector to which Ditsmod will automatically add a provider with the HTTP-request object. On the other hand, an instance of this class will have access to all its parent injectors: at the route level, module level, and application level. Therefore, the class passed to the `providersPerReq` array can depend on providers at any level.
 
 You can also write a class and pass it into the `providersPerMod` array; in that case it can depend only on providers at the module level or at the application level. If it depends on providers that you passed into `providersPerRou` or `providersPerReq`, you will get an error that these providers are not found.
 
@@ -468,7 +514,7 @@ const locals = child.get(LOCAL); // ['аа']
 To make it possible to substitute a specific multi-provider, you can do the following:
 
 1. pass a class to the multi-provider object using the `useToken` property;
-2. then pass that class as `ClassProvider`;
+2. then pass that class as `ClassProvider` or `TypeProvider`;
 3. next in the providers array add a provider that substitutes that class.
 
 ```ts
