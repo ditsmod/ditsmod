@@ -20,7 +20,9 @@ class Service2 {
 }
 ```
 
-As you can see, in the constructor of `Service2`, a static data type is specified for the `service1` parameter. If you run the command:
+As you can see, the constructor of `Service2` specifies a static data type for the `service1` parameter. This is a typical example for applications where one class depends on another, and this dependency is declared in the class constructor. Why is it called a dependency? — Because before creating an instance of `Service2`, an instance of `Service1` must be created first.
+
+If you run the command:
 
 ```bash
 npm run build
@@ -36,7 +38,7 @@ class Service2 {
 }
 ```
 
-That is, the information about the parameter type in the `Service2` constructor is lost. But if we use a class decorator, the TypeScript compiler will output more JavaScript code containing information about static typing. For example, let's use the `injectable` decorator:
+That is, the information about the parameter type in the `Service2` constructor is lost. This does not suit us, because in this case we will not be able to automatically (programmatically) find out that `Service2` depends on `Service1`. But if we use a class decorator, the TypeScript compiler will output more JavaScript code containing information about static typing. For example, let's use the `injectable` decorator:
 
 ```ts {1,5}
 import { injectable } from '@ditsmod/core';
@@ -73,13 +75,13 @@ Service2 = __decorate([
 ], Service2);
 ```
 
-Fortunately, you will rarely need to inspect the `dist` folder and analyze compiled code, but it can sometimes be useful to glance at it for a general understanding of how static typing is transferred into JavaScript code. The most interesting part is found in the last four lines. It's clear that the TypeScript compiler now associates the array `[Service1]` with `Service2`. This array contains information about the static parameter types detected by the compiler in the `Service2` constructor.
+Fortunately, you will rarely need to inspect the `dist` folder and analyze compiled code, but it can sometimes be useful to glance at it for a general understanding of how static typing is transferred into JavaScript code. The most interesting part is found in the last four lines. It's clear that the TypeScript compiler now associates the array `[Service1]` with `Service2`. This array contains information about the static parameter types detected by the compiler in the `Service2` constructor. It looks like we can now programmatically find out that `Service2` depends on `Service1`. The only thing left to do is find out what APIs Ditsmod provides to store and read this information.
 
 Further analysis of the compiled code shows that the `Reflect` class is used to store metadata related to static typing. At the initial stage of learning Ditsmod, you don’t need to dive deeply into how `Reflect` works, because Ditsmod provides higher-level tools that simplify working with storing and using class metadata. At this point, it’s enough to know that `Reflect` is imported from the [reflect-metadata][13] library, and the API of this library is then used by Ditsmod to read the metadata described above. This is handled by the so-called **reflector**.
 
 Let's see what higher-level tools Ditsmod provides for working with the reflector. Let's make the previous example more complex to see how metadata can be extracted and how complex dependency chains can be formed. Consider three classes with the following dependency: `Service3` -> `Service2` -> `Service1`. Insert the following code into `src/app/services.ts`:
 
-```ts
+```ts {15}
 import { injectable, getDependencies } from '@ditsmod/core';
 
 class Service1 {}
