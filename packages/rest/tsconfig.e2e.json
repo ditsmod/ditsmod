@@ -3,7 +3,7 @@
   "compilerOptions": {
     "outDir": "dist-e2e",
     "rootDir": "e2e",
-    "baseUrl": ".",
+    // "baseUrl": ".",
     "tsBuildInfoFile": "dist-e2e/e2e.tsbuildinfo",
   },
   "include": ["e2e"],
