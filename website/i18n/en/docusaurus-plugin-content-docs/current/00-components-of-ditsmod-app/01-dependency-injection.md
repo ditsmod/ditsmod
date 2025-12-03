@@ -44,7 +44,7 @@ As you can see, the `Injector.resolveAndCreate()` method takes an array of class
 
 So, what are the tasks of the injector, and what exactly does its `injector.get()` method do:
 
-1. When creating an injector, it is given an array of providers — that is, an array of instructions mapping what is being requested (the token) to what should be returned (the value). In this case, the providers are the classes in the array `[Service1, Service2, Service3]`. But where exactly are these “instructions” mentioned? The point is that under the hood, the DI system transforms this array of classes into an array of instructions like this: `[{ token: Service1, useClass: Service1 }, { token: Service2, useClass: Service2 }, { token: Service3, useClass: Service3 }]`. This step is crucial for the injector’s further operation. If you do not pass all the required providers, the injector will not have the necessary instructions when you request a particular token.
+1. When creating an injector, it is given an array of providers — that is, an array of instructions mapping what is being requested (the token) to what should be returned (the value). In this case, the providers are the classes in the array `[Service1, Service2, Service3]`. But where are the “instructions” mentioned above? The point is that under the hood, the DI system transforms this array of classes into an array of instructions like this: `[{ token: Service1, useClass: Service1 }, { token: Service2, useClass: Service2 }, { token: Service3, useClass: Service3 }]`. This step is crucial for the injector’s further operation. If you do not pass all the required providers, the injector will not have the corresponding instructions when you request a particular token.
 2. After creating the injector, when it is asked for the `Service3` token, it looks at the constructor of this class and sees a dependency on `Service2`.
 3. Then it inspects the constructor of `Service2` and sees a dependency on `Service1`.
 4. Then it inspects the constructor of `Service1`, finds no dependencies, and therefore first creates an instance of `Service1`.
@@ -92,16 +92,7 @@ As you can see, now when creating the injector, instead of classes we passed an 
 3. If the token `Service3` is requested, execute the provided function that returns the text `value for Service3`.
 4. If the token `Service4` is requested, return the value for the `Service3` token, meaning the text `value for Service3`.
 
-Now that we have passed the providers to the injector in the form of instructions, it becomes clearer that the injector needs these instructions to map what it is being asked for (the token) to what it should provide (the value). In the documentation, such a mapping may also be referred to as an **injector registry** or a **provider registry**. For the injector, a **token** is an identifier used to look up a value in its registry. While scanning a class's dependencies, the [reflector][108] returns tokens rather than providers, which means the injector cannot rely solely on the reflector without also being given the providers. Therefore, when creating an injector, you must supply providers containing the tokens that will be requested from it, particularly through `injector.get()`.
-
-Since this is very important, let's restate how DI works, but in different words. When the injector is created, it receives providers that serve as instructions mapping tokens to the values that should be returned for those tokens. As you can see in the previous code example, providers are passed to `Injector.resolveAndCreate()`, and as the name of this method suggests, dependency **resolution** happens first. And what is "dependency resolution"? This is the process of scanning each provider using the [reflector][108] and determining the list of tokens whose values that provider depends on. Once the injector has been created, the reflector is no longer used, which is why `injector.get()` in the following example throws an error:
-
-```ts
-const injector = Injector.resolveAndCreate([]);
-const service3 = injector.get(Service3); // Error: No provider for Service3!
-```
-
-By the way, another reason why the reflector is not used when calling `injector.get()` is that the token requested in this method can be not only a class, but also, for example, a primitive type.
+Now that we have passed the providers to the injector in the form of instructions, it becomes clearer that the injector needs these instructions to map what it is being asked for (the token) to what it should provide (the value). In the documentation, such a mapping may also be referred to as an **injector registry** or a **provider registry**. For the injector, a **token** is an identifier used to look up a value in its registry.
 
 ### Short and long form of token passing in class methods {#short-and-long-form-of-token-passing-in-class-methods}
 
@@ -114,7 +105,7 @@ class Service1 {}
 
 @injectable()
 class Service2 {
-  constructor(service1: Service1) {}
+  constructor(service1: Service1) {} // Short form of specifying a dependency
 }
 ```
 
@@ -136,7 +127,7 @@ interface InterfaceOfItem {
 
 @injectable()
 export class Service1 {
-  constructor(@inject('some-string') private someArray: InterfaceOfItem[]) {}
+  constructor(@inject('some-string') private someArray: InterfaceOfItem[]) {} // Long form of specifying a dependency
   // ...
 }
 ```
@@ -244,7 +235,7 @@ More details about each of these types:
    { token: Service2, useToken: Service1 }
    ```
 
-   You are telling DI: “When provider consumers request the `Service2` token, the value for the `Service1` token should be used”. In other words, this directive creates an alias `Service2` that points to `Service1`. Therefore, a `TokenProvider` is not self-sufficient, unlike other provider types, and it must ultimately point to another provider type — a `ValueProvider`, `ClassProvider`, or `FactoryProvider`:
+   You are telling DI: “When provider consumers request the `Service2` token, the value for the `Service1` token should be used”. In other words, this directive creates an alias `Service2` that points to `Service1`. Therefore, a `TokenProvider` is not self-sufficient, unlike other provider types, and it must ultimately point to another provider type — a `TypeProvider`, `ValueProvider`, `ClassProvider`, or `FactoryProvider`:
 
    ```ts {4}
    import { Injector } from '@ditsmod/core';
