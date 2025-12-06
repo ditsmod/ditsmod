@@ -333,6 +333,125 @@ When we request `Service3` from the parent injector, it cannot create an instanc
 
 And neither injector can return an instance of `Service4`, because this class was not passed to any of them during their creation.
 
+### Chain of dependencies at different levels {#chain-of-dependencies-at-different-levels}
+
+The dependency chain of providers can be quite complex, and the injector hierarchy adds even more complexity. Let’s start with a simple case and then make it more complex. In the following example, `Service` depends on `Config`, and both providers are passed to the same injector:
+
+```ts {14-15,19}
+import { injectable, Injector } from '@ditsmod/core';
+
+class Config {
+  one: any;
+  two: any;
+}
+
+@injectable()
+class Service {
+  constructor(public config: Config) {}
+}
+
+const parent = Injector.resolveAndCreate([
+  Service,
+  { token: Config, useValue: { one: 1, two: 2 } }
+]);
+
+const child = parent.resolveAndCreateChild([
+  // Empty array
+]);
+
+parent.get(Service).config; // returns { one: 1, two: 2 }
+child.get(Service).config; // returns { one: 1, two: 2 } from parent injector
+```
+
+As you can see, this example creates both parent and child injectors, and both `Service` and its dependency `Config` are passed to the parent injector. In such a case, when the parent injector is asked for the value of the `Service` token, DI works according to the following logic:
+
+1. first, the injector inspects the list of dependencies in `Service` and sees `Config`;
+2. then the injector inspects the dependencies of `Config`, but that provider has no dependencies;
+3. the instance of `Config` is created first, followed by the instance of `Service`.
+
+When the child injector is created with an empty array of providers, any request from it will be delegated to the parent injector:
+
+1. first, DI checks the child injector and does not find `Service`;
+2. then the injector turns to the parent injector and receives the already created `Service` instance.
+
+So far, everything is simple. Now let’s complicate the example by passing different values for the `Config` token to the parent and child injectors:
+
+```ts {14-15,19}
+import { injectable, Injector } from '@ditsmod/core';
+
+class Config {
+  one: any;
+  two: any;
+}
+
+@injectable()
+class Service {
+  constructor(public config: Config) {}
+}
+
+const parent = Injector.resolveAndCreate([
+  Service,
+  { token: Config, useValue: { one: 1, two: 2 } }
+]);
+
+const child = parent.resolveAndCreateChild([
+  { token: Config, useValue: { one: 11, two: 22 } }
+]);
+```
+
+When examining this example, remember that the parent injector cannot see its child injectors, so any change in the child injector does not affect the parent injector. In other words, for the parent injector, nothing changes here, because it receives exactly the same providers as in the previous example.
+
+But what about the child injector? Now it has its own version of the provider with the `Config` token, which differs from the parent’s version. So how will the child injector behave when the following is requested?
+
+```ts
+child.get(Service).config;
+```
+
+It’s useful to think about this first on your own to better reinforce this behavior. Thought about it? Okay, the logic of this injector will be as follows:
+
+1. first, DI checks the child injector and does not find `Service`;
+2. then the injector turns to the parent injector and receives the already created `Service` instance. Therefore, this expression returns `{ one: 1, two: 2 }`.
+
+A bit unexpected, right? Many people might assume that creating a `Service` instance would use the child’s local version of `Config`, which has the value `{ one: 11, two: 22 }`. But note that the child injector is asked for `Service` first, and since it doesn’t have it, it must turn to the parent injector for the `Service` instance. And because the parent injector resolves `Service`’s dependencies in its own context, it uses its own local version of `Config`, which has the value `{ one: 1, two: 2 }`.
+
+However, when we request `Config` from the child injector instead of `Service`, it returns its own local value as expected:
+
+```ts
+child.get(Config); // { one: 11, two: 22 }
+```
+
+Can you guess what can be done so that when requesting `Service` from the child injector, you can obtain the local version of `Config`? — Correct: when creating the child injector, we can also pass `Service`, so that it will not turn to the parent injector:
+
+```ts {19}
+import { injectable, Injector } from '@ditsmod/core';
+
+class Config {
+  one: any;
+  two: any;
+}
+
+@injectable()
+class Service {
+  constructor(public config: Config) {}
+}
+
+const parent = Injector.resolveAndCreate([
+  Service,
+  { token: Config, useValue: { one: 1, two: 2 } }
+]);
+
+const child = parent.resolveAndCreateChild([
+  Service,
+  { token: Config, useValue: { one: 11, two: 22 } }
+]);
+```
+
+Now the child injector has both `Service` and `Config`, so it will not refer to the parent injector:
+
+```ts
+child.get(Service).config; // { one: 11, two: 22 }
+```
+
 ### Hierarchy of injectors in the Ditsmod application {#hierarchy-of-injectors-in-the-ditsmod-application}
 
 Later in the documentation, you will encounter the following object properties that are passed through module metadata:
