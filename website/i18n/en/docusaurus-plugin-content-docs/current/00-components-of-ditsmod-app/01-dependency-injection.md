@@ -12,7 +12,7 @@ Additionally, if you don't yet know what exactly reflector does and what "depend
 
 ## Injector, tokens and providers {#injector-and-providers}
 
-The injector is the main mechanism that implements the Dependency Injection pattern in Ditsmod. The ultimate goal of the injector is to return a value for a specific identifier called a **token**. In other words, the injector works very simply: it receives a token and returns the value associated with that token. Obviously, such functionality requires instructions that map what is being requested from the injector to what it should return. These instructions are provided by the so-called **providers**.
+In the [previous section][108], we saw how a constructor can specify the dependency of one class on another class, and how a dependency chain can be automatically determined using a reflector. Now let's get acquainted with the **injector** — a mechanism that, in particular, allows obtaining class instances while considering their dependencies. The injector works very simply: it takes a **token** and returns a value for that token. Obviously, such functionality requires instructions linking what is requested from the injector to what it provides. These instructions are supplied by so-called **providers**.
 
 Let's look at the following example, which slightly expands on the last example from the [Decorators and Reflector][108] section:
 
@@ -32,19 +32,19 @@ class Service3 {
 }
 
 const injector = Injector.resolveAndCreate([
-  Service1,
-  Service2,
-  Service3
+  { token: Service1, useClass: Service1 },
+  { token: Service2, useClass: Service2 },
+  { token: Service3, useClass: Service3 }
 ]);
 const service3 = injector.get(Service3); // Instance of Service3
 service3 === injector.get(Service3); // true
 ```
 
-As you can see, the `Injector.resolveAndCreate()` method takes an array of classes as input and returns an **injector** that can create an instance of each provided class via the `injector.get()` method, taking into account the entire dependency chain (`Service3` -> `Service2` -> `Service1`).
+As you can see, the `Injector.resolveAndCreate()` method takes an array of providers as input and outputs an **injector** that can create an instance of each provided class using the `injector.get()` method, taking the entire dependency chain into account (`Service3` -> `Service2` -> `Service1`).
 
-So, what are the tasks of the injector, and what exactly does its `injector.get()` method do:
+So, what tasks does the injector handle, and what does its `injector.get()` method do:
 
-1. When creating an injector, it is given an array of providers — that is, an array of instructions mapping what is being requested (the token) to what should be returned (the value). In this case, the providers are the classes in the array `[Service1, Service2, Service3]`. But where are the “instructions” mentioned above? The point is that under the hood, the DI system transforms this array of classes into an array of instructions like this: `[{ token: Service1, useClass: Service1 }, { token: Service2, useClass: Service2 }, { token: Service3, useClass: Service3 }]`. This step is crucial for the injector’s further operation. If you do not pass all the required providers, the injector will not have the corresponding instructions when you request a particular token.
+1. When the injector is created, it receives an array of providers — that is, an array of instructions defining what is requested from it (by token) and what it should return (the value). This stage is crucial for the injector’s subsequent operation. If you do not supply all required providers, the injector will not have the necessary instructions when you request a particular token.
 2. After creating the injector, when it is asked for the `Service3` token, it looks at the constructor of this class and sees a dependency on `Service2`.
 3. Then it inspects the constructor of `Service2` and sees a dependency on `Service1`.
 4. Then it inspects the constructor of `Service1`, finds no dependencies, and therefore first creates an instance of `Service1`.
@@ -60,6 +60,21 @@ const service3 = injector.get(Service3); // Error: No provider for Service3!
 ```
 
 As expected, when we pass an empty array instead of a provider array, and then request the `Service3` token from the injector, the injector throws an error, requiring a **provider** for that token.
+
+By the way, the following two injectors receive equivalent providers:
+
+```ts
+const injector1 = Injector.resolveAndCreate([
+  { token: Service1, useClass: Service1 },
+  { token: Service2, useClass: Service2 },
+  { token: Service3, useClass: Service3 }
+]);
+const injector2 = Injector.resolveAndCreate([
+  Service1,
+  Service2,
+  Service3
+]);
+```
 
 To better understand what providers can look like, let’s pass the injector an array of providers in the following form:
 
