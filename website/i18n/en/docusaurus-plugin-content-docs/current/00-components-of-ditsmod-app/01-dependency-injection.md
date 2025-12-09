@@ -333,13 +333,13 @@ child.get(Service4); // Error - No provider for Service4!
 parent.get(Service4); // Error - No provider for Service4!
 ```
 
-As you can see, when creating the child injector, `Service1` was not passed to it, so when requesting an instance of this class it will refer to the parent. By the way, there is one non-obvious but very important point here: through the `get()` method, child injectors only request certain instances of classes from parent injectors — they do not create them by themselves. That's why this expression returns `true`:
+As you can see, when creating the child injector, `Service1` was not passed to it, so when it is asked for the value of this token, it will take it from the parent injector. By the way, there is one non-obvious but very important point here: through the `get()` method, child injectors can request token values from parent injectors if necessary, and they do not create them on their own. That is why this expression returns `true`:
 
 ```ts
 parent.get(Service1) === child.get(Service1); // true
 ```
 
-Because this is a very important feature in the injector hierarchy, let's describe it again: the value of a given provider is stored in the injector to which that provider was passed. That is, if `Service1` was not passed to the child injector when it was created, then `child.get(Service1)` may return an instance of `Service1`, but it will be created in the parent injector. And after the instance of `Service1` is created in the parent injector, the same instance will be returned (from the cache) on subsequent requests either via `child.get(Service1)` or via `parent.get(Service1)`. This is also an important feature because it determines where the state of a particular provider will be stored.
+Since this is a very important characteristic of the injector hierarchy, let's describe it again: the value of a particular provider is stored in the injector to which the corresponding provider is passed. That is, if during the creation of the child injector the provider with the `Service1` token is not passed to it, then when `child.get(Service1)` is requested, the child injector will not create the value for the `Service1` token. Instead, the child injector will turn to the parent injector, where the provider with the `Service1` token was passed, and therefore the parent injector will be able to create the value for this token. And after the `Service1` instance is created in the parent injector, this same instance will be returned (from the cache) when requested again either through `child.get(Service1)` or through `parent.get(Service1)`.
 
 When we look at the behavior of injectors when requesting `Service2`, they will behave differently because both injectors were provided with the `Service2` provider during their creation, so each will create its own local version of this service; this is precisely why the expression below returns `false`:
 
@@ -381,16 +381,18 @@ parent.get(Service).config; // returns { one: 1, two: 2 }
 child.get(Service).config; // returns { one: 1, two: 2 } from parent injector
 ```
 
-As you can see, this example creates both parent and child injectors, and both `Service` and its dependency `Config` are passed to the parent injector. In such a case, when the parent injector is asked for the value of the `Service` token, DI works according to the following logic:
+As you can see, in this example both the parent and child injectors are created, and both `Service` and its dependency `Config` are provided only to the parent injector. In this case, when the parent injector is asked for the value of the provider with the `Service` token, it will operate according to the following logic:
 
-1. first, the injector inspects the list of dependencies in `Service` and sees `Config`;
-2. then the injector inspects the dependencies of `Config`, but that provider has no dependencies;
-3. the instance of `Config` is created first, followed by the instance of `Service`.
+1. First, it scans its provider array and finds `Service`, so it "knows" that when `Service` is requested, it must return an instance of this class.
+2. Then it scans the list of dependencies of `Service` and finds `Config`.
+3. Next, it scans its provider array and finds `{ token: Config, useValue: { one: 1, two: 2 } }`, so it "knows" that when `Config` is requested, it must return `{ one: 1, two: 2 }`.
+4. It then scans the list of dependencies in the provider with the `Config` token and finds none.
+5. Therefore, to create the `Service` instance, it will use the value `{ one: 1, two: 2 }`. Note that when creating the `Service` instance, the injector does not create an instance of `Config`; instead, it uses the ready-made object `{ one: 1, two: 2 }`, because these instructions were provided in the provider array when the parent injector was created.
 
-When the child injector is created with an empty array of providers, any request from it will be delegated to the parent injector:
+When the child injector is created with an empty provider array, it will always delegate requests to the parent injector:
 
-1. first, DI checks the child injector and does not find `Service`;
-2. then the injector turns to the parent injector and receives the already created `Service` instance.
+1. First, the child injector scans its provider array and finds no instructions.
+2. Then the child injector forwards the request to the parent injector and receives the already-created `Service` instance.
 
 So far, everything is simple. Now let’s complicate the example by passing different values for the `Config` token to the parent and child injectors:
 
@@ -427,10 +429,10 @@ child.get(Service).config;
 
 It’s useful to think about this first on your own to better reinforce this behavior. Thought about it? Okay, the logic of this injector will be as follows:
 
-1. first, DI checks the child injector and does not find `Service`;
-2. then the injector turns to the parent injector and receives the already created `Service` instance. Therefore, this expression returns `{ one: 1, two: 2 }`.
+1. first it will look through its providers array and will not find a provider with the token `Service`;
+2. then it will contact the parent injector and receive a ready-made `Service` instance from it. Therefore, this expression will return `{ one: 1, two: 2 }`.
 
-A bit unexpected, right? Many people might assume that creating a `Service` instance would use the child’s local version of `Config`, which has the value `{ one: 11, two: 22 }`. But note that the child injector is asked for `Service` first, and since it doesn’t have it, it must turn to the parent injector for the `Service` instance. And because the parent injector resolves `Service`’s dependencies in its own context, it uses its own local version of `Config`, which has the value `{ one: 1, two: 2 }`.
+A bit unexpected, isn't it? Many would probably assume that the child injector would use its local version of `Config` (that is, `{ one: 11, two: 22 }`) when creating the `Service` instance. But note that in the expression `child.get(Service).config`, the child injector is being asked specifically for `Service`, and this token was not provided in its list of providers. Therefore, it must delegate the request to the parent injector. And because the parent injector resolves the dependencies of `Service` within its own context, it uses its own local version of `Config`, which has the value `{ one: 1, two: 2 }`.
 
 However, when we request `Config` from the child injector instead of `Service`, it returns its own local value as expected:
 
@@ -438,7 +440,7 @@ However, when we request `Config` from the child injector instead of `Service`, 
 child.get(Config); // { one: 11, two: 22 }
 ```
 
-Can you guess what can be done so that when requesting `Service` from the child injector, you can obtain the local version of `Config`? — Correct: when creating the child injector, we can also pass `Service`, so that it will not turn to the parent injector:
+You can probably guess what needs to be done so that when `Service` is requested from the child injector, the DI resolves its dependency using the child injector’s local provider for the `Config` token. — Exactly: when creating the child injector, we can include `Service` in its provider array as well.
 
 ```ts {19}
 import { injectable, Injector } from '@ditsmod/core';
