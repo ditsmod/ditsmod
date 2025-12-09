@@ -40,17 +40,22 @@ const service3 = injector.get(Service3); // Instance of Service3
 service3 === injector.get(Service3); // true
 ```
 
-As you can see, the `Injector.resolveAndCreate()` method takes an array of providers as input and outputs an **injector** that can create an instance of each provided class using the `injector.get()` method, taking the entire dependency chain into account (`Service3` -> `Service2` -> `Service1`).
+As you can see, the `Injector.resolveAndCreate()` method takes an array of providers as input and outputs an **injector** that can create an instance of each provided class using the `injector.get()` method, taking into account the entire dependency chain (`Service3` -> `Service2` -> `Service1`).
 
 So, what tasks does the injector handle, and what does its `injector.get()` method do:
 
-1. When the injector is created, it receives an array of providers — that is, an array of instructions defining what is requested from it (by token) and what it should return (the value). This stage is crucial for the injector’s subsequent operation. If you do not supply all required providers, the injector will not have the necessary instructions when you request a particular token.
-2. After creating the injector, when it is asked for the `Service3` token, it looks at the constructor of this class and sees a dependency on `Service2`.
-3. Then it inspects the constructor of `Service2` and sees a dependency on `Service1`.
-4. Then it inspects the constructor of `Service1`, finds no dependencies, and therefore first creates an instance of `Service1`.
-5. Next, it creates an instance of `Service2` using the `Service1` instance.
-6. And finally, it creates an instance of `Service3` using the `Service2` instance.
-7. If the `Service3` instance is requested again later, the `injector.get()` method will return the previously created instance of `Service3` from the injector’s cache.
+1. When the injector is created, it receives an array of providers — that is, an array of instructions defining what is requested from it (by token) and what it should return (the value). This stage is very important for the further operation of the injector. If you do not provide all required providers, the injector will not have the appropriate instructions when you request a particular token.
+2. After the injector is created, when the token `Service3` is requested, it scans the provider array and sees the instruction `{ token: Service3, useClass: Service3 }`, so it "understands" that for the `Service3` token it must return an instance of the `Service3` class.
+3. It then inspects the constructor of the `Service3` class and sees the dependency on `Service2`.
+4. In the previous step, essentially, the `Service2` token is being requested, so the injector scans the providers and finds the instruction `{ token: Service2, useClass: Service2 }`, so it "understands" that for the `Service2` token it must return an instance of the `Service2` class.
+5. It then inspects the constructor of `Service2` and sees the dependency on `Service1`.
+6. In the previous step, the `Service1` token is being requested, so the injector scans the providers and finds the instruction `{ token: Service1, useClass: Service1 }`, so it "understands" that for the `Service1` token it must return an instance of the `Service1` class.
+7. It then inspects the constructor of `Service1`, finds no dependencies, and therefore creates the `Service1` instance first.
+8. Next, it creates the `Service2` instance using the `Service1` instance.
+9. And finally, it creates the `Service3` instance using the `Service2` instance.
+10. If later the `Service3` instance is requested again, the `injector.get()` method will return the previously created `Service3` instance from the injector’s cache.
+
+In conclusion, we can state that `injector.get()` indeed works very simply: it receives the `Service3` token and returns its value — the instance of the `Service3` class. But to operate this way, the injector first takes into account the array of providers supplied to it. Second, it considers the dependency chain of each provider.
 
 Now let’s break rule 1 and try to pass an empty array when creating the injector. In that case, calling `injector.get()` will throw an error:
 
@@ -100,16 +105,14 @@ injector.get(Service4); // value for Service3
 
 Note that in this example, the `injectable` decorator is not used, since each class shown here does not have a constructor where dependencies could be specified.
 
-As you can see, now when creating the injector, instead of classes we passed an array of objects. These objects are also called **providers**. Each provider is an instruction for the DI:
+As you can see, during injector creation we have now passed an array of providers of four types. Later, each of these types will be formally described, but even without that, it is easy to guess what instructions these providers convey to the injector:
 
 1. If the token `Service1` is requested, return the text `value for Service1`.
 2. If the token `Service2` is requested, first create an instance of `Service2`, and then return it.
 3. If the token `Service3` is requested, execute the provided function that returns the text `value for Service3`.
 4. If the token `Service4` is requested, return the value for the `Service3` token, meaning the text `value for Service3`.
 
-Now that we have passed the providers to the injector in the form of instructions, it becomes clearer that the injector needs these instructions to map what it is being asked for (the token) to what it should provide (the value). In the documentation, such a mapping may also be referred to as an **injector registry** or a **provider registry**. For the injector, a **token** is an identifier used to look up a value in its registry.
-
-### Short and long form of token passing in class methods {#short-and-long-form-of-token-passing-in-class-methods}
+### Short and long forms of declaring dependencies in class methods {#short-and-long-forms-of-declaring-dependencies-in-class-methods}
 
 If a class is used as the constructor parameter type, it can also be used as a token:
 
@@ -120,7 +123,7 @@ class Service1 {}
 
 @injectable()
 class Service2 {
-  constructor(service1: Service1) {} // Short form of specifying a dependency
+  constructor(service1: Service1) {} // Short form of declaring a dependency
 }
 ```
 
@@ -128,9 +131,9 @@ It is very important to understand that the token mechanism is needed for the Ja
 
 Unlike a class, an array cannot be used simultaneously as a TypeScript type and as a token. On the other hand, a token may have a type completely unrelated to the dependency it is associated with, so, for example, a string-type token can be associated with a dependency that has any TypeScript type, including arrays, interfaces, enums, etc.
 
-A token can be passed in the short or long form of specifying a dependency. The last example uses the **short form** of specifying a dependency, which has significant limitations because it allows specifying a dependency only on a particular *class*.
+A dependency can be declared in either a short or a long form. In the last example, the **short form** of declaring a dependency is used, and it has significant limitations because in this way you can specify a dependency only on a particular *class*.
 
-There is also a **long form** of specifying a dependency using the `inject` decorator, which allows using an alternative token:
+There is also a **long form** of declaring a dependency using the `inject` decorator, which allows you to use an alternative token:
 
 ```ts {10}
 import { injectable, inject } from '@ditsmod/core';
@@ -142,7 +145,7 @@ interface InterfaceOfItem {
 
 @injectable()
 export class Service1 {
-  constructor(@inject('some-string') private someArray: InterfaceOfItem[]) {} // Long form of specifying a dependency
+  constructor(@inject('some-string') private someArray: InterfaceOfItem[]) {} // Long form of declaring a dependency
   // ...
 }
 ```
