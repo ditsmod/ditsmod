@@ -1,14 +1,14 @@
 ---
-sidebar_position: 1
+sidebar_position: 2
 ---
 
 # Modules
 
-One of the main elements of the Ditsmod architecture are its modules. But what exactly is good about modular architecture? - Modularity allows you to compose different autonomous elements and assemble them into a scalable application. Thanks to the autonomy of the modules, large projects are easier to develop, test, deploy and maintain.
+One of the key elements of the Ditsmod architecture is its modules. But what exactly makes a modular architecture so advantageous? — Modularity allows you to compose various autonomous elements and assemble a scalable application from them. Thanks to the autonomy of modules, large projects are easier to develop, test, deploy, and maintain. Modularity also simplifies the transition to a microservices architecture if, in the future, you decide that your Ditsmod application requires horizontal scaling.
 
 Such architecture allows you to isolate in one module **several code files** that may have different roles, but **common specialization**. A module can be compared to an orchestra, in which there are different instruments, but they all create music together. On the other hand, the need to isolate different modules arises due to the fact that they may have different specializations and because of this - may interfere with each other. Continuing the analogy with people, if you put police and musicians, or brokers and translators in the same office, they will most likely interfere with each other. That is why **narrow specialization** is important for a module.
 
-Modules are the largest building blocks of an application, and their metadata declares such module components as:
+Modules are the largest building blocks of an application, and their metadata declares the following components of the application:
 - controllers that accept HTTP requests and send HTTP responses;
 - services where the business logic of the application is described;
 - interceptors and guards that allow you to automate the processing of HTTP requests according to typical patterns;
@@ -69,5 +69,3 @@ export class SomeModule {}
 It is recommended that module files end with `*.module.ts` and that their class names end with `*Module`.
 
 It can contain exactly the same metadata as root modules, except for the `resolvedCollisionsPerApp` property. In addition to being declared directly in the application, feature module can also be published on npmjs.com.
-
-[1]: https://www.npmjs.com/package/reflect-metadata
