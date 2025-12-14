@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # Router, controllers and services
 
-## What does a router do? {#what-does-a-router-do}
+## What does a REST router do? {#what-does-a-rest-router-do}
 
 A router maps URLs to the appropriate request handler. For example, when users request URLs like `/some-path`, `/other-path`, or `/path-with/:parameter` from their browser, they are informing the Ditsmod application that they want to access a specific resource or perform an action on the website. To enable the Ditsmod application to respond appropriately in these cases, you need to define the corresponding request handlers in the code. So, if `/some-path` is requested, a specific function is executed; if `/other-path` is requested, a different function is triggered, and so on. This process of defining the relationship between a URL and its handler is known as URL-to-handler mapping.
 
@@ -35,7 +35,7 @@ if (handle) {
 
 In most cases, the request handler calls the controller method.
 
-## What is a controller {#what-is-a-controller}
+## What is a REST controller {#what-is-a-rest-controller}
 
 The mapping between the URL and the request handler is based on the metadata attached to the controller methods. A TypeScript class becomes a Ditsmod controller thanks to the `controller` decorator:
 
@@ -53,7 +53,7 @@ export class SomeController {
 
 It is recommended that controller files end with `*.controller.ts` and their class names end with `*Controller`.
 
-As can be seen from the previous example, any controller must have:
+As can be seen from the previous example, any REST controller must have:
 
 1. A class method that will be invoked during an HTTP request.
 2. The HTTP method name (`GET`, `POST`, `PATCH`, etc.).
@@ -61,7 +61,7 @@ As can be seen from the previous example, any controller must have:
 
 The combination of the second and third points must be unique across the entire application. In other words, if you define that `GET` + `/hello` is bound to a specific controller method, this combination must not be reused. Otherwise, the `@ditsmod/rest` module will throw an error with an appropriate message.
 
-Ditsmod provides controllers in two alternative modes, which differ in particular in the mechanism for passing the HTTP request to the controller method:
+Ditsmod provides controllers in two alternative modes, which differ in the mechanism for passing arguments to the controller method:
 
 1. **Injector-scoped controller** (default). A controller method can receive any number of arguments from the [DI injector][3]. These arguments can include an HTTP request.
 2. **Context-scoped controller**. The controller method receives a single argument - the request context, which includes the HTTP request.
@@ -91,10 +91,10 @@ export class HelloWorldController {
 What we see here:
 
 1. A route is created using the `route` decorator, which is placed before a class method, and the method's name doesn't matter.
-2. In this controller mode, the class method can declare any number of parameters. In this case, we declared three parameters: `service1` of type `Service1`, `service2` of type `Service2`, and `res` of type `Res`. This way, we are instructing Ditsmod to create instances of these classes based on their types and pass them to the corresponding variables. By the way, `res` is short for *response*.
+2. In this controller mode, you can declare any number of parameters in a class method. In this case, we declared three dependencies: `service1` with data type `Service1`, `service2` with data type `Service2`, and `res` with data type `Res`. By the way, `res` is short for the word _response_.
 3. Text responses to HTTP requests are sent using `res.send()`.
 
-Although in the previous example the class instances were injected into `method1`, we can request these instances in the constructor in the same way:
+Although in the previous example the dependencies were declared in `method1`, we can do this in a similar way in the constructor:
 
 ```ts {7}
 import { controller, Res, route } from '@ditsmod/rest';
@@ -114,7 +114,7 @@ export class HelloWorldController {
 }
 ```
 
-Of course, other instances of classes can be requested in the parameters, and the order of the parameters is not important.
+Of course, other dependencies can be declared in method parameters, and the sequence of parameters is unimportant.
 
 :::tip Use the access modifier
 The access modifier in the constructor can be any of the following: `private`, `protected`, or `public`. However, if no modifier is specified, the parameters will only be visible within the constructor (they will not be accessible in the methods).

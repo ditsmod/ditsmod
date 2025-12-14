@@ -811,7 +811,7 @@ Remember that when DI cannot find the required provider, there are only three po
 
 [101]: ../../#installation
 [102]: #injector-and-providers
-[103]: /components-of-ditsmod-app/controllers-and-services/#what-is-a-controller
+[103]: /components-of-ditsmod-app/controllers-and-services/#what-is-a-rest-controller
 [104]: /components-of-ditsmod-app/extensions/#group-of-extensions
 [105]: /components-of-ditsmod-app/http-interceptors/
 [106]: /components-of-ditsmod-app/guards/
