@@ -134,6 +134,10 @@ module.exports = {
         // ],
         createRedirects(currentPath) {
           const arr = [
+            ...getRedirect(currentPath, '/native-modules/rest/controllers-and-services', ['/components-of-ditsmod-app/controllers-and-services']),
+            ...getRedirect(currentPath, '/native-modules/rest/http-interceptors', ['/components-of-ditsmod-app/http-interceptors']),
+            ...getRedirect(currentPath, '/native-modules/rest/guards', ['/components-of-ditsmod-app/guards']),
+            ...getRedirect(currentPath, '/native-modules/rest/install', ['/native-modules/rest']),
             ...getRedirect(currentPath, '/developer-guides/exports-and-imports', ['/components-of-ditsmod-app/exports-and-imports']),
             ...getRedirect(currentPath, '/developer-guides/providers-collisions', ['/components-of-ditsmod-app/providers-collisions']),
             ...getRedirect(currentPath, '/components-of-ditsmod-app/extensions', ['/extensions/create-extension','/extensions/about-extensions']),

@@ -2,7 +2,7 @@
 sidebar_position: 0
 ---
 
-# @ditsmod/rest
+# Install
 
 As the name suggests, the `@ditsmod/rest` module provides support for [REST][0]. It includes:
 

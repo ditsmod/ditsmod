@@ -299,7 +299,7 @@ export class SomeModule {}
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/06-body-parser
 [2]: https://www.npmjs.com/package/@ts-stack/multiparty
-[3]: /components-of-ditsmod-app/controllers-and-services/#what-is-a-rest-controller
+[3]: /native-modules/rest/controllers-and-services/#what-is-a-rest-controller
 [4]: https://github.com/ts-stack/body-parser/
 [5]: https://github.com/ts-stack/multer
 [6]: https://github.com/expressjs/body-parser

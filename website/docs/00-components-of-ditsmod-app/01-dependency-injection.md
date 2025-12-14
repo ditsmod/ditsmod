@@ -812,8 +812,8 @@ service2.service1 instanceof Service1; // true
 [101]: ../../#installation
 [102]: #injector-and-providers
 [104]: /components-of-ditsmod-app/extensions/#group-of-extensions
-[105]: /components-of-ditsmod-app/http-interceptors/
-[106]: /components-of-ditsmod-app/guards/
+[105]: /native-modules/rest/http-interceptors/
+[106]: /native-modules/rest/guards/
 [107]: /developer-guides/exports-and-imports/
 [108]: /components-of-ditsmod-app/decorators-and-reflector/
 [121]: /components-of-ditsmod-app/providers-collisions/

@@ -813,8 +813,8 @@ Remember that when DI cannot find the required provider, there are only three po
 [102]: #injector-and-providers
 [103]: /components-of-ditsmod-app/controllers-and-services/#what-is-a-rest-controller
 [104]: /components-of-ditsmod-app/extensions/#group-of-extensions
-[105]: /components-of-ditsmod-app/http-interceptors/
-[106]: /components-of-ditsmod-app/guards/
+[105]: /native-modules/rest/http-interceptors/
+[106]: /native-modules/rest/guards/
 [107]: /developer-guides/exports-and-imports/
 [108]: /components-of-ditsmod-app/decorators-and-reflector/
 [121]: /components-of-ditsmod-app/providers-collisions/

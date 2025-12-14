@@ -1,5 +1,5 @@
 ---
-sidebar_position: 4
+sidebar_position: 2
 ---
 
 # HTTP Interceptors
@@ -115,4 +115,4 @@ In this case, the interceptors are passed in the module's metadata. They can als
 [106]: /components-of-ditsmod-app/dependency-injection
 [107]: /components-of-ditsmod-app/dependency-injection#multi-providers
 [108]: /components-of-ditsmod-app/extensions
-[109]: /components-of-ditsmod-app/controllers-and-services/#what-is-a-rest-controller
+[109]: /native-modules/rest/controllers-and-services/#what-is-a-rest-controller

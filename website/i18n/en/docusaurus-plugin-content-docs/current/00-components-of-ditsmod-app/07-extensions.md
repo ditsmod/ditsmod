@@ -262,4 +262,4 @@ Of course, such dynamic addition of providers is possible only before creating H
 [7]: /components-of-ditsmod-app/dependency-injection#multi-providers
 [8]: /components-of-ditsmod-app/dependency-injection#hierarchy-and-encapsulation-of-injectors
 [9]: /components-of-ditsmod-app/dependency-injection#providers
-[10]: /components-of-ditsmod-app/http-interceptors/
+[10]: /native-modules/rest/http-interceptors/
