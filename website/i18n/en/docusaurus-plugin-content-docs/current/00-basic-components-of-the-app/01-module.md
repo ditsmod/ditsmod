@@ -8,7 +8,7 @@ One of the key elements of the Ditsmod architecture is its modules. But what exa
 
 Such architecture allows you to isolate in one module **several code files** that may have different roles, but **common specialization**. A module can be compared to an orchestra, in which there are different instruments, but they all create music together. On the other hand, the need to isolate different modules arises due to the fact that they may have different specializations and because of this - may interfere with each other. Continuing the analogy with people, if you put police and musicians, or brokers and translators in the same office, they will most likely interfere with each other. That is why **narrow specialization** is important for a module.
 
-Modules are the largest building blocks of an application, and their metadata declares the following components of the application:
+Modules are the largest building blocks of an application, and their metadata can declare the following components of the application:
 - controllers that accept HTTP requests and send HTTP responses;
 - services where the business logic of the application is described;
 - interceptors and guards that allow you to automate the processing of HTTP requests according to typical patterns;
