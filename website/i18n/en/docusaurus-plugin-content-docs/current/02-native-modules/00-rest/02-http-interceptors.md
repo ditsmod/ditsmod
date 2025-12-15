@@ -112,7 +112,7 @@ In this case, the interceptors are passed in the module's metadata. They can als
 [8]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/types/route-data.ts
 [9]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.16.0/packages/body-parser/src/body-parser.extension.ts#L54
 
-[106]: /components-of-ditsmod-app/dependency-injection
-[107]: /components-of-ditsmod-app/dependency-injection#multi-providers
-[108]: /components-of-ditsmod-app/extensions
+[106]: /basic-components-of-the-app/dependency-injection
+[107]: /basic-components-of-the-app/dependency-injection#multi-providers
+[108]: /basic-components-of-the-app/extensions
 [109]: /native-modules/rest/controllers-and-services/#what-is-a-rest-controller

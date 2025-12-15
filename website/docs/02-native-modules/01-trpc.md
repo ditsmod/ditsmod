@@ -254,4 +254,4 @@ export class PostController {
 [1]: https://trpc.io/docs/quickstart
 [2]: https://github.com/ditsmod/ditsmod/tree/main/examples/18-trpc-server
 [3]: https://github.com/trpc/trpc/discussions/2448
-[4]: /components-of-ditsmod-app/dependency-injection/#injector-and-providers
+[4]: /basic-components-of-the-app/dependency-injection/#injector-and-providers

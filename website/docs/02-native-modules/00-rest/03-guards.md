@@ -195,6 +195,6 @@ export class SomeModule {}
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/03-route-guards
 [2]: https://github.com/ditsmod/realworld/blob/main/packages/server/src/app/modules/service/auth/bearer.guard.ts
-[3]: /components-of-ditsmod-app/dependency-injection#injector-and-providers
+[3]: /basic-components-of-the-app/dependency-injection#injector-and-providers
 [4]: /native-modules/rest/controllers-and-services/#what-is-a-rest-controller
 [5]: https://developer.mozilla.org/en-US/docs/Web/API/Response

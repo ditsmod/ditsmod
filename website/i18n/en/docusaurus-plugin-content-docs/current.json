@@ -3,8 +3,8 @@
     "message": "Next",
     "description": "The label for version current"
   },
-  "sidebar.tutorialSidebar.category.Складові Ditsmod-застосунку": {
-    "message": "Components of Ditsmod app",
+  "sidebar.tutorialSidebar.category.Базові складові застосунку": {
+    "message": "Basic components of the app",
     "description": "The label for category Extensions in sidebar tutorialSidebar"
   },
   "sidebar.tutorialSidebar.category.Гайди розробника": {

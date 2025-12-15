@@ -485,10 +485,10 @@ Also, if you import a provider from an external module and you have a provider w
 
 [1]: /developer-guides/exports-and-imports#import-module
 [2]: /developer-guides/exports-and-imports#ModuleWithParams
-[3]: /components-of-ditsmod-app/dependency-injection/#injector-and-providers
+[3]: /basic-components-of-the-app/dependency-injection/#injector-and-providers
 [5]: /native-modules/body-parser#retrieving-the-request-body
 [6]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/services/pre-router.ts
-[7]: /components-of-ditsmod-app/dependency-injection/
-[9]: /components-of-ditsmod-app/extensions/
+[7]: /basic-components-of-the-app/dependency-injection/
+[9]: /basic-components-of-the-app/extensions/
 [10]: #injector-scoped-controller
 [11]: #context-scoped-controller

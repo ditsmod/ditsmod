@@ -291,6 +291,6 @@ export class SecondModule {}
 ```
 
 
-[1]: /components-of-ditsmod-app/dependency-injection#injector-and-providers
-[2]: /components-of-ditsmod-app/extensions
+[1]: /basic-components-of-the-app/dependency-injection#injector-and-providers
+[2]: /basic-components-of-the-app/extensions
 [3]: https://en.wikipedia.org/wiki/Singleton_pattern
