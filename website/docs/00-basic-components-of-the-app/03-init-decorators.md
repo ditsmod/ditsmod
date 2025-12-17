@@ -1,5 +1,5 @@
 ---
-sidebar_position: 13
+sidebar_position: 3
 ---
 
 # Ініт-декоратори та ініт-хуки
