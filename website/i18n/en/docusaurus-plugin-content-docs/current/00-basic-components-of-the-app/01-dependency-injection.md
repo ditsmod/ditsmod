@@ -12,7 +12,7 @@ Additionally, if you don't yet know what exactly reflector does and what "depend
 
 ## Injector, tokens and providers {#injector-and-providers}
 
-In the [previous section][108], we saw how a constructor can specify the dependency of one class on another class, and how a dependency chain can be automatically determined using a reflector. Now let's get acquainted with the **injector** — a mechanism that, in particular, allows obtaining class instances while considering their dependencies. The injector works very simply: it takes a **token** and returns a value for that token. Obviously, such functionality requires instructions linking what is requested from the injector to what it provides. These instructions are supplied by so-called **providers**.
+In the [previous section][108], we saw how a constructor can specify the dependency of one class on another class, and how a dependency chain can be automatically determined using a reflector. Now let's get acquainted with the **injector** — a mechanism that allows obtaining class instances while considering their dependencies. The injector works very simply: it takes a **token** and returns a value for that token. Obviously, such functionality requires instructions linking what is requested from the injector to what it provides. These instructions are supplied by so-called **providers**.
 
 Let's look at the following example, which slightly expands on the last example from the [Decorators and Reflector][108] section:
 
@@ -210,7 +210,7 @@ More details about each of these types:
    { token: 'token2', useClass: SomeService }
    ```
 
-3. **FactoryProvider** - this type of provider has the `useFactory` property which can accept arguments of two types:
+3. **FactoryProvider** - this type of provider has the `useFactory` property, and it has two subtypes:
 
    * **ClassFactoryProvider** (recommended, due to its better encapsulation) implies that a [tuple][11] is passed to `useFactory`, where the first element must be a class and the second element must be a method of that class which should return some value for the given token. For example, if the class is:
 
@@ -295,6 +295,8 @@ More details about each of these types:
    console.log(injector.get('token4')); // some value for token1
    ```
 
+   That is, the provider with `token4` has the following dependency chain: `token4` -> `token3` -> `token2` -> `token1`. That is why, when `token4` is requested from the injector, it ultimately returns the value for `token1`.
+
 Now that you are familiar with the concept of a **provider**, it can be clarified that a **dependency** is a dependency on the **value of a provider**. Such a dependency is held by **consumers** of provider values either in service constructors, or in controllers' constructors or methods, or in the `get()` method of [injectors][102].
 
 ## Hierarchy and encapsulation of injectors  {#hierarchy-and-encapsulation-of-injectors}
@@ -316,17 +318,17 @@ class Service4 {}
 const parent = Injector.resolveAndCreate([Service1, Service2]); // Parent injector
 const child = parent.resolveAndCreateChild([Service2, Service3]); // Child injector
 
-child.get(Service1); // OK
-parent.get(Service1); // OK
+child.get(Service1); // instance of Service1
+parent.get(Service1); // instance of Service1
 
 parent.get(Service1) === child.get(Service1); // true
 
-child.get(Service2); // OK
-parent.get(Service2); // OK
+child.get(Service2); // instance of Service2
+parent.get(Service2); // instance of Service2
 
 parent.get(Service2) === child.get(Service2); // false
 
-child.get(Service3); // OK
+child.get(Service3); // instance of Service3
 parent.get(Service3); // Error - No provider for Service3!
 
 child.get(Service4); // Error - No provider for Service4!
@@ -478,7 +480,7 @@ This method makes sense to use only in a child injector when it lacks a certain 
 
 For example, when `Service` depends on `Config`, and `Service` exists only in the parent injector, while `Config` exists both in the parent and in the child injector:
 
-```ts {16}
+```ts {14-15,18}
 import { injectable, Injector } from '@ditsmod/core';
 
 class Config {
@@ -491,8 +493,13 @@ class Service {
   constructor(public config: Config) {}
 }
 
-const parent = Injector.resolveAndCreate([Service, { token: Config, useValue: { one: 1, two: 2 } }]);
-const child = parent.resolveAndCreateChild([{ token: Config, useValue: { one: 11, two: 22 } }]);
+const parent = Injector.resolveAndCreate([
+  Service,
+  { token: Config, useValue: { one: 1, two: 2 } }
+]);
+const child = parent.resolveAndCreateChild([
+  { token: Config, useValue: { one: 11, two: 22 } }
+]);
 child.get(Service).config; // returns from parent injector: { one: 1, two: 2 }
 child.pull(Service).config; // pulls Service in current injector: { one: 11, two: 22 }
 ```
@@ -501,7 +508,7 @@ As you can see, if you use `child.get(Service)` in this case, `Service` will be 
 
 But if the requested provider exists in the child injector, then `child.pull(Service)` will work identically to `child.get(Service)` (with the addition that the provider's value is added to the injector's cache):
 
-```ts {14-15}
+```ts {15-16}
 import { injectable, Injector } from '@ditsmod/core';
 
 class Config {
@@ -515,7 +522,10 @@ class Service {
 }
 
 const parent = Injector.resolveAndCreate([]);
-const child = parent.resolveAndCreateChild([Service, { token: Config, useValue: { one: 11, two: 22 } }]);
+const child = parent.resolveAndCreateChild([
+  Service,
+  { token: Config, useValue: { one: 11, two: 22 } }
+]);
 child.get(Service).config; // { one: 11, two: 22 }
 ```
 
@@ -550,7 +560,55 @@ Recall that higher-level injectors in the hierarchy have no access to lower-leve
 
 For example, if you write a class that depends on the HTTP request, you will be able to pass it only to the `providersPerReq` array, because only from this array Ditsmod forms the injector to which Ditsmod will automatically add a provider with the HTTP-request object. On the other hand, an instance of this class will have access to all its parent injectors: at the route level, module level, and application level. Therefore, the class passed to the `providersPerReq` array can depend on providers at any level.
 
-You can also write a class and pass it into the `providersPerMod` array; in that case it can depend only on providers at the module level or at the application level. If it depends on providers that you passed into `providersPerRou` or `providersPerReq`, you will get an error that these providers are not found.
+You can also write a class and pass it into the `providersPerMod` array; in that case it can depend only on providers at the module level or at the application level:
+
+```ts {10}
+import { injectable, Injector } from '@ditsmod/core';
+
+class Service1 {}
+
+@injectable()
+class Service2 {
+constructor(public service1: Service1) {}
+}
+
+const providersPerApp = [Service1];
+const providersPerMod = [Service2];
+const providersPerRou = [];
+const providersPerReq = [];
+
+const injectorPerApp = Injector.resolveAndCreate(providersPerApp);
+const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
+injectorPerMod.get(Service2); // Instance of Service2
+```
+
+In this case, `Service2` depends on `Service1`, which is provided at the application level. Therefore, when `Service2` is requested from the injector at the module level, it will be resolved from the parent injector at the application level.
+
+If `Service2` depends on providers that you passed in the `providersPerRou` or `providersPerReq` arrays, you will get an error indicating that these providers were not found:
+
+```ts {12}
+import { injectable, Injector } from '@ditsmod/core';
+
+class Service1 {}
+
+@injectable()
+class Service2 {
+constructor(public service1: Service1) {}
+}
+
+const providersPerApp = [];
+const providersPerMod = [Service2];
+const providersPerRou = [Service1];
+const providersPerReq = [];
+
+const injectorPerApp = Injector.resolveAndCreate(providersPerApp);
+const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
+const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
+injectorPerMod.get(Service2); // Error: No provider for Service1
+injectorPerRou.get(Service2); // Error: No provider for Service1
+```
+
+In this case, the injector at the module level cannot create an instance of `Service2` because it depends on the `Service1` class, which was provided to the injector at the route level. Therefore, the parent injector `injectorPerMod` cannot request an instance of `Service1` from the child `injectorPerRou`.
 
 ### Current injector {#current-injector}
 

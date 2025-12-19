@@ -55,7 +55,7 @@ app.server.listen(3000, '0.0.0.0');
 
 But why isn’t Ditsmod as minimalistic as ExpressJS? As you can see in the example, ExpressJS creates an application object, to which routes are then added. The `app` object represents the API of various separate components, including router configuration, error handling setup, rendering system configuration, HTTP server setup, etc. Such code looks very compact in simple examples, but in essence, it violates the [Single Responsibility Principle][21]. In contrast, Ditsmod clearly distinguishes between:
 
-- the role of the class (controller) where the route is created;
+- the role of the controller in which the route is created;
 - the role of the module where the controllers are declared;
 - the role of the application that contains the HTTP server.
 

@@ -12,7 +12,7 @@ sidebar_position: 1
 
 ## Інжектор, токени та провайдери {#injector-and-providers}
 
-У [попередньому розділі][108] ми побачили як в конструкторі можна вказувати залежність одного класу від іншого класу, а також як можна автоматично визначити ланцюжок залежностей за допомогою рефлектора. Тепер давайте познайомимось з **інжектором** - механізмом який зокрема дозволяє отримувати інстанси класів, з врахуванням їхніх залежностей. Інжектор працює дуже просто: приймає **токен**, і видає значення для цього токена. Очевидно, що для такої функціональності потрібні інструкції між тим, що запитують в інжектора, і тим що він видає. Такі інструкції забезпечуються так званими **провайдерами**.
+У [попередньому розділі][108] ми побачили як в конструкторі можна вказувати залежність одного класу від іншого класу, а також як можна автоматично визначити ланцюжок залежностей за допомогою рефлектора. Тепер давайте познайомимось з **інжектором** - механізмом який дозволяє отримувати інстанси класів, з врахуванням їхніх залежностей. Інжектор працює дуже просто: приймає **токен**, і видає значення для цього токена. Очевидно, що для такої функціональності потрібні інструкції між тим, що запитують в інжектора, і тим що він видає. Такі інструкції забезпечуються так званими **провайдерами**.
 
 Давайте розглянемо наступний приклад, який трохи розширює останній приклад з розділу [Декоратори та рефлектор][108]:
 
@@ -36,7 +36,7 @@ const injector = Injector.resolveAndCreate([
   { token: Service2, useClass: Service2 },
   { token: Service3, useClass: Service3 }
 ]);
-const service3 = injector.get(Service3); // Instance of Service3
+const service3 = injector.get(Service3); // інстанс Service3
 service3 === injector.get(Service3); // true
 ```
 
@@ -98,7 +98,7 @@ const injector = Injector.resolveAndCreate([
   { token: Service4, useToken: Service3 },
 ]);
 injector.get(Service1); // value for Service1
-injector.get(Service2); // instance of Service2
+injector.get(Service2); // інстанс Service2
 injector.get(Service3); // value for Service3
 injector.get(Service4); // value for Service3
 ```
@@ -210,7 +210,7 @@ import { ValueProvider, ClassProvider, FactoryProvider, TokenProvider } from '@d
     { token: 'token2', useClass: SomeService }
     ```
 
-3. **FactoryProvider** - цей тип провайдера має властивість `useFactory`, в яку можна передавати аргументи двох типів:
+3. **FactoryProvider** - цей тип провайдера має властивість `useFactory`, і він має два підтипи:
 
     - **ClassFactoryProvider** (рекомендовано, через свою кращу інкапсуляцію) передбачає, що до `useFactory` передається [tuple][11], де на першому місці повинен бути клас, а на другому місці - метод цього класу, який повинен повернути якесь значення для вказаного токена. Наприклад, якщо клас буде таким:
 
@@ -295,6 +295,8 @@ import { ValueProvider, ClassProvider, FactoryProvider, TokenProvider } from '@d
     console.log(injector.get('token4')); // some value for token1
     ```
 
+    Тобто, у провайдера з `token4` є наступний ланцюжок залежностей: `token4` -> `token3` -> `token2` -> `token1`. Саме тому, коли в інжектора запитують `token4`, в кінцевому підсумку він видає значення для `token1`.
+
 Тепер, коли ви вже ознайомились з поняттям **провайдер**, можна уточнити, що під **залежністю** розуміють залежність саме від **значення провайдера**. Таку залежність мають **споживачі** значень провайдерів або в конструкторах сервісів, або в конструкторах чи методах контролерів, або в методі `get()` [інжекторів][102].
 
 ## Ієрархія та інкапсуляція інжекторів  {#hierarchy-and-encapsulation-of-injectors}
@@ -316,17 +318,17 @@ class Service4 {}
 const parent = Injector.resolveAndCreate([Service1, Service2]); // Батьківський інжектор
 const child = parent.resolveAndCreateChild([Service2, Service3]); // Дочірній інжектор
 
-child.get(Service1); // ОК
-parent.get(Service1); // ОК
+child.get(Service1); // інстанс Service1
+parent.get(Service1); // інстанс Service1
 
 parent.get(Service1) === child.get(Service1); // true
 
-child.get(Service2); // ОК
-parent.get(Service2); // ОК
+child.get(Service2); // інстанс Service2
+parent.get(Service2); // інстанс Service2
 
 parent.get(Service2) === child.get(Service2); // false
 
-child.get(Service3); // ОК
+child.get(Service3); // інстанс Service3
 parent.get(Service3); // Error - No provider for Service3!
 
 child.get(Service4); // Error - No provider for Service4!
@@ -478,7 +480,7 @@ child.get(Service).config; // { one: 11, two: 22 }
 
 Наприклад, коли `Service` залежить від `Config`, причому `Service` є тільки у батьківському інжекторі, а `Config` є як у батьківському, так і у дочірньому інжекторі:
 
-```ts {16}
+```ts {14-15,18}
 import { injectable, Injector } from '@ditsmod/core';
 
 class Config {
@@ -491,8 +493,13 @@ class Service {
   constructor(public config: Config) {}
 }
 
-const parent = Injector.resolveAndCreate([Service, { token: Config, useValue: { one: 1, two: 2 } }]);
-const child = parent.resolveAndCreateChild([{ token: Config, useValue: { one: 11, two: 22 } }]);
+const parent = Injector.resolveAndCreate([
+  Service,
+  { token: Config, useValue: { one: 1, two: 2 } }
+]);
+const child = parent.resolveAndCreateChild([
+  { token: Config, useValue: { one: 11, two: 22 } }
+]);
 child.get(Service).config; // returns from parent injector: { one: 1, two: 2 }
 child.pull(Service).config; // pulls Service in current injector: { one: 11, two: 22 }
 ```
@@ -501,7 +508,7 @@ child.pull(Service).config; // pulls Service in current injector: { one: 11, two
 
 Але якщо запитуваний провайдер є у дочірньому інжекторі, то вираз `child.pull(Service)` буде працювати ідентично до виразу `child.get(Service)` (з додаванням значення провайдера у кеш інжектора):
 
-```ts {14-15}
+```ts {15-16}
 import { injectable, Injector } from '@ditsmod/core';
 
 class Config {
@@ -515,7 +522,10 @@ class Service {
 }
 
 const parent = Injector.resolveAndCreate([]);
-const child = parent.resolveAndCreateChild([Service, { token: Config, useValue: { one: 11, two: 22 } }]);
+const child = parent.resolveAndCreateChild([
+  Service,
+  { token: Config, useValue: { one: 11, two: 22 } }
+]);
 child.get(Service).config; // { one: 11, two: 22 }
 ```
 
@@ -550,7 +560,55 @@ const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
 
 Наприклад, якщо ви напишете клас, що має залежність від HTTP-запиту, ви зможете його передати тільки у масив `providersPerReq`, бо тільки з цього масиву формується інжектор, до якого Ditsmod буде автоматично додавати провайдер з об'єктом HTTP-запиту. З іншого боку, інстанс цього класу матиме доступ до усіх своїх батьківських інжекторів: на рівні роуту, модуля, та застосунку. Тому клас, що передається в масив `providersPerReq` може залежати від провайдерів на будь-якому рівні.
 
-Також ви можете написати певний клас і передати його в масив `providersPerMod`, в такому разі він може залежати тільки від провайдерів на рівні модуля, або на рівні застосунку. Якщо він буде залежати від провайдерів, які ви передали в масив `providersPerRou` чи `providersPerReq`, ви отримаєте помилку про те, що ці провайдери не знайдені.
+Також ви можете написати певний клас і передати його в масив `providersPerMod`, в такому разі він може залежати тільки від провайдерів на рівні модуля, або на рівні застосунку:
+
+```ts {10}
+import { injectable, Injector } from '@ditsmod/core';
+
+class Service1 {}
+
+@injectable()
+class Service2 {
+  constructor(public service1: Service1) {}
+}
+
+const providersPerApp = [Service1];
+const providersPerMod = [Service2];
+const providersPerRou = [];
+const providersPerReq = [];
+
+const injectorPerApp = Injector.resolveAndCreate(providersPerApp);
+const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
+injectorPerMod.get(Service2); // Інстанс Service2
+```
+
+В даному разі `Service2` залежить від `Service1`, який передано на рівні застосунку. Тому, коли в інжектора на рівні модуля запитується `Service2`, він його знайде у батьківському інжекторі на рівні застосунку.
+
+Якщо `Service2` буде залежати від провайдерів, які ви передали в масив `providersPerRou` чи `providersPerReq`, ви отримаєте помилку про те, що ці провайдери не знайдені:
+
+```ts {12}
+import { injectable, Injector } from '@ditsmod/core';
+
+class Service1 {}
+
+@injectable()
+class Service2 {
+  constructor(public service1: Service1) {}
+}
+
+const providersPerApp = [];
+const providersPerMod = [Service2];
+const providersPerRou = [Service1];
+const providersPerReq = [];
+
+const injectorPerApp = Injector.resolveAndCreate(providersPerApp);
+const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
+const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
+injectorPerMod.get(Service2); // Error: No provider for Service1
+injectorPerRou.get(Service2); // Error: No provider for Service1
+```
+
+В даному разі інжектор на рівні модуля не може створити інстансу `Service2`, оскільки він залежить від класу `Service1`, який було передано до інжектора на рівні роуту. Тому батьківський інжектор `injectorPerMod` не може звернутись до дочірнього `injectorPerRou` за інстансом `Service1`.
 
 ### Поточний інжектор {#current-injector}
 
