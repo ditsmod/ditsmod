@@ -63,7 +63,7 @@ Looking at the amount of code, you might think that Ditsmod is slower than Expre
 
 More application examples are available in the [Ditsmod][4] repository, as well as in the [RealWorld][13] repository.
 
-P.S. Although a link to the repository with all the necessary settings for Ditsmod applications is provided below, if you choose to use just this code, don't forget to include the following in your tsconfig files:
+P.S. Although a link to a repository with all the necessary settings for Ditsmod applications is provided below, still, if you want to use only the code from the previous example, do not forget to specify the following in the tsconfig files:
 
 ```json {4-5}
 {
