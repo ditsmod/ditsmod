@@ -3,12 +3,6 @@ import { resolveForwardRef } from './forward-ref.js';
 import { InjectionToken } from './injection-token.js';
 
 /**
- * A unique object used for retrieving items from the `Injector`.
- *
- * Keys have:
- * - a system-wide unique `id`.
- * - a `token`.
- *
  * `DualKey` is used internally by `Injector` because its system-wide unique `id` allows
  * the injector to store created objects in a more efficient way.
  *
@@ -18,6 +12,9 @@ import { InjectionToken } from './injection-token.js';
 export class DualKey {
   constructor(
     public token: any,
+    /**
+     * System-wide unique `id`
+     */
     public id: number,
   ) {}
 }
