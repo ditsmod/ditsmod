@@ -9,7 +9,7 @@ import { Dependency, ID, ResolvedProvider, Visibility } from './types-and-models
  */
 export class DepsChecker {
   static checkForResolved(injector: Injector, provider: ResolvedProvider, ignoreDeps?: any[]): any {
-    this.checkMultiOrRegularProvider({ injector, provider, parentTokens: [], ignoreDeps });
+    this.checkMultiOrRegularProvider({ injector, provider, depsPath: [], ignoreDeps });
   }
 
   /**
@@ -26,14 +26,14 @@ export class DepsChecker {
     ignoreDeps?: any[],
   ): any {
     const dualKey = KeyRegistry.get(token);
-    const parentTokens: any[] = [];
-    return this.selectInjectorAndCheckDeps({ injector, dualKey, parentTokens, visibility, ignoreDeps });
+    const depsPath: any[] = [];
+    return this.selectInjectorAndCheckDeps({ injector, dualKey, depsPath, visibility, ignoreDeps });
   }
 
   private static selectInjectorAndCheckDeps({
     injector,
     dualKey,
-    parentTokens,
+    depsPath,
     visibility,
     ignoreDeps,
     isOptional,
@@ -46,7 +46,7 @@ export class DepsChecker {
     return this.findInRegistryCurrentProvider({
       injector,
       dualKey,
-      parentTokens,
+      depsPath,
       ignoreDeps,
       visibility,
       isOptional,
@@ -56,7 +56,7 @@ export class DepsChecker {
   private static findInRegistryCurrentProvider({
     injector,
     dualKey,
-    parentTokens,
+    depsPath,
     ignoreDeps,
     visibility,
     isOptional,
@@ -69,10 +69,10 @@ export class DepsChecker {
 
       // This is an alternative to the "instanceof ResolvedProvider" expression.
       if (meta?.[ID]) {
-        if (parentTokens.includes(dualKey.token)) {
-          throw new CyclicDependency([dualKey.token, ...parentTokens]);
+        if (depsPath.includes(dualKey.token)) {
+          throw new CyclicDependency([dualKey.token, ...depsPath]);
         }
-        this.checkMultiOrRegularProvider({ injector, provider: meta, parentTokens, ignoreDeps });
+        this.checkMultiOrRegularProvider({ injector, provider: meta, depsPath, ignoreDeps });
         return;
       } else if (meta !== undefined || injector.hasId(dualKey.id)) {
         return;
@@ -80,24 +80,24 @@ export class DepsChecker {
         return this.findInRegistryCurrentProvider({
           injector: injector.parent,
           dualKey,
-          parentTokens,
+          depsPath,
           ignoreDeps,
           isOptional,
         });
       }
     }
     if (!isOptional) {
-      throw new NoProvider([dualKey.token, ...parentTokens]);
+      throw new NoProvider([dualKey.token, ...depsPath]);
     }
   }
 
-  private static checkMultiOrRegularProvider({ injector, provider, parentTokens, ignoreDeps }: Config4): any {
+  private static checkMultiOrRegularProvider({ injector, provider, depsPath, ignoreDeps }: Config4): any {
     if (provider.multi) {
       provider.resolvedFactories.forEach(({ dependencies }) => {
         const config3: Config3 = {
           injector,
           dualKey: provider.dualKey,
-          parentTokens,
+          depsPath,
           dependencies,
           ignoreDeps,
         };
@@ -107,7 +107,7 @@ export class DepsChecker {
       const config3: Config3 = {
         injector,
         dualKey: provider.dualKey,
-        parentTokens,
+        depsPath,
         dependencies: provider.resolvedFactories[0].dependencies,
         ignoreDeps,
       };
@@ -115,13 +115,13 @@ export class DepsChecker {
     }
   }
 
-  private static findInRegistryDeps({ injector, dualKey, parentTokens, dependencies, ignoreDeps }: Config3): any {
+  private static findInRegistryDeps({ injector, dualKey, depsPath, dependencies, ignoreDeps }: Config3): any {
     dependencies = dependencies.filter((dep) => !ignoreDeps?.includes(dep.dualKey));
     dependencies.forEach((dep) => {
       return this.selectInjectorAndCheckDeps({
         injector,
         dualKey: dep.dualKey,
-        parentTokens: [dualKey.token, ...parentTokens],
+        depsPath: [dualKey.token, ...depsPath],
         visibility: dep.visibility,
         ignoreDeps,
         isOptional: dep.optional,
@@ -131,7 +131,7 @@ export class DepsChecker {
 }
 
 interface BaseConfig {
-  parentTokens: any[];
+  depsPath: any[];
   injector?: Injector | null;
   dualKey?: DualKey;
   visibility?: Visibility;

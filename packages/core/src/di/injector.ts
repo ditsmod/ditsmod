@@ -608,7 +608,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
 
   protected selectInjectorAndGet(
     dualKey: DualKey,
-    parentTokens: any[],
+    depsPath: any[],
     visibility: Visibility,
     defaultValue: any,
     ctx?: NonNullable<unknown>,
@@ -618,13 +618,13 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
     }
 
     const injector = visibility === skipSelf ? this.parent : this;
-    return this.getOrThrow(injector, dualKey, parentTokens, defaultValue, visibility, ctx);
+    return this.getOrThrow(injector, dualKey, depsPath, defaultValue, visibility, ctx);
   }
 
   protected getOrThrow(
     injector: Injector | null,
     dualKey: DualKey,
-    parentTokens: any[],
+    depsPath: any[],
     defaultValue: any,
     visibility?: Visibility,
     ctx?: NonNullable<unknown>,
@@ -634,16 +634,16 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
         const meta = injector.#registry[dualKey.id];
         if (meta?.[ID]) {
           // This is an alternative to the "instanceof ResolvedProvider" expression.
-          if (parentTokens.includes(dualKey.token)) {
-            throw new CyclicDependency([dualKey.token, ...parentTokens]);
+          if (depsPath.includes(dualKey.token)) {
+            throw new CyclicDependency([dualKey.token, ...depsPath]);
           }
-          const value = injector.instantiateResolved(meta, parentTokens);
+          const value = injector.instantiateResolved(meta, depsPath);
           return (injector.#registry[dualKey.id] = value);
         } else if (meta !== undefined || injector.hasId(dualKey.id)) {
           // Here "meta" - is a value for provider that has given `token`.
           return meta;
         } else if (visibility !== fromSelf && injector.parent) {
-          return injector.parent.getOrThrow(injector.parent, dualKey, parentTokens, defaultValue, undefined);
+          return injector.parent.getOrThrow(injector.parent, dualKey, depsPath, defaultValue, undefined);
         }
       } else {
         const resolvedProvider = this.getResolvedProvider(this, dualKey);
@@ -653,7 +653,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
       }
     }
     if (defaultValue === NoDefaultValue) {
-      throw new NoProvider([dualKey.token, ...parentTokens]);
+      throw new NoProvider([dualKey.token, ...depsPath]);
     } else {
       return defaultValue;
     }
@@ -683,19 +683,19 @@ expect(car.engine).toBe(injector.get(Engine));
 expect(car).not.toBe(injector.instantiateResolved(carProvider));
 ```
    */
-  instantiateResolved<T = any>(provider: ResolvedProvider, parentTokens: any[] = [], ctx?: NonNullable<unknown>): T {
+  instantiateResolved<T = any>(provider: ResolvedProvider, depsPath: any[] = [], ctx?: NonNullable<unknown>): T {
     if (provider.multi) {
       return provider.resolvedFactories.map((factory) => {
-        return this.instantiate(provider.dualKey.token, parentTokens, factory, ctx);
+        return this.instantiate(provider.dualKey.token, depsPath, factory, ctx);
       }) as T;
     } else {
-      return this.instantiate(provider.dualKey.token, parentTokens, provider.resolvedFactories[0], ctx);
+      return this.instantiate(provider.dualKey.token, depsPath, provider.resolvedFactories[0], ctx);
     }
   }
 
   protected instantiate(
     token: NonNullable<unknown>,
-    parentTokens: any[],
+    depsPath: any[],
     resolvedFactory: ResolvedFactory,
     ctx?: NonNullable<unknown>,
   ): any {
@@ -705,7 +705,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
       }
       return this.selectInjectorAndGet(
         dep.dualKey,
-        [token, ...parentTokens],
+        [token, ...depsPath],
         dep.visibility,
         dep.optional ? undefined : NoDefaultValue,
         dep.ctx,
@@ -715,7 +715,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     try {
       return resolvedFactory.factory(...deps);
     } catch (e: any) {
-      throw new InstantiationError(e, [token, ...parentTokens]);
+      throw new InstantiationError(e, [token, ...depsPath]);
     }
   }
 
