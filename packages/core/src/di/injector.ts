@@ -600,7 +600,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
   }
 
   /**
-   * Works identically to {@link get | injector.get()}, but always returns type `any`.
+   * Works identically to {@link get | injector.get()}, but by default returns type `any`.
    */
   getAny<T = any>(token: NonNullable<unknown>, visibility: Visibility = null, defaultValue: any = NoDefaultValue): T {
     return this.selectInjectorAndGet(KeyRegistry.get(token), [], visibility, defaultValue);
@@ -632,8 +632,9 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
     if (injector) {
       if (ctx == null) {
         const meta = injector.#registry[dualKey.id];
+
+        // This is an alternative to the "instanceof ResolvedProvider" expression.
         if (meta?.[ID]) {
-          // This is an alternative to the "instanceof ResolvedProvider" expression.
           if (depsPath.includes(dualKey.token)) {
             throw new CyclicDependency([dualKey.token, ...depsPath]);
           }
