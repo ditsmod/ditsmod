@@ -12,7 +12,11 @@ export function getProviderName(provider: any) {
     if (provider instanceof InjectionToken) {
       token = provider;
     } else {
-      token = provider.constructor instanceof Class ? provider.constructor : provider;
+      if (typeof provider == 'string') {
+        token = provider;
+      } else {
+        token = provider.constructor instanceof Class ? provider.constructor : provider;
+      }
     }
   }
   return typeof token == 'symbol' ? token.toString() : `${token.name || token}`;
