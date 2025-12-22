@@ -9,7 +9,7 @@ import { Dependency, ID, ResolvedProvider, Visibility } from './types-and-models
  */
 export class DepsChecker {
   static checkForResolved(injector: Injector, provider: ResolvedProvider, ignoreDeps?: any[]): any {
-    this.checkMultiOrRegularProvider({ injector, provider, depsPath: [], ignoreDeps });
+    this.checkMultiOrRegularProvider({ injector, provider, resolutionPath: [], ignoreDeps });
   }
 
   /**
@@ -26,14 +26,14 @@ export class DepsChecker {
     ignoreDeps?: any[],
   ): any {
     const dualKey = KeyRegistry.get(token);
-    const depsPath: any[] = [];
-    return this.selectInjectorAndCheckDeps({ injector, dualKey, depsPath, visibility, ignoreDeps });
+    const resolutionPath: any[] = [];
+    return this.selectInjectorAndCheckDeps({ injector, dualKey, resolutionPath, visibility, ignoreDeps });
   }
 
   private static selectInjectorAndCheckDeps({
     injector,
     dualKey,
-    depsPath,
+    resolutionPath,
     visibility,
     ignoreDeps,
     isOptional,
@@ -46,7 +46,7 @@ export class DepsChecker {
     return this.findInRegistryCurrentProvider({
       injector,
       dualKey,
-      depsPath,
+      resolutionPath,
       ignoreDeps,
       visibility,
       isOptional,
@@ -56,7 +56,7 @@ export class DepsChecker {
   private static findInRegistryCurrentProvider({
     injector,
     dualKey,
-    depsPath,
+    resolutionPath,
     ignoreDeps,
     visibility,
     isOptional,
@@ -69,10 +69,10 @@ export class DepsChecker {
 
       // This is an alternative to the "instanceof ResolvedProvider" expression.
       if (meta?.[ID]) {
-        if (depsPath.includes(dualKey.token)) {
-          throw new CyclicDependency([dualKey.token, ...depsPath]);
+        if (resolutionPath.includes(dualKey.token)) {
+          throw new CyclicDependency([dualKey.token, ...resolutionPath]);
         }
-        this.checkMultiOrRegularProvider({ injector, provider: meta, depsPath, ignoreDeps });
+        this.checkMultiOrRegularProvider({ injector, provider: meta, resolutionPath, ignoreDeps });
         return;
       } else if (meta !== undefined || injector.hasId(dualKey.id)) {
         return;
@@ -80,24 +80,24 @@ export class DepsChecker {
         return this.findInRegistryCurrentProvider({
           injector: injector.parent,
           dualKey,
-          depsPath,
+          resolutionPath,
           ignoreDeps,
           isOptional,
         });
       }
     }
     if (!isOptional) {
-      throw new NoProvider([dualKey.token, ...depsPath]);
+      throw new NoProvider([dualKey.token, ...resolutionPath]);
     }
   }
 
-  private static checkMultiOrRegularProvider({ injector, provider, depsPath, ignoreDeps }: Config4): any {
+  private static checkMultiOrRegularProvider({ injector, provider, resolutionPath, ignoreDeps }: Config4): any {
     if (provider.multi) {
       provider.resolvedFactories.forEach(({ dependencies }) => {
         const config3: Config3 = {
           injector,
           dualKey: provider.dualKey,
-          depsPath,
+          resolutionPath,
           dependencies,
           ignoreDeps,
         };
@@ -107,7 +107,7 @@ export class DepsChecker {
       const config3: Config3 = {
         injector,
         dualKey: provider.dualKey,
-        depsPath,
+        resolutionPath,
         dependencies: provider.resolvedFactories[0].dependencies,
         ignoreDeps,
       };
@@ -115,13 +115,13 @@ export class DepsChecker {
     }
   }
 
-  private static findInRegistryDeps({ injector, dualKey, depsPath, dependencies, ignoreDeps }: Config3): any {
+  private static findInRegistryDeps({ injector, dualKey, resolutionPath, dependencies, ignoreDeps }: Config3): any {
     dependencies = dependencies.filter((dep) => !ignoreDeps?.includes(dep.dualKey));
     dependencies.forEach((dep) => {
       return this.selectInjectorAndCheckDeps({
         injector,
         dualKey: dep.dualKey,
-        depsPath: [dualKey.token, ...depsPath],
+        resolutionPath: [dualKey.token, ...resolutionPath],
         visibility: dep.visibility,
         ignoreDeps,
         isOptional: dep.optional,
@@ -131,7 +131,7 @@ export class DepsChecker {
 }
 
 interface BaseConfig {
-  depsPath: any[];
+  resolutionPath: any[];
   injector?: Injector | null;
   dualKey?: DualKey;
   visibility?: Visibility;

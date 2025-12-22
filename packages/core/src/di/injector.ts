@@ -22,6 +22,7 @@ import {
   Class,
   DecoratorAndValue,
   Dependency,
+  ResolutionPath,
   ID,
   NormalizedProvider,
   ParamsMeta,
@@ -608,7 +609,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
 
   protected selectInjectorAndGet(
     dualKey: DualKey,
-    depsPath: any[],
+    resolutionPath: any[],
     visibility: Visibility,
     defaultValue: any,
     ctx?: NonNullable<unknown>,
@@ -618,13 +619,13 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
     }
 
     const injector = visibility === skipSelf ? this.parent : this;
-    return this.getOrThrow(injector, dualKey, depsPath, defaultValue, visibility, ctx);
+    return this.getOrThrow(injector, dualKey, resolutionPath, defaultValue, visibility, ctx);
   }
 
   protected getOrThrow(
     injector: Injector | null,
     dualKey: DualKey,
-    depsPath: any[],
+    resolutionPath: any[],
     defaultValue: any,
     visibility?: Visibility,
     ctx?: NonNullable<unknown>,
@@ -635,16 +636,16 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
 
         // This is an alternative to the "instanceof ResolvedProvider" expression.
         if (meta?.[ID]) {
-          if (depsPath.includes(dualKey.token)) {
-            throw new CyclicDependency([dualKey.token, ...depsPath]);
+          if (resolutionPath.includes(dualKey.token)) {
+            throw new CyclicDependency([dualKey.token, ...resolutionPath]);
           }
-          const value = injector.instantiateResolved(meta, depsPath);
+          const value = injector.instantiateResolved(meta, resolutionPath);
           return (injector.#registry[dualKey.id] = value);
         } else if (meta !== undefined || injector.hasId(dualKey.id)) {
           // Here "meta" - is a value for provider that has given `token`.
           return meta;
         } else if (visibility !== fromSelf && injector.parent) {
-          return injector.parent.getOrThrow(injector.parent, dualKey, depsPath, defaultValue, undefined);
+          return injector.parent.getOrThrow(injector.parent, dualKey, resolutionPath, defaultValue, undefined);
         }
       } else {
         const resolvedProvider = this.getResolvedProvider(this, dualKey);
@@ -654,7 +655,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
       }
     }
     if (defaultValue === NoDefaultValue) {
-      throw new NoProvider([dualKey.token, ...depsPath]);
+      throw new NoProvider([dualKey.token, ...resolutionPath]);
     } else {
       return defaultValue;
     }
@@ -684,19 +685,19 @@ expect(car.engine).toBe(injector.get(Engine));
 expect(car).not.toBe(injector.instantiateResolved(carProvider));
 ```
    */
-  instantiateResolved<T = any>(provider: ResolvedProvider, depsPath: any[] = [], ctx?: NonNullable<unknown>): T {
+  instantiateResolved<T = any>(provider: ResolvedProvider, resolutionPath: any[] = [], ctx?: NonNullable<unknown>): T {
     if (provider.multi) {
       return provider.resolvedFactories.map((factory) => {
-        return this.instantiate(provider.dualKey.token, depsPath, factory, ctx);
+        return this.instantiate(provider.dualKey.token, resolutionPath, factory, ctx);
       }) as T;
     } else {
-      return this.instantiate(provider.dualKey.token, depsPath, provider.resolvedFactories[0], ctx);
+      return this.instantiate(provider.dualKey.token, resolutionPath, provider.resolvedFactories[0], ctx);
     }
   }
 
   protected instantiate(
     token: NonNullable<unknown>,
-    depsPath: any[],
+    resolutionPath: any[],
     resolvedFactory: ResolvedFactory,
     ctx?: NonNullable<unknown>,
   ): any {
@@ -706,7 +707,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
       }
       return this.selectInjectorAndGet(
         dep.dualKey,
-        [token, ...depsPath],
+        [token, ...resolutionPath],
         dep.visibility,
         dep.optional ? undefined : NoDefaultValue,
         dep.ctx,
@@ -716,7 +717,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     try {
       return resolvedFactory.factory(...deps);
     } catch (e: any) {
-      throw new InstantiationError(e, [token, ...depsPath]);
+      throw new InstantiationError(e, [token, ...resolutionPath]);
     }
   }
 

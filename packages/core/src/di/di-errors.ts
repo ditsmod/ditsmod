@@ -273,7 +273,7 @@ function constructResolvingPath(tokens: any[]): string {
   if (tokens.length > 1) {
     const reversed = findFirstClosedCycle(tokens.slice().reverse());
     const tokenStrs = reversed.map((token) => stringify(token));
-    return ' (' + tokenStrs.join(' -> ') + ')';
+    return ` Resolution path: ${tokenStrs.join(' -> ')}`;
   }
 
   return '';
