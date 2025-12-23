@@ -1293,4 +1293,33 @@ describe("null as provider's value", () => {
     pathTracer.addItem(A, child).addItem(token, parent);
     expect(() => child.get(A)).toThrow(new NoProvider(pathTracer.path));
   });
+
+  it('should throw with properly printed injector chain', () => {
+    class Service1 {}
+    class Service2 {}
+
+    @injectable()
+    class Service3 {
+      constructor(service1: Service1) {}
+    }
+
+    @injectable()
+    class Service4 {
+      constructor(service2: Service2, service3: Service3) {}
+    }
+
+    const providersPerApp: Provider[] = [];
+    const providersPerMod = [Service2, Service3, Service4];
+    const providersPerRou = [Service1];
+
+    const injectorPerApp = Injector.resolveAndCreate(providersPerApp, 'injectorPerApp');
+    const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod, 'injectorPerMod');
+    const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou, 'injectorPerRou');
+
+    const msg =
+      'No provider for [Service1 in injectorPerMod >> injectorPerApp]! ' +
+      'Resolution path: [Service4 in injectorPerRou >> injectorPerMod] -> [Service3 in injectorPerMod]' +
+      ' -> [Service1 in injectorPerMod >> injectorPerApp]';
+    expect(() => injectorPerRou.get(Service4)).toThrow(msg);
+  });
 });
