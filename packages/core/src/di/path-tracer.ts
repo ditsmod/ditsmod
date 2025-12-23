@@ -32,26 +32,45 @@ export class PathTracer {
    */
   get path() {
     let prevInjector: Injector | null | undefined;
-    let prevLevel = 0;
-    return this.items.map((item) => {
-      const providerName = getProviderName(item.token);
-      if (item.injector?.level) {
-        prevInjector = item.injector;
-        return `[${providerName} in ${item.injector.level}]`;
-      } else {
-        if (this.hasOneLevel()) {
-          return providerName;
-        }
-        let level = 0;
-        if (prevInjector === item.injector) {
-          level = prevLevel;
-        } else {
-          level = ++prevLevel;
-          prevInjector = item.injector;
-        }
-        return `[${providerName} in injector${level}]`;
-      }
+    let level = 0;
+    return this.mergeItems().map((item) => {
+      const tokenName = getProviderName(item.token);
+      const injectorStr = item.injectors
+        .map((inj) => {
+          if (inj?.level) {
+            prevInjector = inj;
+            return inj.level;
+          } else {
+            if (this.hasOneLevel()) {
+              return '';
+            }
+            if (prevInjector !== inj) {
+              ++level;
+              prevInjector = inj;
+            }
+            return `injector${level}`;
+          }
+        })
+        .join(' >> ');
+
+      return injectorStr ? `[${tokenName} in ${injectorStr}]` : tokenName;
     });
+  }
+
+  protected mergeItems() {
+    let prevToken: any;
+    const mergedItems: { token: any; injectors: (Injector | null | undefined)[] }[] = [];
+    this.items.forEach((item) => {
+      if (prevToken === item.token) {
+        const prevItem = mergedItems.at(-1)!;
+        prevItem.injectors.unshift(item.injector);
+      } else {
+        mergedItems.push({ token: item.token, injectors: [item.injector] });
+      }
+      prevToken = item.token;
+    });
+
+    return mergedItems;
   }
 
   protected hasOneLevel() {
