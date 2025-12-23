@@ -19,6 +19,7 @@ import {
   NoAnnotation,
   NoProvider,
 } from './di-errors.js';
+import { PathTracer } from './path-tracer.js';
 
 class Engine {}
 
@@ -235,7 +236,9 @@ describe('injector', () => {
     it('child injector pull provider from parent injector, and instatiate it', () => {
       const parent = Injector.resolveAndCreate([Car]);
       const child = parent.resolveAndCreateChild([Engine]);
-      expect(() => child.get(Car)).toThrow(new NoProvider([Engine, Car]));
+      const pathTracer = new PathTracer();
+      pathTracer.addItem(Car, parent).addItem(Car, child).addItem(Engine, child);
+      expect(() => child.get(Car)).toThrow(new NoProvider(pathTracer.path));
       expect(child.pull(Car)).toBeInstanceOf(Car);
       expect(child.pull(Car).engine).toBeInstanceOf(Engine);
     });
@@ -911,9 +914,7 @@ describe('injector', () => {
   it('should show the full path when no provider', () => {
     const injector = createInjector([CarWithDashboard, Engine, Dashboard]);
     expect(() => injector.get(CarWithDashboard)).toThrow(
-      `No provider for DashboardSoftware! (${stringify(CarWithDashboard)} -> ${stringify(
-        Dashboard,
-      )} -> DashboardSoftware)`,
+      new NoProvider([DashboardSoftware, Dashboard, CarWithDashboard]),
     );
   });
 
@@ -921,7 +922,7 @@ describe('injector', () => {
     const providers = Injector.resolve([Car, { token: Engine, useClass: BrokenEngine }]);
     const Registry = Injector.prepareRegistry(providers);
     const injector = new Injector(Registry);
-    const err = new InstantiationError(new Error('Broken Engine'), ['Engine (Car -> Engine)']);
+    const err = new InstantiationError(new Error('Broken Engine'), ['Engine Resolution path: Car -> Engine']);
     expect(() => injector.get(Car)).toThrow(err);
   });
 
@@ -1288,7 +1289,8 @@ describe("null as provider's value", () => {
     }
     const parent = Injector.resolveAndCreate([]);
     const child = parent.resolveAndCreateChild([A, { token, useValue: "child's value" }]);
-    const msg = 'No provider for token! (A -> token)';
-    expect(() => child.get(A)).toThrow(new NoProvider([token, A]));
+    const pathTracer = new PathTracer();
+    pathTracer.addItem(A, child).addItem(token, parent);
+    expect(() => child.get(A)).toThrow(new NoProvider(pathTracer.path));
   });
 });

@@ -11,7 +11,8 @@ import {
   injectable,
   factoryMethod,
   optional,
-  skipSelf
+  skipSelf,
+  PathTracer
 } from './index.js';
 import { CyclicDependency, NoProvider } from './di-errors.js';
 
@@ -275,8 +276,10 @@ describe("null as provider's value", () => {
       }
 
       const parent = Injector.resolveAndCreate([]);
-      const injector = parent.resolveAndCreateChild([Dependecy2]);
-      expect(() => DepsChecker.check(injector, Dependecy2)).toThrow(new NoProvider([Dependecy1, Dependecy2]));
+      const child = parent.resolveAndCreateChild([Dependecy2]);
+      const pathTracer = new PathTracer();
+      pathTracer.addItem(Dependecy2, child).addItem(Dependecy1, child).addItem(Dependecy1, parent);
+      expect(() => DepsChecker.check(child, Dependecy2)).toThrow(new NoProvider(pathTracer.path));
       expect(spy).toHaveBeenCalledTimes(0);
     });
 
@@ -324,7 +327,9 @@ describe("null as provider's value", () => {
       }
       const parent = Injector.resolveAndCreate([]);
       const child = parent.resolveAndCreateChild([A, { token, useValue: "child's value" }]);
-      expect(() => DepsChecker.check(child, A)).toThrow(new NoProvider([token, A]));
+      const pathTracer = new PathTracer();
+      pathTracer.addItem(A, child).addItem(token, parent);
+      expect(() => DepsChecker.check(child, A)).toThrow(new NoProvider(pathTracer.path));
       expect(spy).toHaveBeenCalledTimes(0);
     });
 

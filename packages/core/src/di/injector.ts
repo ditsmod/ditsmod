@@ -2,7 +2,6 @@ import { AnyFn } from '#types/mix.js';
 import { fromSelf, inject, InjectTransformResult, optional, skipSelf } from './decorators.js';
 import {
   FailedCreateFactoryProvider,
-  CyclicDependency,
   InstantiationError,
   InvalidProvider,
   MixMultiWithRegularProviders,
@@ -22,7 +21,6 @@ import {
   Class,
   DecoratorAndValue,
   Dependency,
-  ResolutionPath,
   ID,
   NormalizedProvider,
   ParamsMeta,
@@ -33,6 +31,7 @@ import {
   Visibility,
   getNewRegistry,
 } from './types-and-models.js';
+import { PathTracer } from './path-tracer.js';
 import {
   isClassProvider,
   isFactoryProvider,
@@ -597,19 +596,19 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
   get<T extends AnyFn>(token: T, visibility?: Visibility, defaultValue?: T): ReturnType<T>;
   get(token: NonNullable<unknown>, visibility?: Visibility, defaultValue?: any): any;
   get(token: NonNullable<unknown>, visibility: Visibility = null, defaultValue: any = NoDefaultValue): any {
-    return this.selectInjectorAndGet(KeyRegistry.get(token), [], visibility, defaultValue);
+    return this.selectInjectorAndGet(KeyRegistry.get(token), new PathTracer(), visibility, defaultValue);
   }
 
   /**
    * Works identically to {@link get | injector.get()}, but by default returns type `any`.
    */
   getAny<T = any>(token: NonNullable<unknown>, visibility: Visibility = null, defaultValue: any = NoDefaultValue): T {
-    return this.selectInjectorAndGet(KeyRegistry.get(token), [], visibility, defaultValue);
+    return this.selectInjectorAndGet(KeyRegistry.get(token), new PathTracer(), visibility, defaultValue);
   }
 
   protected selectInjectorAndGet(
     dualKey: DualKey,
-    resolutionPath: any[],
+    pathTracer: PathTracer,
     visibility: Visibility,
     defaultValue: any,
     ctx?: NonNullable<unknown>,
@@ -619,43 +618,41 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
     }
 
     const injector = visibility === skipSelf ? this.parent : this;
-    return this.getOrThrow(injector, dualKey, resolutionPath, defaultValue, visibility, ctx);
+    return this.getOrThrow(injector, dualKey, pathTracer, defaultValue, visibility, ctx);
   }
 
   protected getOrThrow(
     injector: Injector | null,
     dualKey: DualKey,
-    resolutionPath: any[],
+    pathTracer: PathTracer,
     defaultValue: any,
     visibility?: Visibility,
     ctx?: NonNullable<unknown>,
   ): any {
+    pathTracer.addItem(dualKey.token, injector);
     if (injector) {
       if (ctx == null) {
         const meta = injector.#registry[dualKey.id];
 
         // This is an alternative to the "instanceof ResolvedProvider" expression.
         if (meta?.[ID]) {
-          if (resolutionPath.includes(dualKey.token)) {
-            throw new CyclicDependency([dualKey.token, ...resolutionPath]);
-          }
-          const value = injector.instantiateResolved(meta, resolutionPath);
+          const value = injector.instantiateResolved(meta, pathTracer);
           return (injector.#registry[dualKey.id] = value);
         } else if (meta !== undefined || injector.hasId(dualKey.id)) {
           // Here "meta" - is a value for provider that has given `token`.
           return meta;
         } else if (visibility !== fromSelf && injector.parent) {
-          return injector.parent.getOrThrow(injector.parent, dualKey, resolutionPath, defaultValue, undefined);
+          return injector.parent.getOrThrow(injector.parent, dualKey, pathTracer, defaultValue, undefined);
         }
       } else {
         const resolvedProvider = this.getResolvedProvider(this, dualKey);
         if (resolvedProvider) {
-          return this.instantiateResolved(resolvedProvider, [], ctx);
+          return this.instantiateResolved(resolvedProvider, new PathTracer(), ctx);
         }
       }
     }
     if (defaultValue === NoDefaultValue) {
-      throw new NoProvider([dualKey.token, ...resolutionPath]);
+      throw new NoProvider(pathTracer.path);
     } else {
       return defaultValue;
     }
@@ -685,19 +682,22 @@ expect(car.engine).toBe(injector.get(Engine));
 expect(car).not.toBe(injector.instantiateResolved(carProvider));
 ```
    */
-  instantiateResolved<T = any>(provider: ResolvedProvider, resolutionPath: any[] = [], ctx?: NonNullable<unknown>): T {
+  instantiateResolved<T = any>(
+    provider: ResolvedProvider,
+    pathTracer: PathTracer = new PathTracer(),
+    ctx?: NonNullable<unknown>,
+  ): T {
     if (provider.multi) {
       return provider.resolvedFactories.map((factory) => {
-        return this.instantiate(provider.dualKey.token, resolutionPath, factory, ctx);
+        return this.instantiate(pathTracer, factory, ctx);
       }) as T;
     } else {
-      return this.instantiate(provider.dualKey.token, resolutionPath, provider.resolvedFactories[0], ctx);
+      return this.instantiate(pathTracer, provider.resolvedFactories[0], ctx);
     }
   }
 
   protected instantiate(
-    token: NonNullable<unknown>,
-    resolutionPath: any[],
+    pathTracer: PathTracer,
     resolvedFactory: ResolvedFactory,
     ctx?: NonNullable<unknown>,
   ): any {
@@ -705,19 +705,21 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
       if (dep.dualKey.token === CTX_DATA) {
         return ctx;
       }
-      return this.selectInjectorAndGet(
+      const result = this.selectInjectorAndGet(
         dep.dualKey,
-        [token, ...resolutionPath],
+        pathTracer,
         dep.visibility,
         dep.optional ? undefined : NoDefaultValue,
         dep.ctx,
       );
+      pathTracer.removeFirstItem();
+      return result;
     });
 
     try {
       return resolvedFactory.factory(...deps);
     } catch (e: any) {
-      throw new InstantiationError(e, [token, ...resolutionPath]);
+      throw new InstantiationError(e, pathTracer.path);
     }
   }
 
@@ -757,12 +759,14 @@ child.pull(Service).config; // pulls Service in current injector: { one: 11, two
   pull<T extends AnyFn>(token: T, defaultValue?: T): ReturnType<T>;
   pull(token: NonNullable<unknown>, defaultValue?: any): any;
   pull(token: NonNullable<unknown>, defaultValue: any = NoDefaultValue): any {
+    const pathTracer = new PathTracer();
+    pathTracer.addItem(token, this);
     const dualKey = KeyRegistry.get(token);
     const meta = this.#registry[dualKey.id];
 
     // This is an alternative to the "instanceof ResolvedProvider" expression.
     if (meta?.[ID]) {
-      const value = this.instantiateResolved(meta, []);
+      const value = this.instantiateResolved(meta, pathTracer);
       return (this.#registry[dualKey.id] = value);
     } else if (meta !== undefined || this.hasId(dualKey.id)) {
       // Here "meta" - is a value for provider that has given `token`.
@@ -772,7 +776,7 @@ child.pull(Service).config; // pulls Service in current injector: { one: 11, two
     if (this.parent) {
       const resolvedProvider = this.getResolvedProvider(this.parent, dualKey);
       if (resolvedProvider) {
-        return this.instantiateResolved(resolvedProvider, []);
+        return this.instantiateResolved(resolvedProvider, pathTracer);
       }
     }
     if (defaultValue === NoDefaultValue) {
