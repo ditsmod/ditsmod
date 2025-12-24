@@ -541,12 +541,12 @@ Later in the documentation, you will encounter the following object properties t
 Using these arrays, Ditsmod forms different injectors that are related by a hierarchical connection. Such a hierarchy can be simulated as follows:
 
 ```ts
-import { Injector } from '@ditsmod/core';
+import { Injector, Provider } from '@ditsmod/core';
 
-const providersPerApp = [];
-const providersPerMod = [];
-const providersPerRou = [];
-const providersPerReq = [];
+const providersPerApp: Provider[] = [];
+const providersPerMod: Provider[] = [];
+const providersPerRou: Provider[] = [];
+const providersPerReq: Provider[] = [];
 
 const injectorPerApp = Injector.resolveAndCreate(providersPerApp);
 const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
@@ -563,19 +563,19 @@ For example, if you write a class that depends on the HTTP request, you will be 
 You can also write a class and pass it into the `providersPerMod` array; in that case it can depend only on providers at the module level or at the application level:
 
 ```ts {10}
-import { injectable, Injector } from '@ditsmod/core';
+import { injectable, Injector, Provider } from '@ditsmod/core';
 
 class Service1 {}
 
 @injectable()
 class Service2 {
-constructor(public service1: Service1) {}
+  constructor(public service1: Service1) {}
 }
 
-const providersPerApp = [Service1];
-const providersPerMod = [Service2];
-const providersPerRou = [];
-const providersPerReq = [];
+const providersPerApp: Provider[] = [Service1];
+const providersPerMod: Provider[] = [Service2];
+const providersPerRou: Provider[] = [];
+const providersPerReq: Provider[] = [];
 
 const injectorPerApp = Injector.resolveAndCreate(providersPerApp);
 const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
@@ -586,8 +586,8 @@ In this case, `Service2` depends on `Service1`, which is provided at the applica
 
 If `Service2` depends on providers that you passed in the `providersPerRou` or `providersPerReq` arrays, you will get an error indicating that these providers were not found:
 
-```ts {12}
-import { injectable, Injector } from '@ditsmod/core';
+```ts
+import { injectable, Injector, Provider } from '@ditsmod/core';
 
 class Service1 {}
 
@@ -596,19 +596,73 @@ class Service2 {
 constructor(public service1: Service1) {}
 }
 
-const providersPerApp = [];
-const providersPerMod = [Service2];
-const providersPerRou = [Service1];
-const providersPerReq = [];
+const providersPerApp: Provider[] = [];
+const providersPerMod: Provider[] = [Service2];
+const providersPerRou: Provider[] = [Service1];
+const providersPerReq: Provider[] = [];
 
 const injectorPerApp = Injector.resolveAndCreate(providersPerApp);
 const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
 const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
-injectorPerMod.get(Service2); // Error: No provider for Service1
-injectorPerRou.get(Service2); // Error: No provider for Service1
+
+injectorPerMod.get(Service2);
+// Error: No provider for [Service1 in injector2 >> injector1]!
+// Resolution path: [Service2 in injector2] -> [Service1 in injector2 >> injector1]
+
+injectorPerRou.get(Service2);
+// Error: No provider for [Service1 in injector2 >> injector1]!
+// Resolution path: [Service2 in injector3 >> injector2] -> [Service1 in injector2 >> injector1]
 ```
 
-In this case, the injector at the module level cannot create an instance of `Service2` because it depends on the `Service1` class, which was provided to the injector at the route level. Therefore, the parent injector `injectorPerMod` cannot request an instance of `Service1` from the child `injectorPerRou`.
+In this case, the injector at the module level cannot create an instance of `Service2` because it depends on the `Service1` class, which was provided to the injector at the route level. Therefore, the parent `injectorPerMod` cannot request an instance of `Service1` from the child `injectorPerRou`.
+
+Pay attention to the error messages. If injectors have more than one level of hierarchy, such messages contain information about the token as well as the injectors in which it was searched. In this example, the first error indicates that a provider with the `Service1` token was not found in `injector2 >> injector1`. That is, `Service1` was first searched for in `injector2`, and then in `injector1`. In addition, the error also contains a `Resolution path`:
+
+```ts
+injectorPerMod.get(Service2);
+// Error: No provider for [Service1 in injector2 >> injector1]!
+// Resolution path: [Service2 in injector2] -> [Service1 in injector2 >> injector1]
+```
+
+Injectors are numbered from the parent to the child injector. In this error message, it is clear that two levels of injectors are involved, that is, `injectorPerApp` is `injector1`, and `injectorPerMod` is `injector2`. But is it possible to explicitly specify injector levels? Yes, it is. Moreover, it is even recommended to always do so:
+
+```ts
+import { injectable, Injector, Provider } from '@ditsmod/core';
+
+class Service1 {}
+
+@injectable()
+class Service2 {
+constructor(public service1: Service1) {}
+}
+
+const providersPerApp: Provider[] = [];
+const providersPerMod: Provider[] = [Service2];
+const providersPerRou: Provider[] = [Service1];
+const providersPerReq: Provider[] = [];
+
+const injectorPerApp = Injector.resolveAndCreate(providersPerApp, 'injectorPerApp');
+const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod, 'injectorPerMod');
+const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou, 'injectorPerRou');
+
+injectorPerMod.get(Service2);
+// Error: No provider for [Service1 in injectorPerMod >> injectorPerApp]!
+// Resolution path: [Service2 in injectorPerMod] -> [Service1 in injectorPerMod >> injectorPerApp]
+
+injectorPerRou.get(Service2);
+// Error: No provider for [Service1 in injectorPerMod >> injectorPerApp]!
+// Resolution path: [Service2 in injectorPerRou >> injectorPerMod] -> [Service1 in injectorPerMod >> injectorPerApp]
+```
+
+As you can see, when creating each injector, injector names are passed with an indication of their level in the hierarchy. Let’s analyze the following expression and the error message it throws:
+
+```ts
+injectorPerRou.get(Service2);
+// Error: No provider for [Service1 in injectorPerMod >> injectorPerApp]!
+// Resolution path: [Service2 in injectorPerRou >> injectorPerMod] -> [Service1 in injectorPerMod >> injectorPerApp]
+```
+
+As indicated in the `Resolution path`, in the first block with square brackets, the search for `Service2` starts in `injectorPerRou`, then continues in `injectorPerMod`. The transition from searching in one injector to another is conventionally denoted by the `>>` symbols. Next, the arrow `->` conventionally shows that `Service2` depends on `Service1`, so the search continues in `injectorPerMod` as well as in `injectorPerApp`. As a result, as the error tells us, there is no provider for `[Service1 in injectorPerMod >> injectorPerApp]`.
 
 ### Current injector {#current-injector}
 

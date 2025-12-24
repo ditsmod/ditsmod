@@ -541,12 +541,12 @@ child.get(Service).config; // { one: 11, two: 22 }
 Використовуючи ці масиви, Ditsmod формує різні інжектори, що пов'язані між собою ієрархічним зв'язком. Таку ієрархію можна зімітувати наступним чином:
 
 ```ts
-import { Injector } from '@ditsmod/core';
+import { Injector, Provider } from '@ditsmod/core';
 
-const providersPerApp = [];
-const providersPerMod = [];
-const providersPerRou = [];
-const providersPerReq = [];
+const providersPerApp: Provider[] = [];
+const providersPerMod: Provider[] = [];
+const providersPerRou: Provider[] = [];
+const providersPerReq: Provider[] = [];
 
 const injectorPerApp = Injector.resolveAndCreate(providersPerApp);
 const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
@@ -563,7 +563,7 @@ const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
 Також ви можете написати певний клас і передати його в масив `providersPerMod`, в такому разі він може залежати тільки від провайдерів на рівні модуля, або на рівні застосунку:
 
 ```ts {10}
-import { injectable, Injector } from '@ditsmod/core';
+import { injectable, Injector, Provider } from '@ditsmod/core';
 
 class Service1 {}
 
@@ -572,14 +572,14 @@ class Service2 {
   constructor(public service1: Service1) {}
 }
 
-const providersPerApp = [Service1];
-const providersPerMod = [Service2];
-const providersPerRou = [];
-const providersPerReq = [];
+const providersPerApp: Provider[] = [Service1];
+const providersPerMod: Provider[] = [Service2];
+const providersPerRou: Provider[] = [];
+const providersPerReq: Provider[] = [];
 
 const injectorPerApp = Injector.resolveAndCreate(providersPerApp);
 const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
-injectorPerMod.get(Service2); // Інстанс Service2
+injectorPerMod.get(Service2); // Instance of Service2
 ```
 
 В даному разі `Service2` залежить від `Service1`, який передано на рівні застосунку. Тому, коли в інжектора на рівні модуля запитується `Service2`, він його знайде у батьківському інжекторі на рівні застосунку.
@@ -587,28 +587,82 @@ injectorPerMod.get(Service2); // Інстанс Service2
 Якщо `Service2` буде залежати від провайдерів, які ви передали в масив `providersPerRou` чи `providersPerReq`, ви отримаєте помилку про те, що ці провайдери не знайдені:
 
 ```ts {12}
-import { injectable, Injector } from '@ditsmod/core';
+import { injectable, Injector, Provider } from '@ditsmod/core';
 
 class Service1 {}
 
 @injectable()
 class Service2 {
-  constructor(public service1: Service1) {}
+constructor(public service1: Service1) {}
 }
 
-const providersPerApp = [];
-const providersPerMod = [Service2];
-const providersPerRou = [Service1];
-const providersPerReq = [];
+const providersPerApp: Provider[] = [];
+const providersPerMod: Provider[] = [Service2];
+const providersPerRou: Provider[] = [Service1];
+const providersPerReq: Provider[] = [];
 
 const injectorPerApp = Injector.resolveAndCreate(providersPerApp);
 const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
 const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
-injectorPerMod.get(Service2); // Error: No provider for Service1
-injectorPerRou.get(Service2); // Error: No provider for Service1
+
+injectorPerMod.get(Service2);
+// Error: No provider for [Service1 in injector2 >> injector1]!
+// Resolution path: [Service2 in injector2] -> [Service1 in injector2 >> injector1]
+
+injectorPerRou.get(Service2);
+// Error: No provider for [Service1 in injector2 >> injector1]!
+// Resolution path: [Service2 in injector3 >> injector2] -> [Service1 in injector2 >> injector1]
 ```
 
-В даному разі інжектор на рівні модуля не може створити інстансу `Service2`, оскільки він залежить від класу `Service1`, який було передано до інжектора на рівні роуту. Тому батьківський інжектор `injectorPerMod` не може звернутись до дочірнього `injectorPerRou` за інстансом `Service1`.
+В даному разі, інжектор на рівні модуля не може створити інстансу `Service2`, оскільки він залежить від класу `Service1`, який було передано до інжектора на рівні роуту. Тому батьківський інжектор `injectorPerMod` не може звернутись до дочірнього `injectorPerRou` за інстансом `Service1`.
+
+Зверніть увагу на повідомлення помилок. Якщо інжектори мають більше, ніж один рівень ієрархії, такі повідомлення містять інформацію про токен, а також про інжектори, в яких вони шукались. В даному прикладі, у першій помилці вказано, що не знайдено провайдера з токеном `Service1` в `injector2 >> injector1`. Тобто, `Service1` спочатку шукався в `injector2`, а потім в `injector1`. Окрім цього, помилка ще й містить `Resolution path`:
+
+```ts
+injectorPerMod.get(Service2);
+// Error: No provider for [Service1 in injector2 >> injector1]!
+// Resolution path: [Service2 in injector2] -> [Service1 in injector2 >> injector1]
+```
+
+Нумеруються інжектори від батьківського до дочірнього інжектора. В даному повідомленні помилки зрозуміло, що бере участь два рівня інжекторів, тобто `injectorPerApp` - це `injector1`, а `injectorPerMod` - це `injector2`. Але чи можна явно вказувати рівні інжекторів? - Так, можна. Більше того, це навіть рекомендується робити завжди:
+
+```ts
+import { injectable, Injector, Provider } from '@ditsmod/core';
+
+class Service1 {}
+
+@injectable()
+class Service2 {
+constructor(public service1: Service1) {}
+}
+
+const providersPerApp: Provider[] = [];
+const providersPerMod: Provider[] = [Service2];
+const providersPerRou: Provider[] = [Service1];
+const providersPerReq: Provider[] = [];
+
+const injectorPerApp = Injector.resolveAndCreate(providersPerApp, 'injectorPerApp');
+const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod, 'injectorPerMod');
+const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou, 'injectorPerRou');
+
+injectorPerMod.get(Service2);
+// Error: No provider for [Service1 in injectorPerMod >> injectorPerApp]!
+// Resolution path: [Service2 in injectorPerMod] -> [Service1 in injectorPerMod >> injectorPerApp]
+
+injectorPerRou.get(Service2);
+// Error: No provider for [Service1 in injectorPerMod >> injectorPerApp]!
+// Resolution path: [Service2 in injectorPerRou >> injectorPerMod] -> [Service1 in injectorPerMod >> injectorPerApp]
+```
+
+Як бачите, під час створення кожного інжектора, йому передаються назви інжекторів з указанням рівня в ієрархії. Давайте розбиремо наступний вираз, і повідомлення помилки, яке він кидає:
+
+```ts
+injectorPerRou.get(Service2);
+// Error: No provider for [Service1 in injectorPerMod >> injectorPerApp]!
+// Resolution path: [Service2 in injectorPerRou >> injectorPerMod] -> [Service1 in injectorPerMod >> injectorPerApp]
+```
+
+Як вказано в `Resolution path`, в першому блоці з квадратними дужками, пошук `Service2` починається з `injectorPerRou`, потім продовжується в `injectorPerMod`. Перехід від пошуку в одному інжекторі до іншого умовно позначено символами ` >> `. Далі стрілочка ` -> ` умовно показує, що `Service2` залежить від `Service1`, тому пошук продовжується в `injectorPerMod`, а також в `injectorPerApp`. В результаті, як говорить нам помилка, немає провайдера для `[Service1 in injectorPerMod >> injectorPerApp]`.
 
 ### Поточний інжектор {#current-injector}
 
