@@ -357,7 +357,7 @@ parent.get(Service2) === child.get(Service2); // false
 
 Ланцюжок залежностей провайдерів може бути досить складним, а ієрархія інжекторів ще додає складності. Давайте розглянемо простий випадок, а потім ускладнемо його. Отже в наступному прикладі `Service` залежить від `Config`, причому обидва провайдери передаються в один інжектор:
 
-```ts {14-15,19}
+```ts {14-15,18}
 import { injectable, Injector } from '@ditsmod/core';
 
 class Config {
@@ -375,12 +375,10 @@ const parent = Injector.resolveAndCreate([
   { token: Config, useValue: { one: 1, two: 2 } }
 ]);
 
-const child = parent.resolveAndCreateChild([
-  // Пустий масив
-]);
+const child = parent.resolveAndCreateChild([]);
 
-parent.get(Service).config; // returns { one: 1, two: 2 }
-child.get(Service).config; // returns { one: 1, two: 2 } from parent injector
+parent.get(Service); // Instance of Service
+child.get(Service); // Instance of Service
 ```
 
 Як бачите, в даному прикладі створюються батьківський та дочірній інжектори, причому як `Service`, так і його залежність - `Config` - передаються лише в батьківський інжектор. В такому разі, коли у батьківського інжектора запитується значення провайдера з токеном `Service`, цей інжектор буде діяти за такою логікою:
@@ -396,9 +394,41 @@ child.get(Service).config; // returns { one: 1, two: 2 } from parent injector
 1. спочатку дочірній інжектор прогляне масив своїх провайдерів і не знайде там жодних інструкцій;
 2. потім дочірній інжектор звернеться до батьківського інжектора і отримає від нього вже готовий інстанс `Service`.
 
-Поки що все просто. Давайте тепер ускладнимо приклад передавши різні значення для токена `Config` у батьківський та дочірній інжектор:
+У випадку, коли ми `Service` передаємо в один інжектор, а `Config` - в інший, тут вже важливо враховувати залежність між ними, тому працювати така схема буде лише у випадку, коли `Config` передається в батьківський інжектор, а `Service` - в дочірній. Причому запитувати `Service` можна лише у дочірнього інжектора:
 
-```ts {14-15,19}
+```ts {14,18}
+import { injectable, Injector } from '@ditsmod/core';
+
+class Config {
+  one: any;
+  two: any;
+}
+
+@injectable()
+class Service {
+  constructor(public config: Config) {}
+}
+
+const parent = Injector.resolveAndCreate([
+  { token: Config, useValue: { one: 1, two: 2 } }
+]);
+
+const child = parent.resolveAndCreateChild([
+  Service,
+]);
+
+child.get(Config); // { one: 1, two: 2 }
+child.get(Service); // instance of Service
+
+parent.get(Config); // { one: 1, two: 2 }
+parent.get(Service); // Error: No provider for Service!
+```
+
+Як бачите, дочірній інжектор може створювати інстанс `Service`, хоча `Config` він запитує у батьківського інжектора. Натомість батьківський інжектор може видати лише значення для `Config`, а ось провайдер `Service` для нього недоступний, оскільки батьківський інжектор не бачить дочірнього інжектора, де є цей провайдер.
+
+Тепер давайте передамо `Service` у батьківський інжектор, а `Config` - в дочірній. Пам'ятаючи, що батьківські інжектори ніколи не звертаються до дочірніх інжекторів, здогадуєтесь які можуть бути проблеми з `Service`?
+
+```ts {14,18}
 import { injectable, Injector } from '@ditsmod/core';
 
 class Config {
@@ -413,36 +443,118 @@ class Service {
 
 const parent = Injector.resolveAndCreate([
   Service,
-  { token: Config, useValue: { one: 1, two: 2 } }
 ]);
 
 const child = parent.resolveAndCreateChild([
   { token: Config, useValue: { one: 11, two: 22 } }
 ]);
+
+child.get(Config); // { one: 11, two: 22 }
+
+child.get(Service);
+// Error: No provider for [Config in injector1]!
+// Resolution path: [Service in injector2 >> injector1] -> [Config in injector1]
+
+parent.get(Service);
+// Error: No provider for Config!
+// Resolution path: Service -> Config
 ```
 
-Розглядаючи даний приклад, нагадайте собі, що батьківський інжектор не бачить дочірніх інжекторів, тому будь-яка зміна в дочірньому інжекторі ніяк не впливає на батьківський інжектор. Тобто, для батьківського інжектора тут нічого не змінилось, оскільки він отримує точно такі самі провайдери, як і у попередньому прикладі.
+Як бачите, коли у дочірнього інжектора запитується токен `Config`, він видає відповідне значення, оскільки під час його створення йому передали провайдер з цим токеном.
 
-А як щодо дочірнього інжектора? Тепер він отримав свою власну версію провайдера з токеном `Config`, яка відрізняється від батьківської версії. То як тепер дочірній інжектор буде діяти, коли у нього запитають наступне?
+Інша справа із `Service`, який залежить від `Config`. Не зважаючи на те, що у дочірній інжектор передали провайдер з токеном `Config`, цей інжектор все одно не може створити інстанс `Service`, тому він змушений звернутись до батьківського інжектора. В той же час, батьківський інжектор хоча і має провайдер з токеном `Service`, але не має доступу до дочірнього інжектора, де є `Config`, тому під час запиту `child.get(Service)` насправді кидатиме помилку саме батьківський інжектор.
+
+Зверніть увагу на `Resolution path` у повідомленні помилки:
 
 ```ts
-child.get(Service).config;
+child.get(Service);
+// Error: No provider for [Config in injector1]!
+// Resolution path: [Service in injector2 >> injector1] -> [Config in injector1]
 ```
 
-Корисно спочатку подумати над цим самостійно, щоб краще закріпити дану особливість в пам'яті. Подумали? Ок, логіка у даного інжектора буде наступною:
+`Resolution path` починається з пошуку `Service` в `injector2`, а потім продовжується в `injector1`. Оскільки цю помилку спричинив вираз `child.get(Service)`, можна догадатись, що `injector2` - це автоматичне ім'я, яке Ditsmod надав дочірньому інжектору. Відповідно - `injector1` - це батьківський інжектор. Пам'ятайте, що найвищій в ієрархії інжектор завжди матиме автоматичне ім'я `injector1`, і чим нижчий інжектор в ієрархії, тим більший номер буде в кінці його імені `injectorN`.
+
+Але чи можна явно вказувати імена (чи рівні в ієрархії) інжекторів? - Так, можна, передаючи другий аргумент під час створення інжектора. Більше того, це навіть рекомендується робити завжди:
+
+```ts {15,20}
+import { injectable, Injector } from '@ditsmod/core';
+
+class Config {
+  one: any;
+  two: any;
+}
+
+@injectable()
+class Service {
+  constructor(public config: Config) {}
+}
+
+const parent = Injector.resolveAndCreate(
+  [Service],
+  'parentInjector'
+);
+
+const child = parent.resolveAndCreateChild(
+  [{ token: Config, useValue: { one: 11, two: 22 } }],
+  'childInjector'
+);
+
+child.get(Service);
+// Error: No provider for [Config in parentInjector]!
+// Resolution path: [Service in childInjector >> parentInjector] -> [Config in parentInjector]
+```
+
+В такому разі, `Resolution path` стає більш зрозумілим:
+
+1. спочатку `Service` шукється в `childInjector`, потім - у `parentInjector`;
+2. і оскільки `Service` знайдено саме у `parentInjector`, його залежність - `Config` - теж буде шукатись у `parentInjector`.
+
+Аналізуючи повідомлення помилки, можна здогадатись, що проблему можна вирішити двома способами:
+
+1. потрібно або `Service` додати до `childInjector`, щоб він не піднімався до `parentInjector`;
+2. або `Config` додати до `parentInjector`, щоб він міг вирішити залежність для `Service`.
+
+Давайте скористаємось другим варіантом:
+
+```ts {16}
+import { injectable, Injector } from '@ditsmod/core';
+
+class Config {
+  one: any;
+  two: any;
+}
+
+@injectable()
+class Service {
+  constructor(public config: Config) {}
+}
+
+const parent = Injector.resolveAndCreate(
+  [
+    Service,
+    { token: Config, useValue: { one: 1, two: 2 } }
+  ],
+  'parentInjector'
+);
+
+const child = parent.resolveAndCreateChild(
+  [{ token: Config, useValue: { one: 11, two: 22 } }],
+  'childInjector'
+);
+```
+
+Тут батьківський інжектор має обидва необхідних провайдери, щоб створити інстанс `Service`. А як щодо дочірнього інжектора? З якою саме версією `Config` буде створено інстанс `Service` в наступному виразі?
+
+```ts
+child.get(Service);
+```
+
+Корисно спочатку подумати над цим самостійно, щоб краще закріпити дану особливість в пам'яті. Подумали? Ок, логіка в дочірнього інжектора буде наступною:
 
 1. спочатку він прогляне масив своїх провайдерів і не знайде там провайдера з токеном `Service`;
-2. потім він звернеться до батьківського інжектора і отримає від нього вже готовий інстанс `Service`. Тому даний вираз поверне `{ one: 1, two: 2 }`.
+2. потім він звернеться до батьківського інжектора і отримає від нього вже готовий інстанс `Service`, в якому `Config` матиме значення `{ one: 1, two: 2 }`.
 
-Трохи неочікувано, правда ж? Мабуть багато хто подумав, що дочірній інжектор для створення інстансу `Service` буде використовувати локальну версію `Config` (тобто `{ one: 11, two: 22 }`). Але зверніть увагу, що у виразі `child.get(Service).config` у дочірнього інжектора запитують саме `Service`, який йому не передали у списку провайдерів, тому він змушений звернутись до батьківського інжектора. І оскільки потім батьківський інжектор вирішує залежності `Service` у своєму контексті, він якраз і використовує свою локальну версію `Config`, що має значення `{ one: 1, two: 2 }`.
-
-Коли ж замість `Service` ми запитаємо `Config` у дочірнього інжектора, то він видасть очікувано своє локальне значення:
-
-```ts
-child.get(Config); // { one: 11, two: 22 }
-```
-
-Здогадуєтесь, що можна зробити, щоб при запиті `Service` у дочірнього інжектора, DI вирішував його залежність з використанням його локальної версії провайдера з токеном `Config`? - Так, при створенні дочірнього інжектора, в масиві провайдерів ми можемо передати йому також `Service`:
+Трохи неочікувано, правда ж? Мабуть дехто подумав, що дочірній інжектор для створення інстансу `Service` буде використовувати локальну версію `Config` (тобто `{ one: 11, two: 22 }`). Здогадуєтесь, що можна зробити, щоб при запиті `Service` у дочірнього інжектора, DI вирішував його залежність з використанням локальної версії провайдера з токеном `Config`? - Так, при створенні дочірнього інжектора, в масиві провайдерів ми можемо передати йому також `Service`:
 
 ```ts {19}
 import { injectable, Injector } from '@ditsmod/core';
@@ -554,115 +666,97 @@ const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
 const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
 ```
 
-Під капотом, Ditsmod робить аналогічну процедуру багато разів для різних модулів, роутів та запитів. Наприклад, якщо застосунок Ditsmod має два модулі, і десять REST-роутів, відповідно буде створено один інжектор на рівні застосунку, по одному інжектору для кожного модуля (2 шт.), по одному інжектору для кожного роуту (10 шт.), і по одному інжектору на кожен запит. Інжектори на рівні запиту видаляються автоматично кожен раз після завершення обробки запиту.
+Під капотом, Ditsmod робить аналогічну процедуру багато разів для різних модулів, роутів та HTTP-запитів. Використовуючи цей приклад, давайте потренуємось щоб краще розуміти ієрархію інжекторів, і знову скористаємось знайомим класом `Service`, який залежить від `Config`:
 
-Нагадаємо, що вищі в ієрархії інжектори не мають доступу до нижчих в ієрархії інжекторів. Це означає, що **при передачі класу у певний інжектор, потрібно знати найнижчий рівень ієрархії його залежностей**.
-
-Наприклад, якщо ви напишете клас, що має залежність від HTTP-запиту, ви зможете його передати тільки у масив `providersPerReq`, бо тільки з цього масиву формується інжектор, до якого Ditsmod буде автоматично додавати провайдер з об'єктом HTTP-запиту. З іншого боку, інстанс цього класу матиме доступ до усіх своїх батьківських інжекторів: на рівні роуту, модуля, та застосунку. Тому клас, що передається в масив `providersPerReq` може залежати від провайдерів на будь-якому рівні.
-
-Також ви можете написати певний клас і передати його в масив `providersPerMod`, в такому разі він може залежати тільки від провайдерів на рівні модуля, або на рівні застосунку:
-
-```ts {11,17}
+```ts {13,16,23}
 import { injectable, Injector, Provider } from '@ditsmod/core';
 
-class Service1 {}
-
-@injectable()
-class Service2 {
-  constructor(public service1: Service1) {}
+class Config {
+  one: any;
+  two: any;
 }
 
-const providersPerApp: Provider[] = [Service1];
-const providersPerMod: Provider[] = [Service2];
+@injectable()
+class Service {
+  constructor(public config: Config) {}
+}
+
+const providersPerApp: Provider[] = [Service];
+const providersPerMod: Provider[] = [];
 const providersPerRou: Provider[] = [];
-const providersPerReq: Provider[] = [];
+const providersPerReq: Provider[] = [Config];
 
-const injectorPerApp = Injector.resolveAndCreate(providersPerApp);
-const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
-injectorPerMod.get(Service2); // Instance of Service2
+const injectorPerApp = Injector.resolveAndCreate(providersPerApp, 'App');
+const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod, 'Mod');
+const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou, 'Rou');
+const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq, 'Req');
+
+injectorPerReq.get(Service);
+// Error: No provider for [Config in App]!
+// Resolution path: [Service in Req >> Rou >> Mod >> App] -> [Config in App]
 ```
 
-В даному разі `Service2` залежить від `Service1`, який передано на рівні застосунку. Тому, коли в інжектора на рівні модуля запитується `Service2`, інстанс цього класу буде створено після того, як із  батьківського інжектора на рівні застосунку буде взято інстанс `Service1`.
+Як бачите, тут інжекторам надаються скорочені назви рівнів ієрархії:
 
-Якщо `Service2` буде залежати від провайдерів, які ви передали в масив `providersPerRou` чи `providersPerReq`, ви отримаєте помилку про те, що ці провайдери не знайдені:
+1. `App` - рівень застосунку;
+2. `Mod` - рівень модуля;
+1. `Rou` - рівень роуту;
+1. `Req` - рівень запиту.
 
-```ts {11,19,23}
-import { injectable, Injector, Provider } from '@ditsmod/core';
+Помилку викликав вираз `injectorPerReq.get(Service)`, і як каже нам `Resolution path` у цій помилці, `Service` шукався на усіх рівнях ієрархії інжекторів - починаючи від `Req`, і закінчуючи `App`. Потім пошук переключився на `Config`, який шукався лише на рівні `App`.
 
-class Service1 {}
+Якщо `Service` передавати на рівні модуля:
 
-@injectable()
-class Service2 {
-constructor(public service1: Service1) {}
-}
-
+```ts {2}
 const providersPerApp: Provider[] = [];
-const providersPerMod: Provider[] = [Service2];
-const providersPerRou: Provider[] = [Service1];
-const providersPerReq: Provider[] = [];
-
-const injectorPerApp = Injector.resolveAndCreate(providersPerApp);
-const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
-const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
-
-injectorPerMod.get(Service2);
-// Error: No provider for [Service1 in injector2 >> injector1]!
-// Resolution path: [Service2 in injector2] -> [Service1 in injector2 >> injector1]
-
-injectorPerRou.get(Service2);
-// Error: No provider for [Service1 in injector2 >> injector1]!
-// Resolution path: [Service2 in injector3 >> injector2] -> [Service1 in injector2 >> injector1]
+const providersPerMod: Provider[] = [Service];
+const providersPerRou: Provider[] = [];
+const providersPerReq: Provider[] = [Config];
 ```
 
-В даному разі, інжектор на рівні модуля не може створити інстансу `Service2`, оскільки він залежить від класу `Service1`, який було передано до інжектора на рівні роуту. Тому батьківський інжектор `injectorPerMod` не може звернутись до дочірнього `injectorPerRou` за інстансом `Service1`.
-
-Зверніть увагу на повідомлення помилок. Якщо інжектори мають більше, ніж один рівень ієрархії, такі повідомлення містять інформацію про токен, а також про інжектори, в яких вони шукались. В даному прикладі, у першій помилці вказано, що не знайдено провайдера з токеном `Service1` в `injector2 >> injector1`. Тобто, `Service1` спочатку шукався в `injector2`, а потім в `injector1`. Окрім цього, помилка ще й містить `Resolution path`:
+В такому разі повідомлення помилки буде таким:
 
 ```ts
-injectorPerMod.get(Service2);
-// Error: No provider for [Service1 in injector2 >> injector1]!
-// Resolution path: [Service2 in injector2] -> [Service1 in injector2 >> injector1]
+injectorPerReq.get(Service);
+// Error: No provider for [Config in Mod >> App]!
+// Resolution path: [Service in Req >> Rou >> Mod] -> [Config in Mod >> App]
 ```
 
-Нумеруються інжектори від батьківського до дочірнього інжектора. В даному повідомленні помилки зрозуміло, що бере участь два рівня інжекторів, тобто `injectorPerApp` - це `injector1`, а `injectorPerMod` - це `injector2`. Але чи можна явно вказувати рівні інжекторів? - Так, можна. Більше того, це навіть рекомендується робити завжди:
+Як каже нам `Resolution path` у цій помилці, `Service` шукався на трьох рівнях ієрархії інжекторів - починаючи від `Req`, і закінчуючи `Mod`. Але чому пошук не продовжився на рівні `App`? - Тому що під час створення інжекторів, `Service` було передано саме на рівень `Mod`. І якщо б на цьому рівні були усі необхідні провайдери, саме на цьому рівні створювався б інстанс `Service`. Потім пошук переключився на `Config`, від якого залежить `Service`, і стартував цей пошук з того самого рівня, на якому було знайдено `Service`. Завершився пошук `Config` на рівні `App`, інжектор якого і кинув помилку про те, що не може знайти провайдера для `Config`.
 
-```ts {15-17}
-import { injectable, Injector, Provider } from '@ditsmod/core';
+Аналізуючи `Resolution path`, черговий раз підтвердилось, що пошук провайдерів завжди відбувається від нижніх до вищіх рівнів ієрархії інжекторів, і ніколи навпаки.
 
-class Service1 {}
+Мабуть ви здогадуєтесь, що буде, коли `Service` передавати на рівні роуту:
 
-@injectable()
-class Service2 {
-constructor(public service1: Service1) {}
-}
-
+```ts {3}
 const providersPerApp: Provider[] = [];
-const providersPerMod: Provider[] = [Service2];
-const providersPerRou: Provider[] = [Service1];
-const providersPerReq: Provider[] = [];
-
-const injectorPerApp = Injector.resolveAndCreate(providersPerApp, 'injectorPerApp');
-const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod, 'injectorPerMod');
-const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou, 'injectorPerRou');
-
-injectorPerMod.get(Service2);
-// Error: No provider for [Service1 in injectorPerMod >> injectorPerApp]!
-// Resolution path: [Service2 in injectorPerMod] -> [Service1 in injectorPerMod >> injectorPerApp]
-
-injectorPerRou.get(Service2);
-// Error: No provider for [Service1 in injectorPerMod >> injectorPerApp]!
-// Resolution path: [Service2 in injectorPerRou >> injectorPerMod] -> [Service1 in injectorPerMod >> injectorPerApp]
+const providersPerMod: Provider[] = [];
+const providersPerRou: Provider[] = [Service];
+const providersPerReq: Provider[] = [Config];
 ```
 
-Як бачите, під час створення кожного інжектора, йому передаються назви інжекторів з указанням рівня в ієрархії. Давайте розбиремо наступний вираз, і повідомлення помилки, яке він кидає:
+Так, даний вираз все ще кидає помилку:
 
 ```ts
-injectorPerRou.get(Service2);
-// Error: No provider for [Service1 in injectorPerMod >> injectorPerApp]!
-// Resolution path: [Service2 in injectorPerRou >> injectorPerMod] -> [Service1 in injectorPerMod >> injectorPerApp]
+injectorPerReq.get(Service);
+// Error: No provider for [Config in Rou >> Mod >> App]!
+// Resolution path: [Service in Req >> Rou] -> [Config in Rou >> Mod >> App]
 ```
 
-Як вказано в `Resolution path`, в першому блоці з квадратними дужками, пошук `Service2` починається з `injectorPerRou`, потім продовжується в `injectorPerMod`. Перехід від пошуку в одному інжекторі до іншого умовно позначено символами ` >> `. Далі стрілочка ` -> ` умовно показує, що `Service2` залежить від `Service1`, тому пошук продовжується в `injectorPerMod`, а також в `injectorPerApp`. В результаті, як говорить нам помилка, немає провайдера для `[Service1 in injectorPerMod >> injectorPerApp]`.
+Як каже нам `Resolution path` у цій помилці, `Service` шукався на двох рівнях ієрархії інжекторів - на `Req` та `Rou` рівні. А провайдери для `Config` шукались вже на трьох верхніх рівнях - від `Rou` до `App`.
+
+І нарешті, коли `Service` передавати на тому самому рівні, що і `Config`, то вже такий вираз не кидатиме помилок:
+
+```ts
+const providersPerApp: Provider[] = [];
+const providersPerMod: Provider[] = [];
+const providersPerRou: Provider[] = [];
+const providersPerReq: Provider[] = [Service, Config];
+```
+
+Також не буде помилок, коли `Config` передавати на вищому рівні, ніж той, на який передали `Service`. Вираз `injectorPerReq.get(Service)` нарешті починає працювати, оскільки `Service` зразу знаходиться, а `Config` знаходиться на тому самому рівні, або вище.
+
+Під час передачі провайдерів для створення інжекторів, потрібно завжди пам'ятати, що **усі провайдери, від яких залежить певний сервіс, повинні бути або на тому самому рівні, що і даний сервіс, або на вищіх рівнях, оскільки пошук відповідних провайдерів буде відбуватись завжди від рівня даного сервісу і вище**. Іншими словами, провайдери, від яких залежить певний сервіс, ніколи не будуть шукатись на нижчих рівнях, відносно того рівня, куди передано даний сервіс.
 
 ### Поточний інжектор {#current-injector}
 

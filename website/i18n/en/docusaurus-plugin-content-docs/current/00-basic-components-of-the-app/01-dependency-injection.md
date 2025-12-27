@@ -357,7 +357,7 @@ And neither injector can return an instance of `Service4`, because this class wa
 
 The dependency chain of providers can be quite complex, and the injector hierarchy adds even more complexity. Let’s start with a simple case and then make it more complex. In the following example, `Service` depends on `Config`, and both providers are passed to the same injector:
 
-```ts {14-15,19}
+```ts {14-15,18}
 import { injectable, Injector } from '@ditsmod/core';
 
 class Config {
@@ -375,12 +375,10 @@ const parent = Injector.resolveAndCreate([
   { token: Config, useValue: { one: 1, two: 2 } }
 ]);
 
-const child = parent.resolveAndCreateChild([
-  // Empty array
-]);
+const child = parent.resolveAndCreateChild([]);
 
-parent.get(Service).config; // returns { one: 1, two: 2 }
-child.get(Service).config; // returns { one: 1, two: 2 } from parent injector
+parent.get(Service); // Instance of Service
+child.get(Service); // Instance of Service
 ```
 
 As you can see, in this example both the parent and child injectors are created, and both `Service` and its dependency `Config` are provided only to the parent injector. In this case, when the parent injector is asked for the value of the provider with the `Service` token, it will operate according to the following logic:
@@ -396,9 +394,41 @@ When the child injector is created with an empty provider array, it will always 
 1. First, the child injector scans its provider array and finds no instructions.
 2. Then the child injector forwards the request to the parent injector and receives the already-created `Service` instance.
 
-So far, everything is simple. Now let’s complicate the example by passing different values for the `Config` token to the parent and child injectors:
+In the case where we pass `Service` to one injector and `Config` to another, it becomes important to take into account the dependency between them. Therefore, such a setup will work only when `Config` is passed to the parent injector and `Service` to the child injector. Moreover, `Service` can be requested only from the child injector:
 
-```ts {14-15,19}
+```ts {14,18}
+import { injectable, Injector } from '@ditsmod/core';
+
+class Config {
+  one: any;
+  two: any;
+}
+
+@injectable()
+class Service {
+  constructor(public config: Config) {}
+}
+
+const parent = Injector.resolveAndCreate([
+  { token: Config, useValue: { one: 1, two: 2 } }
+]);
+
+const child = parent.resolveAndCreateChild([
+  Service,
+]);
+
+child.get(Config); // { one: 1, two: 2 }
+child.get(Service); // instance of Service
+
+parent.get(Config); // { one: 1, two: 2 }
+parent.get(Service); // Error: No provider for Service!
+```
+
+As you can see, the child injector can create an instance of `Service`, even though it requests `Config` from the parent injector. In contrast, the parent injector can provide only the value for `Config`, while the `Service` provider is unavailable to it, because the parent injector does not see the child injector where this provider exists.
+
+Now let’s provide `Service` to the parent injector and `Config` to the child one. Keeping in mind that parent injectors never look into child injectors, can you guess what problems may arise with `Service`?
+
+```ts {14,18}
 import { injectable, Injector } from '@ditsmod/core';
 
 class Config {
@@ -413,36 +443,118 @@ class Service {
 
 const parent = Injector.resolveAndCreate([
   Service,
-  { token: Config, useValue: { one: 1, two: 2 } }
 ]);
 
 const child = parent.resolveAndCreateChild([
   { token: Config, useValue: { one: 11, two: 22 } }
 ]);
-```
 
-When examining this example, remember that the parent injector cannot see its child injectors, so any change in the child injector does not affect the parent injector. In other words, for the parent injector, nothing changes here, because it receives exactly the same providers as in the previous example.
-
-But what about the child injector? Now it has its own version of the provider with the `Config` token, which differs from the parent’s version. So how will the child injector behave when the following is requested?
-
-```ts
-child.get(Service).config;
-```
-
-It’s useful to think about this first on your own to better reinforce this behavior. Thought about it? Okay, the logic of this injector will be as follows:
-
-1. first it will look through its providers array and will not find a provider with the token `Service`;
-2. then it will contact the parent injector and receive a ready-made `Service` instance from it. Therefore, this expression will return `{ one: 1, two: 2 }`.
-
-A bit unexpected, isn't it? Many would probably assume that the child injector would use its local version of `Config` (that is, `{ one: 11, two: 22 }`) when creating the `Service` instance. But note that in the expression `child.get(Service).config`, the child injector is being asked specifically for `Service`, and this token was not provided in its list of providers. Therefore, it must delegate the request to the parent injector. And because the parent injector resolves the dependencies of `Service` within its own context, it uses its own local version of `Config`, which has the value `{ one: 1, two: 2 }`.
-
-However, when we request `Config` from the child injector instead of `Service`, it returns its own local value as expected:
-
-```ts
 child.get(Config); // { one: 11, two: 22 }
+
+child.get(Service);
+// Error: No provider for [Config in injector1]!
+// Resolution path: [Service in injector2 >> injector1] -> [Config in injector1]
+
+parent.get(Service);
+// Error: No provider for Config!
+// Resolution path: Service -> Config
 ```
 
-You can probably guess what needs to be done so that when `Service` is requested from the child injector, the DI resolves its dependency using the child injector’s local provider for the `Config` token. — Exactly: when creating the child injector, we can include `Service` in its provider array as well.
+As you can see, when the `Config` token is requested from the child injector, it returns the corresponding value, because during its creation it was provided with a provider for this token.
+
+The situation is different with `Service`, which depends on `Config`. Despite the fact that the child injector was given a provider with the `Config` token, this injector still cannot create an instance of `Service`, so it is forced to delegate the request to the parent injector. At the same time, although the parent injector has a provider with the `Service` token, it does not have access to the child injector where `Config` exists. Therefore, when calling `child.get(Service)`, the error is actually thrown by the parent injector.
+
+Pay attention to the `Resolution path` in the error message:
+
+```ts
+child.get(Service);
+// Error: No provider for [Config in injector1]!
+// Resolution path: [Service in injector2 >> injector1] -> [Config in injector1]
+```
+
+The `Resolution path` starts with searching for `Service` in `injector2` and then continues in `injector1`. Since this error was caused by the expression `child.get(Service)`, one can infer that `injector2` is the automatic name assigned by Ditsmod to the child injector. Accordingly, `injector1` is the parent injector. Remember that the highest injector in the hierarchy will always have the automatic name `injector1`, and the lower an injector is in the hierarchy, the larger the number at the end of its name `injectorN` will be.
+
+But is it possible to explicitly specify injector names (or hierarchy levels)? Yes, it is possible by passing a second argument when creating an injector. Moreover, it is even recommended to always do this:
+
+```ts {15,20}
+import { injectable, Injector } from '@ditsmod/core';
+
+class Config {
+  one: any;
+  two: any;
+}
+
+@injectable()
+class Service {
+  constructor(public config: Config) {}
+}
+
+const parent = Injector.resolveAndCreate(
+  [Service],
+  'parentInjector'
+);
+
+const child = parent.resolveAndCreateChild(
+  [{ token: Config, useValue: { one: 11, two: 22 } }],
+  'childInjector'
+);
+
+child.get(Service);
+// Error: No provider for [Config in parentInjector]!
+// Resolution path: [Service in childInjector >> parentInjector] -> [Config in parentInjector]
+```
+
+In this case, the `Resolution path` becomes more clear:
+
+1. first, `Service` is searched for in `childInjector`, then in `parentInjector`;
+2. and since `Service` is found in `parentInjector`, its dependency — `Config` — will also be searched for in `parentInjector`.
+
+By analyzing the error message, one can infer that the problem can be solved in two ways:
+
+1. either add `Service` to `childInjector` so that it does not elevate to `parentInjector`;
+2. or add `Config` to `parentInjector` so that it can resolve the dependency for `Service`.
+
+Let us use the second option:
+
+```ts {16}
+import { injectable, Injector } from '@ditsmod/core';
+
+class Config {
+  one: any;
+  two: any;
+}
+
+@injectable()
+class Service {
+  constructor(public config: Config) {}
+}
+
+const parent = Injector.resolveAndCreate(
+  [
+    Service,
+    { token: Config, useValue: { one: 1, two: 2 } }
+  ],
+  'parentInjector'
+);
+
+const child = parent.resolveAndCreateChild(
+  [{ token: Config, useValue: { one: 11, two: 22 } }],
+  'childInjector'
+);
+```
+
+Here, the parent injector has both required providers to create an instance of `Service`. But what about the child injector? Which version of `Config` will be used to create the instance of `Service` in the following expression?
+
+```ts
+child.get(Service);
+```
+
+It is useful to think about this on your own first, to better solidify this behavior in memory. Thought about it? OK, the logic in the child injector will be as follows:
+
+1. first, it will scan its own providers array and will not find a provider with the `Service` token;
+2. then it will delegate to the parent injector and receive from it an already created instance of `Service`, in which `Config` will have the value `{ one: 1, two: 2 }`.
+
+A bit unexpected, right? Some might have thought that the child injector would use the local version of `Config` (that is, `{ one: 11, two: 22 }`) to create the instance of `Service`. Can you guess what can be done so that when requesting `Service` from the child injector, DI resolves its dependency using the local version of the provider with the `Config` token? Yes, when creating the child injector, we can also pass `Service` to it in the providers array:
 
 ```ts {19}
 import { injectable, Injector } from '@ditsmod/core';
@@ -554,115 +666,97 @@ const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
 const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
 ```
 
-Under the hood, Ditsmod performs a similar procedure many times for different modules, routes, and requests. For example, if a Ditsmod application has two modules and ten REST routes, there will be one injector at the application level, one injector for each module (2 total), one injector for each route (10 total), and one injector for each request. Injectors at the request level are removed automatically after each request is processed.
+Under the hood, Ditsmod performs a similar procedure many times for different modules, routes, and HTTP requests. Using this example, let’s practice to better understand the injector hierarchy, and once again use the familiar `Service` class, which depends on `Config`:
 
-Recall that higher-level injectors in the hierarchy have no access to lower-level injectors. This means that **when passing a class to a specific injector, it’s necessary to know the lowest level in the hierarchy of its dependencies**.
-
-For example, if you write a class that depends on the HTTP request, you will be able to pass it only to the `providersPerReq` array, because only from this array Ditsmod forms the injector to which Ditsmod will automatically add a provider with the HTTP-request object. On the other hand, an instance of this class will have access to all its parent injectors: at the route level, module level, and application level. Therefore, the class passed to the `providersPerReq` array can depend on providers at any level.
-
-You can also write a class and pass it into the `providersPerMod` array; in that case it can depend only on providers at the module level or at the application level:
-
-```ts {11,17}
+```ts {13,16,23}
 import { injectable, Injector, Provider } from '@ditsmod/core';
 
-class Service1 {}
-
-@injectable()
-class Service2 {
-  constructor(public service1: Service1) {}
+class Config {
+  one: any;
+  two: any;
 }
 
-const providersPerApp: Provider[] = [Service1];
-const providersPerMod: Provider[] = [Service2];
+@injectable()
+class Service {
+  constructor(public config: Config) {}
+}
+
+const providersPerApp: Provider[] = [Service];
+const providersPerMod: Provider[] = [];
 const providersPerRou: Provider[] = [];
-const providersPerReq: Provider[] = [];
+const providersPerReq: Provider[] = [Config];
 
-const injectorPerApp = Injector.resolveAndCreate(providersPerApp);
-const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
-injectorPerMod.get(Service2); // Instance of Service2
+const injectorPerApp = Injector.resolveAndCreate(providersPerApp, 'App');
+const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod, 'Mod');
+const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou, 'Rou');
+const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq, 'Req');
+
+injectorPerReq.get(Service);
+// Error: No provider for [Config in App]!
+// Resolution path: [Service in Req >> Rou >> Mod >> App] -> [Config in App]
 ```
 
-In this case, `Service2` depends on `Service1`, which is passed in at the application level. Therefore, when `Service2` is requested from the module-level injector, an instance of this class will be created after `Service1` is retrieved from the parent application-level injector.
+As you can see, the injectors here are given abbreviated names for the hierarchy levels:
 
-If `Service2` depends on providers that you passed in the `providersPerRou` or `providersPerReq` arrays, you will get an error indicating that these providers were not found:
+1. `App` - application level;
+2. `Mod` - module level;
+3. `Rou` - route level;
+4. `Req` - request level.
 
-```ts {11,19,23}
-import { injectable, Injector, Provider } from '@ditsmod/core';
+The error was caused by the expression `injectorPerReq.get(Service)`, and as the `Resolution path` in this error tells us, `Service` was searched for at all levels of the injector hierarchy—from `Req` up to `App`. Then the search switched to `Config`, which was searched only at the `App` level.
 
-class Service1 {}
+If `Service` is provided at the module level:
 
-@injectable()
-class Service2 {
-constructor(public service1: Service1) {}
-}
-
+```ts {2}
 const providersPerApp: Provider[] = [];
-const providersPerMod: Provider[] = [Service2];
-const providersPerRou: Provider[] = [Service1];
-const providersPerReq: Provider[] = [];
-
-const injectorPerApp = Injector.resolveAndCreate(providersPerApp);
-const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
-const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
-
-injectorPerMod.get(Service2);
-// Error: No provider for [Service1 in injector2 >> injector1]!
-// Resolution path: [Service2 in injector2] -> [Service1 in injector2 >> injector1]
-
-injectorPerRou.get(Service2);
-// Error: No provider for [Service1 in injector2 >> injector1]!
-// Resolution path: [Service2 in injector3 >> injector2] -> [Service1 in injector2 >> injector1]
+const providersPerMod: Provider[] = [Service];
+const providersPerRou: Provider[] = [];
+const providersPerReq: Provider[] = [Config];
 ```
 
-In this case, the injector at the module level cannot create an instance of `Service2` because it depends on the `Service1` class, which was provided to the injector at the route level. Therefore, the parent `injectorPerMod` cannot request an instance of `Service1` from the child `injectorPerRou`.
-
-Pay attention to the error messages. If injectors have more than one level of hierarchy, such messages contain information about the token as well as the injectors in which it was searched. In this example, the first error indicates that a provider with the `Service1` token was not found in `injector2 >> injector1`. That is, `Service1` was first searched for in `injector2`, and then in `injector1`. In addition, the error also contains a `Resolution path`:
+In this case, the error message will look like this:
 
 ```ts
-injectorPerMod.get(Service2);
-// Error: No provider for [Service1 in injector2 >> injector1]!
-// Resolution path: [Service2 in injector2] -> [Service1 in injector2 >> injector1]
+injectorPerReq.get(Service);
+// Error: No provider for [Config in Mod >> App]!
+// Resolution path: [Service in Req >> Rou >> Mod] -> [Config in Mod >> App]
 ```
 
-Injectors are numbered from the parent to the child injector. In this error message, it is clear that two levels of injectors are involved, that is, `injectorPerApp` is `injector1`, and `injectorPerMod` is `injector2`. But is it possible to explicitly specify injector levels? Yes, it is. Moreover, it is even recommended to always do so:
+As the `Resolution path` in this error tells us, `Service` was searched for at three levels of the injector hierarchy—from `Req` up to `Mod`. But why didn’t the search continue to the `App` level? Because when the injectors were created, `Service` was provided specifically at the `Mod` level. And if all required providers had been present at this level, the `Service` instance would have been created right there. Then the search switched to `Config`, on which `Service` depends, and this search started from the same level where `Service` was found. The search for `Config` ended at the `App` level, whose injector threw the error stating that it could not find a provider for `Config`.
 
-```ts {15-17}
-import { injectable, Injector, Provider } from '@ditsmod/core';
+By analyzing the `Resolution path`, it is once again confirmed that provider lookup always proceeds from lower to higher levels of the injector hierarchy, and never the other way around.
 
-class Service1 {}
+You can probably guess what will happen when `Service` is provided at the route level:
 
-@injectable()
-class Service2 {
-constructor(public service1: Service1) {}
-}
-
+```ts {3}
 const providersPerApp: Provider[] = [];
-const providersPerMod: Provider[] = [Service2];
-const providersPerRou: Provider[] = [Service1];
-const providersPerReq: Provider[] = [];
-
-const injectorPerApp = Injector.resolveAndCreate(providersPerApp, 'injectorPerApp');
-const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod, 'injectorPerMod');
-const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou, 'injectorPerRou');
-
-injectorPerMod.get(Service2);
-// Error: No provider for [Service1 in injectorPerMod >> injectorPerApp]!
-// Resolution path: [Service2 in injectorPerMod] -> [Service1 in injectorPerMod >> injectorPerApp]
-
-injectorPerRou.get(Service2);
-// Error: No provider for [Service1 in injectorPerMod >> injectorPerApp]!
-// Resolution path: [Service2 in injectorPerRou >> injectorPerMod] -> [Service1 in injectorPerMod >> injectorPerApp]
+const providersPerMod: Provider[] = [];
+const providersPerRou: Provider[] = [Service];
+const providersPerReq: Provider[] = [Config];
 ```
 
-As you can see, when creating each injector, injector names are passed with an indication of their level in the hierarchy. Let’s analyze the following expression and the error message it throws:
+Yes, this expression still throws an error:
 
 ```ts
-injectorPerRou.get(Service2);
-// Error: No provider for [Service1 in injectorPerMod >> injectorPerApp]!
-// Resolution path: [Service2 in injectorPerRou >> injectorPerMod] -> [Service1 in injectorPerMod >> injectorPerApp]
+injectorPerReq.get(Service);
+// Error: No provider for [Config in Rou >> Mod >> App]!
+// Resolution path: [Service in Req >> Rou] -> [Config in Rou >> Mod >> App]
 ```
 
-As indicated in the `Resolution path`, in the first block with square brackets, the search for `Service2` starts in `injectorPerRou`, then continues in `injectorPerMod`. The transition from searching in one injector to another is conventionally denoted by the `>>` symbols. Next, the arrow `->` conventionally shows that `Service2` depends on `Service1`, so the search continues in `injectorPerMod` as well as in `injectorPerApp`. As a result, as the error tells us, there is no provider for `[Service1 in injectorPerMod >> injectorPerApp]`.
+As the `Resolution path` in this error tells us, `Service` was searched for at two levels of the injector hierarchy — `Req` and `Rou`. And the providers for `Config` were searched for at the three upper levels — from `Rou` to `App`.
+
+Finally, when `Service` is provided at the same level as `Config`, this expression will no longer throw errors:
+
+```ts
+const providersPerApp: Provider[] = [];
+const providersPerMod: Provider[] = [];
+const providersPerRou: Provider[] = [];
+const providersPerReq: Provider[] = [Service, Config];
+```
+
+There will also be no errors when `Config` is provided at a higher level than the one where `Service` is provided. The expression `injectorPerReq.get(Service)` finally starts working, because `Service` is found immediately, and `Config` is found at the same level or higher.
+
+When providing providers for creating injectors, you should always remember that **all providers on which a given service depends must be either at the same level as that service or at higher levels, since the search for the corresponding providers will always proceed from the level of that service upward**. In other words, providers on which a given service depends will never be searched for at lower levels relative to the level at which that service is provided.
 
 ### Current injector {#current-injector}
 
@@ -745,10 +839,10 @@ const parent = Injector.resolveAndCreate([
 ]);
 
 const child = parent.resolveAndCreateChild([
-  { token: LOCAL, useValue: 'аа', multi: true }
+  { token: LOCAL, useValue: 'aa', multi: true }
 ]);
 
-const locals = child.get(LOCAL); // ['аа']
+const locals = child.get(LOCAL); // ['aa']
 ```
 
 ### Multi-provider substitution {#multi-provider-substitution}
