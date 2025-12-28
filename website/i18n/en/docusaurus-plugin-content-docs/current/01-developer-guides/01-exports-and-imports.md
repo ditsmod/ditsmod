@@ -106,6 +106,14 @@ interface ModuleWithParams {
    */
   providersPerMod?: Providers | Provider[] = [];
   /**
+   * Providers per a route.
+   */
+  providersPerRou?: Providers | Provider[] = [];
+  /**
+   * Providers per a request.
+   */
+  providersPerReq?: Providers | Provider[] = [];
+  /**
    * List of modules, `ModuleWithParams` or tokens of providers exported by this
    * module.
    */
