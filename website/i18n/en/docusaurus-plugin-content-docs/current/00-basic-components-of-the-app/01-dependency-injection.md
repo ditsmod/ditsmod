@@ -756,7 +756,7 @@ const providersPerReq: Provider[] = [Service, Config];
 
 There will also be no errors when `Config` is provided at a higher level than the one where `Service` is provided. The expression `injectorPerReq.get(Service)` finally starts working, because `Service` is found immediately, and `Config` is found at the same level or higher.
 
-When providing providers for creating injectors, you should always remember that **all providers on which a given service depends must be either at the same level as that service or at higher levels, since the search for the corresponding providers will always proceed from the level of that service upward**. In other words, providers on which a given service depends will never be searched for at lower levels relative to the level at which that service is provided.
+When registering providers for creating injectors, you should always remember that **all providers on which a given service depends must be either at the same level as that service or at higher levels, since the search for the corresponding providers will always proceed from the level of that service upward**. In other words, providers on which a given service depends will never be searched for at lower levels relative to the level at which that service is provided.
 
 ### Current injector {#current-injector}
 
@@ -933,7 +933,7 @@ export class SecondService {
 }
 ```
 
-But DI will ignore this optionality and will throw an error if it cannot create `FirstService`. For this code to work you need to use the `optional` decorator:
+However, since DI works in JavaScript code rather than in TypeScript, it will ignore this optionality and will throw an error if there is no provider with the `FirstService` token. For this code to work you need to use the `optional` decorator:
 
 ```ts {6}
 import { injectable, optional } from '@ditsmod/core';
@@ -945,6 +945,8 @@ export class SecondService {
   // ...
 }
 ```
+
+Since JavaScript has no notion of an “optional property”, this can only be indicated by using decorators.
 
 ### fromSelf {#fromSelf}
 
@@ -966,7 +968,9 @@ const child = parent.resolveAndCreateChild([Service2]);
 const service2 = parent.get(Service2) as Service2;
 service2.service1 instanceof Service1; // true
 
-child.get(Service2); // Error - Service1 not found
+child.get(Service2);
+// Error: No provider for Service1!
+// Resolution path: Service2 -> Service1
 ```
 
 As you can see, `Service2` depends on `Service1`, and the `fromSelf` decorator tells DI: "When creating an instance of `Service1`, use only the same injector that creates the instance of `Service2`, and do not refer to the parent injector". When the parent injector is created, it is given both required services, so when requesting the token `Service2` it will successfully resolve the dependency and return an instance of that class.
@@ -990,23 +994,17 @@ class Service2 {
 const parent = Injector.resolveAndCreate([Service1, Service2]);
 const child = parent.resolveAndCreateChild([Service2]);
 
-parent.get(Service2); // Error - Service1 not found
-
 const service2 = child.get(Service2) as Service2;
 service2.service1 instanceof Service1; // true
+
+parent.get(Service2);
+// Error: No provider for Service1!
+// Resolution path: Service2 -> Service1
 ```
 
 As you can see, `Service2` depends on `Service1`, and the `skipSelf` decorator tells DI: "When creating an instance of `Service1`, skip the injector that will create the instance of `Service2` and immediately refer to the parent injector". When the parent injector is created, it is given both necessary services, but due to `skipSelf` it cannot use the value for `Service1` from its own registry, therefore it will not be able to resolve the specified dependency.
 
 When creating the child injector, it was not passed `Service1`, but it can refer to the parent injector for it. Therefore the child injector successfully resolves the dependency for `Service2`.
-
-## When DI can't find the right provider {#when-di-cant-find-the-right-provider}
-
-Remember that when DI cannot find the required provider, there are only three possible reasons:
-
-1. you did not pass the required provider to DI in module or controller metadata (or, in testing, to `Injector.resolveAndCreate()`);
-2. you did not import the module that provides the required provider, or that provider is not exported;
-3. you are requesting a provider from the parent injector that exists only in a child injector.
 
 [1]: https://en.wikipedia.org/wiki/Dependency_injection
 [11]: https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types

@@ -933,7 +933,7 @@ export class SecondService {
 }
 ```
 
-Але DI проігнорує цю опціональність і видасть помилку у разі відсутності можливості для створення `FirstService`. Щоб даний код працював, необхідно скористатись декоратором `optional`:
+Але оскільки DI працює у JavaScript-коді, а не у TypeScript, він проігнорує цю опціональність і видасть помилку у разі відсутності провайдера з токеном `FirstService`. Щоб даний код працював, необхідно скористатись декоратором `optional`:
 
 ```ts {6}
 import { injectable, optional } from '@ditsmod/core';
@@ -945,6 +945,8 @@ export class SecondService {
   // ...
 }
 ```
+
+Оскільки в JavaScript немає позначки "опціональна властивість", лише завдяки декораторам можна це вказати.
 
 ### fromSelf {#fromSelf}
 
@@ -966,7 +968,9 @@ const child = parent.resolveAndCreateChild([Service2]);
 const service2 = parent.get(Service2) as Service2;
 service2.service1 instanceof Service1; // true
 
-child.get(Service2); // Error - Service1 not found
+child.get(Service2);
+// Error: No provider for Service1!
+// Resolution path: Service2 -> Service1
 ```
 
 Як бачите, `Service2` залежить від `Service1`, причому декоратор `fromSelf` вказує DI: "При створенні інстансу `Service1` використовувати тільки той самий інжектор, який створить інстанс `Service2`, а до батьківського інжектора не потрібно звертатись". Коли створюється батьківський інжектор, йому передають обидва необхідні сервіси, тому при запиті токену `Service2` він успішно вирішить залежність та видасть інстанс цього класу.
@@ -990,23 +994,17 @@ class Service2 {
 const parent = Injector.resolveAndCreate([Service1, Service2]);
 const child = parent.resolveAndCreateChild([Service2]);
 
-parent.get(Service2); // Error - Service1 not found
-
 const service2 = child.get(Service2) as Service2;
 service2.service1 instanceof Service1; // true
+
+parent.get(Service2);
+// Error: No provider for Service1!
+// Resolution path: Service2 -> Service1
 ```
 
 Як бачите, `Service2` залежить від `Service1`, причому декоратор `skipSelf` вказує DI: "При створенні інстансу `Service1` пропустити той інжектор, який створить інстанс `Service2`, і зразу звертатись до батьківського інжектора". Коли створюється батьківський інжектор, йому передають обидва необхідні сервіси, але через `skipSelf` він не може використати значення для `Service1` з власного реєстру, тому він не зможе вирішити вказану залежність.
 
 А при створенні дочірнього інжектора, йому не передали `Service1`, зате він може звернутись до батьківського інжектора за ним. Тому дочірній інжектор успішно вирішить залежність `Service2`.
-
-## Коли DI не може знайти потрібного провайдера {#when-di-cant-find-the-right-provider}
-
-Пам'ятайте, що коли DI не може знайти потрібного провайдера, існує всього три можливі причини:
-
-1. ви не передали потрібний провайдер до DI в метадані модуля чи контролера (ну або у випадку тестування - у `Injector.resolveAndCreate()`);
-2. ви не імпортували модуль, де передається потрібний вам провайдер, або ж цей провайдер не експортується;
-3. ви запитуєте у батьківському інжекторі провайдер з дочірнього інжектора.
 
 [1]: https://uk.wikipedia.org/wiki/%D0%92%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F_%D0%B7%D0%B0%D0%BB%D0%B5%D0%B6%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9
 [11]: https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types
