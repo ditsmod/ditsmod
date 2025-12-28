@@ -621,6 +621,9 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
     return this.getOrThrow(injector, dualKey, pathTracer, defaultValue, visibility, ctx);
   }
 
+  /**
+   * @param injector This parameter can only be `null` if the `skipSelf` decorator is used.
+   */
   protected getOrThrow(
     injector: Injector | null,
     dualKey: DualKey,

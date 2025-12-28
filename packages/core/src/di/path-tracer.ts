@@ -4,6 +4,9 @@ import { type Injector } from './injector.js';
 
 export interface PathItem {
   token: any;
+  /**
+   * This property can only be `null` if the `skipSelf` decorator is used.
+   */
   injector: Injector | null | undefined;
 }
 export interface InjectorItems {
@@ -65,7 +68,7 @@ export class PathTracer {
     let prevToken: any;
     let injectorNumber = 0;
     this.items.forEach((item) => {
-      if (prevInjector !== item.injector) {
+      if (item.injector && prevInjector !== item.injector) {
         injectorNumber++;
         prevInjector = item.injector;
       }
