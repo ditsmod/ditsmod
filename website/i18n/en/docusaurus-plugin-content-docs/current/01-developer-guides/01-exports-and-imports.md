@@ -91,7 +91,7 @@ Although `path` is an empty string here, for Ditsmod, the presence of `path` mea
 
 As you can see, in the previous example, this time neither the provider nor the module is imported, but the object. This object has the following interface:
 
-<a id="ModuleWithParams"></a>
+### ModuleWithParams {#ModuleWithParams}
 
 ```ts
 interface ModuleWithParams {

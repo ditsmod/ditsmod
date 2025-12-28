@@ -91,7 +91,7 @@ export class SecondModule {}
 
 Як бачите, у попередньому прикладі імпортується на цей раз і не провайдер, і не модуль, а об'єкт. Цей об'єкт має наступний інтерфейс:
 
-<a id="ModuleWithParams"></a>
+### ModuleWithParams {#ModuleWithParams}
 
 ```ts
 interface ModuleWithParams {
