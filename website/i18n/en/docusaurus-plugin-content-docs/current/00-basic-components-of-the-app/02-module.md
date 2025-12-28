@@ -6,7 +6,7 @@ sidebar_position: 2
 
 One of the key elements of the Ditsmod architecture is its modules. But what exactly makes a modular architecture so advantageous? — Modularity allows you to compose various autonomous elements and assemble a scalable application from them. Thanks to the autonomy of modules, large projects are easier to develop, test, deploy, and maintain. Modularity also simplifies the transition to a microservices architecture if, in the future, you decide that your Ditsmod application requires horizontal scaling.
 
-Such architecture allows you to isolate in one module **several code files** that may have different roles, but **common specialization**. A module can be compared to an orchestra, in which there are different instruments, but they all create music together. On the other hand, the need to isolate different modules arises due to the fact that they may have different specializations and because of this - may interfere with each other. Continuing the analogy with people, if you put police and musicians, or brokers and translators in the same office, they will most likely interfere with each other. That is why **narrow specialization** is important for a module.
+A modular architecture makes it possible to isolate **several code files** within a single module that may have different roles but a **shared specialization**. A module can be compared to an orchestra, where there are different instruments, but all of them create a shared piece of music. On the other hand, the need to isolate different modules arises because they may have different specializations and, as a result, may interfere with one another. Continuing the analogy with people, if you place police officers and musicians, or brokers and translators, in the same office, they will most likely interfere with each other. That is why **narrow specialization** is important for a module.
 
 Modules are the largest building blocks of an application, and their metadata can declare components such as:
 - controllers that accept HTTP requests and send HTTP responses;
@@ -22,7 +22,7 @@ There are two types of modules:
 
 ## Root module {#root-module}
 
-Other modules are linked to the root module, which is the only one for the entire application, and its class is recommended to be named `AppModule`. A TypeScript class becomes a Ditsmod root module thanks to one of the decorators such as `rootModule`, `restRootModule`, `trpcRootModule`, etc., depending on the module you are using. For example, if you are using REST, the root module is declared as follows:
+Other modules are attached to the root module; it is the only one for the entire application, and its class is recommended to be named `AppModule`. A TypeScript class becomes a Ditsmod root module by using one of the decorators such as `rootModule`, `restRootModule`, `trpcRootModule`, etc., depending on the architectural style you are using. For example, if you are using REST, the root module is declared as follows:
 
 ```ts
 import { restRootModule } from '@ditsmod/rest';
@@ -57,7 +57,7 @@ export class AppModule {}
 
 ## Feature module {#feature-module}
 
-A TypeScript class becomes a Ditsmod feature module thanks to one of the following decorators: `featureModule`, `restModule`, `trpcModule`, etc., depending on the module you are using. For example, if you are using REST, the root module is declared as follows:
+A TypeScript class becomes a Ditsmod feature module thanks to one of the following decorators: `featureModule`, `restModule`, `trpcModule`, etc., depending on the architectural style you are using. For example, if you are using REST, the root module is declared as follows:
 
 ```ts
 import { restModule } from '@ditsmod/rest';
