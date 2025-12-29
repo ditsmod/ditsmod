@@ -11,8 +11,8 @@
     "message": "Developer guides",
     "description": "The label for category Extensions in sidebar tutorialSidebar"
   },
-  "sidebar.tutorialSidebar.category.Рідні Ditsmod-модулі": {
-    "message": "Native Ditsmod modules",
+  "sidebar.tutorialSidebar.category.Рідні модулі": {
+    "message": "Native modules",
     "description": "The label for category Extensions in sidebar tutorialSidebar"
   },
   "sidebar.tutorialSidebar.category.Приклади застосунків": {

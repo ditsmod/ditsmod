@@ -26,4 +26,4 @@ curl -i localhost:3000
 curl -i localhost:3000/resource/123
 ```
 
-For more info see the [docs](https://ditsmod.github.io/en/native-modules/openapi/).
+For more info see the [docs](https://ditsmod.github.io/en/rest-application/native-modules/openapi/).

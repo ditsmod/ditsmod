@@ -7,11 +7,11 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch example 10",
-      "program": "${workspaceFolder}/examples/10-openapi/dist/main.js",
+      "name": "Launch example 1",
+      "program": "${workspaceFolder}/examples/01-hello-world/dist/tmp.js",
       "request": "launch",
-      "preLaunchTask": "npm: build - examples/10-openapi",
-      "cwd": "${workspaceFolder}/examples/10-openapi",
+      "preLaunchTask": "npm: build - examples/01-hello-world",
+      "cwd": "${workspaceFolder}/examples/01-hello-world",
       "runtimeArgs": [
         "--enable-source-maps",
         "-r",
