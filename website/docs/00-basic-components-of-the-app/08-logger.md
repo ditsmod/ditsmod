@@ -16,7 +16,7 @@ import { rootModule } from '@ditsmod/core';
 export class AppModule {}
 ```
 
-Але кращу підтримку типів має хелпер `Providers`:
+Але кращу підтримку типів має хелпер [Providers][2]:
 
 ```ts {5}
 import { rootModule, Providers } from '@ditsmod/core';
@@ -213,6 +213,7 @@ export class SomeController {
 
 
 [1]: /native-modules/rest/guards#helpers-for-guards-with-parameters
+[2]: /basic-components-of-the-app/providers-helper/
 
 [100]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/logger/logger.ts
 [101]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/logger/console-logger.ts

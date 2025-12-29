@@ -57,7 +57,7 @@ export class AppModule {}
 
 ## Feature module {#feature-module}
 
-A TypeScript class becomes a Ditsmod feature module thanks to one of the following decorators: `featureModule`, `restModule`, `trpcModule`, etc., depending on the architectural style you are using. For example, if you are using REST, the root module is declared as follows:
+A TypeScript class becomes a Ditsmod feature module thanks to one of the following decorators: `featureModule`, `restModule`, `trpcModule`, etc., depending on the architectural style you are using. For example, if you are using REST, the feature module is declared as follows:
 
 ```ts
 import { restModule } from '@ditsmod/rest';

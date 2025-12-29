@@ -57,7 +57,7 @@ export class AppModule {}
 
 ## Модуль фіч {#feature-module}
 
-TypeScript клас стає feature модулем Ditsmod завдяки одному з таких декораторів як `featureModule`, `restModule`, `trpcModule` і т.д., в залежності від архітектурного стилю, який ви використовуєте. Наприклад, якщо ви використовуєте REST, кореневий модуль оголошується наступним чином:
+TypeScript клас стає feature модулем Ditsmod завдяки одному з таких декораторів як `featureModule`, `restModule`, `trpcModule` і т.д., в залежності від архітектурного стилю, який ви використовуєте. Наприклад, якщо ви використовуєте REST, модуль фіч оголошується наступним чином:
 
 ```ts
 import { restModule } from '@ditsmod/rest';
