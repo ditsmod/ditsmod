@@ -16,7 +16,7 @@ For more info, see the documentation:
 
 ## Benchmarks
 
-On the techempower website, you can view [benchmarks for backend frameworks on the JavaScript stack][4] (results load up to 10 seconds). As you can see, according to the composite score, Ditsmod is the fastest framework that works on the basis of Node.js. Above it are only those frameworks that work on other JavaScript runtimes (Bun, Just-JS, uwebsockets).
+On the Techempower website, you can view [benchmarks for backend frameworks on the JavaScript stack][4] (results load up to 10 seconds). As you can see, according to the composite score, Ditsmod is the fastest framework that works on the basis of Node.js. Above it are only those frameworks that work on other JavaScript runtimes (Bun, Just-JS, uwebsockets).
 
 ![](website/static/img/tech-empower-benchmarks.png)
 

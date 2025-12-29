@@ -7,7 +7,7 @@ module.exports = {
   url: 'https://ditsmod.github.io',
   baseUrl: '/',
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+  markdown: { hooks: { onBrokenMarkdownLinks: 'throw' } },
   favicon: 'img/favicon.ico',
   organizationName: 'ditsmod', // Usually your GitHub org/user name.
   projectName: 'ditsmod.github.io', // Usually your repo name.
