@@ -190,38 +190,6 @@ node dist/main.js
 
 Looking at the file `src/main.ts`, you can see that an instance of the class `RestApplication` is created, and as an argument for the method `create()` is passed `AppModule`. Here `AppModule` is the root module to which other application modules then imports.
 
-## Ditsmod on Bun {#ditsmod-on-bun}
-
-Ditsmod can run on [Bun][19]. However, as of version (v1.1.29), [Bun has a bug][20] that causes it to work incorrectly with TypeScript. If you download Ditsmod's starter, install the dependencies, and try to run the application:
-
-```sh
-git clone --depth 1 https://github.com/ditsmod/rest-starter.git my-app
-cd my-app
-bun install
-bun run build
-bun dist/main.js
-```
-
-Bun will throw the following error:
-
-```text
-1 | (function (entry, fetcher)
-    ^
-SyntaxError: export 'ValueProvider' not found in './types-and-models.js'
-```
-
-At the moment, this bug can be worked around by removing the `tsconfig.json` files from all Ditsmod packages:
-
-```sh
-rm node_modules/@ditsmod/*/tsconfig.json
-```
-
-Additionally, if your application has `compilerOptions.paths` configured in `tsconfig.json`, Bun will also malfunction. Simply comment out or remove this section from `tsconfig.json`. Afterward, you need to run the compiled version of the entry file:
-
-```sh
-bun dist/main.js
-```
-
 
 [1]: #installation
 [2]: https://github.com/ditsmod/rest-starter
@@ -236,6 +204,4 @@ bun dist/main.js
 [16]: https://www.typescriptlang.org/docs/handbook/project-references.html
 [17]: https://github.com/TypeStrong/ts-node
 [18]: https://nodejs.org/api/packages.html#imports
-[19]: https://bun.sh/
-[20]: https://github.com/oven-sh/bun/issues/10438
 [21]: https://en.wikipedia.org/wiki/Single-responsibility_principle

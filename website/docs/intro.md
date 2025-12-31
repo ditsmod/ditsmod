@@ -190,38 +190,6 @@ node dist/main.js
 
 Проглядаючи файл `src/main.ts`, ви можете бачити, що створюється інстанс класу `RestApplication`, а у якості аргументу для методу `create()` передається `AppModule`. Тут `AppModule` є кореневим модулем, до якого вже підв'язуються інші модулі застосунку.
 
-## Ditsmod на Bun {#ditsmod-on-bun}
-
-Ditsmod може працювати на базі [Bun][19]. Щоправда, на даний момент (v1.1.29), [Bun має баг][20], через який він некоректно працює з TypeScript. Якщо ви скачаєте стартер Ditsmod, встановите залежності, і спробуєте запустити затосунок:
-
-```sh
-git clone --depth 1 https://github.com/ditsmod/rest-starter.git my-app
-cd my-app
-bun install
-bun run build
-bun dist/main.js
-```
-
-Bun кине наступну помилку:
-
-```text
-1 | (function (entry, fetcher)
-    ^
-SyntaxError: export 'ValueProvider' not found in './types-and-models.js'
-```
-
-На даний момент, цей баг можна обійти, якщо видалити файли `tsconfig.json` з усіх пакетів Ditsmod:
-
-```sh
-rm node_modules/@ditsmod/*/tsconfig.json
-```
-
-Окрім цього, якщо ваш застосунок має конфігурацію `compilerOptions.paths` у `tsconfig.json`, Bun через це некоректно працює також. Просто закоментуйте або видаліть цю секцію з `tsconfig.json`. Після цього треба запускати скомпільовану версію вхідного файла:
-
-```sh
-bun dist/main.js
-```
-
 
 [1]: #installation
 [2]: https://github.com/ditsmod/rest-starter
@@ -235,6 +203,4 @@ bun dist/main.js
 [16]: https://www.typescriptlang.org/docs/handbook/project-references.html
 [17]: https://github.com/TypeStrong/ts-node
 [18]: https://nodejs.org/api/packages.html#imports
-[19]: https://bun.sh/
-[20]: https://github.com/oven-sh/bun/issues/10438
 [21]: https://uk.wikipedia.org/wiki/%D0%9F%D1%80%D0%B8%D0%BD%D1%86%D0%B8%D0%BF_%D1%94%D0%B4%D0%B8%D0%BD%D0%BE%D1%97_%D0%B2%D1%96%D0%B4%D0%BF%D0%BE%D0%B2%D1%96%D0%B4%D0%B0%D0%BB%D1%8C%D0%BD%D0%BE%D1%81%D1%82%D1%96
