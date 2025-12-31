@@ -18,5 +18,8 @@
   "sidebar.tutorialSidebar.category.Приклади застосунків": {
     "message": "RestApplication examples",
     "description": "The label for category Приклади застосунків in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Глибоке занурення": {
+    "message": "Deep Dive"
   }
 }
