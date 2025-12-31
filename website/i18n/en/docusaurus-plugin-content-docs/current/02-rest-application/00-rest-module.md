@@ -83,4 +83,4 @@ The extensions group token `PRE_ROUTER_EXTENSIONS` is also exported from this mo
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/01-hello-world
 [2]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/types/metadata-per-mod.ts#L58-L74
 [3]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.16.0/packages/body-parser/src/body-parser.extension.ts#L54
-[4]: /basic-components-of-the-app/init-decorators/
+[4]: /deep-dive/init-decorators/
