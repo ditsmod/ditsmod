@@ -1,5 +1,5 @@
 ---
-sidebar_position: 10
+sidebar_position: 99
 ---
 
 # Ditsmod coding style guide

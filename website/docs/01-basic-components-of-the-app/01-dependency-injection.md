@@ -1019,6 +1019,6 @@ parent.get(Service2);
 [104]: /basic-components-of-the-app/extensions/#group-of-extensions
 [105]: /rest-application/http-interceptors/
 [106]: /rest-application/guards/
-[107]: /basic-components-of-the-app/modules/
+[107]: /basic-components-of-the-app/modules/#export-import-append
 [108]: /basic-components-of-the-app/decorators-and-reflector/
-[121]: /basic-components-of-the-app/providers-collisions/
+[121]: /basic-components-of-the-app/modules/#provider-collisions
