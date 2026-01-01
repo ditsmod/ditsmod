@@ -483,8 +483,8 @@ In this case, within `SomeModule` for `token1` the value `value3` will be return
 
 Also, if you import a provider from an external module and you have a provider with the same token in your current module, the local provider will have higher priority provided they were passed at the same hierarchy level.
 
-[1]: /developer-guides/exports-and-imports#import-module
-[2]: /developer-guides/exports-and-imports#ModuleWithParams
+[1]: /basic-components-of-the-app/modules/#import-module
+[2]: /basic-components-of-the-app/modules/#ModuleWithParams
 [3]: /basic-components-of-the-app/dependency-injection/#injector-and-providers
 [5]: /rest-application/native-modules/body-parser#retrieving-the-request-body
 [6]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/services/pre-router.ts

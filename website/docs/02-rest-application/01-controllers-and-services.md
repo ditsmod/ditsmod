@@ -483,8 +483,8 @@ export class SomeModule {}
 
 Також, якщо ви імпортуєте певний провайдер із зовнішнього модуля, і у вас у поточному модулі є провайдер з таким же токеном, то локальний провайдер матиме вищій пріоритет, при умові, що вони передавались на однаковому рівні ієрархії інжекторів.
 
-[1]: /developer-guides/exports-and-imports/#import-module
-[2]: /developer-guides/exports-and-imports#ModuleWithParams
+[1]: /basic-components-of-the-app/modules/#import-module
+[2]: /basic-components-of-the-app/modules/#ModuleWithParams
 [3]: /basic-components-of-the-app/dependency-injection/#injector-and-providers
 [5]: /rest-application/native-modules/body-parser/#retrieving-the-request-body
 [6]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/services/pre-router.ts

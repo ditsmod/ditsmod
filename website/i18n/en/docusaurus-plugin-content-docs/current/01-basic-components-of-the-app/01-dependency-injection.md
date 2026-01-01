@@ -1019,6 +1019,6 @@ When creating the child injector, it was not passed `Service1`, but it can refer
 [104]: /basic-components-of-the-app/extensions/#group-of-extensions
 [105]: /rest-application/http-interceptors/
 [106]: /rest-application/guards/
-[107]: /developer-guides/exports-and-imports/
+[107]: /basic-components-of-the-app/modules/
 [108]: /basic-components-of-the-app/decorators-and-reflector/
 [121]: /basic-components-of-the-app/providers-collisions/
