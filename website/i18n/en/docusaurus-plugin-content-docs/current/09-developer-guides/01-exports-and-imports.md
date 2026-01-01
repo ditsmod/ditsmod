@@ -6,27 +6,28 @@ sidebar_position: 1
 
 The module where you declare certain [providers][1] is called the **host module** for those providers. And when you use those providers in an external module, that external module is called the **consumer module** of those providers.
 
-In order for a consumer module to use providers from a host module, the corresponding provider [tokens][1] must first be exported from the host module. This is done in the metadata that is passed to the decorator in the feature module or root module. For example, if you are using REST, this is done as follows:
+In order for a consumer module to use providers from a host module, the corresponding provider [tokens][1] must first be exported from the host module. This is done in the metadata that is passed to the decorator of the feature module or root module. For example, if you are using REST, this is done as follows:
 
-```ts {9}
+```ts {10}
 import { restModule } from '@ditsmod/rest';
 
-import { FirstService } from './first.service.js';
-import { SecondService } from './second.service.js';
-import { ThirdService } from './third.service.js';
+import { Service1 } from './service1.js';
+import { Service2 } from './service2.js';
+import { Service3 } from './service3.js';
 
 @restModule({
-  providersPerMod: [FirstService, { token: SecondService, useClass: ThirdService }],
-  exports: [SecondService],
+  providersPerApp: [Service1],
+  providersPerMod: [Service2, { token: Service3, useValue: 'some value' }],
+  exports: [Service3],
 })
-export class SomeModule {}
+export class Module1 {}
 ```
 
-Considering the exported tokens, Ditsmod will look for exported providers in the `providersPerMod` array. It makes no sense to export the providers that are passed to `providersPerApp`, since this array will be used to form the [injector][1] at the application level. That is, the providers from the `providersPerApp` array will be available for any module, at any level, and without exporting.
+In this example, taking into account the exported tokens, Ditsmod will look for exported providers in the `providersPerMod` array. It makes no sense to export the providers that are passed to `providersPerApp`, since this array will be used to form the [injector][1] at the application level. That is, the providers from the `providersPerApp` array will be available for any module, at any level, and without exporting.
 
 Since you only need to export provider tokens from the host module, not the providers themselves, you cannot directly pass providers in the form of an object to the `exports` property.
 
-Keep in mind that you only need to export providers from the host module that will be directly used in the consumer modules. In the example above, `SecondService` can depend on `FirstService`, but `FirstService` does not need to be exported if it is not directly used in the consumer module. This ensures module encapsulation.
+Keep in mind that you only need to export providers from the host module that will be directly used in the consumer modules. In the example above, `Service3` can depend on `Service2`, but `Service2` does not need to be exported if it is not directly used in the consumer module. This ensures module encapsulation.
 
 Exporting controllers does not make sense, since exporting only applies to providers.
 
@@ -41,18 +42,18 @@ Exporting providers from the root module means that these providers will automat
 ```ts {9}
 import { restRootModule } from '@ditsmod/rest';
 
-import { SomeService } from './some.service.js';
-import { OtherModule } from './other.module.js';
+import { Service1 } from './service1.js';
+import { Module1 } from './module1.js';
 
 @restRootModule({
-  imports: [OtherModule],
-  providersPerMod: [SomeService],
-  exports: [SomeService, OtherModule],
+  imports: [Module1],
+  providersPerMod: [Service1],
+  exports: [Service1, Module1],
 })
 export class AppModule {}
 ```
 
-In this case, `SomeService` will be added to all application modules at the module level. As you can see, you can also export entire modules. In this case, all providers exported from `OtherModule` will also be added to each application module.
+In this case, `Service1` will be added to all application modules at the module level. As you can see, you can also export entire modules. In this case, all providers exported from `Module1` will also be added to each application module.
 
 ## Import module {#import-module}
 
@@ -60,34 +61,34 @@ You cannot import a single provider into a module, but you can import an entire 
 
 ```ts {6}
 import { restModule } from '@ditsmod/rest';
-import { FirstModule } from './first.module.js';
+import { Module1 } from './module1.js';
 
 @restModule({
   imports: [
-    FirstModule
+    Module1
   ]
 })
-export class SecondModule {}
+export class Module2 {}
 ```
 
-For example, if `SomeService` is exported from the `FirstModule`, then this service can now be used in the `SecondModule`. However, if `FirstModule` has controllers, they will be ignored in this import form. For Ditsmod to take into account controllers from an imported module, the module must be imported with a prefix passed in `path`:
+For example, if `Service1` is exported from the `Module1`, then this service can now be used in the `Module2`. However, if `Module1` has controllers, they will be ignored in this import form. For Ditsmod to take into account controllers from an imported module, the module must be imported with a prefix passed in `path`:
 
 ```ts {6}
 import { restModule } from '@ditsmod/rest';
-import { FirstModule } from './first.module';
+import { Module1 } from './module1.js';
 
 @restModule({
   imports: [
-    { module: FirstModule, path: '' }
+    { module: Module1, path: '' }
   ]
 })
-export class SecondModule {}
+export class Module2 {}
 ```
 
 Although `path` is an empty string here, for Ditsmod, the presence of `path` means:
 
 1. to consider controllers from the imported module as well;
-2. to use `path` as a prefix for all controllers imported from `FirstModule`.
+2. to use `path` as a prefix for all controllers imported from `Module1`.
 
 As you can see, in the previous example, this time neither the provider nor the module is imported, but the object. This object has the following interface:
 
@@ -131,21 +132,21 @@ To reduce the length of the code when importing an object of this type, it is so
 
 ```ts {6}
 import { restModule } from '@ditsmod/rest';
-import { FirstModule } from './first.module';
+import { Module1 } from './module1.js';
 
 @restModule({
   imports: [
-    { module: FirstModule, path: '' }
+    { module: Module1, path: '' }
   ]
 })
-export class SecondModule {}
+export class Module2 {}
 ```
 
-If you declare `FirstModule` and knew that this module would make sense to be imported many times into different modules with different prefixes, then in this case you could write a static method in this class that returns an object specially designed for import:
+If you declare `Module1` and knew that this module would make sense to be imported many times into different modules with different prefixes, then in this case you could write a static method in this class that returns an object specially designed for import:
 
 ```ts
 // ...
-export class FirstModule {
+export class Module1 {
   static withPrefix(path: string) {
     return {
       module: this,
@@ -161,10 +162,10 @@ Now the object returned by this method can be imported as follows:
 // ...
 @restModule({
   imports: [
-    FirstModule.withPrefix('some-prefix')
+    Module1.withPrefix('some-prefix')
   ]
 })
-export class SecondModule {}
+export class Module2 {}
 ```
 
 Static methods make it easier to pass module parameters.
@@ -174,8 +175,8 @@ In order for TypeScript to control exactly what the static import method returns
 ```ts
 import { ModuleWithParams } from '@ditsmod/core';
 // ...
-export class SomeModule {
-  static withParams(someParams: SomeParams): ModuleWithParams<SomeModule> {
+export class Module1 {
+  static withParams(someParams: SomeParams): ModuleWithParams<Module1> {
     return {
       module: this,
       // ...
@@ -233,24 +234,24 @@ If you don't need to import providers and [extensions][2] into the current modul
 
 ```ts {5}
 import { restModule } from '@ditsmod/rest';
-import { FirstModule } from './first.module.js';
+import { Module1 } from './module1.js';
 
 @restModule({
-  appends: [FirstModule]
+  appends: [Module1]
 })
-export class SecondModule {}
+export class Module2 {}
 ```
 
-In this case, if `SecondModule` has a path prefix, it will be used as a prefix for all routes contained in `FirstModule`. Only those modules with controllers can be appended.
+In this case, if `Module2` has a path prefix, it will be used as a prefix for all routes contained in `Module1`. Only those modules with controllers can be appended.
 
-You can also attach an additional path prefix to `FirstModule`:
+You can also attach an additional path prefix to `Module1`:
 
 ```ts {3}
 // ...
 @restModule({
-  appends: [{ path: 'some-path', module: FirstModule }]
+  appends: [{ path: 'some-path', module: Module1 }]
 })
-export class SecondModule {}
+export class Module2 {}
 ```
 
 In this example, an object was used, in which the module is passed for appending, it has the following interface:
@@ -270,16 +271,16 @@ In addition to importing a specific module, the same module can be simultaneousl
 
 ```ts
 import { restModule } from '@ditsmod/rest';
-import { FirstModule } from './first.module.js';
+import { Module1 } from './module1.js';
 
 @restModule({
-  imports: [FirstModule],
-  exports: [FirstModule],
+  imports: [Module1],
+  exports: [Module1],
 })
-export class SecondModule {}
+export class Module2 {}
 ```
 
-What is the meaning of this? - Now if you import `SecondModule` into some other module, you will actually have `FirstModule` imported as well.
+What is the meaning of this? - Now if you import `Module2` into some other module, you will actually have `Module1` imported as well.
 
 Pay attention! If during re-export you import an object with `ModuleWithParams` interface, the same object must also be exported:
 
@@ -287,15 +288,15 @@ Pay attention! If during re-export you import an object with `ModuleWithParams` 
 import { ModuleWithParams } from '@ditsmod/core';
 import { restModule, RestModuleParams } from '@ditsmod/rest';
 
-import { FirstModule } from './first.module.js';
+import { Module1 } from './module1.js';
 
-const firstModuleWithParams: ModuleWithParams & RestModuleParams = { path: 'some-path', module: FirstModule };
+const firstModuleWithParams: ModuleWithParams & RestModuleParams = { path: 'some-path', module: Module1 };
 
 @restModule({
   imports: [firstModuleWithParams],
   exports: [firstModuleWithParams],
 })
-export class SecondModule {}
+export class Module2 {}
 ```
 
 

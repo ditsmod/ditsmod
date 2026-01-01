@@ -6,27 +6,28 @@ sidebar_position: 1
 
 Модуль, де ви декларуєте певні [провайдери][1], називається **модулем-хостом** для цих провайдерів. А коли ви використовуєте дані провайдери у зовнішньому модулі, то цей зовнішній модуль називається **модулем-споживачем** даних провайдерів.
 
-Для того, щоб модуль-споживач міг використовувати провайдери з модуля-хоста, спочатку необхідно експортувати відповідні [токени][1] провайдерів з модуля-хоста. Робиться це у метаданих, які передаються у декоратор в модуль фіч чи кореневий модуль. Наприклад, якщо ви використовуєте REST, це робиться наступним чином:
+Для того, щоб модуль-споживач міг використовувати провайдери з модуля-хоста, спочатку необхідно експортувати відповідні [токени][1] провайдерів з модуля-хоста. Робиться це у метаданих, які передаються у декоратор модуля фіч чи кореневого модуля. Наприклад, якщо ви використовуєте REST, це робиться наступним чином:
 
-```ts {9}
+```ts {10}
 import { restModule } from '@ditsmod/rest';
 
-import { FirstService } from './first.service.js';
-import { SecondService } from './second.service.js';
-import { ThirdService } from './third.service.js';
+import { Service1 } from './service1.js';
+import { Service2 } from './service2.js';
+import { Service3 } from './service3.js';
 
 @restModule({
-  providersPerMod: [FirstService, { token: SecondService, useClass: ThirdService }],
-  exports: [SecondService],
+  providersPerApp: [Service1],
+  providersPerMod: [Service2, { token: Service3, useValue: 'some value' }],
+  exports: [Service3],
 })
-export class SomeModule {}
+export class Module1 {}
 ```
 
-Беручи до уваги експортовані токени, Ditsmod буде шукати експортовані провайдери в масиві `providersPerMod`. Експортувати провайдери, що передаються у `providersPerApp`, не має сенсу, оскільки з цього масиву буде сформовано [інжектор][1] на рівні застосунку. Тобто провайдери з масиву `providersPerApp` будуть доступними для будь-якого модуля, на будь-якому рівні, і без експорту.
+В даному прикладі, беручи до уваги експортовані токени, Ditsmod буде шукати експортовані провайдери в масиві `providersPerMod`. Експортувати провайдери, що передаються у `providersPerApp`, не має сенсу, оскільки з цього масиву буде сформовано [інжектор][1] на рівні застосунку. Тобто провайдери з масиву `providersPerApp` будуть доступними для будь-якого модуля, на будь-якому рівні, і без експорту.
 
 Оскільки з модуля-хоста вам потрібно експортувати лише токени провайдерів, а не самі провайдери, у властивість `exports` не можна безпосередньо передавати провайдери у формі об'єкта.
 
-Майте на увазі, що з модуля-хоста потрібно експортувати лише ті провайдери, які безпосередньо будуть використовуватись у модулях-споживачах. У прикладі вище, `SecondService` може залежати від `FirstService`, але `FirstService` не потрібно експортувати, якщо він безпосередньо не використовується у модулі-споживачу. Таким чином забезпечується інкапсуляція модулів.
+Майте на увазі, що з модуля-хоста потрібно експортувати лише ті провайдери, які безпосередньо будуть використовуватись у модулях-споживачах. У прикладі вище, `Service3` може залежати від `Service2`, але `Service2` не потрібно експортувати, якщо він безпосередньо не використовується у модулі-споживачу. Таким чином забезпечується інкапсуляція модулів.
 
 Експортувати контролери не має сенсу, оскільки експорт стосується тільки провайдерів.
 
@@ -41,18 +42,18 @@ export class SomeModule {}
 ```ts {9}
 import { restRootModule } from '@ditsmod/rest';
 
-import { SomeService } from './some.service.js';
-import { OtherModule } from './other.module.js';
+import { Service1 } from './service1.js';
+import { Module1 } from './module1.js';
 
 @restRootModule({
-  imports: [OtherModule],
-  providersPerMod: [SomeService],
-  exports: [SomeService, OtherModule],
+  imports: [Module1],
+  providersPerMod: [Service1],
+  exports: [Service1, Module1],
 })
 export class AppModule {}
 ```
 
-В даному випадку, `SomeService` буде додаватись до усіх модулів застосунку на рівні модуля. Як бачите, експортувати можна також і цілі модулі. В даному разі, усі провайдери, що експортуються з `OtherModule`, також будуть додаватись до кожного модуля застосунку.
+В даному випадку, `Service1` буде додаватись до усіх модулів застосунку на рівні модуля. Як бачите, експортувати можна також і цілі модулі. В даному разі, усі провайдери, що експортуються з `Module1`, також будуть додаватись до кожного модуля застосунку.
 
 ## Імпорт модуля {#import-module}
 
@@ -60,34 +61,34 @@ export class AppModule {}
 
 ```ts {6}
 import { restModule } from '@ditsmod/rest';
-import { FirstModule } from './first.module.js';
+import { Module1 } from './module1.js';
 
 @restModule({
   imports: [
-    FirstModule
+    Module1
   ]
 })
-export class SecondModule {}
+export class Module2 {}
 ```
 
-Якщо з `FirstModule` експортується, наприклад, `SomeService`, то тепер цей сервіс можна використовувати у `SecondModule`. Разом з тим, якщо `FirstModule` має контролери, у такій формі імпорту вони будуть ігноруватись. Щоб Ditsmod брав до уваги контролери з імпортованого модуля, цей модуль потрібно імпортувати з префіксом, що передається у `path`:
+Якщо з `Module1` експортується, наприклад, `Service1`, то тепер цей сервіс можна використовувати у `Module2`. Разом з тим, якщо `Module1` має контролери, у такій формі імпорту вони будуть ігноруватись. Щоб Ditsmod брав до уваги контролери з імпортованого модуля, цей модуль потрібно імпортувати з префіксом, що передається у `path`:
 
 ```ts {6}
 import { restModule } from '@ditsmod/rest';
-import { FirstModule } from './first.module';
+import { Module1 } from './module1.js';
 
 @restModule({
   imports: [
-    { module: FirstModule, path: '' }
+    { module: Module1, path: '' }
   ]
 })
-export class SecondModule {}
+export class Module2 {}
 ```
 
 Хоча тут `path` має порожній рядок, але для Ditsmod наявність `path` означає:
 
 1. що потрібно брати до уваги також і контролери з імпортованого модуля;
-2. використовувати `path` у якості префіксу для усіх контролерів, що імпортуються з `FirstModule`.
+2. використовувати `path` у якості префіксу для усіх контролерів, що імпортуються з `Module1`.
 
 Як бачите, у попередньому прикладі імпортується на цей раз і не провайдер, і не модуль, а об'єкт. Цей об'єкт має наступний інтерфейс:
 
@@ -131,21 +132,21 @@ interface ModuleWithParams {
 
 ```ts {6}
 import { restModule } from '@ditsmod/rest';
-import { FirstModule } from './first.module';
+import { Module1 } from './module1.js';
 
 @restModule({
   imports: [
-    { module: FirstModule, path: '' }
+    { module: Module1, path: '' }
   ]
 })
-export class SecondModule {}
+export class Module2 {}
 ```
 
-Якщо б ви оголошували `FirstModule` і знали, що цей модуль є сенс імпортувати багато разів в різні модулі з різними префіксами, в такому разі в даному класі можна написати статичний метод, що повертає об'єкт, спеціально призначений для імпорту:
+Якщо б ви оголошували `Module1` і знали, що цей модуль є сенс імпортувати багато разів в різні модулі з різними префіксами, в такому разі в даному класі можна написати статичний метод, що повертає об'єкт, спеціально призначений для імпорту:
 
 ```ts
 // ...
-export class FirstModule {
+export class Module1 {
   static withPrefix(path: string) {
     return {
       module: this,
@@ -161,10 +162,10 @@ export class FirstModule {
 // ...
 @restModule({
   imports: [
-    FirstModule.withPrefix('some-prefix')
+    Module1.withPrefix('some-prefix')
   ]
 })
-export class SecondModule {}
+export class Module2 {}
 ```
 
 Статичні методи дозволяють спрощувати передачу параметрів модулів.
@@ -174,8 +175,8 @@ export class SecondModule {}
 ```ts
 import { ModuleWithParams } from '@ditsmod/core';
 // ...
-export class SomeModule {
-  static withParams(someParams: SomeParams): ModuleWithParams<SomeModule> {
+export class Module1 {
+  static withParams(someParams: SomeParams): ModuleWithParams<Module1> {
     return {
       module: this,
       // ...
@@ -233,24 +234,24 @@ export class Module1 {}
 
 ```ts {5}
 import { restModule } from '@ditsmod/rest';
-import { FirstModule } from './first.module.js';
+import { Module1 } from './module1.js';
 
 @restModule({
-  appends: [FirstModule]
+  appends: [Module1]
 })
-export class SecondModule {}
+export class Module2 {}
 ```
 
-В даному випадку, якщо `SecondModule` має  path-префікс, він буде використовуватись у якості префіксу для усіх маршрутів, що є у `FirstModule`. Прикріплятись можуть лише ті модулі, що мають контролери. 
+В даному випадку, якщо `Module2` має  path-префікс, він буде використовуватись у якості префіксу для усіх маршрутів, що є у `Module1`. Прикріплятись можуть лише ті модулі, що мають контролери. 
 
-Також можна закріпити додатковий path-префікс за `FirstModule`:
+Також можна закріпити додатковий path-префікс за `Module1`:
 
 ```ts {3}
 // ...
 @restModule({
-  appends: [{ path: 'some-path', module: FirstModule }]
+  appends: [{ path: 'some-path', module: Module1 }]
 })
-export class SecondModule {}
+export class Module2 {}
 ```
 
 У даному прикладі був використаний об'єкт, в якому передається модуль для закріплення, він має наступний інтерфейс:
@@ -270,16 +271,16 @@ interface AppendsWithParams<T extends AnyObj = AnyObj> {
 
 ```ts
 import { restModule } from '@ditsmod/rest';
-import { FirstModule } from './first.module.js';
+import { Module1 } from './module1.js';
 
 @restModule({
-  imports: [FirstModule],
-  exports: [FirstModule],
+  imports: [Module1],
+  exports: [Module1],
 })
-export class SecondModule {}
+export class Module2 {}
 ```
 
-Який у цьому сенс? - Тепер, якщо ви зробите імпорт `SecondModule` у якийсь інший модуль, ви фактично матимете імпортованим ще й `FirstModule`.
+Який у цьому сенс? - Тепер, якщо ви зробите імпорт `Module2` у якийсь інший модуль, ви фактично матимете імпортованим ще й `Module1`.
 
 Зверніть увагу! Якщо під час реекспорту ви імпортуєте об'єкт з інтерфейсом `ModuleWithParams`, цей же об'єкт потрібно й експортувати:
 
@@ -287,15 +288,15 @@ export class SecondModule {}
 import { ModuleWithParams } from '@ditsmod/core';
 import { restModule, RestModuleParams } from '@ditsmod/rest';
 
-import { FirstModule } from './first.module.js';
+import { Module1 } from './module1.js';
 
-const firstModuleWithParams: ModuleWithParams & RestModuleParams = { path: 'some-path', module: FirstModule };
+const firstModuleWithParams: ModuleWithParams & RestModuleParams = { path: 'some-path', module: Module1 };
 
 @restModule({
   imports: [firstModuleWithParams],
   exports: [firstModuleWithParams],
 })
-export class SecondModule {}
+export class Module2 {}
 ```
 
 
