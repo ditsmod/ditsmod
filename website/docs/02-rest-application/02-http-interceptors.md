@@ -112,7 +112,7 @@ export class SomeModule {}
 [8]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/types/route-data.ts
 [9]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.16.0/packages/body-parser/src/body-parser.extension.ts#L54
 
-[106]: /basic-components-of-the-app/dependency-injection
-[107]: /basic-components-of-the-app/dependency-injection#multi-providers
-[108]: /basic-components-of-the-app/extensions
+[106]: /basic-components/dependency-injection
+[107]: /basic-components/dependency-injection#multi-providers
+[108]: /basic-components/extensions
 [109]: /rest-application/controllers-and-services/#what-is-a-rest-controller

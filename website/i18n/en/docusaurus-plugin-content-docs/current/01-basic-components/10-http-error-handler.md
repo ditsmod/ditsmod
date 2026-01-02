@@ -150,7 +150,7 @@ We remind you that provider collisions can only occur when importing modules. Th
 
 
 
-[1]: /developer-guides/providers-collisions
+[1]: /basic-components/modules/#provider-collisions
 
 [100]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/error/default-http-error-handler.ts
 [101]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/error/http-error-handler.ts

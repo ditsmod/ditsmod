@@ -441,6 +441,6 @@ class Module3 {}
 Якщо `Module3` ви встановили за допомогою менеджера пакетів (npm, npm run і т.д.), немає сенсу локально змінювати цей модуль щоб вирішити колізію. Така ситуація може виникнути лише якщо `Module1` та `Module2` експортуються з кореневого модуля, тому вам потрібно видалити один із цих модулів звідти. Ну і, звичайно ж, після цього вам прийдеться явно імпортувати видалений модуль у ті модулі, де він необхідний.
 
 
-[1]: /basic-components-of-the-app/dependency-injection/#injector-and-providers
-[2]: /basic-components-of-the-app/extensions
+[1]: /basic-components/dependency-injection/#injector-and-providers
+[2]: /basic-components/extensions
 [3]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) "Singleton"

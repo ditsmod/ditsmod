@@ -107,4 +107,4 @@ export class OtherModule {}
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/11-override-core-log-messages
 
-[100]: /developer-guides/providers-collisions/
+[100]: /basic-components/modules/#provider-collisions

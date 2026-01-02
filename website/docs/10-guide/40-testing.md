@@ -271,9 +271,9 @@ const server = await TestApplication.createTestApp(AppModule)
 
 
 
-[1]: /basic-components-of-the-app/dependency-injection
-[2]: /basic-components-of-the-app/dependency-injection#injector-and-providers
-[3]: /basic-components-of-the-app/dependency-injection#hierarchy-and-encapsulation-of-injectors
+[1]: /basic-components/dependency-injection
+[2]: /basic-components/dependency-injection#injector-and-providers
+[3]: /basic-components/dependency-injection#hierarchy-and-encapsulation-of-injectors
 [4]: #testrestplugin
 
 [100]: https://jestjs.io/

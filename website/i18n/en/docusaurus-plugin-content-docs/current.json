@@ -3,23 +3,28 @@
     "message": "Next",
     "description": "The label for version current"
   },
-  "sidebar.tutorialSidebar.category.Базові складові застосунку": {
-    "message": "Basic components of the app",
-    "description": "The label for category Extensions in sidebar tutorialSidebar"
+  "sidebar.tutorialSidebar.category.Базові компоненти": {
+    "message": "Basic components"
   },
   "sidebar.tutorialSidebar.category.Гайди розробника": {
-    "message": "Developer guides",
-    "description": "The label for category Extensions in sidebar tutorialSidebar"
+    "message": "Developer guides"
   },
   "sidebar.tutorialSidebar.category.Рідні модулі": {
-    "message": "Native modules",
-    "description": "The label for category Extensions in sidebar tutorialSidebar"
+    "message": "Native modules"
   },
   "sidebar.tutorialSidebar.category.Приклади застосунків": {
-    "message": "RestApplication examples",
-    "description": "The label for category Приклади застосунків in sidebar tutorialSidebar"
+    "message": "RestApplication examples"
   },
   "sidebar.tutorialSidebar.category.Глибоке занурення": {
     "message": "Deep Dive"
+  },
+  "sidebar.tutorialSidebar.category.Гід": {
+    "message": "Guide"
+  },
+  "sidebar.tutorialSidebar.category.REST застосунок": {
+    "message": "REST application"
+  },
+  "sidebar.tutorialSidebar.category.tRPC застосунок": {
+    "message": "tRPC application"
   }
 }

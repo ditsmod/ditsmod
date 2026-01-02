@@ -13,7 +13,7 @@ Ditsmod allows you to write applications using different architectural styles:
 - **WebSockets** have not been implemented, but [Ditsmod provides an API][4] that allows adding support for this architecture.
 - **Microservices** have not been implemented, but [Ditsmod provides an API][4] that allows adding support for this architecture.
 
-Such packages are more than just regular feature modules, since they also include **application classes** that define their own application configuration, their own application build sequence, their own application runtime behavior, and so on. As a rule, each of these packages has its own specifics regarding feature modules.
+Such packages are more than just regular feature modules, since they also include **application classes** that define their own application configuration, their own application build sequence, and so on. As a rule, each of these packages has its own specifics regarding feature modules.
 
 At the initial stage of learning Ditsmod, it is sufficient to know that this framework is capable of supporting different architectural styles. If you want to implement your own version of a particular architectural style, you will need to [deeply dive into studying Ditsmod][4].
 
@@ -30,4 +30,4 @@ app.server.listen(3000, '0.0.0.0');
 [1]: /rest-application/rest-module/
 [2]: /rest-application/native-modules/testing/
 [3]: /trpc-application/trpc-module/
-[4]: /deep-dive/intro/
+[4]: /deep-dive/application-class/

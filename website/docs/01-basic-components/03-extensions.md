@@ -259,7 +259,7 @@ export class BodyParserExtension implements Extension<void> {
 [4]: #extension-registration
 [5]: /rest-application/native-modules/body-parser
 [6]: /rest-application/native-modules/openapi
-[7]: /basic-components-of-the-app/dependency-injection#мульти-провайдери
-[8]: /basic-components-of-the-app/dependency-injection#hierarchy-and-encapsulation-of-injectors
-[9]: /basic-components-of-the-app/dependency-injection#провайдери
+[7]: /basic-components/dependency-injection#мульти-провайдери
+[8]: /basic-components/dependency-injection#hierarchy-and-encapsulation-of-injectors
+[9]: /basic-components/dependency-injection#провайдери
 [10]: /rest-application/http-interceptors/

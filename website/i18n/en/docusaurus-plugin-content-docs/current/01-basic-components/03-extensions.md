@@ -259,7 +259,7 @@ Of course, such dynamic addition of providers is possible only before creating H
 [4]: #registering-an-extension-in-a-group
 [5]: /rest-application/native-modules/body-parser
 [6]: /rest-application/native-modules/openapi
-[7]: /basic-components-of-the-app/dependency-injection#multi-providers
-[8]: /basic-components-of-the-app/dependency-injection#hierarchy-and-encapsulation-of-injectors
-[9]: /basic-components-of-the-app/dependency-injection#providers
+[7]: /basic-components/dependency-injection#multi-providers
+[8]: /basic-components/dependency-injection#hierarchy-and-encapsulation-of-injectors
+[9]: /basic-components/dependency-injection#providers
 [10]: /rest-application/http-interceptors/

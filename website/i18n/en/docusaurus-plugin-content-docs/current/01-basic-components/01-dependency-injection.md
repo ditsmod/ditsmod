@@ -1016,9 +1016,9 @@ When creating the child injector, it was not passed `Service1`, but it can refer
 [101]: ../../#installation
 [102]: #injector-and-providers
 [103]: #optional-fromSelf-skipSelf-decorators
-[104]: /basic-components-of-the-app/extensions/#group-of-extensions
+[104]: /basic-components/extensions/#group-of-extensions
 [105]: /rest-application/http-interceptors/
 [106]: /rest-application/guards/
-[107]: /basic-components-of-the-app/modules/#export-import-append
-[108]: /basic-components-of-the-app/decorators-and-reflector/
-[121]: /basic-components-of-the-app/modules/#provider-collisions
+[107]: /basic-components/modules/#export-import-append
+[108]: /basic-components/decorators-and-reflector/
+[121]: /basic-components/modules/#provider-collisions
