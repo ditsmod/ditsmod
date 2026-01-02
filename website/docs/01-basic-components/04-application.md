@@ -30,4 +30,4 @@ app.server.listen(3000, '0.0.0.0');
 [1]: /rest-application/rest-module/
 [2]: /rest-application/native-modules/testing/
 [3]: /trpc-application/trpc-module/
-[4]: /deep-dive/application-class/
+[4]: /deep-dive/essentials/
