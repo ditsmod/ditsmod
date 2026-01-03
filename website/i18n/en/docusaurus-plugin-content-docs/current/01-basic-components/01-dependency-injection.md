@@ -12,7 +12,19 @@ Additionally, if you don't yet know what exactly reflector does and what "depend
 
 ## Injector, tokens and providers {#injector-and-providers}
 
-In the [previous section][108], we saw how a constructor can specify the dependency of one class on another class, and how a dependency chain can be automatically determined using a reflector. Now let's get acquainted with the **injector** — a mechanism that allows obtaining class instances while considering their dependencies. The injector works very simply: it takes a **token** and returns a value for that token. Obviously, such functionality requires instructions linking what is requested from the injector to what it provides. These instructions are supplied by so-called **providers**.
+In the context of Dependency Injection (DI), people often talk about injectors (also called containers), tokens, services, and providers. If these terms are new to you, the following real-life associations should help:
+
+- **Token** — in everyday life, this term is used rarely, but it is very close to the concept of a “product name”. We all use stores, and for the seller to give you exactly what you need, you name a specific product. In Dependency Injection, a token plays a similar role: it is an identifier by which the required value can be found. Technically, a token does not have to be a string — it can be any unique identifier used for lookup.
+- **Provider** - in everyday life, this term is familiar. A provider is a company that supplies a certain service or product. For example, a provider may offer internet access services and at the same time sell you modems. In Dependency Injection, this term is close to its everyday meaning but has a certain difference, because a “Provider” is understood not simply as a “Company that supplies a service or product”, but rather as a “Contract that specifies the product name and which company supplies that product”. From a technical perspective, it is easiest to imagine a provider, for example, as an object like this:
+  ```json
+  { token: 'some-token', useValue: 'some-value' }
+  ```
+  That is, it is an instruction that says: “When a value is requested by such a token, this value should be returned”.
+- **Injector** - this term is also rarely used in everyday life, but it can be imagined as an “Order Center” that acts as an intermediary between providers and consumers. First, providers enter into “Contracts” with the “Order Center”, and then consumers contact these order centers with “Product Names” in order to receive the corresponding product. From a technical perspective, providers are first registered in injectors, and then consumers address injectors with tokens to obtain the corresponding value.
+
+Now let us complete the simplified real-life analogy and return to the technical details. From this point on, all terms are used in their technical sense.
+
+In the [previous section][108], we saw how a dependency of one class on another class can be specified in a constructor, as well as how a dependency chain can be automatically determined using a reflector. In the context of Dependency Injection, such classes are often called **services**. Now let us take a closer look at the **injector** — the mechanism that allows you to obtain instances of services while taking their dependencies into account. The injector works very simply: it accepts a **token** and returns the value associated with that token. Obviously, such functionality requires instructions that define the relationship between what is requested from the injector and what it returns. These instructions are provided by so-called **providers**.
 
 Let's look at the following example, which slightly expands on the last example from the [Decorators and Reflector][108] section:
 
@@ -57,15 +69,6 @@ So, what tasks does the injector perform, and what does its `injector.get()` met
 
 As a result, we can state that `injector.get()` really works very simply: it accepts the `Service3` token and returns its value — the instance of the `Service3` class. However, in order to work this way, the injector, first, takes into account the array of providers passed to it. Second, it considers the dependency chain of each provider.
 
-Now let’s break rule 1 and try to pass an empty array when creating the injector. In that case, calling `injector.get()` will throw an error:
-
-```ts
-const injector = Injector.resolveAndCreate([]);
-const service3 = injector.get(Service3); // Error: No provider for Service3!
-```
-
-As expected, when we pass an empty array instead of a provider array, and then request the `Service3` token from the injector, the injector throws an error, requiring a **provider** for that token.
-
 By the way, the following two injectors receive equivalent providers:
 
 ```ts
@@ -80,6 +83,15 @@ const injector2 = Injector.resolveAndCreate([
   Service3
 ]);
 ```
+
+Now let’s break rule 1 and try to pass an empty array when creating the injector. In that case, calling `injector.get()` will throw an error:
+
+```ts
+const injector = Injector.resolveAndCreate([]);
+const service3 = injector.get(Service3); // Error: No provider for Service3!
+```
+
+As expected, when we pass an empty array instead of a provider array, and then request the `Service3` token from the injector, the injector throws an error, requiring a **provider** for that token.
 
 To better understand what providers can look like, let’s pass the injector an array of providers in the following form:
 
@@ -190,7 +202,7 @@ type Provider = Class<any> |
 
 *_note that the token for a provider with the `useFactory` property is optional, because DI can use the function or the method of the specified class as a token._
 
-If the provider is represented as an object, its types can be imported from `@ditsmod/core`:
+Provider types can be imported from `@ditsmod/core`:
 
 ```ts
 import { ValueProvider, ClassProvider, FactoryProvider, TokenProvider } from '@ditsmod/core';
@@ -237,12 +249,12 @@ More details about each of these types:
    * **FunctionFactoryProvider** implies that a function can be passed to `useFactory`, which may have parameters — i.e., it may have dependencies. These dependencies must be explicitly specified in the `deps` property as an array of tokens, and the order of tokens is important:
 
      ```ts {6}
-     function fn(service1: Service1, service2: Service2) {
+     function fn(dependecy1: Dependecy1, dependecy2: Dependecy2) {
        // ...
        return 'some value';
      }
 
-     { token: 'token3', deps: [Service1, Service2], useFactory: fn }
+     { token: 'token3', deps: [Dependecy1, Dependecy2], useFactory: fn }
      ```
 
      Note that the `deps` property receives provider *tokens*, and DI treats them specifically as tokens, not as providers. That is, for these tokens, the corresponding providers still need to be passed in the providers array. Also note that [parameter decorators][103] (for example, `optional`, `skipSelf`, etc.) are not passed in `deps`. If your factory requires parameter decorators, you need to use `ClassFactoryProvider`.
@@ -329,10 +341,10 @@ parent.get(Service2); // instance of Service2
 parent.get(Service2) === child.get(Service2); // false
 
 child.get(Service3); // instance of Service3
-parent.get(Service3); // Error - No provider for Service3!
+parent.get(Service3); // Error: No provider for Service3!
 
-child.get(Service4); // Error - No provider for Service4!
-parent.get(Service4); // Error - No provider for Service4!
+child.get(Service4); // Error: No provider for [Service4 in injector2 >> injector1]!
+parent.get(Service4); // Error: No provider for Service4!
 ```
 
 As you can see, when creating the child injector, `Service1` was not passed to it, so when it is asked for the value of this token, it will take it from the parent injector. By the way, there is one non-obvious but very important point here: through the `get()` method, child injectors can request token values from parent injectors if necessary, and they do not create them on their own. That is why this expression returns `true`:
@@ -355,7 +367,7 @@ And neither injector can return an instance of `Service4`, because this class wa
 
 ### Chain of dependencies at different levels {#chain-of-dependencies-at-different-levels}
 
-The dependency chain of providers can be quite complex, and the injector hierarchy adds even more complexity. Let’s start with a simple case and then make it more complex. In the following example, `Service` depends on `Config`, and both providers are passed to the same injector:
+The dependency chain of providers can be quite complex, and the injector hierarchy adds even more complexity. Let’s start with a simple case and then make it more complex. So in the following example `Service` depends on `Config`, and both providers for these services are passed to the same injector:
 
 ```ts {14-15,18}
 import { injectable, Injector } from '@ditsmod/core';
@@ -794,7 +806,7 @@ const injector = Injector.resolveAndCreate([
 const locals = injector.get(LOCAL); // ['uk', 'en']
 ```
 
-Essentially, multi-providers allow creating groups of providers that share the same token. This capability is used, for example, to create groups of `HTTP_INTERCEPTORS`.
+Essentially, multi-providers allow creating groups of providers that share the same token. This capability is used in `@ditsmod/rest`, for example, to create groups of `HTTP_INTERCEPTORS`.
 
 It is not allowed for the same token to be both a regular provider and a multi-provider in the same injector:
 
