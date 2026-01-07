@@ -75,7 +75,7 @@ export class RestApplication extends BaseApplication {
 }
 
 /**
- * This class is needed only to access the protected methods of the `LogMediator` class.
+ * This class is needed only as type to access the protected methods of the `LogMediator` class.
  */
 export class PublicLogMediator extends SystemLogMediator {
   override updateOutputLogLevel() {
