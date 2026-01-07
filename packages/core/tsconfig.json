@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
+    // "baseUrl": ".",
     "outDir": "dist",
     "paths": {
       "#di": ["./src/di/index.js"],

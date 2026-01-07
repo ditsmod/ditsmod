@@ -31,10 +31,10 @@
     }
   },
   "scripts": {
-    "build": "tsc -b tsconfig.build.json",
+    "build": "tsgo -b tsconfig.build.json",
     "build-ui": "yarn build && node dist/swagger-ui/compile.js",
     "clean": "rm -rf dist*",
-    "build-test": "tsc -b tsconfig.unit.json",
+    "build-test": "tsgo -b tsconfig.unit.json",
     "test": "yarn build-test && yarn esm-jest",
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)"
   },
@@ -48,6 +48,7 @@
     "yaml": "^2.8.1"
   },
   "devDependencies": {
+    "@typescript/native-preview": "^7.0.0-dev.20260107.1",
     "copy-webpack-plugin": "^13.0.1",
     "css-loader": "^7.1.2",
     "html-webpack-plugin": "^5.6.4",

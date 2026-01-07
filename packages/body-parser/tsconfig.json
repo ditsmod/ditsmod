@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "rootDir": "src",
-    "baseUrl": ".",
+    // "baseUrl": ".",
     "outDir": "dist",
     "paths": {
       "@ditsmod/core": ["../core/src/index.js"],

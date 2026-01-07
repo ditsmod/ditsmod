@@ -3,7 +3,7 @@
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",
-    "baseUrl": ".",
+    // "baseUrl": ".",
     "tsBuildInfoFile": "dist/unit.tsbuildinfo",
   },
   "include": ["src/**/*.spec.ts", "src/**/*.d.ts"],
