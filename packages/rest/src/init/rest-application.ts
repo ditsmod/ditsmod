@@ -18,7 +18,7 @@ export class RestApplication extends BaseApplication {
 
   /**
    * @param appModule The root module of the application.
-   * @param restOptions RestApplication options.
+   * @param restOptions {@link RestApplication} options.
    */
   static async create(appModule: ModuleType, restOptions?: AppOptions) {
     const app = new this();
