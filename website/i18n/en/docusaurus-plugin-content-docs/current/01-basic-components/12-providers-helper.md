@@ -2,7 +2,7 @@
 sidebar_position: 12
 ---
 
-# Providers helper
+# `Providers` helper
 
 This class simplifies the addition of providers to DI while simultaneously controlling their types. Since this class implements the so-called [Iteration protocols][1], it facilitates the conversion of itself into an array (note the spread operator):
 
