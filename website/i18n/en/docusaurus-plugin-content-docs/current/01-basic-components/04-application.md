@@ -12,9 +12,9 @@ Ditsmod allows you to write applications using different architectural styles:
 - **GraphQL**
 - **WebSockets**
 - **Microservices**
-- ... and so on
+- ...
 
-[Ditsmod provides an API][4] that allows you to add support for the required architecture. Such packages are more than just regular feature modules, since they also include **application classes** that define their own application configuration, their own application build sequence, and so on. As a rule, each of these packages has its own specifics regarding feature modules.
+[Ditsmod provides an API][4] that allows you to add support for the required architecture. Such packages are more than just regular feature modules, since they also include **application classes** that define their own application configuration, their own application build sequence, and so on. As a rule, each of these packages has its own specifics regarding feature modules. In addition, if the application's web server has its own operating characteristics for different **Runtimes** (Node, Bun, Deno, etc.), Ditsmod allows you to take this into account at the stage of initialization of the application class.
 
 An instance of the **application class** is typically created in the `main.ts` file, and the application starts working from there. For example, an instance of a REST application class is created as follows:
 

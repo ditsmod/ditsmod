@@ -26,7 +26,7 @@ export abstract class BaseApplication {
   }
 
   protected async bootstrapApplication(baseAppInitializer: BaseAppInitializer) {
-    // Here, before init custom logger, works default logger.
+    // Here, before init custom logger, works default Logger.
     baseAppInitializer.bootstrapProvidersPerApp();
     // Here, after init providers per app, reinit Logger with new config.
     this.log = baseAppInitializer.log;
