@@ -14,13 +14,13 @@ Additionally, if you don't yet know what exactly reflector does and what "depend
 
 In the context of Dependency Injection (DI), people often talk about injectors (also called containers), tokens, services, and providers. If these terms are new to you, the following real-life associations should help:
 
-- **Token** — Although this word in everyday life often means a subway token or a game chip, in programming (in particular in DI) it works like a ticket to a storage locker. That is, in DI a token is an identifier by which the required value can be found.
-- **Provider** - In everyday life, this term is familiar. A provider is a company that supplies a certain service or product. For example, a provider may offer internet access services and at the same time sell you modems. In Dependency Injection, this term is close to its everyday meaning but has a certain difference, because a “Provider” is understood not simply as a “Company that supplies a service or product”, but rather as a “Contract that specifies the product name and which company supplies that product”. From a technical perspective, it is easiest to imagine a provider, for example, as an object like this:
-  ```json
+- **Token** — Although this word in everyday life often means a subway token or a game chip, in DI it works like a ticket to a storage locker. That is, in DI a token is an identifier by which the required value can be found.
+- **Provider** - In everyday life, this term means a company that supplies a certain service or product. In DI, however, this term means an instruction (mapping) that contains a token and the corresponding service or value. From a technical perspective, it is easiest to imagine a provider, for example, as an object like this:
+  ```ts
   { token: 'some-token', useValue: 'some-value' }
   ```
-  That is, it is an instruction that says: “When a value is requested by such a token, this value should be returned”.
-- **Injector** - This term is also rarely used in everyday life, but it can be imagined as an “Order Center” that acts as an intermediary between providers and consumers. First, providers enter into “Contracts” with the “Order Center”, and then consumers contact these order centers with “Product Names” in order to receive the corresponding product. From a technical perspective, providers are first registered in injectors, and then consumers address injectors with tokens to obtain the corresponding value.
+  In this case, it is an instruction that says: “When `some-token` is requested, `some-value` should be returned.”
+- **Injector** - this term is rarely used in everyday life, but its concept is quite common and somewhat resembles a “Marketplace” with a delivery service (like Amazon in the US). First, providers supply their products or services to the Marketplace, and then consumers contact these Marketplaces with tokens to obtain the corresponding product or service. From a technical perspective, developers first register providers in injectors, and then, using tokens, obtain the corresponding values from a specific provider.
 
 Now let us complete the simplified real-life analogy and return to the technical details. From this point on, all terms are used in their technical sense.
 
