@@ -46,7 +46,7 @@
     "test-unit": "tsgo -b tsconfig.unit.json && yarn esm-jest",
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",
     "build-test": "tsgo -b tsconfig.e2e.json",
-    "bench": "yarn build && node --enable-source-maps --expose-gc dist/bench.js",
+    "bench": "yarn build && node --enable-source-maps --expose-gc dist/utils/bench.js",
     "rebuild": "cd ../.. && yarn clean && cd - && yarn build"
   },
   "keywords": [
