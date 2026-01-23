@@ -2,7 +2,6 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "noEmit": true,
-    // "baseUrl": "./",
     "tsBuildInfoFile": "dist/ts.tsbuildinfo",
   },
   "include": ["src", "e2e"],
