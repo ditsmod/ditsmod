@@ -369,7 +369,7 @@ export class Module2 {}
 
 ## Provider Collisions {#provider-collisions}
 
-Provider collisions occur when different providers that offer the same service are imported into the current module.
+Provider collisions occur when different providers with the same token are imported into the current module.
 
 Let's take a closer look at a specific example. Imagine you have `Module3`, where you import `Module2` and `Module1`. You made these imports because you need `Service2` and `Service1` from these modules, respectively. You review the results of these services operations, but for some reason, `Service1` does not behave as expected. You start debugging and discover that `Service1` is exported from both `Module2` and `Module1`. You expected `Service1` to be exported only from `Module1`, but in reality, the version exported by `Module2` is being used:
 
