@@ -11,7 +11,6 @@ import {
 import { ModRefId, OptionalProps } from '#types/mix.js';
 import { Counter } from '#extension/counter.js';
 import { ExtensionsContext } from '#extension/extensions-context.js';
-import { createDeferred } from '#utils/create-deferred.js';
 import { BaseMeta } from '#types/base-meta.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { isExtensionProvider } from './type-guards.js';
@@ -27,7 +26,7 @@ export class StageIteration {
   reject: (err: any) => void;
 
   constructor(public index: number) {
-    const obj = createDeferred<void>();
+    const obj = Promise.withResolvers<void>();
     this.promise = obj.promise;
     this.resolve = obj.resolve;
     this.reject = obj.reject;
