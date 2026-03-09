@@ -24,7 +24,7 @@
     "strict": true,
     "noImplicitReturns": true,
     "skipLibCheck": true,
-    "target": "es2023",
+    "target": "esnext",
     "strictPropertyInitialization": false,
     "noImplicitAny": true,
     "emitDecoratorMetadata": true,
