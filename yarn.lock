@@ -15,7 +15,6 @@ __metadata:
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
     start-server-and-test: "npm:^2.1.0"
-    typescript: "npm:^5.9.2"
     wait-port: "npm:^1.1.0"
     zod: "npm:^4.1.5"
   languageName: unknown
@@ -691,7 +690,6 @@ __metadata:
     "@auth/core": "npm:^0.40.0"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
     vitest: "npm:^3.2.4"
   peerDependencies:
     "@ditsmod/body-parser": ^3.0.0-alpha.5
@@ -709,7 +707,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.5
     "@ditsmod/rest": ^3.0.0-alpha.5
@@ -726,7 +723,6 @@ __metadata:
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
     reflect-metadata: "npm:^0.2.2"
-    typescript: "npm:^5.9.2"
   languageName: unknown
   linkType: soft
 
@@ -739,7 +735,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.5
     "@ditsmod/rest": ^3.0.0-alpha.5
@@ -753,7 +748,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   peerDependencies:
     "@apollo/server": ^5.0.0
     "@ditsmod/core": ^3.0.0-alpha.5
@@ -768,7 +762,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.5
     "@ditsmod/rest": ^3.0.0-alpha.5
@@ -783,7 +776,6 @@ __metadata:
     jest: "npm:^30.1.3"
     jsonwebtoken: "npm:^9.0.2"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.5
   languageName: unknown
@@ -798,7 +790,6 @@ __metadata:
     ajv: "npm:^8.17.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.5
     "@ditsmod/i18n": ^3.0.0-alpha.5
@@ -821,7 +812,6 @@ __metadata:
     npm-run-all: "npm:^4.1.5"
     style-loader: "npm:^4.0.0"
     swagger-ui: "npm:^5.28.1"
-    typescript: "npm:^5.9.2"
     webpack: "npm:^5.101.3"
     yaml: "npm:^2.8.1"
     yaml-loader: "npm:^0.8.1"
@@ -838,7 +828,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.5
     "@ditsmod/rest": ^3.0.0-alpha.5
@@ -852,7 +841,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.5
     "@ditsmod/rest": ^3.0.0-alpha.5
@@ -870,7 +858,6 @@ __metadata:
     koa-tree-router: "npm:^0.13.1"
     npm-run-all: "npm:^4.1.5"
     trek-router: "npm:^1.2.0"
-    typescript: "npm:^5.9.2"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.5
   languageName: unknown
@@ -884,7 +871,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.5
     "@ditsmod/rest": ^3.0.0-alpha.5
@@ -898,7 +884,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.5
     "@ditsmod/rest": ^3.0.0-alpha.5
@@ -912,7 +897,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.5
     "@ditsmod/rest": ^3.0.0-alpha.5
@@ -926,7 +910,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.5
     "@trpc/server": ^11.5.0
@@ -940,7 +923,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.5
     "@ditsmod/rest": ^3.0.0-alpha.5
@@ -6064,7 +6046,6 @@ __metadata:
     reflect-metadata: "npm:^0.2.2"
     supertest: "npm:^7.1.4"
     ts-node: "npm:^10.9.2"
-    typescript: "npm:~5.9.2"
     typescript-eslint: "npm:^8.42.0"
     vitest: "npm:^3.2.4"
   languageName: unknown
@@ -6809,7 +6790,6 @@ __metadata:
   dependencies:
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   languageName: unknown
   linkType: soft
 
@@ -6820,7 +6800,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   languageName: unknown
   linkType: soft
 
@@ -6831,7 +6810,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   languageName: unknown
   linkType: soft
 
@@ -6843,7 +6821,6 @@ __metadata:
     dotenv: "npm:^17.2.2"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   languageName: unknown
   linkType: soft
 
@@ -6857,7 +6834,6 @@ __metadata:
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
     pino: "npm:^9.9.4"
-    typescript: "npm:^5.9.2"
     winston: "npm:^3.17.0"
   languageName: unknown
   linkType: soft
@@ -6869,7 +6845,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   languageName: unknown
   linkType: soft
 
@@ -6880,7 +6855,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   languageName: unknown
   linkType: soft
 
@@ -6891,7 +6865,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   languageName: unknown
   linkType: soft
 
@@ -6902,7 +6875,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   languageName: unknown
   linkType: soft
 
@@ -6913,7 +6885,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   languageName: unknown
   linkType: soft
 
@@ -6924,7 +6895,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   languageName: unknown
   linkType: soft
 
@@ -6935,7 +6905,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   languageName: unknown
   linkType: soft
 
@@ -6946,7 +6915,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   languageName: unknown
   linkType: soft
 
@@ -6957,7 +6925,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   languageName: unknown
   linkType: soft
 
@@ -6968,7 +6935,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   languageName: unknown
   linkType: soft
 
@@ -6979,7 +6945,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   languageName: unknown
   linkType: soft
 
@@ -6990,7 +6955,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   languageName: unknown
   linkType: soft
 
@@ -7001,7 +6965,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   languageName: unknown
   linkType: soft
 
@@ -7015,7 +6978,6 @@ __metadata:
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
     start-server-and-test: "npm:^2.1.0"
-    typescript: "npm:^5.9.2"
     wait-port: "npm:^1.1.0"
     zod: "npm:^4.1.5"
   languageName: unknown
@@ -7028,7 +6990,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   languageName: unknown
   linkType: soft
 
@@ -7039,7 +7000,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   languageName: unknown
   linkType: soft
 
@@ -7125,7 +7085,6 @@ __metadata:
   dependencies:
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   languageName: unknown
   linkType: soft
 
@@ -14345,16 +14304,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.9.2, typescript@npm:~5.9.2":
-  version: 5.9.2
-  resolution: "typescript@npm:5.9.2"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 10c0/cd635d50f02d6cf98ed42de2f76289701c1ec587a363369255f01ed15aaf22be0813226bff3c53e99d971f9b540e0b3cc7583dbe05faded49b1b0bed2f638a18
-  languageName: node
-  linkType: hard
-
 "typescript@patch:typescript@npm%3A>=3 < 6#optional!builtin<compat/typescript>":
   version: 5.6.2
   resolution: "typescript@patch:typescript@npm%3A5.6.2#optional!builtin<compat/typescript>::version=5.6.2&hash=8c6c40"
@@ -14362,16 +14311,6 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 10c0/94eb47e130d3edd964b76da85975601dcb3604b0c848a36f63ac448d0104e93819d94c8bdf6b07c00120f2ce9c05256b8b6092d23cf5cf1c6fa911159e4d572f
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@npm%3A^5.9.2#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A~5.9.2#optional!builtin<compat/typescript>":
-  version: 5.9.2
-  resolution: "typescript@patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 10c0/34d2a8e23eb8e0d1875072064d5e1d9c102e0bdce56a10a25c0b917b8aa9001a9cf5c225df12497e99da107dc379360bc138163c66b55b95f5b105b50578067e
   languageName: node
   linkType: hard
 
@@ -15185,7 +15124,6 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260309.1"
     jest: "npm:^30.1.3"
     npm-run-all: "npm:^4.1.5"
-    typescript: "npm:^5.9.2"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-alpha.5
   languageName: unknown
