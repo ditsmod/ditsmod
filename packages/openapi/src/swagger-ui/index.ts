@@ -1,5 +1,5 @@
 import swaggerUi from 'swagger-ui';
-import 'swagger-ui/dist/swagger-ui.css';
+// import 'swagger-ui/dist/swagger-ui.css';
 
 import type { SwaggerOAuthOptions } from './o-auth-options.js';
 
