@@ -10,10 +10,10 @@ export default tseslint.config(
     languageOptions: {
       parserOptions: {
         projectService: true,
-        project: [
-          './packages/*/tsconfig.json',
-          './examples/*/tsconfig.json',
-        ]
+        // project: [
+        //   './packages/*/tsconfig.json',
+        //   './examples/*/tsconfig.json',
+        // ]
       },
     },
   },
