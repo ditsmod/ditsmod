@@ -16,7 +16,7 @@ Ditsmod is a Node.js-based web framework designed for building highly extensible
 - Built-in **OpenAPI** support with request validation based on OpenAPI metadata.
 - As of today, [Ditsmod is one of the fastest Node.js web frameworks][14]:
 
-![Techempower benchmarks](/img/tech-empower-benchmarks.png)
+![JS frameworks benchmarks][22]
 
 Some architectural concepts in Ditsmod are inspired by [Angular][9], with its DI system built on Angular's native DI module.
 
@@ -199,9 +199,10 @@ Looking at the file `src/main.ts`, you can see that an instance of the class `Re
 [10]: https://jestjs.io/en/
 [12]: https://en.wikipedia.org/wiki/Singleton_pattern
 [13]: https://github.com/ditsmod/realworld
-[14]: https://www.techempower.com/benchmarks/#section=test&runid=8495ffea-08e2-4da7-a91d-4d6a48690ef2&l=zieepr-cjj
+[14]: https://github.com/ditsmod/vs-webframework
 [15]: https://github.com/remy/nodemon
 [16]: https://www.typescriptlang.org/docs/handbook/project-references.html
 [17]: https://github.com/TypeStrong/ts-node
 [18]: https://nodejs.org/api/packages.html#imports
 [21]: https://en.wikipedia.org/wiki/Single-responsibility_principle
+[22]: https://raw.githubusercontent.com/ditsmod/vs-webframework/refs/heads/main/req-per-sec-frameworks3.png

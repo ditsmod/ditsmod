@@ -16,9 +16,9 @@ For more info, see the documentation:
 
 ## Benchmarks
 
-On the Techempower website, you can view [benchmarks for backend frameworks on the JavaScript stack][4] (results load up to 10 seconds). As you can see, according to the composite score, Ditsmod is the fastest framework that works on the basis of Node.js. Above it are only those frameworks that work on other JavaScript runtimes (Bun, Just-JS, uwebsockets).
+You can view [benchmarks for backend frameworks on the JavaScript stack][4].
 
-![](website/static/img/tech-empower-benchmarks.png)
+![benchmarks for backend frameworks on the JavaScript stack][10]
 
 ## About the repo
 
@@ -46,9 +46,10 @@ yarn start:dev
 [1]: https://github.com/angular/angular
 [2]: https://www.typescriptlang.org/tsconfig#paths
 [3]: https://www.typescriptlang.org/docs/handbook/project-references.html
-[4]: https://www.techempower.com/benchmarks/#section=test&runid=e8b36ecc-d623-48bb-936d-d043e9db2c13&l=zieepr-cjj
+[4]: https://github.com/ditsmod/vs-webframework
 [5]: https://github.com/tanem/express-bookshelf-realworld-example-app
 [6]: https://dev.to/kostyatretyak/nestjs-vs-ditsmod-injection-scopes-537o
 [7]: https://x.com/kammysliwiec/status/1447892571376783360
 [8]: https://github.com/nestjs/nest/issues/13817#issuecomment-2245130264
 [9]: https://x.com/kammysliwiec/status/1859531066006032394
+[10]: https://github.com/ditsmod/vs-webframework/blob/main/req-per-sec-frameworks3.png

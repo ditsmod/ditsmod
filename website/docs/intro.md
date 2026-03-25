@@ -16,7 +16,7 @@ Ditsmod - це веб-фреймворк на базі Node.js, призначе
 - Має підтримку **OpenAPI**, та має можливість проводити валідацію запитів на основі метаданих OpenAPI.
 - На сьогодішній день, [Ditsmod є одним із найшвидших серед Node.js веб фреймворків][14]:
 
-![Techempower benchmarks](/img/tech-empower-benchmarks.png)
+![JS frameworks benchmarks][22]
 
 Деякі концепції архітектури Ditsmod взяті з [Angular][9] концепцій, а DI побудована на базі нативного модуля Angular DI.
 
@@ -198,9 +198,10 @@ node dist/main.js
 [10]: https://jestjs.io/en/
 [12]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) "Singleton"
 [13]: https://github.com/ditsmod/realworld
-[14]: https://www.techempower.com/benchmarks/#section=test&runid=8495ffea-08e2-4da7-a91d-4d6a48690ef2&l=zieepr-cjj
+[14]: https://github.com/ditsmod/vs-webframework
 [15]: https://github.com/remy/nodemon
 [16]: https://www.typescriptlang.org/docs/handbook/project-references.html
 [17]: https://github.com/TypeStrong/ts-node
 [18]: https://nodejs.org/api/packages.html#imports
 [21]: https://uk.wikipedia.org/wiki/%D0%9F%D1%80%D0%B8%D0%BD%D1%86%D0%B8%D0%BF_%D1%94%D0%B4%D0%B8%D0%BD%D0%BE%D1%97_%D0%B2%D1%96%D0%B4%D0%BF%D0%BE%D0%B2%D1%96%D0%B4%D0%B0%D0%BB%D1%8C%D0%BD%D0%BE%D1%81%D1%82%D1%96
+[22]: https://raw.githubusercontent.com/ditsmod/vs-webframework/refs/heads/main/req-per-sec-frameworks3.png
