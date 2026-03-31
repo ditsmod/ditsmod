@@ -4,7 +4,7 @@ As of late 2025, there are roughly three dozen well-known backend web frameworks
 
 It’s understandable that mature frameworks with large ecosystems and user bases can’t easily switch to the newest ECMAScript features. Smaller or less popular frameworks, on the other hand, can experiment more freely, introduce breaking changes, and fix deep architectural issues along the way.
 
-**Ditsmod** has been in development since early 2020, and its third major release is planned for early 2026. Version 3 will focus on framework stabilization, full test coverage, and API refinements.
+**Ditsmod** has been in development since early 2020, and its third major release is planned for 2026. Version 3 will focus on framework stabilization, full test coverage, and API refinements.
 
 So why should you give **Ditsmod** a try?  
 Earlier versions went through a lot of breaking changes, but as a result, Ditsmod now has a solid, modular, and flexible architecture designed for building modern, scalable applications. Its codebase is written in TypeScript and uses ESM natively. It comes with hierarchical Dependency Injection – a perfect match for modular applications. With built-in helpers for decorators and TypeScript-powered reflection, Ditsmod makes metaprogramming practical and productive, simplifying dependency management, module integration, and testing.
