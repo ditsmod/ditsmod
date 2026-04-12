@@ -57,32 +57,36 @@ Ditsmod uses the [Logger][100] class as an interface as well as a DI token. By d
 - `fatal` - A fatal event that will prevent the application from continuing.
 - `off` - No events will be logged. Intended for testing, it is not recommended to use it in product mode.
 
-In this documentation, when we talk about "logging levels", we mean "log level of detail". The highest level of detail is `all`, the lowest level of detail is `off`.
+In this documentation, when we talk about "log levels", we mean the "level of log detail". The highest level of detail is `all`, and the lowest level of detail is `off`.
 
-Sometimes in this documentation, or in the Ditsmod system messages, you may come across two types indicating the logging level:
+In Ditsmod system messages, you may encounter two types that denote the log level:
 
-- **InputLogLevel** - this type indicates the log level intended for a specific message. For example, the following entry uses the log level - `info`:
+- **InputLogLevel** - this type denotes the log level assigned to a specific message. Note that the `off` level is not present in `InputLogLevel`. For example, in the following entry, the log level `info` is used:
   ```ts
   logger.log('info', 'some message');
   ```
-- **OutputLogLevel** - this type indicates the limit level of logs above which messages are ignored. For example, the following entry sets the logging level to `debug`:
+- **OutputLogLevel** - this type is used to set the upper level in the log filter. The logger will record all logs whose level is equal to or lower than the configured `OutputLogLevel`. For example, in the following entry, the log level `debug` is set:
   ```ts
   logger.setLevel('debug');
   ```
 
-If `InputLogLevel` is equal to or lower than `OutputLogLevel`, the message is writed by the logger, otherwise it is ignored. For example, the following combination will write a message:
+In other words, the `InputLogLevel` type is used to set the level of a specific message, while the `OutputLogLevel` type is used to filter all messages depending on their level. For example:
 
 ```ts
 logger.setLevel('debug');
 logger.log('info', 'some message');
 ```
 
-And in the following - it will be ignored:
+As you can see in the first line, using `OutputLogLevel`, the maximum level of message detail is limited to `debug`. Thus, messages with detail levels `debug`, `info`, `warn`, `error`, or `fatal` will be recorded by the logger. In this example, the detail level is `info`, so the logger will record it.
+
+Now let us look at a case where the message "filter" allows only messages with a detail level of `warn` or higher:
 
 ```ts
 logger.setLevel('warn');
 logger.log('info', 'some message');
 ```
+
+In this case, the logger will not record anything, because the log filter is set to `warn`, while the `InputLogLevel` is set to `info`.
 
 ## Substitution the system logger {#substitution-the-system-logger}
 
