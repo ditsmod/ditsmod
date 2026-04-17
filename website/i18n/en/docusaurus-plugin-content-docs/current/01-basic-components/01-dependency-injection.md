@@ -406,7 +406,9 @@ When the child injector is created with an empty provider array, it will always 
 1. First, the child injector scans its provider array and finds no instructions.
 2. Then the child injector forwards the request to the parent injector and receives the already-created `Service` instance.
 
-In the case where we pass `Service` to one injector and `Config` to another, it becomes important to take into account the dependency between them. Therefore, such a setup will work only when `Config` is passed to the parent injector and `Service` to the child injector. Moreover, `Service` can be requested only from the child injector:
+Now let us complicate the example: pass one provider at one level of the hierarchy, and its dependency at another. In this case, the dependency must always be provided at a higher level, because dependency resolution always occurs bottom-up through the hierarchy, and never top-down.
+
+In the following example, `Service` depends on `Config`, so `Config` is provided in the parent injector, and `Service` in the child injector. In this case, bottom-up resolution (`Service -> Config`) in the hierarchy will work:
 
 ```ts {14,18}
 import { injectable, Injector } from '@ditsmod/core';
@@ -438,7 +440,7 @@ parent.get(Service); // Error: No provider for Service!
 
 As you can see, the child injector can create an instance of `Service`, even though it requests `Config` from the parent injector. In contrast, the parent injector can provide only the value for `Config`, while the `Service` provider is unavailable to it, because the parent injector does not see the child injector where this provider exists.
 
-Now let’s provide `Service` to the parent injector and `Config` to the child one. Keeping in mind that parent injectors never look into child injectors, can you guess what problems may arise with `Service`?
+Now let us violate the rule that states that a dependency can be at the same level of the hierarchy as the provider or at a higher level. Thus, `Service` will be at a higher level (in the parent injector), while `Config` will be at a lower level (in the child injector):
 
 ```ts {14,18}
 import { injectable, Injector } from '@ditsmod/core';
