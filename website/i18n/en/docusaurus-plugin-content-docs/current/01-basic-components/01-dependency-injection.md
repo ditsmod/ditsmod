@@ -367,48 +367,9 @@ And neither injector can return an instance of `Service4`, because this class wa
 
 ### Chain of dependencies at different levels {#chain-of-dependencies-at-different-levels}
 
-The dependency chain of providers can be quite complex, and the injector hierarchy adds even more complexity. Let’s start with a simple case and then make it more complex. So in the following example `Service` depends on `Config`, and both providers for these services are passed to the same injector:
+The dependency chain of providers can be quite complex, and the injector hierarchy adds even more complexity. The following rule helps here: "**If a certain provider depends on another provider, then that other provider must not be placed at lower levels of the hierarchy (in child injectors)**".
 
-```ts {14-15,18}
-import { injectable, Injector } from '@ditsmod/core';
-
-class Config {
-  one: any;
-  two: any;
-}
-
-@injectable()
-class Service {
-  constructor(public config: Config) {}
-}
-
-const parent = Injector.resolveAndCreate([
-  Service,
-  { token: Config, useValue: { one: 1, two: 2 } }
-]);
-
-const child = parent.resolveAndCreateChild([]);
-
-parent.get(Service); // Instance of Service
-child.get(Service); // Instance of Service
-```
-
-As you can see, in this example both the parent and child injectors are created, and both `Service` and its dependency `Config` are provided only to the parent injector. In this case, when the parent injector is asked for the value of the provider with the `Service` token, it will operate according to the following logic:
-
-1. First, it scans its provider array and finds `Service`, so it "knows" that when `Service` is requested, it must return an instance of this class.
-2. Then it scans the list of dependencies of `Service` and finds `Config`.
-3. Next, it scans its provider array and finds `{ token: Config, useValue: { one: 1, two: 2 } }`, so it "knows" that when `Config` is requested, it must return `{ one: 1, two: 2 }`.
-4. It then scans the list of dependencies in the provider with the `Config` token and finds none.
-5. Therefore, to create the `Service` instance, it will use the value `{ one: 1, two: 2 }`. Note that when creating the `Service` instance, the injector does not create an instance of `Config`; instead, it uses the ready-made object `{ one: 1, two: 2 }`, because these instructions were provided in the provider array when the parent injector was created.
-
-When the child injector is created with an empty provider array, it will always delegate requests to the parent injector:
-
-1. First, the child injector scans its provider array and finds no instructions.
-2. Then the child injector forwards the request to the parent injector and receives the already-created `Service` instance.
-
-Now let us complicate the example: pass one provider at one level of the hierarchy, and its dependency at another. In this case, the dependency must always be provided at a higher level, because dependency resolution always occurs bottom-up through the hierarchy, and never top-down.
-
-In the following example, `Service` depends on `Config`, so `Config` is provided in the parent injector, and `Service` in the child injector. In this case, bottom-up resolution (`Service -> Config`) in the hierarchy will work:
+Let us start with a simple example:
 
 ```ts {14,18}
 import { injectable, Injector } from '@ditsmod/core';
@@ -438,9 +399,15 @@ parent.get(Config); // { one: 1, two: 2 }
 parent.get(Service); // Error: No provider for Service!
 ```
 
-As you can see, the child injector can create an instance of `Service`, even though it requests `Config` from the parent injector. In contrast, the parent injector can provide only the value for `Config`, while the `Service` provider is unavailable to it, because the parent injector does not see the child injector where this provider exists.
+What do we see here:
 
-Now let us violate the rule that states that a dependency can be at the same level of the hierarchy as the provider or at a higher level. Thus, `Service` will be at a higher level (in the parent injector), while `Config` will be at a lower level (in the child injector):
+1. The provider with the token `Service` depends on the provider with the token `Config`.
+2. There are two levels of hierarchy formed by the parent and child injectors.
+3. `Config` is passed to the parent injector, while `Service` is passed to the child injector. That is, the restriction on placing a dependency (`Config`) at lower levels of the hierarchy is respected here. If you do the opposite, no injector will be able to create an instance of `Service` (this case is shown in the next example).
+4. The child injector can return values for both providers, since it is at a lower level of the hierarchy, and the rule for placing providers with dependencies across different hierarchy levels is respected (see point three of this list).
+5. The parent injector can return a value only for `Config`, since it was given a provider only with this token. When it is asked for the value of `Service`, it throws an error, even though the child injector has a provider with the token `Service`. This happens because parent injectors never query child injectors to obtain required provider values.
+
+Now let us violate the rule that states that a dependency must not be placed at lower levels of the hierarchy. Thus, `Service` will be at a higher level (in the parent injector), while `Config` will be at a lower level (in the child injector):
 
 ```ts {14,18}
 import { injectable, Injector } from '@ditsmod/core';
@@ -476,7 +443,7 @@ parent.get(Service);
 
 As you can see, when the `Config` token is requested from the child injector, it returns the corresponding value, because during its creation it was provided with a provider for this token.
 
-The situation is different with `Service`, which depends on `Config`. Despite the fact that the child injector was given a provider with the `Config` token, this injector still cannot create an instance of `Service`, so it is forced to delegate the request to the parent injector. At the same time, although the parent injector has a provider with the `Service` token, it does not have access to the child injector where `Config` exists. Therefore, when calling `child.get(Service)`, the error is actually thrown by the parent injector.
+It’s a different story with `Service`, which depends on `Config`. When the child injector was created, it was not provided with a provider for the `Service` token, so it cannot create an instance of `Service`, and therefore it has to fall back to the parent injector. At the same time, although the parent injector has a provider for the `Service` token, it does not have access to the child injector where `Config` is defined, so when calling `child.get(Service)`, it is actually the parent injector that will throw the error.
 
 Pay attention to the `Resolution path` in the error message:
 
