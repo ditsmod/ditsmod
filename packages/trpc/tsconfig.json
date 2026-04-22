@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "outDir": "dist",
-      "paths": {
+    "types": ["node", "jest"],
+    "paths": {
       "@ditsmod/core": ["../core/src/index.js"],
       "#decorators/*": ["./src/decorators/*"],
       "#errors": ["./src/errors.js"],
