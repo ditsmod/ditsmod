@@ -7,7 +7,7 @@
       "#mod/*": ["./src/*"],
     },
     "module": "nodenext",
-    // "moduleResolution": "nodenext",
+    "moduleResolution": "nodenext",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,

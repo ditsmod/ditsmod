@@ -7,7 +7,7 @@
       "@ditsmod/rest": ["../rest/src/index.js"],
     },
     "module": "nodenext",
-    // "moduleResolution": "nodenext",
+    "moduleResolution": "nodenext",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,

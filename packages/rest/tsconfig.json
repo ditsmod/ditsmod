@@ -16,7 +16,7 @@
       "#diagnostics-channel": ["./src/diagnostics-channel.js"],
     },
     "module": "nodenext",
-    // "moduleResolution": "nodenext",
+    "moduleResolution": "nodenext",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
