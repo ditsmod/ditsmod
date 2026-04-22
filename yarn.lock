@@ -11,7 +11,7 @@ __metadata:
   dependencies:
     "@trpc/client": "npm:^11.5.1"
     "@trpc/server": "npm:^11.5.1"
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
     start-server-and-test: "npm:^2.1.5"
@@ -688,7 +688,7 @@ __metadata:
   resolution: "@ditsmod/authjs@workspace:packages/authjs"
   dependencies:
     "@auth/core": "npm:^0.40.0"
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     npm-run-all: "npm:^4.1.5"
     vitest: "npm:^4.0.18"
   peerDependencies:
@@ -704,7 +704,7 @@ __metadata:
   dependencies:
     "@ts-stack/body-parser": "npm:^1.2.0"
     "@ts-stack/multer": "npm:^1.0.0"
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   peerDependencies:
@@ -719,7 +719,7 @@ __metadata:
   dependencies:
     "@ts-stack/chain-error": "npm:^1.5.1"
     "@ts-stack/stack-utils": "npm:^1.1.0"
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
     reflect-metadata: "npm:^0.2.2"
@@ -732,7 +732,7 @@ __metadata:
   dependencies:
     "@ts-stack/cookies": "npm:^1.2.2"
     "@ts-stack/cors": "npm:^1.4.2"
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   peerDependencies:
@@ -745,7 +745,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ditsmod/graphql@workspace:packages/graphql"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   peerDependencies:
@@ -759,7 +759,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ditsmod/i18n@workspace:packages/i18n"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   peerDependencies:
@@ -772,7 +772,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ditsmod/jwt@workspace:packages/jwt"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     jsonwebtoken: "npm:^9.0.2"
     npm-run-all: "npm:^4.1.5"
@@ -786,7 +786,7 @@ __metadata:
   resolution: "@ditsmod/openapi-validation@workspace:packages/openapi-validation"
   dependencies:
     "@ts-stack/cookies": "npm:^1.2.2"
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     ajv: "npm:^8.17.1"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
@@ -803,7 +803,7 @@ __metadata:
   resolution: "@ditsmod/openapi@workspace:packages/openapi"
   dependencies:
     "@ts-stack/openapi-spec": "npm:^3.1.6"
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     copy-webpack-plugin: "npm:^13.0.1"
     css-loader: "npm:^7.1.2"
     html-webpack-plugin: "npm:^5.6.4"
@@ -825,7 +825,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ditsmod/rest-diagnostics@workspace:packages/rest-diagnostics"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   peerDependencies:
@@ -838,7 +838,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ditsmod/rest-testing@workspace:packages/rest-testing"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   peerDependencies:
@@ -852,7 +852,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ditsmod/rest@workspace:packages/rest"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     find-my-way: "npm:^9.3.0"
     jest: "npm:^30.2.0"
     koa-tree-router: "npm:^0.13.1"
@@ -868,7 +868,7 @@ __metadata:
   resolution: "@ditsmod/session-cookie@workspace:packages/session-cookie"
   dependencies:
     "@ts-stack/cookies": "npm:^1.2.2"
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   peerDependencies:
@@ -881,7 +881,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ditsmod/sqb@workspace:packages/sqb"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   peerDependencies:
@@ -894,7 +894,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ditsmod/testing@workspace:packages/testing"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   peerDependencies:
@@ -907,7 +907,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ditsmod/trpc@workspace:packages/trpc"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   peerDependencies:
@@ -920,7 +920,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ditsmod/versions@workspace:packages/versions"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   peerDependencies:
@@ -3693,66 +3693,66 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript/native-preview-darwin-arm64@npm:7.0.0-dev.20260322.1":
-  version: 7.0.0-dev.20260322.1
-  resolution: "@typescript/native-preview-darwin-arm64@npm:7.0.0-dev.20260322.1"
+"@typescript/native-preview-darwin-arm64@npm:7.0.0-dev.20260421.2":
+  version: 7.0.0-dev.20260421.2
+  resolution: "@typescript/native-preview-darwin-arm64@npm:7.0.0-dev.20260421.2"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@typescript/native-preview-darwin-x64@npm:7.0.0-dev.20260322.1":
-  version: 7.0.0-dev.20260322.1
-  resolution: "@typescript/native-preview-darwin-x64@npm:7.0.0-dev.20260322.1"
+"@typescript/native-preview-darwin-x64@npm:7.0.0-dev.20260421.2":
+  version: 7.0.0-dev.20260421.2
+  resolution: "@typescript/native-preview-darwin-x64@npm:7.0.0-dev.20260421.2"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@typescript/native-preview-linux-arm64@npm:7.0.0-dev.20260322.1":
-  version: 7.0.0-dev.20260322.1
-  resolution: "@typescript/native-preview-linux-arm64@npm:7.0.0-dev.20260322.1"
+"@typescript/native-preview-linux-arm64@npm:7.0.0-dev.20260421.2":
+  version: 7.0.0-dev.20260421.2
+  resolution: "@typescript/native-preview-linux-arm64@npm:7.0.0-dev.20260421.2"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
-"@typescript/native-preview-linux-arm@npm:7.0.0-dev.20260322.1":
-  version: 7.0.0-dev.20260322.1
-  resolution: "@typescript/native-preview-linux-arm@npm:7.0.0-dev.20260322.1"
+"@typescript/native-preview-linux-arm@npm:7.0.0-dev.20260421.2":
+  version: 7.0.0-dev.20260421.2
+  resolution: "@typescript/native-preview-linux-arm@npm:7.0.0-dev.20260421.2"
   conditions: os=linux & cpu=arm
   languageName: node
   linkType: hard
 
-"@typescript/native-preview-linux-x64@npm:7.0.0-dev.20260322.1":
-  version: 7.0.0-dev.20260322.1
-  resolution: "@typescript/native-preview-linux-x64@npm:7.0.0-dev.20260322.1"
+"@typescript/native-preview-linux-x64@npm:7.0.0-dev.20260421.2":
+  version: 7.0.0-dev.20260421.2
+  resolution: "@typescript/native-preview-linux-x64@npm:7.0.0-dev.20260421.2"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
-"@typescript/native-preview-win32-arm64@npm:7.0.0-dev.20260322.1":
-  version: 7.0.0-dev.20260322.1
-  resolution: "@typescript/native-preview-win32-arm64@npm:7.0.0-dev.20260322.1"
+"@typescript/native-preview-win32-arm64@npm:7.0.0-dev.20260421.2":
+  version: 7.0.0-dev.20260421.2
+  resolution: "@typescript/native-preview-win32-arm64@npm:7.0.0-dev.20260421.2"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@typescript/native-preview-win32-x64@npm:7.0.0-dev.20260322.1":
-  version: 7.0.0-dev.20260322.1
-  resolution: "@typescript/native-preview-win32-x64@npm:7.0.0-dev.20260322.1"
+"@typescript/native-preview-win32-x64@npm:7.0.0-dev.20260421.2":
+  version: 7.0.0-dev.20260421.2
+  resolution: "@typescript/native-preview-win32-x64@npm:7.0.0-dev.20260421.2"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"@typescript/native-preview@npm:^7.0.0-dev.20260322.1":
-  version: 7.0.0-dev.20260322.1
-  resolution: "@typescript/native-preview@npm:7.0.0-dev.20260322.1"
+"@typescript/native-preview@npm:^7.0.0-dev.20260421.2":
+  version: 7.0.0-dev.20260421.2
+  resolution: "@typescript/native-preview@npm:7.0.0-dev.20260421.2"
   dependencies:
-    "@typescript/native-preview-darwin-arm64": "npm:7.0.0-dev.20260322.1"
-    "@typescript/native-preview-darwin-x64": "npm:7.0.0-dev.20260322.1"
-    "@typescript/native-preview-linux-arm": "npm:7.0.0-dev.20260322.1"
-    "@typescript/native-preview-linux-arm64": "npm:7.0.0-dev.20260322.1"
-    "@typescript/native-preview-linux-x64": "npm:7.0.0-dev.20260322.1"
-    "@typescript/native-preview-win32-arm64": "npm:7.0.0-dev.20260322.1"
-    "@typescript/native-preview-win32-x64": "npm:7.0.0-dev.20260322.1"
+    "@typescript/native-preview-darwin-arm64": "npm:7.0.0-dev.20260421.2"
+    "@typescript/native-preview-darwin-x64": "npm:7.0.0-dev.20260421.2"
+    "@typescript/native-preview-linux-arm": "npm:7.0.0-dev.20260421.2"
+    "@typescript/native-preview-linux-arm64": "npm:7.0.0-dev.20260421.2"
+    "@typescript/native-preview-linux-x64": "npm:7.0.0-dev.20260421.2"
+    "@typescript/native-preview-win32-arm64": "npm:7.0.0-dev.20260421.2"
+    "@typescript/native-preview-win32-x64": "npm:7.0.0-dev.20260421.2"
   dependenciesMeta:
     "@typescript/native-preview-darwin-arm64":
       optional: true
@@ -3770,7 +3770,7 @@ __metadata:
       optional: true
   bin:
     tsgo: bin/tsgo.js
-  checksum: 10c0/dbd0f9caae4f9ec5d8296c554c7553d9665f3bf10c7ab8a8f9f2e12bfbf911dcfb75bc94a69f18b6933bed26c9e22dda5c5138cdd38031d62bc7e2e4115ea8cc
+  checksum: 10c0/79dbb7e5204c5906bcb3a2946209162efbaac9c8fa78ffeccb8b6718661a5b40f988d60b27350ad538cc1a4143524e5fc97b04fa4767bd42a036000f226438db
   languageName: node
   linkType: hard
 
@@ -6026,7 +6026,7 @@ __metadata:
     "@types/jest": "npm:^30.0.0"
     "@types/node": "npm:^24.3.1"
     "@types/supertest": "npm:^7.2.0"
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     eslint: "npm:^10.0.3"
     jest: "npm:^30.2.0"
     lerna: "npm:8.2.4"
@@ -6766,7 +6766,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example01@workspace:examples/01-hello-world"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   languageName: unknown
@@ -6776,7 +6776,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example02@workspace:examples/02-http-error-handler"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   languageName: unknown
@@ -6786,7 +6786,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example03@workspace:examples/03-route-guards"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     dotenv: "npm:^17.3.1"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
@@ -6798,7 +6798,7 @@ __metadata:
   resolution: "example04@workspace:examples/04-logger"
   dependencies:
     "@types/bunyan": "npm:^1.8.11"
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     bunyan: "npm:^1.8.15"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
@@ -6811,7 +6811,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example05@workspace:examples/05-nested-routes"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   languageName: unknown
@@ -6821,7 +6821,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example06@workspace:examples/06-body-parser"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   languageName: unknown
@@ -6831,7 +6831,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example07@workspace:examples/07-dynamically-composing-modules"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   languageName: unknown
@@ -6841,7 +6841,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example08@workspace:examples/08-http-interceptors"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   languageName: unknown
@@ -6851,7 +6851,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example09@workspace:examples/09-one-extension"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   languageName: unknown
@@ -6861,7 +6861,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example10@workspace:examples/10-openapi"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   languageName: unknown
@@ -6871,7 +6871,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example11@workspace:examples/11-override-core-log-messages"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   languageName: unknown
@@ -6881,7 +6881,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example12@workspace:examples/12-testing"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   languageName: unknown
@@ -6891,7 +6891,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example13@workspace:examples/13-module-encapsulation"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   languageName: unknown
@@ -6901,7 +6901,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example14@workspace:examples/14-auth-jwt"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   languageName: unknown
@@ -6911,7 +6911,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example15@workspace:examples/15-i18n"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   languageName: unknown
@@ -6921,7 +6921,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example16@workspace:examples/16-openapi-validation"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   languageName: unknown
@@ -6931,7 +6931,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example17@workspace:examples/17-cors"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   languageName: unknown
@@ -6943,7 +6943,7 @@ __metadata:
   dependencies:
     "@trpc/client": "npm:^11.5.1"
     "@trpc/server": "npm:^11.5.1"
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
     start-server-and-test: "npm:^2.1.5"
@@ -6956,7 +6956,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example19@workspace:examples/19-session-cookie"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   languageName: unknown
@@ -6966,7 +6966,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example20@workspace:examples/20-authjs"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   languageName: unknown
@@ -15008,7 +15008,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "x-package-example@workspace:packages/x-package-template"
   dependencies:
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260322.1"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260421.2"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   peerDependencies:
