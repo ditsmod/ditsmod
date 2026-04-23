@@ -20,7 +20,7 @@ In the context of Dependency Injection (DI), people often talk about injectors (
   { token: 'some-token', useValue: 'some-value' }
   ```
   In this case, it is an instruction that says: “When `some-token` is requested, `some-value` should be returned.”
-- **Injector** - this term is rarely used in everyday life, but its concept is quite common and somewhat resembles a “Marketplace” with a delivery service (like Amazon in the US). First, providers supply their products or services to the Marketplace, and then consumers contact these Marketplaces with tokens to obtain the corresponding product or service. From a technical perspective, developers first register providers in injectors, and then, using tokens, obtain the corresponding values from a specific provider.
+- **Injector** - this term is rarely used in everyday life, but its concept is quite common and somewhat resembles a “Marketplace” with a delivery service (like Amazon in the US). First, providers supply their products or services to the Marketplace, and then consumers contact this Marketplace with tokens to obtain the corresponding product or service. From a technical perspective, developers first register providers in injectors, and then, using tokens, obtain the corresponding values from a specific provider.
 
 Now let us complete the simplified real-life analogy and return to the technical details. From this point on, all terms are used in their technical sense.
 
@@ -367,7 +367,7 @@ And neither injector can return an instance of `Service4`, because this class wa
 
 ### Chain of dependencies at different levels {#chain-of-dependencies-at-different-levels}
 
-The dependency chain of providers can be quite complex, and the injector hierarchy adds even more complexity. The following rule helps here: "**If a certain provider depends on another provider, then that other provider must not be placed at lower levels of the hierarchy (in child injectors)**".
+The dependency chain of providers can be quite complex, and the injector hierarchy adds even more complexity. The following rule helps here: "**If a provider depends on another provider, the dependency must not be placed at a lower level of the hierarchy - in child injectors**".
 
 Let us start with a simple example:
 
@@ -647,9 +647,9 @@ const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
 const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
 ```
 
-Under the hood, Ditsmod performs a similar procedure many times for different modules, routes, and HTTP requests. Using this example, let’s practice to better understand the injector hierarchy, and once again use the familiar `Service` class, which depends on `Config`:
+Under the hood, Ditsmod performs a similar procedure many times for different modules, routes, and HTTP requests. Using this example, let’s reinforce our understanding of the dependency chain at different levels of the injector hierarchy, and once again use the familiar `Service` class that depends on `Config`:
 
-```ts {13,16,23}
+```ts {16,23}
 import { injectable, Injector, Provider } from '@ditsmod/core';
 
 class Config {
@@ -662,40 +662,31 @@ class Service {
   constructor(public config: Config) {}
 }
 
-const providersPerApp: Provider[] = [Service];
+const providersPerApp: Provider[] = [];
 const providersPerMod: Provider[] = [];
 const providersPerRou: Provider[] = [];
-const providersPerReq: Provider[] = [Config];
+const providersPerReq: Provider[] = [Service, Config];
 
 const injectorPerApp = Injector.resolveAndCreate(providersPerApp, 'App');
 const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod, 'Mod');
 const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou, 'Rou');
 const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq, 'Req');
 
-injectorPerReq.get(Service);
-// Error: No provider for [Config in App]!
-// Resolution path: [Service in Req >> Rou >> Mod >> App] -> [Config in App]
+injectorPerReq.get(Service); // returns instance of Service
 ```
 
-As you can see, the injectors here are given abbreviated names for the hierarchy levels:
+This example does not throw an error because `Service` and `Config` are passed to the same injector, and it is this injector that is used to request `Service`. If we request `Service` or `Config` from injectors at higher levels, they will throw an error, because parent injectors never consult child injectors to retrieve any provider values. For example, if instead of `injectorPerReq.get(Service)` we call `injectorPerRou.get(Service)` or `injectorPerMod.get(Service)`, or `injectorPerApp.get(Service)` — all of them will throw an error.
+
+The situation changes if the provider with the `Config` token is not at the same level as the provider with the `Service` token. To avoid mistakes, recall the rule: "**If a provider depends on another provider, the dependency must not be placed at a lower level of the hierarchy - in child injectors**". Since we have a dependency chain — `Service -> Config` — `Config` must always be higher in the injector hierarchy relative to `Service`. In that case, the child injector will first attempt to create `Service`, detect the dependency on `Config`, not find it in the current injector, and then delegate the lookup to one of the parent injectors.
+
+Note that in the previous example, injectors are given abbreviated names of hierarchy levels:
 
 1. `App` - application level;
 2. `Mod` - module level;
 3. `Rou` - route level;
 4. `Req` - request level.
 
-The error was caused by the expression `injectorPerReq.get(Service)`, and as the `Resolution path` in this error tells us, `Service` was searched for at all levels of the injector hierarchy—from `Req` up to `App`. Then the search switched to `Config`, which was searched only at the `App` level.
-
-If `Service` is provided at the module level:
-
-```ts {2}
-const providersPerApp: Provider[] = [];
-const providersPerMod: Provider[] = [Service];
-const providersPerRou: Provider[] = [];
-const providersPerReq: Provider[] = [Config];
-```
-
-In this case, the error message will look like this:
+This is done for better readability of errors:
 
 ```ts
 injectorPerReq.get(Service);
@@ -703,41 +694,9 @@ injectorPerReq.get(Service);
 // Resolution path: [Service in Req >> Rou >> Mod] -> [Config in Mod >> App]
 ```
 
-As the `Resolution path` in this error tells us, `Service` was searched for at three levels of the injector hierarchy—from `Req` up to `Mod`. But why didn’t the search continue to the `App` level? Because when the injectors were created, `Service` was provided specifically at the `Mod` level. And if all required providers had been present at this level, the `Service` instance would have been created right there. Then the search switched to `Config`, on which `Service` depends, and this search started from the same level where `Service` was found. The search for `Config` ended at the `App` level, whose injector threw the error stating that it could not find a provider for `Config`.
+Although we do not see all the code that caused this error, we at least know that the stack of this error begins with the call `injectorPerReq.get(Service)`. We also see that the `Resolution path` starts with searching for `Service` across three levels of the injector hierarchy — `Req >> Rou >> Mod`. But why did the search not continue at the `App` level? — We can infer that during injector creation, `Service` was provided at the `Mod` level. And if all required providers had been present at that level, the `Service` instance would have been created there. Then the search switched to `Config`, which `Service` depends on, and this search started from the same level where `Service` was found. The search for `Config` ended at the `App` level, whose injector threw an error stating that it could not find a provider for `Config`.
 
-By analyzing the `Resolution path`, it is once again confirmed that provider lookup always proceeds from lower to higher levels of the injector hierarchy, and never the other way around.
-
-You can probably guess what will happen when `Service` is provided at the route level:
-
-```ts {3}
-const providersPerApp: Provider[] = [];
-const providersPerMod: Provider[] = [];
-const providersPerRou: Provider[] = [Service];
-const providersPerReq: Provider[] = [Config];
-```
-
-Yes, this expression still throws an error:
-
-```ts
-injectorPerReq.get(Service);
-// Error: No provider for [Config in Rou >> Mod >> App]!
-// Resolution path: [Service in Req >> Rou] -> [Config in Rou >> Mod >> App]
-```
-
-As the `Resolution path` in this error tells us, `Service` was searched for at two levels of the injector hierarchy — `Req` and `Rou`. And the providers for `Config` were searched for at the three upper levels — from `Rou` to `App`.
-
-Finally, when `Service` is provided at the same level as `Config`, this expression will no longer throw errors:
-
-```ts
-const providersPerApp: Provider[] = [];
-const providersPerMod: Provider[] = [];
-const providersPerRou: Provider[] = [];
-const providersPerReq: Provider[] = [Service, Config];
-```
-
-There will also be no errors when `Config` is provided at a higher level than the one where `Service` is provided. The expression `injectorPerReq.get(Service)` finally starts working, because `Service` is found immediately, and `Config` is found at the same level or higher.
-
-When registering providers for creating injectors, you should always remember that **all providers on which a given service depends must be either at the same level as that service or at higher levels, since the search for the corresponding providers will always proceed from the level of that service upward**. In other words, providers on which a given service depends will never be searched for at lower levels relative to the level at which that service is provided.
+It follows that this error was caused by violating the rule of placing dependencies across different levels of the injector hierarchy. Based on the `Resolution path`, the provider with the `Service` token was placed at the `Mod` level, while the provider with the `Config` token was either not provided to any injector at all, or was provided to child injectors at the `Rou` or `Req` levels.
 
 ### Current injector {#current-injector}
 
