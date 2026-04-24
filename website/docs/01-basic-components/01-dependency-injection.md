@@ -892,7 +892,7 @@ export class SecondService {
 
 Декоратори `fromSelf` та `skipSelf` мають сенс у випадку, коли існує певна ієрархія інжекторів. Декоратор `fromSelf` використовується дуже рідко.
 
-```ts
+```ts {7}
 import { injectable, fromSelf, Injector } from '@ditsmod/core';
 
 class Service1 {}
@@ -921,7 +921,7 @@ child.get(Service2);
 
 Декоратор `skipSelf` використовується частіше, ніж `fromSelf`, але також рідко.
 
-```ts
+```ts {7}
 import { injectable, skipSelf, Injector } from '@ditsmod/core';
 
 class Service1 {}

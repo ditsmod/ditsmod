@@ -892,7 +892,7 @@ Since JavaScript has no notion of an “optional property”, this can only be i
 
 The `fromSelf` and `skipSelf` decorators make sense when there is some hierarchy of injectors. The `fromSelf` decorator is used very rarely.
 
-```ts
+```ts {7}
 import { injectable, fromSelf, Injector } from '@ditsmod/core';
 
 class Service1 {}
@@ -921,7 +921,7 @@ But when creating the child injector, `Service1` was not passed to it, so when r
 
 The `skipSelf` decorator is used more often than `fromSelf`, but still rarely.
 
-```ts
+```ts {7}
 import { injectable, skipSelf, Injector } from '@ditsmod/core';
 
 class Service1 {}
