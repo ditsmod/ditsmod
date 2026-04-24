@@ -854,7 +854,7 @@ injector.setById(id, 'value1');
 
 The advantage of using the `injector.setById()` method is that it is faster than `injector.setByToken()`, but only if you get the ID from the `KeyRegistry` once and then call `injector.setById()` many times.
 
-## Decorators `optional`, `fromSelf` and `skipSelf` {#optional-fromSelf-skipSelf-decorators}
+## `optional`, `fromSelf` and `skipSelf` decorators {#optional-fromSelf-skipSelf-decorators}
 
 These decorators are used to control the behavior of the injector when searching for values for a given token.
 
