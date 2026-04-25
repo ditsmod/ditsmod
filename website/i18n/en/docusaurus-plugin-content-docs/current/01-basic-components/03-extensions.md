@@ -18,7 +18,7 @@ In most cases, multidimensional arrays of configuration data reflect the structu
 
 For example, in the [@ditsmod/body-parser][5] module, there is an extension that dynamically adds an HTTP interceptor to parse the request body for each route that has the appropriate method (POST, PATCH, PUT). It does this once before the HTTP request handlers are created, so there is no need to check the need for parsing on every request.
 
-Another example. The [@ditsmod/openapi][6] module allows you to create OpenAPI documentation using the new `@oasRoute` decorator. Without the extension working, Ditsmod will ignore the metadata from this new decorator. The extension from this module receives the aforementioned configuration array, finds the metadata from the `@oasRoute` decorator, and interprets this metadata by adding other metadata that will be used by another extension to set up routes.
+Another example. The [@ditsmod/openapi][6] module allows you to create OpenAPI documentation using the new `@oasRoute` decorator. Without the extension working, Ditsmod will ignore the metadata from this new decorator. The extension from this module receives the aforementioned configuration array, finds the metadata from the `@oasRoute` decorator, and interprets this metadata by adding other metadata that will be used by the target extension to set up routes.
 
 ## What is "Ditsmod extension" {#what-is-ditsmod-extension}
 
