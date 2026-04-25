@@ -76,26 +76,30 @@ The module where you declare certain [providers][1] is called the **host module*
 
 In order for a consumer module to use providers from a host module, the corresponding provider [tokens][1] must first be exported from the host module. This is done in the metadata that is passed to the decorator of the feature module or root module. For example, if you are using REST, this is done as follows:
 
-```ts {10}
+```ts {14}
 import { restModule } from '@ditsmod/rest';
 
 import { Service1 } from './service1.js';
 import { Service2 } from './service2.js';
 import { Service3 } from './service3.js';
 
+function useFactory(s2: Service2) {
+  return // ...
+}
+
 @restModule({
   providersPerApp: [Service1],
-  providersPerMod: [Service2, { token: Service3, useValue: 'some value' }],
-  exports: [Service3],
+  providersPerReq: [Service2, { token: 'some-token', deps: [Service2], useFactory }],
+  exports: ['some-token'],
 })
 export class Module1 {}
 ```
 
-In this example, taking into account the exported tokens, Ditsmod will look for exported providers in the `providersPerMod` array. It makes no sense to export the providers that are passed to `providersPerApp`, since this array will be used to form the [injector][1] at the application level. That is, the providers from the `providersPerApp` array will be available for any module, at any level, and without exporting.
+In this example, taking into account the exported tokens, Ditsmod will look for exported providers in the `providersPerReq` array. It makes no sense to export the providers that are passed to `providersPerApp`, since this array will be used to form the [injector][1] at the application level. That is, the providers from the `providersPerApp` array will be available for any module, at any level, and without exporting.
 
 Since you only need to export provider tokens from the host module, not the providers themselves, you cannot directly pass providers in the form of an object to the `exports` property.
 
-Keep in mind that you only need to export providers from the host module that will be directly used in the consumer modules. In the example above, `Service3` can depend on `Service2`, but `Service2` does not need to be exported if it is not directly used in the consumer module. This ensures module encapsulation.
+Keep in mind that you only need to export providers from the host module that will be directly used in the consumer modules. In the example above, the provider with `some-token` depends on `Service2`, but `Service2` does not need to be exported if it is not directly used in the consuming module. This ensures module encapsulation.
 
 Exporting controllers does not make sense, since exporting only applies to providers.
 
@@ -115,13 +119,13 @@ import { Module1 } from './module1.js';
 
 @restRootModule({
   imports: [Module1],
-  providersPerMod: [Service1],
+  providersPerReq: [Service1],
   exports: [Service1, Module1],
 })
 export class AppModule {}
 ```
 
-In this case, `Service1` will be added to all application modules at the module level. As you can see, you can also export entire modules. In this case, all providers exported from `Module1` will also be added to each application module.
+In this case, `Service1` will be added to all application modules at the HTTP request level. As you can see, you can also export entire modules. In this case, all providers exported from `Module1` will also be added to each application module at the corresponding level.
 
 ### Import module {#import-module}
 
@@ -260,7 +264,7 @@ Let's consider a specific situation. In the following example, each provider is 
 ```ts
 // ...
 @restModule({
-  providersPerMod: [Provider1],
+  providersPerReq: [Provider1],
   exports: [Provider1],
 })
 export class Module1 {}
@@ -277,24 +281,9 @@ Suppose we import this module into `Module2`, which has no providers of its own:
 export class Module2 {}
 ```
 
-As a result of this import, the consumer module (`Module2`) will now have `Provider1` at the module level, because it is declared at that level in the host module (`Module1`). When working with `Provider1`, its instances will be created separately in both modules. [Singleton][3] can be shared between modules only if its provider is declared at the application level. In our example, the provider is declared at the module level, so `Module1` and `Module2` will not have instances of `Provider1` shared at either level.
+As a result of this import, the consumer module (`Module2`) will now have `Provider1` at the HTTP request level, because it is declared at that level in the host module (`Module1`). When working with `Provider1`, its instances will be created separately in both modules. [Singleton][3] can be shared between modules only if its provider is declared at the application level. In our example, the provider is declared at the HTTP request level, so `Module1` and `Module2` will not have instances of `Provider1` shared at either level.
 
 So it can be argued that classes are imported, not their instances.
-
-#### Import and encapsulation {#import-and-encapsulation}
-
-Let's consider a situation where only `Provider3` is exported from `Module1`, since only this provider is directly used in external modules:
-
-```ts
-// ...
-@restModule({
-  providersPerMod: [Provider3, Provider2, Provider1],
-  exports: [Provider3],
-})
-export class Module1 {}
-```
-
-Suppose `Provider3` has a dependency on `Provider1` and `Provider2`. What will Ditsmod do when importing this module into other modules? Ditsmod will import all three providers, since `Provider3` depends on the other two providers.
 
 ### Appending of the module {#appending-of-the-module}
 
