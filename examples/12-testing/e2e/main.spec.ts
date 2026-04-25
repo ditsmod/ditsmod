@@ -57,7 +57,7 @@ describe('12-testing', () => {
     it('should start from "Controller1.method1"', async () => {
       const { status } = await request(server).get('/fail1');
       expect(status).toBe(500);
-      const cause = new NoProvider(['non-existing-token']);
+      const cause = new NoProvider(['[non-existing-token in Req >> Rou >> Mod >> App]']);
       const err = new InstantiationError(cause, ['Controller1.prototype.method1']);
       expect(setError).toHaveBeenCalledWith(err);
       expect(setError).toHaveBeenCalledTimes(1);
