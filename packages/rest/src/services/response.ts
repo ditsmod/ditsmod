@@ -1,4 +1,5 @@
 import { inject, injectable } from '@ditsmod/core';
+import { ServerResponse } from 'node:http';
 
 import { RAW_RES } from '#types/constants.js';
 import { RawResponse } from './request.js';
@@ -42,6 +43,7 @@ export class Res<T = any> {
   }
 
   redirect(statusCode: RedirectStatusCodes, path: string) {
-    this.rawRes.writeHead(statusCode, { Location: path }).end();
+    // @todo Refactoring this for HTTP2
+    (this.rawRes as ServerResponse).writeHead(statusCode, { Location: path }).end();
   }
 }

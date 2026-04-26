@@ -1,3 +1,4 @@
+import { ServerResponse } from 'node:http';
 import { RawResponse } from '#services/request.js';
 
 /**
@@ -8,7 +9,8 @@ export async function applyResponse(response: Response, rawRes: RawResponse) {
 
   // Explicitly write the headers for content-type
   // https://stackoverflow.com/a/59449326/13944042
-  rawRes.writeHead(response.status, response.statusText, {
+  // @todo Refactoring this for HTTP2
+  (rawRes as ServerResponse).writeHead(response.status, response.statusText, {
     'Content-Type': response.headers.get('content-type') || '',
   });
 

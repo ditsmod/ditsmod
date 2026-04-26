@@ -1,3 +1,4 @@
+import { ServerResponse } from 'node:http';
 import { inject } from '@ditsmod/core';
 import { controller, route, RAW_RES, RawResponse, Res } from '@ditsmod/rest';
 import { HTTP_BODY, MulterParser } from '@ditsmod/body-parser';
@@ -29,7 +30,8 @@ export class SomeController {
   async downloadFile(res: Res, parse: MulterParser) {
     const parsedForm = await parse.array('fieldName', 5);
     await saveFiles(parsedForm);
-    res.rawRes.writeHead(303, { Connection: 'close', Location: '/file-upload' });
+    // @todo Refactoring this for HTTP2
+    (res.rawRes as ServerResponse).writeHead(303, { Connection: 'close', Location: '/file-upload' });
     res.rawRes.end();
   }
 }

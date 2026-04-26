@@ -1,3 +1,4 @@
+import { ServerResponse } from 'node:http';
 import { RequestContext, controller, route } from '@ditsmod/rest';
 import { MulterCtxParser } from '@ditsmod/body-parser';
 
@@ -26,7 +27,8 @@ export class CtxController {
   async downloadFile(ctx: RequestContext) {
     const parsedForm = await this.parse.array(ctx, 'fieldName', 5);
     await saveFiles(parsedForm);
-    ctx.rawRes.writeHead(303, { Connection: 'close', Location: '/context-scoped-file-upload' });
+    // @todo Refactoring this for HTTP2
+    (ctx.rawRes as ServerResponse).writeHead(303, { Connection: 'close', Location: '/context-scoped-file-upload' });
     ctx.rawRes.end();
   }
 }
