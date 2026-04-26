@@ -3,7 +3,6 @@ import {
   ExtensionsManager,
   ExtensionsMetaPerApp,
   HttpMethod,
-  PerAppService,
   injectable,
   Injector,
   optional,
@@ -34,10 +33,9 @@ import { OasRouteMetaNotFound } from '#errors';
 export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
   protected oasObject: XOasObject;
   protected stage1ExtensionMeta: Stage1ExtensionMeta2<MetadataPerMod3>;
+  protected injectorPerMod: Injector;
 
   constructor(
-    private perAppService: PerAppService,
-    private injectorPerMod: Injector,
     private extensionsManager: ExtensionsManager,
     private log: OpenapiLogMediator,
     @optional() private extensionsMetaPerApp?: ExtensionsMetaPerApp,
@@ -53,14 +51,15 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     return this.oasObject;
   }
 
-  async stage2() {
+  async stage2(injectorPerMod: Injector) {
+    this.injectorPerMod = injectorPerMod;
     if (this.stage1ExtensionMeta) {
       this.log.applyingAccumulatedData(this);
       await this.compileOasObject(this.stage1ExtensionMeta.groupDataPerApp);
       const json = JSON.stringify(this.oasObject);
       const oasOptions = this.extensionsMetaPerApp?.oasOptions as OasOptions | undefined;
       const yaml = stringify(this.oasObject, oasOptions?.yamlSchemaOptions);
-      this.perAppService.reinitInjector([{ token: OasConfigFiles, useValue: { json, yaml } }]);
+      injectorPerMod.parent!.setByToken(OasConfigFiles, { json, yaml });
     }
   }
 
