@@ -1,4 +1,4 @@
-import { ServerResponse } from 'node:http';
+import { type ServerResponse } from 'node:http';
 import { inject } from '@ditsmod/core';
 import { controller, route, RAW_RES, RawResponse, Res } from '@ditsmod/rest';
 import { HTTP_BODY, MulterParser } from '@ditsmod/body-parser';

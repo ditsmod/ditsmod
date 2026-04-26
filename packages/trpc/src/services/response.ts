@@ -1,5 +1,5 @@
 import { inject, injectable } from '@ditsmod/core';
-import { ServerResponse } from 'node:http';
+import { type ServerResponse } from 'node:http';
 
 import { RAW_RES } from '#types/types.js';
 import { RawResponse } from './request.js';

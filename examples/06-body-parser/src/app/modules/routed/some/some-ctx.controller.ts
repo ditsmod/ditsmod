@@ -1,4 +1,4 @@
-import { ServerResponse } from 'node:http';
+import { type ServerResponse } from 'node:http';
 import { RequestContext, controller, route } from '@ditsmod/rest';
 import { MulterCtxParser } from '@ditsmod/body-parser';
 
