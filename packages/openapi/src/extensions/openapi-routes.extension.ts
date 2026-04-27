@@ -186,8 +186,6 @@ export class OpenapiRoutesExtension extends RoutesExtension implements Extension
 
     paramsNames.forEach((name) => {
       if (path.includes(`{${name}}`)) {
-        let msg = `Compiling OAS routes failed: ${moduleName} have a route with param: "{${name}}"`;
-        msg += `, you must convert this to ":${name}"`;
         throw new CompilingOasRoutesFailed(moduleName, name);
       }
       path = path.replace(`:${name}`, `{${name}}`);
