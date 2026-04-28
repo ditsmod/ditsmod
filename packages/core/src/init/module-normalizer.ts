@@ -259,16 +259,16 @@ export class ModuleNormalizer {
       if (!isExtensionConfig(extensionOrConfig)) {
         extensionOrConfig = { extension: extensionOrConfig } as ExtensionConfigBase;
       }
-      const extensionObj = getExtensionProvider(extensionOrConfig);
-      extensionObj.providers.forEach((p) => this.checkStageMethodsForExtension(this.baseMeta.name, p));
-      if (extensionObj.config) {
-        this.baseMeta.aExtensionConfig.push(extensionObj.config);
+      const normExtensionConfig = getExtensionProvider(extensionOrConfig, this.baseMeta.mExtensionAsGroupToken);
+      normExtensionConfig.providers.forEach((p) => this.checkStageMethodsForExtension(this.baseMeta.name, p));
+      if (normExtensionConfig.config) {
+        this.baseMeta.aExtensionConfig.push(normExtensionConfig.config);
       }
-      if (extensionObj.exportedConfig) {
-        this.baseMeta.aExportedExtensionConfig.push(extensionObj.exportedConfig);
+      if (normExtensionConfig.exportedConfig) {
+        this.baseMeta.aExportedExtensionConfig.push(normExtensionConfig.exportedConfig);
       }
-      this.baseMeta.extensionsProviders.push(...extensionObj.providers);
-      this.baseMeta.exportedExtensionsProviders.push(...extensionObj.exportedProviders);
+      this.baseMeta.extensionsProviders.push(...normExtensionConfig.providers);
+      this.baseMeta.exportedExtensionsProviders.push(...normExtensionConfig.exportedProviders);
     });
   }
 
