@@ -464,7 +464,7 @@ export class NotDeclaredInAfterExtensionList extends CustomError {
     super({
       msg1:
         `${extensionName1} attempted to call "extensionManager.stage1(${extensionName2})", ` +
-        `but ${extensionName2} not declared in "afterExtensions" array in this module.`,
+        `but ${extensionName2} not declared in "afterExtensions" array in this extension.`,
       level: 'fatal',
     });
   }
