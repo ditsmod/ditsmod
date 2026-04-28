@@ -11,14 +11,14 @@ import {
   SystemLogMediator,
   Counter,
   Extension,
-  InternalExtensionsManager,
+  InternalExtensionManager,
 } from '@ditsmod/core';
 
 import { OverriderConfig } from './types.js';
 import { OVERRIDERS_CONFIG } from './constants.js';
 
 @injectable()
-export class TestExtensionsManager extends InternalExtensionsManager {
+export class TestExtensionManager extends InternalExtensionManager {
   constructor(
     injector: Injector,
     systemLogMediator: SystemLogMediator,

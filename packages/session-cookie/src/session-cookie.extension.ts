@@ -1,4 +1,4 @@
-import { Extension, ExtensionsManager, injectable } from '@ditsmod/core';
+import { Extension, ExtensionManager, injectable } from '@ditsmod/core';
 import { HTTP_INTERCEPTORS, RoutesExtension } from '@ditsmod/rest';
 
 import { SessionCookieInterceptor } from './session-cookie.interceptor.js';
@@ -7,7 +7,7 @@ import { SessionCookieInterceptor } from './session-cookie.interceptor.js';
 export class SessionCookieExtension implements Extension<void> {
   #inited: boolean;
 
-  constructor(protected extensionManager: ExtensionsManager) {}
+  constructor(protected extensionManager: ExtensionManager) {}
 
   async stage1() {
     if (this.#inited) {

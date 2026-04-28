@@ -1,5 +1,5 @@
 import { inspect } from 'node:util';
-import { Extension, ExtensionsManager, injectable } from '@ditsmod/core';
+import { Extension, ExtensionManager, injectable } from '@ditsmod/core';
 
 import { HTTP_INTERCEPTORS } from '#types/constants.js';
 import { isInterceptor } from '#types/type.guards.js';
@@ -11,7 +11,7 @@ import { InvalidInterceptor } from '#errors';
  */
 @injectable()
 export class UseInterceptorExtension implements Extension {
-  constructor(protected extensionManager: ExtensionsManager) {}
+  constructor(protected extensionManager: ExtensionManager) {}
 
   async stage1() {
     const stage1ExtensionMeta = await this.extensionManager.stage1(RoutesExtension);

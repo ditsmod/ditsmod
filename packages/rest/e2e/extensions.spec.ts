@@ -4,7 +4,7 @@ import {
   InjectionToken,
   Extension,
   injectable,
-  ExtensionsManager,
+  ExtensionManager,
   rootModule,
   featureModule,
   Stage1DebugMeta,
@@ -25,10 +25,10 @@ describe('extensions e2e', () => {
   it('extension from firs iteration want to call group from third iteration', async () => {
     @injectable()
     class Extension1 implements Extension<void> {
-      constructor(private extensionsManager: ExtensionsManager) {}
+      constructor(private extensionManager: ExtensionManager) {}
 
       async stage1() {
-        await this.extensionsManager.stage1(Extension3);
+        await this.extensionManager.stage1(Extension3);
       }
     }
 
@@ -52,7 +52,7 @@ describe('extensions e2e', () => {
     })
     class AppModule {}
 
-    const msg = 'Extension1 attempted to call "extensionsManager.stage1(Extension3)';
+    const msg = 'Extension1 attempted to call "extensionManager.stage1(Extension3)';
     await expect(TestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
   });
 
@@ -265,7 +265,7 @@ describe('extensions e2e', () => {
      * This extension is declared in `Module1`, which is imported into three different modules.
      * A second extension that depends on this extension is declared below. The second extension
      * is declared in `Module2`, it is imported into two different modules. The tests check exactly
-     * what the `extensionsManager.stage1()` returns from the `Extension1` group, and how many times
+     * what the `extensionManager.stage1()` returns from the `Extension1` group, and how many times
      * the initialization of the second extension is called.
      */
     @injectable()
@@ -277,7 +277,7 @@ describe('extensions e2e', () => {
 
     @injectable()
     class Extension2 implements Extension {
-      constructor(private extensionManager: ExtensionsManager) {}
+      constructor(private extensionManager: ExtensionManager) {}
 
       async stage1() {
         const stage1ExtensionMeta = await this.extensionManager.stage1(Extension1);
@@ -348,7 +348,7 @@ describe('extensions e2e', () => {
      * A second extension that depends on this extension is declared below. The second extension
      * is declared in `Module2`, it is imported into one module.
      *
-     * The test verifies that `ExtensionsManager` returns data for `Extension1` from the entire
+     * The test verifies that `ExtensionManager` returns data for `Extension1` from the entire
      * application, even though `Module2` is imported into only one module.
      */
     @injectable()
@@ -360,7 +360,7 @@ describe('extensions e2e', () => {
 
     @injectable()
     class Extension2 implements Extension {
-      constructor(private extensionManager: ExtensionsManager) {}
+      constructor(private extensionManager: ExtensionManager) {}
 
       async stage1() {
         const stage1ExtensionMeta = await this.extensionManager.stage1(Extension1, this);
@@ -370,7 +370,7 @@ describe('extensions e2e', () => {
 
     @injectable()
     class Extension3 implements Extension {
-      constructor(private extensionManager: ExtensionsManager) {}
+      constructor(private extensionManager: ExtensionManager) {}
 
       async stage1() {
         const stage1ExtensionMeta = await this.extensionManager.stage1(Extension1);

@@ -31,13 +31,13 @@ export class StageIteration {
 export type StageIterationMap = Map<ExtensionClass, StageIteration>;
 
 @injectable()
-export class ExtensionsManager {
+export class ExtensionManager {
   /**
-   * Settings by {@link InternalExtensionsManager}.
+   * Settings by {@link InternalExtensionManager}.
    */
   moduleName: string = '';
   /**
-   * Settings by {@link InternalExtensionsManager}.
+   * Settings by {@link InternalExtensionManager}.
    */
   protected stageIterationMap: StageIterationMap;
   protected currStageIteration: StageIteration;
@@ -233,7 +233,7 @@ export class ExtensionsManager {
 }
 
 @injectable()
-export class InternalExtensionsManager extends ExtensionsManager {
+export class InternalExtensionManager extends ExtensionManager {
   async internalStage1(baseMeta: BaseMeta, aOrderedExtensions: ExtensionClass[]) {
     this.moduleName = baseMeta.name;
     const stageIterationMap = new Map() as StageIterationMap;

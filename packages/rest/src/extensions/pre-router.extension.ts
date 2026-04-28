@@ -6,7 +6,7 @@ import {
   DepsChecker,
   SystemLogMediator,
   ExtensionsContext,
-  ExtensionsManager,
+  ExtensionManager,
   PerAppService,
   Extension,
   Provider,
@@ -54,14 +54,14 @@ export class PreRouterExtension implements Extension<void> {
   constructor(
     protected perAppService: PerAppService,
     protected router: Router,
-    protected extensionsManager: ExtensionsManager,
+    protected extensionManager: ExtensionManager,
     protected moduleManager: ModuleManager,
     protected log: SystemLogMediator,
     protected extensionsContext: ExtensionsContext,
   ) {}
 
   async stage1() {
-    this.stage1ExtensionMeta = await this.extensionsManager.stage1(RoutesExtension);
+    this.stage1ExtensionMeta = await this.extensionManager.stage1(RoutesExtension);
     this.injectorPerApp = this.perAppService.reinitInjector([{ token: Router, useValue: this.router }]);
     this.addDefaultProviders(this.stage1ExtensionMeta.groupData);
   }

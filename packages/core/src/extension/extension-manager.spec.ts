@@ -3,26 +3,26 @@ import { Extension, ExtensionCounters } from '#extension/extension-types.js';
 import { getExtensionProviderList } from '#extension/get-extension-provider.js';
 import { defaultProvidersPerApp } from '#init/default-providers-per-app.js';
 import { ExtensionsContext } from '#extension/extensions-context.js';
-import { StageIteration, ExtensionsManager } from '#extension/extensions-manager.js';
+import { StageIteration, ExtensionManager } from '#extension/extension-manager.js';
 import { CircularDepsBetweenExtensions } from '#error/core-errors.js';
 
-describe('ExtensionsManager', () => {
+describe('ExtensionManager', () => {
   describe('stage1', () => {});
 
   describe('circular dependencies', () => {
-    class MockExtensionsManager extends ExtensionsManager {
+    class MockExtensionManager extends ExtensionManager {
       override stageIterationMap = new Map();
       override currStageIteration = new StageIteration(0);
     }
 
-    let mock: MockExtensionsManager;
+    let mock: MockExtensionManager;
 
     @injectable()
     class Extension3 implements Extension {
-      constructor(public mockExtensionsManager: MockExtensionsManager) {}
+      constructor(public mockExtensionManager: MockExtensionManager) {}
 
       async stage1() {
-        await this.mockExtensionsManager.stage1(Extension4);
+        await this.mockExtensionManager.stage1(Extension4);
       }
     }
 
@@ -33,19 +33,19 @@ describe('ExtensionsManager', () => {
 
     @injectable()
     class Extension2 implements Extension {
-      constructor(public mockExtensionsManager: MockExtensionsManager) {}
+      constructor(public mockExtensionManager: MockExtensionManager) {}
 
       async stage1() {
-        await this.mockExtensionsManager.stage1(Extension3);
+        await this.mockExtensionManager.stage1(Extension3);
       }
     }
 
     @injectable()
     class Extension4 implements Extension {
-      constructor(public mockExtensionsManager: MockExtensionsManager) {}
+      constructor(public mockExtensionManager: MockExtensionManager) {}
 
       async stage1() {
-        await this.mockExtensionsManager.stage1(Extension3);
+        await this.mockExtensionManager.stage1(Extension3);
       }
     }
 
@@ -58,11 +58,11 @@ describe('ExtensionsManager', () => {
           { extension: Extension3 },
           { extension: Extension4 },
         ]),
-        MockExtensionsManager,
+        MockExtensionManager,
         ExtensionsContext,
         ExtensionCounters,
       ]);
-      mock = injector.get(MockExtensionsManager) as MockExtensionsManager;
+      mock = injector.get(MockExtensionManager) as MockExtensionManager;
     });
 
     it('Extension1 without deps', async () => {

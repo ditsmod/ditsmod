@@ -1,6 +1,6 @@
 import {
   Extension,
-  ExtensionsManager,
+  ExtensionManager,
   PerAppService,
   Provider,
   injectable,
@@ -23,7 +23,7 @@ export class I18nExtension implements Extension<void> {
 
   constructor(
     private log: I18nLogMediator,
-    private extensionsManager: ExtensionsManager,
+    private extensionManager: ExtensionManager,
     private i18nTransformer: I18nTransformer,
     private perAppService: PerAppService,
   ) {}
@@ -33,7 +33,7 @@ export class I18nExtension implements Extension<void> {
       return;
     }
 
-    const stage1ExtensionMeta = await this.extensionsManager.stage1(RoutesExtension);
+    const stage1ExtensionMeta = await this.extensionManager.stage1(RoutesExtension);
     this.addI18nProviders(stage1ExtensionMeta, isLastModule);
 
     this.#inited = true;

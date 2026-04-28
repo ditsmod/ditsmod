@@ -1,9 +1,9 @@
-import { Extension, ExtensionsManager, injectable } from '@ditsmod/core';
+import { Extension, ExtensionManager, injectable } from '@ditsmod/core';
 import { RoutesExtension } from '@ditsmod/rest';
 
 @injectable()
 export class SqbExtension implements Extension<void> {
-  constructor(protected extensionManager: ExtensionsManager) {}
+  constructor(protected extensionManager: ExtensionManager) {}
 
   async stage1() {
     const stage1ExtensionMeta = await this.extensionManager.stage1(RoutesExtension);

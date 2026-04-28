@@ -2,7 +2,7 @@ import {
   injectable,
   Extension,
   DecoratorAndValue,
-  ExtensionsManager,
+  ExtensionManager,
   Stage1ExtensionMeta,
   getDebugClassName,
   Injector,
@@ -57,12 +57,12 @@ export class TrpcPreRouterExtension implements Extension<void> {
   protected injectorPerApp: Injector;
 
   constructor(
-    protected extensionsManager: ExtensionsManager,
+    protected extensionManager: ExtensionManager,
     protected moduleManager: ModuleManager,
   ) {}
 
   async stage1() {
-    this.stage1ExtensionMeta = await this.extensionsManager.stage1(TrpcRouteExtension);
+    this.stage1ExtensionMeta = await this.extensionManager.stage1(TrpcRouteExtension);
     this.addDefaultProviders(this.stage1ExtensionMeta.groupData);
   }
 

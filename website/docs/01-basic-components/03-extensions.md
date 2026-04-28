@@ -121,24 +121,24 @@ export class SomeModule {}
 
 Тобто у властивість `token` передається токен групи `MY_EXTENSIONS`, до якої належить ваше розширення. У властивість `beforeExtensions` передається токен групи розширень `ROUTES_EXTENSIONS`, перед якою потрібно запускати групу `MY_EXTENSIONS`. Опціонально можна використовувати властивість `exported` або `exportOnly` для того, щоб вказати, чи потрібно щоб дане розширення працювало у зовнішньому модулі, яке імпортуватиме цей модуль. Окрім цього, властивість `exportOnly` ще й вказує на те, що дане розширення не потрібно запускати у так званому хост-модулі (тобто в модулі, де оголошується це розширення).
 
-## Використання ExtensionsManager {#using-extensionsmanager}
+## Використання ExtensionManager {#using-extensionmanager}
 
-Якщо певне розширення має залежність від іншого розширення, рекомендується вказувати таку залежність посередньо через групу розширень. Для цього вам знадобиться `ExtensionsManager`, який ініціалізує групи розширень, кидає помилки про циклічні залежності між розширеннями, і показує весь ланцюжок розширень, що призвів до зациклення. Окрім цього, `ExtensionsManager` дозволяє збирати результати ініціалізації розширень з усього застосунку, а не лише з одного модуля.
+Якщо певне розширення має залежність від іншого розширення, рекомендується вказувати таку залежність посередньо через групу розширень. Для цього вам знадобиться `ExtensionManager`, який ініціалізує групи розширень, кидає помилки про циклічні залежності між розширеннями, і показує весь ланцюжок розширень, що призвів до зациклення. Окрім цього, `ExtensionManager` дозволяє збирати результати ініціалізації розширень з усього застосунку, а не лише з одного модуля.
 
-Припустимо `MyExtension` повинно дочекатись завершення ініціалізації групи `OTHER_EXTENSIONS`. Щоб зробити це, у конструкторі треба указувати залежність від `ExtensionsManager`, а у `stage1()` викликати `stage1()` цього сервісу:
+Припустимо `MyExtension` повинно дочекатись завершення ініціалізації групи `OTHER_EXTENSIONS`. Щоб зробити це, у конструкторі треба указувати залежність від `ExtensionManager`, а у `stage1()` викликати `stage1()` цього сервісу:
 
 ```ts {11}
 import { injectable } from '@ditsmod/core';
-import { Extension, ExtensionsManager } from '@ditsmod/core';
+import { Extension, ExtensionManager } from '@ditsmod/core';
 
 import { OTHER_EXTENSIONS } from './other.extensions.js';
 
 @injectable()
 export class MyExtension implements Extension<void> {
-  constructor(private extensionsManager: ExtensionsManager) {}
+  constructor(private extensionManager: ExtensionManager) {}
 
   async stage1() {
-    const stage1ExtensionMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS);
+    const stage1ExtensionMeta = await this.extensionManager.stage1(OTHER_EXTENSIONS);
 
     stage1ExtensionMeta.groupData.forEach((stage1Meta) => {
       const someData = stage1Meta;
@@ -149,7 +149,7 @@ export class MyExtension implements Extension<void> {
 }
 ```
 
-`ExtensionsManager` буде послідовно викликати ініціалізацію усіх розширень з указаної групи, а результат їхньої роботи повертатиме в об'єкті, що має наступний інтерфейс:
+`ExtensionManager` буде послідовно викликати ініціалізацію усіх розширень з указаної групи, а результат їхньої роботи повертатиме в об'єкті, що має наступний інтерфейс:
 
 ```ts
 interface Stage1ExtensionMeta<T = any> {
@@ -167,20 +167,20 @@ interface Stage1ExtensionMeta<T = any> {
 
 Важливо пам'ятати, що для кожного модуля створюється окремий інстанс певного розширення. Наприклад, якщо `MyExtension` імпортовано у три різні модулі, то Ditsmod буде послідовно обробляти ці три модулі із трьома різними інстансами `MyExtension`. Окрім цього, якщо `MyExtension` потребує підсумкові дані, наприклад, від групи розширень `OTHER_EXTENSIONS` із чотирьох модулів, а саме `MyExtension` імпортовано лише у три модулі, це означає, що з одного модуля `MyExtension` може і не отримати необхідних даних.
 
-В такому випадку потрібно передавати `true` у якості аргументу для третього параметра методу `extensionsManager.stage1`:
+В такому випадку потрібно передавати `true` у якості аргументу для третього параметра методу `extensionManager.stage1`:
 
 ```ts {11}
 import { injectable } from '@ditsmod/core';
-import { Extension, ExtensionsManager } from '@ditsmod/core';
+import { Extension, ExtensionManager } from '@ditsmod/core';
 
 import { OTHER_EXTENSIONS } from './other.extensions.js';
 
 @injectable()
 export class MyExtension implements Extension<void> {
-  constructor(private extensionsManager: ExtensionsManager) {}
+  constructor(private extensionManager: ExtensionManager) {}
 
   async stage1() {
-    const stage1ExtensionMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, this, true);
+    const stage1ExtensionMeta = await this.extensionManager.stage1(OTHER_EXTENSIONS, this, true);
     if (stage1ExtensionMeta.delay) {
       return;
     }
@@ -198,7 +198,7 @@ export class MyExtension implements Extension<void> {
 Тобто коли вам потрібно щоб `MyExtension` отримало дані з групи `OTHER_EXTENSIONS` з усього застосунку, третім аргументом для методу `stage1` потрібно передавати `true`:
 
 ```ts
-const stage1ExtensionMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, this, true);
+const stage1ExtensionMeta = await this.extensionManager.stage1(OTHER_EXTENSIONS, this, true);
 ```
 
 В такому разі гарантується, що інстанс `MyExtension` отримає дані з усіх модулів, куди імпортовано `OTHER_EXTENSIONS`. Навіть якщо `MyExtension` буде імпортовано у певний модуль, в якому немає розширень із групи `OTHER_EXTENSIONS`, але ці розширення є в інших модулях, все-одно метод `stage1` даного розширення буде викликано після ініціалізації усіх розширень, тому `MyExtension` отримає дані від `OTHER_EXTENSIONS` з усіх модулів.
@@ -213,7 +213,7 @@ const stage1ExtensionMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS
 @injectable()
 export class BodyParserExtension implements Extension<void> {
   constructor(
-    protected extensionManager: ExtensionsManager,
+    protected extensionManager: ExtensionManager,
     protected perAppService: PerAppService,
   ) {}
 

@@ -8,15 +8,15 @@ import { Extension } from '#extension/extension-types.js';
  */
 @injectable()
 export class Counter {
-  #extensionsManagerId = 0;
+  #extensionManagerId = 0;
   #initedExtensions = new Set<Extension>();
 
   increaseExtensionsInitId() {
-    return ++this.#extensionsManagerId;
+    return ++this.#extensionManagerId;
   }
 
   getExtensionsInitId() {
-    return this.#extensionsManagerId;
+    return this.#extensionManagerId;
   }
 
   resetInitedExtensionsSet() {

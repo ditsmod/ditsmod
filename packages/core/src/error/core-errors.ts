@@ -456,14 +456,14 @@ export class CircularDepsBetweenExtensions extends CustomError {
   }
 }
 /**
- * `extensionName1 attempted to call "extensionsManager.stage1(extensionName2)",
+ * `extensionName1 attempted to call "extensionManager.stage1(extensionName2)",
  * but extensionName2 not declared in "afterExtensions" array in this module.`
  */
 export class NotDeclaredInAfterExtensionList extends CustomError {
   constructor(extensionName1: string, extensionName2: string) {
     super({
       msg1:
-        `${extensionName1} attempted to call "extensionsManager.stage1(${extensionName2})", ` +
+        `${extensionName1} attempted to call "extensionManager.stage1(${extensionName2})", ` +
         `but ${extensionName2} not declared in "afterExtensions" array in this module.`,
       level: 'fatal',
     });

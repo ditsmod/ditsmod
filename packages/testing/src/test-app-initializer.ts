@@ -3,7 +3,7 @@ import {
   ExtensionCounters,
   ExtensionsContext,
   ForwardRefFn,
-  InternalExtensionsManager,
+  InternalExtensionManager,
   MetadataPerMod2,
   ModRefId,
   Provider,
@@ -14,7 +14,7 @@ import { RestAppInitializer } from '@ditsmod/rest';
 
 import { TestOverrider } from './test-overrider.js';
 import { OverriderConfig } from './types.js';
-import { TestExtensionsManager } from './test-extensions-manager.js';
+import { TestExtensionManager } from './test-extension-manager.js';
 import { OVERRIDERS_CONFIG } from './constants.js';
 
 export class TestAppInitializer extends RestAppInitializer {
@@ -66,7 +66,7 @@ export class TestAppInitializer extends RestAppInitializer {
   ): Provider[] {
     const providers = super.getProvidersForExtensions(metadataPerMod2, extensionCounters, extensionsContext);
     providers.push(
-      { token: InternalExtensionsManager, useClass: TestExtensionsManager },
+      { token: InternalExtensionManager, useClass: TestExtensionManager },
       { token: OVERRIDERS_CONFIG, useValue: this.aOverriderConfig },
     );
     return providers;

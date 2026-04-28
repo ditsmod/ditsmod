@@ -43,7 +43,7 @@ export { BaseMeta, BaseInitMeta, getProxyForInitMeta } from '#types/base-meta.js
 export { ProvidersOnly } from '#types/providers-metadata.js';
 export { ConsoleLogger } from '#logger/console-logger.js';
 export { ExtensionsContext } from '#extension/extensions-context.js';
-export { ExtensionsManager, InternalExtensionsManager } from '#extension/extensions-manager.js';
+export { ExtensionManager, InternalExtensionManager } from '#extension/extension-manager.js';
 export { LogMediator } from '#logger/log-mediator.js';
 export { LogItem } from '#logger/types.js';
 export { SystemLogMediator } from '#logger/system-log-mediator.js';

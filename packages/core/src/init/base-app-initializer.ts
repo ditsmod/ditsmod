@@ -9,7 +9,7 @@ import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import { Counter } from '#extension/counter.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ExtensionsContext } from '#extension/extensions-context.js';
-import { ExtensionsManager, InternalExtensionsManager } from '#extension/extensions-manager.js';
+import { ExtensionManager, InternalExtensionManager } from '#extension/extension-manager.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { PerAppService } from '#services/per-app.service.js';
 import { ModRefId } from '#types/mix.js';
@@ -268,11 +268,11 @@ export class BaseAppInitializer {
       }
       const providers = this.getProvidersForExtensions(metadataPerMod2, extensionCounters, extensionsContext);
       const injectorForExtensions = injectorPerMod.resolveAndCreateChild(providers, 'ForExtensions');
-      const extensionsManager = injectorForExtensions.get(InternalExtensionsManager) as InternalExtensionsManager;
+      const extensionManager = injectorForExtensions.get(InternalExtensionManager) as InternalExtensionManager;
 
       systemLogMediator.startExtensions(this);
       this.decreaseExtensionsCounters(extensionCounters, extensionsProviders);
-      await this.handleExtensionsPerMod(baseMeta, aOrderedExtensions, extensionsManager, systemLogMediator);
+      await this.handleExtensionsPerMod(baseMeta, aOrderedExtensions, extensionManager, systemLogMediator);
       this.logExtensionsStatistic(injectorPerApp, systemLogMediator);
     }
     await this.perAppHandling(mMetadataPerMod2, extensionsContext);
@@ -365,8 +365,8 @@ export class BaseAppInitializer {
     extensionsContext: ExtensionsContext,
   ): Provider[] {
     return [
-      InternalExtensionsManager,
-      { token: ExtensionsManager, useToken: InternalExtensionsManager },
+      InternalExtensionManager,
+      { token: ExtensionManager, useToken: InternalExtensionManager },
       { token: ExtensionsContext, useValue: extensionsContext },
       { token: MetadataPerMod2, useValue: metadataPerMod2 },
       { token: ExtensionCounters, useValue: extensionCounters },
@@ -377,11 +377,11 @@ export class BaseAppInitializer {
   protected async handleExtensionsPerMod(
     baseMeta: BaseMeta,
     aOrderedExtensions: ExtensionClass[],
-    extensionsManager: InternalExtensionsManager,
+    extensionManager: InternalExtensionManager,
     systemLogMediator: SystemLogMediator,
   ) {
     systemLogMediator.sequenceOfExtensions(this, aOrderedExtensions);
-    await extensionsManager.internalStage1(baseMeta, aOrderedExtensions);
+    await extensionManager.internalStage1(baseMeta, aOrderedExtensions);
   }
 
   /**

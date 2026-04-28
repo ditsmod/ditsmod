@@ -1,6 +1,6 @@
 import {
   Extension,
-  ExtensionsManager,
+  ExtensionManager,
   ExtensionsMetaPerApp,
   HttpMethod,
   injectable,
@@ -36,13 +36,13 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
   protected injectorPerMod: Injector;
 
   constructor(
-    private extensionsManager: ExtensionsManager,
+    private extensionManager: ExtensionManager,
     private log: OpenapiLogMediator,
     @optional() private extensionsMetaPerApp?: ExtensionsMetaPerApp,
   ) {}
 
   async stage1() {
-    const stage1ExtensionMeta = await this.extensionsManager.stage1(RoutesExtension, this, true);
+    const stage1ExtensionMeta = await this.extensionManager.stage1(RoutesExtension, this, true);
     if (stage1ExtensionMeta.delay) {
       this.log.dataAccumulation(this);
       return false;

@@ -1,4 +1,4 @@
-import { Extension, ExtensionsManager, PerAppService, injectable, optional } from '@ditsmod/core';
+import { Extension, ExtensionManager, PerAppService, injectable, optional } from '@ditsmod/core';
 import { HTTP_INTERCEPTORS, RoutesExtension } from '@ditsmod/rest';
 import { isReferenceObject } from '@ditsmod/openapi';
 
@@ -12,7 +12,7 @@ import { RequestBodyInterceptor } from './request-body.interceptor.js';
 export class ValidationExtension implements Extension<void> {
   constructor(
     protected perAppService: PerAppService,
-    protected extensionsManager: ExtensionsManager,
+    protected extensionManager: ExtensionManager,
     protected ajvService: AjvService,
     @optional() private validationOptions?: ValidationOptions,
   ) {}
@@ -22,7 +22,7 @@ export class ValidationExtension implements Extension<void> {
   }
 
   protected async filterParameters() {
-    const stage1ExtensionMeta = await this.extensionsManager.stage1(RoutesExtension);
+    const stage1ExtensionMeta = await this.extensionManager.stage1(RoutesExtension);
 
     stage1ExtensionMeta.groupData.forEach((metadataPerMod3) => {
       const { aControllerMetadata } = metadataPerMod3;

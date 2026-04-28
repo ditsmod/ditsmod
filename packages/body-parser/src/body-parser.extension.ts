@@ -1,4 +1,4 @@
-import { Extension, ExtensionsManager, PerAppService, injectable } from '@ditsmod/core';
+import { Extension, ExtensionManager, PerAppService, injectable } from '@ditsmod/core';
 import { HTTP_INTERCEPTORS, RoutesExtension } from '@ditsmod/rest';
 
 import { BodyParserConfig } from './body-parser-config.js';
@@ -8,7 +8,7 @@ import { CtxBodyParserInterceptor } from './ctx-body-parser.interceptor.js';
 @injectable()
 export class BodyParserExtension implements Extension<void> {
   constructor(
-    protected extensionManager: ExtensionsManager,
+    protected extensionManager: ExtensionManager,
     protected perAppService: PerAppService,
   ) {}
 

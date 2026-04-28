@@ -121,24 +121,24 @@ export class SomeModule {}
 
 That is, the token of the group `MY_EXTENSIONS`, to which your extension belongs, is transferred to the `token` property. The token of the `ROUTES_EXTENSIONS` group, before which the `MY_EXTENSIONS` group should be started, is passed to the `beforeExtensions` property. Optionally, you can use the `exported` or `exportOnly` property to specify whether this extension should function in an external module that imports this module. Additionally, the `exportOnly` property indicates that this extension should not be executed in the so-called host module (i.e., the module where this extension is declared).
 
-## Using ExtensionsManager {#using-extensionsmanager}
+## Using ExtensionManager {#using-extensionmanager}
 
-If a certain extension has a dependency on another extension, it is recommended to specify that dependency indirectly through the extension group. To do this, you need `ExtensionsManager`, which initializes groups of extensions, throws errors about cyclic dependencies between extensions, and shows the entire chain of extensions that caused the loop. Additionally, `ExtensionsManager` allows you to collect extensions initialization results from the entire application, not just from a single module.
+If a certain extension has a dependency on another extension, it is recommended to specify that dependency indirectly through the extension group. To do this, you need `ExtensionManager`, which initializes groups of extensions, throws errors about cyclic dependencies between extensions, and shows the entire chain of extensions that caused the loop. Additionally, `ExtensionManager` allows you to collect extensions initialization results from the entire application, not just from a single module.
 
-Suppose `MyExtension` has to wait for the initialization of the `OTHER_EXTENSIONS` group to complete. To do this, you must specify the dependence on `ExtensionsManager` in the constructor, and in `stage1()` call `stage1()` of this service:
+Suppose `MyExtension` has to wait for the initialization of the `OTHER_EXTENSIONS` group to complete. To do this, you must specify the dependence on `ExtensionManager` in the constructor, and in `stage1()` call `stage1()` of this service:
 
 ```ts {11}
 import { injectable } from '@ditsmod/core';
-import { Extension, ExtensionsManager } from '@ditsmod/core';
+import { Extension, ExtensionManager } from '@ditsmod/core';
 
 import { OTHER_EXTENSIONS } from './other.extensions.js';
 
 @injectable()
 export class MyExtension implements Extension<void> {
-  constructor(private extensionsManager: ExtensionsManager) {}
+  constructor(private extensionManager: ExtensionManager) {}
 
   async stage1() {
-    const stage1ExtensionMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS);
+    const stage1ExtensionMeta = await this.extensionManager.stage1(OTHER_EXTENSIONS);
 
     stage1ExtensionMeta.groupData.forEach((stage1Meta) => {
       const someData = stage1Meta;
@@ -149,7 +149,7 @@ export class MyExtension implements Extension<void> {
 }
 ```
 
-The `ExtensionsManager` will sequentially initialize all extensions from a given group and return the result in an object that follows this interface:
+The `ExtensionManager` will sequentially initialize all extensions from a given group and return the result in an object that follows this interface:
 
 ```ts
 interface Stage1ExtensionMeta<T = any> {
@@ -167,20 +167,20 @@ The `groupData` property holds an array of data collected from the current modul
 
 It's important to note that a separate instance of each extension is created for each module. For example, if `MyExtension` is imported into three different modules, Ditsmod will process these three modules sequentially with three different instances of `MyExtension`. Additionally, if `MyExtension` requires data from, say, the `OTHER_EXTENSIONS` group, which spans four modules, but `MyExtension` is only imported into three modules, it may not receive all the necessary data from one of the modules.
 
-In this case, you need to pass `true` as the third argument to the `extensionsManager.stage1` method:
+In this case, you need to pass `true` as the third argument to the `extensionManager.stage1` method:
 
 ```ts {11}
 import { injectable } from '@ditsmod/core';
-import { Extension, ExtensionsManager } from '@ditsmod/core';
+import { Extension, ExtensionManager } from '@ditsmod/core';
 
 import { OTHER_EXTENSIONS } from './other.extensions.js';
 
 @injectable()
 export class MyExtension implements Extension<void> {
-  constructor(private extensionsManager: ExtensionsManager) {}
+  constructor(private extensionManager: ExtensionManager) {}
 
   async stage1() {
-    const stage1ExtensionMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, this, true);
+    const stage1ExtensionMeta = await this.extensionManager.stage1(OTHER_EXTENSIONS, this, true);
     if (stage1ExtensionMeta.delay) {
       return;
     }
@@ -198,7 +198,7 @@ export class MyExtension implements Extension<void> {
 Thus, when you need `MyExtension` to receive data from the `OTHER_EXTENSIONS` group throughout the application, you need to pass `true` as the third argument to the `stage1` method:
 
 ```ts
-const stage1ExtensionMeta = await this.extensionsManager.stage1(OTHER_EXTENSIONS, this, true);
+const stage1ExtensionMeta = await this.extensionManager.stage1(OTHER_EXTENSIONS, this, true);
 ```
 
 In this case, it is guaranteed that the `MyExtension` instance will receive data from all modules where `OTHER_EXTENSIONS` is imported. Even if `MyExtension` is imported into a module without any extensions from the `OTHER_EXTENSIONS` group, but these extensions exist in other modules, the `stage1` method of this extension will still be called after all extensions are initialized, ensuring that `MyExtension` receives data from `OTHER_EXTENSIONS` across all modules.
@@ -213,7 +213,7 @@ You can see how it is done in [BodyParserExtension][3]:
 @injectable()
 export class BodyParserExtension implements Extension<void> {
   constructor(
-    protected extensionManager: ExtensionsManager,
+    protected extensionManager: ExtensionManager,
     protected perAppService: PerAppService,
   ) {}
 

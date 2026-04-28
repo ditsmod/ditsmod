@@ -1,7 +1,7 @@
 import {
   ChainError,
   Extension,
-  ExtensionsManager,
+  ExtensionManager,
   HttpMethod,
   injectable,
   Injector,
@@ -19,7 +19,7 @@ export class AuthjsExtension implements Extension {
   protected stage1ExtensionMeta: Stage1ExtensionMeta<MetadataPerMod3>;
 
   constructor(
-    protected extensionManager: ExtensionsManager,
+    protected extensionManager: ExtensionManager,
     protected logMediator: AuthjsLogMediator,
   ) {}
 

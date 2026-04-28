@@ -2,7 +2,7 @@ import {
   injectable,
   Injector,
   Extension,
-  ExtensionsManager,
+  ExtensionManager,
   PerAppService,
   Status,
   HttpMethod,
@@ -28,11 +28,11 @@ export class CorsExtension implements Extension<void | false> {
 
   constructor(
     protected perAppService: PerAppService,
-    private extensionsManager: ExtensionsManager,
+    private extensionManager: ExtensionManager,
   ) {}
 
   async stage1() {
-    const stage1ExtensionMeta = await this.extensionsManager.stage1(RoutesExtension, this, true);
+    const stage1ExtensionMeta = await this.extensionManager.stage1(RoutesExtension, this, true);
     if (stage1ExtensionMeta.delay) {
       return false;
     }
