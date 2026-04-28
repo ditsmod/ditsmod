@@ -1,6 +1,8 @@
-import { Provider } from '#di';
-import { ExtensionClass } from '#extension/extension-types.js';
-import { AnyObj } from '#types/mix.js';
+import { KeyRegistry, type Provider } from '#di';
+import type { Extension, ExtensionClass } from '#extension/extension-types.js';
+import type { ExtensionManager } from './extension-manager.js';
+import type { AnyObj } from '#types/mix.js';
+import type { GroupToken } from '#di/key-registry.js';
 
 export class ExtensionObj {
   providers: Provider[];
@@ -19,6 +21,12 @@ export interface ExtensionConfigBase {
    * The array of extension classes after which this extension will be called.
    */
   afterExtensions?: ExtensionClass[];
+  /**
+   * Each element in this array will form a separate group of extensions together with the current extension.
+   * When one of the extensions from this array is passed to {@link ExtensionManager.stage1 | ExtensionManager.stage1()},
+   * it will return the result of the {@link Extension.stage1 | stage1()} method from each extension in the formed group.
+   */
+  groups?: ExtensionClass[];
   overrideExtension?: never;
 }
 
@@ -53,7 +61,10 @@ export function isBaseExtensionConfig(extensionConfig: AnyObj): extensionConfig 
   return (extensionConfig as ExtensionConfigBase).extension !== undefined;
 }
 
-export function getExtensionProvider(extensionConfig: ExtensionConfig): ExtensionObj {
+export function getExtensionProvider(
+  extensionConfig: ExtensionConfig,
+  mExtensionAsGroupToken: Map<ExtensionClass, GroupToken<any>>,
+): ExtensionObj {
   if (isConfigWithOverrideExtension(extensionConfig)) {
     const { extension, overrideExtension } = extensionConfig;
     return {
@@ -63,6 +74,17 @@ export function getExtensionProvider(extensionConfig: ExtensionConfig): Extensio
   }
 
   const providers: Provider[] = [extensionConfig.extension];
+
+  // Creating a group of extensions using multi-providers
+  extensionConfig.groups?.forEach((ext) => {
+    const groupToken = KeyRegistry.getGroupToken(ext);
+    if (!mExtensionAsGroupToken.has(ext)) {
+      mExtensionAsGroupToken.set(ext, groupToken);
+      providers.push({ token: groupToken, useToken: ext, multi: true });
+    }
+    providers.push({ token: groupToken, useToken: extensionConfig.extension, multi: true });
+  });
+
   if (extensionConfig.exportOnly) {
     return {
       providers: [],
@@ -85,8 +107,11 @@ export function getExtensionProvider(extensionConfig: ExtensionConfig): Extensio
   }
 }
 
-export function getExtensionProviderList(extensionConfig: ExtensionConfig[]) {
+export function getExtensionProviderList(
+  extensionConfig: ExtensionConfig[],
+  mExtensionAsGroupToken: Map<ExtensionClass, GroupToken<any>>,
+) {
   const providers: Provider[] = [];
-  extensionConfig.map((obj) => providers.push(...getExtensionProvider(obj).providers));
+  extensionConfig.map((obj) => providers.push(...getExtensionProvider(obj, mExtensionAsGroupToken).providers));
   return providers;
 }

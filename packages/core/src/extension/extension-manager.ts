@@ -36,6 +36,7 @@ export class ExtensionManager {
    * Settings by {@link InternalExtensionManager}.
    */
   moduleName: string = '';
+  protected baseMeta: BaseMeta;
   /**
    * Settings by {@link InternalExtensionManager}.
    */
@@ -169,33 +170,40 @@ export class ExtensionManager {
   }
 
   protected async initExtension<T>(ExtCls: ExtensionClass): Promise<Stage1ExtensionMeta> {
-    const extension = this.injector.get(ExtCls, undefined, []) as Extension<T>;
+    let extensions: Extension<T>[];
+    const groupToken = this.baseMeta.mExtensionAsGroupToken.get(ExtCls);
+    if (groupToken) {
+      extensions = this.injector.get(groupToken, undefined, []);
+    } else {
+      extensions = [this.injector.get(ExtCls, undefined, [])];
+    }
     const stage1ExtensionMeta = new Stage1ExtensionMeta<T>(this.moduleName, [], []);
     this.updateExtensionCounters(ExtCls, stage1ExtensionMeta);
 
-    if (this.unfinishedInit.has(extension)) {
-      this.throwCircularDeps(extension);
-    }
-    const debugMetaCache = this.debugMetaCache.get(extension);
-    if (debugMetaCache) {
-      stage1ExtensionMeta.addDebugMeta(debugMetaCache);
-      return stage1ExtensionMeta;
-    }
+    for (const extension of extensions) {
+      if (this.unfinishedInit.has(extension)) {
+        this.throwCircularDeps(extension);
+      }
+      const debugMetaCache = this.debugMetaCache.get(extension);
+      if (debugMetaCache) {
+        stage1ExtensionMeta.addDebugMeta(debugMetaCache);
+        continue;
+      }
 
-    this.unfinishedInit.add(extension);
-    this.log.startInitExtension(this, this.unfinishedInit);
-    const ExtensionClass = extension.constructor as Class<Extension<T>>;
-    const countdown = this.extensionCounters.mExtensions.get(ExtensionClass) || 0;
-    const isLastModule = countdown === 0;
-    const data = (await extension.stage1?.(isLastModule)) as T;
-    this.extensionsListForStage2.add(extension);
-    this.log.finishInitExtension(this, this.unfinishedInit, data);
-    this.counter.addInitedExtensions(extension);
-    this.unfinishedInit.delete(extension);
-    const debugMeta = new Stage1DebugMeta<T>(extension, data, !isLastModule, countdown);
-    this.debugMetaCache.set(extension, debugMeta);
-    stage1ExtensionMeta.addDebugMeta(debugMeta);
-
+      this.unfinishedInit.add(extension);
+      this.log.startInitExtension(this, this.unfinishedInit);
+      const ExtensionClass = extension.constructor as Class<Extension<T>>;
+      const countdown = this.extensionCounters.mExtensions.get(ExtensionClass) || 0;
+      const isLastModule = countdown === 0;
+      const data = (await extension.stage1?.(isLastModule)) as T;
+      this.extensionsListForStage2.add(extension);
+      this.log.finishInitExtension(this, this.unfinishedInit, data);
+      this.counter.addInitedExtensions(extension);
+      this.unfinishedInit.delete(extension);
+      const debugMeta = new Stage1DebugMeta<T>(extension, data, !isLastModule, countdown);
+      this.debugMetaCache.set(extension, debugMeta);
+      stage1ExtensionMeta.addDebugMeta(debugMeta);
+    }
     return stage1ExtensionMeta;
   }
 
@@ -235,6 +243,7 @@ export class ExtensionManager {
 @injectable()
 export class InternalExtensionManager extends ExtensionManager {
   async internalStage1(baseMeta: BaseMeta, aOrderedExtensions: ExtensionClass[]) {
+    this.baseMeta = baseMeta;
     this.moduleName = baseMeta.name;
     const stageIterationMap = new Map() as StageIterationMap;
     this.stageIterationMap = stageIterationMap;

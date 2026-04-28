@@ -14,7 +14,7 @@ import { OpenapiLogMediator } from '#services/openapi-log-mediator.js';
   providersPerApp: [OasConfigFiles],
   providersPerMod: [OpenapiLogMediator],
   extensions: [
-    { extension: OpenapiRoutesExtension, export: true },
+    { extension: OpenapiRoutesExtension, groups: [RoutesExtension], export: true },
     {
       extension: OpenapiCompilerExtension,
       afterExtensions: [RoutesExtension],
