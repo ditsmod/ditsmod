@@ -16,7 +16,7 @@ import {
   isParamsWithMwp,
 } from '#decorators/type-guards.js';
 import { isProvider } from '#utils/type-guards.js';
-import { ExtensionConfigBase, getExtensionProvider } from '#extension/get-extension-provider.js';
+import { ExtensionConfigBase, normalizeExtensionConfig } from '#extension/get-extension-provider.js';
 import { AnyFn, AnyObj, Level, ModRefId, ModuleType, PickProps } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { RootRawMetadata } from '#decorators/module-raw-metadata.js';
@@ -259,7 +259,7 @@ export class ModuleNormalizer {
       if (!isExtensionConfig(extensionOrConfig)) {
         extensionOrConfig = { extension: extensionOrConfig } as ExtensionConfigBase;
       }
-      const normExtensionConfig = getExtensionProvider(extensionOrConfig, this.baseMeta.mExtensionAsGroupToken);
+      const normExtensionConfig = normalizeExtensionConfig(extensionOrConfig, this.baseMeta.mExtensionAsGroupToken);
       normExtensionConfig.providers.forEach((p) => this.checkStageMethodsForExtension(this.baseMeta.name, p));
       if (normExtensionConfig.config) {
         this.baseMeta.aExtensionConfig.push(normExtensionConfig.config);

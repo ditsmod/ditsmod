@@ -61,7 +61,7 @@ export function isBaseExtensionConfig(extensionConfig: AnyObj): extensionConfig 
   return (extensionConfig as ExtensionConfigBase).extension !== undefined;
 }
 
-export function getExtensionProvider(
+export function normalizeExtensionConfig(
   extensionConfig: ExtensionConfig,
   mExtensionAsGroupToken: Map<ExtensionClass, GroupToken<any>>,
 ): ExtensionObj {
@@ -112,6 +112,6 @@ export function getExtensionProviderList(
   mExtensionAsGroupToken: Map<ExtensionClass, GroupToken<any>>,
 ) {
   const providers: Provider[] = [];
-  extensionConfig.map((obj) => providers.push(...getExtensionProvider(obj, mExtensionAsGroupToken).providers));
+  extensionConfig.map((obj) => providers.push(...normalizeExtensionConfig(obj, mExtensionAsGroupToken).providers));
   return providers;
 }

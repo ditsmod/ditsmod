@@ -35,7 +35,7 @@ export {
   Stage1ExtensionMetaPerApp,
 } from '#extension/extension-types.js';
 export { topologicalSort } from './extension/topological-sort.js';
-export { getExtensionProvider } from './extension/get-extension-provider.js';
+export { normalizeExtensionConfig } from './extension/get-extension-provider.js';
 export { isExtensionProvider, isExtensionConfig } from '#extension/type-guards.js';
 export { ModuleExtract } from '#types/module-extract.js';
 export { Counter } from '#extension/counter.js';

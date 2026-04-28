@@ -1,6 +1,6 @@
 import { KeyRegistry, InjectionToken, Provider } from '#di';
 import { Extension } from '#extension/extension-types.js';
-import { ExtensionConfig, getExtensionProvider } from '#extension/get-extension-provider.js';
+import { ExtensionConfig, normalizeExtensionConfig } from '#extension/get-extension-provider.js';
 
 describe('getExtensionProvider', () => {
   const MY_EXTENSION = new InjectionToken('MY_EXTENSION');
@@ -17,7 +17,7 @@ describe('getExtensionProvider', () => {
 
     it('extension without exports (two arguments)', () => {
       const args: ExtensionConfig = { extension: Extension1 };
-      expect(getExtensionProvider(args)).toMatchObject({
+      expect(normalizeExtensionConfig(args)).toMatchObject({
         exportedProviders: [],
         providers,
       });
@@ -26,7 +26,7 @@ describe('getExtensionProvider', () => {
     it('extension with override', () => {
       const args: ExtensionConfig = { extension: Extension2, overrideExtension: Extension1 };
       const providers: Provider[] = [{ token: Extension1, useClass: Extension2 }];
-      expect(getExtensionProvider(args)).toMatchObject({
+      expect(normalizeExtensionConfig(args)).toMatchObject({
         exportedProviders: [],
         providers,
       });
@@ -34,7 +34,7 @@ describe('getExtensionProvider', () => {
 
     it('extension without exports (three arguments)', () => {
       const args: ExtensionConfig = { extension: Extension1, export: false };
-      expect(getExtensionProvider(args)).toMatchObject({
+      expect(normalizeExtensionConfig(args)).toMatchObject({
         exportedProviders: [],
         providers,
       });
@@ -42,7 +42,7 @@ describe('getExtensionProvider', () => {
 
     it('extension with exports', () => {
       const args: ExtensionConfig = { extension: Extension1, export: true };
-      expect(getExtensionProvider(args)).toMatchObject({
+      expect(normalizeExtensionConfig(args)).toMatchObject({
         exportedProviders: providers,
         providers,
       });
