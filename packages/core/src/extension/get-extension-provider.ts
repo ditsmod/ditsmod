@@ -4,7 +4,7 @@ import type { ExtensionManager } from './extension-manager.js';
 import type { AnyObj } from '#types/mix.js';
 import type { GroupToken } from '#di/key-registry.js';
 
-export class ExtensionObj {
+export class ExtensionProvidersAndConfigs {
   providers: Provider[];
   exportedProviders: Provider[];
   config?: ExtensionConfig;
@@ -64,7 +64,7 @@ export function isBaseExtensionConfig(extensionConfig: AnyObj): extensionConfig 
 export function normalizeExtensionConfig(
   extensionConfig: ExtensionConfig,
   mExtensionAsGroupToken: Map<ExtensionClass, GroupToken<any>>,
-): ExtensionObj {
+): ExtensionProvidersAndConfigs {
   if (isConfigWithOverrideExtension(extensionConfig)) {
     const { extension, overrideExtension } = extensionConfig;
     return {

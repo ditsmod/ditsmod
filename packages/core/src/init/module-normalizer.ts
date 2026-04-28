@@ -259,16 +259,16 @@ export class ModuleNormalizer {
       if (!isExtensionConfig(extensionOrConfig)) {
         extensionOrConfig = { extension: extensionOrConfig } as ExtensionConfigBase;
       }
-      const normExtensionConfig = normalizeExtensionConfig(extensionOrConfig, this.baseMeta.mExtensionAsGroupToken);
-      normExtensionConfig.providers.forEach((p) => this.checkStageMethodsForExtension(this.baseMeta.name, p));
-      if (normExtensionConfig.config) {
-        this.baseMeta.aExtensionConfig.push(normExtensionConfig.config);
+      const extProvidersAndConfigs = normalizeExtensionConfig(extensionOrConfig, this.baseMeta.mExtensionAsGroupToken);
+      extProvidersAndConfigs.providers.forEach((p) => this.checkStageMethodsForExtension(this.baseMeta.name, p));
+      if (extProvidersAndConfigs.config) {
+        this.baseMeta.aExtensionConfig.push(extProvidersAndConfigs.config);
       }
-      if (normExtensionConfig.exportedConfig) {
-        this.baseMeta.aExportedExtensionConfig.push(normExtensionConfig.exportedConfig);
+      if (extProvidersAndConfigs.exportedConfig) {
+        this.baseMeta.aExportedExtensionConfig.push(extProvidersAndConfigs.exportedConfig);
       }
-      this.baseMeta.extensionsProviders.push(...normExtensionConfig.providers);
-      this.baseMeta.exportedExtensionsProviders.push(...normExtensionConfig.exportedProviders);
+      this.baseMeta.extensionsProviders.push(...extProvidersAndConfigs.providers);
+      this.baseMeta.exportedExtensionsProviders.push(...extProvidersAndConfigs.exportedProviders);
     });
   }
 
