@@ -267,7 +267,7 @@ export class BaseAppInitializer {
         continue;
       }
       const providers = this.getProvidersForExtensions(metadataPerMod2, extensionCounters, extensionsContext);
-      const injectorForExtensions = injectorPerMod.resolveAndCreateChild(providers, 'ForExtensions');
+      const injectorForExtensions = injectorPerMod.resolveAndCreateChild(providers, 'injectorOfExtensions');
       const extensionManager = injectorForExtensions.get(InternalExtensionManager) as InternalExtensionManager;
 
       systemLogMediator.startExtensions(this);
