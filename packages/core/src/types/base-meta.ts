@@ -2,10 +2,12 @@ import { Class, MultiProvider } from '#di';
 import { AnyFn, AnyObj, ModRefId, ModuleType } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from '../decorators/module-raw-metadata.js';
-import { ExtensionConfig } from '#extension/get-extension-provider.js';
+import { ExtensionConfig, type ExtensionConfigBase } from '#extension/get-extension-provider.js';
 import { InitMetaMap } from '#decorators/init-hooks-and-metadata.js';
 import { InitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { AllInitHooks } from '#decorators/init-hooks-and-metadata.js';
+import { ExtensionClass } from '#extension/extension-types.js';
+import { GroupToken } from '#di/key-registry.js';
 
 export class BaseInitMeta<A extends AnyObj = AnyObj> {
   importsModules: ModuleType[];
@@ -107,6 +109,11 @@ export class BaseMeta<
    * List of unique init hooks found in the current module and all imported modules.
    */
   allInitHooks: AllInitHooks = new Map();
+  /**
+   * The mapping between an extension specified in {@link ExtensionConfigBase.groups}
+   * and the extension group token assigned to it.
+   */
+  mExtensionAsGroupToken = new Map<ExtensionClass, GroupToken>();
 
   constructor() {
     super();
