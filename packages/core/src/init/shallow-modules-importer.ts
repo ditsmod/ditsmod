@@ -310,8 +310,8 @@ export class ShallowModulesImporter {
     return { module2: modRefId2, providers };
   }
 
-  protected checkExtensionsGraph(extensions: (ExtensionConfig | ExtensionConfig3)[]) {
-    const extensionWithBeforeExtension = extensions?.filter((config) => {
+  protected checkExtensionsGraph(aExtensionConfig: (ExtensionConfig | ExtensionConfig3)[]) {
+    const extensionWithBeforeExtension = aExtensionConfig?.filter((config) => {
       return !isConfigWithOverrideExtension(config) && config.beforeExtensions;
     }) as ExtensionConfig[] | undefined;
 
