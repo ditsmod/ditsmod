@@ -114,6 +114,11 @@ export class BaseMeta<
    * and the extension group token assigned to it.
    */
   mExtensionAsGroupToken = new Map<ExtensionClass, GroupToken>();
+  /**
+   * The mapping between an extension specified in {@link ExtensionConfigBase.groups}
+   * and the extension group token assigned to it.
+   */
+  mExportedExtensionAsGroupToken = new Map<ExtensionClass, GroupToken>();
 
   constructor() {
     super();

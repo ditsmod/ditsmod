@@ -259,7 +259,7 @@ export class ModuleNormalizer {
       if (!isExtensionConfig(extensionOrConfig)) {
         extensionOrConfig = { extension: extensionOrConfig } as ExtensionConfigBase;
       }
-      const extProvidersAndConfigs = normalizeExtensionConfig(extensionOrConfig, this.baseMeta.mExtensionAsGroupToken);
+      const extProvidersAndConfigs = normalizeExtensionConfig(extensionOrConfig);
       extProvidersAndConfigs.providers.forEach((p) => this.checkStageMethodsForExtension(this.baseMeta.name, p));
       if (extProvidersAndConfigs.config) {
         this.baseMeta.aExtensionConfig.push(extProvidersAndConfigs.config);
@@ -269,6 +269,10 @@ export class ModuleNormalizer {
       }
       this.baseMeta.extensionsProviders.push(...extProvidersAndConfigs.providers);
       this.baseMeta.exportedExtensionsProviders.push(...extProvidersAndConfigs.exportedProviders);
+      extProvidersAndConfigs.mGroupToken?.forEach((gt, ext) => this.baseMeta.mExtensionAsGroupToken.set(ext, gt));
+      extProvidersAndConfigs.mExportedGroupToken?.forEach((groupToken, ext) => {
+        this.baseMeta.mExportedExtensionAsGroupToken.set(ext, groupToken);
+      });
     });
   }
 
