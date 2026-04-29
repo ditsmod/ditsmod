@@ -17,7 +17,7 @@ import {
   ExtensionConfig3,
   ExtensionConfigBase,
   isConfigWithOverrideExtension,
-} from '#extension/get-extension-provider.js';
+} from '#extension/extension-providers-and-configs.js';
 import { findCycle } from '#extension/tarjan-graph.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { topologicalSort } from '#extension/topological-sort.js';

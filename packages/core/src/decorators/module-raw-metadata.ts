@@ -1,6 +1,6 @@
 import { ProvidersOnly } from '#types/providers-metadata.js';
 import { AnyObj, ModRefId, ModuleType } from '#types/mix.js';
-import { ExtensionConfig } from '#extension/get-extension-provider.js';
+import { ExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import { ExtensionClass } from '#extension/extension-types.js';
 import { InitParamsMap } from '#decorators/init-hooks-and-metadata.js';
 import type { rootModule } from '#decorators/root-module.js';

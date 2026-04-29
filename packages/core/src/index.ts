@@ -35,7 +35,7 @@ export {
   Stage1ExtensionMetaPerApp,
 } from '#extension/extension-types.js';
 export { topologicalSort } from './extension/topological-sort.js';
-export { normalizeExtensionConfig } from './extension/get-extension-provider.js';
+export { normalizeExtensionConfig } from './extension/extension-providers-and-configs.js';
 export { isExtensionProvider, isExtensionConfig } from '#extension/type-guards.js';
 export { ModuleExtract } from '#types/module-extract.js';
 export { Counter } from '#extension/counter.js';
@@ -83,7 +83,7 @@ export { getDuplicates } from '#utils/get-duplicates.js';
 export { getCollisions } from '#utils/get-collisions.js';
 export { getDependencies, ReflectiveDependency } from '#utils/get-dependencies.js';
 export { getProviderName } from '#utils/get-provider-name.js';
-export { ExtensionConfig, isConfigWithOverrideExtension } from '#extension/get-extension-provider.js';
+export { ExtensionConfig, isConfigWithOverrideExtension } from '#extension/extension-providers-and-configs.js';
 export { getModule } from '#utils/get-module.js';
 export { getStatusText, isSuccess, Status, STATUS_CODE_INFO } from '#utils/http-status-codes.js';
 export { NormalizedProvider, normalizeProviders } from '#utils/ng-utils.js';

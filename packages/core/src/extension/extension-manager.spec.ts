@@ -1,6 +1,6 @@
 import { injectable, Injector } from '#di';
 import { Extension, ExtensionCounters } from '#extension/extension-types.js';
-import { getExtensionProviderList } from '#extension/get-extension-provider.js';
+import { getExtensionProviderList } from '#extension/extension-providers-and-configs.js';
 import { defaultProvidersPerApp } from '#init/default-providers-per-app.js';
 import { ExtensionsContext } from '#extension/extensions-context.js';
 import { StageIteration, ExtensionManager } from '#extension/extension-manager.js';

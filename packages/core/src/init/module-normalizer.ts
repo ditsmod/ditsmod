@@ -16,7 +16,7 @@ import {
   isParamsWithMwp,
 } from '#decorators/type-guards.js';
 import { isProvider } from '#utils/type-guards.js';
-import { ExtensionConfigBase, normalizeExtensionConfig } from '#extension/get-extension-provider.js';
+import { ExtensionConfigBase, normalizeExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import { AnyFn, AnyObj, Level, ModRefId, ModuleType, PickProps } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { RootRawMetadata } from '#decorators/module-raw-metadata.js';
