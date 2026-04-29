@@ -157,7 +157,7 @@ export class RestShallowModulesImporter {
   }
 
   protected getPrefixAndGuards(modRefId: RestModRefId, meta: RestInitMeta, isImport?: boolean) {
-    let prefixPerMod = '';
+    let prefixPerMod: string;
     let guards1: GuardPerMod1[] = [];
     const { absolutePath } = meta.params;
     const hasModuleParams = isModuleWithParams(modRefId);
