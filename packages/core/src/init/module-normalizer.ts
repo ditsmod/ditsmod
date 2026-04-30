@@ -269,7 +269,9 @@ export class ModuleNormalizer {
       }
       this.baseMeta.extensionProviders.push(...extProvidersAndConfigs.providers);
       this.baseMeta.exportedExtensionProviders.push(...extProvidersAndConfigs.exportedProviders);
-      extProvidersAndConfigs.mGroupToken?.forEach((gt, ext) => this.baseMeta.mExtensionAsGroupToken.set(ext, gt));
+      extProvidersAndConfigs.mGroupToken?.forEach((groupToken, ext) => {
+        this.baseMeta.mExtensionAsGroupToken.set(ext, groupToken);
+      });
       extProvidersAndConfigs.mExportedGroupToken?.forEach((groupToken, ext) => {
         this.baseMeta.mExportedExtensionAsGroupToken.set(ext, groupToken);
       });

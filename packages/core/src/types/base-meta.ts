@@ -110,12 +110,12 @@ export class BaseMeta<
    */
   allInitHooks: AllInitHooks = new Map();
   /**
-   * The mapping between an extension specified in {@link ExtensionConfigBase.groups}
+   * The mapping between an extension specified in {@link ExtensionConfigBase.groups | ExtensionConfig.groups}
    * and the extension group token assigned to it.
    */
   mExtensionAsGroupToken = new Map<ExtensionClass, GroupToken>();
   /**
-   * The mapping between an extension specified in {@link ExtensionConfigBase.groups}
+   * The mapping between an extension specified in {@link ExtensionConfigBase.groups | ExtensionConfig.groups}
    * and the extension group token assigned to it.
    */
   mExportedExtensionAsGroupToken = new Map<ExtensionClass, GroupToken>();
