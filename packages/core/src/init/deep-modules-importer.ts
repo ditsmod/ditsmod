@@ -174,8 +174,10 @@ export class DeepModulesImporter {
 
       const newGroupProviders: Provider[] = [];
       baseImportRegistry.extensionGroupTokens.get(srcModRefId)?.forEach((groupToken, ext) => {
-        targetProviders.mExtensionAsGroupToken.set(ext, groupToken);
-        newGroupProviders.push({ token: groupToken, useToken: ext, multi: true });
+        if (!targetProviders.mExtensionAsGroupToken.has(ext)) {
+          targetProviders.mExtensionAsGroupToken.set(ext, groupToken);
+          newGroupProviders.push({ token: groupToken, useToken: ext, multi: true });
+        }
       });
 
       targetProviders.extensionProviders.unshift(...newGroupProviders);
