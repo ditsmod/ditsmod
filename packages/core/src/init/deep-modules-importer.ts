@@ -25,7 +25,7 @@ import { ModuleExtract } from '#types/module-extract.js';
  * recursively collects providers for them from the corresponding modules.
  */
 export class DeepModulesImporter {
-  dependencyChain: [ModRefId, Provider][] = [];
+  protected dependencyChain: [ModRefId, Provider][] = [];
   protected tokensPerApp: any[];
   protected extensionsTokens: any[] = [];
   protected extensionCounters = new ExtensionCounters();

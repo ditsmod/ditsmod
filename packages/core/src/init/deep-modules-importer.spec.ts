@@ -13,6 +13,7 @@ import { BaseImportRegistry } from './types.js';
 describe('DeepModulesImporter', () => {
   @injectable()
   class DeepModulesImporterMock extends DeepModulesImporter {
+    override dependencyChain: [ModRefId, Provider][] = [];
     override resolveImportedProviders(
       targetProviders: BaseMeta,
       baseImportRegistry: BaseImportRegistry,
