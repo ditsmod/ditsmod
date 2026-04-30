@@ -261,8 +261,8 @@ export class BaseAppInitializer {
       const injectorPerMod = injectorPerApp.resolveAndCreateChild(baseMeta.providersPerMod, 'Mod');
       injectorPerMod.pullAndSave(Logger);
       const systemLogMediator = injectorPerMod.pullAndSave(SystemLogMediator) as SystemLogMediator;
-      const { extensionsProviders } = baseMeta;
-      if (!extensionsProviders.length) {
+      const { extensionProviders } = baseMeta;
+      if (!extensionProviders.length) {
         systemLogMediator.skippingStartExtensions(this);
         continue;
       }
@@ -271,7 +271,7 @@ export class BaseAppInitializer {
       const extensionManager = injectorForExtensions.get(InternalExtensionManager) as InternalExtensionManager;
 
       systemLogMediator.startExtensions(this);
-      this.decreaseExtensionsCounters(extensionCounters, extensionsProviders);
+      this.decreaseExtensionsCounters(extensionCounters, extensionProviders);
       await this.handleExtensionsPerMod(baseMeta, aOrderedExtensions, extensionManager, systemLogMediator);
       this.logExtensionsStatistic(injectorPerApp, systemLogMediator);
     }
@@ -370,7 +370,7 @@ export class BaseAppInitializer {
       { token: ExtensionsContext, useValue: extensionsContext },
       { token: MetadataPerMod2, useValue: metadataPerMod2 },
       { token: ExtensionCounters, useValue: extensionCounters },
-      ...metadataPerMod2.baseMeta.extensionsProviders,
+      ...metadataPerMod2.baseMeta.extensionProviders,
     ];
   }
 

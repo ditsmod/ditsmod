@@ -530,7 +530,7 @@ describe('ModuleManager', () => {
       async stage1() {}
     }
 
-    const extensionsProviders: Provider[] = [Extension1];
+    const extensionProviders: Provider[] = [Extension1];
 
     @featureModule({
       extensions: [{ extension: Extension1 as any, export: true }],
@@ -558,8 +558,8 @@ describe('ModuleManager', () => {
     expectedMeta1.id = '';
     expectedMeta1.name = 'Module1';
     expectedMeta1.modRefId = Module1;
-    expectedMeta1.extensionsProviders = extensionsProviders;
-    expectedMeta1.exportedExtensionsProviders = extensionsProviders;
+    expectedMeta1.extensionProviders = extensionProviders;
+    expectedMeta1.exportedExtensionProviders = extensionProviders;
     expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir('transformModule');
     expectedMeta1.isExternal = false;
     expectedMeta1.rawMeta = expect.any(Object);
@@ -578,7 +578,7 @@ describe('ModuleManager', () => {
       async stage1() {}
     }
 
-    const extensionsProviders: Provider[] = [Extension1];
+    const extensionProviders: Provider[] = [Extension1];
 
     @featureModule({
       extensions: [{ extension: Extension1 as any, export: true }],
@@ -608,8 +608,8 @@ describe('ModuleManager', () => {
     expectedMeta1.id = '';
     expectedMeta1.name = 'Module1';
     expectedMeta1.modRefId = Module1;
-    expectedMeta1.extensionsProviders = extensionsProviders;
-    expectedMeta1.exportedExtensionsProviders = extensionsProviders;
+    expectedMeta1.extensionProviders = extensionProviders;
+    expectedMeta1.exportedExtensionProviders = extensionProviders;
     expectedMeta1.declaredInDir = CallsiteUtils.getCallerDir('transformModule');
     expectedMeta1.isExternal = false;
     expectedMeta1.rawMeta = expect.any(Object);

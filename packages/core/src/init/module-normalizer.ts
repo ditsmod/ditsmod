@@ -267,8 +267,8 @@ export class ModuleNormalizer {
       if (extProvidersAndConfigs.exportedConfig) {
         this.baseMeta.aExportedExtensionConfig.push(extProvidersAndConfigs.exportedConfig);
       }
-      this.baseMeta.extensionsProviders.push(...extProvidersAndConfigs.providers);
-      this.baseMeta.exportedExtensionsProviders.push(...extProvidersAndConfigs.exportedProviders);
+      this.baseMeta.extensionProviders.push(...extProvidersAndConfigs.providers);
+      this.baseMeta.exportedExtensionProviders.push(...extProvidersAndConfigs.exportedProviders);
       extProvidersAndConfigs.mGroupToken?.forEach((gt, ext) => this.baseMeta.mExtensionAsGroupToken.set(ext, gt));
       extProvidersAndConfigs.mExportedGroupToken?.forEach((groupToken, ext) => {
         this.baseMeta.mExportedExtensionAsGroupToken.set(ext, groupToken);
@@ -496,8 +496,8 @@ export class AppModule {}
       !this.baseMeta.exportsModules.length &&
       !this.baseMeta.providersPerApp.length &&
       !this.baseMeta.exportsWithParams.length &&
-      !this.baseMeta.exportedExtensionsProviders.length &&
-      !this.baseMeta.extensionsProviders.length
+      !this.baseMeta.exportedExtensionProviders.length &&
+      !this.baseMeta.extensionProviders.length
     ) {
       throw new ModuleShouldHaveValue();
     }

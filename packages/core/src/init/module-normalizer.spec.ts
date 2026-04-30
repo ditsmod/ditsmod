@@ -110,8 +110,8 @@ describe('ModuleNormalizer', () => {
     expect(baseMeta.resolvedCollisionsPerMod).toEqual([[Service2, Module2]]);
     expect(baseMeta.resolvedCollisionsPerRou).toEqual([]);
     expect(baseMeta.resolvedCollisionsPerReq).toEqual([]);
-    expect(baseMeta.extensionsProviders).toEqual([Extension1]);
-    expect(baseMeta.exportedExtensionsProviders).toEqual([Extension1]);
+    expect(baseMeta.extensionProviders).toEqual([Extension1]);
+    expect(baseMeta.exportedExtensionProviders).toEqual([Extension1]);
     expect(baseMeta.extensionsMeta).toEqual({ one: 1 });
   });
 
@@ -275,8 +275,8 @@ describe('ModuleNormalizer', () => {
 
     expect(() => mock.normalize(Module2)).not.toThrow();
     const baseMeta = mock.normalize(Module2);
-    expect(baseMeta.extensionsProviders).toEqual([Extension1]);
-    expect(baseMeta.exportedExtensionsProviders).toEqual([Extension1]);
+    expect(baseMeta.extensionProviders).toEqual([Extension1]);
+    expect(baseMeta.exportedExtensionProviders).toEqual([Extension1]);
   });
 
   describe('creating custom decorator with init hooks', () => {

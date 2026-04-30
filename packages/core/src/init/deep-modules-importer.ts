@@ -1,6 +1,6 @@
 import { Injector } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { defaultExtensionsProviders } from '#extension/default-extensions-providers.js';
+import { defaultExtensionProviders } from '#extension/default-extensions-providers.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
@@ -120,11 +120,11 @@ export class DeepModulesImporter {
     baseImportRegistry.extensions.forEach((providers) => {
       currentExtensionsTokens.push(...getTokens(providers));
     });
-    this.extensionsTokens = getTokens([...defaultExtensionsProviders, ...currentExtensionsTokens]);
+    this.extensionsTokens = getTokens([...defaultExtensionProviders, ...currentExtensionsTokens]);
 
     baseImportRegistry.extensions.forEach((importedProviders, srcModule) => {
       const newProviders = importedProviders.filter((np) => {
-        for (const ep of targetProviders.extensionsProviders) {
+        for (const ep of targetProviders.extensionProviders) {
           if (ep === np) {
             return false;
           }
@@ -155,7 +155,7 @@ export class DeepModulesImporter {
         }
         return true;
       });
-      targetProviders.extensionsProviders.unshift(...newProviders);
+      targetProviders.extensionProviders.unshift(...newProviders);
       importedProviders.forEach((importedProvider) => {
         if (this.hasUnresolvedDeps(targetProviders.modRefId, importedProvider, ['Mod'])) {
           this.fetchDeps(targetProviders, srcModule, importedProvider, ['Mod']);
@@ -166,8 +166,8 @@ export class DeepModulesImporter {
   }
 
   protected increaseExtensionCounters(baseMeta: BaseMeta) {
-    const extensionsProviders = [...baseMeta.extensionsProviders];
-    const uniqTargets = new Set<Provider>(getProvidersTargets(extensionsProviders));
+    const extensionProviders = [...baseMeta.extensionProviders];
+    const uniqTargets = new Set<Provider>(getProvidersTargets(extensionProviders));
 
     uniqTargets.forEach((target) => {
       const counter = this.extensionCounters.mExtensions.get(target) || 0;

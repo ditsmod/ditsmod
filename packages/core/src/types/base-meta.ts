@@ -28,8 +28,8 @@ export class BaseInitMeta<A extends AnyObj = AnyObj> {
   resolvedCollisionsPerMod: [any, ModRefId][];
   resolvedCollisionsPerRou: [any, ModRefId][];
   resolvedCollisionsPerReq: [any, ModRefId][];
-  extensionsProviders: Provider[];
-  exportedExtensionsProviders: Provider[];
+  extensionProviders: Provider[];
+  exportedExtensionProviders: Provider[];
   aExtensionConfig: ExtensionConfig[];
   aExportedExtensionConfig: ExtensionConfig[];
   /**
@@ -140,8 +140,8 @@ export class BaseMeta<
     this.resolvedCollisionsPerMod = [];
     this.resolvedCollisionsPerRou = [];
     this.resolvedCollisionsPerReq = [];
-    this.extensionsProviders = [];
-    this.exportedExtensionsProviders = [];
+    this.extensionProviders = [];
+    this.exportedExtensionProviders = [];
     this.aExtensionConfig = [];
     this.aExportedExtensionConfig = [];
     this.extensionsMeta = {} as ExtensionMeta;

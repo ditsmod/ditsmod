@@ -55,7 +55,7 @@ export class ShallowModulesImporter {
   protected importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
   protected importedMultiProvidersPerRou = new Map<ModRefId, Provider[]>();
   protected importedMultiProvidersPerReq = new Map<ModRefId, Provider[]>();
-  protected importedExtensionsProviders = new Map<ModRefId, Provider[]>();
+  protected importedExtensionProviders = new Map<ModRefId, Provider[]>();
   protected aImportedExtensionConfig: ExtensionConfig[] = [];
 
   /**
@@ -82,7 +82,7 @@ export class ShallowModulesImporter {
       importedMultiProvidersPerMod: this.importedMultiProvidersPerMod,
       importedMultiProvidersPerRou: this.importedMultiProvidersPerRou,
       importedMultiProvidersPerReq: this.importedMultiProvidersPerReq,
-      importedExtensionsProviders: this.importedExtensionsProviders,
+      importedExtensionProviders: this.importedExtensionProviders,
       aImportedExtensionConfig: this.aImportedExtensionConfig,
       mInitValue,
     };
@@ -130,7 +130,7 @@ export class ShallowModulesImporter {
       multiPerMod = new Map([...this.importedMultiProvidersPerMod]);
       multiPerRou = new Map([...this.importedMultiProvidersPerRou]);
       multiPerReq = new Map([...this.importedMultiProvidersPerReq]);
-      extensions = new Map([...this.importedExtensionsProviders]);
+      extensions = new Map([...this.importedExtensionProviders]);
       aExtensionConfig = [...this.aImportedExtensionConfig];
     } else {
       this.glProviders.mInitValue.forEach(({ initHooks }, decorator) => {
@@ -144,7 +144,7 @@ export class ShallowModulesImporter {
       multiPerMod = new Map([...this.glProviders.importedMultiProvidersPerMod, ...this.importedMultiProvidersPerMod]);
       multiPerRou = new Map([...this.glProviders.importedMultiProvidersPerRou, ...this.importedMultiProvidersPerRou]);
       multiPerReq = new Map([...this.glProviders.importedMultiProvidersPerReq, ...this.importedMultiProvidersPerReq]);
-      extensions = new Map([...this.glProviders.importedExtensionsProviders, ...this.importedExtensionsProviders]);
+      extensions = new Map([...this.glProviders.importedExtensionProviders, ...this.importedExtensionProviders]);
       aExtensionConfig = [...this.glProviders.aImportedExtensionConfig, ...this.aImportedExtensionConfig];
     }
 
@@ -237,8 +237,8 @@ export class ShallowModulesImporter {
     if (baseMeta1.exportedMultiProvidersPerReq.length) {
       this.importedMultiProvidersPerReq.set(modRefId, baseMeta1.exportedMultiProvidersPerReq);
     }
-    if (baseMeta1.exportedExtensionsProviders.length) {
-      this.importedExtensionsProviders.set(baseMeta1.modRefId, baseMeta1.exportedExtensionsProviders);
+    if (baseMeta1.exportedExtensionProviders.length) {
+      this.importedExtensionProviders.set(baseMeta1.modRefId, baseMeta1.exportedExtensionProviders);
       this.aImportedExtensionConfig.push(...baseMeta1.aExportedExtensionConfig);
     }
     this.throwIfTryResolvingMultiprovidersCollisions(baseMeta1.name);
