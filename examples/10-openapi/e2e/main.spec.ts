@@ -42,7 +42,7 @@ describe('10-openapi', () => {
     expect(Number(headers?.['content-length'])).toBeGreaterThan(0);
   });
 
-  it('serves route with JSON response for OpenAPI docs', async () => {
+  it('serves route that returns JavaScript bundle for OpenAPI docs', async () => {
     const { status, type, headers } = await testAgent.get('/openapi.bundle.js');
     expect(status).toBe(200);
     expect(type).toBe('text/javascript');
