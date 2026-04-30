@@ -4,6 +4,7 @@ import { Provider } from '#di/types-and-models.js';
 import { ExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import { BaseInitRawMeta, InitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { ExtensionClass } from '#extension/extension-types.js';
+import { GroupToken } from '#di/key-registry.js';
 
 /**
  * Used to create a mapping between a provider and the module from which it was imported.
@@ -31,6 +32,7 @@ export class GlobalProviders {
   importedMultiProvidersPerRou = new Map<ModRefId, Provider[]>();
   importedMultiProvidersPerReq = new Map<ModRefId, Provider[]>();
   importedExtensionProviders = new Map<ModRefId, Provider[]>();
+  importedExtensionGroupTokens = new Map<ModRefId, Map<ExtensionClass, GroupToken>>();
   aImportedExtensionConfig: ExtensionConfig[] = [];
   mInitValue = new Map<AnyFn, GlobalInitHooks>();
 }

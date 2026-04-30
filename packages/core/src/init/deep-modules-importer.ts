@@ -1,4 +1,4 @@
-import { Injector } from '#di';
+import { Injector, isMultiProvider } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { defaultExtensionProviders } from '#extension/default-extensions-providers.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
@@ -27,6 +27,9 @@ import { ModuleExtract } from '#types/module-extract.js';
 export class DeepModulesImporter {
   protected dependencyChain: [ModRefId, Provider][] = [];
   protected tokensPerApp: any[];
+  /**
+   * @todo Describe the purpose of this
+   */
   protected extensionsTokens: any[] = [];
   protected extensionCounters = new ExtensionCounters();
 
@@ -116,38 +119,49 @@ export class DeepModulesImporter {
   }
 
   protected resolveProvidersForExtensions(targetProviders: BaseMeta, baseImportRegistry: BaseImportRegistry) {
-    const currentExtensionsTokens: any[] = [];
-    baseImportRegistry.extensions.forEach((providers) => {
-      currentExtensionsTokens.push(...getTokens(providers));
+    const currentExtensionsProviders: any[] = [];
+    baseImportRegistry.extensionProviders.forEach((p) => currentExtensionsProviders.push(...p));
+    this.extensionsTokens = getTokens([...defaultExtensionProviders, ...currentExtensionsProviders]);
+    baseImportRegistry.extensionGroupTokens.forEach((importedGroupTokens) => {
+      importedGroupTokens.forEach((groupToken, ext) => {
+        this.extensionsTokens.push(groupToken, ext);
+      });
     });
-    this.extensionsTokens = getTokens([...defaultExtensionProviders, ...currentExtensionsTokens]);
+    this.mergeExtensionProviders(targetProviders, baseImportRegistry);
+    this.increaseExtensionCounters(targetProviders);
+  }
 
-    baseImportRegistry.extensions.forEach((importedProviders, srcModule) => {
-      const newProviders = importedProviders.filter((np) => {
+  protected mergeExtensionProviders(targetProviders: BaseMeta, baseImportRegistry: BaseImportRegistry) {
+    baseImportRegistry.extensionProviders.forEach((importedProviders, srcModRefId) => {
+      // Select only those imported providers that are not in the current module. Multi-providers are all transferred.
+      const newProviders = importedProviders.filter((impProvider) => {
+        if (isMultiProvider(impProvider)) {
+          return true;
+        }
         for (const ep of targetProviders.extensionProviders) {
-          if (ep === np) {
+          if (ep === impProvider) {
             return false;
           }
-          if (isClassProvider(ep) && isClassProvider(np)) {
-            const equal = ep.token === np.token && ep.useClass === np.useClass;
+          if (isClassProvider(ep) && isClassProvider(impProvider)) {
+            const equal = ep.token === impProvider.token && ep.useClass === impProvider.useClass;
             if (equal) {
               return false;
             }
           }
-          if (isTokenProvider(ep) && isTokenProvider(np)) {
-            const equal = ep.token === np.token && ep.useToken === np.useToken;
+          if (isTokenProvider(ep) && isTokenProvider(impProvider)) {
+            const equal = ep.token === impProvider.token && ep.useToken === impProvider.useToken;
             if (equal) {
               return false;
             }
           }
-          if (isFactoryProvider(ep) && isFactoryProvider(np)) {
-            const equal = ep.token === np.token && ep.useFactory === np.useFactory;
+          if (isFactoryProvider(ep) && isFactoryProvider(impProvider)) {
+            const equal = ep.token === impProvider.token && ep.useFactory === impProvider.useFactory;
             if (equal) {
               return false;
             }
           }
-          if (isValueProvider(ep) && isValueProvider(np)) {
-            const equal = ep.token === np.token && ep.useValue === np.useValue;
+          if (isValueProvider(ep) && isValueProvider(impProvider)) {
+            const equal = ep.token === impProvider.token && ep.useValue === impProvider.useValue;
             if (equal) {
               return false;
             }
@@ -155,14 +169,22 @@ export class DeepModulesImporter {
         }
         return true;
       });
+
       targetProviders.extensionProviders.unshift(...newProviders);
-      importedProviders.forEach((importedProvider) => {
+
+      const newGroupProviders: Provider[] = [];
+      baseImportRegistry.extensionGroupTokens.get(srcModRefId)?.forEach((groupToken, ext) => {
+        targetProviders.mExtensionAsGroupToken.set(ext, groupToken);
+        newGroupProviders.push({ token: groupToken, useToken: ext, multi: true });
+      });
+
+      targetProviders.extensionProviders.unshift(...newGroupProviders);
+      importedProviders.concat(newGroupProviders).forEach((importedProvider) => {
         if (this.hasUnresolvedDeps(targetProviders.modRefId, importedProvider, ['Mod'])) {
-          this.fetchDeps(targetProviders, srcModule, importedProvider, ['Mod']);
+          this.fetchDeps(targetProviders, srcModRefId, importedProvider, ['Mod']);
         }
       });
     });
-    this.increaseExtensionCounters(targetProviders);
   }
 
   protected increaseExtensionCounters(baseMeta: BaseMeta) {

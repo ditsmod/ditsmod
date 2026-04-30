@@ -32,6 +32,8 @@ import {
   FalseResolvedCollisions,
 } from '#errors';
 import { defaultProvidersPerMod } from './default-providers-per-mod.js';
+import { GroupToken } from '#di/key-registry.js';
+
 /**
  * Recursively collects providers taking into account module imports/exports,
  * but does not take provider dependencies into account.
@@ -56,6 +58,7 @@ export class ShallowModulesImporter {
   protected importedMultiProvidersPerRou = new Map<ModRefId, Provider[]>();
   protected importedMultiProvidersPerReq = new Map<ModRefId, Provider[]>();
   protected importedExtensionProviders = new Map<ModRefId, Provider[]>();
+  protected importedExtensionGroupTokens = new Map<ModRefId, Map<ExtensionClass, GroupToken>>();
   protected aImportedExtensionConfig: ExtensionConfig[] = [];
 
   /**
@@ -83,6 +86,7 @@ export class ShallowModulesImporter {
       importedMultiProvidersPerRou: this.importedMultiProvidersPerRou,
       importedMultiProvidersPerReq: this.importedMultiProvidersPerReq,
       importedExtensionProviders: this.importedExtensionProviders,
+      importedExtensionGroupTokens: this.importedExtensionGroupTokens,
       aImportedExtensionConfig: this.aImportedExtensionConfig,
       mInitValue,
     };
@@ -120,7 +124,8 @@ export class ShallowModulesImporter {
     let multiPerMod: Map<ModRefId, Provider[]>;
     let multiPerRou: Map<ModRefId, Provider[]>;
     let multiPerReq: Map<ModRefId, Provider[]>;
-    let extensions: Map<ModRefId, Provider[]>;
+    let extensionProviders: Map<ModRefId, Provider[]>;
+    let extensionGroupTokens: Map<ModRefId, Map<ExtensionClass, GroupToken>>;
     let aExtensionConfig: ExtensionConfig[];
     if (baseMeta.isExternal) {
       // External modules do not require global providers and extensions from the application.
@@ -130,7 +135,8 @@ export class ShallowModulesImporter {
       multiPerMod = new Map([...this.importedMultiProvidersPerMod]);
       multiPerRou = new Map([...this.importedMultiProvidersPerRou]);
       multiPerReq = new Map([...this.importedMultiProvidersPerReq]);
-      extensions = new Map([...this.importedExtensionProviders]);
+      extensionProviders = new Map([...this.importedExtensionProviders]);
+      extensionGroupTokens = new Map([...this.importedExtensionGroupTokens]);
       aExtensionConfig = [...this.aImportedExtensionConfig];
     } else {
       this.glProviders.mInitValue.forEach(({ initHooks }, decorator) => {
@@ -144,7 +150,11 @@ export class ShallowModulesImporter {
       multiPerMod = new Map([...this.glProviders.importedMultiProvidersPerMod, ...this.importedMultiProvidersPerMod]);
       multiPerRou = new Map([...this.glProviders.importedMultiProvidersPerRou, ...this.importedMultiProvidersPerRou]);
       multiPerReq = new Map([...this.glProviders.importedMultiProvidersPerReq, ...this.importedMultiProvidersPerReq]);
-      extensions = new Map([...this.glProviders.importedExtensionProviders, ...this.importedExtensionProviders]);
+      extensionProviders = new Map([...this.glProviders.importedExtensionProviders, ...this.importedExtensionProviders]);
+      extensionGroupTokens = new Map([
+        ...this.glProviders.importedExtensionGroupTokens,
+        ...this.importedExtensionGroupTokens,
+      ]);
       aExtensionConfig = [...this.glProviders.aImportedExtensionConfig, ...this.aImportedExtensionConfig];
     }
 
@@ -161,7 +171,8 @@ export class ShallowModulesImporter {
         multiPerMod,
         multiPerRou,
         multiPerReq,
-        extensions,
+        extensionProviders,
+        extensionGroupTokens,
       }),
     );
   }
@@ -239,6 +250,7 @@ export class ShallowModulesImporter {
     }
     if (baseMeta1.exportedExtensionProviders.length) {
       this.importedExtensionProviders.set(baseMeta1.modRefId, baseMeta1.exportedExtensionProviders);
+      this.importedExtensionGroupTokens.set(baseMeta1.modRefId, baseMeta1.mExportedExtensionAsGroupToken);
       this.aImportedExtensionConfig.push(...baseMeta1.aExportedExtensionConfig);
     }
     this.throwIfTryResolvingMultiprovidersCollisions(baseMeta1.name);

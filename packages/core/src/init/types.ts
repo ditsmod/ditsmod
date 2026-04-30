@@ -3,6 +3,7 @@ import { BaseMeta } from '#types/base-meta.js';
 import { ProviderImport } from '#types/metadata-per-mod.js';
 import { Provider } from '#di/types-and-models.js';
 import { ExtensionClass } from '#extension/extension-types.js';
+import { GroupToken } from '#di/key-registry.js';
 
 /**
  * Metadata collected using `ShallowModulesImporter`. The target for this metadata is `DeepModulesImporter`.
@@ -38,10 +39,17 @@ export interface BaseImportRegistry {
    * `Map<token, ProviderImport>`
    */
   perMod: Map<any, ProviderImport>;
+  /**
+   * `Map<token, ProviderImport>`
+   */
   perRou: Map<any, ProviderImport>;
+  /**
+   * `Map<token, ProviderImport>`
+   */
   perReq: Map<any, ProviderImport>;
   multiPerMod: Map<ModRefId, Provider[]>;
   multiPerRou: Map<ModRefId, Provider[]>;
   multiPerReq: Map<ModRefId, Provider[]>;
-  extensions: Map<ModRefId, Provider[]>;
+  extensionProviders: Map<ModRefId, Provider[]>;
+  extensionGroupTokens: Map<ModRefId, Map<ExtensionClass, GroupToken>>;
 }
