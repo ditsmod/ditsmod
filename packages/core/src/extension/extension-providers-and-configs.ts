@@ -65,8 +65,6 @@ export function isBaseExtensionConfig(extensionConfig: AnyObj): extensionConfig 
 }
 
 export function normalizeExtensionConfig(extensionConfig: ExtensionConfig): ExtensionProvidersAndConfigs {
-  const mGroupToken = new Map<ExtensionClass, GroupToken>();
-
   if (isConfigWithOverrideExtension(extensionConfig)) {
     const { extension, overrideExtension } = extensionConfig;
     return {
@@ -75,6 +73,7 @@ export function normalizeExtensionConfig(extensionConfig: ExtensionConfig): Exte
     };
   }
 
+  const mGroupToken = new Map<ExtensionClass, GroupToken>();
   const providers: Provider[] = [extensionConfig.extension];
 
   // Creating a group of extensions using multi-providers
