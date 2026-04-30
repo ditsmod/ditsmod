@@ -3,6 +3,7 @@ import type { fromSelf, skipSelf } from './decorators.js';
 import { ForwardRefFn } from './forward-ref.js';
 import { InjectionToken } from './injection-token.js';
 import { DualKey } from './key-registry.js';
+import { MultiProvider } from './utils.js';
 
 /**
  * ### Interface Overview
@@ -166,6 +167,8 @@ export function getNewRegistry(): typeof RegistryOfInjector {
  * An internal resolved representation of a factory function created by resolving `Provider`.
  */
 export class ResolvedFactory {
+  declare provider?: MultiProvider;
+
   constructor(
     /**
      * Factory function which can return an instance of an object represented by a key.
@@ -176,8 +179,15 @@ export class ResolvedFactory {
      * Arguments (dependencies) to the `factory` function.
      */
     public dependencies: Dependency[],
-  ) {}
+    provider?: MultiProvider,
+  ) {
+    if (provider) {
+      this.provider = provider;
+    }
+  }
 }
+
+export type CompareFn<T = any> = (a: T, b: T) => number;
 
 /**
  * ### Interface Overview

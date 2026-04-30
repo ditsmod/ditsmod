@@ -1,4 +1,4 @@
-import { Class, Injector, injectable } from '#di';
+import { Class, Injector, TokenProvider, injectable } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import {
   Extension,
@@ -173,7 +173,11 @@ export class ExtensionManager {
     let extensions: Extension<T>[];
     const groupToken = this.baseMeta.mExtensionAsGroupToken.get(ExtCls);
     if (groupToken) {
-      extensions = this.injector.get(groupToken, undefined, []);
+      extensions = this.injector.getOrderedMultiValues<TokenProvider>(groupToken, (a, b) => {
+        const stageIterationA = this.stageIterationMap.get(a.useToken) || { index: 0 };
+        const stageIterationB = this.stageIterationMap.get(b.useToken) || { index: 0 };
+        return stageIterationA.index - stageIterationB.index;
+      });
     } else {
       extensions = [this.injector.get(ExtCls, undefined, [])];
     }

@@ -29,6 +29,7 @@ import {
   ResolvedFactory,
   ResolvedProvider,
   Visibility,
+  CompareFn,
   getNewRegistry,
 } from './types-and-models.js';
 import { PathTracer } from './path-tracer.js';
@@ -39,6 +40,7 @@ import {
   isNormalizedProvider,
   isTypeProvider,
   isValueProvider,
+  MultiProvider,
 } from './utils.js';
 import { DEBUG_NAME, stringify } from './stringify.js';
 import { DEPS_KEY } from './decorator-factories.js';
@@ -244,9 +246,9 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       const Cls = resolveForwardRef(provider.useClass) as Class;
       const factoryFn = (...args: any[]) => new Cls(...args);
       const resolvedDeps = this.getDependencies(Cls);
-      return [this.getResolvedProvider(provider.token, factoryFn, resolvedDeps, provider.multi)];
+      return [this.getResolvedProvider(provider, provider.token, factoryFn, resolvedDeps, provider.multi)];
     } else if (isValueProvider(provider)) {
-      return [this.getResolvedProvider(provider.token, () => provider.useValue, [], provider.multi)];
+      return [this.getResolvedProvider(provider, provider.token, () => provider.useValue, [], provider.multi)];
     } else if (isFactoryProvider(provider)) {
       if (isFunctionFactoryProvider(provider)) {
         const token = provider.token || provider.useFactory;
@@ -255,7 +257,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
           const dualKey = KeyRegistry.get(d);
           return Dependency.fromDualKey(dualKey);
         });
-        return [this.getResolvedProvider(token, factoryFn, resolvedDeps, provider.multi)];
+        return [this.getResolvedProvider(provider, token, factoryFn, resolvedDeps, provider.multi)];
       }
       const [rawClass, rawFactory] = provider.useFactory;
       const Cls = resolveForwardRef(rawClass) as Class;
@@ -276,17 +278,18 @@ expect(injector.get(Car) instanceof Car).toBe(true);
         return new Cls(...args1)[factoryKey](...args2);
       };
       const deps = [...resolvedDeps2, ...resolvedDeps1];
-      return [this.getResolvedProvider(token, factoryFn, deps, provider.multi)];
+      return [this.getResolvedProvider(provider, token, factoryFn, deps, provider.multi)];
     } else {
       // Token provider.
       const factoryFn = (aliasInstance: any) => aliasInstance;
       const dualKey = KeyRegistry.get(provider.useToken);
       const resolvedDeps = [Dependency.fromDualKey(dualKey)];
-      return [this.getResolvedProvider(provider.token, factoryFn, resolvedDeps, provider.multi)];
+      return [this.getResolvedProvider(provider, provider.token, factoryFn, resolvedDeps, provider.multi)];
     }
   }
 
   protected static getResolvedProvider(
+    provider: Provider,
     token: NonNullable<unknown>,
     factoryFn: AnyFn,
     resolvedDeps: Dependency[],
@@ -295,6 +298,9 @@ expect(injector.get(Car) instanceof Car).toBe(true);
     const dualKey = KeyRegistry.get(token);
     const resolvedFactory = new ResolvedFactory(factoryFn, resolvedDeps);
     isMulti ??= false;
+    if (isMulti) {
+      resolvedFactory.provider = provider as MultiProvider;
+    }
     return new ResolvedProvider(dualKey, [resolvedFactory], isMulti);
   }
 
@@ -606,19 +612,40 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
     return this.selectInjectorAndGet(KeyRegistry.get(token), new PathTracer(), visibility, defaultValue);
   }
 
+  /**
+   * This method is appropriate to use when the initialization order within a single group of multi-providers
+   * with the specified `token` is important. The comparison function `compareFn` accepts multi-provider
+   * objects as its first and second parameters.
+   *
+   * __Warning!__ This method does not guarantee the initialization of multi-providers in the order
+   * returned by `compareFn` if there is a direct or indirect dependency between them.
+   *
+   * @param token Multi-provider token.
+   * @param compareFn Function used to determine the order of the value from multi-providers. It is expected to return
+   * a negative value if the first argument is less than the second argument, zero if they're equal, and a positive
+   * value otherwise.
+   */
+  getOrderedMultiValues<T extends Provider = Provider, A = any>(
+    token: NonNullable<unknown>,
+    compareFn: CompareFn<T>,
+  ): A[] {
+    return this.selectInjectorAndGet(KeyRegistry.get(token), new PathTracer(), null, [], undefined, compareFn);
+  }
+
   protected selectInjectorAndGet(
     dualKey: DualKey,
     pathTracer: PathTracer,
     visibility: Visibility,
     defaultValue: any,
     ctx?: NonNullable<unknown>,
+    compareFn?: CompareFn,
   ) {
     if (dualKey.token === Injector) {
       return this;
     }
 
     const injector = visibility === skipSelf ? this.parent : this;
-    return this.getOrThrow(injector, dualKey, pathTracer, defaultValue, visibility, ctx);
+    return this.getOrThrow(injector, dualKey, pathTracer, defaultValue, visibility, ctx, compareFn);
   }
 
   /**
@@ -631,6 +658,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
     defaultValue: any,
     visibility?: Visibility,
     ctx?: NonNullable<unknown>,
+    compareFn?: CompareFn,
   ): any {
     pathTracer.addItem(dualKey.token, injector);
     if (injector) {
@@ -639,7 +667,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
 
         // This is an alternative to the "instanceof ResolvedProvider" expression.
         if (meta?.[ID]) {
-          const value = injector.instantiateResolved(meta, pathTracer);
+          const value = injector.instantiateResolved(meta, pathTracer, undefined, compareFn);
           return (injector.#registry[dualKey.id] = value);
         } else if (meta !== undefined || injector.hasId(dualKey.id)) {
           // Here "meta" - is a value for provider that has given `token`.
@@ -650,7 +678,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
       } else {
         const resolvedProvider = this.getResolvedProvider(this, dualKey);
         if (resolvedProvider) {
-          return this.instantiateResolved(resolvedProvider, new PathTracer(), ctx);
+          return this.instantiateResolved(resolvedProvider, new PathTracer(), ctx, compareFn);
         }
       }
     }
@@ -689,9 +717,18 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     provider: ResolvedProvider,
     pathTracer: PathTracer = new PathTracer(),
     ctx?: NonNullable<unknown>,
+    compareFn?: CompareFn,
   ): T {
     if (provider.multi) {
-      return provider.resolvedFactories.map((factory) => {
+      let resolvedFactories: ResolvedFactory[];
+      if (compareFn) {
+        resolvedFactories = provider.resolvedFactories.toSorted((a, b) => {
+          return compareFn(a.provider as MultiProvider, b.provider as MultiProvider);
+        });
+      } else {
+        resolvedFactories = provider.resolvedFactories;
+      }
+      return resolvedFactories.map((factory) => {
         return this.instantiate(provider.dualKey.token, pathTracer, factory, ctx);
       }) as T;
     } else {
