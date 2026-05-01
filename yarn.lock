@@ -7156,10 +7156,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"example00@workspace:experiments/00-init-modules-only":
+"example00@workspace:examples/00-standalone-application":
   version: 0.0.0-use.local
-  resolution: "example00@workspace:experiments/00-init-modules-only"
+  resolution: "example00@workspace:examples/00-standalone-application"
   dependencies:
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260501.1"
     jest: "npm:^30.2.0"
     npm-run-all: "npm:^4.1.5"
   languageName: unknown
