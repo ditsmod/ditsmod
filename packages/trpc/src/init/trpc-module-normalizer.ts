@@ -17,14 +17,11 @@ export class TrpcModuleNormalizer {
     this.baseMeta = baseMeta;
     const meta = getProxyForInitMeta(baseMeta, TrpcInitMeta);
     this.meta = meta;
+    if (rawMeta.controllers) {
+      this.meta.controllers.push(...rawMeta.controllers);
+    }
     this.checkMetadata();
     return meta;
-  }
-
-  protected checkController(Controller: Class) {
-    if (!reflector.getDecorators(Controller, isCtrlDecor)) {
-      throw new ControllerDoesNotHaveDecorator(Controller.name);
-    }
   }
 
   protected checkMetadata() {
@@ -55,14 +52,10 @@ export class TrpcModuleNormalizer {
     }
   }
 
-  protected normalizeGuards(guards?: GuardItem[]) {
-    return (guards || []).map((item) => {
-      if (Array.isArray(item)) {
-        return { guard: item[0], params: item.slice(1) } as NormalizedGuard;
-      } else {
-        return { guard: item } as NormalizedGuard;
-      }
-    });
+  protected checkController(Controller: Class) {
+    if (!reflector.getDecorators(Controller, isCtrlDecor)) {
+      throw new ControllerDoesNotHaveDecorator(Controller.name);
+    }
   }
 
   protected checkGuards(guards: NormalizedGuard[]) {
