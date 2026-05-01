@@ -17,13 +17,13 @@ cd examples/10*
 npm run start:dev
 ```
 
-Open your browser with http://localhost:3000/openapi and there should be OpenAPI documentation.
+Open your browser with http://0.0.0.0:3000/openapi and there should be OpenAPI documentation.
 
 Check from second terminal:
 
 ```bash
-curl -i localhost:3000
-curl -i localhost:3000/resource/123
+curl -i 0.0.0.0:3000
+curl -i 0.0.0.0:3000/resource/123
 ```
 
 For more info see the [docs](https://ditsmod.github.io/en/rest-application/native-modules/openapi/).
