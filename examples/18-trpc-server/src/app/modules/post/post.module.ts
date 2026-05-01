@@ -1,4 +1,4 @@
-import { initTrpcModule, ModuleWithTrpcRoutes } from '@ditsmod/trpc';
+import { ModuleWithTrpcRoutes, trpcModule } from '@ditsmod/trpc';
 import { RouterOf } from '@ditsmod/trpc/client';
 
 import { PostController } from '#post/post.controller.js';
@@ -8,7 +8,7 @@ import { CommentModule } from '#post/comments/comment.module.js';
 // For TRPCClient
 export type PostRouter = RouterOf<typeof PostModule>;
 
-@initTrpcModule({
+@trpcModule({
   imports: [DbModule, CommentModule],
   controllers: [PostController],
 })
