@@ -729,19 +729,14 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
         resolvedFactories = provider.resolvedFactories;
       }
       return resolvedFactories.map((factory) => {
-        return this.instantiate(provider.dualKey.token, pathTracer, factory, ctx);
+        return this.instantiate(pathTracer, factory, ctx);
       }) as T;
     } else {
-      return this.instantiate(provider.dualKey.token, pathTracer, provider.resolvedFactories[0], ctx);
+      return this.instantiate(pathTracer, provider.resolvedFactories[0], ctx);
     }
   }
 
-  protected instantiate(
-    token: NonNullable<unknown>,
-    pathTracer: PathTracer,
-    resolvedFactory: ResolvedFactory,
-    ctx?: NonNullable<unknown>,
-  ): any {
+  protected instantiate(pathTracer: PathTracer, resolvedFactory: ResolvedFactory, ctx?: NonNullable<unknown>): any {
     const deps = resolvedFactory.dependencies.map((dep) => {
       if (dep.dualKey.token === CTX_DATA) {
         return ctx;
@@ -760,7 +755,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     try {
       return resolvedFactory.factory(...deps);
     } catch (e: any) {
-      throw new InstantiationError(e, [token, ...pathTracer.path]);
+      throw new InstantiationError(e, pathTracer.path);
     }
   }
 
