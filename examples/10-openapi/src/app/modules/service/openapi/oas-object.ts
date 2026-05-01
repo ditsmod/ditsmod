@@ -1,7 +1,7 @@
 import { XOasObject, openapi } from '@ts-stack/openapi-spec';
 
 export const oasObject: XOasObject = {
-  openapi,
+  openapi: '3.0.0',
   info: { title: 'Testing @ditsmod/openapi', version: '1.0.0' },
   tags: [
     {
