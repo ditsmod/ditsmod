@@ -6,6 +6,7 @@ export { defaultProvidersPerMod } from '#init/default-providers-per-mod.js';
 export { BaseAppInitializer } from '#init/base-app-initializer.js';
 export { ShallowImports, BaseImportRegistry } from '#init/types.js';
 export { BaseApplication } from '#init/base-application.js';
+export { StandaloneApplication } from '#init/standalone-application.js';
 export { BaseAppOptions } from '#init/base-app-options.js';
 export { DeepModulesImporter } from '#init/deep-modules-importer.js';
 export { GlobalProviders, GlobalInitHooks } from '#types/metadata-per-mod.js';
