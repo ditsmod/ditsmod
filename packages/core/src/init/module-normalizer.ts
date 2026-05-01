@@ -164,12 +164,18 @@ export class ModuleNormalizer {
         throw new ForbiddenExportNormalizedProvider(this.baseMeta.name, exp.token.name || exp.token);
       }
       if (isModuleWithParams(exp)) {
-        this.baseMeta.exportsWithParams.push(exp);
+        // @todo Review this condition later
+        if (!this.baseMeta.exportsWithParams.includes(exp)) {
+          this.baseMeta.exportsWithParams.push(exp);
+        }
       } else if (isProvider(exp) || declaredTokens.includes(exp)) {
         // Provider or token of provider
         this.exportProviders(exp);
       } else if (this.getDecoratorMeta(exp)) {
-        this.baseMeta.exportsModules.push(exp);
+        // @todo Review this condition later
+        if (!this.baseMeta.exportsModules.includes(exp)) {
+          this.baseMeta.exportsModules.push(exp);
+        }
       } else {
         throw new ExportingUnknownSymbol(this.baseMeta.name, exp.name || exp);
       }
