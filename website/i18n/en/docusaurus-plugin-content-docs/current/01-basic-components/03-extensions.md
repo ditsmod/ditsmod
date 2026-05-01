@@ -26,7 +26,23 @@ In Ditsmod, **extension** is a class that implements the `Extension` interface:
 
 ```ts
 interface Extension<T> {
-  stage1(isLastModule: boolean): Promise<T>;
+  /**
+   * This method is called at the stage when providers are dynamically added.
+   *
+   * @param isLastModule Indicates whether this call is made in the last
+   * module where this extension is imported or not.
+   */
+  stage1?(isLastModule: boolean): Promise<T>;
+  /**
+   * This method is called after the `stage1()` method has executed for all modules
+   * in the application and this method takes a module-level injector as an argument.
+   */
+  stage2?(injectorPerMod: Injector): Promise<void>;
+  /**
+   * This method is called after the `stage2()` method has executed for all modules
+   * in the application. There is no strict role for this method.
+   */
+  stage3?(): Promise<void>;
 }
 ```
 
@@ -42,42 +58,9 @@ Each extension needs to be registered, this will be mentioned later, and now let
 
 You can see a simple example in the folder [09-one-extension][1].
 
-## Group of extensions {#group-of-extensions}
-
-Any extension must be a member of one or more groups. The concept of a **group of extensions** is similar to the concept of a group of [interceptors][10]. Note that group of interceptors performs a specific type of work: augmenting the processing of an HTTP request for a particular route. Similarly, each group of extensions represents a distinct type of work on specific metadata. As a rule, extensions in a particular group return metadata that has the same basic interface. Essentially, a group of extensions allows abstraction from specific extensions; instead, it makes only the type of work performed within this group important.
-
-For example, in `@ditsmod/rest` there is a group `ROUTES_EXTENSIONS` which by default includes a single extension that processes metadata collected from the `@route()` decorator. If an application requires OpenAPI documentation, you can import the `@ditsmod/openapi` module, which also has an extension registered in the `ROUTES_EXTENSIONS` group, but this extension works with the `@oasRoute()` decorator. In this case, two extensions will already be registered in the `ROUTES_EXTENSIONS` group, each of which will prepare data for establishing the router's routes. These extensions are grouped together because they configure routes and their `stage1()` methods return data with the same basic interface.
-
-Having a common base data interface returned by each extension in a given group is an important requirement because other extensions may expect data from that group and will rely on that base interface. Of course, the base interface can be expanded if necessary, but not narrowed.
-
-In addition to a common basic interface, the sequence in which group of extensions is launched and the dependency between them is also important. In our example, after all the extensions from the `ROUTES_EXTENSIONS` group have worked, their data is collected in one array and passed to the `PRE_ROUTER_EXTENSIONS` group. Even if you later register more new extensions in the `ROUTES_EXTENSIONS` group, the `PRE_ROUTER_EXTENSIONS` group will still be started after absolutely all extensions from the `ROUTES_EXTENSIONS` group, including your new extensions, have been worked out.
-
-This feature is very handy because it sometimes allows you to integrate external Ditsmod modules (for example, from npmjs.com) into your application without any customization, just by importing them into the desired module. Thanks to group of extensions, the imported extensions will be executed in the correct order, even if they are imported from different external modules.
-
-This is how the extension from `@ditsmod/body-parser` works, for example. You simply import `BodyParserModule`, and its extensions will already be run in the correct order, which is written in this module. In this case, its extension will run after the `ROUTES_EXTENSIONS` group, but before the `PRE_ROUTER_EXTENSIONS` group. And note that `BodyParserModule` has no idea which extensions will work in these groups, it only cares about
-
-1. the data interface that the extensions in the `ROUTES_EXTENSIONS` group will return;
-2. the startup order, so that the routes are not set before this module works (i.e. the `PRE_ROUTER_EXTENSIONS` group works after it, not before).
-
-This means that the `BodyParserModule` will take into account the routes set with the `@route()` or `@oasRoute()` decorators, or any other decorators from this group, since they are processed by the extensions that run before it in the `ROUTES_EXTENSIONS` group.
-
 ## Extension registration {#extension-registration}
 
 [Register the extension][4] in an existing extension group, or create a new group, even if it has a single extension. You will need to create a new DI token for the new group.
-
-### Creating a new group token {#creating-a-new-group-token}
-
-The extension group token must be an instance of the `InjectionToken` class.
-
-For example, to create a token for `MY_EXTENSIONS` group, you need to do the following:
-
-```ts
-import { InjectionToken, Extension } from '@ditsmod/core';
-
-export const MY_EXTENSIONS = new InjectionToken<Extension<void>[]>('MY_EXTENSIONS');
-```
-
-As you can see, each extension group must specify that DI will return an array of extension instances: `Extension<void>[]`. This must be done, the only difference may be in the generic `Extension<T>[]`.
 
 ### Registering an extension in a group {#registering-an-extension-in-a-group}
 
@@ -87,13 +70,20 @@ Objects of the following type can be transferred to the `extensions` array, whic
 class ExtensionConfig {
   extension: ExtensionClass;
   /**
-   * The token of the group after which this extension will be called.
+   * The array of extension classes before which this extension will be called.
    */
-  afterExtensions?: ExtensionClass[]>;
+  beforeExtensions?: ExtensionClass[];
   /**
-   * The token of the group before which this extension will be called.
+   * The array of extension classes after which this extension will be called.
    */
-  beforeExtensions?: ExtensionClass[]>;
+  afterExtensions?: ExtensionClass[];
+  /**
+   * Each element in this array will form a separate group of extensions together with the current extension.
+   * When one of the extensions from this array is passed to `ExtensionManager.stage1()`,
+   * it will return the result of the `Extension.stage1()` method from each extension in the formed group.
+   */
+  groups?: ExtensionClass[];
+  overrideExtension?: never;
   /**
    * Indicates whether this extension needs to be exported.
    */
@@ -120,6 +110,25 @@ export class SomeModule {}
 ```
 
 That is, the token of the group `MY_EXTENSIONS`, to which your extension belongs, is transferred to the `token` property. The token of the `ROUTES_EXTENSIONS` group, before which the `MY_EXTENSIONS` group should be started, is passed to the `beforeExtensions` property. Optionally, you can use the `exported` or `exportOnly` property to specify whether this extension should function in an external module that imports this module. Additionally, the `exportOnly` property indicates that this extension should not be executed in the so-called host module (i.e., the module where this extension is declared).
+
+## Group of extensions {#group-of-extensions}
+
+Any extension must be a member of one or more groups. The concept of a **group of extensions** is similar to the concept of a group of [interceptors][10]. Note that group of interceptors performs a specific type of work: augmenting the processing of an HTTP request for a particular route. Similarly, each group of extensions represents a distinct type of work on specific metadata. As a rule, extensions in a particular group return metadata that has the same basic interface. Essentially, a group of extensions allows abstraction from specific extensions; instead, it makes only the type of work performed within this group important.
+
+For example, in `@ditsmod/rest` there is a group `ROUTES_EXTENSIONS` which by default includes a single extension that processes metadata collected from the `@route()` decorator. If an application requires OpenAPI documentation, you can import the `@ditsmod/openapi` module, which also has an extension registered in the `ROUTES_EXTENSIONS` group, but this extension works with the `@oasRoute()` decorator. In this case, two extensions will already be registered in the `ROUTES_EXTENSIONS` group, each of which will prepare data for establishing the router's routes. These extensions are grouped together because they configure routes and their `stage1()` methods return data with the same basic interface.
+
+Having a common base data interface returned by each extension in a given group is an important requirement because other extensions may expect data from that group and will rely on that base interface. Of course, the base interface can be expanded if necessary, but not narrowed.
+
+In addition to a common basic interface, the sequence in which group of extensions is launched and the dependency between them is also important. In our example, after all the extensions from the `ROUTES_EXTENSIONS` group have worked, their data is collected in one array and passed to the `PRE_ROUTER_EXTENSIONS` group. Even if you later register more new extensions in the `ROUTES_EXTENSIONS` group, the `PRE_ROUTER_EXTENSIONS` group will still be started after absolutely all extensions from the `ROUTES_EXTENSIONS` group, including your new extensions, have been worked out.
+
+This feature is very handy because it sometimes allows you to integrate external Ditsmod modules (for example, from npmjs.com) into your application without any customization, just by importing them into the desired module. Thanks to group of extensions, the imported extensions will be executed in the correct order, even if they are imported from different external modules.
+
+This is how the extension from `@ditsmod/body-parser` works, for example. You simply import `BodyParserModule`, and its extensions will already be run in the correct order, which is written in this module. In this case, its extension will run after the `ROUTES_EXTENSIONS` group, but before the `PRE_ROUTER_EXTENSIONS` group. And note that `BodyParserModule` has no idea which extensions will work in these groups, it only cares about
+
+1. the data interface that the extensions in the `ROUTES_EXTENSIONS` group will return;
+2. the startup order, so that the routes are not set before this module works (i.e. the `PRE_ROUTER_EXTENSIONS` group works after it, not before).
+
+This means that the `BodyParserModule` will take into account the routes set with the `@route()` or `@oasRoute()` decorators, or any other decorators from this group, since they are processed by the extensions that run before it in the `ROUTES_EXTENSIONS` group.
 
 ## Using ExtensionManager {#using-extensionmanager}
 
