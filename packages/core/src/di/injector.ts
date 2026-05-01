@@ -721,7 +721,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
   ): T {
     if (provider.multi) {
       let resolvedFactories: ResolvedFactory[];
-      if (compareFn) {
+      if (typeof compareFn == 'function') {
         resolvedFactories = provider.resolvedFactories.toSorted((a, b) => {
           return compareFn(a.provider as MultiProvider, b.provider as MultiProvider);
         });
