@@ -17,7 +17,7 @@ describe('getExtensionProvider', () => {
 
     it('extension without exports (two arguments)', () => {
       const args: ExtensionConfig = { extension: Extension1 };
-      expect(normalizeExtensionConfig(args, new Map())).toMatchObject({
+      expect(normalizeExtensionConfig(args)).toMatchObject({
         exportedProviders: [],
         providers,
       });
@@ -26,7 +26,7 @@ describe('getExtensionProvider', () => {
     it('extension with override', () => {
       const args: ExtensionConfig = { extension: Extension2, overrideExtension: Extension1 };
       const providers: Provider[] = [{ token: Extension1, useClass: Extension2 }];
-      expect(normalizeExtensionConfig(args, new Map())).toMatchObject({
+      expect(normalizeExtensionConfig(args)).toMatchObject({
         exportedProviders: [],
         providers,
       });
@@ -34,7 +34,7 @@ describe('getExtensionProvider', () => {
 
     it('extension without exports (three arguments)', () => {
       const args: ExtensionConfig = { extension: Extension1, export: false };
-      expect(normalizeExtensionConfig(args, new Map())).toMatchObject({
+      expect(normalizeExtensionConfig(args)).toMatchObject({
         exportedProviders: [],
         providers,
       });
@@ -42,7 +42,7 @@ describe('getExtensionProvider', () => {
 
     it('extension with exports', () => {
       const args: ExtensionConfig = { extension: Extension1, export: true };
-      expect(normalizeExtensionConfig(args, new Map())).toMatchObject({
+      expect(normalizeExtensionConfig(args)).toMatchObject({
         exportedProviders: providers,
         providers,
       });

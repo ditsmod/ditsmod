@@ -58,7 +58,6 @@ describe('ExtensionManager', () => {
           { extension: Extension3 },
           { extension: Extension4 },
         ],
-        new Map()
         ),
         MockExtensionManager,
         ExtensionsContext,
