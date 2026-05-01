@@ -1,6 +1,6 @@
 import { featureModule } from '#decorators/feature-module.js';
 import { BaseInitRawMeta, InitHooks } from '#decorators/init-hooks-and-metadata.js';
-import { BaseInitMeta } from '#types/base-meta.js';
+import { BaseInitMeta, getProxyForInitMeta } from '#types/base-meta.js';
 import { rootModule } from '#decorators/root-module.js';
 import { forwardRef, injectable, makeClassDecorator, MultiProvider } from '#di';
 import { Extension } from '#extension/extension-types.js';
@@ -300,7 +300,7 @@ describe('ModuleNormalizer', () => {
     /**
      * Init hooks transform an object of type {@link RootRawMetadata} into an object of that type.
      */
-    interface InitMeta extends BaseInitMeta {
+    class InitMeta extends BaseInitMeta {
       baseMeta: BaseMeta;
       rawMeta: RootRawMetadata;
     }
@@ -310,10 +310,12 @@ describe('ModuleNormalizer', () => {
      */
     class InitHooks1 extends InitHooks<RootRawMetadata> {
       override normalize(baseMeta: BaseMeta) {
-        return {
-          baseMeta,
-          rawMeta: this.rawMeta,
-        } as InitMeta;
+        const meta = getProxyForInitMeta(baseMeta, InitMeta);
+
+        // Add arbitrary metadata declared in InitMeta
+        meta.baseMeta = baseMeta;
+        meta.rawMeta = this.rawMeta;
+        return meta;
       }
     }
 

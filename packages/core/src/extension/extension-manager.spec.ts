@@ -5,12 +5,14 @@ import { defaultProvidersPerApp } from '#init/default-providers-per-app.js';
 import { ExtensionsContext } from '#extension/extensions-context.js';
 import { StageIteration, ExtensionManager } from '#extension/extension-manager.js';
 import { CircularDepsBetweenExtensions } from '#error/core-errors.js';
+import { BaseMeta } from '#types/base-meta.js';
 
 describe('ExtensionManager', () => {
   describe('stage1', () => {});
 
   describe('circular dependencies', () => {
     class MockExtensionManager extends ExtensionManager {
+      override baseMeta = new BaseMeta();
       override stageIterationMap = new Map();
       override currStageIteration = new StageIteration(0);
     }
