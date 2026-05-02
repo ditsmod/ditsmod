@@ -8,7 +8,7 @@ sidebar_position: 3
 
 Typically, an extension does its work before the HTTP request handlers are created. To modify or extend the application's functionality, an extension uses static metadata that is attached to specific decorators. On the other hand, an extension can also dynamically add metadata of the same type as the static metadata. Extensions can initialize asynchronously, and can depend on each other.
 
-The task of most extensions is to act like a pipeline, taking a multidimensional array of configuration data (metadata) as input and producing another (or augmented) multidimensional array as output. This final array is ultimately interpreted by the target extension, e.g. to create routes and their handlers. However, extensions do not necessarily need to work with configuration or setting up HTTP request handlers; they can also write logs, collect metrics for monitoring, or perform other tasks.
+The task of most extensions is to act like a pipeline, taking a multidimensional array of configuration data (metadata) as input and producing another (or augmented) multidimensional array as output. This final array is ultimately interpreted by the target extension, e.g. to create routes and their handlers. However, extensions do not necessarily need to work with configuration or setting up HTTP request handlers; they can also initialize database connections, write logs, collect metrics for monitoring, or perform other tasks.
 
 In most cases, multidimensional arrays of configuration data reflect the structure of the application:
 
@@ -52,19 +52,27 @@ Each extension needs to be registered, this will be mentioned later, and now let
 2. this metadata is then passed to DI with token `MetadataPerMod2`, so - every extension can get this metadata in the constructor;
 3. the extensions start working per module:
     - in each module, the extensions created within this module or imported into this module are collected;
-    - each of these extensions gets metadata, also collected in this module, and the `stage1()` methods of given extensions are called.
+    - each of these extensions gets metadata, also collected in this module, and the `stage1`, `stage2`, `stage3` methods of given extensions are called.
 4. HTTP request handlers are created;
 5. the application starts working in the usual mode, processing HTTP requests.
 
-You can see a simple example in the folder [09-one-extension][1].
+You can see a simple example in the folder [00-standalone-application][1].
 
 ## Extension registration {#extension-registration}
 
-[Register the extension][4] in an existing extension group, or create a new group, even if it has a single extension. You will need to create a new DI token for the new group.
+Extensions are passed in the module metadata, in the `extensions` property. Depending on the architectural style you choose, decorators such as `featureModule`, `restModule`, `trpcModule`, etc. can be used for this:
 
-### Registering an extension in a group {#registering-an-extension-in-a-group}
+```ts {5}
+import { restModule } from '@ditsmod/rest';
+import { SimpleExtension } from './simple-extension.js';
 
-Objects of the following type can be transferred to the `extensions` array, which is in the module's metadata:
+@restModule({
+  extensions: [SimpleExtension]
+})
+export class AppModule {}
+```
+
+This is the simplest way to register an extension, which is suitable only for cases where it is sufficient for the extension to work in the module where it is declared and registered. For more complex configurations, you can pass an object with the following type:
 
 ```ts
 class ExtensionConfig {
@@ -83,7 +91,7 @@ class ExtensionConfig {
    * it will return the result of the `Extension.stage1()` method from each extension in the formed group.
    */
   groups?: ExtensionClass[];
-  overrideExtension?: never;
+  overrideExtension?: ExtensionClass;
   /**
    * Indicates whether this extension needs to be exported.
    */
@@ -95,59 +103,94 @@ class ExtensionConfig {
 }
 ```
 
-The `beforeExtensions` property is used when you want your extension group to run before another extension group:
+For example:
 
-```ts
-import { restModule, RoutesExtension } from '@ditsmod/rest';
-import { MyExtension } from './my.extension.js';
+```ts {6-11}
+import { restModule, RouteExtension } from '@ditsmod/rest';
+import { SimpleExtension } from './simple-extension.js';
 
 @restModule({
   extensions: [
-    { extension: MyExtension, beforeExtensions: [RoutesExtension], export: true }
+    {
+      extension: SimpleExtension,
+      beforeExtensions: [RouteExtension],
+      afterExtensions: [],
+      export: true,
+    },
   ],
 })
 export class SomeModule {}
 ```
 
-That is, the token of the group `MY_EXTENSIONS`, to which your extension belongs, is transferred to the `token` property. The token of the `ROUTES_EXTENSIONS` group, before which the `MY_EXTENSIONS` group should be started, is passed to the `beforeExtensions` property. Optionally, you can use the `exported` or `exportOnly` property to specify whether this extension should function in an external module that imports this module. Additionally, the `exportOnly` property indicates that this extension should not be executed in the so-called host module (i.e., the module where this extension is declared).
+That is, the extension class that you declare and register in the current module is passed to the `extension` property. The corresponding extension classes are passed to the `beforeExtensions` or `afterExtensions` properties if you need the registered extension to run before or after the specified extensions. Optionally, you can use the `export` or `exportOnly` property to indicate whether this extension should work in an external module that will import this module. Additionally, the `exportOnly` property also indicates that this extension should not be executed in the so-called host module (i.e., the module where this extension is declared).
 
-## Group of extensions {#group-of-extensions}
+## Groups of extensions {#group-of-extensions}
 
-Any extension must be a member of one or more groups. The concept of a **group of extensions** is similar to the concept of a group of [interceptors][10]. Note that group of interceptors performs a specific type of work: augmenting the processing of an HTTP request for a particular route. Similarly, each group of extensions represents a distinct type of work on specific metadata. As a rule, extensions in a particular group return metadata that has the same basic interface. Essentially, a group of extensions allows abstraction from specific extensions; instead, it makes only the type of work performed within this group important.
+Any extension can belong to one or more groups. The concept of an **extension group** is analogous to the concept of a group of [interceptors][10]. Recall that a group of interceptors performs a specific type of work: it augments the handling of an HTTP request for a particular route in a controller. Similarly, each group of extensions is a separate type of work over certain metadata. As a rule, extensions in a given group return metadata that share the same base interface. Essentially, extension groups allow you to abstract away from specific extensions, making only the type of work performed within these groups important.
 
-For example, in `@ditsmod/rest` there is a group `ROUTES_EXTENSIONS` which by default includes a single extension that processes metadata collected from the `@route()` decorator. If an application requires OpenAPI documentation, you can import the `@ditsmod/openapi` module, which also has an extension registered in the `ROUTES_EXTENSIONS` group, but this extension works with the `@oasRoute()` decorator. In this case, two extensions will already be registered in the `ROUTES_EXTENSIONS` group, each of which will prepare data for establishing the router's routes. These extensions are grouped together because they configure routes and their `stage1()` methods return data with the same basic interface.
+For example, in `@ditsmod/rest` there is `RouteExtension`, which processes metadata collected from the `@route()` decorator. If an application needs OpenAPI documentation, you can additionally connect the `@ditsmod/openapi` module, where `OpenapiRouteExtension` is registered and works with the `@oasRoute()` decorator. In the metadata of the `@ditsmod/openapi` module, it is specified that `OpenapiRouteExtension` should be used in the same group as `RouteExtension`:
 
-Having a common base data interface returned by each extension in a given group is an important requirement because other extensions may expect data from that group and will rely on that base interface. Of course, the base interface can be expanded if necessary, but not narrowed.
+```ts
+extensions: [
+  { extension: OpenapiRouteExtension, groups: [RouteExtension], export: true },
+  // ...
+],
+```
 
-In addition to a common basic interface, the sequence in which group of extensions is launched and the dependency between them is also important. In our example, after all the extensions from the `ROUTES_EXTENSIONS` group have worked, their data is collected in one array and passed to the `PRE_ROUTER_EXTENSIONS` group. Even if you later register more new extensions in the `ROUTES_EXTENSIONS` group, the `PRE_ROUTER_EXTENSIONS` group will still be started after absolutely all extensions from the `ROUTES_EXTENSIONS` group, including your new extensions, have been worked out.
+As you can see, groups are formed thanks to the `groups` property in the module metadata. These two extensions are collected into one group because both of them configure routes, and their `stage1()` methods return data with the same base interface. Now, if both of these extensions are imported into the same module, all consumers that request data from `RouteExtension` will also receive the results from `OpenapiRouteExtension`, which returns data with an extended interface.
 
-This feature is very handy because it sometimes allows you to integrate external Ditsmod modules (for example, from npmjs.com) into your application without any customization, just by importing them into the desired module. Thanks to group of extensions, the imported extensions will be executed in the correct order, even if they are imported from different external modules.
+A shared base interface of the data returned by each extension in a given group is an important condition, since other extensions may expect data from this group, and they will rely specifically on this base interface. Of course, the base interface can be extended if needed, but not narrowed.
 
-This is how the extension from `@ditsmod/body-parser` works, for example. You simply import `BodyParserModule`, and its extensions will already be run in the correct order, which is written in this module. In this case, its extension will run after the `ROUTES_EXTENSIONS` group, but before the `PRE_ROUTER_EXTENSIONS` group. And note that `BodyParserModule` has no idea which extensions will work in these groups, it only cares about
+In addition, the order of execution of individual groups of extensions and the dependencies between them are also important. In our example, after the group with `RouteExtension` and `OpenapiExtension` has completed, their data is collected into a single array and passed to `PreRouterExtension`. Even if you later register more new extensions in the group with `RouteExtension`, `PreRouterExtension` will still be executed only after absolutely all extensions in the group with `RouteExtension` have completed, including your new extensions.
 
-1. the data interface that the extensions in the `ROUTES_EXTENSIONS` group will return;
-2. the startup order, so that the routes are not set before this module works (i.e. the `PRE_ROUTER_EXTENSIONS` group works after it, not before).
+This feature is very convenient, as it sometimes allows you to integrate external Ditsmod modules (for example, from npmjs.com) into your application without any configuration, simply by importing them into the required module. Imported extensions that belong to certain groups will be executed in the correct order, even if they are imported from different external modules.
 
-This means that the `BodyParserModule` will take into account the routes set with the `@route()` or `@oasRoute()` decorators, or any other decorators from this group, since they are processed by the extensions that run before it in the `ROUTES_EXTENSIONS` group.
+Note that the `groups` property specifies the "header" elements of **separate** groups (not a single group):
+
+```ts
+extensions: [
+  { extension: Extension3, groups: [Extension1, Extension2], export: true },
+  // ...
+],
+```
+
+Based on this configuration, two separate groups of extensions will be created:
+
+1. `Extension1`, `Extension3`;
+2. `Extension2`, `Extension3`.
+
+If in the current module other extensions also specify these same "header" elements in `groups`, these groups will be extended:
+
+```ts
+extensions: [
+  { extension: Extension4, groups: [Extension1, Extension2], export: true },
+  // ...
+],
+```
+
+And it does not matter whether `Extension4` is declared in the current module or imported from another module. Now these groups will contain the following elements:
+
+1. `Extension1`, `Extension3`, `Extension4`;
+2. `Extension2`, `Extension3`, `Extension4`.
 
 ## Using ExtensionManager {#using-extensionmanager}
 
-If a certain extension has a dependency on another extension, it is recommended to specify that dependency indirectly through the extension group. To do this, you need `ExtensionManager`, which initializes groups of extensions, throws errors about cyclic dependencies between extensions, and shows the entire chain of extensions that caused the loop. Additionally, `ExtensionManager` allows you to collect extensions initialization results from the entire application, not just from a single module.
+If a certain extension has a dependency on another extension, it is recommended to specify such a dependency using `ExtensionManager`. It initializes extensions following the appropriate sequence specified in the configs of these extensions, caches the results of `extension.stage1()` methods, caches the results of extension groups, throws errors about cyclic dependencies between extensions, and shows the entire chain of extensions that led to the cycle. In addition, `ExtensionManager` allows you to collect initialization results of extensions from the entire application, not just from a single module.
 
-Suppose `MyExtension` has to wait for the initialization of the `OTHER_EXTENSIONS` group to complete. To do this, you must specify the dependence on `ExtensionManager` in the constructor, and in `stage1()` call `stage1()` of this service:
+Suppose `Extension2` expects the results of the `stage1()` method from `Extension1`, so a dependency on `ExtensionManager` is specified in the constructor, and `this.extensionManager.stage1()` is called inside `extension2.stage1()`:
 
 ```ts {11}
 import { injectable } from '@ditsmod/core';
 import { Extension, ExtensionManager } from '@ditsmod/core';
 
-import { OTHER_EXTENSIONS } from './other.extensions.js';
+import { Extension1 } from './extension1.js';
 
 @injectable()
-export class MyExtension implements Extension<void> {
+export class Extension2 implements Extension<void> {
   constructor(private extensionManager: ExtensionManager) {}
 
   async stage1() {
-    const stage1ExtensionMeta = await this.extensionManager.stage1(OTHER_EXTENSIONS);
+    const stage1ExtensionMeta = await this.extensionManager.stage1(Extension1);
 
     stage1ExtensionMeta.groupData.forEach((stage1Meta) => {
       const someData = stage1Meta;
@@ -158,38 +201,46 @@ export class MyExtension implements Extension<void> {
 }
 ```
 
-The `ExtensionManager` will sequentially initialize all extensions from a given group and return the result in an object that follows this interface:
+Note that `stage1ExtensionMeta.groupData` will always contain an array of results, regardless of whether `Extension1` belongs to an extension group in the current module or not. Here `stage1ExtensionMeta` has the following interface:
 
 ```ts
 interface Stage1ExtensionMeta<T = any> {
   delay: boolean;
-  countdown = 0;
+  countdown: number;
   groupDataPerApp: Stage1ExtensionMetaPerApp<T>[];
+  moduleName: string,
+  groupDebugMeta: Stage1DebugMeta<T>[],
   groupData: T[],
-  moduleName: string;
+}
+
+interface Stage1DebugMeta<T = any> {
+  extension: Extension<T>,
+  payload: T,
+  delay: boolean,
+  countdown: number,
 }
 ```
 
-If the `delay` property is `true`, it means that the `groupDataPerApp` property does not yet contain data from all modules where this extension group (`OTHER_EXTENSIONS`) is imported. The `countdown` property indicates how many modules are left for this extension group to process before `groupDataPerApp` will contain data from all modules. Thus, the `delay` and `countdown` properties only apply to `groupDataPerApp`.
+If `stage1ExtensionMeta.delay === true` — this means that the `groupDataPerApp` property contains data not yet from all modules where this extension (`Extension1`) is imported. The `countdown` property indicates in how many modules this extension still needs to be processed so that the `groupDataPerApp` property contains data from all modules. That is, the `delay` and `countdown` properties relate only to the `groupDataPerApp` property.
 
-The `groupData` property holds an array of data collected from the current module by different extensions of this group.
+The `groupData` property contains an array where data from the current module is collected from one or more extensions.
 
-It's important to note that a separate instance of each extension is created for each module. For example, if `MyExtension` is imported into three different modules, Ditsmod will process these three modules sequentially with three different instances of `MyExtension`. Additionally, if `MyExtension` requires data from, say, the `OTHER_EXTENSIONS` group, which spans four modules, but `MyExtension` is only imported into three modules, it may not receive all the necessary data from one of the modules.
+It is important to remember that a separate instance of a given extension is created for each module. For example, if `Extension2` is imported into three different modules, Ditsmod will process these three modules sequentially with three different instances of `Extension2`. In addition, if `Extension2` needs aggregated data, for example, from `Extension1` from four modules, but `Extension2` itself is imported only into three modules, this means that from one module `Extension2` may not receive the required data.
 
-In this case, you need to pass `true` as the third argument to the `extensionManager.stage1` method:
+In this case, you need to pass `this` as the second argument to `extensionManager.stage1`:
 
 ```ts {11}
 import { injectable } from '@ditsmod/core';
 import { Extension, ExtensionManager } from '@ditsmod/core';
 
-import { OTHER_EXTENSIONS } from './other.extensions.js';
+import { Extension1 } from './extension1.js';
 
 @injectable()
-export class MyExtension implements Extension<void> {
+export class Extension2 implements Extension<void> {
   constructor(private extensionManager: ExtensionManager) {}
 
   async stage1() {
-    const stage1ExtensionMeta = await this.extensionManager.stage1(OTHER_EXTENSIONS, this, true);
+    const stage1ExtensionMeta = await this.extensionManager.stage1(Extension1, this);
     if (stage1ExtensionMeta.delay) {
       return;
     }
@@ -204,17 +255,17 @@ export class MyExtension implements Extension<void> {
 }
 ```
 
-Thus, when you need `MyExtension` to receive data from the `OTHER_EXTENSIONS` group throughout the application, you need to pass `true` as the third argument to the `stage1` method:
+That is, when you need `Extension2` to receive data from `Extension1` from the entire application, you need to pass `this` as the second argument for the `extensionManager.stage1` method:
 
 ```ts
-const stage1ExtensionMeta = await this.extensionManager.stage1(OTHER_EXTENSIONS, this, true);
+const stage1ExtensionMeta = await this.extensionManager.stage1(Extension1, this);
 ```
 
-In this case, it is guaranteed that the `MyExtension` instance will receive data from all modules where `OTHER_EXTENSIONS` is imported. Even if `MyExtension` is imported into a module without any extensions from the `OTHER_EXTENSIONS` group, but these extensions exist in other modules, the `stage1` method of this extension will still be called after all extensions are initialized, ensuring that `MyExtension` receives data from `OTHER_EXTENSIONS` across all modules.
+In this case, it is guaranteed that the instance of `Extension2` will receive data from all modules where `Extension1` is imported. Even if `Extension1` and `Extension2` are imported into separate modules (i.e., they are not present in a shared module), `extension2.stage1` will still ultimately receive data from `extension1.stage1` across all modules.
 
 ## Dynamic addition of providers {#dynamic-addition-of-providers}
 
-Any extension can specify a dependency on the `ROUTES_EXTENSIONS` group to dynamically add providers at any level. Extensions from this group use metadata with `MetadataPerMod2` interface and return metadata with `MetadataPerMod3` interface.
+Any extension can declare a dependency on a group of extensions where `RouteExtension` is the header, in order to dynamically add providers at any level. Extensions from this group use metadata with the `MetadataPerMod2` interface and return metadata with the `MetadataPerMod3` interface.
 
 You can see how it is done in [BodyParserExtension][3]:
 
@@ -263,12 +314,10 @@ In this case, the HTTP interceptor is added to the `providersPerReq` array in th
 
 Of course, such dynamic addition of providers is possible only before creating HTTP request handlers.
 
-[1]: https://github.com/ditsmod/ditsmod/tree/main/examples/09-one-extension
+[1]: https://github.com/ditsmod/ditsmod/tree/main/examples/00-standalone-application
 [3]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.17.0/packages/body-parser/src/body-parser.extension.ts#L54
 [4]: #registering-an-extension-in-a-group
 [5]: /rest-application/native-modules/body-parser
 [6]: /rest-application/native-modules/openapi
-[7]: /basic-components/dependency-injection#multi-providers
 [8]: /basic-components/dependency-injection#hierarchy-and-encapsulation-of-injectors
-[9]: /basic-components/dependency-injection#providers
 [10]: /rest-application/http-interceptors/
