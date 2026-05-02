@@ -32,7 +32,7 @@ export class CorsExtension implements Extension<void | false> {
   ) {}
 
   async stage1() {
-    const stage1ExtensionMeta = await this.extensionManager.stage1(RouteExtension, this, true);
+    const stage1ExtensionMeta = await this.extensionManager.stage1(RouteExtension, this);
     if (stage1ExtensionMeta.delay) {
       return false;
     }

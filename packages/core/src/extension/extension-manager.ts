@@ -62,21 +62,9 @@ export class ExtensionManager {
     protected extensionCounters: ExtensionCounters,
   ) {}
 
-  async stage1<T>(
-    ExtCls: ExtensionClass<T>,
-    pendingExtension?: Extension,
-    parApp?: false,
-  ): Promise<Stage1ExtensionMeta<T>>;
-  async stage1<T>(
-    ExtCls: ExtensionClass<T>,
-    pendingExtension: Extension,
-    parApp: true,
-  ): Promise<Stage1ExtensionMeta2<T>>;
-  async stage1<T>(
-    ExtCls: ExtensionClass<T>,
-    pendingExtension?: Extension,
-    parApp?: boolean,
-  ): Promise<Stage1ExtensionMeta<T>> {
+  async stage1<T>(ExtCls: ExtensionClass<T>): Promise<Stage1ExtensionMeta<T>>;
+  async stage1<T>(ExtCls: ExtensionClass<T>, pendingExtension: Extension): Promise<Stage1ExtensionMeta2<T>>;
+  async stage1<T>(ExtCls: ExtensionClass<T>, pendingExtension?: Extension): Promise<Stage1ExtensionMeta<T>> {
     const currStageIteration = this.currStageIteration;
     const stageIteration = this.stageIterationMap.get(ExtCls);
     if (stageIteration) {
@@ -94,12 +82,12 @@ export class ExtensionManager {
     let stage1ExtensionMeta = this.stage1ExtensionMetaCache.get(ExtCls);
     if (stage1ExtensionMeta) {
       this.updateExtensionCounters(ExtCls, stage1ExtensionMeta);
-      return this.updatePerAppState(ExtCls, stage1ExtensionMeta, pendingExtension, parApp);
+      return this.updatePerAppState(ExtCls, stage1ExtensionMeta, pendingExtension);
     }
 
     stage1ExtensionMeta = await this.prepareAndInitExtension<T>(ExtCls);
     stage1ExtensionMeta.groupDataPerApp = this.extensionsContext.mStage1ExtensionMeta.get(ExtCls)!;
-    stage1ExtensionMeta = this.updatePerAppState(ExtCls, stage1ExtensionMeta, pendingExtension, parApp);
+    stage1ExtensionMeta = this.updatePerAppState(ExtCls, stage1ExtensionMeta, pendingExtension);
     currStageIteration.resolve();
     return stage1ExtensionMeta;
   }
@@ -108,10 +96,10 @@ export class ExtensionManager {
     ExtCls: ExtensionClass,
     stage1ExtensionMeta: Stage1ExtensionMeta,
     pendingExtension?: Extension,
-    parApp?: boolean,
   ) {
-    stage1ExtensionMeta = this.prepareStage1ExtensionMetaPerApp(stage1ExtensionMeta, parApp);
-    if (parApp) {
+    const perApp = Boolean(pendingExtension);
+    stage1ExtensionMeta = this.prepareStage1ExtensionMetaPerApp(stage1ExtensionMeta, perApp);
+    if (perApp) {
       if (stage1ExtensionMeta.delay) {
         this.addExtensionToPendingList(ExtCls, pendingExtension!);
       } else {
@@ -123,9 +111,9 @@ export class ExtensionManager {
 
   protected prepareStage1ExtensionMetaPerApp(
     stage1ExtensionMeta: Stage1ExtensionMeta2,
-    parApp?: boolean,
+    perApp?: boolean,
   ): Stage1ExtensionMeta {
-    if (parApp && !stage1ExtensionMeta.delay) {
+    if (perApp && !stage1ExtensionMeta.delay) {
       const copystage1ExtensionMeta = { ...stage1ExtensionMeta };
       delete (copystage1ExtensionMeta as Stage1ExtensionMeta2).groupData;
       delete (copystage1ExtensionMeta as Stage1ExtensionMeta2).groupDebugMeta;
