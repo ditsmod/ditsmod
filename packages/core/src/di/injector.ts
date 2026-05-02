@@ -628,8 +628,9 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
   getOrderedMultiValues<T extends Provider = Provider, A = any>(
     token: NonNullable<unknown>,
     compareFn: CompareFn<T>,
+    defaultValue: any = NoDefaultValue
   ): A[] {
-    return this.selectInjectorAndGet(KeyRegistry.get(token), new PathTracer(), null, [], undefined, compareFn);
+    return this.selectInjectorAndGet(KeyRegistry.get(token), new PathTracer(), null, defaultValue, undefined, compareFn);
   }
 
   protected selectInjectorAndGet(
