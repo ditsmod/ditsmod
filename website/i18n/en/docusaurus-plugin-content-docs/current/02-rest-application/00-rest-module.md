@@ -71,13 +71,13 @@ import { MyRouter } from './my-router.js';
 export class MyCustomRouterModule {}
 ```
 
-## Extensions group `ROUTES_EXTENSIONS` {#extensions-group-routes_extensions}
+## `RouteExtension` {#route-extension}
 
-The extensions group token `ROUTES_EXTENSIONS` is exported from this module. Extensions from this group return metadata with interface [`Array<MetadataPerMod3>`][2] is an array of dynamic metadata that is intended for creating request handlers. Each item of this array is a separate route.
+This module exports `RouteExtension`. This extension returns metadata with the [`Array<MetadataPerMod3>`][2] interface — an array of dynamic metadata intended for creating request handlers. Each element of this array represents a separate route.
 
-## Extensions group `PRE_ROUTER_EXTENSIONS` {#extensions-group-pre_router_extensions}
+## `PreRouterExtension` {#pre-router-extension}
 
-The extensions group token `PRE_ROUTER_EXTENSIONS` is also exported from this module. An extension from this group uses the metadata returned by the `ROUTES_EXTENSIONS` extension group to create HTTP request handlers.
+This module also exports `PreRouterExtension`. This extension uses the metadata returned by `RouteExtension` to create HTTP request handlers.
 
 [0]: https://en.wikipedia.org/wiki/REST
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/01-hello-world

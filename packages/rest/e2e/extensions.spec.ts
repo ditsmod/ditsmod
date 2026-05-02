@@ -202,7 +202,6 @@ describe('extensions e2e', () => {
   it('check isLastModule', async () => {
     const extensionInit = jest.fn();
 
-    const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
     class Provider1 {}
     class Provider2 {}
     class Provider3 {}
@@ -255,8 +254,6 @@ describe('extensions e2e', () => {
     const extensionInit1 = jest.fn();
     const extensionInit2 = jest.fn();
 
-    const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
-    const MY_EXTENSIONS2 = new InjectionToken<Extension[]>('MY_EXTENSIONS2');
     class Provider1 {}
     class Provider2 {}
     class Provider3 {}
@@ -339,8 +336,6 @@ describe('extensions e2e', () => {
     const spyMetaFromAllModules = jest.fn();
     const spyMetaFromCurrentModule = jest.fn();
 
-    const MY_EXTENSIONS1 = new InjectionToken<Extension[]>('MY_EXTENSIONS1');
-    const MY_EXTENSIONS2 = new InjectionToken<Extension[]>('MY_EXTENSIONS2');
     class Provider1 {}
 
     /**

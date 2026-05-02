@@ -223,11 +223,11 @@ TestApplication.createTestApp(AppModule)
 
 ### `TestRestPlugin` {#testrestplugin}
 
-В класі `TestRestPlugin` використовується `testApplication.overrideExtensionMeta()` для підміни провайдерів у метаданих, що додаються групою `ROUTES_EXTENSIONS`:
+В класі `TestRestPlugin` використовується `testApplication.overrideExtensionMeta()` для підміни провайдерів у метаданих, що додаються групою `RouteExtension`:
 
 ```ts
 import { Provider } from '@ditsmod/core';
-import { MetadataPerMod3, ROUTES_EXTENSIONS } from '@ditsmod/rest';
+import { MetadataPerMod3, RouteExtension } from '@ditsmod/rest';
 import { TestApplication, ExtensionMetaOverrider } from '@ditsmod/testing';
 
 export class TestRestPlugin extends TestApplication {
@@ -238,7 +238,7 @@ export class TestRestPlugin extends TestApplication {
       });
     };
 
-    this.overrideExtensionMeta(ROUTES_EXTENSIONS, overrideRoutesMeta);
+    this.overrideExtensionMeta(RouteExtension, overrideRoutesMeta);
     return this;
   }
 }

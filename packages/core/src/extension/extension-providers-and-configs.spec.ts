@@ -3,8 +3,6 @@ import { Extension } from '#extension/extension-types.js';
 import { ExtensionConfig, normalizeExtensionConfig } from '#extension/extension-providers-and-configs.js';
 
 describe('getExtensionProvider', () => {
-  const MY_EXTENSION = new InjectionToken('MY_EXTENSION');
-  const OTHER_EXTENSION = new InjectionToken('OTHER_EXTENSION');
   class Extension1 implements Extension {
     async stage1() {}
   }

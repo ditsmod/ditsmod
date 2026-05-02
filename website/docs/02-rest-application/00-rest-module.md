@@ -71,13 +71,13 @@ import { MyRouter } from './my-router.js';
 export class MyCustomRouterModule {}
 ```
 
-## Група розширень `ROUTES_EXTENSIONS` {#extensions-group-routes_extensions}
+## `RouteExtension` {#route-extension}
 
-З даного модуля експортується токен групи розширень `ROUTES_EXTENSIONS`. Розширення з цієї групи повертають метадані з інтерфейсом [`Array<MetadataPerMod3>`][2] - це масив динамічних метаданих, які призначені для створення обробників запитів. Кожен елемент цього масиву - це окремий роут.
+З даного модуля експортується `RouteExtension`. Дане розширення повертає метадані з інтерфейсом [`Array<MetadataPerMod3>`][2] - це масив динамічних метаданих, які призначені для створення обробників запитів. Кожен елемент цього масиву - це окремий роут.
 
-## Група розширень `PRE_ROUTER_EXTENSIONS` {#extensions-group-pre_router_extensions}
+## `PreRouterExtension` {#pre-router-extension}
 
-З даного модуля також експортується токен групи розширень `PRE_ROUTER_EXTENSIONS`. Розширення з цієї групи використовує метадані, які повертає група розширень `ROUTES_EXTENSIONS`, щоб створювати обробники HTTP-запитів.
+З даного модуля також експортується `PreRouterExtension`. Дане розширення використовує метадані, які повертає `RouteExtension`, щоб створювати обробники HTTP-запитів.
 
 [0]: https://uk.wikipedia.org/wiki/REST
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/01-hello-world
