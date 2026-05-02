@@ -125,7 +125,7 @@ Ditsmod has good support for TypeScript models for OpenAPI v3.1.0, including Ope
 
 ## Passing Operation Object parameters {#passing-operation-object-parameters}
 
-In the following example, with the helper `getParams()`, almost everything that we wrote manually for `parameters` in the previous example is recorded:
+In the following example, with the helper `getParams()`, almost everything that we wrote manually for `parameters` in the previous example is writed:
 
 ```ts {8}
 import { controller } from '@ditsmod/rest';

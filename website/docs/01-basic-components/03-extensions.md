@@ -145,7 +145,7 @@ extensions: [
 
 Ця фіча є дуже зручною, оскільки вона інколи дозволяє інтегрувати зовнішні модулі Ditsmod (наприклад, з npmjs.com) у ваш застосунок без жодних налаштувань, просто імпортуючи їх у потрібний модуль. Імпортовані розширення, що входять до певних груп, будуть запускатись у правильній послідовності, навіть якщо вони імпортовані з різних зовнішніх модулів.
 
-Зверніть увагу, що у властивості `groups` вказуються "заголовні" елементи **окремих** груп (а не однієї групи):
+Зверніть увагу, що у властивості `groups` вказуються класи розширень, які виступають у ролі токенів окремих груп:
 
 ```ts
 extensions: [
@@ -263,6 +263,32 @@ const stage1ExtensionMeta = await this.extensionManager.stage1(Extension1, this)
 
 В такому разі гарантується, що інстанс `Extension2` отримає дані з усіх модулів, куди імпортовано `Extension1`. Навіть якщо `Extension1` та `Extension2` будуть імпортовані у окремі модулі (тобто вони не зустрічаються у спільному модулі), все-одно у підсумку `extension2.stage1` отримає дані від `extension1.stage1` з усіх модулів.
 
+### Токени груп розширень {#extension-group-tokens}
+
+Давайте повернемось до попереднього прикладу з кодом, де оголошуються дві окремі групи розширень, коли у властивість `groups` ми передаємо класи двох розширень:
+
+```ts
+extensions: [
+  { extension: Extension3, groups: [Extension1, Extension2], export: true },
+  // ...
+],
+```
+
+І, як вже було сказано, на основі цієї конфігурації створюються дві окремі групи:
+
+1. `Extension1`, `Extension3`;
+2. `Extension2`, `Extension3`.
+
+Тепер, коли ви ознайомились з `ExtensionManager`, важливо наголосити на тому, що пошук груп розширень відбуваються саме за тими класами розширень, які ми раніше вказали у властивості `groups`:
+
+```ts
+await this.extensionManager.stage1(Extension1); // Повертаються дані від Extension1 та Extension3
+await this.extensionManager.stage1(Extension2); // Повертаються дані від Extension2 та Extension3
+await this.extensionManager.stage1(Extension3); // Повертаються дані лише від Extension3
+```
+
+Тобто тут `Extension1` та `Extension2` фактично виступають у ролі токенів (чи ідентифікаторів) груп.
+
 ## Динамічне додавання провайдерів {#dynamic-addition-of-providers}
 
 Будь-яке розширення може вказати залежність від групи розширень, де є заголовним `RouteExtension`, щоб динамічно додавати провайдери на будь-якому рівні. Розширення з цієї групи використовують метадані з інтерфейсом `MetadataPerMod2` і повертають метадані з інтерфейсом `MetadataPerMod3`.
@@ -316,8 +342,8 @@ export class BodyParserExtension implements Extension<void> {
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/00-standalone-application
 [3]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.17.0/packages/body-parser/src/body-parser.extension.ts#L54
-[4]: #extension-registration
 [5]: /rest-application/native-modules/body-parser
 [6]: /rest-application/native-modules/openapi
 [8]: /basic-components/dependency-injection#hierarchy-and-encapsulation-of-injectors
+[9]: #using-extensionmanager
 [10]: /rest-application/http-interceptors/

@@ -145,7 +145,7 @@ In addition, the order of execution of individual groups of extensions and the d
 
 This feature is very convenient, as it sometimes allows you to integrate external Ditsmod modules (for example, from npmjs.com) into your application without any configuration, simply by importing them into the required module. Imported extensions that belong to certain groups will be executed in the correct order, even if they are imported from different external modules.
 
-Note that the `groups` property specifies the "header" elements of **separate** groups (not a single group):
+Note that the `groups` property specifies extension classes that act as tokens for individual groups:
 
 ```ts
 extensions: [
@@ -263,6 +263,32 @@ const stage1ExtensionMeta = await this.extensionManager.stage1(Extension1, this)
 
 In this case, it is guaranteed that the instance of `Extension2` will receive data from all modules where `Extension1` is imported. Even if `Extension1` and `Extension2` are imported into separate modules (i.e., they are not present in a shared module), `extension2.stage1` will still ultimately receive data from `extension1.stage1` across all modules.
 
+### Extension Group Tokens {#extension-group-tokens}
+
+Let's return to the previous code example where two separate extension groups are declared, when we pass the classes of two extensions into the `groups` property:
+
+```ts
+extensions: [
+  { extension: Extension3, groups: [Extension1, Extension2], export: true },
+  // ...
+],
+```
+
+And, as already mentioned, based on this configuration, two separate groups are created:
+
+1. `Extension1`, `Extension3`;
+2. `Extension2`, `Extension3`.
+
+Now that you are familiar with `ExtensionManager`, it is important to emphasize that the lookup of extension groups is performed specifically by the extension classes that we previously specified in the `groups` property:
+
+```ts
+await this.extensionManager.stage1(Extension1); // Data from Extension1 and Extension3 is returned
+await this.extensionManager.stage1(Extension2); // Data from Extension2 and Extension3 is returned
+await this.extensionManager.stage1(Extension3); // Only data from Extension3 is returned
+```
+
+That is, here `Extension1` and `Extension2` effectively act as tokens (or identifiers) of the groups.
+
 ## Dynamic addition of providers {#dynamic-addition-of-providers}
 
 Any extension can declare a dependency on a group of extensions where `RouteExtension` is the header, in order to dynamically add providers at any level. Extensions from this group use metadata with the `MetadataPerMod2` interface and return metadata with the `MetadataPerMod3` interface.
@@ -316,7 +342,6 @@ Of course, such dynamic addition of providers is possible only before creating H
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/00-standalone-application
 [3]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.17.0/packages/body-parser/src/body-parser.extension.ts#L54
-[4]: #registering-an-extension-in-a-group
 [5]: /rest-application/native-modules/body-parser
 [6]: /rest-application/native-modules/openapi
 [8]: /basic-components/dependency-injection#hierarchy-and-encapsulation-of-injectors
