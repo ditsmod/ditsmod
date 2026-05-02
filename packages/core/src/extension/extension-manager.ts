@@ -44,7 +44,7 @@ export class ExtensionManager {
   protected currStageIteration: StageIteration;
   protected unfinishedInit = new Set<Extension | ExtensionClass>();
   /**
-   * The cache for extension in the current module.
+   * The cache for `extension.stage1()` in the current module.
    */
   protected debugMetaCache = new Map<Extension, Stage1DebugMeta>();
   protected excludedExtensionPendingList = new Map<ExtensionClass, Set<Class<Extension>>>();
@@ -173,11 +173,15 @@ export class ExtensionManager {
     let extensions: Extension<T>[];
     const groupToken = this.baseMeta.mExtensionAsGroupToken.get(ExtCls);
     if (groupToken) {
-      extensions = this.injector.getOrderedMultiValues<TokenProvider>(groupToken, (a, b) => {
-        const stageIterationA = this.stageIterationMap.get(a.useToken) || { index: 0 };
-        const stageIterationB = this.stageIterationMap.get(b.useToken) || { index: 0 };
-        return stageIterationA.index - stageIterationB.index;
-      });
+      extensions = this.injector.getOrderedMultiValues<TokenProvider>(
+        groupToken,
+        (a, b) => {
+          const stageIterationA = this.stageIterationMap.get(a.useToken) || { index: 0 };
+          const stageIterationB = this.stageIterationMap.get(b.useToken) || { index: 0 };
+          return stageIterationA.index - stageIterationB.index;
+        },
+        [],
+      );
     } else {
       extensions = [this.injector.get(ExtCls, undefined, [])];
     }
