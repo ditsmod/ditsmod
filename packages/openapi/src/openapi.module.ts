@@ -1,9 +1,9 @@
 import { XOasObject } from '@ts-stack/openapi-spec';
 import { featureModule, InitParamsMap, ModuleWithParams, Providers } from '@ditsmod/core';
-import { RestModule, PreRouterExtension, RoutesExtension, initRest } from '@ditsmod/rest';
+import { RestModule, PreRouterExtension, RouteExtension, initRest } from '@ditsmod/rest';
 
 import { OpenapiCompilerExtension } from './extensions/openapi-compiler.extension.js';
-import { OpenapiRoutesExtension } from './extensions/openapi-routes.extension.js';
+import { OpenapiRouteExtension } from './extensions/openapi-routes.extension.js';
 import { OpenapiController } from './openapi.controller.js';
 import { SwaggerOAuthOptions } from './swagger-ui/o-auth-options.js';
 import { OasConfigFiles, OasExtensionConfig } from './types/oas-extension-options.js';
@@ -14,10 +14,10 @@ import { OpenapiLogMediator } from '#services/openapi-log-mediator.js';
   providersPerApp: [OasConfigFiles],
   providersPerMod: [OpenapiLogMediator],
   extensions: [
-    { extension: OpenapiRoutesExtension, groups: [RoutesExtension], export: true },
+    { extension: OpenapiRouteExtension, groups: [RouteExtension], export: true },
     {
       extension: OpenapiCompilerExtension,
-      afterExtensions: [RoutesExtension],
+      afterExtensions: [RouteExtension],
       beforeExtensions: [PreRouterExtension],
       export: true,
     },

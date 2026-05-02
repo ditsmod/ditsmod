@@ -1,5 +1,5 @@
 import { featureModule, ModuleWithParams } from '@ditsmod/core';
-import { initRest, PreRouterExtension, RoutesExtension } from '@ditsmod/rest';
+import { initRest, PreRouterExtension, RouteExtension } from '@ditsmod/rest';
 import { BodyParserGroup } from '@ts-stack/body-parser';
 import { Multer } from '@ts-stack/multer';
 
@@ -32,7 +32,7 @@ import { MulterCtxParser } from './multer-ctx.parser.js';
   extensions: [
     {
       extension: BodyParserExtension,
-      afterExtensions: [RoutesExtension],
+      afterExtensions: [RouteExtension],
       beforeExtensions: [PreRouterExtension],
       exportOnly: true,
     },

@@ -49,7 +49,7 @@ export class RestProvidersOnly {
   providersPerReq: Provider[] = [];
 }
 /**
- * This metadata returns from `DeepModulesImporter`. The target for this metadata is `RoutesExtension`.
+ * This metadata returns from `DeepModulesImporter`. The target for this metadata is `RouteExtension`.
  */
 
 export class RestMetadataPerMod2 {

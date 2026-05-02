@@ -1,5 +1,5 @@
 import { Extension, ExtensionManager, PerAppService, injectable } from '@ditsmod/core';
-import { HTTP_INTERCEPTORS, RoutesExtension } from '@ditsmod/rest';
+import { HTTP_INTERCEPTORS, RouteExtension } from '@ditsmod/rest';
 
 import { BodyParserConfig } from './body-parser-config.js';
 import { BodyParserInterceptor } from './body-parser.interceptor.js';
@@ -13,7 +13,7 @@ export class BodyParserExtension implements Extension<void> {
   ) {}
 
   async stage1() {
-    const stage1ExtensionMeta = await this.extensionManager.stage1(RoutesExtension);
+    const stage1ExtensionMeta = await this.extensionManager.stage1(RouteExtension);
     stage1ExtensionMeta.groupData.forEach((metadataPerMod3) => {
       const { aControllerMetadata } = metadataPerMod3;
       const { providersPerMod } = metadataPerMod3.baseMeta;

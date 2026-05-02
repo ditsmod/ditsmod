@@ -8,7 +8,7 @@ title: "@ditsmod/rest"
 Як видно з назви, модуль `@ditsmod/rest` забезпечує підтримку [REST][0]. Він містить зокрема:
 
 - [ініт-декоратори][4] для кореневого модуля та модуля фіч - `restRootModule`, `restModule`;
-- розширення, які забезпечують створення REST-роутів - `RoutesExtension`, `PreRouterExtension`;
+- розширення, які забезпечують створення REST-роутів - `RouteExtension`, `PreRouterExtension`;
 - роутер, що має наступний тип:
 
 ```ts

@@ -1,7 +1,7 @@
 import { BaseAppOptions, featureModule } from '@ditsmod/core';
 
 import { DefaultRouter, Router } from '#services/router.js';
-import { RoutesExtension } from '#extensions/routes.extension.js';
+import { RouteExtension } from '#extensions/routes.extension.js';
 import { PreRouterExtension } from '#extensions/pre-router.extension.js';
 import { UseInterceptorExtension } from '#extensions/use-interceptor.extension.js';
 import { AppOptions } from '#types/app-options.js';
@@ -9,7 +9,7 @@ import { RequestContext } from '#services/request-context.js';
 import { PreRouter } from '#services/pre-router.js';
 
 /**
- * Sets `Router` provider on application level, and adds `RoutesExtension` with `PreRouterExtension`.
+ * Sets `Router` provider on application level, and adds `RouteExtension` with `PreRouterExtension`.
  */
 @featureModule({
   providersPerApp: [
@@ -19,11 +19,11 @@ import { PreRouter } from '#services/pre-router.js';
     PreRouter,
   ],
   extensions: [
-    { extension: RoutesExtension, beforeExtensions: [PreRouterExtension], exportOnly: true },
-    { extension: PreRouterExtension, afterExtensions: [RoutesExtension], exportOnly: true },
+    { extension: RouteExtension, beforeExtensions: [PreRouterExtension], exportOnly: true },
+    { extension: PreRouterExtension, afterExtensions: [RouteExtension], exportOnly: true },
     {
       extension: UseInterceptorExtension,
-      afterExtensions: [RoutesExtension],
+      afterExtensions: [RouteExtension],
       beforeExtensions: [PreRouterExtension],
       exportOnly: true,
     },

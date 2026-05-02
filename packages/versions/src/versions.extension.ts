@@ -1,12 +1,12 @@
 import { Extension, ExtensionManager, injectable } from '@ditsmod/core';
-import { RoutesExtension } from '@ditsmod/rest';
+import { RouteExtension } from '@ditsmod/rest';
 
 @injectable()
 export class VersionsExtension implements Extension<void> {
   constructor(protected extensionManager: ExtensionManager) {}
 
   async stage1() {
-    const stage1ExtensionMeta = await this.extensionManager.stage1(RoutesExtension);
+    const stage1ExtensionMeta = await this.extensionManager.stage1(RouteExtension);
     stage1ExtensionMeta.groupData.forEach((metadataPerMod3) => {
       const { aControllerMetadata } = metadataPerMod3;
       console.log('-'.repeat(50), metadataPerMod3.meta);

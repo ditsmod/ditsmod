@@ -1,5 +1,5 @@
 import { featureModule, isProvider, ModuleWithParams, Provider } from '@ditsmod/core';
-import { RoutesExtension, RestModule, UseInterceptorExtension, initRest } from '@ditsmod/rest';
+import { RouteExtension, RestModule, UseInterceptorExtension, initRest } from '@ditsmod/rest';
 import { BodyParserModule, BodyParserExtension } from '@ditsmod/body-parser';
 
 import { AUTHJS_SESSION } from './constants.js';
@@ -22,7 +22,7 @@ import { AuthjsConfig } from './authjs.config.js';
   extensions: [
     {
       extension: AuthjsExtension,
-      afterExtensions: [BodyParserExtension, RoutesExtension],
+      afterExtensions: [BodyParserExtension, RouteExtension],
       beforeExtensions: [UseInterceptorExtension],
       exportOnly: true,
     },

@@ -1,11 +1,11 @@
 import { ParameterObject, ReferenceObject, XParameterObject } from '@ts-stack/openapi-spec';
 
-import { OpenapiRoutesExtension } from './openapi-routes.extension.js';
+import { OpenapiRouteExtension } from './openapi-routes.extension.js';
 import { HttpMethod } from '@ditsmod/core';
 import { BOUND_TO_HTTP_METHOD, BOUND_TO_PATH_PARAM } from '#utils/parameters.js';
 
-describe('OpenapiRoutesExtension', () => {
-  class MockOpenapiRoutesExtension extends OpenapiRoutesExtension {
+describe('OpenapiRouteExtension', () => {
+  class MockOpenapiRouteExtension extends OpenapiRouteExtension {
     override transformToOasPath(moduleName: string, path: string, params: XParameterObject[]) {
       return super.transformToOasPath(moduleName, path, params);
     }
@@ -25,9 +25,9 @@ describe('OpenapiRoutesExtension', () => {
     }
   }
 
-  let mock: MockOpenapiRoutesExtension;
+  let mock: MockOpenapiRouteExtension;
   beforeEach(() => {
-    mock = new MockOpenapiRoutesExtension(null as any, null as any);
+    mock = new MockOpenapiRouteExtension(null as any, null as any);
   });
 
   describe('mergeParams()', () => {
