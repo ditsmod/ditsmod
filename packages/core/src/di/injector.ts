@@ -749,7 +749,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
         dep.optional ? undefined : NoDefaultValue,
         dep.ctx,
       );
-      pathTracer.removeFirstItem();
+      pathTracer.removeFirstToken();
       return result;
     });
 

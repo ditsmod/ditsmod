@@ -36,8 +36,12 @@ export class PathTracer {
     return this;
   }
 
-  removeFirstItem() {
-    this.items.splice(0, 1);
+  removeFirstToken() {
+    const token = this.items.at(0)?.token;
+    if (token)
+      while (token === this.items.at(0)?.token) {
+        this.items.splice(0, 1);
+      }
   }
 
   /**

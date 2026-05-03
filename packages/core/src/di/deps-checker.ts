@@ -125,7 +125,7 @@ export class DepsChecker {
         ignoreDeps,
         isOptional: dep.optional,
       });
-      pathTracer.removeFirstItem();
+      pathTracer.removeFirstToken();
       return result;
     });
   }
