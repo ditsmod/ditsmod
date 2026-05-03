@@ -45,6 +45,8 @@ import { TrpcOpts } from '#types/types.js';
 import { getResolvedGuards } from '#utils/prepare-guards.js';
 import { InterceptorWithGuardsPerRou } from '#interceptors/interceptor-with-guards-per-rou.js';
 import { isInterceptor } from '#types/type.guards.js';
+import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
+import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js';
 
 export function isTrpcRoute<T>(decoratorAndValue?: DecoratorAndValue<T>): decoratorAndValue is DecoratorAndValue<T> {
   return (decoratorAndValue as DecoratorAndValue<T>)?.decorator === trpcRoute;
@@ -86,12 +88,14 @@ export class TrpcPreRouterExtension implements Extension<void> {
       { token: TrpcHttpBackend, useClass: DefaultTrpcHttpBackend },
       { token: TrpcHttpFrontend, useClass: DefaultTrpcHttpFrontend },
       TrpcChainMaker,
+      ...defaultProvidersPerReq,
     );
 
     metadataPerMod3.meta.providersPerRou.unshift(
       { token: TrpcHttpBackend, useClass: DefaultCtxTrpcHttpBackend },
       { token: TrpcChainMaker, useClass: DefaultCtxTrpcChainMaker },
       { token: TrpcHttpFrontend, useClass: DefaultCtxTrpcHttpFrontend },
+      ...defaultProvidersPerRou,
     );
   }
 
