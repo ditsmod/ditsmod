@@ -2,6 +2,7 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",
+    "types": ["node", "jest"],
     "paths": {
       "@ditsmod/core": ["../core/src/index.js"],
       "@ditsmod/rest": ["../rest/src/index.js"],
