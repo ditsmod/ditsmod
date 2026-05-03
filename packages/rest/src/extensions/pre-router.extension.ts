@@ -5,7 +5,7 @@ import {
   injectable,
   DepsChecker,
   SystemLogMediator,
-  ExtensionsContext,
+  ExtensionContext,
   ExtensionManager,
   PerAppService,
   Extension,
@@ -57,7 +57,7 @@ export class PreRouterExtension implements Extension<void> {
     protected extensionManager: ExtensionManager,
     protected moduleManager: ModuleManager,
     protected log: SystemLogMediator,
-    protected extensionsContext: ExtensionsContext,
+    protected extensionContext: ExtensionContext,
   ) {}
 
   async stage1() {

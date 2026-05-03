@@ -1,6 +1,6 @@
 import {
   ExtensionCounters,
-  ExtensionsContext,
+  ExtensionContext,
   ExtensionClass,
   inject,
   injectable,
@@ -23,13 +23,13 @@ export class TestExtensionManager extends InternalExtensionManager {
     injector: Injector,
     systemLogMediator: SystemLogMediator,
     counter: Counter,
-    extensionsContext: ExtensionsContext,
+    extensionContext: ExtensionContext,
     extensionCounters: ExtensionCounters,
     @inject(OVERRIDERS_CONFIG)
     @optional()
     protected aOverriderConfig: OverriderConfig[] = [],
   ) {
-    super(injector, systemLogMediator, counter, extensionsContext, extensionCounters);
+    super(injector, systemLogMediator, counter, extensionContext, extensionCounters);
   }
 
   override async stage1<T>(ExtCls: ExtensionClass<T>): Promise<Stage1ExtensionMeta<T>>;

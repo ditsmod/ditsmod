@@ -2,7 +2,7 @@ import { injectable, Injector } from '#di';
 import { Extension, ExtensionCounters } from '#extension/extension-types.js';
 import { getExtensionProviderList } from '#extension/extension-providers-and-configs.js';
 import { defaultProvidersPerApp } from '#init/default-providers-per-app.js';
-import { ExtensionsContext } from '#extension/extensions-context.js';
+import { ExtensionContext } from '#extension/extensions-context.js';
 import { StageIteration, ExtensionManager } from '#extension/extension-manager.js';
 import { CircularDepsBetweenExtensions } from '#error/core-errors.js';
 import { BaseMeta } from '#types/base-meta.js';
@@ -62,7 +62,7 @@ describe('ExtensionManager', () => {
         ],
         ),
         MockExtensionManager,
-        ExtensionsContext,
+        ExtensionContext,
         ExtensionCounters,
       ]);
       mock = injector.get(MockExtensionManager) as MockExtensionManager;

@@ -3,7 +3,7 @@ import { ExtensionClass, Stage1ExtensionMeta, Extension } from '#extension/exten
 import { ModRefId } from '#types/mix.js';
 
 @injectable()
-export class ExtensionsContext {
+export class ExtensionContext {
   mStage1ExtensionMeta = new Map<ExtensionClass, Stage1ExtensionMeta[]>();
   /**
    * The pending list of extensions that want to receive the initialization result

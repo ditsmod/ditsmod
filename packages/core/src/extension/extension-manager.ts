@@ -10,7 +10,7 @@ import {
 } from '#extension/extension-types.js';
 import { ModRefId, OptionalProps } from '#types/mix.js';
 import { Counter } from '#extension/counter.js';
-import { ExtensionsContext } from '#extension/extensions-context.js';
+import { ExtensionContext } from '#extension/extensions-context.js';
 import { BaseMeta } from '#types/base-meta.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { isExtensionProvider } from './type-guards.js';
@@ -58,7 +58,7 @@ export class ExtensionManager {
     protected injector: Injector,
     protected log: SystemLogMediator,
     protected counter: Counter,
-    protected extensionsContext: ExtensionsContext,
+    protected extensionContext: ExtensionContext,
     protected extensionCounters: ExtensionCounters,
   ) {}
 
@@ -86,7 +86,7 @@ export class ExtensionManager {
     }
 
     stage1ExtensionMeta = await this.prepareAndInitExtension<T>(ExtCls);
-    stage1ExtensionMeta.groupDataPerApp = this.extensionsContext.mStage1ExtensionMeta.get(ExtCls)!;
+    stage1ExtensionMeta.groupDataPerApp = this.extensionContext.mStage1ExtensionMeta.get(ExtCls)!;
     stage1ExtensionMeta = this.updatePerAppState(ExtCls, stage1ExtensionMeta, pendingExtension);
     currStageIteration.resolve();
     return stage1ExtensionMeta;
@@ -131,11 +131,11 @@ export class ExtensionManager {
   protected addExtensionToPendingList(ExtCls: ExtensionClass, pendingExtension: Extension) {
     const ExtensionClass = pendingExtension.constructor as Class<Extension>;
     const mExtensions =
-      this.extensionsContext.mExtensionPendingList.get(ExtCls) || new Map<Class<Extension>, Extension>();
+      this.extensionContext.mExtensionPendingList.get(ExtCls) || new Map<Class<Extension>, Extension>();
 
     if (!mExtensions.has(ExtensionClass)) {
       mExtensions.set(ExtensionClass, pendingExtension);
-      this.extensionsContext.mExtensionPendingList.set(ExtCls, mExtensions);
+      this.extensionContext.mExtensionPendingList.set(ExtCls, mExtensions);
     }
   }
 
@@ -207,9 +207,9 @@ export class ExtensionManager {
   protected setStage1ExtensionMetaPerApp(ExtCls: ExtensionClass, stage1ExtensionMeta: Stage1ExtensionMeta) {
     const copyStage1ExtensionMeta = { ...stage1ExtensionMeta } as Stage1ExtensionMeta;
     delete (copyStage1ExtensionMeta as OptionalProps<Stage1ExtensionMeta, 'groupDataPerApp'>).groupDataPerApp;
-    const aStage1ExtensionMeta = this.extensionsContext.mStage1ExtensionMeta.get(ExtCls) || [];
+    const aStage1ExtensionMeta = this.extensionContext.mStage1ExtensionMeta.get(ExtCls) || [];
     aStage1ExtensionMeta.push(copyStage1ExtensionMeta);
-    this.extensionsContext.mStage1ExtensionMeta.set(ExtCls, aStage1ExtensionMeta);
+    this.extensionContext.mStage1ExtensionMeta.set(ExtCls, aStage1ExtensionMeta);
   }
 
   protected updateExtensionCounters(ExtCls: ExtensionClass, stage1ExtensionMeta: Stage1ExtensionMeta) {
@@ -262,16 +262,16 @@ export class InternalExtensionManager extends ExtensionManager {
   }
 
   protected setExtensionsToStage2(modRefId: ModRefId) {
-    this.extensionsContext.mStage.set(modRefId, this.extensionsListForStage2);
+    this.extensionContext.mStage.set(modRefId, this.extensionsListForStage2);
   }
 
   protected updateExtensionPendingList() {
     for (const [ExtCls, sExtensions] of this.excludedExtensionPendingList) {
       for (const ExtensionClass of sExtensions) {
-        const mExtensions = this.extensionsContext.mExtensionPendingList.get(ExtCls);
+        const mExtensions = this.extensionContext.mExtensionPendingList.get(ExtCls);
         mExtensions?.delete(ExtensionClass);
         if (!mExtensions?.size) {
-          this.extensionsContext.mExtensionPendingList.delete(ExtCls);
+          this.extensionContext.mExtensionPendingList.delete(ExtCls);
         }
       }
     }
