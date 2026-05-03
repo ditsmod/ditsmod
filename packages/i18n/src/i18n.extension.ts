@@ -17,7 +17,6 @@ import { DictService } from './dict.service.js';
 
 @injectable()
 export class I18nExtension implements Extension<void> {
-  #inited: boolean;
   protected injector: Injector;
   protected hasTranslation: boolean;
 
@@ -29,14 +28,8 @@ export class I18nExtension implements Extension<void> {
   ) {}
 
   async stage1(isLastModule?: boolean) {
-    if (this.#inited) {
-      return;
-    }
-
     const stage1ExtensionMeta = await this.extensionManager.stage1(RouteExtension);
     this.addI18nProviders(stage1ExtensionMeta, isLastModule);
-
-    this.#inited = true;
   }
 
   protected addI18nProviders(stage1ExtensionMeta: Stage1ExtensionMeta<MetadataPerMod3>, isLastModule?: boolean) {
