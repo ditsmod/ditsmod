@@ -171,7 +171,8 @@ export class ExtensionManager {
         [],
       );
     } else {
-      extensions = [this.injector.get(ExtCls, undefined, [])];
+      const result = this.injector.get(ExtCls, undefined, false);
+      extensions = result ? [result] : [];
     }
     const stage1ExtensionMeta = new Stage1ExtensionMeta<T>(this.moduleName, [], []);
     this.updateExtensionCounters(ExtCls, stage1ExtensionMeta);
