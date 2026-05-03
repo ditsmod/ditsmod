@@ -1323,3 +1323,12 @@ describe("null as provider's value", () => {
     expect(() => injectorPerRou.get(Service4)).toThrow(msg);
   });
 });
+
+describe('InstantiationError', () => {
+  it('injector.instantiateResolved() should print properly error message', () => {
+    const inj1 = Injector.resolveAndCreate([], 'inj1');
+    const resolvedProvider = Injector.resolve([{ token: 'token2', useFactory: () => inj1.get('token1') }])[0];
+    const msg = 'Failed instantiation of token2: No provider for token1!';
+    expect(() => inj1.instantiateResolved(resolvedProvider)).toThrow(msg);
+  });
+});
