@@ -44,5 +44,7 @@
     "@ditsmod/versions": "3.0.0-alpha.5",
     "x-package-example": "3.0.0-alpha.5"
   },
-  "changesets": []
+  "changesets": [
+    "tender-pillows-fly"
+  ]
 }

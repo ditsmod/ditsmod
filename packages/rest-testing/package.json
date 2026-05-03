@@ -1,7 +1,7 @@
 {
   "name": "@ditsmod/rest-testing",
   "type": "module",
-  "version": "3.0.0-alpha.5",
+  "version": "3.0.0-alpha.6",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
@@ -30,9 +30,9 @@
   "author": "",
   "license": "MIT",
   "peerDependencies": {
-    "@ditsmod/core": "^3.0.0-alpha.5",
-    "@ditsmod/rest": "^3.0.0-alpha.5",
-    "@ditsmod/testing": "^3.0.0-alpha.5"
+    "@ditsmod/core": "^3.0.0-alpha.6",
+    "@ditsmod/rest": "^3.0.0-alpha.6",
+    "@ditsmod/testing": "^3.0.0-alpha.6"
   },
   "publishConfig": {
     "access": "public"
