@@ -1,0 +1,28 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config/schema.json",
+  "changelog": "@changesets/cli/changelog",
+  "commit": false,
+  "fixed": [
+    [
+      "@ditsmod/authjs",
+      "@ditsmod/body-parser",
+      "@ditsmod/core",
+      "@ditsmod/cors",
+      "@ditsmod/i18n",
+      "@ditsmod/jwt",
+      "@ditsmod/openapi",
+      "@ditsmod/openapi-validation",
+      "@ditsmod/rest",
+      "@ditsmod/rest-diagnostics",
+      "@ditsmod/rest-testing",
+      "@ditsmod/session-cookie",
+      "@ditsmod/testing",
+      "@ditsmod/trpc"
+    ]
+  ],
+  "linked": [],
+  "access": "public",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": []
+}

@@ -26,7 +26,10 @@
     "build-exam-test": "tsgo -b examples/tsconfig.e2e.json",
     "build-vscode": "tsgo -b examples/tsconfig.vscode.json",
     "lint": "eslint .",
-    "clean": "rm -r packages/*/dist* examples/*/dist*"
+    "clean": "rm -r packages/*/dist* examples/*/dist*",
+    "changeset": "changeset",
+    "changeset:version": "changeset version",
+    "publish": "yarn build && yarn changeset publish"
   },
   "repository": {
     "type": "git",
@@ -43,6 +46,8 @@
   },
   "homepage": "https://github.com/ditsmod/ditsmod#readme",
   "devDependencies": {
+    "@changesets/changelog-github": "^0.6.0",
+    "@changesets/cli": "^2.31.0",
     "@eslint/js": "^10.0.1",
     "@types/jest": "^30.0.0",
     "@types/node": "^25.6.0",
