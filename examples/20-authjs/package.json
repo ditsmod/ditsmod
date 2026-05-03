@@ -1,4 +1,5 @@
 {
+  "private": true,
   "name": "example20",
   "type": "module",
   "version": "1.0.0",

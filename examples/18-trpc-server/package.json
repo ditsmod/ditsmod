@@ -1,4 +1,5 @@
 {
+  "private": true,
   "name": "18-trpc-server",
   "type": "module",
   "version": "1.0.0",
