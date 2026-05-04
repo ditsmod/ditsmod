@@ -7,9 +7,7 @@ import {
   ShallowImports,
 } from '@ditsmod/core';
 
-import { DeepModulesImporterConfig, RestMetadataPerMod2, RestProvidersOnly, RestShallowImports } from './types.js';
-import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js';
-import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
+import { DeepModulesImporterConfig, RestMetadataPerMod2, RestShallowImports } from './types.js';
 
 /**
  * By analyzing the dependencies of the providers returned by `ShallowModulesImporter`,
@@ -41,8 +39,6 @@ export class RestDeepModulesImporter {
 
   importModulesDeep(): RestMetadataPerMod2 | undefined {
     const { guards1, prefixPerMod, meta, applyControllers } = this.shallowImports;
-    meta.providersPerRou.unshift(...defaultProvidersPerRou);
-    meta.providersPerReq.unshift(...defaultProvidersPerReq);
     return {
       baseMeta: this.shallowImports.baseMeta,
       meta,
