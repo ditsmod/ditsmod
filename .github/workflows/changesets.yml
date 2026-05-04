@@ -37,7 +37,7 @@ jobs:
           corepack prepare yarn@4.12.0 --activate
 
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --immutable
 
       - name: Build
         run: yarn build
@@ -48,9 +48,12 @@ jobs:
           yarn build-ui
           cd -
 
-      - name: Run Changesets
+      - name: Create Release Pull Request or Publish to npm
         uses: changesets/action@v1
         with:
+          version: yarn changeset version && yarn install
           publish: yarn changeset publish
+          commit: "chore(ci): update versions"
+          title: "chore(ci): update versions"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
