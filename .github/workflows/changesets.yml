@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   changesets:
@@ -31,7 +33,7 @@ jobs:
           corepack prepare yarn@4.12.0 --activate
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Build
         run: yarn build
