@@ -17,7 +17,7 @@ import { isClassProvider, isFactoryProvider, isTokenProvider, isValueProvider } 
 import { ExtensionCounters } from '#extension/extension-types.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { ProvidersOnly } from '#types/providers-metadata.js';
-import { CircularDepsInImports, NoProviderDuringResolveImports } from '#errors';
+import { CircularDepsInImports, NoProviderDuringResolveImports, FailImportProviders } from '#errors';
 import { ModuleExtract } from '#types/module-extract.js';
 
 /**
@@ -61,35 +61,39 @@ export class DeepModulesImporter {
     this.tokensPerApp = getTokens(this.providersPerApp);
     this.shallowImportsMap.forEach(
       ({ baseMeta, aOrderedExtensions, baseImportRegistry, initImportRegistryMap }, modRefId) => {
-        const deepImportedModules = new Map<AnyFn, AnyObj>();
-        mMetadataPerMod2.set(modRefId, { baseMeta, aOrderedExtensions, deepImportedModules });
-        const targetProviders = new ProvidersOnly<Provider[]>();
-        this.resolveImportedProviders(targetProviders, baseImportRegistry, levels);
-        this.resolveProvidersForExtensions(baseMeta, baseImportRegistry);
-        const useValue: ModuleExtract = {
-          moduleName: baseMeta.name,
-          isExternal: baseMeta.isExternal,
-        };
-        baseMeta.providersPerMod.unshift({ token: ModuleExtract, useValue });
-        baseMeta.providersPerMod.unshift(...targetProviders.providersPerMod);
-        baseMeta.providersPerRou.unshift(...targetProviders.providersPerRou);
-        baseMeta.providersPerReq.unshift(...targetProviders.providersPerReq);
-        baseMeta.allInitHooks.forEach((initHooks, decorator) => {
-          const shallowImportedModule = initImportRegistryMap.get(decorator)!;
-          const deepImports = initHooks.importModulesDeep({
-            parent: this,
-            shallowImports: shallowImportedModule,
-            moduleManager: this.moduleManager,
-            shallowImportsMap: this.shallowImportsMap,
-            providersPerApp: this.providersPerApp,
-            log: this.log,
+        try {
+          const deepImportedModules = new Map<AnyFn, AnyObj>();
+          mMetadataPerMod2.set(modRefId, { baseMeta, aOrderedExtensions, deepImportedModules });
+          const targetProviders = new ProvidersOnly<Provider[]>();
+          this.resolveImportedProviders(targetProviders, baseImportRegistry, levels);
+          this.resolveProvidersForExtensions(baseMeta, baseImportRegistry);
+          const useValue: ModuleExtract = {
+            moduleName: baseMeta.name,
+            isExternal: baseMeta.isExternal,
+          };
+          baseMeta.providersPerMod.unshift({ token: ModuleExtract, useValue });
+          baseMeta.providersPerMod.unshift(...targetProviders.providersPerMod);
+          baseMeta.providersPerRou.unshift(...targetProviders.providersPerRou);
+          baseMeta.providersPerReq.unshift(...targetProviders.providersPerReq);
+          baseMeta.allInitHooks.forEach((initHooks, decorator) => {
+            const shallowImportedModule = initImportRegistryMap.get(decorator)!;
+            const deepImports = initHooks.importModulesDeep({
+              parent: this,
+              shallowImports: shallowImportedModule,
+              moduleManager: this.moduleManager,
+              shallowImportsMap: this.shallowImportsMap,
+              providersPerApp: this.providersPerApp,
+              log: this.log,
+            });
+            if (deepImports === undefined) {
+              deepImportedModules.set(decorator, shallowImportedModule);
+            } else {
+              deepImportedModules.set(decorator, deepImports);
+            }
           });
-          if (deepImports === undefined) {
-            deepImportedModules.set(decorator, shallowImportedModule);
-          } else {
-            deepImportedModules.set(decorator, deepImports);
-          }
-        });
+        } catch (err: any) {
+          throw new FailImportProviders(baseMeta.name, err);
+        }
       },
     );
 
