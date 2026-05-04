@@ -35,15 +35,18 @@ jobs:
         run: |
           corepack enable
           corepack prepare yarn@4.12.0 --activate
-          cd packages/openapi
-          yarn build-ui
-          cd -
 
       - name: Install dependencies
         run: yarn install
 
       - name: Build
         run: yarn build
+
+      - name: Build UI (OpenAPI)
+        run: |
+          cd packages/openapi
+          yarn build-ui
+          cd -
 
       - name: Run Changesets
         uses: changesets/action@v1
