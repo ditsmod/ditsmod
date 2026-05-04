@@ -1,10 +1,10 @@
-import { featureModule, Providers } from '@ditsmod/core';
-import { initRest } from '@ditsmod/rest';
+import { Providers } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 
 import { SecondController } from './second/second.controller.js';
 
-@initRest({ controllers: [SecondController] })
-@featureModule({
+@restModule({
+  controllers: [SecondController],
   providersPerMod: new Providers().useLogConfig({ level: 'debug' }),
 })
 export class SecondModule {}
