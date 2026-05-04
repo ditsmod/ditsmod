@@ -1,7 +1,7 @@
 {
   "name": "@ditsmod/testing",
   "type": "module",
-  "version": "3.0.0-next.7",
+  "version": "3.0.0-next.8",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git"
@@ -33,8 +33,8 @@
   "author": "",
   "license": "MIT",
   "peerDependencies": {
-    "@ditsmod/core": "^3.0.0-next.7",
-    "@ditsmod/rest": "^3.0.0-next.7"
+    "@ditsmod/core": "^3.0.0-next.8",
+    "@ditsmod/rest": "^3.0.0-next.8"
   },
   "devDependencies": {
     "@typescript/native-preview": "^7.0.0-dev.20260501.1",

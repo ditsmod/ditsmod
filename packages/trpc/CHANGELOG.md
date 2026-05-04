@@ -1,5 +1,13 @@
 # @ditsmod/trpc
 
+## 3.0.0-next.8
+
+### Patch Changes
+
+- 3891ba5: add build UI for OpenAPI inside changesets.yml
+- Updated dependencies [3891ba5]
+  - @ditsmod/core@3.0.0-next.8
+
 ## 3.0.0-next.7
 
 ### Minor Changes
