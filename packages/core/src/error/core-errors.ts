@@ -470,12 +470,26 @@ export class NotDeclaredInAfterExtensionList extends CustomError {
   }
 }
 /**
- * `Failed to resolve imported dependencies for ${moduleName}: no provider for ${tokenName}! ${partMsg}.`
+ * `Failed to import providers for ${moduleName}`
+ */
+export class FailImportProviders extends CustomError {
+  constructor(moduleName: string, cause: any) {
+    super(
+      {
+        msg1: `Failed to import providers for ${moduleName}`,
+        level: 'fatal',
+      },
+      cause,
+    );
+  }
+}
+/**
+ * `Dependency resolution failed in ${moduleName}: no provider for ${tokenName}! ${partMsg}.`
  */
 export class NoProviderDuringResolveImports extends CustomError {
   constructor(moduleName: string, tokenName: string, partMsg: string) {
     super({
-      msg1: `Failed to resolve imported dependencies for ${moduleName}: no provider for ${tokenName}! ${partMsg}.`,
+      msg1: `Dependency resolution failed in ${moduleName}: no provider for ${tokenName}! ${partMsg}.`,
       level: 'fatal',
     });
   }

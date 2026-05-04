@@ -1,4 +1,5 @@
 export {
+  FailImportProviders,
   ProhibitSavingModulesSnapshot,
   ProvidersCollision,
   ResolvingCollisionsNotImportedInModule,
