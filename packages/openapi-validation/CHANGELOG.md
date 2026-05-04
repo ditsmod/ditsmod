@@ -1,5 +1,16 @@
 <a name="openapi-validation-2.12.1"></a>
 
+## 3.0.0-next.8
+
+### Patch Changes
+
+- 3891ba5: add build UI for OpenAPI inside changesets.yml
+- Updated dependencies [3891ba5]
+  - @ditsmod/core@3.0.0-next.8
+  - @ditsmod/i18n@3.0.0-next.8
+  - @ditsmod/openapi@3.0.0-next.8
+  - @ditsmod/rest@3.0.0-next.8
+
 ## 3.0.0-next.7
 
 ### Minor Changes

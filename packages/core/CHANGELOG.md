@@ -1,5 +1,11 @@
 <a name="core-2.61.1"></a>
 
+## 3.0.0-next.8
+
+### Patch Changes
+
+- 3891ba5: add build UI for OpenAPI inside changesets.yml
+
 ## 3.0.0-next.7
 
 ### Minor Changes

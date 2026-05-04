@@ -45,6 +45,7 @@
     "x-package-example": "3.0.0-alpha.5"
   },
   "changesets": [
+    "hot-streets-create",
     "jolly-socks-open",
     "tender-pillows-fly"
   ]
