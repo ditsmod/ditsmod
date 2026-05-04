@@ -1,5 +1,15 @@
 <a name="core-2.61.1"></a>
 
+## 3.0.0-next.7
+
+### Minor Changes
+
+- 77f935b: Release v3.0.0-alpha.6
+
+### Patch Changes
+
+- 50e88e8: Fix imports for REST
+
 ## 3.0.0-alpha.6
 
 ### Major Changes
