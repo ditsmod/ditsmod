@@ -1,6 +1,6 @@
 {
   "mode": "pre",
-  "tag": "alpha",
+  "tag": "next",
   "initialVersions": {
     "example00": "1.0.0",
     "example01": "1.0.0",
@@ -25,26 +25,24 @@
     "example19": "1.0.0",
     "example20": "1.0.0",
     "experiment01": "1.0.0",
-    "@ditsmod/authjs": "3.0.0-alpha.5",
-    "@ditsmod/body-parser": "3.0.0-alpha.5",
-    "@ditsmod/core": "3.0.0-alpha.5",
-    "@ditsmod/cors": "3.0.0-alpha.5",
+    "@ditsmod/authjs": "3.0.0-alpha.6",
+    "@ditsmod/body-parser": "3.0.0-alpha.6",
+    "@ditsmod/core": "3.0.0-alpha.6",
+    "@ditsmod/cors": "3.0.0-alpha.6",
     "@ditsmod/graphql": "3.0.0-alpha.5",
-    "@ditsmod/i18n": "3.0.0-alpha.5",
-    "@ditsmod/jwt": "3.0.0-alpha.5",
-    "@ditsmod/openapi": "3.0.0-alpha.5",
-    "@ditsmod/openapi-validation": "3.0.0-alpha.5",
-    "@ditsmod/rest": "3.0.0-alpha.5",
+    "@ditsmod/i18n": "3.0.0-alpha.6",
+    "@ditsmod/jwt": "3.0.0-alpha.6",
+    "@ditsmod/openapi": "3.0.0-alpha.6",
+    "@ditsmod/openapi-validation": "3.0.0-alpha.6",
+    "@ditsmod/rest": "3.0.0-alpha.6",
     "@ditsmod/rest-diagnostics": "3.0.0-alpha.5",
-    "@ditsmod/rest-testing": "3.0.0-alpha.5",
-    "@ditsmod/session-cookie": "3.0.0-alpha.5",
+    "@ditsmod/rest-testing": "3.0.0-alpha.6",
+    "@ditsmod/session-cookie": "3.0.0-alpha.6",
     "@ditsmod/sqb": "3.0.0-alpha.5",
-    "@ditsmod/testing": "3.0.0-alpha.5",
-    "@ditsmod/trpc": "3.0.0-alpha.5",
+    "@ditsmod/testing": "3.0.0-alpha.6",
+    "@ditsmod/trpc": "3.0.0-alpha.6",
     "@ditsmod/versions": "3.0.0-alpha.5",
     "x-package-example": "3.0.0-alpha.5"
   },
-  "changesets": [
-    "tender-pillows-fly"
-  ]
+  "changesets": []
 }

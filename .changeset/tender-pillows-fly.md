@@ -1,17 +1,17 @@
 ---
-'@ditsmod/authjs': major
-'@ditsmod/body-parser': major
-'@ditsmod/core': major
-'@ditsmod/cors': major
-'@ditsmod/i18n': major
-'@ditsmod/jwt': major
-'@ditsmod/openapi': major
-'@ditsmod/openapi-validation': major
-'@ditsmod/rest': major
-'@ditsmod/rest-testing': major
-'@ditsmod/session-cookie': major
-'@ditsmod/testing': major
-'@ditsmod/trpc': major
+'@ditsmod/authjs': minor
+'@ditsmod/body-parser': minor
+'@ditsmod/core': minor
+'@ditsmod/cors': minor
+'@ditsmod/i18n': minor
+'@ditsmod/jwt': minor
+'@ditsmod/openapi': minor
+'@ditsmod/openapi-validation': minor
+'@ditsmod/rest': minor
+'@ditsmod/rest-testing': minor
+'@ditsmod/session-cookie': minor
+'@ditsmod/testing': minor
+'@ditsmod/trpc': minor
 ---
 
 Release v3.0.0-alpha.6
