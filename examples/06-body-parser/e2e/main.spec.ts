@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { TestApplication } from '@ditsmod/testing';
+import { TestRestApplication } from '@ditsmod/testing';
 import { Providers, Status } from '@ditsmod/core';
 import { HttpServer } from '@ditsmod/rest';
 import { BodyParserConfig } from '@ditsmod/body-parser';
@@ -13,7 +13,7 @@ describe('06-body-parser', () => {
   beforeAll(async () => {
     const providers = new Providers().useValue<BodyParserConfig>(BodyParserConfig, { jsonOptions: { limit: '9b' } });
 
-    server = await TestApplication.createTestApp(AppModule)
+    server = await TestRestApplication.createTestApp(AppModule)
       .overrideModuleMeta([...providers])
       .getServer();
     testAgent = request(server);

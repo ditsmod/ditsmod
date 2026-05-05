@@ -1,7 +1,7 @@
 import supertest from 'supertest';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { Status } from '@ditsmod/core';
-import { TestApplication } from '@ditsmod/testing';
+import { TestRestApplication } from '@ditsmod/testing';
 import { HttpServer } from '@ditsmod/rest';
 
 import { AppModule } from './app.module.js';
@@ -18,7 +18,7 @@ describe('Integration test with login and getSession', () => {
   }
 
   beforeAll(async () => {
-    server = await TestApplication.createTestApp(AppModule).getServer();
+    server = await TestRestApplication.createTestApp(AppModule).getServer();
     client = supertest(server);
   });
 

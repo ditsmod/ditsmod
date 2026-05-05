@@ -1,7 +1,7 @@
 import supertest from 'supertest';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { controller, route, applyResponse, Res, HttpServer, restRootModule } from '@ditsmod/rest';
-import { TestApplication } from '@ditsmod/testing';
+import { TestRestApplication } from '@ditsmod/testing';
 
 let webResponse: Response = new Response();
 
@@ -35,7 +35,7 @@ describe('toWebResponse', () => {
   let client: ReturnType<typeof supertest>;
 
   beforeAll(async () => {
-    server = await TestApplication.createTestApp(AppModule).getServer();
+    server = await TestRestApplication.createTestApp(AppModule).getServer();
     client = supertest(server);
   });
 

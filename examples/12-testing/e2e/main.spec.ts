@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { HttpServer } from '@ditsmod/rest';
 import { HttpErrorHandler } from '@ditsmod/rest';
-import { TestApplication } from '@ditsmod/testing';
+import { TestRestApplication } from '@ditsmod/testing';
 import { InstantiationError, NoProvider } from '@ditsmod/core/errors';
 import { jest } from '@jest/globals';
 
@@ -14,7 +14,7 @@ describe('12-testing', () => {
   let testAgent: ReturnType<typeof request>;
 
   it('controller works case 1', async () => {
-    const server = await TestApplication.createTestApp(AppModule).getServer();
+    const server = await TestRestApplication.createTestApp(AppModule).getServer();
     testAgent = request(server);
 
     const { status, text } = await testAgent.get('/');
@@ -24,7 +24,7 @@ describe('12-testing', () => {
   });
 
   it('controller works case 2', async () => {
-    const server = await TestApplication.createTestApp(AppModule).getServer();
+    const server = await TestRestApplication.createTestApp(AppModule).getServer();
     testAgent = request(server);
 
     const { status, text } = await testAgent.get('/admin');
@@ -39,7 +39,7 @@ describe('12-testing', () => {
     let server: HttpServer;
 
     beforeAll(async () => {
-      server = await TestApplication.createTestApp(AppModule)
+      server = await TestRestApplication.createTestApp(AppModule)
         .addProvidersToModule(AppModule, [{ token: ErrorContainer, useValue: errorContainer }])
         .overrideModuleMeta([
           {

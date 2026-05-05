@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { HttpServer } from '@ditsmod/rest';
-import { TestApplication } from '@ditsmod/testing';
+import { TestRestApplication } from '@ditsmod/testing';
 
 import { AppModule } from '#app/app.module.js';
 
@@ -9,7 +9,7 @@ describe('09-one-extension', () => {
   let testAgent: ReturnType<typeof request>;
 
   beforeAll(async () => {
-    server = await TestApplication.createTestApp(AppModule).getServer();
+    server = await TestRestApplication.createTestApp(AppModule).getServer();
     testAgent = request(server);
   });
 

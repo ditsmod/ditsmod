@@ -3,7 +3,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { Status } from '@ditsmod/core';
 import { controller, RequestContext, RawRequest, restRootModule } from '@ditsmod/rest';
 import { route, HttpServer } from '@ditsmod/rest';
-import { TestApplication } from '@ditsmod/testing';
+import { TestRestApplication } from '@ditsmod/testing';
 import { BodyParserModule } from '@ditsmod/body-parser';
 
 import { toWebRequest, encodeUrlEncoded } from '#mod/http-api-adapters.js';
@@ -59,7 +59,7 @@ describe('toWebRequest', () => {
   let client: ReturnType<typeof supertest>;
 
   beforeAll(async () => {
-    server = await TestApplication.createTestApp(AppModule).getServer();
+    server = await TestRestApplication.createTestApp(AppModule).getServer();
     client = supertest(server);
   });
 

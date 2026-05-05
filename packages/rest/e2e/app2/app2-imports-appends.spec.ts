@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { HttpServer } from '@ditsmod/rest';
-import { TestApplication } from '@ditsmod/testing';
+import { TestRestApplication } from '@ditsmod/testing';
 
 import { AppModule } from './app.module.js';
 import { Module3 } from './module3/module3.js';
@@ -10,7 +10,7 @@ describe('rest app2', () => {
   let testAgent: ReturnType<typeof request>;
 
   beforeAll(async () => {
-    server = await TestApplication.createTestApp(AppModule).markModuleAsExternal(Module3).getServer();
+    server = await TestRestApplication.createTestApp(AppModule).markModuleAsExternal(Module3).getServer();
     testAgent = request(server);
   });
 

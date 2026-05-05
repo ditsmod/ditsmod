@@ -14,7 +14,7 @@ import { ExtensionMetaOverrider } from './types.js';
 import { TestAppInitializer } from './test-app-initializer.js';
 import { TestModuleManager } from './test-module-manager.js';
 
-export class TestApplication extends RestApplication {
+export class TestRestApplication extends RestApplication {
   protected testAppInitializer: TestAppInitializer;
   protected testModuleManager: TestModuleManager;
   protected appModule: ModuleType;
@@ -99,16 +99,16 @@ export class TestApplication extends RestApplication {
  * This method allows you to dynamically extend this class using plugins:
  * 
  * ```ts
-import { TestApplication } from '@ditsmod/testing';
+import { TestRestApplication } from '@ditsmod/testing';
 
-class Plugin1 extends TestApplication {
+class Plugin1 extends TestRestApplication {
   method1() {
     // ...
     return this;
   }
 }
 
-class Plugin2 extends TestApplication {
+class Plugin2 extends TestRestApplication {
   method2() {
     // ...
     return this;
@@ -117,7 +117,7 @@ class Plugin2 extends TestApplication {
 
 class AppModule {}
 
-TestApplication.createTestApp(AppModule)
+TestRestApplication.createTestApp(AppModule)
   .$use(Plugin1, Plugin2)
   .method1()
   .method2()
@@ -129,7 +129,7 @@ TestApplication.createTestApp(AppModule)
  * 
  * __Warning__: Plugins cannot use arrow functions as methods, as they will not work.
  */
-  $use<T extends [Class<TestApplication>, ...Class<TestApplication>[]]>(...Plugins: T) {
+  $use<T extends [Class<TestRestApplication>, ...Class<TestRestApplication>[]]>(...Plugins: T) {
     Plugins.forEach((Plugin) => {
       Object.getOwnPropertyNames(Plugin.prototype)
         .filter((p) => p != 'constructor')

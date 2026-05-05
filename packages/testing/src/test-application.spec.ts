@@ -2,13 +2,13 @@ import { ModuleType, rootModule } from '@ditsmod/core';
 import { AppOptions, initRest, Router } from '@ditsmod/rest';
 import { Server } from 'node:http';
 
-import { TestApplication } from './test-application.js';
+import { TestRestApplication } from './test-application.js';
 
-describe('TestApplication', () => {
-  class TestApplicationMock extends TestApplication {
-    declare preTestApplication: TestApplicationMock;
+describe('TestRestApplication', () => {
+  class TestRestApplicationMock extends TestRestApplication {
+    declare preTestRestApplication: TestRestApplicationMock;
     static override async create(appModule: ModuleType, appOptions?: AppOptions) {
-      return super.createTestApp(appModule, appOptions) as unknown as TestApplicationMock;
+      return super.createTestApp(appModule, appOptions) as unknown as TestRestApplicationMock;
     }
   }
 
@@ -21,18 +21,18 @@ describe('TestApplication', () => {
 
   describe('create()', () => {
     it('not throw an error', async () => {
-      await expect(TestApplicationMock.create(RootModule1, { path })).resolves.not.toThrow();
+      await expect(TestRestApplicationMock.create(RootModule1, { path })).resolves.not.toThrow();
     });
   });
 
   describe('getServer()', () => {
     it('not to throw an error', async () => {
-      const mock = await TestApplicationMock.create(RootModule1, { path });
+      const mock = await TestRestApplicationMock.create(RootModule1, { path });
       await expect(mock.getServer()).resolves.not.toThrow();
     });
 
     it('returns instance of http.Server', async () => {
-      const mock = await TestApplicationMock.create(RootModule1, { path });
+      const mock = await TestRestApplicationMock.create(RootModule1, { path });
       const server = await mock.getServer();
       expect(server).toBeInstanceOf(Server);
     });

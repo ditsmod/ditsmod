@@ -115,7 +115,7 @@ Let's look at the situation when we make a mock for `EmailService`:
 ```ts {14,21}
 import request from 'supertest';
 import { HttpServer } from '@ditsmod/core';
-import { TestApplication } from '@ditsmod/testing';
+import { TestRestApplication } from '@ditsmod/testing';
 import { jest } from '@jest/globals';
 
 import { AppModule } from '#app/app.module.js';
@@ -131,7 +131,7 @@ describe('End-to-end testing', () => {
   beforeEach(async () => {
     jest.restoreAllMocks();
 
-    server = await TestApplication.createTestApp(AppModule)
+    server = await TestRestApplication.createTestApp(AppModule)
       .overrideModuleMeta([
         { token: EmailService, useValue: MockEmailService }
       ])
@@ -157,21 +157,21 @@ describe('End-to-end testing', () => {
 });
 ```
 
-As you can see in the test code, first, a test application is created based on the `TestApplication` class, then a mock is substituted for `EmailService`. At the very end, the `getServer()` method is called and thus creates and returns a web server that has not yet called the `server.listen()` method, so supertest can automatically do this by substituting a random port number, which is an important point when asynchronously calling several tests at once. Here `AppModule` is the root module of the application.
+As you can see in the test code, first, a test application is created based on the `TestRestApplication` class, then a mock is substituted for `EmailService`. At the very end, the `getServer()` method is called and thus creates and returns a web server that has not yet called the `server.listen()` method, so supertest can automatically do this by substituting a random port number, which is an important point when asynchronously calling several tests at once. Here `AppModule` is the root module of the application.
 
-Note that these tests do not use the code from the `./src/main.ts` file, so any arguments you pass to this code must be duplicated for `TestApplication`. For example, if your application has an `api` prefix, then pass the same prefix to the test application:
+Note that these tests do not use the code from the `./src/main.ts` file, so any arguments you pass to this code must be duplicated for `TestRestApplication`. For example, if your application has an `api` prefix, then pass the same prefix to the test application:
 
 ```ts
-server = await TestApplication.createTestApp(AppModule, { path: 'api' }).getServer();
+server = await TestRestApplication.createTestApp(AppModule, { path: 'api' }).getServer();
 ```
 
-### `testApplication.overrideModuleMeta()` {#testapplicationoverridemodulemeta}
+### `testRestApplication.overrideModuleMeta()` {#testrestapplicationoverridemodulemeta}
 
-The `testApplication.overrideModuleMeta()` method replaces providers in module metadata. Providers with mocks are only passed to DI at a particular level of the hierarchy if there are corresponding providers with the same tokens in application at that level.
+The `testRestApplication.overrideModuleMeta()` method replaces providers in module metadata. Providers with mocks are only passed to DI at a particular level of the hierarchy if there are corresponding providers with the same tokens in application at that level.
 
-### `testApplication.overrideExtensionMeta()` {#testapplicationoverrideextensionmeta}
+### `testRestApplication.overrideExtensionMeta()` {#testrestapplicationoverrideextensionmeta}
 
-The `testApplication.overrideExtensionMeta()` method overrides providers in the metadata added by an extension. This method takes two arguments:
+The `testRestApplication.overrideExtensionMeta()` method overrides providers in the metadata added by an extension. This method takes two arguments:
 
 1. the extension class that returns the metadata where providers need to be overridden for tests;
 2. a callback that will work with the metadata returned by the extension (specified in the first argument).
@@ -186,23 +186,23 @@ interface ExtensionMetaOverrider<T = any> {
 
 That is, this callback accepts a single argument - an object with the `groupData` property, where you can find metadata from the specified group of extensions.
 
-[TestRestPlugin][4] is described below, which shows how to use `testApplication.overrideExtensionMeta()`.
+[TestRestPlugin][4] is described below, which shows how to use `testRestApplication.overrideExtensionMeta()`.
 
-### `testApplication.$use()` {#testapplicationuse}
+### `testRestApplication.$use()` {#testrestapplicationuse}
 
-This method is intended for creating plugins that can dynamically add methods and properties to the `TestApplication` instance:
+This method is intended for creating plugins that can dynamically add methods and properties to the `TestRestApplication` instance:
 
 ```ts
-import { TestApplication } from '@ditsmod/testing';
+import { TestRestApplication } from '@ditsmod/testing';
 
-class Plugin1 extends TestApplication {
+class Plugin1 extends TestRestApplication {
   method1() {
     // ...
     return this;
   }
 }
 
-class Plugin2 extends TestApplication {
+class Plugin2 extends TestRestApplication {
   method2() {
     // ...
     return this;
@@ -211,26 +211,26 @@ class Plugin2 extends TestApplication {
 
 class AppModule {}
 
-TestApplication.createTestApp(AppModule)
+TestRestApplication.createTestApp(AppModule)
   .$use(Plugin1, Plugin2)
   .method1()
   .method2()
   .overrideModuleMeta([]);
 ```
 
-As you can see, after using `$use()`, the `TestApplication` instance can use plugin methods. [An example of using such a plugin in real life][103] can be viewed in the `@ditsmod/rest` module.
+As you can see, after using `$use()`, the `TestRestApplication` instance can use plugin methods. [An example of using such a plugin in real life][103] can be viewed in the `@ditsmod/rest` module.
 
 
 ### `TestRestPlugin` {#testrestplugin}
 
-The `TestRestPlugin` class uses `testApplication.overrideExtensionMeta()` to override providers in the metadata added by the `RouteExtension` group:
+The `TestRestPlugin` class uses `testRestApplication.overrideExtensionMeta()` to override providers in the metadata added by the `RouteExtension` group:
 
 ```ts
 import { Provider } from '@ditsmod/core';
 import { MetadataPerMod3, RouteExtension } from '@ditsmod/rest';
-import { TestApplication, ExtensionMetaOverrider } from '@ditsmod/testing';
+import { TestRestApplication, ExtensionMetaOverrider } from '@ditsmod/testing';
 
-export class TestRestPlugin extends TestApplication {
+export class TestRestPlugin extends TestRestApplication {
   overrideExtensionRestMeta(providersToOverride: Provider[]) {
     const overrideRoutesMeta: ExtensionMetaOverrider<MetadataPerMod3> = (stage1ExtensionMeta) => {
       stage1ExtensionMeta.groupData?.forEach((metadataPerMod3) => {
@@ -248,7 +248,7 @@ You can use this example to create plugins that will replace providers for other
 
 ```ts {14-15}
 import { Provider } from '@ditsmod/core';
-import { TestApplication } from '@ditsmod/testing';
+import { TestRestApplication } from '@ditsmod/testing';
 import { TestRestPlugin } from '@ditsmod/rest-testing';
 
 import { AppModule } from './app.module.js';
@@ -259,7 +259,7 @@ const providers: Provider[] = [
   { token: Service2, useValue: 'value2' },
 ];
 
-const server = await TestApplication.createTestApp(AppModule)
+const server = await TestRestApplication.createTestApp(AppModule)
   .$use(TestRestPlugin)
   .overrideExtensionRestMeta(providers)
   .getServer();

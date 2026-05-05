@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { TestApplication } from '@ditsmod/testing';
+import { TestRestApplication } from '@ditsmod/testing';
 import { HttpServer } from '@ditsmod/rest';
 
 import { AppModule } from '#app/app.module.js';
@@ -9,7 +9,7 @@ describe('05-nested-routes', () => {
   let testAgent: ReturnType<typeof request>;
 
   beforeAll(async () => {
-    server = await TestApplication.createTestApp(AppModule, { path: 'api' }).getServer();
+    server = await TestRestApplication.createTestApp(AppModule, { path: 'api' }).getServer();
     testAgent = request(server);
   });
 

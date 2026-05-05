@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { TestApplication } from '@ditsmod/testing';
+import { TestRestApplication } from '@ditsmod/testing';
 import {
   InjectionToken,
   Extension,
@@ -53,7 +53,7 @@ describe('extensions e2e', () => {
     class AppModule {}
 
     const msg = 'Extension1 attempted to call "extensionManager.stage1(Extension3)';
-    await expect(TestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
+    await expect(TestRestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
   });
 
   it('using "before" groups, run first the group that was declared (or imported) last', async () => {
@@ -88,7 +88,7 @@ describe('extensions e2e', () => {
     })
     class AppModule {}
 
-    await expect(TestApplication.createTestApp(AppModule).getServer()).resolves.not.toThrow();
+    await expect(TestRestApplication.createTestApp(AppModule).getServer()).resolves.not.toThrow();
     expect(callOrder).toEqual(['Extension3', 'Extension2', 'Extension1']);
   });
 
@@ -109,7 +109,7 @@ describe('extensions e2e', () => {
     class AppModule {}
 
     const msg = ': Extension3 -> Extension2 -> Extension1 -> Extension3';
-    await expect(TestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
+    await expect(TestRestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
   });
 
   it('circular dependencies of groups in three modules', async () => {
@@ -136,7 +136,7 @@ describe('extensions e2e', () => {
     class AppModule {}
 
     const msg = ': Extension1 -> Extension3 -> Extension2 -> Extension1';
-    await expect(TestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
+    await expect(TestRestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
   });
 
   it('circular dependencies of groups in two modules', async () => {
@@ -166,7 +166,7 @@ describe('extensions e2e', () => {
     class AppModule {}
 
     const msg = ': Extension2 -> Extension1 -> Extension3 -> Extension2';
-    await expect(TestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
+    await expect(TestRestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
   });
 
   it('circular dependencies of groups in Module2 with global Module1', async () => {
@@ -196,7 +196,7 @@ describe('extensions e2e', () => {
     class AppModule {}
 
     const msg = 'Extension2 -> Extension1 -> Extension3 -> Extension2';
-    await expect(TestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
+    await expect(TestRestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
   });
 
   it('check isLastModule', async () => {
@@ -243,7 +243,7 @@ describe('extensions e2e', () => {
     })
     class AppModule {}
 
-    await TestApplication.createTestApp(AppModule).getServer();
+    await TestRestApplication.createTestApp(AppModule).getServer();
     expect(extensionInit).toHaveBeenCalledTimes(3);
     expect(extensionInit).toHaveBeenNthCalledWith(1, false);
     expect(extensionInit).toHaveBeenNthCalledWith(2, false);
@@ -309,7 +309,7 @@ describe('extensions e2e', () => {
     })
     class AppModule {}
 
-    await TestApplication.createTestApp(AppModule).getServer();
+    await TestRestApplication.createTestApp(AppModule).getServer();
     expect(extensionInit1).toHaveBeenCalledTimes(3);
     expect(extensionInit1).toHaveBeenNthCalledWith(1, false);
     expect(extensionInit1).toHaveBeenNthCalledWith(2, false);
@@ -402,7 +402,7 @@ describe('extensions e2e', () => {
     })
     class AppModule {}
 
-    await TestApplication.createTestApp(AppModule).getServer();
+    await TestRestApplication.createTestApp(AppModule).getServer();
     expect(spyIsLastModule).toHaveBeenCalledTimes(3);
     expect(spyIsLastModule).toHaveBeenNthCalledWith(1, false);
     expect(spyIsLastModule).toHaveBeenNthCalledWith(2, false);

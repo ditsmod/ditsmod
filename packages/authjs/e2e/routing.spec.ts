@@ -1,7 +1,7 @@
 import supertest from 'supertest';
 import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import { route, RequestContext, controller, HttpServer, restRootModule } from '@ditsmod/rest';
-import { TestApplication } from '@ditsmod/testing';
+import { TestRestApplication } from '@ditsmod/testing';
 
 import credentials from '#mod/providers/credentials.js';
 import { AuthjsModule } from '#mod/authjs.module.js';
@@ -40,7 +40,7 @@ describe('Middleware behaviour', () => {
   let client: ReturnType<typeof supertest>;
 
   beforeAll(async () => {
-    server = await TestApplication.createTestApp(AppModule).getServer();
+    server = await TestRestApplication.createTestApp(AppModule).getServer();
     client = supertest(server);
   });
 
