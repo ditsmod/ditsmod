@@ -1,6 +1,14 @@
 import { PublicLogMediator } from '#logger/system-log-mediator.js';
-import { BaseAppInitializer, BaseApplication, BaseAppOptions, ModuleType } from '@ditsmod/core';
+import { ModuleType } from '#types/mix.js';
+import { BaseAppInitializer } from './base-app-initializer.js';
+import { BaseAppOptions } from './base-app-options.js';
+import { BaseApplication } from './base-application.js';
 
+/**
+ * This class is primarily used for testing `@ditsmod/core`, and for demonstrating how the application works without a web server.
+ * It can also be used as a basic example for building a full-fledged web application (or another application that requires
+ * modularity, Dependency Injection, a logger, and extension handling).
+ */
 export class StandaloneApplication extends BaseApplication {
   /**
    * @param appModule The root module of the application.
