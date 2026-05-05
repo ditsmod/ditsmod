@@ -1,5 +1,5 @@
-import { featureModule, isProvider, ModuleWithParams, Provider } from '@ditsmod/core';
-import { RouteExtension, RestModule, UseInterceptorExtension, initRest } from '@ditsmod/rest';
+import { isProvider, ModuleWithParams, Provider } from '@ditsmod/core';
+import { RouteExtension, UseInterceptorExtension, restModule } from '@ditsmod/rest';
 import { BodyParserModule, BodyParserExtension } from '@ditsmod/body-parser';
 
 import { AUTHJS_SESSION } from './constants.js';
@@ -14,8 +14,8 @@ import { AuthjsConfig } from './authjs.config.js';
  *
  * [1]: https://authjs.dev/
  */
-@initRest({
-  imports: [RestModule, BodyParserModule],
+@restModule({
+  imports: [BodyParserModule],
   providersPerMod: [AuthjsLogMediator],
   providersPerRou: [{ token: AuthjsGuard, useClass: AuthjsPerRouGuard }],
   providersPerReq: [AuthjsGuard, { token: AUTHJS_SESSION }],
@@ -29,7 +29,6 @@ import { AuthjsConfig } from './authjs.config.js';
   ],
   exports: [BodyParserModule, AUTHJS_SESSION, AuthjsGuard],
 })
-@featureModule()
 export class AuthjsModule {
   /**
    * You can pass either a ready-made configuration or a provider that returns the configuration.

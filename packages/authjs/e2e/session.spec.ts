@@ -1,7 +1,7 @@
 import supertest from 'supertest';
 import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
-import { Status, rootModule } from '@ditsmod/core';
-import { route, controller, RestModule, Req, HttpServer, initRest } from '@ditsmod/rest';
+import { Status } from '@ditsmod/core';
+import { route, controller, Req, HttpServer, restRootModule } from '@ditsmod/rest';
 import { TestApplication } from '@ditsmod/testing';
 
 const sessionJson = {
@@ -47,11 +47,7 @@ export class Controller1 {
   }
 }
 
-@initRest({
-  imports: [RestModule],
-  controllers: [Controller1],
-})
-@rootModule()
+@restRootModule({ controllers: [Controller1] })
 export class AppModule {}
 
 describe('getSession', () => {

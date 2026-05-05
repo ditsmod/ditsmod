@@ -31,9 +31,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@auth/core@npm:^0.40.0":
-  version: 0.40.0
-  resolution: "@auth/core@npm:0.40.0"
+"@auth/core@npm:^0.41.2":
+  version: 0.41.2
+  resolution: "@auth/core@npm:0.41.2"
   dependencies:
     "@panva/hkdf": "npm:^1.2.1"
     jose: "npm:^6.0.6"
@@ -43,7 +43,7 @@ __metadata:
   peerDependencies:
     "@simplewebauthn/browser": ^9.0.1
     "@simplewebauthn/server": ^9.0.2
-    nodemailer: ^6.8.0
+    nodemailer: ^7.0.7
   peerDependenciesMeta:
     "@simplewebauthn/browser":
       optional: true
@@ -51,7 +51,7 @@ __metadata:
       optional: true
     nodemailer:
       optional: true
-  checksum: 10c0/25cd12f22611eedc21c17dc1908fa9428ae5f0e32eb32c1ab009642276c37099cce58f49ffbb7f8e8d6d6488d5101a24fb9808ec662eee5aca19d520750acaa3
+  checksum: 10c0/a8309434a91bb678c5dd644b97ae8ed0935426808f4251ddd5f888b845c152393718978d631ffdf48ed13c2626dae146665592b6be66b7e1c06356764a89dce4
   languageName: node
   linkType: hard
 
@@ -949,7 +949,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ditsmod/authjs@workspace:packages/authjs"
   dependencies:
-    "@auth/core": "npm:^0.40.0"
+    "@auth/core": "npm:^0.41.2"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260501.1"
     npm-run-all: "npm:^4.1.5"
     vitest: "npm:^4.0.18"

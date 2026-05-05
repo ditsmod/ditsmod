@@ -1,8 +1,8 @@
 import supertest from 'supertest';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { Status, rootModule } from '@ditsmod/core';
-import { controller, RequestContext, RawRequest, initRest } from '@ditsmod/rest';
-import { route, RestModule, HttpServer } from '@ditsmod/rest';
+import { Status } from '@ditsmod/core';
+import { controller, RequestContext, RawRequest, restRootModule } from '@ditsmod/rest';
+import { route, HttpServer } from '@ditsmod/rest';
 import { TestApplication } from '@ditsmod/testing';
 import { BodyParserModule } from '@ditsmod/body-parser';
 
@@ -32,11 +32,10 @@ export class Controller1 {
   }
 }
 
-@initRest({
-  imports: [RestModule, BodyParserModule],
+@restRootModule({
+  imports: [BodyParserModule],
   controllers: [Controller1],
 })
-@rootModule()
 export class AppModule {}
 
 function expectMatchingRequestHeaders(req: RawRequest, request: Request) {

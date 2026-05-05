@@ -1,7 +1,6 @@
 import supertest from 'supertest';
 import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
-import { rootModule } from '@ditsmod/core';
-import { route, RestModule, RequestContext, controller, HttpServer, initRest } from '@ditsmod/rest';
+import { route, RequestContext, controller, HttpServer, restRootModule } from '@ditsmod/rest';
 import { TestApplication } from '@ditsmod/testing';
 
 import credentials from '#mod/providers/credentials.js';
@@ -30,14 +29,10 @@ export class Controller1 {
   }
 }
 
-@initRest({
-  imports: [
-    RestModule,
-    AuthjsModule.withConfig({ secret: 'secret', providers: [credentials] }),
-  ],
+@restRootModule({
+  imports: [AuthjsModule.withConfig({ secret: 'secret', providers: [credentials] })],
   controllers: [Controller1],
 })
-@rootModule()
 export class AppModule {}
 
 describe('Middleware behaviour', () => {
