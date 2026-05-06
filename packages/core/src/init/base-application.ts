@@ -10,11 +10,11 @@ export abstract class BaseApplication {
   protected log: SystemLogMediator;
 
   protected init(baseAppOptions?: BaseAppOptions) {
-    if (Error.stackTraceLimit == 10) {
-      Error.stackTraceLimit = 50; // Override default limit.
-    }
     this.log = new SystemLogMediator({ moduleName: 'app' });
     this.baseAppOptions = { ...new BaseAppOptions(), ...baseAppOptions };
+    if (Error.stackTraceLimit == 10) {
+      Error.stackTraceLimit = this.baseAppOptions.stackTraceLimit || 50;
+    }
     LogMediator.bufferLogs = this.baseAppOptions.bufferLogs;
     this.log.startingDitsmod(this); // OutputLogLevel is still unknown here.
   }

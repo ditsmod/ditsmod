@@ -24,7 +24,7 @@ export class BaseAppOptions {
   /**
    * Specifies whether to show logs from external modules. An external module
    * is a module that you install using package managers (npm, yarn, etc.).
-   * 
+   *
    * Default - false.
    */
   showExternalLogs?: boolean;
@@ -32,4 +32,10 @@ export class BaseAppOptions {
    * Log level (trace, debug, info etc.)
    */
   logLevel?: OutputLogLevel;
+  /**
+   * The error stack trace limit.
+   * 
+   * Default - `50`.
+   */
+  stackTraceLimit?: number = 50;
 }
