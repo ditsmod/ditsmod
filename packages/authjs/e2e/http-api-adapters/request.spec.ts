@@ -3,7 +3,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { Status } from '@ditsmod/core';
 import { controller, RequestContext, RawRequest, restRootModule } from '@ditsmod/rest';
 import { route, HttpServer } from '@ditsmod/rest';
-import { TestRestApplication } from '@ditsmod/testing';
+import { TestRestApplication } from '@ditsmod/rest-testing';
 import { BodyParserModule } from '@ditsmod/body-parser';
 
 import { toWebRequest, encodeUrlEncoded } from '#mod/http-api-adapters.js';

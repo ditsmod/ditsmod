@@ -11,7 +11,7 @@
       "@ditsmod/rest": ["../../packages/rest/src/index.js"],
       "@ditsmod/openapi": ["../../packages/openapi/src/index.js"],
       "@ditsmod/jwt": ["../../packages/jwt/src/index.js"],
-      "@ditsmod/testing": ["../../packages/testing/src/index.js"],
+      "@ditsmod/rest-testing": ["../../packages/rest-testing/src/index.js"],
     }
   },
   "include": ["src", "e2e"],
@@ -20,6 +20,6 @@
     { "path": "../../packages/openapi/tsconfig.build.json" },
     { "path": "../../packages/rest/tsconfig.build.json" },
     { "path": "../../packages/jwt/tsconfig.build.json" },
-    { "path": "../../packages/testing/tsconfig.build.json" },
+    { "path": "../../packages/rest-testing/tsconfig.build.json" },
   ]
 }

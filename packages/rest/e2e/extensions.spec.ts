@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { TestRestApplication } from '@ditsmod/testing';
+import { TestRestApplication } from '@ditsmod/rest-testing';
 import {
   InjectionToken,
   Extension,

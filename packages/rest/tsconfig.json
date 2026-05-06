@@ -4,7 +4,7 @@
     "types": ["node", "jest"],
     "paths": {
       "@ditsmod/core": ["../core/src/index.js"],
-      "@ditsmod/testing": ["../testing/src/index.js"],
+      "@ditsmod/rest-testing": ["../rest-testing/src/index.js"],
       "#interceptors/*": ["./src/interceptors/*"],
       "#errors": ["./src/errors.js"],
       "#utils/*": ["./src/utils/*"],
@@ -37,7 +37,7 @@
   "include": ["src", "e2e"],
   "references": [
     { "path": "../core/tsconfig.build.json" },
-    { "path": "../testing/tsconfig.build.json" },
+    { "path": "../rest-testing/tsconfig.build.json" },
     { "path": "../rest-testing/tsconfig.build.json" },
   ]
 }

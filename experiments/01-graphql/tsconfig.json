@@ -7,13 +7,13 @@
       "#app/*": ["./src/app/*"],
       "@ditsmod/core": ["../../packages/core/src/index.js"],
       "@ditsmod/graphql": ["../../packages/graphql/src/index.js"],
-      "@ditsmod/testing": ["../../packages/testing/src/index.js"],
+      "@ditsmod/rest-testing": ["../../packages/rest-testing/src/index.js"],
     }
   },
   "include": ["src", "e2e"],
   "references": [
     { "path": "../../packages/core/tsconfig.build.json" },
     { "path": "../../packages/graphql/tsconfig.build.json" },
-    { "path": "../../packages/testing/tsconfig.build.json" },
+    { "path": "../../packages/rest-testing/tsconfig.build.json" },
   ]
 }

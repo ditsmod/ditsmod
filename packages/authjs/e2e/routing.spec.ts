@@ -1,7 +1,7 @@
 import supertest from 'supertest';
 import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import { route, RequestContext, controller, HttpServer, restRootModule } from '@ditsmod/rest';
-import { TestRestApplication } from '@ditsmod/testing';
+import { TestRestApplication } from '@ditsmod/rest-testing';
 
 import credentials from '#mod/providers/credentials.js';
 import { AuthjsModule } from '#mod/authjs.module.js';

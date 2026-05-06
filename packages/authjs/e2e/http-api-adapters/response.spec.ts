@@ -1,7 +1,7 @@
 import supertest from 'supertest';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { controller, route, applyResponse, Res, HttpServer, restRootModule } from '@ditsmod/rest';
-import { TestRestApplication } from '@ditsmod/testing';
+import { TestRestApplication } from '@ditsmod/rest-testing';
 
 let webResponse: Response = new Response();
 

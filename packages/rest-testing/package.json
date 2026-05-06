@@ -17,6 +17,9 @@
       "default": "./dist/index.js"
     }
   },
+  "imports": {
+    "#app/*": "./dist/*"
+  },
   "scripts": {
     "build": "tsgo -b tsconfig.build.json",
     "clean": "rm -rf dist*",
@@ -31,8 +34,7 @@
   "license": "MIT",
   "peerDependencies": {
     "@ditsmod/core": "^3.0.0-next.8",
-    "@ditsmod/rest": "^3.0.0-next.8",
-    "@ditsmod/testing": "^3.0.0-next.8"
+    "@ditsmod/rest": "^3.0.0-next.8"
   },
   "publishConfig": {
     "access": "public"

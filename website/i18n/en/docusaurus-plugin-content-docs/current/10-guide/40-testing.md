@@ -115,7 +115,7 @@ Let's look at the situation when we make a mock for `EmailService`:
 ```ts {14,21}
 import request from 'supertest';
 import { HttpServer } from '@ditsmod/core';
-import { TestRestApplication } from '@ditsmod/testing';
+import { TestRestApplication } from '@ditsmod/rest-testing';
 import { jest } from '@jest/globals';
 
 import { AppModule } from '#app/app.module.js';
@@ -193,7 +193,7 @@ That is, this callback accepts a single argument - an object with the `groupData
 This method is intended for creating plugins that can dynamically add methods and properties to the `TestRestApplication` instance:
 
 ```ts
-import { TestRestApplication } from '@ditsmod/testing';
+import { TestRestApplication } from '@ditsmod/rest-testing';
 
 class Plugin1 extends TestRestApplication {
   method1() {
@@ -228,7 +228,7 @@ The `TestRestPlugin` class uses `testRestApplication.overrideExtensionMeta()` to
 ```ts
 import { Provider } from '@ditsmod/core';
 import { MetadataPerMod3, RouteExtension } from '@ditsmod/rest';
-import { TestRestApplication, ExtensionMetaOverrider } from '@ditsmod/testing';
+import { TestRestApplication, ExtensionMetaOverrider } from '@ditsmod/rest-testing';
 
 export class TestRestPlugin extends TestRestApplication {
   overrideExtensionRestMeta(providersToOverride: Provider[]) {
@@ -248,7 +248,7 @@ You can use this example to create plugins that will replace providers for other
 
 ```ts {14-15}
 import { Provider } from '@ditsmod/core';
-import { TestRestApplication } from '@ditsmod/testing';
+import { TestRestApplication } from '@ditsmod/rest-testing';
 import { TestRestPlugin } from '@ditsmod/rest-testing';
 
 import { AppModule } from './app.module.js';

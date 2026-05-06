@@ -115,7 +115,7 @@ describe('Service2', () => {
 ```ts {14,21}
 import request from 'supertest';
 import { HttpServer } from '@ditsmod/core';
-import { TestRestApplication } from '@ditsmod/testing';
+import { TestRestApplication } from '@ditsmod/rest-testing';
 import { jest } from '@jest/globals';
 
 import { AppModule } from '#app/app.module.js';
@@ -193,7 +193,7 @@ interface ExtensionMetaOverrider<T = any> {
 Даний метод призначений для створення плагінів, які можуть динамічно додавати методи та властивості до інстансу `TestRestApplication`:
 
 ```ts
-import { TestRestApplication } from '@ditsmod/testing';
+import { TestRestApplication } from '@ditsmod/rest-testing';
 
 class Plugin1 extends TestRestApplication {
   method1() {
@@ -228,7 +228,7 @@ TestRestApplication.createTestApp(AppModule)
 ```ts
 import { Provider } from '@ditsmod/core';
 import { MetadataPerMod3, RouteExtension } from '@ditsmod/rest';
-import { TestRestApplication, ExtensionMetaOverrider } from '@ditsmod/testing';
+import { TestRestApplication, ExtensionMetaOverrider } from '@ditsmod/rest-testing';
 
 export class TestRestPlugin extends TestRestApplication {
   overrideExtensionRestMeta(providersToOverride: Provider[]) {
@@ -248,7 +248,7 @@ export class TestRestPlugin extends TestRestApplication {
 
 ```ts {14-15}
 import { Provider } from '@ditsmod/core';
-import { TestRestApplication } from '@ditsmod/testing';
+import { TestRestApplication } from '@ditsmod/rest-testing';
 import { TestRestPlugin } from '@ditsmod/rest-testing';
 
 import { AppModule } from './app.module.js';

@@ -1,6 +1,9 @@
 import { Provider, Providers } from '@ditsmod/core';
 import { MetadataPerMod3, RouteExtension } from '@ditsmod/rest';
-import { TestRestApplication, ExtensionMetaOverrider, TestOverrider } from '@ditsmod/testing';
+
+import { TestRestApplication } from './test-application.js';
+import { ExtensionMetaOverrider } from './types.js';
+import { TestOverrider } from './test-overrider.js';
 
 export class TestRestPlugin extends TestRestApplication {
   overrideExtensionRestMeta(providersToOverride: Providers | Provider[]) {

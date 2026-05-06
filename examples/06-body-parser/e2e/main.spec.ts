@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { TestRestApplication } from '@ditsmod/testing';
+import { TestRestApplication } from '@ditsmod/rest-testing';
 import { Providers, Status } from '@ditsmod/core';
 import { HttpServer } from '@ditsmod/rest';
 import { BodyParserConfig } from '@ditsmod/body-parser';

@@ -10,7 +10,7 @@
       "@ditsmod/core": ["../../packages/core/src/index.js"],
       "@ditsmod/rest": ["../../packages/rest/src/index.js"],
       "@ditsmod/i18n": ["../../packages/i18n/src/index.js"],
-      "@ditsmod/testing": ["../../packages/testing/src/index.js"],
+      "@ditsmod/rest-testing": ["../../packages/rest-testing/src/index.js"],
     }
   },
   "include": ["src", "e2e"],
@@ -18,6 +18,6 @@
     { "path": "../../packages/core/tsconfig.build.json" },
     { "path": "../../packages/rest/tsconfig.build.json" },
     { "path": "../../packages/i18n/tsconfig.build.json" },
-    { "path": "../../packages/testing/tsconfig.build.json" },
+    { "path": "../../packages/rest-testing/tsconfig.build.json" },
   ]
 }
