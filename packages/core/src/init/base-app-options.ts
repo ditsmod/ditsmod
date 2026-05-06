@@ -25,11 +25,13 @@ export class BaseAppOptions {
    * Specifies whether to show logs from external modules. An external module
    * is a module that you install using package managers (npm, yarn, etc.).
    *
-   * Default - false.
+   * Default - `true`.
    */
   showExternalLogs?: boolean;
   /**
-   * Log level (trace, debug, info etc.)
+   * Log level (trace, debug, info etc.).
+   * 
+   * Default - `info`.
    */
   logLevel?: OutputLogLevel;
   /**

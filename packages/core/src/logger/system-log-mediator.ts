@@ -49,7 +49,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * `Starting Ditsmod application...`
+   * `debug: Starting Ditsmod application...`
    */
   startingDitsmod(self: object) {
     const className = self.constructor.name;
@@ -58,7 +58,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * `${className}: Rescan of root module is forbidden: it must only be loaded once at startup.`
+   * `warn: ${className}: Rescan of root module is forbidden: it must only be loaded once at startup.`
    */
   forbiddenRescanRootModule(self: object) {
     const className = self.constructor.name;
@@ -66,7 +66,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * `"${moduleName}" has already been imported into "${moduleId}".`
+   * `warn: "${moduleName}" has already been imported into "${moduleId}".`
    */
   moduleAlreadyImported(self: object, inputModule: ModRefId, targetModuleId: string) {
     const className = self.constructor.name;
@@ -76,7 +76,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * `${serverName}: webserver is running at ${host}:${port}.`
+   * `info: ${serverName}: webserver is running at ${host}:${port}.`
    */
   serverListen(self: object, host: string, port: number) {
     const className = self.constructor.name;
@@ -84,7 +84,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * `start reinit the application.`
+   * `debug: start reinit the application.`
    */
   startReinitApp(self: object) {
     const className = self.constructor.name;
@@ -92,7 +92,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * `skipping autocommit of changes for config of moduleManager.`
+   * `warn: skipping autocommit of changes for config of moduleManager.`
    */
   skippingAutocommitModulesConfig(self: object) {
     const className = self.constructor.name;
@@ -100,7 +100,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * `finished reinit the application.`
+   * `debug: finished reinit the application.`
    */
   finishReinitApp(self: object) {
     const className = self.constructor.name;
@@ -116,7 +116,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * `start rollback of changes for config of moduleManager during reinit the application.`
+   * `debug: start rollback of changes for config of moduleManager during reinit the application.`
    */
   startRollbackModuleConfigChanges(self: object) {
     const className = self.constructor.name;
@@ -125,7 +125,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * `successful rollback of changes for config of moduleManager during reinit the application.`
+   * `debug: successful rollback of changes for config of moduleManager during reinit the application.`
    */
   successfulRollbackModuleConfigChanges(self: object) {
     const className = self.constructor.name;
@@ -134,7 +134,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * `successful added "${inputModuleName}" to "${targetMetaName}".`
+   * `debug: successful added "${inputModuleName}" to "${targetMetaName}".`
    */
   successfulAddedModuleToImport(self: object, inputModule: ModRefId, targetMetaName: string) {
     const className = self.constructor.name;
@@ -143,7 +143,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * `module with ID "${moduleId}" not found.`
+   * `warn: module with ID "${moduleId}" not found.`
    */
   moduleNotFound(self: object, moduleId: string) {
     const className = self.constructor.name;
@@ -151,7 +151,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * `${inputMetaName} successful removed from ${targetMetaName}.`
+   * `debug: ${inputMetaName} successful removed from ${targetMetaName}.`
    */
   moduleSuccessfulRemoved(self: object, inputMetaName: string, targetMetaName: string) {
     const className = self.constructor.name;
@@ -159,7 +159,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * `${moduleName} has ID: "${moduleId}".`
+   * `trace: ${moduleName} has ID: "${moduleId}".`
    */
   moduleHasId(self: object, moduleId: string) {
     const className = self.constructor.name;
@@ -167,6 +167,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
+   * trace: 
 - BaseAppInitializer: global providers per a module: []
 - BaseAppInitializer: global providers per a route: []
 - BaseAppInitializer: global providers per a request: []
@@ -188,7 +189,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * ${className}: No extensions found.
+   * `debug: ${className}: No extensions found.`
    */
   skippingStartExtensions(self: object) {
     const className = self.constructor.name;
@@ -196,7 +197,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * ${className}: Starting extensions...
+   * `debug: ${className}: Starting extensions...`
    */
   startExtensions(self: object) {
     const className = self.constructor.name;
@@ -204,7 +205,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * `${tokenName} start init.`
+   * `trace: ${tokenName} start init.`
    */
   startExtensionInit(self: object, unfinishedInit: Set<Extension | ExtensionClass>) {
     const className = self.constructor.name;
@@ -225,7 +226,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * `finish init ${tokenName}.`
+   * `trace: finish init ${tokenName}.`
    */
   finishExtensionInit(self: object, unfinishedInit: Set<Extension | ExtensionClass>) {
     const className = self.constructor.name;
@@ -234,7 +235,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * `for ${tokenName} no extensions found.`
+   * `warn: for ${tokenName} no extensions found.`
    */
   noExtensionsFound(self: object, ExtCls: any, unfinishedInit: Set<Extension | ExtensionClass>) {
     const className = self.constructor.name;
@@ -250,7 +251,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * `${path}: start init.`
+   * `trace: ${path}: start init.`
    */
   startInitExtension(self: object, unfinishedInit: Set<Extension | ExtensionClass>) {
     const className = self.constructor.name;
@@ -259,7 +260,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * `${path}: finish init${withSomeValue}.`
+   * `trace: ${path}: finish init${withSomeValue}.`
    */
   finishInitExtension(self: object, unfinishedInit: Set<Extension | ExtensionClass>, data: any) {
     const className = self.constructor.name;
@@ -269,7 +270,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * `total inited ${extensionsNum} extensions: ${extensionsNames}.`
+   * `debug: total inited ${extensionsNum} extensions: ${extensionsNames}.`
    */
   totalInitedExtensions(self: object, extensionsNum: number, extensionsNames: string) {
     const className = self.constructor.name;
@@ -278,7 +279,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * [internal error]
+   * `debug: [internal error]`
    */
   internalServerError(self: object, err: Error, appendMsg?: string) {
     const className = self.constructor.name;
@@ -324,7 +325,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * `can not activate the route with URL: ${httpMethod} ${url}.`
+   * `debug: can not activate the route with URL: ${httpMethod} ${url}.`
    */
   youCannotActivateRoute(self: object, httpMethod: string, url: string) {
     const className = self.constructor.name;
@@ -332,7 +333,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * `${className}: The sequence of extension group operations: ...`
+   * `trace: ${className}: The sequence of extension group operations: ...`
    */
   sequenceOfExtensions(self: object, aOrderedExtensions: ExtensionClass[]) {
     const className = self.constructor.name;
@@ -343,7 +344,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * `the application has no routes.`
+   * `warn: the application has no routes.`
    */
   noRoutes(self: object) {
     const className = self.constructor.name;
@@ -351,7 +352,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * `setted route ${httpMethod} "/${path}"`.
+   * `info: setted route ${httpMethod} "/${path}"`.
    */
   printRoute(self: object, httpMethod: string, path: string, countOfGuards: number) {
     const className = self.constructor.name;
@@ -363,7 +364,7 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * ModuleName: ClassName: providersPerMod: ...
+   * `trace: ModuleName: ClassName: providersPerMod: ...`
    */
   showProvidersInLogs(
     self: object,
