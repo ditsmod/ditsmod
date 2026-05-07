@@ -127,6 +127,21 @@ export class AppModule {}
 
 In this case, `Service1` will be added to all application modules at the HTTP request level. As you can see, you can also export entire modules. In this case, all providers exported from `Module1` will also be added to each application module at the corresponding level.
 
+Sometimes there is a need to add an entire array of providers, and to export their tokens, there is a helper `getTokens()`:
+
+```ts {9}
+import { restRootModule, getTokens } from '@ditsmod/rest';
+import { defaultProviders } from './default-providers.js';
+
+@restRootModule({
+  providersPerReq: [...defaultProviders],
+  exports: [...getTokens(defaultProviders)],
+})
+export class AppModule {}
+```
+
+Here, `defaultProviders` is an array of providers, and if you tried to export this array, you could get an error if it contained providers defined as objects. Only provider tokens should be exported, which is why `getTokens()` is used.
+
 ### Import module {#import-module}
 
 You cannot import a single provider into a module, but you can import an entire module with all the providers and [extensions][2] exported from it. For example, if you are using REST, this is done as follows:
