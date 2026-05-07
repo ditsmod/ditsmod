@@ -1,5 +1,5 @@
 ---
-title: HttpErrorHandler
+title: Error
 sidebar_position: 10
 ---
 
