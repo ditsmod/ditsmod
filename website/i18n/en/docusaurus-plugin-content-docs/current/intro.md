@@ -205,4 +205,4 @@ Looking at the file `src/main.ts`, you can see that an instance of the class `Re
 [17]: https://github.com/TypeStrong/ts-node
 [18]: https://nodejs.org/api/packages.html#imports
 [21]: https://en.wikipedia.org/wiki/Single-responsibility_principle
-[22]: https://raw.githubusercontent.com/ditsmod/vs-webframework/refs/heads/main/req-per-sec-frameworks3.png
+[22]: https://raw.githubusercontent.com/ditsmod/vs-webframework/refs/heads/main/req-per-sec-frameworks4.png
