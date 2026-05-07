@@ -49,5 +49,4 @@ yarn start:dev
 [3]: https://www.typescriptlang.org/docs/handbook/project-references.html
 [4]: https://github.com/ditsmod/vs-webframework
 [5]: https://github.com/tanem/express-bookshelf-realworld-example-app
-[8]: https://github.com/nestjs/nest/issues/13817#issuecomment-2245130264
 [10]: https://github.com/ditsmod/vs-webframework/blob/main/req-per-sec-frameworks4.png
