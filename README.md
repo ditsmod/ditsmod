@@ -49,8 +49,5 @@ yarn start:dev
 [3]: https://www.typescriptlang.org/docs/handbook/project-references.html
 [4]: https://github.com/ditsmod/vs-webframework
 [5]: https://github.com/tanem/express-bookshelf-realworld-example-app
-[6]: https://dev.to/kostyatretyak/nestjs-vs-ditsmod-injection-scopes-537o
-[7]: https://x.com/kammysliwiec/status/1447892571376783360
 [8]: https://github.com/nestjs/nest/issues/13817#issuecomment-2245130264
-[9]: https://x.com/kammysliwiec/status/1859531066006032394
-[10]: https://github.com/ditsmod/vs-webframework/blob/main/req-per-sec-frameworks3.png
+[10]: https://github.com/ditsmod/vs-webframework/blob/main/req-per-sec-frameworks4.png

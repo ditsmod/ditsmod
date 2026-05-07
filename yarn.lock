@@ -1107,7 +1107,6 @@ __metadata:
   peerDependencies:
     "@ditsmod/core": ^3.0.0-next.8
     "@ditsmod/rest": ^3.0.0-next.8
-    "@ditsmod/testing": ^3.0.0-next.8
   languageName: unknown
   linkType: soft
 
