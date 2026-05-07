@@ -6,7 +6,7 @@ import { BaseApplication } from './base-application.js';
 
 /**
  * This class is primarily used for testing `@ditsmod/core`, and for demonstrating how the application works without a web server.
- * It can also be used as a basic example for building a full-fledged web application (or another application that requires
+ * It can also be used as a basic example for building a full-fledged web application (or another backend application that requires
  * modularity, Dependency Injection, a logger, and extension handling).
  */
 export class StandaloneApplication extends BaseApplication {
