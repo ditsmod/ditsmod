@@ -28,7 +28,7 @@ export class DefaultCtxHttpFrontend implements HttpFrontend {
   /**
    * This method is called after `intercept()`.
    */
-  after(ctx: RequestContext, val: any) {
+  after(ctx: RequestContext, val: string | object | Uint8Array | undefined) {
     if (ctx.rawRes.headersSent) {
       return;
     }
@@ -43,12 +43,16 @@ export class DefaultCtxHttpFrontend implements HttpFrontend {
       }
     }
 
-    const contentType = ctx.rawRes.getHeader('content-type');
-    if (typeof val == 'object' || contentType?.toString().includes('application/json')) {
+    const rawType = ctx.rawRes.getHeader('content-type');
+    const contentType = typeof rawType == 'string' ? rawType : undefined;
+    if ((typeof val == 'object' && val !== null) || contentType?.startsWith('application/json')) {
       ctx.sendJson(val);
     } else if (contentType && !val) {
       this.throwTypeError(ctx, contentType);
     } else {
+      if (typeof val == 'string' && !contentType) {
+        ctx.rawRes.setHeader('content-type', 'text/plain; charset=utf-8');
+      }
       ctx.send(val);
     }
   }
