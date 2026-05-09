@@ -6,7 +6,7 @@ sidebar_position: 3
 
 ## The purpose of Ditsmod extension {#the-purpose-of-ditsmod-extension}
 
-Typically, an extension does its work before the HTTP request handlers are created. To modify or extend the application's functionality, an extension uses static metadata that is attached to specific decorators. On the other hand, an extension can also dynamically add metadata of the same type as the static metadata. Extensions can initialize asynchronously, and can depend on each other.
+Extensions start working when Ditsmod has collected static metadata from class-level decorators and exported/imported modules and providers exactly as specified in the collected static metadata of the module. Typically, an extension does its work before the HTTP request handlers are created. To modify or extend the application's functionality, an extension uses static metadata that is attached to specific decorators. On the other hand, an extension can also dynamically add metadata of the same type as the static metadata. Extensions can initialize asynchronously, and can depend on each other.
 
 The task of most extensions is to act like a pipeline, taking a multidimensional array of configuration data (metadata) as input and producing another (or augmented) multidimensional array as output. This final array is ultimately interpreted by the target extension, e.g. to create routes and their handlers. However, extensions do not necessarily need to work with configuration or setting up HTTP request handlers; they can also initialize database connections, write logs, collect metrics for monitoring, or perform other tasks.
 
@@ -16,7 +16,7 @@ In most cases, multidimensional arrays of configuration data reflect the structu
 2. each module contains controllers or providers;
 3. each controller has one or more routes.
 
-For example, in the [@ditsmod/body-parser][5] module, there is an extension that dynamically adds an HTTP interceptor to parse the request body for each route that has the appropriate method (POST, PATCH, PUT). It does this once before the HTTP request handlers are created, so there is no need to check the need for parsing on every request.
+A simple and practical example of how extensions work can be found in the [@ditsmod/body-parser][5] module, where an extension dynamically adds an HTTP interceptor for parsing the request body to each route that has the corresponding method (POST, PATCH, PUT). It does this once before the HTTP request handlers are created, so there is no need to check the need for parsing on every request.
 
 Another example. The [@ditsmod/openapi][6] module allows you to create OpenAPI documentation using the new `@oasRoute` decorator. Without the extension working, Ditsmod will ignore the metadata from this new decorator. The extension from this module receives the aforementioned configuration array, finds the metadata from the `@oasRoute` decorator, and interprets this metadata by adding other metadata that will be used by the target extension to set up routes.
 
@@ -45,16 +45,6 @@ interface Extension<T> {
   stage3?(): Promise<void>;
 }
 ```
-
-Each extension needs to be registered, this will be mentioned later, but for now assume that you are using `@ditsmod/rest`, and you have registered all the necessary extensions. After that, the following process occurs:
-
-1. metadata is collected from all decorators (`@rootModule`, `@featureModule`, `@controller`, `@route`...);
-2. this metadata is then passed to DI with token `MetadataPerMod2`, so - every extension can get this metadata in the constructor;
-3. the extensions start working per module:
-    - in each module, the extensions created within this module or imported into this module are collected;
-    - each of these extensions gets metadata, also collected in this module, and the `stage1`, `stage2`, `stage3` methods of given extensions are called.
-4. HTTP request handlers are created;
-5. the application starts working in the usual mode, processing HTTP requests.
 
 You can see a simple example in the folder [00-standalone-application][1].
 
@@ -227,10 +217,8 @@ It is important to remember that a separate instance of a given extension is cre
 
 In this case, you need to pass `this` as the second argument to `extensionManager.stage1`:
 
-```ts {11}
-import { injectable } from '@ditsmod/core';
-import { Extension, ExtensionManager } from '@ditsmod/core';
-
+```ts {9}
+import { injectable, Extension, ExtensionManager } from '@ditsmod/core';
 import { Extension1 } from './extension1.js';
 
 @injectable()
@@ -277,7 +265,7 @@ And, as already mentioned, based on this configuration, two separate groups are 
 1. `Extension1`, `Extension3`;
 2. `Extension2`, `Extension3`.
 
-Now that you are familiar with `ExtensionManager`, it is important to emphasize that the lookup of extension groups is performed specifically by the extension classes that we previously specified in the `groups` property:
+Now that you are familiar with `ExtensionManager`, it is important to emphasize that the lookup of extension groups is performed by tokens — by the extension classes that we previously specified in the `groups` property:
 
 ```ts
 await this.extensionManager.stage1(Extension1); // Data from Extension1 and Extension3 is returned
