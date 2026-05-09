@@ -13,8 +13,6 @@ export { GlobalProviders, GlobalInitHooks } from '#types/metadata-per-mod.js';
 export { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 export { defaultProvidersPerApp } from '#init/default-providers-per-app.js';
 export { OnModuleInit } from '#init/hooks.js';
-export { CustomError } from '#error/custom-error.js';
-export { ErrorInfo } from '#error/error-info.js';
 export { featureModule } from '#decorators/feature-module.js';
 export {
   InitHooks,
@@ -102,5 +100,5 @@ export {
   isParamsWithMwp,
   hasDeclaredInDir,
 } from '#decorators/type-guards.js';
-export { isChainError, isProvider, isCustomError, TypeGuard } from '#utils/type-guards.js';
+export { isProvider, TypeGuard } from '#utils/type-guards.js';
 export { objectKeys } from '#utils/object-keys.js';

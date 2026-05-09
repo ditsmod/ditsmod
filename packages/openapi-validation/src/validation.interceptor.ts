@@ -1,4 +1,5 @@
-import { injectable, Injector, skipSelf, Status, CustomError } from '@ditsmod/core';
+import { injectable, Injector, skipSelf, Status } from '@ditsmod/core';
+import { CustomError } from '@ditsmod/core/errors';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
 import { DictService } from '@ditsmod/i18n';
 import { RawRequest, RawResponse, RequestContext, HttpHandler, HttpInterceptor, RouteMeta } from '@ditsmod/rest';

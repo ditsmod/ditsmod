@@ -9,8 +9,9 @@ Ditsmod надає два вбудовані класи - `CustomError` та `Ht
 
 Клас `CustomError` можна компонувати для створення будь-якої помилки:
 
-```ts {9}
-import { CustomError, Status } from '@ditsmod/core';
+```ts {10}
+import { Status } from '@ditsmod/core';
+import { CustomError } from '@ditsmod/core/errors';
 
 // ...
 
@@ -73,7 +74,8 @@ interface ErrorInfo {
 Ви можете створити свій власний обробник помилок, для цього вам потрібно створити клас, що впроваджує інтерфейс [HttpErrorHandler][101]:
 
 ```ts
-import { HttpErrorHandler, injectable, isCustomError, Logger, RequestContext, Status } from '@ditsmod/core';
+import { HttpErrorHandler, injectable, Logger, RequestContext, Status } from '@ditsmod/core';
+import { isCustomError } from '@ditsmod/core/errors';
 import { randomUUID } from 'node:crypto';
 
 @injectable()

@@ -1,5 +1,6 @@
 import { parse } from 'node:querystring';
-import { AnyObj, CustomError, HttpMethod, injectable, Status } from '@ditsmod/core';
+import { AnyObj, HttpMethod, injectable, Status } from '@ditsmod/core';
+import { CustomError } from '@ditsmod/core/errors';
 
 import { HttpFrontend, HttpHandler } from './tokens-and-types.js';
 import { RequestContext } from '#services/request-context.js';

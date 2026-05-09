@@ -1,4 +1,5 @@
-import { fromSelf, injectable, CustomError } from '@ditsmod/core';
+import { fromSelf, injectable } from '@ditsmod/core';
+import { CustomError } from '@ditsmod/core/errors';
 import { PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/rest';
 import { Cookies } from '@ts-stack/cookies';
 import { XSchemaObject } from '@ts-stack/openapi-spec';

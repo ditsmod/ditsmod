@@ -9,8 +9,9 @@ Ditsmod provides two built-in classes - `CustomError` and `HttpErrorHandler` - t
 
 The `CustomError` class can be composed to generate any error:
 
-```ts {9}
-import { CustomError, Status } from '@ditsmod/core';
+```ts {10}
+import { Status } from '@ditsmod/core';
+import { CustomError } from '@ditsmod/core/errors';
 
 // ...
 
@@ -73,7 +74,8 @@ Any errors that occur while processing an HTTP request that you have not caught 
 You can create your own error handler by creating a class that implements the [HttpErrorHandler][101] interface:
 
 ```ts
-import { HttpErrorHandler, injectable, isCustomError, Logger, RequestContext, Status } from '@ditsmod/core';
+import { HttpErrorHandler, injectable, Logger, RequestContext, Status } from '@ditsmod/core';
+import { isCustomError } from '@ditsmod/core/errors';
 import { randomUUID } from 'node:crypto';
 
 @injectable()

@@ -1,4 +1,4 @@
-import { CustomError } from '@ditsmod/core';
+import { CustomError } from '@ditsmod/core/errors';
 
 /**
  * `Checking deps in sandbox for "${controllerName}" failed`.

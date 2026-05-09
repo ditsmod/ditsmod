@@ -1,4 +1,5 @@
-import { injectable, CustomError } from '@ditsmod/core';
+import { injectable } from '@ditsmod/core';
+import { CustomError } from '@ditsmod/core/errors';
 import { HTTP_BODY } from '@ditsmod/body-parser';
 
 import { ValidationRouteMeta } from './types.js';

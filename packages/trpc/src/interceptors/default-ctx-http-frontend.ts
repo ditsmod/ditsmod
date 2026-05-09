@@ -1,4 +1,5 @@
-import { CustomError, injectable, Status } from '@ditsmod/core';
+import { injectable, Status } from '@ditsmod/core';
+import { CustomError } from '@ditsmod/core/errors';
 
 import { TrpcHttpFrontend, TrpcHttpHandler } from './tokens-and-types.js';
 import { TrpcOpts } from '#types/types.js';

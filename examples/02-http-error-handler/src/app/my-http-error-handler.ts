@@ -1,4 +1,5 @@
-import { injectable, isCustomError, Logger, Status } from '@ditsmod/core';
+import { injectable, Logger, Status } from '@ditsmod/core';
+import { isCustomError } from '@ditsmod/core/errors';
 import { HttpErrorHandler, RequestContext } from '@ditsmod/rest';
 import { randomUUID } from 'node:crypto';
 
