@@ -105,8 +105,8 @@ module.exports = {
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: ({ version, versionDocsDirPath, docPath, locale }) =>
             locale == 'en'
-              ? `https://github.com/ditsmod/ditsmod/edit/main/website/i18n/en/docusaurus-plugin-content-docs/${version}/${docPath}`
-              : `https://github.com/ditsmod/ditsmod/edit/main/website/${versionDocsDirPath}/${docPath}`,
+              ? `https://github.com/ditsmod/ditsmod/edit/develop/website/i18n/en/docusaurus-plugin-content-docs/${version}/${docPath}`
+              : `https://github.com/ditsmod/ditsmod/edit/develop/website/${versionDocsDirPath}/${docPath}`,
         },
         // blog: {
         //   showReadingTime: true,
