@@ -46,7 +46,7 @@ interface Extension<T> {
 }
 ```
 
-Кожне розширення потрібно реєструвати, про це буде згадано пізніше, а зараз припустимо, що така реєстрація відбулася, після чого йде наступний процес:
+Кожне розширення потрібно реєструвати, про це буде згадано пізніше, а зараз припустимо, що ви використовуєте `@ditsmod/rest`, і ви зареєстрували усі необхідні розширення. Після цього йде наступний процес:
 
 1. збираються метадані з усіх декораторів (`@rootModule`, `@featureModule`, `@controller`, `@route`...);
 2. зібрані метадані передаються в DI з токеном `MetadataPerMod2`, отже - будь-яке розширення може отримати ці метадані у себе в конструкторі;
@@ -159,7 +159,7 @@ extensions: [
 1. `Extension1`, `Extension3`;
 2. `Extension2`, `Extension3`.
 
-Якщо в поточному модулі інші розширення також вкажуть ці самі "заголовні" елементи в `groups`, дані групи розширяться:
+Якщо в поточному модулі інші розширення також вкажуть ці самі токени груп в `groups`, дані групи розширяться:
 
 ```ts
 extensions: [
@@ -179,10 +179,8 @@ extensions: [
 
 Припустимо `Extension2` очікує результати роботи методу `stage1()` від `Extension1`, тому в конструкторі вказується залежність від `ExtensionManager`, а у `extension2.stage1()` викликається `this.extensionManager.stage1()`:
 
-```ts {11}
-import { injectable } from '@ditsmod/core';
-import { Extension, ExtensionManager } from '@ditsmod/core';
-
+```ts {9}
+import { injectable, Extension, ExtensionManager } from '@ditsmod/core';
 import { Extension1 } from './extension1.js';
 
 @injectable()
@@ -265,7 +263,7 @@ const stage1ExtensionMeta = await this.extensionManager.stage1(Extension1, this)
 
 ### Токени груп розширень {#extension-group-tokens}
 
-Давайте повернемось до попереднього прикладу з кодом, де оголошуються дві окремі групи розширень, коли у властивість `groups` ми передаємо класи двох розширень:
+Давайте повернемось до [попереднього прикладу з кодом][2], де оголошуються дві окремі групи розширень, коли у властивість `groups` ми передаємо класи двох розширень:
 
 ```ts
 extensions: [
@@ -291,11 +289,14 @@ await this.extensionManager.stage1(Extension3); // Повертаються да
 
 ## Динамічне додавання провайдерів {#dynamic-addition-of-providers}
 
-Будь-яке розширення може вказати залежність від групи розширень, де є заголовним `RouteExtension`, щоб динамічно додавати провайдери на будь-якому рівні. Розширення з цієї групи використовують метадані з інтерфейсом `MetadataPerMod2` і повертають метадані з інтерфейсом `MetadataPerMod3`.
+Якщо ви використовуєте `@ditsmod/rest`, будь-яке розширення може вказати залежність від групи розширень з токеном `RouteExtension`, щоб динамічно додавати провайдери на будь-якому рівні. Розширення з цієї групи використовують метадані з інтерфейсом `MetadataPerMod2` і повертають метадані з інтерфейсом `MetadataPerMod3`.
 
 Можна проглянути як це зроблено у [BodyParserExtension][3]:
 
-```ts {9,25,32}
+```ts {12,28,35}
+import { RouteExtension, HTTP_INTERCEPTORS } from '@ditsmod/rest';
+
+// ...
 @injectable()
 export class BodyParserExtension implements Extension<void> {
   constructor(
@@ -341,6 +342,7 @@ export class BodyParserExtension implements Extension<void> {
 Звичайно ж, таке динамічне додавання провайдерів можливе лише перед створенням обробників HTTP-запитів.
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/00-standalone-application
+[2]: #group-of-extensions
 [3]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.17.0/packages/body-parser/src/body-parser.extension.ts#L54
 [5]: /rest-application/native-modules/body-parser
 [6]: /rest-application/native-modules/openapi

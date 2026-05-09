@@ -46,7 +46,7 @@ interface Extension<T> {
 }
 ```
 
-Each extension needs to be registered, this will be mentioned later, and now let's assume that such registration has taken place, and then the following process goes on:
+Each extension needs to be registered, this will be mentioned later, but for now assume that you are using `@ditsmod/rest`, and you have registered all the necessary extensions. After that, the following process occurs:
 
 1. metadata is collected from all decorators (`@rootModule`, `@featureModule`, `@controller`, `@route`...);
 2. this metadata is then passed to DI with token `MetadataPerMod2`, so - every extension can get this metadata in the constructor;
@@ -159,7 +159,7 @@ Based on this configuration, two separate groups of extensions will be created:
 1. `Extension1`, `Extension3`;
 2. `Extension2`, `Extension3`.
 
-If in the current module other extensions also specify these same "header" elements in `groups`, these groups will be extended:
+If in the current module other extensions also specify these same group tokens in `groups`, these groups will be extended:
 
 ```ts
 extensions: [
@@ -179,10 +179,8 @@ If a certain extension has a dependency on another extension, it is recommended 
 
 Suppose `Extension2` expects the results of the `stage1()` method from `Extension1`, so a dependency on `ExtensionManager` is specified in the constructor, and `this.extensionManager.stage1()` is called inside `extension2.stage1()`:
 
-```ts {11}
-import { injectable } from '@ditsmod/core';
-import { Extension, ExtensionManager } from '@ditsmod/core';
-
+```ts {9}
+import { injectable, Extension, ExtensionManager } from '@ditsmod/core';
 import { Extension1 } from './extension1.js';
 
 @injectable()
@@ -265,7 +263,7 @@ In this case, it is guaranteed that the instance of `Extension2` will receive da
 
 ### Extension Group Tokens {#extension-group-tokens}
 
-Let's return to the previous code example where two separate extension groups are declared, when we pass the classes of two extensions into the `groups` property:
+Let's return to the [previous code example][2] where two separate extension groups are declared, when we pass the classes of two extensions into the `groups` property:
 
 ```ts
 extensions: [
@@ -291,11 +289,14 @@ That is, here `Extension1` and `Extension2` effectively act as tokens (or identi
 
 ## Dynamic addition of providers {#dynamic-addition-of-providers}
 
-Any extension can declare a dependency on a group of extensions where `RouteExtension` is the header, in order to dynamically add providers at any level. Extensions from this group use metadata with the `MetadataPerMod2` interface and return metadata with the `MetadataPerMod3` interface.
+If you are using `@ditsmod/rest`, any extension can declare a dependency on the extension group with the `RouteExtension` token to dynamically add providers at any level. Extensions from this group use metadata with the `MetadataPerMod2` interface and return metadata with the `MetadataPerMod3` interface.
 
 You can see how it is done in [BodyParserExtension][3]:
 
-```ts {9,25,32}
+```ts {12,28,35}
+import { RouteExtension, HTTP_INTERCEPTORS } from '@ditsmod/rest';
+
+// ...
 @injectable()
 export class BodyParserExtension implements Extension<void> {
   constructor(
@@ -341,6 +342,7 @@ In this case, the HTTP interceptor is added to the `providersPerReq` array in th
 Of course, such dynamic addition of providers is possible only before creating HTTP request handlers.
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/00-standalone-application
+[2]: #group-of-extensions
 [3]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.17.0/packages/body-parser/src/body-parser.extension.ts#L54
 [5]: /rest-application/native-modules/body-parser
 [6]: /rest-application/native-modules/openapi
