@@ -67,6 +67,30 @@ interface ErrorInfo {
 
 Конструктор класу `CustomError` другим аргументом може приймати cause error, якщо така є.
 
+### Дочірні класи CustomError {#customerror-subclasses}
+
+Рекомендується використовувати `CustomError` у якості базового класу, на основі якого створювати будь-які інші класи помилок. Наприклад таким чином створюється нова помилка `NormalizationFailed` (префікс `ERR_` до `code` цієї помилки додається автоматично):
+
+```ts
+import { CustomError } from '@ditsmod/core/errors';
+/**
+ * `Normalization of ${moduleName} failed`
+ */
+export class NormalizationFailed extends CustomError {
+  constructor(moduleName: string, cause: Error) {
+    super(
+      {
+        msg1: `Normalization of ${moduleName} failed`,
+        level: 'fatal',
+      },
+      cause,
+    );
+  }
+}
+```
+
+Це дасть вам змогу контролювати унікальність назв помилок, відлагоджувати помилки через `instanceof`, додавати ланцюжок помилок через поле `cause` (другим аргументом в конструктор `CustomError`), автоматично прибирати частину з стек-трейсу помилки.
+
 ## HttpErrorHandler {#httperrorhandler}
 
 Усі помилки, які виникають під час обробки HTTP-запиту, і які ви не зловили у контролерах, інтерсепторах, або сервісах, потрапляють до [DefaultHttpErrorHandler][100]. Цей обробник передається до реєстру DI на рівні роуту.

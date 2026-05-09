@@ -67,6 +67,30 @@ interface ErrorInfo {
 
 The `CustomError` class constructor can accept cause error as the second argument, if there is one.
 
+### `CustomError` subclasses {#customerror-subclasses}
+
+It is recommended to use `CustomError` as a base class for creating any other error classes. For example, a new error `NormalizationFailed` is created as follows (the `ERR_` prefix is automatically added to this error’s `code`):
+
+```ts
+import { CustomError } from '@ditsmod/core/errors';
+/**
+ * `Normalization of ${moduleName} failed`
+ */
+export class NormalizationFailed extends CustomError {
+  constructor(moduleName: string, cause: Error) {
+    super(
+      {
+        msg1: `Normalization of ${moduleName} failed`,
+        level: 'fatal',
+      },
+      cause,
+    );
+  }
+}
+```
+
+This allows you to control the uniqueness of error names, debug errors via `instanceof`, add an error chain via the `cause` field (as the second argument to the `CustomError` constructor), and automatically remove part of the error stack trace.
+
 ## HttpErrorHandler {#httperrorhandler}
 
 Any errors that occur while processing an HTTP request that you have not caught in controllers, interceptors, or services go to [DefaultHttpErrorHandler][100]. This handler is passed to the DI registry at the route level.
