@@ -139,8 +139,6 @@ export class BaseAppInitializer {
     return this.perAppService.injector;
   }
 
-  async resetRequestListener() {}
-
   async reinit(autocommit: boolean = true): Promise<void | Error> {
     this.log.flush();
     LogMediator.bufferLogs = true;
@@ -168,7 +166,6 @@ export class BaseAppInitializer {
       } else {
         this.log.skippingAutocommitModulesConfig(this);
       }
-      await this.resetRequestListener();
       this.log.finishReinitApp(this);
     } catch (err) {
       return this.handleReinitError(err);

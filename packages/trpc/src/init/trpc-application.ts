@@ -27,6 +27,7 @@ export class TrpcApplication extends BaseApplication {
       const appInitializer = new TrpcAppInitializer(app.appOptions, moduleManager, app.log);
       await app.bootstrapApplication(appInitializer);
       await app.createServerAndBindToListening(appInitializer);
+      await appInitializer.resetRequestListener();
       return app;
     } catch (err: any) {
       (app.log as PublicLogMediator).updateOutputLogLevel();

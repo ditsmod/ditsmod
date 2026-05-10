@@ -44,7 +44,7 @@ export class TrpcAppInitializer extends BaseAppInitializer {
     super.overrideMetaAfterStage1(modRefId, baseMeta);
   }
 
-  override async resetRequestListener() {
+  async resetRequestListener() {
     const injectorPerMod = this.moduleManager.getInjectorPerMod('root', true);
     const trpcInternalService = injectorPerMod.get(TrpcInternalService) as TrpcInternalService;
     trpcInternalService.setTrpcRouter(this.baseMeta);

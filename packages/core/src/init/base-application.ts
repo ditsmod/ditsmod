@@ -54,8 +54,6 @@ export abstract class BaseApplication {
     // Phase 3: Extensions are initialized. Re-initialize the Logger again to reflect any extension-specific configs.
     this.log = baseAppInitializer.log;
     (this.log as PublicLogMediator).updateOutputLogLevel();
-
-    await baseAppInitializer.resetRequestListener();
   }
 
   protected flushLogs() {
