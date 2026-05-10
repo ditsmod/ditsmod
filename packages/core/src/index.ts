@@ -88,7 +88,6 @@ export { getStatusText, isSuccess, Status, STATUS_CODE_INFO } from '#utils/http-
 export { NormalizedProvider, normalizeProviders } from '#utils/ng-utils.js';
 export { pickProperties } from '#utils/pick-properties.js';
 export { Providers } from '#utils/providers.js';
-export { CallsiteUtils } from '#utils/callsites.js';
 export { getDebugClassName, clearDebugClassNames } from '#utils/get-debug-class-name.js';
 export { getProviderTarget, getProvidersTargets, getToken, getTokens } from '#utils/get-tokens.js';
 export {

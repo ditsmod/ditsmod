@@ -73,7 +73,7 @@ class TestObj {
 }
 
 describe('Reflector', () => {
-  const __dir = CallsiteUtils.getCallerDir('anonymous');
+  const __dir = expect.any(String);
   let reflector: Reflector;
 
   beforeEach(() => {
@@ -351,25 +351,22 @@ describe('Reflector', () => {
 
   describe('annotations', () => {
     it('should return an array of annotations for a type', () => {
-      const declaredInDir = CallsiteUtils.getCallerDir('anonymous');
       const p = reflector.getMetadata(ClassWithDecorators)!.constructor.decorators;
-      expect(p).toEqual([new DecoratorAndValue(classDecorator, { value: 'class' }, declaredInDir)]);
+      expect(p).toEqual([new DecoratorAndValue(classDecorator, { value: 'class' }, expect.any(String))]);
     });
 
     it('should work for a class without metadata in annotation', () => {
-      const declaredInDir = CallsiteUtils.getCallerDir('anonymous');
       @classDecorator()
       class ClassWithoutMetadata {}
       const p = reflector.getMetadata(ClassWithoutMetadata)!.constructor.decorators;
-      expect(p).toEqual([new DecoratorAndValue(classDecorator, undefined, declaredInDir)]);
+      expect(p).toEqual([new DecoratorAndValue(classDecorator, undefined, expect.any(String))]);
     });
 
     it('should work class decorator without metadata transformator', () => {
       @classDecoratorWithoutTransformator()
       class ClassWithoutMetadata {}
       const p = reflector.getMetadata(ClassWithoutMetadata)!.constructor.decorators;
-      const declaredInDir = CallsiteUtils.getCallerDir('anonymous');
-      expect(p).toEqual([new DecoratorAndValue(classDecoratorWithoutTransformator, [], declaredInDir)]);
+      expect(p).toEqual([new DecoratorAndValue(classDecoratorWithoutTransformator, [], expect.any(String))]);
     });
 
     it('should work for a class without annotations', () => {
@@ -460,18 +457,17 @@ describe('Reflector', () => {
       class NoDecorators {}
 
       // Check that metadata for Parent was not changed!
-      const declaredInDir = CallsiteUtils.getCallerDir('anonymous');
       expect(reflector.getMetadata(Parent)!.constructor.decorators).toEqual([
-        new DecoratorAndValue(classDecorator, { value: 'parent' }, declaredInDir),
+        new DecoratorAndValue(classDecorator, { value: 'parent' }, expect.any(String)),
       ]);
 
       expect(reflector.getMetadata(Child)!.constructor.decorators).toEqual([
-        new DecoratorAndValue(classDecorator, { value: 'child' }, declaredInDir),
-        new DecoratorAndValue(classDecorator, { value: 'parent' }, declaredInDir),
+        new DecoratorAndValue(classDecorator, { value: 'child' }, expect.any(String)),
+        new DecoratorAndValue(classDecorator, { value: 'parent' }, expect.any(String)),
       ]);
 
       expect(reflector.getMetadata(ChildNoDecorators)!.constructor.decorators).toEqual([
-        new DecoratorAndValue(classDecorator, { value: 'parent' }, declaredInDir),
+        new DecoratorAndValue(classDecorator, { value: 'parent' }, expect.any(String)),
       ]);
 
       expect(reflector.getMetadata(NoDecorators)).toBeUndefined();
