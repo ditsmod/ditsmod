@@ -1,4 +1,5 @@
-import { Logger, Injector, Status, CustomError } from '@ditsmod/core';
+import { Logger, Injector, Status } from '@ditsmod/core';
+import { CustomError } from '@ditsmod/core/errors';
 import { jest } from '@jest/globals';
 
 import { RequestContext } from '#services/request-context.js';
