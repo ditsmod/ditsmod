@@ -302,7 +302,7 @@ So it can be argued that classes are imported, not their instances.
 
 ### Appending of the module {#appending-of-the-module}
 
-If you don't need to import providers and [extensions][2] into the current module, but just append the external module to the path prefix of the current module, you can use the `appends` array:
+If you are using `@ditsmod/rest` and you don't need to import providers and [extensions][2] into the current module, but just append the external module to the path prefix of the current module, you can use the `appends` array:
 
 ```ts {5}
 import { restModule } from '@ditsmod/rest';
