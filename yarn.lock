@@ -980,7 +980,6 @@ __metadata:
   resolution: "@ditsmod/core@workspace:packages/core"
   dependencies:
     "@ts-stack/chain-error": "npm:^1.5.1"
-    "@ts-stack/stack-utils": "npm:^1.1.0"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260501.1"
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
@@ -3715,13 +3714,6 @@ __metadata:
   version: 3.1.6
   resolution: "@ts-stack/openapi-spec@npm:3.1.6"
   checksum: 10c0/d791cd4500f023842dd062fec99bad70e9a7a01fe9226165738692fbb06fe0e0f4fe67541ac735743add997d2c0baf609a8f60f93c9fc5be8c533f30955ea268
-  languageName: node
-  linkType: hard
-
-"@ts-stack/stack-utils@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "@ts-stack/stack-utils@npm:1.1.0"
-  checksum: 10c0/1741db8e75ddf682508bd23191e84f1abee3e7ac42bdff7c713fc02edbe8a641cd5cd7ff1138b9d830982b56fe5753095875b270e3745bc5bff0821ca4489d69
   languageName: node
   linkType: hard
 

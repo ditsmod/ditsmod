@@ -58,7 +58,6 @@
   },
   "dependencies": {
     "@ts-stack/chain-error": "^1.5.1",
-    "@ts-stack/stack-utils": "^1.1.0",
     "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
