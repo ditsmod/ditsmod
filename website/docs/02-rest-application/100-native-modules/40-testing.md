@@ -14,4 +14,4 @@ npm i -D @ditsmod/rest-testing
 
 
 
-[1]: /guide/testing/#end-to-end-testing
+[1]: /rest-application/guide/testing/#end-to-end-testing

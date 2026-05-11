@@ -14,4 +14,4 @@ We recommend keeping such tests in a separate directory called `e2e`, at the sam
 
 
 
-[1]: /guide/testing/#end-to-end-testing
+[1]: /rest-application/guide/testing/#end-to-end-testing
