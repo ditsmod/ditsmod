@@ -1,5 +1,5 @@
 ---
-sidebar_position: 1
+sidebar_position: 2
 ---
 
 # Ініт-декоратори та ініт-хуки
@@ -79,6 +79,8 @@ export class SomeModule {}
 ```
 
 [Готовий приклад створення ініт-декоратора][2] можна знайти в тестах репозиторія Ditsmod. Окрім цього, можна проглянути на більш складний, але і більш повний приклад [створення ініт-декораторів (restRootModule, restModule та initRest)][3], які знаходяться у модулі `@ditsmod/rest`.
+
+## Нормалізація та валідація {#normalization-and-validation}
 
 [1]: /basic-components/modules/#ModuleWithParams
 [2]: https://github.com/ditsmod/ditsmod/blob/168a9fe0712b5bedc5649908c4ada5158c956174/packages/core/src/init/module-normalizer.spec.ts#L282-L475

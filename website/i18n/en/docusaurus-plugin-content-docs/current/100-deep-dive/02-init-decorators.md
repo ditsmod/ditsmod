@@ -1,5 +1,5 @@
 ---
-sidebar_position: 1
+sidebar_position: 2
 ---
 
 # Init Decorators and Init Hooks
@@ -79,6 +79,8 @@ export class SomeModule {}
 ```
 
 [A ready-made example of creating an init decorator][2] can be found in the Ditsmod repository tests. In addition, you can check out a more complex but also more complete example of [creating init decorators (restRootModule, restModule, and initRest)][3], which are located in the `@ditsmod/rest` module.
+
+## Normalization and validation {#normalization-and-validation}
 
 [1]: /basic-components/modules/#ModuleWithParams
 [2]: https://github.com/ditsmod/ditsmod/blob/168a9fe0712b5bedc5649908c4ada5158c956174/packages/core/src/init/module-normalizer.spec.ts#L282-L475
