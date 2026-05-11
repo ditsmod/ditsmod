@@ -109,23 +109,24 @@ By exporting tokens from a host module, you are declaring that the corresponding
 
 ### Exporting providers from root module {#exporting-providers-from-rootmodule}
 
-Exporting providers from the root module means that these providers will automatically be added to every module in the application. For example, if you are using REST, this is done as follows:
+Exporting providers from the root module means that these providers will be automatically added to every module declared in your application. At the same time, these providers will not be added to external modules, i.e., modules that you install using package managers like npm, yarn, etc. For example, if you are using REST, this is done as follows:
 
-```ts {9}
+```ts {10}
 import { restRootModule } from '@ditsmod/rest';
+import { BodyParserModule } from '@ditsmod/body-parser';
 
 import { Service1 } from './service1.js';
 import { Module1 } from './module1.js';
 
 @restRootModule({
-  imports: [Module1],
+  imports: [Module1, BodyParserModule],
   providersPerReq: [Service1],
   exports: [Service1, Module1],
 })
 export class AppModule {}
 ```
 
-In this case, `Service1` will be added to all application modules at the HTTP request level. As you can see, you can also export entire modules. In this case, all providers exported from `Module1` will also be added to each application module at the corresponding level.
+In this case, `Service1` will not be added to `BodyParserModule` (because it is an external module); instead, it will be added to all other application modules at the HTTP request level. As you can see, you can also export entire modules. In this case, all providers exported from `Module1` will also be added to every application module at the corresponding level.
 
 Sometimes there is a need to add an entire array of providers, and to export their tokens, there is a helper `getTokens()`:
 
