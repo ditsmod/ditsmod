@@ -1,6 +1,6 @@
 import { injectable, Injector } from '#di';
 import { DeepModulesImporter } from '#init/deep-modules-importer.js';
-import { BaseMeta } from '#types/base-meta.js';
+import { BaseMeta } from '#init/base-meta.js';
 import { ModRefId, Level } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';

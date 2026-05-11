@@ -1,6 +1,6 @@
 import { featureModule } from '#decorators/feature-module.js';
 import { BaseInitRawMeta, InitHooks } from '#decorators/init-hooks-and-metadata.js';
-import { BaseInitMeta, getProxyForInitMeta } from '#types/base-meta.js';
+import { BaseInitMeta, getProxyForInitMeta, BaseMeta } from '#init/base-meta.js';
 import { rootModule } from '#decorators/root-module.js';
 import { forwardRef, injectable, makeClassDecorator, MultiProvider } from '#di';
 import { Extension } from '#extension/extension-types.js';
@@ -12,7 +12,6 @@ import {
   ModuleWithParams,
   RootRawMetadata,
 } from '#decorators/module-raw-metadata.js';
-import { BaseMeta } from '#types/base-meta.js';
 import { InitDecorator } from '#decorators/init-hooks-and-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { ModuleNormalizer } from './module-normalizer.js';

@@ -3,7 +3,7 @@ import { featureModule } from '#decorators/feature-module.js';
 import { isFeatureModule, isModuleWithParams, isRootModule } from '#decorators/type-guards.js';
 import { rootModule } from '#decorators/root-module.js';
 import { ModuleRawMetadata, ModuleWithParams } from '#decorators/module-raw-metadata.js';
-import { BaseMeta } from '#types/base-meta.js';
+import { BaseMeta } from '#init/base-meta.js';
 import { InitHooks } from './init-hooks-and-metadata.js';
 
 describe('type guards', () => {

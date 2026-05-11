@@ -3,7 +3,7 @@ import { DeepModulesImporter } from '#init/deep-modules-importer.js';
 import { Logger } from '#logger/logger.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { PublicLogMediator, SystemLogMediator } from '#logger/system-log-mediator.js';
-import { BaseMeta } from '#types/base-meta.js';
+import { BaseMeta } from '#init/base-meta.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
 import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import { Counter } from '#extension/counter.js';

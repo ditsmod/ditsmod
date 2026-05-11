@@ -38,7 +38,7 @@ export { normalizeExtensionConfig } from './extension/extension-providers-and-co
 export { isExtensionProvider, isExtensionConfig } from '#extension/type-guards.js';
 export { ModuleExtract } from '#types/module-extract.js';
 export { Counter } from '#extension/counter.js';
-export { BaseMeta, BaseInitMeta, getProxyForInitMeta } from '#types/base-meta.js';
+export { BaseMeta, BaseInitMeta, getProxyForInitMeta } from '#init/base-meta.js';
 export { ProvidersOnly } from '#types/providers-metadata.js';
 export { ConsoleLogger } from '#logger/console-logger.js';
 export { ExtensionContext } from '#extension/extensions-context.js';

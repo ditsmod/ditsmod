@@ -1,5 +1,5 @@
 import { reflector } from '#di';
-import type { BaseMeta } from '#types/base-meta.js';
+import type { BaseMeta } from '#init/base-meta.js';
 import type { ModuleManager } from '#init/module-manager.js';
 import type { GlobalProviders } from '#types/metadata-per-mod.js';
 import { ProviderImport } from '#types/metadata-per-mod.js';

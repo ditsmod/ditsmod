@@ -6,7 +6,7 @@ import { LogMediator } from '#logger/log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { featureModule } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
-import { BaseMeta } from '#types/base-meta.js';
+import { BaseMeta } from '#init/base-meta.js';
 import { BaseAppInitializer } from '#init/base-app-initializer.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { Provider } from '#di/types-and-models.js';

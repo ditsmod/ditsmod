@@ -7,10 +7,9 @@ import { Extension } from '#extension/extension-types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ModuleId, ModuleManager } from './module-manager.js';
 import { AllInitHooks, BaseInitRawMeta } from '#decorators/init-hooks-and-metadata.js';
-import { BaseInitMeta } from '#types/base-meta.js';
+import { BaseInitMeta, BaseMeta } from '#init/base-meta.js';
 import { ModRefId } from '#types/mix.js';
 import { ModuleWithParams } from '#decorators/module-raw-metadata.js';
-import { BaseMeta } from '#types/base-meta.js';
 import { InitDecorator } from '#decorators/init-hooks-and-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { InitHooks } from '#decorators/init-hooks-and-metadata.js';
@@ -18,7 +17,7 @@ import { isModuleWithParams } from '#decorators/type-guards.js';
 import { FailAddingToImports } from '#errors';
 
 describe('ModuleManager', () => {
-  console.log = jest.fn();
+  // console.log = jest.fn();
   @injectable()
   class Service1 {}
   @injectable()
@@ -55,14 +54,11 @@ describe('ModuleManager', () => {
     jest.resetAllMocks();
   });
 
-  it('root module should be scanned first among all modules (because of moduleNormalizer.checkAndMarkExternalModule())', () => {
+  it('should scan the root module first among all modules (due to moduleNormalizer.checkAndMarkExternalModule())', () => {
     class Service1 {}
     class Service2 {}
 
-    @featureModule({
-      providersPerApp: [Service1],
-      imports: [Module1],
-    })
+    @featureModule({ providersPerApp: [Service1] })
     class Module1 {}
 
     @featureModule({
@@ -71,9 +67,7 @@ describe('ModuleManager', () => {
     })
     class Module2 {}
 
-    @rootModule({
-      imports: [Module2],
-    })
+    @rootModule({ imports: [Module2] })
     class AppModule {}
 
     jest.spyOn(mock, 'normalizeMetadata');

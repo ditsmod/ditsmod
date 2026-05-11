@@ -1,4 +1,4 @@
-import { BaseMeta } from '#types/base-meta.js';
+import { BaseMeta } from '#init/base-meta.js';
 import { AnyFn, AnyObj, ModRefId } from './mix.js';
 import { Provider } from '#di/types-and-models.js';
 import { ExtensionConfig } from '#extension/extension-providers-and-configs.js';

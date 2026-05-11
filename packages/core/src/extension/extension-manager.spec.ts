@@ -5,7 +5,7 @@ import { defaultProvidersPerApp } from '#init/default-providers-per-app.js';
 import { ExtensionContext } from '#extension/extensions-context.js';
 import { StageIteration, ExtensionManager } from '#extension/extension-manager.js';
 import { CircularDepsBetweenExtensions } from '#error/core-errors.js';
-import { BaseMeta } from '#types/base-meta.js';
+import { BaseMeta } from '#init/base-meta.js';
 
 describe('ExtensionManager', () => {
   describe('stage1', () => {});

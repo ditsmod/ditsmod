@@ -21,7 +21,7 @@ import { AnyFn, AnyObj, Level, ModRefId, ModuleType, PickProps } from '#types/mi
 import { Provider } from '#di/types-and-models.js';
 import { RootRawMetadata } from '#decorators/module-raw-metadata.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
-import { BaseMeta } from '#types/base-meta.js';
+import { BaseMeta } from '#init/base-meta.js';
 import { ForwardRefFn, resolveForwardRef } from '#di/forward-ref.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
 import { Class } from '#di/types-and-models.js';
@@ -110,7 +110,8 @@ export class ModuleNormalizer {
   }
 
   /**
-   * For this method to work properly, the root module must be scanned by {@link ModuleManager} first.
+   * Since this method relies on the established variable {@link rootDeclaredInDir},
+   * during scanning the {@link ModuleManager} must first scan the root module.
    */
   protected checkAndMarkExternalModule(rawMeta: RootRawMetadata) {
     if (isRootModule(rawMeta)) {

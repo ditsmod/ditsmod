@@ -8,7 +8,7 @@ import { BaseImportRegistry, ShallowImports } from '#init/types.js';
 import { MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import { Level, ModRefId, AnyFn, AnyObj } from '#types/mix.js';
 import { Provider } from '#di/types-and-models.js';
-import { BaseMeta } from '#types/base-meta.js';
+import { BaseMeta } from '#init/base-meta.js';
 import { ReflectiveDependency, getDependencies } from '#utils/get-dependencies.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
 import { getProviderName } from '#utils/get-provider-name.js';

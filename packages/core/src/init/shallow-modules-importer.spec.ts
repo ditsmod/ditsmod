@@ -1,7 +1,7 @@
 import { injectable, Provider, makePropDecorator, FactoryProvider, forwardRef } from '#di';
 import { featureModule } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
-import { BaseMeta } from '#types/base-meta.js';
+import { BaseMeta } from '#init/base-meta.js';
 import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { GlobalProviders, ProviderImport } from '#types/metadata-per-mod.js';

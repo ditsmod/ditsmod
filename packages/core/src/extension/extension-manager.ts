@@ -11,7 +11,7 @@ import {
 import { ModRefId, OptionalProps } from '#types/mix.js';
 import { Counter } from '#extension/counter.js';
 import { ExtensionContext } from '#extension/extensions-context.js';
-import { BaseMeta } from '#types/base-meta.js';
+import { BaseMeta } from '#init/base-meta.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { isExtensionProvider } from './type-guards.js';
 import { NotDeclaredInAfterExtensionList, CircularDepsBetweenExtensions, ExtensionFailed } from '#errors';

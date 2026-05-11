@@ -3,7 +3,7 @@ import { AnyObj, RequireProps } from '#types/mix.js';
 import { ModuleRawMetadata, ModuleWithParams } from '#decorators/module-raw-metadata.js';
 import { RootRawMetadata } from '#decorators/module-raw-metadata.js';
 import { InitHooks } from '#decorators/init-hooks-and-metadata.js';
-import { BaseMeta } from '#types/base-meta.js';
+import { BaseMeta } from '#init/base-meta.js';
 
 export function isParamsWithMwp(arg?: AnyObj): arg is { mwp: ModuleWithParams } {
   return isModuleWithParams((arg as { mwp: ModuleWithParams } | undefined)?.mwp);
