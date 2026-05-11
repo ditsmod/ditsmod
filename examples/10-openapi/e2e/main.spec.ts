@@ -56,7 +56,7 @@ describe('10-openapi', () => {
   it('serves route with YAML response for OpenAPI docs', async () => {
     const { status, type, headers } = await testAgent.get('/openapi.yaml');
     expect(status).toBe(200);
-    expect(type).toBe('text/yaml');
+    expect(type).toBe('application/yaml');
     expect(Number(headers?.['content-length'])).toBeGreaterThan(0);
   });
 
