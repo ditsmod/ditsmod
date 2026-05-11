@@ -32,12 +32,12 @@ export class OpenapiController {
     responses: {
       [Status.OK]: {
         description: 'YAML-file for the OpenAPI documentation',
-        content: { ['text/yaml; charset=utf-8']: {} },
+        content: { ['application/yaml; charset=utf-8']: {} },
       },
     },
   })
   async getYaml(configFiles: OasConfigFiles) {
-    this.res.setContentType('text/yaml; charset=utf-8').send(configFiles.yaml);
+    this.res.setContentType('application/yaml; charset=utf-8').send(configFiles.yaml);
   }
 
   @oasRoute('GET', 'openapi.json', {
