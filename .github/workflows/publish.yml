@@ -1,0 +1,61 @@
+name: Publish to npm
+
+on:
+  push:
+    tags:
+      - "*"
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    environment:
+      name: publishing
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Enable Corepack
+        run: |
+          corepack enable
+          corepack install
+
+      - name: Run scripts
+        run: |
+          yarn install --immutable
+          yarn build
+          cd packages/authjs
+          npm publish --provenance
+          cd ../body-parser
+          npm publish --provenance
+          cd ../core
+          npm publish --provenance
+          cd ../cors
+          npm publish --provenance
+          cd ../i18n
+          npm publish --provenance
+          cd ../jwt
+          npm publish --provenance
+          cd ../openapi
+          yarn build-ui
+          npm publish --provenance
+          cd ../openapi-validation
+          npm publish --provenance
+          cd ../rest
+          npm publish --provenance
+          cd ../rest-testing
+          npm publish --provenance
+          cd ../session-cookie
+          npm publish --provenance
+          cd ../trpc
+          npm publish --provenance
