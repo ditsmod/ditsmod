@@ -289,10 +289,11 @@ await this.extensionManager.stage1(Extension3); // Повертаються да
 
 Можна проглянути як це зроблено у [BodyParserExtension][3]:
 
-```ts {12,28,35}
-import { RouteExtension, HTTP_INTERCEPTORS } from '@ditsmod/rest';
-
+```ts {13,31,38}
+import { Extension, ExtensionManager, PerAppService, injectable } from '@ditsmod/core';
+import { HTTP_INTERCEPTORS, RouteExtension } from '@ditsmod/rest';
 // ...
+
 @injectable()
 export class BodyParserExtension implements Extension<void> {
   constructor(
@@ -303,39 +304,57 @@ export class BodyParserExtension implements Extension<void> {
   async stage1() {
     const stage1ExtensionMeta = await this.extensionManager.stage1(RouteExtension);
     stage1ExtensionMeta.groupData.forEach((metadataPerMod3) => {
-      const { aControllerMetadata, providersPerMod } = metadataPerMod3;
-      aControllerMetadata.forEach(({ providersPerRou, providersPerReq, httpMethod, singleton }) => {
+      const { aControllerMetadata } = metadataPerMod3;
+      const { providersPerMod } = metadataPerMod3.baseMeta;
+      aControllerMetadata.forEach(({ providersPerRou, providersPerReq, httpMethods, scope }) => {
         // Merging the providers from a module and a controller
-        const mergedProvidersPerRou = [...metadataPerMod3.providersPerRou, ...providersPerRou];
-        const mergedProvidersPerReq = [...metadataPerMod3.providersPerReq, ...providersPerReq];
+        const mergedProvidersPerRou = [...metadataPerMod3.meta.providersPerRou, ...providersPerRou];
+        const mergedProvidersPerReq = [...metadataPerMod3.meta.providersPerReq, ...providersPerReq];
 
         // Creating a hierarchy of injectors.
         const injectorPerApp = this.perAppService.injector;
         const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedProvidersPerRou);
-        if (singleton) {
-          let bodyParserConfig = injectorPerRou.get(BodyParserConfig, undefined, {}) as BodyParserConfig;
-          bodyParserConfig = { ...new BodyParserConfig(), ...bodyParserConfig }; // Merge with default.
-          if (bodyParserConfig.acceptMethods!.includes(httpMethod)) {
-            providersPerRou.push({ token: HTTP_INTERCEPTORS, useClass: CtxBodyParserInterceptor, multi: true });
+        httpMethods.forEach((method) => {
+          if (scope == 'ctx') {
+            let bodyParserConfig = injectorPerRou.get(BodyParserConfig, undefined, {}) as BodyParserConfig;
+            bodyParserConfig = { ...new BodyParserConfig(), ...bodyParserConfig }; // Merge with default.
+            if (bodyParserConfig.acceptMethods!.includes(method)) {
+              providersPerRou.push({ token: HTTP_INTERCEPTORS, useClass: CtxBodyParserInterceptor, multi: true });
+            }
+          } else {
+            const injectorPerReq = injectorPerRou.resolveAndCreateChild(mergedProvidersPerReq);
+            let bodyParserConfig = injectorPerReq.get(BodyParserConfig, undefined, {}) as BodyParserConfig;
+            bodyParserConfig = { ...new BodyParserConfig(), ...bodyParserConfig }; // Merge with default.
+            if (bodyParserConfig.acceptMethods!.includes(method)) {
+              providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: BodyParserInterceptor, multi: true });
+            }
           }
-        } else {
-          const injectorPerReq = injectorPerRou.resolveAndCreateChild(mergedProvidersPerReq);
-          let bodyParserConfig = injectorPerReq.get(BodyParserConfig, undefined, {}) as BodyParserConfig;
-          bodyParserConfig = { ...new BodyParserConfig(), ...bodyParserConfig }; // Merge with default.
-          if (bodyParserConfig.acceptMethods!.includes(httpMethod)) {
-            providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: BodyParserInterceptor, multi: true });
-          }
-        }
+        });
       });
     });
   }
 }
 ```
 
-В даному разі, HTTP-інтерсептор додається в масив `providersPerReq`, у метадані контролера. Але перед цим, створюється [ієрархія інжекторів][8] для того, щоб отримати певну конфігурацію, яка вказує нам чи потрібно додавати такий інтерсептор. Якщо б не потрібно було перевіряти будь-яку умову, ми могли б не створювати ієрархії інжекторів, і зразу б додали інтерсептор на рівні запиту.
+В даному разі, у метадані контролера додається HTTP-інтерсептор в масив `providersPerReq` або `providersPerRou` (в залежності від режиму роботи контролера). Але перед цим, створюється [ієрархія інжекторів][8] для того, щоб отримати певну конфігурацію, яка вказує нам чи потрібно додавати такий інтерсептор. Якщо б не потрібно було перевіряти будь-яку умову, ми могли б не створювати ієрархії інжекторів, і зразу б додали інтерсептор на рівні запиту.
 
-Звичайно ж, таке динамічне додавання провайдерів можливе лише перед створенням обробників HTTP-запитів.
+Зверніть увагу, що тут створюється ієрархія інжекторів, які використовуються лише щоб отримати значення для токена `BodyParserConfig`. Піля цього дані інжектори нікуди більше не передаються, тобто видаляються з пам'яті. А інжектори, що містять провайдери, зібрані від усіх розширень, будуть створені згодом - у `PreRouterExtension`. Саме тому у метаданих `BodyParserModule` прописано, що `BodyParserExtension` повинно працювати після `RouteExtension`, але перед `PreRouterExtension`:
+
+```ts {7-8}
+import { RouteExtension, PreRouterExtension } from '@ditsmod/rest';
+
+// ... Тут оголошується BodyParserModule
+extensions: [
+  {
+    extension: BodyParserExtension,
+    afterExtensions: [RouteExtension],
+    beforeExtensions: [PreRouterExtension],
+    exportOnly: true,
+  },
+],
+// ...
+```
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/00-standalone-application
 [2]: #group-of-extensions
