@@ -35,27 +35,27 @@ jobs:
           yarn install --immutable
           yarn build
           cd packages/authjs
-          npm publish --provenance
+          npm publish --provenance --tag next
           cd ../body-parser
-          npm publish --provenance
+          npm publish --provenance --tag next
           cd ../core
-          npm publish --provenance
+          npm publish --provenance --tag next
           cd ../cors
-          npm publish --provenance
+          npm publish --provenance --tag next
           cd ../i18n
-          npm publish --provenance
+          npm publish --provenance --tag next
           cd ../jwt
-          npm publish --provenance
+          npm publish --provenance --tag next
           cd ../openapi
           yarn build-ui
-          npm publish --provenance
+          npm publish --provenance --tag next
           cd ../openapi-validation
-          npm publish --provenance
+          npm publish --provenance --tag next
           cd ../rest
-          npm publish --provenance
+          npm publish --provenance --tag next
           cd ../rest-testing
-          npm publish --provenance
+          npm publish --provenance --tag next
           cd ../session-cookie
-          npm publish --provenance
+          npm publish --provenance --tag next
           cd ../trpc
-          npm publish --provenance
+          npm publish --provenance --tag next
