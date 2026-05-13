@@ -4,7 +4,7 @@
   "version": "3.0.0-next.8",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ditsmod/ditsmod.git"
+    "url": "git+https://github.com/ditsmod/ditsmod.git"
   },
   "description": "JWT module for Ditsmod application",
   "module": "dist/index.js",
