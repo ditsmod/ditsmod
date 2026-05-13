@@ -81,7 +81,7 @@ In this case, the guard will work at the request level, for controllers in injec
 
 ## Use of guards {#use-of-guards}
 
-If you use the `@ditsmod/rest` module, the guards are passed to the controllers in an array in the third parameter of the `route` decorator:
+The guards are passed to the controllers in an array in the third parameter of the `route` decorator:
 
 ```ts {6}
 import { controller, Res, route } from '@ditsmod/rest';
