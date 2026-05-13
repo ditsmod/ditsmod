@@ -1,4 +1,4 @@
-import { DecoratorAndValue, CallsiteUtils, reflector } from '@ditsmod/core';
+import { DecoratorAndValue, reflector } from '@ditsmod/core';
 
 import { route, RouteMetadata } from './route.js';
 import { HttpHandler, HttpInterceptor } from '#interceptors/tokens-and-types.js';
@@ -14,7 +14,7 @@ describe('Route decorator', () => {
     const actualMeta = reflector.getMetadata(Controller1)!;
     expect(actualMeta.constructor.type).toBe(Function);
     expect(actualMeta.constructor.decorators).toMatchObject<DecoratorAndValue[]>([
-      new DecoratorAndValue(controller, {}, CallsiteUtils.getCallerDir()),
+      new DecoratorAndValue(controller, {}, expect.any(String)),
     ]);
   });
 

@@ -4,7 +4,6 @@ import { BaseInitMeta, getProxyForInitMeta, BaseMeta } from '#init/base-meta.js'
 import { rootModule } from '#decorators/root-module.js';
 import { forwardRef, injectable, makeClassDecorator, MultiProvider } from '#di';
 import { Extension } from '#extension/extension-types.js';
-import { CallsiteUtils } from '#utils/callsites.js';
 import { AnyObj, ModRefId } from '#types/mix.js';
 import {
   FeatureModuleParams,
