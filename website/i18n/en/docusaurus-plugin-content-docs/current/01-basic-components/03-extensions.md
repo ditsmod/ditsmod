@@ -46,6 +46,8 @@ interface Extension<T> {
 }
 ```
 
+Please note that the term "value returned by the extension" refers to the value returned by the `stage1()` method of that extension.
+
 You can see a simple example in the folder [00-standalone-application][1].
 
 ## Extension registration {#extension-registration}
@@ -131,7 +133,7 @@ As you can see, groups are formed thanks to the `groups` property in the module 
 
 A shared base interface of the data returned by each extension in a given group is an important condition, since other extensions may expect data from this group, and they will rely specifically on this base interface. Of course, the base interface can be extended if needed, but not narrowed.
 
-In addition, the order of execution of individual groups of extensions and the dependencies between them are also important. In our example, after the group with `RouteExtension` and `OpenapiExtension` has completed, their data is collected into a single array and passed to `PreRouterExtension`. Even if you later register more new extensions in the group with `RouteExtension`, `PreRouterExtension` will still be executed only after absolutely all extensions in the group with `RouteExtension` have completed, including your new extensions.
+In addition, the order of execution of individual groups of extensions and the dependencies between them are also important. In our example, after the group with `RouteExtension` and `OpenapiRouteExtension` has completed, their data is collected into a single array and passed to `PreRouterExtension`. Even if you later register more new extensions in the group with `RouteExtension`, `PreRouterExtension` will still be executed only after absolutely all extensions in the group with `RouteExtension` have completed, including your new extensions.
 
 This feature is very convenient, as it sometimes allows you to integrate external Ditsmod modules (for example, from npmjs.com) into your application without any configuration, simply by importing them into the required module. Imported extensions that belong to certain groups will be executed in the correct order, even if they are imported from different external modules.
 
@@ -158,10 +160,12 @@ extensions: [
 ],
 ```
 
-And it does not matter whether `Extension4` is declared in the current module or imported from another module. Now these groups will contain the following elements:
+Now these groups will contain the following elements:
 
 1. `Extension1`, `Extension3`, `Extension4`;
 2. `Extension2`, `Extension3`, `Extension4`.
+
+And it does not matter whether `Extension4` is declared in the current module or imported from another module.
 
 ## Using ExtensionManager {#using-extensionmanager}
 
@@ -211,7 +215,11 @@ interface Stage1DebugMeta<T = any> {
 
 If `stage1ExtensionMeta.delay === true` — this means that the `groupDataPerApp` property contains data not yet from all modules where this extension (`Extension1`) is imported. The `countdown` property indicates in how many modules this extension still needs to be processed so that the `groupDataPerApp` property contains data from all modules. That is, the `delay` and `countdown` properties relate only to the `groupDataPerApp` property.
 
-The `groupData` property contains an array where data from the current module is collected from one or more extensions.
+The `groupData` property contains an array that aggregates data from the current module provided by one or more extensions. The `groupDebugMeta` property contains more detailed information about the extensions that produced the data in `groupData`. Elements in the `groupData` array correspond to elements in the `groupDebugMeta` array by index, i.e.:
+
+```ts
+groupData[0] === groupDebugMeta[0]?.payload; // true
+```
 
 It is important to remember that a separate instance of a given extension is created for each module. For example, if `Extension2` is imported into three different modules, Ditsmod will process these three modules sequentially with three different instances of `Extension2`. In addition, if `Extension2` needs aggregated data, for example, from `Extension1` from four modules, but `Extension2` itself is imported only into three modules, this means that from one module `Extension2` may not receive the required data.
 
