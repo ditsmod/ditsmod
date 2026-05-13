@@ -67,5 +67,4 @@ Before writing your interceptor for validation, you can first review how is writ
 [1]: https://ajv.js.org/guide/getting-started.html
 [2]: /rest-application/native-modules/openapi
 [3]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#referenceObject
-[4]: https://github.com/ditsmod/ditsmod/blob/main/packages/openapi-validation/src/parameters.interceptor.ts
-
+[4]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/openapi-validation/src/parameters.interceptor.ts

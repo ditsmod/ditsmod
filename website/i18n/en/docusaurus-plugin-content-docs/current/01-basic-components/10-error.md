@@ -178,6 +178,5 @@ We remind you that provider collisions can only occur when importing modules. Th
 
 [1]: /basic-components/modules/#provider-collisions
 
-[100]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/error/default-http-error-handler.ts
-[101]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/error/http-error-handler.ts
-[102]: https://github.com/ditsmod/ditsmod/blob/main/packages/core/src/error/error-opts.ts
+[100]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/rest/src/services/default-http-error-handler.ts
+[101]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/rest/src/services/http-error-handler.ts

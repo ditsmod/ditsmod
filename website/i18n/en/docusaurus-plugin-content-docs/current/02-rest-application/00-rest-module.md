@@ -81,6 +81,6 @@ This module also exports `PreRouterExtension`. This extension uses the metadata 
 
 [0]: https://en.wikipedia.org/wiki/REST
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/01-hello-world
-[2]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/types/metadata-per-mod.ts#L58-L74
-[3]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.16.0/packages/body-parser/src/body-parser.extension.ts#L54
+[2]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/rest/src/types/types.ts#L21-L27
+[3]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/body-parser/src/body-parser.extension.ts#L41
 [4]: /deep-dive/init-decorators/

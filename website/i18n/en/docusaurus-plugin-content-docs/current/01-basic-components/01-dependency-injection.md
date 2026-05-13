@@ -948,10 +948,9 @@ When creating the child injector, it was not passed `Service1`, but it can refer
 
 [1]: https://en.wikipedia.org/wiki/Dependency_injection
 [11]: https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types
-[12]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/tsconfig.json#L31
 [15]: https://en.wikipedia.org/wiki/Singleton_pattern
-[16]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/body-parser/src/body-parser.interceptor.ts#L15
-[17]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/examples/14-auth-jwt/src/app/modules/services/auth/bearer.guard.ts#L24
+[16]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/body-parser/src/body-parser.interceptor.ts#L16
+[17]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/examples/14-auth-jwt/src/app/modules/services/auth/bearer.guard.ts#L25
 
 [101]: ../../#installation
 [102]: #injector-and-providers

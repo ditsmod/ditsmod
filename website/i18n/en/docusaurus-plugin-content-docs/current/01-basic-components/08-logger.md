@@ -219,8 +219,8 @@ As you can see, the route path `/set-loglevel` is created here, with protection 
 [1]: /rest-application/guards#helpers-for-guards-with-parameters
 [2]: /basic-components/providers-helper/
 
-[100]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/logger/logger.ts
-[101]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/logger/console-logger.ts
+[100]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/core/src/logger/logger.ts
+[101]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/core/src/logger/console-logger.ts
 [102]: https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Level.html
 [103]: https://github.com/winstonjs/winston
-[104]: https://github.com/ditsmod/ditsmod/tree/core-2.54.0/examples/04-logger/src/app/modules
+[104]: https://github.com/ditsmod/ditsmod/tree/3.0.0-next.8/examples/04-logger/src/app/modules

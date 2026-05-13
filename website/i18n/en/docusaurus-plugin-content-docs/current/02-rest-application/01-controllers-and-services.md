@@ -487,7 +487,7 @@ Also, if you import a provider from an external module and you have a provider w
 [2]: /basic-components/modules/#ModuleWithParams
 [3]: /basic-components/dependency-injection/#injector-and-providers
 [5]: /rest-application/native-modules/body-parser#retrieving-the-request-body
-[6]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/src/services/pre-router.ts
+[6]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/rest/src/services/pre-router.ts
 [7]: /basic-components/dependency-injection/
 [9]: /basic-components/extensions/
 [10]: #injector-scoped-controller

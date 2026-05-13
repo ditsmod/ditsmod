@@ -124,7 +124,7 @@ node --watch dist/app/services.js
 Тепер, якщо у `src/app/services.ts`, у функцію `getDependencies()` передати `Service2`, через пару секунд у другому терміналі ви повинні побачити вивід `[ { token: [class Service1], required: true } ]`.
 
 
-[13]: https://github.com/ditsmod/ditsmod/blob/core-2.54.0/packages/core/package.json#L53
+[13]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/core/package.json#L61
 [14]: https://github.com/tc39/proposal-decorators
 
 [101]: ../../#installation

@@ -83,5 +83,5 @@ export class SomeModule {}
 ## Normalization and validation {#normalization-and-validation}
 
 [1]: /basic-components/modules/#ModuleWithParams
-[2]: https://github.com/ditsmod/ditsmod/blob/168a9fe0712b5bedc5649908c4ada5158c956174/packages/core/src/init/module-normalizer.spec.ts#L282-L475
-[3]: https://github.com/ditsmod/ditsmod/blob/168a9fe0712b5bedc5649908c4ada5158c956174/packages/rest/src/decorators/rest-init-hooks-and-metadata.ts
+[2]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/core/src/init/module-normalizer.spec.ts#L280-L475
+[3]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/rest/src/decorators/rest-init-hooks-and-metadata.ts

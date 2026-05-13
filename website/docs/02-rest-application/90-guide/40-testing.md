@@ -279,5 +279,5 @@ const server = await TestRestApplication.createTestApp(AppModule)
 [100]: https://jestjs.io/
 [101]: https://jestjs.io/docs/mock-functions
 [102]: https://github.com/ladjs/supertest
-[103]: https://github.com/ditsmod/ditsmod/blob/c42c834cb9/packages/rest/e2e/main.spec.ts#L39
-[104]: https://github.com/ditsmod/ditsmod/blob/main/packages/rest-testing/src/test-rest.plugin.ts
+[103]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/rest/e2e/app1/app1-with-overriden-providers.spec.ts#L37
+[104]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/rest-testing/src/test-rest.plugin.ts

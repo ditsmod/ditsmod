@@ -339,7 +339,7 @@ Of course, such dynamic addition of providers is possible only before creating H
 
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/00-standalone-application
 [2]: #group-of-extensions
-[3]: https://github.com/ditsmod/ditsmod/blob/body-parser-2.17.0/packages/body-parser/src/body-parser.extension.ts#L54
+[3]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/body-parser/src/body-parser.extension.ts#L41
 [5]: /rest-application/native-modules/body-parser
 [6]: /rest-application/native-modules/openapi
 [8]: /basic-components/dependency-injection#hierarchy-and-encapsulation-of-injectors
