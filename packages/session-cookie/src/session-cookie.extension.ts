@@ -1,5 +1,5 @@
 import { Extension, ExtensionManager, injectable } from '@ditsmod/core';
-import { HTTP_INTERCEPTORS, RouteExtension } from '@ditsmod/rest';
+import { HTTP_INTERCEPTORS, RestRouteExtension } from '@ditsmod/rest';
 
 import { SessionCookieInterceptor } from './session-cookie.interceptor.js';
 
@@ -14,7 +14,7 @@ export class SessionCookieExtension implements Extension<void> {
       return;
     }
 
-    const stage1ExtensionMeta = await this.extensionManager.stage1(RouteExtension);
+    const stage1ExtensionMeta = await this.extensionManager.stage1(RestRouteExtension);
     stage1ExtensionMeta.groupData.forEach((metadataPerMod3) => {
       metadataPerMod3.aControllerMetadata.forEach(({ providersPerRou, scope }) => {
         if (scope == 'ctx') {

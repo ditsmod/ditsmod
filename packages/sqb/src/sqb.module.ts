@@ -1,10 +1,10 @@
 import { featureModule, ModuleWithParams } from '@ditsmod/core';
-import { RouteExtension } from '@ditsmod/rest';
+import { RestRouteExtension } from '@ditsmod/rest';
 
 import { SqbExtension } from './sqb.extension.js';
 
 @featureModule({
-  extensions: [{ extension: SqbExtension, afterExtensions: [RouteExtension], export: true }],
+  extensions: [{ extension: SqbExtension, afterExtensions: [RestRouteExtension], export: true }],
 })
 export class SqbModule {
   static withParams(): ModuleWithParams<SqbModule> {

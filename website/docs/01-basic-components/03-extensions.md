@@ -98,14 +98,14 @@ class ExtensionConfig {
 Наприклад:
 
 ```ts {6-11}
-import { restModule, RouteExtension } from '@ditsmod/rest';
+import { restModule, RestRouteExtension } from '@ditsmod/rest';
 import { SimpleExtension } from './simple-extension.js';
 
 @restModule({
   extensions: [
     {
       extension: SimpleExtension,
-      beforeExtensions: [RouteExtension],
+      beforeExtensions: [RestRouteExtension],
       afterExtensions: [],
       export: true,
     },
@@ -120,20 +120,20 @@ export class SomeModule {}
 
 Будь-яке розширення може входити в одну або декілька груп. Концепція **групи розширень** аналогічна до концепції групи [інтерсепторів][10]. Давайте згадаємо, що група інтерсепторів виконує конкретний вид робіт: доповнює обробку HTTP-запиту для певного роута в контролері. Аналогічно, кожна група розширень - це окремий вид робіт над певними метаданими. Як правило, розширення в певній групі повертають метадані, що мають однаковий базовий інтерфейс. По-суті, групи розширень дозволяють абстрагуватись від конкретних розширень, роблячи важливими лише вид роботи, що виконується у даних групах.
 
-Наприклад, у `@ditsmod/rest` є `RouteExtension`, що обробляє метадані, зібрані з декоратора `@route()`. Якщо в якомусь застосунку потрібна документація OpenAPI - можна додатково підключити модуль `@ditsmod/openapi`, де зареєстровано `OpenapiRouteExtension`, що працює з декоратором `@oasRoute()`. В метаданих модуля `@ditsmod/openapi` вказано, що `OpenapiRouteExtension` потрібно використовувати в одній групі з `RouteExtension`:
+Наприклад, у `@ditsmod/rest` є `RestRouteExtension`, що обробляє метадані, зібрані з декоратора `@route()`. Якщо в якомусь застосунку потрібна документація OpenAPI - можна додатково підключити модуль `@ditsmod/openapi`, де зареєстровано `OpenapiRouteExtension`, що працює з декоратором `@oasRoute()`. В метаданих модуля `@ditsmod/openapi` вказано, що `OpenapiRouteExtension` потрібно використовувати в одній групі з `RestRouteExtension`:
 
 ```ts
 extensions: [
-  { extension: OpenapiRouteExtension, groups: [RouteExtension], export: true },
+  { extension: OpenapiRouteExtension, groups: [RestRouteExtension], export: true },
   // ...
 ],
 ```
 
-Як бачите, групи формуються завдяки властивості `groups` у метаданих модуля. Ці два розширення зібрані в одну групу через те, що обидва вони налаштовують роути, а їхні методи `stage1()` повертають дані з однаковим базовим інтерфейсом. Тепер, якщо обидва ці розширення імпортуються в один і той самий модуль, усі споживачі, що запитують дані від `RouteExtension`, отримуватимуть також результати роботи від `OpenapiRouteExtension`, яке повертає дані з розширеним інтерфейсом.
+Як бачите, групи формуються завдяки властивості `groups` у метаданих модуля. Ці два розширення зібрані в одну групу через те, що обидва вони налаштовують роути, а їхні методи `stage1()` повертають дані з однаковим базовим інтерфейсом. Тепер, якщо обидва ці розширення імпортуються в один і той самий модуль, усі споживачі, що запитують дані від `RestRouteExtension`, отримуватимуть також результати роботи від `OpenapiRouteExtension`, яке повертає дані з розширеним інтерфейсом.
 
 Спільний базовий інтерфейс даних, який повертає кожне з розширень у певній групі, - це важлива умова, оскільки інші розширення можуть очікувати дані із цієї групи, і вони будуть опиратись саме на цей базовий інтерфейс. Звичайно ж, базовий інтерфейс при потребі можна розширювати, але не звужувати.
 
-Окрім цього, важливою є також послідовність запуску окремих груп розширень і залежність між ними. У нашому прикладі, після того, як відпрацює група з `RouteExtension` та `OpenapiRouteExtension`, їхні дані збираються в один масив і передаються до `PreRouterExtension`. Навіть якщо ви пізніше зареєструєте більше нових розширень у групі з `RouteExtension`, все-одно `PreRouterExtension` буде запускатись вже після того як відпрацюють абсолютно усі розширення у групі з `RouteExtension`, включаючи ваші нові розширення.
+Окрім цього, важливою є також послідовність запуску окремих груп розширень і залежність між ними. У нашому прикладі, після того, як відпрацює група з `RestRouteExtension` та `OpenapiRouteExtension`, їхні дані збираються в один масив і передаються до `PreRouterExtension`. Навіть якщо ви пізніше зареєструєте більше нових розширень у групі з `RestRouteExtension`, все-одно `PreRouterExtension` буде запускатись вже після того як відпрацюють абсолютно усі розширення у групі з `RestRouteExtension`, включаючи ваші нові розширення.
 
 Ця фіча є дуже зручною, оскільки вона інколи дозволяє інтегрувати зовнішні модулі Ditsmod (наприклад, з npmjs.com) у ваш застосунок без жодних налаштувань, просто імпортуючи їх у потрібний модуль. Імпортовані розширення, що входять до певних груп, будуть запускатись у правильній послідовності, навіть якщо вони імпортовані з різних зовнішніх модулів.
 
@@ -285,13 +285,13 @@ await this.extensionManager.stage1(Extension3); // Повертаються да
 
 ## Динамічне додавання провайдерів {#dynamic-addition-of-providers}
 
-Якщо ви використовуєте `@ditsmod/rest`, будь-яке розширення може вказати залежність від групи розширень з токеном `RouteExtension`, щоб динамічно додавати провайдери на будь-якому рівні. Розширення з цієї групи використовують метадані з інтерфейсом `MetadataPerMod2` і повертають метадані з інтерфейсом `MetadataPerMod3`.
+Якщо ви використовуєте `@ditsmod/rest`, будь-яке розширення може вказати залежність від групи розширень з токеном `RestRouteExtension`, щоб динамічно додавати провайдери на будь-якому рівні. Розширення з цієї групи використовують метадані з інтерфейсом `MetadataPerMod2` і повертають метадані з інтерфейсом `MetadataPerMod3`.
 
 Можна проглянути як це зроблено у [BodyParserExtension][3]:
 
 ```ts {13,31,38}
 import { Extension, ExtensionManager, PerAppService, injectable } from '@ditsmod/core';
-import { HTTP_INTERCEPTORS, RouteExtension } from '@ditsmod/rest';
+import { HTTP_INTERCEPTORS, RestRouteExtension } from '@ditsmod/rest';
 // ...
 
 @injectable()
@@ -302,7 +302,7 @@ export class BodyParserExtension implements Extension<void> {
   ) {}
 
   async stage1() {
-    const stage1ExtensionMeta = await this.extensionManager.stage1(RouteExtension);
+    const stage1ExtensionMeta = await this.extensionManager.stage1(RestRouteExtension);
     stage1ExtensionMeta.groupData.forEach((metadataPerMod3) => {
       const { aControllerMetadata } = metadataPerMod3;
       const { providersPerMod } = metadataPerMod3.baseMeta;
@@ -339,16 +339,16 @@ export class BodyParserExtension implements Extension<void> {
 
 В даному разі, у метадані контролера додається HTTP-інтерсептор в масив `providersPerReq` або `providersPerRou` (в залежності від режиму роботи контролера). Але перед цим, створюється [ієрархія інжекторів][8] для того, щоб отримати певну конфігурацію, яка вказує нам чи потрібно додавати такий інтерсептор. Якщо б не потрібно було перевіряти будь-яку умову, ми могли б не створювати ієрархії інжекторів, і зразу б додали інтерсептор на рівні запиту.
 
-Зверніть увагу, що тут створюється ієрархія інжекторів, які використовуються лише щоб отримати значення для токена `BodyParserConfig`. Піля цього дані інжектори нікуди більше не передаються, тобто видаляються з пам'яті. А інжектори, що містять провайдери, зібрані від усіх розширень, будуть створені згодом - у `PreRouterExtension`. Саме тому у метаданих `BodyParserModule` прописано, що `BodyParserExtension` повинно працювати після `RouteExtension`, але перед `PreRouterExtension`:
+Зверніть увагу, що тут створюється ієрархія інжекторів, які використовуються лише щоб отримати значення для токена `BodyParserConfig`. Піля цього дані інжектори нікуди більше не передаються, тобто видаляються з пам'яті. А інжектори, що містять провайдери, зібрані від усіх розширень, будуть створені згодом - у `PreRouterExtension`. Саме тому у метаданих `BodyParserModule` прописано, що `BodyParserExtension` повинно працювати після `RestRouteExtension`, але перед `PreRouterExtension`:
 
 ```ts {7-8}
-import { RouteExtension, PreRouterExtension } from '@ditsmod/rest';
+import { RestRouteExtension, PreRouterExtension } from '@ditsmod/rest';
 
 // ... Тут оголошується BodyParserModule
 extensions: [
   {
     extension: BodyParserExtension,
-    afterExtensions: [RouteExtension],
+    afterExtensions: [RestRouteExtension],
     beforeExtensions: [PreRouterExtension],
     exportOnly: true,
   },

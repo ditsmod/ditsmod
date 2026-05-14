@@ -16,7 +16,7 @@ import {
   MetadataPerMod3,
   RestMetadataPerMod2,
   RouteMeta,
-  RouteExtension,
+  RestRouteExtension,
 } from '@ditsmod/rest';
 import { ReferenceObject, XOperationObject, XParameterObject } from '@ts-stack/openapi-spec';
 
@@ -28,7 +28,7 @@ import { OasOptions } from '#types/oas-options.js';
 import { CompilingOasRoutesFailed, ThrowParamNotFoundInPath } from '#errors';
 
 @injectable()
-export class OpenapiRouteExtension extends RouteExtension implements Extension<MetadataPerMod3> {
+export class OpenapiRouteExtension extends RestRouteExtension implements Extension<MetadataPerMod3> {
   constructor(
     protected override appOptions: AppOptions,
     protected override metadataPerMod2: MetadataPerMod2<RestMetadataPerMod2>,

@@ -8,7 +8,7 @@ title: "@ditsmod/rest"
 Як видно з назви, модуль `@ditsmod/rest` забезпечує підтримку [REST][0]. Він містить зокрема:
 
 - [ініт-декоратори][4] для кореневого модуля та модуля фіч - `restRootModule`, `restModule`;
-- розширення, які забезпечують створення REST-роутів - `RouteExtension`, `PreRouterExtension`;
+- розширення, які забезпечують створення REST-роутів - `RestRouteExtension`, `PreRouterExtension`;
 - роутер, що має наступний тип:
 
 ```ts
@@ -71,13 +71,13 @@ import { MyRouter } from './my-router.js';
 export class MyCustomRouterModule {}
 ```
 
-## `RouteExtension` {#route-extension}
+## `RestRouteExtension` {#route-extension}
 
-З даного модуля експортується `RouteExtension`. Дане розширення повертає метадані з інтерфейсом [`Array<MetadataPerMod3>`][2] - це масив динамічних метаданих, які призначені для створення обробників запитів. Кожен елемент цього масиву - це окремий роут.
+З даного модуля експортується `RestRouteExtension`. Дане розширення повертає метадані з інтерфейсом [`Array<MetadataPerMod3>`][2] - це масив динамічних метаданих, які призначені для створення обробників запитів. Кожен елемент цього масиву - це окремий роут.
 
 ## `PreRouterExtension` {#pre-router-extension}
 
-З даного модуля також експортується `PreRouterExtension`. Дане розширення використовує метадані, які повертає `RouteExtension`, щоб створювати обробники HTTP-запитів.
+З даного модуля також експортується `PreRouterExtension`. Дане розширення використовує метадані, які повертає `RestRouteExtension`, щоб створювати обробники HTTP-запитів.
 
 [0]: https://uk.wikipedia.org/wiki/REST
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/01-hello-world

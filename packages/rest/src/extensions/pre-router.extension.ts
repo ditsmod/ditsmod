@@ -42,7 +42,7 @@ import { GuardPerMod1, NormalizedGuard } from '#interceptors/guard.js';
 import { RouteHandler, Router } from '#services/router.js';
 import { HttpErrorHandler } from '#services/http-error-handler.js';
 import { RequestContext } from '#services/request-context.js';
-import { RouteExtension } from './routes.extension.js';
+import { RestRouteExtension } from './routes.extension.js';
 import { CheckingDepsInSandboxFailed, GuardNotFound, InvalidConfigurationOfRoute } from '#errors';
 
 @injectable()
@@ -61,7 +61,7 @@ export class PreRouterExtension implements Extension<void> {
   ) {}
 
   async stage1() {
-    this.stage1ExtensionMeta = await this.extensionManager.stage1(RouteExtension);
+    this.stage1ExtensionMeta = await this.extensionManager.stage1(RestRouteExtension);
     this.injectorPerApp = this.perAppService.reinitInjector([{ token: Router, useValue: this.router }]);
     this.addDefaultProviders(this.stage1ExtensionMeta.groupData);
   }

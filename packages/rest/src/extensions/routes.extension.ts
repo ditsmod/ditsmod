@@ -14,7 +14,7 @@ import { RestMetadataPerMod2 } from '#init/types.js';
 import { FailedValidationOfRoute } from '#errors';
 
 @injectable()
-export class RouteExtension implements Extension<MetadataPerMod3> {
+export class RestRouteExtension implements Extension<MetadataPerMod3> {
   protected metadataPerMod3: MetadataPerMod3;
 
   constructor(

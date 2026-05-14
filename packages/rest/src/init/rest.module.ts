@@ -1,7 +1,7 @@
 import { BaseAppOptions, featureModule, getTokens } from '@ditsmod/core';
 
 import { DefaultRouter, Router } from '#services/router.js';
-import { RouteExtension } from '#extensions/routes.extension.js';
+import { RestRouteExtension } from '#extensions/routes.extension.js';
 import { PreRouterExtension } from '#extensions/pre-router.extension.js';
 import { UseInterceptorExtension } from '#extensions/use-interceptor.extension.js';
 import { AppOptions } from '#types/app-options.js';
@@ -11,7 +11,7 @@ import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js'
 import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js';
 
 /**
- * Sets `Router` provider on application level, and adds `RouteExtension` with `PreRouterExtension`.
+ * Sets `Router` provider on application level, and adds `RestRouteExtension` with `PreRouterExtension`.
  */
 @featureModule({
   providersPerApp: [
@@ -24,11 +24,11 @@ import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js'
   providersPerReq: [...defaultProvidersPerReq],
   exports: [...getTokens(defaultProvidersPerRou.concat(defaultProvidersPerReq))],
   extensions: [
-    { extension: RouteExtension, beforeExtensions: [PreRouterExtension], exportOnly: true },
-    { extension: PreRouterExtension, afterExtensions: [RouteExtension], exportOnly: true },
+    { extension: RestRouteExtension, beforeExtensions: [PreRouterExtension], exportOnly: true },
+    { extension: PreRouterExtension, afterExtensions: [RestRouteExtension], exportOnly: true },
     {
       extension: UseInterceptorExtension,
-      afterExtensions: [RouteExtension],
+      afterExtensions: [RestRouteExtension],
       beforeExtensions: [PreRouterExtension],
       exportOnly: true,
     },

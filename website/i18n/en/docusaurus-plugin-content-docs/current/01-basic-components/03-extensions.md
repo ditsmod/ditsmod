@@ -98,14 +98,14 @@ class ExtensionConfig {
 For example:
 
 ```ts {6-11}
-import { restModule, RouteExtension } from '@ditsmod/rest';
+import { restModule, RestRouteExtension } from '@ditsmod/rest';
 import { SimpleExtension } from './simple-extension.js';
 
 @restModule({
   extensions: [
     {
       extension: SimpleExtension,
-      beforeExtensions: [RouteExtension],
+      beforeExtensions: [RestRouteExtension],
       afterExtensions: [],
       export: true,
     },
@@ -120,20 +120,20 @@ That is, the extension class that you declare and register in the current module
 
 Any extension can belong to one or more groups. The concept of an **extension group** is analogous to the concept of a group of [interceptors][10]. Recall that a group of interceptors performs a specific type of work: it augments the handling of an HTTP request for a particular route in a controller. Similarly, each group of extensions is a separate type of work over certain metadata. As a rule, extensions in a given group return metadata that share the same base interface. Essentially, extension groups allow you to abstract away from specific extensions, making only the type of work performed within these groups important.
 
-For example, in `@ditsmod/rest` there is `RouteExtension`, which processes metadata collected from the `@route()` decorator. If an application needs OpenAPI documentation, you can additionally connect the `@ditsmod/openapi` module, where `OpenapiRouteExtension` is registered and works with the `@oasRoute()` decorator. In the metadata of the `@ditsmod/openapi` module, it is specified that `OpenapiRouteExtension` should be used in the same group as `RouteExtension`:
+For example, in `@ditsmod/rest` there is `RestRouteExtension`, which processes metadata collected from the `@route()` decorator. If an application needs OpenAPI documentation, you can additionally connect the `@ditsmod/openapi` module, where `OpenapiRouteExtension` is registered and works with the `@oasRoute()` decorator. In the metadata of the `@ditsmod/openapi` module, it is specified that `OpenapiRouteExtension` should be used in the same group as `RestRouteExtension`:
 
 ```ts
 extensions: [
-  { extension: OpenapiRouteExtension, groups: [RouteExtension], export: true },
+  { extension: OpenapiRouteExtension, groups: [RestRouteExtension], export: true },
   // ...
 ],
 ```
 
-As you can see, groups are formed thanks to the `groups` property in the module metadata. These two extensions are collected into one group because both of them configure routes, and their `stage1()` methods return data with the same base interface. Now, if both of these extensions are imported into the same module, all consumers that request data from `RouteExtension` will also receive the results from `OpenapiRouteExtension`, which returns data with an extended interface.
+As you can see, groups are formed thanks to the `groups` property in the module metadata. These two extensions are collected into one group because both of them configure routes, and their `stage1()` methods return data with the same base interface. Now, if both of these extensions are imported into the same module, all consumers that request data from `RestRouteExtension` will also receive the results from `OpenapiRouteExtension`, which returns data with an extended interface.
 
 A shared base interface of the data returned by each extension in a given group is an important condition, since other extensions may expect data from this group, and they will rely specifically on this base interface. Of course, the base interface can be extended if needed, but not narrowed.
 
-In addition, the order of execution of individual groups of extensions and the dependencies between them are also important. In our example, after the group with `RouteExtension` and `OpenapiRouteExtension` has completed, their data is collected into a single array and passed to `PreRouterExtension`. Even if you later register more new extensions in the group with `RouteExtension`, `PreRouterExtension` will still be executed only after absolutely all extensions in the group with `RouteExtension` have completed, including your new extensions.
+In addition, the order of execution of individual groups of extensions and the dependencies between them are also important. In our example, after the group with `RestRouteExtension` and `OpenapiRouteExtension` has completed, their data is collected into a single array and passed to `PreRouterExtension`. Even if you later register more new extensions in the group with `RestRouteExtension`, `PreRouterExtension` will still be executed only after absolutely all extensions in the group with `RestRouteExtension` have completed, including your new extensions.
 
 This feature is very convenient, as it sometimes allows you to integrate external Ditsmod modules (for example, from npmjs.com) into your application without any configuration, simply by importing them into the required module. Imported extensions that belong to certain groups will be executed in the correct order, even if they are imported from different external modules.
 
@@ -285,13 +285,13 @@ That is, here `Extension1` and `Extension2` effectively act as tokens (or identi
 
 ## Dynamic addition of providers {#dynamic-addition-of-providers}
 
-If you are using `@ditsmod/rest`, any extension can declare a dependency on the extension group with the `RouteExtension` token to dynamically add providers at any level. Extensions from this group use metadata with the `MetadataPerMod2` interface and return metadata with the `MetadataPerMod3` interface.
+If you are using `@ditsmod/rest`, any extension can declare a dependency on the extension group with the `RestRouteExtension` token to dynamically add providers at any level. Extensions from this group use metadata with the `MetadataPerMod2` interface and return metadata with the `MetadataPerMod3` interface.
 
 You can see how it is done in [BodyParserExtension][3]:
 
 ```ts {13,31,38}
 import { Extension, ExtensionManager, PerAppService, injectable } from '@ditsmod/core';
-import { HTTP_INTERCEPTORS, RouteExtension } from '@ditsmod/rest';
+import { HTTP_INTERCEPTORS, RestRouteExtension } from '@ditsmod/rest';
 // ...
 
 @injectable()
@@ -302,7 +302,7 @@ export class BodyParserExtension implements Extension<void> {
   ) {}
 
   async stage1() {
-    const stage1ExtensionMeta = await this.extensionManager.stage1(RouteExtension);
+    const stage1ExtensionMeta = await this.extensionManager.stage1(RestRouteExtension);
     stage1ExtensionMeta.groupData.forEach((metadataPerMod3) => {
       const { aControllerMetadata } = metadataPerMod3;
       const { providersPerMod } = metadataPerMod3.baseMeta;
@@ -339,16 +339,16 @@ export class BodyParserExtension implements Extension<void> {
 
 In this case, an HTTP interceptor is added to the controller metadata in the `providersPerReq` or `providersPerRou` array (depending on the controller's operating mode). But before that, a [hierarchy of injectors][8] is created in order to get a certain configuration that tells us whether we need to add such an interceptor. If we didn't need to check any condition, we could avoid creating injector hierarchies and just add an interceptor at request level.
 
-Note that here a hierarchy of injectors is created, which are used only to obtain the value for the `BodyParserConfig` token. After that, these injectors are not passed anywhere else, i.e., they are removed from memory. And the injectors that contain providers collected from all extensions will be created later — in `PreRouterExtension`. That is why the `BodyParserModule` metadata specifies that `BodyParserExtension` should run after `RouteExtension`, but before `PreRouterExtension`:
+Note that here a hierarchy of injectors is created, which are used only to obtain the value for the `BodyParserConfig` token. After that, these injectors are not passed anywhere else, i.e., they are removed from memory. And the injectors that contain providers collected from all extensions will be created later — in `PreRouterExtension`. That is why the `BodyParserModule` metadata specifies that `BodyParserExtension` should run after `RestRouteExtension`, but before `PreRouterExtension`:
 
 ```ts {7-8}
-import { RouteExtension, PreRouterExtension } from '@ditsmod/rest';
+import { RestRouteExtension, PreRouterExtension } from '@ditsmod/rest';
 
 // ... Here BodyParserModule is declared
 extensions: [
   {
     extension: BodyParserExtension,
-    afterExtensions: [RouteExtension],
+    afterExtensions: [RestRouteExtension],
     beforeExtensions: [PreRouterExtension],
     exportOnly: true,
   },

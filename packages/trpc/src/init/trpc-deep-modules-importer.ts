@@ -14,7 +14,7 @@ import { TrpcShallowImports } from '#decorators/trpc-init-hooks-and-metadata.js'
 import { GuardPerMod1 } from '#interceptors/trpc-guard.js';
 
 /**
- * This metadata returns from `DeepModulesImporter`. The target for this metadata is `RouteExtension`.
+ * This metadata returns from `DeepModulesImporter`. The target for this metadata is `RestRouteExtension`.
  */
 
 export class TrpcMetadataPerMod2 {

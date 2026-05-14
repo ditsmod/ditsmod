@@ -1,5 +1,5 @@
 import { featureModule, ModuleWithParams, Providers } from '@ditsmod/core';
-import { initRest, PreRouterExtension, RouteExtension } from '@ditsmod/rest';
+import { initRest, PreRouterExtension, RestRouteExtension } from '@ditsmod/rest';
 import { CorsOptions } from '@ts-stack/cors';
 
 import { CorsExtension } from './cors.extension.js';
@@ -11,7 +11,7 @@ import { CorsService } from './cors.service.js';
   extensions: [
     {
       extension: CorsExtension,
-      afterExtensions: [RouteExtension],
+      afterExtensions: [RestRouteExtension],
       beforeExtensions: [PreRouterExtension],
       export: true,
     },

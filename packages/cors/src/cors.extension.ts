@@ -16,7 +16,7 @@ import {
   HTTP_INTERCEPTORS,
   MetadataPerMod3,
   RouteMeta,
-  RouteExtension,
+  RestRouteExtension,
 } from '@ditsmod/rest';
 
 import { CorsInterceptor } from './cors.interceptor.js';
@@ -32,7 +32,7 @@ export class CorsExtension implements Extension<void | false> {
   ) {}
 
   async stage1() {
-    const stage1ExtensionMeta = await this.extensionManager.stage1(RouteExtension, this);
+    const stage1ExtensionMeta = await this.extensionManager.stage1(RestRouteExtension, this);
     if (stage1ExtensionMeta.delay) {
       return false;
     }

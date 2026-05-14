@@ -223,11 +223,11 @@ As you can see, after using `$use()`, the `TestRestApplication` instance can use
 
 ### `TestRestPlugin` {#testrestplugin}
 
-The `TestRestPlugin` class uses `testRestApplication.overrideExtensionMeta()` to override providers in the metadata added by the `RouteExtension` group:
+The `TestRestPlugin` class uses `testRestApplication.overrideExtensionMeta()` to override providers in the metadata added by the `RestRouteExtension` group:
 
 ```ts
 import { Provider } from '@ditsmod/core';
-import { MetadataPerMod3, RouteExtension } from '@ditsmod/rest';
+import { MetadataPerMod3, RestRouteExtension } from '@ditsmod/rest';
 import { TestRestApplication, ExtensionMetaOverrider } from '@ditsmod/rest-testing';
 
 export class TestRestPlugin extends TestRestApplication {
@@ -238,7 +238,7 @@ export class TestRestPlugin extends TestRestApplication {
       });
     };
 
-    this.overrideExtensionMeta(RouteExtension, overrideRoutesMeta);
+    this.overrideExtensionMeta(RestRouteExtension, overrideRoutesMeta);
     return this;
   }
 }

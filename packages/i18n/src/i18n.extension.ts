@@ -8,7 +8,7 @@ import {
   fromSelf,
   Stage1ExtensionMeta,
 } from '@ditsmod/core';
-import { MetadataPerMod3, RouteExtension } from '@ditsmod/rest';
+import { MetadataPerMod3, RestRouteExtension } from '@ditsmod/rest';
 
 import { I18nTransformer } from './i18n-transformer.js';
 import { I18nLogMediator } from './i18n-log-mediator.js';
@@ -28,7 +28,7 @@ export class I18nExtension implements Extension<void> {
   ) {}
 
   async stage1(isLastModule?: boolean) {
-    const stage1ExtensionMeta = await this.extensionManager.stage1(RouteExtension);
+    const stage1ExtensionMeta = await this.extensionManager.stage1(RestRouteExtension);
     this.addI18nProviders(stage1ExtensionMeta, isLastModule);
   }
 
