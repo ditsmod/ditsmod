@@ -46,9 +46,49 @@ interface Extension<T> {
 }
 ```
 
-Зверніть увагу, що під поняттям "значення, яке повертає розширення" мається на увазі значення, яке повертає метод `stage1()` даного розширення.
+Готовий простий приклад ви можете проглянути у теці [00-standalone-application][1]. Зверніть увагу, що під поняттям "значення, що повертає розширення" мається на увазі значення, що повертає метод `stage1()` даного розширення.
 
-Готовий простий приклад ви можете проглянути у теці [00-standalone-application][1].
+Імплементацію даного інтерфейсу можна зробити, наприклад, так:
+
+```ts
+import { injectable, Extension, Logger } from '@ditsmod/core';
+
+@injectable()
+export class SimpleExtension implements Extension<void> {
+  constructor(private logger: Logger) {}
+
+  async stage1() {
+    // ...
+    this.logger.log('info', 'some message');
+  }
+}
+```
+
+Як бачите, розширення у своєму конструкторі можуть вказувати залежність від сервісів, провайдери яких можуть бути оголошені на рівні модуля чи застосунку. Але майте на увазі, що в інжектор для розширень передаються лише провайдери зі статичних метаданих, що вказані у декораторах модуля.
+
+Як зазначено в описі методів розширень, під час виклику `stage1()` будь-яке розширення може [динамічно додавати провайдери][7] на будь-який [рівень ієрархії][8]. І вже після того, як відпрацювали `stage1()` у розширеннях з усіх модулів застосунку, лише тоді створюються фінальні інжектори на рівні застосунку, і на рівні кожного із модулів. Інжектор на рівні модуля передається у якості аргументу до `stage2(injectorPerMod)`. На цьому етапі ще можна динамічно додавати провайдери для формування інжекторів, але вже на нижчому, ніж модуль, рівні; причому таке додавання вже повинні робити таргет-розширення, для яких дані провайдери і призначались, і які самі вже створюють відповідні фінальні інжектори.
+
+Майте на увазі, що на першому етапі роботи розширень, інжектор для розширень - це не той інжектор, який буде створено на другому етапі роботи розширень, тому наступна передача значень в інжектор для розширень не має сенсу:
+
+```ts {8}
+import { injectable, Extension, Injector } from '@ditsmod/core';
+
+@injectable()
+export class SimpleExtension implements Extension<void> {
+  constructor(private injector: Injector) {}
+
+  async stage1() {
+    this.injector.setByToken('some-token', 'some value');
+  }
+
+  async stage2(injectorPerMod: Injector) {
+    injectorPerMod === this.injector; // false
+    injectorPerMod.get('some-token'); // may return undefined
+  }
+}
+```
+
+Правильнішим буде [передавати][7] у метадані [ValueProvider][11].
 
 ## Реєстрація розширення {#extension-registration}
 
@@ -115,6 +155,16 @@ export class SomeModule {}
 ```
 
 Тобто у властивість `extension` передається клас розширення, яке ви декларуєте і реєструєте у поточному модулі. У властивість `beforeExtensions` або `afterExtensions` передаються відповідні класи розширень, якщо вам потрібно щоб зареєстроване розширення працювало перед або після вказаних розширень. Опціонально можна використовувати властивість `export` або `exportOnly` для того, щоб вказати, чи потрібно щоб дане розширення працювало у зовнішньому модулі, яке імпортуватиме цей модуль. Окрім цього, властивість `exportOnly` ще й вказує на те, що дане розширення не потрібно запускати у так званому хост-модулі (тобто в модулі, де оголошується це розширення).
+
+Також ви можете підмінити зовнішнє розширення, яке імпортується в поточний модуль:
+
+```ts
+extensions: [
+  { extension: MyExtension, overrideExtension: ExternalExtension }
+],
+```
+
+В даному разі `ExternalExtension` імпортується в поточний модуль, де ви його підміняєте `MyExtension`.
 
 ## Групи розширень {#group-of-extensions}
 
@@ -359,8 +409,11 @@ extensions: [
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/00-standalone-application
 [2]: #group-of-extensions
 [3]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/body-parser/src/body-parser.extension.ts#L41
+[4]: /basic-components/dependency-injection/#injector-and-providers
 [5]: /rest-application/native-modules/body-parser
 [6]: /rest-application/native-modules/openapi
-[8]: /basic-components/dependency-injection#hierarchy-and-encapsulation-of-injectors
+[7]: #dynamic-addition-of-providers
+[8]: /basic-components/dependency-injection#hierarchy-of-injectors-in-the-ditsmod-application
 [9]: #using-extensionmanager
 [10]: /rest-application/http-interceptors/
+[11]: /basic-components/dependency-injection/#provider

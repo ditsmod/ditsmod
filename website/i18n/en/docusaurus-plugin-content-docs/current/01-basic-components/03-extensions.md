@@ -46,9 +46,49 @@ interface Extension<T> {
 }
 ```
 
-Please note that the term "value returned by the extension" refers to the value returned by the `stage1()` method of that extension.
+You can find a ready simple example in the [00-standalone-application][1] folder. Note that the term "value returned by the extension" refers to the value returned by the `stage1()` method of this extension.
 
-You can see a simple example in the folder [00-standalone-application][1].
+The implementation of this interface can be done, for example, as follows:
+
+```ts
+import { injectable, Extension, Logger } from '@ditsmod/core';
+
+@injectable()
+export class SimpleExtension implements Extension<void> {
+  constructor(private logger: Logger) {}
+
+  async stage1() {
+    // ...
+    this.logger.log('info', 'some message');
+  }
+}
+```
+
+As you can see, extensions can declare dependencies on services in their constructors, whose providers may be declared at the module or application level. However, keep in mind that only providers from the static metadata specified in the module decorators are passed to the injector for extensions.
+
+As noted in the description of extension methods, during the execution of `stage1()`, any extension can [dynamically add providers][7] to any [hierarchy level][8]. And only after `stage1()` has been executed in extensions from all application modules, the final injectors are created at the application level and at the level of each module. The injector at the module level is passed as an argument to `stage2(injectorPerMod)`. At this stage, it is still possible to dynamically add providers for forming injectors, but already at a lower level than the module; moreover, such addition must already be done by target extensions for which these providers are intended, and which themselves already create the corresponding final injectors.
+
+Keep in mind that at the first stage of extension execution, the injector for extensions is not the same injector that will be created at the second stage of extension execution, so the following passing of values to the injector for extensions makes no sense:
+
+```ts {8}
+import { injectable, Extension, Injector } from '@ditsmod/core';
+
+@injectable()
+export class SimpleExtension implements Extension<void> {
+  constructor(private injector: Injector) {}
+
+  async stage1() {
+    this.injector.setByToken('some-token', 'some value');
+  }
+
+  async stage2(injectorPerMod: Injector) {
+    injectorPerMod === this.injector; // false
+    injectorPerMod.get('some-token'); // may return undefined
+  }
+}
+```
+
+It is more appropriate to [pass][7] a [ValueProvider][11] in metadata.
 
 ## Extension registration {#extension-registration}
 
@@ -115,6 +155,16 @@ export class SomeModule {}
 ```
 
 That is, the extension class that you declare and register in the current module is passed to the `extension` property. The corresponding extension classes are passed to the `beforeExtensions` or `afterExtensions` properties if you need the registered extension to run before or after the specified extensions. Optionally, you can use the `export` or `exportOnly` property to indicate whether this extension should work in an external module that will import this module. Additionally, the `exportOnly` property also indicates that this extension should not be executed in the so-called host module (i.e., the module where this extension is declared).
+
+You can also override an external extension that is imported into the current module:
+
+```ts
+extensions: [
+  { extension: MyExtension, overrideExtension: ExternalExtension }
+],
+```
+
+In this case, `ExternalExtension` is imported into the current module, where you override it with `MyExtension`.
 
 ## Extension groups {#group-of-extensions}
 
@@ -359,7 +409,10 @@ extensions: [
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/00-standalone-application
 [2]: #group-of-extensions
 [3]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/body-parser/src/body-parser.extension.ts#L41
+[4]: /basic-components/dependency-injection/#injector-and-providers
 [5]: /rest-application/native-modules/body-parser
 [6]: /rest-application/native-modules/openapi
-[8]: /basic-components/dependency-injection#hierarchy-and-encapsulation-of-injectors
+[7]: #dynamic-addition-of-providers
+[8]: /basic-components/dependency-injection#hierarchy-of-injectors-in-the-ditsmod-application
 [10]: /rest-application/http-interceptors/
+[11]: /basic-components/dependency-injection/#provider
