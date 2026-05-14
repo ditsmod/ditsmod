@@ -1,8 +1,7 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
 import { Providers } from '@ditsmod/core';
-import { TestRestApplication } from '@ditsmod/rest-testing';
-import { TestRestPlugin } from '@ditsmod/rest-testing';
+import { TestRestApplication, TestRestPlugin } from '@ditsmod/rest-testing';
 
 import { AppModule } from './app.module.js';
 import {
