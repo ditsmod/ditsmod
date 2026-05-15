@@ -59,7 +59,7 @@ But why isn’t Ditsmod as minimalistic as ExpressJS? As you can see in the exam
 - the role of the module where the controllers are declared;
 - the role of the application that contains the HTTP server.
 
-Looking at the amount of code, you might think that Ditsmod is slower than ExpressJS because of its verbosity. But in fact, only Ditsmod's cold start is slightly slower (it starts in 34 ms on my laptop, while ExpressJS starts in 4 ms). In terms of request processing speed, [Ditsmod is more than twice as fast as ExpressJS][14].
+Looking at the amount of code, you might think that Ditsmod is slower than ExpressJS because of its verbosity. But in fact, only Ditsmod's cold start is slightly slower (it starts in 34 ms on my laptop, while ExpressJS starts in 4 ms). As for request processing speed, [Ditsmod is ~30% faster than ExpressJS][14].
 
 More application examples are available in the [Ditsmod][4] repository, as well as in the [RealWorld][13] repository.
 
