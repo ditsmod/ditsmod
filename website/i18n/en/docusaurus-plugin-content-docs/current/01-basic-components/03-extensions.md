@@ -92,7 +92,7 @@ export class SimpleExtension implements Extension<void> {
 }
 ```
 
-If you want to pass a ready-made value in the first stage of extension initialization, it would be more correct to [pass][7] them in the [ValueProvider][11] metadata.
+If you want to pass a ready-made value in the first stage of extension initialization, it would be more correct to [pass][7] them as [ValueProvider][11] in the metadata.
 
 ## Extension registration {#extension-registration}
 
