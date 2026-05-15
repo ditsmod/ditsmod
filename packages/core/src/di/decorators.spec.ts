@@ -29,7 +29,7 @@ describe('decorators', () => {
   it('should invoke as decorator', () => {
     class Class {}
     testDecorator({ marker: 'WORKS' })(Class);
-    const annotations = (Class as any)[CLASS_KEY] as DecoratorAndValue[];
+    const annotations = Reflect.getOwnMetadata(CLASS_KEY, Class) as DecoratorAndValue[];
     expect(annotations[0].value.marker).toEqual('WORKS');
   });
 
@@ -37,7 +37,7 @@ describe('decorators', () => {
     testDecorator({ marker: 'parent' })(DecoratedParent);
     testDecorator({ marker: 'child' })(DecoratedChild);
 
-    const annotations = (DecoratedChild as any)[CLASS_KEY] as DecoratorAndValue[];
+    const annotations = Reflect.getOwnMetadata(CLASS_KEY, DecoratedChild) as DecoratorAndValue[];
     expect(annotations.length).toBe(1);
     expect(annotations[0].value.marker).toEqual('child');
   });

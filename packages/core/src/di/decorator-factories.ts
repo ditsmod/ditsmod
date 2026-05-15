@@ -125,9 +125,8 @@ export function getParamKey(defaultKey: symbol, propertyKey?: string | symbol): 
 }
 
 export function getRawMetadata<T = any>(Cls: Class, key: symbol, defaultValue: T): T {
-  // Use of Object.defineProperty is important since it creates non-enumerable property which
-  // prevents the property is copied during subclassing.
-  return Cls.hasOwnProperty(key)
-    ? Cls[key as keyof Class]
-    : Object.defineProperty(Cls, key, { value: defaultValue })[key as keyof Class];
+  if (!Reflect.hasOwnMetadata(key, Cls)) {
+    Reflect.defineMetadata(key, defaultValue, Cls);
+  }
+  return Reflect.getOwnMetadata(key, Cls);
 }

@@ -227,18 +227,12 @@ export class Reflector {
     key: string | symbol,
     classMeta?: ClassMeta<DecorValue, Proto>,
   ) {
-    // Use of Object.defineProperty is important since it creates non-enumerable property which
-    // prevents the property is copied during subclassing.
-    if (Cls.hasOwnProperty(key)) {
-      (Cls as any)[key] = classMeta;
-    } else {
-      Object.defineProperty(Cls, key, { value: classMeta, writable: true });
-    }
+    this.reflect.defineMetadata(key, classMeta, Cls);
   }
 
   protected getOwnCacheMetadata<DecorValue = any, Proto extends object = object>(Cls: any) {
-    if (Cls.hasOwnProperty(CACHE_KEY)) {
-      return Cls[CACHE_KEY] as ClassMeta<DecorValue, Proto> | undefined;
+    if (this.reflect.hasOwnMetadata(CACHE_KEY, Cls)) {
+      return this.reflect.getOwnMetadata(CACHE_KEY, Cls) as ClassMeta<DecorValue, Proto> | undefined;
     }
     return null;
   }
@@ -332,7 +326,7 @@ export class Reflector {
   protected getOwnParams(Cls: Class, propertyKey?: string | symbol): ParamsMeta[] | null[] {
     const isConstructor = !propertyKey || propertyKey == 'constructor';
     const key = isConstructor ? getParamKey(PARAMS_KEY) : getParamKey(PARAMS_KEY, propertyKey);
-    const paramMetadata = Cls.hasOwnProperty(key) && (Cls as any)[key];
+    const paramMetadata = this.reflect.hasOwnMetadata(key, Cls) && this.reflect.getOwnMetadata(key, Cls);
     const args = (isConstructor ? [Cls] : [Cls.prototype, propertyKey]) as [Class];
     const paramTypes = this.reflect.getOwnMetadata('design:paramtypes', ...args);
 
@@ -353,18 +347,10 @@ export class Reflector {
   }
 
   protected getOwnClassAnnotations(Cls: Class): any[] | null {
-    // API for metadata created by invoking the decorators.
-    if (Cls.hasOwnProperty(CLASS_KEY)) {
-      return (Cls as any)[CLASS_KEY];
-    }
-    return null;
+    return this.reflect.hasOwnMetadata(CLASS_KEY, Cls) ? this.reflect.getOwnMetadata(CLASS_KEY, Cls) : null;
   }
 
   protected getOwnPropMetadata(Cls: any): { [key: string | symbol]: any[] } | null {
-    // API for metadata created by invoking the decorators.
-    if (Cls.hasOwnProperty(PROP_KEY)) {
-      return Cls[PROP_KEY];
-    }
-    return null;
+    return this.reflect.hasOwnMetadata(PROP_KEY, Cls) ? this.reflect.getOwnMetadata(PROP_KEY, Cls) : null;
   }
 }
