@@ -645,6 +645,8 @@ const injectorPerApp = Injector.resolveAndCreate(providersPerApp);
 const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
 const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
 const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
+
+injectorPerApp === injectorPerMod.parent; // true
 ```
 
 Under the hood, Ditsmod performs a similar procedure many times for different modules, routes, and HTTP requests. Using this example, let’s reinforce our understanding of the dependency chain at different levels of the injector hierarchy, and once again use the familiar `Service` class that depends on `Config`:

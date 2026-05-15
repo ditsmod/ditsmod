@@ -645,6 +645,8 @@ const injectorPerApp = Injector.resolveAndCreate(providersPerApp);
 const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
 const injectorPerRou = injectorPerMod.resolveAndCreateChild(providersPerRou);
 const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
+
+injectorPerApp === injectorPerMod.parent; // true
 ```
 
 Під капотом, Ditsmod робить аналогічну процедуру багато разів для різних модулів, роутів та HTTP-запитів. Використовуючи цей приклад, давайте закріпимо знання про ланцюжок залежностей на різних рівнях ієрархії інжекторів, і знову скористаємось знайомим класом `Service`, який залежить від `Config`:

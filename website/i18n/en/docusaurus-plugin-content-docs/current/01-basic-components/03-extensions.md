@@ -64,13 +64,13 @@ export class SimpleExtension implements Extension<void> {
 }
 ```
 
-As you can see, extensions can declare dependencies on services in their constructors, whose providers may be declared at the module or application level. However, keep in mind that only providers from the static metadata specified in the module decorators are passed to the injector for extensions.
+As you can see, extensions can declare dependencies on services whose providers may be defined at the module or application level. However, keep in mind that this injector is formed before the extensions start working, so providers from other extensions are not passed to it.
 
-As noted in the description of extension methods, during the execution of `stage1()`, any extension can [dynamically add providers][7] to any [hierarchy level][8]. And only after `stage1()` has been executed in extensions from all application modules, the final injectors are created at the application level and at the level of each module. The injector at the module level is passed as an argument to `stage2(injectorPerMod)`. At this stage, it is still possible to dynamically add providers for forming injectors, but already at a lower level than the module; moreover, such addition must already be done by target extensions for which these providers are intended, and which themselves already create the corresponding final injectors.
+During `stage1()`, any extension can [dynamically add providers][7] to any [hierarchy level][8]. Only after `stage1()` has finished running in all extensions across all modules, the final injectors are created - one at the application level and one per module. The module-level injector is passed as an argument to `stage2(injectorPerMod)`. At this stage, providers can still be added dynamically, but only at levels lower than the module. This must be done by the target extensions for which those providers are intended, and they are also responsible for creating the corresponding final injectors.
 
-Keep in mind that at the first stage of extension execution, the injector for extensions is not the same injector that will be created at the second stage of extension execution, so the following passing of values to the injector for extensions makes no sense:
+If you request `Injector` in the extension constructor, you will get a special module-level injector that is only for extensions. So there is no point in passing values ​​to it in the hope that they will be available in the final injectors:
 
-```ts {8}
+```ts {8,15,17}
 import { injectable, Extension, Injector } from '@ditsmod/core';
 
 @injectable()
@@ -78,17 +78,21 @@ export class SimpleExtension implements Extension<void> {
   constructor(private injector: Injector) {}
 
   async stage1() {
-    this.injector.setByToken('some-token', 'some value');
+    this.injector.setByToken('some-token', 'some value'); // ❌ Don't do this
   }
 
   async stage2(injectorPerMod: Injector) {
     injectorPerMod === this.injector; // false
     injectorPerMod.get('some-token'); // may return undefined
+
+    injectorPerMod.setByToken('some-token', 'some value'); // ✅ The module level
+    // OR
+    injectorPerMod.parent.setByToken('some-token', 'some value'); // ✅ The application level
   }
 }
 ```
 
-It is more appropriate to [pass][7] a [ValueProvider][11] in metadata.
+If you want to pass a ready-made value in the first stage of extension initialization, it would be more correct to [pass][7] them in the [ValueProvider][11] metadata.
 
 ## Extension registration {#extension-registration}
 
