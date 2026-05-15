@@ -16,9 +16,9 @@ In most cases, multidimensional arrays of configuration data reflect the structu
 2. each module contains controllers or providers;
 3. each controller has one or more routes.
 
-A simple and practical example of how extensions work can be found in the [@ditsmod/body-parser][5] module, where an extension dynamically adds an HTTP interceptor for parsing the request body to each route that has the corresponding method (POST, PATCH, PUT). It does this once before the HTTP request handlers are created, so there is no need to check the need for parsing on every request.
+A simple and practical example of how extensions work can be found in the [@ditsmod/body-parser][5] module, where an extension dynamically adds an HTTP interceptor for parsing the request body to each route that has the corresponding method (POST, PATCH, PUT). It does this once before the HTTP request handlers are created, so there is no need to check whether parsing is required on every request.
 
-Another example. The [@ditsmod/openapi][6] module allows you to create OpenAPI documentation using the new `@oasRoute` decorator. Without the extension working, Ditsmod will ignore the metadata from this new decorator. The extension from this module receives the aforementioned configuration array, finds the metadata from the `@oasRoute` decorator, and interprets this metadata by adding other metadata that will be used by the target extension to set up routes.
+Another example. The [@ditsmod/rest][6] module allows setting routes using a custom `@route` decorator. Without the extension running, Ditsmod will ignore the metadata from this decorator. The extension from this module takes the configuration array mentioned above, finds metadata from the `@route` decorator there, and interprets it by adding other metadata that will be used by the target extension to set up routes.
 
 ## What is "Ditsmod extension" {#what-is-ditsmod-extension}
 
@@ -187,7 +187,16 @@ As you can see, groups are formed thanks to the `groups` property in the module 
 
 A shared base interface of the data returned by each extension in a given group is an important condition, since other extensions may expect data from this group, and they will rely specifically on this base interface. Of course, the base interface can be extended if needed, but not narrowed.
 
-In addition, the order of execution of individual groups of extensions and the dependencies between them are also important. In our example, after the group with `RestRouteExtension` and `OpenapiRouteExtension` has completed, their data is collected into a single array and passed to `PreRouterExtension`. Even if you later register more new extensions in the group with `RestRouteExtension`, `PreRouterExtension` will still be executed only after absolutely all extensions in the group with `RestRouteExtension` have completed, including your new extensions.
+In addition, the execution order of individual extension groups and the dependencies between them are also important. In our example, after the group containing `RestRouteExtension` and `OpenapiRouteExtension` has finished executing, their data is collected into a single array and passed to `PreRouterExtension`. Even if you later register more new extensions in this group, `PreRouterExtension` will still execute only after absolutely all extensions in this group have finished executing, including your newly added extensions. This behavior is dictated by the instructions recorded during the declaration of `RestRouteExtension`:
+
+```ts
+extensions: [
+  { extension: RestRouteExtension, beforeExtensions: [PreRouterExtension], exportOnly: true },
+  // ...
+],
+```
+
+As you can see, nothing is said here about `OpenapiRouteExtension`, and even when `OpenapiRouteExtension` was declared, it also did not specify that `OpenapiRouteExtension` must run before `PreRouterExtension`. It is enough that `groups: [RestRouteExtension]` was specified during the declaration of `OpenapiRouteExtension`, and this automatically places `OpenapiRouteExtension` in the queue after `RestRouteExtension`, but before `PreRouterExtension`.
 
 This feature is very convenient, as it sometimes allows you to integrate external Ditsmod modules (for example, from npmjs.com) into your application without any configuration, simply by importing them into the required module. Imported extensions that belong to certain groups will be executed in the correct order, even if they are imported from different external modules.
 
@@ -202,8 +211,8 @@ extensions: [
 
 Based on this configuration, two separate groups of extensions will be created:
 
-1. `Extension1`, `Extension3`;
-2. `Extension2`, `Extension3`.
+- First group: `Extension1`, `Extension3`.
+- Second group: `Extension2`, `Extension3`.
 
 If in the current module other extensions also specify these same group tokens in `groups`, these groups will be extended:
 
@@ -216,8 +225,8 @@ extensions: [
 
 Now these groups will contain the following elements:
 
-1. `Extension1`, `Extension3`, `Extension4`;
-2. `Extension2`, `Extension3`, `Extension4`.
+- First group: `Extension1`, `Extension3`, `Extension4`.
+- Second group: `Extension2`, `Extension3`, `Extension4`.
 
 And it does not matter whether `Extension4` is declared in the current module or imported from another module.
 
@@ -324,8 +333,8 @@ extensions: [
 
 And, as already mentioned, based on this configuration, two separate groups are created:
 
-1. `Extension1`, `Extension3`;
-2. `Extension2`, `Extension3`.
+- First group: `Extension1`, `Extension3`.
+- Second group: `Extension2`, `Extension3`.
 
 Now that you are familiar with `ExtensionManager`, it is important to emphasize that the lookup of extension groups is performed by tokens — by the extension classes that we previously specified in the `groups` property:
 
