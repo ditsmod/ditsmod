@@ -1,6 +1,6 @@
 import { AnyObj } from '#types/mix.js';
 import { TypeGuard } from '#utils/type-guards.js';
-import { ClassMetaIterator, init } from './class-meta-iterator.js';
+import { ClassMetaIterator } from './class-meta-iterator.js';
 import {
   CACHE_KEY,
   CLASS_KEY,
@@ -108,9 +108,6 @@ export class Reflector {
     if (cache === null) {
       this.concatWithParentClassMeta(Cls, classMeta);
       cache = this.concatWithOwnClassMeta(Cls, classMeta);
-      if (cache) {
-        (cache as unknown as ClassMetaIterator)[init]();
-      }
     }
 
     return this.getClassMetaOrParamsMeta(Cls, cache!, propertyKey);
@@ -199,7 +196,7 @@ export class Reflector {
         return;
       }
       if (!classMeta.hasOwnProperty(propName)) {
-        (classMeta as any)[propName] = { type: Function, decorators: [], params: [] } as ClassPropMeta;
+        (classMeta as any)[propName] = { type: Class, decorators: [], params: [] } as ClassPropMeta;
       }
       const classPropMeta = (classMeta as any)[propName] as ClassPropMeta;
       classPropMeta.params = this.getParamsMetadata(Cls, propName as any);

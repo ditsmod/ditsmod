@@ -1,5 +1,5 @@
-import { ClassMetaIterator, init } from './class-meta-iterator.js';
 import { jest } from '@jest/globals';
+import { ClassMetaIterator } from './class-meta-iterator.js';
 
 describe('ClassMetaIterator', () => {
   it('works with nested loops', () => {
@@ -10,7 +10,6 @@ describe('ClassMetaIterator', () => {
     (classMetaIterator as any)['key1'] = '';
     (classMetaIterator as any)[sym] = '';
     (classMetaIterator as any)['key2'] = '';
-    classMetaIterator[init]();
 
     for (const v of classMetaIterator) {
       for1(v);
