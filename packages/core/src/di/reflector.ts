@@ -9,7 +9,7 @@ import {
   METHODS_WITH_PARAMS,
   PROP_KEY,
   getParamKey,
-  getRawMetadata,
+  getDecoratorsMeta,
 } from './decorator-factories.js';
 import { ForwardRefFn, resolveForwardRef } from './forward-ref.js';
 import { Class, DecoratorAndValue, ParamsMeta, ClassMeta, ClassPropMeta, UnknownType } from './types-and-models.js';
@@ -183,7 +183,7 @@ export class Reflector {
     classMeta: ClassMeta<DecorValue, Proto>,
     ownMetaKeys: (string | symbol)[],
   ): ClassMeta<DecorValue, Proto> | undefined {
-    const methodNames = getRawMetadata(Cls, METHODS_WITH_PARAMS, new Set());
+    const methodNames = getDecoratorsMeta(Cls, METHODS_WITH_PARAMS, new Set());
     methodNames.add('constructor');
     methodNames.forEach((propName: any) => {
       if (ownMetaKeys.includes(propName)) {

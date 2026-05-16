@@ -45,14 +45,12 @@ export function makeClassDecorator<T extends AnyFn>(transform?: T, debugFactoryN
     const value = transform ? transform(...args) : [...args];
     const declaredInDir = CallsiteUtils.getCallerDir();
     return function classDecorator(Cls: Class): void {
-      const annotations: any[] = getRawMetadata(Cls, CLASS_KEY, []);
+      const annotations: any[] = getDecoratorsMeta(Cls, CLASS_KEY, []);
       const decoratorAndValue = new DecoratorAndValue(decoratorId || classDecoratorFactory, value, declaredInDir);
       annotations.push(decoratorAndValue);
     };
   }
-  if (debugFactoryName) {
-    Object.defineProperty(classDecoratorFactory, 'name', { value: debugFactoryName });
-  }
+  setDecoratorFactoryName(classDecoratorFactory, debugFactoryName);
   return classDecoratorFactory;
 }
 
@@ -74,8 +72,8 @@ export function makeParamDecorator<T extends AnyFn>(transform?: T, debugFactoryN
       // This function can be called for a class constructor and methods.
       const Cls = isType(clsOrObj) ? clsOrObj : (clsOrObj.constructor as Class);
       const key = getParamKey(PARAMS_KEY, propertyKey);
-      const parameters: any[] = getRawMetadata(Cls, key, []);
-      const methodNames: Set<string | symbol> = getRawMetadata(Cls, METHODS_WITH_PARAMS, new Set());
+      const parameters = getDecoratorsMeta(Cls, key, [] as any[]);
+      const methodNames: Set<string | symbol> = getDecoratorsMeta(Cls, METHODS_WITH_PARAMS, new Set());
       methodNames.add(propertyKey || 'constructor');
 
       // There might be gaps if some in between parameters do not have annotations.
@@ -87,9 +85,7 @@ export function makeParamDecorator<T extends AnyFn>(transform?: T, debugFactoryN
       (parameters[index] ??= []).push(new DecoratorAndValue(decoratorId || paramDecorFactory, value));
     };
   }
-  if (paramDecorFactory) {
-    Object.defineProperty(paramDecorFactory, 'name', { value: debugFactoryName });
-  }
+  setDecoratorFactoryName(paramDecorFactory, debugFactoryName);
   return paramDecorFactory;
 }
 
@@ -105,14 +101,11 @@ export function makePropDecorator<T extends AnyFn>(transform?: T, debugFactoryNa
     const value = transform ? transform(...args) : [...args];
     return function propDecorator(target: any, propertyKey: string | symbol): void {
       const Cls = target.constructor as Class;
-      const meta = getRawMetadata(Cls, PROP_KEY, {} as { [key: string | symbol]: any });
-      meta[propertyKey] = (meta.hasOwnProperty(propertyKey) && meta[propertyKey]) || [];
-      meta[propertyKey].push(new DecoratorAndValue(decoratorId || propDecorFactory, value));
+      const meta = getDecoratorsMeta(Cls, PROP_KEY, {} as Record<string | symbol, DecoratorAndValue[]>);
+      (meta[propertyKey] ??= []).push(new DecoratorAndValue(decoratorId || propDecorFactory, value));
     };
   }
-  if (propDecorFactory) {
-    Object.defineProperty(propDecorFactory, 'name', { value: debugFactoryName });
-  }
+  setDecoratorFactoryName(propDecorFactory, debugFactoryName);
   return propDecorFactory;
 }
 
@@ -124,9 +117,15 @@ export function getParamKey(defaultKey: symbol, propertyKey?: string | symbol): 
   }
 }
 
-export function getRawMetadata<T = any>(Cls: Class, key: symbol, defaultValue: T): T {
-  if (!Reflect.hasOwnMetadata(key, Cls)) {
-    Reflect.defineMetadata(key, defaultValue, Cls);
+export function getDecoratorsMeta<T = any>(Cls: Class, metadataKey: symbol, defaultValue: T): T {
+  if (!Reflect.hasOwnMetadata(metadataKey, Cls)) {
+    Reflect.defineMetadata(metadataKey, defaultValue, Cls);
   }
-  return Reflect.getOwnMetadata(key, Cls);
+  return Reflect.getOwnMetadata(metadataKey, Cls);
+}
+
+function setDecoratorFactoryName(factory: AnyFn, debugFactoryName?: string) {
+  if (debugFactoryName) {
+    Object.defineProperty(factory, 'name', { value: debugFactoryName });
+  }
 }
