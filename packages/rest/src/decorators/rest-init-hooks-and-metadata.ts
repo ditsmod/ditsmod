@@ -1,5 +1,5 @@
 import {
-  makeClassDecorator,
+  Reflector,
   InitHooks,
   ModRefId,
   BaseMeta,
@@ -23,7 +23,7 @@ import { RestGlobalProviders } from '#types/types.js';
 import { RestModule } from '#init/rest.module.js';
 import { RestDeepModulesImporter } from '#init/rest-deep-modules-importer.js';
 
-export const initRest: InitDecorator<RestInitRawMeta, RestModuleParams, RestInitMeta> = makeClassDecorator(
+export const initRest: InitDecorator<RestInitRawMeta, RestModuleParams, RestInitMeta> = Reflector.makeClassDecorator(
   transformInitMeta,
   'initRest',
 );
@@ -31,8 +31,8 @@ export const restRootModule: InitDecorator<
   RestInitRawMeta & { resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][] },
   RestModuleParams,
   RestInitMeta
-> = makeClassDecorator(transformRootMeta, 'restRootModule', initRest);
-export const restModule: InitDecorator<RestInitRawMeta, RestModuleParams, RestInitMeta> = makeClassDecorator(
+> = Reflector.makeClassDecorator(transformRootMeta, 'restRootModule', initRest);
+export const restModule: InitDecorator<RestInitRawMeta, RestModuleParams, RestInitMeta> = Reflector.makeClassDecorator(
   transformFeatureMeta,
   'restModule',
   initRest,

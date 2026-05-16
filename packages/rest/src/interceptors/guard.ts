@@ -1,8 +1,8 @@
-import { Class, makeClassDecorator, BaseMeta } from '@ditsmod/core';
+import { Class, Reflector, BaseMeta } from '@ditsmod/core';
 import { RequestContext } from '#services/request-context.js';
 import { RestInitMeta } from '#init/rest-init-meta.js';
 
-export const guard = makeClassDecorator((data?: never) => data);
+export const guard = Reflector.makeClassDecorator((data?: never) => data);
 
 export interface CanActivate {
   canActivate(ctx: RequestContext, params?: any[]): boolean | Response | Promise<boolean | Response>;

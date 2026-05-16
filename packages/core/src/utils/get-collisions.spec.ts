@@ -1,7 +1,7 @@
 
+import { Reflector } from '#di/reflector.js';
 import { Provider } from '#di/types-and-models.js';
 import { getCollisions } from './get-collisions.js';
-import { makePropDecorator } from '#di';
 
 describe('getTokensCollisions()', () => {
   it('duplicates are identical', () => {
@@ -61,7 +61,7 @@ describe('getTokensCollisions()', () => {
     class Provider5 {}
     class Provider6 {}
     class Provider7 {}
-    const decorFactory = makePropDecorator();
+    const decorFactory = Reflector.makePropDecorator();
     class ClassWithFactory {
       @decorFactory()
       method1() {

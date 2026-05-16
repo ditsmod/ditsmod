@@ -1,4 +1,4 @@
-import { AnyObj, makePropDecorator, Class } from '@ditsmod/core';
+import { AnyObj, Reflector, Class } from '@ditsmod/core';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
 
 export type AnyEnum<T extends number | string = number | string> = Record<T, T>;
@@ -33,4 +33,4 @@ class Post {
 }
  * ```
  */
-export const property = makePropDecorator(transformPropertyMeta, 'property');
+export const property = Reflector.makePropDecorator(transformPropertyMeta, 'property');

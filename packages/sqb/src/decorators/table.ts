@@ -1,5 +1,4 @@
-import { makeClassDecorator } from '@ditsmod/core';
-
+import { Reflector } from '@ditsmod/core';
 import { TableConfig } from '../types.js';
 
-export const table = makeClassDecorator((config: TableConfig) => config);
+export const table = Reflector.makeClassDecorator((config: TableConfig) => config);

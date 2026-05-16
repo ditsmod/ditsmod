@@ -1,4 +1,4 @@
-import { makeClassDecorator, Provider, Providers } from '@ditsmod/core';
+import { Reflector, Provider, Providers } from '@ditsmod/core';
 
 /**
  * Metadata accepted by the default injector-scoped trpcController.
@@ -14,7 +14,7 @@ export interface ControllerRawMetadata {
   providersPerReq?: Providers | Provider[];
 }
 
-export const trpcController: ControllerDecor = makeClassDecorator(
+export const trpcController: ControllerDecor = Reflector.makeClassDecorator(
   (data?: ControllerRawMetadata) => data || {},
   'trpcController',
 );

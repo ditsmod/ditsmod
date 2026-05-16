@@ -1,8 +1,6 @@
 import { jest } from '@jest/globals';
 import 'reflect-metadata/lite';
 
-import { makeClassDecorator, makeParamDecorator, makePropDecorator } from './decorator-factories.js';
-
 import { KeyRegistry } from './key-registry.js';
 import { Class, CTX_DATA, Dependency, getNewRegistry, Provider, ResolvedProvider } from './types-and-models.js';
 import { stringify } from '#di/stringify.js';
@@ -20,6 +18,7 @@ import {
   NoProvider,
 } from './di-errors.js';
 import { PathTracer } from './path-tracer.js';
+import { Reflector } from './reflector.js';
 
 class Engine {}
 
@@ -73,7 +72,7 @@ class NoAnnotations {
   constructor(secretDependency: any) {}
 }
 
-const factory = makePropDecorator();
+const factory = Reflector.makePropDecorator();
 const provider0 = new InjectionToken('provider0');
 const provider1 = new InjectionToken('provider1');
 const provider2 = new InjectionToken('provider2');
@@ -111,9 +110,9 @@ function createInjector(providers: Provider[], parent?: Injector | null): Inject
 
 describe('injector', () => {
   describe('getDependencies() method', () => {
-    const classDecorator = makeClassDecorator((data?: any) => data);
-    const paramDecorator = makeParamDecorator((value: any) => value);
-    const propDecorator = makePropDecorator((value: string) => value);
+    const classDecorator = Reflector.makeClassDecorator((data?: any) => data);
+    const paramDecorator = Reflector.makeParamDecorator((value: any) => value);
+    const propDecorator = Reflector.makePropDecorator((value: string) => value);
 
     class MockInjector extends Injector {
       static override getDependencies(Cls: Class, propertyKey?: string | symbol) {
@@ -384,8 +383,8 @@ describe('injector', () => {
     const spy1 = jest.fn();
     const spy2 = jest.fn();
     const spy3 = jest.fn();
-    const controller = makeClassDecorator();
-    const route = makePropDecorator((method: 'GET' | 'POST', path: string) => ({ method, path }));
+    const controller = Reflector.makeClassDecorator();
+    const route = Reflector.makePropDecorator((method: 'GET' | 'POST', path: string) => ({ method, path }));
 
     @controller({ providers: [] })
     class Controller {
@@ -482,8 +481,8 @@ describe('injector', () => {
     const spy1 = jest.fn();
     const spy2 = jest.fn();
     const spy3 = jest.fn();
-    const controller = makeClassDecorator();
-    const route = makePropDecorator((method: 'GET' | 'POST', path: string) => ({ method, path }));
+    const controller = Reflector.makeClassDecorator();
+    const route = Reflector.makePropDecorator((method: 'GET' | 'POST', path: string) => ({ method, path }));
 
     @controller({ providers: [] })
     class Controller {
@@ -586,7 +585,7 @@ describe('injector', () => {
   });
 
   it('should throw when passing anonymous function to useFactory', () => {
-    const prop = makePropDecorator();
+    const prop = Reflector.makePropDecorator();
     class ClassWithFactory {
       @prop()
       method1(one: any) {
@@ -599,7 +598,7 @@ describe('injector', () => {
   });
 
   it('should throw when passing fake value to useFactory', () => {
-    const prop = makePropDecorator();
+    const prop = Reflector.makePropDecorator();
     class ClassWithFactory {
       @prop()
       method1(one: any) {

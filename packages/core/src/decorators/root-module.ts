@@ -1,4 +1,4 @@
-import { makeClassDecorator } from '#di';
+import { Reflector } from '#di/reflector.js';
 import { RootModuleMetadata } from '#types/root-module-metadata.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { Providers } from '#utils/providers.js';
@@ -17,7 +17,7 @@ function transformModule(data?: RootRawMetadata): RootRawMetadata {
   return rawMeta;
 }
 
-export const rootModule: RootModuleDecorator = makeClassDecorator(function transformRootModule(
+export const rootModule: RootModuleDecorator = Reflector.makeClassDecorator(function transformRootModule(
   data?: RootModuleMetadata,
 ) {
   const rawMeta = transformModule(data);

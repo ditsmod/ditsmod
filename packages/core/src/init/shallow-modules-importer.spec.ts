@@ -1,4 +1,4 @@
-import { injectable, Provider, makePropDecorator, FactoryProvider, forwardRef } from '#di';
+import { injectable, Provider, Reflector, FactoryProvider, forwardRef } from '#di';
 import { featureModule } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { BaseMeta } from '#init/base-meta.js';
@@ -428,7 +428,7 @@ describe('ShallowModulesImporter', () => {
       class Provider1 {}
       class Provider2 {}
       class Provider3 {}
-      const factory = makePropDecorator();
+      const factory = Reflector.makePropDecorator();
 
       class ClassWithFactory {
         @factory()
@@ -463,7 +463,7 @@ describe('ShallowModulesImporter', () => {
     it('import Module2 and Module1 with collision - Provider1', () => {
       class Provider1 {}
       class Provider2 {}
-      const factory = makePropDecorator();
+      const factory = Reflector.makePropDecorator();
 
       class ClassWithFactory {
         @factory()
@@ -602,7 +602,7 @@ describe('ShallowModulesImporter', () => {
       class Provider1 {}
       class Provider2 {}
       class Provider3 {}
-      const factory = makePropDecorator();
+      const factory = Reflector.makePropDecorator();
 
       class ClassWithFactory {
         @factory()

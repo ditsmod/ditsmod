@@ -20,7 +20,7 @@ sidebar_position: 2
 import {
   InitHooks,
   InitDecorator,
-  makeClassDecorator,
+  Reflector,
   BaseInitRawMeta,
   FeatureModuleParams,
   BaseInitMeta,
@@ -71,7 +71,7 @@ function getInitHooks(data?: RawMetadata): InitHooks<RawMetadata> {
 }
 
 // Creating the init decorator
-const initSome: InitDecorator<RawMetadata, InitParams, InitMeta> = makeClassDecorator(getInitHooks);
+const initSome: InitDecorator<RawMetadata, InitParams, InitMeta> = Reflector.makeClassDecorator(getInitHooks);
 
 // Using init decorator
 @initSome({ one: 1, two: 2 })

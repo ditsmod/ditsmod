@@ -1,4 +1,4 @@
-import { Class, HttpMethod, makePropDecorator } from '@ditsmod/core';
+import { Class, HttpMethod, Reflector } from '@ditsmod/core';
 import { GuardItem, HttpInterceptor } from '@ditsmod/rest';
 import { XOperationObject } from '@ts-stack/openapi-spec';
 
@@ -69,7 +69,7 @@ function oasRouteCallback(
 /**
  * Open API Specification Route.
  */
-export const oasRoute: OasRouteInterface = makePropDecorator(oasRouteCallback, 'oasRoute');
+export const oasRoute: OasRouteInterface = Reflector.makePropDecorator(oasRouteCallback, 'oasRoute');
 
 interface OasRouteInterface {
   (

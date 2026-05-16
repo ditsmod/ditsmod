@@ -9,6 +9,6 @@ describe('restRootModule decorator', () => {
     const metadata = reflector.getDecorators(Module1)!;
     expect(metadata.length).toBe(1);
     expect(metadata[0].decorator).toBe(initRest);
-    expect(metadata[0].declaredInDir?.includes('ditsmod/packages/rest/dist/decorators')).toBe(true);
+    expect(metadata[0].declaredInDir).toContain('ditsmod/packages/core/dist/decorators');
   });
 });

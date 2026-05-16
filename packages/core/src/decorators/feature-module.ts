@@ -1,9 +1,9 @@
-import { makeClassDecorator } from '#di';
 import { ModuleRawMetadata } from '#decorators/module-raw-metadata.js';
+import { Reflector } from '#di/reflector.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { Providers } from '#utils/providers.js';
 
-export const featureModule: FeatureModuleDecorator = makeClassDecorator(transformModule, 'featureModule');
+export const featureModule: FeatureModuleDecorator = Reflector.makeClassDecorator(transformModule, 'featureModule');
 
 export interface FeatureModuleDecorator {
   (data?: ModuleRawMetadata): any;

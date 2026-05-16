@@ -1,5 +1,5 @@
 import {
-  makeClassDecorator,
+  Reflector,
   InitHooks,
   ModRefId,
   BaseMeta,
@@ -50,7 +50,7 @@ export interface TrpcInitRawMeta extends BaseInitRawMeta<TrpcModuleParams> {
   controllers?: Class[];
 }
 
-export const initTrpcModule: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, TrpcInitMeta> = makeClassDecorator(
+export const initTrpcModule: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, TrpcInitMeta> = Reflector.makeClassDecorator(
   transformInitMeta,
   'initTrpcModule',
 );
@@ -58,8 +58,8 @@ export const trpcRootModule: InitDecorator<
   TrpcInitRawMeta & { resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][] },
   TrpcModuleParams,
   TrpcInitMeta
-> = makeClassDecorator(transformRootMetadata, 'trpcRootModule', initTrpcModule);
-export const trpcModule: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, TrpcInitMeta> = makeClassDecorator(
+> = Reflector.makeClassDecorator(transformRootMetadata, 'trpcRootModule', initTrpcModule);
+export const trpcModule: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, TrpcInitMeta> = Reflector.makeClassDecorator(
   transformFeatureMetadata,
   'trpcModule',
   initTrpcModule,

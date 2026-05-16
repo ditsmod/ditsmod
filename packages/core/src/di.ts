@@ -1,6 +1,6 @@
 import 'reflect-metadata/lite';
 
-export { makeClassDecorator, makeParamDecorator, makePropDecorator } from '#di/decorator-factories.js';
+export { Reflector } from '#di/reflector.js';
 export * from '#di/decorators.js';
 export { ForwardRefFn, forwardRef, resolveForwardRef } from '#di/forward-ref.js';
 export { InjectionToken } from '#di/injection-token.js';

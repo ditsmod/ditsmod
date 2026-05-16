@@ -1,4 +1,4 @@
-import { makeClassDecorator } from '@ditsmod/core';
+import { Reflector } from '@ditsmod/core';
 import { XResponsesObject, XSecuritySchemeObject } from '@ts-stack/openapi-spec';
 
 export interface OasGuardMetadata {
@@ -40,4 +40,4 @@ export interface OasGuardMetadata {
   tags?: string[];
 }
 
-export const oasGuard = makeClassDecorator((data: OasGuardMetadata) => data, 'oasGuard');
+export const oasGuard = Reflector.makeClassDecorator((data: OasGuardMetadata) => data, 'oasGuard');

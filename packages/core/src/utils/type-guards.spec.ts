@@ -4,7 +4,6 @@ import {
   InjectionToken,
   isMultiProvider,
   isNormalizedProvider,
-  makePropDecorator,
   isInjectionToken,
   MultiProvider,
   forwardRef,
@@ -13,6 +12,7 @@ import { featureModule } from '#decorators/feature-module.js';
 import { isProvider } from '#utils/type-guards.js';
 import { isForwardRef } from '#di/forward-ref.js';
 import { rootModule } from '#decorators/root-module.js';
+import { Reflector } from '#di/reflector.js';
 
 describe('type guards', () => {
   it('isForwardRef()', () => {
@@ -93,7 +93,7 @@ describe('type guards', () => {
     });
 
     it('true FactoryProvider', () => {
-      const factory = makePropDecorator();
+      const factory = Reflector.makePropDecorator();
       class ClassWithDecorators {
         @factory()
         method1() {
@@ -124,7 +124,7 @@ describe('type guards', () => {
     });
 
     it('false FactoryProvider', () => {
-      const factory = makePropDecorator();
+      const factory = Reflector.makePropDecorator();
       class ClassWithDecorators {
         @factory()
         method1() {

@@ -1,6 +1,7 @@
 import { jest } from '@jest/globals';
 
-import { injectable, forwardRef, Provider, isMultiProvider, makeClassDecorator } from '#di';
+import { Reflector } from '#di/reflector.js';
+import { injectable, forwardRef, Provider, isMultiProvider } from '#di';
 import { featureModule } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { Extension } from '#extension/extension-types.js';
@@ -693,10 +694,10 @@ describe('ModuleManager', () => {
       override hostRawMeta = { four: 4 };
     }
 
-    const initSome1: InitDecorator<any, any, any> = makeClassDecorator((data) => new InitHooks1(data));
-    const initSome2: InitDecorator<any, any, any> = makeClassDecorator((data) => new InitHooks2(data));
-    const initSome3: InitDecorator<any, any, any> = makeClassDecorator((data) => new InitHooks3(data));
-    const initSome4: InitDecorator<any, any, any> = makeClassDecorator((data) => new InitHooks4(data));
+    const initSome1: InitDecorator<any, any, any> = Reflector.makeClassDecorator((data) => new InitHooks1(data));
+    const initSome2: InitDecorator<any, any, any> = Reflector.makeClassDecorator((data) => new InitHooks2(data));
+    const initSome3: InitDecorator<any, any, any> = Reflector.makeClassDecorator((data) => new InitHooks3(data));
+    const initSome4: InitDecorator<any, any, any> = Reflector.makeClassDecorator((data) => new InitHooks4(data));
 
     @initSome1({ name: '1' })
     @featureModule()
@@ -758,7 +759,7 @@ describe('ModuleManager', () => {
     interface InitMeta extends BaseInitMeta {
       path?: string;
     }
-    const initSome: InitDecorator<RootRawMetadata, { path?: string }, InitMeta> = makeClassDecorator(
+    const initSome: InitDecorator<RootRawMetadata, { path?: string }, InitMeta> = Reflector.makeClassDecorator(
       (d) => new InitHooks1(d),
     );
 
@@ -802,8 +803,8 @@ describe('ModuleManager', () => {
     }
     class InitHooks1 extends InitHooks<RawMeta1> {}
     class InitHooks2 extends InitHooks<RawMeta2> {}
-    const initSome1: InitDecorator<RawMeta1, {}, InitMeta1> = makeClassDecorator((d) => new InitHooks1(d));
-    const initSome2: InitDecorator<RawMeta2, {}, InitMeta2> = makeClassDecorator((d) => new InitHooks2(d));
+    const initSome1: InitDecorator<RawMeta1, {}, InitMeta1> = Reflector.makeClassDecorator((d) => new InitHooks1(d));
+    const initSome2: InitDecorator<RawMeta2, {}, InitMeta2> = Reflector.makeClassDecorator((d) => new InitHooks2(d));
 
     @featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
     class Module1 {}

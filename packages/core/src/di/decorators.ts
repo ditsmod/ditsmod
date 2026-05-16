@@ -1,5 +1,5 @@
 import { AnyFn } from '#types/mix.js';
-import { makeClassDecorator, makePropDecorator, makeParamDecorator } from './decorator-factories.js';
+import { Reflector } from './reflector.js';
 
 /**
  * Allows you to use an alternative token for a specific dependency.
@@ -38,7 +38,7 @@ const injector = Injector.resolveAndCreate([Engine, Car]);
 expect(injector.get(Car).engine instanceof Engine).toBe(true);
 ```
    */
-export const inject: InjectDecorator = makeParamDecorator(
+export const inject: InjectDecorator = Reflector.makeParamDecorator(
   (token, ctx?) => ({ token, ctx }) satisfies InjectTransformResult,
   'inject',
 );
@@ -71,7 +71,7 @@ const injector = Injector.resolveAndCreate([Car]);
 expect(injector.get(Car).engine).toBeNull();
 ```
  */
-export const optional = makeParamDecorator();
+export const optional = Reflector.makeParamDecorator();
 
 /**
  * A marker metadata that marks a class as available to `Injector` for creation.
@@ -106,7 +106,7 @@ class Service2 {
 expect(() => Injector.resolveAndCreate([Service2, Service1])).toThrow();
 ```
  */
-export const injectable = makeClassDecorator(() => undefined);
+export const injectable = Reflector.makeClassDecorator(() => undefined);
 
 /**
  * Specifies that an injector should retrieve a dependency only from itself (ignore parent injectors).
@@ -137,7 +137,7 @@ it('child cannot create instance of Service2', () => {
 });
 ```
  */
-export const fromSelf = makeParamDecorator();
+export const fromSelf = Reflector.makeParamDecorator();
 
 /**
  * ### Description
@@ -170,9 +170,9 @@ it('the child can instantiate Service2', () => {
 });
 ```
  */
-export const skipSelf = makeParamDecorator();
+export const skipSelf = Reflector.makeParamDecorator();
 
 /**
  * Used to mark methods in a class for `FactoryProvider`.
  */
-export const factoryMethod = makePropDecorator();
+export const factoryMethod = Reflector.makePropDecorator();

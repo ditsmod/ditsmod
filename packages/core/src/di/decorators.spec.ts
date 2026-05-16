@@ -1,18 +1,18 @@
 import 'reflect-metadata/lite';
 
-import { CLASS_KEY, makeClassDecorator, makePropDecorator } from './decorator-factories.js';
+import { Reflector } from './reflector.js';
 import { reflector } from './reflection.js';
-import { DecoratorAndValue } from './types-and-models.js';
+import { CLASS_KEY, DecoratorAndValue } from './types-and-models.js';
 
 class DecoratedParent {}
 class DecoratedChild extends DecoratedParent {}
 
-const testDecorator = makeClassDecorator((data: any) => data);
+const testDecorator = Reflector.makeClassDecorator((data: any) => data);
 
 describe('Property decorators', () => {
   // https://github.com/angular/angular/issues/12224
   it('should work on the "watch" property', () => {
-    const prop = makePropDecorator((value: any) => value);
+    const prop = Reflector.makePropDecorator((value: any) => value);
 
     class TestClass {
       @prop('firefox!')
@@ -23,6 +23,23 @@ describe('Property decorators', () => {
     expect(p.watch.type).toBe(Object);
     expect(p.watch.decorators).toEqual([new DecoratorAndValue(prop, 'firefox!')]);
   });
+
+  // it('should work with any default plain values', () => {
+  //   const propDecor = makePropDecorator((data: any) => ({ value: data != null ? data : 5 }));
+  //   class A {
+  //     prop1: number;
+  //   };
+  //   propDecor(0)(A, 'prop1');
+  //   console.log(Reflect.getOwnMetadata(PROP_KEY, A, 'prop1'));
+  //   // expect(propDecor(0)(fn, 'prop1')).toEqual(0);
+  // });
+
+  // it('should work with any object values', () => {
+  //   // make sure we don't walk up the prototype chain
+  //   const propDecor = makePropDecorator((data: any) => ({ value: 5, ...data }));
+  //   const value = Object.create({ value: 10 });
+  //   expect(new propDecor(value).value).toEqual(5);
+  // });
 });
 
 describe('decorators', () => {

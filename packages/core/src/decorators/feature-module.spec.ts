@@ -10,7 +10,7 @@ describe('Module decorator', () => {
     const metadata = reflector.getDecorators(Module1)!;
     expect(metadata.length).toBe(1);
     expect(metadata[0].decorator).toBe(featureModule);
-    expect(metadata[0].declaredInDir?.includes('ditsmod/packages/core/dist/decorators')).toBe(true);
+    expect(metadata[0].declaredInDir).toContain('ditsmod/packages/core/dist/decorators');
   });
 
   it('decorator with some data', () => {

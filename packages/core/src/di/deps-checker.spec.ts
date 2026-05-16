@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import 'reflect-metadata/lite';
 
-import { makePropDecorator } from './decorator-factories.js';
+import { Reflector } from './reflector.js';
 import { DepsChecker } from './deps-checker.js';
 import {
   InjectionToken,
@@ -68,7 +68,7 @@ class NoAnnotations {
   constructor(secretDependency: any) {}
 }
 
-const factory = makePropDecorator();
+const factory = Reflector.makePropDecorator();
 const provider0 = new InjectionToken('provider0');
 const provider1 = new InjectionToken('provider1');
 const provider2 = new InjectionToken('provider2');

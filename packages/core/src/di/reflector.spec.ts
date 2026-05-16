@@ -1,12 +1,11 @@
 import 'reflect-metadata/lite';
-import { makeClassDecorator, makeParamDecorator, makePropDecorator } from './decorator-factories.js';
 import { Reflector, isDelegateCtor } from './reflector.js';
 import { ClassPropMeta, DecoratorAndValue, ParamsMeta, PropMetadataTuple, UnknownType } from './types-and-models.js';
 
-const classDecorator = makeClassDecorator((data?: any) => data);
-const classDecoratorWithoutTransformator = makeClassDecorator();
-const paramDecorator = makeParamDecorator((value: any) => value);
-const propDecorator = makePropDecorator((value: string) => value);
+const classDecorator = Reflector.makeClassDecorator((data?: any) => data);
+const classDecoratorWithoutTransformator = Reflector.makeClassDecorator();
+const paramDecorator = Reflector.makeParamDecorator((value: any) => value);
+const propDecorator = Reflector.makePropDecorator((value: string) => value);
 
 class AType {
   constructor(public value: any) {}

@@ -1,4 +1,4 @@
-import { makeClassDecorator, Provider, Providers } from '@ditsmod/core';
+import { Reflector, Provider, Providers } from '@ditsmod/core';
 
 /**
  * Metadata accepted by the default injector-scoped controller.
@@ -42,7 +42,7 @@ export interface ControllerRawMetadata2 {
 
 export type ControllerRawMetadata = ControllerRawMetadata1 | ControllerRawMetadata2;
 
-export const controller: ControllerDecor = makeClassDecorator((data?: ControllerRawMetadata) => data || {});
+export const controller: ControllerDecor = Reflector.makeClassDecorator((data?: ControllerRawMetadata) => data || {});
 
 interface ControllerDecor {
   (meta?: ControllerRawMetadata1): any;

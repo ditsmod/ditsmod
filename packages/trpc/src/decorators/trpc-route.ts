@@ -1,4 +1,4 @@
-import { Class, makePropDecorator } from '@ditsmod/core';
+import { Class, Reflector } from '@ditsmod/core';
 
 import { GuardItem } from '#interceptors/trpc-guard.js';
 import { TrpcHttpInterceptor } from '#interceptors/tokens-and-types.js';
@@ -19,4 +19,4 @@ function routeFn(
   return { guards, interceptors };
 }
 
-export const trpcRoute = makePropDecorator(routeFn, 'trpcRoute');
+export const trpcRoute = Reflector.makePropDecorator(routeFn, 'trpcRoute');

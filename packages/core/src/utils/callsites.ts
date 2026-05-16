@@ -3,7 +3,7 @@ import { type CallSiteObject, getCallSites } from 'node:util';
 
 export class CallsiteUtils {
   /**
-   * Use this method very carefully, works only from inside `/di/decorator-factories.[js|ts]` file.
+   * Use this method very carefully, works only from inside `/di/reflector.[js|ts]` file.
    *
    * @param functionName The name of the function inside which this method is called.
    */
@@ -19,7 +19,7 @@ export class CallsiteUtils {
     const callSites = getCallSites();
     // this.debug(callSites);
     for (let i = 0; i < callSites.length; i++) {
-      if (callSites[i].scriptName.includes('/di/decorator-factories.')) {
+      if (callSites[i].scriptName.includes('/di/reflector.')) {
         return callSites[i+1];
       }
     }

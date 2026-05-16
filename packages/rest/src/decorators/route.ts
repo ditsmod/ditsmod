@@ -1,4 +1,4 @@
-import { Class, HttpMethod, makePropDecorator } from '@ditsmod/core';
+import { Class, HttpMethod, Reflector } from '@ditsmod/core';
 
 import { GuardItem } from '#interceptors/guard.js';
 import { HttpInterceptor } from '#interceptors/tokens-and-types.js';
@@ -23,4 +23,4 @@ function routeFn(
   return { httpMethod, path, guards, interceptors };
 }
 
-export const route = makePropDecorator(routeFn, 'route');
+export const route = Reflector.makePropDecorator(routeFn, 'route');

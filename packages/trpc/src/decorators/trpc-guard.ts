@@ -1,3 +1,3 @@
-import { makeClassDecorator } from '@ditsmod/core';
+import { Reflector } from '@ditsmod/core';
 
-export const trpcGuard = makeClassDecorator(undefined, 'trpcGuard');
+export const trpcGuard = Reflector.makeClassDecorator(undefined, 'trpcGuard');
