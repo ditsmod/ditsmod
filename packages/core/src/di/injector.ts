@@ -31,6 +31,7 @@ import {
   Visibility,
   CompareFn,
   getNewRegistry,
+  DEPS_KEY,
 } from './types-and-models.js';
 import { PathTracer } from './path-tracer.js';
 import {
@@ -43,7 +44,6 @@ import {
   MultiProvider,
 } from './utils.js';
 import { DEBUG_NAME, stringify } from './stringify.js';
-import { DEPS_KEY } from './decorator-factories.js';
 
 export type LevelOfInjector = 'App' | 'Mod' | 'Rou' | 'Req' | (string & {});
 

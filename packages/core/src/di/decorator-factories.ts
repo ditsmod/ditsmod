@@ -1,37 +1,15 @@
 import { AnyFn } from '#types/mix.js';
 import { CallsiteUtils } from '#utils/callsites.js';
-import { DecoratorAndValue, type Class } from './types-and-models.js';
+import { Reflector } from './reflector.js';
+import {
+  CLASS_KEY,
+  DecoratorAndValue,
+  METHODS_WITH_PARAMS,
+  PARAMS_KEY,
+  PROP_KEY,
+  type Class,
+} from './types-and-models.js';
 import { isType } from './utils.js';
-
-/**
- * The key used to store metadata in a static property of a class.
- * This metadata is taken from the class-level decorator.
- */
-export const CLASS_KEY = Symbol();
-/**
- * The key used to store metadata in a static property of a class.
- * This metadata is taken from the parameter-level decorator in a constructor of a class.
- */
-export const PARAMS_KEY = Symbol();
-/**
- * The key used to store metadata in a static property of a class.
- * This metadata is taken from the property-level decorator of a class.
- */
-export const PROP_KEY = Symbol();
-/**
- * The key used to store cached metadata in a static property of a class.
- * This metadata is taken from all decorators of a class.
- */
-export const CACHE_KEY = Symbol();
-/**
- * The key used to store cached dependencies in a static property of a class.
- * This dependencies is seted by `injector.getDependencies()`.
- */
-export const DEPS_KEY = Symbol();
-/**
- * The key used to store registry of props where are params with metadata.
- */
-export const METHODS_WITH_PARAMS = Symbol();
 
 /**
  * @param transform Such a transformer should not use symbols that can be wrapped with `forwardRef()`,
@@ -45,7 +23,7 @@ export function makeClassDecorator<T extends AnyFn>(transform?: T, debugFactoryN
     const value = transform ? transform(...args) : [...args];
     const declaredInDir = CallsiteUtils.getCallerDir();
     return function classDecorator(Cls: Class): void {
-      const annotations: any[] = getDecoratorsMeta(Cls, CLASS_KEY, []);
+      const annotations = Reflector.getRawMeta(Cls, CLASS_KEY, undefined, [] as DecoratorAndValue[]);
       const decoratorAndValue = new DecoratorAndValue(decoratorId || classDecoratorFactory, value, declaredInDir);
       annotations.push(decoratorAndValue);
     };
@@ -71,9 +49,8 @@ export function makeParamDecorator<T extends AnyFn>(transform?: T, debugFactoryN
     ): void {
       // This function can be called for a class constructor and methods.
       const Cls = isType(clsOrObj) ? clsOrObj : (clsOrObj.constructor as Class);
-      const key = getParamKey(PARAMS_KEY, propertyKey);
-      const parameters = getDecoratorsMeta(Cls, key, [] as any[]);
-      const methodNames: Set<string | symbol> = getDecoratorsMeta(Cls, METHODS_WITH_PARAMS, new Set());
+      const parameters = Reflector.getRawMeta(Cls, PARAMS_KEY, propertyKey, [] as any[]);
+      const methodNames: Set<string | symbol> = Reflector.getRawMeta(Cls, METHODS_WITH_PARAMS, undefined, new Set());
       methodNames.add(propertyKey || 'constructor');
 
       // There might be gaps if some in between parameters do not have annotations.
@@ -101,27 +78,13 @@ export function makePropDecorator<T extends AnyFn>(transform?: T, debugFactoryNa
     const value = transform ? transform(...args) : [...args];
     return function propDecorator(target: any, propertyKey: string | symbol): void {
       const Cls = target.constructor as Class;
-      const meta = getDecoratorsMeta(Cls, PROP_KEY, {} as Record<string | symbol, DecoratorAndValue[]>);
+      const defaultValue = {} as Record<string | symbol, DecoratorAndValue[]>;
+      const meta = Reflector.getRawMeta(Cls, PROP_KEY, undefined, defaultValue);
       (meta[propertyKey] ??= []).push(new DecoratorAndValue(decoratorId || propDecorFactory, value));
     };
   }
   setDecoratorFactoryName(propDecorFactory, debugFactoryName);
   return propDecorFactory;
-}
-
-export function getParamKey(defaultKey: symbol, propertyKey?: string | symbol): symbol {
-  if (propertyKey) {
-    return typeof propertyKey == 'symbol' ? propertyKey : Symbol.for(`ɵ${propertyKey}`);
-  } else {
-    return defaultKey;
-  }
-}
-
-export function getDecoratorsMeta<T = any>(Cls: Class, metadataKey: symbol, defaultValue: T): T {
-  if (!Reflect.hasOwnMetadata(metadataKey, Cls)) {
-    Reflect.defineMetadata(metadataKey, defaultValue, Cls);
-  }
-  return Reflect.getOwnMetadata(metadataKey, Cls);
 }
 
 function setDecoratorFactoryName(factory: AnyFn, debugFactoryName?: string) {
