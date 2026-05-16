@@ -300,7 +300,7 @@ describe('ModuleNormalizer', () => {
      */
     class InitMeta extends BaseInitMeta {
       baseMeta: BaseMeta;
-      rawMeta: RootRawMetadata;
+      initRawMeta: RootRawMetadata;
     }
 
     /**
@@ -312,7 +312,7 @@ describe('ModuleNormalizer', () => {
 
         // Add arbitrary metadata declared in InitMeta
         meta.baseMeta = baseMeta;
-        meta.rawMeta = this.rawMeta;
+        meta.initRawMeta = this.rawMeta;
         return meta;
       }
     }
@@ -393,7 +393,7 @@ describe('ModuleNormalizer', () => {
 
       const baseMeta = mock.normalize(Module1).initMeta.get(initSome);
       expect(baseMeta?.baseMeta.modRefId).toBe(Module1);
-      expect(baseMeta?.rawMeta).toEqual(rawMeta);
+      expect(baseMeta?.initRawMeta).toEqual(rawMeta);
     });
 
     it('proprly works with imports/exports of modules', () => {
