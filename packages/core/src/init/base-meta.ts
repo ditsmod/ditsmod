@@ -10,6 +10,10 @@ import { ExtensionClass } from '#extension/extension-types.js';
 import { GroupToken } from '#di/key-registry.js';
 
 export class BaseInitMeta<A extends AnyObj = AnyObj> {
+  /**
+   * The module ID.
+   */
+  id?: string = '';
   importsModules: ModuleType[];
   importsWithParams: ModuleWithParams[];
   providersPerApp: Provider[];
@@ -89,10 +93,6 @@ export class BaseMeta<
    * The module name.
    */
   name: string;
-  /**
-   * The module ID.
-   */
-  id?: string = '';
   /**
    * The directory in which the class was declared.
    */
