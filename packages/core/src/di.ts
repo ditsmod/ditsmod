@@ -27,7 +27,6 @@ export {
   CTX_DATA,
   ClassMeta,
   ClassPropMeta,
-  SymbolIterator,
   UnknownType
 } from '#di/types-and-models.js';
 export {

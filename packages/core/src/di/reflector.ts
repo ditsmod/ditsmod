@@ -95,7 +95,7 @@ export class Reflector {
     Cls: Class<Proto>,
     propertyKey?: string | symbol,
   ): ClassMeta<DecorValue, Proto> | ClassPropMeta<DecorValue> | undefined {
-    const classMeta = new ClassMetaIterator() as unknown as ClassMeta<DecorValue, Proto>;
+    const classMeta = new ClassMetaIterator() as ClassMeta<DecorValue, Proto>;
     if (!isType(Cls)) {
       return;
     }
