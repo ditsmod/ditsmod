@@ -41,12 +41,6 @@ export function isDelegateCtor(typeStr: string): boolean {
 }
 
 export class Reflector {
-  private reflect: typeof Reflect;
-
-  constructor(reflect?: typeof Reflect) {
-    this.reflect = reflect || Reflect;
-  }
-
   /**
    * @param Cls The class from which to return the metadata.
    * @param typeGuard Type guard, which will search for necessary decorators.
@@ -141,7 +135,7 @@ export class Reflector {
       const parentPropMeta = this.getMetadata(parentClass);
       // Merging current meta with parent meta
       if (parentPropMeta) {
-        this.reflect.ownKeys(parentPropMeta).forEach((propName) => {
+        Reflect.ownKeys(parentPropMeta).forEach((propName) => {
           const classPropMeta = { ...parentPropMeta[propName as any] };
           classPropMeta.decorators = classPropMeta.decorators.slice();
           classPropMeta.params = classPropMeta.params.slice();
@@ -161,10 +155,10 @@ export class Reflector {
     const ownPropMetadata = this.getOwnPropMetadata(Cls);
     let ownMetaKeys: (string | symbol)[] = [];
     if (ownPropMetadata) {
-      ownMetaKeys = this.reflect.ownKeys(ownPropMetadata);
+      ownMetaKeys = Reflect.ownKeys(ownPropMetadata);
     }
     ownMetaKeys.forEach((propName) => {
-      const type = this.reflect.getOwnMetadata('design:type', Cls.prototype, propName);
+      const type = Reflect.getOwnMetadata('design:type', Cls.prototype, propName);
       const decorators = ownPropMetadata![propName];
       if (classMeta.hasOwnProperty(propName)) {
         const classPropMeta = (classMeta as any)[propName] as ClassPropMeta;
@@ -207,7 +201,7 @@ export class Reflector {
     });
 
     if (
-      this.reflect.ownKeys(classMeta).length == 1 &&
+      Reflect.ownKeys(classMeta).length == 1 &&
       !classMeta.constructor.decorators.length &&
       !classMeta.constructor.params.length
     ) {
@@ -224,12 +218,12 @@ export class Reflector {
     key: string | symbol,
     classMeta?: ClassMeta<DecorValue, Proto>,
   ) {
-    this.reflect.defineMetadata(key, classMeta, Cls);
+    Reflect.defineMetadata(key, classMeta, Cls);
   }
 
   protected getOwnCacheMetadata<DecorValue = any, Proto extends object = object>(Cls: any) {
-    if (this.reflect.hasOwnMetadata(CACHE_KEY, Cls)) {
-      return this.reflect.getOwnMetadata(CACHE_KEY, Cls) as ClassMeta<DecorValue, Proto> | undefined;
+    if (Reflect.hasOwnMetadata(CACHE_KEY, Cls)) {
+      return Reflect.getOwnMetadata(CACHE_KEY, Cls) as ClassMeta<DecorValue, Proto> | undefined;
     }
     return null;
   }
@@ -323,9 +317,9 @@ export class Reflector {
   protected getOwnParams(Cls: Class, propertyKey?: string | symbol): ParamsMeta[] | null[] {
     const isConstructor = !propertyKey || propertyKey == 'constructor';
     const key = isConstructor ? getParamKey(PARAMS_KEY) : getParamKey(PARAMS_KEY, propertyKey);
-    const paramMetadata = this.reflect.hasOwnMetadata(key, Cls) && this.reflect.getOwnMetadata(key, Cls);
+    const paramMetadata = Reflect.hasOwnMetadata(key, Cls) && Reflect.getOwnMetadata(key, Cls);
     const args = (isConstructor ? [Cls] : [Cls.prototype, propertyKey]) as [Class];
-    const paramTypes = this.reflect.getOwnMetadata('design:paramtypes', ...args);
+    const paramTypes = Reflect.getOwnMetadata('design:paramtypes', ...args);
 
     if (paramTypes || paramMetadata) {
       return this.mergeTypesAndClassMeta(paramTypes, paramMetadata);
@@ -344,10 +338,10 @@ export class Reflector {
   }
 
   protected getOwnClassAnnotations(Cls: Class): any[] | null {
-    return this.reflect.hasOwnMetadata(CLASS_KEY, Cls) ? this.reflect.getOwnMetadata(CLASS_KEY, Cls) : null;
+    return Reflect.hasOwnMetadata(CLASS_KEY, Cls) ? Reflect.getOwnMetadata(CLASS_KEY, Cls) : null;
   }
 
   protected getOwnPropMetadata(Cls: any): { [key: string | symbol]: any[] } | null {
-    return this.reflect.hasOwnMetadata(PROP_KEY, Cls) ? this.reflect.getOwnMetadata(PROP_KEY, Cls) : null;
+    return Reflect.hasOwnMetadata(PROP_KEY, Cls) ? Reflect.getOwnMetadata(PROP_KEY, Cls) : null;
   }
 }
