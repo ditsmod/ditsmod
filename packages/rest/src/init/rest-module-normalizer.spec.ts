@@ -123,8 +123,8 @@ describe('rest ModuleNormalizer', () => {
         forwardRef(() => Service2),
         { token: forwardRef(() => Service4), useToken: forwardRef(() => Service4), multi: true },
       ],
-      resolvedCollisionsPerRou: [[forwardRef(() => Service1), forwardRef(() => Module3)]],
-      resolvedCollisionsPerReq: [[forwardRef(() => Service2), module4WithParams]],
+      resolvedCollisionPerRou: [[forwardRef(() => Service1), forwardRef(() => Module3)]],
+      resolvedCollisionPerReq: [[forwardRef(() => Service2), module4WithParams]],
       exports: [
         forwardRef(() => Service1),
         forwardRef(() => Service2),
@@ -146,8 +146,8 @@ describe('rest ModuleNormalizer', () => {
     expect(meta1.exportedProvidersPerReq).toEqual([Service2]);
     expect(meta1.exportedMultiProvidersPerRou).toEqual([{ token: Service3, useClass: Service3, multi: true }]);
     expect(meta1.exportedMultiProvidersPerReq).toEqual([{ token: Service4, useToken: Service4, multi: true }]);
-    expect(meta1.resolvedCollisionsPerRou).toEqual([[Service1, Module3]]);
-    expect(meta1.resolvedCollisionsPerReq).toEqual([[Service2, { module: Module4 }]]);
+    expect(meta1.resolvedCollisionPerRou).toEqual([[Service1, Module3]]);
+    expect(meta1.resolvedCollisionPerReq).toEqual([[Service2, { module: Module4 }]]);
     expect(meta1.appendsModules).toEqual([Module5]);
     expect(meta1.appendsWithParams).toEqual([appendWithParams]);
 
@@ -301,8 +301,8 @@ describe('rest ModuleNormalizer', () => {
     @initRest({
       controllers: [Controller1],
       providersPerRou: [Service1, { token: Service2, useClass: Service2, multi: true }],
-      resolvedCollisionsPerRou: [[Service1, Module1]],
-      resolvedCollisionsPerReq: [[Service2, Module2]],
+      resolvedCollisionPerRou: [[Service1, Module1]],
+      resolvedCollisionPerReq: [[Service2, Module2]],
       exports: [Service1, Service2],
     })
     @rootModule()
@@ -315,8 +315,8 @@ describe('rest ModuleNormalizer', () => {
     expect(meta.exportedProvidersPerRou).toEqual([Service1]);
     expect(meta.exportedMultiProvidersPerRou).toEqual([{ token: Service2, useClass: Service2, multi: true }]);
     expect(meta.providersPerReq.length).toBe(0);
-    expect(meta.resolvedCollisionsPerRou).toEqual([[Service1, Module1]]);
-    expect(meta.resolvedCollisionsPerReq).toEqual([[Service2, Module2]]);
+    expect(meta.resolvedCollisionPerRou).toEqual([[Service1, Module1]]);
+    expect(meta.resolvedCollisionPerReq).toEqual([[Service2, Module2]]);
   });
 
   it('wrong imports/exports of modules', () => {

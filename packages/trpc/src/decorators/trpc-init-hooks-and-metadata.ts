@@ -55,7 +55,7 @@ export const initTrpcModule: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, Tr
   'initTrpcModule',
 );
 export const trpcRootModule: InitDecorator<
-  TrpcInitRawMeta & { resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][] },
+  TrpcInitRawMeta & { resolvedCollisionPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][] },
   TrpcModuleParams,
   TrpcInitMeta
 > = Reflector.makeClassDecorator(transformRootMetadata, 'trpcRootModule', initTrpcModule);

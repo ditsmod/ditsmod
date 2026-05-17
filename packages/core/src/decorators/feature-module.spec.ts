@@ -41,7 +41,7 @@ describe('Module decorator', () => {
       exports: [],
       extensions: [],
       extensionsMeta: {},
-      resolvedCollisionsPerMod: [],
+      resolvedCollisionPerMod: [],
     })
     class Module1 {}
 
@@ -52,7 +52,7 @@ describe('Module decorator', () => {
       providersPerApp: [],
       providersPerMod: [],
       extensionsMeta: {},
-      resolvedCollisionsPerMod: [],
+      resolvedCollisionPerMod: [],
       exports: [],
       extensions: [],
     } as RootRawMetadata);

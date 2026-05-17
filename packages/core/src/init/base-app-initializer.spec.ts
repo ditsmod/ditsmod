@@ -45,8 +45,8 @@ describe('BaseAppInitializer', () => {
       return super.collectProvidersShallow(moduleManager);
     }
 
-    override getResolvedCollisionsPerApp() {
-      return super.getResolvedCollisionsPerApp();
+    override getResolvedCollisionPerApp() {
+      return super.getResolvedCollisionPerApp();
     }
 
     override decreaseExtensionsCounters(extensionCounters: ExtensionCounters, providers: Provider[]) {
@@ -122,7 +122,7 @@ describe('BaseAppInitializer', () => {
       expect(() => mock.prepareProvidersPerApp()).toThrow(err);
     });
 
-    it('should works with collision and resolvedCollisionsPerApp', () => {
+    it('should works with collision and resolvedCollisionPerApp', () => {
       class Provider1 {}
       class Provider2 {}
 
@@ -134,18 +134,18 @@ describe('BaseAppInitializer', () => {
 
       @rootModule({
         imports: [Module1, Module2],
-        resolvedCollisionsPerApp: [[Provider1, Module1]],
+        resolvedCollisionPerApp: [[Provider1, Module1]],
       })
       class AppModule {}
 
       mock.baseMeta = moduleManager.scanRootModule(AppModule);
       expect(() => mock.prepareProvidersPerApp()).not.toThrow();
-      expect(mock.getResolvedCollisionsPerApp()).toEqual([{ token: Provider1, useClass: Provider2 }]);
+      expect(mock.getResolvedCollisionPerApp()).toEqual([{ token: Provider1, useClass: Provider2 }]);
       expect(mock.baseMeta.providersPerApp).toEqual([{ token: Provider1, useClass: Provider2 }]);
-      expect(mock.baseMeta.resolvedCollisionsPerApp.length).toBe(1);
+      expect(mock.baseMeta.resolvedCollisionPerApp.length).toBe(1);
     });
 
-    it('should throw an error because resolvedCollisionsPerApp not properly setted', () => {
+    it('should throw an error because resolvedCollisionPerApp not properly setted', () => {
       class Provider1 {}
 
       @featureModule({})
@@ -159,7 +159,7 @@ describe('BaseAppInitializer', () => {
 
       @rootModule({
         imports: [Module1, Module2],
-        resolvedCollisionsPerApp: [[Provider1, Module0]],
+        resolvedCollisionPerApp: [[Provider1, Module0]],
       })
       class AppModule {}
 
@@ -223,7 +223,7 @@ describe('BaseAppInitializer', () => {
 
       @rootModule({
         imports: [Module0, Module1, Module2],
-        resolvedCollisionsPerApp: [[Provider1, Module1]],
+        resolvedCollisionPerApp: [[Provider1, Module1]],
       })
       class AppModule {}
 
@@ -232,7 +232,7 @@ describe('BaseAppInitializer', () => {
       expect(() => mock.prepareProvidersPerApp()).toThrow(err);
     });
 
-    it('should throw an error because resolvedCollisionsPerApp not properly setted provider', () => {
+    it('should throw an error because resolvedCollisionPerApp not properly setted provider', () => {
       class Provider1 {}
       class Provider2 {}
 
@@ -250,7 +250,7 @@ describe('BaseAppInitializer', () => {
 
       @rootModule({
         imports: [Module0, Module1, Module2],
-        resolvedCollisionsPerApp: [[Provider1, Module0]],
+        resolvedCollisionPerApp: [[Provider1, Module0]],
       })
       class AppModule {}
 

@@ -24,7 +24,7 @@ import { RestShallowModulesImporter } from './rest-shallow-modules-importer.js';
 import { Level, RestGlobalProviders } from '#types/types.js';
 import { getImportedProviders } from '../utils/get-imports.js';
 import { ModuleMustHaveControllers } from '#services/rest-errors.js';
-import { ResolvingCollisionsNotExistsOnThisLevel } from '@ditsmod/core/errors';
+import { ResolvingCollisionNotExistsOnThisLevel } from '@ditsmod/core/errors';
 
 @injectable()
 class MockShallowModulesImporter extends RestShallowModulesImporter {
@@ -33,11 +33,11 @@ class MockShallowModulesImporter extends RestShallowModulesImporter {
   override baseMeta = new BaseMeta();
   // override guards1: GuardPerMod1[] = [];
 
-  protected override getResolvedCollisionsPerLevel(
+  protected override getResolvedCollisionPerLevel(
     level: Level,
     token1: any,
   ): { module2: ModRefId<AnyObj>; providers: Provider[] } {
-    return super.getResolvedCollisionsPerLevel(level, token1);
+    return super.getResolvedCollisionPerLevel(level, token1);
   }
 }
 
@@ -114,7 +114,7 @@ describe('shallow importing modules', () => {
     // expect(getImportedProviders(val.importedProvidersPerReq)).toEqual([Provider2, Provider1]);
   });
 
-  it('should throw an error because resolvedCollisionsPerReq not properly setted provider', () => {
+  it('should throw an error because resolvedCollisionPerReq not properly setted provider', () => {
     class Provider1 {}
     class Provider2 {}
 
@@ -133,16 +133,16 @@ describe('shallow importing modules', () => {
     class Module2 {}
 
     @initRest({
-      resolvedCollisionsPerReq: [[Provider1, Module0]],
+      resolvedCollisionPerReq: [[Provider1, Module0]],
     })
     @rootModule({ imports: [Module0, Module1, Module2] })
     class AppModule {}
 
-    const err = new ResolvingCollisionsNotExistsOnThisLevel('AppModule', 'Module0', 'Req', 'Provider1');
+    const err = new ResolvingCollisionNotExistsOnThisLevel('AppModule', 'Module0', 'Req', 'Provider1');
     expect(() => importModulesShallow(AppModule)).toThrow(err);
   });
 
-  it('should throw an error because AppModule have resolvedCollisionsPerReq when there is no collisions', () => {
+  it('should throw an error because AppModule have resolvedCollisionPerReq when there is no collisions', () => {
     class Provider1 {}
     class Provider2 {}
 
@@ -154,7 +154,7 @@ describe('shallow importing modules', () => {
     @featureModule()
     class Module2 {}
 
-    @initRest({ resolvedCollisionsPerReq: [[Provider1, Module1]] })
+    @initRest({ resolvedCollisionPerReq: [[Provider1, Module1]] })
     @rootModule({ imports: [Module1, Module2] })
     class AppModule {}
 
@@ -184,8 +184,8 @@ describe('shallow importing modules', () => {
 
     let msg =
       'Importing providers to AppModule failed: exports from Module1, Module2 causes collision with Provider1. ';
-    msg += 'You should add Provider1 to resolvedCollisionsPerReq in this module. ';
-    msg += 'For example: resolvedCollisionsPerReq: [ [Provider1, Module1] ].';
+    msg += 'You should add Provider1 to resolvedCollisionPerReq in this module. ';
+    msg += 'For example: resolvedCollisionPerReq: [ [Provider1, Module1] ].';
     expect(() => importModulesShallow(AppModule)).toThrow(msg);
   });
 
@@ -203,7 +203,7 @@ describe('shallow importing modules', () => {
     const modRefId1: ModuleWithParams = { module: Module1 };
     const modRefId2: ModuleWithParams = { module: Module2 };
     @initRest({
-      resolvedCollisionsPerReq: [[Provider1, modRefId1]],
+      resolvedCollisionPerReq: [[Provider1, modRefId1]],
     })
     @rootModule({ imports: [modRefId1, modRefId2] })
     class AppModule {}
@@ -224,7 +224,7 @@ describe('shallow importing modules', () => {
 
     const modRefId1: ModuleWithParams = { module: Module1 };
     const modRefId2: ModuleWithParams = { module: Module2 };
-    @initRest({ resolvedCollisionsPerReq: [[Provider1, modRefId1]] })
+    @initRest({ resolvedCollisionPerReq: [[Provider1, modRefId1]] })
     @rootModule({ imports: [modRefId1, modRefId2] })
     class AppModule {}
 

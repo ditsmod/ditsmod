@@ -16,8 +16,8 @@ import {
 } from '@ditsmod/core';
 import {
   ProvidersCollision,
-  ResolvingCollisionsNotExistsOnThisLevel,
-  ResolvingCollisionsNotImportedInApplication,
+  ResolvingCollisionNotExistsOnThisLevel,
+  ResolvingCollisionNotImportedInApplication,
 } from '@ditsmod/core/errors';
 
 import { GuardPerMod1 } from '#interceptors/guard.js';
@@ -191,7 +191,7 @@ export class RestShallowModulesImporter {
     providerImport: RestProviderImport,
   ) {
     const declaredTokens = getTokens(this.meta[`providersPer${level}`]);
-    const resolvedTokens = this.meta[`resolvedCollisionsPer${level}`].map(([token]) => token);
+    const resolvedTokens = this.meta[`resolvedCollisionPer${level}`].map(([token]) => token);
     const duplImpTokens = [...declaredTokens, ...resolvedTokens].includes(token) ? [] : [token];
     const collisions = getCollisions(duplImpTokens, [...providerImport.providers, provider]);
     if (collisions.length) {
@@ -207,18 +207,18 @@ export class RestShallowModulesImporter {
     }
   }
 
-  protected getResolvedCollisionsPerLevel(level: Level, token1: any) {
-    const [token2, modRefId2] = this.meta[`resolvedCollisionsPer${level}`].find(([token2]) => token1 === token2)!;
+  protected getResolvedCollisionPerLevel(level: Level, token1: any) {
+    const [token2, modRefId2] = this.meta[`resolvedCollisionPer${level}`].find(([token2]) => token1 === token2)!;
     const moduleName = getDebugClassName(modRefId2) || '""';
     const tokenName = token2.name || token2;
     const baseMeta2 = this.moduleManager.getBaseMeta(modRefId2);
     const meta2 = baseMeta2?.initMeta.get(initRest);
     if (!baseMeta2) {
-      throw new ResolvingCollisionsNotImportedInApplication(this.moduleName, moduleName, level, tokenName);
+      throw new ResolvingCollisionNotImportedInApplication(this.moduleName, moduleName, level, tokenName);
     }
     const providers = getLastProviders(meta2?.[`providersPer${level}`] || []).filter((p) => getToken(p) === token2);
     if (!providers.length) {
-      throw new ResolvingCollisionsNotExistsOnThisLevel(this.moduleName, moduleName, level, tokenName);
+      throw new ResolvingCollisionNotExistsOnThisLevel(this.moduleName, moduleName, level, tokenName);
     }
 
     return { module2: modRefId2, providers };

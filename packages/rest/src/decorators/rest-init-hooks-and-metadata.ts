@@ -28,7 +28,7 @@ export const initRest: InitDecorator<RestInitRawMeta, RestModuleParams, RestInit
   'initRest',
 );
 export const restRootModule: InitDecorator<
-  RestInitRawMeta & { resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][] },
+  RestInitRawMeta & { resolvedCollisionPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][] },
   RestModuleParams,
   RestInitMeta
 > = Reflector.makeClassDecorator(transformRootMeta, 'restRootModule', initRest);

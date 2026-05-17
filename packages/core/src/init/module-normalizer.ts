@@ -128,7 +128,7 @@ export class ModuleNormalizer {
   }
 
   protected normalizeDeclaredAndResolvedProviders(
-    rawMeta: BaseInitRawMeta & PickProps<RootRawMetadata, 'resolvedCollisionsPerApp'>,
+    rawMeta: BaseInitRawMeta & PickProps<RootRawMetadata, 'resolvedCollisionPerApp'>,
   ) {
     (['App', 'Mod', 'Rou', 'Req'] as const).forEach((level) => {
       if (rawMeta[`providersPer${level}`]) {
@@ -136,14 +136,14 @@ export class ModuleNormalizer {
         this.baseMeta[`providersPer${level}`].push(...providersPerLevel);
       }
 
-      if (rawMeta[`resolvedCollisionsPer${level}`]) {
-        rawMeta[`resolvedCollisionsPer${level}`]!.forEach(([token, module]) => {
+      if (rawMeta[`resolvedCollisionPer${level}`]) {
+        rawMeta[`resolvedCollisionPer${level}`]!.forEach(([token, module]) => {
           token = resolveForwardRef(token);
           module = resolveForwardRef(module);
           if (isModuleWithParams(module)) {
             module.module = resolveForwardRef(module.module);
           }
-          this.baseMeta[`resolvedCollisionsPer${level}`].push([token, module]);
+          this.baseMeta[`resolvedCollisionPer${level}`].push([token, module]);
         });
       }
     });
@@ -239,16 +239,16 @@ export class ModuleNormalizer {
   }
 
   protected throwIfResolvingNormalizedProvider(
-    rawMeta: BaseInitRawMeta & PickProps<RootRawMetadata, 'resolvedCollisionsPerApp'>,
+    rawMeta: BaseInitRawMeta & PickProps<RootRawMetadata, 'resolvedCollisionPerApp'>,
   ) {
-    const resolvedCollisionsPerLevel: [any, ModRefId | ForwardRefFn<ModuleType>][] = [];
+    const resolvedCollisionPerLevel: [any, ModRefId | ForwardRefFn<ModuleType>][] = [];
     (['App', 'Mod', 'Rou', 'Req'] as const).forEach((level) => {
-      if (Array.isArray(rawMeta[`resolvedCollisionsPer${level}`])) {
-        resolvedCollisionsPerLevel.push(...rawMeta[`resolvedCollisionsPer${level}`]!);
+      if (Array.isArray(rawMeta[`resolvedCollisionPer${level}`])) {
+        resolvedCollisionPerLevel.push(...rawMeta[`resolvedCollisionPer${level}`]!);
       }
     });
 
-    resolvedCollisionsPerLevel.forEach(([provider]) => {
+    resolvedCollisionPerLevel.forEach(([provider]) => {
       provider = resolveForwardRef(provider);
       if (isNormalizedProvider(provider)) {
         const providerName = provider.token.name || provider.token;

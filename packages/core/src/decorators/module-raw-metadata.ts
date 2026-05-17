@@ -52,17 +52,17 @@ export class ModuleRawMetadata<T extends AnyObj = AnyObj> {
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  declare resolvedCollisionsPerMod?: [any, ModRefId | ForwardRefFn<ModuleType>][];
+  declare resolvedCollisionPerMod?: [any, ModRefId | ForwardRefFn<ModuleType>][];
   /**
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  declare resolvedCollisionsPerRou?: [any, ModRefId | ForwardRefFn<ModuleType>][];
+  declare resolvedCollisionPerRou?: [any, ModRefId | ForwardRefFn<ModuleType>][];
   /**
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  declare resolvedCollisionsPerReq?: [any, ModRefId | ForwardRefFn<ModuleType>][];
+  declare resolvedCollisionPerReq?: [any, ModRefId | ForwardRefFn<ModuleType>][];
 }
 /**
  * An object with this type is passed into the `imports` array of
@@ -112,6 +112,6 @@ export class RootRawMetadata extends ModuleRawMetadata {
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  declare resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][];
+  declare resolvedCollisionPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][];
 }
 

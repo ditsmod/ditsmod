@@ -159,14 +159,14 @@ import { ErrorHandlerModule } from './error-handler.module.js';
 @restModule({
   // ...
   imports: [ErrorHandlerModule],
-  resolvedCollisionsPerRou: [
+  resolvedCollisionPerRou: [
     [HttpErrorHandler, ErrorHandlerModule],
   ],
 })
 export class SomeModule {}
 ```
 
-As you can see, the collision is resolved in the `resolvedCollisionsPerRou` array because it occurs at the route level. You pass there an array of two elements, where the first element is the token with which a collision occurred, and the second element is the module from which you want to export this provider.
+As you can see, the collision is resolved in the `resolvedCollisionPerRou` array because it occurs at the route level. You pass there an array of two elements, where the first element is the token with which a collision occurred, and the second element is the module from which you want to export this provider.
 
 We remind you that provider collisions can only occur when importing modules. That is, if you create your own error handler locally within a particular module, there will be no collisions.
 
