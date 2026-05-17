@@ -77,9 +77,25 @@ Service2 = __decorate([
 
 Fortunately, you will rarely need to inspect the `dist` folder and analyze compiled code, but it can sometimes be useful to glance at it for a general understanding of how static typing is transferred into JavaScript code. The most interesting part is found in the last four lines. It's clear that the TypeScript compiler now associates the array `[Service1]` with `Service2`. This array contains information about the static parameter types detected by the compiler in the `Service2` constructor. It looks like we can now programmatically find out that `Service2` depends on `Service1`. The only thing left to do is find out what APIs Ditsmod provides to store and read this information.
 
-Further analysis of the compiled code shows that the `Reflect` class is used to store metadata related to static typing. At the initial stage of learning Ditsmod, you don’t need to dive deeply into how `Reflect` works, because Ditsmod provides higher-level tools that simplify working with storing and using class metadata. At this point, it’s enough to know that `Reflect` is imported from the [reflect-metadata][13] library, and the API of this library is then used by Ditsmod to read the metadata described above. This is handled by the so-called **reflector**.
+Further analysis of the compiled code indicates that the `Reflect` class is used to store metadata with static typing. At the initial stage of learning Ditsmod, you do not need to dive too deeply into how `Reflect` works, since Ditsmod provides higher-level tools that simplify working with storing and using class metadata.
 
-Let's see what higher-level tools Ditsmod provides for working with the reflector. Let's make the previous example more complex to see how metadata can be extracted and how complex dependency chains can be formed. Consider three classes with the following dependency: `Service3` -> `Service2` -> `Service1`. Insert the following code into `src/app/services.ts`:
+On the other hand, it is useful to know at least the basics in this area. For example, it is worth knowing that `Reflect` is a standard JavaScript class extended with a special API for working with decorators and metadata. This special API is provided by the [reflect-metadata][13] library:
+
+```ts
+import 'reflect-metadata/lite';
+
+class Service1 {}
+
+// Store metadata associated with Service1
+Reflect.defineMetadata('any-metadata-key', 'some-value', Service1);
+
+// Read previously stored metadata (returns "some-value")
+Reflect.getMetadata('any-metadata-key', Service1);
+```
+
+As you can see, the extended API in `Reflect` allows attaching metadata to a specific class even without decorators. At the beginning of this script, there is `import 'reflect-metadata/lite'`, through which this library performs so-called "monkey patching", meaning it dynamically adds API methods to the standard `Reflect` class. If you comment out this import, the code will stop working, and you will get an error stating that `Reflect` does not have the `defineMetadata()` method. The same applies to decorators — without `reflect-metadata`, they will stop working as well. This is important to remember during testing when your test file does not import `@ditsmod/core` (which automatically imports `reflect-metadata/lite`).
+
+Now let's take a look at the higher-level tools that Ditsmod provides for working with reflection. We will complicate the previous example to see how metadata can be extracted and how complex dependency chains can be formed. Consider three classes with the following dependency: `Service3` -> `Service2` -> `Service1`. Insert the following code into `src/app/services.ts`:
 
 ```ts {15}
 import { injectable, getDependencies } from '@ditsmod/core';
