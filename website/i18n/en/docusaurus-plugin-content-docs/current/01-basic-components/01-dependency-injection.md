@@ -12,17 +12,15 @@ Additionally, if you don't yet know what exactly reflector does and what "depend
 
 ## Injector, tokens and providers {#injector-and-providers}
 
-In the context of Dependency Injection (DI), people often talk about injectors (also called containers), tokens, services, and providers. If these terms are new to you, the following real-life associations should help:
+In the context of Dependency Injection (DI), people often talk about injectors (also called containers), tokens, services, and providers. If these terms are new to you, the following real-life associations may help:
 
-- **Token** — Although this word in everyday life often means a subway token or a game chip, in DI it works like a ticket to a storage locker. That is, in DI a token is an identifier by which the required value can be found.
-- **Provider** - In everyday life, this term means a company that supplies a certain service or product. In DI, however, this term means an instruction (mapping) that contains a token and the corresponding service or value. From a technical perspective, it is easiest to imagine a provider, for example, as an object like this:
+- **Token** — In everyday life, this might be a subway token or a game chip. In DI, a token works like a "claim ticket" or a "locker receipt". You keep this ticket and later present it to retrieve an item. In code, a token is simply an identifier that tells the system what value you are asking for.
+- **Provider** — In everyday life, a provider is a company that supplies a service or product. In DI, a provider is an instruction (a mapping) that says: "When a specific token is requested, return this specific value". Technically, a provider can be imagined as an object like this:
   ```ts
   { token: 'some-token', useValue: 'some-value' }
   ```
-  In this case, it is an instruction that says: “When `some-token` is requested, `some-value` should be returned.”
-- **Injector** - this term is rarely used in everyday life, but its concept is quite common and somewhat resembles a “Marketplace” with a delivery service (like Amazon in the US). First, providers supply their products or services to the Marketplace, and then consumers contact this Marketplace with tokens to obtain the corresponding product or service. From a technical perspective, developers first register providers in injectors, and then, using tokens, obtain the corresponding values from a specific provider.
-
-Now let us complete the simplified real-life analogy and return to the technical details. From this point on, all terms are used in their technical sense.
+  This instruction tells the system: "If someone presents the ticket 'some-token', give them 'some-value'."
+- **Injector** (also known as a container) — In everyday life, this term is rarely used, but the concept resembles a storage locker attendant. You hand your claim ticket (token) to the attendant, and they find the corresponding compartment, retrieve the item, and hand it to you. The injector, therefore, is the mechanism that accepts a token and returns the associated value, relying on providers as its set of instructions.
 
 In the [previous section][108], we saw how a dependency of one class on another class can be specified in a constructor, as well as how a dependency chain can be automatically determined using a reflector. In the context of Dependency Injection, such classes are often called **services**. Now let us take a closer look at the **injector** — the mechanism that allows you to obtain instances of services while taking their dependencies into account. The injector works very simply: it accepts a **token** and returns the value associated with that token. Obviously, such functionality requires instructions that define the relationship between what is requested from the injector and what it returns. These instructions are provided by so-called **providers**.
 
@@ -367,7 +365,7 @@ And neither injector can return an instance of `Service4`, because this class wa
 
 ### Chain of dependencies at different levels {#chain-of-dependencies-at-different-levels}
 
-The dependency chain of providers can be quite complex, and the injector hierarchy adds even more complexity. The following rule helps here: "**If a provider depends on another provider, the dependency must not be placed at a lower level of the hierarchy - in child injectors**".
+The dependency chain of providers can be quite complex, and the injector hierarchy adds even more complexity. The following rule helps here: "**If a provider depends on another provider, the dependency must not be placed at a lower level of the hierarchy — in child injectors**".
 
 Let us start with a simple example:
 
@@ -679,7 +677,7 @@ injectorPerReq.get(Service); // returns instance of Service
 
 This example does not throw an error because `Service` and `Config` are passed to the same injector, and it is this injector that is used to request `Service`. If we request `Service` or `Config` from injectors at higher levels, they will throw an error, because parent injectors never consult child injectors to retrieve any provider values. For example, if instead of `injectorPerReq.get(Service)` we call `injectorPerRou.get(Service)` or `injectorPerMod.get(Service)`, or `injectorPerApp.get(Service)` — all of them will throw an error.
 
-The situation changes if the provider with the `Config` token is not at the same level as the provider with the `Service` token. To avoid mistakes, recall the rule: "**If a provider depends on another provider, the dependency must not be placed at a lower level of the hierarchy - in child injectors**". Since we have a dependency chain — `Service -> Config` — `Config` must always be higher in the injector hierarchy relative to `Service`. In that case, the child injector will first attempt to create `Service`, detect the dependency on `Config`, not find it in the current injector, and then delegate the lookup to one of the parent injectors.
+The situation changes if the provider with the `Config` token is not at the same level as the provider with the `Service` token. To avoid mistakes, recall the rule: "**If a provider depends on another provider, the dependency must not be placed at a lower level of the hierarchy — in child injectors**". Since we have a dependency chain — `Service -> Config` — `Config` must always be higher in the injector hierarchy relative to `Service`. In that case, the child injector will first attempt to create `Service`, detect the dependency on `Config`, not find it in the current injector, and then delegate the lookup to one of the parent injectors.
 
 Note that in the previous example, injectors are given abbreviated names of hierarchy levels:
 
