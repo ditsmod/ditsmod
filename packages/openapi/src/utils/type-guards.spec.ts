@@ -1,4 +1,4 @@
-import { reflector } from '@ditsmod/core';
+import { Reflector } from '@ditsmod/core';
 import { RequestContext, CanActivate } from '@ditsmod/rest';
 
 import { oasGuard } from '#decorators/oas-guard.js';
@@ -14,7 +14,7 @@ describe('OAS type guards', () => {
     }
 
     it('should recognize class guard', () => {
-      const propMetadata = reflector.getDecorators(Guard1)!;
+      const propMetadata = Reflector.getDecorators(Guard1)!;
       expect(isOasGuard(propMetadata[0])).toBe(true);
     });
   });

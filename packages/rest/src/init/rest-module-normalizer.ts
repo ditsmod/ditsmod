@@ -3,7 +3,7 @@ import {
   isNormalizedProvider,
   BaseMeta,
   Providers,
-  reflector,
+  Reflector,
   resolveForwardRef,
   getDuplicates,
   isModuleWithParams,
@@ -111,7 +111,7 @@ export class RestModuleNormalizer {
   }
 
   protected checkController(Controller: Class) {
-    if (!reflector.getDecorators(Controller, isCtrlDecor)) {
+    if (!Reflector.getDecorators(Controller, isCtrlDecor)) {
       throw new ControllerDoesNotHaveDecorator(Controller.name);
     }
   }

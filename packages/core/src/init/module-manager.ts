@@ -1,6 +1,6 @@
 import { format } from 'node:util';
 
-import { ForwardRefFn, injectable, Injector, Provider, reflector, resolveForwardRef } from '#di';
+import { ForwardRefFn, injectable, Injector, Provider, Reflector, resolveForwardRef } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyObj, ModuleType, ModRefId } from '#types/mix.js';
 import { ModuleWithParams } from '#decorators/module-raw-metadata.js';
@@ -65,7 +65,7 @@ export class ModuleManager {
       return this.getBaseMeta('root', true);
     }
     this.providersPerApp = [];
-    if (!reflector.getDecorators(appModule, isRootModule)) {
+    if (!Reflector.getDecorators(appModule, isRootModule)) {
       throw new RootNotHaveDecorator(appModule.name);
     }
 

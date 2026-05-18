@@ -1,4 +1,4 @@
-import { injectable, Extension, MetadataPerMod2, type Class, reflector, Provider, awaitTokens } from '@ditsmod/core';
+import { injectable, Extension, MetadataPerMod2, type Class, Reflector, Provider, awaitTokens } from '@ditsmod/core';
 import { inspect } from 'node:util';
 
 import { TrpcMetadataPerMod2 } from '#init/trpc-deep-modules-importer.js';
@@ -37,7 +37,7 @@ export class TrpcRouteExtension implements Extension<MetadataPerMod3> {
     const { providersPerMod } = trpcMetadataPerMod2.baseMeta;
 
     for (const Controller of trpcMetadataPerMod2.meta.controllers as Class<Record<string | symbol, any>>[]) {
-      const classMeta = reflector.getMetadata(Controller)!;
+      const classMeta = Reflector.getMetadata(Controller)!;
       for (const methodName of classMeta) {
         for (const decoratorAndValue of classMeta[methodName].decorators) {
           if (!isTrpcRoute(decoratorAndValue)) {

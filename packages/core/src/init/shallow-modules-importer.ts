@@ -1,4 +1,4 @@
-import { reflector } from '#di';
+import { Reflector } from '#di';
 import type { BaseMeta } from '#init/base-meta.js';
 import type { ModuleManager } from '#init/module-manager.js';
 import type { GlobalProviders } from '#types/metadata-per-mod.js';
@@ -376,7 +376,7 @@ export class ShallowModulesImporter {
         if (collision) {
           const providerImport = this[`importedProvidersPer${level}`].get(token)!;
           const hostModulePath = this.moduleManager.getBaseMeta(providerImport.modRefId)?.declaredInDir || '.';
-          const decorAndVal = reflector.getDecorators(token, hasDeclaredInDir)?.at(0);
+          const decorAndVal = Reflector.getDecorators(token, hasDeclaredInDir)?.at(0);
           const collisionWithPath = decorAndVal?.declaredInDir || '.';
           if (hostModulePath !== '.' && collisionWithPath !== '.' && collisionWithPath.startsWith(hostModulePath)) {
             // Allow collisions in host modules.

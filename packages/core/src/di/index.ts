@@ -7,7 +7,6 @@ export { InjectionToken } from './injection-token.js';
 export { Injector } from './injector.js';
 export { PathTracer } from './path-tracer.js';
 export { DualKey, KeyRegistry, ParamToken } from './key-registry.js';
-export { reflector } from './reflection.js';
 export {
   Class,
   ClassFactoryProvider,

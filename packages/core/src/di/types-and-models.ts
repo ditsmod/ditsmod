@@ -66,7 +66,7 @@ export type PropMetadataTuple<Value = any> = [Class, ...DecoratorAndValue<Value>
 export class UnknownType {}
 
 /**
- * Metadata returned by the `reflector.getMetadata()` method.
+ * Metadata returned by the `Reflector.getMetadata()` method.
  */
 export type ClassMeta<DecorValue = any, Proto extends object = object> = {
   [P in keyof Proto]: ClassPropMeta<DecorValue>;

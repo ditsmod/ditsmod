@@ -1,5 +1,5 @@
 import { Logger, LoggerConfig } from '#logger/logger.js';
-import { Class, FunctionFactoryProvider, Provider, reflector, UseFactoryTuple } from '#di';
+import { Class, FunctionFactoryProvider, Provider, Reflector, UseFactoryTuple } from '#di';
 import { LogMediator } from '#logger/log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyFn, UnionToIntersection } from '#types/mix.js';
@@ -91,7 +91,7 @@ export class Providers {
     }
 
     Classes.forEach((Cls, i) => {
-      const classMeta = reflector.getMetadata(Cls);
+      const classMeta = Reflector.getMetadata(Cls);
       if (!classMeta) {
         throw new ClassForUseFactoriesWithoutDecorators(i);
       }

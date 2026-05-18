@@ -1,4 +1,4 @@
-import { reflector } from '#di';
+import { Reflector } from '#di';
 import { featureModule } from './feature-module.js';
 import { RootRawMetadata } from './module-raw-metadata.js';
 
@@ -7,7 +7,7 @@ describe('Module decorator', () => {
     @featureModule({})
     class Module1 {}
 
-    const metadata = reflector.getDecorators(Module1)!;
+    const metadata = Reflector.getDecorators(Module1)!;
     expect(metadata.length).toBe(1);
     expect(metadata[0].decorator).toBe(featureModule);
     expect(metadata[0].declaredInDir).toContain('ditsmod/packages/core/dist/decorators');
@@ -17,7 +17,7 @@ describe('Module decorator', () => {
     @featureModule({ providersPerApp: [] })
     class Module1 {}
 
-    const metadata = reflector.getDecorators(Module1)!;
+    const metadata = Reflector.getDecorators(Module1)!;
     expect(metadata.length).toBe(1);
     expect(metadata[0].value).toEqual<RootRawMetadata>({
       providersPerApp: [],
@@ -29,7 +29,7 @@ describe('Module decorator', () => {
     @featureModule()
     class Module1 {}
 
-    const metadata = reflector.getDecorators(Module1)!;
+    const metadata = Reflector.getDecorators(Module1)!;
     expect(metadata.length).toBe(2);
   });
 
@@ -45,7 +45,7 @@ describe('Module decorator', () => {
     })
     class Module1 {}
 
-    const metadata = reflector.getDecorators(Module1)!;
+    const metadata = Reflector.getDecorators(Module1)!;
     expect(metadata.length).toBe(1);
     expect(metadata[0].value).toEqual<RootRawMetadata>({
       imports: [],

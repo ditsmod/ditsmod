@@ -1,4 +1,4 @@
-import { reflector } from '#di';
+import { Reflector } from '#di';
 import { rootModule } from './root-module.js';
 import { RootRawMetadata } from './module-raw-metadata.js';
 
@@ -7,7 +7,7 @@ describe('RootModule decorator', () => {
     @rootModule({})
     class Module1 {}
 
-    const metadata = reflector.getDecorators(Module1)!;
+    const metadata = Reflector.getDecorators(Module1)!;
     expect(metadata.length).toBe(1);
     expect(metadata[0].decorator).toBe(rootModule);
     expect(metadata[0].declaredInDir).toContain('ditsmod/packages/core/dist/decorators');
@@ -17,7 +17,7 @@ describe('RootModule decorator', () => {
     @rootModule({ providersPerApp: [] })
     class Module1 {}
 
-    const metadata = reflector.getDecorators(Module1)!;
+    const metadata = Reflector.getDecorators(Module1)!;
     expect(metadata.length).toBe(1);
   });
 
@@ -26,7 +26,7 @@ describe('RootModule decorator', () => {
     @rootModule()
     class Module1 {}
 
-    const metadata = reflector.getDecorators(Module1)!;
+    const metadata = Reflector.getDecorators(Module1)!;
     expect(metadata.length).toBe(2);
   });
 
@@ -40,7 +40,7 @@ describe('RootModule decorator', () => {
     })
     class Module1 {}
 
-    const metadata = reflector.getDecorators(Module1)!;
+    const metadata = Reflector.getDecorators(Module1)!;
     expect(metadata.length).toBe(1);
     expect(metadata[0].value).toEqual<RootRawMetadata>({
       providersPerApp: [],

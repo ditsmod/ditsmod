@@ -1,4 +1,4 @@
-import { Class, isFeatureModule, BaseMeta, reflector, getDuplicates, getProxyForInitMeta } from '@ditsmod/core';
+import { Class, isFeatureModule, BaseMeta, Reflector, getDuplicates, getProxyForInitMeta } from '@ditsmod/core';
 import { ModuleShouldHaveValue } from '@ditsmod/core/errors';
 
 import { TrpcInitMeta, TrpcInitRawMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
@@ -53,7 +53,7 @@ export class TrpcModuleNormalizer {
   }
 
   protected checkController(Controller: Class) {
-    if (!reflector.getDecorators(Controller, isCtrlDecor)) {
+    if (!Reflector.getDecorators(Controller, isCtrlDecor)) {
       throw new ControllerDoesNotHaveDecorator(Controller.name);
     }
   }

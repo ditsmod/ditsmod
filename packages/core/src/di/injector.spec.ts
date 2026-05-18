@@ -8,7 +8,6 @@ import { fromSelf, inject, injectable, factoryMethod, optional, skipSelf } from 
 import { InjectionToken } from './injection-token.js';
 import { Injector } from './injector.js';
 import { forwardRef } from './forward-ref.js';
-import { reflector } from './reflection.js';
 import {
   CannotFindFactoryAsMethod,
   CyclicDependency,
@@ -429,10 +428,10 @@ describe('injector', () => {
     expect(spy2).toHaveBeenCalledTimes(1);
     expect(spy3).toHaveBeenCalledTimes(1);
 
-    const classMetadata = reflector.getDecorators<[{ providers: [] }]>(Controller)!;
+    const classMetadata = Reflector.getDecorators<[{ providers: [] }]>(Controller)!;
     expect(classMetadata[0].value).toEqual([{ providers: [] }]);
 
-    const propMetadata = reflector.getMetadata(Controller)!;
+    const propMetadata = Reflector.getMetadata(Controller)!;
     const [container1] = propMetadata.method1.decorators;
     expect(container1.decorator).toBe(route);
     expect(container1.value).toEqual({ method: 'GET', path: 'some-path' });
@@ -526,10 +525,10 @@ describe('injector', () => {
     expect(spy2).toHaveBeenCalledTimes(1);
     expect(spy3).toHaveBeenCalledTimes(1);
 
-    const classMetadata = reflector.getDecorators<string>(Controller)!;
+    const classMetadata = Reflector.getDecorators<string>(Controller)!;
     expect(classMetadata[0].value).toEqual([{ providers: [] }]);
 
-    const propMetadata = reflector.getMetadata(Controller)!;
+    const propMetadata = Reflector.getMetadata(Controller)!;
     const [container1] = propMetadata.method1.decorators;
     expect(container1.decorator).toBe(route);
     expect(container1.value).toEqual({ method: 'GET', path: 'some-path' });

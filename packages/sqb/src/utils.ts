@@ -1,4 +1,4 @@
-import { Class, reflector } from '@ditsmod/core';
+import { Class, Reflector } from '@ditsmod/core';
 import { TableConfig } from './types.js';
 
 /**
@@ -11,7 +11,7 @@ import { TableConfig } from './types.js';
  * @param alias A database table alias.
  */
 export function getTableMetadata<T extends Class>(Cls: T, alias: string, withoutAlias?: boolean): TableMetadata<T> {
-  const config: TableConfig | undefined = reflector.getDecorators(Cls)?.at(0)?.value;
+  const config: TableConfig | undefined = Reflector.getDecorators(Cls)?.at(0)?.value;
   const tableName = config?.tableName || Cls.name;
   const tableNameWithAlias = withoutAlias ? `${tableName}` : `${tableName} as ${alias}`;
 

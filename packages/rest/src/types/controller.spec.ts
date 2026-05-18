@@ -1,4 +1,4 @@
-import { reflector } from '@ditsmod/core';
+import { Reflector } from '@ditsmod/core';
 import { controller } from './controller.js';
 
 
@@ -7,7 +7,7 @@ describe('Controller decorator', () => {
     @controller()
     class Controller1 {}
 
-    const metadata = reflector.getDecorators(Controller1)!;
+    const metadata = Reflector.getDecorators(Controller1)!;
     expect(metadata.length).toBe(1);
     expect(metadata[0].value).toEqual({});
     expect(metadata[0].decorator).toBe(controller);
@@ -17,7 +17,7 @@ describe('Controller decorator', () => {
     @controller({ providersPerReq: [] })
     class Controller1 {}
 
-    const metadata = reflector.getDecorators(Controller1)!;
+    const metadata = Reflector.getDecorators(Controller1)!;
     expect(metadata.length).toBe(1);
     expect(metadata[0].value).toEqual({ providersPerReq: [] })!;
   });
@@ -27,7 +27,7 @@ describe('Controller decorator', () => {
     @controller({ providersPerReq: [] })
     class Controller1 {}
 
-    const metadata = reflector.getDecorators(Controller1)!;
+    const metadata = Reflector.getDecorators(Controller1)!;
     expect(metadata.length).toBe(2);
     expect(metadata[0].value).toEqual({ providersPerReq: [] });
     expect(metadata[1].value).toEqual({ providersPerReq: [] });
@@ -37,7 +37,7 @@ describe('Controller decorator', () => {
     @controller({ providersPerRou: [], providersPerReq: [] })
     class Controller1 {}
 
-    const metadata = reflector.getDecorators(Controller1)!;
+    const metadata = Reflector.getDecorators(Controller1)!;
     expect(metadata.length).toBe(1);
     expect(metadata[0].value).toEqual({ providersPerRou: [], providersPerReq: [] });
   });

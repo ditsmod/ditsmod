@@ -15,7 +15,7 @@ import {
 import { ForwardRefFn, resolveForwardRef } from './forward-ref.js';
 import { InjectionToken } from './injection-token.js';
 import { DualKey, KeyRegistry } from './key-registry.js';
-import { reflector } from './reflection.js';
+import { Reflector } from './reflector.js';
 import {
   CTX_DATA,
   Class,
@@ -330,7 +330,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
   }
 
   protected static getDependencies(Cls: Class, propertyKey?: string | symbol): Dependency[] {
-    const classPropMeta = reflector.getMetadata(Cls, propertyKey);
+    const classPropMeta = Reflector.getMetadata(Cls, propertyKey);
     if (!classPropMeta) {
       return [];
     }

@@ -5,7 +5,7 @@ import {
   isTokenProvider,
   isValueProvider,
   MultiProvider,
-  reflector,
+  Reflector,
 } from '#di';
 import {
   isModuleWithParams,
@@ -106,7 +106,7 @@ export class ModuleNormalizer {
   protected getDecoratorMeta(modRefId: ModRefId) {
     modRefId = resolveForwardRef(modRefId);
     const mod = isModuleWithParams(modRefId) ? resolveForwardRef(modRefId.module) : modRefId;
-    return reflector.getDecorators(mod);
+    return Reflector.getDecorators(mod);
   }
 
   /**
@@ -482,7 +482,7 @@ export class AppModule {}
           if (!this.baseMeta.exportsWithParams.includes(exp.mwp)) {
             this.baseMeta.exportsWithParams.push(exp.mwp);
           }
-        } else if (reflector.getDecorators(exp, isFeatureModule)) {
+        } else if (Reflector.getDecorators(exp, isFeatureModule)) {
           if (!this.baseMeta.exportsModules.includes(exp)) {
             this.baseMeta.exportsModules.push(exp);
           }

@@ -4,7 +4,7 @@ import {
   Extension,
   HttpMethod,
   Provider,
-  reflector,
+  Reflector,
   Class,
   MetadataPerMod2,
 } from '@ditsmod/core';
@@ -46,7 +46,7 @@ export class OpenapiRouteExtension extends RestRouteExtension implements Extensi
     const aControllerMetadata: ControllerMetadata[] = [];
     if (applyControllers)
       for (const Controller of meta.controllers as Class<Record<string | symbol, any>>[]) {
-        const classMeta = reflector.getMetadata(Controller)!;
+        const classMeta = Reflector.getMetadata(Controller)!;
         for (const methodName of classMeta) {
           for (const decoratorAndValue of classMeta[methodName].decorators) {
             if (!isOasRoute(decoratorAndValue)) {

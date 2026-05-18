@@ -1,5 +1,5 @@
 import { inspect } from 'node:util';
-import { injectable, Extension, Provider, reflector, Class, HttpMethod, MetadataPerMod2 } from '@ditsmod/core';
+import { injectable, Extension, Provider, Reflector, Class, HttpMethod, MetadataPerMod2 } from '@ditsmod/core';
 
 import { MetadataPerMod3 } from '#types/types.js';
 import { isCtrlDecor, isRoute } from '#types/type.guards.js';
@@ -42,7 +42,7 @@ export class RestRouteExtension implements Extension<MetadataPerMod3> {
     const aControllerMetadata: ControllerMetadata[] = [];
     if (applyControllers)
       for (const Controller of restMetadataPerMod2.meta.controllers as Class<Record<string | symbol, any>>[]) {
-        const classMeta = reflector.getMetadata(Controller)!;
+        const classMeta = Reflector.getMetadata(Controller)!;
         for (const methodName of classMeta) {
           for (const decoratorAndValue of classMeta[methodName].decorators) {
             if (!isRoute<RouteMetadata>(decoratorAndValue)) {

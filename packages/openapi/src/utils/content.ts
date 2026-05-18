@@ -1,4 +1,4 @@
-import { AnyObj, reflector, Class } from '@ditsmod/core';
+import { AnyObj, Reflector, Class } from '@ditsmod/core';
 import {
   SchemaObject,
   SchemaObjectType,
@@ -60,7 +60,7 @@ export class Content {
 
   protected getSchema(model: Class<AnyObj>) {
     const schema = this.getSchemaStubForModel(model);
-    const modelMeta = reflector.getMetadata(model);
+    const modelMeta = Reflector.getMetadata(model);
 
     for (const property in modelMeta) {
       const propertyMeta = modelMeta[property].decorators.find(isProperty);

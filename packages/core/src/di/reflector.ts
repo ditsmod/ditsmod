@@ -162,7 +162,7 @@ export class Reflector {
    * @returns Returns an array of `DecoratorAndValue` for the passed `Cls`, using the passed `typeGuard`,
    * or `undefined` if no appropriate decorators.
    */
-  getDecorators<T extends DecoratorAndValue>(
+  static getDecorators<T extends DecoratorAndValue>(
     Cls: Class | ForwardRefFn<Class>,
     typeGuard: TypeGuard<T>,
   ): (T extends DecoratorAndValue<infer V> ? DecoratorAndValue<V> : never)[] | undefined;
@@ -172,8 +172,8 @@ export class Reflector {
    * @returns Returns an array of `DecoratorAndValue` for the passed `Cls`,
    * or `undefined` if no appropriate decorators.
    */
-  getDecorators<T = any>(Cls: Class | ForwardRefFn<Class>): DecoratorAndValue<T>[] | undefined;
-  getDecorators<T extends DecoratorAndValue>(Cls: Class | ForwardRefFn<Class>, typeGuard?: TypeGuard<T>) {
+  static getDecorators<T = any>(Cls: Class | ForwardRefFn<Class>): DecoratorAndValue<T>[] | undefined;
+  static getDecorators<T extends DecoratorAndValue>(Cls: Class | ForwardRefFn<Class>, typeGuard?: TypeGuard<T>) {
     Cls = resolveForwardRef(Cls);
     let decorators = this.getMetadata(Cls)?.constructor.decorators || [];
     if (typeGuard) {
@@ -188,7 +188,7 @@ export class Reflector {
    *
    * @param Cls A class that has decorators.
    */
-  getMetadata<DecorValue = any, Proto extends AnyObj = AnyObj>(
+  static getMetadata<DecorValue = any, Proto extends AnyObj = AnyObj>(
     Cls: Class<Proto>,
   ): ClassMeta<DecorValue, Proto> | undefined;
   /**
@@ -196,11 +196,11 @@ export class Reflector {
    *
    * @param Cls A class that has decorators.
    */
-  getMetadata<DecorValue = any, Proto extends AnyObj = AnyObj>(
+  static getMetadata<DecorValue = any, Proto extends AnyObj = AnyObj>(
     Cls: Class<Proto>,
     propertyKey?: keyof Proto | 'constructor' | symbol,
   ): ClassPropMeta<DecorValue> | undefined;
-  getMetadata<DecorValue = any, Proto extends AnyObj = AnyObj>(
+  static getMetadata<DecorValue = any, Proto extends AnyObj = AnyObj>(
     Cls: Class<Proto>,
     propertyKey?: string | symbol,
   ): ClassMeta<DecorValue, Proto> | ClassPropMeta<DecorValue> | undefined {
@@ -228,7 +228,7 @@ export class Reflector {
     }
   }
 
-  protected getClassMetaOrParamsMeta<DecorValue = any, Proto extends object = object>(
+  protected static getClassMetaOrParamsMeta<DecorValue = any, Proto extends object = object>(
     Cls: Class<Proto>,
     classMeta: ClassMeta<DecorValue, Proto> | undefined,
     propertyKey?: string | symbol,
@@ -247,7 +247,7 @@ export class Reflector {
     }
   }
 
-  protected concatWithParentClassMeta<DecorValue = any, Proto extends AnyObj = object>(
+  protected static concatWithParentClassMeta<DecorValue = any, Proto extends AnyObj = object>(
     Cls: Class<Proto>,
     classMeta: ClassMeta<DecorValue, Proto>,
   ) {
@@ -269,7 +269,7 @@ export class Reflector {
     }
   }
 
-  protected concatWithOwnClassMeta<DecorValue = any, Proto extends AnyObj = object>(
+  protected static concatWithOwnClassMeta<DecorValue = any, Proto extends AnyObj = object>(
     Cls: Class<Proto>,
     classMeta: ClassMeta<DecorValue, Proto>,
   ) {
@@ -299,7 +299,7 @@ export class Reflector {
     return this.concatWithParamsMeta(Cls, classMeta, ownMetaKeys);
   }
 
-  protected concatWithParamsMeta<DecorValue = any, Proto extends AnyObj = object>(
+  protected static concatWithParamsMeta<DecorValue = any, Proto extends AnyObj = object>(
     Cls: Class<Proto>,
     classMeta: ClassMeta<DecorValue, Proto>,
     ownMetaKeys: (string | symbol)[],
@@ -334,7 +334,7 @@ export class Reflector {
     return classMeta;
   }
 
-  protected setMetaCache<DecorValue = any, Proto extends AnyObj = object>(
+  protected static setMetaCache<DecorValue = any, Proto extends AnyObj = object>(
     Cls: Class<Proto>,
     metadataKey: string | symbol,
     classMeta?: ClassMeta<DecorValue, Proto>,
@@ -342,7 +342,7 @@ export class Reflector {
     Reflect.defineMetadata(metadataKey, classMeta, Cls);
   }
 
-  protected getOwnCacheMetadata<DecorValue = any, Proto extends object = object>(Cls: any) {
+  protected static getOwnCacheMetadata<DecorValue = any, Proto extends object = object>(Cls: any) {
     if (Reflect.hasOwnMetadata(CACHE_KEY, Cls)) {
       return Reflect.getOwnMetadata(CACHE_KEY, Cls) as ClassMeta<DecorValue, Proto> | undefined;
     }
@@ -354,7 +354,7 @@ export class Reflector {
    *
    * @param Cls A class that has decorators.
    */
-  protected getClassMetadata<T = any>(Cls: Class): DecoratorAndValue<T>[] {
+  protected static getClassMetadata<T = any>(Cls: Class): DecoratorAndValue<T>[] {
     if (!isType(Cls)) {
       return [];
     }
@@ -371,7 +371,7 @@ export class Reflector {
    * @param propertyKey If this method is called without `propertyKey`,
    * it's returns parameters of class constructor.
    */
-  protected getParamsMetadata<T extends object>(
+  protected static getParamsMetadata<T extends object>(
     Cls: Class<T>,
     propertyKey?: Exclude<keyof T, number>,
   ): (ParamsMeta | null)[] {
@@ -400,7 +400,7 @@ export class Reflector {
     }
   }
 
-  protected getParentClass(ctor: Class): Class {
+  protected static getParentClass(ctor: Class): Class {
     const parentProto = ctor.prototype ? Object.getPrototypeOf(ctor.prototype) : null;
     const parentClass = parentProto ? parentProto.constructor : null;
     // Note: We always use `Object` as the null value
@@ -408,7 +408,7 @@ export class Reflector {
     return parentClass || Object;
   }
 
-  protected mergeTypesAndClassMeta(paramTypes: any[], paramMetadata: any[]): ParamsMeta[] {
+  protected static mergeTypesAndClassMeta(paramTypes: any[], paramMetadata: any[]): ParamsMeta[] {
     let result: ParamsMeta[];
 
     if (paramTypes === undefined) {
@@ -435,7 +435,7 @@ export class Reflector {
     return result;
   }
 
-  protected getOwnParams(Cls: Class, propertyKey?: string | symbol): ParamsMeta[] | null[] {
+  protected static getOwnParams(Cls: Class, propertyKey?: string | symbol): ParamsMeta[] | null[] {
     const isConstructor = !propertyKey || propertyKey == 'constructor';
     const paramMetadata = isConstructor ? Reflector.getParamRawMeta(Cls) : Reflector.getParamRawMeta(Cls, propertyKey);
     const args = (isConstructor ? [Cls] : [Cls.prototype, propertyKey]) as [Class];
@@ -457,11 +457,11 @@ export class Reflector {
     }
   }
 
-  protected getOwnClassAnnotations(Cls: Class): any[] | null {
+  protected static getOwnClassAnnotations(Cls: Class): any[] | null {
     return Reflect.hasOwnMetadata(CLASS_KEY, Cls) ? Reflect.getOwnMetadata(CLASS_KEY, Cls) : null;
   }
 
-  protected getOwnPropMetadata(Cls: any): { [key: string | symbol]: any[] } | null {
+  protected static getOwnPropMetadata(Cls: any): { [key: string | symbol]: any[] } | null {
     return Reflect.hasOwnMetadata(PROP_KEY, Cls) ? Reflect.getOwnMetadata(PROP_KEY, Cls) : null;
   }
 }

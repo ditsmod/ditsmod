@@ -1,5 +1,5 @@
 import { SchemaObjectType, XParameterObject, XSchemaObject } from '@ts-stack/openapi-spec';
-import { AnyObj, HttpMethod, Class, reflector, isDecoratorAndValue, DecoratorAndValue } from '@ditsmod/core';
+import { AnyObj, HttpMethod, Class, Reflector, isDecoratorAndValue, DecoratorAndValue } from '@ditsmod/core';
 import { YouCanNotSetThisAction } from '#errors';
 
 type RequiredParamsIn = 'query' | 'header' | 'path' | 'cookie';
@@ -138,7 +138,7 @@ export class Parameters {
    */
   protected setMetadata(model: Class, paramsObjects: XParameterObject[]): XParameterObject[] {
     return paramsObjects.map((paramObject) => {
-      const propertyDecorator = reflector.getMetadata(model)?.[paramObject.name];
+      const propertyDecorator = Reflector.getMetadata(model)?.[paramObject.name];
       if (propertyDecorator) {
         const schemas = propertyDecorator.decorators
           .filter((item) => isDecoratorAndValue(item))

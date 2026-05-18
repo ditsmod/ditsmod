@@ -1,7 +1,6 @@
 import 'reflect-metadata/lite';
 
 import { Reflector } from './reflector.js';
-import { reflector } from './reflection.js';
 import { CLASS_KEY, DecoratorAndValue } from './types-and-models.js';
 
 class DecoratedParent {}
@@ -19,7 +18,7 @@ describe('Property decorators', () => {
       watch: any;
     }
 
-    const p = reflector.getMetadata(TestClass)!;
+    const p = Reflector.getMetadata(TestClass)!;
     expect(p.watch.type).toBe(Object);
     expect(p.watch.decorators).toEqual([new DecoratorAndValue(prop, 'firefox!')]);
   });

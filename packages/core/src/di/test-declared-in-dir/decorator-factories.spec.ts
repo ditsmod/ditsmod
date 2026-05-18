@@ -1,6 +1,5 @@
 import 'reflect-metadata/lite';
 import { Reflector } from '#di/reflector.js';
-import { reflector } from '#di/reflection.js';
 
 fdescribe('persistent debug name of decorator factory', () => {
   it('for makeClassDecorator', () => {
@@ -9,7 +8,7 @@ fdescribe('persistent debug name of decorator factory', () => {
     const SomeClass = class {};
     Reflector.setClassRawMeta(SomeClass, classDecoratorFactory({ one: 1 }));
 
-    console.log(reflector.getMetadata(SomeClass)?.constructor.decorators);
+    console.log(Reflector.getMetadata(SomeClass)?.constructor.decorators);
     console.log(Reflector.getClassRawMeta(SomeClass));
     // expect(classDecorator.name).toBe('classDecorator1');
   });
