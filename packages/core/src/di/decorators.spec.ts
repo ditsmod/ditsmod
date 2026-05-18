@@ -1,7 +1,8 @@
 import 'reflect-metadata/lite';
 
 import { Reflector } from './reflector.js';
-import { CLASS_KEY, DecoratorAndValue } from './types-and-models.js';
+import { DecoratorAndValue } from './types-and-models.js';
+import { CLASS_KEY } from './constants.js';
 
 class DecoratedParent {}
 class DecoratedChild extends DecoratedParent {}

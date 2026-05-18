@@ -6,40 +6,6 @@ import { MultiProvider } from './utils.js';
 
 
 /**
- * The key used to store metadata of a class.
- * This metadata is taken from the class-level decorator.
- */
-export const CLASS_KEY = Symbol();
-/**
- * The key used to store metadata of a class.
- * This metadata is taken from the parameter-level decorator in a constructor of a class.
- */
-export const PARAMS_KEY = Symbol();
-/**
- * The key used to store metadata of a class.
- * This metadata is taken from the property-level decorator of a class.
- */
-export const PROP_KEY = Symbol();
-/**
- * The key used to store cached metadata of a class.
- * This metadata is taken from all decorators of a class.
- */
-export const CACHE_KEY = Symbol();
-/**
- * The key used to store cached dependencies of a class.
- * This dependencies is seted by `injector.getDependencies()`.
- */
-export const DEPS_KEY = Symbol();
-/**
- * The key used to store registry of props where are params with metadata.
- */
-export const METHODS_WITH_PARAMS = Symbol();
-
-export interface TypeGuard<T> {
-  (arg: any): arg is T;
-}
-
-/**
  * ### Interface Overview
  *
 ```ts
@@ -198,8 +164,6 @@ export class ResolvedFactory {
     }
   }
 }
-
-export type CompareFn<T = any> = (a: T, b: T) => number;
 
 /**
  * ### Interface Overview
@@ -478,4 +442,7 @@ export type UseFactoryTuple = [Class, AnyFn];
  */
 export type Provider = TypeProvider | ValueProvider | ClassProvider | TokenProvider | FactoryProvider;
 export type AnyFn<Args extends any[] = any[], Return = any> = (...args: Args) => Return;
-
+export interface TypeGuard<T> {
+  (arg: any): arg is T;
+}
+export type CompareFn<T = any> = (a: T, b: T) => number;

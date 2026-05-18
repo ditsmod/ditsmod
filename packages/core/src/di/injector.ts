@@ -31,8 +31,8 @@ import {
   Visibility,
   CompareFn,
   getNewRegistry,
-  DEPS_KEY,
 } from './types-and-models.js';
+import { DEPS_KEY } from './constants.js';
 import { PathTracer } from './path-tracer.js';
 import {
   isClassProvider,

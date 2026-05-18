@@ -4,20 +4,15 @@ import { CallsiteUtils } from '#utils/callsites.js';
 import { ClassMetaIterator } from './class-meta-iterator.js';
 import { ForwardRefFn, resolveForwardRef } from './forward-ref.js';
 import {
-  CACHE_KEY,
-  CLASS_KEY,
-  DEPS_KEY,
-  PARAMS_KEY,
-  METHODS_WITH_PARAMS,
-  PROP_KEY,
   Class,
   DecoratorAndValue,
   ParamsMeta,
   ClassMeta,
   ClassPropMeta,
   UnknownType,
-  TypeGuard
+  TypeGuard,
 } from './types-and-models.js';
+import { CACHE_KEY, CLASS_KEY, DEPS_KEY, PARAMS_KEY, METHODS_WITH_PARAMS, PROP_KEY } from './constants.js';
 import { isType, newArray } from './utils.js';
 
 type KeyOf<T extends AnyObj> = Extract<keyof T, string | symbol>;
