@@ -118,8 +118,10 @@ export class Reflector {
       return function propDecorator(target: any, propertyKey: string | symbol): void {
         const Cls = target.constructor as Class;
         const defaultValue = {} as Record<string | symbol, DecoratorAndValue[]>;
+        const item = new DecoratorAndValue(decoratorId || propDecorFactory, value);
+        Reflector.getRawMeta(Cls, PROP_KEY, propertyKey, item);
         const meta = Reflector.getRawMeta(Cls, PROP_KEY, undefined, defaultValue);
-        (meta[propertyKey] ??= []).push(new DecoratorAndValue(decoratorId || propDecorFactory, value));
+        (meta[propertyKey] ??= []).push(item);
       };
     }
     this.setDecoratorFactoryName(propDecorFactory, debugFactoryName);
