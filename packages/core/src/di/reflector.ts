@@ -19,6 +19,7 @@ import {
 } from './types-and-models.js';
 import { isType, newArray } from './utils.js';
 
+type KeyOf<T extends AnyObj> = Extract<keyof T, string | symbol>;
 /**
  * Attention: These regex has to hold even if the code is minified!
  */
@@ -127,15 +128,20 @@ export class Reflector {
   /**
    * @param propertyKey If this parameter is `undefined`, constructor parameters are passed.
    */
-  static getParamRawMeta(Cls: Class, propertyKey?: string | symbol) {
+  static getParamRawMeta<T extends AnyObj>(Cls: Class<T>, propertyKey?: KeyOf<T>) {
     return this.getRawMeta(Cls, PARAMS_KEY, propertyKey);
   }
 
-  static getPropRawMeta(Cls: Class, propertyKey?: string | symbol) {
+  static getPropRawMeta<T extends AnyObj>(Cls: Class<T>, propertyKey?: KeyOf<T>) {
     return this.getRawMeta(Cls, PROP_KEY, propertyKey);
   }
 
-  static getRawMeta<T = any>(Cls: Class, metadataKey: symbol, propertyKey?: string | symbol, defaultValue?: T): T {
+  static getRawMeta<T extends AnyObj, R = any>(
+    Cls: Class<T>,
+    metadataKey: any,
+    propertyKey?: KeyOf<T>,
+    defaultValue?: R,
+  ): R {
     if (propertyKey) {
       if (defaultValue !== undefined && !Reflect.hasOwnMetadata(metadataKey, Cls, propertyKey)) {
         Reflect.defineMetadata(metadataKey, defaultValue, Cls, propertyKey);
