@@ -1,6 +1,5 @@
 import { AnyFn, AnyObj } from '#types/mix.js';
 import { CallsiteUtils } from '#utils/callsites.js';
-import { TypeGuard } from '#utils/type-guards.js';
 import { ClassMetaIterator } from './class-meta-iterator.js';
 import { ForwardRefFn, resolveForwardRef } from './forward-ref.js';
 import {
@@ -16,6 +15,7 @@ import {
   ClassMeta,
   ClassPropMeta,
   UnknownType,
+  TypeGuard
 } from './types-and-models.js';
 import { isType, newArray } from './utils.js';
 
@@ -162,11 +162,11 @@ export class Reflector {
    */
   static getMetadata<DecorValue = any, Proto extends AnyObj = AnyObj>(
     Cls: Class<Proto>,
-    propertyKey?: keyof Proto | 'constructor' | symbol,
+    propertyKey?: keyof Proto | 'constructor' | symbol | (string & {}),
   ): ClassPropMeta<DecorValue> | undefined;
   static getMetadata<DecorValue = any, Proto extends AnyObj = AnyObj>(
     Cls: Class<Proto>,
-    propertyKey?: string | symbol,
+    propertyKey: string | symbol | undefined = 'constructor',
   ): ClassMeta<DecorValue, Proto> | ClassPropMeta<DecorValue> | undefined {
     const classMeta = new ClassMetaIterator() as ClassMeta<DecorValue, Proto>;
     if (!isType(Cls)) {

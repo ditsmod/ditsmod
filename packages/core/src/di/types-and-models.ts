@@ -36,6 +36,10 @@ export const DEPS_KEY = Symbol();
  */
 export const METHODS_WITH_PARAMS = Symbol();
 
+export interface TypeGuard<T> {
+  (arg: any): arg is T;
+}
+
 /**
  * ### Interface Overview
  *

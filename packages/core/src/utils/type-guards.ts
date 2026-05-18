@@ -13,10 +13,6 @@ export function isProvider(maybeProvider?: any): maybeProvider is Provider {
   return (maybeProvider instanceof Class && !isSomeModule) || isNormalizedProvider(maybeProvider);
 }
 
-export interface TypeGuard<T> {
-  (arg: any): arg is T;
-}
-
 export function isChainError<T extends AnyObj>(err: any): err is ChainError<T> {
   return err instanceof ChainError;
 }
