@@ -1,4 +1,4 @@
-import { AnyFn } from '#types/mix.js';
+import { AnyFn } from './types-and-models.js';
 import { Reflector } from './reflector.js';
 
 /**

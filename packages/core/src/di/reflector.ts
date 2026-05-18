@@ -1,4 +1,5 @@
-import { AnyFn, AnyObj } from '#types/mix.js';
+import { AnyObj } from '#types/mix.js';
+import { AnyFn } from './types-and-models.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ClassMetaIterator } from './class-meta-iterator.js';
 import { ForwardRefFn, resolveForwardRef } from './forward-ref.js';

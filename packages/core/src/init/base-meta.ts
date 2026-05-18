@@ -1,5 +1,6 @@
 import { Class, MultiProvider } from '#di';
-import { AnyFn, AnyObj, ModRefId, ModuleType } from '#types/mix.js';
+import { AnyObj, ModRefId, ModuleType } from '#types/mix.js';
+import { AnyFn } from '#di/types-and-models.js';
 import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from '../decorators/module-raw-metadata.js';
 import { ExtensionConfig, type ExtensionConfigBase } from '#extension/extension-providers-and-configs.js';

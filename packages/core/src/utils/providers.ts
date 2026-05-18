@@ -2,7 +2,8 @@ import { Logger, LoggerConfig } from '#logger/logger.js';
 import { Class, FunctionFactoryProvider, Provider, Reflector, UseFactoryTuple } from '#di';
 import { LogMediator } from '#logger/log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { AnyFn, UnionToIntersection } from '#types/mix.js';
+import { UnionToIntersection } from '#types/mix.js';
+import { AnyFn } from '#di/types-and-models.js';
 import { NormalizedProvider } from './ng-utils.js';
 import { ClassForUseFactoriesWithoutDecorators } from '#error/core-errors.js';
 

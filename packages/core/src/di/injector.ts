@@ -1,4 +1,4 @@
-import { AnyFn } from '#types/mix.js';
+import { AnyFn } from './types-and-models.js';
 import { fromSelf, inject, InjectTransformResult, optional, skipSelf } from './decorators.js';
 import {
   FailedCreateFactoryProvider,

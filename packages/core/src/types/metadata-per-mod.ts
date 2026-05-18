@@ -1,5 +1,6 @@
 import { BaseMeta } from '#init/base-meta.js';
-import { AnyFn, AnyObj, ModRefId } from './mix.js';
+import { AnyObj, ModRefId } from './mix.js';
+import { AnyFn } from '#di/types-and-models.js';
 import { Provider } from '#di/types-and-models.js';
 import { ExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import { BaseInitRawMeta, InitHooks } from '#decorators/init-hooks-and-metadata.js';

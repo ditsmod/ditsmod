@@ -1,4 +1,3 @@
-import { AnyFn } from '#types/mix.js';
 import type { fromSelf, skipSelf } from './decorators.js';
 import { ForwardRefFn } from './forward-ref.js';
 import { InjectionToken } from './injection-token.js';
@@ -478,3 +477,5 @@ export type UseFactoryTuple = [Class, AnyFn];
  * See `TypeProvider`, `ValueProvider`, `ClassProvider`, `TokenProvider`, `FactoryProvider`.
  */
 export type Provider = TypeProvider | ValueProvider | ClassProvider | TokenProvider | FactoryProvider;
+export type AnyFn<Args extends any[] = any[], Return = any> = (...args: Args) => Return;
+

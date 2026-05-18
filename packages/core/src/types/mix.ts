@@ -65,8 +65,6 @@ export type OmitProps<T extends AnyObj, K extends keyof T> = Pick<T, Exclude<key
 export type PickProps<T extends AnyObj, K extends keyof T> = { [P in K]: T[P] };
 export type RequireOnlyProps<T, K extends keyof T> = Partial<Omit<T, K>> & Required<Pick<T, K>>;
 export type OptionalProps<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-export type AnyFn<Args extends any[] = any[], Return = any> = (...args: Args) => Return;
-
 /**
  * It is just `{ [key: string | symbol]: any }` an object interface.
  */
