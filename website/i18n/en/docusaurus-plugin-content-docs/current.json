@@ -21,6 +21,9 @@
   "sidebar.tutorialSidebar.category.Гід": {
     "message": "Guide"
   },
+  "sidebar.tutorialSidebar.category.REST Гід": {
+    "message": "REST Guide"
+  },
   "sidebar.tutorialSidebar.category.REST застосунок": {
     "message": "REST application"
   },
