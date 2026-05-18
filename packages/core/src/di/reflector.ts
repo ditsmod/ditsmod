@@ -58,9 +58,9 @@ export class Reflector {
       const value = transform ? transform(...args) : [...args];
       const declaredInDir = CallsiteUtils.getCallerDir();
       return function classDecorator(Cls: Class): void {
-        const annotations = Reflector.getRawMeta(Cls, CLASS_KEY, undefined, [] as DecoratorAndValue[]);
+        const classDecorValues = Reflector.getRawMeta(Cls, CLASS_KEY, undefined, [] as DecoratorAndValue[]);
         const decoratorAndValue = new DecoratorAndValue(decoratorId || classDecoratorFactory, value, declaredInDir);
-        annotations.push(decoratorAndValue);
+        classDecorValues.push(decoratorAndValue);
       };
     }
     this.setDecoratorFactoryName(classDecoratorFactory, debugFactoryName);
@@ -77,12 +77,12 @@ export class Reflector {
     function paramDecorFactory(...args: Parameters<T>) {
       const value = transform ? transform(...args) : [...args];
       return function paramDecorator(
-        clsOrObj: Class | object,
+        classOrInstance: Class | object,
         propertyKey: string | symbol | undefined,
         index: number,
       ): void {
         // This function can be called for a class constructor and methods.
-        const Cls = isType(clsOrObj) ? clsOrObj : (clsOrObj.constructor as Class);
+        const Cls = isType(classOrInstance) ? classOrInstance : (classOrInstance.constructor as Class);
         const parameters = Reflector.getRawMeta(Cls, PARAMS_KEY, propertyKey, [] as any[]);
         const methodNames: Set<string | symbol> = Reflector.getRawMeta(Cls, METHODS_WITH_PARAMS, undefined, new Set());
         methodNames.add(propertyKey || 'constructor');
@@ -186,7 +186,7 @@ export class Reflector {
     return this.getClassMetaOrParamsMeta(Cls, cache!, propertyKey);
   }
 
-  static setRawClassMeta(Cls: Class, classDecorator: (Cls: Class) => any) {
+  static setRawClassMeta(Cls: Class, classDecorator: AnyFn) {
     classDecorator(Cls);
   }
 
@@ -194,6 +194,14 @@ export class Reflector {
     return this.getRawMeta(Cls, CLASS_KEY);
   }
 
+  static setRawParamMeta<T extends AnyObj>(
+    Cls: Class<T>,
+    propertyKey: string | symbol | undefined,
+    index: number,
+    paramDecorator: AnyFn,
+  ) {
+    paramDecorator(Cls, propertyKey, index);
+  }
   /**
    * @param propertyKey If this parameter is `undefined`, constructor parameters are passed.
    */
@@ -206,7 +214,7 @@ export class Reflector {
   }
 
   static getRawMeta<T extends AnyObj, R = any>(
-    Cls: Class<T>,
+    Cls: Class<T> | T,
     metadataKey: any,
     propertyKey?: KeyOf<T>,
     defaultValue?: R,
