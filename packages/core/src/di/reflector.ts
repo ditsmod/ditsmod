@@ -282,7 +282,7 @@ export class Reflector {
     Cls: Class<Proto>,
     classMeta: ClassMeta<DecorValue, Proto>,
   ) {
-    const ownPropMetadata = this.getOwnPropMetadata(Cls);
+    const ownPropMetadata = this.getRawPropMeta(Cls);
     let ownMetaKeys: (string | symbol)[] = [];
     if (ownPropMetadata) {
       ownMetaKeys = Reflect.ownKeys(ownPropMetadata);
@@ -368,7 +368,7 @@ export class Reflector {
       return [];
     }
     const parentClass = this.getParentClass(Cls);
-    const ownClassAnnotations = this.getOwnClassAnnotations(Cls) || [];
+    const ownClassAnnotations = this.getRawClassMeta(Cls) || [];
     const parentAnnotations = parentClass !== Object ? this.getClassMetadata<T>(parentClass) : [];
     return ownClassAnnotations.concat(parentAnnotations);
   }
@@ -464,13 +464,5 @@ export class Reflector {
     } else {
       return newArray(Cls.length, null);
     }
-  }
-
-  protected static getOwnClassAnnotations(Cls: Class): any[] | null {
-    return Reflect.hasOwnMetadata(CLASS_KEY, Cls) ? Reflect.getOwnMetadata(CLASS_KEY, Cls) : null;
-  }
-
-  protected static getOwnPropMetadata(Cls: any): { [key: string | symbol]: any[] } | null {
-    return Reflect.hasOwnMetadata(PROP_KEY, Cls) ? Reflect.getOwnMetadata(PROP_KEY, Cls) : null;
   }
 }
