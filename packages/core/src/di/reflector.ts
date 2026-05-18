@@ -46,12 +46,6 @@ export function isDelegateCtor(typeStr: string): boolean {
 }
 
 export class Reflector {
-  static setClassRawMeta(Cls: object, classDecorator: (Cls: Class) => any) {
-    classDecorator(Cls as any);
-  }
-  static getClassRawMeta(Cls: Class) {
-    return this.getRawMeta(Cls, CLASS_KEY);
-  }
   /**
    * @param transform Such a transformer should not use symbols that can be wrapped with `forwardRef()`,
    * because at this stage the `resolveForwardRef()` function will not work correctly.
@@ -128,35 +122,6 @@ export class Reflector {
     return propDecorFactory;
   }
   /**
-   * @param propertyKey If this parameter is `undefined`, constructor parameters are passed.
-   */
-  static getParamRawMeta<T extends AnyObj>(Cls: Class<T>, propertyKey?: KeyOf<T>) {
-    return this.getRawMeta(Cls, PARAMS_KEY, propertyKey);
-  }
-
-  static getPropRawMeta<T extends AnyObj>(Cls: Class<T>, propertyKey?: KeyOf<T>) {
-    return this.getRawMeta(Cls, PROP_KEY, propertyKey);
-  }
-
-  static getRawMeta<T extends AnyObj, R = any>(
-    Cls: Class<T>,
-    metadataKey: any,
-    propertyKey?: KeyOf<T>,
-    defaultValue?: R,
-  ): R {
-    if (propertyKey) {
-      if (defaultValue !== undefined && !Reflect.hasOwnMetadata(metadataKey, Cls, propertyKey)) {
-        Reflect.defineMetadata(metadataKey, defaultValue, Cls, propertyKey);
-      }
-      return Reflect.getOwnMetadata(metadataKey, Cls, propertyKey);
-    }
-    if (defaultValue !== undefined && !Reflect.hasOwnMetadata(metadataKey, Cls)) {
-      Reflect.defineMetadata(metadataKey, defaultValue, Cls);
-    }
-    return Reflect.getOwnMetadata(metadataKey, Cls);
-  }
-
-  /**
    * @param Cls The class from which to return the metadata.
    * @param typeGuard Type guard, which will search for necessary decorators.
    * @returns Returns an array of `DecoratorAndValue` for the passed `Cls`, using the passed `typeGuard`,
@@ -181,7 +146,6 @@ export class Reflector {
     }
     return decorators.length ? decorators : undefined;
   }
-
   /**
    * Returns an object with all the metadata for the passed class.
    * This object implements [The iterable protocol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol).
@@ -220,6 +184,43 @@ export class Reflector {
     }
 
     return this.getClassMetaOrParamsMeta(Cls, cache!, propertyKey);
+  }
+
+  static setRawClassMeta(Cls: Class, classDecorator: (Cls: Class) => any) {
+    classDecorator(Cls);
+  }
+
+  static getRawClassMeta(Cls: Class) {
+    return this.getRawMeta(Cls, CLASS_KEY);
+  }
+
+  /**
+   * @param propertyKey If this parameter is `undefined`, constructor parameters are passed.
+   */
+  static getRawParamMeta<T extends AnyObj>(Cls: Class<T>, propertyKey?: KeyOf<T>) {
+    return this.getRawMeta(Cls, PARAMS_KEY, propertyKey);
+  }
+
+  static getRawPropMeta<T extends AnyObj>(Cls: Class<T>, propertyKey?: KeyOf<T>) {
+    return this.getRawMeta(Cls, PROP_KEY, propertyKey);
+  }
+
+  static getRawMeta<T extends AnyObj, R = any>(
+    Cls: Class<T>,
+    metadataKey: any,
+    propertyKey?: KeyOf<T>,
+    defaultValue?: R,
+  ): R {
+    if (propertyKey) {
+      if (defaultValue !== undefined && !Reflect.hasOwnMetadata(metadataKey, Cls, propertyKey)) {
+        Reflect.defineMetadata(metadataKey, defaultValue, Cls, propertyKey);
+      }
+      return Reflect.getOwnMetadata(metadataKey, Cls, propertyKey);
+    }
+    if (defaultValue !== undefined && !Reflect.hasOwnMetadata(metadataKey, Cls)) {
+      Reflect.defineMetadata(metadataKey, defaultValue, Cls);
+    }
+    return Reflect.getOwnMetadata(metadataKey, Cls);
   }
 
   protected static setDecoratorFactoryName(factory: AnyFn, debugFactoryName?: string) {
@@ -437,7 +438,7 @@ export class Reflector {
 
   protected static getOwnParams(Cls: Class, propertyKey?: string | symbol): ParamsMeta[] | null[] {
     const isConstructor = !propertyKey || propertyKey == 'constructor';
-    const paramMetadata = isConstructor ? Reflector.getParamRawMeta(Cls) : Reflector.getParamRawMeta(Cls, propertyKey);
+    const paramMetadata = isConstructor ? Reflector.getRawParamMeta(Cls) : Reflector.getRawParamMeta(Cls, propertyKey);
     const args = (isConstructor ? [Cls] : [Cls.prototype, propertyKey]) as [Class];
     const paramTypes = Reflect.getOwnMetadata('design:paramtypes', ...args);
 
