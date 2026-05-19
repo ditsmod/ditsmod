@@ -1,5 +1,6 @@
-import { AnyObj, Reflector, Class } from '@ditsmod/core';
-import {
+import type { AnyObj} from '@ditsmod/core';
+import { Reflector, Class } from '@ditsmod/core';
+import type {
   SchemaObject,
   SchemaObjectType,
   XEncodingObject,
@@ -8,8 +9,8 @@ import {
 } from '@ts-stack/openapi-spec';
 
 import { REQUIRED } from '#constants';
-import { AnyEnum, CustomType } from '#decorators/property.js';
-import { mediaTypeName } from '#types/media-types.js';
+import type { AnyEnum, CustomType } from '#decorators/property.js';
+import type { mediaTypeName } from '#types/media-types.js';
 import { isProperty } from './type-guards.js';
 import { ArrayTypeDefinitionConflict, EnumTypeDefinitionConflict } from '#errors';
 

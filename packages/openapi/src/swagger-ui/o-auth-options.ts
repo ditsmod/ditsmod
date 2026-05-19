@@ -1,4 +1,4 @@
-import { AnyObj } from '@ditsmod/core';
+import type { AnyObj } from '@ditsmod/core';
 
 export class SwaggerOAuthOptions {
   /**

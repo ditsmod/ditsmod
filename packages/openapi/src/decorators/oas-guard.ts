@@ -1,5 +1,5 @@
 import { Reflector } from '@ditsmod/core';
-import { XResponsesObject, XSecuritySchemeObject } from '@ts-stack/openapi-spec';
+import type { XResponsesObject, XSecuritySchemeObject } from '@ts-stack/openapi-spec';
 
 export interface OasGuardMetadata {
   /**

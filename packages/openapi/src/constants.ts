@@ -1,6 +1,7 @@
-import { OasGuardMetadata } from '#decorators/oas-guard.js';
+import type { OasGuardMetadata } from '#decorators/oas-guard.js';
 import { Status } from '@ditsmod/core';
-import { openapi, XOasObject } from '@ts-stack/openapi-spec';
+import type { XOasObject } from '@ts-stack/openapi-spec';
+import { openapi } from '@ts-stack/openapi-spec';
 
 /**
  * Used inside OpenAPI models to indicates whether requestBody property is required or not.

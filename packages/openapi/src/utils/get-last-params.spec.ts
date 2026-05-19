@@ -1,4 +1,4 @@
-import { ParameterObject, ReferenceObject } from '@ts-stack/openapi-spec';
+import type { ParameterObject, ReferenceObject } from '@ts-stack/openapi-spec';
 
 import { getLastParameterObjects, getLastReferenceObjects } from './get-last-params.js';
 

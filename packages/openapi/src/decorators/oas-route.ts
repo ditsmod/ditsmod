@@ -1,6 +1,7 @@
-import { Class, HttpMethod, Reflector } from '@ditsmod/core';
-import { GuardItem, HttpInterceptor } from '@ditsmod/rest';
-import { XOperationObject } from '@ts-stack/openapi-spec';
+import type { Class, HttpMethod} from '@ditsmod/core';
+import { Reflector } from '@ditsmod/core';
+import type { GuardItem, HttpInterceptor } from '@ditsmod/rest';
+import type { XOperationObject } from '@ts-stack/openapi-spec';
 
 /**
  * This route metadata has a `guards` property.

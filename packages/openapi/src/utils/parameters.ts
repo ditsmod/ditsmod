@@ -1,5 +1,6 @@
-import { SchemaObjectType, XParameterObject, XSchemaObject } from '@ts-stack/openapi-spec';
-import { AnyObj, HttpMethod, Class, Reflector, isDecoratorAndValue, DecoratorAndValue } from '@ditsmod/core';
+import type { SchemaObjectType, XParameterObject, XSchemaObject } from '@ts-stack/openapi-spec';
+import type { AnyObj, HttpMethod, DecoratorAndValue } from '@ditsmod/core';
+import { Class, Reflector, isDecoratorAndValue } from '@ditsmod/core';
 import { YouCanNotSetThisAction } from '#errors';
 
 type RequiredParamsIn = 'query' | 'header' | 'path' | 'cookie';
