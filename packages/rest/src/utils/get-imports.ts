@@ -1,4 +1,4 @@
-import { ProviderImport, Provider } from '@ditsmod/core';
+import type { ProviderImport, Provider } from '@ditsmod/core';
 
 export function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) {
   return [...(map || []).keys()];

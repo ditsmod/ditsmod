@@ -1,11 +1,13 @@
-import { HttpMethod, ModuleExtract, GlobalInitHooks, BaseMeta, Provider } from '@ditsmod/core';
+import type { HttpMethod, BaseMeta} from '@ditsmod/core';
+import { ModuleExtract, GlobalInitHooks, Provider } from '@ditsmod/core';
 
 import { RestProviderImport } from '#init/types.js';
-import { Tree } from '#services/tree.js';
-import { GuardPerMod1 } from '#interceptors/guard.js';
-import { RouteHandler } from '#services/router.js';
-import { ControllerMetadata } from './controller-metadata.js';
-import { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
+import type { Tree } from '#services/tree.js';
+import type { GuardPerMod1 } from '#interceptors/guard.js';
+import type { RouteHandler } from '#services/router.js';
+import type { ControllerMetadata } from './controller-metadata.js';
+import type { RestInitMeta } from '#init/rest-init-meta.js';
+import { RestModRefId } from '#init/rest-init-meta.js';
 
 export class RestGlobalProviders extends GlobalInitHooks {}
 

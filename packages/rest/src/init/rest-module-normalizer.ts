@@ -1,26 +1,28 @@
-import {
+import type {
   Class,
-  isNormalizedProvider,
   BaseMeta,
   Providers,
+  Provider,
+  ForwardRefFn,
+  ModuleType} from '@ditsmod/core';
+import {
+  isNormalizedProvider,
   Reflector,
   resolveForwardRef,
   getDuplicates,
   isModuleWithParams,
-  Provider,
   isClassProvider,
   isTokenProvider,
   getProxyForInitMeta,
-  ForwardRefFn,
-  ModuleType,
   isRootModule,
 } from '@ditsmod/core';
 import { ForbiddenExportNormalizedProvider, ModuleShouldHaveValue } from '@ditsmod/core/errors';
 
-import { AppendsWithParams, RestInitRawMeta } from '#init/rest-init-raw-meta.js';
-import { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
+import type { AppendsWithParams, RestInitRawMeta } from '#init/rest-init-raw-meta.js';
+import type { RestModRefId} from '#init/rest-init-meta.js';
+import { RestInitMeta } from '#init/rest-init-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
-import { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
+import type { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { ControllerDoesNotHaveDecorator, DuplicateOfControllers, InvalidGuard } from '#errors';
 

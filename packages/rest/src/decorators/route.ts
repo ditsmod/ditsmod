@@ -1,7 +1,8 @@
-import { Class, HttpMethod, Reflector } from '@ditsmod/core';
+import type { Class, HttpMethod} from '@ditsmod/core';
+import { Reflector } from '@ditsmod/core';
 
-import { GuardItem } from '#interceptors/guard.js';
-import { HttpInterceptor } from '#interceptors/tokens-and-types.js';
+import type { GuardItem } from '#interceptors/guard.js';
+import type { HttpInterceptor } from '#interceptors/tokens-and-types.js';
 
 export interface RouteMetadata {
   httpMethod: HttpMethod | [HttpMethod, ...HttpMethod[]];

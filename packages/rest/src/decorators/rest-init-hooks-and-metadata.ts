@@ -1,25 +1,26 @@
-import {
-  Reflector,
-  InitHooks,
+import type {
   ModRefId,
   BaseMeta,
   InitDecorator,
   Provider,
   ForwardRefFn,
-  ModuleType,
+  ModuleType} from '@ditsmod/core';
+import {
+  Reflector,
+  InitHooks
 } from '@ditsmod/core';
 
-import { RestInitRawMeta, RestModuleParams } from '#init/rest-init-raw-meta.js';
+import type { RestInitRawMeta, RestModuleParams } from '#init/rest-init-raw-meta.js';
 import { RestModuleNormalizer } from '#init/rest-module-normalizer.js';
 import { RestShallowModulesImporter } from '#init/rest-shallow-modules-importer.js';
-import {
+import type {
   DeepModulesImporterConfig,
   ExportGlobalProvidersConfig,
   ImportModulesShallowConfig,
   RestShallowImports,
 } from '#init/types.js';
-import { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
-import { RestGlobalProviders } from '#types/types.js';
+import type { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
+import type { RestGlobalProviders } from '#types/types.js';
 import { RestModule } from '#init/rest.module.js';
 import { RestDeepModulesImporter } from '#init/rest-deep-modules-importer.js';
 

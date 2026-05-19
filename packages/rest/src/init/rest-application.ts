@@ -2,13 +2,14 @@ import type * as http from 'node:http';
 import type * as http2 from 'node:http2';
 import type * as https from 'node:https';
 import type { AddressInfo } from 'node:net';
-import { ModuleType, SystemLogMediator, BaseApplication } from '@ditsmod/core';
+import type { ModuleType} from '@ditsmod/core';
+import { SystemLogMediator, BaseApplication } from '@ditsmod/core';
 
-import { AppOptions } from '#types/app-options.js';
-import { HttpServerModule, HttpsServerModule } from '#init/http-module.js';
-import { Http2SecureServerOptions, HttpServer } from '#types/server-options.js';
+import type { AppOptions } from '#types/app-options.js';
+import type { HttpServerModule, HttpsServerModule } from '#init/http-module.js';
+import type { Http2SecureServerOptions, HttpServer } from '#types/server-options.js';
 import { isHttp2SecureServerOptions } from '#types/type.guards.js';
-import { RequestListener } from '#services/request.js';
+import type { RequestListener } from '#services/request.js';
 import { RestAppInitializer } from './rest-app-initializer.js';
 import { CreateSecureServerInHttp2NotFound } from '#errors';
 

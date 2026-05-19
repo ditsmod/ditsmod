@@ -1,9 +1,10 @@
-import { InjectionToken, AnyObj } from '@ditsmod/core';
+import type { AnyObj } from '@ditsmod/core';
+import { InjectionToken } from '@ditsmod/core';
 
-import { HttpInterceptor } from '#interceptors/tokens-and-types.js';
-import { RawRequest, RawResponse } from '#services/request.js';
-import { PathParam } from '#services/router.js';
-import { HttpServer } from './server-options.js';
+import type { HttpInterceptor } from '#interceptors/tokens-and-types.js';
+import type { RawRequest, RawResponse } from '#services/request.js';
+import type { PathParam } from '#services/router.js';
+import type { HttpServer } from './server-options.js';
 
 export const HTTP_INTERCEPTORS = new InjectionToken<HttpInterceptor[]>('HTTP_INTERCEPTORS');
 /**

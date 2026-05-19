@@ -1,4 +1,4 @@
-import { HttpMethod } from '@ditsmod/core';
+import type { HttpMethod } from '@ditsmod/core';
 import { CustomError } from '@ditsmod/core/errors';
 
 // export class X extends CustomError {

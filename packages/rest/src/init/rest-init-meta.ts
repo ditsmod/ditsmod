@@ -1,7 +1,8 @@
-import { AnyObj, Provider, ModuleType, MultiProvider, Class, ModRefId, BaseInitMeta } from '@ditsmod/core';
+import type { AnyObj, ModuleType, Class, ModRefId} from '@ditsmod/core';
+import { Provider, MultiProvider, BaseInitMeta } from '@ditsmod/core';
 
-import { NormalizedGuard } from '#interceptors/guard.js';
-import { AppendsWithParams } from '#init/rest-init-raw-meta.js';
+import type { NormalizedGuard } from '#interceptors/guard.js';
+import type { AppendsWithParams } from '#init/rest-init-raw-meta.js';
 
 class NormalizedParams {
   declare path?: string;

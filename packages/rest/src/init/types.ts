@@ -1,4 +1,4 @@
-import {
+import type {
   Provider,
   BaseMeta,
   GlobalProviders,
@@ -9,8 +9,8 @@ import {
   ShallowImports,
 } from '@ditsmod/core';
 
-import { GuardPerMod1 } from '#interceptors/guard.js';
-import { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
+import type { GuardPerMod1 } from '#interceptors/guard.js';
+import type { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
 
 export class RestProviderImport<T extends Provider = Provider> {
   modRefId: RestModRefId;

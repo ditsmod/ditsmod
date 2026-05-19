@@ -1,7 +1,7 @@
 import { Injector } from '@ditsmod/core';
 
 import { DefaultRouter } from './router.js';
-import { Fn } from '../types/types.js';
+import type { Fn } from '../types/types.js';
 import { Tree } from './tree.js';
 
 describe('Router', () => {

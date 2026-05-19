@@ -1,7 +1,10 @@
-import {
+import type {
   Provider,
   ModRefId,
   ModuleManager,
+  BaseMeta,
+  GlobalProviders} from '@ditsmod/core';
+import {
   isModuleWithParams,
   getTokens,
   getToken,
@@ -9,8 +12,6 @@ import {
   getCollisions,
   isRootModule,
   getModule,
-  BaseMeta,
-  GlobalProviders,
   getLastProviders,
   getProxyForInitMeta,
 } from '@ditsmod/core';
@@ -20,11 +21,12 @@ import {
   ResolvingCollisionNotImportedInApplication,
 } from '@ditsmod/core/errors';
 
-import { GuardPerMod1 } from '#interceptors/guard.js';
-import { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
-import { Level, RestGlobalProviders } from '#types/types.js';
+import type { GuardPerMod1 } from '#interceptors/guard.js';
+import type { RestModRefId} from '#init/rest-init-meta.js';
+import { RestInitMeta } from '#init/rest-init-meta.js';
+import type { Level, RestGlobalProviders } from '#types/types.js';
 import { initRest, RestInitHooks } from '#decorators/rest-init-hooks-and-metadata.js';
-import { ImportModulesShallowConfig, RestProviderImport, RestShallowImports } from './types.js';
+import type { ImportModulesShallowConfig, RestProviderImport, RestShallowImports } from './types.js';
 import { ModuleIncludesInImportsAndAppends } from '#errors';
 import { ModuleMustHaveControllers } from '#services/rest-errors.js';
 

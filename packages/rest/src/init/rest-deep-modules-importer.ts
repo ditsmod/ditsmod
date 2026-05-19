@@ -1,4 +1,4 @@
-import {
+import type {
   ModRefId,
   Provider,
   ModuleManager,
@@ -7,7 +7,7 @@ import {
   ShallowImports,
 } from '@ditsmod/core';
 
-import { DeepModulesImporterConfig, RestMetadataPerMod2, RestShallowImports } from './types.js';
+import type { DeepModulesImporterConfig, RestMetadataPerMod2, RestShallowImports } from './types.js';
 
 /**
  * By analyzing the dependencies of the providers returned by `ShallowModulesImporter`,

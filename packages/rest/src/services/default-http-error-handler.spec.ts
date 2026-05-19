@@ -3,7 +3,7 @@ import { CustomError } from '@ditsmod/core/errors';
 import { jest } from '@jest/globals';
 
 import { RequestContext } from '#services/request-context.js';
-import { RawResponse } from '#services/request.js';
+import type { RawResponse } from '#services/request.js';
 import { DefaultHttpErrorHandler as ErrorHandler } from '#services/default-http-error-handler.js';
 
 

@@ -1,6 +1,6 @@
 import { Injector, ModuleExtract } from '@ditsmod/core';
 
-import { Fn } from '../types/types.js';
+import type { Fn } from '../types/types.js';
 import { Tree } from '../services/tree.js';
 import { DefaultRouter } from '../services/router.js';
 

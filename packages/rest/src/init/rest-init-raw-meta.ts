@@ -1,5 +1,5 @@
-import { AnyObj, ModuleType, Class, AnyFn, BaseInitRawMeta, FeatureModuleParams, ForwardRefFn } from '@ditsmod/core';
-import { GuardItem } from '#interceptors/guard.js';
+import type { AnyObj, ModuleType, Class, AnyFn, BaseInitRawMeta, FeatureModuleParams, ForwardRefFn } from '@ditsmod/core';
+import type { GuardItem } from '#interceptors/guard.js';
 
 /**
  * Metadata for the `initRest` decorator, which adds REST metadata to a `featureModule` or `rootModule`.

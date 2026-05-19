@@ -1,6 +1,7 @@
-import { Class, Reflector, BaseMeta } from '@ditsmod/core';
-import { RequestContext } from '#services/request-context.js';
-import { RestInitMeta } from '#init/rest-init-meta.js';
+import type { Class, BaseMeta } from '@ditsmod/core';
+import { Reflector } from '@ditsmod/core';
+import type { RequestContext } from '#services/request-context.js';
+import type { RestInitMeta } from '#init/rest-init-meta.js';
 
 export const guard = Reflector.makeClassDecorator((data?: never) => data);
 

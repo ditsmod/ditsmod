@@ -1,5 +1,6 @@
-import { AsyncLocalStorage } from 'node:async_hooks';
-import { Channel, channel, subscribe, unsubscribe, hasSubscribers, tracingChannel } from 'node:diagnostics_channel';
+import type { AsyncLocalStorage } from 'node:async_hooks';
+import type { Channel} from 'node:diagnostics_channel';
+import { channel, subscribe, unsubscribe, hasSubscribers, tracingChannel } from 'node:diagnostics_channel';
 export { TracingChannelCollection, TracingChannelSubscribers } from 'node:diagnostics_channel';
 
 interface ChannelMap {

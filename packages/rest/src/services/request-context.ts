@@ -1,9 +1,9 @@
-import { AnyObj } from '@ditsmod/core';
+import type { AnyObj } from '@ditsmod/core';
 import { TLSSocket } from 'node:tls';
 
-import { RawRequest, RawResponse } from './request.js';
+import type { RawRequest, RawResponse } from './request.js';
 import { Res } from './response.js';
-import { PathParam } from './router.js';
+import type { PathParam } from './router.js';
 
 
 
