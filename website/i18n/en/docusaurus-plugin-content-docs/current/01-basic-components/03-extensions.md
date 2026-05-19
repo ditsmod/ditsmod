@@ -8,7 +8,49 @@ sidebar_position: 3
 
 Extensions start working when Ditsmod has collected static metadata from class-level decorators and exported/imported modules and providers exactly as specified in the collected static metadata of the module. Typically, an extension does its work before the HTTP request handlers are created. To modify or extend the application's functionality, an extension uses static metadata that is attached to specific decorators. On the other hand, an extension can also dynamically add metadata of the same type as the static metadata. Extensions can initialize asynchronously, and can depend on each other.
 
-The task of most extensions is to act like a pipeline, taking a multidimensional array of configuration data (metadata) as input and producing another (or augmented) multidimensional array as output. This final array is ultimately interpreted by the target extension, e.g. to create routes and their handlers. However, extensions do not necessarily need to work with configuration or setting up HTTP request handlers; they can also initialize database connections, collect metrics for monitoring, write logs, or perform other tasks.
+Figuratively speaking, a module + extension, in terms of how they operate conceptually, somewhat resemble a "cloud provider" that supplies only the infrastructure for a business. That is, the business logic itself is written not in the extensions, but rather in services, controllers, guards, interceptors, etc., which will operate after the preparatory work performed by the extensions.
+
+The concept behind how extensions work, in a highly simplified form, is as follows:
+
+```ts {13-23}
+import { createServer } from 'http';
+import { Injector } from '@ditsmod/core';
+
+class Controller1 {
+  // ...
+}
+class Interceptor1 {
+  // ...
+}
+
+let handler: (req, res) => Promise<void>;
+
+async function extension1() {
+  const injector = Injector.resolveAndCreate([
+    { token: 'controller1', useClass: Controller1 },
+    { token: 'interceptors', useClass: Interceptor1, multi: true },
+  ]);
+
+  handler = async function (req, res) {
+    const interceptors = injector.get('interceptors') as Interceptor1[];
+    // ...
+  };
+}
+
+await extension1();
+
+const server = createServer(async (req, res) => {
+  await handler(req, res);
+});
+
+server.listen(3000, () => {
+  console.log('Webserver run on http://localhost:3000');
+});
+```
+
+As you can see, a controller and an interceptor are declared first, symbolizing disparate metadata here. Then, in the highlighted lines, the `extension1()` function is shown, which conditionally symbolizes the functionality of an extension. In essence, the extension gathers all metadata together, passes it to the DI registry, creates an injector, and ultimately creates an HTTP request handler.
+
+The task of most extensions is to act like a pipeline, taking a multidimensional array of configuration data (metadata) as input and producing another (or augmented) multidimensional array as output. This final array is ultimately interpreted by the target extension, e.g. to create routes and their handlers. However, extensions do not necessarily need to work with configuration or setting up HTTP request handlers; they can also initialize database connections, collect metrics for monitoring, or perform other tasks.
 
 In most cases, multidimensional arrays of configuration data reflect the structure of the application:
 
