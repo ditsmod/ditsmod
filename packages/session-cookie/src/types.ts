@@ -1,6 +1,6 @@
-import { RequestContext } from '@ditsmod/rest';
+import type { RequestContext } from '@ditsmod/rest';
 import { CookieOptions } from '@ts-stack/cookies';
-import { SessionCookie } from './session-cookie.js';
+import type { SessionCookie } from './session-cookie.js';
 
 export class SessionCookieOptions extends CookieOptions {
   cookieName?: string;
