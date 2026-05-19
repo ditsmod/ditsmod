@@ -1,5 +1,5 @@
-import { TrpcRootObject } from '@ditsmod/trpc';
-import { NodeHTTPRequest, NodeHTTPResponse } from '@trpc/server/adapters/node-http';
+import type { TrpcRootObject } from '@ditsmod/trpc';
+import type { NodeHTTPRequest, NodeHTTPResponse } from '@trpc/server/adapters/node-http';
 
 export type TrpcContext = {
   req: NodeHTTPRequest;

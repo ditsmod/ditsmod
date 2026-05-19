@@ -1,6 +1,6 @@
 import { Injector } from '@ditsmod/core';
-import { Res } from '@ditsmod/rest';
-import { Logger as WinstonLogger } from 'winston';
+import type { Res } from '@ditsmod/rest';
+import type { Logger as WinstonLogger } from 'winston';
 import { jest } from '@jest/globals';
 
 import { WinstonController } from './winston.controller.js';

@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { HttpServer } from '@ditsmod/rest';
+import type { HttpServer } from '@ditsmod/rest';
 import { HttpErrorHandler } from '@ditsmod/rest';
 import { TestRestApplication } from '@ditsmod/rest-testing';
 import { InstantiationError, NoProvider } from '@ditsmod/core/errors';

@@ -1,9 +1,10 @@
 import type { AnyTRPCRouter } from '@trpc/server';
-import { createTRPCClient, httpBatchLink, loggerLink, TRPCClient } from '@trpc/client';
+import type { TRPCClient } from '@trpc/client';
+import { createTRPCClient, httpBatchLink, loggerLink } from '@trpc/client';
 import { tap } from '@trpc/server/observable';
 import { inspect } from 'node:util';
 
-import { AuthRouter, MessageRouter, PostRouter } from '18-trpc-server';
+import type { AuthRouter, MessageRouter, PostRouter } from '18-trpc-server';
 
 const url = 'http://localhost:2021/trpc';
 const trpc = createTRPCClient<AnyTRPCRouter>({

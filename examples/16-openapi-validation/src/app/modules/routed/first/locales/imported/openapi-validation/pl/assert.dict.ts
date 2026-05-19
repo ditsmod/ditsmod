@@ -1,4 +1,4 @@
-import { ISO639 } from '@ditsmod/i18n';
+import type { ISO639 } from '@ditsmod/i18n';
 import { AssertDict } from '@ditsmod/openapi-validation';
 
 export class AssertPlDict extends AssertDict {

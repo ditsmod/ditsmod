@@ -1,6 +1,6 @@
 import { Injector } from '@ditsmod/core';
-import { Res } from '@ditsmod/rest';
-import { Logger as PinoLogger } from 'pino';
+import type { Res } from '@ditsmod/rest';
+import type { Logger as PinoLogger } from 'pino';
 import { jest } from '@jest/globals';
 
 import { PinoController } from './pino.controller.js';

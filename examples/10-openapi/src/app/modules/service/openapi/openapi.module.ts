@@ -1,4 +1,5 @@
-import { OpenapiModule, SwaggerOAuthOptions } from '@ditsmod/openapi';
+import type { SwaggerOAuthOptions } from '@ditsmod/openapi';
+import { OpenapiModule } from '@ditsmod/openapi';
 import { oasObject } from './oas-object.js';
 
 const swaggerOAuthOptions: SwaggerOAuthOptions = {

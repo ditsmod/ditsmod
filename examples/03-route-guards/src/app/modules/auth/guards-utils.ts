@@ -1,7 +1,7 @@
 import { createHelperForGuardWithParams } from '@ditsmod/rest';
 
 import { PermissionsGuard } from './permissions.guard.js';
-import { Permission } from './types.js';
+import type { Permission } from './types.js';
 import { CtxPermissionsGuard } from './ctx-permissions.guard.js';
 import { BasicGuard } from './basic.guard.js';
 
