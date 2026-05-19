@@ -1,6 +1,6 @@
 import type { RawRequest } from '@ditsmod/rest';
 import type { AuthAction, Session } from '@auth/core/types';
-import { ProviderType } from '@auth/core/providers';
+import type { ProviderType } from '@auth/core/providers';
 
 export interface ReqForSession {
   protocol: 'http' | 'https';

@@ -1,5 +1,5 @@
 import type { AuthConfig } from '@auth/core';
-import { Provider } from '@auth/core/providers';
+import type { Provider } from '@auth/core/providers';
 
 /**
  * Configure the {@link https://authjs.dev/reference/core#auth | Auth method}.
