@@ -20,7 +20,7 @@ export class StandaloneApplication extends BaseApplication {
    * 4. Handles startup errors by logging them.
    * 
    * @param appModule The root module of the application.
-   * @param baseOptions Global options for the application bootstrap process.
+   * @param baseOptions App options for the application bootstrap process.
    * @returns An instance of StandaloneApplication.
    */
   static async create(appModule: ModuleType, baseOptions?: BaseAppOptions) {

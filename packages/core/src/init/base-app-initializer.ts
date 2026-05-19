@@ -208,12 +208,12 @@ export class BaseAppInitializer {
 
   protected collectProvidersShallow(moduleManager: ModuleManager) {
     const shallowModulesImporter1 = new ShallowModulesImporter();
-    const globalProviders = shallowModulesImporter1.exportGlobalProviders(moduleManager);
-    this.log.printGlobalProviders(this, globalProviders);
+    const appProviders = shallowModulesImporter1.exportAppProviders(moduleManager);
+    this.log.printAppProviders(this, appProviders);
     const shallowModulesImporter2 = new ShallowModulesImporter();
     const { modRefId, allInitHooks } = moduleManager.getBaseMeta('root', true);
     const shallowImportsMap = shallowModulesImporter2.importModulesShallow({
-      globalProviders,
+      appProviders,
       modRefId,
       moduleManager,
       unfinishedScanModules: new Set(),
@@ -226,7 +226,7 @@ export class BaseAppInitializer {
     allInitHooks.forEach((initHooks, decorator) => {
       const val = initHooks.importModulesShallow({
         moduleManager,
-        globalProviders,
+        appProviders,
         modRefId,
         unfinishedScanModules: new Set(),
       });

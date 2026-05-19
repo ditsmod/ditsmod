@@ -50,7 +50,7 @@ export class TestRestApplication extends RestApplication {
 
   /**
    * Marks modules as external (those installed via package managers like npm, yarn, etc).
-   * As a result, they will not accept global providers that the application exports from
+   * As a result, they will not accept app providers that the application exports from
    * the root module. Useful when you want to test how external modules will behave.
    *
    * @param modRefId The module reference ID. If you import the module as an object,

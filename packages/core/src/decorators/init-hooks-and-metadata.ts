@@ -8,7 +8,7 @@ import type { ModuleWithParams, ModuleRawMetadata } from '#decorators/module-raw
 import type { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import type { featureModule } from './feature-module.js';
 import type { rootModule } from './root-module.js';
-import { GlobalInitHooks, type GlobalProviders } from '#types/metadata-per-mod.js';
+import { AppInitHooks, type AppProviders } from '#types/metadata-per-mod.js';
 import { type BaseMeta, getProxyForInitMeta, BaseInitMeta } from '#init/base-meta.js';
 
 export type AllInitHooks = Map<AnyFn, Omit<InitHooks, 'rawMeta'>>;
@@ -88,12 +88,12 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
    * This method gets metadata from {@link rootModule} decorator to collect
    * providers from the {@link ModuleRawMetadata.exports | exports } property.
    */
-  exportGlobalProviders(config: {
+  exportAppProviders(config: {
     moduleManager: ModuleManager;
-    globalProviders: GlobalProviders;
+    appProviders: AppProviders;
     baseMeta: BaseMeta;
   }) {
-    return new GlobalInitHooks();
+    return new AppInitHooks();
   }
 
   /**
@@ -102,7 +102,7 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
    */
   importModulesShallow(config: {
     moduleManager: ModuleManager;
-    globalProviders: GlobalProviders;
+    appProviders: AppProviders;
     modRefId: ModRefId;
     unfinishedScanModules: Set<ModRefId>;
   }): Map<ModRefId, { baseMeta: BaseMeta } & AnyObj> {

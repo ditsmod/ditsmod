@@ -17,14 +17,14 @@ export class ProviderImport<T extends Provider = Provider> {
   providers: T[] = [];
 }
 
-export class GlobalInitHooks<T extends BaseInitRawMeta = BaseInitRawMeta> {
+export class AppInitHooks<T extends BaseInitRawMeta = BaseInitRawMeta> {
   /**
-   * The presence of this property indicates whether at least one global provider is exported.
+   * The presence of this property indicates whether at least one app provider is exported.
    */
   initHooks?: InitHooks<T>;
 }
 
-export class GlobalProviders {
+export class AppProviders {
   importedProvidersPerMod = new Map<any, ProviderImport>();
   importedProvidersPerRou = new Map<any, ProviderImport>();
   importedProvidersPerReq = new Map<any, ProviderImport>();
@@ -34,7 +34,7 @@ export class GlobalProviders {
   importedExtensionProviders = new Map<ModRefId, Provider[]>();
   importedExtensionGroupTokens = new Map<ModRefId, Map<ExtensionClass, GroupToken>>();
   aImportedExtensionConfig: ExtensionConfig[] = [];
-  mInitValue = new Map<AnyFn, GlobalInitHooks>();
+  mInitValue = new Map<AnyFn, AppInitHooks>();
 }
 
 export class MetadataPerMod2<T extends AnyObj = AnyObj> {

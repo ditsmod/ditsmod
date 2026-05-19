@@ -1,26 +1,17 @@
-import type {
-  ModRefId,
-  BaseMeta,
-  InitDecorator,
-  Provider,
-  ForwardRefFn,
-  ModuleType} from '@ditsmod/core';
-import {
-  Reflector,
-  InitHooks
-} from '@ditsmod/core';
+import type { ModRefId, BaseMeta, InitDecorator, Provider, ForwardRefFn, ModuleType } from '@ditsmod/core';
+import { Reflector, InitHooks } from '@ditsmod/core';
 
 import type { RestInitRawMeta, RestModuleParams } from '#init/rest-init-raw-meta.js';
 import { RestModuleNormalizer } from '#init/rest-module-normalizer.js';
 import { RestShallowModulesImporter } from '#init/rest-shallow-modules-importer.js';
 import type {
   DeepModulesImporterConfig,
-  ExportGlobalProvidersConfig,
+  ExportAppProvidersConfig,
   ImportModulesShallowConfig,
   RestShallowImports,
 } from '#init/types.js';
 import type { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
-import type { RestGlobalProviders } from '#types/types.js';
+import type { RestAppProviders } from '#types/types.js';
 import { RestModule } from '#init/rest.module.js';
 import { RestDeepModulesImporter } from '#init/rest-deep-modules-importer.js';
 
@@ -66,8 +57,8 @@ export class RestInitHooks extends InitHooks<RestInitRawMeta> {
     return meta?.appendsModules.concat(meta?.appendsWithParams as any[]) || [];
   }
 
-  override exportGlobalProviders(config: ExportGlobalProvidersConfig): RestGlobalProviders {
-    return new RestShallowModulesImporter().exportGlobalProviders(config);
+  override exportAppProviders(config: ExportAppProvidersConfig): RestAppProviders {
+    return new RestShallowModulesImporter().exportAppProviders(config);
   }
 
   override importModulesShallow(config: ImportModulesShallowConfig): Map<ModRefId, RestShallowImports> {

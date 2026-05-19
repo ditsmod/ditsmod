@@ -1,7 +1,7 @@
 import type {
   Provider,
   BaseMeta,
-  GlobalProviders,
+  AppProviders,
   ModRefId,
   ModuleManager,
   SystemLogMediator,
@@ -60,15 +60,15 @@ export class RestMetadataPerMod2 {
   applyControllers?: boolean;
 }
 
-export interface ExportGlobalProvidersConfig {
+export interface ExportAppProvidersConfig {
   moduleManager: ModuleManager;
-  globalProviders: GlobalProviders;
+  appProviders: AppProviders;
   baseMeta: BaseMeta;
 }
 
 export interface ImportModulesShallowConfig {
   moduleManager: ModuleManager;
-  globalProviders: GlobalProviders;
+  appProviders: AppProviders;
   modRefId: ModRefId;
   unfinishedScanModules: Set<ModRefId>;
   prefixPerMod: string;

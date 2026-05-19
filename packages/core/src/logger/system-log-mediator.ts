@@ -2,7 +2,7 @@ import { Class, injectable } from '#di';
 import { ConsoleLogger } from '#logger/console-logger.js';
 import { Logger } from '#logger/logger.js';
 import { LogMediator } from '#logger/log-mediator.js';
-import { GlobalProviders, ProviderImport } from '#types/metadata-per-mod.js';
+import { AppProviders, ProviderImport } from '#types/metadata-per-mod.js';
 import { ModRefId } from '#types/mix.js';
 import { Provider } from '#di/top/types-and-models.js';
 import { ExtensionClass, Extension } from '#extension/extension-types.js';
@@ -168,20 +168,20 @@ export class SystemLogMediator extends LogMediator {
 
   /**
    * trace: 
-- BaseAppInitializer: global providers per a module: []
-- BaseAppInitializer: global providers per a route: []
-- BaseAppInitializer: global providers per a request: []
+- BaseAppInitializer: app providers per a module: []
+- BaseAppInitializer: app providers per a route: []
+- BaseAppInitializer: app providers per a request: []
    */
-  printGlobalProviders(self: object, globalProviders: GlobalProviders) {
+  printAppProviders(self: object, appProviders: AppProviders) {
     const className = self.constructor.name;
-    const globalProvidersPerMod = this.getProvidersNames(globalProviders.importedProvidersPerMod);
-    // const globalProvidersPerRou = this.getProvidersNames(globalProviders.importedProvidersPerRou);
-    // const globalProvidersPerReq = this.getProvidersNames(globalProviders.importedProvidersPerReq);
-    const prefix = `${className}: global providers per a`;
-    this.setLog('debug', `${className}: global providers are collected.`);
-    this.setLog('trace', `${prefix} module: [${globalProvidersPerMod}]`);
-    // this.setLog('trace', `${prefix} route: [${globalProvidersPerRou}]`);
-    // this.setLog('trace', `${prefix} request: [${globalProvidersPerReq}]`);
+    const appProvidersPerMod = this.getProvidersNames(appProviders.importedProvidersPerMod);
+    // const appProvidersPerRou = this.getProvidersNames(appProviders.importedProvidersPerRou);
+    // const appProvidersPerReq = this.getProvidersNames(appProviders.importedProvidersPerReq);
+    const prefix = `${className}: app providers per a`;
+    this.setLog('debug', `${className}: app providers are collected.`);
+    this.setLog('trace', `${prefix} module: [${appProvidersPerMod}]`);
+    // this.setLog('trace', `${prefix} route: [${appProvidersPerRou}]`);
+    // this.setLog('trace', `${prefix} request: [${appProvidersPerReq}]`);
   }
 
   protected getProvidersNames(providersMap: Map<any, ProviderImport<Provider>>) {

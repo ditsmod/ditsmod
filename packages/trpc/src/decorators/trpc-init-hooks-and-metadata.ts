@@ -8,13 +8,13 @@ import type {
   ModuleType,
   Class,
   ModuleManager,
-  GlobalProviders,
+  AppProviders,
   DeepModulesImporter,
   ShallowImports,
   SystemLogMediator,
   ForwardRefFn,
 } from '@ditsmod/core';
-import { Reflector, InitHooks, BaseInitMeta, GlobalInitHooks } from '@ditsmod/core';
+import { Reflector, InitHooks, BaseInitMeta, AppInitHooks } from '@ditsmod/core';
 
 import { TrpcModule } from '../trpc.module.js';
 import { TrpcModuleNormalizer } from '#init/trpc-module-normalizer.js';
@@ -87,8 +87,8 @@ export class TrpcInitHooks extends InitHooks<TrpcInitRawMeta> {
     return [];
   }
 
-  override exportGlobalProviders(config: ExportGlobalProvidersConfig): TrpcGlobalProviders {
-    return new TrpcShallowModulesImporter().exportGlobalProviders(config);
+  override exportAppProviders(config: ExportAppProvidersConfig): TrpcAppProviders {
+    return new TrpcShallowModulesImporter().exportAppProviders(config);
   }
 
   override importModulesShallow(config: ImportModulesShallowConfig): Map<ModRefId, TrpcShallowImports> {
@@ -100,15 +100,15 @@ export class TrpcInitHooks extends InitHooks<TrpcInitRawMeta> {
   }
 }
 
-export interface ExportGlobalProvidersConfig {
+export interface ExportAppProvidersConfig {
   moduleManager: ModuleManager;
-  globalProviders: GlobalProviders;
+  appProviders: AppProviders;
   baseMeta: BaseMeta;
 }
 
 export interface ImportModulesShallowConfig {
   moduleManager: ModuleManager;
-  globalProviders: GlobalProviders;
+  appProviders: AppProviders;
   modRefId: ModRefId;
   unfinishedScanModules: Set<ModRefId>;
   guards1?: GuardPerMod1[];
@@ -135,4 +135,4 @@ export class TrpcShallowImports {
   meta: TrpcInitMeta;
 }
 
-export class TrpcGlobalProviders extends GlobalInitHooks {}
+export class TrpcAppProviders extends AppInitHooks {}

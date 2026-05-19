@@ -9,7 +9,7 @@ export { BaseApplication } from '#init/base-application.js';
 export { StandaloneApplication } from '#init/standalone-application.js';
 export { BaseAppOptions } from '#init/base-app-options.js';
 export { DeepModulesImporter } from '#init/deep-modules-importer.js';
-export { GlobalProviders, GlobalInitHooks } from '#types/metadata-per-mod.js';
+export { AppProviders, AppInitHooks } from '#types/metadata-per-mod.js';
 export { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 export { defaultProvidersPerApp } from '#init/default-providers-per-app.js';
 export { OnModuleInit } from '#init/hooks.js';

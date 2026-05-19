@@ -1,9 +1,4 @@
-import type {
-  Provider,
-  ModRefId,
-  ModuleManager,
-  BaseMeta,
-  GlobalProviders} from '@ditsmod/core';
+import type { Provider, ModRefId, ModuleManager, BaseMeta, AppProviders } from '@ditsmod/core';
 import {
   isModuleWithParams,
   getTokens,
@@ -22,9 +17,9 @@ import {
 } from '@ditsmod/core/errors';
 
 import type { GuardPerMod1 } from '#interceptors/guard.js';
-import type { RestModRefId} from '#init/rest-init-meta.js';
+import type { RestModRefId } from '#init/rest-init-meta.js';
 import { RestInitMeta } from '#init/rest-init-meta.js';
-import type { Level, RestGlobalProviders } from '#types/types.js';
+import type { Level, RestAppProviders } from '#types/types.js';
 import { initRest, RestInitHooks } from '#decorators/rest-init-hooks-and-metadata.js';
 import type { ImportModulesShallowConfig, RestProviderImport, RestShallowImports } from './types.js';
 import { ModuleIncludesInImportsAndAppends } from '#errors';
@@ -35,8 +30,8 @@ import { ModuleMustHaveControllers } from '#services/rest-errors.js';
  * but does not take provider dependencies into account.
  *
  * Also:
- * - exports global providers;
- * - merges global and local providers;
+ * - exports app providers;
+ * - merges app and local providers;
  * - checks on providers collisions.
  */
 export class RestShallowModulesImporter {
@@ -47,26 +42,26 @@ export class RestShallowModulesImporter {
   protected meta: RestInitMeta;
 
   /**
-   * GlobalProviders.
+   * AppProviders.
    */
-  protected glProviders: GlobalProviders;
-  protected restGlProviders: RestGlobalProviders;
+  protected glProviders: AppProviders;
+  protected restGlProviders: RestAppProviders;
   protected shallowImportsMap = new Map<ModRefId, RestShallowImports>();
   protected unfinishedScanModules = new Set<ModRefId>();
   protected unfinishedExportModules = new Set<ModRefId>();
   protected moduleManager: ModuleManager;
 
-  exportGlobalProviders({
+  exportAppProviders({
     moduleManager,
-    globalProviders,
+    appProviders,
     baseMeta,
   }: {
     moduleManager: ModuleManager;
-    globalProviders: GlobalProviders;
+    appProviders: AppProviders;
     baseMeta: BaseMeta;
-  }): RestGlobalProviders {
+  }): RestAppProviders {
     this.moduleManager = moduleManager;
-    this.glProviders = globalProviders;
+    this.glProviders = appProviders;
     this.moduleName = baseMeta.name;
     this.baseMeta = baseMeta;
     this.meta = this.getInitMeta(baseMeta);
@@ -81,7 +76,7 @@ export class RestShallowModulesImporter {
    */
   importModulesShallow({
     moduleManager,
-    globalProviders,
+    appProviders,
     modRefId,
     unfinishedScanModules,
     prefixPerMod,
@@ -92,8 +87,8 @@ export class RestShallowModulesImporter {
     const baseMeta = this.moduleManager.getBaseMeta(modRefId, true);
     this.baseMeta = baseMeta;
     this.meta = this.getInitMeta(baseMeta);
-    this.glProviders = globalProviders;
-    this.restGlProviders = globalProviders.mInitValue.get(initRest) as RestGlobalProviders;
+    this.glProviders = appProviders;
+    this.restGlProviders = appProviders.mInitValue.get(initRest) as RestAppProviders;
     this.prefixPerMod = prefixPerMod || '';
     this.moduleName = baseMeta.name;
     this.guards1 = guards1 || [];
@@ -145,7 +140,7 @@ export class RestShallowModulesImporter {
       this.unfinishedScanModules.add(modRefId);
       const shallowImportsBase = shallowModulesImporter.importModulesShallow({
         moduleManager: this.moduleManager,
-        globalProviders: this.glProviders,
+        appProviders: this.glProviders,
         modRefId,
         unfinishedScanModules: this.unfinishedScanModules,
         prefixPerMod,

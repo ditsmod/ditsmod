@@ -1,7 +1,7 @@
 import { Reflector } from '#di';
 import type { BaseMeta } from '#init/base-meta.js';
 import type { ModuleManager } from '#init/module-manager.js';
-import type { GlobalProviders } from '#types/metadata-per-mod.js';
+import type { AppProviders } from '#types/metadata-per-mod.js';
 import { ProviderImport } from '#types/metadata-per-mod.js';
 import type { Level, ModRefId, AnyObj } from '#types/mix.js';
 import type { AnyFn, Provider } from '#di/top/types-and-models.js';
@@ -40,8 +40,8 @@ import type { GroupToken } from '#di/key-registry.js';
  * but does not take provider dependencies into account.
  *
  * Also:
- * - exports global providers;
- * - merges global and local providers;
+ * - exports app providers;
+ * - merges app and local providers;
  * - checks on providers collisions.
  */
 export class ShallowModulesImporter {
@@ -63,15 +63,15 @@ export class ShallowModulesImporter {
   protected aImportedExtensionConfig: ExtensionConfig[] = [];
 
   /**
-   * GlobalProviders.
+   * AppProviders.
    */
-  protected glProviders: GlobalProviders;
+  protected glProviders: AppProviders;
   protected shallowImportsMap = new Map<ModRefId, ShallowImports>();
   protected unfinishedScanModules = new Set<ModRefId>();
   protected unfinishedExportModules = new Set<ModRefId>();
   protected moduleManager: ModuleManager;
 
-  exportGlobalProviders(moduleManager: ModuleManager): GlobalProviders {
+  exportAppProviders(moduleManager: ModuleManager): AppProviders {
     this.moduleManager = moduleManager;
     const baseMeta = moduleManager.getBaseMeta('root', true);
     this.moduleName = baseMeta.name;
@@ -79,7 +79,7 @@ export class ShallowModulesImporter {
     this.importProvidersAndExtensions(baseMeta);
     this.checkAllCollisionsWithLevelsMix();
     const mInitValue = new Map<AnyFn, AnyObj>();
-    const globalProviders: GlobalProviders = {
+    const appProviders: AppProviders = {
       importedProvidersPerMod: this.importedProvidersPerMod,
       importedProvidersPerRou: this.importedProvidersPerRou,
       importedProvidersPerReq: this.importedProvidersPerReq,
@@ -93,27 +93,27 @@ export class ShallowModulesImporter {
     };
 
     baseMeta.allInitHooks.forEach((initHooks, decorator) => {
-      const val = initHooks.exportGlobalProviders({ moduleManager, globalProviders, baseMeta });
+      const val = initHooks.exportAppProviders({ moduleManager, appProviders, baseMeta });
       mInitValue.set(decorator, val);
     });
 
-    return globalProviders;
+    return appProviders;
   }
 
   importModulesShallow({
-    globalProviders,
+    appProviders,
     modRefId,
     moduleManager,
     unfinishedScanModules,
   }: {
-    globalProviders: GlobalProviders;
+    appProviders: AppProviders;
     modRefId: ModRefId;
     moduleManager: ModuleManager;
     unfinishedScanModules: Set<ModRefId>;
   }): Map<ModRefId, ShallowImports> {
     const baseMeta = moduleManager.getBaseMeta(modRefId, true);
     this.moduleManager = moduleManager;
-    this.glProviders = globalProviders;
+    this.glProviders = appProviders;
     this.moduleName = baseMeta.name;
     this.unfinishedScanModules = unfinishedScanModules;
     this.baseMeta = baseMeta;
@@ -129,7 +129,7 @@ export class ShallowModulesImporter {
     let extensionGroupTokens: Map<ModRefId, Map<ExtensionClass, GroupToken>>;
     let aExtensionConfig: ExtensionConfig[];
     if (baseMeta.isExternal) {
-      // External modules do not require global providers and extensions from the application.
+      // External modules do not require app providers and extensions from the application.
       perMod = new Map([...this.importedProvidersPerMod]);
       perRou = new Map([...this.importedProvidersPerRou]);
       perReq = new Map([...this.importedProvidersPerReq]);
@@ -209,7 +209,7 @@ export class ShallowModulesImporter {
     const shallowModulesImporter = new ShallowModulesImporter();
     this.unfinishedScanModules.add(modRefId);
     const shallowImportsMap = shallowModulesImporter.importModulesShallow({
-      globalProviders: this.glProviders,
+      appProviders: this.glProviders,
       modRefId,
       moduleManager: this.moduleManager,
       unfinishedScanModules: this.unfinishedScanModules,

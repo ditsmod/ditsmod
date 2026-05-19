@@ -1,5 +1,5 @@
 import type { AnyFn, AnyObj, BaseMeta, ModRefId, Override, Provider } from '@ditsmod/core';
-import { BaseAppOptions, GlobalInitHooks, InjectionToken } from '@ditsmod/core';
+import { BaseAppOptions, AppInitHooks, InjectionToken } from '@ditsmod/core';
 import type { AnyRouter } from '@trpc/server';
 import { initTRPC } from '@trpc/server';
 import type { CreateHTTPHandlerOptions } from '@trpc/server/adapters/standalone';
@@ -67,7 +67,7 @@ type GetRouterConfig<T> = {
   [K in keyof T]: T[K] extends AnyFn<any, infer R> ? CtrlOrModuleFn<R> : GetRouterConfig<T[K]>;
 };
 type CtrlOrModuleFn<F> = F extends AnyFn ? F : GetRouterConfig<F>;
-export class TrpcGlobalProviders extends GlobalInitHooks {
+export class TrpcAppProviders extends AppInitHooks {
   importedProvidersPerMod = new Map<any, TrpcProviderImport>();
   importedProvidersPerRou = new Map<any, TrpcProviderImport>();
   importedProvidersPerReq = new Map<any, TrpcProviderImport>();

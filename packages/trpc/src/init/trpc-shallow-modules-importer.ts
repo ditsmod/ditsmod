@@ -1,9 +1,9 @@
-import type { ModRefId, ModuleManager, BaseMeta, GlobalProviders } from '@ditsmod/core';
+import type { ModRefId, ModuleManager, BaseMeta, AppProviders } from '@ditsmod/core';
 import { isModuleWithParams, getProxyForInitMeta } from '@ditsmod/core';
 
 import type {
   ImportModulesShallowConfig,
-  TrpcGlobalProviders,
+  TrpcAppProviders,
   TrpcModRefId,
   TrpcShallowImports,
 } from '#decorators/trpc-init-hooks-and-metadata.js';
@@ -15,8 +15,8 @@ import type { GuardPerMod1 } from '#interceptors/trpc-guard.js';
  * but does not take provider dependencies into account.
  *
  * Also:
- * - exports global providers;
- * - merges global and local providers;
+ * - exports app providers;
+ * - merges app and local providers;
  * - checks on providers collisions.
  */
 export class TrpcShallowModulesImporter {
@@ -26,26 +26,26 @@ export class TrpcShallowModulesImporter {
   protected meta: TrpcInitMeta;
 
   /**
-   * GlobalProviders.
+   * AppProviders.
    */
-  protected glProviders: GlobalProviders;
-  protected trpcGlProviders: TrpcGlobalProviders;
+  protected glProviders: AppProviders;
+  protected trpcGlProviders: TrpcAppProviders;
   protected shallowImportsMap = new Map<ModRefId, TrpcShallowImports>();
   protected unfinishedScanModules = new Set<ModRefId>();
   protected unfinishedExportModules = new Set<ModRefId>();
   protected moduleManager: ModuleManager;
 
-  exportGlobalProviders({
+  exportAppProviders({
     moduleManager,
-    globalProviders,
+    appProviders,
     baseMeta,
   }: {
     moduleManager: ModuleManager;
-    globalProviders: GlobalProviders;
+    appProviders: AppProviders;
     baseMeta: BaseMeta;
-  }): TrpcGlobalProviders {
+  }): TrpcAppProviders {
     this.moduleManager = moduleManager;
-    this.glProviders = globalProviders;
+    this.glProviders = appProviders;
     this.moduleName = baseMeta.name;
     this.baseMeta = baseMeta;
     this.meta = this.getInitMeta(baseMeta);
@@ -60,7 +60,7 @@ export class TrpcShallowModulesImporter {
    */
   importModulesShallow({
     moduleManager,
-    globalProviders,
+    appProviders,
     modRefId,
     unfinishedScanModules,
     guards1,
@@ -69,8 +69,8 @@ export class TrpcShallowModulesImporter {
     const baseMeta = this.moduleManager.getBaseMeta(modRefId, true);
     this.baseMeta = baseMeta;
     this.meta = this.getInitMeta(baseMeta);
-    this.glProviders = globalProviders;
-    this.trpcGlProviders = globalProviders.mInitValue.get(initTrpcModule) as TrpcGlobalProviders;
+    this.glProviders = appProviders;
+    this.trpcGlProviders = appProviders.mInitValue.get(initTrpcModule) as TrpcAppProviders;
     this.moduleName = baseMeta.name;
     this.guards1 = guards1 || [];
     this.unfinishedScanModules = unfinishedScanModules;
@@ -104,7 +104,7 @@ export class TrpcShallowModulesImporter {
       this.unfinishedScanModules.add(modRefId);
       const shallowImportsBase = shallowModulesImporter.importModulesShallow({
         moduleManager: this.moduleManager,
-        globalProviders: this.glProviders,
+        appProviders: this.glProviders,
         modRefId,
         unfinishedScanModules: this.unfinishedScanModules,
         guards1,

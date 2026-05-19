@@ -11,7 +11,7 @@ export abstract class BaseApplication {
   protected log: SystemLogMediator;
 
   /**
-   * Initializes the application's base settings, configures global log buffering,
+   * Initializes the application's base settings, configures app log buffering,
    * and adjusts the stack trace limit for better debugging.
    */
   protected init(baseAppOptions?: BaseAppOptions) {
