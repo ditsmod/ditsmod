@@ -49,6 +49,7 @@ export default defineConfig([
       '**/jest.setup.js',
       '**/jest.d.ts',
       '**/jest.matchers.ts',
+      'packages/openapi/ui/*',
     ],
   },
 ]);
