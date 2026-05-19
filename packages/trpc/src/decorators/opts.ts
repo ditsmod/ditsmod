@@ -1,4 +1,5 @@
-import { inject, InjectTransformResult, Reflector } from '@ditsmod/core';
+import type { InjectTransformResult} from '@ditsmod/core';
+import { inject, Reflector } from '@ditsmod/core';
 import { TRPC_OPTS } from '#types/constants.js';
 
 /**

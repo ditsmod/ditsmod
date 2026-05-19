@@ -2,14 +2,15 @@ import type * as http from 'node:http';
 import type * as http2 from 'node:http2';
 import type * as https from 'node:https';
 import type { AddressInfo } from 'node:net';
-import { ModuleType, SystemLogMediator, BaseApplication } from '@ditsmod/core';
+import type { ModuleType} from '@ditsmod/core';
+import { SystemLogMediator, BaseApplication } from '@ditsmod/core';
 
-import { RequestListener, TrpcAppOptions } from '#types/types.js';
+import type { RequestListener, TrpcAppOptions } from '#types/types.js';
 import { TrpcAppInitializer } from './trpc-app-initializer.js';
-import { HttpServer, Http2SecureServerOptions } from '#types/server-options.js';
+import type { HttpServer, Http2SecureServerOptions } from '#types/server-options.js';
 import { CreateSecureServerInHttp2NotFound } from '../error/trpc-errors.js';
 import { isHttp2SecureServerOptions } from '#utils/type.guards.js';
-import { HttpServerModule, HttpsServerModule } from '#types/http-module.js';
+import type { HttpServerModule, HttpsServerModule } from '#types/http-module.js';
 
 export class TrpcApplication extends BaseApplication {
   server: HttpServer;

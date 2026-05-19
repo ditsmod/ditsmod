@@ -1,17 +1,17 @@
-import {
+import type {
   ModRefId,
   Provider,
   ModuleManager,
   SystemLogMediator,
   DeepModulesImporter,
   ShallowImports,
-  ModuleExtract,
   BaseMeta,
 } from '@ditsmod/core';
+import { ModuleExtract } from '@ditsmod/core';
 
-import { DeepModulesImporterConfig, TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
-import { TrpcShallowImports } from '#decorators/trpc-init-hooks-and-metadata.js';
-import { GuardPerMod1 } from '#interceptors/trpc-guard.js';
+import type { DeepModulesImporterConfig, TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
+import type { TrpcShallowImports } from '#decorators/trpc-init-hooks-and-metadata.js';
+import type { GuardPerMod1 } from '#interceptors/trpc-guard.js';
 
 /**
  * This metadata returns from `DeepModulesImporter`. The target for this metadata is `RestRouteExtension`.

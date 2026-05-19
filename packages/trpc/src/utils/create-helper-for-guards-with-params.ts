@@ -1,5 +1,5 @@
-import { Class } from '@ditsmod/core';
-import { TrpcCanActivate } from '#interceptors/trpc-guard.js';
+import type { Class } from '@ditsmod/core';
+import type { TrpcCanActivate } from '#interceptors/trpc-guard.js';
 
 /**
  * This factory creates a helper that makes it easier to work with guards that have parameters.

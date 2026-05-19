@@ -1,6 +1,4 @@
-import {
-  Reflector,
-  InitHooks,
+import type {
   ModRefId,
   BaseMeta,
   InitDecorator,
@@ -9,20 +7,19 @@ import {
   FeatureModuleParams,
   ModuleType,
   Class,
-  BaseInitMeta,
   ModuleManager,
   GlobalProviders,
   DeepModulesImporter,
   ShallowImports,
   SystemLogMediator,
-  GlobalInitHooks,
   ForwardRefFn,
 } from '@ditsmod/core';
+import { Reflector, InitHooks, BaseInitMeta, GlobalInitHooks } from '@ditsmod/core';
 
 import { TrpcModule } from '../trpc.module.js';
 import { TrpcModuleNormalizer } from '#init/trpc-module-normalizer.js';
 import { TrpcShallowModulesImporter } from '#init/trpc-shallow-modules-importer.js';
-import { GuardItem, GuardPerMod1, NormalizedGuard } from '#interceptors/trpc-guard.js';
+import type { GuardItem, GuardPerMod1, NormalizedGuard } from '#interceptors/trpc-guard.js';
 
 export type TrpcModRefId = ModRefId;
 
@@ -50,10 +47,8 @@ export interface TrpcInitRawMeta extends BaseInitRawMeta<TrpcModuleParams> {
   controllers?: Class[];
 }
 
-export const initTrpcModule: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, TrpcInitMeta> = Reflector.makeClassDecorator(
-  transformInitMeta,
-  'initTrpcModule',
-);
+export const initTrpcModule: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, TrpcInitMeta> =
+  Reflector.makeClassDecorator(transformInitMeta, 'initTrpcModule');
 export const trpcRootModule: InitDecorator<
   TrpcInitRawMeta & { resolvedCollisionPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][] },
   TrpcModuleParams,

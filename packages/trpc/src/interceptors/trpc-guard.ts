@@ -1,6 +1,6 @@
-import { Class, BaseMeta } from '@ditsmod/core';
-import { TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
-import { TrpcOpts } from '#types/types.js';
+import type { Class, BaseMeta } from '@ditsmod/core';
+import type { TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
+import type { TrpcOpts } from '#types/types.js';
 
 export interface TrpcCanActivate {
   canActivate(opts: TrpcOpts, params?: any[]): boolean | Promise<boolean>;

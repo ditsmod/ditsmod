@@ -1,22 +1,14 @@
-import {
-  ModRefId,
-  ModuleManager,
-  isModuleWithParams,
-  BaseMeta,
-  GlobalProviders,
-  getProxyForInitMeta,
-} from '@ditsmod/core';
+import type { ModRefId, ModuleManager, BaseMeta, GlobalProviders } from '@ditsmod/core';
+import { isModuleWithParams, getProxyForInitMeta } from '@ditsmod/core';
 
-import {
+import type {
   ImportModulesShallowConfig,
-  initTrpcModule,
   TrpcGlobalProviders,
-  TrpcInitHooks,
-  TrpcInitMeta,
   TrpcModRefId,
   TrpcShallowImports,
 } from '#decorators/trpc-init-hooks-and-metadata.js';
-import { GuardPerMod1 } from '#interceptors/trpc-guard.js';
+import { initTrpcModule, TrpcInitHooks, TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
+import type { GuardPerMod1 } from '#interceptors/trpc-guard.js';
 
 /**
  * Recursively collects providers taking into account module imports/exports,

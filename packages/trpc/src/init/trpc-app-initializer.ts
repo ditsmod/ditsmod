@@ -1,9 +1,11 @@
-import { BaseAppInitializer, BaseMeta, ModRefId, ProvidersOnly } from '@ditsmod/core';
+import type { ModRefId, ProvidersOnly } from '@ditsmod/core';
+import { BaseAppInitializer, BaseMeta } from '@ditsmod/core';
 import { initTRPC } from '@trpc/server';
 
-import { RequestListener, SERVER, TrpcRootModule } from '../types/types.js';
+import type { RequestListener, TrpcRootModule } from '../types/types.js';
+import { SERVER } from '../types/types.js';
 import { TrpcPreRouter } from '#services/pre-router.js';
-import { HttpServer } from '#types/server-options.js';
+import type { HttpServer } from '#types/server-options.js';
 import { TRPC_ROOT } from '#types/constants.js';
 import { TrpcInternalService } from '#services/trpc-internal.service.js';
 import { TrpcService } from '#services/trpc.service.js';

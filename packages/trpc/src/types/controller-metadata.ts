@@ -1,8 +1,8 @@
-import { Class, Provider } from '@ditsmod/core';
+import type { Class, Provider } from '@ditsmod/core';
 
-import { TrpcRouteMeta } from './trpc-route-data.js';
-import { TrpcHttpInterceptor } from '#interceptors/tokens-and-types.js';
-import { NormalizedGuard } from '../interceptors/trpc-guard.js';
+import type { TrpcRouteMeta } from './trpc-route-data.js';
+import type { TrpcHttpInterceptor } from '#interceptors/tokens-and-types.js';
+import type { NormalizedGuard } from '../interceptors/trpc-guard.js';
 
 export interface ControllerMetadata {
   /**

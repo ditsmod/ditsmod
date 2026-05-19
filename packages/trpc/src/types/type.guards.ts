@@ -1,9 +1,10 @@
-import { AnyObj, Class, DecoratorAndValue } from '@ditsmod/core';
+import type { AnyObj, Class, DecoratorAndValue } from '@ditsmod/core';
 
 import { trpcRoute } from '#decorators/trpc-route.js';
-import { TrpcHttpInterceptor } from '#interceptors/tokens-and-types.js';
-import { Http2SecureServerOptions, ServerOptions } from './server-options.js';
-import { trpcController, ControllerRawMetadata } from '#decorators/trpc-controller.js';
+import type { TrpcHttpInterceptor } from '#interceptors/tokens-and-types.js';
+import type { Http2SecureServerOptions, ServerOptions } from './server-options.js';
+import type { ControllerRawMetadata } from '#decorators/trpc-controller.js';
+import { trpcController } from '#decorators/trpc-controller.js';
 
 export function isCtrlDecor(decoratorAndValue?: AnyObj): decoratorAndValue is DecoratorAndValue<ControllerRawMetadata> {
   return decoratorAndValue?.decorator === trpcController;

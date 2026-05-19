@@ -1,4 +1,5 @@
-import { Reflector, Provider, Providers } from '@ditsmod/core';
+import type { Provider, Providers } from '@ditsmod/core';
+import { Reflector } from '@ditsmod/core';
 
 /**
  * Metadata accepted by the default injector-scoped trpcController.

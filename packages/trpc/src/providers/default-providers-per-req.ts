@@ -1,4 +1,5 @@
-import { awaitTokens, Provider } from '@ditsmod/core';
+import type { Provider } from '@ditsmod/core';
+import { awaitTokens } from '@ditsmod/core';
 
 import { RAW_REQ, RAW_RES } from '#types/types.js';
 import { Req } from '#services/request.js';

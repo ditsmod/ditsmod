@@ -1,9 +1,12 @@
-import { Class, isFeatureModule, BaseMeta, Reflector, getDuplicates, getProxyForInitMeta } from '@ditsmod/core';
+import type { Class, BaseMeta } from '@ditsmod/core';
+import { isFeatureModule, Reflector, getDuplicates, getProxyForInitMeta } from '@ditsmod/core';
 import { ModuleShouldHaveValue } from '@ditsmod/core/errors';
 
-import { TrpcInitMeta, TrpcInitRawMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
+import type { TrpcInitRawMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
+import { TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { ControllerDoesNotHaveDecorator, DuplicateOfControllers, InvalidGuard } from '../error/trpc-errors.js';
-import { GuardItem, NormalizedGuard } from '#interceptors/trpc-guard.js';
+import type { NormalizedGuard } from '#interceptors/trpc-guard.js';
+import { GuardItem } from '#interceptors/trpc-guard.js';
 import { isCtrlDecor } from '#types/type.guards.js';
 
 /**

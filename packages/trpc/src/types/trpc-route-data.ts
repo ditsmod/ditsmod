@@ -1,4 +1,4 @@
-import { Class, ResolvedGuard, ResolvedGuardPerMod, ResolvedProvider } from '@ditsmod/core';
+import type { Class, ResolvedGuard, ResolvedGuardPerMod, ResolvedProvider } from '@ditsmod/core';
 
 import type { TrpcRouteExtension } from '#extensions/trpc-route.extension.js';
 

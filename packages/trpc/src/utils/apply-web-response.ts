@@ -1,5 +1,5 @@
 import { type ServerResponse } from 'node:http';
-import { RawResponse } from '#services/request.js';
+import type { RawResponse } from '#services/request.js';
 
 /**
  * Apply a Web Response to Ditsmod Response.

@@ -1,4 +1,4 @@
-import { Provider } from '@ditsmod/core';
+import type { Provider } from '@ditsmod/core';
 
 import { HttpErrorHandler } from '../services/http-error-handler.js';
 import { DefaultHttpErrorHandler } from '../services/default-http-error-handler.js';

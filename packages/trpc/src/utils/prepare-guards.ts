@@ -1,7 +1,8 @@
-import { ResolvedProvider, Injector, ResolvedGuard, Class } from '@ditsmod/core';
+import type { ResolvedProvider, ResolvedGuard, Class } from '@ditsmod/core';
+import { Injector } from '@ditsmod/core';
 import { inspect } from 'node:util';
 
-import { GuardItem, NormalizedGuard } from '#interceptors/trpc-guard.js';
+import type { GuardItem, NormalizedGuard } from '#interceptors/trpc-guard.js';
 import { FailedValidationOfRoute } from '../error/trpc-errors.js';
 
 export function getResolvedGuards(guards: NormalizedGuard[], resolvedProviders: ResolvedProvider[]) {

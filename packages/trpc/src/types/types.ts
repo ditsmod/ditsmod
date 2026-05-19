@@ -1,15 +1,7 @@
-import {
-  AnyFn,
-  AnyObj,
-  BaseAppOptions,
-  BaseMeta,
-  GlobalInitHooks,
-  InjectionToken,
-  ModRefId,
-  Override,
-  Provider,
-} from '@ditsmod/core';
-import { AnyRouter, initTRPC } from '@trpc/server';
+import type { AnyFn, AnyObj, BaseMeta, ModRefId, Override, Provider } from '@ditsmod/core';
+import { BaseAppOptions, GlobalInitHooks, InjectionToken } from '@ditsmod/core';
+import type { AnyRouter } from '@trpc/server';
+import { initTRPC } from '@trpc/server';
 import type { CreateHTTPHandlerOptions } from '@trpc/server/adapters/standalone';
 import type {
   NodeHTTPCreateContextFnOptions,
@@ -21,10 +13,10 @@ import type { Http2ServerRequest, Http2ServerResponse } from 'http2';
 
 import type { HttpModule } from '#types/http-module.js';
 import type { ServerOptions } from '#types/server-options.js';
-import { TrpcInitMeta, TrpcModRefId } from '#decorators/trpc-init-hooks-and-metadata.js';
-import { GuardPerMod1 } from '#interceptors/trpc-guard.js';
-import { ControllerMetadata } from './controller-metadata.js';
-import { TrpcHttpInterceptor } from '#interceptors/tokens-and-types.js';
+import type { TrpcInitMeta, TrpcModRefId } from '#decorators/trpc-init-hooks-and-metadata.js';
+import type { GuardPerMod1 } from '#interceptors/trpc-guard.js';
+import type { ControllerMetadata } from './controller-metadata.js';
+import type { TrpcHttpInterceptor } from '#interceptors/tokens-and-types.js';
 
 const t = initTRPC.create();
 

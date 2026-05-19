@@ -1,6 +1,6 @@
 import type * as http from 'http';
 import type * as http2 from 'http2';
-import { Http2SecureServer, Http2Server } from 'http2';
+import type { Http2SecureServer, Http2Server } from 'http2';
 import type * as https from 'https';
 
 export type Http2SecureServerOptions = http2.SecureServerOptions & { isHttp2SecureServer: boolean };
