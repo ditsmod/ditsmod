@@ -1,4 +1,4 @@
-import { SecretOrPrivateKey, SecretOrPublicKey, SignOptions, VerifyOptions } from 'jsonwebtoken';
+import type { SecretOrPrivateKey, SecretOrPublicKey, SignOptions, VerifyOptions } from 'jsonwebtoken';
 
 /**
  * Used as an interface and DI token.
