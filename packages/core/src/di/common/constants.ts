@@ -1,3 +1,7 @@
+import { InjectionToken } from '#di/common/injection-token.js';
+
+export const CTX_DATA = new InjectionToken('CTX_DATA');
+
 /**
  * The key used to store metadata of a class.
  * This metadata is taken from the class-level decorator.
@@ -27,3 +31,4 @@ export const DEPS_KEY = Symbol();
  * The key used to store registry of props where are params with metadata.
  */
 export const METHODS_WITH_PARAMS = Symbol();
+

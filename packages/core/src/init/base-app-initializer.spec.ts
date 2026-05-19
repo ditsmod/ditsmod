@@ -9,7 +9,7 @@ import { rootModule } from '#decorators/root-module.js';
 import { BaseMeta } from '#init/base-meta.js';
 import { BaseAppInitializer } from '#init/base-app-initializer.js';
 import { ModuleManager } from '#init/module-manager.js';
-import { Provider } from '#di/types-and-models.js';
+import { Provider } from '#di/common/types-and-models.js';
 import { Extension, ExtensionCounters } from '#extension/extension-types.js';
 import { Providers } from '#utils/providers.js';
 import { BaseAppOptions } from '#init/base-app-options.js';

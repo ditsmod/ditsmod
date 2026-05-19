@@ -4,7 +4,7 @@ import { Logger } from '#logger/logger.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { GlobalProviders, ProviderImport } from '#types/metadata-per-mod.js';
 import { ModRefId } from '#types/mix.js';
-import { Provider } from '#di/types-and-models.js';
+import { Provider } from '#di/common/types-and-models.js';
 import { ExtensionClass, Extension } from '#extension/extension-types.js';
 import { getImportedTokens } from '#utils/get-imports.js';
 import { getProviderName } from '#utils/get-provider-name.js';

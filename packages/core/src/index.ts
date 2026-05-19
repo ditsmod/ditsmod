@@ -98,6 +98,6 @@ export {
   isParamsWithMwp,
   hasDeclaredInDir,
 } from '#decorators/type-guards.js';
-export { TypeGuard, AnyFn } from '#di/types-and-models.js';
+export { TypeGuard, AnyFn } from '#di/common/types-and-models.js';
 export { isProvider } from '#utils/type-guards.js';
 export { objectKeys } from '#utils/object-keys.js';

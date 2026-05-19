@@ -2,7 +2,7 @@ import { inspect } from 'node:util';
 
 import { CustomError } from '#error/custom-error.js';
 import { stringify } from '#di/stringify.js';
-import { Class } from './types-and-models.js';
+import { Class } from './common/types-and-models.js';
 import { LevelOfInjector } from './injector.js';
 
 /**

@@ -1,4 +1,3 @@
-import { AnyFn } from './types-and-models.js';
 import { Reflector } from './reflector.js';
 
 /**

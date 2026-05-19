@@ -1,6 +1,6 @@
 import { injectable, optional } from '#di';
 import { InputLogLevel, Logger, LoggerConfig, OutputLogLevel } from '#logger/logger.js';
-import { AnyFn } from '#di/types-and-models.js';
+import { AnyFn } from '#di/common/types-and-models.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
 
 @injectable()

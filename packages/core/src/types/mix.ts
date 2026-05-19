@@ -1,7 +1,5 @@
 import { Class, Injector, ResolvedProvider } from '#di';
-import { Provider } from '#di/types-and-models.js';
 import { ModuleWithParams } from '#decorators/module-raw-metadata.js';
-import { Providers } from '#utils/providers.js';
 
 /**
  * Help type for combining interfaces.

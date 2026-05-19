@@ -1,4 +1,4 @@
-import { Class } from '#di/types-and-models.js';
+import { Class } from '#di/common/types-and-models.js';
 import { Extension } from '#extension/extension-types.js';
 import { AnyObj } from '#types/mix.js';
 import { ExtensionConfig } from './tarjan-graph.js';

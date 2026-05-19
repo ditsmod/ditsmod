@@ -3,7 +3,7 @@ import 'reflect-metadata/lite';
 export { Reflector } from './reflector.js';
 export * from './decorators.js';
 export { ForwardRefFn, forwardRef, resolveForwardRef, isForwardRef } from './forward-ref.js';
-export { InjectionToken } from './injection-token.js';
+export { InjectionToken } from './common/injection-token.js';
 export { Injector } from './injector.js';
 export { PathTracer } from './path-tracer.js';
 export { DualKey, KeyRegistry, ParamToken } from './key-registry.js';
@@ -11,24 +11,19 @@ export {
   Class,
   ClassFactoryProvider,
   ClassProvider,
-  DecoratorAndValue,
   FactoryProvider,
   FunctionFactoryProvider,
   NormalizedProvider,
   ParamsMeta,
   Provider,
-  RegistryOfInjector,
-  ResolvedFactory,
-  ResolvedProvider,
   TokenProvider,
   TypeProvider,
   UseFactoryTuple,
   ValueProvider,
-  CTX_DATA,
-  ClassMeta,
+    ClassMeta,
   ClassPropMeta,
   UnknownType,
-} from './types-and-models.js';
+} from './common/types-and-models.js';
 export {
   isClassFactoryProvider,
   isClassProvider,
@@ -44,4 +39,6 @@ export {
   MultiProvider,
 } from './utils.js';
 export { DepsChecker } from './deps-checker.js';
-export { Equal, Expect } from './static-type-guards.js';
+export { DecoratorAndValue } from './common/decorator-and-value.js';
+export { CTX_DATA } from './common/constants.js';
+export { RegistryOfInjector, ResolvedFactory, ResolvedProvider } from './common/resolved-provider.js';

@@ -1,18 +1,18 @@
 import { AnyObj } from '#types/mix.js';
-import { AnyFn } from './types-and-models.js';
+import { AnyFn } from './common/types-and-models.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ClassMetaIterator } from './class-meta-iterator.js';
 import { ForwardRefFn, resolveForwardRef } from './forward-ref.js';
 import {
   Class,
-  DecoratorAndValue,
   ParamsMeta,
   ClassMeta,
   ClassPropMeta,
   UnknownType,
   TypeGuard,
-} from './types-and-models.js';
-import { CACHE_KEY, CLASS_KEY, DEPS_KEY, PARAMS_KEY, METHODS_WITH_PARAMS, PROP_KEY } from './constants.js';
+} from './common/types-and-models.js';
+import { DecoratorAndValue } from './common/decorator-and-value.js';
+import { CACHE_KEY, CLASS_KEY, DEPS_KEY, PARAMS_KEY, METHODS_WITH_PARAMS, PROP_KEY } from './common/constants.js';
 import { isType, newArray } from './utils.js';
 
 type KeyOf<T extends AnyObj> = Extract<keyof T, string | symbol>;

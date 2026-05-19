@@ -1,5 +1,5 @@
 import { Injector } from '#di';
-import { Provider } from '#di/types-and-models.js';
+import { Provider } from '#di/common/types-and-models.js';
 
 export interface ReflectiveDependency {
   token: NonNullable<unknown>;

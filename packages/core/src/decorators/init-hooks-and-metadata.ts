@@ -4,7 +4,7 @@ import { ShallowImports } from '#init/types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { GlobalInitHooks, GlobalProviders } from '#types/metadata-per-mod.js';
 import { AnyObj, ModRefId, ModuleType } from '#types/mix.js';
-import { AnyFn } from '#di/types-and-models.js';
+import { AnyFn } from '#di/common/types-and-models.js';
 import { BaseMeta, getProxyForInitMeta, BaseInitMeta } from '#init/base-meta.js';
 import { ModuleWithParams, type ModuleRawMetadata } from '#decorators/module-raw-metadata.js';
 import type { ShallowModulesImporter } from '#init/shallow-modules-importer.js';

@@ -2,7 +2,7 @@ import { injectable, Injector } from '#di';
 import { DeepModulesImporter } from '#init/deep-modules-importer.js';
 import { BaseMeta } from '#init/base-meta.js';
 import { ModRefId, Level } from '#types/mix.js';
-import { Provider } from '#di/types-and-models.js';
+import { Provider } from '#di/common/types-and-models.js';
 import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';

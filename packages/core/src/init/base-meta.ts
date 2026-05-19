@@ -1,7 +1,7 @@
 import { Class, MultiProvider } from '#di';
 import { AnyObj, ModRefId, ModuleType } from '#types/mix.js';
-import { AnyFn } from '#di/types-and-models.js';
-import { Provider } from '#di/types-and-models.js';
+import { AnyFn } from '#di/common/types-and-models.js';
+import { Provider } from '#di/common/types-and-models.js';
 import { ModuleWithParams } from '../decorators/module-raw-metadata.js';
 import { ExtensionConfig, type ExtensionConfigBase } from '#extension/extension-providers-and-configs.js';
 import { InitMetaMap } from '#decorators/init-hooks-and-metadata.js';

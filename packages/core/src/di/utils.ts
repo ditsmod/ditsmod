@@ -1,10 +1,9 @@
 import { ModRefId } from '#types/mix.js';
-import { InjectionToken } from './injection-token.js';
+import { InjectionToken } from './common/injection-token.js';
 import {
   Class,
   ClassFactoryProvider,
   ClassProvider,
-  DecoratorAndValue,
   FactoryProvider,
   FunctionFactoryProvider,
   NormalizedProvider,
@@ -12,7 +11,8 @@ import {
   TokenProvider,
   TypeProvider,
   ValueProvider,
-} from './types-and-models.js';
+} from './common/types-and-models.js';
+import { DecoratorAndValue } from './common/decorator-and-value.js';
 
 /**
  * Equivalent to ES6 spread, add each item to an array.

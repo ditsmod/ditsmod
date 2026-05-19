@@ -1,6 +1,6 @@
 import { InputLogLevel } from '#logger/logger.js';
 import { Status } from '#utils/http-status-codes.js';
-import { AnyFn } from '#di/types-and-models.js';
+import { AnyFn } from '#di/common/types-and-models.js';
 
 export class ErrorInfo {
   /**

@@ -1,8 +1,7 @@
 import { AnyObj, ModRefId } from '#types/mix.js';
-import { AnyFn } from '#di/types-and-models.js';
+import { AnyFn, Provider } from '#di/common/types-and-models.js';
 import { BaseMeta } from '#init/base-meta.js';
 import { ProviderImport } from '#types/metadata-per-mod.js';
-import { Provider } from '#di/types-and-models.js';
 import { ExtensionClass } from '#extension/extension-types.js';
 import { GroupToken } from '#di/key-registry.js';
 

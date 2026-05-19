@@ -3,7 +3,8 @@ import { NoProvider } from './errors.js';
 import { Injector } from './injector.js';
 import { DualKey, KeyRegistry } from './key-registry.js';
 import { PathTracer } from './path-tracer.js';
-import { Dependency, ID, ResolvedProvider, Visibility } from './types-and-models.js';
+import { Dependency, Visibility } from './common/types-and-models.js';
+import { ID, ResolvedProvider } from './common/resolved-provider.js';
 
 /**
  * Allow check dependencies for given provider.

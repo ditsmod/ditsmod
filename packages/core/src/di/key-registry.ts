@@ -2,7 +2,7 @@ import { ExtensionClass } from '#extension/extension-types.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { TokenMustBeDefined } from './errors.js';
 import { resolveForwardRef } from './forward-ref.js';
-import { InjectionToken } from './injection-token.js';
+import { InjectionToken } from './common/injection-token.js';
 
 /**
  * `DualKey` is used internally by `Injector` because its system-wide unique `id` allows

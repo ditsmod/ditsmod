@@ -18,14 +18,12 @@ import {
 import { isProvider } from '#utils/type-guards.js';
 import { ExtensionConfigBase, normalizeExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import { AnyObj, Level, ModRefId, ModuleType, PickProps } from '#types/mix.js';
-import { AnyFn } from '#di/types-and-models.js';
-import { Provider } from '#di/types-and-models.js';
+import { AnyFn, Provider, Class } from '#di/common/types-and-models.js';
 import { RootRawMetadata } from '#decorators/module-raw-metadata.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { BaseMeta } from '#init/base-meta.js';
 import { ForwardRefFn, resolveForwardRef } from '#di/forward-ref.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
-import { Class } from '#di/types-and-models.js';
 import { Providers } from '#utils/providers.js';
 import { Extension } from '#extension/extension-types.js';
 import { normalizeProviders } from '#utils/ng-utils.js';
