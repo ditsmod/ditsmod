@@ -1,4 +1,5 @@
-import { getModule, ModRefId, ModuleManager, BaseMeta, AllInitHooks } from '@ditsmod/core';
+import type { ModRefId, BaseMeta, AllInitHooks } from '@ditsmod/core';
+import { getModule, ModuleManager } from '@ditsmod/core';
 
 export class TestModuleManager extends ModuleManager {
   protected externalModules = new Set<ModRefId>();

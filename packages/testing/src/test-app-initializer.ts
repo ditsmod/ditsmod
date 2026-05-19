@@ -1,19 +1,18 @@
-import {
+import type {
   BaseMeta,
   ExtensionCounters,
   ExtensionContext,
   ForwardRefFn,
-  InternalExtensionManager,
   MetadataPerMod2,
   ModRefId,
   Provider,
   Providers,
-  resolveForwardRef,
 } from '@ditsmod/core';
+import { InternalExtensionManager, resolveForwardRef } from '@ditsmod/core';
 import { RestAppInitializer } from '@ditsmod/rest';
 
 import { TestOverrider } from './test-overrider.js';
-import { OverriderConfig } from './types.js';
+import type { OverriderConfig } from './types.js';
 import { TestExtensionManager } from './test-extension-manager.js';
 import { OVERRIDERS_CONFIG } from './constants.js';
 
