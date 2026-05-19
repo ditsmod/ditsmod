@@ -1,4 +1,4 @@
-import { Provider } from '#di/common/types-and-models.js';
+import { Provider } from '#di/top/types-and-models.js';
 import { Extension } from '#extension/extension-types.js';
 import {
   InjectionToken,

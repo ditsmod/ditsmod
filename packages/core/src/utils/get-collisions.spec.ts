@@ -1,6 +1,6 @@
 
 import { Reflector } from '#di/reflector.js';
-import { Provider } from '#di/common/types-and-models.js';
+import { Provider } from '#di/top/types-and-models.js';
 import { getCollisions } from './get-collisions.js';
 
 describe('getTokensCollisions()', () => {

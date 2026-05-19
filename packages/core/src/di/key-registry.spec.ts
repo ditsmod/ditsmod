@@ -1,5 +1,5 @@
 import { Extension } from '#extension/extension-types.js';
-import { InjectionToken } from './common/injection-token.js';
+import { InjectionToken } from './top/injection-token.js';
 import { KeyRegistry } from './key-registry.js';
 
 describe('KeyRegistry', () => {

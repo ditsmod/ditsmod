@@ -18,7 +18,7 @@ import {
 import { isProvider } from '#utils/type-guards.js';
 import { ExtensionConfigBase, normalizeExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import { AnyObj, Level, ModRefId, ModuleType, PickProps } from '#types/mix.js';
-import { AnyFn, Provider, Class } from '#di/common/types-and-models.js';
+import { AnyFn, Provider, Class } from '#di/top/types-and-models.js';
 import { RootRawMetadata } from '#decorators/module-raw-metadata.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { BaseMeta } from '#init/base-meta.js';

@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 
 import { Logger, LoggerConfig } from '#logger/logger.js';
-import { ClassFactoryProvider, Provider } from '#di/common/types-and-models.js';
+import { ClassFactoryProvider, Provider } from '#di/top/types-and-models.js';
 import { ConsoleLogger } from '#logger/console-logger.js';
 import { Providers } from './providers.js';
 import { LogMediator } from '#logger/log-mediator.js';

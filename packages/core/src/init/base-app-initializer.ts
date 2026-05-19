@@ -13,7 +13,7 @@ import { ExtensionManager, InternalExtensionManager } from '#extension/extension
 import { ModuleManager } from '#init/module-manager.js';
 import { PerAppService } from '#services/per-app.service.js';
 import { ModRefId } from '#types/mix.js';
-import { Provider } from '#di/common/types-and-models.js';
+import { Provider } from '#di/top/types-and-models.js';
 import { ExtensionClass, ExtensionCounters } from '#extension/extension-types.js';
 import { getCollisions } from '#utils/get-collisions.js';
 import { getDuplicates } from '#utils/get-duplicates.js';

@@ -1,5 +1,5 @@
 import { AnyObj, ModRefId } from '#types/mix.js';
-import { AnyFn, Provider } from '#di/common/types-and-models.js';
+import { AnyFn, Provider } from '#di/top/types-and-models.js';
 import { BaseMeta } from '#init/base-meta.js';
 import { ProviderImport } from '#types/metadata-per-mod.js';
 import { ExtensionClass } from '#extension/extension-types.js';

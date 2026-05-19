@@ -1,7 +1,7 @@
 import 'reflect-metadata/lite';
 import { Reflector, isDelegateCtor } from './reflector.js';
-import { type ClassPropMeta, type ParamsMeta, type PropMetadataTuple, UnknownType } from './common/types-and-models.js';
-import { DecoratorAndValue } from './common/decorator-and-value.js';
+import { type ClassPropMeta, type ParamsMeta, type PropMetadataTuple, UnknownType } from './top/types-and-models.js';
+import { DecoratorAndValue } from './top/decorator-and-value.js';
 
 const classDecorator = Reflector.makeClassDecorator((data?: any) => data);
 const classDecoratorWithoutTransformator = Reflector.makeClassDecorator();

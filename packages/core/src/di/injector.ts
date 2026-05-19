@@ -1,4 +1,4 @@
-import type { AnyFn } from './common/types-and-models.js';
+import type { AnyFn } from './top/types-and-models.js';
 import { fromSelf, inject, type InjectTransformResult, optional, skipSelf } from './decorators.js';
 import {
   FailedCreateFactoryProvider,
@@ -13,7 +13,7 @@ import {
   SettingValueByTokenFailed,
 } from './errors.js';
 import { type ForwardRefFn, resolveForwardRef } from './forward-ref.js';
-import type { InjectionToken } from './common/injection-token.js';
+import type { InjectionToken } from './top/injection-token.js';
 import { DualKey, KeyRegistry } from './key-registry.js';
 import { Reflector } from './reflector.js';
 import type {
@@ -23,18 +23,18 @@ import type {
   Provider,
   Visibility,
   CompareFn,
-} from './common/types-and-models.js';
-import { Dependency } from './common/types-and-models.js';
-import { CTX_DATA } from './common/constants.js';
+} from './top/types-and-models.js';
+import { Dependency } from './top/types-and-models.js';
+import { CTX_DATA } from './top/constants.js';
 import {
   type RegistryOfInjector,
   ID,
   ResolvedFactory,
   ResolvedProvider,
   getNewRegistry,
-} from './common/resolved-provider.js';
-import { DecoratorAndValue } from './common/decorator-and-value.js';
-import { DEPS_KEY } from './common/constants.js';
+} from './top/resolved-provider.js';
+import { DecoratorAndValue } from './top/decorator-and-value.js';
+import { DEPS_KEY } from './top/constants.js';
 import { PathTracer } from './path-tracer.js';
 import {
   isClassProvider,

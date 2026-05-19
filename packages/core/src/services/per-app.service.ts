@@ -1,5 +1,5 @@
 import { injectable, Injector } from '#di';
-import { Provider } from '#di/common/types-and-models.js';
+import { Provider } from '#di/top/types-and-models.js';
 import { CannotReinitInjectorAfterStage1 } from '#errors';
 
 /**

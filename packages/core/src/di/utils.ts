@@ -9,10 +9,10 @@ import type {
   TokenProvider,
   TypeProvider,
   ValueProvider,
-} from './common/types-and-models.js';
-import type { DecoratorAndValue } from './common/decorator-and-value.js';
-import { InjectionToken } from './common/injection-token.js';
-import { Class } from './common/types-and-models.js';
+} from './top/types-and-models.js';
+import type { DecoratorAndValue } from './top/decorator-and-value.js';
+import { InjectionToken } from './top/injection-token.js';
+import { Class } from './top/types-and-models.js';
 
 /**
  * Equivalent to ES6 spread, add each item to an array.

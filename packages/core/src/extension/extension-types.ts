@@ -1,6 +1,6 @@
 import { Class, Injector } from '#di';
 import { AnyObj, OptionalProps } from '#types/mix.js';
-import { Provider } from '#di/common/types-and-models.js';
+import { Provider } from '#di/top/types-and-models.js';
 
 export class ExtensionsMetaPerApp {
   [key: string]: AnyObj;

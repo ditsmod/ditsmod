@@ -4,7 +4,7 @@ import type { ModuleManager } from '#init/module-manager.js';
 import type { GlobalProviders } from '#types/metadata-per-mod.js';
 import { ProviderImport } from '#types/metadata-per-mod.js';
 import type { Level, ModRefId, AnyObj } from '#types/mix.js';
-import type { AnyFn, Provider } from '#di/common/types-and-models.js';
+import type { AnyFn, Provider } from '#di/top/types-and-models.js';
 import { ShallowImports } from '#init/types.js';
 import { getCollisions } from '#utils/get-collisions.js';
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';

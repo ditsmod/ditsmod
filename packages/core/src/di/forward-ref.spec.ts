@@ -1,5 +1,5 @@
 import { forwardRef, resolveForwardRef } from './forward-ref.js';
-import { Class } from './common/types-and-models.js';
+import { Class } from './top/types-and-models.js';
 
 describe('forwardRef', function () {
   it('should wrap and unwrap the reference', () => {
