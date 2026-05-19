@@ -1,4 +1,4 @@
-import { InjectionToken } from '#di/top/injection-token.js';
+import { InjectionToken } from './injection-token.js';
 
 export const CTX_DATA = new InjectionToken('CTX_DATA');
 

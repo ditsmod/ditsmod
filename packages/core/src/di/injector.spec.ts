@@ -5,7 +5,6 @@ import { KeyRegistry } from './key-registry.js';
 import { Class, Dependency, Provider } from './top/types-and-models.js';
 import { CTX_DATA } from './top/constants.js';
 import { getNewRegistry, ResolvedProvider } from './top/resolved-provider.js';
-import { stringify } from '#di/stringify.js';
 import { fromSelf, inject, injectable, factoryMethod, optional, skipSelf } from './decorators.js';
 import { InjectionToken } from './top/injection-token.js';
 import { Injector } from './injector.js';

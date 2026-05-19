@@ -1,4 +1,4 @@
-import { stringify } from '#di/stringify.js';
+import { stringify } from './stringify.js';
 
 export const FORWARD_REF = Symbol();
 
