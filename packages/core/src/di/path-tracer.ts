@@ -1,6 +1,6 @@
 import { CyclicDependency } from '#errors';
 import { getProviderName } from '#utils/get-provider-name.js';
-import { type Injector } from './injector.js';
+import type { Injector } from './injector.js';
 
 export interface PathItem {
   token: any;

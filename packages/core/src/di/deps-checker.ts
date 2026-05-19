@@ -1,10 +1,10 @@
 import { fromSelf, skipSelf } from './decorators.js';
 import { NoProvider } from './errors.js';
 import { Injector } from './injector.js';
-import { DualKey, KeyRegistry } from './key-registry.js';
+import { type DualKey, KeyRegistry } from './key-registry.js';
 import { PathTracer } from './path-tracer.js';
-import { Dependency, Visibility } from './common/types-and-models.js';
-import { ID, ResolvedProvider } from './common/resolved-provider.js';
+import type { Dependency, Visibility } from './common/types-and-models.js';
+import { ID, type ResolvedProvider } from './common/resolved-provider.js';
 
 /**
  * Allow check dependencies for given provider.

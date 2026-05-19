@@ -1,5 +1,5 @@
-import { AnyFn } from './common/types-and-models.js';
-import { fromSelf, inject, InjectTransformResult, optional, skipSelf } from './decorators.js';
+import type { AnyFn } from './common/types-and-models.js';
+import { fromSelf, inject, type InjectTransformResult, optional, skipSelf } from './decorators.js';
 import {
   FailedCreateFactoryProvider,
   InstantiationError,
@@ -12,24 +12,26 @@ import {
   SettingValueByIdFailed,
   SettingValueByTokenFailed,
 } from './errors.js';
-import { ForwardRefFn, resolveForwardRef } from './forward-ref.js';
-import { InjectionToken } from './common/injection-token.js';
+import { type ForwardRefFn, resolveForwardRef } from './forward-ref.js';
+import type { InjectionToken } from './common/injection-token.js';
 import { DualKey, KeyRegistry } from './key-registry.js';
 import { Reflector } from './reflector.js';
-import {
+import type {
   Class,
-  Dependency,
   NormalizedProvider,
   ParamsMeta,
   Provider,
   Visibility,
   CompareFn,
 } from './common/types-and-models.js';
+import { Dependency } from './common/types-and-models.js';
 import { CTX_DATA } from './common/constants.js';
 import {
-  ID, RegistryOfInjector,
+  type RegistryOfInjector,
+  ID,
   ResolvedFactory,
-  ResolvedProvider, getNewRegistry
+  ResolvedProvider,
+  getNewRegistry,
 } from './common/resolved-provider.js';
 import { DecoratorAndValue } from './common/decorator-and-value.js';
 import { DEPS_KEY } from './common/constants.js';
@@ -41,7 +43,7 @@ import {
   isNormalizedProvider,
   isTypeProvider,
   isValueProvider,
-  MultiProvider,
+  type MultiProvider,
 } from './utils.js';
 import { DEBUG_NAME, stringify } from './stringify.js';
 

@@ -1,4 +1,4 @@
-import { ExtensionClass } from '#extension/extension-types.js';
+import type { ExtensionClass } from '#extension/extension-types.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { TokenMustBeDefined } from './errors.js';
 import { resolveForwardRef } from './forward-ref.js';

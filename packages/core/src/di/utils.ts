@@ -1,7 +1,5 @@
-import { ModRefId } from '#types/mix.js';
-import { InjectionToken } from './common/injection-token.js';
-import {
-  Class,
+import type { ModRefId } from '#types/mix.js';
+import type {
   ClassFactoryProvider,
   ClassProvider,
   FactoryProvider,
@@ -12,7 +10,9 @@ import {
   TypeProvider,
   ValueProvider,
 } from './common/types-and-models.js';
-import { DecoratorAndValue } from './common/decorator-and-value.js';
+import type { DecoratorAndValue } from './common/decorator-and-value.js';
+import { InjectionToken } from './common/injection-token.js';
+import { Class } from './common/types-and-models.js';
 
 /**
  * Equivalent to ES6 spread, add each item to an array.
