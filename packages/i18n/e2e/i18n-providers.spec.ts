@@ -3,7 +3,8 @@ import { Providers } from '@ditsmod/core';
 import { I18nProviders } from '#src/i18n-providers.js';
 import { CommonDict } from './current/index.js';
 import { CommonUkDict } from './current/common-uk.dict.js';
-import { I18nOptions, I18N_TRANSLATIONS, Translations } from '#src/types/mix.js';
+import type { Translations } from '#src/types/mix.js';
+import { I18nOptions, I18N_TRANSLATIONS } from '#src/types/mix.js';
 
 describe('I18nProviders', () => {
   it('returns arrays with two elements of DI providers', () => {

@@ -1,4 +1,5 @@
-import { AnyObj, Injector, ModuleExtract } from '@ditsmod/core';
+import type { AnyObj} from '@ditsmod/core';
+import { Injector, ModuleExtract } from '@ditsmod/core';
 import { QUERY_PARAMS } from '@ditsmod/rest';
 import { jest } from '@jest/globals';
 

@@ -1,5 +1,6 @@
-import { InjectionToken, Class } from '@ditsmod/core';
-import { ISO639 } from './iso-639.js';
+import type { Class } from '@ditsmod/core';
+import { InjectionToken } from '@ditsmod/core';
+import type { ISO639 } from './iso-639.js';
 
 export interface Dictionary {
   getLng(): ISO639;

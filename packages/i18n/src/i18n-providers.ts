@@ -1,5 +1,7 @@
-import { Providers, Class } from '@ditsmod/core';
-import { Dictionary, DictGroup, Translations, I18N_TRANSLATIONS, I18nOptions } from './types/mix.js';
+import type { Class } from '@ditsmod/core';
+import { Providers } from '@ditsmod/core';
+import type { Dictionary, DictGroup, Translations} from './types/mix.js';
+import { I18N_TRANSLATIONS, I18nOptions } from './types/mix.js';
 
 export function getDictGroup<T extends Class<Dictionary>>(base: T, ...dicts: T[]): DictGroup {
   return [base, ...dicts];

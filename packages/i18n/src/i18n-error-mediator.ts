@@ -1,5 +1,5 @@
 import { CustomError } from '@ditsmod/core/errors';
-import { ISO639 } from './types/iso-639.js';
+import type { ISO639 } from './types/iso-639.js';
 
 export const i18nErrors = {
   /**
