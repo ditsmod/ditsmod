@@ -1,9 +1,9 @@
-import { Class } from '@ditsmod/core';
-import { Dictionary } from '@ditsmod/i18n';
+import type { Class } from '@ditsmod/core';
+import type { Dictionary } from '@ditsmod/i18n';
 import { OasRouteMeta } from '@ditsmod/openapi';
-import { XParameterObject, XSchemaObject } from '@ts-stack/openapi-spec';
+import type { XParameterObject, XSchemaObject } from '@ts-stack/openapi-spec';
 
-import { ValidationOptions } from './validation-options.js';
+import type { ValidationOptions } from './validation-options.js';
 
 export class ValidationRouteMeta extends OasRouteMeta {
   parameters: XParameterObject[];

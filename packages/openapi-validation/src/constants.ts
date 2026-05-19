@@ -1,5 +1,5 @@
 import { InjectionToken } from '@ditsmod/core';
-import { Options } from 'ajv';
+import type { Options } from 'ajv';
 
 /**
  * Ajv JSON schema validator options, see [docs](https://ajv.js.org/) for more info.

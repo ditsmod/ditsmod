@@ -1,4 +1,4 @@
-import { ISO639 } from '@ditsmod/i18n';
+import type { ISO639 } from '@ditsmod/i18n';
 import { AssertDict } from '../_base-en/assert.dict.js';
 
 export class AssertUkDict extends AssertDict {

@@ -1,4 +1,4 @@
-import { Dictionary, ISO639 } from '@ditsmod/i18n';
+import type { Dictionary, ISO639 } from '@ditsmod/i18n';
 
 export class AssertDict implements Dictionary {
   getLng(): ISO639 {
