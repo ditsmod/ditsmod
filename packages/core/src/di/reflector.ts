@@ -162,7 +162,7 @@ export class Reflector {
   ): ClassPropMeta<DecorValue> | undefined;
   static getMetadata<DecorValue = any, Proto extends AnyObj = AnyObj>(
     Cls: Class<Proto>,
-    propertyKey: string | symbol | undefined = 'constructor',
+    propertyKey?: string | symbol,
   ): ClassMeta<DecorValue, Proto> | ClassPropMeta<DecorValue> | undefined {
     const classMeta = new ClassMetaIterator() as ClassMeta<DecorValue, Proto>;
     if (!isType(Cls)) {
