@@ -1,9 +1,10 @@
 // @ts-check
 
 import eslint from '@eslint/js';
+import { defineConfig } from 'eslint/config';
 import tseslint from 'typescript-eslint';
 
-export default tseslint.config(
+export default defineConfig([
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   {
@@ -18,9 +19,9 @@ export default tseslint.config(
       semi: ['error', 'always'],
       quotes: ['error', 'single', { avoidEscape: true }],
       '@typescript-eslint/no-floating-promises': 'error',
+      '@typescript-eslint/no-misused-promises': 1,
       '@typescript-eslint/no-unused-expressions': 'warn',
       '@typescript-eslint/consistent-type-imports': 1,
-      '@typescript-eslint/no-misused-promises': 0,
       '@typescript-eslint/no-empty-object-type': 0,
       '@typescript-eslint/no-non-null-assertion': 0,
       '@typescript-eslint/no-empty-function': 0,
@@ -32,7 +33,6 @@ export default tseslint.config(
       '@typescript-eslint/no-non-null-asserted-optional-chain': 0,
       '@typescript-eslint/no-unused-vars': 0,
       '@typescript-eslint/triple-slash-reference': 0,
-      '@typescript-eslint/ban-types': 0,
       'no-async-promise-executor': 0,
       'no-prototype-builtins': 0,
     },
@@ -51,4 +51,4 @@ export default tseslint.config(
       '**/jest.matchers.ts',
     ],
   },
-);
+]);
