@@ -566,7 +566,7 @@ describe('ModuleManager', () => {
     expect(mock.getBaseMeta(Module1)).toMatchObject(expectedMeta1);
   });
 
-  it('root module with exported globaly some extension', () => {
+  it('root module with exported appy some extension', () => {
     @injectable()
     class Extension1 implements Extension<void> {
       async stage1() {}

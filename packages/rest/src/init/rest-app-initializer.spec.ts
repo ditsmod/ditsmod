@@ -106,13 +106,13 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
       shallowImportsBase = mock.collectProvidersShallow(moduleManager);
     });
 
-    function checkGlobalProviders(shallowImports: ShallowImports | undefined) {
+    function checkAppProviders(shallowImports: ShallowImports | undefined) {
       const tokensPerMod = getImportedTokens(shallowImports?.baseImportRegistry.perMod).slice(0, 3);
       expect(tokensPerMod).toEqual([Provider0, Provider3, Provider4]);
       const tokensPerReq = getImportedTokens(shallowImports?.baseImportRegistry.perReq).slice(0, 3);
       expect(tokensPerReq).toEqual([Provider5, Provider6, Provider7]);
 
-      // Global providers per a module
+      // App providers per a module
       const perMod = shallowImports?.baseImportRegistry?.perMod!;
       const expectedPerMod = new ProviderImport();
 
@@ -126,7 +126,7 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
       expectedPerMod.providers = [Provider4];
       expect(perMod.get(Provider4)).toEqual(expectedPerMod);
 
-      // Global providers per a request
+      // App providers per a request
       const perReq = shallowImports?.baseImportRegistry.perReq!;
       const expectedPerReq = new ProviderImport();
       expectedPerReq.modRefId = module3WithParams;
@@ -145,7 +145,7 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
       const providerPerMod: Provider = { token: ModuleExtract, useValue: moduleExtract };
       expect(mod0?.baseMeta.providersPerMod).toEqual([providerPerMod, Provider0]);
       expect(mod0?.baseMeta.providersPerReq).toEqual([]);
-      checkGlobalProviders(mod0);
+      checkAppProviders(mod0);
     });
 
     it('Module1', async () => {
@@ -154,7 +154,7 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
       const moduleExtract: ModuleExtract = { path: '', moduleName: 'Module1', isExternal: false };
       const providerPerMod: Provider = { token: ModuleExtract, useValue: moduleExtract };
       expect(mod1?.baseMeta.providersPerMod).toEqual([providerPerMod, obj1, Provider2]);
-      checkGlobalProviders(mod1);
+      checkAppProviders(mod1);
     });
 
     it('Module2', async () => {
@@ -164,7 +164,7 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
       const providerPerMod: Provider = { token: ModuleExtract, useValue: moduleExtract };
       expect(mod2?.baseMeta.providersPerMod).toEqual([providerPerMod, Provider3, Provider4]);
       expect(mod2?.baseMeta.providersPerReq).toEqual([]);
-      checkGlobalProviders(mod2);
+      checkAppProviders(mod2);
     });
 
     it('Module3', async () => {
@@ -177,7 +177,7 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
       };
       expect(mod3?.baseMeta.providersPerMod).toEqual([providerPerMod]);
       expect(mod3?.baseMeta.providersPerReq).toEqual([Provider5, Provider6, Provider7]);
-      checkGlobalProviders(mod3);
+      checkAppProviders(mod3);
     });
 
     it('Module4', async () => {
@@ -189,7 +189,7 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
       const providerPerMod: Provider = { token: ModuleExtract, useValue: moduleExtract };
       expect(mod4?.baseMeta.providersPerMod).toEqual([providerPerMod]);
       expect(mod4?.baseMeta.providersPerReq).toEqual([Provider8, Provider9]);
-      checkGlobalProviders(mod4);
+      checkAppProviders(mod4);
     });
 
     it('AppModule', async () => {
@@ -204,7 +204,7 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
       };
       expect(root1?.baseMeta.providersPerMod).toEqual([providerPerMod]);
       expect(root1?.baseMeta.providersPerReq).toEqual([]);
-      checkGlobalProviders(root1);
+      checkAppProviders(root1);
       expect(getImportedTokens(root1?.baseImportRegistry.perMod)).toEqual([Provider0, Provider3, Provider4, Provider1]);
       expect(getImportedTokens(root1?.baseImportRegistry.perReq)).toEqual([
         Provider5,

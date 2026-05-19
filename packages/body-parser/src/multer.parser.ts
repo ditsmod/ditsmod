@@ -39,7 +39,7 @@ export class MulterParser {
    * An array of files will be stored in `parsedForm.files`.
    *
    * **WARNING:** Make sure that you always handle the files that a user uploads.
-   * Never use this method as a global parser since a malicious user could upload
+   * Never use this method as a app parser since a malicious user could upload
    * files to a route that you didn't anticipate. Only use this function on routes
    * where you are handling the uploaded files.
    */

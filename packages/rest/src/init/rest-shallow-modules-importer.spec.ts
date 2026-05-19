@@ -3,7 +3,7 @@ import {
   clearDebugClassNames,
   featureModule,
   forwardRef,
-  GlobalProviders,
+  AppProviders,
   injectable,
   ModRefId,
   ModuleManager,
@@ -21,7 +21,7 @@ import { controller } from '#types/controller.js';
 import { AppendsWithParams } from './rest-init-raw-meta.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { RestShallowModulesImporter } from './rest-shallow-modules-importer.js';
-import { Level, RestGlobalProviders } from '#types/types.js';
+import { Level, RestAppProviders } from '#types/types.js';
 import { getImportedProviders } from '../utils/get-imports.js';
 import { ModuleMustHaveControllers } from '#services/rest-errors.js';
 import { ResolvingCollisionNotExistsOnThisLevel } from '@ditsmod/core/errors';
@@ -55,15 +55,15 @@ describe('shallow importing modules', () => {
   function importModulesShallow(modRefId: ModuleType) {
     expect(() => moduleManager.scanRootModule(modRefId)).not.toThrow();
     const shallowImportsBase = new ShallowModulesImporterBase().importModulesShallow({
-      globalProviders: new GlobalProviders(),
+      appProviders: new AppProviders(),
       modRefId,
       moduleManager,
       unfinishedScanModules: new Set(),
     });
-    const globalProviders = new ShallowModulesImporterBase().exportGlobalProviders(moduleManager);
+    const appProviders = new ShallowModulesImporterBase().exportAppProviders(moduleManager);
     return mock.importModulesShallow({
       modRefId: modRefId,
-      globalProviders,
+      appProviders,
       unfinishedScanModules: new Set(),
       moduleManager,
       prefixPerMod: '',
@@ -106,11 +106,11 @@ describe('shallow importing modules', () => {
 
     const baseMeta = moduleManager.scanRootModule(AppModule);
     const initHooks = baseMeta.allInitHooks.get(initRest)!;
-    const val = initHooks.exportGlobalProviders({
+    const val = initHooks.exportAppProviders({
       moduleManager,
-      globalProviders: new GlobalProviders(),
+      appProviders: new AppProviders(),
       baseMeta,
-    }) as RestGlobalProviders;
+    }) as RestAppProviders;
     // expect(getImportedProviders(val.importedProvidersPerReq)).toEqual([Provider2, Provider1]);
   });
 
