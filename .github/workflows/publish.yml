@@ -3,7 +3,7 @@ name: Publish to npm
 on:
   push:
     tags:
-      - "*"
+      - '*'
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
@@ -13,49 +13,26 @@ jobs:
     permissions:
       contents: read
       id-token: write
-
     environment:
       name: publishing
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-          registry-url: "https://registry.npmjs.org"
-
+          registry-url: 'https://registry.npmjs.org'
       - name: Enable Corepack
         run: |
           corepack enable
           corepack install
-
       - name: Run scripts
         run: |
           yarn install --immutable
           yarn build
-          cd packages/authjs
-          npm publish --provenance --tag next
-          cd ../body-parser
-          npm publish --provenance --tag next
-          cd ../core
-          npm publish --provenance --tag next
-          cd ../cors
-          npm publish --provenance --tag next
-          cd ../i18n
-          npm publish --provenance --tag next
-          cd ../jwt
-          npm publish --provenance --tag next
-          cd ../openapi
+          cd packages/openapi
           yarn build-ui
-          npm publish --provenance --tag next
-          cd ../openapi-validation
-          npm publish --provenance --tag next
-          cd ../rest
-          npm publish --provenance --tag next
-          cd ../rest-testing
-          npm publish --provenance --tag next
-          cd ../session-cookie
-          npm publish --provenance --tag next
-          cd ../trpc
-          npm publish --provenance --tag next
+          for pkg in authjs body-parser core cors i18n jwt openapi openapi-validation rest rest-testing session-cookie trpc;
+          do
+            cd ../$pkg
+            npm publish --provenance --tag next
+          done
