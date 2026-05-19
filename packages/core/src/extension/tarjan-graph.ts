@@ -1,4 +1,4 @@
-import { AnyObj } from '#types/mix.js';
+import type { AnyObj } from '#types/mix.js';
 import { isExtensionConfig } from './type-guards.js';
 
 export type ExtensionConfig<T> = {

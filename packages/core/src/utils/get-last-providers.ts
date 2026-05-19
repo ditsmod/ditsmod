@@ -1,4 +1,4 @@
-import { Provider } from '#di/top/types-and-models.js';
+import type { Provider } from '#di/top/types-and-models.js';
 import { getTokens } from './get-tokens.js';
 import { isMultiProvider } from '#di';
 

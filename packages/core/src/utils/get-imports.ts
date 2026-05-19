@@ -1,5 +1,5 @@
-import { Provider } from '#di/top/types-and-models.js';
-import { ProviderImport } from '#types/metadata-per-mod.js';
+import type { Provider } from '#di/top/types-and-models.js';
+import type { ProviderImport } from '#types/metadata-per-mod.js';
 
 export function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) {
   return [...(map || []).keys()];

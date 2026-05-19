@@ -1,4 +1,5 @@
-import { findCycle, ExtensionConfig } from './tarjan-graph.js';
+import type { ExtensionConfig } from './tarjan-graph.js';
+import { findCycle } from './tarjan-graph.js';
 
 describe("Tarjan's algorithm", () => {
   describe('circular dependencies with "beforeExtensions" property', () => {

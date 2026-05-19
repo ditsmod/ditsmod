@@ -1,14 +1,15 @@
-import { Class, MultiProvider } from '#di';
-import { AnyObj, ModRefId, ModuleType } from '#types/mix.js';
-import { AnyFn } from '#di/top/types-and-models.js';
-import { Provider } from '#di/top/types-and-models.js';
-import { ModuleWithParams } from '../decorators/module-raw-metadata.js';
-import { ExtensionConfig, type ExtensionConfigBase } from '#extension/extension-providers-and-configs.js';
-import { InitMetaMap } from '#decorators/init-hooks-and-metadata.js';
-import { InitHooks } from '#decorators/init-hooks-and-metadata.js';
-import { AllInitHooks } from '#decorators/init-hooks-and-metadata.js';
-import { ExtensionClass } from '#extension/extension-types.js';
-import { GroupToken } from '#di/key-registry.js';
+import type { Class, MultiProvider } from '#di';
+import type { AnyObj, ModRefId, ModuleType } from '#types/mix.js';
+import type { AnyFn } from '#di/top/types-and-models.js';
+import type { Provider } from '#di/top/types-and-models.js';
+import type { ModuleWithParams } from '../decorators/module-raw-metadata.js';
+import type { ExtensionConfig} from '#extension/extension-providers-and-configs.js';
+import { type ExtensionConfigBase } from '#extension/extension-providers-and-configs.js';
+import type { InitMetaMap } from '#decorators/init-hooks-and-metadata.js';
+import type { InitHooks } from '#decorators/init-hooks-and-metadata.js';
+import type { AllInitHooks } from '#decorators/init-hooks-and-metadata.js';
+import type { ExtensionClass } from '#extension/extension-types.js';
+import type { GroupToken } from '#di/key-registry.js';
 
 export class BaseInitMeta<A extends AnyObj = AnyObj> {
   /**

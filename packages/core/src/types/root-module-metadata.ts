@@ -1,5 +1,5 @@
-import { ModRefId } from './mix.js';
-import { ModuleRawMetadata } from '../decorators/module-raw-metadata.js';
+import type { ModRefId } from './mix.js';
+import type { ModuleRawMetadata } from '../decorators/module-raw-metadata.js';
 
 export interface RootModuleMetadata extends ModuleRawMetadata {
   /**

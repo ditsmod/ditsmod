@@ -1,7 +1,7 @@
-import { Class } from '#di/top/types-and-models.js';
-import { Extension } from '#extension/extension-types.js';
-import { AnyObj } from '#types/mix.js';
-import { ExtensionConfig } from './tarjan-graph.js';
+import type { Class } from '#di/top/types-and-models.js';
+import type { Extension } from '#extension/extension-types.js';
+import type { AnyObj } from '#types/mix.js';
+import type { ExtensionConfig } from './tarjan-graph.js';
 
 export function isExtensionProvider(provider?: any): provider is Class<Extension> {
   return (

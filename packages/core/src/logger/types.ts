@@ -1,4 +1,4 @@
-import { InputLogLevel, OutputLogLevel } from '#logger/logger.js';
+import type { InputLogLevel, OutputLogLevel } from '#logger/logger.js';
 
 /**
  * Default type for `LogMediator.buffer`.

@@ -1,6 +1,6 @@
-import { ForwardRefFn } from '#di/forward-ref.js';
-import { Provider } from '#di/top/types-and-models.js';
-import { Providers } from '#utils/providers.js';
+import type { ForwardRefFn } from '#di/forward-ref.js';
+import type { Provider } from '#di/top/types-and-models.js';
+import type { Providers } from '#utils/providers.js';
 
 export class ProvidersOnly<T = Providers | (Provider | ForwardRefFn<Provider>)[]> {
   /**

@@ -1,9 +1,9 @@
-import { AnyObj, ModRefId } from '#types/mix.js';
-import { AnyFn, Provider } from '#di/top/types-and-models.js';
-import { BaseMeta } from '#init/base-meta.js';
-import { ProviderImport } from '#types/metadata-per-mod.js';
-import { ExtensionClass } from '#extension/extension-types.js';
-import { GroupToken } from '#di/key-registry.js';
+import type { AnyObj, ModRefId } from '#types/mix.js';
+import type { AnyFn, Provider } from '#di/top/types-and-models.js';
+import type { BaseMeta } from '#init/base-meta.js';
+import type { ProviderImport } from '#types/metadata-per-mod.js';
+import type { ExtensionClass } from '#extension/extension-types.js';
+import type { GroupToken } from '#di/key-registry.js';
 
 /**
  * Metadata collected using `ShallowModulesImporter`. The target for this metadata is `DeepModulesImporter`.

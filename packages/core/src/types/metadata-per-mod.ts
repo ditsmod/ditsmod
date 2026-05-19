@@ -1,10 +1,10 @@
-import { BaseMeta } from '#init/base-meta.js';
-import { AnyObj, ModRefId } from './mix.js';
-import { AnyFn, Provider } from '#di/top/types-and-models.js';
-import { ExtensionConfig } from '#extension/extension-providers-and-configs.js';
-import { BaseInitRawMeta, InitHooks } from '#decorators/init-hooks-and-metadata.js';
-import { ExtensionClass } from '#extension/extension-types.js';
-import { GroupToken } from '#di/key-registry.js';
+import type { BaseMeta } from '#init/base-meta.js';
+import type { AnyObj, ModRefId } from './mix.js';
+import type { AnyFn, Provider } from '#di/top/types-and-models.js';
+import type { ExtensionConfig } from '#extension/extension-providers-and-configs.js';
+import type { BaseInitRawMeta, InitHooks } from '#decorators/init-hooks-and-metadata.js';
+import type { ExtensionClass } from '#extension/extension-types.js';
+import type { GroupToken } from '#di/key-registry.js';
 
 /**
  * Used to create a mapping between a provider and the module from which it was imported.

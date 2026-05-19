@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 
 import { ConsoleLogger } from '#logger/console-logger.js';
-import { InputLogLevel } from '#logger/logger.js';
+import type { InputLogLevel } from '#logger/logger.js';
 
 describe('ConsoleLogger', () => {
   console.log = jest.fn();

@@ -1,9 +1,10 @@
 import { ChainError } from '@ts-stack/chain-error';
 
 import { isModuleWithParams, isModDecor } from '#decorators/type-guards.js';
-import { Provider, Reflector, Class, isNormalizedProvider } from '#di';
+import type { Provider} from '#di';
+import { Reflector, Class, isNormalizedProvider } from '#di';
 import { CustomError } from '#error/custom-error.js';
-import { AnyObj } from '#types/mix.js';
+import type { AnyObj } from '#types/mix.js';
 
 export function isProvider(maybeProvider?: any): maybeProvider is Provider {
   if (isModuleWithParams(maybeProvider)) {

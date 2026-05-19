@@ -1,5 +1,5 @@
 import { isExtensionProvider } from '#extension/type-guards.js';
-import { Extension } from '#extension/extension-types.js';
+import type { Extension } from '#extension/extension-types.js';
 
 describe('core type guards', () => {
   it('isExtensionProvider()', () => {

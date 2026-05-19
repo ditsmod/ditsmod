@@ -1,5 +1,5 @@
 import { isClassProvider, isFactoryProvider, isFunctionFactoryProvider, isTokenProvider, isValueProvider } from '#di';
-import { Provider } from '#di/top/types-and-models.js';
+import type { Provider } from '#di/top/types-and-models.js';
 import { getTokens } from './get-tokens.js';
 
 /**

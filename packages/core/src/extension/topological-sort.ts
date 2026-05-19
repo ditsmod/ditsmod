@@ -1,5 +1,6 @@
-import { AnyObj } from '#types/mix.js';
-import { getGraph, Graph, ExtensionConfig } from './tarjan-graph.js';
+import type { AnyObj } from '#types/mix.js';
+import type { Graph, ExtensionConfig } from './tarjan-graph.js';
+import { getGraph } from './tarjan-graph.js';
 import { isExtensionConfig } from './type-guards.js';
 
 export function topologicalSort<T = any, R extends ExtensionConfig<T> = ExtensionConfig<any>>(

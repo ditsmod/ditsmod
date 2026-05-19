@@ -1,7 +1,7 @@
-import { PublicLogMediator } from '#logger/system-log-mediator.js';
-import { ModuleType } from '#types/mix.js';
+import type { PublicLogMediator } from '#logger/system-log-mediator.js';
+import type { ModuleType } from '#types/mix.js';
 import { BaseAppInitializer } from './base-app-initializer.js';
-import { BaseAppOptions } from './base-app-options.js';
+import type { BaseAppOptions } from './base-app-options.js';
 import { BaseApplication } from './base-application.js';
 
 /**

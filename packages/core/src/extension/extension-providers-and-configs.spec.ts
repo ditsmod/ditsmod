@@ -1,6 +1,8 @@
-import { KeyRegistry, InjectionToken, Provider } from '#di';
-import { Extension } from '#extension/extension-types.js';
-import { ExtensionConfig, normalizeExtensionConfig } from '#extension/extension-providers-and-configs.js';
+import type { Provider } from '#di';
+import { KeyRegistry, InjectionToken } from '#di';
+import type { Extension } from '#extension/extension-types.js';
+import type { ExtensionConfig} from '#extension/extension-providers-and-configs.js';
+import { normalizeExtensionConfig } from '#extension/extension-providers-and-configs.js';
 
 describe('getExtensionProvider', () => {
   class Extension1 implements Extension {

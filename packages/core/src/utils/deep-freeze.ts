@@ -1,4 +1,4 @@
-import { AnyObj } from '#types/mix.js';
+import type { AnyObj } from '#types/mix.js';
 
 export function deepFreeze<T extends AnyObj | AnyObj[]>(obj: T): T {
   if (Array.isArray(obj)) {

@@ -10,10 +10,6 @@ export default tseslint.config(
     languageOptions: {
       parserOptions: {
         projectService: true,
-        // project: [
-        //   './packages/*/tsconfig.json',
-        //   './examples/*/tsconfig.json',
-        // ]
       },
     },
   },
@@ -23,6 +19,7 @@ export default tseslint.config(
       quotes: ['error', 'single', { avoidEscape: true }],
       '@typescript-eslint/no-floating-promises': 'error',
       '@typescript-eslint/no-unused-expressions': 'warn',
+      '@typescript-eslint/consistent-type-imports': 1,
       '@typescript-eslint/no-misused-promises': 0,
       '@typescript-eslint/no-empty-object-type': 0,
       '@typescript-eslint/no-non-null-assertion': 0,

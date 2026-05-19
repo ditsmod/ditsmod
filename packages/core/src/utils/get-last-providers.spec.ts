@@ -1,4 +1,4 @@
-import { ValueProvider } from '#di';
+import type { ValueProvider } from '#di';
 import { getLastProviders } from './get-last-providers.js';
 
 describe('getLastProviders()', () => {

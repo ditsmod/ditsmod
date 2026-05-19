@@ -1,4 +1,4 @@
-import { OutputLogLevel } from '#logger/logger.js';
+import type { OutputLogLevel } from '#logger/logger.js';
 
 /**
  * Configs of logger is not added to the providers array as a separate provider but can be directly

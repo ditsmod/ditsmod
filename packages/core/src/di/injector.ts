@@ -14,7 +14,8 @@ import {
 } from './errors.js';
 import { type ForwardRefFn, resolveForwardRef } from './forward-ref.js';
 import type { InjectionToken } from './top/injection-token.js';
-import { DualKey, KeyRegistry } from './key-registry.js';
+import type { DualKey} from './key-registry.js';
+import { KeyRegistry } from './key-registry.js';
 import { Reflector } from './reflector.js';
 import type {
   Class,

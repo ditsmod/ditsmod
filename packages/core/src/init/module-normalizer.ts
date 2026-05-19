@@ -1,10 +1,11 @@
+import type {
+  MultiProvider} from '#di';
 import {
   isClassProvider,
   isMultiProvider,
   isNormalizedProvider,
   isTokenProvider,
   isValueProvider,
-  MultiProvider,
   Reflector,
 } from '#di';
 import {
@@ -16,21 +17,24 @@ import {
   isParamsWithMwp,
 } from '#decorators/type-guards.js';
 import { isProvider } from '#utils/type-guards.js';
-import { ExtensionConfigBase, normalizeExtensionConfig } from '#extension/extension-providers-and-configs.js';
-import { AnyObj, Level, ModRefId, ModuleType, PickProps } from '#types/mix.js';
-import { AnyFn, Provider, Class } from '#di/top/types-and-models.js';
-import { RootRawMetadata } from '#decorators/module-raw-metadata.js';
+import type { ExtensionConfigBase} from '#extension/extension-providers-and-configs.js';
+import { normalizeExtensionConfig } from '#extension/extension-providers-and-configs.js';
+import type { AnyObj, Level, ModRefId, ModuleType, PickProps } from '#types/mix.js';
+import type { AnyFn, Provider} from '#di/top/types-and-models.js';
+import { Class } from '#di/top/types-and-models.js';
+import type { RootRawMetadata } from '#decorators/module-raw-metadata.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { BaseMeta } from '#init/base-meta.js';
-import { ForwardRefFn, resolveForwardRef } from '#di/forward-ref.js';
+import type { ForwardRefFn} from '#di/forward-ref.js';
+import { resolveForwardRef } from '#di/forward-ref.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
 import { Providers } from '#utils/providers.js';
-import { Extension } from '#extension/extension-types.js';
+import type { Extension } from '#extension/extension-types.js';
 import { normalizeProviders } from '#utils/ng-utils.js';
 import { isExtensionConfig } from '#extension/type-guards.js';
-import { ModuleWithParams, ModuleRawMetadata } from '#decorators/module-raw-metadata.js';
-import { AllInitHooks, BaseInitRawMeta } from '#decorators/init-hooks-and-metadata.js';
-import { InitHooks } from '#decorators/init-hooks-and-metadata.js';
+import type { ModuleWithParams, ModuleRawMetadata } from '#decorators/module-raw-metadata.js';
+import type { AllInitHooks, BaseInitRawMeta } from '#decorators/init-hooks-and-metadata.js';
+import type { InitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { objectKeys } from '#utils/object-keys.js';
 import {
   UndefinedSymbol,

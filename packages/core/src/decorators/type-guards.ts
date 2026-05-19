@@ -1,6 +1,7 @@
 import { DecoratorAndValue } from '#di';
-import { AnyObj, RequireProps } from '#types/mix.js';
-import { ModuleRawMetadata, ModuleWithParams } from '#decorators/module-raw-metadata.js';
+import type { AnyObj, RequireProps } from '#types/mix.js';
+import type { ModuleWithParams } from '#decorators/module-raw-metadata.js';
+import { ModuleRawMetadata } from '#decorators/module-raw-metadata.js';
 import { RootRawMetadata } from '#decorators/module-raw-metadata.js';
 import { InitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { BaseMeta } from '#init/base-meta.js';

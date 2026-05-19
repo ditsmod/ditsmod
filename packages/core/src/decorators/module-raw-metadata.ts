@@ -1,12 +1,12 @@
-import { ProvidersOnly } from '#types/providers-metadata.js';
-import { AnyObj, ModRefId, ModuleType } from '#types/mix.js';
-import { ExtensionConfig } from '#extension/extension-providers-and-configs.js';
-import { ExtensionClass } from '#extension/extension-types.js';
-import { InitParamsMap } from '#decorators/init-hooks-and-metadata.js';
+import type { ProvidersOnly } from '#types/providers-metadata.js';
+import type { AnyObj, ModRefId, ModuleType } from '#types/mix.js';
+import type { ExtensionConfig } from '#extension/extension-providers-and-configs.js';
+import type { ExtensionClass } from '#extension/extension-types.js';
+import type { InitParamsMap } from '#decorators/init-hooks-and-metadata.js';
 import type { rootModule } from '#decorators/root-module.js';
 import type { featureModule } from '#decorators/feature-module.js';
-import { ForwardRefFn, Provider } from '#di';
-import { Providers } from '#utils/providers.js';
+import type { ForwardRefFn, Provider } from '#di';
+import type { Providers } from '#utils/providers.js';
 
 /**
  * Raw metadata for {@link rootModule} and {@link featureModule} decorator.

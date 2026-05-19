@@ -6,13 +6,14 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {
+import type {
   Provider,
-  Class,
   ValueProvider,
   ClassProvider,
   TokenProvider,
-  FactoryProvider,
+  FactoryProvider} from '#di';
+import {
+  Class,
   resolveForwardRef,
   isNormalizedProvider,
   isClassProvider,

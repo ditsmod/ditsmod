@@ -1,5 +1,5 @@
 import { resolveForwardRef } from '#di';
-import { AnyObj, ModRefId, ModuleType } from '#types/mix.js';
+import type { AnyObj, ModRefId, ModuleType } from '#types/mix.js';
 import { isModuleWithParams } from '#decorators/type-guards.js';
 
 export function getModule<T extends AnyObj>(modRefId: ModRefId<T>): ModuleType<T> {

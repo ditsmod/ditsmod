@@ -12,16 +12,17 @@ import { getLastProviders } from '#utils/get-last-providers.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
 import { hasDeclaredInDir } from '#decorators/type-guards.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
-import {
+import type {
   ExtensionConfig,
   ExtensionConfig3,
-  ExtensionConfigBase,
+  ExtensionConfigBase} from '#extension/extension-providers-and-configs.js';
+import {
   isConfigWithOverrideExtension,
 } from '#extension/extension-providers-and-configs.js';
 import { findCycle } from '#extension/tarjan-graph.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { topologicalSort } from '#extension/topological-sort.js';
-import { ExtensionClass } from '#extension/extension-types.js';
+import type { ExtensionClass } from '#extension/extension-types.js';
 import {
   ExtensionConfigCauseCyclicDeps,
   ResolvingCollisionNotExistsOnThisLevel,
@@ -32,7 +33,7 @@ import {
   FalseResolvedCollision,
 } from '#errors';
 import { defaultProvidersPerMod } from './default-providers-per-mod.js';
-import { GroupToken } from '#di/key-registry.js';
+import type { GroupToken } from '#di/key-registry.js';
 
 /**
  * Recursively collects providers taking into account module imports/exports,

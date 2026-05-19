@@ -1,5 +1,5 @@
 import { Reflector } from '#di/reflector.js';
-import { RootModuleMetadata } from '#types/root-module-metadata.js';
+import type { RootModuleMetadata } from '#types/root-module-metadata.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { Providers } from '#utils/providers.js';
 import { RootRawMetadata } from './module-raw-metadata.js';

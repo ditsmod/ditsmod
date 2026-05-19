@@ -1,4 +1,4 @@
-import { FunctionFactoryProvider } from '#di/top/types-and-models.js';
+import type { FunctionFactoryProvider } from '#di/top/types-and-models.js';
 import type { DeepModulesImporter } from '#init/deep-modules-importer.js';
 
 /**

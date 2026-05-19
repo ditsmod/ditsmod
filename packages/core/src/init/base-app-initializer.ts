@@ -1,9 +1,11 @@
-import { Injector, isMultiProvider } from '#di';
+import type { Injector} from '#di';
+import { isMultiProvider } from '#di';
 import { DeepModulesImporter } from '#init/deep-modules-importer.js';
 import { Logger } from '#logger/logger.js';
 import { LogMediator } from '#logger/log-mediator.js';
-import { PublicLogMediator, SystemLogMediator } from '#logger/system-log-mediator.js';
-import { BaseMeta } from '#init/base-meta.js';
+import type { PublicLogMediator} from '#logger/system-log-mediator.js';
+import { SystemLogMediator } from '#logger/system-log-mediator.js';
+import type { BaseMeta } from '#init/base-meta.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
 import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import { Counter } from '#extension/counter.js';
@@ -12,9 +14,10 @@ import { ExtensionContext } from '#extension/extensions-context.js';
 import { ExtensionManager, InternalExtensionManager } from '#extension/extension-manager.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { PerAppService } from '#services/per-app.service.js';
-import { ModRefId } from '#types/mix.js';
-import { Provider } from '#di/top/types-and-models.js';
-import { ExtensionClass, ExtensionCounters } from '#extension/extension-types.js';
+import type { ModRefId } from '#types/mix.js';
+import type { Provider } from '#di/top/types-and-models.js';
+import type { ExtensionClass} from '#extension/extension-types.js';
+import { ExtensionCounters } from '#extension/extension-types.js';
 import { getCollisions } from '#utils/get-collisions.js';
 import { getDuplicates } from '#utils/get-duplicates.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
@@ -24,8 +27,8 @@ import { MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { getModule } from '#utils/get-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
-import { ShallowImports } from './types.js';
-import { ProvidersOnly } from '#types/providers-metadata.js';
+import type { ShallowImports } from './types.js';
+import type { ProvidersOnly } from '#types/providers-metadata.js';
 import {
   FailedCollectingMetadata,
   FailedCreateInjectorPerMod,
@@ -37,7 +40,7 @@ import {
   ProvidersCollision,
   FailedOverrideMetaAfterStage1,
 } from '#errors';
-import { OnModuleInit } from './hooks.js';
+import type { OnModuleInit } from './hooks.js';
 
 export class BaseAppInitializer {
   protected perAppService = new PerAppService();
