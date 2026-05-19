@@ -30,9 +30,7 @@ During you run the following command:
 corepack enable
 corepack install
 yarn install
-cd packages/openapi
-yarn build-ui
-cd -
+yarn build-openapi-ui
 ```
 
 yarn will create symlinks in `node_modules` for all packages listed in the `packages/*` and `examples/*` folders. Also, modules in the `packages/*` folder are linked to the applications in the `examples/*` folder thanks to [compilerOptions.paths][2] as well as [Project References][3]. So, after any change in the source files in `packages/*`, these changes are automatically reflected in `examples/*`.
@@ -43,6 +41,23 @@ Development mode for any application in the `examples/*` directory can be starte
 cd examples/01*
 yarn start:dev
 ```
+
+### Documentation
+
+The web version of the documentation is launched with the following command:
+
+```bash
+yarn docs --locale en
+```
+
+The documentation files are located in the following folders:
+
+- `website/docs`
+- `website/i18n/en/docusaurus-plugin-content-docs/current`
+
+
+
+
 
 [1]: https://github.com/angular/angular
 [2]: https://www.typescriptlang.org/tsconfig#paths
