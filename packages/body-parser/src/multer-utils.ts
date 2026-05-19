@@ -1,6 +1,7 @@
 import { Status } from '@ditsmod/core';
 import { CustomError } from '@ditsmod/core/errors';
-import { MulterParsedForm, MulterError } from '@ts-stack/multer';
+import type { MulterParsedForm} from '@ts-stack/multer';
+import { MulterError } from '@ts-stack/multer';
 
 import { MulterExtendedOptions } from './multer-extended-options.js';
 

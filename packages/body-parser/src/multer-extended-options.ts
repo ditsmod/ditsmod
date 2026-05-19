@@ -1,4 +1,5 @@
-import { InputLogLevel, Status } from '@ditsmod/core';
+import type { InputLogLevel} from '@ditsmod/core';
+import { Status } from '@ditsmod/core';
 import { MulterOptions } from '@ts-stack/multer';
 
 export class MulterExtendedOptions extends MulterOptions {

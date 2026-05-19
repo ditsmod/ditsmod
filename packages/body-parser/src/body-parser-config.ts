@@ -1,5 +1,6 @@
-import { HttpMethod, InjectionToken } from '@ditsmod/core';
-import { JsonOptions, RawOptions, TextOptions, UrlencodedOptions } from '@ts-stack/body-parser';
+import type { HttpMethod} from '@ditsmod/core';
+import { InjectionToken } from '@ditsmod/core';
+import type { JsonOptions, RawOptions, TextOptions, UrlencodedOptions } from '@ts-stack/body-parser';
 
 export class BodyParserConfig {
   acceptMethods?: HttpMethod[] = ['POST', 'PUT', 'PATCH'];
