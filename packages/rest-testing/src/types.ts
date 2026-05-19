@@ -1,4 +1,4 @@
-import { Provider, Providers, Stage1ExtensionMeta, Stage1ExtensionMeta2, Extension, Class, ForwardRefFn } from '@ditsmod/core';
+import type { Provider, Providers, Stage1ExtensionMeta, Stage1ExtensionMeta2, Extension, Class, ForwardRefFn } from '@ditsmod/core';
 import { TestRestApplication } from './test-application.js';
 
 export type Level = 'App' | 'Mod' | 'Rou' | 'Req';

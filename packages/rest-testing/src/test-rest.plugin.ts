@@ -1,8 +1,9 @@
-import { Provider, Providers } from '@ditsmod/core';
-import { MetadataPerMod3, RestRouteExtension } from '@ditsmod/rest';
+import type { Provider, Providers } from '@ditsmod/core';
+import type { MetadataPerMod3} from '@ditsmod/rest';
+import { RestRouteExtension } from '@ditsmod/rest';
 
 import { TestRestApplication } from './test-application.js';
-import { ExtensionMetaOverrider } from './types.js';
+import type { ExtensionMetaOverrider } from './types.js';
 import { TestOverrider } from './test-overrider.js';
 
 export class TestRestPlugin extends TestRestApplication {

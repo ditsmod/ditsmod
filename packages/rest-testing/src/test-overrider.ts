@@ -1,4 +1,5 @@
-import { Provider, PerAppService, getToken, getTokens } from '@ditsmod/core';
+import type { Provider, PerAppService} from '@ditsmod/core';
+import { getToken, getTokens } from '@ditsmod/core';
 
 export class TestOverrider {
   static overrideAllProviders(perAppService: PerAppService, aProviders: Provider[][], providersToOverride: Provider[]) {

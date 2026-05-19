@@ -1,6 +1,5 @@
-import {
+import type {
   ModuleType,
-  SystemLogMediator,
   Providers,
   ExtensionClass,
   Class,
@@ -8,9 +7,11 @@ import {
   ModRefId,
   Provider,
 } from '@ditsmod/core';
-import { RestApplication, AppOptions } from '@ditsmod/rest';
+import { SystemLogMediator } from '@ditsmod/core';
+import type { AppOptions } from '@ditsmod/rest';
+import { RestApplication } from '@ditsmod/rest';
 
-import { ExtensionMetaOverrider } from './types.js';
+import type { ExtensionMetaOverrider } from './types.js';
 import { TestAppInitializer } from './test-app-initializer.js';
 import { TestModuleManager } from './test-module-manager.js';
 

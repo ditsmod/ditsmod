@@ -1,8 +1,9 @@
-import { ModRefId, BaseMeta, Providers, Provider } from '@ditsmod/core';
+import type { ModRefId, Provider } from '@ditsmod/core';
+import { BaseMeta, Providers } from '@ditsmod/core';
 import { RestInitMeta, initRest } from '@ditsmod/rest';
 
 import { TestAppInitializer } from '#app/test-app-initializer.js';
-import { ProvidersOnly } from '#app/types.js';
+import type { ProvidersOnly } from '#app/types.js';
 
 describe('TestAppInitializer', () => {
   class MockTestAppInitializer extends TestAppInitializer {
