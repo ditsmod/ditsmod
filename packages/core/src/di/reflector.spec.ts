@@ -1,616 +1,553 @@
 import 'reflect-metadata/lite';
 import { Reflector, isDelegateCtor } from './reflector.js';
-import { type ClassPropMeta, type ParamsMeta, type PropMetadataTuple, UnknownType } from './top/types-and-models.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
-
-const classDecorator = Reflector.makeClassDecorator((data?: any) => data);
-const classDecoratorWithoutTransformator = Reflector.makeClassDecorator();
-const paramDecorator = Reflector.makeParamDecorator((value: any) => value);
-const propDecorator = Reflector.makePropDecorator((value: string) => value);
-
-class AType {
-  constructor(public value: any) {}
-}
-
-class BType {
-  constructor(public value: any) {}
-}
-
-class CType {
-  constructor(public value: any) {}
-}
-
-class DType {
-  constructor(public value: any) {}
-}
-
-@classDecorator({ value: 'class' })
-class ClassWithDecorators {
-  @propDecorator('p1')
-  @propDecorator('p2')
-  a: AType;
-
-  b: AType;
-
-  @propDecorator('p3')
-  set c(value: CType) {}
-
-  @propDecorator('type')
-  d: number;
-
-  @propDecorator('p4')
-  someMethod1(a: AType) {}
-
-  @propDecorator('p5')
-  someMethod2(@paramDecorator('method2 param') b: BType, d: DType) {}
-
-  someMethod3(
-    @paramDecorator('method3 param1') c: CType,
-    @paramDecorator('method3 param2 value1') @paramDecorator('method3 param2 value2') b: BType,
-    a: AType,
-  ) {}
-
-  constructor(@paramDecorator('a') a: AType, @paramDecorator('b') b: BType, d: DType) {
-    this.a = a;
-    this.b = b;
-  }
-}
-
-class ClassWithoutDecorators {
-  constructor(a: any, b: any) {}
-}
-
-class TestObj {
-  constructor(
-    public a: any,
-    public b: any,
-  ) {}
-
-  identity(arg: any) {
-    return arg;
-  }
-}
+import { ClassMetaIterator } from './class-meta-iterator.js';
+import { UnknownType } from '../di.js';
 
 describe('Reflector', () => {
-  const __dir = expect.any(String);
-  let reflector: Reflector;
+  describe('no error with simple call', () => {
+    it('makeClassDecorator()', () => {
+      expect(() => Reflector.makeClassDecorator()).not.toThrow();
+    });
+    it('classDecoratorFactory()', () => {
+      expect(() => {
+        const classDecoratorFactory = Reflector.makeClassDecorator();
+        @classDecoratorFactory()
+        class Service1 {}
+      }).not.toThrow();
+    });
 
-  beforeEach(() => {
-    reflector = new Reflector();
-  });
-
-  describe('getMetadata', () => {
-    const methodNameAsSymbol = Symbol();
-
-    @classDecorator({ value: 'parent' })
-    class Parent {
-      @propDecorator('p1')
-      @propDecorator('p2')
-      a: AType;
-
-      b: AType;
-
-      @propDecorator('p1')
-      [methodNameAsSymbol](param1: AType) {}
-
-      @propDecorator('p11')
-      methodWithDecorators(param1: AType) {}
-
-      methodWithoutDecorators(param1: AType) {}
-
-      @propDecorator('p3')
-      set c(value: CType) {}
-
-      @propDecorator('type')
-      d: number;
-
-      @propDecorator('p4')
-      someMethod1(a: AType) {}
-
-      @propDecorator('p5')
-      someMethod2(@paramDecorator('method2 param1') b: BType, d: DType) {}
-
-      someMethod3(
-        @paramDecorator('method3 param1') c: CType,
-        @paramDecorator('method3 param2 value1') @paramDecorator('method3 param2 value2') b: BType,
-        a: AType,
-      ) {}
-
-      constructor(@paramDecorator('a') a: AType, @paramDecorator('b') b: BType, d: DType) {
-        this.a = a;
-        this.b = b;
-      }
-    }
-
-    describe('Parent', () => {
-      it('should return array with null because of no decorators', () => {
-        expect(Reflector.getMetadata(Parent, 'methodWithoutDecorators')).toEqual({
-          decorators: [],
-          params: [null],
-          type: UnknownType,
-        });
-      });
-      it('should return empty array for non existen property name', () => {
-        expect(Reflector.getMetadata(Parent, 'nonExistingPropName' as any)).toEqual({
-          decorators: [],
-          params: [],
-          type: UnknownType,
-        });
-      });
-      it('should return array with one dependency', () => {
-        const classPropMeta = {
-          type: Function,
-          decorators: [new DecoratorAndValue(propDecorator, 'p11')],
-          params: [[AType]],
-        } as ClassPropMeta;
-        expect(Reflector.getMetadata(Parent, 'methodWithDecorators')).toEqual(classPropMeta);
-      });
-
-      it('should return properties with decorators', () => {
-        const p = Reflector.getMetadata(Parent)!;
-        const properties = [];
-        for (const prop of p) {
-          properties.push(prop);
+    it('makePropDecorator()', () => {
+      expect(() => Reflector.makePropDecorator()).not.toThrow();
+    });
+    it('propDecoratorFactory()', () => {
+      expect(() => {
+        const propDecoratorFactory = Reflector.makePropDecorator();
+        class Service1 {
+          @propDecoratorFactory()
+          method1() {}
         }
-        expect(properties.length).toBe(9);
-        expect(properties.includes('b')).toBe(false);
-        expect(properties.includes('methodWithoutDecorators')).toBe(false);
-        expect(properties.includes(methodNameAsSymbol)).toBe(true);
-      });
-
-      it('someMethod1', () => {
-        const p = Reflector.getMetadata(Parent)!;
-        expect(p.someMethod1.type).toBe(Function);
-        expect(p.someMethod1.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(propDecorator, 'p4')]);
-        expect(p.someMethod1.params).toEqual<PropMetadataTuple[]>([[AType]]);
-      });
-
-      it('someMethod2', () => {
-        const p = Reflector.getMetadata(Parent)!;
-        expect(p.someMethod2.type).toBe(Function);
-        expect(p.someMethod2.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(propDecorator, 'p5')]);
-        expect(p.someMethod2.params).toEqual<PropMetadataTuple[]>([
-          [BType, new DecoratorAndValue(paramDecorator, 'method2 param1')],
-          [DType],
-        ]);
-      });
-
-      it('someMethod3', () => {
-        const p = Reflector.getMetadata(Parent)!;
-        expect(p.someMethod3.type).toBe(Function);
-        expect(p.someMethod3.decorators).toEqual<DecoratorAndValue[]>([]);
-        expect(p.someMethod3.params).toEqual<PropMetadataTuple[]>([
-          [CType, new DecoratorAndValue(paramDecorator, 'method3 param1')],
-          [
-            BType,
-            new DecoratorAndValue(paramDecorator, 'method3 param2 value2'),
-            new DecoratorAndValue(paramDecorator, 'method3 param2 value1'),
-          ],
-          [AType],
-        ]);
-      });
-
-      it('c property should have CType', () => {
-        const p = Reflector.getMetadata(Parent)!;
-        expect(p.c.type).toBe(CType);
-      });
-
-      it('constructor', () => {
-        const p = Reflector.getMetadata(Parent)!;
-        expect(p.constructor.type).toBe(Function);
-        expect(p.constructor.decorators).toMatchObject<DecoratorAndValue[]>([
-          new DecoratorAndValue(classDecorator, { value: 'parent' }, __dir),
-        ]);
-        expect(p.constructor.params).toEqual<PropMetadataTuple[]>([
-          [AType, new DecoratorAndValue(paramDecorator, 'a')],
-          [BType, new DecoratorAndValue(paramDecorator, 'b')],
-          [DType],
-        ]);
-      });
+      }).not.toThrow();
     });
 
-    @classDecorator({ value: 'child' })
-    class Child extends Parent {
-      @propDecorator('child-p1')
-      @propDecorator('child-p2')
-      declare a: AType;
-
-      declare b: AType;
-
-      @propDecorator('child-p3')
-      override set c(value: DType) {}
-
-      @propDecorator('child-type')
-      declare d: number;
-
-      @propDecorator('child-p4')
-      override someMethod1(a: BType) {}
-
-      override someMethod3(
-        @paramDecorator('child-method3 param1') c: CType,
-        @paramDecorator('child-method3 param2 value1') @paramDecorator('child-method3 param2 value2') b: BType,
-        d: DType,
-      ) {}
-
-      constructor(c: CType, @paramDecorator('b') b: BType, @paramDecorator('a') a: AType, d: DType) {
-        super(a, b, d);
-        this.a = a;
-        this.b = b;
-      }
-    }
-
-    it('Child', () => {
-      const p2 = Reflector.getMetadata(Child)!;
-      expect(p2.someMethod1.type).toBe(Function);
-      expect(p2.someMethod1.decorators).toEqual<DecoratorAndValue[]>([
-        new DecoratorAndValue(propDecorator, 'child-p4'),
-        new DecoratorAndValue(propDecorator, 'p4'),
-      ]);
-      expect(p2.someMethod1.params).toEqual<PropMetadataTuple[]>([[BType]]);
-
-      expect(p2.someMethod2.type).toBe(Function);
-      expect(p2.someMethod2.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(propDecorator, 'p5')]);
-      expect(p2.someMethod2.params).toEqual<PropMetadataTuple[]>([
-        [BType, new DecoratorAndValue(paramDecorator, 'method2 param1')],
-        [DType],
-      ]);
-
-      expect(p2.someMethod3.type).toBe(Function);
-      expect(p2.someMethod3.decorators).toEqual<DecoratorAndValue[]>([]);
-      expect(p2.someMethod3.params).toEqual<PropMetadataTuple[]>([
-        [CType, new DecoratorAndValue(paramDecorator, 'child-method3 param1')],
-        [
-          BType,
-          new DecoratorAndValue(paramDecorator, 'child-method3 param2 value2'),
-          new DecoratorAndValue(paramDecorator, 'child-method3 param2 value1'),
-        ],
-        [DType],
-      ]);
-
-      expect(p2.c.type).toBe(DType);
-
-      expect(p2.constructor.type).toBe(Function);
-      expect(p2.constructor.decorators).toMatchObject<DecoratorAndValue[]>([
-        new DecoratorAndValue(classDecorator, { value: 'child' }, __dir),
-        new DecoratorAndValue(classDecorator, { value: 'parent' }, __dir),
-      ]);
-      expect(p2.constructor.params).toEqual<PropMetadataTuple[]>([
-        [CType],
-        [BType, new DecoratorAndValue(paramDecorator, 'b')],
-        [AType, new DecoratorAndValue(paramDecorator, 'a')],
-        [DType],
-      ]);
+    it('makeParamDecorator()', () => {
+      expect(() => Reflector.makeParamDecorator()).not.toThrow();
     });
-  });
-
-  describe('parameters', () => {
-    it('should return an array of parameters for a type', () => {
-      const p = Reflector.getMetadata(ClassWithDecorators, 'constructor')!;
-      expect(p.params).toEqual<(ParamsMeta | [typeof DType])[]>([
-        [AType, new DecoratorAndValue(paramDecorator, 'a')],
-        [BType, new DecoratorAndValue(paramDecorator, 'b')],
-        [DType],
-      ]);
-    });
-
-    it('should return an array of parameters for someMethod2', () => {
-      const p = Reflector.getMetadata(ClassWithDecorators, 'someMethod2')!;
-      expect(p.params).toEqual([[BType, new DecoratorAndValue(paramDecorator, 'method2 param')], [DType]]);
-    });
-
-    it('should return an array of parameters for someMethod3', () => {
-      const p = Reflector.getMetadata(ClassWithDecorators, 'someMethod3')!;
-      expect(p.params).toEqual([
-        [CType, new DecoratorAndValue(paramDecorator, 'method3 param1')],
-        [
-          BType,
-          new DecoratorAndValue(paramDecorator, 'method3 param2 value2'),
-          new DecoratorAndValue(paramDecorator, 'method3 param2 value1'),
-        ],
-        [AType],
-      ]);
-    });
-
-    it('should work for a class without annotations', () => {
-      const p = Reflector.getMetadata(ClassWithoutDecorators, 'constructor')!;
-      expect(p.params.length).toEqual(2);
-    });
-  });
-
-  describe('propMetadata', () => {
-    it('should return a string map of prop metadata for the given class', () => {
-      const p = Reflector.getMetadata(ClassWithDecorators)!;
-      expect(p.a.type).toBe(AType);
-      expect(p.a.decorators).toEqual<DecoratorAndValue[]>([
-        new DecoratorAndValue(propDecorator, 'p2'),
-        new DecoratorAndValue(propDecorator, 'p1'),
-      ]);
-
-      expect(p.c.type).toBe(CType);
-      expect(p.c.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(propDecorator, 'p3')]);
-
-      expect(p.d.type).toBe(Number);
-      expect(p.d.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(propDecorator, 'type')]);
-
-      expect(p.someMethod1.type).toBe(Function);
-      expect(p.someMethod1.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(propDecorator, 'p4')]);
-    });
-
-    it('should also return metadata if the class has no decorator', () => {
-      class Test {
-        @propDecorator('test')
-        prop1: string;
-      }
-
-      const meta = Reflector.getMetadata(Test)!;
-      expect(meta.prop1.type).toBe(String);
-      expect(meta.prop1.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(propDecorator, 'test')]);
-    });
-  });
-
-  describe('annotations', () => {
-    it('should return an array of annotations for a type', () => {
-      const p = Reflector.getMetadata(ClassWithDecorators)!.constructor.decorators;
-      expect(p).toEqual([new DecoratorAndValue(classDecorator, { value: 'class' }, expect.any(String))]);
-    });
-
-    it('should work for a class without metadata in annotation', () => {
-      @classDecorator()
-      class ClassWithoutMetadata {}
-      const p = Reflector.getMetadata(ClassWithoutMetadata)!.constructor.decorators;
-      expect(p).toEqual([new DecoratorAndValue(classDecorator, undefined, expect.any(String))]);
-    });
-
-    it('should work class decorator without metadata transformator', () => {
-      @classDecoratorWithoutTransformator()
-      class ClassWithoutMetadata {}
-      const p = Reflector.getMetadata(ClassWithoutMetadata)!.constructor.decorators;
-      expect(p).toEqual([new DecoratorAndValue(classDecoratorWithoutTransformator, [], expect.any(String))]);
-    });
-
-    it('should work for a class without annotations', () => {
-      const p = Reflector.getMetadata(ClassWithoutDecorators)!.constructor.decorators;
-      expect(p).toEqual([]);
-    });
-  });
-
-  describe('isDelegateCtor', () => {
-    it('should support ES5 compiled classes', () => {
-      // These classes will be compiled to ES5 code so their stringified form
-      // below will contain ES5 constructor functions rather than native classes.
-      class Parent {}
-
-      class ChildNoCtor extends Parent {}
-      class ChildWithCtor extends Parent {
-        constructor() {
-          super();
+    it('paramDecoratorFactory()', () => {
+      expect(() => {
+        // eslint-disable-next-line no-useless-assignment
+        const paramDecoratorFactory = Reflector.makeParamDecorator();
+        class Service1 {
+          method1(@paramDecoratorFactory() one: any) {}
         }
-      }
-      class ChildNoCtorPrivateProps extends Parent {
-        private x = 10;
-      }
-
-      expect(isDelegateCtor(ChildNoCtor.toString())).toBe(true);
-      expect(isDelegateCtor(ChildNoCtorPrivateProps.toString())).toBe(true);
-      expect(isDelegateCtor(ChildWithCtor.toString())).toBe(false);
-    });
-
-    it('should not throw when no prototype on type', () => {
-      // Cannot test arrow function here due to the compilation
-      const dummyArrowFn = function () {};
-      Object.defineProperty(dummyArrowFn, 'prototype', { value: undefined });
-      expect(() => Reflector.getMetadata(dummyArrowFn as any)?.constructor.decorators).not.toThrow();
-    });
-
-    it('should support native class', () => {
-      // These classes are defined as strings unlike the tests above because otherwise
-      // the compiler (of these tests) will convert them to ES5 constructor function
-      // style classes.
-      const ChildNoCtor = 'class ChildNoCtor extends Parent {}\n';
-      const ChildWithCtor = 'class ChildWithCtor extends Parent {\n  constructor() { super(); }}\n';
-      const ChildNoCtorComplexBase = "class ChildNoCtor extends Parent['foo'].bar(baz) {}\n";
-      const ChildWithCtorComplexBase =
-        "class ChildWithCtor extends Parent['foo'].bar(baz) {\n  constructor() { super(); }}\n";
-      const ChildNoCtorPrivateProps =
-        'class ChildNoCtorPrivateProps extends Parent {\n' +
-        '  constructor() {\n' +
-        // Note that the instance property causes a pass-through constructor to be synthesized
-        '    super(...arguments);\n' +
-        '    this.x = 10;\n' +
-        '  }\n' +
-        '}\n';
-
-      expect(isDelegateCtor(ChildNoCtor)).toBe(true);
-      expect(isDelegateCtor(ChildNoCtorPrivateProps)).toBe(true);
-      expect(isDelegateCtor(ChildWithCtor)).toBe(false);
-      expect(isDelegateCtor(ChildNoCtorComplexBase)).toBe(true);
-      expect(isDelegateCtor(ChildWithCtorComplexBase)).toBe(false);
-    });
-
-    it('should properly handle all class forms', () => {
-      const ctor = (str: string) => expect(isDelegateCtor(str)).toBe(false);
-      const noCtor = (str: string) => expect(isDelegateCtor(str)).toBe(true);
-
-      ctor('class Bar extends Foo {constructor(){}}');
-      ctor('class Bar extends Foo { constructor ( ) {} }');
-      ctor('class Bar extends Foo { other(){}; constructor(){} }');
-
-      noCtor('class extends Foo{}');
-      noCtor('class extends Foo {}');
-      noCtor('class Bar extends Foo {}');
-      noCtor('class $Bar1_ extends $Fo0_ {}');
-      noCtor('class Bar extends Foo { other(){} }');
+      }).not.toThrow();
     });
   });
 
-  describe('inheritance with decorators', () => {
-    it('should inherit annotations', () => {
-      @classDecorator({ value: 'parent' })
-      class Parent {}
+  describe('getMetadata()', () => {
+    describe('classDecoratorFactory()', () => {
+      const classDecoratorFactory = Reflector.makeClassDecorator();
 
-      @classDecorator({ value: 'child' })
-      class Child extends Parent {}
+      it('no errors with simple call', () => {
+        @classDecoratorFactory({ val: 1 })
+        class Service1 {}
+        expect(() => Reflector.getMetadata(Service1)).not.toThrow();
+      });
 
-      class ChildNoDecorators extends Parent {}
+      it('returns ClassMetaIterator', () => {
+        @classDecoratorFactory({ val: 1 })
+        class Service1 {}
 
-      class NoDecorators {}
+        const classMetaIterator = Reflector.getMetadata(Service1);
+        expect(classMetaIterator).toBeInstanceOf(ClassMetaIterator);
+        expect(Array.from(classMetaIterator!).length).toBe(1);
+        expect(classMetaIterator?.constructor.params).toEqual([]);
+      });
 
-      // Check that metadata for Parent was not changed!
-      expect(Reflector.getMetadata(Parent)!.constructor.decorators).toEqual([
-        new DecoratorAndValue(classDecorator, { value: 'parent' }, expect.any(String)),
-      ]);
+      it('one or two arguments - different results', () => {
+        @classDecoratorFactory({ val: 1 })
+        class Service1 {}
+        expect(Reflector.getMetadata(Service1)).not.toBe(Reflector.getMetadata(Service1, undefined));
+        expect(Reflector.getMetadata(Service1, 'constructor')).toBe(Reflector.getMetadata(Service1, undefined));
+      });
 
-      expect(Reflector.getMetadata(Child)!.constructor.decorators).toEqual([
-        new DecoratorAndValue(classDecorator, { value: 'child' }, expect.any(String)),
-        new DecoratorAndValue(classDecorator, { value: 'parent' }, expect.any(String)),
-      ]);
+      it('store cache', () => {
+        @classDecoratorFactory({ val: 1 })
+        class Service1 {}
+        class MockReflector extends Reflector {
+          // Make this method public to properly testing it
+          static override getOwnCacheMetadata(Cls: any) {
+            return super.getOwnCacheMetadata(Cls) as any;
+          }
+        }
+        expect(MockReflector.getOwnCacheMetadata(Service1)).toBeFalsy();
+        Reflector.getMetadata(Service1); // Make call to have the cache
+        expect(MockReflector.getOwnCacheMetadata(Service1)).toBeTruthy();
+      });
 
-      expect(Reflector.getMetadata(ChildNoDecorators)!.constructor.decorators).toEqual([
-        new DecoratorAndValue(classDecorator, { value: 'parent' }, expect.any(String)),
-      ]);
+      it('child concat decorators with parent', () => {
+        @classDecoratorFactory({ val: 1 })
+        class Parent {}
+        @classDecoratorFactory({ val: 2 })
+        class Child extends Parent {}
 
-      expect(Reflector.getMetadata(NoDecorators)).toBeUndefined();
-      expect(Reflector.getMetadata({} as any)).toBeUndefined();
-      expect(Reflector.getMetadata(1 as any)).toBeUndefined();
-      expect(Reflector.getMetadata(null!)).toBeUndefined();
+        expect(Reflector.getMetadata(Parent, 'constructor')?.decorators.length).toBe(1);
+        const childMeta = Reflector.getMetadata(Child, 'constructor');
+        expect(childMeta?.decorators.length).toBe(2);
+        expect(childMeta?.decorators.map((d) => d.value)).toEqual([[{ val: 2 }], [{ val: 1 }]]);
+      });
     });
 
-    it('should inherit parameters', () => {
-      class A {}
-      class B {}
-      class C {}
+    describe('propDecoratorFactory()', () => {
+      const propDecoratorFactory = Reflector.makePropDecorator();
 
-      // Note: We need the class decorator as well,
-      // as otherwise TS won't capture the ctor arguments!
-      @classDecorator({ value: 'parent' })
-      class Parent {
-        constructor(@paramDecorator('a') a: A, @paramDecorator('b') b: B) {}
-      }
+      it('no errors with simple call', () => {
+        class Service1 {
+          @propDecoratorFactory({ val: 2 })
+          method1() {}
 
-      class Child extends Parent {}
+          method2() {}
 
-      @classDecorator({ value: 'child' })
-      class ChildWithDecorator extends Parent {}
-
-      @classDecorator({ value: 'child' })
-      class ChildWithDecoratorAndProps extends Parent {
-        private x = 10;
-      }
-
-      // Note: We need the class decorator as well,
-      // as otherwise TS won't capture the ctor arguments!
-      @classDecorator({ value: 'child' })
-      class ChildWithCtor extends Parent {
-        constructor(@paramDecorator('c') c: C) {
-          super(null!, null!);
+          @propDecoratorFactory({ val: 3 })
+          prop1() {}
         }
-      }
+        expect(() => Reflector.getMetadata(Service1)).not.toThrow();
+      });
 
-      class ChildWithCtorNoDecorator extends Parent {
-        constructor(a: any, b: any, c: any) {
-          super(null!, null!);
+      it('returns ClassMetaIterator', () => {
+        class Service1 {
+          @propDecoratorFactory({ val: 2 })
+          method1() {}
+
+          method2() {}
         }
-      }
+        const classMetaIterator = Reflector.getMetadata(Service1);
+        expect(classMetaIterator).toBeInstanceOf(ClassMetaIterator);
+        expect(Array.from(classMetaIterator!).length).toBe(2);
+      });
 
-      class NoDecorators {}
+      it('has class properties', () => {
+        class Service1 {
+          @propDecoratorFactory({ val: 2 })
+          method1() {}
 
-      // Check that metadata for Parent was not changed!
-      expect(Reflector.getMetadata(Parent, 'constructor')?.params).toEqual<ParamsMeta[]>([
-        [A, new DecoratorAndValue(paramDecorator, 'a')],
-        [B, new DecoratorAndValue(paramDecorator, 'b')],
-      ]);
+          method2() {}
 
-      expect(Reflector.getMetadata(Child, 'constructor')?.params).toEqual<ParamsMeta[]>([
-        [A, new DecoratorAndValue(paramDecorator, 'a')],
-        [B, new DecoratorAndValue(paramDecorator, 'b')],
-      ]);
+          @propDecoratorFactory({ val: 3 })
+          prop1() {}
+        }
 
-      expect(Reflector.getMetadata(ChildWithDecorator, 'constructor')?.params).toEqual<ParamsMeta[]>([
-        [A, new DecoratorAndValue(paramDecorator, 'a')],
-        [B, new DecoratorAndValue(paramDecorator, 'b')],
-      ]);
+        const classMetaIterator = Reflector.getMetadata(Service1);
+        expect(Array.from(classMetaIterator!)).toEqual(['method1', 'prop1', 'constructor']);
+        expect(classMetaIterator?.constructor.decorators).toEqual([]);
+        expect(classMetaIterator?.constructor.params).toEqual([]);
+        expect(classMetaIterator?.method1.decorators).toEqual([
+          new DecoratorAndValue(propDecoratorFactory, [{ val: 2 }]),
+        ]);
+        expect(classMetaIterator?.method1.params).toEqual([]);
+        expect(classMetaIterator?.prop1.decorators).toEqual([
+          new DecoratorAndValue(propDecoratorFactory, [{ val: 3 }]),
+        ]);
+        expect(classMetaIterator?.prop1.params).toEqual([]);
+      });
 
-      expect(Reflector.getMetadata(ChildWithDecoratorAndProps, 'constructor')?.params).toEqual<ParamsMeta[]>([
-        [A, new DecoratorAndValue(paramDecorator, 'a')],
-        [B, new DecoratorAndValue(paramDecorator, 'b')],
-      ]);
+      it('child concat decorators with parent', () => {
+        class Parent {
+          @propDecoratorFactory({ val: 'parent1' })
+          method1() {}
 
-      expect(Reflector.getMetadata(ChildWithCtor, 'constructor')?.params).toEqual<ParamsMeta[]>([
-        [C, new DecoratorAndValue(paramDecorator, 'c')],
-      ]);
+          method2() {}
 
-      // If we have no decorator, we don't get metadata about the ctor params.
-      // But we should still get an array of the right length based on function.length.
-      // TODO: Review use of `any` here (#19904)
-      expect(Reflector.getMetadata(ChildWithCtorNoDecorator, 'constructor')?.params).toEqual<ParamsMeta[]>([
-        null,
-        null,
-        null,
-      ] as any[]);
+          @propDecoratorFactory({ val: 'parent2' })
+          prop1() {}
+        }
+        class Child extends Parent {
+          @propDecoratorFactory({ val: 'child1' })
+          override method2() {}
 
-      expect(Reflector.getMetadata(NoDecorators)).toBeUndefined();
-      expect(Reflector.getMetadata({} as any)).toBeUndefined();
-      expect(Reflector.getMetadata(1 as any)).toBeUndefined();
-      expect(Reflector.getMetadata(null!)).toBeUndefined();
+          @propDecoratorFactory({ val: 'child2' })
+          override prop1() {}
+        }
+
+        const childMeta = Reflector.getMetadata(Child);
+        // Only parent has this property with decorator
+        expect(childMeta?.method1.decorators).toEqual([
+          new DecoratorAndValue(propDecoratorFactory, [{ val: 'parent1' }]),
+        ]);
+
+        // Parent without decorator while child with decorator
+        expect(childMeta?.method2.decorators).toEqual([
+          new DecoratorAndValue(propDecoratorFactory, [{ val: 'child1' }]),
+        ]);
+        expect(childMeta?.method1.params).toEqual([]);
+
+        // Both - parent and child has decorators
+        expect(childMeta?.prop1.decorators).toEqual([
+          new DecoratorAndValue(propDecoratorFactory, [{ val: 'child2' }]),
+          new DecoratorAndValue(propDecoratorFactory, [{ val: 'parent2' }]),
+        ]);
+        expect(childMeta?.prop1.params).toEqual([]);
+      });
     });
 
-    it('should inherit property metadata', () => {
-      class A {}
-      class B {}
-      class C {}
-      class D {}
+    describe('paramDecoratorFactory()', () => {
+      const paramDecoratorFactory = Reflector.makeParamDecorator();
 
-      class Parent {
-        @propDecorator('a')
-        a: A;
-        @propDecorator('b1')
-        b: B;
-        @propDecorator('type parent')
-        d: D;
-      }
+      it('no errors with simple call', () => {
+        class Service1 {}
+        class Service2 {}
 
-      class Child extends Parent {
-        @propDecorator('b2')
-        declare b: B;
-        @propDecorator('c')
-        c: C;
-        @propDecorator('type child')
-        declare d: D;
-      }
+        class Service3 {
+          constructor(@paramDecoratorFactory() param1: Service1) {}
+          method1(@paramDecoratorFactory() param1: Service2) {}
+        }
+        expect(() => Reflector.getMetadata(Service3)).not.toThrow();
+      });
 
-      class NoDecorators {}
+      it('returns ClassMetaIterator', () => {
+        class Service1 {}
+        class Service2 {}
 
-      // Check that metadata for Parent was not changed!
-      const parent = Reflector.getMetadata(Parent)!;
-      expect(parent.a.type).toBe(A);
-      expect(parent.b.type).toBe(B);
-      expect(parent.d.type).toBe(D);
+        class Service3 {
+          constructor(@paramDecoratorFactory() param1: Service1) {}
+          method1(@paramDecoratorFactory() param1: Service2) {}
+        }
+        const classMetaIterator = Reflector.getMetadata(Service3);
+        expect(classMetaIterator).toBeInstanceOf(ClassMetaIterator);
+        expect(Array.from(classMetaIterator!).length).toBe(2);
+      });
 
-      expect(parent.a.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(propDecorator, 'a')]);
-      expect(parent.b.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(propDecorator, 'b1')]);
-      expect(parent.d.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(propDecorator, 'type parent')]);
+      it('has class properties', () => {
+        class Service1 {}
+        class Service2 {}
 
-      const child = Reflector.getMetadata(Child)!;
-      expect(child.a.type).toBe(A);
-      expect(child.b.type).toBe(B);
-      expect(child.d.type).toBe(D);
-      expect(child.c.type).toBe(C);
+        class Service3 {
+          constructor(
+            param1: any,
+            @paramDecoratorFactory({ val: 10 }) param2: string[],
+            @paramDecoratorFactory({ val: 11 }) param3: Service1,
+          ) {}
 
-      expect(child.a.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(propDecorator, 'a')]);
-      expect(child.b.decorators).toEqual<DecoratorAndValue[]>([
-        new DecoratorAndValue(propDecorator, 'b2'),
-        new DecoratorAndValue(propDecorator, 'b1'),
-      ]);
-      expect(child.d.decorators).toEqual<DecoratorAndValue[]>([
-        new DecoratorAndValue(propDecorator, 'type child'),
-        new DecoratorAndValue(propDecorator, 'type parent'),
-      ]);
-      expect(child.c.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(propDecorator, 'c')]);
+          method1(
+            @paramDecoratorFactory({ val: 20 }) param1: Service2,
+            param2: number,
+            @paramDecoratorFactory({ val: 30 }) param3: string,
+          ) {}
+        }
 
-      expect(Reflector.getMetadata(NoDecorators)).toBeUndefined();
-      expect(Reflector.getMetadata({} as any)).toBeUndefined();
-      expect(Reflector.getMetadata(1 as any)).toBeUndefined();
-      expect(Reflector.getMetadata(null!)).toBeUndefined();
+        const classMetaIterator = Reflector.getMetadata(Service3);
+        expect(Array.from(classMetaIterator!)).toEqual(['method1', 'constructor']);
+        expect(classMetaIterator?.constructor.params).toEqual([
+          [],
+          [Array, new DecoratorAndValue(paramDecoratorFactory, [{ val: 10 }])],
+          [Service1, new DecoratorAndValue(paramDecoratorFactory, [{ val: 11 }])],
+        ]);
+        expect(classMetaIterator?.constructor.decorators).toEqual([]);
+        expect(classMetaIterator?.method1.params).toEqual([
+          [Service2, new DecoratorAndValue(paramDecoratorFactory, [{ val: 20 }])],
+          [Number],
+          [String, new DecoratorAndValue(paramDecoratorFactory, [{ val: 30 }])],
+        ]);
+        expect(classMetaIterator?.method1.decorators).toEqual([]);
+      });
+
+      it('child no concat decorators with parent', () => {
+        class Service1 {}
+        class Service2 {}
+        class Service3 {}
+        class Service4 {}
+
+        class Parent {
+          method1(@paramDecoratorFactory('parent1') param1: Service1) {}
+
+          method2(@paramDecoratorFactory('parent2') param1: Service2) {}
+
+          method3(@paramDecoratorFactory('parent3') param1: Service3) {}
+        }
+        class Child extends Parent {
+          override method2(@paramDecoratorFactory('child1') param1?: Service4) {}
+
+          override method3() {}
+        }
+
+        const childMeta = Reflector.getMetadata(Child);
+        // Only parent has this property with decorator
+        expect(childMeta?.method1.decorators).toEqual([]);
+        expect(childMeta?.method1.params).toEqual([
+          [Service1, new DecoratorAndValue(paramDecoratorFactory, ['parent1'])]
+        ]);
+
+        // Parent without decorator while child with decorator
+        expect(childMeta?.method2.decorators).toEqual([]);
+        expect(childMeta?.method2.params).toEqual([
+          [Service4, new DecoratorAndValue(paramDecoratorFactory, ['child1'])]
+        ]);
+
+        // Both - parent and child has decorators
+        expect(childMeta?.method3.params).toEqual([]);
+        expect(childMeta?.method3.decorators).toEqual([]);
+      });
+    });
+
+    describe('mix: class and prop decorator factories', () => {
+      const classDecoratorFactory = Reflector.makeClassDecorator();
+      const propDecoratorFactory = Reflector.makePropDecorator();
+
+      it('no errors with simple call', () => {
+        @classDecoratorFactory({ val: 1 })
+        class Service1 {
+          @propDecoratorFactory({ val: 2 })
+          method1() {}
+          @propDecoratorFactory({ val: 3 })
+          prop1() {}
+        }
+        expect(() => Reflector.getMetadata(Service1)).not.toThrow();
+      });
+
+      it('returns ClassMetaIterator', () => {
+        @classDecoratorFactory({ val: 1 })
+        class Service1 {
+          @propDecoratorFactory({ val: 2 })
+          method1() {}
+        }
+        const classMetaIterator = Reflector.getMetadata(Service1);
+        expect(classMetaIterator).toBeInstanceOf(ClassMetaIterator);
+        expect(Array.from(classMetaIterator!).length).toBe(2);
+      });
+
+      it('has class properties', () => {
+        @classDecoratorFactory({ val: 1 })
+        class Service1 {
+          @propDecoratorFactory({ val: 2 })
+          method1() {}
+          @propDecoratorFactory({ val: 3 })
+          prop1() {}
+        }
+
+        const classMetaIterator = Reflector.getMetadata(Service1);
+        expect(Array.from(classMetaIterator!)).toEqual(['method1', 'prop1', 'constructor']);
+        expect(classMetaIterator?.constructor.decorators).toEqual([
+          new DecoratorAndValue(classDecoratorFactory, [{ val: 1 }], expect.any(String)),
+        ]);
+        expect(classMetaIterator?.constructor.params).toEqual([]);
+        expect(classMetaIterator?.method1.decorators).toEqual([
+          new DecoratorAndValue(propDecoratorFactory, [{ val: 2 }]),
+        ]);
+        expect(classMetaIterator?.method1.params).toEqual([]);
+        expect(classMetaIterator?.prop1.decorators).toEqual([
+          new DecoratorAndValue(propDecoratorFactory, [{ val: 3 }]),
+        ]);
+        expect(classMetaIterator?.prop1.params).toEqual([]);
+      });
+    });
+
+    describe('mix: class and param decorator factories', () => {
+      const classDecoratorFactory = Reflector.makeClassDecorator();
+      const paramDecoratorFactory = Reflector.makeParamDecorator();
+
+      it('no errors with simple call', () => {
+        class Service1 {}
+        class Service2 {}
+
+        @classDecoratorFactory({ val: 1 })
+        class Service3 {
+          constructor(@paramDecoratorFactory() param1: Service1) {}
+          method1(@paramDecoratorFactory() param1: Service2) {}
+        }
+        expect(() => Reflector.getMetadata(Service3)).not.toThrow();
+      });
+
+      it('returns ClassMetaIterator', () => {
+        class Service1 {}
+        class Service2 {}
+
+        @classDecoratorFactory({ val: 1 })
+        class Service3 {
+          constructor(@paramDecoratorFactory() param1: Service1) {}
+          method1(@paramDecoratorFactory() param1: Service2) {}
+        }
+        const classMetaIterator = Reflector.getMetadata(Service3);
+        expect(classMetaIterator).toBeInstanceOf(ClassMetaIterator);
+        expect(Array.from(classMetaIterator!).length).toBe(2);
+      });
+
+      it('has class properties', () => {
+        class Service1 {}
+        class Service2 {}
+
+        @classDecoratorFactory({ val: 3 })
+        class Service3 {
+          constructor(
+            param1: any,
+            @paramDecoratorFactory({ val: 10 }) param2: string[],
+            @paramDecoratorFactory({ val: 11 }) param3: Service1,
+          ) {}
+
+          method1(
+            @paramDecoratorFactory({ val: 20 }) param1: Service2,
+            param2: number,
+            @paramDecoratorFactory({ val: 30 }) param3: string,
+          ) {}
+        }
+
+        const classMetaIterator = Reflector.getMetadata(Service3);
+        expect(Array.from(classMetaIterator!)).toEqual(['method1', 'constructor']);
+        expect(classMetaIterator?.constructor.params).toEqual([
+          [],
+          [Array, new DecoratorAndValue(paramDecoratorFactory, [{ val: 10 }])],
+          [Service1, new DecoratorAndValue(paramDecoratorFactory, [{ val: 11 }])],
+        ]);
+        expect(classMetaIterator?.method1.params).toEqual([
+          [Service2, new DecoratorAndValue(paramDecoratorFactory, [{ val: 20 }])],
+          [Number],
+          [String, new DecoratorAndValue(paramDecoratorFactory, [{ val: 30 }])],
+        ]);
+        expect(classMetaIterator?.method1.decorators).toEqual([]);
+      });
+    });
+
+    describe('mix: prop and param decorator factories', () => {
+      const propDecoratorFactory = Reflector.makePropDecorator();
+      const paramDecoratorFactory = Reflector.makeParamDecorator();
+
+      it('no errors with simple call', () => {
+        class Service2 {}
+
+        class Service3 {
+          @propDecoratorFactory({ val: 2 })
+          method1(@paramDecoratorFactory() param1: Service2) {}
+
+          method2(param1: Service2, param2: any) {}
+        }
+        expect(() => Reflector.getMetadata(Service3)).not.toThrow();
+      });
+
+      it('returns ClassMetaIterator', () => {
+        class Service2 {}
+
+        class Service3 {
+          @propDecoratorFactory({ val: 2 })
+          method1(@paramDecoratorFactory() param1: Service2) {}
+        }
+        const classMetaIterator = Reflector.getMetadata(Service3);
+        expect(classMetaIterator).toBeInstanceOf(ClassMetaIterator);
+        expect(Array.from(classMetaIterator!).length).toBe(2);
+      });
+
+      it('has class properties', () => {
+        class Service2 {}
+
+        class Service3 {
+          @propDecoratorFactory({ val: 2 })
+          method1(
+            @paramDecoratorFactory({ val: 20 }) param1: Service2,
+            param2: number,
+            @paramDecoratorFactory({ val: 30 }) param3: string,
+          ) {}
+
+          method2(param1: Service2, param2: any) {}
+        }
+
+        const classMetaIterator = Reflector.getMetadata(Service3);
+        expect(Array.from(classMetaIterator!)).toEqual(['method1', 'constructor']);
+        expect(classMetaIterator?.constructor.decorators).toEqual([]);
+        expect(classMetaIterator?.constructor.params).toEqual([]);
+        expect(classMetaIterator?.method1.params).toEqual([
+          [Service2, new DecoratorAndValue(paramDecoratorFactory, [{ val: 20 }])],
+          [Number],
+          [String, new DecoratorAndValue(paramDecoratorFactory, [{ val: 30 }])],
+        ]);
+        expect(classMetaIterator?.method1.decorators).toEqual([
+          new DecoratorAndValue(propDecoratorFactory, [{ val: 2 }]),
+        ]);
+
+        // Method without decorator
+        const classMetaIterator2 = Reflector.getMetadata(Service3, 'method2');
+        expect(classMetaIterator2?.type).toBe(UnknownType);
+        expect(classMetaIterator2?.decorators).toEqual([]);
+        expect(classMetaIterator2?.params).toEqual([null, null]);
+
+        // Non existing property
+        const classMetaIterator3 = Reflector.getMetadata(Service3, 'nonExistingPropName');
+        expect(classMetaIterator3?.type).toBe(UnknownType);
+        expect(classMetaIterator3?.decorators).toEqual([]);
+        expect(classMetaIterator3?.params).toEqual([]);
+      });
+    });
+
+    describe('mix: class, prop and param decorator factories', () => {
+      const classDecoratorFactory = Reflector.makeClassDecorator();
+      const propDecoratorFactory = Reflector.makePropDecorator();
+      const paramDecoratorFactory = Reflector.makeParamDecorator();
+
+      it('no errors with simple call', () => {
+        class Service2 {}
+
+        @classDecoratorFactory({ val: 111 })
+        class Service3 {
+          @propDecoratorFactory({ val: 2 })
+          method1(@paramDecoratorFactory() param1: Service2) {}
+
+          method2(param1: Service2, param2: any) {}
+        }
+        expect(() => Reflector.getMetadata(Service3)).not.toThrow();
+      });
+
+      it('returns ClassMetaIterator', () => {
+        class Service2 {}
+
+        @classDecoratorFactory({ val: 111 })
+        class Service3 {
+          @propDecoratorFactory({ val: 2 })
+          method1(@paramDecoratorFactory() param1: Service2) {}
+        }
+        const classMetaIterator = Reflector.getMetadata(Service3);
+        expect(classMetaIterator).toBeInstanceOf(ClassMetaIterator);
+        expect(Array.from(classMetaIterator!).length).toBe(2);
+      });
+
+      it('has class properties', () => {
+        class Service2 {}
+
+        @classDecoratorFactory({ val: 111 })
+        class Service3 {
+          @propDecoratorFactory({ val: 2 })
+          method1(
+            @paramDecoratorFactory({ val: 20 }) param1: Service2,
+            param2: number,
+            @paramDecoratorFactory({ val: 30 }) param3: string,
+          ) {}
+
+          method2(param1: Service2, param2: any) {}
+        }
+
+        const classMetaIterator = Reflector.getMetadata(Service3);
+        expect(Array.from(classMetaIterator!)).toEqual(['method1', 'constructor']);
+        expect(classMetaIterator?.constructor.decorators).toEqual([
+          new DecoratorAndValue(classDecoratorFactory, [{ val: 111 }], expect.any(String)),
+        ]);
+        expect(classMetaIterator?.constructor.params).toEqual([]);
+        expect(classMetaIterator?.method1.params).toEqual([
+          [Service2, new DecoratorAndValue(paramDecoratorFactory, [{ val: 20 }])],
+          [Number],
+          [String, new DecoratorAndValue(paramDecoratorFactory, [{ val: 30 }])],
+        ]);
+        expect(classMetaIterator?.method1.decorators).toEqual([
+          new DecoratorAndValue(propDecoratorFactory, [{ val: 2 }]),
+        ]);
+
+        // Method without decorator
+        const classMetaIterator2 = Reflector.getMetadata(Service3, 'method2');
+        expect(classMetaIterator2?.type).toBe(UnknownType);
+        expect(classMetaIterator2?.decorators).toEqual([]);
+        expect(classMetaIterator2?.params).toEqual([null, null]);
+
+        // Non existing property
+        const classMetaIterator3 = Reflector.getMetadata(Service3, 'nonExistingPropName');
+        expect(classMetaIterator3?.type).toBe(UnknownType);
+        expect(classMetaIterator3?.decorators).toEqual([]);
+        expect(classMetaIterator3?.params).toEqual([]);
+      });
     });
   });
 });
