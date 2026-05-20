@@ -16,6 +16,7 @@ import { CACHE_KEY, CLASS_KEY, DEPS_KEY, PARAMS_KEY, METHODS_WITH_PARAMS, PROP_K
 import { isType, newArray } from './utils.js';
 
 type KeyOf<T extends AnyObj> = Extract<keyof T, string | symbol>;
+type KeyOfClass<Proto extends AnyObj> = keyof Proto | 'constructor' | symbol | (string & {});
 /**
  * Attention: These regex has to hold even if the code is minified!
  */
@@ -158,7 +159,7 @@ export class Reflector {
    */
   static getMetadata<DecorValue = any, Proto extends AnyObj = AnyObj>(
     Cls: Class<Proto>,
-    propertyKey?: keyof Proto | 'constructor' | symbol | (string & {}),
+    propertyKey?: KeyOfClass<Proto>,
   ): ClassPropMeta<DecorValue> | undefined;
   static getMetadata<DecorValue = any, Proto extends AnyObj = AnyObj>(
     Cls: Class<Proto>,
@@ -201,25 +202,25 @@ export class Reflector {
   /**
    * @param propertyKey If this parameter is `undefined`, constructor parameters are passed.
    */
-  static getRawParamMeta<T extends AnyObj>(Cls: Class<T>, propertyKey?: KeyOf<T>) {
+  static getRawParamMeta<T extends AnyObj>(Cls: Class<T>, propertyKey?: KeyOfClass<T>) {
     return this.getRawMeta(Cls, PARAMS_KEY, propertyKey);
   }
 
-  static getRawPropMeta<T extends AnyObj>(Cls: Class<T>, propertyKey?: KeyOf<T>) {
+  static getRawPropMeta<T extends AnyObj>(Cls: Class<T>, propertyKey?: KeyOfClass<T>) {
     return this.getRawMeta(Cls, PROP_KEY, propertyKey);
   }
 
   static getRawMeta<T extends AnyObj, R = any>(
     Cls: Class<T> | T,
     metadataKey: any,
-    propertyKey?: KeyOf<T>,
+    propertyKey?: KeyOfClass<T>,
     defaultValue?: R,
   ): R {
     if (propertyKey) {
-      if (defaultValue !== undefined && !Reflect.hasOwnMetadata(metadataKey, Cls, propertyKey)) {
-        Reflect.defineMetadata(metadataKey, defaultValue, Cls, propertyKey);
+      if (defaultValue !== undefined && !Reflect.hasOwnMetadata(metadataKey, Cls, propertyKey as string)) {
+        Reflect.defineMetadata(metadataKey, defaultValue, Cls, propertyKey as string);
       }
-      return Reflect.getOwnMetadata(metadataKey, Cls, propertyKey);
+      return Reflect.getOwnMetadata(metadataKey, Cls, propertyKey as string);
     }
     if (defaultValue !== undefined && !Reflect.hasOwnMetadata(metadataKey, Cls)) {
       Reflect.defineMetadata(metadataKey, defaultValue, Cls);
@@ -243,7 +244,7 @@ export class Reflector {
       if (classPropMeta) {
         return classPropMeta;
       } else {
-        const params = this.getParamsMetadata(Cls, propertyKey as Exclude<keyof Proto, number>);
+        const params = this.getParamsMetadata(Cls, propertyKey as KeyOfClass<Proto>);
         const classPropMeta = { type: UnknownType, decorators: [], params } as ClassPropMeta;
         return classPropMeta;
       }
@@ -278,14 +279,14 @@ export class Reflector {
     Cls: Class<Proto>,
     classMeta: ClassMeta<DecorValue, Proto>,
   ) {
-    const ownPropMetadata = this.getRawPropMeta(Cls);
-    let ownMetaKeys: (string | symbol)[] = [];
-    if (ownPropMetadata) {
-      ownMetaKeys = Reflect.ownKeys(ownPropMetadata);
+    const ownPropsMeta = this.getRawPropMeta(Cls) as Record<string | symbol, DecoratorAndValue[]> | undefined;
+    let ownProps: (string | symbol)[] = [];
+    if (ownPropsMeta) {
+      ownProps = Reflect.ownKeys(ownPropsMeta);
     }
-    ownMetaKeys.forEach((propName) => {
+    ownProps.forEach((propName) => {
       const type = Reflect.getOwnMetadata('design:type', Cls.prototype, propName);
-      const decorators = ownPropMetadata![propName];
+      const decorators = ownPropsMeta![propName];
       if (classMeta.hasOwnProperty(propName)) {
         const classPropMeta = (classMeta as any)[propName] as ClassPropMeta;
         classPropMeta.type = type; // Override parent type.
@@ -301,18 +302,18 @@ export class Reflector {
       }
     });
 
-    return this.concatWithParamsMeta(Cls, classMeta, ownMetaKeys);
+    return this.concatWithParamsMeta(Cls, classMeta, ownProps);
   }
 
   protected static concatWithParamsMeta<DecorValue = any, Proto extends AnyObj = object>(
     Cls: Class<Proto>,
     classMeta: ClassMeta<DecorValue, Proto>,
-    ownMetaKeys: (string | symbol)[],
+    ownProps: (string | symbol)[],
   ): ClassMeta<DecorValue, Proto> | undefined {
     const methodNames = Reflector.getRawMeta(Cls, METHODS_WITH_PARAMS, undefined, new Set());
     methodNames.add('constructor');
     methodNames.forEach((propName: any) => {
-      if (ownMetaKeys.includes(propName)) {
+      if (ownProps.includes(propName)) {
         return;
       }
       if (!classMeta.hasOwnProperty(propName)) {
@@ -365,7 +366,7 @@ export class Reflector {
     }
     const parentClass = this.getParentClass(Cls);
     const ownClassAnnotations = this.getRawClassMeta(Cls) || [];
-    const parentAnnotations = parentClass !== Object ? this.getClassMetadata<T>(parentClass) : [];
+    const parentAnnotations = parentClass === Object ? [] : this.getClassMetadata<T>(parentClass);
     return ownClassAnnotations.concat(parentAnnotations);
   }
 
@@ -378,7 +379,7 @@ export class Reflector {
    */
   protected static getParamsMetadata<T extends object>(
     Cls: Class<T>,
-    propertyKey?: Exclude<keyof T, number>,
+    propertyKey?: KeyOfClass<T>,
   ): (ParamsMeta | null)[] {
     if (!isType(Cls)) {
       return [];
@@ -413,7 +414,7 @@ export class Reflector {
     return parentClass || Object;
   }
 
-  protected static mergeTypesAndClassMeta(paramTypes: any[], paramMetadata: any[]): ParamsMeta[] {
+  protected static mergeTypesAndClassMeta(paramTypes: any[] | undefined, paramMetadata: any[]): ParamsMeta[] {
     let result: ParamsMeta[];
 
     if (paramTypes === undefined) {
@@ -423,15 +424,10 @@ export class Reflector {
     }
 
     for (let i = 0; i < result.length; i++) {
-      // TS outputs Object for parameters without types, while Traceur omits
-      // the annotations. For now we preserve the Traceur behavior to aid
-      // migration, but this can be revisited.
-      if (paramTypes === undefined) {
+      if (paramTypes === undefined || paramTypes[i] === Object) {
         result[i] = [];
-      } else if (paramTypes[i] && paramTypes[i] != Object) {
-        result[i] = [paramTypes[i]] as unknown as ParamsMeta;
-      } else {
-        result[i] = [];
+      } else if (paramTypes[i]) {
+        result[i] = [paramTypes[i]] as ParamsMeta;
       }
       if (paramMetadata && paramMetadata[i] != null) {
         result[i] = result[i].concat(paramMetadata[i]) as ParamsMeta;
@@ -440,7 +436,7 @@ export class Reflector {
     return result;
   }
 
-  protected static getOwnParams(Cls: Class, propertyKey?: string | symbol): ParamsMeta[] | null[] {
+  protected static getOwnParams<T extends AnyObj>(Cls: Class, propertyKey?: KeyOfClass<T>): ParamsMeta[] | null[] {
     const isConstructor = !propertyKey || propertyKey == 'constructor';
     const paramMetadata = isConstructor ? Reflector.getRawParamMeta(Cls) : Reflector.getRawParamMeta(Cls, propertyKey);
     const args = (isConstructor ? [Cls] : [Cls.prototype, propertyKey]) as [Class];
