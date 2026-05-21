@@ -15,7 +15,6 @@ import { DecoratorAndValue } from './top/decorator-and-value.js';
 import { CACHE_KEY, CLASS_KEY, DEPS_KEY, PARAMS_KEY, METHODS_WITH_PARAMS, PROP_KEY } from './top/constants.js';
 import { isType, newArray } from './utils.js';
 
-type KeyOf<T extends AnyObj> = Extract<keyof T, string | symbol>;
 type KeyOfClass<Proto extends AnyObj> = keyof Proto | 'constructor' | symbol | (string & {});
 /**
  * Attention: These regex has to hold even if the code is minified!
@@ -176,8 +175,8 @@ export class Reflector {
 
     let cache = this.getOwnCacheMetadata<DecorValue, Proto>(Cls);
     if (cache === null) {
-      this.concatWithParentClassMeta(Cls, classMeta);
-      cache = this.concatWithOwnClassMeta(Cls, classMeta);
+      this.concatWithParentMeta(Cls, classMeta);
+      cache = this.concatWithOwnMeta(Cls, classMeta);
     }
 
     return this.getClassMetaOrParamsMeta(Cls, cache!, propertyKey);
@@ -244,7 +243,7 @@ export class Reflector {
       if (classPropMeta) {
         return classPropMeta;
       } else {
-        const params = this.getParamsMetadata(Cls, propertyKey as KeyOfClass<Proto>);
+        const params = this.getParamsMeta(Cls, propertyKey as KeyOfClass<Proto>);
         const classPropMeta = { type: UnknownType, decorators: [], params } as ClassPropMeta;
         return classPropMeta;
       }
@@ -253,7 +252,7 @@ export class Reflector {
     }
   }
 
-  protected static concatWithParentClassMeta<DecorValue = any, Proto extends AnyObj = object>(
+  protected static concatWithParentMeta<DecorValue = any, Proto extends AnyObj = object>(
     Cls: Class<Proto>,
     classMeta: ClassMeta<DecorValue, Proto>,
   ) {
@@ -263,19 +262,19 @@ export class Reflector {
       // Merging current meta with parent meta
       if (parentPropMeta) {
         Reflect.ownKeys(parentPropMeta).forEach((propName) => {
-          const classPropMeta = { ...parentPropMeta[propName as any] };
-          classPropMeta.decorators = classPropMeta.decorators.slice();
-          classPropMeta.params = classPropMeta.params.slice();
-          if ((classPropMeta as any)[DEPS_KEY]) {
-            (classPropMeta as any)[DEPS_KEY] = (classPropMeta as any)[DEPS_KEY].slice();
+          const propMeta = { ...parentPropMeta[propName as any] };
+          propMeta.decorators = propMeta.decorators.slice();
+          propMeta.params = propMeta.params.slice();
+          if ((propMeta as any)[DEPS_KEY]) {
+            (propMeta as any)[DEPS_KEY] = (propMeta as any)[DEPS_KEY].slice();
           }
-          (classMeta as any)[propName] = classPropMeta;
+          (classMeta as any)[propName] = propMeta;
         });
       }
     }
   }
 
-  protected static concatWithOwnClassMeta<DecorValue = any, Proto extends AnyObj = object>(
+  protected static concatWithOwnMeta<DecorValue = any, Proto extends AnyObj = object>(
     Cls: Class<Proto>,
     classMeta: ClassMeta<DecorValue, Proto>,
   ) {
@@ -298,7 +297,7 @@ export class Reflector {
 
       if ((classMeta as any)[propName].type === Function) {
         const classPropMeta = (classMeta as any)[propName] as ClassPropMeta;
-        classPropMeta.params = this.getParamsMetadata(Cls, propName as any);
+        classPropMeta.params = this.getParamsMeta(Cls, propName as any);
       }
     });
 
@@ -320,10 +319,10 @@ export class Reflector {
         (classMeta as any)[propName] = { type: Class, decorators: [], params: [] } as ClassPropMeta;
       }
       const classPropMeta = (classMeta as any)[propName] as ClassPropMeta;
-      classPropMeta.params = this.getParamsMetadata(Cls, propName as any);
+      classPropMeta.params = this.getParamsMeta(Cls, propName as any);
       delete (classPropMeta as any)[DEPS_KEY];
       if (propName == 'constructor') {
-        classPropMeta.decorators = this.getClassMetadata(Cls);
+        classPropMeta.decorators = this.getClassMeta(Cls);
       }
     });
 
@@ -360,13 +359,13 @@ export class Reflector {
    *
    * @param Cls A class that has decorators.
    */
-  protected static getClassMetadata<T = any>(Cls: Class): DecoratorAndValue<T>[] {
+  protected static getClassMeta<T = any>(Cls: Class): DecoratorAndValue<T>[] {
     if (!isType(Cls)) {
       return [];
     }
     const parentClass = this.getParentClass(Cls);
     const ownClassAnnotations = this.getRawClassMeta(Cls) || [];
-    const parentAnnotations = parentClass === Object ? [] : this.getClassMetadata<T>(parentClass);
+    const parentAnnotations = parentClass === Object ? [] : this.getClassMeta<T>(parentClass);
     return ownClassAnnotations.concat(parentAnnotations);
   }
 
@@ -377,10 +376,7 @@ export class Reflector {
    * @param propertyKey If this method is called without `propertyKey`,
    * it's returns parameters of class constructor.
    */
-  protected static getParamsMetadata<T extends object>(
-    Cls: Class<T>,
-    propertyKey?: KeyOfClass<T>,
-  ): (ParamsMeta | null)[] {
+  protected static getParamsMeta<T extends object>(Cls: Class<T>, propertyKey?: KeyOfClass<T>): (ParamsMeta | null)[] {
     if (!isType(Cls)) {
       return [];
     }
@@ -398,11 +394,11 @@ export class Reflector {
     if (isConstructor && isDelegateCtor(Cls.toString())) {
       const parentClass = this.getParentClass(Cls);
       if (parentClass !== Object) {
-        return this.getParamsMetadata(parentClass, propertyKey);
+        return this.getParamsMeta(parentClass, propertyKey);
       }
       return [];
     } else {
-      return this.getOwnParams(Cls, propertyKey);
+      return this.getOwnParamsMeta(Cls, propertyKey);
     }
   }
 
@@ -436,7 +432,7 @@ export class Reflector {
     return result;
   }
 
-  protected static getOwnParams<T extends AnyObj>(Cls: Class, propertyKey?: KeyOfClass<T>): ParamsMeta[] | null[] {
+  protected static getOwnParamsMeta<T extends AnyObj>(Cls: Class, propertyKey?: KeyOfClass<T>): ParamsMeta[] | null[] {
     const isConstructor = !propertyKey || propertyKey == 'constructor';
     const paramMetadata = isConstructor ? Reflector.getRawParamMeta(Cls) : Reflector.getRawParamMeta(Cls, propertyKey);
     const args = (isConstructor ? [Cls] : [Cls.prototype, propertyKey]) as [Class];
