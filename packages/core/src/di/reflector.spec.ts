@@ -572,6 +572,94 @@ describe('Reflector', () => {
         expect(classMetaIterator3?.params).toEqual([]);
       });
     });
+
+    describe('order of parent and child decorators on class and property level', () => {
+      const classDecoratorFactory = Reflector.makeClassDecorator((...args: string[]) => args);
+      const propDecoratorFactory = Reflector.makePropDecorator((...args: string[]) => args);
+
+      @classDecoratorFactory('constructor1.3')
+      @classDecoratorFactory('constructor1.2')
+      @classDecoratorFactory('constructor1.1')
+      class Class1 {
+        @propDecoratorFactory('property1.3')
+        @propDecoratorFactory('property1.2')
+        @propDecoratorFactory('property1.1')
+        prop1: any;
+
+        @propDecoratorFactory('property1.6')
+        @propDecoratorFactory('property1.5')
+        @propDecoratorFactory('property1.4')
+        prop2: any;
+      }
+
+      @classDecoratorFactory('constructor2.3')
+      @classDecoratorFactory('constructor2.2')
+      @classDecoratorFactory('constructor2.1')
+      class Class2 extends Class1 {
+        @propDecoratorFactory('property2.3')
+        @propDecoratorFactory('property2.2')
+        @propDecoratorFactory('property2.1')
+        declare prop1: any;
+
+        @propDecoratorFactory('property2.6')
+        @propDecoratorFactory('property2.5')
+        @propDecoratorFactory('property2.4')
+        declare prop2: any;
+      }
+
+      @classDecoratorFactory('constructor3.3')
+      @classDecoratorFactory('constructor3.2')
+      @classDecoratorFactory('constructor3.1')
+      class Class3 extends Class2 {
+        @propDecoratorFactory('property3.3')
+        @propDecoratorFactory('property3.2')
+        @propDecoratorFactory('property3.1')
+        declare prop1: any;
+
+        @propDecoratorFactory('property3.6')
+        @propDecoratorFactory('property3.5')
+        @propDecoratorFactory('property3.4')
+        declare prop2: any;
+      }
+
+      const moduleMeta = Reflector.getMetadata(Class3);
+      console.log('-'.repeat(50), 'constructor');
+      it('firs - child, next - parent', () => {
+        expect(moduleMeta?.constructor.decorators.map((d) => d.value)).toEqual([
+          ['constructor3.1'],
+          ['constructor3.2'],
+          ['constructor3.3'],
+          ['constructor2.1'],
+          ['constructor2.2'],
+          ['constructor2.3'],
+          ['constructor1.1'],
+          ['constructor1.2'],
+          ['constructor1.3'],
+        ]);
+        expect(moduleMeta?.prop1.decorators.map((d) => d.value)).toEqual([
+          ['property3.1'],
+          ['property3.2'],
+          ['property3.3'],
+          ['property2.1'],
+          ['property2.2'],
+          ['property2.3'],
+          ['property1.1'],
+          ['property1.2'],
+          ['property1.3'],
+        ]);
+        expect(moduleMeta?.prop2.decorators.map((d) => d.value)).toEqual([
+          ['property3.4'],
+          ['property3.5'],
+          ['property3.6'],
+          ['property2.4'],
+          ['property2.5'],
+          ['property2.6'],
+          ['property1.4'],
+          ['property1.5'],
+          ['property1.6'],
+        ]);
+      });
+    });
   });
 
   describe('isDelegateCtor', () => {
