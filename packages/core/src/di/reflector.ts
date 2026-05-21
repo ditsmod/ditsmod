@@ -279,29 +279,61 @@ export class Reflector {
     classMeta: ClassMeta<DecorValue, Proto>,
   ) {
     const ownPropsMeta = this.getRawPropMeta(Cls) as Record<string | symbol, DecoratorAndValue[]> | undefined;
-    let ownProps: (string | symbol)[] = [];
+    let ownPropsWithMeta: (string | symbol)[] = [];
     if (ownPropsMeta) {
-      ownProps = Reflect.ownKeys(ownPropsMeta);
+      ownPropsWithMeta = Reflect.ownKeys(ownPropsMeta);
     }
-    ownProps.forEach((propName) => {
-      const type = Reflect.getOwnMetadata('design:type', Cls.prototype, propName);
-      const decorators = ownPropsMeta![propName];
-      if (classMeta.hasOwnProperty(propName)) {
-        const classPropMeta = (classMeta as any)[propName] as ClassPropMeta;
+    ownPropsWithMeta.forEach((propertyKey) => {
+      const type = Reflect.getOwnMetadata('design:type', Cls.prototype, propertyKey);
+      const decorators = ownPropsMeta![propertyKey];
+      if (classMeta.hasOwnProperty(propertyKey)) {
+        const classPropMeta = (classMeta as any)[propertyKey] as ClassPropMeta;
         classPropMeta.type = type; // Override parent type.
         classPropMeta.params = []; // Remove parent params.
         classPropMeta.decorators.unshift(...decorators);
       } else {
-        (classMeta as any)[propName] = { type, decorators, params: [] } as ClassPropMeta;
+        (classMeta as any)[propertyKey] = { type, decorators, params: [] } as ClassPropMeta;
       }
 
-      if ((classMeta as any)[propName].type === Function) {
-        const classPropMeta = (classMeta as any)[propName] as ClassPropMeta;
-        classPropMeta.params = this.getParamsMeta(Cls, propName as any);
+      if ((classMeta as any)[propertyKey].type === Function) {
+        const classPropMeta = (classMeta as any)[propertyKey] as ClassPropMeta;
+        classPropMeta.params = this.getParamsMeta(Cls, propertyKey as any);
       }
     });
 
-    return this.concatWithParamsMeta(Cls, classMeta, ownProps);
+    this.removeOverridenParams(Cls, classMeta, ownPropsWithMeta);
+    return this.concatWithParamsMeta(Cls, classMeta, ownPropsWithMeta);
+  }
+
+  /**
+   * If a child class overrides a parent method but does not have a property decorator or params decorator,
+   * the parent parameters must be removed.
+   *
+   * @param objWithParentMeta This object may have inherited methods from a parent class.
+   */
+  protected static removeOverridenParams<DecorValue = any, Proto extends AnyObj = object>(
+    Cls: Class<Proto>,
+    objWithParentMeta: ClassMeta<DecorValue, Proto>,
+    ownPropsWithMeta: (string | symbol)[],
+  ) {
+    if (typeof Cls.prototype != 'object') {
+      return;
+    }
+
+    const allClassMethods = Reflect.ownKeys(Cls.prototype).filter((prop) => {
+      if (prop == 'constructor') {
+        return false;
+      }
+
+      const descriptor = Object.getOwnPropertyDescriptor(Cls.prototype, prop);
+      return typeof descriptor?.value == 'function';
+    });
+
+    Reflect.ownKeys(objWithParentMeta).forEach((propertyKey) => {
+      if (allClassMethods.includes(propertyKey) && !ownPropsWithMeta.includes(propertyKey)) {
+        objWithParentMeta[propertyKey].params = [];
+      }
+    });
   }
 
   protected static concatWithParamsMeta<DecorValue = any, Proto extends AnyObj = object>(
