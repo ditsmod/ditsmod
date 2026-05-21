@@ -69,6 +69,28 @@ export class Reflector {
    * @param decoratorId Sometimes it is not enough to identify the metadata returned by a specific decorator
    * using `instanceof`. Sometimes it is useful to have a single identifier for a certain group of decorators.
    */
+  static makePropDecorator<T extends AnyFn>(transform?: T, debugFactoryName?: string, decoratorId?: AnyFn) {
+    function propDecorFactory(...args: Parameters<T>) {
+      const value = transform ? transform(...args) : [...args];
+      return function propDecorator(target: any, propertyKey: string | symbol): void {
+        const Cls = target.constructor as Class;
+        const defaultValue = {} as Record<string | symbol, DecoratorAndValue[]>;
+        const item = new DecoratorAndValue(decoratorId || propDecorFactory, value);
+        Reflector.getRawMeta(Cls, PROP_KEY, propertyKey, item);
+        const meta = Reflector.getRawMeta(Cls, PROP_KEY, undefined, defaultValue);
+        (meta[propertyKey] ??= []).push(item);
+      };
+    }
+    this.setDecoratorFactoryName(propDecorFactory, debugFactoryName);
+    return propDecorFactory;
+  }
+  /**
+   * @param transform Such a transformer should not use symbols that can be wrapped with `forwardRef()`,
+   * because at this stage the `resolveForwardRef()` function will not work correctly.
+   * @param debugFactoryName Gives a name to the decorator that can be viewed during debugging.
+   * @param decoratorId Sometimes it is not enough to identify the metadata returned by a specific decorator
+   * using `instanceof`. Sometimes it is useful to have a single identifier for a certain group of decorators.
+   */
   static makeParamDecorator<T extends AnyFn>(transform?: T, debugFactoryName?: string, decoratorId?: AnyFn) {
     function paramDecorFactory(...args: Parameters<T>) {
       const value = transform ? transform(...args) : [...args];
@@ -94,28 +116,6 @@ export class Reflector {
     }
     this.setDecoratorFactoryName(paramDecorFactory, debugFactoryName);
     return paramDecorFactory;
-  }
-  /**
-   * @param transform Such a transformer should not use symbols that can be wrapped with `forwardRef()`,
-   * because at this stage the `resolveForwardRef()` function will not work correctly.
-   * @param debugFactoryName Gives a name to the decorator that can be viewed during debugging.
-   * @param decoratorId Sometimes it is not enough to identify the metadata returned by a specific decorator
-   * using `instanceof`. Sometimes it is useful to have a single identifier for a certain group of decorators.
-   */
-  static makePropDecorator<T extends AnyFn>(transform?: T, debugFactoryName?: string, decoratorId?: AnyFn) {
-    function propDecorFactory(...args: Parameters<T>) {
-      const value = transform ? transform(...args) : [...args];
-      return function propDecorator(target: any, propertyKey: string | symbol): void {
-        const Cls = target.constructor as Class;
-        const defaultValue = {} as Record<string | symbol, DecoratorAndValue[]>;
-        const item = new DecoratorAndValue(decoratorId || propDecorFactory, value);
-        Reflector.getRawMeta(Cls, PROP_KEY, propertyKey, item);
-        const meta = Reflector.getRawMeta(Cls, PROP_KEY, undefined, defaultValue);
-        (meta[propertyKey] ??= []).push(item);
-      };
-    }
-    this.setDecoratorFactoryName(propDecorFactory, debugFactoryName);
-    return propDecorFactory;
   }
   /**
    * @param Cls The class from which to return the metadata.
@@ -182,6 +182,133 @@ export class Reflector {
     return this.getClassMetaOrParamsMeta(Cls, cache!, propertyKey);
   }
 
+  protected static getOwnCacheMetadata<DecorValue = any, Proto extends object = object>(Cls: any) {
+    if (Reflect.hasOwnMetadata(CACHE_KEY, Cls)) {
+      return Reflect.getOwnMetadata(CACHE_KEY, Cls) as ClassMeta<DecorValue, Proto> | undefined;
+    }
+    return null;
+  }
+
+  protected static concatWithParentMeta<DecorValue = any, Proto extends AnyObj = object>(
+    Cls: Class<Proto>,
+    classMeta: ClassMeta<DecorValue, Proto>,
+  ) {
+    const parentClass = this.getParentClass(Cls);
+    if (parentClass !== Object) {
+      const parentPropMeta = this.getMetadata(parentClass);
+      // Merging current meta with parent meta
+      if (parentPropMeta) {
+        Reflect.ownKeys(parentPropMeta).forEach((propName) => {
+          const propMeta = { ...parentPropMeta[propName as any] };
+          propMeta.decorators = propMeta.decorators.slice();
+          propMeta.params = propMeta.params.slice();
+          if ((propMeta as any)[DEPS_KEY]) {
+            (propMeta as any)[DEPS_KEY] = (propMeta as any)[DEPS_KEY].slice();
+          }
+          (classMeta as any)[propName] = propMeta;
+        });
+      }
+    }
+  }
+
+  protected static getParentClass(ctor: Class): Class {
+    const parentProto = ctor.prototype ? Object.getPrototypeOf(ctor.prototype) : null;
+    const parentClass = parentProto ? parentProto.constructor : null;
+    // Note: We always use `Object` as the null value
+    // to simplify checking later on.
+    return parentClass || Object;
+  }
+
+  protected static concatWithOwnMeta<DecorValue = any, Proto extends AnyObj = object>(
+    Cls: Class<Proto>,
+    classMeta: ClassMeta<DecorValue, Proto>,
+  ) {
+    const ownPropsMeta = this.getRawPropMeta(Cls) as Record<string | symbol, DecoratorAndValue[]> | undefined;
+    let ownPropsWithMeta: (string | symbol)[] = [];
+    if (ownPropsMeta) {
+      ownPropsWithMeta = Reflect.ownKeys(ownPropsMeta);
+    }
+    ownPropsWithMeta.forEach((propertyKey) => {
+      const type = Reflect.getOwnMetadata('design:type', Cls.prototype, propertyKey);
+      const decorators = ownPropsMeta![propertyKey];
+      if (classMeta.hasOwnProperty(propertyKey)) {
+        const classPropMeta = (classMeta as any)[propertyKey] as ClassPropMeta;
+        classPropMeta.type = type; // Override parent type.
+        classPropMeta.params = []; // Remove parent params.
+        classPropMeta.decorators.unshift(...decorators);
+      } else {
+        (classMeta as any)[propertyKey] = { type, decorators, params: [] } as ClassPropMeta;
+      }
+
+      if ((classMeta as any)[propertyKey].type === Function) {
+        const classPropMeta = (classMeta as any)[propertyKey] as ClassPropMeta;
+        classPropMeta.params = this.getParamsMeta(Cls, propertyKey as any);
+      }
+    });
+
+    this.removeOverridenParams(Cls, classMeta, ownPropsWithMeta);
+    return this.concatWithParamsMeta(Cls, classMeta, ownPropsWithMeta);
+  }
+
+  static getRawPropMeta<T extends AnyObj>(Cls: Class<T>, propertyKey?: KeyOfClass<T>) {
+    return this.getRawMeta(Cls, PROP_KEY, propertyKey);
+  }
+
+  /**
+   * Returns the metadata for the constructor or methods of the passed class.
+   *
+   * @param Cls A class that has decorators.
+   * @param propertyKey If this method is called without `propertyKey`,
+   * it's returns parameters of class constructor.
+   */
+  protected static getParamsMeta<T extends object>(Cls: Class<T>, propertyKey?: KeyOfClass<T>): (ParamsMeta | null)[] {
+    if (!isType(Cls)) {
+      return [];
+    }
+    const isConstructor = !propertyKey || propertyKey == 'constructor';
+
+    /**
+     * If we have no decorators, we only have function.length as metadata.
+     * In that case, to detect whether a child class declared an own constructor or not,
+     * we need to look inside of that constructor to check whether it is
+     * just calling the parent.
+     * This also helps to work around for https://github.com/Microsoft/TypeScript/issues/12439
+     * that sets 'design:paramtypes' to []
+     * if a class inherits from another class but has no ctor declared itself.
+     */
+    if (isConstructor && isDelegateCtor(Cls.toString())) {
+      const parentClass = this.getParentClass(Cls);
+      if (parentClass !== Object) {
+        return this.getParamsMeta(parentClass, propertyKey);
+      }
+      return [];
+    } else {
+      return this.getOwnParamsMeta(Cls, propertyKey);
+    }
+  }
+
+  protected static getOwnParamsMeta<T extends AnyObj>(Cls: Class, propertyKey?: KeyOfClass<T>): ParamsMeta[] | null[] {
+    const isConstructor = !propertyKey || propertyKey == 'constructor';
+    const paramMetadata = isConstructor ? Reflector.getRawParamMeta(Cls) : Reflector.getRawParamMeta(Cls, propertyKey);
+    const args = (isConstructor ? [Cls] : [Cls.prototype, propertyKey]) as [Class];
+    const paramTypes = Reflect.getOwnMetadata('design:paramtypes', ...args);
+
+    if (paramTypes || paramMetadata) {
+      return this.mergeTypesAndClassMeta(paramTypes, paramMetadata);
+    }
+
+    /**
+     * If a class or method has no decorators, at least create metadata
+     * based on function.length.
+     */
+    if (propertyKey && !isConstructor) {
+      const descriptor = Object.getOwnPropertyDescriptor(Cls.prototype, propertyKey);
+      return newArray(descriptor?.value?.length || 0, null);
+    } else {
+      return newArray(Cls.length, null);
+    }
+  }
+
   static setRawClassMeta(Cls: Class, classDecorator: AnyFn) {
     classDecorator(Cls);
   }
@@ -203,10 +330,6 @@ export class Reflector {
    */
   static getRawParamMeta<T extends AnyObj>(Cls: Class<T>, propertyKey?: KeyOfClass<T>) {
     return this.getRawMeta(Cls, PARAMS_KEY, propertyKey);
-  }
-
-  static getRawPropMeta<T extends AnyObj>(Cls: Class<T>, propertyKey?: KeyOfClass<T>) {
-    return this.getRawMeta(Cls, PROP_KEY, propertyKey);
   }
 
   static getRawMeta<T extends AnyObj, R = any>(
@@ -250,59 +373,6 @@ export class Reflector {
     } else {
       return classMeta;
     }
-  }
-
-  protected static concatWithParentMeta<DecorValue = any, Proto extends AnyObj = object>(
-    Cls: Class<Proto>,
-    classMeta: ClassMeta<DecorValue, Proto>,
-  ) {
-    const parentClass = this.getParentClass(Cls);
-    if (parentClass !== Object) {
-      const parentPropMeta = this.getMetadata(parentClass);
-      // Merging current meta with parent meta
-      if (parentPropMeta) {
-        Reflect.ownKeys(parentPropMeta).forEach((propName) => {
-          const propMeta = { ...parentPropMeta[propName as any] };
-          propMeta.decorators = propMeta.decorators.slice();
-          propMeta.params = propMeta.params.slice();
-          if ((propMeta as any)[DEPS_KEY]) {
-            (propMeta as any)[DEPS_KEY] = (propMeta as any)[DEPS_KEY].slice();
-          }
-          (classMeta as any)[propName] = propMeta;
-        });
-      }
-    }
-  }
-
-  protected static concatWithOwnMeta<DecorValue = any, Proto extends AnyObj = object>(
-    Cls: Class<Proto>,
-    classMeta: ClassMeta<DecorValue, Proto>,
-  ) {
-    const ownPropsMeta = this.getRawPropMeta(Cls) as Record<string | symbol, DecoratorAndValue[]> | undefined;
-    let ownPropsWithMeta: (string | symbol)[] = [];
-    if (ownPropsMeta) {
-      ownPropsWithMeta = Reflect.ownKeys(ownPropsMeta);
-    }
-    ownPropsWithMeta.forEach((propertyKey) => {
-      const type = Reflect.getOwnMetadata('design:type', Cls.prototype, propertyKey);
-      const decorators = ownPropsMeta![propertyKey];
-      if (classMeta.hasOwnProperty(propertyKey)) {
-        const classPropMeta = (classMeta as any)[propertyKey] as ClassPropMeta;
-        classPropMeta.type = type; // Override parent type.
-        classPropMeta.params = []; // Remove parent params.
-        classPropMeta.decorators.unshift(...decorators);
-      } else {
-        (classMeta as any)[propertyKey] = { type, decorators, params: [] } as ClassPropMeta;
-      }
-
-      if ((classMeta as any)[propertyKey].type === Function) {
-        const classPropMeta = (classMeta as any)[propertyKey] as ClassPropMeta;
-        classPropMeta.params = this.getParamsMeta(Cls, propertyKey as any);
-      }
-    });
-
-    this.removeOverridenParams(Cls, classMeta, ownPropsWithMeta);
-    return this.concatWithParamsMeta(Cls, classMeta, ownPropsWithMeta);
   }
 
   /**
@@ -379,13 +449,6 @@ export class Reflector {
     Reflect.defineMetadata(metadataKey, classMeta, Cls);
   }
 
-  protected static getOwnCacheMetadata<DecorValue = any, Proto extends object = object>(Cls: any) {
-    if (Reflect.hasOwnMetadata(CACHE_KEY, Cls)) {
-      return Reflect.getOwnMetadata(CACHE_KEY, Cls) as ClassMeta<DecorValue, Proto> | undefined;
-    }
-    return null;
-  }
-
   /**
    * Returns the metadata for passed class.
    *
@@ -399,47 +462,6 @@ export class Reflector {
     const ownClassAnnotations = this.getRawClassMeta(Cls) || [];
     const parentAnnotations = parentClass === Object ? [] : this.getClassMeta<T>(parentClass);
     return ownClassAnnotations.concat(parentAnnotations);
-  }
-
-  /**
-   * Returns the metadata for the constructor or methods of the passed class.
-   *
-   * @param Cls A class that has decorators.
-   * @param propertyKey If this method is called without `propertyKey`,
-   * it's returns parameters of class constructor.
-   */
-  protected static getParamsMeta<T extends object>(Cls: Class<T>, propertyKey?: KeyOfClass<T>): (ParamsMeta | null)[] {
-    if (!isType(Cls)) {
-      return [];
-    }
-    const isConstructor = !propertyKey || propertyKey == 'constructor';
-
-    /**
-     * If we have no decorators, we only have function.length as metadata.
-     * In that case, to detect whether a child class declared an own constructor or not,
-     * we need to look inside of that constructor to check whether it is
-     * just calling the parent.
-     * This also helps to work around for https://github.com/Microsoft/TypeScript/issues/12439
-     * that sets 'design:paramtypes' to []
-     * if a class inherits from another class but has no ctor declared itself.
-     */
-    if (isConstructor && isDelegateCtor(Cls.toString())) {
-      const parentClass = this.getParentClass(Cls);
-      if (parentClass !== Object) {
-        return this.getParamsMeta(parentClass, propertyKey);
-      }
-      return [];
-    } else {
-      return this.getOwnParamsMeta(Cls, propertyKey);
-    }
-  }
-
-  protected static getParentClass(ctor: Class): Class {
-    const parentProto = ctor.prototype ? Object.getPrototypeOf(ctor.prototype) : null;
-    const parentClass = parentProto ? parentProto.constructor : null;
-    // Note: We always use `Object` as the null value
-    // to simplify checking later on.
-    return parentClass || Object;
   }
 
   protected static mergeTypesAndClassMeta(paramTypes: any[] | undefined, paramMetadata: any[]): ParamsMeta[] {
@@ -462,27 +484,5 @@ export class Reflector {
       }
     }
     return result;
-  }
-
-  protected static getOwnParamsMeta<T extends AnyObj>(Cls: Class, propertyKey?: KeyOfClass<T>): ParamsMeta[] | null[] {
-    const isConstructor = !propertyKey || propertyKey == 'constructor';
-    const paramMetadata = isConstructor ? Reflector.getRawParamMeta(Cls) : Reflector.getRawParamMeta(Cls, propertyKey);
-    const args = (isConstructor ? [Cls] : [Cls.prototype, propertyKey]) as [Class];
-    const paramTypes = Reflect.getOwnMetadata('design:paramtypes', ...args);
-
-    if (paramTypes || paramMetadata) {
-      return this.mergeTypesAndClassMeta(paramTypes, paramMetadata);
-    }
-
-    /**
-     * If a class or method has no decorators, at least create metadata
-     * based on function.length.
-     */
-    if (propertyKey && !isConstructor) {
-      const descriptor = Object.getOwnPropertyDescriptor(Cls.prototype, propertyKey);
-      return newArray(descriptor?.value?.length || 0, null);
-    } else {
-      return newArray(Cls.length, null);
-    }
   }
 }
