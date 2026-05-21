@@ -1,4 +1,3 @@
-import 'reflect-metadata/lite';
 import { Reflector, isDelegateCtor } from './reflector.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
 import { ClassMetaIterator } from './class-meta-iterator.js';
@@ -86,15 +85,19 @@ describe('Reflector', () => {
       });
 
       it('child concat decorators with parent', () => {
-        @classDecoratorFactory({ val: 1 })
+        @classDecoratorFactory({ val: 'parent' })
         class Parent {}
-        @classDecoratorFactory({ val: 2 })
+        @classDecoratorFactory({ val: 'child' })
         class Child extends Parent {}
 
-        expect(Reflector.getMetadata(Parent, 'constructor')?.decorators.length).toBe(1);
+        expect(Reflector.getMetadata(Parent, 'constructor')?.decorators).toEqual([
+          new DecoratorAndValue(classDecoratorFactory, [{ val: 'parent' }], expect.any(String)),
+        ]);
         const childMeta = Reflector.getMetadata(Child, 'constructor');
-        expect(childMeta?.decorators.length).toBe(2);
-        expect(childMeta?.decorators.map((d) => d.value)).toEqual([[{ val: 2 }], [{ val: 1 }]]);
+        expect(childMeta?.decorators).toEqual([
+          new DecoratorAndValue(classDecoratorFactory, [{ val: 'child' }], expect.any(String)),
+          new DecoratorAndValue(classDecoratorFactory, [{ val: 'parent' }], expect.any(String)),
+        ]);
       });
     });
 
@@ -252,38 +255,58 @@ describe('Reflector', () => {
       });
 
       it('child no concat decorators with parent', () => {
+        class Service0 {}
         class Service1 {}
         class Service2 {}
         class Service3 {}
         class Service4 {}
 
         class Parent {
-          method1(@paramDecoratorFactory('parent1') param1: Service1) {}
+          constructor(
+            @paramDecoratorFactory('parent-param1') param1: Service0,
+            @paramDecoratorFactory('parent-param2') param2: Service1,
+          ) {}
 
-          method2(@paramDecoratorFactory('parent2') param1: Service2) {}
+          method1(@paramDecoratorFactory('parent-param1') param1: Service1) {}
 
-          method3(@paramDecoratorFactory('parent3') param1: Service3) {}
+          method2(@paramDecoratorFactory('parent-param2') param1: Service2) {}
+
+          method3(@paramDecoratorFactory('parent-param3') param1: Service3) {}
         }
+
         class Child extends Parent {
-          override method2(@paramDecoratorFactory('child1') param1?: Service4) {}
+          constructor(param1: Service2, param2: Service3, @paramDecoratorFactory('child-param1') param3: Service4) {
+            super(param1, param2);
+          }
+          override method2(@paramDecoratorFactory('child-param1') param1?: Service4) {}
 
           override method3() {}
         }
 
         const childMeta = Reflector.getMetadata(Child);
+
+        // Child override constructor params
+        expect(childMeta?.constructor.decorators).toEqual([]);
+        expect(childMeta?.constructor.params).toEqual([
+          [Service2],
+          [Service3],
+          [Service4, new DecoratorAndValue(paramDecoratorFactory, ['child-param1'])],
+        ]);
+
         // Only parent has this property with decorator
         expect(childMeta?.method1.decorators).toEqual([]);
         expect(childMeta?.method1.params).toEqual([
-          [Service1, new DecoratorAndValue(paramDecoratorFactory, ['parent1'])]
+          [Service1, new DecoratorAndValue(paramDecoratorFactory, ['parent-param1'])],
         ]);
 
-        // Parent without decorator while child with decorator
+        // Parent and child has params with decorator
         expect(childMeta?.method2.decorators).toEqual([]);
         expect(childMeta?.method2.params).toEqual([
-          [Service4, new DecoratorAndValue(paramDecoratorFactory, ['child1'])]
+          [Service4, new DecoratorAndValue(paramDecoratorFactory, ['child-param1'])],
         ]);
 
-        // Both - parent and child has decorators
+        // Parent has method with decorators,
+        // while child override this method and not have decorators at all
         expect(childMeta?.method3.params).toEqual([]);
         expect(childMeta?.method3.decorators).toEqual([]);
       });
@@ -548,6 +571,75 @@ describe('Reflector', () => {
         expect(classMetaIterator3?.decorators).toEqual([]);
         expect(classMetaIterator3?.params).toEqual([]);
       });
+    });
+  });
+
+  describe('isDelegateCtor', () => {
+    it('should support ES5 compiled classes', () => {
+      // These classes will be compiled to ES5 code so their stringified form
+      // below will contain ES5 constructor functions rather than native classes.
+      class Parent {}
+
+      class ChildNoCtor extends Parent {}
+      class ChildWithCtor extends Parent {
+        constructor() {
+          super();
+        }
+      }
+      class ChildNoCtorPrivateProps extends Parent {
+        private x = 10;
+      }
+
+      expect(isDelegateCtor(ChildNoCtor.toString())).toBe(true);
+      expect(isDelegateCtor(ChildNoCtorPrivateProps.toString())).toBe(true);
+      expect(isDelegateCtor(ChildWithCtor.toString())).toBe(false);
+    });
+
+    it('should not throw when no prototype on type', () => {
+      // Cannot test arrow function here due to the compilation
+      const dummyArrowFn = function () {};
+      Object.defineProperty(dummyArrowFn, 'prototype', { value: undefined });
+      expect(() => Reflector.getMetadata(dummyArrowFn as any)?.constructor.decorators).not.toThrow();
+    });
+
+    it('should support native class', () => {
+      // These classes are defined as strings unlike the tests above because otherwise
+      // the compiler (of these tests) will convert them to ES5 constructor function
+      // style classes.
+      const ChildNoCtor = 'class ChildNoCtor extends Parent {}\n';
+      const ChildWithCtor = 'class ChildWithCtor extends Parent {\n  constructor() { super(); }}\n';
+      const ChildNoCtorComplexBase = "class ChildNoCtor extends Parent['foo'].bar(baz) {}\n";
+      const ChildWithCtorComplexBase =
+        "class ChildWithCtor extends Parent['foo'].bar(baz) {\n  constructor() { super(); }}\n";
+      const ChildNoCtorPrivateProps =
+        'class ChildNoCtorPrivateProps extends Parent {\n' +
+        '  constructor() {\n' +
+        // Note that the instance property causes a pass-through constructor to be synthesized
+        '    super(...arguments);\n' +
+        '    this.x = 10;\n' +
+        '  }\n' +
+        '}\n';
+
+      expect(isDelegateCtor(ChildNoCtor)).toBe(true);
+      expect(isDelegateCtor(ChildNoCtorPrivateProps)).toBe(true);
+      expect(isDelegateCtor(ChildWithCtor)).toBe(false);
+      expect(isDelegateCtor(ChildNoCtorComplexBase)).toBe(true);
+      expect(isDelegateCtor(ChildWithCtorComplexBase)).toBe(false);
+    });
+
+    it('should properly handle all class forms', () => {
+      const ctor = (str: string) => expect(isDelegateCtor(str)).toBe(false);
+      const noCtor = (str: string) => expect(isDelegateCtor(str)).toBe(true);
+
+      ctor('class Bar extends Foo {constructor(){}}');
+      ctor('class Bar extends Foo { constructor ( ) {} }');
+      ctor('class Bar extends Foo { other(){}; constructor(){} }');
+
+      noCtor('class extends Foo{}');
+      noCtor('class extends Foo {}');
+      noCtor('class Bar extends Foo {}');
+      noCtor('class $Bar1_ extends $Fo0_ {}');
+      noCtor('class Bar extends Foo { other(){} }');
     });
   });
 });
