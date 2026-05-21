@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import 'reflect-metadata/lite';
 
 import { KeyRegistry } from './key-registry.js';
 import { Class, Dependency, Provider } from './top/types-and-models.js';

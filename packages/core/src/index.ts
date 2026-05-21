@@ -1,4 +1,4 @@
-export * from '#di';
+export * from './di.js';
 export * from '@ts-stack/chain-error';
 
 export { awaitTokens } from '#utils/await-tokens.js';

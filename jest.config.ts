@@ -5,6 +5,7 @@ const config: Config = {
   testEnvironment: 'node',
   modulePathIgnorePatterns: [],
   projects: ['<rootDir>/packages/*/jest.config.ts'],
+  setupFilesAfterEnv: ['reflect-metadata/lite'],
 };
 
 export default config;

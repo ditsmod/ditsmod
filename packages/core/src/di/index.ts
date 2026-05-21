@@ -1,5 +1,7 @@
 import 'reflect-metadata/lite';
 
+/** == Internal imports (it's not used for exports from `@ditsmod/core/di`) == **/
+
 export { Reflector } from './reflector.js';
 export * from './decorators.js';
 export { ForwardRefFn, forwardRef, resolveForwardRef, isForwardRef } from './forward-ref.js';

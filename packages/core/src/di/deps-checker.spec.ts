@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import 'reflect-metadata/lite';
 
 import { Reflector } from './reflector.js';
 import { DepsChecker } from './deps-checker.js';

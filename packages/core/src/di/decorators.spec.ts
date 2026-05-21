@@ -1,5 +1,3 @@
-import 'reflect-metadata/lite';
-
 import { Reflector } from './reflector.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
 import { CLASS_KEY } from './top/constants.js';
