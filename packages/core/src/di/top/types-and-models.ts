@@ -44,6 +44,7 @@ export interface ClassPropMeta<DecorValue = any> {
   type: Class;
   decorators: DecoratorAndValue<DecorValue>[];
   params: (ParamsMeta | null)[];
+  newParams: Map<Class, (ParamsMeta | null)[]>;
 }
 
 export type ParamsItem<Value = any> = DecoratorAndValue<Value> | InjectionToken<any> | Class;

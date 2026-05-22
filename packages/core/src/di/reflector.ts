@@ -193,15 +193,16 @@ export class Reflector {
     Cls: Class<Proto>,
     classMeta: ClassMeta<DecorValue, Proto>,
   ) {
-    const parentClass = this.getParentClass(Cls);
-    if (parentClass !== Object) {
-      const parentPropMeta = this.getMetadata(parentClass);
+    const ParentCls = this.getParentClass(Cls);
+    if (ParentCls !== Object) {
+      const parentPropMeta = this.getMetadata(ParentCls);
       // Merging current meta with parent meta
       if (parentPropMeta) {
         Reflect.ownKeys(parentPropMeta).forEach((propName) => {
           const propMeta = { ...parentPropMeta[propName as any] };
           propMeta.decorators = propMeta.decorators.slice();
           propMeta.params = propMeta.params.slice();
+          propMeta.newParams = new Map([[Cls, propMeta.params]]);
           if ((propMeta as any)[DEPS_KEY]) {
             (propMeta as any)[DEPS_KEY] = (propMeta as any)[DEPS_KEY].slice();
           }
@@ -211,8 +212,8 @@ export class Reflector {
     }
   }
 
-  protected static getParentClass(ctor: Class): Class {
-    const parentProto = ctor.prototype ? Object.getPrototypeOf(ctor.prototype) : null;
+  protected static getParentClass(Cls: Class): Class {
+    const parentProto = Cls.prototype ? Object.getPrototypeOf(Cls.prototype) : null;
     const parentClass = parentProto ? parentProto.constructor : null;
     // Note: We always use `Object` as the null value
     // to simplify checking later on.
@@ -237,12 +238,13 @@ export class Reflector {
         classPropMeta.params = []; // Remove parent params.
         classPropMeta.decorators.unshift(...decorators);
       } else {
-        (classMeta as any)[propertyKey] = { type, decorators, params: [] } as ClassPropMeta;
+        (classMeta as any)[propertyKey] = { type, decorators, params: [], newParams: new Map() } as ClassPropMeta;
       }
 
       if ((classMeta as any)[propertyKey].type === Function) {
         const classPropMeta = (classMeta as any)[propertyKey] as ClassPropMeta;
         classPropMeta.params = this.getParamsMeta(Cls, propertyKey as any);
+        classPropMeta.newParams = new Map([[Cls, classPropMeta.params]]);
       }
     });
 
@@ -367,7 +369,8 @@ export class Reflector {
         return classPropMeta;
       } else {
         const params = this.getParamsMeta(Cls, propertyKey as KeyOfClass<Proto>);
-        const classPropMeta = { type: UnknownType, decorators: [], params } as ClassPropMeta;
+        const newParams = new Map<Class, (ParamsMeta | null)[]>([[Cls, params]]);
+        const classPropMeta = { type: UnknownType, decorators: [], params, newParams } as ClassPropMeta;
         return classPropMeta;
       }
     } else {
@@ -387,14 +390,11 @@ export class Reflector {
     ownPropsWithMeta: (string | symbol)[],
   ) {
     if (typeof Cls.prototype != 'object') {
+      // @todo Check what is the case
       return;
     }
 
     const allClassMethods = Reflect.ownKeys(Cls.prototype).filter((prop) => {
-      if (prop == 'constructor') {
-        return false;
-      }
-
       const descriptor = Object.getOwnPropertyDescriptor(Cls.prototype, prop);
       return typeof descriptor?.value == 'function';
     });
@@ -418,10 +418,16 @@ export class Reflector {
         return;
       }
       if (!classMeta.hasOwnProperty(propName)) {
-        (classMeta as any)[propName] = { type: Class, decorators: [], params: [] } as ClassPropMeta;
+        (classMeta as any)[propName] = {
+          type: Class,
+          decorators: [],
+          params: [],
+          newParams: new Map(),
+        } as ClassPropMeta;
       }
       const classPropMeta = (classMeta as any)[propName] as ClassPropMeta;
       classPropMeta.params = this.getParamsMeta(Cls, propName as any);
+      classPropMeta.newParams = new Map([[Cls, classPropMeta.params]]);
       delete (classPropMeta as any)[DEPS_KEY];
       if (propName == 'constructor') {
         classPropMeta.decorators = this.getClassMeta(Cls);
@@ -431,7 +437,8 @@ export class Reflector {
     if (
       Reflect.ownKeys(classMeta).length == 1 &&
       !classMeta.constructor.decorators.length &&
-      !classMeta.constructor.params.length
+      // !classMeta.constructor.params.length &&
+      !classMeta.constructor.newParams.size
     ) {
       this.setMetaCache(Cls, CACHE_KEY, undefined);
       return;
