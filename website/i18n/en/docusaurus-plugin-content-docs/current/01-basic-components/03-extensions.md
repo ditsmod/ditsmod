@@ -12,10 +12,13 @@ Figuratively speaking, a module + extension, in terms of how they operate concep
 
 The concept behind how extensions work, in a highly simplified form, is as follows:
 
-```ts {13-23}
+```ts {16-27}
 import { createServer } from 'http';
 import { Injector } from '@ditsmod/core';
 
+class Service1 {
+  // ...
+}
 class Controller1 {
   // ...
 }
@@ -27,6 +30,7 @@ let handler: (req, res) => Promise<void>;
 
 async function extension1() {
   const injector = Injector.resolveAndCreate([
+    Service1
     { token: 'controller1', useClass: Controller1 },
     { token: 'interceptors', useClass: Interceptor1, multi: true },
   ]);
@@ -48,9 +52,9 @@ server.listen(3000, () => {
 });
 ```
 
-As you can see, a controller and an interceptor are declared first, symbolizing disparate metadata here. Then, in the highlighted lines, the `extension1()` function is shown, which conditionally symbolizes the functionality of an extension. In essence, the extension gathers all metadata together, passes it to the DI registry, creates an injector, and ultimately creates an HTTP request handler.
+As you can see, first a service, controller and an interceptor are declared, which here symbolize separate application elements. Then, in the highlighted lines, the `extension1()` function is shown, which here conditionally symbolizes extension functionality. Essentially, the extension gathers certain application elements together, creates an injector, and ultimately creates an HTTP request handler.
 
-The task of most extensions is to act like a pipeline, taking a multidimensional array of configuration data (metadata) as input and producing another (or augmented) multidimensional array as output. This final array is ultimately interpreted by the target extension, e.g. to create routes and their handlers. However, extensions do not necessarily need to work with configuration or setting up HTTP request handlers; they can also initialize database connections, collect metrics for monitoring, or perform other tasks.
+The task of most extensions is to act like a pipeline, taking a multidimensional array of configuration data (metadata) as input and producing another (or augmented) multidimensional array as output. This final array is ultimately interpreted by the target extension, e.g. to create routes and their handlers. However, extensions do not necessarily need to work with configuration or setting up HTTP request handlers; they can also initialize database connections, collect metrics for monitoring, expose variables to the [REPL][100] session, or perform other tasks.
 
 In most cases, multidimensional arrays of configuration data reflect the structure of the application:
 
@@ -58,7 +62,7 @@ In most cases, multidimensional arrays of configuration data reflect the structu
 2. each module contains controllers or providers;
 3. each controller has one or more routes.
 
-A simple and practical example of how extensions work can be found in the [@ditsmod/body-parser][5] module, where an extension dynamically adds an HTTP interceptor for parsing the request body to each route that has the corresponding method (POST, PATCH, PUT). It does this once before the HTTP request handlers are created, so there is no need to check whether parsing is required on every request.
+A simple and practical example of how extensions work can be found in the [@ditsmod/body-parser][101] module, where an extension dynamically adds an HTTP interceptor for parsing the request body to each route that has the corresponding method (POST, PATCH, PUT). It does this once before the HTTP request handlers are created, so there is no need to check whether parsing is required on every request.
 
 Another example. The [@ditsmod/rest][6] module allows setting routes using a custom `@route` decorator. Without the extension running, Ditsmod will ignore the metadata from this decorator. The extension from this module takes the configuration array mentioned above, finds metadata from the `@route` decorator there, and interprets it by adding other metadata that will be used by the target extension to set up routes.
 
@@ -88,7 +92,7 @@ interface Extension<T> {
 }
 ```
 
-You can find a ready simple example in the [00-standalone-application][1] folder. Note that the term "value returned by the extension" refers to the value returned by the `stage1()` method of this extension.
+Each of these methods acts as a hook that Ditsmod invokes automatically. In the documentation, you may occasionally encounter phrases like "the value returned by the extension"; in such cases, this refers to the value returned by the `stage1()` method of that extension. You can find a ready simple example in the [00-standalone-application][103] folder.
 
 The implementation of this interface can be done, for example, as follows:
 
@@ -106,7 +110,7 @@ export class SimpleExtension implements Extension<void> {
 }
 ```
 
-As you can see, extensions can declare dependencies on services whose providers may be defined at the module or application level. However, keep in mind that this injector is formed before the extensions start working, so providers from other extensions are not passed to it.
+As you can see, extensions can declare dependencies on services whose providers may be defined at the module or application level. Note that the injector accessible via the extension constructor is initialized before any extensions execute; therefore, providers from other extensions are not passed to it.
 
 During `stage1()`, any extension can [dynamically add providers][7] to any [hierarchy level][8]. Only after `stage1()` has finished running in all extensions across all modules, the final injectors are created - one at the application level and one per module. The module-level injector is passed as an argument to `stage2(injectorPerMod)`. At this stage, providers can still be added dynamically, but only at levels lower than the module. This must be done by the target extensions for which those providers are intended, and they are also responsible for creating the corresponding final injectors.
 
@@ -390,9 +394,9 @@ That is, here `Extension1` and `Extension2` effectively act as tokens (or identi
 
 ## Dynamic addition of providers {#dynamic-addition-of-providers}
 
-If you are using `@ditsmod/rest`, any extension can declare a dependency on the extension group with the `RestRouteExtension` token to dynamically add providers at any level. Extensions from this group use metadata with the `MetadataPerMod2` interface and return metadata with the `MetadataPerMod3` interface.
+If you are using `@ditsmod/rest`, any extension can declare a dependency on the `RestRouteExtension` to dynamically add providers at any level. This extension uses metadata with the `MetadataPerMod2` interface and returns metadata with the `MetadataPerMod3` interface.
 
-You can see how it is done in [BodyParserExtension][3]:
+You can see how it is done in [BodyParserExtension][102]:
 
 ```ts {13,31,38}
 import { Extension, ExtensionManager, PerAppService, injectable } from '@ditsmod/core';
@@ -442,9 +446,9 @@ export class BodyParserExtension implements Extension<void> {
 }
 ```
 
-In this case, an HTTP interceptor is added to the controller metadata in the `providersPerReq` or `providersPerRou` array (depending on the controller's operating mode). But before that, a [hierarchy of injectors][8] is created in order to get a certain configuration that tells us whether we need to add such an interceptor. If we didn't need to check any condition, we could avoid creating injector hierarchies and just add an interceptor at request level.
+In this case, an HTTP interceptor is added to the controller's metadata within the `providersPerReq` or `providersPerRou` array (depending on the controller's operating mode). Note that the [injector hierarchy][8] created here is used solely to resolve the value for the `BodyParserConfig` token, which determines whether the interceptor needs to be added. Afterward, these injectors are not passed anywhere else, meaning they are cleared from memory.
 
-Note that here a hierarchy of injectors is created, which are used only to obtain the value for the `BodyParserConfig` token. After that, these injectors are not passed anywhere else, i.e., they are removed from memory. And the injectors that contain providers collected from all extensions will be created later — in `PreRouterExtension`. That is why the `BodyParserModule` metadata specifies that `BodyParserExtension` should run after `RestRouteExtension`, but before `PreRouterExtension`:
+The actual injectors containing providers collected from all extensions will be created later—in `PreRouterExtension`. This is precisely why the `BodyParserModule` metadata specifies that `BodyParserExtension` must run after `RestRouteExtension` but before `PreRouterExtension`:
 
 ```ts {7-8}
 import { RestRouteExtension, PreRouterExtension } from '@ditsmod/rest';
@@ -461,13 +465,15 @@ extensions: [
 // ...
 ```
 
-[1]: https://github.com/ditsmod/ditsmod/tree/main/examples/00-standalone-application
 [2]: #group-of-extensions
-[3]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/body-parser/src/body-parser.extension.ts#L41
 [4]: /basic-components/dependency-injection/#injector-and-providers
-[5]: /rest-application/native-modules/body-parser
 [6]: /rest-application/native-modules/openapi
 [7]: #dynamic-addition-of-providers
 [8]: /basic-components/dependency-injection#hierarchy-of-injectors-in-the-ditsmod-application
 [10]: /rest-application/http-interceptors/
 [11]: /basic-components/dependency-injection/#provider
+
+[100]: https://nodejs.org/api/repl.html
+[101]: https://github.com/ditsmod/ditsmod/tree/main/examples/06-body-parser
+[102]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/body-parser/src/body-parser.extension.ts#L41
+[103]: https://github.com/ditsmod/ditsmod/tree/main/examples/00-standalone-application
