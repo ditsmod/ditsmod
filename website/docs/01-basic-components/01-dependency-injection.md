@@ -229,7 +229,7 @@ import { ValueProvider, ClassProvider, FactoryProvider, TokenProvider } from '@d
 
       export class ClassWithFactory {
         @factoryMethod()
-        method1(dependecy1: Dependecy1, dependecy2: Dependecy2) {
+        method1(Dependency1: Dependency1, dependecy2: Dependecy2) {
           // ...
           return '...';
         }
@@ -247,12 +247,12 @@ import { ValueProvider, ClassProvider, FactoryProvider, TokenProvider } from '@d
     - **FunctionFactoryProvider** передбачає, що до `useFactory` можна передавати функцію, яка може мати параметри - тобто може мати залежність. Цю залежність необхідно додатково вручну вказувати у властивості `deps` у вигляді масиву токенів, причому порядок передачі токенів важливий:
 
       ```ts {6}
-      function fn(dependecy1: Dependecy1, dependecy2: Dependecy2) {
+      function fn(Dependency1: Dependency1, dependecy2: Dependecy2) {
         // ...
         return 'some value';
       }
 
-      { token: 'token3', deps: [Dependecy1, Dependecy2], useFactory: fn }
+      { token: 'token3', deps: [Dependency1, Dependecy2], useFactory: fn }
       ```
 
       Зверніть увагу, що у властивість `deps` передаються саме _токени_ провайдерів, і DI їх сприймає саме як токени, а не як провайдери. Тобто для цих токенів, в масив провайдерів ще треба буде передати відповідні провайдери. Також зверніть увагу, що у `deps` не передаються [декоратори для параметрів][103] (наприклад `optional`, `skipSelf` і т.д.). Якщо для вашої фабрики необхідні декоратори параметрів - вам потрібно скористатись `ClassFactoryProvider`.
@@ -854,9 +854,51 @@ injector.setById(id, 'value1');
 
 Переваги використання методу `injector.setById()` в тому, що він швидший за метод `injector.setByToken()`, але лише при умові, якщо ви один раз отримуєте ID із `KeyRegistry`, а потім багато разів використовуєте `injector.setById()`.
 
-## Декоратори `optional`, `fromSelf` та `skipSelf` {#optional-fromSelf-skipSelf-decorators}
+## Декоратори для параметрів методів {#method-parameter-decorators}
 
-Ці декоратори використовуються для управління поведінкою інжектора під час пошуку значень для певного токена.
+Ці декоратори використовуються для управління поведінкою інжектора під час пошуку значень для певного токена. Найчастіше використовуються `inject` та `optional`, дуже рідко - `fromSelf` та `skipSelf`.
+
+### inject {#inject}
+
+Як раніше було сказано, декоратор `inject` дозволяє вказувати альтернативний токен у параметрах методів, і таким чином можна вказувати будь-які типи залежностей:
+
+```ts
+import { injectable, inject } from '@ditsmod/core';
+import { InterfaceOfItem } from './types.js';
+import { SOME_TOKEN } from './tokens.js';
+
+@injectable()
+export class Service1 {
+  constructor(@inject(SOME_TOKEN) private someArray: InterfaceOfItem[]) {}
+  // ...
+}
+```
+
+Окрім цього, другим аргументом в `inject` також можна передати контекстні дані:
+
+```ts {11}
+import { injectable, inject, CTX_DATA, Injector } from '@ditsmod/core';
+
+@injectable()
+class Dependency1 {
+  constructor(@inject(CTX_DATA) public contextParameter: string) {}
+}
+
+@injectable()
+class Service1 {
+  constructor(
+    @inject(Dependency1, 'some-context') public Dependency1: Dependency1,
+  ) {}
+}
+
+const injector = Injector.resolveAndCreate([Service1, Dependency1]);
+const targetClass = injector.get(Service1) as Service1;
+targetClass.Dependency1.contextParameter; // some-context
+```
+
+У цьому прикладі показано, що `Service1` залежить від `Dependency1`. Разом з тим, `Dependency1` у параметрах конструктора вказує залежність від провайдера з токеном `CTX_DATA`. Як говорить назва цього токена, від DI очікується отримання контекстних даних. Але звідки беруться ці контекстні дані? - Із контексту виклику самого `Dependency1`, тобто з конструктора `Service1`.
+
+Виходить що `Service1` намагається отримати інстанс `Dependency1` передаючи йому `some-context`.
 
 ### optional {#optional}
 
@@ -954,7 +996,7 @@ parent.get(Service2);
 
 [101]: ../../#installation
 [102]: #injector-and-providers
-[103]: #optional-fromSelf-skipSelf-decorators
+[103]: #method-parameter-decorators
 [104]: /basic-components/extensions/#group-of-extensions
 [105]: /rest-application/http-interceptors/
 [106]: /rest-application/guards/

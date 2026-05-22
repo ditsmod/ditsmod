@@ -229,7 +229,7 @@ More details about each of these types:
 
      export class ClassWithFactory {
        @factoryMethod()
-       method1(dependecy1: Dependecy1, dependecy2: Dependecy2) {
+       method1(Dependency1: Dependency1, dependecy2: Dependecy2) {
          // ...
          return '...';
        }
@@ -247,12 +247,12 @@ More details about each of these types:
    * **FunctionFactoryProvider** implies that a function can be passed to `useFactory`, which may have parameters — i.e., it may have dependencies. These dependencies must be explicitly specified in the `deps` property as an array of tokens, and the order of tokens is important:
 
      ```ts {6}
-     function fn(dependecy1: Dependecy1, dependecy2: Dependecy2) {
+     function fn(Dependency1: Dependency1, dependecy2: Dependecy2) {
        // ...
        return 'some value';
      }
 
-     { token: 'token3', deps: [Dependecy1, Dependecy2], useFactory: fn }
+     { token: 'token3', deps: [Dependency1, Dependecy2], useFactory: fn }
      ```
 
      Note that the `deps` property receives provider *tokens*, and DI treats them specifically as tokens, not as providers. That is, for these tokens, the corresponding providers still need to be passed in the providers array. Also note that [parameter decorators][103] (for example, `optional`, `skipSelf`, etc.) are not passed in `deps`. If your factory requires parameter decorators, you need to use `ClassFactoryProvider`.
@@ -441,7 +441,7 @@ parent.get(Service);
 
 As you can see, when the `Config` token is requested from the child injector, it returns the corresponding value, because during its creation it was provided with a provider for this token.
 
-It’s a different story with `Service`, which depends on `Config`. When the child injector was created, it was not provided with a provider for the `Service` token, so it cannot create an instance of `Service`, and therefore it has to fall back to the parent injector. At the same time, although the parent injector has a provider for the `Service` token, it does not have access to the child injector where `Config` is defined, so when calling `child.get(Service)`, it is actually the parent injector that will throw the error.
+It’s a different story with `Service`, which depends on `Config`. When the child injector is created without a provider for the `Service` token, it cannot instantiate `Service` itself and must delegate the request to the parent injector. However, even though the parent injector holds the provider for `Service`, it lacks access to the child injector where `Config` is defined. As a result, calling `child.get(Service)` causes the parent injector to throw the error.
 
 Pay attention to the `Resolution path` in the error message:
 
@@ -854,9 +854,51 @@ injector.setById(id, 'value1');
 
 The advantage of using the `injector.setById()` method is that it is faster than `injector.setByToken()`, but only if you get the ID from the `KeyRegistry` once and then call `injector.setById()` many times.
 
-## `optional`, `fromSelf` and `skipSelf` decorators {#optional-fromSelf-skipSelf-decorators}
+## Method Parameter Decorators {#method-parameter-decorators}
 
-These decorators are used to control the behavior of the injector when searching for values for a given token.
+These decorators are used to manage the behavior of the injector when looking up values for a specific token. The most commonly used are `inject` and `optional`, while `fromSelf` and `skipSelf` are used very rarely.
+
+### inject {#inject}
+
+As previously mentioned, the `inject` decorator allows you to specify an alternative token in method parameters, enabling you to pass any type of dependency:
+
+```ts
+import { injectable, inject } from '@ditsmod/core';
+import { InterfaceOfItem } from './types.js';
+import { SOME_TOKEN } from './tokens.js';
+
+@injectable()
+export class Service1 {
+  constructor(@inject(SOME_TOKEN) private someArray: InterfaceOfItem[]) {}
+  // ...
+}
+```
+
+In addition, you can pass contextual data as the second argument to `inject`:
+
+```ts {11}
+import { injectable, inject, CTX_DATA, Injector } from '@ditsmod/core';
+
+@injectable()
+class Dependency1 {
+  constructor(@inject(CTX_DATA) public contextParameter: string) {}
+}
+
+@injectable()
+class Service1 {
+  constructor(
+    @inject(Dependency1, 'some-context') public dependency1: Dependency1,
+  ) {}
+}
+
+const injector = Injector.resolveAndCreate([Service1, Dependency1]);
+const targetClass = injector.get(Service1) as Service1;
+targetClass.dependency1.contextParameter; // some-context
+```
+
+This example demonstrates that `Service1` depends on `Dependency1`. However, `Dependency1` in the constructor parameters indicates a dependency on a provider with the `CTX_DATA` token. As the name of this token suggests, the DI is expected to resolve contextual data. But where does this contextual data come from? It comes from the call context of `Dependency1` itself — meaning, from the constructor of `Service1`.
+
+Essentially, `Service1` attempts to resolve an instance of `Dependency1` by passing `some-context` to it.
 
 ### optional {#optional}
 
@@ -954,7 +996,7 @@ When creating the child injector, it was not passed `Service1`, but it can refer
 
 [101]: ../../#installation
 [102]: #injector-and-providers
-[103]: #optional-fromSelf-skipSelf-decorators
+[103]: #method-parameter-decorators
 [104]: /basic-components/extensions/#group-of-extensions
 [105]: /rest-application/http-interceptors/
 [106]: /rest-application/guards/
