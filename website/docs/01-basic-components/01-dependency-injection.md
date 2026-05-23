@@ -208,7 +208,7 @@ import { ValueProvider, ClassProvider, FactoryProvider, TokenProvider } from '@d
 
 Більш детально про кожен із цих типів:
 
-1. **ValueProvider** - цей тип провайдера має властивість `useValue`, в яку передається будь-яке значення, окрім `undefined`, і значення якого буде використано як значення даного провайдера. Приклад такого провайдера:
+1. **ValueProvider** - цей тип провайдера має властивість `useValue`, в яку передається будь-яке значення, і значення якого буде використано як значення даного провайдера. Приклад такого провайдера:
 
     ```ts
     { token: 'token1', useValue: 'some value' }
@@ -242,7 +242,7 @@ import { ValueProvider, ClassProvider, FactoryProvider, TokenProvider } from '@d
       { token: 'token3', useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] }
       ```
 
-      Спочатку DI створить інстанс цього класу, потім викличе його метод та отримає результат, який вже і буде значенням даного провайдера. Метод указаного класу може повертати будь-яке значення, окрім `undefined`.
+      Спочатку DI створить інстанс цього класу, потім викличе його метод та отримає результат, який вже і буде значенням даного провайдера. Метод указаного класу може повертати будь-яке значення.
 
     - **FunctionFactoryProvider** передбачає, що до `useFactory` можна передавати функцію, яка може мати параметри - тобто може мати залежність. Цю залежність необхідно додатково вручну вказувати у властивості `deps` у вигляді масиву токенів, причому порядок передачі токенів важливий:
 
@@ -892,8 +892,8 @@ class Service1 {
 }
 
 const injector = Injector.resolveAndCreate([Service1, Dependency1]);
-const targetClass = injector.get(Service1) as Service1;
-targetClass.Dependency1.contextParameter; // some-context
+const service1 = injector.get(Service1) as Service1;
+service1.Dependency1.contextParameter; // some-context
 ```
 
 У цьому прикладі показано, що `Service1` залежить від `Dependency1`. Разом з тим, `Dependency1` у параметрах конструктора вказує залежність від провайдера з токеном `CTX_DATA`. Як говорить назва цього токена, від DI очікується отримання контекстних даних. Але звідки беруться ці контекстні дані? - Із контексту виклику самого `Dependency1`, тобто з конструктора `Service1`.

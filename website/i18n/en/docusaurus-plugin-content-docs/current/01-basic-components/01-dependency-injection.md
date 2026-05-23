@@ -208,7 +208,7 @@ import { ValueProvider, ClassProvider, FactoryProvider, TokenProvider } from '@d
 
 More details about each of these types:
 
-1. **ValueProvider** – this type of provider has a `useValue` property, to which any value except `undefined` is passed, and whose value will be used as the value of this provider. An example of such a provider:
+1. **ValueProvider** – this type of provider has a `useValue` property, to which any value is passed, and whose value will be used as the value of this provider. An example of such a provider:
 
    ```ts
    { token: 'token1', useValue: 'some value' }
@@ -242,7 +242,7 @@ More details about each of these types:
      { token: 'token3', useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] }
      ```
 
-     First, DI will create an instance of this class, then call its method and obtain the result, which will then be the value of this provider. The method of the specified class can return any value except `undefined`.
+     First, DI will create an instance of this class, then call its method and obtain the result, which will then be the value of this provider. The method of the specified class can return any value.
 
    * **FunctionFactoryProvider** implies that a function can be passed to `useFactory`, which may have parameters — i.e., it may have dependencies. These dependencies must be explicitly specified in the `deps` property as an array of tokens, and the order of tokens is important:
 
@@ -892,8 +892,8 @@ class Service1 {
 }
 
 const injector = Injector.resolveAndCreate([Service1, Dependency1]);
-const targetClass = injector.get(Service1) as Service1;
-targetClass.dependency1.contextParameter; // some-context
+const service1 = injector.get(Service1) as Service1;
+service1.dependency1.contextParameter; // some-context
 ```
 
 This example demonstrates that `Service1` depends on `Dependency1`. However, `Dependency1` in the constructor parameters indicates a dependency on a provider with the `CTX_DATA` token. As the name of this token suggests, the DI is expected to resolve contextual data. But where does this contextual data come from? It comes from the call context of `Dependency1` itself — meaning, from the constructor of `Service1`.
