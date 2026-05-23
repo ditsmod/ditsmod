@@ -226,19 +226,48 @@ describe('injector', () => {
       const injector = Injector.resolveAndCreate([Engine, Car]);
       expect(injector.pull(Car)).toBeInstanceOf(Car);
       expect(injector.pull(Car).engine).toBeInstanceOf(Engine);
-      expect(injector.pull(Car) === injector.pull(Car)).toBe(true);
-      expect(injector.pull(Car) === injector.get(Car)).toBe(true);
-      expect(injector.pull(Car).engine === injector.pull(Car).engine).toBe(true);
+      expect(injector.pull(Car)).toBe(injector.pull(Car)); // From cache
+      expect(injector.pull(Car)).toBe(injector.get(Car)); // From cache
+      expect(injector.pull(Car).engine).toBe(injector.pull(Car).engine); // From cache
     });
 
     it('child injector pull provider from parent injector, and instatiate it', () => {
-      const parent = Injector.resolveAndCreate([Car]);
-      const child = parent.resolveAndCreateChild([Engine]);
+      const parent = Injector.resolveAndCreate([Car], 'parent');
+      const child = parent.resolveAndCreateChild([Engine], 'child');
       const pathTracer = new PathTracer();
-      pathTracer.addItem(Car, parent).addItem(Car, child).addItem(Engine, child);
-      expect(() => child.get(Car)).toThrow(new NoProvider(pathTracer.path));
+      pathTracer.addItem(Car, child).addItem(Car, parent).addItem(Engine, parent);
+      const err = new NoProvider(pathTracer.path);
+      expect(() => child.get(Car)).toThrow(err);
       expect(child.pull(Car)).toBeInstanceOf(Car);
       expect(child.pull(Car).engine).toBeInstanceOf(Engine);
+      expect(() => child.get(Car)).toThrow(err); // No cache
+      expect(child.pull(Car)).not.toBe(child.pull(Car)); // No cache
+    });
+
+    it('when Service3 taken from parent, can walk this way: [Service3 in child] -> [Service2 in child] -> [Service1 in child >> parent]', () => {
+      class Service1 {}
+      @injectable()
+      class Service2 {
+        constructor(public service1: Service1) {}
+      }
+      @injectable()
+      class Service3 {
+        constructor(public service2: Service2) {}
+      }
+      const parent = Injector.resolveAndCreate([Service3, Service1], 'parent');
+      const child = parent.resolveAndCreateChild([Service2], 'child');
+      const pathTracer = new PathTracer();
+      pathTracer.addItem(Service3, child).addItem(Service3, parent).addItem(Service2, parent);
+      const err = new NoProvider(pathTracer.path);
+      expect(() => child.get(Service3)).toThrow(err);
+      const service3 = child.pull(Service3) as Service3;
+      expect(service3).toBeInstanceOf(Service3);
+      expect(service3.service2).toBeInstanceOf(Service2);
+      expect(service3.service2.service1).toBeInstanceOf(Service1);
+      expect(() => child.get(Service3)).toThrow(err); // No cache for target token
+      expect(service3).not.toBe(child.pull(Service3)); // No cache for target token
+      expect(child.get(Service2)).toBe(service3.service2); // Dependency from cache
+      expect(parent.get(Service1)).toBe(service3.service2.service1); // Dependency from cache
     });
 
     it('allow default value', () => {
@@ -1263,31 +1292,30 @@ describe("null as provider's value", () => {
   });
 
   it('@skipSelf() should cause return value from parent', () => {
-    const token = new InjectionToken('token');
+    class Service1 {}
     @injectable()
-    class A {
-      constructor(@inject(token) @skipSelf() public a: string) {}
+    class Service2 {
+      constructor(@skipSelf() public service1: Service1) {}
     }
-    const parent = Injector.resolveAndCreate([{ token, useValue: "parent's value" }]);
-    const child = parent.resolveAndCreateChild([A, { token, useValue: "child's value" }]);
-    expect(() => {
-      const value = child.get(A) as A;
-      expect(value).toBeInstanceOf(A);
-      expect(value.a).toBe("parent's value");
-    }).not.toThrow();
+    const parent = Injector.resolveAndCreate([{ token: Service1, useValue: 'parent value' }], 'parent');
+    const child = parent.resolveAndCreateChild([Service1, Service2], 'child');
+    expect(() => child.get(Service2)).not.toThrow();
+    const value = child.get(Service2) as Service2;
+    expect(value).toBeInstanceOf(Service2);
+    expect(value.service1).toBe('parent value');
   });
 
   it('@skipSelf() should throw', () => {
-    const token = new InjectionToken('token');
+    class Service1 {}
     @injectable()
-    class A {
-      constructor(@inject(token) @skipSelf() public a: string) {}
+    class Service2 {
+      constructor(@inject(Service1) @skipSelf() public service1: string) {}
     }
-    const parent = Injector.resolveAndCreate([]);
-    const child = parent.resolveAndCreateChild([A, { token, useValue: "child's value" }]);
+    const parent = Injector.resolveAndCreate([], 'parent');
+    const child = parent.resolveAndCreateChild([Service1, Service2], 'child');
     const pathTracer = new PathTracer();
-    pathTracer.addItem(A, child).addItem(token, parent);
-    expect(() => child.get(A)).toThrow(new NoProvider(pathTracer.path));
+    pathTracer.addItem(Service2, child).addItem(Service1, parent);
+    expect(() => child.get(Service2)).toThrow(new NoProvider(pathTracer.path));
   });
 
   it('should throw with properly printed injector chain', () => {
