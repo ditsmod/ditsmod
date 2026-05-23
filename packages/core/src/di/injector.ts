@@ -14,17 +14,10 @@ import {
 } from './errors.js';
 import { type ForwardRefFn, resolveForwardRef } from './forward-ref.js';
 import type { InjectionToken } from './top/injection-token.js';
-import type { DualKey} from './key-registry.js';
+import type { DualKey } from './key-registry.js';
 import { KeyRegistry } from './key-registry.js';
 import { Reflector } from './reflector.js';
-import type {
-  Class,
-  NormalizedProvider,
-  ParamsMeta,
-  Provider,
-  Visibility,
-  CompareFn,
-} from './top/types-and-models.js';
+import type { Class, NormalizedProvider, ParamsMeta, Provider, Visibility, CompareFn } from './top/types-and-models.js';
 import { Dependency } from './top/types-and-models.js';
 import { CTX_DATA } from './top/constants.js';
 import {
@@ -678,7 +671,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
 
         // This is an alternative to the "instanceof ResolvedProvider" expression.
         if (meta?.[ID]) {
-          const value = injector.instantiateResolved(meta, pathTracer, undefined, compareFn);
+          const value = injector._instantiateResolved(meta, undefined, compareFn, pathTracer);
           return (injector.#registry[dualKey.id] = value);
         } else if (meta !== undefined || injector.hasId(dualKey.id)) {
           // Here "meta" - is a value for provider that has given `token`.
@@ -689,7 +682,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
       } else {
         const resolvedProvider = this.getResolvedProvider(this, dualKey);
         if (resolvedProvider) {
-          return this.instantiateResolved(resolvedProvider, new PathTracer(), ctx, compareFn);
+          return this._instantiateResolved(resolvedProvider, ctx, compareFn, new PathTracer());
         }
       }
     }
@@ -723,12 +716,18 @@ const car = injector.instantiateResolved(carProvider);
 expect(car.engine).toBe(injector.get(Engine));
 expect(car).not.toBe(injector.instantiateResolved(carProvider));
 ```
+   *
+   * @param ctx The context with which this provider should be resolved.
    */
-  instantiateResolved<T = any>(
+  instantiateResolved<T = any>(provider: ResolvedProvider, ctx?: NonNullable<unknown>): T {
+    return this._instantiateResolved(provider, ctx);
+  }
+
+  protected _instantiateResolved<T = any>(
     provider: ResolvedProvider,
-    pathTracer: PathTracer = new PathTracer(),
     ctx?: NonNullable<unknown>,
     compareFn?: CompareFn,
+    pathTracer: PathTracer = new PathTracer(),
   ): T {
     if (provider.multi) {
       let resolvedFactories: ResolvedFactory[];
@@ -819,7 +818,7 @@ child.pull(Service).config; // pulls Service in current injector: { one: 11, two
 
     // This is an alternative to the "instanceof ResolvedProvider" expression.
     if (meta?.[ID]) {
-      const value = this.instantiateResolved(meta, pathTracer);
+      const value = this._instantiateResolved(meta, undefined, undefined, pathTracer);
       return (this.#registry[dualKey.id] = value);
     } else if (meta !== undefined || this.hasId(dualKey.id)) {
       // Here "meta" - is a value for provider that has given `token`.
@@ -829,7 +828,7 @@ child.pull(Service).config; // pulls Service in current injector: { one: 11, two
     if (this.parent) {
       const resolvedProvider = this.getResolvedProvider(this.parent, dualKey);
       if (resolvedProvider) {
-        return this.instantiateResolved(resolvedProvider, pathTracer);
+        return this._instantiateResolved(resolvedProvider, undefined, undefined, pathTracer);
       }
     }
     if (defaultValue === NoDefaultValue) {

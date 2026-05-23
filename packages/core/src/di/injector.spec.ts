@@ -644,7 +644,7 @@ describe('injector', () => {
   });
 
   describe('@inject(token, ctx)', () => {
-    it('first dependency', () => {
+    it('dependency with context in first parameter', () => {
       @injectable()
       class Dependecy1 {
         constructor(@inject(CTX_DATA) public contextParameter: string) {}
@@ -668,7 +668,7 @@ describe('injector', () => {
       expect(targetClass.dependecy2).toBe(targetClass.dependecy3);
     });
 
-    it('second dependency', () => {
+    it('dependency with context in second parameter', () => {
       @injectable()
       class Dependecy1 {
         constructor(@inject(CTX_DATA) public contextParameter: string) {}
@@ -692,7 +692,7 @@ describe('injector', () => {
       expect(targetClass.dependecy3).toBe(targetClass.dependecy1);
     });
 
-    it('dependencies in several contexts', () => {
+    it('dependencies with context in several parameters', () => {
       @injectable()
       class Dependecy1 {
         constructor(@inject(CTX_DATA) public contextParameter: string) {}
@@ -1022,10 +1022,10 @@ describe('resolveAndInstantiate', () => {
 describe('instantiateResolved', () => {
   it('should instantiate an object in the context of the injector', () => {
     const injector = Injector.resolveAndCreate([Engine]);
-    const map = Injector.resolve([Car]);
-    const resolvedProvider = Array.from(map.values())[0];
+    const resolvedProvider = Injector.resolve([Car])[0];
     const car = injector.instantiateResolved(resolvedProvider);
     expect(car).toBeInstanceOf(Car);
+    expect(car).not.toBe(injector.instantiateResolved(resolvedProvider)); // No cache
     expect(car.engine).toBe(injector.get(Engine));
   });
 });
@@ -1096,11 +1096,11 @@ describe('resolve', () => {
   });
 
   it('should support multi providers', () => {
-    const map = Injector.resolve([
+    const arr = Injector.resolve([
       { token: Engine, useClass: BrokenEngine, multi: true },
       { token: Engine, useClass: TurboEngine, multi: true },
     ]);
-    const resolvedProvider = Array.from(map.values())[0];
+    const resolvedProvider = arr[0];
 
     expect(resolvedProvider.dualKey.token).toBe(Engine);
     expect(resolvedProvider.multi).toEqual(true);
@@ -1108,11 +1108,11 @@ describe('resolve', () => {
   });
 
   it('should support providers as hash', () => {
-    const map = Injector.resolve([
+    const arr = Injector.resolve([
       { token: Engine, useClass: BrokenEngine, multi: true },
       { token: Engine, useClass: TurboEngine, multi: true },
     ]);
-    const resolvedProvider = Array.from(map.values())[0];
+    const resolvedProvider = arr[0];
 
     expect(resolvedProvider.dualKey.token).toBe(Engine);
     expect(resolvedProvider.multi).toEqual(true);
@@ -1120,8 +1120,8 @@ describe('resolve', () => {
   });
 
   it('should support multi providers with only one provider', () => {
-    const map = Injector.resolve([{ token: Engine, useClass: BrokenEngine, multi: true }]);
-    const resolvedProvider = Array.from(map.values())[0];
+    const arr = Injector.resolve([{ token: Engine, useClass: BrokenEngine, multi: true }]);
+    const resolvedProvider = arr[0];
 
     expect(resolvedProvider.dualKey.token).toBe(Engine);
     expect(resolvedProvider.multi).toEqual(true);
@@ -1145,12 +1145,11 @@ describe('resolve', () => {
         return 'OK';
       }
     }
-    const map = Injector.resolve([
+    const resolvedProviders = Injector.resolve([
       forwardRef(() => Engine),
       { token: forwardRef(() => BrokenEngine), useClass: forwardRef(() => Engine) },
       { token: forwardRef(() => String), useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
     ]);
-    const resolvedProviders = Array.from(map.values());
 
     const engineProvider = resolvedProviders[0];
     const brokenEngineProvider = resolvedProviders[1];
@@ -1160,7 +1159,7 @@ describe('resolve', () => {
     expect(brokenEngineProvider.resolvedFactories[0].factory() instanceof Engine).toBe(true);
     expect(stringProvider.resolvedFactories[0].dependencies[0].dualKey.token).toEqual(Engine);
 
-    const injector = Injector.fromResolvedProviders(map);
+    const injector = Injector.fromResolvedProviders(resolvedProviders);
     expect(() => injector.get(Engine)).not.toThrow();
     expect(() => injector.get(BrokenEngine)).not.toThrow();
     expect(() => injector.get(String)).not.toThrow();
@@ -1180,15 +1179,14 @@ describe('resolve', () => {
     }
 
     const useValue = "It's works!";
-    const map = Injector.resolve([
+    const resolvedProviders = Injector.resolve([
       { token: factoryToken, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
       { token: valueToken, useValue },
     ]);
-    const resolvedProviders = Array.from(map.values());
     const resolvedProvider = resolvedProviders[0];
 
     expect(resolvedProvider.resolvedFactories[0].dependencies[0].dualKey.token).toEqual(valueToken);
-    const injector = Injector.fromResolvedProviders(map);
+    const injector = Injector.fromResolvedProviders(resolvedProviders);
     expect(injector.get(factoryToken)).toBe(useValue);
   });
 });
