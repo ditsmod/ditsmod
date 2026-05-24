@@ -585,9 +585,9 @@ expect(car.engine).toBe(injector.get(Engine));
 expect(car).not.toBe(injector.resolveAndInstantiate(Car));
 ```
    */
-  resolveAndInstantiate(provider: Provider): any {
+  resolveAndInstantiate(provider: Provider, ctx?: NonNullable<unknown>): any {
     const resolvedProvider = Injector.resolve([provider])[0];
-    return this.instantiateResolved(resolvedProvider);
+    return this.instantiateResolved(resolvedProvider, ctx);
   }
 
   /**
