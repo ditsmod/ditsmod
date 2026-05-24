@@ -1,10 +1,8 @@
-import { InjectionToken } from './injection-token.js';
-
 /**
  * You do not need to pass a value for this token to DI, as it is generated automatically.
  * If you try to pass a value for this token to DI, it will be ignored.
  */
-export const CTX_DATA = new InjectionToken('CTX_DATA');
+export const CTX_DATA = Symbol('CTX_DATA');
 
 /**
  * The key used to store metadata of a class.
@@ -35,4 +33,3 @@ export const DEPS_KEY = Symbol();
  * The key used to store registry of props where are params with metadata.
  */
 export const METHODS_WITH_PARAMS = Symbol();
-

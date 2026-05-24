@@ -9,7 +9,7 @@ import type { MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import type { Level, ModRefId, AnyObj } from '#types/mix.js';
 import type { AnyFn, Provider } from '#di/top/types-and-models.js';
 import type { BaseMeta } from '#init/base-meta.js';
-import type { ReflectiveDependency} from '#utils/get-dependencies.js';
+import type { ReflectiveDependency } from '#utils/get-dependencies.js';
 import { getDependencies } from '#utils/get-dependencies.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
 import { getProviderName } from '#utils/get-provider-name.js';
@@ -20,6 +20,8 @@ import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { ProvidersOnly } from '#types/providers-metadata.js';
 import { CircularDepsInImports, NoProviderDuringResolveImports, FailImportProviders } from '#errors';
 import { ModuleExtract } from '#types/module-extract.js';
+import { stringify } from '#di/stringify.js';
+import { injCtx } from '#di/decorators.js';
 
 /**
  * By analyzing the dependencies of the providers returned by `ShallowModulesImporter`,
@@ -126,7 +128,11 @@ export class DeepModulesImporter {
   protected resolveProvidersForExtensions(targetProviders: BaseMeta, baseImportRegistry: BaseImportRegistry) {
     const currentExtensionsProviders: any[] = [];
     baseImportRegistry.extensionProviders.forEach((p) => currentExtensionsProviders.push(...p));
-    this.extensionsTokens = getTokens([...defaultExtensionProviders, ...currentExtensionsProviders]);
+    this.extensionsTokens = getTokens([
+      ...defaultExtensionProviders,
+      ...currentExtensionsProviders,
+      injCtx,
+    ]);
     baseImportRegistry.extensionGroupTokens.forEach((importedGroupTokens) => {
       importedGroupTokens.forEach((groupToken, ext) => {
         this.extensionsTokens.push(groupToken, ext);
@@ -381,7 +387,7 @@ export class DeepModulesImporter {
   throwError(baseMeta: BaseMeta, provider: Provider, path: any[], token: any, levels: string[]) {
     path = [provider, ...path, token];
     const strPath = getTokens(path)
-      .map((t) => t.name || t)
+      .map((t) => stringify(t.name || t))
       .join(' -> ');
 
     const levelsPath = levels

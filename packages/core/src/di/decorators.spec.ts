@@ -1,6 +1,8 @@
 import { Reflector } from './reflector.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
 import { CLASS_KEY } from './top/constants.js';
+import { injCtx } from './decorators.js';
+import { Injector } from './injector.js';
 
 class DecoratedParent {}
 class DecoratedChild extends DecoratedParent {}
@@ -20,6 +22,22 @@ describe('Property decorators', () => {
     const p = Reflector.getMetadata(TestClass)!;
     expect(p.watch.type).toBe(Object);
     expect(p.watch.decorators).toEqual([new DecoratorAndValue(prop, 'firefox!')]);
+  });
+
+  it('should work on the "watch" property', () => {
+    class Service1 {
+      method1(@injCtx('token1') param1: any, @injCtx('token3') param2: any) {
+        return { param1, param2 };
+      }
+    }
+
+    const injector = Injector.resolveAndCreate([
+      { token: 'token2', useFactory: [Service1, Service1.prototype.method1] },
+    ]);
+
+    injector.setCtx('token1', 'ok1');
+    injector.setCtx('token3', 'ok2');
+    expect(injector.get('token2')).toEqual({ param1: 'ok1', param2: 'ok2' });
   });
 
   // it('should work with any default plain values', () => {

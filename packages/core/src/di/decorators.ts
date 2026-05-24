@@ -53,6 +53,15 @@ export interface InjectTransformResult {
 }
 
 /**
+ * 
+ */
+export const injCtx = Reflector.makeParamDecorator(
+  (token: any) => ({ token: injCtx, ctx: token }) satisfies InjectTransformResult,
+  'injCtx',
+  inject,
+);
+
+/**
  * A parameter metadata that marks a dependency as optional.
  * `Injector` provides `null` if the dependency is not found.
  *

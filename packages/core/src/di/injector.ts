@@ -1,5 +1,5 @@
 import type { AnyFn } from './top/types-and-models.js';
-import { fromSelf, inject, type InjectTransformResult, optional, skipSelf } from './decorators.js';
+import { fromSelf, injCtx, inject, type InjectTransformResult, optional, skipSelf } from './decorators.js';
 import {
   FailedCreateFactoryProvider,
   InstantiationError,
@@ -10,7 +10,6 @@ import {
   CannotFindFactoryAsMethod,
   CannotFindMethodInClass,
   SettingValueByIdFailed,
-  SettingValueByTokenFailed,
 } from './errors.js';
 import { type ForwardRefFn, resolveForwardRef } from './forward-ref.js';
 import type { InjectionToken } from './top/injection-token.js';
@@ -39,7 +38,7 @@ import {
   isValueProvider,
   type MultiProvider,
 } from './utils.js';
-import { DEBUG_NAME, stringify } from './stringify.js';
+import { DEBUG_NAME } from './stringify.js';
 
 export type LevelOfInjector = 'App' | 'Mod' | 'Rou' | 'Req' | (string & {});
 
@@ -83,6 +82,7 @@ export class Injector {
   #registry: RegistryOfInjector;
   #Registry: typeof RegistryOfInjector;
   #level?: LevelOfInjector;
+  #ctx = new Map<any, any>();
 
   get level() {
     return this.#level;
@@ -518,19 +518,19 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
   }
 
   /**
-   * Sets value in injector registry by its token.
-   *
-   * @param value New value for this ID.
+   * Sets contextual data.
    */
-  setByToken(token: NonNullable<unknown>, value: any, force?: boolean) {
-    const { id } = KeyRegistry.get(token);
-    if (force || this.hasId(id)) {
-      this.#registry[id] = value;
-      return this;
-    }
+  setCtx(token: NonNullable<unknown>, value: any) {
+    this.#ctx.set(token, value);
+    return this;
+  }
 
-    const displayToken = stringify(token);
-    throw new SettingValueByTokenFailed(displayToken, this.#level);
+  hasCtx(token: NonNullable<unknown>) {
+    return this.#ctx.has(token);
+  }
+
+  getCtx(token: NonNullable<unknown>) {
+    return this.#getCtxValue(token);
   }
 
   /**
@@ -551,14 +551,6 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
       }
       externalInj.setById(id, val);
     }
-  }
-
-  clear(): void {
-    this.#Registry = undefined as any;
-    this.#registry = undefined as any;
-    this.#parent = undefined as any;
-    this.#level = undefined;
-    this.setParentGetter(() => this.#parent);
   }
 
   /**
@@ -746,6 +738,14 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     }
   }
 
+  #getCtxValue(token: any): any {
+    if (this.#ctx.has(token)) {
+      return this.#ctx.get(token);
+    } else if (this.#parent) {
+      return this.#parent.#getCtxValue(token);
+    }
+  }
+
   protected instantiate(
     token: any,
     pathTracer: PathTracer,
@@ -753,9 +753,8 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     ctx?: NonNullable<unknown>,
   ): any {
     const deps = resolvedFactory.dependencies.map((dep) => {
-      if (dep.dualKey.token === CTX_DATA) {
-        return ctx;
-      }
+      if (dep.dualKey.token === CTX_DATA) return ctx;
+      if (dep.dualKey.token === injCtx) return this.#getCtxValue(dep.ctx);
       const result = this.selectInjectorAndGet(
         dep.dualKey,
         pathTracer,
@@ -879,7 +878,7 @@ child.get(Service).config; // now returns: { one: 11, two: 22 }
   pullAndSave(token: NonNullable<unknown>, defaultValue?: any): any;
   pullAndSave(token: NonNullable<unknown>, defaultValue: any = NoDefaultValue): any {
     const value = this.pull(token, defaultValue);
-    this.setByToken(token, value, true);
+    this.setCtx(token, value);
     return value;
   }
 

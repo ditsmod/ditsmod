@@ -1,3 +1,4 @@
+import { stringify } from '#di/stringify.js';
 import { CustomError } from './custom-error.js';
 
 /**
@@ -489,7 +490,7 @@ export class FailImportProviders extends CustomError {
 export class NoProviderDuringResolveImports extends CustomError {
   constructor(moduleName: string, tokenName: string, partMsg: string) {
     super({
-      msg1: `Dependency resolution failed in ${moduleName}: no provider for ${tokenName}! ${partMsg}.`,
+      msg1: `Dependency resolution failed in ${moduleName}: no provider for ${stringify(tokenName)}! ${partMsg}.`,
       level: 'fatal',
     });
   }
