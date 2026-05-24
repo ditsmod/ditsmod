@@ -9,7 +9,6 @@ import {
   KeyRegistry,
   Provider,
   DepsChecker,
-  CTX_DATA,
   SystemLogMediator,
   fromSelf,
   ResolvedProvider,
@@ -17,6 +16,8 @@ import {
   ModuleManager,
   ClassFactoryProvider,
   getToken,
+  dkrCtx,
+  injCtx,
 } from '@ditsmod/core';
 import { inspect } from 'node:util';
 import type { AnyMiddlewareFunction } from '@trpc/server';
@@ -252,7 +253,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
    */
   protected checkDeps(inj: Injector, routeMeta: TrpcRouteMeta, controllerName: string) {
     try {
-      const ignoreDeps: any[] = [TRPC_HTTP_INTERCEPTORS, CTX_DATA, TrpcRouteService];
+      const ignoreDeps: any[] = [TRPC_HTTP_INTERCEPTORS, dkrCtx, injCtx, TrpcRouteService];
       DepsChecker.check(inj, HttpErrorHandler, undefined, ignoreDeps);
       DepsChecker.check(inj, TrpcChainMaker, undefined, ignoreDeps);
       DepsChecker.check(inj, TrpcHttpFrontend, undefined, ignoreDeps);

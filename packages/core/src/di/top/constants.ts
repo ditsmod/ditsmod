@@ -1,10 +1,4 @@
 /**
- * You do not need to pass a value for this token to DI, as it is generated automatically.
- * If you try to pass a value for this token to DI, it will be ignored.
- */
-export const CTX_DATA = Symbol('CTX_DATA');
-
-/**
  * The key used to store metadata of a class.
  * This metadata is taken from the class-level decorator.
  */

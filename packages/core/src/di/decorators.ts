@@ -1,3 +1,4 @@
+import { forwardRef } from './forward-ref.js';
 import { Reflector } from './reflector.js';
 
 /**
@@ -53,7 +54,15 @@ export interface InjectTransformResult {
 }
 
 /**
- * 
+ * Decorator context.
+ */
+export const dkrCtx = Reflector.makeParamDecorator(
+  () => ({ token: forwardRef(() => dkrCtx) }) satisfies InjectTransformResult,
+  'dkrCtx',
+  inject,
+)();
+/**
+ * Injector context.
  */
 export const injCtx = Reflector.makeParamDecorator(
   (token: any) => ({ token: injCtx, ctx: token }) satisfies InjectTransformResult,

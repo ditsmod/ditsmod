@@ -39,7 +39,6 @@ export {
   isInjectionToken,
   MultiProvider,
 } from '#di/utils.js';
-export { CTX_DATA } from '#di/top/constants.js';
 export { DepsChecker } from '#di/deps-checker.js';
 export { RegistryOfInjector, ResolvedFactory, ResolvedProvider } from '#di/top/resolved-provider.js';
 export { DecoratorAndValue } from '#di/top/decorator-and-value.js';

@@ -42,5 +42,4 @@ export {
 } from './utils.js';
 export { DepsChecker } from './deps-checker.js';
 export { DecoratorAndValue } from './top/decorator-and-value.js';
-export { CTX_DATA } from './top/constants.js';
 export { RegistryOfInjector, ResolvedFactory, ResolvedProvider } from './top/resolved-provider.js';

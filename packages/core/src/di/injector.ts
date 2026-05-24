@@ -1,5 +1,5 @@
 import type { AnyFn } from './top/types-and-models.js';
-import { fromSelf, injCtx, inject, type InjectTransformResult, optional, skipSelf } from './decorators.js';
+import { dkrCtx, fromSelf, injCtx, inject, type InjectTransformResult, optional, skipSelf } from './decorators.js';
 import {
   FailedCreateFactoryProvider,
   InstantiationError,
@@ -18,7 +18,6 @@ import { KeyRegistry } from './key-registry.js';
 import { Reflector } from './reflector.js';
 import type { Class, NormalizedProvider, ParamsMeta, Provider, Visibility, CompareFn } from './top/types-and-models.js';
 import { Dependency } from './top/types-and-models.js';
-import { CTX_DATA } from './top/constants.js';
 import {
   type RegistryOfInjector,
   ID,
@@ -753,7 +752,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     ctx?: NonNullable<unknown>,
   ): any {
     const deps = resolvedFactory.dependencies.map((dep) => {
-      if (dep.dualKey.token === CTX_DATA) return ctx;
+      if (dep.dualKey.token === dkrCtx) return ctx;
       if (dep.dualKey.token === injCtx) return this.#getCtxValue(dep.ctx);
       const result = this.selectInjectorAndGet(
         dep.dualKey,
