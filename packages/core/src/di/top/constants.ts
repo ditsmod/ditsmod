@@ -1,5 +1,9 @@
 import { InjectionToken } from './injection-token.js';
 
+/**
+ * You do not need to pass a value for this token to DI, as it is generated automatically.
+ * If you try to pass a value for this token to DI, it will be ignored.
+ */
 export const CTX_DATA = new InjectionToken('CTX_DATA');
 
 /**

@@ -898,7 +898,7 @@ service1.dependency1.contextParameter; // some-context
 
 This example demonstrates that `Service1` depends on `Dependency1`. However, `Dependency1` in the constructor parameters indicates a dependency on a provider with the `CTX_DATA` token. As the name of this token suggests, the DI is expected to resolve contextual data. But where does this contextual data come from? It comes from the call context of `Dependency1` itself — meaning, from the constructor of `Service1`.
 
-Essentially, `Service1` attempts to resolve an instance of `Dependency1` by passing `some-context` to it.
+Essentially, `Service1` attempts to resolve an instance of `Dependency1` by passing `some-context` to it. In such cases, the injector does not create a cache.
 
 ### optional {#optional}
 
