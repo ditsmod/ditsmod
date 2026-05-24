@@ -22,7 +22,7 @@ export class BearerGuard implements CanActivate {
      */
     const token = authValue[1];
     const session = await this.authService.getSession(token);
-    this.injector.setByToken(SESSION, session);
+    this.injector.setCtx(SESSION, session);
     return Boolean(token);
   }
 }

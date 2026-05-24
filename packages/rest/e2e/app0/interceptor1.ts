@@ -11,7 +11,7 @@ export class Interceptor1 implements HttpInterceptor {
     if (ctx.scope == 'ctx') {
       (ctx as RequestContext & { msg: string }).msg = 'ok';
     } else {
-      this.injector.setByToken('msg', 'ok');
+      this.injector.setCtx('msg', 'ok');
     }
 
     return next.handle();

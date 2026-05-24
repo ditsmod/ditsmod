@@ -13,12 +13,12 @@ export class DefaultHttpFrontend extends DefaultCtxHttpFrontend {
 
   override before(ctx: RequestContext) {
     if (ctx.queryString) {
-      this.injector.setByToken(QUERY_PARAMS, parse(ctx.queryString));
+      this.injector.setCtx(QUERY_PARAMS, parse(ctx.queryString));
     }
     if (ctx.aPathParams?.length) {
       const pathParams: AnyObj = {};
       ctx.aPathParams.forEach((param) => (pathParams[param.key] = param.value));
-      this.injector.setByToken(PATH_PARAMS, pathParams);
+      this.injector.setCtx(PATH_PARAMS, pathParams);
     }
     return this;
   }

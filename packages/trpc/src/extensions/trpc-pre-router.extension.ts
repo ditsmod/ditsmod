@@ -219,9 +219,6 @@ export class TrpcPreRouterExtension implements Extension<void> {
       .concat(resolvedPerRou)
       .find((rp) => rp.dualKey.token === HttpErrorHandler)!;
     const RegistryPerReq = Injector.prepareRegistry(resolvedPerReq);
-    const optsId = KeyRegistry.get(TRPC_OPTS).id;
-    const rawReqId = KeyRegistry.get(RAW_REQ).id;
-    const rawResId = KeyRegistry.get(RAW_RES).id;
 
     const handlerPerReq = async (opts: TrpcOpts<any, any>) => {
       const rawReq: RawRequest = opts.ctx.req;
@@ -229,9 +226,9 @@ export class TrpcPreRouterExtension implements Extension<void> {
       const injector = new Injector(RegistryPerReq, 'Req', injectorPerRou);
       return (
         injector
-          .setById(optsId, opts)
-          .setById(rawReqId, rawReq)
-          .setById(rawResId, rawRes)
+          .setCtx(TRPC_OPTS, opts)
+          .setCtx(RAW_REQ, rawReq)
+          .setCtx(RAW_RES, rawRes)
           .instantiateResolved<TrpcChainMaker>(resolvedTrpcChainMaker)
           .makeChain(opts)
           .handle() // First HTTP handler in the chain of HTTP interceptors.
@@ -239,7 +236,6 @@ export class TrpcPreRouterExtension implements Extension<void> {
           //   const errorHandler = injector.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
           //   return errorHandler.handleError(err, ctx);
           // })
-          .finally(() => injector.clear())
       );
     };
 
@@ -248,7 +244,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
     routeService.setHandlerPerReq(routeMeta, resolvedPerReq, middlewarePerRou, handlerPerReq);
 
     const methodAsToken = routeMeta.Controller.prototype[routeMeta.methodName];
-    injectorPerMod.setByToken(methodAsToken, injectorPerRou.get(methodAsToken));
+    injectorPerMod.setCtx(methodAsToken, injectorPerRou.get(methodAsToken));
   }
 
   /**

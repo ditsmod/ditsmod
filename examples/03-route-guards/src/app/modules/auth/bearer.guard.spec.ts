@@ -2,13 +2,11 @@ import { Injector } from '@ditsmod/core';
 import type { RequestContext } from '@ditsmod/rest';
 
 import { BearerGuard } from './bearer.guard.js';
-import { SESSION } from './types.js';
 import { AuthService } from './auth.service.js';
 
 describe('AuthGuard#canActivate()', () => {
-  const injector = Injector.resolveAndCreate([{ token: SESSION, useValue: {} }]);
   const authService = new AuthService();
-  const authGuard = new BearerGuard(injector, authService);
+  const authGuard = new BearerGuard(Injector.resolveAndCreate([]), authService);
   function getCtx(authorization: string) {
     return { rawReq: { headers: { authorization } } } as RequestContext;
   }

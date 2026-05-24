@@ -1,4 +1,4 @@
-import { fromSelf, injectable } from '@ditsmod/core';
+import { injectable } from '@ditsmod/core';
 import { CustomError } from '@ditsmod/core/errors';
 import { PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/rest';
 import { Cookies } from '@ts-stack/cookies';
@@ -22,11 +22,15 @@ export class ParametersInterceptor extends ValidationInterceptor {
       const schema = parameter.schema as XSchemaObject<any>;
       let value: any;
       if (parameter.in == 'path') {
-        const pathParams = this.injector.get(PATH_PARAMS, fromSelf, null);
-        value = pathParams?.[parameter.name];
+        if (this.injector.hasCtx(PATH_PARAMS)) {
+          const pathParams = this.injector.getCtx(PATH_PARAMS);
+          value = pathParams?.[parameter.name];
+        }
       } else if (parameter.in == 'query') {
-        const queryParams = this.injector.get(QUERY_PARAMS, fromSelf, null);
-        value = queryParams?.[parameter.name];
+        if (this.injector.hasCtx(QUERY_PARAMS)) {
+          const queryParams = this.injector.getCtx(QUERY_PARAMS);
+          value = queryParams?.[parameter.name];
+        }
       } else if (parameter.in == 'cookie') {
         const cookies = new Cookies(this.rawReq, this.rawRes);
         value = cookies.get(parameter.name);

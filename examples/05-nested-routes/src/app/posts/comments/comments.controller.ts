@@ -1,4 +1,4 @@
-import { AnyObj, inject } from '@ditsmod/core';
+import { AnyObj, injCtx } from '@ditsmod/core';
 import { controller, route, PATH_PARAMS, Res } from '@ditsmod/rest';
 
 @controller()
@@ -8,7 +8,7 @@ export class CommentsController {
    */
   @route('GET')
   @route('GET', ':commentId')
-  sendComments(res: Res, @inject(PATH_PARAMS) pathParams: AnyObj = {}) {
+  sendComments(res: Res, @injCtx(PATH_PARAMS) pathParams: AnyObj = {}) {
     res.sendJson({ pathParams });
   }
 }

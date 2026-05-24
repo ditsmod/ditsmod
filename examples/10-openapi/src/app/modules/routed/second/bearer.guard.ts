@@ -39,7 +39,7 @@ export class BearerGuard implements CanActivate {
       .catch((err: VerifyErrors) => false as const); // Here `as const` to narrow down returned type.
 
     if (payload) {
-      this.injector.setByToken(JWT_PAYLOAD, payload);
+      this.injector.setCtx(JWT_PAYLOAD, payload);
       return true;
     } else {
       return false;

@@ -2,7 +2,6 @@ import { isProvider, ModuleWithParams, Provider } from '@ditsmod/core';
 import { RestRouteExtension, UseInterceptorExtension, restModule } from '@ditsmod/rest';
 import { BodyParserModule, BodyParserExtension } from '@ditsmod/body-parser';
 
-import { AUTHJS_SESSION } from './constants.js';
 import { AuthjsGuard } from '#mod/authjs.guard.js';
 import { AuthjsPerRouGuard } from './authjs-per-rou.guard.js';
 import { AuthjsLogMediator } from './authjs-log-mediator.js';
@@ -18,7 +17,7 @@ import { AuthjsConfig } from './authjs.config.js';
   imports: [BodyParserModule],
   providersPerMod: [AuthjsLogMediator],
   providersPerRou: [{ token: AuthjsGuard, useClass: AuthjsPerRouGuard }],
-  providersPerReq: [AuthjsGuard, { token: AUTHJS_SESSION }],
+  providersPerReq: [AuthjsGuard],
   extensions: [
     {
       extension: AuthjsExtension,
@@ -27,7 +26,7 @@ import { AuthjsConfig } from './authjs.config.js';
       exportOnly: true,
     },
   ],
-  exports: [BodyParserModule, AUTHJS_SESSION, AuthjsGuard],
+  exports: [BodyParserModule, AuthjsGuard],
 })
 export class AuthjsModule {
   /**

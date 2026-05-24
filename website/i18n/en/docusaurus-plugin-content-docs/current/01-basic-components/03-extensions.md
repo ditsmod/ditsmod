@@ -124,16 +124,16 @@ export class SimpleExtension implements Extension<void> {
   constructor(private injector: Injector) {}
 
   async stage1() {
-    this.injector.setByToken('some-token', 'some value'); // ❌ Don't do this
+    this.injector.setCtx('some-token', 'some value'); // ❌ Don't do this
   }
 
   async stage2(injectorPerMod: Injector) {
     injectorPerMod === this.injector; // false
     injectorPerMod.get('some-token'); // may return undefined
 
-    injectorPerMod.setByToken('some-token', 'some value'); // ✅ The module level
+    injectorPerMod.setCtx('some-token', 'some value'); // ✅ The module level
     // OR
-    injectorPerMod.parent.setByToken('some-token', 'some value'); // ✅ The application level
+    injectorPerMod.parent.setCtx('some-token', 'some value'); // ✅ The application level
   }
 }
 ```

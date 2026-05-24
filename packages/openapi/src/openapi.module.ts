@@ -6,12 +6,11 @@ import { OpenapiCompilerExtension } from './extensions/openapi-compiler.extensio
 import { OpenapiRouteExtension } from './extensions/openapi-routes.extension.js';
 import { OpenapiController } from './openapi.controller.js';
 import { SwaggerOAuthOptions } from './swagger-ui/o-auth-options.js';
-import { OasConfigFiles, OasExtensionConfig } from './types/oas-extension-options.js';
+import { OasExtensionConfig } from './types/oas-extension-options.js';
 import { OpenapiLogMediator } from '#services/openapi-log-mediator.js';
 
 @initRest({
   imports: [RestModule],
-  providersPerApp: [OasConfigFiles],
   providersPerMod: [OpenapiLogMediator],
   extensions: [
     { extension: OpenapiRouteExtension, groups: [RestRouteExtension], export: true },

@@ -826,8 +826,8 @@ token2 -> value100
 import { Injector } from '@ditsmod/core';
 
 const injector = Injector.resolveAndCreate([{ token: 'token1', useValue: undefined }]);
-injector.setByToken('token1', 'value1');
-injector.get('token1'); // value1
+injector.setCtx('token1', 'value1');
+injector.getCtx('token1'); // value1
 ```
 
 Зверніть увагу, що в даному разі до реєстру спочатку передається провайдер з `token1`, який має значення `undefined`, і лише потім ми змінюємо значення для даного токена. Якщо ви спробуєте редагувати значення для токена, якого у реєстрі немає, DI кине приблизно таку помилку:
@@ -840,19 +840,6 @@ DiError: Setting value by token failed: cannot find token in register: "token1".
 
 1. [BodyParserInterceptor][16];
 2. [BearerGuard][17].
-
-У якості альтернативи для методу `injector.setByToken()`, можна використовувати еквівалентний вираз:
-
-```ts {5}
-import { KeyRegistry } from '@ditsmod/core';
-
-// ...
-const { id } = KeyRegistry.get('token1');
-injector.setById(id, 'value1');
-// ...
-```
-
-Переваги використання методу `injector.setById()` в тому, що він швидший за метод `injector.setByToken()`, але лише при умові, якщо ви один раз отримуєте ID із `KeyRegistry`, а потім багато разів використовуєте `injector.setById()`.
 
 ## Декоратори для параметрів методів {#method-parameter-decorators}
 

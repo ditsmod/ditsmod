@@ -1,4 +1,4 @@
-import { inject, injectable, optional } from '@ditsmod/core';
+import { injCtx, injectable, optional } from '@ditsmod/core';
 import { RawRequest, RawResponse, RAW_REQ, RAW_RES } from '@ditsmod/rest';
 import { Cookies, CookieOptions } from '@ts-stack/cookies';
 import { CorsOptions, cors, mergeOptions } from '@ts-stack/cors';
@@ -6,8 +6,8 @@ import { CorsOptions, cors, mergeOptions } from '@ts-stack/cors';
 @injectable()
 export class CorsService {
   constructor(
-    @inject(RAW_REQ) private rawReq: RawRequest,
-    @inject(RAW_RES) private rawRes: RawResponse,
+    @injCtx(RAW_REQ) private rawReq: RawRequest,
+    @injCtx(RAW_RES) private rawRes: RawResponse,
     @optional() private corsOptions?: CorsOptions
   ) {}
 

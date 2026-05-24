@@ -1,4 +1,4 @@
-import { inject } from '@ditsmod/core';
+import { injCtx } from '@ditsmod/core';
 import { controller, route, Res } from '@ditsmod/rest';
 import { JWT_PAYLOAD } from '@ditsmod/jwt';
 
@@ -13,7 +13,7 @@ export class HelloWorldController {
   }
 
   @route('GET', 'profile', [BearerGuard])
-  async getProfile(@inject(JWT_PAYLOAD) jwtPayload: MyJwtPayload, res: Res) {
+  async getProfile(@injCtx(JWT_PAYLOAD) jwtPayload: MyJwtPayload, res: Res) {
     res.send(`Hello, ${jwtPayload.userName}! You have successfully authorized.`);
   }
 }

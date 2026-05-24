@@ -1,11 +1,11 @@
-import { inject } from '@ditsmod/core';
+import { injCtx } from '@ditsmod/core';
 
 import { CanActivate } from '#interceptors/guard.js';
 import { QUERY_PARAMS } from '#types/constants.js';
 import { RequestContext } from '#services/request-context.js';
 
 export class Guard implements CanActivate {
-  constructor(@inject(QUERY_PARAMS) protected queryParams: any) {}
+  constructor(@injCtx(QUERY_PARAMS) protected queryParams: any) {}
 
   canActivate(ctx: RequestContext) {
     return Boolean(this.queryParams?.allow == 1 || this.queryParams?.allow == 3);
@@ -19,7 +19,7 @@ export class GuardPerRou implements CanActivate {
 }
 
 export class OtherGuard implements CanActivate {
-  constructor(@inject(QUERY_PARAMS) protected queryParams: any) {}
+  constructor(@injCtx(QUERY_PARAMS) protected queryParams: any) {}
 
   canActivate(ctx: RequestContext) {
     return Boolean(this.queryParams?.allow == 2 || this.queryParams?.allow == 3);

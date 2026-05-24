@@ -1,6 +1,5 @@
 import {
   Injector,
-  KeyRegistry,
   fromSelf,
   injectable,
   DepsChecker,
@@ -22,6 +21,7 @@ import {
   ModuleManager,
   HttpMethod,
   getDebugClassName,
+  injCtx,
 } from '@ditsmod/core';
 
 import { routeChannel } from '#diagnostics-channel';
@@ -246,27 +246,23 @@ export class PreRouterExtension implements Extension<void> {
       .concat(resolvedPerRou)
       .find((rp) => rp.dualKey.token === HttpErrorHandler)!;
     const RegistryPerReq = Injector.prepareRegistry(resolvedPerReq);
-    const rawReqId = KeyRegistry.get(RAW_REQ).id;
-    const rawResId = KeyRegistry.get(RAW_RES).id;
-    const pathParamsId = KeyRegistry.get(A_PATH_PARAMS).id;
-    const queryStringId = KeyRegistry.get(QUERY_STRING).id;
 
     return (async (rawReq, rawRes, aPathParams, queryString) => {
       const injector = new Injector(RegistryPerReq, 'Req', injectorPerRou);
       const ctx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString);
+
       await injector
-        .setById(rawReqId, rawReq)
-        .setById(rawResId, rawRes)
-        .setById(pathParamsId, aPathParams)
-        .setById(queryStringId, queryString || '')
+        .setCtx(RAW_REQ, rawReq)
+        .setCtx(RAW_RES, rawRes)
+        .setCtx(A_PATH_PARAMS, aPathParams)
+        .setCtx(QUERY_STRING, queryString || '')
         .instantiateResolved<ChainMaker>(resolvedChainMaker)
         .makeChain(ctx)
         .handle() // First HTTP handler in the chain of HTTP interceptors.
         .catch((err) => {
           const errorHandler = injector.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
           return errorHandler.handleError(err, ctx);
-        })
-        .finally(() => injector.clear());
+        });
     }) as RouteHandler;
   }
 
@@ -341,7 +337,7 @@ export class PreRouterExtension implements Extension<void> {
     path: string,
   ) {
     try {
-      const ignoreDeps: any[] = [HTTP_INTERCEPTORS, CTX_DATA];
+      const ignoreDeps: any[] = [HTTP_INTERCEPTORS, CTX_DATA, injCtx];
       DepsChecker.check(inj, HttpErrorHandler, undefined, ignoreDeps);
       DepsChecker.check(inj, ChainMaker, undefined, ignoreDeps);
       DepsChecker.check(inj, HttpFrontend, undefined, ignoreDeps);

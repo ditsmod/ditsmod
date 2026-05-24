@@ -56,12 +56,19 @@ describe('10-openapi', () => {
   it('serves route with YAML response for OpenAPI docs', async () => {
     const { status, type, headers } = await testAgent.get('/openapi.yaml');
     expect(status).toBe(200);
-    expect(type).toBe('application/yaml');
+    expect(type).toBe('text/yaml');
     expect(Number(headers?.['content-length'])).toBeGreaterThan(0);
   });
 
   it('controller works', async () => {
     const { status, body, type } = await testAgent.get('/resource/123');
+    expect(status).toBe(200);
+    expect(type).toBe('application/json');
+    expect(body).toEqual({ resourceId: '123', body: 'some body for resourceId 123' });
+  });
+
+  it('controller works', async () => {
+    const { status, body, type } = await testAgent.get('/resource2/123');
     expect(status).toBe(200);
     expect(type).toBe('application/json');
     expect(body).toEqual({ resourceId: '123', body: 'some body for resourceId 123' });

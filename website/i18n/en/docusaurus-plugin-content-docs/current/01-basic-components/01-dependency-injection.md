@@ -826,8 +826,8 @@ In addition, it is possible to edit ready *values* in the DI registry:
 import { Injector } from '@ditsmod/core';
 
 const injector = Injector.resolveAndCreate([{ token: 'token1', useValue: undefined }]);
-injector.setByToken('token1', 'value1');
-injector.get('token1'); // value1
+injector.setCtx('token1', 'value1');
+injector.getCtx('token1'); // value1
 ```
 
 Note that in this case a provider with `token1` and the value `undefined` is first passed to the registry, and only then do we change the value for this token. If you try to edit the value for a token that is not present in the registry, DI will throw an error similar to:
@@ -840,19 +840,6 @@ In most cases, editing values is used by [interceptors][105] or [guards][106], a
 
 1. [BodyParserInterceptor][16];
 2. [BearerGuard][17].
-
-As an alternative to the `injector.setByToken()` method, you can use the equivalent expression:
-
-```ts {5}
-import { KeyRegistry } from '@ditsmod/core';
-
-// ...
-const { id } = KeyRegistry.get('token1');
-injector.setById(id, 'value1');
-// ...
-```
-
-The advantage of using the `injector.setById()` method is that it is faster than `injector.setByToken()`, but only if you get the ID from the `KeyRegistry` once and then call `injector.setById()` many times.
 
 ## Method Parameter Decorators {#method-parameter-decorators}
 

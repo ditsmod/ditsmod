@@ -1,6 +1,6 @@
 import { createReadStream } from 'node:fs';
 import { readFile } from 'node:fs/promises';
-import { Status } from '@ditsmod/core';
+import { injCtx, Status } from '@ditsmod/core';
 import { controller, Res } from '@ditsmod/rest';
 
 import { webpackDist } from './swagger-ui/constants.js';
@@ -32,12 +32,12 @@ export class OpenapiController {
     responses: {
       [Status.OK]: {
         description: 'YAML-file for the OpenAPI documentation',
-        content: { ['application/yaml; charset=utf-8']: {} },
+        content: { ['text/yaml; charset=utf-8']: {} },
       },
     },
   })
-  async getYaml(configFiles: OasConfigFiles) {
-    this.res.setContentType('application/yaml; charset=utf-8').send(configFiles.yaml);
+  async getYaml(@injCtx(OasConfigFiles) configFiles: OasConfigFiles) {
+    this.res.setContentType('text/yaml; charset=utf-8').send(configFiles.yaml);
   }
 
   @oasRoute('GET', 'openapi.json', {
@@ -50,7 +50,7 @@ export class OpenapiController {
       },
     },
   })
-  async getJson(configFiles: OasConfigFiles) {
+  async getJson(@injCtx(OasConfigFiles) configFiles: OasConfigFiles) {
     this.res.setContentType('application/json; charset=utf-8').send(configFiles.json);
   }
 
