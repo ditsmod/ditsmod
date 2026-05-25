@@ -1,5 +1,6 @@
 import { featureModule } from '#decorators/feature-module.js';
-import { forwardRef, injectable } from '#di';
+import { injectable } from '#di/decorators.js';
+import { forwardRef } from '#di/forward-ref.js';
 import { Module3 } from './module-manager3.spec.js';
 
 @injectable()

@@ -6,8 +6,8 @@ import { ConsoleLogger } from '#logger/console-logger.js';
 import { Providers } from './providers.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { factoryMethod, injectable } from '#di';
 import { ClassForUseFactoriesWithoutDecorators } from '#error/core-errors.js';
+import { factoryMethod, injectable } from '#di/decorators.js';
 
 describe('Providers', () => {
   it('call constuctor not to throw', () => {

@@ -1,15 +1,15 @@
-import type { ForwardRefFn, Provider } from '#di';
 import type { ModuleManager } from '#init/module-manager.js';
 import type { ShallowImports } from '#init/types.js';
 import type { SystemLogMediator } from '#logger/system-log-mediator.js';
 import type { AnyObj, ModRefId, ModuleType } from '#types/mix.js';
-import type { AnyFn } from '#di/top/types-and-models.js';
+import type { AnyFn, Provider } from '#di/top/types-and-models.js';
 import type { ModuleWithParams, ModuleRawMetadata } from '#decorators/module-raw-metadata.js';
 import type { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import type { featureModule } from './feature-module.js';
 import type { rootModule } from './root-module.js';
 import { AppInitHooks, type AppProviders } from '#types/metadata-per-mod.js';
 import { type BaseMeta, getProxyForInitMeta, BaseInitMeta } from '#init/base-meta.js';
+import type { ForwardRefFn } from '#di/forward-ref.js';
 
 export type AllInitHooks = Map<AnyFn, Omit<InitHooks, 'rawMeta'>>;
 

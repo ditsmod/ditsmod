@@ -1,10 +1,11 @@
-import { DecoratorAndValue, Reflector } from '#di';
 import { featureModule } from '#decorators/feature-module.js';
 import { isFeatureModule, isModuleWithParams, isRootModule } from '#decorators/type-guards.js';
 import { rootModule } from '#decorators/root-module.js';
 import { ModuleRawMetadata, ModuleWithParams } from '#decorators/module-raw-metadata.js';
 import { BaseMeta } from '#init/base-meta.js';
 import { InitHooks } from './init-hooks-and-metadata.js';
+import { Reflector } from '#di/reflector.js';
+import { DecoratorAndValue } from '#di/top/decorator-and-value.js';
 
 describe('type guards', () => {
   describe('isFeatureModule()', () => {

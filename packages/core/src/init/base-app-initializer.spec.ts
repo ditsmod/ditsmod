@@ -1,6 +1,5 @@
 import { jest } from '@jest/globals';
 
-import { injectable } from '#di';
 import { InputLogLevel } from '#logger/logger.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
@@ -19,6 +18,7 @@ import {
   ProvidersCollision,
   ProvidersPerAppMissingTokenName,
 } from '#error/core-errors.js';
+import { injectable } from '#di/decorators.js';
 
 describe('BaseAppInitializer', () => {
   class AppInitializerMock extends BaseAppInitializer {

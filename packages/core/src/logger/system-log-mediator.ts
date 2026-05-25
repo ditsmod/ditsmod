@@ -1,16 +1,16 @@
-import { Class, injectable } from '#di';
 import { ConsoleLogger } from '#logger/console-logger.js';
 import { Logger } from '#logger/logger.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { AppProviders, ProviderImport } from '#types/metadata-per-mod.js';
 import { ModRefId } from '#types/mix.js';
-import { Provider } from '#di/top/types-and-models.js';
+import { Provider, type Class } from '#di/top/types-and-models.js';
 import { ExtensionClass, Extension } from '#extension/extension-types.js';
 import { getImportedTokens } from '#utils/get-imports.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { LoggerNotSet } from '#errors';
 import { CustomError } from '#error/custom-error.js';
+import { injectable } from '#di/decorators.js';
 
 /**
  * Mediator between core logger and custom user's logger.

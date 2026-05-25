@@ -1,5 +1,5 @@
-import { isClassProvider, isFactoryProvider, isTokenProvider, isValueProvider } from '#di';
 import type { Provider } from '#di/top/types-and-models.js';
+import { isClassProvider, isFactoryProvider, isTokenProvider, isValueProvider } from '#di/utils.js';
 import { normalizeProviders } from './ng-utils.js';
 import { isProvider } from './type-guards.js';
 

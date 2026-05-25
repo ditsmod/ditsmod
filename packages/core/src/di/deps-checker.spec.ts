@@ -2,18 +2,13 @@ import { jest } from '@jest/globals';
 
 import { Reflector } from './reflector.js';
 import { DepsChecker } from './deps-checker.js';
-import {
-  InjectionToken,
-  Injector,
-  Provider,
-  inject,
-  injectable,
-  factoryMethod,
-  optional,
-  skipSelf,
-  PathTracer,
-} from './index.js';
+
 import { CyclicDependency, NoProvider } from './di-errors.js';
+import { factoryMethod, inject, injectable, optional, skipSelf } from './decorators.js';
+import { InjectionToken } from './top/injection-token.js';
+import type { Provider } from './top/types-and-models.js';
+import { Injector } from './injector.js';
+import { PathTracer } from './path-tracer.js';
 
 class Engine {}
 

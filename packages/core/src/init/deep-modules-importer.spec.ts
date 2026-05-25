@@ -1,4 +1,3 @@
-import { injectable, Injector } from '#di';
 import { DeepModulesImporter } from '#init/deep-modules-importer.js';
 import { BaseMeta } from '#init/base-meta.js';
 import { ModRefId, Level } from '#types/mix.js';
@@ -9,6 +8,8 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { CircularDepsInImports } from '#error/core-errors.js';
 import { BaseImportRegistry } from './types.js';
+import { injectable } from '#di/decorators.js';
+import { Injector } from '#di/injector.js';
 
 describe('DeepModulesImporter', () => {
   @injectable()

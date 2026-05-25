@@ -1,13 +1,3 @@
-import type {
-  MultiProvider} from '#di';
-import {
-  isClassProvider,
-  isMultiProvider,
-  isNormalizedProvider,
-  isTokenProvider,
-  isValueProvider,
-  Reflector,
-} from '#di';
 import {
   isModuleWithParams,
   isRootModule,
@@ -17,15 +7,15 @@ import {
   isParamsWithMwp,
 } from '#decorators/type-guards.js';
 import { isProvider } from '#utils/type-guards.js';
-import type { ExtensionConfigBase} from '#extension/extension-providers-and-configs.js';
+import type { ExtensionConfigBase } from '#extension/extension-providers-and-configs.js';
 import { normalizeExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import type { AnyObj, Level, ModRefId, ModuleType, PickProps } from '#types/mix.js';
-import type { AnyFn, Provider} from '#di/top/types-and-models.js';
+import type { AnyFn, Provider } from '#di/top/types-and-models.js';
 import { Class } from '#di/top/types-and-models.js';
 import type { RootRawMetadata } from '#decorators/module-raw-metadata.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { BaseMeta } from '#init/base-meta.js';
-import type { ForwardRefFn} from '#di/forward-ref.js';
+import type { ForwardRefFn } from '#di/forward-ref.js';
 import { resolveForwardRef } from '#di/forward-ref.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
 import { Providers } from '#utils/providers.js';
@@ -49,6 +39,8 @@ import {
   ModuleShouldHaveValue,
 } from '#errors';
 import type { ModuleManager } from './module-manager.js';
+import { Reflector } from '#di/reflector.js';
+import { isClassProvider, isMultiProvider, isNormalizedProvider, isTokenProvider, isValueProvider, type MultiProvider } from '#di/utils.js';
 
 /**
  * Normalizes and validates module metadata.

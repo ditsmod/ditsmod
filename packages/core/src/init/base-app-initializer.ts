@@ -1,5 +1,3 @@
-import type { Injector} from '#di';
-import { isMultiProvider } from '#di';
 import { DeepModulesImporter } from '#init/deep-modules-importer.js';
 import { Logger } from '#logger/logger.js';
 import { LogMediator } from '#logger/log-mediator.js';
@@ -41,6 +39,8 @@ import {
   FailedOverrideMetaAfterStage1,
 } from '#errors';
 import type { OnModuleInit } from './hooks.js';
+import { isMultiProvider } from '#di/utils.js';
+import type { Injector } from '#di/injector.js';
 
 export class BaseAppInitializer {
   protected perAppService = new PerAppService();

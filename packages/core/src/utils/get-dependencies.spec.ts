@@ -1,4 +1,5 @@
-import { FactoryProvider, TokenProvider, ValueProvider, inject, injectable, factoryMethod, optional } from '#di';
+import { factoryMethod, inject, injectable, optional } from '#di/decorators.js';
+import type { FactoryProvider, TokenProvider, ValueProvider } from '#di/top/types-and-models.js';
 import { getDependencies } from './get-dependencies.js';
 
 describe('getDependencies()', () => {

@@ -1,4 +1,4 @@
-import { Injector } from '#di';
+import { Injector } from '#di/injector.js';
 import type { Provider } from '#di/top/types-and-models.js';
 
 export interface ReflectiveDependency {

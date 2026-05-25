@@ -17,7 +17,6 @@
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)"
   },
   "imports": {
-    "#di": "./dist/di/index.js",
     "#di/*": "./dist/di/*",
     "#init/*": "./dist/init/*",
     "#types/*": "./dist/types/*",

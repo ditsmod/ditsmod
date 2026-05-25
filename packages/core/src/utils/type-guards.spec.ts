@@ -1,18 +1,12 @@
 import { Provider } from '#di/top/types-and-models.js';
 import { Extension } from '#extension/extension-types.js';
-import {
-  InjectionToken,
-  isMultiProvider,
-  isNormalizedProvider,
-  isInjectionToken,
-  MultiProvider,
-  forwardRef,
-} from '#di';
 import { featureModule } from '#decorators/feature-module.js';
 import { isProvider } from '#utils/type-guards.js';
-import { isForwardRef } from '#di/forward-ref.js';
+import { forwardRef, isForwardRef } from '#di/forward-ref.js';
 import { rootModule } from '#decorators/root-module.js';
 import { Reflector } from '#di/reflector.js';
+import { isInjectionToken, isMultiProvider, isNormalizedProvider, type MultiProvider } from '#di/utils.js';
+import { InjectionToken } from '#di/top/injection-token.js';
 
 describe('type guards', () => {
   it('isForwardRef()', () => {

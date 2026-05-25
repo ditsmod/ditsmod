@@ -6,19 +6,9 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import type {
-  Provider,
-  ValueProvider,
-  ClassProvider,
-  TokenProvider,
-  FactoryProvider} from '#di';
-import {
-  Class,
-  resolveForwardRef,
-  isNormalizedProvider,
-  isClassProvider,
-  isTokenProvider,
-} from '#di';
+import { resolveForwardRef } from '#di/forward-ref.js';
+import { Class, type ClassProvider, type FactoryProvider, type Provider, type TokenProvider, type ValueProvider } from '#di/top/types-and-models.js';
+import { isClassProvider, isNormalizedProvider, isTokenProvider } from '#di/utils.js';
 import { InvalidProvider } from '#errors';
 
 /**

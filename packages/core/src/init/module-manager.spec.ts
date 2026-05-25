@@ -1,7 +1,6 @@
 import { jest } from '@jest/globals';
 
 import { Reflector } from '#di/reflector.js';
-import { injectable, forwardRef, Provider, isMultiProvider } from '#di';
 import { featureModule } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { Extension } from '#extension/extension-types.js';
@@ -16,6 +15,10 @@ import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { InitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { isModuleWithParams } from '#decorators/type-guards.js';
 import { FailAddingToImports } from '#errors';
+import { injectable } from '#di/decorators.js';
+import { forwardRef } from '#di/forward-ref.js';
+import type { Provider } from '#di/top/types-and-models.js';
+import { isMultiProvider } from '#di/utils.js';
 
 describe('ModuleManager', () => {
   // console.log = jest.fn();

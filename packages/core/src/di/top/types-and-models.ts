@@ -274,7 +274,7 @@ export interface TokenProvider extends BaseNormalizedProvider {
  * ### Example
  *
 ```ts
-import { factoryMethod } from '#di';
+import { factoryMethod } from '@ditsmod/core';
 
 const Location = new InjectionToken('location');
 const Hash = new InjectionToken('hash');

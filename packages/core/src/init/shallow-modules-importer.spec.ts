@@ -1,4 +1,3 @@
-import { injectable, Provider, Reflector, FactoryProvider, forwardRef } from '#di';
 import { featureModule } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { BaseMeta } from '#init/base-meta.js';
@@ -16,6 +15,10 @@ import {
   ProvidersCollision,
 } from '#error/core-errors.js';
 import { ShallowImports } from './types.js';
+import { injectable } from '#di/decorators.js';
+import type { FactoryProvider, Provider } from '#di/top/types-and-models.js';
+import { forwardRef } from '#di/forward-ref.js';
+import { Reflector } from '#di/reflector.js';
 
 describe('ShallowModulesImporter', () => {
   class Provider1 {}

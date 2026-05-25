@@ -3,7 +3,6 @@ import { BaseInitRawMeta, InitHooks } from '#decorators/init-hooks-and-metadata.
 import { BaseInitMeta, getProxyForInitMeta, BaseMeta } from '#init/base-meta.js';
 import { rootModule } from '#decorators/root-module.js';
 import { Reflector } from '#di/reflector.js';
-import { forwardRef, injectable, MultiProvider } from '#di';
 import { Extension } from '#extension/extension-types.js';
 import { AnyObj, ModRefId } from '#types/mix.js';
 import {
@@ -23,6 +22,9 @@ import {
   InvalidExtension,
   ReexportFailed,
 } from '#error/core-errors.js';
+import { injectable } from '#di/decorators.js';
+import type { MultiProvider } from '#di/utils.js';
+import { forwardRef } from '#di/forward-ref.js';
 
 describe('ModuleNormalizer', () => {
   class MockModuleNormalizer extends ModuleNormalizer {

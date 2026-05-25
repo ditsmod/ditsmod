@@ -5,8 +5,9 @@ import type { ExtensionClass } from '#extension/extension-types.js';
 import type { InitParamsMap } from '#decorators/init-hooks-and-metadata.js';
 import type { rootModule } from '#decorators/root-module.js';
 import type { featureModule } from '#decorators/feature-module.js';
-import type { ForwardRefFn, Provider } from '#di';
 import type { Providers } from '#utils/providers.js';
+import type { Provider } from '#di/top/types-and-models.js';
+import type { ForwardRefFn } from '#di/forward-ref.js';
 
 /**
  * Raw metadata for {@link rootModule} and {@link featureModule} decorator.

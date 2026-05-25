@@ -1,4 +1,4 @@
-import { injectable } from '#di';
+import { injectable } from '#di/decorators.js';
 import { Extension } from '#extension/extension-types.js';
 
 /**

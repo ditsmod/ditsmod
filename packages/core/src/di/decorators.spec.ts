@@ -1,8 +1,10 @@
 import { Reflector } from './reflector.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
 import { CLASS_KEY } from './top/constants.js';
-import { injCtx } from './decorators.js';
+import { dkrCtx, injCtx } from './decorators.js';
 import { Injector } from './injector.js';
+import { Context } from './context.js';
+import type { Provider } from './top/types-and-models.js';
 
 class DecoratedParent {}
 class DecoratedChild extends DecoratedParent {}
@@ -24,20 +26,30 @@ describe('Property decorators', () => {
     expect(p.watch.decorators).toEqual([new DecoratorAndValue(prop, 'firefox!')]);
   });
 
-  it('should work on the "watch" property', () => {
+  it('@injCtx()', () => {
+    const providers: Provider[] = [
+      Context,
+      {
+        token: injCtx,
+        deps: [Context, dkrCtx],
+        useFactory: (context: Context, token: any) => context.get(token),
+      },
+    ];
     class Service1 {
-      method1(@injCtx('token1') param1: any, @injCtx('token3') param2: any) {
+      method1(@injCtx('token1') param1: any, @injCtx('token2') param2: any) {
         return { param1, param2 };
       }
     }
 
     const injector = Injector.resolveAndCreate([
-      { token: 'token2', useFactory: [Service1, Service1.prototype.method1] },
+      ...providers,
+      { token: 'token3', useFactory: [Service1, Service1.prototype.method1] },
     ]);
 
-    injector.setCtx('token1', 'ok1');
-    injector.setCtx('token3', 'ok2');
-    expect(injector.get('token2')).toEqual({ param1: 'ok1', param2: 'ok2' });
+    const ctx = injector.get(Context) as Context;
+    ctx.set('token1', 1);
+    ctx.set('token2', 2);
+    expect(injector.get('token3')).toEqual({ param1: 1, param2: 2 });
   });
 
   // it('should work with any default plain values', () => {

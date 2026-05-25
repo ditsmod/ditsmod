@@ -1,4 +1,4 @@
-import { Reflector } from '#di';
+import { Reflector } from '#di/reflector.js';
 import type { BaseMeta } from '#init/base-meta.js';
 import type { ModuleManager } from '#init/module-manager.js';
 import type { AppProviders } from '#types/metadata-per-mod.js';

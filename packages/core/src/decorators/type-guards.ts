@@ -1,4 +1,4 @@
-import { DecoratorAndValue } from '#di';
+import { DecoratorAndValue } from '#di/top/decorator-and-value.js';
 import type { AnyObj, RequireProps } from '#types/mix.js';
 import type { ModuleWithParams } from '#decorators/module-raw-metadata.js';
 import { ModuleRawMetadata } from '#decorators/module-raw-metadata.js';

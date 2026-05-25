@@ -1,4 +1,4 @@
-import { Reflector } from '#di';
+import { Reflector } from '#di/reflector.js';
 import { featureModule } from './feature-module.js';
 import { RootRawMetadata } from './module-raw-metadata.js';
 

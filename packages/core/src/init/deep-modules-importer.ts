@@ -1,4 +1,3 @@
-import { Injector, isMultiProvider } from '#di';
 import type { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { defaultExtensionProviders } from '#extension/default-extensions-providers.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
@@ -14,7 +13,6 @@ import { getDependencies } from '#utils/get-dependencies.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { getProvidersTargets, getTokens } from '#utils/get-tokens.js';
-import { isClassProvider, isFactoryProvider, isTokenProvider, isValueProvider } from '#di';
 import { ExtensionCounters } from '#extension/extension-types.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { ProvidersOnly } from '#types/providers-metadata.js';
@@ -22,6 +20,8 @@ import { CircularDepsInImports, NoProviderDuringResolveImports, FailImportProvid
 import { ModuleExtract } from '#types/module-extract.js';
 import { stringify } from '#di/stringify.js';
 import { injCtx } from '#di/decorators.js';
+import { isClassProvider, isFactoryProvider, isMultiProvider, isTokenProvider, isValueProvider } from '#di/utils.js';
+import { Injector } from '#di/injector.js';
 
 /**
  * By analyzing the dependencies of the providers returned by `ShallowModulesImporter`,

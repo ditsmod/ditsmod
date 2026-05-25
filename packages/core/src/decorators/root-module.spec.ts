@@ -1,6 +1,6 @@
-import { Reflector } from '#di';
 import { rootModule } from './root-module.js';
 import { RootRawMetadata } from './module-raw-metadata.js';
+import { Reflector } from '#di/reflector.js';
 
 describe('RootModule decorator', () => {
   it('empty decorator', () => {

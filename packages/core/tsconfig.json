@@ -3,7 +3,6 @@
     "outDir": "dist",
     "types": ["node", "jest"],
     "paths": {
-      "#di": ["./src/di/index.js"],
       "#di/*": ["./src/di/*"],
       "#init/*": ["./src/init/*"],
       "#types/*": ["./src/types/*"],

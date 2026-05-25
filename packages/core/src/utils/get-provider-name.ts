@@ -1,4 +1,6 @@
-import { Class, InjectionToken, isNormalizedProvider } from '#di';
+import { InjectionToken } from '#di/top/injection-token.js';
+import { Class } from '#di/top/types-and-models.js';
+import { isNormalizedProvider } from '#di/utils.js';
 import { getToken } from './get-tokens.js';
 
 /**

@@ -1,7 +1,7 @@
-import type { Provider } from '../di.js';
 import { Context } from './context.js';
 import { dkrCtx, factoryMethod, injCtx } from './decorators.js';
 import { Injector } from './injector.js';
+import type { Provider } from './top/types-and-models.js';
 
 describe('Context', () => {
   it('case1', () => {

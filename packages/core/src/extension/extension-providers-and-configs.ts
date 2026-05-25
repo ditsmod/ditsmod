@@ -1,8 +1,8 @@
-import { KeyRegistry, type Provider } from '#di';
 import type { Extension, ExtensionClass } from '#extension/extension-types.js';
 import type { ExtensionManager } from './extension-manager.js';
 import type { AnyObj } from '#types/mix.js';
-import type { GroupToken } from '#di/key-registry.js';
+import { KeyRegistry, type GroupToken } from '#di/key-registry.js';
+import type { Provider } from '#di/top/types-and-models.js';
 
 export class ExtensionProvidersAndConfigs {
   providers: Provider[];

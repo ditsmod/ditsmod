@@ -1,9 +1,9 @@
 import { featureModule } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
-import { forwardRef } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { Module1 } from '#init/module-manager4.spec.js';
+import { forwardRef } from '#di/forward-ref.js';
 
 @featureModule({ imports: [forwardRef(() => Module1)], providersPerApp: [{ token: 'token2' }] })
 class Module2 {}

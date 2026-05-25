@@ -1,6 +1,5 @@
 import { format } from 'node:util';
 
-import { ForwardRefFn, injectable, Injector, Provider, Reflector, resolveForwardRef } from '#di';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyObj, ModuleType, ModRefId } from '#types/mix.js';
 import { ModuleWithParams } from '#decorators/module-raw-metadata.js';
@@ -20,6 +19,11 @@ import {
   RootNotHaveDecorator,
 } from '#errors';
 import { getModule } from '#utils/get-module.js';
+import { injectable } from '#di/decorators.js';
+import type { Provider } from '#di/top/types-and-models.js';
+import type { Injector } from '#di/injector.js';
+import { Reflector } from '#di/reflector.js';
+import { resolveForwardRef, type ForwardRefFn } from '#di/forward-ref.js';
 
 export type ModulesMap = Map<ModRefId, BaseMeta>;
 export type ModulesMapId = Map<string, ModRefId>;
