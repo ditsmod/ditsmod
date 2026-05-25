@@ -3,7 +3,8 @@ import { NoProvider } from './errors.js';
 import { Injector } from './injector.js';
 import { type DualKey, KeyRegistry } from './key-registry.js';
 import { PathTracer } from './path-tracer.js';
-import type { Dependency, Visibility } from './top/types-and-models.js';
+import type { Visibility } from './top/types-and-models.js';
+import type { Dependency } from './top/resolved-provider.js';
 import { ID, type ResolvedProvider } from './top/resolved-provider.js';
 
 /**

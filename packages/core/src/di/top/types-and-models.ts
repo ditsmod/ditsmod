@@ -1,7 +1,6 @@
 import type { fromSelf, skipSelf } from '../decorators.js';
 import type { ForwardRefFn } from '../forward-ref.js';
 import type { InjectionToken } from './injection-token.js';
-import type { DualKey } from '../key-registry.js';
 import type { DecoratorAndValue } from './decorator-and-value.js';
 
 /**
@@ -53,22 +52,6 @@ export type ParamsMeta<Value = any> = [Class, ...ParamsItem<Value>[]] | [];
 export type Visibility = typeof fromSelf | typeof skipSelf | null;
 
 export type NormalizedProvider = ValueProvider | ClassProvider | TokenProvider | FactoryProvider;
-
-/**
- * This is internal and should not be used directly.
- */
-export class Dependency {
-  constructor(
-    public dualKey: DualKey,
-    public optional: boolean,
-    public visibility: Visibility,
-    public ctx?: NonNullable<unknown>,
-  ) {}
-
-  static fromDualKey(dualKey: DualKey, ctx?: NonNullable<unknown>): Dependency {
-    return new Dependency(dualKey, false, null, ctx);
-  }
-}
 
 /**
  * ### Interface Overview

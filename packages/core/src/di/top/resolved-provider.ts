@@ -1,6 +1,6 @@
 import type { DualKey } from '#di/key-registry.js';
 import type { MultiProvider } from '#di/utils.js';
-import type { AnyFn, Dependency } from './types-and-models.js';
+import type { AnyFn, Visibility } from './types-and-models.js';
 
 /**
  * This ID is used (instead `instanceof ResolvedProvider`) to quickly identify the type of values that the DI registry contains.
@@ -73,3 +73,20 @@ export class ResolvedFactory {
     }
   }
 }
+
+/**
+ * This is internal and should not be used directly.
+ */
+export class Dependency {
+  constructor(
+    public dualKey: DualKey,
+    public optional: boolean,
+    public visibility: Visibility,
+    public ctx?: NonNullable<unknown>
+  ) { }
+
+  static fromDualKey(dualKey: DualKey, ctx?: NonNullable<unknown>): Dependency {
+    return new Dependency(dualKey, false, null, ctx);
+  }
+}
+
