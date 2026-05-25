@@ -10,10 +10,11 @@ export class DecoratorAndValue<Value = any> {
   constructor(
     public decorator: AnyFn,
     public value: Value,
+    public decoratorId?: AnyFn,
     /**
      * The directory in which the class was declared.
      */
-    public declaredInDir?: string
+    public declaredInDir?: string,
   ) {
     if (declaredInDir === undefined) {
       delete this.declaredInDir;

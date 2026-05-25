@@ -1,5 +1,5 @@
 import type { AnyObj } from '#types/mix.js';
-import type { AnyFn } from './top/types-and-models.js';
+import type { AnyFn, Provider } from './top/types-and-models.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ClassMetaIterator } from './class-meta-iterator.js';
 import { type ForwardRefFn, resolveForwardRef } from './forward-ref.js';
@@ -55,7 +55,7 @@ export class Reflector {
       const declaredInDir = CallsiteUtils.getCallerDir();
       return function classDecorator(Cls: Class): void {
         const classDecorValues = Reflector.getRawMeta(Cls, CLASS_KEY, undefined, [] as DecoratorAndValue[]);
-        const decoratorAndValue = new DecoratorAndValue(decoratorId || classDecoratorFactory, value, declaredInDir);
+        const decoratorAndValue = new DecoratorAndValue(classDecoratorFactory, value, decoratorId, declaredInDir);
         classDecorValues.push(decoratorAndValue);
       };
     }
@@ -75,7 +75,7 @@ export class Reflector {
       return function propDecorator(target: any, propertyKey: string | symbol): void {
         const Cls = target.constructor as Class;
         const defaultValue = {} as Record<string | symbol, DecoratorAndValue[]>;
-        const item = new DecoratorAndValue(decoratorId || propDecorFactory, value);
+        const item = new DecoratorAndValue(propDecorFactory, value, decoratorId);
         Reflector.getRawMeta(Cls, PROP_KEY, propertyKey, item);
         const meta = Reflector.getRawMeta(Cls, PROP_KEY, undefined, defaultValue);
         (meta[propertyKey] ??= []).push(item);
@@ -111,7 +111,7 @@ export class Reflector {
           parameters.push(null);
         }
 
-        (parameters[index] ??= []).push(new DecoratorAndValue(decoratorId || paramDecorFactory, value));
+        (parameters[index] ??= []).push(new DecoratorAndValue(paramDecorFactory, value, decoratorId));
       };
     }
     this.setDecoratorFactoryName(paramDecorFactory, debugFactoryName);

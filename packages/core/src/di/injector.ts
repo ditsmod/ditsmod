@@ -362,8 +362,8 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       const paramsItem = paramsMeta[i];
 
       if (paramsItem instanceof DecoratorAndValue) {
-        const { decorator } = paramsItem;
-        if (decorator === inject) {
+        const { decorator, decoratorId } = paramsItem;
+        if (decoratorId === inject) {
           token = (paramsItem.value as InjectTransformResult).token;
           ctx = (paramsItem.value as InjectTransformResult).ctx;
         } else if (decorator === optional) {
