@@ -1,5 +1,5 @@
 import type { AnyFn } from './top/types-and-models.js';
-import { dkrCtx, fromSelf, injCtx, inject, type InjectTransformResult, optional, skipSelf } from './decorators.js';
+import { dkrCtx, fromSelf, inject, type InjectTransformResult, optional, skipSelf } from './decorators.js';
 import {
   FailedCreateFactoryProvider,
   InstantiationError,
@@ -17,9 +17,9 @@ import type { DualKey } from './key-registry.js';
 import { KeyRegistry } from './key-registry.js';
 import { Reflector } from './reflector.js';
 import type { Class, NormalizedProvider, ParamsMeta, Provider, Visibility, CompareFn } from './top/types-and-models.js';
-import { Dependency } from './top/types-and-models.js';
 import {
   type RegistryOfInjector,
+  Dependency,
   ID,
   ResolvedFactory,
   ResolvedProvider,
@@ -81,7 +81,6 @@ export class Injector {
   #registry: RegistryOfInjector;
   #Registry: typeof RegistryOfInjector;
   #level?: LevelOfInjector;
-  #ctx = new Map<any, any>();
 
   get level() {
     return this.#level;
@@ -517,22 +516,6 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
   }
 
   /**
-   * Sets contextual data.
-   */
-  setCtx(token: NonNullable<unknown>, value: any) {
-    this.#ctx.set(token, value);
-    return this;
-  }
-
-  hasCtx(token: NonNullable<unknown>) {
-    return this.#ctx.has(token);
-  }
-
-  getCtx(token: NonNullable<unknown>) {
-    return this.#getCtxValue(token);
-  }
-
-  /**
    * Extracts the values from the current injector for the specified tokens,
    * and inserts them into the external injector.
    *
@@ -737,14 +720,6 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     }
   }
 
-  #getCtxValue(token: any): any {
-    if (this.#ctx.has(token)) {
-      return this.#ctx.get(token);
-    } else if (this.#parent) {
-      return this.#parent.#getCtxValue(token);
-    }
-  }
-
   protected instantiate(
     token: any,
     pathTracer: PathTracer,
@@ -753,7 +728,6 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
   ): any {
     const deps = resolvedFactory.dependencies.map((dep) => {
       if (dep.dualKey.token === dkrCtx) return ctx;
-      if (dep.dualKey.token === injCtx) return this.#getCtxValue(dep.ctx);
       const result = this.selectInjectorAndGet(
         dep.dualKey,
         pathTracer,
@@ -877,7 +851,7 @@ child.get(Service).config; // now returns: { one: 11, two: 22 }
   pullAndSave(token: NonNullable<unknown>, defaultValue?: any): any;
   pullAndSave(token: NonNullable<unknown>, defaultValue: any = NoDefaultValue): any {
     const value = this.pull(token, defaultValue);
-    this.setCtx(token, value);
+    // this.setCtx(token, value);
     return value;
   }
 
@@ -899,7 +873,7 @@ child.get(Service).config; // now returns: { one: 11, two: 22 }
   }
 
   hasId(id: number) {
-    return id in this.#registry;
+    return Object.hasOwn(this.#registry, id);
   }
 
   hasToken(token: NonNullable<unknown>) {
