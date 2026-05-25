@@ -61,11 +61,9 @@ export const dkrCtx = Reflector.makeParamDecorator(
   'dkrCtx',
   inject,
 )();
-/**
- * Injector context.
- */
+
 export const injCtx = Reflector.makeParamDecorator(
-  (token: any) => ({ token: injCtx, ctx: token }) satisfies InjectTransformResult,
+  (token?: any) => ({ token: injCtx, ctx: token }) satisfies InjectTransformResult,
   'injCtx',
   inject,
 );
