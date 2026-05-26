@@ -1,5 +1,7 @@
-import { Class, Reflector } from '@ditsmod/core';
-import { TableConfig } from './types.js';
+import type { Class} from '@ditsmod/core';
+import { Reflector } from '@ditsmod/core';
+
+import type { TableConfig } from './types.js';
 
 /**
  * Returns an array containing the following three elements:
