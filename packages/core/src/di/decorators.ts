@@ -105,7 +105,7 @@ const injector = Injector.resolveAndCreate([Car]);
 expect(injector.get(Car).engine).toBeNull();
 ```
  */
-export const optional = Reflector.makeParamDecorator();
+export const optional = Reflector.makeParamDecorator(undefined, 'optional');
 
 /**
  * A marker metadata that marks a class as available to `Injector` for creation.
@@ -171,7 +171,7 @@ it('child cannot create instance of Service2', () => {
 });
 ```
  */
-export const fromSelf = Reflector.makeParamDecorator();
+export const fromSelf = Reflector.makeParamDecorator(undefined, 'fromSelf');
 
 /**
  * ### Description
@@ -204,7 +204,7 @@ it('the child can instantiate Service2', () => {
 });
 ```
  */
-export const skipSelf = Reflector.makeParamDecorator();
+export const skipSelf = Reflector.makeParamDecorator(undefined, 'skipSelf');
 
 /**
  * Used to mark methods in a class for `FactoryProvider`.
