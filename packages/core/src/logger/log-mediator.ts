@@ -4,7 +4,7 @@ import { Logger, LoggerConfig, InputLogLevel, OutputLogLevel } from '#logger/log
 import { LogItem } from '#logger/types.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
 import { injectable, optional } from '#di/decorators.js';
-import type { Injector } from '#di/injector.js';
+import { Injector } from '#di/injector.js';
 
 /**
  * Mediator between the core logger and the user's custom logger.

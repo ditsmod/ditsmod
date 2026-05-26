@@ -15,7 +15,7 @@ import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { isExtensionProvider } from './type-guards.js';
 import { NotDeclaredInAfterExtensionList, CircularDepsBetweenExtensions, ExtensionFailed } from '#errors';
 import { injectable } from '#di/decorators.js';
-import type { Injector } from '#di/injector.js';
+import { Injector } from '#di/injector.js';
 import type { Class, TokenProvider } from '#di/top/types-and-models.js';
 
 export class StageIteration {
