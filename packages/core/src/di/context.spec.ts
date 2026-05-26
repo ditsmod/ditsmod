@@ -1,8 +1,8 @@
-import { Context } from './context.js';
 import { factoryMethod } from './decorators.js';
 import { ctx } from './ctx/decorators.js';
 import { Injector } from './injector.js';
-import { injectorCtxProviders } from './providers.js';
+import { injectorCtxProviders } from './ctx/providers.js';
+import { Context } from './ctx/context.js';
 
 describe('Context', () => {
   it('case1', () => {
