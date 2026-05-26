@@ -24,8 +24,8 @@ export class InjScopedController {
 @controller({ scope: 'ctx' })
 export class CtxScopedController {
   @route('GET', 'ctx-scoped', [AuthjsGuard])
-  async method1(ctx: RequestContext) {
-    return ctx.auth;
+  async method1(reqCtx: RequestContext) {
+    return reqCtx.auth;
   }
 }
 

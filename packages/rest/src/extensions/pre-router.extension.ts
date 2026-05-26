@@ -21,7 +21,7 @@ import {
   ModuleManager,
   HttpMethod,
   getDebugClassName,
-  ctx,
+  Context,
 } from '@ditsmod/core';
 
 import { routeChannel } from '#diagnostics-channel';
@@ -169,12 +169,12 @@ export class PreRouterExtension implements Extension<void> {
 
     if (this.hasInterceptors(mergedPerRou)) {
       return (async (rawReq, rawRes, aPathParams, queryString) => {
-        const ctx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString, 'ctx');
+        const reqCtx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString, 'ctx');
         await chainMaker
-          .makeChain(ctx)
+          .makeChain(reqCtx)
           .handle() // First HTTP handler in the chain of HTTP interceptors.
           .catch((err) => {
-            return errorHandler.handleError(err, ctx);
+            return errorHandler.handleError(err, reqCtx);
           });
       }) as RouteHandler;
     } else {
@@ -183,11 +183,10 @@ export class PreRouterExtension implements Extension<void> {
   }
 
   protected hasInterceptors(mergedPerRou: Provider[]) {
-    const interceptors = mergedPerRou
-      .filter((p) => {
-        const token = getToken(p);
-        return token === HTTP_INTERCEPTORS || token === HttpBackend;
-      });
+    const interceptors = mergedPerRou.filter((p) => {
+      const token = getToken(p);
+      return token === HTTP_INTERCEPTORS || token === HttpBackend;
+    });
 
     // The application has two default interceptors.
     return interceptors.length > 2;
@@ -195,16 +194,16 @@ export class PreRouterExtension implements Extension<void> {
 
   protected handleWithoutInterceptors(
     RequestContextClass: typeof RequestContext,
-    routeHandler: (ctx: RequestContext) => Promise<any>,
+    routeHandler: (reqCtx: RequestContext) => Promise<any>,
     errorHandler: HttpErrorHandler,
   ) {
     const interceptor = new DefaultCtxHttpFrontend();
     return (async (rawReq, rawRes, aPathParams, queryString) => {
-      const ctx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString, 'ctx') as RequestContext;
+      const reqCtx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString, 'ctx') as RequestContext;
       try {
-        interceptor.before(ctx).after(ctx, await routeHandler(ctx));
+        interceptor.before(reqCtx).after(reqCtx, await routeHandler(reqCtx));
       } catch (err: any) {
-        await errorHandler.handleError(err, ctx);
+        await errorHandler.handleError(err, reqCtx);
       }
     }) as RouteHandler;
   }
@@ -242,6 +241,7 @@ export class PreRouterExtension implements Extension<void> {
     routeMeta.resolvedHandler = this.getResolvedHandler(routeMeta, resolvedPerReq);
     this.checkDeps(injPerReq, routeMeta, controllerName, httpMethod, fullPath);
     const resolvedChainMaker = resolvedPerReq.find((rp) => rp.dualKey.token === ChainMaker)!;
+    const resolvedCtx = resolvedPerReq.find((rp) => rp.dualKey.token === Context)!;
     const resolvedErrHandler = resolvedPerReq
       .concat(resolvedPerRou)
       .find((rp) => rp.dualKey.token === HttpErrorHandler)!;
@@ -249,19 +249,20 @@ export class PreRouterExtension implements Extension<void> {
 
     return (async (rawReq, rawRes, aPathParams, queryString) => {
       const injector = new Injector(RegistryPerReq, 'Req', injectorPerRou);
-      const ctx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString);
+      (injector.instantiateResolved(resolvedCtx) as Context)
+        .set(RAW_REQ, rawReq)
+        .set(RAW_RES, rawRes)
+        .set(A_PATH_PARAMS, aPathParams)
+        .set(QUERY_STRING, queryString || '');
 
+      const reqCtx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString);
       await injector
-        .setCtx(RAW_REQ, rawReq)
-        .setCtx(RAW_RES, rawRes)
-        .setCtx(A_PATH_PARAMS, aPathParams)
-        .setCtx(QUERY_STRING, queryString || '')
         .instantiateResolved<ChainMaker>(resolvedChainMaker)
-        .makeChain(ctx)
+        .makeChain(reqCtx)
         .handle() // First HTTP handler in the chain of HTTP interceptors.
         .catch((err) => {
           const errorHandler = injector.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
-          return errorHandler.handleError(err, ctx);
+          return errorHandler.handleError(err, reqCtx);
         });
     }) as RouteHandler;
   }
@@ -337,7 +338,7 @@ export class PreRouterExtension implements Extension<void> {
     path: string,
   ) {
     try {
-      const ignoreDeps: any[] = [HTTP_INTERCEPTORS, input, ctx];
+      const ignoreDeps: any[] = [HTTP_INTERCEPTORS, input];
       DepsChecker.check(inj, HttpErrorHandler, undefined, ignoreDeps);
       DepsChecker.check(inj, ChainMaker, undefined, ignoreDeps);
       DepsChecker.check(inj, HttpFrontend, undefined, ignoreDeps);

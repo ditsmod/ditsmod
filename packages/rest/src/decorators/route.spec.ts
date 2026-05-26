@@ -81,7 +81,7 @@ describe('Route decorator', () => {
 
   it('one guard without params', () => {
     class Guard1 implements CanActivate {
-      canActivate(ctx: RequestContext) {
+      canActivate(reqCtx: RequestContext) {
         return true;
       }
     }

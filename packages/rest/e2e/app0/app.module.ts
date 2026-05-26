@@ -34,18 +34,18 @@ export class DefaultController {
 @controller({ scope: 'ctx' })
 export class CtxController {
   @route('GET', 'get1/:pathParam1/:pathParam2')
-  tellHello(ctx: RequestContext) {
-    return { pathParams: ctx.pathParams, queryParams: ctx.queryParams };
+  tellHello(reqCtx: RequestContext) {
+    return { pathParams: reqCtx.pathParams, queryParams: reqCtx.queryParams };
   }
 
   @route(['GET', 'POST'], 'get-array1')
-  [Symbol()](ctx: RequestContext) {
-    return ctx.sendJson(ctx.rawReq.headers);
+  [Symbol()](reqCtx: RequestContext) {
+    return reqCtx.sendJson(reqCtx.rawReq.headers);
   }
 
   @route('GET', 'interceptor1', [], [Interceptor1])
-  withInterceptors(ctx: RequestContext) {
-    return (ctx as RequestContext & { msg: string }).msg;
+  withInterceptors(reqCtx: RequestContext) {
+    return (reqCtx as RequestContext & { msg: string }).msg;
   }
 }
 

@@ -6,8 +6,8 @@ import { cors, CorsOptions } from '@ts-stack/cors';
 export class CorsInterceptor implements HttpInterceptor {
   constructor(private corsOptions: CorsOptions) {}
 
-  async intercept(next: HttpHandler, ctx: RequestContext) {
-    const headersSent = cors(ctx.rawReq, ctx.rawRes, this.corsOptions);
+  async intercept(next: HttpHandler, reqCtx: RequestContext) {
+    const headersSent = cors(reqCtx.rawReq, reqCtx.rawRes, this.corsOptions);
     if (headersSent) {
       return;
     }
