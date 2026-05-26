@@ -16,7 +16,7 @@ import {
   ModuleManager,
   ClassFactoryProvider,
   getToken,
-  dkrCtx,
+  input,
   injCtx,
 } from '@ditsmod/core';
 import { inspect } from 'node:util';
@@ -253,7 +253,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
    */
   protected checkDeps(inj: Injector, routeMeta: TrpcRouteMeta, controllerName: string) {
     try {
-      const ignoreDeps: any[] = [TRPC_HTTP_INTERCEPTORS, dkrCtx, injCtx, TrpcRouteService];
+      const ignoreDeps: any[] = [TRPC_HTTP_INTERCEPTORS, input, injCtx, TrpcRouteService];
       DepsChecker.check(inj, HttpErrorHandler, undefined, ignoreDeps);
       DepsChecker.check(inj, TrpcChainMaker, undefined, ignoreDeps);
       DepsChecker.check(inj, TrpcHttpFrontend, undefined, ignoreDeps);

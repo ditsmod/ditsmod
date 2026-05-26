@@ -4,7 +4,7 @@ import { KeyRegistry } from './key-registry.js';
 import { Class, Provider } from './top/types-and-models.js';
 import { Dependency } from './top/resolved-provider.js';
 import { getNewRegistry, ResolvedProvider } from './top/resolved-provider.js';
-import { fromSelf, inject, injectable, factoryMethod, optional, skipSelf, dkrCtx } from './decorators.js';
+import { fromSelf, inject, injectable, factoryMethod, optional, skipSelf, input } from './decorators.js';
 import { InjectionToken } from './top/injection-token.js';
 import { Injector } from './injector.js';
 import { forwardRef } from './forward-ref.js';
@@ -676,7 +676,7 @@ describe('injector', () => {
     it('dependency with context in first parameter', () => {
       @injectable()
       class Dependecy1 {
-        constructor(@dkrCtx public contextParameter: string) {}
+        constructor(@input public contextParameter: string) {}
       }
 
       @injectable()
@@ -700,7 +700,7 @@ describe('injector', () => {
     it('dependency with context in second parameter', () => {
       @injectable()
       class Dependecy1 {
-        constructor(@dkrCtx public contextParameter: string) {}
+        constructor(@input public contextParameter: string) {}
       }
 
       @injectable()
@@ -724,7 +724,7 @@ describe('injector', () => {
     it('dependencies with context in several parameters', () => {
       @injectable()
       class Dependecy1 {
-        constructor(@dkrCtx public contextParameter: string) {}
+        constructor(@input public contextParameter: string) {}
       }
 
       @injectable()
@@ -750,7 +750,7 @@ describe('injector', () => {
     it('dependencies with factories', () => {
       @injectable()
       class Dependecy1 {
-        constructor(@dkrCtx public contextParameter: string) {}
+        constructor(@input public contextParameter: string) {}
       }
 
       @injectable()
@@ -781,7 +781,7 @@ describe('injector', () => {
     xit('for child dependency', () => {
       @injectable()
       class Dependecy1 {
-        constructor(@dkrCtx public contextParameter: string | number) {}
+        constructor(@input public contextParameter: string | number) {}
       }
 
       @injectable()

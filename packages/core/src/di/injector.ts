@@ -1,5 +1,5 @@
 import type { AnyFn } from './top/types-and-models.js';
-import { dkrCtx, fromSelf, inject, type InjectTransformResult, optional, skipSelf } from './decorators.js';
+import { input, fromSelf, inject, type InjectTransformResult, optional, skipSelf } from './decorators.js';
 import {
   FailedCreateFactoryProvider,
   InstantiationError,
@@ -727,7 +727,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     ctx?: NonNullable<unknown>,
   ): any {
     const deps = resolvedFactory.dependencies.map((dep) => {
-      if (dep.dualKey.token === dkrCtx) return ctx;
+      if (dep.dualKey.token === input) return ctx;
       const result = this.selectInjectorAndGet(
         dep.dualKey,
         pathTracer,

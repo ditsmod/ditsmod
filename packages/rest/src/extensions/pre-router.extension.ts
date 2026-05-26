@@ -11,7 +11,7 @@ import {
   Provider,
   Stage1ExtensionMeta,
   Stage1ExtensionMetaPerApp,
-  dkrCtx,
+  input,
   FactoryProvider,
   ResolvedGuard,
   ResolvedProvider,
@@ -337,7 +337,7 @@ export class PreRouterExtension implements Extension<void> {
     path: string,
   ) {
     try {
-      const ignoreDeps: any[] = [HTTP_INTERCEPTORS, dkrCtx, injCtx];
+      const ignoreDeps: any[] = [HTTP_INTERCEPTORS, input, injCtx];
       DepsChecker.check(inj, HttpErrorHandler, undefined, ignoreDeps);
       DepsChecker.check(inj, ChainMaker, undefined, ignoreDeps);
       DepsChecker.check(inj, HttpFrontend, undefined, ignoreDeps);

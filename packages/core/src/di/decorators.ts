@@ -54,11 +54,30 @@ export interface InjectTransformResult {
 }
 
 /**
- * Decorator context.
+ * A method parameter decorator that indicates to the DI injector that it needs to pass context data
+ * that was passed during the `@inject(Service, 'context-data')` call (or its analogues).
+ * 
+ * ### Example
+```ts
+import { injectable, inject, input } from '@ditsmod/core';
+
+@injectable()
+class Dependecy1 {
+  constructor(@input public inputData: string) { // Here input is 'ctx1'
+    // ...
+  }
+}
+
+@injectable()
+class Service1 {
+  constructor(@inject(Dependecy1, 'ctx1') dependecy1: Dependecy1) {}
+}
+```
+ * 
  */
-export const dkrCtx = Reflector.makeParamDecorator(
-  () => ({ token: forwardRef(() => dkrCtx) }) satisfies InjectTransformResult,
-  'dkrCtx',
+export const input = Reflector.makeParamDecorator(
+  () => ({ token: forwardRef(() => input) }) satisfies InjectTransformResult,
+  'input',
   inject,
 )();
 
