@@ -845,7 +845,7 @@ DiError: Setting value by token failed: cannot find token in register: "token1".
 
 Ці декоратори використовуються для управління поведінкою інжектора під час пошуку значень для певного токена. Найчастіше використовуються `inject` та `optional`, дуже рідко - `fromSelf` та `skipSelf`.
 
-### inject {#inject}
+### inject та input {#inject-and-input}
 
 Як раніше було сказано, декоратор `inject` дозволяє вказувати альтернативний токен у параметрах методів, і таким чином можна вказувати будь-які типи залежностей:
 
@@ -864,28 +864,67 @@ export class Service1 {
 Окрім цього, другим аргументом в `inject` також можна передати контекстні дані:
 
 ```ts {11}
-import { injectable, inject, CTX_DATA, Injector } from '@ditsmod/core';
+import { injectable, inject, input, Injector } from '@ditsmod/core';
 
 @injectable()
 class Dependency1 {
-  constructor(@inject(CTX_DATA) public contextParameter: string) {}
+  constructor(@input public contextParameter: string) {}
 }
 
 @injectable()
 class Service1 {
   constructor(
-    @inject(Dependency1, 'some-context') public Dependency1: Dependency1,
+    @inject(Dependency1, 'context-data') public dependency1: Dependency1,
   ) {}
 }
 
 const injector = Injector.resolveAndCreate([Service1, Dependency1]);
 const service1 = injector.get(Service1) as Service1;
-service1.Dependency1.contextParameter; // some-context
+service1.dependency1.contextParameter; // context-data
 ```
 
-У цьому прикладі показано, що `Service1` залежить від `Dependency1`. Разом з тим, `Dependency1` у параметрах конструктора вказує залежність від провайдера з токеном `CTX_DATA`. Як говорить назва цього токена, від DI очікується отримання контекстних даних. Але звідки беруться ці контекстні дані? - Із контексту виклику самого `Dependency1`, тобто з конструктора `Service1`.
+Тут показано, що `Service1` залежить від `Dependency1`, а у конструкторі `Dependency1` перед параметром поставлено декоратор `@input` (без дужок!). Таким чином очікується, що DI перед створенням `Dependency1` передасть йому дані з `@inject(Dependency1, 'context-data')` до того параметру, перед яким розташовано `@input`. Тобто `Service1` намагається отримати інстанс `Dependency1` передаючи йому `context-data`.
 
-Виходить що `Service1` намагається отримати інстанс `Dependency1` передаючи йому `some-context`. В таких випадках інжектор не створює кеш.
+Аналогічно ви можете отримати "вхідні" дані у будь-якому провайдері, де можна вказати залежність:
+
+```ts {5,23}
+import { injectable, inject, Injector, input } from '@ditsmod/core';
+
+@injectable()
+class Service2 {
+  constructor(@inject(input) public arg: string) { // Простіше використати "@input"
+    console.log(arg); // print: context-data2
+  }
+}
+
+@injectable()
+class Service1 {
+  constructor(
+    @inject('token1', 'context-data1') public param1: string,
+    @inject(Service2, 'context-data2') public param2: string,
+  ) {}
+}
+
+const injector = Injector.resolveAndCreate([
+  Service1,
+  Service2,
+  {
+    token: 'token1',
+    deps: [input],
+    useFactory: (arg) => console.log(arg), // print: context-data1
+  },
+]);
+
+injector.get(Service1);
+```
+
+Що ми тут бачимо:
+
+1. Провайдери з токенами `Service2` та `token1` вказують у якості залежності функцію `input`. Ця функція насправді призначена для використання її як декоратор параметра методу, але нам DI дозволяє її також використовувати як токен провайдера.
+2. У `Service1` вказано залежність від провайдерів з токенами `Service2` та `token1`, причому другим аргументом у `@inject()` передано певні контекстні дані, які передаються відповідним провайдерам під час їхнього створення.
+3. В інжектора запитується `Service1`, і щоб створити інстанс цього класу, спочатку DI передає провайдерам з токенами `Service2` та `token1` відповідні контекстні дані.
+
+Майте на увазі, що коли до `@inject()` передається другий аргумент, інжектор не створює кеш для вказаної залежності.
 
 ### optional {#optional}
 

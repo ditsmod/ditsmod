@@ -845,7 +845,7 @@ In most cases, editing values is used by [interceptors][105] or [guards][106], a
 
 These decorators are used to manage the behavior of the injector when looking up values for a specific token. The most commonly used are `inject` and `optional`, while `fromSelf` and `skipSelf` are used very rarely.
 
-### inject {#inject}
+### inject and input {#inject-and-input}
 
 As previously mentioned, the `inject` decorator allows you to specify an alternative token in method parameters, enabling you to pass any type of dependency:
 
@@ -861,31 +861,70 @@ export class Service1 {
 }
 ```
 
-In addition, you can pass contextual data as the second argument to `inject`:
+In addition to this, contextual data can also be passed as the second argument to `inject`:
 
 ```ts {11}
-import { injectable, inject, CTX_DATA, Injector } from '@ditsmod/core';
+import { injectable, inject, input, Injector } from '@ditsmod/core';
 
 @injectable()
 class Dependency1 {
-  constructor(@inject(CTX_DATA) public contextParameter: string) {}
+  constructor(@input public contextParameter: string) {}
 }
 
 @injectable()
 class Service1 {
   constructor(
-    @inject(Dependency1, 'some-context') public dependency1: Dependency1,
+    @inject(Dependency1, 'context-data') public dependency1: Dependency1,
   ) {}
 }
 
 const injector = Injector.resolveAndCreate([Service1, Dependency1]);
 const service1 = injector.get(Service1) as Service1;
-service1.dependency1.contextParameter; // some-context
+service1.dependency1.contextParameter; // context-data
 ```
 
-This example demonstrates that `Service1` depends on `Dependency1`. However, `Dependency1` in the constructor parameters indicates a dependency on a provider with the `CTX_DATA` token. As the name of this token suggests, the DI is expected to resolve contextual data. But where does this contextual data come from? It comes from the call context of `Dependency1` itself — meaning, from the constructor of `Service1`.
+Here it is shown that `Service1` depends on `Dependency1`, and in the constructor of `Dependency1`, the `@input` decorator is placed before the parameter (without parentheses!). This way, it is expected that before creating `Dependency1`, DI will pass the data from `@inject(Dependency1, 'context-data')` to the parameter marked with `@input`. In other words, `Service1` attempts to obtain an instance of `Dependency1` while passing `context-data` to it.
 
-Essentially, `Service1` attempts to resolve an instance of `Dependency1` by passing `some-context` to it. In such cases, the injector does not create a cache.
+Similarly, you can obtain "input" data in any provider where a dependency can be specified:
+
+```ts {5,23}
+import { injectable, inject, Injector, input } from '@ditsmod/core';
+
+@injectable()
+class Service2 {
+  constructor(@inject(input) public arg: string) { // It's easier to use just "@input"
+    console.log(arg); // print: context-data2
+  }
+}
+
+@injectable()
+class Service1 {
+  constructor(
+    @inject('token1', 'context-data1') public param1: string,
+    @inject(Service2, 'context-data2') public param2: string,
+  ) {}
+}
+
+const injector = Injector.resolveAndCreate([
+  Service1,
+  Service2,
+  {
+    token: 'token1',
+    deps: [input],
+    useFactory: (arg) => console.log(arg), // print: context-data1
+  },
+]);
+
+injector.get(Service1);
+```
+
+What do we see here:
+
+1. Providers with the `Service2` and `token1` tokens specify the `input` function as a dependency. This function is actually intended to be used as a method parameter decorator, but DI also allows us to use it as a provider token.
+2. `Service1` specifies dependencies on providers with the `Service2` and `token1` tokens, and certain contextual data is passed as the second argument to `@inject()`, which is then passed to the corresponding providers during their creation.
+3. `Service1` is requested from the injector, and to create an instance of this class, DI first passes the corresponding contextual data to the providers with the `Service2` and `token1` tokens.
+
+Note that when a second argument is passed to `@inject()`, the injector does not create a cache for the specified dependency.
 
 ### optional {#optional}
 
