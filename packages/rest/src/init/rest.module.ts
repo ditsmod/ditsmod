@@ -1,4 +1,4 @@
-import { BaseAppOptions, featureModule, getTokens, injectorCtxProviders } from '@ditsmod/core';
+import { BaseAppOptions, featureModule, getTokens } from '@ditsmod/core';
 
 import { DefaultRouter, Router } from '#services/router.js';
 import { RestRouteExtension } from '#extensions/routes.extension.js';
@@ -15,13 +15,11 @@ import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js'
  */
 @featureModule({
   providersPerApp: [
-    ...injectorCtxProviders,
     { token: Router, useClass: DefaultRouter },
     { token: AppOptions, useToken: BaseAppOptions },
     { token: RequestContext, useValue: RequestContext },
     PreRouter,
   ],
-  providersPerMod: [...injectorCtxProviders],
   providersPerRou: [...defaultProvidersPerRou],
   providersPerReq: [...defaultProvidersPerReq],
   exports: [...getTokens(defaultProvidersPerRou.concat(defaultProvidersPerReq))],
