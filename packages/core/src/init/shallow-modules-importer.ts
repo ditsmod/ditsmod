@@ -76,7 +76,7 @@ export class ShallowModulesImporter {
     this.moduleName = baseMeta.name;
     this.baseMeta = baseMeta;
     this.importProvidersAndExtensions(baseMeta);
-    this.checkAllCollisionsWithLevelsMix();
+    // this.checkAllCollisionsWithLevelsMix();
     const mInitValue = new Map<AnyFn, AnyObj>();
     const appProviders: AppProviders = {
       importedProvidersPerMod: this.importedProvidersPerMod,
@@ -204,7 +204,7 @@ export class ShallowModulesImporter {
       }
       this.scanModule(modRefId);
     }
-    this.checkAllCollisionsWithLevelsMix();
+    // this.checkAllCollisionsWithLevelsMix();
   }
 
   protected scanModule(modRefId: ModRefId) {

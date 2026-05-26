@@ -1,6 +1,7 @@
-import type { Provider } from '../di.js';
+import { input } from '#di/decorators.js';
+import { ctx } from '#di/ctx/decorators.js';
+import type { Provider } from '#di/top/types-and-models.js';
 import { Context } from './context.js';
-import { input, ctx } from './decorators.js';
 
 /**
  * Providers required for `Context` and the `ctx` parameter decorator to work. These providers need

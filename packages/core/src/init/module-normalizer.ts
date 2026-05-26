@@ -20,7 +20,7 @@ import { resolveForwardRef } from '#di/forward-ref.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
 import { Providers } from '#utils/providers.js';
 import type { Extension } from '#extension/extension-types.js';
-import { normalizeProviders } from '#utils/ng-utils.js';
+import { normalizeProviders, stringify } from '#utils/ng-utils.js';
 import { isExtensionConfig } from '#extension/type-guards.js';
 import type { ModuleWithParams, ModuleRawMetadata } from '#decorators/module-raw-metadata.js';
 import type { AllInitHooks, BaseInitRawMeta } from '#decorators/init-hooks-and-metadata.js';
@@ -173,7 +173,7 @@ export class ModuleNormalizer {
           this.baseMeta.exportsModules.push(exp);
         }
       } else {
-        throw new ExportingUnknownSymbol(this.baseMeta.name, exp.name || exp);
+        throw new ExportingUnknownSymbol(this.baseMeta.name, stringify(exp));
       }
     });
   }

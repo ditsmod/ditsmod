@@ -81,12 +81,6 @@ export const input = Reflector.makeParamDecorator(
   inject,
 )();
 
-export const ctx = Reflector.makeParamDecorator(
-  (token?: any) => ({ token: forwardRef(() => ctx), ctx: token }) satisfies InjectTransformResult,
-  'ctx',
-  inject,
-);
-
 /**
  * A parameter metadata that marks a dependency as optional.
  * `Injector` provides `null` if the dependency is not found.

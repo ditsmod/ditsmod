@@ -1,7 +1,7 @@
 import { Reflector } from './reflector.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
 import { CLASS_KEY } from './top/constants.js';
-import { ctx } from './decorators.js';
+import { ctx } from './ctx/decorators.js';
 import { Injector } from './injector.js';
 import { Context } from './context.js';
 import { injectorCtxProviders } from './providers.js';

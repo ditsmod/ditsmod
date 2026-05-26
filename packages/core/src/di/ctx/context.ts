@@ -1,5 +1,5 @@
-import { injectable } from './decorators.js';
-import { Injector } from './injector.js';
+import { injectable } from '#di/decorators.js';
+import { Injector } from '#di/injector.js';
 
 @injectable()
 export class Context {
