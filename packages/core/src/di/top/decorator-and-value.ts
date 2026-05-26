@@ -16,6 +16,7 @@ export class DecoratorAndValue<Value = any> {
      */
     public declaredInDir?: string,
   ) {
+    this.decoratorId ??= decorator;
     if (declaredInDir === undefined) {
       delete this.declaredInDir;
     }
