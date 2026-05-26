@@ -1,7 +1,7 @@
 import { Context } from './context.js';
-import { dkrCtx, factoryMethod, injCtx } from './decorators.js';
+import { factoryMethod, injCtx } from './decorators.js';
 import { Injector } from './injector.js';
-import type { Provider } from './top/types-and-models.js';
+import { injectorCtxProviders } from './providers.js';
 
 describe('Context', () => {
   it('case1', () => {
@@ -11,18 +11,10 @@ describe('Context', () => {
         return { param1, param2 };
       }
     }
-    const providers: Provider[] = [
-      Context,
-      {
-        token: injCtx,
-        deps: [Context, dkrCtx],
-        useFactory: (context: Context, token: any) => context.get(token),
-      },
-    ];
-    const injectorPerApp = Injector.resolveAndCreate([...providers], 'App');
-    const injectorPerMod = injectorPerApp.resolveAndCreateChild([...providers], 'Mod');
+    const injectorPerApp = Injector.resolveAndCreate([...injectorCtxProviders], 'App');
+    const injectorPerMod = injectorPerApp.resolveAndCreateChild([...injectorCtxProviders], 'Mod');
     const injectorPerRou = injectorPerMod.resolveAndCreateChild(
-      [...providers, { useFactory: [Service1, Service1.prototype.method1] }],
+      [...injectorCtxProviders, { useFactory: [Service1, Service1.prototype.method1] }],
       'Rou',
     );
     const ctx = injectorPerRou.get(Context) as Context;

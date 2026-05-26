@@ -1,10 +1,10 @@
 import { Reflector } from './reflector.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
 import { CLASS_KEY } from './top/constants.js';
-import { dkrCtx, injCtx } from './decorators.js';
+import { injCtx } from './decorators.js';
 import { Injector } from './injector.js';
 import { Context } from './context.js';
-import type { Provider } from './top/types-and-models.js';
+import { injectorCtxProviders } from './providers.js';
 
 class DecoratedParent {}
 class DecoratedChild extends DecoratedParent {}
@@ -27,14 +27,6 @@ describe('Property decorators', () => {
   });
 
   it('@injCtx()', () => {
-    const providers: Provider[] = [
-      Context,
-      {
-        token: injCtx,
-        deps: [Context, dkrCtx],
-        useFactory: (context: Context, token: any) => context.get(token),
-      },
-    ];
     class Service1 {
       method1(@injCtx('token1') param1: any, @injCtx('token2') param2: any) {
         return { param1, param2 };
@@ -42,7 +34,7 @@ describe('Property decorators', () => {
     }
 
     const injector = Injector.resolveAndCreate([
-      ...providers,
+      ...injectorCtxProviders,
       { token: 'token3', useFactory: [Service1, Service1.prototype.method1] },
     ]);
 
