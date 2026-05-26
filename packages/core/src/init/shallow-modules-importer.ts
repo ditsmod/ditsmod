@@ -15,10 +15,9 @@ import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import type {
   ExtensionConfig,
   ExtensionConfig3,
-  ExtensionConfigBase} from '#extension/extension-providers-and-configs.js';
-import {
-  isConfigWithOverrideExtension,
+  ExtensionConfigBase,
 } from '#extension/extension-providers-and-configs.js';
+import { isConfigWithOverrideExtension } from '#extension/extension-providers-and-configs.js';
 import { findCycle } from '#extension/tarjan-graph.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { topologicalSort } from '#extension/topological-sort.js';
@@ -151,7 +150,10 @@ export class ShallowModulesImporter {
       multiPerMod = new Map([...this.glProviders.importedMultiProvidersPerMod, ...this.importedMultiProvidersPerMod]);
       multiPerRou = new Map([...this.glProviders.importedMultiProvidersPerRou, ...this.importedMultiProvidersPerRou]);
       multiPerReq = new Map([...this.glProviders.importedMultiProvidersPerReq, ...this.importedMultiProvidersPerReq]);
-      extensionProviders = new Map([...this.glProviders.importedExtensionProviders, ...this.importedExtensionProviders]);
+      extensionProviders = new Map([
+        ...this.glProviders.importedExtensionProviders,
+        ...this.importedExtensionProviders,
+      ]);
       extensionGroupTokens = new Map([
         ...this.glProviders.importedExtensionGroupTokens,
         ...this.importedExtensionGroupTokens,
