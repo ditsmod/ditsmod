@@ -845,7 +845,7 @@ DiError: Setting value by token failed: cannot find token in register: "token1".
 
 Ці декоратори використовуються для управління поведінкою інжектора під час пошуку значень для певного токена. Найчастіше використовуються `inject` та `optional`, дуже рідко - `fromSelf` та `skipSelf`.
 
-### inject та input {#inject-and-input}
+### `inject` та `input` {#inject-and-input}
 
 Як раніше було сказано, декоратор `inject` дозволяє вказувати альтернативний токен у параметрах методів, і таким чином можна вказувати будь-які типи залежностей:
 
@@ -885,14 +885,15 @@ service1.dependency1.contextParameter; // context-data
 
 Тут показано, що `Service1` залежить від `Dependency1`, а у конструкторі `Dependency1` перед параметром поставлено декоратор `@input` (без дужок!). Таким чином очікується, що DI перед створенням `Dependency1` передасть йому дані з `@inject(Dependency1, 'context-data')` до того параметру, перед яким розташовано `@input`. Тобто `Service1` намагається отримати інстанс `Dependency1` передаючи йому `context-data`.
 
-Аналогічно ви можете отримати "вхідні" дані у будь-якому провайдері, де можна вказати залежність:
+Ви можете отримати "вхідні" дані у будь-якому провайдері, де можна вказати залежність. До речі, використовуючи декоратор ось так - `@input` - це скорочена версія від `@inject(input)`:
 
-```ts {5,23}
-import { injectable, inject, Injector, input } from '@ditsmod/core';
+```ts {5,21}
+import { injectable, inject, Injector, input, type FunctionFactoryProvider } from '@ditsmod/core';
 
 @injectable()
 class Service2 {
-  constructor(@inject(input) public arg: string) { // Простіше використати "@input"
+  constructor(@inject(input) public arg: string) {
+    // Простіше використати "@input"
     console.log(arg); // print: context-data2
   }
 }
@@ -905,15 +906,13 @@ class Service1 {
   ) {}
 }
 
-const injector = Injector.resolveAndCreate([
-  Service1,
-  Service2,
-  {
-    token: 'token1',
-    deps: [input],
-    useFactory: (arg) => console.log(arg), // print: context-data1
-  },
-]);
+const factoryProvider: FunctionFactoryProvider = {
+  token: 'token1',
+  deps: [input],
+  useFactory: (arg) => console.log(arg), // print: context-data1
+};
+
+const injector = Injector.resolveAndCreate([Service1, Service2, factoryProvider]);
 
 injector.get(Service1);
 ```
@@ -926,7 +925,7 @@ injector.get(Service1);
 
 Майте на увазі, що коли до `@inject()` передається другий аргумент, інжектор не створює кеш для вказаної залежності.
 
-### optional {#optional}
+### `optional` {#optional}
 
 Інколи вам може знадобитись вказати опціональну (необов'язкову) залежність в конструкторі. Давайте розглянемо наступний приклад, де після властивості `firstService` поставлено знак питання, і таким чином вказано для TypeScript що ця властивість є опціональною:
 
@@ -956,7 +955,7 @@ export class SecondService {
 
 Оскільки в JavaScript немає позначки "опціональна властивість", лише завдяки декораторам можна це вказати.
 
-### fromSelf {#fromSelf}
+### `fromSelf` {#fromSelf}
 
 Декоратори `fromSelf` та `skipSelf` мають сенс у випадку, коли існує певна ієрархія інжекторів. Декоратор `fromSelf` використовується дуже рідко.
 
@@ -985,7 +984,7 @@ child.get(Service2);
 
 А ось при створенні дочірнього інжектора, йому не передали `Service1`, тому при запиті токену `Service2` він не зможе вирішити залежність цього сервісу. Якщо прибрати декоратор `fromSelf` з конструктора, то дочірній іжектор успішно вирішить залежність `Service2`.
 
-### skipSelf {#skipSelf}
+### `skipSelf` {#skipSelf}
 
 Декоратор `skipSelf` використовується частіше, ніж `fromSelf`, але також рідко.
 

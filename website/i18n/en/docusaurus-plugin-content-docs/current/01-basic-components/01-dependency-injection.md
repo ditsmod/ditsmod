@@ -845,7 +845,7 @@ In most cases, editing values is used by [interceptors][105] or [guards][106], a
 
 These decorators are used to manage the behavior of the injector when looking up values for a specific token. The most commonly used are `inject` and `optional`, while `fromSelf` and `skipSelf` are used very rarely.
 
-### inject and input {#inject-and-input}
+### `inject` and `input` {#inject-and-input}
 
 As previously mentioned, the `inject` decorator allows you to specify an alternative token in method parameters, enabling you to pass any type of dependency:
 
@@ -885,14 +885,15 @@ service1.dependency1.contextParameter; // context-data
 
 Here it is shown that `Service1` depends on `Dependency1`, and in the constructor of `Dependency1`, the `@input` decorator is placed before the parameter (without parentheses!). This way, it is expected that before creating `Dependency1`, DI will pass the data from `@inject(Dependency1, 'context-data')` to the parameter marked with `@input`. In other words, `Service1` attempts to obtain an instance of `Dependency1` while passing `context-data` to it.
 
-Similarly, you can obtain "input" data in any provider where a dependency can be specified:
+You can obtain "input" data in any provider where a dependency can be specified. By the way, using the decorator like this - `@input` - is a shortened version of `@inject(input)`:
 
-```ts {5,23}
-import { injectable, inject, Injector, input } from '@ditsmod/core';
+```ts {5,21}
+import { injectable, inject, Injector, input, type FunctionFactoryProvider } from '@ditsmod/core';
 
 @injectable()
 class Service2 {
-  constructor(@inject(input) public arg: string) { // It's easier to use just "@input"
+  constructor(@inject(input) public arg: string) {
+    // Простіше використати "@input"
     console.log(arg); // print: context-data2
   }
 }
@@ -905,15 +906,13 @@ class Service1 {
   ) {}
 }
 
-const injector = Injector.resolveAndCreate([
-  Service1,
-  Service2,
-  {
-    token: 'token1',
-    deps: [input],
-    useFactory: (arg) => console.log(arg), // print: context-data1
-  },
-]);
+const factoryProvider: FunctionFactoryProvider = {
+  token: 'token1',
+  deps: [input],
+  useFactory: (arg) => console.log(arg), // print: context-data1
+};
+
+const injector = Injector.resolveAndCreate([Service1, Service2, factoryProvider]);
 
 injector.get(Service1);
 ```
@@ -926,7 +925,7 @@ What do we see here:
 
 Note that when a second argument is passed to `@inject()`, the injector does not create a cache for the specified dependency.
 
-### optional {#optional}
+### `optional` {#optional}
 
 Sometimes you may need to mark a dependency in the constructor as optional. Let's look at the following example where a question mark is placed after the `firstService` property, indicating to TypeScript that this property is optional:
 
@@ -956,7 +955,7 @@ export class SecondService {
 
 Since JavaScript has no notion of an “optional property”, this can only be indicated by using decorators.
 
-### fromSelf {#fromSelf}
+### `fromSelf` {#fromSelf}
 
 The `fromSelf` and `skipSelf` decorators make sense when there is some hierarchy of injectors. The `fromSelf` decorator is used very rarely.
 
@@ -985,7 +984,7 @@ As you can see, `Service2` depends on `Service1`, and the `fromSelf` decorator t
 
 But when creating the child injector, `Service1` was not passed to it, so when requesting the token `Service2` it will not be able to resolve that service's dependency. If you remove the `fromSelf` decorator from the constructor, then the child injector will successfully resolve the dependency for `Service2`.
 
-### skipSelf {#skipSelf}
+### `skipSelf` {#skipSelf}
 
 The `skipSelf` decorator is used more often than `fromSelf`, but still rarely.
 
