@@ -1,4 +1,4 @@
-import { rootModule, Providers, inject, injCtx } from '@ditsmod/core';
+import { rootModule, Providers, inject, ctx } from '@ditsmod/core';
 import {
   QUERY_PARAMS,
   PATH_PARAMS,
@@ -16,7 +16,7 @@ import { Interceptor1 } from './interceptor1.js';
 @controller({ providersPerReq: [{ token: 'msg' }] })
 export class DefaultController {
   @route('GET', 'get0/:pathParam1/:pathParam2')
-  tellHello(@injCtx(QUERY_PARAMS) queryParams: any, @injCtx(PATH_PARAMS) pathParams: any) {
+  tellHello(@ctx(QUERY_PARAMS) queryParams: any, @ctx(PATH_PARAMS) pathParams: any) {
     return { pathParams, queryParams };
   }
 

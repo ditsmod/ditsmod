@@ -1,4 +1,4 @@
-import { injCtx } from '@ditsmod/core';
+import { ctx } from '@ditsmod/core';
 import { controller, route, RequestContext, restRootModule } from '@ditsmod/rest';
 
 import { AuthjsModule } from '#mod/authjs.module.js';
@@ -16,7 +16,7 @@ export class InjScopedController {
   }
 
   @route('GET', 'inj-scoped', [AuthjsGuard])
-  async method2(@injCtx(AUTHJS_SESSION) session: any) {
+  async method2(@ctx(AUTHJS_SESSION) session: any) {
     return session;
   }
 }

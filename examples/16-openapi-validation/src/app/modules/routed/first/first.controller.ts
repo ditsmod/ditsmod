@@ -1,4 +1,4 @@
-import { AnyObj, injCtx } from '@ditsmod/core';
+import { AnyObj, ctx } from '@ditsmod/core';
 import { HTTP_BODY } from '@ditsmod/body-parser';
 import { getParams, getContent, oasRoute } from '@ditsmod/openapi';
 import { controller, PATH_PARAMS, Res } from '@ditsmod/rest';
@@ -11,7 +11,7 @@ export class FirstController {
     description: 'Route wtih required path parameter',
     parameters: getParams('path', true, Model1, 'username'),
   })
-  getResourceId(@injCtx(PATH_PARAMS) pathParams: AnyObj, res: Res) {
+  getResourceId(@ctx(PATH_PARAMS) pathParams: AnyObj, res: Res) {
     const { username } = pathParams;
     res.sendJson({ username });
   }
@@ -23,7 +23,7 @@ export class FirstController {
       content: getContent({ mediaType: 'application/json', model: Model1 }),
     },
   })
-  postModel1(@injCtx(HTTP_BODY) body: any, res: Res) {
+  postModel1(@ctx(HTTP_BODY) body: any, res: Res) {
     res.sendJson(body);
   }
 
@@ -34,7 +34,7 @@ export class FirstController {
       content: getContent({ mediaType: 'application/json', model: Model2 }),
     },
   })
-  postModel2(@injCtx(HTTP_BODY) body: any, res: Res) {
+  postModel2(@ctx(HTTP_BODY) body: any, res: Res) {
     res.sendJson(body);
   }
 }

@@ -1,4 +1,4 @@
-import { injCtx, injectable, optional } from '@ditsmod/core';
+import { ctx, injectable, optional } from '@ditsmod/core';
 import { RAW_REQ, RawRequest } from '@ditsmod/rest';
 import { Multer, MulterGroup } from '@ts-stack/multer';
 
@@ -8,7 +8,7 @@ import { checkResult } from './multer-utils.js';
 @injectable()
 export class MulterParser {
   constructor(
-    @injCtx(RAW_REQ) protected rawReq: RawRequest,
+    @ctx(RAW_REQ) protected rawReq: RawRequest,
     protected multer: Multer,
     @optional() protected options?: MulterExtendedOptions,
   ) {}

@@ -1,7 +1,7 @@
 import { Reflector } from './reflector.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
 import { CLASS_KEY } from './top/constants.js';
-import { injCtx } from './decorators.js';
+import { ctx } from './decorators.js';
 import { Injector } from './injector.js';
 import { Context } from './context.js';
 import { injectorCtxProviders } from './providers.js';
@@ -26,9 +26,9 @@ describe('Property decorators', () => {
     expect(p.watch.decorators).toEqual([new DecoratorAndValue(prop, 'firefox!')]);
   });
 
-  it('@injCtx()', () => {
+  it('@ctx()', () => {
     class Service1 {
-      method1(@injCtx('token1') param1: any, @injCtx('token2') param2: any) {
+      method1(@ctx('token1') param1: any, @ctx('token2') param2: any) {
         return { param1, param2 };
       }
     }
@@ -38,9 +38,9 @@ describe('Property decorators', () => {
       { token: 'token3', useFactory: [Service1, Service1.prototype.method1] },
     ]);
 
-    const ctx = injector.get(Context) as Context;
-    ctx.set('token1', 1);
-    ctx.set('token2', 2);
+    const context = injector.get(Context) as Context;
+    context.set('token1', 1);
+    context.set('token2', 2);
     expect(injector.get('token3')).toEqual({ param1: 1, param2: 2 });
   });
 

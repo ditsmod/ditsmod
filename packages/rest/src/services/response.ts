@@ -1,4 +1,4 @@
-import { injCtx, injectable } from '@ditsmod/core';
+import { ctx, injectable } from '@ditsmod/core';
 import { type ServerResponse } from 'node:http';
 
 import { RAW_RES } from '#types/constants.js';
@@ -11,7 +11,7 @@ export class Res<T = any> {
     /**
      * Native webserver response.
      */
-    @injCtx(RAW_RES) public rawRes: RawResponse,
+    @ctx(RAW_RES) public rawRes: RawResponse,
   ) {}
 
   /**

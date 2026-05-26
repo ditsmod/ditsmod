@@ -1,4 +1,4 @@
-import { AnyObj, injCtx, Status } from '@ditsmod/core';
+import { AnyObj, ctx, Status } from '@ditsmod/core';
 import { controller, route, PATH_PARAMS, Res } from '@ditsmod/rest';
 import { getParams, getContent, oasRoute } from '@ditsmod/openapi';
 
@@ -29,7 +29,7 @@ export class FirstController {
       },
     },
   })
-  getResourceId(@injCtx(PATH_PARAMS) pathParams: AnyObj, res: Res) {
+  getResourceId(@ctx(PATH_PARAMS) pathParams: AnyObj, res: Res) {
     const { resourceId } = pathParams;
     res.sendJson({ resourceId, body: `some body for resourceId ${resourceId}` });
   }
@@ -45,7 +45,7 @@ export class FirstController {
       },
     },
   })
-  getResourceId2(@injCtx(PATH_PARAMS) pathParams: AnyObj, res: Res) {
+  getResourceId2(@ctx(PATH_PARAMS) pathParams: AnyObj, res: Res) {
     const { resourceId } = pathParams;
     res.sendJson({ resourceId, body: `some body for resourceId ${resourceId}` });
   }

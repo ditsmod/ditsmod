@@ -1,4 +1,4 @@
-import { AnyObj, injCtx, injectable, Injector, optional, Logger } from '@ditsmod/core';
+import { AnyObj, ctx, injectable, Injector, optional, Logger } from '@ditsmod/core';
 import { DictService, I18nLogMediator, I18nOptions, ISO639 } from '@ditsmod/i18n';
 import { QUERY_PARAMS, RAW_REQ, RawRequest } from '@ditsmod/rest';
 
@@ -9,8 +9,8 @@ export class MyDictService extends DictService {
     protected override log: I18nLogMediator,
     protected logger: Logger,
     @optional() protected override i18nOptions?: I18nOptions,
-    @injCtx(QUERY_PARAMS) protected override queryParams?: AnyObj,
-    @optional() @injCtx(RAW_REQ) protected rawReq?: RawRequest,
+    @ctx(QUERY_PARAMS) protected override queryParams?: AnyObj,
+    @optional() @ctx(RAW_REQ) protected rawReq?: RawRequest,
   ) {
     super(injector, log, i18nOptions, queryParams);
   }

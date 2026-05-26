@@ -1,6 +1,6 @@
 import { createReadStream } from 'node:fs';
 import { readFile } from 'node:fs/promises';
-import { injCtx, Status } from '@ditsmod/core';
+import { ctx, Status } from '@ditsmod/core';
 import { controller, Res } from '@ditsmod/rest';
 
 import { webpackDist } from './swagger-ui/constants.js';
@@ -36,7 +36,7 @@ export class OpenapiController {
       },
     },
   })
-  async getYaml(@injCtx(OasConfigFiles) configFiles: OasConfigFiles) {
+  async getYaml(@ctx(OasConfigFiles) configFiles: OasConfigFiles) {
     this.res.setContentType('text/yaml; charset=utf-8').send(configFiles.yaml);
   }
 
@@ -50,7 +50,7 @@ export class OpenapiController {
       },
     },
   })
-  async getJson(@injCtx(OasConfigFiles) configFiles: OasConfigFiles) {
+  async getJson(@ctx(OasConfigFiles) configFiles: OasConfigFiles) {
     this.res.setContentType('application/json; charset=utf-8').send(configFiles.json);
   }
 

@@ -21,7 +21,7 @@ import {
   ModuleManager,
   HttpMethod,
   getDebugClassName,
-  injCtx,
+  ctx,
 } from '@ditsmod/core';
 
 import { routeChannel } from '#diagnostics-channel';
@@ -337,7 +337,7 @@ export class PreRouterExtension implements Extension<void> {
     path: string,
   ) {
     try {
-      const ignoreDeps: any[] = [HTTP_INTERCEPTORS, input, injCtx];
+      const ignoreDeps: any[] = [HTTP_INTERCEPTORS, input, ctx];
       DepsChecker.check(inj, HttpErrorHandler, undefined, ignoreDeps);
       DepsChecker.check(inj, ChainMaker, undefined, ignoreDeps);
       DepsChecker.check(inj, HttpFrontend, undefined, ignoreDeps);

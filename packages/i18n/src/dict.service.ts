@@ -1,4 +1,4 @@
-import { AnyObj, injCtx, injectable, Injector, optional, Class } from '@ditsmod/core';
+import { AnyObj, ctx, injectable, Injector, optional, Class } from '@ditsmod/core';
 import { QUERY_PARAMS } from '@ditsmod/rest';
 
 import { I18nLogMediator } from './i18n-log-mediator.js';
@@ -14,7 +14,7 @@ export class DictService {
     protected injector: Injector,
     protected log: I18nLogMediator,
     @optional() protected i18nOptions?: I18nOptions,
-    @optional() @injCtx(QUERY_PARAMS) protected queryParams?: AnyObj,
+    @optional() @ctx(QUERY_PARAMS) protected queryParams?: AnyObj,
   ) {}
 
   getAllDictionaries<T extends Class<Dictionary>>(token: T) {

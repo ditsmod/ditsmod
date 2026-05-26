@@ -1,4 +1,4 @@
-import { AnyObj, injCtx } from '@ditsmod/core';
+import { AnyObj, ctx } from '@ditsmod/core';
 import { controller, route, PATH_PARAMS, Res } from '@ditsmod/rest';
 import { DictService } from '@ditsmod/i18n';
 
@@ -8,7 +8,7 @@ import { SecondDict } from '#app/second/i18n/current/_base-en/second.dict.js';
 @controller()
 export class SecondController {
   @route('GET', 'second/:userName')
-  tellHello(@injCtx(PATH_PARAMS) pathParams: AnyObj, dictService: DictService, res: Res) {
+  tellHello(@ctx(PATH_PARAMS) pathParams: AnyObj, dictService: DictService, res: Res) {
     const dict = dictService.getDictionary(SecondDict);
     const { userName } = pathParams;
     const msg = dict.hello(userName);

@@ -81,9 +81,9 @@ export const input = Reflector.makeParamDecorator(
   inject,
 )();
 
-export const injCtx = Reflector.makeParamDecorator(
-  (token?: any) => ({ token: forwardRef(() => injCtx), ctx: token }) satisfies InjectTransformResult,
-  'injCtx',
+export const ctx = Reflector.makeParamDecorator(
+  (token?: any) => ({ token: forwardRef(() => ctx), ctx: token }) satisfies InjectTransformResult,
+  'ctx',
   inject,
 );
 

@@ -1,4 +1,4 @@
-import { injCtx } from '@ditsmod/core';
+import { ctx } from '@ditsmod/core';
 import { randomUUID } from 'node:crypto';
 import { TLSSocket } from 'node:tls';
 import type * as http from 'node:http';
@@ -12,7 +12,7 @@ export class Req {
     /**
      * Native webserver request.
      */
-    @injCtx(RAW_REQ) public rawReq: RawRequest,
+    @ctx(RAW_REQ) public rawReq: RawRequest,
   ) {}
 
   get requestId() {

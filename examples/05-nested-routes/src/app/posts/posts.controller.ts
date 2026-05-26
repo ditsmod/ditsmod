@@ -1,4 +1,4 @@
-import { AnyObj, injCtx } from '@ditsmod/core';
+import { AnyObj, ctx } from '@ditsmod/core';
 import { controller, route, PATH_PARAMS, Res } from '@ditsmod/rest';
 
 @controller()
@@ -8,7 +8,7 @@ export class PostsController {
    */
   @route('GET')
   @route('GET', ':postId')
-  sendPosts(res: Res, @injCtx(PATH_PARAMS) pathParams: AnyObj = {}) {
+  sendPosts(res: Res, @ctx(PATH_PARAMS) pathParams: AnyObj = {}) {
     res.sendJson({ pathParams });
   }
 }

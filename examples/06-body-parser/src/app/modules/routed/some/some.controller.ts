@@ -1,5 +1,5 @@
 import { type ServerResponse } from 'node:http';
-import { injCtx } from '@ditsmod/core';
+import { ctx } from '@ditsmod/core';
 import { controller, route, RAW_RES, RawResponse, Res } from '@ditsmod/rest';
 import { HTTP_BODY, MulterParser } from '@ditsmod/body-parser';
 
@@ -17,12 +17,12 @@ export class SomeController {
   }
 
   @route('POST')
-  post(res: Res, @injCtx(HTTP_BODY) body: Body) {
+  post(res: Res, @ctx(HTTP_BODY) body: Body) {
     res.sendJson(body);
   }
 
   @route('GET', 'file-upload')
-  getHtmlForm(@injCtx(RAW_RES) rawRes: RawResponse) {
+  getHtmlForm(@ctx(RAW_RES) rawRes: RawResponse) {
     sendHtmlForm(rawRes);
   }
 

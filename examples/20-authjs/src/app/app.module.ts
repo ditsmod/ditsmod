@@ -1,6 +1,6 @@
 import { controller, route, Res, restRootModule } from '@ditsmod/rest';
 import { AuthjsConfig, AUTHJS_SESSION, AuthjsGuard, AuthjsModule, AuthjsInterceptor } from '@ditsmod/authjs';
-import { injCtx } from '@ditsmod/core';
+import { ctx } from '@ditsmod/core';
 
 import { OverriddenAuthConfig } from './authjs.config.js';
 
@@ -12,7 +12,7 @@ export class InjScopedController {
   }
 
   @route('GET', 'per-req', [AuthjsGuard])
-  getSession(@injCtx(AUTHJS_SESSION) session: any) {
+  getSession(@ctx(AUTHJS_SESSION) session: any) {
     return session.user;
   }
 
