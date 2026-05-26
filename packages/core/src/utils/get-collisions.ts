@@ -1,24 +1,29 @@
 import type { Provider } from '#di/top/types-and-models.js';
-import { isClassProvider, isFactoryProvider, isFunctionFactoryProvider, isTokenProvider, isValueProvider } from '#di/utils.js';
+import {
+  isClassProvider,
+  isFactoryProvider,
+  isFunctionFactoryProvider,
+  isTokenProvider,
+  isValueProvider,
+} from '#di/utils.js';
 import { getTokens } from './get-tokens.js';
 
 /**
- * If you have a replacement for some provider - you have a collision.
- *
- * Returns array of uniq tokens.
- *
  * @todo Add checks for FactoryProvider.
+ * 
+ * @param uniqDuplTokens Duplicates found in tokens.
+ * @param providersWithDuplicates Merged providers where there may be conflicts.
  */
-export function getCollisions(uniqDuplTokens: any[], providers: Provider[]) {
+export function getCollisions(uniqDuplTokens: any[], providersWithDuplicates: Provider[]) {
   uniqDuplTokens ??= [];
-  providers ??= [];
+  providersWithDuplicates ??= [];
   const duplProviders: Provider[] = [];
   const duplTokens: any[] = [];
   const collisions = new Set<any>();
 
-  getTokens(providers).forEach((token, i) => {
+  getTokens(providersWithDuplicates).forEach((token, i) => {
     if (uniqDuplTokens.includes(token)) {
-      const currProvider = providers[i];
+      const currProvider = providersWithDuplicates[i];
       const index = duplTokens.indexOf(token);
       if (index == -1) {
         duplTokens.push(token);
