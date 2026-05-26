@@ -19,7 +19,7 @@ import { ProvidersOnly } from '#types/providers-metadata.js';
 import { CircularDepsInImports, NoProviderDuringResolveImports, FailImportProviders } from '#errors';
 import { ModuleExtract } from '#types/module-extract.js';
 import { stringify } from '#di/stringify.js';
-import { ctx } from '#di/decorators.js';
+import { input } from '#di/decorators.js';
 import { isClassProvider, isFactoryProvider, isMultiProvider, isTokenProvider, isValueProvider } from '#di/utils.js';
 import { Injector } from '#di/injector.js';
 
@@ -131,7 +131,7 @@ export class DeepModulesImporter {
     this.extensionsTokens = getTokens([
       ...defaultExtensionProviders,
       ...currentExtensionsProviders,
-      ctx,
+      input
     ]);
     baseImportRegistry.extensionGroupTokens.forEach((importedGroupTokens) => {
       importedGroupTokens.forEach((groupToken, ext) => {
