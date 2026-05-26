@@ -1,9 +1,10 @@
-import type { Provider } from '@ditsmod/core';
+import { injectorCtxProviders, type Provider } from '@ditsmod/core';
 
 import { HttpErrorHandler } from '../services/http-error-handler.js';
 import { DefaultHttpErrorHandler } from '../services/default-http-error-handler.js';
 
 
 export const defaultProvidersPerRou: Provider[] = [
+  ...injectorCtxProviders,
   { token: HttpErrorHandler, useClass: DefaultHttpErrorHandler },
 ];

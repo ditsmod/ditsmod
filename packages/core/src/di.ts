@@ -43,3 +43,4 @@ export { DepsChecker } from '#di/deps-checker.js';
 export { RegistryOfInjector, ResolvedFactory, ResolvedProvider } from '#di/top/resolved-provider.js';
 export { DecoratorAndValue } from '#di/top/decorator-and-value.js';
 export { Context } from '#di/context.js';
+export { injectorCtxProviders } from '#di/providers.js';

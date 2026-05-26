@@ -1,10 +1,11 @@
-import type { Provider } from '@ditsmod/core';
+import { injectorCtxProviders, type Provider } from '@ditsmod/core';
 
 import { RAW_REQ, RAW_RES, A_PATH_PARAMS, PATH_PARAMS, QUERY_PARAMS, QUERY_STRING } from '#types/constants.js';
 import { Req } from '../services/request.js';
 import { Res } from '../services/response.js';
 
 export const defaultProvidersPerReq: Readonly<Provider[]> = [
+  ...injectorCtxProviders,
   { token: RAW_REQ },
   { token: RAW_RES },
   { token: A_PATH_PARAMS },
