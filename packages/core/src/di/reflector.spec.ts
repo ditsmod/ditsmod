@@ -91,12 +91,12 @@ describe('Reflector', () => {
         class Child extends Parent {}
 
         expect(Reflector.getMetadata(Parent, 'constructor')?.decorators).toEqual([
-          new DecoratorAndValue(classDecoratorFactory, [{ val: 'parent' }], expect.any(String)),
+          new DecoratorAndValue(classDecoratorFactory, [{ val: 'parent' }], undefined, expect.any(String)),
         ]);
         const childMeta = Reflector.getMetadata(Child, 'constructor');
         expect(childMeta?.decorators).toEqual([
-          new DecoratorAndValue(classDecoratorFactory, [{ val: 'child' }], expect.any(String)),
-          new DecoratorAndValue(classDecoratorFactory, [{ val: 'parent' }], expect.any(String)),
+          new DecoratorAndValue(classDecoratorFactory, [{ val: 'child' }], undefined, expect.any(String)),
+          new DecoratorAndValue(classDecoratorFactory, [{ val: 'parent' }], undefined, expect.any(String)),
         ]);
       });
     });
@@ -350,7 +350,7 @@ describe('Reflector', () => {
         const classMetaIterator = Reflector.getMetadata(Service1);
         expect(Array.from(classMetaIterator!)).toEqual(['method1', 'prop1', 'constructor']);
         expect(classMetaIterator?.constructor.decorators).toEqual([
-          new DecoratorAndValue(classDecoratorFactory, [{ val: 1 }], expect.any(String)),
+          new DecoratorAndValue(classDecoratorFactory, [{ val: 1 }], undefined, expect.any(String)),
         ]);
         expect(classMetaIterator?.constructor.params).toEqual([]);
         expect(classMetaIterator?.method1.decorators).toEqual([
@@ -547,7 +547,7 @@ describe('Reflector', () => {
         const classMetaIterator = Reflector.getMetadata(Service3);
         expect(Array.from(classMetaIterator!)).toEqual(['method1', 'constructor']);
         expect(classMetaIterator?.constructor.decorators).toEqual([
-          new DecoratorAndValue(classDecoratorFactory, [{ val: 111 }], expect.any(String)),
+          new DecoratorAndValue(classDecoratorFactory, [{ val: 111 }], undefined, expect.any(String)),
         ]);
         expect(classMetaIterator?.constructor.params).toEqual([]);
         expect(classMetaIterator?.method1.params).toEqual([
@@ -623,7 +623,6 @@ describe('Reflector', () => {
       }
 
       const moduleMeta = Reflector.getMetadata(Class3);
-      console.log('-'.repeat(50), 'constructor');
       it('firs - child, next - parent', () => {
         expect(moduleMeta?.constructor.decorators.map((d) => d.value)).toEqual([
           ['constructor3.1'],
