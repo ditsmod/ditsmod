@@ -47,7 +47,7 @@ yarn start:dev
 The web version of the documentation is launched with the following command:
 
 ```bash
-yarn docs --locale en
+yarn docs-en
 ```
 
 The documentation files are located in the following folders:

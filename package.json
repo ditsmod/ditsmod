@@ -28,6 +28,7 @@
     "build-vscode": "tsgo -b examples/tsconfig.vscode.json",
     "lint": "eslint",
     "docs": "yarn --cwd website start --port 3001",
+    "docs-en": "yarn docs --locale en",
     "docs-deploy": "cd website && ./deploy.sh",
     "clean": "rm -r packages/*/dist* examples/*/dist*"
   },
