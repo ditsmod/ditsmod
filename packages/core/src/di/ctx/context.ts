@@ -24,7 +24,7 @@ export class Context {
   get(): Map<string, Map<any, any>>;
   get(token: any): unknown;
   get(token?: any): any {
-    if (!token) {
+    if (token === undefined) {
       return this.collectValues();
     }
     if (this.#ctx.has(token)) {
