@@ -12,7 +12,7 @@ import { ValidationInterceptor } from './validation.interceptor.js';
 export class RequestBodyInterceptor extends ValidationInterceptor {
   protected override prepareAndValidate() {
     const { options, requestBodySchema } = this.routeMeta as ValidationRouteMeta;
-    const body = this.injector.getCtx(HTTP_BODY);
+    const body = this.ctx.get(HTTP_BODY);
     if (body === undefined) {
       const dict = this.getDict();
       throw new CustomError({

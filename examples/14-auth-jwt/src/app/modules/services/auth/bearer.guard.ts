@@ -1,4 +1,4 @@
-import { Injector } from '@ditsmod/core';
+import { Context } from '@ditsmod/core';
 import { CanActivate, guard, RequestContext } from '@ditsmod/rest';
 import { JwtService, JWT_PAYLOAD, VerifyErrors } from '@ditsmod/jwt';
 
@@ -6,7 +6,7 @@ import { JwtService, JWT_PAYLOAD, VerifyErrors } from '@ditsmod/jwt';
 export class BearerGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
-    private injector: Injector
+    private ctx: Context
   ) {}
 
   async canActivate(ctx: RequestContext) {
@@ -22,7 +22,7 @@ export class BearerGuard implements CanActivate {
       .catch((err: VerifyErrors) => false as const); // Here `as const` to narrow down returned type.
 
     if (payload) {
-      this.injector.setCtx(JWT_PAYLOAD, payload);
+      this.ctx.set(JWT_PAYLOAD, payload);
       return true;
     } else {
       return false;

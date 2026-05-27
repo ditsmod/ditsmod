@@ -1,4 +1,4 @@
-import { injectable, Injector, skipSelf, Status } from '@ditsmod/core';
+import { injectable, Injector, skipSelf, Status, Context } from '@ditsmod/core';
 import { CustomError } from '@ditsmod/core/errors';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
 import { DictService } from '@ditsmod/i18n';
@@ -15,6 +15,7 @@ export class ValidationInterceptor implements HttpInterceptor {
 
   constructor(
     protected injector: Injector,
+    protected ctx: Context,
     protected ajvService: AjvService,
     @skipSelf() protected routeMeta: RouteMeta,
   ) {}

@@ -1,4 +1,4 @@
-import { Injector } from '@ditsmod/core';
+import { Context } from '@ditsmod/core';
 import { CanActivate, guard, RequestContext } from '@ditsmod/rest';
 
 import { getSession } from '#mod/get-session.js';
@@ -9,7 +9,7 @@ import { AuthjsConfig } from './authjs.config.js';
 export class AuthjsGuard implements CanActivate {
   constructor(
     protected config: AuthjsConfig,
-    protected injector: Injector,
+    protected ctx: Context,
   ) {}
 
   async canActivate(ctx: RequestContext, params?: any[]): Promise<boolean | Response> {
@@ -18,7 +18,7 @@ export class AuthjsGuard implements CanActivate {
       return false;
     }
     ctx.auth = session;
-    this.injector.setCtx(AUTHJS_SESSION, session);
+    this.ctx.set(AUTHJS_SESSION, session);
     return true;
   }
 }

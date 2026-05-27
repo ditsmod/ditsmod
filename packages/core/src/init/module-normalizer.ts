@@ -92,8 +92,8 @@ export class ModuleNormalizer {
     baseMeta.rawMeta = rawMeta;
     baseMeta.declaredInDir = decorAndVal?.declaredInDir || '.';
     baseMeta.modRefId = modRefId;
-    aDecoratorMeta.filter(isModuleWithInitHooks).forEach(({ decorator, value }) => {
-      baseMeta.mInitHooks.set(decorator, value);
+    aDecoratorMeta.filter(isModuleWithInitHooks).forEach(({ decoratorId, value }) => {
+      baseMeta.mInitHooks.set(decoratorId!, value);
     });
     return { rawMeta, baseMeta };
   }

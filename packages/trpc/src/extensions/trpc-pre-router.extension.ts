@@ -17,6 +17,7 @@ import {
   ClassFactoryProvider,
   getToken,
   input,
+  Context,
 } from '@ditsmod/core';
 import { inspect } from 'node:util';
 import type { AnyMiddlewareFunction } from '@trpc/server';
@@ -224,19 +225,15 @@ export class TrpcPreRouterExtension implements Extension<void> {
       const rawReq: RawRequest = opts.ctx.req;
       const rawRes: RawResponse = opts.ctx.res;
       const injector = new Injector(RegistryPerReq, 'Req', injectorPerRou);
-      return (
-        injector
-          .setCtx(TRPC_OPTS, opts)
-          .setCtx(RAW_REQ, rawReq)
-          .setCtx(RAW_RES, rawRes)
-          .instantiateResolved<TrpcChainMaker>(resolvedTrpcChainMaker)
-          .makeChain(opts)
-          .handle() // First HTTP handler in the chain of HTTP interceptors.
-          // .catch((err) => {
-          //   const errorHandler = injector.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
-          //   return errorHandler.handleError(err, ctx);
-          // })
-      );
+      (injector.get(Context) as Context).set(TRPC_OPTS, opts).set(RAW_REQ, rawReq).set(RAW_RES, rawRes);
+      return injector
+        .instantiateResolved<TrpcChainMaker>(resolvedTrpcChainMaker)
+        .makeChain(opts)
+        .handle(); // First HTTP handler in the chain of HTTP interceptors.
+        // .catch((err) => {
+        //   const errorHandler = injector.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
+        //   return errorHandler.handleError(err, ctx);
+        // });
     };
 
     const routeService = injectorPerRou.get(TrpcRouteService) as PublicTrpcRouteService;
@@ -244,7 +241,8 @@ export class TrpcPreRouterExtension implements Extension<void> {
     routeService.setHandlerPerReq(routeMeta, resolvedPerReq, middlewarePerRou, handlerPerReq);
 
     const methodAsToken = routeMeta.Controller.prototype[routeMeta.methodName];
-    injectorPerMod.setCtx(methodAsToken, injectorPerRou.get(methodAsToken));
+    const ctx = injectorPerMod.get(Context) as Context;
+    ctx.set(methodAsToken, injectorPerRou.get(methodAsToken));
   }
 
   /**

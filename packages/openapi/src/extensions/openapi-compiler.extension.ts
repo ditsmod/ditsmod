@@ -9,6 +9,7 @@ import {
   Reflector,
   Stage1ExtensionMetaPerApp,
   Stage1ExtensionMeta2,
+  Context,
 } from '@ditsmod/core';
 import {
   PathItemObject,
@@ -59,7 +60,8 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
       const json = JSON.stringify(this.oasObject);
       const oasOptions = this.extensionsMetaPerApp?.oasOptions as OasOptions | undefined;
       const yaml = stringify(this.oasObject, oasOptions?.yamlSchemaOptions);
-      injectorPerMod.parent!.setCtx(OasConfigFiles, { json, yaml });
+      const ctx = injectorPerMod.parent?.get(Context) as Context;
+      ctx.set(OasConfigFiles, { json, yaml });
     }
   }
 
