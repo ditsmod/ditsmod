@@ -42,14 +42,11 @@ jobs:
         run: |
           corepack enable
           corepack install
-      - name: Install Dependency
+      - name: Install and build
         run: |
           cd packages/${{ matrix.package }}
           yarn install --immutable
-      - name: Build
-        run: |
-          cd packages/${{ matrix.package }}
-          yarn build
+          yarn build-ts
       - name: Build OpenAPI UI
         if: matrix.build_ui
         run: |
