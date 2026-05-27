@@ -42,16 +42,25 @@ jobs:
         run: |
           corepack enable
           corepack install
-      - name: Install and build
+      - name: Install Dependency
         run: |
           cd packages/${{ matrix.package }}
           yarn install --immutable
+      - name: Build
+        run: |
+          cd packages/${{ matrix.package }}
           yarn build
       - name: Build OpenAPI UI
         if: matrix.build_ui
         run: |
           cd packages/openapi
           yarn build-ui
+      - name: Verify build output
+        run: |
+          if [ ! -d "dist" ]; then
+            echo "dist directory does not exist"
+            exit 1
+          fi
       - name: Publish
         run: |
           cd packages/${{ matrix.package }}
