@@ -623,6 +623,8 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
    * @param ctx Context data that you can pass to the injector for the provider with the specified `token`.
    * If that provider specifies a dependency on [input][1] decorator, it can retrieve this data. If you pass
    * context data, the injector does not use or create a cache for the provider with the specified token.
+   *
+   * [1]: https://ditsmod.github.io/en/basic-components/dependency-injection/#inject-and-input
    */
   getOrderedMultiValues<T extends Provider = Provider, A = any>(
     token: NonNullable<unknown>,
