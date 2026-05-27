@@ -1,7 +1,7 @@
 {
   "name": "@ditsmod/rest",
   "type": "module",
-  "version": "3.0.0-next.9",
+  "version": "3.0.0-next.10",
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "homepage": "https://ditsmod.github.io/en/",
   "description": "Rest module for Ditsmod applications",
@@ -64,7 +64,7 @@
     "trek-router": "^1.2.0"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^3.0.0-next.9"
+    "@ditsmod/core": "^3.0.0-next.10"
   },
   "gitHead": "eaf8f20b4e75e38c7a51fd1c3174b691cea756fa",
   "publishConfig": {
