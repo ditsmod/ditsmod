@@ -42,6 +42,10 @@
       "types": "./dist/di.d.ts",
       "default": "./dist/di.js"
     },
+    "./decorators": {
+      "types": "./dist/decorators.d.ts",
+      "default": "./dist/decorators.js"
+    },
     "./errors": {
       "types": "./dist/errors.d.ts",
       "default": "./dist/errors.js"
