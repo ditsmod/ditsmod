@@ -707,9 +707,9 @@ __metadata:
     npm-run-all: "npm:^4.1.5"
     vitest: "npm:^4.0.18"
   peerDependencies:
-    "@ditsmod/body-parser": ^3.0.0-next.8
-    "@ditsmod/core": ^3.0.0-next.8
-    "@ditsmod/rest": ^3.0.0-next.8
+    "@ditsmod/body-parser": ^3.0.0-next.9
+    "@ditsmod/core": ^3.0.0-next.9
+    "@ditsmod/rest": ^3.0.0-next.9
   languageName: unknown
   linkType: soft
 
@@ -723,8 +723,8 @@ __metadata:
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
   peerDependencies:
-    "@ditsmod/core": ^3.0.0-next.8
-    "@ditsmod/rest": ^3.0.0-next.8
+    "@ditsmod/core": ^3.0.0-next.9
+    "@ditsmod/rest": ^3.0.0-next.9
   languageName: unknown
   linkType: soft
 
@@ -750,8 +750,8 @@ __metadata:
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
   peerDependencies:
-    "@ditsmod/core": ^3.0.0-next.8
-    "@ditsmod/rest": ^3.0.0-next.8
+    "@ditsmod/core": ^3.0.0-next.9
+    "@ditsmod/rest": ^3.0.0-next.9
   languageName: unknown
   linkType: soft
 
@@ -764,7 +764,7 @@ __metadata:
     npm-run-all: "npm:^4.1.5"
   peerDependencies:
     "@apollo/server": ^5.0.0
-    "@ditsmod/core": ^3.0.0-next.8
+    "@ditsmod/core": ^3.0.0-next.9
     graphql: ^16.11.0
   languageName: unknown
   linkType: soft
@@ -777,8 +777,8 @@ __metadata:
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
   peerDependencies:
-    "@ditsmod/core": ^3.0.0-next.8
-    "@ditsmod/rest": ^3.0.0-next.8
+    "@ditsmod/core": ^3.0.0-next.9
+    "@ditsmod/rest": ^3.0.0-next.9
   languageName: unknown
   linkType: soft
 
@@ -791,7 +791,7 @@ __metadata:
     jsonwebtoken: "npm:^9.0.3"
     npm-run-all: "npm:^4.1.5"
   peerDependencies:
-    "@ditsmod/core": ^3.0.0-next.8
+    "@ditsmod/core": ^3.0.0-next.9
   languageName: unknown
   linkType: soft
 
@@ -805,10 +805,10 @@ __metadata:
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
   peerDependencies:
-    "@ditsmod/core": ^3.0.0-next.8
-    "@ditsmod/i18n": ^3.0.0-next.8
-    "@ditsmod/openapi": ^3.0.0-next.8
-    "@ditsmod/rest": ^3.0.0-next.8
+    "@ditsmod/core": ^3.0.0-next.9
+    "@ditsmod/i18n": ^3.0.0-next.9
+    "@ditsmod/openapi": ^3.0.0-next.9
+    "@ditsmod/rest": ^3.0.0-next.9
   languageName: unknown
   linkType: soft
 
@@ -831,8 +831,8 @@ __metadata:
     yaml: "npm:^2.8.3"
     yaml-loader: "npm:^0.8.1"
   peerDependencies:
-    "@ditsmod/core": ^3.0.0-next.8
-    "@ditsmod/rest": ^3.0.0-next.8
+    "@ditsmod/core": ^3.0.0-next.9
+    "@ditsmod/rest": ^3.0.0-next.9
   languageName: unknown
   linkType: soft
 
@@ -844,8 +844,8 @@ __metadata:
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
   peerDependencies:
-    "@ditsmod/core": ^3.0.0-next.8
-    "@ditsmod/rest": ^3.0.0-next.8
+    "@ditsmod/core": ^3.0.0-next.9
+    "@ditsmod/rest": ^3.0.0-next.9
   languageName: unknown
   linkType: soft
 
@@ -857,8 +857,8 @@ __metadata:
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
   peerDependencies:
-    "@ditsmod/core": ^3.0.0-next.8
-    "@ditsmod/rest": ^3.0.0-next.8
+    "@ditsmod/core": ^3.0.0-next.9
+    "@ditsmod/rest": ^3.0.0-next.9
   languageName: unknown
   linkType: soft
 
@@ -873,7 +873,7 @@ __metadata:
     npm-run-all: "npm:^4.1.5"
     trek-router: "npm:^1.2.0"
   peerDependencies:
-    "@ditsmod/core": ^3.0.0-next.8
+    "@ditsmod/core": ^3.0.0-next.9
   languageName: unknown
   linkType: soft
 
@@ -886,8 +886,8 @@ __metadata:
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
   peerDependencies:
-    "@ditsmod/core": ^3.0.0-next.8
-    "@ditsmod/rest": ^3.0.0-next.8
+    "@ditsmod/core": ^3.0.0-next.9
+    "@ditsmod/rest": ^3.0.0-next.9
   languageName: unknown
   linkType: soft
 
@@ -899,8 +899,8 @@ __metadata:
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
   peerDependencies:
-    "@ditsmod/core": ^3.0.0-next.8
-    "@ditsmod/rest": ^3.0.0-next.8
+    "@ditsmod/core": ^3.0.0-next.9
+    "@ditsmod/rest": ^3.0.0-next.9
   languageName: unknown
   linkType: soft
 
@@ -912,8 +912,8 @@ __metadata:
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
   peerDependencies:
-    "@ditsmod/core": ^3.0.0-next.8
-    "@ditsmod/rest": ^3.0.0-next.8
+    "@ditsmod/core": ^3.0.0-next.9
+    "@ditsmod/rest": ^3.0.0-next.9
   languageName: unknown
   linkType: soft
 
@@ -925,7 +925,7 @@ __metadata:
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
   peerDependencies:
-    "@ditsmod/core": ^3.0.0-next.8
+    "@ditsmod/core": ^3.0.0-next.9
     "@trpc/server": ^11.5.0
   languageName: unknown
   linkType: soft
@@ -938,8 +938,8 @@ __metadata:
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
   peerDependencies:
-    "@ditsmod/core": ^3.0.0-next.8
-    "@ditsmod/rest": ^3.0.0-next.8
+    "@ditsmod/core": ^3.0.0-next.9
+    "@ditsmod/rest": ^3.0.0-next.9
   languageName: unknown
   linkType: soft
 
@@ -15521,7 +15521,7 @@ __metadata:
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
   peerDependencies:
-    "@ditsmod/core": ^3.0.0-next.8
+    "@ditsmod/core": ^3.0.0-next.9
   languageName: unknown
   linkType: soft
 
