@@ -56,7 +56,7 @@
     "typescript"
   ],
   "devDependencies": {
-    "@typescript/native-preview": "^7.0.0-dev.20260511.1",
+    "@typescript/native-preview": "^7.0.0-dev.20260527.1",
     "find-my-way": "^9.3.0",
     "jest": "^30.4.2",
     "koa-tree-router": "^0.13.1",
