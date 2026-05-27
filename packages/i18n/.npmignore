@@ -1,9 +1,8 @@
-spec
 *.tgz
 *.log
 *.spec.*
-yarn.lock
-jest.config.ts
+yarn.*
+jest.*
 .*
 nodemon.json
 CHANGELOG.md
@@ -11,4 +10,5 @@ CHANGELOG.md
 tsconfig.e2e.json
 tsconfig.unit.json
 test
+e2e
 dist-*
