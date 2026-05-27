@@ -54,6 +54,7 @@ jobs:
           yarn build-ui
       - name: Verify build output
         run: |
+          cd packages/${{ matrix.package }}
           if [ ! -d "dist" ]; then
             echo "dist directory does not exist"
             exit 1
