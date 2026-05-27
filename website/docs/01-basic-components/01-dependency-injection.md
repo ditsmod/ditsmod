@@ -843,11 +843,11 @@ DiError: Setting value by token failed: cannot find token in register: "token1".
 
 ## Декоратори для параметрів методів {#method-parameter-decorators}
 
-Ці декоратори використовуються для управління поведінкою інжектора під час пошуку значень для певного токена. Найчастіше використовуються `inject` та `optional`, дуже рідко - `fromSelf` та `skipSelf`.
+Ці декоратори використовуються для управління поведінкою інжектора під час пошуку значень для певного токена. Найчастіше використовуються `inject`, `input` та `optional`, дуже рідко - `fromSelf` та `skipSelf`.
 
 ### `inject` та `input` {#inject-and-input}
 
-Як раніше було сказано, декоратор `inject` дозволяє вказувати альтернативний токен у параметрах методів, і таким чином можна вказувати будь-які типи залежностей:
+Як [раніше було сказано][2], декоратор `inject` дозволяє вказувати альтернативний токен у параметрах методів, і таким чином можна вказувати будь-які типи залежностей:
 
 ```ts
 import { injectable, inject } from '@ditsmod/core';
@@ -887,13 +887,12 @@ service1.dependency1.contextParameter; // context-data
 
 Ви можете отримати "вхідні" дані у будь-якому провайдері, де можна вказати залежність. До речі, використовуючи декоратор ось так - `@input` - це скорочена версія від `@inject(input)`:
 
-```ts {5,21}
+```ts {5,20}
 import { injectable, inject, Injector, input, type FunctionFactoryProvider } from '@ditsmod/core';
 
 @injectable()
 class Service2 {
-  constructor(@inject(input) public arg: string) {
-    // Простіше використати "@input"
+  constructor(@inject(input) public arg: string) { // Простіше використати "@input"
     console.log(arg); // print: context-data2
   }
 }
@@ -920,7 +919,7 @@ injector.get(Service1);
 Що ми тут бачимо:
 
 1. Провайдери з токенами `Service2` та `token1` вказують у якості залежності функцію `input`. Ця функція насправді призначена для використання її як декоратор параметра методу, але нам DI дозволяє її також використовувати як токен провайдера.
-2. У `Service1` вказано залежність від провайдерів з токенами `Service2` та `token1`, причому другим аргументом у `@inject()` передано певні контекстні дані, які передаються відповідним провайдерам під час їхнього створення.
+2. У `Service1` вказано залежність від провайдерів з токенами `Service2` та `token1`, причому другим аргументом у `@inject()` передано певні контекстні дані.
 3. В інжектора запитується `Service1`, і щоб створити інстанс цього класу, спочатку DI передає провайдерам з токенами `Service2` та `token1` відповідні контекстні дані.
 
 Майте на увазі, що коли до `@inject()` передається другий аргумент, інжектор не створює кеш для вказаної залежності.
@@ -1014,6 +1013,7 @@ parent.get(Service2);
 А при створенні дочірнього інжектора, йому не передали `Service1`, зате він може звернутись до батьківського інжектора за ним. Тому дочірній інжектор успішно вирішить залежність `Service2`.
 
 [1]: https://uk.wikipedia.org/wiki/%D0%92%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F_%D0%B7%D0%B0%D0%BB%D0%B5%D0%B6%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9
+[2]: #short-and-long-forms-of-declaring-dependencies-in-class-methods
 [11]: https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types
 [15]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) "Singleton"
 [16]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/body-parser/src/body-parser.interceptor.ts#L16

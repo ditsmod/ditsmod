@@ -843,11 +843,11 @@ In most cases, editing values is used by [interceptors][105] or [guards][106], a
 
 ## Method Parameter Decorators {#method-parameter-decorators}
 
-These decorators are used to manage the behavior of the injector when looking up values for a specific token. The most commonly used are `inject` and `optional`, while `fromSelf` and `skipSelf` are used very rarely.
+These decorators are used to manage the behavior of the injector when looking up values for a specific token. The most commonly used are `inject`, `input` and `optional`, while `fromSelf` and `skipSelf` are used very rarely.
 
 ### `inject` and `input` {#inject-and-input}
 
-As previously mentioned, the `inject` decorator allows you to specify an alternative token in method parameters, enabling you to pass any type of dependency:
+As [previously mentioned][2], the `inject` decorator allows you to specify an alternative token in method parameters, enabling you to pass any type of dependency:
 
 ```ts
 import { injectable, inject } from '@ditsmod/core';
@@ -887,13 +887,12 @@ Here it is shown that `Service1` depends on `Dependency1`, and in the constructo
 
 You can obtain "input" data in any provider where a dependency can be specified. By the way, using the decorator like this - `@input` - is a shortened version of `@inject(input)`:
 
-```ts {5,21}
+```ts {5,20}
 import { injectable, inject, Injector, input, type FunctionFactoryProvider } from '@ditsmod/core';
 
 @injectable()
 class Service2 {
-  constructor(@inject(input) public arg: string) {
-    // Простіше використати "@input"
+  constructor(@inject(input) public arg: string) { // It's easier to just use "@input"
     console.log(arg); // print: context-data2
   }
 }
@@ -920,7 +919,7 @@ injector.get(Service1);
 What do we see here:
 
 1. Providers with the `Service2` and `token1` tokens specify the `input` function as a dependency. This function is actually intended to be used as a method parameter decorator, but DI also allows us to use it as a provider token.
-2. `Service1` specifies dependencies on providers with the `Service2` and `token1` tokens, and certain contextual data is passed as the second argument to `@inject()`, which is then passed to the corresponding providers during their creation.
+2. `Service1` specifies dependencies on providers with the `Service2` and `token1` tokens, and certain contextual data is passed as the second argument to `@inject()`.
 3. `Service1` is requested from the injector, and to create an instance of this class, DI first passes the corresponding contextual data to the providers with the `Service2` and `token1` tokens.
 
 Note that when a second argument is passed to `@inject()`, the injector does not create a cache for the specified dependency.
@@ -1014,6 +1013,7 @@ As you can see, `Service2` depends on `Service1`, and the `skipSelf` decorator t
 When creating the child injector, it was not passed `Service1`, but it can refer to the parent injector for it. Therefore the child injector successfully resolves the dependency for `Service2`.
 
 [1]: https://en.wikipedia.org/wiki/Dependency_injection
+[2]: #short-and-long-forms-of-declaring-dependencies-in-class-methods
 [11]: https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types
 [15]: https://en.wikipedia.org/wiki/Singleton_pattern
 [16]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/body-parser/src/body-parser.interceptor.ts#L16

@@ -241,7 +241,6 @@ export class PreRouterExtension implements Extension<void> {
     routeMeta.resolvedHandler = this.getResolvedHandler(routeMeta, resolvedPerReq);
     this.checkDeps(injPerReq, routeMeta, controllerName, httpMethod, fullPath);
     const resolvedChainMaker = resolvedPerReq.find((rp) => rp.dualKey.token === ChainMaker)!;
-    const resolvedCtx = resolvedPerReq.find((rp) => rp.dualKey.token === Context)!;
     const resolvedErrHandler = resolvedPerReq
       .concat(resolvedPerRou)
       .find((rp) => rp.dualKey.token === HttpErrorHandler)!;
@@ -249,7 +248,7 @@ export class PreRouterExtension implements Extension<void> {
 
     return (async (rawReq, rawRes, aPathParams, queryString) => {
       const injector = new Injector(RegistryPerReq, 'Req', injectorPerRou);
-      (injector.instantiateResolved(resolvedCtx) as Context)
+      (injector.get(Context) as Context)
         .set(RAW_REQ, rawReq)
         .set(RAW_RES, rawRes)
         .set(A_PATH_PARAMS, aPathParams)

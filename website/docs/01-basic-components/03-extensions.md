@@ -30,7 +30,7 @@ let handler: (req, res) => Promise<void>;
 
 async function extension1() {
   const injector = Injector.resolveAndCreate([
-    Service1
+    Service1,
     { token: 'controller1', useClass: Controller1 },
     { token: 'interceptors', useClass: Interceptor1, multi: true },
   ]);
