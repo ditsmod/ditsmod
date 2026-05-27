@@ -6,7 +6,6 @@ on:
       - '*'
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -15,6 +14,24 @@ jobs:
       id-token: write
     environment:
       name: publishing
+    strategy:
+      matrix:
+        package:
+          - authjs
+          - body-parser
+          - core
+          - cors
+          - i18n
+          - jwt
+          - openapi
+          - openapi-validation
+          - rest
+          - rest-testing
+          - session-cookie
+          - trpc
+        include:
+          - package: openapi
+            build_ui: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -25,14 +42,17 @@ jobs:
         run: |
           corepack enable
           corepack install
-      - name: Run scripts
+      - name: Install and build
         run: |
+          cd packages/${{ matrix.package }}
           yarn install --immutable
           yarn build
+      - name: Build OpenAPI UI
+        if: matrix.build_ui
+        run: |
           cd packages/openapi
           yarn build-ui
-          for pkg in authjs body-parser core cors i18n jwt openapi openapi-validation rest rest-testing session-cookie trpc;
-          do
-            cd ../$pkg
-            npm publish --provenance --access public --tag next
-          done
+      - name: Publish
+        run: |
+          cd packages/${{ matrix.package }}
+          npm publish --provenance --tag next
