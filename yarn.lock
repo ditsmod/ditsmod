@@ -705,6 +705,7 @@ __metadata:
     "@auth/core": "npm:^0.41.2"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260527.1"
     npm-run-all: "npm:^4.1.5"
+    typescript: "npm:^6.0.3"
     vitest: "npm:^4.0.18"
   peerDependencies:
     "@ditsmod/body-parser": ^3.0.0-next.10
@@ -722,6 +723,7 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260527.1"
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
+    typescript: "npm:^6.0.3"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-next.10
     "@ditsmod/rest": ^3.0.0-next.10
@@ -737,6 +739,7 @@ __metadata:
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
     reflect-metadata: "npm:^0.2.2"
+    typescript: "npm:^6.0.3"
   languageName: unknown
   linkType: soft
 
@@ -749,6 +752,7 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260527.1"
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
+    typescript: "npm:^6.0.3"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-next.10
     "@ditsmod/rest": ^3.0.0-next.10
@@ -762,6 +766,7 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260527.1"
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
+    typescript: "npm:^6.0.3"
   peerDependencies:
     "@apollo/server": ^5.0.0
     "@ditsmod/core": ^3.0.0-next.10
@@ -776,6 +781,7 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260527.1"
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
+    typescript: "npm:^6.0.3"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-next.10
     "@ditsmod/rest": ^3.0.0-next.10
@@ -790,6 +796,7 @@ __metadata:
     jest: "npm:^30.4.2"
     jsonwebtoken: "npm:^9.0.3"
     npm-run-all: "npm:^4.1.5"
+    typescript: "npm:^6.0.3"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-next.10
   languageName: unknown
@@ -804,6 +811,7 @@ __metadata:
     ajv: "npm:^8.17.1"
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
+    typescript: "npm:^6.0.3"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-next.10
     "@ditsmod/i18n": ^3.0.0-next.10
@@ -827,6 +835,7 @@ __metadata:
     npm-run-all: "npm:^4.1.5"
     style-loader: "npm:^4.0.0"
     swagger-ui: "npm:~5.27.1"
+    typescript: "npm:^6.0.3"
     webpack: "npm:^5.106.2"
     yaml: "npm:^2.8.3"
     yaml-loader: "npm:^0.8.1"
@@ -843,6 +852,7 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260527.1"
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
+    typescript: "npm:^6.0.3"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-next.10
     "@ditsmod/rest": ^3.0.0-next.10
@@ -856,6 +866,7 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260527.1"
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
+    typescript: "npm:^6.0.3"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-next.10
     "@ditsmod/rest": ^3.0.0-next.10
@@ -872,6 +883,7 @@ __metadata:
     koa-tree-router: "npm:^0.13.1"
     npm-run-all: "npm:^4.1.5"
     trek-router: "npm:^1.2.0"
+    typescript: "npm:^6.0.3"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-next.10
   languageName: unknown
@@ -885,6 +897,7 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260527.1"
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
+    typescript: "npm:^6.0.3"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-next.10
     "@ditsmod/rest": ^3.0.0-next.10
@@ -898,6 +911,7 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260527.1"
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
+    typescript: "npm:^6.0.3"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-next.10
     "@ditsmod/rest": ^3.0.0-next.10
@@ -911,6 +925,7 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260527.1"
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
+    typescript: "npm:^6.0.3"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-next.10
     "@ditsmod/rest": ^3.0.0-next.10
@@ -924,6 +939,7 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260527.1"
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
+    typescript: "npm:^6.0.3"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-next.10
     "@trpc/server": ^11.5.0
@@ -937,6 +953,7 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260527.1"
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
+    typescript: "npm:^6.0.3"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-next.10
     "@ditsmod/rest": ^3.0.0-next.10
@@ -14682,6 +14699,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typescript@npm:^6.0.3":
+  version: 6.0.3
+  resolution: "typescript@npm:6.0.3"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10c0/4a25ff5045b984370f48f196b3a0120779b1b343d40b9a68d114ea5e5fff099809b2bb777576991a63a5cd59cf7bffd96ff6fe10afcefbcb8bd6fb96ad4b6606
+  languageName: node
+  linkType: hard
+
 "typescript@patch:typescript@npm%3A>=3 < 6#optional!builtin<compat/typescript>":
   version: 5.6.2
   resolution: "typescript@patch:typescript@npm%3A5.6.2#optional!builtin<compat/typescript>::version=5.6.2&hash=8c6c40"
@@ -14699,6 +14726,16 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 10c0/ad09fdf7a756814dce65bc60c1657b40d44451346858eea230e10f2e95a289d9183b6e32e5c11e95acc0ccc214b4f36289dcad4bf1886b0adb84d711d336a430
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@npm%3A^6.0.3#optional!builtin<compat/typescript>":
+  version: 6.0.3
+  resolution: "typescript@patch:typescript@npm%3A6.0.3#optional!builtin<compat/typescript>::version=6.0.3&hash=5786d5"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10c0/2f25c74e65663c248fa1ade2b8459d9ce5372ff9dad07067310f132966ebec1d93f6c42f0baf77a6b6a7a91460463f708e6887013aaade22111037457c6b25df
   languageName: node
   linkType: hard
 
@@ -15520,6 +15557,7 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260527.1"
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
+    typescript: "npm:^6.0.3"
   peerDependencies:
     "@ditsmod/core": ^3.0.0-next.10
   languageName: unknown

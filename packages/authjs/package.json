@@ -11,6 +11,7 @@
   "module": "dist/index.js",
   "scripts": {
     "build": "tsgo -b tsconfig.build.json",
+    "build-ts": "tsc -b tsconfig.build.json",
     "clean": "rm -rf dist*",
     "test": "yarn build-test && vitest",
     "build-test": "tsgo -b tsconfig.e2e.json"
@@ -63,6 +64,7 @@
   "devDependencies": {
     "@typescript/native-preview": "^7.0.0-dev.20260527.1",
     "npm-run-all": "^4.1.5",
+    "typescript": "^6.0.3",
     "vitest": "^4.0.18"
   },
   "gitHead": "eaf8f20b4e75e38c7a51fd1c3174b691cea756fa"
