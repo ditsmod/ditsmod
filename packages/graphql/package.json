@@ -33,7 +33,7 @@
   "license": "MIT",
   "peerDependencies": {
     "@apollo/server": "^5.0.0",
-    "@ditsmod/core": "^3.0.0-next.10",
+    "@ditsmod/core": "^3.0.0-next.11",
     "graphql": "^16.11.0"
   },
   "devDependencies": {

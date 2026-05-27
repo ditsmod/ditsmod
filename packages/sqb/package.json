@@ -37,8 +37,8 @@
   "author": "",
   "license": "MIT",
   "peerDependencies": {
-    "@ditsmod/core": "^3.0.0-next.10",
-    "@ditsmod/rest": "^3.0.0-next.10"
+    "@ditsmod/core": "^3.0.0-next.11",
+    "@ditsmod/rest": "^3.0.0-next.11"
   },
   "devDependencies": {
     "@typescript/native-preview": "^7.0.0-dev.20260527.1",
