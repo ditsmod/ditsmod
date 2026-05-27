@@ -426,14 +426,14 @@ export class BodyParserExtension implements Extension<void> {
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedProvidersPerRou);
         httpMethods.forEach((method) => {
           if (scope == 'ctx') {
-            let bodyParserConfig = injectorPerRou.get(BodyParserConfig, undefined, {}) as BodyParserConfig;
+            let bodyParserConfig = injectorPerRou.get(BodyParserConfig, {}) as BodyParserConfig;
             bodyParserConfig = { ...new BodyParserConfig(), ...bodyParserConfig }; // Merge with default.
             if (bodyParserConfig.acceptMethods!.includes(method)) {
               providersPerRou.push({ token: HTTP_INTERCEPTORS, useClass: CtxBodyParserInterceptor, multi: true });
             }
           } else {
             const injectorPerReq = injectorPerRou.resolveAndCreateChild(mergedProvidersPerReq);
-            let bodyParserConfig = injectorPerReq.get(BodyParserConfig, undefined, {}) as BodyParserConfig;
+            let bodyParserConfig = injectorPerReq.get(BodyParserConfig, {}) as BodyParserConfig;
             bodyParserConfig = { ...new BodyParserConfig(), ...bodyParserConfig }; // Merge with default.
             if (bodyParserConfig.acceptMethods!.includes(method)) {
               providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: BodyParserInterceptor, multi: true });

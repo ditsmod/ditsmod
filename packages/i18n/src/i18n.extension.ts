@@ -35,7 +35,7 @@ export class I18nExtension implements Extension<void> {
   protected addI18nProviders(stage1ExtensionMeta: Stage1ExtensionMeta<MetadataPerMod3>, isLastModule?: boolean) {
     const injectorPerApp = this.perAppService.injector;
 
-    const translationsPerApp = injectorPerApp.get(I18N_TRANSLATIONS, undefined, null);
+    const translationsPerApp = injectorPerApp.get(I18N_TRANSLATIONS, null);
     this.hasTranslation = Boolean(translationsPerApp);
     if (isLastModule && translationsPerApp) {
       const providers = this.i18nTransformer.getProviders(translationsPerApp);
@@ -62,7 +62,7 @@ export class I18nExtension implements Extension<void> {
 
   protected addI18nProvidersToLevel(providers: Provider[]) {
     this.injector = this.injector.resolveAndCreateChild(providers);
-    const translations = this.injector.get(I18N_TRANSLATIONS, fromSelf, null) as Translations[];
+    const translations = this.injector.get(I18N_TRANSLATIONS, null, undefined, fromSelf) as Translations[];
     if (translations) {
       this.hasTranslation = true;
       providers.push(...this.i18nTransformer.getProviders(translations));

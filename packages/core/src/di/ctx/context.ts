@@ -8,7 +8,7 @@ export class Context {
 
   constructor(protected injector: Injector) {
     if (injector.parent) {
-      this.#parent = injector.parent.get(Context, null, null);
+      this.#parent = injector.parent.get(Context, null);
     }
   }
 

@@ -567,19 +567,42 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
   /**
    * Retrieves an instance from the injector based on the provided token.
    * If not found, returns the `defaultValue` otherwise.
+   *
+   * @param defaultValue Any default value except `undefined`. If you specify a default value and
+   * the injector cannot find a value for the provider with the specified `token`, the injector will
+   * not throw an error and will return the default value.
+   * @param ctx Context data that you can pass to the injector for the provider with the specified `token`.
+   * If that provider specifies a dependency on [input][1] decorator, it can retrieve this data. If you pass
+   * context data, the injector does not use or create a cache for the provider with the specified token.
+   *
+   * [1]: https://ditsmod.github.io/en/basic-components/dependency-injection/#inject-and-input
    */
-  get<T>(token: Class<T> | InjectionToken<T>, visibility?: Visibility, defaultValue?: T): T;
-  get<T extends AnyFn>(token: T, visibility?: Visibility, defaultValue?: T): ReturnType<T>;
-  get(token: NonNullable<unknown>, visibility?: Visibility, defaultValue?: any): any;
-  get(token: NonNullable<unknown>, visibility: Visibility = null, defaultValue: any = NoDefaultValue): any {
-    return this.selectInjectorAndGet(KeyRegistry.get(token), new PathTracer(), visibility, defaultValue);
+  get<T>(token: Class<T> | InjectionToken<T>, defaultValue?: T, ctx?: any, visibility?: Visibility): T;
+  get<T extends AnyFn>(token: T, defaultValue?: T, ctx?: any, visibility?: Visibility): ReturnType<T>;
+  get(token: NonNullable<unknown>, defaultValue?: any, ctx?: any, visibility?: Visibility): any;
+  get(token: NonNullable<unknown>, defaultValue: any = NoDefaultValue, ctx?: any, visibility: Visibility = null): any {
+    return this.selectInjectorAndGet(KeyRegistry.get(token), new PathTracer(), visibility, defaultValue, ctx);
   }
 
   /**
    * Works identically to {@link get | injector.get()}, but by default returns type `any`.
+   *
+   * @param defaultValue Any default value except `undefined`. If you specify a default value and
+   * the injector cannot find a value for the provider with the specified `token`, the injector will
+   * not throw an error and will return the default value.
+   * @param ctx Context data that you can pass to the injector for the provider with the specified `token`.
+   * If that provider specifies a dependency on [input][1] decorator, it can retrieve this data. If you pass
+   * context data, the injector does not use or create a cache for the provider with the specified token.
+   *
+   * [1]: https://ditsmod.github.io/en/basic-components/dependency-injection/#inject-and-input
    */
-  getAny<T = any>(token: NonNullable<unknown>, visibility: Visibility = null, defaultValue: any = NoDefaultValue): T {
-    return this.selectInjectorAndGet(KeyRegistry.get(token), new PathTracer(), visibility, defaultValue);
+  getAny<T = any>(
+    token: NonNullable<unknown>,
+    defaultValue: any = NoDefaultValue,
+    ctx?: any,
+    visibility: Visibility = null,
+  ): T {
+    return this.selectInjectorAndGet(KeyRegistry.get(token), new PathTracer(), visibility, defaultValue, ctx);
   }
 
   /**
@@ -594,18 +617,25 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
    * @param compareFn Function used to determine the order of the value from multi-providers. It is expected to return
    * a negative value if the first argument is less than the second argument, zero if they're equal, and a positive
    * value otherwise.
+   * @param defaultValue Any default value except `undefined`. If you specify a default value and
+   * the injector cannot find a value for the provider with the specified `token`, the injector will
+   * not throw an error and will return the default value.
+   * @param ctx Context data that you can pass to the injector for the provider with the specified `token`.
+   * If that provider specifies a dependency on [input][1] decorator, it can retrieve this data. If you pass
+   * context data, the injector does not use or create a cache for the provider with the specified token.
    */
   getOrderedMultiValues<T extends Provider = Provider, A = any>(
     token: NonNullable<unknown>,
     compareFn: CompareFn<T>,
     defaultValue: any = NoDefaultValue,
+    ctx?: any
   ): A[] {
     return this.selectInjectorAndGet(
       KeyRegistry.get(token),
       new PathTracer(),
       null,
       defaultValue,
-      undefined,
+      ctx,
       compareFn,
     );
   }

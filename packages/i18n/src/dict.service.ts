@@ -18,7 +18,7 @@ export class DictService {
   ) {}
 
   getAllDictionaries<T extends Class<Dictionary>>(token: T) {
-    const arr = this.injector.get(token, undefined, []) as T['prototype'][];
+    const arr = this.injector.get(token, []) as T['prototype'][];
     return arr.slice(0).reverse();
   }
 

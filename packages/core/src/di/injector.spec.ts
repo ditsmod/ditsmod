@@ -697,6 +697,24 @@ describe('injector', () => {
       expect(targetClass.dependecy2).toBe(targetClass.dependecy3);
     });
 
+    it('works with injector.get()', () => {
+      @injectable()
+      class Service1 {
+        constructor(@input public param: string) {}
+      }
+
+      const injector = Injector.resolveAndCreate([
+        Service1,
+        { token: 'token1', deps: [input], useFactory: (p) => p },
+      ]);
+
+      const dep = injector.get(Service1, undefined, 'one') as Service1;
+      expect(dep).toBeInstanceOf(Service1);
+      expect(dep.param).toBe('one');
+      expect(dep).not.toBe(injector.get(Service1, undefined, 'one')); // no cache even for same value
+      expect(injector.get('token1', undefined, 'two')).toBe('two');
+    });
+
     it('dependency with context in second parameter', () => {
       @injectable()
       class Dependecy1 {
@@ -997,12 +1015,12 @@ describe('child', () => {
     const child = parent.resolveAndCreateChild([]);
 
     expect(() => {
-      const result = parent.get(Engine, undefined, []);
+      const result = parent.get(Engine, []);
       expect(result).toEqual([]);
     }).not.toThrow();
 
     expect(() => {
-      const result = child.get(Engine, undefined, []);
+      const result = child.get(Engine, []);
       expect(result).toEqual([]);
     }).not.toThrow();
   });

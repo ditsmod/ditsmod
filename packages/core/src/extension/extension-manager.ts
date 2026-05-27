@@ -173,7 +173,7 @@ export class ExtensionManager {
         [],
       );
     } else {
-      const result = this.injector.get(ExtCls, undefined, false);
+      const result = this.injector.get(ExtCls, false);
       extensions = result ? [result] : [];
     }
     const stage1ExtensionMeta = new Stage1ExtensionMeta<T>(this.moduleName, [], []);
