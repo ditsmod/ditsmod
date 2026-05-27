@@ -62,4 +62,4 @@ jobs:
       - name: Publish
         run: |
           cd packages/${{ matrix.package }}
-          npm publish --provenance --tag next
+          yarn npm publish --provenance --tag next
