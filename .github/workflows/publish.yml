@@ -34,5 +34,5 @@ jobs:
           for pkg in authjs body-parser core cors i18n jwt openapi openapi-validation rest rest-testing session-cookie trpc;
           do
             cd ../$pkg
-            npm publish --provenance --tag next
+            npm publish --provenance --access public --tag next
           done
