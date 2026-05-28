@@ -11,7 +11,6 @@
   "module": "dist/index.js",
   "scripts": {
     "build": "tsgo -b tsconfig.build.json",
-    "build-ts": "tsc -b tsconfig.build.json",
     "clean": "rm -rf dist*",
     "test": "yarn build-test && yarn esm-jest",
     "build-test": "tsgo -b tsconfig.unit.json",
@@ -67,8 +66,7 @@
   "devDependencies": {
     "@typescript/native-preview": "^7.0.0-dev.20260527.1",
     "jest": "^30.4.2",
-    "npm-run-all": "^4.1.5",
-    "typescript": "^6.0.3"
+    "npm-run-all": "^4.1.5"
   },
   "gitHead": "eaf8f20b4e75e38c7a51fd1c3174b691cea756fa"
 }

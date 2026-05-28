@@ -46,7 +46,7 @@ jobs:
         run: |
           cd packages/${{ matrix.package }}
           yarn install --immutable
-          yarn build-ts
+          yarn build
       - name: Build OpenAPI UI
         if: matrix.build_ui
         run: |
