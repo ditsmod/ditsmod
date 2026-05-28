@@ -1,4 +1,4 @@
-import { AnyFn, AnyObj, BaseMeta, getModule, inject, injectable, ModRefId, ModuleManager } from '@ditsmod/core';
+import { AnyFn, AnyObj, BaseMeta, getModule, inject, injectable, ModRefId, ModuleManager, Context } from '@ditsmod/core';
 
 import { TRPC_ROOT } from '#types/constants.js';
 import { TrpcRouterOpts, TrpcRootObject, ModuleWithTrpcRoutes, RouterOptions, TrpcRootModule } from '#types/types.js';
@@ -69,7 +69,8 @@ export class TrpcInternalService {
         } else {
           // Case with `{ property: ControllerClass.prototype.someMethod }`
           const injectorPerMod = this.moduleManager.getInjectorPerMod(currentModRefId, true);
-          trpcRouterConfig[prop] = injectorPerMod.get(val);
+          const ctx = injectorPerMod.get(Context) as Context;
+          trpcRouterConfig[prop] = ctx.get(val) as any;
         }
       } else {
         // Case with `{ property: nestedObject }`
