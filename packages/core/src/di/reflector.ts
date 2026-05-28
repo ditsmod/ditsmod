@@ -450,7 +450,7 @@ export class Reflector {
 
   protected static setMetaCache<DecorValue = any, Proto extends AnyObj = object>(
     Cls: Class<Proto>,
-    metadataKey: string | symbol,
+    metadataKey: any,
     classMeta?: ClassMeta<DecorValue, Proto>,
   ) {
     Reflect.defineMetadata(metadataKey, classMeta, Cls);
