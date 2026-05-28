@@ -7,7 +7,7 @@ import { TRPC_OPTS } from '#types/constants.js';
  */
 export const optsFactory = Reflector.makeParamDecorator(
   () => {
-    return { token: ctx, ctx: TRPC_OPTS } satisfies InjectTransformResult;
+    return { token: ctx, input: TRPC_OPTS } satisfies InjectTransformResult;
   },
   'opts',
   inject,

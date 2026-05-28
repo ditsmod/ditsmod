@@ -39,18 +39,18 @@ expect(injector.get(Car).engine instanceof Engine).toBe(true);
 ```
    */
 export const inject: InjectDecorator = Reflector.makeParamDecorator(
-  (token, ctx?) => ({ token, ctx }) satisfies InjectTransformResult,
+  (token, input?) => ({ token, input }) satisfies InjectTransformResult,
   'inject',
 );
 
 export interface InjectDecorator {
   (token: NonNullable<unknown>): any;
-  <T extends NonNullable<unknown>>(token: NonNullable<unknown>, ctx: T): any;
+  <T extends NonNullable<unknown>>(token: NonNullable<unknown>, input: T): any;
 }
 
 export interface InjectTransformResult {
   token: NonNullable<unknown>;
-  ctx?: NonNullable<unknown>;
+  input?: NonNullable<unknown>;
 }
 
 /**
@@ -63,14 +63,14 @@ import { injectable, inject, input } from '@ditsmod/core';
 
 @injectable()
 class Dependecy1 {
-  constructor(@input public inputData: string) { // Here input is 'ctx1'
+  constructor(@input public inputData: string) { // Here input is 'input1'
     // ...
   }
 }
 
 @injectable()
 class Service1 {
-  constructor(@inject(Dependecy1, 'ctx1') dependecy1: Dependecy1) {}
+  constructor(@inject(Dependecy1, 'input1') dependecy1: Dependecy1) {}
 }
 ```
  * 

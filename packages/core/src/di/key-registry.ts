@@ -27,7 +27,7 @@ export class DualKey {
 export class GroupToken<T = any> extends InjectionToken<T> {}
 
 /**
- * This class is used to automatically create a token for `@inject(token, ctx)`.
+ * This class is used to automatically create a token for `@inject(token, input)`.
  */
 export class ParamToken<T = any> extends InjectionToken<T> {}
 

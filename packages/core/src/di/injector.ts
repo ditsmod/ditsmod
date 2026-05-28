@@ -337,9 +337,9 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       throw new NoAnnotation(Cls, aParamsMeta, propertyKey);
     }
     const deps = aParamsMeta.map((paramsMeta) => {
-      const { token, ctx, isOptional, visibility } = this.extractPayload(paramsMeta!);
+      const { token, input, isOptional, visibility } = this.extractPayload(paramsMeta!);
       if (token != null) {
-        return new Dependency(KeyRegistry.get(token), isOptional, visibility, ctx);
+        return new Dependency(KeyRegistry.get(token), isOptional, visibility, input);
       } else {
         throw new NoAnnotation(Cls, aParamsMeta, propertyKey);
       }
@@ -352,7 +352,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
 
   protected static extractPayload(paramsMeta: ParamsMeta) {
     let token: any = null;
-    let ctx: any = undefined;
+    let input: any = undefined;
     let isOptional = false;
 
     let visibility: Visibility = null;
@@ -364,7 +364,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
         const { decorator, decoratorId } = paramsItem;
         if (decoratorId === inject) {
           token = (paramsItem.value as InjectTransformResult).token;
-          ctx = (paramsItem.value as InjectTransformResult).ctx;
+          input = (paramsItem.value as InjectTransformResult).input;
         } else if (decorator === optional) {
           isOptional = true;
         } else if (decorator === fromSelf || decorator === skipSelf) {
@@ -376,7 +376,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
     }
 
     token = resolveForwardRef(token);
-    return { token, ctx, isOptional, visibility };
+    return { token, input, isOptional, visibility };
   }
 
   /**
@@ -559,9 +559,9 @@ expect(car.engine).toBe(injector.get(Engine));
 expect(car).not.toBe(injector.resolveAndInstantiate(Car));
 ```
    */
-  resolveAndInstantiate(provider: Provider, ctx?: NonNullable<unknown>): any {
+  resolveAndInstantiate(provider: Provider, input?: NonNullable<unknown>): any {
     const resolvedProvider = Injector.resolve([provider])[0];
-    return this.instantiateResolved(resolvedProvider, ctx);
+    return this.instantiateResolved(resolvedProvider, input);
   }
 
   /**
@@ -571,17 +571,17 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
    * @param defaultValue Any default value except `undefined`. If you specify a default value and
    * the injector cannot find a value for the provider with the specified `token`, the injector will
    * not throw an error and will return the default value.
-   * @param ctx Context data that you can pass to the injector for the provider with the specified `token`.
+   * @param input Context data that you can pass to the injector for the provider with the specified `token`.
    * If that provider specifies a dependency on [input][1] decorator, it can retrieve this data. If you pass
    * context data, the injector does not use or create a cache for the provider with the specified token.
    *
    * [1]: https://ditsmod.github.io/en/basic-components/dependency-injection/#inject-and-input
    */
-  get<T>(token: Class<T> | InjectionToken<T>, defaultValue?: T, ctx?: any, visibility?: Visibility): T;
-  get<T extends AnyFn>(token: T, defaultValue?: T, ctx?: any, visibility?: Visibility): ReturnType<T>;
-  get(token: NonNullable<unknown>, defaultValue?: any, ctx?: any, visibility?: Visibility): any;
-  get(token: NonNullable<unknown>, defaultValue: any = NoDefaultValue, ctx?: any, visibility: Visibility = null): any {
-    return this.selectInjectorAndGet(KeyRegistry.get(token), new PathTracer(), visibility, defaultValue, ctx);
+  get<T>(token: Class<T> | InjectionToken<T>, defaultValue?: T, input?: any, visibility?: Visibility): T;
+  get<T extends AnyFn>(token: T, defaultValue?: T, input?: any, visibility?: Visibility): ReturnType<T>;
+  get(token: NonNullable<unknown>, defaultValue?: any, input?: any, visibility?: Visibility): any;
+  get(token: NonNullable<unknown>, defaultValue: any = NoDefaultValue, input?: any, visibility: Visibility = null): any {
+    return this.selectInjectorAndGet(KeyRegistry.get(token), new PathTracer(), visibility, defaultValue, input);
   }
 
   /**
@@ -590,7 +590,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
    * @param defaultValue Any default value except `undefined`. If you specify a default value and
    * the injector cannot find a value for the provider with the specified `token`, the injector will
    * not throw an error and will return the default value.
-   * @param ctx Context data that you can pass to the injector for the provider with the specified `token`.
+   * @param input Context data that you can pass to the injector for the provider with the specified `token`.
    * If that provider specifies a dependency on [input][1] decorator, it can retrieve this data. If you pass
    * context data, the injector does not use or create a cache for the provider with the specified token.
    *
@@ -599,10 +599,10 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
   getAny<T = any>(
     token: NonNullable<unknown>,
     defaultValue: any = NoDefaultValue,
-    ctx?: any,
+    input?: any,
     visibility: Visibility = null,
   ): T {
-    return this.selectInjectorAndGet(KeyRegistry.get(token), new PathTracer(), visibility, defaultValue, ctx);
+    return this.selectInjectorAndGet(KeyRegistry.get(token), new PathTracer(), visibility, defaultValue, input);
   }
 
   /**
@@ -620,7 +620,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
    * @param defaultValue Any default value except `undefined`. If you specify a default value and
    * the injector cannot find a value for the provider with the specified `token`, the injector will
    * not throw an error and will return the default value.
-   * @param ctx Context data that you can pass to the injector for the provider with the specified `token`.
+   * @param input Context data that you can pass to the injector for the provider with the specified `token`.
    * If that provider specifies a dependency on [input][1] decorator, it can retrieve this data. If you pass
    * context data, the injector does not use or create a cache for the provider with the specified token.
    *
@@ -630,14 +630,14 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
     token: NonNullable<unknown>,
     compareFn: CompareFn<T>,
     defaultValue: any = NoDefaultValue,
-    ctx?: any
+    input?: any
   ): A[] {
     return this.selectInjectorAndGet(
       KeyRegistry.get(token),
       new PathTracer(),
       null,
       defaultValue,
-      ctx,
+      input,
       compareFn,
     );
   }
@@ -647,7 +647,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
     pathTracer: PathTracer,
     visibility: Visibility,
     defaultValue: any,
-    ctx?: NonNullable<unknown>,
+    input?: NonNullable<unknown>,
     compareFn?: CompareFn,
   ) {
     if (dualKey.token === Injector) {
@@ -655,7 +655,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
     }
 
     const injector = visibility === skipSelf ? this.parent : this;
-    return this.getOrThrow(injector, dualKey, pathTracer, defaultValue, visibility, ctx, compareFn);
+    return this.getOrThrow(injector, dualKey, pathTracer, defaultValue, visibility, input, compareFn);
   }
 
   /**
@@ -667,12 +667,12 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
     pathTracer: PathTracer,
     defaultValue: any,
     visibility?: Visibility,
-    ctx?: NonNullable<unknown>,
+    input?: NonNullable<unknown>,
     compareFn?: CompareFn,
   ): any {
     pathTracer.addItem(dualKey.token, injector);
     if (injector) {
-      if (ctx == null) {
+      if (input == null) {
         const meta = injector.#registry[dualKey.id];
 
         // This is an alternative to the "instanceof ResolvedProvider" expression.
@@ -688,7 +688,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
       } else {
         const resolvedProvider = this.getResolvedProvider(this, dualKey);
         if (resolvedProvider) {
-          return this._instantiateResolved(resolvedProvider, ctx, compareFn, new PathTracer());
+          return this._instantiateResolved(resolvedProvider, input, compareFn, new PathTracer());
         }
       }
     }
@@ -723,15 +723,15 @@ expect(car.engine).toBe(injector.get(Engine));
 expect(car).not.toBe(injector.instantiateResolved(carProvider));
 ```
    *
-   * @param ctx The context with which this provider should be resolved.
+   * @param input The context with which this provider should be resolved.
    */
-  instantiateResolved<T = any>(provider: ResolvedProvider, ctx?: NonNullable<unknown>): T {
-    return this._instantiateResolved(provider, ctx);
+  instantiateResolved<T = any>(provider: ResolvedProvider, input?: NonNullable<unknown>): T {
+    return this._instantiateResolved(provider, input);
   }
 
   protected _instantiateResolved<T = any>(
     provider: ResolvedProvider,
-    ctx?: NonNullable<unknown>,
+    input?: NonNullable<unknown>,
     compareFn?: CompareFn,
     pathTracer: PathTracer = new PathTracer(),
   ): T {
@@ -745,10 +745,10 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
         resolvedFactories = provider.resolvedFactories;
       }
       return resolvedFactories.map((factory) => {
-        return this.instantiate(provider.dualKey.token, pathTracer, factory, ctx);
+        return this.instantiate(provider.dualKey.token, pathTracer, factory, input);
       }) as T;
     } else {
-      return this.instantiate(provider.dualKey.token, pathTracer, provider.resolvedFactories[0], ctx);
+      return this.instantiate(provider.dualKey.token, pathTracer, provider.resolvedFactories[0], input);
     }
   }
 
@@ -756,16 +756,16 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     token: any,
     pathTracer: PathTracer,
     resolvedFactory: ResolvedFactory,
-    ctx?: NonNullable<unknown>,
+    inputCtx?: NonNullable<unknown>,
   ): any {
     const deps = resolvedFactory.dependencies.map((dep) => {
-      if (dep.dualKey.token === input) return ctx;
+      if (dep.dualKey.token === input) return inputCtx;
       const result = this.selectInjectorAndGet(
         dep.dualKey,
         pathTracer,
         dep.visibility,
         dep.optional ? undefined : NoDefaultValue,
-        dep.ctx,
+        dep.input,
       );
       pathTracer.removeFirstToken();
       return result;

@@ -82,11 +82,11 @@ export class Dependency {
     public dualKey: DualKey,
     public optional: boolean,
     public visibility: Visibility,
-    public ctx?: NonNullable<unknown>
+    public input?: NonNullable<unknown>
   ) { }
 
-  static fromDualKey(dualKey: DualKey, ctx?: NonNullable<unknown>): Dependency {
-    return new Dependency(dualKey, false, null, ctx);
+  static fromDualKey(dualKey: DualKey, input?: NonNullable<unknown>): Dependency {
+    return new Dependency(dualKey, false, null, input);
   }
 }
 
