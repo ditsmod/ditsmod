@@ -69,7 +69,7 @@ export class DepsChecker {
       if (ignoreDeps?.includes(dualKey.token)) {
         return;
       }
-      const meta = injector.getValue(dualKey.id);
+      const meta = injector.getResolvedProviderFromPrototype(dualKey.id);
 
       // This is an alternative to the "instanceof ResolvedProvider" expression.
       if (meta?.[ID]) {

@@ -527,7 +527,7 @@ expect(child.get(ParentProvider)).toBe(parent.get(ParentProvider));
   fill(externalInj: Injector, tokens: any[]) {
     for (const token of tokens) {
       const id = KeyRegistry.get(token).id;
-      const val = this.getValue(id);
+      const val = this.#registry[id];
       if (val?.[ID]) {
         continue;
       }
@@ -895,11 +895,8 @@ child.get(Service).config; // now returns: { one: 11, two: 22 }
     }
   }
 
-  /**
-   * Returns provider's value from registry by ID.
-   */
-  getValue(id: number) {
-    return this.#registry[id];
+  getResolvedProviderFromPrototype(id: number) {
+    return this.#Registry.prototype[id];
   }
 
   hasId(id: number) {
