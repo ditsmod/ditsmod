@@ -580,7 +580,12 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
   get<T>(token: Class<T> | InjectionToken<T>, defaultValue?: T, input?: any, visibility?: Visibility): T;
   get<T extends AnyFn>(token: T, defaultValue?: T, input?: any, visibility?: Visibility): ReturnType<T>;
   get(token: NonNullable<unknown>, defaultValue?: any, input?: any, visibility?: Visibility): any;
-  get(token: NonNullable<unknown>, defaultValue: any = NoDefaultValue, input?: any, visibility: Visibility = null): any {
+  get(
+    token: NonNullable<unknown>,
+    defaultValue: any = NoDefaultValue,
+    input?: any,
+    visibility: Visibility = null,
+  ): any {
     return this.selectInjectorAndGet(KeyRegistry.get(token), new PathTracer(), visibility, defaultValue, input);
   }
 
@@ -630,16 +635,9 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
     token: NonNullable<unknown>,
     compareFn: CompareFn<T>,
     defaultValue: any = NoDefaultValue,
-    input?: any
+    input?: any,
   ): A[] {
-    return this.selectInjectorAndGet(
-      KeyRegistry.get(token),
-      new PathTracer(),
-      null,
-      defaultValue,
-      input,
-      compareFn,
-    );
+    return this.selectInjectorAndGet(KeyRegistry.get(token), new PathTracer(), null, defaultValue, input, compareFn);
   }
 
   protected selectInjectorAndGet(
@@ -759,14 +757,18 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     inputCtx?: NonNullable<unknown>,
   ): any {
     const deps = resolvedFactory.dependencies.map((dep) => {
-      if (dep.dualKey.token === input) return inputCtx;
-      const result = this.selectInjectorAndGet(
-        dep.dualKey,
-        pathTracer,
-        dep.visibility,
-        dep.optional ? undefined : NoDefaultValue,
-        dep.input,
-      );
+      let result: any;
+      if (dep.dualKey.token === input) {
+        result = inputCtx;
+      } else {
+        result = this.selectInjectorAndGet(
+          dep.dualKey,
+          pathTracer,
+          dep.visibility,
+          dep.optional ? undefined : NoDefaultValue,
+          dep.input,
+        );
+      }
       pathTracer.removeFirstToken();
       return result;
     });

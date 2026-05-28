@@ -1,4 +1,4 @@
-import { fromSelf, skipSelf } from './decorators.js';
+import { fromSelf, input, skipSelf } from './decorators.js';
 import { NoProvider } from './errors.js';
 import { Injector } from './injector.js';
 import { type DualKey, KeyRegistry } from './key-registry.js';
@@ -119,14 +119,19 @@ export class DepsChecker {
   private static findInRegistryDeps({ injector, pathTracer, dependencies, ignoreDeps }: Config3): any {
     dependencies = dependencies.filter((dep) => !ignoreDeps?.includes(dep.dualKey));
     dependencies.forEach((dep) => {
-      const result = this.selectInjectorAndCheckDeps({
-        injector,
-        dualKey: dep.dualKey,
-        pathTracer,
-        visibility: dep.visibility,
-        ignoreDeps,
-        isOptional: dep.optional,
-      });
+      let result: any;
+      if (dep.dualKey.token === input) {
+        result = dep.input;
+      } else {
+        result = this.selectInjectorAndCheckDeps({
+          injector,
+          dualKey: dep.dualKey,
+          pathTracer,
+          visibility: dep.visibility,
+          ignoreDeps,
+          isOptional: dep.optional,
+        });
+      }
       pathTracer.removeFirstToken();
       return result;
     });
