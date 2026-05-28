@@ -1,5 +1,6 @@
 export * from './di.js';
 export * from '@ts-stack/chain-error';
+export * from './errors.js';
 
 export { awaitTokens } from '#utils/await-tokens.js';
 export { defaultProvidersPerMod } from '#init/default-providers-per-mod.js';
