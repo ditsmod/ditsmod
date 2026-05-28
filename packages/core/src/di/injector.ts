@@ -757,18 +757,14 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     inputCtx?: NonNullable<unknown>,
   ): any {
     const deps = resolvedFactory.dependencies.map((dep) => {
-      let result: any;
-      if (dep.dualKey.token === input) {
-        result = inputCtx;
-      } else {
-        result = this.selectInjectorAndGet(
-          dep.dualKey,
-          pathTracer,
-          dep.visibility,
-          dep.optional ? undefined : NoDefaultValue,
-          dep.input,
-        );
-      }
+      if (dep.dualKey.token === input) return inputCtx;
+      const result = this.selectInjectorAndGet(
+        dep.dualKey,
+        pathTracer,
+        dep.visibility,
+        dep.optional ? undefined : NoDefaultValue,
+        dep.input,
+      );
       pathTracer.removeFirstToken();
       return result;
     });
