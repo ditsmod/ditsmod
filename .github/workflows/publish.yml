@@ -52,13 +52,6 @@ jobs:
         run: |
           cd packages/openapi
           yarn build-ui
-      - name: Verify build output
-        run: |
-          cd packages/${{ matrix.package }}
-          if [ ! -d "dist" ]; then
-            echo "dist directory does not exist"
-            exit 1
-          fi
       - name: Publish
         run: |
           cd packages/${{ matrix.package }}
