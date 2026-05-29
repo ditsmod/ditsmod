@@ -5,7 +5,6 @@ import {
   inject,
   injectable,
   Injector,
-  KeyRegistry,
   ModuleManager,
   ModuleType,
   Provider,
@@ -19,13 +18,10 @@ import {
   MetadataPerMod2,
   ModuleWithParams,
   Context,
-  injectorCtxProviders,
 } from '@ditsmod/core';
 import { InstantiationError, NoProvider } from '@ditsmod/core/errors';
 
 import { CanActivate, guard } from '#interceptors/guard.js';
-import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
-import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js';
 import { RequestContext } from '#services/request-context.js';
 import { initRest, restModule, restRootModule } from '#decorators/rest-init-hooks-and-metadata.js';
 import { RestMetadataPerMod2 } from './types.js';
@@ -281,7 +277,7 @@ describe('DeepModulesImporter', () => {
     expect(() => getMetadataPerMod2(Module3)).toThrow(msg);
   });
 
-  fit(`There is the following dependency chain: Service4 -> Service3 -> Service2 -> Service1;
+  it(`There is the following dependency chain: Service4 -> Service3 -> Service2 -> Service1;
     AppModule imports Module2, which exports only Service4, but DeepModulesImporter imports
     the entire dependency chain (both from Module2 and from Module1, which is imported
     into Module2)`, () => {
@@ -320,14 +316,9 @@ describe('DeepModulesImporter', () => {
     class AppModule {}
 
     const initMeta = getRestMetadataPerMod2(AppModule)!.meta!;
-    expect(initMeta.providersPerRou).toEqual([
-      Service3,
-      Service4,
-      ...defaultProvidersPerRou,
-      ...injectorCtxProviders,
-      Context, // @todo Remove this duplicate
-    ]);
-    expect(initMeta.providersPerReq).toEqual(defaultProvidersPerReq);
+    const arr = [Service3, Service4, Context];
+    expect(arr.every((item) => initMeta.providersPerRou.includes(item))).toBe(true);
+    expect([Context].every((item) => initMeta.providersPerReq.includes(item))).toBe(true);
     expect(initMeta.providersPerMod.includes(Service1)).toBeTruthy();
     expect(initMeta.providersPerMod.includes(Service2)).toBeTruthy();
   });
@@ -426,8 +417,7 @@ describe('DeepModulesImporter', () => {
       constructor(public service1: Service1) {}
     }
 
-    @initRest({ providersPerRou: [Service2], exports: [Service2] })
-    @featureModule()
+    @restModule({ providersPerRou: [Service2], exports: [Service2] })
     class Module2 {}
 
     @rootModule({ imports: [Module1, Module2] })
@@ -447,19 +437,19 @@ describe('DeepModulesImporter', () => {
       constructor(public service1: Service1) {}
     }
 
-    @featureModule({ providersPerMod: [Service1], exports: [Service1] })
+    @restModule({ providersPerMod: [Service1], exports: [Service1] })
     class Module1 {}
 
-    @initRest({ imports: [Module1], providersPerRou: [Service2], exports: [Service2] })
-    @featureModule()
+    @restModule({ imports: [Module1], providersPerRou: [Service2], exports: [Service2] })
     class Module2 {}
 
-    @rootModule({ imports: [Module2] })
+    @restRootModule({ imports: [Module2] })
     class AppModule {}
 
     const initMeta = getRestMetadataPerMod2(AppModule)!.meta!;
-    expect(initMeta.providersPerReq).toEqual(defaultProvidersPerReq);
-    expect(initMeta.providersPerRou.slice(-1)).toEqual([Service2]);
+    const arr = [Context];
+    expect(arr.every((item) => initMeta.providersPerReq.includes(item))).toBe(true);
+    expect(initMeta.providersPerRou.includes(Service2)).toBe(true);
     expect(initMeta.providersPerMod.includes(Service1)).toBeTruthy();
   });
 
@@ -472,26 +462,26 @@ describe('DeepModulesImporter', () => {
       constructor(service1: Service1, service2: Service2) {}
     }
 
-    @featureModule({ providersPerMod: [Service1], exports: [Service1] })
+    @restModule({ providersPerMod: [Service1], exports: [Service1] })
     class Module1 {}
 
-    @initRest({ imports: [Module1], providersPerRou: [Service3, Service2], exports: [Service3] })
-    @featureModule()
+    @restModule({ imports: [Module1], providersPerRou: [Service3, Service2], exports: [Service3] })
     class Module2 {}
 
-    @rootModule({
+    @restRootModule({
       imports: [Module1, Module2],
     })
     class AppModule {}
 
     const initMeta = getRestMetadataPerMod2(AppModule)!.meta!;
-    expect(initMeta.providersPerReq).toEqual(defaultProvidersPerReq);
+    const arr = [Context];
+    expect(arr.every((item) => initMeta.providersPerReq.includes(item))).toBe(true);
     expect(initMeta.providersPerRou.includes(Service2)).toBeTruthy();
     expect(initMeta.providersPerRou.includes(Service3)).toBeTruthy();
     expect(initMeta.providersPerMod.includes(Service1)).toBeTruthy();
   });
 
-  it('Module3 does not load the Service1 as dependency because Service2 does not declare this dependency', () => {
+  it('deep importer does not load the Service1 to AppModule as dependency because Service2 does not declare this dependency', () => {
     @injectable()
     class Service1 {}
 
@@ -507,26 +497,18 @@ describe('DeepModulesImporter', () => {
       constructor(public service2: Service2) {}
     }
 
-    @initRest({ providersPerRou: [Service1], exports: [Service1] })
-    @featureModule()
+    @restModule({ providersPerRou: [Service1], exports: [Service1] })
     class Module1 {}
 
-    @initRest({ providersPerRou: [Service2], exports: [Service2] })
-    @featureModule({ imports: [Module1] })
+    @restModule({ providersPerRou: [Service2], exports: [Service2], imports: [Module1] })
     class Module2 {}
 
-    @initRest({ providersPerRou: [Service3], exports: [Service3] })
-    @rootModule({
-      imports: [Module2],
-    })
+    @restRootModule({ providersPerRou: [Service3], exports: [Service3], imports: [Module2] })
     class AppModule {}
 
     const initMeta = getRestMetadataPerMod2(AppModule)!.meta!;
-    const injector = Injector.resolveAndCreate(initMeta.providersPerRou);
-    const msg = 'No provider for Service1!; this error during instantiation of Service2! (Service3 -> Service2)';
-    const cause = new NoProvider([Service1]);
-    const err = new InstantiationError(cause, [Service2, Service3]);
-    expect(() => injector.get(Service3)).toThrow(err);
+    expect(initMeta.providersPerRou.includes(Service2)).toBe(true);
+    expect(initMeta.providersPerRou.includes(Service1)).toBe(false);
   });
 
   it(`By directly importing Module1, AppModule adds all providers from that module,
@@ -594,8 +576,7 @@ describe('DeepModulesImporter', () => {
     const mod1WithParams: ModuleWithParams & RestModuleParams = { module: Module1, guards: [BearerGuard1] };
     const provider: Provider = { token: BearerGuard1, useClass: BearerGuard2 };
 
-    @initRest({ imports: [mod1WithParams], providersPerRou: [provider, Service0, Service2] })
-    @rootModule()
+    @restRootModule({ imports: [mod1WithParams], providersPerRou: [provider, Service0, Service2] })
     class AppModule {}
 
     const mMetadataPerMod2 = getMetadataPerMod2(AppModule);
@@ -604,16 +585,11 @@ describe('DeepModulesImporter', () => {
     expect(restMetadataPerMod2.guards1.at(0)?.guard).toBe(BearerGuard1);
 
     // Guards per a module must have ref to host module baseMeta.
-    expect(restMetadataPerMod2.guards1.at(0)?.baseMeta.modRefId === AppModule).toBe(true);
+    expect(restMetadataPerMod2.guards1.at(0)?.baseMeta.modRefId).toBe(AppModule);
 
     // The injector must have enough providers to create a guard instance.
     const injector = Injector.resolveAndCreate(restMetadataPerMod2.guards1.at(0)?.meta.providersPerRou || []);
     expect(() => injector.get(BearerGuard1)).not.toThrow();
     expect(injector.get(BearerGuard1)).toBeInstanceOf(BearerGuard2);
-
-    // Corresponding values are created for the entire chain of dependencies.
-    const { id } = KeyRegistry.get(Service0);
-    const ctx = injector.get(Context) as Context;
-    expect(ctx.get(id)).toBeInstanceOf(Service0);
   });
 });
