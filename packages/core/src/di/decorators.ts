@@ -2,42 +2,32 @@ import { forwardRef } from './forward-ref.js';
 import { Reflector } from './reflector.js';
 
 /**
- * Allows you to use an alternative token for a specific dependency.
+ * A parameter decorator that allows you to specify an alternative token. It can operate in two modes:
+ * 1. When taking one argument, DI creates a cache for the corresponding result.
+ * 2. When taking two arguments, DI does not create or use a cache.
+ * 
+ * For more info, see the [documentation][1].
  * 
  * ### Example
+ * 
+ * ```ts
+@injectable()
+class Service2 {
+  // Uses DI cache
+  constructor(@inject('some-token') public service1: Service1) {}
+}
+
+// OR
+
+@injectable()
+class Service2 {
+  // Does not use DI cache
+  constructor(@inject('some-token', 'some-input') public service1: Service1) {}
+}
+ * ```
  *
-```ts
-class Engine {}
-
-@injectable()
-class Car {
-  constructor(@inject('MyEngine') public engine: Engine) {}
-}
-
-const injector =
-    Injector.resolveAndCreate([{token: 'MyEngine', useClass: Engine}, Car]);
-
-expect(injector.get(Car).engine instanceof Engine).toBe(true);
-```
-  *
-  * When `@inject()` is not present, `Injector` will use the type annotation of the
-  * parameter.
-  *
-  * ### Example
-  *
-```ts
-class Engine {}
-
-@injectable()
-class Car {
-  constructor(public engine: Engine) {
-  }  // same as constructor(@inject(Engine) engine:Engine)
-}
-
-const injector = Injector.resolveAndCreate([Engine, Car]);
-expect(injector.get(Car).engine instanceof Engine).toBe(true);
-```
-   */
+ * [1]: http://ditsmod.github.io/en/basic-components/dependency-injection/#inject-and-input
+ */
 export const inject: InjectDecorator = Reflector.makeParamDecorator(
   (token, input?) => ({ token, input }) satisfies InjectTransformResult,
   'inject',
@@ -54,8 +44,10 @@ export interface InjectTransformResult {
 }
 
 /**
- * A method parameter decorator that indicates to the DI injector that it needs to pass context data
- * that was passed during the `@inject(Service, 'context-data')` call (or its analogues).
+ * A parameter decorator that indicates to the DI injector that it needs to pass input data
+ * that was passed during the `@inject(Service, 'some-data')` call (or its analogues).
+ * 
+ * For more info, see the [documentation][1].
  * 
  * ### Example
 ```ts
@@ -63,17 +55,18 @@ import { injectable, inject, input } from '@ditsmod/core';
 
 @injectable()
 class Dependecy1 {
-  constructor(@input public inputData: string) { // Here input is 'input1'
+  constructor(@input public inputData: string) { // Here input is 'some-data'
     // ...
   }
 }
 
 @injectable()
 class Service1 {
-  constructor(@inject(Dependecy1, 'input1') dependecy1: Dependecy1) {}
+  constructor(@inject(Dependecy1, 'some-data') dependecy1: Dependecy1) {}
 }
 ```
  * 
+ * [1]: http://ditsmod.github.io/en/basic-components/dependency-injection/#inject-and-input
  */
 export const input = Reflector.makeParamDecorator(
   () => ({ token: forwardRef(() => input) }) satisfies InjectTransformResult,
