@@ -1,4 +1,4 @@
-import { rootModule, Providers, inject, ctx } from '@ditsmod/core';
+import { rootModule, Providers, ctx } from '@ditsmod/core';
 import {
   QUERY_PARAMS,
   PATH_PARAMS,
@@ -26,7 +26,7 @@ export class DefaultController {
   }
 
   @route('GET', 'interceptor0', [], [Interceptor1])
-  withInterceptors(@inject('msg') msg: string) {
+  withInterceptors(@ctx('msg') msg: string) {
     return msg;
   }
 }

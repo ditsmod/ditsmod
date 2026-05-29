@@ -14,7 +14,7 @@ describe('Route decorator', () => {
     const actualMeta = Reflector.getMetadata(Controller1)!;
     expect(actualMeta.constructor.type).toBe(Function);
     expect(actualMeta.constructor.decorators).toMatchObject<DecoratorAndValue[]>([
-      new DecoratorAndValue(controller, {}, expect.any(String)),
+      new DecoratorAndValue(controller, {}, undefined, expect.any(String)),
     ]);
   });
 

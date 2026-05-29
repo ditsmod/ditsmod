@@ -4,7 +4,6 @@ import {
   ModuleManager,
   ModuleWithParams,
   BaseMeta,
-  rootModule,
   SystemLogMediator,
   ModRefId,
 } from '@ditsmod/core';
@@ -12,8 +11,8 @@ import {
 import { CanActivate, guard } from '../interceptors/guard.js';
 import { controller } from '../types/controller.js';
 import { RequestContext } from '../services/request-context.js';
-import { AppendsWithParams } from './rest-init-raw-meta.js';
-import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
+import { AppendsWithParams, type RestModuleParams } from './rest-init-raw-meta.js';
+import { initRest, restRootModule } from '#decorators/rest-init-hooks-and-metadata.js';
 
 let mock: MockModuleManager;
 
@@ -57,26 +56,27 @@ it('imports and appends with gruards for some modules', () => {
   @featureModule()
   class Module2 {}
 
-  const ModuleWithParams: ModuleWithParams = {
-    //
-    // path: 'module1',
+  const moduleWithParams: RestModuleParams & ModuleWithParams = {
+    path: 'module1',
     module: Module1,
-    // guards: [Guard1],
+    guards: [Guard1],
   };
   const appendsWithParams: AppendsWithParams = {
-    //
     path: 'module2',
     module: Module2,
-    // guards: [Guard2],
+    guards: [Guard2],
   };
 
-  @initRest({})
-  @initRest({ appends: [appendsWithParams] })
-  @rootModule({ imports: [ModuleWithParams] })
+  @restRootModule({
+    appends: [appendsWithParams],
+    imports: [moduleWithParams],
+  })
   class AppModule {}
 
   mock.scanRootModule(AppModule);
-  expect(mock.map.size).toBe(3);
-  // expect(mock.getMetadata(ModuleWithParams)?.guards).toMatchObject([{ guard: Guard1 }]);
-  // expect(mock.getMetadata(appendsWithParams)?.guards).toMatchObject([{ guard: Guard2 }]);
+  const initMeta1 = mock.getBaseMeta(moduleWithParams)?.initMeta.get(initRest)?.params;
+  const initMeta2 = mock.getBaseMeta(appendsWithParams)?.initMeta.get(initRest)?.params;
+  expect(mock.map.size).toBe(5);
+  expect(initMeta1).toMatchObject({ guards: [{ guard: Guard1 }], path: 'module1' });
+  expect(initMeta2).toMatchObject({ guards: [{ guard: Guard2 }], path: 'module2' });
 });

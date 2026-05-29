@@ -1,18 +1,17 @@
 import { jest } from '@jest/globals';
 import { TestRestApplication } from '@ditsmod/rest-testing';
 import {
-  InjectionToken,
   Extension,
   injectable,
   ExtensionManager,
-  rootModule,
-  featureModule,
   Stage1DebugMeta,
   Stage1ExtensionMeta,
   Stage1ExtensionMeta2,
 } from '@ditsmod/core';
 
 import { Router } from '#services/router.js';
+import { restModule, restRootModule } from '#decorators/rest-init-hooks-and-metadata.js';
+
 describe('extensions e2e', () => {
   @injectable()
   class Extension2 implements Extension<void> {
@@ -42,7 +41,7 @@ describe('extensions e2e', () => {
       async stage1() {}
     }
 
-    @rootModule({
+    @restRootModule({
       providersPerApp: [{ token: Router, useValue: 'fake value' }],
       extensions: [
         { extension: Extension1, beforeExtensions: [Extension2] },
@@ -78,7 +77,7 @@ describe('extensions e2e', () => {
       }
     }
 
-    @rootModule({
+    @restRootModule({
       providersPerApp: [{ token: Router, useValue: 'fake value' }],
       extensions: [
         { extension: Extension1 },
@@ -98,17 +97,17 @@ describe('extensions e2e', () => {
       async stage1() {}
     }
 
-    @rootModule({
+    @restRootModule({
       providersPerApp: [{ token: Router, useValue: 'fake value' }],
       extensions: [
         { extension: Extension1, beforeExtensions: [Extension2] },
-        { extension: Extension1, beforeExtensions: [Extension1] },
-        { extension: Extension1, beforeExtensions: [Extension3] },
+        { extension: Extension2, beforeExtensions: [Extension3] },
+        { extension: Extension3, beforeExtensions: [Extension1] },
       ],
     })
     class AppModule {}
 
-    const msg = ': Extension3 -> Extension2 -> Extension1 -> Extension3';
+    const msg = ': Extension1 -> Extension2 -> Extension3 -> Extension1';
     await expect(TestRestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
   });
 
@@ -118,24 +117,24 @@ describe('extensions e2e', () => {
       async stage1() {}
     }
 
-    @featureModule({
-      extensions: [{ extension: Extension1, beforeExtensions: [Extension2], exportOnly: true }],
+    @restModule({
+      extensions: [{ extension: Extension3, beforeExtensions: [Extension1], exportOnly: true }],
     })
     class Module1 {}
 
-    @featureModule({
-      extensions: [{ extension: Extension1, beforeExtensions: [Extension1], exportOnly: true }],
+    @restModule({
+      extensions: [{ extension: Extension2, beforeExtensions: [Extension3], exportOnly: true }],
     })
     class Module2 {}
 
-    @rootModule({
+    @restRootModule({
       imports: [Module1, Module2],
       providersPerApp: [{ token: Router, useValue: 'fake value' }],
-      extensions: [{ extension: Extension1, beforeExtensions: [Extension3] }],
+      extensions: [{ extension: Extension1, beforeExtensions: [Extension2] }],
     })
     class AppModule {}
 
-    const msg = ': Extension1 -> Extension3 -> Extension2 -> Extension1';
+    const msg = ': Extension1 -> Extension2 -> Extension3 -> Extension1';
     await expect(TestRestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
   });
 
@@ -145,57 +144,53 @@ describe('extensions e2e', () => {
       async stage1() {}
     }
 
-    @featureModule({
+    @restModule({
       extensions: [{ extension: Extension1, beforeExtensions: [Extension2], exportOnly: true }],
     })
     class Module1 {}
 
-    @featureModule({
+    @restModule({
       imports: [Module1],
       extensions: [
-        { extension: Extension1, beforeExtensions: [Extension1] },
-        { extension: Extension1, beforeExtensions: [Extension3] },
+        { extension: Extension2, beforeExtensions: [Extension3] },
+        { extension: Extension3, beforeExtensions: [Extension1] },
       ],
     })
     class Module2 {}
 
-    @rootModule({
-      imports: [Module2],
-      providersPerApp: [{ token: Router, useValue: 'fake value' }],
-    })
+    @restRootModule({ imports: [Module2] })
     class AppModule {}
 
-    const msg = ': Extension2 -> Extension1 -> Extension3 -> Extension2';
+    const msg = ': Extension2 -> Extension3 -> Extension1 -> Extension2';
     await expect(TestRestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
   });
 
-  it('circular dependencies of groups in Module2 with global Module1', async () => {
+  it('circular dependencies of groups in Module2 with reexported Module1', async () => {
     @injectable()
     class Extension1 implements Extension<void> {
       async stage1() {}
     }
 
-    @featureModule({
+    @restModule({
       extensions: [{ extension: Extension1, beforeExtensions: [Extension2], exportOnly: true }],
     })
     class Module1 {}
 
-    @featureModule({
+    @restModule({
       extensions: [
-        { extension: Extension1, beforeExtensions: [Extension1] },
-        { extension: Extension1, beforeExtensions: [Extension3] },
+        { extension: Extension2, beforeExtensions: [Extension3] },
+        { extension: Extension3, beforeExtensions: [Extension1] },
       ],
     })
     class Module2 {}
 
-    @rootModule({
+    @restRootModule({
       imports: [Module1, Module2],
-      providersPerApp: [{ token: Router, useValue: 'fake value' }],
       exports: [Module1],
     })
     class AppModule {}
 
-    const msg = 'Extension2 -> Extension1 -> Extension3 -> Extension2';
+    const msg = 'Extension2 -> Extension3 -> Extension1 -> Extension2';
     await expect(TestRestApplication.createTestApp(AppModule).getServer()).rejects.toThrow(msg);
   });
 
@@ -217,27 +212,27 @@ describe('extensions e2e', () => {
       }
     }
 
-    @featureModule({
+    @restModule({
       providersPerMod: [Provider1],
       extensions: [{ extension: Extension1, exportOnly: true }],
     })
     class Module1 {}
 
-    @featureModule({
+    @restModule({
       imports: [Module1],
       providersPerMod: [Provider2],
       exports: [Provider2],
     })
     class Module2 {}
 
-    @featureModule({
+    @restModule({
       imports: [Module1],
       providersPerMod: [Provider3],
       exports: [Provider3],
     })
     class Module3 {}
 
-    @rootModule({
+    @restRootModule({
       imports: [Module1, Module2, Module3],
       providersPerApp: [{ token: Router, useValue: 'fake value' }],
     })
@@ -282,13 +277,13 @@ describe('extensions e2e', () => {
       }
     }
 
-    @featureModule({
+    @restModule({
       providersPerMod: [Provider1],
       extensions: [{ extension: Extension1, exportOnly: true }],
     })
     class Module1 {}
 
-    @featureModule({
+    @restModule({
       imports: [Module1],
       providersPerMod: [Provider2],
       extensions: [{ extension: Extension2, exportOnly: true }],
@@ -296,14 +291,14 @@ describe('extensions e2e', () => {
     })
     class Module2 {}
 
-    @featureModule({
+    @restModule({
       imports: [Module1, Module2],
       providersPerMod: [Provider3],
       exports: [Provider3],
     })
     class Module3 {}
 
-    @rootModule({
+    @restRootModule({
       imports: [Module1, Module2, Module3],
       providersPerApp: [{ token: Router, useValue: 'fake value' }],
     })
@@ -373,30 +368,30 @@ describe('extensions e2e', () => {
       }
     }
 
-    @featureModule({
+    @restModule({
       extensions: [{ extension: Extension1, exportOnly: true }],
     })
     class Module1 {}
 
-    @featureModule({
+    @restModule({
       imports: [Module1],
       extensions: [{ extension: Extension2, exportOnly: true }],
     })
     class Module2 {}
 
-    @featureModule({
+    @restModule({
       imports: [Module1, Module2],
       providersPerMod: [Provider1],
       exports: [Provider1],
     })
     class Module3 {}
 
-    @featureModule({
+    @restModule({
       extensions: [{ extension: Extension3, exportOnly: true }],
     })
     class Module4 {}
 
-    @rootModule({
+    @restRootModule({
       imports: [Module1, Module3, Module4],
       providersPerApp: [{ token: Router, useValue: 'fake value' }],
     })

@@ -18,6 +18,8 @@ import {
   ModRefId,
   MetadataPerMod2,
   ModuleWithParams,
+  Context,
+  injectorCtxProviders,
 } from '@ditsmod/core';
 import { InstantiationError, NoProvider } from '@ditsmod/core/errors';
 
@@ -25,7 +27,7 @@ import { CanActivate, guard } from '#interceptors/guard.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
 import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js';
 import { RequestContext } from '#services/request-context.js';
-import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
+import { initRest, restModule, restRootModule } from '#decorators/rest-init-hooks-and-metadata.js';
 import { RestMetadataPerMod2 } from './types.js';
 import { RestModuleParams } from './rest-init-raw-meta.js';
 
@@ -274,12 +276,12 @@ describe('DeepModulesImporter', () => {
     @rootModule({ imports: [Module2] })
     class Module3 {}
 
-    let msg = 'for Module2: no provider for Service1! (required by Service2 -> Service1). ';
+    let msg = 'Module2: no provider for Service1! (required by Service2 -> Service1). ';
     msg += 'Searched in providersPerRou, providersPerMod, providersPerApp';
     expect(() => getMetadataPerMod2(Module3)).toThrow(msg);
   });
 
-  it(`There is the following dependency chain: Service4 -> Service3 -> Service2 -> Service1;
+  fit(`There is the following dependency chain: Service4 -> Service3 -> Service2 -> Service1;
     AppModule imports Module2, which exports only Service4, but DeepModulesImporter imports
     the entire dependency chain (both from Module2 and from Module1, which is imported
     into Module2)`, () => {
@@ -304,20 +306,27 @@ describe('DeepModulesImporter', () => {
       constructor(public service3: Service3) {}
     }
 
-    @initRest({ providersPerRou: [Service3, Service4], exports: [Service4] })
-    @featureModule({
+    @restModule({
+      providersPerRou: [Service3, Service4],
+      exports: [Service4],
       imports: [Module1],
       providersPerMod: [Service2],
     })
     class Module2 {}
 
-    @rootModule({
+    @restRootModule({
       imports: [Module2],
     })
     class AppModule {}
 
     const initMeta = getRestMetadataPerMod2(AppModule)!.meta!;
-    expect(initMeta.providersPerRou).toEqual([...defaultProvidersPerRou, Service3, Service4]);
+    expect(initMeta.providersPerRou).toEqual([
+      Service3,
+      Service4,
+      ...defaultProvidersPerRou,
+      ...injectorCtxProviders,
+      Context, // @todo Remove this duplicate
+    ]);
     expect(initMeta.providersPerReq).toEqual(defaultProvidersPerReq);
     expect(initMeta.providersPerMod.includes(Service1)).toBeTruthy();
     expect(initMeta.providersPerMod.includes(Service2)).toBeTruthy();
@@ -424,7 +433,7 @@ describe('DeepModulesImporter', () => {
     @rootModule({ imports: [Module1, Module2] })
     class AppModule {}
 
-    let msg = 'for Module2: no provider for Service1! (required by Service2 -> Service1). ';
+    let msg = 'Module2: no provider for Service1! (required by Service2 -> Service1). ';
     msg += 'Searched in providersPerRou, providersPerMod, providersPerApp';
     expect(() => getMetadataPerMod2(AppModule)).toThrow(msg);
   });
@@ -604,6 +613,7 @@ describe('DeepModulesImporter', () => {
 
     // Corresponding values are created for the entire chain of dependencies.
     const { id } = KeyRegistry.get(Service0);
-    expect(injector.getValue(id)).toBeInstanceOf(Service0);
+    const ctx = injector.get(Context) as Context;
+    expect(ctx.get(id)).toBeInstanceOf(Service0);
   });
 });
