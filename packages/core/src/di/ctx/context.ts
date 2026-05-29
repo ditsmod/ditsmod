@@ -1,4 +1,4 @@
-import { injectable } from '#di/decorators.js';
+import { fromSelf, injectable } from '#di/decorators.js';
 import { Injector } from '#di/injector.js';
 
 @injectable()
@@ -44,7 +44,7 @@ export class Context {
    * module they protect._
    */
   fill(externalInj: Injector, tokens: any[]) {
-    const ctx = externalInj.get(Context) as Context;
+    const ctx = externalInj.get(Context, undefined, undefined, fromSelf) as Context;
     for (const token of tokens) {
       ctx.set(token, this.#ctx.get(token));
     }
