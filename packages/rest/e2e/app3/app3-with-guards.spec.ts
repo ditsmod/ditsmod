@@ -36,7 +36,7 @@ describe('guard', () => {
       expect(text).toBe('ok1');
     });
 
-    it.skip('the guard added to a specific route works', async () => {
+    it('the guard added to a specific route works', async () => {
       const { status } = await testAgent.get('/module1/need-auth1');
       expect(status).toBe(401);
     });
@@ -47,7 +47,7 @@ describe('guard', () => {
       expect(text).toBe('some secret1');
     });
 
-    it.skip('guard set to import Module2 prohibits access to controllers without guards', async () => {
+    it('guard set to import Module2 prohibits access to controllers without guards', async () => {
       const { status } = await testAgent.get('/module2-with-guard/ok1');
       expect(status).toBe(401);
     });
@@ -58,12 +58,12 @@ describe('guard', () => {
       expect(text).toBe('ok1');
     });
 
-    it.skip('the first route (out of the two available) that is installed directly on the controller route does not pass the request', async () => {
+    it('the first route (out of the two available) that is installed directly on the controller route does not pass the request', async () => {
       const { status } = await testAgent.get('/module2-with-guard/ok3?allow=1');
       expect(status).toBe(401);
     });
 
-    it.skip('the second route (out of the two available) that is installed directly on the controller route does not pass the request', async () => {
+    it('the second route (out of the two available) that is installed directly on the controller route does not pass the request', async () => {
       const { status } = await testAgent.get('/module2-with-guard/ok3?allow=2');
       expect(status).toBe(401);
     });
@@ -80,7 +80,7 @@ describe('guard', () => {
       expect(text).toBe('ok1');
     });
 
-    it.skip('a child module that is imported into a root module without guards can set guards on its own module imports', async () => {
+    it('a child module that is imported into a root module without guards can set guards on its own module imports', async () => {
       const { status } = await testAgent.get('/module3/module2-with-guard/ok1');
       expect(status).toBe(401);
     });
@@ -99,7 +99,7 @@ describe('guard', () => {
       expect(text).toBe('ok2');
     });
 
-    it.skip('the guard added to a specific route works', async () => {
+    it('the guard added to a specific route works', async () => {
       const { status } = await testAgent.get('/module1/need-auth2');
       expect(status).toBe(401);
     });
@@ -110,7 +110,7 @@ describe('guard', () => {
       expect(text).toBe('some secret2');
     });
 
-    it.skip('guard set to import Module2 prohibits access to controllers without guards', async () => {
+    it('guard set to import Module2 prohibits access to controllers without guards', async () => {
       const { status } = await testAgent.get('/module2-with-guard/ok2');
       expect(status).toBe(401);
     });
@@ -121,12 +121,12 @@ describe('guard', () => {
       expect(text).toBe('ok2');
     });
 
-    it.skip('the first route (out of the two available) that is installed directly on the controller route does not pass the request', async () => {
+    it('the first route (out of the two available) that is installed directly on the controller route does not pass the request', async () => {
       const { status } = await testAgent.get('/module2-with-guard/ok4?allow=1');
       expect(status).toBe(401);
     });
 
-    it.skip('the second route (out of the two available) that is installed directly on the controller route does not pass the request', async () => {
+    it('the second route (out of the two available) that is installed directly on the controller route does not pass the request', async () => {
       const { status } = await testAgent.get('/module2-with-guard/ok4?allow=2');
       expect(status).toBe(401);
     });
@@ -143,7 +143,7 @@ describe('guard', () => {
       expect(text).toBe('ok2');
     });
 
-    it.skip('a child module that is imported into a root module without guards can set guards on its own module imports', async () => {
+    it('a child module that is imported into a root module without guards can set guards on its own module imports', async () => {
       const { status } = await testAgent.get('/module3/module2-with-guard/ok2');
       expect(status).toBe(401);
     });
