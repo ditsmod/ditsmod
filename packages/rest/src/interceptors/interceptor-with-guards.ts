@@ -1,4 +1,13 @@
-import { injectable, Injector, ResolvedGuardPerMod, skipSelf, Status, SystemLogMediator } from '@ditsmod/core';
+import {
+  Context,
+  fromSelf,
+  injectable,
+  Injector,
+  ResolvedGuardPerMod,
+  skipSelf,
+  Status,
+  SystemLogMediator,
+} from '@ditsmod/core';
 
 import { CanActivate } from '../interceptors/guard.js';
 import { RouteMeta } from '../types/route-data.js';
@@ -47,7 +56,8 @@ export class InterceptorWithGuards implements HttpInterceptor {
 
   protected getInjectorPerReq(rg: ResolvedGuardPerMod) {
     const inj = rg.injectorPerRou.createChildFromResolved(rg.resolvedPerReq!, 'Req');
-    this.injector.fill(inj, [RAW_REQ, RAW_RES, A_PATH_PARAMS, QUERY_STRING, QUERY_PARAMS, PATH_PARAMS]);
+    const ctx = this.injector.get(Context, undefined, undefined, fromSelf) as Context;
+    ctx.fill(inj, [RAW_REQ, RAW_RES, A_PATH_PARAMS, QUERY_STRING, QUERY_PARAMS, PATH_PARAMS]);
     return inj;
   }
 

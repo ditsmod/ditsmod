@@ -1,4 +1,4 @@
-import { injectable, Injector, ResolvedGuardPerMod, skipSelf, Status, SystemLogMediator } from '@ditsmod/core';
+import { Context, fromSelf, injectable, Injector, ResolvedGuardPerMod, skipSelf, Status, SystemLogMediator } from '@ditsmod/core';
 import { TRPCError } from '@trpc/server';
 
 import { RAW_REQ, RAW_RES } from '#types/types.js';
@@ -48,7 +48,8 @@ export class InterceptorWithGuards implements TrpcHttpInterceptor {
 
   protected getInjectorPerReq(rg: ResolvedGuardPerMod) {
     const inj = rg.injectorPerRou.createChildFromResolved(rg.resolvedPerReq!, 'Req');
-    this.injector.fill(inj, [RAW_REQ, RAW_RES]);
+    const ctx = this.injector.get(Context, undefined, undefined, fromSelf) as Context;
+    ctx.fill(inj, [RAW_REQ, RAW_RES]);
     return inj;
   }
 

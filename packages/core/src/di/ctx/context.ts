@@ -34,6 +34,22 @@ export class Context {
     }
   }
 
+  /**
+   * Extracts values from the current context for the specified tokens, and inserts them into
+   * the context of the external injector.
+   *
+   * _Note: At the time of creation, this method was intended to enable guards at the module level,
+   * specifically to pass contextual values to their injector at the request level. In this case,
+   * the injectors for the guards are considered external in relation to the injectors of the
+   * module they protect._
+   */
+  fill(externalInj: Injector, tokens: any[]) {
+    const ctx = externalInj.get(Context) as Context;
+    for (const token of tokens) {
+      ctx.set(token, this.#ctx.get(token));
+    }
+  }
+
   protected collectValues(mergedCtx = new Map(), stepsUp: number = -1): Map<string, Map<any, any>> {
     ++stepsUp;
     mergedCtx.set(this.injector.level || `steps up: ${stepsUp}`, new Map(this.#ctx));

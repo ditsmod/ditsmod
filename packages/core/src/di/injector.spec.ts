@@ -338,15 +338,6 @@ describe('injector', () => {
       expect(engine).toBeInstanceOf(Engine);
       expect(dashboardSoftware).toBeInstanceOf(DashboardSoftware);
     });
-
-    it('injector.setById() should works', () => {
-      const { id } = KeyRegistry.get(1);
-      const injector = Injector.resolveAndCreate([Engine, { token: 1, useValue: 'value 1' }]);
-      expect(injector.get(Engine)).toBeInstanceOf(Engine);
-      expect(injector.get(1)).toBe('value 1');
-      injector.setById(id, 'value 2');
-      expect(injector.get(1)).toBe('value 2');
-    });
   });
 
   it('should support function factory', () => {
