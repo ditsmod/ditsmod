@@ -1,4 +1,4 @@
-import { fromSelf, input, skipSelf } from './decorators.js';
+import { fromSelf, input as inputFn, skipSelf } from './decorators.js';
 import { NoProvider } from './errors.js';
 import { Injector } from './injector.js';
 import { type DualKey, KeyRegistry } from './key-registry.js';
@@ -12,7 +12,12 @@ import { ID, type ResolvedProvider } from './top/resolved-provider.js';
  */
 export class DepsChecker {
   static checkForResolved(injector: Injector, provider: ResolvedProvider, ignoreDeps?: any[]): any {
-    this.checkMultiOrRegularProvider({ injector, provider, pathTracer: new PathTracer(), ignoreDeps });
+    this.checkMultiOrRegularProvider({
+      injector,
+      provider,
+      pathTracer: new PathTracer(),
+      ignoreDeps,
+    });
   }
 
   /**
@@ -40,6 +45,7 @@ export class DepsChecker {
     visibility,
     ignoreDeps,
     isOptional,
+    input,
   }: Config2) {
     if (dualKey.token === Injector) {
       return;
@@ -53,6 +59,7 @@ export class DepsChecker {
       ignoreDeps,
       visibility,
       isOptional,
+      input,
     });
   }
 
@@ -63,6 +70,7 @@ export class DepsChecker {
     ignoreDeps,
     visibility,
     isOptional,
+    input,
   }: Config1): any {
     pathTracer.addItem(dualKey.token, injector);
     if (injector) {
@@ -73,7 +81,7 @@ export class DepsChecker {
 
       // This is an alternative to the "instanceof ResolvedProvider" expression.
       if (meta?.[ID]) {
-        this.checkMultiOrRegularProvider({ injector, provider: meta, pathTracer, ignoreDeps });
+        this.checkMultiOrRegularProvider({ injector, provider: meta, pathTracer, ignoreDeps, input });
         return;
       } else if (meta !== undefined || injector.hasId(dualKey.id)) {
         return;
@@ -84,6 +92,7 @@ export class DepsChecker {
           pathTracer,
           ignoreDeps,
           isOptional,
+          input,
         });
       }
     }
@@ -92,7 +101,7 @@ export class DepsChecker {
     }
   }
 
-  private static checkMultiOrRegularProvider({ injector, provider, pathTracer, ignoreDeps }: Config4): any {
+  private static checkMultiOrRegularProvider({ injector, provider, pathTracer, ignoreDeps, input }: Config4): any {
     if (provider.multi) {
       provider.resolvedFactories.forEach(({ dependencies }) => {
         const config3: Config3 = {
@@ -101,6 +110,7 @@ export class DepsChecker {
           pathTracer,
           dependencies,
           ignoreDeps,
+          input,
         };
         this.findInRegistryDeps(config3);
       });
@@ -111,15 +121,16 @@ export class DepsChecker {
         pathTracer,
         dependencies: provider.resolvedFactories[0].dependencies,
         ignoreDeps,
+        input,
       };
       return this.findInRegistryDeps(config3);
     }
   }
 
-  private static findInRegistryDeps({ injector, pathTracer, dependencies, ignoreDeps }: Config3): any {
+  private static findInRegistryDeps({ injector, pathTracer, dependencies, ignoreDeps, input: inputRaw }: Config3): any {
     dependencies = dependencies.filter((dep) => !ignoreDeps?.includes(dep.dualKey));
     dependencies.forEach((dep) => {
-      if (dep.dualKey.token === input) return;
+      if (dep.dualKey.token === inputFn) return;
       this.selectInjectorAndCheckDeps({
         injector,
         dualKey: dep.dualKey,
@@ -127,6 +138,7 @@ export class DepsChecker {
         visibility: dep.visibility,
         ignoreDeps,
         isOptional: dep.optional,
+        input: dep.input,
       });
       pathTracer.removeFirstToken();
     });
@@ -144,6 +156,7 @@ interface BaseConfig {
   onlyFromSelf?: boolean;
   defaultValue?: any;
   isOptional?: boolean;
+  input?: any;
 }
 
 interface Config4 extends BaseConfig {

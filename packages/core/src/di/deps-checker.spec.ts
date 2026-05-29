@@ -98,7 +98,7 @@ function createInjector(providers: Provider[], parent?: Injector | null): Inject
   }
 }
 
-describe("null as provider's value", () => {
+describe('DepsChecker', () => {
   describe('checkDeps()', () => {
     const spy = jest.fn();
     beforeEach(() => {
