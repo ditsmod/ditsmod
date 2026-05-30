@@ -259,8 +259,7 @@ export class BaseAppInitializer {
         metadataPerMod2.aOrderedExtensions,
       );
       const injectorPerMod = injectorPerApp.resolveAndCreateChild(baseMeta.providersPerMod, 'Mod');
-      injectorPerMod.pullAndSave(Logger);
-      const systemLogMediator = injectorPerMod.pullAndSave(SystemLogMediator) as SystemLogMediator;
+      const systemLogMediator = injectorPerMod.pull(SystemLogMediator) as SystemLogMediator;
       const { extensionProviders } = baseMeta;
       if (!extensionProviders.length) {
         systemLogMediator.skippingStartExtensions(this);
