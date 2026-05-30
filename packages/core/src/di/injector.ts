@@ -9,7 +9,6 @@ import {
   NoProvider,
   CannotFindFactoryAsMethod,
   CannotFindMethodInClass,
-  SettingValueByIdFailed,
 } from './errors.js';
 import { type ForwardRefFn, resolveForwardRef } from './forward-ref.js';
 import type { InjectionToken } from './top/injection-token.js';

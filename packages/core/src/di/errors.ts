@@ -2,8 +2,6 @@ export {
   NoProvider,
   InstantiationError,
   TokenMustBeDefined,
-  SettingValueByTokenFailed,
-  SettingValueByIdFailed,
   CannotFindMethodInClass,
   CannotFindFactoryAsMethod,
   MixMultiWithRegularProviders,

@@ -80,28 +80,6 @@ export class TokenMustBeDefined extends CustomError {
   }
 }
 /**
- * `The injector is trying to set a value by token but cannot find "${displayToken}" in the registry, in providersPer${level}.`
- */
-export class SettingValueByTokenFailed extends CustomError {
-  constructor(displayToken: string, level?: LevelOfInjector) {
-    super({
-      msg1: `The injector is trying to set a value by token but cannot find "${displayToken}" in the registry, in providersPer${level}.`,
-      level: 'fatal',
-    });
-  }
-}
-/**
- * `The injector is trying to set a value by ID but cannot find "${id}" in the registry, in providersPer${level}.`
- */
-export class SettingValueByIdFailed extends CustomError {
-  constructor(id: number, level?: LevelOfInjector) {
-    super({
-      msg1: `The injector is trying to set a value by ID but cannot find "${id}" in the registry, in providersPer${level}.`,
-      level: 'fatal',
-    });
-  }
-}
-/**
  * `Cannot find method in "${className}".`
  */
 export class CannotFindMethodInClass extends CustomError {
