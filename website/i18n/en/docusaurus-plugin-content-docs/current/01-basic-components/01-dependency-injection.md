@@ -810,33 +810,60 @@ const locals = injector.get(HTTP_INTERCEPTORS); // [MyInterceptor]
 
 This construction makes sense, for example, if the first two points are executed in an external module that you cannot edit, and the third point is executed by the user of the current module.
 
-## Editing values in the DI register {#editing-values-in-the-di-register}
+## `Context` Service {#context-service}
 
-When creating an injector, it is passed an array of providers, which is then converted into the so-called **provider registry**. Schematically, this registry can be represented as follows:
+When building an application, there is sometimes a need to pass data not directly from function to function, but through an intermediary. Such an intermediary is often the injector, which is used to pass various kinds of configuration. However, the problem is that data can be passed to the injector only through the providers array, and only before the injector is created. After that, it becomes immutable, so the role of such an intermediary must then be delegated to some service.
 
-```
-token1 -> value15
-token2 -> value100
-...
-```
+That service is `Context`. Its methods can traverse up the injector hierarchy to retrieve a value associated with a specified key:
 
-In addition, it is possible to edit ready *values* in the DI registry:
+```ts
+import { Injector, Context } from '@ditsmod/core';
 
-```ts {4}
-import { Injector } from '@ditsmod/core';
+const parent = Injector.resolveAndCreate([Context], 'parent level');
+const child = parent.resolveAndCreateChild([Context], 'child level');
+const parentCtx = parent.get(Context) as Context;
+const childCtx = child.get(Context) as Context;
+parentCtx.set('key1', 'value1');
+childCtx.set('key2', 'value2');
 
-const injector = Injector.resolveAndCreate([{ token: 'token1', useValue: undefined }]);
-injector.setCtx('token1', 'value1');
-injector.getCtx('token1'); // value1
-```
-
-Note that in this case a provider with `token1` and the value `undefined` is first passed to the registry, and only then do we change the value for this token. If you try to edit the value for a token that is not present in the registry, DI will throw an error similar to:
-
-```text
-DiError: Setting value by token failed: cannot find token in register: "token1". Try adding a provider with the same token to the current injector via module or controller metadata.
+childCtx.get('key1'); // value1
+childCtx.get('key2'); // value2
 ```
 
-In most cases, editing values is used by [interceptors][105] or [guards][106], as they thus pass the result of their work into the registry:
+This example demonstrates:
+
+1. Creating a parent and a child injector, each with `Context` registered as a provider.
+2. Retrieving `Context` instances from both injectors and setting key-value pairs.
+3. Finally, retrieving both values from the child context. This demonstrates that a child context can also access values stored in its parent context.
+
+The `Context` service is used, for example, by [interceptors][105], [guards][106], request handlers, controllers, and services in `@ditsmod/rest`. First, an HTTP request is passed to a guard, which reads certain authentication-related information and may query a database to retrieve information about the current user. Then, instead of storing this information directly in the request object and passing it from function to function, it is centrally stored in `Context`, from which controllers or any services located at the same level of the injector hierarchy can retrieve it.
+
+Using the `Context` service in class method parameters is especially simple and convenient:
+
+```ts {5}
+import { Injector, Context, ctx, ctxProviders, factoryMethod } from '@ditsmod/core';
+
+class Service1 {
+  @factoryMethod()
+  method1(@ctx('key1') param1: any, @ctx('key2') param2: any) {
+    return { param1, param2 };
+  }
+}
+
+const injector = Injector.resolveAndCreate(
+  [...ctxProviders, { token: 'token1', useFactory: [Service1, Service1.prototype.method1] }],
+);
+
+const context = injector.get(Context) as Context;
+context.set('key1', 'value1');
+context.set('key2', 'value2');
+
+injector.get('token1'); // { param1: 'value1', param2: 'value2' }
+```
+
+This example illustrates a situation where a value is stored in `Context` in one part of the program and consumed elsewhere—in class method parameters. The same mechanism can be used to obtain context values in controller parameters (if you are using `@ditsmod/rest`). Note that the `ctxProviders` array is added to the providers list. It contains all the providers required for this mechanism to work. In real applications, if you use `@ditsmod/rest`, `CtxModule` is already re-exported with all the necessary providers.
+
+You can find real-world examples of setting context values here:
 
 1. [BodyParserInterceptor][16];
 2. [BearerGuard][17].
@@ -1016,8 +1043,8 @@ When creating the child injector, it was not passed `Service1`, but it can refer
 [2]: #short-and-long-forms-of-declaring-dependencies-in-class-methods
 [11]: https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types
 [15]: https://en.wikipedia.org/wiki/Singleton_pattern
-[16]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/body-parser/src/body-parser.interceptor.ts#L16
-[17]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/examples/14-auth-jwt/src/app/modules/services/auth/bearer.guard.ts#L25
+[16]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.12/packages/body-parser/src/body-parser.interceptor.ts#L16
+[17]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.12/examples/14-auth-jwt/src/app/modules/services/auth/bearer.guard.ts#L25
 
 [101]: ../../#installation
 [102]: #injector-and-providers

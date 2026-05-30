@@ -810,33 +810,60 @@ const locals = injector.get(HTTP_INTERCEPTORS); // [MyInterceptor]
 
 Така конструкція має сенс, наприклад, якщо перші два пункти виконуються десь у зовнішньому модулі, до якого у вас немає доступу на редагування, а третій пункт виконує вже користувач поточного модуля.
 
-## Редагування значень в реєстрі DI {#editing-values-​​in-the-di-register}
+## Сервіс `Context` {#context-service}
 
-Під час створення інжектора, йому передається масив провайдерів, який потім перетворюється на так званий **реєстр провайдерів**. Схематично цей реєстр можна уявляти наступним чином:
+Коли ви будуєте застосунок, інколи є потреба передавати дані не напряму від функції до функції, а через посередника. Таким посередником часто виступає інжектор, коли через нього передають різного роду конфігурацію. Але проблема в тому, що передати дані у сам інжектор можна лише передаючи дані у масив провайдерів, причому до моменту створення інжектора. Після цього, він є імутабельним (незмінним), тому роль такого посередника потім вже потрібно передавати якомусь сервісу.
 
-```
-token1 -> value15
-token2 -> value100
-...
-```
+Саме таким сервісом є `Context`, його методи вміють підніматись вгору по ієрархії інжекторів щоб отримати певне значення для вказаного ключа:
 
-Окрім цього, існує можливість редагування готових _значень_ реєстра DI:
+```ts
+import { Injector, Context } from '@ditsmod/core';
 
-```ts {4}
-import { Injector } from '@ditsmod/core';
+const parent = Injector.resolveAndCreate([Context], 'parent level');
+const child = parent.resolveAndCreateChild([Context], 'child level');
+const parentCtx = parent.get(Context) as Context;
+const childCtx = child.get(Context) as Context;
+parentCtx.set('key1', 'value1');
+childCtx.set('key2', 'value2');
 
-const injector = Injector.resolveAndCreate([{ token: 'token1', useValue: undefined }]);
-injector.setCtx('token1', 'value1');
-injector.getCtx('token1'); // value1
-```
-
-Зверніть увагу, що в даному разі до реєстру спочатку передається провайдер з `token1`, який має значення `undefined`, і лише потім ми змінюємо значення для даного токена. Якщо ви спробуєте редагувати значення для токена, якого у реєстрі немає, DI кине приблизно таку помилку:
-
-```text
-DiError: Setting value by token failed: cannot find token in register: "token1". Try adding a provider with the same token to the current injector via module or controller metadata.
+childCtx.get('key1'); // value1
+childCtx.get('key2'); // value2
 ```
 
-У більшості випадків, редагування значень використовують [інтерсептори][105] або [гарди][106], оскільки вони таким чином передають результат своєї роботи до реєстру:
+В цьому прикладі показано:
+
+1. Створення батьківського та дочірнього інжектора, у кожен з яких передано `Context` у якості провайдера.
+2. Потім показано як отримують інстанси `Context` з обох інжекторів, і встановлюють пари "ключ-значення".
+3. І в самому кінці показано, як отримують ці обидва значення у дочірньому контексті. Тобто тут продемонстровано, що з дочірнього контексту можна також отриматит значення і батьківського контексту.
+
+Сервіс `Context` використовують, наприклад, [інтерсептори][105], [ґарди][106], обробники-запитів, контролери та сервіси у `@ditsmod/rest`. Спочатку HTTP-запит передається ґарду, який зчитує певну auth-інформацію, можливо звертається до бази даних щоб витягнути інормацію про поточного користувача. Потім, замість того, щоб цю інформацію зберігати прямо в об'єкті запиту і передавати від функції до функції, вона централізовано зберігається у `Context`, звідки її можуть витягувати контролери чи будь-які сервіси, що знаходяться на тому ж рівні ієрархії інжекторів.
+
+Особливо просто і зручно користуватись сервісом `Context` у параметрах методів класів:
+
+```ts {5}
+import { Injector, Context, ctx, ctxProviders, factoryMethod } from '@ditsmod/core';
+
+class Service1 {
+  @factoryMethod()
+  method1(@ctx('key1') param1: any, @ctx('key2') param2: any) {
+    return { param1, param2 };
+  }
+}
+
+const injector = Injector.resolveAndCreate(
+  [...ctxProviders, { token: 'token1', useFactory: [Service1, Service1.prototype.method1] }],
+);
+
+const context = injector.get(Context) as Context;
+context.set('key1', 'value1');
+context.set('key2', 'value2');
+
+injector.get('token1'); // { param1: 'value1', param2: 'value2' }
+```
+
+В даному прикладі умовно показано ситуацію, коли значення для `Context` встановлюється в одному місці програми, а використовується це значення в іншому місці - у параметрах методу класу. Точно по цій схемі можна отримати значення контекста у параметрах контролера (якщо ви використовуєте `@ditsmod/rest`). Зверніть увагу, що в даному прикладі до провайдерів додається масив `ctxProviders`, де є усі необхідні провайдери, щоб ця схема працювала. В реальних же застосунках, якщо ви використовуєте `@ditsmod/rest`, там вже робиться реекспорт `CtxModule` з усіма необхідними провайдерами.
+
+Реальний приклад встановлення значень для контексту можна знайти ось тут:
 
 1. [BodyParserInterceptor][16];
 2. [BearerGuard][17].
@@ -1016,8 +1043,8 @@ parent.get(Service2);
 [2]: #short-and-long-forms-of-declaring-dependencies-in-class-methods
 [11]: https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types
 [15]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) "Singleton"
-[16]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/body-parser/src/body-parser.interceptor.ts#L16
-[17]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/examples/14-auth-jwt/src/app/modules/services/auth/bearer.guard.ts#L25
+[16]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.12/packages/body-parser/src/body-parser.interceptor.ts#L16
+[17]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.12/examples/14-auth-jwt/src/app/modules/services/auth/bearer.guard.ts#L25
 
 [101]: ../../#installation
 [102]: #injector-and-providers
