@@ -77,7 +77,7 @@ expect(car.engine instanceof Engine).toBe(true);
  * resolve all of the object's dependencies automatically.
  */
 export class Injector {
-  #parent: Injector | null;
+  #parent: Injector | undefined;
   #registry: RegistryOfInjector;
   #Registry: typeof RegistryOfInjector;
   #level?: LevelOfInjector;
@@ -92,7 +92,7 @@ export class Injector {
   constructor(Registry: typeof RegistryOfInjector, level?: LevelOfInjector, parent?: Injector) {
     this.#Registry = Registry;
     this.#registry = new Registry();
-    this.#parent = parent || null;
+    this.#parent = parent;
     this.#level = level;
   }
 
@@ -427,15 +427,15 @@ expect(child.parent).toBe(parent);
 ```
    *
    */
-  get parent(): Injector | null {
+  get parent(): Injector | undefined {
     return this.parentGetter();
   }
 
-  protected parentGetter(): Injector | null {
+  protected parentGetter(): Injector | undefined {
     return this.#parent;
   }
 
-  setParentGetter(parentGetter: () => Injector | null) {
+  setParentGetter(parentGetter: () => Injector | undefined) {
     this.parentGetter = parentGetter;
     return this;
   }
@@ -624,7 +624,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
    * @param injector This parameter can only be `null` if the `skipSelf` decorator is used.
    */
   protected getOrThrow(
-    injector: Injector | null,
+    injector: Injector | undefined,
     dualKey: DualKey,
     pathTracer: PathTracer,
     defaultValue: any,
