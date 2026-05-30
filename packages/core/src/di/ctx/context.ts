@@ -4,7 +4,7 @@ import { Injector } from '#di/injector.js';
 @injectable()
 export class Context {
   #ctx = new Map();
-  #parent: Context | null;
+  #parent: Context | undefined;
 
   constructor(protected injector: Injector) {
     if (injector.parent) {
@@ -12,24 +12,43 @@ export class Context {
     }
   }
 
+  /**
+   * Sets the value in the current context for the specified `token`.
+   */
   set(token: NonNullable<unknown>, value: any) {
     this.#ctx.set(token, value);
     return this;
   }
 
-  has(token: NonNullable<unknown>) {
-    return this.#ctx.has(token);
+  /**
+   * Indicates whether a value exists for the specified `token`. The search for values
+   * is done from bottom to top in the injector hierarchy.
+   */
+  has(token: NonNullable<unknown>, fromSelf?: boolean): boolean | undefined {
+    if (fromSelf) {
+      return this.#ctx.has(token);
+    }
+    return this.#ctx.has(token) || (this.#parent && this.#parent.has(token));
   }
 
+  /**
+   * Returns all key-value pairs found up the injector hierarchy.
+   */
   get(): Map<string, Map<any, any>>;
-  get(token: any): unknown;
-  get(token?: any): any {
+  /**
+   * Searches and returns the value for the specified `token` from bottom to top in the injector hierarchy.
+   *
+   * @param fromSelf If `true`, the lookup for values will only occur in the current context,
+   * without ascending to parent injectors.
+   */
+  get(token: any, fromSelf?: boolean): unknown | undefined;
+  get(token?: any, fromSelf?: boolean): any {
     if (token === undefined) {
       return this.collectValues();
     }
     if (this.#ctx.has(token)) {
       return this.#ctx.get(token);
-    } else if (this.#parent) {
+    } else if (!fromSelf && this.#parent) {
       return this.#parent.get(token);
     }
   }

@@ -22,15 +22,11 @@ export class ParametersInterceptor extends ValidationInterceptor {
       const schema = parameter.schema as XSchemaObject<any>;
       let value: any;
       if (parameter.in == 'path') {
-        if (this.ctx.has(PATH_PARAMS)) {
-          const pathParams = this.ctx.get(PATH_PARAMS) as AnyObj;
-          value = pathParams?.[parameter.name];
-        }
+        const pathParams = this.ctx.get(PATH_PARAMS, true) as AnyObj;
+        value = pathParams?.[parameter.name];
       } else if (parameter.in == 'query') {
-        if (this.ctx.has(QUERY_PARAMS)) {
-          const queryParams = this.injector.get(QUERY_PARAMS);
-          value = queryParams?.[parameter.name];
-        }
+        const queryParams = this.ctx.get(QUERY_PARAMS, true) as AnyObj;
+        value = queryParams?.[parameter.name];
       } else if (parameter.in == 'cookie') {
         const cookies = new Cookies(this.rawReq, this.rawRes);
         value = cookies.get(parameter.name);
