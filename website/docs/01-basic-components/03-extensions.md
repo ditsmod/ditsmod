@@ -114,32 +114,6 @@ export class SimpleExtension implements Extension<void> {
 
 Під час виконання `stage1()` будь-яке розширення може [динамічно додавати провайдери][7] на будь-який [рівень ієрархії][8]. Лише після завершення `stage1()` в усіх розширеннях всіх модулів, створюються фінальні інжектори - один на рівні застосунку та окремі на рівні кожного модуля. Інжектор модуля передається аргументом у `stage2(injectorPerMod)`. На цьому етапі також можна додавати провайдери, але лише на рівнях, нижчих за модуль. Це мають робити ті розширення, для яких ці провайдери призначені, і вони ж самостійно створюють відповідні фінальні інжектори.
 
-Якщо якщо в конструкторі розширення запитати `Injector`, ви отримаєте спеціальний інжектор на рівні модуля, що призначено лише для розширень. Тому немає сенсу передавати у нього значення сподіваючись, що вони будуть доступними у фінальних інжекторах. Лише на другому та третьопу етапі ініціалізації розширень ви :
-
-```ts {8,15,17}
-import { injectable, Extension, Injector } from '@ditsmod/core';
-
-@injectable()
-export class SimpleExtension implements Extension<void> {
-  constructor(private injector: Injector) {}
-
-  async stage1() {
-    this.injector.setCtx('some-token', 'some value'); // ❌ Не робіть так
-  }
-
-  async stage2(injectorPerMod: Injector) {
-    injectorPerMod === this.injector; // false
-    injectorPerMod.get('some-token'); // may return undefined
-
-    injectorPerMod.setCtx('some-token', 'some value'); // ✅ Рівень модуля
-    // OR
-    injectorPerMod.parent.setCtx('some-token', 'some value'); // ✅ Рівень застосунку
-  }
-}
-```
-
-Якщо ви хочете передати готове значення на першому етапі ініціалізації розширення, правильнішим буде [передавати][7] їх як [ValueProvider][11] у метаданих.
-
 ## Реєстрація розширення {#extension-registration}
 
 Розширення передаються у метадані модуля, у властивість `extensions`. В залежності від вибраного вами архітектурного стилю, для цього можуть використовуватись такі декоратори як `featureModule`, `restModule`, `trpcModule` і т.д.:

@@ -114,32 +114,6 @@ As you can see, extensions can declare dependencies on services whose providers 
 
 During `stage1()`, any extension can [dynamically add providers][7] to any [hierarchy level][8]. Only after `stage1()` has finished running in all extensions across all modules, the final injectors are created - one at the application level and one per module. The module-level injector is passed as an argument to `stage2(injectorPerMod)`. At this stage, providers can still be added dynamically, but only at levels lower than the module. This must be done by the target extensions for which those providers are intended, and they are also responsible for creating the corresponding final injectors.
 
-If you request `Injector` in the extension constructor, you will get a special module-level injector that is only for extensions. So there is no point in passing values ​​to it in the hope that they will be available in the final injectors:
-
-```ts {8,15,17}
-import { injectable, Extension, Injector } from '@ditsmod/core';
-
-@injectable()
-export class SimpleExtension implements Extension<void> {
-  constructor(private injector: Injector) {}
-
-  async stage1() {
-    this.injector.setCtx('some-token', 'some value'); // ❌ Don't do this
-  }
-
-  async stage2(injectorPerMod: Injector) {
-    injectorPerMod === this.injector; // false
-    injectorPerMod.get('some-token'); // may return undefined
-
-    injectorPerMod.setCtx('some-token', 'some value'); // ✅ The module level
-    // OR
-    injectorPerMod.parent.setCtx('some-token', 'some value'); // ✅ The application level
-  }
-}
-```
-
-If you want to pass a ready-made value in the first stage of extension initialization, it would be more correct to [pass][7] them as [ValueProvider][11] in the metadata.
-
 ## Extension registration {#extension-registration}
 
 Extensions are passed in the module metadata, in the `extensions` property. Depending on the architectural style you choose, decorators such as `featureModule`, `restModule`, `trpcModule`, etc. can be used for this:

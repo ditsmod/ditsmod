@@ -39,7 +39,7 @@ export class AuthModule {}
 Тепер в межах `AuthModule` можете використовувати `JwtService`:
 
 ```ts {8,19-22}
-import { injectable, Injector } from '@ditsmod/core';
+import { injectable, Context } from '@ditsmod/core';
 import { CanActivate, RequestContext } from '@ditsmod/rest';
 import { JwtService, VerifyErrors, JWT_PAYLOAD } from '@ditsmod/jwt';
 
@@ -47,7 +47,7 @@ import { JwtService, VerifyErrors, JWT_PAYLOAD } from '@ditsmod/jwt';
 export class BearerGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
-    private injector: Injector
+    private ctx: Context
   ) {}
 
   async canActivate(ctx: RequestContext) {
@@ -63,7 +63,7 @@ export class BearerGuard implements CanActivate {
       .catch((err: VerifyErrors) => false as const); // Here `as const` to narrow down returned type.
 
     if (payload) {
-      this.injector.setCtx(JWT_PAYLOAD, payload);
+      this.ctx.set(JWT_PAYLOAD, payload);
       return true;
     } else {
       return false;
