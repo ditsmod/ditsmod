@@ -3,7 +3,7 @@ import { DecoratorAndValue } from './top/decorator-and-value.js';
 import { CLASS_KEY } from './top/constants.js';
 import { ctx } from './ctx/decorators.js';
 import { Injector } from './injector.js';
-import { injectorCtxProviders } from './ctx/providers.js';
+import { ctxProviders } from './ctx/providers.js';
 import { Context } from './ctx/context.js';
 
 class DecoratedParent {}
@@ -34,7 +34,7 @@ describe('Property decorators', () => {
     }
 
     const injector = Injector.resolveAndCreate([
-      ...injectorCtxProviders,
+      ...ctxProviders,
       { token: 'token3', useFactory: [Service1, Service1.prototype.method1] },
     ]);
 

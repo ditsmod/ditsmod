@@ -1,7 +1,7 @@
 import { factoryMethod, fromSelf } from '#di/decorators.js';
 import { Injector } from '#di/injector.js';
 import { ctx } from './decorators.js';
-import { injectorCtxProviders } from './providers.js';
+import { ctxProviders } from './providers.js';
 import { Context } from './context.js';
 
 describe('Context', () => {
@@ -13,7 +13,7 @@ describe('Context', () => {
       }
     }
     const injector = Injector.resolveAndCreate(
-      [...injectorCtxProviders, { useFactory: [Service1, Service1.prototype.method1] }],
+      [...ctxProviders, { useFactory: [Service1, Service1.prototype.method1] }],
       'App',
     );
     const context = injector.get(Context) as Context;
@@ -29,10 +29,10 @@ describe('Context', () => {
         return { param1, param2, param3 };
       }
     }
-    const injectorPerApp = Injector.resolveAndCreate([...injectorCtxProviders], 'App');
-    const injectorPerMod = injectorPerApp.resolveAndCreateChild([...injectorCtxProviders], 'Mod');
+    const injectorPerApp = Injector.resolveAndCreate([...ctxProviders], 'App');
+    const injectorPerMod = injectorPerApp.resolveAndCreateChild([...ctxProviders], 'Mod');
     const injectorPerRou = injectorPerMod.resolveAndCreateChild(
-      [...injectorCtxProviders, { useFactory: [Service1, Service1.prototype.method1] }],
+      [...ctxProviders, { useFactory: [Service1, Service1.prototype.method1] }],
       'Rou',
     );
     const contextPerApp = injectorPerApp.get(Context) as Context;
