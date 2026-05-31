@@ -23,7 +23,7 @@ describe('guard', () => {
    * - route with `/need-auth` - this is a route with guard;
    */
 
-  describe('with injector-scoped controller', () => {
+  describe('with request-scoped controller', () => {
     it('passing guards to providers, or setting them to import a module, does not affect access to the root controller', async () => {
       const { status, text } = await testAgent.get('/root-controller');
       expect(status).toBe(200);
@@ -92,7 +92,7 @@ describe('guard', () => {
     });
   });
 
-  describe('with context-scoped controller', () => {
+  describe('with route-scoped controller', () => {
     it('setting guards on individual routes does not affect other routes', async () => {
       const { status, text } = await testAgent.get('/module1/ok2');
       expect(status).toBe(200);

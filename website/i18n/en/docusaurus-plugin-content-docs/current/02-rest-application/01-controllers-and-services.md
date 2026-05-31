@@ -63,14 +63,14 @@ The combination of the second and third points must be unique across the entire 
 
 Ditsmod provides controllers in two alternative modes, which differ in the mechanism for passing arguments to the controller method:
 
-1. **Injector-scoped controller** (default). A controller method can receive any number of arguments from the [DI injector][3]. These arguments can include an HTTP request.
-2. **Context-scoped controller**. The controller method receives a single argument - the request context, which includes the HTTP request.
+1. **Request-scoped controller** (default). A controller method can receive any number of arguments from the [DI injector][3]. These arguments can include an HTTP request.
+2. **Route-scoped controller**. The controller method receives a single argument - the request context, which includes the HTTP request.
 
 The first mode is more convenient and safer when working within the context of the current HTTP request (e.g., when the client provides a specific identifier that must be considered when forming the response). The second mode is noticeably faster (approximately 15–20%) and consumes less memory, but the request context cannot be stored in the instance properties of the controller, as this instance may be used simultaneously for other clients.
 
-### Injector-scoped controller {#injector-scoped-controller}
+### Request-scoped controller {#request-scoped-controller}
 
-By default, Ditsmod works with the controller in injector-scoped mode. This means, first, that a separate controller instance will be created for each HTTP request. Second, any controller method that has a `route` decorator will receive an arbitrary number of arguments from the [DI injector][3]. The following example creates a single route that accepts a `GET` request at `/hello`:
+By default, Ditsmod works with the controller in request-scoped mode. This means, first, that a separate controller instance will be created for each HTTP request. Second, any controller method that has a `route` decorator will receive an arbitrary number of arguments from the [DI injector][3]. The following example creates a single route that accepts a `GET` request at `/hello`:
 
 ```ts {7}
 import { controller, route, Res } from '@ditsmod/rest';
@@ -168,9 +168,9 @@ export class HelloWorldController {
 
 You may also be interested in [how to get the HTTP request body][5].
 
-### Context-scoped controller {#context-scoped-controller}
+### Route-scoped controller {#route-scoped-controller}
 
-To make a controller operate in the context-scoped mode, you need to specify `{ scope: 'ctx' }` in its metadata. Because the controller is instantiated in this mode only once, you will not be able to query in its constructor for class instances that are instantiated on each request. For example, if you request an instance of the `Res` class in the constructor, Ditsmod will throw an error:
+To make a controller operate in the route-scoped mode, you need to specify `{ scope: 'ctx' }` in its metadata. Because the controller is instantiated in this mode only once, you will not be able to query in its constructor for class instances that are instantiated on each request. For example, if you request an instance of the `Res` class in the constructor, Ditsmod will throw an error:
 
 ```ts {3,5}
 import { RequestContext, controller, route } from '@ditsmod/rest';
@@ -200,23 +200,23 @@ export class HelloWorldController {
 }
 ```
 
-In the "context-scoped" mode, controller methods bound to specific routes receive a single argument - the request context. That is, in this mode you will no longer be able to declare other method parameters. However, in the constructor you can still declare an arbitrary number of parameters that are created only once.
+In the "route-scoped" mode, controller methods bound to specific routes receive a single argument - the request context. That is, in this mode you will no longer be able to declare other method parameters. However, in the constructor you can still declare an arbitrary number of parameters that are created only once.
 
 ### Controller injector hierarchy {#controller-injector-hierarchy}
 
-A controller [in injector-scoped mode][10], besides its own injector at the request level, also has three parent injectors: at the route level, module level and application level. These injectors are also formed based on the providers that you pass into the following arrays:
+A controller [in request-scoped mode][10], besides its own injector at the request level, also has three parent injectors: at the route level, module level and application level. These injectors are also formed based on the providers that you pass into the following arrays:
 
 * `providersPerApp`;
 * `providersPerMod`;
 * `providersPerRou`;
-* `providersPerReq` (this array forms the injector for a controller in injector-scoped mode).
+* `providersPerReq` (this array forms the injector for a controller in request-scoped mode).
 
-Thus a controller in injector-scoped mode can depend on services at any level.
+Thus a controller in request-scoped mode can depend on services at any level.
 
-If a controller is [in context-scoped mode][11], its own injector is located at the module level, and it has one parent injector at the application level:
+If a controller is [in route-scoped mode][11], its own injector is located at the module level, and it has one parent injector at the application level:
 
 * `providersPerApp`;
-* `providersPerMod` (this array forms the injector for a controller in context-scoped mode).
+* `providersPerMod` (this array forms the injector for a controller in route-scoped mode).
 
 ## Binding of the controller to the host module {#binding-of-the-controller-to-the-host-module}
 
@@ -490,5 +490,5 @@ Also, if you import a provider from an external module and you have a provider w
 [6]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/rest/src/services/pre-router.ts
 [7]: /basic-components/dependency-injection/
 [9]: /basic-components/extensions/
-[10]: #injector-scoped-controller
-[11]: #context-scoped-controller
+[10]: #request-scoped-controller
+[11]: #route-scoped-controller

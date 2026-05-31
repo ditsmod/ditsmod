@@ -18,8 +18,8 @@ npm run start:dev
 From second terminal:
 
 ```bash
-curl -i localhost:3000/injector-scoped
-curl -i localhost:3000/context-scoped
+curl -i localhost:3000/request-scoped
+curl -i localhost:3000/route-scoped
 ```
 
 ## TypeScript configs

@@ -17,7 +17,7 @@ describe('19-session-cookie', () => {
     server?.close();
   });
 
-  describe('non-context-scoped', () => {
+  describe('non-route-scoped', () => {
     it('should set cookie', async () => {
       const { status, headers, text } = await testAgent.get('/set');
       expect(status).toBe(200);
@@ -32,7 +32,7 @@ describe('19-session-cookie', () => {
     });
   });
 
-  describe('context-scoped', () => {
+  describe('route-scoped', () => {
     it('should set cookie', async () => {
       const { status, headers, text } = await testAgent.get('/set2');
       expect(status).toBe(200);

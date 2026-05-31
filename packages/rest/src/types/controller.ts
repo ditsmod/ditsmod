@@ -2,7 +2,7 @@ import type { Provider, Providers } from '@ditsmod/core';
 import { Reflector } from '@ditsmod/core';
 
 /**
- * Metadata accepted by the default injector-scoped controller.
+ * Metadata accepted by the default request-scoped controller.
  */
 export interface ControllerRawMetadata1 {
   /**
@@ -24,7 +24,7 @@ export interface ControllerRawMetadata1 {
 }
 
 /**
- * Metadata accepted by the context-scoped controller.
+ * Metadata accepted by the route-scoped controller.
  */
 export interface ControllerRawMetadata2 {
   /**

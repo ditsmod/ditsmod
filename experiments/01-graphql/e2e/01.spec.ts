@@ -17,17 +17,17 @@ describe('01-hello-world', () => {
     server?.close();
   });
 
-  describe('injector-scoped controller', () => {
+  describe('request-scoped controller', () => {
     it('works with GET method', async () => {
-      const { status, text } = await testAgent.get('/injector-scoped');
+      const { status, text } = await testAgent.get('/request-scoped');
       expect(status).toBe(200);
       expect(text).toBe('ok1');
     });
   });
 
-  describe('context-scoped controller', () => {
+  describe('route-scoped controller', () => {
     it('works with GET method', async () => {
-      const { status, text } = await testAgent.get('/context-scoped');
+      const { status, text } = await testAgent.get('/route-scoped');
       expect(status).toBe(200);
       expect(text).toBe('ok2');
     });

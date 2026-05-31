@@ -2,7 +2,7 @@ import type { Provider, Providers } from '@ditsmod/core';
 import { Reflector } from '@ditsmod/core';
 
 /**
- * Metadata accepted by the default injector-scoped trpcController.
+ * Metadata accepted by the default request-scoped trpcController.
  */
 export interface ControllerRawMetadata {
   /**

@@ -1,4 +1,4 @@
-Controllers operate in two modes - injector-scoped and context-scoped. The following is verified:
+Controllers operate in two modes - request-scoped and route-scoped. The following is verified:
 
 1. Handling of query and path parameters.
 2. Support for routes with controller method names of type `Symbol`, as well as routes that work for both `GET` and `POST` methods simultaneously.

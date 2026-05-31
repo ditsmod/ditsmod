@@ -51,15 +51,15 @@ describe('06-body-parser', () => {
     expect(body).toEqual({});
   });
 
-  it('controller context-scoped should works with get', async () => {
-    const { status, text } = await testAgent.get('/context-scoped');
+  it('controller route-scoped should works with get', async () => {
+    const { status, text } = await testAgent.get('/route-scoped');
     expect(status).toBe(200);
     expect(text).toBe('Hello, you need send POST request');
   });
 
-  it('controller context-scoped should parsed post', async () => {
+  it('controller route-scoped should parsed post', async () => {
     const { status, body, type } = await testAgent
-      .post('/context-scoped')
+      .post('/route-scoped')
       .set('Content-Type', 'application/json')
       .send({ one: 1 });
     expect(status).toBe(200);
@@ -67,17 +67,17 @@ describe('06-body-parser', () => {
     expect(body).toEqual({ one: 1 });
   });
 
-  it('controller context-scoped should parsed post', async () => {
+  it('controller route-scoped should parsed post', async () => {
     const { status } = await testAgent
-      .post('/context-scoped')
+      .post('/route-scoped')
       .set('Content-Type', 'application/json')
       .send({ one: 1, two: 2 });
     expect(status).toBe(Status.PAYLOAD_TO_LARGE);
   });
 
-  it('controller context-scoped should not parse fake-content-type', async () => {
+  it('controller route-scoped should not parse fake-content-type', async () => {
     const { status, body, type } = await testAgent
-      .post('/context-scoped')
+      .post('/route-scoped')
       .set('Content-Type', 'fake-content-type')
       .send('{ one: 1 }');
     expect(status).toBe(200);

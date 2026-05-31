@@ -8,27 +8,27 @@ import { saveFiles, sendHtmlForm } from './utils.js';
 export class CtxController {
   constructor(protected parse: MulterCtxParser) {}
 
-  @route('GET', 'context-scoped')
+  @route('GET', 'route-scoped')
   tellHello(ctx: RequestContext) {
     ctx.send('Hello, you need send POST request');
   }
 
-  @route('POST', 'context-scoped')
+  @route('POST', 'route-scoped')
   post(ctx: RequestContext) {
     ctx.sendJson(ctx.body);
   }
 
-  @route('GET', 'context-scoped-file-upload')
+  @route('GET', 'route-scoped-file-upload')
   getHtmlForm(ctx: RequestContext) {
     sendHtmlForm(ctx.rawRes);
   }
 
-  @route('POST', 'context-scoped-file-upload')
+  @route('POST', 'route-scoped-file-upload')
   async downloadFile(ctx: RequestContext) {
     const parsedForm = await this.parse.array(ctx, 'fieldName', 5);
     await saveFiles(parsedForm);
     // @todo Refactoring this for HTTP2
-    (ctx.rawRes as ServerResponse).writeHead(303, { Connection: 'close', Location: '/context-scoped-file-upload' });
+    (ctx.rawRes as ServerResponse).writeHead(303, { Connection: 'close', Location: '/route-scoped-file-upload' });
     ctx.rawRes.end();
   }
 }

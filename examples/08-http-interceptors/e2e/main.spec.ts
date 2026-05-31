@@ -24,8 +24,8 @@ describe('08-http-interceptors', () => {
     expect(body).toEqual({ originalMsg: 'Original message!', msg: 'message that attached by interceptor' });
   });
 
-  it('context-scoped controller works', async () => {
-    const { status, body, type } = await testAgent.get('/context-scoped');
+  it('route-scoped controller works', async () => {
+    const { status, body, type } = await testAgent.get('/route-scoped');
     expect(status).toBe(200);
     expect(type).toBe('application/json');
     expect(body).toEqual({ originalMsg: 'Original message!', msg: 'message that attached by interceptor' });

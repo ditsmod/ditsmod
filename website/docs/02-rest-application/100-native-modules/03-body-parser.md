@@ -89,9 +89,9 @@ export class AppModule {}
 
 ## Отримання тіла запиту {#retrieving-the-request-body}
 
-В залежності від того, чи працює контролер [в context-scoped, чи injector-scoped режимі][3], результат роботи інтерсептора можна отримати двома способами:
+В залежності від того, чи працює контролер [в route-scoped, чи request-scoped режимі][3], результат роботи інтерсептора можна отримати двома способами:
 
-1. Якщо контролер працює в режимі injector-scoped, результат можна отримати за допомогою токена `HTTP_BODY`:
+1. Якщо контролер працює в режимі request-scoped, результат можна отримати за допомогою токена `HTTP_BODY`:
 
   ```ts {12}
   import { ctx } from '@ditsmod/core';
@@ -110,7 +110,7 @@ export class AppModule {}
     }
   }
   ```
-2. Якщо контролер працює в режимі context-scoped, результат можна отримати з контексту:
+2. Якщо контролер працює в режимі route-scoped, результат можна отримати з контексту:
 
   ```ts {6}
   import { controller, RequestContext, route } from '@ditsmod/rest';
@@ -178,7 +178,7 @@ export class SomeController {
     }
   }
   ```
-2. Якщо контролер працює в режимі context-scoped, через DI необхідно запитати `MulterCtxParser`, після чого можете користуватись його методами:
+2. Якщо контролер працює в режимі route-scoped, через DI необхідно запитати `MulterCtxParser`, після чого можете користуватись його методами:
 
   ```ts {7,11}
   import { createWriteStream } from 'node:fs';
@@ -227,21 +227,21 @@ export class SomeController {
   ```ts
   const { textFields, file } = await parse.single('fieldName');
   // OR
-  const { textFields, file } = await parse.single(ctx, 'fieldName'); // For context-scoped.
+  const { textFields, file } = await parse.single(ctx, 'fieldName'); // For route-scoped.
   ```
 
 - метод `array` може приймати декілька файлів з указаного поля форми:
   ```ts
   const { textFields, files } = await parse.array('fieldName', 5);
   // OR
-  const { textFields, files } = await parse.array(ctx, 'fieldName', 5); // For context-scoped.
+  const { textFields, files } = await parse.array(ctx, 'fieldName', 5); // For route-scoped.
   ```
 - метод `any` повертає такий самий тип даних, що і метод `array`, але він приймає файли з будь-якими назвами полів форми, а також він не має параметрів для обмеження максимальної кількості файлів (вона обмежується лише загальною конфігурацією, про яку буде йти мова згодом):
 
   ```ts
   const { textFields, files } = await parse.any();
   // OR
-  const { textFields, files } = await parse.any(ctx); // For context-scoped.
+  const { textFields, files } = await parse.any(ctx); // For route-scoped.
   ```
 
 - метод `groups` приймає масиви файлів з указаними полями форми:
@@ -254,13 +254,13 @@ export class SomeController {
   const { textFields, groups } = await parse.groups(ctx, [
     { name: 'avatar', maxCount: 1 },
     { name: 'gallery', maxCount: 8 },
-  ]); // For context-scoped.
+  ]); // For route-scoped.
   ```
 - метод `textFields` повертає об'єкт лише з полів форми, що не мають `type="file"`; якщо у формі будуть поля з файлами, цей метод кине помилку:
   ```ts
   const textFields = await parse.textFields();
   // OR
-  const textFields = await parse.textFields(ctx); // For context-scoped.
+  const textFields = await parse.textFields(ctx); // For route-scoped.
   ```
 
 ### MulterExtendedOptions {#multerextendedoptions}

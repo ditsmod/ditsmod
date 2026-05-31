@@ -3,7 +3,7 @@ import { controller, route, initRest } from '@ditsmod/rest';
 
 @controller()
 export class DefaultController {
-  @route('GET', 'injector-scoped')
+  @route('GET', 'request-scoped')
   tellHello() {
     return 'ok1';
   }
@@ -11,7 +11,7 @@ export class DefaultController {
 
 @controller({ scope: 'ctx' })
 export class CtxController {
-  @route('GET', 'context-scoped')
+  @route('GET', 'route-scoped')
   tellHello() {
     return 'ok2';
   }

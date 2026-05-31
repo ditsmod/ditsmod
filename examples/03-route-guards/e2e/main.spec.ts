@@ -17,7 +17,7 @@ describe('03-route-guards', () => {
     server?.close();
   });
 
-  describe('injector-scoped controller', () => {
+  describe('request-scoped controller', () => {
     it('should works', async () => {
       const { status, text } = await testAgent.get('/controler1-of-module1');
       expect(status).toBe(200);
@@ -53,7 +53,7 @@ describe('03-route-guards', () => {
     });
   });
 
-  describe('context-scoped controller', () => {
+  describe('route-scoped controller', () => {
     it('should works', async () => {
       const { status, text } = await testAgent.get('/controler2-of-module1');
       expect(status).toBe(200);

@@ -3,7 +3,7 @@ import { controller, route } from '@ditsmod/rest';
 import { Permission, basicAuth, requirePermissions, BearerGuard, requirePermissionsSngl } from '#auth';
 
 /**
- * Injector-scoped controller
+ * Request-scoped controller
  */
 @controller()
 export class InjController {
@@ -29,7 +29,7 @@ export class InjController {
 }
 
 /**
- * Context-scoped controller
+ * Route-scoped controller
  */
 @controller({ scope: 'ctx' })
 export class CtxController {

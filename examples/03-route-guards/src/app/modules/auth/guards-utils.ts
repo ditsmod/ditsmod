@@ -7,7 +7,7 @@ import { BasicGuard } from './basic.guard.js';
 
 export const requirePermissions = createHelperForGuardWithParams<Permission>(PermissionsGuard);
 /**
- * Context-scoped permission guard.
+ * Route-scoped permission guard.
  */
 export const requirePermissionsSngl = createHelperForGuardWithParams<Permission>(CtxPermissionsGuard);
 

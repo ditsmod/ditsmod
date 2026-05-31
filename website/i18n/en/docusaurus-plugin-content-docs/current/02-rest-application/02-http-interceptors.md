@@ -14,11 +14,11 @@ Typically, interceptors are used to automate standard processing, such as:
 - caching;
 - etc.
 
-Interceptors can be centrally enabled or disabled without modifying the code of the controller methods they are attached to. Like controllers, interceptors can operate in either [injector-scoped or context-scoped mode][109]. Unlike the context-scoped mode, in the injector-scoped mode, interceptors have access to the request-level injector, allowing them to invoke services at the request, route, module, or application level. On the other hand, in the context-scoped mode, their instances are created at the route level, which grants them access to services at the route, module, or application level.
+Interceptors can be centrally enabled or disabled without modifying the code of the controller methods they are attached to. Like controllers, interceptors can operate in either [request-scoped or route-scoped mode][109]. Unlike the route-scoped mode, in the request-scoped mode, interceptors have access to the request-level injector, allowing them to invoke services at the request, route, module, or application level. On the other hand, in the route-scoped mode, their instances are created at the route level, which grants them access to services at the route, module, or application level.
 
 ## HTTP request processing scheme {#http-request-processing-scheme}
 
-### Injector-scoped mode {#injector-scoped-mode}
+### Request-scoped mode {#request-scoped-mode}
 
 HTTP request processing has the following workflow:
 
@@ -42,9 +42,9 @@ Since the promise chain starts with `PreRouter` and ends with the controller met
 
 In addition, because `PreRouter`, `HttpFrontend`, `InterceptorWithGuards`, and `HttpBackend` instances are created using DI, you can replace them with your own version of the respective classes. For example, if you don't just want to send a 501 status when the required route is missing, but also want to add some text or change headers, you can substitute [PreRouter][7] with your own class.
 
-### Context-scoped mode {#context-scoped-mode}
+### Route-scoped mode {#route-scoped-mode}
 
-A context-scoped interceptor operates very similarly to an injector-scoped interceptor but does not utilize the request-level injector. The workflow involving it differs at points 4 and 7, as the instance of a context-scoped interceptor is created at the route level:
+A route-scoped interceptor operates very similarly to an request-scoped interceptor but does not utilize the request-level injector. The workflow involving it differs at points 4 and 7, as the instance of a route-scoped interceptor is created at the route level:
 
 1. Ditsmod creates an instance of [PreRouter][7] at the application level.
 2. `PreRouter` uses the router to search for the request handler according to the URI.
@@ -74,7 +74,7 @@ As you can see, the `intercept()` method has two parameters: the first one recei
 
 ## Passing interceptor to the injector {#passing-interceptor-to-the-injector}
 
-The interceptor for injector-scoped mode is passed to the injector at the request level using [multi-providers][107] with the `HTTP_INTERCEPTORS` token:
+The interceptor for request-scoped mode is passed to the injector at the request level using [multi-providers][107] with the `HTTP_INTERCEPTORS` token:
 
 ```ts
 import { HTTP_INTERCEPTORS, restModule } from '@ditsmod/rest';
@@ -87,7 +87,7 @@ import { MyHttpInterceptor } from './my-http-interceptor.js';
 export class SomeModule {}
 ```
 
-Passing an interceptor for context-scoped mode happens in exactly the same way, but at the route, module, or application level:
+Passing an interceptor for route-scoped mode happens in exactly the same way, but at the route, module, or application level:
 
 ```ts
 import { HTTP_INTERCEPTORS, restModule } from '@ditsmod/rest';
