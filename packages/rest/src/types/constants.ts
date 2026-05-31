@@ -25,7 +25,7 @@ export const QUERY_PARAMS = new InjectionToken<AnyObj>('QUERY_PARAMS');
 /**
  * DI token for querystring that is returned by `PreRouter` after spliting `rawReq.url` by question mark.
  */
-export const QUERY_STRING = new InjectionToken<RawRequest>('QUERY_STRING');
+export const QUERY_STRING = new InjectionToken<string>('QUERY_STRING');
 
 /**
  * A DI token that allows you to obtain the instance of the server that is serving the current application.
