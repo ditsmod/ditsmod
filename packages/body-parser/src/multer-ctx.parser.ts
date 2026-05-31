@@ -6,7 +6,7 @@ import { MulterExtendedOptions } from './multer-extended-options.js';
 import { checkResult } from './multer-utils.js';
 
 @injectable()
-export class MulterCtxParser {
+export class RouteScopedMulterParser {
   constructor(
     protected multer: Multer,
     @optional() protected options?: MulterExtendedOptions,
@@ -16,8 +16,8 @@ export class MulterCtxParser {
    * Accepts a single file from a form field with the name you pass in the `name` parameter.
    * The single file will be stored in `parsedForm.file` property.
    */
-  single<F extends object = any>(ctx: RequestContext, name: string) {
-    const result = this.multer.single<F>(name)(ctx.rawReq, ctx.rawReq.headers);
+  single<F extends object = any>(reqCtx: RequestContext, name: string) {
+    const result = this.multer.single<F>(name)(reqCtx.rawReq, reqCtx.rawReq.headers);
     return checkResult(result);
   }
 
@@ -28,8 +28,8 @@ export class MulterCtxParser {
    *
    * __Note__: `maxCount` limit has precedence over `limits.files`.
    */
-  array<F extends object = any>(ctx: RequestContext, name: string, maxCount?: number) {
-    const result = this.multer.array<F>(name, maxCount)(ctx.rawReq, ctx.rawReq.headers);
+  array<F extends object = any>(reqCtx: RequestContext, name: string, maxCount?: number) {
+    const result = this.multer.array<F>(name, maxCount)(reqCtx.rawReq, reqCtx.rawReq.headers);
     return checkResult(result);
   }
 
@@ -42,8 +42,8 @@ export class MulterCtxParser {
    * files to a route that you didn't anticipate. Only use this function on routes
    * where you are handling the uploaded files.
    */
-  any<F extends object = any>(ctx: RequestContext) {
-    const result = this.multer.any<F>()(ctx.rawReq, ctx.rawReq.headers);
+  any<F extends object = any>(reqCtx: RequestContext) {
+    const result = this.multer.any<F>()(reqCtx.rawReq, reqCtx.rawReq.headers);
     return checkResult(result);
   }
 
@@ -63,8 +63,8 @@ export class MulterCtxParser {
    * 
    * __Note__: `maxCount` limit has precedence over `limits.files`.
    */
-  groups<F extends object = any, G extends string = string>(ctx: RequestContext, groups: MulterGroup<G>[]) {
-    const result = this.multer.groups<F, G>(groups)(ctx.rawReq, ctx.rawReq.headers);
+  groups<F extends object = any, G extends string = string>(reqCtx: RequestContext, groups: MulterGroup<G>[]) {
+    const result = this.multer.groups<F, G>(groups)(reqCtx.rawReq, reqCtx.rawReq.headers);
     return checkResult(result);
   }
 
@@ -72,8 +72,8 @@ export class MulterCtxParser {
    * Accept only text (non-file) fields. If any file upload is made, error with code
    * `LIMIT_UNEXPECTED_FILE` will be issued. This is the same as doing `parse.groups([])`.
    */
-  textFields<F extends object = any>(ctx: RequestContext) {
-    const result = this.multer.textFields<F>()(ctx.rawReq, ctx.rawReq.headers);
-    return checkResult(result).then(parsedForm => parsedForm.textFields);
+  textFields<F extends object = any>(reqCtx: RequestContext) {
+    const result = this.multer.textFields<F>()(reqCtx.rawReq, reqCtx.rawReq.headers);
+    return checkResult(result).then((parsedForm) => parsedForm.textFields);
   }
 }

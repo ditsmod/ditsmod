@@ -1,14 +1,14 @@
 import { createHelperForGuardWithParams } from '@ditsmod/rest';
 
-import { PermissionsGuard } from './permissions.guard.js';
+import { RequestScopedPermissionsGuard } from './permissions.guard.js';
 import type { Permission } from './types.js';
-import { CtxPermissionsGuard } from './ctx-permissions.guard.js';
-import { BasicGuard } from './basic.guard.js';
+import { RouteScopedPermissionsGuard } from './ctx-permissions.guard.js';
+import { RequestScopedBasicGuard } from './basic.guard.js';
 
-export const requirePermissions = createHelperForGuardWithParams<Permission>(PermissionsGuard);
+export const requirePermissions = createHelperForGuardWithParams<Permission>(RequestScopedPermissionsGuard);
 /**
  * Route-scoped permission guard.
  */
-export const requirePermissionsSngl = createHelperForGuardWithParams<Permission>(CtxPermissionsGuard);
+export const requirePermissionsSngl = createHelperForGuardWithParams<Permission>(RouteScopedPermissionsGuard);
 
-export const basicAuth = createHelperForGuardWithParams<string>(BasicGuard);
+export const basicAuth = createHelperForGuardWithParams<string>(RequestScopedBasicGuard);

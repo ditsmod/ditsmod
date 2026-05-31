@@ -17,16 +17,16 @@ export class HelloWorldController {
   }
 }
 
-@controller({ scope: 'ctx' })
+@controller({ scope: 'route' })
 export class HelloWorldController2 {
   @route('GET', 'set2')
-  setCookie(ctx: RequestContextWithSession) {
-    ctx.sessionCookie.id = '123';
-    ctx.send('Hello, World!\n');
+  setCookie(reqCtx: RequestContextWithSession) {
+    reqCtx.sessionCookie.id = '123';
+    reqCtx.send('Hello, World!\n');
   }
 
   @route('GET', 'get2')
-  getCookie(ctx: RequestContextWithSession) {
-    ctx.send(`session ID: ${ctx.sessionCookie.id}`);
+  getCookie(reqCtx: RequestContextWithSession) {
+    reqCtx.send(`session ID: ${reqCtx.sessionCookie.id}`);
   }
 }

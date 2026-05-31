@@ -32,9 +32,9 @@ import { InterceptorWithGuards } from '#interceptors/interceptor-with-guards.js'
 import { RouteMeta } from '../types/route-data.js';
 import { ChainMaker } from '#interceptors/chain-maker.js';
 import { DefaultHttpBackend } from '#interceptors/default-http-backend.js';
-import { DefaultCtxHttpBackend } from '#interceptors/default-ctx-http-backend.js';
-import { DefaultCtxChainMaker } from '#interceptors/default-ctx-chain-maker.js';
-import { DefaultCtxHttpFrontend } from '#interceptors/default-ctx-http-frontend.js';
+import { RouteScopedDefaultHttpBackend } from '#interceptors/default-ctx-http-backend.js';
+import { RouteScopedDefaultChainMaker } from '#interceptors/default-ctx-chain-maker.js';
+import { RouteScopedDefaultHttpFrontend } from '#interceptors/default-ctx-http-frontend.js';
 import { DefaultHttpFrontend } from '#interceptors/default-http-frontend.js';
 import { HttpBackend, HttpFrontend } from '#interceptors/tokens-and-types.js';
 import { GuardPerMod1, NormalizedGuard } from '#interceptors/guard.js';
@@ -89,9 +89,9 @@ export class PreRouterExtension implements Extension<void> {
     );
 
     metadataPerMod3.meta.providersPerRou.unshift(
-      { token: HttpBackend, useClass: DefaultCtxHttpBackend },
-      { token: ChainMaker, useClass: DefaultCtxChainMaker },
-      { token: HttpFrontend, useClass: DefaultCtxHttpFrontend },
+      { token: HttpBackend, useClass: RouteScopedDefaultHttpBackend },
+      { token: ChainMaker, useClass: RouteScopedDefaultChainMaker },
+      { token: HttpFrontend, useClass: RouteScopedDefaultHttpFrontend },
     );
   }
 
@@ -108,7 +108,7 @@ export class PreRouterExtension implements Extension<void> {
 
       aControllerMetadata.forEach((controllerMetadata) => {
         let handle: RouteHandler;
-        if (controllerMetadata.scope == 'ctx') {
+        if (controllerMetadata.scope == 'route') {
           handle = this.getHandlerPerMod(metadataPerMod3, this.injectorPerMod, controllerMetadata);
         } else {
           handle = this.getHandlerPerReq(metadataPerMod3, this.injectorPerMod, controllerMetadata);
@@ -159,7 +159,7 @@ export class PreRouterExtension implements Extension<void> {
     this.checkDeps(injectorPerRou, routeMeta, controllerName, httpMethods, fullPath);
     const resolvedChainMaker = resolvedPerRou.find((rp) => rp.dualKey.token === ChainMaker)!;
     const resolvedErrHandler = resolvedPerRou.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
-    const chainMaker = injectorPerRou.instantiateResolved<DefaultCtxChainMaker>(resolvedChainMaker);
+    const chainMaker = injectorPerRou.instantiateResolved<RouteScopedDefaultChainMaker>(resolvedChainMaker);
     const ctrl = injectorPerMod.get(routeMeta.Controller);
     const routeHandler = ctrl[routeMeta.methodName].bind(ctrl) as typeof routeMeta.routeHandler;
     routeMeta.routeHandler = routeHandler;
@@ -168,7 +168,7 @@ export class PreRouterExtension implements Extension<void> {
 
     if (this.hasInterceptors(mergedPerRou)) {
       return (async (rawReq, rawRes, aPathParams, queryString) => {
-        const reqCtx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString, 'ctx');
+        const reqCtx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString, 'route');
         await chainMaker
           .makeChain(reqCtx)
           .handle() // First HTTP handler in the chain of HTTP interceptors.
@@ -196,9 +196,9 @@ export class PreRouterExtension implements Extension<void> {
     routeHandler: (reqCtx: RequestContext) => Promise<any>,
     errorHandler: HttpErrorHandler,
   ) {
-    const interceptor = new DefaultCtxHttpFrontend();
+    const interceptor = new RouteScopedDefaultHttpFrontend();
     return (async (rawReq, rawRes, aPathParams, queryString) => {
-      const reqCtx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString, 'ctx') as RequestContext;
+      const reqCtx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString, 'route') as RequestContext;
       try {
         interceptor.before(reqCtx).after(reqCtx, await routeHandler(reqCtx));
       } catch (err: any) {

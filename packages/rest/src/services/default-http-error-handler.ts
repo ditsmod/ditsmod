@@ -9,7 +9,7 @@ import { RequestContext } from './request-context.js';
 export class DefaultHttpErrorHandler implements HttpErrorHandler {
   constructor(protected logger: Logger) {}
 
-  async handleError(err: Error, ctx: RequestContext) {
+  async handleError(err: Error, reqCtx: RequestContext) {
     const requestId = randomUUID();
     const errObj = { requestId, err };
     if (isCustomError(err)) {
@@ -19,13 +19,13 @@ export class DefaultHttpErrorHandler implements HttpErrorHandler {
       } else {
         this.logger.log(level || 'debug', errObj);
       }
-      ctx.rawRes.statusCode = status || Status.INTERNAL_SERVER_ERROR;
-      this.sendError(err.message, ctx, requestId, err.code);
+      reqCtx.rawRes.statusCode = status || Status.INTERNAL_SERVER_ERROR;
+      this.sendError(err.message, reqCtx, requestId, err.code);
     } else {
       this.logger.log('error', errObj);
       const msg = err.message || 'Internal server error';
-      ctx.rawRes.statusCode = (err as any).status || Status.INTERNAL_SERVER_ERROR;
-      this.sendError(msg, ctx, requestId);
+      reqCtx.rawRes.statusCode = (err as any).status || Status.INTERNAL_SERVER_ERROR;
+      this.sendError(msg, reqCtx, requestId);
     }
   }
 
@@ -33,18 +33,18 @@ export class DefaultHttpErrorHandler implements HttpErrorHandler {
     this.logger.log(err.info.level || 'debug', `Error: ${err.info.msg2}\nrequestId: ${requestId}\n${err.stack}`);
   }
 
-  protected sendError(error: string, ctx: RequestContext, requestId: string, code?: string) {
-    if (!ctx.rawRes.headersSent) {
-      this.addRequestIdToHeader(requestId, ctx);
+  protected sendError(error: string, reqCtx: RequestContext, requestId: string, code?: string) {
+    if (!reqCtx.rawRes.headersSent) {
+      this.addRequestIdToHeader(requestId, reqCtx);
       if (code && code != 'CustomError') {
-        ctx.sendJson({ error, code });
+        reqCtx.sendJson({ error, code });
       } else {
-        ctx.sendJson({ error });
+        reqCtx.sendJson({ error });
       }
     }
   }
 
-  protected addRequestIdToHeader(requestId: string, ctx: RequestContext) {
-    ctx.rawRes.setHeader('x-requestId', requestId);
+  protected addRequestIdToHeader(requestId: string, reqCtx: RequestContext) {
+    reqCtx.rawRes.setHeader('x-requestId', requestId);
   }
 }

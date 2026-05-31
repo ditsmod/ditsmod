@@ -1,10 +1,10 @@
 import { injectable, Injector } from '@ditsmod/core';
 
-import { DefaultCtxTrpcHttpFrontend } from './default-ctx-http-frontend.js';
+import { RouteScopedDefaultTrpcHttpFrontend } from './default-ctx-http-frontend.js';
 import { TrpcOpts } from '#types/types.js';
 
 @injectable()
-export class DefaultTrpcHttpFrontend extends DefaultCtxTrpcHttpFrontend {
+export class DefaultTrpcHttpFrontend extends RouteScopedDefaultTrpcHttpFrontend {
   constructor(private injector: Injector) {
     super();
   }

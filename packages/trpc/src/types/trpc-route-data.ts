@@ -19,5 +19,5 @@ export class TrpcRouteMeta {
    */
   resolvedGuards?: ResolvedGuard[];
   resolvedGuardsPerMod?: ResolvedGuardPerMod[];
-  // routeHandler?: (ctx: RequestContext) => Promise<any>;
+  // routeHandler?: (reqCtx: RequestContext) => Promise<any>;
 }

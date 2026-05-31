@@ -3,7 +3,7 @@ import { HTTP_INTERCEPTORS, RestRouteExtension } from '@ditsmod/rest';
 
 import { BodyParserConfig } from './body-parser-config.js';
 import { BodyParserInterceptor } from './body-parser.interceptor.js';
-import { CtxBodyParserInterceptor } from './ctx-body-parser.interceptor.js';
+import { RouteScopedBodyParserInterceptor } from './ctx-body-parser.interceptor.js';
 
 @injectable()
 export class BodyParserExtension implements Extension<void> {
@@ -27,11 +27,11 @@ export class BodyParserExtension implements Extension<void> {
         const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedProvidersPerRou);
         httpMethods.forEach((method) => {
-          if (scope == 'ctx') {
+          if (scope == 'route') {
             let bodyParserConfig = injectorPerRou.get(BodyParserConfig, {}) as BodyParserConfig;
             bodyParserConfig = { ...new BodyParserConfig(), ...bodyParserConfig }; // Merge with default.
             if (bodyParserConfig.acceptMethods!.includes(method)) {
-              providersPerRou.push({ token: HTTP_INTERCEPTORS, useClass: CtxBodyParserInterceptor, multi: true });
+              providersPerRou.push({ token: HTTP_INTERCEPTORS, useClass: RouteScopedBodyParserInterceptor, multi: true });
             }
           } else {
             const injectorPerReq = injectorPerRou.resolveAndCreateChild(mergedProvidersPerReq);

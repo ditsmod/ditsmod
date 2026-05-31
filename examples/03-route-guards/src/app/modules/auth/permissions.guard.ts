@@ -5,10 +5,10 @@ import { AuthService } from './auth.service.js';
 import { Permission } from './types.js';
 
 @guard()
-export class PermissionsGuard implements CanActivate {
+export class RequestScopedPermissionsGuard implements CanActivate {
   constructor(private authService: AuthService) {}
 
-  async canActivate(ctx: RequestContext, params?: Permission[]) {
+  async canActivate(reqCtx: RequestContext, params?: Permission[]) {
     if (await this.authService.hasPermissions(params)) {
       return true;
     } else {

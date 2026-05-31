@@ -9,8 +9,8 @@ export class BearerGuard implements CanActivate {
     private ctx: Context
   ) {}
 
-  async canActivate(ctx: RequestContext) {
-    const authValue = ctx.rawReq.headers.authorization?.split(' ');
+  async canActivate(reqCtx: RequestContext) {
+    const authValue = reqCtx.rawReq.headers.authorization?.split(' ');
     if (authValue?.[0] != 'Bearer') {
       return false;
     }

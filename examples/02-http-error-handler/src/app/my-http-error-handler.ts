@@ -7,26 +7,26 @@ import { randomUUID } from 'node:crypto';
 export class MyHttpErrorHandler implements HttpErrorHandler {
   constructor(protected logger: Logger) {}
 
-  async handleError(err: Error, ctx: RequestContext) {
+  async handleError(err: Error, reqCtx: RequestContext) {
     const requestId = randomUUID();
     const errObj = { requestId, err, note: 'This is my implementation of HttpErrorHandler' };
     if (isCustomError(err)) {
       const { level, status } = err.info;
       this.logger.log(level || 'debug', errObj);
-      ctx.rawRes.statusCode = status || Status.INTERNAL_SERVER_ERROR;
-      this.sendError(err.message, ctx, requestId);
+      reqCtx.rawRes.statusCode = status || Status.INTERNAL_SERVER_ERROR;
+      this.sendError(err.message, reqCtx, requestId);
     } else {
       this.logger.log('error', errObj);
       const msg = err.message || 'Internal server error';
-      ctx.rawRes.statusCode = (err as any).status || Status.INTERNAL_SERVER_ERROR;
-      this.sendError(msg, ctx, requestId);
+      reqCtx.rawRes.statusCode = (err as any).status || Status.INTERNAL_SERVER_ERROR;
+      this.sendError(msg, reqCtx, requestId);
     }
   }
 
-  protected sendError(error: string, ctx: RequestContext, requestId: string) {
-    if (!ctx.rawRes.headersSent) {
-      this.addRequestIdToHeader(requestId, ctx);
-      ctx.sendJson({ error });
+  protected sendError(error: string, reqCtx: RequestContext, requestId: string) {
+    if (!reqCtx.rawRes.headersSent) {
+      this.addRequestIdToHeader(requestId, reqCtx);
+      reqCtx.sendJson({ error });
     }
   }
 

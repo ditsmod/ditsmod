@@ -5,19 +5,19 @@ import {
   HttpHandler,
   HttpInterceptor,
   HttpInterceptorHandler,
-  CtxHttpBackend,
+  RouteScopedHttpBackend,
 } from './tokens-and-types.js';
 import { HTTP_INTERCEPTORS } from '#types/constants.js';
 import { RequestContext } from '#services/request-context.js';
 
 class PreHttpBackend implements HttpBackend {
   constructor(
-    protected backend: CtxHttpBackend,
-    protected ctx: RequestContext,
+    protected backend: RouteScopedHttpBackend,
+    protected reqCtx: RequestContext,
   ) {}
 
   handle() {
-    return this.backend.handle(this.ctx);
+    return this.backend.handle(this.reqCtx);
   }
 }
 
@@ -25,16 +25,16 @@ class PreHttpBackend implements HttpBackend {
  * An injectable service that ties multiple interceptors in chain.
  */
 @injectable()
-export class DefaultCtxChainMaker {
+export class RouteScopedDefaultChainMaker {
   constructor(
     private backend: HttpBackend,
     @inject(HTTP_INTERCEPTORS) @optional() private interceptors: HttpInterceptor[] = [],
   ) {}
 
-  makeChain(ctx: RequestContext): HttpHandler {
+  makeChain(reqCtx: RequestContext): HttpHandler {
     return this.interceptors.reduceRight(
-      (next, interceptor) => new HttpInterceptorHandler(interceptor, ctx, next),
-      new PreHttpBackend(this.backend, ctx) as HttpBackend,
+      (next, interceptor) => new HttpInterceptorHandler(interceptor, reqCtx, next),
+      new PreHttpBackend(this.backend, reqCtx) as HttpBackend,
     );
   }
 }

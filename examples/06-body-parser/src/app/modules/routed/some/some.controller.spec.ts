@@ -2,18 +2,18 @@ import { Injector } from '@ditsmod/core';
 import type { Res } from '@ditsmod/rest';
 import { jest } from '@jest/globals';
 
-import { SomeController } from './some.controller.js';
+import { RequestScopedController } from './some.controller.js';
 
 describe('SomeController', () => {
   const send = jest.fn();
   const sendJson = jest.fn();
   const res = { send, sendJson } as unknown as Res;
-  let someController: SomeController;
+  let someController: RequestScopedController;
 
   beforeEach(() => {
     jest.restoreAllMocks();
-    const injector = Injector.resolveAndCreate([SomeController]);
-    someController = injector.get(SomeController);
+    const injector = Injector.resolveAndCreate([RequestScopedController]);
+    someController = injector.get(RequestScopedController);
   });
 
   it('should say "Hello, World!"', () => {

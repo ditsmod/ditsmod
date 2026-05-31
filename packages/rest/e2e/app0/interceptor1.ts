@@ -7,9 +7,9 @@ import { RequestContext } from '#services/request-context.js';
 export class Interceptor1 implements HttpInterceptor {
   constructor(protected ctx: Context) {}
 
-  async intercept(next: HttpHandler, ctx: RequestContext) {
-    if (ctx.scope == 'ctx') {
-      (ctx as RequestContext & { msg: string }).msg = 'ok';
+  async intercept(next: HttpHandler, reqCtx: RequestContext) {
+    if (reqCtx.scope == 'route') {
+      (reqCtx as RequestContext & { msg: string }).msg = 'ok';
     } else {
       this.ctx.set('msg', 'ok');
     }

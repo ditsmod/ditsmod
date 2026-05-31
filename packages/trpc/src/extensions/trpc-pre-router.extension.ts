@@ -34,11 +34,11 @@ import { GuardPerMod1 } from '#interceptors/trpc-guard.js';
 import { RawRequest, RawResponse } from '#services/request.js';
 import { HttpErrorHandler } from '#services/http-error-handler.js';
 import { CheckingDepsInSandboxFailed, GuardNotFound, InvalidInterceptor } from '../error/trpc-errors.js';
-import { DefaultCtxTrpcHttpFrontend } from '#interceptors/default-ctx-http-frontend.js';
+import { RouteScopedDefaultTrpcHttpFrontend } from '#interceptors/default-ctx-http-frontend.js';
 import { DefaultTrpcHttpBackend } from '#interceptors/default-http-backend.js';
 import { DefaultTrpcHttpFrontend } from '#interceptors/default-http-frontend.js';
-import { DefaultCtxTrpcHttpBackend } from '#interceptors/default-ctx-http-backend.js';
-import { DefaultCtxTrpcChainMaker } from '#interceptors/default-ctx-chain-maker.js';
+import { RouteScopedDefaultTrpcHttpBackend } from '#interceptors/default-ctx-http-backend.js';
+import { RouteScopedDefaultTrpcChainMaker } from '#interceptors/default-ctx-chain-maker.js';
 import { PublicTrpcRouteService, TrpcRouteService } from '#services/route.service.js';
 import { TRPC_OPTS } from '#types/constants.js';
 import { TrpcOpts } from '#types/types.js';
@@ -88,9 +88,9 @@ export class TrpcPreRouterExtension implements Extension<void> {
     );
 
     metadataPerMod3.meta.providersPerRou.unshift(
-      { token: TrpcHttpBackend, useClass: DefaultCtxTrpcHttpBackend },
-      { token: TrpcChainMaker, useClass: DefaultCtxTrpcChainMaker },
-      { token: TrpcHttpFrontend, useClass: DefaultCtxTrpcHttpFrontend },
+      { token: TrpcHttpBackend, useClass: RouteScopedDefaultTrpcHttpBackend },
+      { token: TrpcChainMaker, useClass: RouteScopedDefaultTrpcChainMaker },
+      { token: TrpcHttpFrontend, useClass: RouteScopedDefaultTrpcHttpFrontend },
       ...defaultProvidersPerRou,
     );
   }
@@ -145,14 +145,14 @@ export class TrpcPreRouterExtension implements Extension<void> {
     this.checkDeps(injectorPerRou, routeMeta, controllerName);
     const resolvedTrpcChainMaker = resolvedPerRou.find((rp) => rp.dualKey.token === TrpcChainMaker)!;
     const resolvedErrHandler = resolvedPerRou.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
-    const chainMaker = injectorPerRou.instantiateResolved<DefaultCtxTrpcChainMaker>(resolvedTrpcChainMaker);
+    const chainMaker = injectorPerRou.instantiateResolved<RouteScopedDefaultTrpcChainMaker>(resolvedTrpcChainMaker);
     const errorHandler = injectorPerRou.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
 
     if (this.hasInterceptors(mergedPerRou)) {
       return (async (opts) => {
         const result = await chainMaker.makeChain(opts).handle(); // First HTTP handler in the chain of HTTP interceptors.
         // .catch((err) => {
-        //   return errorHandler.handleError(err, ctx);
+        //   return errorHandler.handleError(err, reqCtx);
         // })
         return opts.next(result);
       }) as AnyMiddlewareFunction;
@@ -172,15 +172,15 @@ export class TrpcPreRouterExtension implements Extension<void> {
   }
 
   protected handleWithoutInterceptors(errorHandler: HttpErrorHandler) {
-    // const interceptor = new DefaultCtxTrpcHttpFrontend();
+    // const interceptor = new RouteScopedDefaultTrpcHttpFrontend();
     return (async (opts) => {
       // try {
-      //   interceptor.before(ctx).after(ctx, await routeHandler(ctx));
+      //   interceptor.before(reqCtx).after(reqCtx, await routeHandler(reqCtx));
       // } catch (err: any) {
-      //   await errorHandler.handleError(err, ctx);
+      //   await errorHandler.handleError(err, reqCtx);
       // }
       // const val = await routeHandler(opts);
-      // const result = await interceptor.before(ctx).after(ctx, val);
+      // const result = await interceptor.before(reqCtx).after(reqCtx, val);
       return opts.next();
     }) as AnyMiddlewareFunction;
   }
@@ -227,7 +227,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
         .handle(); // First HTTP handler in the chain of HTTP interceptors.
         // .catch((err) => {
         //   const errorHandler = injector.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
-        //   return errorHandler.handleError(err, ctx);
+        //   return errorHandler.handleError(err, reqCtx);
         // });
     };
 

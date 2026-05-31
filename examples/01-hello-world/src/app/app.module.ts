@@ -2,15 +2,15 @@ import { Providers } from '@ditsmod/core';
 import { controller, route, restRootModule } from '@ditsmod/rest';
 
 @controller()
-export class DefaultController {
+export class RequestScopedController {
   @route('GET', 'request-scoped')
   tellHello() {
     return 'ok1';
   }
 }
 
-@controller({ scope: 'ctx' })
-export class CtxController {
+@controller({ scope: 'route' })
+export class RouteScopedController {
   @route('GET', 'route-scoped')
   tellHello() {
     return 'ok2';
@@ -18,7 +18,7 @@ export class CtxController {
 }
 
 @restRootModule({
-  controllers: [DefaultController, CtxController],
+  controllers: [RequestScopedController, RouteScopedController],
   providersPerApp: new Providers().useLogConfig({ level: 'info' }),
 })
 export class AppModule {}

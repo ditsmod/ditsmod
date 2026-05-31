@@ -14,7 +14,7 @@ import {
 import { Interceptor1 } from './interceptor1.js';
 
 @controller({ providersPerReq: [{ token: 'msg' }] })
-export class DefaultController {
+export class RequestScopedController {
   @route('GET', 'get0/:pathParam1/:pathParam2')
   tellHello(@ctx(QUERY_PARAMS) queryParams: any, @ctx(PATH_PARAMS) pathParams: any) {
     return { pathParams, queryParams };
@@ -31,8 +31,8 @@ export class DefaultController {
   }
 }
 
-@controller({ scope: 'ctx' })
-export class CtxController {
+@controller({ scope: 'route' })
+export class RouteScopedController {
   @route('GET', 'get1/:pathParam1/:pathParam2')
   tellHello(reqCtx: RequestContext) {
     return { pathParams: reqCtx.pathParams, queryParams: reqCtx.queryParams };
@@ -49,7 +49,7 @@ export class CtxController {
   }
 }
 
-@initRest({ controllers: [DefaultController, CtxController] })
+@initRest({ controllers: [RequestScopedController, RouteScopedController] })
 @rootModule({
   imports: [RestModule],
   providersPerApp: new Providers().useLogConfig({ level: 'info' }),

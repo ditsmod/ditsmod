@@ -8,7 +8,7 @@ import { BodyParserExtension } from './body-parser.extension.js';
 import { BodyParserGroupFactory } from './body-parser-group.factory.js';
 import { MulterFactory } from './multer.factory.js';
 import { MulterParser } from './multer.parser.js';
-import { MulterCtxParser } from './multer-ctx.parser.js';
+import { RouteScopedMulterParser } from './multer-ctx.parser.js';
 
 /**
  * Adds `BodyParserInterceptor` to all requests with HTTP methods specified in `bodyParserConfig.acceptMethods`.
@@ -16,7 +16,7 @@ import { MulterCtxParser } from './multer-ctx.parser.js';
  */
 @restModule({
   providersPerMod: [
-    MulterCtxParser,
+    RouteScopedMulterParser,
     {
       token: Multer,
       useFactory: [MulterFactory, MulterFactory.prototype.getMulter],
@@ -37,7 +37,7 @@ import { MulterCtxParser } from './multer-ctx.parser.js';
       exportOnly: true,
     },
   ],
-  exports: [MulterCtxParser, HTTP_BODY, BodyParserGroup, MulterParser],
+  exports: [RouteScopedMulterParser, HTTP_BODY, BodyParserGroup, MulterParser],
 })
 export class BodyParserModule {
   static withParams(config: BodyParserConfig): ModuleWithParams<BodyParserModule> {

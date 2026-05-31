@@ -8,11 +8,11 @@ import { AuthService } from './auth.service.js';
  * This guard works only per request.
  */
 @guard()
-export class BearerGuard implements CanActivate {
-  constructor(protected ctx: Context, protected authService: AuthService) {}
+export class RequestScopedBearerGuard implements CanActivate {
+  constructor(protected reqCtx: Context, protected authService: AuthService) {}
 
-  async canActivate(ctx: RequestContext, params?: any[]) {
-    const authValue = ctx.rawReq.headers.authorization?.split(' ');
+  async canActivate(reqCtx: RequestContext, params?: any[]) {
+    const authValue = reqCtx.rawReq.headers.authorization?.split(' ');
     if (authValue?.[0] != 'Bearer') {
       return false;
     }
@@ -22,7 +22,7 @@ export class BearerGuard implements CanActivate {
      */
     const token = authValue[1];
     const session = await this.authService.getSession(token);
-    this.ctx.set(SESSION, session);
+    this.reqCtx.set(SESSION, session);
     return Boolean(token);
   }
 }
@@ -31,11 +31,11 @@ export class BearerGuard implements CanActivate {
  * This guard works only per route.
  */
 @guard()
-export class BearerCtxGuard implements CanActivate {
+export class RouteScopedBearerGuard implements CanActivate {
   constructor(protected injector: Injector, protected authService: AuthService) {}
 
-  async canActivate(ctx: RequestContext, params?: any[]) {
-    const authValue = ctx.rawReq.headers.authorization?.split(' ');
+  async canActivate(reqCtx: RequestContext, params?: any[]) {
+    const authValue = reqCtx.rawReq.headers.authorization?.split(' ');
     if (authValue?.[0] != 'Bearer') {
       return false;
     }
@@ -45,7 +45,7 @@ export class BearerCtxGuard implements CanActivate {
      */
     const token = authValue[1];
     const session = await this.authService.getSession(token);
-    ctx.auth = session;
+    reqCtx.auth = session;
     return Boolean(token);
   }
 }

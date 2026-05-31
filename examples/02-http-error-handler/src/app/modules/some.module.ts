@@ -1,5 +1,5 @@
 import { restModule } from '@ditsmod/rest';
-import { SomeController, SomeCtxController } from './some/some.controller.js';
+import { RequestScopedController, RouteScopedController } from './some/some.controller.js';
 
-@restModule({ controllers: [SomeController, SomeCtxController] })
+@restModule({ controllers: [RequestScopedController, RouteScopedController] })
 export class SomeModule {}

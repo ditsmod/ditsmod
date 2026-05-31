@@ -48,6 +48,6 @@ export abstract class TrpcHttpBackend implements TrpcHttpHandler {
   abstract handle(): Promise<any>;
 }
 
-export abstract class CtxTrpcHttpBackend {
+export abstract class RouteScopedTrpcHttpBackend {
   abstract handle(opts: TrpcOpts): Promise<any>;
 }

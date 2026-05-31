@@ -1,6 +1,8 @@
-import { AuthjsConfig } from '@ditsmod/authjs';
-import credentials, { CredentialsConfig } from '@ditsmod/authjs/providers/credentials';
 import { factoryMethod } from '@ditsmod/core';
+
+import { AuthjsConfig } from '#mod/authjs.config.js';
+import type { CredentialsConfig } from '#mod/providers/credentials.js';
+import credentials from '#mod/providers/credentials.js';
 
 export class OverriddenAuthConfig extends AuthjsConfig {
   override secret = 'secret';

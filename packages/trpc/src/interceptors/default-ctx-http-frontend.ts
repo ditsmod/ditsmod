@@ -5,7 +5,7 @@ import { TrpcHttpFrontend, TrpcHttpHandler } from './tokens-and-types.js';
 import { TrpcOpts } from '#types/types.js';
 
 @injectable()
-export class DefaultCtxTrpcHttpFrontend implements TrpcHttpFrontend {
+export class RouteScopedDefaultTrpcHttpFrontend implements TrpcHttpFrontend {
   async intercept(next: TrpcHttpHandler, opts: TrpcOpts) {
     return this.before(opts).after(opts, await next.handle());
   }

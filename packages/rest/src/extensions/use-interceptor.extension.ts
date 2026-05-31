@@ -20,7 +20,7 @@ export class UseInterceptorExtension implements Extension {
         for (const Interceptor of ctrlMeta.interceptors) {
           if (isInterceptor(Interceptor)) {
             const provider = { token: HTTP_INTERCEPTORS, useClass: Interceptor, multi: true };
-            if (ctrlMeta.scope == 'ctx') {
+            if (ctrlMeta.scope == 'route') {
               ctrlMeta.providersPerRou.push(provider);
             } else {
               ctrlMeta.providersPerReq.push(provider);

@@ -51,10 +51,10 @@ export class FirstController {
   }
 }
 
-@controller({ scope: 'ctx' })
-export class CtxController {
+@controller({ scope: 'route' })
+export class RouteScopedController {
   @route('GET', 'route-scoped')
-  ctxScoped(res: Res) {
+  routeScoped(res: Res) {
     res.send('ok');
   }
 }

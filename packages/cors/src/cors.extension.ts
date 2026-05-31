@@ -62,7 +62,7 @@ export class CorsExtension implements Extension<void | false> {
           const corsOptions = this.getCorsOptions(injectorPerMod, mergedPerRou);
           const mergedCorsOptions = mergeOptions(corsOptions);
           providersPerRou.unshift({ token: CorsOptions, useValue: mergedCorsOptions });
-          if (scope == 'ctx') {
+          if (scope == 'route') {
             providersPerRou.push({ token: HTTP_INTERCEPTORS, useClass: CorsInterceptor, multi: true });
           } else {
             providersPerReq.push({ token: HTTP_INTERCEPTORS, useClass: CorsInterceptor, multi: true });
@@ -119,10 +119,10 @@ export class CorsExtension implements Extension<void | false> {
         this.registeredPathForOptions.set(fullPath, allowHttpMethods);
 
         class DynamicController {
-          [methodName](ctx: RequestContext) {
-            ctx.rawRes.statusCode = Status.NO_CONTENT;
-            ctx.rawRes.setHeader('Allow', allowHttpMethods.join());
-            ctx.rawRes.end();
+          [methodName](reqCtx: RequestContext) {
+            reqCtx.rawRes.statusCode = Status.NO_CONTENT;
+            reqCtx.rawRes.setHeader('Allow', allowHttpMethods.join());
+            reqCtx.rawRes.end();
           }
         }
 
@@ -143,7 +143,7 @@ export class CorsExtension implements Extension<void | false> {
           ],
           providersPerReq: [],
           routeMeta,
-          scope: 'ctx',
+          scope: 'route',
           interceptors: [],
           guards: [],
         };

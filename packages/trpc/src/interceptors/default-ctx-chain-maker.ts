@@ -5,19 +5,19 @@ import {
   TrpcHttpHandler,
   TrpcHttpInterceptor,
   TrpcHttpInterceptorHandler,
-  CtxTrpcHttpBackend,
+  RouteScopedTrpcHttpBackend,
 } from './tokens-and-types.js';
 import { TRPC_HTTP_INTERCEPTORS } from '#types/types.js';
 import { TrpcOpts } from '#types/types.js';
 
 class PreTrpcHttpBackend implements TrpcHttpBackend {
   constructor(
-    protected backend: CtxTrpcHttpBackend,
-    protected ctx: TrpcOpts,
+    protected backend: RouteScopedTrpcHttpBackend,
+    protected trpcCtx: TrpcOpts,
   ) {}
 
   handle() {
-    return this.backend.handle(this.ctx);
+    return this.backend.handle(this.trpcCtx);
   }
 }
 
@@ -25,7 +25,7 @@ class PreTrpcHttpBackend implements TrpcHttpBackend {
  * An injectable service that ties multiple interceptors in chain.
  */
 @injectable()
-export class DefaultCtxTrpcChainMaker {
+export class RouteScopedDefaultTrpcChainMaker {
   constructor(
     private backend: TrpcHttpBackend,
     @inject(TRPC_HTTP_INTERCEPTORS) @optional() private interceptors: TrpcHttpInterceptor[] = [],

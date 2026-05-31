@@ -24,7 +24,7 @@ describe('Integration test with login and getSession', () => {
 
   afterAll(async () => server?.close());
 
-  ['inj', 'ctx'].forEach((scope) => {
+  ['request', 'route'].forEach((scope) => {
     it(`${scope}-scoped controller should return the session with username after logging in`, async () => {
       // Get cookies with csrf
       const response = await client.get('/auth/csrf').set('Accept', 'application/json');

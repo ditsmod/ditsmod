@@ -24,7 +24,7 @@ export class GuardNotFound extends CustomError {
     msg1 += ` ${moduleName} for "${controllerName}".`;
     msg1 += ` Lookup in ${levelNames} was unsuccessful.`;
     if (!perReq) {
-      msg1 += ` Notice that ${controllerName} has "{ scope: 'ctx' }" in its metadata.`;
+      msg1 += ` Notice that ${controllerName} has "{ scope: 'route' }" in its metadata.`;
     }
     super({
       msg1,

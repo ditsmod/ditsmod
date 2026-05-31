@@ -10,7 +10,7 @@ interface Body {
 }
 
 @controller()
-export class SomeController {
+export class RequestScopedController {
   @route('GET')
   tellHello(res: Res) {
     res.send('Hello, you need send POST request');

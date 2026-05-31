@@ -16,7 +16,7 @@ export interface ControllerRawMetadata1 {
   /**
    * Indicates in which mode the controller methods work.
    *
-   * The operation of the controller in `ctx` mode means that its methods,
+   * The operation of the controller in `route` mode means that its methods,
    * which are bound to routes, receive a single argument - an object containing
    * context data, including native request objects.
    */
@@ -34,11 +34,11 @@ export interface ControllerRawMetadata2 {
   /**
    * Indicates in which mode the controller methods work.
    *
-   * The operation of the controller in `ctx` mode means that its methods,
+   * The operation of the controller in `route` mode means that its methods,
    * which are bound to routes, receive a single argument - an object containing
    * context data, including native request objects.
    */
-  scope: 'ctx';
+  scope: 'route';
 }
 
 export type ControllerRawMetadata = ControllerRawMetadata1 | ControllerRawMetadata2;

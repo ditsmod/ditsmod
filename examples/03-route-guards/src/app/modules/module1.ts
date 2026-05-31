@@ -1,7 +1,7 @@
 import { restModule } from '@ditsmod/rest';
 
 import { AuthModule } from '#auth';
-import { InjController, CtxController } from './module1/controllers.js';
+import { InjController, RouteScopedController } from './module1/controllers.js';
 
-@restModule({ imports: [AuthModule], controllers: [InjController, CtxController] })
+@restModule({ imports: [AuthModule], controllers: [InjController, RouteScopedController] })
 export class Module1 {}

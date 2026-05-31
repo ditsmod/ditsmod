@@ -62,7 +62,7 @@ describe('OpenapiCompilerExtension', () => {
         responses,
       })
       class Guard1 implements CanActivate {
-        canActivate(ctx: RequestContext) {
+        canActivate(reqCtx: RequestContext) {
           return true;
         }
       }
@@ -96,7 +96,7 @@ describe('OpenapiCompilerExtension', () => {
         responses,
       })
       class Guard1 implements CanActivate {
-        canActivate(ctx: RequestContext) {
+        canActivate(reqCtx: RequestContext) {
           return true;
         }
       }
@@ -130,7 +130,7 @@ describe('OpenapiCompilerExtension', () => {
         responses,
       })
       class Guard1 implements CanActivate {
-        canActivate(ctx: RequestContext) {
+        canActivate(reqCtx: RequestContext) {
           return true;
         }
       }

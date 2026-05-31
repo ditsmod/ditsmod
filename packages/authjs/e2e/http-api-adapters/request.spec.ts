@@ -8,26 +8,26 @@ import { BodyParserModule } from '@ditsmod/body-parser';
 
 import { toWebRequest, encodeUrlEncoded } from '#mod/http-api-adapters.js';
 
-@controller({ scope: 'ctx' })
+@controller({ scope: 'route' })
 export class Controller1 {
   @route('GET', 'case1')
-  async case1(ctx: RequestContext) {
-    const request = toWebRequest(ctx);
-    expectMatchingRequestHeaders(ctx.rawReq, request);
+  async case1(reqCtx: RequestContext) {
+    const request = toWebRequest(reqCtx);
+    expectMatchingRequestHeaders(reqCtx.rawReq, request);
     return 'OK';
   }
 
   @route('POST', 'case2')
-  async case2(ctx: RequestContext) {
-    const request = toWebRequest(ctx);
-    await expectMatchingJsonRequestBody(ctx, request);
+  async case2(reqCtx: RequestContext) {
+    const request = toWebRequest(reqCtx);
+    await expectMatchingJsonRequestBody(reqCtx, request);
     return 'OK';
   }
 
   @route('POST', 'case3')
-  async case3(ctx: RequestContext) {
-    const request = toWebRequest(ctx);
-    await expectMatchingUrlEncodedRequestBody(ctx, request);
+  async case3(reqCtx: RequestContext) {
+    const request = toWebRequest(reqCtx);
+    await expectMatchingUrlEncodedRequestBody(reqCtx, request);
     return 'OK';
   }
 }

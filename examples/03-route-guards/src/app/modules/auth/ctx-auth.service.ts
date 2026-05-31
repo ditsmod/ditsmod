@@ -4,11 +4,11 @@ import { RequestContext } from '@ditsmod/rest';
 import { Permission } from './types.js';
 
 @injectable()
-export class CtxAuthService {
+export class RouteScopedAuthService {
   /**
    * Here you need implement more logic.
    */
-  async hasPermissions(ctx: RequestContext, permissions?: Permission[]) {
+  async hasPermissions(reqCtx: RequestContext, permissions?: Permission[]) {
     const currentUser = { permissions: [Permission.canActivateSomeResource] };
 
     return permissions?.every((permission) => currentUser.permissions.includes(permission));

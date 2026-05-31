@@ -170,12 +170,12 @@ You may also be interested in [how to get the HTTP request body][5].
 
 ### Route-scoped controller {#route-scoped-controller}
 
-To make a controller operate in the route-scoped mode, you need to specify `{ scope: 'ctx' }` in its metadata. Because the controller is instantiated in this mode only once, you will not be able to query in its constructor for class instances that are instantiated on each request. For example, if you request an instance of the `Res` class in the constructor, Ditsmod will throw an error:
+To make a controller operate in the route-scoped mode, you need to specify `{ scope: 'route' }` in its metadata. Because the controller is instantiated in this mode only once, you will not be able to query in its constructor for class instances that are instantiated on each request. For example, if you request an instance of the `Res` class in the constructor, Ditsmod will throw an error:
 
 ```ts {3,5}
 import { RequestContext, controller, route } from '@ditsmod/rest';
 
-@controller({ scope: 'ctx' })
+@controller({ scope: 'route' })
 export class HelloWorldController {
   constructor(private res: Res) {}
 
@@ -191,11 +191,11 @@ The working case will be as follows:
 ```ts {3,6}
 import { controller, RequestContext, route } from '@ditsmod/rest';
 
-@controller({ scope: 'ctx' })
+@controller({ scope: 'route' })
 export class HelloWorldController {
   @route('GET', 'hello')
-  method1(ctx: RequestContext) {
-    ctx.send('Hello, World!');
+  method1(reqCtx: RequestContext) {
+    reqCtx.send('Hello, World!');
   }
 }
 ```

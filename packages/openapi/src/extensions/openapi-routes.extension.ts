@@ -57,7 +57,7 @@ export class OpenapiRouteExtension extends RestRouteExtension implements Extensi
             const providersPerReq: Provider[] = [];
             const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
             const scope = ctrlDecorator?.value.scope;
-            if (scope == 'ctx') {
+            if (scope == 'route') {
               baseMeta.providersPerMod.unshift(Controller);
             }
             const guards = [];

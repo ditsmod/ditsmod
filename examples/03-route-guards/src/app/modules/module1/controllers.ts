@@ -1,6 +1,5 @@
 import { controller, route } from '@ditsmod/rest';
-
-import { Permission, basicAuth, requirePermissions, BearerGuard, requirePermissionsSngl } from '#auth';
+import { Permission, basicAuth, requirePermissions, RequestScopedBearerGuard, requirePermissionsSngl } from '#auth';
 
 /**
  * Request-scoped controller
@@ -17,7 +16,7 @@ export class InjController {
     return 'You are now authorized with BasicGuard';
   }
 
-  @route('GET', 'unauth', [BearerGuard])
+  @route('GET', 'unauth', [RequestScopedBearerGuard])
   throw401Error() {
     return 'some secret';
   }
@@ -31,8 +30,8 @@ export class InjController {
 /**
  * Route-scoped controller
  */
-@controller({ scope: 'ctx' })
-export class CtxController {
+@controller({ scope: 'route' })
+export class RouteScopedController {
   @route('GET', 'controler2-of-module1')
   ok() {
     return 'ok';
@@ -43,7 +42,7 @@ export class CtxController {
     return 'You are now authorized with BasicGuard';
   }
 
-  @route('GET', 'unauth2', [BearerGuard])
+  @route('GET', 'unauth2', [RequestScopedBearerGuard])
   throw401Error() {
     return 'some secret';
   }

@@ -39,7 +39,7 @@ describe('type guards', () => {
   describe('isRoute()', () => {
     @injectable()
     class Guard1 implements CanActivate {
-      canActivate(ctx: RequestContext) {
+      canActivate(reqCtx: RequestContext) {
         return true;
       }
 
@@ -61,7 +61,7 @@ describe('type guards', () => {
   describe('isInterceptor()', () => {
     it('true Interceptor', () => {
       class Interceptor1 implements HttpInterceptor {
-        async intercept(next: HttpHandler, ctx: RequestContext) {}
+        async intercept(next: HttpHandler, reqCtx: RequestContext) {}
       }
 
       expect(isInterceptor(Interceptor1)).toBe(true);
@@ -69,7 +69,7 @@ describe('type guards', () => {
 
     it('false Interceptor', () => {
       class Interceptor1 {
-        async inter(next: HttpHandler, ctx: RequestContext) {}
+        async inter(next: HttpHandler, reqCtx: RequestContext) {}
       }
 
       expect(isInterceptor(Interceptor1)).toBe(false);

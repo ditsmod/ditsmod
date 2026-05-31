@@ -9,21 +9,21 @@ import { OverriddenAuthConfig } from './authjs.config.js';
 import { AuthjsInterceptor } from '#mod/authjs.interceptor.js';
 
 @controller()
-export class InjScopedController {
+export class RequestScopedController {
   @route('POST', 'auth/:action/:providerType', [], [AuthjsInterceptor])
   async method1() {
     return 'ok';
   }
 
-  @route('GET', 'inj-scoped', [AuthjsGuard])
+  @route('GET', 'request-scoped', [AuthjsGuard])
   async method2(@ctx(AUTHJS_SESSION) session: any) {
     return session;
   }
 }
 
-@controller({ scope: 'ctx' })
-export class CtxScopedController {
-  @route('GET', 'ctx-scoped', [AuthjsGuard])
+@controller({ scope: 'route' })
+export class RouteScopedController {
+  @route('GET', 'route-scoped', [AuthjsGuard])
   async method1(reqCtx: RequestContext) {
     return reqCtx.auth;
   }
@@ -36,6 +36,6 @@ export class CtxScopedController {
       useFactory: [OverriddenAuthConfig, OverriddenAuthConfig.prototype.initAuthjsConfig],
     }),
   ],
-  controllers: [InjScopedController, CtxScopedController],
+  controllers: [RequestScopedController, RouteScopedController],
 })
 export class AppModule {}

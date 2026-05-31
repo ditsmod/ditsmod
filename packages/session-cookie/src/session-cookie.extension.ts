@@ -17,7 +17,7 @@ export class SessionCookieExtension implements Extension<void> {
     const stage1ExtensionMeta = await this.extensionManager.stage1(RestRouteExtension);
     stage1ExtensionMeta.groupData.forEach((metadataPerMod3) => {
       metadataPerMod3.aControllerMetadata.forEach(({ providersPerRou, scope }) => {
-        if (scope == 'ctx') {
+        if (scope == 'route') {
           providersPerRou.unshift(SessionCookieInterceptor);
           providersPerRou.push({ token: HTTP_INTERCEPTORS, useToken: SessionCookieInterceptor, multi: true });
         }

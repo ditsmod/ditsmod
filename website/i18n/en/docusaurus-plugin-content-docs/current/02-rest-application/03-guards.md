@@ -10,7 +10,7 @@ Any guard is a [DI provider][3] passed to injectors at the request level [in inj
 
 ```ts
 interface CanActivate {
-  canActivate(ctx: RequestContext, params?: any[]): boolean | Response | Promise<boolean | Response>;
+  canActivate(reqCtx: RequestContext, params?: any[]): boolean | Response | Promise<boolean | Response>;
 }
 ```
 
@@ -24,7 +24,7 @@ import { AuthService } from './auth.service.js';
 export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService) {}
 
-  async canActivate(ctx: RequestContext, params?: any[]) {
+  async canActivate(reqCtx: RequestContext, params?: any[]) {
     return Boolean(await this.authService.updateAndGetSession());
   }
 }
@@ -43,7 +43,7 @@ import { Permission } from './types.js';
 export class PermissionsGuard implements CanActivate {
   constructor(private authService: AuthService) {}
 
-  async canActivate(ctx: RequestContext, params?: Permission[]) {
+  async canActivate(reqCtx: RequestContext, params?: Permission[]) {
     if (await this.authService.hasPermissions(params)) {
       return true;
     } else {
@@ -130,7 +130,7 @@ import { Permission } from './permission.js';
 export class PermissionsGuard implements CanActivate {
   constructor(private authService: AuthService) {}
 
-  async canActivate(ctx: RequestContext, params?: Permission[]) {
+  async canActivate(reqCtx: RequestContext, params?: Permission[]) {
     if (await this.authService.hasPermissions(params)) {
       return true;
     } else {

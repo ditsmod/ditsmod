@@ -115,11 +115,11 @@ Depending on whether the controller works [in route-scoped or request-scoped mod
   ```ts {6}
   import { controller, RequestContext, route } from '@ditsmod/rest';
 
-  @controller({ scope: 'ctx' })
+  @controller({ scope: 'route' })
   export class SomeController {
     @route('POST')
-    ok(ctx: RequestContext) {
-      ctx.sendJson(ctx.body);
+    ok(reqCtx: RequestContext) {
+      reqCtx.sendJson(reqCtx.body);
     }
   }
   ```
@@ -178,23 +178,23 @@ Depending on whether the controller works [in injector-scope or context-scope mo
     }
   }
   ```
-2. If the controller works in route-scoped mode, `MulterCtxParser` must be requested via DI, after which you can use its methods:
+2. If the controller works in route-scoped mode, `RouteScopedMulterParser` must be requested via DI, after which you can use its methods:
 
   ```ts {7,11}
   import { createWriteStream } from 'node:fs';
   import { controller, RequestContext, route } from '@ditsmod/rest';
-  import { MulterParsedForm, MulterCtxParser } from '@ditsmod/body-parser';
+  import { MulterParsedForm, RouteScopedMulterParser } from '@ditsmod/body-parser';
 
-  @controller({ scope: 'ctx' })
+  @controller({ scope: 'route' })
   export class SomeController {
-    constructor(protected parse: MulterCtxParser) {}
+    constructor(protected parse: RouteScopedMulterParser) {}
 
     @route('POST', 'file-upload')
-    async downloadFile(ctx: RequestContext) {
-      const parsedForm = await this.parse.array(ctx, 'fieldName', 5);
+    async downloadFile(reqCtx: RequestContext) {
+      const parsedForm = await this.parse.array(reqCtx, 'fieldName', 5);
       await this.saveFiles(parsedForm);
       // ...
-      ctx.rawRes.end('ok');
+      reqCtx.rawRes.end('ok');
     }
 
     protected saveFiles(parsedForm: MulterParsedForm) {
@@ -227,21 +227,21 @@ A maximum of two properties from these four can be filled in one parsing: the `t
   ```ts
   const { textFields, file } = await parse.single('fieldName');
   // OR
-  const { textFields, file } = await parse.single(ctx, 'fieldName'); // For route-scoped.
+  const { textFields, file } = await parse.single(reqCtx, 'fieldName'); // For route-scoped.
   ```
 
 - The `array` method can accept multiple files from the specified form field:
   ```ts
   const { textFields, files } = await parse.array('fieldName', 5);
   // OR
-  const { textFields, files } = await parse.array(ctx, 'fieldName', 5); // For route-scoped.
+  const { textFields, files } = await parse.array(reqCtx, 'fieldName', 5); // For route-scoped.
   ```
 - The `any` method returns the same type of data as the `array` method, but it accepts files with any form field names and does not have parameters to limit the maximum number of files (this limit is determined by the general configuration, which will be discussed later):
 
   ```ts
   const { textFields, files } = await parse.any();
   // OR
-  const { textFields, files } = await parse.any(ctx); // For route-scoped.
+  const { textFields, files } = await parse.any(reqCtx); // For route-scoped.
   ```
 
 - The `groups` method accepts arrays of files from specified form fields:
@@ -251,7 +251,7 @@ A maximum of two properties from these four can be filled in one parsing: the `t
     { name: 'gallery', maxCount: 8 },
   ]);
   // OR
-  const { textFields, groups } = await parse.groups(ctx, [
+  const { textFields, groups } = await parse.groups(reqCtx, [
     { name: 'avatar', maxCount: 1 },
     { name: 'gallery', maxCount: 8 },
   ]); // For route-scoped.
@@ -260,7 +260,7 @@ A maximum of two properties from these four can be filled in one parsing: the `t
   ```ts
   const textFields = await parse.textFields();
   // OR
-  const textFields = await parse.textFields(ctx); // For route-scoped.
+  const textFields = await parse.textFields(reqCtx); // For route-scoped.
   ```
 
 ### MulterExtendedOptions {#multerextendedoptions}
@@ -277,7 +277,7 @@ export class MulterExtendedOptions extends MulterOptions {
 }
 ```
 
-It is recommended to pass the provider with this token at the module level so that it applies to both `MulterParser` and `MulterCtxParser`:
+It is recommended to pass the provider with this token at the module level so that it applies to both `MulterParser` and `RouteScopedMulterParser`:
 
 ```ts {4,12}
 import { restModule } from '@ditsmod/rest';

@@ -56,7 +56,7 @@ export class InterceptorWithGuards implements TrpcHttpInterceptor {
   protected prohibitActivation(opts: TrpcOpts, status?: Status) {
     const systemLogMediator = this.injector.get(SystemLogMediator) as SystemLogMediator;
     systemLogMediator.youCannotActivateRoute(this, '', opts.ctx.req.url!);
-    // ctx.rawRes.statusCode = Status.UNAUTHORIZED;
+    // reqCtx.rawRes.statusCode = Status.UNAUTHORIZED;
     throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
 }

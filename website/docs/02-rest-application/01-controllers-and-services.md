@@ -170,12 +170,12 @@ export class HelloWorldController {
 
 ### Route-scoped контролер {#route-scoped-controller}
 
-Щоб контролер працював в режимі route-scoped, в його метаданих потрібно вказати `{ scope: 'ctx' }`. Через те, що інстанс контролера у цьому режимі створюється єдиний раз, ви не зможете запитувати у його конструкторі інстанси класів, які створюються за кожним запитом. Наприклад, якщо в конструкторі ви запросите інстанс класу `Res`, Ditsmod кине помилку:
+Щоб контролер працював в режимі route-scoped, в його метаданих потрібно вказати `{ scope: 'route' }`. Через те, що інстанс контролера у цьому режимі створюється єдиний раз, ви не зможете запитувати у його конструкторі інстанси класів, які створюються за кожним запитом. Наприклад, якщо в конструкторі ви запросите інстанс класу `Res`, Ditsmod кине помилку:
 
 ```ts {3,5}
 import { RequestContext, controller, route } from '@ditsmod/rest';
 
-@controller({ scope: 'ctx' })
+@controller({ scope: 'route' })
 export class HelloWorldController {
   constructor(private res: Res) {}
 
@@ -191,11 +191,11 @@ export class HelloWorldController {
 ```ts {3,6}
 import { controller, RequestContext, route } from '@ditsmod/rest';
 
-@controller({ scope: 'ctx' })
+@controller({ scope: 'route' })
 export class HelloWorldController {
   @route('GET', 'hello')
-  method1(ctx: RequestContext) {
-    ctx.send('Hello, World!');
+  method1(reqCtx: RequestContext) {
+    reqCtx.send('Hello, World!');
   }
 }
 ```

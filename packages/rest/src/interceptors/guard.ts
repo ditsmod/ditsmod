@@ -6,7 +6,7 @@ import type { RestInitMeta } from '#init/rest-init-meta.js';
 export const guard = Reflector.makeClassDecorator((data?: never) => data);
 
 export interface CanActivate {
-  canActivate(ctx: RequestContext, params?: any[]): boolean | Response | Promise<boolean | Response>;
+  canActivate(reqCtx: RequestContext, params?: any[]): boolean | Response | Promise<boolean | Response>;
 }
 
 export type GuardItem = Class<CanActivate> | [Class<CanActivate>, any, ...any[]];

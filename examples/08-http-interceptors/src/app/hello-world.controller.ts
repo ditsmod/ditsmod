@@ -13,10 +13,10 @@ export class HelloWorldController {
   }
 }
 
-@controller({ scope: 'ctx' })
+@controller({ scope: 'route' })
 export class HelloWorldController2 {
   @route('GET', 'route-scoped')
-  tellHello(ctx: RequestContext) {
+  tellHello(reqCtx: RequestContext) {
     return 'Original message!';
   }
 }

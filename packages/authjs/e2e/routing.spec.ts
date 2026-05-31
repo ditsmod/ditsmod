@@ -12,11 +12,11 @@ vi.mock('#mod/http-api-adapters.js', async (importOriginal) => {
   const mod = await importOriginal<typeof import('#mod/http-api-adapters.js')>();
   return {
     ...mod,
-    toWebRequest: vi.fn((ctx: RequestContext) => {
-      if (ctx.rawReq.headers['x-test-header'] == 'throw') {
+    toWebRequest: vi.fn((reqCtx: RequestContext) => {
+      if (reqCtx.rawReq.headers['x-test-header'] == 'throw') {
         throw new Error('Test error');
       }
-      return mod.toWebRequest(ctx);
+      return mod.toWebRequest(reqCtx);
     }),
   };
 });

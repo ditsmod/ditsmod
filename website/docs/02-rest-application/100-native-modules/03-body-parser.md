@@ -115,11 +115,11 @@ export class AppModule {}
   ```ts {6}
   import { controller, RequestContext, route } from '@ditsmod/rest';
 
-  @controller({ scope: 'ctx' })
+  @controller({ scope: 'route' })
   export class SomeController {
     @route('POST')
-    ok(ctx: RequestContext) {
-      ctx.sendJson(ctx.body);
+    ok(reqCtx: RequestContext) {
+      reqCtx.sendJson(reqCtx.body);
     }
   }
   ```
@@ -183,18 +183,18 @@ export class SomeController {
   ```ts {7,11}
   import { createWriteStream } from 'node:fs';
   import { controller, RequestContext, route } from '@ditsmod/rest';
-  import { MulterParsedForm, MulterCtxParser } from '@ditsmod/body-parser';
+  import { MulterParsedForm, RouteScopedMulterParser } from '@ditsmod/body-parser';
 
-  @controller({ scope: 'ctx' })
+  @controller({ scope: 'route' })
   export class SomeController {
-    constructor(protected parse: MulterCtxParser) {}
+    constructor(protected parse: RouteScopedMulterParser) {}
 
     @route('POST', 'file-upload')
-    async downloadFile(ctx: RequestContext) {
-      const parsedForm = await this.parse.array(ctx, 'fieldName', 5);
+    async downloadFile(reqCtx: RequestContext) {
+      const parsedForm = await this.parse.array(reqCtx, 'fieldName', 5);
       await this.saveFiles(parsedForm);
       // ...
-      ctx.rawRes.end('ok');
+      reqCtx.rawRes.end('ok');
     }
 
     protected saveFiles(parsedForm: MulterParsedForm) {
@@ -227,21 +227,21 @@ export class SomeController {
   ```ts
   const { textFields, file } = await parse.single('fieldName');
   // OR
-  const { textFields, file } = await parse.single(ctx, 'fieldName'); // For route-scoped.
+  const { textFields, file } = await parse.single(reqCtx, 'fieldName'); // For route-scoped.
   ```
 
 - метод `array` може приймати декілька файлів з указаного поля форми:
   ```ts
   const { textFields, files } = await parse.array('fieldName', 5);
   // OR
-  const { textFields, files } = await parse.array(ctx, 'fieldName', 5); // For route-scoped.
+  const { textFields, files } = await parse.array(reqCtx, 'fieldName', 5); // For route-scoped.
   ```
 - метод `any` повертає такий самий тип даних, що і метод `array`, але він приймає файли з будь-якими назвами полів форми, а також він не має параметрів для обмеження максимальної кількості файлів (вона обмежується лише загальною конфігурацією, про яку буде йти мова згодом):
 
   ```ts
   const { textFields, files } = await parse.any();
   // OR
-  const { textFields, files } = await parse.any(ctx); // For route-scoped.
+  const { textFields, files } = await parse.any(reqCtx); // For route-scoped.
   ```
 
 - метод `groups` приймає масиви файлів з указаними полями форми:
@@ -251,7 +251,7 @@ export class SomeController {
     { name: 'gallery', maxCount: 8 },
   ]);
   // OR
-  const { textFields, groups } = await parse.groups(ctx, [
+  const { textFields, groups } = await parse.groups(reqCtx, [
     { name: 'avatar', maxCount: 1 },
     { name: 'gallery', maxCount: 8 },
   ]); // For route-scoped.
@@ -260,7 +260,7 @@ export class SomeController {
   ```ts
   const textFields = await parse.textFields();
   // OR
-  const textFields = await parse.textFields(ctx); // For route-scoped.
+  const textFields = await parse.textFields(reqCtx); // For route-scoped.
   ```
 
 ### MulterExtendedOptions {#multerextendedoptions}
@@ -277,7 +277,7 @@ export class MulterExtendedOptions extends MulterOptions {
 }
 ```
 
-Рекомендуємо передавати провайдер з цим токеном на рівні модуля, щоб він діяв як для `MulterParser` так і для `MulterCtxParser`:
+Рекомендуємо передавати провайдер з цим токеном на рівні модуля, щоб він діяв як для `MulterParser` так і для `RouteScopedMulterParser`:
 
 ```ts {4,12}
 import { restModule } from '@ditsmod/rest';

@@ -30,14 +30,14 @@ beforeEach(() => {
 it('imports and appends with gruards for some modules', () => {
   @guard()
   class Guard1 implements CanActivate {
-    async canActivate(ctx: RequestContext, params?: any[]) {
+    async canActivate(reqCtx: RequestContext, params?: any[]) {
       return false;
     }
   }
 
   @guard()
   class Guard2 implements CanActivate {
-    async canActivate(ctx: RequestContext, params?: any[]) {
+    async canActivate(reqCtx: RequestContext, params?: any[]) {
       return false;
     }
   }

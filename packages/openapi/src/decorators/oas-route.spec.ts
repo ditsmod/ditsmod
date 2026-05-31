@@ -8,13 +8,13 @@ import { oasRoute, OasRouteMetadata } from './oas-route.js';
 describe('@oasRoute', () => {
   it('route params: method, path, guards, interceptors, operation object', () => {
     class Guard1 implements CanActivate {
-      canActivate(ctx: RequestContext) {
+      canActivate(reqCtx: RequestContext) {
         return true;
       }
     }
 
     class Interceptor1 implements HttpInterceptor {
-      async intercept(next: HttpHandler, ctx: RequestContext) {}
+      async intercept(next: HttpHandler, reqCtx: RequestContext) {}
     }
 
     @controller()
@@ -37,13 +37,13 @@ describe('@oasRoute', () => {
 
   it('route params: method, path, guards, interceptors', () => {
     class Guard1 implements CanActivate {
-      canActivate(ctx: RequestContext) {
+      canActivate(reqCtx: RequestContext) {
         return true;
       }
     }
 
     class Interceptor1 implements HttpInterceptor {
-      async intercept(next: HttpHandler, ctx: RequestContext) {}
+      async intercept(next: HttpHandler, reqCtx: RequestContext) {}
     }
 
     @controller()
@@ -66,7 +66,7 @@ describe('@oasRoute', () => {
 
   it('route params: method, path, guards, operation object', () => {
     class Guard1 implements CanActivate {
-      canActivate(ctx: RequestContext) {
+      canActivate(reqCtx: RequestContext) {
         return true;
       }
     }
@@ -90,7 +90,7 @@ describe('@oasRoute', () => {
 
   it('route params: method, path, guards', () => {
     class Guard1 implements CanActivate {
-      canActivate(ctx: RequestContext) {
+      canActivate(reqCtx: RequestContext) {
         return true;
       }
     }
