@@ -1,4 +1,4 @@
-import { rootModule, Providers, ctx } from '@ditsmod/core';
+import { rootModule, Providers, ctx, type Context } from '@ditsmod/core';
 import {
   QUERY_PARAMS,
   PATH_PARAMS,
@@ -7,8 +7,8 @@ import {
   controller,
   route,
   RestModule,
-  RequestContext,
   initRest,
+  RAW_REQ,
 } from '@ditsmod/rest';
 
 import { Interceptor1 } from './interceptor1.js';
@@ -34,18 +34,22 @@ export class RequestScopedController {
 @controller({ scope: 'route' })
 export class RouteScopedController {
   @route('GET', 'get1/:pathParam1/:pathParam2')
-  tellHello(reqCtx: RequestContext) {
-    return { pathParams: reqCtx.pathParams, queryParams: reqCtx.queryParams };
+  tellHello(ctx: Context) {
+    const pathParams = ctx.get(PATH_PARAMS, true)!;
+    const queryParams = ctx.get(QUERY_PARAMS, true)!;
+    return { pathParams, queryParams };
   }
 
   @route(['GET', 'POST'], 'get-array1')
-  [Symbol()](reqCtx: RequestContext) {
-    return reqCtx.sendJson(reqCtx.rawReq.headers);
+  [Symbol()](ctx: Context) {
+    const res = ctx.get(Res)!;
+    const rawReq = ctx.get(RAW_REQ, true)!;
+    return res.sendJson(rawReq.headers);
   }
 
   @route('GET', 'interceptor1', [], [Interceptor1])
-  withInterceptors(reqCtx: RequestContext) {
-    return (reqCtx as RequestContext & { msg: string }).msg;
+  withInterceptors(ctx: Context) {
+    return (ctx as Context & { msg: string }).msg;
   }
 }
 

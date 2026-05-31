@@ -1,15 +1,14 @@
-import { injectable } from '@ditsmod/core';
+import { injectable, type Context } from '@ditsmod/core';
 
 import { RouteMeta } from '../types/route-data.js';
 import { RouteScopedHttpBackend } from './tokens-and-types.js';
-import { RequestContext } from '#services/request-context.js';
 
 
 @injectable()
 export class RouteScopedDefaultHttpBackend implements RouteScopedHttpBackend {
   constructor(protected routeMeta: RouteMeta) {}
 
-  async handle(reqCtx: RequestContext) {
-    return this.routeMeta.routeHandler!(reqCtx);
+  async handle(ctx: Context) {
+    return this.routeMeta.routeHandler!(ctx);
   }
 }

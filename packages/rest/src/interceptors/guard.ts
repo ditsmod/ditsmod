@@ -1,12 +1,11 @@
-import type { Class, BaseMeta } from '@ditsmod/core';
+import type { Class, BaseMeta, Context } from '@ditsmod/core';
 import { Reflector } from '@ditsmod/core';
-import type { RequestContext } from '#services/request-context.js';
 import type { RestInitMeta } from '#init/rest-init-meta.js';
 
 export const guard = Reflector.makeClassDecorator((data?: never) => data);
 
 export interface CanActivate {
-  canActivate(reqCtx: RequestContext, params?: any[]): boolean | Response | Promise<boolean | Response>;
+  canActivate(ctx: Context, params?: any[]): boolean | Response | Promise<boolean | Response>;
 }
 
 export type GuardItem = Class<CanActivate> | [Class<CanActivate>, any, ...any[]];

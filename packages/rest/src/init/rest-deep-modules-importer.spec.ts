@@ -22,7 +22,6 @@ import {
 import { InstantiationError, NoProvider } from '@ditsmod/core/errors';
 
 import { CanActivate, guard } from '#interceptors/guard.js';
-import { RequestContext } from '#services/request-context.js';
 import { initRest, restModule, restRootModule } from '#decorators/rest-init-hooks-and-metadata.js';
 import { RestMetadataPerMod2 } from './types.js';
 import { RestModuleParams } from './rest-init-raw-meta.js';
@@ -190,12 +189,12 @@ describe('DeepModulesImporter', () => {
   it('root module with initRest decorator imports Module1 that has params, but has not initRest decorator', () => {
     class Provider1 {}
     class Guard1 implements CanActivate {
-      async canActivate(reqCtx: RequestContext, params?: any[]) {
+      async canActivate(ctx: Context, params?: any[]) {
         return false;
       }
     }
     class Guard2 implements CanActivate {
-      async canActivate(reqCtx: RequestContext, params?: any[]) {
+      async canActivate(ctx: Context, params?: any[]) {
         return false;
       }
     }
@@ -556,7 +555,7 @@ describe('DeepModulesImporter', () => {
      */
     @guard()
     class BearerGuard1 implements CanActivate {
-      async canActivate(reqCtx: RequestContext, params?: any[]) {
+      async canActivate(ctx: Context, params?: any[]) {
         return false;
       }
     }
@@ -568,7 +567,7 @@ describe('DeepModulesImporter', () => {
     class BearerGuard2 implements CanActivate {
       constructor(private service2: Service2) {}
 
-      async canActivate(reqCtx: RequestContext, params?: any[]) {
+      async canActivate(ctx: Context, params?: any[]) {
         return false;
       }
     }

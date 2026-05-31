@@ -1,10 +1,9 @@
-import { DecoratorAndValue, Reflector } from '@ditsmod/core';
+import { DecoratorAndValue, Reflector, type Context } from '@ditsmod/core';
 
 import { route, RouteMetadata } from './route.js';
 import { HttpHandler, HttpInterceptor } from '#interceptors/tokens-and-types.js';
 import { CanActivate } from '../interceptors/guard.js';
 import { controller } from '../types/controller.js';
-import { RequestContext } from '../services/request-context.js';
 
 describe('Route decorator', () => {
   it('controller without methods', () => {
@@ -81,7 +80,7 @@ describe('Route decorator', () => {
 
   it('one guard without params', () => {
     class Guard1 implements CanActivate {
-      canActivate(reqCtx: RequestContext) {
+      canActivate(ctx: Context) {
         return true;
       }
     }
@@ -104,7 +103,7 @@ describe('Route decorator', () => {
 
   it('two guards without params', () => {
     class Guard1 implements CanActivate {
-      canActivate(reqCtx: RequestContext) {
+      canActivate(ctx: Context) {
         return true;
       }
     }
@@ -127,7 +126,7 @@ describe('Route decorator', () => {
 
   it('two guard with params', () => {
     class Guard1 implements CanActivate {
-      canActivate(reqCtx: RequestContext) {
+      canActivate(ctx: Context) {
         return true;
       }
     }
@@ -157,7 +156,7 @@ describe('Route decorator', () => {
 
   it('one interceptor, one extension group', () => {
     class Interceptor1 implements HttpInterceptor {
-      async intercept(next: HttpHandler, reqCtx: RequestContext) {}
+      async intercept(next: HttpHandler, ctx: Context) {}
     }
 
     @controller()

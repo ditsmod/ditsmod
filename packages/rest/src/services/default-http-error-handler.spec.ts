@@ -1,8 +1,7 @@
-import { Logger, Injector, Status } from '@ditsmod/core';
+import { Logger, Injector, Status, Context } from '@ditsmod/core';
 import { CustomError } from '@ditsmod/core/errors';
 import { jest } from '@jest/globals';
 
-import { RequestContext } from '#services/request-context.js';
 import type { RawResponse } from '#services/request.js';
 import { DefaultHttpErrorHandler as ErrorHandler } from '#services/default-http-error-handler.js';
 
@@ -19,7 +18,7 @@ describe('DefaultHttpErrorHandler', () => {
     end(...args: any[]) {},
   } as RawResponse;
 
-  const reqCtx = new RequestContext({} as any, rawRes, null, '');
+  const ctx = new Context({} as any);
   const logger = { log(...args: any[]) {} } as Logger;
 
   beforeEach(() => {
@@ -36,7 +35,7 @@ describe('DefaultHttpErrorHandler', () => {
   it('default error with some message', () => {
     const err = new Error('one');
     (err as any).status = Status.PAYLOAD_TO_LARGE;
-    expect(() => errorHandler.handleError(err, reqCtx)).not.toThrow();
+    expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
     expect(rawRes.statusCode).toBe(Status.PAYLOAD_TO_LARGE);
     expect(rawRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'one' }));
     expect(rawRes.end).toHaveBeenCalledTimes(1);
@@ -47,7 +46,7 @@ describe('DefaultHttpErrorHandler', () => {
   it('custom error with msg1', () => {
     const msg1 = 'one';
     const err = new CustomError({ msg1 });
-    expect(() => errorHandler.handleError(err, reqCtx)).not.toThrow();
+    expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
     expect(rawRes.statusCode).toBe(Status.INTERNAL_SERVER_ERROR);
     expect(rawRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'one' }));
     expect(rawRes.end).toHaveBeenCalledTimes(1);
@@ -58,7 +57,7 @@ describe('DefaultHttpErrorHandler', () => {
   it('custom error with status and level changed', () => {
     const msg1 = 'one';
     const err = new CustomError({ msg1, status: Status.CONFLICT, level: 'fatal' });
-    expect(() => errorHandler.handleError(err, reqCtx)).not.toThrow();
+    expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
     expect(rawRes.statusCode).toBe(Status.CONFLICT);
     expect(rawRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'one' }));
     expect(rawRes.end).toHaveBeenCalledTimes(1);
@@ -69,7 +68,7 @@ describe('DefaultHttpErrorHandler', () => {
   it('custom error with msg1 and arguments for format', () => {
     const msg1 = 'one two';
     const err = new CustomError({ msg1 });
-    expect(() => errorHandler.handleError(err, reqCtx)).not.toThrow();
+    expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
     expect(rawRes.statusCode).toBe(Status.INTERNAL_SERVER_ERROR);
     expect(rawRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'one two' }));
     expect(rawRes.end).toHaveBeenCalledTimes(1);
@@ -80,7 +79,7 @@ describe('DefaultHttpErrorHandler', () => {
   it('custom error with msg2', () => {
     const msg2 = 'one';
     const err = new CustomError({ msg2 });
-    expect(() => errorHandler.handleError(err, reqCtx)).not.toThrow();
+    expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
     expect(rawRes.statusCode).toBe(Status.INTERNAL_SERVER_ERROR);
     expect(rawRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'Internal server error' }));
     expect(rawRes.end).toHaveBeenCalledTimes(1);
@@ -92,7 +91,7 @@ describe('DefaultHttpErrorHandler', () => {
   it('custom error with msg2 and arguments for format', () => {
     const msg2 = 'one %s three';
     const err = new CustomError({ msg2 });
-    expect(() => errorHandler.handleError(err, reqCtx)).not.toThrow();
+    expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
     expect(rawRes.statusCode).toBe(Status.INTERNAL_SERVER_ERROR);
     expect(rawRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'Internal server error' }));
     expect(logger.log).toHaveBeenCalledWith('warn', expect.stringContaining('Error: one %s three'));
@@ -104,7 +103,7 @@ describe('DefaultHttpErrorHandler', () => {
     const msg1 = 'one two';
     const msg2 = 'four six';
     const err = new CustomError({ msg1, msg2 });
-    expect(() => errorHandler.handleError(err, reqCtx)).not.toThrow();
+    expect(() => errorHandler.handleError(err, ctx)).not.toThrow();
     expect(rawRes.statusCode).toBe(Status.INTERNAL_SERVER_ERROR);
     expect(rawRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'one two' }));
     expect(rawRes.end).toHaveBeenCalledTimes(1);

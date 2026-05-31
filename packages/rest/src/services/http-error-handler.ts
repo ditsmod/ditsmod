@@ -1,7 +1,7 @@
-import type { RequestContext } from './request-context.js';
+import type { Context } from '@ditsmod/core';
 
 export class HttpErrorHandler {
-  handleError(error: any, reqCtx: RequestContext): void | Promise<void> {
+  handleError(error: any, ctx: Context): void | Promise<void> {
     throw error;
   }
 }

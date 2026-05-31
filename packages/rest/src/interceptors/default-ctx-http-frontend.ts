@@ -1,27 +1,28 @@
 import { parse } from 'node:querystring';
-import { AnyObj, HttpMethod, injectable, Status } from '@ditsmod/core';
+import { AnyObj, HttpMethod, injectable, Status, type Context } from '@ditsmod/core';
 import { CustomError } from '@ditsmod/core/errors';
 
 import { HttpFrontend, HttpHandler } from './tokens-and-types.js';
-import { RequestContext } from '#services/request-context.js';
+import { A_PATH_PARAMS, PATH_PARAMS, QUERY_PARAMS, QUERY_STRING, RAW_REQ, RAW_RES } from '#types/constants.js';
+import { Res } from '#services/response.js';
 
 @injectable()
 export class RouteScopedDefaultHttpFrontend implements HttpFrontend {
-  async intercept(next: HttpHandler, reqCtx: RequestContext) {
-    this.before(reqCtx).after(reqCtx, await next.handle());
+  async intercept(next: HttpHandler, ctx: Context) {
+    this.before(ctx).after(ctx, await next.handle());
   }
 
   /**
    * This method is called before `intercept()`.
    */
-  before(reqCtx: RequestContext) {
-    if (reqCtx.queryString) {
-      reqCtx.queryParams = parse(reqCtx.queryString);
+  before(ctx: Context) {
+    if (ctx.has(QUERY_STRING, true)) {
+      ctx.set(QUERY_PARAMS, parse(ctx.get(QUERY_STRING, true)!));
     }
-    if (reqCtx.aPathParams?.length) {
+    if (ctx.has(A_PATH_PARAMS, true)) {
       const pathParams: AnyObj = {};
-      reqCtx.aPathParams.forEach((param) => (pathParams[param.key] = param.value));
-      reqCtx.pathParams = pathParams;
+      ctx.get(A_PATH_PARAMS, true)!.forEach((param) => (pathParams[param.key] = param.value));
+      ctx.set(PATH_PARAMS, pathParams)!;
     }
     return this;
   }
@@ -29,38 +30,39 @@ export class RouteScopedDefaultHttpFrontend implements HttpFrontend {
   /**
    * This method is called after `intercept()`.
    */
-  after(reqCtx: RequestContext, val: string | object | Uint8Array | undefined) {
-    if (reqCtx.rawRes.headersSent) {
+  after(ctx: Context, val: string | object | Uint8Array | undefined) {
+    const rawRes = ctx.get(RAW_RES, true)!;
+    if (rawRes.headersSent) {
       return;
     }
-    if (!reqCtx.rawRes.statusCode) {
-      const httpMethod = reqCtx.rawReq.method as HttpMethod;
+    if (!rawRes.statusCode) {
+      const httpMethod = ctx.get(RAW_REQ, true)!.method as HttpMethod;
       if (httpMethod == 'GET') {
-        reqCtx.rawRes.statusCode = Status.OK;
+        rawRes.statusCode = Status.OK;
       } else if (httpMethod == 'POST') {
-        reqCtx.rawRes.statusCode = Status.CREATED;
+        rawRes.statusCode = Status.CREATED;
       } else if (httpMethod == 'OPTIONS') {
-        reqCtx.rawRes.statusCode = Status.NO_CONTENT;
+        rawRes.statusCode = Status.NO_CONTENT;
       }
     }
 
-    const rawType = reqCtx.rawRes.getHeader('content-type');
+    const rawType = rawRes.getHeader('content-type');
     const contentType = typeof rawType == 'string' ? rawType : undefined;
     if ((typeof val == 'object' && val !== null) || contentType?.startsWith('application/json')) {
-      reqCtx.sendJson(val);
+      ctx.get(Res)!.sendJson(val);
     } else if (contentType && !val) {
-      this.throwTypeError(reqCtx, contentType);
+      this.throwTypeError(ctx, contentType);
     } else {
       if (typeof val == 'string' && !contentType) {
-        reqCtx.rawRes.setHeader('content-type', 'text/plain; charset=utf-8');
+        rawRes.setHeader('content-type', 'text/plain; charset=utf-8');
       }
-      reqCtx.send(val);
+      ctx.get(Res)!.send(val);
     }
   }
 
-  protected throwTypeError(reqCtx: RequestContext, contentType?: string | number | string[]) {
+  protected throwTypeError(ctx: Context, contentType?: string | number | string[]) {
     const msg1 = 'Internal Server Error';
-    const route = JSON.stringify({ method: reqCtx.rawReq.method, url: reqCtx.rawReq.url });
+    const route = JSON.stringify({ method: ctx.get(RAW_REQ, true)!.method, url: ctx.get(RAW_REQ, true)!.url });
     let msg2 = `The request handler with route ${route} set the data type to "${contentType}"`;
     msg2 += ' but did not send the response body. Make sure your handler returns a value.';
     throw new CustomError({ msg1, msg2, level: 'error', status: Status.INTERNAL_SERVER_ERROR });

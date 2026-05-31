@@ -6,11 +6,11 @@ import {
   BaseMeta,
   SystemLogMediator,
   ModRefId,
+  type Context,
 } from '@ditsmod/core';
 
 import { CanActivate, guard } from '../interceptors/guard.js';
 import { controller } from '../types/controller.js';
-import { RequestContext } from '../services/request-context.js';
 import { AppendsWithParams, type RestModuleParams } from './rest-init-raw-meta.js';
 import { initRest, restRootModule } from '#decorators/rest-init-hooks-and-metadata.js';
 
@@ -30,14 +30,14 @@ beforeEach(() => {
 it('imports and appends with gruards for some modules', () => {
   @guard()
   class Guard1 implements CanActivate {
-    async canActivate(reqCtx: RequestContext, params?: any[]) {
+    async canActivate(ctx: Context, params?: any[]) {
       return false;
     }
   }
 
   @guard()
   class Guard2 implements CanActivate {
-    async canActivate(reqCtx: RequestContext, params?: any[]) {
+    async canActivate(ctx: Context, params?: any[]) {
       return false;
     }
   }
