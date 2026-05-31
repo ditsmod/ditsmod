@@ -1,3 +1,31 @@
+import type { ExtensionConfigBase } from '#extension/extension-providers-and-configs.js';
+import type { ModuleManager } from './module-manager.js';
+import type { AnyObj, Level, ModRefId, ModuleType, PickProps } from '#types/mix.js';
+import type { AnyFn, Provider } from '#di/top/types-and-models.js';
+import type { RootRawMetadata, ModuleWithParams, ModuleRawMetadata } from '#decorators/module-raw-metadata.js';
+import type { ForwardRefFn } from '#di/forward-ref.js';
+import type { Extension } from '#extension/extension-types.js';
+import type { AllInitHooks, BaseInitRawMeta, InitHooks } from '#decorators/init-hooks-and-metadata.js';
+import { isProvider } from '#utils/type-guards.js';
+import { normalizeExtensionConfig } from '#extension/extension-providers-and-configs.js';
+import { Class } from '#di/top/types-and-models.js';
+import { getDebugClassName } from '#utils/get-debug-class-name.js';
+import { BaseMeta } from '#init/base-meta.js';
+import { resolveForwardRef } from '#di/forward-ref.js';
+import { getToken, getTokens } from '#utils/get-tokens.js';
+import { Providers } from '#utils/providers.js';
+import { normalizeProviders, stringify } from '#utils/ng-utils.js';
+import { isExtensionConfig } from '#extension/type-guards.js';
+import { objectKeys } from '#utils/object-keys.js';
+import { Reflector } from '#di/reflector.js';
+import {
+  isClassProvider,
+  isMultiProvider,
+  isNormalizedProvider,
+  isTokenProvider,
+  isValueProvider,
+  type MultiProvider,
+} from '#di/utils.js';
 import {
   isModuleWithParams,
   isRootModule,
@@ -6,26 +34,6 @@ import {
   isModuleWithInitHooks,
   isParamsWithMwp,
 } from '#decorators/type-guards.js';
-import { isProvider } from '#utils/type-guards.js';
-import type { ExtensionConfigBase } from '#extension/extension-providers-and-configs.js';
-import { normalizeExtensionConfig } from '#extension/extension-providers-and-configs.js';
-import type { AnyObj, Level, ModRefId, ModuleType, PickProps } from '#types/mix.js';
-import type { AnyFn, Provider } from '#di/top/types-and-models.js';
-import { Class } from '#di/top/types-and-models.js';
-import type { RootRawMetadata } from '#decorators/module-raw-metadata.js';
-import { getDebugClassName } from '#utils/get-debug-class-name.js';
-import { BaseMeta } from '#init/base-meta.js';
-import type { ForwardRefFn } from '#di/forward-ref.js';
-import { resolveForwardRef } from '#di/forward-ref.js';
-import { getToken, getTokens } from '#utils/get-tokens.js';
-import { Providers } from '#utils/providers.js';
-import type { Extension } from '#extension/extension-types.js';
-import { normalizeProviders, stringify } from '#utils/ng-utils.js';
-import { isExtensionConfig } from '#extension/type-guards.js';
-import type { ModuleWithParams, ModuleRawMetadata } from '#decorators/module-raw-metadata.js';
-import type { AllInitHooks, BaseInitRawMeta } from '#decorators/init-hooks-and-metadata.js';
-import type { InitHooks } from '#decorators/init-hooks-and-metadata.js';
-import { objectKeys } from '#utils/object-keys.js';
 import {
   UndefinedSymbol,
   ResolvedCollisionTokensOnly,
@@ -38,9 +46,6 @@ import {
   ForbiddenExportProvidersPerApp,
   ModuleShouldHaveValue,
 } from '#errors';
-import type { ModuleManager } from './module-manager.js';
-import { Reflector } from '#di/reflector.js';
-import { isClassProvider, isMultiProvider, isNormalizedProvider, isTokenProvider, isValueProvider, type MultiProvider } from '#di/utils.js';
 
 /**
  * Normalizes and validates module metadata.
