@@ -124,39 +124,39 @@ The access modifier in the constructor can be any of the following: `private`, `
 
 To pass path parameters to the router, you need to use a colon before the parameter name. For example, the URL `some-url/:param1/:param2` includes two path parameters. If you are using the `@ditsmod/rest` module for routing, only path parameters determine the routes, while query parameters are not taken into account.
 
-To access path or query parameters, you need to use the `inject` decorator along with the `PATH_PARAMS` and `QUERY_PARAMS` tokens:
+To access path or query parameters, you need to use the `ctx` decorator along with the `PATH_PARAMS` and `QUERY_PARAMS` tokens:
 
 ```ts {8-9}
-import { inject, AnyObj } from '@ditsmod/core';
+import { ctx, AnyObj } from '@ditsmod/core';
 import { controller, route, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/rest';
 
 @controller()
 export class SomeController {
   @route('GET', 'some-url/:param1/:param2')
   method1(
-    @inject(PATH_PARAMS) pathParams: AnyObj,
-    @inject(QUERY_PARAMS) queryParams: AnyObj
+    @ctx(PATH_PARAMS) pathParams: AnyObj,
+    @ctx(QUERY_PARAMS) queryParams: AnyObj
   ) {
     return ({ pathParams, queryParams });
   }
 }
 ```
 
-You can find more information about what a token is and what the `inject` decorator does in the [Dependency Injection][3] section.
+You can find more information about what a token is and what the `ctx` decorator does in the [Dependency Injection][3] section.
 
 As you can see from the previous example, responses to HTTP requests can also be sent using the regular `return`.
 
 Native Node.js request and response objects can be obtained by tokens, respectively - `RAW_REQ` and `RAW_RES`:
 
 ```ts {7-8}
-import { inject } from '@ditsmod/core';
+import { ctx } from '@ditsmod/core';
 import { controller, route, RAW_REQ, RAW_RES, RawRequest, RawResponse } from '@ditsmod/rest';
 
 @controller()
 export class HelloWorldController {
   constructor(
-    @inject(RAW_REQ) private rawReq: RawRequest,
-    @inject(RAW_RES) private rawRes: RawResponse
+    @ctx(RAW_REQ) private rawReq: RawRequest,
+    @ctx(RAW_RES) private rawRes: RawResponse
   ) {}
 
   @route('GET', 'hello')

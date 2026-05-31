@@ -124,39 +124,39 @@ export class HelloWorldController {
 
 Щоб передати path-параметри для роутера, необхідно використовувати двокрапку перед іменем параметра. Наприклад, в URL `some-url/:param1/:param2` передано два path-параметри. Якщо для роутінгу ви використовуєте модуль `@ditsmod/rest`, лише path-параметри визначають роути, а query-параметри не беруться до уваги.
 
-Щоб отримати path-параметри чи query-параметри, доведеться скористатись декоратором `inject` та токенами `PATH_PARAMS` і `QUERY_PARAMS`:
+Щоб отримати path-параметри чи query-параметри, доведеться скористатись декоратором `ctx` та токенами `PATH_PARAMS` і `QUERY_PARAMS`:
 
 ```ts {8-9}
-import { inject, AnyObj } from '@ditsmod/core';
+import { ctx, AnyObj } from '@ditsmod/core';
 import { controller, route, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/rest';
 
 @controller()
 export class SomeController {
   @route('GET', 'some-url/:param1/:param2')
   method1(
-    @inject(PATH_PARAMS) pathParams: AnyObj,
-    @inject(QUERY_PARAMS) queryParams: AnyObj
+    @ctx(PATH_PARAMS) pathParams: AnyObj,
+    @ctx(QUERY_PARAMS) queryParams: AnyObj
   ) {
     return ({ pathParams, queryParams });
   }
 }
 ```
 
-Більше інформації про те, що таке **токен** та що саме робить декоратор `inject` ви можете отримати з розділу [Dependency Injection][3].
+Більше інформації про те, що таке **токен** та що саме робить декоратор `ctx` ви можете отримати з розділу [Dependency Injection][3].
 
 Як бачите з попереднього прикладу, відповіді на HTTP-запити також можна відправляти завдяки звичайному `return`.
 
 Рідні Node.js об'єкти запиту та відповіді можна отримати за токенами відповідно - `RAW_REQ` та `RAW_RES`:
 
 ```ts {7-8}
-import { inject } from '@ditsmod/core';
+import { ctx } from '@ditsmod/core';
 import { controller, route, RAW_REQ, RAW_RES, RawRequest, RawResponse } from '@ditsmod/rest';
 
 @controller()
 export class HelloWorldController {
   constructor(
-    @inject(RAW_REQ) private rawReq: RawRequest,
-    @inject(RAW_RES) private rawRes: RawResponse
+    @ctx(RAW_REQ) private rawReq: RawRequest,
+    @ctx(RAW_RES) private rawRes: RawResponse
   ) {}
 
   @route('GET', 'hello')

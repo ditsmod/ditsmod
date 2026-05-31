@@ -94,7 +94,7 @@ export class AppModule {}
 1. Якщо контролер працює в режимі injector-scoped, результат можна отримати за допомогою токена `HTTP_BODY`:
 
   ```ts {12}
-  import { inject } from '@ditsmod/core';
+  import { ctx } from '@ditsmod/core';
   import { controller, Res, route } from '@ditsmod/rest';
   import { HTTP_BODY } from '@ditsmod/body-parser';
 
@@ -105,7 +105,7 @@ export class AppModule {}
   @controller()
   export class SomeController {
     @route('POST')
-    ok(@inject(HTTP_BODY) body: Body, res: Res) {
+    ok(@ctx(HTTP_BODY) body: Body, res: Res) {
       res.sendJson(body);
     }
   }

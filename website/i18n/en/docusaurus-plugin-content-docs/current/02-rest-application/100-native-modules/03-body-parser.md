@@ -94,7 +94,7 @@ Depending on whether the controller works [in context-scoped or injector-scoped 
 1. If the controller works in injector-scoped mode, the result can be obtained using the `HTTP_BODY` token:
 
   ```ts {12}
-  import { inject } from '@ditsmod/core';
+  import { ctx } from '@ditsmod/core';
   import { controller, Res, route } from '@ditsmod/rest';
   import { HTTP_BODY } from '@ditsmod/body-parser';
 
@@ -105,7 +105,7 @@ Depending on whether the controller works [in context-scoped or injector-scoped 
   @controller()
   export class SomeController {
     @route('POST')
-    ok(@inject(HTTP_BODY) body: Body, res: Res) {
+    ok(@ctx(HTTP_BODY) body: Body, res: Res) {
       res.sendJson(body);
     }
   }
