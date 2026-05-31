@@ -1,5 +1,7 @@
 import { fromSelf, injectable } from '#di/decorators.js';
 import { Injector } from '#di/injector.js';
+import type { InjectionToken } from '#di/top/injection-token.js';
+import type { Class } from '#di/top/types-and-models.js';
 
 @injectable()
 export class Context {
@@ -15,7 +17,9 @@ export class Context {
   /**
    * Sets the value in the current context for the specified `token`.
    */
-  set(token: NonNullable<unknown>, value: any) {
+  set<T = unknown>(token: InjectionToken<T>, value: T): this;
+  set<T = unknown>(token: NonNullable<unknown>, value: T): this;
+  set<T = unknown>(token: NonNullable<unknown>, value: T) {
     this.#ctx.set(token, value);
     return this;
   }
@@ -41,7 +45,12 @@ export class Context {
    * @param fromSelf If `true`, the lookup for values will only occur in the current context,
    * without ascending to parent injectors.
    */
-  get(token: any, fromSelf?: boolean): unknown | undefined;
+  get<T = unknown>(token: Class<T>, fromSelf?: boolean): T | undefined;
+  get<T = unknown>(token: InjectionToken<T>, fromSelf?: boolean): T | undefined;
+  get<T = unknown>(
+    token: NonNullable<T>,
+    fromSelf?: boolean,
+  ): T extends abstract new (...args: any) => any ? InstanceType<T> : NonNullable<unknown> | undefined;
   get(token?: any, fromSelf?: boolean): any {
     if (token === undefined) {
       return this.collectValues();
