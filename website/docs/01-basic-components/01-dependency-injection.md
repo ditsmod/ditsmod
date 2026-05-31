@@ -836,15 +836,14 @@ childCtx.get('key2'); // value2
 2. Потім показано як отримують інстанси `Context` з обох інжекторів, і встановлюють пари "ключ-значення".
 3. І в самому кінці показано, як отримують ці обидва значення у дочірньому контексті. Тобто тут продемонстровано, що з дочірнього контексту можна також отриматит значення і батьківського контексту.
 
-Сервіс `Context` використовують, наприклад, [інтерсептори][105], [ґарди][106], обробники-запитів, контролери та сервіси у `@ditsmod/rest`. Спочатку HTTP-запит передається ґарду, який зчитує певну auth-інформацію, можливо звертається до бази даних щоб витягнути інормацію про поточного користувача. Потім, замість того, щоб цю інформацію зберігати прямо в об'єкті запиту і передавати від функції до функції, вона централізовано зберігається у `Context`, звідки її можуть витягувати контролери чи будь-які сервіси, що знаходяться на тому ж рівні ієрархії інжекторів.
+Сервіс `Context` використовують [інтерсептори][105], [ґарди][106], обробники-запитів, контролери та сервіси у `@ditsmod/rest`, коли контролери працюють у [injector-scoped][3] режимі. Наприклад, ґард отримує HTTP-запит, зчитує певну auth-інформацію, можливо звертається до бази даних щоб витягнути інормацію про поточного користувача. Потім, замість того, щоб цю інформацію зберігати прямо в об'єкті запиту і передавати від функції до функції, він її централізовано зберігає у `Context`, звідки її можуть витягувати контролери чи будь-які сервіси, що знаходяться на тому ж рівні ієрархії інжекторів, або на нижніх рівнях.
 
 Особливо просто і зручно користуватись сервісом `Context` у параметрах методів класів:
 
-```ts {5}
-import { Injector, Context, ctx, ctxProviders, factoryMethod } from '@ditsmod/core';
+```ts {4}
+import { Injector, Context, ctx, ctxProviders } from '@ditsmod/core';
 
 class Service1 {
-  @factoryMethod()
   method1(@ctx('key1') param1: any, @ctx('key2') param2: any) {
     return { param1, param2 };
   }
@@ -895,22 +894,22 @@ import { injectable, inject, input, Injector } from '@ditsmod/core';
 
 @injectable()
 class Dependency1 {
-  constructor(@input public contextParameter: string) {}
+  constructor(@input public inputParameter: string) {}
 }
 
 @injectable()
 class Service1 {
   constructor(
-    @inject(Dependency1, 'context-data') public dependency1: Dependency1,
+    @inject(Dependency1, 'input-data') public dependency1: Dependency1,
   ) {}
 }
 
 const injector = Injector.resolveAndCreate([Service1, Dependency1]);
 const service1 = injector.get(Service1) as Service1;
-service1.dependency1.contextParameter; // context-data
+service1.dependency1.inputParameter; // input-data
 ```
 
-Тут показано, що `Service1` залежить від `Dependency1`, а у конструкторі `Dependency1` перед параметром поставлено декоратор `@input` (без дужок!). Таким чином очікується, що DI перед створенням `Dependency1` передасть йому дані з `@inject(Dependency1, 'context-data')` до того параметру, перед яким розташовано `@input`. Тобто `Service1` намагається отримати інстанс `Dependency1` передаючи йому `context-data`.
+Тут показано, що `Service1` залежить від `Dependency1`, а у конструкторі `Dependency1` перед параметром поставлено декоратор `@input` (без дужок!). Таким чином очікується, що DI перед створенням `Dependency1` передасть йому дані з `@inject(Dependency1, 'input-data')` до того параметру, перед яким розташовано `@input`. Тобто `Service1` намагається отримати інстанс `Dependency1` передаючи йому `input-data`.
 
 Ви можете отримати "вхідні" дані у будь-якому провайдері, де можна вказати залежність. До речі, використовуючи декоратор ось так - `@input` - це скорочена версія від `@inject(input)`:
 
@@ -920,22 +919,22 @@ import { injectable, inject, Injector, input, type FunctionFactoryProvider } fro
 @injectable()
 class Service2 {
   constructor(@inject(input) public arg: string) { // Простіше використати "@input"
-    console.log(arg); // print: context-data2
+    console.log(arg); // print: input-data2
   }
 }
 
 @injectable()
 class Service1 {
   constructor(
-    @inject('token1', 'context-data1') public param1: string,
-    @inject(Service2, 'context-data2') public param2: string,
+    @inject('token1', 'input-data1') public param1: string,
+    @inject(Service2, 'input-data2') public param2: string,
   ) {}
 }
 
 const factoryProvider: FunctionFactoryProvider = {
   token: 'token1',
   deps: [input],
-  useFactory: (arg) => console.log(arg), // print: context-data1
+  useFactory: (arg) => console.log(arg), // print: input-data1
 };
 
 const injector = Injector.resolveAndCreate([Service1, Service2, factoryProvider]);
@@ -1041,6 +1040,7 @@ parent.get(Service2);
 
 [1]: https://uk.wikipedia.org/wiki/%D0%92%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F_%D0%B7%D0%B0%D0%BB%D0%B5%D0%B6%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9
 [2]: #short-and-long-forms-of-declaring-dependencies-in-class-methods
+[3]: /rest-application/controllers-and-services/#what-is-a-rest-controller
 [11]: https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types
 [15]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) "Singleton"
 [16]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.12/packages/body-parser/src/body-parser.interceptor.ts#L16

@@ -836,15 +836,14 @@ This example demonstrates:
 2. Retrieving `Context` instances from both injectors and setting key-value pairs.
 3. Finally, retrieving both values from the child context. This demonstrates that a child context can also access values stored in its parent context.
 
-The `Context` service is used, for example, by [interceptors][105], [guards][106], request handlers, controllers, and services in `@ditsmod/rest`. First, an HTTP request is passed to a guard, which reads certain authentication-related information and may query a database to retrieve information about the current user. Then, instead of storing this information directly in the request object and passing it from function to function, it is centrally stored in `Context`, from which controllers or any services located at the same level of the injector hierarchy can retrieve it.
+The `Context` service is used by [interceptors][105], [guards][106], request handlers, controllers, and services in `@ditsmod/rest` when the controllers are running in [injector-scoped][3] mode. For example, a guard receives an HTTP request, reads certain authentication-related information, and may query a database to retrieve information about the current user. Then, instead of storing this information directly in the request object and passing it from function to function, the guard stores it centrally in `Context`, from where it can be accessed by controllers or any services located at the same injector hierarchy level or at lower levels.
 
 Using the `Context` service in class method parameters is especially simple and convenient:
 
-```ts {5}
-import { Injector, Context, ctx, ctxProviders, factoryMethod } from '@ditsmod/core';
+```ts {4}
+import { Injector, Context, ctx, ctxProviders } from '@ditsmod/core';
 
 class Service1 {
-  @factoryMethod()
   method1(@ctx('key1') param1: any, @ctx('key2') param2: any) {
     return { param1, param2 };
   }
@@ -895,22 +894,22 @@ import { injectable, inject, input, Injector } from '@ditsmod/core';
 
 @injectable()
 class Dependency1 {
-  constructor(@input public contextParameter: string) {}
+  constructor(@input public inputParameter: string) {}
 }
 
 @injectable()
 class Service1 {
   constructor(
-    @inject(Dependency1, 'context-data') public dependency1: Dependency1,
+    @inject(Dependency1, 'input-data') public dependency1: Dependency1,
   ) {}
 }
 
 const injector = Injector.resolveAndCreate([Service1, Dependency1]);
 const service1 = injector.get(Service1) as Service1;
-service1.dependency1.contextParameter; // context-data
+service1.dependency1.inputParameter; // input-data
 ```
 
-Here it is shown that `Service1` depends on `Dependency1`, and in the constructor of `Dependency1`, the `@input` decorator is placed before the parameter (without parentheses!). This way, it is expected that before creating `Dependency1`, DI will pass the data from `@inject(Dependency1, 'context-data')` to the parameter marked with `@input`. In other words, `Service1` attempts to obtain an instance of `Dependency1` while passing `context-data` to it.
+Here it is shown that `Service1` depends on `Dependency1`, and in the constructor of `Dependency1`, the `@input` decorator is placed before the parameter (without parentheses!). This way, it is expected that before creating `Dependency1`, DI will pass the data from `@inject(Dependency1, 'input-data')` to the parameter marked with `@input`. In other words, `Service1` attempts to obtain an instance of `Dependency1` while passing `input-data` to it.
 
 You can obtain "input" data in any provider where a dependency can be specified. By the way, using the decorator like this - `@input` - is a shortened version of `@inject(input)`:
 
@@ -920,22 +919,22 @@ import { injectable, inject, Injector, input, type FunctionFactoryProvider } fro
 @injectable()
 class Service2 {
   constructor(@inject(input) public arg: string) { // It's easier to just use "@input"
-    console.log(arg); // print: context-data2
+    console.log(arg); // print: input-data2
   }
 }
 
 @injectable()
 class Service1 {
   constructor(
-    @inject('token1', 'context-data1') public param1: string,
-    @inject(Service2, 'context-data2') public param2: string,
+    @inject('token1', 'input-data1') public param1: string,
+    @inject(Service2, 'input-data2') public param2: string,
   ) {}
 }
 
 const factoryProvider: FunctionFactoryProvider = {
   token: 'token1',
   deps: [input],
-  useFactory: (arg) => console.log(arg), // print: context-data1
+  useFactory: (arg) => console.log(arg), // print: input-data1
 };
 
 const injector = Injector.resolveAndCreate([Service1, Service2, factoryProvider]);
@@ -1041,6 +1040,7 @@ When creating the child injector, it was not passed `Service1`, but it can refer
 
 [1]: https://en.wikipedia.org/wiki/Dependency_injection
 [2]: #short-and-long-forms-of-declaring-dependencies-in-class-methods
+[3]: /rest-application/controllers-and-services/#what-is-a-rest-controller
 [11]: https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types
 [15]: https://en.wikipedia.org/wiki/Singleton_pattern
 [16]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.12/packages/body-parser/src/body-parser.interceptor.ts#L16
