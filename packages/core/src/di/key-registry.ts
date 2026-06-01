@@ -51,16 +51,9 @@ export class KeyRegistry {
     if (!token) {
       throw new TokenMustBeDefined();
     }
-    const newKey = new DualKey(token, this.numberOfKeys);
+    const newKey = new DualKey(token, this.#allKeys.size);
     this.#allKeys.set(token, newKey);
     return newKey;
-  }
-
-  /**
-   * @returns the number of keys registered in the system.
-   */
-  static get numberOfKeys(): number {
-    return this.#allKeys.size;
   }
 
   /**
