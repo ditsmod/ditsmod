@@ -820,9 +820,4 @@ child.pull(Service).config; // pulls Service in current injector: { one: 11, two
   hasId(id: number) {
     return Object.hasOwn(this.#registry, id);
   }
-
-  hasToken(token: NonNullable<unknown>) {
-    const id = KeyRegistry.get(token).id;
-    return id !== undefined && this.hasId(id);
-  }
 }
