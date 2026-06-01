@@ -41,6 +41,7 @@ import { DEBUG_NAME } from './stringify.js';
 export type LevelOfInjector = 'App' | 'Mod' | 'Rou' | 'Req' | (string & {});
 
 const NoDefaultValue = Symbol();
+const OptionalNullishToken = Symbol('OptionalWithoutToken');
 
 /**
  * A dependency injection container used for instantiating objects and resolving
@@ -339,6 +340,8 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       const { token, input, isOptional, visibility } = this.extractPayload(paramsMeta!);
       if (token != null) {
         return new Dependency(KeyRegistry.get(token), isOptional, visibility, input);
+      } else if (isOptional) {
+        return new Dependency(KeyRegistry.get(OptionalNullishToken), true, visibility, input);
       } else {
         throw new NoAnnotation(Cls, aParamsMeta, propertyKey);
       }
