@@ -1,11 +1,9 @@
-import type { AnyObj } from '@ditsmod/core';
+import type { AnyObj, Injector } from '@ditsmod/core';
 import { TLSSocket } from 'node:tls';
 
 import type { RawRequest, RawResponse } from './request.js';
 import { Res } from './response.js';
 import type { PathParam } from './router.js';
-
-
 
 /**
  * The request context class, which you can substitute with your own class.
@@ -16,26 +14,27 @@ import type { PathParam } from './router.js';
  * An instance of this class is created without DI.
  */
 export class RequestContext extends Res {
-  declare pathParams?: AnyObj;
-  declare queryParams?: AnyObj;
-  declare body?: any;
-  declare auth?: any;
+  pathParams?: AnyObj;
+  queryParams?: AnyObj;
+  body?: any;
+  auth?: any;
 
   constructor(
+    injector: Injector,
     public rawReq: RawRequest,
     public override rawRes: RawResponse,
     public aPathParams: PathParam[] | null,
     public queryString: string,
     /**
      * Indicates in which mode the controller methods work.
-     * 
+     *
      * The operation of the controller in `route` mode means that its methods,
-     * which are bound to routes, receive a single argument - an object containing 
+     * which are bound to routes, receive a single argument - an object containing
      * context data, including native request objects.
      */
     public scope?: 'route',
   ) {
-    super(rawRes);
+    super(rawRes, injector);
   }
 
   get protocol() {

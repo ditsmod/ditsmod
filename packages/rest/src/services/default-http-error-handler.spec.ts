@@ -19,7 +19,7 @@ describe('DefaultHttpErrorHandler', () => {
     end(...args: any[]) {},
   } as RawResponse;
 
-  const reqCtx = new RequestContext({} as any, rawRes, null, '');
+  const reqCtx = new RequestContext({} as any, {} as any, rawRes, null, '');
   const logger = { log(...args: any[]) {} } as Logger;
 
   beforeEach(() => {

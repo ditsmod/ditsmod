@@ -168,7 +168,7 @@ export class PreRouterExtension implements Extension<void> {
 
     if (this.hasInterceptors(mergedPerRou)) {
       return (async (rawReq, rawRes, aPathParams, queryString) => {
-        const reqCtx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString, 'route');
+        const reqCtx = new RequestContextClass(injectorPerRou, rawReq, rawRes, aPathParams, queryString, 'route');
         await chainMaker
           .makeChain(reqCtx)
           .handle() // First HTTP handler in the chain of HTTP interceptors.
@@ -177,7 +177,7 @@ export class PreRouterExtension implements Extension<void> {
           });
       }) as RouteHandler;
     } else {
-      return this.handleWithoutInterceptors(RequestContextClass, routeHandler, errorHandler);
+      return this.handleWithoutInterceptors(injectorPerRou, RequestContextClass, routeHandler, errorHandler);
     }
   }
 
@@ -192,13 +192,21 @@ export class PreRouterExtension implements Extension<void> {
   }
 
   protected handleWithoutInterceptors(
+    injectorPerRou: Injector,
     RequestContextClass: typeof RequestContext,
     routeHandler: (reqCtx: RequestContext) => Promise<any>,
     errorHandler: HttpErrorHandler,
   ) {
     const interceptor = new RouteScopedDefaultHttpFrontend();
     return (async (rawReq, rawRes, aPathParams, queryString) => {
-      const reqCtx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString, 'route') as RequestContext;
+      const reqCtx = new RequestContextClass(
+        injectorPerRou,
+        rawReq,
+        rawRes,
+        aPathParams,
+        queryString,
+        'route',
+      ) as RequestContext;
       try {
         interceptor.before(reqCtx).after(reqCtx, await routeHandler(reqCtx));
       } catch (err: any) {
@@ -247,13 +255,13 @@ export class PreRouterExtension implements Extension<void> {
 
     return (async (rawReq, rawRes, aPathParams, queryString) => {
       const injector = new Injector(RegistryPerReq, 'Req', injectorPerRou);
-      (injector.get(Context) as Context)
+      (injector.get(Context) as RequestContext)
         .set(RAW_REQ, rawReq)
         .set(RAW_RES, rawRes)
         .set(A_PATH_PARAMS, aPathParams)
         .set(QUERY_STRING, queryString || '');
 
-      const reqCtx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString);
+      const reqCtx = new RequestContextClass(injector, rawReq, rawRes, aPathParams, queryString);
       await injector
         .instantiateResolved<ChainMaker>(resolvedChainMaker)
         .makeChain(reqCtx)

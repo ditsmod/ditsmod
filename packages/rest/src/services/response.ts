@@ -1,18 +1,21 @@
-import { ctx, injectable } from '@ditsmod/core';
-import { type ServerResponse } from 'node:http';
+import { Context, ctx, injectable, Injector } from '@ditsmod/core';
+import type { ServerResponse } from 'node:http';
 
 import { RAW_RES } from '#types/constants.js';
 import { RawResponse } from './request.js';
 import { RedirectStatusCodes } from '#types/types.js';
 
 @injectable()
-export class Res<T = any> {
+export class Res<T = any> extends Context {
   constructor(
     /**
      * Native webserver response.
      */
     @ctx(RAW_RES) public rawRes: RawResponse,
-  ) {}
+    injector: Injector,
+  ) {
+    super(injector);
+  }
 
   /**
    * Setting value to the response header `Content-Type`.
