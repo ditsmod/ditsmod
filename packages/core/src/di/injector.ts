@@ -543,7 +543,12 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
    *
    * [1]: https://ditsmod.github.io/en/basic-components/dependency-injection/#inject-and-input
    */
-  get<T>(token: Class<T> | InjectionToken<T>, defaultValue?: T, input?: any, visibility?: Visibility): T;
+  get<T extends new (...args: any[]) => any>(
+    token: T | InjectionToken<T>,
+    defaultValue?: InstanceType<T> | null,
+    input?: any,
+    visibility?: Visibility,
+  ): InstanceType<T>;
   get<T extends AnyFn>(token: T, defaultValue?: T, input?: any, visibility?: Visibility): ReturnType<T>;
   get(token: NonNullable<unknown>, defaultValue?: any, input?: any, visibility?: Visibility): any;
   get(
