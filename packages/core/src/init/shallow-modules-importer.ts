@@ -33,6 +33,7 @@ import {
 } from '#errors';
 import { defaultProvidersPerMod } from './default-providers-per-mod.js';
 import type { GroupToken } from '#di/key-registry.js';
+import { getModule } from '#utils/get-module.js';
 
 /**
  * Recursively collects providers taking into account module imports/exports,
@@ -225,7 +226,7 @@ export class ShallowModulesImporter {
    *
    * @param baseMeta1 Module metadata from where imports providers.
    */
-  protected importProvidersAndExtensions(baseMeta1: BaseMeta) {
+  protected importProvidersAndExtensions(baseMeta1: BaseMeta, reexporter?: ModRefId) {
     const { modRefId, exportsModules, exportsWithParams } = baseMeta1;
 
     for (const modRefId2 of [...exportsModules, ...exportsWithParams]) {
@@ -233,15 +234,14 @@ export class ShallowModulesImporter {
         continue;
       }
       const baseMeta2 = this.moduleManager.getBaseMeta(modRefId2, true);
-      // Reexported module
       this.unfinishedExportModules.add(baseMeta2.modRefId);
-      this.importProvidersAndExtensions(baseMeta2);
+      this.importProvidersAndExtensions(baseMeta2, baseMeta1.modRefId); // Reexports module
       this.unfinishedExportModules.delete(baseMeta2.modRefId);
     }
 
-    this.addProviders('Mod', baseMeta1);
-    this.addProviders('Rou', baseMeta1);
-    this.addProviders('Req', baseMeta1);
+    this.addProviders('Mod', baseMeta1, reexporter);
+    this.addProviders('Rou', baseMeta1, reexporter);
+    this.addProviders('Req', baseMeta1, reexporter);
     if (baseMeta1.exportedMultiProvidersPerMod.length) {
       this.importedMultiProvidersPerMod.set(modRefId, baseMeta1.exportedMultiProvidersPerMod);
     }
@@ -259,11 +259,12 @@ export class ShallowModulesImporter {
     this.throwIfTryResolvingMultiprovidersCollisions(baseMeta1.name);
   }
 
-  protected addProviders(level: Level, baseMeta: BaseMeta) {
+  protected addProviders(level: Level, baseMeta: BaseMeta, reexporter?: ModRefId) {
     baseMeta[`exportedProvidersPer${level}`].forEach((provider) => {
       const token1 = getToken(provider);
       const providerImport = this[`importedProvidersPer${level}`].get(token1);
-      if (providerImport) {
+
+      if (providerImport && providerImport.reexporter !== baseMeta.modRefId) {
         this.checkCollisionsPerLevel(baseMeta.modRefId, level, token1, provider, providerImport);
         const hasResolvedCollision = this.baseMeta[`resolvedCollisionPer${level}`].some(
           ([token2]) => token2 === token1,
@@ -279,6 +280,9 @@ export class ShallowModulesImporter {
         const newProviderImport = new ProviderImport();
         newProviderImport.modRefId = baseMeta.modRefId;
         newProviderImport.providers.push(provider);
+        if (reexporter) {
+          newProviderImport.reexporter = reexporter;
+        }
         this[`importedProvidersPer${level}`].set(token1, newProviderImport);
       }
     });
