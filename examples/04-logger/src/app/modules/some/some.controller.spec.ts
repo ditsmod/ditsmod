@@ -1,6 +1,6 @@
 import type { Logger } from '@ditsmod/core';
 import { Injector } from '@ditsmod/core';
-import type { Res } from '@ditsmod/rest';
+import type { RequestContext } from '@ditsmod/rest';
 import { jest } from '@jest/globals';
 
 import { SomeController } from './some.controller.js';
@@ -8,7 +8,7 @@ import { SomeController } from './some.controller.js';
 describe('SomeController', () => {
   const send = jest.fn();
   const log = jest.fn();
-  const res = { send } as unknown as Res;
+  const res = { send } as unknown as RequestContext;
   const logger = { log } as unknown as Logger;
   let someController: SomeController;
 

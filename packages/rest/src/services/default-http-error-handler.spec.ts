@@ -6,7 +6,6 @@ import { RequestContext } from '#services/request-context.js';
 import type { RawResponse } from '#services/request.js';
 import { DefaultHttpErrorHandler as ErrorHandler } from '#services/default-http-error-handler.js';
 
-
 describe('DefaultHttpErrorHandler', () => {
   let errorHandler: ErrorHandler;
 
@@ -19,7 +18,8 @@ describe('DefaultHttpErrorHandler', () => {
     end(...args: any[]) {},
   } as RawResponse;
 
-  const reqCtx = new RequestContext({} as any, {} as any, rawRes, null, '');
+  const reqCtx = new RequestContext({} as any);
+  reqCtx.setCtx({} as any, rawRes, [], '');
   const logger = { log(...args: any[]) {} } as Logger;
 
   beforeEach(() => {

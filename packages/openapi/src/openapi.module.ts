@@ -10,7 +10,6 @@ import { OasExtensionConfig } from './types/oas-extension-options.js';
 import { OpenapiLogMediator } from '#services/openapi-log-mediator.js';
 
 @initRest({
-  imports: [RestModule],
   providersPerMod: [OpenapiLogMediator],
   extensions: [
     { extension: OpenapiRouteExtension, groups: [RestRouteExtension], export: true },
@@ -22,7 +21,6 @@ import { OpenapiLogMediator } from '#services/openapi-log-mediator.js';
     },
   ],
   controllers: [OpenapiController],
-  exports: [RestModule],
 })
 @featureModule()
 export class OpenapiModule {

@@ -84,14 +84,14 @@ export class SomeModule {}
 Ґарди передаються до контролерів в масиві у третьому параметрі декоратора `route`:
 
 ```ts {6}
-import { controller, Res, route } from '@ditsmod/rest';
+import { controller, RequestContext, route } from '@ditsmod/rest';
 import { AuthGuard } from './auth.guard.js';
 
 @controller()
 export class SomeController {
   @route('GET', 'some-url', [AuthGuard])
-  tellHello(res: Res) {
-    res.send('Hello, admin!');
+  tellHello(reqCtx: RequestContext) {
+    reqCtx.send('Hello, admin!');
   }
 }
 ```
@@ -103,7 +103,7 @@ export class SomeController {
 Давайте розглянемо такий приклад:
 
 ```ts {8}
-import { controller, Res, route } from '@ditsmod/rest';
+import { controller, RequestContext, route } from '@ditsmod/rest';
 
 import { PermissionsGuard } from './permissions.guard.js';
 import { Permission } from './permission.js';
@@ -111,8 +111,8 @@ import { Permission } from './permission.js';
 @controller()
 export class SomeController {
   @route('GET', 'some-url', [[PermissionsGuard, Permission.canActivateAdministration]])
-  tellHello(res: Res) {
-    res.send('Hello, admin!');
+  tellHello(reqCtx: RequestContext) {
+    reqCtx.send('Hello, admin!');
   }
 }
 ```
@@ -157,7 +157,7 @@ export const requirePermissions = createHelperForGuardWithParams<Permission>(Per
 Тепер `requirePermissions()` можна використовувати для створення роутів:
 
 ```ts {8}
-import { controller, Res, route } from '@ditsmod/rest';
+import { controller, RequestContext, route } from '@ditsmod/rest';
 
 import { requirePermissions } from '../auth/guards-utils.js';
 import { Permission } from '../auth/types.js';
@@ -165,8 +165,8 @@ import { Permission } from '../auth/types.js';
 @controller()
 export class SomeController {
   @route('GET', 'administration', [requirePermissions(Permission.canActivateAdministration)])
-  helloAdmin(res: Res) {
-    res.send('some secret');
+  helloAdmin(reqCtx: RequestContext) {
+    reqCtx.send('some secret');
   }
 }
 ```

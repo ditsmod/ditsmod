@@ -1,6 +1,6 @@
 import supertest from 'supertest';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { controller, route, applyResponse, Res, HttpServer, restRootModule } from '@ditsmod/rest';
+import { controller, route, applyResponse, RequestContext, HttpServer, restRootModule } from '@ditsmod/rest';
 import { TestRestApplication } from '@ditsmod/rest-testing';
 
 let webResponse: Response = new Response();
@@ -8,7 +8,7 @@ let webResponse: Response = new Response();
 @controller()
 export class Controller1 {
   @route('GET')
-  async getAuth(res: Res) {
+  async getAuth(reqCtx: RequestContext) {
     const headers = new Headers();
     headers.append('X-Test-Header', 'foo');
     headers.append('Content-Type', 'application/json');

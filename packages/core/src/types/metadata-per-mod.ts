@@ -15,7 +15,7 @@ export class ProviderImport<T extends Provider = Provider> {
    * This property can have more than one element for multi-providers only.
    */
   providers: T[] = [];
-  reexporter?: ModRefId;
+  declare reexporter?: ModRefId;
 }
 
 export class AppInitHooks<T extends BaseInitRawMeta = BaseInitRawMeta> {

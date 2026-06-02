@@ -1,5 +1,5 @@
 import { ctx } from '@ditsmod/core';
-import { controller, route, Res } from '@ditsmod/rest';
+import { controller, route, RequestContext } from '@ditsmod/rest';
 import { JWT_PAYLOAD } from '@ditsmod/jwt';
 
 import { BearerGuard } from './modules/services/auth/bearer.guard.js';
@@ -8,12 +8,12 @@ import { MyJwtPayload } from './modules/services/auth/types.js';
 @controller()
 export class HelloWorldController {
   @route('GET')
-  async getToken(res: Res) {
-    res.send('Hello, World!\n');
+  async getToken(reqCtx: RequestContext) {
+    reqCtx.send('Hello, World!\n');
   }
 
   @route('GET', 'profile', [BearerGuard])
-  async getProfile(@ctx(JWT_PAYLOAD) jwtPayload: MyJwtPayload, res: Res) {
-    res.send(`Hello, ${jwtPayload.userName}! You have successfully authorized.`);
+  async getProfile(@ctx(JWT_PAYLOAD) jwtPayload: MyJwtPayload, reqCtx: RequestContext) {
+    reqCtx.send(`Hello, ${jwtPayload.userName}! You have successfully authorized.`);
   }
 }

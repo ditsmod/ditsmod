@@ -73,17 +73,17 @@ The first mode is more convenient and safer when working within the context of t
 By default, Ditsmod works with the controller in request-scoped mode. This means, first, that a separate controller instance will be created for each HTTP request. Second, any controller method that has a `route` decorator will receive an arbitrary number of arguments from the [DI injector][3]. The following example creates a single route that accepts a `GET` request at `/hello`:
 
 ```ts {7}
-import { controller, route, Res } from '@ditsmod/rest';
+import { controller, route, RequestContext } from '@ditsmod/rest';
 import { Service1 } from './service-1';
 import { Service2 } from './service-2';
 
 @controller()
 export class HelloWorldController {
   @route('GET', 'hello')
-  method1(service1: Service1, service2: Service2, res: Res) {
+  method1(service1: Service1, service2: Service2, reqCtx: RequestContext) {
     // Working with service1 and service2
     // ...
-    res.send('Hello, World!');
+    reqCtx.send('Hello, World!');
   }
 }
 ```
@@ -91,25 +91,25 @@ export class HelloWorldController {
 What we see here:
 
 1. A route is created using the `route` decorator, which is placed before a class method, and the method's name doesn't matter.
-2. In this controller mode, you can declare any number of parameters in a class method. In this case, we declared three dependencies: `service1` with data type `Service1`, `service2` with data type `Service2`, and `res` with data type `Res`. By the way, `res` is short for the word _response_.
-3. Text responses to HTTP requests are sent using `res.send()`.
+2. In this controller mode, you can declare any number of parameters in a class method. In this case, we declared three dependencies: `service1` with data type `Service1`, `service2` with data type `Service2`, and `res` with data type `RequestContext`. By the way, `res` is short for the word _response_.
+3. Text responses to HTTP requests are sent using `reqCtx.send()`.
 
 Although in the previous example the dependencies were declared in `method1`, we can do this in a similar way in the constructor:
 
 ```ts {7}
-import { controller, Res, route } from '@ditsmod/rest';
+import { controller, RequestContext, route } from '@ditsmod/rest';
 import { Service1 } from './service-1';
 import { Service2 } from './service-2';
 
 @controller()
 export class HelloWorldController {
-  constructor(private service1: Service1, private service2: Service2, private res: Res) {}
+  constructor(private service1: Service1, private service2: Service2, private reqCtx: RequestContext) {}
 
   @route('GET', 'hello')
   method1() {
     // Working with this.service1 and this.service2
     // ...
-    this.res.send('Hello, World!');
+    this.reqCtx.send('Hello, World!');
   }
 }
 ```
@@ -170,18 +170,18 @@ You may also be interested in [how to get the HTTP request body][5].
 
 ### Route-scoped controller {#route-scoped-controller}
 
-To make a controller operate in the route-scoped mode, you need to specify `{ scope: 'route' }` in its metadata. Because the controller is instantiated in this mode only once, you will not be able to query in its constructor for class instances that are instantiated on each request. For example, if you request an instance of the `Res` class in the constructor, Ditsmod will throw an error:
+To make a controller operate in the route-scoped mode, you need to specify `{ scope: 'route' }` in its metadata. Because the controller is instantiated in this mode only once, you will not be able to query in its constructor for class instances that are instantiated on each request. For example, if you request an instance of the `RequestContext` class in the constructor, Ditsmod will throw an error:
 
 ```ts {3,5}
 import { RequestContext, controller, route } from '@ditsmod/rest';
 
 @controller({ scope: 'route' })
 export class HelloWorldController {
-  constructor(private res: Res) {}
+  constructor(private reqCtx: RequestContext) {}
 
   @route('GET', 'hello')
   method1() {
-    this.res.send('Hello, World!');
+    this.reqCtx.send('Hello, World!');
   }
 }
 ```
@@ -311,7 +311,7 @@ export class SomeModule {}
 Similarly, the services is passed in the controller metadata:
 
 ```ts {8-9}
-import { controller, Res, route } from '@ditsmod/rest';
+import { controller, RequestContext, route } from '@ditsmod/rest';
 
 import { FirstService } from './first.service.js';
 import { SecondService } from './second.service.js';
@@ -324,8 +324,8 @@ import { SecondService } from './second.service.js';
 })
 export class SomeController {
   @route('GET', 'hello')
-  method1(res: Res, secondService: SecondService) {
-    res.send(secondService.sayHello());
+  method1(reqCtx: RequestContext, secondService: SecondService) {
+    reqCtx.send(secondService.sayHello());
   }
 }
 ```

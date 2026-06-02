@@ -1,6 +1,6 @@
 import { type ServerResponse } from 'node:http';
 import { ctx } from '@ditsmod/core';
-import { controller, route, RAW_RES, RawResponse, Res } from '@ditsmod/rest';
+import { controller, route, RAW_RES, RawResponse, RequestContext } from '@ditsmod/rest';
 import { HTTP_BODY, MulterParser } from '@ditsmod/body-parser';
 
 import { saveFiles, sendHtmlForm } from './utils.js';
@@ -12,13 +12,13 @@ interface Body {
 @controller()
 export class RequestScopedController {
   @route('GET')
-  tellHello(res: Res) {
-    res.send('Hello, you need send POST request');
+  tellHello(reqCtx: RequestContext) {
+    reqCtx.send('Hello, you need send POST request');
   }
 
   @route('POST')
-  post(res: Res, @ctx(HTTP_BODY) body: Body) {
-    res.sendJson(body);
+  post(reqCtx: RequestContext, @ctx(HTTP_BODY) body: Body) {
+    reqCtx.sendJson(body);
   }
 
   @route('GET', 'file-upload')
@@ -27,11 +27,11 @@ export class RequestScopedController {
   }
 
   @route('POST', 'file-upload')
-  async downloadFile(res: Res, parse: MulterParser) {
+  async downloadFile(reqCtx: RequestContext, parse: MulterParser) {
     const parsedForm = await parse.array('fieldName', 5);
     await saveFiles(parsedForm);
     // @todo Refactoring this for HTTP2
-    (res.rawRes as ServerResponse).writeHead(303, { Connection: 'close', Location: '/file-upload' });
-    res.rawRes.end();
+    (reqCtx.rawRes as ServerResponse).writeHead(303, { Connection: 'close', Location: '/file-upload' });
+    reqCtx.rawRes.end();
   }
 }

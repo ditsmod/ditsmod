@@ -1,12 +1,12 @@
 import { Injector } from '@ditsmod/core';
-import type { Res } from '@ditsmod/rest';
+import type { RequestContext } from '@ditsmod/rest';
 import { jest } from '@jest/globals';
 
 import { CommentsController } from './comments.controller.js';
 
 describe('CommentsController', () => {
   const sendJson = jest.fn();
-  const res = { sendJson } as unknown as Res;
+  const res = { sendJson } as unknown as RequestContext;
   let commentsController: CommentsController;
 
   beforeEach(() => {

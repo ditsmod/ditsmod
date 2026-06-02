@@ -1,5 +1,5 @@
 import { BaseAppInitializer, ModuleManager, ModuleWithParams, skipSelf } from '@ditsmod/core';
-import { controller, route, Res, RestModuleParams } from '@ditsmod/rest';
+import { controller, route, RequestContext, RestModuleParams } from '@ditsmod/rest';
 
 import { SecondModule } from '../second.module.js';
 import { ThirdModule } from '../third/third.module.js';
@@ -15,40 +15,40 @@ export class FirstController {
   ) {}
 
   @route('GET')
-  tellHello(res: Res) {
-    res.send('first module.\n');
+  tellHello(reqCtx: RequestContext) {
+    reqCtx.send('first module.\n');
   }
 
   @route('GET', 'add-2')
-  async addSecondModule(res: Res) {
+  async addSecondModule(reqCtx: RequestContext) {
     this.moduleManager.addImport(secondModuleWithParams);
-    await this.reinitApp(res, 'second', 'importing');
+    await this.reinitApp(reqCtx, 'second', 'importing');
   }
 
   @route('GET', 'del-2')
-  async removeSecondModule(res: Res) {
+  async removeSecondModule(reqCtx: RequestContext) {
     this.moduleManager.removeImport(secondModuleWithParams);
-    await this.reinitApp(res, 'second', 'removing');
+    await this.reinitApp(reqCtx, 'second', 'removing');
   }
 
   @route('GET', 'add-3')
-  async addThirdModule(res: Res) {
+  async addThirdModule(reqCtx: RequestContext) {
     this.moduleManager.addImport(thirdModuleWithParams);
-    await this.reinitApp(res, 'third', 'importing');
+    await this.reinitApp(reqCtx, 'third', 'importing');
   }
 
   @route('GET', 'del-3')
-  async removeThirdModule(res: Res) {
+  async removeThirdModule(reqCtx: RequestContext) {
     this.moduleManager.removeImport(thirdModuleWithParams);
-    await this.reinitApp(res, 'third', 'removing');
+    await this.reinitApp(reqCtx, 'third', 'removing');
   }
 
-  private async reinitApp(res: Res, moduleName: 'second' | 'third', action: 'importing' | 'removing') {
+  private async reinitApp(reqCtx: RequestContext, moduleName: 'second' | 'third', action: 'importing' | 'removing') {
     const err = await this.appInitializer.reinit();
     if (err) {
-      res.send(`${action} ${moduleName} failed: ${err.message}\n`);
+      reqCtx.send(`${action} ${moduleName} failed: ${err.message}\n`);
     } else {
-      res.send(`${moduleName} successfully ${action}!\n`);
+      reqCtx.send(`${moduleName} successfully ${action}!\n`);
     }
   }
 }

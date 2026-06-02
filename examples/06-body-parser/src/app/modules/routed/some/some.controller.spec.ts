@@ -1,5 +1,5 @@
 import { Injector } from '@ditsmod/core';
-import type { Res } from '@ditsmod/rest';
+import type { RequestContext } from '@ditsmod/rest';
 import { jest } from '@jest/globals';
 
 import { RequestScopedController } from './some.controller.js';
@@ -7,7 +7,7 @@ import { RequestScopedController } from './some.controller.js';
 describe('SomeController', () => {
   const send = jest.fn();
   const sendJson = jest.fn();
-  const res = { send, sendJson } as unknown as Res;
+  const res = { send, sendJson } as unknown as RequestContext;
   let someController: RequestScopedController;
 
   beforeEach(() => {

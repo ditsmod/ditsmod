@@ -1,4 +1,4 @@
-import { Res, controller, route } from '@ditsmod/rest';
+import { RequestContext, controller, route } from '@ditsmod/rest';
 import { RequestContextWithSession, SessionCookie } from '@ditsmod/session-cookie';
 
 @controller()
@@ -6,14 +6,14 @@ export class HelloWorldController {
   constructor(private session: SessionCookie) {}
 
   @route('GET', 'set')
-  setCookie(res: Res) {
+  setCookie(reqCtx: RequestContext) {
     this.session.id = '123';
-    res.send('Hello, World!\n');
+    reqCtx.send('Hello, World!\n');
   }
 
   @route('GET', 'get')
-  getCookie(res: Res) {
-    res.send(`session ID: ${this.session.id}`);
+  getCookie(reqCtx: RequestContext) {
+    reqCtx.send(`session ID: ${this.session.id}`);
   }
 }
 

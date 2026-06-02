@@ -17,7 +17,7 @@ export const requirePermissions = createHelperForGuardWithParams<Permission>(Per
  * ### Usage
  * 
 ```ts
-import { controller, Res, route } from '@ditsmod/core';
+import { controller, RequestContext, route } from '@ditsmod/core';
 
 import { requirePermissions } from '../auth/guards-utils.js';
 import { Permission } from '../auth/types.js';
@@ -25,8 +25,8 @@ import { Permission } from '../auth/types.js';
 @controller()
 export class SomeController {
   @route('GET', 'administration', [requirePermissions(Permission.canActivateAdministration)])
-  helloAdmin(res: Res) {
-    res.send('some secret');
+  helloAdmin(reqCtx: RequestContext) {
+    reqCtx.send('some secret');
   }
 }
 ```

@@ -843,7 +843,7 @@ describe('injector', () => {
   it('should support multiProviders that are created using useToken', () => {
     const injector = createInjector([Engine, SportsCar, { token: Car, useToken: SportsCar, multi: true }]);
 
-    const cars: [SportsCar] = injector.get(Car);
+    const cars: [SportsCar] = injector.getAny(Car);
     expect(cars.length).toEqual(1);
     expect(cars[0]).toBe(injector.get(SportsCar));
   });
@@ -855,7 +855,7 @@ describe('injector', () => {
       { token: Car, useClass: CarWithOptionalEngine, multi: true },
     ]);
 
-    const cars: [SportsCar, CarWithOptionalEngine] = injector.get(Car);
+    const cars: [SportsCar, CarWithOptionalEngine] = injector.getAny(Car);
     expect(cars.length).toEqual(2);
     expect(cars[0]).toBeInstanceOf(SportsCar);
     expect(cars[1]).toBeInstanceOf(CarWithOptionalEngine);

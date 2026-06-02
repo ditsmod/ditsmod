@@ -1,5 +1,5 @@
 import { AnyObj, ctx } from '@ditsmod/core';
-import { controller, route, PATH_PARAMS, Res } from '@ditsmod/rest';
+import { controller, route, PATH_PARAMS, RequestContext } from '@ditsmod/rest';
 
 @controller()
 export class PostsController {
@@ -8,7 +8,7 @@ export class PostsController {
    */
   @route('GET')
   @route('GET', ':postId')
-  sendPosts(res: Res, @ctx(PATH_PARAMS) pathParams: AnyObj = {}) {
-    res.sendJson({ pathParams });
+  sendPosts(reqCtx: RequestContext, @ctx(PATH_PARAMS) pathParams: AnyObj = {}) {
+    reqCtx.sendJson({ pathParams });
   }
 }

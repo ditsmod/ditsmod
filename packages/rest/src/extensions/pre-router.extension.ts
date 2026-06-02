@@ -164,11 +164,16 @@ export class PreRouterExtension implements Extension<void> {
     const routeHandler = ctrl[routeMeta.methodName].bind(ctrl) as typeof routeMeta.routeHandler;
     routeMeta.routeHandler = routeHandler;
     const errorHandler = injectorPerRou.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
-    const RequestContextClass = injectorPerRou.get(RequestContext) as typeof RequestContext;
+    const RequestContextClass = injectorPerRou.getAny(RequestContext) as typeof RequestContext;
 
     if (this.hasInterceptors(mergedPerRou)) {
       return (async (rawReq, rawRes, aPathParams, queryString) => {
-        const reqCtx = new RequestContextClass(injectorPerRou, rawReq, rawRes, aPathParams, queryString, 'route');
+        const reqCtx = new RequestContextClass(injectorPerRou);
+        reqCtx.rawReq = rawReq;
+        reqCtx.rawRes = rawRes;
+        reqCtx.aPathParams = aPathParams;
+        reqCtx.queryString = queryString;
+        reqCtx.scope = 'route';
         await chainMaker
           .makeChain(reqCtx)
           .handle() // First HTTP handler in the chain of HTTP interceptors.
@@ -199,14 +204,12 @@ export class PreRouterExtension implements Extension<void> {
   ) {
     const interceptor = new RouteScopedDefaultHttpFrontend();
     return (async (rawReq, rawRes, aPathParams, queryString) => {
-      const reqCtx = new RequestContextClass(
-        injectorPerRou,
-        rawReq,
-        rawRes,
-        aPathParams,
-        queryString,
-        'route',
-      ) as RequestContext;
+      const reqCtx = new RequestContextClass(injectorPerRou);
+      reqCtx.rawReq = rawReq;
+      reqCtx.rawRes = rawRes;
+      reqCtx.aPathParams = aPathParams;
+      reqCtx.queryString = queryString;
+      reqCtx.scope = 'route';
       try {
         interceptor.before(reqCtx).after(reqCtx, await routeHandler(reqCtx));
       } catch (err: any) {
@@ -244,7 +247,6 @@ export class PreRouterExtension implements Extension<void> {
       true,
     );
     const injPerReq = injectorPerRou.createChildFromResolved(resolvedPerReq, 'Req');
-    const RequestContextClass = injPerReq.get(RequestContext) as typeof RequestContext;
     routeMeta.resolvedHandler = this.getResolvedHandler(routeMeta, resolvedPerReq);
     this.checkDeps(injPerReq, routeMeta, controllerName, httpMethod, fullPath);
     const resolvedChainMaker = resolvedPerReq.find((rp) => rp.dualKey.token === ChainMaker)!;
@@ -255,13 +257,8 @@ export class PreRouterExtension implements Extension<void> {
 
     return (async (rawReq, rawRes, aPathParams, queryString) => {
       const injector = new Injector(RegistryPerReq, 'Req', injectorPerRou);
-      (injector.get(Context) as RequestContext)
-        .set(RAW_REQ, rawReq)
-        .set(RAW_RES, rawRes)
-        .set(A_PATH_PARAMS, aPathParams)
-        .set(QUERY_STRING, queryString || '');
+      const reqCtx = injector.get(RequestContext).setCtx(rawReq, rawRes, aPathParams, queryString);
 
-      const reqCtx = new RequestContextClass(injector, rawReq, rawRes, aPathParams, queryString);
       await injector
         .instantiateResolved<ChainMaker>(resolvedChainMaker)
         .makeChain(reqCtx)

@@ -1,5 +1,5 @@
 import { Injector } from '@ditsmod/core';
-import type { Res } from '@ditsmod/rest';
+import type { RequestContext } from '@ditsmod/rest';
 import type { Logger as PinoLogger } from 'pino';
 import { jest } from '@jest/globals';
 
@@ -8,7 +8,7 @@ import { PinoController } from './pino.controller.js';
 describe('PinoController', () => {
   const send = jest.fn();
   const info = jest.fn();
-  const res = { send } as unknown as Res;
+  const res = { send } as unknown as RequestContext;
   const pinoLogger = { info } as unknown as PinoLogger;
   let pinoController: PinoController;
 

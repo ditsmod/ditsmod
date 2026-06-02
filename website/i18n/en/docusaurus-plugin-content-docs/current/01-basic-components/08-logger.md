@@ -190,7 +190,7 @@ To change the logging level in production mode, you do not need to change the co
 
 ```ts
 import { AnyObj, ctx, Logger, InputLogLevel } from '@ditsmod/core';
-import { route, QUERY_PARAMS, Res, controller } from '@ditsmod/rest';
+import { route, QUERY_PARAMS, RequestContext, controller } from '@ditsmod/rest';
 
 import { requirePermissions } from '../auth/guards-utils.js';
 import { Permission } from '../auth/types.js';
@@ -198,13 +198,13 @@ import { Permission } from '../auth/types.js';
 @controller()
 export class SomeController {
   @route('GET', 'set-loglevel', [requirePermissions(Permission.canSetLogLevel)])
-  setLogLevel(@ctx(QUERY_PARAMS) queryParams: AnyObj, logger: Logger, res: Res) {
+  setLogLevel(@ctx(QUERY_PARAMS) queryParams: AnyObj, logger: Logger, reqCtx: RequestContext) {
     const level = queryParams.logLevel as InputLogLevel;
     try {
       logger.setLevel(level);
-      res.send('Setting logLevel successful!');
+      reqCtx.send('Setting logLevel successful!');
     } catch (error: any) {
-      res.send(`Setting logLevel is failed: ${error.message}`);
+      reqCtx.send(`Setting logLevel is failed: ${error.message}`);
     }
   }
 }

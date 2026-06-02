@@ -33,7 +33,6 @@ import {
 } from '#errors';
 import { defaultProvidersPerMod } from './default-providers-per-mod.js';
 import type { GroupToken } from '#di/key-registry.js';
-import { getModule } from '#utils/get-module.js';
 
 /**
  * Recursively collects providers taking into account module imports/exports,

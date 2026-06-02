@@ -1,10 +1,10 @@
-import { RequestContext, Res, controller, route } from '@ditsmod/rest';
+import { RequestContext, controller, route } from '@ditsmod/rest';
 
 @controller()
 export class RequestScopedController {
   @route('GET', 'hello')
-  ok(res: Res) {
-    res.send('Hello, World!');
+  ok(reqCtx: RequestContext) {
+    reqCtx.send('Hello, World!');
   }
 
   @route('GET', 'throw-error')

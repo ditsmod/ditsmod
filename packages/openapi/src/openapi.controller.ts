@@ -1,7 +1,7 @@
 import { createReadStream } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { ctx, Status } from '@ditsmod/core';
-import { controller, Res } from '@ditsmod/rest';
+import { controller, RequestContext } from '@ditsmod/rest';
 
 import { webpackDist } from './swagger-ui/constants.js';
 import { oasRoute } from './decorators/oas-route.js';
@@ -9,7 +9,7 @@ import { OAS_CONFIG_FILES, OasConfigFiles } from './types/oas-extension-options.
 
 @controller()
 export class OpenapiController {
-  constructor(private res: Res) {}
+  constructor(private reqCtx: RequestContext) {}
 
   @oasRoute('GET', 'openapi', {
     description: 'OpenAPI documentation',
@@ -23,7 +23,7 @@ export class OpenapiController {
   })
   async getIndex() {
     const indexHtml = await readFile(`${webpackDist}/index.html`, 'utf8');
-    this.res.setContentType('text/html; charset=utf-8').send(indexHtml);
+    this.reqCtx.setContentType('text/html; charset=utf-8').send(indexHtml);
   }
 
   @oasRoute('GET', 'openapi.yaml', {
@@ -37,7 +37,7 @@ export class OpenapiController {
     },
   })
   async getYaml(@ctx(OAS_CONFIG_FILES) configFiles: OasConfigFiles) {
-    this.res.setContentType('text/yaml; charset=utf-8').send(configFiles.yaml);
+    this.reqCtx.setContentType('text/yaml; charset=utf-8').send(configFiles.yaml);
   }
 
   @oasRoute('GET', 'openapi.json', {
@@ -51,7 +51,7 @@ export class OpenapiController {
     },
   })
   async getJson(@ctx(OAS_CONFIG_FILES) configFiles: OasConfigFiles) {
-    this.res.setContentType('application/json; charset=utf-8').send(configFiles.json);
+    this.reqCtx.setContentType('application/json; charset=utf-8').send(configFiles.json);
   }
 
   @oasRoute('GET', 'openapi.bundle.js', {
@@ -65,12 +65,12 @@ export class OpenapiController {
     },
   })
   getJavaScript() {
-    this.res.setContentType('text/javascript; charset=utf-8');
+    this.reqCtx.setContentType('text/javascript; charset=utf-8');
     return new Promise<void>((resolve, reject) => {
       createReadStream(`${webpackDist}/openapi.bundle.js`)
         .on('close', resolve)
         .on('error', reject)
-        .pipe(this.res.rawRes);
+        .pipe(this.reqCtx.rawRes);
     });
   }
 }

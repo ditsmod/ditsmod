@@ -1,5 +1,5 @@
 import { Injector } from '@ditsmod/core';
-import type { Res } from '@ditsmod/rest';
+import type { RequestContext } from '@ditsmod/rest';
 import type { Logger as WinstonLogger } from 'winston';
 import { jest } from '@jest/globals';
 
@@ -8,7 +8,7 @@ import { WinstonController } from './winston.controller.js';
 describe('WinstonController', () => {
   const send = jest.fn();
   const info = jest.fn();
-  const res = { send } as unknown as Res;
+  const res = { send } as unknown as RequestContext;
   const winstonLogger = { info } as unknown as WinstonLogger;
   let winstonController: WinstonController;
 

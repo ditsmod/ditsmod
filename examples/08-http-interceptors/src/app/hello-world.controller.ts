@@ -1,9 +1,9 @@
-import { RequestContext, Res, controller, route } from '@ditsmod/rest';
+import { RequestContext, controller, route } from '@ditsmod/rest';
 
 @controller()
 export class HelloWorldController {
   @route('GET')
-  tellHello(res: Res) {
+  tellHello(reqCtx: RequestContext) {
     return 'Original message!';
   }
 

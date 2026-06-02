@@ -95,7 +95,7 @@ export class AppModule {}
 
   ```ts {12}
   import { ctx } from '@ditsmod/core';
-  import { controller, Res, route } from '@ditsmod/rest';
+  import { controller, RequestContext, route } from '@ditsmod/rest';
   import { HTTP_BODY } from '@ditsmod/body-parser';
 
   interface Body {
@@ -105,8 +105,8 @@ export class AppModule {}
   @controller()
   export class SomeController {
     @route('POST')
-    ok(@ctx(HTTP_BODY) body: Body, res: Res) {
-      res.sendJson(body);
+    ok(@ctx(HTTP_BODY) body: Body, reqCtx: RequestContext) {
+      reqCtx.sendJson(body);
     }
   }
   ```
@@ -150,17 +150,17 @@ export class SomeController {
 
   ```ts {9}
   import { createWriteStream } from 'node:fs';
-  import { controller, Res, route } from '@ditsmod/rest';
+  import { controller, RequestContext, route } from '@ditsmod/rest';
   import { MulterParsedForm, MulterParser } from '@ditsmod/body-parser';
 
   @controller()
   export class SomeController {
     @route('POST', 'file-upload')
-    async downloadFile(res: Res, parse: MulterParser) {
+    async downloadFile(reqCtx: RequestContext, parse: MulterParser) {
       const parsedForm = await parse.array('fieldName', 5);
       await this.saveFiles(parsedForm);
       // ...
-      res.send('ok');
+      reqCtx.send('ok');
     }
 
     protected saveFiles(parsedForm: MulterParsedForm) {

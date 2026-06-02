@@ -95,7 +95,7 @@ Depending on whether the controller works [in route-scoped or request-scoped mod
 
   ```ts {12}
   import { ctx } from '@ditsmod/core';
-  import { controller, Res, route } from '@ditsmod/rest';
+  import { controller, RequestContext, route } from '@ditsmod/rest';
   import { HTTP_BODY } from '@ditsmod/body-parser';
 
   interface Body {
@@ -105,8 +105,8 @@ Depending on whether the controller works [in route-scoped or request-scoped mod
   @controller()
   export class SomeController {
     @route('POST')
-    ok(@ctx(HTTP_BODY) body: Body, res: Res) {
-      res.sendJson(body);
+    ok(@ctx(HTTP_BODY) body: Body, reqCtx: RequestContext) {
+      reqCtx.sendJson(body);
     }
   }
   ```
@@ -150,17 +150,17 @@ Depending on whether the controller works [in injector-scope or context-scope mo
 
   ```ts {9}
   import { createWriteStream } from 'node:fs';
-  import { controller, Res, route } from '@ditsmod/rest';
+  import { controller, RequestContext, route } from '@ditsmod/rest';
   import { MulterParsedForm, MulterParser } from '@ditsmod/body-parser';
 
   @controller()
   export class SomeController {
     @route('POST', 'file-upload')
-    async downloadFile(res: Res, parse: MulterParser) {
+    async downloadFile(reqCtx: RequestContext, parse: MulterParser) {
       const parsedForm = await parse.array('fieldName', 5);
       await this.saveFiles(parsedForm);
       // ...
-      res.send('ok');
+      reqCtx.send('ok');
     }
 
     protected saveFiles(parsedForm: MulterParsedForm) {

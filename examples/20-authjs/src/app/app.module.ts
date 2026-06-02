@@ -1,4 +1,4 @@
-import { controller, route, Res, restRootModule } from '@ditsmod/rest';
+import { controller, route, restRootModule, RequestContext } from '@ditsmod/rest';
 import { AuthjsConfig, AUTHJS_SESSION, AuthjsGuard, AuthjsModule, AuthjsInterceptor } from '@ditsmod/authjs';
 import { ctx } from '@ditsmod/core';
 
@@ -17,8 +17,8 @@ export class InjScopedController {
   }
 
   @route('GET')
-  goto(res: Res) {
-    res.rawRes.setHeader('content-type', 'text/html');
+  goto(reqCtx: RequestContext) {
+    reqCtx.rawRes.setHeader('content-type', 'text/html');
     const url = 'http://0.0.0.0:3000/auth/signin';
     return `Open your browser on <a href="${url}">${url}</a>`;
   }

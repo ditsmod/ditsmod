@@ -84,14 +84,14 @@ In this case, the guard will work at the request level, for controllers in reque
 The guards are passed to the controllers in an array in the third parameter of the `route` decorator:
 
 ```ts {6}
-import { controller, Res, route } from '@ditsmod/rest';
+import { controller, RequestContext, route } from '@ditsmod/rest';
 import { AuthGuard } from './auth.guard.js';
 
 @controller()
 export class SomeController {
   @route('GET', 'some-url', [AuthGuard])
-  tellHello(res: Res) {
-    res.send('Hello, admin!');
+  tellHello(reqCtx: RequestContext) {
+    reqCtx.send('Hello, admin!');
   }
 }
 ```
@@ -103,7 +103,7 @@ The guard in the `canActivate()` method has two parameters. The arguments for th
 Let's consider such an example:
 
 ```ts {8}
-import { controller, Res, route } from '@ditsmod/rest';
+import { controller, RequestContext, route } from '@ditsmod/rest';
 
 import { PermissionsGuard } from './permissions.guard.js';
 import { Permission } from './permission.js';
@@ -111,8 +111,8 @@ import { Permission } from './permission.js';
 @controller()
 export class SomeController {
   @route('GET', 'some-url', [[PermissionsGuard, Permission.canActivateAdministration]])
-  tellHello(res: Res) {
-    res.send('Hello, admin!');
+  tellHello(reqCtx: RequestContext) {
+    reqCtx.send('Hello, admin!');
   }
 }
 ```
@@ -157,7 +157,7 @@ In this example, `PermissionsGuard` is passed as an argument, which accepts para
 `requirePermissions()` can now be used to create routes:
 
 ```ts {8}
-import { controller, Res, route } from '@ditsmod/rest';
+import { controller, RequestContext, route } from '@ditsmod/rest';
 
 import { requirePermissions } from '../auth/guards-utils.js';
 import { Permission } from '../auth/types.js';
@@ -165,8 +165,8 @@ import { Permission } from '../auth/types.js';
 @controller()
 export class SomeController {
   @route('GET', 'administration', [requirePermissions(Permission.canActivateAdministration)])
-  helloAdmin(res: Res) {
-    res.send('some secret');
+  helloAdmin(reqCtx: RequestContext) {
+    reqCtx.send('some secret');
   }
 }
 ```

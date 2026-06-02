@@ -2,7 +2,6 @@ import { rootModule, Providers, ctx } from '@ditsmod/core';
 import {
   QUERY_PARAMS,
   PATH_PARAMS,
-  Res,
   Req,
   controller,
   route,
@@ -21,8 +20,8 @@ export class RequestScopedController {
   }
 
   @route(['GET', 'POST'], 'get-array0')
-  [Symbol()](req: Req, res: Res) {
-    return res.sendJson(req.rawReq.headers);
+  [Symbol()](req: Req, reqCtx: RequestContext) {
+    return reqCtx.sendJson(req.rawReq.headers);
   }
 
   @route('GET', 'interceptor0', [], [Interceptor1])

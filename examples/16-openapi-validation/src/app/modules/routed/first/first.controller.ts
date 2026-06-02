@@ -1,7 +1,7 @@
 import { AnyObj, ctx } from '@ditsmod/core';
 import { HTTP_BODY } from '@ditsmod/body-parser';
 import { getParams, getContent, oasRoute } from '@ditsmod/openapi';
-import { controller, PATH_PARAMS, Res } from '@ditsmod/rest';
+import { controller, PATH_PARAMS, RequestContext } from '@ditsmod/rest';
 
 import { Model1, Model2 } from './models.js';
 
@@ -11,9 +11,9 @@ export class FirstController {
     description: 'Route wtih required path parameter',
     parameters: getParams('path', true, Model1, 'username'),
   })
-  getResourceId(@ctx(PATH_PARAMS) pathParams: AnyObj, res: Res) {
+  getResourceId(@ctx(PATH_PARAMS) pathParams: AnyObj, reqCtx: RequestContext) {
     const { username } = pathParams;
-    res.sendJson({ username });
+    reqCtx.sendJson({ username });
   }
 
   @oasRoute('POST', 'model1', {
@@ -23,8 +23,8 @@ export class FirstController {
       content: getContent({ mediaType: 'application/json', model: Model1 }),
     },
   })
-  postModel1(@ctx(HTTP_BODY) body: any, res: Res) {
-    res.sendJson(body);
+  postModel1(@ctx(HTTP_BODY) body: any, reqCtx: RequestContext) {
+    reqCtx.sendJson(body);
   }
 
   @oasRoute('POST', 'model2', {
@@ -34,7 +34,7 @@ export class FirstController {
       content: getContent({ mediaType: 'application/json', model: Model2 }),
     },
   })
-  postModel2(@ctx(HTTP_BODY) body: any, res: Res) {
-    res.sendJson(body);
+  postModel2(@ctx(HTTP_BODY) body: any, reqCtx: RequestContext) {
+    reqCtx.sendJson(body);
   }
 }
