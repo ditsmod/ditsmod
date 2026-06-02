@@ -18,8 +18,8 @@ export interface HttpInterceptor {
 export class HttpInterceptorHandler implements HttpHandler {
   constructor(
     public interceptor: HttpInterceptor,
-    public ctx: Context,
     public next: HttpHandler,
+    public ctx: Context,
   ) {}
 
   async handle(): Promise<any> {

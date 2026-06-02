@@ -32,7 +32,7 @@ export class RouteScopedDefaultChainMaker {
 
   makeChain(ctx: Context): HttpHandler {
     return this.interceptors.reduceRight(
-      (next, interceptor) => new HttpInterceptorHandler(interceptor, ctx, next),
+      (next, interceptor) => new HttpInterceptorHandler(interceptor, next, ctx),
       new PreHttpBackend(this.backend, ctx) as HttpBackend,
     );
   }

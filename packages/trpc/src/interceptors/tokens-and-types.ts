@@ -18,8 +18,8 @@ export interface TrpcHttpInterceptor {
 export class TrpcHttpInterceptorHandler implements TrpcHttpHandler {
   constructor(
     public interceptor: TrpcHttpInterceptor,
-    public opts: TrpcOpts,
     public next: TrpcHttpHandler,
+    public opts: TrpcOpts,
   ) {}
 
   async handle(): Promise<any> {

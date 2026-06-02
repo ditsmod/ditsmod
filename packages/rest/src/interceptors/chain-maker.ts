@@ -15,7 +15,7 @@ export class ChainMaker {
 
   makeChain(ctx: Context): HttpHandler {
     return this.interceptors.reduceRight(
-      (next, interceptor) => new HttpInterceptorHandler(interceptor, ctx, next),
+      (next, interceptor) => new HttpInterceptorHandler(interceptor, next, ctx),
       this.backend,
     );
   }

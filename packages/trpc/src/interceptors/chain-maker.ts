@@ -16,7 +16,7 @@ export class TrpcChainMaker {
 
   makeChain(opts: TrpcOpts): TrpcHttpHandler {
     return this.interceptors.reduceRight(
-      (next, interceptor) => new TrpcHttpInterceptorHandler(interceptor, opts, next),
+      (next, interceptor) => new TrpcHttpInterceptorHandler(interceptor, next, opts),
       this.backend,
     );
   }
