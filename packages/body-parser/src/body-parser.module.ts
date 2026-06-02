@@ -28,7 +28,7 @@ import { RouteScopedMulterParser } from './multer-ctx.parser.js';
       useFactory: [BodyParserGroupFactory, BodyParserGroupFactory.prototype.getBodyParserGroup],
     },
   ],
-  providersPerReq: [{ token: HTTP_BODY }, MulterParser],
+  providersPerReq: [MulterParser],
   extensions: [
     {
       extension: BodyParserExtension,
@@ -37,7 +37,7 @@ import { RouteScopedMulterParser } from './multer-ctx.parser.js';
       exportOnly: true,
     },
   ],
-  exports: [RouteScopedMulterParser, HTTP_BODY, BodyParserGroup, MulterParser],
+  exports: [RouteScopedMulterParser, BodyParserGroup, MulterParser],
 })
 export class BodyParserModule {
   static withParams(config: BodyParserConfig): ModuleWithParams<BodyParserModule> {

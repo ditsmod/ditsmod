@@ -13,7 +13,7 @@ import {
 
 import { Interceptor1 } from './interceptor1.js';
 
-@controller({ providersPerReq: [{ token: 'msg' }] })
+@controller()
 export class RequestScopedController {
   @route('GET', 'get0/:pathParam1/:pathParam2')
   tellHello(@ctx(QUERY_PARAMS) queryParams: any, @ctx(PATH_PARAMS) pathParams: any) {
