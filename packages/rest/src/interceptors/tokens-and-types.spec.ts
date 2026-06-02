@@ -20,10 +20,10 @@ import { ChainMaker } from './chain-maker.js';
 import { DefaultHttpBackend } from './default-http-backend.js';
 import { HttpBackend, HttpFrontend, HttpHandler, HttpInterceptor } from './tokens-and-types.js';
 import { HTTP_INTERCEPTORS } from '#types/constants.js';
-import { Req } from '#services/request.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { RestShallowModulesImporter } from '#init/rest-shallow-modules-importer.js';
+import { RequestContext } from '#services/request-context.js';
 
 describe('HttpInterceptor', () => {
   const jestFn = jest.fn((interceptorName: string) => interceptorName);
@@ -322,18 +322,18 @@ describe('mix per app, per mod or per req', () => {
   });
 
   it('resolve 2 case 3', () => {
-    @initRest({ providersPerReq: [{ token: Req, useClass: Req }] })
-    @featureModule({ exports: [Req] })
+    @initRest({ providersPerReq: [{ token: RequestContext, useClass: RequestContext }] })
+    @featureModule({ exports: [RequestContext] })
     class Module1 {}
 
-    @initRest({ resolvedCollisionPerReq: [[Req, Module1]] })
+    @initRest({ resolvedCollisionPerReq: [[RequestContext, Module1]] })
     @rootModule({ imports: [Module1] })
     class AppModule {}
 
     moduleManager.scanRootModule(AppModule);
     expect(() => mock.importModulesShallow([], new AppProviders(), '', AppModule, moduleManager, new Set())).not.toThrow();
     expect([...mock.importedProvidersPerReq]).toEqual([
-      [Req, { modRefId: Module1, providers: [{ token: Req, useClass: Req }] }],
+      [RequestContext, { modRefId: Module1, providers: [{ token: RequestContext, useClass: RequestContext }] }],
     ]);
   });
 

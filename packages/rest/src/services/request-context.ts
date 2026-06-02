@@ -1,5 +1,6 @@
 import { Context, injectable, type AnyObj } from '@ditsmod/core';
 import { TLSSocket } from 'node:tls';
+import { randomUUID } from 'node:crypto';
 
 import type { RawRequest, RawResponse } from './request.js';
 import type { PathParam } from './router.js';
@@ -34,6 +35,7 @@ export class RequestContext<T = any> extends Context {
    * context data, including native request objects.
    */
   scope?: 'route';
+  #requestId: string;
 
   /**
    * This method is intended for use in `request-scoped` mode only.
@@ -81,6 +83,13 @@ export class RequestContext<T = any> extends Context {
   redirect(statusCode: RedirectStatusCodes, path: string) {
     // @todo Refactoring this for HTTP2
     (this.rawRes as ServerResponse).writeHead(statusCode, { Location: path }).end();
+  }
+
+  get requestId() {
+    if (!this.#requestId) {
+      this.#requestId = randomUUID();
+    }
+    return this.#requestId;
   }
 
   get protocol() {

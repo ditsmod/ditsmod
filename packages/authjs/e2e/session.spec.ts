@@ -1,7 +1,7 @@
 import supertest from 'supertest';
 import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import { Status } from '@ditsmod/core';
-import { route, controller, Req, HttpServer, restRootModule } from '@ditsmod/rest';
+import { route, controller, HttpServer, restRootModule, RequestContext } from '@ditsmod/rest';
 import { TestRestApplication } from '@ditsmod/rest-testing';
 
 const sessionJson = {
@@ -35,8 +35,8 @@ const expectation = vi.fn((data?: any) => data);
 @controller()
 export class Controller1 {
   @route('GET')
-  async getAuth(req: Req) {
-    const session = await getSession(req, {
+  async getAuth(ctx: RequestContext) {
+    const session = await getSession(ctx, {
       providers: [],
       secret: 'secret',
     });

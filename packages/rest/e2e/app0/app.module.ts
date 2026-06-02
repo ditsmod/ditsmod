@@ -1,14 +1,5 @@
 import { rootModule, Providers, ctx } from '@ditsmod/core';
-import {
-  QUERY_PARAMS,
-  PATH_PARAMS,
-  Req,
-  controller,
-  route,
-  RestModule,
-  RequestContext,
-  initRest,
-} from '@ditsmod/rest';
+import { QUERY_PARAMS, PATH_PARAMS, controller, route, RestModule, RequestContext, initRest } from '@ditsmod/rest';
 
 import { Interceptor1 } from './interceptor1.js';
 
@@ -20,8 +11,8 @@ export class RequestScopedController {
   }
 
   @route(['GET', 'POST'], 'get-array0')
-  [Symbol()](req: Req, reqCtx: RequestContext) {
-    return reqCtx.sendJson(req.rawReq.headers);
+  [Symbol()](reqCtx: RequestContext) {
+    return reqCtx.sendJson(reqCtx.rawReq.headers);
   }
 
   @route('GET', 'interceptor0', [], [Interceptor1])
