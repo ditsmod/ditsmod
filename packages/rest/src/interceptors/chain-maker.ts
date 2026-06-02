@@ -1,7 +1,8 @@
-import { inject, injectable, optional, type Context } from '@ditsmod/core';
+import { inject, injectable, optional } from '@ditsmod/core';
 
 import { HttpBackend, HttpInterceptor, HttpHandler, HttpInterceptorHandler } from './tokens-and-types.js';
 import { HTTP_INTERCEPTORS } from '#types/constants.js';
+import { RequestContext } from '#services/request-context.js';
 
 /**
  * An injectable service that ties multiple interceptors in chain.
@@ -13,9 +14,9 @@ export class ChainMaker {
     @inject(HTTP_INTERCEPTORS) @optional() private interceptors: HttpInterceptor[] = [],
   ) {}
 
-  makeChain(ctx: Context): HttpHandler {
+  makeChain(reqCtx: RequestContext): HttpHandler {
     return this.interceptors.reduceRight(
-      (next, interceptor) => new HttpInterceptorHandler(interceptor, next, ctx),
+      (next, interceptor) => new HttpInterceptorHandler(interceptor, next, reqCtx),
       this.backend,
     );
   }

@@ -1,4 +1,4 @@
-import type { Context } from '@ditsmod/core';
+import type { RequestContext } from '#services/request-context.js';
 
 /**
  * `HttpHandler` is injectable. When injected, the handler instance dispatches requests to the
@@ -12,18 +12,18 @@ export abstract class HttpHandler {
 }
 
 export interface HttpInterceptor {
-  intercept(next: HttpHandler, ctx: Context): Promise<any>;
+  intercept(next: HttpHandler, reqCtx: RequestContext): Promise<any>;
 }
 
 export class HttpInterceptorHandler implements HttpHandler {
   constructor(
     public interceptor: HttpInterceptor,
     public next: HttpHandler,
-    public ctx: Context,
+    public reqCtx: RequestContext,
   ) {}
 
   async handle(): Promise<any> {
-    return this.interceptor.intercept(this.next, this.ctx);
+    return this.interceptor.intercept(this.next, this.reqCtx);
   }
 }
 
@@ -33,7 +33,7 @@ export class HttpInterceptorHandler implements HttpHandler {
  * Interceptors sit between the `HttpFrontend` and the `HttpBackend`.
  */
 export abstract class HttpFrontend implements HttpInterceptor {
-  abstract intercept(next: HttpHandler, ctx: Context): Promise<any>;
+  abstract intercept(next: HttpHandler, reqCtx: RequestContext): Promise<any>;
 }
 
 /**
@@ -49,5 +49,5 @@ export abstract class HttpBackend implements HttpHandler {
 }
 
 export abstract class RouteScopedHttpBackend {
-  abstract handle(ctx: Context): Promise<any>;
+  abstract handle(reqCtx: RequestContext): Promise<any>;
 }

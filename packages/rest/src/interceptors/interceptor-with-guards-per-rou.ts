@@ -1,10 +1,10 @@
-import { injectable, Injector, Status, SystemLogMediator, type Context } from '@ditsmod/core';
+import { injectable, Injector, Status, SystemLogMediator } from '@ditsmod/core';
 
 import { RouteMeta } from '../types/route-data.js';
 import { HttpHandler, HttpInterceptor } from './tokens-and-types.js';
 import { applyResponse } from '#utils/apply-web-response.js';
 import { CanActivate } from './guard.js';
-import { RAW_REQ, RAW_RES } from '#types/constants.js';
+import { RequestContext } from '#services/request-context.js';
 
 @injectable()
 export class InterceptorWithGuardsPerRou implements IInterceptorWithGuardsPerRou {
@@ -17,20 +17,20 @@ export class InterceptorWithGuardsPerRou implements IInterceptorWithGuardsPerRou
     this.initGuards();
   }
 
-  async intercept(next: HttpHandler, ctx: Context) {
+  async intercept(next: HttpHandler, reqCtx: RequestContext) {
     if (this.routeMeta.resolvedGuardsPerMod) {
       for (const item of this.routeMeta.resolvedGuardsPerMod) {
         const guard = item.injectorPerRou.instantiateResolved(item.guard) as CanActivate;
-        const result = await guard.canActivate(ctx, item.params);
+        const result = await guard.canActivate(reqCtx, item.params);
         if (result !== true) {
-          return this.sendResponse(ctx, result);
+          return this.sendResponse(reqCtx, result);
         }
       }
     }
     for (const item of this.instantiatedGuards) {
-      const result = await item.guard.canActivate(ctx, item.params);
+      const result = await item.guard.canActivate(reqCtx, item.params);
       if (result !== true) {
-        return this.sendResponse(ctx, result);
+        return this.sendResponse(reqCtx, result);
       }
     }
 
@@ -44,22 +44,20 @@ export class InterceptorWithGuardsPerRou implements IInterceptorWithGuardsPerRou
     });
   }
 
-  protected async sendResponse(ctx: Context, result: false | Response) {
+  protected async sendResponse(reqCtx: RequestContext, result: false | Response) {
     if (result === false) {
-      this.prohibitActivation(ctx);
+      this.prohibitActivation(reqCtx);
       return;
     }
-    await applyResponse(result, ctx.get(RAW_RES, true)!);
+    await applyResponse(result, reqCtx.rawRes);
     return result;
   }
 
-  protected prohibitActivation(ctx: Context) {
+  protected prohibitActivation(reqCtx: RequestContext) {
     const systemLogMediator = this.injector.get(SystemLogMediator) as SystemLogMediator;
-    const rawReq = ctx.get(RAW_REQ, true)!;
-    const rawRes = ctx.get(RAW_RES, true)!;
-    systemLogMediator.youCannotActivateRoute(this, rawReq.method!, rawReq.url!);
-    rawRes.statusCode = Status.UNAUTHORIZED;
-    rawRes.end();
+    systemLogMediator.youCannotActivateRoute(this, reqCtx.rawReq.method!, reqCtx.rawReq.url!);
+    reqCtx.rawRes.statusCode = Status.UNAUTHORIZED;
+    reqCtx.rawRes.end();
   }
 }
 

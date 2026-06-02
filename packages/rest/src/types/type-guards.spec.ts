@@ -1,10 +1,11 @@
-import { featureModule, injectable, isModuleWithParams, Reflector, type Context } from '@ditsmod/core';
+import { featureModule, injectable, isModuleWithParams, Reflector } from '@ditsmod/core';
 
 import { route } from '#decorators/route.js';
 import { isAppendsWithParams, isCtrlDecor, isInterceptor, isRoute } from './type.guards.js';
 import { HttpHandler, HttpInterceptor } from '#interceptors/tokens-and-types.js';
 import { CanActivate } from '#interceptors/guard.js';
 import { controller } from './controller.js';
+import { RequestContext } from '#services/request-context.js';
 import { AppendsWithParams } from '#init/rest-init-raw-meta.js';
 
 describe('type guards', () => {
@@ -38,7 +39,7 @@ describe('type guards', () => {
   describe('isRoute()', () => {
     @injectable()
     class Guard1 implements CanActivate {
-      canActivate(ctx: Context) {
+      canActivate(reqCtx: RequestContext) {
         return true;
       }
 
@@ -60,7 +61,7 @@ describe('type guards', () => {
   describe('isInterceptor()', () => {
     it('true Interceptor', () => {
       class Interceptor1 implements HttpInterceptor {
-        async intercept(next: HttpHandler, ctx: Context) {}
+        async intercept(next: HttpHandler, reqCtx: RequestContext) {}
       }
 
       expect(isInterceptor(Interceptor1)).toBe(true);
@@ -68,7 +69,7 @@ describe('type guards', () => {
 
     it('false Interceptor', () => {
       class Interceptor1 {
-        async inter(next: HttpHandler, ctx: Context) {}
+        async inter(next: HttpHandler, reqCtx: RequestContext) {}
       }
 
       expect(isInterceptor(Interceptor1)).toBe(false);

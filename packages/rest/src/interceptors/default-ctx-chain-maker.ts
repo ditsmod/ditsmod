@@ -1,4 +1,4 @@
-import { inject, injectable, optional, type Context } from '@ditsmod/core';
+import { inject, injectable, optional } from '@ditsmod/core';
 
 import {
   HttpBackend,
@@ -8,15 +8,16 @@ import {
   RouteScopedHttpBackend,
 } from './tokens-and-types.js';
 import { HTTP_INTERCEPTORS } from '#types/constants.js';
+import { RequestContext } from '#services/request-context.js';
 
 class PreHttpBackend implements HttpBackend {
   constructor(
     protected backend: RouteScopedHttpBackend,
-    protected ctx: Context,
+    protected reqCtx: RequestContext,
   ) {}
 
   handle() {
-    return this.backend.handle(this.ctx);
+    return this.backend.handle(this.reqCtx);
   }
 }
 
@@ -30,10 +31,10 @@ export class RouteScopedDefaultChainMaker {
     @inject(HTTP_INTERCEPTORS) @optional() private interceptors: HttpInterceptor[] = [],
   ) {}
 
-  makeChain(ctx: Context): HttpHandler {
+  makeChain(reqCtx: RequestContext): HttpHandler {
     return this.interceptors.reduceRight(
-      (next, interceptor) => new HttpInterceptorHandler(interceptor, next, ctx),
-      new PreHttpBackend(this.backend, ctx) as HttpBackend,
+      (next, interceptor) => new HttpInterceptorHandler(interceptor, next, reqCtx),
+      new PreHttpBackend(this.backend, reqCtx) as HttpBackend,
     );
   }
 }

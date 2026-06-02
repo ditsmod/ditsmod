@@ -13,6 +13,7 @@ import { CanActivate } from '../interceptors/guard.js';
 import { RouteMeta } from '../types/route-data.js';
 import { HttpHandler, HttpInterceptor } from './tokens-and-types.js';
 import { applyResponse } from '#utils/apply-web-response.js';
+import { RequestContext } from '#services/request-context.js';
 import { RAW_REQ, RAW_RES, A_PATH_PARAMS, QUERY_STRING, QUERY_PARAMS, PATH_PARAMS } from '#types/constants.js';
 
 @injectable()
@@ -22,34 +23,34 @@ export class InterceptorWithGuards implements HttpInterceptor {
     private injector: Injector,
   ) {}
 
-  async intercept(next: HttpHandler, ctx: Context) {
+  async intercept(next: HttpHandler, reqCtx: RequestContext) {
     if (this.routeMeta.resolvedGuardsPerMod)
       for (const item of this.routeMeta.resolvedGuardsPerMod) {
         const injectorPerReq = this.getInjectorPerReq(item);
         const guard = injectorPerReq.instantiateResolved(item.guard) as CanActivate;
-        const result = await guard.canActivate(ctx, item.params);
+        const result = await guard.canActivate(reqCtx, item.params);
         if (result !== true) {
-          return this.sendResponse(ctx, result);
+          return this.sendResponse(reqCtx, result);
         }
       }
     if (this.routeMeta.resolvedGuards)
       for (const item of this.routeMeta.resolvedGuards) {
         const guard = this.injector.instantiateResolved(item.guard) as CanActivate;
-        const result = await guard.canActivate(ctx, item.params);
+        const result = await guard.canActivate(reqCtx, item.params);
         if (result !== true) {
-          return this.sendResponse(ctx, result);
+          return this.sendResponse(reqCtx, result);
         }
       }
 
     return next.handle();
   }
 
-  protected async sendResponse(ctx: Context, result: false | Response) {
+  protected async sendResponse(reqCtx: RequestContext, result: false | Response) {
     if (result === false) {
-      this.prohibitActivation(ctx);
+      this.prohibitActivation(reqCtx);
       return;
     }
-    await applyResponse(result, ctx.get(RAW_RES, true)!);
+    await applyResponse(result, reqCtx.rawRes);
     return result;
   }
 
@@ -60,12 +61,10 @@ export class InterceptorWithGuards implements HttpInterceptor {
     return inj;
   }
 
-  protected prohibitActivation(ctx: Context, status?: Status) {
+  protected prohibitActivation(reqCtx: RequestContext, status?: Status) {
     const systemLogMediator = this.injector.get(SystemLogMediator) as SystemLogMediator;
-    const rawReq = ctx.get(RAW_REQ, true)!;
-    const rawRes = ctx.get(RAW_RES, true)!;
-    systemLogMediator.youCannotActivateRoute(this, rawReq.method!, rawReq.url!);
-    rawRes.statusCode = Status.UNAUTHORIZED;
-    rawRes.end();
+    systemLogMediator.youCannotActivateRoute(this, reqCtx.rawReq.method!, reqCtx.rawReq.url!);
+    reqCtx.rawRes.statusCode = Status.UNAUTHORIZED;
+    reqCtx.rawRes.end();
   }
 }
