@@ -55,4 +55,5 @@ export { Context } from '#di/ctx/context.js';
 export { ctxProviders } from '#di/ctx/providers.js';
 export { ctx } from '#di/ctx/decorators.js';
 export { CtxModule } from '#di/ctx/ctx.module.js';
+export { getSymbol } from '#di/ctx/get-symbol.js';
 export { TypeGuard, AnyFn } from '#di/top/types-and-models.js';
