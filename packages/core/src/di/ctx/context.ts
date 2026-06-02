@@ -1,7 +1,6 @@
 import { fromSelf, injectable } from '#di/decorators.js';
 import { Injector } from '#di/injector.js';
-import type { InjectionToken } from '#di/top/injection-token.js';
-import type { Class } from '#di/top/types-and-models.js';
+import type { InjectionSymbol } from './get-symbol.js';
 
 @injectable()
 export class Context {
@@ -15,24 +14,24 @@ export class Context {
   }
 
   /**
-   * Sets the value in the current context for the specified `token`.
+   * Sets the value in the current context for the specified `key`.
    */
-  set<T = unknown>(token: InjectionToken<T>, value: T): this;
-  set<T = unknown>(token: NonNullable<unknown>, value: T): this;
-  set<T = unknown>(token: NonNullable<unknown>, value: T) {
-    this.#ctx.set(token, value);
+  set<T = unknown>(key: InjectionSymbol<T>, value: T): this;
+  set<T = unknown>(key: string | symbol | InjectionSymbol, value: T): this;
+  set<T = unknown>(key: string | symbol | InjectionSymbol, value: T) {
+    this.#ctx.set(key, value);
     return this;
   }
 
   /**
-   * Indicates whether a value exists for the specified `token`. The search for values
+   * Indicates whether a value exists for the specified `key`. The search for values
    * is done from bottom to top in the injector hierarchy.
    */
-  has(token: NonNullable<unknown>, fromSelf?: boolean): boolean | undefined {
+  has(key: NonNullable<unknown>, fromSelf?: boolean): boolean | undefined {
     if (fromSelf) {
-      return this.#ctx.has(token);
+      return this.#ctx.has(key);
     }
-    return this.#ctx.has(token) || (this.#parent && this.#parent.has(token));
+    return this.#ctx.has(key) || (this.#parent && this.#parent.has(key));
   }
 
   /**
@@ -40,30 +39,26 @@ export class Context {
    */
   get(): Map<string, Map<any, any>>;
   /**
-   * Searches and returns the value for the specified `token` from bottom to top in the injector hierarchy.
+   * Searches and returns the value for the specified `key` from bottom to top in the injector hierarchy.
    *
    * @param fromSelf If `true`, the lookup for values will only occur in the current context,
    * without ascending to parent injectors.
    */
-  get<T = unknown>(token: Class<T>, fromSelf?: boolean): T | undefined;
-  get<T = unknown>(token: InjectionToken<T>, fromSelf?: boolean): T | undefined;
-  get<T = unknown>(
-    token: NonNullable<T>,
-    fromSelf?: boolean,
-  ): T extends abstract new (...args: any) => any ? InstanceType<T> : NonNullable<unknown> | undefined;
-  get(token?: any, fromSelf?: boolean): any {
-    if (token === undefined) {
+  get<T = unknown>(key: InjectionSymbol<T>, fromSelf?: boolean): T | undefined;
+  get<T = unknown>(key: string | symbol | InjectionSymbol, fromSelf?: boolean): T | undefined;
+  get(key?: any, fromSelf?: boolean): any {
+    if (key === undefined) {
       return this.collectValues();
     }
-    if (this.#ctx.has(token)) {
-      return this.#ctx.get(token);
+    if (this.#ctx.has(key)) {
+      return this.#ctx.get(key);
     } else if (!fromSelf && this.#parent) {
-      return this.#parent.get(token);
+      return this.#parent.get(key);
     }
   }
 
   /**
-   * Extracts values from the current context for the specified tokens, and inserts them into
+   * Extracts values from the current context for the specified keys, and inserts them into
    * the context of the external injector.
    *
    * _Note: At the time of creation, this method was intended to enable guards at the module level,
@@ -71,10 +66,10 @@ export class Context {
    * the injectors for the guards are considered external in relation to the injectors of the
    * module they protect._
    */
-  fill(externalInj: Injector, tokens: any[]) {
+  fill(externalInj: Injector, keys: (string | symbol | InjectionSymbol)[]) {
     const ctx = externalInj.get(Context, undefined, undefined, fromSelf) as Context;
-    for (const token of tokens) {
-      ctx.set(token, this.#ctx.get(token));
+    for (const key of keys) {
+      ctx.set(key, this.#ctx.get(key));
     }
   }
 

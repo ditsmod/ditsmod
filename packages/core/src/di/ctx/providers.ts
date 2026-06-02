@@ -12,6 +12,6 @@ export const ctxProviders: Provider[] = [
   {
     token: ctx,
     deps: [Context, input],
-    useFactory: (context: Context, token: any) => context.get(token),
+    useFactory: (context: Context, key: any) => context.get(key),
   },
 ];

@@ -1,4 +1,5 @@
-export interface InjectionSymbol<T> {}
+// eslint-disable-next-line @typescript-eslint/no-wrapper-object-types
+export interface InjectionSymbol<T = unknown> extends Symbol {}
 
 /**
  * Returns a symbol associated with the type `T`.
