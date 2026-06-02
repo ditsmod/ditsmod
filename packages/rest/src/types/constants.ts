@@ -1,5 +1,5 @@
 import type { AnyObj } from '@ditsmod/core';
-import { InjectionToken } from '@ditsmod/core';
+import { getSymbol, InjectionToken } from '@ditsmod/core';
 
 import type { HttpInterceptor } from '#interceptors/tokens-and-types.js';
 import type { RawRequest, RawResponse } from '#services/request.js';
@@ -10,22 +10,22 @@ export const HTTP_INTERCEPTORS = new InjectionToken<HttpInterceptor[]>('HTTP_INT
 /**
  * DI token for native webserver request.
  */
-export const RAW_REQ = new InjectionToken<RawRequest>('RAW_REQ');
+export const RAW_REQ = getSymbol<RawRequest>('RAW_REQ');
 /**
  * DI token for native webserver response.
  */
-export const RAW_RES = new InjectionToken<RawResponse>('RAW_RES');
+export const RAW_RES = getSymbol<RawResponse>('RAW_RES');
 
 /**
  * DI token for path params that is returned by `@ditsmod/rest`.
  */
-export const A_PATH_PARAMS = new InjectionToken<PathParam[]>('A_PATH_PARAMS');
-export const PATH_PARAMS = new InjectionToken<AnyObj>('PATH_PARAMS');
-export const QUERY_PARAMS = new InjectionToken<AnyObj>('QUERY_PARAMS');
+export const A_PATH_PARAMS = getSymbol<PathParam[]>('A_PATH_PARAMS');
+export const PATH_PARAMS = getSymbol<AnyObj>('PATH_PARAMS');
+export const QUERY_PARAMS = getSymbol<AnyObj>('QUERY_PARAMS');
 /**
  * DI token for querystring that is returned by `PreRouter` after spliting `rawReq.url` by question mark.
  */
-export const QUERY_STRING = new InjectionToken<string>('QUERY_STRING');
+export const QUERY_STRING = getSymbol<string>('QUERY_STRING');
 
 /**
  * A DI token that allows you to obtain the instance of the server that is serving the current application.

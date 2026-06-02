@@ -1,8 +1,8 @@
-import { InjectionToken } from '@ditsmod/core';
+import { getSymbol } from '@ditsmod/core';
 
 export const enum Permission {
   canActivateSomeResource = 1,
   canActivateAdministration = 2,
 }
 
-export const SESSION = new InjectionToken('SESSION');
+export const SESSION = getSymbol('SESSION');

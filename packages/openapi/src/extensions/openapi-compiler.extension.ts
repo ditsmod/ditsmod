@@ -25,7 +25,7 @@ import { MetadataPerMod3, NormalizedGuard, RestRouteExtension } from '@ditsmod/r
 
 import { OasRouteMeta } from '#types/oas-route-meta.js';
 import { DEFAULT_OAS_OBJECT, defaultForNonOasGuard } from '#constants';
-import { OasConfigFiles, OasExtensionConfig } from '#types/oas-extension-options.js';
+import { OAS_CONFIG_FILES, OasExtensionConfig } from '#types/oas-extension-options.js';
 import { OasOptions } from '#types/oas-options.js';
 import { OpenapiLogMediator } from '#services/openapi-log-mediator.js';
 import { OasRouteMetaNotFound } from '#errors';
@@ -61,7 +61,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
       const oasOptions = this.extensionsMetaPerApp?.oasOptions as OasOptions | undefined;
       const yaml = stringify(this.oasObject, oasOptions?.yamlSchemaOptions);
       const ctx = injectorPerMod.parent?.get(Context) as Context;
-      ctx.set(OasConfigFiles, { json, yaml });
+      ctx.set(OAS_CONFIG_FILES, { json, yaml });
     }
   }
 

@@ -5,7 +5,7 @@ import { controller, Res } from '@ditsmod/rest';
 
 import { webpackDist } from './swagger-ui/constants.js';
 import { oasRoute } from './decorators/oas-route.js';
-import { OasConfigFiles } from './types/oas-extension-options.js';
+import { OAS_CONFIG_FILES, OasConfigFiles } from './types/oas-extension-options.js';
 
 @controller()
 export class OpenapiController {
@@ -36,7 +36,7 @@ export class OpenapiController {
       },
     },
   })
-  async getYaml(@ctx(OasConfigFiles) configFiles: OasConfigFiles) {
+  async getYaml(@ctx(OAS_CONFIG_FILES) configFiles: OasConfigFiles) {
     this.res.setContentType('text/yaml; charset=utf-8').send(configFiles.yaml);
   }
 
@@ -50,7 +50,7 @@ export class OpenapiController {
       },
     },
   })
-  async getJson(@ctx(OasConfigFiles) configFiles: OasConfigFiles) {
+  async getJson(@ctx(OAS_CONFIG_FILES) configFiles: OasConfigFiles) {
     this.res.setContentType('application/json; charset=utf-8').send(configFiles.json);
   }
 
