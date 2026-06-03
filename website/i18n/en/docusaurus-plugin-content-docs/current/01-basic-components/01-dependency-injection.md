@@ -826,8 +826,8 @@ const childCtx = child.get(Context) as Context;
 parentCtx.set('key1', 'value1');
 childCtx.set('key2', 'value2');
 
-childCtx.get('key1'); // value1
-childCtx.get('key2'); // value2
+childCtx.getInScope('key1'); // value1
+childCtx.getInScope('key2'); // value2
 ```
 
 This example demonstrates:
@@ -836,7 +836,7 @@ This example demonstrates:
 2. Retrieving `Context` instances from both injectors and setting key-value pairs.
 3. Finally, retrieving both values from the child context. This demonstrates that a child context can also access values stored in its parent context.
 
-The `Context` service is used by [interceptors][105], [guards][106], request handlers, controllers, and services in `@ditsmod/rest` when the controllers are running in [request-scoped][3] mode. For example, a guard receives an HTTP request, reads certain authentication-related information, and may query a database to retrieve information about the current user. Then, instead of storing this information directly in the request object and passing it from function to function, the guard stores it centrally in `Context`, from where it can be accessed by controllers or any services located at the same injector hierarchy level or at lower levels.
+The `Context` service is used by [interceptors][105], [guards][106], request handlers, controllers, and services in `@ditsmod/rest` when controllers operate in [request-scoped][3] mode. For example, an interceptor first parses the request body. Then, instead of storing this information directly in the request object and passing it from function to function, it stores it centrally in `Context`. From there, it can be retrieved by controllers or any services at the same or lower levels of the injector hierarchy.
 
 Using the `Context` service in class method parameters is especially simple and convenient:
 
@@ -866,6 +866,28 @@ You can find real-world examples of setting context values here:
 
 1. [BodyParserInterceptor][16];
 2. [BearerGuard][17].
+
+### `getSymbol()` helper {#getsymbol-helper}
+
+Use the `getSymbol<T>()` function for keys in the `Context` service to enable the type parameter associated with the specified key:
+
+```ts {8,13}
+import { Context, getSymbol, Injector } from '@ditsmod/core';
+
+export interface InterfaceOfSomeValue {
+  one: string;
+  two: number;
+}
+
+export const SOME_KEY = getSymbol<InterfaceOfSomeValue>('SOME_KEY');
+
+// Testing
+const injector = Injector.resolveAndCreate([Context]);
+const ctx = injector.get(Context);
+const value = ctx.get(SOME_KEY); // TypeScript infers the type as "InterfaceOfSomeValue | undefined"
+```
+
+The `getSymbol<T>()` function is a lightweight wrapper around `Symbol()`. Its only purpose is to provide a type parameter, allowing TypeScript to subsequently infer the type when methods such as `ctx.get()` or `ctx.getInScope()` are called.
 
 ## Method Parameter Decorators {#method-parameter-decorators}
 
