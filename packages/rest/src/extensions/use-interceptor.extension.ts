@@ -7,7 +7,8 @@ import { RestRouteExtension } from './routes.extension.js';
 import { InvalidInterceptor } from '#errors';
 
 /**
- * A group of extensions that allows you to set the order of launching different interceptors.
+ * Takes into account interceptors specified in controller methods,
+ * for example: `@route('GET', 'some-path', [], [Interceptor1])`.
  */
 @injectable()
 export class UseInterceptorExtension implements Extension {
