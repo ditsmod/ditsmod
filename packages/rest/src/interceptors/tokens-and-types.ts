@@ -12,18 +12,18 @@ export abstract class HttpHandler {
 }
 
 export interface HttpInterceptor {
-  intercept(next: HttpHandler, reqCtx: RequestContext): Promise<any>;
+  intercept(next: HttpHandler, ctx: RequestContext): Promise<any>;
 }
 
 export class HttpInterceptorHandler implements HttpHandler {
   constructor(
     public interceptor: HttpInterceptor,
     public next: HttpHandler,
-    public reqCtx: RequestContext,
+    public ctx: RequestContext,
   ) {}
 
   async handle(): Promise<any> {
-    return this.interceptor.intercept(this.next, this.reqCtx);
+    return this.interceptor.intercept(this.next, this.ctx);
   }
 }
 
@@ -33,7 +33,7 @@ export class HttpInterceptorHandler implements HttpHandler {
  * Interceptors sit between the `HttpFrontend` and the `HttpBackend`.
  */
 export abstract class HttpFrontend implements HttpInterceptor {
-  abstract intercept(next: HttpHandler, reqCtx: RequestContext): Promise<any>;
+  abstract intercept(next: HttpHandler, ctx: RequestContext): Promise<any>;
 }
 
 /**
@@ -49,5 +49,5 @@ export abstract class HttpBackend implements HttpHandler {
 }
 
 export abstract class RouteScopedHttpBackend {
-  abstract handle(reqCtx: RequestContext): Promise<any>;
+  abstract handle(ctx: RequestContext): Promise<any>;
 }

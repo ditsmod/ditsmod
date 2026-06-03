@@ -4,18 +4,18 @@ import { CorsService } from '@ditsmod/cors';
 @controller()
 export class FirstController {
   @route('GET')
-  getMethod(reqCtx: RequestContext) {
-    reqCtx.send('GET method\n');
+  getMethod(ctx: RequestContext) {
+    ctx.send('GET method\n');
   }
 
   @route('POST')
-  postMethod(reqCtx: RequestContext) {
-    reqCtx.send('POST method\n');
+  postMethod(ctx: RequestContext) {
+    ctx.send('POST method\n');
   }
 
   @route('PATCH')
-  patchMethod(reqCtx: RequestContext) {
-    reqCtx.send('PATCH method\n');
+  patchMethod(ctx: RequestContext) {
+    ctx.send('PATCH method\n');
   }
 }
 
@@ -24,8 +24,8 @@ export class SecondController {
   constructor(private corsService: CorsService) {}
 
   @route('GET', 'credentials')
-  getMethod(reqCtx: RequestContext) {
+  getMethod(ctx: RequestContext) {
     this.corsService.setCookie('one', 'value for one');
-    reqCtx.send('Here GET request with "Access-Control-Allow-Credentials: true" header.\n');
+    ctx.send('Here GET request with "Access-Control-Allow-Credentials: true" header.\n');
   }
 }

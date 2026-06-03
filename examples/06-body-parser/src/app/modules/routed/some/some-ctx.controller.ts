@@ -9,26 +9,26 @@ export class RouteScopedController {
   constructor(protected parse: RouteScopedMulterParser) {}
 
   @route('GET', 'route-scoped')
-  tellHello(reqCtx: RequestContext) {
-    reqCtx.send('Hello, you need send POST request');
+  tellHello(ctx: RequestContext) {
+    ctx.send('Hello, you need send POST request');
   }
 
   @route('POST', 'route-scoped')
-  post(reqCtx: RequestContext) {
-    reqCtx.sendJson(reqCtx.body);
+  post(ctx: RequestContext) {
+    ctx.sendJson(ctx.body);
   }
 
   @route('GET', 'route-scoped-file-upload')
-  getHtmlForm(reqCtx: RequestContext) {
-    sendHtmlForm(reqCtx.rawRes);
+  getHtmlForm(ctx: RequestContext) {
+    sendHtmlForm(ctx.rawRes);
   }
 
   @route('POST', 'route-scoped-file-upload')
-  async downloadFile(reqCtx: RequestContext) {
-    const parsedForm = await this.parse.array(reqCtx, 'fieldName', 5);
+  async downloadFile(ctx: RequestContext) {
+    const parsedForm = await this.parse.array(ctx, 'fieldName', 5);
     await saveFiles(parsedForm);
     // @todo Refactoring this for HTTP2
-    (reqCtx.rawRes as ServerResponse).writeHead(303, { Connection: 'close', Location: '/route-scoped-file-upload' });
-    reqCtx.rawRes.end();
+    (ctx.rawRes as ServerResponse).writeHead(303, { Connection: 'close', Location: '/route-scoped-file-upload' });
+    ctx.rawRes.end();
   }
 }

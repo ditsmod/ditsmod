@@ -12,12 +12,12 @@ export class AuthjsGuard implements CanActivate {
     protected ctx: Context,
   ) {}
 
-  async canActivate(reqCtx: RequestContext, params?: any[]): Promise<boolean | Response> {
-    const session = await getSession(reqCtx, this.config);
+  async canActivate(ctx: RequestContext, params?: any[]): Promise<boolean | Response> {
+    const session = await getSession(ctx, this.config);
     if (!session) {
       return false;
     }
-    reqCtx.auth = session;
+    ctx.auth = session;
     this.ctx.set(AUTHJS_SESSION, session);
     return true;
   }

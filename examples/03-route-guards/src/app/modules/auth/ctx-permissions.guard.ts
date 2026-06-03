@@ -8,8 +8,8 @@ import { RouteScopedAuthService } from './ctx-auth.service.js';
 export class RouteScopedPermissionsGuard implements CanActivate {
   constructor(private authService: RouteScopedAuthService) {}
 
-  async canActivate(reqCtx: RequestContext, params?: Permission[]) {
-    if (await this.authService.hasPermissions(reqCtx, params)) {
+  async canActivate(ctx: RequestContext, params?: Permission[]) {
+    if (await this.authService.hasPermissions(ctx, params)) {
       return true;
     } else {
       return new Response(null, { status: Status.FORBIDDEN });

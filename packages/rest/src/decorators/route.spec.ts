@@ -81,7 +81,7 @@ describe('Route decorator', () => {
 
   it('one guard without params', () => {
     class Guard1 implements CanActivate {
-      canActivate(reqCtx: RequestContext) {
+      canActivate(ctx: RequestContext) {
         return true;
       }
     }
@@ -104,7 +104,7 @@ describe('Route decorator', () => {
 
   it('two guards without params', () => {
     class Guard1 implements CanActivate {
-      canActivate(reqCtx: RequestContext) {
+      canActivate(ctx: RequestContext) {
         return true;
       }
     }
@@ -127,7 +127,7 @@ describe('Route decorator', () => {
 
   it('two guard with params', () => {
     class Guard1 implements CanActivate {
-      canActivate(reqCtx: RequestContext) {
+      canActivate(ctx: RequestContext) {
         return true;
       }
     }
@@ -157,7 +157,7 @@ describe('Route decorator', () => {
 
   it('one interceptor, one extension group', () => {
     class Interceptor1 implements HttpInterceptor {
-      async intercept(next: HttpHandler, reqCtx: RequestContext) {}
+      async intercept(next: HttpHandler, ctx: RequestContext) {}
     }
 
     @controller()

@@ -8,12 +8,12 @@ import { MyJwtPayload } from './modules/services/auth/types.js';
 @controller()
 export class HelloWorldController {
   @route('GET')
-  async getToken(reqCtx: RequestContext) {
-    reqCtx.send('Hello, World!\n');
+  async getToken(ctx: RequestContext) {
+    ctx.send('Hello, World!\n');
   }
 
   @route('GET', 'profile', [BearerGuard])
-  async getProfile(@ctx(JWT_PAYLOAD) jwtPayload: MyJwtPayload, reqCtx: RequestContext) {
-    reqCtx.send(`Hello, ${jwtPayload.userName}! You have successfully authorized.`);
+  async getProfile(@ctx(JWT_PAYLOAD) jwtPayload: MyJwtPayload, ctx: RequestContext) {
+    ctx.send(`Hello, ${jwtPayload.userName}! You have successfully authorized.`);
   }
 }

@@ -4,8 +4,8 @@ import { route, controller, RequestContext } from '@ditsmod/rest';
 @controller()
 export class Controller1 {
   @route('GET', 'fail1')
-  method1(reqCtx: RequestContext, injector: Injector) {
+  method1(ctx: RequestContext, injector: Injector) {
     injector.get('non-existing-token');
-    reqCtx.send('ok');
+    ctx.send('ok');
   }
 }

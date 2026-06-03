@@ -3,7 +3,7 @@ import { RequestContext, controller, route } from '@ditsmod/rest';
 @controller()
 export class HelloWorldController {
   @route('GET')
-  tellHello(reqCtx: RequestContext) {
+  tellHello(ctx: RequestContext) {
     return 'Original message!';
   }
 
@@ -16,7 +16,7 @@ export class HelloWorldController {
 @controller({ scope: 'route' })
 export class HelloWorldController2 {
   @route('GET', 'route-scoped')
-  tellHello(reqCtx: RequestContext) {
+  tellHello(ctx: RequestContext) {
     return 'Original message!';
   }
 }

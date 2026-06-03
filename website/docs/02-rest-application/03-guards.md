@@ -10,7 +10,7 @@ sidebar_position: 3
 
 ```ts
 interface CanActivate {
-  canActivate(reqCtx: RequestContext, params?: any[]): boolean | Response | Promise<boolean | Response>;
+  canActivate(ctx: RequestContext, params?: any[]): boolean | Response | Promise<boolean | Response>;
 }
 ```
 
@@ -24,7 +24,7 @@ import { AuthService } from './auth.service.js';
 export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService) {}
 
-  async canActivate(reqCtx: RequestContext, params?: any[]) {
+  async canActivate(ctx: RequestContext, params?: any[]) {
     return Boolean(await this.authService.updateAndGetSession());
   }
 }
@@ -43,7 +43,7 @@ import { Permission } from './types.js';
 export class PermissionsGuard implements CanActivate {
   constructor(private authService: AuthService) {}
 
-  async canActivate(reqCtx: RequestContext, params?: Permission[]) {
+  async canActivate(ctx: RequestContext, params?: Permission[]) {
     if (await this.authService.hasPermissions(params)) {
       return true;
     } else {
@@ -90,8 +90,8 @@ import { AuthGuard } from './auth.guard.js';
 @controller()
 export class SomeController {
   @route('GET', 'some-url', [AuthGuard])
-  tellHello(reqCtx: RequestContext) {
-    reqCtx.send('Hello, admin!');
+  tellHello(ctx: RequestContext) {
+    ctx.send('Hello, admin!');
   }
 }
 ```
@@ -111,8 +111,8 @@ import { Permission } from './permission.js';
 @controller()
 export class SomeController {
   @route('GET', 'some-url', [[PermissionsGuard, Permission.canActivateAdministration]])
-  tellHello(reqCtx: RequestContext) {
-    reqCtx.send('Hello, admin!');
+  tellHello(ctx: RequestContext) {
+    ctx.send('Hello, admin!');
   }
 }
 ```
@@ -130,7 +130,7 @@ import { Permission } from './permission.js';
 export class PermissionsGuard implements CanActivate {
   constructor(private authService: AuthService) {}
 
-  async canActivate(reqCtx: RequestContext, params?: Permission[]) {
+  async canActivate(ctx: RequestContext, params?: Permission[]) {
     if (await this.authService.hasPermissions(params)) {
       return true;
     } else {
@@ -165,8 +165,8 @@ import { Permission } from '../auth/types.js';
 @controller()
 export class SomeController {
   @route('GET', 'administration', [requirePermissions(Permission.canActivateAdministration)])
-  helloAdmin(reqCtx: RequestContext) {
-    reqCtx.send('some secret');
+  helloAdmin(ctx: RequestContext) {
+    ctx.send('some secret');
   }
 }
 ```

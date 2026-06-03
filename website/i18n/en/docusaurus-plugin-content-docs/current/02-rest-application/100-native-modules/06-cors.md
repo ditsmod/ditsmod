@@ -104,12 +104,12 @@ import { CorsService } from '@ditsmod/cors';
 
 @controller()
 export class SomeController {
-  constructor(private reqCtx: RequestContext, private corsService: CorsService) {}
+  constructor(private ctx: RequestContext, private corsService: CorsService) {}
 
   @route('GET')
   getMethod() {
     this.corsService.setCookie('one', 'value for one');
-    this.reqCtx.send('Some response');
+    this.ctx.send('Some response');
   }
 }
 ```

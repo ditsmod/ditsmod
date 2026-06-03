@@ -152,7 +152,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
       return (async (opts) => {
         const result = await chainMaker.makeChain(opts).handle(); // First HTTP handler in the chain of HTTP interceptors.
         // .catch((err) => {
-        //   return errorHandler.handleError(err, reqCtx);
+        //   return errorHandler.handleError(err, ctx);
         // })
         return opts.next(result);
       }) as AnyMiddlewareFunction;
@@ -175,12 +175,12 @@ export class TrpcPreRouterExtension implements Extension<void> {
     // const interceptor = new RouteScopedDefaultTrpcHttpFrontend();
     return (async (opts) => {
       // try {
-      //   interceptor.before(reqCtx).after(reqCtx, await routeHandler(reqCtx));
+      //   interceptor.before(ctx).after(ctx, await routeHandler(ctx));
       // } catch (err: any) {
-      //   await errorHandler.handleError(err, reqCtx);
+      //   await errorHandler.handleError(err, ctx);
       // }
       // const val = await routeHandler(opts);
-      // const result = await interceptor.before(reqCtx).after(reqCtx, val);
+      // const result = await interceptor.before(ctx).after(ctx, val);
       return opts.next();
     }) as AnyMiddlewareFunction;
   }
@@ -227,7 +227,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
         .handle(); // First HTTP handler in the chain of HTTP interceptors.
         // .catch((err) => {
         //   const errorHandler = injector.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
-        //   return errorHandler.handleError(err, reqCtx);
+        //   return errorHandler.handleError(err, ctx);
         // });
     };
 

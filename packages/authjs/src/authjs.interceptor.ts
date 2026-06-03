@@ -11,10 +11,10 @@ export class AuthjsInterceptor implements HttpInterceptor {
     setEnvDefaults(process.env, config);
   }
 
-  async intercept(next: HttpHandler, reqCtx: RequestContext) {
-    let response = await Auth(toWebRequest(reqCtx), this.config);
+  async intercept(next: HttpHandler, ctx: RequestContext) {
+    let response = await Auth(toWebRequest(ctx), this.config);
     if (response.body || (response.status != Status.OK && response.status != Status.FOUND)) {
-      await applyResponse(response, reqCtx.rawRes);
+      await applyResponse(response, ctx.rawRes);
       return;
     }
     if (response.status == Status.FOUND) {
@@ -22,7 +22,7 @@ export class AuthjsInterceptor implements HttpInterceptor {
       headers.delete('location');
       response = new Response(undefined, { headers });
     }
-    applyHeaders(response, reqCtx.rawRes);
+    applyHeaders(response, ctx.rawRes);
     return next.handle();
   }
 }

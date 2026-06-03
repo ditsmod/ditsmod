@@ -11,8 +11,8 @@ export class RequestScopedController {
   }
 
   @route(['GET', 'POST'], 'get-array0')
-  [Symbol()](reqCtx: RequestContext) {
-    return reqCtx.sendJson(reqCtx.rawReq.headers);
+  [Symbol()](ctx: RequestContext) {
+    return ctx.sendJson(ctx.rawReq.headers);
   }
 
   @route('GET', 'interceptor0', [], [Interceptor1])
@@ -24,18 +24,18 @@ export class RequestScopedController {
 @controller({ scope: 'route' })
 export class RouteScopedController {
   @route('GET', 'get1/:pathParam1/:pathParam2')
-  tellHello(reqCtx: RequestContext) {
-    return { pathParams: reqCtx.pathParams, queryParams: reqCtx.queryParams };
+  tellHello(ctx: RequestContext) {
+    return { pathParams: ctx.pathParams, queryParams: ctx.queryParams };
   }
 
   @route(['GET', 'POST'], 'get-array1')
-  [Symbol()](reqCtx: RequestContext) {
-    return reqCtx.sendJson(reqCtx.rawReq.headers);
+  [Symbol()](ctx: RequestContext) {
+    return ctx.sendJson(ctx.rawReq.headers);
   }
 
   @route('GET', 'interceptor1', [], [Interceptor1])
-  withInterceptors(reqCtx: RequestContext) {
-    return (reqCtx as RequestContext & { msg: string }).msg;
+  withInterceptors(ctx: RequestContext) {
+    return (ctx as RequestContext & { msg: string }).msg;
   }
 }
 

@@ -6,7 +6,7 @@ import { BearerGuard } from './bearer.guard.js';
 @controller()
 export class SecondController {
   @oasRoute('GET', 'second', [BearerGuard])
-  getSome(reqCtx: RequestContext) {
-    reqCtx.sendJson({ ok: 1 });
+  getSome(ctx: RequestContext) {
+    ctx.sendJson({ ok: 1 });
   }
 }

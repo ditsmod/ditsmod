@@ -8,7 +8,7 @@ describe('OAS type guards', () => {
   describe('isOasGuard()', () => {
     @oasGuard({} as any)
     class Guard1 implements CanActivate {
-      canActivate(reqCtx: RequestContext) {
+      canActivate(ctx: RequestContext) {
         return true;
       }
     }

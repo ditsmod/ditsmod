@@ -14,9 +14,9 @@ export class ChainMaker {
     @inject(HTTP_INTERCEPTORS) @optional() private interceptors: HttpInterceptor[] = [],
   ) {}
 
-  makeChain(reqCtx: RequestContext): HttpHandler {
+  makeChain(ctx: RequestContext): HttpHandler {
     return this.interceptors.reduceRight(
-      (next, interceptor) => new HttpInterceptorHandler(interceptor, next, reqCtx),
+      (next, interceptor) => new HttpInterceptorHandler(interceptor, next, ctx),
       this.backend,
     );
   }

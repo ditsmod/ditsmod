@@ -7,8 +7,8 @@ export class OtherController {
   constructor(private someService: SomeService) {}
 
   @route('GET')
-  tellHello(reqCtx: RequestContext) {
+  tellHello(ctx: RequestContext) {
     this.someService.setSomeLog();
-    reqCtx.send("I'm OtherController\n");
+    ctx.send("I'm OtherController\n");
   }
 }

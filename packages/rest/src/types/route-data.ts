@@ -18,5 +18,5 @@ export class RouteMeta {
   resolvedGuardsPerMod?: ResolvedGuardPerMod[];
   Controller: Class;
   methodName: string | symbol;
-  routeHandler?: (reqCtx: RequestContext) => Promise<any>;
+  routeHandler?: (ctx: RequestContext) => Promise<any>;
 }

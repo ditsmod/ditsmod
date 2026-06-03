@@ -25,8 +25,8 @@ import { Permission } from '../auth/types.js';
 @trpcController()
 export class SomeController {
   @trpcRoute([requirePermissions(Permission.canActivateAdministration)])
-  helloAdmin(reqCtx: RequestContext) {
-    reqCtx.send('some secret');
+  helloAdmin(ctx: RequestContext) {
+    ctx.send('some secret');
   }
 }
 ```

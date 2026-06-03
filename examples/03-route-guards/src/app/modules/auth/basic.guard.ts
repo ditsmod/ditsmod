@@ -12,22 +12,22 @@ if (!basicAuth) {
  */
 @guard()
 export class RequestScopedBasicGuard implements CanActivate {
-  canActivate(reqCtx: RequestContext, [realm]: [string?] = []) {
-    const { authorization } = reqCtx.rawReq.headers;
+  canActivate(ctx: RequestContext, [realm]: [string?] = []) {
+    const { authorization } = ctx.rawReq.headers;
     if (!authorization) {
-      return this.unauth(reqCtx, realm);
+      return this.unauth(ctx, realm);
     }
     const expectBase64 = Buffer.from(basicAuth!, 'utf8').toString('base64');
     const [authType, actualBase64] = authorization.split(' ');
     if (authType != 'Basic' || actualBase64 != expectBase64) {
-      return this.unauth(reqCtx, realm);
+      return this.unauth(ctx, realm);
     }
     return true;
   }
 
-  protected unauth(reqCtx: RequestContext, realm?: string): Response {
+  protected unauth(ctx: RequestContext, realm?: string): Response {
     realm ??= 'Access to the API endpoint';
-    reqCtx.rawRes.setHeader('WWW-Authenticate', `Basic realm="${realm}"`);
+    ctx.rawRes.setHeader('WWW-Authenticate', `Basic realm="${realm}"`);
     return new Response(null, { status: Status.UNAUTHORIZED });
   }
 }

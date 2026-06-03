@@ -6,7 +6,7 @@ export class FirstController {
   constructor(private firstService: FirstService) {}
 
   @route('GET', 'first')
-  tellHefllo(reqCtx: RequestContext) {
-    reqCtx.send(this.firstService.countToThree());
+  tellHefllo(ctx: RequestContext) {
+    ctx.send(this.firstService.countToThree());
   }
 }

@@ -8,14 +8,6 @@ import { A_PATH_PARAMS, QUERY_STRING, RAW_REQ, RAW_RES } from '#types/constants.
 import type { RedirectStatusCodes } from '#types/types.js';
 import type { ServerResponse } from 'node:http';
 
-/**
- * The request context class, which you can substitute with your own class.
- * You can do this at any level, but remember that your class must implement `RequestContext`
- * and must also be passed to the DI registry as a `ValueProvider`
- * like this: `{ token: RequestContext, useValue: MyRequestContext }`.
- *
- * An instance of this class is created without DI.
- */
 @injectable()
 export class RequestContext<T = any> extends Context {
   rawReq: RawRequest;

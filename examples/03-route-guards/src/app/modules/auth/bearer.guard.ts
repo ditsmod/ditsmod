@@ -9,10 +9,10 @@ import { AuthService } from './auth.service.js';
  */
 @guard()
 export class RequestScopedBearerGuard implements CanActivate {
-  constructor(protected reqCtx: Context, protected authService: AuthService) {}
+  constructor(protected ctx: Context, protected authService: AuthService) {}
 
-  async canActivate(reqCtx: RequestContext, params?: any[]) {
-    const authValue = reqCtx.rawReq.headers.authorization?.split(' ');
+  async canActivate(ctx: RequestContext, params?: any[]) {
+    const authValue = ctx.rawReq.headers.authorization?.split(' ');
     if (authValue?.[0] != 'Bearer') {
       return false;
     }
@@ -22,7 +22,7 @@ export class RequestScopedBearerGuard implements CanActivate {
      */
     const token = authValue[1];
     const session = await this.authService.getSession(token);
-    this.reqCtx.set(SESSION, session);
+    this.ctx.set(SESSION, session);
     return Boolean(token);
   }
 }
@@ -34,8 +34,8 @@ export class RequestScopedBearerGuard implements CanActivate {
 export class RouteScopedBearerGuard implements CanActivate {
   constructor(protected injector: Injector, protected authService: AuthService) {}
 
-  async canActivate(reqCtx: RequestContext, params?: any[]) {
-    const authValue = reqCtx.rawReq.headers.authorization?.split(' ');
+  async canActivate(ctx: RequestContext, params?: any[]) {
+    const authValue = ctx.rawReq.headers.authorization?.split(' ');
     if (authValue?.[0] != 'Bearer') {
       return false;
     }
@@ -45,7 +45,7 @@ export class RouteScopedBearerGuard implements CanActivate {
      */
     const token = authValue[1];
     const session = await this.authService.getSession(token);
-    reqCtx.auth = session;
+    ctx.auth = session;
     return Boolean(token);
   }
 }

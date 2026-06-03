@@ -12,13 +12,13 @@ interface Body {
 @controller()
 export class RequestScopedController {
   @route('GET')
-  tellHello(reqCtx: RequestContext) {
-    reqCtx.send('Hello, you need send POST request');
+  tellHello(ctx: RequestContext) {
+    ctx.send('Hello, you need send POST request');
   }
 
   @route('POST')
-  post(reqCtx: RequestContext, @ctx(HTTP_BODY) body: Body) {
-    reqCtx.sendJson(body);
+  post(ctx: RequestContext, @ctx(HTTP_BODY) body: Body) {
+    ctx.sendJson(body);
   }
 
   @route('GET', 'file-upload')
@@ -27,11 +27,11 @@ export class RequestScopedController {
   }
 
   @route('POST', 'file-upload')
-  async downloadFile(reqCtx: RequestContext, parse: MulterParser) {
+  async downloadFile(ctx: RequestContext, parse: MulterParser) {
     const parsedForm = await parse.array('fieldName', 5);
     await saveFiles(parsedForm);
     // @todo Refactoring this for HTTP2
-    (reqCtx.rawRes as ServerResponse).writeHead(303, { Connection: 'close', Location: '/file-upload' });
-    reqCtx.rawRes.end();
+    (ctx.rawRes as ServerResponse).writeHead(303, { Connection: 'close', Location: '/file-upload' });
+    ctx.rawRes.end();
   }
 }

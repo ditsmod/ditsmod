@@ -7,8 +7,8 @@ export class AuthController {
   constructor(private jwtService: JwtService) {}
 
   @route('GET', 'get-token-for/:userName')
-  async getToken(@ctx(PATH_PARAMS) pathParams: AnyObj, reqCtx: RequestContext) {
+  async getToken(@ctx(PATH_PARAMS) pathParams: AnyObj, ctx: RequestContext) {
     const token = await this.jwtService.signWithSecret({ userName: pathParams.userName });
-    reqCtx.send(token);
+    ctx.send(token);
   }
 }

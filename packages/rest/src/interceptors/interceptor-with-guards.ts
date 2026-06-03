@@ -23,34 +23,34 @@ export class InterceptorWithGuards implements HttpInterceptor {
     private injector: Injector,
   ) {}
 
-  async intercept(next: HttpHandler, reqCtx: RequestContext) {
+  async intercept(next: HttpHandler, ctx: RequestContext) {
     if (this.routeMeta.resolvedGuardsPerMod)
       for (const item of this.routeMeta.resolvedGuardsPerMod) {
         const injectorPerReq = this.getInjectorPerReq(item);
         const guard = injectorPerReq.instantiateResolved(item.guard) as CanActivate;
-        const result = await guard.canActivate(reqCtx, item.params);
+        const result = await guard.canActivate(ctx, item.params);
         if (result !== true) {
-          return this.sendResponse(reqCtx, result);
+          return this.sendResponse(ctx, result);
         }
       }
     if (this.routeMeta.resolvedGuards)
       for (const item of this.routeMeta.resolvedGuards) {
         const guard = this.injector.instantiateResolved(item.guard) as CanActivate;
-        const result = await guard.canActivate(reqCtx, item.params);
+        const result = await guard.canActivate(ctx, item.params);
         if (result !== true) {
-          return this.sendResponse(reqCtx, result);
+          return this.sendResponse(ctx, result);
         }
       }
 
     return next.handle();
   }
 
-  protected async sendResponse(reqCtx: RequestContext, result: false | Response) {
+  protected async sendResponse(ctx: RequestContext, result: false | Response) {
     if (result === false) {
-      this.prohibitActivation(reqCtx);
+      this.prohibitActivation(ctx);
       return;
     }
-    await applyResponse(result, reqCtx.rawRes);
+    await applyResponse(result, ctx.rawRes);
     return result;
   }
 
@@ -61,10 +61,10 @@ export class InterceptorWithGuards implements HttpInterceptor {
     return inj;
   }
 
-  protected prohibitActivation(reqCtx: RequestContext, status?: Status) {
+  protected prohibitActivation(ctx: RequestContext, status?: Status) {
     const systemLogMediator = this.injector.get(SystemLogMediator) as SystemLogMediator;
-    systemLogMediator.youCannotActivateRoute(this, reqCtx.rawReq.method!, reqCtx.rawReq.url!);
-    reqCtx.rawRes.statusCode = Status.UNAUTHORIZED;
-    reqCtx.rawRes.end();
+    systemLogMediator.youCannotActivateRoute(this, ctx.rawReq.method!, ctx.rawReq.url!);
+    ctx.rawRes.statusCode = Status.UNAUTHORIZED;
+    ctx.rawRes.end();
   }
 }

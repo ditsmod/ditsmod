@@ -105,8 +105,8 @@ export class AppModule {}
   @controller()
   export class SomeController {
     @route('POST')
-    ok(@ctx(HTTP_BODY) body: Body, reqCtx: RequestContext) {
-      reqCtx.sendJson(body);
+    ok(@ctx(HTTP_BODY) body: Body, ctx: RequestContext) {
+      ctx.sendJson(body);
     }
   }
   ```
@@ -118,8 +118,8 @@ export class AppModule {}
   @controller({ scope: 'route' })
   export class SomeController {
     @route('POST')
-    ok(reqCtx: RequestContext) {
-      reqCtx.sendJson(reqCtx.body);
+    ok(ctx: RequestContext) {
+      ctx.sendJson(ctx.body);
     }
   }
   ```
@@ -156,11 +156,11 @@ export class SomeController {
   @controller()
   export class SomeController {
     @route('POST', 'file-upload')
-    async downloadFile(reqCtx: RequestContext, parse: MulterParser) {
+    async downloadFile(ctx: RequestContext, parse: MulterParser) {
       const parsedForm = await parse.array('fieldName', 5);
       await this.saveFiles(parsedForm);
       // ...
-      reqCtx.send('ok');
+      ctx.send('ok');
     }
 
     protected saveFiles(parsedForm: MulterParsedForm) {
@@ -190,11 +190,11 @@ export class SomeController {
     constructor(protected parse: RouteScopedMulterParser) {}
 
     @route('POST', 'file-upload')
-    async downloadFile(reqCtx: RequestContext) {
-      const parsedForm = await this.parse.array(reqCtx, 'fieldName', 5);
+    async downloadFile(ctx: RequestContext) {
+      const parsedForm = await this.parse.array(ctx, 'fieldName', 5);
       await this.saveFiles(parsedForm);
       // ...
-      reqCtx.rawRes.end('ok');
+      ctx.rawRes.end('ok');
     }
 
     protected saveFiles(parsedForm: MulterParsedForm) {
@@ -227,21 +227,21 @@ export class SomeController {
   ```ts
   const { textFields, file } = await parse.single('fieldName');
   // OR
-  const { textFields, file } = await parse.single(reqCtx, 'fieldName'); // For route-scoped.
+  const { textFields, file } = await parse.single(ctx, 'fieldName'); // For route-scoped.
   ```
 
 - метод `array` може приймати декілька файлів з указаного поля форми:
   ```ts
   const { textFields, files } = await parse.array('fieldName', 5);
   // OR
-  const { textFields, files } = await parse.array(reqCtx, 'fieldName', 5); // For route-scoped.
+  const { textFields, files } = await parse.array(ctx, 'fieldName', 5); // For route-scoped.
   ```
 - метод `any` повертає такий самий тип даних, що і метод `array`, але він приймає файли з будь-якими назвами полів форми, а також він не має параметрів для обмеження максимальної кількості файлів (вона обмежується лише загальною конфігурацією, про яку буде йти мова згодом):
 
   ```ts
   const { textFields, files } = await parse.any();
   // OR
-  const { textFields, files } = await parse.any(reqCtx); // For route-scoped.
+  const { textFields, files } = await parse.any(ctx); // For route-scoped.
   ```
 
 - метод `groups` приймає масиви файлів з указаними полями форми:
@@ -251,7 +251,7 @@ export class SomeController {
     { name: 'gallery', maxCount: 8 },
   ]);
   // OR
-  const { textFields, groups } = await parse.groups(reqCtx, [
+  const { textFields, groups } = await parse.groups(ctx, [
     { name: 'avatar', maxCount: 1 },
     { name: 'gallery', maxCount: 8 },
   ]); // For route-scoped.
@@ -260,7 +260,7 @@ export class SomeController {
   ```ts
   const textFields = await parse.textFields();
   // OR
-  const textFields = await parse.textFields(reqCtx); // For route-scoped.
+  const textFields = await parse.textFields(ctx); // For route-scoped.
   ```
 
 ### MulterExtendedOptions {#multerextendedoptions}

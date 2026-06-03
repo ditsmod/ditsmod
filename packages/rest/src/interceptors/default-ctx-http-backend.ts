@@ -9,7 +9,7 @@ import { RequestContext } from '#services/request-context.js';
 export class RouteScopedDefaultHttpBackend implements RouteScopedHttpBackend {
   constructor(protected routeMeta: RouteMeta) {}
 
-  async handle(reqCtx: RequestContext) {
-    return this.routeMeta.routeHandler!(reqCtx);
+  async handle(ctx: RequestContext) {
+    return this.routeMeta.routeHandler!(ctx);
   }
 }

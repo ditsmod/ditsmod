@@ -20,9 +20,9 @@ export class ValidationInterceptor implements HttpInterceptor {
     @skipSelf() protected routeMeta: RouteMeta,
   ) {}
 
-  intercept(next: HttpHandler, reqCtx: RequestContext) {
-    this.rawReq = reqCtx.rawReq;
-    this.rawRes = reqCtx.rawRes;
+  intercept(next: HttpHandler, ctx: RequestContext) {
+    this.rawReq = ctx.rawReq;
+    this.rawRes = ctx.rawRes;
     this.prepareAndValidate();
     return next.handle();
   }

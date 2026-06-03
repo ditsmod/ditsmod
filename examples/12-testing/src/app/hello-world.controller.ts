@@ -7,14 +7,14 @@ export class HelloWorldController {
   constructor(private myService: MyService) {}
 
   @route('GET')
-  async helloWorld(reqCtx: RequestContext) {
+  async helloWorld(ctx: RequestContext) {
     const message = await this.myService.helloWorld();
-    reqCtx.send(message);
+    ctx.send(message);
   }
 
   @route('GET', 'admin')
-  async helloAdmin(reqCtx: RequestContext) {
+  async helloAdmin(ctx: RequestContext) {
     const message = await this.myService.helloAdmin();
-    reqCtx.send(message);
+    ctx.send(message);
   }
 }

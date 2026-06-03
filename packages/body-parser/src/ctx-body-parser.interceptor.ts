@@ -6,8 +6,8 @@ import { RequestContext, HttpHandler, HttpInterceptor } from '@ditsmod/rest';
 export class RouteScopedBodyParserInterceptor implements HttpInterceptor {
   constructor(private bodyParserGroup: BodyParserGroup) {}
 
-  async intercept(next: HttpHandler, reqCtx: RequestContext) {
-    reqCtx.body = await this.bodyParserGroup.parse(reqCtx.rawReq, reqCtx.rawReq.headers, {});
+  async intercept(next: HttpHandler, ctx: RequestContext) {
+    ctx.body = await this.bodyParserGroup.parse(ctx.rawReq, ctx.rawReq.headers, {});
 
     return next.handle();
   }

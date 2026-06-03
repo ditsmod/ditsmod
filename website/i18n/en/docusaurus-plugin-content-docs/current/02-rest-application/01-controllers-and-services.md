@@ -80,10 +80,10 @@ import { Service2 } from './service-2';
 @controller()
 export class HelloWorldController {
   @route('GET', 'hello')
-  method1(service1: Service1, service2: Service2, reqCtx: RequestContext) {
+  method1(service1: Service1, service2: Service2, ctx: RequestContext) {
     // Working with service1 and service2
     // ...
-    reqCtx.send('Hello, World!');
+    ctx.send('Hello, World!');
   }
 }
 ```
@@ -92,7 +92,7 @@ What we see here:
 
 1. A route is created using the `route` decorator, which is placed before a class method, and the method's name doesn't matter.
 2. In this controller mode, you can declare any number of parameters in a class method. In this case, we declared three dependencies: `service1` with data type `Service1`, `service2` with data type `Service2`, and `res` with data type `RequestContext`. By the way, `res` is short for the word _response_.
-3. Text responses to HTTP requests are sent using `reqCtx.send()`.
+3. Text responses to HTTP requests are sent using `ctx.send()`.
 
 Although in the previous example the dependencies were declared in `method1`, we can do this in a similar way in the constructor:
 
@@ -103,13 +103,13 @@ import { Service2 } from './service-2';
 
 @controller()
 export class HelloWorldController {
-  constructor(private service1: Service1, private service2: Service2, private reqCtx: RequestContext) {}
+  constructor(private service1: Service1, private service2: Service2, private ctx: RequestContext) {}
 
   @route('GET', 'hello')
   method1() {
     // Working with this.service1 and this.service2
     // ...
-    this.reqCtx.send('Hello, World!');
+    this.ctx.send('Hello, World!');
   }
 }
 ```
@@ -177,11 +177,11 @@ import { RequestContext, controller, route } from '@ditsmod/rest';
 
 @controller({ scope: 'route' })
 export class HelloWorldController {
-  constructor(private reqCtx: RequestContext) {}
+  constructor(private ctx: RequestContext) {}
 
   @route('GET', 'hello')
   method1() {
-    this.reqCtx.send('Hello, World!');
+    this.ctx.send('Hello, World!');
   }
 }
 ```
@@ -194,8 +194,8 @@ import { controller, RequestContext, route } from '@ditsmod/rest';
 @controller({ scope: 'route' })
 export class HelloWorldController {
   @route('GET', 'hello')
-  method1(reqCtx: RequestContext) {
-    reqCtx.send('Hello, World!');
+  method1(ctx: RequestContext) {
+    ctx.send('Hello, World!');
   }
 }
 ```
@@ -324,8 +324,8 @@ import { SecondService } from './second.service.js';
 })
 export class SomeController {
   @route('GET', 'hello')
-  method1(reqCtx: RequestContext, secondService: SecondService) {
-    reqCtx.send(secondService.sayHello());
+  method1(ctx: RequestContext, secondService: SecondService) {
+    ctx.send(secondService.sayHello());
   }
 }
 ```

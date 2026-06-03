@@ -17,8 +17,8 @@ export class InjScopedController {
   }
 
   @route('GET')
-  goto(reqCtx: RequestContext) {
-    reqCtx.rawRes.setHeader('content-type', 'text/html');
+  goto(ctx: RequestContext) {
+    ctx.rawRes.setHeader('content-type', 'text/html');
     const url = 'http://0.0.0.0:3000/auth/signin';
     return `Open your browser on <a href="${url}">${url}</a>`;
   }

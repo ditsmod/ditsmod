@@ -6,7 +6,7 @@ export class SecondController {
   constructor(@inject('multi-provider') private multiProvider: any) {}
 
   @route('GET', 'second')
-  getHello(reqCtx: RequestContext) {
-    reqCtx.sendJson(this.multiProvider);
+  getHello(ctx: RequestContext) {
+    ctx.sendJson(this.multiProvider);
   }
 }

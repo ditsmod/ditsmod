@@ -11,9 +11,9 @@ export class FirstController {
     description: 'Route wtih required path parameter',
     parameters: getParams('path', true, Model1, 'username'),
   })
-  getResourceId(@ctx(PATH_PARAMS) pathParams: AnyObj, reqCtx: RequestContext) {
+  getResourceId(@ctx(PATH_PARAMS) pathParams: AnyObj, ctx: RequestContext) {
     const { username } = pathParams;
-    reqCtx.sendJson({ username });
+    ctx.sendJson({ username });
   }
 
   @oasRoute('POST', 'model1', {
@@ -23,8 +23,8 @@ export class FirstController {
       content: getContent({ mediaType: 'application/json', model: Model1 }),
     },
   })
-  postModel1(@ctx(HTTP_BODY) body: any, reqCtx: RequestContext) {
-    reqCtx.sendJson(body);
+  postModel1(@ctx(HTTP_BODY) body: any, ctx: RequestContext) {
+    ctx.sendJson(body);
   }
 
   @oasRoute('POST', 'model2', {
@@ -34,7 +34,7 @@ export class FirstController {
       content: getContent({ mediaType: 'application/json', model: Model2 }),
     },
   })
-  postModel2(@ctx(HTTP_BODY) body: any, reqCtx: RequestContext) {
-    reqCtx.sendJson(body);
+  postModel2(@ctx(HTTP_BODY) body: any, ctx: RequestContext) {
+    ctx.sendJson(body);
   }
 }

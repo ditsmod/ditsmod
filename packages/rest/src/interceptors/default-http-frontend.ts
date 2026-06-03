@@ -11,13 +11,13 @@ export class DefaultHttpFrontend extends RouteScopedDefaultHttpFrontend {
     super();
   }
 
-  override before(reqCtx: RequestContext) {
-    if (reqCtx.queryString) {
-      this.ctx.set(QUERY_PARAMS, parse(reqCtx.queryString));
+  override before(ctx: RequestContext) {
+    if (ctx.queryString) {
+      this.ctx.set(QUERY_PARAMS, parse(ctx.queryString));
     }
-    if (reqCtx.aPathParams?.length) {
+    if (ctx.aPathParams?.length) {
       const pathParams: AnyObj = {};
-      reqCtx.aPathParams.forEach((param) => (pathParams[param.key] = param.value));
+      ctx.aPathParams.forEach((param) => (pathParams[param.key] = param.value));
       this.ctx.set(PATH_PARAMS, pathParams);
     }
     return this;

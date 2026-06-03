@@ -8,16 +8,16 @@ import { SecondDict } from '#app/second/i18n/current/_base-en/second.dict.js';
 @controller()
 export class SecondController {
   @route('GET', 'second/:userName')
-  tellHello(@ctx(PATH_PARAMS) pathParams: AnyObj, dictService: DictService, reqCtx: RequestContext) {
+  tellHello(@ctx(PATH_PARAMS) pathParams: AnyObj, dictService: DictService, ctx: RequestContext) {
     const dict = dictService.getDictionary(SecondDict);
     const { userName } = pathParams;
     const msg = dict.hello(userName);
 
-    reqCtx.send(msg);
+    ctx.send(msg);
   }
 
   @route('GET', 'first-extended')
-  tellHefllo(reqCtx: RequestContext, firstService: FirstService) {
-    reqCtx.send(firstService.countToThree());
+  tellHefllo(ctx: RequestContext, firstService: FirstService) {
+    ctx.send(firstService.countToThree());
   }
 }

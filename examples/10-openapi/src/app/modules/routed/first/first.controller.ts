@@ -9,13 +9,13 @@ import { getMetaContent } from './overriden-helper.js';
 @controller({ providersPerReq: [BasicGuard] })
 export class FirstController {
   @route(['GET', 'POST'])
-  hello(reqCtx: RequestContext) {
-    reqCtx.send('Hello, World!\n');
+  hello(ctx: RequestContext) {
+    ctx.send('Hello, World!\n');
   }
 
   @oasRoute('GET', 'guard', [BasicGuard])
-  helloWithGuard(reqCtx: RequestContext) {
-    reqCtx.send('Hello, user!');
+  helloWithGuard(ctx: RequestContext) {
+    ctx.send('Hello, user!');
   }
 
   @oasRoute('GET', 'resource/:resourceId', {
@@ -29,9 +29,9 @@ export class FirstController {
       },
     },
   })
-  getResourceId(@ctx(PATH_PARAMS) pathParams: AnyObj, reqCtx: RequestContext) {
+  getResourceId(@ctx(PATH_PARAMS) pathParams: AnyObj, ctx: RequestContext) {
     const { resourceId } = pathParams;
-    reqCtx.sendJson({ resourceId, body: `some body for resourceId ${resourceId}` });
+    ctx.sendJson({ resourceId, body: `some body for resourceId ${resourceId}` });
   }
 
   @oasRoute('GET', 'resource2/:resourceId', {
@@ -45,16 +45,16 @@ export class FirstController {
       },
     },
   })
-  getResourceId2(@ctx(PATH_PARAMS) pathParams: AnyObj, reqCtx: RequestContext) {
+  getResourceId2(@ctx(PATH_PARAMS) pathParams: AnyObj, ctx: RequestContext) {
     const { resourceId } = pathParams;
-    reqCtx.sendJson({ resourceId, body: `some body for resourceId ${resourceId}` });
+    ctx.sendJson({ resourceId, body: `some body for resourceId ${resourceId}` });
   }
 }
 
 @controller({ scope: 'route' })
 export class RouteScopedController {
   @route('GET', 'route-scoped')
-  routeScoped(reqCtx: RequestContext) {
-    reqCtx.send('ok');
+  routeScoped(ctx: RequestContext) {
+    ctx.send('ok');
   }
 }

@@ -8,7 +8,7 @@ import { Permission } from './types.js';
 export class RequestScopedPermissionsGuard implements CanActivate {
   constructor(private authService: AuthService) {}
 
-  async canActivate(reqCtx: RequestContext, params?: Permission[]) {
+  async canActivate(ctx: RequestContext, params?: Permission[]) {
     if (await this.authService.hasPermissions(params)) {
       return true;
     } else {

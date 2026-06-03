@@ -11,23 +11,23 @@ import { toWebRequest, encodeUrlEncoded } from '#mod/http-api-adapters.js';
 @controller({ scope: 'route' })
 export class Controller1 {
   @route('GET', 'case1')
-  async case1(reqCtx: RequestContext) {
-    const request = toWebRequest(reqCtx);
-    expectMatchingRequestHeaders(reqCtx.rawReq, request);
+  async case1(ctx: RequestContext) {
+    const request = toWebRequest(ctx);
+    expectMatchingRequestHeaders(ctx.rawReq, request);
     return 'OK';
   }
 
   @route('POST', 'case2')
-  async case2(reqCtx: RequestContext) {
-    const request = toWebRequest(reqCtx);
-    await expectMatchingJsonRequestBody(reqCtx, request);
+  async case2(ctx: RequestContext) {
+    const request = toWebRequest(ctx);
+    await expectMatchingJsonRequestBody(ctx, request);
     return 'OK';
   }
 
   @route('POST', 'case3')
-  async case3(reqCtx: RequestContext) {
-    const request = toWebRequest(reqCtx);
-    await expectMatchingUrlEncodedRequestBody(reqCtx, request);
+  async case3(ctx: RequestContext) {
+    const request = toWebRequest(ctx);
+    await expectMatchingUrlEncodedRequestBody(ctx, request);
     return 'OK';
   }
 }

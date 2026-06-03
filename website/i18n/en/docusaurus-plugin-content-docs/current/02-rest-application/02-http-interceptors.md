@@ -64,7 +64,7 @@ import { RequestContext, HttpHandler, HttpInterceptor } from '@ditsmod/rest';
 
 @injectable()
 export class MyHttpInterceptor implements HttpInterceptor {
-  intercept(next: HttpHandler, reqCtx: RequestContext) {
+  intercept(next: HttpHandler, ctx: RequestContext) {
     return next.handle(); // Here returns Promise<any>;
   }
 }

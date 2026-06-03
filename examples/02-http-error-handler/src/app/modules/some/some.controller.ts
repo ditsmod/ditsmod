@@ -3,8 +3,8 @@ import { RequestContext, controller, route } from '@ditsmod/rest';
 @controller()
 export class RequestScopedController {
   @route('GET', 'hello')
-  ok(reqCtx: RequestContext) {
-    reqCtx.send('Hello, World!');
+  ok(ctx: RequestContext) {
+    ctx.send('Hello, World!');
   }
 
   @route('GET', 'throw-error')
@@ -16,8 +16,8 @@ export class RequestScopedController {
 @controller({ scope: 'route' })
 export class RouteScopedController {
   @route('GET', 'hello2')
-  ok(reqCtx: RequestContext) {
-    reqCtx.send('Hello, World2!');
+  ok(ctx: RequestContext) {
+    ctx.send('Hello, World2!');
   }
 
   @route('GET', 'throw-error2')

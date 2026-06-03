@@ -15,40 +15,40 @@ export class FirstController {
   ) {}
 
   @route('GET')
-  tellHello(reqCtx: RequestContext) {
-    reqCtx.send('first module.\n');
+  tellHello(ctx: RequestContext) {
+    ctx.send('first module.\n');
   }
 
   @route('GET', 'add-2')
-  async addSecondModule(reqCtx: RequestContext) {
+  async addSecondModule(ctx: RequestContext) {
     this.moduleManager.addImport(secondModuleWithParams);
-    await this.reinitApp(reqCtx, 'second', 'importing');
+    await this.reinitApp(ctx, 'second', 'importing');
   }
 
   @route('GET', 'del-2')
-  async removeSecondModule(reqCtx: RequestContext) {
+  async removeSecondModule(ctx: RequestContext) {
     this.moduleManager.removeImport(secondModuleWithParams);
-    await this.reinitApp(reqCtx, 'second', 'removing');
+    await this.reinitApp(ctx, 'second', 'removing');
   }
 
   @route('GET', 'add-3')
-  async addThirdModule(reqCtx: RequestContext) {
+  async addThirdModule(ctx: RequestContext) {
     this.moduleManager.addImport(thirdModuleWithParams);
-    await this.reinitApp(reqCtx, 'third', 'importing');
+    await this.reinitApp(ctx, 'third', 'importing');
   }
 
   @route('GET', 'del-3')
-  async removeThirdModule(reqCtx: RequestContext) {
+  async removeThirdModule(ctx: RequestContext) {
     this.moduleManager.removeImport(thirdModuleWithParams);
-    await this.reinitApp(reqCtx, 'third', 'removing');
+    await this.reinitApp(ctx, 'third', 'removing');
   }
 
-  private async reinitApp(reqCtx: RequestContext, moduleName: 'second' | 'third', action: 'importing' | 'removing') {
+  private async reinitApp(ctx: RequestContext, moduleName: 'second' | 'third', action: 'importing' | 'removing') {
     const err = await this.appInitializer.reinit();
     if (err) {
-      reqCtx.send(`${action} ${moduleName} failed: ${err.message}\n`);
+      ctx.send(`${action} ${moduleName} failed: ${err.message}\n`);
     } else {
-      reqCtx.send(`${moduleName} successfully ${action}!\n`);
+      ctx.send(`${moduleName} successfully ${action}!\n`);
     }
   }
 }

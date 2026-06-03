@@ -5,11 +5,11 @@ import { RequestContext } from '#services/request-context.js';
 
 @injectable()
 export class Interceptor1 implements HttpInterceptor {
-  async intercept(next: HttpHandler, reqCtx: RequestContext) {
-    if (reqCtx.scope == 'route') {
-      (reqCtx as RequestContext & { msg: string }).msg = 'ok';
+  async intercept(next: HttpHandler, ctx: RequestContext) {
+    if (ctx.scope == 'route') {
+      (ctx as RequestContext & { msg: string }).msg = 'ok';
     } else {
-      reqCtx.set('msg', 'ok');
+      ctx.set('msg', 'ok');
     }
 
     return next.handle();

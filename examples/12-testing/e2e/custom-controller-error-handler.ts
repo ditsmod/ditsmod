@@ -12,8 +12,8 @@ export class CustomHttpErrorHandler extends DefaultHttpErrorHandler {
     super(logger);
   }
 
-  override async handleError(err: Error, reqCtx: RequestContext) {
-    await super.handleError(err, reqCtx);
+  override async handleError(err: Error, ctx: RequestContext) {
+    await super.handleError(err, ctx);
     this.errorContainer.setError(err);
   }
 }

@@ -198,13 +198,13 @@ import { Permission } from '../auth/types.js';
 @controller()
 export class SomeController {
   @route('GET', 'set-loglevel', [requirePermissions(Permission.canSetLogLevel)])
-  setLogLevel(@ctx(QUERY_PARAMS) queryParams: AnyObj, logger: Logger, reqCtx: RequestContext) {
+  setLogLevel(@ctx(QUERY_PARAMS) queryParams: AnyObj, logger: Logger, ctx: RequestContext) {
     const level = queryParams.logLevel as InputLogLevel;
     try {
       logger.setLevel(level);
-      reqCtx.send('Setting logLevel successful!');
+      ctx.send('Setting logLevel successful!');
     } catch (error: any) {
-      reqCtx.send(`Setting logLevel is failed: ${error.message}`);
+      ctx.send(`Setting logLevel is failed: ${error.message}`);
     }
   }
 }

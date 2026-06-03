@@ -29,7 +29,7 @@ import express from 'express';
 const app = express();
 
 app.get('/hello', function (req, res) {
-  reqCtx.send('Hello, World!');
+  ctx.send('Hello, World!');
 });
 
 app.listen(3000, '0.0.0.0');

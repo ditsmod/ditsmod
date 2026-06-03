@@ -25,8 +25,8 @@ import { Permission } from '../auth/types.js';
 @controller()
 export class SomeController {
   @route('GET', 'administration', [requirePermissions(Permission.canActivateAdministration)])
-  helloAdmin(reqCtx: RequestContext) {
-    reqCtx.send('some secret');
+  helloAdmin(ctx: RequestContext) {
+    ctx.send('some secret');
   }
 }
 ```

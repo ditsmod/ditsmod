@@ -13,18 +13,18 @@ export class AppController {
   ) {}
 
   @route('GET')
-  showCounters(reqCtx: RequestContext) {
+  showCounters(ctx: RequestContext) {
     const msg = `per req counter: ${this.thirdService.getCounter()}, per rou counter: ${this.onePerRouService.getCounter()}`;
-    reqCtx.send(msg);
+    ctx.send(msg);
   }
 
   @route('POST')
-  showRequestBody(reqCtx: RequestContext) {
-    reqCtx.sendJson({ body: this.thirdService.getBody(reqCtx.body) });
+  showRequestBody(ctx: RequestContext) {
+    ctx.sendJson({ body: this.thirdService.getBody(ctx.body) });
   }
 
   @route('GET', 'zero')
-  getMultiProvideValue(reqCtx: RequestContext) {
-    reqCtx.sendJson(this.multiProvider);
+  getMultiProvideValue(ctx: RequestContext) {
+    ctx.sendJson(this.multiProvider);
   }
 }

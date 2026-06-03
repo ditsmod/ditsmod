@@ -8,7 +8,7 @@ export class CommentsController {
    */
   @route('GET')
   @route('GET', ':commentId')
-  sendComments(reqCtx: RequestContext, @ctx(PATH_PARAMS) pathParams: AnyObj = {}) {
-    reqCtx.sendJson({ pathParams });
+  sendComments(ctx: RequestContext, @ctx(PATH_PARAMS) pathParams: AnyObj = {}) {
+    ctx.sendJson({ pathParams });
   }
 }

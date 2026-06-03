@@ -8,7 +8,7 @@ let webResponse: Response = new Response();
 @controller()
 export class Controller1 {
   @route('GET')
-  async getAuth(reqCtx: RequestContext) {
+  async getAuth(ctx: RequestContext) {
     const headers = new Headers();
     headers.append('X-Test-Header', 'foo');
     headers.append('Content-Type', 'application/json');

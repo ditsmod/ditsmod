@@ -43,17 +43,17 @@ import { SessionCookie } from '@ditsmod/session-cookie';
 
 @controller()
 export class HelloWorldController {
-  constructor(private session: SessionCookie, private reqCtx: RequestContext) {}
+  constructor(private session: SessionCookie, private ctx: RequestContext) {}
 
   @route('GET', 'set')
   setCookie() {
     this.session.id = '123';
-    this.reqCtx.send('Hello, World!\n');
+    this.ctx.send('Hello, World!\n');
   }
 
   @route('GET', 'get')
   getCookie() {
-    this.reqCtx.send(`session ID: ${this.session.id}`);
+    this.ctx.send(`session ID: ${this.session.id}`);
   }
 }
 ```

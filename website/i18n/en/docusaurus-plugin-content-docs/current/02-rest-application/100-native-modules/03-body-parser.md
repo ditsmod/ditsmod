@@ -105,8 +105,8 @@ Depending on whether the controller works [in route-scoped or request-scoped mod
   @controller()
   export class SomeController {
     @route('POST')
-    ok(@ctx(HTTP_BODY) body: Body, reqCtx: RequestContext) {
-      reqCtx.sendJson(body);
+    ok(@ctx(HTTP_BODY) body: Body, ctx: RequestContext) {
+      ctx.sendJson(body);
     }
   }
   ```
@@ -118,8 +118,8 @@ Depending on whether the controller works [in route-scoped or request-scoped mod
   @controller({ scope: 'route' })
   export class SomeController {
     @route('POST')
-    ok(reqCtx: RequestContext) {
-      reqCtx.sendJson(reqCtx.body);
+    ok(ctx: RequestContext) {
+      ctx.sendJson(ctx.body);
     }
   }
   ```
@@ -156,11 +156,11 @@ Depending on whether the controller works [in injector-scope or context-scope mo
   @controller()
   export class SomeController {
     @route('POST', 'file-upload')
-    async downloadFile(reqCtx: RequestContext, parse: MulterParser) {
+    async downloadFile(ctx: RequestContext, parse: MulterParser) {
       const parsedForm = await parse.array('fieldName', 5);
       await this.saveFiles(parsedForm);
       // ...
-      reqCtx.send('ok');
+      ctx.send('ok');
     }
 
     protected saveFiles(parsedForm: MulterParsedForm) {
@@ -190,11 +190,11 @@ Depending on whether the controller works [in injector-scope or context-scope mo
     constructor(protected parse: RouteScopedMulterParser) {}
 
     @route('POST', 'file-upload')
-    async downloadFile(reqCtx: RequestContext) {
-      const parsedForm = await this.parse.array(reqCtx, 'fieldName', 5);
+    async downloadFile(ctx: RequestContext) {
+      const parsedForm = await this.parse.array(ctx, 'fieldName', 5);
       await this.saveFiles(parsedForm);
       // ...
-      reqCtx.rawRes.end('ok');
+      ctx.rawRes.end('ok');
     }
 
     protected saveFiles(parsedForm: MulterParsedForm) {
@@ -227,21 +227,21 @@ A maximum of two properties from these four can be filled in one parsing: the `t
   ```ts
   const { textFields, file } = await parse.single('fieldName');
   // OR
-  const { textFields, file } = await parse.single(reqCtx, 'fieldName'); // For route-scoped.
+  const { textFields, file } = await parse.single(ctx, 'fieldName'); // For route-scoped.
   ```
 
 - The `array` method can accept multiple files from the specified form field:
   ```ts
   const { textFields, files } = await parse.array('fieldName', 5);
   // OR
-  const { textFields, files } = await parse.array(reqCtx, 'fieldName', 5); // For route-scoped.
+  const { textFields, files } = await parse.array(ctx, 'fieldName', 5); // For route-scoped.
   ```
 - The `any` method returns the same type of data as the `array` method, but it accepts files with any form field names and does not have parameters to limit the maximum number of files (this limit is determined by the general configuration, which will be discussed later):
 
   ```ts
   const { textFields, files } = await parse.any();
   // OR
-  const { textFields, files } = await parse.any(reqCtx); // For route-scoped.
+  const { textFields, files } = await parse.any(ctx); // For route-scoped.
   ```
 
 - The `groups` method accepts arrays of files from specified form fields:
@@ -251,7 +251,7 @@ A maximum of two properties from these four can be filled in one parsing: the `t
     { name: 'gallery', maxCount: 8 },
   ]);
   // OR
-  const { textFields, groups } = await parse.groups(reqCtx, [
+  const { textFields, groups } = await parse.groups(ctx, [
     { name: 'avatar', maxCount: 1 },
     { name: 'gallery', maxCount: 8 },
   ]); // For route-scoped.
@@ -260,7 +260,7 @@ A maximum of two properties from these four can be filled in one parsing: the `t
   ```ts
   const textFields = await parse.textFields();
   // OR
-  const textFields = await parse.textFields(reqCtx); // For route-scoped.
+  const textFields = await parse.textFields(ctx); // For route-scoped.
   ```
 
 ### MulterExtendedOptions {#multerextendedoptions}

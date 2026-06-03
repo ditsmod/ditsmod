@@ -4,11 +4,11 @@ import type { RequestContext } from '@ditsmod/rest';
 /**
  * Adapts Ditsmod Request to a Web Request, returning the Web Request.
  */
-export function toWebRequest(reqCtx: RequestContext, alternativeUrl?: string) {
-  const url = `${reqCtx.protocol}://${process.env.HOST ?? 'localhost'}${alternativeUrl || reqCtx.rawReq.url}`;
+export function toWebRequest(ctx: RequestContext, alternativeUrl?: string) {
+  const url = `${ctx.protocol}://${process.env.HOST ?? 'localhost'}${alternativeUrl || ctx.rawReq.url}`;
   const headers = new Headers();
 
-  Object.entries(reqCtx.rawReq.headers).forEach(([key, value]) => {
+  Object.entries(ctx.rawReq.headers).forEach(([key, value]) => {
     if (Array.isArray(value)) {
       value.forEach((v) => v && headers.append(key, v));
       return;
@@ -20,10 +20,10 @@ export function toWebRequest(reqCtx: RequestContext, alternativeUrl?: string) {
   });
 
   // GET and HEAD not allowed to receive body
-  const body = /GET|HEAD/.test(reqCtx.rawReq.method || '') ? undefined : encodeRequestBody(reqCtx);
+  const body = /GET|HEAD/.test(ctx.rawReq.method || '') ? undefined : encodeRequestBody(ctx);
 
   const request = new Request(url, {
-    method: reqCtx.rawReq.method,
+    method: ctx.rawReq.method,
     headers,
     body,
   } satisfies RequestInit);
@@ -34,14 +34,14 @@ export function toWebRequest(reqCtx: RequestContext, alternativeUrl?: string) {
 /**
  * Encodes Ditsmod Request body based on the content type header.
  */
-function encodeRequestBody(reqCtx: RequestContext): BodyInit | null | undefined {
-  const contentType = reqCtx.rawReq.headers['content-type'];
+function encodeRequestBody(ctx: RequestContext): BodyInit | null | undefined {
+  const contentType = ctx.rawReq.headers['content-type'];
 
   if (contentType?.includes('application/x-www-form-urlencoded')) {
-    return encodeUrlEncoded(reqCtx.body);
+    return encodeUrlEncoded(ctx.body);
   }
 
-  return encodeJson(reqCtx.body);
+  return encodeJson(ctx.body);
 }
 
 /**
