@@ -1,4 +1,4 @@
-import { Context, injectable, type AnyObj } from '@ditsmod/core';
+import { Context, injectable, optional, type AnyObj } from '@ditsmod/core';
 import { TLSSocket } from 'node:tls';
 import { randomUUID } from 'node:crypto';
 
@@ -10,24 +10,28 @@ import type { ServerResponse } from 'node:http';
 
 @injectable()
 export class RequestContext<T = any> extends Context {
-  rawReq: RawRequest;
-  rawRes: RawResponse;
-  aPathParams: PathParam[] | null;
-  queryString: string;
-
   pathParams?: AnyObj;
   queryParams?: AnyObj;
   body?: any;
   auth?: any;
-  /**
-   * Indicates in which mode the controller methods work.
-   *
-   * The operation of the controller in `route` mode means that its methods,
-   * which are bound to routes, receive a single argument - an object containing
-   * context data, including native request objects.
-   */
-  scope?: 'route';
   #requestId: string;
+
+  constructor(
+    @optional() public rawReq: RawRequest,
+    @optional() public rawRes: RawResponse,
+    @optional() public aPathParams: PathParam[] | null,
+    @optional() public queryString: string,
+    /**
+     * Indicates in which mode the controller methods work.
+     *
+     * The operation of the controller in `route` mode means that its methods,
+     * which are bound to routes, receive a single argument - an object containing
+     * context data, including native request objects.
+     */
+    @optional() public scope?: 'route',
+  ) {
+    super();
+  }
 
   /**
    * This method is intended for use in `request-scoped` mode only.

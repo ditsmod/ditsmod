@@ -826,8 +826,8 @@ const childCtx = child.get(Context) as Context;
 parentCtx.set('key1', 'value1');
 childCtx.set('key2', 'value2');
 
-childCtx.getInScope('key1'); // value1
-childCtx.getInScope('key2'); // value2
+childCtx.getInScope('key1', child); // value1
+childCtx.getInScope('key2', child); // value2
 ```
 
 This example demonstrates:

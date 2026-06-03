@@ -168,12 +168,7 @@ export class PreRouterExtension implements Extension<void> {
 
     if (this.hasInterceptors(mergedPerRou)) {
       return (async (rawReq, rawRes, aPathParams, queryString) => {
-        const ctx = new RequestContextClass(injectorPerRou);
-        ctx.rawReq = rawReq;
-        ctx.rawRes = rawRes;
-        ctx.aPathParams = aPathParams;
-        ctx.queryString = queryString;
-        ctx.scope = 'route';
+        const ctx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString, 'route');
         await chainMaker
           .makeChain(ctx)
           .handle() // First HTTP handler in the chain of HTTP interceptors.
@@ -182,7 +177,7 @@ export class PreRouterExtension implements Extension<void> {
           });
       }) as RouteHandler;
     } else {
-      return this.handleWithoutInterceptors(injectorPerRou, RequestContextClass, routeHandler, errorHandler);
+      return this.handleWithoutInterceptors(RequestContextClass, routeHandler, errorHandler);
     }
   }
 
@@ -197,19 +192,13 @@ export class PreRouterExtension implements Extension<void> {
   }
 
   protected handleWithoutInterceptors(
-    injectorPerRou: Injector,
     RequestContextClass: typeof RequestContext,
     routeHandler: (ctx: RequestContext) => Promise<any>,
     errorHandler: HttpErrorHandler,
   ) {
     const interceptor = new RouteScopedDefaultHttpFrontend();
     return (async (rawReq, rawRes, aPathParams, queryString) => {
-      const ctx = new RequestContextClass(injectorPerRou);
-      ctx.rawReq = rawReq;
-      ctx.rawRes = rawRes;
-      ctx.aPathParams = aPathParams;
-      ctx.queryString = queryString;
-      ctx.scope = 'route';
+      const ctx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString, 'route');
       try {
         interceptor.before(ctx).after(ctx, await routeHandler(ctx));
       } catch (err: any) {

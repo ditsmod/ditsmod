@@ -18,7 +18,7 @@ describe('DefaultHttpErrorHandler', () => {
     end(...args: any[]) {},
   } as RawResponse;
 
-  const ctx = new RequestContext({} as any);
+  const ctx = new RequestContext({} as any, {} as any, {} as any[], '');
   ctx.setCtx({} as any, rawRes, [], '');
   const logger = { log(...args: any[]) {} } as Logger;
 
