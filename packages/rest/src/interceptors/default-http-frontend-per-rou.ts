@@ -6,7 +6,7 @@ import { HttpFrontend, HttpHandler } from './tokens-and-types.js';
 import type { RouteContext } from '#services/route-context.js';
 
 @injectable()
-export class RouteScopedDefaultHttpFrontend implements HttpFrontend {
+export class DefaultHttpFrontendPerRou implements HttpFrontend {
   async intercept(next: HttpHandler, ctx: RouteContext) {
     this.before(ctx).after(ctx, await next.handle());
   }

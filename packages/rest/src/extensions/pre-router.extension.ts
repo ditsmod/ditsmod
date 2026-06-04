@@ -31,9 +31,9 @@ import { InterceptorWithGuards } from '#interceptors/interceptor-with-guards.js'
 import { RouteMeta } from '../types/route-data.js';
 import { ChainMaker } from '#interceptors/chain-maker.js';
 import { DefaultHttpBackend } from '#interceptors/default-http-backend.js';
-import { RouteScopedDefaultHttpBackend } from '#interceptors/default-ctx-http-backend.js';
-import { RouteScopedDefaultChainMaker } from '#interceptors/default-ctx-chain-maker.js';
-import { RouteScopedDefaultHttpFrontend } from '#interceptors/default-ctx-http-frontend.js';
+import { DefaultHttpBackendPerRou } from '#interceptors/default-http-backend-per-rou.js';
+import { DefaultChainMakerPerRou } from '#interceptors/default-chain-maker-per-rou.js';
+import { DefaultHttpFrontendPerRou } from '#interceptors/default-http-frontend-per-rou.js';
 import { DefaultHttpFrontend } from '#interceptors/default-http-frontend.js';
 import { HttpBackend, HttpFrontend } from '#interceptors/tokens-and-types.js';
 import { GuardPerMod1, NormalizedGuard } from '#interceptors/guard.js';
@@ -89,9 +89,9 @@ export class PreRouterExtension implements Extension<void> {
     );
 
     metadataPerMod3.meta.providersPerRou.unshift(
-      { token: HttpBackend, useClass: RouteScopedDefaultHttpBackend },
-      { token: ChainMaker, useClass: RouteScopedDefaultChainMaker },
-      { token: HttpFrontend, useClass: RouteScopedDefaultHttpFrontend },
+      { token: HttpBackend, useClass: DefaultHttpBackendPerRou },
+      { token: ChainMaker, useClass: DefaultChainMakerPerRou },
+      { token: HttpFrontend, useClass: DefaultHttpFrontendPerRou },
     );
   }
 
@@ -159,7 +159,7 @@ export class PreRouterExtension implements Extension<void> {
     this.checkDeps(injectorPerRou, routeMeta, controllerName, httpMethods, fullPath);
     const resolvedChainMaker = resolvedPerRou.find((rp) => rp.dualKey.token === ChainMaker)!;
     const resolvedErrHandler = resolvedPerRou.find((rp) => rp.dualKey.token === HttpErrorHandler)!;
-    const chainMaker = injectorPerRou.instantiateResolved<RouteScopedDefaultChainMaker>(resolvedChainMaker);
+    const chainMaker = injectorPerRou.instantiateResolved<DefaultChainMakerPerRou>(resolvedChainMaker);
     const ctrl = injectorPerMod.get(routeMeta.Controller);
     const routeHandler = ctrl[routeMeta.methodName].bind(ctrl) as typeof routeMeta.routeHandler;
     routeMeta.routeHandler = routeHandler;
@@ -196,7 +196,7 @@ export class PreRouterExtension implements Extension<void> {
     routeHandler: (ctx: RouteContext) => Promise<any>,
     errorHandler: HttpErrorHandler,
   ) {
-    const interceptor = new RouteScopedDefaultHttpFrontend();
+    const interceptor = new DefaultHttpFrontendPerRou();
     return (async (rawReq, rawRes, aPathParams, queryString) => {
       const ctx = new RouteContextClass(rawReq, rawRes, aPathParams, queryString);
       try {

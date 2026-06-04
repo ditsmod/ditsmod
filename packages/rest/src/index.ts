@@ -31,11 +31,11 @@ export {
   InstantiatedGuard,
 } from '#interceptors/interceptor-with-guards-per-rou.js';
 export { InterceptorWithGuards } from '#interceptors/interceptor-with-guards.js';
-export { RouteScopedDefaultHttpBackend } from '#interceptors/default-ctx-http-backend.js';
+export { DefaultHttpBackendPerRou } from '#interceptors/default-http-backend-per-rou.js';
 export { DefaultHttpBackend } from '#interceptors/default-http-backend.js';
 export { ChainMaker } from '#interceptors/chain-maker.js';
-export { RouteScopedDefaultChainMaker } from '#interceptors/default-ctx-chain-maker.js';
-export { RouteScopedDefaultHttpFrontend } from '#interceptors/default-ctx-http-frontend.js';
+export { DefaultChainMakerPerRou } from '#interceptors/default-chain-maker-per-rou.js';
+export { DefaultHttpFrontendPerRou } from '#interceptors/default-http-frontend-per-rou.js';
 export { DefaultHttpFrontend } from '#interceptors/default-http-frontend.js';
 export {
   HttpBackend,
