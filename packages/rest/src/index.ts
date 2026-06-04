@@ -65,3 +65,5 @@ export { defaultProvidersPerReq } from './providers/default-providers-per-req.js
 export { HttpErrorHandler } from './services/http-error-handler.js';
 export { defaultProvidersPerRou } from './providers/default-providers-per-rou.js';
 export { DefaultHttpErrorHandler } from './services/default-http-error-handler.js';
+export { RouteContext } from './services/route-context.js';
+export { BaseRequestContext } from './services/base-request-context.js';

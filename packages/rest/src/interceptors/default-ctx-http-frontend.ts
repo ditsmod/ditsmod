@@ -3,18 +3,18 @@ import { AnyObj, HttpMethod, injectable, Status } from '@ditsmod/core';
 import { CustomError } from '@ditsmod/core/errors';
 
 import { HttpFrontend, HttpHandler } from './tokens-and-types.js';
-import { RequestContext } from '#services/request-context.js';
+import type { RouteContext } from '#services/route-context.js';
 
 @injectable()
 export class RouteScopedDefaultHttpFrontend implements HttpFrontend {
-  async intercept(next: HttpHandler, ctx: RequestContext) {
+  async intercept(next: HttpHandler, ctx: RouteContext) {
     this.before(ctx).after(ctx, await next.handle());
   }
 
   /**
    * This method is called before `intercept()`.
    */
-  before(ctx: RequestContext) {
+  before(ctx: RouteContext) {
     if (ctx.queryString) {
       ctx.queryParams = parse(ctx.queryString);
     }
@@ -29,7 +29,7 @@ export class RouteScopedDefaultHttpFrontend implements HttpFrontend {
   /**
    * This method is called after `intercept()`.
    */
-  after(ctx: RequestContext, val: string | object | Uint8Array | undefined) {
+  after(ctx: RouteContext, val: string | object | Uint8Array | undefined) {
     if (ctx.rawRes.headersSent) {
       return;
     }
@@ -58,7 +58,7 @@ export class RouteScopedDefaultHttpFrontend implements HttpFrontend {
     }
   }
 
-  protected throwTypeError(ctx: RequestContext, contentType?: string | number | string[]) {
+  protected throwTypeError(ctx: RouteContext, contentType?: string | number | string[]) {
     const msg1 = 'Internal Server Error';
     const route = JSON.stringify({ method: ctx.rawReq.method, url: ctx.rawReq.url });
     let msg2 = `The request handler with route ${route} set the data type to "${contentType}"`;

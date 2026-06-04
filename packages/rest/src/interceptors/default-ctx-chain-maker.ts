@@ -8,12 +8,12 @@ import {
   RouteScopedHttpBackend,
 } from './tokens-and-types.js';
 import { HTTP_INTERCEPTORS } from '#types/constants.js';
-import { RequestContext } from '#services/request-context.js';
+import type { RouteContext } from '#services/route-context.js';
 
 class PreHttpBackend implements HttpBackend {
   constructor(
     protected backend: RouteScopedHttpBackend,
-    protected ctx: RequestContext,
+    protected ctx: RouteContext,
   ) {}
 
   handle() {
@@ -31,7 +31,7 @@ export class RouteScopedDefaultChainMaker {
     @inject(HTTP_INTERCEPTORS) @optional() private interceptors: HttpInterceptor[] = [],
   ) {}
 
-  makeChain(ctx: RequestContext): HttpHandler {
+  makeChain(ctx: RouteContext): HttpHandler {
     return this.interceptors.reduceRight(
       (next, interceptor) => new HttpInterceptorHandler(interceptor, next, ctx),
       new PreHttpBackend(this.backend, ctx) as HttpBackend,

@@ -1,4 +1,4 @@
-import type { RequestContext } from '#services/request-context.js';
+import type { BaseRequestContext } from '#services/base-request-context.js';
 
 /**
  * `HttpHandler` is injectable. When injected, the handler instance dispatches requests to the
@@ -12,14 +12,14 @@ export abstract class HttpHandler {
 }
 
 export interface HttpInterceptor {
-  intercept(next: HttpHandler, ctx: RequestContext): Promise<any>;
+  intercept(next: HttpHandler, ctx: BaseRequestContext): Promise<any>;
 }
 
 export class HttpInterceptorHandler implements HttpHandler {
   constructor(
     public interceptor: HttpInterceptor,
     public next: HttpHandler,
-    public ctx: RequestContext,
+    public ctx: BaseRequestContext,
   ) {}
 
   async handle(): Promise<any> {
@@ -33,7 +33,7 @@ export class HttpInterceptorHandler implements HttpHandler {
  * Interceptors sit between the `HttpFrontend` and the `HttpBackend`.
  */
 export abstract class HttpFrontend implements HttpInterceptor {
-  abstract intercept(next: HttpHandler, ctx: RequestContext): Promise<any>;
+  abstract intercept(next: HttpHandler, ctx: BaseRequestContext): Promise<any>;
 }
 
 /**
@@ -49,5 +49,5 @@ export abstract class HttpBackend implements HttpHandler {
 }
 
 export abstract class RouteScopedHttpBackend {
-  abstract handle(ctx: RequestContext): Promise<any>;
+  abstract handle(ctx: BaseRequestContext): Promise<any>;
 }

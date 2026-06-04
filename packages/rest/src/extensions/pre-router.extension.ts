@@ -20,12 +20,11 @@ import {
   ModuleManager,
   HttpMethod,
   getDebugClassName,
-  Context,
 } from '@ditsmod/core';
 
 import { routeChannel } from '#diagnostics-channel';
 import { MetadataPerMod3, PreparedRouteMeta } from '../types/types.js';
-import { A_PATH_PARAMS, HTTP_INTERCEPTORS, QUERY_STRING, RAW_REQ, RAW_RES } from '#types/constants.js';
+import { HTTP_INTERCEPTORS } from '#types/constants.js';
 import { ControllerMetadata } from '../types/controller-metadata.js';
 import { InterceptorWithGuardsPerRou } from '#interceptors/interceptor-with-guards-per-rou.js';
 import { InterceptorWithGuards } from '#interceptors/interceptor-with-guards.js';
@@ -43,6 +42,7 @@ import { HttpErrorHandler } from '#services/http-error-handler.js';
 import { RequestContext } from '#services/request-context.js';
 import { RestRouteExtension } from './routes.extension.js';
 import { CheckingDepsInSandboxFailed, GuardNotFound, InvalidConfigurationOfRoute } from '#errors';
+import { RouteContext } from '#services/route-context.js';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
@@ -138,7 +138,7 @@ export class PreRouterExtension implements Extension<void> {
 
     const routeMeta = baseRouteMeta as RequireProps<typeof baseRouteMeta, 'routeHandler'>;
     const mergedPerRou: Provider[] = [];
-    mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
+    mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend, multi: true });
     const controllerName = getDebugClassName(routeMeta.Controller) || 'unknown';
 
     if (metadataPerMod3.guards1.length || controllerMetadata.guards.length) {
@@ -164,11 +164,11 @@ export class PreRouterExtension implements Extension<void> {
     const routeHandler = ctrl[routeMeta.methodName].bind(ctrl) as typeof routeMeta.routeHandler;
     routeMeta.routeHandler = routeHandler;
     const errorHandler = injectorPerRou.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
-    const RequestContextClass = injectorPerRou.getAny(RequestContext) as typeof RequestContext;
+    const RouteContextClass = injectorPerRou.getAny<typeof RouteContext>(RouteContext);
 
     if (this.hasInterceptors(mergedPerRou)) {
       return (async (rawReq, rawRes, aPathParams, queryString) => {
-        const ctx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString, 'route');
+        const ctx = new RouteContextClass(rawReq, rawRes, aPathParams, queryString);
         await chainMaker
           .makeChain(ctx)
           .handle() // First HTTP handler in the chain of HTTP interceptors.
@@ -177,7 +177,7 @@ export class PreRouterExtension implements Extension<void> {
           });
       }) as RouteHandler;
     } else {
-      return this.handleWithoutInterceptors(RequestContextClass, routeHandler, errorHandler);
+      return this.handleWithoutInterceptors(RouteContextClass, routeHandler, errorHandler);
     }
   }
 
@@ -192,13 +192,13 @@ export class PreRouterExtension implements Extension<void> {
   }
 
   protected handleWithoutInterceptors(
-    RequestContextClass: typeof RequestContext,
-    routeHandler: (ctx: RequestContext) => Promise<any>,
+    RouteContextClass: typeof RouteContext,
+    routeHandler: (ctx: RouteContext) => Promise<any>,
     errorHandler: HttpErrorHandler,
   ) {
     const interceptor = new RouteScopedDefaultHttpFrontend();
     return (async (rawReq, rawRes, aPathParams, queryString) => {
-      const ctx = new RequestContextClass(rawReq, rawRes, aPathParams, queryString, 'route');
+      const ctx = new RouteContextClass(rawReq, rawRes, aPathParams, queryString);
       try {
         interceptor.before(ctx).after(ctx, await routeHandler(ctx));
       } catch (err: any) {
@@ -217,7 +217,7 @@ export class PreRouterExtension implements Extension<void> {
     const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'Rou');
 
     const mergedPerReq: Provider[] = [];
-    mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend as any, multi: true });
+    mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend, multi: true });
     if (metadataPerMod3.guards1.length || controllerMetadata.guards.length) {
       mergedPerReq.push(InterceptorWithGuards);
       mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: InterceptorWithGuards, multi: true });
