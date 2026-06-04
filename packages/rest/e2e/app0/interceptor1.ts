@@ -1,4 +1,4 @@
-import { injectable, Context } from '@ditsmod/core';
+import { injectable } from '@ditsmod/core';
 
 import { HttpHandler, HttpInterceptor } from '#interceptors/tokens-and-types.js';
 import { RequestContext } from '#services/request-context.js';
@@ -6,12 +6,7 @@ import { RequestContext } from '#services/request-context.js';
 @injectable()
 export class Interceptor1 implements HttpInterceptor {
   async intercept(next: HttpHandler, ctx: RequestContext) {
-    if (ctx.scope == 'route') {
-      (ctx as RequestContext & { msg: string }).msg = 'ok';
-    } else {
-      ctx.set('msg', 'ok');
-    }
-
+    ctx.set('msg', 'ok');
     return next.handle();
   }
 }

@@ -17,7 +17,7 @@ describe('basic features of the rest module', () => {
     server?.close();
   });
 
-  ['injector', 'context'].forEach((scope, id) => {
+  ['request', 'route'].forEach((scope, id) => {
     describe(`${scope}-scoped controller`, () => {
       it('GET request with path and query params', async () => {
         const { status, type, body } = await testAgent.get(`/get${id}/11/22?queryParam1=1&queryParam2=2`);

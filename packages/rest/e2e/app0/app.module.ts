@@ -35,7 +35,7 @@ export class RouteScopedController {
 
   @route('GET', 'interceptor1', [], [Interceptor1])
   withInterceptors(ctx: RequestContext) {
-    return (ctx as RequestContext & { msg: string }).msg;
+    return ctx.get('msg');
   }
 }
 
