@@ -6,7 +6,6 @@ import {
   SystemLogMediator,
   ExtensionContext,
   ExtensionManager,
-  PerAppService,
   Extension,
   Provider,
   Stage1ExtensionMeta,
@@ -48,11 +47,8 @@ import { RouteContext } from '#services/route-context.js';
 export class PreRouterExtension implements Extension<void> {
   protected stage1ExtensionMeta: Stage1ExtensionMeta<MetadataPerMod3>;
   protected injectorPerMod: Injector;
-  protected injectorPerApp: Injector;
 
   constructor(
-    protected perAppService: PerAppService,
-    protected router: Router,
     protected extensionManager: ExtensionManager,
     protected moduleManager: ModuleManager,
     protected log: SystemLogMediator,
@@ -61,7 +57,6 @@ export class PreRouterExtension implements Extension<void> {
 
   async stage1() {
     this.stage1ExtensionMeta = await this.extensionManager.stage1(RestRouteExtension);
-    this.injectorPerApp = this.perAppService.reinitInjector([{ token: Router, useValue: this.router }]);
     this.addDefaultProviders(this.stage1ExtensionMeta.groupData);
   }
 
@@ -350,6 +345,7 @@ export class PreRouterExtension implements Extension<void> {
     stage1ExtensionMeta: Stage1ExtensionMeta<MetadataPerMod3>,
     preparedRouteMeta: PreparedRouteMeta[],
   ) {
+    const router = this.injectorPerMod.get(Router);
     if (!stage1ExtensionMeta.delay) {
       const appHasRoutes = this.checkPresenceOfRoutesInApplication(stage1ExtensionMeta.groupDataPerApp);
       if (!appHasRoutes) {
@@ -369,9 +365,9 @@ export class PreRouterExtension implements Extension<void> {
         this.log.printRoute(this, httpMethod, fullPath, countOfGuards);
         routeChannel('ditsmod.route').publish({ moduleName, httpMethod, fullPath, countOfGuards });
         if (httpMethod == 'ALL') {
-          this.router.all(`/${fullPath}`, handle);
+          router.all(`/${fullPath}`, handle);
         } else {
-          this.router.on(httpMethod, `/${fullPath}`, handle);
+          router.on(httpMethod, `/${fullPath}`, handle);
         }
       });
     });
