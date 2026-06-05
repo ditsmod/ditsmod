@@ -38,11 +38,11 @@ export class I18nTransformer {
 
   protected getCurrentOrImportedProviders(token: Class<Dictionary>, group: Class<Dictionary>[]) {
     const providers: Provider[] = [];
-    for (const dict of group) {
-      if (token !== dict) {
-        this.logMissingMethodsIfExists(token, dict);
+    for (const DictCls of group) {
+      if (token !== DictCls) {
+        this.logMissingMethodsIfExists(token, DictCls);
       }
-      providers.push({ token: token, useClass: dict, multi: true });
+      providers.push({ token: token, useClass: DictCls, multi: true });
     }
     return providers;
   }

@@ -35,7 +35,7 @@ export class I18nLogMediator extends LogMediator {
     this.setLog('debug', msg);
   }
   /**
-   * className: for tokenName found extended dictionaries for locales: [...].
+   * [debug className]: for tokenName found extended dictionaries for locales: [...].
    */
   overridedLngs(self: object, tokenName: string, allLngs: string[]) {
     const className = self.constructor.name;

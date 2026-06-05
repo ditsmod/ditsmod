@@ -1,12 +1,13 @@
 import {
   Extension,
   ExtensionManager,
-  PerAppService,
   Provider,
   injectable,
   Injector,
   fromSelf,
   Stage1ExtensionMeta,
+  inject,
+  PROVIDERS_PER_APP,
 } from '@ditsmod/core';
 import { MetadataPerMod3, RestRouteExtension } from '@ditsmod/rest';
 
@@ -24,7 +25,7 @@ export class I18nExtension implements Extension<void> {
     private log: I18nLogMediator,
     private extensionManager: ExtensionManager,
     private i18nTransformer: I18nTransformer,
-    private perAppService: PerAppService,
+   @inject(PROVIDERS_PER_APP) protected providersPerApp: Provider[],
   ) {}
 
   async stage1(isLastModule?: boolean) {
@@ -33,13 +34,13 @@ export class I18nExtension implements Extension<void> {
   }
 
   protected addI18nProviders(stage1ExtensionMeta: Stage1ExtensionMeta<MetadataPerMod3>, isLastModule?: boolean) {
-    const injectorPerApp = this.perAppService.injector;
+    const injectorPerApp = Injector.resolveAndCreate(this.providersPerApp);
 
     const translationsPerApp = injectorPerApp.get(I18N_TRANSLATIONS, null);
     this.hasTranslation = Boolean(translationsPerApp);
     if (isLastModule && translationsPerApp) {
       const providers = this.i18nTransformer.getProviders(translationsPerApp);
-      this.perAppService.providers.push(...providers);
+      this.providersPerApp.push(...providers);
     }
 
     for (const metadataPerMod3 of stage1ExtensionMeta.groupData) {
