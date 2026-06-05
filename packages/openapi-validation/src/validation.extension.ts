@@ -1,4 +1,4 @@
-import { Extension, ExtensionManager, PerAppService, injectable, optional } from '@ditsmod/core';
+import { Extension, ExtensionManager, injectable, optional } from '@ditsmod/core';
 import { HTTP_INTERCEPTORS, RestRouteExtension } from '@ditsmod/rest';
 import { isReferenceObject } from '@ditsmod/openapi';
 
@@ -11,7 +11,6 @@ import { RequestBodyInterceptor } from './request-body.interceptor.js';
 @injectable()
 export class ValidationExtension implements Extension<void> {
   constructor(
-    protected perAppService: PerAppService,
     protected extensionManager: ExtensionManager,
     protected ajvService: AjvService,
     @optional() private validationOptions?: ValidationOptions,
