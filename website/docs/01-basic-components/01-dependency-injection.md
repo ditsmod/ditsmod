@@ -122,6 +122,22 @@ injector.get(Service4); // value for Service3
 3. Якщо запитується токен `Service3`, треба запустити надану функцію, яка видає текст `value for Service3`.
 4. Якщо запитується токен `Service4`, треба видати значення для токену `Service3`, тобто треба видати текст `value for Service3`.
 
+### Дублювання провайдерів з однаковим токеном {#duplicate-providers-with-the-same-token}
+
+Якщо під час створення інжектора ви передаєте два або більше звичайних провайдера з однаковим токеном, інжектор братиме до уваги лише останній провайдер в масиві:
+
+```ts
+const injector = Injector.resolveAndCreate([
+  { token: 'token1', useValue: 'value1' },
+  { token: 'token1', useValue: 'value2' },
+  { token: 'token1', useValue: 'value3' }
+]);
+
+injector.get('token1'); // 'value3'
+```
+
+Виключення з цього правила є лише для [мульти-провайдерів][4], які повертають усі передані значення в масиві.
+
 ### Коротка та довга форми декларації залежностей у методах класу {#short-and-long-forms-of-declaring-dependencies-in-class-methods}
 
 Якщо у якості типу параметра конструктора використовується клас, його одночасно можна використовувати у якості токена:
@@ -1063,6 +1079,7 @@ parent.get(Service2);
 [1]: https://uk.wikipedia.org/wiki/%D0%92%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F_%D0%B7%D0%B0%D0%BB%D0%B5%D0%B6%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9
 [2]: #short-and-long-forms-of-declaring-dependencies-in-class-methods
 [3]: /rest-application/controllers-and-services/#what-is-a-rest-controller
+[4]: #multi-providers
 [11]: https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types
 [15]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) "Singleton"
 [16]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.12/packages/body-parser/src/body-parser.interceptor.ts#L16

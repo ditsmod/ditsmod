@@ -122,6 +122,22 @@ As you can see, during injector creation we have now passed an array of provider
 3. If the token `Service3` is requested, execute the provided function that returns the text `value for Service3`.
 4. If the token `Service4` is requested, return the value for the `Service3` token, meaning the text `value for Service3`.
 
+### Duplicate providers with the same token {#duplicate-providers-with-the-same-token}
+
+If you pass two or more regular providers with the same token while creating an injector, the injector will only consider the last provider in the array:
+
+```ts
+const injector = Injector.resolveAndCreate([
+  { token: 'token1', useValue: 'value1' },
+  { token: 'token1', useValue: 'value2' },
+  { token: 'token1', useValue: 'value3' }
+]);
+
+injector.get('token1'); // 'value3'
+```
+
+The only exception to this rule is [multi-providers][4], which return all provided values in an array.
+
 ### Short and long forms of declaring dependencies in class methods {#short-and-long-forms-of-declaring-dependencies-in-class-methods}
 
 If a class is used as the constructor parameter type, it can also be used as a token:
@@ -1063,6 +1079,7 @@ When creating the child injector, it was not passed `Service1`, but it can refer
 [1]: https://en.wikipedia.org/wiki/Dependency_injection
 [2]: #short-and-long-forms-of-declaring-dependencies-in-class-methods
 [3]: /rest-application/controllers-and-services/#what-is-a-rest-controller
+[4]: #multi-providers
 [11]: https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types
 [15]: https://en.wikipedia.org/wiki/Singleton_pattern
 [16]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.12/packages/body-parser/src/body-parser.interceptor.ts#L16
