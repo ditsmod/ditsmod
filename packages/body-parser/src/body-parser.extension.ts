@@ -1,15 +1,16 @@
-import { Extension, ExtensionManager, PerAppService, injectable } from '@ditsmod/core';
+import { Extension, ExtensionManager, Injector, injectable, inject, PROVIDERS_PER_APP } from '@ditsmod/core';
 import { HTTP_INTERCEPTORS, RestRouteExtension } from '@ditsmod/rest';
 
 import { BodyParserConfig } from './body-parser-config.js';
 import { BodyParserInterceptor } from './body-parser.interceptor.js';
 import { RouteScopedBodyParserInterceptor } from './ctx-body-parser.interceptor.js';
+import type { Provider } from '@ditsmod/core/di';
 
 @injectable()
 export class BodyParserExtension implements Extension<void> {
   constructor(
     protected extensionManager: ExtensionManager,
-    protected perAppService: PerAppService,
+   @inject(PROVIDERS_PER_APP) protected providersPerApp: Provider[],
   ) {}
 
   async stage1() {
@@ -23,7 +24,7 @@ export class BodyParserExtension implements Extension<void> {
         const mergedProvidersPerReq = [...metadataPerMod3.meta.providersPerReq, ...providersPerReq];
 
         // Creating a hierarchy of injectors.
-        const injectorPerApp = this.perAppService.injector;
+        const injectorPerApp = Injector.resolveAndCreate(this.providersPerApp, 'App');
         const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedProvidersPerRou);
         httpMethods.forEach((method) => {
