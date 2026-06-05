@@ -430,16 +430,7 @@ expect(child.parent).toBe(parent);
    *
    */
   get parent(): Injector | undefined {
-    return this.parentGetter();
-  }
-
-  protected parentGetter(): Injector | undefined {
     return this.#parent;
-  }
-
-  setParentGetter(parentGetter: () => Injector | undefined) {
-    this.parentGetter = parentGetter;
-    return this;
   }
 
   /**

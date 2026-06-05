@@ -49,7 +49,6 @@ export { LogMediator } from '#logger/log-mediator.js';
 export { LogItem } from '#logger/types.js';
 export { SystemLogMediator } from '#logger/system-log-mediator.js';
 export { ModuleManager } from '#init/module-manager.js';
-export { PerAppService } from '#services/per-app.service.js';
 export { Logger, LoggerConfig, InputLogLevel, OutputLogLevel } from '#logger/logger.js';
 export { MetadataPerMod2 } from '#types/metadata-per-mod.js';
 export {

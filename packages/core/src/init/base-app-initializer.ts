@@ -10,7 +10,6 @@ import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ExtensionContext } from '#extension/extensions-context.js';
 import { ExtensionManager, InternalExtensionManager } from '#extension/extension-manager.js';
 import { ModuleManager } from '#init/module-manager.js';
-import { PerAppService } from '#services/per-app.service.js';
 import type { ModRefId } from '#types/mix.js';
 import type { Provider } from '#di/top/types-and-models.js';
 import type { ExtensionClass } from '#extension/extension-types.js';
@@ -39,12 +38,12 @@ import {
 } from '#errors';
 import type { OnModuleInit } from './hooks.js';
 import { isMultiProvider } from '#di/utils.js';
-import type { Injector } from '#di/injector.js';
+import { Injector } from '#di/injector.js';
 import { PROVIDERS_PER_APP } from './constants.js';
 
 export class BaseAppInitializer {
-  protected perAppService = new PerAppService();
   protected baseMeta: BaseMeta;
+  protected injectorPerApp: Injector;
 
   constructor(
     protected baseAppOptions: BaseAppOptions,
@@ -57,7 +56,6 @@ export class BaseAppInitializer {
    */
   bootstrapProvidersPerApp() {
     this.baseMeta = this.moduleManager.getBaseMeta('root', true);
-    this.perAppService = new PerAppService();
     this.prepareProvidersPerApp();
     this.addDefaultProvidersPerApp();
     this.createInjectorAndSetLogMediator();
@@ -138,8 +136,7 @@ export class BaseAppInitializer {
     });
     const { extensionCounters, mMetadataPerMod2 } = deepModulesImporter.importModulesDeep();
     await this.handleExtensions(mMetadataPerMod2, extensionCounters);
-    this.log = this.perAppService.injector.get(SystemLogMediator) as SystemLogMediator;
-    return this.perAppService.injector;
+    return this.injectorPerApp;
   }
 
   async reinit(autocommit: boolean = true): Promise<void | Error> {
@@ -202,8 +199,9 @@ export class BaseAppInitializer {
    * Creates injector per the application and sets log.
    */
   protected createInjectorAndSetLogMediator() {
-    const injectorPerApp = this.perAppService.reinitInjector(this.baseMeta.providersPerApp);
-    this.log = injectorPerApp.get(SystemLogMediator) as SystemLogMediator;
+    this.injectorPerApp = Injector.resolveAndCreate(this.baseMeta.providersPerApp, 'App');
+    this.log = this.injectorPerApp.get(SystemLogMediator) as SystemLogMediator;
+    return this.injectorPerApp;
   }
 
   protected collectProvidersShallow(moduleManager: ModuleManager) {
@@ -251,14 +249,13 @@ export class BaseAppInitializer {
     extensionCounters: ExtensionCounters,
   ) {
     const extensionContext = new ExtensionContext();
-    const injectorPerApp = this.perAppService.reinitInjector([{ token: PerAppService, useValue: this.perAppService }]);
 
     for (const [, metadataPerMod2] of mMetadataPerMod2) {
       const { baseMeta, aOrderedExtensions } = this.overrideMetaBeforeExtensionHanling(
         metadataPerMod2.baseMeta,
         metadataPerMod2.aOrderedExtensions,
       );
-      const injectorPerMod = injectorPerApp.resolveAndCreateChild(baseMeta.providersPerMod, 'Mod');
+      const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(baseMeta.providersPerMod, 'Mod');
       const systemLogMediator = injectorPerMod.pull(SystemLogMediator) as SystemLogMediator;
       const { extensionProviders } = baseMeta;
       if (!extensionProviders.length) {
@@ -272,7 +269,7 @@ export class BaseAppInitializer {
       systemLogMediator.startExtensions(this);
       this.decreaseExtensionsCounters(extensionCounters, extensionProviders);
       await this.handleExtensionsPerMod(baseMeta, aOrderedExtensions, extensionManager, systemLogMediator);
-      this.logExtensionsStatistic(injectorPerApp, systemLogMediator);
+      this.logExtensionsStatistic(this.injectorPerApp, systemLogMediator);
     }
     await this.perAppHandling(mMetadataPerMod2, extensionContext);
   }
@@ -300,9 +297,7 @@ export class BaseAppInitializer {
     }
 
     // After the extensions have added new providers, injectorPerApp needs to be recreated one last time.
-    this.perAppService.providers.push(...this.baseMeta.providersPerApp);
-    this.perAppService.reinitInjector();
-    this.perAppService.close();
+    this.createInjectorAndSetLogMediator();
 
     for (const [modRefId, { baseMeta }] of mMetadataPerMod2) {
       try {
@@ -347,7 +342,7 @@ export class BaseAppInitializer {
   protected async initModuleAndGetInjectorPerMod(baseMeta: BaseMeta): Promise<Injector> {
     const Mod = getModule(baseMeta.modRefId);
     const extendedProvidersPerMod = [Mod, ...baseMeta.providersPerMod];
-    const injectorPerApp = this.perAppService.injector;
+    const injectorPerApp = this.injectorPerApp;
     const injectorPerMod = injectorPerApp.resolveAndCreateChild(extendedProvidersPerMod, 'Mod');
     await (injectorPerMod.get(Mod) as Partial<OnModuleInit>).onModuleInit?.(); // Instantiate the class of the module and call the hook.
     return injectorPerMod;
