@@ -372,8 +372,8 @@ If you are using `@ditsmod/rest`, any extension can declare a dependency on the 
 
 You can see how it is done in [BodyParserExtension][102]:
 
-```ts {13,31,38}
-import { Extension, ExtensionManager, PerAppService, injectable } from '@ditsmod/core';
+```ts {14,32,39}
+import { Extension, ExtensionManager, Injector, injectable, inject, PROVIDERS_PER_APP } from '@ditsmod/core';
 import { HTTP_INTERCEPTORS, RestRouteExtension } from '@ditsmod/rest';
 // ...
 
@@ -381,7 +381,7 @@ import { HTTP_INTERCEPTORS, RestRouteExtension } from '@ditsmod/rest';
 export class BodyParserExtension implements Extension<void> {
   constructor(
     protected extensionManager: ExtensionManager,
-    protected perAppService: PerAppService,
+   @inject(PROVIDERS_PER_APP) protected providersPerApp: Provider[],
   ) {}
 
   async stage1() {
@@ -395,7 +395,7 @@ export class BodyParserExtension implements Extension<void> {
         const mergedProvidersPerReq = [...metadataPerMod3.meta.providersPerReq, ...providersPerReq];
 
         // Creating a hierarchy of injectors.
-        const injectorPerApp = this.perAppService.injector;
+        const injectorPerApp = Injector.resolveAndCreate(this.providersPerApp, 'App');
         const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
         const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedProvidersPerRou);
         httpMethods.forEach((method) => {

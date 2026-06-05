@@ -55,7 +55,7 @@ export class TestAppInitializer extends RestAppInitializer {
     if (additionalProviders) {
       aProviders.forEach((arr) => arr.push(...additionalProviders));
     }
-    TestOverrider.overrideAllProviders(this.perAppService, aProviders, this.providersForOverride);
+    TestOverrider.overrideAllProviders(this.baseMeta.providersPerApp, aProviders, this.providersForOverride);
   }
 
   protected override getProvidersForExtensions(

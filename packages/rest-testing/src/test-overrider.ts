@@ -1,13 +1,11 @@
-import type { Provider, PerAppService} from '@ditsmod/core';
+import type { Provider } from '@ditsmod/core';
 import { getToken, getTokens } from '@ditsmod/core';
 
 export class TestOverrider {
-  static overrideAllProviders(perAppService: PerAppService, aProviders: Provider[][], providersToOverride: Provider[]) {
+  static overrideAllProviders(providersPerApp: Provider[], aProviders: Provider[][], providersToOverride: Provider[]) {
     providersToOverride.forEach((provider) => {
-      this.overrideProvider([perAppService.providers], provider);
+      this.overrideProvider([providersPerApp], provider);
     });
-
-    perAppService.reinitInjector();
 
     providersToOverride.forEach((provider) => {
       this.overrideProvider(aProviders, provider);

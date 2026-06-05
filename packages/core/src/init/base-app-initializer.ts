@@ -1,6 +1,6 @@
 import { DeepModulesImporter } from '#init/deep-modules-importer.js';
 import { LogMediator } from '#logger/log-mediator.js';
-import type { PublicLogMediator} from '#logger/system-log-mediator.js';
+import type { PublicLogMediator } from '#logger/system-log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import type { BaseMeta } from '#init/base-meta.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
@@ -13,7 +13,7 @@ import { ModuleManager } from '#init/module-manager.js';
 import { PerAppService } from '#services/per-app.service.js';
 import type { ModRefId } from '#types/mix.js';
 import type { Provider } from '#di/top/types-and-models.js';
-import type { ExtensionClass} from '#extension/extension-types.js';
+import type { ExtensionClass } from '#extension/extension-types.js';
 import { ExtensionCounters } from '#extension/extension-types.js';
 import { getCollisions } from '#utils/get-collisions.js';
 import { getDuplicates } from '#utils/get-duplicates.js';
@@ -277,10 +277,7 @@ export class BaseAppInitializer {
     await this.perAppHandling(mMetadataPerMod2, extensionContext);
   }
 
-  protected async perAppHandling(
-    mMetadataPerMod2: Map<ModRefId, MetadataPerMod2>,
-    extensionContext: ExtensionContext,
-  ) {
+  protected async perAppHandling(mMetadataPerMod2: Map<ModRefId, MetadataPerMod2>, extensionContext: ExtensionContext) {
     for (const [ExtCls, mExtensions] of extensionContext.mExtensionPendingList) {
       for (const extension of mExtensions.values()) {
         try {
@@ -303,6 +300,7 @@ export class BaseAppInitializer {
     }
 
     // After the extensions have added new providers, injectorPerApp needs to be recreated one last time.
+    this.perAppService.providers.push(...this.baseMeta.providersPerApp);
     this.perAppService.reinitInjector();
     this.perAppService.close();
 
