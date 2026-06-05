@@ -3,11 +3,12 @@ import {
   Injector,
   Extension,
   ExtensionManager,
-  PerAppService,
   Status,
   HttpMethod,
   Provider,
   Stage1ExtensionMetaPerApp,
+  inject,
+  PROVIDERS_PER_APP,
 } from '@ditsmod/core';
 import { CorsOptions, mergeOptions } from '@ts-stack/cors';
 import {
@@ -27,7 +28,7 @@ export class CorsExtension implements Extension<void | false> {
   private registeredPathForOptions = new Map<string, HttpMethod[]>();
 
   constructor(
-    protected perAppService: PerAppService,
+    @inject(PROVIDERS_PER_APP) protected providersPerApp: Provider[],
     private extensionManager: ExtensionManager,
   ) {}
 
@@ -36,20 +37,17 @@ export class CorsExtension implements Extension<void | false> {
     if (stage1ExtensionMeta.delay) {
       return false;
     }
-    this.prepareDataAndSetInterceptors(stage1ExtensionMeta.groupDataPerApp, this.perAppService.injector);
+    this.prepareDataAndSetInterceptors(stage1ExtensionMeta.groupDataPerApp);
 
     return; // Make TypeScript happy
   }
 
-  protected prepareDataAndSetInterceptors(
-    groupDataPerApp: Stage1ExtensionMetaPerApp<MetadataPerMod3>[],
-    injectorPerApp: Injector,
-  ) {
+  protected prepareDataAndSetInterceptors(groupDataPerApp: Stage1ExtensionMetaPerApp<MetadataPerMod3>[]) {
     groupDataPerApp.forEach((stage1ExtensionMetaPerApp) => {
       stage1ExtensionMetaPerApp.groupData.forEach((metadataPerMod3) => {
         const { aControllerMetadata } = metadataPerMod3;
         const { providersPerMod } = metadataPerMod3.baseMeta;
-        const injectorPerMod = injectorPerApp.resolveAndCreateChild(providersPerMod);
+        const injector = Injector.resolveAndCreate([...this.providersPerApp, ...providersPerMod]);
         const routesWithOptions = this.getRoutesWithOptions(
           providersPerMod,
           stage1ExtensionMetaPerApp.groupData,
@@ -59,7 +57,7 @@ export class CorsExtension implements Extension<void | false> {
 
         aControllerMetadata.forEach(({ providersPerReq, providersPerRou, scope }) => {
           const mergedPerRou = [...metadataPerMod3.meta.providersPerRou, ...providersPerRou];
-          const corsOptions = this.getCorsOptions(injectorPerMod, mergedPerRou);
+          const corsOptions = this.getCorsOptions(injector, mergedPerRou);
           const mergedCorsOptions = mergeOptions(corsOptions);
           providersPerRou.unshift({ token: CorsOptions, useValue: mergedCorsOptions });
           if (scope == 'route') {
