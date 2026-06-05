@@ -1,5 +1,4 @@
 import { DeepModulesImporter } from '#init/deep-modules-importer.js';
-import { Logger } from '#logger/logger.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import type { PublicLogMediator} from '#logger/system-log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
@@ -41,6 +40,7 @@ import {
 import type { OnModuleInit } from './hooks.js';
 import { isMultiProvider } from '#di/utils.js';
 import type { Injector } from '#di/injector.js';
+import { PROVIDERS_PER_APP } from './constants.js';
 
 export class BaseAppInitializer {
   protected perAppService = new PerAppService();
@@ -369,6 +369,7 @@ export class BaseAppInitializer {
       { token: ExtensionContext, useValue: extensionContext },
       { token: MetadataPerMod2, useValue: metadataPerMod2 },
       { token: ExtensionCounters, useValue: extensionCounters },
+      { token: PROVIDERS_PER_APP, useValue: this.baseMeta.providersPerApp },
       ...metadataPerMod2.baseMeta.extensionProviders,
     ];
   }
