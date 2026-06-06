@@ -24,7 +24,7 @@ import {
 } from '@ditsmod/core/errors';
 
 import { controller } from '../types/controller.js';
-import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
+import { initRest, restRootModule } from '#decorators/rest-init-hooks-and-metadata.js';
 import { AppendsWithParams } from './rest-init-raw-meta.js';
 import { RestInitMeta } from './rest-init-meta.js';
 import { CanActivate, guard } from '#interceptors/guard.js';
@@ -32,7 +32,7 @@ import { RequestContext } from '#services/request-context.js';
 import { RestModule } from './rest.module.js';
 
 describe('ModuleManager', () => {
-  console.log = jest.fn();
+  // console.log = jest.fn();
   type ModuleId = string | ModRefId;
 
   class MockModuleManager extends ModuleManager {
@@ -177,12 +177,11 @@ describe('ModuleManager', () => {
   });
 
   it('empty root module with initRest decorator', () => {
-    @initRest()
-    @rootModule()
+    @restRootModule()
     class AppModule {}
 
     mock.scanRootModule(AppModule);
-    expect(mock.map.size).toBe(2);
+    expect(mock.map.size).toBe(3);
     expect(mock.map.get(AppModule)).toBeDefined();
     expect(mock.map.get(RestModule)).toBeDefined();
   });
@@ -206,7 +205,7 @@ describe('ModuleManager', () => {
     class AppModule {}
 
     mock.scanRootModule(AppModule);
-    expect(mock.map.size).toBe(2);
+    expect(mock.map.size).toBe(3);
     expect(getInitMeta('root')?.providersPerReq).toEqual([Provider1]);
   });
 
@@ -404,7 +403,7 @@ describe('ModuleManager', () => {
     class AppModule {}
 
     mock.scanRootModule(AppModule);
-    expect(mock.map.size).toBe(5);
+    expect(mock.map.size).toBe(6);
     expect(getInitMeta(Module1)?.controllers).toEqual([Controller1]);
 
     expect(mock.map.get(Module2)?.initMeta.get(initRest)?.providersPerRou).toEqual([Provider1]);
@@ -461,7 +460,7 @@ describe('ModuleManager', () => {
     class AppModule {}
 
     mock.scanRootModule(AppModule);
-    expect(mock.map.size).toBe(4);
+    expect(mock.map.size).toBe(5);
     expect(getInitMeta(moduleWithParams)?.params.guards).toMatchObject([{ guard: Guard1 }]);
     expect(getInitMeta(appendsWithParams)?.params.guards).toMatchObject([{ guard: Guard2 }]);
   });

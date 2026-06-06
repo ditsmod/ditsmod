@@ -11,7 +11,7 @@ import {
 } from '@ditsmod/core';
 
 import { RestModuleNormalizer } from './rest-module-normalizer.js';
-import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
+import { initRest, restRootModule } from '#decorators/rest-init-hooks-and-metadata.js';
 import { controller } from '#types/controller.js';
 import { CanActivate, NormalizedGuard } from '#interceptors/guard.js';
 import { RequestContext } from '#services/request-context.js';
@@ -165,12 +165,12 @@ describe('rest ModuleNormalizer', () => {
     class Service1 {}
     class Service2 {}
     class Guard1 implements CanActivate {
-      canActivate(ctx: RequestContext, params?: any[]): boolean | Response | Promise<boolean | Response> {
+      canActivate(ctx: RequestContext, params?: any[]) {
         return false;
       }
     }
     class Guard2 implements CanActivate {
-      canActivate(ctx: RequestContext, params?: any[]): boolean | Response | Promise<boolean | Response> {
+      canActivate(ctx: RequestContext, params?: any[]) {
         return false;
       }
     }
@@ -224,12 +224,12 @@ describe('rest ModuleNormalizer', () => {
     class Service7 {}
     class Service8 {}
     class Guard1 implements CanActivate {
-      canActivate(ctx: RequestContext, params?: any[]): boolean | Response | Promise<boolean | Response> {
+      canActivate(ctx: RequestContext, params?: any[]) {
         return false;
       }
     }
     class Guard2 implements CanActivate {
-      canActivate(ctx: RequestContext, params?: any[]): boolean | Response | Promise<boolean | Response> {
+      canActivate(ctx: RequestContext, params?: any[]) {
         return false;
       }
     }
@@ -319,18 +319,20 @@ describe('rest ModuleNormalizer', () => {
     expect(meta.resolvedCollisionPerReq).toEqual([[Service2, Module2]]);
   });
 
-  it('wrong imports/exports of modules', () => {
+  it('export of modules without import', () => {
     class Service1 {}
 
     @featureModule({ providersPerApp: [Service1] })
     class Module1 {}
 
-    @initRest({ exports: [{ module: Module1 }] })
-    @rootModule()
+    @featureModule({ exports: [Module1] })
+    class Module2 {}
+
+    @restRootModule({ imports: [Module2] })
     class AppModule {}
 
-    const cause = new ReexportFailed('AppModule', 'Module1');
-    const err = new NormalizationFailed('AppModule', cause);
+    const cause = new ReexportFailed('Module2', 'Module1');
+    const err = new NormalizationFailed('Module2', cause);
     expect(() => moduleManager.scanRootModule(AppModule)).toThrow(err);
   });
 });

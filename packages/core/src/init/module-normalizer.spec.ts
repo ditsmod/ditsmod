@@ -328,7 +328,7 @@ describe('ModuleNormalizer', () => {
       return new InitHooks1(metadata);
     }
 
-    const initSome: InitDecorator<RootRawMetadata, InitParams, InitMeta> = Reflector.makeClassDecorator(getInitHooks);
+    const initSome: InitDecorator<RootRawMetadata, InitParams, InitMeta> = Reflector.makeClassDecorator(getInitHooks, 'initSome');
 
     it('during import MWP, merge existing init params with new init params', () => {
       class Service1 {}
@@ -341,7 +341,7 @@ describe('ModuleNormalizer', () => {
       @featureModule()
       class Module2 {}
 
-      const mwp: ModuleWithInitParams & InitParams = {
+      const mwp1: ModuleWithInitParams & InitParams = {
         module: Module1,
         providersPerMod: [Service1],
         providersPerApp: [Service3],
@@ -349,16 +349,16 @@ describe('ModuleNormalizer', () => {
         num: 4,
         initParams: new Map(),
       };
-      mwp.initParams.set(initSome, { path: 'path-1' });
+      mwp1.initParams.set(initSome, { path: 'path-1' });
 
-      const mwp1: ModuleWithInitParams & InitParams = {
+      const mwp2: ModuleWithInitParams & InitParams = {
         module: Module2,
         providersPerApp: [Service2],
         num: 12,
         extensionsMeta: { four: 4 },
         initParams: new Map(),
       };
-      mwp1.initParams.set(initSome, {
+      mwp2.initParams.set(initSome, {
         path: 'path-2',
         providersPerApp: [Service1],
         num: 11,
@@ -366,20 +366,20 @@ describe('ModuleNormalizer', () => {
       });
 
       @initSome({
-        imports: [{ mwp: mwp, providersPerMod: [Service2], extensionsMeta: { two: 2 }, num: 5 }, mwp1],
+        imports: [{ mwp: mwp1, providersPerMod: [Service2], extensionsMeta: { two: 2 }, num: 5 }, mwp2],
       })
-      @featureModule()
+      @rootModule()
       class AppModule {}
 
       mock.normalize(AppModule);
-      expect(mwp.initParams?.get(initSome)).toEqual({
+      expect(mwp1.initParams?.get(initSome)).toEqual<InitParams>({
         path: 'path-1',
         providersPerMod: [Service1, Service2],
         extensionsMeta: { one: 1, two: 2 },
         num: 5,
         providersPerApp: [Service3],
       });
-      expect(mwp1.initParams?.get(initSome)).toEqual({
+      expect(mwp2.initParams?.get(initSome)).toEqual<InitParams>({
         providersPerApp: [Service1, Service2],
         num: 12,
         extensionsMeta: { three: 3, four: 4 },
