@@ -7,6 +7,7 @@ import { Class, UnknownType } from './top/types-and-models.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
 import { CACHE_KEY, CLASS_KEY, DEPS_KEY, PARAMS_KEY, METHODS_WITH_PARAMS, PROP_KEY } from './top/constants.js';
 import { isType, newArray } from './utils.js';
+import type { InjectionToken } from './top/injection-token.js';
 
 type KeyOfClass<Proto extends AnyObj> = keyof Proto | 'constructor' | symbol | (string & {});
 /**
@@ -169,19 +170,16 @@ export class Reflector {
     }
 
     let cache = this.getOwnCacheMetadata<DecorValue, Proto>(Cls);
-    if (cache === null) {
+    if (!cache) {
       this.concatWithParentMeta(Cls, classMeta);
       cache = this.concatWithOwnMeta(Cls, classMeta);
     }
 
-    return this.getClassMetaOrParamsMeta(Cls, cache!, propertyKey);
+    return this.getClassMetaOrParamsMeta(Cls, cache, propertyKey);
   }
 
   protected static getOwnCacheMetadata<DecorValue = any, Proto extends object = object>(Cls: any) {
-    if (Reflect.hasOwnMetadata(CACHE_KEY, Cls)) {
-      return Reflect.getOwnMetadata(CACHE_KEY, Cls) as ClassMeta<DecorValue, Proto> | undefined;
-    }
-    return null;
+    return Reflect.getOwnMetadata(CACHE_KEY, Cls) as ClassMeta<DecorValue, Proto> | undefined;
   }
 
   protected static concatWithParentMeta<DecorValue = any, Proto extends AnyObj = object>(
@@ -445,7 +443,7 @@ export class Reflector {
 
   protected static setMetaCache<DecorValue = any, Proto extends AnyObj = object>(
     Cls: Class<Proto>,
-    metadataKey: any,
+    metadataKey: InjectionToken<ClassMeta<DecorValue, Proto>>,
     classMeta?: ClassMeta<DecorValue, Proto>,
   ) {
     Reflect.defineMetadata(metadataKey, classMeta, Cls);
