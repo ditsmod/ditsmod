@@ -1,16 +1,9 @@
 import type { AnyObj } from '#types/mix.js';
 import type { AnyFn } from './top/types-and-models.js';
+import type { ParamsMeta, ClassMeta, ClassPropMeta, TypeGuard } from './top/types-and-models.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ClassMetaIterator } from './class-meta-iterator.js';
-import { type ForwardRefFn, resolveForwardRef } from './forward-ref.js';
-import {
-  Class,
-  type ParamsMeta,
-  type ClassMeta,
-  type ClassPropMeta,
-  type TypeGuard,
-  UnknownType,
-} from './top/types-and-models.js';
+import { Class, UnknownType } from './top/types-and-models.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
 import { CACHE_KEY, CLASS_KEY, DEPS_KEY, PARAMS_KEY, METHODS_WITH_PARAMS, PROP_KEY } from './top/constants.js';
 import { isType, newArray } from './utils.js';
@@ -124,7 +117,7 @@ export class Reflector {
    * or `undefined` if no appropriate decorators.
    */
   static getDecorators<T extends DecoratorAndValue>(
-    Cls: Class | ForwardRefFn<Class>,
+    Cls: Class,
     typeGuard: TypeGuard<T>,
   ): (T extends DecoratorAndValue<infer V> ? DecoratorAndValue<V> : never)[] | undefined;
   /**
@@ -133,9 +126,8 @@ export class Reflector {
    * @returns Returns an array of `DecoratorAndValue` for the passed `Cls`,
    * or `undefined` if no appropriate decorators.
    */
-  static getDecorators<T = any>(Cls: Class | ForwardRefFn<Class>): DecoratorAndValue<T>[] | undefined;
-  static getDecorators<T extends DecoratorAndValue>(Cls: Class | ForwardRefFn<Class>, typeGuard?: TypeGuard<T>) {
-    Cls = resolveForwardRef(Cls);
+  static getDecorators<T = any>(Cls: Class): DecoratorAndValue<T>[] | undefined;
+  static getDecorators<T extends DecoratorAndValue>(Cls: Class, typeGuard?: TypeGuard<T>) {
     let decorators = this.collectMetadata(Cls)?.constructor.decorators || [];
     if (typeGuard) {
       decorators = decorators.filter(typeGuard);
@@ -143,8 +135,11 @@ export class Reflector {
     return decorators.length ? decorators : undefined;
   }
   /**
-   * Returns an object with all the metadata for the passed class.
-   * This object implements [The iterable protocol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol).
+   * Returns an instance of {@link ClassMetaIterator}, which implements the [iterable protocol][1].
+   * Each property of this class corresponds to a property with a decorator in the `Cls` parameter, and the value
+   * of that property contains the normalized metadata returned by the decorator transformers.
+   *
+   * [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol
    *
    * @param Cls A class that has decorators.
    */
