@@ -36,7 +36,7 @@ export class TrpcRouteExtension implements Extension<MetadataPerMod3> {
     const aControllerMetadata: ControllerMetadata[] = [];
 
     for (const Controller of trpcMetadataPerMod2.meta.controllers as Class<Record<string | symbol, any>>[]) {
-      const classMeta = Reflector.getMetadata(Controller)!;
+      const classMeta = Reflector.collectMetadata(Controller)!;
       for (const methodName of classMeta) {
         for (const decoratorAndValue of classMeta[methodName].decorators) {
           if (!isTrpcRoute(decoratorAndValue)) {

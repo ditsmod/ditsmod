@@ -324,7 +324,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
   }
 
   protected static getDependencies(Cls: Class, propertyKey?: string | symbol): Dependency[] {
-    const classPropMeta = Reflector.getMetadata(Cls, propertyKey);
+    const classPropMeta = Reflector.collectMetadata(Cls, propertyKey);
     if (!classPropMeta) {
       return [];
     }

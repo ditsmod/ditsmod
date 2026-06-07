@@ -139,7 +139,7 @@ export class Parameters {
    */
   protected setMetadata(model: Class, paramsObjects: XParameterObject[]): XParameterObject[] {
     return paramsObjects.map((paramObject) => {
-      const propertyDecorator = Reflector.getMetadata(model)?.[paramObject.name];
+      const propertyDecorator = Reflector.collectMetadata(model)?.[paramObject.name];
       if (propertyDecorator) {
         const schemas = propertyDecorator.decorators
           .filter((item) => isDecoratorAndValue(item))

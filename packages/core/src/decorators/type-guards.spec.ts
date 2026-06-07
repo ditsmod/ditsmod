@@ -11,7 +11,7 @@ describe('type guards', () => {
   describe('isFeatureModule()', () => {
     it('class without decorator', () => {
       class Module1 {}
-      const metadata = Reflector.getMetadata(Module1);
+      const metadata = Reflector.collectMetadata(Module1);
       expect(isFeatureModule(metadata)).toBe(false);
     });
 
@@ -94,7 +94,7 @@ describe('type guards', () => {
 
     it('class without decorator', () => {
       class Module1 {}
-      const metadata = Reflector.getMetadata(Module1);
+      const metadata = Reflector.collectMetadata(Module1);
       expect(isRootModule(metadata)).toBe(false);
     });
   });

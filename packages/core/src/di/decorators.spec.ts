@@ -21,7 +21,7 @@ describe('Property decorators', () => {
       watch: any;
     }
 
-    const p = Reflector.getMetadata(TestClass)!;
+    const p = Reflector.collectMetadata(TestClass)!;
     expect(p.watch.type).toBe(Object);
     expect(p.watch.decorators).toEqual([new DecoratorAndValue(prop, 'firefox!')]);
   });

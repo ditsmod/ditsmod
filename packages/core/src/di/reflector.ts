@@ -136,7 +136,7 @@ export class Reflector {
   static getDecorators<T = any>(Cls: Class | ForwardRefFn<Class>): DecoratorAndValue<T>[] | undefined;
   static getDecorators<T extends DecoratorAndValue>(Cls: Class | ForwardRefFn<Class>, typeGuard?: TypeGuard<T>) {
     Cls = resolveForwardRef(Cls);
-    let decorators = this.getMetadata(Cls)?.constructor.decorators || [];
+    let decorators = this.collectMetadata(Cls)?.constructor.decorators || [];
     if (typeGuard) {
       decorators = decorators.filter(typeGuard);
     }
@@ -148,7 +148,7 @@ export class Reflector {
    *
    * @param Cls A class that has decorators.
    */
-  static getMetadata<DecorValue = any, Proto extends AnyObj = AnyObj>(
+  static collectMetadata<DecorValue = any, Proto extends AnyObj = AnyObj>(
     Cls: Class<Proto>,
   ): ClassMeta<DecorValue, Proto> | undefined;
   /**
@@ -156,11 +156,11 @@ export class Reflector {
    *
    * @param Cls A class that has decorators.
    */
-  static getMetadata<DecorValue = any, Proto extends AnyObj = AnyObj>(
+  static collectMetadata<DecorValue = any, Proto extends AnyObj = AnyObj>(
     Cls: Class<Proto>,
     propertyKey?: KeyOfClass<Proto>,
   ): ClassPropMeta<DecorValue> | undefined;
-  static getMetadata<DecorValue = any, Proto extends AnyObj = AnyObj>(
+  static collectMetadata<DecorValue = any, Proto extends AnyObj = AnyObj>(
     Cls: Class<Proto>,
     propertyKey?: string | symbol,
   ): ClassMeta<DecorValue, Proto> | ClassPropMeta<DecorValue> | undefined {
@@ -195,7 +195,7 @@ export class Reflector {
   ) {
     const ParentCls = this.getParentClass(Cls);
     if (ParentCls !== Object) {
-      const parentPropMeta = this.getMetadata(ParentCls);
+      const parentPropMeta = this.collectMetadata(ParentCls);
       // Merging current meta with parent meta
       if (parentPropMeta) {
         Reflect.ownKeys(parentPropMeta).forEach((propName) => {

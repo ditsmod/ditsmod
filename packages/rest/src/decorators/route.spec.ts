@@ -11,7 +11,7 @@ describe('Route decorator', () => {
     @controller()
     class Controller1 {}
 
-    const actualMeta = Reflector.getMetadata(Controller1)!;
+    const actualMeta = Reflector.collectMetadata(Controller1)!;
     expect(actualMeta.constructor.type).toBe(Function);
     expect(actualMeta.constructor.decorators).toMatchObject<DecoratorAndValue[]>([
       new DecoratorAndValue(controller, {}, undefined, expect.any(String)),
@@ -25,7 +25,7 @@ describe('Route decorator', () => {
       method() {}
     }
 
-    const metadata = Reflector.getMetadata(Controller1)!;
+    const metadata = Reflector.collectMetadata(Controller1)!;
     expect(metadata.method.type).toBe(Function);
     const decorator = new DecoratorAndValue<RouteMetadata>(route, {
       httpMethod: 'GET',
@@ -43,7 +43,7 @@ describe('Route decorator', () => {
       method() {}
     }
 
-    const metadata = Reflector.getMetadata(Controller1)!;
+    const metadata = Reflector.collectMetadata(Controller1)!;
     expect(metadata.method.type).toBe(Function);
     const decorator = new DecoratorAndValue<RouteMetadata>(route, {
       httpMethod: ['GET', 'POST'],
@@ -62,7 +62,7 @@ describe('Route decorator', () => {
       method() {}
     }
 
-    const metadata = Reflector.getMetadata(Controller1)!;
+    const metadata = Reflector.collectMetadata(Controller1)!;
     expect(metadata.method.type).toBe(Function);
     const decoratorGet = new DecoratorAndValue<RouteMetadata>(route, {
       httpMethod: 'GET',
@@ -91,7 +91,7 @@ describe('Route decorator', () => {
       method() {}
     }
 
-    const metadata = Reflector.getMetadata(Controller1)!;
+    const metadata = Reflector.collectMetadata(Controller1)!;
     expect(metadata.method.type).toBe(Function);
     const decorator = new DecoratorAndValue<RouteMetadata>(route, {
       httpMethod: 'GET',
@@ -114,7 +114,7 @@ describe('Route decorator', () => {
       method() {}
     }
 
-    const metadata = Reflector.getMetadata(Controller1)!;
+    const metadata = Reflector.collectMetadata(Controller1)!;
     expect(metadata.method.type).toBe(Function);
     const decorator = new DecoratorAndValue<RouteMetadata>(route, {
       httpMethod: 'GET',
@@ -140,7 +140,7 @@ describe('Route decorator', () => {
       method() {}
     }
 
-    const metadata = Reflector.getMetadata(Controller1)!;
+    const metadata = Reflector.collectMetadata(Controller1)!;
     expect(metadata.method.type).toBe(Function);
     expect(metadata.method.decorators).toMatchObject<DecoratorAndValue[]>([
       new DecoratorAndValue<RouteMetadata>(route, {
@@ -166,7 +166,7 @@ describe('Route decorator', () => {
       method() {}
     }
 
-    const metadata = Reflector.getMetadata(Controller1)!;
+    const metadata = Reflector.collectMetadata(Controller1)!;
     expect(metadata.method.type).toBe(Function);
     expect(metadata.method.decorators).toMatchObject<DecoratorAndValue[]>([
       new DecoratorAndValue<RouteMetadata>(route, {

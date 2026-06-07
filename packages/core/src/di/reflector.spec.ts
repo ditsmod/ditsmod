@@ -43,21 +43,21 @@ describe('Reflector', () => {
     });
   });
 
-  describe('getMetadata()', () => {
+  describe('collectMetadata()', () => {
     describe('classDecoratorFactory()', () => {
       const classDecoratorFactory = Reflector.makeClassDecorator();
 
       it('no errors with simple call', () => {
         @classDecoratorFactory({ val: 1 })
         class Service1 {}
-        expect(() => Reflector.getMetadata(Service1)).not.toThrow();
+        expect(() => Reflector.collectMetadata(Service1)).not.toThrow();
       });
 
       it('returns ClassMetaIterator', () => {
         @classDecoratorFactory({ val: 1 })
         class Service1 {}
 
-        const classMetaIterator = Reflector.getMetadata(Service1);
+        const classMetaIterator = Reflector.collectMetadata(Service1);
         expect(classMetaIterator).toBeInstanceOf(ClassMetaIterator);
         expect(Array.from(classMetaIterator!).length).toBe(1);
         expect(classMetaIterator?.constructor.params).toEqual([]);
@@ -66,8 +66,8 @@ describe('Reflector', () => {
       it('one or two arguments - different results', () => {
         @classDecoratorFactory({ val: 1 })
         class Service1 {}
-        expect(Reflector.getMetadata(Service1)).not.toBe(Reflector.getMetadata(Service1, undefined));
-        expect(Reflector.getMetadata(Service1, 'constructor')).toBe(Reflector.getMetadata(Service1, undefined));
+        expect(Reflector.collectMetadata(Service1)).not.toBe(Reflector.collectMetadata(Service1, undefined));
+        expect(Reflector.collectMetadata(Service1, 'constructor')).toBe(Reflector.collectMetadata(Service1, undefined));
       });
 
       it('store cache', () => {
@@ -80,7 +80,7 @@ describe('Reflector', () => {
           }
         }
         expect(MockReflector.getOwnCacheMetadata(Service1)).toBeFalsy();
-        Reflector.getMetadata(Service1); // Make call to have the cache
+        Reflector.collectMetadata(Service1); // Make call to have the cache
         expect(MockReflector.getOwnCacheMetadata(Service1)).toBeTruthy();
       });
 
@@ -90,10 +90,10 @@ describe('Reflector', () => {
         @classDecoratorFactory({ val: 'child' })
         class Child extends Parent {}
 
-        expect(Reflector.getMetadata(Parent, 'constructor')?.decorators).toEqual([
+        expect(Reflector.collectMetadata(Parent, 'constructor')?.decorators).toEqual([
           new DecoratorAndValue(classDecoratorFactory, [{ val: 'parent' }], undefined, expect.any(String)),
         ]);
-        const childMeta = Reflector.getMetadata(Child, 'constructor');
+        const childMeta = Reflector.collectMetadata(Child, 'constructor');
         expect(childMeta?.decorators).toEqual([
           new DecoratorAndValue(classDecoratorFactory, [{ val: 'child' }], undefined, expect.any(String)),
           new DecoratorAndValue(classDecoratorFactory, [{ val: 'parent' }], undefined, expect.any(String)),
@@ -114,7 +114,7 @@ describe('Reflector', () => {
           @propDecoratorFactory({ val: 3 })
           prop1() {}
         }
-        expect(() => Reflector.getMetadata(Service1)).not.toThrow();
+        expect(() => Reflector.collectMetadata(Service1)).not.toThrow();
       });
 
       it('returns ClassMetaIterator', () => {
@@ -124,7 +124,7 @@ describe('Reflector', () => {
 
           method2() {}
         }
-        const classMetaIterator = Reflector.getMetadata(Service1);
+        const classMetaIterator = Reflector.collectMetadata(Service1);
         expect(classMetaIterator).toBeInstanceOf(ClassMetaIterator);
         expect(Array.from(classMetaIterator!).length).toBe(2);
       });
@@ -140,7 +140,7 @@ describe('Reflector', () => {
           prop1() {}
         }
 
-        const classMetaIterator = Reflector.getMetadata(Service1);
+        const classMetaIterator = Reflector.collectMetadata(Service1);
         expect(Array.from(classMetaIterator!)).toEqual(['method1', 'prop1', 'constructor']);
         expect(classMetaIterator?.constructor.decorators).toEqual([]);
         expect(classMetaIterator?.constructor.params).toEqual([]);
@@ -172,7 +172,7 @@ describe('Reflector', () => {
           override prop1() {}
         }
 
-        const childMeta = Reflector.getMetadata(Child);
+        const childMeta = Reflector.collectMetadata(Child);
         // Only parent has this property with decorator
         expect(childMeta?.method1.decorators).toEqual([
           new DecoratorAndValue(propDecoratorFactory, [{ val: 'parent1' }]),
@@ -204,7 +204,7 @@ describe('Reflector', () => {
           constructor(@paramDecoratorFactory() param1: Service1) {}
           method1(@paramDecoratorFactory() param1: Service2) {}
         }
-        expect(() => Reflector.getMetadata(Service3)).not.toThrow();
+        expect(() => Reflector.collectMetadata(Service3)).not.toThrow();
       });
 
       it('returns ClassMetaIterator', () => {
@@ -215,7 +215,7 @@ describe('Reflector', () => {
           constructor(@paramDecoratorFactory() param1: Service1) {}
           method1(@paramDecoratorFactory() param1: Service2) {}
         }
-        const classMetaIterator = Reflector.getMetadata(Service3);
+        const classMetaIterator = Reflector.collectMetadata(Service3);
         expect(classMetaIterator).toBeInstanceOf(ClassMetaIterator);
         expect(Array.from(classMetaIterator!).length).toBe(2);
       });
@@ -238,7 +238,7 @@ describe('Reflector', () => {
           ) {}
         }
 
-        const classMetaIterator = Reflector.getMetadata(Service3);
+        const classMetaIterator = Reflector.collectMetadata(Service3);
         expect(Array.from(classMetaIterator!)).toEqual(['method1', 'constructor']);
         expect(classMetaIterator?.constructor.params).toEqual([
           [],
@@ -283,7 +283,7 @@ describe('Reflector', () => {
           override method3() {}
         }
 
-        const childMeta = Reflector.getMetadata(Child);
+        const childMeta = Reflector.collectMetadata(Child);
 
         // Child override constructor params
         expect(childMeta?.constructor.decorators).toEqual([]);
@@ -324,7 +324,7 @@ describe('Reflector', () => {
           @propDecoratorFactory({ val: 3 })
           prop1() {}
         }
-        expect(() => Reflector.getMetadata(Service1)).not.toThrow();
+        expect(() => Reflector.collectMetadata(Service1)).not.toThrow();
       });
 
       it('returns ClassMetaIterator', () => {
@@ -333,7 +333,7 @@ describe('Reflector', () => {
           @propDecoratorFactory({ val: 2 })
           method1() {}
         }
-        const classMetaIterator = Reflector.getMetadata(Service1);
+        const classMetaIterator = Reflector.collectMetadata(Service1);
         expect(classMetaIterator).toBeInstanceOf(ClassMetaIterator);
         expect(Array.from(classMetaIterator!).length).toBe(2);
       });
@@ -347,7 +347,7 @@ describe('Reflector', () => {
           prop1() {}
         }
 
-        const classMetaIterator = Reflector.getMetadata(Service1);
+        const classMetaIterator = Reflector.collectMetadata(Service1);
         expect(Array.from(classMetaIterator!)).toEqual(['method1', 'prop1', 'constructor']);
         expect(classMetaIterator?.constructor.decorators).toEqual([
           new DecoratorAndValue(classDecoratorFactory, [{ val: 1 }], undefined, expect.any(String)),
@@ -377,7 +377,7 @@ describe('Reflector', () => {
           constructor(@paramDecoratorFactory() param1: Service1) {}
           method1(@paramDecoratorFactory() param1: Service2) {}
         }
-        expect(() => Reflector.getMetadata(Service3)).not.toThrow();
+        expect(() => Reflector.collectMetadata(Service3)).not.toThrow();
       });
 
       it('returns ClassMetaIterator', () => {
@@ -389,7 +389,7 @@ describe('Reflector', () => {
           constructor(@paramDecoratorFactory() param1: Service1) {}
           method1(@paramDecoratorFactory() param1: Service2) {}
         }
-        const classMetaIterator = Reflector.getMetadata(Service3);
+        const classMetaIterator = Reflector.collectMetadata(Service3);
         expect(classMetaIterator).toBeInstanceOf(ClassMetaIterator);
         expect(Array.from(classMetaIterator!).length).toBe(2);
       });
@@ -413,7 +413,7 @@ describe('Reflector', () => {
           ) {}
         }
 
-        const classMetaIterator = Reflector.getMetadata(Service3);
+        const classMetaIterator = Reflector.collectMetadata(Service3);
         expect(Array.from(classMetaIterator!)).toEqual(['method1', 'constructor']);
         expect(classMetaIterator?.constructor.params).toEqual([
           [],
@@ -442,7 +442,7 @@ describe('Reflector', () => {
 
           method2(param1: Service2, param2: any) {}
         }
-        expect(() => Reflector.getMetadata(Service3)).not.toThrow();
+        expect(() => Reflector.collectMetadata(Service3)).not.toThrow();
       });
 
       it('returns ClassMetaIterator', () => {
@@ -452,7 +452,7 @@ describe('Reflector', () => {
           @propDecoratorFactory({ val: 2 })
           method1(@paramDecoratorFactory() param1: Service2) {}
         }
-        const classMetaIterator = Reflector.getMetadata(Service3);
+        const classMetaIterator = Reflector.collectMetadata(Service3);
         expect(classMetaIterator).toBeInstanceOf(ClassMetaIterator);
         expect(Array.from(classMetaIterator!).length).toBe(2);
       });
@@ -471,7 +471,7 @@ describe('Reflector', () => {
           method2(param1: Service2, param2: any) {}
         }
 
-        const classMetaIterator = Reflector.getMetadata(Service3);
+        const classMetaIterator = Reflector.collectMetadata(Service3);
         expect(Array.from(classMetaIterator!)).toEqual(['method1', 'constructor']);
         expect(classMetaIterator?.constructor.decorators).toEqual([]);
         expect(classMetaIterator?.constructor.params).toEqual([]);
@@ -485,13 +485,13 @@ describe('Reflector', () => {
         ]);
 
         // Method without decorator
-        const classMetaIterator2 = Reflector.getMetadata(Service3, 'method2');
+        const classMetaIterator2 = Reflector.collectMetadata(Service3, 'method2');
         expect(classMetaIterator2?.type).toBe(UnknownType);
         expect(classMetaIterator2?.decorators).toEqual([]);
         expect(classMetaIterator2?.params).toEqual([null, null]);
 
         // Non existing property
-        const classMetaIterator3 = Reflector.getMetadata(Service3, 'nonExistingPropName');
+        const classMetaIterator3 = Reflector.collectMetadata(Service3, 'nonExistingPropName');
         expect(classMetaIterator3?.type).toBe(UnknownType);
         expect(classMetaIterator3?.decorators).toEqual([]);
         expect(classMetaIterator3?.params).toEqual([]);
@@ -513,7 +513,7 @@ describe('Reflector', () => {
 
           method2(param1: Service2, param2: any) {}
         }
-        expect(() => Reflector.getMetadata(Service3)).not.toThrow();
+        expect(() => Reflector.collectMetadata(Service3)).not.toThrow();
       });
 
       it('returns ClassMetaIterator', () => {
@@ -524,7 +524,7 @@ describe('Reflector', () => {
           @propDecoratorFactory({ val: 2 })
           method1(@paramDecoratorFactory() param1: Service2) {}
         }
-        const classMetaIterator = Reflector.getMetadata(Service3);
+        const classMetaIterator = Reflector.collectMetadata(Service3);
         expect(classMetaIterator).toBeInstanceOf(ClassMetaIterator);
         expect(Array.from(classMetaIterator!).length).toBe(2);
       });
@@ -544,7 +544,7 @@ describe('Reflector', () => {
           method2(param1: Service2, param2: any) {}
         }
 
-        const classMetaIterator = Reflector.getMetadata(Service3);
+        const classMetaIterator = Reflector.collectMetadata(Service3);
         expect(Array.from(classMetaIterator!)).toEqual(['method1', 'constructor']);
         expect(classMetaIterator?.constructor.decorators).toEqual([
           new DecoratorAndValue(classDecoratorFactory, [{ val: 111 }], undefined, expect.any(String)),
@@ -560,13 +560,13 @@ describe('Reflector', () => {
         ]);
 
         // Method without decorator
-        const classMetaIterator2 = Reflector.getMetadata(Service3, 'method2');
+        const classMetaIterator2 = Reflector.collectMetadata(Service3, 'method2');
         expect(classMetaIterator2?.type).toBe(UnknownType);
         expect(classMetaIterator2?.decorators).toEqual([]);
         expect(classMetaIterator2?.params).toEqual([null, null]);
 
         // Non existing property
-        const classMetaIterator3 = Reflector.getMetadata(Service3, 'nonExistingPropName');
+        const classMetaIterator3 = Reflector.collectMetadata(Service3, 'nonExistingPropName');
         expect(classMetaIterator3?.type).toBe(UnknownType);
         expect(classMetaIterator3?.decorators).toEqual([]);
         expect(classMetaIterator3?.params).toEqual([]);
@@ -622,7 +622,7 @@ describe('Reflector', () => {
         declare prop2: any;
       }
 
-      const moduleMeta = Reflector.getMetadata(Class3);
+      const moduleMeta = Reflector.collectMetadata(Class3);
       it('firs - child, next - parent', () => {
         expect(moduleMeta?.constructor.decorators.map((d) => d.value)).toEqual([
           ['constructor3.1'],
@@ -686,7 +686,7 @@ describe('Reflector', () => {
       // Cannot test arrow function here due to the compilation
       const dummyArrowFn = function () {};
       Object.defineProperty(dummyArrowFn, 'prototype', { value: undefined });
-      expect(() => Reflector.getMetadata(dummyArrowFn as any)?.constructor.decorators).not.toThrow();
+      expect(() => Reflector.collectMetadata(dummyArrowFn as any)?.constructor.decorators).not.toThrow();
     });
 
     it('should support native class', () => {

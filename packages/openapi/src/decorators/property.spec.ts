@@ -6,7 +6,7 @@ describe('@property', () => {
   it('model without properties', () => {
     class Model1 {}
 
-    expect(Reflector.getMetadata(Model1)).toBeUndefined();
+    expect(Reflector.collectMetadata(Model1)).toBeUndefined();
   });
 
   it('empty value', () => {
@@ -20,7 +20,7 @@ describe('@property', () => {
       prop3: string;
     }
 
-    const actualMeta = Reflector.getMetadata(Model1)!;
+    const actualMeta = Reflector.collectMetadata(Model1)!;
     expect(actualMeta.prop1.type).toBe(String);
     expect(actualMeta.prop2.type).toBe(Number);
     expect(actualMeta.prop3.type).toBe(String);
@@ -42,7 +42,7 @@ describe('@property', () => {
       prop1: string;
     }
 
-    const actualMeta = Reflector.getMetadata(Model1)!;
+    const actualMeta = Reflector.collectMetadata(Model1)!;
     expect(actualMeta.prop1.type).toBe(String);
     const value = {
       schema: {
@@ -61,7 +61,7 @@ describe('@property', () => {
       prop1: Boolean[];
     }
 
-    const actualMeta = Reflector.getMetadata(Model1)!;
+    const actualMeta = Reflector.collectMetadata(Model1)!;
     expect(actualMeta.prop1.type).toBe(Array);
     const value = { schema: {}, customType: { array: Boolean } };
     expect(actualMeta.prop1.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(property, value)]);
@@ -74,7 +74,7 @@ describe('@property', () => {
       prop1: [Boolean, String];
     }
 
-    const actualMeta = Reflector.getMetadata(Model1)!;
+    const actualMeta = Reflector.collectMetadata(Model1)!;
     expect(actualMeta.prop1.type).toBe(Array);
     const value = { schema: {}, customType: { array: [Boolean, String] } };
     expect(actualMeta.prop1.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(property, value)]);

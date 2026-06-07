@@ -451,7 +451,7 @@ describe('injector', () => {
     const classMetadata = Reflector.getDecorators<[{ providers: [] }]>(Controller)!;
     expect(classMetadata[0].value).toEqual([{ providers: [] }]);
 
-    const propMetadata = Reflector.getMetadata(Controller)!;
+    const propMetadata = Reflector.collectMetadata(Controller)!;
     const [container1] = propMetadata.method1.decorators;
     expect(container1.decorator).toBe(route);
     expect(container1.value).toEqual({ method: 'GET', path: 'some-path' });
@@ -548,7 +548,7 @@ describe('injector', () => {
     const classMetadata = Reflector.getDecorators<string>(Controller)!;
     expect(classMetadata[0].value).toEqual([{ providers: [] }]);
 
-    const propMetadata = Reflector.getMetadata(Controller)!;
+    const propMetadata = Reflector.collectMetadata(Controller)!;
     const [container1] = propMetadata.method1.decorators;
     expect(container1.decorator).toBe(route);
     expect(container1.value).toEqual({ method: 'GET', path: 'some-path' });
