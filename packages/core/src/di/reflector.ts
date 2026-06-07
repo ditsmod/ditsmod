@@ -237,7 +237,8 @@ export class Reflector {
       if ((classMeta as any)[propertyKey].type === Function) {
         const classPropMeta = (classMeta as any)[propertyKey] as ClassPropMeta;
         classPropMeta.params = this.getParamsMeta(Cls, propertyKey as any);
-        classPropMeta.newParams = new Map([[Cls, classPropMeta.params]]);
+        classPropMeta.newParams ??= new Map();
+        classPropMeta.newParams.set(Cls, classPropMeta.params);
       }
     });
 
@@ -402,27 +403,28 @@ export class Reflector {
   protected static concatWithParamsMeta<DecorValue = any, Proto extends AnyObj = object>(
     Cls: Class<Proto>,
     classMeta: ClassMeta<DecorValue, Proto>,
-    ownProps: (string | symbol)[],
+    ownPropsWithMeta: (string | symbol)[],
   ): ClassMeta<DecorValue, Proto> | undefined {
-    const methodNames = Reflector.getRawMeta(Cls, METHODS_WITH_PARAMS, undefined, new Set());
-    methodNames.add('constructor');
-    methodNames.forEach((propName: any) => {
-      if (ownProps.includes(propName)) {
+    const ownMethodsWithParams = Reflector.getRawMeta(Cls, METHODS_WITH_PARAMS, undefined, new Set<string | symbol>());
+    ownMethodsWithParams.add('constructor');
+    ownMethodsWithParams.forEach((methodWithParams) => {
+      if (ownPropsWithMeta.includes(methodWithParams)) {
         return;
       }
-      if (!classMeta.hasOwnProperty(propName)) {
-        (classMeta as any)[propName] = {
+      if (!classMeta.hasOwnProperty(methodWithParams)) {
+        (classMeta as any)[methodWithParams] = {
           type: Class,
           decorators: [],
           params: [],
           newParams: new Map(),
         } as ClassPropMeta;
       }
-      const classPropMeta = (classMeta as any)[propName] as ClassPropMeta;
-      classPropMeta.params = this.getParamsMeta(Cls, propName as any);
-      classPropMeta.newParams = new Map([[Cls, classPropMeta.params]]);
+      const classPropMeta = (classMeta as any)[methodWithParams] as ClassPropMeta;
+      classPropMeta.params = this.getParamsMeta(Cls, methodWithParams);
+      classPropMeta.newParams ??= new Map();
+      classPropMeta.newParams.set(Cls, classPropMeta.params);
       delete (classPropMeta as any)[DEPS_KEY];
-      if (propName == 'constructor') {
+      if (methodWithParams == 'constructor') {
         classPropMeta.decorators = this.getClassMeta(Cls);
       }
     });
