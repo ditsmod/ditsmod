@@ -1,3 +1,4 @@
+import { getSymbol } from '#di/ctx/get-symbol.js';
 import { InjectionToken } from './injection-token.js';
 import type { ClassMeta } from './types-and-models.js';
 
@@ -29,4 +30,4 @@ export const METHODS_WITH_PARAMS = new InjectionToken('METHODS_WITH_PARAMS');
  * The key used to store cached dependencies of a class.
  * This dependencies is seted by `injector.getDependencies()`.
  */
-export const DEPS_KEY = Symbol();
+export const DEPS_KEY = getSymbol();

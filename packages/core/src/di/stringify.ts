@@ -1,4 +1,6 @@
-export const DEBUG_NAME = 'debugName';
+import { getSymbol } from '../di.js';
+
+export const DEBUG_NAME = getSymbol<string>('DEBUG_NAME');
 
 export function stringify(token: any): string {
   if (typeof token == 'string') {
