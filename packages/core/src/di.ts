@@ -3,6 +3,7 @@ import 'reflect-metadata/lite';
 /** == External imports that used for exports from `@ditsmod/core/di` == **/
 
 export { Reflector } from '#di/reflector.js';
+export { ParentParams } from '#di/parent-params.js';
 export {
   factoryMethod,
   fromSelf,
