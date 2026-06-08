@@ -17,7 +17,7 @@ import { KeyRegistry } from './key-registry.js';
 import { Reflector } from './reflector.js';
 import type { Class, NormalizedProvider, ParamsMeta, Provider, Visibility, CompareFn } from './top/types-and-models.js';
 import {
-  type DepsCache,
+  type DepsMeta,
   type RegistryOfInjector,
   Dependency,
   ID,
@@ -240,11 +240,11 @@ expect(injector.get(Car) instanceof Car).toBe(true);
   protected static resolveProvider(provider: NormalizedProvider): ResolvedProvider[] {
     if (isClassProvider(provider)) {
       const Cls = resolveForwardRef(provider.useClass) as Class;
-      const depsCache = this.getDependencies(Cls);
-      const factoryFn = depsCache.hasParentParams
-        ? (...args: any[]) => new Cls(...ParentParams.getArgs(depsCache.argsShape!, args))
+      const depsMeta = this.getDependencies(Cls);
+      const factoryFn = depsMeta.hasParentParams
+        ? (...args: any[]) => new Cls(...ParentParams.getArgs(depsMeta.argsShape!, args))
         : (...args: any[]) => new Cls(...args);
-      return [this.getResolvedProvider(provider, provider.token, factoryFn, depsCache.deps, provider.multi)];
+      return [this.getResolvedProvider(provider, provider.token, factoryFn, depsMeta.deps, provider.multi)];
     } else if (isValueProvider(provider)) {
       return [this.getResolvedProvider(provider, provider.token, () => provider.useValue, [], provider.multi)];
     } else if (isFactoryProvider(provider)) {
@@ -278,15 +278,15 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       throw new FailedCreateFactoryProvider(token, typeof factory);
     }
     const factoryKey = this.getFactoryKey(Cls, factory);
-    const depsCache = this.getDependencies(Cls);
+    const depsMeta = this.getDependencies(Cls);
     const resolvedDeps2 = this.getDependencies(Cls, factoryKey).deps;
     const numArgs2 = resolvedDeps2.length;
     let factoryFn: AnyFn;
-    if (depsCache.hasParentParams) {
+    if (depsMeta.hasParentParams) {
       factoryFn = (...args: any[]) => {
         const args1 = args.slice(numArgs2);
         const args2 = args.slice(0, numArgs2);
-        return new Cls(...ParentParams.getArgs(depsCache.argsShape!, args1))[factoryKey](...args2);
+        return new Cls(...ParentParams.getArgs(depsMeta.argsShape!, args1))[factoryKey](...args2);
       };
     } else {
       factoryFn = (...args: any[]) => {
@@ -295,7 +295,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
         return new Cls(...args1)[factoryKey](...args2);
       };
     }
-    const deps = [...resolvedDeps2, ...depsCache.deps];
+    const deps = [...resolvedDeps2, ...depsMeta.deps];
     return [this.getResolvedProvider(provider, token, factoryFn, deps, provider.multi)];
   }
 
@@ -340,7 +340,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
     throw new CannotFindMethodInClass(Cls.name);
   }
 
-  protected static getDependencies(Cls: Class, propertyKey?: string | symbol): DepsCache {
+  protected static getDependencies(Cls: Class, propertyKey?: string | symbol): DepsMeta {
     const classPropMeta = Reflector.collectMetadata(Cls, propertyKey);
     if (!classPropMeta) {
       return { deps: [] };
@@ -367,10 +367,10 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       }
     });
 
-    const newCache = { deps, hasParentParams, argsShape } satisfies DepsCache;
-    classPropMeta[DEPS_KEY] = newCache;
+    const depsMeta = { deps, hasParentParams, argsShape } satisfies DepsMeta;
+    classPropMeta[DEPS_KEY] = depsMeta;
 
-    return newCache;
+    return depsMeta;
   }
 
   protected static extractPayload(paramsMeta: ParamsMeta) {

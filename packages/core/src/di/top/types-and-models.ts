@@ -2,7 +2,7 @@ import type { fromSelf, skipSelf } from '../decorators.js';
 import type { ForwardRefFn } from '../forward-ref.js';
 import type { InjectionToken } from './injection-token.js';
 import type { DecoratorAndValue } from './decorator-and-value.js';
-import type { DepsCache } from './resolved-provider.js';
+import type { DepsMeta } from './resolved-provider.js';
 import type { DEPS_KEY } from './constants.js';
 
 /**
@@ -42,7 +42,7 @@ export type ClassMeta<DecorValue = any, Proto extends object = object> = {
 } & { constructor: ClassPropMeta<DecorValue> } & { [Symbol.iterator]: () => Generator<string | symbol> };
 
 export interface ClassPropMeta<DecorValue = any> {
-  [DEPS_KEY]?: DepsCache;
+  [DEPS_KEY]?: DepsMeta;
   type: Class;
   decorators: DecoratorAndValue<DecorValue>[];
   params: (ParamsMeta | null)[];

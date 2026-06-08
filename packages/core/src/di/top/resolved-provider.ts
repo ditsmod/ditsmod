@@ -91,7 +91,7 @@ export class Dependency {
   }
 }
 
-export interface DepsCache {
+export interface DepsMeta {
   deps: Dependency[];
   hasParentParams?: boolean;
   argsShape?: ParentArgsShape[];
