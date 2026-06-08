@@ -3,7 +3,7 @@ import { inspect } from 'node:util';
 import { CustomError } from '#error/custom-error.js';
 import { stringify } from './stringify.js';
 import type { Class } from './top/types-and-models.js';
-import type { LevelOfInjector } from './injector.js';
+import { ParentParams, type ParentArgsShape } from './parent-params.js';
 
 /**
    * Thrown when trying to retrieve a dependency by key from `Injector`, but the
@@ -151,8 +151,15 @@ expect(() => Injector.resolveAndCreate([A,B])).toThrow();
 ```
    */
 export class NoAnnotation extends CustomError {
-  constructor(Cls: Class, params: any[], propertyKey?: string | symbol) {
+  constructor(
+    Cls: Class,
+    params: any[],
+    propertyKey?: string | symbol,
+    hasParentParams?: boolean,
+    argsShape?: ParentArgsShape[],
+  ) {
     let msg1: string;
+    params = hasParentParams ? ParentParams.getArgs(argsShape!, params) : params;
     const signature = getSignature(params);
     if (propertyKey) {
       const path = `${stringify(Cls)}.${propertyKey.toString()}`;
@@ -263,6 +270,8 @@ function getSignature(params: any[]) {
     const parameter = params[i];
     if (!parameter || parameter.length == 0) {
       signature.push('?');
+    } else if (Array.isArray(parameter) && parameter.includes(null)) {
+      signature.push(`[${getSignature(parameter).join(', ')}]`);
     } else {
       signature.push(parameter.map(stringify).join(' '));
     }

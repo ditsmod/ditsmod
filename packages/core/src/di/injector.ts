@@ -354,7 +354,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       ...classPropMeta.newParams.values(),
     ]);
     if (aParamsMeta.includes(null)) {
-      throw new NoAnnotation(Cls, aParamsMeta, propertyKey);
+      throw new NoAnnotation(Cls, aParamsMeta, propertyKey, hasParentParams, argsShape);
     }
     const deps = (aParamsMeta as ParamsMeta[]).map((paramsMeta) => {
       const { token, input, isOptional, visibility } = this.extractPayload(paramsMeta);
