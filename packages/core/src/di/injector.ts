@@ -1,4 +1,4 @@
-import type { AnyFn } from './top/types-and-models.js';
+import type { AnyFn, FactoryProvider } from './top/types-and-models.js';
 import { input, fromSelf, inject, type InjectTransformResult, optional, skipSelf } from './decorators.js';
 import {
   FailedCreateFactoryProvider,
@@ -248,44 +248,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
     } else if (isValueProvider(provider)) {
       return [this.getResolvedProvider(provider, provider.token, () => provider.useValue, [], provider.multi)];
     } else if (isFactoryProvider(provider)) {
-      if (isFunctionFactoryProvider(provider)) {
-        const token = provider.token || provider.useFactory;
-        const factoryFn = (...args: any[]) => provider.useFactory(...args);
-        const resolvedDeps = (provider.deps || []).map((d) => {
-          const dualKey = KeyRegistry.get(d);
-          return Dependency.fromDualKey(dualKey);
-        });
-        return [this.getResolvedProvider(provider, token, factoryFn, resolvedDeps, provider.multi)];
-      }
-      const [rawClass, rawFactory] = provider.useFactory;
-      const Cls = resolveForwardRef(rawClass) as Class;
-      const factory = resolveForwardRef(rawFactory) as AnyFn;
-      const token = provider.token || factory;
-      if (typeof factory == 'function') {
-        (factory as any)[DEBUG_NAME] = `${Cls.name}.prototype.${factory.name}`;
-      } else {
-        throw new FailedCreateFactoryProvider(token, typeof factory);
-      }
-      const factoryKey = this.getFactoryKey(Cls, factory);
-      const depsCache = this.getDependencies(Cls);
-      const resolvedDeps2 = this.getDependencies(Cls, factoryKey).deps;
-      const numArgs2 = resolvedDeps2.length;
-      let factoryFn: AnyFn;
-      if (depsCache.hasParentParams) {
-        factoryFn = (...args: any[]) => {
-          const args1 = args.slice(numArgs2);
-          const args2 = args.slice(0, numArgs2);
-          return new Cls(...ParentParams.getArgs(depsCache.argsShape!, args1))[factoryKey](...args2);
-        };
-      } else {
-        factoryFn = (...args: any[]) => {
-          const args1 = args.slice(numArgs2);
-          const args2 = args.slice(0, numArgs2);
-          return new Cls(...args1)[factoryKey](...args2);
-        };
-      }
-      const deps = [...resolvedDeps2, ...depsCache.deps];
-      return [this.getResolvedProvider(provider, token, factoryFn, deps, provider.multi)];
+      return this.resolveFactoryProvider(provider);
     } else {
       // Token provider.
       const factoryFn = (aliasInstance: any) => aliasInstance;
@@ -293,6 +256,47 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       const resolvedDeps = [Dependency.fromDualKey(dualKey)];
       return [this.getResolvedProvider(provider, provider.token, factoryFn, resolvedDeps, provider.multi)];
     }
+  }
+
+  protected static resolveFactoryProvider(provider: FactoryProvider) {
+    if (isFunctionFactoryProvider(provider)) {
+      const token = provider.token || provider.useFactory;
+      const factoryFn = (...args: any[]) => provider.useFactory(...args);
+      const resolvedDeps = (provider.deps || []).map((d) => {
+        const dualKey = KeyRegistry.get(d);
+        return Dependency.fromDualKey(dualKey);
+      });
+      return [this.getResolvedProvider(provider, token, factoryFn, resolvedDeps, provider.multi)];
+    }
+    const [rawClass, rawFactory] = provider.useFactory;
+    const Cls = resolveForwardRef(rawClass) as Class;
+    const factory = resolveForwardRef(rawFactory) as AnyFn;
+    const token = provider.token || factory;
+    if (typeof factory == 'function') {
+      (factory as any)[DEBUG_NAME] = `${Cls.name}.prototype.${factory.name}`;
+    } else {
+      throw new FailedCreateFactoryProvider(token, typeof factory);
+    }
+    const factoryKey = this.getFactoryKey(Cls, factory);
+    const depsCache = this.getDependencies(Cls);
+    const resolvedDeps2 = this.getDependencies(Cls, factoryKey).deps;
+    const numArgs2 = resolvedDeps2.length;
+    let factoryFn: AnyFn;
+    if (depsCache.hasParentParams) {
+      factoryFn = (...args: any[]) => {
+        const args1 = args.slice(numArgs2);
+        const args2 = args.slice(0, numArgs2);
+        return new Cls(...ParentParams.getArgs(depsCache.argsShape!, args1))[factoryKey](...args2);
+      };
+    } else {
+      factoryFn = (...args: any[]) => {
+        const args1 = args.slice(numArgs2);
+        const args2 = args.slice(0, numArgs2);
+        return new Cls(...args1)[factoryKey](...args2);
+      };
+    }
+    const deps = [...resolvedDeps2, ...depsCache.deps];
+    return [this.getResolvedProvider(provider, token, factoryFn, deps, provider.multi)];
   }
 
   protected static getResolvedProvider(
