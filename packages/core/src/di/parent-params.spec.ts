@@ -1,10 +1,14 @@
-import { inspect } from 'node:util';
-import { Reflector } from './reflector.js';
-import { ParentParams } from './parent-params.js';
+import { jest } from '@jest/globals';
 
-const classDecoratorFactory = Reflector.makeClassDecorator((param) => param, 'decoratorForClass');
-const propDecoratorFactory = Reflector.makePropDecorator((param) => param, 'decoratorForProp');
-const paramDecoratorFactory = Reflector.makeParamDecorator((param) => param, 'decoratorForPapam');
+import { Reflector } from './reflector.js';
+import { ParentParams, type ParentArgsShape } from './parent-params.js';
+import type { ParamsMeta } from './top/types-and-models.js';
+import { Injector } from './injector.js';
+import { inject } from './decorators.js';
+
+const classDecoratorFactory = Reflector.makeClassDecorator();
+const propDecoratorFactory = Reflector.makePropDecorator();
+const paramDecoratorFactory = Reflector.makeParamDecorator();
 
 class ClassBefore1Param1 {}
 class ClassBefore1Param2 {}
@@ -18,12 +22,12 @@ class Class2Param2 {}
 class Class3Param1 {}
 class Class3Param2 {}
 
-@classDecoratorFactory('constructorBefore1')
+@classDecoratorFactory()
 class ClassBefore1 {
   constructor(param1: ClassBefore1Param1, param2: ClassBefore1Param2) {}
 }
 
-@classDecoratorFactory('constructorBefore2')
+@classDecoratorFactory()
 class ClassBefore2 extends ClassBefore1 {
   constructor(parentParams: ParentParams) {
     // @ts-expect-error auto-injected
@@ -31,14 +35,14 @@ class ClassBefore2 extends ClassBefore1 {
   }
 }
 
-@classDecoratorFactory('constructor0.1')
+@classDecoratorFactory()
 class Class0 extends ClassBefore2 {
   constructor(param1: Class0Param1, param2: Class0Param2, param3: Class0Param3) {
     super([param1, param2]);
   }
 }
 
-@classDecoratorFactory('constructor1.1')
+@classDecoratorFactory()
 class Class1 extends Class0 {
   constructor(param1: Class1Param1, param2: Class1Param2, parentParams: ParentParams) {
     // @ts-expect-error auto-injected
@@ -46,7 +50,7 @@ class Class1 extends Class0 {
   }
 }
 
-@classDecoratorFactory('constructor2.1')
+@classDecoratorFactory()
 class Class2 extends Class1 {
   constructor(
     param1: Class2Param1,
@@ -58,35 +62,165 @@ class Class2 extends Class1 {
     super(...parentParams);
   }
 
-  @propDecoratorFactory('prop2.1')
+  @propDecoratorFactory()
   prop: string;
 }
 
-@classDecoratorFactory('constructor3.1')
+const class3Constructor = jest.fn();
+
+@classDecoratorFactory()
 class Class3 extends Class2 {
   constructor(parentParams: ParentParams, param1: Class3Param1, param2: Class3Param2) {
     // @ts-expect-error auto-injected
     super(...parentParams);
+    class3Constructor(parentParams, param1, param2);
   }
 
-  @propDecoratorFactory('prop3.1')
+  @propDecoratorFactory()
   declare prop: string;
+
+  @propDecoratorFactory('prop3.1')
+  method1(@inject('token2') param1: any) {
+    return param1;
+  }
 }
 
-const moduleMeta = Reflector.collectMetadata(Class3);
-console.log(moduleMeta?.constructor.newParams);
+describe('classMeta.constructor.params', () => {
+  it('has info about all parents params', () => {
+    const classMeta = Reflector.collectMetadata(Class3);
+    const map = classMeta?.constructor.newParams;
+    expect(map).toBeInstanceOf(Map);
+    expect(map?.size).toBe(6);
+    expect(map?.has(Class3)).toBe(true);
+    expect(map?.get(Class3)).toEqual<ParamsMeta[]>([[ParentParams], [Class3Param1], [Class3Param2]]);
 
-console.log('*'.repeat(50), 'tokens and argsShape');
+    expect(map?.has(Class2)).toBe(true);
+    expect(map?.get(Class2)).toEqual<ParamsMeta[]>([
+      [Class2Param1],
+      [ParentParams],
+      [Class2Param2, expect.any(Object)],
+      [ParentParams],
+    ]);
 
-const { aParamsMeta, argsShape } = ParentParams.getTokensAndArgsShape([...moduleMeta!.constructor.newParams!.values()]);
-console.log('tokens:', aParamsMeta);
-console.log('argsShape:', inspect(argsShape, false, 5));
+    expect(map?.has(Class1)).toBe(true);
+    expect(map?.get(Class1)).toEqual<ParamsMeta[]>([[Class1Param1], [Class1Param2], [ParentParams]]);
 
-// tokens віддаєш у DI:
-const results = aParamsMeta.map((token) => (Array.isArray(token) ? token[0] : token));
+    expect(map?.has(Class0)).toBe(true);
+    expect(map?.get(Class0)).toEqual<ParamsMeta[]>([[Class0Param1], [Class0Param2], [Class0Param3]]);
 
-// а потім збираєш аргументи для Class3:
-const class3Args = ParentParams.getArgs(argsShape, results);
+    expect(map?.has(ClassBefore1)).toBe(true);
+    expect(map?.get(ClassBefore1)).toEqual<ParamsMeta[]>([[ClassBefore1Param1], [ClassBefore1Param2]]);
 
-console.log('='.repeat(50), 'args');
-console.dir(class3Args, { depth: null });
+    expect(map?.has(ClassBefore2)).toBe(true);
+    expect(map?.get(ClassBefore2)).toEqual<ParamsMeta[]>([[ParentParams]]);
+  });
+});
+
+describe('ParentParams', () => {
+  describe('getTokensAndArgsShape()', () => {
+    it('returns a one-dimensional array of params, without ParentParams', () => {
+      const classMeta = Reflector.collectMetadata(Class3);
+      const { aParamsMeta, argsShape } = ParentParams.getTokensAndArgsShape([
+        ...classMeta!.constructor.newParams!.values(),
+      ]);
+      expect(aParamsMeta).toEqual<ParamsMeta[]>([
+        [Class2Param1],
+        [Class1Param1],
+        [Class1Param2],
+        [Class0Param1],
+        [Class0Param2],
+        [Class0Param3],
+        [Class2Param2, expect.any(Object)],
+        [Class1Param1],
+        [Class1Param2],
+        [Class0Param1],
+        [Class0Param2],
+        [Class0Param3],
+        [Class3Param1],
+        [Class3Param2],
+      ]);
+
+      expect(argsShape).toEqual<ParentArgsShape[]>([[0, [1, 2, [3, 4, 5]], 6, [7, 8, [9, 10, 11]]], 12, 13]);
+
+      const results = aParamsMeta.map((token) => (Array.isArray(token) ? token[0] : token));
+      const class3Args = ParentParams.getArgs(argsShape, results);
+      expect(class3Args).toEqual([
+        [
+          Class2Param1,
+          [Class1Param1, Class1Param2, [Class0Param1, Class0Param2, Class0Param3]],
+          Class2Param2,
+          [Class1Param1, Class1Param2, [Class0Param1, Class0Param2, Class0Param3]],
+        ],
+        Class3Param1,
+        Class3Param2,
+      ]);
+    });
+  });
+});
+
+describe('injector.get()', () => {
+  afterEach(() => jest.resetAllMocks());
+
+  const injector = Injector.resolveAndCreate([
+    ClassBefore1Param1,
+    ClassBefore1Param2,
+    Class0Param1,
+    Class0Param2,
+    Class0Param3,
+    Class1Param1,
+    Class1Param2,
+    Class2Param1,
+    Class2Param2,
+    Class3Param2,
+    Class3,
+    { token: 'token1', useFactory: [Class3, Class3.prototype.method1] },
+    { token: 'token2', useValue: 'value2' },
+    Class3Param1,
+  ]);
+
+  it('properly resolves classes with ParentParams', () => {
+    expect(injector.get(Class3)).toBeInstanceOf(Class3);
+    expect(class3Constructor).toHaveBeenCalledTimes(1);
+    expect(class3Constructor).toHaveBeenCalledWith(
+      [
+        expect.any(Class2Param1),
+        [
+          expect.any(Class1Param1),
+          expect.any(Class1Param2),
+          [expect.any(Class0Param1), expect.any(Class0Param2), expect.any(Class0Param3)],
+        ],
+        expect.any(Class2Param2),
+        [
+          expect.any(Class1Param1),
+          expect.any(Class1Param2),
+          [expect.any(Class0Param1), expect.any(Class0Param2), expect.any(Class0Param3)],
+        ],
+      ],
+      expect.any(Class3Param1),
+      expect.any(Class3Param2),
+    );
+  });
+
+  it('properly resolves class factory with ParentParams', () => {
+    expect(injector.get('token1')).toBe('value2');
+    expect(class3Constructor).toHaveBeenCalledTimes(1);
+    expect(class3Constructor).toHaveBeenCalledWith(
+      [
+        expect.any(Class2Param1),
+        [
+          expect.any(Class1Param1),
+          expect.any(Class1Param2),
+          [expect.any(Class0Param1), expect.any(Class0Param2), expect.any(Class0Param3)],
+        ],
+        expect.any(Class2Param2),
+        [
+          expect.any(Class1Param1),
+          expect.any(Class1Param2),
+          [expect.any(Class0Param1), expect.any(Class0Param2), expect.any(Class0Param3)],
+        ],
+      ],
+      expect.any(Class3Param1),
+      expect.any(Class3Param2),
+    );
+  });
+});
