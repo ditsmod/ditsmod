@@ -188,16 +188,17 @@ export class Reflector {
   ) {
     const ParentCls = this.getParentClass(Cls);
     if (ParentCls !== Object) {
-      const parentPropMeta = this.collectMetadata(ParentCls);
+      const parentClassMeta = this.collectMetadata(ParentCls);
       // Merging current meta with parent meta
-      if (parentPropMeta) {
-        Reflect.ownKeys(parentPropMeta).forEach((propName) => {
-          const propMeta = { ...parentPropMeta[propName as any] };
+      if (parentClassMeta) {
+        Reflect.ownKeys(parentClassMeta).forEach((propName) => {
+          const propMeta = { ...parentClassMeta[propName as any] };
           propMeta.decorators = propMeta.decorators.slice();
           propMeta.params = propMeta.params.slice();
-          propMeta.newParams = new Map([[Cls, propMeta.params]]);
-          if ((propMeta as any)[DEPS_KEY]) {
-            (propMeta as any)[DEPS_KEY] = (propMeta as any)[DEPS_KEY].slice();
+          propMeta.newParams ??= new Map();
+          propMeta.newParams.set(Cls, propMeta.params);
+          if (propMeta[DEPS_KEY]) {
+            propMeta[DEPS_KEY]!.deps = propMeta[DEPS_KEY]!.deps.slice();
           }
           (classMeta as any)[propName] = propMeta;
         });
