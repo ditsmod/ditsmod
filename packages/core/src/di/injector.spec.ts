@@ -202,21 +202,29 @@ describe('injector', () => {
 
       it('Parent', () => {
         const deps1 = (Injector as typeof MockInjector).getDependencies(Parent);
-        expect(deps1).toEqual([
-          new Dependency(KeyRegistry.get(AType), ...rest),
-          new Dependency(KeyRegistry.get(BType), ...rest),
-          new Dependency(KeyRegistry.get(DType), ...rest),
-        ]);
+        expect(deps1).toEqual({
+          deps: [
+            new Dependency(KeyRegistry.get(AType), ...rest),
+            new Dependency(KeyRegistry.get(BType), ...rest),
+            new Dependency(KeyRegistry.get(DType), ...rest),
+          ],
+          hasParentParams: false,
+          argsShape: [0, 1, 2],
+        });
       });
 
       it('Child', () => {
         const deps2 = (Injector as typeof MockInjector).getDependencies(Child);
-        expect(deps2).toEqual([
-          new Dependency(KeyRegistry.get(CType), ...rest),
-          new Dependency(KeyRegistry.get(BType), ...rest),
-          new Dependency(KeyRegistry.get(AType), ...rest),
-          new Dependency(KeyRegistry.get(DType), ...rest),
-        ]);
+        expect(deps2).toEqual({
+          deps: [
+            new Dependency(KeyRegistry.get(CType), ...rest),
+            new Dependency(KeyRegistry.get(BType), ...rest),
+            new Dependency(KeyRegistry.get(AType), ...rest),
+            new Dependency(KeyRegistry.get(DType), ...rest),
+          ],
+          hasParentParams: false,
+          argsShape: [0, 1, 2, 3],
+        });
       });
     });
   });
@@ -694,10 +702,7 @@ describe('injector', () => {
         constructor(@input public param: string) {}
       }
 
-      const injector = Injector.resolveAndCreate([
-        Service1,
-        { token: 'token1', deps: [input], useFactory: (p) => p },
-      ]);
+      const injector = Injector.resolveAndCreate([Service1, { token: 'token1', deps: [input], useFactory: (p) => p }]);
 
       const dep = injector.get(Service1, undefined, 'one') as Service1;
       expect(dep).toBeInstanceOf(Service1);
