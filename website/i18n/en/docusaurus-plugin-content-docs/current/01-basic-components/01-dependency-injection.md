@@ -325,6 +325,56 @@ More details about each of these types:
 
 Now that you are familiar with the concept of a **provider**, it can be clarified that a **dependency** is a dependency on the **value of a provider**. Such a dependency is held by **consumers** of provider values either in service constructors, or in controllers' constructors or methods, or in the `get()` method of [injectors][102].
 
+### Special token `ParentParams` {#parent-params}
+
+Ditsmod has a special token `ParentParams`, which DI takes as a placeholder, where it substitutes an array of arguments for the parent constructor:
+
+```ts {19,24}
+import { ParentParams, Injector, injectable } from '@ditsmod/core/di';
+
+class Class1Param1 {}
+class Class1Param2 {}
+class Class2Param1 {}
+class Class2Param2 {}
+
+@injectable()
+class Parent {
+  constructor(
+    public class1Param1: Class1Param1,
+    public class1Param2: Class1Param2,
+  ) {}
+}
+
+@injectable()
+class Child extends Parent {
+  constructor(
+    parentParams: ParentParams,
+    public class2Param1: Class2Param1,
+    public class2Param2: Class2Param2,
+  ) {
+    // @ts-expect-error auto-injected
+    super(...parentParams);
+  }
+}
+
+const injector = Injector.resolveAndCreate([
+  Child,
+  Class1Param1,
+  Class1Param2,
+  Class2Param1,
+  Class2Param2,
+]);
+console.log(injector.get(Child));
+```
+
+This example shows that the `Child` class extends the `Parent` class, and each of them is decorated with `@injectable()`. In addition, the first parameter of the `Child` constructor is typed as `ParentParams`, into which the DI will inject an array of instances: `[Class1Param1, Class1Param2]`. Note that there is a special comment above the `super(...parentParams)` expression that suppresses any TypeScript errors. This is done because, in this case, type checking for `parentParams` is not important, since the only operation involving `parentParams` is spreading the array into the parent constructor.
+
+As an alternative, you can use the following approach, which does not require a comment to suppress a TypeScript error:
+
+```ts
+super(...(parentParams as ConstructorParameters<typeof Parent>));
+```
+
 ## Hierarchy and encapsulation of injectors  {#hierarchy-and-encapsulation-of-injectors}
 
 DI provides the ability to create a hierarchy and encapsulation of injectors, involving parent and child injectors. It is thanks to hierarchy and encapsulation that the structure and modularity of an application are built. On the other hand, when encapsulation exists, there are rules that need to be learned to understand when one service can access a certain provider and when it cannot.

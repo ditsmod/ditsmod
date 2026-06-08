@@ -325,6 +325,56 @@ import { ValueProvider, ClassProvider, FactoryProvider, TokenProvider } from '@d
 
 Тепер, коли ви вже ознайомились з поняттям **провайдер**, можна уточнити, що під **залежністю** розуміють залежність саме від **значення провайдера**. Таку залежність мають **споживачі** значень провайдерів або в конструкторах сервісів, або в конструкторах чи методах контролерів, або в методі `get()` [інжекторів][102].
 
+### Спеціальний токен `ParentParams` {#parent-params}
+
+Ditsmod має спеціальний токен `ParentParams`, який DI сприймає як placeholder, куди він підставляє масив аргументів для батьківського конструктора:
+
+```ts {19,24}
+import { ParentParams, Injector, injectable } from '@ditsmod/core/di';
+
+class Class1Param1 {}
+class Class1Param2 {}
+class Class2Param1 {}
+class Class2Param2 {}
+
+@injectable()
+class Parent {
+  constructor(
+    public class1Param1: Class1Param1,
+    public class1Param2: Class1Param2,
+  ) {}
+}
+
+@injectable()
+class Child extends Parent {
+  constructor(
+    parentParams: ParentParams,
+    public class2Param1: Class2Param1,
+    public class2Param2: Class2Param2,
+  ) {
+    // @ts-expect-error auto-injected
+    super(...parentParams);
+  }
+}
+
+const injector = Injector.resolveAndCreate([
+  Child,
+  Class1Param1,
+  Class1Param2,
+  Class2Param1,
+  Class2Param2,
+]);
+console.log(injector.get(Child));
+```
+
+В даному прикладі показано, що клас `Child` розширює клас `Parent` і над кожним із них є декоратор `@injectable()`. Окрім цього, в конструкторі `Child` перший параметр позначено типом `ParentParams`, куди DI передасть масив інстансів: `[Class1Param1, Class1Param2]`. Зверніть увагу, що над виразом `super(...parentParams)` знаходиться спеціальний коментар, який придушує будь-які TypeScript-помилки. Це зроблено через те, що в даному разі контроль типу для `parentParams` не є важливим, оскільки єдиним виразом з `parentParams` є спред масиву для батьківського конструктора.
+
+У якості альтернативи, можете використати наступний варіант, який вже не потребує коментаря для придушення TypeScript-помилки:
+
+```ts
+super(...(parentParams as ConstructorParameters<typeof Parent>));
+```
+
 ## Ієрархія та інкапсуляція інжекторів  {#hierarchy-and-encapsulation-of-injectors}
 
 DI надає можливість створювати ще й ієрархію та інкапсуляцію інжекторів, в якій беруть участь батьківські та дочірні інжектори. Саме завдяки ієрархії та інкапсуляції - і будується структура та модульність застосунку. З іншого боку, якщо є інкапсуляція, існують правила, які треба вивчити, щоб орієнтуватись, коли один сервіс може отримати доступ до певного провайдера, а коли - ні.
