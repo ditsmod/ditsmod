@@ -1,4 +1,5 @@
 import type { DualKey } from '#di/key-registry.js';
+import type { ParentArgsShape } from '#di/parent-params.js';
 import type { MultiProvider } from '#di/utils.js';
 import type { AnyFn, Visibility } from './types-and-models.js';
 
@@ -30,8 +31,8 @@ export class ResolvedProvider {
   constructor(
     public dualKey: DualKey,
     public resolvedFactories: ResolvedFactory[],
-    public multi: boolean
-  ) { }
+    public multi: boolean,
+  ) {}
 }
 
 export class RegistryOfInjector {
@@ -66,7 +67,7 @@ export class ResolvedFactory {
      * Arguments (dependencies) to the `factory` function.
      */
     public dependencies: Dependency[],
-    provider?: MultiProvider
+    provider?: MultiProvider,
   ) {
     if (provider) {
       this.provider = provider;
@@ -82,11 +83,16 @@ export class Dependency {
     public dualKey: DualKey,
     public optional: boolean,
     public visibility: Visibility,
-    public input?: NonNullable<unknown>
-  ) { }
+    public input?: NonNullable<unknown>,
+  ) {}
 
   static fromDualKey(dualKey: DualKey, input?: NonNullable<unknown>): Dependency {
     return new Dependency(dualKey, false, null, input);
   }
 }
 
+export interface DepsCache {
+  deps: Dependency[];
+  hasParentParams?: boolean;
+  argsShape?: ParentArgsShape[];
+}

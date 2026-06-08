@@ -1,21 +1,23 @@
 import type { ParamsMeta } from './top/types-and-models.js';
 
-export type ArgsShape = number | ArgsShape[];
+export type ParentArgsShape = number | ParentArgsShape[];
 
 export class ParentParams {
   static getTokensAndArgsShape(paramsByClass: (ParamsMeta | null)[][]) {
-    let tokens: (ParamsMeta | null)[] = [];
-    let argsShape: ArgsShape[] = [];
+    let aParamsMeta: (ParamsMeta | null)[] = [];
+    let argsShape: ParentArgsShape[] = [];
+    let hasParentParams: boolean = false;
 
     for (const params of paramsByClass) {
-      const parentTokens = tokens;
+      const parentTokens = aParamsMeta;
       const parentShape = argsShape;
 
       const nextTokens: (ParamsMeta | null)[] = [];
-      const nextShape: ArgsShape[] = [];
+      const nextShape: ParentArgsShape[] = [];
 
       for (const param of params) {
         if (param?.[0] === ParentParams) {
+          hasParentParams = true;
           const offset = nextTokens.length;
 
           nextTokens.push(...parentTokens);
@@ -28,20 +30,20 @@ export class ParentParams {
         }
       }
 
-      tokens = nextTokens;
+      aParamsMeta = nextTokens;
       argsShape = nextShape;
     }
 
-    return { tokens, argsShape };
+    return { aParamsMeta, argsShape, hasParentParams };
   }
 
-  static getArgs(shape: ArgsShape[], results: unknown[]): unknown[] {
+  static getArgs(shape: ParentArgsShape[], results: unknown[]): unknown[] {
     return shape.map((item) => {
       return Array.isArray(item) ? this.getArgs(item, results) : results[item];
     });
   }
 
-  protected static rebaseShape(shape: ArgsShape[], offset: number): ArgsShape[] {
+  protected static rebaseShape(shape: ParentArgsShape[], offset: number): ParentArgsShape[] {
     return shape.map((item) => {
       return Array.isArray(item) ? this.rebaseShape(item, offset) : item + offset;
     });

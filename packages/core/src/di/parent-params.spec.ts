@@ -78,12 +78,12 @@ console.log(moduleMeta?.constructor.newParams);
 
 console.log('*'.repeat(50), 'tokens and argsShape');
 
-const { tokens, argsShape } = ParentParams.getTokensAndArgsShape([...moduleMeta!.constructor.newParams!.values()]);
-console.log('tokens:', tokens);
+const { aParamsMeta, argsShape } = ParentParams.getTokensAndArgsShape([...moduleMeta!.constructor.newParams!.values()]);
+console.log('tokens:', aParamsMeta);
 console.log('argsShape:', inspect(argsShape, false, 5));
 
 // tokens віддаєш у DI:
-const results = tokens.map((token) => (Array.isArray(token) ? token[0] : token));
+const results = aParamsMeta.map((token) => (Array.isArray(token) ? token[0] : token));
 
 // а потім збираєш аргументи для Class3:
 const class3Args = ParentParams.getArgs(argsShape, results);
