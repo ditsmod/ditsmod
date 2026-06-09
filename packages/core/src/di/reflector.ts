@@ -204,6 +204,7 @@ export class Reflector {
           const propMeta = { ...parentClassMeta[propName as any] };
           propMeta.decorators = propMeta.decorators.slice();
           if (propMeta[DEPS_KEY]) {
+            propMeta[DEPS_KEY] = { ...propMeta[DEPS_KEY]! };
             propMeta[DEPS_KEY]!.deps = propMeta[DEPS_KEY]!.deps.slice();
           }
           (classMeta as any)[propName] = propMeta;
