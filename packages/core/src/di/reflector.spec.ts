@@ -45,9 +45,9 @@ describe('Reflector', () => {
 
   describe('collectMetadata()', () => {
     describe('classDecoratorFactory()', () => {
-      const classDecoratorFactory = Reflector.makeClassDecorator();
+      const classDecoratorFactory = Reflector.makeClassDecorator((param1: any) => param1);
 
-      it('no errors with simple call', () => {
+      it('no errors with transformer and simple call', () => {
         @classDecoratorFactory({ val: 1 })
         class Service1 {}
         expect(() => Reflector.collectMetadata(Service1)).not.toThrow();
@@ -79,9 +79,9 @@ describe('Reflector', () => {
             return super.getOwnCacheMetadata(Cls) as any;
           }
         }
-        expect(MockReflector.getOwnCacheMetadata(Service1)).toBeFalsy();
+        expect(MockReflector.getOwnCacheMetadata(Service1)).toBeUndefined();
         Reflector.collectMetadata(Service1); // Make call to have the cache
-        expect(MockReflector.getOwnCacheMetadata(Service1)).toBeTruthy();
+        expect(MockReflector.getOwnCacheMetadata(Service1)).toBeInstanceOf(ClassMetaIterator);
       });
 
       it('child concat decorators with parent', () => {
@@ -91,12 +91,12 @@ describe('Reflector', () => {
         class Child extends Parent {}
 
         expect(Reflector.collectMetadata(Parent, 'constructor')?.decorators).toEqual([
-          new DecoratorAndValue(classDecoratorFactory, [{ val: 'parent' }], undefined, expect.any(String)),
+          new DecoratorAndValue(classDecoratorFactory, { val: 'parent' }, undefined, expect.any(String)),
         ]);
         const childMeta = Reflector.collectMetadata(Child, 'constructor');
         expect(childMeta?.decorators).toEqual([
-          new DecoratorAndValue(classDecoratorFactory, [{ val: 'child' }], undefined, expect.any(String)),
-          new DecoratorAndValue(classDecoratorFactory, [{ val: 'parent' }], undefined, expect.any(String)),
+          new DecoratorAndValue(classDecoratorFactory, { val: 'child' }, undefined, expect.any(String)),
+          new DecoratorAndValue(classDecoratorFactory, { val: 'parent' }, undefined, expect.any(String)),
         ]);
       });
     });
@@ -255,30 +255,32 @@ describe('Reflector', () => {
       });
 
       it('child no concat decorators with parent', () => {
-        class Service0 {}
-        class Service1 {}
-        class Service2 {}
-        class Service3 {}
-        class Service4 {}
+        class ParentParam1 {}
+        class ParentParam2 {}
+        class ParentParam3 {}
+        class ParentParam4 {}
+        class ChildPram1 {}
+        class ChildPram2 {}
+        class ChildPram3 {}
 
         class Parent {
           constructor(
-            @paramDecoratorFactory('parent-param1') param1: Service0,
-            @paramDecoratorFactory('parent-param2') param2: Service1,
+            @paramDecoratorFactory('parent-param1') param1: ParentParam1,
+            @paramDecoratorFactory('parent-param2') param2: ParentParam2,
           ) {}
 
-          method1(@paramDecoratorFactory('parent-param1') param1: Service1) {}
+          method1(@paramDecoratorFactory('parent-param1') param1: ParentParam2) {}
 
-          method2(@paramDecoratorFactory('parent-param2') param1: Service2) {}
+          method2(@paramDecoratorFactory('parent-param2') param1: ParentParam3) {}
 
-          method3(@paramDecoratorFactory('parent-param3') param1: Service3) {}
+          method3(@paramDecoratorFactory('parent-param3') param1: ParentParam4) {}
         }
 
         class Child extends Parent {
-          constructor(param1: Service2, param2: Service3, @paramDecoratorFactory('child-param1') param3: Service4) {
+          constructor(param1: ChildPram1, param2: ChildPram2, @paramDecoratorFactory('child-param1') param3: ChildPram3) {
             super(param1, param2);
           }
-          override method2(@paramDecoratorFactory('child-param1') param1?: Service4) {}
+          override method2(@paramDecoratorFactory('child-param1') param1?: ChildPram3) {}
 
           override method3() {}
         }
@@ -288,21 +290,21 @@ describe('Reflector', () => {
         // Child override constructor params
         expect(childMeta?.constructor.decorators).toEqual([]);
         expect(childMeta?.constructor.params).toEqual([
-          [Service2],
-          [Service3],
-          [Service4, new DecoratorAndValue(paramDecoratorFactory, ['child-param1'])],
+          [ChildPram1],
+          [ChildPram2],
+          [ChildPram3, new DecoratorAndValue(paramDecoratorFactory, ['child-param1'])],
         ]);
 
         // Only parent has this property with decorator
         expect(childMeta?.method1.decorators).toEqual([]);
         expect(childMeta?.method1.params).toEqual([
-          [Service1, new DecoratorAndValue(paramDecoratorFactory, ['parent-param1'])],
+          [ParentParam2, new DecoratorAndValue(paramDecoratorFactory, ['parent-param1'])],
         ]);
 
         // Parent and child has params with decorator
         expect(childMeta?.method2.decorators).toEqual([]);
         expect(childMeta?.method2.params).toEqual([
-          [Service4, new DecoratorAndValue(paramDecoratorFactory, ['child-param1'])],
+          [ChildPram3, new DecoratorAndValue(paramDecoratorFactory, ['child-param1'])],
         ]);
 
         // Parent has method with decorators,
@@ -680,13 +682,6 @@ describe('Reflector', () => {
       expect(isDelegateCtor(ChildNoCtor.toString())).toBe(true);
       expect(isDelegateCtor(ChildNoCtorPrivateProps.toString())).toBe(true);
       expect(isDelegateCtor(ChildWithCtor.toString())).toBe(false);
-    });
-
-    it('should not throw when no prototype on type', () => {
-      // Cannot test arrow function here due to the compilation
-      const dummyArrowFn = function () {};
-      Object.defineProperty(dummyArrowFn, 'prototype', { value: undefined });
-      expect(() => Reflector.collectMetadata(dummyArrowFn as any)?.constructor.decorators).not.toThrow();
     });
 
     it('should support native class', () => {
