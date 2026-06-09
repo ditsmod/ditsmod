@@ -384,11 +384,6 @@ export class Reflector {
     objWithParentMeta: ClassMeta<DecorValue, Proto>,
     ownPropsWithMeta: (string | symbol)[],
   ) {
-    if (typeof Cls.prototype != 'object') {
-      // @todo Check what is the case
-      return;
-    }
-
     const allClassMethods = Reflect.ownKeys(Cls.prototype).filter((prop) => {
       const descriptor = Object.getOwnPropertyDescriptor(Cls.prototype, prop);
       return typeof descriptor?.value == 'function';
