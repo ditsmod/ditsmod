@@ -194,9 +194,6 @@ export class Reflector {
         Reflect.ownKeys(parentClassMeta).forEach((propName) => {
           const propMeta = { ...parentClassMeta[propName as any] };
           propMeta.decorators = propMeta.decorators.slice();
-          propMeta.params = propMeta.params.slice();
-          propMeta.newParams ??= new Map();
-          propMeta.newParams.set(Cls, propMeta.params);
           if (propMeta[DEPS_KEY]) {
             propMeta[DEPS_KEY]!.deps = propMeta[DEPS_KEY]!.deps.slice();
           }
