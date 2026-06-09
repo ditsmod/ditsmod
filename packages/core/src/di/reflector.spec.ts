@@ -1,7 +1,7 @@
 import { Reflector, isDelegateCtor } from './reflector.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
 import { ClassMetaIterator } from './class-meta-iterator.js';
-import { UnknownType } from '../di.js';
+import { UnknownType } from './top/types-and-models.js';
 
 describe('Reflector', () => {
   describe('no error with simple call', () => {
