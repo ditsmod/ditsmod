@@ -187,7 +187,7 @@ export class Reflector {
     classMeta: ClassMeta<DecorValue, Proto>,
   ) {
     const ParentCls = this.getParentClass(Cls);
-    if (ParentCls !== Object) {
+    if (ParentCls) {
       const parentClassMeta = this.collectMetadata(ParentCls);
       // Merging current meta with parent meta
       if (parentClassMeta) {
@@ -206,12 +206,9 @@ export class Reflector {
     }
   }
 
-  protected static getParentClass(Cls: Class): Class {
-    const parentProto = Cls.prototype ? Object.getPrototypeOf(Cls.prototype) : null;
-    const parentClass = parentProto ? parentProto.constructor : null;
-    // Note: We always use `Object` as the null value
-    // to simplify checking later on.
-    return parentClass || Object;
+  protected static getParentClass(Cls: Class): Class | undefined {
+    const parentClass = Object.getPrototypeOf(Cls.prototype).constructor;
+    return parentClass == Object ? undefined : parentClass;
   }
 
   protected static concatWithOwnMeta<DecorValue = any, Proto extends AnyObj = object>(
@@ -243,7 +240,9 @@ export class Reflector {
       }
     });
 
-    this.removeOverridenParams(Cls, classMeta, ownPropsWithMeta);
+    if (this.getParentClass(Cls)) {
+      this.removeOverridenParams(Cls, classMeta, ownPropsWithMeta);
+    }
     return this.concatWithParamsMeta(Cls, classMeta, ownPropsWithMeta);
   }
 
@@ -275,7 +274,7 @@ export class Reflector {
      */
     if (isConstructor && isDelegateCtor(Cls.toString())) {
       const parentClass = this.getParentClass(Cls);
-      if (parentClass !== Object) {
+      if (parentClass) {
         return this.getParamsMeta(parentClass, propertyKey);
       }
       return [];
@@ -458,7 +457,7 @@ export class Reflector {
     }
     const parentClass = this.getParentClass(Cls);
     const ownClassAnnotations = this.getRawClassMeta(Cls) || [];
-    const parentAnnotations = parentClass === Object ? [] : this.getClassMeta<T>(parentClass);
+    const parentAnnotations = parentClass ? this.getClassMeta<T>(parentClass) : [];
     return ownClassAnnotations.concat(parentAnnotations);
   }
 
