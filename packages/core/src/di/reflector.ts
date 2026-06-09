@@ -182,6 +182,15 @@ export class Reflector {
     return Reflect.getOwnMetadata(CACHE_KEY, Cls) as ClassMeta<DecorValue, Proto> | undefined;
   }
 
+  protected static createClassPropMeta<DecorValue = any>(
+    type: Class = UnknownType,
+    decorators: DecoratorAndValue<DecorValue>[] = [],
+    params: (ParamsMeta | null)[] = [],
+    newParams = new Map<Class, (ParamsMeta | null)[]>(),
+  ): ClassPropMeta<DecorValue> {
+    return { type, decorators, params, newParams };
+  }
+
   protected static concatWithParentMeta<DecorValue = any, Proto extends AnyObj = object>(
     Cls: Class<Proto>,
     classMeta: ClassMeta<DecorValue, Proto>,
@@ -213,10 +222,8 @@ export class Reflector {
     classMeta: ClassMeta<DecorValue, Proto>,
   ) {
     const ownPropsMeta = this.getRawPropMeta(Cls) as Record<string | symbol, DecoratorAndValue[]> | undefined;
-    let ownPropsWithMeta: (string | symbol)[] = [];
-    if (ownPropsMeta) {
-      ownPropsWithMeta = Reflect.ownKeys(ownPropsMeta);
-    }
+    const ownPropsWithMeta = ownPropsMeta ? Reflect.ownKeys(ownPropsMeta) : [];
+
     ownPropsWithMeta.forEach((propertyKey) => {
       const type = Reflect.getOwnMetadata('design:type', Cls.prototype, propertyKey);
       const decorators = ownPropsMeta![propertyKey];
@@ -226,7 +233,7 @@ export class Reflector {
         classPropMeta.params = []; // Remove parent params.
         classPropMeta.decorators.unshift(...decorators);
       } else {
-        (classMeta as any)[propertyKey] = { type, decorators, params: [], newParams: new Map() } as ClassPropMeta;
+        (classMeta as any)[propertyKey] = this.createClassPropMeta(type, decorators);
       }
 
       if ((classMeta as any)[propertyKey].type === Function) {
@@ -361,8 +368,7 @@ export class Reflector {
       } else {
         const params = this.getParamsMeta(Cls, propertyKey as KeyOfClass<Proto>);
         const newParams = new Map<Class, (ParamsMeta | null)[]>([[Cls, params]]);
-        const classPropMeta = { type: UnknownType, decorators: [], params, newParams } as ClassPropMeta;
-        return classPropMeta;
+        return this.createClassPropMeta(UnknownType, [], params, newParams);
       }
     } else {
       return classMeta;
@@ -404,12 +410,7 @@ export class Reflector {
         return;
       }
       if (!classMeta.hasOwnProperty(methodWithParams)) {
-        (classMeta as any)[methodWithParams] = {
-          type: Class,
-          decorators: [],
-          params: [],
-          newParams: new Map(),
-        } as ClassPropMeta;
+        (classMeta as any)[methodWithParams] = this.createClassPropMeta(Class);
       }
       const classPropMeta = (classMeta as any)[methodWithParams] as ClassPropMeta;
       classPropMeta.params = this.getParamsMeta(Cls, methodWithParams);
