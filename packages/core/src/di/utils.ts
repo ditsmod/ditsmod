@@ -83,7 +83,7 @@ export function newArray<T>(size: number, value?: T): T[] {
 }
 
 export function isDecoratorAndValue(
-  decoratorAndValue?: DecoratorAndValue | Class,
+  decoratorAndValue?: DecoratorAndValue | Class | InjectionToken,
 ): decoratorAndValue is DecoratorAndValue {
   return (
     (decoratorAndValue as DecoratorAndValue)?.decorator !== undefined &&
