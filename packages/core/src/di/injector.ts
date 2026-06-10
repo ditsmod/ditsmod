@@ -15,7 +15,14 @@ import type { InjectionToken } from './top/injection-token.js';
 import type { DualKey } from './key-registry.js';
 import { KeyRegistry } from './key-registry.js';
 import { Reflector } from './reflector.js';
-import type { Class, NormalizedProvider, ParamsMeta, Provider, Visibility, CompareFn } from './top/types-and-models.js';
+import type {
+  Class,
+  NormalizedProvider,
+  ParameterMeta,
+  Provider,
+  Visibility,
+  CompareFn,
+} from './top/types-and-models.js';
 import {
   type DepsMeta,
   type RegistryOfInjector,
@@ -356,8 +363,8 @@ expect(injector.get(Car) instanceof Car).toBe(true);
     if (aParamsMeta.includes(null)) {
       throw new NoAnnotation(Cls, aParamsMeta, propertyKey, hasParentParams, argsShape);
     }
-    const deps = (aParamsMeta as ParamsMeta[]).map((paramsMeta) => {
-      const { token, input, isOptional, visibility } = this.extractPayload(paramsMeta);
+    const deps = (aParamsMeta as ParameterMeta[]).map((parameterMeta) => {
+      const { token, input, isOptional, visibility } = this.extractPayload(parameterMeta);
       if (token != null) {
         return new Dependency(KeyRegistry.get(token), isOptional, visibility, input);
       } else if (isOptional) {
@@ -373,28 +380,28 @@ expect(injector.get(Car) instanceof Car).toBe(true);
     return depsMeta;
   }
 
-  protected static extractPayload(paramsMeta: ParamsMeta) {
+  protected static extractPayload(parameterMeta: ParameterMeta) {
     let token: any = null;
     let input: any = undefined;
     let isOptional = false;
 
     let visibility: Visibility = null;
 
-    for (let i = 0; i < paramsMeta.length; ++i) {
-      const paramsItem = paramsMeta[i];
+    for (let i = 0; i < parameterMeta.length; ++i) {
+      const parameterItem = parameterMeta[i];
 
-      if (paramsItem instanceof DecoratorAndValue) {
-        const { decoratorId } = paramsItem;
+      if (parameterItem instanceof DecoratorAndValue) {
+        const { decoratorId } = parameterItem;
         if (decoratorId === inject) {
-          token = (paramsItem.value as InjectTransformResult).token;
-          input = (paramsItem.value as InjectTransformResult).input;
+          token = (parameterItem.value as InjectTransformResult).token;
+          input = (parameterItem.value as InjectTransformResult).input;
         } else if (decoratorId === optional) {
           isOptional = true;
         } else if (decoratorId === fromSelf || decoratorId === skipSelf) {
           visibility = decoratorId;
         }
       } else {
-        token = paramsItem;
+        token = parameterItem;
       }
     }
 

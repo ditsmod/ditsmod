@@ -1,12 +1,12 @@
 import { inject, type InjectTransformResult } from './decorators.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
-import type { ParamsMeta } from './top/types-and-models.js';
+import type { ParameterMeta } from './top/types-and-models.js';
 
 export type ParentArgsShape = number | ParentArgsShape[];
 
 export class ParentParams {
-  static getTokensAndArgsShape(parameterMetaOfClass: (ParamsMeta | null)[][]) {
-    let aParamsMeta: (ParamsMeta | null)[] = [];
+  static getTokensAndArgsShape(parameterMetaOfClass: (ParameterMeta | null)[][]) {
+    let aParamsMeta: (ParameterMeta | null)[] = [];
     let argsShape: ParentArgsShape[] = [];
     let hasParentParams: boolean = false;
 
@@ -14,7 +14,7 @@ export class ParentParams {
       const parentTokens = aParamsMeta;
       const parentShape = argsShape;
 
-      const nextTokens: (ParamsMeta | null)[] = [];
+      const nextTokens: (ParameterMeta | null)[] = [];
       const nextShape: ParentArgsShape[] = [];
 
       for (const parameterMeta of aParameterMeta) {
@@ -45,7 +45,7 @@ export class ParentParams {
     });
   }
 
-  protected static hasParentParams(parameterMeta: ParamsMeta | null): boolean | void {
+  protected static hasParentParams(parameterMeta: ParameterMeta | null): boolean | void {
     for (const parameterItem of parameterMeta || []) {
       if (parameterItem instanceof DecoratorAndValue) {
         if (parameterItem.decoratorId === inject) {

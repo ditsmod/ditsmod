@@ -2,7 +2,7 @@ import { jest } from '@jest/globals';
 
 import { Reflector } from './reflector.js';
 import { ParentParams, type ParentArgsShape } from './parent-params.js';
-import type { ParamsMeta } from './top/types-and-models.js';
+import type { ParameterMeta } from './top/types-and-models.js';
 import { Injector } from './injector.js';
 import { inject } from './decorators.js';
 
@@ -92,10 +92,10 @@ describe('classMeta.constructor.params', () => {
     expect(map).toBeInstanceOf(Map);
     expect(map?.size).toBe(6);
     expect(map?.has(Class3)).toBe(true);
-    expect(map?.get(Class3)).toEqual<ParamsMeta[]>([[ParentParams], [Class3Param1], [Class3Param2]]);
+    expect(map?.get(Class3)).toEqual<ParameterMeta[]>([[ParentParams], [Class3Param1], [Class3Param2]]);
 
     expect(map?.has(Class2)).toBe(true);
-    expect(map?.get(Class2)).toEqual<ParamsMeta[]>([
+    expect(map?.get(Class2)).toEqual<ParameterMeta[]>([
       [Class2Param1],
       [ParentParams],
       [Class2Param2, expect.any(Object)],
@@ -103,16 +103,16 @@ describe('classMeta.constructor.params', () => {
     ]);
 
     expect(map?.has(Class1)).toBe(true);
-    expect(map?.get(Class1)).toEqual<ParamsMeta[]>([[Class1Param1], [Class1Param2], [ParentParams]]);
+    expect(map?.get(Class1)).toEqual<ParameterMeta[]>([[Class1Param1], [Class1Param2], [ParentParams]]);
 
     expect(map?.has(Class0)).toBe(true);
-    expect(map?.get(Class0)).toEqual<ParamsMeta[]>([[Class0Param1], [Class0Param2], [Class0Param3]]);
+    expect(map?.get(Class0)).toEqual<ParameterMeta[]>([[Class0Param1], [Class0Param2], [Class0Param3]]);
 
     expect(map?.has(ClassBefore1)).toBe(true);
-    expect(map?.get(ClassBefore1)).toEqual<ParamsMeta[]>([[ClassBefore1Param1], [ClassBefore1Param2]]);
+    expect(map?.get(ClassBefore1)).toEqual<ParameterMeta[]>([[ClassBefore1Param1], [ClassBefore1Param2]]);
 
     expect(map?.has(ClassBefore2)).toBe(true);
-    expect(map?.get(ClassBefore2)).toEqual<ParamsMeta[]>([[ParentParams]]);
+    expect(map?.get(ClassBefore2)).toEqual<ParameterMeta[]>([[ParentParams]]);
   });
 });
 
@@ -123,7 +123,7 @@ describe('ParentParams', () => {
       const { aParamsMeta, argsShape } = ParentParams.getTokensAndArgsShape([
         ...classMeta!.constructor.newParams!.values(),
       ]);
-      expect(aParamsMeta).toEqual<ParamsMeta[]>([
+      expect(aParamsMeta).toEqual<ParameterMeta[]>([
         [Class2Param1],
         [Class1Param1],
         [Class1Param2],

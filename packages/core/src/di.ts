@@ -25,7 +25,7 @@ export {
   FactoryProvider,
   FunctionFactoryProvider,
   NormalizedProvider,
-  ParamsMeta,
+  ParameterMeta,
   Provider,
   TokenProvider,
   TypeProvider,

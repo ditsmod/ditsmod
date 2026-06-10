@@ -1,6 +1,6 @@
 import type { AnyObj } from '#types/mix.js';
 import type { AnyFn } from './top/types-and-models.js';
-import type { ParamsMeta, ClassMeta, ClassPropMeta, TypeGuard } from './top/types-and-models.js';
+import type { ParameterMeta, ClassMeta, ClassPropMeta, TypeGuard } from './top/types-and-models.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ClassMetaIterator } from './class-meta-iterator.js';
 import { Class, UnknownType } from './top/types-and-models.js';
@@ -194,8 +194,8 @@ export class Reflector {
   protected static createClassPropMeta<DecorValue = any>(
     type: Class = UnknownType,
     decorators: DecoratorAndValue<DecorValue>[] = [],
-    params: (ParamsMeta | null)[] = [],
-    newParams = new Map<Class, (ParamsMeta | null)[]>(),
+    params: (ParameterMeta | null)[] = [],
+    newParams = new Map<Class, (ParameterMeta | null)[]>(),
   ): ClassPropMeta<DecorValue> {
     return { type, decorators, params, newParams };
   }
@@ -277,7 +277,7 @@ export class Reflector {
    * @param propertyKey If this method is called without `propertyKey`,
    * it's returns parameters of class constructor.
    */
-  protected static getParamsMeta<T extends object>(Cls: Class<T>, propertyKey?: KeyOfClass<T>): (ParamsMeta | null)[] {
+  protected static getParamsMeta<T extends object>(Cls: Class<T>, propertyKey?: KeyOfClass<T>): (ParameterMeta | null)[] {
     if (!isType(Cls)) {
       return [];
     }
@@ -303,7 +303,7 @@ export class Reflector {
     }
   }
 
-  protected static getOwnParamsMeta<T extends AnyObj>(Cls: Class, propertyKey?: KeyOfClass<T>): ParamsMeta[] | null[] {
+  protected static getOwnParamsMeta<T extends AnyObj>(Cls: Class, propertyKey?: KeyOfClass<T>): ParameterMeta[] | null[] {
     const isConstructor = !propertyKey || propertyKey == 'constructor';
     const paramMetadata = isConstructor ? Reflector.getRawParamMeta(Cls) : Reflector.getRawParamMeta(Cls, propertyKey);
     const args = (isConstructor ? [Cls] : [Cls.prototype, propertyKey]) as [Class];
@@ -387,7 +387,7 @@ export class Reflector {
         // The requested method/property may have no decorators at all. Return a synthetic
         // metadata object so callers can still inspect function.length based params.
         const params = this.getParamsMeta(Cls, propertyKey as KeyOfClass<Proto>);
-        const newParams = new Map<Class, (ParamsMeta | null)[]>([[Cls, params]]);
+        const newParams = new Map<Class, (ParameterMeta | null)[]>([[Cls, params]]);
         return this.createClassPropMeta(UnknownType, [], params, newParams);
       }
     } else {
@@ -483,8 +483,8 @@ export class Reflector {
     return ownClassAnnotations.concat(parentAnnotations);
   }
 
-  protected static mergeTypesAndClassMeta(paramTypes: any[] | undefined, paramMetadata: any[]): ParamsMeta[] {
-    let result: ParamsMeta[];
+  protected static mergeTypesAndClassMeta(paramTypes: any[] | undefined, paramMetadata: any[]): ParameterMeta[] {
+    let result: ParameterMeta[];
 
     if (paramTypes === undefined) {
       result = newArray(paramMetadata.length);
@@ -498,10 +498,10 @@ export class Reflector {
         // instead of using Object as an injection token.
         result[i] = [];
       } else if (paramTypes[i]) {
-        result[i] = [paramTypes[i]] as ParamsMeta;
+        result[i] = [paramTypes[i]] as ParameterMeta;
       }
       if (paramMetadata && paramMetadata[i] != null) {
-        result[i] = result[i].concat(paramMetadata[i]) as ParamsMeta;
+        result[i] = result[i].concat(paramMetadata[i]) as ParameterMeta;
       }
     }
     return result;

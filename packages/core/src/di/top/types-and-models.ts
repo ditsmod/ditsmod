@@ -45,12 +45,12 @@ export interface ClassPropMeta<DecorValue = any> {
   [DEPS_KEY]?: DepsMeta;
   type: Class;
   decorators: DecoratorAndValue<DecorValue>[];
-  params: (ParamsMeta | null)[];
-  newParams: Map<Class, (ParamsMeta | null)[]>;
+  params: (ParameterMeta | null)[];
+  newParams: Map<Class, (ParameterMeta | null)[]>;
 }
 
-export type ParamsItem<Value = any> = DecoratorAndValue<Value> | InjectionToken<any> | Class;
-export type ParamsMeta<Value = any> = [Class, ...ParamsItem<Value>[]] | [];
+export type ParameterItem<Value = any> = DecoratorAndValue<Value> | InjectionToken<any> | Class;
+export type ParameterMeta<Value = any> = [Class, ...ParameterItem<Value>[]] | [];
 
 export type Visibility = typeof fromSelf | typeof skipSelf | null;
 
