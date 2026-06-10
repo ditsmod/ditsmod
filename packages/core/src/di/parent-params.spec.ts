@@ -54,8 +54,8 @@ class Class1 extends Class0 {
 class Class2 extends Class1 {
   constructor(
     param1: Class2Param1,
-    parentParams: ParentParams,
-    @paramDecoratorFactory({ one: 1 }) param2: Class2Param2,
+    @inject(ParentParams) parentParams: any[],
+    param2: Class2Param2,
     parentParams2: ParentParams,
   ) {
     // @ts-expect-error auto-injected
@@ -97,8 +97,8 @@ describe('classMeta.constructor.params', () => {
     expect(map?.has(Class2)).toBe(true);
     expect(map?.get(Class2)).toEqual<ParameterMeta[]>([
       [Class2Param1],
-      [ParentParams],
-      [Class2Param2, expect.any(Object)],
+      [Array, expect.any(Object)],
+      [Class2Param2],
       [ParentParams],
     ]);
 
@@ -130,7 +130,7 @@ describe('ParentParams', () => {
         [Class0Param1],
         [Class0Param2],
         [Class0Param3],
-        [Class2Param2, expect.any(Object)],
+        [Class2Param2],
         [Class1Param1],
         [Class1Param2],
         [Class0Param1],

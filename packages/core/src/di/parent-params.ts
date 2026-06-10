@@ -46,15 +46,17 @@ export class ParentParams {
   }
 
   protected static hasParentParams(parameterMeta: ParameterMeta | null): boolean | void {
+    let token: any;
     for (const parameterItem of parameterMeta || []) {
       if (parameterItem instanceof DecoratorAndValue) {
         if (parameterItem.decoratorId === inject) {
           return ParentParams === (parameterItem.value as InjectTransformResult).token;
         }
       } else {
-        return ParentParams === parameterItem;
+        token = parameterItem;
       }
     }
+    return token === ParentParams;
   }
 
   protected static rebaseShape(shape: ParentArgsShape[], offset: number): ParentArgsShape[] {
