@@ -4,6 +4,7 @@
     "types": ["node", "jest"],
     "paths": {
       "#di/*": ["./src/di/*"],
+      "#ctx/*": ["./src/ctx/*"],
       "#init/*": ["./src/init/*"],
       "#types/*": ["./src/types/*"],
       "#utils/*": ["./src/utils/*"],

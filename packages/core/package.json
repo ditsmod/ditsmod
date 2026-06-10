@@ -18,6 +18,7 @@
   },
   "imports": {
     "#di/*": "./dist/di/*",
+    "#ctx/*": "./dist/ctx/*",
     "#init/*": "./dist/init/*",
     "#types/*": "./dist/types/*",
     "#utils/*": "./dist/utils/*",

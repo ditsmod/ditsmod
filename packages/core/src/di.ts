@@ -52,9 +52,5 @@ export {
 export { DepsChecker } from '#di/deps-checker.js';
 export { RegistryOfInjector, ResolvedFactory, ResolvedProvider } from '#di/top/resolved-provider.js';
 export { DecoratorAndValue } from '#di/top/decorator-and-value.js';
-export { Context } from '#di/ctx/context.js';
-export { ctxProviders } from '#di/ctx/providers.js';
-export { ctx } from '#di/ctx/decorators.js';
-export { CtxModule } from '#di/ctx/ctx.module.js';
-export { getSymbol, InjectionSymbol } from '#di/ctx/get-symbol.js';
+export { getSymbol, InjectionSymbol } from '#di/top/get-symbol.js';
 export { TypeGuard, AnyFn } from '#di/top/types-and-models.js';

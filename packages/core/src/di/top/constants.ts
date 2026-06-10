@@ -1,4 +1,4 @@
-import { getSymbol } from '#di/ctx/get-symbol.js';
+import { getSymbol } from '#di/top/get-symbol.js';
 import { InjectionToken } from './injection-token.js';
 import type { DepsMeta } from './resolved-provider.js';
 import type { ClassMeta } from './types-and-models.js';

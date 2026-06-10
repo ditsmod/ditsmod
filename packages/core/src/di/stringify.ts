@@ -1,4 +1,4 @@
-import { getSymbol } from './ctx/get-symbol.js';
+import { getSymbol } from './top/get-symbol.js';
 
 export const DEBUG_NAME = getSymbol<string>('DEBUG_NAME');
 

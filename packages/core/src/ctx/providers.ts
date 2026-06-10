@@ -1,5 +1,5 @@
 import { input } from '#di/decorators.js';
-import { ctx } from '#di/ctx/decorators.js';
+import { ctx } from '#ctx/decorators.js';
 import type { Provider } from '#di/top/types-and-models.js';
 import { Context } from './context.js';
 import { Injector } from '#di/injector.js';

@@ -101,3 +101,7 @@ export {
 } from '#decorators/type-guards.js';
 export { isProvider } from '#utils/type-guards.js';
 export { objectKeys } from '#utils/object-keys.js';
+export { Context } from '#ctx/context.js';
+export { ctxProviders } from '#ctx/providers.js';
+export { ctx } from '#ctx/decorators.js';
+export { CtxModule } from '#ctx/ctx.module.js';
