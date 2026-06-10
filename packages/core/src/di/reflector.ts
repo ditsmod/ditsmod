@@ -46,6 +46,8 @@ export class Reflector {
   static makeClassDecorator<T extends AnyFn>(transform?: T, debugFactoryName?: string, decoratorId?: AnyFn) {
     function classDecoratorFactory(...args: Parameters<T>): any {
       const value = transform ? transform(...args) : [...args];
+      // Capture the decorator declaration directory while the decorator factory is executed.
+      // Later, module discovery uses this location to resolve relative metadata.
       const declaredInDir = CallsiteUtils.getCallerDir();
       return function classDecorator(Cls: Class): void {
         const classDecorValues = Reflector.getRawMeta(Cls, CLASS_KEY, undefined, [] as DecoratorAndValue[]);
@@ -70,6 +72,7 @@ export class Reflector {
         const Cls = target.constructor as Class;
         const defaultValue = {} as Record<string | symbol, DecoratorAndValue[]>;
         const item = new DecoratorAndValue(propDecorFactory, value, decoratorId);
+        // Store both quick per-property metadata and the property list used by this.collectMetadata().
         Reflector.getRawMeta(Cls, PROP_KEY, propertyKey, item);
         const meta = Reflector.getRawMeta(Cls, PROP_KEY, undefined, defaultValue);
         (meta[propertyKey] ??= []).push(item);
@@ -97,6 +100,8 @@ export class Reflector {
         const Cls = isType(classOrInstance) ? classOrInstance : (classOrInstance.constructor as Class);
         const parameters = Reflector.getRawMeta(Cls, PARAMS_KEY, propertyKey, [] as any[]);
         const methodNames: Set<string | symbol> = Reflector.getRawMeta(Cls, METHODS_WITH_PARAMS, undefined, new Set());
+        // TypeScript emits parameter metadata only for decorated declarations, so keep
+        // an explicit registry of constructors and methods that have parameter decorators.
         methodNames.add(propertyKey || 'constructor');
 
         // There might be gaps if some in between parameters do not have annotations.
@@ -165,12 +170,16 @@ export class Reflector {
       return;
     }
 
+    // A second argument with undefined explicitly asks for constructor metadata.
+    // A missing second argument asks for the whole class metadata iterator.
     if (arguments.length == 2 && !propertyKey) {
       propertyKey = 'constructor';
     }
 
     let cache = this.getOwnCacheMetadata<DecorValue, Proto>(Cls);
     if (!cache) {
+      // Build a fresh metadata view once, then cache it on the class constructor.
+      // Parent metadata is copied first so own metadata can override or prepend it.
       this.concatWithParentMeta(Cls, classMeta);
       cache = this.concatWithOwnMeta(Cls, classMeta);
     }
@@ -201,9 +210,12 @@ export class Reflector {
       // Merging current meta with parent meta
       if (parentClassMeta) {
         Reflect.ownKeys(parentClassMeta).forEach((propName) => {
+          // Child metadata must be mutable without mutating the already cached parent view.
           const propMeta = { ...parentClassMeta[propName as any] };
           propMeta.decorators = propMeta.decorators.slice();
           if (propMeta[DEPS_KEY]) {
+            // Dependency metadata is attached later by the injector, but inherited
+            // reflector metadata may already carry it from a previous resolution.
             propMeta[DEPS_KEY] = { ...propMeta[DEPS_KEY]! };
             propMeta[DEPS_KEY]!.deps = propMeta[DEPS_KEY]!.deps.slice();
           }
@@ -230,13 +242,16 @@ export class Reflector {
       const decorators = ownPropsMeta![propertyKey];
       if (classMeta.hasOwnProperty(propertyKey)) {
         const classPropMeta = (classMeta as any)[propertyKey] as ClassPropMeta;
-        classPropMeta.type = type; // Override parent type.
-        classPropMeta.params = []; // Remove parent params.
+        // Own property metadata represents an override, so parent type and params no longer apply.
+        classPropMeta.type = type;
+        classPropMeta.params = [];
         classPropMeta.decorators.unshift(...decorators);
       } else {
         (classMeta as any)[propertyKey] = this.createClassPropMeta(type, decorators);
       }
 
+      // Method decorators have design:type === Function. In that case the method
+      // can also have parameter metadata and should expose it on the same property meta.
       if ((classMeta as any)[propertyKey].type === Function) {
         const classPropMeta = (classMeta as any)[propertyKey] as ClassPropMeta;
         classPropMeta.params = this.getParamsMeta(Cls, propertyKey as any);
@@ -340,6 +355,8 @@ export class Reflector {
     defaultValue?: R,
   ): R {
     if (propertyKey) {
+      // Reflect metadata distinguishes metadata on a property from metadata on a class.
+      // The optional default is installed only once to preserve identity for arrays/maps.
       if (defaultValue !== undefined && !Reflect.hasOwnMetadata(metadataKey, Cls, propertyKey as string)) {
         Reflect.defineMetadata(metadataKey, defaultValue, Cls, propertyKey as string);
       }
@@ -367,6 +384,8 @@ export class Reflector {
       if (classPropMeta) {
         return classPropMeta;
       } else {
+        // The requested method/property may have no decorators at all. Return a synthetic
+        // metadata object so callers can still inspect function.length based params.
         const params = this.getParamsMeta(Cls, propertyKey as KeyOfClass<Proto>);
         const newParams = new Map<Class, (ParamsMeta | null)[]>([[Cls, params]]);
         return this.createClassPropMeta(UnknownType, [], params, newParams);
@@ -405,6 +424,8 @@ export class Reflector {
     ownPropsWithMeta: (string | symbol)[],
   ): ClassMeta<DecorValue, Proto> | undefined {
     const ownMethodsWithParams = Reflector.getRawMeta(Cls, METHODS_WITH_PARAMS, undefined, new Set<string | symbol>());
+    // Constructor metadata is always normalized so class decorators and constructor params
+    // share one stable metadata entry.
     ownMethodsWithParams.add('constructor');
     ownMethodsWithParams.forEach((methodWithParams) => {
       if (ownPropsWithMeta.includes(methodWithParams)) {
@@ -417,6 +438,7 @@ export class Reflector {
       classPropMeta.params = this.getParamsMeta(Cls, methodWithParams);
       classPropMeta.newParams ??= new Map();
       classPropMeta.newParams.set(Cls, classPropMeta.params);
+      // Parameter metadata changed, so previously resolved dependency metadata is stale.
       delete (classPropMeta as any)[DEPS_KEY];
       if (methodWithParams == 'constructor') {
         classPropMeta.decorators = this.getClassMeta(Cls);
@@ -429,6 +451,7 @@ export class Reflector {
       // !classMeta.constructor.params.length &&
       !classMeta.constructor.newParams.size
     ) {
+      // Avoid caching an empty iterator for classes with no meaningful reflector metadata.
       this.setMetaCache(Cls, CACHE_KEY, undefined);
       return;
     }
@@ -471,6 +494,8 @@ export class Reflector {
 
     for (let i = 0; i < result.length; i++) {
       if (paramTypes === undefined || paramTypes[i] === Object) {
+        // `Object` is emitted for erased or too broad TypeScript types. Treat it as unknown
+        // instead of using Object as an injection token.
         result[i] = [];
       } else if (paramTypes[i]) {
         result[i] = [paramTypes[i]] as ParamsMeta;
