@@ -1,22 +1,24 @@
+import { inject, type InjectTransformResult } from './decorators.js';
+import { DecoratorAndValue } from './top/decorator-and-value.js';
 import type { ParamsMeta } from './top/types-and-models.js';
 
 export type ParentArgsShape = number | ParentArgsShape[];
 
 export class ParentParams {
-  static getTokensAndArgsShape(paramsByClass: (ParamsMeta | null)[][]) {
+  static getTokensAndArgsShape(parameterMetaOfClass: (ParamsMeta | null)[][]) {
     let aParamsMeta: (ParamsMeta | null)[] = [];
     let argsShape: ParentArgsShape[] = [];
     let hasParentParams: boolean = false;
 
-    for (const params of paramsByClass) {
+    for (const aParameterMeta of parameterMetaOfClass) {
       const parentTokens = aParamsMeta;
       const parentShape = argsShape;
 
       const nextTokens: (ParamsMeta | null)[] = [];
       const nextShape: ParentArgsShape[] = [];
 
-      for (const param of params) {
-        if (param?.[0] === ParentParams) {
+      for (const parameterMeta of aParameterMeta) {
+        if (this.hasParentParams(parameterMeta)) {
           hasParentParams = true;
           const offset = nextTokens.length;
 
@@ -25,7 +27,7 @@ export class ParentParams {
         } else {
           const index = nextTokens.length;
 
-          nextTokens.push(param);
+          nextTokens.push(parameterMeta);
           nextShape.push(index);
         }
       }
@@ -41,6 +43,18 @@ export class ParentParams {
     return shape.map((item) => {
       return Array.isArray(item) ? this.getArgs(item, results) : results[item];
     });
+  }
+
+  protected static hasParentParams(parameterMeta: ParamsMeta | null): boolean | void {
+    for (const parameterItem of parameterMeta || []) {
+      if (parameterItem instanceof DecoratorAndValue) {
+        if (parameterItem.decoratorId === inject) {
+          return ParentParams === (parameterItem.value as InjectTransformResult).token;
+        }
+      } else {
+        return ParentParams === parameterItem;
+      }
+    }
   }
 
   protected static rebaseShape(shape: ParentArgsShape[], offset: number): ParentArgsShape[] {
