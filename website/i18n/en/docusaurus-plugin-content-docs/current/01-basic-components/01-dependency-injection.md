@@ -332,16 +332,16 @@ Ditsmod has a special token `ParentParams`, which DI takes as a placeholder, whe
 ```ts {19,24}
 import { ParentParams, Injector, injectable } from '@ditsmod/core/di';
 
-class Class1Param1 {}
-class Class1Param2 {}
-class Class2Param1 {}
-class Class2Param2 {}
+class ParentParam1 {}
+class ParentParam2 {}
+class ChildParam1 {}
+class ChildParam2 {}
 
 @injectable()
 class Parent {
   constructor(
-    public class1Param1: Class1Param1,
-    public class1Param2: Class1Param2,
+    public parentParam1: ParentParam1,
+    public parentParam2: ParentParam2,
   ) {}
 }
 
@@ -349,8 +349,8 @@ class Parent {
 class Child extends Parent {
   constructor(
     parentParams: ParentParams,
-    public class2Param1: Class2Param1,
-    public class2Param2: Class2Param2,
+    public childParam1: ChildParam1,
+    public childParam2: ChildParam2,
   ) {
     // @ts-expect-error auto-injected
     super(...parentParams);
@@ -359,20 +359,48 @@ class Child extends Parent {
 
 const injector = Injector.resolveAndCreate([
   Child,
-  Class1Param1,
-  Class1Param2,
-  Class2Param1,
-  Class2Param2,
+  ParentParam1,
+  ParentParam2,
+  ChildParam1,
+  ChildParam2,
 ]);
 console.log(injector.get(Child));
 ```
 
-This example shows that the `Child` class extends the `Parent` class, and each of them is decorated with `@injectable()`. In addition, the first parameter of the `Child` constructor is typed as `ParentParams`, into which the DI will inject an array of instances: `[Class1Param1, Class1Param2]`. Note that there is a special comment above the `super(...parentParams)` expression that suppresses any TypeScript errors. This is done because, in this case, type checking for `parentParams` is not important, since the only operation involving `parentParams` is spreading the array into the parent constructor.
+This example shows that the `Child` class extends the `Parent` class, and each of them is decorated with `@injectable()`. In addition, the first parameter of the `Child` constructor is typed as `ParentParams`, into which the DI will inject an array of instances: `[ParentParam1, ParentParam2]`. Note that there is a special comment above the `super(...parentParams)` expression that suppresses any TypeScript errors. This is done because, in this case, type checking for `parentParams` is not important, since the only operation involving `parentParams` is spreading the array into the parent constructor.
 
 As an alternative, you can use the following approach, which does not require a comment to suppress a TypeScript error:
 
-```ts
-super(...(parentParams as ConstructorParameters<typeof Parent>));
+Alternative #1:
+
+```ts {6}
+import { ParentParams, Injector, injectable, inject } from '@ditsmod/core/di';
+// ...
+@injectable()
+class Child extends Parent {
+  constructor(
+    @inject(ParentParams) parentParams: ConstructorParameters<typeof Parent>,
+    public childParam1: ChildParam1,
+    public childParam2: ChildParam2,
+  ) {
+    super(...parentParams);
+  }
+}
+```
+
+Alternative #2:
+
+```ts {8}
+@injectable()
+class Child extends Parent {
+  constructor(
+    parentParams: ParentParams,
+    public childParam1: ChildParam1,
+    public childParam2: ChildParam2,
+  ) {
+    super(...(parentParams as ConstructorParameters<typeof Parent>));
+  }
+}
 ```
 
 ## Hierarchy and encapsulation of injectors  {#hierarchy-and-encapsulation-of-injectors}
