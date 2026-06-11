@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 
 import { Reflector } from './reflector.js';
-import { ParentParams, type ParentArgsShape } from './parent-params.js';
+import { ParentParams, type ParentRecipe } from './parent-params.js';
 import type { ParameterMeta } from './top/types-and-models.js';
 import { Injector } from './injector.js';
 import { inject } from './decorators.js';
@@ -117,10 +117,10 @@ describe('classMeta.constructor.params', () => {
 });
 
 describe('ParentParams', () => {
-  describe('getTokensAndArgsShape()', () => {
+  describe('getParamsMetaAndRecipe()', () => {
     it('returns a one-dimensional array of params, without ParentParams', () => {
       const classMeta = Reflector.collectMetadata(Class3);
-      const { aParamsMeta, argsShape } = ParentParams.getTokensAndArgsShape([
+      const { aParamsMeta, recipe } = ParentParams.getParamsMetaAndRecipe([
         ...classMeta!.constructor.newParams!.values(),
       ]);
       expect(aParamsMeta).toEqual<ParameterMeta[]>([
@@ -140,10 +140,10 @@ describe('ParentParams', () => {
         [Class3Param2],
       ]);
 
-      expect(argsShape).toEqual<ParentArgsShape[]>([[0, [1, 2, [3, 4, 5]], 6, [7, 8, [9, 10, 11]]], 12, 13]);
+      expect(recipe).toEqual<ParentRecipe[]>([[0, [1, 2, [3, 4, 5]], 6, [7, 8, [9, 10, 11]]], 12, 13]);
 
       const results = aParamsMeta.map((token) => (Array.isArray(token) ? token[0] : token));
-      const class3Args = ParentParams.getArgs(argsShape, results);
+      const class3Args = ParentParams.getArgs(recipe, results);
       expect(class3Args).toEqual([
         [
           Class2Param1,

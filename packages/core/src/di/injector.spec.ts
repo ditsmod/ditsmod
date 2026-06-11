@@ -209,7 +209,7 @@ describe('injector', () => {
             new Dependency(KeyRegistry.get(DType), ...rest),
           ],
           hasParentParams: false,
-          argsShape: [0, 1, 2],
+          recipe: [0, 1, 2],
         });
       });
 
@@ -223,7 +223,7 @@ describe('injector', () => {
             new Dependency(KeyRegistry.get(DType), ...rest),
           ],
           hasParentParams: false,
-          argsShape: [0, 1, 2, 3],
+          recipe: [0, 1, 2, 3],
         });
       });
     });

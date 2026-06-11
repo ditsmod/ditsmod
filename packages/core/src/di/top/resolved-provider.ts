@@ -1,5 +1,5 @@
 import type { DualKey } from '#di/key-registry.js';
-import type { ParentArgsShape } from '#di/parent-params.js';
+import type { ParentRecipe } from '#di/parent-params.js';
 import type { MultiProvider } from '#di/utils.js';
 import type { AnyFn, Visibility } from './types-and-models.js';
 
@@ -94,5 +94,5 @@ export class Dependency {
 export interface DepsMeta {
   deps: Dependency[];
   hasParentParams?: boolean;
-  argsShape?: ParentArgsShape[];
+  recipe?: ParentRecipe[];
 }

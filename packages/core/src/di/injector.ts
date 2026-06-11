@@ -249,7 +249,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       const Cls = resolveForwardRef(provider.useClass) as Class;
       const depsMeta = this.getDependencies(Cls);
       const factoryFn = depsMeta.hasParentParams
-        ? (...args: any[]) => new Cls(...ParentParams.getArgs(depsMeta.argsShape!, args))
+        ? (...args: any[]) => new Cls(...ParentParams.getArgs(depsMeta.recipe!, args))
         : (...args: any[]) => new Cls(...args);
       return [this.getResolvedProvider(provider, provider.token, factoryFn, depsMeta.deps, provider.multi)];
     } else if (isValueProvider(provider)) {
@@ -293,7 +293,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       factoryFn = (...args: any[]) => {
         const args1 = args.slice(numArgs2);
         const args2 = args.slice(0, numArgs2);
-        return new Cls(...ParentParams.getArgs(depsMeta.argsShape!, args1))[factoryKey](...args2);
+        return new Cls(...ParentParams.getArgs(depsMeta.recipe!, args1))[factoryKey](...args2);
       };
     } else {
       factoryFn = (...args: any[]) => {
@@ -357,11 +357,11 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       return cache;
     }
     // const aParamsMeta = classPropMeta.params;
-    const { aParamsMeta, hasParentParams, argsShape } = ParentParams.getTokensAndArgsShape([
+    const { aParamsMeta, hasParentParams, recipe } = ParentParams.getParamsMetaAndRecipe([
       ...classPropMeta.newParams.values(),
     ]);
     if (aParamsMeta.includes(null)) {
-      throw new NoAnnotation(Cls, aParamsMeta, propertyKey, hasParentParams, argsShape);
+      throw new NoAnnotation(Cls, aParamsMeta, propertyKey, hasParentParams, recipe);
     }
     const deps = (aParamsMeta as ParameterMeta[]).map((parameterMeta) => {
       const { token, input, isOptional, visibility } = this.extractPayload(parameterMeta);
@@ -374,7 +374,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       }
     });
 
-    const depsMeta = { deps, hasParentParams, argsShape } satisfies DepsMeta;
+    const depsMeta = { deps, hasParentParams, recipe } satisfies DepsMeta;
     classPropMeta[DEPS_KEY] = depsMeta;
 
     return depsMeta;

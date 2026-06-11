@@ -3,7 +3,7 @@ import { inspect } from 'node:util';
 import { CustomError } from '#error/custom-error.js';
 import { stringify } from './stringify.js';
 import type { Class } from './top/types-and-models.js';
-import { ParentParams, type ParentArgsShape } from './parent-params.js';
+import { ParentParams, type ParentRecipe } from './parent-params.js';
 
 /**
    * Thrown when trying to retrieve a dependency by key from `Injector`, but the
@@ -156,10 +156,10 @@ export class NoAnnotation extends CustomError {
     params: any[],
     propertyKey?: string | symbol,
     hasParentParams?: boolean,
-    argsShape?: ParentArgsShape[],
+    recipe?: ParentRecipe[],
   ) {
     let msg1: string;
-    params = hasParentParams ? ParentParams.getArgs(argsShape!, params) : params;
+    params = hasParentParams ? ParentParams.getArgs(recipe!, params) : params;
     const signature = getSignature(params);
     if (propertyKey) {
       const path = `${stringify(Cls)}.${propertyKey.toString()}`;
