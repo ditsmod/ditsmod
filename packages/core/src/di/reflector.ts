@@ -8,6 +8,7 @@ import { DecoratorAndValue } from './top/decorator-and-value.js';
 import { CACHE_KEY, CLASS_KEY, DEPS_KEY, PARAMS_KEY, METHODS_WITH_PARAMS, PROP_KEY } from './top/constants.js';
 import { isType, newArray } from './utils.js';
 import type { InjectionToken } from './top/injection-token.js';
+import type { InjectionSymbol } from './top/get-symbol.js';
 
 type KeyOfClass<Proto extends AnyObj> = keyof Proto | 'constructor' | symbol | (string & {});
 /**
@@ -50,7 +51,7 @@ export class Reflector {
       // Later, module discovery uses this location to resolve relative metadata.
       const declaredInDir = CallsiteUtils.getCallerDir();
       return function classDecorator(Cls: Class): void {
-        const classDecorValues = Reflector.getRawMeta(Cls, CLASS_KEY, undefined, [] as DecoratorAndValue[]);
+        const classDecorValues = Reflector.getRawMeta(Cls, CLASS_KEY, undefined, []);
         const decoratorAndValue = new DecoratorAndValue(classDecoratorFactory, value, decoratorId, declaredInDir);
         classDecorValues.push(decoratorAndValue);
       };
@@ -70,11 +71,8 @@ export class Reflector {
       const value = transform ? transform(...args) : [...args];
       return function propDecorator(target: any, propertyKey: string | symbol): void {
         const Cls = target.constructor as Class;
-        const defaultValue = {} as Record<string | symbol, DecoratorAndValue[]>;
         const item = new DecoratorAndValue(propDecorFactory, value, decoratorId);
-        // Store both quick per-property metadata and the property list used by this.collectMetadata().
-        Reflector.getRawMeta(Cls, PROP_KEY, propertyKey, item);
-        const meta = Reflector.getRawMeta(Cls, PROP_KEY, undefined, defaultValue);
+        const meta = Reflector.getRawMeta(Cls, PROP_KEY, undefined, {});
         (meta[propertyKey] ??= []).push(item);
       };
     }
@@ -98,8 +96,8 @@ export class Reflector {
       ): void {
         // This function can be called for a class constructor and methods.
         const Cls = isType(classOrInstance) ? classOrInstance : (classOrInstance.constructor as Class);
-        const parameters = Reflector.getRawMeta(Cls, PARAMS_KEY, propertyKey, [] as any[]);
-        const methodNames: Set<string | symbol> = Reflector.getRawMeta(Cls, METHODS_WITH_PARAMS, undefined, new Set());
+        const parameters = Reflector.getRawMeta(Cls, PARAMS_KEY, propertyKey, []);
+        const methodNames = Reflector.getRawMeta(Cls, METHODS_WITH_PARAMS, undefined, new Set());
         // TypeScript emits parameter metadata only for decorated declarations, so keep
         // an explicit registry of constructors and methods that have parameter decorators.
         methodNames.add(propertyKey || 'constructor');
@@ -109,7 +107,6 @@ export class Reflector {
         while (parameters.length <= index) {
           parameters.push(null);
         }
-
         (parameters[index] ??= []).push(new DecoratorAndValue(paramDecorFactory, value, decoratorId));
       };
     }
@@ -209,9 +206,9 @@ export class Reflector {
       const parentClassMeta = this.collectMetadata(ParentCls);
       // Merging current meta with parent meta
       if (parentClassMeta) {
-        Reflect.ownKeys(parentClassMeta).forEach((propName) => {
+        Reflect.ownKeys(parentClassMeta).forEach((propertyKey) => {
           // Child metadata must be mutable without mutating the already cached parent view.
-          const propMeta = { ...parentClassMeta[propName as any] };
+          const propMeta = { ...parentClassMeta[propertyKey as any] };
           propMeta.decorators = propMeta.decorators.slice();
           if (propMeta[DEPS_KEY]) {
             // Dependency metadata is attached later by the injector, but inherited
@@ -219,7 +216,7 @@ export class Reflector {
             propMeta[DEPS_KEY] = { ...propMeta[DEPS_KEY]! };
             propMeta[DEPS_KEY]!.deps = propMeta[DEPS_KEY]!.deps.slice();
           }
-          (classMeta as any)[propName] = propMeta;
+          (classMeta as any)[propertyKey] = propMeta;
         });
       }
     }
@@ -234,14 +231,14 @@ export class Reflector {
     Cls: Class<Proto>,
     classMeta: ClassMeta<DecorValue, Proto>,
   ) {
-    const ownPropsMeta = this.getRawPropMeta(Cls) as Record<string | symbol, DecoratorAndValue[]> | undefined;
+    const ownPropsMeta = this.getRawPropMeta(Cls);
     const ownPropsWithMeta = ownPropsMeta ? Reflect.ownKeys(ownPropsMeta) : [];
 
     ownPropsWithMeta.forEach((propertyKey) => {
       const type = Reflect.getOwnMetadata('design:type', Cls.prototype, propertyKey);
       const decorators = ownPropsMeta![propertyKey];
       if (classMeta.hasOwnProperty(propertyKey)) {
-        const classPropMeta = (classMeta as any)[propertyKey] as ClassPropMeta;
+        const classPropMeta = classMeta[propertyKey];
         // Own property metadata represents an override, so parent type and params no longer apply.
         classPropMeta.type = type;
         classPropMeta.params = [];
@@ -277,7 +274,10 @@ export class Reflector {
    * @param propertyKey If this method is called without `propertyKey`,
    * it's returns parameters of class constructor.
    */
-  protected static getParamsMeta<T extends object>(Cls: Class<T>, propertyKey?: KeyOfClass<T>): (ParameterMeta | null)[] {
+  protected static getParamsMeta<T extends object>(
+    Cls: Class<T>,
+    propertyKey?: KeyOfClass<T>,
+  ): (ParameterMeta | null)[] {
     if (!isType(Cls)) {
       return [];
     }
@@ -303,14 +303,17 @@ export class Reflector {
     }
   }
 
-  protected static getOwnParamsMeta<T extends AnyObj>(Cls: Class, propertyKey?: KeyOfClass<T>): ParameterMeta[] | null[] {
+  protected static getOwnParamsMeta<T extends AnyObj>(
+    Cls: Class,
+    propertyKey?: KeyOfClass<T>,
+  ): ParameterMeta[] | null[] {
     const isConstructor = !propertyKey || propertyKey == 'constructor';
     const paramMetadata = isConstructor ? Reflector.getRawParamMeta(Cls) : Reflector.getRawParamMeta(Cls, propertyKey);
     const args = (isConstructor ? [Cls] : [Cls.prototype, propertyKey]) as [Class];
     const paramTypes = Reflect.getOwnMetadata('design:paramtypes', ...args);
 
     if (paramTypes || paramMetadata) {
-      return this.mergeTypesAndClassMeta(paramTypes, paramMetadata);
+      return this.mergeTypesAndClassMeta(paramTypes, paramMetadata || []);
     }
 
     /**
@@ -348,6 +351,28 @@ export class Reflector {
     return this.getRawMeta(Cls, PARAMS_KEY, propertyKey);
   }
 
+  static getRawMeta<T extends AnyObj, R = any>(
+    Cls: Class<T> | T,
+    metadataKey: InjectionToken<R> | InjectionSymbol<R>,
+    propertyKey?: KeyOfClass<T>,
+  ): R | undefined;
+  static getRawMeta<T extends AnyObj, R = any>(
+    Cls: Class<T> | T,
+    metadataKey: InjectionToken<R> | InjectionSymbol<R>,
+    propertyKey: KeyOfClass<T> | undefined,
+    defaultValue: R,
+  ): R;
+  static getRawMeta<T extends AnyObj, R = any>(
+    Cls: Class<T> | T,
+    metadataKey: any,
+    propertyKey?: KeyOfClass<T>,
+  ): R | undefined;
+  static getRawMeta<T extends AnyObj, R = any>(
+    Cls: Class<T> | T,
+    metadataKey: any,
+    propertyKey: KeyOfClass<T> | undefined,
+    defaultValue: R,
+  ): R;
   static getRawMeta<T extends AnyObj, R = any>(
     Cls: Class<T> | T,
     metadataKey: any,
