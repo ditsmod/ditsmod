@@ -32,4 +32,4 @@ export const METHODS_WITH_PARAMS = new InjectionToken<Set<string | symbol>>('MET
  * The key used to store cached dependencies of a class.
  * This dependencies is seted by `injector.getDependencies()`.
  */
-export const DEPS_KEY = getSymbol<DepsMeta>();
+export const DEPS_KEY = getSymbol<DepsMeta>('DEPS_KEY');
