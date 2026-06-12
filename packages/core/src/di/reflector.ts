@@ -1,5 +1,5 @@
 import type { AnyObj } from '#types/mix.js';
-import type { AnyFn } from './top/types-and-models.js';
+import type { AnyFn, ParameterItem } from './top/types-and-models.js';
 import type { ParameterMeta, ClassMeta, ClassPropMeta, TypeGuard } from './top/types-and-models.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ClassMetaIterator } from './class-meta-iterator.js';
@@ -72,6 +72,8 @@ export class Reflector {
       return function propDecorator(target: any, propertyKey: string | symbol): void {
         const Cls = target.constructor as Class;
         const item = new DecoratorAndValue(propDecorFactory, value, decoratorId);
+        // Store both quick per-property metadata and the property list used by this.collectMetadata().
+        // Reflector.getRawMeta(Cls, PROP_KEY, propertyKey, item);
         const meta = Reflector.getRawMeta(Cls, PROP_KEY, undefined, {});
         (meta[propertyKey] ??= []).push(item);
       };
@@ -249,9 +251,9 @@ export class Reflector {
 
       // Method decorators have design:type === Function. In that case the method
       // can also have parameter metadata and should expose it on the same property meta.
-      if ((classMeta as any)[propertyKey].type === Function) {
-        const classPropMeta = (classMeta as any)[propertyKey] as ClassPropMeta;
-        classPropMeta.params = this.getParamsMeta(Cls, propertyKey as any);
+      if (classMeta[propertyKey].type === Function) {
+        const classPropMeta = classMeta[propertyKey];
+        classPropMeta.params = this.getParamsMeta(Cls, propertyKey);
         classPropMeta.newParams ??= new Map();
         classPropMeta.newParams.set(Cls, classPropMeta.params);
       }
@@ -278,9 +280,6 @@ export class Reflector {
     Cls: Class<T>,
     propertyKey?: KeyOfClass<T>,
   ): (ParameterMeta | null)[] {
-    if (!isType(Cls)) {
-      return [];
-    }
     const isConstructor = !propertyKey || propertyKey == 'constructor';
 
     /**
@@ -308,12 +307,14 @@ export class Reflector {
     propertyKey?: KeyOfClass<T>,
   ): ParameterMeta[] | null[] {
     const isConstructor = !propertyKey || propertyKey == 'constructor';
-    const paramMetadata = isConstructor ? Reflector.getRawParamMeta(Cls) : Reflector.getRawParamMeta(Cls, propertyKey);
+    const paramDecoratorMeta = isConstructor
+      ? Reflector.getRawParamMeta(Cls)
+      : Reflector.getRawParamMeta(Cls, propertyKey);
     const args = (isConstructor ? [Cls] : [Cls.prototype, propertyKey]) as [Class];
-    const paramTypes = Reflect.getOwnMetadata('design:paramtypes', ...args);
+    const paramTypes = Reflect.getOwnMetadata('design:paramtypes', ...args) as Class[];
 
-    if (paramTypes || paramMetadata) {
-      return this.mergeTypesAndClassMeta(paramTypes, paramMetadata || []);
+    if (paramTypes || paramDecoratorMeta) {
+      return this.mergeTypesAndParamDecoratorMeta(paramTypes, paramDecoratorMeta);
     }
 
     /**
@@ -508,27 +509,46 @@ export class Reflector {
     return ownClassAnnotations.concat(parentAnnotations);
   }
 
-  protected static mergeTypesAndClassMeta(paramTypes: any[] | undefined, paramMetadata: any[]): ParameterMeta[] {
-    let result: ParameterMeta[];
+  /**
+   * Returns an array with the metadata of the method parameters. The following example shows
+   * one case when the method has three parameters:
+   * 
+   ```ts
+const paramsMeta = [
+  [ SomeClass, DecoratorAndValue ], // First parameter
+  [ DecoratorAndValue ], // Second parameter
+  [ OtherClass ] // Third parameter
+];
+   ```
+   * 
+   * That is, the parameter metadata is presented as an array, where the class type can come first
+   * (if the TypeScript compiler was able to determine it), or an instance of the `DecoratorAndValue`
+   * class immediately follows (if a decorator is used at the parameter level).
+   */
+  protected static mergeTypesAndParamDecoratorMeta(
+    paramTypes: Class[],
+    paramDecoratorMeta: (DecoratorAndValue[] | null)[] | undefined,
+  ): ParameterMeta[] {
+    let mergedParamMeta: ParameterItem[][];
 
-    if (paramTypes === undefined) {
-      result = newArray(paramMetadata.length);
+    if (paramTypes) {
+      mergedParamMeta = new Array(paramTypes.length);
     } else {
-      result = newArray(paramTypes.length);
+      mergedParamMeta = paramDecoratorMeta ? new Array(paramDecoratorMeta.length) : [];
     }
 
-    for (let i = 0; i < result.length; i++) {
-      if (paramTypes === undefined || paramTypes[i] === Object) {
-        // `Object` is emitted for erased or too broad TypeScript types. Treat it as unknown
+    for (let paramIndex = 0; paramIndex < mergedParamMeta.length; paramIndex++) {
+      if (paramTypes[paramIndex] === Object) {
+        // TypeScript emit `Object` for types like `any`. Treat it as unknown
         // instead of using Object as an injection token.
-        result[i] = [];
-      } else if (paramTypes[i]) {
-        result[i] = [paramTypes[i]] as ParameterMeta;
+        mergedParamMeta[paramIndex] = [];
+      } else if (paramTypes[paramIndex]) {
+        mergedParamMeta[paramIndex] = [paramTypes[paramIndex]] as [Class];
       }
-      if (paramMetadata && paramMetadata[i] != null) {
-        result[i] = result[i].concat(paramMetadata[i]) as ParameterMeta;
+      if (paramDecoratorMeta && paramDecoratorMeta[paramIndex] != null) {
+        mergedParamMeta[paramIndex].push(...(paramDecoratorMeta[paramIndex] as DecoratorAndValue[]));
       }
     }
-    return result;
+    return mergedParamMeta as ParameterMeta[];
   }
 }
