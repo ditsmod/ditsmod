@@ -10,6 +10,10 @@ import { isType, newArray } from './utils.js';
 import type { InjectionToken } from './top/injection-token.js';
 import type { InjectionSymbol } from './top/get-symbol.js';
 
+export type ClassMetaChain<DecorValue = any, Proto extends AnyObj = AnyObj> = Map<
+  Class,
+  ClassMeta<DecorValue, Proto> | undefined
+>;
 type KeyOfClass<Proto extends AnyObj> = keyof Proto | 'constructor' | symbol | (string & {});
 /**
  * Attention: These regex has to hold even if the code is minified!
@@ -175,19 +179,21 @@ export class Reflector {
       propertyKey = 'constructor';
     }
 
-    let cache = this.getOwnCacheMetadata<DecorValue, Proto>(Cls);
-    if (!cache) {
+    let classMetaChain = this.getOwnCacheMetadata<DecorValue, Proto>(Cls);
+    if (!classMetaChain) {
       // Build a fresh metadata view once, then cache it on the class constructor.
       // Parent metadata is copied first so own metadata can override or prepend it.
-      this.concatWithParentMeta(Cls, classMeta);
-      cache = this.concatWithOwnMeta(Cls, classMeta);
+      const newClassMetaChain: ClassMetaChain<DecorValue, Proto> = new Map();
+      this.concatWithParentMeta(Cls, classMeta, newClassMetaChain);
+      this.concatWithOwnMeta(Cls, classMeta, newClassMetaChain);
+      classMetaChain = newClassMetaChain.set(Cls, classMeta);
     }
 
-    return this.getClassMetaOrParamsMeta(Cls, cache, propertyKey);
+    return this.getClassMetaOrParamsMeta(Cls, classMetaChain.get(Cls), propertyKey);
   }
 
   protected static getOwnCacheMetadata<DecorValue = any, Proto extends object = object>(Cls: any) {
-    return Reflect.getOwnMetadata(CACHE_KEY, Cls) as ClassMeta<DecorValue, Proto> | undefined;
+    return Reflect.getOwnMetadata(CACHE_KEY, Cls) as ClassMetaChain<DecorValue, Proto> | undefined;
   }
 
   protected static createClassPropMeta<DecorValue = any>(
@@ -202,12 +208,14 @@ export class Reflector {
   protected static concatWithParentMeta<DecorValue = any, Proto extends AnyObj = object>(
     Cls: Class<Proto>,
     classMeta: ClassMeta<DecorValue, Proto>,
+    classMetaChain: ClassMetaChain<DecorValue, Proto>,
   ) {
     const ParentCls = this.getParentClass(Cls);
     if (ParentCls) {
-      const parentClassMeta = this.collectMetadata(ParentCls);
+      const parentClassMeta = this.collectMetadata<DecorValue, Proto>(ParentCls);
       // Merging current meta with parent meta
       if (parentClassMeta) {
+        classMetaChain.set(ParentCls, parentClassMeta);
         Reflect.ownKeys(parentClassMeta).forEach((propertyKey) => {
           // Child metadata must be mutable without mutating the already cached parent view.
           const propMeta = { ...parentClassMeta[propertyKey as any] };
@@ -232,6 +240,7 @@ export class Reflector {
   protected static concatWithOwnMeta<DecorValue = any, Proto extends AnyObj = object>(
     Cls: Class<Proto>,
     classMeta: ClassMeta<DecorValue, Proto>,
+    classMetaChain: ClassMetaChain<DecorValue, Proto>,
   ) {
     const ownPropsMeta = this.getRawPropMeta(Cls);
     const ownPropsWithMeta = ownPropsMeta ? Reflect.ownKeys(ownPropsMeta) : [];
@@ -262,7 +271,7 @@ export class Reflector {
     if (this.getParentClass(Cls)) {
       this.removeOverridenParams(Cls, classMeta, ownPropsWithMeta);
     }
-    return this.concatWithParamsMeta(Cls, classMeta, ownPropsWithMeta);
+    return this.concatWithParamsMeta(Cls, classMeta, ownPropsWithMeta, classMetaChain);
   }
 
   static getRawPropMeta<T extends AnyObj>(Cls: Class<T>, propertyKey?: KeyOfClass<T>) {
@@ -448,6 +457,7 @@ export class Reflector {
     Cls: Class<Proto>,
     classMeta: ClassMeta<DecorValue, Proto>,
     ownPropsWithMeta: (string | symbol)[],
+    classMetaChain: ClassMetaChain<DecorValue, Proto>,
   ): ClassMeta<DecorValue, Proto> | undefined {
     const ownMethodsWithParams = Reflector.getRawMeta(Cls, METHODS_WITH_PARAMS, undefined, new Set<string | symbol>());
     // Constructor metadata is always normalized so class decorators and constructor params
@@ -482,16 +492,12 @@ export class Reflector {
       return;
     }
 
-    this.setMetaCache(Cls, CACHE_KEY, classMeta);
+    this.setMetaCache(Cls, CACHE_KEY, classMetaChain);
     return classMeta;
   }
 
-  protected static setMetaCache<DecorValue = any, Proto extends AnyObj = object>(
-    Cls: Class<Proto>,
-    metadataKey: InjectionToken<ClassMeta<DecorValue, Proto>>,
-    classMeta?: ClassMeta<DecorValue, Proto>,
-  ) {
-    Reflect.defineMetadata(metadataKey, classMeta, Cls);
+  protected static setMetaCache<T>(Cls: Class, metadataKey: InjectionToken<T>, classMetaChain?: T) {
+    Reflect.defineMetadata(metadataKey, classMetaChain, Cls);
   }
 
   /**
