@@ -13,7 +13,7 @@ class NormalizedParams {
 export class RestInitMeta extends BaseInitMeta {
   appendsWithParams: AppendsWithParams[] = [];
   appendsModules: ModuleType[] = [];
-  controllers: Class[] = [];
+  controllers: Class<Record<string | symbol, any>>[] = [];
   params = new NormalizedParams();
 }
 
