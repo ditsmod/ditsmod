@@ -501,14 +501,11 @@ export class Reflector {
   }
 
   /**
-   * Returns the metadata for passed class.
+   * Returns the metadata from decorator at class level.
    *
    * @param Cls A class that has decorators.
    */
   protected static getClassMeta<T = any>(Cls: Class): DecoratorAndValue<T>[] {
-    if (!isType(Cls)) {
-      return [];
-    }
     const parentClass = this.getParentClass(Cls);
     const ownClassAnnotations = this.getRawClassMeta(Cls) || [];
     const parentAnnotations = parentClass ? this.getClassMeta<T>(parentClass) : [];
