@@ -196,15 +196,6 @@ export class Reflector {
     return Reflect.getOwnMetadata(CACHE_KEY, Cls) as ClassMetaChain<DecorValue, Proto> | undefined;
   }
 
-  protected static createClassPropMeta<DecorValue = any>(
-    type: Class = UnknownType,
-    decorators: DecoratorAndValue<DecorValue>[] = [],
-    params: (ParameterMeta | null)[] = [],
-    newParams = new Map<Class, (ParameterMeta | null)[]>(),
-  ): ClassPropMeta<DecorValue> {
-    return { type, decorators, params, newParams };
-  }
-
   protected static concatWithParentMeta<DecorValue = any, Proto extends AnyObj = object>(
     Cls: Class<Proto>,
     classMeta: ClassMeta<DecorValue, Proto>,
@@ -336,6 +327,15 @@ export class Reflector {
     } else {
       return newArray(Cls.length, null);
     }
+  }
+
+  protected static createClassPropMeta<DecorValue = any>(
+    type: Class = UnknownType,
+    decorators: DecoratorAndValue<DecorValue>[] = [],
+    params: (ParameterMeta | null)[] = [],
+    newParams = new Map<Class, (ParameterMeta | null)[]>(),
+  ): ClassPropMeta<DecorValue> {
+    return { type, decorators, params, newParams };
   }
 
   static setRawClassMeta(Cls: Class, classDecorator: AnyFn) {
