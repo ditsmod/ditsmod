@@ -46,7 +46,18 @@ export interface ClassPropMeta<DecorValue = any> {
   type: Class;
   decorators: DecoratorAndValue<DecorValue>[];
   params: (ParameterMeta | null)[];
-  newParams: Map<Class, (ParameterMeta | null)[]>;
+}
+
+/**
+ * Metadata returned by the `Reflector.collectMetadata()` method.
+ */
+export type MergedClassMeta<DecorValue = any, Proto extends object = object> = {
+  [P in keyof Proto]: MergedClassPropMeta<DecorValue>;
+} & { constructor: MergedClassPropMeta<DecorValue> } & { [Symbol.iterator]: () => Generator<string | symbol> };
+
+export interface MergedClassPropMeta<DecorValue = any> extends ClassPropMeta<DecorValue> {
+  decoratorChain: Map<Class, DecoratorAndValue<DecorValue>[]>;
+  paramChain: Map<Class, (ParameterMeta | null)[]>;
 }
 
 export type ParameterItem<Value = any> = DecoratorAndValue<Value> | InjectionToken<any> | Class;

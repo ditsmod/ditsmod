@@ -356,9 +356,8 @@ expect(injector.get(Car) instanceof Car).toBe(true);
     if (cache) {
       return cache;
     }
-    // const aParamsMeta = classPropMeta.params;
     const { aParamsMeta, hasParentParams, recipe } = ParentParams.getParamsMetaAndRecipe([
-      ...classPropMeta.newParams.values(),
+      ...classPropMeta.paramChain!.values(),
     ]);
     if (aParamsMeta.includes(null)) {
       throw new NoAnnotation(Cls, aParamsMeta, propertyKey, hasParentParams, recipe);

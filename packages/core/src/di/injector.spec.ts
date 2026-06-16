@@ -584,7 +584,7 @@ describe('injector', () => {
     expect(() => createInjector([NoAnnotations])).toThrow(new NoAnnotation(NoAnnotations, [[]]));
   });
 
-  it('should throw when no type and not @inject (factory case)', () => {
+  it('should throw when no type and no @inject (factory case)', () => {
     class ClassWithFactory {
       @factory()
       method1(one: any) {

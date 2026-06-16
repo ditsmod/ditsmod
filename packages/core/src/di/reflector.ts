@@ -1,11 +1,19 @@
 import type { AnyObj } from '#types/mix.js';
-import type { AnyFn, ParameterItem } from './top/types-and-models.js';
+import type { AnyFn, ParameterItem, MergedClassMeta, MergedClassPropMeta } from './top/types-and-models.js';
 import type { ParameterMeta, ClassMeta, ClassPropMeta, TypeGuard } from './top/types-and-models.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ClassMetaIterator } from './class-meta-iterator.js';
 import { Class, UnknownType } from './top/types-and-models.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
-import { CACHE_KEY, CLASS_KEY, DEPS_KEY, PARAMS_KEY, METHODS_WITH_PARAMS, PROP_KEY } from './top/constants.js';
+import {
+  CACHE_KEY,
+  CLASS_KEY,
+  DEPS_KEY,
+  PARAMS_KEY,
+  METHODS_WITH_PARAMS,
+  PROP_KEY,
+  CACHE_CHAIN_KEY,
+} from './top/constants.js';
 import { isType, newArray } from './utils.js';
 import type { InjectionToken } from './top/injection-token.js';
 import type { InjectionSymbol } from './top/get-symbol.js';
@@ -143,6 +151,7 @@ export class Reflector {
     }
     return decorators.length ? decorators : undefined;
   }
+
   /**
    * Returns an instance of {@link ClassMetaIterator}, which implements the [iterable protocol][1].
    * Each property of this class corresponds to a property with a decorator in the `Cls` parameter, and the value
@@ -154,7 +163,7 @@ export class Reflector {
    */
   static collectMetadata<DecorValue = any, Proto extends AnyObj = AnyObj>(
     Cls: Class<Proto>,
-  ): ClassMeta<DecorValue, Proto> | undefined;
+  ): MergedClassMeta<DecorValue, Proto> | undefined;
   /**
    * Returns the metadata for the constructor or methods of the passed class.
    *
@@ -163,12 +172,11 @@ export class Reflector {
   static collectMetadata<DecorValue = any, Proto extends AnyObj = AnyObj>(
     Cls: Class<Proto>,
     propertyKey?: KeyOfClass<Proto>,
-  ): ClassPropMeta<DecorValue> | undefined;
+  ): MergedClassPropMeta<DecorValue> | undefined;
   static collectMetadata<DecorValue = any, Proto extends AnyObj = AnyObj>(
     Cls: Class<Proto>,
     propertyKey?: string | symbol,
-  ): ClassMeta<DecorValue, Proto> | ClassPropMeta<DecorValue> | undefined {
-    const classMeta = new ClassMetaIterator() as ClassMeta<DecorValue, Proto>;
+  ): MergedClassMeta<DecorValue, Proto> | MergedClassPropMeta<DecorValue> | undefined {
     if (!isType(Cls)) {
       return;
     }
@@ -179,47 +187,81 @@ export class Reflector {
       propertyKey = 'constructor';
     }
 
-    let classMetaChain = this.getOwnCacheMetadata<DecorValue, Proto>(Cls);
+    let mergedClassMeta = this.getMergedClassMeta<DecorValue, Proto>(Cls);
+    if (!mergedClassMeta) {
+      mergedClassMeta = this.mergeMeta(Cls);
+    }
+
+    return this.getClassMetaOrParamsMeta(Cls, mergedClassMeta, propertyKey);
+  }
+
+  protected static mergeMeta<DecorValue = any, Proto extends AnyObj = AnyObj>(Cls: Class<Proto>) {
+    // If a child class overrides a parent method but does not have a property decorator or params decorator, the parent parameters must be removed.
+
+    const mergedClassMeta = new ClassMetaIterator() as MergedClassMeta<DecorValue, Proto>;
+    mergedClassMeta.constructor = this.createMergedClassPropMeta();
+
+    const classMetaChain = this.collectMetaChain(Cls);
+    classMetaChain.forEach((classMeta, key) => {
+      if (!classMeta) return;
+
+      for (const prop of classMeta) {
+        (mergedClassMeta as any)[prop] ??= this.createMergedClassPropMeta<DecorValue>();
+        mergedClassMeta[prop].type = classMeta[prop].type;
+        mergedClassMeta[prop].decorators = classMeta[prop].decorators.slice();
+        mergedClassMeta[prop].params = classMeta[prop].params.slice();
+        mergedClassMeta[prop].decoratorChain.set(key, classMeta[prop].decorators.slice());
+        mergedClassMeta[prop].paramChain.set(key, classMeta[prop].params.slice());
+      }
+    });
+    if (classMetaChain.size > 1) {
+      this.removeOverridenParams(Cls, mergedClassMeta);
+    }
+
+    if (this.isEmptyMeta(mergedClassMeta)) {
+      // Avoid caching an empty iterator for classes with no meaningful reflector metadata.
+      this.setMetaCache(Cls, CACHE_KEY, undefined);
+      return;
+    }
+    this.setMetaCache(Cls, CACHE_KEY, mergedClassMeta);
+    return mergedClassMeta;
+  }
+
+  protected static collectMetaChain<DecorValue = any, Proto extends AnyObj = AnyObj>(
+    Cls: Class<Proto>,
+  ): ClassMetaChain<DecorValue, Proto> {
+    const classMeta = new ClassMetaIterator() as ClassMeta<DecorValue, Proto>;
+
+    let classMetaChain = this.getCacheChainMeta<DecorValue, Proto>(Cls);
     if (!classMetaChain) {
       // Build a fresh metadata view once, then cache it on the class constructor.
       // Parent metadata is copied first so own metadata can override or prepend it.
       const newClassMetaChain: ClassMetaChain<DecorValue, Proto> = new Map();
-      this.concatWithParentMeta(Cls, classMeta, newClassMetaChain);
+      this.concatWithParentMeta(Cls, newClassMetaChain);
       this.concatWithOwnMeta(Cls, classMeta, newClassMetaChain);
       classMetaChain = newClassMetaChain.set(Cls, classMeta);
     }
 
-    return this.getClassMetaOrParamsMeta(Cls, classMetaChain.get(Cls), propertyKey);
+    return classMetaChain;
   }
 
-  protected static getOwnCacheMetadata<DecorValue = any, Proto extends object = object>(Cls: any) {
-    return Reflect.getOwnMetadata(CACHE_KEY, Cls) as ClassMetaChain<DecorValue, Proto> | undefined;
+  protected static getMergedClassMeta<DecorValue = any, Proto extends object = object>(Cls: any) {
+    return Reflect.getOwnMetadata(CACHE_KEY, Cls) as MergedClassMeta<DecorValue, Proto> | undefined;
+  }
+
+  protected static getCacheChainMeta<DecorValue = any, Proto extends object = object>(Cls: any) {
+    return Reflect.getOwnMetadata(CACHE_CHAIN_KEY, Cls) as ClassMetaChain<DecorValue, Proto> | undefined;
   }
 
   protected static concatWithParentMeta<DecorValue = any, Proto extends AnyObj = object>(
     Cls: Class<Proto>,
-    classMeta: ClassMeta<DecorValue, Proto>,
     classMetaChain: ClassMetaChain<DecorValue, Proto>,
   ) {
     const ParentCls = this.getParentClass(Cls);
     if (ParentCls) {
-      const parentClassMeta = this.collectMetadata<DecorValue, Proto>(ParentCls);
+      const parentClassMetaChain = this.collectMetaChain<DecorValue, Proto>(ParentCls);
       // Merging current meta with parent meta
-      if (parentClassMeta) {
-        classMetaChain.set(ParentCls, parentClassMeta);
-        Reflect.ownKeys(parentClassMeta).forEach((propertyKey) => {
-          // Child metadata must be mutable without mutating the already cached parent view.
-          const propMeta = { ...parentClassMeta[propertyKey as any] };
-          propMeta.decorators = propMeta.decorators.slice();
-          if (propMeta[DEPS_KEY]) {
-            // Dependency metadata is attached later by the injector, but inherited
-            // reflector metadata may already carry it from a previous resolution.
-            propMeta[DEPS_KEY] = { ...propMeta[DEPS_KEY]! };
-            propMeta[DEPS_KEY]!.deps = propMeta[DEPS_KEY]!.deps.slice();
-          }
-          (classMeta as any)[propertyKey] = propMeta;
-        });
-      }
+      parentClassMetaChain?.forEach((item, key) => classMetaChain.set(key, item));
     }
   }
 
@@ -244,7 +286,7 @@ export class Reflector {
         // Own property metadata represents an override, so parent type and params no longer apply.
         classPropMeta.type = type;
         classPropMeta.params = [];
-        classPropMeta.decorators.unshift(...decorators);
+        classPropMeta.decorators = decorators;
       } else {
         (classMeta as any)[propertyKey] = this.createClassPropMeta(type, decorators);
       }
@@ -254,14 +296,9 @@ export class Reflector {
       if (classMeta[propertyKey].type === Function) {
         const classPropMeta = classMeta[propertyKey];
         classPropMeta.params = this.getParamsMeta(Cls, propertyKey);
-        classPropMeta.newParams ??= new Map();
-        classPropMeta.newParams.set(Cls, classPropMeta.params);
       }
     });
 
-    if (this.getParentClass(Cls)) {
-      this.removeOverridenParams(Cls, classMeta, ownPropsWithMeta);
-    }
     return this.concatWithParamsMeta(Cls, classMeta, ownPropsWithMeta, classMetaChain);
   }
 
@@ -333,16 +370,25 @@ export class Reflector {
     type: Class = UnknownType,
     decorators: DecoratorAndValue<DecorValue>[] = [],
     params: (ParameterMeta | null)[] = [],
-    newParams = new Map<Class, (ParameterMeta | null)[]>(),
   ): ClassPropMeta<DecorValue> {
-    return { type, decorators, params, newParams };
+    return { type, decorators, params };
   }
 
-  static setRawClassMeta(Cls: Class, classDecorator: AnyFn) {
+  protected static createMergedClassPropMeta<DecorValue = any>(
+    type: Class = UnknownType,
+    decorators: DecoratorAndValue<DecorValue>[] = [],
+    params: (ParameterMeta | null)[] = [],
+    decoratorsChain: Map<Class, DecoratorAndValue<DecorValue>[]> = new Map(),
+    paramsChain: Map<Class, (ParameterMeta | null)[]> = new Map(),
+  ): MergedClassPropMeta<DecorValue> {
+    return { type, decorators, params, paramChain: paramsChain, decoratorChain: decoratorsChain };
+  }
+
+  static setMetaOnClassLevel(Cls: Class, classDecorator: AnyFn) {
     classDecorator(Cls);
   }
 
-  static getRawClassMeta(Cls: Class) {
+  static getMetaOnClassLevel(Cls: Class) {
     return this.getRawMeta(Cls, CLASS_KEY);
   }
 
@@ -411,9 +457,9 @@ export class Reflector {
 
   protected static getClassMetaOrParamsMeta<DecorValue = any, Proto extends object = object>(
     Cls: Class<Proto>,
-    classMeta: ClassMeta<DecorValue, Proto> | undefined,
+    classMeta: MergedClassMeta<DecorValue, Proto> | undefined,
     propertyKey?: string | symbol,
-  ): ClassMeta<DecorValue, Proto> | ClassPropMeta<DecorValue> | undefined {
+  ): MergedClassMeta<DecorValue, Proto> | MergedClassPropMeta<DecorValue> | undefined {
     if (propertyKey) {
       const classPropMeta = classMeta?.[propertyKey as keyof Proto];
       if (classPropMeta) {
@@ -422,8 +468,7 @@ export class Reflector {
         // The requested method/property may have no decorators at all. Return a synthetic
         // metadata object so callers can still inspect function.length based params.
         const params = this.getParamsMeta(Cls, propertyKey as KeyOfClass<Proto>);
-        const newParams = new Map<Class, (ParameterMeta | null)[]>([[Cls, params]]);
-        return this.createClassPropMeta(UnknownType, [], params, newParams);
+        return this.createMergedClassPropMeta(UnknownType, [], params, new Map(), new Map([[Cls, params]]));
       }
     } else {
       return classMeta;
@@ -439,15 +484,20 @@ export class Reflector {
   protected static removeOverridenParams<DecorValue = any, Proto extends AnyObj = object>(
     Cls: Class<Proto>,
     objWithParentMeta: ClassMeta<DecorValue, Proto>,
-    ownPropsWithMeta: (string | symbol)[],
   ) {
+    const ownPropsMeta = this.getRawPropMeta(Cls);
+    const ownPropsWithMeta = ownPropsMeta ? Reflect.ownKeys(ownPropsMeta) : [];
+    const ownMethodsWithParams = Reflector.getRawMeta(Cls, METHODS_WITH_PARAMS, undefined, new Set<string | symbol>());
+    ownPropsWithMeta.forEach((prop) => ownMethodsWithParams.add(prop));
+
     const allClassMethods = Reflect.ownKeys(Cls.prototype).filter((prop) => {
       const descriptor = Object.getOwnPropertyDescriptor(Cls.prototype, prop);
       return typeof descriptor?.value == 'function';
     });
 
     Reflect.ownKeys(objWithParentMeta).forEach((propertyKey) => {
-      if (allClassMethods.includes(propertyKey) && !ownPropsWithMeta.includes(propertyKey)) {
+      if (propertyKey == 'constructor') return;
+      if (allClassMethods.includes(propertyKey) && !ownMethodsWithParams.has(propertyKey)) {
         objWithParentMeta[propertyKey].params = [];
       }
     });
@@ -472,44 +522,31 @@ export class Reflector {
       }
       const classPropMeta = (classMeta as any)[methodWithParams] as ClassPropMeta;
       classPropMeta.params = this.getParamsMeta(Cls, methodWithParams);
-      classPropMeta.newParams ??= new Map();
-      classPropMeta.newParams.set(Cls, classPropMeta.params);
-      // Parameter metadata changed, so previously resolved dependency metadata is stale.
-      delete (classPropMeta as any)[DEPS_KEY];
       if (methodWithParams == 'constructor') {
-        classPropMeta.decorators = this.getClassMeta(Cls);
+        classPropMeta.decorators = this.getMetaOnClassLevel(Cls) || [];
       }
     });
 
-    if (
-      Reflect.ownKeys(classMeta).length == 1 &&
-      !classMeta.constructor.decorators.length &&
-      // !classMeta.constructor.params.length &&
-      !classMeta.constructor.newParams.size
-    ) {
+    if (this.isEmptyMeta(classMeta)) {
       // Avoid caching an empty iterator for classes with no meaningful reflector metadata.
-      this.setMetaCache(Cls, CACHE_KEY, undefined);
+      this.setMetaCache(Cls, CACHE_CHAIN_KEY, undefined);
       return;
     }
 
-    this.setMetaCache(Cls, CACHE_KEY, classMetaChain);
+    this.setMetaCache(Cls, CACHE_CHAIN_KEY, classMetaChain);
     return classMeta;
+  }
+
+  protected static isEmptyMeta(classMeta: ClassMeta | MergedClassMeta): boolean {
+    return (
+      Reflect.ownKeys(classMeta).length == 1 &&
+      !classMeta.constructor.decorators.length &&
+      !classMeta.constructor.params.length
+    );
   }
 
   protected static setMetaCache<T>(Cls: Class, metadataKey: InjectionToken<T>, classMetaChain?: T) {
     Reflect.defineMetadata(metadataKey, classMetaChain, Cls);
-  }
-
-  /**
-   * Returns the metadata from decorator at class level.
-   *
-   * @param Cls A class that has decorators.
-   */
-  protected static getClassMeta<T = any>(Cls: Class): DecoratorAndValue<T>[] {
-    const parentClass = this.getParentClass(Cls);
-    const ownClassAnnotations = this.getRawClassMeta(Cls) || [];
-    const parentAnnotations = parentClass ? this.getClassMeta<T>(parentClass) : [];
-    return ownClassAnnotations.concat(parentAnnotations);
   }
 
   /**

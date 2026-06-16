@@ -54,9 +54,12 @@ describe('Reflector', () => {
       @classDecorator('child')
       class Child extends Parent {}
 
-      expect(Reflector.collectMetadata(Child, 'constructor')?.decorators.map((item) => item.value)).toEqual([
-        'child',
-        'parent',
+      const metadata = Reflector.collectMetadata(Child, 'constructor');
+
+      expect(metadata?.decorators.map((item) => item.value)).toEqual(['child']);
+      expect([...metadata!.decoratorChain]).toEqual([
+        [Parent, [expect.objectContaining({value: 'parent'})]],
+        [Child, [expect.objectContaining({value: 'child'})]],
       ]);
     });
 
@@ -122,7 +125,7 @@ describe('Reflector', () => {
       const metadata = Reflector.collectMetadata(Service);
 
       expect(metadata).toBeInstanceOf(ClassMetaIterator);
-      expect(Array.from(metadata!)).toEqual(['method', 'prop', 'constructor']);
+      expect(Array.from(metadata!)).toEqual(['constructor', 'method', 'prop']);
       expect(metadata?.method).toMatchObject({
         decorators: [new DecoratorAndValue(propDecorator, [{ val: 2 }])],
         params: [],
@@ -135,33 +138,34 @@ describe('Reflector', () => {
     });
 
     it('merges inherited property decorators while preserving child-first order', () => {
-      const propDecorator = Reflector.makePropDecorator();
+      const propDecorator = Reflector.makePropDecorator((val) => val);
 
       class Parent {
-        @propDecorator({ val: 'parent-only' })
+        @propDecorator('parent-only')
         method1() {}
 
         method2() {}
 
-        @propDecorator({ val: 'parent' })
+        @propDecorator('parent')
         prop!: string;
       }
 
       class Child extends Parent {
-        @propDecorator({ val: 'child-only' })
+        @propDecorator('child-only')
         override method2() {}
 
-        @propDecorator({ val: 'child' })
+        @propDecorator('child')
         declare prop: string;
       }
 
       const metadata = Reflector.collectMetadata(Child);
 
-      expect(metadata?.method1.decorators).toEqual([new DecoratorAndValue(propDecorator, [{ val: 'parent-only' }])]);
-      expect(metadata?.method2.decorators).toEqual([new DecoratorAndValue(propDecorator, [{ val: 'child-only' }])]);
-      expect(metadata?.prop.decorators).toEqual([
-        new DecoratorAndValue(propDecorator, [{ val: 'child' }]),
-        new DecoratorAndValue(propDecorator, [{ val: 'parent' }]),
+      expect(metadata?.method1.decorators).toEqual([expect.objectContaining({ value: 'parent-only' })]);
+      expect(metadata?.method2.decorators).toEqual([expect.objectContaining({ value: 'child-only' })]);
+      expect(metadata?.prop.decorators).toEqual([expect.objectContaining({ value: 'child' })]);
+      expect([...metadata!.prop.decoratorChain]).toEqual([
+        [Parent, [expect.objectContaining({ value: 'parent' })]],
+        [Child, [expect.objectContaining({ value: 'child' })]],
       ]);
     });
 
@@ -180,7 +184,7 @@ describe('Reflector', () => {
       const metadata = Reflector.collectMetadata(UsersController)!;
 
       // Property decorators are reflected as iterable class metadata entries.
-      expect(Array.from(metadata)).toEqual(['list', 'constructor', symbolKey]);
+      expect([...metadata]).toEqual(['constructor', 'list', symbolKey]);
       expect(metadata.list.decorators).toEqual([new DecoratorAndValue(route, { method: 'GET', path: '/users' })]);
       expect(metadata[symbolKey].decorators).toEqual([
         new DecoratorAndValue(route, { method: 'POST', path: '/users' }),
@@ -228,7 +232,7 @@ describe('Reflector', () => {
 
       const metadata = Reflector.collectMetadata(Controller);
 
-      expect(Array.from(metadata!)).toEqual(['method', 'constructor']);
+      expect(Array.from(metadata!)).toEqual(['constructor', 'method']);
       expect(metadata?.constructor.params).toEqual([
         [],
         [Array, new DecoratorAndValue(paramDecorator, [{ val: 10 }])],
@@ -260,9 +264,7 @@ describe('Reflector', () => {
         ) {}
 
         method1(@paramDecorator('parent-param1') param1: ParentParam2) {}
-
         method2(@paramDecorator('parent-param2') param1: ParentParam3) {}
-
         method3(@paramDecorator('parent-param3') param1: ParentParam4) {}
       }
 
@@ -270,9 +272,7 @@ describe('Reflector', () => {
         constructor(param1: ChildParam1, param2: ChildParam2, @paramDecorator('child-param1') param3: ChildParam3) {
           super(param1, param2);
         }
-
         override method2(@paramDecorator('child-param1') param1?: ChildParam3) {}
-
         override method3() {}
       }
 
@@ -313,7 +313,6 @@ describe('Reflector', () => {
         [AuditService, new DecoratorAndValue(param, { token: 'audit' })],
       ]);
       expect(metadata.handle.params).toEqual([[Number, new DecoratorAndValue(param, { token: 'id' })], []]);
-      expect(metadata.handle.newParams.get(UsersController)).toBe(metadata.handle.params);
     });
 
     it('pads undecorated parameter positions with null before merging metadata', () => {
@@ -351,7 +350,6 @@ describe('Reflector', () => {
         decorators: [],
         params: [],
       });
-      expect(methodMeta?.newParams.get(UsersController)).toBe(methodMeta?.params);
     });
   });
 
@@ -377,7 +375,7 @@ describe('Reflector', () => {
 
       const metadata = Reflector.collectMetadata(Controller);
 
-      expect(Array.from(metadata!)).toEqual(['method', 'constructor']);
+      expect([...metadata!]).toEqual(['constructor', 'method']);
       expect(metadata?.constructor.decorators).toEqual([
         new DecoratorAndValue(classDecorator, [{ val: 111 }], undefined, expect.any(String)),
       ]);
@@ -401,8 +399,8 @@ describe('Reflector', () => {
     });
 
     it('preserves decorator order across multiple inheritance levels', () => {
-      const classDecorator = Reflector.makeClassDecorator((...args: string[]) => args);
-      const propDecorator = Reflector.makePropDecorator((...args: string[]) => args);
+      const classDecorator = Reflector.makeClassDecorator((args: string) => args);
+      const propDecorator = Reflector.makePropDecorator((args: string) => args);
 
       @classDecorator('constructor1.3')
       @classDecorator('constructor1.2')
@@ -452,37 +450,87 @@ describe('Reflector', () => {
       const metadata = Reflector.collectMetadata(Class3);
 
       expect(metadata?.constructor.decorators.map((item) => item.value)).toEqual([
-        ['constructor3.1'],
-        ['constructor3.2'],
-        ['constructor3.3'],
-        ['constructor2.1'],
-        ['constructor2.2'],
-        ['constructor2.3'],
-        ['constructor1.1'],
-        ['constructor1.2'],
-        ['constructor1.3'],
+        'constructor3.1',
+        'constructor3.2',
+        'constructor3.3',
       ]);
-      expect(metadata?.prop1.decorators.map((item) => item.value)).toEqual([
-        ['property3.1'],
-        ['property3.2'],
-        ['property3.3'],
-        ['property2.1'],
-        ['property2.2'],
-        ['property2.3'],
-        ['property1.1'],
-        ['property1.2'],
-        ['property1.3'],
+      expect([...metadata!.constructor.decoratorChain]).toEqual([
+        [
+          Class1,
+          [
+            expect.objectContaining({ value: 'constructor1.1' }),
+            expect.objectContaining({ value: 'constructor1.2' }),
+            expect.objectContaining({ value: 'constructor1.3' }),
+          ],
+        ],
+        [
+          Class2,
+          [
+            expect.objectContaining({ value: 'constructor2.1' }),
+            expect.objectContaining({ value: 'constructor2.2' }),
+            expect.objectContaining({ value: 'constructor2.3' }),
+          ],
+        ],
+        [
+          Class3,
+          [
+            expect.objectContaining({ value: 'constructor3.1' }),
+            expect.objectContaining({ value: 'constructor3.2' }),
+            expect.objectContaining({ value: 'constructor3.3' }),
+          ],
+        ],
       ]);
-      expect(metadata?.prop2.decorators.map((item) => item.value)).toEqual([
-        ['property3.4'],
-        ['property3.5'],
-        ['property3.6'],
-        ['property2.4'],
-        ['property2.5'],
-        ['property2.6'],
-        ['property1.4'],
-        ['property1.5'],
-        ['property1.6'],
+      expect([...metadata!.prop1.decoratorChain]).toEqual([
+        [
+          Class1,
+          [
+            expect.objectContaining({ value: 'property1.1' }),
+            expect.objectContaining({ value: 'property1.2' }),
+            expect.objectContaining({ value: 'property1.3' }),
+          ],
+        ],
+        [
+          Class2,
+          [
+            expect.objectContaining({ value: 'property2.1' }),
+            expect.objectContaining({ value: 'property2.2' }),
+            expect.objectContaining({ value: 'property2.3' }),
+          ],
+        ],
+        [
+          Class3,
+          [
+            expect.objectContaining({ value: 'property3.1' }),
+            expect.objectContaining({ value: 'property3.2' }),
+            expect.objectContaining({ value: 'property3.3' }),
+          ],
+        ],
+      ]);
+      expect([...metadata!.prop2.decoratorChain]).toEqual([
+        [
+          Class1,
+          [
+            expect.objectContaining({ value: 'property1.4' }),
+            expect.objectContaining({ value: 'property1.5' }),
+            expect.objectContaining({ value: 'property1.6' }),
+          ],
+        ],
+        [
+          Class2,
+          [
+            expect.objectContaining({ value: 'property2.4' }),
+            expect.objectContaining({ value: 'property2.5' }),
+            expect.objectContaining({ value: 'property2.6' }),
+          ],
+        ],
+        [
+          Class3,
+          [
+            expect.objectContaining({ value: 'property3.4' }),
+            expect.objectContaining({ value: 'property3.5' }),
+            expect.objectContaining({ value: 'property3.6' }),
+          ],
+        ],
       ]);
     });
   });
@@ -547,20 +595,28 @@ describe('Reflector', () => {
 
       @classTag('parent')
       class ParentController {
-        @propTag('parent')
+        @propTag('parent.handle')
         handle() {}
       }
 
       @classTag('child')
       class ChildController extends ParentController {
-        @propTag('child')
+        @propTag('child.handle')
         override handle() {}
       }
 
       const metadata = Reflector.collectMetadata(ChildController)!;
 
-      expect(metadata.constructor.decorators.map((item) => item.value)).toEqual(['child', 'parent']);
-      expect(metadata.handle.decorators.map((item) => item.value)).toEqual(['child', 'parent']);
+      expect(metadata.constructor.decorators.map((item) => item.value)).toEqual(['child']);
+      expect([...metadata.constructor.decoratorChain]).toEqual([
+        [ParentController, [expect.objectContaining({ value: 'parent' })]],
+        [ChildController, [expect.objectContaining({ value: 'child' })]],
+      ]);
+      expect(metadata.handle.decorators.map((item) => item.value)).toEqual(['child.handle']);
+      expect([...metadata.handle.decoratorChain]).toEqual([
+        [ParentController, [expect.objectContaining({ value: 'parent.handle' })]],
+        [ChildController, [expect.objectContaining({ value: 'child.handle' })]],
+      ]);
     });
 
     it('removes inherited params when a child overrides a method without parameter metadata', () => {
@@ -599,12 +655,11 @@ describe('Reflector', () => {
 
       const childMeta = Reflector.collectMetadata(ChildController)!;
       const childDeps = Reflect.get(childMeta.handle, DEPS_KEY) as DepsMeta;
-      childDeps.deps = childDeps.deps.slice();
+      expect(childDeps).toBeUndefined();
 
       childMeta.handle.decorators.push(new DecoratorAndValue(prop, 'child-only'));
 
       expect(parentMeta.handle.decorators.map((item) => item.value)).toEqual(['parent']);
-      expect(childDeps.deps).not.toBe(parentDeps.deps);
       expect(parentDeps.deps).toEqual([]);
     });
 
@@ -634,10 +689,10 @@ describe('Reflector', () => {
         constructor(value: string) {}
       }
 
-      Reflector.setRawClassMeta(RawController, classTag('raw-class'));
+      Reflector.setMetaOnClassLevel(RawController, classTag('raw-class'));
       Reflector.setRawParamMeta(RawController, undefined, 0, paramTag('raw-param'));
 
-      expect(Reflector.getRawClassMeta(RawController)).toEqual([
+      expect(Reflector.getMetaOnClassLevel(RawController)).toEqual([
         new DecoratorAndValue(classTag, 'raw-class', undefined, expect.any(String)),
       ]);
       expect(Reflector.getRawParamMeta(RawController)).toEqual([[new DecoratorAndValue(paramTag, 'raw-param')]]);
