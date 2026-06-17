@@ -65,22 +65,22 @@ describe('Reflector', () => {
 
     it('stores transformed values and exposes them through class metadata', () => {
       function sharedDecoratorId() {}
-      const controller = Reflector.makeClassDecorator(
+      const Service = Reflector.makeClassDecorator(
         (path: string, method: 'GET' | 'POST') => ({ method, path }),
-        'controller',
+        'Service',
         sharedDecoratorId,
       );
 
-      @controller('/users', 'GET')
-      class UsersController {}
+      @Service('/users', 'GET')
+      class UsersService {}
 
-      const decorators = Reflector.getDecorators(UsersController);
-      const constructorMeta = Reflector.collectMetadata(UsersController, 'constructor');
+      const decorators = Reflector.getDecorators(UsersService);
+      const constructorMeta = Reflector.collectMetadata(UsersService, 'constructor');
 
-      expect(controller.name).toBe('controller');
+      expect(Service.name).toBe('Service');
       expect(decorators).toHaveLength(1);
       expect(decorators?.at(0)).toMatchObject({
-        decorator: controller,
+        decorator: Service,
         decoratorId: sharedDecoratorId,
         value: { method: 'GET', path: '/users' },
       });
@@ -89,21 +89,21 @@ describe('Reflector', () => {
     });
 
     it('returns undefined when no class decorators match the type guard', () => {
-      const controller = Reflector.makeClassDecorator((path: string) => ({ kind: 'controller' as const, path }));
+      const Service = Reflector.makeClassDecorator((path: string) => ({ kind: 'Service' as const, path }));
       const service = Reflector.makeClassDecorator((name: string) => ({ kind: 'service' as const, name }));
 
-      @controller('/users')
+      @Service('/users')
       @service('users')
-      class UsersController {}
+      class UsersService {}
 
-      const controllers = Reflector.getDecorators(UsersController, (metadata): metadata is DecoratorAndValue => {
-        return metadata.value.kind == 'controller';
+      const Services = Reflector.getDecorators(UsersService, (metadata): metadata is DecoratorAndValue => {
+        return metadata.value.kind == 'Service';
       });
-      const missing = Reflector.getDecorators(UsersController, (metadata): metadata is DecoratorAndValue => {
+      const missing = Reflector.getDecorators(UsersService, (metadata): metadata is DecoratorAndValue => {
         return metadata.value.kind == 'missing';
       });
 
-      expect(controllers?.map((metadata) => metadata.value)).toEqual([{ kind: 'controller', path: '/users' }]);
+      expect(Services?.map((metadata) => metadata.value)).toEqual([{ kind: 'Service', path: '/users' }]);
       expect(missing).toBeUndefined();
     });
   });
@@ -173,7 +173,7 @@ describe('Reflector', () => {
       const symbolKey = Symbol('handler');
       const route = Reflector.makePropDecorator((method: 'GET' | 'POST', path: string) => ({ method, path }));
 
-      class UsersController {
+      class UsersService {
         @route('GET', '/users')
         list() {}
 
@@ -181,7 +181,7 @@ describe('Reflector', () => {
         [symbolKey]() {}
       }
 
-      const metadata = Reflector.collectMetadata(UsersController)!;
+      const metadata = Reflector.collectMetadata(UsersService)!;
 
       // Property decorators are reflected as iterable class metadata entries.
       expect([...metadata]).toEqual(['constructor', 'list', symbolKey]);
@@ -189,7 +189,7 @@ describe('Reflector', () => {
       expect(metadata[symbolKey].decorators).toEqual([
         new DecoratorAndValue(route, { method: 'POST', path: '/users' }),
       ]);
-      // expect(Reflector.getRawPropMeta(UsersController, symbolKey)).toEqual(
+      // expect(Reflector.getRawPropMeta(UsersService, symbolKey)).toEqual(
       //   new DecoratorAndValue(route, { method: 'POST', path: '/users' }),
       // );
     });
@@ -197,13 +197,13 @@ describe('Reflector', () => {
     it('uses decorator application order on the same property', () => {
       const tag = Reflector.makePropDecorator((value: string) => value);
 
-      class TaggedController {
+      class TaggedService {
         @tag('outer')
         @tag('inner')
         handle() {}
       }
 
-      const metadata = Reflector.collectMetadata(TaggedController)!;
+      const metadata = Reflector.collectMetadata(TaggedService)!;
 
       expect(metadata.handle.decorators.map((item) => item.value)).toEqual(['inner', 'outer']);
     });
@@ -216,7 +216,7 @@ describe('Reflector', () => {
       class Service1 {}
       class Service2 {}
 
-      class Controller {
+      class Service {
         constructor(
           param1: any,
           @paramDecorator({ val: 10 }) param2: string[],
@@ -230,7 +230,7 @@ describe('Reflector', () => {
         ) {}
       }
 
-      const metadata = Reflector.collectMetadata(Controller);
+      const metadata = Reflector.collectMetadata(Service);
 
       expect(Array.from(metadata!)).toEqual(['constructor', 'method']);
       expect(metadata?.constructor.params).toEqual([
@@ -298,13 +298,13 @@ describe('Reflector', () => {
       class UserService {}
       class AuditService {}
 
-      class UsersController {
+      class UsersService {
         constructor(@param('users') users: UserService, plain: string, @param('audit') audit: AuditService) {}
 
         handle(@param('id') id: number, body: object) {}
       }
 
-      const metadata = Reflector.collectMetadata(UsersController)!;
+      const metadata = Reflector.collectMetadata(UsersService)!;
 
       // Object design types are intentionally normalized to an empty tuple.
       expect(metadata.constructor.params).toEqual([
@@ -318,13 +318,13 @@ describe('Reflector', () => {
     it('pads undecorated parameter positions with null before merging metadata', () => {
       const param = Reflector.makeParamDecorator((value: string) => value);
 
-      class UsersController {
+      class UsersService {
         handle(first: string, second: number, @param('third') third: boolean) {}
       }
 
-      const metadata = Reflector.collectMetadata(UsersController)!;
+      const metadata = Reflector.collectMetadata(UsersService)!;
 
-      expect(Reflector.getRawParamMeta(UsersController, 'handle')).toEqual([
+      expect(Reflector.getRawParamMeta(UsersService, 'handle')).toEqual([
         null,
         null,
         [new DecoratorAndValue(param, 'third')],
@@ -333,12 +333,12 @@ describe('Reflector', () => {
     });
 
     it('creates fallback parameter metadata for methods without decorators', () => {
-      class UsersController {
+      class UsersService {
         handle(first: string, second: number) {}
       }
 
-      const methodMeta = Reflector.collectMetadata(UsersController, 'handle');
-      const missingMeta = Reflector.collectMetadata(UsersController, 'missing');
+      const methodMeta = Reflector.collectMetadata(UsersService, 'handle');
+      const missingMeta = Reflector.collectMetadata(UsersService, 'missing');
 
       expect(methodMeta).toMatchObject({
         type: UnknownType,
@@ -594,28 +594,28 @@ describe('Reflector', () => {
       const propTag = Reflector.makePropDecorator((value: string) => value);
 
       @classTag('parent')
-      class ParentController {
+      class ParentService {
         @propTag('parent.handle')
         handle() {}
       }
 
       @classTag('child')
-      class ChildController extends ParentController {
+      class ChildService extends ParentService {
         @propTag('child.handle')
         override handle() {}
       }
 
-      const metadata = Reflector.collectMetadata(ChildController)!;
+      const metadata = Reflector.collectMetadata(ChildService)!;
 
       expect(metadata.constructor.decorators.map((item) => item.value)).toEqual(['child']);
       expect([...metadata.constructor.decoratorChain]).toEqual([
-        [ParentController, [expect.objectContaining({ value: 'parent' })]],
-        [ChildController, [expect.objectContaining({ value: 'child' })]],
+        [ParentService, [expect.objectContaining({ value: 'parent' })]],
+        [ChildService, [expect.objectContaining({ value: 'child' })]],
       ]);
       expect(metadata.handle.decorators.map((item) => item.value)).toEqual(['child.handle']);
       expect([...metadata.handle.decoratorChain]).toEqual([
-        [ParentController, [expect.objectContaining({ value: 'parent.handle' })]],
-        [ChildController, [expect.objectContaining({ value: 'child.handle' })]],
+        [ParentService, [expect.objectContaining({ value: 'parent.handle' })]],
+        [ChildService, [expect.objectContaining({ value: 'child.handle' })]],
       ]);
     });
 
@@ -623,16 +623,17 @@ describe('Reflector', () => {
       const param = Reflector.makeParamDecorator((value: string) => value);
 
       class ParentParam {}
+      class ChildParam {}
 
-      class ParentController {
-        handle(@param('parent') value: ParentParam) {}
+      class ParentService {
+        handle(@param('parent') param: ParentParam) {}
       }
 
-      class ChildController extends ParentController {
-        override handle() {}
+      class ChildService extends ParentService {
+        override handle(param: ChildParam) {}
       }
 
-      const metadata = Reflector.collectMetadata(ChildController)!;
+      const metadata = Reflector.collectMetadata(ChildService)!;
 
       // The child method is own code, so parent parameter metadata must not leak into it.
       expect(metadata.handle.params).toEqual([]);
@@ -642,18 +643,18 @@ describe('Reflector', () => {
     it('keeps parent metadata isolated when child metadata is merged', () => {
       const prop = Reflector.makePropDecorator((value: string) => value);
 
-      class ParentController {
+      class ParentService {
         @prop('parent')
         handle() {}
       }
 
-      class ChildController extends ParentController {}
+      class ChildService extends ParentService {}
 
-      const parentMeta = Reflector.collectMetadata(ParentController)!;
+      const parentMeta = Reflector.collectMetadata(ParentService)!;
       const parentDeps: DepsMeta = { deps: [] };
       Reflect.set(parentMeta.handle, DEPS_KEY, parentDeps);
 
-      const childMeta = Reflector.collectMetadata(ChildController)!;
+      const childMeta = Reflector.collectMetadata(ChildService)!;
       const childDeps = Reflect.get(childMeta.handle, DEPS_KEY) as DepsMeta;
       expect(childDeps).toBeUndefined();
 
@@ -668,13 +669,13 @@ describe('Reflector', () => {
 
       class ParentParam {}
 
-      class ParentController {
+      class ParentService {
         constructor(@param('parent') value: ParentParam) {}
       }
 
-      class ChildController extends ParentController {}
+      class ChildService extends ParentService {}
 
-      const metadata = Reflector.collectMetadata(ChildController)!;
+      const metadata = Reflector.collectMetadata(ChildService)!;
 
       expect(metadata.constructor.params).toEqual([[ParentParam, new DecoratorAndValue(param, 'parent')]]);
     });
@@ -685,37 +686,37 @@ describe('Reflector', () => {
       const classTag = Reflector.makeClassDecorator((value: string) => value);
       const paramTag = Reflector.makeParamDecorator((value: string) => value);
 
-      class RawController {
+      class RawService {
         constructor(value: string) {}
       }
 
-      Reflector.setMetaOnClassLevel(RawController, classTag('raw-class'));
-      Reflector.setRawParamMeta(RawController, undefined, 0, paramTag('raw-param'));
+      Reflector.setMetaOnClassLevel(RawService, classTag('raw-class'));
+      Reflector.setRawParamMeta(RawService, undefined, 0, paramTag('raw-param'));
 
-      expect(Reflector.getMetaOnClassLevel(RawController)).toEqual([
+      expect(Reflector.getMetaOnClassLevel(RawService)).toEqual([
         new DecoratorAndValue(classTag, 'raw-class', undefined, expect.any(String)),
       ]);
-      expect(Reflector.getRawParamMeta(RawController)).toEqual([[new DecoratorAndValue(paramTag, 'raw-param')]]);
+      expect(Reflector.getRawParamMeta(RawService)).toEqual([[new DecoratorAndValue(paramTag, 'raw-param')]]);
     });
 
     it('defines default raw metadata only once', () => {
-      class RawController {}
+      class RawService {}
 
       const firstDefault = ['first'];
       const secondDefault = ['second'];
 
-      expect(Reflector.getRawMeta(RawController, 'custom-key', undefined, firstDefault)).toBe(firstDefault);
-      expect(Reflector.getRawMeta(RawController, 'custom-key', undefined, secondDefault)).toBe(firstDefault);
+      expect(Reflector.getRawMeta(RawService, 'custom-key', undefined, firstDefault)).toBe(firstDefault);
+      expect(Reflector.getRawMeta(RawService, 'custom-key', undefined, secondDefault)).toBe(firstDefault);
     });
 
     it('returns cached class metadata on repeated collection', () => {
       const classTag = Reflector.makeClassDecorator();
 
       @classTag('cached')
-      class CachedController {}
+      class CachedService {}
 
-      const first = Reflector.collectMetadata(CachedController);
-      const second = Reflector.collectMetadata(CachedController);
+      const first = Reflector.collectMetadata(CachedService);
+      const second = Reflector.collectMetadata(CachedService);
 
       expect(first).toBeInstanceOf(ClassMetaIterator);
       expect(second).toBe(first);
@@ -728,11 +729,11 @@ describe('Reflector', () => {
     it('creates constructor metadata with Class type when only parameter metadata exists', () => {
       const param = Reflector.makeParamDecorator((value: string) => value);
 
-      class RawController {
+      class RawService {
         constructor(@param('raw') value: string) {}
       }
 
-      const metadata = Reflector.collectMetadata(RawController)!;
+      const metadata = Reflector.collectMetadata(RawService)!;
 
       expect(metadata.constructor.type).toBe(Class);
       expect(metadata.constructor.decorators).toEqual([]);
