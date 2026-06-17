@@ -307,21 +307,12 @@ export class Reflector {
     ownPropsWithMeta.forEach((propertyKey) => {
       const type = Reflect.getOwnMetadata('design:type', Cls.prototype, propertyKey);
       const decorators = ownPropsMeta![propertyKey];
-      if (classMeta.hasOwnProperty(propertyKey)) {
-        const classPropMeta = classMeta[propertyKey];
-        // Own property metadata represents an override, so parent type and params no longer apply.
-        classPropMeta.type = type;
-        classPropMeta.params = [];
-        classPropMeta.decorators = decorators;
-      } else {
-        (classMeta as any)[propertyKey] = this.createClassPropMeta(type, decorators);
-      }
+      (classMeta as any)[propertyKey] = this.createClassPropMeta(type, decorators);
 
       // Method decorators have design:type === Function. In that case the method
       // can also have parameter metadata and should expose it on the same property meta.
       if (classMeta[propertyKey].type === Function) {
-        const classPropMeta = classMeta[propertyKey];
-        classPropMeta.params = this.getParamsMeta(Cls, propertyKey);
+        classMeta[propertyKey].params = this.getParamsMeta(Cls, propertyKey);
       }
     });
 
