@@ -187,10 +187,9 @@ export class Reflector {
       propertyKey = 'constructor';
     }
 
-    let mergedClassMeta = this.getMergedClassMeta<DecorValue, Proto>(Cls);
-    if (!mergedClassMeta) {
-      mergedClassMeta = this.mergeMeta(Cls);
-    }
+    const mergedClassMeta = this.hasMergedClassMeta(Cls)
+      ? this.getMergedClassMeta<DecorValue, Proto>(Cls)
+      : this.mergeMeta(Cls);
 
     return this.getClassMetaOrParamsMeta(Cls, mergedClassMeta, propertyKey);
   }
@@ -202,7 +201,7 @@ export class Reflector {
     mergedClassMeta.constructor = this.createMergedClassPropMeta();
 
     const classMetaChain = this.collectMetaChain(Cls);
-    classMetaChain.forEach((classMeta, key) => {
+    classMetaChain?.forEach((classMeta, key) => {
       if (!classMeta) return;
 
       for (const prop of classMeta) {
@@ -214,43 +213,71 @@ export class Reflector {
         mergedClassMeta[prop].paramChain.set(key, classMeta[prop].params.slice());
       }
     });
-    if (classMetaChain.size > 1) {
+    if (classMetaChain && classMetaChain.size > 1) {
       this.removeOverridenParams(Cls, mergedClassMeta);
     }
 
     if (this.isEmptyMeta(mergedClassMeta)) {
       // Avoid caching an empty iterator for classes with no meaningful reflector metadata.
-      this.setMetaCache(Cls, CACHE_KEY, undefined);
+      this.setMergedClassMeta(Cls);
+      this.setMergedClassMetaChain(Cls);
       return;
     }
-    this.setMetaCache(Cls, CACHE_KEY, mergedClassMeta);
+    this.setMergedClassMeta(Cls, mergedClassMeta);
+    this.setMergedClassMetaChain(Cls, classMetaChain);
     return mergedClassMeta;
   }
 
   protected static collectMetaChain<DecorValue = any, Proto extends AnyObj = AnyObj>(
     Cls: Class<Proto>,
-  ): ClassMetaChain<DecorValue, Proto> {
+  ): ClassMetaChain<DecorValue, Proto> | undefined {
     const classMeta = new ClassMetaIterator() as ClassMeta<DecorValue, Proto>;
 
-    let classMetaChain = this.getCacheChainMeta<DecorValue, Proto>(Cls);
-    if (!classMetaChain) {
+    let classMetaChain: ClassMetaChain<DecorValue, Proto> | undefined;
+    if (this.hasMergedClassMetaChain(Cls)) {
+      classMetaChain = this.getMergedClassMetaChain<DecorValue, Proto>(Cls);
+    } else {
       // Build a fresh metadata view once, then cache it on the class constructor.
       // Parent metadata is copied first so own metadata can override or prepend it.
       const newClassMetaChain: ClassMetaChain<DecorValue, Proto> = new Map();
       this.concatWithParentMeta(Cls, newClassMetaChain);
-      this.concatWithOwnMeta(Cls, classMeta, newClassMetaChain);
+      this.concatWithOwnMeta(Cls, classMeta);
       classMetaChain = newClassMetaChain.set(Cls, classMeta);
     }
 
     return classMetaChain;
   }
 
+  protected static isEmptyMeta(classMeta: ClassMeta | MergedClassMeta): boolean {
+    return (
+      Reflect.ownKeys(classMeta).length == 1 &&
+      !classMeta.constructor.decorators.length &&
+      !classMeta.constructor.params.length
+    );
+  }
+
+  protected static setMergedClassMeta(Cls: Class, classMetaChain?: MergedClassMeta) {
+    Reflect.defineMetadata(CACHE_KEY, classMetaChain, Cls);
+  }
+
   protected static getMergedClassMeta<DecorValue = any, Proto extends object = object>(Cls: any) {
     return Reflect.getOwnMetadata(CACHE_KEY, Cls) as MergedClassMeta<DecorValue, Proto> | undefined;
   }
 
-  protected static getCacheChainMeta<DecorValue = any, Proto extends object = object>(Cls: any) {
+  protected static hasMergedClassMeta(Cls: any) {
+    return Reflect.hasOwnMetadata(CACHE_KEY, Cls);
+  }
+
+  protected static setMergedClassMetaChain(Cls: Class, classMetaChain?: ClassMetaChain) {
+    Reflect.defineMetadata(CACHE_CHAIN_KEY, classMetaChain, Cls);
+  }
+
+  protected static getMergedClassMetaChain<DecorValue = any, Proto extends object = object>(Cls: any) {
     return Reflect.getOwnMetadata(CACHE_CHAIN_KEY, Cls) as ClassMetaChain<DecorValue, Proto> | undefined;
+  }
+
+  protected static hasMergedClassMetaChain(Cls: any) {
+    return Reflect.hasOwnMetadata(CACHE_CHAIN_KEY, Cls);
   }
 
   protected static concatWithParentMeta<DecorValue = any, Proto extends AnyObj = object>(
@@ -273,7 +300,6 @@ export class Reflector {
   protected static concatWithOwnMeta<DecorValue = any, Proto extends AnyObj = object>(
     Cls: Class<Proto>,
     classMeta: ClassMeta<DecorValue, Proto>,
-    classMetaChain: ClassMetaChain<DecorValue, Proto>,
   ) {
     const ownPropsMeta = this.getRawPropMeta(Cls);
     const ownPropsWithMeta = ownPropsMeta ? Reflect.ownKeys(ownPropsMeta) : [];
@@ -299,7 +325,7 @@ export class Reflector {
       }
     });
 
-    return this.concatWithParamsMeta(Cls, classMeta, ownPropsWithMeta, classMetaChain);
+    this.concatWithParamsMeta(Cls, classMeta, ownPropsWithMeta);
   }
 
   static getRawPropMeta<T extends AnyObj>(Cls: Class<T>, propertyKey?: KeyOfClass<T>) {
@@ -507,8 +533,7 @@ export class Reflector {
     Cls: Class<Proto>,
     classMeta: ClassMeta<DecorValue, Proto>,
     ownPropsWithMeta: (string | symbol)[],
-    classMetaChain: ClassMetaChain<DecorValue, Proto>,
-  ): ClassMeta<DecorValue, Proto> | undefined {
+  ): void {
     const ownMethodsWithParams = Reflector.getRawMeta(Cls, METHODS_WITH_PARAMS, undefined, new Set<string | symbol>());
     // Constructor metadata is always normalized so class decorators and constructor params
     // share one stable metadata entry.
@@ -526,27 +551,6 @@ export class Reflector {
         classPropMeta.decorators = this.getMetaOnClassLevel(Cls) || [];
       }
     });
-
-    if (this.isEmptyMeta(classMeta)) {
-      // Avoid caching an empty iterator for classes with no meaningful reflector metadata.
-      this.setMetaCache(Cls, CACHE_CHAIN_KEY, undefined);
-      return;
-    }
-
-    this.setMetaCache(Cls, CACHE_CHAIN_KEY, classMetaChain);
-    return classMeta;
-  }
-
-  protected static isEmptyMeta(classMeta: ClassMeta | MergedClassMeta): boolean {
-    return (
-      Reflect.ownKeys(classMeta).length == 1 &&
-      !classMeta.constructor.decorators.length &&
-      !classMeta.constructor.params.length
-    );
-  }
-
-  protected static setMetaCache<T>(Cls: Class, metadataKey: InjectionToken<T>, classMetaChain?: T) {
-    Reflect.defineMetadata(metadataKey, classMetaChain, Cls);
   }
 
   /**
