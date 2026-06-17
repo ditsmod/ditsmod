@@ -495,15 +495,13 @@ export class Reflector {
   /**
    * If a child class overrides a parent method but does not have a property decorator or params decorator,
    * the parent parameters must be removed.
-   *
-   * @param objWithParentMeta This object may have inherited methods from a parent class.
    */
   protected static removeOverridenParams<DecorValue = any, Proto extends AnyObj = object>(
     Cls: Class<Proto>,
-    objWithParentMeta: ClassMeta<DecorValue, Proto>,
+    mergedClassMeta: ClassMeta<DecorValue, Proto>,
   ) {
-    const ownPropsMeta = this.getRawPropMeta(Cls);
-    const ownPropsWithMeta = ownPropsMeta ? Reflect.ownKeys(ownPropsMeta) : [];
+    const ownPropMeta = this.getRawPropMeta(Cls);
+    const ownPropsWithMeta = ownPropMeta ? Reflect.ownKeys(ownPropMeta) : [];
     const ownMethodsWithParams = Reflector.getRawMeta(Cls, METHODS_WITH_PARAMS, undefined, new Set<string | symbol>());
     ownPropsWithMeta.forEach((prop) => ownMethodsWithParams.add(prop));
 
@@ -512,10 +510,10 @@ export class Reflector {
       return typeof descriptor?.value == 'function';
     });
 
-    Reflect.ownKeys(objWithParentMeta).forEach((propertyKey) => {
+    Reflect.ownKeys(mergedClassMeta).forEach((propertyKey) => {
       if (propertyKey == 'constructor') return;
       if (allClassMethods.includes(propertyKey) && !ownMethodsWithParams.has(propertyKey)) {
-        objWithParentMeta[propertyKey].params = [];
+        mergedClassMeta[propertyKey].params = this.getParamsMeta(Cls, propertyKey);
       }
     });
   }

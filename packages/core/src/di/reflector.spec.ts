@@ -256,6 +256,7 @@ describe('Reflector', () => {
       class ChildParam1 {}
       class ChildParam2 {}
       class ChildParam3 {}
+      class ChildParam4 {}
 
       class Parent {
         constructor(
@@ -273,7 +274,7 @@ describe('Reflector', () => {
           super(param1, param2);
         }
         override method2(@paramDecorator('child-param1') param1?: ChildParam3) {}
-        override method3() {}
+        override method3(param1: ChildParam4) {}
       }
 
       const metadata = Reflector.collectMetadata(Child);
@@ -289,7 +290,7 @@ describe('Reflector', () => {
       expect(metadata?.method2.params).toEqual([
         [ChildParam3, new DecoratorAndValue(paramDecorator, ['child-param1'])],
       ]);
-      expect(metadata?.method3.params).toEqual([]);
+      expect(metadata?.method3.params).toEqual([null]);
     });
 
     it('merges reflected parameter types with constructor and method parameter decorators', () => {
@@ -630,14 +631,14 @@ describe('Reflector', () => {
       }
 
       class ChildService extends ParentService {
-        override handle(param: ChildParam) {}
+        override handle(param1: ChildParam, param2?: string) {}
       }
 
-      const metadata = Reflector.collectMetadata(ChildService)!;
+      const childMeta = Reflector.collectMetadata(ChildService)!;
 
       // The child method is own code, so parent parameter metadata must not leak into it.
-      expect(metadata.handle.params).toEqual([]);
-      expect(metadata.handle.decorators).toEqual([]);
+      expect(childMeta.handle.params).toEqual([null, null]);
+      expect(childMeta.handle.decorators).toEqual([]);
     });
 
     it('keeps parent metadata isolated when child metadata is merged', () => {
