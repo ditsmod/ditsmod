@@ -1,9 +1,7 @@
-import type { ClassMetaChain } from '#di/reflector.js';
 import { getSymbol } from '#di/top/get-symbol.js';
 import type { DecoratorAndValue } from './decorator-and-value.js';
 import { InjectionToken } from './injection-token.js';
 import type { DepsMeta } from './resolved-provider.js';
-import type { MergedClassMeta } from './types-and-models.js';
 
 /**
  * The key used to store metadata of a class.
@@ -20,16 +18,6 @@ export const PARAMS_KEY = new InjectionToken<(DecoratorAndValue[] | null)[]>('PA
  * This metadata is taken from the property-level decorator of a class.
  */
 export const PROP_KEY = new InjectionToken<Record<string | symbol, DecoratorAndValue[]>>('PROP_KEY');
-/**
- * The key used to store cached metadata of a class.
- * This metadata is taken from all decorators of a class.
- */
-export const CACHE_KEY = new InjectionToken<MergedClassMeta>('CACHE_KEY');
-/**
- * The key used to store cached metadata of a class.
- * This metadata is taken from all decorators of a class.
- */
-export const CACHE_CHAIN_KEY = new InjectionToken<ClassMetaChain>('CACHE_CHAIN_KEY');
 /**
  * The key used to store registry of props where are params with metadata.
  */

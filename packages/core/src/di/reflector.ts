@@ -5,18 +5,13 @@ import { CallsiteUtils } from '#utils/callsites.js';
 import { ClassMetaIterator } from './class-meta-iterator.js';
 import { Class, UnknownType } from './top/types-and-models.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
-import {
-  CACHE_KEY,
-  CLASS_KEY,
-  DEPS_KEY,
-  PARAMS_KEY,
-  METHODS_WITH_PARAMS,
-  PROP_KEY,
-  CACHE_CHAIN_KEY,
-} from './top/constants.js';
+import { CLASS_KEY, PARAMS_KEY, METHODS_WITH_PARAMS, PROP_KEY } from './top/constants.js';
 import { isType, newArray } from './utils.js';
 import type { InjectionToken } from './top/injection-token.js';
 import type { InjectionSymbol } from './top/get-symbol.js';
+
+const mergedClassMetaCache = new WeakMap<Class, ClassMeta | undefined>();
+const classMetaChainCache = new WeakMap<Class, ClassMetaChain | undefined>();
 
 export type ClassMetaChain<DecorValue = any, Proto extends AnyObj = AnyObj> = Map<
   Class,
@@ -220,11 +215,11 @@ export class Reflector {
     if (this.isEmptyMeta(mergedClassMeta)) {
       // Avoid caching an empty iterator for classes with no meaningful reflector metadata.
       this.setMergedClassMeta(Cls);
-      this.setMergedClassMetaChain(Cls);
+      this.setClassMetaChain(Cls);
       return;
     }
     this.setMergedClassMeta(Cls, mergedClassMeta);
-    this.setMergedClassMetaChain(Cls, classMetaChain);
+    this.setClassMetaChain(Cls, classMetaChain);
     return mergedClassMeta;
   }
 
@@ -234,8 +229,8 @@ export class Reflector {
     const classMeta = new ClassMetaIterator() as ClassMeta<DecorValue, Proto>;
 
     let classMetaChain: ClassMetaChain<DecorValue, Proto> | undefined;
-    if (this.hasMergedClassMetaChain(Cls)) {
-      classMetaChain = this.getMergedClassMetaChain<DecorValue, Proto>(Cls);
+    if (this.hasClassMetaChain(Cls)) {
+      classMetaChain = this.getClassMetaChain<DecorValue, Proto>(Cls);
     } else {
       // Build a fresh metadata view once, then cache it on the class constructor.
       // Parent metadata is copied first so own metadata can override or prepend it.
@@ -257,27 +252,27 @@ export class Reflector {
   }
 
   protected static setMergedClassMeta(Cls: Class, classMetaChain?: MergedClassMeta) {
-    Reflect.defineMetadata(CACHE_KEY, classMetaChain, Cls);
+    mergedClassMetaCache.set(Cls, classMetaChain);
   }
 
   protected static getMergedClassMeta<DecorValue = any, Proto extends object = object>(Cls: any) {
-    return Reflect.getOwnMetadata(CACHE_KEY, Cls) as MergedClassMeta<DecorValue, Proto> | undefined;
+    return mergedClassMetaCache.get(Cls) as MergedClassMeta<DecorValue, Proto> | undefined;
   }
 
   protected static hasMergedClassMeta(Cls: any) {
-    return Reflect.hasOwnMetadata(CACHE_KEY, Cls);
+    return mergedClassMetaCache.has(Cls);
   }
 
-  protected static setMergedClassMetaChain(Cls: Class, classMetaChain?: ClassMetaChain) {
-    Reflect.defineMetadata(CACHE_CHAIN_KEY, classMetaChain, Cls);
+  protected static setClassMetaChain(Cls: Class, classMetaChain?: ClassMetaChain) {
+    classMetaChainCache.set(Cls, classMetaChain);
   }
 
-  protected static getMergedClassMetaChain<DecorValue = any, Proto extends object = object>(Cls: any) {
-    return Reflect.getOwnMetadata(CACHE_CHAIN_KEY, Cls) as ClassMetaChain<DecorValue, Proto> | undefined;
+  protected static getClassMetaChain<DecorValue = any, Proto extends object = object>(Cls: any) {
+    return classMetaChainCache.get(Cls) as ClassMetaChain<DecorValue, Proto> | undefined;
   }
 
-  protected static hasMergedClassMetaChain(Cls: any) {
-    return Reflect.hasOwnMetadata(CACHE_CHAIN_KEY, Cls);
+  protected static hasClassMetaChain(Cls: any) {
+    return classMetaChainCache.has(Cls);
   }
 
   protected static concatWithParentMeta<DecorValue = any, Proto extends AnyObj = object>(
