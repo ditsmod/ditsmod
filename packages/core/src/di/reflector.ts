@@ -184,12 +184,12 @@ export class Reflector {
 
     const mergedClassMeta = this.hasMergedClassMeta(Cls)
       ? this.getMergedClassMeta<DecorValue, Proto>(Cls)
-      : this.mergeMeta(Cls);
+      : this.mergeClassMeta<DecorValue, Proto>(Cls);
 
     return this.getClassMetaOrParamsMeta(Cls, mergedClassMeta, propertyKey);
   }
 
-  protected static mergeMeta<DecorValue = any, Proto extends AnyObj = AnyObj>(Cls: Class<Proto>) {
+  protected static mergeClassMeta<DecorValue = any, Proto extends AnyObj = AnyObj>(Cls: Class<Proto>) {
     const mergedClassMeta = new ClassMetaIterator() as MergedClassMeta<DecorValue, Proto>;
     mergedClassMeta.constructor = this.createMergedClassPropMeta();
 
