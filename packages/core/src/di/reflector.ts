@@ -190,8 +190,6 @@ export class Reflector {
   }
 
   protected static mergeMeta<DecorValue = any, Proto extends AnyObj = AnyObj>(Cls: Class<Proto>) {
-    // If a child class overrides a parent method but does not have a property decorator or params decorator, the parent parameters must be removed.
-
     const mergedClassMeta = new ClassMetaIterator() as MergedClassMeta<DecorValue, Proto>;
     mergedClassMeta.constructor = this.createMergedClassPropMeta();
 
@@ -208,6 +206,17 @@ export class Reflector {
         mergedClassMeta[prop].paramChain.set(key, classMeta[prop].params.slice());
       }
     });
+
+    return this.removeOverridenParamsAndSaveCache(Cls, mergedClassMeta, classMetaChain);
+  }
+
+  protected static removeOverridenParamsAndSaveCache<DecorValue = any, Proto extends AnyObj = AnyObj>(
+    Cls: Class<Proto>,
+    mergedClassMeta: MergedClassMeta<DecorValue, Proto>,
+    classMetaChain: ClassMetaChain<any, Proto> | undefined,
+  ) {
+    // If a child class overrides a parent method but does not have a property decoratoror params decorator,
+    // the parent parameters must be removed.
     if (classMetaChain && classMetaChain.size > 1) {
       this.removeOverridenParams(Cls, mergedClassMeta);
     }
