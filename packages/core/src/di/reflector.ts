@@ -212,7 +212,11 @@ export class Reflector {
       this.removeOverridenParams(Cls, mergedClassMeta);
     }
 
-    if (this.isEmptyMeta(mergedClassMeta)) {
+    if (
+      Reflect.ownKeys(mergedClassMeta).length == 1 &&
+      !mergedClassMeta.constructor.decorators.length &&
+      !mergedClassMeta.constructor.params.length
+    ) {
       // Avoid caching an empty iterator for classes with no meaningful reflector metadata.
       this.setMergedClassMeta(Cls);
       this.setClassMetaChain(Cls);
@@ -241,14 +245,6 @@ export class Reflector {
     }
 
     return classMetaChain;
-  }
-
-  protected static isEmptyMeta(classMeta: ClassMeta | MergedClassMeta): boolean {
-    return (
-      Reflect.ownKeys(classMeta).length == 1 &&
-      !classMeta.constructor.decorators.length &&
-      !classMeta.constructor.params.length
-    );
   }
 
   protected static setMergedClassMeta(Cls: Class, classMetaChain?: MergedClassMeta) {
