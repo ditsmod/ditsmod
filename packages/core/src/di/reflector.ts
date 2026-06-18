@@ -335,22 +335,8 @@ export class Reflector {
     propertyKey?: KeyOfClass<T>,
   ): (ParameterMeta | null)[] {
     const isConstructor = !propertyKey || propertyKey == 'constructor';
-
-    /**
-     * If we have no decorators, we only have function.length as metadata.
-     * In that case, to detect whether a child class declared an own constructor or not,
-     * we need to look inside of that constructor to check whether it is
-     * just calling the parent.
-     * This also helps to work around for https://github.com/Microsoft/TypeScript/issues/12439
-     * that sets 'design:paramtypes' to []
-     * if a class inherits from another class but has no ctor declared itself.
-     */
     if (isConstructor && isDelegateCtor(Cls.toString())) {
-      const parentClass = this.getParentClass(Cls);
-      if (parentClass) {
-        return this.getParamsMeta(parentClass, propertyKey);
-      }
-      return [];
+      return this.getParamsMeta(this.getParentClass(Cls)!, propertyKey);
     } else {
       return this.getOwnParamsMeta(Cls, propertyKey);
     }
