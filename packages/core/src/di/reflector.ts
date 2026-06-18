@@ -1,9 +1,9 @@
 import type { AnyObj } from '#types/mix.js';
-import type { AnyFn, ParameterItem, MergedClassMeta, MergedClassPropMeta } from './top/types-and-models.js';
+import type { AnyFn, ParameterItem, MergedClassMeta, MergedClassPropMeta, Class } from './top/types-and-models.js';
 import type { ParameterMeta, ClassMeta, ClassPropMeta, TypeGuard } from './top/types-and-models.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ClassMetaIterator } from './class-meta-iterator.js';
-import { Class, UnknownType } from './top/types-and-models.js';
+import { UnknownType } from './top/types-and-models.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
 import { CLASS_KEY, PARAMS_KEY, METHODS_WITH_PARAMS, PROP_KEY } from './top/constants.js';
 import { isType, newArray } from './utils.js';
@@ -261,25 +261,37 @@ export class Reflector {
 
   protected static getClassMeta<DecorValue = any, Proto extends AnyObj = object>(Cls: Class<Proto>) {
     const classMeta = new ClassMetaIterator() as ClassMeta<DecorValue, Proto>;
-    classMeta.constructor = this.createClassPropMeta(Function, this.getMetaOnClassLevel(Cls));
-    classMeta.constructor.params = this.getParamsMeta(Cls, 'constructor');
+    classMeta.constructor = this.createClassPropMeta(
+      Function,
+      this.getMetaOnClassLevel(Cls),
+      this.getParamsMeta(Cls, 'constructor'),
+    );
 
     const ownPropsMeta = this.getRawPropMeta(Cls);
     const ownPropsWithMeta = ownPropsMeta ? Reflect.ownKeys(ownPropsMeta) : [];
+    const ownMethodsWithParams = Reflector.getRawMeta(Cls, METHODS_WITH_PARAMS, undefined, new Set<string | symbol>());
+    ownPropsWithMeta.forEach((p) => ownMethodsWithParams.add(p));
 
-    ownPropsWithMeta.forEach((propertyKey) => {
-      const type = Reflect.getOwnMetadata('design:type', Cls.prototype, propertyKey);
-      const decorators = ownPropsMeta![propertyKey];
-      (classMeta as any)[propertyKey] = this.createClassPropMeta(type, decorators);
+    ownMethodsWithParams.forEach((propertyKey) => {
+      let type = Reflect.getOwnMetadata('design:type', Cls.prototype, propertyKey);
+      if (!type && propertyKey == 'constructor') {
+        type = Function;
+      }
+      const decorators = ownPropsMeta ? ownPropsMeta[propertyKey] : [];
+      if (classMeta[propertyKey]) {
+        classMeta[propertyKey].type = type;
+        classMeta[propertyKey].decorators = decorators;
+      } else {
+        (classMeta as any)[propertyKey] = this.createClassPropMeta(type, decorators);
+      }
 
       // Method decorators have design:type === Function. In that case the method
       // can also have parameter metadata and should expose it on the same property meta.
-      if (classMeta[propertyKey].type === Function) {
+      if (propertyKey != 'constructor' && classMeta[propertyKey].type === Function) {
         classMeta[propertyKey].params = this.getParamsMeta(Cls, propertyKey);
       }
     });
 
-    this.concatWithParamsMeta(Cls, classMeta, ownPropsWithMeta);
     return classMeta;
   }
 
@@ -465,21 +477,6 @@ export class Reflector {
       if (allClassMethods.includes(propertyKey) && !ownMethodsWithParams.has(propertyKey)) {
         mergedClassMeta[propertyKey].params = this.getParamsMeta(Cls, propertyKey);
       }
-    });
-  }
-
-  protected static concatWithParamsMeta<DecorValue = any, Proto extends AnyObj = object>(
-    Cls: Class<Proto>,
-    classMeta: ClassMeta<DecorValue, Proto>,
-    ownPropsWithMeta: (string | symbol)[],
-  ): void {
-    const ownMethodsWithParams = Reflector.getRawMeta(Cls, METHODS_WITH_PARAMS, undefined, new Set<string | symbol>());
-    ownMethodsWithParams.forEach((methodWithParams) => {
-      if (ownPropsWithMeta.includes(methodWithParams)) {
-        return;
-      }
-      (classMeta as any)[methodWithParams] ??= this.createClassPropMeta(Class);
-      classMeta[methodWithParams].params = this.getParamsMeta(Cls, methodWithParams);
     });
   }
 
