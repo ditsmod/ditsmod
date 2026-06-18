@@ -5,7 +5,7 @@ import { CallsiteUtils } from '#utils/callsites.js';
 import { ClassMetaIterator } from './class-meta-iterator.js';
 import { UnknownType } from './top/types-and-models.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
-import { CLASS_KEY, PARAMS_KEY, METHODS_WITH_PARAMS, PROP_KEY } from './top/constants.js';
+import { CLASS_KEY, PARAM_KEY, METHODS_WITH_PARAMS, PROP_KEY } from './top/constants.js';
 import { isType, newArray } from './utils.js';
 import type { InjectionToken } from './top/injection-token.js';
 import type { InjectionSymbol } from './top/get-symbol.js';
@@ -105,7 +105,7 @@ export class Reflector {
       ): void {
         // This function can be called for a class constructor and methods.
         const Cls = isType(classOrInstance) ? classOrInstance : (classOrInstance.constructor as Class);
-        const parameters = Reflector.getRawMeta(Cls, PARAMS_KEY, propertyKey, []);
+        const parameters = Reflector.getRawMeta(Cls, PARAM_KEY, propertyKey, []);
         const methodNames = Reflector.getRawMeta(Cls, METHODS_WITH_PARAMS, undefined, new Set());
         // TypeScript emits parameter metadata only for decorated declarations, so keep
         // an explicit registry of constructors and methods that have parameter decorators.
@@ -186,7 +186,7 @@ export class Reflector {
       ? (mergedClassMetaCache.get(Cls) as MergedClassMeta<DecorValue, Proto>)
       : this.mergeClassMeta<DecorValue, Proto>(Cls);
 
-    return this.getClassMetaOrParamsMeta(Cls, mergedClassMeta, propertyKey);
+    return this.getClassMetaOrParamMeta(Cls, mergedClassMeta, propertyKey);
   }
 
   protected static mergeClassMeta<DecorValue = any, Proto extends AnyObj = AnyObj>(Cls: Class<Proto>) {
@@ -264,7 +264,7 @@ export class Reflector {
     classMeta.constructor = this.createClassPropMeta(
       Function,
       this.getMetaOnClassLevel(Cls),
-      this.getParamsMeta(Cls, 'constructor'),
+      this.getParamMeta(Cls, 'constructor'),
     );
 
     const ownPropsMeta = this.getRawPropMeta(Cls);
@@ -288,7 +288,7 @@ export class Reflector {
       // Method decorators have design:type === Function. In that case the method
       // can also have parameter metadata and should expose it on the same property meta.
       if (propertyKey != 'constructor' && classMeta[propertyKey].type === Function) {
-        classMeta[propertyKey].params = this.getParamsMeta(Cls, propertyKey);
+        classMeta[propertyKey].params = this.getParamMeta(Cls, propertyKey);
       }
     });
 
@@ -306,19 +306,19 @@ export class Reflector {
    * @param propertyKey If this method is called without `propertyKey`,
    * it's returns parameters of class constructor.
    */
-  protected static getParamsMeta<T extends object>(
+  protected static getParamMeta<T extends object>(
     Cls: Class<T>,
     propertyKey?: KeyOfClass<T>,
   ): (ParameterMeta | null)[] {
     const isConstructor = !propertyKey || propertyKey == 'constructor';
     if (isConstructor && isDelegateCtor(Cls.toString())) {
-      return this.getParamsMeta(this.getParentClass(Cls)!, propertyKey);
+      return this.getParamMeta(this.getParentClass(Cls)!, propertyKey);
     } else {
-      return this.getOwnParamsMeta(Cls, propertyKey);
+      return this.getOwnParamMeta(Cls, propertyKey);
     }
   }
 
-  protected static getOwnParamsMeta<T extends AnyObj>(
+  protected static getOwnParamMeta<T extends AnyObj>(
     Cls: Class,
     propertyKey?: KeyOfClass<T>,
   ): ParameterMeta[] | null[] {
@@ -357,10 +357,10 @@ export class Reflector {
     type: Class = UnknownType,
     decorators: DecoratorAndValue<DecorValue>[] = [],
     params: (ParameterMeta | null)[] = [],
-    decoratorsChain: Map<Class, DecoratorAndValue<DecorValue>[]> = new Map(),
-    paramsChain: Map<Class, (ParameterMeta | null)[]> = new Map(),
+    decoratorChain: Map<Class, DecoratorAndValue<DecorValue>[]> = new Map(),
+    paramChain: Map<Class, (ParameterMeta | null)[]> = new Map(),
   ): MergedClassPropMeta<DecorValue> {
-    return { type, decorators, params, paramChain: paramsChain, decoratorChain: decoratorsChain };
+    return { type, decorators, params, paramChain, decoratorChain };
   }
 
   static setMetaOnClassLevel(Cls: Class, classDecorator: AnyFn) {
@@ -383,7 +383,7 @@ export class Reflector {
    * @param propertyKey If this parameter is `undefined`, constructor parameters are passed.
    */
   static getRawParamMeta<T extends AnyObj>(Cls: Class<T>, propertyKey?: KeyOfClass<T>) {
-    return this.getRawMeta(Cls, PARAMS_KEY, propertyKey);
+    return this.getRawMeta(Cls, PARAM_KEY, propertyKey);
   }
 
   static getRawMeta<T extends AnyObj, R = any>(
@@ -434,7 +434,7 @@ export class Reflector {
     }
   }
 
-  protected static getClassMetaOrParamsMeta<DecorValue = any, Proto extends object = object>(
+  protected static getClassMetaOrParamMeta<DecorValue = any, Proto extends object = object>(
     Cls: Class<Proto>,
     classMeta: MergedClassMeta<DecorValue, Proto> | undefined,
     propertyKey?: string | symbol,
@@ -446,7 +446,7 @@ export class Reflector {
       } else {
         // The requested method/property may have no decorators at all. Return a synthetic
         // metadata object so callers can still inspect function.length based params.
-        const params = this.getParamsMeta(Cls, propertyKey as KeyOfClass<Proto>);
+        const params = this.getParamMeta(Cls, propertyKey as KeyOfClass<Proto>);
         return this.createMergedClassPropMeta(UnknownType, [], params, new Map(), new Map([[Cls, params]]));
       }
     } else {
@@ -475,7 +475,7 @@ export class Reflector {
     Reflect.ownKeys(mergedClassMeta).forEach((propertyKey) => {
       if (propertyKey == 'constructor') return;
       if (allClassMethods.includes(propertyKey) && !ownMethodsWithParams.has(propertyKey)) {
-        mergedClassMeta[propertyKey].params = this.getParamsMeta(Cls, propertyKey);
+        mergedClassMeta[propertyKey].params = this.getParamMeta(Cls, propertyKey);
       }
     });
   }
