@@ -183,7 +183,7 @@ export class Reflector {
     }
 
     const mergedClassMeta = mergedClassMetaCache.has(Cls)
-      ? mergedClassMetaCache.get(Cls) as MergedClassMeta<DecorValue, Proto>
+      ? (mergedClassMetaCache.get(Cls) as MergedClassMeta<DecorValue, Proto>)
       : this.mergeClassMeta<DecorValue, Proto>(Cls);
 
     return this.getClassMetaOrParamsMeta(Cls, mergedClassMeta, propertyKey);
@@ -237,33 +237,22 @@ export class Reflector {
   protected static collectMetaChain<DecorValue = any, Proto extends AnyObj = AnyObj>(
     Cls: Class<Proto>,
   ): ClassMetaChain<DecorValue, Proto> | undefined {
-    const classMeta = new ClassMetaIterator() as ClassMeta<DecorValue, Proto>;
-
-    let classMetaChain: ClassMetaChain<DecorValue, Proto> | undefined;
     if (classMetaChainCache.has(Cls)) {
-      classMetaChain = classMetaChainCache.get(Cls) as ClassMetaChain<DecorValue, Proto>;
+      return classMetaChainCache.get(Cls) as ClassMetaChain<DecorValue, Proto>;
     } else {
       // Build a fresh metadata view once, then cache it on the class constructor.
       // Parent metadata is copied first so own metadata can override or prepend it.
       const newClassMetaChain: ClassMetaChain<DecorValue, Proto> = new Map();
-      this.concatWithParentMeta(Cls, newClassMetaChain);
+      const ParentCls = this.getParentClass(Cls);
+      if (ParentCls) {
+        // Merging current meta with parent meta
+        this.collectMetaChain<DecorValue, Proto>(ParentCls)?.forEach((v, k) => newClassMetaChain.set(k, v));
+      }
+      const classMeta = new ClassMetaIterator() as ClassMeta<DecorValue, Proto>;
       this.concatWithOwnMeta(Cls, classMeta);
-      classMetaChain = newClassMetaChain.set(Cls, classMeta);
-      classMetaChainCache.set(Cls, classMetaChain);
-    }
-
-    return classMetaChain;
-  }
-
-  protected static concatWithParentMeta<DecorValue = any, Proto extends AnyObj = object>(
-    Cls: Class<Proto>,
-    classMetaChain: ClassMetaChain<DecorValue, Proto>,
-  ) {
-    const ParentCls = this.getParentClass(Cls);
-    if (ParentCls) {
-      const parentClassMetaChain = this.collectMetaChain<DecorValue, Proto>(ParentCls);
-      // Merging current meta with parent meta
-      parentClassMetaChain?.forEach((item, key) => classMetaChain.set(key, item));
+      newClassMetaChain.set(Cls, classMeta);
+      classMetaChainCache.set(Cls, newClassMetaChain);
+      return newClassMetaChain;
     }
   }
 
