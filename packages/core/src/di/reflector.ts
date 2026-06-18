@@ -159,7 +159,7 @@ export class Reflector {
   /**
    * Returns an instance of {@link ClassMetaIterator}, which implements the [iterable protocol][1].
    * Each property of this class corresponds to a property with a decorator in the `Cls` parameter, and the value
-   * of that property contains the normalized metadata returned by the decorator transformers.
+   * of that property contains the normalized metadata with {@link MergedClassPropMeta}.
    *
    * [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol
    *
@@ -410,34 +410,26 @@ export class Reflector {
     if (isConstructor && isDelegateCtor(Cls.toString())) {
       return this.getParamMeta(this.getParentClass(Cls)!, propertyKey);
     } else {
-      return this.collectOwnParamMeta(Cls, propertyKey);
-    }
-  }
+      const paramDecoratorMeta = isConstructor
+        ? Reflector.getRawParamMeta(Cls)
+        : Reflector.getRawParamMeta(Cls, propertyKey);
+      const args = (isConstructor ? [Cls] : [Cls.prototype, propertyKey]) as [Class];
+      const paramTypes = Reflect.getOwnMetadata('design:paramtypes', ...args) as Class[];
 
-  protected static collectOwnParamMeta<T extends AnyObj>(
-    Cls: Class,
-    propertyKey?: KeyOfClass<T>,
-  ): ParameterMeta[] | null[] {
-    const isConstructor = !propertyKey || propertyKey == 'constructor';
-    const paramDecoratorMeta = isConstructor
-      ? Reflector.getRawParamMeta(Cls)
-      : Reflector.getRawParamMeta(Cls, propertyKey);
-    const args = (isConstructor ? [Cls] : [Cls.prototype, propertyKey]) as [Class];
-    const paramTypes = Reflect.getOwnMetadata('design:paramtypes', ...args) as Class[];
+      if (paramTypes || paramDecoratorMeta) {
+        return this.mergeTypesAndParamDecoratorMeta(paramTypes, paramDecoratorMeta);
+      }
 
-    if (paramTypes || paramDecoratorMeta) {
-      return this.mergeTypesAndParamDecoratorMeta(paramTypes, paramDecoratorMeta);
-    }
-
-    /**
-     * If a class or method has no decorators, at least create metadata
-     * based on function.length.
-     */
-    if (propertyKey && !isConstructor) {
-      const descriptor = Object.getOwnPropertyDescriptor(Cls.prototype, propertyKey);
-      return newArray(descriptor?.value?.length || 0, null);
-    } else {
-      return newArray(Cls.length, null);
+      /**
+       * If a class or method has no decorators, at least create metadata
+       * based on function.length.
+       */
+      if (propertyKey && !isConstructor) {
+        const descriptor = Object.getOwnPropertyDescriptor(Cls.prototype, propertyKey);
+        return newArray(descriptor?.value?.length || 0, null);
+      } else {
+        return newArray(Cls.length, null);
+      }
     }
   }
 
