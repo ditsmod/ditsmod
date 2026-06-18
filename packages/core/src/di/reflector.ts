@@ -248,9 +248,7 @@ export class Reflector {
         // Merging current meta with parent meta
         this.collectMetaChain<DecorValue, Proto>(ParentCls)?.forEach((v, k) => newClassMetaChain.set(k, v));
       }
-      const classMeta = new ClassMetaIterator() as ClassMeta<DecorValue, Proto>;
-      this.concatWithOwnMeta(Cls, classMeta);
-      newClassMetaChain.set(Cls, classMeta);
+      newClassMetaChain.set(Cls, this.getClassMeta(Cls));
       classMetaChainCache.set(Cls, newClassMetaChain);
       return newClassMetaChain;
     }
@@ -261,10 +259,8 @@ export class Reflector {
     return parentClass == Object ? undefined : parentClass;
   }
 
-  protected static concatWithOwnMeta<DecorValue = any, Proto extends AnyObj = object>(
-    Cls: Class<Proto>,
-    classMeta: ClassMeta<DecorValue, Proto>,
-  ) {
+  protected static getClassMeta<DecorValue = any, Proto extends AnyObj = object>(Cls: Class<Proto>) {
+    const classMeta = new ClassMetaIterator() as ClassMeta<DecorValue, Proto>;
     const ownPropsMeta = this.getRawPropMeta(Cls);
     const ownPropsWithMeta = ownPropsMeta ? Reflect.ownKeys(ownPropsMeta) : [];
 
@@ -281,6 +277,7 @@ export class Reflector {
     });
 
     this.concatWithParamsMeta(Cls, classMeta, ownPropsWithMeta);
+    return classMeta;
   }
 
   static getRawPropMeta<T extends AnyObj>(Cls: Class<T>, propertyKey?: KeyOfClass<T>) {
