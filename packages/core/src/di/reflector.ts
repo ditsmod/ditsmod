@@ -182,8 +182,8 @@ export class Reflector {
       propertyKey = 'constructor';
     }
 
-    const mergedClassMeta = this.hasMergedClassMeta(Cls)
-      ? this.getMergedClassMeta<DecorValue, Proto>(Cls)
+    const mergedClassMeta = mergedClassMetaCache.has(Cls)
+      ? mergedClassMetaCache.get(Cls) as MergedClassMeta<DecorValue, Proto>
       : this.mergeClassMeta<DecorValue, Proto>(Cls);
 
     return this.getClassMetaOrParamsMeta(Cls, mergedClassMeta, propertyKey);
@@ -227,12 +227,10 @@ export class Reflector {
       !mergedClassMeta.constructor.params.length
     ) {
       // Avoid caching an empty iterator for classes with no meaningful reflector metadata.
-      this.setMergedClassMeta(Cls);
-      this.setClassMetaChain(Cls);
+      mergedClassMetaCache.set(Cls, undefined);
       return;
     }
-    this.setMergedClassMeta(Cls, mergedClassMeta);
-    this.setClassMetaChain(Cls, classMetaChain);
+    mergedClassMetaCache.set(Cls, mergedClassMeta);
     return mergedClassMeta;
   }
 
@@ -242,8 +240,8 @@ export class Reflector {
     const classMeta = new ClassMetaIterator() as ClassMeta<DecorValue, Proto>;
 
     let classMetaChain: ClassMetaChain<DecorValue, Proto> | undefined;
-    if (this.hasClassMetaChain(Cls)) {
-      classMetaChain = this.getClassMetaChain<DecorValue, Proto>(Cls);
+    if (classMetaChainCache.has(Cls)) {
+      classMetaChain = classMetaChainCache.get(Cls) as ClassMetaChain<DecorValue, Proto>;
     } else {
       // Build a fresh metadata view once, then cache it on the class constructor.
       // Parent metadata is copied first so own metadata can override or prepend it.
@@ -251,33 +249,10 @@ export class Reflector {
       this.concatWithParentMeta(Cls, newClassMetaChain);
       this.concatWithOwnMeta(Cls, classMeta);
       classMetaChain = newClassMetaChain.set(Cls, classMeta);
+      classMetaChainCache.set(Cls, classMetaChain);
     }
 
     return classMetaChain;
-  }
-
-  protected static setMergedClassMeta(Cls: Class, classMetaChain?: MergedClassMeta) {
-    mergedClassMetaCache.set(Cls, classMetaChain);
-  }
-
-  protected static getMergedClassMeta<DecorValue = any, Proto extends object = object>(Cls: any) {
-    return mergedClassMetaCache.get(Cls) as MergedClassMeta<DecorValue, Proto> | undefined;
-  }
-
-  protected static hasMergedClassMeta(Cls: any) {
-    return mergedClassMetaCache.has(Cls);
-  }
-
-  protected static setClassMetaChain(Cls: Class, classMetaChain?: ClassMetaChain) {
-    classMetaChainCache.set(Cls, classMetaChain);
-  }
-
-  protected static getClassMetaChain<DecorValue = any, Proto extends object = object>(Cls: any) {
-    return classMetaChainCache.get(Cls) as ClassMetaChain<DecorValue, Proto> | undefined;
-  }
-
-  protected static hasClassMetaChain(Cls: any) {
-    return classMetaChainCache.has(Cls);
   }
 
   protected static concatWithParentMeta<DecorValue = any, Proto extends AnyObj = object>(

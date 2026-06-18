@@ -58,8 +58,8 @@ describe('Reflector', () => {
 
       expect(metadata?.decorators.map((item) => item.value)).toEqual(['child']);
       expect([...metadata!.decoratorChain]).toEqual([
-        [Parent, [expect.objectContaining({value: 'parent'})]],
-        [Child, [expect.objectContaining({value: 'child'})]],
+        [Parent, [expect.objectContaining({ value: 'parent' })]],
+        [Child, [expect.objectContaining({ value: 'child' })]],
       ]);
     });
 
