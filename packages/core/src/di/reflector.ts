@@ -314,11 +314,11 @@ export class Reflector {
     if (isConstructor && isDelegateCtor(Cls.toString())) {
       return this.getParamMeta(this.getParentClass(Cls)!, propertyKey);
     } else {
-      return this.getOwnParamMeta(Cls, propertyKey);
+      return this.collectOwnParamMeta(Cls, propertyKey);
     }
   }
 
-  protected static getOwnParamMeta<T extends AnyObj>(
+  protected static collectOwnParamMeta<T extends AnyObj>(
     Cls: Class,
     propertyKey?: KeyOfClass<T>,
   ): ParameterMeta[] | null[] {
