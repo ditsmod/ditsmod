@@ -345,6 +345,49 @@ export class Reflector {
     }
   }
 
+  /**
+   * Returns an array with the metadata of the method parameters. The following example shows
+   * one case when the method has three parameters:
+   * 
+   ```ts
+const paramsMeta = [
+  [ SomeClass, DecoratorAndValue ], // First parameter
+  [ DecoratorAndValue ], // Second parameter
+  [ OtherClass ] // Third parameter
+];
+   ```
+   * 
+   * That is, the parameter metadata is presented as an array, where the class type can come first
+   * (if the TypeScript compiler was able to determine it), or an instance of the `DecoratorAndValue`
+   * class immediately follows (if a decorator is used at the parameter level).
+   */
+  protected static mergeTypesAndParamDecoratorMeta(
+    paramTypes: Class[],
+    paramDecoratorMeta: (DecoratorAndValue[] | null)[] | undefined,
+  ): ParameterMeta[] {
+    let mergedParamMeta: ParameterItem[][];
+
+    if (paramTypes) {
+      mergedParamMeta = new Array(paramTypes.length);
+    } else {
+      mergedParamMeta = paramDecoratorMeta ? new Array(paramDecoratorMeta.length) : [];
+    }
+
+    for (let paramIndex = 0; paramIndex < mergedParamMeta.length; paramIndex++) {
+      if (paramTypes[paramIndex] === Object) {
+        // TypeScript emit `Object` for types like `any`. Treat it as unknown
+        // instead of using Object as an injection token.
+        mergedParamMeta[paramIndex] = [];
+      } else if (paramTypes[paramIndex]) {
+        mergedParamMeta[paramIndex] = [paramTypes[paramIndex]] as [Class];
+      }
+      if (paramDecoratorMeta && paramDecoratorMeta[paramIndex] != null) {
+        mergedParamMeta[paramIndex].push(...(paramDecoratorMeta[paramIndex] as DecoratorAndValue[]));
+      }
+    }
+    return mergedParamMeta as ParameterMeta[];
+  }
+
   protected static createClassPropMeta<DecorValue = any>(
     type: Class = UnknownType,
     decorators: DecoratorAndValue<DecorValue>[] = [],
@@ -478,48 +521,5 @@ export class Reflector {
         mergedClassMeta[propertyKey].params = this.getParamMeta(Cls, propertyKey);
       }
     });
-  }
-
-  /**
-   * Returns an array with the metadata of the method parameters. The following example shows
-   * one case when the method has three parameters:
-   * 
-   ```ts
-const paramsMeta = [
-  [ SomeClass, DecoratorAndValue ], // First parameter
-  [ DecoratorAndValue ], // Second parameter
-  [ OtherClass ] // Third parameter
-];
-   ```
-   * 
-   * That is, the parameter metadata is presented as an array, where the class type can come first
-   * (if the TypeScript compiler was able to determine it), or an instance of the `DecoratorAndValue`
-   * class immediately follows (if a decorator is used at the parameter level).
-   */
-  protected static mergeTypesAndParamDecoratorMeta(
-    paramTypes: Class[],
-    paramDecoratorMeta: (DecoratorAndValue[] | null)[] | undefined,
-  ): ParameterMeta[] {
-    let mergedParamMeta: ParameterItem[][];
-
-    if (paramTypes) {
-      mergedParamMeta = new Array(paramTypes.length);
-    } else {
-      mergedParamMeta = paramDecoratorMeta ? new Array(paramDecoratorMeta.length) : [];
-    }
-
-    for (let paramIndex = 0; paramIndex < mergedParamMeta.length; paramIndex++) {
-      if (paramTypes[paramIndex] === Object) {
-        // TypeScript emit `Object` for types like `any`. Treat it as unknown
-        // instead of using Object as an injection token.
-        mergedParamMeta[paramIndex] = [];
-      } else if (paramTypes[paramIndex]) {
-        mergedParamMeta[paramIndex] = [paramTypes[paramIndex]] as [Class];
-      }
-      if (paramDecoratorMeta && paramDecoratorMeta[paramIndex] != null) {
-        mergedParamMeta[paramIndex].push(...(paramDecoratorMeta[paramIndex] as DecoratorAndValue[]));
-      }
-    }
-    return mergedParamMeta as ParameterMeta[];
   }
 }
