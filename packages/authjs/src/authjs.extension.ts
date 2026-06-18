@@ -1,5 +1,4 @@
 import {
-  ChainError,
   Extension,
   ExtensionManager,
   HttpMethod,
@@ -7,6 +6,7 @@ import {
   Injector,
   Stage1ExtensionMeta,
 } from '@ditsmod/core';
+import { ChainError } from '@ditsmod/core/errors';
 import { MetadataPerMod3, RestRouteExtension } from '@ditsmod/rest';
 import { LoggerInstance } from '@auth/core/types';
 

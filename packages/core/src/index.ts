@@ -1,6 +1,4 @@
 export * from './di.js';
-export * from '@ts-stack/chain-error';
-export * from './errors.js';
 
 export { PROVIDERS_PER_APP } from '#init/constants.js';
 export { awaitTokens } from '#utils/await-tokens.js';

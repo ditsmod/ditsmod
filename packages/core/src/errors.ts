@@ -43,6 +43,7 @@ export {
 } from '#error/core-errors.js';
 
 export * from '#di/errors.js';
+export * from '@ts-stack/chain-error';
 export { CustomError } from '#error/custom-error.js';
 export { isChainError, isCustomError } from '#utils/type-guards.js';
 export { ErrorInfo } from '#error/error-info.js';
