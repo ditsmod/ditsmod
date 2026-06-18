@@ -677,7 +677,6 @@ describe('Reflector', () => {
       class ChildService extends ParentService {}
 
       const metadata = Reflector.collectMetadata(ChildService)!;
-
       expect(metadata.constructor.params).toEqual([[ParentParam, new DecoratorAndValue(param, 'parent')]]);
     });
   });

@@ -261,6 +261,9 @@ export class Reflector {
 
   protected static getClassMeta<DecorValue = any, Proto extends AnyObj = object>(Cls: Class<Proto>) {
     const classMeta = new ClassMetaIterator() as ClassMeta<DecorValue, Proto>;
+    classMeta.constructor = this.createClassPropMeta(Function, this.getMetaOnClassLevel(Cls));
+    classMeta.constructor.params = this.getParamsMeta(Cls, 'constructor');
+
     const ownPropsMeta = this.getRawPropMeta(Cls);
     const ownPropsWithMeta = ownPropsMeta ? Reflect.ownKeys(ownPropsMeta) : [];
 
@@ -471,21 +474,12 @@ export class Reflector {
     ownPropsWithMeta: (string | symbol)[],
   ): void {
     const ownMethodsWithParams = Reflector.getRawMeta(Cls, METHODS_WITH_PARAMS, undefined, new Set<string | symbol>());
-    // Constructor metadata is always normalized so class decorators and constructor params
-    // share one stable metadata entry.
-    ownMethodsWithParams.add('constructor');
     ownMethodsWithParams.forEach((methodWithParams) => {
       if (ownPropsWithMeta.includes(methodWithParams)) {
         return;
       }
-      if (!classMeta.hasOwnProperty(methodWithParams)) {
-        (classMeta as any)[methodWithParams] = this.createClassPropMeta(Class);
-      }
-      const classPropMeta = (classMeta as any)[methodWithParams] as ClassPropMeta;
-      classPropMeta.params = this.getParamsMeta(Cls, methodWithParams);
-      if (methodWithParams == 'constructor') {
-        classPropMeta.decorators = this.getMetaOnClassLevel(Cls) || [];
-      }
+      (classMeta as any)[methodWithParams] ??= this.createClassPropMeta(Class);
+      classMeta[methodWithParams].params = this.getParamsMeta(Cls, methodWithParams);
     });
   }
 
