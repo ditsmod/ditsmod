@@ -1,1 +1,1 @@
-This repository contains compiled files for the site https://ditsmod.github.io/
+This repository contains compiled files for the site https://ditsmod.github.io/en/
