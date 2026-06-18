@@ -1,5 +1,13 @@
 import type { AnyObj } from '#types/mix.js';
-import type { ParameterMeta, ClassMeta, TypeGuard , AnyFn, ParameterItem, MergedClassMeta, Class } from './top/types-and-models.js';
+import type {
+  ParameterMeta,
+  ClassMeta,
+  TypeGuard,
+  AnyFn,
+  ParameterItem,
+  MergedClassMeta,
+  Class,
+} from './top/types-and-models.js';
 import type { InjectionToken } from './top/injection-token.js';
 import type { InjectionSymbol } from './top/get-symbol.js';
 import { MergedClassPropMeta } from './top/types-and-models.js';
@@ -190,6 +198,75 @@ export class Reflector {
     return this.getClassMetaOrParamMeta(Cls, mergedClassMeta, propertyKey);
   }
 
+  static setMetaOnClassLevel(Cls: Class, classDecorator: AnyFn) {
+    classDecorator(Cls);
+  }
+
+  static getMetaOnClassLevel(Cls: Class) {
+    return this.getRawMeta(Cls, CLASS_KEY);
+  }
+
+  static setRawParamMeta<T extends AnyObj>(
+    Cls: Class<T>,
+    propertyKey: string | symbol | undefined,
+    index: number,
+    paramDecorator: AnyFn,
+  ) {
+    paramDecorator(Cls, propertyKey, index);
+  }
+  /**
+   * @param propertyKey If this parameter is `undefined`, constructor parameters are passed.
+   */
+  static getRawParamMeta<T extends AnyObj>(Cls: Class<T>, propertyKey?: KeyOfClass<T>) {
+    return this.getRawMeta(Cls, PARAM_KEY, propertyKey);
+  }
+
+  static getRawMeta<T extends AnyObj, R = any>(
+    Cls: Class<T> | T,
+    metadataKey: InjectionToken<R> | InjectionSymbol<R>,
+    propertyKey?: KeyOfClass<T>,
+  ): R | undefined;
+  static getRawMeta<T extends AnyObj, R = any>(
+    Cls: Class<T> | T,
+    metadataKey: InjectionToken<R> | InjectionSymbol<R>,
+    propertyKey: KeyOfClass<T> | undefined,
+    defaultValue: R,
+  ): R;
+  static getRawMeta<T extends AnyObj, R = any>(
+    Cls: Class<T> | T,
+    metadataKey: any,
+    propertyKey?: KeyOfClass<T>,
+  ): R | undefined;
+  static getRawMeta<T extends AnyObj, R = any>(
+    Cls: Class<T> | T,
+    metadataKey: any,
+    propertyKey: KeyOfClass<T> | undefined,
+    defaultValue: R,
+  ): R;
+  static getRawMeta<T extends AnyObj, R = any>(
+    Cls: Class<T> | T,
+    metadataKey: any,
+    propertyKey?: KeyOfClass<T>,
+    defaultValue?: R,
+  ): R {
+    if (propertyKey) {
+      // Reflect metadata distinguishes metadata on a property from metadata on a class.
+      // The optional default is installed only once to preserve identity for arrays/maps.
+      if (defaultValue !== undefined && !Reflect.hasOwnMetadata(metadataKey, Cls, propertyKey as string)) {
+        Reflect.defineMetadata(metadataKey, defaultValue, Cls, propertyKey as string);
+      }
+      return Reflect.getOwnMetadata(metadataKey, Cls, propertyKey as string);
+    }
+    if (defaultValue !== undefined && !Reflect.hasOwnMetadata(metadataKey, Cls)) {
+      Reflect.defineMetadata(metadataKey, defaultValue, Cls);
+    }
+    return Reflect.getOwnMetadata(metadataKey, Cls);
+  }
+
+  static getRawPropMeta<T extends AnyObj>(Cls: Class<T>, propertyKey?: KeyOfClass<T>) {
+    return this.getRawMeta(Cls, PROP_KEY, propertyKey);
+  }
+
   protected static mergeClassMeta<DecorValue = any, Proto extends AnyObj = AnyObj>(Cls: Class<Proto>) {
     const mergedClassMeta = new ClassMetaIterator() as MergedClassMeta<DecorValue, Proto>;
     mergedClassMeta.constructor = new MergedClassPropMeta();
@@ -233,6 +310,32 @@ export class Reflector {
     }
     mergedClassMetaCache.set(Cls, mergedClassMeta);
     return mergedClassMeta;
+  }
+
+  /**
+   * If a child class overrides a parent method but does not have a property decorator or params decorator,
+   * the parent parameters must be removed.
+   */
+  protected static removeOverridenParams<DecorValue = any, Proto extends AnyObj = object>(
+    Cls: Class<Proto>,
+    mergedClassMeta: ClassMeta<DecorValue, Proto>,
+  ) {
+    const ownPropMeta = this.getRawPropMeta(Cls);
+    const ownPropsWithMeta = ownPropMeta ? Reflect.ownKeys(ownPropMeta) : [];
+    const ownMethodsWithParams = Reflector.getRawMeta(Cls, METHODS_WITH_PARAMS, undefined, new Set<string | symbol>());
+    ownPropsWithMeta.forEach((prop) => ownMethodsWithParams.add(prop));
+
+    const allClassMethods = Reflect.ownKeys(Cls.prototype).filter((prop) => {
+      const descriptor = Object.getOwnPropertyDescriptor(Cls.prototype, prop);
+      return typeof descriptor?.value == 'function';
+    });
+
+    Reflect.ownKeys(mergedClassMeta).forEach((propertyKey) => {
+      if (propertyKey == 'constructor') return;
+      if (allClassMethods.includes(propertyKey) && !ownMethodsWithParams.has(propertyKey)) {
+        mergedClassMeta[propertyKey].params = this.getParamMeta(Cls, propertyKey);
+      }
+    });
   }
 
   protected static collectMetaChain<DecorValue = any, Proto extends AnyObj = AnyObj>(
@@ -287,10 +390,6 @@ export class Reflector {
     });
 
     return classMeta;
-  }
-
-  static getRawPropMeta<T extends AnyObj>(Cls: Class<T>, propertyKey?: KeyOfClass<T>) {
-    return this.getRawMeta(Cls, PROP_KEY, propertyKey);
   }
 
   /**
@@ -385,71 +484,6 @@ const paramsMeta = [
     return mergedParamMeta as ParameterMeta[];
   }
 
-  static setMetaOnClassLevel(Cls: Class, classDecorator: AnyFn) {
-    classDecorator(Cls);
-  }
-
-  static getMetaOnClassLevel(Cls: Class) {
-    return this.getRawMeta(Cls, CLASS_KEY);
-  }
-
-  static setRawParamMeta<T extends AnyObj>(
-    Cls: Class<T>,
-    propertyKey: string | symbol | undefined,
-    index: number,
-    paramDecorator: AnyFn,
-  ) {
-    paramDecorator(Cls, propertyKey, index);
-  }
-  /**
-   * @param propertyKey If this parameter is `undefined`, constructor parameters are passed.
-   */
-  static getRawParamMeta<T extends AnyObj>(Cls: Class<T>, propertyKey?: KeyOfClass<T>) {
-    return this.getRawMeta(Cls, PARAM_KEY, propertyKey);
-  }
-
-  static getRawMeta<T extends AnyObj, R = any>(
-    Cls: Class<T> | T,
-    metadataKey: InjectionToken<R> | InjectionSymbol<R>,
-    propertyKey?: KeyOfClass<T>,
-  ): R | undefined;
-  static getRawMeta<T extends AnyObj, R = any>(
-    Cls: Class<T> | T,
-    metadataKey: InjectionToken<R> | InjectionSymbol<R>,
-    propertyKey: KeyOfClass<T> | undefined,
-    defaultValue: R,
-  ): R;
-  static getRawMeta<T extends AnyObj, R = any>(
-    Cls: Class<T> | T,
-    metadataKey: any,
-    propertyKey?: KeyOfClass<T>,
-  ): R | undefined;
-  static getRawMeta<T extends AnyObj, R = any>(
-    Cls: Class<T> | T,
-    metadataKey: any,
-    propertyKey: KeyOfClass<T> | undefined,
-    defaultValue: R,
-  ): R;
-  static getRawMeta<T extends AnyObj, R = any>(
-    Cls: Class<T> | T,
-    metadataKey: any,
-    propertyKey?: KeyOfClass<T>,
-    defaultValue?: R,
-  ): R {
-    if (propertyKey) {
-      // Reflect metadata distinguishes metadata on a property from metadata on a class.
-      // The optional default is installed only once to preserve identity for arrays/maps.
-      if (defaultValue !== undefined && !Reflect.hasOwnMetadata(metadataKey, Cls, propertyKey as string)) {
-        Reflect.defineMetadata(metadataKey, defaultValue, Cls, propertyKey as string);
-      }
-      return Reflect.getOwnMetadata(metadataKey, Cls, propertyKey as string);
-    }
-    if (defaultValue !== undefined && !Reflect.hasOwnMetadata(metadataKey, Cls)) {
-      Reflect.defineMetadata(metadataKey, defaultValue, Cls);
-    }
-    return Reflect.getOwnMetadata(metadataKey, Cls);
-  }
-
   protected static setDecoratorFactoryName(factory: AnyFn, debugFactoryName?: string) {
     if (debugFactoryName) {
       Object.defineProperty(factory, 'name', { value: debugFactoryName });
@@ -474,31 +508,5 @@ const paramsMeta = [
     } else {
       return classMeta;
     }
-  }
-
-  /**
-   * If a child class overrides a parent method but does not have a property decorator or params decorator,
-   * the parent parameters must be removed.
-   */
-  protected static removeOverridenParams<DecorValue = any, Proto extends AnyObj = object>(
-    Cls: Class<Proto>,
-    mergedClassMeta: ClassMeta<DecorValue, Proto>,
-  ) {
-    const ownPropMeta = this.getRawPropMeta(Cls);
-    const ownPropsWithMeta = ownPropMeta ? Reflect.ownKeys(ownPropMeta) : [];
-    const ownMethodsWithParams = Reflector.getRawMeta(Cls, METHODS_WITH_PARAMS, undefined, new Set<string | symbol>());
-    ownPropsWithMeta.forEach((prop) => ownMethodsWithParams.add(prop));
-
-    const allClassMethods = Reflect.ownKeys(Cls.prototype).filter((prop) => {
-      const descriptor = Object.getOwnPropertyDescriptor(Cls.prototype, prop);
-      return typeof descriptor?.value == 'function';
-    });
-
-    Reflect.ownKeys(mergedClassMeta).forEach((propertyKey) => {
-      if (propertyKey == 'constructor') return;
-      if (allClassMethods.includes(propertyKey) && !ownMethodsWithParams.has(propertyKey)) {
-        mergedClassMeta[propertyKey].params = this.getParamMeta(Cls, propertyKey);
-      }
-    });
   }
 }
