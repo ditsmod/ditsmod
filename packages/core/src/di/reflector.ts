@@ -271,25 +271,13 @@ export class Reflector {
     const ownPropsWithMeta = ownPropsMeta ? Reflect.ownKeys(ownPropsMeta) : [];
     const ownMethodsWithParams = Reflector.getRawMeta(Cls, METHODS_WITH_PARAMS, undefined, new Set<string | symbol>());
     ownPropsWithMeta.forEach((p) => ownMethodsWithParams.add(p));
+    ownMethodsWithParams.delete('constructor');
 
     ownMethodsWithParams.forEach((propertyKey) => {
-      let type = Reflect.getOwnMetadata('design:type', Cls.prototype, propertyKey);
-      if (!type && propertyKey == 'constructor') {
-        type = Function;
-      }
-      const decorators = ownPropsMeta ? ownPropsMeta[propertyKey] : [];
-      if (classMeta[propertyKey]) {
-        classMeta[propertyKey].type = type;
-        classMeta[propertyKey].decorators = decorators;
-      } else {
-        (classMeta as any)[propertyKey] = this.createClassPropMeta(type, decorators);
-      }
-
-      // Method decorators have design:type === Function. In that case the method
-      // can also have parameter metadata and should expose it on the same property meta.
-      if (propertyKey != 'constructor' && classMeta[propertyKey].type === Function) {
-        classMeta[propertyKey].params = this.getParamMeta(Cls, propertyKey);
-      }
+      const type: Class = Reflect.getOwnMetadata('design:type', Cls.prototype, propertyKey);
+      const decorators = ownPropsMeta ? ownPropsMeta[propertyKey] || [] : [];
+      const params = this.getParamMeta(Cls, propertyKey);
+      (classMeta as any)[propertyKey] = this.createClassPropMeta(type, decorators, params);
     });
 
     return classMeta;
@@ -300,7 +288,7 @@ export class Reflector {
   }
 
   /**
-   * Returns the metadata for the constructor or methods of the passed class.
+   * Returns array of parameters for given method.
    *
    * @param Cls A class that has decorators.
    * @param propertyKey If this method is called without `propertyKey`,
@@ -310,6 +298,9 @@ export class Reflector {
     Cls: Class<T>,
     propertyKey?: KeyOfClass<T>,
   ): (ParameterMeta | null)[] {
+    const descriptor = Object.getOwnPropertyDescriptor(Cls.prototype, propertyKey || 'constructor');
+    if (typeof descriptor?.value != 'function') return [];
+
     const isConstructor = !propertyKey || propertyKey == 'constructor';
     if (isConstructor && isDelegateCtor(Cls.toString())) {
       return this.getParamMeta(this.getParentClass(Cls)!, propertyKey);
