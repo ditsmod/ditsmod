@@ -3,7 +3,7 @@ import type { ForwardRefFn } from '../forward-ref.js';
 import type { InjectionToken } from './injection-token.js';
 import type { DecoratorAndValue } from './decorator-and-value.js';
 import type { DepsMeta } from './resolved-provider.js';
-import type { DEPS_KEY } from './constants.js';
+import { DEPS_KEY } from './constants.js';
 
 /**
  * ### Interface Overview
@@ -41,11 +41,14 @@ export type ClassMeta<DecorValue = any, Proto extends object = object> = {
   [P in keyof Proto]: ClassPropMeta<DecorValue>;
 } & { constructor: ClassPropMeta<DecorValue> } & { [Symbol.iterator]: () => Generator<string | symbol> };
 
-export interface ClassPropMeta<DecorValue = any> {
+export class ClassPropMeta<DecorValue = any> {
   [DEPS_KEY]?: DepsMeta;
-  type: Class;
-  decorators: DecoratorAndValue<DecorValue>[];
-  params: (ParameterMeta | null)[];
+
+  constructor(
+    public type: Class = UnknownType,
+    public decorators: DecoratorAndValue<DecorValue>[] = [],
+    public params: (ParameterMeta | null)[] = [],
+  ) {}
 }
 
 /**
@@ -55,9 +58,16 @@ export type MergedClassMeta<DecorValue = any, Proto extends object = object> = {
   [P in keyof Proto]: MergedClassPropMeta<DecorValue>;
 } & { constructor: MergedClassPropMeta<DecorValue> } & { [Symbol.iterator]: () => Generator<string | symbol> };
 
-export interface MergedClassPropMeta<DecorValue = any> extends ClassPropMeta<DecorValue> {
-  decoratorChain: Map<Class, DecoratorAndValue<DecorValue>[]>;
-  paramChain: Map<Class, (ParameterMeta | null)[]>;
+export class MergedClassPropMeta<DecorValue = any> extends ClassPropMeta<DecorValue> {
+  constructor(
+    type: Class = UnknownType,
+    decorators: DecoratorAndValue<DecorValue>[] = [],
+    params: (ParameterMeta | null)[] = [],
+    public decoratorChain: Map<Class, DecoratorAndValue<DecorValue>[]> = new Map(),
+    public paramChain: Map<Class, (ParameterMeta | null)[]> = new Map(),
+  ) {
+    super(type, decorators, params);
+  }
 }
 
 export type ParameterItem<Value = any> = DecoratorAndValue<Value> | InjectionToken<any> | Class;

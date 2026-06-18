@@ -1,14 +1,15 @@
 import type { AnyObj } from '#types/mix.js';
-import type { AnyFn, ParameterItem, MergedClassMeta, MergedClassPropMeta, Class } from './top/types-and-models.js';
-import type { ParameterMeta, ClassMeta, ClassPropMeta, TypeGuard } from './top/types-and-models.js';
+import type { ParameterMeta, ClassMeta, TypeGuard , AnyFn, ParameterItem, MergedClassMeta, Class } from './top/types-and-models.js';
+import type { InjectionToken } from './top/injection-token.js';
+import type { InjectionSymbol } from './top/get-symbol.js';
+import { MergedClassPropMeta } from './top/types-and-models.js';
+import { ClassPropMeta } from './top/types-and-models.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ClassMetaIterator } from './class-meta-iterator.js';
 import { UnknownType } from './top/types-and-models.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
 import { CLASS_KEY, PARAM_KEY, METHODS_WITH_PARAMS, PROP_KEY } from './top/constants.js';
 import { isType, newArray } from './utils.js';
-import type { InjectionToken } from './top/injection-token.js';
-import type { InjectionSymbol } from './top/get-symbol.js';
 
 const mergedClassMetaCache = new WeakMap<Class, ClassMeta | undefined>();
 const classMetaChainCache = new WeakMap<Class, ClassMetaChain | undefined>();
@@ -191,14 +192,14 @@ export class Reflector {
 
   protected static mergeClassMeta<DecorValue = any, Proto extends AnyObj = AnyObj>(Cls: Class<Proto>) {
     const mergedClassMeta = new ClassMetaIterator() as MergedClassMeta<DecorValue, Proto>;
-    mergedClassMeta.constructor = this.createMergedClassPropMeta();
+    mergedClassMeta.constructor = new MergedClassPropMeta();
 
     const classMetaChain = this.collectMetaChain(Cls);
     classMetaChain?.forEach((classMeta, key) => {
       if (!classMeta) return;
 
       for (const prop of classMeta) {
-        (mergedClassMeta as any)[prop] ??= this.createMergedClassPropMeta<DecorValue>();
+        (mergedClassMeta as any)[prop] ??= new MergedClassPropMeta<DecorValue>();
         mergedClassMeta[prop].type = classMeta[prop].type;
         mergedClassMeta[prop].decorators = classMeta[prop].decorators.slice();
         mergedClassMeta[prop].params = classMeta[prop].params.slice();
@@ -265,7 +266,7 @@ export class Reflector {
     // Setting metadata for a constructor is different from setting metadata for
     // other class properties. A constructor has a different metadata key,
     // a different strategy for getting parameters (taking inheritance into account), etc.
-    classMeta.constructor = this.createClassPropMeta(
+    classMeta.constructor = new ClassPropMeta(
       Function,
       this.getMetaOnClassLevel(Cls),
       this.getParamMeta(Cls, 'constructor'),
@@ -282,7 +283,7 @@ export class Reflector {
       const type: Class = Reflect.getOwnMetadata('design:type', Cls.prototype, propertyKey);
       const decorators = ownPropsMeta ? ownPropsMeta[propertyKey] || [] : [];
       const params = this.getParamMeta(Cls, propertyKey);
-      (classMeta as any)[propertyKey] = this.createClassPropMeta(type, decorators, params);
+      (classMeta as any)[propertyKey] = new ClassPropMeta(type, decorators, params);
     });
 
     return classMeta;
@@ -384,24 +385,6 @@ const paramsMeta = [
     return mergedParamMeta as ParameterMeta[];
   }
 
-  protected static createClassPropMeta<DecorValue = any>(
-    type: Class = UnknownType,
-    decorators: DecoratorAndValue<DecorValue>[] = [],
-    params: (ParameterMeta | null)[] = [],
-  ): ClassPropMeta<DecorValue> {
-    return { type, decorators, params };
-  }
-
-  protected static createMergedClassPropMeta<DecorValue = any>(
-    type: Class = UnknownType,
-    decorators: DecoratorAndValue<DecorValue>[] = [],
-    params: (ParameterMeta | null)[] = [],
-    decoratorChain: Map<Class, DecoratorAndValue<DecorValue>[]> = new Map(),
-    paramChain: Map<Class, (ParameterMeta | null)[]> = new Map(),
-  ): MergedClassPropMeta<DecorValue> {
-    return { type, decorators, params, paramChain, decoratorChain };
-  }
-
   static setMetaOnClassLevel(Cls: Class, classDecorator: AnyFn) {
     classDecorator(Cls);
   }
@@ -486,7 +469,7 @@ const paramsMeta = [
         // The requested method/property may have no decorators at all. Return a synthetic
         // metadata object so callers can still inspect function.length based params.
         const params = this.getParamMeta(Cls, propertyKey as KeyOfClass<Proto>);
-        return this.createMergedClassPropMeta(UnknownType, [], params, new Map(), new Map([[Cls, params]]));
+        return new MergedClassPropMeta(UnknownType, [], params, new Map(), new Map([[Cls, params]]));
       }
     } else {
       return classMeta;

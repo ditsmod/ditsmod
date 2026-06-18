@@ -33,6 +33,7 @@ export {
   ValueProvider,
   ClassMeta,
   ClassPropMeta,
+  MergedClassPropMeta,
   UnknownType,
 } from '#di/top/types-and-models.js';
 export {
