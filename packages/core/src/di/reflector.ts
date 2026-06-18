@@ -261,12 +261,17 @@ export class Reflector {
 
   protected static getClassMeta<DecorValue = any, Proto extends AnyObj = object>(Cls: Class<Proto>) {
     const classMeta = new ClassMetaIterator() as ClassMeta<DecorValue, Proto>;
+
+    // Setting metadata for a constructor is different from setting metadata for
+    // other class properties. A constructor has a different metadata key,
+    // a different strategy for getting parameters (taking inheritance into account), etc.
     classMeta.constructor = this.createClassPropMeta(
       Function,
       this.getMetaOnClassLevel(Cls),
       this.getParamMeta(Cls, 'constructor'),
     );
 
+    // Get a list of unique class properties that have metadata.
     const ownPropsMeta = this.getRawPropMeta(Cls);
     const ownPropsWithMeta = ownPropsMeta ? Reflect.ownKeys(ownPropsMeta) : [];
     const ownMethodsWithParams = Reflector.getRawMeta(Cls, METHODS_WITH_PARAMS, undefined, new Set<string | symbol>());
