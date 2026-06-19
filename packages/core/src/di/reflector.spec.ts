@@ -3,7 +3,7 @@ import { Reflector, isDelegateCtor } from './reflector.js';
 import { DEPS_KEY } from './top/constants.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
 import type { DepsMeta } from './top/resolved-provider.js';
-import { Class, UnknownType } from './top/types-and-models.js';
+import { MergedClassPropMeta, UnknownType } from './top/types-and-models.js';
 
 describe('Reflector', () => {
   describe('class decorators', () => {
@@ -316,7 +316,7 @@ describe('Reflector', () => {
       expect(metadata.handle.params).toEqual([[Number, new DecoratorAndValue(param, { token: 'id' })], []]);
     });
 
-    it('pads undecorated parameter positions with null before merging metadata', () => {
+    it('pads undecorated parameter positions with Sting or Number objects', () => {
       const param = Reflector.makeParamDecorator((value: string) => value);
 
       class UsersService {
@@ -325,12 +325,13 @@ describe('Reflector', () => {
 
       const metadata = Reflector.collectMetadata(UsersService)!;
 
-      expect(Reflector.getRawParamMeta(UsersService, 'handle')).toEqual([
-        null,
-        null,
-        [new DecoratorAndValue(param, 'third')],
+      const mergedClassPropMeta = Reflector.collectMetadata(UsersService, 'handle');
+      expect(mergedClassPropMeta?.params).toEqual([
+        [String],
+        [Number],
+        [Boolean, new DecoratorAndValue(param, 'third')],
       ]);
-      expect(metadata.handle.params).toEqual([[String], [Number], [Boolean, new DecoratorAndValue(param, 'third')]]);
+      expect(metadata.handle.params).toBe(mergedClassPropMeta?.params);
     });
 
     it('creates fallback parameter metadata for methods without decorators', () => {
@@ -690,23 +691,34 @@ describe('Reflector', () => {
         constructor(value: string) {}
       }
 
-      Reflector.setMetaOnClassLevel(RawService, classTag('raw-class'));
-      Reflector.setRawParamMeta(RawService, undefined, 0, paramTag('raw-param'));
+      classTag('raw-class')(RawService);
+      paramTag('raw-param-0')(RawService, undefined, 0);
+      paramTag('raw-param-1')(RawService, undefined, 1);
 
-      expect(Reflector.getMetaOnClassLevel(RawService)).toEqual([
-        new DecoratorAndValue(classTag, 'raw-class', undefined, expect.any(String)),
-      ]);
-      expect(Reflector.getRawParamMeta(RawService)).toEqual([[new DecoratorAndValue(paramTag, 'raw-param')]]);
+      const mergedClassPropMeta = Reflector.collectMetadata(RawService, 'constructor');
+      expect(mergedClassPropMeta).toBeInstanceOf(MergedClassPropMeta);
+      expect(mergedClassPropMeta).toEqual(
+        expect.objectContaining({
+          decorators: [new DecoratorAndValue(classTag, 'raw-class', undefined, expect.any(String))],
+          params: [[new DecoratorAndValue(paramTag, 'raw-param-0')], [new DecoratorAndValue(paramTag, 'raw-param-1')]],
+        } satisfies Partial<MergedClassPropMeta>),
+      );
     });
 
     it('defines default raw metadata only once', () => {
+      class PulicReflector extends Reflector {
+        static override getRawMeta(...args: any[]) {
+          // @ts-expect-error all write
+          return super.getRawMeta(...args);
+        }
+      }
       class RawService {}
 
       const firstDefault = ['first'];
       const secondDefault = ['second'];
 
-      expect(Reflector.getRawMeta(RawService, 'custom-key', undefined, firstDefault)).toBe(firstDefault);
-      expect(Reflector.getRawMeta(RawService, 'custom-key', undefined, secondDefault)).toBe(firstDefault);
+      expect(PulicReflector.getRawMeta(RawService, 'custom-key', undefined, firstDefault)).toBe(firstDefault);
+      expect(PulicReflector.getRawMeta(RawService, 'custom-key', undefined, secondDefault)).toBe(firstDefault);
     });
 
     it('returns cached class metadata on repeated collection', () => {
