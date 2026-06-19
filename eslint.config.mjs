@@ -33,6 +33,7 @@ export default defineConfig([
       '@typescript-eslint/no-non-null-asserted-optional-chain': 0,
       '@typescript-eslint/no-unused-vars': 0,
       '@typescript-eslint/triple-slash-reference': 0,
+      '@typescript-eslint/no-unsafe-function-type': 0,
       'no-unused-private-class-members': 'warn',
       'no-useless-assignment': 'warn',
       'no-restricted-imports': ['error', 'fs'],
