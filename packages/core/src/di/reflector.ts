@@ -202,11 +202,22 @@ export class Reflector {
   /**
    * __Disclaimer__: This method has experimental support.
    */
+  static setClassMeta<Args extends any[]>(
+    Cls: Class | AbstractClass,
+    decoratorFactory: AnyFn<Args, (Cls: AbstractClass | Class) => void>,
+    ...args: Args
+  ) {
+    return decoratorFactory(...args)(Cls);
+  }
+
+  /**
+   * __Disclaimer__: This method has experimental support.
+   */
   static setPropertyMeta<Args extends any[]>(
     Cls: Class | AbstractClass,
     propertyKey: string | symbol,
     propertyType: any,
-    decoratorFactory: AnyFn<Args>,
+    decoratorFactory: AnyFn<Args, PropertyDecorator>,
     ...args: Args
   ) {
     Reflect.defineMetadata('design:type', propertyType, Cls.prototype, propertyKey);
@@ -218,11 +229,29 @@ export class Reflector {
    */
   static setParameterMeta<Args extends any[]>(
     Cls: Class | AbstractClass,
+    parameterMeta: ([any, AnyFn<Args, ParameterDecorator>, ...Args] | null | undefined)[],
+  ): void;
+  static setParameterMeta<Args extends any[]>(
+    Cls: Class | AbstractClass,
     propertyKey: string | symbol,
-    parameterMeta: ([any, AnyFn<Args>, ...Args] | null | undefined)[],
+    parameterMeta: ([any, AnyFn<Args, ParameterDecorator>, ...Args] | null | undefined)[],
+  ): void;
+  static setParameterMeta<Args extends any[]>(
+    Cls: Class | AbstractClass,
+    keyOrParamMeta: (string | symbol) | ([any, AnyFn<Args, ParameterDecorator>, ...Args] | null | undefined)[],
+    parameterMeta?: ([any, AnyFn<Args, ParameterDecorator>, ...Args] | null | undefined)[],
   ) {
+    let propertyKey: string | symbol;
+    if (parameterMeta) {
+      propertyKey = keyOrParamMeta as string | symbol;
+    } else {
+      propertyKey = '';
+      parameterMeta = keyOrParamMeta as ([any, AnyFn<Args, ParameterDecorator>, ...Args] | null | undefined)[];
+    }
     Reflect.defineMetadata('design:type', Function, Cls.prototype, propertyKey);
-    const params: any[] = Reflect.getOwnMetadata('design:paramtypes', Cls.prototype, propertyKey) || [];
+    const params: any[] = propertyKey
+      ? Reflect.getOwnMetadata('design:paramtypes', Cls.prototype, propertyKey) || []
+      : Reflect.getOwnMetadata('design:paramtypes', Cls) || [];
 
     parameterMeta.forEach((tuple, parameterIndex) => {
       if (tuple === null || tuple === undefined) return;
