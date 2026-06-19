@@ -53,7 +53,7 @@ export class MergedClassPropMeta<DecorValue = any> extends ClassPropMeta<DecorVa
 }
 
 export type ParameterItem<Value = any> = DecoratorAndValue<Value> | InjectionToken<any> | Class;
-export type ParameterMeta<Value = any> = [Class, ...ParameterItem<Value>[]] | [];
+export type ParameterMeta<Value = any> = [Class, ...ParameterItem<Value>[]] | [...ParameterItem<Value>[]] | [];
 
 export type Visibility = typeof fromSelf | typeof skipSelf | null;
 
