@@ -7,6 +7,7 @@ import type {
   ParameterItem,
   MergedClassMeta,
   Class,
+  AbstractClass,
 } from './top/types-and-models.js';
 import type { InjectionToken } from './top/injection-token.js';
 import type { InjectionSymbol } from './top/get-symbol.js';
@@ -61,12 +62,12 @@ export class Reflector {
    * using `instanceof`. Sometimes it is useful to have a single identifier for a certain group of decorators.
    */
   static makeClassDecorator<T extends AnyFn>(transform?: T, debugFactoryName?: string, decoratorId?: AnyFn) {
-    function classDecoratorFactory(...args: Parameters<T>): any {
+    function classDecoratorFactory(...args: Parameters<T>) {
       const value = transform ? transform(...args) : [...args];
       // Capture the decorator declaration directory while the decorator factory is executed.
       // Later, module discovery uses this location to resolve relative metadata.
       const declaredInDir = CallsiteUtils.getCallerDir();
-      return function classDecorator(Cls: Class): void {
+      return function classDecorator(Cls: AbstractClass | Class): void {
         const classDecorValues = Reflector.getRawMeta(Cls, CLASS_KEY, undefined, []);
         const decoratorAndValue = new DecoratorAndValue(classDecoratorFactory, value, decoratorId, declaredInDir);
         classDecorValues.push(decoratorAndValue);
@@ -85,7 +86,7 @@ export class Reflector {
   static makePropDecorator<T extends AnyFn>(transform?: T, debugFactoryName?: string, decoratorId?: AnyFn) {
     function propDecorFactory(...args: Parameters<T>) {
       const value = transform ? transform(...args) : [...args];
-      return function propDecorator(target: any, propertyKey: string | symbol): void {
+      return function propDecorator(target: object, propertyKey: string | symbol): void {
         const Cls = target.constructor as Class;
         const item = new DecoratorAndValue(propDecorFactory, value, decoratorId);
         // Store both quick per-property metadata and the property list used by this.collectMetadata().

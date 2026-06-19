@@ -5,26 +5,8 @@ import type { DecoratorAndValue } from './decorator-and-value.js';
 import type { DepsMeta } from './resolved-provider.js';
 import { DEPS_KEY } from './constants.js';
 
-/**
- * ### Interface Overview
- *
-```ts
-interface Class<T> extends Function {
-  new (...args: any[]): T
-}
-```
- * Represents a type that a some class is instances of.
- *
- * An example of a `Class` is class, which in JavaScript is be represented by
- * the constructor function.
- */
-export const Class = Function;
-
-// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-export interface Class<T = any> extends Function {
-  new (...args: any[]): T;
-  prototype: T;
-}
+export type Class<T = any, A extends any[] = any> = (new (...args: A) => T) & { prototype: T };
+export type AbstractClass<T = any, A extends any[]= any> = (abstract new (...args: A) => T) & { prototype: T };
 
 export type PropMetadataTuple<Value = any> = [Class, ...DecoratorAndValue<Value>[]];
 
@@ -116,7 +98,7 @@ const injector = Injector.resolveAndCreate([
 expect(injector.get(Greeting).salutation).toBe('Hello');
 ```
  */
-export interface TypeProvider extends Class {}
+export type TypeProvider = Class;
 
 export interface BaseNormalizedProvider {
   /**

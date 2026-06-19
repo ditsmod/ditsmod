@@ -20,6 +20,7 @@ export { Injector } from '#di/injector.js';
 export { DualKey, KeyRegistry, ParamToken } from '#di/key-registry.js';
 export {
   Class,
+  AbstractClass,
   ClassFactoryProvider,
   ClassProvider,
   FactoryProvider,

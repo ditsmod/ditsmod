@@ -45,7 +45,7 @@ export function normalizeProviders(
 ) {
   providers.forEach((provider) => {
     provider = resolveForwardRef(provider);
-    if (provider instanceof Class) {
+    if (provider instanceof Function) {
       arrayOfProviders.push({ token: provider, useClass: provider });
     } else if (isNormalizedProvider(provider)) {
       provider.token = resolveForwardRef(provider.token);

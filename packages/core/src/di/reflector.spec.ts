@@ -735,7 +735,7 @@ describe('Reflector', () => {
 
       const metadata = Reflector.collectMetadata(RawService)!;
 
-      expect(metadata.constructor.type).toBe(Class);
+      expect(metadata.constructor.type).toBe(Function);
       expect(metadata.constructor.decorators).toEqual([]);
       expect(metadata.constructor.params).toEqual([[String, new DecoratorAndValue(param, 'raw')]]);
     });

@@ -103,7 +103,7 @@ export class Content {
       if (schema.type == 'array' && !schema.items) {
         schema.items = {};
       }
-    } else if (model instanceof Class) {
+    } else if (model instanceof Function) {
       schema.type = 'object';
       schema.properties = {};
     }
@@ -148,7 +148,7 @@ export class Content {
       this.fillEnum(propertySchema, customType.enum);
     } else if (this.standartTypes.includes(propertyType as any)) {
       propertySchema.type = (propertyType.name?.toLowerCase() || 'null') as SchemaObjectType;
-    } else if (propertyType instanceof Class) {
+    } else if (propertyType instanceof Function) {
       if (this.scanInProgress.has(model)) {
         propertySchema.type = 'object';
         propertySchema.description = `[Circular references to ${model.name}]`;

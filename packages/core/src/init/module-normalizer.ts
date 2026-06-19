@@ -8,7 +8,7 @@ import type { Extension } from '#extension/extension-types.js';
 import type { AllInitHooks, BaseInitRawMeta, InitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { isProvider } from '#utils/type-guards.js';
 import { normalizeExtensionConfig } from '#extension/extension-providers-and-configs.js';
-import { Class } from '#di/top/types-and-models.js';
+import type { Class } from '#di/top/types-and-models.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { BaseMeta } from '#init/base-meta.js';
 import { resolveForwardRef } from '#di/forward-ref.js';
@@ -293,9 +293,9 @@ export class ModuleNormalizer {
     let extensionClass: Class<Extension> | undefined;
     if (isClassProvider(np)) {
       extensionClass = resolveForwardRef(np.useClass);
-    } else if (isTokenProvider(np) && np.useToken instanceof Class) {
+    } else if (isTokenProvider(np) && np.useToken instanceof Function) {
       extensionClass = np.useToken;
-    } else if (isValueProvider(np) && np.useValue.constructor instanceof Class) {
+    } else if (isValueProvider(np) && np.useValue.constructor instanceof Function) {
       extensionClass = np.useValue.constructor;
     }
 

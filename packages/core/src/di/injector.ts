@@ -1,4 +1,3 @@
-import type { AnyFn, FactoryProvider } from './top/types-and-models.js';
 import { input, fromSelf, inject, type InjectTransformResult, optional, skipSelf } from './decorators.js';
 import {
   FailedCreateFactoryProvider,
@@ -22,6 +21,9 @@ import type {
   Provider,
   Visibility,
   CompareFn,
+  AbstractClass,
+  AnyFn,
+  FactoryProvider,
 } from './top/types-and-models.js';
 import {
   type DepsMeta,
@@ -561,7 +563,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
    *
    * [1]: https://ditsmod.github.io/en/basic-components/dependency-injection/#inject-and-input
    */
-  get<T extends new (...args: any[]) => any>(
+  get<T extends Class | AbstractClass>(
     token: T,
     defaultValue?: InstanceType<T> | null,
     input?: any,

@@ -12,7 +12,7 @@ import type {
 } from './top/types-and-models.js';
 import type { DecoratorAndValue } from './top/decorator-and-value.js';
 import { InjectionToken } from './top/injection-token.js';
-import { Class } from './top/types-and-models.js';
+import type { Class } from './top/types-and-models.js';
 
 /**
  * Equivalent to ES6 spread, add each item to an array.
@@ -94,7 +94,7 @@ export function isType(v: any): v is Class {
 }
 
 export function isTypeProvider(provider: Provider): provider is TypeProvider {
-  return provider instanceof Class;
+  return provider instanceof Function;
 }
 
 export function isValueProvider(provider?: Provider | ModRefId): provider is ValueProvider {

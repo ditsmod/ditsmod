@@ -8,7 +8,7 @@ import { getToken } from './get-tokens.js';
  */
 export function getProviderName(provider: any) {
   let token: any;
-  if (isNormalizedProvider(provider) || provider instanceof Class) {
+  if (isNormalizedProvider(provider) || provider instanceof Function) {
     token = getToken(provider);
   } else {
     if (provider instanceof InjectionToken) {
@@ -17,7 +17,7 @@ export function getProviderName(provider: any) {
       if (typeof provider == 'string') {
         token = provider;
       } else {
-        token = provider.constructor instanceof Class ? provider.constructor : provider;
+        token = provider.constructor instanceof Function ? provider.constructor : provider;
       }
     }
   }

@@ -12,7 +12,7 @@ export function isProvider(maybeProvider?: any): maybeProvider is Provider {
     return false;
   }
   const isSomeModule = Reflector.getDecorators(maybeProvider, isModDecor);
-  return (maybeProvider instanceof Class && !isSomeModule) || isNormalizedProvider(maybeProvider);
+  return (maybeProvider instanceof Function && !isSomeModule) || isNormalizedProvider(maybeProvider);
 }
 
 export function isChainError<T extends AnyObj>(err: any): err is ChainError<T> {

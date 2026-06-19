@@ -1,6 +1,6 @@
 import type { SchemaObjectType, XParameterObject, XSchemaObject } from '@ts-stack/openapi-spec';
 import type { AnyObj, HttpMethod, DecoratorAndValue } from '@ditsmod/core';
-import { Class, Reflector, isDecoratorAndValue } from '@ditsmod/core';
+import { type Class, Reflector, isDecoratorAndValue } from '@ditsmod/core';
 import { YouCanNotSetThisAction } from '#errors';
 
 type RequiredParamsIn = 'query' | 'header' | 'path' | 'cookie';
@@ -161,7 +161,7 @@ export class Parameters {
     if (schema.type === undefined) {
       if ([Boolean, Number, String, Array, Object].includes(propertyType as any)) {
         schema.type = (propertyType.name?.toLowerCase() || 'null') as SchemaObjectType;
-      } else if (propertyType instanceof Class) {
+      } else if (propertyType instanceof Function) {
         schema.type = 'object';
       } else {
         schema.type = 'null';
