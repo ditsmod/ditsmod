@@ -334,7 +334,7 @@ export class Reflector {
     Reflect.ownKeys(mergedClassMeta).forEach((propertyKey) => {
       if (propertyKey == 'constructor') return;
       if (allClassMethods.includes(propertyKey) && !ownMethodsWithParams.has(propertyKey)) {
-        mergedClassMeta[propertyKey].params = this.getParamMeta(Cls, propertyKey);
+        mergedClassMeta[propertyKey].params = this.collectParamMeta(Cls, propertyKey);
       }
     });
   }
@@ -373,7 +373,7 @@ export class Reflector {
     classMeta.constructor = new ClassPropMeta(
       Function,
       this.getMetaOnClassLevel(Cls),
-      this.getParamMeta(Cls, 'constructor'),
+      this.collectParamMeta(Cls, 'constructor'),
     );
 
     // Get a list of unique class properties that have metadata.
@@ -386,7 +386,7 @@ export class Reflector {
     ownMethodsWithParams.forEach((propertyKey) => {
       const type: Class = Reflect.getOwnMetadata('design:type', Cls.prototype, propertyKey);
       const decorators = ownPropsMeta ? ownPropsMeta[propertyKey] || [] : [];
-      const params = this.getParamMeta(Cls, propertyKey);
+      const params = this.collectParamMeta(Cls, propertyKey);
       (classMeta as any)[propertyKey] = new ClassPropMeta(type, decorators, params);
     });
 
@@ -400,7 +400,7 @@ export class Reflector {
    * @param propertyKey If this method is called without `propertyKey`,
    * it's returns parameters of class constructor.
    */
-  protected static getParamMeta<T extends object>(
+  protected static collectParamMeta<T extends object>(
     Cls: Class<T>,
     propertyKey?: KeyOfClass<T>,
   ): (ParameterMeta | null)[] {
@@ -409,7 +409,7 @@ export class Reflector {
 
     const isConstructor = !propertyKey || propertyKey == 'constructor';
     if (isConstructor && isDelegateCtor(Cls.toString())) {
-      return this.getParamMeta(this.getParentClass(Cls)!, propertyKey);
+      return this.collectParamMeta(this.getParentClass(Cls)!, propertyKey);
     } else {
       const paramDecoratorMeta = isConstructor
         ? Reflector.getRawParamMeta(Cls)
@@ -495,7 +495,7 @@ const paramsMeta = [
       } else {
         // The requested method/property may have no decorators at all. Return a synthetic
         // metadata object so callers can still inspect function.length based params.
-        const params = this.getParamMeta(Cls, propertyKey as KeyOfClass<Proto>);
+        const params = this.collectParamMeta(Cls, propertyKey as KeyOfClass<Proto>);
         return new MergedClassPropMeta(UnknownType, [], params, new Map(), new Map([[Cls, params]]));
       }
     } else {
