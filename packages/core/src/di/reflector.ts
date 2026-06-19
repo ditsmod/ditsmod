@@ -86,7 +86,7 @@ export class Reflector {
   static makePropDecorator<T extends AnyFn>(transform?: T, debugFactoryName?: string, decoratorId?: AnyFn) {
     function propDecorFactory(...args: Parameters<T>) {
       const value = transform ? transform(...args) : [...args];
-      return function propDecorator(target: object, propertyKey: string | symbol): void {
+      return function propDecorator(target: { constructor: Function }, propertyKey: string | symbol): void {
         const Cls = target.constructor as Class;
         const item = new DecoratorAndValue(propDecorFactory, value, decoratorId);
         // Store both quick per-property metadata and the property list used by this.collectMetadata().
@@ -109,7 +109,7 @@ export class Reflector {
     function paramDecorFactory(...args: Parameters<T>) {
       const value = transform ? transform(...args) : [...args];
       return function paramDecorator(
-        classOrInstance: Class | object,
+        classOrInstance: Class | { constructor: Function },
         propertyKey: string | symbol | undefined,
         index: number,
       ): void {
@@ -197,6 +197,40 @@ export class Reflector {
       : this.mergeClassMeta<DecorValue, Proto>(Cls);
 
     return this.getClassMetaOrParamMeta(Cls, mergedClassMeta, propertyKey);
+  }
+
+  /**
+   * __Disclaimer__: This method has experimental support.
+   */
+  static setPropertyMeta<Args extends any[]>(
+    Cls: Class | AbstractClass,
+    propertyKey: string | symbol,
+    propertyType: any,
+    decoratorFactory: AnyFn<Args>,
+    ...args: Args
+  ) {
+    Reflect.defineMetadata('design:type', propertyType, Cls.prototype, propertyKey);
+    return decoratorFactory(...args)({ constructor: Cls }, propertyKey);
+  }
+
+  /**
+   * __Disclaimer__: This method has experimental support.
+   */
+  static setParameterMeta<Args extends any[]>(
+    Cls: Class | AbstractClass,
+    propertyKey: string | symbol,
+    parameterMeta: ([any, AnyFn<Args>, ...Args] | null | undefined)[],
+  ) {
+    Reflect.defineMetadata('design:type', Function, Cls.prototype, propertyKey);
+    const params: any[] = Reflect.getOwnMetadata('design:paramtypes', Cls.prototype, propertyKey) || [];
+
+    parameterMeta.forEach((tuple, parameterIndex) => {
+      if (tuple === null || tuple === undefined) return;
+      const [parameterType, decoratorFactory, ...args] = tuple;
+      params[parameterIndex] ??= parameterType ?? UnknownType;
+      decoratorFactory(...args)(Cls, propertyKey, parameterIndex);
+    });
+    Reflect.defineMetadata('design:paramtypes', params, Cls.prototype, propertyKey);
   }
 
   protected static getRawMeta<T extends AnyObj, R = any>(
@@ -307,7 +341,7 @@ export class Reflector {
     Reflect.ownKeys(mergedClassMeta).forEach((propertyKey) => {
       if (propertyKey == 'constructor') return;
       if (allClassMethods.includes(propertyKey) && !ownMethodsWithParams.has(propertyKey)) {
-        mergedClassMeta[propertyKey].params = this.collectParamMeta(Cls, propertyKey);
+        mergedClassMeta[propertyKey].params = this.collectParamMeta(Cls, propertyKey, Function);
       }
     });
   }
@@ -346,7 +380,7 @@ export class Reflector {
     classMeta.constructor = new ClassPropMeta(
       Function,
       this.getRawMeta(Cls, CLASS_KEY),
-      this.collectParamMeta(Cls, 'constructor'),
+      this.collectParamMeta(Cls, 'constructor', Function),
     );
 
     // Get a list of unique class properties that have metadata.
@@ -359,7 +393,7 @@ export class Reflector {
     ownMethodsWithParams.forEach((propertyKey) => {
       const type: Class = Reflect.getOwnMetadata('design:type', Cls.prototype, propertyKey);
       const decorators = ownPropsMeta ? ownPropsMeta[propertyKey] || [] : [];
-      const params = this.collectParamMeta(Cls, propertyKey);
+      const params = this.collectParamMeta(Cls, propertyKey, type);
       (classMeta as any)[propertyKey] = new ClassPropMeta(type, decorators, params);
     });
 
@@ -376,13 +410,18 @@ export class Reflector {
   protected static collectParamMeta<T extends object>(
     Cls: Class<T>,
     propertyKey?: KeyOfClass<T>,
+    propertyType?: any,
   ): (ParameterMeta | null)[] {
-    const descriptor = Object.getOwnPropertyDescriptor(Cls.prototype, propertyKey || 'constructor');
-    if (typeof descriptor?.value != 'function') return [];
+    if (propertyType && propertyType !== Function) {
+      return [];
+    } else if (!propertyType) {
+      const descriptor = Object.getOwnPropertyDescriptor(Cls.prototype, propertyKey || 'constructor');
+      if (typeof descriptor?.value != 'function') return [];
+    }
 
     const isConstructor = !propertyKey || propertyKey == 'constructor';
     if (isConstructor && isDelegateCtor(Cls.toString())) {
-      return this.collectParamMeta(this.getParentClass(Cls)!, propertyKey);
+      return this.collectParamMeta(this.getParentClass(Cls)!, propertyKey, propertyType);
     } else {
       const paramDecoratorMeta = isConstructor
         ? this.getRawMeta(Cls, PARAM_KEY)
