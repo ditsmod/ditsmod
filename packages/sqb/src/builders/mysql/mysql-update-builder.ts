@@ -1,6 +1,6 @@
-import { OneSqlExpression } from '../../types.js';
+import type { OneSqlExpression } from '../../types.js';
 import { defaultEscapeFn, defaultRunFn, mergeEscapeAndRun } from '../../utils.js';
-import { NoSqlActions, TableAndAlias } from '../types.js';
+import type { NoSqlActions, TableAndAlias } from '../types.js';
 import { AndOrBuilder } from './and-or-builder.js';
 import { JoinBuilder } from './join-builder.js';
 import { MySqlSelectBuilder } from './mysql-select-builder.js';

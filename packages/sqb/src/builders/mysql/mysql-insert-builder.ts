@@ -1,4 +1,4 @@
-import { NoSqlActions, TableAndAlias } from '../types.js';
+import type { NoSqlActions, TableAndAlias } from '../types.js';
 import { MySqlSelectBuilder } from './mysql-select-builder.js';
 import { defaultEscapeFn, defaultRunFn, mergeEscapeAndRun } from '../../utils.js';
 
