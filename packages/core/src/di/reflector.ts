@@ -17,11 +17,14 @@ import { CallsiteUtils } from '#utils/callsites.js';
 import { ClassMetaIterator } from './class-meta-iterator.js';
 import { UnknownType } from './top/types-and-models.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
-import { CLASS_KEY, PARAM_KEY, METHODS_WITH_PARAMS, PROP_KEY } from './top/constants.js';
+import { PARAM_KEY, METHODS_WITH_PARAMS, PROP_KEY } from './top/constants.js';
 import { isType, newArray } from './utils.js';
+import { WeakMap26 } from './shim/weak-map-26.js';
 
 const mergedClassMetaCache = new WeakMap<Class, ClassMeta | undefined>();
 const classMetaChainCache = new WeakMap<Class, ClassMetaChain | undefined>();
+
+export const classMetaCache = new WeakMap26<Class | AbstractClass, DecoratorAndValue[]>();
 
 export type ClassMetaChain<DecorValue = any, Proto extends AnyObj = AnyObj> = Map<
   Class,
@@ -71,7 +74,7 @@ export class Reflector {
       // Later, module discovery uses this location to resolve relative metadata.
       const declaredInDir = CallsiteUtils.getCallerDir();
       return function classDecorator(Cls: AbstractClass | Class): void {
-        const classDecorValues = Reflector.getRawMeta(Cls, CLASS_KEY, undefined, []);
+        const classDecorValues = classMetaCache.getOrInsert(Cls, []);
         const decoratorAndValue = new DecoratorAndValue(classDecoratorFactory, value, decoratorId, declaredInDir);
         classDecorValues.push(decoratorAndValue);
       };
@@ -421,7 +424,7 @@ export class Reflector {
     // a different strategy for getting parameters (taking inheritance into account), etc.
     classMeta.constructor = new ClassPropMeta(
       Function,
-      this.getRawMeta(Cls, CLASS_KEY),
+      classMetaCache.get(Cls),
       this.collectParamMeta(Cls, 'constructor', Function),
     );
 

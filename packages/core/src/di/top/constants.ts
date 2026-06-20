@@ -5,11 +5,6 @@ import type { DepsMeta } from './resolved-provider.js';
 
 /**
  * The key used to store metadata of a class.
- * This metadata is taken from the class-level decorator.
- */
-export const CLASS_KEY = new InjectionToken<DecoratorAndValue[]>('CLASS_KEY');
-/**
- * The key used to store metadata of a class.
  * This metadata is taken from the parameter-level decorator in a constructor of a class.
  */
 export const PARAM_KEY = new InjectionToken<(DecoratorAndValue[] | null)[]>('PARAM_KEY');

@@ -1,6 +1,5 @@
-import { Reflector } from './reflector.js';
+import { classMetaCache, Reflector } from './reflector.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
-import { CLASS_KEY } from './top/constants.js';
 import { ctx } from '#ctx/decorators.js';
 import { Injector } from './injector.js';
 import { ctxProviders } from '#ctx/providers.js';
@@ -66,7 +65,7 @@ describe('decorators', () => {
   it('should invoke as decorator', () => {
     class Class {}
     testDecorator({ marker: 'WORKS' })(Class);
-    const annotations = Reflect.getOwnMetadata(CLASS_KEY, Class) as DecoratorAndValue[];
+    const annotations = classMetaCache.get(Class) as DecoratorAndValue[];
     expect(annotations[0].value.marker).toEqual('WORKS');
   });
 
@@ -74,7 +73,7 @@ describe('decorators', () => {
     testDecorator({ marker: 'parent' })(DecoratedParent);
     testDecorator({ marker: 'child' })(DecoratedChild);
 
-    const annotations = Reflect.getOwnMetadata(CLASS_KEY, DecoratedChild) as DecoratorAndValue[];
+    const annotations = classMetaCache.get(DecoratedChild) as DecoratorAndValue[];
     expect(annotations.length).toBe(1);
     expect(annotations[0].value.marker).toEqual('child');
   });
