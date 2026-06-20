@@ -72,4 +72,27 @@ console.log(metadata?.constructor.paramChain);
 
 In this example, the `Child` class extends the `Parent` class and overrides the type of the first constructor parameter. The highlighted line shows where the parameters for the entire class inheritance chain are stored - `metadata.constructor.paramChain`. The same applies to `metadata.constructor.decoratorChain`.
 
+### Complex decorator types {#complex-decorator-types}
+
+TypeScript can infer the type of a simple function passed to `Reflector.make*Decorator()`, which is intended for metadata transformation. If you need more complex types, you can declare the desired type of this function using an interface:
+
+```ts {7-8}
+const inject: InjectDecorator = Reflector.makeParamDecorator(
+  (token, input?) => ({ token, input }) satisfies InjectTransformResult,
+  'inject',
+);
+
+interface InjectDecorator {
+  (token: NonNullable<unknown>): any;
+  <T extends NonNullable<unknown>>(token: NonNullable<unknown>, input: T): any;
+}
+
+interface InjectTransformResult {
+  token: NonNullable<unknown>;
+  input?: NonNullable<unknown>;
+}
+```
+
+This shows how Ditsmod declares the type for the `inject` parameter decorator. In this case, the complexity of the types lies in the fact that the transformer function has two signatures, and TypeScript currently cannot infer more than one signature.
+
 [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect

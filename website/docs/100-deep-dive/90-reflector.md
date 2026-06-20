@@ -72,4 +72,27 @@ console.log(metadata?.constructor.paramChain);
 
 В даному прикладі клас `Child` розширює клас `Parent` і перевизначає тип першого параметра в конструкторі. У виділеному рядку показано де зберігаються параметри для усього ланцюжка наслідувань класів - `metadata.constructor.paramChain`. Це саме стосується і `metadata.constructor.decoratorChain`.
 
+### Складні типи декораторів {#complex-decorator-types}
+
+TypeScript може вивести тип простої функції, що передається у `Reflector.make*Decorator()`, яка призначається для трансформації метаданих. Якщо вам потрібний більш складніші типи, ви можете оголосити бажаний тип цієї функції за допомогою інтерфейсу:
+
+```ts {7-8}
+const inject: InjectDecorator = Reflector.makeParamDecorator(
+  (token, input?) => ({ token, input }) satisfies InjectTransformResult,
+  'inject',
+);
+
+interface InjectDecorator {
+  (token: NonNullable<unknown>): any;
+  <T extends NonNullable<unknown>>(token: NonNullable<unknown>, input: T): any;
+}
+
+interface InjectTransformResult {
+  token: NonNullable<unknown>;
+  input?: NonNullable<unknown>;
+}
+```
+
+Тут показано як саме Ditsmod оголошує тип для декоратора параметрів `inject`. В даному разі, складність типів полягає у тому, що функція-трансформер має дві сигнатури, а TypeScript, на даний момент, не вміє виводити більше однієї сигнатури.
+
 [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect
