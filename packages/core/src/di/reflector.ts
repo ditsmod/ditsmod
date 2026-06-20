@@ -56,7 +56,7 @@ export function isDelegateCtor(typeStr: string): boolean {
 export class Reflector {
   /**
    * Creates a factory of decorators that operate work at the class level.
-   * 
+   *
    * @param transform Such a transformer should not use symbols that can be wrapped with `forwardRef()`,
    * because at this stage the `resolveForwardRef()` function will not work correctly.
    * @param debugFactoryName Gives a name to the decorator that can be viewed during debugging.
@@ -81,7 +81,7 @@ export class Reflector {
   }
   /**
    * Creates a factory of decorators that operate at the property or method level.
-   * 
+   *
    * @param transform Such a transformer should not use symbols that can be wrapped with `forwardRef()`,
    * because at this stage the `resolveForwardRef()` function will not work correctly.
    * @param debugFactoryName Gives a name to the decorator that can be viewed during debugging.
@@ -106,7 +106,7 @@ export class Reflector {
   }
   /**
    * Creates a factory of decorators that operate at the method parameter level.
-   * 
+   *
    * @param transform Such a transformer should not use symbols that can be wrapped with `forwardRef()`,
    * because at this stage the `resolveForwardRef()` function will not work correctly.
    * @param debugFactoryName Gives a name to the decorator that can be viewed during debugging.
@@ -142,6 +142,8 @@ export class Reflector {
     return paramDecorFactory;
   }
   /**
+   * Returns metadata from class-level decorators.
+   *
    * @param Cls The class from which to return the metadata.
    * @param typeGuard Type guard, which will search for necessary decorators.
    * @returns Returns an array of `DecoratorAndValue` for the passed `Cls`, using the passed `typeGuard`,
@@ -152,6 +154,8 @@ export class Reflector {
     typeGuard: TypeGuard<T>,
   ): (T extends DecoratorAndValue<infer V> ? DecoratorAndValue<V> : never)[] | undefined;
   /**
+   * Returns metadata from class-level decorators.
+   *
    * @param Cls The class from which to return the metadata.
    * @param typeGuard Type guard, which will search for necessary decorators.
    * @returns Returns an array of `DecoratorAndValue` for the passed `Cls`,
