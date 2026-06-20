@@ -55,11 +55,14 @@ export function isDelegateCtor(typeStr: string): boolean {
 
 export class Reflector {
   /**
+   * Creates a factory of decorators that operate work at the class level.
+   * 
    * @param transform Such a transformer should not use symbols that can be wrapped with `forwardRef()`,
    * because at this stage the `resolveForwardRef()` function will not work correctly.
    * @param debugFactoryName Gives a name to the decorator that can be viewed during debugging.
-   * @param decoratorId Sometimes it is not enough to identify the metadata returned by a specific decorator
-   * using `instanceof`. Sometimes it is useful to have a single identifier for a certain group of decorators.
+   * @param decoratorId Acts as an identifier for a group of decorators whose transformers return metadata
+   * of a specific base type. Essentially, it is an alternative to the class inheritance mechanism and
+   * the use of `instanceof` for identifying the types returned by transformers.
    */
   static makeClassDecorator<T extends AnyFn>(transform?: T, debugFactoryName?: string, decoratorId?: AnyFn) {
     function classDecoratorFactory(...args: Parameters<T>) {
@@ -77,11 +80,14 @@ export class Reflector {
     return classDecoratorFactory;
   }
   /**
+   * Creates a factory of decorators that operate at the property or method level.
+   * 
    * @param transform Such a transformer should not use symbols that can be wrapped with `forwardRef()`,
    * because at this stage the `resolveForwardRef()` function will not work correctly.
    * @param debugFactoryName Gives a name to the decorator that can be viewed during debugging.
-   * @param decoratorId Sometimes it is not enough to identify the metadata returned by a specific decorator
-   * using `instanceof`. Sometimes it is useful to have a single identifier for a certain group of decorators.
+   * @param decoratorId Acts as an identifier for a group of decorators whose transformers return metadata
+   * of a specific base type. Essentially, it is an alternative to the class inheritance mechanism and
+   * the use of `instanceof` for identifying the types returned by transformers.
    */
   static makePropDecorator<T extends AnyFn>(transform?: T, debugFactoryName?: string, decoratorId?: AnyFn) {
     function propDecorFactory(...args: Parameters<T>) {
@@ -99,11 +105,14 @@ export class Reflector {
     return propDecorFactory;
   }
   /**
+   * Creates a factory of decorators that operate at the method parameter level.
+   * 
    * @param transform Such a transformer should not use symbols that can be wrapped with `forwardRef()`,
    * because at this stage the `resolveForwardRef()` function will not work correctly.
    * @param debugFactoryName Gives a name to the decorator that can be viewed during debugging.
-   * @param decoratorId Sometimes it is not enough to identify the metadata returned by a specific decorator
-   * using `instanceof`. Sometimes it is useful to have a single identifier for a certain group of decorators.
+   * @param decoratorId Acts as an identifier for a group of decorators whose transformers return metadata
+   * of a specific base type. Essentially, it is an alternative to the class inheritance mechanism and
+   * the use of `instanceof` for identifying the types returned by transformers.
    */
   static makeParamDecorator<T extends AnyFn>(transform?: T, debugFactoryName?: string, decoratorId?: AnyFn) {
     function paramDecorFactory(...args: Parameters<T>) {
