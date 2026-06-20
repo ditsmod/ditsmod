@@ -27,6 +27,7 @@ const classMetaChainCache = new WeakMap<Class, ClassMetaChain | undefined>();
 export const classMetaCache = new WeakMap26<Class | AbstractClass, DecoratorAndValue[]>();
 export const propMetaCache = new WeakMap26<Class | AbstractClass, Record<string | symbol, DecoratorAndValue[]>>();
 export const methodWithParamsCache = new WeakMap26<Class | AbstractClass, Set<string | symbol>>();
+export const constructorParamsCache = new WeakMap26<Class | AbstractClass, (DecoratorAndValue<any>[] | null)[]>();
 
 export type ClassMetaChain<DecorValue = any, Proto extends AnyObj = AnyObj> = Map<
   Class,
@@ -129,7 +130,9 @@ export class Reflector {
       ): void {
         // This function can be called for a class constructor and methods.
         const Cls = isType(classOrInstance) ? classOrInstance : (classOrInstance.constructor as Class);
-        const parameters = Reflector.getRawMeta(Cls, PARAM_KEY, propertyKey, []);
+        const parameters = propertyKey
+          ? Reflector.getRawMeta(Cls, PARAM_KEY, propertyKey, [])
+          : constructorParamsCache.getOrInsert(Cls, []);
         const methodNames = methodWithParamsCache.getOrInsert(Cls, new Set());
         // TypeScript emits parameter metadata only for decorated declarations, so keep
         // an explicit registry of constructors and methods that have parameter decorators.
@@ -288,17 +291,6 @@ export class Reflector {
   protected static getRawMeta<T extends AnyObj, R = any>(
     Cls: Class<T> | T,
     metadataKey: InjectionToken<R> | InjectionSymbol<R>,
-    propertyKey: KeyOfClass<T> | undefined,
-    defaultValue: R,
-  ): R;
-  protected static getRawMeta<T extends AnyObj, R = any>(
-    Cls: Class<T> | T,
-    metadataKey: any,
-    propertyKey?: KeyOfClass<T>,
-  ): R | undefined;
-  protected static getRawMeta<T extends AnyObj, R = any>(
-    Cls: Class<T> | T,
-    metadataKey: any,
     propertyKey: KeyOfClass<T> | undefined,
     defaultValue: R,
   ): R;
@@ -471,7 +463,7 @@ export class Reflector {
       return this.collectParamMeta(this.getParentClass(Cls)!, propertyKey, propertyType);
     } else {
       const paramDecoratorMeta = isConstructor
-        ? this.getRawMeta(Cls, PARAM_KEY)
+        ? constructorParamsCache.get(Cls)
         : this.getRawMeta(Cls, PARAM_KEY, propertyKey);
       const args = (isConstructor ? [Cls] : [Cls.prototype, propertyKey]) as [Class];
       const paramTypes = Reflect.getOwnMetadata('design:paramtypes', ...args) as Class[];
