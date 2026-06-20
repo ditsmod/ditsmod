@@ -126,11 +126,11 @@ describe('Reflector', () => {
 
       expect(metadata).toBeInstanceOf(ClassMetaIterator);
       expect(Array.from(metadata!)).toEqual(['constructor', 'method', 'prop']);
-      expect(metadata?.method).toMatchObject({
+      expect(metadata?.method).toMatchObject<Partial<MergedClassPropMeta>>({
         decorators: [new DecoratorAndValue(propDecorator, [{ val: 2 }])],
         params: [],
       });
-      expect(metadata?.prop).toMatchObject({
+      expect(metadata?.prop).toMatchObject<Partial<MergedClassPropMeta>>({
         decorators: [new DecoratorAndValue(propDecorator, [{ val: 3 }])],
         params: [],
       });
@@ -342,12 +342,12 @@ describe('Reflector', () => {
       const methodMeta = Reflector.collectMetadata(UsersService, 'handle');
       const missingMeta = Reflector.collectMetadata(UsersService, 'missing');
 
-      expect(methodMeta).toMatchObject({
+      expect(methodMeta).toMatchObject<Partial<MergedClassPropMeta>>({
         type: UnknownType,
         decorators: [],
         params: [null, null],
       });
-      expect(missingMeta).toMatchObject({
+      expect(missingMeta).toMatchObject<Partial<MergedClassPropMeta>>({
         type: UnknownType,
         decorators: [],
         params: [],
@@ -388,12 +388,12 @@ describe('Reflector', () => {
         [String, new DecoratorAndValue(paramDecorator, [{ val: 30 }])],
       ]);
 
-      expect(Reflector.collectMetadata(Controller, 'methodWithoutDecorators')).toMatchObject({
+      expect(Reflector.collectMetadata(Controller, 'methodWithoutDecorators')).toMatchObject<Partial<MergedClassPropMeta>>({
         type: UnknownType,
         decorators: [],
         params: [null, null],
       });
-      expect(Reflector.collectMetadata(Controller, 'nonExistingPropName')).toMatchObject({
+      expect(Reflector.collectMetadata(Controller, 'nonExistingPropName')).toMatchObject<Partial<MergedClassPropMeta>>({
         type: UnknownType,
         decorators: [],
         params: [],
