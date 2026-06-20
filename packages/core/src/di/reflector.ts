@@ -17,14 +17,14 @@ import { UnknownType } from './top/types-and-models.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
 import { isType, newArray } from './utils.js';
 import {
-  classMetaCache,
+  classMetaMap,
   classMetaChainCache,
-  constructorParamsCache,
+  constructorParamsMap,
   getMethodParamMeta,
   isDelegateCtor,
   mergedClassMetaCache,
-  methodWithParamsCache,
-  propMetaCache,
+  methodWithParamsMap,
+  propMetaMap,
   type ClassMetaChain,
   type KeyOfClass,
 } from './reflector-helpers.js';
@@ -47,7 +47,7 @@ export class Reflector {
       // Later, module discovery uses this location to resolve relative metadata.
       const declaredInDir = CallsiteUtils.getCallerDir();
       return function classDecorator(Cls: AbstractClass | Class): void {
-        const classDecorValues = classMetaCache.getOrInsert(Cls, []);
+        const classDecorValues = classMetaMap.getOrInsert(Cls, []);
         const decoratorAndValue = new DecoratorAndValue(classDecoratorFactory, value, decoratorId, declaredInDir);
         classDecorValues.push(decoratorAndValue);
       };
@@ -73,7 +73,7 @@ export class Reflector {
         const item = new DecoratorAndValue(propDecorFactory, value, decoratorId);
         // Store both quick per-property metadata and the property list used by this.collectMetadata().
         // Reflector.getRawMeta(Cls, PROP_KEY, propertyKey, item);
-        const meta = propMetaCache.getOrInsert(Cls, {});
+        const meta = propMetaMap.getOrInsert(Cls, {});
         (meta[propertyKey] ??= []).push(item);
       };
     }
@@ -102,8 +102,8 @@ export class Reflector {
         const Cls = isType(classOrInstance) ? classOrInstance : (classOrInstance.constructor as Class);
         const parameters = propertyKey
           ? getMethodParamMeta(Cls, propertyKey, [])
-          : constructorParamsCache.getOrInsert(Cls, []);
-        const methodNames = methodWithParamsCache.getOrInsert(Cls, new Set());
+          : constructorParamsMap.getOrInsert(Cls, []);
+        const methodNames = methodWithParamsMap.getOrInsert(Cls, new Set());
         // TypeScript emits parameter metadata only for decorated declarations, so keep
         // an explicit registry of constructors and methods that have parameter decorators.
         methodNames.add(propertyKey || 'constructor');
@@ -306,9 +306,9 @@ export class Reflector {
     Cls: Class<Proto>,
     mergedClassMeta: ClassMeta<DecorValue, Proto>,
   ) {
-    const ownPropMeta = propMetaCache.get(Cls);
+    const ownPropMeta = propMetaMap.get(Cls);
     const ownPropsWithMeta = ownPropMeta ? Reflect.ownKeys(ownPropMeta) : [];
-    const ownMethodsWithParams = methodWithParamsCache.getOrInsert(Cls, new Set());
+    const ownMethodsWithParams = methodWithParamsMap.getOrInsert(Cls, new Set());
     ownPropsWithMeta.forEach((prop) => ownMethodsWithParams.add(prop));
 
     const allClassMethods = Reflect.ownKeys(Cls.prototype).filter((prop) => {
@@ -357,14 +357,14 @@ export class Reflector {
     // a different strategy for getting parameters (taking inheritance into account), etc.
     classMeta.constructor = new ClassPropMeta(
       Function,
-      classMetaCache.get(Cls),
+      classMetaMap.get(Cls),
       this.collectParamMeta(Cls, 'constructor', Function),
     );
 
     // Get a list of unique class properties that have metadata.
-    const ownPropsMeta = propMetaCache.get(Cls);
+    const ownPropsMeta = propMetaMap.get(Cls);
     const ownPropsWithMeta = ownPropsMeta ? Reflect.ownKeys(ownPropsMeta) : [];
-    const ownMethodsWithParams = methodWithParamsCache.getOrInsert(Cls, new Set());
+    const ownMethodsWithParams = methodWithParamsMap.getOrInsert(Cls, new Set());
     ownPropsWithMeta.forEach((p) => ownMethodsWithParams.add(p));
     ownMethodsWithParams.delete('constructor');
 
@@ -402,7 +402,7 @@ export class Reflector {
       return this.collectParamMeta(this.getParentClass(Cls)!, propertyKey, propertyType);
     } else {
       const paramDecoratorMeta = isConstructor
-        ? constructorParamsCache.get(Cls)
+        ? constructorParamsMap.get(Cls)
         : getMethodParamMeta(Cls, propertyKey as string);
       const args = (isConstructor ? [Cls] : [Cls.prototype, propertyKey]) as [Class];
       const paramTypes = Reflect.getOwnMetadata('design:paramtypes', ...args) as Class[];

@@ -4,7 +4,7 @@ import { ctx } from '#ctx/decorators.js';
 import { Injector } from './injector.js';
 import { ctxProviders } from '#ctx/providers.js';
 import { Context } from '#ctx/context.js';
-import { classMetaCache } from './reflector-helpers.js';
+import { classMetaMap } from './reflector-helpers.js';
 
 class DecoratedParent {}
 class DecoratedChild extends DecoratedParent {}
@@ -66,7 +66,7 @@ describe('decorators', () => {
   it('should invoke as decorator', () => {
     class Class {}
     testDecorator({ marker: 'WORKS' })(Class);
-    const annotations = classMetaCache.get(Class) as DecoratorAndValue[];
+    const annotations = classMetaMap.get(Class) as DecoratorAndValue[];
     expect(annotations[0].value.marker).toEqual('WORKS');
   });
 
@@ -74,7 +74,7 @@ describe('decorators', () => {
     testDecorator({ marker: 'parent' })(DecoratedParent);
     testDecorator({ marker: 'child' })(DecoratedChild);
 
-    const annotations = classMetaCache.get(DecoratedChild) as DecoratorAndValue[];
+    const annotations = classMetaMap.get(DecoratedChild) as DecoratorAndValue[];
     expect(annotations.length).toBe(1);
     expect(annotations[0].value.marker).toEqual('child');
   });

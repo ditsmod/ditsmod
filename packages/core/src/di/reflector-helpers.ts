@@ -5,11 +5,12 @@ import { WeakMap26 } from './shim/weak-map-26.js';
 
 export const mergedClassMetaCache = new WeakMap<Class, ClassMeta | undefined>();
 export const classMetaChainCache = new WeakMap<Class, ClassMetaChain | undefined>();
-export const classMetaCache = new WeakMap26<Class | AbstractClass, DecoratorAndValue[]>();
-export const propMetaCache = new WeakMap26<Class | AbstractClass, Record<string | symbol, DecoratorAndValue[]>>();
-export const methodWithParamsCache = new WeakMap26<Class | AbstractClass, Set<string | symbol>>();
-export const constructorParamsCache = new WeakMap26<Class | AbstractClass, (DecoratorAndValue<any>[] | null)[]>();
-export const methodParamsCache = new WeakMap26<
+
+export const classMetaMap = new WeakMap26<Class | AbstractClass, DecoratorAndValue[]>();
+export const propMetaMap = new WeakMap26<Class | AbstractClass, Record<string | symbol, DecoratorAndValue[]>>();
+export const methodWithParamsMap = new WeakMap26<Class | AbstractClass, Set<string | symbol>>();
+export const constructorParamsMap = new WeakMap26<Class | AbstractClass, (DecoratorAndValue<any>[] | null)[]>();
+export const methodParamsMap = new WeakMap26<
   Class | AbstractClass,
   Map<string | symbol, (DecoratorAndValue<any>[] | null)[]>
 >();
@@ -24,7 +25,7 @@ export function getMethodParamMeta(
   defaultValue: any[],
 ): (DecoratorAndValue<any>[] | null)[];
 export function getMethodParamMeta(Cls: Class | AbstractClass, propertyKey: string | symbol, defaultValue?: any[]) {
-  const map = methodParamsCache.getOrInsert(Cls, new Map());
+  const map = methodParamsMap.getOrInsert(Cls, new Map());
   if (defaultValue && !map.has(propertyKey)) {
     map.set(propertyKey, defaultValue);
   }
