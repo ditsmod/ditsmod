@@ -3,7 +3,7 @@ import { Reflector, isDelegateCtor } from './reflector.js';
 import { DEPS_KEY } from './top/constants.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
 import type { DepsMeta } from './top/resolved-provider.js';
-import { MergedClassPropMeta, UnknownType } from './top/types-and-models.js';
+import { MergedClassPropMeta, UnknownType, type AbstractClass, type AnyFn, type Class } from './top/types-and-models.js';
 
 describe('Reflector', () => {
   describe('class decorators', () => {
@@ -388,7 +388,9 @@ describe('Reflector', () => {
         [String, new DecoratorAndValue(paramDecorator, [{ val: 30 }])],
       ]);
 
-      expect(Reflector.collectMetadata(Controller, 'methodWithoutDecorators')).toMatchObject<Partial<MergedClassPropMeta>>({
+      expect(Reflector.collectMetadata(Controller, 'methodWithoutDecorators')).toMatchObject<
+        Partial<MergedClassPropMeta>
+      >({
         type: UnknownType,
         decorators: [],
         params: [null, null],
@@ -683,15 +685,37 @@ describe('Reflector', () => {
   });
 
   describe('metadata helpers and cache', () => {
+    class PublicReflector extends Reflector {
+      static override setClassMeta(...args: Parameters<typeof Reflector.setClassMeta>) {
+        return super.setClassMeta(...args);
+      }
+      static override setPropertyMeta(...args: Parameters<typeof Reflector.setPropertyMeta>) {
+        return super.setPropertyMeta(...args);
+      }
+      static override setParameterMeta<Args extends any[]>(
+        Cls: Class | AbstractClass,
+        parameterMeta: ([any, AnyFn<Args, ParameterDecorator>, ...Args] | null | undefined)[],
+      ): void;
+      static override setParameterMeta<Args extends any[]>(
+        Cls: Class | AbstractClass,
+        propertyKey: string | symbol,
+        parameterMeta: ([any, AnyFn<Args, ParameterDecorator>, ...Args] | null | undefined)[],
+      ): void;
+      static override setParameterMeta(...args: any[]) {
+        // @ts-expect-error all ok
+        return super.setParameterMeta(...args);
+      }
+    }
+
     it('applies class and parameter "decorators" through helper methods', () => {
-      const classLevel = Reflector.makeClassDecorator((value: string) => value);
-      const paramLevel = Reflector.makeParamDecorator((value: string) => value);
+      const classLevel = PublicReflector.makeClassDecorator((value: string) => value);
+      const paramLevel = PublicReflector.makeParamDecorator((value: string) => value);
       class SomeService {}
 
-      Reflector.setClassMeta(SomeService, classLevel, 'class');
-      Reflector.setParameterMeta(SomeService, [[Boolean, paramLevel, 'param-constr']]);
+      PublicReflector.setClassMeta(SomeService, classLevel, 'class');
+      PublicReflector.setParameterMeta(SomeService, [[Boolean, paramLevel, 'param-constr']]);
 
-      const mergedClassPropMeta = Reflector.collectMetadata(SomeService, 'constructor');
+      const mergedClassPropMeta = PublicReflector.collectMetadata(SomeService, 'constructor');
       expect(mergedClassPropMeta).toBeInstanceOf(MergedClassPropMeta);
       expect(mergedClassPropMeta).toMatchObject<Partial<MergedClassPropMeta>>({
         type: Function,
@@ -701,12 +725,12 @@ describe('Reflector', () => {
     });
 
     it('applies property "decorators" through helper methods', () => {
-      const propLevel = Reflector.makePropDecorator((value: string) => value);
+      const propLevel = PublicReflector.makePropDecorator((value: string) => value);
       class SomeService {}
 
-      Reflector.setPropertyMeta(SomeService, 'someProp', String, propLevel, 'prop-1');
+      PublicReflector.setPropertyMeta(SomeService, 'someProp', String, propLevel, 'prop-1');
 
-      const mergedClassPropMeta = Reflector.collectMetadata(SomeService, 'someProp');
+      const mergedClassPropMeta = PublicReflector.collectMetadata(SomeService, 'someProp');
       expect(mergedClassPropMeta).toBeInstanceOf(MergedClassPropMeta);
       expect(mergedClassPropMeta).toMatchObject<Partial<MergedClassPropMeta>>({
         type: String,
@@ -716,35 +740,35 @@ describe('Reflector', () => {
     });
 
     it('applies class, property and parameter "decorators" through helper methods', () => {
-      const classLevel = Reflector.makeClassDecorator((value: string) => value);
-      const propLevel = Reflector.makePropDecorator((value: string) => value);
-      const paramLevel = Reflector.makeParamDecorator((value: string) => value);
+      const classLevel = PublicReflector.makeClassDecorator((value: string) => value);
+      const propLevel = PublicReflector.makePropDecorator((value: string) => value);
+      const paramLevel = PublicReflector.makeParamDecorator((value: string) => value);
 
       class SomeService {}
 
-      Reflector.setClassMeta(SomeService, classLevel, 'class');
-      Reflector.setParameterMeta(SomeService, [[Boolean, paramLevel, 'param-constr']]);
+      PublicReflector.setClassMeta(SomeService, classLevel, 'class');
+      PublicReflector.setParameterMeta(SomeService, [[Boolean, paramLevel, 'param-constr']]);
 
-      Reflector.setPropertyMeta(SomeService, 'someProp', String, propLevel, 'prop-1');
-      Reflector.setParameterMeta(SomeService, 'someProp', [
+      PublicReflector.setPropertyMeta(SomeService, 'someProp', String, propLevel, 'prop-1');
+      PublicReflector.setParameterMeta(SomeService, 'someProp', [
         [Boolean, paramLevel, 'param-1'],
         null,
         [Number, paramLevel, 'param-3'],
       ]);
-      Reflector.setParameterMeta(SomeService, 'someProp', [
+      PublicReflector.setParameterMeta(SomeService, 'someProp', [
         null,
         [String, paramLevel, 'param-2'],
         [undefined, paramLevel, 'param-4'],
       ]);
 
-      const mergedClassPropMeta1 = Reflector.collectMetadata(SomeService, 'constructor');
+      const mergedClassPropMeta1 = PublicReflector.collectMetadata(SomeService, 'constructor');
       expect(mergedClassPropMeta1).toBeInstanceOf(MergedClassPropMeta);
       expect(mergedClassPropMeta1).toMatchObject<Partial<MergedClassPropMeta>>({
         type: Function,
         decorators: [new DecoratorAndValue(classLevel, 'class', undefined, expect.any(String))],
         params: [[new DecoratorAndValue(paramLevel, 'param-constr')]],
       });
-      const mergedClassPropMeta2 = Reflector.collectMetadata(SomeService, 'someProp');
+      const mergedClassPropMeta2 = PublicReflector.collectMetadata(SomeService, 'someProp');
       expect(mergedClassPropMeta2).toBeInstanceOf(MergedClassPropMeta);
       expect(mergedClassPropMeta2).toMatchObject<Partial<MergedClassPropMeta>>({
         type: Function,

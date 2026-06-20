@@ -211,7 +211,7 @@ export class Reflector {
   /**
    * __Disclaimer__: This method has experimental support.
    */
-  static setClassMeta<Args extends any[]>(
+  protected static setClassMeta<Args extends any[]>(
     Cls: Class | AbstractClass,
     decoratorFactory: AnyFn<Args, (Cls: AbstractClass | Class) => void>,
     ...args: Args
@@ -222,7 +222,7 @@ export class Reflector {
   /**
    * __Disclaimer__: This method has experimental support.
    */
-  static setPropertyMeta<Args extends any[]>(
+  protected static setPropertyMeta<Args extends any[]>(
     Cls: Class | AbstractClass,
     propertyKey: string | symbol,
     propertyType: any,
@@ -236,16 +236,16 @@ export class Reflector {
   /**
    * __Disclaimer__: This method has experimental support.
    */
-  static setParameterMeta<Args extends any[]>(
+  protected static setParameterMeta<Args extends any[]>(
     Cls: Class | AbstractClass,
     parameterMeta: ([any, AnyFn<Args, ParameterDecorator>, ...Args] | null | undefined)[],
   ): void;
-  static setParameterMeta<Args extends any[]>(
+  protected static setParameterMeta<Args extends any[]>(
     Cls: Class | AbstractClass,
     propertyKey: string | symbol,
     parameterMeta: ([any, AnyFn<Args, ParameterDecorator>, ...Args] | null | undefined)[],
   ): void;
-  static setParameterMeta<Args extends any[]>(
+  protected static setParameterMeta<Args extends any[]>(
     Cls: Class | AbstractClass,
     keyOrParamMeta: (string | symbol) | ([any, AnyFn<Args, ParameterDecorator>, ...Args] | null | undefined)[],
     parameterMeta?: ([any, AnyFn<Args, ParameterDecorator>, ...Args] | null | undefined)[],
