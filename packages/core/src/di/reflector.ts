@@ -413,7 +413,7 @@ export class Reflector {
 
       /**
        * If a class or method has no decorators, at least create metadata
-       * based on function.length.
+       * based on Class.length.
        */
       if (propertyKey && !isConstructor) {
         const descriptor = Object.getOwnPropertyDescriptor(Cls.prototype, propertyKey);

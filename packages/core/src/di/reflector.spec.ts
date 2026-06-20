@@ -17,7 +17,7 @@ describe('Reflector', () => {
       const metadata = Reflector.collectMetadata(Service);
 
       expect(metadata).toBeInstanceOf(ClassMetaIterator);
-      expect(Array.from(metadata!)).toEqual(['constructor']);
+      expect([...metadata!]).toEqual(['constructor']);
       expect(metadata?.constructor.decorators).toEqual([
         new DecoratorAndValue(classDecorator, [{ val: 1 }], undefined, expect.any(String)),
       ]);
@@ -36,7 +36,7 @@ describe('Reflector', () => {
       ]);
     });
 
-    it('treats collectMetadata(cls, undefined) as a constructor metadata request', () => {
+    it('treats collectMetadata(Cls, undefined) as a constructor metadata request', () => {
       const classDecorator = Reflector.makeClassDecorator();
 
       @classDecorator({ val: 1 })
@@ -46,7 +46,7 @@ describe('Reflector', () => {
       expect(Reflector.collectMetadata(Service, 'constructor')).toBe(Reflector.collectMetadata(Service, undefined));
     });
 
-    it('orders child class decorators before inherited decorators', () => {
+    it('orders child class decorators after inherited decorators', () => {
       const classDecorator = Reflector.makeClassDecorator((value: string) => value);
 
       @classDecorator('parent')
