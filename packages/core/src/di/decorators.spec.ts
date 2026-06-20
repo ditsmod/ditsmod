@@ -1,9 +1,10 @@
-import { classMetaCache, Reflector } from './reflector.js';
+import { Reflector } from './reflector.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
 import { ctx } from '#ctx/decorators.js';
 import { Injector } from './injector.js';
 import { ctxProviders } from '#ctx/providers.js';
 import { Context } from '#ctx/context.js';
+import { classMetaCache } from './reflector-helpers.js';
 
 class DecoratedParent {}
 class DecoratedChild extends DecoratedParent {}

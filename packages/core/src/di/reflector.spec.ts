@@ -1,5 +1,6 @@
 import { ClassMetaIterator } from './class-meta-iterator.js';
-import { Reflector, isDelegateCtor } from './reflector.js';
+import { getMethodParamMeta, isDelegateCtor } from './reflector-helpers.js';
+import { Reflector } from './reflector.js';
 import { DEPS_KEY } from './top/constants.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
 import type { DepsMeta } from './top/resolved-provider.js';
@@ -782,19 +783,13 @@ describe('Reflector', () => {
     });
 
     it('defines default raw metadata only once', () => {
-      class PulicReflector extends Reflector {
-        static override getRawMeta(...args: any[]) {
-          // @ts-expect-error all write
-          return super.getRawMeta(...args);
-        }
-      }
       class RawService {}
 
       const firstDefault = ['first'];
       const secondDefault = ['second'];
 
-      expect(PulicReflector.getRawMeta(RawService, 'custom-key', undefined, firstDefault)).toBe(firstDefault);
-      expect(PulicReflector.getRawMeta(RawService, 'custom-key', undefined, secondDefault)).toBe(firstDefault);
+      expect(getMethodParamMeta(RawService, 'custom-key', firstDefault)).toBe(firstDefault);
+      expect(getMethodParamMeta(RawService, 'custom-key', secondDefault)).toBe(firstDefault);
     });
 
     it('returns cached class metadata on repeated collection', () => {

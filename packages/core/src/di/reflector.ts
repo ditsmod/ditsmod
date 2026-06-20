@@ -9,55 +9,25 @@ import type {
   Class,
   AbstractClass,
 } from './top/types-and-models.js';
-import type { InjectionToken } from './top/injection-token.js';
-import type { InjectionSymbol } from './top/get-symbol.js';
 import { MergedClassPropMeta } from './top/types-and-models.js';
 import { ClassPropMeta } from './top/types-and-models.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ClassMetaIterator } from './class-meta-iterator.js';
 import { UnknownType } from './top/types-and-models.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
-import { PARAM_KEY } from './top/constants.js';
 import { isType, newArray } from './utils.js';
-import { WeakMap26 } from './shim/weak-map-26.js';
-
-const mergedClassMetaCache = new WeakMap<Class, ClassMeta | undefined>();
-const classMetaChainCache = new WeakMap<Class, ClassMetaChain | undefined>();
-
-export const classMetaCache = new WeakMap26<Class | AbstractClass, DecoratorAndValue[]>();
-export const propMetaCache = new WeakMap26<Class | AbstractClass, Record<string | symbol, DecoratorAndValue[]>>();
-export const methodWithParamsCache = new WeakMap26<Class | AbstractClass, Set<string | symbol>>();
-export const constructorParamsCache = new WeakMap26<Class | AbstractClass, (DecoratorAndValue<any>[] | null)[]>();
-
-export type ClassMetaChain<DecorValue = any, Proto extends AnyObj = AnyObj> = Map<
-  Class,
-  ClassMeta<DecorValue, Proto> | undefined
->;
-type KeyOfClass<Proto extends AnyObj> = keyof Proto | 'constructor' | symbol | (string & {});
-/**
- * Attention: These regex has to hold even if the code is minified!
- */
-const DELEGATE_CTOR = /^function\s+\S+\(\)\s*{[\s\S]+\.apply\(this,\s*arguments\)/;
-const INHERITED_CLASS = /^class\s+[A-Za-z\d$_]*\s*extends\s+[^{]+{/;
-const INHERITED_CLASS_WITH_CTOR = /^class\s+[A-Za-z\d$_]*\s*extends\s+[^{]+{[\s\S]*constructor\s*\(/;
-const INHERITED_CLASS_WITH_DELEGATE_CTOR =
-  /^class\s+[A-Za-z\d$_]*\s*extends\s+[^{]+{[\s\S]*constructor\s*\(\)\s*{\s+super\(\.\.\.arguments\)/;
-
-/**
- * Determine whether a stringified type is a class which delegates its constructor
- * to its parent.
- *
- * This is not trivial since compiled code can actually contain a constructor function
- * even if the original source code did not. For instance, when the child class contains
- * an initialized instance property.
- */
-export function isDelegateCtor(typeStr: string): boolean {
-  return (
-    DELEGATE_CTOR.test(typeStr) ||
-    INHERITED_CLASS_WITH_DELEGATE_CTOR.test(typeStr) ||
-    (INHERITED_CLASS.test(typeStr) && !INHERITED_CLASS_WITH_CTOR.test(typeStr))
-  );
-}
+import {
+  classMetaCache,
+  classMetaChainCache,
+  constructorParamsCache,
+  getMethodParamMeta,
+  isDelegateCtor,
+  mergedClassMetaCache,
+  methodWithParamsCache,
+  propMetaCache,
+  type ClassMetaChain,
+  type KeyOfClass,
+} from './reflector-helpers.js';
 
 export class Reflector {
   /**
@@ -131,7 +101,7 @@ export class Reflector {
         // This function can be called for a class constructor and methods.
         const Cls = isType(classOrInstance) ? classOrInstance : (classOrInstance.constructor as Class);
         const parameters = propertyKey
-          ? Reflector.getRawMeta(Cls, PARAM_KEY, propertyKey, [])
+          ? getMethodParamMeta(Cls, propertyKey, [])
           : constructorParamsCache.getOrInsert(Cls, []);
         const methodNames = methodWithParamsCache.getOrInsert(Cls, new Set());
         // TypeScript emits parameter metadata only for decorated declarations, so keep
@@ -281,37 +251,6 @@ export class Reflector {
       decoratorFactory(...args)(Cls, propertyKey, parameterIndex);
     });
     Reflect.defineMetadata('design:paramtypes', params, Cls.prototype, propertyKey);
-  }
-
-  protected static getRawMeta<T extends AnyObj, R = any>(
-    Cls: Class<T> | T,
-    metadataKey: InjectionToken<R> | InjectionSymbol<R>,
-    propertyKey?: KeyOfClass<T>,
-  ): R | undefined;
-  protected static getRawMeta<T extends AnyObj, R = any>(
-    Cls: Class<T> | T,
-    metadataKey: InjectionToken<R> | InjectionSymbol<R>,
-    propertyKey: KeyOfClass<T> | undefined,
-    defaultValue: R,
-  ): R;
-  protected static getRawMeta<T extends AnyObj, R = any>(
-    Cls: Class<T> | T,
-    metadataKey: any,
-    propertyKey?: KeyOfClass<T>,
-    defaultValue?: R,
-  ): R {
-    if (propertyKey) {
-      // Reflect metadata distinguishes metadata on a property from metadata on a class.
-      // The optional default is installed only once to preserve identity for arrays/maps.
-      if (defaultValue !== undefined && !Reflect.hasOwnMetadata(metadataKey, Cls, propertyKey as string)) {
-        Reflect.defineMetadata(metadataKey, defaultValue, Cls, propertyKey as string);
-      }
-      return Reflect.getOwnMetadata(metadataKey, Cls, propertyKey as string);
-    }
-    if (defaultValue !== undefined && !Reflect.hasOwnMetadata(metadataKey, Cls)) {
-      Reflect.defineMetadata(metadataKey, defaultValue, Cls);
-    }
-    return Reflect.getOwnMetadata(metadataKey, Cls);
   }
 
   protected static mergeClassMeta<DecorValue = any, Proto extends AnyObj = AnyObj>(Cls: Class<Proto>) {
@@ -464,7 +403,7 @@ export class Reflector {
     } else {
       const paramDecoratorMeta = isConstructor
         ? constructorParamsCache.get(Cls)
-        : this.getRawMeta(Cls, PARAM_KEY, propertyKey);
+        : getMethodParamMeta(Cls, propertyKey as string);
       const args = (isConstructor ? [Cls] : [Cls.prototype, propertyKey]) as [Class];
       const paramTypes = Reflect.getOwnMetadata('design:paramtypes', ...args) as Class[];
 
