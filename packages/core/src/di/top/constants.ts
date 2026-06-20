@@ -9,10 +9,6 @@ import type { DepsMeta } from './resolved-provider.js';
  */
 export const PARAM_KEY = new InjectionToken<(DecoratorAndValue[] | null)[]>('PARAM_KEY');
 /**
- * The key used to store registry of props where are params with metadata.
- */
-export const METHODS_WITH_PARAMS = new InjectionToken<Set<string | symbol>>('METHODS_WITH_PARAMS');
-/**
  * The key used to store cached dependencies of a class.
  * This dependencies is seted by `injector.getDependencies()`.
  */

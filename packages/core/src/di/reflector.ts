@@ -17,7 +17,7 @@ import { CallsiteUtils } from '#utils/callsites.js';
 import { ClassMetaIterator } from './class-meta-iterator.js';
 import { UnknownType } from './top/types-and-models.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
-import { PARAM_KEY, METHODS_WITH_PARAMS } from './top/constants.js';
+import { PARAM_KEY } from './top/constants.js';
 import { isType, newArray } from './utils.js';
 import { WeakMap26 } from './shim/weak-map-26.js';
 
@@ -26,6 +26,7 @@ const classMetaChainCache = new WeakMap<Class, ClassMetaChain | undefined>();
 
 export const classMetaCache = new WeakMap26<Class | AbstractClass, DecoratorAndValue[]>();
 export const propMetaCache = new WeakMap26<Class | AbstractClass, Record<string | symbol, DecoratorAndValue[]>>();
+export const methodWithParamsCache = new WeakMap26<Class | AbstractClass, Set<string | symbol>>();
 
 export type ClassMetaChain<DecorValue = any, Proto extends AnyObj = AnyObj> = Map<
   Class,
@@ -129,7 +130,7 @@ export class Reflector {
         // This function can be called for a class constructor and methods.
         const Cls = isType(classOrInstance) ? classOrInstance : (classOrInstance.constructor as Class);
         const parameters = Reflector.getRawMeta(Cls, PARAM_KEY, propertyKey, []);
-        const methodNames = Reflector.getRawMeta(Cls, METHODS_WITH_PARAMS, undefined, new Set());
+        const methodNames = methodWithParamsCache.getOrInsert(Cls, new Set());
         // TypeScript emits parameter metadata only for decorated declarations, so keep
         // an explicit registry of constructors and methods that have parameter decorators.
         methodNames.add(propertyKey || 'constructor');
@@ -376,7 +377,7 @@ export class Reflector {
   ) {
     const ownPropMeta = propMetaCache.get(Cls);
     const ownPropsWithMeta = ownPropMeta ? Reflect.ownKeys(ownPropMeta) : [];
-    const ownMethodsWithParams = Reflector.getRawMeta(Cls, METHODS_WITH_PARAMS, undefined, new Set<string | symbol>());
+    const ownMethodsWithParams = methodWithParamsCache.getOrInsert(Cls, new Set());
     ownPropsWithMeta.forEach((prop) => ownMethodsWithParams.add(prop));
 
     const allClassMethods = Reflect.ownKeys(Cls.prototype).filter((prop) => {
@@ -432,7 +433,7 @@ export class Reflector {
     // Get a list of unique class properties that have metadata.
     const ownPropsMeta = propMetaCache.get(Cls);
     const ownPropsWithMeta = ownPropsMeta ? Reflect.ownKeys(ownPropsMeta) : [];
-    const ownMethodsWithParams = Reflector.getRawMeta(Cls, METHODS_WITH_PARAMS, undefined, new Set<string | symbol>());
+    const ownMethodsWithParams = methodWithParamsCache.getOrInsert(Cls, new Set());
     ownPropsWithMeta.forEach((p) => ownMethodsWithParams.add(p));
     ownMethodsWithParams.delete('constructor');
 
