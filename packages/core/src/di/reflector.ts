@@ -17,7 +17,7 @@ import { CallsiteUtils } from '#utils/callsites.js';
 import { ClassMetaIterator } from './class-meta-iterator.js';
 import { UnknownType } from './top/types-and-models.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
-import { PARAM_KEY, METHODS_WITH_PARAMS, PROP_KEY } from './top/constants.js';
+import { PARAM_KEY, METHODS_WITH_PARAMS } from './top/constants.js';
 import { isType, newArray } from './utils.js';
 import { WeakMap26 } from './shim/weak-map-26.js';
 
@@ -25,6 +25,7 @@ const mergedClassMetaCache = new WeakMap<Class, ClassMeta | undefined>();
 const classMetaChainCache = new WeakMap<Class, ClassMetaChain | undefined>();
 
 export const classMetaCache = new WeakMap26<Class | AbstractClass, DecoratorAndValue[]>();
+export const propMetaCache = new WeakMap26<Class | AbstractClass, Record<string | symbol, DecoratorAndValue[]>>();
 
 export type ClassMetaChain<DecorValue = any, Proto extends AnyObj = AnyObj> = Map<
   Class,
@@ -100,7 +101,7 @@ export class Reflector {
         const item = new DecoratorAndValue(propDecorFactory, value, decoratorId);
         // Store both quick per-property metadata and the property list used by this.collectMetadata().
         // Reflector.getRawMeta(Cls, PROP_KEY, propertyKey, item);
-        const meta = Reflector.getRawMeta(Cls, PROP_KEY, undefined, {});
+        const meta = propMetaCache.getOrInsert(Cls, {});
         (meta[propertyKey] ??= []).push(item);
       };
     }
@@ -373,7 +374,7 @@ export class Reflector {
     Cls: Class<Proto>,
     mergedClassMeta: ClassMeta<DecorValue, Proto>,
   ) {
-    const ownPropMeta = this.getRawMeta(Cls, PROP_KEY);
+    const ownPropMeta = propMetaCache.get(Cls);
     const ownPropsWithMeta = ownPropMeta ? Reflect.ownKeys(ownPropMeta) : [];
     const ownMethodsWithParams = Reflector.getRawMeta(Cls, METHODS_WITH_PARAMS, undefined, new Set<string | symbol>());
     ownPropsWithMeta.forEach((prop) => ownMethodsWithParams.add(prop));
@@ -429,7 +430,7 @@ export class Reflector {
     );
 
     // Get a list of unique class properties that have metadata.
-    const ownPropsMeta = this.getRawMeta(Cls, PROP_KEY);
+    const ownPropsMeta = propMetaCache.get(Cls);
     const ownPropsWithMeta = ownPropsMeta ? Reflect.ownKeys(ownPropsMeta) : [];
     const ownMethodsWithParams = Reflector.getRawMeta(Cls, METHODS_WITH_PARAMS, undefined, new Set<string | symbol>());
     ownPropsWithMeta.forEach((p) => ownMethodsWithParams.add(p));
