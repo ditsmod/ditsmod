@@ -915,8 +915,8 @@ import { Injector, Context } from '@ditsmod/core';
 
 const parent = Injector.resolveAndCreate([Context], 'parent level');
 const child = parent.resolveAndCreateChild([Context], 'child level');
-const parentCtx = parent.get(Context) as Context;
-const childCtx = child.get(Context) as Context;
+const parentCtx = parent.get(Context);
+const childCtx = child.get(Context);
 parentCtx.set('key1', 'value1');
 childCtx.set('key2', 'value2');
 
@@ -947,7 +947,7 @@ const injector = Injector.resolveAndCreate(
   [...ctxProviders, { token: 'token1', useFactory: [Service1, Service1.prototype.method1] }],
 );
 
-const context = injector.get(Context) as Context;
+const context = injector.get(Context);
 context.set('key1', 'value1');
 context.set('key2', 'value2');
 
@@ -1021,7 +1021,7 @@ class Service1 {
 }
 
 const injector = Injector.resolveAndCreate([Service1, Dependency1]);
-const service1 = injector.get(Service1) as Service1;
+const service1 = injector.get(Service1);
 service1.dependency1.inputParameter; // input-data
 ```
 
@@ -1060,9 +1060,9 @@ injector.get(Service1);
 
 Що ми тут бачимо:
 
-1. Провайдери з токенами `Service2` та `token1` вказують у якості залежності функцію `input`. Ця функція насправді призначена для використання її як декоратор параметра методу, але нам DI дозволяє її також використовувати як токен провайдера.
+1. `Service2` та `factoryProvider` вказують у якості залежності функцію `input`. Ця функція насправді призначена для використання її як декоратор параметра методу, але нам DI дозволяє її також використовувати як токен провайдера.
 2. У `Service1` вказано залежність від провайдерів з токенами `Service2` та `token1`, причому другим аргументом у `@inject()` передано певні контекстні дані.
-3. В інжектора запитується `Service1`, і щоб створити інстанс цього класу, спочатку DI передає провайдерам з токенами `Service2` та `token1` відповідні контекстні дані.
+3. В інжектора запитується `Service1`, і щоб створити інстанс цього класу, спочатку DI передає до `Service2` та `factoryProvider` відповідні контекстні дані.
 
 Майте на увазі, що коли до `@inject()` передається другий аргумент, інжектор не створює кеш для вказаної залежності.
 

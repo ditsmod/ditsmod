@@ -915,8 +915,8 @@ import { Injector, Context } from '@ditsmod/core';
 
 const parent = Injector.resolveAndCreate([Context], 'parent level');
 const child = parent.resolveAndCreateChild([Context], 'child level');
-const parentCtx = parent.get(Context) as Context;
-const childCtx = child.get(Context) as Context;
+const parentCtx = parent.get(Context);
+const childCtx = child.get(Context);
 parentCtx.set('key1', 'value1');
 childCtx.set('key2', 'value2');
 
@@ -947,7 +947,7 @@ const injector = Injector.resolveAndCreate(
   [...ctxProviders, { token: 'token1', useFactory: [Service1, Service1.prototype.method1] }],
 );
 
-const context = injector.get(Context) as Context;
+const context = injector.get(Context);
 context.set('key1', 'value1');
 context.set('key2', 'value2');
 
@@ -1021,7 +1021,7 @@ class Service1 {
 }
 
 const injector = Injector.resolveAndCreate([Service1, Dependency1]);
-const service1 = injector.get(Service1) as Service1;
+const service1 = injector.get(Service1);
 service1.dependency1.inputParameter; // input-data
 ```
 
@@ -1060,9 +1060,9 @@ injector.get(Service1);
 
 What do we see here:
 
-1. Providers with the `Service2` and `token1` tokens specify the `input` function as a dependency. This function is actually intended to be used as a method parameter decorator, but DI also allows us to use it as a provider token.
+1. `Service2` and `factoryProvider` specify the `input` function as a dependency. This function is actually intended to be used as a method parameter decorator, but DI also allows us to use it as a provider token.
 2. `Service1` specifies dependencies on providers with the `Service2` and `token1` tokens, and certain contextual data is passed as the second argument to `@inject()`.
-3. `Service1` is requested from the injector, and to create an instance of this class, DI first passes the corresponding contextual data to the providers with the `Service2` and `token1` tokens.
+3. `Service1` is requested from the injector, and to create an instance of this class, DI first passes the corresponding contextual data to `Service2` and `factoryProvider`.
 
 Note that when a second argument is passed to `@inject()`, the injector does not create a cache for the specified dependency.
 
