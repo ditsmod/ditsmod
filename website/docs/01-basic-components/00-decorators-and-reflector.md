@@ -79,7 +79,7 @@ Service2 = __decorate([
 
 Подальший аналіз скомпільованого коду вказує нам, що для збереження метаданих зі статичною типізацію використовується клас `Reflect`. На початковому етапі ознайомлення з Ditsmod, вам можна особливо не заглиблюватись в тему роботи `Reflect`, оскільки в Ditsmod є більш високорівневі інструменти, що спрощують роботу зі збереженням та використанням метаданих класів.
 
-З іншого боку, корисно знати хоча б базові речі в цьому плані. Наприклад, не зайвим буде знати, що `Reflect` є стандартним JavaScript-класом, до якого додається ще спеціальне API для роботи з декораторами та метаданими. Це спеціальне API надає бібліотека [reflect-metadata][13]:
+З іншого боку, корисно знати хоча б базові речі в цьому плані. Наприклад, не зайвим буде знати, що [Reflect][1] є стандартним JavaScript-класом, до якого додається ще спеціальне API для роботи з декораторами та метаданими. Це спеціальне API надає бібліотека [reflect-metadata][13]:
 
 ```ts
 import 'reflect-metadata/lite';
@@ -139,7 +139,7 @@ node --watch dist/app/services.js
 
 Тепер, якщо у `src/app/services.ts`, у функцію `getDependencies()` передати `Service2`, через пару секунд у другому терміналі ви повинні побачити вивід `[ { token: [class Service1], required: true } ]`.
 
-
+[1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect
 [13]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/core/package.json#L61
 [14]: https://github.com/tc39/proposal-decorators
 

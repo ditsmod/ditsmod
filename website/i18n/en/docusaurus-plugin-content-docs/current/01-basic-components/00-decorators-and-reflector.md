@@ -79,7 +79,7 @@ Fortunately, you will rarely need to inspect the `dist` folder and analyze compi
 
 Further analysis of the compiled code indicates that the `Reflect` class is used to store metadata with static typing. At the initial stage of learning Ditsmod, you do not need to dive too deeply into how `Reflect` works, since Ditsmod provides higher-level tools that simplify working with storing and using class metadata.
 
-On the other hand, it is useful to know at least the basics in this area. For example, it is worth knowing that `Reflect` is a standard JavaScript class extended with a special API for working with decorators and metadata. This special API is provided by the [reflect-metadata][13] library:
+On the other hand, it is useful to know at least the basics in this area. For example, it is worth knowing that [Reflect][1] is a standard JavaScript class extended with a special API for working with decorators and metadata. This special API is provided by the [reflect-metadata][13] library:
 
 ```ts
 import 'reflect-metadata/lite';
@@ -139,7 +139,7 @@ node --watch dist/app/services.js
 
 Now, if in `src/app/services.ts` you pass `Service2` to the `getDependencies()` function, after a few seconds, you should see the output `[ { token: [class Service1], required: true } ]` in the second terminal.
 
-
+[1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect
 [13]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/core/package.json#L61
 [14]: https://github.com/tc39/proposal-decorators
 
