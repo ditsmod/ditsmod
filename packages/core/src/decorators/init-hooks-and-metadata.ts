@@ -199,7 +199,7 @@ function getInitHooks(data?: RootRawMetadata): InitHooks<RootRawMetadata> {
 // Creating an init decorator
 export const initSome: InitDecorator<RootRawMetadata, { path?: string }, InitMeta> = makeClassDecorator(getInitHooks);
 
-\@featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
+@featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
 class Module1 {
   static withParams(): ModuleWithInitParams<Module1> {
     return {
@@ -213,8 +213,8 @@ const moduleWithParams = Module1.withParams();
 moduleWithParams.initParams.set(initSome, { path: 'some-prefix' });
 
 // Using the newly created init decorator
-\@initSome({ one: 1, two: 2 })
-\@featureModule({ imports: [moduleWithParams] })
+@initSome({ one: 1, two: 2 })
+@featureModule({ imports: [moduleWithParams] })
 class MyModule {
   // Your code here
 }

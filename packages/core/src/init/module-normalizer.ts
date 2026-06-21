@@ -361,11 +361,11 @@ export class ModuleNormalizer {
 import { featureModule, rootModule } from '@ditsmod/core';
 import { initRest } from '@ditsmod/rest';
 
-\@featureModule()
+@featureModule()
 class Module1 {}
 
-\@initRest({ imports: [{ module: Module1, path: 'some-prefix' }] })
-\@rootModule()
+@initRest({ imports: [{ module: Module1, path: 'some-prefix' }] })
+@rootModule()
 export class AppModule {}
 ```
    * 
