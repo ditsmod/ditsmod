@@ -42,7 +42,7 @@ export class RestRouteExtension implements Extension<MetadataPerMod3> {
     const aControllerMetadata: ControllerMetadata[] = [];
     if (applyControllers)
       for (const Controller of restMetadataPerMod2.meta.controllers) {
-        const classMeta = Reflector.collectMetadata(Controller)!;
+        const classMeta = Reflector.collectMeta(Controller)!;
         for (const methodName of classMeta) {
           for (const decoratorAndValue of classMeta[methodName].decorators) {
             if (!isRoute<RouteMetadata>(decoratorAndValue)) {

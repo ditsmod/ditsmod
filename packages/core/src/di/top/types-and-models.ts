@@ -17,7 +17,7 @@ export type PropMetadataTuple<Value = any> = [Class, ...DecoratorAndValue<Value>
 export class UnknownType {}
 
 /**
- * Metadata returned by the `Reflector.collectMetadata()` method.
+ * Metadata returned by the `Reflector.collectMeta()` method.
  */
 export type ClassMeta<DecorValue = any, Proto extends object = object> = {
   [P in keyof Proto]: ClassPropMeta<DecorValue>;
@@ -34,7 +34,7 @@ export class ClassPropMeta<DecorValue = any> {
 }
 
 /**
- * Metadata returned by the `Reflector.collectMetadata()` method.
+ * Metadata returned by the `Reflector.collectMeta()` method.
  */
 export type MergedClassMeta<DecorValue = any, Proto extends object = object> = {
   [P in keyof Proto]: MergedClassPropMeta<DecorValue>;

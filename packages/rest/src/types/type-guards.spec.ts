@@ -13,13 +13,13 @@ describe('type guards', () => {
     it('class with decorator', () => {
       @controller()
       class Module1 {}
-      const metadata = Reflector.getDecorators(Module1)![0];
+      const metadata = Reflector.getClassLevelMeta(Module1)![0];
       expect(isCtrlDecor(metadata)).toBe(true);
     });
 
     it('class without decorator', () => {
       class Module1 {}
-      const metadata = Reflector.collectMetadata(Module1);
+      const metadata = Reflector.collectMeta(Module1);
       expect(isCtrlDecor(metadata)).toBe(false);
     });
   });
@@ -53,7 +53,7 @@ describe('type guards', () => {
     }
 
     it('should recognize the route', () => {
-      const firstDecor = Reflector.collectMetadata(ClassWithDecorators)!.some.decorators[0];
+      const firstDecor = Reflector.collectMeta(ClassWithDecorators)!.some.decorators[0];
       expect(isRoute({ decorator: firstDecor.decorator, value: firstDecor.value })).toBe(true);
     });
   });

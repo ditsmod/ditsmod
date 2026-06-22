@@ -11,7 +11,7 @@ export function isProvider(maybeProvider?: any): maybeProvider is Provider {
   if (isModuleWithParams(maybeProvider)) {
     return false;
   }
-  const isSomeModule = Reflector.getDecorators(maybeProvider, isModDecor);
+  const isSomeModule = Reflector.getClassLevelMeta(maybeProvider, isModDecor);
   return (maybeProvider instanceof Function && !isSomeModule) || isNormalizedProvider(maybeProvider);
 }
 

@@ -112,8 +112,8 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     const responses: XResponsesObject = {};
     normalizedGuards.forEach((normalizedGuard) => {
       const guardName = normalizedGuard.guard.name;
-      const numberOfDecorators = Reflector.getDecorators(normalizedGuard.guard)?.length || 0;
-      Reflector.getDecorators(normalizedGuard.guard)?.forEach((decor, index) => {
+      const numberOfDecorators = Reflector.getClassLevelMeta(normalizedGuard.guard)?.length || 0;
+      Reflector.getClassLevelMeta(normalizedGuard.guard)?.forEach((decor, index) => {
         let securityName = numberOfDecorators > 1 ? `${guardName}_${index}` : guardName;
         securityName = securityName.charAt(0).toLowerCase() + securityName.slice(1);
 

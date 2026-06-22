@@ -46,7 +46,7 @@ export class OpenapiRouteExtension extends RestRouteExtension implements Extensi
     const aControllerMetadata: ControllerMetadata[] = [];
     if (applyControllers)
       for (const Controller of meta.controllers as Class<Record<string | symbol, any>>[]) {
-        const classMeta = Reflector.collectMetadata(Controller)!;
+        const classMeta = Reflector.collectMeta(Controller)!;
         for (const methodName of classMeta) {
           for (const decoratorAndValue of classMeta[methodName].decorators) {
             if (!isOasRoute(decoratorAndValue)) {

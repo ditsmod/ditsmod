@@ -71,7 +71,7 @@ export class Reflector {
       return function propDecorator(target: { constructor: Function }, propertyKey: string | symbol): void {
         const Cls = target.constructor as Class;
         const item = new DecoratorAndValue(propDecorFactory, value, decoratorId);
-        // Store both quick per-property metadata and the property list used by this.collectMetadata().
+        // Store both quick per-property metadata and the property list used by this.collectMeta().
         // Reflector.getRawMeta(Cls, PROP_KEY, propertyKey, item);
         const meta = propMetaMap.getOrInsert(Cls, {});
         (meta[propertyKey] ??= []).push(item);
@@ -127,7 +127,7 @@ export class Reflector {
    * @returns Returns an array of `DecoratorAndValue` for the passed `Cls`, using the passed `typeGuard`,
    * or `undefined` if no appropriate decorators.
    */
-  static getDecorators<T extends DecoratorAndValue>(
+  static getClassLevelMeta<T extends DecoratorAndValue>(
     Cls: Class,
     typeGuard: TypeGuard<T>,
   ): (T extends DecoratorAndValue<infer V> ? DecoratorAndValue<V> : never)[] | undefined;
@@ -139,9 +139,9 @@ export class Reflector {
    * @returns Returns an array of `DecoratorAndValue` for the passed `Cls`,
    * or `undefined` if no appropriate decorators.
    */
-  static getDecorators<T = any>(Cls: Class): DecoratorAndValue<T>[] | undefined;
-  static getDecorators<T extends DecoratorAndValue>(Cls: Class, typeGuard?: TypeGuard<T>) {
-    let decorators = this.collectMetadata(Cls)?.constructor.decorators || [];
+  static getClassLevelMeta<T = any>(Cls: Class): DecoratorAndValue<T>[] | undefined;
+  static getClassLevelMeta<T extends DecoratorAndValue>(Cls: Class, typeGuard?: TypeGuard<T>) {
+    let decorators = this.collectMeta(Cls)?.constructor.decorators || [];
     if (typeGuard) {
       decorators = decorators.filter(typeGuard);
     }
@@ -149,6 +149,11 @@ export class Reflector {
   }
 
   /**
+   * Collects metadata from decorators at any level:
+   * - class level;
+   * - method or property level;
+   * - parameter level.
+   * 
    * Returns an instance of {@link ClassMetaIterator}, which implements the [iterable protocol][1].
    * Each property of this class corresponds to a property with a decorator in the `Cls` parameter, and the value
    * of that property contains the normalized metadata with {@link MergedClassPropMeta}.
@@ -157,7 +162,7 @@ export class Reflector {
    *
    * @param Cls A class that has decorators.
    */
-  static collectMetadata<DecorValue = any, Proto extends AnyObj = AnyObj>(
+  static collectMeta<DecorValue = any, Proto extends AnyObj = AnyObj>(
     Cls: Class<Proto>,
   ): MergedClassMeta<DecorValue, Proto> | undefined;
   /**
@@ -165,11 +170,11 @@ export class Reflector {
    *
    * @param Cls A class that has decorators.
    */
-  static collectMetadata<DecorValue = any, Proto extends AnyObj = AnyObj>(
+  static collectMeta<DecorValue = any, Proto extends AnyObj = AnyObj>(
     Cls: Class<Proto>,
     propertyKey?: KeyOfClass<Proto>,
   ): MergedClassPropMeta<DecorValue> | undefined;
-  static collectMetadata<DecorValue = any, Proto extends AnyObj = AnyObj>(
+  static collectMeta<DecorValue = any, Proto extends AnyObj = AnyObj>(
     Cls: Class<Proto>,
     propertyKey?: string | symbol,
   ): MergedClassMeta<DecorValue, Proto> | MergedClassPropMeta<DecorValue> | undefined {

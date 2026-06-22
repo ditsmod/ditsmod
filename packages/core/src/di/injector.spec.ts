@@ -456,10 +456,10 @@ describe('injector', () => {
     expect(spy2).toHaveBeenCalledTimes(1);
     expect(spy3).toHaveBeenCalledTimes(1);
 
-    const classMetadata = Reflector.getDecorators<[{ providers: [] }]>(Controller)!;
+    const classMetadata = Reflector.getClassLevelMeta<[{ providers: [] }]>(Controller)!;
     expect(classMetadata[0].value).toEqual([{ providers: [] }]);
 
-    const propMetadata = Reflector.collectMetadata(Controller)!;
+    const propMetadata = Reflector.collectMeta(Controller)!;
     const [container1] = propMetadata.method1.decorators;
     expect(container1.decorator).toBe(route);
     expect(container1.value).toEqual({ method: 'GET', path: 'some-path' });
@@ -553,10 +553,10 @@ describe('injector', () => {
     expect(spy2).toHaveBeenCalledTimes(1);
     expect(spy3).toHaveBeenCalledTimes(1);
 
-    const classMetadata = Reflector.getDecorators<string>(Controller)!;
+    const classMetadata = Reflector.getClassLevelMeta<string>(Controller)!;
     expect(classMetadata[0].value).toEqual([{ providers: [] }]);
 
-    const propMetadata = Reflector.collectMetadata(Controller)!;
+    const propMetadata = Reflector.collectMeta(Controller)!;
     const [container1] = propMetadata.method1.decorators;
     expect(container1.decorator).toBe(route);
     expect(container1.value).toEqual({ method: 'GET', path: 'some-path' });

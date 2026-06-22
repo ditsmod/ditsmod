@@ -87,7 +87,7 @@ class Class3 extends Class2 {
 
 describe('classMeta.constructor.params', () => {
   it('has info about all parents params', () => {
-    const classMeta = Reflector.collectMetadata(Class3);
+    const classMeta = Reflector.collectMeta(Class3);
     const map = classMeta?.constructor.paramChain;
     expect(map).toBeInstanceOf(Map);
     expect(map?.size).toBe(6);
@@ -119,7 +119,7 @@ describe('classMeta.constructor.params', () => {
 describe('ParentParams', () => {
   describe('getParamsMetaAndRecipe()', () => {
     it('returns a one-dimensional array of params, without ParentParams', () => {
-      const classMeta = Reflector.collectMetadata(Class3);
+      const classMeta = Reflector.collectMeta(Class3);
       const { aParamsMeta, recipe } = ParentParams.getParamsMetaAndRecipe([
         ...classMeta!.constructor.paramChain!.values(),
       ]);

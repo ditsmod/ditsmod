@@ -14,7 +14,7 @@ describe('Reflector', () => {
       @classDecorator({ val: 1 })
       class Service {}
 
-      const metadata = Reflector.collectMetadata(Service);
+      const metadata = Reflector.collectMeta(Service);
 
       expect(metadata).toBeInstanceOf(ClassMetaIterator);
       expect([...metadata!]).toEqual(['constructor']);
@@ -30,20 +30,20 @@ describe('Reflector', () => {
       @classDecorator('cached')
       class Service {}
 
-      expect(Reflector.collectMetadata(Service)).toBe(Reflector.collectMetadata(Service));
-      expect(Reflector.collectMetadata(Service, 'constructor')?.decorators).toEqual([
+      expect(Reflector.collectMeta(Service)).toBe(Reflector.collectMeta(Service));
+      expect(Reflector.collectMeta(Service, 'constructor')?.decorators).toEqual([
         new DecoratorAndValue(classDecorator, { value: 'cached' }, undefined, expect.any(String)),
       ]);
     });
 
-    it('treats collectMetadata(Cls, undefined) as a constructor metadata request', () => {
+    it('treats collectMeta(Cls, undefined) as a constructor metadata request', () => {
       const classDecorator = Reflector.makeClassDecorator();
 
       @classDecorator({ val: 1 })
       class Service {}
 
-      expect(Reflector.collectMetadata(Service)).not.toBe(Reflector.collectMetadata(Service, undefined));
-      expect(Reflector.collectMetadata(Service, 'constructor')).toBe(Reflector.collectMetadata(Service, undefined));
+      expect(Reflector.collectMeta(Service)).not.toBe(Reflector.collectMeta(Service, undefined));
+      expect(Reflector.collectMeta(Service, 'constructor')).toBe(Reflector.collectMeta(Service, undefined));
     });
 
     it('orders child class decorators after inherited decorators', () => {
@@ -55,7 +55,7 @@ describe('Reflector', () => {
       @classDecorator('child')
       class Child extends Parent {}
 
-      const metadata = Reflector.collectMetadata(Child, 'constructor');
+      const metadata = Reflector.collectMeta(Child, 'constructor');
 
       expect(metadata?.decorators.map((item) => item.value)).toEqual(['child']);
       expect([...metadata!.decoratorChain]).toEqual([
@@ -75,8 +75,8 @@ describe('Reflector', () => {
       @Service('/users', 'GET')
       class UsersService {}
 
-      const decorators = Reflector.getDecorators(UsersService);
-      const constructorMeta = Reflector.collectMetadata(UsersService, 'constructor');
+      const decorators = Reflector.getClassLevelMeta(UsersService);
+      const constructorMeta = Reflector.collectMeta(UsersService, 'constructor');
 
       expect(Service.name).toBe('Service');
       expect(decorators).toHaveLength(1);
@@ -97,10 +97,10 @@ describe('Reflector', () => {
       @service('users')
       class UsersService {}
 
-      const Services = Reflector.getDecorators(UsersService, (metadata): metadata is DecoratorAndValue => {
+      const Services = Reflector.getClassLevelMeta(UsersService, (metadata): metadata is DecoratorAndValue => {
         return metadata.value.kind == 'Service';
       });
-      const missing = Reflector.getDecorators(UsersService, (metadata): metadata is DecoratorAndValue => {
+      const missing = Reflector.getClassLevelMeta(UsersService, (metadata): metadata is DecoratorAndValue => {
         return metadata.value.kind == 'missing';
       });
 
@@ -123,7 +123,7 @@ describe('Reflector', () => {
         prop!: string;
       }
 
-      const metadata = Reflector.collectMetadata(Service);
+      const metadata = Reflector.collectMeta(Service);
 
       expect(metadata).toBeInstanceOf(ClassMetaIterator);
       expect(Array.from(metadata!)).toEqual(['constructor', 'method', 'prop']);
@@ -159,7 +159,7 @@ describe('Reflector', () => {
         declare prop: string;
       }
 
-      const metadata = Reflector.collectMetadata(Child);
+      const metadata = Reflector.collectMeta(Child);
 
       expect(metadata?.method1.decorators).toEqual([expect.objectContaining({ value: 'parent-only' })]);
       expect(metadata?.method2.decorators).toEqual([expect.objectContaining({ value: 'child-only' })]);
@@ -182,7 +182,7 @@ describe('Reflector', () => {
         [symbolKey]() {}
       }
 
-      const metadata = Reflector.collectMetadata(UsersService)!;
+      const metadata = Reflector.collectMeta(UsersService)!;
 
       // Property decorators are reflected as iterable class metadata entries.
       expect([...metadata]).toEqual(['constructor', 'list', symbolKey]);
@@ -204,7 +204,7 @@ describe('Reflector', () => {
         handle() {}
       }
 
-      const metadata = Reflector.collectMetadata(TaggedService)!;
+      const metadata = Reflector.collectMeta(TaggedService)!;
 
       expect(metadata.handle.decorators.map((item) => item.value)).toEqual(['inner', 'outer']);
     });
@@ -231,7 +231,7 @@ describe('Reflector', () => {
         ) {}
       }
 
-      const metadata = Reflector.collectMetadata(Service);
+      const metadata = Reflector.collectMeta(Service);
 
       expect(Array.from(metadata!)).toEqual(['constructor', 'method']);
       expect(metadata?.constructor.params).toEqual([
@@ -278,7 +278,7 @@ describe('Reflector', () => {
         override method3(param1: ChildParam4) {}
       }
 
-      const metadata = Reflector.collectMetadata(Child);
+      const metadata = Reflector.collectMeta(Child);
 
       expect(metadata?.constructor.params).toEqual([
         [ChildParam1],
@@ -306,7 +306,7 @@ describe('Reflector', () => {
         handle(@param('id') id: number, body: object) {}
       }
 
-      const metadata = Reflector.collectMetadata(UsersService)!;
+      const metadata = Reflector.collectMeta(UsersService)!;
 
       // Object design types are intentionally normalized to an empty tuple.
       expect(metadata.constructor.params).toEqual([
@@ -324,9 +324,9 @@ describe('Reflector', () => {
         handle(first: string, second: number, @param('third') third: boolean) {}
       }
 
-      const metadata = Reflector.collectMetadata(UsersService)!;
+      const metadata = Reflector.collectMeta(UsersService)!;
 
-      const mergedClassPropMeta = Reflector.collectMetadata(UsersService, 'handle');
+      const mergedClassPropMeta = Reflector.collectMeta(UsersService, 'handle');
       expect(mergedClassPropMeta?.params).toEqual([
         [String],
         [Number],
@@ -340,8 +340,8 @@ describe('Reflector', () => {
         handle(first: string, second: number) {}
       }
 
-      const methodMeta = Reflector.collectMetadata(UsersService, 'handle');
-      const missingMeta = Reflector.collectMetadata(UsersService, 'missing');
+      const methodMeta = Reflector.collectMeta(UsersService, 'handle');
+      const missingMeta = Reflector.collectMeta(UsersService, 'missing');
 
       expect(methodMeta).toMatchObject<Partial<MergedClassPropMeta>>({
         type: UnknownType,
@@ -376,7 +376,7 @@ describe('Reflector', () => {
         methodWithoutDecorators(param1: Service, param2: any) {}
       }
 
-      const metadata = Reflector.collectMetadata(Controller);
+      const metadata = Reflector.collectMeta(Controller);
 
       expect([...metadata!]).toEqual(['constructor', 'method']);
       expect(metadata?.constructor.decorators).toEqual([
@@ -389,14 +389,14 @@ describe('Reflector', () => {
         [String, new DecoratorAndValue(paramDecorator, [{ val: 30 }])],
       ]);
 
-      expect(Reflector.collectMetadata(Controller, 'methodWithoutDecorators')).toMatchObject<
+      expect(Reflector.collectMeta(Controller, 'methodWithoutDecorators')).toMatchObject<
         Partial<MergedClassPropMeta>
       >({
         type: UnknownType,
         decorators: [],
         params: [null, null],
       });
-      expect(Reflector.collectMetadata(Controller, 'nonExistingPropName')).toMatchObject<Partial<MergedClassPropMeta>>({
+      expect(Reflector.collectMeta(Controller, 'nonExistingPropName')).toMatchObject<Partial<MergedClassPropMeta>>({
         type: UnknownType,
         decorators: [],
         params: [],
@@ -452,7 +452,7 @@ describe('Reflector', () => {
         declare prop2: string;
       }
 
-      const metadata = Reflector.collectMetadata(Class3);
+      const metadata = Reflector.collectMeta(Class3);
 
       expect(metadata?.constructor.decorators.map((item) => item.value)).toEqual([
         'constructor3.1',
@@ -610,7 +610,7 @@ describe('Reflector', () => {
         override handle() {}
       }
 
-      const metadata = Reflector.collectMetadata(ChildService)!;
+      const metadata = Reflector.collectMeta(ChildService)!;
 
       expect(metadata.constructor.decorators.map((item) => item.value)).toEqual(['child']);
       expect([...metadata.constructor.decoratorChain]).toEqual([
@@ -638,7 +638,7 @@ describe('Reflector', () => {
         override handle(param1: ChildParam, param2?: string) {}
       }
 
-      const childMeta = Reflector.collectMetadata(ChildService)!;
+      const childMeta = Reflector.collectMeta(ChildService)!;
 
       // The child method is own code, so parent parameter metadata must not leak into it.
       expect(childMeta.handle.params).toEqual([null, null]);
@@ -655,11 +655,11 @@ describe('Reflector', () => {
 
       class ChildService extends ParentService {}
 
-      const parentMeta = Reflector.collectMetadata(ParentService)!;
+      const parentMeta = Reflector.collectMeta(ParentService)!;
       const parentDeps: DepsMeta = { deps: [] };
       Reflect.set(parentMeta.handle, DEPS_KEY, parentDeps);
 
-      const childMeta = Reflector.collectMetadata(ChildService)!;
+      const childMeta = Reflector.collectMeta(ChildService)!;
       const childDeps = Reflect.get(childMeta.handle, DEPS_KEY) as DepsMeta;
       expect(childDeps).toBeUndefined();
 
@@ -680,7 +680,7 @@ describe('Reflector', () => {
 
       class ChildService extends ParentService {}
 
-      const metadata = Reflector.collectMetadata(ChildService)!;
+      const metadata = Reflector.collectMeta(ChildService)!;
       expect(metadata.constructor.params).toEqual([[ParentParam, new DecoratorAndValue(param, 'parent')]]);
     });
   });
@@ -716,7 +716,7 @@ describe('Reflector', () => {
       PublicReflector.setClassMeta(SomeService, classLevel, 'class');
       PublicReflector.setParameterMeta(SomeService, [[Boolean, paramLevel, 'param-constr']]);
 
-      const mergedClassPropMeta = PublicReflector.collectMetadata(SomeService, 'constructor');
+      const mergedClassPropMeta = PublicReflector.collectMeta(SomeService, 'constructor');
       expect(mergedClassPropMeta).toBeInstanceOf(MergedClassPropMeta);
       expect(mergedClassPropMeta).toMatchObject<Partial<MergedClassPropMeta>>({
         type: Function,
@@ -731,7 +731,7 @@ describe('Reflector', () => {
 
       PublicReflector.setPropertyMeta(SomeService, 'someProp', String, propLevel, 'prop-1');
 
-      const mergedClassPropMeta = PublicReflector.collectMetadata(SomeService, 'someProp');
+      const mergedClassPropMeta = PublicReflector.collectMeta(SomeService, 'someProp');
       expect(mergedClassPropMeta).toBeInstanceOf(MergedClassPropMeta);
       expect(mergedClassPropMeta).toMatchObject<Partial<MergedClassPropMeta>>({
         type: String,
@@ -762,14 +762,14 @@ describe('Reflector', () => {
         [undefined, paramLevel, 'param-4'],
       ]);
 
-      const mergedClassPropMeta1 = PublicReflector.collectMetadata(SomeService, 'constructor');
+      const mergedClassPropMeta1 = PublicReflector.collectMeta(SomeService, 'constructor');
       expect(mergedClassPropMeta1).toBeInstanceOf(MergedClassPropMeta);
       expect(mergedClassPropMeta1).toMatchObject<Partial<MergedClassPropMeta>>({
         type: Function,
         decorators: [new DecoratorAndValue(classLevel, 'class', undefined, expect.any(String))],
         params: [[new DecoratorAndValue(paramLevel, 'param-constr')]],
       });
-      const mergedClassPropMeta2 = PublicReflector.collectMetadata(SomeService, 'someProp');
+      const mergedClassPropMeta2 = PublicReflector.collectMeta(SomeService, 'someProp');
       expect(mergedClassPropMeta2).toBeInstanceOf(MergedClassPropMeta);
       expect(mergedClassPropMeta2).toMatchObject<Partial<MergedClassPropMeta>>({
         type: Function,
@@ -798,15 +798,15 @@ describe('Reflector', () => {
       @classTag('cached')
       class CachedService {}
 
-      const first = Reflector.collectMetadata(CachedService);
-      const second = Reflector.collectMetadata(CachedService);
+      const first = Reflector.collectMeta(CachedService);
+      const second = Reflector.collectMeta(CachedService);
 
       expect(first).toBeInstanceOf(ClassMetaIterator);
       expect(second).toBe(first);
     });
 
     it('returns undefined for values that are not classes', () => {
-      expect(Reflector.collectMetadata({} as any)).toBeUndefined();
+      expect(Reflector.collectMeta({} as any)).toBeUndefined();
     });
 
     it('creates constructor metadata with Class type when only parameter metadata exists', () => {
@@ -816,7 +816,7 @@ describe('Reflector', () => {
         constructor(@param('some') value: string) {}
       }
 
-      const metadata = Reflector.collectMetadata(SomeService)!;
+      const metadata = Reflector.collectMeta(SomeService)!;
 
       expect(metadata.constructor.type).toBe(Function);
       expect(metadata.constructor.decorators).toEqual([]);

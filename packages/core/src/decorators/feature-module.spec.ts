@@ -1,13 +1,13 @@
 import { Reflector } from '#di/reflector.js';
 import { featureModule } from './feature-module.js';
-import type { RootRawMetadata } from './root-module.js';
+import type { ModuleRawMetadata } from './module-raw-metadata.js';
 
 describe('Module decorator', () => {
   it('empty decorator', () => {
     @featureModule({})
     class Module1 {}
 
-    const metadata = Reflector.getDecorators(Module1)!;
+    const metadata = Reflector.getClassLevelMeta(Module1)!;
     expect(metadata.length).toBe(1);
     expect(metadata[0].decorator).toBe(featureModule);
     expect(metadata[0].declaredInDir).toContain('ditsmod/packages/core/dist/decorators');
@@ -17,9 +17,9 @@ describe('Module decorator', () => {
     @featureModule({ providersPerApp: [] })
     class Module1 {}
 
-    const metadata = Reflector.getDecorators(Module1)!;
+    const metadata = Reflector.getClassLevelMeta(Module1)!;
     expect(metadata.length).toBe(1);
-    expect(metadata[0].value).toEqual<RootRawMetadata>({
+    expect(metadata[0].value).toEqual<ModuleRawMetadata>({
       providersPerApp: [],
     });
   });
@@ -29,32 +29,29 @@ describe('Module decorator', () => {
     @featureModule()
     class Module1 {}
 
-    const metadata = Reflector.getDecorators(Module1)!;
+    const metadata = Reflector.getClassLevelMeta(Module1)!;
     expect(metadata.length).toBe(2);
   });
 
   it('decorator with all allowed properties', () => {
-    @featureModule({
+    const rootRawMeta: ModuleRawMetadata = {
       imports: [],
       providersPerApp: [],
       providersPerMod: [],
+      providersPerRou: [],
+      providersPerReq: [],
+      resolvedCollisionPerMod: [],
+      resolvedCollisionPerRou: [],
+      resolvedCollisionPerReq: [],
+      extensionsMeta: {},
       exports: [],
       extensions: [],
-      extensionsMeta: {},
-      resolvedCollisionPerMod: [],
-    })
+    };
+    @featureModule(rootRawMeta)
     class Module1 {}
 
-    const metadata = Reflector.getDecorators(Module1)!;
+    const metadata = Reflector.getClassLevelMeta(Module1)!;
     expect(metadata.length).toBe(1);
-    expect(metadata[0].value).toEqual<RootRawMetadata>({
-      imports: [],
-      providersPerApp: [],
-      providersPerMod: [],
-      extensionsMeta: {},
-      resolvedCollisionPerMod: [],
-      exports: [],
-      extensions: [],
-    } as RootRawMetadata);
+    expect(metadata[0].value).toEqual(rootRawMeta);
   });
 });

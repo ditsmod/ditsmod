@@ -382,7 +382,7 @@ export class ShallowModulesImporter {
         if (collision) {
           const providerImport = this[`importedProvidersPer${level}`].get(token)!;
           const hostModulePath = this.moduleManager.getBaseMeta(providerImport.modRefId)?.declaredInDir || '.';
-          const decorAndVal = Reflector.getDecorators(token, hasDeclaredInDir)?.at(0);
+          const decorAndVal = Reflector.getClassLevelMeta(token, hasDeclaredInDir)?.at(0);
           const collisionWithPath = decorAndVal?.declaredInDir || '.';
           if (hostModulePath !== '.' && collisionWithPath !== '.' && collisionWithPath.startsWith(hostModulePath)) {
             // Allow collisions in host modules.

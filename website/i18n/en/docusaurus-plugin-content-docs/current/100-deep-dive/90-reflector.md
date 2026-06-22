@@ -24,7 +24,7 @@ class Service1 {
   property1: string;
 }
 
-const metadata = Reflector.collectMetadata(Service1);
+const metadata = Reflector.collectMeta(Service1);
 console.log(metadata);
 ```
 
@@ -38,7 +38,7 @@ const classLevel = Reflector.makeClassDecorator((obj: any) => obj);
 @classLevel({ one: 1, two: 2 })
 class Service1 {}
 
-const metadata = Reflector.collectMetadata(Service1);
+const metadata = Reflector.collectMeta(Service1);
 console.log(metadata?.constructor.decorators[0].value); // Print { one: 1, two: 2 }
 ```
 
@@ -66,7 +66,7 @@ class Child extends Parent {
   }
 }
 
-const metadata = Reflector.collectMetadata(Child);
+const metadata = Reflector.collectMeta(Child);
 console.log(metadata?.constructor.paramChain);
 ```
 

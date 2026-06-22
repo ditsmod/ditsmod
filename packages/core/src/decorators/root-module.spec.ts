@@ -6,7 +6,7 @@ describe('RootModule decorator', () => {
     @rootModule({})
     class Module1 {}
 
-    const metadata = Reflector.getDecorators(Module1)!;
+    const metadata = Reflector.getClassLevelMeta(Module1)!;
     expect(metadata.length).toBe(1);
     expect(metadata[0].decorator).toBe(rootModule);
     expect(metadata[0].declaredInDir).toContain('ditsmod/packages/core/dist/decorators');
@@ -16,7 +16,7 @@ describe('RootModule decorator', () => {
     @rootModule({ providersPerApp: [] })
     class Module1 {}
 
-    const metadata = Reflector.getDecorators(Module1)!;
+    const metadata = Reflector.getClassLevelMeta(Module1)!;
     expect(metadata.length).toBe(1);
   });
 
@@ -25,28 +25,31 @@ describe('RootModule decorator', () => {
     @rootModule()
     class Module1 {}
 
-    const metadata = Reflector.getDecorators(Module1)!;
+    const metadata = Reflector.getClassLevelMeta(Module1)!;
     expect(metadata.length).toBe(2);
   });
 
   it('decorator with all allowed properties', () => {
-    @rootModule({
+    const rootRawMeta: RootRawMetadata = {
       imports: [],
       providersPerApp: [],
       providersPerMod: [],
+      providersPerRou: [],
+      providersPerReq: [],
+      resolvedCollisionPerApp: [],
+      resolvedCollisionPerMod: [],
+      resolvedCollisionPerRou: [],
+      resolvedCollisionPerReq: [],
+      extensionsMeta: {},
       exports: [],
       extensions: [],
-    })
+    };
+    @rootModule(rootRawMeta)
     class Module1 {}
 
-    const metadata = Reflector.getDecorators(Module1)!;
+    const metadata = Reflector.getClassLevelMeta(Module1)!;
     expect(metadata.length).toBe(1);
-    expect(metadata[0].value).toEqual<RootRawMetadata>({
-      providersPerApp: [],
-      providersPerMod: [],
-      imports: [],
-      exports: [],
-      extensions: [],
-    } as RootRawMetadata);
+    expect(metadata[0].value).toEqual(rootRawMeta);
+    expect(metadata[0].value).not.toBe(rootRawMeta);
   });
 });

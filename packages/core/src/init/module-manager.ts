@@ -69,7 +69,7 @@ export class ModuleManager {
       return this.getBaseMeta('root', true);
     }
     this.providersPerApp = [];
-    if (!Reflector.getDecorators(appModule, isRootModule)) {
+    if (!Reflector.getClassLevelMeta(appModule, isRootModule)) {
       throw new RootNotHaveDecorator(appModule.name);
     }
 

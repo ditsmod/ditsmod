@@ -92,7 +92,7 @@ export class Providers {
     }
 
     Classes.forEach((Cls, i) => {
-      const classMeta = Reflector.collectMetadata(Cls);
+      const classMeta = Reflector.collectMeta(Cls);
       if (!classMeta) {
         throw new ClassForUseFactoriesWithoutDecorators(i);
       }

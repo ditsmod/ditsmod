@@ -56,7 +56,7 @@ export class TrpcModuleNormalizer {
   }
 
   protected checkController(Controller: Class) {
-    if (!Reflector.getDecorators(Controller, isCtrlDecor)) {
+    if (!Reflector.getClassLevelMeta(Controller, isCtrlDecor)) {
       throw new ControllerDoesNotHaveDecorator(Controller.name);
     }
   }

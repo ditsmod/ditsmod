@@ -11,14 +11,14 @@ describe('type guards', () => {
   describe('isFeatureModule()', () => {
     it('class without decorator', () => {
       class Module1 {}
-      const metadata = Reflector.collectMetadata(Module1);
+      const metadata = Reflector.collectMeta(Module1);
       expect(isFeatureModule(metadata)).toBe(false);
     });
 
     it('DecoratorAndValue', () => {
       @featureModule()
       class Module1 {}
-      const metadata = Reflector.getDecorators(Module1)![0];
+      const metadata = Reflector.getClassLevelMeta(Module1)![0];
       expect(isFeatureModule(metadata)).toBe(true);
     });
 
@@ -42,7 +42,7 @@ describe('type guards', () => {
       }
 
       const baseMeta = new BaseMeta();
-      const metadata = Reflector.getDecorators(Module1)![0];
+      const metadata = Reflector.getClassLevelMeta(Module1)![0];
       baseMeta.rawMeta = metadata.value;
       expect(isFeatureModule(baseMeta)).toBe(true);
     });
@@ -88,13 +88,13 @@ describe('type guards', () => {
     it('class with decorator', () => {
       @rootModule({})
       class Module1 {}
-      const rawMeta = Reflector.getDecorators(Module1, isRootModule);
+      const rawMeta = Reflector.getClassLevelMeta(Module1, isRootModule);
       expect(rawMeta).toBeDefined();
     });
 
     it('class without decorator', () => {
       class Module1 {}
-      const metadata = Reflector.collectMetadata(Module1);
+      const metadata = Reflector.collectMeta(Module1);
       expect(isRootModule(metadata)).toBe(false);
     });
   });
