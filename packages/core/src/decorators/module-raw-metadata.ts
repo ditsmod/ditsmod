@@ -10,7 +10,7 @@ import type { Provider } from '#di/top/types-and-models.js';
 import type { ForwardRefFn } from '#di/forward-ref.js';
 
 /**
- * Raw metadata for {@link rootModule} and {@link featureModule} decorator.
+ * Raw metadata that is passed to the {@link rootModule} and {@link featureModule} decorators.
  */
 export class ModuleRawMetadata<T extends AnyObj = AnyObj> {
   /**
@@ -65,6 +65,30 @@ export class ModuleRawMetadata<T extends AnyObj = AnyObj> {
    */
   declare resolvedCollisionPerReq?: [any, ModRefId | ForwardRefFn<ModuleType>][];
 }
+
+export interface BaseModuleWithParams<M extends AnyObj = AnyObj> {
+  /**
+   * The module ID.
+   */
+  id?: string;
+  module: ModuleType<M> | ForwardRefFn<ModuleType<M>>;
+}
+/**
+ * Metadata with this type is created when the `parentMeta: BaseMeta` property is added to `BaseModuleWithParams`.
+ */
+export interface FeatureModuleParams<E extends AnyObj = AnyObj> extends Partial<ProvidersOnly> {
+  /**
+   * List of modules, `ModuleWithParams` or tokens of providers exported by this
+   * module.
+   */
+  exports?: any[];
+  /**
+   * This property allows you to pass any information to extensions.
+   *
+   * You must follow this rule: data for one extension - one key in `extensionsMeta` object.
+   */
+  extensionsMeta?: E;
+}
 /**
  * An object with this type is passed into the `imports` array of
  * the module with the `featureModule` or `rootModule` decorator.
@@ -81,38 +105,5 @@ export interface ModuleWithParams<M extends AnyObj = AnyObj> extends BaseModuleW
  */
 export interface ModuleWithInitParams<M extends AnyObj = AnyObj> extends ModuleWithParams<M> {
   initParams: InitParamsMap;
-}
-/**
- * Metadata with this type is created when the `parentMeta: BaseMeta` property is added to `BaseModuleWithParams`.
- */
-
-export interface BaseModuleWithParams<M extends AnyObj = AnyObj> {
-  /**
-   * The module ID.
-   */
-  id?: string;
-  module: ModuleType<M> | ForwardRefFn<ModuleType<M>>;
-}
-export interface FeatureModuleParams<E extends AnyObj = AnyObj> extends Partial<ProvidersOnly> {
-  /**
-   * List of modules, `ModuleWithParams` or tokens of providers exported by this
-   * module.
-   */
-  exports?: any[];
-  /**
-   * This property allows you to pass any information to extensions.
-   *
-   * You must follow this rule: data for one extension - one key in `extensionsMeta` object.
-   */
-  extensionsMeta?: E;
-}/**
- * Raw module metadata returned by reflector.
- */
-export class RootRawMetadata extends ModuleRawMetadata {
-  /**
-   * An array of pairs, each of which is in the first place the provider's token,
-   * and in the second - the module from which to import the provider with the specified token.
-   */
-  declare resolvedCollisionPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][];
 }
 

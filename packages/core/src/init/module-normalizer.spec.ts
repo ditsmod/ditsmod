@@ -1,16 +1,11 @@
 import { featureModule } from '#decorators/feature-module.js';
 import { BaseInitRawMeta, InitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { BaseInitMeta, getProxyForInitMeta, BaseMeta } from '#init/base-meta.js';
-import { rootModule } from '#decorators/root-module.js';
+import { rootModule, RootRawMetadata } from '#decorators/root-module.js';
 import { Reflector } from '#di/reflector.js';
 import { Extension } from '#extension/extension-types.js';
 import { AnyObj, ModRefId } from '#types/mix.js';
-import {
-  FeatureModuleParams,
-  ModuleWithInitParams,
-  ModuleWithParams,
-  RootRawMetadata,
-} from '#decorators/module-raw-metadata.js';
+import { FeatureModuleParams, ModuleWithInitParams, ModuleWithParams } from '#decorators/module-raw-metadata.js';
 import { InitDecorator } from '#decorators/init-hooks-and-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { ModuleNormalizer } from './module-normalizer.js';
@@ -328,7 +323,10 @@ describe('ModuleNormalizer', () => {
       return new InitHooks1(metadata);
     }
 
-    const initSome: InitDecorator<RootRawMetadata, InitParams, InitMeta> = Reflector.makeClassDecorator(getInitHooks, 'initSome');
+    const initSome: InitDecorator<RootRawMetadata, InitParams, InitMeta> = Reflector.makeClassDecorator(
+      getInitHooks,
+      'initSome',
+    );
 
     it('during import MWP, merge existing init params with new init params', () => {
       class Service1 {}

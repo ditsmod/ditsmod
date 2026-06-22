@@ -1,5 +1,4 @@
-import { rootModule } from './root-module.js';
-import { RootRawMetadata } from './module-raw-metadata.js';
+import { rootModule, type RootRawMetadata } from './root-module.js';
 import { Reflector } from '#di/reflector.js';
 
 describe('RootModule decorator', () => {

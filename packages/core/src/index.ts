@@ -22,7 +22,7 @@ export {
   AllInitHooks,
   BaseInitRawMeta,
 } from '#decorators/init-hooks-and-metadata.js';
-export { rootModule } from '#decorators/root-module.js';
+export { rootModule, RootRawMetadata } from '#decorators/root-module.js';
 export {
   ExtensionCounters,
   ExtensionClass,
@@ -65,13 +65,11 @@ export {
 } from '#types/mix.js';
 export {
   ModuleRawMetadata,
-  RootRawMetadata,
   ModuleWithParams,
   ModuleWithInitParams,
   BaseModuleWithParams,
   FeatureModuleParams,
 } from '#decorators/module-raw-metadata.js';
-export { RootModuleMetadata } from '#types/root-module-metadata.js';
 export { ProviderImport } from '#types/metadata-per-mod.js';
 export { mergeArrays } from '#utils/merge-arrays.js';
 export { getLastProviders } from '#utils/get-last-providers.js';

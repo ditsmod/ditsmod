@@ -1,13 +1,25 @@
+import type { ForwardRefFn } from '#di/forward-ref.js';
+import type { ModRefId, ModuleType } from '#types/mix.js';
 import { Reflector } from '#di/reflector.js';
-import type { RootModuleMetadata } from '#types/root-module-metadata.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { Providers } from '#utils/providers.js';
-import { RootRawMetadata } from './module-raw-metadata.js';
+import { ModuleRawMetadata } from './module-raw-metadata.js';
+
+/**
+ * Raw module metadata returned by reflector.
+ */
+export class RootRawMetadata extends ModuleRawMetadata {
+  /**
+   * An array of pairs, each of which is in the first place the provider's token,
+   * and in the second - the module from which to import the provider with the specified token.
+   */
+  declare resolvedCollisionPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][];
+}
 
 export const rootModule: RootModuleDecorator = Reflector.makeClassDecorator(transformModule, 'rootModule');
 
 export interface RootModuleDecorator {
-  (data?: RootModuleMetadata): any;
+  (data?: RootRawMetadata): any;
 }
 
 function transformModule(data?: RootRawMetadata): RootRawMetadata {

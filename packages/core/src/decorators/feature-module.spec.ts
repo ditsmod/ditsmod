@@ -1,6 +1,6 @@
 import { Reflector } from '#di/reflector.js';
 import { featureModule } from './feature-module.js';
-import { RootRawMetadata } from './module-raw-metadata.js';
+import type { RootRawMetadata } from './root-module.js';
 
 describe('Module decorator', () => {
   it('empty decorator', () => {

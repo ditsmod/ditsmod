@@ -2,7 +2,7 @@ import type { ExtensionConfigBase } from '#extension/extension-providers-and-con
 import type { ModuleManager } from './module-manager.js';
 import type { AnyObj, Level, ModRefId, ModuleType, PickProps } from '#types/mix.js';
 import type { AnyFn, Provider } from '#di/top/types-and-models.js';
-import type { RootRawMetadata, ModuleWithParams, ModuleRawMetadata } from '#decorators/module-raw-metadata.js';
+import type { ModuleWithParams, ModuleRawMetadata } from '#decorators/module-raw-metadata.js';
 import type { ForwardRefFn } from '#di/forward-ref.js';
 import type { Extension } from '#extension/extension-types.js';
 import type { AllInitHooks, BaseInitRawMeta, InitHooks } from '#decorators/init-hooks-and-metadata.js';
@@ -46,6 +46,7 @@ import {
   ForbiddenExportProvidersPerApp,
   ModuleShouldHaveValue,
 } from '#errors';
+import type { RootRawMetadata } from '#decorators/root-module.js';
 
 /**
  * Normalizes and validates module metadata.
