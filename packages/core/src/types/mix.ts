@@ -119,6 +119,7 @@ export type HttpMethod =
   | 'PROPPATCH'
   | 'PURGE'
   | 'PUT'
+  | 'QUERY'
   | 'REBIND'
   | 'REPORT'
   | 'SEARCH'
