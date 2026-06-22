@@ -6,7 +6,7 @@ sidebar_position: 3
 
 If you want to restrict access to certain routes, you can use guards. You can view a finished example of an application with guards in the [examples][1] folder or in [RealWorld example][2].
 
-Any guard is a [DI provider][3] passed to injectors at the request level [in injector-scope mode][4], or at other levels if the controller is in route-scoped mode. Each guard must be a class that implements the `CanActivate` interface:
+Any guard is a [DI provider][3] passed to injectors at the request level [in request-scoped mode][4], or at other levels if the controller is in route-scoped mode. Each guard must be a class that implements the `CanActivate` interface:
 
 ```ts
 interface CanActivate {

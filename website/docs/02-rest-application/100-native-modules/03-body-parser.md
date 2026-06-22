@@ -105,8 +105,8 @@ export class AppModule {}
   @controller()
   export class SomeController {
     @route('POST')
-    ok(@ctx(HTTP_BODY) body: Body, ctx: RequestContext) {
-      ctx.sendJson(body);
+    ok(@ctx(HTTP_BODY) body: Body) {
+      return body;
     }
   }
   ```
@@ -119,7 +119,7 @@ export class AppModule {}
   export class SomeController {
     @route('POST')
     ok(ctx: RequestContext) {
-      ctx.sendJson(ctx.body);
+      return ctx.body;
     }
   }
   ```
@@ -144,9 +144,9 @@ export class SomeController {
 
 ## Завантаження файлів {#file-uploads}
 
-В залежності від того, чи контролер працює [в режимі injector-scope, чи context-scope][3], спосіб отримання парсера, та сигнатури його методів трохи відрізняються:
+В залежності від того, чи контролер працює [в режимі request-scoped, чи route-scoped][3], спосіб отримання парсера, та сигнатури його методів трохи відрізняються:
 
-1. Якщо контролер працює в режимі injector-scope, через DI необхідно запитати `MulterParser`, після чого можете користуватись його методами:
+1. Якщо контролер працює в режимі request-scoped, через DI необхідно запитати `MulterParser`, після чого можете користуватись його методами:
 
   ```ts {9}
   import { createWriteStream } from 'node:fs';
@@ -158,9 +158,7 @@ export class SomeController {
     @route('POST', 'file-upload')
     async downloadFile(ctx: RequestContext, parse: MulterParser) {
       const parsedForm = await parse.array('fieldName', 5);
-      await this.saveFiles(parsedForm);
-      // ...
-      ctx.send('ok');
+      return this.saveFiles(parsedForm);
     }
 
     protected saveFiles(parsedForm: MulterParsedForm) {
@@ -174,7 +172,7 @@ export class SomeController {
         promises.push(promise);
       });
 
-      return Promise.all(promises);
+      return Promise.allSettled(promises);
     }
   }
   ```
@@ -192,9 +190,7 @@ export class SomeController {
     @route('POST', 'file-upload')
     async downloadFile(ctx: RequestContext) {
       const parsedForm = await this.parse.array(ctx, 'fieldName', 5);
-      await this.saveFiles(parsedForm);
-      // ...
-      ctx.rawRes.end('ok');
+      return this.saveFiles(parsedForm);
     }
 
     protected saveFiles(parsedForm: MulterParsedForm) {
@@ -208,7 +204,7 @@ export class SomeController {
         promises.push(promise);
       });
 
-      return Promise.all(promises);
+      return Promise.allSettled(promises);
     }
   }
   ```

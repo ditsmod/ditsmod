@@ -105,8 +105,8 @@ Depending on whether the controller works [in route-scoped or request-scoped mod
   @controller()
   export class SomeController {
     @route('POST')
-    ok(@ctx(HTTP_BODY) body: Body, ctx: RequestContext) {
-      ctx.sendJson(body);
+    ok(@ctx(HTTP_BODY) body: Body) {
+      return body;
     }
   }
   ```
@@ -119,7 +119,7 @@ Depending on whether the controller works [in route-scoped or request-scoped mod
   export class SomeController {
     @route('POST')
     ok(ctx: RequestContext) {
-      ctx.sendJson(ctx.body);
+      return ctx.body;
     }
   }
   ```
@@ -144,9 +144,9 @@ That is, this way you pass an empty array, instead of the default array `['POST'
 
 ## File Uploads {#file-uploads}
 
-Depending on whether the controller works [in injector-scope or context-scope mode][3], the method of obtaining the parser and the signatures of its methods differ slightly:
+Depending on whether the controller works [in request-scoped or route-scoped mode][3], the method of obtaining the parser and the signatures of its methods differ slightly:
 
-1. If the controller is running in injector-scope mode, `MulterParser` must be requested via DI, after which you can use its methods:
+1. If the controller is running in request-scoped mode, `MulterParser` must be requested via DI, after which you can use its methods:
 
   ```ts {9}
   import { createWriteStream } from 'node:fs';
@@ -158,9 +158,7 @@ Depending on whether the controller works [in injector-scope or context-scope mo
     @route('POST', 'file-upload')
     async downloadFile(ctx: RequestContext, parse: MulterParser) {
       const parsedForm = await parse.array('fieldName', 5);
-      await this.saveFiles(parsedForm);
-      // ...
-      ctx.send('ok');
+      return this.saveFiles(parsedForm);
     }
 
     protected saveFiles(parsedForm: MulterParsedForm) {
@@ -174,7 +172,7 @@ Depending on whether the controller works [in injector-scope or context-scope mo
         promises.push(promise);
       });
 
-      return Promise.all(promises);
+      return Promise.allSettled(promises);
     }
   }
   ```
@@ -192,9 +190,7 @@ Depending on whether the controller works [in injector-scope or context-scope mo
     @route('POST', 'file-upload')
     async downloadFile(ctx: RequestContext) {
       const parsedForm = await this.parse.array(ctx, 'fieldName', 5);
-      await this.saveFiles(parsedForm);
-      // ...
-      ctx.rawRes.end('ok');
+      return this.saveFiles(parsedForm);
     }
 
     protected saveFiles(parsedForm: MulterParsedForm) {
@@ -208,7 +204,7 @@ Depending on whether the controller works [in injector-scope or context-scope mo
         promises.push(promise);
       });
 
-      return Promise.all(promises);
+      return Promise.allSettled(promises);
     }
   }
   ```
