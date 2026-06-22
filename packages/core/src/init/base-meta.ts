@@ -3,7 +3,7 @@ import type { AnyFn, Class } from '#di/top/types-and-models.js';
 import type { Provider } from '#di/top/types-and-models.js';
 import type { ModuleWithParams } from '../decorators/module-raw-metadata.js';
 import type { ExtensionConfig} from '#extension/extension-providers-and-configs.js';
-import { type ExtensionConfigBase } from '#extension/extension-providers-and-configs.js';
+import type { ExtensionConfigBase } from '#extension/extension-providers-and-configs.js';
 import type { InitMetaMap } from '#decorators/init-hooks-and-metadata.js';
 import type { InitHooks } from '#decorators/init-hooks-and-metadata.js';
 import type { AllInitHooks } from '#decorators/init-hooks-and-metadata.js';

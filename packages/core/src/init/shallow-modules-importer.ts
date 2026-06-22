@@ -64,7 +64,7 @@ export class ShallowModulesImporter {
   /**
    * AppProviders.
    */
-  protected glProviders: AppProviders;
+  protected appProviders: AppProviders;
   protected shallowImportsMap = new Map<ModRefId, ShallowImports>();
   protected unfinishedScanModules = new Set<ModRefId>();
   protected unfinishedExportModules = new Set<ModRefId>();
@@ -112,7 +112,7 @@ export class ShallowModulesImporter {
   }): Map<ModRefId, ShallowImports> {
     const baseMeta = moduleManager.getBaseMeta(modRefId, true);
     this.moduleManager = moduleManager;
-    this.glProviders = appProviders;
+    this.appProviders = appProviders;
     this.moduleName = baseMeta.name;
     this.unfinishedScanModules = unfinishedScanModules;
     this.baseMeta = baseMeta;
@@ -139,26 +139,26 @@ export class ShallowModulesImporter {
       extensionGroupTokens = new Map([...this.importedExtensionGroupTokens]);
       aExtensionConfig = [...this.aImportedExtensionConfig];
     } else {
-      this.glProviders.mInitValue.forEach(({ initHooks }, decorator) => {
+      this.appProviders.mInitValue.forEach(({ initHooks }, decorator) => {
         if (initHooks && !baseMeta.allInitHooks.has(decorator)) {
           baseMeta.allInitHooks.set(decorator, initHooks);
         }
       });
-      perMod = new Map([...this.glProviders.importedProvidersPerMod, ...this.importedProvidersPerMod]);
-      perRou = new Map([...this.glProviders.importedProvidersPerRou, ...this.importedProvidersPerRou]);
-      perReq = new Map([...this.glProviders.importedProvidersPerReq, ...this.importedProvidersPerReq]);
-      multiPerMod = new Map([...this.glProviders.importedMultiProvidersPerMod, ...this.importedMultiProvidersPerMod]);
-      multiPerRou = new Map([...this.glProviders.importedMultiProvidersPerRou, ...this.importedMultiProvidersPerRou]);
-      multiPerReq = new Map([...this.glProviders.importedMultiProvidersPerReq, ...this.importedMultiProvidersPerReq]);
+      perMod = new Map([...this.appProviders.importedProvidersPerMod, ...this.importedProvidersPerMod]);
+      perRou = new Map([...this.appProviders.importedProvidersPerRou, ...this.importedProvidersPerRou]);
+      perReq = new Map([...this.appProviders.importedProvidersPerReq, ...this.importedProvidersPerReq]);
+      multiPerMod = new Map([...this.appProviders.importedMultiProvidersPerMod, ...this.importedMultiProvidersPerMod]);
+      multiPerRou = new Map([...this.appProviders.importedMultiProvidersPerRou, ...this.importedMultiProvidersPerRou]);
+      multiPerReq = new Map([...this.appProviders.importedMultiProvidersPerReq, ...this.importedMultiProvidersPerReq]);
       extensionProviders = new Map([
-        ...this.glProviders.importedExtensionProviders,
+        ...this.appProviders.importedExtensionProviders,
         ...this.importedExtensionProviders,
       ]);
       extensionGroupTokens = new Map([
-        ...this.glProviders.importedExtensionGroupTokens,
+        ...this.appProviders.importedExtensionGroupTokens,
         ...this.importedExtensionGroupTokens,
       ]);
-      aExtensionConfig = [...this.glProviders.aImportedExtensionConfig, ...this.aImportedExtensionConfig];
+      aExtensionConfig = [...this.appProviders.aImportedExtensionConfig, ...this.aImportedExtensionConfig];
     }
 
     const allExtensionConfigs = baseMeta.aExtensionConfig.concat(aExtensionConfig);
@@ -211,7 +211,7 @@ export class ShallowModulesImporter {
     const shallowModulesImporter = new ShallowModulesImporter();
     this.unfinishedScanModules.add(modRefId);
     const shallowImportsMap = shallowModulesImporter.importModulesShallow({
-      appProviders: this.glProviders,
+      appProviders: this.appProviders,
       modRefId,
       moduleManager: this.moduleManager,
       unfinishedScanModules: this.unfinishedScanModules,

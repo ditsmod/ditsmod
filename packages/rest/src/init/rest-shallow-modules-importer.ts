@@ -44,7 +44,7 @@ export class RestShallowModulesImporter {
   /**
    * AppProviders.
    */
-  protected glProviders: AppProviders;
+  protected appProviders: AppProviders;
   protected restGlProviders: RestAppProviders;
   protected shallowImportsMap = new Map<ModRefId, RestShallowImports>();
   protected unfinishedScanModules = new Set<ModRefId>();
@@ -61,7 +61,7 @@ export class RestShallowModulesImporter {
     baseMeta: BaseMeta;
   }): RestAppProviders {
     this.moduleManager = moduleManager;
-    this.glProviders = appProviders;
+    this.appProviders = appProviders;
     this.moduleName = baseMeta.name;
     this.baseMeta = baseMeta;
     this.meta = this.getInitMeta(baseMeta);
@@ -87,7 +87,7 @@ export class RestShallowModulesImporter {
     const baseMeta = this.moduleManager.getBaseMeta(modRefId, true);
     this.baseMeta = baseMeta;
     this.meta = this.getInitMeta(baseMeta);
-    this.glProviders = appProviders;
+    this.appProviders = appProviders;
     this.restGlProviders = appProviders.mInitValue.get(initRest) as RestAppProviders;
     this.prefixPerMod = prefixPerMod || '';
     this.moduleName = baseMeta.name;
@@ -140,7 +140,7 @@ export class RestShallowModulesImporter {
       this.unfinishedScanModules.add(modRefId);
       const shallowImportsBase = shallowModulesImporter.importModulesShallow({
         moduleManager: this.moduleManager,
-        appProviders: this.glProviders,
+        appProviders: this.appProviders,
         modRefId,
         unfinishedScanModules: this.unfinishedScanModules,
         prefixPerMod,
