@@ -4,6 +4,12 @@ import { objectKeys } from '#utils/object-keys.js';
 import { Providers } from '#utils/providers.js';
 import { RootRawMetadata } from './module-raw-metadata.js';
 
+export const rootModule: RootModuleDecorator = Reflector.makeClassDecorator(transformModule, 'rootModule');
+
+export interface RootModuleDecorator {
+  (data?: RootModuleMetadata): any;
+}
+
 function transformModule(data?: RootRawMetadata): RootRawMetadata {
   const rawMeta = Object.assign(new RootRawMetadata(), data) as RootRawMetadata;
   objectKeys(rawMeta).forEach((p) => {
@@ -15,15 +21,4 @@ function transformModule(data?: RootRawMetadata): RootRawMetadata {
   });
 
   return rawMeta;
-}
-
-export const rootModule: RootModuleDecorator = Reflector.makeClassDecorator(function transformRootModule(
-  data?: RootModuleMetadata,
-) {
-  const rawMeta = transformModule(data);
-  return rawMeta;
-}, 'rootModule');
-
-export interface RootModuleDecorator {
-  (data?: RootModuleMetadata): any;
 }
