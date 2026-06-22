@@ -68,8 +68,8 @@ export type OptionalProps<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K
 /**
  * It is just `{ [key: string | symbol]: any }` an object interface.
  */
-export interface AnyObj {
-  [key: string | symbol]: any;
+export interface AnyObj<T = any> {
+  [key: string | symbol]: T;
 }
 
 export interface ResolvedGuardPerMod {
