@@ -1,0 +1,22 @@
+{
+  "files": [],
+  "references": [
+    { "path": "authjs/tsconfig.build.json" },
+    { "path": "body-parser/tsconfig.build.json" },
+    { "path": "core/tsconfig.build.json" },
+    { "path": "cors/tsconfig.build.json" },
+    { "path": "i18n/tsconfig.build.json" },
+    { "path": "jwt/tsconfig.build.json" },
+    { "path": "openapi/tsconfig.build.json" },
+    { "path": "openapi-validation/tsconfig.build.json" },
+    { "path": "rest/tsconfig.build.json" },
+    { "path": "rest-diagnostics/tsconfig.build.json" },
+    { "path": "rest-testing/tsconfig.build.json" },
+    { "path": "session-cookie/tsconfig.build.json" },
+    { "path": "sqb/tsconfig.build.json" },
+    { "path": "testing/tsconfig.build.json" },
+    { "path": "trpc/tsconfig.build.json" },
+    { "path": "graphql/tsconfig.build.json" },
+    { "path": "versions/tsconfig.build.json" },
+  ]
+}
