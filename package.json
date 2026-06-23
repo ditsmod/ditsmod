@@ -19,7 +19,7 @@
     "test-examples": "tsgo -b examples/tsconfig.e2e.json && yarn esm-jest -c examples/jest.config.ts",
     "test-all": "yarn test && yarn test-authjs && yarn test-examples && yarn build-vscode",
     "pub": "lerna publish from-package --pre-dist-tag next",
-    "build": "tsgo -b packages",
+    "build": "tsgo -b packages/tsconfig.build.json",
     "build-openapi-ui": "yarn --cwd packages/openapi build-ui",
     "build-test": "tsgo -b packages/tsconfig.test.json",
     "build-authjs-test": "tsgo -b packages/authjs/tsconfig.e2e.json",
