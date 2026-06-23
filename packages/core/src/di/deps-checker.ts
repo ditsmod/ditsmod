@@ -4,8 +4,8 @@ import { Injector } from './injector.js';
 import { type DualKey, KeyRegistry } from './key-registry.js';
 import { PathTracer } from './path-tracer.js';
 import type { Visibility } from './top/types-and-models.js';
-import type { Dependency } from './top/resolved-provider.js';
-import { ID, type ResolvedProvider } from './top/resolved-provider.js';
+import type { Dependency, ResolvedProvider } from './top/resolved-provider.js';
+import { ID } from './top/resolved-provider.js';
 
 /**
  * Allow check dependencies for given provider.

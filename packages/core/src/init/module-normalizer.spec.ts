@@ -1,12 +1,11 @@
 import { featureModule } from '#decorators/feature-module.js';
-import { BaseInitRawMeta, InitHooks } from '#decorators/init-hooks-and-metadata.js';
+import { BaseInitRawMeta, InitHooks, InitDecorator } from '#decorators/init-hooks-and-metadata.js';
 import { BaseInitMeta, getProxyForInitMeta, BaseMeta } from '#init/base-meta.js';
 import { rootModule, RootRawMetadata } from '#decorators/root-module.js';
 import { Reflector } from '#di/reflector.js';
 import { Extension } from '#extension/extension-types.js';
 import { AnyObj, ModRefId } from '#types/mix.js';
 import { FeatureModuleParams, ModuleWithInitParams, ModuleWithParams } from '#decorators/module-raw-metadata.js';
-import { InitDecorator } from '#decorators/init-hooks-and-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { ModuleNormalizer } from './module-normalizer.js';
 import { Providers } from '#utils/providers.js';

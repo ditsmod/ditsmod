@@ -2,8 +2,7 @@ import { jest } from '@jest/globals';
 
 import { KeyRegistry } from './key-registry.js';
 import { Class, Provider } from './top/types-and-models.js';
-import { Dependency } from './top/resolved-provider.js';
-import { getNewRegistry, ResolvedProvider } from './top/resolved-provider.js';
+import { Dependency, getNewRegistry, ResolvedProvider } from './top/resolved-provider.js';
 import { fromSelf, inject, injectable, factoryMethod, optional, skipSelf, input } from './decorators.js';
 import { InjectionToken } from './top/injection-token.js';
 import { Injector } from './injector.js';

@@ -9,11 +9,9 @@ import type {
   Class,
   AbstractClass,
 } from './top/types-and-models.js';
-import { MergedClassPropMeta } from './top/types-and-models.js';
-import { ClassPropMeta } from './top/types-and-models.js';
+import { MergedClassPropMeta, ClassPropMeta, UnknownType } from './top/types-and-models.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ClassMetaIterator } from './class-meta-iterator.js';
-import { UnknownType } from './top/types-and-models.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
 import { isType, newArray } from './utils.js';
 import {

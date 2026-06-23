@@ -81,7 +81,7 @@ export { getProviderName } from '#utils/get-provider-name.js';
 export { ExtensionConfig, isConfigWithOverrideExtension } from '#extension/extension-providers-and-configs.js';
 export { getModule } from '#utils/get-module.js';
 export { getStatusText, isSuccess, Status, STATUS_CODE_INFO } from '#utils/http-status-codes.js';
-export { NormalizedProvider, normalizeProviders } from '#utils/ng-utils.js';
+export { normalizeProviders } from '#utils/ng-utils.js';
 export { pickProperties } from '#utils/pick-properties.js';
 export { Providers } from '#utils/providers.js';
 export { getDebugClassName, clearDebugClassNames } from '#utils/get-debug-class-name.js';
