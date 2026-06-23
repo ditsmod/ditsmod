@@ -3,7 +3,17 @@ import type { AnyFn, Class, FunctionFactoryProvider, Provider, UseFactoryTuple }
 import type { NormalizedProvider } from './ng-utils.js';
 import { ClassForUseFactoriesWithoutDecorators } from '#error/core-errors.js';
 import { Reflector } from '#di/reflector.js';
+import type { InjectionToken } from '#di/top/injection-token.js';
+import type { InjectionSymbol } from '#di/top/get-symbol.js';
 
+type ProviderToken<T> = 
+  | InjectionToken<T> 
+  | Class<T> 
+  | InjectionSymbol<T>
+  | string 
+  | symbol 
+  | number 
+  | NonNullable<unknown>;
 /**
  * This class has utilites to adding providers to DI in more type safe way.
  * 
@@ -32,7 +42,7 @@ export class Providers {
     return this.self;
   }
 
-  useValue<T>(token: NonNullable<unknown>, useValue: T, multi?: boolean) {
+  useValue<T>(token: ProviderToken<T>, useValue: T, multi?: boolean) {
     if (this.true) {
       this.pushProvider({ token, useValue }, multi);
     }
@@ -40,7 +50,7 @@ export class Providers {
     return this.self;
   }
 
-  useClass<A extends Class, B extends A>(token: A, useClass: B, multi?: boolean) {
+  useClass<T>(token: ProviderToken<T>, useClass: Class<T>, multi?: boolean) {
     if (this.true) {
       this.pushProvider({ token, useClass }, multi);
     }
@@ -81,7 +91,7 @@ export class Providers {
   }
 
   /**
-   * Each class passed to this method must have at least one method-level decorator.
+   * Each class passed to this method must have at least one method-* or parameter-level decorator.
    */
   useFactories(...Classes: Class<Record<string | symbol, any>>[]) {
     if (!this.true) {
