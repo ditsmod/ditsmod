@@ -1,4 +1,4 @@
-import { rootModule, Providers } from '@ditsmod/core';
+import { rootModule, Providers, LoggerConfig } from '@ditsmod/core';
 import { controller, route, initRest } from '@ditsmod/rest';
 
 @controller()
@@ -19,7 +19,7 @@ export class RouteScopedController {
 
 @initRest({
   controllers: [RequestScopedController, RouteScopedController],
-  providersPerApp: new Providers().useLogConfig({ level: 'info' }),
+  providersPerApp: new Providers().useValue(LoggerConfig, { level: 'info' }),
 })
 @rootModule()
 export class AppModule {}

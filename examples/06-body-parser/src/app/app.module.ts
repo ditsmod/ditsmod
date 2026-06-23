@@ -1,4 +1,4 @@
-import { Providers } from '@ditsmod/core';
+import { LoggerConfig, Providers } from '@ditsmod/core';
 import { restRootModule } from '@ditsmod/rest';
 import { BodyParserModule } from '@ditsmod/body-parser';
 
@@ -12,7 +12,7 @@ const moduleWithBodyParserConfig = BodyParserModule.withParams({
 @restRootModule({
   appends: [SomeModule],
   imports: [moduleWithBodyParserConfig],
-  providersPerApp: new Providers().useLogConfig({ level: 'info' }),
+  providersPerApp: new Providers().useValue(LoggerConfig, { level: 'info' }),
   exports: [moduleWithBodyParserConfig],
 })
 export class AppModule {}

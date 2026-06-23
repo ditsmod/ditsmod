@@ -1,4 +1,4 @@
-import { Providers } from '@ditsmod/core';
+import { LoggerConfig, Providers } from '@ditsmod/core';
 import { restRootModule } from '@ditsmod/rest';
 
 import { HelloWorldController } from './hello-world.controller.js';
@@ -7,7 +7,7 @@ import { OtherService } from './other.service.js';
 import { Controller1 } from './bad.controllers.js';
 
 @restRootModule({
-  providersPerApp: new Providers().useLogConfig({ level: 'info' }),
+  providersPerApp: new Providers().useValue(LoggerConfig, { level: 'info' }),
   controllers: [HelloWorldController, Controller1],
   providersPerReq: [MyService, OtherService],
 })

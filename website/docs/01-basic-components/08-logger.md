@@ -19,11 +19,11 @@ export class AppModule {}
 Але кращу підтримку типів має хелпер [Providers][2]:
 
 ```ts {5}
-import { rootModule, Providers } from '@ditsmod/core';
+import { rootModule, Providers, LoggerConfig } from '@ditsmod/core';
 // ...
 @rootModule({
   // ...
-  providersPerApp: new Providers().useLogConfig({ level: 'info' }),
+  providersPerApp: new Providers().useValue(LoggerConfig, { level: 'info' }),
 })
 export class AppModule {}
 ```

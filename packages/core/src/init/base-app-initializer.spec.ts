@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 
-import { InputLogLevel } from '#logger/logger.js';
+import { InputLogLevel, LoggerConfig } from '#logger/logger.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { featureModule } from '#decorators/feature-module.js';
@@ -318,8 +318,9 @@ describe('BaseAppInitializer', () => {
       @rootModule({
         providersPerApp: new Providers()
           // .passThrough(Router)
-          .useLogConfig({ level: 'trace' })
-          .useSystemLogMediator(LogMediatorMock),
+          .useValue(LoggerConfig, { level: 'trace' })
+          .passThrough(LogMediatorMock)
+          .useToken(SystemLogMediator, LogMediatorMock),
       })
       class AppModule {}
 
