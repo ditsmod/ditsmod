@@ -1,6 +1,3 @@
-import { Logger, LoggerConfig } from '#logger/logger.js';
-import type { LogMediator } from '#logger/log-mediator.js';
-import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import type { UnionToIntersection } from '#types/mix.js';
 import type { AnyFn, Class, FunctionFactoryProvider, Provider, UseFactoryTuple } from '#di/top/types-and-models.js';
 import type { NormalizedProvider } from './ng-utils.js';
@@ -110,36 +107,6 @@ export class Providers {
         throw new ClassForUseFactoriesWithoutDecorators(i);
       }
     });
-
-    return this.self;
-  }
-
-  useLogger(useLogger: Partial<Logger>, useConfig?: LoggerConfig) {
-    if (this.true) {
-      this.providers.push({ token: Logger, useValue: useLogger });
-      if (useConfig) {
-        this.providers.push({ token: LoggerConfig, useValue: useConfig });
-      }
-    }
-
-    return this.self;
-  }
-
-  useLogConfig(useConfig: LoggerConfig) {
-    if (this.true) {
-      this.providers.push({ token: LoggerConfig, useValue: useConfig });
-    }
-
-    return this.self;
-  }
-
-  useSystemLogMediator<T extends Class<LogMediator>>(CustomLogMediator: T) {
-    if (this.true) {
-      this.providers.push(
-        { token: CustomLogMediator, useClass: CustomLogMediator },
-        { token: SystemLogMediator, useToken: CustomLogMediator },
-      );
-    }
 
     return this.self;
   }
