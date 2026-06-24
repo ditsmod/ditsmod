@@ -1,9 +1,8 @@
-import type { ForwardRefFn} from '#di/forward-ref.js';
-import { resolveForwardRef } from '#di/forward-ref.js';
+import { resolveForwardRef, type ForwardRefFn } from '#di/forward-ref.js';
 import type { ModRefId, ModuleType } from '#types/mix.js';
 import { isModuleWithParams } from '#decorators/type-guards.js';
 
-const debugClassNames = new Map<ModRefId, string>();
+const debugClassNames = new WeakMap<ModRefId, string>();
 const debugClassNameCounters = new Map<string, number>();
 
 /**
@@ -26,9 +25,7 @@ export function getDebugClassName(modRefId: string | ModRefId | ForwardRefFn<Mod
   }
   modRefId = resolveForwardRef(modRefId);
   const debugClassName = debugClassNames.get(modRefId);
-  if (debugClassName) {
-    return debugClassName;
-  }
+  if (debugClassName) return debugClassName;
 
   let className: string;
   if (isModuleWithParams(modRefId)) {
@@ -53,6 +50,5 @@ export function getDebugClassName(modRefId: string | ModRefId | ForwardRefFn<Mod
 }
 
 export function clearDebugClassNames() {
-  debugClassNames.clear();
   debugClassNameCounters.clear();
 }
