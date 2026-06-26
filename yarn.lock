@@ -3141,14 +3141,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ts-stack/cycle-detector@npm:^1.0.3":
-  version: 1.0.3
-  resolution: "@ts-stack/cycle-detector@npm:1.0.3"
+"@ts-stack/cycle-detector@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@ts-stack/cycle-detector@npm:1.1.1"
   peerDependencies:
     typescript: ">=5.0.0"
   bin:
     cycle-detector: dist/index.js
-  checksum: 10c0/dbeea48f4ff04d93878b1546bc15952f3da9f1637167d85e1d10d6fb98ed81961d9e8b54722c96f0b5e898cf7f2c837912ecab9a87c7d0aa6a6325963ec34446
+  checksum: 10c0/94735011e3246eaae5ec15a0cd1b8949232e39e46908b73d3fb07ebb4cc04c4b271311978f9032a72c16a2ecbd0049fc9251fca88c044b12abeaa176baf3946e
   languageName: node
   linkType: hard
 
@@ -6184,7 +6184,7 @@ __metadata:
   resolution: "ditsmod@workspace:."
   dependencies:
     "@eslint/js": "npm:^10.0.1"
-    "@ts-stack/cycle-detector": "npm:^1.0.3"
+    "@ts-stack/cycle-detector": "npm:^1.1.1"
     "@types/jest": "npm:^30.0.0"
     "@types/node": "npm:^25.6.2"
     "@types/supertest": "npm:^7.2.0"
