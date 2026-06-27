@@ -131,19 +131,21 @@ export class ModuleNormalizer {
     rawMeta: BaseInitRawMeta & PickProps<RootRawMetadata, 'resolvedCollisionPerApp'>,
   ) {
     (['App', 'Mod', 'Rou', 'Req'] as const).forEach((level) => {
-      if (rawMeta[`providersPer${level}`]) {
-        const providersPerLevel = this.resolveForwardRef(rawMeta[`providersPer${level}`]);
-        this.baseMeta[`providersPer${level}`].push(...providersPerLevel);
+      const providersKey = `providersPer${level}` as const;
+      if (rawMeta[providersKey]) {
+        const providersPerLevel = this.resolveAllForwardRefs(rawMeta[providersKey]);
+        this.baseMeta[providersKey].push(...providersPerLevel);
       }
 
-      if (rawMeta[`resolvedCollisionPer${level}`]) {
-        rawMeta[`resolvedCollisionPer${level}`]!.forEach(([token, module]) => {
+      const resolvedCollisionKey = `resolvedCollisionPer${level}` as const;
+      if (rawMeta[resolvedCollisionKey]) {
+        rawMeta[resolvedCollisionKey]!.forEach(([token, module]) => {
           token = resolveForwardRef(token);
           module = resolveForwardRef(module);
           if (isModuleWithParams(module)) {
             module.module = resolveForwardRef(module.module);
           }
-          this.baseMeta[`resolvedCollisionPer${level}`].push([token, module]);
+          this.baseMeta[resolvedCollisionKey].push([token, module]);
         });
       }
     });
@@ -157,7 +159,7 @@ export class ModuleNormalizer {
       this.baseMeta.providersPerMod.concat(this.baseMeta.providersPerRou, this.baseMeta.providersPerReq),
     );
 
-    this.resolveForwardRef(rawMeta.exports).forEach((exp, i) => {
+    this.resolveAllForwardRefs(rawMeta.exports).forEach((exp, i) => {
       if (exp === undefined) {
         throw new UndefinedSymbol(action, this.baseMeta.name, i);
       }
@@ -216,7 +218,7 @@ export class ModuleNormalizer {
     }
     (['providersPerApp', 'providersPerMod', 'providersPerRou', 'providersPerReq'] as const).forEach((prop) => {
       if (modWitParams[prop] instanceof Providers || (Array.isArray(modWitParams[prop]) && modWitParams[prop].length)) {
-        this.baseMeta[prop].push(...this.resolveForwardRef(modWitParams[prop]));
+        this.baseMeta[prop].push(...this.resolveAllForwardRefs(modWitParams[prop]));
       }
     });
     this.normalizeExports(modWitParams, 'Exports with params');
@@ -226,7 +228,7 @@ export class ModuleNormalizer {
   }
 
   protected normalizeImports(rawMeta: RootRawMetadata) {
-    this.resolveForwardRef(rawMeta.imports).forEach((imp, i) => {
+    this.resolveAllForwardRefs(rawMeta.imports).forEach((imp, i) => {
       if (imp === undefined) {
         throw new UndefinedSymbol('Imports', this.baseMeta.name, i);
       }
@@ -389,23 +391,24 @@ export class AppModule {}
     });
   }
 
-  // prettier-ignore
-  protected resolveForwardRef<T extends ModRefId | Provider | ForwardRefFn | { mwp: ModuleWithParams }>(arr = [] as T[] | Providers) {
+  protected resolveAllForwardRefs<T extends ModRefId | Provider | ForwardRefFn | { mwp: ModuleWithParams }>(
+    arr: T[] | Providers = []
+  ): Exclude<T, ForwardRefFn>[] {
     return [...arr].map((item) => {
-      item = resolveForwardRef(item);
-      if (isParamsWithMwp(item)) {
-        item.mwp.module = resolveForwardRef(item.mwp.module);
-      } else if (isNormalizedProvider(item)) {
-        item.token = resolveForwardRef(item.token);
-        if (isClassProvider(item)) {
-          item.useClass = resolveForwardRef(item.useClass);
-        } else if (isTokenProvider(item)) {
-          item.useToken = resolveForwardRef(item.useToken);
+      const resolved = resolveForwardRef(item);
+      if (isParamsWithMwp(resolved)) {
+        resolved.mwp.module = resolveForwardRef(resolved.mwp.module);
+      } else if (isNormalizedProvider(resolved)) {
+        resolved.token = resolveForwardRef(resolved.token);
+        if (isClassProvider(resolved)) {
+          resolved.useClass = resolveForwardRef(resolved.useClass);
+        } else if (isTokenProvider(resolved)) {
+          resolved.useToken = resolveForwardRef(resolved.useToken);
         }
-      } else if (isModuleWithParams(item)) {
-        item.module = resolveForwardRef(item.module);
+      } else if (isModuleWithParams(resolved)) {
+        resolved.module = resolveForwardRef(resolved.module);
       }
-      return item;
+      return resolved;
     }) as Exclude<T, ForwardRefFn>[];
   }
 
@@ -419,7 +422,7 @@ export class AppModule {}
 
   protected fetchInitImports(decorator: AnyFn, initRawMeta: BaseInitRawMeta) {
     if (initRawMeta.imports) {
-      this.resolveForwardRef(initRawMeta.imports).forEach((imp) => {
+      this.resolveAllForwardRefs(initRawMeta.imports).forEach((imp) => {
         if (isModuleWithParams(imp)) {
           const params = { ...imp };
           this.mergeInitParams(decorator, params, imp);
@@ -473,7 +476,7 @@ export class AppModule {}
 
   protected fetchInitExports(initRawMeta: BaseInitRawMeta) {
     if (initRawMeta.exports) {
-      this.resolveForwardRef(initRawMeta.exports).forEach((exp) => {
+      this.resolveAllForwardRefs(initRawMeta.exports).forEach((exp) => {
         if (isModuleWithParams(exp)) {
           if (!this.baseMeta.exportsWithParams.includes(exp)) {
             this.baseMeta.exportsWithParams.push(exp);
