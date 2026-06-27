@@ -5,7 +5,7 @@ import { rootModule, RootRawMetadata } from '#decorators/root-module.js';
 import { Reflector } from '#di/reflector.js';
 import { Extension } from '#extension/extension-types.js';
 import { AnyObj, ModRefId } from '#types/mix.js';
-import { FeatureModuleParams, ModuleWithInitParams, ModuleWithParams } from '#decorators/module-raw-metadata.js';
+import { FeatureModuleParams, ModuleRawMetadata, ModuleWithInitParams, ModuleWithParams } from '#decorators/module-raw-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { ModuleNormalizer } from './module-normalizer.js';
 import { Providers } from '#utils/providers.js';
@@ -26,6 +26,7 @@ import type { MultiProvider } from '#di/utils.js';
 import { forwardRef } from '#di/forward-ref.js';
 import { KeyRegistry } from '#di/key-registry.js';
 import { isModuleWithParams } from '#decorators/type-guards.js';
+import { DecoratorAndValue } from '#di/top/decorator-and-value.js';
 
 describe('ModuleNormalizer', () => {
   class MockModuleNormalizer extends ModuleNormalizer {
@@ -769,4 +770,71 @@ describe('ModuleNormalizer', () => {
       expect(baseMeta.initMeta.get(initSome)).toEqual({ path: 'prefix', modRefId: moduleWithParams });
     });
   });
+
+  describe('checkAndMarkExternalModule()', () => {
+    class ExternalModuleNormalizer extends ModuleNormalizer {
+      customMeta = new Map<any, DecoratorAndValue[]>();
+
+      override normalize(modRefId: any, allInitHooks = new Map()): BaseMeta {
+        return super.normalize(modRefId, allInitHooks);
+      }
+
+      protected override getDecoratorMeta(modRefId: any) {
+        return this.customMeta.get(modRefId);
+      }
+    }
+
+    it('should mark external modules correctly based on declaredInDir and rootDeclaredInDir', () => {
+      const normalizer = new ExternalModuleNormalizer();
+      class AppModule {}
+      class ExternalModule {}
+      class InternalModule {}
+
+      const dummyDecorator = () => {};
+
+      // Set root module
+      const rootMetaVal = new RootRawMetadata();
+      const rootDec = new DecoratorAndValue(dummyDecorator, rootMetaVal, undefined, '/user-project/src');
+      normalizer.customMeta.set(AppModule, [rootDec]);
+
+      // External module outside /user-project/src
+      const extMetaVal = Object.assign(new ModuleRawMetadata(), { providersPerApp: [{ token: 't', useValue: 1 }] });
+      const extDec = new DecoratorAndValue(dummyDecorator, extMetaVal, undefined, '/node_modules/external-mod');
+      normalizer.customMeta.set(ExternalModule, [extDec]);
+
+      // Internal module inside /user-project/src
+      const intMetaVal = Object.assign(new ModuleRawMetadata(), { providersPerApp: [{ token: 't', useValue: 1 }] });
+      const intDec = new DecoratorAndValue(dummyDecorator, intMetaVal, undefined, '/user-project/src/features/internal-mod');
+      normalizer.customMeta.set(InternalModule, [intDec]);
+
+      const rootMeta = normalizer.normalize(AppModule);
+      expect(rootMeta.isExternal).toBeUndefined();
+
+      const extMeta = normalizer.normalize(ExternalModule);
+      expect(extMeta.isExternal).toBe(true);
+
+      const intMeta = normalizer.normalize(InternalModule);
+      expect(intMeta.isExternal).toBe(false);
+    });
+
+    it('should mark ditsmod package module as external if root is not in ditsmod/packages', () => {
+      const normalizer = new ExternalModuleNormalizer();
+      class AppModule {}
+      class DitsmodModule {}
+
+      const dummyDecorator = () => {};
+
+      const rootDec = new DecoratorAndValue(dummyDecorator, new RootRawMetadata(), undefined, '/user-project/src');
+      normalizer.customMeta.set(AppModule, [rootDec]);
+
+      const ditsmodMetaVal = Object.assign(new ModuleRawMetadata(), { providersPerApp: [{ token: 't', useValue: 1 }] });
+      const ditsmodDec = new DecoratorAndValue(dummyDecorator, ditsmodMetaVal, undefined, '/user-project/node_modules/ditsmod/packages/core');
+      normalizer.customMeta.set(DitsmodModule, [ditsmodDec]);
+
+      normalizer.normalize(AppModule);
+      const ditsmodMeta = normalizer.normalize(DitsmodModule);
+      expect(ditsmodMeta.isExternal).toBe(true);
+    });
+  });
 });
+
