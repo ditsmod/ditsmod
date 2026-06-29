@@ -29,7 +29,7 @@ export function getDebugClassName(modRefId: string | ModRefId | ForwardRefFn<Mod
 
   let className: string;
   if (isModuleWithParams(modRefId)) {
-    className = modRefId.id || `${modRefId.module.name}-WithParams`;
+    className = modRefId.id || `${resolveForwardRef(modRefId.module).name}-WithParams`;
   } else {
     className = modRefId.name;
   }
