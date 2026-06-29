@@ -27,6 +27,7 @@ import { forwardRef } from '#di/forward-ref.js';
 import { KeyRegistry } from '#di/key-registry.js';
 import { isModuleWithParams } from '#decorators/type-guards.js';
 import { DecoratorAndValue } from '#di/top/decorator-and-value.js';
+import { getModule } from '#utils/get-module.js';
 
 describe('ModuleNormalizer', () => {
   class MockModuleNormalizer extends ModuleNormalizer {
@@ -236,6 +237,36 @@ describe('ModuleNormalizer', () => {
     expect(baseMeta.exportedProvidersPerMod).toEqual([Service2]);
     expect(baseMeta.resolvedCollisionPerMod).toEqual([[Service2, Module1]]);
     expect(baseMeta.exportedMultiProvidersPerMod).toEqual([{ token: Service4, useToken: Service4, multi: true }]);
+  });
+
+  it('resolves forwardRef() in module with params providers', () => {
+    class Service1 {}
+    class Service2 {}
+    class Service3 {}
+
+    @featureModule({
+      providersPerMod: [Service1],
+      exports: [Service1],
+    })
+    class Module1 {}
+
+    const moduleWithParams: ModuleWithParams = {
+      module: forwardRef(() => Module1),
+      providersPerMod: [
+        forwardRef(() => Service2),
+        { token: forwardRef(() => Service3), useClass: forwardRef(() => Service3) },
+      ],
+      exports: [forwardRef(() => Service2), forwardRef(() => Service3)],
+    };
+
+    const baseMeta = mock.normalize(moduleWithParams);
+    expect(baseMeta.name).toBe('Module1-WithParams');
+    expect(baseMeta.providersPerMod).toEqual([
+      Service1,
+      Service2,
+      { token: Service3, useClass: Service3 },
+    ]);
+    expect(baseMeta.exportedProvidersPerMod).toEqual([Service1, Service2, { token: Service3, useClass: Service3 }]);
   });
 
   it('module exports a normalized provider', () => {
@@ -592,6 +623,24 @@ describe('ModuleNormalizer', () => {
   });
 
   describe('extensions', () => {
+    it('prefers module with params extensionsMeta over static extensionsMeta', () => {
+      class Service1 {}
+
+      @featureModule({
+        extensionsMeta: { one: 1, shared: 'static' },
+        providersPerMod: [Service1],
+        exports: [Service1],
+      })
+      class Module1 {}
+
+      const baseMeta = mock.normalize({
+        module: Module1,
+        extensionsMeta: { two: 2, shared: 'params' },
+      });
+
+      expect(baseMeta.extensionsMeta).toEqual({ one: 1, shared: 'params', two: 2 });
+    });
+
     it('accepts extension with stage2() only', () => {
       @injectable()
       class Extension1 implements Extension {
@@ -837,4 +886,3 @@ describe('ModuleNormalizer', () => {
     });
   });
 });
-
