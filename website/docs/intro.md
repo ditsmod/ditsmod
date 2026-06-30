@@ -97,6 +97,29 @@ cd my-app
 npm i
 ```
 
+### Додайте `AGENTS.md` та `SKILL.md` для ШІ-агентів {#add-agent-skills}
+
+Файл [AGENTS.md][3] призначений для ШІ-агентів, його треба встановлювати в кореневу директорію репозиторію. Цей файл буде братись до уваги ШІ-агентом кожен раз, коли ви звертаєтесь до агента. Щоб скопіювати самий свіжий `AGENTS.md`, запустіть наступну команду:
+
+```bash
+cd my-app # Перехід до стартового репозиторію
+npm run setup:agents
+```
+
+Додатково можна встановити ще й [скіли для ШІ-агентів][5], щоб вони краще розуміли особливості Ditsmod-застосунків:
+
+```bash
+npx skills add ditsmod/agent-skills
+```
+
+Ця команда дасть на вибір усі доступні скіли. Якщо ж ви знаєте який саме скіл вам потрібно, його можна встановити так:
+
+```bash
+npx skills add ditsmod/agent-skills --skill ditsmod-module-composition
+```
+
+Скіли ШІ-агентами зчитуються лише у разі потреби, коли ви запитуєте щось релевантне у них.
+
 ## Запуск в режимі розробки {#start-in-development-mode}
 
 Стартувати застосунок в режимі розробки можна наступною командою:
@@ -193,7 +216,9 @@ node dist/main.js
 
 [1]: #installation
 [2]: https://github.com/ditsmod/rest-starter
+[3]: https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md
 [4]: https://github.com/ditsmod/ditsmod/tree/main/examples
+[5]: https://agentskills.io/home
 [9]: https://github.com/angular/angular
 [10]: https://jestjs.io/en/
 [12]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) "Singleton"

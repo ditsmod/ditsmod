@@ -97,6 +97,29 @@ cd my-app
 npm i
 ```
 
+### Add `AGENTS.md` and `SKILL.md` for AI agents {#add-agent-skills}
+
+The file [AGENTS.md][3] is intended for AI agents and should be placed in the root directory of the repository. This file will be taken into account by the AI agent every time you interact with the agent. To copy the latest version of `AGENTS.md`, run the following command:
+
+```bash
+cd my-app # Go to starter repository
+npm run setup:agents
+```
+
+Additionally, you can install [AI agent skills][5] to help them better understand the specifics of Ditsmod applications:
+
+```bash
+npx skills add ditsmod/agent-skills
+```
+
+This command will let you choose from all available skills. If you already know which skill you need, you can install it like this:
+
+```bash
+npx skills add ditsmod/agent-skills --skill ditsmod-module-composition
+```
+
+AI agent skills are only loaded when needed, when you ask something relevant to them.
+
 ## Start in Development Mode {#start-in-development-mode}
 
 You can start the application in development mode with the following command:
@@ -193,9 +216,9 @@ Looking at the file `src/main.ts`, you can see that an instance of the class `Re
 
 [1]: #installation
 [2]: https://github.com/ditsmod/rest-starter
+[3]: https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md
 [4]: https://github.com/ditsmod/ditsmod/tree/main/examples
-[8]: https://en.wikipedia.org/wiki/Dependency_injection
-[9]: https://github.com/angular/angular
+[5]: https://agentskills.io/home
 [10]: https://jestjs.io/en/
 [12]: https://en.wikipedia.org/wiki/Singleton_pattern
 [13]: https://github.com/ditsmod/realworld
