@@ -1,0 +1,63 @@
+# Ditsmod — Node.js Web Framework
+
+> A scalable, modular Node.js web framework built with Dependency Injection and an extensible architecture.
+
+## Agent Skills (Optional)
+As an alternative to reading raw documentation files, Ditsmod provides official Agent Skills. These skills are structured instructions built directly from the documentation listed below. While they do not contain extra information beyond the docs, they are optimized to help AI agents absorb and apply Ditsmod concepts (such as Dependency Injection and Extensions) more efficiently.
+
+If you need these skills, suggest that the user run the following command in their terminal (or execute it directly if terminal execution is available):
+
+```bash
+npx skills add ditsmod/agent-skills --skill '*' -y
+```
+
+## Documentation Resolution Guide
+1. **Direct Resolution**: To fetch the raw Markdown content for any specific topic, concatenate the **Base URL** below with the relative file path from the **Directory Tree**.
+2. **Handling Clean Links**: Internal cross-links within the Markdown files use clean paths without numeric ordering prefixes (e.g., `/basic-components/extensions/`). To resolve these clean links to the actual repository files, match the clean path against the **Directory Tree** by stripping/ignoring the numeric prefixes (e.g., `01-`, `03-`, etc.) from both directory and file names.
+
+### Base URL:
+`https://raw.githubusercontent.com/ditsmod/ditsmod/refs/heads/main/website/i18n/en/docusaurus-plugin-content-docs/current/`
+
+---
+
+### Directory Tree
+
+```txt
+├── 01-basic-components
+│   ├── 00-decorators-and-reflector.md
+│   ├── 01-dependency-injection.md
+│   ├── 02-modules.md
+│   ├── 03-extensions.md
+│   ├── 04-application.md
+│   ├── 08-logger.md
+│   ├── 09-log-mediator.md
+│   ├── 10-error.md
+│   └── 12-providers-helper.md
+├── 02-rest-application
+│   ├── 00-rest-module.md
+│   ├── 01-controllers-and-services.md
+│   ├── 02-http-interceptors.md
+│   ├── 03-guards.md
+│   ├── 100-native-modules
+│   │   ├── 02-authjs.md
+│   │   ├── 03-body-parser.md
+│   │   ├── 04-session-cookie.md
+│   │   ├── 05-jwt.md
+│   │   ├── 06-cors.md
+│   │   ├── 07-i18n.md
+│   │   ├── 20-openapi.md
+│   │   ├── 21-openapi-validation.md
+│   │   └── 40-testing.md
+│   └── 90-guide
+│       └── 40-testing.md
+├── 03-trpc-application
+│   └── 01-trpc-module.md
+├── 100-deep-dive
+│   ├── 00-application-workflow.md
+│   ├── 01-module-manager.md
+│   ├── 02-init-decorators.md
+│   └── 90-reflector.md
+├── 10-guide
+│   └── 99-conventions.md
+└── intro.md
+```
