@@ -112,10 +112,10 @@ npm run setup:agents
 npx skills add ditsmod/agent-skills
 ```
 
-Ця команда дасть на вибір усі доступні скіли. Якщо ж ви знаєте який саме скіл вам потрібно, його можна встановити так:
+Ця команда дасть на вибір усі доступні скіли. Якщо ж ви хочете встановити усі офіційни скіли для Ditsmod, це можна зробити так:
 
 ```bash
-npx skills add ditsmod/agent-skills --skill ditsmod-modules
+npx skills add ditsmod/agent-skills --skill '*' -y
 ```
 
 Скіли ШІ-агентами зчитуються лише у разі потреби, коли ви запитуєте щось релевантне у них.
@@ -213,7 +213,6 @@ node dist/main.js
 
 Проглядаючи файл `src/main.ts`, ви можете бачити, що створюється інстанс класу `RestApplication`, а у якості аргументу для методу `create()` передається `AppModule`. Тут `AppModule` є кореневим модулем, до якого вже підв'язуються інші модулі застосунку.
 
-
 [1]: #installation
 [2]: https://github.com/ditsmod/rest-starter
 [3]: https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md
@@ -221,7 +220,7 @@ node dist/main.js
 [5]: https://agentskills.io/home
 [9]: https://github.com/angular/angular
 [10]: https://jestjs.io/en/
-[12]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) "Singleton"
+[12]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) 'Singleton'
 [13]: https://github.com/ditsmod/realworld
 [14]: https://github.com/ditsmod/vs-webframework
 [15]: https://github.com/remy/nodemon

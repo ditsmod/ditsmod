@@ -112,10 +112,10 @@ Additionally, you can install [AI agent skills][5] to help them better understan
 npx skills add ditsmod/agent-skills
 ```
 
-This command will let you choose from all available skills. If you already know which skill you need, you can install it like this:
+This command will let you choose from all available skills. If you want to install all the official skills for Ditsmod, you can do it like this:
 
 ```bash
-npx skills add ditsmod/agent-skills --skill ditsmod-modules
+npx skills add ditsmod/agent-skills --skill '*' -y
 ```
 
 AI agent skills are only loaded when needed, when you ask something relevant to them.
@@ -212,7 +212,6 @@ node dist/main.js
 ```
 
 Looking at the file `src/main.ts`, you can see that an instance of the class `RestApplication` is created, and as an argument for the method `create()` is passed `AppModule`. Here `AppModule` is the root module to which other application modules then imports.
-
 
 [1]: #installation
 [2]: https://github.com/ditsmod/rest-starter
