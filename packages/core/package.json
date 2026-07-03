@@ -58,7 +58,7 @@
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
   "license": "MIT",
   "engines": {
-    "node": ">= 20.6.0"
+    "node": ">= 24.0.0"
   },
   "dependencies": {
     "@ts-stack/chain-error": "^1.5.1",
