@@ -115,7 +115,7 @@ npx skills add ditsmod/agent-skills
 This command will let you choose from all available skills. If you already know which skill you need, you can install it like this:
 
 ```bash
-npx skills add ditsmod/agent-skills --skill ditsmod-module-composition
+npx skills add ditsmod/agent-skills --skill ditsmod-modules
 ```
 
 AI agent skills are only loaded when needed, when you ask something relevant to them.

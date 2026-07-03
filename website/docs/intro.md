@@ -115,7 +115,7 @@ npx skills add ditsmod/agent-skills
 Ця команда дасть на вибір усі доступні скіли. Якщо ж ви знаєте який саме скіл вам потрібно, його можна встановити так:
 
 ```bash
-npx skills add ditsmod/agent-skills --skill ditsmod-module-composition
+npx skills add ditsmod/agent-skills --skill ditsmod-modules
 ```
 
 Скіли ШІ-агентами зчитуються лише у разі потреби, коли ви запитуєте щось релевантне у них.
