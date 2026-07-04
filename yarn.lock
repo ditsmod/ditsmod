@@ -939,6 +939,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@ditsmod/cli@workspace:packages/cli":
+  version: 0.0.0-use.local
+  resolution: "@ditsmod/cli@workspace:packages/cli"
+  dependencies:
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260626.1"
+    jest: "npm:^30.4.2"
+  languageName: unknown
+  linkType: soft
+
 "@ditsmod/core@workspace:packages/core":
   version: 0.0.0-use.local
   resolution: "@ditsmod/core@workspace:packages/core"
