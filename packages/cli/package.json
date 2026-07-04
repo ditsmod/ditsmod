@@ -8,7 +8,7 @@
     "url": "git+https://github.com/ditsmod/ditsmod.git"
   },
   "homepage": "https://ditsmod.github.io/en/",
-  "description": "Ditsmod module to support ",
+  "description": "CLI tool for Ditsmod framework development",
   "module": "dist/index.js",
   "exports": {
     "./package.json": {
@@ -19,6 +19,10 @@
       "default": "./dist/index.js"
     }
   },
+  "bin": {
+    "ditsmod": "dist/ditsmod.js",
+    "dm": "dist/ditsmod.js"
+  },
   "scripts": {
     "build": "tsgo -b tsconfig.build.json",
     "clean": "rm -rf dist*",
@@ -26,11 +30,19 @@
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)"
   },
   "keywords": [
-    "ditsmod"
+    "ditsmod",
+    "cli",
+    "ditsmod-cli"
   ],
   "author": "",
   "license": "MIT",
+  "dependencies": {
+    "chokidar": "^4.0.3",
+    "commander": "^14.0.0",
+    "typescript": "^5.9.3"
+  },
   "devDependencies": {
+    "@types/node": "^26.0.1",
     "@typescript/native-preview": "^7.0.0-dev.20260626.1",
     "jest": "^30.4.2"
   },

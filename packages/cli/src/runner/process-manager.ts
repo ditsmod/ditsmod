@@ -1,0 +1,131 @@
+import { spawn, type ChildProcess } from 'node:child_process';
+import { EventEmitter } from 'node:events';
+
+export interface ProcessManagerOptions {
+  /**
+   * Arguments passed to `node` before the entry file.
+   * Defaults to `['--enable-source-maps']`.
+   */
+  nodeArgs?: string[];
+
+  /**
+   * Time in ms to wait for the process to exit gracefully after SIGTERM
+   * before sending SIGKILL. Defaults to 5000.
+   */
+  killTimeout?: number;
+}
+
+/**
+ * Manages the lifecycle of the Node.js application child process.
+ *
+ * Features:
+ * - Graceful shutdown: SIGTERM → wait `killTimeout` ms → SIGKILL
+ * - Kills the **entire process group** (via negative PID) to clean up workers
+ * - Returns a Promise on `restart()` that resolves only after the old process
+ *   has fully exited, preventing EADDRINUSE errors.
+ *
+ * Emits:
+ * - `exit` (code: number | null, signal: NodeJS.Signals | null)
+ * - `error` (err: Error)
+ */
+export class ProcessManager extends EventEmitter {
+  private current: ChildProcess | null = null;
+  private readonly nodeArgs: string[];
+  private readonly killTimeout: number;
+
+  constructor(options: ProcessManagerOptions = {}) {
+    super();
+    this.nodeArgs = options.nodeArgs ?? ['--enable-source-maps'];
+    this.killTimeout = options.killTimeout ?? 5000;
+  }
+
+  /**
+   * Starts the application process. Call `restart()` for subsequent restarts
+   * so that the previous process is cleanly terminated first.
+   */
+  start(entryFile: string): void {
+    this.current = this.spawnProcess(entryFile);
+  }
+
+  /**
+   * Gracefully stops the running process (if any) and starts a fresh one.
+   * Awaits full termination before spawning to prevent port conflicts.
+   */
+  async restart(entryFile: string): Promise<void> {
+    await this.stop();
+    this.current = this.spawnProcess(entryFile);
+  }
+
+  /**
+   * Gracefully terminates the current process and waits for it to exit.
+   */
+  stop(): Promise<void> {
+    if (!this.current || this.current.exitCode !== null) {
+      this.current = null;
+      return Promise.resolve();
+    }
+
+    return new Promise((resolve) => {
+      const proc = this.current!;
+
+      const done = () => {
+        clearTimeout(killTimer);
+        this.current = null;
+        resolve();
+      };
+
+      proc.once('exit', done);
+      proc.once('error', done);
+
+      // Try graceful shutdown first (allows the app to flush connections)
+      this.killProcessGroup(proc, 'SIGTERM');
+
+      // Force-kill after timeout if it has not exited yet
+      const killTimer = setTimeout(() => {
+        if (proc.exitCode === null) {
+          this.killProcessGroup(proc, 'SIGKILL');
+        }
+      }, this.killTimeout);
+    });
+  }
+
+  private spawnProcess(entryFile: string): ChildProcess {
+    const proc = spawn('node', [...this.nodeArgs, entryFile], {
+      stdio: 'inherit',
+      // Assign a dedicated process group so we can kill all child workers too
+      detached: true,
+    });
+
+    proc.on('exit', (code, signal) => {
+      this.emit('exit', code, signal);
+    });
+
+    proc.on('error', (err) => {
+      this.emit('error', err);
+    });
+
+    return proc;
+  }
+
+  /**
+   * Sends a signal to the entire process group of `proc`.
+   * On POSIX systems, negating the PID kills all processes in the same group.
+   * On Windows this falls back to killing the process directly.
+   */
+  private killProcessGroup(proc: ChildProcess, signal: NodeJS.Signals): void {
+    if (proc.pid == null) {
+      return;
+    }
+
+    try {
+      if (process.platform === 'win32') {
+        proc.kill(signal);
+      } else {
+        // Negative PID → entire process group
+        process.kill(-proc.pid, signal);
+      }
+    } catch {
+      // Process may have already exited — ignore ESRCH
+    }
+  }
+}

@@ -939,12 +939,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@ditsmod/cli@workspace:packages/cli":
+"@ditsmod/cli@npm:^3.0.0-next.13, @ditsmod/cli@workspace:packages/cli":
   version: 0.0.0-use.local
   resolution: "@ditsmod/cli@workspace:packages/cli"
   dependencies:
+    "@types/node": "npm:^26.0.1"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260626.1"
+    chokidar: "npm:^4.0.3"
+    commander: "npm:^14.0.0"
     jest: "npm:^30.4.2"
+    typescript: "npm:^5.9.3"
+  bin:
+    ditsmod: dist/ditsmod.js
+    dm: dist/ditsmod.js
   languageName: unknown
   linkType: soft
 
@@ -5562,6 +5569,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"chokidar@npm:^4.0.3":
+  version: 4.0.3
+  resolution: "chokidar@npm:4.0.3"
+  dependencies:
+    readdirp: "npm:^4.0.1"
+  checksum: 10c0/a58b9df05bb452f7d105d9e7229ac82fa873741c0c40ddcc7bb82f8a909fbe3f7814c9ebe9bc9a2bef9b737c0ec6e2d699d179048ef06ad3ec46315df0ebe6ad
+  languageName: node
+  linkType: hard
+
 "chownr@npm:^2.0.0":
   version: 2.0.0
   resolution: "chownr@npm:2.0.0"
@@ -5830,6 +5846,13 @@ __metadata:
   version: 1.0.8
   resolution: "comma-separated-tokens@npm:1.0.8"
   checksum: 10c0/c3bcfeaa6d50313528a006a40bcc0f9576086665c9b48d4b3a76ddd63e7d6174734386c98be1881cbf6ecfc25e1db61cd775a7b896d2ea7a65de28f83a0f9b17
+  languageName: node
+  linkType: hard
+
+"commander@npm:^14.0.0":
+  version: 14.0.3
+  resolution: "commander@npm:14.0.3"
+  checksum: 10c0/755652564bbf56ff2ff083313912b326450d3f8d8c85f4b71416539c9a05c3c67dbd206821ca72635bf6b160e2afdefcb458e86b317827d5cb333b69ce7f1a24
   languageName: node
   linkType: hard
 
@@ -7302,9 +7325,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example01@workspace:examples/01-hello-world"
   dependencies:
+    "@ditsmod/cli": "npm:^3.0.0-next.13"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260626.1"
     jest: "npm:^30.4.2"
-    npm-run-all: "npm:^4.1.5"
   languageName: unknown
   linkType: soft
 
@@ -12880,6 +12903,13 @@ __metadata:
     string_decoder: "npm:~1.1.1"
     util-deprecate: "npm:~1.0.1"
   checksum: 10c0/7efdb01f3853bc35ac62ea25493567bf588773213f5f4a79f9c365e1ad13bab845ac0dae7bc946270dc40c3929483228415e92a3fc600cc7e4548992f41ee3fa
+  languageName: node
+  linkType: hard
+
+"readdirp@npm:^4.0.1":
+  version: 4.1.2
+  resolution: "readdirp@npm:4.1.2"
+  checksum: 10c0/60a14f7619dec48c9c850255cd523e2717001b0e179dc7037cfa0895da7b9e9ab07532d324bfb118d73a710887d1e35f79c495fa91582784493e085d18c72c62
   languageName: node
   linkType: hard
 

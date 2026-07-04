@@ -19,6 +19,7 @@ jobs:
         package:
           - authjs
           - body-parser
+          - cli
           - core
           - cors
           - i18n
