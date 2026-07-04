@@ -55,6 +55,7 @@ export default defineConfig([
       '**/jest.d.ts',
       '**/jest.matchers.ts',
       'packages/openapi/ui/*',
+      'commitlint.config.ts'
     ],
   },
 ]);

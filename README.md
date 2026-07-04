@@ -30,6 +30,7 @@ During you run the following command:
 corepack enable
 corepack install
 yarn install
+yarn prepare
 yarn build-openapi-ui
 ```
 
@@ -54,10 +55,6 @@ The documentation files are located in the following folders:
 
 - `website/docs`
 - `website/i18n/en/docusaurus-plugin-content-docs/current`
-
-
-
-
 
 [1]: https://github.com/angular/angular
 [2]: https://www.typescriptlang.org/tsconfig#paths
