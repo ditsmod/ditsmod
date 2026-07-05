@@ -37,7 +37,6 @@ describe('startCommand options & parsing', () => {
       expect(parsedOpts?.envFile).toBeUndefined();
       expect(parsedOpts?.entryFile).toBe('dist/main.js');
       expect(parsedOpts?.preserveWatchOutput).toBe(false);
-      expect(parsedOpts?.killTimeout).toBe(5000);
       expect(parsedOpts?.assets).toBeUndefined();
       expect(parsedEntryArg).toBeUndefined();
     });
@@ -94,12 +93,6 @@ describe('startCommand options & parsing', () => {
       program.parse(['node', 'test', 'start', '--preserve-watch-output']);
 
       expect(parsedOpts?.preserveWatchOutput).toBe(true);
-    });
-
-    it('should parse --kill-timeout number option', () => {
-      program.parse(['node', 'test', 'start', '--kill-timeout', '3000']);
-
-      expect(parsedOpts?.killTimeout).toBe(3000);
     });
   });
 

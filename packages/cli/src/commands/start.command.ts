@@ -13,7 +13,6 @@ export interface StartCommandOptions {
   entryFile?: string;
   assets?: string[];
   preserveWatchOutput: boolean;
-  killTimeout: number;
 }
 
 /**
@@ -30,12 +29,6 @@ export function startCommand(program: Command): void {
     .option('--entry-file <file>', 'Compiled entry file to run (relative to project root)', 'dist/main.js')
     .option('-a, --assets <globs...>', 'Non-TypeScript asset globs to watch and copy to dist/ (e.g., "src/**/*.json")')
     .option('--preserve-watch-output', 'Do not clear the screen between compilations', false)
-    .option(
-      '--kill-timeout <ms>',
-      'Milliseconds to wait for the app to shut down before force-killing it',
-      (v) => parseInt(v, 10),
-      5000,
-    )
     .action((entryFileArg: string | undefined, opts: StartCommandOptions) => runStart(entryFileArg, opts));
 }
 
@@ -57,7 +50,6 @@ export async function runStart(entryFileArg: string | undefined, opts: StartComm
     exec: opts.exec,
     debug: opts.debug,
     envFile: opts.envFile,
-    killTimeout: opts.killTimeout,
   });
 
   const compiler = new WatchCompiler({
