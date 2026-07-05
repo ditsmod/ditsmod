@@ -8,6 +8,8 @@ import { AssetWatcher, type AssetEntry } from '../assets/asset-watcher.js';
 export interface StartCommandOptions {
   project: string;
   exec: string;
+  debug?: boolean | string;
+  envFile?: string[];
   entryFile?: string;
   assets?: string[];
   preserveWatchOutput: boolean;
@@ -23,6 +25,8 @@ export function startCommand(program: Command): void {
     .description('Run Ditsmod application')
     .option('-p, --project <path>', 'Path to TypeScript config file', 'tsconfig.build.json')
     .option('-e, --exec <binary>', 'Binary to run', 'node')
+    .option('-d, --debug [hostport]', 'Run in debug mode (with --inspect flag)')
+    .option('--env-file <paths...>', 'Path(s) to env file(s) to load into environment')
     .option('--entry-file <file>', 'Compiled entry file to run (relative to project root)', 'dist/main.js')
     .option('-a, --assets <globs...>', 'Non-TypeScript asset globs to watch and copy to dist/ (e.g., "src/**/*.json")')
     .option('--preserve-watch-output', 'Do not clear the screen between compilations', false)
@@ -51,6 +55,8 @@ export async function runStart(entryFileArg: string | undefined, opts: StartComm
 
   const processManager = new ProcessManager({
     exec: opts.exec,
+    debug: opts.debug,
+    envFile: opts.envFile,
     killTimeout: opts.killTimeout,
   });
 

@@ -33,6 +33,8 @@ describe('startCommand options & parsing', () => {
       expect(parsedOpts).toBeDefined();
       expect(parsedOpts?.project).toBe('tsconfig.build.json');
       expect(parsedOpts?.exec).toBe('node');
+      expect(parsedOpts?.debug).toBeUndefined();
+      expect(parsedOpts?.envFile).toBeUndefined();
       expect(parsedOpts?.entryFile).toBe('dist/main.js');
       expect(parsedOpts?.preserveWatchOutput).toBe(false);
       expect(parsedOpts?.killTimeout).toBe(5000);
@@ -50,6 +52,24 @@ describe('startCommand options & parsing', () => {
       program.parse(['node', 'test', 'start', '-e', 'bun']);
 
       expect(parsedOpts?.exec).toBe('bun');
+    });
+
+    it('should parse -d / --debug flag without value', () => {
+      program.parse(['node', 'test', 'start', '-d']);
+
+      expect(parsedOpts?.debug).toBe(true);
+    });
+
+    it('should parse -d / --debug option with custom hostport', () => {
+      program.parse(['node', 'test', 'start', '-d', '9229']);
+
+      expect(parsedOpts?.debug).toBe('9229');
+    });
+
+    it('should parse --env-file option with array of paths', () => {
+      program.parse(['node', 'test', 'start', '--env-file', '.env', '.env.local']);
+
+      expect(parsedOpts?.envFile).toEqual(['.env', '.env.local']);
     });
 
     it('should parse --entry-file option', () => {

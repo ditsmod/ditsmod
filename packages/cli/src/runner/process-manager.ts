@@ -8,6 +8,16 @@ export interface ProcessManagerOptions {
   exec?: string;
 
   /**
+   * Enable Node.js debug mode (`--inspect` or `--inspect=hostport`).
+   */
+  debug?: boolean | string;
+
+  /**
+   * Environment files to load via Node.js `--env-file` option.
+   */
+  envFile?: string[];
+
+  /**
    * Arguments passed to `node` before the entry file.
    * Defaults to `['--enable-source-maps']`.
    */
@@ -36,12 +46,16 @@ export interface ProcessManagerOptions {
 export class ProcessManager extends EventEmitter {
   private current: ChildProcess | null = null;
   private readonly exec: string;
+  private readonly debug?: boolean | string;
+  private readonly envFile?: string[];
   private readonly nodeArgs: string[];
   private readonly killTimeout: number;
 
   constructor(options: ProcessManagerOptions = {}) {
     super();
     this.exec = options.exec ?? 'node';
+    this.debug = options.debug;
+    this.envFile = options.envFile;
     this.nodeArgs = options.nodeArgs ?? ['--enable-source-maps'];
     this.killTimeout = options.killTimeout ?? 5000;
   }
@@ -97,8 +111,21 @@ export class ProcessManager extends EventEmitter {
 
   private spawnProcess(entryFile: string, appArgs: string[] = []): ChildProcess {
     const isNode = this.exec === 'node';
+    let spawnNodeArgs = [...this.nodeArgs];
+
+    if (isNode) {
+      if (this.debug) {
+        const inspectFlag = typeof this.debug === 'string' ? `--inspect=${this.debug}` : '--inspect';
+        spawnNodeArgs.unshift(inspectFlag);
+      }
+      if (this.envFile?.length) {
+        const envFlags = this.envFile.map((f) => `--env-file=${f}`);
+        spawnNodeArgs.unshift(...envFlags);
+      }
+    }
+
     const spawnArgs = isNode
-      ? [...this.nodeArgs, entryFile, ...appArgs]
+      ? [...spawnNodeArgs, entryFile, ...appArgs]
       : [entryFile, ...appArgs];
 
     const proc = spawn(this.exec, spawnArgs, {
