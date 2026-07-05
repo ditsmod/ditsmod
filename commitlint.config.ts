@@ -29,11 +29,7 @@ const Configuration: UserConfig = {
     '  Correct pattern:\n' +
     '  type(scope): subject\n\n' +
     '  Example:\n' +
-    '  chore(website): update dependencies\n\n' +
-    '  Allowed types:\n' +
-    '  build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test\n\n' +
-    '  Allowed scopes:\n  - ' +
-    [...getPackages(), 'website', 'examples', 'ci', 'experiments'].join('\n  - '),
+    '  chore(website): update dependencies\n',
 };
 
 export default Configuration;
