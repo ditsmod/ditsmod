@@ -31,9 +31,6 @@ export function newCommand(program: Command): void {
     .action((directoryArg: string, opts: NewCommandOptions) => runNew(directoryArg, opts));
 }
 
-export async function runStart(directoryArg: string, opts: NewCommandOptions): Promise<void> {
-  return runNew(directoryArg, opts);
-}
 
 export async function runNew(directoryArg: string, opts: NewCommandOptions): Promise<void> {
   if (!directoryArg) {
@@ -123,6 +120,10 @@ export async function runNew(directoryArg: string, opts: NewCommandOptions): Pro
     // 5. Install dependencies if not skipped
     if (!opts.skipInstall) {
       const pm = opts.packageManager || 'npm';
+      const allowedPMs = ['npm', 'yarn', 'pnpm'];
+      if (!allowedPMs.includes(pm)) {
+        throw new Error(`Unsupported package manager "${pm}". Allowed values: ${allowedPMs.join(', ')}.`);
+      }
       console.log(`\n[ditsmod] Installing dependencies using ${pm}…\n`);
       execSync(`${pm} install`, { cwd: targetAbsDir, stdio: 'inherit' });
     }

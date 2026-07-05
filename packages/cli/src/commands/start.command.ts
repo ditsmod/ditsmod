@@ -1,4 +1,5 @@
 import { type Command } from 'commander';
+import { on } from 'node:events';
 import fs from 'node:fs';
 import path from 'node:path';
 import { WatchCompiler, type CompilationResult } from '../compiler/watch-compiler.js';
@@ -91,42 +92,56 @@ export async function runStart(entryFileArg: string | undefined, opts: StartComm
     assetWatcher.start();
   }
 
-  // --- Compiler events ---
-  let started = false;
-
-  compiler.on('compiled', async (result: CompilationResult) => {
-    if (result.hasErrors) {
-      // Don't restart — keep the last working build running
-      return;
-    }
-
-    if (!started) {
-      started = true;
-      console.log('\n[ditsmod] Starting application…\n');
-      processManager.start(entryAbs, appArgs);
-    } else {
-      console.log('\n[ditsmod] Restarting application…\n');
-      await processManager.restart(entryAbs, appArgs);
-    }
-  });
-
   compiler.on('error', (err: Error) => {
     console.error('[ditsmod] Compiler error:', err.message);
   });
 
+  // --- Graceful shutdown on Ctrl+C via AbortController ---
+  const ac = new AbortController();
+  const shutdown = () => ac.abort();
+
+  process.once('SIGINT', shutdown);
+  process.once('SIGTERM', shutdown);
+
+  // Create event stream BEFORE starting compiler to capture the initial synchronous 'compiled' event
+  const compiledEvents = on(compiler, 'compiled', { signal: ac.signal });
+
   // --- Start compiler ---
   compiler.start();
 
-  // --- Graceful shutdown on Ctrl+C ---
-  const shutdown = async () => {
+  let started = false;
+  try {
+    for await (const [result] of compiledEvents) {
+      const compilationResult = result as CompilationResult;
+      if (compilationResult.hasErrors) {
+        // Don't restart — keep the last working build running
+        continue;
+      }
+
+      if (!started) {
+        started = true;
+        console.log('\n[ditsmod] Starting application…\n');
+        processManager.start(entryAbs, appArgs);
+      } else {
+        console.log('\n[ditsmod] Restarting application…\n');
+        try {
+          await processManager.restart(entryAbs, appArgs);
+        } catch (err: any) {
+          console.error('[ditsmod] Error restarting application:', err?.message || err);
+        }
+      }
+    }
+  } catch (err: any) {
+    if (err?.name !== 'AbortError') {
+      console.error('[ditsmod] Unexpected error in watch loop:', err);
+    }
+  } finally {
     compiler.close();
     await assetWatcher?.close();
     await processManager.stop();
-    process.exit(0);
-  };
-
-  process.on('SIGINT', shutdown);
-  process.on('SIGTERM', shutdown);
+    process.removeListener('SIGINT', shutdown);
+    process.removeListener('SIGTERM', shutdown);
+  }
 }
 
 /**

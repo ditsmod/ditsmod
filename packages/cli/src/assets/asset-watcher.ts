@@ -53,26 +53,39 @@ export class AssetWatcher extends EventEmitter {
   }
 
   start(): void {
-    const globs = this.options.assets.flatMap((entry) => {
+    // Chokidar v4 no longer resolves glob patterns passed to watch() reliably
+    // on all platforms. Instead we watch the srcRoot directories directly and
+    // use Node.js built-in path.matchesGlob() (available since Node 22) to
+    // filter events according to the configured include/exclude patterns.
+    const includeGlobs = this.options.assets.flatMap((entry) => {
       const includes = Array.isArray(entry.include) ? entry.include : [entry.include];
       return includes.map((g) => path.join(this.srcRoot, g));
     });
 
-    const ignoredGlobs = this.options.assets.flatMap((entry) => {
+    const excludeGlobs = this.options.assets.flatMap((entry) => {
       const excludes = entry.exclude ? (Array.isArray(entry.exclude) ? entry.exclude : [entry.exclude]) : [];
       return excludes.map((g) => path.join(this.srcRoot, g));
     });
 
-    this.watcher = chokidar.watch(globs, {
-      ignored: ignoredGlobs.length ? ignoredGlobs : undefined,
+    /**
+     * Returns true if `absPath` matches one of the include patterns AND does
+     * not match any of the exclude patterns.
+     */
+    const isAsset = (absPath: string): boolean => {
+      if (!includeGlobs.some((g) => path.matchesGlob(absPath, g))) return false;
+      if (excludeGlobs.some((g) => path.matchesGlob(absPath, g))) return false;
+      return true;
+    };
+
+    this.watcher = chokidar.watch(this.srcRoot, {
       persistent: true,
       ignoreInitial: false, // Copy existing assets on startup
     });
 
     this.watcher
-      .on('add', (filePath: string) => this.copyAsset(filePath))
-      .on('change', (filePath: string) => this.copyAsset(filePath))
-      .on('unlink', (filePath: string) => this.removeAsset(filePath))
+      .on('add', (filePath: string) => { if (isAsset(filePath)) this.copyAsset(filePath); })
+      .on('change', (filePath: string) => { if (isAsset(filePath)) this.copyAsset(filePath); })
+      .on('unlink', (filePath: string) => { if (isAsset(filePath)) this.removeAsset(filePath); })
       .on('error', (err: unknown) => this.emit('error', err instanceof Error ? err : new Error(String(err))));
   }
 

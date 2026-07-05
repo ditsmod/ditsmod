@@ -1,6 +1,10 @@
 import { Command } from 'commander';
+import { jest } from '@jest/globals';
 import path from 'node:path';
-import { startCommand, resolveEntryFile, resolveProjectConfig, type StartCommandOptions } from './start.command.js';
+import fs from 'node:fs';
+import os from 'node:os';
+import { startCommand, runStart, resolveEntryFile, resolveProjectConfig, type StartCommandOptions } from './start.command.js';
+import { ProcessManager } from '../runner/process-manager.js';
 
 describe('startCommand options & parsing', () => {
   let program: Command;
@@ -151,4 +155,55 @@ describe('startCommand options & parsing', () => {
       expect(result).toBe(path.resolve(cwd, 'dist/custom.js'));
     });
   });
+});
+
+describe('runStart execution flow', () => {
+  let tmpDir: string;
+  let processManagerStartSpy: ReturnType<typeof jest.spyOn>;
+  let exitSpy: ReturnType<typeof jest.spyOn>;
+
+  beforeEach(() => {
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'start-cmd-spec-'));
+    fs.mkdirSync(path.join(tmpDir, 'src'), { recursive: true });
+    fs.writeFileSync(path.join(tmpDir, 'src/index.ts'), 'export const a = 1;\n');
+    fs.writeFileSync(
+      path.join(tmpDir, 'tsconfig.build.json'),
+      JSON.stringify({
+        compilerOptions: { outDir: './dist', moduleResolution: 'node' },
+        include: ['src/**/*'],
+      }),
+    );
+    fs.mkdirSync(path.join(tmpDir, 'dist'), { recursive: true });
+    fs.writeFileSync(path.join(tmpDir, 'dist/main.js'), 'console.log("hello");');
+
+    processManagerStartSpy = jest.spyOn(ProcessManager.prototype, 'start').mockImplementation(() => {});
+    // Prevent process.exit(0) in shutdown from terminating Jest process
+    exitSpy = jest.spyOn(process, 'exit').mockImplementation((() => {}) as any);
+  });
+
+  afterEach(() => {
+    processManagerStartSpy.mockRestore();
+    exitSpy.mockRestore();
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  });
+
+  it('should trigger ProcessManager.start on initial compilation', async () => {
+    const startPromise = runStart(undefined, {
+      project: path.join(tmpDir, 'tsconfig.build.json'),
+      exec: 'node',
+      preserveWatchOutput: true,
+    });
+
+    // Wait for compiler to emit initial event and processManager.start to be called
+    await new Promise((resolve) => setTimeout(resolve, 800));
+
+    expect(processManagerStartSpy).toHaveBeenCalledWith(
+      path.resolve(tmpDir, 'dist/main.js'),
+      [],
+    );
+
+    // Stop the watch loop gracefully by emitting SIGINT
+    process.emit('SIGINT');
+    await startPromise;
+  }, 10_000);
 });
