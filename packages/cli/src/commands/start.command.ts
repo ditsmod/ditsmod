@@ -124,8 +124,7 @@ export async function runStart(entryFileArg: string | undefined, opts: StartComm
         console.log('\n[ditsmod] Starting application…\n');
         processManager.start(entryAbs, appArgs);
       } else {
-        if (restartTimer) clearTimeout(restartTimer);
-        restartTimer = setTimeout(async () => {
+        const restartApp = async () => {
           restartTimer = null;
           console.log('\n[ditsmod] Restarting application…\n');
           try {
@@ -133,6 +132,11 @@ export async function runStart(entryFileArg: string | undefined, opts: StartComm
           } catch (err: any) {
             console.error('[ditsmod] Error restarting application:', err?.message || err);
           }
+        };
+
+        if (restartTimer) clearTimeout(restartTimer);
+        restartTimer = setTimeout(() => {
+          void restartApp();
         }, 300);
       }
     }

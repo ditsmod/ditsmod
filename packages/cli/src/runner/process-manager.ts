@@ -120,7 +120,7 @@ export class ProcessManager extends EventEmitter {
 
   private spawnProcess(entryFile: string, appArgs: string[] = []): ChildProcess {
     const isNode = this.exec === 'node';
-    let spawnNodeArgs = [...this.nodeArgs];
+    const spawnNodeArgs = [...this.nodeArgs];
 
     if (isNode) {
       if (this.debug) {
