@@ -3,7 +3,13 @@ import { jest } from '@jest/globals';
 import path from 'node:path';
 import fs from 'node:fs';
 import os from 'node:os';
-import { startCommand, runStart, resolveEntryFile, resolveProjectConfig, type StartCommandOptions } from './start.command.js';
+import {
+  startCommand,
+  runStart,
+  resolveEntryFile,
+  resolveProjectConfig,
+  type StartCommandOptions,
+} from './start.command.js';
 import { ProcessManager } from '../runner/process-manager.js';
 
 describe('startCommand options & parsing', () => {
@@ -203,10 +209,7 @@ describe('runStart execution flow', () => {
     // Wait for compiler to emit initial event and processManager.start to be called
     await new Promise((resolve) => setTimeout(resolve, 800));
 
-    expect(processManagerStartSpy).toHaveBeenCalledWith(
-      path.resolve(tmpDir, 'dist/main.js'),
-      [],
-    );
+    expect(processManagerStartSpy).toHaveBeenCalledWith(path.resolve(tmpDir, 'dist/main.js'), []);
 
     // Stop the watch loop gracefully by emitting SIGINT
     process.emit('SIGINT');

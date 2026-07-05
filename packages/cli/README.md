@@ -18,7 +18,7 @@ Or globally:
 npm i -g @ditsmod/cli
 ```
 
-*Note:* Binary aliases `ditsmod` and `dm` are available when installed.
+_Note:_ Binary aliases `ditsmod` and `dm` are available when installed.
 
 ---
 
@@ -89,13 +89,7 @@ dm start -- --port=8080 --host=0.0.0.0
 `@ditsmod/cli` exports its core building blocks for programmatic usage:
 
 ```ts
-import {
-  WatchCompiler,
-  ProcessManager,
-  AssetWatcher,
-  startCommand,
-  newCommand,
-} from '@ditsmod/cli';
+import { WatchCompiler, ProcessManager, AssetWatcher, startCommand, newCommand } from '@ditsmod/cli';
 ```
 
 ## License

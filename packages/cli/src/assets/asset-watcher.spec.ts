@@ -209,4 +209,3 @@ describe('AssetWatcher', () => {
     await expect(watcher.close()).resolves.toBeUndefined();
   });
 });
-

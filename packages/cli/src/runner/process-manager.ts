@@ -140,9 +140,7 @@ export class ProcessManager extends EventEmitter {
       }
     }
 
-    const spawnArgs = isNode
-      ? [...spawnNodeArgs, entryFile, ...appArgs]
-      : [entryFile, ...appArgs];
+    const spawnArgs = isNode ? [...spawnNodeArgs, entryFile, ...appArgs] : [entryFile, ...appArgs];
 
     const proc = spawn(this.exec, spawnArgs, {
       stdio: this.stdio,
