@@ -61,7 +61,7 @@ ditsmod start
 
 #### Options:
 
-- `-p, --project <path>`: Path to TypeScript config file. Default: `"tsconfig.build.json"`.
+- `-p, --project <path>`: Path to TypeScript config file or project directory. Default: `"tsconfig.build.json"`.
 - `-e, --exec <binary>`: Binary to execute the entry file. Default: `"node"`.
 - `-d, --debug [hostport]`: Run Node.js in debug mode with the `--inspect` flag.
 - `--env-file <paths...>`: Environment file(s) to load into `process.env` (Node.js >= v20).
