@@ -23,6 +23,7 @@ describe('newCommand options & parsing', () => {
   beforeEach(() => {
     program = new Command();
     program.exitOverride();
+    program.configureOutput({ writeErr: () => {} });
     parsedOpts = undefined;
     parsedDirArg = undefined;
 

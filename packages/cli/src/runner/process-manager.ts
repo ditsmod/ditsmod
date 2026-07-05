@@ -1,4 +1,4 @@
-import { spawn, type ChildProcess } from 'node:child_process';
+import { spawn, type ChildProcess, type StdioOptions } from 'node:child_process';
 import { EventEmitter } from 'node:events';
 
 export interface ProcessManagerOptions {
@@ -28,6 +28,11 @@ export interface ProcessManagerOptions {
    * before sending SIGKILL. Defaults to 5000.
    */
   killTimeout?: number;
+
+  /**
+   * Child process stdio configuration. Defaults to `'inherit'`.
+   */
+  stdio?: StdioOptions;
 }
 
 /**
@@ -51,6 +56,7 @@ export class ProcessManager extends EventEmitter {
   private readonly envFile?: string[];
   private readonly nodeArgs: string[];
   private readonly killTimeout: number;
+  private readonly stdio: StdioOptions;
 
   constructor(options: ProcessManagerOptions = {}) {
     super();
@@ -59,6 +65,7 @@ export class ProcessManager extends EventEmitter {
     this.envFile = options.envFile;
     this.nodeArgs = options.nodeArgs ?? ['--enable-source-maps'];
     this.killTimeout = options.killTimeout ?? 5000;
+    this.stdio = options.stdio ?? 'inherit';
   }
 
   /**
@@ -138,7 +145,7 @@ export class ProcessManager extends EventEmitter {
       : [entryFile, ...appArgs];
 
     const proc = spawn(this.exec, spawnArgs, {
-      stdio: 'inherit',
+      stdio: this.stdio,
       // Assign a dedicated process group so we can kill all child workers too
       detached: true,
     });

@@ -41,12 +41,16 @@ export class WatchCompiler extends EventEmitter {
 
     const createProgram = ts.createEmitAndSemanticDiagnosticsBuilderProgram;
 
-    const host = ts.createWatchCompilerHost(
-      configPath,
-      { preserveWatchOutput },
-      ts.sys,
-      createProgram,
-    );
+    // TypeScript's default watch status reporter appends double newlines to status messages.
+    // We wrap system.write to normalize multiple trailing newlines to a single newline.
+    const watchStatusSystem: ts.System = {
+      ...ts.sys,
+      write(msg: string) {
+        ts.sys.write(msg.replace(/(\r?\n){2,}$/, ts.sys.newLine));
+      },
+    };
+
+    const host = ts.createWatchCompilerHost(configPath, { preserveWatchOutput }, watchStatusSystem, createProgram);
 
     // Intercept the official afterProgramCreate lifecycle hook
     const origAfterProgramCreate = host.afterProgramCreate;

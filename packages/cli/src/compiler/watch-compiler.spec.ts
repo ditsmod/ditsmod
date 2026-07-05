@@ -1,7 +1,9 @@
-import { WatchCompiler, type CompilationResult } from './watch-compiler.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
+import { jest } from '@jest/globals';
+
+import { WatchCompiler, type CompilationResult } from './watch-compiler.js';
 
 function makeTmpProject(sourceCode: string): { dir: string; tsconfig: string; cleanup: () => void } {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wc-spec-'));
@@ -21,8 +23,14 @@ function makeTmpProject(sourceCode: string): { dir: string; tsconfig: string; cl
 
 describe('WatchCompiler', () => {
   let compiler: WatchCompiler;
+  let stdoutSpy: ReturnType<typeof jest.spyOn>;
+
+  beforeEach(() => {
+    stdoutSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => true);
+  });
 
   afterEach(() => {
+    stdoutSpy?.mockRestore();
     if (compiler) {
       compiler.close();
     }
@@ -80,4 +88,3 @@ describe('WatchCompiler', () => {
     expect(() => compiler.close()).not.toThrow();
   });
 });
-

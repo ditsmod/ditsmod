@@ -161,8 +161,12 @@ describe('runStart execution flow', () => {
   let tmpDir: string;
   let processManagerStartSpy: ReturnType<typeof jest.spyOn>;
   let exitSpy: ReturnType<typeof jest.spyOn>;
+  let stdoutSpy: ReturnType<typeof jest.spyOn>;
+  let consoleLogSpy: ReturnType<typeof jest.spyOn>;
 
   beforeEach(() => {
+    stdoutSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => true);
+    consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'start-cmd-spec-'));
     fs.mkdirSync(path.join(tmpDir, 'src'), { recursive: true });
     fs.writeFileSync(path.join(tmpDir, 'src/index.ts'), 'export const a = 1;\n');
@@ -182,6 +186,8 @@ describe('runStart execution flow', () => {
   });
 
   afterEach(() => {
+    stdoutSpy.mockRestore();
+    consoleLogSpy.mockRestore();
     processManagerStartSpy.mockRestore();
     exitSpy.mockRestore();
     fs.rmSync(tmpDir, { recursive: true, force: true });

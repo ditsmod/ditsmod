@@ -102,7 +102,7 @@ describe('ProcessManager', () => {
 
   it('should pass --inspect flag when debug is true', async () => {
     const fixture = writeTmpScript('process.exit(0);\n');
-    manager = new ProcessManager({ debug: true, nodeArgs: [] });
+    manager = new ProcessManager({ debug: true, nodeArgs: [], stdio: 'ignore' });
 
     const exitPromise = new Promise<number | null>((resolve) => manager.once('exit', resolve));
     manager.start(fixture);
@@ -111,7 +111,7 @@ describe('ProcessManager', () => {
 
   it('should pass --inspect=<host> flag when debug is a string', async () => {
     const fixture = writeTmpScript('process.exit(0);\n');
-    manager = new ProcessManager({ debug: '127.0.0.1:9229', nodeArgs: [] });
+    manager = new ProcessManager({ debug: '127.0.0.1:9229', nodeArgs: [], stdio: 'ignore' });
 
     const exitPromise = new Promise<number | null>((resolve) => manager.once('exit', resolve));
     manager.start(fixture);
@@ -120,7 +120,7 @@ describe('ProcessManager', () => {
 
   it('should pass --env-file flags when envFile option is provided', async () => {
     const fixture = writeTmpScript('process.exit(0);\n');
-    manager = new ProcessManager({ envFile: ['.env'], nodeArgs: [] });
+    manager = new ProcessManager({ envFile: ['.env'], nodeArgs: [], stdio: 'ignore' });
 
     const exitPromise = new Promise<number | null>((resolve) => manager.once('exit', resolve));
     manager.start(fixture);

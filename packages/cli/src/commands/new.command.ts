@@ -31,7 +31,6 @@ export function newCommand(program: Command): void {
     .action((directoryArg: string, opts: NewCommandOptions) => runNew(directoryArg, opts));
 }
 
-
 export async function runNew(directoryArg: string, opts: NewCommandOptions): Promise<void> {
   if (!directoryArg) {
     throw new Error("Missing required argument 'directory'. Usage: ditsmod new <directory>");
@@ -46,9 +45,7 @@ export async function runNew(directoryArg: string, opts: NewCommandOptions): Pro
 
   if (!repoUrl) {
     const validTemplates = Object.keys(TEMPLATE_REPOS).join(', ');
-    throw new Error(
-      `Unknown template "${opts.template}". Available templates: ${validTemplates}`,
-    );
+    throw new Error(`Unknown template "${opts.template}". Available templates: ${validTemplates}`);
   }
 
   if (fs.existsSync(targetAbsDir)) {
@@ -167,4 +164,3 @@ export async function runNew(directoryArg: string, opts: NewCommandOptions): Pro
     process.removeListener('SIGTERM', cleanup);
   }
 }
-

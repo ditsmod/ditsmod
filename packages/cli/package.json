@@ -26,6 +26,7 @@
     "build": "tsgo -b tsconfig.build.json",
     "clean": "rm -rf dist*",
     "test": "tsgo -b tsconfig.unit.json && yarn esm-jest",
+    "build-test": "tsgo -b tsconfig.build.json",
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)"
   },
   "keywords": [
