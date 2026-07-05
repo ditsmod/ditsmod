@@ -35,7 +35,17 @@ export function startCommand(program: Command): void {
 
 async function runStart(entryFileArg: string | undefined, opts: StartCommandOptions): Promise<void> {
   const cwd = process.cwd();
-  const entryAbs = resolveEntryFile(cwd, entryFileArg || opts.entryFile);
+
+  // If entryFileArg starts with -, it is an option/flag, not a file name
+  const validEntryArg = entryFileArg?.startsWith('-') ? undefined : entryFileArg;
+  const entryAbs = resolveEntryFile(cwd, validEntryArg || opts.entryFile);
+
+  // Extract arguments passed after `--` to forward them to the application child process
+  let appArgs: string[] = [];
+  const dashDashIndex = process.argv.indexOf('--');
+  if (dashDashIndex >= 0) {
+    appArgs = process.argv.slice(dashDashIndex + 1);
+  }
 
   const processManager = new ProcessManager({
     killTimeout: opts.killTimeout,
@@ -73,10 +83,10 @@ async function runStart(entryFileArg: string | undefined, opts: StartCommandOpti
     if (!started) {
       started = true;
       console.log('\n[ditsmod] Starting application…\n');
-      processManager.start(entryAbs);
+      processManager.start(entryAbs, appArgs);
     } else {
       console.log('\n[ditsmod] Restarting application…\n');
-      await processManager.restart(entryAbs);
+      await processManager.restart(entryAbs, appArgs);
     }
   });
 

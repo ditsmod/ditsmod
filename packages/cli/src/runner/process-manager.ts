@@ -40,20 +40,19 @@ export class ProcessManager extends EventEmitter {
   }
 
   /**
-   * Starts the application process. Call `restart()` for subsequent restarts
-   * so that the previous process is cleanly terminated first.
+   * Starts the application process with optional application arguments.
    */
-  start(entryFile: string): void {
-    this.current = this.spawnProcess(entryFile);
+  start(entryFile: string, appArgs: string[] = []): void {
+    this.current = this.spawnProcess(entryFile, appArgs);
   }
 
   /**
    * Gracefully stops the running process (if any) and starts a fresh one.
    * Awaits full termination before spawning to prevent port conflicts.
    */
-  async restart(entryFile: string): Promise<void> {
+  async restart(entryFile: string, appArgs: string[] = []): Promise<void> {
     await this.stop();
-    this.current = this.spawnProcess(entryFile);
+    this.current = this.spawnProcess(entryFile, appArgs);
   }
 
   /**
@@ -89,8 +88,8 @@ export class ProcessManager extends EventEmitter {
     });
   }
 
-  private spawnProcess(entryFile: string): ChildProcess {
-    const proc = spawn('node', [...this.nodeArgs, entryFile], {
+  private spawnProcess(entryFile: string, appArgs: string[] = []): ChildProcess {
+    const proc = spawn('node', [...this.nodeArgs, entryFile, ...appArgs], {
       stdio: 'inherit',
       // Assign a dedicated process group so we can kill all child workers too
       detached: true,
