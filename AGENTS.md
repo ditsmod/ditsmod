@@ -42,3 +42,12 @@ website/i18n/en/docusaurus-plugin-content-docs/current/
 
 When adding or modifying public API, update the corresponding documentation file.
 Run `yarn docs-en` to preview changes locally.
+
+---
+
+## Language Rules / Мовні правила
+
+- **Ukrainian Language / Українська мова**:
+  - When communicating or writing in Ukrainian, the English term **"application"** (or **"app"**) must either remain in English, or be translated as **"застосунок"**.
+  - **Do NOT** translate it as **"додаток"**.
+
