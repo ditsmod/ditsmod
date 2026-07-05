@@ -1,6 +1,6 @@
 import { Command } from 'commander';
 import path from 'node:path';
-import { startCommand, resolveEntryFile, type StartCommandOptions } from './start.command.js';
+import { startCommand, resolveEntryFile, resolveProjectConfig, type StartCommandOptions } from './start.command.js';
 
 describe('startCommand options & parsing', () => {
   let program: Command;
@@ -35,7 +35,7 @@ describe('startCommand options & parsing', () => {
       expect(parsedOpts?.exec).toBe('node');
       expect(parsedOpts?.debug).toBeUndefined();
       expect(parsedOpts?.envFile).toBeUndefined();
-      expect(parsedOpts?.entryFile).toBe('dist/main.js');
+      expect(parsedOpts?.entryFile).toBeUndefined();
       expect(parsedOpts?.preserveWatchOutput).toBe(false);
       expect(parsedOpts?.watchAssets).toBeUndefined();
       expect(parsedEntryArg).toBeUndefined();
@@ -96,12 +96,39 @@ describe('startCommand options & parsing', () => {
     });
   });
 
+  describe('resolveProjectConfig helper', () => {
+    const cwd = process.cwd();
+
+    it('should resolve default tsconfig.build.json or fallback tsconfig.json in cwd', () => {
+      const result = resolveProjectConfig(cwd, 'tsconfig.build.json');
+      expect(result.projectDir).toBe('.');
+      expect(result.projectFile).toMatch(/tsconfig(\.build)?\.json/);
+    });
+
+    it('should resolve directory input by searching tsconfig.build.json or tsconfig.json inside it', () => {
+      const result = resolveProjectConfig(cwd, '.');
+      expect(result.projectDir).toBe('.');
+      expect(result.projectFile).toMatch(/tsconfig(\.build)?\.json/);
+    });
+
+    it('should throw error if input file or directory tsconfig does not exist', () => {
+      expect(() => resolveProjectConfig(cwd, 'non-existent-directory-xyz')).toThrow(
+        'Cannot find TypeScript config file "non-existent-directory-xyz".',
+      );
+    });
+  });
+
   describe('resolveEntryFile helper', () => {
     const cwd = process.cwd();
 
     it('should resolve undefined input to dist/main.js', () => {
       const result = resolveEntryFile(cwd, undefined);
       expect(result).toBe(path.resolve(cwd, 'dist/main.js'));
+    });
+
+    it('should resolve undefined input with projectDir apps/backend to apps/backend/dist/main.js', () => {
+      const result = resolveEntryFile(cwd, undefined, 'apps/backend');
+      expect(result).toBe(path.resolve(cwd, 'apps/backend/dist/main.js'));
     });
 
     it('should resolve tmp.ts to dist/tmp.js', () => {
