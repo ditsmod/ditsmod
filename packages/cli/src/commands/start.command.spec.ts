@@ -37,7 +37,7 @@ describe('startCommand options & parsing', () => {
       expect(parsedOpts?.envFile).toBeUndefined();
       expect(parsedOpts?.entryFile).toBe('dist/main.js');
       expect(parsedOpts?.preserveWatchOutput).toBe(false);
-      expect(parsedOpts?.assets).toBeUndefined();
+      expect(parsedOpts?.watchAssets).toBeUndefined();
       expect(parsedEntryArg).toBeUndefined();
     });
 
@@ -83,10 +83,10 @@ describe('startCommand options & parsing', () => {
       expect(parsedEntryArg).toBe('src/app.ts');
     });
 
-    it('should parse -a / --assets array option', () => {
-      program.parse(['node', 'test', 'start', '-a', 'src/**/*.json', 'src/**/*.graphql']);
+    it('should parse --watch-assets array option', () => {
+      program.parse(['node', 'test', 'start', '--watch-assets', 'src/**/*.json', 'src/**/*.graphql']);
 
-      expect(parsedOpts?.assets).toEqual(['src/**/*.json', 'src/**/*.graphql']);
+      expect(parsedOpts?.watchAssets).toEqual(['src/**/*.json', 'src/**/*.graphql']);
     });
 
     it('should parse --preserve-watch-output boolean flag', () => {
