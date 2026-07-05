@@ -6,11 +6,9 @@
   "license": "MIT",
   "scripts": {
     "start": "run-p dev:server dev:client --print-label",
-    "start:dev": "run-p watch dev:client --print-label",
-    "dev:server": "run-p watch start:server",
-    "dev:client": "yarn wait-port 2021 && node --watch-path=dist/client.js --watch-path=../18-trpc-server/dist/main.js --enable-source-maps dist/client.js",
-    "start:server": "yarn build && node --watch --enable-source-maps ../18-trpc-server/dist/main.js",
-    "watch": "yarn build --watch",
+    "start:dev": "run-p dev:server dev:client --print-label",
+    "dev:server": "ditsmod start --project ../18-trpc-server/tsconfig.build.json --entry-file ../18-trpc-server/dist/main.js",
+    "dev:client": "yarn wait-port 2021 && ditsmod start dist/client.js",
     "clean": "rm -r dist*",
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",
     "build-test": "tsgo -b tsconfig.e2e.json",
@@ -25,6 +23,7 @@
     "#message/*": "./dist/app/modules/message/*"
   },
   "devDependencies": {
+    "@ditsmod/cli": "^3.0.0-next.13",
     "@typescript/native-preview": "^7.0.0-dev.20260626.1",
     "jest": "^30.4.2",
     "npm-run-all": "^4.1.5",

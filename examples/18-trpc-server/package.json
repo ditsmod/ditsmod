@@ -7,10 +7,8 @@
   "scripts": {
     "start": "run-p dev:server dev:client --print-label",
     "start:dev": "run-p dev:server dev:client --print-label",
-    "dev:server": "run-p watch start:server",
-    "dev:client": "wait-port 2021 && node --enable-source-maps --watch ../18-trpc-client/dist/client.js",
-    "start:server": "yarn build && node --watch --enable-source-maps dist/main.js",
-    "watch": "yarn build --watch",
+    "dev:server": "ditsmod start",
+    "dev:client": "wait-port 2021 && ditsmod start --project ../18-trpc-client/tsconfig.build.json --entry-file ../18-trpc-client/dist/client.js",
     "clean": "rm -r dist*",
     "test": "yarn build-test && yarn esm-jest",
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",
@@ -35,6 +33,7 @@
     "#message/*": "./dist/app/modules/message/*"
   },
   "devDependencies": {
+    "@ditsmod/cli": "^3.0.0-next.13",
     "@typescript/native-preview": "^7.0.0-dev.20260626.1",
     "jest": "^30.4.2",
     "npm-run-all": "^4.1.5",

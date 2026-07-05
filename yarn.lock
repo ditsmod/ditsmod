@@ -9,6 +9,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "18-trpc-server@workspace:examples/18-trpc-server"
   dependencies:
+    "@ditsmod/cli": "npm:^3.0.0-next.13"
     "@trpc/client": "npm:^11.5.1"
     "@trpc/server": "npm:^11.5.1"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260626.1"
@@ -7306,9 +7307,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example00@workspace:examples/00-standalone-application"
   dependencies:
+    "@ditsmod/cli": "npm:^3.0.0-next.13"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260626.1"
     jest: "npm:^30.4.2"
-    npm-run-all: "npm:^4.1.5"
   languageName: unknown
   linkType: soft
 
@@ -7326,9 +7327,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example02@workspace:examples/02-http-error-handler"
   dependencies:
+    "@ditsmod/cli": "npm:^3.0.0-next.13"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260626.1"
     jest: "npm:^30.4.2"
-    npm-run-all: "npm:^4.1.5"
   languageName: unknown
   linkType: soft
 
@@ -7336,10 +7337,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example03@workspace:examples/03-route-guards"
   dependencies:
+    "@ditsmod/cli": "npm:^3.0.0-next.13"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260626.1"
     dotenv: "npm:^17.3.1"
     jest: "npm:^30.4.2"
-    npm-run-all: "npm:^4.1.5"
   languageName: unknown
   linkType: soft
 
@@ -7347,11 +7348,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example04@workspace:examples/04-logger"
   dependencies:
+    "@ditsmod/cli": "npm:^3.0.0-next.13"
     "@types/bunyan": "npm:^1.8.11"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260626.1"
     bunyan: "npm:^1.8.15"
     jest: "npm:^30.4.2"
-    npm-run-all: "npm:^4.1.5"
     pino: "npm:^9.9.4"
     winston: "npm:^3.17.0"
   languageName: unknown
@@ -7361,9 +7362,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example05@workspace:examples/05-nested-routes"
   dependencies:
+    "@ditsmod/cli": "npm:^3.0.0-next.13"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260626.1"
     jest: "npm:^30.4.2"
-    npm-run-all: "npm:^4.1.5"
   languageName: unknown
   linkType: soft
 
@@ -7371,9 +7372,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example06@workspace:examples/06-body-parser"
   dependencies:
+    "@ditsmod/cli": "npm:^3.0.0-next.13"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260626.1"
     jest: "npm:^30.4.2"
-    npm-run-all: "npm:^4.1.5"
   languageName: unknown
   linkType: soft
 
@@ -7381,9 +7382,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example07@workspace:examples/07-dynamically-composing-modules"
   dependencies:
+    "@ditsmod/cli": "npm:^3.0.0-next.13"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260626.1"
     jest: "npm:^30.4.2"
-    npm-run-all: "npm:^4.1.5"
   languageName: unknown
   linkType: soft
 
@@ -7391,9 +7392,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example08@workspace:examples/08-http-interceptors"
   dependencies:
+    "@ditsmod/cli": "npm:^3.0.0-next.13"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260626.1"
     jest: "npm:^30.4.2"
-    npm-run-all: "npm:^4.1.5"
   languageName: unknown
   linkType: soft
 
@@ -7401,9 +7402,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example09@workspace:examples/09-one-extension"
   dependencies:
+    "@ditsmod/cli": "npm:^3.0.0-next.13"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260626.1"
     jest: "npm:^30.4.2"
-    npm-run-all: "npm:^4.1.5"
   languageName: unknown
   linkType: soft
 
@@ -7411,9 +7412,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example10@workspace:examples/10-openapi"
   dependencies:
+    "@ditsmod/cli": "npm:^3.0.0-next.13"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260626.1"
     jest: "npm:^30.4.2"
-    npm-run-all: "npm:^4.1.5"
   languageName: unknown
   linkType: soft
 
@@ -7421,9 +7422,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example11@workspace:examples/11-override-core-log-messages"
   dependencies:
+    "@ditsmod/cli": "npm:^3.0.0-next.13"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260626.1"
     jest: "npm:^30.4.2"
-    npm-run-all: "npm:^4.1.5"
   languageName: unknown
   linkType: soft
 
@@ -7431,9 +7432,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example12@workspace:examples/12-testing"
   dependencies:
+    "@ditsmod/cli": "npm:^3.0.0-next.13"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260626.1"
     jest: "npm:^30.4.2"
-    npm-run-all: "npm:^4.1.5"
   languageName: unknown
   linkType: soft
 
@@ -7441,9 +7442,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example13@workspace:examples/13-module-encapsulation"
   dependencies:
+    "@ditsmod/cli": "npm:^3.0.0-next.13"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260626.1"
     jest: "npm:^30.4.2"
-    npm-run-all: "npm:^4.1.5"
   languageName: unknown
   linkType: soft
 
@@ -7451,9 +7452,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example14@workspace:examples/14-auth-jwt"
   dependencies:
+    "@ditsmod/cli": "npm:^3.0.0-next.13"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260626.1"
     jest: "npm:^30.4.2"
-    npm-run-all: "npm:^4.1.5"
   languageName: unknown
   linkType: soft
 
@@ -7461,9 +7462,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example15@workspace:examples/15-i18n"
   dependencies:
+    "@ditsmod/cli": "npm:^3.0.0-next.13"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260626.1"
     jest: "npm:^30.4.2"
-    npm-run-all: "npm:^4.1.5"
   languageName: unknown
   linkType: soft
 
@@ -7471,9 +7472,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example16@workspace:examples/16-openapi-validation"
   dependencies:
+    "@ditsmod/cli": "npm:^3.0.0-next.13"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260626.1"
     jest: "npm:^30.4.2"
-    npm-run-all: "npm:^4.1.5"
   languageName: unknown
   linkType: soft
 
@@ -7481,9 +7482,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example17@workspace:examples/17-cors"
   dependencies:
+    "@ditsmod/cli": "npm:^3.0.0-next.13"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260626.1"
     jest: "npm:^30.4.2"
-    npm-run-all: "npm:^4.1.5"
   languageName: unknown
   linkType: soft
 
@@ -7491,6 +7492,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example18-client@workspace:examples/18-trpc-client"
   dependencies:
+    "@ditsmod/cli": "npm:^3.0.0-next.13"
     "@trpc/client": "npm:^11.5.1"
     "@trpc/server": "npm:^11.5.1"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260626.1"
@@ -7507,9 +7509,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example19@workspace:examples/19-session-cookie"
   dependencies:
+    "@ditsmod/cli": "npm:^3.0.0-next.13"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260626.1"
     jest: "npm:^30.4.2"
-    npm-run-all: "npm:^4.1.5"
   languageName: unknown
   linkType: soft
 
@@ -7517,9 +7519,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example20@workspace:examples/20-authjs"
   dependencies:
+    "@ditsmod/cli": "npm:^3.0.0-next.13"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260626.1"
     jest: "npm:^30.4.2"
-    npm-run-all: "npm:^4.1.5"
   languageName: unknown
   linkType: soft
 

@@ -13,6 +13,7 @@
   "include": ["src", "e2e"],
   "references": [
     { "path": "../../packages/core/tsconfig.build.json" },
+    { "path": "../../packages/cli/tsconfig.build.json" },
     { "path": "../../packages/graphql/tsconfig.build.json" },
     { "path": "../../packages/rest-testing/tsconfig.build.json" },
   ]

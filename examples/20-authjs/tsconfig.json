@@ -14,6 +14,7 @@
   "references": [
     { "path": "../../packages/authjs/tsconfig.build.json" },
     { "path": "../../packages/core/tsconfig.build.json" },
+    { "path": "../../packages/cli/tsconfig.build.json" },
     { "path": "../../packages/rest/tsconfig.build.json" },
     { "path": "../../packages/rest-testing/tsconfig.build.json" },
   ]
