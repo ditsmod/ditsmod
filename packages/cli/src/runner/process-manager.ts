@@ -3,6 +3,11 @@ import { EventEmitter } from 'node:events';
 
 export interface ProcessManagerOptions {
   /**
+   * Binary to run. Defaults to `'node'`.
+   */
+  exec?: string;
+
+  /**
    * Arguments passed to `node` before the entry file.
    * Defaults to `['--enable-source-maps']`.
    */
@@ -16,7 +21,7 @@ export interface ProcessManagerOptions {
 }
 
 /**
- * Manages the lifecycle of the Node.js application child process.
+ * Manages the lifecycle of the application child process.
  *
  * Features:
  * - Graceful shutdown: SIGTERM → wait `killTimeout` ms → SIGKILL
@@ -30,11 +35,13 @@ export interface ProcessManagerOptions {
  */
 export class ProcessManager extends EventEmitter {
   private current: ChildProcess | null = null;
+  private readonly exec: string;
   private readonly nodeArgs: string[];
   private readonly killTimeout: number;
 
   constructor(options: ProcessManagerOptions = {}) {
     super();
+    this.exec = options.exec ?? 'node';
     this.nodeArgs = options.nodeArgs ?? ['--enable-source-maps'];
     this.killTimeout = options.killTimeout ?? 5000;
   }
@@ -89,7 +96,12 @@ export class ProcessManager extends EventEmitter {
   }
 
   private spawnProcess(entryFile: string, appArgs: string[] = []): ChildProcess {
-    const proc = spawn('node', [...this.nodeArgs, entryFile, ...appArgs], {
+    const isNode = this.exec === 'node';
+    const spawnArgs = isNode
+      ? [...this.nodeArgs, entryFile, ...appArgs]
+      : [entryFile, ...appArgs];
+
+    const proc = spawn(this.exec, spawnArgs, {
       stdio: 'inherit',
       // Assign a dedicated process group so we can kill all child workers too
       detached: true,

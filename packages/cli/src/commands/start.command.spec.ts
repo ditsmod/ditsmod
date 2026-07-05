@@ -14,23 +14,16 @@ describe('startCommand options & parsing', () => {
     parsedEntryArg = undefined;
 
     // Register command with mock action handler
-    const cmd = program
-      .command('start [entryFile]')
-      .description('Run Ditsmod application')
-      .option('-p, --project <path>', 'Path to TypeScript config file', 'tsconfig.build.json')
-      .option('--entry-file <file>', 'Compiled entry file to run (relative to project root)', 'dist/main.js')
-      .option('-a, --assets <globs...>', 'Non-TypeScript asset globs to watch and copy to dist/')
-      .option('--preserve-watch-output', 'Do not clear the screen between compilations', false)
-      .option(
-        '--kill-timeout <ms>',
-        'Milliseconds to wait for the app to shut down before force-killing it',
-        (v) => parseInt(v, 10),
-        5000,
-      )
-      .action((entryFileArg: string | undefined, opts: StartCommandOptions) => {
+    startCommand(program);
+
+    // Override action for unit testing parsed options
+    const cmd = program.commands.find((c) => c.name() === 'start');
+    if (cmd) {
+      cmd.action((entryFileArg: string | undefined, opts: StartCommandOptions) => {
         parsedEntryArg = entryFileArg;
         parsedOpts = opts;
       });
+    }
   });
 
   describe('CLI Options parsing', () => {
@@ -39,6 +32,7 @@ describe('startCommand options & parsing', () => {
 
       expect(parsedOpts).toBeDefined();
       expect(parsedOpts?.project).toBe('tsconfig.build.json');
+      expect(parsedOpts?.exec).toBe('node');
       expect(parsedOpts?.entryFile).toBe('dist/main.js');
       expect(parsedOpts?.preserveWatchOutput).toBe(false);
       expect(parsedOpts?.killTimeout).toBe(5000);
@@ -50,6 +44,12 @@ describe('startCommand options & parsing', () => {
       program.parse(['node', 'test', 'start', '-p', 'tsconfig.custom.json']);
 
       expect(parsedOpts?.project).toBe('tsconfig.custom.json');
+    });
+
+    it('should parse -e / --exec option', () => {
+      program.parse(['node', 'test', 'start', '-e', 'bun']);
+
+      expect(parsedOpts?.exec).toBe('bun');
     });
 
     it('should parse --entry-file option', () => {

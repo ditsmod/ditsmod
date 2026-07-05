@@ -14,8 +14,9 @@ describe('ProcessManager', () => {
     expect(manager).toBeDefined();
   });
 
-  it('should instantiate with custom killTimeout and nodeArgs', () => {
+  it('should instantiate with custom exec, killTimeout, and nodeArgs', () => {
     manager = new ProcessManager({
+      exec: 'node',
       killTimeout: 2000,
       nodeArgs: ['--enable-source-maps'],
     });
