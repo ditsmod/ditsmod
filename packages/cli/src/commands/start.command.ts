@@ -21,13 +21,17 @@ export interface StartCommandOptions {
 export function startCommand(program: Command): void {
   program
     .command('start [entryFile]')
+    .usage('[options] [entryFile]\n       dm start [options] [entryFile]')
     .description('Run Ditsmod application')
     .option('-p, --project <path>', 'Path to TypeScript config file', 'tsconfig.build.json')
     .option('-e, --exec <binary>', 'Binary to run', 'node')
     .option('-d, --debug [hostport]', 'Run in debug mode (with --inspect flag)')
     .option('--env-file <paths...>', 'Path(s) to env file(s) to load into environment')
     .option('--entry-file <file>', 'Compiled entry file to run (relative to project root)', 'dist/main.js')
-    .option('--watch-assets <globs...>', 'Non-TypeScript asset globs to watch and copy to dist/ (e.g., "src/**/*.json")')
+    .option(
+      '--watch-assets <globs...>',
+      'Non-TypeScript asset globs to watch and copy to dist/ (e.g., "src/**/*.json")',
+    )
     .option('--preserve-watch-output', 'Do not clear the screen between compilations', false)
     .action((entryFileArg: string | undefined, opts: StartCommandOptions) => runStart(entryFileArg, opts));
 }

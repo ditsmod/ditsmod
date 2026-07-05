@@ -6,6 +6,7 @@ const program = new Command();
 
 program
   .name('ditsmod')
+  .usage('[options] [command]\n       dm [options] [command]')
   .description('Ditsmod CLI — development tools for Ditsmod framework')
   .version('3.0.0-next.13');
 
