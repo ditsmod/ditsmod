@@ -81,7 +81,27 @@ Please make sure that Node.js >= v20.6.0 is installed on your operating system.
 
 ## Installation {#installation}
 
-The basic set for running the application has a repository [ditsmod/rest-starter][2]. Clone it and install the dependencies:
+You can install the `@ditsmod/cli` package globally:
+
+```bash
+npm i -g @ditsmod/cli
+```
+
+After installation, the `ditsmod` executable and its shorthand alias `dm` become available system-wide:
+
+```bash
+dm new my-app
+cd my-app
+```
+
+Or create a new application without prior installation using `npx`:
+
+```bash
+npx @ditsmod/cli new my-app
+cd my-app
+```
+
+Alternatively, you can manually clone the [ditsmod/rest-starter][2] repository:
 
 ```bash
 git clone --depth 1 https://github.com/ditsmod/rest-starter.git my-app
@@ -89,12 +109,10 @@ cd my-app
 npm i
 ```
 
-Alternatively, you can use the starter monorepo:
+Or create a starter monorepo:
 
 ```bash
-git clone --depth 1 https://github.com/ditsmod/rest-monorepo-starter.git my-app
-cd my-app
-npm i
+dm new my-app -t rest-monorepo
 ```
 
 ### Add `AGENTS.md` and `SKILL.md` for AI agents {#add-agent-skills}
@@ -127,6 +145,16 @@ You can start the application in development mode with the following command:
 ```bash
 npm run start:dev
 ```
+
+Or directly using Ditsmod CLI (or shorthand alias `dm`):
+
+```bash
+ditsmod start
+# or using the shorthand alias:
+dm start
+```
+
+The `@ditsmod/cli` utility automatically handles incremental TypeScript compilation and restarts the Node.js server whenever source files are changed, eliminating the need to run separate compiler and server terminals.
 
 You can check the server operation using `curl`:
 
