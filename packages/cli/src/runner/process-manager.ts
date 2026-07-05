@@ -45,6 +45,7 @@ export interface ProcessManagerOptions {
  */
 export class ProcessManager extends EventEmitter {
   private current: ChildProcess | null = null;
+  private stoppingPromise: Promise<void> | null = null;
   private readonly exec: string;
   private readonly debug?: boolean | string;
   private readonly envFile?: string[];
@@ -85,12 +86,17 @@ export class ProcessManager extends EventEmitter {
       return Promise.resolve();
     }
 
-    return new Promise((resolve) => {
+    if (this.stoppingPromise) {
+      return this.stoppingPromise;
+    }
+
+    this.stoppingPromise = new Promise((resolve) => {
       const proc = this.current!;
 
       const done = () => {
         clearTimeout(killTimer);
         this.current = null;
+        this.stoppingPromise = null;
         resolve();
       };
 
@@ -106,7 +112,10 @@ export class ProcessManager extends EventEmitter {
           this.killProcessGroup(proc, 'SIGKILL');
         }
       }, this.killTimeout);
+      killTimer.unref();
     });
+
+    return this.stoppingPromise;
   }
 
   private spawnProcess(entryFile: string, appArgs: string[] = []): ChildProcess {
@@ -133,6 +142,7 @@ export class ProcessManager extends EventEmitter {
       // Assign a dedicated process group so we can kill all child workers too
       detached: true,
     });
+    proc.unref();
 
     proc.on('exit', (code, signal) => {
       this.emit('exit', code, signal);

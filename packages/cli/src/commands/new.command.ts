@@ -1,5 +1,5 @@
 import { type Command } from 'commander';
-import { execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -59,18 +59,11 @@ export async function runNew(directoryArg: string, opts: NewCommandOptions): Pro
   }
 
   let createdDir = false;
+  let cancelled = false;
 
   // --- Signal Handling for Ctrl+C (SIGINT) ---
   const cleanup = () => {
-    console.log('\n\n[ditsmod] Operation cancelled. Cleaning up temporary files…');
-    if (createdDir && fs.existsSync(targetAbsDir)) {
-      try {
-        fs.rmSync(targetAbsDir, { recursive: true, force: true });
-      } catch {
-        // Ignore cleanup errors
-      }
-    }
-    process.exit(130);
+    cancelled = true;
   };
 
   process.once('SIGINT', cleanup);
@@ -81,8 +74,12 @@ export async function runNew(directoryArg: string, opts: NewCommandOptions): Pro
     console.log(`Using template: ${templateName} (${repoUrl})`);
 
     // 1. Clone starter repository
-    execSync(`git clone --depth 1 ${repoUrl} "${targetAbsDir}"`, { stdio: 'inherit' });
+    execFileSync('git', ['clone', '--depth', '1', repoUrl, targetAbsDir], { stdio: 'inherit' });
     createdDir = true;
+
+    if (cancelled) {
+      throw Object.assign(new Error('Operation cancelled'), { signal: 'SIGINT', status: 130 });
+    }
 
     // 2. Remove template .git directory
     const gitDir = path.join(targetAbsDir, '.git');
@@ -102,19 +99,27 @@ export async function runNew(directoryArg: string, opts: NewCommandOptions): Pro
       }
     }
 
+    if (cancelled) {
+      throw Object.assign(new Error('Operation cancelled'), { signal: 'SIGINT', status: 130 });
+    }
+
     // 4. Initialize clean git repository if not skipped
     if (!opts.skipGit) {
       try {
         console.log('\n[ditsmod] Initializing git repository…');
-        execSync('git init', { cwd: targetAbsDir, stdio: 'ignore' });
-        execSync('git add .', { cwd: targetAbsDir, stdio: 'ignore' });
-        execSync(`git commit -m "Initial commit from ${templateName} template"`, {
+        execFileSync('git', ['init'], { cwd: targetAbsDir, stdio: 'ignore' });
+        execFileSync('git', ['add', '.'], { cwd: targetAbsDir, stdio: 'ignore' });
+        execFileSync('git', ['commit', '-m', `Initial commit from ${templateName} template`], {
           cwd: targetAbsDir,
           stdio: 'ignore',
         });
       } catch {
         console.warn('[ditsmod] Could not initialize git repository.');
       }
+    }
+
+    if (cancelled) {
+      throw Object.assign(new Error('Operation cancelled'), { signal: 'SIGINT', status: 130 });
     }
 
     // 5. Install dependencies if not skipped
@@ -125,7 +130,7 @@ export async function runNew(directoryArg: string, opts: NewCommandOptions): Pro
         throw new Error(`Unsupported package manager "${pm}". Allowed values: ${allowedPMs.join(', ')}.`);
       }
       console.log(`\n[ditsmod] Installing dependencies using ${pm}…\n`);
-      execSync(`${pm} install`, { cwd: targetAbsDir, stdio: 'inherit' });
+      execFileSync(pm, ['install'], { cwd: targetAbsDir, stdio: 'inherit' });
     }
 
     console.log(`\n Successfully created project "${targetDirName}"!\n`);
@@ -135,21 +140,31 @@ export async function runNew(directoryArg: string, opts: NewCommandOptions): Pro
     }
     console.log(`  ${opts.packageManager || 'npm'} start\n`);
   } catch (err: any) {
-    if (err?.signal === 'SIGINT' || err?.status === 130) {
-      cleanup();
-    } else {
-      // If failed for other reasons, clean up partial directory if created
+    if (cancelled || err?.signal === 'SIGINT' || err?.status === 130) {
+      console.log('\n\n[ditsmod] Operation cancelled. Cleaning up temporary files…');
       if (createdDir && fs.existsSync(targetAbsDir)) {
         try {
           fs.rmSync(targetAbsDir, { recursive: true, force: true });
         } catch {
-          // Ignore
+          // Ignore cleanup errors
         }
       }
-      throw err;
+      process.exitCode = 130;
+      return;
     }
+
+    // If failed for other reasons, clean up partial directory if created
+    if (createdDir && fs.existsSync(targetAbsDir)) {
+      try {
+        fs.rmSync(targetAbsDir, { recursive: true, force: true });
+      } catch {
+        // Ignore
+      }
+    }
+    throw err;
   } finally {
     process.removeListener('SIGINT', cleanup);
     process.removeListener('SIGTERM', cleanup);
   }
 }
+

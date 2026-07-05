@@ -36,12 +36,11 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "chokidar": "^4.0.3",
     "commander": "^14.0.0",
     "typescript": "^5.9.3"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.14",
+    "@types/jest": "^30.0.0",
     "@types/node": "^26.0.1",
     "@typescript/native-preview": "^7.0.0-dev.20260626.1",
     "jest": "^30.4.2"

@@ -1,12 +1,11 @@
-import chokidar, { type FSWatcher } from 'chokidar';
 import fs from 'node:fs';
 import path from 'node:path';
 import { EventEmitter } from 'node:events';
 
 export interface AssetEntry {
   /**
-   * Glob pattern(s) relative to `srcRoot` to watch.
-   * E.g. `"**\/*.json"` or `["**\/*.graphql", "**\/*.proto"]`.
+   * Glob pattern(s) relative to srcRoot to watch.
+   * E.g. "*.json" or ["*.graphql", "*.proto"].
    */
   include: string | string[];
 
@@ -42,56 +41,101 @@ export interface AssetWatcherOptions {
  * - `error` (err: Error)
  */
 export class AssetWatcher extends EventEmitter {
-  private watcher: FSWatcher | null = null;
+  private watcher: fs.FSWatcher | null = null;
   private readonly srcRoot: string;
   private readonly outDir: string;
+  private readonly includeGlobs: string[];
+  private readonly excludeGlobs: string[];
+  private readonly debounceTimers = new Map<string, NodeJS.Timeout>();
+  private readonly debounceMs = 100;
 
   constructor(private readonly options: AssetWatcherOptions) {
     super();
     this.srcRoot = path.resolve(options.srcRoot);
     this.outDir = path.resolve(options.outDir);
-  }
 
-  start(): void {
-    // Chokidar v4 no longer resolves glob patterns passed to watch() reliably
-    // on all platforms. Instead we watch the srcRoot directories directly and
-    // use Node.js built-in path.matchesGlob() (available since Node 22) to
-    // filter events according to the configured include/exclude patterns.
-    const includeGlobs = this.options.assets.flatMap((entry) => {
+    this.includeGlobs = options.assets.flatMap((entry) => {
       const includes = Array.isArray(entry.include) ? entry.include : [entry.include];
       return includes.map((g) => path.join(this.srcRoot, g));
     });
 
-    const excludeGlobs = this.options.assets.flatMap((entry) => {
+    this.excludeGlobs = options.assets.flatMap((entry) => {
       const excludes = entry.exclude ? (Array.isArray(entry.exclude) ? entry.exclude : [entry.exclude]) : [];
       return excludes.map((g) => path.join(this.srcRoot, g));
     });
+  }
 
-    /**
-     * Returns true if `absPath` matches one of the include patterns AND does
-     * not match any of the exclude patterns.
-     */
-    const isAsset = (absPath: string): boolean => {
-      if (!includeGlobs.some((g) => path.matchesGlob(absPath, g))) return false;
-      if (excludeGlobs.some((g) => path.matchesGlob(absPath, g))) return false;
-      return true;
-    };
+  start(): void {
+    // 1. Initial scan: copy existing assets on startup
+    this.initialScan();
 
-    this.watcher = chokidar.watch(this.srcRoot, {
-      persistent: true,
-      ignoreInitial: false, // Copy existing assets on startup
-    });
-
-    this.watcher
-      .on('add', (filePath: string) => { if (isAsset(filePath)) this.copyAsset(filePath); })
-      .on('change', (filePath: string) => { if (isAsset(filePath)) this.copyAsset(filePath); })
-      .on('unlink', (filePath: string) => { if (isAsset(filePath)) this.removeAsset(filePath); })
-      .on('error', (err: unknown) => this.emit('error', err instanceof Error ? err : new Error(String(err))));
+    // 2. Watch for file changes recursively using native node:fs.watch
+    try {
+      this.watcher = fs.watch(this.srcRoot, { recursive: true });
+      this.watcher.on('change', (eventType, filename) => {
+        if (!filename) return;
+        const absPath = path.join(this.srcRoot, filename.toString());
+        if (!this.isAsset(absPath)) return;
+        this.debouncedHandleChange(absPath);
+      });
+      this.watcher.on('error', (err: unknown) => {
+        this.emit('error', err instanceof Error ? err : new Error(String(err)));
+      });
+    } catch (err: unknown) {
+      this.emit('error', err instanceof Error ? err : new Error(String(err)));
+    }
   }
 
   async close(): Promise<void> {
-    await this.watcher?.close();
+    this.watcher?.close();
     this.watcher = null;
+    for (const timer of this.debounceTimers.values()) {
+      clearTimeout(timer);
+    }
+    this.debounceTimers.clear();
+  }
+
+  private initialScan(): void {
+    try {
+      if (!fs.existsSync(this.srcRoot)) return;
+      const entries = fs.readdirSync(this.srcRoot, { recursive: true, withFileTypes: true });
+      for (const entry of entries) {
+        if (!entry.isFile()) continue;
+        const parentDir = entry.parentPath || (entry as any).path || this.srcRoot;
+        const absPath = path.join(parentDir, entry.name);
+        if (this.isAsset(absPath)) {
+          this.copyAsset(absPath);
+        }
+      }
+    } catch (err) {
+      this.emit('error', err instanceof Error ? err : new Error(String(err)));
+    }
+  }
+
+  private debouncedHandleChange(absPath: string): void {
+    const existing = this.debounceTimers.get(absPath);
+    if (existing) clearTimeout(existing);
+
+    const timer = setTimeout(() => {
+      this.debounceTimers.delete(absPath);
+      this.handleChange(absPath);
+    }, this.debounceMs);
+
+    this.debounceTimers.set(absPath, timer);
+  }
+
+  private handleChange(absPath: string): void {
+    if (fs.existsSync(absPath)) {
+      this.copyAsset(absPath);
+    } else {
+      this.removeAsset(absPath);
+    }
+  }
+
+  private isAsset(absPath: string): boolean {
+    if (!this.includeGlobs.some((g) => path.matchesGlob(absPath, g))) return false;
+    if (this.excludeGlobs.some((g) => path.matchesGlob(absPath, g))) return false;
+    return true;
   }
 
   private copyAsset(srcPath: string): void {

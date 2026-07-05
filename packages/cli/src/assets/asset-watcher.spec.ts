@@ -17,17 +17,6 @@ function makeTmpDirs(): { srcRoot: string; outDir: string; cleanup: () => void }
   };
 }
 
-// Wait for chokidar's 'ready' event before doing file operations.
-function waitReady(watcher: AssetWatcher): Promise<void> {
-  return new Promise<void>((resolve, reject) => {
-    // AssetWatcher wraps FSWatcher — access it through the internal field.
-    // We listen to 'ready' on the underlying FSWatcher via chokidar.
-    // Since chokidar's watcher is private, we use a small timeout after start()
-    // that is consistent with chokidar's stabilization time.
-    setTimeout(resolve, 500);
-  });
-}
-
 describe('AssetWatcher', () => {
   let watcher: AssetWatcher;
   let cleanup: () => void;
@@ -92,8 +81,8 @@ describe('AssetWatcher', () => {
     watcher = new AssetWatcher({ srcRoot, outDir, assets: [{ include: '**/*.json' }] });
     watcher.start();
 
-    // Wait for chokidar to be ready before writing a new file
-    await waitReady(watcher);
+    // Small delay for watch listener setup
+    await new Promise((r) => setTimeout(r, 200));
 
     await new Promise<void>((resolve, reject) => {
       const timer = setTimeout(() => reject(new Error('Timed out waiting for change event')), 9000);
@@ -111,7 +100,7 @@ describe('AssetWatcher', () => {
     expect(fs.existsSync(path.join(outDir, 'new.json'))).toBe(true);
   }, 15_000);
 
-  // ── start(): removes file from outDir on unlink ───────────────────────────
+  // ── start(): removes file from outDir on deletion ──────────────────────────
 
   it('should remove dest file when source asset is deleted', async () => {
     const { srcRoot, outDir, cleanup: c } = makeTmpDirs();
@@ -139,8 +128,8 @@ describe('AssetWatcher', () => {
     const destFile = path.join(outDir, 'removable.json');
     expect(fs.existsSync(destFile)).toBe(true);
 
-    // Wait for chokidar stabilization, then delete source
-    await waitReady(watcher);
+    // Small delay before unlinking
+    await new Promise((r) => setTimeout(r, 200));
 
     await new Promise<void>((resolve, reject) => {
       const timer = setTimeout(() => reject(new Error('Timed out waiting for unlink event')), 9000);
@@ -156,7 +145,59 @@ describe('AssetWatcher', () => {
     });
 
     expect(fs.existsSync(destFile)).toBe(false);
-  }, 30_000);
+  }, 15_000);
+
+  // ── exclude pattern filtering ─────────────────────────────────────────────
+
+  it('should ignore files matching exclude patterns', async () => {
+    const { srcRoot, outDir, cleanup: c } = makeTmpDirs();
+    cleanup = c;
+
+    const includedFile = path.join(srcRoot, 'included.json');
+    const excludedFile = path.join(srcRoot, 'excluded.tmp.json');
+
+    fs.writeFileSync(includedFile, '{}');
+    fs.writeFileSync(excludedFile, '{}');
+
+    watcher = new AssetWatcher({
+      srcRoot,
+      outDir,
+      assets: [{ include: '**/*.json', exclude: '**/*.tmp.json' }],
+    });
+
+    watcher.start();
+
+    await new Promise((r) => setTimeout(r, 300));
+
+    expect(fs.existsSync(path.join(outDir, 'included.json'))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, 'excluded.tmp.json'))).toBe(false);
+  });
+
+  // ── Subdirectory mirroring ────────────────────────────────────────────────
+
+  it('should mirror subdirectory structure correctly', async () => {
+    const { srcRoot, outDir, cleanup: c } = makeTmpDirs();
+    cleanup = c;
+
+    const subDir = path.join(srcRoot, 'nested', 'deep');
+    fs.mkdirSync(subDir, { recursive: true });
+    const srcFile = path.join(subDir, 'schema.graphql');
+    fs.writeFileSync(srcFile, 'type Query { id: ID! }');
+
+    watcher = new AssetWatcher({
+      srcRoot,
+      outDir,
+      assets: [{ include: '**/*.graphql' }],
+    });
+
+    watcher.start();
+
+    await new Promise((r) => setTimeout(r, 300));
+
+    const destFile = path.join(outDir, 'nested', 'deep', 'schema.graphql');
+    expect(fs.existsSync(destFile)).toBe(true);
+    expect(fs.readFileSync(destFile, 'utf8')).toBe('type Query { id: ID! }');
+  });
 
   // ── close() is idempotent ─────────────────────────────────────────────────
 
@@ -168,3 +209,4 @@ describe('AssetWatcher', () => {
     await expect(watcher.close()).resolves.toBeUndefined();
   });
 });
+

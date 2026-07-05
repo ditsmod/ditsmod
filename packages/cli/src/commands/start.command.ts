@@ -110,6 +110,7 @@ export async function runStart(entryFileArg: string | undefined, opts: StartComm
   compiler.start();
 
   let started = false;
+  let restartTimer: NodeJS.Timeout | null = null;
   try {
     for await (const [result] of compiledEvents) {
       const compilationResult = result as CompilationResult;
@@ -123,12 +124,16 @@ export async function runStart(entryFileArg: string | undefined, opts: StartComm
         console.log('\n[ditsmod] Starting application…\n');
         processManager.start(entryAbs, appArgs);
       } else {
-        console.log('\n[ditsmod] Restarting application…\n');
-        try {
-          await processManager.restart(entryAbs, appArgs);
-        } catch (err: any) {
-          console.error('[ditsmod] Error restarting application:', err?.message || err);
-        }
+        if (restartTimer) clearTimeout(restartTimer);
+        restartTimer = setTimeout(async () => {
+          restartTimer = null;
+          console.log('\n[ditsmod] Restarting application…\n');
+          try {
+            await processManager.restart(entryAbs, appArgs);
+          } catch (err: any) {
+            console.error('[ditsmod] Error restarting application:', err?.message || err);
+          }
+        }, 300);
       }
     }
   } catch (err: any) {
@@ -136,6 +141,7 @@ export async function runStart(entryFileArg: string | undefined, opts: StartComm
       console.error('[ditsmod] Unexpected error in watch loop:', err);
     }
   } finally {
+    if (restartTimer) clearTimeout(restartTimer);
     compiler.close();
     await assetWatcher?.close();
     await processManager.stop();

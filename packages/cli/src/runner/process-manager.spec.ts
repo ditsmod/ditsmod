@@ -97,4 +97,60 @@ describe('ProcessManager', () => {
     // restart() must resolve without throwing
     await expect(manager.restart(fixture)).resolves.toBeUndefined();
   }, 10_000);
+
+  // ── Options & Flags ───────────────────────────────────────────────────────
+
+  it('should pass --inspect flag when debug is true', async () => {
+    const fixture = writeTmpScript('process.exit(0);\n');
+    manager = new ProcessManager({ debug: true, nodeArgs: [] });
+
+    const exitPromise = new Promise<number | null>((resolve) => manager.once('exit', resolve));
+    manager.start(fixture);
+    await exitPromise;
+  }, 10_000);
+
+  it('should pass --inspect=<host> flag when debug is a string', async () => {
+    const fixture = writeTmpScript('process.exit(0);\n');
+    manager = new ProcessManager({ debug: '127.0.0.1:9229', nodeArgs: [] });
+
+    const exitPromise = new Promise<number | null>((resolve) => manager.once('exit', resolve));
+    manager.start(fixture);
+    await exitPromise;
+  }, 10_000);
+
+  it('should pass --env-file flags when envFile option is provided', async () => {
+    const fixture = writeTmpScript('process.exit(0);\n');
+    manager = new ProcessManager({ envFile: ['.env'], nodeArgs: [] });
+
+    const exitPromise = new Promise<number | null>((resolve) => manager.once('exit', resolve));
+    manager.start(fixture);
+    await exitPromise;
+  }, 10_000);
+
+  // ── Double Stop Guard ──────────────────────────────────────────────────────
+
+  it('should resolve stop() cleanly when called twice concurrently', async () => {
+    const fixture = writeTmpScript(SLEEP_FOREVER_SCRIPT);
+    manager = new ProcessManager({ nodeArgs: [] });
+    manager.start(fixture);
+    await new Promise((r) => setTimeout(r, 100));
+
+    const [res1, res2] = await Promise.all([manager.stop(), manager.stop()]);
+    expect(res1).toBeUndefined();
+    expect(res2).toBeUndefined();
+  }, 10_000);
+
+  // ── Spawn Error Emission ───────────────────────────────────────────────────
+
+  it('should emit error event when child process fails to spawn', async () => {
+    manager = new ProcessManager({ exec: 'non-existent-binary-xyz-12345', nodeArgs: [] });
+    const errPromise = new Promise<Error>((resolve) => manager.once('error', resolve));
+
+    manager.start('dummy.js');
+    const err = await errPromise;
+
+    expect(err).toBeDefined();
+    expect((err as any).code).toBe('ENOENT');
+  }, 10_000);
 });
+

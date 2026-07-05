@@ -55,9 +55,12 @@ export class WatchCompiler extends EventEmitter {
       // Always call original to let TypeScript finalise the watch state
       origAfterProgramCreate?.(builderProgram);
 
-      // Inspect diagnostics WITHOUT causing an additional emit
-      const program = builderProgram.getProgram();
-      const diagnostics = ts.getPreEmitDiagnostics(program);
+      // Inspect cached incremental diagnostics WITHOUT causing an un-cached full re-check
+      const diagnostics = [
+        ...builderProgram.getSyntacticDiagnostics(),
+        ...builderProgram.getSemanticDiagnostics(),
+        ...builderProgram.getOptionsDiagnostics(),
+      ];
       const hasErrors = diagnostics.some((d) => d.category === ts.DiagnosticCategory.Error);
 
       this.emit('compiled', { hasErrors, diagnostics } satisfies CompilationResult);
