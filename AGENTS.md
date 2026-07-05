@@ -53,12 +53,13 @@ Run `yarn docs-en` to preview changes locally.
 
 ## Verification
 
+- **Running Prettier**: The agent must run Prettier to auto-format every new or modified file before finishing changes (e.g., `npx prettier --write path/to/file.ts`).
 - **Running ESLint**: After completing any code changes, the agent must run ESLint. To avoid running it for the entire project (which can cause memory issues), run it only for the modified packages (e.g., `yarn lint packages/cli` from the project root) or specifically for the modified files.
 
 ---
 
-## Language Rules / Мовні правила
+## Language Rules
 
-- **Ukrainian Language / Українська мова**:
+- **Ukrainian Language**:
   - When communicating or writing in Ukrainian, the English term **"application"** (or **"app"**) must either remain in English, or be translated as **"застосунок"**.
   - **Do NOT** translate it as **"додаток"**.
