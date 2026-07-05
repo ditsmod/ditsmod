@@ -33,7 +33,7 @@ export function startCommand(program: Command): void {
     .action((entryFileArg: string | undefined, opts: StartCommandOptions) => runStart(entryFileArg, opts));
 }
 
-async function runStart(entryFileArg: string | undefined, opts: StartCommandOptions): Promise<void> {
+export async function runStart(entryFileArg: string | undefined, opts: StartCommandOptions): Promise<void> {
   const cwd = process.cwd();
 
   // If entryFileArg starts with -, it is an option/flag, not a file name
@@ -117,7 +117,7 @@ async function runStart(entryFileArg: string | undefined, opts: StartCommandOpti
  * - `tmp` -> `dist/tmp.js`
  * - `dist/main.js` -> `dist/main.js`
  */
-function resolveEntryFile(cwd: string, input?: string): string {
+export function resolveEntryFile(cwd: string, input?: string): string {
   const rawInput = input || 'dist/main.js';
 
   let entry = rawInput;
@@ -126,7 +126,11 @@ function resolveEntryFile(cwd: string, input?: string): string {
   }
 
   let normalized = entry.replace(/\\/g, '/');
-  if (normalized.startsWith('src/')) {
+  if (normalized.startsWith('dist/')) {
+    normalized = normalized.slice(5);
+  } else if (normalized.startsWith('./dist/')) {
+    normalized = normalized.slice(7);
+  } else if (normalized.startsWith('src/')) {
     normalized = normalized.slice(4);
   } else if (normalized.startsWith('./src/')) {
     normalized = normalized.slice(6);

@@ -3,6 +3,7 @@
   "references": [
     { "path": "authjs/tsconfig.json" },
     { "path": "body-parser/tsconfig.json" },
+    { "path": "cli/tsconfig.json" },
     { "path": "core/tsconfig.json" },
     { "path": "cors/tsconfig.json" },
     { "path": "i18n/tsconfig.json" },
@@ -17,6 +18,6 @@
     { "path": "testing/tsconfig.json" },
     { "path": "trpc/tsconfig.json" },
     { "path": "graphql/tsconfig.json" },
-    { "path": "versions/tsconfig.json" },
+    { "path": "versions/tsconfig.json" }
   ]
 }

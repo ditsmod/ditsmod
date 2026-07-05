@@ -42,6 +42,7 @@
     "typescript": "^5.9.3"
   },
   "devDependencies": {
+    "@types/jest": "^29.5.14",
     "@types/node": "^26.0.1",
     "@typescript/native-preview": "^7.0.0-dev.20260626.1",
     "jest": "^30.4.2"
