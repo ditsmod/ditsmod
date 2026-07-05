@@ -43,6 +43,13 @@ website/i18n/en/docusaurus-plugin-content-docs/current/
 When adding or modifying public API, update the corresponding documentation file.
 Run `yarn docs-en` to preview changes locally.
 
+### Documentation Translation & Synchronization Rules
+
+- **Multi-language updates**: When updating website documentation, update both the English and Ukrainian versions.
+- **Line-by-line synchronization**: The English and Ukrainian documentation files must always be synchronized line-by-line. For example, if a header starts at line `N` in the Ukrainian version, the corresponding English header must also start at line `N`.
+- **Header IDs**: Every header must have an ID in English using the syntax: `## Some header {#some-header}` where `{#some-header}` is the ID.
+
+
 ---
 
 ## Language Rules / Мовні правила
