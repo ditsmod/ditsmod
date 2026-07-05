@@ -2,3 +2,4 @@ export { WatchCompiler, type WatchCompilerOptions, type CompilationResult } from
 export { ProcessManager, type ProcessManagerOptions } from './runner/process-manager.js';
 export { AssetWatcher, type AssetWatcherOptions, type AssetEntry } from './assets/asset-watcher.js';
 export { startCommand, type StartCommandOptions } from './commands/start.command.js';
+export { newCommand, type NewCommandOptions, TEMPLATE_REPOS } from './commands/new.command.js';
