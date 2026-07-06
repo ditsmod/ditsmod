@@ -19,8 +19,32 @@ export interface CompilationResult {
  * - `compiled` (result: CompilationResult) — after each compilation cycle completes.
  * - `error` (err: Error) — on internal failures.
  */
+declare module 'typescript' {
+  export const Diagnostics: {
+    Found_0_errors_Watching_for_file_changes: { code: number };
+    Found_1_error_Watching_for_file_changes: { code: number };
+    Starting_compilation_in_watch_mode: { code: number };
+    File_change_detected_Starting_incremental_compilation: { code: number };
+  };
+  export function createWatchStatusReporter(system: ts.System, pretty?: boolean): ts.WatchStatusReporter;
+  export function createDiagnosticReporter(system: ts.System, pretty?: boolean): ts.DiagnosticReporter;
+  export interface SolutionBuilder<T extends ts.BuilderProgram> {
+    close(): void;
+  }
+}
+
+const watchCompletionCodes = new Set<number>([
+  ts.Diagnostics.Found_0_errors_Watching_for_file_changes.code,
+  ts.Diagnostics.Found_1_error_Watching_for_file_changes.code,
+]);
+
+const watchStartCodes = new Set<number>([
+  ts.Diagnostics.Starting_compilation_in_watch_mode.code,
+  ts.Diagnostics.File_change_detected_Starting_incremental_compilation.code,
+]);
+
 export class WatchCompiler extends EventEmitter {
-  private watchProgram: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram> | null = null;
+  private solutionBuilder: ts.SolutionBuilder<ts.EmitAndSemanticDiagnosticsBuilderProgram> | null = null;
 
   constructor(private readonly options: WatchCompilerOptions) {
     super();
@@ -50,31 +74,51 @@ export class WatchCompiler extends EventEmitter {
       },
     };
 
-    const host = ts.createWatchCompilerHost(configPath, { preserveWatchOutput }, watchStatusSystem, createProgram);
+    let currentDiagnostics: ts.Diagnostic[] = [];
+    const defaultWatchStatusReporter = ts.createWatchStatusReporter(watchStatusSystem, true);
+    const defaultDiagnosticReporter = ts.createDiagnosticReporter(watchStatusSystem, true);
 
-    // Intercept the official afterProgramCreate lifecycle hook
-    const origAfterProgramCreate = host.afterProgramCreate;
+    const host = ts.createSolutionBuilderWithWatchHost(
+      watchStatusSystem,
+      createProgram,
+      (diagnostic) => {
+        defaultDiagnosticReporter(diagnostic);
+        currentDiagnostics.push(diagnostic);
+      },
+      undefined,
+      (watchStatusDiagnostic, newLine, options, errorCount) => {
+        defaultWatchStatusReporter(watchStatusDiagnostic, newLine, options, errorCount);
 
-    host.afterProgramCreate = (builderProgram) => {
-      // Always call original to let TypeScript finalise the watch state
-      origAfterProgramCreate?.(builderProgram);
+        const code = watchStatusDiagnostic.code;
+        if (watchCompletionCodes.has(code)) {
+          const hasErrors = currentDiagnostics.some((d) => d.category === ts.DiagnosticCategory.Error);
+          const diagnostics = [...currentDiagnostics];
+          currentDiagnostics = [];
+          this.emit('compiled', { hasErrors, diagnostics } satisfies CompilationResult);
+        } else if (watchStartCodes.has(code)) {
+          currentDiagnostics = [];
+        }
+      },
+    );
 
-      // Inspect cached incremental diagnostics WITHOUT causing an un-cached full re-check
-      const diagnostics = [
+    host.afterProgramEmitAndDiagnostics = (builderProgram) => {
+      const progDiagnostics = [
         ...builderProgram.getSyntacticDiagnostics(),
         ...builderProgram.getSemanticDiagnostics(),
         ...builderProgram.getOptionsDiagnostics(),
       ];
-      const hasErrors = diagnostics.some((d) => d.category === ts.DiagnosticCategory.Error);
-
-      this.emit('compiled', { hasErrors, diagnostics } satisfies CompilationResult);
+      currentDiagnostics.push(...progDiagnostics);
     };
 
-    this.watchProgram = ts.createWatchProgram(host);
+    this.solutionBuilder = ts.createSolutionBuilderWithWatch(host, [configPath], { preserveWatchOutput });
+
+    this.solutionBuilder.build();
   }
 
   close(): void {
-    this.watchProgram?.close();
-    this.watchProgram = null;
+    if (this.solutionBuilder) {
+      this.solutionBuilder.close();
+      this.solutionBuilder = null;
+    }
   }
 }

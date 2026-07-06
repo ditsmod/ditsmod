@@ -149,11 +149,37 @@ export class ProcessManager extends EventEmitter {
     });
     proc.unref();
 
+    const exitCleanup = () => {
+      this.killProcessGroup(proc, 'SIGKILL');
+    };
+
+    const signals: NodeJS.Signals[] = ['SIGINT', 'SIGTERM', 'SIGHUP', 'SIGQUIT'];
+    const signalHandlers = new Map<NodeJS.Signals, () => void>();
+
+    signals.forEach((sig) => {
+      const handler = () => {
+        exitCleanup();
+      };
+      signalHandlers.set(sig, handler);
+      process.once(sig, handler);
+    });
+
+    process.once('exit', exitCleanup);
+
+    const removeListeners = () => {
+      process.removeListener('exit', exitCleanup);
+      signalHandlers.forEach((handler, sig) => {
+        process.removeListener(sig, handler);
+      });
+    };
+
     proc.on('exit', (code, signal) => {
+      removeListeners();
       this.emit('exit', code, signal);
     });
 
     proc.on('error', (err) => {
+      removeListeners();
       this.emit('error', err);
     });
 

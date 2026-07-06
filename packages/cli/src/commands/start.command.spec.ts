@@ -179,7 +179,7 @@ describe('runStart execution flow', () => {
     fs.writeFileSync(
       path.join(tmpDir, 'tsconfig.build.json'),
       JSON.stringify({
-        compilerOptions: { outDir: './dist', moduleResolution: 'node' },
+        compilerOptions: { outDir: './dist', rootDir: './src', target: 'esnext', module: 'nodenext', moduleResolution: 'nodenext' },
         include: ['src/**/*'],
       }),
     );

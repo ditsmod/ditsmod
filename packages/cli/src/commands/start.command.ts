@@ -102,6 +102,8 @@ export async function runStart(entryFileArg: string | undefined, opts: StartComm
 
   process.once('SIGINT', shutdown);
   process.once('SIGTERM', shutdown);
+  process.once('SIGHUP', shutdown);
+  process.once('SIGQUIT', shutdown);
 
   // Create event stream BEFORE starting compiler to capture the initial synchronous 'compiled' event
   const compiledEvents = on(compiler, 'compiled', { signal: ac.signal });
@@ -151,6 +153,8 @@ export async function runStart(entryFileArg: string | undefined, opts: StartComm
     await processManager.stop();
     process.removeListener('SIGINT', shutdown);
     process.removeListener('SIGTERM', shutdown);
+    process.removeListener('SIGHUP', shutdown);
+    process.removeListener('SIGQUIT', shutdown);
   }
 }
 

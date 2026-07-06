@@ -14,7 +14,13 @@ function makeTmpProject(sourceCode: string): { dir: string; tsconfig: string; cl
   fs.writeFileSync(
     tsconfig,
     JSON.stringify({
-      compilerOptions: { outDir: './dist', module: 'nodenext', moduleResolution: 'nodenext', target: 'esnext' },
+      compilerOptions: {
+        outDir: './dist',
+        rootDir: './src',
+        module: 'nodenext',
+        moduleResolution: 'nodenext',
+        target: 'esnext',
+      },
       include: ['src'],
     }),
   );
@@ -87,4 +93,60 @@ describe('WatchCompiler', () => {
     expect(() => compiler.close()).not.toThrow();
     expect(() => compiler.close()).not.toThrow();
   });
+
+  it('should emit compiled event for project references', async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wc-composite-'));
+    try {
+      const libDir = path.join(dir, 'lib');
+      const appDir = path.join(dir, 'app');
+      fs.mkdirSync(path.join(libDir, 'src'), { recursive: true });
+      fs.mkdirSync(path.join(appDir, 'src'), { recursive: true });
+
+      fs.writeFileSync(path.join(libDir, 'src', 'index.ts'), 'export const val = 42;\n');
+      fs.writeFileSync(
+        path.join(libDir, 'tsconfig.json'),
+        JSON.stringify({
+          compilerOptions: {
+            composite: true,
+            outDir: './dist',
+            rootDir: './src',
+            declaration: true,
+            target: 'esnext',
+            module: 'nodenext',
+            moduleResolution: 'nodenext',
+          },
+          include: ['src'],
+        }),
+      );
+
+      fs.writeFileSync(
+        path.join(appDir, 'src', 'index.ts'),
+        'import { val } from "../../lib/dist/index.js"; console.log(val);\n',
+      );
+      const appTsconfig = path.join(appDir, 'tsconfig.json');
+      fs.writeFileSync(
+        appTsconfig,
+        JSON.stringify({
+          compilerOptions: {
+            outDir: './dist',
+            rootDir: './src',
+            target: 'esnext',
+            module: 'nodenext',
+            moduleResolution: 'nodenext',
+          },
+          include: ['src'],
+          references: [{ path: '../lib' }],
+        }),
+      );
+
+      compiler = new WatchCompiler({ tsconfig: appTsconfig, preserveWatchOutput: true });
+      const result = await new Promise<CompilationResult>((resolve) => {
+        compiler.once('compiled', resolve);
+        compiler.start();
+      });
+      expect(result.hasErrors).toBe(false);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  }, 15_000);
 });
