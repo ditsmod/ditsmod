@@ -5,17 +5,21 @@ import path from 'node:path';
 export interface WatchCompilerOptions {
   tsconfig: string;
   preserveWatchOutput?: boolean;
+  verbose?: boolean;
 }
 
 export interface CompilationResult {
   hasErrors: boolean;
   diagnostics: readonly ts.Diagnostic[];
+  errorCount?: number;
+  duration?: number;
 }
 
 /**
  * Wraps the TypeScript Compiler API for incremental watch-mode compilation.
  *
  * Emits the following events:
+ * - `buildStart` — when compilation starts.
  * - `compiled` (result: CompilationResult) — after each compilation cycle completes.
  * - `error` (err: Error) — on internal failures.
  */
@@ -51,7 +55,7 @@ export class WatchCompiler extends EventEmitter {
   }
 
   start(): void {
-    const { tsconfig, preserveWatchOutput = false } = this.options;
+    const { tsconfig, preserveWatchOutput = false, verbose = false } = this.options;
 
     const configPath = ts.findConfigFile(
       path.dirname(path.resolve(tsconfig)),
@@ -62,6 +66,8 @@ export class WatchCompiler extends EventEmitter {
     if (!configPath) {
       throw new Error(`Cannot find TypeScript config file: "${tsconfig}"`);
     }
+
+    this.emit('buildStart');
 
     const createProgram = ts.createEmitAndSemanticDiagnosticsBuilderProgram;
 
@@ -74,6 +80,7 @@ export class WatchCompiler extends EventEmitter {
       },
     };
 
+    let startTime = Date.now();
     let currentDiagnostics: ts.Diagnostic[] = [];
     const defaultWatchStatusReporter = ts.createWatchStatusReporter(watchStatusSystem, true);
     const defaultDiagnosticReporter = ts.createDiagnosticReporter(watchStatusSystem, true);
@@ -87,19 +94,38 @@ export class WatchCompiler extends EventEmitter {
       },
       undefined,
       (watchStatusDiagnostic, newLine, options, errorCount) => {
-        defaultWatchStatusReporter(watchStatusDiagnostic, newLine, options, errorCount);
+        if (verbose) {
+          defaultWatchStatusReporter(watchStatusDiagnostic, newLine, options, errorCount);
+        }
 
         const code = watchStatusDiagnostic.code;
         if (watchCompletionCodes.has(code)) {
           const hasErrors = currentDiagnostics.some((d) => d.category === ts.DiagnosticCategory.Error);
+          const computedErrorCount = currentDiagnostics.filter(
+            (d) => d.category === ts.DiagnosticCategory.Error,
+          ).length;
           const diagnostics = [...currentDiagnostics];
           currentDiagnostics = [];
-          this.emit('compiled', { hasErrors, diagnostics } satisfies CompilationResult);
+          const duration = Date.now() - startTime;
+          this.emit('compiled', {
+            hasErrors,
+            diagnostics,
+            errorCount: computedErrorCount,
+            duration,
+          } satisfies CompilationResult);
         } else if (watchStartCodes.has(code)) {
+          startTime = Date.now();
           currentDiagnostics = [];
+          this.emit('buildStart');
         }
       },
     );
+
+    if (verbose) {
+      host.reportSolutionBuilderStatus = (diagnostic) => {
+        defaultDiagnosticReporter(diagnostic);
+      };
+    }
 
     this.solutionBuilder = ts.createSolutionBuilderWithWatch(host, [configPath], { preserveWatchOutput });
 

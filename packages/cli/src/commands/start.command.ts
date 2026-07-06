@@ -2,6 +2,7 @@ import { type Command } from 'commander';
 import { on } from 'node:events';
 import fs from 'node:fs';
 import path from 'node:path';
+import ts from 'typescript';
 import { WatchCompiler, type CompilationResult } from '../compiler/watch-compiler.js';
 import { ProcessManager } from '../runner/process-manager.js';
 import { AssetWatcher, type AssetEntry } from '../assets/asset-watcher.js';
@@ -14,6 +15,8 @@ export interface StartCommandOptions {
   entryFile?: string;
   watchAssets?: string[];
   preserveWatchOutput: boolean;
+  verbose: boolean;
+  restartDelay: string;
 }
 
 export interface ResolvedProjectConfig {
@@ -39,6 +42,8 @@ export function startCommand(program: Command): void {
       'Non-TypeScript asset globs to watch and copy to dist/ (e.g., "src/**/*.json")',
     )
     .option('--preserve-watch-output', 'Do not clear the screen between compilations', false)
+    .option('--verbose', 'Show verbose TypeScript project references progress', false)
+    .option('--restart-delay <ms>', 'Delay in ms before restarting after successful compilation', '300')
     .action((entryFileArg: string | undefined, opts: StartCommandOptions) => runStart(entryFileArg, opts));
 }
 
@@ -48,7 +53,7 @@ export async function runStart(entryFileArg: string | undefined, opts: StartComm
 
   // If entryFileArg starts with -, it is an option/flag, not a file name
   const validEntryArg = entryFileArg?.startsWith('-') ? undefined : entryFileArg;
-  const entryAbs = resolveEntryFile(cwd, validEntryArg || opts.entryFile, projectDir);
+  const entryAbs = resolveEntryFile(cwd, validEntryArg || opts.entryFile, projectDir, projectFile);
 
   // Auto-detect .env file in projectDir if --env-file was not explicitly provided
   let resolvedEnvFile = opts.envFile;
@@ -75,6 +80,7 @@ export async function runStart(entryFileArg: string | undefined, opts: StartComm
   const compiler = new WatchCompiler({
     tsconfig: path.resolve(cwd, projectFile),
     preserveWatchOutput: opts.preserveWatchOutput,
+    verbose: opts.verbose,
   });
 
   // --- Asset watcher (optional) ---
@@ -108,11 +114,20 @@ export async function runStart(entryFileArg: string | undefined, opts: StartComm
   // Create event stream BEFORE starting compiler to capture the initial synchronous 'compiled' event
   const compiledEvents = on(compiler, 'compiled', { signal: ac.signal });
 
+  let started = false;
+
+  compiler.on('buildStart', () => {
+    if (started) {
+      console.log('\n[ditsmod] File change detected. Compiling…\n');
+    }
+  });
+
   // --- Start compiler ---
   compiler.start();
 
-  let started = false;
   let restartTimer: NodeJS.Timeout | null = null;
+  const restartDelayMs = parseInt(opts.restartDelay, 10) || 300;
+
   try {
     for await (const [result] of compiledEvents) {
       const compilationResult = result as CompilationResult;
@@ -121,14 +136,24 @@ export async function runStart(entryFileArg: string | undefined, opts: StartComm
         continue;
       }
 
+      if (opts.verbose && compilationResult.duration !== undefined) {
+        const seconds = (compilationResult.duration / 1000).toFixed(2);
+        console.log(`\n[ditsmod] Compilation completed in ${seconds} s.`);
+      }
+
       if (!started) {
         started = true;
-        console.log('\n[ditsmod] Starting application…\n');
+        const timestamp = new Date().toLocaleTimeString();
+        console.log(`[${timestamp}] [ditsmod] Starting application…\n`);
         processManager.start(entryAbs, appArgs);
       } else {
         const restartApp = async () => {
           restartTimer = null;
-          console.log('\n[ditsmod] Restarting application…\n');
+          if (!opts.preserveWatchOutput && !opts.verbose) {
+            console.clear();
+          }
+          const timestamp = new Date().toLocaleTimeString();
+          console.log(`[${timestamp}] [ditsmod] Restarting application…\n`);
           try {
             await processManager.restart(entryAbs, appArgs);
           } catch (err: any) {
@@ -139,7 +164,7 @@ export async function runStart(entryFileArg: string | undefined, opts: StartComm
         if (restartTimer) clearTimeout(restartTimer);
         restartTimer = setTimeout(() => {
           void restartApp();
-        }, 300);
+        }, restartDelayMs);
       }
     }
   } catch (err: any) {
@@ -218,8 +243,40 @@ export function resolveProjectConfig(cwd: string, input: string): ResolvedProjec
  * - `tmp` -> `dist/tmp.js`
  * - `dist/main.js` -> `dist/main.js`
  */
-export function resolveEntryFile(cwd: string, input?: string, projectDir: string = '.'): string {
-  const rawInput = input || path.join(projectDir, 'dist/main.js');
+export function resolveEntryFile(cwd: string, input?: string, projectDir: string = '.', projectFile?: string): string {
+  const baseDir = path.resolve(cwd, projectDir);
+  let outDir = 'dist';
+  let rootDir = 'src';
+
+  if (projectFile) {
+    const configPath = path.resolve(cwd, projectFile);
+    try {
+      const parsedConfig = ts.getParsedCommandLineOfConfigFile(
+        configPath,
+        {},
+        {
+          useCaseSensitiveFileNames: ts.sys.useCaseSensitiveFileNames,
+          readDirectory: ts.sys.readDirectory,
+          fileExists: ts.sys.fileExists,
+          readFile: ts.sys.readFile,
+          getCurrentDirectory: ts.sys.getCurrentDirectory,
+          onUnRecoverableConfigFileDiagnostic: () => {},
+        },
+      );
+      if (parsedConfig?.options) {
+        if (typeof parsedConfig.options.outDir === 'string') {
+          outDir = path.relative(baseDir, parsedConfig.options.outDir) || 'dist';
+        }
+        if (typeof parsedConfig.options.rootDir === 'string') {
+          rootDir = path.relative(baseDir, parsedConfig.options.rootDir) || 'src';
+        }
+      }
+    } catch {
+      // Fallback to default dist/src
+    }
+  }
+
+  const rawInput = input || path.join(projectDir, outDir, 'main.js');
 
   let entry = rawInput;
   if (path.isAbsolute(entry)) {
@@ -232,21 +289,23 @@ export function resolveEntryFile(cwd: string, input?: string, projectDir: string
     normalized = normalized.slice(normalizedProjDir.length + 1);
   }
 
-  if (normalized.startsWith('dist/')) {
-    normalized = normalized.slice(5);
-  } else if (normalized.startsWith('./dist/')) {
-    normalized = normalized.slice(7);
-  } else if (normalized.startsWith('src/')) {
-    normalized = normalized.slice(4);
-  } else if (normalized.startsWith('./src/')) {
-    normalized = normalized.slice(6);
+  const outDirPrefix = outDir.replace(/\\/g, '/') + '/';
+  const rootDirPrefix = rootDir.replace(/\\/g, '/') + '/';
+
+  if (normalized.startsWith(outDirPrefix)) {
+    normalized = normalized.slice(outDirPrefix.length);
+  } else if (normalized.startsWith('./' + outDirPrefix)) {
+    normalized = normalized.slice(outDirPrefix.length + 2);
+  } else if (normalized.startsWith(rootDirPrefix)) {
+    normalized = normalized.slice(rootDirPrefix.length);
+  } else if (normalized.startsWith('./' + rootDirPrefix)) {
+    normalized = normalized.slice(rootDirPrefix.length + 2);
   }
 
   normalized = normalized.replace(/\.(ts|mts|cts|js|mjs)$/, '');
 
-  const baseDir = path.resolve(cwd, projectDir);
-  const candidate1 = path.resolve(baseDir, 'dist', `${normalized}.js`);
-  const candidate2 = path.resolve(baseDir, 'dist', 'src', `${normalized}.js`);
+  const candidate1 = path.resolve(baseDir, outDir, `${normalized}.js`);
+  const candidate2 = path.resolve(baseDir, outDir, rootDir, `${normalized}.js`);
   const rawCandidate = path.resolve(cwd, rawInput);
 
   if (fs.existsSync(candidate1)) {

@@ -68,6 +68,42 @@ describe('WatchCompiler', () => {
       });
       expect(result.hasErrors).toBe(false);
       expect(result.diagnostics).toHaveLength(0);
+      expect(result.errorCount).toBe(0);
+      expect(typeof result.duration).toBe('number');
+    } finally {
+      cleanup();
+    }
+  }, 15_000);
+
+  it('should emit buildStart event before compiled event', async () => {
+    const { tsconfig, cleanup } = makeTmpProject('export const x = 1;\n');
+    try {
+      compiler = new WatchCompiler({ tsconfig, preserveWatchOutput: true });
+      let buildStartFired = false;
+      compiler.once('buildStart', () => {
+        buildStartFired = true;
+      });
+      const result = await new Promise<CompilationResult>((resolve) => {
+        compiler.once('compiled', resolve);
+        compiler.start();
+      });
+      expect(buildStartFired).toBe(true);
+      expect(result.hasErrors).toBe(false);
+    } finally {
+      cleanup();
+    }
+  }, 15_000);
+
+  it('should support verbose option and report status', async () => {
+    const { tsconfig, cleanup } = makeTmpProject('export const x = 1;\n');
+    try {
+      compiler = new WatchCompiler({ tsconfig, preserveWatchOutput: true, verbose: true });
+      const result = await new Promise<CompilationResult>((resolve) => {
+        compiler.once('compiled', resolve);
+        compiler.start();
+      });
+      expect(result.hasErrors).toBe(false);
+      expect(stdoutSpy).toHaveBeenCalled();
     } finally {
       cleanup();
     }
@@ -83,6 +119,7 @@ describe('WatchCompiler', () => {
       });
       expect(result.hasErrors).toBe(true);
       expect(result.diagnostics.length).toBeGreaterThan(0);
+      expect(result.errorCount).toBeGreaterThan(0);
     } finally {
       cleanup();
     }

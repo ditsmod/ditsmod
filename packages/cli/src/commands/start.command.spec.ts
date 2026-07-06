@@ -48,6 +48,8 @@ describe('startCommand options & parsing', () => {
       expect(parsedOpts?.entryFile).toBeUndefined();
       expect(parsedOpts?.preserveWatchOutput).toBe(false);
       expect(parsedOpts?.watchAssets).toBeUndefined();
+      expect(parsedOpts?.verbose).toBe(false);
+      expect(parsedOpts?.restartDelay).toBe('300');
       expect(parsedEntryArg).toBeUndefined();
     });
 
@@ -104,6 +106,18 @@ describe('startCommand options & parsing', () => {
 
       expect(parsedOpts?.preserveWatchOutput).toBe(true);
     });
+
+    it('should parse --verbose flag', () => {
+      program.parse(['node', 'test', 'start', '--verbose']);
+
+      expect(parsedOpts?.verbose).toBe(true);
+    });
+
+    it('should parse --restart-delay option', () => {
+      program.parse(['node', 'test', 'start', '--restart-delay', '500']);
+
+      expect(parsedOpts?.restartDelay).toBe('500');
+    });
   });
 
   describe('resolveProjectConfig helper', () => {
@@ -134,6 +148,26 @@ describe('startCommand options & parsing', () => {
     it('should resolve undefined input to dist/main.js', () => {
       const result = resolveEntryFile(cwd, undefined);
       expect(result).toBe(path.resolve(cwd, 'dist/main.js'));
+    });
+
+    it('should resolve with custom outDir and rootDir from custom tsconfig file', () => {
+      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'start-spec-custom-'));
+      const tsconfigFile = path.join(tmpDir, 'tsconfig.custom.json');
+      fs.writeFileSync(
+        tsconfigFile,
+        JSON.stringify({
+          compilerOptions: {
+            outDir: './custom-dist',
+            rootDir: './custom-src',
+          },
+        }),
+      );
+      try {
+        const result = resolveEntryFile(cwd, undefined, tmpDir, tsconfigFile);
+        expect(result).toBe(path.resolve(tmpDir, 'custom-dist/main.js'));
+      } finally {
+        fs.rmSync(tmpDir, { recursive: true, force: true });
+      }
     });
 
     it('should resolve undefined input with projectDir apps/backend to apps/backend/dist/main.js', () => {
@@ -169,17 +203,25 @@ describe('runStart execution flow', () => {
   let exitSpy: ReturnType<typeof jest.spyOn>;
   let stdoutSpy: ReturnType<typeof jest.spyOn>;
   let consoleLogSpy: ReturnType<typeof jest.spyOn>;
+  let consoleClearSpy: ReturnType<typeof jest.spyOn>;
 
   beforeEach(() => {
     stdoutSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => true);
     consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    consoleClearSpy = jest.spyOn(console, 'clear').mockImplementation(() => {});
     tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'start-cmd-spec-'));
     fs.mkdirSync(path.join(tmpDir, 'src'), { recursive: true });
     fs.writeFileSync(path.join(tmpDir, 'src/index.ts'), 'export const a = 1;\n');
     fs.writeFileSync(
       path.join(tmpDir, 'tsconfig.build.json'),
       JSON.stringify({
-        compilerOptions: { outDir: './dist', rootDir: './src', target: 'esnext', module: 'nodenext', moduleResolution: 'nodenext' },
+        compilerOptions: {
+          outDir: './dist',
+          rootDir: './src',
+          target: 'esnext',
+          module: 'nodenext',
+          moduleResolution: 'nodenext',
+        },
         include: ['src/**/*'],
       }),
     );
@@ -194,6 +236,7 @@ describe('runStart execution flow', () => {
   afterEach(() => {
     stdoutSpy.mockRestore();
     consoleLogSpy.mockRestore();
+    consoleClearSpy.mockRestore();
     processManagerStartSpy.mockRestore();
     exitSpy.mockRestore();
     fs.rmSync(tmpDir, { recursive: true, force: true });
@@ -204,6 +247,8 @@ describe('runStart execution flow', () => {
       project: path.join(tmpDir, 'tsconfig.build.json'),
       exec: 'node',
       preserveWatchOutput: true,
+      verbose: false,
+      restartDelay: '300',
     });
 
     // Wait for compiler to emit initial event and processManager.start to be called
