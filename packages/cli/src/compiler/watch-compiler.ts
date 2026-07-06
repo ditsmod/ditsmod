@@ -101,15 +101,6 @@ export class WatchCompiler extends EventEmitter {
       },
     );
 
-    host.afterProgramEmitAndDiagnostics = (builderProgram) => {
-      const progDiagnostics = [
-        ...builderProgram.getSyntacticDiagnostics(),
-        ...builderProgram.getSemanticDiagnostics(),
-        ...builderProgram.getOptionsDiagnostics(),
-      ];
-      currentDiagnostics.push(...progDiagnostics);
-    };
-
     this.solutionBuilder = ts.createSolutionBuilderWithWatch(host, [configPath], { preserveWatchOutput });
 
     this.solutionBuilder.build();
