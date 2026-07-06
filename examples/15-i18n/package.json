@@ -10,8 +10,7 @@
     "#dict/second/*": "./dist/app/second/i18n/current/_base-en/*"
   },
   "scripts": {
-    "start": "yarn build && node --watch --enable-source-maps dist/main.js",
-    "start:dev": "ditsmod start",
+    "start": "ditsmod start",
     "test": "yarn build-test && yarn esm-jest",
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",
     "build-test": "tsgo -b tsconfig.e2e.json",

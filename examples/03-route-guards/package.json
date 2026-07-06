@@ -5,9 +5,8 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "yarn build && node --watch --enable-source-maps -r dotenv/config dist/main.js",
+    "start": "ditsmod start",
     "clean": "rm -r dist*",
-    "start:dev": "ditsmod start",
     "test": "yarn build-test && yarn esm-jest",
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",
     "build": "tsgo -b tsconfig.build.json",
