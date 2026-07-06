@@ -2,7 +2,7 @@
 
 Command Line Interface (CLI) and development tools for the [Ditsmod](https://github.com/ditsmod/ditsmod) framework.
 
-Provides commands to generate new applications from official starter templates and run applications in development mode with incremental TypeScript watch compilation, graceful process restarts, and asset synchronization.
+Provides commands to generate new applications from official starter templates and run applications in development mode with incremental TypeScript watch compilation (with full support for TypeScript Project References / composite builds), graceful process restarts, and asset synchronization.
 
 ## Installation
 
@@ -53,7 +53,7 @@ dm new my-trpc-app -t trpc-monorepo --skip-install
 
 ### `ditsmod start [entryFile]` / `dm start [entryFile]`
 
-Runs the Ditsmod application in development mode. Monitors TypeScript source files, incrementally compiles changes, and gracefully restarts the Node.js application process.
+Runs the Ditsmod application in development mode. Monitors TypeScript source files, incrementally compiles changes (including cross-package changes in monorepos via TypeScript Project References), and gracefully restarts the Node.js application process.
 
 ```bash
 ditsmod start
@@ -61,7 +61,7 @@ ditsmod start
 
 #### Options:
 
-- `-p, --project <path>`: Path to TypeScript config file or project directory. Default: `"tsconfig.build.json"`.
+- `-p, --project <path>`: Path to TypeScript config file or project directory (supporting TypeScript Project References). Default: `"tsconfig.build.json"`.
 - `-e, --exec <binary>`: Binary to execute the entry file. Default: `"node"`.
 - `-d, --debug [hostport]`: Run Node.js in debug mode with the `--inspect` flag.
 - `--env-file <paths...>`: Environment file(s) to load into `process.env` (Node.js >= v20).
