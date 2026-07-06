@@ -31,6 +31,7 @@ corepack enable
 corepack install
 yarn install
 yarn prepare
+yarn build
 yarn build-openapi-ui
 ```
 
