@@ -950,6 +950,8 @@ __metadata:
     commander: "npm:^14.0.0"
     jest: "npm:^30.4.2"
     typescript: "npm:^6.0.3"
+  peerDependencies:
+    typescript: ">=5.0.0"
   bin:
     ditsmod: dist/ditsmod.js
     dm: dist/ditsmod.js
