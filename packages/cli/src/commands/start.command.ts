@@ -126,7 +126,8 @@ export async function runStart(entryFileArg: string | undefined, opts: StartComm
   compiler.start();
 
   let restartTimer: NodeJS.Timeout | null = null;
-  const restartDelayMs = parseInt(opts.restartDelay, 10) || 300;
+  const parsedDelay = parseInt(opts.restartDelay, 10);
+  const restartDelayMs = Number.isNaN(parsedDelay) ? 300 : parsedDelay;
 
   try {
     for await (const [result] of compiledEvents) {
