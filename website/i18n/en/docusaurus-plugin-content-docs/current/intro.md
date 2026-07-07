@@ -81,39 +81,32 @@ Please make sure that Node.js >= v20.6.0 is installed on your operating system.
 
 ## Installation {#installation}
 
-You can install the `@ditsmod/cli` package globally:
+You can install the `@ditsmod/cli` package globally to create a new application:
 
 ```bash
 npm i -g @ditsmod/cli
-```
-
-After installation, the `ditsmod` executable and its shorthand alias `dm` become available system-wide:
-
-```bash
 dm new my-app
 cd my-app
 ```
 
-Or create a new application without prior installation using `npx`:
+Or without prior installation using `npx`:
 
 ```bash
 npx @ditsmod/cli new my-app
 cd my-app
 ```
 
-Alternatively, you can manually clone the [ditsmod/rest-starter][2] repository:
+This way you can create a REST-application (by default) or a monorepo:
 
 ```bash
-git clone --depth 1 https://github.com/ditsmod/rest-starter.git my-app
-cd my-app
-npm i
+dm new my-app
 ```
 
-Or create a starter monorepo:
+Key options of the `new` command:
 
-```bash
-dm new my-app -t rest-monorepo
-```
+- `-t, --template <name>` — starter template (`rest`, `rest-monorepo`, `trpc-monorepo`).
+- `-m, --package-manager <name>` — package manager to use (`npm`, `yarn`, `pnpm`).
+- `--skip-install` — skip automatic dependency installation.
 
 ### Add `AGENTS.md` and `SKILL.md` for AI agents {#add-agent-skills}
 
@@ -146,7 +139,7 @@ You can start the application in development mode with the following command:
 npm run start:dev
 ```
 
-Or directly using Ditsmod CLI (or shorthand alias `dm`):
+Or directly using Ditsmod CLI:
 
 ```bash
 ditsmod start
@@ -155,6 +148,13 @@ dm start
 ```
 
 The `@ditsmod/cli` utility automatically handles incremental TypeScript compilation and restarts the Node.js server whenever source files are changed, eliminating the need to run separate compiler and server terminals.
+
+You can customize the startup behavior using options:
+
+- `-d, --debug [hostport]` — runs Node.js in debug mode with the `--inspect` flag.
+- `--verbose` — shows verbose progress of TypeScript Project References compilation.
+- `--restart-delay <ms>` — delay in milliseconds before restarting the server after successful compilation (default is `300`).
+- `--watch-assets <globs...>` — non-TypeScript asset globs to watch and copy to `dist/` on changes.
 
 You can check the server operation using `curl`:
 
@@ -246,6 +246,7 @@ Looking at the file `src/main.ts`, you can see that an instance of the class `Re
 [3]: https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md
 [4]: https://github.com/ditsmod/ditsmod/tree/main/examples
 [5]: https://agentskills.io/home
+[9]: https://github.com/angular/angular
 [10]: https://jestjs.io/en/
 [12]: https://en.wikipedia.org/wiki/Singleton_pattern
 [13]: https://github.com/ditsmod/realworld
