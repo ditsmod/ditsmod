@@ -20,61 +20,6 @@ Ditsmod - це веб-фреймворк на базі Node.js, призначе
 
 Деякі концепції архітектури Ditsmod взяті з [Angular][9] концепцій, а DI побудована на базі нативного модуля Angular DI.
 
-### ExpressJS vs. Ditsmod {#expressjs-vs-ditsmod}
-
-Для порівняння, в наступних двох прикладах показано мінімальний код для запуску ExpressJS та Ditsmod застосунків.
-
-```js
-import express from 'express';
-const app = express();
-
-app.get('/hello', function (req, res) {
-  ctx.send('Hello, World!');
-});
-
-app.listen(3000, '0.0.0.0');
-```
-
-```ts
-import { controller, route, restRootModule, RestApplication } from '@ditsmod/rest';
-
-@controller()
-class ExampleController {
-  @route('GET', 'hello')
-  tellHello() {
-    return 'Hello, World!';
-  }
-}
-
-@restRootModule({ controllers: [ExampleController] })
-class AppModule {}
-
-const app = await RestApplication.create(AppModule);
-app.server.listen(3000, '0.0.0.0');
-```
-
-Але чому Ditsmod не такий мінімалістичний, як ExpressJS? Як бачите в прикладі, ExpressJS створює об'єкт застосунку, в якому потім додає роути. В об'єкті `app` представлено API різних окремих складових, зокрема: налаштування роутера, налаштування обробки помилок, налаштування системи рендерінгу, HTTP-сервера і т.д. Такий код у простих прикладах виглядає дуже компактно, але у ньому по-суті порушується [Принцип єдиної відповідальності][21]. Натомість в Ditsmod чітко розмежовано:
-
-- роль контролера, в якому створюється роут;
-- роль модуля, в якому задекларовано контролери;
-- роль застосунку, який містить HTTP-сервер.
-
-Оцінюючи об'єм коду, можна припустити, що через свою багатослівність, Ditsmod є повільнішим за ExpressJS. Але насправді трохи повільнішим є лише холодний старт Ditsmod (на моєму ноутбуку він стартує за 34 ms, тоді як ExpressJS стартує за 4 ms). Що стосується швидкості обробки запитів, то [Ditsmod швидший за ExpressJS на ~30%][14].
-
-Більше прикладів застосунку є у репозиторію [Ditsmod][4], а також у репозиторію [RealWorld][13].
-
-P.S. Хоча нижче надано лінк на репозиторій з усіма необхідними налаштуваннями для Ditsmod-застосунків, але, все ж таки, якщо ви захочете використати лише код з попереднього прикладу, незабудьте у tsconfig-файлах прописати наступне:
-
-```json {4-5}
-{
-  "compilerOptions": {
-    // ...
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
-  }
-}
-```
-
 ## Попередні умови {#prerequisites}
 
 Будь-ласка, переконайтесь що на вашій операційній системі встановлено Node.js >= v24.0.0.
@@ -240,6 +185,61 @@ node dist/main.js
 ```
 
 Проглядаючи файл `src/main.ts`, ви можете бачити, що створюється інстанс класу `RestApplication`, а у якості аргументу для методу `create()` передається `AppModule`. Тут `AppModule` є кореневим модулем, до якого вже підв'язуються інші модулі застосунку.
+
+## ExpressJS vs. Ditsmod {#expressjs-vs-ditsmod}
+
+Для порівняння, в наступних двох прикладах показано мінімальний код для запуску ExpressJS та Ditsmod застосунків.
+
+```js
+import express from 'express';
+const app = express();
+
+app.get('/hello', function (req, res) {
+  ctx.send('Hello, World!');
+});
+
+app.listen(3000, '0.0.0.0');
+```
+
+```ts
+import { controller, route, restRootModule, RestApplication } from '@ditsmod/rest';
+
+@controller()
+class ExampleController {
+  @route('GET', 'hello')
+  tellHello() {
+    return 'Hello, World!';
+  }
+}
+
+@restRootModule({ controllers: [ExampleController] })
+class AppModule {}
+
+const app = await RestApplication.create(AppModule);
+app.server.listen(3000, '0.0.0.0');
+```
+
+Але чому Ditsmod не такий мінімалістичний, як ExpressJS? Як бачите в прикладі, ExpressJS створює об'єкт застосунку, в якому потім додає роути. В об'єкті `app` представлено API різних окремих складових, зокрема: налаштування роутера, налаштування обробки помилок, налаштування системи рендерінгу, HTTP-сервера і т.д. Такий код у простих прикладах виглядає дуже компактно, але у ньому по-суті порушується [Принцип єдиної відповідальності][21]. Натомість в Ditsmod чітко розмежовано:
+
+- роль контролера, в якому створюється роут;
+- роль модуля, в якому задекларовано контролери;
+- роль застосунку, який містить HTTP-сервер.
+
+Оцінюючи об'єм коду, можна припустити, що через свою багатослівність, Ditsmod є повільнішим за ExpressJS. Але насправді трохи повільнішим є лише холодний старт Ditsmod (на моєму ноутбуку він стартує за 34 ms, тоді як ExpressJS стартує за 4 ms). Що стосується швидкості обробки запитів, то [Ditsmod швидший за ExpressJS на ~30%][14].
+
+Більше прикладів застосунку є у репозиторію [Ditsmod][4], а також у репозиторію [RealWorld][13].
+
+P.S. Хоча нижче надано лінк на репозиторій з усіма необхідними налаштуваннями для Ditsmod-застосунків, але, все ж таки, якщо ви захочете використати лише код з попереднього прикладу, незабудьте у tsconfig-файлах прописати наступне:
+
+```json {4-5}
+{
+  "compilerOptions": {
+    // ...
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  }
+}
+```
 
 [1]: #installation
 [2]: https://github.com/ditsmod/rest-starter
