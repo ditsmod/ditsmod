@@ -77,7 +77,7 @@ P.S. Although a link to a repository with all the necessary settings for Ditsmod
 
 ## Prerequisites {#prerequisites}
 
-Please make sure that Node.js >= v20.6.0 is installed on your operating system.
+Please make sure that Node.js >= v24.0.0 is installed on your operating system.
 
 ## Installation {#installation}
 
