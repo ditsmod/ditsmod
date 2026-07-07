@@ -28,7 +28,7 @@ const metadata = Reflector.collectMeta(Service1);
 console.log(metadata);
 ```
 
-This example demonstrates the creation of decorator factories at the class, property, and parameter levels. Since no transformers are passed to any factory here, the data passed to the factory will be returned as an array. In the next example, a simple transformer is passed to the decorator factory, which passes the single argument through unchanged:
+This example demonstrates how to create decorator factories at the class, property, and parameter levels. Since no transformers are provided here, the factory simply returns the input data as an array. In the next example, we will supply a basic transformer to the decorator factory that returns the single argument unchanged:
 
 ```ts {3}
 import { Reflector } from '@ditsmod/core/di';
@@ -93,6 +93,6 @@ interface InjectTransformResult {
 }
 ```
 
-This shows how Ditsmod declares the type for the `inject` parameter decorator. In this case, the complexity of the types lies in the fact that the transformer function has two signatures, and TypeScript currently cannot infer more than one signature.
+This example shows how Ditsmod declares types for the `inject` parameter decorator. The type complexity arises because the transformer function has multiple signatures, and TypeScript currently cannot infer more than one signature.
 
 [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect
