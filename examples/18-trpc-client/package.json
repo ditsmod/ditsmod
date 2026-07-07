@@ -32,8 +32,8 @@
     "wait-port": "^1.1.0"
   },
   "dependencies": {
-    "@trpc/client": "^11.5.1",
-    "@trpc/server": "^11.5.1",
+    "@trpc/client": "^11.18.0",
+    "@trpc/server": "^11.18.0",
     "zod": "^4.4.3"
   }
 }

@@ -10,8 +10,8 @@ __metadata:
   resolution: "18-trpc-server@workspace:examples/18-trpc-server"
   dependencies:
     "@ditsmod/cli": "npm:^3.0.0-next.13"
-    "@trpc/client": "npm:^11.5.1"
-    "@trpc/server": "npm:^11.5.1"
+    "@trpc/client": "npm:^11.18.0"
+    "@trpc/server": "npm:^11.18.0"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260626.1"
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
@@ -1149,6 +1149,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ditsmod/trpc@workspace:packages/trpc"
   dependencies:
+    "@trpc/server": "npm:^11.18.0"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260626.1"
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
@@ -3331,22 +3332,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@trpc/client@npm:^11.5.1":
-  version: 11.5.1
-  resolution: "@trpc/client@npm:11.5.1"
+"@trpc/client@npm:^11.18.0":
+  version: 11.18.0
+  resolution: "@trpc/client@npm:11.18.0"
   peerDependencies:
-    "@trpc/server": 11.5.1
+    "@trpc/server": 11.18.0
     typescript: ">=5.7.2"
-  checksum: 10c0/4c0ae5e8c37b21fb0da0acc76f11f236aeed3b2e05c3e018849b7a6f513b3b69fd80a2902a9471a723760086807d1b1cdefc68a20ed45829f45019f459c98355
+  bin:
+    intent: bin/intent.js
+  checksum: 10c0/5f508ef927f8d2fb86016d367c1368e9a628b24088a366db6d2b806e1fd481e3a6791411053afc3985067bf651d39fe91d9fb10e40acab3ec625d6820071fa67
   languageName: node
   linkType: hard
 
-"@trpc/server@npm:^11.5.1":
-  version: 11.5.1
-  resolution: "@trpc/server@npm:11.5.1"
+"@trpc/server@npm:^11.18.0":
+  version: 11.18.0
+  resolution: "@trpc/server@npm:11.18.0"
   peerDependencies:
     typescript: ">=5.7.2"
-  checksum: 10c0/b07b8388cf68565a4caf4d4d15a2257ec82888623edde70bc8079b66daf6e331621ef90f88e33e7b046b464bdde24e701f0a716df6ec3e14fbe197156fcdd74d
+  bin:
+    intent: bin/intent.js
+  checksum: 10c0/4cf53c786c4c0c2c15e11d8ea3c05093ad27c40c8663fc0d23b31ecdbbb58a2003e528c15661058526b15079f9612bf561daf79ef3f4f87f43ef22fa7af23640
   languageName: node
   linkType: hard
 
@@ -7493,8 +7498,8 @@ __metadata:
   resolution: "example18-client@workspace:examples/18-trpc-client"
   dependencies:
     "@ditsmod/cli": "npm:^3.0.0-next.13"
-    "@trpc/client": "npm:^11.5.1"
-    "@trpc/server": "npm:^11.5.1"
+    "@trpc/client": "npm:^11.18.0"
+    "@trpc/server": "npm:^11.18.0"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260626.1"
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
