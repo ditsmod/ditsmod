@@ -1,7 +1,7 @@
 import { BaseAppOptions, Context, CtxModule, featureModule, getTokens } from '@ditsmod/core';
 
 import { DefaultRouter, Router } from '#services/router.js';
-import { RestRouteExtension } from '#extensions/routes.extension.js';
+import { RestRouteExtension } from '#extensions/rest-route.extension.js';
 import { PreRouterExtension } from '#extensions/pre-router.extension.js';
 import { UseInterceptorExtension } from '#extensions/use-interceptor.extension.js';
 import { AppOptions } from '#types/app-options.js';

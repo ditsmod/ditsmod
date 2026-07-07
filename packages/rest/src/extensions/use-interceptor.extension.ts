@@ -3,7 +3,7 @@ import { Extension, ExtensionManager, injectable } from '@ditsmod/core';
 
 import { HTTP_INTERCEPTORS } from '#types/constants.js';
 import { isInterceptor } from '#types/type.guards.js';
-import { RestRouteExtension } from './routes.extension.js';
+import { RestRouteExtension } from './rest-route.extension.js';
 import { InvalidInterceptor } from '#errors';
 
 /**

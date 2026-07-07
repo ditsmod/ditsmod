@@ -39,7 +39,7 @@ import { GuardPerMod1, NormalizedGuard } from '#interceptors/guard.js';
 import { RouteHandler, Router } from '#services/router.js';
 import { HttpErrorHandler } from '#services/http-error-handler.js';
 import { RequestContext } from '#services/request-context.js';
-import { RestRouteExtension } from './routes.extension.js';
+import { RestRouteExtension } from './rest-route.extension.js';
 import { CheckingDepsInSandboxFailed, GuardNotFound, InvalidConfigurationOfRoute } from '#errors';
 import { RouteContext } from '#services/route-context.js';
 
