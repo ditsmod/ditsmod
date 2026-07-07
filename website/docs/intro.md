@@ -26,32 +26,36 @@ Ditsmod - це веб-фреймворк на базі Node.js, призначе
 
 ## Встановлення {#installation}
 
-Ви можете встановити пакет `@ditsmod/cli` глобально, щоб створити новий застосунок:
+Ви можете встановити пакет `@ditsmod/cli` глобально:
 
 ```bash
 npm i -g @ditsmod/cli
-dm new my-app
-cd my-app
 ```
 
-Або без попереднього встановлення через `npx`:
+Щоб переглянути список усіх доступних команд та опцій `@ditsmod/cli`, виконайте:
+
+```bash
+dm --help
+```
+
+Або щоб переглянути довідку для конкретної команди (наприклад, `new` або `start`):
+
+```bash
+dm new --help
+dm start --help
+```
+
+Так ви можете створити стартовий проект REST-застосунку:
+
+```bash
+dm new my-app
+```
+
+Також ви можете користуватись `@ditsmod/cli` без глобального встановлення:
 
 ```bash
 npx @ditsmod/cli new my-app
-cd my-app
 ```
-
-Також ви можете створити дефолтний REST-застосунок або монорепозиторій:
-
-```bash
-dm new my-app
-```
-
-Основні опції команди `new`:
-
-- `-t, --template <name>` — стартовий шаблон (`rest`, `rest-monorepo`, `trpc-monorepo`).
-- `-m, --package-manager <name>` — менеджер пакетів (`npm`, `yarn`, `pnpm`).
-- `--skip-install` — пропустити автоматичне встановлення залежностей.
 
 ### Додайте `AGENTS.md` та `SKILL.md` для ШІ-агентів {#add-agent-skills}
 
@@ -63,12 +67,6 @@ npm run setup:agents
 ```
 
 Додатково можна встановити ще й [скіли для ШІ-агентів][5], щоб вони краще розуміли особливості Ditsmod-застосунків:
-
-```bash
-npx skills add ditsmod/agent-skills
-```
-
-Ця команда дасть на вибір усі доступні скіли. Якщо ж ви хочете встановити усі офіційни скіли для Ditsmod, це можна зробити так:
 
 ```bash
 npx skills add ditsmod/agent-skills --skill '*' -y
@@ -229,7 +227,7 @@ app.server.listen(3000, '0.0.0.0');
 
 Більше прикладів застосунку є у репозиторію [Ditsmod][4], а також у репозиторію [RealWorld][13].
 
-P.S. Хоча нижче надано лінк на репозиторій з усіма необхідними налаштуваннями для Ditsmod-застосунків, але, все ж таки, якщо ви захочете використати лише код з попереднього прикладу, незабудьте у tsconfig-файлах прописати наступне:
+P.S. Хоча вище вже надано лінк на репозиторій з усіма необхідними налаштуваннями для Ditsmod-застосунків, але, все ж таки, якщо ви захочете використати лише код з попереднього прикладу, незабудьте у tsconfig-файлах прописати наступне:
 
 ```json {4-5}
 {
@@ -243,7 +241,7 @@ P.S. Хоча нижче надано лінк на репозиторій з у
 
 [1]: #installation
 [2]: https://github.com/ditsmod/rest-starter
-[3]: https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md
+[3]: https://github.com/ditsmod/agent-skills/blob/main/AGENTS.md
 [4]: https://github.com/ditsmod/ditsmod/tree/main/examples
 [5]: https://agentskills.io/home
 [9]: https://github.com/angular/angular

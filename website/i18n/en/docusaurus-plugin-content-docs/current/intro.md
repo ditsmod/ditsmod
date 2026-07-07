@@ -26,32 +26,36 @@ Please make sure that Node.js >= v24.0.0 is installed on your operating system.
 
 ## Installation {#installation}
 
-You can install the `@ditsmod/cli` package globally to create a new application:
+You can install the `@ditsmod/cli` package globally:
 
 ```bash
 npm i -g @ditsmod/cli
-dm new my-app
-cd my-app
 ```
 
-Or without prior installation using `npx`:
+To see the list of all available commands and options of `@ditsmod/cli`, run:
+
+```bash
+dm --help
+```
+
+Or to see the help for a specific command (e.g., `new` or `start`):
+
+```bash
+dm new --help
+dm start --help
+```
+
+This is how you can create a starter REST application project:
+
+```bash
+dm new my-app
+```
+
+You can also use `@ditsmod/cli` without a global installation:
 
 ```bash
 npx @ditsmod/cli new my-app
-cd my-app
 ```
-
-This way you can create a REST-application (by default) or a monorepo:
-
-```bash
-dm new my-app
-```
-
-Key options of the `new` command:
-
-- `-t, --template <name>` — starter template (`rest`, `rest-monorepo`, `trpc-monorepo`).
-- `-m, --package-manager <name>` — package manager to use (`npm`, `yarn`, `pnpm`).
-- `--skip-install` — skip automatic dependency installation.
 
 ### Add `AGENTS.md` and `SKILL.md` for AI agents {#add-agent-skills}
 
@@ -63,12 +67,6 @@ npm run setup:agents
 ```
 
 Additionally, you can install [AI agent skills][5] to help them better understand the specifics of Ditsmod applications:
-
-```bash
-npx skills add ditsmod/agent-skills
-```
-
-This command will let you choose from all available skills. If you want to install all the official skills for Ditsmod, you can do it like this:
 
 ```bash
 npx skills add ditsmod/agent-skills --skill '*' -y
@@ -229,7 +227,7 @@ Looking at the amount of code, you might think that Ditsmod is slower than Expre
 
 More application examples are available in the [Ditsmod][4] repository, as well as in the [RealWorld][13] repository.
 
-P.S. Although a link to a repository with all the necessary settings for Ditsmod applications is provided below, still, if you want to use only the code from the previous example, do not forget to specify the following in the tsconfig files:
+P.S. Although a link to a repository with all the necessary settings for Ditsmod applications is provided above, still, if you want to use only the code from the previous example, do not forget to specify the following in the tsconfig files:
 
 ```json {4-5}
 {
@@ -243,7 +241,7 @@ P.S. Although a link to a repository with all the necessary settings for Ditsmod
 
 [1]: #installation
 [2]: https://github.com/ditsmod/rest-starter
-[3]: https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md
+[3]: https://github.com/ditsmod/agent-skills/blob/main/AGENTS.md
 [4]: https://github.com/ditsmod/ditsmod/tree/main/examples
 [5]: https://agentskills.io/home
 [9]: https://github.com/angular/angular
