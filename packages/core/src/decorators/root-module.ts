@@ -8,7 +8,7 @@ import { ModuleRawMetadata } from './module-raw-metadata.js';
 /**
  * Raw module metadata returned by reflector.
  */
-export class RootRawMetadata extends ModuleRawMetadata {
+export class RootDecoratorOptions extends ModuleRawMetadata {
   /**
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
@@ -19,11 +19,11 @@ export class RootRawMetadata extends ModuleRawMetadata {
 export const rootModule: RootModuleDecorator = Reflector.makeClassDecorator(transformModule, 'rootModule');
 
 export interface RootModuleDecorator {
-  (data?: RootRawMetadata): any;
+  (data?: RootDecoratorOptions): any;
 }
 
-function transformModule(data?: RootRawMetadata): RootRawMetadata {
-  const rawMeta = Object.assign(new RootRawMetadata(), data) as RootRawMetadata;
+function transformModule(data?: RootDecoratorOptions): RootDecoratorOptions {
+  const rawMeta = Object.assign(new RootDecoratorOptions(), data) as RootDecoratorOptions;
   objectKeys(rawMeta).forEach((p) => {
     if (rawMeta[p] instanceof Providers) {
       (rawMeta as any)[p] = [...rawMeta[p]];

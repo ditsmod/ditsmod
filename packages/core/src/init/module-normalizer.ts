@@ -45,7 +45,7 @@ import {
   ForbiddenExportProvidersPerApp,
   ModuleShouldHaveValue,
 } from '#errors';
-import type { RootRawMetadata } from '#decorators/root-module.js';
+import type { RootDecoratorOptions } from '#decorators/root-module.js';
 
 /**
  * Normalizes and validates module metadata.
@@ -113,7 +113,7 @@ export class ModuleNormalizer {
    * Since this method relies on the established variable {@link rootDeclaredInDir},
    * during scanning the {@link ModuleManager} must first scan the root module.
    */
-  protected checkAndMarkExternalModule(rawMeta: RootRawMetadata) {
+  protected checkAndMarkExternalModule(rawMeta: RootDecoratorOptions) {
     if (isRootModule(rawMeta)) {
       this.rootDeclaredInDir = this.baseMeta.declaredInDir;
     } else if (this.rootDeclaredInDir) {
@@ -128,7 +128,7 @@ export class ModuleNormalizer {
   }
 
   protected normalizeDeclaredAndResolvedProviders(
-    rawMeta: InitDecoratorOptions & PickProps<RootRawMetadata, 'resolvedCollisionPerApp'>,
+    rawMeta: InitDecoratorOptions & PickProps<RootDecoratorOptions, 'resolvedCollisionPerApp'>,
   ) {
     (['App', 'Mod', 'Rou', 'Req'] as const).forEach((level) => {
       const providersKey = `providersPer${level}` as const;
@@ -227,7 +227,7 @@ export class ModuleNormalizer {
     }
   }
 
-  protected normalizeImports(rawMeta: RootRawMetadata) {
+  protected normalizeImports(rawMeta: RootDecoratorOptions) {
     this.resolveAllForwardRefs(rawMeta.imports).forEach((imp, i) => {
       if (imp === undefined) {
         throw new UndefinedSymbol('Imports', this.baseMeta.name, i);
@@ -241,7 +241,7 @@ export class ModuleNormalizer {
   }
 
   protected throwIfResolvingNormalizedProvider(
-    rawMeta: InitDecoratorOptions & PickProps<RootRawMetadata, 'resolvedCollisionPerApp'>,
+    rawMeta: InitDecoratorOptions & PickProps<RootDecoratorOptions, 'resolvedCollisionPerApp'>,
   ) {
     const resolvedCollisionPerLevel: [any, ModRefId | ForwardRefFn<ModuleType>][] = [];
     (['App', 'Mod', 'Rou', 'Req'] as const).forEach((level) => {
@@ -501,7 +501,7 @@ export class AppModule {}
     }
   }
 
-  protected quickCheckMetadata(rawMeta: RootRawMetadata) {
+  protected quickCheckMetadata(rawMeta: RootDecoratorOptions) {
     this.throwIfResolvingNormalizedProvider(rawMeta);
     if (
       !isRootModule(this.baseMeta) &&

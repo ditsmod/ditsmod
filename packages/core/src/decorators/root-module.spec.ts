@@ -1,4 +1,4 @@
-import { rootModule, type RootRawMetadata } from './root-module.js';
+import { rootModule, type RootDecoratorOptions } from './root-module.js';
 import { Reflector } from '#di/reflector.js';
 
 describe('RootModule decorator', () => {
@@ -30,7 +30,7 @@ describe('RootModule decorator', () => {
   });
 
   it('decorator with all allowed properties', () => {
-    const rootRawMeta: RootRawMetadata = {
+    const rootRawMeta: RootDecoratorOptions = {
       imports: [],
       providersPerApp: [],
       providersPerMod: [],

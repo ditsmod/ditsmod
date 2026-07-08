@@ -1,6 +1,6 @@
 import { topologicalSort } from './topological-sort.js';
-import type { ExtensionConfig} from './tarjan-graph.js';
-import { getGraph} from './tarjan-graph.js';
+import type { ExtensionConfig } from './tarjan-graph.js';
+import { getGraph } from './tarjan-graph.js';
 
 describe('topologicalSort()', () => {
   it('case 1', () => {
@@ -56,13 +56,7 @@ describe('topologicalSort()', () => {
       { extension: 'EXT.4', beforeExtensions: ['EXT.1'] },
       { extension: 'EXT.5', beforeExtensions: ['EXT.4'] },
     ];
-    expect(topologicalSort(configs, true)).toEqual([
-      'EXT.3',
-      'EXT.2',
-      'EXT.5',
-      'EXT.4',
-      'EXT.1',
-    ]);
+    expect(topologicalSort(configs, true)).toEqual(['EXT.3', 'EXT.2', 'EXT.5', 'EXT.4', 'EXT.1']);
   });
 
   it('case 7', () => {
@@ -73,13 +67,7 @@ describe('topologicalSort()', () => {
       { extension: 'EXT.3', beforeExtensions: ['EXT.2'] },
       { extension: 'EXT.4', beforeExtensions: ['EXT.1'] },
     ];
-    expect(topologicalSort(configs, true)).toEqual([
-      'EXT.5',
-      'EXT.3',
-      'EXT.2',
-      'EXT.4',
-      'EXT.1',
-    ]);
+    expect(topologicalSort(configs, true)).toEqual(['EXT.5', 'EXT.3', 'EXT.2', 'EXT.4', 'EXT.1']);
   });
 
   it('case 8', () => {
@@ -90,12 +78,6 @@ describe('topologicalSort()', () => {
       { extension: 'EXT.3', beforeExtensions: ['EXT.2'] },
       { extension: 'EXT.4', beforeExtensions: ['EXT.1'] },
     ];
-    expect(topologicalSort(configs, true)).toEqual([
-      'EXT.3',
-      'EXT.2',
-      'EXT.5',
-      'EXT.4',
-      'EXT.1',
-    ]);
+    expect(topologicalSort(configs, true)).toEqual(['EXT.3', 'EXT.2', 'EXT.5', 'EXT.4', 'EXT.1']);
   });
 });

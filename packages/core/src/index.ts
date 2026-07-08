@@ -22,7 +22,7 @@ export {
   AllInitHooks,
   InitDecoratorOptions,
 } from '#decorators/init-hooks-and-metadata.js';
-export { rootModule, RootRawMetadata } from '#decorators/root-module.js';
+export { rootModule, RootDecoratorOptions } from '#decorators/root-module.js';
 export {
   ExtensionCounters,
   ExtensionClass,

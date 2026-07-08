@@ -1,7 +1,7 @@
 import { featureModule } from '#decorators/feature-module.js';
 import { InitDecoratorOptions, InitHooks, InitDecorator } from '#decorators/init-hooks-and-metadata.js';
 import { BaseInitMeta, getProxyForInitMeta, BaseMeta } from '#init/base-meta.js';
-import { rootModule, RootRawMetadata } from '#decorators/root-module.js';
+import { rootModule, RootDecoratorOptions } from '#decorators/root-module.js';
 import { Reflector } from '#di/reflector.js';
 import { Extension } from '#extension/extension-types.js';
 import { AnyObj, ModRefId } from '#types/mix.js';
@@ -55,7 +55,7 @@ describe('ModuleNormalizer', () => {
     const expectedMeta = new BaseMeta();
     expectedMeta.id = '';
     expectedMeta.name = 'AppModule';
-    expectedMeta.rawMeta = new RootRawMetadata();
+    expectedMeta.rawMeta = new RootDecoratorOptions();
     expectedMeta.modRefId = AppModule;
     expectedMeta.declaredInDir = expect.any(String);
     expectedMeta.isExternal = undefined;
@@ -326,24 +326,24 @@ describe('ModuleNormalizer', () => {
     /**
      * An object with this type will be passed directly to the init decorator.
      */
-    interface RootRawMetadata extends InitDecoratorOptions<InitParams> {
+    interface RootDecoratorOptions extends InitDecoratorOptions<InitParams> {
       one?: number;
       two?: number;
       appends?: ({ module: ModRefId } & AnyObj)[];
     }
 
     /**
-     * Init hooks transform an object of type {@link RootRawMetadata} into an object of that type.
+     * Init hooks transform an object of type {@link RootDecoratorOptions} into an object of that type.
      */
     class InitMeta extends BaseInitMeta {
       baseMeta: BaseMeta;
-      initRawMeta: RootRawMetadata;
+      initRawMeta: RootDecoratorOptions;
     }
 
     /**
      * The methods of this class will normalize and validate the metadata passed to the init decorator.
      */
-    class InitHooks1 extends InitHooks<RootRawMetadata> {
+    class InitHooks1 extends InitHooks<RootDecoratorOptions> {
       override normalize(baseMeta: BaseMeta) {
         const meta = getProxyForInitMeta(baseMeta, InitMeta);
 
@@ -357,12 +357,12 @@ describe('ModuleNormalizer', () => {
     /**
      * Init decorator transformer.
      */
-    function getInitHooks(data?: RootRawMetadata): InitHooks<RootRawMetadata> {
+    function getInitHooks(data?: RootDecoratorOptions): InitHooks<RootDecoratorOptions> {
       const metadata = Object.assign({}, data);
       return new InitHooks1(metadata);
     }
 
-    const initSome: InitDecorator<RootRawMetadata, InitParams, InitMeta> = Reflector.makeClassDecorator(
+    const initSome: InitDecorator<RootDecoratorOptions, InitParams, InitMeta> = Reflector.makeClassDecorator(
       getInitHooks,
       'initSome',
     );
@@ -425,7 +425,7 @@ describe('ModuleNormalizer', () => {
     });
 
     it('initHooks.normalize() correctly works', () => {
-      const rawMeta: RootRawMetadata = { one: 1, two: 2 };
+      const rawMeta: RootDecoratorOptions = { one: 1, two: 2 };
 
       @initSome(rawMeta)
       @featureModule()
@@ -842,7 +842,7 @@ describe('ModuleNormalizer', () => {
       const dummyDecorator = () => {};
 
       // Set root module
-      const rootMetaVal = new RootRawMetadata();
+      const rootMetaVal = new RootDecoratorOptions();
       const rootDec = new DecoratorAndValue(dummyDecorator, rootMetaVal, undefined, '/user-project/src');
       normalizer.customMeta.set(AppModule, [rootDec]);
 
@@ -878,7 +878,7 @@ describe('ModuleNormalizer', () => {
 
       const dummyDecorator = () => {};
 
-      const rootDec = new DecoratorAndValue(dummyDecorator, new RootRawMetadata(), undefined, '/user-project/src');
+      const rootDec = new DecoratorAndValue(dummyDecorator, new RootDecoratorOptions(), undefined, '/user-project/src');
       normalizer.customMeta.set(AppModule, [rootDec]);
 
       const ditsmodMetaVal = Object.assign(new ModuleRawMetadata(), { providersPerApp: [{ token: 't', useValue: 1 }] });

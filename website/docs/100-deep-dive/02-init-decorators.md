@@ -25,7 +25,7 @@ import {
   FeatureModuleParams,
   BaseInitMeta,
   BaseMeta,
-  RootRawMetadata,
+  RootDecoratorOptions,
 } from '@ditsmod/core';
 // ...
 
@@ -57,7 +57,7 @@ interface InitParams extends FeatureModuleParams {
  */
 interface InitMeta extends BaseInitMeta {
   baseMeta: BaseMeta;
-  initRawMeta: RootRawMetadata;
+  initRawMeta: RootDecoratorOptions;
 }
 
 // Init decorator transformer
