@@ -4,7 +4,7 @@ import { inspect } from 'node:util';
 import { TrpcMetadataPerMod2 } from '#init/trpc-deep-modules-importer.js';
 import { initTrpcModule } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { TrpcRouteMetadata } from '#decorators/trpc-route.js';
-import { ControllerRawMetadata } from '#decorators/trpc-controller.js';
+import { ControllerDecoratorOptions } from '#decorators/trpc-controller.js';
 import { MetadataPerMod3 } from '#types/types.js';
 import { ControllerMetadata } from '#types/controller-metadata.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';
@@ -49,7 +49,7 @@ export class TrpcRouteExtension implements Extension<MetadataPerMod3> {
           const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
           const guards = normalizeGuards(route.guards);
           providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
-          providersPerReq.push(...((ctrlDecorator?.value as ControllerRawMetadata).providersPerReq || []));
+          providersPerReq.push(...((ctrlDecorator?.value as ControllerDecoratorOptions).providersPerReq || []));
 
           for (const Interceptor of route.interceptors) {
             if (isInterceptor(Interceptor)) {

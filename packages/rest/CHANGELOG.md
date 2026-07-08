@@ -39,7 +39,7 @@
 
 | Commit | Type | Description |
 | -- | -- | -- |
-| [a26b4f7ef7](https://github.com/ditsmod/ditsmod/commit/a26b4f7ef75d99805) | fix | fixed `ControllerRawMetadatar`. |
+| [a26b4f7ef7](https://github.com/ditsmod/ditsmod/commit/a26b4f7ef75d99805) | fix | fixed `ControllerDecoratorOptionsr`. |
 | [607859ef67](https://github.com/ditsmod/ditsmod/commit/607859ef677ddd728) | fix | added `exportedOnly` for extensions. |
 
 

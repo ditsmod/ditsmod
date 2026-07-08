@@ -11,7 +11,7 @@ import {
 import {
   AppOptions,
   ControllerMetadata,
-  ControllerRawMetadata1,
+  ControllerDecoratorOptions1,
   isCtrlDecor,
   MetadataPerMod3,
   RestMetadataPerMod2,
@@ -67,7 +67,7 @@ export class OpenapiRouteExtension extends RestRouteExtension implements Extensi
             guards.push(...this.normalizeGuards(httpMethod, fullPath, decoratorAndValue.value.guards));
             const controllerFactory: FactoryProvider = { useFactory: [Controller, Controller.prototype[methodName]] };
             providersPerReq.push(
-              ...((ctrlDecorator?.value as ControllerRawMetadata1).providersPerReq || []),
+              ...((ctrlDecorator?.value as ControllerDecoratorOptions1).providersPerReq || []),
               controllerFactory,
             );
             const clonedOperationObject = { ...(operationObject || {}) } as XOperationObject;

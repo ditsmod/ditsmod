@@ -7,7 +7,7 @@ import { RouteMetadata } from '#decorators/route.js';
 import { ControllerMetadata } from '#types/controller-metadata.js';
 import { RouteMeta } from '#types/route-data.js';
 import { GuardItem, GuardPerMod1 } from '#interceptors/guard.js';
-import { ControllerRawMetadata1 } from '#types/controller.js';
+import { ControllerDecoratorOptions1 } from '#types/controller.js';
 import { AppOptions } from '#types/app-options.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { RestMetadataPerMod2 } from '#init/types.js';
@@ -61,7 +61,7 @@ export class RestRouteExtension implements Extension<MetadataPerMod3> {
             const fullPath = this.getPath(prefix, controllerPath);
             const guards = this.normalizeGuards(httpMethod, fullPath, route.guards).slice();
             providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
-            providersPerReq.push(...((ctrlDecorator?.value as ControllerRawMetadata1).providersPerReq || []));
+            providersPerReq.push(...((ctrlDecorator?.value as ControllerDecoratorOptions1).providersPerReq || []));
 
             const routeMeta: RouteMeta = {
               Controller,

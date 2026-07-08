@@ -4,7 +4,7 @@ import { Reflector } from '@ditsmod/core';
 /**
  * Metadata accepted by the default request-scoped controller.
  */
-export interface ControllerRawMetadata1 {
+export interface ControllerDecoratorOptions1 {
   /**
    * Providers per route.
    */
@@ -26,7 +26,7 @@ export interface ControllerRawMetadata1 {
 /**
  * Metadata accepted by the route-scoped controller.
  */
-export interface ControllerRawMetadata2 {
+export interface ControllerDecoratorOptions2 {
   /**
    * Providers per route.
    */
@@ -41,11 +41,11 @@ export interface ControllerRawMetadata2 {
   scope: 'route';
 }
 
-export type ControllerRawMetadata = ControllerRawMetadata1 | ControllerRawMetadata2;
+export type ControllerDecoratorOptions = ControllerDecoratorOptions1 | ControllerDecoratorOptions2;
 
-export const controller: ControllerDecor = Reflector.makeClassDecorator((data?: ControllerRawMetadata) => data || {});
+export const controller: ControllerDecor = Reflector.makeClassDecorator((data?: ControllerDecoratorOptions) => data || {});
 
 interface ControllerDecor {
-  (meta?: ControllerRawMetadata1): any;
-  (meta?: ControllerRawMetadata2): any;
+  (meta?: ControllerDecoratorOptions1): any;
+  (meta?: ControllerDecoratorOptions2): any;
 }
