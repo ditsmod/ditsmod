@@ -23,10 +23,10 @@
     "dm": "dist/ditsmod.js"
   },
   "scripts": {
-    "build": "tsgo -b tsconfig.build.json",
+    "build": "tsc -b tsconfig.build.json",
     "clean": "rm -rf dist*",
-    "test": "tsgo -b tsconfig.unit.json && yarn esm-jest",
-    "build-test": "tsgo -b tsconfig.build.json",
+    "test": "tsc -b tsconfig.unit.json && yarn esm-jest",
+    "build-test": "tsc -b tsconfig.build.json",
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)"
   },
   "keywords": [
@@ -45,9 +45,9 @@
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/node": "^26.0.1",
-    "@typescript/native-preview": "^7.0.0-dev.20260626.1",
     "jest": "^30.4.2",
-    "typescript": "^6.0.3"
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "typescript-7": "npm:typescript@^7.0.2"
   },
   "publishConfig": {
     "access": "public"

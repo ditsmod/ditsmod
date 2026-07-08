@@ -11,8 +11,8 @@
     "dev:client": "yarn wait-port 2021 && ditsmod start dist/client.js",
     "clean": "rm -r dist*",
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",
-    "build-test": "tsgo -b tsconfig.e2e.json",
-    "build": "tsgo -b tsconfig.build.json"
+    "build-test": "tsc -b tsconfig.e2e.json",
+    "build": "tsc -b tsconfig.build.json"
   },
   "imports": {
     "#app/*": "./dist/app/*",
@@ -24,11 +24,11 @@
   },
   "devDependencies": {
     "@ditsmod/cli": "^3.0.0-next.13",
-    "@typescript/native-preview": "^7.0.0-dev.20260626.1",
     "jest": "^30.4.2",
     "npm-run-all": "^4.1.5",
     "start-server-and-test": "^2.1.5",
     "typescript": "^5.9.3",
+    "typescript-7": "npm:typescript@^7.0.2",
     "wait-port": "^1.1.0"
   },
   "dependencies": {

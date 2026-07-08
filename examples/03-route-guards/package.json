@@ -9,8 +9,8 @@
     "clean": "rm -r dist*",
     "test": "yarn build-test && yarn esm-jest",
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",
-    "build": "tsgo -b tsconfig.build.json",
-    "build-test": "tsgo -b tsconfig.e2e.json"
+    "build": "tsc -b tsconfig.build.json",
+    "build-test": "tsc -b tsconfig.e2e.json"
   },
   "imports": {
     "#app/*": "./dist/app/*",
@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@ditsmod/cli": "^3.0.0-next.13",
-    "@typescript/native-preview": "^7.0.0-dev.20260626.1",
-    "jest": "^30.4.2"
+    "jest": "^30.4.2",
+    "typescript-7": "npm:typescript@^7.0.2"
   }
 }
