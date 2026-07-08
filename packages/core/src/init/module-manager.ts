@@ -2,7 +2,7 @@ import { format } from 'node:util';
 
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyObj, ModuleType, ModRefId } from '#types/mix.js';
-import { ModuleWithParams } from '#decorators/module-raw-metadata.js';
+import { ModuleWithParams } from '#decorators/module-decorator-options.js';
 import { BaseInitMeta, BaseMeta } from '#init/base-meta.js';
 import { isModuleWithParams, isRootModule } from '#decorators/type-guards.js';
 import { clearDebugClassNames, getDebugClassName } from '#utils/get-debug-class-name.js';

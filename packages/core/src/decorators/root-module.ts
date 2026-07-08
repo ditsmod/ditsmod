@@ -3,12 +3,12 @@ import type { ModRefId, ModuleType } from '#types/mix.js';
 import { Reflector } from '#di/reflector.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { Providers } from '#utils/providers.js';
-import { ModuleRawMetadata } from './module-raw-metadata.js';
+import { ModuleDecoratorOptions } from './module-decorator-options.js';
 
 /**
  * Raw module metadata returned by reflector.
  */
-export class RootDecoratorOptions extends ModuleRawMetadata {
+export class RootDecoratorOptions extends ModuleDecoratorOptions {
   /**
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.

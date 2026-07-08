@@ -1,7 +1,7 @@
 import { DecoratorAndValue } from '#di/top/decorator-and-value.js';
 import type { AnyObj, RequireProps } from '#types/mix.js';
-import type { ModuleWithParams } from '#decorators/module-raw-metadata.js';
-import { ModuleRawMetadata } from '#decorators/module-raw-metadata.js';
+import type { ModuleWithParams } from '#decorators/module-decorator-options.js';
+import { ModuleDecoratorOptions } from '#decorators/module-decorator-options.js';
 import { InitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { BaseMeta } from '#init/base-meta.js';
 import { RootDecoratorOptions } from './root-module.js';
@@ -32,30 +32,32 @@ export function isRootModule(
   return arg instanceof RootDecoratorOptions;
 }
 
-export function isFeatureModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<ModuleRawMetadata>;
-export function isFeatureModule(baseMeta?: BaseMeta): baseMeta is BaseMeta<ModuleRawMetadata>;
-export function isFeatureModule(arg?: AnyObj): arg is ModuleRawMetadata;
+export function isFeatureModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<ModuleDecoratorOptions>;
+export function isFeatureModule(baseMeta?: BaseMeta): baseMeta is BaseMeta<ModuleDecoratorOptions>;
+export function isFeatureModule(arg?: AnyObj): arg is ModuleDecoratorOptions;
 export function isFeatureModule(
-  arg?: DecoratorAndValue | ModuleRawMetadata | BaseMeta,
-): arg is DecoratorAndValue<ModuleRawMetadata> {
+  arg?: DecoratorAndValue | ModuleDecoratorOptions | BaseMeta,
+): arg is DecoratorAndValue<ModuleDecoratorOptions> {
   if (arg instanceof DecoratorAndValue) {
     if (arg.value instanceof InitHooks) {
       return arg.value.moduleRole === 'feature';
     }
-    return arg.value instanceof ModuleRawMetadata;
+    return arg.value instanceof ModuleDecoratorOptions;
   } else if (arg instanceof BaseMeta) {
     if (arg.rawMeta instanceof InitHooks) {
       return arg.rawMeta.moduleRole === 'feature';
     }
-    return arg.rawMeta instanceof ModuleRawMetadata;
+    return arg.rawMeta instanceof ModuleDecoratorOptions;
   } else if (arg instanceof InitHooks) {
     return arg.moduleRole === 'feature';
   }
-  return arg instanceof ModuleRawMetadata;
+  return arg instanceof ModuleDecoratorOptions;
 }
 
-export function isModDecor(arg?: DecoratorAndValue): arg is DecoratorAndValue<RootDecoratorOptions | ModuleRawMetadata>;
-export function isModDecor(arg?: RootDecoratorOptions): arg is RootDecoratorOptions | ModuleRawMetadata;
+export function isModDecor(
+  arg?: DecoratorAndValue,
+): arg is DecoratorAndValue<RootDecoratorOptions | ModuleDecoratorOptions>;
+export function isModDecor(arg?: RootDecoratorOptions): arg is RootDecoratorOptions | ModuleDecoratorOptions;
 export function isModDecor(arg?: any) {
   return isRootModule(arg) || isFeatureModule(arg);
 }

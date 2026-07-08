@@ -1,5 +1,5 @@
 import { clearDebugClassNames, getDebugClassName } from './get-debug-class-name.js';
-import type { ModuleWithParams } from '#decorators/module-raw-metadata.js';
+import type { ModuleWithParams } from '#decorators/module-decorator-options.js';
 import { forwardRef } from '#di/forward-ref.js';
 
 describe('getDebugClassName()', () => {

@@ -1,6 +1,6 @@
 import type { AnyObj, ModRefId, ModuleType } from '#types/mix.js';
 import type { AnyFn, Class, Provider } from '#di/top/types-and-models.js';
-import type { ModuleWithParams } from '../decorators/module-raw-metadata.js';
+import type { ModuleWithParams } from '../decorators/module-decorator-options.js';
 import type { ExtensionConfig, ExtensionConfigBase } from '#extension/extension-providers-and-configs.js';
 import type { InitMetaMap, InitHooks, AllInitHooks } from '#decorators/init-hooks-and-metadata.js';
 import type { ExtensionClass } from '#extension/extension-types.js';

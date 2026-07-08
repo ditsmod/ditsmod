@@ -3,7 +3,7 @@ import type { ShallowImports } from '#init/types.js';
 import type { SystemLogMediator } from '#logger/system-log-mediator.js';
 import type { AnyObj, ModRefId, ModuleType } from '#types/mix.js';
 import type { AnyFn, Provider } from '#di/top/types-and-models.js';
-import type { ModuleWithParams, ModuleRawMetadata } from '#decorators/module-raw-metadata.js';
+import type { ModuleWithParams, ModuleDecoratorOptions } from '#decorators/module-decorator-options.js';
 import type { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import type { featureModule } from './feature-module.js';
 import type { rootModule } from './root-module.js';
@@ -76,7 +76,7 @@ export class InitHooks<T1 extends InitDecoratorOptions = InitDecoratorOptions> {
 
   /**
    * This method gets metadata from {@link rootModule} decorator to collect
-   * providers from the {@link ModuleRawMetadata.exports | exports } property.
+   * providers from the {@link ModuleDecoratorOptions.exports | exports } property.
    */
   exportAppProviders(config: { moduleManager: ModuleManager; appProviders: AppProviders; baseMeta: BaseMeta }) {
     return new AppInitHooks();
@@ -223,6 +223,9 @@ export interface ParamsWithMwp {
   module?: never;
 }
 
-export interface InitDecoratorOptions<InitParams extends object = object> extends Omit<ModuleRawMetadata, 'imports'> {
+export interface InitDecoratorOptions<InitParams extends object = object> extends Omit<
+  ModuleDecoratorOptions,
+  'imports'
+> {
   imports?: (((ParamsWithMwp | ModuleWithParams) & InitParams) | ModuleType | ForwardRefFn<ModuleType>)[];
 }

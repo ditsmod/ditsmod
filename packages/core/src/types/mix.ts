@@ -1,4 +1,4 @@
-import type { ModuleWithParams } from '#decorators/module-raw-metadata.js';
+import type { ModuleWithParams } from '#decorators/module-decorator-options.js';
 import type { Injector } from '#di/injector.js';
 import type { ResolvedProvider } from '#di/top/resolved-provider.js';
 import type { Class } from '#di/top/types-and-models.js';

@@ -2,7 +2,7 @@ import type { ExtensionConfigBase } from '#extension/extension-providers-and-con
 import type { ModuleManager } from './module-manager.js';
 import type { AnyObj, Level, ModRefId, ModuleType, PickProps } from '#types/mix.js';
 import type { AnyFn, Provider, Class } from '#di/top/types-and-models.js';
-import type { ModuleWithParams, ModuleRawMetadata } from '#decorators/module-raw-metadata.js';
+import type { ModuleWithParams, ModuleDecoratorOptions } from '#decorators/module-decorator-options.js';
 import type { ForwardRefFn } from '#di/forward-ref.js';
 import type { Extension } from '#extension/extension-types.js';
 import type { AllInitHooks, InitDecoratorOptions, InitHooks } from '#decorators/init-hooks-and-metadata.js';
@@ -259,7 +259,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected normalizeExtensions(rawMeta: PickProps<ModuleRawMetadata, 'extensions' | 'extensionsMeta'>) {
+  protected normalizeExtensions(rawMeta: PickProps<ModuleDecoratorOptions, 'extensions' | 'extensionsMeta'>) {
     if (rawMeta.extensionsMeta) {
       this.baseMeta.extensionsMeta = { ...rawMeta.extensionsMeta, ...this.baseMeta.extensionsMeta };
     }

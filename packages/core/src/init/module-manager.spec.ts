@@ -9,7 +9,7 @@ import { ModuleId, ModuleManager } from './module-manager.js';
 import { AllInitHooks, InitDecoratorOptions, InitDecorator, InitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { BaseInitMeta, BaseMeta } from '#init/base-meta.js';
 import { ModRefId } from '#types/mix.js';
-import { ModuleWithParams } from '#decorators/module-raw-metadata.js';
+import { ModuleWithParams } from '#decorators/module-decorator-options.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { isModuleWithParams } from '#decorators/type-guards.js';
 import { FailAddingToImports } from '#errors';

@@ -1,6 +1,6 @@
 import { Reflector } from '#di/reflector.js';
 import { featureModule } from './feature-module.js';
-import type { ModuleRawMetadata } from './module-raw-metadata.js';
+import type { ModuleDecoratorOptions } from './module-decorator-options.js';
 
 describe('Module decorator', () => {
   it('empty decorator', () => {
@@ -19,7 +19,7 @@ describe('Module decorator', () => {
 
     const metadata = Reflector.getClassLevelMeta(Module1)!;
     expect(metadata.length).toBe(1);
-    expect(metadata[0].value).toEqual<ModuleRawMetadata>({
+    expect(metadata[0].value).toEqual<ModuleDecoratorOptions>({
       providersPerApp: [],
     });
   });
@@ -34,7 +34,7 @@ describe('Module decorator', () => {
   });
 
   it('decorator with all allowed properties', () => {
-    const rootRawMeta: ModuleRawMetadata = {
+    const rootRawMeta: ModuleDecoratorOptions = {
       imports: [],
       providersPerApp: [],
       providersPerMod: [],

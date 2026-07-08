@@ -7,10 +7,10 @@ import { Extension } from '#extension/extension-types.js';
 import { AnyObj, ModRefId } from '#types/mix.js';
 import {
   FeatureModuleParams,
-  ModuleRawMetadata,
+  ModuleDecoratorOptions,
   ModuleWithInitParams,
   ModuleWithParams,
-} from '#decorators/module-raw-metadata.js';
+} from '#decorators/module-decorator-options.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { ModuleNormalizer } from './module-normalizer.js';
 import { Providers } from '#utils/providers.js';
@@ -847,12 +847,16 @@ describe('ModuleNormalizer', () => {
       normalizer.customMeta.set(AppModule, [rootDec]);
 
       // External module outside /user-project/src
-      const extMetaVal = Object.assign(new ModuleRawMetadata(), { providersPerApp: [{ token: 't', useValue: 1 }] });
+      const extMetaVal = Object.assign(new ModuleDecoratorOptions(), {
+        providersPerApp: [{ token: 't', useValue: 1 }],
+      });
       const extDec = new DecoratorAndValue(dummyDecorator, extMetaVal, undefined, '/node_modules/external-mod');
       normalizer.customMeta.set(ExternalModule, [extDec]);
 
       // Internal module inside /user-project/src
-      const intMetaVal = Object.assign(new ModuleRawMetadata(), { providersPerApp: [{ token: 't', useValue: 1 }] });
+      const intMetaVal = Object.assign(new ModuleDecoratorOptions(), {
+        providersPerApp: [{ token: 't', useValue: 1 }],
+      });
       const intDec = new DecoratorAndValue(
         dummyDecorator,
         intMetaVal,
@@ -881,7 +885,9 @@ describe('ModuleNormalizer', () => {
       const rootDec = new DecoratorAndValue(dummyDecorator, new RootDecoratorOptions(), undefined, '/user-project/src');
       normalizer.customMeta.set(AppModule, [rootDec]);
 
-      const ditsmodMetaVal = Object.assign(new ModuleRawMetadata(), { providersPerApp: [{ token: 't', useValue: 1 }] });
+      const ditsmodMetaVal = Object.assign(new ModuleDecoratorOptions(), {
+        providersPerApp: [{ token: 't', useValue: 1 }],
+      });
       const ditsmodDec = new DecoratorAndValue(
         dummyDecorator,
         ditsmodMetaVal,

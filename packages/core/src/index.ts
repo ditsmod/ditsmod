@@ -64,12 +64,12 @@ export {
   UnionToIntersection,
 } from '#types/mix.js';
 export {
-  ModuleRawMetadata,
+  ModuleDecoratorOptions,
   ModuleWithParams,
   ModuleWithInitParams,
   BaseModuleWithParams,
   FeatureModuleParams,
-} from '#decorators/module-raw-metadata.js';
+} from '#decorators/module-decorator-options.js';
 export { ProviderImport } from '#types/metadata-per-mod.js';
 export { mergeArrays } from '#utils/merge-arrays.js';
 export { getLastProviders } from '#utils/get-last-providers.js';
