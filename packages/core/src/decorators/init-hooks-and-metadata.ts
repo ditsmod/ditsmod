@@ -30,27 +30,17 @@ export class InitHooks<T1 extends BaseInitRawMeta = BaseInitRawMeta> {
 
   /**
    * Raw metadata intended for the host module.
-   * 
-   * A module where the class with init hooks is declared (the host module) sometimes requires annotation
-   * using its own init decorators, but this can be problematic if you also additionally pass the host module
-   * to the {@link hostModule | this.hostModule} property. This causes a circular dependency. To avoid this,
-   * you should not annotate the host module using its own decorators. Instead, pass the metadata to this property.
    *
-   * For example, if the decorator `initSomeThing` is declared in `SomeModule`,
-   * in that case you cannot simultaneously:
+   * Sometimes, the host module (where the init hook class is declared) needs to be decorated
+   * with its own init decorator. If you do this and also set {@link hostModule}, it creates
+   * a circular dependency.
    *
-   * 1. annotate `SomeModule` using the `initSomeThing` decorator;
-   * 2. assign `this.hostModule = SomeModule` in the class with hooks for `initSomeThing`.
+   * To prevent this, do not decorate the host module with its own decorator. Instead,
+   * pass its metadata to this property:
    *
-   * This would result in a circular dependency, since `SomeModule` depends on `initSomeThing`, and
-   * `initSomeThing` depends on `SomeModule`. To avoid this, point 1 must not be performed. Instead,
-   * set metadata in this way:
-   *
-```ts
-override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
-```
-   *
-   * Here, `{ one: 1, two: 2 }` represents the placeholder metadata that needs to be passed to `SomeModule`.
+   * ```ts
+   * override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
+   * ```
    */
   declare hostRawMeta?: T1;
 
@@ -88,11 +78,7 @@ override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
    * This method gets metadata from {@link rootModule} decorator to collect
    * providers from the {@link ModuleRawMetadata.exports | exports } property.
    */
-  exportAppProviders(config: {
-    moduleManager: ModuleManager;
-    appProviders: AppProviders;
-    baseMeta: BaseMeta;
-  }) {
+  exportAppProviders(config: { moduleManager: ModuleManager; appProviders: AppProviders; baseMeta: BaseMeta }) {
     return new AppInitHooks();
   }
 

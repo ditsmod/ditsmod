@@ -55,7 +55,7 @@ Run `yarn docs-en` to preview changes locally.
 
 - **Running Prettier**: The agent must run Prettier to auto-format every new or modified file before finishing changes (e.g., `npx prettier --write path/to/file.ts`).
 - **Running ESLint**: After completing any code changes, the agent must run ESLint. To avoid running it for the entire project (which can cause memory issues), run it only for the modified packages (e.g., `yarn lint packages/cli` from the project root) or specifically for the modified files.
-- **Running Tests**: To run unit tests for a specific package, the agent should run them using the package workspace (e.g., `yarn workspace @ditsmod/cli test` or `yarn --cwd packages/cli test`). Avoid running `yarn test packages/<package-name>` from the root of the project, as this compiles tests for the entire monorepo and can fail due to compilation errors in other packages.
+- **Running Tests**: Run tests only if there are code changes (running tests is not required for documentation or comment-only changes). To run unit tests for a specific package, the agent should run them using the package workspace (e.g., `yarn workspace @ditsmod/cli test` or `yarn --cwd packages/cli test`). Avoid running `yarn test packages/<package-name>` from the root of the project, as this compiles tests for the entire monorepo and can fail due to compilation errors in other packages.
 
 ---
 
