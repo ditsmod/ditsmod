@@ -27,7 +27,7 @@
     "build-exam-test": "tsgo -b examples/tsconfig.e2e.json",
     "build-vscode": "tsgo -b examples/tsconfig.vscode.json",
     "lint": "eslint",
-    "cycle": "cycle-detector",
+    "cycle": "cycle-detector packages/*/src/index.ts",
     "docs": "yarn --cwd website start --port 3001",
     "docs-en": "yarn docs --locale en",
     "docs-tree": "tree -I '_category_.json' website/i18n/en/docusaurus-plugin-content-docs/current",
