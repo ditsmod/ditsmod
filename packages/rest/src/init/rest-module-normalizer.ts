@@ -1,10 +1,4 @@
-import type {
-  Class,
-  BaseMeta,
-  Providers,
-  Provider,
-  ForwardRefFn,
-  ModuleType} from '@ditsmod/core';
+import type { Class, BaseMeta, Providers, Provider, ForwardRefFn, ModuleType } from '@ditsmod/core';
 import {
   isNormalizedProvider,
   Reflector,
@@ -19,7 +13,7 @@ import {
 import { ForbiddenExportNormalizedProvider, ModuleShouldHaveValue } from '@ditsmod/core/errors';
 
 import type { AppendsWithParams, RestInitRawMeta } from '#init/rest-init-raw-meta.js';
-import type { RestModRefId} from '#init/rest-init-meta.js';
+import type { RestModRefId } from '#init/rest-init-meta.js';
 import { RestInitMeta } from '#init/rest-init-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
 import type { GuardItem, NormalizedGuard } from '#interceptors/guard.js';

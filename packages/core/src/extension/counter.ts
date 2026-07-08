@@ -3,7 +3,7 @@ import { Extension } from '#extension/extension-types.js';
 
 /**
  * Used to collect various statistics.
- * 
+ *
  * @todo Rename this (maybe to ExtensionCounter?)
  */
 @injectable()
@@ -20,7 +20,7 @@ export class Counter {
   }
 
   resetInitedExtensionsSet() {
-    this.#initedExtensions = new Set;
+    this.#initedExtensions = new Set();
   }
 
   addInitedExtensions(extension: Extension) {

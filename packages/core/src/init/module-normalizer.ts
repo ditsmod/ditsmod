@@ -392,7 +392,7 @@ export class AppModule {}
   }
 
   protected resolveAllForwardRefs<T extends ModRefId | Provider | ForwardRefFn | { mwp: ModuleWithParams }>(
-    arr: T[] | Providers = []
+    arr: T[] | Providers = [],
   ): Exclude<T, ForwardRefFn>[] {
     return [...arr].map((item) => {
       const resolved = resolveForwardRef(item);

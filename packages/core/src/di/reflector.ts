@@ -151,7 +151,7 @@ export class Reflector {
    * - class level;
    * - method or property level;
    * - parameter level.
-   * 
+   *
    * Returns an instance of {@link ClassMetaIterator}, which implements the [iterable protocol][1].
    * Each property of this class corresponds to a property with a decorator in the `Cls` parameter, and the value
    * of that property contains the normalized metadata with {@link MergedClassPropMeta}.

@@ -4,7 +4,6 @@ import { IncomingMessage, ServerResponse } from 'node:http';
 import { Router } from './router.js';
 import { RawResponse, RequestListener } from './request.js';
 
-
 @injectable()
 export class PreRouter {
   constructor(

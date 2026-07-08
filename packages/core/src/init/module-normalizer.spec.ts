@@ -5,7 +5,12 @@ import { rootModule, RootRawMetadata } from '#decorators/root-module.js';
 import { Reflector } from '#di/reflector.js';
 import { Extension } from '#extension/extension-types.js';
 import { AnyObj, ModRefId } from '#types/mix.js';
-import { FeatureModuleParams, ModuleRawMetadata, ModuleWithInitParams, ModuleWithParams } from '#decorators/module-raw-metadata.js';
+import {
+  FeatureModuleParams,
+  ModuleRawMetadata,
+  ModuleWithInitParams,
+  ModuleWithParams,
+} from '#decorators/module-raw-metadata.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { ModuleNormalizer } from './module-normalizer.js';
 import { Providers } from '#utils/providers.js';
@@ -261,11 +266,7 @@ describe('ModuleNormalizer', () => {
 
     const baseMeta = mock.normalize(moduleWithParams);
     expect(baseMeta.name).toBe('Module1-WithParams');
-    expect(baseMeta.providersPerMod).toEqual([
-      Service1,
-      Service2,
-      { token: Service3, useClass: Service3 },
-    ]);
+    expect(baseMeta.providersPerMod).toEqual([Service1, Service2, { token: Service3, useClass: Service3 }]);
     expect(baseMeta.exportedProvidersPerMod).toEqual([Service1, Service2, { token: Service3, useClass: Service3 }]);
   });
 
@@ -512,7 +513,6 @@ describe('ModuleNormalizer', () => {
       expect(moduleWithParams4.module).toBe(Module4);
     });
   });
-
 
   describe('validation errors', () => {
     it('throws InvalidModRefId for a non-class argument', () => {
@@ -853,7 +853,12 @@ describe('ModuleNormalizer', () => {
 
       // Internal module inside /user-project/src
       const intMetaVal = Object.assign(new ModuleRawMetadata(), { providersPerApp: [{ token: 't', useValue: 1 }] });
-      const intDec = new DecoratorAndValue(dummyDecorator, intMetaVal, undefined, '/user-project/src/features/internal-mod');
+      const intDec = new DecoratorAndValue(
+        dummyDecorator,
+        intMetaVal,
+        undefined,
+        '/user-project/src/features/internal-mod',
+      );
       normalizer.customMeta.set(InternalModule, [intDec]);
 
       const rootMeta = normalizer.normalize(AppModule);
@@ -877,7 +882,12 @@ describe('ModuleNormalizer', () => {
       normalizer.customMeta.set(AppModule, [rootDec]);
 
       const ditsmodMetaVal = Object.assign(new ModuleRawMetadata(), { providersPerApp: [{ token: 't', useValue: 1 }] });
-      const ditsmodDec = new DecoratorAndValue(dummyDecorator, ditsmodMetaVal, undefined, '/user-project/node_modules/ditsmod/packages/core');
+      const ditsmodDec = new DecoratorAndValue(
+        dummyDecorator,
+        ditsmodMetaVal,
+        undefined,
+        '/user-project/node_modules/ditsmod/packages/core',
+      );
       normalizer.customMeta.set(DitsmodModule, [ditsmodDec]);
 
       normalizer.normalize(AppModule);

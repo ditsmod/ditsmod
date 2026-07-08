@@ -1,4 +1,4 @@
-import type { Class, HttpMethod} from '@ditsmod/core';
+import type { Class, HttpMethod } from '@ditsmod/core';
 import { Reflector } from '@ditsmod/core';
 
 import type { GuardItem } from '#interceptors/guard.js';

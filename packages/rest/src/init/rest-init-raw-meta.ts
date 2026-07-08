@@ -1,4 +1,12 @@
-import type { AnyObj, ModuleType, Class, AnyFn, BaseInitRawMeta, FeatureModuleParams, ForwardRefFn } from '@ditsmod/core';
+import type {
+  AnyObj,
+  ModuleType,
+  Class,
+  AnyFn,
+  BaseInitRawMeta,
+  FeatureModuleParams,
+  ForwardRefFn,
+} from '@ditsmod/core';
 import type { GuardItem } from '#interceptors/guard.js';
 
 /**

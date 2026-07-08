@@ -1,7 +1,6 @@
 import { Reflector } from '@ditsmod/core';
 import { controller } from './controller.js';
 
-
 describe('Controller decorator', () => {
   it('empty decorator', () => {
     @controller()

@@ -106,4 +106,3 @@ export interface ModuleWithParams<M extends AnyObj = AnyObj> extends BaseModuleW
 export interface ModuleWithInitParams<M extends AnyObj = AnyObj> extends ModuleWithParams<M> {
   initParams: InitParamsMap;
 }
-

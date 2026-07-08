@@ -8,7 +8,7 @@ export const openapiRoot = join(import.meta.dirname, '../..');
 export const webpackDist = `${openapiRoot}/ui`;
 /**
  * `${openapiRoot}/dist/swagger-ui`
- * 
+ *
  * Also see `./index.ts`
  */
 export const swaggerDist = `${openapiRoot}/dist/swagger-ui`;

@@ -63,17 +63,15 @@ export function pickPropertiesAsGetters<T extends AnyObj, K extends Extract<keyo
 
   sourceObjects.forEach((sourceObj) => {
     sourceObj ??= {};
-    (Object.keys(targetObject) as K[])
-      .filter(callback)
-      .forEach((prop) => {
-        if (sourceObj.hasOwnProperty(prop)) {
-          Object.defineProperty(targetObject, prop, {
-            get() {
-              return sourceObj[prop];
-            },
-          });
-        }
-      });
+    (Object.keys(targetObject) as K[]).filter(callback).forEach((prop) => {
+      if (sourceObj.hasOwnProperty(prop)) {
+        Object.defineProperty(targetObject, prop, {
+          get() {
+            return sourceObj[prop];
+          },
+        });
+      }
+    });
   });
 
   return targetObject;

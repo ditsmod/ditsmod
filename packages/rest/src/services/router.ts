@@ -5,7 +5,6 @@ import { Tree } from './tree.js';
 import { MethodTree, Fn } from '../types/types.js';
 import { RawRequest, RawResponse } from './request.js';
 
-
 export class Router {
   on(method: HttpMethod, path: string, handle: RouteHandler): this {
     return this;

@@ -7,6 +7,6 @@ import { ctxProviders } from './providers.js';
   providersPerMod: [...ctxProviders],
   providersPerRou: [...ctxProviders],
   providersPerReq: [...ctxProviders],
-  exports: getTokens(ctxProviders)
+  exports: getTokens(ctxProviders),
 })
 export class CtxModule {}

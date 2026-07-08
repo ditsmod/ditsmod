@@ -1,4 +1,4 @@
-import type { AnyObj, ModuleType, Class, ModRefId} from '@ditsmod/core';
+import type { AnyObj, ModuleType, Class, ModRefId } from '@ditsmod/core';
 import { Provider, MultiProvider, BaseInitMeta } from '@ditsmod/core';
 
 import type { NormalizedGuard } from '#interceptors/guard.js';

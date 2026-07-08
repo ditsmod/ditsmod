@@ -1,5 +1,5 @@
 import type { Extension } from '#extension/extension-types.js';
-import type { ExtensionConfig} from '#extension/extension-providers-and-configs.js';
+import type { ExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import { normalizeExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import type { Provider } from '#di/top/types-and-models.js';
 

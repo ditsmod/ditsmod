@@ -10,7 +10,7 @@ import { getTokens } from './get-tokens.js';
 
 /**
  * @todo Add checks for FactoryProvider.
- * 
+ *
  * @param uniqDuplTokens Duplicates found in tokens.
  * @param providersWithDuplicates Merged providers where there may be conflicts.
  */

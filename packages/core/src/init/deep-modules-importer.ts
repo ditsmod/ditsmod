@@ -128,11 +128,7 @@ export class DeepModulesImporter {
   protected resolveProvidersForExtensions(targetProviders: BaseMeta, baseImportRegistry: BaseImportRegistry) {
     const currentExtensionsProviders: any[] = [];
     baseImportRegistry.extensionProviders.forEach((p) => currentExtensionsProviders.push(...p));
-    this.extensionsTokens = getTokens([
-      ...defaultExtensionProviders,
-      ...currentExtensionsProviders,
-      input
-    ]);
+    this.extensionsTokens = getTokens([...defaultExtensionProviders, ...currentExtensionsProviders, input]);
     baseImportRegistry.extensionGroupTokens.forEach((importedGroupTokens) => {
       importedGroupTokens.forEach((groupToken, ext) => {
         this.extensionsTokens.push(groupToken, ext);

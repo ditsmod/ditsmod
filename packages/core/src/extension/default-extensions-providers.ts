@@ -7,5 +7,5 @@ export const defaultExtensionProviders: Readonly<any[]> = [
   ExtensionManager,
   ExtensionContext,
   MetadataPerMod2,
-  PROVIDERS_PER_APP
+  PROVIDERS_PER_APP,
 ];

@@ -30,13 +30,13 @@ export class BaseAppOptions {
   showExternalLogs?: boolean;
   /**
    * Log level (trace, debug, info etc.).
-   * 
+   *
    * Default - `info`.
    */
   logLevel?: OutputLogLevel;
   /**
    * The error stack trace limit.
-   * 
+   *
    * Default - `50`.
    */
   stackTraceLimit?: number = 50;

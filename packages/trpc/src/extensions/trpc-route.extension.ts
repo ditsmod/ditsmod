@@ -70,7 +70,7 @@ export class TrpcRouteExtension implements Extension<MetadataPerMod3> {
             providersPerReq,
             routeMeta,
             guards,
-            interceptors: route.interceptors
+            interceptors: route.interceptors,
           });
         }
       }

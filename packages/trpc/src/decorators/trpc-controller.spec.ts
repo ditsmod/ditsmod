@@ -1,7 +1,6 @@
 import { Reflector } from '@ditsmod/core';
 import { trpcController } from './trpc-controller.js';
 
-
 describe('Controller decorator', () => {
   it('empty decorator', () => {
     @trpcController()

@@ -15,7 +15,7 @@ describe('OpenapiRouteExtension', () => {
       path: string,
       controllerName: string,
       prefixParams: (XParameterObject<any> | ReferenceObject)[],
-      params: (XParameterObject<any> | ReferenceObject)[]
+      params: (XParameterObject<any> | ReferenceObject)[],
     ) {
       return super.mergeParams(httpMethods, path, controllerName, prefixParams, params);
     }
@@ -61,7 +61,7 @@ describe('OpenapiRouteExtension', () => {
         'posts/:postId/comments',
         '',
         prefixParams,
-        parameters
+        parameters,
       );
       expect(paramsNonPath).toEqual([
         { in: 'query', name: 'rubricId' },

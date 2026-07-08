@@ -2,7 +2,7 @@ import type * as http from 'node:http';
 import type * as http2 from 'node:http2';
 import type * as https from 'node:https';
 import type { AddressInfo } from 'node:net';
-import type { ModuleType} from '@ditsmod/core';
+import type { ModuleType } from '@ditsmod/core';
 import { SystemLogMediator, BaseApplication } from '@ditsmod/core';
 
 import type { AppOptions } from '#types/app-options.js';

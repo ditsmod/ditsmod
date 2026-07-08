@@ -69,4 +69,3 @@ export function resolveForwardRef<T>(fn: T) {
 export function isForwardRef(arg?: any): arg is ForwardRefFn {
   return Boolean((arg as any)?.[FORWARD_REF]);
 }
-

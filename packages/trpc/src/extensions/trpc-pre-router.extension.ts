@@ -221,14 +221,11 @@ export class TrpcPreRouterExtension implements Extension<void> {
       const rawRes: RawResponse = opts.ctx.res;
       const injector = new Injector(RegistryPerReq, 'Req', injectorPerRou);
       (injector.get(Context) as Context).set(TRPC_OPTS, opts).set(RAW_REQ, rawReq).set(RAW_RES, rawRes);
-      return injector
-        .instantiateResolved<TrpcChainMaker>(resolvedTrpcChainMaker)
-        .makeChain(opts)
-        .handle(); // First HTTP handler in the chain of HTTP interceptors.
-        // .catch((err) => {
-        //   const errorHandler = injector.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
-        //   return errorHandler.handleError(err, ctx);
-        // });
+      return injector.instantiateResolved<TrpcChainMaker>(resolvedTrpcChainMaker).makeChain(opts).handle(); // First HTTP handler in the chain of HTTP interceptors.
+      // .catch((err) => {
+      //   const errorHandler = injector.instantiateResolved(resolvedErrHandler) as HttpErrorHandler;
+      //   return errorHandler.handleError(err, ctx);
+      // });
     };
 
     const routeService = injectorPerRou.get(TrpcRouteService) as PublicTrpcRouteService;

@@ -1,4 +1,4 @@
-import type { Class} from '@ditsmod/core';
+import type { Class } from '@ditsmod/core';
 import { Reflector } from '@ditsmod/core';
 
 import type { GuardItem } from '#interceptors/trpc-guard.js';
@@ -13,10 +13,7 @@ export interface TrpcRouteMetadata {
  * in order to determine if the current user is allowed to activate the trpcController.
  * By default, any user can activate.
  */
-function routeFn(
-  guards: GuardItem[] = [],
-  interceptors: Class<TrpcHttpInterceptor>[] = [],
-): TrpcRouteMetadata {
+function routeFn(guards: GuardItem[] = [], interceptors: Class<TrpcHttpInterceptor>[] = []): TrpcRouteMetadata {
   return { guards, interceptors };
 }
 

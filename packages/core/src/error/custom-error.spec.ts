@@ -3,7 +3,6 @@ import { ChainError } from '@ts-stack/chain-error';
 import { Status } from '#utils/http-status-codes.js';
 import { CustomError } from '#error/custom-error.js';
 
-
 describe('CustomError', () => {
   it('CustomError is instanceof ChainError', () => {
     expect(new CustomError({}) instanceof ChainError).toBe(true);

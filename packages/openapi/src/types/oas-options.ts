@@ -8,5 +8,5 @@ import type { SchemaOptions } from 'yaml';
 export interface OasOptions {
   paratemers?: (XParameterObject | ReferenceObject)[];
   tags?: string[];
-  yamlSchemaOptions?: SchemaOptions
+  yamlSchemaOptions?: SchemaOptions;
 }

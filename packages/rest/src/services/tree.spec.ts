@@ -11,7 +11,7 @@ class TestTree extends Tree {
       this.children.length,
       this.handle,
       this.wildChild,
-      this.type
+      this.type,
     );
     for (let l = this.path.length; l > 0; l--) {
       prefix += ' ';

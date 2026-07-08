@@ -97,7 +97,7 @@ describe('pickPropertiesAsGetters', () => {
     const result = pickPropertiesAsGetters(
       targetObj,
       { excludeProperties: ['one'], includeProperties: ['one', 'two'] },
-      sourceObj
+      sourceObj,
     );
     expect(targetObj).toBe(result);
     expect(sourceObj).toEqual({ one: 1, two: 2 });

@@ -19,14 +19,14 @@ export class OpenapiLogMediator extends LogMediator {
   /**
    * config file (XOasObject) for OpenAPI not found, applying default.
    */
-   oasObjectNotFound(self: object) {
+  oasObjectNotFound(self: object) {
     const className = self.constructor.name;
     this.setLog('trace', `${className}: config file (with XOasObject type) not found, applying default.`);
   }
   /**
    * found config file (with XOasObject type), merge with default.
    */
-   foundOasObject(self: object) {
+  foundOasObject(self: object) {
     const className = self.constructor.name;
     this.setLog('trace', `${className}: found config file (with XOasObject type), merge with default.`);
   }

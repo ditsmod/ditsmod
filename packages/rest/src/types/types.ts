@@ -1,4 +1,4 @@
-import type { HttpMethod, BaseMeta} from '@ditsmod/core';
+import type { HttpMethod, BaseMeta } from '@ditsmod/core';
 import { ModuleExtract, AppInitHooks, Provider } from '@ditsmod/core';
 
 import { RestProviderImport } from '#init/types.js';

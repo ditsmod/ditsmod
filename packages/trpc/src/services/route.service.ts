@@ -98,10 +98,7 @@ export class TrpcRouteService<Context extends AnyObj = AnyObj, Input = void> {
    * 
    * @param methodAsToken Class method as a DI token in the format `ClassName.prototype.methodName`.
    */
-  diInputAndQuery<Input, Output, R>(
-    input: ParserWithInputOutput<Input, Output>,
-    methodAsToken: (...args: any[]) => R,
-  ) {
+  diInputAndQuery<Input, Output, R>(input: ParserWithInputOutput<Input, Output>, methodAsToken: (...args: any[]) => R) {
     const query = this.getHandler<R>(methodAsToken);
     return this.#procedure.input(input).query(query) as TRPCQueryProcedure<{
       input: Input;

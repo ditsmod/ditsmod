@@ -4,7 +4,13 @@ import { Reflector } from './reflector.js';
 import { DEPS_KEY } from './top/constants.js';
 import { DecoratorAndValue } from './top/decorator-and-value.js';
 import type { DepsMeta } from './top/resolved-provider.js';
-import { MergedClassPropMeta, UnknownType, type AbstractClass, type AnyFn, type Class } from './top/types-and-models.js';
+import {
+  MergedClassPropMeta,
+  UnknownType,
+  type AbstractClass,
+  type AnyFn,
+  type Class,
+} from './top/types-and-models.js';
 
 describe('Reflector', () => {
   describe('class decorators', () => {
@@ -389,9 +395,7 @@ describe('Reflector', () => {
         [String, new DecoratorAndValue(paramDecorator, [{ val: 30 }])],
       ]);
 
-      expect(Reflector.collectMeta(Controller, 'methodWithoutDecorators')).toMatchObject<
-        Partial<MergedClassPropMeta>
-      >({
+      expect(Reflector.collectMeta(Controller, 'methodWithoutDecorators')).toMatchObject<Partial<MergedClassPropMeta>>({
         type: UnknownType,
         decorators: [],
         params: [null, null],

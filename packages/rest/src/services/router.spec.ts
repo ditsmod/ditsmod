@@ -9,10 +9,7 @@ describe('Router', () => {
   let injector: Injector;
 
   beforeEach(() => {
-    injector = Injector.resolveAndCreate([
-      Tree,
-      DefaultRouter,
-    ]);
+    injector = Injector.resolveAndCreate([Tree, DefaultRouter]);
   });
 
   it('injector instanceof Injector', () => {

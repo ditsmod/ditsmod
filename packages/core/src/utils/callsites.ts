@@ -20,7 +20,7 @@ export class CallsiteUtils {
     // this.debug(callSites);
     for (let i = 0; i < callSites.length; i++) {
       if (callSites[i].scriptName.includes('/di/reflector.')) {
-        return callSites[i+1];
+        return callSites[i + 1];
       }
     }
     return;

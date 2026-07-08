@@ -7,7 +7,14 @@
  */
 
 import { resolveForwardRef } from '#di/forward-ref.js';
-import { Class, type ClassProvider, type FactoryProvider, type Provider, type TokenProvider, type ValueProvider } from '#di/top/types-and-models.js';
+import {
+  Class,
+  type ClassProvider,
+  type FactoryProvider,
+  type Provider,
+  type TokenProvider,
+  type ValueProvider,
+} from '#di/top/types-and-models.js';
 import { isClassProvider, isNormalizedProvider, isTokenProvider } from '#di/utils.js';
 import { InvalidProvider } from '#errors';
 

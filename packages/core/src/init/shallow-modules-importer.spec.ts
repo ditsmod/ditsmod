@@ -274,7 +274,7 @@ describe('ShallowModulesImporter', () => {
 
       moduleManager.scanRootModule(AppModule);
       let msg = 'Importing providers to AppModule failed: exports from Module1, ';
-       msg += 'Module2 causes collision with Provider1';
+      msg += 'Module2 causes collision with Provider1';
       expect(() => mock.exportAppProviders(moduleManager)).toThrow(msg);
     });
 
