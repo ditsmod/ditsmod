@@ -32,7 +32,7 @@ import {
 /**
  * An object with this type will be passed directly to the init decorator.
  */
-interface RawMetadata extends InitDecoratorOptions<InitParams> {
+interface InitDecoratorOptions extends InitDecoratorOptions<InitParams> {
   one?: number;
   two?: number;
 }
@@ -40,7 +40,7 @@ interface RawMetadata extends InitDecoratorOptions<InitParams> {
 /**
  * The methods of this class will normalize and validate the module metadata.
  */
-class SomeInitHooks extends InitHooks<RawMetadata> {
+class SomeInitHooks extends InitHooks<InitDecoratorOptions> {
   // ...
 }
 
@@ -53,7 +53,7 @@ interface InitParams extends FeatureModuleParams {
 }
 
 /**
- * Init hooks transform an object of type {@link RawMetadata} into an object of that type.
+ * Init hooks transform an object of type {@link InitDecoratorOptions} into an object of that type.
  */
 interface InitMeta extends BaseInitMeta {
   baseMeta: BaseMeta;
@@ -61,7 +61,7 @@ interface InitMeta extends BaseInitMeta {
 }
 
 // Init decorator transformer
-function getInitHooks(data?: RawMetadata): InitHooks<RawMetadata> {
+function getInitHooks(data?: InitDecoratorOptions): InitHooks<InitDecoratorOptions> {
   const metadata = Object.assign({}, data);
   const initHooks = new SomeInitHooks(metadata);
   initHooks.moduleRole = undefined;
@@ -71,7 +71,7 @@ function getInitHooks(data?: RawMetadata): InitHooks<RawMetadata> {
 }
 
 // Creating the init decorator
-const initSome: InitDecorator<RawMetadata, InitParams, InitMeta> = Reflector.makeClassDecorator(getInitHooks);
+const initSome: InitDecorator<InitDecoratorOptions, InitParams, InitMeta> = Reflector.makeClassDecorator(getInitHooks);
 
 // Using init decorator
 @initSome({ one: 1, two: 2 })
