@@ -3,7 +3,7 @@ import { BaseAppInitializer } from '@ditsmod/core';
 import type { RequestListener } from '#services/request.js';
 import { PreRouter } from '#services/pre-router.js';
 import type { HttpServer } from '#types/server-options.js';
-import { SERVER } from '#types/constants.js';
+import { SERVER } from '../top/constants.js';
 
 export class RestAppInitializer extends BaseAppInitializer {
   protected preRouter: PreRouter;

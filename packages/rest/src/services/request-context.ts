@@ -2,7 +2,7 @@ import { injectable } from '@ditsmod/core';
 
 import type { RawRequest, RawResponse } from './request.js';
 import type { PathParam } from './router.js';
-import { A_PATH_PARAMS, QUERY_STRING, RAW_REQ, RAW_RES } from '#types/constants.js';
+import { A_PATH_PARAMS, QUERY_STRING, RAW_REQ, RAW_RES } from '../top/constants.js';
 import { BaseRequestContext } from './base-request-context.js';
 
 @injectable()

@@ -4,7 +4,7 @@ import { getSymbol, InjectionToken } from '@ditsmod/core';
 import type { HttpInterceptor } from '#interceptors/tokens-and-types.js';
 import type { RawRequest, RawResponse } from '#services/request.js';
 import type { PathParam } from '#services/router.js';
-import type { HttpServer } from './server-options.js';
+import type { HttpServer } from '#types/server-options.js';
 
 export const HTTP_INTERCEPTORS = new InjectionToken<HttpInterceptor[]>('HTTP_INTERCEPTORS');
 /**

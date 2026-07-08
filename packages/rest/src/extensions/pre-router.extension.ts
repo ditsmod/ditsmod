@@ -23,7 +23,7 @@ import {
 
 import { routeChannel } from '#diagnostics-channel';
 import { MetadataPerMod3, PreparedRouteMeta } from '../types/types.js';
-import { HTTP_INTERCEPTORS } from '#types/constants.js';
+import { HTTP_INTERCEPTORS } from '../top/constants.js';
 import { ControllerMetadata } from '../types/controller-metadata.js';
 import { InterceptorWithGuardsPerRou } from '#interceptors/interceptor-with-guards-per-rou.js';
 import { InterceptorWithGuards } from '#interceptors/interceptor-with-guards.js';

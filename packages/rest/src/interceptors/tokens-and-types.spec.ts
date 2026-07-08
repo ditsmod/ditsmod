@@ -19,7 +19,7 @@ import {
 import { ChainMaker } from './chain-maker.js';
 import { DefaultHttpBackend } from './default-http-backend.js';
 import { HttpBackend, HttpFrontend, HttpHandler, HttpInterceptor } from './tokens-and-types.js';
-import { HTTP_INTERCEPTORS } from '#types/constants.js';
+import { HTTP_INTERCEPTORS } from '../top/constants.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { RestShallowModulesImporter } from '#init/rest-shallow-modules-importer.js';

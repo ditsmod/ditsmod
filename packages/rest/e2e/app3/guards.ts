@@ -1,7 +1,7 @@
 import { ctx } from '@ditsmod/core';
 
 import { CanActivate } from '#interceptors/guard.js';
-import { QUERY_PARAMS } from '#types/constants.js';
+import { QUERY_PARAMS } from '../../src/top/constants.js';
 import { RequestContext } from '#services/request-context.js';
 
 export class Guard implements CanActivate {

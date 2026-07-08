@@ -1,7 +1,7 @@
 import { inspect } from 'node:util';
 import { Extension, ExtensionManager, injectable } from '@ditsmod/core';
 
-import { HTTP_INTERCEPTORS } from '#types/constants.js';
+import { HTTP_INTERCEPTORS } from '../top/constants.js';
 import { isInterceptor } from '#types/type.guards.js';
 import { RestRouteExtension } from './rest-route.extension.js';
 import { InvalidInterceptor } from '#errors';

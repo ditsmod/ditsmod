@@ -7,7 +7,7 @@ import {
   HttpInterceptorHandler,
   RouteScopedHttpBackend,
 } from './tokens-and-types.js';
-import { HTTP_INTERCEPTORS } from '#types/constants.js';
+import { HTTP_INTERCEPTORS } from '../top/constants.js';
 import type { RouteContext } from '#services/route-context.js';
 
 class PreHttpBackend implements HttpBackend {
