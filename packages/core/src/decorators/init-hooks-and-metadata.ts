@@ -17,7 +17,7 @@ export type AllInitHooks = Map<AnyFn, Omit<InitHooks, 'rawMeta'>>;
  * Init hooks and metadata attached by init decorators,
  * apart from the base decorators - {@link featureModule} or {@link rootModule}.
  */
-export class InitHooks<T1 extends BaseInitRawMeta = BaseInitRawMeta> {
+export class InitHooks<T1 extends InitDecoratorOptions = InitDecoratorOptions> {
   /**
    * If you want your init decorator to also play the role of a base module, substitute the appropriate role.
    */
@@ -208,7 +208,7 @@ class MyModule {
 class MyInitHooks extends InitHooks<RootRawMetadata> {}
 ```
  */
-export interface InitDecorator<InitRawMeta extends BaseInitRawMeta, ModuleParams, InitMeta> {
+export interface InitDecorator<InitRawMeta extends InitDecoratorOptions, ModuleParams, InitMeta> {
   (data?: InitRawMeta): any;
 }
 
@@ -223,6 +223,6 @@ export interface ParamsWithMwp {
   module?: never;
 }
 
-export interface BaseInitRawMeta<InitParams extends object = object> extends Omit<ModuleRawMetadata, 'imports'> {
+export interface InitDecoratorOptions<InitParams extends object = object> extends Omit<ModuleRawMetadata, 'imports'> {
   imports?: (((ParamsWithMwp | ModuleWithParams) & InitParams) | ModuleType | ForwardRefFn<ModuleType>)[];
 }

@@ -5,7 +5,7 @@ import type { AnyFn, Provider, Class } from '#di/top/types-and-models.js';
 import type { ModuleWithParams, ModuleRawMetadata } from '#decorators/module-raw-metadata.js';
 import type { ForwardRefFn } from '#di/forward-ref.js';
 import type { Extension } from '#extension/extension-types.js';
-import type { AllInitHooks, BaseInitRawMeta, InitHooks } from '#decorators/init-hooks-and-metadata.js';
+import type { AllInitHooks, InitDecoratorOptions, InitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { isProvider } from '#utils/type-guards.js';
 import { normalizeExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
@@ -128,7 +128,7 @@ export class ModuleNormalizer {
   }
 
   protected normalizeDeclaredAndResolvedProviders(
-    rawMeta: BaseInitRawMeta & PickProps<RootRawMetadata, 'resolvedCollisionPerApp'>,
+    rawMeta: InitDecoratorOptions & PickProps<RootRawMetadata, 'resolvedCollisionPerApp'>,
   ) {
     (['App', 'Mod', 'Rou', 'Req'] as const).forEach((level) => {
       const providersKey = `providersPer${level}` as const;
@@ -241,7 +241,7 @@ export class ModuleNormalizer {
   }
 
   protected throwIfResolvingNormalizedProvider(
-    rawMeta: BaseInitRawMeta & PickProps<RootRawMetadata, 'resolvedCollisionPerApp'>,
+    rawMeta: InitDecoratorOptions & PickProps<RootRawMetadata, 'resolvedCollisionPerApp'>,
   ) {
     const resolvedCollisionPerLevel: [any, ModRefId | ForwardRefFn<ModuleType>][] = [];
     (['App', 'Mod', 'Rou', 'Req'] as const).forEach((level) => {
@@ -412,7 +412,7 @@ export class AppModule {}
     }) as Exclude<T, ForwardRefFn>[];
   }
 
-  protected fetchInitRawMeta(decorator: AnyFn, initRawMeta: BaseInitRawMeta) {
+  protected fetchInitRawMeta(decorator: AnyFn, initRawMeta: InitDecoratorOptions) {
     this.fetchInitImports(decorator, initRawMeta);
     this.fetchInitExports(initRawMeta);
     this.normalizeExtensions(initRawMeta);
@@ -420,7 +420,7 @@ export class AppModule {}
     this.normalizeExports(initRawMeta, 'Exports');
   }
 
-  protected fetchInitImports(decorator: AnyFn, initRawMeta: BaseInitRawMeta) {
+  protected fetchInitImports(decorator: AnyFn, initRawMeta: InitDecoratorOptions) {
     if (initRawMeta.imports) {
       this.resolveAllForwardRefs(initRawMeta.imports).forEach((imp) => {
         if (isModuleWithParams(imp)) {
@@ -474,7 +474,7 @@ export class AppModule {}
     return dstn;
   }
 
-  protected fetchInitExports(initRawMeta: BaseInitRawMeta) {
+  protected fetchInitExports(initRawMeta: InitDecoratorOptions) {
     if (initRawMeta.exports) {
       this.resolveAllForwardRefs(initRawMeta.exports).forEach((exp) => {
         if (isModuleWithParams(exp)) {

@@ -1,5 +1,5 @@
 import { featureModule } from '#decorators/feature-module.js';
-import { BaseInitRawMeta, InitHooks, InitDecorator } from '#decorators/init-hooks-and-metadata.js';
+import { InitDecoratorOptions, InitHooks, InitDecorator } from '#decorators/init-hooks-and-metadata.js';
 import { BaseInitMeta, getProxyForInitMeta, BaseMeta } from '#init/base-meta.js';
 import { rootModule, RootRawMetadata } from '#decorators/root-module.js';
 import { Reflector } from '#di/reflector.js';
@@ -326,7 +326,7 @@ describe('ModuleNormalizer', () => {
     /**
      * An object with this type will be passed directly to the init decorator.
      */
-    interface RootRawMetadata extends BaseInitRawMeta<InitParams> {
+    interface RootRawMetadata extends InitDecoratorOptions<InitParams> {
       one?: number;
       two?: number;
       appends?: ({ module: ModRefId } & AnyObj)[];
@@ -730,7 +730,7 @@ describe('ModuleNormalizer', () => {
   });
 
   describe('init hooks', () => {
-    interface InitRawMeta extends BaseInitRawMeta<{ path?: string }> {
+    interface InitRawMeta extends InitDecoratorOptions<{ path?: string }> {
       flag?: boolean;
     }
 

@@ -3,7 +3,7 @@ import type {
   BaseMeta,
   InitDecorator,
   Provider,
-  BaseInitRawMeta,
+  InitDecoratorOptions,
   FeatureModuleParams,
   ModuleType,
   Class,
@@ -40,7 +40,7 @@ export interface TrpcModuleParams extends FeatureModuleParams {
 /**
  * Metadata for the `initTrpcModule` decorator, which adds TRPC metadata to a `featureModule` or `rootModule`.
  */
-export interface TrpcInitRawMeta extends BaseInitRawMeta<TrpcModuleParams> {
+export interface TrpcInitRawMeta extends InitDecoratorOptions<TrpcModuleParams> {
   /**
    * The application controllers.
    */

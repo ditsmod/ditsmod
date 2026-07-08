@@ -20,7 +20,7 @@ export {
   InitMetaMap,
   InitParamsMap,
   AllInitHooks,
-  BaseInitRawMeta,
+  InitDecoratorOptions,
 } from '#decorators/init-hooks-and-metadata.js';
 export { rootModule, RootRawMetadata } from '#decorators/root-module.js';
 export {

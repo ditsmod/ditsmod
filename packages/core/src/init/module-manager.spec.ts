@@ -6,7 +6,7 @@ import { rootModule } from '#decorators/root-module.js';
 import { Extension } from '#extension/extension-types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ModuleId, ModuleManager } from './module-manager.js';
-import { AllInitHooks, BaseInitRawMeta, InitDecorator, InitHooks } from '#decorators/init-hooks-and-metadata.js';
+import { AllInitHooks, InitDecoratorOptions, InitDecorator, InitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { BaseInitMeta, BaseMeta } from '#init/base-meta.js';
 import { ModRefId } from '#types/mix.js';
 import { ModuleWithParams } from '#decorators/module-raw-metadata.js';
@@ -753,7 +753,7 @@ describe('ModuleManager', () => {
   });
 
   it('Module1 does not have an annotation with initSome, but imported in AppModule with this decorator', () => {
-    interface RootRawMetadata extends BaseInitRawMeta<{ path?: string }> {
+    interface RootRawMetadata extends InitDecoratorOptions<{ path?: string }> {
       one?: string;
       two?: string;
     }
@@ -790,13 +790,13 @@ describe('ModuleManager', () => {
   });
 
   it('get initParams for three different modules with params', () => {
-    interface RawMeta1 extends BaseInitRawMeta<{ one?: string }> {
+    interface RawMeta1 extends InitDecoratorOptions<{ one?: string }> {
       one?: string;
     }
     interface InitMeta1 {
       paramsForInitMeta1?: any;
     }
-    interface RawMeta2 extends BaseInitRawMeta<{ three?: string }> {
+    interface RawMeta2 extends InitDecoratorOptions<{ three?: string }> {
       three?: string;
     }
     interface InitMeta2 {

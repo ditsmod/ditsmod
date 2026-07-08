@@ -2,7 +2,7 @@ import type { BaseMeta } from '#init/base-meta.js';
 import type { AnyObj, ModRefId } from './mix.js';
 import type { AnyFn, Provider } from '#di/top/types-and-models.js';
 import type { ExtensionConfig } from '#extension/extension-providers-and-configs.js';
-import type { BaseInitRawMeta, InitHooks } from '#decorators/init-hooks-and-metadata.js';
+import type { InitDecoratorOptions, InitHooks } from '#decorators/init-hooks-and-metadata.js';
 import type { ExtensionClass } from '#extension/extension-types.js';
 import type { GroupToken } from '#di/key-registry.js';
 
@@ -18,7 +18,7 @@ export class ProviderImport<T extends Provider = Provider> {
   declare reexporter?: ModRefId;
 }
 
-export class AppInitHooks<T extends BaseInitRawMeta = BaseInitRawMeta> {
+export class AppInitHooks<T extends InitDecoratorOptions = InitDecoratorOptions> {
   /**
    * The presence of this property indicates whether at least one app provider is exported.
    */

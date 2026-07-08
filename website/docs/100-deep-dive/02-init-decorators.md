@@ -21,7 +21,7 @@ import {
   InitHooks,
   InitDecorator,
   Reflector,
-  BaseInitRawMeta,
+  InitDecoratorOptions,
   FeatureModuleParams,
   BaseInitMeta,
   BaseMeta,
@@ -32,7 +32,7 @@ import {
 /**
  * An object with this type will be passed directly to the init decorator.
  */
-interface RawMetadata extends BaseInitRawMeta<InitParams> {
+interface RawMetadata extends InitDecoratorOptions<InitParams> {
   one?: number;
   two?: number;
 }

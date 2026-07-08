@@ -3,7 +3,7 @@ import type {
   ModuleType,
   Class,
   AnyFn,
-  BaseInitRawMeta,
+  InitDecoratorOptions,
   FeatureModuleParams,
   ForwardRefFn,
 } from '@ditsmod/core';
@@ -12,7 +12,7 @@ import type { GuardItem } from '#interceptors/guard.js';
 /**
  * Metadata for the `initRest` decorator, which adds REST metadata to a `featureModule` or `rootModule`.
  */
-export interface RestInitRawMeta extends BaseInitRawMeta<RestModuleParams> {
+export interface RestInitRawMeta extends InitDecoratorOptions<RestModuleParams> {
   /**
    * List of modules that contain controllers. Providers from these modules
    * are not imported into the current module. If the current module has a prefix path,
