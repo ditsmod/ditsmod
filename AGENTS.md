@@ -8,6 +8,9 @@ This file provides rules and context for AI agents working inside the **Ditsmod 
 > - **For specific guidelines on Ditsmod components (DI, Modules, Extensions, etc.)**, refer to: [Ditsmod Agent Skills (Local)](file:///srv/git/ditsmod/agent-skills/skills) or [GitHub Mirror](https://github.com/ditsmod/agent-skills/tree/main/skills).
 > - **Scope of Application Rules**: Use the application developer rules mentioned above when working on directories containing runnable example applications (e.g., `examples/*`, `packages/*/e2e/*` tests or `experiments/*`).
 
+> [!NOTE]
+> `@ts-stack/*` packages are always published with their source files in the `src` folder, so agents can utilize them if needed.
+
 ---
 
 ## Repository Overview
