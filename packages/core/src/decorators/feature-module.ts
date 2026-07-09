@@ -10,14 +10,14 @@ export interface FeatureModuleDecorator {
 }
 
 function transformModule(data?: ModuleDecoratorOptions): ModuleDecoratorOptions {
-  const rawMeta = Object.assign(new ModuleDecoratorOptions(), data);
-  objectKeys(rawMeta).forEach((p) => {
-    if (rawMeta[p] instanceof Providers) {
-      (rawMeta as any)[p] = [...rawMeta[p]];
-    } else if (Array.isArray(rawMeta[p])) {
-      (rawMeta as any)[p] = rawMeta[p].slice();
+  const decoratorOptions = Object.assign(new ModuleDecoratorOptions(), data);
+  objectKeys(decoratorOptions).forEach((p) => {
+    if (decoratorOptions[p] instanceof Providers) {
+      (decoratorOptions as any)[p] = [...decoratorOptions[p]];
+    } else if (Array.isArray(decoratorOptions[p])) {
+      (decoratorOptions as any)[p] = decoratorOptions[p].slice();
     }
   });
 
-  return rawMeta;
+  return decoratorOptions;
 }

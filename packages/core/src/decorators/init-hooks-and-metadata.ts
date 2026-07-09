@@ -11,7 +11,7 @@ import { AppInitHooks, type AppProviders } from '#types/metadata-per-mod.js';
 import { type BaseMeta, getProxyForInitMeta, BaseInitMeta } from '#init/base-meta.js';
 import type { ForwardRefFn } from '#di/forward-ref.js';
 
-export type AllInitHooks = Map<AnyFn, Omit<InitHooks, 'rawMeta'>>;
+export type AllInitHooks = Map<AnyFn, Omit<InitHooks, 'decoratorOptions'>>;
 
 /**
  * Init hooks and metadata attached by init decorators,
@@ -39,20 +39,20 @@ export class InitHooks<T1 extends InitDecoratorOptions = InitDecoratorOptions> {
    * pass its metadata to this property:
    *
    * ```ts
-   * override hostRawMeta: YourMetadataType = { one: 1, two: 2 };
+   * override hostDecoratorOptions: YourMetadataType = { one: 1, two: 2 };
    * ```
    */
-  declare hostRawMeta?: T1;
+  declare hostDecoratorOptions?: T1;
 
-  constructor(public rawMeta: T1) {
-    this.rawMeta ??= {} as T1;
+  constructor(public decoratorOptions: T1) {
+    this.decoratorOptions ??= {} as T1;
   }
 
   /**
    * Returns a new instance of the current class. Most likely, you don't need to override this method.
    */
-  clone<R extends this>(rawMeta?: T1) {
-    return new (this.constructor as { new (arg: object): R })(rawMeta || {});
+  clone<R extends this>(decoratorOptions?: T1) {
+    return new (this.constructor as { new (arg: object): R })(decoratorOptions || {});
   }
 
   /**
@@ -208,8 +208,8 @@ class MyModule {
 class MyInitHooks extends InitHooks<RootDecoratorOptions> {}
 ```
  */
-export interface InitDecorator<InitRawMeta extends InitDecoratorOptions, ModuleParams, InitMeta> {
-  (data?: InitRawMeta): any;
+export interface InitDecorator<T extends InitDecoratorOptions, ModuleParams, InitMeta> {
+  (data?: T): any;
 }
 
 /**

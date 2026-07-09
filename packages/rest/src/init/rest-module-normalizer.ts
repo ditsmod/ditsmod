@@ -12,7 +12,7 @@ import {
 } from '@ditsmod/core';
 import { ForbiddenExportNormalizedProvider, ModuleShouldHaveValue } from '@ditsmod/core/errors';
 
-import type { AppendsWithParams, RestInitRawMeta } from '#init/rest-init-raw-meta.js';
+import type { AppendsWithParams, RestInitDecoratorOptions } from '#init/rest-init-raw-meta.js';
 import type { RestModRefId } from '#init/rest-init-meta.js';
 import { RestInitMeta } from '#init/rest-init-meta.js';
 import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
@@ -27,15 +27,15 @@ export class RestModuleNormalizer {
   protected baseMeta: BaseMeta;
   protected meta: RestInitMeta;
 
-  normalize(baseMeta: BaseMeta, rawMeta: RestInitRawMeta) {
+  normalize(baseMeta: BaseMeta, decoratorOptions: RestInitDecoratorOptions) {
     this.baseMeta = baseMeta;
     const meta = getProxyForInitMeta(baseMeta, RestInitMeta);
     this.meta = meta;
-    if (rawMeta.controllers) {
-      this.meta.controllers.push(...rawMeta.controllers);
+    if (decoratorOptions.controllers) {
+      this.meta.controllers.push(...decoratorOptions.controllers);
     }
     this.mergeModuleWithParams(baseMeta.modRefId);
-    this.appendModules(rawMeta);
+    this.appendModules(decoratorOptions);
     this.checkMetadata();
     return meta;
   }
@@ -66,8 +66,8 @@ export class RestModuleNormalizer {
     }
   }
 
-  protected appendModules(rawMeta: RestInitRawMeta) {
-    rawMeta.appends?.forEach((ap, i) => {
+  protected appendModules(decoratorOptions: RestInitDecoratorOptions) {
+    decoratorOptions.appends?.forEach((ap, i) => {
       ap = this.resolveForwardRef([ap])[0];
       if (isNormalizedProvider(ap)) {
         throw new ForbiddenExportNormalizedProvider(this.baseMeta.name, ap.token.name || ap.token);

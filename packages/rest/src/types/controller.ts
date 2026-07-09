@@ -43,7 +43,9 @@ export interface ControllerDecoratorOptions2 {
 
 export type ControllerDecoratorOptions = ControllerDecoratorOptions1 | ControllerDecoratorOptions2;
 
-export const controller: ControllerDecor = Reflector.makeClassDecorator((data?: ControllerDecoratorOptions) => data || {});
+export const controller: ControllerDecor = Reflector.makeClassDecorator(
+  (data?: ControllerDecoratorOptions) => data || {},
+);
 
 interface ControllerDecor {
   (meta?: ControllerDecoratorOptions1): any;

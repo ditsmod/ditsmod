@@ -12,7 +12,7 @@ export function isParamsWithMwp(arg?: AnyObj): arg is { mwp: ModuleWithParams } 
 
 export function isRootModule(decorAndVal?: DecoratorAndValue): decorAndVal is DecoratorAndValue<RootDecoratorOptions>;
 export function isRootModule(baseMeta?: BaseMeta): baseMeta is BaseMeta<RootDecoratorOptions>;
-export function isRootModule(rawMeta?: AnyObj): rawMeta is RootDecoratorOptions;
+export function isRootModule(decoratorOptions?: AnyObj): decoratorOptions is RootDecoratorOptions;
 export function isRootModule(
   arg?: DecoratorAndValue | RootDecoratorOptions | BaseMeta,
 ): arg is DecoratorAndValue<RootDecoratorOptions> {
@@ -22,10 +22,10 @@ export function isRootModule(
     }
     return arg.value instanceof RootDecoratorOptions;
   } else if (arg instanceof BaseMeta) {
-    if (arg.rawMeta instanceof InitHooks) {
-      return arg.rawMeta.moduleRole === 'root';
+    if (arg.decoratorOptions instanceof InitHooks) {
+      return arg.decoratorOptions.moduleRole === 'root';
     }
-    return arg.rawMeta instanceof RootDecoratorOptions;
+    return arg.decoratorOptions instanceof RootDecoratorOptions;
   } else if (arg instanceof InitHooks) {
     return arg.moduleRole === 'root';
   }
@@ -44,10 +44,10 @@ export function isFeatureModule(
     }
     return arg.value instanceof ModuleDecoratorOptions;
   } else if (arg instanceof BaseMeta) {
-    if (arg.rawMeta instanceof InitHooks) {
-      return arg.rawMeta.moduleRole === 'feature';
+    if (arg.decoratorOptions instanceof InitHooks) {
+      return arg.decoratorOptions.moduleRole === 'feature';
     }
-    return arg.rawMeta instanceof ModuleDecoratorOptions;
+    return arg.decoratorOptions instanceof ModuleDecoratorOptions;
   } else if (arg instanceof InitHooks) {
     return arg.moduleRole === 'feature';
   }

@@ -2,7 +2,7 @@ import type { Class, BaseMeta } from '@ditsmod/core';
 import { isFeatureModule, Reflector, getDuplicates, getProxyForInitMeta } from '@ditsmod/core';
 import { ModuleShouldHaveValue } from '@ditsmod/core/errors';
 
-import type { TrpcInitRawMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
+import type { TrpcInitDecoratorOptions } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { ControllerDoesNotHaveDecorator, DuplicateOfControllers, InvalidGuard } from '../error/trpc-errors.js';
 import type { NormalizedGuard } from '#interceptors/trpc-guard.js';
@@ -16,12 +16,12 @@ export class TrpcModuleNormalizer {
   protected baseMeta: BaseMeta;
   protected meta: TrpcInitMeta;
 
-  normalize(baseMeta: BaseMeta, rawMeta: TrpcInitRawMeta) {
+  normalize(baseMeta: BaseMeta, decoratorOptions: TrpcInitDecoratorOptions) {
     this.baseMeta = baseMeta;
     const meta = getProxyForInitMeta(baseMeta, TrpcInitMeta);
     this.meta = meta;
-    if (rawMeta.controllers) {
-      this.meta.controllers.push(...rawMeta.controllers);
+    if (decoratorOptions.controllers) {
+      this.meta.controllers.push(...decoratorOptions.controllers);
     }
     this.checkMetadata();
     return meta;

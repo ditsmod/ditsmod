@@ -6,7 +6,9 @@ import type { Http2SecureServerOptions, ServerOptions } from './server-options.j
 import type { ControllerDecoratorOptions } from '#decorators/trpc-controller.js';
 import { trpcController } from '#decorators/trpc-controller.js';
 
-export function isCtrlDecor(decoratorAndValue?: AnyObj): decoratorAndValue is DecoratorAndValue<ControllerDecoratorOptions> {
+export function isCtrlDecor(
+  decoratorAndValue?: AnyObj,
+): decoratorAndValue is DecoratorAndValue<ControllerDecoratorOptions> {
   return decoratorAndValue?.decorator === trpcController;
 }
 

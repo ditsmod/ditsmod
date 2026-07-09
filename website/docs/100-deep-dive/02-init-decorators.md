@@ -57,7 +57,7 @@ interface InitParams extends FeatureModuleParams {
  */
 interface InitMeta extends BaseInitMeta {
   baseMeta: BaseMeta;
-  initRawMeta: RootDecoratorOptions;
+  initDecoratorOptions: RootDecoratorOptions;
 }
 
 // Init decorator transformer

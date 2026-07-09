@@ -34,7 +34,7 @@ describe('Module decorator', () => {
   });
 
   it('decorator with all allowed properties', () => {
-    const rootRawMeta: ModuleDecoratorOptions = {
+    const rootDecoratorOptions: ModuleDecoratorOptions = {
       imports: [],
       providersPerApp: [],
       providersPerMod: [],
@@ -47,11 +47,11 @@ describe('Module decorator', () => {
       exports: [],
       extensions: [],
     };
-    @featureModule(rootRawMeta)
+    @featureModule(rootDecoratorOptions)
     class Module1 {}
 
     const metadata = Reflector.getClassLevelMeta(Module1)!;
     expect(metadata.length).toBe(1);
-    expect(metadata[0].value).toEqual(rootRawMeta);
+    expect(metadata[0].value).toEqual(rootDecoratorOptions);
   });
 });

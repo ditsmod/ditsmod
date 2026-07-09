@@ -43,20 +43,20 @@ describe('type guards', () => {
 
       const baseMeta = new BaseMeta();
       const metadata = Reflector.getClassLevelMeta(Module1)![0];
-      baseMeta.rawMeta = metadata.value;
+      baseMeta.decoratorOptions = metadata.value;
       expect(isFeatureModule(baseMeta)).toBe(true);
     });
 
     it('BaseMeta false', () => {
       const baseMeta = new BaseMeta();
-      baseMeta.rawMeta = {};
+      baseMeta.decoratorOptions = {};
       expect(isFeatureModule(baseMeta)).toBe(false);
     });
 
     it('initHooks in BaseMeta false', () => {
       const initHooks = new InitHooks({});
       const baseMeta = new BaseMeta();
-      baseMeta.rawMeta = initHooks;
+      baseMeta.decoratorOptions = initHooks;
       expect(isFeatureModule(baseMeta)).toBe(false);
     });
 
@@ -64,7 +64,7 @@ describe('type guards', () => {
       const initHooks = new InitHooks({});
       initHooks.moduleRole = 'feature';
       const baseMeta = new BaseMeta();
-      baseMeta.rawMeta = initHooks;
+      baseMeta.decoratorOptions = initHooks;
       expect(isFeatureModule(baseMeta)).toBe(true);
     });
 
@@ -88,8 +88,8 @@ describe('type guards', () => {
     it('class with decorator', () => {
       @rootModule({})
       class Module1 {}
-      const rawMeta = Reflector.getClassLevelMeta(Module1, isRootModule);
-      expect(rawMeta).toBeDefined();
+      const decoratorOptions = Reflector.getClassLevelMeta(Module1, isRootModule);
+      expect(decoratorOptions).toBeDefined();
     });
 
     it('class without decorator', () => {

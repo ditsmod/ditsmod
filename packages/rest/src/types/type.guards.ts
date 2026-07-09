@@ -7,7 +7,9 @@ import type { ControllerDecoratorOptions } from './controller.js';
 import { controller } from './controller.js';
 import type { Http2SecureServerOptions, ServerOptions } from './server-options.js';
 
-export function isCtrlDecor(decoratorAndValue?: AnyObj): decoratorAndValue is DecoratorAndValue<ControllerDecoratorOptions> {
+export function isCtrlDecor(
+  decoratorAndValue?: AnyObj,
+): decoratorAndValue is DecoratorAndValue<ControllerDecoratorOptions> {
   return decoratorAndValue?.decorator === controller;
 }
 

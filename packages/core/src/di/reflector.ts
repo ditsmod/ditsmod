@@ -70,7 +70,7 @@ export class Reflector {
         const Cls = target.constructor as Class;
         const item = new DecoratorAndValue(propDecorFactory, value, decoratorId);
         // Store both quick per-property metadata and the property list used by this.collectMeta().
-        // Reflector.getRawMeta(Cls, PROP_KEY, propertyKey, item);
+        // Reflector.getDecoratorOptions(Cls, PROP_KEY, propertyKey, item);
         const meta = propMetaMap.getOrInsert(Cls, {});
         (meta[propertyKey] ??= []).push(item);
       };

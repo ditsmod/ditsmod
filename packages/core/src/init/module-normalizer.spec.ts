@@ -55,7 +55,7 @@ describe('ModuleNormalizer', () => {
     const expectedMeta = new BaseMeta();
     expectedMeta.id = '';
     expectedMeta.name = 'AppModule';
-    expectedMeta.rawMeta = new RootDecoratorOptions();
+    expectedMeta.decoratorOptions = new RootDecoratorOptions();
     expectedMeta.modRefId = AppModule;
     expectedMeta.declaredInDir = expect.any(String);
     expectedMeta.isExternal = undefined;
@@ -64,7 +64,7 @@ describe('ModuleNormalizer', () => {
     expect(mock.normalize(AppModule)).toEqual(expectedMeta);
   });
 
-  it('rawMeta -> baseMeta: transformation of raw metadata into normalized metadata', () => {
+  it('decoratorOptions -> baseMeta: transformation of raw metadata into normalized metadata', () => {
     class Service1 {}
     class Service2 {}
     class Service3 {}
@@ -337,7 +337,7 @@ describe('ModuleNormalizer', () => {
      */
     class InitMeta extends BaseInitMeta {
       baseMeta: BaseMeta;
-      initRawMeta: RootDecoratorOptions;
+      initDecoratorOptions: RootDecoratorOptions;
     }
 
     /**
@@ -349,7 +349,7 @@ describe('ModuleNormalizer', () => {
 
         // Add arbitrary metadata declared in InitMeta
         meta.baseMeta = baseMeta;
-        meta.initRawMeta = this.rawMeta;
+        meta.initDecoratorOptions = this.decoratorOptions;
         return meta;
       }
     }
@@ -425,15 +425,15 @@ describe('ModuleNormalizer', () => {
     });
 
     it('initHooks.normalize() correctly works', () => {
-      const rawMeta: RootDecoratorOptions = { one: 1, two: 2 };
+      const decoratorOptions: RootDecoratorOptions = { one: 1, two: 2 };
 
-      @initSome(rawMeta)
+      @initSome(decoratorOptions)
       @featureModule()
       class Module1 {}
 
       const baseMeta = mock.normalize(Module1).initMeta.get(initSome);
       expect(baseMeta?.baseMeta.modRefId).toBe(Module1);
-      expect(baseMeta?.initRawMeta).toEqual(rawMeta);
+      expect(baseMeta?.initDecoratorOptions).toEqual(decoratorOptions);
     });
 
     it('proprly works with imports/exports of modules', () => {
@@ -730,7 +730,7 @@ describe('ModuleNormalizer', () => {
   });
 
   describe('init hooks', () => {
-    interface InitRawMeta extends InitDecoratorOptions<{ path?: string }> {
+    interface InitDecoratorOptions extends InitDecoratorOptions<{ path?: string }> {
       flag?: boolean;
     }
 
@@ -740,35 +740,35 @@ describe('ModuleNormalizer', () => {
       modRefId?: ModRefId;
     }
 
-    class InitHooks1 extends InitHooks<InitRawMeta> {
+    class InitHooks1 extends InitHooks<InitDecoratorOptions> {
       override normalize(baseMeta: BaseMeta): InitMeta {
         if (isModuleWithParams(baseMeta.modRefId)) {
           const params = baseMeta.modRefId.initParams?.get(initSome);
           return { path: params?.path, modRefId: baseMeta.modRefId } as InitMeta;
         }
 
-        return { flag: this.rawMeta.flag, modRefId: baseMeta.modRefId } as InitMeta;
+        return { flag: this.decoratorOptions.flag, modRefId: baseMeta.modRefId } as InitMeta;
       }
     }
 
-    const initSome: InitDecorator<InitRawMeta, { path?: string }, InitMeta> = Reflector.makeClassDecorator(
+    const initSome: InitDecorator<InitDecoratorOptions, { path?: string }, InitMeta> = Reflector.makeClassDecorator(
       (data) => new InitHooks1(data),
     );
 
-    it('adds init hooks to host module via allInitHooks and hostRawMeta', () => {
+    it('adds init hooks to host module via allInitHooks and hostDecoratorOptions', () => {
       @featureModule()
       class HostModule {}
 
-      class HostInitHooks extends InitHooks<InitRawMeta> {
+      class HostInitHooks extends InitHooks<InitDecoratorOptions> {
         override hostModule = HostModule;
-        override hostRawMeta = { flag: true };
+        override hostDecoratorOptions = { flag: true };
 
         override normalize(baseMeta: BaseMeta): InitMeta {
-          return { flag: this.rawMeta.flag, modRefId: baseMeta.modRefId } as InitMeta;
+          return { flag: this.decoratorOptions.flag, modRefId: baseMeta.modRefId } as InitMeta;
         }
       }
 
-      const hostInitSome: InitDecorator<InitRawMeta, {}, {}> = Reflector.makeClassDecorator(
+      const hostInitSome: InitDecorator<InitDecoratorOptions, {}, {}> = Reflector.makeClassDecorator(
         (data) => new HostInitHooks(data),
       );
       const allInitHooks = new Map([[hostInitSome, new HostInitHooks({})]]);
@@ -782,11 +782,11 @@ describe('ModuleNormalizer', () => {
       @featureModule()
       class HostModule {}
 
-      class HostInitHooks extends InitHooks<InitRawMeta> {
+      class HostInitHooks extends InitHooks<InitDecoratorOptions> {
         override hostModule = HostModule;
       }
 
-      const hostInitSome: InitDecorator<InitRawMeta, {}, {}> = Reflector.makeClassDecorator(
+      const hostInitSome: InitDecorator<InitDecoratorOptions, {}, {}> = Reflector.makeClassDecorator(
         (data) => new HostInitHooks(data),
       );
 

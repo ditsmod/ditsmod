@@ -40,47 +40,44 @@ export interface TrpcModuleParams extends FeatureModuleParams {
 /**
  * Metadata for the `initTrpcModule` decorator, which adds TRPC metadata to a `featureModule` or `rootModule`.
  */
-export interface TrpcInitRawMeta extends InitDecoratorOptions<TrpcModuleParams> {
+export interface TrpcInitDecoratorOptions extends InitDecoratorOptions<TrpcModuleParams> {
   /**
    * The application controllers.
    */
   controllers?: Class[];
 }
 
-export const initTrpcModule: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, TrpcInitMeta> =
+export const initTrpcModule: InitDecorator<TrpcInitDecoratorOptions, TrpcModuleParams, TrpcInitMeta> =
   Reflector.makeClassDecorator(transformInitMeta, 'initTrpcModule');
 export const trpcRootModule: InitDecorator<
-  TrpcInitRawMeta & { resolvedCollisionPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][] },
+  TrpcInitDecoratorOptions & { resolvedCollisionPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][] },
   TrpcModuleParams,
   TrpcInitMeta
 > = Reflector.makeClassDecorator(transformRootMetadata, 'trpcRootModule', initTrpcModule);
-export const trpcModule: InitDecorator<TrpcInitRawMeta, TrpcModuleParams, TrpcInitMeta> = Reflector.makeClassDecorator(
-  transformFeatureMetadata,
-  'trpcModule',
-  initTrpcModule,
-);
+export const trpcModule: InitDecorator<TrpcInitDecoratorOptions, TrpcModuleParams, TrpcInitMeta> =
+  Reflector.makeClassDecorator(transformFeatureMetadata, 'trpcModule', initTrpcModule);
 
-export function transformInitMeta(data?: TrpcInitRawMeta): InitHooks<TrpcInitRawMeta> {
+export function transformInitMeta(data?: TrpcInitDecoratorOptions): InitHooks<TrpcInitDecoratorOptions> {
   const metadata = Object.assign({}, data);
   return new TrpcInitHooks(metadata);
 }
-export function transformRootMetadata(data?: TrpcInitRawMeta): InitHooks<TrpcInitRawMeta> {
+export function transformRootMetadata(data?: TrpcInitDecoratorOptions): InitHooks<TrpcInitDecoratorOptions> {
   const metadata = Object.assign({}, data);
   const initHooks = new TrpcInitHooks(metadata);
   initHooks.moduleRole = 'root';
   return initHooks;
 }
-export function transformFeatureMetadata(data?: TrpcInitRawMeta): InitHooks<TrpcInitRawMeta> {
+export function transformFeatureMetadata(data?: TrpcInitDecoratorOptions): InitHooks<TrpcInitDecoratorOptions> {
   const metadata = transformRootMetadata(data);
   metadata.moduleRole = 'feature';
   return metadata;
 }
 
-export class TrpcInitHooks extends InitHooks<TrpcInitRawMeta> {
+export class TrpcInitHooks extends InitHooks<TrpcInitDecoratorOptions> {
   override hostModule = TrpcModule;
 
   override normalize(baseMeta: BaseMeta): TrpcInitMeta {
-    return new TrpcModuleNormalizer().normalize(baseMeta, this.rawMeta);
+    return new TrpcModuleNormalizer().normalize(baseMeta, this.decoratorOptions);
   }
 
   override getModulesToScan(meta?: TrpcInitMeta): TrpcModRefId[] {

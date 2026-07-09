@@ -81,7 +81,7 @@ export class BaseMeta<
   /**
    * Metadata returned by the decorator transformer for the module.
    */
-  rawMeta: AnyObj;
+  decoratorOptions: AnyObj;
   /**
    * The module setted here must be identical to the module
    * passed to "imports", "exports" array of `@featureModule` metadata.
