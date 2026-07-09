@@ -8,7 +8,7 @@ import type { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import type { featureModule } from './feature-module.js';
 import type { rootModule } from './root-module.js';
 import { AppInitHooks, type AppProviders } from '#types/metadata-per-mod.js';
-import { type BaseMeta, getProxyForInitMeta, BaseInitMeta } from '#init/base-meta.js';
+import { type NormalizedModuleMeta, getProxyForInitMeta, NormalizedInitMeta } from '#init/base-meta.js';
 import type { ForwardRefFn } from '#di/forward-ref.js';
 
 export type AllInitHooks = Map<AnyFn, Omit<InitHooks, 'decoratorOptions'>>;
@@ -56,13 +56,13 @@ export class InitHooks<T1 extends InitDecoratorOptions = InitDecoratorOptions> {
   }
 
   /**
-   * Normalizes the metadata from the current decorator. It is then inserted into {@link BaseMeta.initMeta | baseMeta.initMeta}.
+   * Normalizes the metadata from the current decorator. It is then inserted into {@link NormalizedModuleMeta.initMeta | normalizedModuleMeta.initMeta}.
    *
-   * @param baseMeta Normalized metadata that is passed
+   * @param normalizedModuleMeta Normalized metadata that is passed
    * to the {@link featureModule} or {@link rootModule} decorator.
    */
-  normalize(baseMeta: BaseMeta) {
-    return getProxyForInitMeta(baseMeta, BaseInitMeta);
+  normalize(normalizedModuleMeta: NormalizedModuleMeta) {
+    return getProxyForInitMeta(normalizedModuleMeta, NormalizedInitMeta);
   }
 
   /**
@@ -70,7 +70,7 @@ export class InitHooks<T1 extends InitDecoratorOptions = InitDecoratorOptions> {
    *
    * @param meta Metadata returned by the {@link normalize | this.normalize()} method.
    */
-  getModulesToScan(meta?: BaseInitMeta): ModRefId[] {
+  getModulesToScan(meta?: NormalizedInitMeta): ModRefId[] {
     return [];
   }
 
@@ -78,7 +78,7 @@ export class InitHooks<T1 extends InitDecoratorOptions = InitDecoratorOptions> {
    * This method gets metadata from {@link rootModule} decorator to collect
    * providers from the {@link ModuleDecoratorOptions.exports | exports } property.
    */
-  exportAppProviders(config: { moduleManager: ModuleManager; appProviders: AppProviders; baseMeta: BaseMeta }) {
+  exportAppProviders(config: { moduleManager: ModuleManager; appProviders: AppProviders; normalizedModuleMeta: NormalizedModuleMeta }) {
     return new AppInitHooks();
   }
 
@@ -91,7 +91,7 @@ export class InitHooks<T1 extends InitDecoratorOptions = InitDecoratorOptions> {
     appProviders: AppProviders;
     modRefId: ModRefId;
     unfinishedScanModules: Set<ModRefId>;
-  }): Map<ModRefId, { baseMeta: BaseMeta } & AnyObj> {
+  }): Map<ModRefId, { normalizedModuleMeta: NormalizedModuleMeta } & AnyObj> {
     return new Map();
   }
 
@@ -101,7 +101,7 @@ export class InitHooks<T1 extends InitDecoratorOptions = InitDecoratorOptions> {
    */
   importModulesDeep(config: {
     parent: AnyObj;
-    shallowImports: { baseMeta: BaseMeta } & AnyObj;
+    shallowImports: { normalizedModuleMeta: NormalizedModuleMeta } & AnyObj;
     moduleManager: ModuleManager;
     shallowImportsMap: Map<ModRefId, ShallowImports>;
     providersPerApp: Provider[];
@@ -112,15 +112,15 @@ export class InitHooks<T1 extends InitDecoratorOptions = InitDecoratorOptions> {
   /**
    * This method must return a mutable array of {@link Provider} arrays, which can be overridden during testing.
    */
-  getProvidersToOverride(meta: BaseInitMeta): Provider[][] {
+  getProvidersToOverride(meta: NormalizedInitMeta): Provider[][] {
     return [];
   }
 }
 
 export interface InitMetaMap {
-  set<T extends BaseInitMeta>(decorator: InitDecorator<any, any, T>, meta: T): this;
-  get<T extends BaseInitMeta>(decorator: InitDecorator<any, any, T>): T | undefined;
-  forEach<T extends BaseInitMeta>(
+  set<T extends NormalizedInitMeta>(decorator: InitDecorator<any, any, T>, meta: T): this;
+  get<T extends NormalizedInitMeta>(decorator: InitDecorator<any, any, T>): T | undefined;
+  forEach<T extends NormalizedInitMeta>(
     callbackfn: (meta: T, decorator: AnyFn, map: Map<AnyFn, T>) => void,
     thisArg?: any,
   ): void;
@@ -128,7 +128,7 @@ export interface InitMetaMap {
    * Returns an iterable of keys in the map
    */
   keys(): MapIterator<AnyFn>;
-  values<T extends BaseInitMeta>(): MapIterator<T>;
+  values<T extends NormalizedInitMeta>(): MapIterator<T>;
   readonly size: number;
   /**
    * @returns boolean indicating whether an element with the specified key exists or not.
@@ -159,7 +159,7 @@ export interface InitParamsMap {
  * ### Complete example with init hooks
  *
  * In this example, `ReturnsType` is the type that will be returned by
- * {@link InitHooks.normalize} or {@link BaseMeta.initMeta | baseMeta.initMeta.get(addSome)}.
+ * {@link InitHooks.normalize} or {@link NormalizedModuleMeta.initMeta | normalizedModuleMeta.initMeta.get(addSome)}.
  *
 ```ts
 import {

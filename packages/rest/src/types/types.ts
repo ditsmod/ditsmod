@@ -1,4 +1,4 @@
-import type { HttpMethod, BaseMeta } from '@ditsmod/core';
+import type { HttpMethod, NormalizedModuleMeta } from '@ditsmod/core';
 import { ModuleExtract, AppInitHooks, Provider } from '@ditsmod/core';
 
 import { RestProviderImport } from '#init/types.js';
@@ -21,7 +21,7 @@ export type RedirectStatusCodes = 300 | 301 | 302 | 303 | 307 | 308;
  * that need set routes. The target for this metadata is `PreRouterExtension` group.
  */
 export class MetadataPerMod3 {
-  baseMeta: BaseMeta;
+  normalizedModuleMeta: NormalizedModuleMeta;
   prefixPerMod: string;
   meta: RestInitMeta;
   aControllerMetadata: ControllerMetadata[];

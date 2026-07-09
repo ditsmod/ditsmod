@@ -1,4 +1,4 @@
-import type { Class, BaseMeta } from '@ditsmod/core';
+import type { Class, NormalizedModuleMeta } from '@ditsmod/core';
 import { isFeatureModule, Reflector, getDuplicates, getProxyForInitMeta } from '@ditsmod/core';
 import { ModuleShouldHaveValue } from '@ditsmod/core/errors';
 
@@ -13,12 +13,12 @@ import { isCtrlDecor } from '#types/type.guards.js';
  * Normalizes and validates module metadata.
  */
 export class TrpcModuleNormalizer {
-  protected baseMeta: BaseMeta;
+  protected normalizedModuleMeta: NormalizedModuleMeta;
   protected meta: TrpcInitMeta;
 
-  normalize(baseMeta: BaseMeta, decoratorOptions: TrpcInitDecoratorOptions) {
-    this.baseMeta = baseMeta;
-    const meta = getProxyForInitMeta(baseMeta, TrpcInitMeta);
+  normalize(normalizedModuleMeta: NormalizedModuleMeta, decoratorOptions: TrpcInitDecoratorOptions) {
+    this.normalizedModuleMeta = normalizedModuleMeta;
+    const meta = getProxyForInitMeta(normalizedModuleMeta, TrpcInitMeta);
     this.meta = meta;
     if (decoratorOptions.controllers) {
       this.meta.controllers.push(...decoratorOptions.controllers);
@@ -37,7 +37,7 @@ export class TrpcModuleNormalizer {
     }
 
     if (
-      isFeatureModule(this.baseMeta) &&
+      isFeatureModule(this.normalizedModuleMeta) &&
       !meta.exportedProvidersPerMod.length &&
       !meta.exportedMultiProvidersPerMod.length &&
       !meta.exportsModules.length &&

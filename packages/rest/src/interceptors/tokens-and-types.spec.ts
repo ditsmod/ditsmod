@@ -10,7 +10,7 @@ import {
   ModRefId,
   ModuleManager,
   ModuleType,
-  BaseMeta,
+  NormalizedModuleMeta,
   rootModule,
   SystemLogMediator,
   ShallowImports,
@@ -148,7 +148,7 @@ describe('mix per app, per mod or per req', () => {
     injectorPerMod: Injector;
     declare prefixPerMod: string;
     override moduleName = 'MockModule';
-    override baseMeta = new BaseMeta();
+    override normalizedModuleMeta = new NormalizedModuleMeta();
     override shallowImportsMap = new Map<ModuleType, ShallowImports>();
     override importedProvidersPerRou = new Map<any, ProviderImport>();
     override importedProvidersPerReq = new Map<any, ProviderImport>();

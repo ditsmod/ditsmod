@@ -24,7 +24,7 @@ export class TrpcRouteExtension implements Extension<MetadataPerMod3> {
     const trpcMetadataPerMod2 = this.metadataPerMod2.deepImportedModules.get(initTrpcModule)!;
     this.metadataPerMod3 = new MetadataPerMod3();
     this.metadataPerMod3.meta = trpcMetadataPerMod2.meta;
-    this.metadataPerMod3.baseMeta = this.metadataPerMod2.baseMeta;
+    this.metadataPerMod3.normalizedModuleMeta = this.metadataPerMod2.normalizedModuleMeta;
     this.metadataPerMod3.aControllerMetadata = this.getControllersMetadata(trpcMetadataPerMod2);
     this.metadataPerMod3.guards1 = trpcMetadataPerMod2.guards1;
     // this.metadataPerMod3.guards1 = [];

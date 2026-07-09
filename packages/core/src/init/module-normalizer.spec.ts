@@ -1,6 +1,6 @@
 import { featureModule } from '#decorators/feature-module.js';
 import { InitDecoratorOptions, InitHooks, InitDecorator } from '#decorators/init-hooks-and-metadata.js';
-import { BaseInitMeta, getProxyForInitMeta, BaseMeta } from '#init/base-meta.js';
+import { NormalizedInitMeta, getProxyForInitMeta, NormalizedModuleMeta } from '#init/base-meta.js';
 import { rootModule, RootDecoratorOptions } from '#decorators/root-module.js';
 import { Reflector } from '#di/reflector.js';
 import { Extension } from '#extension/extension-types.js';
@@ -36,7 +36,7 @@ import { getModule } from '#utils/get-module.js';
 
 describe('ModuleNormalizer', () => {
   class MockModuleNormalizer extends ModuleNormalizer {
-    override normalize(modRefId: ModRefId, allInitHooks = new Map()): BaseMeta {
+    override normalize(modRefId: ModRefId, allInitHooks = new Map()): NormalizedModuleMeta {
       return super.normalize(modRefId, allInitHooks);
     }
   }
@@ -52,7 +52,7 @@ describe('ModuleNormalizer', () => {
     @rootModule()
     class AppModule {}
 
-    const expectedMeta = new BaseMeta();
+    const expectedMeta = new NormalizedModuleMeta();
     expectedMeta.id = '';
     expectedMeta.name = 'AppModule';
     expectedMeta.decoratorOptions = new RootDecoratorOptions();
@@ -64,7 +64,7 @@ describe('ModuleNormalizer', () => {
     expect(mock.normalize(AppModule)).toEqual(expectedMeta);
   });
 
-  it('decoratorOptions -> baseMeta: transformation of raw metadata into normalized metadata', () => {
+  it('decoratorOptions -> normalizedModuleMeta: transformation of raw metadata into normalized metadata', () => {
     class Service1 {}
     class Service2 {}
     class Service3 {}
@@ -100,28 +100,28 @@ describe('ModuleNormalizer', () => {
     })
     class AppModule {}
 
-    const baseMeta = mock.normalize(AppModule);
-    expect(baseMeta.declaredInDir).toEqual(expect.any(String));
-    expect(baseMeta.importsModules).toEqual([Module1]);
-    expect(baseMeta.exportsModules).toEqual([Module1]);
-    expect(baseMeta.importsWithParams).toEqual([moduleWithParams]);
-    expect(baseMeta.providersPerApp).toEqual([Service1]);
-    expect(baseMeta.providersPerMod).toEqual([Service2, multiProvider]);
-    expect(baseMeta.providersPerRou).toEqual([Service3]);
-    expect(baseMeta.providersPerReq).toEqual([Service4]);
-    expect(baseMeta.exportedProvidersPerMod).toEqual([Service2]);
-    expect(baseMeta.exportedProvidersPerRou).toEqual([Service3]);
-    expect(baseMeta.exportedProvidersPerReq).toEqual([Service4]);
-    expect(baseMeta.exportedMultiProvidersPerMod).toEqual([multiProvider]);
-    expect(baseMeta.exportedMultiProvidersPerRou).toEqual([]);
-    expect(baseMeta.exportedMultiProvidersPerReq).toEqual([]);
-    expect(baseMeta.resolvedCollisionPerApp).toEqual([[Service1, Module1]]);
-    expect(baseMeta.resolvedCollisionPerMod).toEqual([[Service2, Module2]]);
-    expect(baseMeta.resolvedCollisionPerRou).toEqual([]);
-    expect(baseMeta.resolvedCollisionPerReq).toEqual([]);
-    expect(baseMeta.extensionProviders).toEqual([Extension1]);
-    expect(baseMeta.exportedExtensionProviders).toEqual([Extension1]);
-    expect(baseMeta.extensionsMeta).toEqual({ one: 1 });
+    const normalizedModuleMeta = mock.normalize(AppModule);
+    expect(normalizedModuleMeta.declaredInDir).toEqual(expect.any(String));
+    expect(normalizedModuleMeta.importsModules).toEqual([Module1]);
+    expect(normalizedModuleMeta.exportsModules).toEqual([Module1]);
+    expect(normalizedModuleMeta.importsWithParams).toEqual([moduleWithParams]);
+    expect(normalizedModuleMeta.providersPerApp).toEqual([Service1]);
+    expect(normalizedModuleMeta.providersPerMod).toEqual([Service2, multiProvider]);
+    expect(normalizedModuleMeta.providersPerRou).toEqual([Service3]);
+    expect(normalizedModuleMeta.providersPerReq).toEqual([Service4]);
+    expect(normalizedModuleMeta.exportedProvidersPerMod).toEqual([Service2]);
+    expect(normalizedModuleMeta.exportedProvidersPerRou).toEqual([Service3]);
+    expect(normalizedModuleMeta.exportedProvidersPerReq).toEqual([Service4]);
+    expect(normalizedModuleMeta.exportedMultiProvidersPerMod).toEqual([multiProvider]);
+    expect(normalizedModuleMeta.exportedMultiProvidersPerRou).toEqual([]);
+    expect(normalizedModuleMeta.exportedMultiProvidersPerReq).toEqual([]);
+    expect(normalizedModuleMeta.resolvedCollisionPerApp).toEqual([[Service1, Module1]]);
+    expect(normalizedModuleMeta.resolvedCollisionPerMod).toEqual([[Service2, Module2]]);
+    expect(normalizedModuleMeta.resolvedCollisionPerRou).toEqual([]);
+    expect(normalizedModuleMeta.resolvedCollisionPerReq).toEqual([]);
+    expect(normalizedModuleMeta.extensionProviders).toEqual([Extension1]);
+    expect(normalizedModuleMeta.exportedExtensionProviders).toEqual([Extension1]);
+    expect(normalizedModuleMeta.extensionsMeta).toEqual({ one: 1 });
   });
 
   it('merge static metadata with params', () => {
@@ -138,7 +138,7 @@ describe('ModuleNormalizer', () => {
     })
     class Module1 {}
 
-    const baseMeta = mock.normalize({
+    const normalizedModuleMeta = mock.normalize({
       id: 'some-id',
       module: Module1,
       providersPerApp: [Service2],
@@ -146,11 +146,11 @@ describe('ModuleNormalizer', () => {
       extensionsMeta: { two: 2 },
       exports: [Service4],
     });
-    expect(baseMeta.providersPerApp).toEqual([Service1, Service2]);
-    expect(baseMeta.providersPerMod).toEqual([Service3, Service4]);
-    expect(baseMeta.exportedProvidersPerMod).toEqual([Service3, Service4]);
-    expect(baseMeta.extensionsMeta).toEqual({ one: 1, two: 2 });
-    expect(baseMeta.id).toEqual('some-id');
+    expect(normalizedModuleMeta.providersPerApp).toEqual([Service1, Service2]);
+    expect(normalizedModuleMeta.providersPerMod).toEqual([Service3, Service4]);
+    expect(normalizedModuleMeta.exportedProvidersPerMod).toEqual([Service3, Service4]);
+    expect(normalizedModuleMeta.extensionsMeta).toEqual({ one: 1, two: 2 });
+    expect(normalizedModuleMeta.id).toEqual('some-id');
   });
 
   it('import module via static metadata, but export via module params', () => {
@@ -164,10 +164,10 @@ describe('ModuleNormalizer', () => {
     @featureModule({ imports: [moduleWithParams], providersPerMod: [Service2] })
     class Module2 {}
 
-    const baseMeta = mock.normalize({ module: Module2, exports: [moduleWithParams] });
-    expect(baseMeta.importsWithParams).toEqual([moduleWithParams]);
-    expect(baseMeta.exportsWithParams).toEqual([moduleWithParams]);
-    expect(baseMeta.providersPerMod).toEqual([Service2]);
+    const normalizedModuleMeta = mock.normalize({ module: Module2, exports: [moduleWithParams] });
+    expect(normalizedModuleMeta.importsWithParams).toEqual([moduleWithParams]);
+    expect(normalizedModuleMeta.exportsWithParams).toEqual([moduleWithParams]);
+    expect(normalizedModuleMeta.providersPerMod).toEqual([Service2]);
   });
 
   it('module reexports another a module without @featureModule decorator', () => {
@@ -232,16 +232,16 @@ describe('ModuleNormalizer', () => {
     })
     class AppModule {}
 
-    const baseMeta = mock.normalize(AppModule);
-    expect(baseMeta.importsModules).toEqual([Module1]);
-    expect(baseMeta.exportsModules).toEqual([Module1]);
-    expect(baseMeta.importsWithParams).toEqual([{ module: Module2 }]);
-    expect(baseMeta.exportsWithParams).toEqual([{ module: Module2 }]);
-    expect(baseMeta.providersPerApp).toEqual([Service1, { token: Service3, useClass: Service3, multi: true }]);
-    expect(baseMeta.providersPerMod).toEqual([Service2, { token: Service4, useToken: Service4, multi: true }]);
-    expect(baseMeta.exportedProvidersPerMod).toEqual([Service2]);
-    expect(baseMeta.resolvedCollisionPerMod).toEqual([[Service2, Module1]]);
-    expect(baseMeta.exportedMultiProvidersPerMod).toEqual([{ token: Service4, useToken: Service4, multi: true }]);
+    const normalizedModuleMeta = mock.normalize(AppModule);
+    expect(normalizedModuleMeta.importsModules).toEqual([Module1]);
+    expect(normalizedModuleMeta.exportsModules).toEqual([Module1]);
+    expect(normalizedModuleMeta.importsWithParams).toEqual([{ module: Module2 }]);
+    expect(normalizedModuleMeta.exportsWithParams).toEqual([{ module: Module2 }]);
+    expect(normalizedModuleMeta.providersPerApp).toEqual([Service1, { token: Service3, useClass: Service3, multi: true }]);
+    expect(normalizedModuleMeta.providersPerMod).toEqual([Service2, { token: Service4, useToken: Service4, multi: true }]);
+    expect(normalizedModuleMeta.exportedProvidersPerMod).toEqual([Service2]);
+    expect(normalizedModuleMeta.resolvedCollisionPerMod).toEqual([[Service2, Module1]]);
+    expect(normalizedModuleMeta.exportedMultiProvidersPerMod).toEqual([{ token: Service4, useToken: Service4, multi: true }]);
   });
 
   it('resolves forwardRef() in module with params providers', () => {
@@ -264,10 +264,10 @@ describe('ModuleNormalizer', () => {
       exports: [forwardRef(() => Service2), forwardRef(() => Service3)],
     };
 
-    const baseMeta = mock.normalize(moduleWithParams);
-    expect(baseMeta.name).toBe('Module1-WithParams');
-    expect(baseMeta.providersPerMod).toEqual([Service1, Service2, { token: Service3, useClass: Service3 }]);
-    expect(baseMeta.exportedProvidersPerMod).toEqual([Service1, Service2, { token: Service3, useClass: Service3 }]);
+    const normalizedModuleMeta = mock.normalize(moduleWithParams);
+    expect(normalizedModuleMeta.name).toBe('Module1-WithParams');
+    expect(normalizedModuleMeta.providersPerMod).toEqual([Service1, Service2, { token: Service3, useClass: Service3 }]);
+    expect(normalizedModuleMeta.exportedProvidersPerMod).toEqual([Service1, Service2, { token: Service3, useClass: Service3 }]);
   });
 
   it('module exports a normalized provider', () => {
@@ -309,9 +309,9 @@ describe('ModuleNormalizer', () => {
     class Module2 {}
 
     expect(() => mock.normalize(Module2)).not.toThrow();
-    const baseMeta = mock.normalize(Module2);
-    expect(baseMeta.extensionProviders).toEqual([Extension1]);
-    expect(baseMeta.exportedExtensionProviders).toEqual([Extension1]);
+    const normalizedModuleMeta = mock.normalize(Module2);
+    expect(normalizedModuleMeta.extensionProviders).toEqual([Extension1]);
+    expect(normalizedModuleMeta.exportedExtensionProviders).toEqual([Extension1]);
   });
 
   describe('creating custom decorator with init hooks', () => {
@@ -335,8 +335,8 @@ describe('ModuleNormalizer', () => {
     /**
      * Init hooks transform an object of type {@link RootDecoratorOptions} into an object of that type.
      */
-    class InitMeta extends BaseInitMeta {
-      baseMeta: BaseMeta;
+    class InitMeta extends NormalizedInitMeta {
+      normalizedModuleMeta: NormalizedModuleMeta;
       initDecoratorOptions: RootDecoratorOptions;
     }
 
@@ -344,11 +344,11 @@ describe('ModuleNormalizer', () => {
      * The methods of this class will normalize and validate the metadata passed to the init decorator.
      */
     class InitHooks1 extends InitHooks<RootDecoratorOptions> {
-      override normalize(baseMeta: BaseMeta) {
-        const meta = getProxyForInitMeta(baseMeta, InitMeta);
+      override normalize(normalizedModuleMeta: NormalizedModuleMeta) {
+        const meta = getProxyForInitMeta(normalizedModuleMeta, InitMeta);
 
         // Add arbitrary metadata declared in InitMeta
-        meta.baseMeta = baseMeta;
+        meta.normalizedModuleMeta = normalizedModuleMeta;
         meta.initDecoratorOptions = this.decoratorOptions;
         return meta;
       }
@@ -431,9 +431,9 @@ describe('ModuleNormalizer', () => {
       @featureModule()
       class Module1 {}
 
-      const baseMeta = mock.normalize(Module1).initMeta.get(initSome);
-      expect(baseMeta?.baseMeta.modRefId).toBe(Module1);
-      expect(baseMeta?.initDecoratorOptions).toEqual(decoratorOptions);
+      const normalizedModuleMeta = mock.normalize(Module1).initMeta.get(initSome);
+      expect(normalizedModuleMeta?.normalizedModuleMeta.modRefId).toBe(Module1);
+      expect(normalizedModuleMeta?.initDecoratorOptions).toEqual(decoratorOptions);
     });
 
     it('proprly works with imports/exports of modules', () => {
@@ -460,15 +460,15 @@ describe('ModuleNormalizer', () => {
       @rootModule()
       class AppModule {}
 
-      const baseMeta = mock.normalize(AppModule);
-      expect(baseMeta.importsModules).toEqual([Module1]);
-      expect(baseMeta.exportsModules).toEqual([Module1]);
-      expect(baseMeta.importsWithParams).toEqual<ModuleWithParams[]>([
+      const normalizedModuleMeta = mock.normalize(AppModule);
+      expect(normalizedModuleMeta.importsModules).toEqual([Module1]);
+      expect(normalizedModuleMeta.exportsModules).toEqual([Module1]);
+      expect(normalizedModuleMeta.importsWithParams).toEqual<ModuleWithParams[]>([
         moduleWithParams2,
         { module: Module3, initParams: expect.any(Map) },
         moduleWithParams4,
       ]);
-      expect(baseMeta.exportsWithParams).toEqual([moduleWithParams2, moduleWithParams4]);
+      expect(normalizedModuleMeta.exportsWithParams).toEqual([moduleWithParams2, moduleWithParams4]);
     });
 
     it('proprly works with imports/exports and forwardRef() with modules', () => {
@@ -500,15 +500,15 @@ describe('ModuleNormalizer', () => {
       @rootModule()
       class AppModule {}
 
-      const baseMeta = mock.normalize(AppModule);
-      expect(baseMeta.importsModules).toEqual([Module1]);
-      expect(baseMeta.importsWithParams).toEqual<ModuleWithParams[]>([
+      const normalizedModuleMeta = mock.normalize(AppModule);
+      expect(normalizedModuleMeta.importsModules).toEqual([Module1]);
+      expect(normalizedModuleMeta.importsWithParams).toEqual<ModuleWithParams[]>([
         moduleWithParams2,
         { module: Module3, initParams: expect.any(Map) },
         moduleWithParams4,
       ]);
-      expect(baseMeta.exportsModules).toEqual([Module1]);
-      expect(baseMeta.exportsWithParams).toEqual([moduleWithParams2, moduleWithParams4]);
+      expect(normalizedModuleMeta.exportsModules).toEqual([Module1]);
+      expect(normalizedModuleMeta.exportsWithParams).toEqual([moduleWithParams2, moduleWithParams4]);
       expect(moduleWithParams2.module).toBe(Module2);
       expect(moduleWithParams4.module).toBe(Module4);
     });
@@ -612,13 +612,13 @@ describe('ModuleNormalizer', () => {
       })
       class AppModule {}
 
-      const baseMeta = mock.normalize(AppModule);
-      expect(baseMeta.providersPerRou).toEqual([Service1]);
-      expect(baseMeta.providersPerReq).toEqual([Service2]);
-      expect(baseMeta.resolvedCollisionPerRou).toEqual([[Service1, Module1]]);
-      expect(baseMeta.resolvedCollisionPerReq).toEqual([[Service2, Module2]]);
-      expect(baseMeta.exportedProvidersPerRou).toEqual([Service1]);
-      expect(baseMeta.exportedProvidersPerReq).toEqual([Service2]);
+      const normalizedModuleMeta = mock.normalize(AppModule);
+      expect(normalizedModuleMeta.providersPerRou).toEqual([Service1]);
+      expect(normalizedModuleMeta.providersPerReq).toEqual([Service2]);
+      expect(normalizedModuleMeta.resolvedCollisionPerRou).toEqual([[Service1, Module1]]);
+      expect(normalizedModuleMeta.resolvedCollisionPerReq).toEqual([[Service2, Module2]]);
+      expect(normalizedModuleMeta.exportedProvidersPerRou).toEqual([Service1]);
+      expect(normalizedModuleMeta.exportedProvidersPerReq).toEqual([Service2]);
     });
   });
 
@@ -633,12 +633,12 @@ describe('ModuleNormalizer', () => {
       })
       class Module1 {}
 
-      const baseMeta = mock.normalize({
+      const normalizedModuleMeta = mock.normalize({
         module: Module1,
         extensionsMeta: { two: 2, shared: 'params' },
       });
 
-      expect(baseMeta.extensionsMeta).toEqual({ one: 1, shared: 'params', two: 2 });
+      expect(normalizedModuleMeta.extensionsMeta).toEqual({ one: 1, shared: 'params', two: 2 });
     });
 
     it('accepts extension with stage2() only', () => {
@@ -697,14 +697,14 @@ describe('ModuleNormalizer', () => {
       })
       class Module1 {}
 
-      const baseMeta = mock.normalize(Module1);
+      const normalizedModuleMeta = mock.normalize(Module1);
       const groupToken = KeyRegistry.getGroupToken(Extension2);
-      expect(baseMeta.extensionProviders).toEqual([
+      expect(normalizedModuleMeta.extensionProviders).toEqual([
         { token: groupToken, useToken: Extension2, multi: true },
         Extension1,
         { token: groupToken, useToken: Extension1, multi: true },
       ]);
-      expect(baseMeta.mExtensionAsGroupToken.get(Extension2)).toBe(groupToken);
+      expect(normalizedModuleMeta.mExtensionAsGroupToken.get(Extension2)).toBe(groupToken);
     });
 
     it('normalizes exportOnly extension', () => {
@@ -722,10 +722,10 @@ describe('ModuleNormalizer', () => {
       })
       class Module1 {}
 
-      const baseMeta = mock.normalize(Module1);
-      expect(baseMeta.extensionProviders).toEqual([]);
-      expect(baseMeta.exportedExtensionProviders).toEqual([Extension1]);
-      expect(baseMeta.aExportedExtensionConfig).toHaveLength(1);
+      const normalizedModuleMeta = mock.normalize(Module1);
+      expect(normalizedModuleMeta.extensionProviders).toEqual([]);
+      expect(normalizedModuleMeta.exportedExtensionProviders).toEqual([Extension1]);
+      expect(normalizedModuleMeta.aExportedExtensionConfig).toHaveLength(1);
     });
   });
 
@@ -734,20 +734,20 @@ describe('ModuleNormalizer', () => {
       flag?: boolean;
     }
 
-    interface InitMeta extends BaseInitMeta {
+    interface InitMeta extends NormalizedInitMeta {
       flag?: boolean;
       path?: string;
       modRefId?: ModRefId;
     }
 
     class InitHooks1 extends InitHooks<InitDecoratorOptions> {
-      override normalize(baseMeta: BaseMeta): InitMeta {
-        if (isModuleWithParams(baseMeta.modRefId)) {
-          const params = baseMeta.modRefId.initParams?.get(initSome);
-          return { path: params?.path, modRefId: baseMeta.modRefId } as InitMeta;
+      override normalize(normalizedModuleMeta: NormalizedModuleMeta): InitMeta {
+        if (isModuleWithParams(normalizedModuleMeta.modRefId)) {
+          const params = normalizedModuleMeta.modRefId.initParams?.get(initSome);
+          return { path: params?.path, modRefId: normalizedModuleMeta.modRefId } as InitMeta;
         }
 
-        return { flag: this.decoratorOptions.flag, modRefId: baseMeta.modRefId } as InitMeta;
+        return { flag: this.decoratorOptions.flag, modRefId: normalizedModuleMeta.modRefId } as InitMeta;
       }
     }
 
@@ -763,8 +763,8 @@ describe('ModuleNormalizer', () => {
         override hostModule = HostModule;
         override hostDecoratorOptions = { flag: true };
 
-        override normalize(baseMeta: BaseMeta): InitMeta {
-          return { flag: this.decoratorOptions.flag, modRefId: baseMeta.modRefId } as InitMeta;
+        override normalize(normalizedModuleMeta: NormalizedModuleMeta): InitMeta {
+          return { flag: this.decoratorOptions.flag, modRefId: normalizedModuleMeta.modRefId } as InitMeta;
         }
       }
 
@@ -773,9 +773,9 @@ describe('ModuleNormalizer', () => {
       );
       const allInitHooks = new Map([[hostInitSome, new HostInitHooks({})]]);
 
-      const baseMeta = mock.normalize(HostModule, allInitHooks);
-      expect(baseMeta.mInitHooks.has(hostInitSome)).toBe(true);
-      expect(baseMeta.initMeta.get(hostInitSome)).toEqual({ flag: true, modRefId: HostModule });
+      const normalizedModuleMeta = mock.normalize(HostModule, allInitHooks);
+      expect(normalizedModuleMeta.mInitHooks.has(hostInitSome)).toBe(true);
+      expect(normalizedModuleMeta.initMeta.get(hostInitSome)).toEqual({ flag: true, modRefId: HostModule });
     });
 
     it('imports hostModule when init decorator declares it', () => {
@@ -796,8 +796,8 @@ describe('ModuleNormalizer', () => {
       @featureModule({ providersPerMod: [Service1], exports: [Service1] })
       class Module1 {}
 
-      const baseMeta = mock.normalize(Module1);
-      expect(baseMeta.importsModules).toContain(HostModule);
+      const normalizedModuleMeta = mock.normalize(Module1);
+      expect(normalizedModuleMeta.importsModules).toContain(HostModule);
     });
 
     it('adds init hooks for imported module with params without init decorator on module class', () => {
@@ -815,8 +815,8 @@ describe('ModuleNormalizer', () => {
 
       mock.normalize(AppModule);
 
-      const baseMeta = mock.normalize(moduleWithParams, allInitHooks);
-      expect(baseMeta.initMeta.get(initSome)).toEqual({ path: 'prefix', modRefId: moduleWithParams });
+      const normalizedModuleMeta = mock.normalize(moduleWithParams, allInitHooks);
+      expect(normalizedModuleMeta.initMeta.get(initSome)).toEqual({ path: 'prefix', modRefId: moduleWithParams });
     });
   });
 
@@ -824,7 +824,7 @@ describe('ModuleNormalizer', () => {
     class ExternalModuleNormalizer extends ModuleNormalizer {
       customMeta = new Map<any, DecoratorAndValue[]>();
 
-      override normalize(modRefId: any, allInitHooks = new Map()): BaseMeta {
+      override normalize(modRefId: any, allInitHooks = new Map()): NormalizedModuleMeta {
         return super.normalize(modRefId, allInitHooks);
       }
 

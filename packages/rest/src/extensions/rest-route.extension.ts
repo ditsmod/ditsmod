@@ -28,7 +28,7 @@ export class RestRouteExtension implements Extension<MetadataPerMod3> {
     this.metadataPerMod3.meta = restMetadataPerMod2.meta;
     const { path: prefixPerApp } = this.appOptions;
     this.metadataPerMod3.prefixPerMod = restMetadataPerMod2.prefixPerMod;
-    this.metadataPerMod3.baseMeta = this.metadataPerMod2.baseMeta;
+    this.metadataPerMod3.normalizedModuleMeta = this.metadataPerMod2.normalizedModuleMeta;
     this.metadataPerMod3.aControllerMetadata = this.getControllersMetadata(prefixPerApp, restMetadataPerMod2);
     this.metadataPerMod3.guards1 = restMetadataPerMod2.guards1;
     // this.metadataPerMod3.guards1 = [];
@@ -37,7 +37,7 @@ export class RestRouteExtension implements Extension<MetadataPerMod3> {
   }
 
   protected getControllersMetadata(prefixPerApp: string = '', restMetadataPerMod2: RestMetadataPerMod2) {
-    const { baseMeta, prefixPerMod, applyControllers } = restMetadataPerMod2;
+    const { normalizedModuleMeta, prefixPerMod, applyControllers } = restMetadataPerMod2;
 
     const aControllerMetadata: ControllerMetadata[] = [];
     if (applyControllers)
@@ -53,8 +53,8 @@ export class RestRouteExtension implements Extension<MetadataPerMod3> {
             const route = decoratorAndValue.value;
             const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
             const scope = ctrlDecorator?.value.scope;
-            if (scope == 'route' && !baseMeta.providersPerMod.includes(Controller)) {
-              baseMeta.providersPerMod.unshift(Controller);
+            if (scope == 'route' && !normalizedModuleMeta.providersPerMod.includes(Controller)) {
+              normalizedModuleMeta.providersPerMod.unshift(Controller);
             }
             const { path: controllerPath, httpMethod, interceptors } = route;
             const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');

@@ -9,7 +9,7 @@ import type { AllInitHooks, InitDecoratorOptions, InitHooks } from '#decorators/
 import { isProvider } from '#utils/type-guards.js';
 import { normalizeExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
-import { BaseMeta } from '#init/base-meta.js';
+import { NormalizedModuleMeta } from '#init/base-meta.js';
 import { resolveForwardRef } from '#di/forward-ref.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
 import { Providers } from '#utils/providers.js';
@@ -51,7 +51,7 @@ import type { RootDecoratorOptions } from '#decorators/root-module.js';
  * Normalizes and validates module metadata.
  */
 export class ModuleNormalizer {
-  protected baseMeta: BaseMeta;
+  protected normalizedModuleMeta: NormalizedModuleMeta;
   /**
    * The directory in which the class was declared.
    */
@@ -61,7 +61,7 @@ export class ModuleNormalizer {
    * Returns normalized module metadata.
    */
   normalize(modRefId: ModRefId, allInitHooks: AllInitHooks) {
-    const { decoratorOptions, baseMeta } = this.init(modRefId);
+    const { decoratorOptions, normalizedModuleMeta } = this.init(modRefId);
     this.checkAndMarkExternalModule(decoratorOptions);
     this.normalizeDeclaredAndResolvedProviders(decoratorOptions);
     this.normalizeExports(decoratorOptions, 'Exports');
@@ -73,7 +73,7 @@ export class ModuleNormalizer {
     this.callInitHooksFromCurrentModule();
     this.addInitHooksForImportedMwp(allInitHooks);
     this.quickCheckMetadata(decoratorOptions);
-    return baseMeta;
+    return normalizedModuleMeta;
   }
 
   protected init(modRefId: ModRefId) {
@@ -91,16 +91,16 @@ export class ModuleNormalizer {
     /**
      * Setting initial properties of metadata.
      */
-    const baseMeta = new BaseMeta();
-    this.baseMeta = baseMeta;
-    baseMeta.name = modName;
-    baseMeta.decoratorOptions = decoratorOptions;
-    baseMeta.declaredInDir = decorAndVal?.declaredInDir || '.';
-    baseMeta.modRefId = modRefId;
+    const normalizedModuleMeta = new NormalizedModuleMeta();
+    this.normalizedModuleMeta = normalizedModuleMeta;
+    normalizedModuleMeta.name = modName;
+    normalizedModuleMeta.decoratorOptions = decoratorOptions;
+    normalizedModuleMeta.declaredInDir = decorAndVal?.declaredInDir || '.';
+    normalizedModuleMeta.modRefId = modRefId;
     aDecoratorMeta.filter(isModuleWithInitHooks).forEach(({ decoratorId, value }) => {
-      baseMeta.mInitHooks.set(decoratorId!, value);
+      normalizedModuleMeta.mInitHooks.set(decoratorId!, value);
     });
-    return { decoratorOptions, baseMeta };
+    return { decoratorOptions, normalizedModuleMeta };
   }
 
   protected getDecoratorMeta(modRefId: ModRefId) {
@@ -115,12 +115,12 @@ export class ModuleNormalizer {
    */
   protected checkAndMarkExternalModule(decoratorOptions: RootDecoratorOptions) {
     if (isRootModule(decoratorOptions)) {
-      this.rootDeclaredInDir = this.baseMeta.declaredInDir;
+      this.rootDeclaredInDir = this.normalizedModuleMeta.declaredInDir;
     } else if (this.rootDeclaredInDir) {
-      const { declaredInDir } = this.baseMeta;
+      const { declaredInDir } = this.normalizedModuleMeta;
       if (this.rootDeclaredInDir !== '.' && declaredInDir !== '.') {
         // Case when CallsiteUtils.getCallerDir() works correctly.
-        this.baseMeta.isExternal =
+        this.normalizedModuleMeta.isExternal =
           !declaredInDir.startsWith(this.rootDeclaredInDir) ||
           (!this.rootDeclaredInDir.includes('ditsmod/packages') && declaredInDir.includes('ditsmod/packages'));
       }
@@ -134,7 +134,7 @@ export class ModuleNormalizer {
       const providersKey = `providersPer${level}` as const;
       if (decoratorOptions[providersKey]) {
         const providersPerLevel = this.resolveAllForwardRefs(decoratorOptions[providersKey]);
-        this.baseMeta[providersKey].push(...providersPerLevel);
+        this.normalizedModuleMeta[providersKey].push(...providersPerLevel);
       }
 
       const resolvedCollisionKey = `resolvedCollisionPer${level}` as const;
@@ -145,7 +145,7 @@ export class ModuleNormalizer {
           if (isModuleWithParams(module)) {
             module.module = resolveForwardRef(module.module);
           }
-          this.baseMeta[resolvedCollisionKey].push([token, module]);
+          this.normalizedModuleMeta[resolvedCollisionKey].push([token, module]);
         });
       }
     });
@@ -156,31 +156,31 @@ export class ModuleNormalizer {
       return;
     }
     const declaredTokens = getTokens(
-      this.baseMeta.providersPerMod.concat(this.baseMeta.providersPerRou, this.baseMeta.providersPerReq),
+      this.normalizedModuleMeta.providersPerMod.concat(this.normalizedModuleMeta.providersPerRou, this.normalizedModuleMeta.providersPerReq),
     );
 
     this.resolveAllForwardRefs(decoratorOptions.exports).forEach((exp, i) => {
       if (exp === undefined) {
-        throw new UndefinedSymbol(action, this.baseMeta.name, i);
+        throw new UndefinedSymbol(action, this.normalizedModuleMeta.name, i);
       }
       if (isNormalizedProvider(exp)) {
-        throw new ForbiddenExportNormalizedProvider(this.baseMeta.name, exp.token.name || exp.token);
+        throw new ForbiddenExportNormalizedProvider(this.normalizedModuleMeta.name, exp.token.name || exp.token);
       }
       if (isModuleWithParams(exp)) {
         // @todo Review this condition later
-        if (!this.baseMeta.exportsWithParams.includes(exp)) {
-          this.baseMeta.exportsWithParams.push(exp);
+        if (!this.normalizedModuleMeta.exportsWithParams.includes(exp)) {
+          this.normalizedModuleMeta.exportsWithParams.push(exp);
         }
       } else if (isProvider(exp) || declaredTokens.includes(exp)) {
         // Provider or token of provider
         this.exportProviders(exp);
       } else if (this.getDecoratorMeta(exp)) {
         // @todo Review this condition later
-        if (!this.baseMeta.exportsModules.includes(exp)) {
-          this.baseMeta.exportsModules.push(exp);
+        if (!this.normalizedModuleMeta.exportsModules.includes(exp)) {
+          this.normalizedModuleMeta.exportsModules.push(exp);
         }
       } else {
-        throw new ExportingUnknownSymbol(this.baseMeta.name, stringify(exp));
+        throw new ExportingUnknownSymbol(this.normalizedModuleMeta.name, stringify(exp));
       }
     });
   }
@@ -188,23 +188,23 @@ export class ModuleNormalizer {
   protected exportProviders(token: any): void {
     let found = false;
     (['Mod', 'Rou', 'Req'] satisfies Level[]).forEach((level) => {
-      const providers = this.baseMeta[`providersPer${level}`].filter((p) => getToken(p) === token);
+      const providers = this.normalizedModuleMeta[`providersPer${level}`].filter((p) => getToken(p) === token);
       if (providers.length) {
         found = true;
         if (providers.some(isMultiProvider)) {
-          this.baseMeta[`exportedMultiProvidersPer${level}`].push(...(providers as MultiProvider[]));
+          this.normalizedModuleMeta[`exportedMultiProvidersPer${level}`].push(...(providers as MultiProvider[]));
         } else {
-          this.baseMeta[`exportedProvidersPer${level}`].push(...providers);
+          this.normalizedModuleMeta[`exportedProvidersPer${level}`].push(...providers);
         }
       }
     });
 
     if (!found) {
       const providerName = token.name || token;
-      if (this.baseMeta.providersPerApp.some((p) => getToken(p) === token)) {
-        throw new ForbiddenExportProvidersPerApp(this.baseMeta.name, providerName);
+      if (this.normalizedModuleMeta.providersPerApp.some((p) => getToken(p) === token)) {
+        throw new ForbiddenExportProvidersPerApp(this.normalizedModuleMeta.name, providerName);
       } else {
-        throw new ExportingUnknownSymbol(this.baseMeta.name, providerName);
+        throw new ExportingUnknownSymbol(this.normalizedModuleMeta.name, providerName);
       }
     }
   }
@@ -214,28 +214,28 @@ export class ModuleNormalizer {
       return;
     }
     if (modWitParams.id) {
-      this.baseMeta.id = modWitParams.id;
+      this.normalizedModuleMeta.id = modWitParams.id;
     }
     (['providersPerApp', 'providersPerMod', 'providersPerRou', 'providersPerReq'] as const).forEach((prop) => {
       if (modWitParams[prop] instanceof Providers || (Array.isArray(modWitParams[prop]) && modWitParams[prop].length)) {
-        this.baseMeta[prop].push(...this.resolveAllForwardRefs(modWitParams[prop]));
+        this.normalizedModuleMeta[prop].push(...this.resolveAllForwardRefs(modWitParams[prop]));
       }
     });
     this.normalizeExports(modWitParams, 'Exports with params');
     if (modWitParams.extensionsMeta) {
-      this.baseMeta.extensionsMeta = { ...modWitParams.extensionsMeta };
+      this.normalizedModuleMeta.extensionsMeta = { ...modWitParams.extensionsMeta };
     }
   }
 
   protected normalizeImports(decoratorOptions: RootDecoratorOptions) {
     this.resolveAllForwardRefs(decoratorOptions.imports).forEach((imp, i) => {
       if (imp === undefined) {
-        throw new UndefinedSymbol('Imports', this.baseMeta.name, i);
+        throw new UndefinedSymbol('Imports', this.normalizedModuleMeta.name, i);
       }
       if (isModuleWithParams(imp)) {
-        this.baseMeta.importsWithParams.push(imp);
+        this.normalizedModuleMeta.importsWithParams.push(imp);
       } else {
-        this.baseMeta.importsModules.push(imp);
+        this.normalizedModuleMeta.importsModules.push(imp);
       }
     });
   }
@@ -254,14 +254,14 @@ export class ModuleNormalizer {
       provider = resolveForwardRef(provider);
       if (isNormalizedProvider(provider)) {
         const providerName = provider.token.name || provider.token;
-        throw new ResolvedCollisionTokensOnly(this.baseMeta.name, providerName);
+        throw new ResolvedCollisionTokensOnly(this.normalizedModuleMeta.name, providerName);
       }
     });
   }
 
   protected normalizeExtensions(decoratorOptions: PickProps<ModuleDecoratorOptions, 'extensions' | 'extensionsMeta'>) {
     if (decoratorOptions.extensionsMeta) {
-      this.baseMeta.extensionsMeta = { ...decoratorOptions.extensionsMeta, ...this.baseMeta.extensionsMeta };
+      this.normalizedModuleMeta.extensionsMeta = { ...decoratorOptions.extensionsMeta, ...this.normalizedModuleMeta.extensionsMeta };
     }
 
     decoratorOptions.extensions?.forEach((extensionOrConfig) => {
@@ -269,23 +269,23 @@ export class ModuleNormalizer {
         extensionOrConfig = { extension: extensionOrConfig } as ExtensionConfigBase;
       }
       const extProvidersAndConfigs = normalizeExtensionConfig(extensionOrConfig);
-      extProvidersAndConfigs.providers.forEach((p) => this.checkStageMethodsForExtension(this.baseMeta.name, p));
+      extProvidersAndConfigs.providers.forEach((p) => this.checkStageMethodsForExtension(this.normalizedModuleMeta.name, p));
       if (extProvidersAndConfigs.config) {
-        this.baseMeta.aExtensionConfig.push(extProvidersAndConfigs.config);
+        this.normalizedModuleMeta.aExtensionConfig.push(extProvidersAndConfigs.config);
       }
       if (extProvidersAndConfigs.exportedConfig) {
-        this.baseMeta.aExportedExtensionConfig.push(extProvidersAndConfigs.exportedConfig);
+        this.normalizedModuleMeta.aExportedExtensionConfig.push(extProvidersAndConfigs.exportedConfig);
       }
-      this.baseMeta.extensionProviders.push(...extProvidersAndConfigs.providers);
-      this.baseMeta.exportedExtensionProviders.push(...extProvidersAndConfigs.exportedProviders);
+      this.normalizedModuleMeta.extensionProviders.push(...extProvidersAndConfigs.providers);
+      this.normalizedModuleMeta.exportedExtensionProviders.push(...extProvidersAndConfigs.exportedProviders);
       extProvidersAndConfigs.mGroupToken?.forEach((groupToken, ext) => {
-        if (!this.baseMeta.mExtensionAsGroupToken.has(ext)) {
-          this.baseMeta.mExtensionAsGroupToken.set(ext, groupToken);
-          this.baseMeta.extensionProviders.unshift({ token: groupToken, useToken: ext, multi: true });
+        if (!this.normalizedModuleMeta.mExtensionAsGroupToken.has(ext)) {
+          this.normalizedModuleMeta.mExtensionAsGroupToken.set(ext, groupToken);
+          this.normalizedModuleMeta.extensionProviders.unshift({ token: groupToken, useToken: ext, multi: true });
         }
       });
       extProvidersAndConfigs.mExportedGroupToken?.forEach((groupToken, ext) => {
-        this.baseMeta.mExportedExtensionAsGroupToken.set(ext, groupToken);
+        this.normalizedModuleMeta.mExportedExtensionAsGroupToken.set(ext, groupToken);
       });
     });
   }
@@ -313,12 +313,12 @@ export class ModuleNormalizer {
   }
 
   protected checkReexportModules() {
-    const imports = [...this.baseMeta.importsModules, ...this.baseMeta.importsWithParams];
-    const exports = [...this.baseMeta.exportsModules, ...this.baseMeta.exportsWithParams];
+    const imports = [...this.normalizedModuleMeta.importsModules, ...this.normalizedModuleMeta.importsWithParams];
+    const exports = [...this.normalizedModuleMeta.exportsModules, ...this.normalizedModuleMeta.exportsWithParams];
 
     exports.forEach((modRefId) => {
       if (!imports.includes(modRefId)) {
-        throw new ReexportFailed(this.baseMeta.name, getDebugClassName(modRefId) || '""');
+        throw new ReexportFailed(this.normalizedModuleMeta.name, getDebugClassName(modRefId) || '""');
       }
     });
   }
@@ -329,22 +329,22 @@ export class ModuleNormalizer {
    */
   protected addInitHooksForHostDecorator(allInitHooks: AllInitHooks) {
     allInitHooks.forEach((initHooks, decorator) => {
-      if (initHooks.hostModule === this.baseMeta.modRefId && initHooks.hostDecoratorOptions) {
+      if (initHooks.hostModule === this.normalizedModuleMeta.modRefId && initHooks.hostDecoratorOptions) {
         const newInitHooks = initHooks.clone(initHooks.hostDecoratorOptions);
-        this.baseMeta.mInitHooks.set(decorator, newInitHooks);
+        this.normalizedModuleMeta.mInitHooks.set(decorator, newInitHooks);
       }
     });
   }
 
   protected callInitHooksFromCurrentModule() {
-    this.baseMeta.mInitHooks.forEach((initHooks, decorator) => {
-      this.baseMeta.allInitHooks.set(decorator, initHooks);
+    this.normalizedModuleMeta.mInitHooks.forEach((initHooks, decorator) => {
+      this.normalizedModuleMeta.allInitHooks.set(decorator, initHooks);
 
       // Importing host module.
-      if (initHooks.hostModule === this.baseMeta.modRefId) {
+      if (initHooks.hostModule === this.normalizedModuleMeta.modRefId) {
         // No need import host module in host module.
-      } else if (initHooks.hostModule && !this.baseMeta.importsModules.includes(initHooks.hostModule)) {
-        this.baseMeta.importsModules.push(initHooks.hostModule);
+      } else if (initHooks.hostModule && !this.normalizedModuleMeta.importsModules.includes(initHooks.hostModule)) {
+        this.normalizedModuleMeta.importsModules.push(initHooks.hostModule);
       }
 
       this.fetchInitDecoratorOptions(decorator, initHooks.decoratorOptions);
@@ -376,17 +376,17 @@ export class AppModule {}
    * this method adds hooks so that the import of `Module1` with parameters can be properly handled.
    */
   protected addInitHooksForImportedMwp(allInitHooks: AllInitHooks) {
-    (this.baseMeta.modRefId as ModuleWithParams).initParams?.forEach((params, decorator) => {
-      if (!this.baseMeta.mInitHooks.has(decorator)) {
+    (this.normalizedModuleMeta.modRefId as ModuleWithParams).initParams?.forEach((params, decorator) => {
+      if (!this.normalizedModuleMeta.mInitHooks.has(decorator)) {
         const initHooks = allInitHooks.get(decorator)!;
         const newInitHooks = initHooks.clone();
-        this.baseMeta.allInitHooks.set(decorator, newInitHooks);
+        this.normalizedModuleMeta.allInitHooks.set(decorator, newInitHooks);
         this.callInitHook(decorator, newInitHooks);
 
         /**
          * This is need for {@link quickCheckMetadata} only.
          */
-        this.baseMeta.mInitHooks.set(decorator, newInitHooks);
+        this.normalizedModuleMeta.mInitHooks.set(decorator, newInitHooks);
       }
     });
   }
@@ -432,8 +432,8 @@ export class AppModule {}
           delete params.mwp;
           this.mergeInitParams(decorator, params, imp.mwp);
         } else {
-          if (!this.baseMeta.importsModules.includes(imp)) {
-            this.baseMeta.importsModules.push(imp);
+          if (!this.normalizedModuleMeta.importsModules.includes(imp)) {
+            this.normalizedModuleMeta.importsModules.push(imp);
           }
         }
       });
@@ -450,8 +450,8 @@ export class AppModule {}
     } else {
       mwp.initParams.set(decorator, params);
     }
-    if (!this.baseMeta.importsWithParams.includes(mwp)) {
-      this.baseMeta.importsWithParams.push(mwp);
+    if (!this.normalizedModuleMeta.importsWithParams.includes(mwp)) {
+      this.normalizedModuleMeta.importsWithParams.push(mwp);
     }
   }
 
@@ -478,16 +478,16 @@ export class AppModule {}
     if (initDecoratorOptions.exports) {
       this.resolveAllForwardRefs(initDecoratorOptions.exports).forEach((exp) => {
         if (isModuleWithParams(exp)) {
-          if (!this.baseMeta.exportsWithParams.includes(exp)) {
-            this.baseMeta.exportsWithParams.push(exp);
+          if (!this.normalizedModuleMeta.exportsWithParams.includes(exp)) {
+            this.normalizedModuleMeta.exportsWithParams.push(exp);
           }
         } else if (isParamsWithMwp(exp)) {
-          if (!this.baseMeta.exportsWithParams.includes(exp.mwp)) {
-            this.baseMeta.exportsWithParams.push(exp.mwp);
+          if (!this.normalizedModuleMeta.exportsWithParams.includes(exp.mwp)) {
+            this.normalizedModuleMeta.exportsWithParams.push(exp.mwp);
           }
         } else if (Reflector.getClassLevelMeta(exp, isFeatureModule)) {
-          if (!this.baseMeta.exportsModules.includes(exp)) {
-            this.baseMeta.exportsModules.push(exp);
+          if (!this.normalizedModuleMeta.exportsModules.includes(exp)) {
+            this.normalizedModuleMeta.exportsModules.push(exp);
           }
         }
       });
@@ -495,24 +495,24 @@ export class AppModule {}
   }
 
   protected callInitHook(decorator: AnyFn, initHooks: InitHooks) {
-    const meta = initHooks.normalize(this.baseMeta);
+    const meta = initHooks.normalize(this.normalizedModuleMeta);
     if (meta) {
-      this.baseMeta.initMeta.set(decorator, meta);
+      this.normalizedModuleMeta.initMeta.set(decorator, meta);
     }
   }
 
   protected quickCheckMetadata(decoratorOptions: RootDecoratorOptions) {
     this.throwIfResolvingNormalizedProvider(decoratorOptions);
     if (
-      !isRootModule(this.baseMeta) &&
-      !this.baseMeta.mInitHooks.size &&
-      !this.baseMeta.exportedProvidersPerMod.length &&
-      !this.baseMeta.exportedMultiProvidersPerMod.length &&
-      !this.baseMeta.exportsModules.length &&
-      !this.baseMeta.providersPerApp.length &&
-      !this.baseMeta.exportsWithParams.length &&
-      !this.baseMeta.exportedExtensionProviders.length &&
-      !this.baseMeta.extensionProviders.length
+      !isRootModule(this.normalizedModuleMeta) &&
+      !this.normalizedModuleMeta.mInitHooks.size &&
+      !this.normalizedModuleMeta.exportedProvidersPerMod.length &&
+      !this.normalizedModuleMeta.exportedMultiProvidersPerMod.length &&
+      !this.normalizedModuleMeta.exportsModules.length &&
+      !this.normalizedModuleMeta.providersPerApp.length &&
+      !this.normalizedModuleMeta.exportsWithParams.length &&
+      !this.normalizedModuleMeta.exportedExtensionProviders.length &&
+      !this.normalizedModuleMeta.extensionProviders.length
     ) {
       throw new ModuleShouldHaveValue();
     }

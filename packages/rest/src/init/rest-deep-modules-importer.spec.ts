@@ -12,7 +12,7 @@ import {
   SystemLogMediator,
   BaseAppInitializer,
   BaseAppOptions,
-  BaseMeta,
+  NormalizedModuleMeta,
   DeepModulesImporter,
   ModRefId,
   MetadataPerMod2,
@@ -29,7 +29,7 @@ import { RestModuleParams } from './rest-init-raw-meta.js';
 
 describe('DeepModulesImporter', () => {
   class AppInitializerMock extends BaseAppInitializer {
-    override baseMeta = new BaseMeta();
+    override normalizedModuleMeta = new NormalizedModuleMeta();
 
     override collectProvidersShallow(moduleManager: ModuleManager) {
       return super.collectProvidersShallow(moduleManager);
@@ -48,7 +48,7 @@ describe('DeepModulesImporter', () => {
     const deepModulesImporter = new DeepModulesImporter({
       moduleManager,
       shallowImportsMap,
-      providersPerApp: initializer.baseMeta.providersPerApp,
+      providersPerApp: initializer.normalizedModuleMeta.providersPerApp,
       log: systemLogMediator,
     });
     const { extensionCounters, mMetadataPerMod2 } = deepModulesImporter.importModulesDeep();
@@ -63,7 +63,7 @@ describe('DeepModulesImporter', () => {
     clearDebugClassNames();
   });
 
-  it('synchronization between baseMeta and initMeta remains', () => {
+  it('synchronization between normalizedModuleMeta and initMeta remains', () => {
     class Service1 {}
     class Service2 {}
     class Service3 {}
@@ -90,25 +90,25 @@ describe('DeepModulesImporter', () => {
     class AppModule {}
 
     const map = getMetadataPerMod2(AppModule);
-    const rootBaseMeta = map.get(AppModule)?.baseMeta;
-    const mod1BaseMeta = map.get(Module1)?.baseMeta;
+    const rootNormalizedModuleMeta = map.get(AppModule)?.normalizedModuleMeta;
+    const mod1NormalizedModuleMeta = map.get(Module1)?.normalizedModuleMeta;
 
-    expect(mod1BaseMeta?.providersPerApp).toEqual([Service1, Service3]);
-    expect(mod1BaseMeta?.providersPerMod.includes(Service2)).toBeTruthy();
-    expect(mod1BaseMeta?.providersPerMod.includes(Service4)).toBeTruthy();
-    expect(rootBaseMeta?.providersPerApp.includes(Service5)).toBeTruthy();
-    expect(rootBaseMeta?.providersPerMod.includes(Service6)).toBeTruthy();
+    expect(mod1NormalizedModuleMeta?.providersPerApp).toEqual([Service1, Service3]);
+    expect(mod1NormalizedModuleMeta?.providersPerMod.includes(Service2)).toBeTruthy();
+    expect(mod1NormalizedModuleMeta?.providersPerMod.includes(Service4)).toBeTruthy();
+    expect(rootNormalizedModuleMeta?.providersPerApp.includes(Service5)).toBeTruthy();
+    expect(rootNormalizedModuleMeta?.providersPerMod.includes(Service6)).toBeTruthy();
 
-    const mod1InitMeta = mod1BaseMeta?.initMeta.get(initRest);
-    expect(mod1BaseMeta?.providersPerApp).toBe(mod1InitMeta?.providersPerApp);
-    expect(mod1BaseMeta?.providersPerMod).toBe(mod1InitMeta?.providersPerMod);
+    const mod1InitMeta = mod1NormalizedModuleMeta?.initMeta.get(initRest);
+    expect(mod1NormalizedModuleMeta?.providersPerApp).toBe(mod1InitMeta?.providersPerApp);
+    expect(mod1NormalizedModuleMeta?.providersPerMod).toBe(mod1InitMeta?.providersPerMod);
     expect(mod1InitMeta?.providersPerApp).toEqual([Service1, Service3]);
     expect(mod1InitMeta?.providersPerMod.includes(Service2)).toBeTruthy();
     expect(mod1InitMeta?.providersPerMod.includes(Service4)).toBeTruthy();
 
-    const rootInitMeta = rootBaseMeta?.initMeta.get(initRest);
-    expect(rootBaseMeta?.providersPerApp).toBe(rootInitMeta?.providersPerApp);
-    expect(rootBaseMeta?.providersPerMod).toBe(rootInitMeta?.providersPerMod);
+    const rootInitMeta = rootNormalizedModuleMeta?.initMeta.get(initRest);
+    expect(rootNormalizedModuleMeta?.providersPerApp).toBe(rootInitMeta?.providersPerApp);
+    expect(rootNormalizedModuleMeta?.providersPerMod).toBe(rootInitMeta?.providersPerMod);
     expect(rootInitMeta?.providersPerApp.includes(Service5)).toBeTruthy();
     expect(rootInitMeta?.providersPerMod.includes(Service6)).toBeTruthy();
   });
@@ -584,8 +584,8 @@ describe('DeepModulesImporter', () => {
     const restMetadataPerMod2 = mod1?.deepImportedModules.get(initRest) as RestMetadataPerMod2;
     expect(restMetadataPerMod2.guards1.at(0)?.guard).toBe(BearerGuard1);
 
-    // Guards per a module must have ref to host module baseMeta.
-    expect(restMetadataPerMod2.guards1.at(0)?.baseMeta.modRefId).toBe(AppModule);
+    // Guards per a module must have ref to host module normalizedModuleMeta.
+    expect(restMetadataPerMod2.guards1.at(0)?.normalizedModuleMeta.modRefId).toBe(AppModule);
 
     // The injector must have enough providers to create a guard instance.
     const injector = Injector.resolveAndCreate(restMetadataPerMod2.guards1.at(0)?.meta.providersPerRou || []);

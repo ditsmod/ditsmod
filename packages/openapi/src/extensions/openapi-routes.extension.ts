@@ -37,9 +37,9 @@ export class OpenapiRouteExtension extends RestRouteExtension implements Extensi
   }
 
   protected override getControllersMetadata(prefixPerApp: string, restMetadataPerMod2: RestMetadataPerMod2) {
-    const { baseMeta, prefixPerMod, applyControllers, meta } = restMetadataPerMod2;
+    const { normalizedModuleMeta, prefixPerMod, applyControllers, meta } = restMetadataPerMod2;
 
-    const oasOptions = baseMeta.extensionsMeta.oasOptions as OasOptions;
+    const oasOptions = normalizedModuleMeta.extensionsMeta.oasOptions as OasOptions;
     const prefixParams = oasOptions?.paratemers;
     const prefixTags = oasOptions?.tags;
 
@@ -58,7 +58,7 @@ export class OpenapiRouteExtension extends RestRouteExtension implements Extensi
             const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
             const scope = ctrlDecorator?.value.scope;
             if (scope == 'route') {
-              baseMeta.providersPerMod.unshift(Controller);
+              normalizedModuleMeta.providersPerMod.unshift(Controller);
             }
             const guards = [];
             const { httpMethod, path: controllerPath, operationObject, interceptors } = oasRoute;
@@ -84,7 +84,7 @@ export class OpenapiRouteExtension extends RestRouteExtension implements Extensi
             clonedOperationObject.parameters = [...paramsRefs, ...paramsInPath, ...paramsNonPath];
             clonedOperationObject.tags = [...(clonedOperationObject.tags || []), ...(prefixTags || [])];
             // For now, here ReferenceObjects is ignored, if it is intended for a path.
-            const oasPath = this.transformToOasPath(baseMeta.name, fullPath, paramsInPath);
+            const oasPath = this.transformToOasPath(normalizedModuleMeta.name, fullPath, paramsInPath);
             providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
             const routeMeta: OasRouteMeta = {
               oasPath,

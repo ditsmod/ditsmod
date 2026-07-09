@@ -1,4 +1,4 @@
-import type { Class, BaseMeta, Providers, Provider, ForwardRefFn, ModuleType } from '@ditsmod/core';
+import type { Class, NormalizedModuleMeta, Providers, Provider, ForwardRefFn, ModuleType } from '@ditsmod/core';
 import {
   isNormalizedProvider,
   Reflector,
@@ -24,17 +24,17 @@ import { ControllerDoesNotHaveDecorator, DuplicateOfControllers, InvalidGuard } 
  * Normalizes and validates module metadata.
  */
 export class RestModuleNormalizer {
-  protected baseMeta: BaseMeta;
+  protected normalizedModuleMeta: NormalizedModuleMeta;
   protected meta: RestInitMeta;
 
-  normalize(baseMeta: BaseMeta, decoratorOptions: RestInitDecoratorOptions) {
-    this.baseMeta = baseMeta;
-    const meta = getProxyForInitMeta(baseMeta, RestInitMeta);
+  normalize(normalizedModuleMeta: NormalizedModuleMeta, decoratorOptions: RestInitDecoratorOptions) {
+    this.normalizedModuleMeta = normalizedModuleMeta;
+    const meta = getProxyForInitMeta(normalizedModuleMeta, RestInitMeta);
     this.meta = meta;
     if (decoratorOptions.controllers) {
       this.meta.controllers.push(...decoratorOptions.controllers);
     }
-    this.mergeModuleWithParams(baseMeta.modRefId);
+    this.mergeModuleWithParams(normalizedModuleMeta.modRefId);
     this.appendModules(decoratorOptions);
     this.checkMetadata();
     return meta;
@@ -70,7 +70,7 @@ export class RestModuleNormalizer {
     decoratorOptions.appends?.forEach((ap, i) => {
       ap = this.resolveForwardRef([ap])[0];
       if (isNormalizedProvider(ap)) {
-        throw new ForbiddenExportNormalizedProvider(this.baseMeta.name, ap.token.name || ap.token);
+        throw new ForbiddenExportNormalizedProvider(this.normalizedModuleMeta.name, ap.token.name || ap.token);
       }
       if (isAppendsWithParams(ap)) {
         const params = { ...ap } as Partial<AppendsWithParams>;
@@ -122,7 +122,7 @@ export class RestModuleNormalizer {
     }
 
     if (
-      !isRootModule(this.baseMeta) &&
+      !isRootModule(this.normalizedModuleMeta) &&
       !meta.exportedProvidersPerMod.length &&
       !meta.exportedMultiProvidersPerMod.length &&
       !meta.exportsModules.length &&

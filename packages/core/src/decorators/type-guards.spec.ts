@@ -2,7 +2,7 @@ import { featureModule } from '#decorators/feature-module.js';
 import { isFeatureModule, isModuleWithParams, isRootModule } from '#decorators/type-guards.js';
 import { rootModule } from '#decorators/root-module.js';
 import { ModuleDecoratorOptions, ModuleWithParams } from '#decorators/module-decorator-options.js';
-import { BaseMeta } from '#init/base-meta.js';
+import { NormalizedModuleMeta } from '#init/base-meta.js';
 import { InitHooks } from './init-hooks-and-metadata.js';
 import { Reflector } from '#di/reflector.js';
 import { DecoratorAndValue } from '#di/top/decorator-and-value.js';
@@ -35,37 +35,37 @@ describe('type guards', () => {
       expect(isFeatureModule(decorAndVal)).toBe(true);
     });
 
-    it('BaseMeta true', () => {
+    it('NormalizedModuleMeta true', () => {
       @featureModule()
       class Module1 {
         method1() {}
       }
 
-      const baseMeta = new BaseMeta();
+      const normalizedModuleMeta = new NormalizedModuleMeta();
       const metadata = Reflector.getClassLevelMeta(Module1)![0];
-      baseMeta.decoratorOptions = metadata.value;
-      expect(isFeatureModule(baseMeta)).toBe(true);
+      normalizedModuleMeta.decoratorOptions = metadata.value;
+      expect(isFeatureModule(normalizedModuleMeta)).toBe(true);
     });
 
-    it('BaseMeta false', () => {
-      const baseMeta = new BaseMeta();
-      baseMeta.decoratorOptions = {};
-      expect(isFeatureModule(baseMeta)).toBe(false);
+    it('NormalizedModuleMeta false', () => {
+      const normalizedModuleMeta = new NormalizedModuleMeta();
+      normalizedModuleMeta.decoratorOptions = {};
+      expect(isFeatureModule(normalizedModuleMeta)).toBe(false);
     });
 
-    it('initHooks in BaseMeta false', () => {
+    it('initHooks in NormalizedModuleMeta false', () => {
       const initHooks = new InitHooks({});
-      const baseMeta = new BaseMeta();
-      baseMeta.decoratorOptions = initHooks;
-      expect(isFeatureModule(baseMeta)).toBe(false);
+      const normalizedModuleMeta = new NormalizedModuleMeta();
+      normalizedModuleMeta.decoratorOptions = initHooks;
+      expect(isFeatureModule(normalizedModuleMeta)).toBe(false);
     });
 
-    it('initHooks in BaseMeta true', () => {
+    it('initHooks in NormalizedModuleMeta true', () => {
       const initHooks = new InitHooks({});
       initHooks.moduleRole = 'feature';
-      const baseMeta = new BaseMeta();
-      baseMeta.decoratorOptions = initHooks;
-      expect(isFeatureModule(baseMeta)).toBe(true);
+      const normalizedModuleMeta = new NormalizedModuleMeta();
+      normalizedModuleMeta.decoratorOptions = initHooks;
+      expect(isFeatureModule(normalizedModuleMeta)).toBe(true);
     });
 
     it('initHooks direct true', () => {

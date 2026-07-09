@@ -9,7 +9,7 @@ import {
   ModuleManager,
   ModuleType,
   ModuleWithParams,
-  BaseMeta,
+  NormalizedModuleMeta,
   Provider,
   rootModule,
   SystemLogMediator,
@@ -30,7 +30,7 @@ import { ResolvingCollisionNotExistsOnThisLevel } from '@ditsmod/core/errors';
 class MockShallowModulesImporter extends RestShallowModulesImporter {
   declare prefixPerMod: string;
   override moduleName = 'MockModule';
-  override baseMeta = new BaseMeta();
+  override normalizedModuleMeta = new NormalizedModuleMeta();
   // override guards1: GuardPerMod1[] = [];
 
   protected override getResolvedCollisionPerLevel(
@@ -104,12 +104,12 @@ describe('shallow importing modules', () => {
     })
     class AppModule {}
 
-    const baseMeta = moduleManager.scanRootModule(AppModule);
-    const initHooks = baseMeta.allInitHooks.get(initRest)!;
+    const normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
+    const initHooks = normalizedModuleMeta.allInitHooks.get(initRest)!;
     const val = initHooks.exportAppProviders({
       moduleManager,
       appProviders: new AppProviders(),
-      baseMeta,
+      normalizedModuleMeta,
     }) as RestAppProviders;
     // expect(getImportedProviders(val.importedProvidersPerReq)).toEqual([Provider2, Provider1]);
   });
@@ -285,7 +285,7 @@ describe('shallow importing modules', () => {
     expect(shallowImports_3).toBeDefined();
 
     expect(shallowImports_1.prefixPerMod).toBe('prefix1');
-    expect(shallowImports_1.baseMeta).toBeDefined();
+    expect(shallowImports_1.normalizedModuleMeta).toBeDefined();
     // expect(shallowImports_1.applyControllers).toBe(true);
 
     expect(shallowImports_2.prefixPerMod).toBe('prefix2');
@@ -433,7 +433,7 @@ describe('shallow importing modules', () => {
     expect(shallowImports_3).toBeDefined();
 
     expect(shallowImports_1.prefixPerMod).toBe('prefix1');
-    expect(shallowImports_1.baseMeta).toBeDefined();
+    expect(shallowImports_1.normalizedModuleMeta).toBeDefined();
     // expect(shallowImports_1.applyControllers).toBe(true);
 
     expect(shallowImports_2.prefixPerMod).toBe('prefix2');

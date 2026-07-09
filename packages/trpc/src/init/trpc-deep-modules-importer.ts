@@ -5,7 +5,7 @@ import type {
   SystemLogMediator,
   DeepModulesImporter,
   ShallowImports,
-  BaseMeta,
+  NormalizedModuleMeta,
 } from '@ditsmod/core';
 import { ModuleExtract } from '@ditsmod/core';
 
@@ -18,7 +18,7 @@ import type { GuardPerMod1 } from '#interceptors/trpc-guard.js';
  */
 
 export class TrpcMetadataPerMod2 {
-  baseMeta: BaseMeta;
+  normalizedModuleMeta: NormalizedModuleMeta;
   meta: TrpcInitMeta;
   guards1: GuardPerMod1[];
 }

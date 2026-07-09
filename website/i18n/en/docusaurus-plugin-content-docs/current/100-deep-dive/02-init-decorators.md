@@ -23,8 +23,8 @@ import {
   Reflector,
   InitDecoratorOptions,
   FeatureModuleParams,
-  BaseInitMeta,
-  BaseMeta,
+  NormalizedInitMeta,
+  NormalizedModuleMeta,
   RootDecoratorOptions,
 } from '@ditsmod/core';
 // ...
@@ -55,8 +55,8 @@ interface InitParams extends FeatureModuleParams {
 /**
  * Init hooks transform an object of type {@link InitDecoratorOptions} into an object of that type.
  */
-interface InitMeta extends BaseInitMeta {
-  baseMeta: BaseMeta;
+interface InitMeta extends NormalizedInitMeta {
+  normalizedModuleMeta: NormalizedModuleMeta;
   initDecoratorOptions: RootDecoratorOptions;
 }
 

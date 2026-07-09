@@ -7,7 +7,7 @@ import { Extension } from '#extension/extension-types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ModuleId, ModuleManager } from './module-manager.js';
 import { AllInitHooks, InitDecoratorOptions, InitDecorator, InitHooks } from '#decorators/init-hooks-and-metadata.js';
-import { BaseInitMeta, BaseMeta } from '#init/base-meta.js';
+import { NormalizedInitMeta, NormalizedModuleMeta } from '#init/base-meta.js';
 import { ModRefId } from '#types/mix.js';
 import { ModuleWithParams } from '#decorators/module-decorator-options.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
@@ -28,19 +28,19 @@ describe('ModuleManager', () => {
   class Service3 {}
 
   class MockModuleManager extends ModuleManager {
-    declare map: Map<ModRefId, BaseMeta>;
+    declare map: Map<ModRefId, NormalizedModuleMeta>;
     declare mapId: Map<string, ModRefId>;
-    declare snapshotMap: Map<ModRefId, BaseMeta>;
+    declare snapshotMap: Map<ModRefId, NormalizedModuleMeta>;
     declare snapshotMapId: Map<string, ModRefId>;
-    declare oldSnapshotMap: Map<ModRefId, BaseMeta>;
+    declare oldSnapshotMap: Map<ModRefId, NormalizedModuleMeta>;
     declare oldSnapshotMapId: Map<string, ModRefId>;
 
-    override normalizeMetadata(modRefId: ModRefId, allInitHooks: AllInitHooks): BaseMeta {
+    override normalizeMetadata(modRefId: ModRefId, allInitHooks: AllInitHooks): NormalizedModuleMeta {
       return super.normalizeMetadata(modRefId, allInitHooks);
     }
 
-    override getBaseMetaFromSnapshot(moduleId: ModuleId) {
-      return super.getBaseMetaFromSnapshot(moduleId);
+    override getNormalizedModuleMetaFromSnapshot(moduleId: ModuleId) {
+      return super.getNormalizedModuleMetaFromSnapshot(moduleId);
     }
   }
 
@@ -155,8 +155,8 @@ describe('ModuleManager', () => {
     class AppModule {}
 
     expect(() => mock.scanRootModule(AppModule)).not.toThrow();
-    expect(mock.getBaseMeta(Module1)?.importsModules).toEqual([Module3]);
-    expect(mock.getBaseMeta(Module3)?.importsModules).toEqual([Module2]);
+    expect(mock.getNormalizedModuleMeta(Module1)?.importsModules).toEqual([Module3]);
+    expect(mock.getNormalizedModuleMeta(Module3)?.importsModules).toEqual([Module2]);
   });
 
   it('programmatically adding some modules to "imports" array of root module', () => {
@@ -182,7 +182,7 @@ describe('ModuleManager', () => {
 
     const module3WithProviders: ModuleWithParams = { module: Module3, providersPerMod: [Service2] };
 
-    const expectedMeta1 = new BaseMeta();
+    const expectedMeta1 = new NormalizedModuleMeta();
     expectedMeta1.id = '';
     expectedMeta1.name = 'AppModule';
     expectedMeta1.modRefId = AppModule;
@@ -194,9 +194,9 @@ describe('ModuleManager', () => {
 
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(1);
-    expect(mock.getBaseMeta('root')).not.toBe(mock.getBaseMetaFromSnapshot('root'));
-    expect(mock.getBaseMeta('root')).toBe(mock.getBaseMeta('root'));
-    expect(mock.getBaseMeta('root')).toEqual(expectedMeta1);
+    expect(mock.getNormalizedModuleMeta('root')).not.toBe(mock.getNormalizedModuleMetaFromSnapshot('root'));
+    expect(mock.getNormalizedModuleMeta('root')).toBe(mock.getNormalizedModuleMeta('root'));
+    expect(mock.getNormalizedModuleMeta('root')).toEqual(expectedMeta1);
 
     expect(mock.addImport(Module1)).toBe(true);
     expect(mock.snapshotMap.size).toBe(2);
@@ -247,7 +247,7 @@ describe('ModuleManager', () => {
     expect(mock.oldSnapshotMapId.size).toBe(1);
     expect(mock.oldSnapshotMapId.get('root')).toBe(AppModule);
 
-    const expectedMeta2 = new BaseMeta();
+    const expectedMeta2 = new NormalizedModuleMeta();
     expectedMeta2.id = '';
     expectedMeta2.name = 'AppModule';
     expectedMeta2.modRefId = AppModule;
@@ -288,7 +288,7 @@ describe('ModuleManager', () => {
     expect(mock.oldSnapshotMapId.size).toBe(0);
     expect(mock.oldSnapshotMap.has(AppModule)).toBe(false);
 
-    const expectedMeta3 = new BaseMeta();
+    const expectedMeta3 = new NormalizedModuleMeta();
     expectedMeta3.id = '';
     expectedMeta3.name = 'AppModule';
     expectedMeta3.modRefId = AppModule;
@@ -299,15 +299,15 @@ describe('ModuleManager', () => {
     expectedMeta3.mInitHooks = expect.any(Map);
     expectedMeta3.decoratorOptions = expect.any(Object);
 
-    expect(mock.getBaseMeta('root') === mock.getBaseMeta('root')).toBe(true);
-    expect(mock.getBaseMeta('root') !== mock.getBaseMetaFromSnapshot('root')).toBe(true);
-    expect(mock.getBaseMeta('root')).toEqual(expectedMeta3);
+    expect(mock.getNormalizedModuleMeta('root') === mock.getNormalizedModuleMeta('root')).toBe(true);
+    expect(mock.getNormalizedModuleMeta('root') !== mock.getNormalizedModuleMetaFromSnapshot('root')).toBe(true);
+    expect(mock.getNormalizedModuleMeta('root')).toEqual(expectedMeta3);
 
     mock.addImport(module3WithProviders);
     expect(mock.snapshotMap.size).toBe(5);
     expect(mock.map.size).toBe(4);
     expect(mock.oldSnapshotMap.size).toBe(4);
-    expect(mock.getBaseMetaFromSnapshot('root')).toEqual({
+    expect(mock.getNormalizedModuleMetaFromSnapshot('root')).toEqual({
       ...expectedMeta3,
       importsWithParams: [module3WithProviders],
     });
@@ -317,8 +317,8 @@ describe('ModuleManager', () => {
     mock.rollback();
     expect(mock.snapshotMap.size).toBe(4);
     expect(mock.map.size).toBe(4);
-    expect(mock.getBaseMetaFromSnapshot('root')).toEqual(expectedMeta3);
-    expect(mock.getBaseMeta('root')).toEqual(expectedMeta3);
+    expect(mock.getNormalizedModuleMetaFromSnapshot('root')).toEqual(expectedMeta3);
+    expect(mock.getNormalizedModuleMeta('root')).toEqual(expectedMeta3);
     expect(mock.snapshotMap.has(module3WithProviders)).toBe(false);
     expect(mock.map.has(module3WithProviders)).toBe(false);
     expect(mock.oldSnapshotMap.size).toBe(0);
@@ -368,7 +368,7 @@ describe('ModuleManager', () => {
     })
     class AppModule {}
 
-    const expectedMeta1 = new BaseMeta();
+    const expectedMeta1 = new NormalizedModuleMeta();
     expectedMeta1.id = '';
     expectedMeta1.name = 'AppModule';
     expectedMeta1.modRefId = AppModule;
@@ -383,7 +383,7 @@ describe('ModuleManager', () => {
     mock.scanRootModule(AppModule);
     expect(mock.snapshotMap.size).toBe(6);
     expect(mock.map.size).toBe(6);
-    expect(mock.getBaseMeta('root')).toEqual(expectedMeta1);
+    expect(mock.getNormalizedModuleMeta('root')).toEqual(expectedMeta1);
     expect(mock.oldSnapshotMapId.size).toBe(0);
     expect(mock.oldSnapshotMap.size).toBe(0);
     expect(mock.snapshotMap.get(Module1)?.importsModules).toEqual([Module0]);
@@ -431,10 +431,10 @@ describe('ModuleManager', () => {
     expect(mock.oldSnapshotMapId.size).toBe(0);
     expect(mock.oldSnapshotMap.size).toBe(0);
 
-    expect(mock.getBaseMeta('root')?.importsModules).toEqual([Module1, Module2]);
+    expect(mock.getNormalizedModuleMeta('root')?.importsModules).toEqual([Module1, Module2]);
     expect(mock.removeImport(Module2)).toBe(true);
-    expect(mock.getBaseMetaFromSnapshot('root')?.importsModules).toEqual([Module1]);
-    expect(mock.getBaseMeta('root')?.importsModules).toEqual([Module1, Module2]);
+    expect(mock.getNormalizedModuleMetaFromSnapshot('root')?.importsModules).toEqual([Module1]);
+    expect(mock.getNormalizedModuleMeta('root')?.importsModules).toEqual([Module1, Module2]);
     expect(mock.snapshotMap.size).toBe(4);
     expect(mock.map.size).toBe(5);
     expect(mock.oldSnapshotMap.get(AppModule)?.importsModules).toEqual([Module1, Module2]);
@@ -444,10 +444,10 @@ describe('ModuleManager', () => {
     expect(mock.removeImport(Module2)).toBe(false);
     expect(mock.snapshotMap.size).toBe(4);
     expect(mock.map.size).toBe(5);
-    expect(mock.getBaseMetaFromSnapshot('root')?.importsModules).toEqual([Module1]);
-    expect(mock.getBaseMeta('root')?.importsModules).toEqual([Module1, Module2]);
+    expect(mock.getNormalizedModuleMetaFromSnapshot('root')?.importsModules).toEqual([Module1]);
+    expect(mock.getNormalizedModuleMeta('root')?.importsModules).toEqual([Module1, Module2]);
 
-    const expectedMeta2 = new BaseMeta();
+    const expectedMeta2 = new NormalizedModuleMeta();
     expectedMeta2.id = '';
     expectedMeta2.name = 'AppModule';
     expectedMeta2.modRefId = AppModule;
@@ -459,22 +459,22 @@ describe('ModuleManager', () => {
     expectedMeta2.mInitHooks = expect.any(Map);
     expectedMeta2.decoratorOptions = expect.any(Object);
 
-    expect(mock.getBaseMetaFromSnapshot('root')).toEqual(expectedMeta2);
+    expect(mock.getNormalizedModuleMetaFromSnapshot('root')).toEqual(expectedMeta2);
     expect(mock.oldSnapshotMapId.size).toBe(2);
     expect(mock.oldSnapshotMap.size).toBe(5);
 
-    expect(mock.getBaseMetaFromSnapshot('root')?.importsWithParams).toEqual([
+    expect(mock.getNormalizedModuleMetaFromSnapshot('root')?.importsWithParams).toEqual([
       module3WithProviders,
       module4WithProviders,
     ]);
-    expect(mock.getBaseMeta('root')?.importsWithParams).toEqual([module3WithProviders, module4WithProviders]);
+    expect(mock.getNormalizedModuleMeta('root')?.importsWithParams).toEqual([module3WithProviders, module4WithProviders]);
     expect(mock.removeImport(module3WithProviders)).toBe(true);
-    expect(mock.getBaseMetaFromSnapshot('root')?.importsWithParams).toEqual([module4WithProviders]);
-    expect(mock.getBaseMeta('root')?.importsWithParams).toEqual([module3WithProviders, module4WithProviders]);
+    expect(mock.getNormalizedModuleMetaFromSnapshot('root')?.importsWithParams).toEqual([module4WithProviders]);
+    expect(mock.getNormalizedModuleMeta('root')?.importsWithParams).toEqual([module3WithProviders, module4WithProviders]);
     expect(mock.snapshotMap.size).toBe(3);
     expect(mock.map.size).toBe(5);
 
-    const expectedMeta3 = new BaseMeta();
+    const expectedMeta3 = new NormalizedModuleMeta();
     expectedMeta3.id = '';
     expectedMeta3.name = 'AppModule';
     expectedMeta3.modRefId = AppModule;
@@ -486,12 +486,12 @@ describe('ModuleManager', () => {
     expectedMeta3.mInitHooks = expect.any(Map);
     expectedMeta3.decoratorOptions = expect.any(Object);
 
-    expect(mock.getBaseMetaFromSnapshot('root')).toEqual(expectedMeta3);
+    expect(mock.getNormalizedModuleMetaFromSnapshot('root')).toEqual(expectedMeta3);
     expect(mock.oldSnapshotMapId.size).toBe(2);
     expect(mock.oldSnapshotMap.size).toBe(5);
     expect(mock.oldSnapshotMap.get(AppModule)?.importsWithParams).toEqual([module3WithProviders, module4WithProviders]);
 
-    const expectedMeta4 = new BaseMeta();
+    const expectedMeta4 = new NormalizedModuleMeta();
     expectedMeta4.id = '';
     expectedMeta4.name = 'AppModule';
     expectedMeta4.modRefId = AppModule;
@@ -505,7 +505,7 @@ describe('ModuleManager', () => {
     expect(mock.removeImport(moduleId)).toBe(true);
     expect(mock.snapshotMap.size).toBe(2);
     expect(mock.map.size).toBe(5);
-    expect(mock.getBaseMetaFromSnapshot('root')).toEqual(expectedMeta4);
+    expect(mock.getNormalizedModuleMetaFromSnapshot('root')).toEqual(expectedMeta4);
     expect(mock.oldSnapshotMapId.size).toBe(2);
     expect(mock.oldSnapshotMap.size).toBe(5);
 
@@ -514,7 +514,7 @@ describe('ModuleManager', () => {
     expect(mock.mapId.size).toBe(2);
     expect(mock.snapshotMap.size).toBe(5);
     expect(mock.map.size).toBe(5);
-    expect(mock.getBaseMeta('root')).toEqual(expectedMeta1);
+    expect(mock.getNormalizedModuleMeta('root')).toEqual(expectedMeta1);
     expect(mock.oldSnapshotMapId.size).toBe(0);
     expect(mock.oldSnapshotMap.size).toBe(0);
   });
@@ -537,7 +537,7 @@ describe('ModuleManager', () => {
     })
     class Module3 {}
 
-    const expectedMeta3 = new BaseMeta();
+    const expectedMeta3 = new NormalizedModuleMeta();
     expectedMeta3.id = '';
     expectedMeta3.name = 'Module3';
     expectedMeta3.modRefId = Module3;
@@ -549,7 +549,7 @@ describe('ModuleManager', () => {
     delete (expectedMeta3 as any).aExtensionConfig;
     delete (expectedMeta3 as any).aExportedExtensionConfig;
 
-    const expectedMeta1 = new BaseMeta();
+    const expectedMeta1 = new NormalizedModuleMeta();
     expectedMeta1.id = '';
     expectedMeta1.name = 'Module1';
     expectedMeta1.modRefId = Module1;
@@ -563,8 +563,8 @@ describe('ModuleManager', () => {
     expectedMeta1.mInitHooks = expect.any(Map);
 
     mock.scanRootModule(Module3);
-    expect(mock.getBaseMeta('root')).toMatchObject(expectedMeta3);
-    expect(mock.getBaseMeta(Module1)).toMatchObject(expectedMeta1);
+    expect(mock.getNormalizedModuleMeta('root')).toMatchObject(expectedMeta3);
+    expect(mock.getNormalizedModuleMeta(Module1)).toMatchObject(expectedMeta1);
   });
 
   it('root module with exported appy some extension', () => {
@@ -586,7 +586,7 @@ describe('ModuleManager', () => {
     })
     class Module3 {}
 
-    const expectedMeta3 = new BaseMeta();
+    const expectedMeta3 = new NormalizedModuleMeta();
     expectedMeta3.id = '';
     expectedMeta3.name = 'Module3';
     expectedMeta3.modRefId = Module3;
@@ -599,7 +599,7 @@ describe('ModuleManager', () => {
     delete (expectedMeta3 as any).aExtensionConfig;
     delete (expectedMeta3 as any).aExportedExtensionConfig;
 
-    const expectedMeta1 = new BaseMeta();
+    const expectedMeta1 = new NormalizedModuleMeta();
     expectedMeta1.id = '';
     expectedMeta1.name = 'Module1';
     expectedMeta1.modRefId = Module1;
@@ -613,8 +613,8 @@ describe('ModuleManager', () => {
     delete (expectedMeta1 as any).aExportedExtensionConfig;
 
     mock.scanRootModule(Module3);
-    expect(mock.getBaseMeta('root')).toMatchObject(expectedMeta3);
-    expect(mock.getBaseMeta(Module1)).toMatchObject(expectedMeta1);
+    expect(mock.getNormalizedModuleMeta('root')).toMatchObject(expectedMeta3);
+    expect(mock.getNormalizedModuleMeta(Module1)).toMatchObject(expectedMeta1);
   });
 
   it('split multi providers and common providers', () => {
@@ -637,7 +637,7 @@ describe('ModuleManager', () => {
     })
     class Module3 {}
 
-    const expectedMeta3 = new BaseMeta();
+    const expectedMeta3 = new NormalizedModuleMeta();
     expectedMeta3.id = '';
     expectedMeta3.name = 'Module3';
     expectedMeta3.modRefId = Module3;
@@ -647,7 +647,7 @@ describe('ModuleManager', () => {
     expectedMeta3.decoratorOptions = expect.any(Object);
     expectedMeta3.mInitHooks = expect.any(Map);
 
-    const expectedMeta1 = new BaseMeta();
+    const expectedMeta1 = new NormalizedModuleMeta();
     expectedMeta1.id = '';
     expectedMeta1.name = 'Module1';
     expectedMeta1.modRefId = Module1;
@@ -660,8 +660,8 @@ describe('ModuleManager', () => {
     expectedMeta1.mInitHooks = expect.any(Map);
 
     mock.scanRootModule(Module3);
-    expect(mock.getBaseMeta('root')).toEqual(expectedMeta3);
-    expect(mock.getBaseMeta(Module1)).toEqual(expectedMeta1);
+    expect(mock.getNormalizedModuleMeta('root')).toEqual(expectedMeta3);
+    expect(mock.getNormalizedModuleMeta(Module1)).toEqual(expectedMeta1);
   });
 
   it('import hostModules; allInitHooks should only contain init hooks imported into the current module', () => {
@@ -718,20 +718,20 @@ describe('ModuleManager', () => {
 
     mock.scanRootModule(Module4);
 
-    const mod1 = mock.getBaseMeta(Module1, true);
-    const mod2 = mock.getBaseMeta(Module2, true);
-    const mod3 = mock.getBaseMeta(Module3, true);
-    const mod4 = mock.getBaseMeta(Module4, true);
+    const mod1 = mock.getNormalizedModuleMeta(Module1, true);
+    const mod2 = mock.getNormalizedModuleMeta(Module2, true);
+    const mod3 = mock.getNormalizedModuleMeta(Module3, true);
+    const mod4 = mock.getNormalizedModuleMeta(Module4, true);
 
     mod1.importsModules.includes(HostModule1);
     mod2.importsModules.includes(HostModule2);
     mod3.importsModules.includes(HostModule3);
     mod4.importsModules.includes(HostModule4);
 
-    expect(mock.getBaseMeta(HostModule1, true).modRefId).toBe(HostModule1);
-    expect(mock.getBaseMeta(HostModule2, true).modRefId).toBe(HostModule2);
-    expect(mock.getBaseMeta(HostModule3, true).modRefId).toBe(HostModule3);
-    expect(mock.getBaseMeta(HostModule4, true).modRefId).toBe(HostModule4);
+    expect(mock.getNormalizedModuleMeta(HostModule1, true).modRefId).toBe(HostModule1);
+    expect(mock.getNormalizedModuleMeta(HostModule2, true).modRefId).toBe(HostModule2);
+    expect(mock.getNormalizedModuleMeta(HostModule3, true).modRefId).toBe(HostModule3);
+    expect(mock.getNormalizedModuleMeta(HostModule4, true).modRefId).toBe(HostModule4);
 
     expect(mod1.allInitHooks.size).toBe(1);
     expect(mod1.allInitHooks.get(initSome1)?.hostModule).toBe(HostModule1);
@@ -757,7 +757,7 @@ describe('ModuleManager', () => {
       one?: string;
       two?: string;
     }
-    interface InitMeta extends BaseInitMeta {
+    interface InitMeta extends NormalizedInitMeta {
       path?: string;
     }
     const initSome: InitDecorator<RootDecoratorOptions, { path?: string }, InitMeta> = Reflector.makeClassDecorator(
@@ -765,7 +765,7 @@ describe('ModuleManager', () => {
     );
 
     class InitHooks1 extends InitHooks<RootDecoratorOptions> {
-      override normalize({ modRefId }: BaseMeta): InitMeta {
+      override normalize({ modRefId }: NormalizedModuleMeta): InitMeta {
         if (isModuleWithParams(modRefId)) {
           const params = modRefId.initParams?.get(initSome);
           return { path: params?.path } as InitMeta;
@@ -785,7 +785,7 @@ describe('ModuleManager', () => {
     class AppModule {}
 
     mock.scanRootModule(AppModule);
-    const mod1 = mock.getBaseMeta(moduleWithParams)!;
+    const mod1 = mock.getNormalizedModuleMeta(moduleWithParams)!;
     expect(mod1.initMeta.get(initSome)).toEqual({ path: 'some-prefix' });
   });
 

@@ -46,7 +46,7 @@ export class CorsExtension implements Extension<void | false> {
     groupDataPerApp.forEach((stage1ExtensionMetaPerApp) => {
       stage1ExtensionMetaPerApp.groupData.forEach((metadataPerMod3) => {
         const { aControllerMetadata } = metadataPerMod3;
-        const { providersPerMod } = metadataPerMod3.baseMeta;
+        const { providersPerMod } = metadataPerMod3.normalizedModuleMeta;
         const injector = Injector.resolveAndCreate([...this.providersPerApp, ...providersPerMod]);
         const routesWithOptions = this.getRoutesWithOptions(
           providersPerMod,

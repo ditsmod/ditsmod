@@ -2,7 +2,7 @@ import { DeepModulesImporter } from '#init/deep-modules-importer.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import type { PublicLogMediator } from '#logger/system-log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import type { BaseMeta } from '#init/base-meta.js';
+import type { NormalizedModuleMeta } from '#init/base-meta.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
 import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import { Counter } from '#extension/counter.js';
@@ -42,7 +42,7 @@ import { Injector } from '#di/injector.js';
 import { PROVIDERS_PER_APP } from './constants.js';
 
 export class BaseAppInitializer {
-  protected baseMeta: BaseMeta;
+  protected normalizedModuleMeta: NormalizedModuleMeta;
   protected injectorPerApp: Injector;
 
   constructor(
@@ -55,7 +55,7 @@ export class BaseAppInitializer {
    * _Note:_ after call this method, you need call `this.systemLogMediator.flush()`.
    */
   bootstrapProvidersPerApp() {
-    this.baseMeta = this.moduleManager.getBaseMeta('root', true);
+    this.normalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta('root', true);
     this.prepareProvidersPerApp();
     this.addDefaultProvidersPerApp();
     this.createInjectorAndSetLogMediator();
@@ -73,9 +73,9 @@ export class BaseAppInitializer {
     const exportedNormProviders = normalizeProviders(exportedProviders);
     const exportedTokens = exportedNormProviders.map((np) => np.token);
     const exportedMultiTokens = exportedNormProviders.filter((np) => np.multi).map((np) => np.token);
-    const resolvedTokens = this.baseMeta.resolvedCollisionPerApp.map(([token]) => token);
+    const resolvedTokens = this.normalizedModuleMeta.resolvedCollisionPerApp.map(([token]) => token);
     const defaultTokens = getTokens(defaultProvidersPerApp);
-    const rootTokens = getTokens(this.baseMeta.providersPerApp);
+    const rootTokens = getTokens(this.normalizedModuleMeta.providersPerApp);
     const mergedTokens = [...exportedTokens, ...defaultTokens];
     const exportedTokensDuplicates = getDuplicates(mergedTokens).filter(
       (d) => ![...resolvedTokens, ...rootTokens, ...exportedMultiTokens].includes(d),
@@ -84,10 +84,10 @@ export class BaseAppInitializer {
     const collisions = getCollisions(exportedTokensDuplicates, mergedProviders);
     if (collisions.length) {
       const modulesNames = this.findModulesCausedCollisions(collisions);
-      throw new ProvidersCollision(this.baseMeta.name, collisions, modulesNames);
+      throw new ProvidersCollision(this.normalizedModuleMeta.name, collisions, modulesNames);
     }
     exportedProviders.push(...this.getResolvedCollisionPerApp());
-    this.baseMeta.providersPerApp.unshift(...getLastProviders(exportedProviders));
+    this.normalizedModuleMeta.providersPerApp.unshift(...getLastProviders(exportedProviders));
   }
 
   protected findModulesCausedCollisions(collisions: any[]) {
@@ -105,16 +105,16 @@ export class BaseAppInitializer {
   }
 
   protected getResolvedCollisionPerApp() {
-    const rootModuleName = this.moduleManager.getBaseMeta('root', true).name;
+    const rootModuleName = this.moduleManager.getNormalizedModuleMeta('root', true).name;
     const resolvedProviders: Provider[] = [];
-    this.baseMeta.resolvedCollisionPerApp.forEach(([token, module]) => {
+    this.normalizedModuleMeta.resolvedCollisionPerApp.forEach(([token, module]) => {
       const moduleName = getDebugClassName(module) || 'unknown';
       const tokenName = token.name || token;
-      const baseMeta = this.moduleManager.getBaseMeta(module);
-      if (!baseMeta) {
+      const normalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(module);
+      if (!normalizedModuleMeta) {
         throw new ModuleNotImportedInApplication(rootModuleName, moduleName, tokenName);
       }
-      const provider = getLastProviders(baseMeta.providersPerApp).find((p) => getToken(p) === token);
+      const provider = getLastProviders(normalizedModuleMeta.providersPerApp).find((p) => getToken(p) === token);
       if (!provider) {
         throw new ProvidersPerAppMissingTokenName(rootModuleName, moduleName, tokenName);
       }
@@ -131,7 +131,7 @@ export class BaseAppInitializer {
     const deepModulesImporter = new DeepModulesImporter({
       moduleManager: this.moduleManager,
       shallowImportsMap: this.collectProvidersShallow(this.moduleManager),
-      providersPerApp: this.baseMeta.providersPerApp,
+      providersPerApp: this.normalizedModuleMeta.providersPerApp,
       log: this.log,
     });
     const { extensionCounters, mMetadataPerMod2 } = deepModulesImporter.importModulesDeep();
@@ -187,7 +187,7 @@ export class BaseAppInitializer {
   }
 
   protected addDefaultProvidersPerApp() {
-    this.baseMeta.providersPerApp.unshift(
+    this.normalizedModuleMeta.providersPerApp.unshift(
       ...defaultProvidersPerApp,
       { token: BaseAppOptions, useValue: this.baseAppOptions },
       { token: ModuleManager, useValue: this.moduleManager },
@@ -199,7 +199,7 @@ export class BaseAppInitializer {
    * Creates injector per the application and sets log.
    */
   protected createInjectorAndSetLogMediator() {
-    this.injectorPerApp = Injector.resolveAndCreate(this.baseMeta.providersPerApp, 'App');
+    this.injectorPerApp = Injector.resolveAndCreate(this.normalizedModuleMeta.providersPerApp, 'App');
     this.log = this.injectorPerApp.get(SystemLogMediator) as SystemLogMediator;
     return this.injectorPerApp;
   }
@@ -209,7 +209,7 @@ export class BaseAppInitializer {
     const appProviders = shallowModulesImporter1.exportAppProviders(moduleManager);
     this.log.printAppProviders(this, appProviders);
     const shallowModulesImporter2 = new ShallowModulesImporter();
-    const { modRefId, allInitHooks } = moduleManager.getBaseMeta('root', true);
+    const { modRefId, allInitHooks } = moduleManager.getNormalizedModuleMeta('root', true);
     const shallowImportsMap = shallowModulesImporter2.importModulesShallow({
       appProviders,
       modRefId,
@@ -251,13 +251,13 @@ export class BaseAppInitializer {
     const extensionContext = new ExtensionContext();
 
     for (const [, metadataPerMod2] of mMetadataPerMod2) {
-      const { baseMeta, aOrderedExtensions } = this.overrideMetaBeforeExtensionHanling(
-        metadataPerMod2.baseMeta,
+      const { normalizedModuleMeta, aOrderedExtensions } = this.overrideMetaBeforeExtensionHanling(
+        metadataPerMod2.normalizedModuleMeta,
         metadataPerMod2.aOrderedExtensions,
       );
-      const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(baseMeta.providersPerMod, 'Mod');
+      const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(normalizedModuleMeta.providersPerMod, 'Mod');
       const systemLogMediator = injectorPerMod.pull(SystemLogMediator) as SystemLogMediator;
-      const { extensionProviders } = baseMeta;
+      const { extensionProviders } = normalizedModuleMeta;
       if (!extensionProviders.length) {
         systemLogMediator.skippingStartExtensions(this);
         continue;
@@ -268,7 +268,7 @@ export class BaseAppInitializer {
 
       systemLogMediator.startExtensions(this);
       this.decreaseExtensionsCounters(extensionCounters, extensionProviders);
-      await this.handleExtensionsPerMod(baseMeta, aOrderedExtensions, extensionManager, systemLogMediator);
+      await this.handleExtensionsPerMod(normalizedModuleMeta, aOrderedExtensions, extensionManager, systemLogMediator);
       this.logExtensionsStatistic(this.injectorPerApp, systemLogMediator);
     }
     await this.perAppHandling(mMetadataPerMod2, extensionContext);
@@ -286,10 +286,10 @@ export class BaseAppInitializer {
       }
     }
 
-    for (const [modRefId, { baseMeta }] of mMetadataPerMod2) {
+    for (const [modRefId, { normalizedModuleMeta }] of mMetadataPerMod2) {
       try {
-        this.overrideMetaAfterStage1(baseMeta.modRefId, baseMeta);
-        baseMeta.initMeta.forEach((meta) => this.overrideMetaAfterStage1(baseMeta.modRefId, meta));
+        this.overrideMetaAfterStage1(normalizedModuleMeta.modRefId, normalizedModuleMeta);
+        normalizedModuleMeta.initMeta.forEach((meta) => this.overrideMetaAfterStage1(normalizedModuleMeta.modRefId, meta));
       } catch (err: any) {
         const debugModuleName = getDebugClassName(modRefId) || 'unknown';
         throw new FailedOverrideMetaAfterStage1(debugModuleName, err);
@@ -299,9 +299,9 @@ export class BaseAppInitializer {
     // After the extensions have added new providers, injectorPerApp needs to be recreated one last time.
     this.createInjectorAndSetLogMediator();
 
-    for (const [modRefId, { baseMeta }] of mMetadataPerMod2) {
+    for (const [modRefId, { normalizedModuleMeta }] of mMetadataPerMod2) {
       try {
-        const injectorPerMod = await this.initModuleAndGetInjectorPerMod(baseMeta);
+        const injectorPerMod = await this.initModuleAndGetInjectorPerMod(normalizedModuleMeta);
         this.moduleManager.setInjectorPerMod(modRefId, injectorPerMod);
       } catch (err: any) {
         const debugModuleName = getDebugClassName(modRefId) || 'unknown';
@@ -339,9 +339,9 @@ export class BaseAppInitializer {
     }
   }
 
-  protected async initModuleAndGetInjectorPerMod(baseMeta: BaseMeta): Promise<Injector> {
-    const Mod = getModule(baseMeta.modRefId);
-    const extendedProvidersPerMod = [Mod, ...baseMeta.providersPerMod];
+  protected async initModuleAndGetInjectorPerMod(normalizedModuleMeta: NormalizedModuleMeta): Promise<Injector> {
+    const Mod = getModule(normalizedModuleMeta.modRefId);
+    const extendedProvidersPerMod = [Mod, ...normalizedModuleMeta.providersPerMod];
     const injectorPerApp = this.injectorPerApp;
     const injectorPerMod = injectorPerApp.resolveAndCreateChild(extendedProvidersPerMod, 'Mod');
     await (injectorPerMod.get(Mod) as Partial<OnModuleInit>).onModuleInit?.(); // Instantiate the class of the module and call the hook.
@@ -362,19 +362,19 @@ export class BaseAppInitializer {
       { token: ExtensionContext, useValue: extensionContext },
       { token: MetadataPerMod2, useValue: metadataPerMod2 },
       { token: ExtensionCounters, useValue: extensionCounters },
-      { token: PROVIDERS_PER_APP, useValue: this.baseMeta.providersPerApp },
-      ...metadataPerMod2.baseMeta.extensionProviders,
+      { token: PROVIDERS_PER_APP, useValue: this.normalizedModuleMeta.providersPerApp },
+      ...metadataPerMod2.normalizedModuleMeta.extensionProviders,
     ];
   }
 
   protected async handleExtensionsPerMod(
-    baseMeta: BaseMeta,
+    normalizedModuleMeta: NormalizedModuleMeta,
     aOrderedExtensions: ExtensionClass[],
     extensionManager: InternalExtensionManager,
     systemLogMediator: SystemLogMediator,
   ) {
     systemLogMediator.sequenceOfExtensions(this, aOrderedExtensions);
-    await extensionManager.internalStage1(baseMeta, aOrderedExtensions);
+    await extensionManager.internalStage1(normalizedModuleMeta, aOrderedExtensions);
   }
 
   /**
@@ -382,8 +382,8 @@ export class BaseAppInitializer {
    *
    * See `TestAppInitializer` in `@ditsmod/testing` for more info.
    */
-  protected overrideMetaBeforeExtensionHanling(baseMeta: BaseMeta, aOrderedExtensions: ExtensionClass[]) {
-    return { baseMeta, aOrderedExtensions };
+  protected overrideMetaBeforeExtensionHanling(normalizedModuleMeta: NormalizedModuleMeta, aOrderedExtensions: ExtensionClass[]) {
+    return { normalizedModuleMeta, aOrderedExtensions };
   }
 
   /**

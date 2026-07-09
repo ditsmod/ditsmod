@@ -1,6 +1,6 @@
 import type {
   ModRefId,
-  BaseMeta,
+  NormalizedModuleMeta,
   InitDecorator,
   Provider,
   InitDecoratorOptions,
@@ -14,7 +14,7 @@ import type {
   SystemLogMediator,
   ForwardRefFn,
 } from '@ditsmod/core';
-import { Reflector, InitHooks, BaseInitMeta, AppInitHooks } from '@ditsmod/core';
+import { Reflector, InitHooks, NormalizedInitMeta, AppInitHooks } from '@ditsmod/core';
 
 import { TrpcModule } from '../trpc.module.js';
 import { TrpcModuleNormalizer } from '#init/trpc-module-normalizer.js';
@@ -27,7 +27,7 @@ class NormalizedParams {
   guards: NormalizedGuard[] = [];
 }
 
-export class TrpcInitMeta extends BaseInitMeta {
+export class TrpcInitMeta extends NormalizedInitMeta {
   appendsModules: ModuleType[] = [];
   controllers: Class[] = [];
   params = new NormalizedParams();
@@ -76,8 +76,8 @@ export function transformFeatureMetadata(data?: TrpcInitDecoratorOptions): InitH
 export class TrpcInitHooks extends InitHooks<TrpcInitDecoratorOptions> {
   override hostModule = TrpcModule;
 
-  override normalize(baseMeta: BaseMeta): TrpcInitMeta {
-    return new TrpcModuleNormalizer().normalize(baseMeta, this.decoratorOptions);
+  override normalize(normalizedModuleMeta: NormalizedModuleMeta): TrpcInitMeta {
+    return new TrpcModuleNormalizer().normalize(normalizedModuleMeta, this.decoratorOptions);
   }
 
   override getModulesToScan(meta?: TrpcInitMeta): TrpcModRefId[] {
@@ -100,7 +100,7 @@ export class TrpcInitHooks extends InitHooks<TrpcInitDecoratorOptions> {
 export interface ExportAppProvidersConfig {
   moduleManager: ModuleManager;
   appProviders: AppProviders;
-  baseMeta: BaseMeta;
+  normalizedModuleMeta: NormalizedModuleMeta;
 }
 
 export interface ImportModulesShallowConfig {
@@ -123,7 +123,7 @@ export interface DeepModulesImporterConfig {
  */
 
 export class TrpcShallowImports {
-  baseMeta: BaseMeta;
+  normalizedModuleMeta: NormalizedModuleMeta;
   guards1: GuardPerMod1[];
   /**
    * Snapshot of `TrpcInitMeta`. If you modify any array in this object,

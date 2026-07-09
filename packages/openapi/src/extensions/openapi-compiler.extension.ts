@@ -80,7 +80,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
               paths[`/${oasPath}`] = { ...(paths[`/${oasPath}`] || {}), ...pathItemObject };
             } else {
               if (!method) {
-                throw new OasRouteMetaNotFound(metadataPerMod3.baseMeta.name);
+                throw new OasRouteMetaNotFound(metadataPerMod3.normalizedModuleMeta.name);
               }
               this.applyNonOasRoute(fullPath, paths, method, guards);
             }

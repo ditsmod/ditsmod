@@ -1,5 +1,5 @@
 import type { AnyObj, ModuleType, Class, ModRefId } from '@ditsmod/core';
-import { Provider, MultiProvider, BaseInitMeta } from '@ditsmod/core';
+import { Provider, MultiProvider, NormalizedInitMeta } from '@ditsmod/core';
 
 import type { NormalizedGuard } from '#interceptors/guard.js';
 import type { AppendsWithParams } from '#init/rest-init-raw-meta.js';
@@ -10,7 +10,7 @@ class NormalizedParams {
   guards: NormalizedGuard[] = [];
 }
 
-export class RestInitMeta extends BaseInitMeta {
+export class RestInitMeta extends NormalizedInitMeta {
   appendsWithParams: AppendsWithParams[] = [];
   appendsModules: ModuleType[] = [];
   controllers: Class<Record<string | symbol, any>>[] = [];

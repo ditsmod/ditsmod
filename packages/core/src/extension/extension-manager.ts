@@ -10,7 +10,7 @@ import {
 import { ModRefId, OptionalProps } from '#types/mix.js';
 import { Counter } from '#extension/counter.js';
 import { ExtensionContext } from '#extension/extensions-context.js';
-import { BaseMeta } from '#init/base-meta.js';
+import { NormalizedModuleMeta } from '#init/base-meta.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { isExtensionProvider } from './type-guards.js';
 import { NotDeclaredInAfterExtensionList, CircularDepsBetweenExtensions, ExtensionFailed } from '#errors';
@@ -38,7 +38,7 @@ export class ExtensionManager {
    * Settings by {@link InternalExtensionManager}.
    */
   moduleName: string = '';
-  protected baseMeta: BaseMeta;
+  protected normalizedModuleMeta: NormalizedModuleMeta;
   /**
    * Settings by {@link InternalExtensionManager}.
    */
@@ -161,7 +161,7 @@ export class ExtensionManager {
 
   protected async initExtension<T>(ExtCls: ExtensionClass): Promise<Stage1ExtensionMeta> {
     let extensions: Extension<T>[];
-    const groupToken = this.baseMeta.mExtensionAsGroupToken.get(ExtCls);
+    const groupToken = this.normalizedModuleMeta.mExtensionAsGroupToken.get(ExtCls);
     if (groupToken) {
       extensions = this.injector.getOrderedMultiValues<TokenProvider>(
         groupToken,
@@ -241,9 +241,9 @@ export class ExtensionManager {
 
 @injectable()
 export class InternalExtensionManager extends ExtensionManager {
-  async internalStage1(baseMeta: BaseMeta, aOrderedExtensions: ExtensionClass[]) {
-    this.baseMeta = baseMeta;
-    this.moduleName = baseMeta.name;
+  async internalStage1(normalizedModuleMeta: NormalizedModuleMeta, aOrderedExtensions: ExtensionClass[]) {
+    this.normalizedModuleMeta = normalizedModuleMeta;
+    this.moduleName = normalizedModuleMeta.name;
     const stageIterationMap = new Map() as StageIterationMap;
     this.stageIterationMap = stageIterationMap;
     aOrderedExtensions.forEach((ExtCls, index) => {
@@ -256,11 +256,11 @@ export class InternalExtensionManager extends ExtensionManager {
         await this.stage1(ExtCls);
         this.updateExtensionPendingList();
       } catch (err: any) {
-        const moduleName = getDebugClassName(baseMeta.modRefId) || '""';
+        const moduleName = getDebugClassName(normalizedModuleMeta.modRefId) || '""';
         throw new ExtensionFailed(ExtCls.name, moduleName, err);
       }
     }
-    this.setExtensionsToStage2(baseMeta.modRefId);
+    this.setExtensionsToStage2(normalizedModuleMeta.modRefId);
   }
 
   protected setExtensionsToStage2(modRefId: ModRefId) {

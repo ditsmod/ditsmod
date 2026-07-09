@@ -1,5 +1,5 @@
 import { DeepModulesImporter } from '#init/deep-modules-importer.js';
-import { BaseMeta } from '#init/base-meta.js';
+import { NormalizedModuleMeta } from '#init/base-meta.js';
 import { ModRefId, Level } from '#types/mix.js';
 import { Provider } from '#di/top/types-and-models.js';
 import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
@@ -16,7 +16,7 @@ describe('DeepModulesImporter', () => {
   class DeepModulesImporterMock extends DeepModulesImporter {
     override dependencyChain: [ModRefId, Provider][] = [];
     override resolveImportedProviders(
-      targetProviders: BaseMeta,
+      targetProviders: NormalizedModuleMeta,
       baseImportRegistry: BaseImportRegistry,
       levels: Level[],
     ) {

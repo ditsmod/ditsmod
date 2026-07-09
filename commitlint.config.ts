@@ -20,7 +20,7 @@ const getPackages = (): string[] => {
 const Configuration: UserConfig = {
   extends: ['@commitlint/config-conventional'],
   rules: {
-    'scope-enum': [2, 'always', [...getPackages(), 'website', 'examples', 'ci', 'experiments']],
+    'scope-enum': [2, 'always', [...getPackages(), 'website', 'examples', 'ci', 'experiments', 'cross']],
     'scope-empty': [2, 'never'],
     'header-max-length': [2, 'always', 120],
   },

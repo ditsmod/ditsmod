@@ -269,7 +269,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
 
   protected getResolvedGuardsPerMod(guards: GuardPerMod1[], controllerName: string, perReq?: boolean) {
     return guards.map((g) => {
-      const resolvedPerMod = Injector.resolve(g.baseMeta.providersPerMod);
+      const resolvedPerMod = Injector.resolve(g.normalizedModuleMeta.providersPerMod);
       const resolvedPerRou = Injector.resolve(g.meta.providersPerRou);
       const resolvedPerReq = Injector.resolve(g.meta.providersPerReq);
       const resolvedProviders = perReq
@@ -284,10 +284,10 @@ export class TrpcPreRouterExtension implements Extension<void> {
           levels.push('providersPerReq');
         }
         const levelNames = levels.join(' and ');
-        throw new GuardNotFound(g.baseMeta.name, controllerName, g.guard.name, levelNames, perReq);
+        throw new GuardNotFound(g.normalizedModuleMeta.name, controllerName, g.guard.name, levelNames, perReq);
       }
 
-      const injectorPerMod = this.moduleManager.getInjectorPerMod(g.baseMeta.modRefId, true);
+      const injectorPerMod = this.moduleManager.getInjectorPerMod(g.normalizedModuleMeta.modRefId, true);
       const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou, 'Rou');
 
       const resolvedGuard: ResolvedGuardPerMod = {

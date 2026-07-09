@@ -16,7 +16,7 @@ export class RestAppInitializer extends BaseAppInitializer {
   requestListener: RequestListener = (rawReq, rawRes) => this.preRouter.requestListener(rawReq, rawRes);
 
   protected override addDefaultProvidersPerApp() {
-    this.baseMeta.providersPerApp.unshift({ token: SERVER, useFactory: () => this.server });
+    this.normalizedModuleMeta.providersPerApp.unshift({ token: SERVER, useFactory: () => this.server });
     super.addDefaultProvidersPerApp();
   }
 

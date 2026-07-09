@@ -3,7 +3,7 @@ import { format } from 'node:util';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyObj, ModuleType, ModRefId } from '#types/mix.js';
 import { ModuleWithParams } from '#decorators/module-decorator-options.js';
-import { BaseInitMeta, BaseMeta } from '#init/base-meta.js';
+import { NormalizedInitMeta, NormalizedModuleMeta } from '#init/base-meta.js';
 import { isModuleWithParams, isRootModule } from '#decorators/type-guards.js';
 import { clearDebugClassNames, getDebugClassName } from '#utils/get-debug-class-name.js';
 import { objectKeys } from '#utils/object-keys.js';
@@ -25,7 +25,7 @@ import type { Injector } from '#di/injector.js';
 import { Reflector } from '#di/reflector.js';
 import { resolveForwardRef, type ForwardRefFn } from '#di/forward-ref.js';
 
-export type ModulesMap = Map<ModRefId, BaseMeta>;
+export type ModulesMap = Map<ModRefId, NormalizedModuleMeta>;
 export type ModulesMapId = Map<string, ModRefId>;
 export type ModuleId = string | ModRefId;
 
@@ -55,41 +55,41 @@ export class ModuleManager {
     'importsWithParams',
     'exportsModules',
     'exportsWithParams',
-  ] satisfies (keyof BaseInitMeta)[];
+  ] satisfies (keyof NormalizedInitMeta)[];
 
   constructor(protected systemLogMediator: SystemLogMediator) {}
 
   /**
-   * Creates a snapshot of {@link BaseMeta} for the root module, stores locally and returns it.
+   * Creates a snapshot of {@link NormalizedModuleMeta} for the root module, stores locally and returns it.
    * You can also get the result this way: `moduleManager.getMetadata('root')`.
    */
-  scanRootModule(appModule: ModuleType): BaseMeta {
+  scanRootModule(appModule: ModuleType): NormalizedModuleMeta {
     if (this.snapshotMap.size) {
       this.systemLogMediator.forbiddenRescanRootModule(this);
-      return this.getBaseMeta('root', true);
+      return this.getNormalizedModuleMeta('root', true);
     }
     this.providersPerApp = [];
     if (!Reflector.getClassLevelMeta(appModule, isRootModule)) {
       throw new RootNotHaveDecorator(appModule.name);
     }
 
-    const baseMeta = this.scanModule(appModule);
+    const normalizedModuleMeta = this.scanModule(appModule);
     this.injectorPerModMap.clear();
     this.unfinishedScanModules.clear();
     this.scanedModules.clear();
     clearDebugClassNames();
     this.mapId.set('root', appModule);
     this.saveSnapshot();
-    return baseMeta;
+    return normalizedModuleMeta;
   }
 
   scanModule(modRefId: ModRefId | ForwardRefFn<ModuleType>, allInitHooks?: AllInitHooks, saveToShapshot?: boolean) {
     allInitHooks ??= new Map();
     modRefId = resolveForwardRef(modRefId);
-    const baseMeta = this.normalizeMetadata(modRefId, allInitHooks);
+    const normalizedModuleMeta = this.normalizeMetadata(modRefId, allInitHooks);
     const importsOrExports: (ModuleWithParams | ModuleType)[] = [];
-    baseMeta.mInitHooks.forEach((initHooks, decorator) => {
-      const meta = baseMeta.initMeta.get(decorator);
+    normalizedModuleMeta.mInitHooks.forEach((initHooks, decorator) => {
+      const meta = normalizedModuleMeta.initMeta.get(decorator);
       if (meta) {
         importsOrExports.push(...initHooks.getModulesToScan(meta));
       }
@@ -97,7 +97,7 @@ export class ModuleManager {
 
     // Merging arrays with this props in one array.
     const inputs = this.propsWithModules
-      .map((p) => baseMeta[p])
+      .map((p) => normalizedModuleMeta[p])
       .reduce<ModRefId[]>((prev, curr) => prev.concat(curr), importsOrExports);
 
     for (const input of inputs) {
@@ -105,46 +105,46 @@ export class ModuleManager {
         continue;
       }
       this.unfinishedScanModules.add(input);
-      this.scanModule(input, baseMeta.allInitHooks, saveToShapshot);
+      this.scanModule(input, normalizedModuleMeta.allInitHooks, saveToShapshot);
       this.unfinishedScanModules.delete(input);
       this.scanedModules.add(input);
     }
 
-    this.callInitHooksAfterScan(baseMeta);
+    this.callInitHooksAfterScan(normalizedModuleMeta);
 
-    if (baseMeta.id) {
-      this.mapId.set(baseMeta.id, modRefId);
-      this.systemLogMediator.moduleHasId(this, baseMeta.id);
+    if (normalizedModuleMeta.id) {
+      this.mapId.set(normalizedModuleMeta.id, modRefId);
+      this.systemLogMediator.moduleHasId(this, normalizedModuleMeta.id);
     }
-    const providersPerApp = isRootModule(baseMeta) ? [] : baseMeta.providersPerApp;
+    const providersPerApp = isRootModule(normalizedModuleMeta) ? [] : normalizedModuleMeta.providersPerApp;
     this.providersPerApp.push(...providersPerApp);
     if (saveToShapshot) {
-      this.snapshotMap.set(modRefId, baseMeta);
+      this.snapshotMap.set(modRefId, normalizedModuleMeta);
     } else {
-      this.map.set(modRefId, baseMeta);
+      this.map.set(modRefId, normalizedModuleMeta);
     }
-    baseMeta.allInitHooks.forEach((initHooks, decorator) => allInitHooks.set(decorator, initHooks));
-    return baseMeta;
+    normalizedModuleMeta.allInitHooks.forEach((initHooks, decorator) => allInitHooks.set(decorator, initHooks));
+    return normalizedModuleMeta;
   }
 
   /**
-   * Returns a mutable {@link BaseMeta}. Therefore, if you retrieve a {@link BaseMeta} from this method and then modify it,
-   * the next call to this method will return the already modified {@link BaseMeta}.
+   * Returns a mutable {@link NormalizedModuleMeta}. Therefore, if you retrieve a {@link NormalizedModuleMeta} from this method and then modify it,
+   * the next call to this method will return the already modified {@link NormalizedModuleMeta}.
    */
-  getBaseMeta(moduleId: ModuleId, throwErrIfNotFound?: boolean): BaseMeta | undefined;
-  getBaseMeta(moduleId: ModuleId, throwErrIfNotFound: true): BaseMeta;
-  getBaseMeta(moduleId: ModuleId, throwErrIfNotFound?: boolean) {
-    let baseMeta: BaseMeta | undefined;
+  getNormalizedModuleMeta(moduleId: ModuleId, throwErrIfNotFound?: boolean): NormalizedModuleMeta | undefined;
+  getNormalizedModuleMeta(moduleId: ModuleId, throwErrIfNotFound: true): NormalizedModuleMeta;
+  getNormalizedModuleMeta(moduleId: ModuleId, throwErrIfNotFound?: boolean) {
+    let normalizedModuleMeta: NormalizedModuleMeta | undefined;
     if (typeof moduleId == 'string') {
       const mapId = this.mapId.get(moduleId);
       if (mapId) {
-        baseMeta = this.map.get(mapId);
+        normalizedModuleMeta = this.map.get(mapId);
       }
     } else {
-      baseMeta = this.map.get(moduleId);
+      normalizedModuleMeta = this.map.get(moduleId);
     }
 
-    if (throwErrIfNotFound && !baseMeta) {
+    if (throwErrIfNotFound && !normalizedModuleMeta) {
       let moduleName: string;
       if (typeof moduleId == 'string') {
         moduleName = moduleId;
@@ -154,7 +154,7 @@ export class ModuleManager {
       throw new ModuleIdNotFoundInModuleManager(moduleName);
     }
 
-    return baseMeta;
+    return normalizedModuleMeta;
   }
 
   /**
@@ -164,15 +164,15 @@ export class ModuleManager {
    * @param targetModuleId Module ID to which the input module will be added.
    */
   addImport(inputModule: ModRefId, targetModuleId: ModuleId = 'root'): boolean | void {
-    const targetBaseMeta = this.getBaseMetaFromSnapshot(targetModuleId);
-    if (!targetBaseMeta) {
+    const targetNormalizedModuleMeta = this.getNormalizedModuleMetaFromSnapshot(targetModuleId);
+    if (!targetNormalizedModuleMeta) {
       const modName = getDebugClassName(inputModule);
       const modIdStr = format(targetModuleId).slice(0, 50);
       throw new FailAddingToImports(modName, modIdStr);
     }
 
     const prop = isModuleWithParams(inputModule) ? 'importsWithParams' : 'importsModules';
-    if (targetBaseMeta[prop].some((imp: ModRefId) => imp === inputModule)) {
+    if (targetNormalizedModuleMeta[prop].some((imp: ModRefId) => imp === inputModule)) {
       const modIdStr = format(targetModuleId).slice(0, 50);
       this.systemLogMediator.moduleAlreadyImported(this, inputModule, modIdStr);
       return false;
@@ -180,9 +180,9 @@ export class ModuleManager {
 
     this.startTransaction();
     try {
-      (targetBaseMeta[prop] as ModRefId[]).push(inputModule);
+      (targetNormalizedModuleMeta[prop] as ModRefId[]).push(inputModule);
       this.scanModule(inputModule, undefined, true);
-      this.systemLogMediator.successfulAddedModuleToImport(this, inputModule, targetBaseMeta.name);
+      this.systemLogMediator.successfulAddedModuleToImport(this, inputModule, targetNormalizedModuleMeta.name);
       return true;
     } catch (err) {
       this.rollback(err as Error);
@@ -193,20 +193,20 @@ export class ModuleManager {
    * @param targetModuleId Module ID from where the input module will be removed.
    */
   removeImport(inputModuleId: ModuleId, targetModuleId: ModuleId = 'root'): boolean | void {
-    const inputBaseMeta = this.getBaseMetaFromSnapshot(inputModuleId);
-    if (!inputBaseMeta) {
+    const inputNormalizedModuleMeta = this.getNormalizedModuleMetaFromSnapshot(inputModuleId);
+    if (!inputNormalizedModuleMeta) {
       const modIdStr = format(inputModuleId).slice(0, 50);
       this.systemLogMediator.moduleNotFound(this, modIdStr);
       return false;
     }
 
-    const targetMeta = this.getBaseMetaFromSnapshot(targetModuleId);
+    const targetMeta = this.getNormalizedModuleMetaFromSnapshot(targetModuleId);
     if (!targetMeta) {
       const modIdStr = format(targetModuleId).slice(0, 50);
-      throw new FailRemovingImport(inputBaseMeta.name, modIdStr);
+      throw new FailRemovingImport(inputNormalizedModuleMeta.name, modIdStr);
     }
-    const prop = isModuleWithParams(inputBaseMeta.modRefId) ? 'importsWithParams' : 'importsModules';
-    const index = targetMeta[prop].findIndex((imp: ModRefId) => imp === inputBaseMeta.modRefId);
+    const prop = isModuleWithParams(inputNormalizedModuleMeta.modRefId) ? 'importsWithParams' : 'importsModules';
+    const index = targetMeta[prop].findIndex((imp: ModRefId) => imp === inputNormalizedModuleMeta.modRefId);
     if (index == -1) {
       const modIdStr = format(inputModuleId).slice(0, 50);
       this.systemLogMediator.moduleNotFound(this, modIdStr);
@@ -217,12 +217,12 @@ export class ModuleManager {
     try {
       targetMeta[prop].splice(index, 1);
       if (!this.includesInSomeModule(inputModuleId, 'root')) {
-        if (inputBaseMeta.id) {
-          this.snapshotMapId.delete(inputBaseMeta.id);
+        if (inputNormalizedModuleMeta.id) {
+          this.snapshotMapId.delete(inputNormalizedModuleMeta.id);
         }
-        this.snapshotMap.delete(inputBaseMeta.modRefId);
+        this.snapshotMap.delete(inputNormalizedModuleMeta.modRefId);
       }
-      this.systemLogMediator.moduleSuccessfulRemoved(this, inputBaseMeta.name, targetMeta.name);
+      this.systemLogMediator.moduleSuccessfulRemoved(this, inputNormalizedModuleMeta.name, targetMeta.name);
       return true;
     } catch (err) {
       this.rollback(err as Error);
@@ -235,7 +235,7 @@ export class ModuleManager {
       return false;
     }
 
-    this.snapshotMap.forEach((baseMeta, key) => this.oldSnapshotMap.set(key, this.copyBaseMeta(baseMeta)));
+    this.snapshotMap.forEach((normalizedModuleMeta, key) => this.oldSnapshotMap.set(key, this.copyNormalizedModuleMeta(normalizedModuleMeta)));
     this.oldSnapshotMapId = new Map(this.snapshotMapId);
 
     return true;
@@ -261,11 +261,11 @@ export class ModuleManager {
   }
 
   /**
-   * Resets changes made to {@link BaseMeta} after normalization.
+   * Resets changes made to {@link NormalizedModuleMeta} after normalization.
    */
   reset() {
     this.map = new Map();
-    this.snapshotMap.forEach((baseMeta, key) => this.map.set(key, this.copyBaseMeta(baseMeta)));
+    this.snapshotMap.forEach((normalizedModuleMeta, key) => this.map.set(key, this.copyNormalizedModuleMeta(normalizedModuleMeta)));
     this.mapId = new Map(this.snapshotMapId);
     return this;
   }
@@ -327,18 +327,18 @@ export class ModuleManager {
     return this.getInjectorPerMod(moduleId, throwErrIfNotFound)?.get(Mod);
   }
 
-  protected getBaseMetaFromSnapshot(moduleId: ModuleId) {
-    let baseMeta: BaseMeta | undefined;
+  protected getNormalizedModuleMetaFromSnapshot(moduleId: ModuleId) {
+    let normalizedModuleMeta: NormalizedModuleMeta | undefined;
     if (typeof moduleId == 'string') {
       const mapId = this.snapshotMapId.get(moduleId);
       if (mapId) {
-        baseMeta = this.snapshotMap.get(mapId);
+        normalizedModuleMeta = this.snapshotMap.get(mapId);
       }
     } else {
-      baseMeta = this.snapshotMap.get(moduleId);
+      normalizedModuleMeta = this.snapshotMap.get(moduleId);
     }
 
-    return baseMeta;
+    return normalizedModuleMeta;
   }
 
   /**
@@ -347,26 +347,26 @@ export class ModuleManager {
    * executed for the current module. The result of executing these init hooks is objects with initialized
    * properties, into which certain metadata can later be imported.
    */
-  protected callInitHooksAfterScan(baseMeta: BaseMeta) {
-    baseMeta.allInitHooks.forEach((initHooks, decorator) => {
-      if (!baseMeta.mInitHooks.has(decorator)) {
-        const meta = initHooks.clone().normalize(baseMeta);
+  protected callInitHooksAfterScan(normalizedModuleMeta: NormalizedModuleMeta) {
+    normalizedModuleMeta.allInitHooks.forEach((initHooks, decorator) => {
+      if (!normalizedModuleMeta.mInitHooks.has(decorator)) {
+        const meta = initHooks.clone().normalize(normalizedModuleMeta);
         if (meta) {
-          baseMeta.initMeta.set(decorator, meta);
+          normalizedModuleMeta.initMeta.set(decorator, meta);
         }
       }
     });
   }
 
-  protected copyBaseMeta(baseMeta: BaseMeta) {
-    baseMeta = { ...(baseMeta || ({} as BaseMeta)) };
+  protected copyNormalizedModuleMeta(normalizedModuleMeta: NormalizedModuleMeta) {
+    normalizedModuleMeta = { ...(normalizedModuleMeta || ({} as NormalizedModuleMeta)) };
 
-    objectKeys(baseMeta).forEach((p) => {
-      if (Array.isArray(baseMeta[p])) {
-        (baseMeta as any)[p] = baseMeta[p].slice();
+    objectKeys(normalizedModuleMeta).forEach((p) => {
+      if (Array.isArray(normalizedModuleMeta[p])) {
+        (normalizedModuleMeta as any)[p] = normalizedModuleMeta[p].slice();
       }
     });
-    return baseMeta;
+    return normalizedModuleMeta;
   }
 
   /**
@@ -377,7 +377,7 @@ export class ModuleManager {
    * @param targetModuleId Module where to search `inputModule`.
    */
   protected includesInSomeModule(inputModuleId: ModuleId, targetModuleId: ModuleId): boolean {
-    const targetMeta = this.getBaseMetaFromSnapshot(targetModuleId);
+    const targetMeta = this.getNormalizedModuleMetaFromSnapshot(targetModuleId);
     if (!targetMeta) {
       return false;
     }
@@ -392,7 +392,7 @@ export class ModuleManager {
     );
   }
 
-  protected normalizeMetadata(modRefId: ModRefId, allInitHooks: AllInitHooks): BaseMeta {
+  protected normalizeMetadata(modRefId: ModRefId, allInitHooks: AllInitHooks): NormalizedModuleMeta {
     try {
       return this.moduleNormalizer.normalize(modRefId, allInitHooks);
     } catch (err: any) {
@@ -407,7 +407,7 @@ export class ModuleManager {
     if (this.snapshotMap.size) {
       throw new ProhibitSavingModulesSnapshot();
     } else {
-      this.map.forEach((baseMeta, modRefId) => this.snapshotMap.set(modRefId, this.copyBaseMeta(baseMeta)));
+      this.map.forEach((normalizedModuleMeta, modRefId) => this.snapshotMap.set(modRefId, this.copyNormalizedModuleMeta(normalizedModuleMeta)));
       this.snapshotMapId = new Map(this.mapId);
     }
   }

@@ -7,7 +7,7 @@ import type { ExtensionClass } from '#extension/extension-types.js';
 import type { GroupToken } from '#di/key-registry.js';
 import type { MultiProvider } from '#di/utils.js';
 
-export class BaseInitMeta<A extends AnyObj = AnyObj> {
+export class NormalizedInitMeta<A extends AnyObj = AnyObj> {
   /**
    * The module ID.
    */
@@ -44,26 +44,26 @@ export class BaseInitMeta<A extends AnyObj = AnyObj> {
 
 /**
  * Creates a {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy | Proxy}
- * instance to forward property value assignments from the `InitMeta` instance to the {@link BaseMeta} instance. Here,
+ * instance to forward property value assignments from the `InitMeta` instance to the {@link NormalizedModuleMeta} instance. Here,
  * `InitMeta` refers to the extended interface of normalized data that provides init hooks. This is done to simplify
- * synchronization between {@link BaseMeta} and the metadata from init decorators.
+ * synchronization between {@link NormalizedModuleMeta} and the metadata from init decorators.
  */
-export function getProxyForInitMeta<T extends BaseInitMeta>(baseMeta: BaseMeta, InitMetaClass: Class<T>): T {
+export function getProxyForInitMeta<T extends NormalizedInitMeta>(normalizedModuleMeta: NormalizedModuleMeta, InitMetaClass: Class<T>): T {
   return new Proxy(new InitMetaClass(), {
-    get(meta, prop: keyof BaseMeta, proxy) {
-      if (Reflect.has(baseMeta, prop)) {
-        return Reflect.get(baseMeta, prop, proxy);
+    get(meta, prop: keyof NormalizedModuleMeta, proxy) {
+      if (Reflect.has(normalizedModuleMeta, prop)) {
+        return Reflect.get(normalizedModuleMeta, prop, proxy);
       } else {
         return Reflect.get(meta, prop, proxy);
       }
     },
-    set(meta, prop: keyof BaseMeta, value, proxy) {
-      if (Reflect.has(baseMeta, prop) && Reflect.has(meta, prop)) {
+    set(meta, prop: keyof NormalizedModuleMeta, value, proxy) {
+      if (Reflect.has(normalizedModuleMeta, prop) && Reflect.has(meta, prop)) {
         // @todo Create special error
-        const msg = `${prop} is reserved for internal use by BaseMeta. You cannot use ${InitMetaClass.name}.${prop}.`;
+        const msg = `${prop} is reserved for internal use by NormalizedModuleMeta. You cannot use ${InitMetaClass.name}.${prop}.`;
         throw new TypeError(msg);
-      } else if (Reflect.has(baseMeta, prop)) {
-        return Reflect.set(baseMeta, prop, value, proxy);
+      } else if (Reflect.has(normalizedModuleMeta, prop)) {
+        return Reflect.set(normalizedModuleMeta, prop, value, proxy);
       } else {
         return Reflect.set(meta, prop, value, proxy);
       }
@@ -74,10 +74,10 @@ export function getProxyForInitMeta<T extends BaseInitMeta>(baseMeta: BaseMeta, 
 /**
  * Normalized metadata taken from the `rootModule` or `featureModule` decorator.
  */
-export class BaseMeta<
+export class NormalizedModuleMeta<
   TypeOfModule extends AnyObj = AnyObj,
   ExtensionMeta extends AnyObj = AnyObj,
-> extends BaseInitMeta<ExtensionMeta> {
+> extends NormalizedInitMeta<ExtensionMeta> {
   /**
    * Metadata returned by the decorator transformer for the module.
    */

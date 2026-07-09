@@ -1,6 +1,6 @@
 import type {
   Provider,
-  BaseMeta,
+  NormalizedModuleMeta,
   AppProviders,
   ModRefId,
   ModuleManager,
@@ -23,7 +23,7 @@ export class RestProviderImport<T extends Provider = Provider> {
  * Metadata collected using `ShallowModulesImporter`. The target for this metadata is `DeepModulesImporter`.
  */
 export class RestShallowImports {
-  baseMeta: BaseMeta;
+  normalizedModuleMeta: NormalizedModuleMeta;
   prefixPerMod: string;
   guards1: GuardPerMod1[];
   /**
@@ -53,7 +53,7 @@ export class RestProvidersOnly {
  */
 
 export class RestMetadataPerMod2 {
-  baseMeta: BaseMeta;
+  normalizedModuleMeta: NormalizedModuleMeta;
   meta: RestInitMeta;
   guards1: GuardPerMod1[];
   prefixPerMod: string;
@@ -63,7 +63,7 @@ export class RestMetadataPerMod2 {
 export interface ExportAppProvidersConfig {
   moduleManager: ModuleManager;
   appProviders: AppProviders;
-  baseMeta: BaseMeta;
+  normalizedModuleMeta: NormalizedModuleMeta;
 }
 
 export interface ImportModulesShallowConfig {

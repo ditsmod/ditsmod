@@ -1,4 +1,4 @@
-import type { ModRefId, BaseMeta, InitDecorator, Provider, ForwardRefFn, ModuleType } from '@ditsmod/core';
+import type { ModRefId, NormalizedModuleMeta, InitDecorator, Provider, ForwardRefFn, ModuleType } from '@ditsmod/core';
 import { Reflector, InitHooks } from '@ditsmod/core';
 
 import type { RestInitDecoratorOptions, RestModuleParams } from '#init/rest-init-raw-meta.js';
@@ -44,8 +44,8 @@ export function transformFeatureMeta(data?: RestInitDecoratorOptions): InitHooks
 export class RestInitHooks extends InitHooks<RestInitDecoratorOptions> {
   override hostModule = RestModule;
 
-  override normalize(baseMeta: BaseMeta): RestInitMeta {
-    return new RestModuleNormalizer().normalize(baseMeta, this.decoratorOptions);
+  override normalize(normalizedModuleMeta: NormalizedModuleMeta): RestInitMeta {
+    return new RestModuleNormalizer().normalize(normalizedModuleMeta, this.decoratorOptions);
   }
 
   override getModulesToScan(meta?: RestInitMeta): RestModRefId[] {

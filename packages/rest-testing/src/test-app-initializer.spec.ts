@@ -1,5 +1,5 @@
 import type { ModRefId, Provider } from '@ditsmod/core';
-import { BaseMeta, Providers } from '@ditsmod/core';
+import { NormalizedModuleMeta, Providers } from '@ditsmod/core';
 import { RestInitMeta, initRest } from '@ditsmod/rest';
 
 import { TestAppInitializer } from '#app/test-app-initializer.js';
@@ -9,7 +9,7 @@ describe('TestAppInitializer', () => {
   class MockTestAppInitializer extends TestAppInitializer {
     override mAdditionalProviders = new Map<ModRefId, ProvidersOnly<Provider[]>>();
 
-    override overrideMetaAfterStage1(modRefId: ModRefId, providersOnly: BaseMeta) {
+    override overrideMetaAfterStage1(modRefId: ModRefId, providersOnly: NormalizedModuleMeta) {
       return super.overrideMetaAfterStage1(modRefId, providersOnly);
     }
   }
@@ -59,20 +59,20 @@ describe('TestAppInitializer', () => {
         providersPerMod: [Provider1],
       };
       mock.addProvidersToModule(modRefId, providersMeta1);
-      const baseMeta = new BaseMeta();
-      baseMeta.initMeta.set(initRest, new RestInitMeta());
-      baseMeta.providersPerApp.push(Provider0);
-      baseMeta.providersPerMod.push(Provider0);
+      const normalizedModuleMeta = new NormalizedModuleMeta();
+      normalizedModuleMeta.initMeta.set(initRest, new RestInitMeta());
+      normalizedModuleMeta.providersPerApp.push(Provider0);
+      normalizedModuleMeta.providersPerMod.push(Provider0);
 
-      baseMeta.modRefId = fakeModRefId;
-      mock.overrideMetaAfterStage1(baseMeta.modRefId, baseMeta);
-      expect(baseMeta.providersPerApp).toEqual([Provider0]);
-      expect(baseMeta.providersPerMod).toEqual([Provider0]);
+      normalizedModuleMeta.modRefId = fakeModRefId;
+      mock.overrideMetaAfterStage1(normalizedModuleMeta.modRefId, normalizedModuleMeta);
+      expect(normalizedModuleMeta.providersPerApp).toEqual([Provider0]);
+      expect(normalizedModuleMeta.providersPerMod).toEqual([Provider0]);
 
-      baseMeta.modRefId = modRefId;
-      mock.overrideMetaAfterStage1(baseMeta.modRefId, baseMeta);
-      expect(baseMeta.providersPerApp).toEqual([Provider0, Provider1]);
-      expect(baseMeta.providersPerMod).toEqual([Provider0, Provider1]);
+      normalizedModuleMeta.modRefId = modRefId;
+      mock.overrideMetaAfterStage1(normalizedModuleMeta.modRefId, normalizedModuleMeta);
+      expect(normalizedModuleMeta.providersPerApp).toEqual([Provider0, Provider1]);
+      expect(normalizedModuleMeta.providersPerMod).toEqual([Provider0, Provider1]);
     });
   });
 });

@@ -3,7 +3,7 @@ import type { AnyObj, RequireProps } from '#types/mix.js';
 import type { ModuleWithParams } from '#decorators/module-decorator-options.js';
 import { ModuleDecoratorOptions } from '#decorators/module-decorator-options.js';
 import { InitHooks } from '#decorators/init-hooks-and-metadata.js';
-import { BaseMeta } from '#init/base-meta.js';
+import { NormalizedModuleMeta } from '#init/base-meta.js';
 import { RootDecoratorOptions } from './root-module.js';
 
 export function isParamsWithMwp(arg?: AnyObj): arg is { mwp: ModuleWithParams } {
@@ -11,17 +11,17 @@ export function isParamsWithMwp(arg?: AnyObj): arg is { mwp: ModuleWithParams } 
 }
 
 export function isRootModule(decorAndVal?: DecoratorAndValue): decorAndVal is DecoratorAndValue<RootDecoratorOptions>;
-export function isRootModule(baseMeta?: BaseMeta): baseMeta is BaseMeta<RootDecoratorOptions>;
+export function isRootModule(normalizedModuleMeta?: NormalizedModuleMeta): normalizedModuleMeta is NormalizedModuleMeta<RootDecoratorOptions>;
 export function isRootModule(decoratorOptions?: AnyObj): decoratorOptions is RootDecoratorOptions;
 export function isRootModule(
-  arg?: DecoratorAndValue | RootDecoratorOptions | BaseMeta,
+  arg?: DecoratorAndValue | RootDecoratorOptions | NormalizedModuleMeta,
 ): arg is DecoratorAndValue<RootDecoratorOptions> {
   if (arg instanceof DecoratorAndValue) {
     if (arg.value instanceof InitHooks) {
       return arg.value.moduleRole === 'root';
     }
     return arg.value instanceof RootDecoratorOptions;
-  } else if (arg instanceof BaseMeta) {
+  } else if (arg instanceof NormalizedModuleMeta) {
     if (arg.decoratorOptions instanceof InitHooks) {
       return arg.decoratorOptions.moduleRole === 'root';
     }
@@ -33,17 +33,17 @@ export function isRootModule(
 }
 
 export function isFeatureModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<ModuleDecoratorOptions>;
-export function isFeatureModule(baseMeta?: BaseMeta): baseMeta is BaseMeta<ModuleDecoratorOptions>;
+export function isFeatureModule(normalizedModuleMeta?: NormalizedModuleMeta): normalizedModuleMeta is NormalizedModuleMeta<ModuleDecoratorOptions>;
 export function isFeatureModule(arg?: AnyObj): arg is ModuleDecoratorOptions;
 export function isFeatureModule(
-  arg?: DecoratorAndValue | ModuleDecoratorOptions | BaseMeta,
+  arg?: DecoratorAndValue | ModuleDecoratorOptions | NormalizedModuleMeta,
 ): arg is DecoratorAndValue<ModuleDecoratorOptions> {
   if (arg instanceof DecoratorAndValue) {
     if (arg.value instanceof InitHooks) {
       return arg.value.moduleRole === 'feature';
     }
     return arg.value instanceof ModuleDecoratorOptions;
-  } else if (arg instanceof BaseMeta) {
+  } else if (arg instanceof NormalizedModuleMeta) {
     if (arg.decoratorOptions instanceof InitHooks) {
       return arg.decoratorOptions.moduleRole === 'feature';
     }

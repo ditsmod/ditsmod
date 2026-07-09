@@ -114,7 +114,7 @@ export class ModuleMustHaveControllers extends CustomError {
   }
 }
 /**
- * `Appends to "${baseMeta.name}" failed: "${appendedBaseMeta.name}" includes in both: imports and appends arrays.`
+ * `Appends to "${normalizedModuleMeta.name}" failed: "${appendedNormalizedModuleMeta.name}" includes in both: imports and appends arrays.`
  */
 export class ModuleIncludesInImportsAndAppends extends CustomError {
   constructor(moduleName: string, appendedModuleName: string) {

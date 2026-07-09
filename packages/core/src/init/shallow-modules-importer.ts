@@ -1,5 +1,5 @@
 import { Reflector } from '#di/reflector.js';
-import type { BaseMeta } from '#init/base-meta.js';
+import type { NormalizedModuleMeta } from '#init/base-meta.js';
 import type { ModuleManager } from '#init/module-manager.js';
 import type { AppProviders } from '#types/metadata-per-mod.js';
 import { ProviderImport } from '#types/metadata-per-mod.js';
@@ -48,7 +48,7 @@ export class ShallowModulesImporter {
   /**
    * Module metadata.
    */
-  protected baseMeta: BaseMeta;
+  protected normalizedModuleMeta: NormalizedModuleMeta;
   protected resolvedCollision = new Map<any, Set<Level>>();
 
   protected importedProvidersPerMod = new Map<any, ProviderImport>();
@@ -72,10 +72,10 @@ export class ShallowModulesImporter {
 
   exportAppProviders(moduleManager: ModuleManager): AppProviders {
     this.moduleManager = moduleManager;
-    const baseMeta = moduleManager.getBaseMeta('root', true);
-    this.moduleName = baseMeta.name;
-    this.baseMeta = baseMeta;
-    this.importProvidersAndExtensions(baseMeta);
+    const normalizedModuleMeta = moduleManager.getNormalizedModuleMeta('root', true);
+    this.moduleName = normalizedModuleMeta.name;
+    this.normalizedModuleMeta = normalizedModuleMeta;
+    this.importProvidersAndExtensions(normalizedModuleMeta);
     // this.checkAllCollisionsWithLevelsMix();
     const mInitValue = new Map<AnyFn, AnyObj>();
     const appProviders: AppProviders = {
@@ -91,8 +91,8 @@ export class ShallowModulesImporter {
       mInitValue,
     };
 
-    baseMeta.allInitHooks.forEach((initHooks, decorator) => {
-      const val = initHooks.exportAppProviders({ moduleManager, appProviders, baseMeta });
+    normalizedModuleMeta.allInitHooks.forEach((initHooks, decorator) => {
+      const val = initHooks.exportAppProviders({ moduleManager, appProviders, normalizedModuleMeta });
       mInitValue.set(decorator, val);
     });
 
@@ -110,12 +110,12 @@ export class ShallowModulesImporter {
     moduleManager: ModuleManager;
     unfinishedScanModules: Set<ModRefId>;
   }): Map<ModRefId, ShallowImports> {
-    const baseMeta = moduleManager.getBaseMeta(modRefId, true);
+    const normalizedModuleMeta = moduleManager.getNormalizedModuleMeta(modRefId, true);
     this.moduleManager = moduleManager;
     this.appProviders = appProviders;
-    this.moduleName = baseMeta.name;
+    this.moduleName = normalizedModuleMeta.name;
     this.unfinishedScanModules = unfinishedScanModules;
-    this.baseMeta = baseMeta;
+    this.normalizedModuleMeta = normalizedModuleMeta;
     this.importAndScanModules();
 
     let perMod: Map<any, ProviderImport>;
@@ -127,7 +127,7 @@ export class ShallowModulesImporter {
     let extensionProviders: Map<ModRefId, Provider[]>;
     let extensionGroupTokens: Map<ModRefId, Map<ExtensionClass, GroupToken>>;
     let aExtensionConfig: ExtensionConfig[];
-    if (baseMeta.isExternal) {
+    if (normalizedModuleMeta.isExternal) {
       // External modules do not require app providers and extensions from the application.
       perMod = new Map([...this.importedProvidersPerMod]);
       perRou = new Map([...this.importedProvidersPerRou]);
@@ -140,8 +140,8 @@ export class ShallowModulesImporter {
       aExtensionConfig = [...this.aImportedExtensionConfig];
     } else {
       this.appProviders.mInitValue.forEach(({ initHooks }, decorator) => {
-        if (initHooks && !baseMeta.allInitHooks.has(decorator)) {
-          baseMeta.allInitHooks.set(decorator, initHooks);
+        if (initHooks && !normalizedModuleMeta.allInitHooks.has(decorator)) {
+          normalizedModuleMeta.allInitHooks.set(decorator, initHooks);
         }
       });
       perMod = new Map([...this.appProviders.importedProvidersPerMod, ...this.importedProvidersPerMod]);
@@ -161,13 +161,13 @@ export class ShallowModulesImporter {
       aExtensionConfig = [...this.appProviders.aImportedExtensionConfig, ...this.aImportedExtensionConfig];
     }
 
-    const allExtensionConfigs = baseMeta.aExtensionConfig.concat(aExtensionConfig);
+    const allExtensionConfigs = normalizedModuleMeta.aExtensionConfig.concat(aExtensionConfig);
     this.checkExtensionsGraph(allExtensionConfigs);
     const aOrderedExtensions = topologicalSort<ExtensionClass, ExtensionConfigBase>(allExtensionConfigs, true);
 
     return this.shallowImportsMap.set(
       modRefId,
-      new ShallowImports(this.baseMeta, aOrderedExtensions, {
+      new ShallowImports(this.normalizedModuleMeta, aOrderedExtensions, {
         perMod,
         perRou,
         perReq,
@@ -183,8 +183,8 @@ export class ShallowModulesImporter {
   protected importAndScanModules() {
     this.importModules();
 
-    this.baseMeta.allInitHooks.forEach((initHooks, decorator) => {
-      const meta = this.baseMeta.initMeta.get(decorator);
+    this.normalizedModuleMeta.allInitHooks.forEach((initHooks, decorator) => {
+      const meta = this.normalizedModuleMeta.initMeta.get(decorator);
       for (const modRefId of initHooks.getModulesToScan(meta)) {
         if (this.unfinishedScanModules.has(modRefId)) {
           continue;
@@ -195,10 +195,10 @@ export class ShallowModulesImporter {
   }
 
   protected importModules() {
-    const aModRefIds = this.baseMeta.importsModules.concat(this.baseMeta.importsWithParams as any[]) as ModRefId[];
+    const aModRefIds = this.normalizedModuleMeta.importsModules.concat(this.normalizedModuleMeta.importsWithParams as any[]) as ModRefId[];
     for (const modRefId of aModRefIds) {
-      const baseMeta = this.moduleManager.getBaseMeta(modRefId, true);
-      this.importProvidersAndExtensions(baseMeta);
+      const normalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(modRefId, true);
+      this.importProvidersAndExtensions(normalizedModuleMeta);
       if (this.unfinishedScanModules.has(modRefId)) {
         continue;
       }
@@ -223,49 +223,49 @@ export class ShallowModulesImporter {
   /**
    * Recursively imports providers and extensions.
    *
-   * @param baseMeta1 Module metadata from where imports providers.
+   * @param normalizedModuleMeta1 Module metadata from where imports providers.
    */
-  protected importProvidersAndExtensions(baseMeta1: BaseMeta, reexporter?: ModRefId) {
-    const { modRefId, exportsModules, exportsWithParams } = baseMeta1;
+  protected importProvidersAndExtensions(normalizedModuleMeta1: NormalizedModuleMeta, reexporter?: ModRefId) {
+    const { modRefId, exportsModules, exportsWithParams } = normalizedModuleMeta1;
 
     for (const modRefId2 of [...exportsModules, ...exportsWithParams]) {
       if (this.unfinishedExportModules.has(modRefId2)) {
         continue;
       }
-      const baseMeta2 = this.moduleManager.getBaseMeta(modRefId2, true);
-      this.unfinishedExportModules.add(baseMeta2.modRefId);
-      this.importProvidersAndExtensions(baseMeta2, baseMeta1.modRefId); // Reexports module
-      this.unfinishedExportModules.delete(baseMeta2.modRefId);
+      const normalizedModuleMeta2 = this.moduleManager.getNormalizedModuleMeta(modRefId2, true);
+      this.unfinishedExportModules.add(normalizedModuleMeta2.modRefId);
+      this.importProvidersAndExtensions(normalizedModuleMeta2, normalizedModuleMeta1.modRefId); // Reexports module
+      this.unfinishedExportModules.delete(normalizedModuleMeta2.modRefId);
     }
 
-    this.addProviders('Mod', baseMeta1, reexporter);
-    this.addProviders('Rou', baseMeta1, reexporter);
-    this.addProviders('Req', baseMeta1, reexporter);
-    if (baseMeta1.exportedMultiProvidersPerMod.length) {
-      this.importedMultiProvidersPerMod.set(modRefId, baseMeta1.exportedMultiProvidersPerMod);
+    this.addProviders('Mod', normalizedModuleMeta1, reexporter);
+    this.addProviders('Rou', normalizedModuleMeta1, reexporter);
+    this.addProviders('Req', normalizedModuleMeta1, reexporter);
+    if (normalizedModuleMeta1.exportedMultiProvidersPerMod.length) {
+      this.importedMultiProvidersPerMod.set(modRefId, normalizedModuleMeta1.exportedMultiProvidersPerMod);
     }
-    if (baseMeta1.exportedMultiProvidersPerRou.length) {
-      this.importedMultiProvidersPerRou.set(modRefId, baseMeta1.exportedMultiProvidersPerRou);
+    if (normalizedModuleMeta1.exportedMultiProvidersPerRou.length) {
+      this.importedMultiProvidersPerRou.set(modRefId, normalizedModuleMeta1.exportedMultiProvidersPerRou);
     }
-    if (baseMeta1.exportedMultiProvidersPerReq.length) {
-      this.importedMultiProvidersPerReq.set(modRefId, baseMeta1.exportedMultiProvidersPerReq);
+    if (normalizedModuleMeta1.exportedMultiProvidersPerReq.length) {
+      this.importedMultiProvidersPerReq.set(modRefId, normalizedModuleMeta1.exportedMultiProvidersPerReq);
     }
-    if (baseMeta1.exportedExtensionProviders.length) {
-      this.importedExtensionProviders.set(baseMeta1.modRefId, baseMeta1.exportedExtensionProviders);
-      this.importedExtensionGroupTokens.set(baseMeta1.modRefId, baseMeta1.mExportedExtensionAsGroupToken);
-      this.aImportedExtensionConfig.push(...baseMeta1.aExportedExtensionConfig);
+    if (normalizedModuleMeta1.exportedExtensionProviders.length) {
+      this.importedExtensionProviders.set(normalizedModuleMeta1.modRefId, normalizedModuleMeta1.exportedExtensionProviders);
+      this.importedExtensionGroupTokens.set(normalizedModuleMeta1.modRefId, normalizedModuleMeta1.mExportedExtensionAsGroupToken);
+      this.aImportedExtensionConfig.push(...normalizedModuleMeta1.aExportedExtensionConfig);
     }
-    this.throwIfTryResolvingMultiprovidersCollisions(baseMeta1.name);
+    this.throwIfTryResolvingMultiprovidersCollisions(normalizedModuleMeta1.name);
   }
 
-  protected addProviders(level: Level, baseMeta: BaseMeta, reexporter?: ModRefId) {
-    baseMeta[`exportedProvidersPer${level}`].forEach((provider) => {
+  protected addProviders(level: Level, normalizedModuleMeta: NormalizedModuleMeta, reexporter?: ModRefId) {
+    normalizedModuleMeta[`exportedProvidersPer${level}`].forEach((provider) => {
       const token1 = getToken(provider);
       const providerImport = this[`importedProvidersPer${level}`].get(token1);
 
-      if (providerImport && providerImport.reexporter !== baseMeta.modRefId) {
-        this.checkCollisionsPerLevel(baseMeta.modRefId, level, token1, provider, providerImport);
-        const hasResolvedCollision = this.baseMeta[`resolvedCollisionPer${level}`].some(
+      if (providerImport && providerImport.reexporter !== normalizedModuleMeta.modRefId) {
+        this.checkCollisionsPerLevel(normalizedModuleMeta.modRefId, level, token1, provider, providerImport);
+        const hasResolvedCollision = this.normalizedModuleMeta[`resolvedCollisionPer${level}`].some(
           ([token2]) => token2 === token1,
         );
         if (hasResolvedCollision) {
@@ -277,7 +277,7 @@ export class ShallowModulesImporter {
         }
       } else {
         const newProviderImport = new ProviderImport();
-        newProviderImport.modRefId = baseMeta.modRefId;
+        newProviderImport.modRefId = normalizedModuleMeta.modRefId;
         newProviderImport.providers.push(provider);
         if (reexporter) {
           newProviderImport.reexporter = reexporter;
@@ -294,8 +294,8 @@ export class ShallowModulesImporter {
     provider: Provider,
     providerImport: ProviderImport,
   ) {
-    const declaredTokens = getTokens(this.baseMeta[`providersPer${level}`]);
-    const resolvedTokens = this.baseMeta[`resolvedCollisionPer${level}`].map(([token]) => token);
+    const declaredTokens = getTokens(this.normalizedModuleMeta[`providersPer${level}`]);
+    const resolvedTokens = this.normalizedModuleMeta[`resolvedCollisionPer${level}`].map(([token]) => token);
     const duplImpTokens = [...declaredTokens, ...resolvedTokens].includes(token) ? [] : [token];
     const collisions = getCollisions(duplImpTokens, [...providerImport.providers, provider]);
     if (collisions.length) {
@@ -306,20 +306,20 @@ export class ShallowModulesImporter {
         [token],
         [moduleName1, moduleName2],
         level,
-        this.baseMeta.isExternal,
+        this.normalizedModuleMeta.isExternal,
       );
     }
   }
 
   protected getResolvedCollisionPerLevel(level: Level, token1: any) {
-    const [token2, modRefId2] = this.baseMeta[`resolvedCollisionPer${level}`].find(([token2]) => token1 === token2)!;
+    const [token2, modRefId2] = this.normalizedModuleMeta[`resolvedCollisionPer${level}`].find(([token2]) => token1 === token2)!;
     const moduleName = getDebugClassName(modRefId2) || '""';
     const tokenName = token2.name || token2;
-    const baseMeta2 = this.moduleManager.getBaseMeta(modRefId2);
-    if (!baseMeta2) {
+    const normalizedModuleMeta2 = this.moduleManager.getNormalizedModuleMeta(modRefId2);
+    if (!normalizedModuleMeta2) {
       throw new ResolvingCollisionNotImportedInApplication(this.moduleName, moduleName, level, tokenName);
     }
-    const providers = getLastProviders(baseMeta2[`providersPer${level}`]).filter((p) => getToken(p) === token2);
+    const providers = getLastProviders(normalizedModuleMeta2[`providersPer${level}`]).filter((p) => getToken(p) === token2);
     if (!providers.length) {
       throw new ResolvingCollisionNotExistsOnThisLevel(this.moduleName, moduleName, level, tokenName);
     }
@@ -347,7 +347,7 @@ export class ShallowModulesImporter {
     levels.forEach((level) => {
       const tokens: any[] = [];
       this[`importedMultiProvidersPer${level}`].forEach((providers) => tokens.push(...getTokens(providers)));
-      this.baseMeta[`resolvedCollisionPer${level}`].some(([token]) => {
+      this.normalizedModuleMeta[`resolvedCollisionPer${level}`].some(([token]) => {
         if (tokens.includes(token)) {
           const tokenName = token.name || token;
           throw new CannotResolveCollisionForMultiProviderPerLevel(this.moduleName, moduleName, level, tokenName);
@@ -360,12 +360,12 @@ export class ShallowModulesImporter {
     this.checkCollisionsWithLevelsMix(this.moduleManager.providersPerApp, ['Mod', 'Rou', 'Req']);
     const providersPerMod = [
       ...defaultProvidersPerMod,
-      ...this.baseMeta.providersPerMod,
+      ...this.normalizedModuleMeta.providersPerMod,
       ...getImportedProviders(this.importedProvidersPerMod),
     ];
     this.checkCollisionsWithLevelsMix(providersPerMod, ['Rou', 'Req']);
     const mergedProvidersAndTokens = [
-      ...this.baseMeta.providersPerRou,
+      ...this.normalizedModuleMeta.providersPerRou,
       ...getImportedProviders(this.importedProvidersPerRou),
       // ...defaultProvidersPerReq,
     ];
@@ -375,20 +375,20 @@ export class ShallowModulesImporter {
   protected checkCollisionsWithLevelsMix(providers: any[], levels: Level[]) {
     getTokens(providers).forEach((token) => {
       for (const level of levels) {
-        const declaredTokens = getTokens(this.baseMeta[`providersPer${level}`]);
+        const declaredTokens = getTokens(this.normalizedModuleMeta[`providersPer${level}`]);
         const importedTokens = getImportedTokens(this[`importedProvidersPer${level}`]);
-        const resolvedTokens = this.baseMeta[`resolvedCollisionPer${level}`].map(([t]) => t);
+        const resolvedTokens = this.normalizedModuleMeta[`resolvedCollisionPer${level}`].map(([t]) => t);
         const collision = importedTokens.includes(token) && ![...declaredTokens, ...resolvedTokens].includes(token);
         if (collision) {
           const providerImport = this[`importedProvidersPer${level}`].get(token)!;
-          const hostModulePath = this.moduleManager.getBaseMeta(providerImport.modRefId)?.declaredInDir || '.';
+          const hostModulePath = this.moduleManager.getNormalizedModuleMeta(providerImport.modRefId)?.declaredInDir || '.';
           const decorAndVal = Reflector.getClassLevelMeta(token, hasDeclaredInDir)?.at(0);
           const collisionWithPath = decorAndVal?.declaredInDir || '.';
           if (hostModulePath !== '.' && collisionWithPath !== '.' && collisionWithPath.startsWith(hostModulePath)) {
             // Allow collisions in host modules.
           } else {
             const hostModuleName = getDebugClassName(providerImport.modRefId) || 'unknown';
-            throw new ProvidersCollision(this.moduleName, [token], [hostModuleName], level, this.baseMeta.isExternal);
+            throw new ProvidersCollision(this.moduleName, [token], [hostModuleName], level, this.normalizedModuleMeta.isExternal);
           }
         }
         this.resolveCollisionsWithLevelsMix(token, level, resolvedTokens);
@@ -398,8 +398,8 @@ export class ShallowModulesImporter {
 
   protected resolveCollisionsWithLevelsMix(token1: any, level: Level, resolvedTokens: any[]) {
     if (resolvedTokens.includes(token1)) {
-      const [, module2] = this.baseMeta[`resolvedCollisionPer${level}`].find(([token2]) => token1 === token2)!;
-      if (this.baseMeta.modRefId === module2) {
+      const [, module2] = this.normalizedModuleMeta[`resolvedCollisionPer${level}`].find(([token2]) => token1 === token2)!;
+      if (this.normalizedModuleMeta.modRefId === module2) {
         if (!this[`importedProvidersPer${level}`].delete(token1)) {
           const tokenName = token1.name || token1;
           throw new ResolvingCollisionNotImportedInModule(this.moduleName, level, tokenName);
@@ -422,7 +422,7 @@ export class ShallowModulesImporter {
 
   protected checkFalseResolvingCollision() {
     (['Mod', 'Rou', 'Req'] as const).forEach((level) => {
-      this.baseMeta[`resolvedCollisionPer${level}`].forEach(([token, module]) => {
+      this.normalizedModuleMeta[`resolvedCollisionPer${level}`].forEach(([token, module]) => {
         const levels = this.resolvedCollision.get(token);
         if (!levels || !levels.has(level)) {
           const moduleName = getDebugClassName(module) || 'unknown';

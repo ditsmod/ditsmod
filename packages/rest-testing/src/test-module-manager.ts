@@ -1,4 +1,4 @@
-import type { ModRefId, BaseMeta, AllInitHooks } from '@ditsmod/core';
+import type { ModRefId, NormalizedModuleMeta, AllInitHooks } from '@ditsmod/core';
 import { getModule, ModuleManager } from '@ditsmod/core';
 
 export class TestModuleManager extends ModuleManager {
@@ -11,12 +11,12 @@ export class TestModuleManager extends ModuleManager {
     });
   }
 
-  protected override normalizeMetadata(modRefId: ModRefId, allInitHooks: AllInitHooks): BaseMeta {
-    const baseMeta = super.normalizeMetadata(modRefId, allInitHooks);
+  protected override normalizeMetadata(modRefId: ModRefId, allInitHooks: AllInitHooks): NormalizedModuleMeta {
+    const normalizedModuleMeta = super.normalizeMetadata(modRefId, allInitHooks);
     const mod = getModule(modRefId);
     if (this.externalModules.has(mod)) {
-      baseMeta.isExternal = true;
+      normalizedModuleMeta.isExternal = true;
     }
-    return baseMeta;
+    return normalizedModuleMeta;
   }
 }

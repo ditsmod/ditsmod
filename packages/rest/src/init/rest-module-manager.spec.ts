@@ -2,7 +2,7 @@ import { jest } from '@jest/globals';
 import {
   ModuleWithParams,
   ModuleManager,
-  BaseMeta,
+  NormalizedModuleMeta,
   clearDebugClassNames,
   SystemLogMediator,
   featureModule,
@@ -36,19 +36,19 @@ describe('ModuleManager', () => {
   type ModuleId = string | ModRefId;
 
   class MockModuleManager extends ModuleManager {
-    override map = new Map<ModRefId, BaseMeta>();
+    override map = new Map<ModRefId, NormalizedModuleMeta>();
     override mapId = new Map<string, ModRefId>();
-    override snapshotMap = new Map<ModRefId, BaseMeta>();
+    override snapshotMap = new Map<ModRefId, NormalizedModuleMeta>();
     override snapshotMapId = new Map<string, ModRefId>();
-    override oldSnapshotMap = new Map<ModRefId, BaseMeta>();
+    override oldSnapshotMap = new Map<ModRefId, NormalizedModuleMeta>();
     override oldSnapshotMapId = new Map<string, ModRefId>();
   }
 
   let mock: MockModuleManager;
   function getInitMeta(moduleId: ModuleId) {
-    const baseMeta = mock.getBaseMeta(moduleId);
-    // console.log(baseMeta);
-    return baseMeta?.initMeta.get(initRest);
+    const normalizedModuleMeta = mock.getNormalizedModuleMeta(moduleId);
+    // console.log(normalizedModuleMeta);
+    return normalizedModuleMeta?.initMeta.get(initRest);
   }
 
   beforeEach(() => {
@@ -146,24 +146,24 @@ describe('ModuleManager', () => {
     class AppModule {}
 
     mock.scanRootModule(AppModule);
-    const rootBaseMeta = mock.map.get(AppModule);
-    const baseMeta1 = mock.map.get(Module1);
+    const rootNormalizedModuleMeta = mock.map.get(AppModule);
+    const normalizedModuleMeta1 = mock.map.get(Module1);
 
-    expect(baseMeta1?.providersPerApp).toEqual([Service1, Service3]);
-    expect(baseMeta1?.providersPerMod.includes(Service2)).toBeTruthy();
-    expect(baseMeta1?.providersPerMod.includes(Service4)).toBeTruthy();
-    expect(rootBaseMeta?.providersPerApp).toEqual([Service5]);
-    expect(rootBaseMeta?.providersPerMod.includes(Service6)).toBeTruthy();
+    expect(normalizedModuleMeta1?.providersPerApp).toEqual([Service1, Service3]);
+    expect(normalizedModuleMeta1?.providersPerMod.includes(Service2)).toBeTruthy();
+    expect(normalizedModuleMeta1?.providersPerMod.includes(Service4)).toBeTruthy();
+    expect(rootNormalizedModuleMeta?.providersPerApp).toEqual([Service5]);
+    expect(rootNormalizedModuleMeta?.providersPerMod.includes(Service6)).toBeTruthy();
 
-    const mod1InitMeta = baseMeta1?.initMeta.get(initRest);
-    expect(mod1InitMeta?.providersPerApp).toEqual(baseMeta1?.providersPerApp);
-    expect(mod1InitMeta?.providersPerMod).toEqual(baseMeta1?.providersPerMod);
+    const mod1InitMeta = normalizedModuleMeta1?.initMeta.get(initRest);
+    expect(mod1InitMeta?.providersPerApp).toEqual(normalizedModuleMeta1?.providersPerApp);
+    expect(mod1InitMeta?.providersPerMod).toEqual(normalizedModuleMeta1?.providersPerMod);
     expect(mod1InitMeta?.providersPerMod.includes(Service2)).toBeTruthy();
     expect(mod1InitMeta?.providersPerMod.includes(Service4)).toBeTruthy();
 
-    const rootInitMeta = rootBaseMeta?.initMeta.get(initRest);
-    expect(rootInitMeta?.providersPerApp).toEqual(rootBaseMeta?.providersPerApp);
-    expect(rootInitMeta?.providersPerMod).toEqual(rootBaseMeta?.providersPerMod);
+    const rootInitMeta = rootNormalizedModuleMeta?.initMeta.get(initRest);
+    expect(rootInitMeta?.providersPerApp).toEqual(rootNormalizedModuleMeta?.providersPerApp);
+    expect(rootInitMeta?.providersPerMod).toEqual(rootNormalizedModuleMeta?.providersPerMod);
     expect(rootInitMeta?.providersPerMod.includes(Service6)).toBeTruthy();
   });
 

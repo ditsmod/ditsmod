@@ -1,4 +1,4 @@
-import type { AnyFn, AnyObj, BaseMeta, ModRefId, Override, Provider } from '@ditsmod/core';
+import type { AnyFn, AnyObj, NormalizedModuleMeta, ModRefId, Override, Provider } from '@ditsmod/core';
 import { BaseAppOptions, AppInitHooks, InjectionToken, getSymbol } from '@ditsmod/core';
 import type { AnyRouter } from '@trpc/server';
 import { initTRPC } from '@trpc/server';
@@ -87,7 +87,7 @@ export type RedirectStatusCodes = 300 | 301 | 302 | 303 | 307 | 308;
  */
 
 export class MetadataPerMod3 {
-  baseMeta: BaseMeta;
+  normalizedModuleMeta: NormalizedModuleMeta;
   meta: TrpcInitMeta;
   aControllerMetadata: ControllerMetadata[];
   guards1: GuardPerMod1[];

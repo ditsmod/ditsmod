@@ -140,43 +140,43 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
 
     it('Module0', async () => {
       const mod0 = shallowImportsBase.get(Module0);
-      expect(mod0?.baseMeta.providersPerApp).toEqual([]);
+      expect(mod0?.normalizedModuleMeta.providersPerApp).toEqual([]);
       const moduleExtract: ModuleExtract = { path: '', moduleName: 'Module0', isExternal: false };
       const providerPerMod: Provider = { token: ModuleExtract, useValue: moduleExtract };
-      expect(mod0?.baseMeta.providersPerMod).toEqual([providerPerMod, Provider0]);
-      expect(mod0?.baseMeta.providersPerReq).toEqual([]);
+      expect(mod0?.normalizedModuleMeta.providersPerMod).toEqual([providerPerMod, Provider0]);
+      expect(mod0?.normalizedModuleMeta.providersPerReq).toEqual([]);
       checkAppProviders(mod0);
     });
 
     it('Module1', async () => {
       const mod1 = shallowImportsBase.get(Module1);
-      expect(mod1?.baseMeta.providersPerApp).toEqual([]);
+      expect(mod1?.normalizedModuleMeta.providersPerApp).toEqual([]);
       const moduleExtract: ModuleExtract = { path: '', moduleName: 'Module1', isExternal: false };
       const providerPerMod: Provider = { token: ModuleExtract, useValue: moduleExtract };
-      expect(mod1?.baseMeta.providersPerMod).toEqual([providerPerMod, obj1, Provider2]);
+      expect(mod1?.normalizedModuleMeta.providersPerMod).toEqual([providerPerMod, obj1, Provider2]);
       checkAppProviders(mod1);
     });
 
     it('Module2', async () => {
       const mod2 = shallowImportsBase.get(module2WithParams);
-      expect(mod2?.baseMeta.providersPerApp).toEqual([]);
+      expect(mod2?.normalizedModuleMeta.providersPerApp).toEqual([]);
       const moduleExtract: ModuleExtract = { path: '', moduleName: 'Module2', isExternal: false };
       const providerPerMod: Provider = { token: ModuleExtract, useValue: moduleExtract };
-      expect(mod2?.baseMeta.providersPerMod).toEqual([providerPerMod, Provider3, Provider4]);
-      expect(mod2?.baseMeta.providersPerReq).toEqual([]);
+      expect(mod2?.normalizedModuleMeta.providersPerMod).toEqual([providerPerMod, Provider3, Provider4]);
+      expect(mod2?.normalizedModuleMeta.providersPerReq).toEqual([]);
       checkAppProviders(mod2);
     });
 
     it('Module3', async () => {
       const mod3 = shallowImportsBase.get(module3WithParams);
-      expect(mod3?.baseMeta.providersPerApp).toEqual([]);
+      expect(mod3?.normalizedModuleMeta.providersPerApp).toEqual([]);
       const moduleExtract: ModuleExtract = { path: 'one', moduleName: 'Module3', isExternal: false };
       const providerPerMod: Provider = {
         token: ModuleExtract,
         useValue: moduleExtract,
       };
-      expect(mod3?.baseMeta.providersPerMod).toEqual([providerPerMod]);
-      expect(mod3?.baseMeta.providersPerReq).toEqual([Provider5, Provider6, Provider7]);
+      expect(mod3?.normalizedModuleMeta.providersPerMod).toEqual([providerPerMod]);
+      expect(mod3?.normalizedModuleMeta.providersPerReq).toEqual([Provider5, Provider6, Provider7]);
       checkAppProviders(mod3);
     });
 
@@ -184,11 +184,11 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
       moduleManager.scanRootModule(AppModule);
       const shallowImportsBase = mock.collectProvidersShallow(moduleManager);
       const mod4 = shallowImportsBase.get(module4WithParams);
-      expect(mod4?.baseMeta.providersPerApp).toEqual([]);
+      expect(mod4?.normalizedModuleMeta.providersPerApp).toEqual([]);
       const moduleExtract: ModuleExtract = { path: '', moduleName: 'Module4', isExternal: false };
       const providerPerMod: Provider = { token: ModuleExtract, useValue: moduleExtract };
-      expect(mod4?.baseMeta.providersPerMod).toEqual([providerPerMod]);
-      expect(mod4?.baseMeta.providersPerReq).toEqual([Provider8, Provider9]);
+      expect(mod4?.normalizedModuleMeta.providersPerMod).toEqual([providerPerMod]);
+      expect(mod4?.normalizedModuleMeta.providersPerReq).toEqual([Provider8, Provider9]);
       checkAppProviders(mod4);
     });
 
@@ -196,14 +196,14 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
       moduleManager.scanRootModule(AppModule);
       const shallowImportsBase = mock.collectProvidersShallow(moduleManager);
       const root1 = shallowImportsBase.get(AppModule);
-      expect(root1?.baseMeta.providersPerApp.slice(0, 2)).toEqual([Logger, { token: Router, useValue: 'fake' }]);
+      expect(root1?.normalizedModuleMeta.providersPerApp.slice(0, 2)).toEqual([Logger, { token: Router, useValue: 'fake' }]);
       const moduleExtract: ModuleExtract = { path: '', moduleName: 'AppModule', isExternal: false };
       const providerPerMod: Provider = {
         token: ModuleExtract,
         useValue: moduleExtract,
       };
-      expect(root1?.baseMeta.providersPerMod).toEqual([providerPerMod]);
-      expect(root1?.baseMeta.providersPerReq).toEqual([]);
+      expect(root1?.normalizedModuleMeta.providersPerMod).toEqual([providerPerMod]);
+      expect(root1?.normalizedModuleMeta.providersPerReq).toEqual([]);
       checkAppProviders(root1);
       expect(getImportedTokens(root1?.baseImportRegistry.perMod)).toEqual([Provider0, Provider3, Provider4, Provider1]);
       expect(getImportedTokens(root1?.baseImportRegistry.perReq)).toEqual([

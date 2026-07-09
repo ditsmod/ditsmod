@@ -1,4 +1,4 @@
-import type { BaseMeta } from '#init/base-meta.js';
+import type { NormalizedModuleMeta } from '#init/base-meta.js';
 import type { AnyObj, ModRefId } from './mix.js';
 import type { AnyFn, Provider } from '#di/top/types-and-models.js';
 import type { ExtensionConfig } from '#extension/extension-providers-and-configs.js';
@@ -39,7 +39,7 @@ export class AppProviders {
 }
 
 export class MetadataPerMod2<T extends AnyObj = AnyObj> {
-  baseMeta: BaseMeta;
+  normalizedModuleMeta: NormalizedModuleMeta;
   aOrderedExtensions: ExtensionClass[];
   deepImportedModules: Map<AnyFn, T>;
 }

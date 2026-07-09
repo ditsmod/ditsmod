@@ -1,7 +1,7 @@
 import {
   AnyFn,
   AnyObj,
-  BaseMeta,
+  NormalizedModuleMeta,
   getModule,
   inject,
   injectable,
@@ -31,9 +31,9 @@ export class TrpcInternalService {
    * @param options Options for creating
    * an [HTTP handler](https://trpc.io/docs/server/adapters/standalone#adding-a-handler-to-an-custom-http-server).
    */
-  setTrpcRouter(baseMeta: BaseMeta) {
+  setTrpcRouter(normalizedModuleMeta: NormalizedModuleMeta) {
     const injectorPerMod = this.moduleManager.getInjectorPerMod('root', true);
-    const mod = injectorPerMod.get(baseMeta.modRefId) as Partial<TrpcRootModule>;
+    const mod = injectorPerMod.get(normalizedModuleMeta.modRefId) as Partial<TrpcRootModule>;
     const routerOpts = (mod.setAppRouterOptions?.() || {}) as unknown as TrpcRouterOpts;
     routerOpts.router = this.t.mergeRouters(...this.getRouters());
     routerOpts.createContext = (opts) => opts;
@@ -41,17 +41,17 @@ export class TrpcInternalService {
   }
 
   protected getRouters() {
-    const rootBaseMeta = this.moduleManager.getBaseMeta('root', true);
-    const modulesWithTrpcRoutes = (rootBaseMeta.importsModules as ModRefId[]).concat(rootBaseMeta.importsWithParams);
+    const rootNormalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta('root', true);
+    const modulesWithTrpcRoutes = (rootNormalizedModuleMeta.importsModules as ModRefId[]).concat(rootNormalizedModuleMeta.importsWithParams);
     return modulesWithTrpcRoutes.filter(isModuleWithTrpcRoutes).map((modRefId) => {
       return this.t.router(this.getModuleTrpcConfigs(modRefId));
     });
   }
 
   protected getModuleTrpcConfigs(modRefId: ModRefId<ModuleWithTrpcRoutes>) {
-    const baseMeta = this.moduleManager.getBaseMeta(modRefId, true);
+    const normalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(modRefId, true);
     const importedModulesWithTrpcRoutes = new Map<AnyFn, ModRefId<ModuleWithTrpcRoutes>>();
-    (baseMeta.importsModules as ModRefId[]).concat(baseMeta.importsWithParams).forEach((imp) => {
+    (normalizedModuleMeta.importsModules as ModRefId[]).concat(normalizedModuleMeta.importsWithParams).forEach((imp) => {
       if (isModuleWithTrpcRoutes(imp)) {
         // Method as key in the map
         importedModulesWithTrpcRoutes.set(getModule(imp).prototype.getRouterConfig, imp);

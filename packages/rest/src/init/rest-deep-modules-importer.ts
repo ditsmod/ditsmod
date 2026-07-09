@@ -40,7 +40,7 @@ export class RestDeepModulesImporter {
   importModulesDeep(): RestMetadataPerMod2 | undefined {
     const { guards1, prefixPerMod, meta, applyControllers } = this.shallowImports;
     return {
-      baseMeta: this.shallowImports.baseMeta,
+      normalizedModuleMeta: this.shallowImports.normalizedModuleMeta,
       meta,
       guards1,
       prefixPerMod,

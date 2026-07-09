@@ -7,7 +7,7 @@ import type { BaseImportRegistry, ShallowImports } from '#init/types.js';
 import type { MetadataPerMod2 } from '#types/metadata-per-mod.js';
 import type { Level, ModRefId, AnyObj } from '#types/mix.js';
 import type { AnyFn, Provider } from '#di/top/types-and-models.js';
-import type { BaseMeta } from '#init/base-meta.js';
+import type { NormalizedModuleMeta } from '#init/base-meta.js';
 import type { ReflectiveDependency } from '#utils/get-dependencies.js';
 import { getDependencies } from '#utils/get-dependencies.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
@@ -63,22 +63,22 @@ export class DeepModulesImporter {
     const mMetadataPerMod2 = new Map<ModRefId, MetadataPerMod2>();
     this.tokensPerApp = getTokens(this.providersPerApp);
     this.shallowImportsMap.forEach(
-      ({ baseMeta, aOrderedExtensions, baseImportRegistry, initImportRegistryMap }, modRefId) => {
+      ({ normalizedModuleMeta, aOrderedExtensions, baseImportRegistry, initImportRegistryMap }, modRefId) => {
         try {
           const deepImportedModules = new Map<AnyFn, AnyObj>();
-          mMetadataPerMod2.set(modRefId, { baseMeta, aOrderedExtensions, deepImportedModules });
+          mMetadataPerMod2.set(modRefId, { normalizedModuleMeta, aOrderedExtensions, deepImportedModules });
           const targetProviders = new ProvidersOnly<Provider[]>();
           this.resolveImportedProviders(targetProviders, baseImportRegistry, levels);
-          this.resolveProvidersForExtensions(baseMeta, baseImportRegistry);
+          this.resolveProvidersForExtensions(normalizedModuleMeta, baseImportRegistry);
           const useValue: ModuleExtract = {
-            moduleName: baseMeta.name,
-            isExternal: baseMeta.isExternal,
+            moduleName: normalizedModuleMeta.name,
+            isExternal: normalizedModuleMeta.isExternal,
           };
-          baseMeta.providersPerMod.unshift({ token: ModuleExtract, useValue });
-          baseMeta.providersPerMod.unshift(...targetProviders.providersPerMod);
-          baseMeta.providersPerRou.unshift(...targetProviders.providersPerRou);
-          baseMeta.providersPerReq.unshift(...targetProviders.providersPerReq);
-          baseMeta.allInitHooks.forEach((initHooks, decorator) => {
+          normalizedModuleMeta.providersPerMod.unshift({ token: ModuleExtract, useValue });
+          normalizedModuleMeta.providersPerMod.unshift(...targetProviders.providersPerMod);
+          normalizedModuleMeta.providersPerRou.unshift(...targetProviders.providersPerRou);
+          normalizedModuleMeta.providersPerReq.unshift(...targetProviders.providersPerReq);
+          normalizedModuleMeta.allInitHooks.forEach((initHooks, decorator) => {
             const shallowImportedModule = initImportRegistryMap.get(decorator)!;
             const deepImports = initHooks.importModulesDeep({
               parent: this,
@@ -95,7 +95,7 @@ export class DeepModulesImporter {
             }
           });
         } catch (err: any) {
-          throw new FailImportProviders(baseMeta.name, err);
+          throw new FailImportProviders(normalizedModuleMeta.name, err);
         }
       },
     );
@@ -125,7 +125,7 @@ export class DeepModulesImporter {
     });
   }
 
-  protected resolveProvidersForExtensions(targetProviders: BaseMeta, baseImportRegistry: BaseImportRegistry) {
+  protected resolveProvidersForExtensions(targetProviders: NormalizedModuleMeta, baseImportRegistry: BaseImportRegistry) {
     const currentExtensionsProviders: any[] = [];
     baseImportRegistry.extensionProviders.forEach((p) => currentExtensionsProviders.push(...p));
     this.extensionsTokens = getTokens([...defaultExtensionProviders, ...currentExtensionsProviders, input]);
@@ -138,7 +138,7 @@ export class DeepModulesImporter {
     this.increaseExtensionCounters(targetProviders);
   }
 
-  protected mergeExtensionProviders(targetProviders: BaseMeta, baseImportRegistry: BaseImportRegistry) {
+  protected mergeExtensionProviders(targetProviders: NormalizedModuleMeta, baseImportRegistry: BaseImportRegistry) {
     baseImportRegistry.extensionProviders.forEach((importedProviders, srcModRefId) => {
       // Select only those imported providers that are not in the current module. Multi-providers are all transferred.
       const newProviders = importedProviders.filter((impProvider) => {
@@ -196,8 +196,8 @@ export class DeepModulesImporter {
     });
   }
 
-  protected increaseExtensionCounters(baseMeta: BaseMeta) {
-    const extensionProviders = [...baseMeta.extensionProviders];
+  protected increaseExtensionCounters(normalizedModuleMeta: NormalizedModuleMeta) {
+    const extensionProviders = [...normalizedModuleMeta.extensionProviders];
     const uniqTargets = new Set<Provider>(getProvidersTargets(extensionProviders));
 
     uniqTargets.forEach((target) => {
@@ -220,7 +220,7 @@ export class DeepModulesImporter {
     path: any[] = [],
     childLevels: string[] = [],
   ) {
-    const srcBaseMeta = this.moduleManager.getBaseMeta(srcModRefId, true);
+    const srcNormalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(srcModRefId, true);
 
     for (const dep of this.getDependencies(importedProvider)) {
       let found: boolean = false;
@@ -229,7 +229,7 @@ export class DeepModulesImporter {
       }
 
       for (const level of levels) {
-        const srcProviders = getLastProviders(srcBaseMeta[`providersPer${level}`]);
+        const srcProviders = getLastProviders(srcNormalizedModuleMeta[`providersPer${level}`]);
 
         getTokens(srcProviders).forEach((srcToken, i) => {
           if (srcToken === dep.token) {
@@ -287,7 +287,7 @@ export class DeepModulesImporter {
     }
 
     if (!found && dep.required) {
-      this.throwError(shallowImports.baseMeta, importedProvider, path, dep.token, [...childLevels, ...levels]);
+      this.throwError(shallowImports.normalizedModuleMeta, importedProvider, path, dep.token, [...childLevels, ...levels]);
     }
   }
 
@@ -312,7 +312,7 @@ export class DeepModulesImporter {
   }
 
   protected hasUnresolvedDeps(srcModRefId: ModRefId, provider: Provider, levels: Level[]) {
-    const baseMeta = this.moduleManager.getBaseMeta(srcModRefId, true);
+    const normalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(srcModRefId, true);
 
     for (const dep of this.getDependencies(provider)) {
       let found: boolean = false;
@@ -321,7 +321,7 @@ export class DeepModulesImporter {
       }
 
       forLevel: for (const level of levels) {
-        const srcProviders = getLastProviders(baseMeta[`providersPer${level}`]);
+        const srcProviders = getLastProviders(normalizedModuleMeta[`providersPer${level}`]);
         const srcTokens = getTokens(srcProviders);
 
         for (let i = 0; i < srcTokens.length; i++) {
@@ -380,7 +380,7 @@ export class DeepModulesImporter {
     return false;
   }
 
-  throwError(baseMeta: BaseMeta, provider: Provider, path: any[], token: any, levels: string[]) {
+  throwError(normalizedModuleMeta: NormalizedModuleMeta, provider: Provider, path: any[], token: any, levels: string[]) {
     path = [provider, ...path, token];
     const strPath = getTokens(path)
       .map((t) => stringify(t.name || t))
@@ -393,7 +393,7 @@ export class DeepModulesImporter {
     const partMsg = path.length > 1 ? `(required by ${strPath}). Searched in ${levelsPath}` : levelsPath;
     // this.log.showProvidersInLogs(this, meta.name, meta.providersPerReq, meta.providersPerRou, meta.providersPerMod);
 
-    throw new NoProviderDuringResolveImports(baseMeta.name, token.name || token, partMsg);
+    throw new NoProviderDuringResolveImports(normalizedModuleMeta.name, token.name || token, partMsg);
   }
 
   getDependencies(provider: Provider) {

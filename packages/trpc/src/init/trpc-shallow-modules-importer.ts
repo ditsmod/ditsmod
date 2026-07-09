@@ -1,4 +1,4 @@
-import type { ModRefId, ModuleManager, BaseMeta, AppProviders } from '@ditsmod/core';
+import type { ModRefId, ModuleManager, NormalizedModuleMeta, AppProviders } from '@ditsmod/core';
 import { isModuleWithParams, getProxyForInitMeta } from '@ditsmod/core';
 
 import type {
@@ -22,7 +22,7 @@ import type { GuardPerMod1 } from '#interceptors/trpc-guard.js';
 export class TrpcShallowModulesImporter {
   protected moduleName: string;
   protected guards1: GuardPerMod1[];
-  protected baseMeta: BaseMeta;
+  protected normalizedModuleMeta: NormalizedModuleMeta;
   protected meta: TrpcInitMeta;
 
   /**
@@ -38,17 +38,17 @@ export class TrpcShallowModulesImporter {
   exportAppProviders({
     moduleManager,
     appProviders,
-    baseMeta,
+    normalizedModuleMeta,
   }: {
     moduleManager: ModuleManager;
     appProviders: AppProviders;
-    baseMeta: BaseMeta;
+    normalizedModuleMeta: NormalizedModuleMeta;
   }): TrpcAppProviders {
     this.moduleManager = moduleManager;
     this.glProviders = appProviders;
-    this.moduleName = baseMeta.name;
-    this.baseMeta = baseMeta;
-    this.meta = this.getInitMeta(baseMeta);
+    this.moduleName = normalizedModuleMeta.name;
+    this.normalizedModuleMeta = normalizedModuleMeta;
+    this.meta = this.getInitMeta(normalizedModuleMeta);
 
     return {
       initHooks: new TrpcInitHooks({}),
@@ -66,39 +66,39 @@ export class TrpcShallowModulesImporter {
     guards1,
   }: ImportModulesShallowConfig): Map<ModRefId, TrpcShallowImports> {
     this.moduleManager = moduleManager;
-    const baseMeta = this.moduleManager.getBaseMeta(modRefId, true);
-    this.baseMeta = baseMeta;
-    this.meta = this.getInitMeta(baseMeta);
+    const normalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(modRefId, true);
+    this.normalizedModuleMeta = normalizedModuleMeta;
+    this.meta = this.getInitMeta(normalizedModuleMeta);
     this.glProviders = appProviders;
     this.trpcGlProviders = appProviders.mInitValue.get(initTrpcModule) as TrpcAppProviders;
-    this.moduleName = baseMeta.name;
+    this.moduleName = normalizedModuleMeta.name;
     this.guards1 = guards1 || [];
     this.unfinishedScanModules = unfinishedScanModules;
-    this.importModules([...this.baseMeta.importsModules, ...this.baseMeta.importsWithParams], true);
+    this.importModules([...this.normalizedModuleMeta.importsModules, ...this.normalizedModuleMeta.importsWithParams], true);
 
     return this.shallowImportsMap.set(modRefId, {
-      baseMeta,
+      normalizedModuleMeta,
       guards1: this.guards1,
       meta: this.meta,
     });
   }
 
-  protected getInitMeta(baseMeta: BaseMeta): TrpcInitMeta {
-    let meta = baseMeta.initMeta.get(initTrpcModule);
+  protected getInitMeta(normalizedModuleMeta: NormalizedModuleMeta): TrpcInitMeta {
+    let meta = normalizedModuleMeta.initMeta.get(initTrpcModule);
     if (!meta) {
-      meta = getProxyForInitMeta(baseMeta, TrpcInitMeta);
-      baseMeta.initMeta.set(initTrpcModule, meta);
+      meta = getProxyForInitMeta(normalizedModuleMeta, TrpcInitMeta);
+      normalizedModuleMeta.initMeta.set(initTrpcModule, meta);
     }
     return meta;
   }
 
   protected importModules(aModRefIds: TrpcModRefId[], isImport?: boolean) {
     for (const modRefId of aModRefIds) {
-      const baseMeta = this.moduleManager.getBaseMeta(modRefId, true);
+      const normalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(modRefId, true);
       if (this.unfinishedScanModules.has(modRefId)) {
         continue;
       }
-      const meta = this.getInitMeta(baseMeta);
+      const meta = this.getInitMeta(normalizedModuleMeta);
       const { guards1 } = this.getPrefixAndGuards(modRefId, meta, isImport);
       const shallowModulesImporter = new TrpcShallowModulesImporter();
       this.unfinishedScanModules.add(modRefId);
@@ -123,7 +123,7 @@ export class TrpcShallowModulesImporter {
         return {
           ...g,
           meta: this.meta,
-          baseMeta: this.baseMeta,
+          normalizedModuleMeta: this.normalizedModuleMeta,
         };
       });
       guards1 = [...this.guards1, ...impGuradsPerMod1];

@@ -3,7 +3,7 @@ import {
   featureModule,
   ModuleManager,
   ModuleWithParams,
-  BaseMeta,
+  NormalizedModuleMeta,
   SystemLogMediator,
   ModRefId,
 } from '@ditsmod/core';
@@ -17,7 +17,7 @@ import { initRest, restRootModule } from '#decorators/rest-init-hooks-and-metada
 let mock: MockModuleManager;
 
 class MockModuleManager extends ModuleManager {
-  override map = new Map<ModRefId, BaseMeta>();
+  override map = new Map<ModRefId, NormalizedModuleMeta>();
   override mapId = new Map<string, ModRefId>();
 }
 
@@ -74,8 +74,8 @@ it('imports and appends with gruards for some modules', () => {
   class AppModule {}
 
   mock.scanRootModule(AppModule);
-  const initMeta1 = mock.getBaseMeta(moduleWithParams)?.initMeta.get(initRest)?.params;
-  const initMeta2 = mock.getBaseMeta(appendsWithParams)?.initMeta.get(initRest)?.params;
+  const initMeta1 = mock.getNormalizedModuleMeta(moduleWithParams)?.initMeta.get(initRest)?.params;
+  const initMeta2 = mock.getNormalizedModuleMeta(appendsWithParams)?.initMeta.get(initRest)?.params;
   expect(mock.map.size).toBe(5);
   expect(initMeta1).toMatchObject({ guards: [{ guard: Guard1 }], path: 'module1' });
   expect(initMeta2).toMatchObject({ guards: [{ guard: Guard2 }], path: 'module2' });

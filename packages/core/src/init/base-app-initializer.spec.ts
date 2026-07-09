@@ -5,7 +5,7 @@ import { LogMediator } from '#logger/log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { featureModule } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
-import { BaseMeta } from '#init/base-meta.js';
+import { NormalizedModuleMeta } from '#init/base-meta.js';
 import { BaseAppInitializer } from '#init/base-app-initializer.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { Provider } from '#di/top/types-and-models.js';
@@ -22,7 +22,7 @@ import { injectable } from '#di/decorators.js';
 
 describe('BaseAppInitializer', () => {
   class AppInitializerMock extends BaseAppInitializer {
-    override baseMeta = new BaseMeta();
+    override normalizedModuleMeta = new NormalizedModuleMeta();
 
     constructor(
       public override baseAppOptions: BaseAppOptions,
@@ -117,7 +117,7 @@ describe('BaseAppInitializer', () => {
       })
       class AppModule {}
 
-      mock.baseMeta = moduleManager.scanRootModule(AppModule);
+      mock.normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
       const err = new ProvidersCollision('AppModule', [Provider1], ['Module1', 'Module2']);
       expect(() => mock.prepareProvidersPerApp()).toThrow(err);
     });
@@ -138,11 +138,11 @@ describe('BaseAppInitializer', () => {
       })
       class AppModule {}
 
-      mock.baseMeta = moduleManager.scanRootModule(AppModule);
+      mock.normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
       expect(() => mock.prepareProvidersPerApp()).not.toThrow();
       expect(mock.getResolvedCollisionPerApp()).toEqual([{ token: Provider1, useClass: Provider2 }]);
-      expect(mock.baseMeta.providersPerApp).toEqual([{ token: Provider1, useClass: Provider2 }]);
-      expect(mock.baseMeta.resolvedCollisionPerApp.length).toBe(1);
+      expect(mock.normalizedModuleMeta.providersPerApp).toEqual([{ token: Provider1, useClass: Provider2 }]);
+      expect(mock.normalizedModuleMeta.resolvedCollisionPerApp.length).toBe(1);
     });
 
     it('should throw an error because resolvedCollisionPerApp not properly setted', () => {
@@ -163,7 +163,7 @@ describe('BaseAppInitializer', () => {
       })
       class AppModule {}
 
-      mock.baseMeta = moduleManager.scanRootModule(AppModule);
+      mock.normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
       const err = new ModuleNotImportedInApplication('AppModule', 'Module0', 'Provider1');
       expect(() => mock.prepareProvidersPerApp()).toThrow(err);
     });
@@ -193,9 +193,9 @@ describe('BaseAppInitializer', () => {
       })
       class AppModule {}
 
-      mock.baseMeta = moduleManager.scanRootModule(AppModule);
+      mock.normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
       expect(() => mock.prepareProvidersPerApp()).not.toThrow();
-      expect(mock.baseMeta.providersPerApp).toEqual([
+      expect(mock.normalizedModuleMeta.providersPerApp).toEqual([
         { token: Provider1, useValue: 'value1 of module1', multi: true },
         { token: Provider1, useValue: 'value1 of module2', multi: true },
       ]);
@@ -227,7 +227,7 @@ describe('BaseAppInitializer', () => {
       })
       class AppModule {}
 
-      mock.baseMeta = moduleManager.scanRootModule(AppModule);
+      mock.normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
       const err = new CannotResolveCollisionForMultiProviderPerApp('AppModule', 'Module1', 'Provider1');
       expect(() => mock.prepareProvidersPerApp()).toThrow(err);
     });
@@ -254,7 +254,7 @@ describe('BaseAppInitializer', () => {
       })
       class AppModule {}
 
-      mock.baseMeta = moduleManager.scanRootModule(AppModule);
+      mock.normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
       const err = new ProvidersPerAppMissingTokenName('AppModule', 'Module0', 'Provider1');
       expect(() => mock.prepareProvidersPerApp()).toThrow(err);
     });
@@ -273,7 +273,7 @@ describe('BaseAppInitializer', () => {
       })
       class AppModule {}
 
-      mock.baseMeta = moduleManager.scanRootModule(AppModule);
+      mock.normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
       expect(() => mock.prepareProvidersPerApp()).not.toThrow();
     });
 
@@ -283,15 +283,15 @@ describe('BaseAppInitializer', () => {
       @rootModule({ providersPerApp: [Provider1, Provider1, { token: Provider1, useClass: Provider1 }] })
       class AppModule {}
 
-      mock.baseMeta = moduleManager.scanRootModule(AppModule);
+      mock.normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
       expect(() => mock.prepareProvidersPerApp()).not.toThrow();
-      expect(mock.baseMeta.providersPerApp.length).toBe(3);
+      expect(mock.normalizedModuleMeta.providersPerApp.length).toBe(3);
     });
 
     it('should works with empty "imports" array in root module', () => {
       @rootModule({ imports: [] })
       class AppModule {}
-      mock.baseMeta = moduleManager.scanRootModule(AppModule);
+      mock.normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
       expect(() => mock.prepareProvidersPerApp()).not.toThrow();
     });
   });

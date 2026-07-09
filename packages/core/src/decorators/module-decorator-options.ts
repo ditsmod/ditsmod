@@ -74,7 +74,7 @@ export interface BaseModuleWithParams<M extends AnyObj = AnyObj> {
   module: ModuleType<M> | ForwardRefFn<ModuleType<M>>;
 }
 /**
- * Metadata with this type is created when the `parentMeta: BaseMeta` property is added to `BaseModuleWithParams`.
+ * Metadata with this type is created when the `parentMeta: NormalizedModuleMeta` property is added to `BaseModuleWithParams`.
  */
 export interface FeatureModuleParams<E extends AnyObj = AnyObj> extends Partial<ProvidersOnly> {
   /**

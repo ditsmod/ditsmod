@@ -1,4 +1,4 @@
-import type { Provider, ModRefId, ModuleManager, BaseMeta, AppProviders } from '@ditsmod/core';
+import type { Provider, ModRefId, ModuleManager, NormalizedModuleMeta, AppProviders } from '@ditsmod/core';
 import {
   isModuleWithParams,
   getTokens,
@@ -38,7 +38,7 @@ export class RestShallowModulesImporter {
   protected moduleName: string;
   protected prefixPerMod: string;
   protected guards1: GuardPerMod1[];
-  protected baseMeta: BaseMeta;
+  protected normalizedModuleMeta: NormalizedModuleMeta;
   protected meta: RestInitMeta;
 
   /**
@@ -54,17 +54,17 @@ export class RestShallowModulesImporter {
   exportAppProviders({
     moduleManager,
     appProviders,
-    baseMeta,
+    normalizedModuleMeta,
   }: {
     moduleManager: ModuleManager;
     appProviders: AppProviders;
-    baseMeta: BaseMeta;
+    normalizedModuleMeta: NormalizedModuleMeta;
   }): RestAppProviders {
     this.moduleManager = moduleManager;
     this.appProviders = appProviders;
-    this.moduleName = baseMeta.name;
-    this.baseMeta = baseMeta;
-    this.meta = this.getInitMeta(baseMeta);
+    this.moduleName = normalizedModuleMeta.name;
+    this.normalizedModuleMeta = normalizedModuleMeta;
+    this.meta = this.getInitMeta(normalizedModuleMeta);
 
     return {
       initHooks: new RestInitHooks({}),
@@ -84,25 +84,25 @@ export class RestShallowModulesImporter {
     isAppends,
   }: ImportModulesShallowConfig): Map<ModRefId, RestShallowImports> {
     this.moduleManager = moduleManager;
-    const baseMeta = this.moduleManager.getBaseMeta(modRefId, true);
-    this.baseMeta = baseMeta;
-    this.meta = this.getInitMeta(baseMeta);
+    const normalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(modRefId, true);
+    this.normalizedModuleMeta = normalizedModuleMeta;
+    this.meta = this.getInitMeta(normalizedModuleMeta);
     this.appProviders = appProviders;
     this.restGlProviders = appProviders.mInitValue.get(initRest) as RestAppProviders;
     this.prefixPerMod = prefixPerMod || '';
-    this.moduleName = baseMeta.name;
+    this.moduleName = normalizedModuleMeta.name;
     this.guards1 = guards1 || [];
     this.unfinishedScanModules = unfinishedScanModules;
-    this.checkImportsAndAppends(baseMeta, this.meta);
+    this.checkImportsAndAppends(normalizedModuleMeta, this.meta);
     this.importAndAppendModules();
 
     let applyControllers = false;
-    if (isRootModule(baseMeta) || isAppends || this.hasPath()) {
+    if (isRootModule(normalizedModuleMeta) || isAppends || this.hasPath()) {
       applyControllers = true;
     }
 
     return this.shallowImportsMap.set(modRefId, {
-      baseMeta,
+      normalizedModuleMeta,
       prefixPerMod,
       guards1: this.guards1,
       meta: this.meta,
@@ -110,11 +110,11 @@ export class RestShallowModulesImporter {
     });
   }
 
-  protected getInitMeta(baseMeta: BaseMeta): RestInitMeta {
-    let meta = baseMeta.initMeta.get(initRest);
+  protected getInitMeta(normalizedModuleMeta: NormalizedModuleMeta): RestInitMeta {
+    let meta = normalizedModuleMeta.initMeta.get(initRest);
     if (!meta) {
-      meta = getProxyForInitMeta(baseMeta, RestInitMeta);
-      baseMeta.initMeta.set(initRest, meta);
+      meta = getProxyForInitMeta(normalizedModuleMeta, RestInitMeta);
+      normalizedModuleMeta.initMeta.set(initRest, meta);
     }
     return meta;
   }
@@ -124,17 +124,17 @@ export class RestShallowModulesImporter {
   }
 
   protected importAndAppendModules() {
-    this.importOrAppendModules([...this.baseMeta.importsModules, ...this.baseMeta.importsWithParams], true);
+    this.importOrAppendModules([...this.normalizedModuleMeta.importsModules, ...this.normalizedModuleMeta.importsWithParams], true);
     this.importOrAppendModules([...this.meta.appendsModules, ...this.meta.appendsWithParams]);
   }
 
   protected importOrAppendModules(aModRefIds: RestModRefId[], isImport?: boolean) {
     for (const modRefId of aModRefIds) {
-      const baseMeta = this.moduleManager.getBaseMeta(modRefId, true);
+      const normalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(modRefId, true);
       if (this.unfinishedScanModules.has(modRefId)) {
         continue;
       }
-      const meta = this.getInitMeta(baseMeta);
+      const meta = this.getInitMeta(normalizedModuleMeta);
       const { prefixPerMod, guards1 } = this.getPrefixAndGuards(modRefId, meta, isImport);
       const shallowModulesImporter = new RestShallowModulesImporter();
       this.unfinishedScanModules.add(modRefId);
@@ -170,7 +170,7 @@ export class RestShallowModulesImporter {
         return {
           ...g,
           meta: this.meta,
-          baseMeta: this.baseMeta,
+          normalizedModuleMeta: this.normalizedModuleMeta,
         };
       });
       guards1 = [...this.guards1, ...impGuradsPerMod1];
@@ -199,7 +199,7 @@ export class RestShallowModulesImporter {
         [token],
         [moduleName1, moduleName2],
         level,
-        this.baseMeta.isExternal,
+        this.normalizedModuleMeta.isExternal,
       );
     }
   }
@@ -208,9 +208,9 @@ export class RestShallowModulesImporter {
     const [token2, modRefId2] = this.meta[`resolvedCollisionPer${level}`].find(([token2]) => token1 === token2)!;
     const moduleName = getDebugClassName(modRefId2) || '""';
     const tokenName = token2.name || token2;
-    const baseMeta2 = this.moduleManager.getBaseMeta(modRefId2);
-    const meta2 = baseMeta2?.initMeta.get(initRest);
-    if (!baseMeta2) {
+    const normalizedModuleMeta2 = this.moduleManager.getNormalizedModuleMeta(modRefId2);
+    const meta2 = normalizedModuleMeta2?.initMeta.get(initRest);
+    if (!normalizedModuleMeta2) {
       throw new ResolvingCollisionNotImportedInApplication(this.moduleName, moduleName, level, tokenName);
     }
     const providers = getLastProviders(meta2?.[`providersPer${level}`] || []).filter((p) => getToken(p) === token2);
@@ -221,16 +221,16 @@ export class RestShallowModulesImporter {
     return { module2: modRefId2, providers };
   }
 
-  protected checkImportsAndAppends(baseMeta: BaseMeta, meta1: RestInitMeta) {
+  protected checkImportsAndAppends(normalizedModuleMeta: NormalizedModuleMeta, meta1: RestInitMeta) {
     meta1.appendsModules.concat(meta1.appendsWithParams as any[]).forEach((modRefId) => {
-      const appendedBaseMeta = this.moduleManager.getBaseMeta(modRefId, true);
-      const meta2 = this.getInitMeta(appendedBaseMeta);
+      const appendedNormalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(modRefId, true);
+      const meta2 = this.getInitMeta(appendedNormalizedModuleMeta);
       if (!meta2.controllers.length) {
-        throw new ModuleMustHaveControllers(baseMeta.name, appendedBaseMeta.name);
+        throw new ModuleMustHaveControllers(normalizedModuleMeta.name, appendedNormalizedModuleMeta.name);
       }
       const mod = getModule(modRefId);
-      if (baseMeta.importsModules.includes(mod) || baseMeta.importsWithParams.some((imp) => imp.module === mod)) {
-        throw new ModuleIncludesInImportsAndAppends(baseMeta.name, appendedBaseMeta.name);
+      if (normalizedModuleMeta.importsModules.includes(mod) || normalizedModuleMeta.importsWithParams.some((imp) => imp.module === mod)) {
+        throw new ModuleIncludesInImportsAndAppends(normalizedModuleMeta.name, appendedNormalizedModuleMeta.name);
       }
     });
   }
