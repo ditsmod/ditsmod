@@ -111,15 +111,15 @@ export class DeepModulesImporter {
     levels.forEach((level, i) => {
       baseImportRegistry[`per${level}`].forEach((importedProvider) => {
         targetProviders[`providersPer${level}`].unshift(...importedProvider.providers);
-        importedProvider.providers.forEach((importedProvider) => {
-          this.fetchDeps(targetProviders, importedProvider.modRefId, importedProvider, levels.slice(i));
+        importedProvider.providers.forEach((provider) => {
+          this.fetchDeps(targetProviders, importedProvider.modRefId, provider, levels.slice(i));
         });
       });
 
       baseImportRegistry[`multiPer${level}`].forEach((multiProviders, srcModule) => {
         targetProviders[`providersPer${level}`].unshift(...multiProviders);
-        multiProviders.forEach((importedProvider) => {
-          this.fetchDeps(targetProviders, srcModule, importedProvider, levels.slice(i));
+        multiProviders.forEach((provider) => {
+          this.fetchDeps(targetProviders, srcModule, provider, levels.slice(i));
         });
       });
     });
@@ -191,9 +191,9 @@ export class DeepModulesImporter {
       });
 
       targetProviders.extensionProviders.unshift(...newGroupProviders);
-      importedProviders.concat(newGroupProviders).forEach((importedProvider) => {
-        if (this.hasUnresolvedDeps(targetProviders.modRefId, importedProvider, ['Mod'])) {
-          this.fetchDeps(targetProviders, srcModRefId, importedProvider, ['Mod']);
+      importedProviders.concat(newGroupProviders).forEach((provider) => {
+        if (this.hasUnresolvedDeps(targetProviders.modRefId, provider, ['Mod'])) {
+          this.fetchDeps(targetProviders, srcModRefId, provider, ['Mod']);
         }
       });
     });
@@ -212,20 +212,20 @@ export class DeepModulesImporter {
   /**
    * @param targetProviders These are metadata of the module where providers are imported.
    * @param srcModRefId Module from where imports providers.
-   * @param importedProvider Imported provider.
+   * @param provider Imported provider.
    * @param levels Search in this levels. The level order is important.
    */
   fetchDeps(
     targetProviders: ProvidersByLevel<Provider[]>,
     srcModRefId: ModRefId,
-    importedProvider: Provider,
+    provider: Provider,
     levels: Level[],
     path: any[] = [],
     childLevels: string[] = [],
   ) {
     const srcNormalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(srcModRefId, true);
 
-    for (const dep of this.getDependencies(importedProvider)) {
+    for (const dep of this.getDependencies(provider)) {
       let found: boolean = false;
       if (this.extensionsTokens.includes(dep.token)) {
         continue;
@@ -251,7 +251,7 @@ export class DeepModulesImporter {
       }
 
       if (!found && !this.tokensPerApp.includes(dep.token)) {
-        this.fetchImportedDeps(targetProviders, srcModRefId, importedProvider, levels, path, dep, childLevels);
+        this.fetchImportedDeps(targetProviders, srcModRefId, provider, levels, path, dep, childLevels);
       }
     }
   }
@@ -259,13 +259,13 @@ export class DeepModulesImporter {
   /**
    * @param targetProviders These are metadata of the module where providers are imported.
    * @param srcModRefId1 Module from where imports providers.
-   * @param importedProvider Imported provider.
+   * @param provider Imported provider.
    * @param dep ReflectiveDependecy with token for dependecy of imported provider.
    */
   fetchImportedDeps(
     targetProviders: ProvidersByLevel<Provider[]>,
     srcModRefId1: ModRefId,
-    importedProvider: Provider,
+    provider: Provider,
     levels: Level[],
     path: any[] = [],
     dep: ReflectiveDependency,
@@ -290,7 +290,7 @@ export class DeepModulesImporter {
     }
 
     if (!found && dep.required) {
-      this.throwError(shallowModuleImports.normalizedModuleMeta, importedProvider, path, dep.token, [
+      this.throwError(shallowModuleImports.normalizedModuleMeta, provider, path, dep.token, [
         ...childLevels,
         ...levels,
       ]);
@@ -300,20 +300,20 @@ export class DeepModulesImporter {
   protected fetchDependenciesAgain(
     targetProviders: ProvidersByLevel<Provider[]>,
     srcModRefId: ModRefId,
-    importedProvider: Provider,
+    provider: Provider,
     levels: Level[],
     path: any[],
     childLevels: string[] = [],
   ) {
-    this.addToUnfinishedSearchDependencies(srcModRefId, importedProvider);
-    this.fetchDeps(targetProviders, srcModRefId, importedProvider, levels, path, childLevels);
-    this.deleteFromUnfinishedSearchDependencies(srcModRefId, importedProvider);
+    this.addToUnfinishedSearchDependencies(srcModRefId, provider);
+    this.fetchDeps(targetProviders, srcModRefId, provider, levels, path, childLevels);
+    this.deleteFromUnfinishedSearchDependencies(srcModRefId, provider);
   }
 
-  protected nextHasUnresolvedDeps(srcModRefId: ModRefId, importedProvider: Provider, levels: Level[]) {
-    this.addToUnfinishedSearchDependencies(srcModRefId, importedProvider);
-    const hasUnresolvedDeps = this.hasUnresolvedDeps(srcModRefId, importedProvider, levels);
-    this.deleteFromUnfinishedSearchDependencies(srcModRefId, importedProvider);
+  protected nextHasUnresolvedDeps(srcModRefId: ModRefId, provider: Provider, levels: Level[]) {
+    this.addToUnfinishedSearchDependencies(srcModRefId, provider);
+    const hasUnresolvedDeps = this.hasUnresolvedDeps(srcModRefId, provider, levels);
+    this.deleteFromUnfinishedSearchDependencies(srcModRefId, provider);
     return hasUnresolvedDeps;
   }
 
