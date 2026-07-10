@@ -52,7 +52,7 @@ export class RestProvidersByLevel {
  * This metadata returns from `DeepModulesImporter`. The target for this metadata is `RestRouteExtension`.
  */
 
-export class RestMetadataPerMod2 {
+export class RestResolvedModuleMetadata {
   normalizedModuleMeta: NormalizedModuleMeta;
   meta: RestInitMeta;
   guards1: GuardPerMod1[];

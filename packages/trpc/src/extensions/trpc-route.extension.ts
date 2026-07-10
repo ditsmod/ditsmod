@@ -1,7 +1,7 @@
-import { injectable, Extension, MetadataPerMod2, type Class, Reflector, Provider } from '@ditsmod/core';
+import { injectable, Extension, ResolvedModuleMetadata, type Class, Reflector, Provider } from '@ditsmod/core';
 import { inspect } from 'node:util';
 
-import { TrpcMetadataPerMod2 } from '#init/trpc-deep-modules-importer.js';
+import { TrpcResolvedModuleMetadata } from '#init/trpc-deep-modules-importer.js';
 import { initTrpcModule } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { TrpcRouteMetadata } from '#decorators/trpc-route.js';
 import { ControllerDecoratorOptions } from '#decorators/trpc-controller.js';
@@ -18,24 +18,24 @@ import { normalizeGuards } from '#utils/prepare-guards.js';
 export class TrpcRouteExtension implements Extension<MetadataPerMod3> {
   protected metadataPerMod3: MetadataPerMod3;
 
-  constructor(protected metadataPerMod2: MetadataPerMod2<TrpcMetadataPerMod2>) {}
+  constructor(protected resolvedModuleMetadata: ResolvedModuleMetadata<TrpcResolvedModuleMetadata>) {}
 
   async stage1() {
-    const trpcMetadataPerMod2 = this.metadataPerMod2.deepImportedModules.get(initTrpcModule)!;
+    const trpcResolvedModuleMetadata = this.resolvedModuleMetadata.deepImportedModules.get(initTrpcModule)!;
     this.metadataPerMod3 = new MetadataPerMod3();
-    this.metadataPerMod3.meta = trpcMetadataPerMod2.meta;
-    this.metadataPerMod3.normalizedModuleMeta = this.metadataPerMod2.normalizedModuleMeta;
-    this.metadataPerMod3.aControllerMetadata = this.getControllersMetadata(trpcMetadataPerMod2);
-    this.metadataPerMod3.guards1 = trpcMetadataPerMod2.guards1;
+    this.metadataPerMod3.meta = trpcResolvedModuleMetadata.meta;
+    this.metadataPerMod3.normalizedModuleMeta = this.resolvedModuleMetadata.normalizedModuleMeta;
+    this.metadataPerMod3.aControllerMetadata = this.getControllersMetadata(trpcResolvedModuleMetadata);
+    this.metadataPerMod3.guards1 = trpcResolvedModuleMetadata.guards1;
     // this.metadataPerMod3.guards1 = [];
 
     return this.metadataPerMod3;
   }
 
-  protected getControllersMetadata(trpcMetadataPerMod2: TrpcMetadataPerMod2) {
+  protected getControllersMetadata(trpcResolvedModuleMetadata: TrpcResolvedModuleMetadata) {
     const aControllerMetadata: ControllerMetadata[] = [];
 
-    for (const Controller of trpcMetadataPerMod2.meta.controllers as Class<Record<string | symbol, any>>[]) {
+    for (const Controller of trpcResolvedModuleMetadata.meta.controllers as Class<Record<string | symbol, any>>[]) {
       const classMeta = Reflector.collectMeta(Controller)!;
       for (const methodName of classMeta) {
         for (const decoratorAndValue of classMeta[methodName].decorators) {

@@ -38,7 +38,7 @@ export class AppProviders {
   mInitValue = new Map<AnyFn, AppInitHooks>();
 }
 
-export class MetadataPerMod2<T extends AnyObj = AnyObj> {
+export class ResolvedModuleMetadata<T extends AnyObj = AnyObj> {
   normalizedModuleMeta: NormalizedModuleMeta;
   aOrderedExtensions: ExtensionClass[];
   deepImportedModules: Map<AnyFn, T>;

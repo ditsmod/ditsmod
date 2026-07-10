@@ -7,7 +7,7 @@ import type {
   ShallowImports,
 } from '@ditsmod/core';
 
-import type { DeepModulesImporterConfig, RestMetadataPerMod2, RestShallowImports } from './types.js';
+import type { DeepModulesImporterConfig, RestResolvedModuleMetadata, RestShallowImports } from './types.js';
 
 /**
  * By analyzing the dependencies of the providers returned by `ShallowModulesImporter`,
@@ -37,7 +37,7 @@ export class RestDeepModulesImporter {
     this.log = log;
   }
 
-  importModulesDeep(): RestMetadataPerMod2 | undefined {
+  importModulesDeep(): RestResolvedModuleMetadata | undefined {
     const { guards1, prefixPerMod, meta, applyControllers } = this.shallowImports;
     return {
       normalizedModuleMeta: this.shallowImports.normalizedModuleMeta,

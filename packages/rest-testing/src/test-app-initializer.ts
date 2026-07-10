@@ -3,7 +3,7 @@ import type {
   ExtensionCounters,
   ExtensionContext,
   ForwardRefFn,
-  MetadataPerMod2,
+  ResolvedModuleMetadata,
   ModRefId,
   Provider,
   Providers,
@@ -59,11 +59,11 @@ export class TestAppInitializer extends RestAppInitializer {
   }
 
   protected override getProvidersForExtensions(
-    metadataPerMod2: MetadataPerMod2,
+    resolvedModuleMetadata: ResolvedModuleMetadata,
     extensionCounters: ExtensionCounters,
     extensionContext: ExtensionContext,
   ): Provider[] {
-    const providers = super.getProvidersForExtensions(metadataPerMod2, extensionCounters, extensionContext);
+    const providers = super.getProvidersForExtensions(resolvedModuleMetadata, extensionCounters, extensionContext);
     providers.push(
       { token: InternalExtensionManager, useClass: TestExtensionManager },
       { token: OVERRIDERS_CONFIG, useValue: this.aOverriderConfig },

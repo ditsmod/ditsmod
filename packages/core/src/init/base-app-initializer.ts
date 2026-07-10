@@ -19,7 +19,7 @@ import { getDuplicates } from '#utils/get-duplicates.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
 import { getProvidersTargets, getToken, getTokens } from '#utils/get-tokens.js';
 import { normalizeProviders } from '#utils/ng-utils.js';
-import { MetadataPerMod2 } from '#types/metadata-per-mod.js';
+import { ResolvedModuleMetadata } from '#types/metadata-per-mod.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { getModule } from '#utils/get-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
@@ -134,8 +134,8 @@ export class BaseAppInitializer {
       providersPerApp: this.normalizedModuleMeta.providersPerApp,
       log: this.log,
     });
-    const { extensionCounters, mMetadataPerMod2 } = deepModulesImporter.importModulesDeep();
-    await this.handleExtensions(mMetadataPerMod2, extensionCounters);
+    const { extensionCounters, mResolvedModuleMetadata } = deepModulesImporter.importModulesDeep();
+    await this.handleExtensions(mResolvedModuleMetadata, extensionCounters);
     return this.injectorPerApp;
   }
 
@@ -245,15 +245,15 @@ export class BaseAppInitializer {
   }
 
   protected async handleExtensions(
-    mMetadataPerMod2: Map<ModRefId, MetadataPerMod2>,
+    mResolvedModuleMetadata: Map<ModRefId, ResolvedModuleMetadata>,
     extensionCounters: ExtensionCounters,
   ) {
     const extensionContext = new ExtensionContext();
 
-    for (const [, metadataPerMod2] of mMetadataPerMod2) {
+    for (const [, resolvedModuleMetadata] of mResolvedModuleMetadata) {
       const { normalizedModuleMeta, aOrderedExtensions } = this.overrideMetaBeforeExtensionHanling(
-        metadataPerMod2.normalizedModuleMeta,
-        metadataPerMod2.aOrderedExtensions,
+        resolvedModuleMetadata.normalizedModuleMeta,
+        resolvedModuleMetadata.aOrderedExtensions,
       );
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(normalizedModuleMeta.providersPerMod, 'Mod');
       const systemLogMediator = injectorPerMod.pull(SystemLogMediator) as SystemLogMediator;
@@ -262,7 +262,7 @@ export class BaseAppInitializer {
         systemLogMediator.skippingStartExtensions(this);
         continue;
       }
-      const providers = this.getProvidersForExtensions(metadataPerMod2, extensionCounters, extensionContext);
+      const providers = this.getProvidersForExtensions(resolvedModuleMetadata, extensionCounters, extensionContext);
       const injectorForExtensions = injectorPerMod.resolveAndCreateChild(providers, 'injectorOfExtensions');
       const extensionManager = injectorForExtensions.get(InternalExtensionManager) as InternalExtensionManager;
 
@@ -271,10 +271,13 @@ export class BaseAppInitializer {
       await this.handleExtensionsPerMod(normalizedModuleMeta, aOrderedExtensions, extensionManager, systemLogMediator);
       this.logExtensionsStatistic(this.injectorPerApp, systemLogMediator);
     }
-    await this.perAppHandling(mMetadataPerMod2, extensionContext);
+    await this.perAppHandling(mResolvedModuleMetadata, extensionContext);
   }
 
-  protected async perAppHandling(mMetadataPerMod2: Map<ModRefId, MetadataPerMod2>, extensionContext: ExtensionContext) {
+  protected async perAppHandling(
+    mResolvedModuleMetadata: Map<ModRefId, ResolvedModuleMetadata>,
+    extensionContext: ExtensionContext,
+  ) {
     for (const [ExtCls, mExtensions] of extensionContext.mExtensionPendingList) {
       for (const extension of mExtensions.values()) {
         try {
@@ -286,7 +289,7 @@ export class BaseAppInitializer {
       }
     }
 
-    for (const [modRefId, { normalizedModuleMeta }] of mMetadataPerMod2) {
+    for (const [modRefId, { normalizedModuleMeta }] of mResolvedModuleMetadata) {
       try {
         this.overrideMetaAfterStage1(normalizedModuleMeta.modRefId, normalizedModuleMeta);
         normalizedModuleMeta.initMeta.forEach((meta) =>
@@ -301,7 +304,7 @@ export class BaseAppInitializer {
     // After the extensions have added new providers, injectorPerApp needs to be recreated one last time.
     this.createInjectorAndSetLogMediator();
 
-    for (const [modRefId, { normalizedModuleMeta }] of mMetadataPerMod2) {
+    for (const [modRefId, { normalizedModuleMeta }] of mResolvedModuleMetadata) {
       try {
         const injectorPerMod = await this.initModuleAndGetInjectorPerMod(normalizedModuleMeta);
         this.moduleManager.setInjectorPerMod(modRefId, injectorPerMod);
@@ -354,7 +357,7 @@ export class BaseAppInitializer {
    * Note that this method is used for `@ditsmod/testing`.
    */
   protected getProvidersForExtensions(
-    metadataPerMod2: MetadataPerMod2,
+    resolvedModuleMetadata: ResolvedModuleMetadata,
     extensionCounters: ExtensionCounters,
     extensionContext: ExtensionContext,
   ): Provider[] {
@@ -362,10 +365,10 @@ export class BaseAppInitializer {
       InternalExtensionManager,
       { token: ExtensionManager, useToken: InternalExtensionManager },
       { token: ExtensionContext, useValue: extensionContext },
-      { token: MetadataPerMod2, useValue: metadataPerMod2 },
+      { token: ResolvedModuleMetadata, useValue: resolvedModuleMetadata },
       { token: ExtensionCounters, useValue: extensionCounters },
       { token: PROVIDERS_PER_APP, useValue: this.normalizedModuleMeta.providersPerApp },
-      ...metadataPerMod2.normalizedModuleMeta.extensionProviders,
+      ...resolvedModuleMetadata.normalizedModuleMeta.extensionProviders,
     ];
   }
 

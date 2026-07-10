@@ -6,7 +6,7 @@ import {
   Provider,
   Reflector,
   Class,
-  MetadataPerMod2,
+  ResolvedModuleMetadata,
 } from '@ditsmod/core';
 import {
   AppOptions,
@@ -14,7 +14,7 @@ import {
   ControllerDecoratorOptions1,
   isCtrlDecor,
   MetadataPerMod3,
-  RestMetadataPerMod2,
+  RestResolvedModuleMetadata,
   RouteMeta,
   RestRouteExtension,
 } from '@ditsmod/rest';
@@ -31,13 +31,16 @@ import { CompilingOasRoutesFailed, ThrowParamNotFoundInPath } from '#errors';
 export class OpenapiRouteExtension extends RestRouteExtension implements Extension<MetadataPerMod3> {
   constructor(
     protected override appOptions: AppOptions,
-    protected override metadataPerMod2: MetadataPerMod2<RestMetadataPerMod2>,
+    protected override resolvedModuleMetadata: ResolvedModuleMetadata<RestResolvedModuleMetadata>,
   ) {
-    super(appOptions, metadataPerMod2);
+    super(appOptions, resolvedModuleMetadata);
   }
 
-  protected override getControllersMetadata(prefixPerApp: string, restMetadataPerMod2: RestMetadataPerMod2) {
-    const { normalizedModuleMeta, prefixPerMod, applyControllers, meta } = restMetadataPerMod2;
+  protected override getControllersMetadata(
+    prefixPerApp: string,
+    restResolvedModuleMetadata: RestResolvedModuleMetadata,
+  ) {
+    const { normalizedModuleMeta, prefixPerMod, applyControllers, meta } = restResolvedModuleMetadata;
 
     const oasOptions = normalizedModuleMeta.extensionsMeta.oasOptions as OasOptions;
     const prefixParams = oasOptions?.paratemers;

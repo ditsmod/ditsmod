@@ -368,7 +368,7 @@ That is, here `Extension1` and `Extension2` effectively act as tokens (or identi
 
 ## Dynamic addition of providers {#dynamic-addition-of-providers}
 
-If you are using `@ditsmod/rest`, any extension can declare a dependency on the `RestRouteExtension` to dynamically add providers at any level. This extension uses metadata with the `MetadataPerMod2` interface and returns metadata with the `MetadataPerMod3` interface.
+If you are using `@ditsmod/rest`, any extension can declare a dependency on the `RestRouteExtension` to dynamically add providers at any level. This extension uses metadata with the `ResolvedModuleMetadata` interface and returns metadata with the `MetadataPerMod3` interface.
 
 You can see how it is done in [BodyParserExtension][102]:
 

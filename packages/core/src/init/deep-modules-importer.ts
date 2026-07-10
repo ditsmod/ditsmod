@@ -4,7 +4,7 @@ import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import type { ModuleManager } from '#init/module-manager.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
 import type { BaseImportRegistry, ShallowImports } from '#init/types.js';
-import type { MetadataPerMod2 } from '#types/metadata-per-mod.js';
+import type { ResolvedModuleMetadata } from '#types/metadata-per-mod.js';
 import type { Level, ModRefId, AnyObj } from '#types/mix.js';
 import type { AnyFn, Provider } from '#di/top/types-and-models.js';
 import type { NormalizedModuleMeta } from '#init/base-meta.js';
@@ -60,13 +60,13 @@ export class DeepModulesImporter {
 
   importModulesDeep() {
     const levels: Level[] = ['Req', 'Rou', 'Mod'];
-    const mMetadataPerMod2 = new Map<ModRefId, MetadataPerMod2>();
+    const mResolvedModuleMetadata = new Map<ModRefId, ResolvedModuleMetadata>();
     this.tokensPerApp = getTokens(this.providersPerApp);
     this.shallowImportsMap.forEach(
       ({ normalizedModuleMeta, aOrderedExtensions, baseImportRegistry, initImportRegistryMap }, modRefId) => {
         try {
           const deepImportedModules = new Map<AnyFn, AnyObj>();
-          mMetadataPerMod2.set(modRefId, { normalizedModuleMeta, aOrderedExtensions, deepImportedModules });
+          mResolvedModuleMetadata.set(modRefId, { normalizedModuleMeta, aOrderedExtensions, deepImportedModules });
           const targetProviders = new ProvidersByLevel<Provider[]>();
           this.resolveImportedProviders(targetProviders, baseImportRegistry, levels);
           this.resolveProvidersForExtensions(normalizedModuleMeta, baseImportRegistry);
@@ -100,7 +100,7 @@ export class DeepModulesImporter {
       },
     );
 
-    return { extensionCounters: this.extensionCounters, mMetadataPerMod2 };
+    return { extensionCounters: this.extensionCounters, mResolvedModuleMetadata };
   }
 
   protected resolveImportedProviders(

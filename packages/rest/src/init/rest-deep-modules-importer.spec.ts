@@ -15,7 +15,7 @@ import {
   NormalizedModuleMeta,
   DeepModulesImporter,
   ModRefId,
-  MetadataPerMod2,
+  ResolvedModuleMetadata,
   DynamicModule,
   Context,
 } from '@ditsmod/core';
@@ -24,7 +24,7 @@ import { InstantiationError, NoProvider } from '@ditsmod/core/errors';
 import { CanActivate, guard } from '#interceptors/guard.js';
 import { RequestContext } from '#services/request-context.js';
 import { initRest, restModule, restRootModule } from '#decorators/rest-init-hooks-and-metadata.js';
-import { RestMetadataPerMod2 } from './types.js';
+import { RestResolvedModuleMetadata } from './types.js';
 import { RestModuleOptions } from './rest-init-raw-meta.js';
 
 describe('DeepModulesImporter', () => {
@@ -36,7 +36,7 @@ describe('DeepModulesImporter', () => {
     }
   }
 
-  function getMetadataPerMod2(rootModule: ModuleType) {
+  function getResolvedModuleMetadata(rootModule: ModuleType) {
     const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
     const moduleManager = new ModuleManager(systemLogMediator);
     moduleManager.scanRootModule(rootModule);
@@ -51,12 +51,12 @@ describe('DeepModulesImporter', () => {
       providersPerApp: initializer.normalizedModuleMeta.providersPerApp,
       log: systemLogMediator,
     });
-    const { extensionCounters, mMetadataPerMod2 } = deepModulesImporter.importModulesDeep();
-    return mMetadataPerMod2 as Map<ModRefId, MetadataPerMod2<RestMetadataPerMod2>>;
+    const { extensionCounters, mResolvedModuleMetadata } = deepModulesImporter.importModulesDeep();
+    return mResolvedModuleMetadata as Map<ModRefId, ResolvedModuleMetadata<RestResolvedModuleMetadata>>;
   }
 
-  function getRestMetadataPerMod2(rootModule: ModuleType) {
-    return getMetadataPerMod2(rootModule).get(rootModule)?.deepImportedModules.get(initRest);
+  function getRestResolvedModuleMetadata(rootModule: ModuleType) {
+    return getResolvedModuleMetadata(rootModule).get(rootModule)?.deepImportedModules.get(initRest);
   }
 
   beforeEach(() => {
@@ -89,7 +89,7 @@ describe('DeepModulesImporter', () => {
     @rootModule()
     class AppModule {}
 
-    const map = getMetadataPerMod2(AppModule);
+    const map = getResolvedModuleMetadata(AppModule);
     const rootNormalizedModuleMeta = map.get(AppModule)?.normalizedModuleMeta;
     const mod1NormalizedModuleMeta = map.get(Module1)?.normalizedModuleMeta;
 
@@ -126,7 +126,7 @@ describe('DeepModulesImporter', () => {
     @rootModule({ imports: [Module2] })
     class AppModule {}
 
-    const map = getMetadataPerMod2(AppModule);
+    const map = getResolvedModuleMetadata(AppModule);
     const rootMod = map.get(AppModule)?.deepImportedModules.get(initRest)!;
     const mod2 = map.get(Module2)?.deepImportedModules.get(initRest)!;
     expect(rootMod?.meta.providersPerReq.includes(Service1)).toBeTruthy();
@@ -146,8 +146,8 @@ describe('DeepModulesImporter', () => {
     @rootModule({ imports: [Module1] })
     class AppModule {}
 
-    const restMetadataPerMod2 = getRestMetadataPerMod2(AppModule);
-    expect(restMetadataPerMod2?.meta.providersPerRou.includes(Provider1)).toBeTruthy();
+    const restResolvedModuleMetadata = getRestResolvedModuleMetadata(AppModule);
+    expect(restResolvedModuleMetadata?.meta.providersPerRou.includes(Provider1)).toBeTruthy();
   });
 
   it('root module with initRest decorator exports Provider2 and imports Module1 that has not initRest decorator', () => {
@@ -161,7 +161,7 @@ describe('DeepModulesImporter', () => {
     @rootModule({ imports: [Module1] })
     class AppModule {}
 
-    const map = getMetadataPerMod2(AppModule);
+    const map = getResolvedModuleMetadata(AppModule);
     const mod1 = map.get(Module1)?.deepImportedModules.get(initRest)!;
     expect(mod1).toBeDefined();
     expect(mod1.meta.providersPerReq.includes(Provider2)).toBeTruthy();
@@ -181,7 +181,7 @@ describe('DeepModulesImporter', () => {
     @rootModule({ imports: [Module1, Module2], exports: [Module2] })
     class AppModule {}
 
-    const map = getMetadataPerMod2(AppModule);
+    const map = getResolvedModuleMetadata(AppModule);
     const mod1 = map.get(Module1)?.deepImportedModules.get(initRest)!;
     expect(mod1).toBeDefined();
     expect(mod1.meta.providersPerReq.includes(Provider2)).toBeTruthy();
@@ -213,7 +213,7 @@ describe('DeepModulesImporter', () => {
     @rootModule()
     class AppModule {}
 
-    const map = getMetadataPerMod2(AppModule);
+    const map = getResolvedModuleMetadata(AppModule);
     const rootMod = map.get(AppModule)?.deepImportedModules.get(initRest)!;
     const mod1 = map.get(moduleWithParams)?.deepImportedModules.get(initRest)!;
     expect(mod1.prefixPerMod).toBe('test-prefix');
@@ -249,7 +249,7 @@ describe('DeepModulesImporter', () => {
     @rootModule({ imports: [Module3] })
     class AppModule {}
 
-    const map = getMetadataPerMod2(AppModule);
+    const map = getResolvedModuleMetadata(AppModule);
     const mod1 = map.get(Module1)?.deepImportedModules.get(initRest)!;
     const mod3 = map.get(Module3)?.deepImportedModules.get(initRest)!;
     expect(mod1.meta.providersPerRou.includes(Provider2));
@@ -274,7 +274,7 @@ describe('DeepModulesImporter', () => {
 
     let msg = 'Module2: no provider for Service1! (required by Service2 -> Service1). ';
     msg += 'Searched in providersPerRou, providersPerMod, providersPerApp';
-    expect(() => getMetadataPerMod2(Module3)).toThrow(msg);
+    expect(() => getResolvedModuleMetadata(Module3)).toThrow(msg);
   });
 
   it(`There is the following dependency chain: Service4 -> Service3 -> Service2 -> Service1;
@@ -315,7 +315,7 @@ describe('DeepModulesImporter', () => {
     })
     class AppModule {}
 
-    const initMeta = getRestMetadataPerMod2(AppModule)!.meta!;
+    const initMeta = getRestResolvedModuleMetadata(AppModule)!.meta!;
     const arr = [Service3, Service4, Context];
     expect(arr.every((item) => initMeta.providersPerRou.includes(item))).toBe(true);
     expect([Context].every((item) => initMeta.providersPerReq.includes(item))).toBe(true);
@@ -358,7 +358,7 @@ describe('DeepModulesImporter', () => {
 
     let msg = 'Detected circular dependencies: [Service3 in Module2] -> [Service2 in Module2]';
     msg += ' -> [Service4 in Module2] -> [Service3 in Module2]';
-    expect(() => getMetadataPerMod2(AppModule)).toThrow(msg);
+    expect(() => getResolvedModuleMetadata(AppModule)).toThrow(msg);
   });
 
   it('circular dependencies in different modules', () => {
@@ -401,7 +401,7 @@ describe('DeepModulesImporter', () => {
 
     let msg = 'Detected circular dependencies: [Service3 in Module2] -> [Service2 in Module2]';
     msg += ' -> [Service1 in Module1] -> [Service4 in Module2] -> [Service3 in Module2]';
-    expect(() => getMetadataPerMod2(Module3)).toThrow(msg);
+    expect(() => getResolvedModuleMetadata(Module3)).toThrow(msg);
   });
 
   it(`AppModule imports Module2, which has a dependency on Module1, but Module2 does not import Module1;
@@ -425,7 +425,7 @@ describe('DeepModulesImporter', () => {
 
     let msg = 'Module2: no provider for Service1! (required by Service2 -> Service1). ';
     msg += 'Searched in providersPerRou, providersPerMod, providersPerApp';
-    expect(() => getMetadataPerMod2(AppModule)).toThrow(msg);
+    expect(() => getResolvedModuleMetadata(AppModule)).toThrow(msg);
   });
 
   it('Service2 declared per route and it has dependency on Service1 which is declared per module', () => {
@@ -446,7 +446,7 @@ describe('DeepModulesImporter', () => {
     @restRootModule({ imports: [Module2] })
     class AppModule {}
 
-    const initMeta = getRestMetadataPerMod2(AppModule)!.meta!;
+    const initMeta = getRestResolvedModuleMetadata(AppModule)!.meta!;
     const arr = [Context];
     expect(arr.every((item) => initMeta.providersPerReq.includes(item))).toBe(true);
     expect(initMeta.providersPerRou.includes(Service2)).toBe(true);
@@ -473,7 +473,7 @@ describe('DeepModulesImporter', () => {
     })
     class AppModule {}
 
-    const initMeta = getRestMetadataPerMod2(AppModule)!.meta!;
+    const initMeta = getRestResolvedModuleMetadata(AppModule)!.meta!;
     const arr = [Context];
     expect(arr.every((item) => initMeta.providersPerReq.includes(item))).toBe(true);
     expect(initMeta.providersPerRou.includes(Service2)).toBeTruthy();
@@ -506,7 +506,7 @@ describe('DeepModulesImporter', () => {
     @restRootModule({ providersPerRou: [Service3], exports: [Service3], imports: [Module2] })
     class AppModule {}
 
-    const initMeta = getRestMetadataPerMod2(AppModule)!.meta!;
+    const initMeta = getRestResolvedModuleMetadata(AppModule)!.meta!;
     expect(initMeta.providersPerRou.includes(Service2)).toBe(true);
     expect(initMeta.providersPerRou.includes(Service1)).toBe(false);
   });
@@ -531,7 +531,7 @@ describe('DeepModulesImporter', () => {
     @rootModule({ imports: [Module1] })
     class AppModule {}
 
-    const initMeta = getRestMetadataPerMod2(AppModule)!.meta!;
+    const initMeta = getRestResolvedModuleMetadata(AppModule)!.meta!;
     const injector = Injector.resolveAndCreate(initMeta.providersPerRou);
     expect(() => injector.get(Service2)).not.toThrow();
   });
@@ -579,16 +579,16 @@ describe('DeepModulesImporter', () => {
     @restRootModule({ imports: [mod1WithParams], providersPerRou: [provider, Service0, Service2] })
     class AppModule {}
 
-    const mMetadataPerMod2 = getMetadataPerMod2(AppModule);
-    const mod1 = mMetadataPerMod2.get(mod1WithParams);
-    const restMetadataPerMod2 = mod1?.deepImportedModules.get(initRest) as RestMetadataPerMod2;
-    expect(restMetadataPerMod2.guards1.at(0)?.guard).toBe(BearerGuard1);
+    const mResolvedModuleMetadata = getResolvedModuleMetadata(AppModule);
+    const mod1 = mResolvedModuleMetadata.get(mod1WithParams);
+    const restResolvedModuleMetadata = mod1?.deepImportedModules.get(initRest) as RestResolvedModuleMetadata;
+    expect(restResolvedModuleMetadata.guards1.at(0)?.guard).toBe(BearerGuard1);
 
     // Guards per a module must have ref to host module normalizedModuleMeta.
-    expect(restMetadataPerMod2.guards1.at(0)?.normalizedModuleMeta.modRefId).toBe(AppModule);
+    expect(restResolvedModuleMetadata.guards1.at(0)?.normalizedModuleMeta.modRefId).toBe(AppModule);
 
     // The injector must have enough providers to create a guard instance.
-    const injector = Injector.resolveAndCreate(restMetadataPerMod2.guards1.at(0)?.meta.providersPerRou || []);
+    const injector = Injector.resolveAndCreate(restResolvedModuleMetadata.guards1.at(0)?.meta.providersPerRou || []);
     expect(() => injector.get(BearerGuard1)).not.toThrow();
     expect(injector.get(BearerGuard1)).toBeInstanceOf(BearerGuard2);
   });

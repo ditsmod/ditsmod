@@ -1,5 +1,5 @@
 import { inspect } from 'node:util';
-import { injectable, Extension, Provider, Reflector, Class, HttpMethod, MetadataPerMod2 } from '@ditsmod/core';
+import { injectable, Extension, Provider, Reflector, Class, HttpMethod, ResolvedModuleMetadata } from '@ditsmod/core';
 
 import { MetadataPerMod3 } from '#types/types.js';
 import { isCtrlDecor, isRoute } from '#types/type.guards.js';
@@ -10,7 +10,7 @@ import { GuardItem, GuardPerMod1 } from '#interceptors/guard.js';
 import { ControllerDecoratorOptions1 } from '#types/controller.js';
 import { AppOptions } from '#types/app-options.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
-import { RestMetadataPerMod2 } from '#init/types.js';
+import { RestResolvedModuleMetadata } from '#init/types.js';
 import { FailedValidationOfRoute } from '#errors';
 
 @injectable()
@@ -19,29 +19,29 @@ export class RestRouteExtension implements Extension<MetadataPerMod3> {
 
   constructor(
     protected appOptions: AppOptions,
-    protected metadataPerMod2: MetadataPerMod2<RestMetadataPerMod2>,
+    protected resolvedModuleMetadata: ResolvedModuleMetadata<RestResolvedModuleMetadata>,
   ) {}
 
   async stage1() {
-    const restMetadataPerMod2 = this.metadataPerMod2.deepImportedModules.get(initRest)!;
+    const restResolvedModuleMetadata = this.resolvedModuleMetadata.deepImportedModules.get(initRest)!;
     this.metadataPerMod3 = new MetadataPerMod3();
-    this.metadataPerMod3.meta = restMetadataPerMod2.meta;
+    this.metadataPerMod3.meta = restResolvedModuleMetadata.meta;
     const { path: prefixPerApp } = this.appOptions;
-    this.metadataPerMod3.prefixPerMod = restMetadataPerMod2.prefixPerMod;
-    this.metadataPerMod3.normalizedModuleMeta = this.metadataPerMod2.normalizedModuleMeta;
-    this.metadataPerMod3.aControllerMetadata = this.getControllersMetadata(prefixPerApp, restMetadataPerMod2);
-    this.metadataPerMod3.guards1 = restMetadataPerMod2.guards1;
+    this.metadataPerMod3.prefixPerMod = restResolvedModuleMetadata.prefixPerMod;
+    this.metadataPerMod3.normalizedModuleMeta = this.resolvedModuleMetadata.normalizedModuleMeta;
+    this.metadataPerMod3.aControllerMetadata = this.getControllersMetadata(prefixPerApp, restResolvedModuleMetadata);
+    this.metadataPerMod3.guards1 = restResolvedModuleMetadata.guards1;
     // this.metadataPerMod3.guards1 = [];
 
     return this.metadataPerMod3;
   }
 
-  protected getControllersMetadata(prefixPerApp: string = '', restMetadataPerMod2: RestMetadataPerMod2) {
-    const { normalizedModuleMeta, prefixPerMod, applyControllers } = restMetadataPerMod2;
+  protected getControllersMetadata(prefixPerApp: string = '', restResolvedModuleMetadata: RestResolvedModuleMetadata) {
+    const { normalizedModuleMeta, prefixPerMod, applyControllers } = restResolvedModuleMetadata;
 
     const aControllerMetadata: ControllerMetadata[] = [];
     if (applyControllers)
-      for (const Controller of restMetadataPerMod2.meta.controllers) {
+      for (const Controller of restResolvedModuleMetadata.meta.controllers) {
         const classMeta = Reflector.collectMeta(Controller)!;
         for (const methodName of classMeta) {
           for (const decoratorAndValue of classMeta[methodName].decorators) {
