@@ -56,7 +56,7 @@ export interface ExtensionConfig3 {
 
 export type ExtensionConfig = ExtensionConfig1 | ExtensionConfig2 | ExtensionConfig3;
 
-export function isConfigWithOverrideExtension(extensionConfig: AnyObj): extensionConfig is ExtensionConfig3 {
+export function isOverrideExtensionConfig(extensionConfig: AnyObj): extensionConfig is ExtensionConfig3 {
   return (extensionConfig as ExtensionConfig3).overrideExtension !== undefined;
 }
 
@@ -65,7 +65,7 @@ export function isBaseExtensionConfig(extensionConfig: AnyObj): extensionConfig 
 }
 
 export function normalizeExtensionConfig(extensionConfig: ExtensionConfig): ExtensionProvidersAndConfigs {
-  if (isConfigWithOverrideExtension(extensionConfig)) {
+  if (isOverrideExtensionConfig(extensionConfig)) {
     const { extension, overrideExtension } = extensionConfig;
     return {
       providers: [{ token: overrideExtension, useClass: extension }],

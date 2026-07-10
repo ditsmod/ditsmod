@@ -17,7 +17,7 @@ import type {
   ExtensionConfig3,
   ExtensionConfigBase,
 } from '#extension/extension-providers-and-configs.js';
-import { isConfigWithOverrideExtension } from '#extension/extension-providers-and-configs.js';
+import { isOverrideExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import { findCycle } from '#extension/tarjan-graph.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { topologicalSort } from '#extension/topological-sort.js';
@@ -342,7 +342,7 @@ export class ShallowModulesImporter {
 
   protected checkExtensionsGraph(aExtensionConfig: (ExtensionConfig | ExtensionConfig3)[]) {
     const extensionWithBeforeExtension = aExtensionConfig?.filter((config) => {
-      return !isConfigWithOverrideExtension(config) && config.beforeExtensions;
+      return !isOverrideExtensionConfig(config) && config.beforeExtensions;
     }) as ExtensionConfig[] | undefined;
 
     if (extensionWithBeforeExtension) {

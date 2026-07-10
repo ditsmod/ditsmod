@@ -78,7 +78,7 @@ export { getDuplicates } from '#utils/get-duplicates.js';
 export { getCollisions } from '#utils/get-collisions.js';
 export { getDependencies, ReflectiveDependency } from '#utils/get-dependencies.js';
 export { getProviderName } from '#utils/get-provider-name.js';
-export { ExtensionConfig, isConfigWithOverrideExtension } from '#extension/extension-providers-and-configs.js';
+export { ExtensionConfig, isOverrideExtensionConfig } from '#extension/extension-providers-and-configs.js';
 export { getModule } from '#utils/get-module.js';
 export { getStatusText, isSuccess, Status, STATUS_CODE_INFO } from '#utils/http-status-codes.js';
 export { normalizeProviders } from '#utils/ng-utils.js';
