@@ -35,15 +35,15 @@ export class ResolvedProvider {
   ) {}
 }
 
-export class RegistryOfInjector {
+export class InjectorRegistry {
   [id: number]: ResolvedProvider;
 }
 /**
- * Returns new class with `RegistryOfInjector` interface.
+ * Returns new class with `InjectorRegistry` interface.
  */
 
-export function getNewRegistry(): typeof RegistryOfInjector {
-  return class NewRegistryOfInjector {
+export function getNewRegistry(): typeof InjectorRegistry {
+  return class NewInjectorRegistry {
     /**
      * This ID taken from `resolvedProvider.dualKey.id`.
      */

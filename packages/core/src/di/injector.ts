@@ -27,7 +27,7 @@ import type {
 } from './top/types-and-models.js';
 import {
   type DepsMeta,
-  type RegistryOfInjector,
+  type InjectorRegistry,
   Dependency,
   ID,
   ResolvedFactory,
@@ -89,8 +89,8 @@ expect(car.engine instanceof Engine).toBe(true);
  */
 export class Injector {
   #parent: Injector | undefined;
-  #registry: RegistryOfInjector;
-  #Registry: typeof RegistryOfInjector;
+  #registry: InjectorRegistry;
+  #Registry: typeof InjectorRegistry;
   #level?: LevelOfInjector;
 
   get level() {
@@ -100,7 +100,7 @@ export class Injector {
   /**
    * @param level name of the injector. Useful for debugging.
    */
-  constructor(Registry: typeof RegistryOfInjector, level?: LevelOfInjector, parent?: Injector) {
+  constructor(Registry: typeof InjectorRegistry, level?: LevelOfInjector, parent?: Injector) {
     this.#Registry = Registry;
     this.#registry = new Registry();
     this.#parent = parent;
@@ -154,8 +154,8 @@ console.log(providers[0].resolvedFactories[0].dependencies);
    */
   static prepareRegistry(
     providers: ResolvedProvider[],
-    Registry?: typeof RegistryOfInjector,
-  ): typeof RegistryOfInjector {
+    Registry?: typeof InjectorRegistry,
+  ): typeof InjectorRegistry {
     if (!Registry) {
       Registry = getNewRegistry();
     }
