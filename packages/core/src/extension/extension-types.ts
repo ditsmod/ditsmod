@@ -6,7 +6,7 @@ export class ExtensionsMetaPerApp {
   [key: string]: AnyObj;
 }
 
-export class Stage1DebugMeta<T = any> {
+export class ExtensionDebugMeta<T = any> {
   /**
    * @param extension Instance of an extension.
    * @param payload Value that `extension` returns from its `stage1` method.
@@ -26,11 +26,11 @@ export class Stage1ExtensionMeta<T = any> {
 
   constructor(
     public moduleName: string,
-    public groupDebugMeta: Stage1DebugMeta<T>[],
+    public groupDebugMeta: ExtensionDebugMeta<T>[],
     public groupData: T[],
   ) {}
 
-  addDebugMeta(debugMeta: Stage1DebugMeta<T>) {
+  addDebugMeta(debugMeta: ExtensionDebugMeta<T>) {
     this.groupDebugMeta.push(debugMeta);
     this.groupData.push(debugMeta.payload);
   }

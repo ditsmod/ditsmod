@@ -28,7 +28,7 @@ export {
   ExtensionClass,
   ExtensionsMetaPerApp,
   Extension,
-  Stage1DebugMeta,
+  ExtensionDebugMeta,
   Stage1ExtensionMeta,
   Stage1ExtensionMeta2,
   Stage1ExtensionMetaPerApp,

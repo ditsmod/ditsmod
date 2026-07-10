@@ -4,7 +4,7 @@ import {
   Extension,
   injectable,
   ExtensionManager,
-  Stage1DebugMeta,
+  ExtensionDebugMeta,
   Stage1ExtensionMeta,
   Stage1ExtensionMeta2,
 } from '@ditsmod/core';
@@ -312,7 +312,7 @@ describe('extensions e2e', () => {
 
     expect(extensionInit2).toHaveBeenCalledTimes(2);
     const extension = new Extension1();
-    const stage1Meta = new Stage1DebugMeta(extension, undefined, true, 1);
+    const stage1Meta = new ExtensionDebugMeta(extension, undefined, true, 1);
     const stage1ExtensionMeta = new Stage1ExtensionMeta('Module3', [stage1Meta], [undefined]);
     stage1ExtensionMeta.delay = true;
     stage1ExtensionMeta.countdown = 1;

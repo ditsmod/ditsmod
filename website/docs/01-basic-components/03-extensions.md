@@ -284,11 +284,11 @@ interface Stage1ExtensionMeta<T = any> {
   countdown: number;
   groupDataPerApp: Stage1ExtensionMetaPerApp<T>[];
   moduleName: string,
-  groupDebugMeta: Stage1DebugMeta<T>[],
+  groupDebugMeta: ExtensionDebugMeta<T>[],
   groupData: T[],
 }
 
-interface Stage1DebugMeta<T = any> {
+interface ExtensionDebugMeta<T = any> {
   extension: Extension<T>,
   payload: T,
   delay: boolean,
