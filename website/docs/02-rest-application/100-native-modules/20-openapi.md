@@ -96,7 +96,7 @@ export const oasObject: XOasObject = {
 Щоб створювати окремі маршрути, користуйтесь декоратором `oasRoute`, в якому четвертим або третім параметром (якщо немає ґардів) йде так званий [Operation Object][1]:
 
 ```ts {8-18}
-import { controller } from '@ditsmod/core';
+import { controller } from '@ditsmod/rest';
 import { oasRoute } from '@ditsmod/openapi';
 
 @controller()

@@ -96,7 +96,7 @@ export const oasObject: XOasObject = {
 To create individual routes, use the `oasRoute` decorator, in which the fourth or third parameter (if there are no guards) is the so-called [Operation Object][1]:
 
 ```ts {8-18}
-import { controller } from '@ditsmod/core';
+import { controller } from '@ditsmod/rest';
 import { oasRoute } from '@ditsmod/openapi';
 
 @controller()
