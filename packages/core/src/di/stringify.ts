@@ -1,6 +1,6 @@
-import { getSymbol } from './top/get-symbol.js';
+import { createInjectionSymbol } from './top/get-symbol.js';
 
-export const DEBUG_NAME = getSymbol<string>('DEBUG_NAME');
+export const DEBUG_NAME = createInjectionSymbol<string>('DEBUG_NAME');
 
 export function stringify(token: any): string {
   if (typeof token == 'string') {

@@ -1,6 +1,6 @@
 import type { XOasObject } from '@ts-stack/openapi-spec';
 import type { SwaggerOAuthOptions } from '../swagger-ui/o-auth-options.js';
-import { getSymbol } from '@ditsmod/core';
+import { createInjectionSymbol } from '@ditsmod/core';
 
 /**
  * Internaly used options.
@@ -15,4 +15,4 @@ export interface OasConfigFiles {
   yaml: string;
 }
 
-export const OAS_CONFIG_FILES = getSymbol<OasConfigFiles>();
+export const OAS_CONFIG_FILES = createInjectionSymbol<OasConfigFiles>();

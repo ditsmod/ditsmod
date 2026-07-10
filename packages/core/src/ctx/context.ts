@@ -1,25 +1,25 @@
 import { injectable, fromSelf as fromSelfFn } from '#di/decorators.js';
 import type { Injector } from '#di/injector.js';
-import type { getSymbol, InjectionSymbol } from '#di/top/get-symbol.js';
+import type { createInjectionSymbol, InjectionSymbol } from '#di/top/get-symbol.js';
 
 /**
  * A service for storing specific context data at each level of the injector hierarchy.
  * Additionally, it powers the `@ctx()` parameter decorator.
  * 
- * It is recommended to use the {@link getSymbol | getSymbol\<T\>()} function for context keys,
+ * It is recommended to use the {@link createInjectionSymbol | createInjectionSymbol\<T\>()} function for context keys,
  * which enables passing a type parameter:
  * 
  * ### Example
  * 
 ```ts
-import { Context, getSymbol, Injector } from '@ditsmod/core';
+import { Context, createInjectionSymbol, Injector } from '@ditsmod/core';
 
 export interface InterfaceOfSomeValue {
   one: string;
   two: number;
 }
 
-export const SOME_KEY = getSymbol<InterfaceOfSomeValue>('SOME_KEY');
+export const SOME_KEY = createInjectionSymbol<InterfaceOfSomeValue>('SOME_KEY');
 
 // Testing
 const injector = Injector.resolveAndCreate([Context]);

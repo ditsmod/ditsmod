@@ -1,7 +1,7 @@
-import { getSymbol } from '@ditsmod/core';
+import { createInjectionSymbol } from '@ditsmod/core';
 import type { Options } from 'ajv';
 
 /**
  * Ajv JSON schema validator options, see [docs](https://ajv.js.org/) for more info.
  */
-export const AJV_OPTIONS = getSymbol<Options>('AJV_OPTIONS');
+export const AJV_OPTIONS = createInjectionSymbol<Options>('AJV_OPTIONS');

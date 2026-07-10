@@ -1,5 +1,5 @@
 import type { AnyFn, AnyObj, NormalizedModuleMeta, ModRefId, Override, Provider } from '@ditsmod/core';
-import { BaseAppOptions, AppInitHooks, InjectionToken, getSymbol } from '@ditsmod/core';
+import { BaseAppOptions, AppInitHooks, InjectionToken, createInjectionSymbol } from '@ditsmod/core';
 import type { AnyRouter } from '@trpc/server';
 import { initTRPC } from '@trpc/server';
 import type { CreateHTTPHandlerOptions } from '@trpc/server/adapters/standalone';
@@ -110,11 +110,11 @@ export const TRPC_HTTP_INTERCEPTORS = new InjectionToken<TrpcHttpInterceptor[]>(
 /**
  * DI token for native webserver request.
  */
-export const RAW_REQ = getSymbol<RawRequest>('RAW_REQ');
+export const RAW_REQ = createInjectionSymbol<RawRequest>('RAW_REQ');
 /**
  * DI token for native webserver response.
  */
-export const RAW_RES = getSymbol<RawResponse>('RAW_RES');
+export const RAW_RES = createInjectionSymbol<RawResponse>('RAW_RES');
 
 export interface TrpcOpts<Context extends AnyObj = AnyObj, Input = unknown> {
   ctx: { req: RawRequest; res: RawResponse } & Context;

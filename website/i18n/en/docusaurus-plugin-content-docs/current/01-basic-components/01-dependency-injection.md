@@ -961,19 +961,19 @@ You can find real-world examples of setting context values here:
 1. [BodyParserInterceptor][16];
 2. [BearerGuard][17].
 
-### `getSymbol()` helper {#getsymbol-helper}
+### `createInjectionSymbol()` helper {#createinjectionsymbol-helper}
 
-Use the `getSymbol<T>()` function for keys in the `Context` service to enable the type parameter associated with the specified key:
+Use the `createInjectionSymbol<T>()` function for keys in the `Context` service to enable the type parameter associated with the specified key:
 
 ```ts {8,13}
-import { Context, getSymbol, Injector } from '@ditsmod/core';
+import { Context, createInjectionSymbol, Injector } from '@ditsmod/core';
 
 export interface InterfaceOfSomeValue {
   one: string;
   two: number;
 }
 
-export const SOME_KEY = getSymbol<InterfaceOfSomeValue>('SOME_KEY');
+export const SOME_KEY = createInjectionSymbol<InterfaceOfSomeValue>('SOME_KEY');
 
 // Testing
 const injector = Injector.resolveAndCreate([Context]);
@@ -981,7 +981,7 @@ const ctx = injector.get(Context);
 const value = ctx.get(SOME_KEY); // TypeScript infers the type as "InterfaceOfSomeValue | undefined"
 ```
 
-The `getSymbol<T>()` function is a lightweight wrapper around `Symbol()`. Its only purpose is to provide a type parameter, allowing TypeScript to subsequently infer the type when methods such as `ctx.get()` or `ctx.getInScope()` are called.
+The `createInjectionSymbol<T>()` function is a lightweight wrapper around `Symbol()`. Its only purpose is to provide a type parameter, allowing TypeScript to subsequently infer the type when methods such as `ctx.get()` or `ctx.getInScope()` are called.
 
 ## Method Parameter Decorators {#method-parameter-decorators}
 

@@ -961,19 +961,19 @@ injector.get('token1'); // { param1: 'value1', param2: 'value2' }
 1. [BodyParserInterceptor][16];
 2. [BearerGuard][17].
 
-### Хелпер `getSymbol()` {#getsymbol-helper}
+### Хелпер `createInjectionSymbol()` {#createinjectionsymbol-helper}
 
-Рекомендуємо використовувати функцію `getSymbol<T>()` для ключів у сервісі `Context`, яка дає можливість використовувати тип параметра, що асоціюється з указаним ключем:
+Рекомендуємо використовувати функцію `createInjectionSymbol<T>()` для ключів у сервісі `Context`, яка дає можливість використовувати тип параметра, що асоціюється з указаним ключем:
 
 ```ts {8,13}
-import { Context, getSymbol, Injector } from '@ditsmod/core';
+import { Context, createInjectionSymbol, Injector } from '@ditsmod/core';
 
 export interface InterfaceOfSomeValue {
   one: string;
   two: number;
 }
 
-export const SOME_KEY = getSymbol<InterfaceOfSomeValue>('SOME_KEY');
+export const SOME_KEY = createInjectionSymbol<InterfaceOfSomeValue>('SOME_KEY');
 
 // Тестуємо
 const injector = Injector.resolveAndCreate([Context]);
@@ -981,7 +981,7 @@ const ctx = injector.get(Context);
 const value = ctx.get(SOME_KEY); // TypeScript виводить тип "InterfaceOfSomeValue | undefined"
 ```
 
-Функція `getSymbol<T>()` - це просто обгортка над `Symbol()`, яка нічого додаткового не робить, окрім як додає параметр типу, який згодом TypeScript може вивести, коли використовувати такі методи як `ctx.get()` чи `ctx.getInScope()`.
+Функція `createInjectionSymbol<T>()` - це просто обгортка над `Symbol()`, яка нічого додаткового не робить, окрім як додає параметр типу, який згодом TypeScript може вивести, коли використовувати такі методи як `ctx.get()` чи `ctx.getInScope()`.
 
 ## Декоратори для параметрів методів {#method-parameter-decorators}
 
