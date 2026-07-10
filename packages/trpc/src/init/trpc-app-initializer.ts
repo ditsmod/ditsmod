@@ -1,4 +1,4 @@
-import type { ModRefId, ProvidersOnly } from '@ditsmod/core';
+import type { ModRefId, ProvidersByLevel } from '@ditsmod/core';
 import { BaseAppInitializer, NormalizedModuleMeta } from '@ditsmod/core';
 import { initTRPC } from '@trpc/server';
 
@@ -39,7 +39,7 @@ export class TrpcAppInitializer extends BaseAppInitializer {
 
   requestListener: RequestListener = (rawReq, rawRes) => this.preRouter.requestListener(rawReq, rawRes);
 
-  protected override overrideMetaAfterStage1(modRefId: ModRefId, normalizedModuleMeta: ProvidersOnly): void {
+  protected override overrideMetaAfterStage1(modRefId: ModRefId, normalizedModuleMeta: ProvidersByLevel): void {
     if (normalizedModuleMeta instanceof NormalizedModuleMeta) {
       normalizedModuleMeta.providersPerMod.unshift(TrpcService, TrpcInternalService);
     }

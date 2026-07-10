@@ -43,7 +43,7 @@ export interface RestBaseImportRegistry {
   multiPerReq: Map<RestModRefId, Provider[]>;
 }
 
-export class RestProvidersOnly {
+export class RestProvidersByLevel {
   providersPerMod: Provider[] = [];
   providersPerRou: Provider[] = [];
   providersPerReq: Provider[] = [];

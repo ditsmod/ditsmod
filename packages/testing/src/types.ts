@@ -3,7 +3,7 @@ import { TestRestApplication } from './test-application.js';
 
 export type Level = 'App' | 'Mod' | 'Rou' | 'Req';
 
-export class ProvidersOnly <T = Providers | (Provider | ForwardRefFn<Provider>)[]> {
+export class ProvidersByLevel <T = Providers | (Provider | ForwardRefFn<Provider>)[]> {
   providersPerApp = [] as T;
   providersPerMod = [] as T;
   providersPerRou = [] as T;

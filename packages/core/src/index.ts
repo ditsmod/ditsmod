@@ -39,7 +39,7 @@ export { isExtensionProvider, isExtensionConfig } from '#extension/type-guards.j
 export { ModuleExtract } from '#types/module-extract.js';
 export { Counter } from '#extension/counter.js';
 export { NormalizedModuleMeta, NormalizedInitMeta, getProxyForInitMeta } from '#init/base-meta.js';
-export { ProvidersOnly } from '#types/providers-metadata.js';
+export { ProvidersByLevel } from '#types/providers-metadata.js';
 export { ConsoleLogger } from '#logger/console-logger.js';
 export { ExtensionContext } from '#extension/extensions-context.js';
 export { ExtensionManager, InternalExtensionManager } from '#extension/extension-manager.js';

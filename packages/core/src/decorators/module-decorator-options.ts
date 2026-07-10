@@ -1,4 +1,4 @@
-import type { ProvidersOnly } from '#types/providers-metadata.js';
+import type { ProvidersByLevel } from '#types/providers-metadata.js';
 import type { AnyObj, ModRefId, ModuleType } from '#types/mix.js';
 import type { ExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import type { ExtensionClass } from '#extension/extension-types.js';
@@ -73,7 +73,7 @@ export interface DynamicModuleBase<M extends AnyObj = AnyObj> {
   id?: string;
   module: ModuleType<M> | ForwardRefFn<ModuleType<M>>;
 }
-export interface DynamicModuleOptions<E extends AnyObj = AnyObj> extends Partial<ProvidersOnly> {
+export interface DynamicModuleOptions<E extends AnyObj = AnyObj> extends Partial<ProvidersByLevel> {
   /**
    * List of modules, `DynamicModule` or tokens of providers exported by this
    * module.

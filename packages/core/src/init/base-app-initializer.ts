@@ -24,7 +24,7 @@ import { getProviderName } from '#utils/get-provider-name.js';
 import { getModule } from '#utils/get-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import type { ShallowImports } from './types.js';
-import type { ProvidersOnly } from '#types/providers-metadata.js';
+import type { ProvidersByLevel } from '#types/providers-metadata.js';
 import {
   FailedCollectingMetadata,
   FailedCreateInjectorPerMod,
@@ -396,7 +396,7 @@ export class BaseAppInitializer {
    *
    * See `TestAppInitializer` in `@ditsmod/testing` for more info.
    */
-  protected overrideMetaAfterStage1(modRefId: ModRefId, providersOnly: ProvidersOnly): void {}
+  protected overrideMetaAfterStage1(modRefId: ModRefId, providersByLevel: ProvidersByLevel): void {}
 
   protected decreaseExtensionsCounters(extensionCounters: ExtensionCounters, providers: Provider[]) {
     const { mExtensions } = extensionCounters;

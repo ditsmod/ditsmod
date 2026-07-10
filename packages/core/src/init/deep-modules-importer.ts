@@ -15,7 +15,7 @@ import { getProviderName } from '#utils/get-provider-name.js';
 import { getProvidersTargets, getTokens } from '#utils/get-tokens.js';
 import { ExtensionCounters } from '#extension/extension-types.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
-import { ProvidersOnly } from '#types/providers-metadata.js';
+import { ProvidersByLevel } from '#types/providers-metadata.js';
 import { CircularDepsInImports, NoProviderDuringResolveImports, FailImportProviders } from '#errors';
 import { ModuleExtract } from '#types/module-extract.js';
 import { stringify } from '#di/stringify.js';
@@ -67,7 +67,7 @@ export class DeepModulesImporter {
         try {
           const deepImportedModules = new Map<AnyFn, AnyObj>();
           mMetadataPerMod2.set(modRefId, { normalizedModuleMeta, aOrderedExtensions, deepImportedModules });
-          const targetProviders = new ProvidersOnly<Provider[]>();
+          const targetProviders = new ProvidersByLevel<Provider[]>();
           this.resolveImportedProviders(targetProviders, baseImportRegistry, levels);
           this.resolveProvidersForExtensions(normalizedModuleMeta, baseImportRegistry);
           const useValue: ModuleExtract = {
@@ -104,7 +104,7 @@ export class DeepModulesImporter {
   }
 
   protected resolveImportedProviders(
-    targetProviders: ProvidersOnly<Provider[]>,
+    targetProviders: ProvidersByLevel<Provider[]>,
     baseImportRegistry: BaseImportRegistry,
     levels: Level[],
   ) {
@@ -216,7 +216,7 @@ export class DeepModulesImporter {
    * @param levels Search in this levels. The level order is important.
    */
   fetchDeps(
-    targetProviders: ProvidersOnly<Provider[]>,
+    targetProviders: ProvidersByLevel<Provider[]>,
     srcModRefId: ModRefId,
     importedProvider: Provider,
     levels: Level[],
@@ -263,7 +263,7 @@ export class DeepModulesImporter {
    * @param dep ReflectiveDependecy with token for dependecy of imported provider.
    */
   fetchImportedDeps(
-    targetProviders: ProvidersOnly<Provider[]>,
+    targetProviders: ProvidersByLevel<Provider[]>,
     srcModRefId1: ModRefId,
     importedProvider: Provider,
     levels: Level[],
@@ -298,7 +298,7 @@ export class DeepModulesImporter {
   }
 
   protected fetchDependenciesAgain(
-    targetProviders: ProvidersOnly<Provider[]>,
+    targetProviders: ProvidersByLevel<Provider[]>,
     srcModRefId: ModRefId,
     importedProvider: Provider,
     levels: Level[],

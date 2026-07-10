@@ -3,14 +3,14 @@ import { NormalizedModuleMeta, Providers } from '@ditsmod/core';
 import { RestInitMeta, initRest } from '@ditsmod/rest';
 
 import { TestAppInitializer } from '#app/test-app-initializer.js';
-import type { ProvidersOnly } from '#app/types.js';
+import type { ProvidersByLevel } from '#app/types.js';
 
 describe('TestAppInitializer', () => {
   class MockTestAppInitializer extends TestAppInitializer {
-    override mAdditionalProviders = new Map<ModRefId, ProvidersOnly<Provider[]>>();
+    override mAdditionalProviders = new Map<ModRefId, ProvidersByLevel<Provider[]>>();
 
-    override overrideMetaAfterStage1(modRefId: ModRefId, providersOnly: NormalizedModuleMeta) {
-      return super.overrideMetaAfterStage1(modRefId, providersOnly);
+    override overrideMetaAfterStage1(modRefId: ModRefId, providersByLevel: NormalizedModuleMeta) {
+      return super.overrideMetaAfterStage1(modRefId, providersByLevel);
     }
   }
   const mock = new MockTestAppInitializer(null as any, null as any, null as any);
@@ -20,7 +20,7 @@ describe('TestAppInitializer', () => {
       const modRefId = {} as ModRefId;
       class Provider1 {}
 
-      const providersMeta1: Partial<ProvidersOnly> = {
+      const providersMeta1: Partial<ProvidersByLevel> = {
         providersPerApp: [Provider1],
         providersPerMod: [Provider1],
       };
@@ -34,11 +34,11 @@ describe('TestAppInitializer', () => {
       class Provider1 {}
       class Provider2 {}
 
-      const providersMeta1: Partial<ProvidersOnly> = {
+      const providersMeta1: Partial<ProvidersByLevel> = {
         providersPerApp: [Provider1],
       };
 
-      const providersMeta2: Partial<ProvidersOnly> = {
+      const providersMeta2: Partial<ProvidersByLevel> = {
         providersPerApp: new Providers().passThrough(Provider2),
       };
       mock.addProvidersToModule(modRefId, providersMeta1);
@@ -54,7 +54,7 @@ describe('TestAppInitializer', () => {
       class Provider0 {}
       class Provider1 {}
 
-      const providersMeta1: Partial<ProvidersOnly> = {
+      const providersMeta1: Partial<ProvidersByLevel> = {
         providersPerApp: [Provider1],
         providersPerMod: [Provider1],
       };
