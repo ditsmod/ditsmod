@@ -36,7 +36,7 @@ export {
 export { topologicalSort } from './extension/topological-sort.js';
 export { normalizeExtensionConfig } from './extension/extension-providers-and-configs.js';
 export { isExtensionProvider, isExtensionConfig } from '#extension/type-guards.js';
-export { ModuleExtract } from '#types/module-extract.js';
+export { ModuleInfo } from '#types/module-extract.js';
 export { Counter } from '#extension/counter.js';
 export { NormalizedModuleMeta, NormalizedInitMeta, getProxyForInitMeta } from '#init/base-meta.js';
 export { ProvidersByLevel } from '#types/providers-metadata.js';

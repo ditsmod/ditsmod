@@ -1,5 +1,5 @@
 import type { AnyObj} from '@ditsmod/core';
-import { Injector, ModuleExtract } from '@ditsmod/core';
+import { Injector, ModuleInfo } from '@ditsmod/core';
 import { QUERY_PARAMS } from '@ditsmod/rest';
 import { jest } from '@jest/globals';
 
@@ -16,7 +16,7 @@ describe('DictService', () => {
       { token: I18nLogMediator, useValue: { missingLng: jest.fn } },
       { token: QUERY_PARAMS, useValue: queryParams },
       { token: I18nOptions, useValue: i18nOptions },
-      { token: ModuleExtract, useValue: { moduleName: 'test-i18n' } },
+      { token: ModuleInfo, useValue: { moduleName: 'test-i18n' } },
       { token: CommonDict, useClass: CommonDict, multi: true },
       { token: CommonDict, useClass: CommonUkDict, multi: true },
     ]);

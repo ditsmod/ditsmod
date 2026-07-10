@@ -9,7 +9,7 @@ export class I18nLogMediator extends LogMediator {
    */
   translationNotFound(self: object) {
     const className = self.constructor.name;
-    this.setLog('warn', `${className}: in ${this.moduleExtract.moduleName} translation not found.`);
+    this.setLog('warn', `${className}: in ${this.moduleInfo.moduleName} translation not found.`);
   }
   /**
    * className: in ${extendedClassName} missing methods: [${methods}].

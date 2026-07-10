@@ -17,7 +17,7 @@ import { ExtensionCounters } from '#extension/extension-types.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { ProvidersByLevel } from '#types/providers-metadata.js';
 import { CircularDepsInImports, NoProviderDuringResolveImports, FailImportProviders } from '#errors';
-import { ModuleExtract } from '#types/module-extract.js';
+import { ModuleInfo } from '#types/module-extract.js';
 import { stringify } from '#di/stringify.js';
 import { input } from '#di/decorators.js';
 import { isClassProvider, isFactoryProvider, isMultiProvider, isTokenProvider, isValueProvider } from '#di/utils.js';
@@ -70,11 +70,11 @@ export class DeepModulesImporter {
           const targetProviders = new ProvidersByLevel<Provider[]>();
           this.resolveImportedProviders(targetProviders, baseImportRegistry, levels);
           this.resolveProvidersForExtensions(normalizedModuleMeta, baseImportRegistry);
-          const useValue: ModuleExtract = {
+          const useValue: ModuleInfo = {
             moduleName: normalizedModuleMeta.name,
             isExternal: normalizedModuleMeta.isExternal,
           };
-          normalizedModuleMeta.providersPerMod.unshift({ token: ModuleExtract, useValue });
+          normalizedModuleMeta.providersPerMod.unshift({ token: ModuleInfo, useValue });
           normalizedModuleMeta.providersPerMod.unshift(...targetProviders.providersPerMod);
           normalizedModuleMeta.providersPerRou.unshift(...targetProviders.providersPerRou);
           normalizedModuleMeta.providersPerReq.unshift(...targetProviders.providersPerReq);

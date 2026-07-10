@@ -163,7 +163,7 @@ export class SystemLogMediator extends LogMediator {
    */
   moduleHasId(self: object, moduleId: string) {
     const className = self.constructor.name;
-    this.setLog('trace', `${className}: ${this.moduleExtract.moduleName} has ID: "${moduleId}".`);
+    this.setLog('trace', `${className}: ${this.moduleInfo.moduleName} has ID: "${moduleId}".`);
   }
 
   /**

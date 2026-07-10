@@ -1,4 +1,4 @@
-import { ModuleExtract } from '#types/module-extract.js';
+import { ModuleInfo } from '#types/module-extract.js';
 import { ConsoleLogger } from '#logger/console-logger.js';
 import { Logger, LoggerConfig, InputLogLevel, OutputLogLevel } from '#logger/logger.js';
 import { LogItem } from '#logger/types.js';
@@ -24,7 +24,7 @@ export abstract class LogMediator {
   protected static hasDiffLogLevels: boolean;
 
   constructor(
-    protected moduleExtract: ModuleExtract,
+    protected moduleInfo: ModuleInfo,
     protected injector?: Injector,
     @optional() protected logger: Logger = new ConsoleLogger(),
     @optional() protected loggerConfig: LoggerConfig = new LoggerConfig(),
@@ -40,17 +40,17 @@ export abstract class LogMediator {
     if (LogMediator.bufferLogs) {
       LogMediator.checkDiffLogLevels(this.loggerConfig.level);
       LogMediator.buffer.push({
-        isExternal: this.moduleExtract.isExternal,
+        isExternal: this.moduleInfo.isExternal,
         showExternalLogs,
-        moduleName: this.moduleExtract.moduleName,
+        moduleName: this.moduleInfo.moduleName,
         inputLogLevel,
         outputLogLevel: this.loggerConfig.level || 'info',
         date: new Date(),
         msg,
       });
     } else {
-      if (!this.moduleExtract.isExternal || showExternalLogs) {
-        this.logger.log(inputLogLevel, `[${this.moduleExtract.moduleName}]: ${msg}`);
+      if (!this.moduleInfo.isExternal || showExternalLogs) {
+        this.logger.log(inputLogLevel, `[${this.moduleInfo.moduleName}]: ${msg}`);
       }
     }
   }

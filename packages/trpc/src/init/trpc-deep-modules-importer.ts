@@ -7,7 +7,7 @@ import type {
   ShallowImports,
   NormalizedModuleMeta,
 } from '@ditsmod/core';
-import { ModuleExtract } from '@ditsmod/core';
+import { ModuleInfo } from '@ditsmod/core';
 
 import type { DeepModulesImporterConfig, TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
 import type { TrpcShallowImports } from '#decorators/trpc-init-hooks-and-metadata.js';
@@ -23,7 +23,7 @@ export class TrpcMetadataPerMod2 {
   guards1: GuardPerMod1[];
 }
 
-export class TrpcModuleExtract extends ModuleExtract {}
+export class TrpcModuleInfo extends ModuleInfo {}
 
 /**
  * By analyzing the dependencies of the providers returned by `ShallowModulesImporter`,

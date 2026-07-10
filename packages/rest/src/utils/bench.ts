@@ -1,4 +1,4 @@
-import { Injector, ModuleExtract } from '@ditsmod/core';
+import { Injector, ModuleInfo } from '@ditsmod/core';
 
 import type { Fn } from '../types/types.js';
 import { Tree } from '../services/tree.js';
@@ -44,7 +44,7 @@ async function runBench() {
       let router: any;
 
       if (lib.name == '@ditsmod/rest') {
-        const injector = Injector.resolveAndCreate([Tree, DefaultRouter, ModuleExtract], 'bench');
+        const injector = Injector.resolveAndCreate([Tree, DefaultRouter, ModuleInfo], 'bench');
         router = injector.get(DefaultRouter);
       } else {
         router = new Router();

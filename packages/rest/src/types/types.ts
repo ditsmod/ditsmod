@@ -1,5 +1,5 @@
 import type { HttpMethod, NormalizedModuleMeta } from '@ditsmod/core';
-import { ModuleExtract, AppInitHooks, Provider } from '@ditsmod/core';
+import { ModuleInfo, AppInitHooks, Provider } from '@ditsmod/core';
 
 import { RestProviderImport } from '#init/types.js';
 import type { Tree } from '#services/tree.js';
@@ -72,6 +72,6 @@ export interface RouteParam {
 }
 export type Level = 'Req' | 'Rou' | 'Mod';
 
-export class RestModuleExtract extends ModuleExtract {
+export class RestModuleInfo extends ModuleInfo {
   path: string;
 }

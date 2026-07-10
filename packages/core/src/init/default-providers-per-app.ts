@@ -1,5 +1,5 @@
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { ModuleExtract } from '#types/module-extract.js';
+import { ModuleInfo } from '#types/module-extract.js';
 import { Logger } from '#logger/logger.js';
 import type { Provider } from '#di/top/types-and-models.js';
 import { Providers } from '#utils/providers.js';
@@ -10,6 +10,6 @@ export const defaultProvidersPerApp: Readonly<Provider[]> = [
   ...new Providers()
     .passThrough(SystemLogMediator)
     .useValue(Counter, new Counter())
-    .useValue<ModuleExtract>(ModuleExtract, { moduleName: 'app' })
+    .useValue<ModuleInfo>(ModuleInfo, { moduleName: 'app' })
     .useFactory(Logger, [PatchLogger, PatchLogger.prototype.patchLogger]),
 ];
