@@ -1,7 +1,7 @@
 import type { AnyObj, ModRefId, ModuleType } from '#types/mix.js';
 import type { AnyFn, Class, Provider } from '#di/top/types-and-models.js';
 import type { DynamicModule } from '../decorators/module-decorator-options.js';
-import type { ExtensionConfig, ExtensionConfigBase } from '#extension/extension-providers-and-configs.js';
+import type { ExtensionConfig, BaseExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import type { InitMetaMap, InitHooks, AllInitHooks } from '#decorators/init-hooks-and-metadata.js';
 import type { ExtensionClass } from '#extension/extension-types.js';
 import type { GroupToken } from '#di/key-registry.js';
@@ -115,12 +115,12 @@ export class NormalizedModuleMeta<
    */
   allInitHooks: AllInitHooks = new Map();
   /**
-   * The mapping between an extension specified in {@link ExtensionConfigBase.groups | ExtensionConfig.groups}
+   * The mapping between an extension specified in {@link BaseExtensionConfig.groups | ExtensionConfig.groups}
    * and the extension group token assigned to it.
    */
   mExtensionAsGroupToken = new Map<ExtensionClass, GroupToken>();
   /**
-   * The mapping between an extension specified in {@link ExtensionConfigBase.groups | ExtensionConfig.groups}
+   * The mapping between an extension specified in {@link BaseExtensionConfig.groups | ExtensionConfig.groups}
    * and the extension group token assigned to it.
    */
   mExportedExtensionAsGroupToken = new Map<ExtensionClass, GroupToken>();

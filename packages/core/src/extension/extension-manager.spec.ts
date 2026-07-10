@@ -1,5 +1,5 @@
 import { Extension, ExtensionCounters } from '#extension/extension-types.js';
-import { getExtensionProviderList } from '#extension/extension-providers-and-configs.js';
+import { getExtensionProviders } from '#extension/extension-providers-and-configs.js';
 import { defaultProvidersPerApp } from '#init/default-providers-per-app.js';
 import { ExtensionContext } from '#extension/extensions-context.js';
 import { StageEntry, ExtensionManager } from '#extension/extension-manager.js';
@@ -55,7 +55,7 @@ describe('ExtensionManager', () => {
     beforeEach(() => {
       const injector = Injector.resolveAndCreate([
         ...defaultProvidersPerApp,
-        ...getExtensionProviderList([
+        ...getExtensionProviders([
           { extension: Extension1 },
           { extension: Extension2 },
           { extension: Extension3 },

@@ -14,8 +14,8 @@ import { hasDeclaredInDir } from '#decorators/type-guards.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import type {
   ExtensionConfig,
-  ExtensionConfig3,
-  ExtensionConfigBase,
+  OverrideExtensionConfig,
+  BaseExtensionConfig,
 } from '#extension/extension-providers-and-configs.js';
 import { isOverrideExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import { findCycle } from '#extension/tarjan-graph.js';
@@ -163,7 +163,7 @@ export class ShallowModulesImporter {
 
     const allExtensionConfigs = normalizedModuleMeta.aExtensionConfig.concat(aExtensionConfig);
     this.checkExtensionsGraph(allExtensionConfigs);
-    const aOrderedExtensions = topologicalSort<ExtensionClass, ExtensionConfigBase>(allExtensionConfigs, true);
+    const aOrderedExtensions = topologicalSort<ExtensionClass, BaseExtensionConfig>(allExtensionConfigs, true);
 
     return this.shallowModuleImportsMap.set(
       modRefId,
@@ -340,7 +340,7 @@ export class ShallowModulesImporter {
     return { module2: modRefId2, providers };
   }
 
-  protected checkExtensionsGraph(aExtensionConfig: (ExtensionConfig | ExtensionConfig3)[]) {
+  protected checkExtensionsGraph(aExtensionConfig: (ExtensionConfig | OverrideExtensionConfig)[]) {
     const extensionWithBeforeExtension = aExtensionConfig?.filter((config) => {
       return !isOverrideExtensionConfig(config) && config.beforeExtensions;
     }) as ExtensionConfig[] | undefined;

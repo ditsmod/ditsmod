@@ -4,7 +4,7 @@ import type { AnyObj } from '#types/mix.js';
 import { KeyRegistry, type GroupToken } from '#di/key-registry.js';
 import type { Provider } from '#di/top/types-and-models.js';
 
-export class ExtensionProvidersAndConfigs {
+export class NormalizedExtensionConfig {
   providers: Provider[];
   config?: ExtensionConfig;
   mGroupToken?: Map<ExtensionClass, GroupToken<any>>;
@@ -14,7 +14,7 @@ export class ExtensionProvidersAndConfigs {
   mExportedGroupToken?: Map<ExtensionClass, GroupToken<any>>;
 }
 
-export interface ExtensionConfigBase {
+export interface BaseExtensionConfig {
   extension: ExtensionClass;
   /**
    * The array of extension classes before which this extension will be called.
@@ -33,7 +33,7 @@ export interface ExtensionConfigBase {
   overrideExtension?: never;
 }
 
-export interface ExtensionConfig1 extends ExtensionConfigBase {
+export interface ExportableExtensionConfig extends BaseExtensionConfig {
   /**
    * Indicates whether this extension needs to be export.
    */
@@ -41,7 +41,7 @@ export interface ExtensionConfig1 extends ExtensionConfigBase {
   exportOnly?: never;
 }
 
-export interface ExtensionConfig2 extends ExtensionConfigBase {
+export interface ExportOnlyExtensionConfig extends BaseExtensionConfig {
   export?: never;
   /**
    * Indicates whether this extension needs to be export without working in host module.
@@ -49,22 +49,22 @@ export interface ExtensionConfig2 extends ExtensionConfigBase {
   exportOnly?: boolean;
 }
 
-export interface ExtensionConfig3 {
+export interface OverrideExtensionConfig {
   extension: ExtensionClass;
   overrideExtension: ExtensionClass;
 }
 
-export type ExtensionConfig = ExtensionConfig1 | ExtensionConfig2 | ExtensionConfig3;
+export type ExtensionConfig = ExportableExtensionConfig | ExportOnlyExtensionConfig | OverrideExtensionConfig;
 
-export function isOverrideExtensionConfig(extensionConfig: AnyObj): extensionConfig is ExtensionConfig3 {
-  return (extensionConfig as ExtensionConfig3).overrideExtension !== undefined;
+export function isOverrideExtensionConfig(extensionConfig: AnyObj): extensionConfig is OverrideExtensionConfig {
+  return (extensionConfig as OverrideExtensionConfig).overrideExtension !== undefined;
 }
 
-export function isBaseExtensionConfig(extensionConfig: AnyObj): extensionConfig is ExtensionConfigBase {
-  return (extensionConfig as ExtensionConfigBase).extension !== undefined;
+export function isStandardExtensionConfig(extensionConfig: AnyObj): extensionConfig is BaseExtensionConfig {
+  return (extensionConfig as BaseExtensionConfig).extension !== undefined;
 }
 
-export function normalizeExtensionConfig(extensionConfig: ExtensionConfig): ExtensionProvidersAndConfigs {
+export function normalizeExtensionConfig(extensionConfig: ExtensionConfig): NormalizedExtensionConfig {
   if (isOverrideExtensionConfig(extensionConfig)) {
     const { extension, overrideExtension } = extensionConfig;
     return {
@@ -109,7 +109,7 @@ export function normalizeExtensionConfig(extensionConfig: ExtensionConfig): Exte
   }
 }
 
-export function getExtensionProviderList(extensionConfig: ExtensionConfig[]) {
+export function getExtensionProviders(extensionConfig: ExtensionConfig[]) {
   const providers: Provider[] = [];
   extensionConfig.map((obj) => providers.push(...normalizeExtensionConfig(obj).providers));
   return providers;

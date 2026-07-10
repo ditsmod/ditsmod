@@ -1,4 +1,4 @@
-import type { ExtensionConfigBase } from '#extension/extension-providers-and-configs.js';
+import type { BaseExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import type { ModuleManager } from './module-manager.js';
 import type { AnyObj, Level, ModRefId, ModuleType, PickProps } from '#types/mix.js';
 import type { AnyFn, Provider, Class } from '#di/top/types-and-models.js';
@@ -272,7 +272,7 @@ export class ModuleNormalizer {
 
     decoratorOptions.extensions?.forEach((extensionOrConfig) => {
       if (!isExtensionConfig(extensionOrConfig)) {
-        extensionOrConfig = { extension: extensionOrConfig } as ExtensionConfigBase;
+        extensionOrConfig = { extension: extensionOrConfig } as BaseExtensionConfig;
       }
       const extProvidersAndConfigs = normalizeExtensionConfig(extensionOrConfig);
       extProvidersAndConfigs.providers.forEach((p) =>
