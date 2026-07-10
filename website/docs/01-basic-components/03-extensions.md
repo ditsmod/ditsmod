@@ -265,9 +265,9 @@ export class Extension2 implements Extension<void> {
   constructor(private extensionManager: ExtensionManager) {}
 
   async stage1() {
-    const stage1ExtensionMeta = await this.extensionManager.stage1(Extension1);
+    const extensionGroupMeta = await this.extensionManager.stage1(Extension1);
 
-    stage1ExtensionMeta.groupData.forEach((stage1Meta) => {
+    extensionGroupMeta.groupData.forEach((stage1Meta) => {
       const someData = stage1Meta;
       // Do something here.
       // ...
@@ -276,13 +276,13 @@ export class Extension2 implements Extension<void> {
 }
 ```
 
-Зверніть увагу, що `stage1ExtensionMeta.groupData` завжди буде мати масив результатів, не залежно від того, чи в поточному модулі `Extension1` входить у групу розширень, чи ні. Тут `stage1ExtensionMeta` має наступний інтерфейс:
+Зверніть увагу, що `extensionGroupMeta.groupData` завжди буде мати масив результатів, не залежно від того, чи в поточному модулі `Extension1` входить у групу розширень, чи ні. Тут `extensionGroupMeta` має наступний інтерфейс:
 
 ```ts
-interface Stage1ExtensionMeta<T = any> {
+interface ExtensionGroupMeta<T = any> {
   delay: boolean;
   countdown: number;
-  groupDataPerApp: Stage1ExtensionMetaPerApp<T>[];
+  groupDataPerApp: ExtensionGroupMetaPerApp<T>[];
   moduleName: string,
   groupDebugMeta: ExtensionDebugMeta<T>[],
   groupData: T[],
@@ -296,7 +296,7 @@ interface ExtensionDebugMeta<T = any> {
 }
 ```
 
-Якщо `stage1ExtensionMeta.delay === true` - це означає, що властивість `groupDataPerApp` містить дані ще не з усіх модулів, куди імпортовано дане розширення (`Extension1`). Властивість `countdown` вказує, у скількох модулях ще залишилось відпрацювати даному розширенню, щоб властивість `groupDataPerApp` містила дані з усіх модулів. Тобто властивості `delay` та `countdown` стосуються лише властивості `groupDataPerApp`.
+Якщо `extensionGroupMeta.delay === true` - це означає, що властивість `groupDataPerApp` містить дані ще не з усіх модулів, куди імпортовано дане розширення (`Extension1`). Властивість `countdown` вказує, у скількох модулях ще залишилось відпрацювати даному розширенню, щоб властивість `groupDataPerApp` містила дані з усіх модулів. Тобто властивості `delay` та `countdown` стосуються лише властивості `groupDataPerApp`.
 
 У властивості `groupData` знаходиться масив, де зібрані дані з поточного модуля від одного чи декількох розширень. А у властивості `groupDebugMeta` знаходиться більш детальна інформація про розширення, які зформували дані у `groupData`. Елементи у масиві `groupData` відповідають елементам у масиві `groupDebugMeta` за індексом, тобто:
 
@@ -317,12 +317,12 @@ export class Extension2 implements Extension<void> {
   constructor(private extensionManager: ExtensionManager) {}
 
   async stage1() {
-    const stage1ExtensionMeta = await this.extensionManager.stage1(Extension1, this);
-    if (stage1ExtensionMeta.delay) {
+    const extensionGroupMeta = await this.extensionManager.stage1(Extension1, this);
+    if (extensionGroupMeta.delay) {
       return;
     }
 
-    stage1ExtensionMeta.groupDataPerApp.forEach((totaStage1Meta) => {
+    extensionGroupMeta.groupDataPerApp.forEach((totaStage1Meta) => {
       totaStage1Meta.groupData.forEach((metadataPerMod3) => {
         // Do something here.
         // ...
@@ -335,7 +335,7 @@ export class Extension2 implements Extension<void> {
 Тобто коли вам потрібно щоб `Extension2` отримало дані від `Extension1` з усього застосунку, другим аргументом для методу `extensionManager.stage1` потрібно передавати `this`:
 
 ```ts
-const stage1ExtensionMeta = await this.extensionManager.stage1(Extension1, this);
+const extensionGroupMeta = await this.extensionManager.stage1(Extension1, this);
 ```
 
 В такому разі гарантується, що інстанс `Extension2` отримає дані з усіх модулів, куди імпортовано `Extension1`. Навіть якщо `Extension1` та `Extension2` будуть імпортовані у окремі модулі (тобто вони не зустрічаються у спільному модулі), все-одно у підсумку `extension2.stage1` отримає дані від `extension1.stage1` з усіх модулів.
@@ -385,8 +385,8 @@ export class BodyParserExtension implements Extension<void> {
   ) {}
 
   async stage1() {
-    const stage1ExtensionMeta = await this.extensionManager.stage1(RestRouteExtension);
-    stage1ExtensionMeta.groupData.forEach((metadataPerMod3) => {
+    const extensionGroupMeta = await this.extensionManager.stage1(RestRouteExtension);
+    extensionGroupMeta.groupData.forEach((metadataPerMod3) => {
       const { aControllerMetadata } = metadataPerMod3;
       const { providersPerMod } = metadataPerMod3.normalizedModuleMeta;
       aControllerMetadata.forEach(({ providersPerRou, providersPerReq, httpMethods, scope }) => {

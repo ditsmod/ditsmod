@@ -15,8 +15,8 @@ export class UseInterceptorExtension implements Extension {
   constructor(protected extensionManager: ExtensionManager) {}
 
   async stage1() {
-    const stage1ExtensionMeta = await this.extensionManager.stage1(RestRouteExtension);
-    for (const metadataPerMod3 of stage1ExtensionMeta.groupData) {
+    const extensionGroupMeta = await this.extensionManager.stage1(RestRouteExtension);
+    for (const metadataPerMod3 of extensionGroupMeta.groupData) {
       for (const ctrlMeta of metadataPerMod3.aControllerMetadata) {
         for (const Interceptor of ctrlMeta.interceptors) {
           if (isInterceptor(Interceptor)) {

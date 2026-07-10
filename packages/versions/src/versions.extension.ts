@@ -6,8 +6,8 @@ export class VersionsExtension implements Extension<void> {
   constructor(protected extensionManager: ExtensionManager) {}
 
   async stage1() {
-    const stage1ExtensionMeta = await this.extensionManager.stage1(RestRouteExtension);
-    stage1ExtensionMeta.groupData.forEach((metadataPerMod3) => {
+    const extensionGroupMeta = await this.extensionManager.stage1(RestRouteExtension);
+    extensionGroupMeta.groupData.forEach((metadataPerMod3) => {
       const { aControllerMetadata } = metadataPerMod3;
       console.log('-'.repeat(50), metadataPerMod3.meta);
 

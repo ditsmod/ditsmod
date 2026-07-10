@@ -6,8 +6,8 @@ import {
   injectable,
   Injector,
   optional,
-  Stage1ExtensionMeta,
-  Stage1ExtensionMeta2,
+  ExtensionGroupMeta,
+  PartialExtensionGroupMeta,
   SystemLogMediator,
   Counter,
   Extension,
@@ -32,15 +32,15 @@ export class TestExtensionManager extends InternalExtensionManager {
     super(injector, systemLogMediator, counter, extensionContext, extensionCounters);
   }
 
-  override async stage1<T>(ExtCls: ExtensionClass<T>): Promise<Stage1ExtensionMeta<T>>;
-  override async stage1<T>(ExtCls: ExtensionClass<T>, pendingExtension: Extension): Promise<Stage1ExtensionMeta2<T>>;
+  override async stage1<T>(ExtCls: ExtensionClass<T>): Promise<ExtensionGroupMeta<T>>;
+  override async stage1<T>(ExtCls: ExtensionClass<T>, pendingExtension: Extension): Promise<PartialExtensionGroupMeta<T>>;
   override async stage1<T>(ExtCls: ExtensionClass<T>, pendingExtension?: Extension) {
-    const stage1ExtensionMeta = await super.stage1<T>(ExtCls, pendingExtension as Extension);
+    const extensionGroupMeta = await super.stage1<T>(ExtCls, pendingExtension as Extension);
     this.aOverriderConfig.forEach((overriderConfig) => {
       if (ExtCls === overriderConfig.ExtCls) {
-        overriderConfig.override(stage1ExtensionMeta);
+        overriderConfig.override(extensionGroupMeta);
       }
     });
-    return stage1ExtensionMeta;
+    return extensionGroupMeta;
   }
 }

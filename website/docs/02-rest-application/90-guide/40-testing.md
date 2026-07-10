@@ -180,7 +180,7 @@ server = await TestRestApplication.createTestApp(AppModule, { path: 'api' }).get
 
 ```ts
 interface ExtensionMetaOverrider<T = any> {
-  (stage1ExtensionMeta: Stage1ExtensionMeta<T> | Stage1ExtensionMeta2<T>): void;
+  (extensionGroupMeta: ExtensionGroupMeta<T> | PartialExtensionGroupMeta<T>): void;
 }
 ```
 
@@ -232,8 +232,8 @@ import { TestRestApplication, ExtensionMetaOverrider } from '@ditsmod/rest-testi
 
 export class TestRestPlugin extends TestRestApplication {
   overrideExtensionRestMeta(providersToOverride: Provider[]) {
-    const overrideRoutesMeta: ExtensionMetaOverrider<MetadataPerMod3> = (stage1ExtensionMeta) => {
-      stage1ExtensionMeta.groupData?.forEach((metadataPerMod3) => {
+    const overrideRoutesMeta: ExtensionMetaOverrider<MetadataPerMod3> = (extensionGroupMeta) => {
+      extensionGroupMeta.groupData?.forEach((metadataPerMod3) => {
         // ...
       });
     };

@@ -4,7 +4,7 @@ import {
   HttpMethod,
   injectable,
   Injector,
-  Stage1ExtensionMeta,
+  ExtensionGroupMeta,
 } from '@ditsmod/core';
 import { ChainError } from '@ditsmod/core/errors';
 import { MetadataPerMod3, RestRouteExtension } from '@ditsmod/rest';
@@ -16,7 +16,7 @@ import { AuthjsLogMediator } from './authjs-log-mediator.js';
 
 @injectable()
 export class AuthjsExtension implements Extension {
-  protected stage1ExtensionMeta: Stage1ExtensionMeta<MetadataPerMod3>;
+  protected extensionGroupMeta: ExtensionGroupMeta<MetadataPerMod3>;
 
   constructor(
     protected extensionManager: ExtensionManager,
@@ -24,12 +24,12 @@ export class AuthjsExtension implements Extension {
   ) {}
 
   async stage1() {
-    this.stage1ExtensionMeta = await this.extensionManager.stage1(RestRouteExtension);
+    this.extensionGroupMeta = await this.extensionManager.stage1(RestRouteExtension);
   }
 
   async stage2(injectorPerMod: Injector): Promise<void> {
     const authjsConfig = injectorPerMod.get(AuthjsConfig);
-    parent: for (const metadataPerMod3 of this.stage1ExtensionMeta.groupData) {
+    parent: for (const metadataPerMod3 of this.extensionGroupMeta.groupData) {
       const { aControllerMetadata } = metadataPerMod3;
       for (const obj of aControllerMetadata) {
         const { fullPath, interceptors, httpMethods } = obj;

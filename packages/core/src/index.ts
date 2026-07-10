@@ -29,9 +29,9 @@ export {
   ExtensionsMetaPerApp,
   Extension,
   ExtensionDebugMeta,
-  Stage1ExtensionMeta,
-  Stage1ExtensionMeta2,
-  Stage1ExtensionMetaPerApp,
+  ExtensionGroupMeta,
+  PartialExtensionGroupMeta,
+  ExtensionGroupMetaPerApp,
 } from '#extension/extension-types.js';
 export { topologicalSort } from './extension/topological-sort.js';
 export { normalizeExtensionConfig } from './extension/extension-providers-and-configs.js';

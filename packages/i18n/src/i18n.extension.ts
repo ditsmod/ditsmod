@@ -5,7 +5,7 @@ import {
   injectable,
   Injector,
   fromSelf,
-  Stage1ExtensionMeta,
+  ExtensionGroupMeta,
   inject,
   PROVIDERS_PER_APP,
 } from '@ditsmod/core';
@@ -29,11 +29,11 @@ export class I18nExtension implements Extension<void> {
   ) {}
 
   async stage1(isLastModule?: boolean) {
-    const stage1ExtensionMeta = await this.extensionManager.stage1(RestRouteExtension);
-    this.addI18nProviders(stage1ExtensionMeta, isLastModule);
+    const extensionGroupMeta = await this.extensionManager.stage1(RestRouteExtension);
+    this.addI18nProviders(extensionGroupMeta, isLastModule);
   }
 
-  protected addI18nProviders(stage1ExtensionMeta: Stage1ExtensionMeta<MetadataPerMod3>, isLastModule?: boolean) {
+  protected addI18nProviders(extensionGroupMeta: ExtensionGroupMeta<MetadataPerMod3>, isLastModule?: boolean) {
     const injectorPerApp = Injector.resolveAndCreate(this.providersPerApp);
 
     const translationsPerApp = injectorPerApp.get(I18N_TRANSLATIONS, null);
@@ -43,7 +43,7 @@ export class I18nExtension implements Extension<void> {
       this.providersPerApp.push(...providers);
     }
 
-    for (const metadataPerMod3 of stage1ExtensionMeta.groupData) {
+    for (const metadataPerMod3 of extensionGroupMeta.groupData) {
       const { aControllerMetadata } = metadataPerMod3;
       const { providersPerMod, providersPerRou, providersPerReq } = metadataPerMod3.meta;
       if (!aControllerMetadata.length) {

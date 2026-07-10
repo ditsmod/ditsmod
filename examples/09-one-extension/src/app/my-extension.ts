@@ -9,7 +9,7 @@ export class MyExtension implements Extension<void> {
   ) {}
 
   async stage1() {
-    const stage1ExtensionMeta = await this.extensionManager.stage1(RestRouteExtension);
-    this.logger.log('info', stage1ExtensionMeta.groupData[0].aControllerMetadata);
+    const extensionGroupMeta = await this.extensionManager.stage1(RestRouteExtension);
+    this.logger.log('info', extensionGroupMeta.groupData[0].aControllerMetadata);
   }
 }

@@ -7,8 +7,8 @@ import {
   Injector,
   optional,
   Reflector,
-  Stage1ExtensionMetaPerApp,
-  Stage1ExtensionMeta2,
+  ExtensionGroupMetaPerApp,
+  PartialExtensionGroupMeta,
   Context,
 } from '@ditsmod/core';
 import {
@@ -33,7 +33,7 @@ import { OasRouteMetaNotFound } from '#errors';
 @injectable()
 export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
   protected oasObject: XOasObject;
-  protected stage1ExtensionMeta: Stage1ExtensionMeta2<MetadataPerMod3>;
+  protected extensionGroupMeta: PartialExtensionGroupMeta<MetadataPerMod3>;
   protected injectorPerMod: Injector;
 
   constructor(
@@ -43,20 +43,20 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
   ) {}
 
   async stage1() {
-    const stage1ExtensionMeta = await this.extensionManager.stage1(RestRouteExtension, this);
-    if (stage1ExtensionMeta.delay) {
+    const extensionGroupMeta = await this.extensionManager.stage1(RestRouteExtension, this);
+    if (extensionGroupMeta.delay) {
       this.log.dataAccumulation(this);
       return false;
     }
-    this.stage1ExtensionMeta = stage1ExtensionMeta;
+    this.extensionGroupMeta = extensionGroupMeta;
     return this.oasObject;
   }
 
   async stage2(injectorPerMod: Injector) {
     this.injectorPerMod = injectorPerMod;
-    if (this.stage1ExtensionMeta) {
+    if (this.extensionGroupMeta) {
       this.log.applyingAccumulatedData(this);
-      await this.compileOasObject(this.stage1ExtensionMeta.groupDataPerApp);
+      await this.compileOasObject(this.extensionGroupMeta.groupDataPerApp);
       const json = JSON.stringify(this.oasObject);
       const oasOptions = this.extensionsMetaPerApp?.oasOptions as OasOptions | undefined;
       const yaml = stringify(this.oasObject, oasOptions?.yamlSchemaOptions);
@@ -65,11 +65,11 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     }
   }
 
-  protected async compileOasObject(groupDataPerApp: Stage1ExtensionMetaPerApp<MetadataPerMod3>[]) {
+  protected async compileOasObject(groupDataPerApp: ExtensionGroupMetaPerApp<MetadataPerMod3>[]) {
     const paths: XPathsObject = {};
     this.initOasObject();
-    for (const stage1ExtensionMetaPerApp of groupDataPerApp) {
-      for (const metadataPerMod3 of stage1ExtensionMetaPerApp.groupData) {
+    for (const extensionGroupMetaPerApp of groupDataPerApp) {
+      for (const metadataPerMod3 of extensionGroupMetaPerApp.groupData) {
         metadataPerMod3.aControllerMetadata.forEach(({ httpMethods, fullPath, routeMeta, guards }) => {
           httpMethods.forEach((method) => {
             const { oasPath, resolvedGuards, operationObject } = routeMeta as OasRouteMeta;

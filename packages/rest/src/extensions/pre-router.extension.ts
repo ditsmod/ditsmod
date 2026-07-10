@@ -8,8 +8,8 @@ import {
   ExtensionManager,
   Extension,
   Provider,
-  Stage1ExtensionMeta,
-  Stage1ExtensionMetaPerApp,
+  ExtensionGroupMeta,
+  ExtensionGroupMetaPerApp,
   FactoryProvider,
   ResolvedGuard,
   ResolvedProvider,
@@ -45,7 +45,7 @@ import { RouteContext } from '#services/route-context.js';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
-  protected stage1ExtensionMeta: Stage1ExtensionMeta<MetadataPerMod3>;
+  protected extensionGroupMeta: ExtensionGroupMeta<MetadataPerMod3>;
   protected injectorPerMod: Injector;
 
   constructor(
@@ -56,8 +56,8 @@ export class PreRouterExtension implements Extension<void> {
   ) {}
 
   async stage1() {
-    this.stage1ExtensionMeta = await this.extensionManager.stage1(RestRouteExtension);
-    this.addDefaultProviders(this.stage1ExtensionMeta.groupData);
+    this.extensionGroupMeta = await this.extensionManager.stage1(RestRouteExtension);
+    this.addDefaultProviders(this.extensionGroupMeta.groupData);
   }
 
   async stage2(injectorPerMod: Injector) {
@@ -65,8 +65,8 @@ export class PreRouterExtension implements Extension<void> {
   }
 
   async stage3() {
-    const preparedRouteMeta = this.prepareRoutesMeta(this.stage1ExtensionMeta.groupData);
-    this.setRoutes(this.stage1ExtensionMeta, preparedRouteMeta);
+    const preparedRouteMeta = this.prepareRoutesMeta(this.extensionGroupMeta.groupData);
+    this.setRoutes(this.extensionGroupMeta, preparedRouteMeta);
   }
 
   protected addDefaultProviders(aMetadataPerMod3: MetadataPerMod3[]) {
@@ -349,13 +349,10 @@ export class PreRouterExtension implements Extension<void> {
     }
   }
 
-  protected setRoutes(
-    stage1ExtensionMeta: Stage1ExtensionMeta<MetadataPerMod3>,
-    preparedRouteMeta: PreparedRouteMeta[],
-  ) {
+  protected setRoutes(extensionGroupMeta: ExtensionGroupMeta<MetadataPerMod3>, preparedRouteMeta: PreparedRouteMeta[]) {
     const router = this.injectorPerMod.get(Router);
-    if (!stage1ExtensionMeta.delay) {
-      const appHasRoutes = this.checkPresenceOfRoutesInApplication(stage1ExtensionMeta.groupDataPerApp);
+    if (!extensionGroupMeta.delay) {
+      const appHasRoutes = this.checkPresenceOfRoutesInApplication(extensionGroupMeta.groupDataPerApp);
       if (!appHasRoutes) {
         this.log.noRoutes(this);
         return;
@@ -381,7 +378,7 @@ export class PreRouterExtension implements Extension<void> {
     });
   }
 
-  protected checkPresenceOfRoutesInApplication(groupDataPerApp: Stage1ExtensionMetaPerApp<MetadataPerMod3>[]) {
+  protected checkPresenceOfRoutesInApplication(groupDataPerApp: ExtensionGroupMetaPerApp<MetadataPerMod3>[]) {
     return groupDataPerApp.reduce((prev1, curr1) => {
       return (
         prev1 || curr1.groupData.reduce((prev2, curr2) => prev2 || Boolean(curr2.aControllerMetadata.length), false)

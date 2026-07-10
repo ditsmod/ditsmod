@@ -3,7 +3,7 @@ import {
   Extension,
   DecoratorAndValue,
   ExtensionManager,
-  Stage1ExtensionMeta,
+  ExtensionGroupMeta,
   getDebugClassName,
   Injector,
   KeyRegistry,
@@ -50,7 +50,7 @@ import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js'
 
 @injectable()
 export class TrpcPreRouterExtension implements Extension<void> {
-  protected stage1ExtensionMeta: Stage1ExtensionMeta<MetadataPerMod3>;
+  protected extensionGroupMeta: ExtensionGroupMeta<MetadataPerMod3>;
   protected injectorPerMod: Injector;
   protected injectorPerApp: Injector;
 
@@ -60,8 +60,8 @@ export class TrpcPreRouterExtension implements Extension<void> {
   ) {}
 
   async stage1() {
-    this.stage1ExtensionMeta = await this.extensionManager.stage1(TrpcRouteExtension);
-    this.addDefaultProviders(this.stage1ExtensionMeta.groupData);
+    this.extensionGroupMeta = await this.extensionManager.stage1(TrpcRouteExtension);
+    this.addDefaultProviders(this.extensionGroupMeta.groupData);
   }
 
   async stage2(injectorPerMod: Injector) {
@@ -69,7 +69,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
   }
 
   async stage3() {
-    this.prepareRoutesMeta(this.stage1ExtensionMeta.groupData);
+    this.prepareRoutesMeta(this.extensionGroupMeta.groupData);
   }
 
   protected addDefaultProviders(aMetadataPerMod3: MetadataPerMod3[]) {
