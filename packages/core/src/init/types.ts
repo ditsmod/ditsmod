@@ -1,7 +1,7 @@
 import type { AnyObj, ModRefId } from '#types/mix.js';
 import type { AnyFn, Provider } from '#di/top/types-and-models.js';
 import type { NormalizedModuleMeta } from '#init/base-meta.js';
-import type { ProviderImport } from '#types/metadata-per-mod.js';
+import type { ImportedProvider } from '#types/metadata-per-mod.js';
 import type { ExtensionClass } from '#extension/extension-types.js';
 import type { GroupToken } from '#di/key-registry.js';
 
@@ -15,7 +15,7 @@ export class ShallowModuleImports<T extends AnyObj = AnyObj> {
    */
   normalizedModuleMeta: NormalizedModuleMeta;
   /**
-   * Map between a token and its ProviderImport per level.
+   * Map between a token and its ImportedProvider per level.
    */
   baseImportRegistry: BaseImportRegistry;
   initImportRegistryMap = new Map<AnyFn, { normalizedModuleMeta: NormalizedModuleMeta } & T>();
@@ -40,17 +40,17 @@ export class ShallowModuleImports<T extends AnyObj = AnyObj> {
 
 export interface BaseImportRegistry {
   /**
-   * `Map<token, ProviderImport>`
+   * `Map<token, ImportedProvider>`
    */
-  perMod: Map<any, ProviderImport>;
+  perMod: Map<any, ImportedProvider>;
   /**
-   * `Map<token, ProviderImport>`
+   * `Map<token, ImportedProvider>`
    */
-  perRou: Map<any, ProviderImport>;
+  perRou: Map<any, ImportedProvider>;
   /**
-   * `Map<token, ProviderImport>`
+   * `Map<token, ImportedProvider>`
    */
-  perReq: Map<any, ProviderImport>;
+  perReq: Map<any, ImportedProvider>;
   multiPerMod: Map<ModRefId, Provider[]>;
   multiPerRou: Map<ModRefId, Provider[]>;
   multiPerReq: Map<ModRefId, Provider[]>;

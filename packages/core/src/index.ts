@@ -70,7 +70,7 @@ export {
   BaseDynamicModule,
   DynamicModuleOptions,
 } from '#decorators/module-decorator-options.js';
-export { ProviderImport } from '#types/metadata-per-mod.js';
+export { ImportedProvider } from '#types/metadata-per-mod.js';
 export { mergeArrays } from '#utils/merge-arrays.js';
 export { getLastProviders } from '#utils/get-last-providers.js';
 export { deepFreeze } from '#utils/deep-freeze.js';

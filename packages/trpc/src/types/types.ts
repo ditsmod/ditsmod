@@ -68,9 +68,9 @@ type GetRouterConfig<T> = {
 };
 type CtrlOrModuleFn<F> = F extends AnyFn ? F : GetRouterConfig<F>;
 export class TrpcAppProviders extends AppInitHooks {
-  importedProvidersPerMod = new Map<any, TrpcProviderImport>();
-  importedProvidersPerRou = new Map<any, TrpcProviderImport>();
-  importedProvidersPerReq = new Map<any, TrpcProviderImport>();
+  importedProvidersPerMod = new Map<any, TrpcImportedProvider>();
+  importedProvidersPerRou = new Map<any, TrpcImportedProvider>();
+  importedProvidersPerReq = new Map<any, TrpcImportedProvider>();
   importedMultiProvidersPerMod = new Map<TrpcModRefId, Provider[]>();
   importedMultiProvidersPerRou = new Map<TrpcModRefId, Provider[]>();
   importedMultiProvidersPerReq = new Map<TrpcModRefId, Provider[]>();
@@ -129,7 +129,7 @@ export interface TrpcOpts<Context extends AnyObj = AnyObj, Input = unknown> {
   signal: AbortSignal | undefined;
 }
 
-export class TrpcProviderImport<T extends Provider = Provider> {
+export class TrpcImportedProvider<T extends Provider = Provider> {
   modRefId: TrpcModRefId;
   /**
    * This property can have more than one element for multi-providers only.

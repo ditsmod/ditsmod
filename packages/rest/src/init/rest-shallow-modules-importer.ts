@@ -21,7 +21,7 @@ import type { RestModRefId } from '#init/rest-init-meta.js';
 import { RestInitMeta } from '#init/rest-init-meta.js';
 import type { Level, RestAppProviders } from '#types/types.js';
 import { initRest, RestInitHooks } from '#decorators/rest-init-hooks-and-metadata.js';
-import type { ImportModulesShallowConfig, RestProviderImport, RestShallowModuleImports } from './types.js';
+import type { ImportModulesShallowConfig, RestImportedProvider, RestShallowModuleImports } from './types.js';
 import { ModuleIncludesInImportsAndAppends } from '#errors';
 import { ModuleMustHaveControllers } from '#services/rest-errors.js';
 
@@ -188,14 +188,14 @@ export class RestShallowModulesImporter {
     level: Level,
     token: NonNullable<unknown>,
     provider: Provider,
-    providerImport: RestProviderImport,
+    importedProvider: RestImportedProvider,
   ) {
     const declaredTokens = getTokens(this.meta[`providersPer${level}`]);
     const resolvedTokens = this.meta[`resolvedCollisionPer${level}`].map(([token]) => token);
     const duplImpTokens = [...declaredTokens, ...resolvedTokens].includes(token) ? [] : [token];
-    const collisions = getCollisions(duplImpTokens, [...providerImport.providers, provider]);
+    const collisions = getCollisions(duplImpTokens, [...importedProvider.providers, provider]);
     if (collisions.length) {
-      const moduleName1 = getDebugClassName(providerImport.modRefId) || 'unknown-1';
+      const moduleName1 = getDebugClassName(importedProvider.modRefId) || 'unknown-1';
       const moduleName2 = getDebugClassName(modRefId) || 'unknown-2';
       throw new ProvidersCollision(
         this.moduleName,

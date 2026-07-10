@@ -109,10 +109,10 @@ export class DeepModulesImporter {
     levels: Level[],
   ) {
     levels.forEach((level, i) => {
-      baseImportRegistry[`per${level}`].forEach((providerImport) => {
-        targetProviders[`providersPer${level}`].unshift(...providerImport.providers);
-        providerImport.providers.forEach((importedProvider) => {
-          this.fetchDeps(targetProviders, providerImport.modRefId, importedProvider, levels.slice(i));
+      baseImportRegistry[`per${level}`].forEach((importedProvider) => {
+        targetProviders[`providersPer${level}`].unshift(...importedProvider.providers);
+        importedProvider.providers.forEach((importedProvider) => {
+          this.fetchDeps(targetProviders, importedProvider.modRefId, importedProvider, levels.slice(i));
         });
       });
 
@@ -274,11 +274,11 @@ export class DeepModulesImporter {
     let found = false;
     const shallowModuleImports = this.shallowModuleImportsMap.get(srcModRefId1)!;
     for (const level of levels) {
-      const providerImport = shallowModuleImports.baseImportRegistry[`per${level}`].get(dep.token);
-      if (providerImport) {
+      const importedProvider = shallowModuleImports.baseImportRegistry[`per${level}`].get(dep.token);
+      if (importedProvider) {
         found = true;
         path.push(dep.token);
-        const { modRefId: modRefId2, providers: srcProviders2 } = providerImport;
+        const { modRefId: modRefId2, providers: srcProviders2 } = importedProvider;
         targetProviders[`providersPer${level}`].unshift(...srcProviders2);
 
         // Loop for multi providers.
@@ -363,10 +363,10 @@ export class DeepModulesImporter {
     let found = false;
     const shallowModuleImports = this.shallowModuleImportsMap.get(srcModRefId1)!;
     forLevel: for (const level of levels) {
-      const providerImport = shallowModuleImports.baseImportRegistry[`per${level}`].get(dep.token);
-      if (providerImport) {
+      const importedProvider = shallowModuleImports.baseImportRegistry[`per${level}`].get(dep.token);
+      if (importedProvider) {
         found = true;
-        const { modRefId: modRefId2, providers: srcProviders2 } = providerImport;
+        const { modRefId: modRefId2, providers: srcProviders2 } = importedProvider;
 
         // Loop for multi providers.
         for (const srcProvider2 of srcProviders2) {

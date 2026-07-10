@@ -12,7 +12,7 @@ import type {
 import type { GuardPerMod1 } from '#interceptors/guard.js';
 import type { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
 
-export class RestProviderImport<T extends Provider = Provider> {
+export class RestImportedProvider<T extends Provider = Provider> {
   modRefId: RestModRefId;
   /**
    * This property can have more than one element for multi-providers only.
@@ -35,9 +35,9 @@ export class RestShallowModuleImports {
 }
 
 export interface RestBaseImportRegistry {
-  perMod: Map<any, RestProviderImport>;
-  perRou: Map<any, RestProviderImport>;
-  perReq: Map<any, RestProviderImport>;
+  perMod: Map<any, RestImportedProvider>;
+  perRou: Map<any, RestImportedProvider>;
+  perReq: Map<any, RestImportedProvider>;
   multiPerMod: Map<RestModRefId, Provider[]>;
   multiPerRou: Map<RestModRefId, Provider[]>;
   multiPerReq: Map<RestModRefId, Provider[]>;

@@ -10,7 +10,7 @@ import {
   Provider,
   rootModule,
   SystemLogMediator,
-  ProviderImport,
+  ImportedProvider,
   DynamicModuleWithInit,
   ModRefId,
   ShallowModuleImports,
@@ -19,7 +19,7 @@ import { RestAppInitializer } from './rest-app-initializer.js';
 import { Router } from '../services/router.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 
-function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) {
+function getImportedTokens(map: Map<any, ImportedProvider<Provider>> | undefined) {
   return [...(map || [])].map(([key]) => key);
 
   @injectable()
@@ -114,7 +114,7 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
 
       // App providers per a module
       const perMod = shallowModuleImports?.baseImportRegistry?.perMod!;
-      const expectedPerMod = new ProviderImport();
+      const expectedPerMod = new ImportedProvider();
 
       expectedPerMod.modRefId = Module0;
       expectedPerMod.providers = [Provider0];
@@ -128,7 +128,7 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
 
       // App providers per a request
       const perReq = shallowModuleImports?.baseImportRegistry.perReq!;
-      const expectedPerReq = new ProviderImport();
+      const expectedPerReq = new ImportedProvider();
       expectedPerReq.modRefId = module3WithParams;
       expectedPerReq.providers = [Provider5];
       expect(perReq.get(Provider5)).toEqual(expectedPerReq);

@@ -9,7 +9,7 @@ import type { GroupToken } from '#di/key-registry.js';
 /**
  * Used to create a mapping between a provider and the module from which it was imported.
  */
-export class ProviderImport<T extends Provider = Provider> {
+export class ImportedProvider<T extends Provider = Provider> {
   modRefId: ModRefId;
   /**
    * This property can have more than one element for multi-providers only.
@@ -26,9 +26,9 @@ export class AppInitHooks<T extends InitDecoratorOptions = InitDecoratorOptions>
 }
 
 export class AppProviders {
-  importedProvidersPerMod = new Map<any, ProviderImport>();
-  importedProvidersPerRou = new Map<any, ProviderImport>();
-  importedProvidersPerReq = new Map<any, ProviderImport>();
+  importedProvidersPerMod = new Map<any, ImportedProvider>();
+  importedProvidersPerRou = new Map<any, ImportedProvider>();
+  importedProvidersPerReq = new Map<any, ImportedProvider>();
   importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
   importedMultiProvidersPerRou = new Map<ModRefId, Provider[]>();
   importedMultiProvidersPerReq = new Map<ModRefId, Provider[]>();

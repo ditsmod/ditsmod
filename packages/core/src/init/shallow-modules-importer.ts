@@ -2,7 +2,7 @@ import { Reflector } from '#di/reflector.js';
 import type { NormalizedModuleMeta } from '#init/base-meta.js';
 import type { ModuleManager } from '#init/module-manager.js';
 import type { AppProviders } from '#types/metadata-per-mod.js';
-import { ProviderImport } from '#types/metadata-per-mod.js';
+import { ImportedProvider } from '#types/metadata-per-mod.js';
 import type { Level, ModRefId, AnyObj } from '#types/mix.js';
 import type { AnyFn, Provider } from '#di/top/types-and-models.js';
 import { ShallowModuleImports } from '#init/types.js';
@@ -51,9 +51,9 @@ export class ShallowModulesImporter {
   protected normalizedModuleMeta: NormalizedModuleMeta;
   protected resolvedCollision = new Map<any, Set<Level>>();
 
-  protected importedProvidersPerMod = new Map<any, ProviderImport>();
-  protected importedProvidersPerRou = new Map<any, ProviderImport>();
-  protected importedProvidersPerReq = new Map<any, ProviderImport>();
+  protected importedProvidersPerMod = new Map<any, ImportedProvider>();
+  protected importedProvidersPerRou = new Map<any, ImportedProvider>();
+  protected importedProvidersPerReq = new Map<any, ImportedProvider>();
   protected importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
   protected importedMultiProvidersPerRou = new Map<ModRefId, Provider[]>();
   protected importedMultiProvidersPerReq = new Map<ModRefId, Provider[]>();
@@ -118,9 +118,9 @@ export class ShallowModulesImporter {
     this.normalizedModuleMeta = normalizedModuleMeta;
     this.importAndScanModules();
 
-    let perMod: Map<any, ProviderImport>;
-    let perRou: Map<any, ProviderImport>;
-    let perReq: Map<any, ProviderImport>;
+    let perMod: Map<any, ImportedProvider>;
+    let perRou: Map<any, ImportedProvider>;
+    let perReq: Map<any, ImportedProvider>;
     let multiPerMod: Map<ModRefId, Provider[]>;
     let multiPerRou: Map<ModRefId, Provider[]>;
     let multiPerReq: Map<ModRefId, Provider[]>;
@@ -269,28 +269,28 @@ export class ShallowModulesImporter {
   protected addProviders(level: Level, normalizedModuleMeta: NormalizedModuleMeta, reexporter?: ModRefId) {
     normalizedModuleMeta[`exportedProvidersPer${level}`].forEach((provider) => {
       const token1 = getToken(provider);
-      const providerImport = this[`importedProvidersPer${level}`].get(token1);
+      const importedProvider = this[`importedProvidersPer${level}`].get(token1);
 
-      if (providerImport && providerImport.reexporter !== normalizedModuleMeta.modRefId) {
-        this.checkCollisionsPerLevel(normalizedModuleMeta.modRefId, level, token1, provider, providerImport);
+      if (importedProvider && importedProvider.reexporter !== normalizedModuleMeta.modRefId) {
+        this.checkCollisionsPerLevel(normalizedModuleMeta.modRefId, level, token1, provider, importedProvider);
         const hasResolvedCollision = this.normalizedModuleMeta[`resolvedCollisionPer${level}`].some(
           ([token2]) => token2 === token1,
         );
         if (hasResolvedCollision) {
           const { providers, module2 } = this.getResolvedCollisionPerLevel(level, token1);
-          const newProviderImport = new ProviderImport();
-          newProviderImport.modRefId = module2;
-          newProviderImport.providers.push(...providers);
-          this[`importedProvidersPer${level}`].set(token1, newProviderImport);
+          const newImportedProvider = new ImportedProvider();
+          newImportedProvider.modRefId = module2;
+          newImportedProvider.providers.push(...providers);
+          this[`importedProvidersPer${level}`].set(token1, newImportedProvider);
         }
       } else {
-        const newProviderImport = new ProviderImport();
-        newProviderImport.modRefId = normalizedModuleMeta.modRefId;
-        newProviderImport.providers.push(provider);
+        const newImportedProvider = new ImportedProvider();
+        newImportedProvider.modRefId = normalizedModuleMeta.modRefId;
+        newImportedProvider.providers.push(provider);
         if (reexporter) {
-          newProviderImport.reexporter = reexporter;
+          newImportedProvider.reexporter = reexporter;
         }
-        this[`importedProvidersPer${level}`].set(token1, newProviderImport);
+        this[`importedProvidersPer${level}`].set(token1, newImportedProvider);
       }
     });
   }
@@ -300,14 +300,14 @@ export class ShallowModulesImporter {
     level: Level,
     token: NonNullable<unknown>,
     provider: Provider,
-    providerImport: ProviderImport,
+    importedProvider: ImportedProvider,
   ) {
     const declaredTokens = getTokens(this.normalizedModuleMeta[`providersPer${level}`]);
     const resolvedTokens = this.normalizedModuleMeta[`resolvedCollisionPer${level}`].map(([token]) => token);
     const duplImpTokens = [...declaredTokens, ...resolvedTokens].includes(token) ? [] : [token];
-    const collisions = getCollisions(duplImpTokens, [...providerImport.providers, provider]);
+    const collisions = getCollisions(duplImpTokens, [...importedProvider.providers, provider]);
     if (collisions.length) {
-      const moduleName1 = getDebugClassName(providerImport.modRefId) || 'unknown-1';
+      const moduleName1 = getDebugClassName(importedProvider.modRefId) || 'unknown-1';
       const moduleName2 = getDebugClassName(modRefId) || 'unknown-2';
       throw new ProvidersCollision(
         this.moduleName,
@@ -392,15 +392,15 @@ export class ShallowModulesImporter {
         const resolvedTokens = this.normalizedModuleMeta[`resolvedCollisionPer${level}`].map(([t]) => t);
         const collision = importedTokens.includes(token) && ![...declaredTokens, ...resolvedTokens].includes(token);
         if (collision) {
-          const providerImport = this[`importedProvidersPer${level}`].get(token)!;
+          const importedProvider = this[`importedProvidersPer${level}`].get(token)!;
           const hostModulePath =
-            this.moduleManager.getNormalizedModuleMeta(providerImport.modRefId)?.declaredInDir || '.';
+            this.moduleManager.getNormalizedModuleMeta(importedProvider.modRefId)?.declaredInDir || '.';
           const decorAndVal = Reflector.getClassLevelMeta(token, hasDeclaredInDir)?.at(0);
           const collisionWithPath = decorAndVal?.declaredInDir || '.';
           if (hostModulePath !== '.' && collisionWithPath !== '.' && collisionWithPath.startsWith(hostModulePath)) {
             // Allow collisions in host modules.
           } else {
-            const hostModuleName = getDebugClassName(providerImport.modRefId) || 'unknown';
+            const hostModuleName = getDebugClassName(importedProvider.modRefId) || 'unknown';
             throw new ProvidersCollision(
               this.moduleName,
               [token],

@@ -1,7 +1,7 @@
 import type { HttpMethod, NormalizedModuleMeta } from '@ditsmod/core';
 import { ModuleInfo, AppInitHooks, Provider } from '@ditsmod/core';
 
-import { RestProviderImport } from '#init/types.js';
+import { RestImportedProvider } from '#init/types.js';
 import type { Tree } from '#services/tree.js';
 import type { GuardPerMod1 } from '#interceptors/guard.js';
 import type { RouteHandler } from '#services/router.js';

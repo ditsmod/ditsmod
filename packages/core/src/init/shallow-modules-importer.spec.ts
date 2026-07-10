@@ -3,7 +3,7 @@ import { rootModule } from '#decorators/root-module.js';
 import { NormalizedModuleMeta } from '#init/base-meta.js';
 import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import { ModuleManager } from '#init/module-manager.js';
-import { AppProviders, ProviderImport } from '#types/metadata-per-mod.js';
+import { AppProviders, ImportedProvider } from '#types/metadata-per-mod.js';
 import { ModuleType, Level, ModRefId } from '#types/mix.js';
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
@@ -31,7 +31,7 @@ describe('ShallowModulesImporter', () => {
     override moduleName = 'MockModule';
     override normalizedModuleMeta = new NormalizedModuleMeta();
     override shallowModuleImportsMap = new Map<ModuleType, ShallowModuleImports>();
-    override importedProvidersPerMod = new Map<any, ProviderImport>();
+    override importedProvidersPerMod = new Map<any, ImportedProvider>();
     override importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
     override importedExtensionProviders = new Map<ModRefId, Provider[]>();
 
@@ -114,19 +114,19 @@ describe('ShallowModulesImporter', () => {
       expect(() => mock.exportAppProviders(moduleManager)).not.toThrow();
       expect(getImportedProviders(mock.importedProvidersPerMod)).toEqual([Provider1, Provider2, Provider3]);
 
-      const providerImport = new ProviderImport();
-      providerImport.modRefId = Module1;
-      providerImport.providers = [Provider1];
-      providerImport.reexporter = Module2;
-      expect(mock?.importedProvidersPerMod.get(Provider1)).toEqual(providerImport);
-      providerImport.modRefId = Module2;
-      providerImport.providers = [Provider2];
-      providerImport.reexporter = AppModule;
-      expect(mock?.importedProvidersPerMod.get(Provider2)).toEqual(providerImport);
-      providerImport.modRefId = AppModule;
-      providerImport.providers = [Provider3];
-      providerImport.reexporter = undefined;
-      expect(mock?.importedProvidersPerMod.get(Provider3)).toEqual(providerImport);
+      const importedProvider = new ImportedProvider();
+      importedProvider.modRefId = Module1;
+      importedProvider.providers = [Provider1];
+      importedProvider.reexporter = Module2;
+      expect(mock?.importedProvidersPerMod.get(Provider1)).toEqual(importedProvider);
+      importedProvider.modRefId = Module2;
+      importedProvider.providers = [Provider2];
+      importedProvider.reexporter = AppModule;
+      expect(mock?.importedProvidersPerMod.get(Provider2)).toEqual(importedProvider);
+      importedProvider.modRefId = AppModule;
+      importedProvider.providers = [Provider3];
+      importedProvider.reexporter = undefined;
+      expect(mock?.importedProvidersPerMod.get(Provider3)).toEqual(importedProvider);
     });
 
     it('merge providers from reexported modules', () => {
@@ -411,27 +411,27 @@ describe('ShallowModulesImporter', () => {
       expect(mock.normalizedModuleMeta.providersPerMod).toEqual([]);
 
       expect(mock?.importedProvidersPerMod).toBeDefined();
-      const providerImport = new ProviderImport();
-      providerImport.modRefId = Module0;
-      providerImport.providers = [Provider0];
-      providerImport.reexporter = Module1;
-      expect(mock?.importedProvidersPerMod.get(Provider0)).toEqual(providerImport);
+      const importedProvider = new ImportedProvider();
+      importedProvider.modRefId = Module0;
+      importedProvider.providers = [Provider0];
+      importedProvider.reexporter = Module1;
+      expect(mock?.importedProvidersPerMod.get(Provider0)).toEqual(importedProvider);
 
-      providerImport.modRefId = Module1;
-      providerImport.providers = [Provider1];
-      providerImport.reexporter = Module2;
-      expect(mock?.importedProvidersPerMod.get(Provider1)).toEqual(providerImport);
-      providerImport.providers = [Provider2];
-      expect(mock?.importedProvidersPerMod.get(Provider2)).toEqual(providerImport);
-      providerImport.providers = [Provider3];
-      expect(mock?.importedProvidersPerMod.get(Provider3)).toEqual(providerImport);
+      importedProvider.modRefId = Module1;
+      importedProvider.providers = [Provider1];
+      importedProvider.reexporter = Module2;
+      expect(mock?.importedProvidersPerMod.get(Provider1)).toEqual(importedProvider);
+      importedProvider.providers = [Provider2];
+      expect(mock?.importedProvidersPerMod.get(Provider2)).toEqual(importedProvider);
+      importedProvider.providers = [Provider3];
+      expect(mock?.importedProvidersPerMod.get(Provider3)).toEqual(importedProvider);
 
-      providerImport.modRefId = Module2;
-      providerImport.providers = [Provider5];
-      providerImport.reexporter = Module3;
-      expect(mock?.importedProvidersPerMod.get(Provider5)).toEqual(providerImport);
-      providerImport.providers = [Provider8];
-      expect(mock?.importedProvidersPerMod.get(Provider8)).toEqual(providerImport);
+      importedProvider.modRefId = Module2;
+      importedProvider.providers = [Provider5];
+      importedProvider.reexporter = Module3;
+      expect(mock?.importedProvidersPerMod.get(Provider5)).toEqual(importedProvider);
+      importedProvider.providers = [Provider8];
+      expect(mock?.importedProvidersPerMod.get(Provider8)).toEqual(importedProvider);
     });
 
     it('import Module2 and Module1 with collision - Provider1', () => {
@@ -495,7 +495,7 @@ describe('ShallowModulesImporter', () => {
       class AppModule {}
 
       expect(() => importModulesShallow(AppModule)).not.toThrow();
-      expect([...mock.importedProvidersPerMod]).toEqual<[any, ProviderImport][]>([
+      expect([...mock.importedProvidersPerMod]).toEqual<[any, ImportedProvider][]>([
         [
           Provider2,
           {
@@ -606,7 +606,7 @@ describe('ShallowModulesImporter', () => {
       class AppModule {}
 
       expect(() => importModulesShallow(AppModule)).not.toThrow();
-      expect([...mock.importedProvidersPerMod]).toEqual<[any, ProviderImport][]>([
+      expect([...mock.importedProvidersPerMod]).toEqual<[any, ImportedProvider][]>([
         [Provider2, { modRefId: Module1, providers: [useFactoryProvider2] }],
         [Provider3, { modRefId: Module2, providers: [Provider3] }],
         [Provider1, { modRefId: Module1, providers: [Provider1] }],
@@ -643,7 +643,7 @@ describe('ShallowModulesImporter', () => {
       class AppModule {}
 
       expect(() => importModulesShallow(AppModule)).not.toThrow();
-      expect([...mock.importedProvidersPerMod]).toEqual<[any, ProviderImport][]>([
+      expect([...mock.importedProvidersPerMod]).toEqual<[any, ImportedProvider][]>([
         [Provider1, { modRefId: Module2, providers: [Provider1] }],
       ]);
     });
@@ -677,7 +677,7 @@ describe('ShallowModulesImporter', () => {
       class AppModule {}
 
       expect(() => importModulesShallow(AppModule)).not.toThrow();
-      expect([...mock.importedProvidersPerMod]).toEqual<[any, ProviderImport][]>([
+      expect([...mock.importedProvidersPerMod]).toEqual<[any, ImportedProvider][]>([
         [Provider1, { modRefId: Module1, providers: [Provider1] }],
         [Provider2, { modRefId: baseModuleWithParams, providers: [Provider2] }],
       ]);
@@ -712,7 +712,7 @@ describe('ShallowModulesImporter', () => {
       expect(() => importModulesShallow(AppModule)).not.toThrow();
       const mod3 = mock.shallowModuleImportsMap.get(Module3)!;
       expect([...mod3.baseImportRegistry.perMod]).toEqual([[Provider1, { modRefId: Module1, providers: [Provider1] }]]);
-      expect([...mock.importedProvidersPerMod]).toEqual<[any, ProviderImport][]>([
+      expect([...mock.importedProvidersPerMod]).toEqual<[any, ImportedProvider][]>([
         [Provider1, { modRefId: Module2, providers: [{ token: Provider1, useValue: 'one' }] }],
       ]);
     });
@@ -788,7 +788,7 @@ describe('ShallowModulesImporter', () => {
       class AppModule {}
 
       expect(() => importModulesShallow(AppModule)).not.toThrow();
-      expect([...mock.importedProvidersPerMod]).toEqual<[any, ProviderImport][]>([
+      expect([...mock.importedProvidersPerMod]).toEqual<[any, ImportedProvider][]>([
         [
           Provider1,
           {
@@ -850,7 +850,7 @@ describe('ShallowModulesImporter', () => {
       class AppModule {}
 
       expect(() => importModulesShallow(AppModule)).not.toThrow();
-      expect([...mock.importedProvidersPerMod]).toEqual<[any, ProviderImport][]>([
+      expect([...mock.importedProvidersPerMod]).toEqual<[any, ImportedProvider][]>([
         [Provider1, { modRefId: Module2, providers: [{ token: Provider1, useToken: Provider1 }] }],
         [Provider2, { modRefId: Module1, providers: [Provider2] }],
       ]);
