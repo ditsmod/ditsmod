@@ -1,4 +1,4 @@
-import type { Class, ResolvedGuard, ResolvedGuardPerMod, ResolvedProvider } from '@ditsmod/core';
+import type { Class, ResolvedGuard, ModuleScopedResolvedGuard, ResolvedProvider } from '@ditsmod/core';
 import type { BaseRequestContext } from '#services/base-request-context.js';
 
 /**
@@ -15,7 +15,7 @@ export class RouteMeta {
    * By default, any user can activate.
    */
   resolvedGuards?: ResolvedGuard[];
-  resolvedGuardsPerMod?: ResolvedGuardPerMod[];
+  resolvedGuardsPerMod?: ModuleScopedResolvedGuard[];
   Controller: Class;
   methodName: string | symbol;
   routeHandler?: (ctx: BaseRequestContext) => Promise<any>;

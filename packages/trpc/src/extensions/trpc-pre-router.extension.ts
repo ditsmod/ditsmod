@@ -12,7 +12,7 @@ import {
   SystemLogMediator,
   fromSelf,
   ResolvedProvider,
-  ResolvedGuardPerMod,
+  ModuleScopedResolvedGuard,
   ModuleManager,
   ClassFactoryProvider,
   getToken,
@@ -290,7 +290,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
       const injectorPerMod = this.moduleManager.getInjectorPerMod(g.normalizedModuleMeta.modRefId, true);
       const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou, 'Rou');
 
-      const resolvedGuard: ResolvedGuardPerMod = {
+      const resolvedGuard: ModuleScopedResolvedGuard = {
         guard,
         injectorPerRou,
         resolvedPerReq,

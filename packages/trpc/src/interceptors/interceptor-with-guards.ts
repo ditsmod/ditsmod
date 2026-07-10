@@ -3,7 +3,7 @@ import {
   fromSelf,
   injectable,
   Injector,
-  ResolvedGuardPerMod,
+  ModuleScopedResolvedGuard,
   skipSelf,
   Status,
   SystemLogMediator,
@@ -55,7 +55,7 @@ export class InterceptorWithGuards implements TrpcHttpInterceptor {
     return result;
   }
 
-  protected getInjectorPerReq(rg: ResolvedGuardPerMod) {
+  protected getInjectorPerReq(rg: ModuleScopedResolvedGuard) {
     const inj = rg.injectorPerRou.createChildFromResolved(rg.resolvedPerReq!, 'Req');
     const ctx = this.injector.get(Context, undefined, undefined, fromSelf) as Context;
     ctx.fill(inj, [RAW_REQ, RAW_RES]);

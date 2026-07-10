@@ -1,4 +1,4 @@
-import type { Class, ResolvedGuard, ResolvedGuardPerMod, ResolvedProvider } from '@ditsmod/core';
+import type { Class, ResolvedGuard, ModuleScopedResolvedGuard, ResolvedProvider } from '@ditsmod/core';
 
 import type { TrpcRouteExtension } from '#extensions/trpc-route.extension.js';
 
@@ -18,6 +18,6 @@ export class TrpcRouteMeta {
    * By default, any user can activate.
    */
   resolvedGuards?: ResolvedGuard[];
-  resolvedGuardsPerMod?: ResolvedGuardPerMod[];
+  resolvedGuardsPerMod?: ModuleScopedResolvedGuard[];
   // routeHandler?: (ctx: RequestContext) => Promise<any>;
 }

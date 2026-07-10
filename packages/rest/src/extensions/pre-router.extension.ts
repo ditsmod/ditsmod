@@ -13,7 +13,7 @@ import {
   FactoryProvider,
   ResolvedGuard,
   ResolvedProvider,
-  ResolvedGuardPerMod,
+  ModuleScopedResolvedGuard,
   RequireProps,
   getToken,
   ModuleManager,
@@ -291,7 +291,7 @@ export class PreRouterExtension implements Extension<void> {
       const injectorPerMod = this.moduleManager.getInjectorPerMod(g.normalizedModuleMeta.modRefId, true);
       const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou, 'Rou');
 
-      const resolvedGuard: ResolvedGuardPerMod = {
+      const resolvedGuard: ModuleScopedResolvedGuard = {
         guard,
         injectorPerRou,
         resolvedPerReq,

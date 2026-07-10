@@ -54,7 +54,7 @@ export {
   HttpMethod,
   ModuleType,
   ResolvedGuard,
-  ResolvedGuardPerMod,
+  ModuleScopedResolvedGuard,
   RequireProps,
   PickProps,
   RequireOnlyProps,
@@ -67,7 +67,7 @@ export {
   ModuleDecoratorOptions,
   DynamicModule,
   DynamicModuleWithInit,
-  DynamicModuleBase,
+  BaseDynamicModule,
   DynamicModuleOptions,
 } from '#decorators/module-decorator-options.js';
 export { ProviderImport } from '#types/metadata-per-mod.js';

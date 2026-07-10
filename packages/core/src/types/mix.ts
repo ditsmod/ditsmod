@@ -72,7 +72,7 @@ export interface AnyObj<T = any> {
   [key: string | symbol]: T;
 }
 
-export interface ResolvedGuardPerMod {
+export interface ModuleScopedResolvedGuard {
   guard: ResolvedProvider;
   injectorPerRou: Injector;
   resolvedPerReq?: ResolvedProvider[];

@@ -66,7 +66,7 @@ export class ModuleDecoratorOptions<T extends AnyObj = AnyObj> {
   declare resolvedCollisionPerReq?: [any, ModRefId | ForwardRefFn<ModuleType>][];
 }
 
-export interface DynamicModuleBase<M extends AnyObj = AnyObj> {
+export interface BaseDynamicModule<M extends AnyObj = AnyObj> {
   /**
    * The module ID.
    */
@@ -90,7 +90,7 @@ export interface DynamicModuleOptions<E extends AnyObj = AnyObj> extends Partial
  * An object with this type is passed into the `imports` array of
  * the module with the `featureModule` or `rootModule` decorator.
  */
-export interface DynamicModule<M extends AnyObj = AnyObj> extends DynamicModuleBase<M>, DynamicModuleOptions {
+export interface DynamicModule<M extends AnyObj = AnyObj> extends BaseDynamicModule<M>, DynamicModuleOptions {
   /**
    * If the current module has this property populated, this means it was used in the context of init decorators.
    */
