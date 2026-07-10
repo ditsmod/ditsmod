@@ -1,4 +1,4 @@
-import { Providers } from '@ditsmod/core';
+import { ProviderBuilder } from '@ditsmod/core';
 
 import { I18nProviders } from '#src/i18n-providers.js';
 import { CommonDict } from './current/index.js';
@@ -25,11 +25,11 @@ describe('I18nProviders', () => {
     );
   });
 
-  it('works as plugin for Providers', () => {
+  it('works as plugin for ProviderBuilder', () => {
     let providers: I18nProviders;
 
     function callback() {
-      providers = new Providers().$use(I18nProviders);
+      providers = new ProviderBuilder().$use(I18nProviders);
       providers.i18n({ current: [[CommonDict, CommonUkDict]] }, { defaultLng: 'uk' });
     }
 

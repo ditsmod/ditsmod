@@ -7,10 +7,7 @@ describe('MyService', () => {
   let myService: MyService;
 
   beforeEach(() => {
-    const injector = Injector.resolveAndCreate([
-      MyService,
-      OtherService
-    ]);
+    const injector = Injector.resolveAndCreate([MyService, OtherService]);
 
     myService = injector.get(MyService);
   });

@@ -167,7 +167,7 @@ server = await TestRestApplication.createTestApp(AppModule, { path: 'api' }).get
 
 ### `testRestApplication.overrideModuleMeta()` {#testrestapplicationoverridemodulemeta}
 
-The `testRestApplication.overrideModuleMeta()` method replaces providers in module metadata. Providers with mocks are only passed to DI at a particular level of the hierarchy if there are corresponding providers with the same tokens in application at that level.
+The `testRestApplication.overrideModuleMeta()` method replaces providers in module metadata. ProviderBuilder with mocks are only passed to DI at a particular level of the hierarchy if there are corresponding providers with the same tokens in application at that level.
 
 ### `testRestApplication.overrideExtensionMeta()` {#testrestapplicationoverrideextensionmeta}
 

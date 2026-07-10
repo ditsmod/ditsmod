@@ -3,35 +3,35 @@ import { jest } from '@jest/globals';
 import { Logger, LoggerConfig } from '#logger/logger.js';
 import { ClassFactoryProvider, Provider } from '#di/top/types-and-models.js';
 import { ConsoleLogger } from '#logger/console-logger.js';
-import { Providers } from './providers.js';
+import { ProviderBuilder } from './providers.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ClassForUseFactoriesWithoutDecorators } from '#error/core-errors.js';
 import { factoryMethod, injectable } from '#di/decorators.js';
 
-describe('Providers', () => {
+describe('ProviderBuilder', () => {
   it('call constuctor not to throw', () => {
-    expect(() => new Providers()).not.toThrow();
+    expect(() => new ProviderBuilder()).not.toThrow();
   });
 
   describe('useValue()', () => {
     it('case 1', () => {
-      const value = new Providers().useValue('token', 'value');
+      const value = new ProviderBuilder().useValue('token', 'value');
       expect([...value]).toEqual([{ token: 'token', useValue: 'value' }]);
     });
 
     it('case 2', () => {
-      const value = new Providers().$if(true).useValue('token', 'value');
+      const value = new ProviderBuilder().$if(true).useValue('token', 'value');
       expect([...value]).toEqual([{ token: 'token', useValue: 'value' }]);
     });
 
     it('case 3', () => {
-      const value = new Providers().$if(false).useValue('token', 'value');
+      const value = new ProviderBuilder().$if(false).useValue('token', 'value');
       expect([...value]).toEqual([]);
     });
 
     it('case 4', () => {
-      const value = new Providers().$if(false).useValue('token1', 'value1').useValue('token2', 'value2');
+      const value = new ProviderBuilder().$if(false).useValue('token1', 'value1').useValue('token2', 'value2');
       expect([...value]).toEqual([{ token: 'token2', useValue: 'value2' }]);
     });
 
@@ -39,14 +39,14 @@ describe('Providers', () => {
       class A {
         one: string;
       }
-      const value = new Providers().useValue<A>(A, { one: 'value' });
+      const value = new ProviderBuilder().useValue<A>(A, { one: 'value' });
       expect([...value]).toEqual([{ token: A, useValue: { one: 'value' } }]);
     });
 
     it('works with nested loops', () => {
       const for1 = jest.fn();
       const for2 = jest.fn();
-      const providers = new Providers()
+      const providers = new ProviderBuilder()
         .useValue('token1', 'value1')
         .useValue('token2', 'value2')
         .useValue('token3', 'value3');
@@ -85,7 +85,7 @@ describe('Providers', () => {
         one: string;
         two: number;
       }
-      const value = new Providers().useClass(A, B);
+      const value = new ProviderBuilder().useClass(A, B);
       expect([...value]).toEqual([{ token: A, useClass: B }]);
     });
 
@@ -97,7 +97,7 @@ describe('Providers', () => {
         one: string;
         two: number;
       }
-      const value = new Providers().$if(true).useClass(A, B);
+      const value = new ProviderBuilder().$if(true).useClass(A, B);
       expect([...value]).toEqual([{ token: A, useClass: B }]);
     });
 
@@ -109,7 +109,7 @@ describe('Providers', () => {
         one: string;
         two: number;
       }
-      const value = new Providers().$if(false).useClass(A, B);
+      const value = new ProviderBuilder().$if(false).useClass(A, B);
       expect([...value]).toEqual([]);
     });
   });
@@ -129,7 +129,7 @@ describe('Providers', () => {
         @factoryMethod()
         method4() {}
       }
-      const value = new Providers().useFactories(A, B);
+      const value = new ProviderBuilder().useFactories(A, B);
       expect([...value]).toEqual<ClassFactoryProvider[]>([
         { useFactory: [A, A.prototype.method1] },
         { useFactory: [B, B.prototype.method3] },
@@ -144,7 +144,7 @@ describe('Providers', () => {
         method1() {}
         method2() {}
       }
-      const value = new Providers().$if(true).useFactories(A);
+      const value = new ProviderBuilder().$if(true).useFactories(A);
       expect([...value]).toEqual<ClassFactoryProvider[]>([{ useFactory: [A, A.prototype.method1] }]);
     });
 
@@ -155,7 +155,7 @@ describe('Providers', () => {
         method1() {}
         method2() {}
       }
-      const value = new Providers().$if(false).useFactories(A);
+      const value = new ProviderBuilder().$if(false).useFactories(A);
       expect([...value]).toEqual<ClassFactoryProvider[]>([]);
     });
 
@@ -174,25 +174,25 @@ describe('Providers', () => {
         method4() {}
       }
       const err = new ClassForUseFactoriesWithoutDecorators(1);
-      expect(() => new Providers().useFactories(A, B)).toThrow(err);
+      expect(() => new ProviderBuilder().useFactories(A, B)).toThrow(err);
     });
   });
 
   it('works with plugins', () => {
-    class Some extends Providers {
+    class Some extends ProviderBuilder {
       one(name: string) {
         this.useValue(name, 'молоток');
         return this;
       }
     }
 
-    class Other extends Providers {
+    class Other extends ProviderBuilder {
       two() {
         return this;
       }
     }
 
-    class Third extends Providers {
+    class Third extends ProviderBuilder {
       three() {
         return this;
       }
@@ -202,7 +202,7 @@ describe('Providers', () => {
     jest.spyOn(Other.prototype, 'two');
     jest.spyOn(Third.prototype, 'three');
 
-    const providers = new Providers();
+    const providers = new ProviderBuilder();
 
     function callback() {
       providers.$use(Some).$use(Other).two().two().one('Mostia').$use(Third).three().useValue('token', 'value');

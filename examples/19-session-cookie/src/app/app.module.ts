@@ -1,4 +1,4 @@
-import { LoggerConfig, Providers } from '@ditsmod/core';
+import { LoggerConfig, ProviderBuilder } from '@ditsmod/core';
 import { restRootModule } from '@ditsmod/rest';
 import { SessionCookieModule } from '@ditsmod/session-cookie';
 
@@ -11,7 +11,7 @@ const sessionModuleWithParams = SessionCookieModule.withParams({
 
 @restRootModule({
   imports: [sessionModuleWithParams],
-  providersPerApp: new Providers().useValue(LoggerConfig, { level: 'info' }),
+  providersPerApp: new ProviderBuilder().useValue(LoggerConfig, { level: 'info' }),
   controllers: [HelloWorldController, HelloWorldController2],
   exports: [sessionModuleWithParams],
 })

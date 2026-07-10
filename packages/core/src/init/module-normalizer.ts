@@ -12,7 +12,7 @@ import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { NormalizedModuleMeta } from '#init/base-meta.js';
 import { resolveForwardRef } from '#di/forward-ref.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
-import { Providers } from '#utils/providers.js';
+import { ProviderBuilder } from '#utils/providers.js';
 import { normalizeProviders, stringify } from '#utils/ng-utils.js';
 import { isExtensionConfig } from '#extension/type-guards.js';
 import { objectKeys } from '#utils/object-keys.js';
@@ -220,7 +220,10 @@ export class ModuleNormalizer {
       this.normalizedModuleMeta.id = modWitParams.id;
     }
     (['providersPerApp', 'providersPerMod', 'providersPerRou', 'providersPerReq'] as const).forEach((prop) => {
-      if (modWitParams[prop] instanceof Providers || (Array.isArray(modWitParams[prop]) && modWitParams[prop].length)) {
+      if (
+        modWitParams[prop] instanceof ProviderBuilder ||
+        (Array.isArray(modWitParams[prop]) && modWitParams[prop].length)
+      ) {
         this.normalizedModuleMeta[prop].push(...this.resolveAllForwardRefs(modWitParams[prop]));
       }
     });
@@ -400,7 +403,7 @@ export class AppModule {}
   }
 
   protected resolveAllForwardRefs<T extends ModRefId | Provider | ForwardRefFn | { dynamicModule: DynamicModule }>(
-    arr: T[] | Providers = [],
+    arr: T[] | ProviderBuilder = [],
   ): Exclude<T, ForwardRefFn>[] {
     return [...arr].map((item) => {
       const resolved = resolveForwardRef(item);

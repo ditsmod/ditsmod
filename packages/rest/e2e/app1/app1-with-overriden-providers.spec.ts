@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
-import { Providers } from '@ditsmod/core';
+import { ProviderBuilder } from '@ditsmod/core';
 import { TestRestApplication, TestRestPlugin } from '@ditsmod/rest-testing';
 
 import { AppModule } from './app.module.js';
@@ -28,7 +28,7 @@ describe('@ditsmod/rest/e2e', () => {
   });
 
   it('override services at any level', async () => {
-    const aProvidersToOverride = new Providers()
+    const aProvidersToOverride = new ProviderBuilder()
       .useValue<ServicePerRou2>(ServicePerRou2, { method: methodPerRou2 })
       .useValue<ServicePerReq2>(ServicePerReq2, { method: methodPerReq2 });
 
@@ -36,7 +36,7 @@ describe('@ditsmod/rest/e2e', () => {
       .$use(TestRestPlugin)
       .overrideExtensionRestMeta(aProvidersToOverride)
       .overrideModuleMeta(
-        new Providers()
+        new ProviderBuilder()
           .useValue<ServicePerApp>(ServicePerApp, { method: methodPerApp })
           .useValue<ServicePerMod>(ServicePerMod, { method: methodPerMod })
           .useValue<ServicePerRou>(ServicePerRou, { method: methodPerRou })

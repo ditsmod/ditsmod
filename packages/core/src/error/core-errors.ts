@@ -2,14 +2,14 @@ import { stringify } from '#di/stringify.js';
 import { CustomError } from './custom-error.js';
 
 /**
- * `You are trying to use the useFactories() method from the "Providers" helper,
+ * `You are trying to use the useFactories() method from the "ProviderBuilder" helper,
  * but the [${i}] element has no decorators or is not a class.`
  */
 export class ClassForUseFactoriesWithoutDecorators extends CustomError {
   constructor(i: number) {
     super({
       msg1:
-        'You are trying to use the useFactories() method from the "Providers" helper, ' +
+        'You are trying to use the useFactories() method from the "ProviderBuilder" helper, ' +
         `but the [${i}] element has no decorators or is not a class.`,
       level: 'fatal',
     });

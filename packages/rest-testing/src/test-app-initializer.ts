@@ -6,7 +6,7 @@ import type {
   ResolvedModuleMetadata,
   ModRefId,
   Provider,
-  Providers,
+  ProviderBuilder,
 } from '@ditsmod/core';
 import { InternalExtensionManager, resolveForwardRef } from '@ditsmod/core';
 import { RestAppInitializer } from '@ditsmod/rest';
@@ -25,7 +25,7 @@ export class TestAppInitializer extends RestAppInitializer {
     this.aOverriderConfig.push(config);
   }
 
-  addProvidersToModule(modRefId: ModRefId, rawProviders: Providers | (Provider | ForwardRefFn<Provider>)[]) {
+  addProvidersToModule(modRefId: ModRefId, rawProviders: ProviderBuilder | (Provider | ForwardRefFn<Provider>)[]) {
     const aProviders = this.mAdditionalProviders.get(modRefId) || [];
     if (!this.mAdditionalProviders.has(modRefId)) {
       this.mAdditionalProviders.set(modRefId, aProviders);
@@ -34,7 +34,7 @@ export class TestAppInitializer extends RestAppInitializer {
     aProviders.push(...normalizedProviders);
   }
 
-  overrideModuleMeta(rawProviders: Providers | (Provider | ForwardRefFn<Provider>)[]) {
+  overrideModuleMeta(rawProviders: ProviderBuilder | (Provider | ForwardRefFn<Provider>)[]) {
     const providers = [...rawProviders].map(resolveForwardRef);
     this.providersForOverride.push(...providers);
   }

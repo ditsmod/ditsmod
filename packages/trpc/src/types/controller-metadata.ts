@@ -6,11 +6,11 @@ import type { NormalizedGuard } from '../interceptors/trpc-guard.js';
 
 export interface ControllerMetadata {
   /**
-   * Providers per a route.
+   * ProviderBuilder per a route.
    */
   providersPerRou: Provider[];
   /**
-   * Providers per a request.
+   * ProviderBuilder per a request.
    */
   providersPerReq: Provider[];
   routeMeta: TrpcRouteMeta;

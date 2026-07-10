@@ -17,7 +17,7 @@ import {
 } from '#decorators/module-decorator-options.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { ModuleNormalizer } from './module-normalizer.js';
-import { Providers } from '#utils/providers.js';
+import { ProviderBuilder } from '#utils/providers.js';
 import {
   ExportingUnknownSymbol,
   ForbiddenExportNormalizedProvider,
@@ -92,7 +92,7 @@ describe('ModuleNormalizer', () => {
 
     @rootModule({
       imports: [Module1, moduleWithParams],
-      providersPerApp: new Providers().passThrough(Service1),
+      providersPerApp: new ProviderBuilder().passThrough(Service1),
       providersPerMod: [Service2, multiProvider],
       providersPerRou: [Service3],
       providersPerReq: [Service4],
@@ -135,7 +135,7 @@ describe('ModuleNormalizer', () => {
     class Service4 {}
 
     @featureModule({
-      providersPerApp: new Providers().passThrough(Service1),
+      providersPerApp: new ProviderBuilder().passThrough(Service1),
       providersPerMod: [Service3],
       exports: [Service3],
       extensionsMeta: { one: 1 },

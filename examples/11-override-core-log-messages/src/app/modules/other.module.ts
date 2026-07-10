@@ -1,4 +1,4 @@
-import { Providers } from '@ditsmod/core';
+import { ProviderBuilder } from '@ditsmod/core';
 import { restModule } from '@ditsmod/rest';
 
 import { SomeModule } from './some.module.js';
@@ -8,7 +8,7 @@ import { OtherLogMediator } from './other/other-log-mediator.js';
 
 @restModule({
   imports: [SomeModule],
-  providersPerMod: new Providers().useClass(SomeLogMediator, OtherLogMediator),
+  providersPerMod: new ProviderBuilder().useClass(SomeLogMediator, OtherLogMediator),
   controllers: [OtherController],
 })
 export class OtherModule {}

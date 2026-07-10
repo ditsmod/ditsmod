@@ -69,7 +69,7 @@ interface StatusCodeInfo {
   };
 }
 
-export const STATUS_CODE_INFO: StatusCodeInfo = {
+export const HTTP_STATUS_INFO: StatusCodeInfo = {
   100: {
     statusCode: 100,
     text: 'Continue',
@@ -494,14 +494,14 @@ export const STATUS_CODE_INFO: StatusCodeInfo = {
 /**
  * get the status text from StatusCode
  */
-export function getStatusText(statusCode: HttpStatus) {
-  const code = STATUS_CODE_INFO[statusCode];
+export function getHttpStatusText(statusCode: HttpStatus) {
+  const code = HTTP_STATUS_INFO[statusCode];
   return code?.text || 'Unknown HttpStatus';
 }
 
 /**
  * Returns true if the the Http HttpStatus Code is 200-299 (success)
  */
-export function isSuccess(statusCode: number): boolean {
+export function isSuccessStatus(statusCode: number): boolean {
   return statusCode >= 200 && statusCode < 300;
 }

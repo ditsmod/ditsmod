@@ -2,12 +2,12 @@
 sidebar_position: 12
 ---
 
-# Хелпер `Providers`
+# Хелпер `ProviderBuilder`
 
 Даний клас спрощує додавання провайдерів до DI з одночасним контролем їх типів. Оскільки даний клас впроваджує так званий [Iteration protocols][1], це спрощує перетворення його на масив (зверніть увагу на трикрапку):
 
 ```ts {9}
-import { Providers } from '@ditsmod/core';
+import { ProviderBuilder } from '@ditsmod/core';
 import { restModule } from '@ditsmod/rest';
 // ...
 @restModule({
@@ -15,7 +15,7 @@ import { restModule } from '@ditsmod/rest';
   providersPerRou: [
     Provider1,
     Provider2,
-    ...new Providers().useValue<CorsOptions>(CorsOptions, { origin: 'https://example.com' }),
+    ...new ProviderBuilder().useValue<CorsOptions>(CorsOptions, { origin: 'https://example.com' }),
     // ...
   ],
   // ...
@@ -23,15 +23,15 @@ import { restModule } from '@ditsmod/rest';
 export class SomeModule {}
 ```
 
-Починаючи з v2.55, Ditsmod дозволяє передавати інстанс `Providers` безпосередньо у властивості `providersPer*` метаданих модуля чи контролера:
+Починаючи з v2.55, Ditsmod дозволяє передавати інстанс `ProviderBuilder` безпосередньо у властивості `providersPer*` метаданих модуля чи контролера:
 
 ```ts
-import { Providers } from '@ditsmod/core';
+import { ProviderBuilder } from '@ditsmod/core';
 import { restModule } from '@ditsmod/rest';
 // ...
 @restModule({
   // ...
-  providersPerRou: new Providers()
+  providersPerRou: new ProviderBuilder()
     .passThrough(Provider1)
     .passThrough(Provider2)
     .useValue<CorsOptions>(CorsOptions, { origin: 'https://example.com' }),
@@ -42,15 +42,15 @@ export class SomeModule {}
 
 Метод `providers.passThrough()` пропускає провайдери без перевірки типів, він призначається для передачі класів у якості провайдерів.
 
-Окрім цього, `Providers` має спеціальний метод `$if()`, що дозволяє передавати провайдери лише у випадку, якщо він отримує правдиве значення:
+Окрім цього, `ProviderBuilder` має спеціальний метод `$if()`, що дозволяє передавати провайдери лише у випадку, якщо він отримує правдиве значення:
 
 ```ts {8}
-import { Providers } from '@ditsmod/core';
+import { ProviderBuilder } from '@ditsmod/core';
 import { restModule } from '@ditsmod/rest';
 // ...
 @restModule({
   // ...
-  providersPerRou: new Providers()
+  providersPerRou: new ProviderBuilder()
     .passThrough(Provider1)
     .$if(false)
     .passThrough(Provider2)
@@ -62,10 +62,10 @@ export class SomeModule {}
 
 В даному разі `Provider2` не буде передаватись до DI, тоді як `Provider1` та `Provider3` будуть передаватись. Тобто `$if()` діє лише для першого виразу, що йде зразу після нього.
 
-Метод `providers.$use()` дозволяє створювати плагіни (чи middleware) для розширення функціональності `Providers`:
+Метод `providers.$use()` дозволяє створювати плагіни (чи middleware) для розширення функціональності `ProviderBuilder`:
 
 ```ts {2,11,21-22}
-class Plugin1 extends Providers {
+class Plugin1 extends ProviderBuilder {
   method1() {
     if (this.true) {
       // ...
@@ -74,7 +74,7 @@ class Plugin1 extends Providers {
   }
 }
 
-class Plugin2 extends Providers {
+class Plugin2 extends ProviderBuilder {
   method2() {
     if (this.true) {
       // ...
@@ -83,7 +83,7 @@ class Plugin2 extends Providers {
   }
 }
 
-const providers = [...new Providers()
+const providers = [...new ProviderBuilder()
   .$use(Plugin1, Plugin2)
   .method1()
   .method2()

@@ -1,5 +1,5 @@
 import type { Class } from '@ditsmod/core';
-import { Providers } from '@ditsmod/core';
+import { ProviderBuilder } from '@ditsmod/core';
 import type { Dictionary, DictGroup, Translations} from './types/mix.js';
 import { I18N_TRANSLATIONS, I18nOptions } from './types/mix.js';
 
@@ -7,7 +7,7 @@ export function getDictGroup<T extends Class<Dictionary>>(base: T, ...dicts: T[]
   return [base, ...dicts];
 }
 
-export class I18nProviders extends Providers {
+export class I18nProviders extends ProviderBuilder {
   /**
    * Helper that adds providers in a type safe way.
    */

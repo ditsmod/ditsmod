@@ -1,4 +1,4 @@
-import type { Provider, Providers } from '@ditsmod/core';
+import type { Provider, ProviderBuilder } from '@ditsmod/core';
 import { Reflector } from '@ditsmod/core';
 
 /**
@@ -6,13 +6,13 @@ import { Reflector } from '@ditsmod/core';
  */
 export interface ControllerDecoratorOptions1 {
   /**
-   * Providers per route.
+   * ProviderBuilder per route.
    */
-  providersPerRou?: Providers | Provider[];
+  providersPerRou?: ProviderBuilder | Provider[];
   /**
-   * Providers per HTTP request.
+   * ProviderBuilder per HTTP request.
    */
-  providersPerReq?: Providers | Provider[];
+  providersPerReq?: ProviderBuilder | Provider[];
   /**
    * Indicates in which mode the controller methods work.
    *
@@ -28,9 +28,9 @@ export interface ControllerDecoratorOptions1 {
  */
 export interface ControllerDecoratorOptions2 {
   /**
-   * Providers per route.
+   * ProviderBuilder per route.
    */
-  providersPerRou?: Providers | Provider[];
+  providersPerRou?: ProviderBuilder | Provider[];
   /**
    * Indicates in which mode the controller methods work.
    *

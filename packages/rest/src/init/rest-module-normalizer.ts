@@ -1,4 +1,4 @@
-import type { Class, NormalizedModuleMeta, Providers, Provider, ForwardRefFn, ModuleType } from '@ditsmod/core';
+import type { Class, NormalizedModuleMeta, ProviderBuilder, Provider, ForwardRefFn, ModuleType } from '@ditsmod/core';
 import {
   isNormalizedProvider,
   Reflector,
@@ -88,7 +88,7 @@ export class RestModuleNormalizer {
   }
 
   protected resolveForwardRef<T extends RestModRefId | Provider | ForwardRefFn<ModuleType | Provider>>(
-    arr: T[] | Providers,
+    arr: T[] | ProviderBuilder,
   ) {
     return [...arr].map((item) => {
       item = resolveForwardRef(item);

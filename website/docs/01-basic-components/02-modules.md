@@ -188,21 +188,21 @@ interface DynamicModule {
   id?: string;
   module: ModuleType<M>;
   /**
-   * Providers per the application.
+   * ProviderBuilder per the application.
    */
-  providersPerApp?: Providers | Provider[] = [];
+  providersPerApp?: ProviderBuilder | Provider[] = [];
   /**
-   * Providers per a module.
+   * ProviderBuilder per a module.
    */
-  providersPerMod?: Providers | Provider[] = [];
+  providersPerMod?: ProviderBuilder | Provider[] = [];
   /**
-   * Providers per a route.
+   * ProviderBuilder per a route.
    */
-  providersPerRou?: Providers | Provider[] = [];
+  providersPerRou?: ProviderBuilder | Provider[] = [];
   /**
-   * Providers per a request.
+   * ProviderBuilder per a request.
    */
-  providersPerReq?: Providers | Provider[] = [];
+  providersPerReq?: ProviderBuilder | Provider[] = [];
   /**
    * List of modules, `DynamicModule` or tokens of providers exported by this
    * module.

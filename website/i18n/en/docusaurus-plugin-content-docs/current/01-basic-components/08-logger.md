@@ -16,14 +16,14 @@ import { rootModule } from '@ditsmod/core';
 export class AppModule {}
 ```
 
-However, better type support is provided by the [Providers][2] helper:
+However, better type support is provided by the [ProviderBuilder][2] helper:
 
 ```ts {5}
-import { rootModule, Providers, LoggerConfig } from '@ditsmod/core';
+import { rootModule, ProviderBuilder, LoggerConfig } from '@ditsmod/core';
 // ...
 @rootModule({
   // ...
-  providersPerApp: new Providers().useValue(LoggerConfig, { level: 'info' }),
+  providersPerApp: new ProviderBuilder().useValue(LoggerConfig, { level: 'info' }),
 })
 export class AppModule {}
 ```
@@ -31,13 +31,13 @@ export class AppModule {}
 As you can see, `LoggerConfig` is provided at the application level. If you need a different logging level in a specific module, you should provide both the logging configuration and a provider with the `Logger` token:
 
 ```ts {7-9}
-import { Logger, Providers } from '@ditsmod/core';
+import { Logger, ProviderBuilder } from '@ditsmod/core';
 import { restModule } from '@ditsmod/rest';
 import { PatchLogger } from './patch-logger.js';
 // ...
 @restModule({
   // ...
-  providersPerMod: new Providers()
+  providersPerMod: new ProviderBuilder()
     .useFactory(Logger, [PatchLogger, PatchLogger.prototype.patchLogger])
     .useLogConfig({ level: 'debug' }),
 })

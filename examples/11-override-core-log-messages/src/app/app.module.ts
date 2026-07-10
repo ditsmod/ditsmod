@@ -1,4 +1,4 @@
-import { LoggerConfig, Providers, SystemLogMediator } from '@ditsmod/core';
+import { LoggerConfig, ProviderBuilder, SystemLogMediator } from '@ditsmod/core';
 import { restRootModule } from '@ditsmod/rest';
 
 import { MyLogMediator } from './my-log-mediator.js';
@@ -7,7 +7,7 @@ import { OtherModule } from './modules/other.module.js';
 
 @restRootModule({
   imports: [SomeModule],
-  providersPerApp: new Providers()
+  providersPerApp: new ProviderBuilder()
     .passThrough(MyLogMediator)
     .useToken(SystemLogMediator, MyLogMediator) // This allow use MyLogMediator internaly in Ditsmod core
     .useValue(LoggerConfig, { level: 'info' }),

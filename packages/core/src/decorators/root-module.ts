@@ -2,7 +2,7 @@ import type { ForwardRefFn } from '#di/forward-ref.js';
 import type { ModRefId, ModuleType } from '#types/mix.js';
 import { Reflector } from '#di/reflector.js';
 import { objectKeys } from '#utils/object-keys.js';
-import { Providers } from '#utils/providers.js';
+import { ProviderBuilder } from '#utils/providers.js';
 import { ModuleDecoratorOptions } from './module-decorator-options.js';
 
 /**
@@ -25,7 +25,7 @@ export interface RootModuleDecorator {
 function transformModule(data?: RootDecoratorOptions): RootDecoratorOptions {
   const decoratorOptions = Object.assign(new RootDecoratorOptions(), data) as RootDecoratorOptions;
   objectKeys(decoratorOptions).forEach((p) => {
-    if (decoratorOptions[p] instanceof Providers) {
+    if (decoratorOptions[p] instanceof ProviderBuilder) {
       (decoratorOptions as any)[p] = [...decoratorOptions[p]];
     } else if (Array.isArray(decoratorOptions[p])) {
       (decoratorOptions as any)[p] = decoratorOptions[p].slice();

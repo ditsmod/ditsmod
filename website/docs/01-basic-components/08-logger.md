@@ -16,14 +16,14 @@ import { rootModule } from '@ditsmod/core';
 export class AppModule {}
 ```
 
-Але кращу підтримку типів має хелпер [Providers][2]:
+Але кращу підтримку типів має хелпер [ProviderBuilder][2]:
 
 ```ts {5}
-import { rootModule, Providers, LoggerConfig } from '@ditsmod/core';
+import { rootModule, ProviderBuilder, LoggerConfig } from '@ditsmod/core';
 // ...
 @rootModule({
   // ...
-  providersPerApp: new Providers().useValue(LoggerConfig, { level: 'info' }),
+  providersPerApp: new ProviderBuilder().useValue(LoggerConfig, { level: 'info' }),
 })
 export class AppModule {}
 ```
@@ -31,13 +31,13 @@ export class AppModule {}
 Як бачите, тут `LoggerConfig` передається на рівні застосунку. Якщо вам потрібно щоб у певному модулі діяв інший рівень логування, разом з конфігом для логування необхідно передавати й провайдер з токеном `Logger`:
 
 ```ts {7-9}
-import { Logger, Providers } from '@ditsmod/core';
+import { Logger, ProviderBuilder } from '@ditsmod/core';
 import { restModule } from '@ditsmod/rest';
 import { PatchLogger } from './patch-logger.js';
 // ...
 @restModule({
   // ...
-  providersPerMod: new Providers()
+  providersPerMod: new ProviderBuilder()
     .useFactory(Logger, [PatchLogger, PatchLogger.prototype.patchLogger])
     .useLogConfig({ level: 'debug' }),
 })

@@ -1,4 +1,4 @@
-import { featureModule, DynamicModule, Providers } from '@ditsmod/core';
+import { featureModule, DynamicModule, ProviderBuilder } from '@ditsmod/core';
 import { initRest, PreRouterExtension, RestRouteExtension } from '@ditsmod/rest';
 import { CorsOptions } from '@ts-stack/cors';
 
@@ -22,7 +22,7 @@ export class CorsModule {
   static withParams(options: CorsOptions): DynamicModule<CorsModule> {
     return {
       module: this,
-      providersPerMod: new Providers().useValue<CorsOptions>(CorsOptions, options),
+      providersPerMod: new ProviderBuilder().useValue<CorsOptions>(CorsOptions, options),
       exports: [CorsOptions],
     };
   }

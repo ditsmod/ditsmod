@@ -10,7 +10,7 @@ import { BaseAppInitializer } from '#init/base-app-initializer.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { Provider } from '#di/top/types-and-models.js';
 import { Extension, ExtensionCounters } from '#extension/extension-types.js';
-import { Providers } from '#utils/providers.js';
+import { ProviderBuilder } from '#utils/providers.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
 import {
   CannotResolveCollisionForMultiProviderPerApp,
@@ -316,7 +316,7 @@ describe('BaseAppInitializer', () => {
 
       // Simulation of a call from the AppModule
       @rootModule({
-        providersPerApp: new Providers()
+        providersPerApp: new ProviderBuilder()
           // .passThrough(Router)
           .useValue(LoggerConfig, { level: 'trace' })
           .passThrough(LogMediatorMock)

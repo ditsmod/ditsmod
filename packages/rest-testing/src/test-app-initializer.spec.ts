@@ -1,5 +1,5 @@
 import type { ModRefId, Provider } from '@ditsmod/core';
-import { NormalizedModuleMeta, Providers } from '@ditsmod/core';
+import { NormalizedModuleMeta, ProviderBuilder } from '@ditsmod/core';
 import { RestInitMeta, initRest } from '@ditsmod/rest';
 
 import { TestAppInitializer } from '#app/test-app-initializer.js';
@@ -16,7 +16,7 @@ describe('TestAppInitializer', () => {
   const mock = new MockTestAppInitializer(null as any, null as any, null as any);
 
   describe('addProvidersToModule()', () => {
-    it('adding instanse of Providers to providersPerApp', () => {
+    it('adding instanse of ProviderBuilder to providersPerApp', () => {
       const modRefId = {} as ModRefId;
       class Provider1 {}
 
@@ -29,7 +29,7 @@ describe('TestAppInitializer', () => {
       expect(mock.mAdditionalProviders.get(modRefId)?.providersPerMod).toEqual([Provider1]);
     });
 
-    it('adding mix (Provider[] and instanse of Providers) to providersPerApp', () => {
+    it('adding mix (Provider[] and instanse of ProviderBuilder) to providersPerApp', () => {
       const modRefId = {} as ModRefId;
       class Provider1 {}
       class Provider2 {}
@@ -39,7 +39,7 @@ describe('TestAppInitializer', () => {
       };
 
       const providersMeta2: Partial<ProvidersByLevel> = {
-        providersPerApp: new Providers().passThrough(Provider2),
+        providersPerApp: new ProviderBuilder().passThrough(Provider2),
       };
       mock.addProvidersToModule(modRefId, providersMeta1);
       mock.addProvidersToModule(modRefId, providersMeta2);

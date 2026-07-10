@@ -5,7 +5,7 @@ import type { ExtensionClass } from '#extension/extension-types.js';
 import type { InitParamsMap } from '#decorators/init-hooks-and-metadata.js';
 import type { rootModule } from '#decorators/root-module.js';
 import type { featureModule } from '#decorators/feature-module.js';
-import type { Providers } from '#utils/providers.js';
+import type { ProviderBuilder } from '#utils/providers.js';
 import type { Provider } from '#di/top/types-and-models.js';
 import type { ForwardRefFn } from '#di/forward-ref.js';
 
@@ -14,21 +14,21 @@ import type { ForwardRefFn } from '#di/forward-ref.js';
  */
 export class ModuleDecoratorOptions<T extends AnyObj = AnyObj> {
   /**
-   * Providers per the application.
+   * ProviderBuilder per the application.
    */
-  declare providersPerApp?: Providers | (Provider | ForwardRefFn<Provider>)[];
+  declare providersPerApp?: ProviderBuilder | (Provider | ForwardRefFn<Provider>)[];
   /**
-   * Providers per a module.
+   * ProviderBuilder per a module.
    */
-  declare providersPerMod?: Providers | (Provider | ForwardRefFn<Provider>)[];
+  declare providersPerMod?: ProviderBuilder | (Provider | ForwardRefFn<Provider>)[];
   /**
-   * Providers per a route.
+   * ProviderBuilder per a route.
    */
-  declare providersPerRou?: Providers | (Provider | ForwardRefFn<Provider>)[];
+  declare providersPerRou?: ProviderBuilder | (Provider | ForwardRefFn<Provider>)[];
   /**
-   * Providers per a request.
+   * ProviderBuilder per a request.
    */
-  declare providersPerReq?: Providers | (Provider | ForwardRefFn<Provider>)[];
+  declare providersPerReq?: ProviderBuilder | (Provider | ForwardRefFn<Provider>)[];
   /**
    * List of modules or `DynamicModule` imported by this module.
    * Also you can imports modules and set some prefix per each the module.

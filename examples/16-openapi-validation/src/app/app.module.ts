@@ -1,4 +1,4 @@
-import { LoggerConfig, Providers } from '@ditsmod/core';
+import { LoggerConfig, ProviderBuilder } from '@ditsmod/core';
 import { restRootModule } from '@ditsmod/rest';
 
 import { FirstModule } from './modules/routed/first/first.module.js';
@@ -7,6 +7,6 @@ import { openapiModuleWithParams } from './modules/service/openapi/openapi.modul
 @restRootModule({
   imports: [FirstModule.withPath(''), openapiModuleWithParams],
   exports: [openapiModuleWithParams],
-  providersPerApp: new Providers().useValue(LoggerConfig, { level: 'info', showExternalLogs: false }),
+  providersPerApp: new ProviderBuilder().useValue(LoggerConfig, { level: 'info', showExternalLogs: false }),
 })
 export class AppModule {}

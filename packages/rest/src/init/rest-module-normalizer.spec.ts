@@ -5,7 +5,7 @@ import {
   ModuleManager,
   DynamicModuleWithInit,
   DynamicModule,
-  Providers,
+  ProviderBuilder,
   rootModule,
   SystemLogMediator,
 } from '@ditsmod/core';
@@ -178,7 +178,7 @@ describe('rest ModuleNormalizer', () => {
     }
 
     @initRest({
-      providersPerRou: new Providers().passThrough(Service1),
+      providersPerRou: new ProviderBuilder().passThrough(Service1),
       providersPerReq: [Service2],
       exports: [Service1, Service2],
     })
@@ -238,7 +238,7 @@ describe('rest ModuleNormalizer', () => {
 
     @initRest({
       providersPerApp: [Service7],
-      providersPerRou: new Providers().passThrough(Service1),
+      providersPerRou: new ProviderBuilder().passThrough(Service1),
       providersPerReq: [Service3],
       exports: [Service1, Service3],
     })

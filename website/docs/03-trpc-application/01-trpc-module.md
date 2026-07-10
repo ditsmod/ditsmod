@@ -206,15 +206,15 @@ export class PostService {
 
 ### Крок другий {#step-two}
 
-Найпростіше передати `ClassFactoryProvider` до DI - за допомогою хелпера `Providers`:
+Найпростіше передати `ClassFactoryProvider` до DI - за допомогою хелпера `ProviderBuilder`:
 
 ```ts {6}
 import { trpcController } from '@ditsmod/trpc';
-import { Providers } from '@ditsmod/core';
+import { ProviderBuilder } from '@ditsmod/core';
 import { PostService } from '#post/post.service.js';
 // ...
 @trpcController({
-  providersPerReq: new Providers().useFactories(PostService),
+  providersPerReq: new ProviderBuilder().useFactories(PostService),
 })
 export class PostController {
   // ...

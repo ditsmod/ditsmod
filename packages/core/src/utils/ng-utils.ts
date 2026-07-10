@@ -44,7 +44,7 @@ export function flatten<T = any>(list: any[], dst?: any[]): T[] {
 }
 
 /**
- * Normalize an array of DI Providers
+ * Normalize an array of DI ProviderBuilder
  */
 export function normalizeProviders(
   providers: Provider[] | ReadonlyArray<Provider>,

@@ -184,7 +184,7 @@ interface TotalStage1Meta<T = any> {
 
 | Commit | Type | Description |
 | -- | -- | -- |
-| [fde5c079a9](https://github.com/ditsmod/ditsmod/commit/fde5c079a92a) | fix | Fixed `Symbol.iterator` in `Providers` helper. |
+| [fde5c079a9](https://github.com/ditsmod/ditsmod/commit/fde5c079a92a) | fix | Fixed `Symbol.iterator` in `ProviderBuilder` helper. |
 
 <a name="core-2.55.1"></a>
 ## [core-2.55.1](https://github.com/ditsmod/ditsmod/releases/tag/core-2.55.1) (2024-08-23)
@@ -205,8 +205,8 @@ interface TotalStage1Meta<T = any> {
 
 | Commit | Type | Description |
 | -- | -- | -- |
-| [6767399700](https://github.com/ditsmod/ditsmod/commit/6767399700) | fix | Introduced `$if()` method for Providers helper. |
-| [e1fa4f0024](https://github.com/ditsmod/ditsmod/commit/e1fa4f0024) | fix | Allow passing instance of Providers helper to `providersPer*`. |
+| [6767399700](https://github.com/ditsmod/ditsmod/commit/6767399700) | fix | Introduced `$if()` method for ProviderBuilder helper. |
+| [e1fa4f0024](https://github.com/ditsmod/ditsmod/commit/e1fa4f0024) | fix | Allow passing instance of ProviderBuilder helper to `providersPer*`. |
 | [77ccff93a3](https://github.com/ditsmod/ditsmod/commit/77ccff93a3) | fix | Introduced `providers.passThrough()`. |
 | [9357078583](https://github.com/ditsmod/ditsmod/commit/9357078583) | fix | Fixed type for request handler. |
 
@@ -388,7 +388,7 @@ interface TotalStage1Meta<T = any> {
   ```
 
 - Added `isClassFactoryProvider()` type guard.
-- In `Providers` helper, added support for `FunctionFactoryProvider`.
+- In `ProviderBuilder` helper, added support for `FunctionFactoryProvider`.
 
 <a name="core-2.47.0"></a>
 ## [core-2.47.0](https://github.com/ditsmod/ditsmod/releases/tag/core-2.47.0) (2023-08-28)

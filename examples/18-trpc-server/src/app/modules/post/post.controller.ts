@@ -1,12 +1,12 @@
 import { trpcController, TrpcRouteService, trpcRoute } from '@ditsmod/trpc';
-import { Providers } from '@ditsmod/core';
+import { ProviderBuilder } from '@ditsmod/core';
 import { z } from 'zod';
 
 import { PostService } from '#post/post.service.js';
 import { Guard, MyHttpInterceptor } from '#post/post.interceptors.js';
 
 @trpcController({
-  providersPerReq: new Providers().useFactories(PostService),
+  providersPerReq: new ProviderBuilder().useFactories(PostService),
 })
 export class PostController {
   @trpcRoute([Guard], [MyHttpInterceptor])

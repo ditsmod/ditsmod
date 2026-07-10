@@ -158,7 +158,7 @@ const postClient = trpc as TRPCClient<PostRouter>;
 const post = await postClient.post.createPost.mutate({ title: 'hello client' });
 ```
 
-## Using DI for Providers at the HTTP Request Level {#using-di-for-providers-at-the-http-request-level}
+## Using DI for ProviderBuilder at the HTTP Request Level {#using-di-for-providers-at-the-http-request-level}
 
 When you write the following code, DI will provide route-level providers for you:
 
@@ -206,15 +206,15 @@ Note that at the method level, this provider has a decorator, and it doesn’t m
 
 ### Step Two {#step-two}
 
-The easiest way to pass a `ClassFactoryProvider` to DI is by using the `Providers` helper:
+The easiest way to pass a `ClassFactoryProvider` to DI is by using the `ProviderBuilder` helper:
 
 ```ts {6}
 import { trpcController } from '@ditsmod/trpc';
-import { Providers } from '@ditsmod/core';
+import { ProviderBuilder } from '@ditsmod/core';
 import { PostService } from '#post/post.service.js';
 // ...
 @trpcController({
-  providersPerReq: new Providers().useFactories(PostService),
+  providersPerReq: new ProviderBuilder().useFactories(PostService),
 })
 export class PostController {
   // ...

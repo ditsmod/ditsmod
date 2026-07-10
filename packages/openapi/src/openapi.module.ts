@@ -1,5 +1,5 @@
 import { XOasObject } from '@ts-stack/openapi-spec';
-import { featureModule, InitParamsMap, DynamicModule, Providers } from '@ditsmod/core';
+import { featureModule, InitParamsMap, DynamicModule, ProviderBuilder } from '@ditsmod/core';
 import { RestModule, PreRouterExtension, RestRouteExtension, initRest } from '@ditsmod/rest';
 
 import { OpenapiCompilerExtension } from './extensions/openapi-compiler.extension.js';
@@ -45,7 +45,7 @@ export class OpenapiModule {
 
     return {
       module: this,
-      providersPerApp: new Providers().useValue<OasExtensionConfig>(OasExtensionConfig, oasExtensionConfig),
+      providersPerApp: new ProviderBuilder().useValue<OasExtensionConfig>(OasExtensionConfig, oasExtensionConfig),
       initParams,
     };
   }

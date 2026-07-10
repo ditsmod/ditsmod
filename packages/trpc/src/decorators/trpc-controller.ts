@@ -1,4 +1,4 @@
-import type { Provider, Providers } from '@ditsmod/core';
+import type { Provider, ProviderBuilder } from '@ditsmod/core';
 import { Reflector } from '@ditsmod/core';
 
 /**
@@ -6,13 +6,13 @@ import { Reflector } from '@ditsmod/core';
  */
 export interface ControllerDecoratorOptions {
   /**
-   * Providers per route.
+   * ProviderBuilder per route.
    */
-  providersPerRou?: Providers | Provider[];
+  providersPerRou?: ProviderBuilder | Provider[];
   /**
-   * Providers per HTTP request.
+   * ProviderBuilder per HTTP request.
    */
-  providersPerReq?: Providers | Provider[];
+  providersPerReq?: ProviderBuilder | Provider[];
 }
 
 export const trpcController: ControllerDecor = Reflector.makeClassDecorator(

@@ -26,14 +26,14 @@ npm i @ditsmod/openapi-validation @ditsmod/i18n
 To enable automatic validation in a specific module, it is enough to import `ValidationModule` there. You can also pass `ValidationOptions` and `AJV_OPTIONS`:
 
 ```ts
-import { Providers, HttpStatus } from '@ditsmod/core';
+import { ProviderBuilder, HttpStatus } from '@ditsmod/core';
 import { restModule } from '@ditsmod/rest';
 import { ValidationModule, ValidationOptions, AJV_OPTIONS } from '@ditsmod/openapi-validation';
 import { Options } from 'ajv';
 
 @restModule({
   imports: [ValidationModule],
-  providersPerApp: new Providers()
+  providersPerApp: new ProviderBuilder()
     .useValue<ValidationOptions>(ValidationOptions, { invalidStatus: HttpStatus.UNPROCESSABLE_ENTRY })
     .useValue<Options>(AJV_OPTIONS, { allErrors: true }),
   // ...

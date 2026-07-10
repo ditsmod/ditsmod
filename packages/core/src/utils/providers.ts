@@ -22,14 +22,14 @@ type ProviderToken<T> =
  * ```ts
   Module({
     // ...
-    providersPerMod: new Providers()
+    providersPerMod: new ProviderBuilder()
       .useLogConfig({ level: 'debug' })
       .useClass(SomeService, ExtendedService),
   })
   export class SomeModule {}
  * ```
  */
-export class Providers {
+export class ProviderBuilder {
   protected providers: Provider[] = [];
   protected setedIf?: boolean;
   protected ifCondition?: boolean;
@@ -129,14 +129,14 @@ export class Providers {
    * __Example 1__
    * 
 ```ts
-const providers = new Providers().$if(true).useValue('token', 'value');
+const providers = new ProviderBuilder().$if(true).useValue('token', 'value');
 [...providers]; // return [{ token: 'token', useValue: 'value' }]
 ```
    * 
    * __Example 2__
    * 
 ```ts
-const providers = new Providers()
+const providers = new ProviderBuilder()
   .$if(false)
   .useValue('token1', 'value1')
   .useValue('token2', 'value2');
@@ -155,7 +155,7 @@ const providers = new Providers()
  * This method allows you to dynamically extend this class using plugins:
  * 
  * ```ts
-  class Plugin1 extends Providers {
+  class Plugin1 extends ProviderBuilder {
     method1() {
       if (this.true) {
         // ...
@@ -164,7 +164,7 @@ const providers = new Providers()
     }
   }
 
-  class Plugin2 extends Providers {
+  class Plugin2 extends ProviderBuilder {
     method2() {
       if (this.true) {
         // ...
@@ -173,7 +173,7 @@ const providers = new Providers()
     }
   }
 
-  const providers = [...new Providers()
+  const providers = [...new ProviderBuilder()
     .$use(Plugin1, Plugin2)
     .method1()
     .method2()
@@ -188,7 +188,7 @@ const providers = new Providers()
  * 
  * __Warning__: Plugins cannot use arrow functions as methods, as they will not work.
  */
-  $use<T extends [Class<Providers>, ...Class<Providers>[]]>(...Plugins: T) {
+  $use<T extends [Class<ProviderBuilder>, ...Class<ProviderBuilder>[]]>(...Plugins: T) {
     Plugins.forEach((Plugin) => {
       Object.getOwnPropertyNames(Plugin.prototype)
         .filter((p) => p != 'constructor')
