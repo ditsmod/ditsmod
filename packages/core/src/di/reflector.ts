@@ -12,7 +12,7 @@ import type {
 import { MergedClassPropMeta, ClassPropMeta, UnknownType } from './top/types-and-models.js';
 import { CallsiteUtils } from '#utils/callsites.js';
 import { ClassMetaIterator } from './class-meta-iterator.js';
-import { DecoratorAndValue } from './top/decorator-and-value.js';
+import { DecoratorMeta } from './top/decorator-and-value.js';
 import { isType, newArray } from './utils.js';
 import {
   classMetaMap,
@@ -46,8 +46,8 @@ export class Reflector {
       const declaredInDir = CallsiteUtils.getCallerDir();
       return function classDecorator(Cls: AbstractClass | Class): void {
         const classDecorValues = classMetaMap.getOrInsert(Cls, []);
-        const decoratorAndValue = new DecoratorAndValue(classDecoratorFactory, value, decoratorId, declaredInDir);
-        classDecorValues.push(decoratorAndValue);
+        const decoratorMeta = new DecoratorMeta(classDecoratorFactory, value, decoratorId, declaredInDir);
+        classDecorValues.push(decoratorMeta);
       };
     }
     this.setDecoratorFactoryName(classDecoratorFactory, debugFactoryName);
@@ -68,7 +68,7 @@ export class Reflector {
       const value = transform ? transform(...args) : [...args];
       return function propDecorator(target: { constructor: Function }, propertyKey: string | symbol): void {
         const Cls = target.constructor as Class;
-        const item = new DecoratorAndValue(propDecorFactory, value, decoratorId);
+        const item = new DecoratorMeta(propDecorFactory, value, decoratorId);
         // Store both quick per-property metadata and the property list used by this.collectMeta().
         // Reflector.getDecoratorOptions(Cls, PROP_KEY, propertyKey, item);
         const meta = propMetaMap.getOrInsert(Cls, {});
@@ -111,7 +111,7 @@ export class Reflector {
         while (parameters.length <= index) {
           parameters.push(null);
         }
-        (parameters[index] ??= []).push(new DecoratorAndValue(paramDecorFactory, value, decoratorId));
+        (parameters[index] ??= []).push(new DecoratorMeta(paramDecorFactory, value, decoratorId));
       };
     }
     this.setDecoratorFactoryName(paramDecorFactory, debugFactoryName);
@@ -122,23 +122,23 @@ export class Reflector {
    *
    * @param Cls The class from which to return the metadata.
    * @param typeGuard Type guard, which will search for necessary decorators.
-   * @returns Returns an array of `DecoratorAndValue` for the passed `Cls`, using the passed `typeGuard`,
+   * @returns Returns an array of `DecoratorMeta` for the passed `Cls`, using the passed `typeGuard`,
    * or `undefined` if no appropriate decorators.
    */
-  static getClassLevelMeta<T extends DecoratorAndValue>(
+  static getClassLevelMeta<T extends DecoratorMeta>(
     Cls: Class,
     typeGuard: TypeGuard<T>,
-  ): (T extends DecoratorAndValue<infer V> ? DecoratorAndValue<V> : never)[] | undefined;
+  ): (T extends DecoratorMeta<infer V> ? DecoratorMeta<V> : never)[] | undefined;
   /**
    * Returns metadata from class-level decorators.
    *
    * @param Cls The class from which to return the metadata.
    * @param typeGuard Type guard, which will search for necessary decorators.
-   * @returns Returns an array of `DecoratorAndValue` for the passed `Cls`,
+   * @returns Returns an array of `DecoratorMeta` for the passed `Cls`,
    * or `undefined` if no appropriate decorators.
    */
-  static getClassLevelMeta<T = any>(Cls: Class): DecoratorAndValue<T>[] | undefined;
-  static getClassLevelMeta<T extends DecoratorAndValue>(Cls: Class, typeGuard?: TypeGuard<T>) {
+  static getClassLevelMeta<T = any>(Cls: Class): DecoratorMeta<T>[] | undefined;
+  static getClassLevelMeta<T extends DecoratorMeta>(Cls: Class, typeGuard?: TypeGuard<T>) {
     let decorators = this.collectMeta(Cls)?.constructor.decorators || [];
     if (typeGuard) {
       decorators = decorators.filter(typeGuard);
@@ -433,19 +433,19 @@ export class Reflector {
    * 
    ```ts
 const paramsMeta = [
-  [ SomeClass, DecoratorAndValue ], // First parameter
-  [ DecoratorAndValue ], // Second parameter
+  [ SomeClass, DecoratorMeta ], // First parameter
+  [ DecoratorMeta ], // Second parameter
   [ OtherClass ] // Third parameter
 ];
    ```
    * 
    * That is, the parameter metadata is presented as an array, where the class type can come first
-   * (if the TypeScript compiler was able to determine it), or an instance of the `DecoratorAndValue`
+   * (if the TypeScript compiler was able to determine it), or an instance of the `DecoratorMeta`
    * class immediately follows (if a decorator is used at the parameter level).
    */
   protected static mergeTypesAndParamDecoratorMeta(
     paramTypes: Class[] | undefined,
-    paramDecoratorMeta: (DecoratorAndValue[] | null)[] | undefined,
+    paramDecoratorMeta: (DecoratorMeta[] | null)[] | undefined,
   ): ParameterMeta[] {
     let mergedParamMeta: ParameterItem[][];
 
@@ -464,7 +464,7 @@ const paramsMeta = [
         mergedParamMeta[paramIndex] = [paramTypes?.[paramIndex]] as [Class];
       }
       if (paramDecoratorMeta && paramDecoratorMeta[paramIndex] != null) {
-        mergedParamMeta[paramIndex].push(...(paramDecoratorMeta[paramIndex] as DecoratorAndValue[]));
+        mergedParamMeta[paramIndex].push(...(paramDecoratorMeta[paramIndex] as DecoratorMeta[]));
       }
     }
     return mergedParamMeta as ParameterMeta[];

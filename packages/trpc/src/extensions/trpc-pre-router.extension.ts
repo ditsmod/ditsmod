@@ -1,7 +1,7 @@
 import {
   injectable,
   Extension,
-  DecoratorAndValue,
+  DecoratorMeta,
   ExtensionManager,
   ExtensionGroupMeta,
   getDebugClassName,

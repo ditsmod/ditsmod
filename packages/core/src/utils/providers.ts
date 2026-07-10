@@ -108,7 +108,7 @@ export class ProviderBuilder {
         if (methodName == 'constructor') {
           continue;
         }
-        for (const decoratorAndValue of classMeta[methodName].decorators) {
+        for (const decoratorMeta of classMeta[methodName].decorators) {
           hasFactoryMethod = true;
           this.pushProvider({ useFactory: [Cls, Cls.prototype[methodName]] });
         }

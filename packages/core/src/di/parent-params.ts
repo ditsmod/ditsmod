@@ -1,5 +1,5 @@
 import { inject, type InjectTransformResult } from './decorators.js';
-import { DecoratorAndValue } from './top/decorator-and-value.js';
+import { DecoratorMeta } from './top/decorator-and-value.js';
 import type { ParameterMeta } from './top/types-and-models.js';
 
 export type ParentRecipe = number | ParentRecipe[];
@@ -47,11 +47,11 @@ export class ParentParams {
 
   protected static hasParentParams(parameterMeta: ParameterMeta | null): boolean | void {
     if (parameterMeta?.at(0) === ParentParams) {
-      // Only the first item can be a non-DecoratorAndValue type.
+      // Only the first item can be a non-DecoratorMeta type.
       return true;
     }
     for (const parameterItem of parameterMeta || []) {
-      if (parameterItem instanceof DecoratorAndValue) {
+      if (parameterItem instanceof DecoratorMeta) {
         if (parameterItem.decoratorId === inject) {
           return ParentParams === (parameterItem.value as InjectTransformResult).token;
         }

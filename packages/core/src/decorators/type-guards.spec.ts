@@ -5,7 +5,7 @@ import { ModuleDecoratorOptions, DynamicModule } from '#decorators/module-decora
 import { NormalizedModuleMeta } from '#init/base-meta.js';
 import { InitHooks } from './init-hooks-and-metadata.js';
 import { Reflector } from '#di/reflector.js';
-import { DecoratorAndValue } from '#di/top/decorator-and-value.js';
+import { DecoratorMeta } from '#di/top/decorator-and-value.js';
 
 describe('type guards', () => {
   describe('isFeatureModule()', () => {
@@ -15,23 +15,23 @@ describe('type guards', () => {
       expect(isFeatureModule(metadata)).toBe(false);
     });
 
-    it('DecoratorAndValue', () => {
+    it('DecoratorMeta', () => {
       @featureModule()
       class Module1 {}
       const metadata = Reflector.getClassLevelMeta(Module1)![0];
       expect(isFeatureModule(metadata)).toBe(true);
     });
 
-    it('initHooks in DecoratorAndValue false', () => {
+    it('initHooks in DecoratorMeta false', () => {
       const initHooks = new InitHooks({});
-      const decorAndVal = new DecoratorAndValue(featureModule, initHooks);
+      const decorAndVal = new DecoratorMeta(featureModule, initHooks);
       expect(isFeatureModule(decorAndVal)).toBe(false);
     });
 
-    it('initHooks in DecoratorAndValue true', () => {
+    it('initHooks in DecoratorMeta true', () => {
       const initHooks = new InitHooks({});
       initHooks.moduleRole = 'feature';
-      const decorAndVal = new DecoratorAndValue(featureModule, initHooks);
+      const decorAndVal = new DecoratorMeta(featureModule, initHooks);
       expect(isFeatureModule(decorAndVal)).toBe(true);
     });
 

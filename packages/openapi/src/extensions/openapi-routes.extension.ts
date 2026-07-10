@@ -51,11 +51,11 @@ export class OpenapiRouteExtension extends RestRouteExtension implements Extensi
       for (const Controller of meta.controllers as Class<Record<string | symbol, any>>[]) {
         const classMeta = Reflector.collectMeta(Controller)!;
         for (const methodName of classMeta) {
-          for (const decoratorAndValue of classMeta[methodName].decorators) {
-            if (!isOasRoute(decoratorAndValue)) {
+          for (const decoratorMeta of classMeta[methodName].decorators) {
+            if (!isOasRoute(decoratorMeta)) {
               continue;
             }
-            const oasRoute = decoratorAndValue.value;
+            const oasRoute = decoratorMeta.value;
             const providersPerRou: Provider[] = [];
             const providersPerReq: Provider[] = [];
             const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
@@ -67,7 +67,7 @@ export class OpenapiRouteExtension extends RestRouteExtension implements Extensi
             const { httpMethod, path: controllerPath, operationObject, interceptors } = oasRoute;
             const prefix = [prefixPerApp, prefixPerMod].filter((s) => s).join('/');
             const fullPath = this.getPath(prefix, controllerPath);
-            guards.push(...this.normalizeGuards(httpMethod, fullPath, decoratorAndValue.value.guards));
+            guards.push(...this.normalizeGuards(httpMethod, fullPath, decoratorMeta.value.guards));
             const controllerFactory: FactoryProvider = { useFactory: [Controller, Controller.prototype[methodName]] };
             providersPerReq.push(
               ...((ctrlDecorator?.value as ControllerDecoratorOptions1).providersPerReq || []),

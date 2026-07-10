@@ -11,7 +11,7 @@ import type {
   ValueProvider,
   Class,
 } from './top/types-and-models.js';
-import type { DecoratorAndValue } from './top/decorator-and-value.js';
+import type { DecoratorMeta } from './top/decorator-and-value.js';
 import { InjectionToken } from './top/injection-token.js';
 
 /**
@@ -80,13 +80,10 @@ export function newArray<T>(size: number, value?: T): T[] {
   return list;
 }
 
-export function isDecoratorAndValue(
-  decoratorAndValue?: DecoratorAndValue | Class | InjectionToken,
-): decoratorAndValue is DecoratorAndValue {
-  return (
-    (decoratorAndValue as DecoratorAndValue)?.decorator !== undefined &&
-    Boolean(decoratorAndValue?.hasOwnProperty('value'))
-  );
+export function isDecoratorMeta(
+  decoratorMeta?: DecoratorMeta | Class | InjectionToken,
+): decoratorMeta is DecoratorMeta {
+  return (decoratorMeta as DecoratorMeta)?.decorator !== undefined && Boolean(decoratorMeta?.hasOwnProperty('value'));
 }
 
 export function isType(v: any): v is Class {

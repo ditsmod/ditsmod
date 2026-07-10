@@ -1,4 +1,4 @@
-import type { AnyObj, Class, DecoratorAndValue } from '@ditsmod/core';
+import type { AnyObj, Class, DecoratorMeta } from '@ditsmod/core';
 
 import { trpcRoute } from '#decorators/trpc-route.js';
 import type { TrpcHttpInterceptor } from '#interceptors/tokens-and-types.js';
@@ -6,10 +6,8 @@ import type { Http2SecureServerOptions, ServerOptions } from './server-options.j
 import type { ControllerDecoratorOptions } from '#decorators/trpc-controller.js';
 import { trpcController } from '#decorators/trpc-controller.js';
 
-export function isCtrlDecor(
-  decoratorAndValue?: AnyObj,
-): decoratorAndValue is DecoratorAndValue<ControllerDecoratorOptions> {
-  return decoratorAndValue?.decorator === trpcController;
+export function isCtrlDecor(decoratorMeta?: AnyObj): decoratorMeta is DecoratorMeta<ControllerDecoratorOptions> {
+  return decoratorMeta?.decorator === trpcController;
 }
 
 export function isInterceptor(cls?: Class): cls is Class<TrpcHttpInterceptor> {
@@ -20,6 +18,6 @@ export function isHttp2SecureServerOptions(serverOptions: ServerOptions): server
   return (serverOptions as Http2SecureServerOptions).isHttp2SecureServer;
 }
 
-export function isTrpcRoute<T>(decoratorAndValue?: DecoratorAndValue<T>): decoratorAndValue is DecoratorAndValue<T> {
-  return (decoratorAndValue as DecoratorAndValue<T>)?.decorator === trpcRoute;
+export function isTrpcRoute<T>(decoratorMeta?: DecoratorMeta<T>): decoratorMeta is DecoratorMeta<T> {
+  return (decoratorMeta as DecoratorMeta<T>)?.decorator === trpcRoute;
 }

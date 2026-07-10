@@ -1,4 +1,4 @@
-import { Reflector, DecoratorAndValue } from '@ditsmod/core';
+import { Reflector, DecoratorMeta } from '@ditsmod/core';
 import { RequestContext, CanActivate, controller, HttpHandler, HttpInterceptor } from '@ditsmod/rest';
 
 import { oasRoute, OasRouteMetadata } from './oas-route.js';
@@ -32,7 +32,7 @@ describe('@oasRoute', () => {
       interceptors: [Interceptor1],
       operationObject: { operationId: 'someId' },
     };
-    expect(actualMeta.method.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(oasRoute, value)]);
+    expect(actualMeta.method.decorators).toEqual<DecoratorMeta[]>([new DecoratorMeta(oasRoute, value)]);
   });
 
   it('route params: method, path, guards, interceptors', () => {
@@ -61,7 +61,7 @@ describe('@oasRoute', () => {
       interceptors: [Interceptor1],
       operationObject: {},
     };
-    expect(actualMeta.method.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(oasRoute, value)]);
+    expect(actualMeta.method.decorators).toEqual<DecoratorMeta[]>([new DecoratorMeta(oasRoute, value)]);
   });
 
   it('route params: method, path, guards, operation object', () => {
@@ -85,7 +85,7 @@ describe('@oasRoute', () => {
       operationObject: { operationId: 'someId' },
       interceptors: [],
     };
-    expect(actualMeta.method.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(oasRoute, value)]);
+    expect(actualMeta.method.decorators).toEqual<DecoratorMeta[]>([new DecoratorMeta(oasRoute, value)]);
   });
 
   it('route params: method, path, guards', () => {
@@ -110,7 +110,7 @@ describe('@oasRoute', () => {
       guards: [Guard1],
       interceptors: [],
     };
-    expect(actualMeta.method.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(oasRoute, value)]);
+    expect(actualMeta.method.decorators).toEqual<DecoratorMeta[]>([new DecoratorMeta(oasRoute, value)]);
   });
 
   it('route params: method, path, operation object', () => {
@@ -130,7 +130,7 @@ describe('@oasRoute', () => {
       guards: [],
       interceptors: [],
     };
-    expect(actualMeta.method.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(oasRoute, value)]);
+    expect(actualMeta.method.decorators).toEqual<DecoratorMeta[]>([new DecoratorMeta(oasRoute, value)]);
   });
 
   it('route params: method, path', () => {
@@ -150,7 +150,7 @@ describe('@oasRoute', () => {
       guards: [],
       interceptors: [],
     };
-    expect(actualMeta.method.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(oasRoute, value)]);
+    expect(actualMeta.method.decorators).toEqual<DecoratorMeta[]>([new DecoratorMeta(oasRoute, value)]);
   });
 
   it('route params: method', () => {
@@ -163,6 +163,6 @@ describe('@oasRoute', () => {
     const actualMeta = Reflector.collectMeta(Controller1)!;
     expect(actualMeta.method.type).toBe(Function);
     const value: OasRouteMetadata = { httpMethod: 'GET', path: '', guards: [], interceptors: [], operationObject: {} };
-    expect(actualMeta.method.decorators).toEqual<DecoratorAndValue[]>([new DecoratorAndValue(oasRoute, value)]);
+    expect(actualMeta.method.decorators).toEqual<DecoratorMeta[]>([new DecoratorMeta(oasRoute, value)]);
   });
 });

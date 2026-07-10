@@ -40,7 +40,7 @@ export {
 export {
   isClassFactoryProvider,
   isClassProvider,
-  isDecoratorAndValue,
+  isDecoratorMeta,
   isFactoryProvider,
   isFunctionFactoryProvider,
   isMultiProvider,
@@ -53,6 +53,6 @@ export {
 } from '#di/utils.js';
 export { DepsChecker } from '#di/deps-checker.js';
 export { RegistryOfInjector, ResolvedFactory, ResolvedProvider } from '#di/top/resolved-provider.js';
-export { DecoratorAndValue } from '#di/top/decorator-and-value.js';
+export { DecoratorMeta } from '#di/top/decorator-and-value.js';
 export { getSymbol, InjectionSymbol } from '#di/top/get-symbol.js';
 export { TypeGuard, AnyFn } from '#di/top/types-and-models.js';

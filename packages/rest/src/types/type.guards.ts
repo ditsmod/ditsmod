@@ -1,4 +1,4 @@
-import type { AnyObj, Class, DecoratorAndValue, ModRefId } from '@ditsmod/core';
+import type { AnyObj, Class, DecoratorMeta, ModRefId } from '@ditsmod/core';
 
 import { route } from '#decorators/route.js';
 import type { HttpInterceptor } from '#interceptors/tokens-and-types.js';
@@ -7,14 +7,12 @@ import type { ControllerDecoratorOptions } from './controller.js';
 import { controller } from './controller.js';
 import type { Http2SecureServerOptions, ServerOptions } from './server-options.js';
 
-export function isCtrlDecor(
-  decoratorAndValue?: AnyObj,
-): decoratorAndValue is DecoratorAndValue<ControllerDecoratorOptions> {
-  return decoratorAndValue?.decorator === controller;
+export function isCtrlDecor(decoratorMeta?: AnyObj): decoratorMeta is DecoratorMeta<ControllerDecoratorOptions> {
+  return decoratorMeta?.decorator === controller;
 }
 
-export function isRoute<T>(decoratorAndValue?: DecoratorAndValue<T>): decoratorAndValue is DecoratorAndValue<T> {
-  return (decoratorAndValue as DecoratorAndValue<T>)?.decorator === route;
+export function isRoute<T>(decoratorMeta?: DecoratorMeta<T>): decoratorMeta is DecoratorMeta<T> {
+  return (decoratorMeta as DecoratorMeta<T>)?.decorator === route;
 }
 
 export function isInterceptor(cls?: Class): cls is Class<HttpInterceptor> {

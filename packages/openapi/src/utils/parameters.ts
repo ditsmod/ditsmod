@@ -1,6 +1,6 @@
 import type { SchemaObjectType, XParameterObject, XSchemaObject } from '@ts-stack/openapi-spec';
-import type { AnyObj, HttpMethod, DecoratorAndValue } from '@ditsmod/core';
-import { type Class, Reflector, isDecoratorAndValue } from '@ditsmod/core';
+import type { AnyObj, HttpMethod, DecoratorMeta } from '@ditsmod/core';
+import { type Class, Reflector, isDecoratorMeta } from '@ditsmod/core';
 import { YouCanNotSetThisAction } from '#errors';
 
 type RequiredParamsIn = 'query' | 'header' | 'path' | 'cookie';
@@ -142,8 +142,8 @@ export class Parameters {
       const propertyDecorator = Reflector.collectMeta(model)?.[paramObject.name];
       if (propertyDecorator) {
         const schemas = propertyDecorator.decorators
-          .filter((item) => isDecoratorAndValue(item))
-          .map((val) => (val as DecoratorAndValue).value.schema);
+          .filter((item) => isDecoratorMeta(item))
+          .map((val) => (val as DecoratorMeta).value.schema);
         paramObject.schema = Object.assign({}, ...schemas, paramObject.schema) as XSchemaObject<any>;
         if (paramObject.schema.description) {
           paramObject.description ??= paramObject.schema.description;

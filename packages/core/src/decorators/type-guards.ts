@@ -1,4 +1,4 @@
-import { DecoratorAndValue } from '#di/top/decorator-and-value.js';
+import { DecoratorMeta } from '#di/top/decorator-and-value.js';
 import type { AnyObj, RequireProps } from '#types/mix.js';
 import type { DynamicModule } from '#decorators/module-decorator-options.js';
 import { ModuleDecoratorOptions } from '#decorators/module-decorator-options.js';
@@ -10,15 +10,15 @@ export function isDynamicModuleWrapper(arg?: AnyObj): arg is { dynamicModule: Dy
   return isDynamicModule((arg as { dynamicModule: DynamicModule } | undefined)?.dynamicModule);
 }
 
-export function isRootModule(decorAndVal?: DecoratorAndValue): decorAndVal is DecoratorAndValue<RootDecoratorOptions>;
+export function isRootModule(decorAndVal?: DecoratorMeta): decorAndVal is DecoratorMeta<RootDecoratorOptions>;
 export function isRootModule(
   normalizedModuleMeta?: NormalizedModuleMeta,
 ): normalizedModuleMeta is NormalizedModuleMeta<RootDecoratorOptions>;
 export function isRootModule(decoratorOptions?: AnyObj): decoratorOptions is RootDecoratorOptions;
 export function isRootModule(
-  arg?: DecoratorAndValue | RootDecoratorOptions | NormalizedModuleMeta,
-): arg is DecoratorAndValue<RootDecoratorOptions> {
-  if (arg instanceof DecoratorAndValue) {
+  arg?: DecoratorMeta | RootDecoratorOptions | NormalizedModuleMeta,
+): arg is DecoratorMeta<RootDecoratorOptions> {
+  if (arg instanceof DecoratorMeta) {
     if (arg.value instanceof InitHooks) {
       return arg.value.moduleRole === 'root';
     }
@@ -34,15 +34,15 @@ export function isRootModule(
   return arg instanceof RootDecoratorOptions;
 }
 
-export function isFeatureModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<ModuleDecoratorOptions>;
+export function isFeatureModule(arg?: DecoratorMeta): arg is DecoratorMeta<ModuleDecoratorOptions>;
 export function isFeatureModule(
   normalizedModuleMeta?: NormalizedModuleMeta,
 ): normalizedModuleMeta is NormalizedModuleMeta<ModuleDecoratorOptions>;
 export function isFeatureModule(arg?: AnyObj): arg is ModuleDecoratorOptions;
 export function isFeatureModule(
-  arg?: DecoratorAndValue | ModuleDecoratorOptions | NormalizedModuleMeta,
-): arg is DecoratorAndValue<ModuleDecoratorOptions> {
-  if (arg instanceof DecoratorAndValue) {
+  arg?: DecoratorMeta | ModuleDecoratorOptions | NormalizedModuleMeta,
+): arg is DecoratorMeta<ModuleDecoratorOptions> {
+  if (arg instanceof DecoratorMeta) {
     if (arg.value instanceof InitHooks) {
       return arg.value.moduleRole === 'feature';
     }
@@ -59,33 +59,33 @@ export function isFeatureModule(
 }
 
 export function isModuleDecorator(
-  arg?: DecoratorAndValue,
-): arg is DecoratorAndValue<RootDecoratorOptions | ModuleDecoratorOptions>;
+  arg?: DecoratorMeta,
+): arg is DecoratorMeta<RootDecoratorOptions | ModuleDecoratorOptions>;
 export function isModuleDecorator(arg?: RootDecoratorOptions): arg is RootDecoratorOptions | ModuleDecoratorOptions;
 export function isModuleDecorator(arg?: any) {
   return isRootModule(arg) || isFeatureModule(arg);
 }
 
 export function isModuleWithInitHooks(metadata?: InitHooks<AnyObj>): metadata is InitHooks<AnyObj>;
-export function isModuleWithInitHooks(arg?: DecoratorAndValue): arg is DecoratorAndValue<InitHooks<AnyObj>>;
+export function isModuleWithInitHooks(arg?: DecoratorMeta): arg is DecoratorMeta<InitHooks<AnyObj>>;
 export function isModuleWithInitHooks(
-  arg?: DecoratorAndValue | InitHooks<AnyObj>,
-): arg is DecoratorAndValue<InitHooks<AnyObj>> {
-  if (arg instanceof DecoratorAndValue) {
-    return (arg as DecoratorAndValue<InitHooks<AnyObj>>).value instanceof InitHooks;
+  arg?: DecoratorMeta | InitHooks<AnyObj>,
+): arg is DecoratorMeta<InitHooks<AnyObj>> {
+  if (arg instanceof DecoratorMeta) {
+    return (arg as DecoratorMeta<InitHooks<AnyObj>>).value instanceof InitHooks;
   } else {
     return arg instanceof InitHooks;
   }
 }
 
 /**
- * If this guard returns `true`, then the `DecoratorAndValue`
+ * If this guard returns `true`, then the `DecoratorMeta`
  * instance passed to it has the `declaredInDir` property set.
  */
 export function hasDeclaredInDir(
-  decoratorAndValue?: DecoratorAndValue,
-): decoratorAndValue is RequireProps<DecoratorAndValue, 'declaredInDir'> {
-  return Boolean(decoratorAndValue?.declaredInDir) && decoratorAndValue?.declaredInDir != '.';
+  decoratorMeta?: DecoratorMeta,
+): decoratorMeta is RequireProps<DecoratorMeta, 'declaredInDir'> {
+  return Boolean(decoratorMeta?.declaredInDir) && decoratorMeta?.declaredInDir != '.';
 }
 
 export function isDynamicModule(modRefId?: AnyObj): modRefId is DynamicModule {

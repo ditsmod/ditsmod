@@ -3,7 +3,7 @@
 
 | Commit | Type | Description |
 | -- | -- | -- |
-| [e2edf7dfa2](https://github.com/ditsmod/ditsmod/commit/e2edf7dfa237fdc5) | refactor | replaced `decoratorMetadata` by `decoratorAndValue`. |
+| [e2edf7dfa2](https://github.com/ditsmod/ditsmod/commit/e2edf7dfa237fdc5) | refactor | replaced `decoratorMetadata` by `decoratorMeta`. |
 
 <a name="cors-2.9.0"></a>
 # [cors-2.9.0](https://github.com/ditsmod/ditsmod/releases/tag/cors-2.9.0) (2024-10-21)

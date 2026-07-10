@@ -1,5 +1,5 @@
 import { Reflector } from './reflector.js';
-import { DecoratorAndValue } from './top/decorator-and-value.js';
+import { DecoratorMeta } from './top/decorator-and-value.js';
 import { ctx } from '#ctx/decorators.js';
 import { Injector } from './injector.js';
 import { ctxProviders } from '#ctx/providers.js';
@@ -23,7 +23,7 @@ describe('Property decorators', () => {
 
     const p = Reflector.collectMeta(TestClass)!;
     expect(p.watch.type).toBe(Object);
-    expect(p.watch.decorators).toEqual([new DecoratorAndValue(prop, 'firefox!')]);
+    expect(p.watch.decorators).toEqual([new DecoratorMeta(prop, 'firefox!')]);
   });
 
   it('@ctx()', () => {
@@ -66,7 +66,7 @@ describe('decorators', () => {
   it('should invoke as decorator', () => {
     class Class {}
     testDecorator({ marker: 'WORKS' })(Class);
-    const annotations = classMetaMap.get(Class) as DecoratorAndValue[];
+    const annotations = classMetaMap.get(Class) as DecoratorMeta[];
     expect(annotations[0].value.marker).toEqual('WORKS');
   });
 
@@ -74,7 +74,7 @@ describe('decorators', () => {
     testDecorator({ marker: 'parent' })(DecoratedParent);
     testDecorator({ marker: 'child' })(DecoratedChild);
 
-    const annotations = classMetaMap.get(DecoratedChild) as DecoratorAndValue[];
+    const annotations = classMetaMap.get(DecoratedChild) as DecoratorMeta[];
     expect(annotations.length).toBe(1);
     expect(annotations[0].value.marker).toEqual('child');
   });

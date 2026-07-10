@@ -44,13 +44,13 @@ export class RestRouteExtension implements Extension<MetadataPerMod3> {
       for (const Controller of restResolvedModuleMetadata.meta.controllers) {
         const classMeta = Reflector.collectMeta(Controller)!;
         for (const methodName of classMeta) {
-          for (const decoratorAndValue of classMeta[methodName].decorators) {
-            if (!isRoute<RouteMetadata>(decoratorAndValue)) {
+          for (const decoratorMeta of classMeta[methodName].decorators) {
+            if (!isRoute<RouteMetadata>(decoratorMeta)) {
               continue;
             }
             const providersPerRou: Provider[] = [];
             const providersPerReq: Provider[] = [];
-            const route = decoratorAndValue.value;
+            const route = decoratorMeta.value;
             const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
             const scope = ctrlDecorator?.value.scope;
             if (scope == 'route' && !normalizedModuleMeta.providersPerMod.includes(Controller)) {

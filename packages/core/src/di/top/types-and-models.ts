@@ -1,14 +1,14 @@
 import type { fromSelf, skipSelf } from '../decorators.js';
 import type { ForwardRefFn } from '../forward-ref.js';
 import type { InjectionToken } from './injection-token.js';
-import type { DecoratorAndValue } from './decorator-and-value.js';
+import type { DecoratorMeta } from './decorator-and-value.js';
 import type { DepsMeta } from './resolved-provider.js';
 import { DEPS_KEY } from './constants.js';
 
 export type Class<T = any, A extends any[] = any> = (new (...args: A) => T) & { prototype: T };
 export type AbstractClass<T = any, A extends any[]= any> = (abstract new (...args: A) => T) & { prototype: T };
 
-export type PropMetadataTuple<Value = any> = [Class, ...DecoratorAndValue<Value>[]];
+export type PropMetadataTuple<Value = any> = [Class, ...DecoratorMeta<Value>[]];
 
 /**
  * Used to indicate the unknown data type of a particular
@@ -28,7 +28,7 @@ export class ClassPropMeta<DecorValue = any> {
 
   constructor(
     public type: Class = UnknownType,
-    public decorators: DecoratorAndValue<DecorValue>[] = [],
+    public decorators: DecoratorMeta<DecorValue>[] = [],
     public params: (ParameterMeta | null)[] = [],
   ) {}
 }
@@ -43,16 +43,16 @@ export type MergedClassMeta<DecorValue = any, Proto extends object = object> = {
 export class MergedClassPropMeta<DecorValue = any> extends ClassPropMeta<DecorValue> {
   constructor(
     type: Class = UnknownType,
-    decorators: DecoratorAndValue<DecorValue>[] = [],
+    decorators: DecoratorMeta<DecorValue>[] = [],
     params: (ParameterMeta | null)[] = [],
-    public decoratorChain: Map<Class, DecoratorAndValue<DecorValue>[]> = new Map(),
+    public decoratorChain: Map<Class, DecoratorMeta<DecorValue>[]> = new Map(),
     public paramChain: Map<Class, (ParameterMeta | null)[]> = new Map(),
   ) {
     super(type, decorators, params);
   }
 }
 
-export type ParameterItem<Value = any> = DecoratorAndValue<Value> | InjectionToken<any> | Class;
+export type ParameterItem<Value = any> = DecoratorMeta<Value> | InjectionToken<any> | Class;
 export type ParameterMeta<Value = any> = [Class, ...ParameterItem<Value>[]] | [...ParameterItem<Value>[]] | [];
 
 export type Visibility = typeof fromSelf | typeof skipSelf | null;

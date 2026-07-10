@@ -38,14 +38,14 @@ export class TrpcRouteExtension implements Extension<MetadataPerMod3> {
     for (const Controller of trpcResolvedModuleMetadata.meta.controllers as Class<Record<string | symbol, any>>[]) {
       const classMeta = Reflector.collectMeta(Controller)!;
       for (const methodName of classMeta) {
-        for (const decoratorAndValue of classMeta[methodName].decorators) {
-          if (!isTrpcRoute(decoratorAndValue)) {
+        for (const decoratorMeta of classMeta[methodName].decorators) {
+          if (!isTrpcRoute(decoratorMeta)) {
             continue;
           }
           const methodAsToken = Controller.prototype[methodName];
           const providersPerRou: Provider[] = [TrpcRouteService, { useFactory: [Controller, methodAsToken] }];
           const providersPerReq: Provider[] = [];
-          const route = decoratorAndValue.value as TrpcRouteMetadata;
+          const route = decoratorMeta.value as TrpcRouteMetadata;
           const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
           const guards = normalizeGuards(route.guards);
           providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));

@@ -35,7 +35,7 @@ import type { MultiProvider } from '#di/utils.js';
 import { forwardRef } from '#di/forward-ref.js';
 import { KeyRegistry } from '#di/key-registry.js';
 import { isDynamicModule } from '#decorators/type-guards.js';
-import { DecoratorAndValue } from '#di/top/decorator-and-value.js';
+import { DecoratorMeta } from '#di/top/decorator-and-value.js';
 import { getModule } from '#utils/get-module.js';
 
 describe('ModuleNormalizer', () => {
@@ -838,7 +838,7 @@ describe('ModuleNormalizer', () => {
 
   describe('checkAndMarkExternalModule()', () => {
     class ExternalModuleNormalizer extends ModuleNormalizer {
-      customMeta = new Map<any, DecoratorAndValue[]>();
+      customMeta = new Map<any, DecoratorMeta[]>();
 
       override normalize(modRefId: any, allInitHooks = new Map()): NormalizedModuleMeta {
         return super.normalize(modRefId, allInitHooks);
@@ -859,21 +859,21 @@ describe('ModuleNormalizer', () => {
 
       // Set root module
       const rootMetaVal = new RootDecoratorOptions();
-      const rootDec = new DecoratorAndValue(dummyDecorator, rootMetaVal, undefined, '/user-project/src');
+      const rootDec = new DecoratorMeta(dummyDecorator, rootMetaVal, undefined, '/user-project/src');
       normalizer.customMeta.set(AppModule, [rootDec]);
 
       // External module outside /user-project/src
       const extMetaVal = Object.assign(new ModuleDecoratorOptions(), {
         providersPerApp: [{ token: 't', useValue: 1 }],
       });
-      const extDec = new DecoratorAndValue(dummyDecorator, extMetaVal, undefined, '/node_modules/external-mod');
+      const extDec = new DecoratorMeta(dummyDecorator, extMetaVal, undefined, '/node_modules/external-mod');
       normalizer.customMeta.set(ExternalModule, [extDec]);
 
       // Internal module inside /user-project/src
       const intMetaVal = Object.assign(new ModuleDecoratorOptions(), {
         providersPerApp: [{ token: 't', useValue: 1 }],
       });
-      const intDec = new DecoratorAndValue(
+      const intDec = new DecoratorMeta(
         dummyDecorator,
         intMetaVal,
         undefined,
@@ -898,13 +898,13 @@ describe('ModuleNormalizer', () => {
 
       const dummyDecorator = () => {};
 
-      const rootDec = new DecoratorAndValue(dummyDecorator, new RootDecoratorOptions(), undefined, '/user-project/src');
+      const rootDec = new DecoratorMeta(dummyDecorator, new RootDecoratorOptions(), undefined, '/user-project/src');
       normalizer.customMeta.set(AppModule, [rootDec]);
 
       const ditsmodMetaVal = Object.assign(new ModuleDecoratorOptions(), {
         providersPerApp: [{ token: 't', useValue: 1 }],
       });
-      const ditsmodDec = new DecoratorAndValue(
+      const ditsmodDec = new DecoratorMeta(
         dummyDecorator,
         ditsmodMetaVal,
         undefined,

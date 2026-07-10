@@ -34,7 +34,7 @@ import {
   ResolvedProvider,
   getNewRegistry,
 } from './top/resolved-provider.js';
-import { DecoratorAndValue } from './top/decorator-and-value.js';
+import { DecoratorMeta } from './top/decorator-and-value.js';
 import { DEPS_KEY } from './top/constants.js';
 import { PathTracer } from './path-tracer.js';
 import {
@@ -391,7 +391,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
     for (let i = 0; i < parameterMeta.length; ++i) {
       const parameterItem = parameterMeta[i];
 
-      if (parameterItem instanceof DecoratorAndValue) {
+      if (parameterItem instanceof DecoratorMeta) {
         const { decoratorId } = parameterItem;
         if (decoratorId === inject) {
           token = (parameterItem.value as InjectTransformResult).token;
