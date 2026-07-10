@@ -219,7 +219,7 @@ export interface InitDecorator<T extends InitDecoratorOptions, ModuleParams, Ini
 /**
  * Dynamic module wrapper with additional custom options.
  */
-export interface ParamsWithDynamicModule {
+export interface DynamicModuleWrapper {
   /**
    * Dynamic module.
    */
@@ -231,5 +231,5 @@ export interface InitDecoratorOptions<InitParams extends object = object> extend
   ModuleDecoratorOptions,
   'imports'
 > {
-  imports?: (((ParamsWithDynamicModule | DynamicModule) & InitParams) | ModuleType | ForwardRefFn<ModuleType>)[];
+  imports?: (((DynamicModuleWrapper | DynamicModule) & InitParams) | ModuleType | ForwardRefFn<ModuleType>)[];
 }

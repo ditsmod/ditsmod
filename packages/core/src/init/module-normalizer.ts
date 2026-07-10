@@ -31,7 +31,7 @@ import {
   isModuleDecorator,
   isFeatureModule,
   isModuleWithInitHooks,
-  isParamsWithDynamicModule,
+  isDynamicModuleWrapper,
 } from '#decorators/type-guards.js';
 import {
   UndefinedSymbol,
@@ -404,7 +404,7 @@ export class AppModule {}
   ): Exclude<T, ForwardRefFn>[] {
     return [...arr].map((item) => {
       const resolved = resolveForwardRef(item);
-      if (isParamsWithDynamicModule(resolved)) {
+      if (isDynamicModuleWrapper(resolved)) {
         resolved.dynamicModule.module = resolveForwardRef(resolved.dynamicModule.module);
       } else if (isNormalizedProvider(resolved)) {
         resolved.token = resolveForwardRef(resolved.token);
@@ -434,7 +434,7 @@ export class AppModule {}
         if (isDynamicModule(imp)) {
           const params = { ...imp };
           this.mergeInitParams(decorator, params, imp);
-        } else if (isParamsWithDynamicModule(imp)) {
+        } else if (isDynamicModuleWrapper(imp)) {
           const params = { ...imp } as { dynamicModule?: DynamicModule };
           this.mergeObjects(params, imp.dynamicModule);
           delete params.dynamicModule;
@@ -489,7 +489,7 @@ export class AppModule {}
           if (!this.normalizedModuleMeta.exportsWithParams.includes(exp)) {
             this.normalizedModuleMeta.exportsWithParams.push(exp);
           }
-        } else if (isParamsWithDynamicModule(exp)) {
+        } else if (isDynamicModuleWrapper(exp)) {
           if (!this.normalizedModuleMeta.exportsWithParams.includes(exp.dynamicModule)) {
             this.normalizedModuleMeta.exportsWithParams.push(exp.dynamicModule);
           }

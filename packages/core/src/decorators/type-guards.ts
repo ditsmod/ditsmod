@@ -6,7 +6,7 @@ import { InitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { NormalizedModuleMeta } from '#init/base-meta.js';
 import { RootDecoratorOptions } from './root-module.js';
 
-export function isParamsWithDynamicModule(arg?: AnyObj): arg is { dynamicModule: DynamicModule } {
+export function isDynamicModuleWrapper(arg?: AnyObj): arg is { dynamicModule: DynamicModule } {
   return isDynamicModule((arg as { dynamicModule: DynamicModule } | undefined)?.dynamicModule);
 }
 

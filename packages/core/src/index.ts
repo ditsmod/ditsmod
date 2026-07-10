@@ -92,7 +92,7 @@ export {
   isFeatureModule,
   isModuleDecorator,
   isRootModule,
-  isParamsWithDynamicModule,
+  isDynamicModuleWrapper,
   hasDeclaredInDir,
 } from '#decorators/type-guards.js';
 export { isProvider } from '#utils/type-guards.js';
