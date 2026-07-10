@@ -44,7 +44,7 @@ export { ConsoleLogger } from '#logger/console-logger.js';
 export { ExtensionContext } from '#extension/extensions-context.js';
 export { ExtensionManager, InternalExtensionManager } from '#extension/extension-manager.js';
 export { LogMediator } from '#logger/log-mediator.js';
-export { LogItem } from '#logger/types.js';
+export { LogEntry } from '#logger/types.js';
 export { SystemLogMediator } from '#logger/system-log-mediator.js';
 export { ModuleManager } from '#init/module-manager.js';
 export { Logger, LoggerConfig, InputLogLevel, OutputLogLevel } from '#logger/logger.js';

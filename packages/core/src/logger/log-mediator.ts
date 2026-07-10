@@ -1,7 +1,7 @@
 import { ModuleInfo } from '#types/module-extract.js';
 import { ConsoleLogger } from '#logger/console-logger.js';
 import { Logger, LoggerConfig, InputLogLevel, OutputLogLevel } from '#logger/logger.js';
-import { LogItem } from '#logger/types.js';
+import { LogEntry } from '#logger/types.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
 import { injectable, optional } from '#di/decorators.js';
 import { Injector } from '#di/injector.js';
@@ -18,7 +18,7 @@ export abstract class LogMediator {
    * If you need logging all buffered messages, call `systemLogMediator.flush()`.
    */
   static bufferLogs?: boolean = false;
-  static buffer: LogItem[] = [];
+  static buffer: LogEntry[] = [];
   static outputLogLevel: OutputLogLevel;
   protected static prevOutputLogLevel?: OutputLogLevel;
   protected static hasDiffLogLevels: boolean;
@@ -61,8 +61,8 @@ export abstract class LogMediator {
    * classes, after initializing providers at the application level, and after init extensions.
    */
   protected updateOutputLogLevel() {
-    LogMediator.buffer.forEach((logItem) => {
-      logItem.outputLogLevel = this.loggerConfig.level || 'info';
+    LogMediator.buffer.forEach((logEntry) => {
+      logEntry.outputLogLevel = this.loggerConfig.level || 'info';
     });
   }
 
@@ -82,7 +82,7 @@ export abstract class LogMediator {
   /**
    * Writing of logs by loggers.
    */
-  protected writeLogs(logItems: LogItem[]) {
+  protected writeLogs(logEntrys: LogEntry[]) {
     // A separate instance of the logger is created so that changing the OutputLogLevel does not affect other loggers.
     const logger: Logger =
       this.injector?.resolveAndCreateChild([], 'child of logger').pull(Logger) || new ConsoleLogger();
@@ -91,11 +91,11 @@ export abstract class LogMediator {
       logger.log('warn', this.msgAboutSingletonLogger);
     }
 
-    logItems.forEach((logItem) => {
-      logger.setLevel(logItem.outputLogLevel);
-      const showExternalLogs = this.baseAppOptions?.showExternalLogs ?? logItem.showExternalLogs ?? true;
-      if (!logItem.isExternal || showExternalLogs) {
-        logger.log(logItem.inputLogLevel, `[${logItem.moduleName}]: ${logItem.msg}`);
+    logEntrys.forEach((logEntry) => {
+      logger.setLevel(logEntry.outputLogLevel);
+      const showExternalLogs = this.baseAppOptions?.showExternalLogs ?? logEntry.showExternalLogs ?? true;
+      if (!logEntry.isExternal || showExternalLogs) {
+        logger.log(logEntry.inputLogLevel, `[${logEntry.moduleName}]: ${logEntry.msg}`);
       }
     });
 

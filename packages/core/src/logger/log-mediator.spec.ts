@@ -4,7 +4,7 @@ import { ConsoleLogger } from '#logger/console-logger.js';
 import type { InputLogLevel, OutputLogLevel } from '#logger/logger.js';
 import { Logger } from '#logger/logger.js';
 import { LogMediator } from '#logger/log-mediator.js';
-import type { LogItem } from '#logger/types.js';
+import type { LogEntry } from '#logger/types.js';
 import { Injector } from '#di/injector.js';
 
 describe('LogMediator', () => {
@@ -20,8 +20,8 @@ describe('LogMediator', () => {
       return super.checkDiffLogLevels(level);
     }
 
-    override writeLogs(logItems: LogItem[]) {
-      return super.writeLogs(logItems);
+    override writeLogs(logEntrys: LogEntry[]) {
+      return super.writeLogs(logEntrys);
     }
   }
 
@@ -73,7 +73,7 @@ describe('LogMediator', () => {
   });
 
   describe('writeLogs()', () => {
-    const baseLogItem: LogItem = {
+    const baseLogEntry: LogEntry = {
       moduleName: 'fakeName1',
       date: new Date(),
       inputLogLevel: 'info',
@@ -97,16 +97,16 @@ describe('LogMediator', () => {
       });
 
       it('works with log items', () => {
-        expect(() => mock.writeLogs([baseLogItem])).not.toThrow();
+        expect(() => mock.writeLogs([baseLogEntry])).not.toThrow();
         expect(mock.logger.log).toHaveBeenCalledTimes(0); // writeLogs() creates a separate logger instance.
         expect(console.log).toHaveBeenCalledTimes(1);
-        expect(mock.writeLogs([baseLogItem])).toBeInstanceOf(ConsoleLogger);
+        expect(mock.writeLogs([baseLogEntry])).toBeInstanceOf(ConsoleLogger);
       });
 
       it('changes log level only for local logger', () => {
-        const logger1 = mock.writeLogs([{ ...baseLogItem, outputLogLevel: 'debug' }]);
+        const logger1 = mock.writeLogs([{ ...baseLogEntry, outputLogLevel: 'debug' }]);
         expect(logger1.getLevel()).toBe('debug');
-        const logger2 = mock.writeLogs([{ ...baseLogItem, outputLogLevel: 'off' }]);
+        const logger2 = mock.writeLogs([{ ...baseLogEntry, outputLogLevel: 'off' }]);
         expect(logger2.getLevel()).toBe('off');
         expect(mock.logger.getLevel()).toBe('info');
       });
@@ -121,7 +121,7 @@ describe('LogMediator', () => {
       });
 
       it('works with log items', () => {
-        expect(() => mock.writeLogs([baseLogItem])).not.toThrow();
+        expect(() => mock.writeLogs([baseLogEntry])).not.toThrow();
         expect(mock.logger.log).toHaveBeenCalledTimes(0); // writeLogs() creates a separate logger instance.
         expect(console.log).toHaveBeenCalledTimes(1);
       });
@@ -131,9 +131,9 @@ describe('LogMediator', () => {
       });
 
       it('changes log level only for local logger', () => {
-        const logger1 = mock.writeLogs([{ ...baseLogItem, outputLogLevel: 'debug' }]);
+        const logger1 = mock.writeLogs([{ ...baseLogEntry, outputLogLevel: 'debug' }]);
         expect(logger1.getLevel()).toBe('debug');
-        const logger2 = mock.writeLogs([{ ...baseLogItem, outputLogLevel: 'off' }]);
+        const logger2 = mock.writeLogs([{ ...baseLogEntry, outputLogLevel: 'off' }]);
         expect(logger2.getLevel()).toBe('off');
         expect(mock.logger.getLevel()).toBe('info');
       });
