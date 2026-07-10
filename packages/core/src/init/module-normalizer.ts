@@ -28,7 +28,7 @@ import {
 import {
   isDynamicModule,
   isRootModule,
-  isModDecor,
+  isModuleDecorator,
   isFeatureModule,
   isModuleWithInitHooks,
   isParamsWithDynamicModule,
@@ -78,7 +78,7 @@ export class ModuleNormalizer {
 
   protected init(modRefId: ModRefId) {
     const aDecoratorMeta = this.getDecoratorMeta(modRefId) || [];
-    const decorAndVal = aDecoratorMeta.find((d) => isModDecor(d));
+    const decorAndVal = aDecoratorMeta.find((d) => isModuleDecorator(d));
     const decoratorOptions = decorAndVal?.value;
     const modName = getDebugClassName(modRefId);
     if (!modName) {

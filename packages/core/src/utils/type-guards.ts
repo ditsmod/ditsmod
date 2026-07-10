@@ -1,6 +1,6 @@
 import { ChainError } from '@ts-stack/chain-error';
 
-import { isDynamicModule, isModDecor } from '#decorators/type-guards.js';
+import { isDynamicModule, isModuleDecorator } from '#decorators/type-guards.js';
 import { CustomError } from '#error/custom-error.js';
 import type { AnyObj } from '#types/mix.js';
 import { Reflector } from '#di/reflector.js';
@@ -11,7 +11,7 @@ export function isProvider(maybeProvider?: any): maybeProvider is Provider {
   if (isDynamicModule(maybeProvider)) {
     return false;
   }
-  const isSomeModule = Reflector.getClassLevelMeta(maybeProvider, isModDecor);
+  const isSomeModule = Reflector.getClassLevelMeta(maybeProvider, isModuleDecorator);
   return (maybeProvider instanceof Function && !isSomeModule) || isNormalizedProvider(maybeProvider);
 }
 

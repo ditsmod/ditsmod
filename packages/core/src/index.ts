@@ -90,7 +90,7 @@ export {
   isDynamicModule,
   isModuleWithInitHooks,
   isFeatureModule,
-  isModDecor,
+  isModuleDecorator,
   isRootModule,
   isParamsWithDynamicModule,
   hasDeclaredInDir,

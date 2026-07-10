@@ -58,11 +58,11 @@ export function isFeatureModule(
   return arg instanceof ModuleDecoratorOptions;
 }
 
-export function isModDecor(
+export function isModuleDecorator(
   arg?: DecoratorAndValue,
 ): arg is DecoratorAndValue<RootDecoratorOptions | ModuleDecoratorOptions>;
-export function isModDecor(arg?: RootDecoratorOptions): arg is RootDecoratorOptions | ModuleDecoratorOptions;
-export function isModDecor(arg?: any) {
+export function isModuleDecorator(arg?: RootDecoratorOptions): arg is RootDecoratorOptions | ModuleDecoratorOptions;
+export function isModuleDecorator(arg?: any) {
   return isRootModule(arg) || isFeatureModule(arg);
 }
 
