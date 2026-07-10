@@ -9,6 +9,7 @@ One of the key elements of the Ditsmod architecture is its modules. But what exa
 A modular architecture makes it possible to isolate **several code files** within a single module that may have different roles but a **shared specialization**. A module can be compared to an orchestra, where there are different instruments, but all of them create a shared piece of music. On the other hand, the need to isolate different modules arises because they may have different specializations and, as a result, may interfere with one another. Continuing the analogy with people, if you place police officers and musicians, or brokers and translators, in the same office, they will most likely interfere with each other. That is why **narrow specialization** is important for a module.
 
 Modules are the largest building blocks of an application, and their metadata can declare components such as:
+
 - controllers that accept HTTP requests and send HTTP responses;
 - services where the business logic of the application is described;
 - interceptors and guards that allow you to automate the processing of HTTP requests according to typical patterns;
@@ -84,7 +85,7 @@ import { Service2 } from './service2.js';
 import { Service3 } from './service3.js';
 
 function useFactory(s2: Service2) {
-  return // ...
+  return; // ...
 }
 
 @restModule({
@@ -180,10 +181,10 @@ Although `path` is an empty string here, for Ditsmod, the presence of `path` mea
 
 As you can see, in the previous example, this time neither the provider nor the module is imported, but the object. This object has the following interface:
 
-#### ModuleWithParams {#ModuleWithParams}
+#### DynamicModule {#DynamicModule}
 
 ```ts
-interface ModuleWithParams {
+interface DynamicModule {
   id?: string;
   module: ModuleType<M>;
   /**
@@ -203,7 +204,7 @@ interface ModuleWithParams {
    */
   providersPerReq?: Providers | Provider[] = [];
   /**
-   * List of modules, `ModuleWithParams` or tokens of providers exported by this
+   * List of modules, `DynamicModule` or tokens of providers exported by this
    * module.
    */
   exports?: any[];
@@ -258,17 +259,17 @@ export class Module2 {}
 
 Static methods make it easier to pass module parameters.
 
-In order for TypeScript to control exactly what the static import method returns, it is recommended to use the `ModuleWithParams` interface:
+In order for TypeScript to control exactly what the static import method returns, it is recommended to use the `DynamicModule` interface:
 
 ```ts
-import { ModuleWithParams } from '@ditsmod/core';
+import { DynamicModule } from '@ditsmod/core';
 // ...
 export class Module1 {
-  static withParams(someParams: SomeParams): ModuleWithParams<Module1> {
+  static withParams(someParams: SomeParams): DynamicModule<Module1> {
     return {
       module: this,
       // ...
-    }
+    };
   }
 }
 ```
@@ -291,7 +292,7 @@ Suppose we import this module into `Module2`, which has no providers of its own:
 ```ts
 // ...
 @restModule({
-  imports: [Module1]
+  imports: [Module1],
   // ...
 })
 export class Module2 {}
@@ -310,7 +311,7 @@ import { restModule } from '@ditsmod/rest';
 import { Module1 } from './module1.js';
 
 @restModule({
-  appends: [Module1]
+  appends: [Module1],
 })
 export class Module2 {}
 ```
@@ -322,7 +323,7 @@ You can also attach an additional path prefix to `Module1`:
 ```ts {3}
 // ...
 @restModule({
-  appends: [{ path: 'some-path', module: Module1 }]
+  appends: [{ path: 'some-path', module: Module1 }],
 })
 export class Module2 {}
 ```
@@ -355,15 +356,15 @@ export class Module2 {}
 
 What is the meaning of this? - Now if you import `Module2` into some other module, you will actually have `Module1` imported as well.
 
-Pay attention! If during re-export you import an object with `ModuleWithParams` interface, the same object must also be exported:
+Pay attention! If during re-export you import an object with `DynamicModule` interface, the same object must also be exported:
 
 ```ts
-import { ModuleWithParams } from '@ditsmod/core';
-import { restModule, RestModuleParams } from '@ditsmod/rest';
+import { DynamicModule } from '@ditsmod/core';
+import { restModule, RestModuleOptions } from '@ditsmod/rest';
 
 import { Module1 } from './module1.js';
 
-const firstModuleWithParams: ModuleWithParams & RestModuleParams = { path: 'some-path', module: Module1 };
+const firstModuleWithParams: DynamicModule & RestModuleOptions = { path: 'some-path', module: Module1 };
 
 @restModule({
   imports: [firstModuleWithParams],
@@ -386,7 +387,7 @@ class Service2 {}
 
 @restModule({
   providersPerMod: [Service1],
-  exports: [Service1]
+  exports: [Service1],
 })
 class Module1 {}
 
@@ -426,7 +427,7 @@ class Service2 {}
 
 @restModule({
   providersPerMod: [Service1],
-  exports: [Service1]
+  exports: [Service1],
 })
 class Module1 {}
 
@@ -438,13 +439,12 @@ class Module2 {}
 
 @restRootModule({
   imports: [Module1, Module2],
-  resolvedCollisionPerMod: [ [Service1, Module1] ]
+  resolvedCollisionPerMod: [[Service1, Module1]],
 })
 class Module3 {}
 ```
 
 If you have installed `Module3` using packages manager (npm, yarn, etc.), there is no point in modifying this module locally to resolve the collision. This situation can only occur if `Module2` and `Module1` are exported from the root module, so you need to remove one of these modules from there. And, of course, after that you will have to explicitly import the deleted module into those modules where it is needed.
-
 
 [1]: /basic-components/dependency-injection/#injector-and-providers
 [2]: /basic-components/extensions

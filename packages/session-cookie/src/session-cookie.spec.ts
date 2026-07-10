@@ -1,5 +1,5 @@
 import { Injector } from '@ditsmod/core';
-import type { RawRequest, RawResponse} from '@ditsmod/rest';
+import type { RawRequest, RawResponse } from '@ditsmod/rest';
 import { RAW_REQ, RAW_RES } from '@ditsmod/rest';
 import { jest } from '@jest/globals';
 
@@ -63,7 +63,10 @@ describe('@ditsmod/session-cookie', () => {
     session.id = 'foobar';
     rawRes.writeHead(200);
     expect(setHeader).toHaveBeenCalledTimes(1);
-    expect(setHeader).toHaveBeenCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/session=foobar; path=\/;/)]));
+    expect(setHeader).toHaveBeenCalledWith(
+      'Set-Cookie',
+      expect.arrayContaining([expect.stringMatching(/session=foobar; path=\/;/)]),
+    );
     expect(setHeader).toHaveBeenCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/httponly/)]));
   });
 
@@ -73,7 +76,10 @@ describe('@ditsmod/session-cookie', () => {
     session.id = 'foobar';
     rawRes.writeHead(200);
     expect(setHeader).toHaveBeenCalledTimes(1);
-    expect(setHeader).toHaveBeenCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/session=foobar; path=\/;/)]));
+    expect(setHeader).toHaveBeenCalledWith(
+      'Set-Cookie',
+      expect.arrayContaining([expect.stringMatching(/session=foobar; path=\/;/)]),
+    );
     expect(setHeader).toHaveBeenCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/httponly/)]));
   });
 
@@ -83,7 +89,10 @@ describe('@ditsmod/session-cookie', () => {
     session.setMaxAge(maxAge);
     rawRes.writeHead(200);
     expect(setHeader).toHaveBeenCalledTimes(1);
-    expect(setHeader).toHaveBeenCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/session=foobar; path=\/;/)]));
+    expect(setHeader).toHaveBeenCalledWith(
+      'Set-Cookie',
+      expect.arrayContaining([expect.stringMatching(/session=foobar; path=\/;/)]),
+    );
     expect(setHeader).toHaveBeenCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/httponly/)]));
   });
 });

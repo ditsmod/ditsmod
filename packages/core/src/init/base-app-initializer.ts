@@ -289,7 +289,9 @@ export class BaseAppInitializer {
     for (const [modRefId, { normalizedModuleMeta }] of mMetadataPerMod2) {
       try {
         this.overrideMetaAfterStage1(normalizedModuleMeta.modRefId, normalizedModuleMeta);
-        normalizedModuleMeta.initMeta.forEach((meta) => this.overrideMetaAfterStage1(normalizedModuleMeta.modRefId, meta));
+        normalizedModuleMeta.initMeta.forEach((meta) =>
+          this.overrideMetaAfterStage1(normalizedModuleMeta.modRefId, meta),
+        );
       } catch (err: any) {
         const debugModuleName = getDebugClassName(modRefId) || 'unknown';
         throw new FailedOverrideMetaAfterStage1(debugModuleName, err);
@@ -382,7 +384,10 @@ export class BaseAppInitializer {
    *
    * See `TestAppInitializer` in `@ditsmod/testing` for more info.
    */
-  protected overrideMetaBeforeExtensionHanling(normalizedModuleMeta: NormalizedModuleMeta, aOrderedExtensions: ExtensionClass[]) {
+  protected overrideMetaBeforeExtensionHanling(
+    normalizedModuleMeta: NormalizedModuleMeta,
+    aOrderedExtensions: ExtensionClass[],
+  ) {
     return { normalizedModuleMeta, aOrderedExtensions };
   }
 

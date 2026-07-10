@@ -10,7 +10,7 @@ import type { Provider } from '@ditsmod/core/di';
 export class BodyParserExtension implements Extension<void> {
   constructor(
     protected extensionManager: ExtensionManager,
-   @inject(PROVIDERS_PER_APP) protected providersPerApp: Provider[],
+    @inject(PROVIDERS_PER_APP) protected providersPerApp: Provider[],
   ) {}
 
   async stage1() {
@@ -32,7 +32,11 @@ export class BodyParserExtension implements Extension<void> {
             let bodyParserConfig = injectorPerRou.get(BodyParserConfig, {}) as BodyParserConfig;
             bodyParserConfig = { ...new BodyParserConfig(), ...bodyParserConfig }; // Merge with default.
             if (bodyParserConfig.acceptMethods!.includes(method)) {
-              providersPerRou.push({ token: HTTP_INTERCEPTORS, useClass: RouteScopedBodyParserInterceptor, multi: true });
+              providersPerRou.push({
+                token: HTTP_INTERCEPTORS,
+                useClass: RouteScopedBodyParserInterceptor,
+                multi: true,
+              });
             }
           } else {
             const injectorPerReq = injectorPerRou.resolveAndCreateChild(mergedProvidersPerReq);

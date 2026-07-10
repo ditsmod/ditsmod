@@ -12,9 +12,15 @@ Although you won't have to manually write this mapping, for a general understand
 
 ```ts
 const routes = new Map<string, Function>();
-routes.set('/some-path', function() { /** request handling... **/ });
-routes.set('/other-path', function() { /** request handling... **/ });
-routes.set('/path-with/:parameter', function() { /** request handling... **/ });
+routes.set('/some-path', function () {
+  /** request handling... **/
+});
+routes.set('/other-path', function () {
+  /** request handling... **/
+});
+routes.set('/path-with/:parameter', function () {
+  /** request handling... **/
+});
 // ...
 ```
 
@@ -156,7 +162,7 @@ import { controller, route, RAW_REQ, RAW_RES, RawRequest, RawResponse } from '@d
 export class HelloWorldController {
   constructor(
     @ctx(RAW_REQ) private rawReq: RawRequest,
-    @ctx(RAW_RES) private rawRes: RawResponse
+    @ctx(RAW_RES) private rawRes: RawResponse,
   ) {}
 
   @route('GET', 'hello')
@@ -206,17 +212,17 @@ In the "route-scoped" mode, controller methods bound to specific routes receive 
 
 A controller [in request-scoped mode][10], besides its own injector at the request level, also has three parent injectors: at the route level, module level and application level. These injectors are also formed based on the providers that you pass into the following arrays:
 
-* `providersPerApp`;
-* `providersPerMod`;
-* `providersPerRou`;
-* `providersPerReq` (this array forms the injector for a controller in request-scoped mode).
+- `providersPerApp`;
+- `providersPerMod`;
+- `providersPerRou`;
+- `providersPerReq` (this array forms the injector for a controller in request-scoped mode).
 
 Thus a controller in request-scoped mode can depend on services at any level.
 
 If a controller is [in route-scoped mode][11], its own injector is located at the module level, and it has one parent injector at the application level:
 
-* `providersPerApp`;
-* `providersPerMod` (this array forms the injector for a controller in route-scoped mode).
+- `providersPerApp`;
+- `providersPerMod` (this array forms the injector for a controller in route-scoped mode).
 
 ## Binding of the controller to the host module {#binding-of-the-controller-to-the-host-module}
 
@@ -230,7 +236,7 @@ import { SomeController } from './some.controller.js';
 export class SomeModule {}
 ```
 
-After binding controllers to the host module, in order for Ditsmod to recognize them in an external module, the host module must either be appended or imported as an object that implements the [ModuleWithParams][2] interface. The following example shows both appending and fully importing the host module (this is done only to demonstrate the possibility; in practice, there is no reason to do both at the same time):
+After binding controllers to the host module, in order for Ditsmod to recognize them in an external module, the host module must either be appended or imported as an object that implements the [DynamicModule][2] interface. The following example shows both appending and fully importing the host module (this is done only to demonstrate the possibility; in practice, there is no reason to do both at the same time):
 
 ```ts {5,7}
 import { restModule } from '@ditsmod/rest';
@@ -239,7 +245,7 @@ import { SomeModule } from './some.module.js';
 @restModule({
   appends: [SomeModule],
   // OR
-  imports: [{ module: SomeModule, path: '' }]
+  imports: [{ module: SomeModule, path: '' }],
 })
 export class OtherModule {}
 ```
@@ -251,7 +257,7 @@ import { restModule } from '@ditsmod/rest';
 import { SomeModule } from './some.module.js';
 
 @restModule({
-  imports: [SomeModule]
+  imports: [SomeModule],
 })
 export class OtherModule {}
 ```
@@ -378,7 +384,7 @@ This rule is very important because it clearly shows:
 
 1. in which injector the value for a given provider is created;
 2. that if you take a single injector, the value for a given provider (for a given token) is created only once in it;
-3. that if the child injector lacks a provider, it can ask the parent injector for the *value* of that provider (i.e., the child injector asks the parent injector for the *value*, not for the provider itself).
+3. that if the child injector lacks a provider, it can ask the parent injector for the _value_ of that provider (i.e., the child injector asks the parent injector for the _value_, not for the provider itself).
 
 This rule applies to the `injector.get()` method, but not to `injector.pull()` or `injector.resolveAndInstantiate()`.
 
@@ -484,7 +490,7 @@ In this case, within `SomeModule` for `token1` the value `value3` will be return
 Also, if you import a provider from an external module and you have a provider with the same token in your current module, the local provider will have higher priority provided they were passed at the same hierarchy level.
 
 [1]: /basic-components/modules/#import-module
-[2]: /basic-components/modules/#ModuleWithParams
+[2]: /basic-components/modules/#DynamicModule
 [3]: /basic-components/dependency-injection/#injector-and-providers
 [5]: /rest-application/native-modules/body-parser#retrieving-the-request-body
 [6]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/rest/src/services/pre-router.ts

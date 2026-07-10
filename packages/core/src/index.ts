@@ -65,10 +65,10 @@ export {
 } from '#types/mix.js';
 export {
   ModuleDecoratorOptions,
-  ModuleWithParams,
-  ModuleWithInitParams,
-  BaseModuleWithParams,
-  FeatureModuleParams,
+  DynamicModule,
+  DynamicModuleWithInit,
+  DynamicModuleBase,
+  DynamicModuleOptions,
 } from '#decorators/module-decorator-options.js';
 export { ProviderImport } from '#types/metadata-per-mod.js';
 export { mergeArrays } from '#utils/merge-arrays.js';
@@ -87,12 +87,12 @@ export { Providers } from '#utils/providers.js';
 export { getDebugClassName, clearDebugClassNames } from '#utils/get-debug-class-name.js';
 export { getProviderTarget, getProvidersTargets, getToken, getTokens } from '#utils/get-tokens.js';
 export {
-  isModuleWithParams,
+  isDynamicModule,
   isModuleWithInitHooks,
   isFeatureModule,
   isModDecor,
   isRootModule,
-  isParamsWithMwp,
+  isParamsWithDynamicModule,
   hasDeclaredInDir,
 } from '#decorators/type-guards.js';
 export { isProvider } from '#utils/type-guards.js';

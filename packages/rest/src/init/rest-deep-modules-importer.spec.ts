@@ -16,7 +16,7 @@ import {
   DeepModulesImporter,
   ModRefId,
   MetadataPerMod2,
-  ModuleWithParams,
+  DynamicModule,
   Context,
 } from '@ditsmod/core';
 import { InstantiationError, NoProvider } from '@ditsmod/core/errors';
@@ -25,7 +25,7 @@ import { CanActivate, guard } from '#interceptors/guard.js';
 import { RequestContext } from '#services/request-context.js';
 import { initRest, restModule, restRootModule } from '#decorators/rest-init-hooks-and-metadata.js';
 import { RestMetadataPerMod2 } from './types.js';
-import { RestModuleParams } from './rest-init-raw-meta.js';
+import { RestModuleOptions } from './rest-init-raw-meta.js';
 
 describe('DeepModulesImporter', () => {
   class AppInitializerMock extends BaseAppInitializer {
@@ -203,7 +203,7 @@ describe('DeepModulesImporter', () => {
     @featureModule({ providersPerApp: [Provider1] })
     class Module1 {}
 
-    const moduleWithParams: RestModuleParams & ModuleWithParams = {
+    const moduleWithParams: RestModuleOptions & DynamicModule = {
       path: 'test-prefix',
       guards: [Guard1, [Guard2, { one: 1 }]],
       module: Module1,
@@ -573,7 +573,7 @@ describe('DeepModulesImporter', () => {
       }
     }
 
-    const mod1WithParams: ModuleWithParams & RestModuleParams = { module: Module1, guards: [BearerGuard1] };
+    const mod1WithParams: DynamicModule & RestModuleOptions = { module: Module1, guards: [BearerGuard1] };
     const provider: Provider = { token: BearerGuard1, useClass: BearerGuard2 };
 
     @restRootModule({ imports: [mod1WithParams], providersPerRou: [provider, Service0, Service2] })

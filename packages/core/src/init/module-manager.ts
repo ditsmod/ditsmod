@@ -2,9 +2,9 @@ import { format } from 'node:util';
 
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyObj, ModuleType, ModRefId } from '#types/mix.js';
-import { ModuleWithParams } from '#decorators/module-decorator-options.js';
+import { DynamicModule } from '#decorators/module-decorator-options.js';
 import { NormalizedInitMeta, NormalizedModuleMeta } from '#init/base-meta.js';
-import { isModuleWithParams, isRootModule } from '#decorators/type-guards.js';
+import { isDynamicModule, isRootModule } from '#decorators/type-guards.js';
 import { clearDebugClassNames, getDebugClassName } from '#utils/get-debug-class-name.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { ModuleNormalizer } from '#init/module-normalizer.js';
@@ -87,7 +87,7 @@ export class ModuleManager {
     allInitHooks ??= new Map();
     modRefId = resolveForwardRef(modRefId);
     const normalizedModuleMeta = this.normalizeMetadata(modRefId, allInitHooks);
-    const importsOrExports: (ModuleWithParams | ModuleType)[] = [];
+    const importsOrExports: (DynamicModule | ModuleType)[] = [];
     normalizedModuleMeta.mInitHooks.forEach((initHooks, decorator) => {
       const meta = normalizedModuleMeta.initMeta.get(decorator);
       if (meta) {
@@ -171,7 +171,7 @@ export class ModuleManager {
       throw new FailAddingToImports(modName, modIdStr);
     }
 
-    const prop = isModuleWithParams(inputModule) ? 'importsWithParams' : 'importsModules';
+    const prop = isDynamicModule(inputModule) ? 'importsWithParams' : 'importsModules';
     if (targetNormalizedModuleMeta[prop].some((imp: ModRefId) => imp === inputModule)) {
       const modIdStr = format(targetModuleId).slice(0, 50);
       this.systemLogMediator.moduleAlreadyImported(this, inputModule, modIdStr);
@@ -205,7 +205,7 @@ export class ModuleManager {
       const modIdStr = format(targetModuleId).slice(0, 50);
       throw new FailRemovingImport(inputNormalizedModuleMeta.name, modIdStr);
     }
-    const prop = isModuleWithParams(inputNormalizedModuleMeta.modRefId) ? 'importsWithParams' : 'importsModules';
+    const prop = isDynamicModule(inputNormalizedModuleMeta.modRefId) ? 'importsWithParams' : 'importsModules';
     const index = targetMeta[prop].findIndex((imp: ModRefId) => imp === inputNormalizedModuleMeta.modRefId);
     if (index == -1) {
       const modIdStr = format(inputModuleId).slice(0, 50);
@@ -235,7 +235,9 @@ export class ModuleManager {
       return false;
     }
 
-    this.snapshotMap.forEach((normalizedModuleMeta, key) => this.oldSnapshotMap.set(key, this.copyNormalizedModuleMeta(normalizedModuleMeta)));
+    this.snapshotMap.forEach((normalizedModuleMeta, key) =>
+      this.oldSnapshotMap.set(key, this.copyNormalizedModuleMeta(normalizedModuleMeta)),
+    );
     this.oldSnapshotMapId = new Map(this.snapshotMapId);
 
     return true;
@@ -265,7 +267,9 @@ export class ModuleManager {
    */
   reset() {
     this.map = new Map();
-    this.snapshotMap.forEach((normalizedModuleMeta, key) => this.map.set(key, this.copyNormalizedModuleMeta(normalizedModuleMeta)));
+    this.snapshotMap.forEach((normalizedModuleMeta, key) =>
+      this.map.set(key, this.copyNormalizedModuleMeta(normalizedModuleMeta)),
+    );
     this.mapId = new Map(this.snapshotMapId);
     return this;
   }
@@ -407,7 +411,9 @@ export class ModuleManager {
     if (this.snapshotMap.size) {
       throw new ProhibitSavingModulesSnapshot();
     } else {
-      this.map.forEach((normalizedModuleMeta, modRefId) => this.snapshotMap.set(modRefId, this.copyNormalizedModuleMeta(normalizedModuleMeta)));
+      this.map.forEach((normalizedModuleMeta, modRefId) =>
+        this.snapshotMap.set(modRefId, this.copyNormalizedModuleMeta(normalizedModuleMeta)),
+      );
       this.snapshotMapId = new Map(this.mapId);
     }
   }

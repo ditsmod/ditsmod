@@ -1,4 +1,4 @@
-import { isProvider, ModuleWithParams, Provider } from '@ditsmod/core';
+import { isProvider, DynamicModule, Provider } from '@ditsmod/core';
 import { RestRouteExtension, UseInterceptorExtension, restModule } from '@ditsmod/rest';
 import { BodyParserModule, BodyParserExtension } from '@ditsmod/body-parser';
 
@@ -34,7 +34,7 @@ export class AuthjsModule {
    * The second option is often preferable because, by passing a provider, you can use DI within
    * it to integrate, for example, with the {@link https://authjs.dev/reference/core/providers/credentials#authorize | CredentialsConfig.authorize()} method.
    */
-  static withConfig(providerOrConfig: Provider | AuthjsConfig): ModuleWithParams<AuthjsModule> {
+  static withConfig(providerOrConfig: Provider | AuthjsConfig): DynamicModule<AuthjsModule> {
     return {
       module: this,
       providersPerMod: [

@@ -1,4 +1,4 @@
-import { featureModule, ModuleWithParams } from '@ditsmod/core';
+import { featureModule, DynamicModule } from '@ditsmod/core';
 import { RestRouteExtension } from '@ditsmod/rest';
 
 import { SqbExtension } from './sqb.extension.js';
@@ -7,7 +7,7 @@ import { SqbExtension } from './sqb.extension.js';
   extensions: [{ extension: SqbExtension, afterExtensions: [RestRouteExtension], export: true }],
 })
 export class SqbModule {
-  static withParams(): ModuleWithParams<SqbModule> {
+  static withParams(): DynamicModule<SqbModule> {
     return {
       module: this,
       providersPerMod: [],

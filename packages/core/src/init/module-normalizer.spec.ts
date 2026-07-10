@@ -1,15 +1,19 @@
 import { featureModule } from '#decorators/feature-module.js';
-import { InitDecoratorOptions, InitHooks, InitDecorator } from '#decorators/init-hooks-and-metadata.js';
+import {
+  InitDecoratorOptions as BaseInitDecoratorOptions,
+  InitHooks,
+  InitDecorator,
+} from '#decorators/init-hooks-and-metadata.js';
 import { NormalizedInitMeta, getProxyForInitMeta, NormalizedModuleMeta } from '#init/base-meta.js';
 import { rootModule, RootDecoratorOptions } from '#decorators/root-module.js';
 import { Reflector } from '#di/reflector.js';
 import { Extension } from '#extension/extension-types.js';
 import { AnyObj, ModRefId } from '#types/mix.js';
 import {
-  FeatureModuleParams,
+  DynamicModuleOptions,
   ModuleDecoratorOptions,
-  ModuleWithInitParams,
-  ModuleWithParams,
+  DynamicModuleWithInit,
+  DynamicModule,
 } from '#decorators/module-decorator-options.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { ModuleNormalizer } from './module-normalizer.js';
@@ -30,7 +34,7 @@ import { injectable } from '#di/decorators.js';
 import type { MultiProvider } from '#di/utils.js';
 import { forwardRef } from '#di/forward-ref.js';
 import { KeyRegistry } from '#di/key-registry.js';
-import { isModuleWithParams } from '#decorators/type-guards.js';
+import { isDynamicModule } from '#decorators/type-guards.js';
 import { DecoratorAndValue } from '#di/top/decorator-and-value.js';
 import { getModule } from '#utils/get-module.js';
 
@@ -83,7 +87,7 @@ describe('ModuleNormalizer', () => {
     @featureModule()
     class Module2 {}
 
-    const moduleWithParams: ModuleWithParams = { module: Module2, id: 'some-id' };
+    const moduleWithParams: DynamicModule = { module: Module2, id: 'some-id' };
     const multiProvider: MultiProvider = { token: Service5, useValue: 'some-value', multi: true };
 
     @rootModule({
@@ -160,7 +164,7 @@ describe('ModuleNormalizer', () => {
     @featureModule({ providersPerMod: [Service1] })
     class Module1 {}
 
-    const moduleWithParams: ModuleWithParams = { module: Module1, exports: [Service1] };
+    const moduleWithParams: DynamicModule = { module: Module1, exports: [Service1] };
     @featureModule({ imports: [moduleWithParams], providersPerMod: [Service2] })
     class Module2 {}
 
@@ -184,7 +188,7 @@ describe('ModuleNormalizer', () => {
 
     @featureModule({ providersPerMod: [Service1], exports: [Service1] })
     class Module1 {}
-    const baseModuleWithParams: ModuleWithParams = { module: Module1, providersPerMod: [] };
+    const baseModuleWithParams: DynamicModule = { module: Module1, providersPerMod: [] };
 
     @featureModule({
       imports: [baseModuleWithParams],
@@ -216,7 +220,7 @@ describe('ModuleNormalizer', () => {
     @featureModule({ providersPerApp: [Service0] })
     class Module2 {}
 
-    const module2WithParams: ModuleWithParams = { module: forwardRef(() => Module2) };
+    const module2WithParams: DynamicModule = { module: forwardRef(() => Module2) };
     @rootModule({
       imports: [forwardRef(() => Module1), module2WithParams],
       providersPerApp: [
@@ -237,11 +241,19 @@ describe('ModuleNormalizer', () => {
     expect(normalizedModuleMeta.exportsModules).toEqual([Module1]);
     expect(normalizedModuleMeta.importsWithParams).toEqual([{ module: Module2 }]);
     expect(normalizedModuleMeta.exportsWithParams).toEqual([{ module: Module2 }]);
-    expect(normalizedModuleMeta.providersPerApp).toEqual([Service1, { token: Service3, useClass: Service3, multi: true }]);
-    expect(normalizedModuleMeta.providersPerMod).toEqual([Service2, { token: Service4, useToken: Service4, multi: true }]);
+    expect(normalizedModuleMeta.providersPerApp).toEqual([
+      Service1,
+      { token: Service3, useClass: Service3, multi: true },
+    ]);
+    expect(normalizedModuleMeta.providersPerMod).toEqual([
+      Service2,
+      { token: Service4, useToken: Service4, multi: true },
+    ]);
     expect(normalizedModuleMeta.exportedProvidersPerMod).toEqual([Service2]);
     expect(normalizedModuleMeta.resolvedCollisionPerMod).toEqual([[Service2, Module1]]);
-    expect(normalizedModuleMeta.exportedMultiProvidersPerMod).toEqual([{ token: Service4, useToken: Service4, multi: true }]);
+    expect(normalizedModuleMeta.exportedMultiProvidersPerMod).toEqual([
+      { token: Service4, useToken: Service4, multi: true },
+    ]);
   });
 
   it('resolves forwardRef() in module with params providers', () => {
@@ -255,7 +267,7 @@ describe('ModuleNormalizer', () => {
     })
     class Module1 {}
 
-    const moduleWithParams: ModuleWithParams = {
+    const moduleWithParams: DynamicModule = {
       module: forwardRef(() => Module1),
       providersPerMod: [
         forwardRef(() => Service2),
@@ -265,9 +277,13 @@ describe('ModuleNormalizer', () => {
     };
 
     const normalizedModuleMeta = mock.normalize(moduleWithParams);
-    expect(normalizedModuleMeta.name).toBe('Module1-WithParams');
+    expect(normalizedModuleMeta.name).toBe('Module1-DynamicModule');
     expect(normalizedModuleMeta.providersPerMod).toEqual([Service1, Service2, { token: Service3, useClass: Service3 }]);
-    expect(normalizedModuleMeta.exportedProvidersPerMod).toEqual([Service1, Service2, { token: Service3, useClass: Service3 }]);
+    expect(normalizedModuleMeta.exportedProvidersPerMod).toEqual([
+      Service1,
+      Service2,
+      { token: Service3, useClass: Service3 },
+    ]);
   });
 
   it('module exports a normalized provider', () => {
@@ -318,7 +334,7 @@ describe('ModuleNormalizer', () => {
     /**
      * An object with this type will be passed in the module metadata as a so-called "module with parameters".
      */
-    interface InitParams extends FeatureModuleParams {
+    interface InitParams extends DynamicModuleOptions {
       path?: string;
       num?: number;
     }
@@ -326,7 +342,7 @@ describe('ModuleNormalizer', () => {
     /**
      * An object with this type will be passed directly to the init decorator.
      */
-    interface RootDecoratorOptions extends InitDecoratorOptions<InitParams> {
+    interface RootDecoratorOptions extends BaseInitDecoratorOptions<InitParams> {
       one?: number;
       two?: number;
       appends?: ({ module: ModRefId } & AnyObj)[];
@@ -378,7 +394,7 @@ describe('ModuleNormalizer', () => {
       @featureModule()
       class Module2 {}
 
-      const mwp1: ModuleWithInitParams & InitParams = {
+      const mwp1: DynamicModuleWithInit & InitParams = {
         module: Module1,
         providersPerMod: [Service1],
         providersPerApp: [Service3],
@@ -388,7 +404,7 @@ describe('ModuleNormalizer', () => {
       };
       mwp1.initParams.set(initSome, { path: 'path-1' });
 
-      const mwp2: ModuleWithInitParams & InitParams = {
+      const mwp2: DynamicModuleWithInit & InitParams = {
         module: Module2,
         providersPerApp: [Service2],
         num: 12,
@@ -403,7 +419,7 @@ describe('ModuleNormalizer', () => {
       });
 
       @initSome({
-        imports: [{ mwp: mwp1, providersPerMod: [Service2], extensionsMeta: { two: 2 }, num: 5 }, mwp2],
+        imports: [{ dynamicModule: mwp1, providersPerMod: [Service2], extensionsMeta: { two: 2 }, num: 5 }, mwp2],
       })
       @rootModule()
       class AppModule {}
@@ -444,17 +460,17 @@ describe('ModuleNormalizer', () => {
 
       @featureModule({ providersPerApp: [Service1] })
       class Module2 {}
-      const moduleWithParams2: ModuleWithParams = { module: Module2 };
+      const moduleWithParams2: DynamicModule = { module: Module2 };
 
       @featureModule({ providersPerApp: [Service1] })
       class Module3 {}
 
       @featureModule({ providersPerApp: [Service1] })
       class Module4 {}
-      const moduleWithParams4: ModuleWithParams = { module: Module4 };
+      const moduleWithParams4: DynamicModule = { module: Module4 };
 
       @initSome({
-        imports: [Module1, moduleWithParams2, { module: Module3 }, { mwp: moduleWithParams4 }],
+        imports: [Module1, moduleWithParams2, { module: Module3 }, { dynamicModule: moduleWithParams4 }],
         exports: [Module1, moduleWithParams2, moduleWithParams4],
       })
       @rootModule()
@@ -463,7 +479,7 @@ describe('ModuleNormalizer', () => {
       const normalizedModuleMeta = mock.normalize(AppModule);
       expect(normalizedModuleMeta.importsModules).toEqual([Module1]);
       expect(normalizedModuleMeta.exportsModules).toEqual([Module1]);
-      expect(normalizedModuleMeta.importsWithParams).toEqual<ModuleWithParams[]>([
+      expect(normalizedModuleMeta.importsWithParams).toEqual<DynamicModule[]>([
         moduleWithParams2,
         { module: Module3, initParams: expect.any(Map) },
         moduleWithParams4,
@@ -479,21 +495,21 @@ describe('ModuleNormalizer', () => {
 
       @featureModule({ providersPerApp: [Service1] })
       class Module2 {}
-      const moduleWithParams2: ModuleWithParams = { module: forwardRef(() => Module2) };
+      const moduleWithParams2: DynamicModule = { module: forwardRef(() => Module2) };
 
       @featureModule({ providersPerApp: [Service1] })
       class Module3 {}
 
       @featureModule({ providersPerApp: [Service1] })
       class Module4 {}
-      const moduleWithParams4: ModuleWithParams = { module: forwardRef(() => Module4) };
+      const moduleWithParams4: DynamicModule = { module: forwardRef(() => Module4) };
 
       @initSome({
         imports: [
           forwardRef(() => Module1),
           moduleWithParams2,
           { module: forwardRef(() => Module3) },
-          { mwp: moduleWithParams4 },
+          { dynamicModule: moduleWithParams4 },
         ],
         exports: [forwardRef(() => Module1), moduleWithParams2, moduleWithParams4],
       })
@@ -502,7 +518,7 @@ describe('ModuleNormalizer', () => {
 
       const normalizedModuleMeta = mock.normalize(AppModule);
       expect(normalizedModuleMeta.importsModules).toEqual([Module1]);
-      expect(normalizedModuleMeta.importsWithParams).toEqual<ModuleWithParams[]>([
+      expect(normalizedModuleMeta.importsWithParams).toEqual<DynamicModule[]>([
         moduleWithParams2,
         { module: Module3, initParams: expect.any(Map) },
         moduleWithParams4,
@@ -548,7 +564,7 @@ describe('ModuleNormalizer', () => {
       class Module1 {}
 
       expect(() => mock.normalize({ module: Module1, exports: [undefined as any] })).toThrow(
-        new UndefinedSymbol('Exports with params', 'Module1-WithParams', 0),
+        new UndefinedSymbol('Exports with params', 'Module1-DynamicModule', 0),
       );
     });
 
@@ -730,7 +746,7 @@ describe('ModuleNormalizer', () => {
   });
 
   describe('init hooks', () => {
-    interface InitDecoratorOptions extends InitDecoratorOptions<{ path?: string }> {
+    interface InitDecoratorOptions extends BaseInitDecoratorOptions<{ path?: string }> {
       flag?: boolean;
     }
 
@@ -742,7 +758,7 @@ describe('ModuleNormalizer', () => {
 
     class InitHooks1 extends InitHooks<InitDecoratorOptions> {
       override normalize(normalizedModuleMeta: NormalizedModuleMeta): InitMeta {
-        if (isModuleWithParams(normalizedModuleMeta.modRefId)) {
+        if (isDynamicModule(normalizedModuleMeta.modRefId)) {
           const params = normalizedModuleMeta.modRefId.initParams?.get(initSome);
           return { path: params?.path, modRefId: normalizedModuleMeta.modRefId } as InitMeta;
         }
@@ -806,10 +822,10 @@ describe('ModuleNormalizer', () => {
       @featureModule({ providersPerApp: [Service1] })
       class Module1 {}
 
-      const moduleWithParams: ModuleWithParams = { module: Module1 };
+      const moduleWithParams: DynamicModule = { module: Module1 };
       const allInitHooks = new Map([[initSome, new InitHooks1({})]]);
 
-      @initSome({ imports: [{ mwp: moduleWithParams, path: 'prefix' }] })
+      @initSome({ imports: [{ dynamicModule: moduleWithParams, path: 'prefix' }] })
       @rootModule()
       class AppModule {}
 

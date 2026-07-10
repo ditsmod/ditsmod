@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 import {
-  ModuleWithParams,
+  DynamicModule,
   ModuleManager,
   NormalizedModuleMeta,
   clearDebugClassNames,
@@ -11,7 +11,7 @@ import {
   injectable,
   forwardRef,
   Provider,
-  ModuleWithInitParams,
+  DynamicModuleWithInit,
   ModRefId,
 } from '@ditsmod/core';
 import {
@@ -25,7 +25,7 @@ import {
 
 import { controller } from '../types/controller.js';
 import { initRest, restRootModule } from '#decorators/rest-init-hooks-and-metadata.js';
-import { AppendsWithParams } from './rest-init-raw-meta.js';
+import { AppendsWithOptions } from './rest-init-raw-meta.js';
 import { RestInitMeta } from './rest-init-meta.js';
 import { CanActivate, guard } from '#interceptors/guard.js';
 import { RequestContext } from '#services/request-context.js';
@@ -235,7 +235,7 @@ describe('ModuleManager', () => {
     @featureModule()
     class Module1 {}
 
-    const moduleWithParams: ModuleWithParams = { module: Module1 };
+    const moduleWithParams: DynamicModule = { module: Module1 };
 
     @initRest({ imports: [moduleWithParams], exports: [moduleWithParams] })
     @featureModule()
@@ -251,7 +251,7 @@ describe('ModuleManager', () => {
 
     @featureModule()
     class Module1 {
-      static withParams(): ModuleWithParams<Module1> {
+      static withParams(): DynamicModule<Module1> {
         return {
           module: this,
           providersPerMod: [{ token: Multi, useClass: Multi, multi: true }],
@@ -274,7 +274,7 @@ describe('ModuleManager', () => {
     @initRest({ controllers: [Controller1] })
     @featureModule()
     class Module1 {
-      static withParams(): ModuleWithParams<Module1> {
+      static withParams(): DynamicModule<Module1> {
         return {
           module: this,
         };
@@ -380,7 +380,7 @@ describe('ModuleManager', () => {
     @initRest({ controllers: [Controller1] })
     @featureModule()
     class Module4 {
-      static withParams(providersPerMod: Provider[]): ModuleWithParams<Module4> {
+      static withParams(providersPerMod: Provider[]): DynamicModule<Module4> {
         return {
           module: Module4,
           providersPerMod,
@@ -439,7 +439,7 @@ describe('ModuleManager', () => {
     @initRest({ controllers: [Controller1] })
     @featureModule()
     class Module1 {
-      static withParams(): ModuleWithInitParams<Module1> {
+      static withParams(): DynamicModuleWithInit<Module1> {
         return {
           module: this,
           initParams: new Map(),
@@ -453,7 +453,7 @@ describe('ModuleManager', () => {
 
     const moduleWithParams = Module1.withParams();
     moduleWithParams.initParams.set(initRest, { path: 'module1', guards: [Guard1] });
-    const appendsWithParams: AppendsWithParams = { path: 'module2', module: Module2, guards: [Guard2] };
+    const appendsWithParams: AppendsWithOptions = { path: 'module2', module: Module2, guards: [Guard2] };
 
     @initRest({ appends: [appendsWithParams] })
     @rootModule({ imports: [moduleWithParams] })

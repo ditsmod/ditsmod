@@ -1,4 +1,3 @@
-
 import { CorsExtension } from './cors.extension.js';
 
 describe('CorsExtension', () => {

@@ -9,6 +9,7 @@ sidebar_position: 2
 Модульна архітектура дозволяє ізолювати в одному модулі **декілька файлів коду**, що можуть мати різні ролі, але **спільну спеціалізацію**. Модуль можна порівняти з оркестром, в якому є різні інструменти, але усі вони створюють спільну музику. З іншого боку, потреба в ізоляції різних модулів виникає через те, що вони можуть мати різну спеціалізацію і через це - можуть заважати один-одному. Продовжуючи аналогію з людьми, якщо в одому кабінеті розмістити поліцію та музикантів, або брокерів і перекладачів, швидше за все, вони заважатимуть один-одному. Саме тому для модуля важлива **вузька спеціалізація**.
 
 Модулі є найбільшими будівельними блоками застосунку, і в їхніх метаданих можуть декларуватись такі складові як:
+
 - контролери, що приймають HTTP-запити та відправляють HTTP-відповіді;
 - сервіси, де описується бізнес логіка застосунку;
 - інтерсептори та ґарди, що дозволяють автоматизувати обробку HTTP-запитів по типовим патернам;
@@ -84,7 +85,7 @@ import { Service2 } from './service2.js';
 import { Service3 } from './service3.js';
 
 function useFactory(s2: Service2) {
-  return // ...
+  return; // ...
 }
 
 @restModule({
@@ -180,10 +181,10 @@ export class Module2 {}
 
 Як бачите, у попередньому прикладі імпортується на цей раз і не провайдер, і не модуль, а об'єкт. Цей об'єкт має наступний інтерфейс:
 
-#### ModuleWithParams {#ModuleWithParams}
+#### DynamicModule {#DynamicModule}
 
 ```ts
-interface ModuleWithParams {
+interface DynamicModule {
   id?: string;
   module: ModuleType<M>;
   /**
@@ -203,7 +204,7 @@ interface ModuleWithParams {
    */
   providersPerReq?: Providers | Provider[] = [];
   /**
-   * List of modules, `ModuleWithParams` or tokens of providers exported by this
+   * List of modules, `DynamicModule` or tokens of providers exported by this
    * module.
    */
   exports?: any[];
@@ -258,17 +259,17 @@ export class Module2 {}
 
 Статичні методи дозволяють спрощувати передачу параметрів модулів.
 
-Щоб TypeScript контролював, що саме повертає статичний метод для імпорту, рекомендується використовувати інтерфейс `ModuleWithParams`:
+Щоб TypeScript контролював, що саме повертає статичний метод для імпорту, рекомендується використовувати інтерфейс `DynamicModule`:
 
 ```ts
-import { ModuleWithParams } from '@ditsmod/core';
+import { DynamicModule } from '@ditsmod/core';
 // ...
 export class Module1 {
-  static withParams(someParams: SomeParams): ModuleWithParams<Module1> {
+  static withParams(someParams: SomeParams): DynamicModule<Module1> {
     return {
       module: this,
       // ...
-    }
+    };
   }
 }
 ```
@@ -291,7 +292,7 @@ export class Module1 {}
 ```ts
 // ...
 @restModule({
-  imports: [Module1]
+  imports: [Module1],
   // ...
 })
 export class Module2 {}
@@ -310,19 +311,19 @@ import { restModule } from '@ditsmod/rest';
 import { Module1 } from './module1.js';
 
 @restModule({
-  appends: [Module1]
+  appends: [Module1],
 })
 export class Module2 {}
 ```
 
-В даному випадку, якщо `Module2` має  path-префікс, він буде використовуватись у якості префіксу для усіх маршрутів, що є у `Module1`. Долучатись можуть лише ті модулі, що мають контролери. 
+В даному випадку, якщо `Module2` має path-префікс, він буде використовуватись у якості префіксу для усіх маршрутів, що є у `Module1`. Долучатись можуть лише ті модулі, що мають контролери.
 
 Також можна закріпити додатковий path-префікс за `Module1`:
 
 ```ts {3}
 // ...
 @restModule({
-  appends: [{ path: 'some-path', module: Module1 }]
+  appends: [{ path: 'some-path', module: Module1 }],
 })
 export class Module2 {}
 ```
@@ -355,15 +356,15 @@ export class Module2 {}
 
 Який у цьому сенс? - Тепер, якщо ви зробите імпорт `Module2` у якийсь інший модуль, ви фактично матимете імпортованим ще й `Module1`.
 
-Зверніть увагу! Якщо під час реекспорту ви імпортуєте об'єкт з інтерфейсом `ModuleWithParams`, цей же об'єкт потрібно й експортувати:
+Зверніть увагу! Якщо під час реекспорту ви імпортуєте об'єкт з інтерфейсом `DynamicModule`, цей же об'єкт потрібно й експортувати:
 
 ```ts
-import { ModuleWithParams } from '@ditsmod/core';
-import { restModule, RestModuleParams } from '@ditsmod/rest';
+import { DynamicModule } from '@ditsmod/core';
+import { restModule, RestModuleOptions } from '@ditsmod/rest';
 
 import { Module1 } from './module1.js';
 
-const firstModuleWithParams: ModuleWithParams & RestModuleParams = { path: 'some-path', module: Module1 };
+const firstModuleWithParams: DynamicModule & RestModuleOptions = { path: 'some-path', module: Module1 };
 
 @restModule({
   imports: [firstModuleWithParams],
@@ -386,7 +387,7 @@ class Service2 {}
 
 @restModule({
   providersPerMod: [Service1],
-  exports: [Service1]
+  exports: [Service1],
 })
 class Module1 {}
 
@@ -426,7 +427,7 @@ class Service2 {}
 
 @restModule({
   providersPerMod: [Service1],
-  exports: [Service1]
+  exports: [Service1],
 })
 class Module1 {}
 
@@ -438,14 +439,13 @@ class Module2 {}
 
 @restRootModule({
   imports: [Module1, Module2],
-  resolvedCollisionPerMod: [ [Service1, Module1] ]
+  resolvedCollisionPerMod: [[Service1, Module1]],
 })
 class Module3 {}
 ```
 
 Якщо `Module3` ви встановили за допомогою менеджера пакетів (npm, yarn, і т.д.), немає сенсу локально змінювати цей модуль щоб вирішити колізію. Така ситуація може виникнути лише якщо `Module1` та `Module2` експортуються з кореневого модуля, тому вам потрібно видалити один із цих модулів звідти. Ну і, звичайно ж, після цього вам прийдеться явно імпортувати видалений модуль у ті модулі, де він необхідний.
 
-
 [1]: /basic-components/dependency-injection/#injector-and-providers
 [2]: /basic-components/extensions
-[3]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) "Singleton"
+[3]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) 'Singleton'

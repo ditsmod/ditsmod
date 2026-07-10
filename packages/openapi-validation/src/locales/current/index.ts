@@ -6,6 +6,4 @@ import { AssertUkDict } from './uk/assert.dict.js';
 export { AssertUkDict };
 export { AssertDict };
 
-export const current: DictGroup[] = [
-  [AssertDict, AssertUkDict],
-];
+export const current: DictGroup[] = [[AssertDict, AssertUkDict]];

@@ -1,5 +1,5 @@
 import { Options } from 'ajv';
-import { featureModule, ModuleWithParams, Providers, Class } from '@ditsmod/core';
+import { featureModule, DynamicModule, Providers, Class } from '@ditsmod/core';
 import { PreRouterExtension, RestRouteExtension } from '@ditsmod/rest';
 import { DictGroup, Dictionary, I18nModule, I18nProviders, I18N_TRANSLATIONS } from '@ditsmod/i18n';
 import { BodyParserExtension } from '@ditsmod/body-parser';
@@ -24,7 +24,7 @@ import { ValidationExtension } from './validation.extension.js';
   ],
 })
 export class ValidationModule {
-  static withParams(current: DictGroup<Class<Dictionary>>[]): ModuleWithParams<ValidationModule> {
+  static withParams(current: DictGroup<Class<Dictionary>>[]): DynamicModule<ValidationModule> {
     return {
       module: this,
       providersPerMod: new I18nProviders().i18n({ current }),

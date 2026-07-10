@@ -2,7 +2,7 @@ import {
   clearDebugClassNames,
   featureModule,
   ModuleManager,
-  ModuleWithParams,
+  DynamicModule,
   NormalizedModuleMeta,
   SystemLogMediator,
   ModRefId,
@@ -11,7 +11,7 @@ import {
 import { CanActivate, guard } from '../interceptors/guard.js';
 import { controller } from '../types/controller.js';
 import { RequestContext } from '../services/request-context.js';
-import { AppendsWithParams, type RestModuleParams } from './rest-init-raw-meta.js';
+import { AppendsWithOptions, type RestModuleOptions } from './rest-init-raw-meta.js';
 import { initRest, restRootModule } from '#decorators/rest-init-hooks-and-metadata.js';
 
 let mock: MockModuleManager;
@@ -56,12 +56,12 @@ it('imports and appends with gruards for some modules', () => {
   @featureModule()
   class Module2 {}
 
-  const moduleWithParams: RestModuleParams & ModuleWithParams = {
+  const moduleWithParams: RestModuleOptions & DynamicModule = {
     path: 'module1',
     module: Module1,
     guards: [Guard1],
   };
-  const appendsWithParams: AppendsWithParams = {
+  const appendsWithParams: AppendsWithOptions = {
     path: 'module2',
     module: Module2,
     guards: [Guard2],

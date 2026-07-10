@@ -2,7 +2,7 @@ import type { AnyObj, ModuleType, Class, ModRefId } from '@ditsmod/core';
 import { Provider, MultiProvider, NormalizedInitMeta } from '@ditsmod/core';
 
 import type { NormalizedGuard } from '#interceptors/guard.js';
-import type { AppendsWithParams } from '#init/rest-init-raw-meta.js';
+import type { AppendsWithOptions } from '#init/rest-init-raw-meta.js';
 
 class NormalizedParams {
   declare path?: string;
@@ -11,10 +11,10 @@ class NormalizedParams {
 }
 
 export class RestInitMeta extends NormalizedInitMeta {
-  appendsWithParams: AppendsWithParams[] = [];
+  appendsWithParams: AppendsWithOptions[] = [];
   appendsModules: ModuleType[] = [];
   controllers: Class<Record<string | symbol, any>>[] = [];
   params = new NormalizedParams();
 }
 
-export type RestModRefId<T extends AnyObj = AnyObj> = ModRefId | AppendsWithParams<T>;
+export type RestModRefId<T extends AnyObj = AnyObj> = ModRefId | AppendsWithOptions<T>;

@@ -1,17 +1,19 @@
 import { DecoratorAndValue } from '#di/top/decorator-and-value.js';
 import type { AnyObj, RequireProps } from '#types/mix.js';
-import type { ModuleWithParams } from '#decorators/module-decorator-options.js';
+import type { DynamicModule } from '#decorators/module-decorator-options.js';
 import { ModuleDecoratorOptions } from '#decorators/module-decorator-options.js';
 import { InitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { NormalizedModuleMeta } from '#init/base-meta.js';
 import { RootDecoratorOptions } from './root-module.js';
 
-export function isParamsWithMwp(arg?: AnyObj): arg is { mwp: ModuleWithParams } {
-  return isModuleWithParams((arg as { mwp: ModuleWithParams } | undefined)?.mwp);
+export function isParamsWithDynamicModule(arg?: AnyObj): arg is { dynamicModule: DynamicModule } {
+  return isDynamicModule((arg as { dynamicModule: DynamicModule } | undefined)?.dynamicModule);
 }
 
 export function isRootModule(decorAndVal?: DecoratorAndValue): decorAndVal is DecoratorAndValue<RootDecoratorOptions>;
-export function isRootModule(normalizedModuleMeta?: NormalizedModuleMeta): normalizedModuleMeta is NormalizedModuleMeta<RootDecoratorOptions>;
+export function isRootModule(
+  normalizedModuleMeta?: NormalizedModuleMeta,
+): normalizedModuleMeta is NormalizedModuleMeta<RootDecoratorOptions>;
 export function isRootModule(decoratorOptions?: AnyObj): decoratorOptions is RootDecoratorOptions;
 export function isRootModule(
   arg?: DecoratorAndValue | RootDecoratorOptions | NormalizedModuleMeta,
@@ -33,7 +35,9 @@ export function isRootModule(
 }
 
 export function isFeatureModule(arg?: DecoratorAndValue): arg is DecoratorAndValue<ModuleDecoratorOptions>;
-export function isFeatureModule(normalizedModuleMeta?: NormalizedModuleMeta): normalizedModuleMeta is NormalizedModuleMeta<ModuleDecoratorOptions>;
+export function isFeatureModule(
+  normalizedModuleMeta?: NormalizedModuleMeta,
+): normalizedModuleMeta is NormalizedModuleMeta<ModuleDecoratorOptions>;
 export function isFeatureModule(arg?: AnyObj): arg is ModuleDecoratorOptions;
 export function isFeatureModule(
   arg?: DecoratorAndValue | ModuleDecoratorOptions | NormalizedModuleMeta,
@@ -84,6 +88,6 @@ export function hasDeclaredInDir(
   return Boolean(decoratorAndValue?.declaredInDir) && decoratorAndValue?.declaredInDir != '.';
 }
 
-export function isModuleWithParams(modRefId?: AnyObj): modRefId is ModuleWithParams {
-  return (modRefId as ModuleWithParams)?.module !== undefined;
+export function isDynamicModule(modRefId?: AnyObj): modRefId is DynamicModule {
+  return (modRefId as DynamicModule)?.module !== undefined;
 }

@@ -277,7 +277,15 @@ export class PreRouterExtension implements Extension<void> {
           levels.push('providersPerReq');
         }
         const levelNames = levels.join(' and ');
-        throw new GuardNotFound(g.normalizedModuleMeta.name, controllerName, g.guard.name, httpMethod, path, levelNames, perReq);
+        throw new GuardNotFound(
+          g.normalizedModuleMeta.name,
+          controllerName,
+          g.guard.name,
+          httpMethod,
+          path,
+          levelNames,
+          perReq,
+        );
       }
 
       const injectorPerMod = this.moduleManager.getInjectorPerMod(g.normalizedModuleMeta.modRefId, true);

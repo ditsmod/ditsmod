@@ -1,4 +1,4 @@
-import type { HttpMethod} from '@ditsmod/core';
+import type { HttpMethod } from '@ditsmod/core';
 import { getSymbol } from '@ditsmod/core';
 import type { JsonOptions, RawOptions, TextOptions, UrlencodedOptions } from '@ts-stack/body-parser';
 

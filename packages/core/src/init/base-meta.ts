@@ -1,6 +1,6 @@
 import type { AnyObj, ModRefId, ModuleType } from '#types/mix.js';
 import type { AnyFn, Class, Provider } from '#di/top/types-and-models.js';
-import type { ModuleWithParams } from '../decorators/module-decorator-options.js';
+import type { DynamicModule } from '../decorators/module-decorator-options.js';
 import type { ExtensionConfig, ExtensionConfigBase } from '#extension/extension-providers-and-configs.js';
 import type { InitMetaMap, InitHooks, AllInitHooks } from '#decorators/init-hooks-and-metadata.js';
 import type { ExtensionClass } from '#extension/extension-types.js';
@@ -13,13 +13,13 @@ export class NormalizedInitMeta<A extends AnyObj = AnyObj> {
    */
   id?: string = '';
   importsModules: ModuleType[];
-  importsWithParams: ModuleWithParams[];
+  importsWithParams: DynamicModule[];
   providersPerApp: Provider[];
   providersPerMod: Provider[];
   providersPerRou: Provider[];
   providersPerReq: Provider[];
   exportsModules: ModuleType[];
-  exportsWithParams: ModuleWithParams[];
+  exportsWithParams: DynamicModule[];
   exportedProvidersPerMod: Provider[];
   exportedProvidersPerRou: Provider[];
   exportedProvidersPerReq: Provider[];
@@ -48,7 +48,10 @@ export class NormalizedInitMeta<A extends AnyObj = AnyObj> {
  * `InitMeta` refers to the extended interface of normalized data that provides init hooks. This is done to simplify
  * synchronization between {@link NormalizedModuleMeta} and the metadata from init decorators.
  */
-export function getProxyForInitMeta<T extends NormalizedInitMeta>(normalizedModuleMeta: NormalizedModuleMeta, InitMetaClass: Class<T>): T {
+export function getProxyForInitMeta<T extends NormalizedInitMeta>(
+  normalizedModuleMeta: NormalizedModuleMeta,
+  InitMetaClass: Class<T>,
+): T {
   return new Proxy(new InitMetaClass(), {
     get(meta, prop: keyof NormalizedModuleMeta, proxy) {
       if (Reflect.has(normalizedModuleMeta, prop)) {

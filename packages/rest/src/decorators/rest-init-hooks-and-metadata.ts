@@ -1,7 +1,7 @@
 import type { ModRefId, NormalizedModuleMeta, InitDecorator, Provider, ForwardRefFn, ModuleType } from '@ditsmod/core';
 import { Reflector, InitHooks } from '@ditsmod/core';
 
-import type { RestInitDecoratorOptions, RestModuleParams } from '#init/rest-init-raw-meta.js';
+import type { RestInitDecoratorOptions, RestModuleOptions } from '#init/rest-init-raw-meta.js';
 import { RestModuleNormalizer } from '#init/rest-module-normalizer.js';
 import { RestShallowModulesImporter } from '#init/rest-shallow-modules-importer.js';
 import type {
@@ -15,14 +15,14 @@ import type { RestAppProviders } from '#types/types.js';
 import { RestModule } from '#init/rest.module.js';
 import { RestDeepModulesImporter } from '#init/rest-deep-modules-importer.js';
 
-export const initRest: InitDecorator<RestInitDecoratorOptions, RestModuleParams, RestInitMeta> =
+export const initRest: InitDecorator<RestInitDecoratorOptions, RestModuleOptions, RestInitMeta> =
   Reflector.makeClassDecorator(transformInitMeta, 'initRest');
 export const restRootModule: InitDecorator<
   RestInitDecoratorOptions & { resolvedCollisionPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][] },
-  RestModuleParams,
+  RestModuleOptions,
   RestInitMeta
 > = Reflector.makeClassDecorator(transformRootMeta, 'restRootModule', initRest);
-export const restModule: InitDecorator<RestInitDecoratorOptions, RestModuleParams, RestInitMeta> =
+export const restModule: InitDecorator<RestInitDecoratorOptions, RestModuleOptions, RestInitMeta> =
   Reflector.makeClassDecorator(transformFeatureMeta, 'restModule', initRest);
 
 export function transformInitMeta(data?: RestInitDecoratorOptions): InitHooks<RestInitDecoratorOptions> {

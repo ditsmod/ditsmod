@@ -8,7 +8,7 @@ export class CorsService {
   constructor(
     @ctx(RAW_REQ) private rawReq: RawRequest,
     @ctx(RAW_RES) private rawRes: RawResponse,
-    @optional() private corsOptions?: CorsOptions
+    @optional() private corsOptions?: CorsOptions,
   ) {}
 
   setCookie(name: string, value?: any, opts?: CookieOptions) {

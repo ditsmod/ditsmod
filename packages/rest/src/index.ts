@@ -5,12 +5,12 @@ export { RestAppInitializer } from './init/rest-app-initializer.js';
 export { DefaultRouter, PathParam, RouteHandler, Router, RouterReturns } from './services/router.js';
 export { Tree } from './services/tree.js';
 export {
-  AppendsWithParams,
-  AppendsWithParams1,
-  AppendsWithParams2,
-  BaseAppendsWithParams,
+  AppendsWithOptions,
+  AppendsWithOptions1,
+  AppendsWithOptions2,
+  BaseAppendsWithOptions,
   RestInitDecoratorOptions,
-  RestModuleParams,
+  RestModuleOptions,
 } from './init/rest-init-raw-meta.js';
 export { RouteParam, MetadataPerMod3, RedirectStatusCodes } from './types/types.js';
 export { RestShallowImports, RestMetadataPerMod2 } from '#init/types.js';
@@ -22,7 +22,13 @@ export { UseInterceptorExtension } from './extensions/use-interceptor.extension.
 export { initRest, restRootModule, restModule } from './decorators/rest-init-hooks-and-metadata.js';
 export { RestInitMeta } from './init/rest-init-meta.js';
 export { route, RouteMetadata } from './decorators/route.js';
-export { isRoute, isInterceptor, isAppendsWithParams, isCtrlDecor, isHttp2SecureServerOptions } from './types/type.guards.js';
+export {
+  isRoute,
+  isInterceptor,
+  isAppendsWithOptions,
+  isCtrlDecor,
+  isHttp2SecureServerOptions,
+} from './types/type.guards.js';
 export { RouteMeta } from './types/route-data.js';
 export { ControllerMetadata } from './types/controller-metadata.js';
 export {
@@ -59,8 +65,16 @@ export {
 } from './top/constants.js';
 export { applyResponse, applyHeaders } from './utils/apply-web-response.js';
 export { RawRequest, RawResponse, RequestListener } from './services/request.js';
-export { createHelperForGuardWithParams, HelperForGuardWithParams } from './utils/create-helper-for-guards-with-params.js';
-export { controller, ControllerDecoratorOptions, ControllerDecoratorOptions1, ControllerDecoratorOptions2 } from './types/controller.js';
+export {
+  createHelperForGuardWithParams,
+  HelperForGuardWithParams,
+} from './utils/create-helper-for-guards-with-params.js';
+export {
+  controller,
+  ControllerDecoratorOptions,
+  ControllerDecoratorOptions1,
+  ControllerDecoratorOptions2,
+} from './types/controller.js';
 export { defaultProvidersPerReq } from './providers/default-providers-per-req.js';
 export { HttpErrorHandler } from './services/http-error-handler.js';
 export { defaultProvidersPerRou } from './providers/default-providers-per-rou.js';

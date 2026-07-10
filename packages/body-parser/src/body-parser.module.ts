@@ -1,4 +1,4 @@
-import { ModuleWithParams } from '@ditsmod/core';
+import { DynamicModule } from '@ditsmod/core';
 import { PreRouterExtension, RestRouteExtension, restModule } from '@ditsmod/rest';
 import { BodyParserGroup } from '@ts-stack/body-parser';
 import { Multer } from '@ts-stack/multer';
@@ -40,7 +40,7 @@ import { RouteScopedMulterParser } from './multer-ctx.parser.js';
   exports: [RouteScopedMulterParser, BodyParserGroup, MulterParser],
 })
 export class BodyParserModule {
-  static withParams(config: BodyParserConfig): ModuleWithParams<BodyParserModule> {
+  static withParams(config: BodyParserConfig): DynamicModule<BodyParserModule> {
     return {
       module: this,
       providersPerMod: [{ token: BodyParserConfig, useValue: config }],

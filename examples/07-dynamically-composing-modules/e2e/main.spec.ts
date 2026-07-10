@@ -44,7 +44,7 @@ describe('07-dynamically-composing-modules', () => {
     const { status, body, type } = await testAgent.get('/add-3');
     expect(status).toBe(500);
     expect(type).toBe('application/json');
-    const expectStr = expect.stringContaining('ThirdModule-WithParams failed: this module should have');
+    const expectStr = expect.stringContaining('ThirdModule-DynamicModule failed: this module should have');
     expect(body).toEqual({ error: expectStr, code: 'NormalizationFailed' });
   });
 

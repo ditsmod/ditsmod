@@ -4,7 +4,7 @@ import type {
   Class,
   AnyFn,
   InitDecoratorOptions,
-  FeatureModuleParams,
+  DynamicModuleOptions,
   ForwardRefFn,
 } from '@ditsmod/core';
 import type { GuardItem } from '#interceptors/guard.js';
@@ -12,45 +12,45 @@ import type { GuardItem } from '#interceptors/guard.js';
 /**
  * Metadata for the `initRest` decorator, which adds REST metadata to a `featureModule` or `rootModule`.
  */
-export interface RestInitDecoratorOptions extends InitDecoratorOptions<RestModuleParams> {
+export interface RestInitDecoratorOptions extends InitDecoratorOptions<RestModuleOptions> {
   /**
    * List of modules that contain controllers. Providers from these modules
    * are not imported into the current module. If the current module has a prefix path,
    * that path will be added to each controller route from the appended modules.
    */
-  appends?: Array<ModuleType | AppendsWithParams | ForwardRefFn<ModuleType>>;
+  appends?: Array<ModuleType | AppendsWithOptions | ForwardRefFn<ModuleType>>;
   /**
    * The application controllers.
    */
   controllers?: Class[];
 }
 
-export type RestModuleParams = RestModuleParams1 | RestModuleParams2;
+export type RestModuleOptions = RestModuleOptions1 | RestModuleOptions2;
 
-export interface BaseRestModuleParams extends FeatureModuleParams {
+export interface BaseRestModuleOptions extends DynamicModuleOptions {
   /**
-   * List of modules, `RestModuleParams` or tokens of providers exported by this
+   * List of modules, `RestModuleOptions` or tokens of providers exported by this
    * module.
    */
   exports?: any[];
   guards?: GuardItem[];
 }
 
-export interface RestModuleParams1 extends BaseRestModuleParams {
+export interface RestModuleOptions1 extends BaseRestModuleOptions {
   path?: string;
   absolutePath?: never;
 }
 
-export interface RestModuleParams2 extends BaseRestModuleParams {
+export interface RestModuleOptions2 extends BaseRestModuleOptions {
   absolutePath?: string;
   path?: never;
 }
 /**
  * Used for module metadata, for `appends` array.
  */
-export type AppendsWithParams<T extends AnyObj = AnyObj> = AppendsWithParams1<T> | AppendsWithParams2<T>;
+export type AppendsWithOptions<T extends AnyObj = AnyObj> = AppendsWithOptions1<T> | AppendsWithOptions2<T>;
 
-export interface BaseAppendsWithParams<T extends AnyObj = AnyObj> {
+export interface BaseAppendsWithOptions<T extends AnyObj = AnyObj> {
   /**
    * The module ID.
    */
@@ -60,12 +60,12 @@ export interface BaseAppendsWithParams<T extends AnyObj = AnyObj> {
   initParams?: Map<AnyFn, any>;
 }
 
-export interface AppendsWithParams1<T extends AnyObj = AnyObj> extends BaseAppendsWithParams<T> {
+export interface AppendsWithOptions1<T extends AnyObj = AnyObj> extends BaseAppendsWithOptions<T> {
   path?: string;
   absolutePath?: never;
 }
 
-export interface AppendsWithParams2<T extends AnyObj = AnyObj> extends BaseAppendsWithParams<T> {
+export interface AppendsWithOptions2<T extends AnyObj = AnyObj> extends BaseAppendsWithOptions<T> {
   absolutePath?: string;
   path?: never;
 }

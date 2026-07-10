@@ -18,7 +18,7 @@ export class AssertUkDict extends AssertDict {
     param: string,
     actual: number | string,
     min: number | string,
-    max: number | string = 'unknown'
+    max: number | string = 'unknown',
   ) {
     return `Невірний цифровий параметр '${param}': число повинно бути в межах від ${min} до ${max} (зараз ${actual})`;
   }
@@ -29,7 +29,7 @@ export class AssertUkDict extends AssertDict {
     param: string,
     actual: number | string,
     min: number | string,
-    max: number | string = 'unknown'
+    max: number | string = 'unknown',
   ) {
     return `Невірний текстовий параметр '${param}': текст повинен бути в межах від ${min} до ${max} символів (зараз ${actual})`;
   }
@@ -46,7 +46,7 @@ export class AssertUkDict extends AssertDict {
     param: string,
     actual: number | string,
     min: number | string,
-    max: number | string = 'unknown'
+    max: number | string = 'unknown',
   ) {
     return `Закороткий масив '${param}': він повинен містити від ${min} до ${max} елементів (зараз ${actual})`;
   }

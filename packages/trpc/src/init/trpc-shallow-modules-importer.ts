@@ -1,5 +1,5 @@
 import type { ModRefId, ModuleManager, NormalizedModuleMeta, AppProviders } from '@ditsmod/core';
-import { isModuleWithParams, getProxyForInitMeta } from '@ditsmod/core';
+import { isDynamicModule, getProxyForInitMeta } from '@ditsmod/core';
 
 import type {
   ImportModulesShallowConfig,
@@ -74,7 +74,10 @@ export class TrpcShallowModulesImporter {
     this.moduleName = normalizedModuleMeta.name;
     this.guards1 = guards1 || [];
     this.unfinishedScanModules = unfinishedScanModules;
-    this.importModules([...this.normalizedModuleMeta.importsModules, ...this.normalizedModuleMeta.importsWithParams], true);
+    this.importModules(
+      [...this.normalizedModuleMeta.importsModules, ...this.normalizedModuleMeta.importsWithParams],
+      true,
+    );
 
     return this.shallowImportsMap.set(modRefId, {
       normalizedModuleMeta,
@@ -117,7 +120,7 @@ export class TrpcShallowModulesImporter {
 
   protected getPrefixAndGuards(modRefId: TrpcModRefId, meta: TrpcInitMeta, isImport?: boolean) {
     let guards1: GuardPerMod1[] = [];
-    const hasModuleParams = isModuleWithParams(modRefId);
+    const hasModuleParams = isDynamicModule(modRefId);
     if (hasModuleParams || !isImport) {
       const impGuradsPerMod1 = meta.params.guards.map<GuardPerMod1>((g) => {
         return {

@@ -22,7 +22,7 @@ import {
   InitDecorator,
   Reflector,
   InitDecoratorOptions,
-  FeatureModuleParams,
+  DynamicModuleOptions,
   NormalizedInitMeta,
   NormalizedModuleMeta,
   RootDecoratorOptions,
@@ -47,7 +47,7 @@ class SomeInitHooks extends InitHooks<InitDecoratorOptions> {
 /**
  * An object with this type will be passed in the module metadata as a so-called "module with parameters".
  */
-interface InitParams extends FeatureModuleParams {
+interface InitParams extends DynamicModuleOptions {
   path?: string;
   num?: number;
 }

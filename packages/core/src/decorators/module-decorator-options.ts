@@ -30,12 +30,12 @@ export class ModuleDecoratorOptions<T extends AnyObj = AnyObj> {
    */
   declare providersPerReq?: Providers | (Provider | ForwardRefFn<Provider>)[];
   /**
-   * List of modules or `ModuleWithParams` imported by this module.
+   * List of modules or `DynamicModule` imported by this module.
    * Also you can imports modules and set some prefix per each the module.
    */
   declare imports?: (ModRefId | ForwardRefFn<ModuleType>)[];
   /**
-   * List of modules, {@link ModuleWithParams} or tokens of providers exported by this
+   * List of modules, {@link DynamicModule} or tokens of providers exported by this
    * module.
    */
   declare exports?: any[];
@@ -66,19 +66,16 @@ export class ModuleDecoratorOptions<T extends AnyObj = AnyObj> {
   declare resolvedCollisionPerReq?: [any, ModRefId | ForwardRefFn<ModuleType>][];
 }
 
-export interface BaseModuleWithParams<M extends AnyObj = AnyObj> {
+export interface DynamicModuleBase<M extends AnyObj = AnyObj> {
   /**
    * The module ID.
    */
   id?: string;
   module: ModuleType<M> | ForwardRefFn<ModuleType<M>>;
 }
-/**
- * Metadata with this type is created when the `parentMeta: NormalizedModuleMeta` property is added to `BaseModuleWithParams`.
- */
-export interface FeatureModuleParams<E extends AnyObj = AnyObj> extends Partial<ProvidersOnly> {
+export interface DynamicModuleOptions<E extends AnyObj = AnyObj> extends Partial<ProvidersOnly> {
   /**
-   * List of modules, `ModuleWithParams` or tokens of providers exported by this
+   * List of modules, `DynamicModule` or tokens of providers exported by this
    * module.
    */
   exports?: any[];
@@ -93,16 +90,16 @@ export interface FeatureModuleParams<E extends AnyObj = AnyObj> extends Partial<
  * An object with this type is passed into the `imports` array of
  * the module with the `featureModule` or `rootModule` decorator.
  */
-export interface ModuleWithParams<M extends AnyObj = AnyObj> extends BaseModuleWithParams<M>, FeatureModuleParams {
+export interface DynamicModule<M extends AnyObj = AnyObj> extends DynamicModuleBase<M>, DynamicModuleOptions {
   /**
    * If the current module has this property populated, this means it was used in the context of init decorators.
    */
   initParams?: InitParamsMap;
 }
 /**
- * This interface differs from `ModuleWithParams` only in that it requires the presence of the `initParams` property.
- * It is convenient to use in static module methods that return `ModuleWithParams`.
+ * This interface differs from `DynamicModule` only in that it requires the presence of the `initParams` property.
+ * It is convenient to use in static module methods that return `DynamicModule`.
  */
-export interface ModuleWithInitParams<M extends AnyObj = AnyObj> extends ModuleWithParams<M> {
+export interface DynamicModuleWithInit<M extends AnyObj = AnyObj> extends DynamicModule<M> {
   initParams: InitParamsMap;
 }

@@ -3,7 +3,7 @@ import type { ShallowImports } from '#init/types.js';
 import type { SystemLogMediator } from '#logger/system-log-mediator.js';
 import type { AnyObj, ModRefId, ModuleType } from '#types/mix.js';
 import type { AnyFn, Provider } from '#di/top/types-and-models.js';
-import type { ModuleWithParams, ModuleDecoratorOptions } from '#decorators/module-decorator-options.js';
+import type { DynamicModule, ModuleDecoratorOptions } from '#decorators/module-decorator-options.js';
 import type { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import type { featureModule } from './feature-module.js';
 import type { rootModule } from './root-module.js';
@@ -78,7 +78,11 @@ export class InitHooks<T1 extends InitDecoratorOptions = InitDecoratorOptions> {
    * This method gets metadata from {@link rootModule} decorator to collect
    * providers from the {@link ModuleDecoratorOptions.exports | exports } property.
    */
-  exportAppProviders(config: { moduleManager: ModuleManager; appProviders: AppProviders; normalizedModuleMeta: NormalizedModuleMeta }) {
+  exportAppProviders(config: {
+    moduleManager: ModuleManager;
+    appProviders: AppProviders;
+    normalizedModuleMeta: NormalizedModuleMeta;
+  }) {
     return new AppInitHooks();
   }
 
@@ -167,7 +171,7 @@ import {
   InitDecorator,
   featureModule,
   InitHooks,
-  ModuleWithInitParams,
+  DynamicModuleWithInit,
 } from '@ditsmod/core';
 
 interface RootDecoratorOptions {
@@ -187,7 +191,7 @@ export const initSome: InitDecorator<RootDecoratorOptions, { path?: string }, In
 
 @featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
 class Module1 {
-  static withParams(): ModuleWithInitParams<Module1> {
+  static withParams(): DynamicModuleWithInit<Module1> {
     return {
       module: this,
       initParams: new Map(),
@@ -213,13 +217,13 @@ export interface InitDecorator<T extends InitDecoratorOptions, ModuleParams, Ini
 }
 
 /**
- * MWP - this is module with parameters.
+ * Dynamic module wrapper with additional custom options.
  */
-export interface ParamsWithMwp {
+export interface ParamsWithDynamicModule {
   /**
-   * Module with parameters.
+   * Dynamic module.
    */
-  mwp: ModuleWithParams;
+  dynamicModule: DynamicModule;
   module?: never;
 }
 
@@ -227,5 +231,5 @@ export interface InitDecoratorOptions<InitParams extends object = object> extend
   ModuleDecoratorOptions,
   'imports'
 > {
-  imports?: (((ParamsWithMwp | ModuleWithParams) & InitParams) | ModuleType | ForwardRefFn<ModuleType>)[];
+  imports?: (((ParamsWithDynamicModule | DynamicModule) & InitParams) | ModuleType | ForwardRefFn<ModuleType>)[];
 }

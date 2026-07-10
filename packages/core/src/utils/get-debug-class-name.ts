@@ -1,6 +1,6 @@
 import { resolveForwardRef, type ForwardRefFn } from '#di/forward-ref.js';
 import type { ModRefId, ModuleType } from '#types/mix.js';
-import { isModuleWithParams } from '#decorators/type-guards.js';
+import { isDynamicModule } from '#decorators/type-guards.js';
 
 const debugClassNames = new WeakMap<ModRefId, string>();
 const debugClassNameCounters = new Map<string, number>();
@@ -9,7 +9,7 @@ const debugClassNameCounters = new Map<string, number>();
  * Returns unique names (at the process level) for given
  * classes in a Ditsmod application. If, for example, two modules with
  * the same name are imported, this function will add an index to the name
- * of the second module, separated by a hyphen. Each import of `ModuleWithParams`
+ * of the second module, separated by a hyphen. Each import of `DynamicModule`
  * is distinguished by the reference to the object.
  *
  * Returns `undefined` if the passed argument is not a class and is not a module with parameters.
@@ -28,8 +28,8 @@ export function getDebugClassName(modRefId: string | ModRefId | ForwardRefFn<Mod
   if (debugClassName) return debugClassName;
 
   let className: string;
-  if (isModuleWithParams(modRefId)) {
-    className = modRefId.id || `${resolveForwardRef(modRefId.module).name}-WithParams`;
+  if (isDynamicModule(modRefId)) {
+    className = modRefId.id || `${resolveForwardRef(modRefId.module).name}-DynamicModule`;
   } else {
     className = modRefId.name;
   }

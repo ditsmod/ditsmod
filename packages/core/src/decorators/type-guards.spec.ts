@@ -1,7 +1,7 @@
 import { featureModule } from '#decorators/feature-module.js';
-import { isFeatureModule, isModuleWithParams, isRootModule } from '#decorators/type-guards.js';
+import { isFeatureModule, isDynamicModule, isRootModule } from '#decorators/type-guards.js';
 import { rootModule } from '#decorators/root-module.js';
-import { ModuleDecoratorOptions, ModuleWithParams } from '#decorators/module-decorator-options.js';
+import { ModuleDecoratorOptions, DynamicModule } from '#decorators/module-decorator-options.js';
 import { NormalizedModuleMeta } from '#init/base-meta.js';
 import { InitHooks } from './init-hooks-and-metadata.js';
 import { Reflector } from '#di/reflector.js';
@@ -99,18 +99,18 @@ describe('type guards', () => {
     });
   });
 
-  describe('isModuleWithParams', () => {
+  describe('isDynamicModule', () => {
     it('module without params', () => {
       @featureModule({})
       class Module1 {}
 
-      expect(isModuleWithParams(Module1)).toBe(false);
+      expect(isDynamicModule(Module1)).toBe(false);
     });
 
     it('module with params', () => {
       @featureModule({})
       class Module1 {
-        static withParams(): ModuleWithParams<Module1> {
+        static withParams(): DynamicModule<Module1> {
           return {
             module: Module1,
             providersPerMod: [],
@@ -119,7 +119,7 @@ describe('type guards', () => {
       }
 
       const modObj = Module1.withParams();
-      expect(isModuleWithParams(modObj)).toBe(true);
+      expect(isDynamicModule(modObj)).toBe(true);
     });
   });
 });

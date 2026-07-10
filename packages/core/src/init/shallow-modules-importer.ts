@@ -195,7 +195,9 @@ export class ShallowModulesImporter {
   }
 
   protected importModules() {
-    const aModRefIds = this.normalizedModuleMeta.importsModules.concat(this.normalizedModuleMeta.importsWithParams as any[]) as ModRefId[];
+    const aModRefIds = this.normalizedModuleMeta.importsModules.concat(
+      this.normalizedModuleMeta.importsWithParams as any[],
+    ) as ModRefId[];
     for (const modRefId of aModRefIds) {
       const normalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(modRefId, true);
       this.importProvidersAndExtensions(normalizedModuleMeta);
@@ -251,8 +253,14 @@ export class ShallowModulesImporter {
       this.importedMultiProvidersPerReq.set(modRefId, normalizedModuleMeta1.exportedMultiProvidersPerReq);
     }
     if (normalizedModuleMeta1.exportedExtensionProviders.length) {
-      this.importedExtensionProviders.set(normalizedModuleMeta1.modRefId, normalizedModuleMeta1.exportedExtensionProviders);
-      this.importedExtensionGroupTokens.set(normalizedModuleMeta1.modRefId, normalizedModuleMeta1.mExportedExtensionAsGroupToken);
+      this.importedExtensionProviders.set(
+        normalizedModuleMeta1.modRefId,
+        normalizedModuleMeta1.exportedExtensionProviders,
+      );
+      this.importedExtensionGroupTokens.set(
+        normalizedModuleMeta1.modRefId,
+        normalizedModuleMeta1.mExportedExtensionAsGroupToken,
+      );
       this.aImportedExtensionConfig.push(...normalizedModuleMeta1.aExportedExtensionConfig);
     }
     this.throwIfTryResolvingMultiprovidersCollisions(normalizedModuleMeta1.name);
@@ -312,14 +320,18 @@ export class ShallowModulesImporter {
   }
 
   protected getResolvedCollisionPerLevel(level: Level, token1: any) {
-    const [token2, modRefId2] = this.normalizedModuleMeta[`resolvedCollisionPer${level}`].find(([token2]) => token1 === token2)!;
+    const [token2, modRefId2] = this.normalizedModuleMeta[`resolvedCollisionPer${level}`].find(
+      ([token2]) => token1 === token2,
+    )!;
     const moduleName = getDebugClassName(modRefId2) || '""';
     const tokenName = token2.name || token2;
     const normalizedModuleMeta2 = this.moduleManager.getNormalizedModuleMeta(modRefId2);
     if (!normalizedModuleMeta2) {
       throw new ResolvingCollisionNotImportedInApplication(this.moduleName, moduleName, level, tokenName);
     }
-    const providers = getLastProviders(normalizedModuleMeta2[`providersPer${level}`]).filter((p) => getToken(p) === token2);
+    const providers = getLastProviders(normalizedModuleMeta2[`providersPer${level}`]).filter(
+      (p) => getToken(p) === token2,
+    );
     if (!providers.length) {
       throw new ResolvingCollisionNotExistsOnThisLevel(this.moduleName, moduleName, level, tokenName);
     }
@@ -381,14 +393,21 @@ export class ShallowModulesImporter {
         const collision = importedTokens.includes(token) && ![...declaredTokens, ...resolvedTokens].includes(token);
         if (collision) {
           const providerImport = this[`importedProvidersPer${level}`].get(token)!;
-          const hostModulePath = this.moduleManager.getNormalizedModuleMeta(providerImport.modRefId)?.declaredInDir || '.';
+          const hostModulePath =
+            this.moduleManager.getNormalizedModuleMeta(providerImport.modRefId)?.declaredInDir || '.';
           const decorAndVal = Reflector.getClassLevelMeta(token, hasDeclaredInDir)?.at(0);
           const collisionWithPath = decorAndVal?.declaredInDir || '.';
           if (hostModulePath !== '.' && collisionWithPath !== '.' && collisionWithPath.startsWith(hostModulePath)) {
             // Allow collisions in host modules.
           } else {
             const hostModuleName = getDebugClassName(providerImport.modRefId) || 'unknown';
-            throw new ProvidersCollision(this.moduleName, [token], [hostModuleName], level, this.normalizedModuleMeta.isExternal);
+            throw new ProvidersCollision(
+              this.moduleName,
+              [token],
+              [hostModuleName],
+              level,
+              this.normalizedModuleMeta.isExternal,
+            );
           }
         }
         this.resolveCollisionsWithLevelsMix(token, level, resolvedTokens);
@@ -398,7 +417,9 @@ export class ShallowModulesImporter {
 
   protected resolveCollisionsWithLevelsMix(token1: any, level: Level, resolvedTokens: any[]) {
     if (resolvedTokens.includes(token1)) {
-      const [, module2] = this.normalizedModuleMeta[`resolvedCollisionPer${level}`].find(([token2]) => token1 === token2)!;
+      const [, module2] = this.normalizedModuleMeta[`resolvedCollisionPer${level}`].find(
+        ([token2]) => token1 === token2,
+      )!;
       if (this.normalizedModuleMeta.modRefId === module2) {
         if (!this[`importedProvidersPer${level}`].delete(token1)) {
           const tokenName = token1.name || token1;

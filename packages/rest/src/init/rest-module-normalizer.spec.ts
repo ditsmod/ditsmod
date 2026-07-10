@@ -3,8 +3,8 @@ import {
   featureModule,
   forwardRef,
   ModuleManager,
-  ModuleWithInitParams,
-  ModuleWithParams,
+  DynamicModuleWithInit,
+  DynamicModule,
   Providers,
   rootModule,
   SystemLogMediator,
@@ -15,7 +15,7 @@ import { initRest, restRootModule } from '#decorators/rest-init-hooks-and-metada
 import { controller } from '#types/controller.js';
 import { CanActivate, NormalizedGuard } from '#interceptors/guard.js';
 import { RequestContext } from '#services/request-context.js';
-import { AppendsWithParams } from './rest-init-raw-meta.js';
+import { AppendsWithOptions } from './rest-init-raw-meta.js';
 import { RestModule } from './rest.module.js';
 import { NormalizationFailed, ReexportFailed } from '@ditsmod/core/errors';
 
@@ -37,7 +37,7 @@ describe('rest ModuleNormalizer', () => {
 
     @featureModule({ providersPerApp: [Service0] })
     class Module1 {
-      static withParams(): ModuleWithInitParams<Module1> {
+      static withParams(): DynamicModuleWithInit<Module1> {
         return {
           module: this,
           initParams: new Map(),
@@ -50,7 +50,7 @@ describe('rest ModuleNormalizer', () => {
 
     const moduleWithParams = Module1.withParams();
     moduleWithParams.initParams.set(initRest, { path: 'test1' });
-    const appendWithParams: AppendsWithParams = { module: Module2, path: 'test2' };
+    const appendWithParams: AppendsWithOptions = { module: Module2, path: 'test2' };
 
     // Although in `AppModule` `appendWithParams` and `moduleWithParams` are used in the context of the `initRest` decorator, `Module1` and `Module2`
     // themselves do not have this decorator, so it's important that `Module1` and `Module2` are processed using the init hooks taken from `AppModule`.
@@ -85,7 +85,7 @@ describe('rest ModuleNormalizer', () => {
 
     @featureModule({ providersPerApp: [Service0] })
     class Module2 {
-      static withParams(id: string): ModuleWithInitParams<Module2> {
+      static withParams(id: string): DynamicModuleWithInit<Module2> {
         return {
           id,
           module: this,
@@ -111,8 +111,8 @@ describe('rest ModuleNormalizer', () => {
       module2WithParams.initParams.set(initRest, { path: 'test1' });
       return module2WithParams;
     });
-    const module4WithParams: ModuleWithParams = { module: forwardRef(() => Module4) };
-    const appendWithParams: AppendsWithParams = { module: forwardRef(() => Module6), path: 'test2' };
+    const module4WithParams: DynamicModule = { module: forwardRef(() => Module4) };
+    const appendWithParams: AppendsWithOptions = { module: forwardRef(() => Module6), path: 'test2' };
     @initRest({
       appends: [forwardRef(() => Module5), appendWithParams],
       providersPerRou: [
@@ -158,7 +158,9 @@ describe('rest ModuleNormalizer', () => {
     expect(meta3.params.path).toEqual('test2');
 
     expect(normalizedModuleMeta.importsModules).toEqual([Module1, RestModule]);
-    expect(normalizedModuleMeta.importsWithParams).toEqual([{ id: 'test-id', module: Module2, initParams: expect.any(Map) }]);
+    expect(normalizedModuleMeta.importsWithParams).toEqual([
+      { id: 'test-id', module: Module2, initParams: expect.any(Map) },
+    ]);
   });
 
   it('merge static metadata with append params', () => {
@@ -183,7 +185,7 @@ describe('rest ModuleNormalizer', () => {
     @featureModule()
     class Module1 {}
 
-    const appendsWithParams: AppendsWithParams = {
+    const appendsWithParams: AppendsWithOptions = {
       path: 'one',
       guards: [Guard1, [Guard2, { property1: 'some-value' }]],
       module: Module1,
@@ -242,7 +244,7 @@ describe('rest ModuleNormalizer', () => {
     })
     @featureModule({ providersPerMod: [Service5] })
     class Module1 {
-      static withParams(): ModuleWithInitParams<Module1> {
+      static withParams(): DynamicModuleWithInit<Module1> {
         return {
           module: this,
           initParams: new Map(),

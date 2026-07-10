@@ -2,7 +2,7 @@ import type { AnyObj, Class, DecoratorAndValue, ModRefId } from '@ditsmod/core';
 
 import { route } from '#decorators/route.js';
 import type { HttpInterceptor } from '#interceptors/tokens-and-types.js';
-import type { AppendsWithParams, RestModuleParams } from '#init/rest-init-raw-meta.js';
+import type { AppendsWithOptions, RestModuleOptions } from '#init/rest-init-raw-meta.js';
 import type { ControllerDecoratorOptions } from './controller.js';
 import { controller } from './controller.js';
 import type { Http2SecureServerOptions, ServerOptions } from './server-options.js';
@@ -21,12 +21,13 @@ export function isInterceptor(cls?: Class): cls is Class<HttpInterceptor> {
   return typeof (cls?.prototype as HttpInterceptor | undefined)?.intercept == 'function';
 }
 
-export function isAppendsWithParams(
-  modRefId?: ModRefId | RestModuleParams | AppendsWithParams,
-): modRefId is AppendsWithParams {
+export function isAppendsWithOptions(
+  modRefId?: ModRefId | RestModuleOptions | AppendsWithOptions,
+): modRefId is AppendsWithOptions {
   return (
-    (modRefId as AppendsWithParams)?.module !== undefined &&
-    ((modRefId as AppendsWithParams)?.path !== undefined || (modRefId as AppendsWithParams)?.absolutePath !== undefined)
+    (modRefId as AppendsWithOptions)?.module !== undefined &&
+    ((modRefId as AppendsWithOptions)?.path !== undefined ||
+      (modRefId as AppendsWithOptions)?.absolutePath !== undefined)
   );
 }
 

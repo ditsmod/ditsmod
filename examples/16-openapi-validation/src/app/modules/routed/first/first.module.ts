@@ -1,4 +1,4 @@
-import { InitParamsMap, ModuleWithInitParams } from '@ditsmod/core';
+import { InitParamsMap, DynamicModuleWithInit } from '@ditsmod/core';
 import { I18nProviders } from '@ditsmod/i18n';
 import { ValidationModule } from '@ditsmod/openapi-validation';
 import { BodyParserModule } from '@ditsmod/body-parser';
@@ -14,7 +14,7 @@ import { imported } from './locales/imported/index.js';
   controllers: [FirstController],
 })
 export class FirstModule {
-  static withPath(path?: string): ModuleWithInitParams<FirstModule> {
+  static withPath(path?: string): DynamicModuleWithInit<FirstModule> {
     const initParams: InitParamsMap = new Map();
     initParams.set(initRest, { path });
 

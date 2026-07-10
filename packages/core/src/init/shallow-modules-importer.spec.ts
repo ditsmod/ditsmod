@@ -379,7 +379,13 @@ describe('ShallowModulesImporter', () => {
       expect(tokensPerMod).toEqual([Provider0]);
 
       const mod2 = mock.shallowImportsMap.get(Module2);
-      expect(mod2?.normalizedModuleMeta.providersPerMod).toEqual([Provider4, Provider5, Provider6, Provider7, Provider8]);
+      expect(mod2?.normalizedModuleMeta.providersPerMod).toEqual([
+        Provider4,
+        Provider5,
+        Provider6,
+        Provider7,
+        Provider8,
+      ]);
 
       const tokensPerMod2 = getImportedTokens(mod2?.baseImportRegistry.perMod);
       expect(tokensPerMod2).toEqual([Provider0, Provider1, Provider2, Provider3]);

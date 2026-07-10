@@ -12,9 +12,15 @@ sidebar_position: 1
 
 ```ts
 const routes = new Map<string, Function>();
-routes.set('/some-path', function() { /** обробка запиту... **/ });
-routes.set('/other-path', function() { /** обробка запиту... **/ });
-routes.set('/path-with/:parameter', function() { /** обробка запиту... **/ });
+routes.set('/some-path', function () {
+  /** обробка запиту... **/
+});
+routes.set('/other-path', function () {
+  /** обробка запиту... **/
+});
+routes.set('/path-with/:parameter', function () {
+  /** обробка запиту... **/
+});
 // ...
 ```
 
@@ -33,7 +39,7 @@ if (handle) {
 }
 ```
 
-У більшості випадків, обробник запиту викликає метод контролера. 
+У більшості випадків, обробник запиту викликає метод контролера.
 
 ## Що являє собою REST-контролер {#what-is-a-rest-controller}
 
@@ -156,7 +162,7 @@ import { controller, route, RAW_REQ, RAW_RES, RawRequest, RawResponse } from '@d
 export class HelloWorldController {
   constructor(
     @ctx(RAW_REQ) private rawReq: RawRequest,
-    @ctx(RAW_RES) private rawRes: RawResponse
+    @ctx(RAW_RES) private rawRes: RawResponse,
   ) {}
 
   @route('GET', 'hello')
@@ -230,7 +236,7 @@ import { SomeController } from './some.controller.js';
 export class SomeModule {}
 ```
 
-Після прив'язки контролерів до хост-модуля, щоб Ditsmod брав їх до уваги у зовнішньому модулі, хост-модуль потрібно або прикріпити, або імпортувати у формі об'єкта, що має інтерфейс [ModuleWithParams][2]. В наступному прикладі показано і прикріплення, і повний імпорт хост-модуля (це зроблено лише щоб продемонструвати можливість, на практиці немає сенсу робити одночасне прикріплення з імпортом):
+Після прив'язки контролерів до хост-модуля, щоб Ditsmod брав їх до уваги у зовнішньому модулі, хост-модуль потрібно або прикріпити, або імпортувати у формі об'єкта, що має інтерфейс [DynamicModule][2]. В наступному прикладі показано і прикріплення, і повний імпорт хост-модуля (це зроблено лише щоб продемонструвати можливість, на практиці немає сенсу робити одночасне прикріплення з імпортом):
 
 ```ts {5,7}
 import { restModule } from '@ditsmod/rest';
@@ -239,7 +245,7 @@ import { SomeModule } from './some.module.js';
 @restModule({
   appends: [SomeModule],
   // OR
-  imports: [{ module: SomeModule, path: '' }]
+  imports: [{ module: SomeModule, path: '' }],
 })
 export class OtherModule {}
 ```
@@ -251,7 +257,7 @@ import { restModule } from '@ditsmod/rest';
 import { SomeModule } from './some.module.js';
 
 @restModule({
-  imports: [SomeModule]
+  imports: [SomeModule],
 })
 export class OtherModule {}
 ```
@@ -484,7 +490,7 @@ export class SomeModule {}
 Також, якщо ви імпортуєте певний провайдер із зовнішнього модуля, і у вас у поточному модулі є провайдер з таким же токеном, то локальний провайдер матиме вищій пріоритет, при умові, що вони передавались на однаковому рівні ієрархії інжекторів.
 
 [1]: /basic-components/modules/#import-module
-[2]: /basic-components/modules/#ModuleWithParams
+[2]: /basic-components/modules/#DynamicModule
 [3]: /basic-components/dependency-injection/#injector-and-providers
 [5]: /rest-application/native-modules/body-parser/#retrieving-the-request-body
 [6]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/rest/src/services/pre-router.ts

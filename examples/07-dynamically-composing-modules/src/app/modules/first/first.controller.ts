@@ -1,11 +1,11 @@
-import { BaseAppInitializer, ModuleManager, ModuleWithParams, skipSelf } from '@ditsmod/core';
-import { controller, route, RequestContext, RestModuleParams } from '@ditsmod/rest';
+import { BaseAppInitializer, ModuleManager, DynamicModule, skipSelf } from '@ditsmod/core';
+import { controller, route, RequestContext, RestModuleOptions } from '@ditsmod/rest';
 
 import { SecondModule } from '../second.module.js';
 import { ThirdModule } from '../third/third.module.js';
 
-const secondModuleWithParams: ModuleWithParams & RestModuleParams = { path: '', module: SecondModule };
-const thirdModuleWithParams: ModuleWithParams = { module: ThirdModule };
+const secondModuleWithParams: DynamicModule & RestModuleOptions = { path: '', module: SecondModule };
+const thirdModuleWithParams: DynamicModule = { module: ThirdModule };
 
 @controller()
 export class FirstController {

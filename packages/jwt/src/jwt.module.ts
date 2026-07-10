@@ -1,4 +1,4 @@
-import { featureModule, ModuleWithParams } from '@ditsmod/core';
+import { featureModule, DynamicModule } from '@ditsmod/core';
 import { initRest } from '@ditsmod/rest';
 
 import { JwtService } from './jwt.service.js';
@@ -11,7 +11,7 @@ import { JwtServiceOptions } from './models/jwt-service-options.js';
 })
 @featureModule()
 export class JwtModule {
-  static withParams(jwtServiceOptions: JwtServiceOptions): ModuleWithParams<JwtModule> {
+  static withParams(jwtServiceOptions: JwtServiceOptions): DynamicModule<JwtModule> {
     return {
       module: this,
       providersPerMod: [{ token: JwtServiceOptions, useValue: jwtServiceOptions }],

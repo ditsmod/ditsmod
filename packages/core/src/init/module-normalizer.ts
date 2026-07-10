@@ -2,7 +2,7 @@ import type { ExtensionConfigBase } from '#extension/extension-providers-and-con
 import type { ModuleManager } from './module-manager.js';
 import type { AnyObj, Level, ModRefId, ModuleType, PickProps } from '#types/mix.js';
 import type { AnyFn, Provider, Class } from '#di/top/types-and-models.js';
-import type { ModuleWithParams, ModuleDecoratorOptions } from '#decorators/module-decorator-options.js';
+import type { DynamicModule, ModuleDecoratorOptions } from '#decorators/module-decorator-options.js';
 import type { ForwardRefFn } from '#di/forward-ref.js';
 import type { Extension } from '#extension/extension-types.js';
 import type { AllInitHooks, InitDecoratorOptions, InitHooks } from '#decorators/init-hooks-and-metadata.js';
@@ -26,12 +26,12 @@ import {
   type MultiProvider,
 } from '#di/utils.js';
 import {
-  isModuleWithParams,
+  isDynamicModule,
   isRootModule,
   isModDecor,
   isFeatureModule,
   isModuleWithInitHooks,
-  isParamsWithMwp,
+  isParamsWithDynamicModule,
 } from '#decorators/type-guards.js';
 import {
   UndefinedSymbol,
@@ -105,7 +105,7 @@ export class ModuleNormalizer {
 
   protected getDecoratorMeta(modRefId: ModRefId) {
     modRefId = resolveForwardRef(modRefId);
-    const mod = isModuleWithParams(modRefId) ? resolveForwardRef(modRefId.module) : modRefId;
+    const mod = isDynamicModule(modRefId) ? resolveForwardRef(modRefId.module) : modRefId;
     return Reflector.getClassLevelMeta(mod);
   }
 
@@ -142,7 +142,7 @@ export class ModuleNormalizer {
         decoratorOptions[resolvedCollisionKey]!.forEach(([token, module]) => {
           token = resolveForwardRef(token);
           module = resolveForwardRef(module);
-          if (isModuleWithParams(module)) {
+          if (isDynamicModule(module)) {
             module.module = resolveForwardRef(module.module);
           }
           this.normalizedModuleMeta[resolvedCollisionKey].push([token, module]);
@@ -156,7 +156,10 @@ export class ModuleNormalizer {
       return;
     }
     const declaredTokens = getTokens(
-      this.normalizedModuleMeta.providersPerMod.concat(this.normalizedModuleMeta.providersPerRou, this.normalizedModuleMeta.providersPerReq),
+      this.normalizedModuleMeta.providersPerMod.concat(
+        this.normalizedModuleMeta.providersPerRou,
+        this.normalizedModuleMeta.providersPerReq,
+      ),
     );
 
     this.resolveAllForwardRefs(decoratorOptions.exports).forEach((exp, i) => {
@@ -166,7 +169,7 @@ export class ModuleNormalizer {
       if (isNormalizedProvider(exp)) {
         throw new ForbiddenExportNormalizedProvider(this.normalizedModuleMeta.name, exp.token.name || exp.token);
       }
-      if (isModuleWithParams(exp)) {
+      if (isDynamicModule(exp)) {
         // @todo Review this condition later
         if (!this.normalizedModuleMeta.exportsWithParams.includes(exp)) {
           this.normalizedModuleMeta.exportsWithParams.push(exp);
@@ -210,7 +213,7 @@ export class ModuleNormalizer {
   }
 
   protected mergeModuleWithParams(modWitParams: ModRefId) {
-    if (!isModuleWithParams(modWitParams)) {
+    if (!isDynamicModule(modWitParams)) {
       return;
     }
     if (modWitParams.id) {
@@ -232,7 +235,7 @@ export class ModuleNormalizer {
       if (imp === undefined) {
         throw new UndefinedSymbol('Imports', this.normalizedModuleMeta.name, i);
       }
-      if (isModuleWithParams(imp)) {
+      if (isDynamicModule(imp)) {
         this.normalizedModuleMeta.importsWithParams.push(imp);
       } else {
         this.normalizedModuleMeta.importsModules.push(imp);
@@ -261,7 +264,10 @@ export class ModuleNormalizer {
 
   protected normalizeExtensions(decoratorOptions: PickProps<ModuleDecoratorOptions, 'extensions' | 'extensionsMeta'>) {
     if (decoratorOptions.extensionsMeta) {
-      this.normalizedModuleMeta.extensionsMeta = { ...decoratorOptions.extensionsMeta, ...this.normalizedModuleMeta.extensionsMeta };
+      this.normalizedModuleMeta.extensionsMeta = {
+        ...decoratorOptions.extensionsMeta,
+        ...this.normalizedModuleMeta.extensionsMeta,
+      };
     }
 
     decoratorOptions.extensions?.forEach((extensionOrConfig) => {
@@ -269,7 +275,9 @@ export class ModuleNormalizer {
         extensionOrConfig = { extension: extensionOrConfig } as ExtensionConfigBase;
       }
       const extProvidersAndConfigs = normalizeExtensionConfig(extensionOrConfig);
-      extProvidersAndConfigs.providers.forEach((p) => this.checkStageMethodsForExtension(this.normalizedModuleMeta.name, p));
+      extProvidersAndConfigs.providers.forEach((p) =>
+        this.checkStageMethodsForExtension(this.normalizedModuleMeta.name, p),
+      );
       if (extProvidersAndConfigs.config) {
         this.normalizedModuleMeta.aExtensionConfig.push(extProvidersAndConfigs.config);
       }
@@ -376,7 +384,7 @@ export class AppModule {}
    * this method adds hooks so that the import of `Module1` with parameters can be properly handled.
    */
   protected addInitHooksForImportedMwp(allInitHooks: AllInitHooks) {
-    (this.normalizedModuleMeta.modRefId as ModuleWithParams).initParams?.forEach((params, decorator) => {
+    (this.normalizedModuleMeta.modRefId as DynamicModule).initParams?.forEach((params, decorator) => {
       if (!this.normalizedModuleMeta.mInitHooks.has(decorator)) {
         const initHooks = allInitHooks.get(decorator)!;
         const newInitHooks = initHooks.clone();
@@ -391,13 +399,13 @@ export class AppModule {}
     });
   }
 
-  protected resolveAllForwardRefs<T extends ModRefId | Provider | ForwardRefFn | { mwp: ModuleWithParams }>(
+  protected resolveAllForwardRefs<T extends ModRefId | Provider | ForwardRefFn | { dynamicModule: DynamicModule }>(
     arr: T[] | Providers = [],
   ): Exclude<T, ForwardRefFn>[] {
     return [...arr].map((item) => {
       const resolved = resolveForwardRef(item);
-      if (isParamsWithMwp(resolved)) {
-        resolved.mwp.module = resolveForwardRef(resolved.mwp.module);
+      if (isParamsWithDynamicModule(resolved)) {
+        resolved.dynamicModule.module = resolveForwardRef(resolved.dynamicModule.module);
       } else if (isNormalizedProvider(resolved)) {
         resolved.token = resolveForwardRef(resolved.token);
         if (isClassProvider(resolved)) {
@@ -405,7 +413,7 @@ export class AppModule {}
         } else if (isTokenProvider(resolved)) {
           resolved.useToken = resolveForwardRef(resolved.useToken);
         }
-      } else if (isModuleWithParams(resolved)) {
+      } else if (isDynamicModule(resolved)) {
         resolved.module = resolveForwardRef(resolved.module);
       }
       return resolved;
@@ -423,14 +431,14 @@ export class AppModule {}
   protected fetchInitImports(decorator: AnyFn, initDecoratorOptions: InitDecoratorOptions) {
     if (initDecoratorOptions.imports) {
       this.resolveAllForwardRefs(initDecoratorOptions.imports).forEach((imp) => {
-        if (isModuleWithParams(imp)) {
+        if (isDynamicModule(imp)) {
           const params = { ...imp };
           this.mergeInitParams(decorator, params, imp);
-        } else if (isParamsWithMwp(imp)) {
-          const params = { ...imp } as { mwp?: ModuleWithParams };
-          this.mergeObjects(params, imp.mwp);
-          delete params.mwp;
-          this.mergeInitParams(decorator, params, imp.mwp);
+        } else if (isParamsWithDynamicModule(imp)) {
+          const params = { ...imp } as { dynamicModule?: DynamicModule };
+          this.mergeObjects(params, imp.dynamicModule);
+          delete params.dynamicModule;
+          this.mergeInitParams(decorator, params, imp.dynamicModule);
         } else {
           if (!this.normalizedModuleMeta.importsModules.includes(imp)) {
             this.normalizedModuleMeta.importsModules.push(imp);
@@ -440,18 +448,18 @@ export class AppModule {}
     }
   }
 
-  protected mergeInitParams(decorator: AnyFn, params: AnyObj, mwp: ModuleWithParams) {
+  protected mergeInitParams(decorator: AnyFn, params: AnyObj, dynamicModule: DynamicModule) {
     delete params.module;
     delete params.initParams;
-    mwp.initParams ??= new Map();
-    if (mwp.initParams.has(decorator)) {
-      const existingParams = mwp.initParams.get(decorator)!;
-      mwp.initParams.set(decorator, this.mergeObjects(params, existingParams));
+    dynamicModule.initParams ??= new Map();
+    if (dynamicModule.initParams.has(decorator)) {
+      const existingParams = dynamicModule.initParams.get(decorator)!;
+      dynamicModule.initParams.set(decorator, this.mergeObjects(params, existingParams));
     } else {
-      mwp.initParams.set(decorator, params);
+      dynamicModule.initParams.set(decorator, params);
     }
-    if (!this.normalizedModuleMeta.importsWithParams.includes(mwp)) {
-      this.normalizedModuleMeta.importsWithParams.push(mwp);
+    if (!this.normalizedModuleMeta.importsWithParams.includes(dynamicModule)) {
+      this.normalizedModuleMeta.importsWithParams.push(dynamicModule);
     }
   }
 
@@ -477,13 +485,13 @@ export class AppModule {}
   protected fetchInitExports(initDecoratorOptions: InitDecoratorOptions) {
     if (initDecoratorOptions.exports) {
       this.resolveAllForwardRefs(initDecoratorOptions.exports).forEach((exp) => {
-        if (isModuleWithParams(exp)) {
+        if (isDynamicModule(exp)) {
           if (!this.normalizedModuleMeta.exportsWithParams.includes(exp)) {
             this.normalizedModuleMeta.exportsWithParams.push(exp);
           }
-        } else if (isParamsWithMwp(exp)) {
-          if (!this.normalizedModuleMeta.exportsWithParams.includes(exp.mwp)) {
-            this.normalizedModuleMeta.exportsWithParams.push(exp.mwp);
+        } else if (isParamsWithDynamicModule(exp)) {
+          if (!this.normalizedModuleMeta.exportsWithParams.includes(exp.dynamicModule)) {
+            this.normalizedModuleMeta.exportsWithParams.push(exp.dynamicModule);
           }
         } else if (Reflector.getClassLevelMeta(exp, isFeatureModule)) {
           if (!this.normalizedModuleMeta.exportsModules.includes(exp)) {

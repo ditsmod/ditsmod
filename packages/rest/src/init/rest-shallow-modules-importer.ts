@@ -1,6 +1,6 @@
 import type { Provider, ModRefId, ModuleManager, NormalizedModuleMeta, AppProviders } from '@ditsmod/core';
 import {
-  isModuleWithParams,
+  isDynamicModule,
   getTokens,
   getToken,
   getDebugClassName,
@@ -124,7 +124,10 @@ export class RestShallowModulesImporter {
   }
 
   protected importAndAppendModules() {
-    this.importOrAppendModules([...this.normalizedModuleMeta.importsModules, ...this.normalizedModuleMeta.importsWithParams], true);
+    this.importOrAppendModules(
+      [...this.normalizedModuleMeta.importsModules, ...this.normalizedModuleMeta.importsWithParams],
+      true,
+    );
     this.importOrAppendModules([...this.meta.appendsModules, ...this.meta.appendsWithParams]);
   }
 
@@ -157,7 +160,7 @@ export class RestShallowModulesImporter {
     let prefixPerMod: string;
     let guards1: GuardPerMod1[] = [];
     const { absolutePath } = meta.params;
-    const hasModuleParams = isModuleWithParams(modRefId);
+    const hasModuleParams = isDynamicModule(modRefId);
     if (hasModuleParams || !isImport) {
       if (hasModuleParams && typeof absolutePath == 'string') {
         // Allow slash for absolutePath.
@@ -229,7 +232,10 @@ export class RestShallowModulesImporter {
         throw new ModuleMustHaveControllers(normalizedModuleMeta.name, appendedNormalizedModuleMeta.name);
       }
       const mod = getModule(modRefId);
-      if (normalizedModuleMeta.importsModules.includes(mod) || normalizedModuleMeta.importsWithParams.some((imp) => imp.module === mod)) {
+      if (
+        normalizedModuleMeta.importsModules.includes(mod) ||
+        normalizedModuleMeta.importsWithParams.some((imp) => imp.module === mod)
+      ) {
         throw new ModuleIncludesInImportsAndAppends(normalizedModuleMeta.name, appendedNormalizedModuleMeta.name);
       }
     });

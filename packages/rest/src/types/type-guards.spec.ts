@@ -1,12 +1,12 @@
-import { featureModule, injectable, isModuleWithParams, Reflector } from '@ditsmod/core';
+import { featureModule, injectable, isDynamicModule, Reflector } from '@ditsmod/core';
 
 import { route } from '#decorators/route.js';
-import { isAppendsWithParams, isCtrlDecor, isInterceptor, isRoute } from './type.guards.js';
+import { isAppendsWithOptions, isCtrlDecor, isInterceptor, isRoute } from './type.guards.js';
 import { HttpHandler, HttpInterceptor } from '#interceptors/tokens-and-types.js';
 import { CanActivate } from '#interceptors/guard.js';
 import { controller } from './controller.js';
 import { RequestContext } from '#services/request-context.js';
-import { AppendsWithParams } from '#init/rest-init-raw-meta.js';
+import { AppendsWithOptions } from '#init/rest-init-raw-meta.js';
 
 describe('type guards', () => {
   describe('isController()', () => {
@@ -24,15 +24,15 @@ describe('type guards', () => {
     });
   });
 
-  describe('isAppendsWithParams', () => {
-    it('appends with params', () => {
+  describe('isAppendsWithOptions', () => {
+    it('appends with options', () => {
       @featureModule({})
       class Module1 {}
 
-      const modRefId1: AppendsWithParams = { module: Module1, path: '' };
-      expect(isAppendsWithParams(modRefId1)).toBe(true);
-      const modRefId2: AppendsWithParams = { module: Module1, absolutePath: '' };
-      expect(isAppendsWithParams(modRefId2)).toBe(true);
+      const modRefId1: AppendsWithOptions = { module: Module1, path: '' };
+      expect(isAppendsWithOptions(modRefId1)).toBe(true);
+      const modRefId2: AppendsWithOptions = { module: Module1, absolutePath: '' };
+      expect(isAppendsWithOptions(modRefId2)).toBe(true);
     });
   });
 

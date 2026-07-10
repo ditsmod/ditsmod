@@ -4,7 +4,7 @@ import {
   Reflector,
   resolveForwardRef,
   getDuplicates,
-  isModuleWithParams,
+  isDynamicModule,
   isClassProvider,
   isTokenProvider,
   getProxyForInitMeta,
@@ -12,10 +12,10 @@ import {
 } from '@ditsmod/core';
 import { ForbiddenExportNormalizedProvider, ModuleShouldHaveValue } from '@ditsmod/core/errors';
 
-import type { AppendsWithParams, RestInitDecoratorOptions } from '#init/rest-init-raw-meta.js';
+import type { AppendsWithOptions, RestInitDecoratorOptions } from '#init/rest-init-raw-meta.js';
 import type { RestModRefId } from '#init/rest-init-meta.js';
 import { RestInitMeta } from '#init/rest-init-meta.js';
-import { isAppendsWithParams, isCtrlDecor } from '#types/type.guards.js';
+import { isAppendsWithOptions, isCtrlDecor } from '#types/type.guards.js';
 import type { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { ControllerDoesNotHaveDecorator, DuplicateOfControllers, InvalidGuard } from '#errors';
@@ -41,7 +41,7 @@ export class RestModuleNormalizer {
   }
 
   protected mergeModuleWithParams(modRefId: RestModRefId): void {
-    if (isAppendsWithParams(modRefId)) {
+    if (isAppendsWithOptions(modRefId)) {
       if (modRefId.absolutePath !== undefined) {
         this.meta.params.absolutePath = modRefId.absolutePath;
       }
@@ -50,7 +50,7 @@ export class RestModuleNormalizer {
       }
       this.meta.params.guards.push(...this.normalizeGuards(modRefId.guards));
       return;
-    } else if (!isModuleWithParams(modRefId)) {
+    } else if (!isDynamicModule(modRefId)) {
       return;
     }
     const params = modRefId.initParams?.get(initRest);
@@ -72,8 +72,8 @@ export class RestModuleNormalizer {
       if (isNormalizedProvider(ap)) {
         throw new ForbiddenExportNormalizedProvider(this.normalizedModuleMeta.name, ap.token.name || ap.token);
       }
-      if (isAppendsWithParams(ap)) {
-        const params = { ...ap } as Partial<AppendsWithParams>;
+      if (isAppendsWithOptions(ap)) {
+        const params = { ...ap } as Partial<AppendsWithOptions>;
         delete params.module;
         if (ap.initParams) {
           ap.initParams.set(initRest, params);
@@ -99,7 +99,7 @@ export class RestModuleNormalizer {
         } else if (isTokenProvider(item)) {
           item.useToken = resolveForwardRef(item.useToken);
         }
-      } else if (isModuleWithParams(item)) {
+      } else if (isDynamicModule(item)) {
         item.module = resolveForwardRef(item.module);
       }
       return item;

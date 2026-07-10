@@ -6,12 +6,12 @@ import {
   Logger,
   ModuleExtract,
   ModuleManager,
-  ModuleWithParams,
+  DynamicModule,
   Provider,
   rootModule,
   SystemLogMediator,
   ProviderImport,
-  ModuleWithInitParams,
+  DynamicModuleWithInit,
   ModRefId,
   ShallowImports,
 } from '@ditsmod/core';
@@ -84,10 +84,10 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
     })
     class Module5 {}
 
-    const module2WithParams: ModuleWithParams = Module2.withParams();
-    const module3WithParams: ModuleWithInitParams = { module: Module3, initParams: new Map() };
+    const module2WithParams: DynamicModule = Module2.withParams();
+    const module3WithParams: DynamicModuleWithInit = { module: Module3, initParams: new Map() };
     module3WithParams.initParams.set(initRest, { path: 'one' });
-    const module4WithParams: ModuleWithParams = { module: Module4 };
+    const module4WithParams: DynamicModule = { module: Module4 };
     @rootModule({
       imports: [Module0, Module1, module2WithParams, Module5, module3WithParams, module4WithParams],
       exports: [Module0, module2WithParams, module3WithParams],
@@ -196,7 +196,10 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
       moduleManager.scanRootModule(AppModule);
       const shallowImportsBase = mock.collectProvidersShallow(moduleManager);
       const root1 = shallowImportsBase.get(AppModule);
-      expect(root1?.normalizedModuleMeta.providersPerApp.slice(0, 2)).toEqual([Logger, { token: Router, useValue: 'fake' }]);
+      expect(root1?.normalizedModuleMeta.providersPerApp.slice(0, 2)).toEqual([
+        Logger,
+        { token: Router, useValue: 'fake' },
+      ]);
       const moduleExtract: ModuleExtract = { path: '', moduleName: 'AppModule', isExternal: false };
       const providerPerMod: Provider = {
         token: ModuleExtract,

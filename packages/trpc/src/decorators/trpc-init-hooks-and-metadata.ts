@@ -4,7 +4,7 @@ import type {
   InitDecorator,
   Provider,
   InitDecoratorOptions,
-  FeatureModuleParams,
+  DynamicModuleOptions,
   ModuleType,
   Class,
   ModuleManager,
@@ -33,28 +33,28 @@ export class TrpcInitMeta extends NormalizedInitMeta {
   params = new NormalizedParams();
 }
 
-export interface TrpcModuleParams extends FeatureModuleParams {
+export interface TrpcModuleOptions extends DynamicModuleOptions {
   guards?: GuardItem[];
 }
 
 /**
  * Metadata for the `initTrpcModule` decorator, which adds TRPC metadata to a `featureModule` or `rootModule`.
  */
-export interface TrpcInitDecoratorOptions extends InitDecoratorOptions<TrpcModuleParams> {
+export interface TrpcInitDecoratorOptions extends InitDecoratorOptions<TrpcModuleOptions> {
   /**
    * The application controllers.
    */
   controllers?: Class[];
 }
 
-export const initTrpcModule: InitDecorator<TrpcInitDecoratorOptions, TrpcModuleParams, TrpcInitMeta> =
+export const initTrpcModule: InitDecorator<TrpcInitDecoratorOptions, TrpcModuleOptions, TrpcInitMeta> =
   Reflector.makeClassDecorator(transformInitMeta, 'initTrpcModule');
 export const trpcRootModule: InitDecorator<
   TrpcInitDecoratorOptions & { resolvedCollisionPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][] },
-  TrpcModuleParams,
+  TrpcModuleOptions,
   TrpcInitMeta
 > = Reflector.makeClassDecorator(transformRootMetadata, 'trpcRootModule', initTrpcModule);
-export const trpcModule: InitDecorator<TrpcInitDecoratorOptions, TrpcModuleParams, TrpcInitMeta> =
+export const trpcModule: InitDecorator<TrpcInitDecoratorOptions, TrpcModuleOptions, TrpcInitMeta> =
   Reflector.makeClassDecorator(transformFeatureMetadata, 'trpcModule', initTrpcModule);
 
 export function transformInitMeta(data?: TrpcInitDecoratorOptions): InitHooks<TrpcInitDecoratorOptions> {

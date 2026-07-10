@@ -75,6 +75,6 @@ export class MulterParser {
    */
   textFields<F extends object = any>() {
     const result = this.multer.textFields<F>()(this.rawReq, this.rawReq.headers);
-    return checkResult(result).then(parsedForm => parsedForm.textFields);
+    return checkResult(result).then((parsedForm) => parsedForm.textFields);
   }
 }

@@ -1,4 +1,4 @@
-import type { ModuleWithParams } from '#decorators/module-decorator-options.js';
+import type { DynamicModule } from '#decorators/module-decorator-options.js';
 import type { Injector } from '#di/injector.js';
 import type { ResolvedProvider } from '#di/top/resolved-provider.js';
 import type { Class } from '#di/top/types-and-models.js';
@@ -35,7 +35,7 @@ export type ModuleType<T extends AnyObj = AnyObj> = Class<T>;
 /**
  * Module reference ID.
  */
-export type ModRefId<T extends AnyObj = AnyObj> = ModuleType<T> | ModuleWithParams<T>;
+export type ModRefId<T extends AnyObj = AnyObj> = ModuleType<T> | DynamicModule<T>;
 /**
  * Require only specified properties from the `K` list for `T`.
  * 
