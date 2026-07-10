@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { Status } from '@ditsmod/core';
+import { HttpStatus } from '@ditsmod/core';
 import type { HttpServer } from '@ditsmod/rest';
 import { TestRestApplication } from '@ditsmod/rest-testing';
 
@@ -32,7 +32,7 @@ describe('20-authjs', () => {
     expect(response.body).toEqual({ csrfToken: expect.any(String) });
     expect(response.headers['set-cookie']).toEqual(expect.any(Array));
 
-    await expect(testAgent.get('/per-req')).resolves.toMatchObject({ status: Status.UNAUTHORIZED });
+    await expect(testAgent.get('/per-req')).resolves.toMatchObject({ status: HttpStatus.UNAUTHORIZED });
 
     const csrfTokenCookie = extractCookieValue(response.headers['set-cookie'], 'authjs.csrf-token');
     const callbackCookie = extractCookieValue(response.headers['set-cookie'], 'authjs.callback-url');
@@ -44,7 +44,7 @@ describe('20-authjs', () => {
       .set('Cookie', [csrfTokenCookie, callbackCookie]) // Send the cookie with the request
       .send({ csrfToken: csrfTokenValue, username: 'johnsmith', email: 'johnsmith@i.ua', iAgree: true });
 
-    expect(responseCredentials.status).toBe(Status.OK);
+    expect(responseCredentials.status).toBe(HttpStatus.OK);
     expect(responseCredentials.text).toBe('ok');
 
     // Parse cookie for session token
@@ -53,7 +53,7 @@ describe('20-authjs', () => {
     // Call test route
     const { status, body } = await testAgent.get('/per-req').set('Cookie', [sessionTokenCookie]);
 
-    expect(status).toBe(Status.OK);
+    expect(status).toBe(HttpStatus.OK);
     expect(body).toEqual({
       name: expect.any(String),
       email: expect.any(String),

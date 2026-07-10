@@ -3,7 +3,7 @@ import {
   Injector,
   Extension,
   ExtensionManager,
-  Status,
+  HttpStatus,
   HttpMethod,
   Provider,
   AppExtensionGroupMeta,
@@ -118,7 +118,7 @@ export class CorsExtension implements Extension<void | false> {
 
         class DynamicController {
           [methodName](ctx: RequestContext) {
-            ctx.rawRes.statusCode = Status.NO_CONTENT;
+            ctx.rawRes.statusCode = HttpStatus.NO_CONTENT;
             ctx.rawRes.setHeader('Allow', allowHttpMethods.join());
             ctx.rawRes.end();
           }

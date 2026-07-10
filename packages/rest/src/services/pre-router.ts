@@ -1,4 +1,4 @@
-import { HttpMethod, injectable, Status, SystemLogMediator } from '@ditsmod/core';
+import { HttpMethod, injectable, HttpStatus, SystemLogMediator } from '@ditsmod/core';
 import { IncomingMessage, ServerResponse } from 'node:http';
 
 import { Router } from './router.js';
@@ -35,12 +35,12 @@ export class PreRouter {
    */
   protected sendInternalServerError(rawRes: RawResponse, err: Error) {
     this.systemLogMediator.internalServerError(this, err);
-    rawRes.statusCode = Status.INTERNAL_SERVER_ERROR;
+    rawRes.statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
     rawRes.end();
   }
 
   protected sendNotImplemented(rawRes: RawResponse) {
-    rawRes.statusCode = Status.NOT_IMPLEMENTED;
+    rawRes.statusCode = HttpStatus.NOT_IMPLEMENTED;
     rawRes.end();
   }
 

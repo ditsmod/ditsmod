@@ -1,4 +1,4 @@
-import { Status } from '@ditsmod/core';
+import { HttpStatus } from '@ditsmod/core';
 import { CustomError } from '@ditsmod/core/errors';
 import type { MulterParsedForm } from '@ts-stack/multer';
 import { MulterError } from '@ts-stack/multer';
@@ -17,18 +17,18 @@ export async function checkResult<F extends object = any, G extends string = str
       const { level, status } = getErrorOptions(options);
       throw new CustomError({ msg1: err.message, msg2: err.code, level, status });
     } else {
-      const status = (err as any).status || Status.BAD_REQUEST;
+      const status = (err as any).status || HttpStatus.BAD_REQUEST;
       throw new CustomError({ msg1: (err as any).message, status });
     }
   }
   if (result === null) {
     const msg1 = 'Multer failed to parse multipart/form-data: no body.';
     const { level } = getErrorOptions(options);
-    throw new CustomError({ msg1, level, status: Status.LENGTH_REQUIRED });
+    throw new CustomError({ msg1, level, status: HttpStatus.LENGTH_REQUIRED });
   } else if (result === false) {
     const msg1 = 'Multer failed to parse multipart/form-data: no header with multipart/form-data content type.';
     const { level } = getErrorOptions(options);
-    throw new CustomError({ msg1, level, status: Status.UNSUPPORTED_MEDIA_TYPE });
+    throw new CustomError({ msg1, level, status: HttpStatus.UNSUPPORTED_MEDIA_TYPE });
   }
   return result;
 }

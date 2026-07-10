@@ -1,4 +1,4 @@
-import { Status, injectable } from '@ditsmod/core';
+import { HttpStatus, injectable } from '@ditsmod/core';
 import { Auth, setEnvDefaults } from '@auth/core';
 import { RequestContext, HttpHandler, HttpInterceptor, applyHeaders, applyResponse } from '@ditsmod/rest';
 
@@ -13,11 +13,11 @@ export class AuthjsInterceptor implements HttpInterceptor {
 
   async intercept(next: HttpHandler, ctx: RequestContext) {
     let response = await Auth(toWebRequest(ctx), this.config);
-    if (response.body || (response.status != Status.OK && response.status != Status.FOUND)) {
+    if (response.body || (response.status != HttpStatus.OK && response.status != HttpStatus.FOUND)) {
       await applyResponse(response, ctx.rawRes);
       return;
     }
-    if (response.status == Status.FOUND) {
+    if (response.status == HttpStatus.FOUND) {
       const headers = new Headers(response.headers);
       headers.delete('location');
       response = new Response(undefined, { headers });

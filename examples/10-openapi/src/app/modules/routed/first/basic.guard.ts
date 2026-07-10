@@ -1,4 +1,4 @@
-import { Status } from '@ditsmod/core';
+import { HttpStatus } from '@ditsmod/core';
 import { oasGuard } from '@ditsmod/openapi';
 import { CanActivate, RequestContext } from '@ditsmod/rest';
 
@@ -12,7 +12,7 @@ import { CanActivate, RequestContext } from '@ditsmod/rest';
       '[Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication)',
   },
   responses: {
-    [Status.UNAUTHORIZED]: {
+    [HttpStatus.UNAUTHORIZED]: {
       $ref: '#/components/responses/UnauthorizedError',
     },
   },
@@ -33,6 +33,6 @@ export class BasicGuard implements CanActivate {
 
   protected unauth(ctx: RequestContext) {
     ctx.rawRes.setHeader('WWW-Authenticate', 'Basic realm="Access to the API endpoint"');
-    return new Response(null, { status: Status.UNAUTHORIZED });
+    return new Response(null, { status: HttpStatus.UNAUTHORIZED });
   }
 }

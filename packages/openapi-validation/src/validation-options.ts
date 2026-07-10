@@ -1,5 +1,5 @@
-import { Status } from '@ditsmod/core';
+import { HttpStatus } from '@ditsmod/core';
 
 export class ValidationOptions {
-  invalidStatus: Status = Status.BAD_REQUEST;
+  invalidStatus: HttpStatus = HttpStatus.BAD_REQUEST;
 }

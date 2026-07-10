@@ -1,4 +1,4 @@
-import { injectable, Logger, Status } from '@ditsmod/core';
+import { injectable, Logger, HttpStatus } from '@ditsmod/core';
 import { CustomError, isCustomError } from '@ditsmod/core/errors';
 import { randomUUID } from 'node:crypto';
 
@@ -19,12 +19,12 @@ export class DefaultHttpErrorHandler implements HttpErrorHandler {
       } else {
         this.logger.log(level || 'debug', errObj);
       }
-      opts.ctx.res.statusCode = status || Status.INTERNAL_SERVER_ERROR;
+      opts.ctx.res.statusCode = status || HttpStatus.INTERNAL_SERVER_ERROR;
       this.sendError(err.message, opts, requestId, err.code);
     } else {
       this.logger.log('error', errObj);
       const msg = err.message || 'Internal server error';
-      opts.ctx.res.statusCode = (err as any).status || Status.INTERNAL_SERVER_ERROR;
+      opts.ctx.res.statusCode = (err as any).status || HttpStatus.INTERNAL_SERVER_ERROR;
       this.sendError(msg, opts, requestId);
     }
   }

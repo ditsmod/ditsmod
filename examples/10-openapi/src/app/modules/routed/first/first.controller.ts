@@ -1,4 +1,4 @@
-import { AnyObj, ctx, Status } from '@ditsmod/core';
+import { AnyObj, ctx, HttpStatus } from '@ditsmod/core';
 import { controller, route, PATH_PARAMS, RequestContext } from '@ditsmod/rest';
 import { getParams, getContent, oasRoute } from '@ditsmod/openapi';
 
@@ -23,7 +23,7 @@ export class FirstController {
     description: 'This route uses `getParams()` and `getContent()` helpers from @ditsmod/openapi',
     parameters: getParams('path', true, Model2, 'resourceId'),
     responses: {
-      [Status.OK]: {
+      [HttpStatus.OK]: {
         description: 'Single item',
         content: getContent({ mediaType: 'application/json', model: Model2 }),
       },
@@ -39,7 +39,7 @@ export class FirstController {
     description: 'This route like previous, but uses template `{ data: Model1[], meta: any, error: any }`',
     parameters: getParams('path', true, Model2, 'resourceId'),
     responses: {
-      [Status.OK]: {
+      [HttpStatus.OK]: {
         description: 'Single item',
         content: getMetaContent({ mediaType: 'application/json', model: Model2 }),
       },

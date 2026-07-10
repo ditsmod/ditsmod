@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { TestRestApplication } from '@ditsmod/rest-testing';
-import { Providers, Status } from '@ditsmod/core';
+import { Providers, HttpStatus } from '@ditsmod/core';
 import type { HttpServer } from '@ditsmod/rest';
 import { BodyParserConfig } from '@ditsmod/body-parser';
 
@@ -38,7 +38,7 @@ describe('06-body-parser', () => {
 
   it('should parsed post', async () => {
     const { status } = await testAgent.post('/').set('Content-Type', 'application/json').send({ one: 1, two: 2 });
-    expect(status).toBe(Status.PAYLOAD_TO_LARGE);
+    expect(status).toBe(HttpStatus.PAYLOAD_TO_LARGE);
   });
 
   it('should not parse fake-content-type', async () => {
@@ -72,7 +72,7 @@ describe('06-body-parser', () => {
       .post('/route-scoped')
       .set('Content-Type', 'application/json')
       .send({ one: 1, two: 2 });
-    expect(status).toBe(Status.PAYLOAD_TO_LARGE);
+    expect(status).toBe(HttpStatus.PAYLOAD_TO_LARGE);
   });
 
   it('controller route-scoped should not parse fake-content-type', async () => {

@@ -33,7 +33,7 @@ export class AuthGuard implements CanActivate {
 Або так:
 
 ```ts {11-17}
-import { Status } from '@ditsmod/core';
+import { HttpStatus } from '@ditsmod/core';
 import { RequestContext, CanActivate, guard } from '@ditsmod/rest';
 
 import { AuthService } from './auth.service.js';
@@ -47,7 +47,7 @@ export class PermissionsGuard implements CanActivate {
     if (await this.authService.hasPermissions(params)) {
       return true;
     } else {
-      return new Response(null, { status: Status.FORBIDDEN });
+      return new Response(null, { status: HttpStatus.FORBIDDEN });
     }
   }
 }
@@ -120,7 +120,7 @@ export class SomeController {
 Як бачите, на місці третього параметра у `route` передається масив в масиві, де на першому місці вказано `PermissionsGuard`, а далі йдуть аргументи для нього. В такому разі `PermissionsGuard` отримає ці аргументи у своєму методі `canActivate()`:
 
 ```ts {11}
-import { injectable, Status } from '@ditsmod/core';
+import { injectable, HttpStatus } from '@ditsmod/core';
 import { CanActivate, RequestContext } from '@ditsmod/rest';
 
 import { AuthService } from './auth.service.js';
@@ -134,7 +134,7 @@ export class PermissionsGuard implements CanActivate {
     if (await this.authService.hasPermissions(params)) {
       return true;
     } else {
-      return new Response(null, { status: Status.FORBIDDEN });
+      return new Response(null, { status: HttpStatus.FORBIDDEN });
     }
   }
 }

@@ -80,7 +80,7 @@ export { getDependencies, ReflectiveDependency } from '#utils/get-dependencies.j
 export { getProviderName } from '#utils/get-provider-name.js';
 export { ExtensionConfig, isOverrideExtensionConfig } from '#extension/extension-providers-and-configs.js';
 export { getModule } from '#utils/get-module.js';
-export { getStatusText, isSuccess, Status, STATUS_CODE_INFO } from '#utils/http-status-codes.js';
+export { getStatusText, isSuccess, HttpStatus, STATUS_CODE_INFO } from '#utils/http-status-codes.js';
 export { normalizeProviders } from '#utils/ng-utils.js';
 export { pickProperties } from '#utils/pick-properties.js';
 export { Providers } from '#utils/providers.js';

@@ -1,6 +1,6 @@
 import supertest from 'supertest';
 import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
-import { Status } from '@ditsmod/core';
+import { HttpStatus } from '@ditsmod/core';
 import { route, controller, HttpServer, restRootModule, RequestContext } from '@ditsmod/rest';
 import { TestRestApplication } from '@ditsmod/rest-testing';
 
@@ -64,7 +64,7 @@ describe('getSession', () => {
   it('Should return the mocked session from the Auth response', async () => {
     const { status } = await client.get('/').set('X-Test-Header', 'foo').set('Accept', 'application/json');
 
-    expect(status).toBe(Status.OK);
+    expect(status).toBe(HttpStatus.OK);
     expect(expectation).lastCalledWith(sessionJson);
   });
 });

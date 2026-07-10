@@ -1,4 +1,4 @@
-import { Injector, Status } from '@ditsmod/core';
+import { Injector, HttpStatus } from '@ditsmod/core';
 import type { RequestContext } from '@ditsmod/rest';
 import { jest } from '@jest/globals';
 
@@ -21,7 +21,7 @@ describe('PermissionsGuard#canActivate()', () => {
   it('should return forbidden', async () => {
     hasPermissions.mockReturnValue(false);
     await expect(permissionsGuard.canActivate(ctx)).resolves.not.toThrow();
-    await expect(permissionsGuard.canActivate(ctx)).resolves.toMatchObject({ status: Status.FORBIDDEN });
+    await expect(permissionsGuard.canActivate(ctx)).resolves.toMatchObject({ status: HttpStatus.FORBIDDEN });
   });
 
   it('should return true', async () => {

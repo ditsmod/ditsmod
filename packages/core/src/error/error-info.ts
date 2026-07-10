@@ -1,6 +1,6 @@
 import type { InputLogLevel } from '#logger/logger.js';
 import type { AnyFn } from '#di/top/types-and-models.js';
-import { Status } from '#utils/http-status-codes.js';
+import { HttpStatus } from '#utils/http-status-codes.js';
 
 export class ErrorInfo {
   /**
@@ -26,7 +26,7 @@ export class ErrorInfo {
   /**
    * HTTP status.
    */
-  status?: Status = Status.INTERNAL_SERVER_ERROR;
+  status?: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
   declare params?: any;
   /**
    * If specified, then the stack trace for this error ends at function `constructorOpt`.

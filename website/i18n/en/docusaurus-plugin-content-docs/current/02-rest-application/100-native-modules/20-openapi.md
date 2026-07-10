@@ -315,7 +315,7 @@ export class SomeController {
 The `getContent()` helper accepts a shortened version of the data when describing a single `mediaType` variant. If you need to describe a larger number of `mediaType`, you can use the `Content` class:
 
 ```ts {11-19}
-import { Status } from '@ditsmod/core';
+import { HttpStatus } from '@ditsmod/core';
 import { controller } from '@ditsmod/rest';
 import { oasRoute, Content } from '@ditsmod/openapi';
 
@@ -326,7 +326,7 @@ export class SomeController {
   // ...
   @oasRoute('GET', '', {
     responses: {
-      [Status.OK]: {
+      [HttpStatus.OK]: {
         description: 'Опис контенту із даним статусом',
         content: new Content()
           .set({ mediaType: 'application/xml', model: SomeModel })
@@ -388,7 +388,7 @@ import { oasGuard } from '@ditsmod/openapi';
       '[Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication)',
   },
   responses: {
-    [Status.UNAUTHORIZED]: {
+    [HttpStatus.UNAUTHORIZED]: {
       $ref: '#/components/responses/UnauthorizedError',
     },
   },

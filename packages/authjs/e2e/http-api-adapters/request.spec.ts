@@ -1,6 +1,6 @@
 import supertest from 'supertest';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { Status } from '@ditsmod/core';
+import { HttpStatus } from '@ditsmod/core';
 import { controller, RequestContext, RawRequest, restRootModule } from '@ditsmod/rest';
 import { route, HttpServer } from '@ditsmod/rest';
 import { TestRestApplication } from '@ditsmod/rest-testing';
@@ -67,12 +67,12 @@ describe('toWebRequest', () => {
 
   it('adapts request headers', async () => {
     const { status } = await client.get('/case1').set('X-Test-Header', 'foo').set('Accept', 'application/json');
-    expect(status).toBe(Status.OK);
+    expect(status).toBe(HttpStatus.OK);
   });
 
   it('adapts request with json encoded body', async () => {
     const { status } = await client.post('/case2').set('Content-Type', 'application/json').send({ name: 'Rexford' });
-    expect(status).toBe(Status.OK);
+    expect(status).toBe(HttpStatus.OK);
   });
 
   it('adapts request with url-encoded body', async () => {
@@ -86,6 +86,6 @@ describe('toWebRequest', () => {
       .set('Content-Type', 'application/x-www-form-urlencoded')
       .send(encodeUrlEncoded(data));
 
-    expect(status).toBe(Status.OK);
+    expect(status).toBe(HttpStatus.OK);
   });
 });

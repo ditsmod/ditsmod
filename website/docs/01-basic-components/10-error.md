@@ -10,7 +10,7 @@ Ditsmod надає два вбудовані класи - `CustomError` та `Ht
 Клас `CustomError` можна компонувати для створення будь-якої помилки:
 
 ```ts {10}
-import { Status } from '@ditsmod/core';
+import { HttpStatus } from '@ditsmod/core';
 import { CustomError } from '@ditsmod/core/errors';
 
 // ...
@@ -19,7 +19,7 @@ if (someCondition) {
   const msg1 = 'message for client';
   const msg2 = 'message for logger';
 
-  throw new CustomError({ msg1, msg2, level: 'debug', status: Status.BAD_REQUEST });
+  throw new CustomError({ msg1, msg2, level: 'debug', status: HttpStatus.BAD_REQUEST });
 }
 ```
 
@@ -55,7 +55,7 @@ interface ErrorInfo {
   /**
    * HTTP status.
    */
-  status?: Status = Status.BAD_REQUEST;
+  status?: HttpStatus = HttpStatus.BAD_REQUEST;
   /**
    * The parameters that came with the HTTP request.
    */
@@ -98,7 +98,7 @@ export class NormalizationFailed extends CustomError {
 Ви можете створити свій власний обробник помилок, для цього вам потрібно створити клас, що впроваджує інтерфейс [HttpErrorHandler][101]:
 
 ```ts
-import { HttpErrorHandler, injectable, Logger, RequestContext, Status } from '@ditsmod/core';
+import { HttpErrorHandler, injectable, Logger, RequestContext, HttpStatus } from '@ditsmod/core';
 import { isCustomError } from '@ditsmod/core/errors';
 import { randomUUID } from 'node:crypto';
 
@@ -116,12 +116,12 @@ export class MyHttpErrorHandler implements HttpErrorHandler {
     } else {
       this.logger.log('error', errObj);
       const msg = err.message || 'Internal server error';
-      const status = (err as any).status || Status.INTERNAL_SERVER_ERROR;
+      const status = (err as any).status || HttpStatus.INTERNAL_SERVER_ERROR;
       this.sendError(msg, ctx, requestId, status);
     }
   }
 
-  protected sendError(error: string, ctx: RequestContext, requestId: string, status?: Status) {
+  protected sendError(error: string, ctx: RequestContext, requestId: string, status?: HttpStatus) {
     if (!ctx.rawRes.headersSent) {
       this.addRequestIdToHeader(requestId, ctx);
       ctx.sendJson({ error }, status);

@@ -1,5 +1,5 @@
 import { CanActivate, NormalizedGuard, RequestContext } from '@ditsmod/rest';
-import { PerAppService, Status, Injector } from '@ditsmod/core';
+import { PerAppService, HttpStatus, Injector } from '@ditsmod/core';
 import {
   ComponentsObject,
   OperationObject,
@@ -51,7 +51,7 @@ describe('OpenapiCompilerExtension', () => {
         scheme: 'basic',
       };
       const responses: XResponsesObject = {
-        [Status.UNAUTHORIZED]: {
+        [HttpStatus.UNAUTHORIZED]: {
           $ref: '#/components/responses/UnauthorizedError',
         },
       };
@@ -85,7 +85,7 @@ describe('OpenapiCompilerExtension', () => {
         scheme: 'basic',
       };
       const responses: XResponsesObject = {
-        [Status.UNAUTHORIZED]: {
+        [HttpStatus.UNAUTHORIZED]: {
           $ref: '#/components/responses/UnauthorizedError',
         },
       };
@@ -119,7 +119,7 @@ describe('OpenapiCompilerExtension', () => {
         scheme: 'basic',
       };
       const responses: XResponsesObject = {
-        [Status.UNAUTHORIZED]: {
+        [HttpStatus.UNAUTHORIZED]: {
           $ref: '#/components/responses/UnauthorizedError',
         },
       };
@@ -157,7 +157,7 @@ describe('OpenapiCompilerExtension', () => {
         name: 'keyNameHere',
       };
       const responses: XResponsesObject = {
-        [Status.UNAUTHORIZED]: {
+        [HttpStatus.UNAUTHORIZED]: {
           $ref: '#/components/responses/UnauthorizedError',
         },
       };

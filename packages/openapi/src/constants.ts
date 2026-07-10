@@ -1,5 +1,5 @@
 import type { OasGuardMetadata } from '#decorators/oas-guard.js';
-import { Status } from '@ditsmod/core';
+import { HttpStatus } from '@ditsmod/core';
 import type { XOasObject } from '@ts-stack/openapi-spec';
 import { openapi } from '@ts-stack/openapi-spec';
 
@@ -25,7 +25,7 @@ export const defaultForNonOasGuard: OasGuardMetadata = {
       'See docs for [Bearer Authentication](https://swagger.io/docs/specification/authentication/bearer-authentication/)',
   },
   responses: {
-    [Status.UNAUTHORIZED]: {
+    [HttpStatus.UNAUTHORIZED]: {
       $ref: '#/components/responses/UnauthorizedError',
     },
   },

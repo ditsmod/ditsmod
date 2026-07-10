@@ -264,11 +264,11 @@ A maximum of two properties from these four can be filled in one parsing: the `t
 In modules where `@ditsmod/body-parser` will be used for forms with data in `multipart/form-data` format, you can pass a provider with the token `MulterExtendedOptions` to DI. This class has two more options than the native `MulterOptions` class from `@ts-stack/multer`:
 
 ```ts
-import { InputLogLevel, Status } from '@ditsmod/core';
+import { InputLogLevel, HttpStatus } from '@ditsmod/core';
 import { MulterOptions } from '@ts-stack/multer';
 
 export class MulterExtendedOptions extends MulterOptions {
-  errorStatus?: Status = Status.BAD_REQUEST;
+  errorStatus?: HttpStatus = HttpStatus.BAD_REQUEST;
   errorLogLevel?: InputLogLevel = 'debug';
 }
 ```

@@ -1,6 +1,6 @@
 import supertest from 'supertest';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { Status } from '@ditsmod/core';
+import { HttpStatus } from '@ditsmod/core';
 import { TestRestApplication } from '@ditsmod/rest-testing';
 import type { HttpServer } from '@ditsmod/rest';
 
@@ -40,7 +40,7 @@ describe('Integration test with login and getSession', () => {
         .set('Cookie', [csrfTokenCookie, callbackCookie]) // Send the cookie with the request
         .send({ csrfToken: csrfTokenValue, username: 'johnsmith' });
 
-      expect(responseCredentials.status).toBe(Status.OK);
+      expect(responseCredentials.status).toBe(HttpStatus.OK);
       expect(responseCredentials.text).toBe('ok');
 
       // Parse cookie for session token
@@ -50,7 +50,7 @@ describe('Integration test with login and getSession', () => {
       // Call test route
       const { status, body } = await client.get(`/${scope}-scoped`).set('Cookie', [sessionTokenCookie]);
 
-      expect(status).toBe(Status.OK);
+      expect(status).toBe(HttpStatus.OK);
       expect(body).toMatchObject(expectedSession);
     });
   });

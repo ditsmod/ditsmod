@@ -264,11 +264,11 @@ export class SomeController {
 У модулях, де буде працювати `@ditsmod/body-parser` для форм з даними у форматі `multipart/form-data`, можете передавати до DI провайдер з токеном `MulterExtendedOptions`. Цей клас має на дві опції більше, ніж рідний для `@ts-stack/multer` клас `MulterOptions`:
 
 ```ts
-import { InputLogLevel, Status } from '@ditsmod/core';
+import { InputLogLevel, HttpStatus } from '@ditsmod/core';
 import { MulterOptions } from '@ts-stack/multer';
 
 export class MulterExtendedOptions extends MulterOptions {
-  errorStatus?: Status = Status.BAD_REQUEST;
+  errorStatus?: HttpStatus = HttpStatus.BAD_REQUEST;
   errorLogLevel?: InputLogLevel = 'debug';
 }
 ```

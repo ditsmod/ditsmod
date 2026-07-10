@@ -1,4 +1,4 @@
-import { injectable, Status } from '@ditsmod/core';
+import { injectable, HttpStatus } from '@ditsmod/core';
 import { CustomError } from '@ditsmod/core/errors';
 
 import { TrpcHttpFrontend, TrpcHttpHandler } from './tokens-and-types.js';
@@ -29,6 +29,6 @@ export class RouteScopedDefaultTrpcHttpFrontend implements TrpcHttpFrontend {
     const route = JSON.stringify({ method: '', url: opts.ctx.req.url });
     let msg2 = `The request handler with route ${route} set the data type to "${contentType}"`;
     msg2 += ' but did not send the response body. Make sure your handler returns a value.';
-    throw new CustomError({ msg1, msg2, level: 'error', status: Status.INTERNAL_SERVER_ERROR });
+    throw new CustomError({ msg1, msg2, level: 'error', status: HttpStatus.INTERNAL_SERVER_ERROR });
   }
 }

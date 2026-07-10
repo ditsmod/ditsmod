@@ -1,4 +1,4 @@
-import { Status } from '@ditsmod/core';
+import { HttpStatus } from '@ditsmod/core';
 import { RequestContext, CanActivate, guard } from '@ditsmod/rest';
 
 const basicAuth = process.env.BASIC_AUTH;
@@ -28,6 +28,6 @@ export class RequestScopedBasicGuard implements CanActivate {
   protected unauth(ctx: RequestContext, realm?: string): Response {
     realm ??= 'Access to the API endpoint';
     ctx.rawRes.setHeader('WWW-Authenticate', `Basic realm="${realm}"`);
-    return new Response(null, { status: Status.UNAUTHORIZED });
+    return new Response(null, { status: HttpStatus.UNAUTHORIZED });
   }
 }

@@ -1,4 +1,4 @@
-import { injectable, Injector, Status, SystemLogMediator } from '@ditsmod/core';
+import { injectable, Injector, HttpStatus, SystemLogMediator } from '@ditsmod/core';
 
 import { RouteMeta } from '../types/route-data.js';
 import { HttpHandler, HttpInterceptor } from './tokens-and-types.js';
@@ -56,7 +56,7 @@ export class InterceptorWithGuardsPerRou implements IInterceptorWithGuardsPerRou
   protected prohibitActivation(ctx: RequestContext) {
     const systemLogMediator = this.injector.get(SystemLogMediator) as SystemLogMediator;
     systemLogMediator.youCannotActivateRoute(this, ctx.rawReq.method!, ctx.rawReq.url!);
-    ctx.rawRes.statusCode = Status.UNAUTHORIZED;
+    ctx.rawRes.statusCode = HttpStatus.UNAUTHORIZED;
     ctx.rawRes.end();
   }
 }

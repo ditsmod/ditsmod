@@ -1,4 +1,4 @@
-import { Status } from '@ditsmod/core';
+import { HttpStatus } from '@ditsmod/core';
 import { RequestContext, CanActivate, guard } from '@ditsmod/rest';
 
 import { AuthService } from './auth.service.js';
@@ -12,7 +12,7 @@ export class RequestScopedPermissionsGuard implements CanActivate {
     if (await this.authService.hasPermissions(params)) {
       return true;
     } else {
-      return new Response(null, { status: Status.FORBIDDEN });
+      return new Response(null, { status: HttpStatus.FORBIDDEN });
     }
   }
 }

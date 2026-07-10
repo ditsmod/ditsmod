@@ -315,7 +315,7 @@ export class SomeController {
 Хелпер `getContent()` приймає скорочену версію даних, коли потрібно описати єдиний варіант `mediaType`. Якщо ж вам потрібно описати більшу кількість `mediaType`, можна скористатись класом `Content`:
 
 ```ts {11-19}
-import { Status } from '@ditsmod/core';
+import { HttpStatus } from '@ditsmod/core';
 import { controller } from '@ditsmod/rest';
 import { oasRoute, Content } from '@ditsmod/openapi';
 
@@ -326,7 +326,7 @@ export class SomeController {
   // ...
   @oasRoute('GET', '', {
     responses: {
-      [Status.OK]: {
+      [HttpStatus.OK]: {
         description: 'Опис контенту із даним статусом',
         content: new Content()
           .set({ mediaType: 'application/xml', model: SomeModel })
@@ -388,7 +388,7 @@ import { oasGuard } from '@ditsmod/openapi';
       '[Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication)',
   },
   responses: {
-    [Status.UNAUTHORIZED]: {
+    [HttpStatus.UNAUTHORIZED]: {
       $ref: '#/components/responses/UnauthorizedError',
     },
   },

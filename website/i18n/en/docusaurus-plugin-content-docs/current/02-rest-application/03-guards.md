@@ -33,7 +33,7 @@ export class AuthGuard implements CanActivate {
 Or like this:
 
 ```ts {11-17}
-import { Status } from '@ditsmod/core';
+import { HttpStatus } from '@ditsmod/core';
 import { RequestContext, CanActivate, guard } from '@ditsmod/rest';
 
 import { AuthService } from './auth.service.js';
@@ -47,7 +47,7 @@ export class PermissionsGuard implements CanActivate {
     if (await this.authService.hasPermissions(params)) {
       return true;
     } else {
-      return new Response(null, { status: Status.FORBIDDEN });
+      return new Response(null, { status: HttpStatus.FORBIDDEN });
     }
   }
 }
@@ -120,7 +120,7 @@ export class SomeController {
 As you can see, in place of the third parameter in `route`, an array is passed in an array, where `PermissionsGuard` is specified in the first place, followed by arguments for it. In this case, `PermissionsGuard` will receive these arguments in its `canActivate()` method:
 
 ```ts {11}
-import { injectable, Status } from '@ditsmod/core';
+import { injectable, HttpStatus } from '@ditsmod/core';
 import { CanActivate, RequestContext } from '@ditsmod/rest';
 
 import { AuthService } from './auth.service.js';
@@ -134,7 +134,7 @@ export class PermissionsGuard implements CanActivate {
     if (await this.authService.hasPermissions(params)) {
       return true;
     } else {
-      return new Response(null, { status: Status.FORBIDDEN });
+      return new Response(null, { status: HttpStatus.FORBIDDEN });
     }
   }
 }

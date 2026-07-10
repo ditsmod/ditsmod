@@ -1,6 +1,6 @@
 import { createReadStream } from 'node:fs';
 import { readFile } from 'node:fs/promises';
-import { ctx, Status } from '@ditsmod/core';
+import { ctx, HttpStatus } from '@ditsmod/core';
 import { controller, RequestContext } from '@ditsmod/rest';
 
 import { webpackDist } from './swagger-ui/constants.js';
@@ -15,7 +15,7 @@ export class OpenapiController {
     description: 'OpenAPI documentation',
     parameters: [],
     responses: {
-      [Status.OK]: {
+      [HttpStatus.OK]: {
         description: 'Index file for the OpenAPI Specification',
         content: { ['text/html; charset=utf-8']: {} },
       },
@@ -30,7 +30,7 @@ export class OpenapiController {
     description: 'Config file in YAML format for the OpenAPI documentation',
     parameters: [],
     responses: {
-      [Status.OK]: {
+      [HttpStatus.OK]: {
         description: 'YAML-file for the OpenAPI documentation',
         content: { ['text/yaml; charset=utf-8']: {} },
       },
@@ -44,7 +44,7 @@ export class OpenapiController {
     description: 'Config file in JSON format for the OpenAPI documentation',
     parameters: [],
     responses: {
-      [Status.OK]: {
+      [HttpStatus.OK]: {
         description: 'JSON-file for the OpenAPI documentation',
         content: { ['application/json; charset=utf-8']: {} },
       },
@@ -58,7 +58,7 @@ export class OpenapiController {
     description: 'SwaggerUI JavaScript bundle',
     parameters: [],
     responses: {
-      [Status.OK]: {
+      [HttpStatus.OK]: {
         description: 'JavaScript-file with SwaggerUI logic',
         content: { ['text/javascript; charset=utf-8']: {} },
       },

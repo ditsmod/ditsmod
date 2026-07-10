@@ -1,6 +1,6 @@
 import { ChainError } from '@ts-stack/chain-error';
 
-import { Status } from '#utils/http-status-codes.js';
+import { HttpStatus } from '#utils/http-status-codes.js';
 import { CustomError } from '#error/custom-error.js';
 
 describe('CustomError', () => {
@@ -12,7 +12,7 @@ describe('CustomError', () => {
     const msg1 = 'frontend %s message';
     const msg2 = 'backend %s message';
     const cause = new Error();
-    const err = new CustomError({ msg1, msg2, level: 'warn', status: Status.CONFLICT }, cause);
+    const err = new CustomError({ msg1, msg2, level: 'warn', status: HttpStatus.CONFLICT }, cause);
     expect(err).toMatchObject({
       currentMessage: msg1,
       cause,
@@ -20,7 +20,7 @@ describe('CustomError', () => {
         msg1,
         msg2,
         level: 'warn',
-        status: Status.CONFLICT,
+        status: HttpStatus.CONFLICT,
       },
     });
   });

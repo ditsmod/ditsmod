@@ -1,4 +1,4 @@
-import { injectable, Injector, skipSelf, Status, Context } from '@ditsmod/core';
+import { injectable, Injector, skipSelf, HttpStatus, Context } from '@ditsmod/core';
 import { CustomError } from '@ditsmod/core/errors';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
 import { DictService } from '@ditsmod/i18n';
@@ -33,7 +33,7 @@ export class ValidationInterceptor implements HttpInterceptor {
     const validate = this.ajvService.getValidator(schema);
     if (!validate) {
       const dict = this.getDict();
-      throw new CustomError({ msg2: dict.ajvSchemaNotFound, status: Status.INTERNAL_SERVER_ERROR, level: 'error' });
+      throw new CustomError({ msg2: dict.ajvSchemaNotFound, status: HttpStatus.INTERNAL_SERVER_ERROR, level: 'error' });
     }
     if (!validate(value)) {
       const msg1 = this.ajvService.ajv.errorsText(validate.errors);

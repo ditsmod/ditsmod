@@ -1,5 +1,5 @@
 import { parse } from 'node:querystring';
-import { AnyObj, HttpMethod, injectable, Status } from '@ditsmod/core';
+import { AnyObj, HttpMethod, injectable, HttpStatus } from '@ditsmod/core';
 import { CustomError } from '@ditsmod/core/errors';
 
 import { HttpFrontend, HttpHandler } from './tokens-and-types.js';
@@ -36,11 +36,11 @@ export class DefaultHttpFrontendPerRou implements HttpFrontend {
     if (!ctx.rawRes.statusCode) {
       const httpMethod = ctx.rawReq.method as HttpMethod;
       if (httpMethod == 'GET') {
-        ctx.rawRes.statusCode = Status.OK;
+        ctx.rawRes.statusCode = HttpStatus.OK;
       } else if (httpMethod == 'POST') {
-        ctx.rawRes.statusCode = Status.CREATED;
+        ctx.rawRes.statusCode = HttpStatus.CREATED;
       } else if (httpMethod == 'OPTIONS') {
-        ctx.rawRes.statusCode = Status.NO_CONTENT;
+        ctx.rawRes.statusCode = HttpStatus.NO_CONTENT;
       }
     }
 
@@ -63,6 +63,6 @@ export class DefaultHttpFrontendPerRou implements HttpFrontend {
     const route = JSON.stringify({ method: ctx.rawReq.method, url: ctx.rawReq.url });
     let msg2 = `The request handler with route ${route} set the data type to "${contentType}"`;
     msg2 += ' but did not send the response body. Make sure your handler returns a value.';
-    throw new CustomError({ msg1, msg2, level: 'error', status: Status.INTERNAL_SERVER_ERROR });
+    throw new CustomError({ msg1, msg2, level: 'error', status: HttpStatus.INTERNAL_SERVER_ERROR });
   }
 }

@@ -5,7 +5,7 @@ import {
   Injector,
   ModuleScopedResolvedGuard,
   skipSelf,
-  Status,
+  HttpStatus,
   SystemLogMediator,
 } from '@ditsmod/core';
 
@@ -61,10 +61,10 @@ export class InterceptorWithGuards implements HttpInterceptor {
     return inj;
   }
 
-  protected prohibitActivation(ctx: RequestContext, status?: Status) {
+  protected prohibitActivation(ctx: RequestContext, status?: HttpStatus) {
     const systemLogMediator = this.injector.get(SystemLogMediator) as SystemLogMediator;
     systemLogMediator.youCannotActivateRoute(this, ctx.rawReq.method!, ctx.rawReq.url!);
-    ctx.rawRes.statusCode = Status.UNAUTHORIZED;
+    ctx.rawRes.statusCode = HttpStatus.UNAUTHORIZED;
     ctx.rawRes.end();
   }
 }

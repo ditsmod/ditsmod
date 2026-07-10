@@ -5,7 +5,7 @@ import {
   Injector,
   ModuleScopedResolvedGuard,
   skipSelf,
-  Status,
+  HttpStatus,
   SystemLogMediator,
 } from '@ditsmod/core';
 import { TRPCError } from '@trpc/server';
@@ -62,10 +62,10 @@ export class InterceptorWithGuards implements TrpcHttpInterceptor {
     return inj;
   }
 
-  protected prohibitActivation(opts: TrpcOpts, status?: Status) {
+  protected prohibitActivation(opts: TrpcOpts, status?: HttpStatus) {
     const systemLogMediator = this.injector.get(SystemLogMediator) as SystemLogMediator;
     systemLogMediator.youCannotActivateRoute(this, '', opts.ctx.req.url!);
-    // ctx.rawRes.statusCode = Status.UNAUTHORIZED;
+    // ctx.rawRes.statusCode = HttpStatus.UNAUTHORIZED;
     throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
 }

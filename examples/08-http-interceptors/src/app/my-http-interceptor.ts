@@ -10,7 +10,7 @@ export class MyHttpInterceptor implements HttpInterceptor {
 
     // You can to do something after, for example, log status:
     if (ctx.rawRes.headersSent) {
-      const msg = `MyHttpInterceptor works! Status code: ${ctx.rawRes.statusCode}`;
+      const msg = `MyHttpInterceptor works! HttpStatus code: ${ctx.rawRes.statusCode}`;
       this.logger.log('info', msg);
     } else {
       ctx.rawRes.setHeader('Content-Type', 'application/json; charset=utf-8');

@@ -1,4 +1,4 @@
-export enum Status {
+export enum HttpStatus {
   CONTINUE = 100,
   SWITCHING_PROTOCOLS = 101,
   OK = 200,
@@ -148,8 +148,8 @@ export const STATUS_CODE_INFO: StatusCodeInfo = {
   },
   207: {
     statusCode: 207,
-    text: 'Multi-Status',
-    description: '"Status for multiple independent operations."',
+    text: 'Multi-HttpStatus',
+    description: '"HttpStatus for multiple independent operations."',
     spec_title: 'RFC5218#10.2',
     spec_href: ref + '2518#section-10.2',
   },
@@ -494,13 +494,13 @@ export const STATUS_CODE_INFO: StatusCodeInfo = {
 /**
  * get the status text from StatusCode
  */
-export function getStatusText(statusCode: Status) {
+export function getStatusText(statusCode: HttpStatus) {
   const code = STATUS_CODE_INFO[statusCode];
-  return code?.text || 'Unknown Status';
+  return code?.text || 'Unknown HttpStatus';
 }
 
 /**
- * Returns true if the the Http Status Code is 200-299 (success)
+ * Returns true if the the Http HttpStatus Code is 200-299 (success)
  */
 export function isSuccess(statusCode: number): boolean {
   return statusCode >= 200 && statusCode < 300;
