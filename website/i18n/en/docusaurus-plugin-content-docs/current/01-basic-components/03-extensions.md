@@ -282,7 +282,7 @@ Note that `extensionGroupMeta.groupData` will always contain an array of results
 interface ExtensionGroupMeta<T = any> {
   delay: boolean;
   countdown: number;
-  groupDataPerApp: ExtensionGroupMetaPerApp<T>[];
+  groupDataPerApp: AppExtensionGroupMeta<T>[];
   moduleName: string,
   groupDebugMeta: ExtensionDebugMeta<T>[],
   groupData: T[],

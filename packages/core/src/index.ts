@@ -26,12 +26,12 @@ export { rootModule, RootDecoratorOptions } from '#decorators/root-module.js';
 export {
   ExtensionCounters,
   ExtensionClass,
-  ExtensionsMetaPerApp,
+  ExtensionMetaMap,
   Extension,
   ExtensionDebugMeta,
   ExtensionGroupMeta,
   PartialExtensionGroupMeta,
-  ExtensionGroupMetaPerApp,
+  AppExtensionGroupMeta,
 } from '#extension/extension-types.js';
 export { topologicalSort } from './extension/topological-sort.js';
 export { normalizeExtensionConfig } from './extension/extension-providers-and-configs.js';

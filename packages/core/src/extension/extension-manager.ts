@@ -100,7 +100,7 @@ export class ExtensionManager {
     pendingExtension?: Extension,
   ) {
     const perApp = Boolean(pendingExtension);
-    extensionGroupMeta = this.prepareExtensionGroupMetaPerApp(extensionGroupMeta, perApp);
+    extensionGroupMeta = this.prepareAppExtensionGroupMeta(extensionGroupMeta, perApp);
     if (perApp) {
       if (extensionGroupMeta.delay) {
         this.addExtensionToPendingList(ExtCls, pendingExtension!);
@@ -111,7 +111,7 @@ export class ExtensionManager {
     return extensionGroupMeta;
   }
 
-  protected prepareExtensionGroupMetaPerApp(
+  protected prepareAppExtensionGroupMeta(
     extensionGroupMeta: PartialExtensionGroupMeta,
     perApp?: boolean,
   ): ExtensionGroupMeta {
@@ -155,7 +155,7 @@ export class ExtensionManager {
     this.log.finishExtensionInit(this, this.unfinishedInit);
     this.unfinishedInit.delete(ExtCls);
     this.extensionGroupMetaCache.set(ExtCls, extensionGroupMeta);
-    this.setExtensionGroupMetaPerApp(ExtCls, extensionGroupMeta);
+    this.setAppExtensionGroupMeta(ExtCls, extensionGroupMeta);
     return extensionGroupMeta;
   }
 
@@ -206,7 +206,7 @@ export class ExtensionManager {
     return extensionGroupMeta;
   }
 
-  protected setExtensionGroupMetaPerApp(ExtCls: ExtensionClass, extensionGroupMeta: ExtensionGroupMeta) {
+  protected setAppExtensionGroupMeta(ExtCls: ExtensionClass, extensionGroupMeta: ExtensionGroupMeta) {
     const copyExtensionGroupMeta = { ...extensionGroupMeta } as ExtensionGroupMeta;
     delete (copyExtensionGroupMeta as OptionalProps<ExtensionGroupMeta, 'groupDataPerApp'>).groupDataPerApp;
     const aExtensionGroupMeta = this.extensionContext.mExtensionGroupMeta.get(ExtCls) || [];

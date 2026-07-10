@@ -282,7 +282,7 @@ export class Extension2 implements Extension<void> {
 interface ExtensionGroupMeta<T = any> {
   delay: boolean;
   countdown: number;
-  groupDataPerApp: ExtensionGroupMetaPerApp<T>[];
+  groupDataPerApp: AppExtensionGroupMeta<T>[];
   moduleName: string,
   groupDebugMeta: ExtensionDebugMeta<T>[],
   groupData: T[],

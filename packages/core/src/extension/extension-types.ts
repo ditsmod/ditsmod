@@ -2,7 +2,7 @@ import type { AnyObj, OptionalProps } from '#types/mix.js';
 import type { Class, Provider } from '#di/top/types-and-models.js';
 import type { Injector } from '#di/injector.js';
 
-export class ExtensionsMetaPerApp {
+export class ExtensionMetaMap {
   [key: string]: AnyObj;
 }
 
@@ -22,7 +22,7 @@ export class ExtensionDebugMeta<T = any> {
 export class ExtensionGroupMeta<T = any> {
   delay: boolean;
   countdown = 0;
-  groupDataPerApp: ExtensionGroupMetaPerApp<T>[];
+  groupDataPerApp: AppExtensionGroupMeta<T>[];
 
   constructor(
     public moduleName: string,
@@ -38,7 +38,7 @@ export class ExtensionGroupMeta<T = any> {
 
 // prettier-ignore
 export type PartialExtensionGroupMeta<T = any> = OptionalProps<ExtensionGroupMeta<T>, 'groupDebugMeta' | 'groupData' | 'moduleName' | 'countdown'>;
-export type ExtensionGroupMetaPerApp<T = any> = Omit<ExtensionGroupMeta<T>, 'groupDataPerApp'>;
+export type AppExtensionGroupMeta<T = any> = Omit<ExtensionGroupMeta<T>, 'groupDataPerApp'>;
 
 /**
  * The concept of "stages" in extensions was introduced so that metadata or injectors

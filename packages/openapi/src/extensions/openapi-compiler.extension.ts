@@ -1,13 +1,13 @@
 import {
   Extension,
   ExtensionManager,
-  ExtensionsMetaPerApp,
+  ExtensionMetaMap,
   HttpMethod,
   injectable,
   Injector,
   optional,
   Reflector,
-  ExtensionGroupMetaPerApp,
+  AppExtensionGroupMeta,
   PartialExtensionGroupMeta,
   Context,
 } from '@ditsmod/core';
@@ -39,7 +39,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
   constructor(
     private extensionManager: ExtensionManager,
     private log: OpenapiLogMediator,
-    @optional() private extensionsMetaPerApp?: ExtensionsMetaPerApp,
+    @optional() private extensionsMetaPerApp?: ExtensionMetaMap,
   ) {}
 
   async stage1() {
@@ -65,7 +65,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     }
   }
 
-  protected async compileOasObject(groupDataPerApp: ExtensionGroupMetaPerApp<MetadataPerMod3>[]) {
+  protected async compileOasObject(groupDataPerApp: AppExtensionGroupMeta<MetadataPerMod3>[]) {
     const paths: XPathsObject = {};
     this.initOasObject();
     for (const extensionGroupMetaPerApp of groupDataPerApp) {

@@ -9,7 +9,7 @@ import {
   Extension,
   Provider,
   ExtensionGroupMeta,
-  ExtensionGroupMetaPerApp,
+  AppExtensionGroupMeta,
   FactoryProvider,
   ResolvedGuard,
   ResolvedProvider,
@@ -378,7 +378,7 @@ export class PreRouterExtension implements Extension<void> {
     });
   }
 
-  protected checkPresenceOfRoutesInApplication(groupDataPerApp: ExtensionGroupMetaPerApp<MetadataPerMod3>[]) {
+  protected checkPresenceOfRoutesInApplication(groupDataPerApp: AppExtensionGroupMeta<MetadataPerMod3>[]) {
     return groupDataPerApp.reduce((prev1, curr1) => {
       return (
         prev1 || curr1.groupData.reduce((prev2, curr2) => prev2 || Boolean(curr2.aControllerMetadata.length), false)

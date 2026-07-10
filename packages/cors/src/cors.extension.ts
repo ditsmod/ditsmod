@@ -6,7 +6,7 @@ import {
   Status,
   HttpMethod,
   Provider,
-  ExtensionGroupMetaPerApp,
+  AppExtensionGroupMeta,
   inject,
   PROVIDERS_PER_APP,
 } from '@ditsmod/core';
@@ -42,7 +42,7 @@ export class CorsExtension implements Extension<void | false> {
     return; // Make TypeScript happy
   }
 
-  protected prepareDataAndSetInterceptors(groupDataPerApp: ExtensionGroupMetaPerApp<MetadataPerMod3>[]) {
+  protected prepareDataAndSetInterceptors(groupDataPerApp: AppExtensionGroupMeta<MetadataPerMod3>[]) {
     groupDataPerApp.forEach((extensionGroupMetaPerApp) => {
       extensionGroupMetaPerApp.groupData.forEach((metadataPerMod3) => {
         const { aControllerMetadata } = metadataPerMod3;
