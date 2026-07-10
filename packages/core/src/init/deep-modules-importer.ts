@@ -3,7 +3,7 @@ import { defaultExtensionProviders } from '#extension/default-extensions-provide
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import type { ModuleManager } from '#init/module-manager.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
-import type { BaseImportRegistry, ShallowImports } from '#init/types.js';
+import type { BaseImportRegistry, ShallowModuleImports } from '#init/types.js';
 import type { ResolvedModuleMetadata } from '#types/metadata-per-mod.js';
 import type { Level, ModRefId, AnyObj } from '#types/mix.js';
 import type { AnyFn, Provider } from '#di/top/types-and-models.js';
@@ -37,23 +37,23 @@ export class DeepModulesImporter {
   protected extensionCounters = new ExtensionCounters();
 
   protected moduleManager: ModuleManager;
-  protected shallowImportsMap: Map<ModRefId, ShallowImports>;
+  protected shallowModuleImportsMap: Map<ModRefId, ShallowModuleImports>;
   protected providersPerApp: Provider[];
   protected log: SystemLogMediator;
 
   constructor({
     moduleManager,
-    shallowImportsMap,
+    shallowModuleImportsMap,
     providersPerApp,
     log,
   }: {
     moduleManager: ModuleManager;
-    shallowImportsMap: Map<ModRefId, ShallowImports>;
+    shallowModuleImportsMap: Map<ModRefId, ShallowModuleImports>;
     providersPerApp: Provider[];
     log: SystemLogMediator;
   }) {
     this.moduleManager = moduleManager;
-    this.shallowImportsMap = shallowImportsMap;
+    this.shallowModuleImportsMap = shallowModuleImportsMap;
     this.providersPerApp = providersPerApp;
     this.log = log;
   }
@@ -62,7 +62,7 @@ export class DeepModulesImporter {
     const levels: Level[] = ['Req', 'Rou', 'Mod'];
     const mResolvedModuleMetadata = new Map<ModRefId, ResolvedModuleMetadata>();
     this.tokensPerApp = getTokens(this.providersPerApp);
-    this.shallowImportsMap.forEach(
+    this.shallowModuleImportsMap.forEach(
       ({ normalizedModuleMeta, aOrderedExtensions, baseImportRegistry, initImportRegistryMap }, modRefId) => {
         try {
           const deepImportedModules = new Map<AnyFn, AnyObj>();
@@ -82,9 +82,9 @@ export class DeepModulesImporter {
             const shallowImportedModule = initImportRegistryMap.get(decorator)!;
             const deepImports = initHooks.importModulesDeep({
               parent: this,
-              shallowImports: shallowImportedModule,
+              shallowModuleImports: shallowImportedModule,
               moduleManager: this.moduleManager,
-              shallowImportsMap: this.shallowImportsMap,
+              shallowModuleImportsMap: this.shallowModuleImportsMap,
               providersPerApp: this.providersPerApp,
               log: this.log,
             });
@@ -272,9 +272,9 @@ export class DeepModulesImporter {
     childLevels: string[] = [],
   ) {
     let found = false;
-    const shallowImports = this.shallowImportsMap.get(srcModRefId1)!;
+    const shallowModuleImports = this.shallowModuleImportsMap.get(srcModRefId1)!;
     for (const level of levels) {
-      const providerImport = shallowImports.baseImportRegistry[`per${level}`].get(dep.token);
+      const providerImport = shallowModuleImports.baseImportRegistry[`per${level}`].get(dep.token);
       if (providerImport) {
         found = true;
         path.push(dep.token);
@@ -290,7 +290,7 @@ export class DeepModulesImporter {
     }
 
     if (!found && dep.required) {
-      this.throwError(shallowImports.normalizedModuleMeta, importedProvider, path, dep.token, [
+      this.throwError(shallowModuleImports.normalizedModuleMeta, importedProvider, path, dep.token, [
         ...childLevels,
         ...levels,
       ]);
@@ -361,9 +361,9 @@ export class DeepModulesImporter {
 
   protected hasUnresolvedImportedDeps(srcModRefId1: ModRefId, levels: Level[], dep: ReflectiveDependency) {
     let found = false;
-    const shallowImports = this.shallowImportsMap.get(srcModRefId1)!;
+    const shallowModuleImports = this.shallowModuleImportsMap.get(srcModRefId1)!;
     forLevel: for (const level of levels) {
-      const providerImport = shallowImports.baseImportRegistry[`per${level}`].get(dep.token);
+      const providerImport = shallowModuleImports.baseImportRegistry[`per${level}`].get(dep.token);
       if (providerImport) {
         found = true;
         const { modRefId: modRefId2, providers: srcProviders2 } = providerImport;

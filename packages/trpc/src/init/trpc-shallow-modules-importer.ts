@@ -5,7 +5,7 @@ import type {
   ImportModulesShallowConfig,
   TrpcAppProviders,
   TrpcModRefId,
-  TrpcShallowImports,
+  TrpcShallowModuleImports,
 } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { initTrpcModule, TrpcInitHooks, TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
 import type { GuardPerMod1 } from '#interceptors/trpc-guard.js';
@@ -30,7 +30,7 @@ export class TrpcShallowModulesImporter {
    */
   protected glProviders: AppProviders;
   protected trpcGlProviders: TrpcAppProviders;
-  protected shallowImportsMap = new Map<ModRefId, TrpcShallowImports>();
+  protected shallowModuleImportsMap = new Map<ModRefId, TrpcShallowModuleImports>();
   protected unfinishedScanModules = new Set<ModRefId>();
   protected unfinishedExportModules = new Set<ModRefId>();
   protected moduleManager: ModuleManager;
@@ -64,7 +64,7 @@ export class TrpcShallowModulesImporter {
     modRefId,
     unfinishedScanModules,
     guards1,
-  }: ImportModulesShallowConfig): Map<ModRefId, TrpcShallowImports> {
+  }: ImportModulesShallowConfig): Map<ModRefId, TrpcShallowModuleImports> {
     this.moduleManager = moduleManager;
     const normalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(modRefId, true);
     this.normalizedModuleMeta = normalizedModuleMeta;
@@ -79,7 +79,7 @@ export class TrpcShallowModulesImporter {
       true,
     );
 
-    return this.shallowImportsMap.set(modRefId, {
+    return this.shallowModuleImportsMap.set(modRefId, {
       normalizedModuleMeta,
       guards1: this.guards1,
       meta: this.meta,
@@ -105,7 +105,7 @@ export class TrpcShallowModulesImporter {
       const { guards1 } = this.getPrefixAndGuards(modRefId, meta, isImport);
       const shallowModulesImporter = new TrpcShallowModulesImporter();
       this.unfinishedScanModules.add(modRefId);
-      const shallowImportsBase = shallowModulesImporter.importModulesShallow({
+      const shallowModuleImportsBase = shallowModulesImporter.importModulesShallow({
         moduleManager: this.moduleManager,
         appProviders: this.glProviders,
         modRefId,
@@ -114,7 +114,7 @@ export class TrpcShallowModulesImporter {
       });
       this.unfinishedScanModules.delete(modRefId);
 
-      shallowImportsBase.forEach((val, key) => this.shallowImportsMap.set(key, val));
+      shallowModuleImportsBase.forEach((val, key) => this.shallowModuleImportsMap.set(key, val));
     }
   }
 

@@ -4,13 +4,13 @@ import type {
   ModuleManager,
   SystemLogMediator,
   DeepModulesImporter,
-  ShallowImports,
+  ShallowModuleImports,
   NormalizedModuleMeta,
 } from '@ditsmod/core';
 import { ModuleInfo } from '@ditsmod/core';
 
 import type { DeepModulesImporterConfig, TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
-import type { TrpcShallowImports } from '#decorators/trpc-init-hooks-and-metadata.js';
+import type { TrpcShallowModuleImports } from '#decorators/trpc-init-hooks-and-metadata.js';
 import type { GuardPerMod1 } from '#interceptors/trpc-guard.js';
 
 /**
@@ -32,25 +32,25 @@ export class TrpcModuleInfo extends ModuleInfo {}
 export class TrpcDeepModulesImporter {
   protected tokensPerApp: any[];
 
-  protected shallowImports: TrpcShallowImports;
+  protected shallowModuleImports: TrpcShallowModuleImports;
   protected moduleManager: ModuleManager;
-  protected shallowImportsMap: Map<ModRefId, ShallowImports>;
+  protected shallowModuleImportsMap: Map<ModRefId, ShallowModuleImports>;
   protected providersPerApp: Provider[];
   protected log: SystemLogMediator;
   protected parent: DeepModulesImporter;
 
   constructor({
     parent,
-    shallowImports,
+    shallowModuleImports,
     moduleManager,
-    shallowImportsMap,
+    shallowModuleImportsMap,
     providersPerApp,
     log,
   }: DeepModulesImporterConfig) {
     this.parent = parent;
-    this.shallowImports = shallowImports;
+    this.shallowModuleImports = shallowModuleImports;
     this.moduleManager = moduleManager;
-    this.shallowImportsMap = shallowImportsMap;
+    this.shallowModuleImportsMap = shallowModuleImportsMap;
     this.providersPerApp = providersPerApp;
     this.log = log;
   }

@@ -1,5 +1,5 @@
 import type { ModuleManager } from '#init/module-manager.js';
-import type { ShallowImports } from '#init/types.js';
+import type { ShallowModuleImports } from '#init/types.js';
 import type { SystemLogMediator } from '#logger/system-log-mediator.js';
 import type { AnyObj, ModRefId, ModuleType } from '#types/mix.js';
 import type { AnyFn, Provider } from '#di/top/types-and-models.js';
@@ -105,9 +105,9 @@ export class InitHooks<T1 extends InitDecoratorOptions = InitDecoratorOptions> {
    */
   importModulesDeep(config: {
     parent: AnyObj;
-    shallowImports: { normalizedModuleMeta: NormalizedModuleMeta } & AnyObj;
+    shallowModuleImports: { normalizedModuleMeta: NormalizedModuleMeta } & AnyObj;
     moduleManager: ModuleManager;
-    shallowImportsMap: Map<ModRefId, ShallowImports>;
+    shallowModuleImportsMap: Map<ModRefId, ShallowModuleImports>;
     providersPerApp: Provider[];
     log: SystemLogMediator;
   }): any {

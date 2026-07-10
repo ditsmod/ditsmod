@@ -13,7 +13,7 @@ import {
   ProviderImport,
   DynamicModuleWithInit,
   ModRefId,
-  ShallowImports,
+  ShallowModuleImports,
 } from '@ditsmod/core';
 import { RestAppInitializer } from './rest-app-initializer.js';
 import { Router } from '../services/router.js';
@@ -95,7 +95,7 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
     })
     class AppModule {}
 
-    let shallowImportsBase: Map<ModRefId, ShallowImports>;
+    let shallowModuleImportsBase: Map<ModRefId, ShallowModuleImports>;
 
     beforeAll(() => {
       const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
@@ -103,17 +103,17 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
       const appOptions = new AppOptions();
       mock = new AppInitializerMock(appOptions, moduleManager, systemLogMediator);
       moduleManager.scanRootModule(AppModule);
-      shallowImportsBase = mock.collectProvidersShallow(moduleManager);
+      shallowModuleImportsBase = mock.collectProvidersShallow(moduleManager);
     });
 
-    function checkAppProviders(shallowImports: ShallowImports | undefined) {
-      const tokensPerMod = getImportedTokens(shallowImports?.baseImportRegistry.perMod).slice(0, 3);
+    function checkAppProviders(shallowModuleImports: ShallowModuleImports | undefined) {
+      const tokensPerMod = getImportedTokens(shallowModuleImports?.baseImportRegistry.perMod).slice(0, 3);
       expect(tokensPerMod).toEqual([Provider0, Provider3, Provider4]);
-      const tokensPerReq = getImportedTokens(shallowImports?.baseImportRegistry.perReq).slice(0, 3);
+      const tokensPerReq = getImportedTokens(shallowModuleImports?.baseImportRegistry.perReq).slice(0, 3);
       expect(tokensPerReq).toEqual([Provider5, Provider6, Provider7]);
 
       // App providers per a module
-      const perMod = shallowImports?.baseImportRegistry?.perMod!;
+      const perMod = shallowModuleImports?.baseImportRegistry?.perMod!;
       const expectedPerMod = new ProviderImport();
 
       expectedPerMod.modRefId = Module0;
@@ -127,7 +127,7 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
       expect(perMod.get(Provider4)).toEqual(expectedPerMod);
 
       // App providers per a request
-      const perReq = shallowImports?.baseImportRegistry.perReq!;
+      const perReq = shallowModuleImports?.baseImportRegistry.perReq!;
       const expectedPerReq = new ProviderImport();
       expectedPerReq.modRefId = module3WithParams;
       expectedPerReq.providers = [Provider5];
@@ -139,7 +139,7 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
     }
 
     it('Module0', async () => {
-      const mod0 = shallowImportsBase.get(Module0);
+      const mod0 = shallowModuleImportsBase.get(Module0);
       expect(mod0?.normalizedModuleMeta.providersPerApp).toEqual([]);
       const moduleInfo: ModuleInfo = { path: '', moduleName: 'Module0', isExternal: false };
       const providerPerMod: Provider = { token: ModuleInfo, useValue: moduleInfo };
@@ -149,7 +149,7 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
     });
 
     it('Module1', async () => {
-      const mod1 = shallowImportsBase.get(Module1);
+      const mod1 = shallowModuleImportsBase.get(Module1);
       expect(mod1?.normalizedModuleMeta.providersPerApp).toEqual([]);
       const moduleInfo: ModuleInfo = { path: '', moduleName: 'Module1', isExternal: false };
       const providerPerMod: Provider = { token: ModuleInfo, useValue: moduleInfo };
@@ -158,7 +158,7 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
     });
 
     it('Module2', async () => {
-      const mod2 = shallowImportsBase.get(module2WithParams);
+      const mod2 = shallowModuleImportsBase.get(module2WithParams);
       expect(mod2?.normalizedModuleMeta.providersPerApp).toEqual([]);
       const moduleInfo: ModuleInfo = { path: '', moduleName: 'Module2', isExternal: false };
       const providerPerMod: Provider = { token: ModuleInfo, useValue: moduleInfo };
@@ -168,7 +168,7 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
     });
 
     it('Module3', async () => {
-      const mod3 = shallowImportsBase.get(module3WithParams);
+      const mod3 = shallowModuleImportsBase.get(module3WithParams);
       expect(mod3?.normalizedModuleMeta.providersPerApp).toEqual([]);
       const moduleInfo: ModuleInfo = { path: 'one', moduleName: 'Module3', isExternal: false };
       const providerPerMod: Provider = {
@@ -182,8 +182,8 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
 
     it('Module4', async () => {
       moduleManager.scanRootModule(AppModule);
-      const shallowImportsBase = mock.collectProvidersShallow(moduleManager);
-      const mod4 = shallowImportsBase.get(module4WithParams);
+      const shallowModuleImportsBase = mock.collectProvidersShallow(moduleManager);
+      const mod4 = shallowModuleImportsBase.get(module4WithParams);
       expect(mod4?.normalizedModuleMeta.providersPerApp).toEqual([]);
       const moduleInfo: ModuleInfo = { path: '', moduleName: 'Module4', isExternal: false };
       const providerPerMod: Provider = { token: ModuleInfo, useValue: moduleInfo };
@@ -194,8 +194,8 @@ function getImportedTokens(map: Map<any, ProviderImport<Provider>> | undefined) 
 
     it('AppModule', async () => {
       moduleManager.scanRootModule(AppModule);
-      const shallowImportsBase = mock.collectProvidersShallow(moduleManager);
-      const root1 = shallowImportsBase.get(AppModule);
+      const shallowModuleImportsBase = mock.collectProvidersShallow(moduleManager);
+      const root1 = shallowModuleImportsBase.get(AppModule);
       expect(root1?.normalizedModuleMeta.providersPerApp.slice(0, 2)).toEqual([
         Logger,
         { token: Router, useValue: 'fake' },

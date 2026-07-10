@@ -21,7 +21,7 @@ import type { RestModRefId } from '#init/rest-init-meta.js';
 import { RestInitMeta } from '#init/rest-init-meta.js';
 import type { Level, RestAppProviders } from '#types/types.js';
 import { initRest, RestInitHooks } from '#decorators/rest-init-hooks-and-metadata.js';
-import type { ImportModulesShallowConfig, RestProviderImport, RestShallowImports } from './types.js';
+import type { ImportModulesShallowConfig, RestProviderImport, RestShallowModuleImports } from './types.js';
 import { ModuleIncludesInImportsAndAppends } from '#errors';
 import { ModuleMustHaveControllers } from '#services/rest-errors.js';
 
@@ -46,7 +46,7 @@ export class RestShallowModulesImporter {
    */
   protected appProviders: AppProviders;
   protected restGlProviders: RestAppProviders;
-  protected shallowImportsMap = new Map<ModRefId, RestShallowImports>();
+  protected shallowModuleImportsMap = new Map<ModRefId, RestShallowModuleImports>();
   protected unfinishedScanModules = new Set<ModRefId>();
   protected unfinishedExportModules = new Set<ModRefId>();
   protected moduleManager: ModuleManager;
@@ -82,7 +82,7 @@ export class RestShallowModulesImporter {
     prefixPerMod,
     guards1,
     isAppends,
-  }: ImportModulesShallowConfig): Map<ModRefId, RestShallowImports> {
+  }: ImportModulesShallowConfig): Map<ModRefId, RestShallowModuleImports> {
     this.moduleManager = moduleManager;
     const normalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(modRefId, true);
     this.normalizedModuleMeta = normalizedModuleMeta;
@@ -101,7 +101,7 @@ export class RestShallowModulesImporter {
       applyControllers = true;
     }
 
-    return this.shallowImportsMap.set(modRefId, {
+    return this.shallowModuleImportsMap.set(modRefId, {
       normalizedModuleMeta,
       prefixPerMod,
       guards1: this.guards1,
@@ -141,7 +141,7 @@ export class RestShallowModulesImporter {
       const { prefixPerMod, guards1 } = this.getPrefixAndGuards(modRefId, meta, isImport);
       const shallowModulesImporter = new RestShallowModulesImporter();
       this.unfinishedScanModules.add(modRefId);
-      const shallowImportsBase = shallowModulesImporter.importModulesShallow({
+      const shallowModuleImportsBase = shallowModulesImporter.importModulesShallow({
         moduleManager: this.moduleManager,
         appProviders: this.appProviders,
         modRefId,
@@ -152,7 +152,7 @@ export class RestShallowModulesImporter {
       });
       this.unfinishedScanModules.delete(modRefId);
 
-      shallowImportsBase.forEach((val, key) => this.shallowImportsMap.set(key, val));
+      shallowModuleImportsBase.forEach((val, key) => this.shallowModuleImportsMap.set(key, val));
     }
   }
 

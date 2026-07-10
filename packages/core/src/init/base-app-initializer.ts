@@ -23,7 +23,7 @@ import { ResolvedModuleMetadata } from '#types/metadata-per-mod.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { getModule } from '#utils/get-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
-import type { ShallowImports } from './types.js';
+import type { ShallowModuleImports } from './types.js';
 import type { ProvidersByLevel } from '#types/providers-metadata.js';
 import {
   FailedCollectingMetadata,
@@ -130,7 +130,7 @@ export class BaseAppInitializer {
   async bootstrapModulesAndExtensions() {
     const deepModulesImporter = new DeepModulesImporter({
       moduleManager: this.moduleManager,
-      shallowImportsMap: this.collectProvidersShallow(this.moduleManager),
+      shallowModuleImportsMap: this.collectProvidersShallow(this.moduleManager),
       providersPerApp: this.normalizedModuleMeta.providersPerApp,
       log: this.log,
     });
@@ -210,16 +210,16 @@ export class BaseAppInitializer {
     this.log.printAppProviders(this, appProviders);
     const shallowModulesImporter2 = new ShallowModulesImporter();
     const { modRefId, allInitHooks } = moduleManager.getNormalizedModuleMeta('root', true);
-    const shallowImportsMap = shallowModulesImporter2.importModulesShallow({
+    const shallowModuleImportsMap = shallowModulesImporter2.importModulesShallow({
       appProviders,
       modRefId,
       moduleManager,
       unfinishedScanModules: new Set(),
     });
     if (allInitHooks.size == 0) {
-      return shallowImportsMap;
+      return shallowModuleImportsMap;
     }
-    const mergedShallowImportsMap: Map<ModRefId, ShallowImports> = new Map();
+    const mergedShallowModuleImportsMap: Map<ModRefId, ShallowModuleImports> = new Map();
     // @todo Refactor this.
     allInitHooks.forEach((initHooks, decorator) => {
       const val = initHooks.importModulesShallow({
@@ -228,20 +228,20 @@ export class BaseAppInitializer {
         modRefId,
         unfinishedScanModules: new Set(),
       });
-      shallowImportsMap.forEach((shallowImports, modRefId) => {
+      shallowModuleImportsMap.forEach((shallowModuleImports, modRefId) => {
         const shallowImportedModule = val.get(modRefId)!;
-        const mergedShallowImports = mergedShallowImportsMap.get(modRefId);
-        if (mergedShallowImports) {
-          mergedShallowImports.initImportRegistryMap.set(decorator, shallowImportedModule);
+        const mergedShallowModuleImports = mergedShallowModuleImportsMap.get(modRefId);
+        if (mergedShallowModuleImports) {
+          mergedShallowModuleImports.initImportRegistryMap.set(decorator, shallowImportedModule);
         } else {
-          mergedShallowImportsMap.set(modRefId, {
-            ...shallowImports,
+          mergedShallowModuleImportsMap.set(modRefId, {
+            ...shallowModuleImports,
             initImportRegistryMap: new Map([[decorator, shallowImportedModule]]),
           });
         }
       });
     });
-    return mergedShallowImportsMap;
+    return mergedShallowModuleImportsMap;
   }
 
   protected async handleExtensions(

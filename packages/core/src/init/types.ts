@@ -8,7 +8,7 @@ import type { GroupToken } from '#di/key-registry.js';
 /**
  * Metadata collected using `ShallowModulesImporter`. The target for this metadata is `DeepModulesImporter`.
  */
-export class ShallowImports<T extends AnyObj = AnyObj> {
+export class ShallowModuleImports<T extends AnyObj = AnyObj> {
   /**
    * Snapshot of NormalizedModuleMeta. If you modify any array in this object,
    * the original array will remain unchanged.

@@ -6,7 +6,7 @@ import type {
   ModuleManager,
   SystemLogMediator,
   DeepModulesImporter,
-  ShallowImports,
+  ShallowModuleImports,
 } from '@ditsmod/core';
 
 import type { GuardPerMod1 } from '#interceptors/guard.js';
@@ -22,7 +22,7 @@ export class RestProviderImport<T extends Provider = Provider> {
 /**
  * Metadata collected using `ShallowModulesImporter`. The target for this metadata is `DeepModulesImporter`.
  */
-export class RestShallowImports {
+export class RestShallowModuleImports {
   normalizedModuleMeta: NormalizedModuleMeta;
   prefixPerMod: string;
   guards1: GuardPerMod1[];
@@ -78,9 +78,9 @@ export interface ImportModulesShallowConfig {
 
 export interface DeepModulesImporterConfig {
   parent: DeepModulesImporter;
-  shallowImports: RestShallowImports;
+  shallowModuleImports: RestShallowModuleImports;
   moduleManager: ModuleManager;
-  shallowImportsMap: Map<ModRefId, ShallowImports>;
+  shallowModuleImportsMap: Map<ModRefId, ShallowModuleImports>;
   providersPerApp: Provider[];
   log: SystemLogMediator;
 }

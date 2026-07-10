@@ -5,7 +5,7 @@ import type { AppProviders } from '#types/metadata-per-mod.js';
 import { ProviderImport } from '#types/metadata-per-mod.js';
 import type { Level, ModRefId, AnyObj } from '#types/mix.js';
 import type { AnyFn, Provider } from '#di/top/types-and-models.js';
-import { ShallowImports } from '#init/types.js';
+import { ShallowModuleImports } from '#init/types.js';
 import { getCollisions } from '#utils/get-collisions.js';
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
@@ -65,7 +65,7 @@ export class ShallowModulesImporter {
    * AppProviders.
    */
   protected appProviders: AppProviders;
-  protected shallowImportsMap = new Map<ModRefId, ShallowImports>();
+  protected shallowModuleImportsMap = new Map<ModRefId, ShallowModuleImports>();
   protected unfinishedScanModules = new Set<ModRefId>();
   protected unfinishedExportModules = new Set<ModRefId>();
   protected moduleManager: ModuleManager;
@@ -109,7 +109,7 @@ export class ShallowModulesImporter {
     modRefId: ModRefId;
     moduleManager: ModuleManager;
     unfinishedScanModules: Set<ModRefId>;
-  }): Map<ModRefId, ShallowImports> {
+  }): Map<ModRefId, ShallowModuleImports> {
     const normalizedModuleMeta = moduleManager.getNormalizedModuleMeta(modRefId, true);
     this.moduleManager = moduleManager;
     this.appProviders = appProviders;
@@ -165,9 +165,9 @@ export class ShallowModulesImporter {
     this.checkExtensionsGraph(allExtensionConfigs);
     const aOrderedExtensions = topologicalSort<ExtensionClass, ExtensionConfigBase>(allExtensionConfigs, true);
 
-    return this.shallowImportsMap.set(
+    return this.shallowModuleImportsMap.set(
       modRefId,
-      new ShallowImports(this.normalizedModuleMeta, aOrderedExtensions, {
+      new ShallowModuleImports(this.normalizedModuleMeta, aOrderedExtensions, {
         perMod,
         perRou,
         perReq,
@@ -212,14 +212,14 @@ export class ShallowModulesImporter {
   protected scanModule(modRefId: ModRefId) {
     const shallowModulesImporter = new ShallowModulesImporter();
     this.unfinishedScanModules.add(modRefId);
-    const shallowImportsMap = shallowModulesImporter.importModulesShallow({
+    const shallowModuleImportsMap = shallowModulesImporter.importModulesShallow({
       appProviders: this.appProviders,
       modRefId,
       moduleManager: this.moduleManager,
       unfinishedScanModules: this.unfinishedScanModules,
     });
     this.unfinishedScanModules.delete(modRefId);
-    shallowImportsMap.forEach((val, key) => this.shallowImportsMap.set(key, val));
+    shallowModuleImportsMap.forEach((val, key) => this.shallowModuleImportsMap.set(key, val));
   }
 
   /**

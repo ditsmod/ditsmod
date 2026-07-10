@@ -44,10 +44,10 @@ describe('DeepModulesImporter', () => {
     const initializer = new AppInitializerMock(baseAppOptions, moduleManager, systemLogMediator);
     initializer.bootstrapProvidersPerApp();
     systemLogMediator.flush();
-    const shallowImportsMap = initializer.collectProvidersShallow(moduleManager);
+    const shallowModuleImportsMap = initializer.collectProvidersShallow(moduleManager);
     const deepModulesImporter = new DeepModulesImporter({
       moduleManager,
-      shallowImportsMap,
+      shallowModuleImportsMap,
       providersPerApp: initializer.normalizedModuleMeta.providersPerApp,
       log: systemLogMediator,
     });

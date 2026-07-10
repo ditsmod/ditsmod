@@ -4,43 +4,43 @@ import type {
   ModuleManager,
   SystemLogMediator,
   DeepModulesImporter,
-  ShallowImports,
+  ShallowModuleImports,
 } from '@ditsmod/core';
 
-import type { DeepModulesImporterConfig, RestResolvedModuleMetadata, RestShallowImports } from './types.js';
+import type { DeepModulesImporterConfig, RestResolvedModuleMetadata, RestShallowModuleImports } from './types.js';
 
 /**
  * By analyzing the dependencies of the providers returned by `ShallowModulesImporter`,
  * recursively collects providers for them from the corresponding modules.
  */
 export class RestDeepModulesImporter {
-  protected shallowImports: RestShallowImports;
+  protected shallowModuleImports: RestShallowModuleImports;
   protected moduleManager: ModuleManager;
-  protected shallowImportsMap: Map<ModRefId, ShallowImports>;
+  protected shallowModuleImportsMap: Map<ModRefId, ShallowModuleImports>;
   protected providersPerApp: Provider[];
   protected log: SystemLogMediator;
   protected parent: DeepModulesImporter;
 
   constructor({
     parent,
-    shallowImports,
+    shallowModuleImports,
     moduleManager,
-    shallowImportsMap,
+    shallowModuleImportsMap,
     providersPerApp,
     log,
   }: DeepModulesImporterConfig) {
     this.parent = parent;
-    this.shallowImports = shallowImports;
+    this.shallowModuleImports = shallowModuleImports;
     this.moduleManager = moduleManager;
-    this.shallowImportsMap = shallowImportsMap;
+    this.shallowModuleImportsMap = shallowModuleImportsMap;
     this.providersPerApp = providersPerApp;
     this.log = log;
   }
 
   importModulesDeep(): RestResolvedModuleMetadata | undefined {
-    const { guards1, prefixPerMod, meta, applyControllers } = this.shallowImports;
+    const { guards1, prefixPerMod, meta, applyControllers } = this.shallowModuleImports;
     return {
-      normalizedModuleMeta: this.shallowImports.normalizedModuleMeta,
+      normalizedModuleMeta: this.shallowModuleImports.normalizedModuleMeta,
       meta,
       guards1,
       prefixPerMod,

@@ -54,7 +54,7 @@ beforeEach(() => {
 describe('shallow importing modules', () => {
   function importModulesShallow(modRefId: ModuleType) {
     expect(() => moduleManager.scanRootModule(modRefId)).not.toThrow();
-    const shallowImportsBase = new ShallowModulesImporterBase().importModulesShallow({
+    const shallowModuleImportsBase = new ShallowModulesImporterBase().importModulesShallow({
       appProviders: new AppProviders(),
       modRefId,
       moduleManager,
@@ -277,21 +277,21 @@ describe('shallow importing modules', () => {
     const map = importModulesShallow(AppModule);
     expect(map.size).toBe(5);
 
-    const shallowImports_1 = map.get(mod1)!;
-    const shallowImports_2 = map.get(mod2)!;
-    const shallowImports_3 = map.get(AppModule)!;
-    expect(shallowImports_1).toBeDefined();
-    expect(shallowImports_2).toBeDefined();
-    expect(shallowImports_3).toBeDefined();
+    const shallowModuleImports_1 = map.get(mod1)!;
+    const shallowModuleImports_2 = map.get(mod2)!;
+    const shallowModuleImports_3 = map.get(AppModule)!;
+    expect(shallowModuleImports_1).toBeDefined();
+    expect(shallowModuleImports_2).toBeDefined();
+    expect(shallowModuleImports_3).toBeDefined();
 
-    expect(shallowImports_1.prefixPerMod).toBe('prefix1');
-    expect(shallowImports_1.normalizedModuleMeta).toBeDefined();
-    // expect(shallowImports_1.applyControllers).toBe(true);
+    expect(shallowModuleImports_1.prefixPerMod).toBe('prefix1');
+    expect(shallowModuleImports_1.normalizedModuleMeta).toBeDefined();
+    // expect(shallowModuleImports_1.applyControllers).toBe(true);
 
-    expect(shallowImports_2.prefixPerMod).toBe('prefix2');
-    expect(shallowImports_3.prefixPerMod).toBe('');
-    // expect(shallowImports_2.applyControllers).toBe(true);
-    // expect(shallowImports_3.applyControllers).toBe(false);
+    expect(shallowModuleImports_2.prefixPerMod).toBe('prefix2');
+    expect(shallowModuleImports_3.prefixPerMod).toBe('');
+    // expect(shallowModuleImports_2.applyControllers).toBe(true);
+    // expect(shallowModuleImports_3.applyControllers).toBe(false);
   });
 
   it('should throw an error during importing and appending same module', () => {
@@ -425,20 +425,20 @@ describe('shallow importing modules', () => {
     const map = importModulesShallow(AppModule);
     expect(map.size).toBe(5);
 
-    const shallowImports_1 = map.get(mod1)!;
-    const shallowImports_2 = map.get(mod2)!;
-    const shallowImports_3 = map.get(AppModule)!;
-    expect(shallowImports_1).toBeDefined();
-    expect(shallowImports_2).toBeDefined();
-    expect(shallowImports_3).toBeDefined();
+    const shallowModuleImports_1 = map.get(mod1)!;
+    const shallowModuleImports_2 = map.get(mod2)!;
+    const shallowModuleImports_3 = map.get(AppModule)!;
+    expect(shallowModuleImports_1).toBeDefined();
+    expect(shallowModuleImports_2).toBeDefined();
+    expect(shallowModuleImports_3).toBeDefined();
 
-    expect(shallowImports_1.prefixPerMod).toBe('prefix1');
-    expect(shallowImports_1.normalizedModuleMeta).toBeDefined();
-    // expect(shallowImports_1.applyControllers).toBe(true);
+    expect(shallowModuleImports_1.prefixPerMod).toBe('prefix1');
+    expect(shallowModuleImports_1.normalizedModuleMeta).toBeDefined();
+    // expect(shallowModuleImports_1.applyControllers).toBe(true);
 
-    expect(shallowImports_2.prefixPerMod).toBe('prefix2');
-    expect(shallowImports_3.prefixPerMod).toBe('');
-    // expect(shallowImports_2.applyControllers).toBe(true);
-    // expect(shallowImports_3.applyControllers).toBe(false);
+    expect(shallowModuleImports_2.prefixPerMod).toBe('prefix2');
+    expect(shallowModuleImports_3.prefixPerMod).toBe('');
+    // expect(shallowModuleImports_2.applyControllers).toBe(true);
+    // expect(shallowModuleImports_3.applyControllers).toBe(false);
   });
 });

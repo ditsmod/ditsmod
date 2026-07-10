@@ -13,7 +13,7 @@ import {
   NormalizedModuleMeta,
   rootModule,
   SystemLogMediator,
-  ShallowImports,
+  ShallowModuleImports,
 } from '@ditsmod/core';
 
 import { ChainMaker } from './chain-maker.js';
@@ -149,7 +149,7 @@ describe('mix per app, per mod or per req', () => {
     declare prefixPerMod: string;
     override moduleName = 'MockModule';
     override normalizedModuleMeta = new NormalizedModuleMeta();
-    override shallowImportsMap = new Map<ModuleType, ShallowImports>();
+    override shallowModuleImportsMap = new Map<ModuleType, ShallowModuleImports>();
     override importedProvidersPerRou = new Map<any, ProviderImport>();
     override importedProvidersPerReq = new Map<any, ProviderImport>();
     override importedMultiProvidersPerRou = new Map<ModRefId, Provider[]>();

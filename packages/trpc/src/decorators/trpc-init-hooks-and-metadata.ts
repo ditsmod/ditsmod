@@ -10,7 +10,7 @@ import type {
   ModuleManager,
   AppProviders,
   DeepModulesImporter,
-  ShallowImports,
+  ShallowModuleImports,
   SystemLogMediator,
   ForwardRefFn,
 } from '@ditsmod/core';
@@ -88,7 +88,7 @@ export class TrpcInitHooks extends InitHooks<TrpcInitDecoratorOptions> {
     return new TrpcShallowModulesImporter().exportAppProviders(config);
   }
 
-  override importModulesShallow(config: ImportModulesShallowConfig): Map<ModRefId, TrpcShallowImports> {
+  override importModulesShallow(config: ImportModulesShallowConfig): Map<ModRefId, TrpcShallowModuleImports> {
     return new TrpcShallowModulesImporter().importModulesShallow(config);
   }
 
@@ -113,16 +113,16 @@ export interface ImportModulesShallowConfig {
 
 export interface DeepModulesImporterConfig {
   parent: DeepModulesImporter;
-  shallowImports: TrpcShallowImports;
+  shallowModuleImports: TrpcShallowModuleImports;
   moduleManager: ModuleManager;
-  shallowImportsMap: Map<ModRefId, ShallowImports>;
+  shallowModuleImportsMap: Map<ModRefId, ShallowModuleImports>;
   providersPerApp: Provider[];
   log: SystemLogMediator;
 } /**
  * Metadata collected using `ShallowModulesImporter`. The target for this metadata is `DeepModulesImporter`.
  */
 
-export class TrpcShallowImports {
+export class TrpcShallowModuleImports {
   normalizedModuleMeta: NormalizedModuleMeta;
   guards1: GuardPerMod1[];
   /**

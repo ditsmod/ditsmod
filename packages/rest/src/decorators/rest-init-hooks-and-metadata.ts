@@ -8,7 +8,7 @@ import type {
   DeepModulesImporterConfig,
   ExportAppProvidersConfig,
   ImportModulesShallowConfig,
-  RestShallowImports,
+  RestShallowModuleImports,
 } from '#init/types.js';
 import type { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
 import type { RestAppProviders } from '#types/types.js';
@@ -56,7 +56,7 @@ export class RestInitHooks extends InitHooks<RestInitDecoratorOptions> {
     return new RestShallowModulesImporter().exportAppProviders(config);
   }
 
-  override importModulesShallow(config: ImportModulesShallowConfig): Map<ModRefId, RestShallowImports> {
+  override importModulesShallow(config: ImportModulesShallowConfig): Map<ModRefId, RestShallowModuleImports> {
     return new RestShallowModulesImporter().importModulesShallow(config);
   }
 
