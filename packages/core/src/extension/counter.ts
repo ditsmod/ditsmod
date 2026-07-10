@@ -7,7 +7,7 @@ import { Extension } from '#extension/extension-types.js';
  * @todo Rename this (maybe to ExtensionCounter?)
  */
 @injectable()
-export class Counter {
+export class ExtensionStatistics {
   #extensionManagerId = 0;
   #initedExtensions = new Set<Extension>();
 

@@ -8,7 +8,7 @@ import {
   ExtensionClass,
 } from '#extension/extension-types.js';
 import { ModRefId, OptionalProps } from '#types/mix.js';
-import { Counter } from '#extension/counter.js';
+import { ExtensionStatistics } from '#extension/counter.js';
 import { ExtensionContext } from '#extension/extensions-context.js';
 import { NormalizedModuleMeta } from '#init/base-meta.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
@@ -59,7 +59,7 @@ export class ExtensionManager {
   constructor(
     protected injector: Injector,
     protected log: SystemLogMediator,
-    protected counter: Counter,
+    protected counter: ExtensionStatistics,
     protected extensionContext: ExtensionContext,
     protected extensionCounters: ExtensionCounters,
   ) {}

@@ -5,7 +5,7 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import type { NormalizedModuleMeta } from '#init/base-meta.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
 import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
-import { Counter } from '#extension/counter.js';
+import { ExtensionStatistics } from '#extension/counter.js';
 import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ExtensionContext } from '#extension/extensions-context.js';
 import { ExtensionManager, InternalExtensionManager } from '#extension/extension-manager.js';
@@ -409,7 +409,7 @@ export class BaseAppInitializer {
   }
 
   protected logExtensionsStatistic(injectorPerApp: Injector, systemLogMediator: SystemLogMediator) {
-    const counter = injectorPerApp.get(Counter);
+    const counter = injectorPerApp.get(ExtensionStatistics);
     const extensions = counter.getInitedExtensions();
     const names = Array.from(extensions)
       .map((e) => e.constructor.name)

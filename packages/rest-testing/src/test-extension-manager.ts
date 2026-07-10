@@ -9,7 +9,7 @@ import {
   ExtensionGroupMeta,
   PartialExtensionGroupMeta,
   SystemLogMediator,
-  Counter,
+  ExtensionStatistics,
   Extension,
   InternalExtensionManager,
 } from '@ditsmod/core';
@@ -22,7 +22,7 @@ export class TestExtensionManager extends InternalExtensionManager {
   constructor(
     injector: Injector,
     systemLogMediator: SystemLogMediator,
-    counter: Counter,
+    counter: ExtensionStatistics,
     extensionContext: ExtensionContext,
     extensionCounters: ExtensionCounters,
     @inject(OVERRIDERS_CONFIG)
