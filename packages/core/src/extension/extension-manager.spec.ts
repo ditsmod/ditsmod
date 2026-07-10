@@ -2,7 +2,7 @@ import { Extension, ExtensionCounters } from '#extension/extension-types.js';
 import { getExtensionProviderList } from '#extension/extension-providers-and-configs.js';
 import { defaultProvidersPerApp } from '#init/default-providers-per-app.js';
 import { ExtensionContext } from '#extension/extensions-context.js';
-import { StageIteration, ExtensionManager } from '#extension/extension-manager.js';
+import { StageEntry, ExtensionManager } from '#extension/extension-manager.js';
 import { CircularDepsBetweenExtensions } from '#error/core-errors.js';
 import { NormalizedModuleMeta } from '#init/base-meta.js';
 import { injectable } from '#di/decorators.js';
@@ -15,7 +15,7 @@ describe('ExtensionManager', () => {
     class MockExtensionManager extends ExtensionManager {
       override normalizedModuleMeta = new NormalizedModuleMeta();
       override stageIterationMap = new Map();
-      override currStageIteration = new StageIteration(0);
+      override currStageEntry = new StageEntry(0);
     }
 
     let mock: MockExtensionManager;

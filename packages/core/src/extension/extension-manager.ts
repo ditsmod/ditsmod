@@ -18,7 +18,7 @@ import { injectable } from '#di/decorators.js';
 import { Injector } from '#di/injector.js';
 import type { Class, TokenProvider } from '#di/top/types-and-models.js';
 
-export class StageIteration {
+export class StageEntry {
   promise: Promise<void>;
   resolve: () => void;
   reject: (err: any) => void;
@@ -30,7 +30,7 @@ export class StageIteration {
     this.reject = obj.reject;
   }
 }
-export type StageIterationMap = Map<ExtensionClass, StageIteration>;
+export type StageEntryMap = Map<ExtensionClass, StageEntry>;
 
 @injectable()
 export class ExtensionManager {
@@ -42,8 +42,8 @@ export class ExtensionManager {
   /**
    * Settings by {@link InternalExtensionManager}.
    */
-  protected stageIterationMap: StageIterationMap;
-  protected currStageIteration: StageIteration;
+  protected stageIterationMap: StageEntryMap;
+  protected currStageEntry: StageEntry;
   protected unfinishedInit = new Set<Extension | ExtensionClass>();
   /**
    * The cache for `extension.stage1()` in the current module.
@@ -67,10 +67,10 @@ export class ExtensionManager {
   async stage1<T>(ExtCls: ExtensionClass<T>): Promise<ExtensionGroupMeta<T>>;
   async stage1<T>(ExtCls: ExtensionClass<T>, pendingExtension: Extension): Promise<PartialExtensionGroupMeta<T>>;
   async stage1<T>(ExtCls: ExtensionClass<T>, pendingExtension?: Extension): Promise<ExtensionGroupMeta<T>> {
-    const currStageIteration = this.currStageIteration;
+    const currStageEntry = this.currStageEntry;
     const stageIteration = this.stageIterationMap.get(ExtCls);
     if (stageIteration) {
-      if (stageIteration.index > currStageIteration.index) {
+      if (stageIteration.index > currStageEntry.index) {
         const extensionName = this.getItemName([...this.unfinishedInit].at(-1)!) || 'unknown';
         throw new NotDeclaredInAfterExtensionList(extensionName, ExtCls.name);
       } else if (this.unfinishedInit.has(ExtCls)) {
@@ -90,7 +90,7 @@ export class ExtensionManager {
     extensionGroupMeta = await this.prepareAndInitExtension<T>(ExtCls);
     extensionGroupMeta.groupDataPerApp = this.extensionContext.mExtensionGroupMeta.get(ExtCls)!;
     extensionGroupMeta = this.updatePerAppState(ExtCls, extensionGroupMeta, pendingExtension);
-    currStageIteration.resolve();
+    currStageEntry.resolve();
     return extensionGroupMeta;
   }
 
@@ -244,15 +244,15 @@ export class InternalExtensionManager extends ExtensionManager {
   async internalStage1(normalizedModuleMeta: NormalizedModuleMeta, aOrderedExtensions: ExtensionClass[]) {
     this.normalizedModuleMeta = normalizedModuleMeta;
     this.moduleName = normalizedModuleMeta.name;
-    const stageIterationMap = new Map() as StageIterationMap;
+    const stageIterationMap = new Map() as StageEntryMap;
     this.stageIterationMap = stageIterationMap;
     aOrderedExtensions.forEach((ExtCls, index) => {
-      stageIterationMap.set(ExtCls, new StageIteration(index));
+      stageIterationMap.set(ExtCls, new StageEntry(index));
     });
 
-    for (const [ExtCls, currStageIteration] of stageIterationMap) {
+    for (const [ExtCls, currStageEntry] of stageIterationMap) {
       try {
-        this.currStageIteration = currStageIteration;
+        this.currStageEntry = currStageEntry;
         await this.stage1(ExtCls);
         this.updateExtensionPendingList();
       } catch (err: any) {
