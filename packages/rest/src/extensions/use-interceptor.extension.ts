@@ -11,7 +11,7 @@ import { InvalidInterceptor } from '#errors';
  * for example: `@route('GET', 'some-path', [], [Interceptor1])`.
  */
 @injectable()
-export class UseInterceptorExtension implements Extension {
+export class InterceptorExtension implements Extension {
   constructor(protected extensionManager: ExtensionManager) {}
 
   async stage1() {
