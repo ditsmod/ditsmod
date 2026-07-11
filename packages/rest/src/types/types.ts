@@ -7,7 +7,6 @@ import type { GuardPerMod1 } from '#interceptors/guard.js';
 import type { RouteHandler } from '#services/router.js';
 import type { ControllerMetadata } from './controller-metadata.js';
 import type { RestInitMeta } from '#init/rest-init-meta.js';
-import { RestModRefId } from '#init/rest-init-meta.js';
 
 export class RestAppProviders extends AppInitHooks {}
 
@@ -26,10 +25,6 @@ export class RouteExtensionMeta {
   meta: RestInitMeta;
   aControllerMetadata: ControllerMetadata[];
   guards1: GuardPerMod1[];
-}
-
-export interface ObjectAny {
-  [k: string]: any;
 }
 
 /**
