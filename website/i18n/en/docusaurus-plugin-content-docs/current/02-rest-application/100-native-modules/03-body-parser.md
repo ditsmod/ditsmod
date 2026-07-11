@@ -52,7 +52,7 @@ In this case, the default settings will work. If you need to change some options
 import { restRootModule } from '@ditsmod/rest';
 import { BodyParserModule } from '@ditsmod/body-parser';
 
-const moduleWithBodyParserConfig = BodyParserModule.withParams({
+const moduleWithBodyParserConfig = BodyParserModule.withOpts({
   acceptMethods: ['POST'],
   jsonOptions: { limit: '500kb', strict: false },
   urlencodedOptions: { extended: true },

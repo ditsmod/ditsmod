@@ -21,7 +21,7 @@ import {
   getMethodParamMeta,
   isDelegateCtor,
   mergedClassMetaCache,
-  methodWithParamsMap,
+  methodWithOptsMap,
   propMetaMap,
   type ClassMetaChain,
   type KeyOfClass,
@@ -101,7 +101,7 @@ export class Reflector {
         const parameters = propertyKey
           ? getMethodParamMeta(Cls, propertyKey, [])
           : constructorParamsMap.getOrInsert(Cls, []);
-        const methodNames = methodWithParamsMap.getOrInsert(Cls, new Set());
+        const methodNames = methodWithOptsMap.getOrInsert(Cls, new Set());
         // TypeScript emits parameter metadata only for decorated declarations, so keep
         // an explicit registry of constructors and methods that have parameter decorators.
         methodNames.add(propertyKey || 'constructor');
@@ -311,8 +311,8 @@ export class Reflector {
   ) {
     const ownPropMeta = propMetaMap.get(Cls);
     const ownPropsWithMeta = ownPropMeta ? Reflect.ownKeys(ownPropMeta) : [];
-    const ownMethodsWithParams = methodWithParamsMap.getOrInsert(Cls, new Set());
-    ownPropsWithMeta.forEach((prop) => ownMethodsWithParams.add(prop));
+    const ownMethodsWithOpts = methodWithOptsMap.getOrInsert(Cls, new Set());
+    ownPropsWithMeta.forEach((prop) => ownMethodsWithOpts.add(prop));
 
     const allClassMethods = Reflect.ownKeys(Cls.prototype).filter((prop) => {
       const descriptor = Object.getOwnPropertyDescriptor(Cls.prototype, prop);
@@ -321,7 +321,7 @@ export class Reflector {
 
     Reflect.ownKeys(mergedClassMeta).forEach((propertyKey) => {
       if (propertyKey == 'constructor') return;
-      if (allClassMethods.includes(propertyKey) && !ownMethodsWithParams.has(propertyKey)) {
+      if (allClassMethods.includes(propertyKey) && !ownMethodsWithOpts.has(propertyKey)) {
         mergedClassMeta[propertyKey].params = this.collectParamMeta(Cls, propertyKey, Function);
       }
     });
@@ -367,11 +367,11 @@ export class Reflector {
     // Get a list of unique class properties that have metadata.
     const ownPropsMeta = propMetaMap.get(Cls);
     const ownPropsWithMeta = ownPropsMeta ? Reflect.ownKeys(ownPropsMeta) : [];
-    const ownMethodsWithParams = methodWithParamsMap.getOrInsert(Cls, new Set());
-    ownPropsWithMeta.forEach((p) => ownMethodsWithParams.add(p));
-    ownMethodsWithParams.delete('constructor');
+    const ownMethodsWithOpts = methodWithOptsMap.getOrInsert(Cls, new Set());
+    ownPropsWithMeta.forEach((p) => ownMethodsWithOpts.add(p));
+    ownMethodsWithOpts.delete('constructor');
 
-    ownMethodsWithParams.forEach((propertyKey) => {
+    ownMethodsWithOpts.forEach((propertyKey) => {
       const type: Class = Reflect.getOwnMetadata('design:type', Cls.prototype, propertyKey);
       const decorators = ownPropsMeta ? ownPropsMeta[propertyKey] || [] : [];
       const params = this.collectParamMeta(Cls, propertyKey, type);

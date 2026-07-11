@@ -4,7 +4,7 @@ import { BodyParserModule } from '@ditsmod/body-parser';
 
 import { SomeModule } from './modules/routed/some.module.js';
 
-const moduleWithBodyParserConfig = BodyParserModule.withParams({
+const moduleWithBodyParserConfig = BodyParserModule.withOpts({
   jsonOptions: { limit: '100kb' },
   urlencodedOptions: { extended: true },
 });

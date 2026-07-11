@@ -11,7 +11,7 @@ class NormalizedParams {
 }
 
 export class RestInitMeta extends NormalizedInitMeta {
-  appendsWithParams: AppendsWithOptions[] = [];
+  appendsWithOpts: AppendsWithOptions[] = [];
   appendsModules: ModuleType[] = [];
   controllers: Class<Record<string | symbol, any>>[] = [];
   params = new NormalizedParams();

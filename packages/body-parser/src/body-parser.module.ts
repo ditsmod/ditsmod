@@ -40,7 +40,7 @@ import { RouteScopedMulterParser } from './multer-ctx.parser.js';
   exports: [RouteScopedMulterParser, BodyParserGroup, MulterParser],
 })
 export class BodyParserModule {
-  static withParams(config: BodyParserConfig): DynamicModule<BodyParserModule> {
+  static withOpts(config: BodyParserConfig): DynamicModule<BodyParserModule> {
     return {
       module: this,
       providersPerMod: [{ token: BodyParserConfig, useValue: config }],

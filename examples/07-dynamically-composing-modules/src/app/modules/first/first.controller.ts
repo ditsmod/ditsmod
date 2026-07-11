@@ -4,8 +4,8 @@ import { controller, route, RequestContext, RestModuleOptions } from '@ditsmod/r
 import { SecondModule } from '../second.module.js';
 import { ThirdModule } from '../third/third.module.js';
 
-const secondModuleWithParams: DynamicModule & RestModuleOptions = { path: '', module: SecondModule };
-const thirdModuleWithParams: DynamicModule = { module: ThirdModule };
+const secondDynamicModule: DynamicModule & RestModuleOptions = { path: '', module: SecondModule };
+const thirdDynamicModule: DynamicModule = { module: ThirdModule };
 
 @controller()
 export class FirstController {
@@ -21,25 +21,25 @@ export class FirstController {
 
   @route('GET', 'add-2')
   async addSecondModule(ctx: RequestContext) {
-    this.moduleManager.addImport(secondModuleWithParams);
+    this.moduleManager.addImport(secondDynamicModule);
     await this.reinitApp(ctx, 'second', 'importing');
   }
 
   @route('GET', 'del-2')
   async removeSecondModule(ctx: RequestContext) {
-    this.moduleManager.removeImport(secondModuleWithParams);
+    this.moduleManager.removeImport(secondDynamicModule);
     await this.reinitApp(ctx, 'second', 'removing');
   }
 
   @route('GET', 'add-3')
   async addThirdModule(ctx: RequestContext) {
-    this.moduleManager.addImport(thirdModuleWithParams);
+    this.moduleManager.addImport(thirdDynamicModule);
     await this.reinitApp(ctx, 'third', 'importing');
   }
 
   @route('GET', 'del-3')
   async removeThirdModule(ctx: RequestContext) {
-    this.moduleManager.removeImport(thirdModuleWithParams);
+    this.moduleManager.removeImport(thirdDynamicModule);
     await this.reinitApp(ctx, 'third', 'removing');
   }
 

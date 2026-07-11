@@ -266,7 +266,7 @@ In order for TypeScript to control exactly what the static import method returns
 import { DynamicModule } from '@ditsmod/core';
 // ...
 export class Module1 {
-  static withParams(someParams: SomeParams): DynamicModule<Module1> {
+  static withOpts(someParams: SomeParams): DynamicModule<Module1> {
     return {
       module: this,
       // ...
@@ -332,7 +332,7 @@ export class Module2 {}
 In this example, an object was used, in which the module is passed for appending, it has the following interface:
 
 ```ts
-interface AppendsWithParams<T extends AnyObj = AnyObj> {
+interface AppendsWithOpts<T extends AnyObj = AnyObj> {
   id?: string;
   path: string;
   module: ModuleType<T>;

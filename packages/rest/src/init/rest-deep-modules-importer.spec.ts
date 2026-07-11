@@ -203,19 +203,19 @@ describe('DeepModulesImporter', () => {
     @featureModule({ providersPerApp: [Provider1] })
     class Module1 {}
 
-    const moduleWithParams: RestModuleOptions & DynamicModule = {
+    const dynamicModule: RestModuleOptions & DynamicModule = {
       path: 'test-prefix',
       guards: [Guard1, [Guard2, { one: 1 }]],
       module: Module1,
     };
 
-    @initRest({ imports: [moduleWithParams] })
+    @initRest({ imports: [dynamicModule] })
     @rootModule()
     class AppModule {}
 
     const map = getResolvedModuleMetadata(AppModule);
     const rootMod = map.get(AppModule)?.deepImportedModules.get(initRest)!;
-    const mod1 = map.get(moduleWithParams)?.deepImportedModules.get(initRest)!;
+    const mod1 = map.get(dynamicModule)?.deepImportedModules.get(initRest)!;
     expect(mod1.prefixPerMod).toBe('test-prefix');
     expect(mod1.guards1[0].guard).toBe(Guard1);
     expect(mod1.guards1[0].meta).toBe(rootMod.meta);
@@ -573,14 +573,14 @@ describe('DeepModulesImporter', () => {
       }
     }
 
-    const mod1WithParams: DynamicModule & RestModuleOptions = { module: Module1, guards: [BearerGuard1] };
+    const mod1WithOpts: DynamicModule & RestModuleOptions = { module: Module1, guards: [BearerGuard1] };
     const provider: Provider = { token: BearerGuard1, useClass: BearerGuard2 };
 
-    @restRootModule({ imports: [mod1WithParams], providersPerRou: [provider, Service0, Service2] })
+    @restRootModule({ imports: [mod1WithOpts], providersPerRou: [provider, Service0, Service2] })
     class AppModule {}
 
     const mResolvedModuleMetadata = getResolvedModuleMetadata(AppModule);
-    const mod1 = mResolvedModuleMetadata.get(mod1WithParams);
+    const mod1 = mResolvedModuleMetadata.get(mod1WithOpts);
     const restResolvedModuleMetadata = mod1?.deepImportedModules.get(initRest) as RestResolvedModuleMetadata;
     expect(restResolvedModuleMetadata.guards1.at(0)?.guard).toBe(BearerGuard1);
 

@@ -52,7 +52,7 @@ export class AppModule {}
 import { restRootModule } from '@ditsmod/rest';
 import { BodyParserModule } from '@ditsmod/body-parser';
 
-const moduleWithBodyParserConfig = BodyParserModule.withParams({
+const moduleWithBodyParserConfig = BodyParserModule.withOpts({
   acceptMethods: ['POST'],
   jsonOptions: { limit: '500kb', strict: false },
   urlencodedOptions: { extended: true },

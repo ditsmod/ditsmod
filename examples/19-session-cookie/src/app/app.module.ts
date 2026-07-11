@@ -4,15 +4,15 @@ import { SessionCookieModule } from '@ditsmod/session-cookie';
 
 import { HelloWorldController, HelloWorldController2 } from './hello-world.controller.js';
 
-const sessionModuleWithParams = SessionCookieModule.withParams({
+const sessionDynamicModule = SessionCookieModule.withOpts({
   cookieName: 'custom-session-name',
   httpOnly: true,
 });
 
 @restRootModule({
-  imports: [sessionModuleWithParams],
+  imports: [sessionDynamicModule],
   providersPerApp: new ProviderBuilder().useValue(LoggerConfig, { level: 'info' }),
   controllers: [HelloWorldController, HelloWorldController2],
-  exports: [sessionModuleWithParams],
+  exports: [sessionDynamicModule],
 })
 export class AppModule {}

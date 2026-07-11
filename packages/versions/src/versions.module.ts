@@ -7,7 +7,7 @@ import { VersionsExtension } from './versions.extension.js';
   extensions: [{ extension: VersionsExtension, afterExtensions: [RestRouteExtension], export: true }],
 })
 export class VersionsModule {
-  static withParams(): DynamicModule<VersionsModule> {
+  static withOpts(): DynamicModule<VersionsModule> {
     return {
       module: this,
       providersPerMod: [],

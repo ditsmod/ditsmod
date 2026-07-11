@@ -67,7 +67,7 @@ import { CorsModule } from '@ditsmod/cors';
 
 @restRootModule({
   imports: [
-    CorsModule.withParams({ origin: 'https://example.com' }),
+    CorsModule.withOpts({ origin: 'https://example.com' }),
     // ...
   ],
   // ...

@@ -125,7 +125,7 @@ describe('ModuleManager', () => {
       expect(mock.providersPerApp).toEqual([Service1, Service2, Service3, Service4, Service5, Service6, Service0]);
     });
 
-    it('should works with moduleWithParams', () => {
+    it('should works with dynamicModule', () => {
       @featureModule({})
       class Module6 {}
 
@@ -309,7 +309,7 @@ describe('ModuleManager', () => {
     expect(mock.oldSnapshotMap.size).toBe(4);
     expect(mock.getNormalizedModuleMetaFromSnapshot('root')).toEqual({
       ...expectedMeta3,
-      importsWithParams: [module3WithProviders],
+      importsWithOpts: [module3WithProviders],
     });
     expect(mock.snapshotMap.has(module3WithProviders)).toBe(true);
     expect(mock.map.has(module3WithProviders)).toBe(false);
@@ -336,7 +336,7 @@ describe('ModuleManager', () => {
 
     @featureModule({ providersPerMod: [Service1], exports: [Service1] })
     class Module3 {
-      static withParams(providersPerMod: Provider[]): DynamicModule<Module3> {
+      static withOpts(providersPerMod: Provider[]): DynamicModule<Module3> {
         return {
           module: Module3,
           providersPerMod,
@@ -344,12 +344,12 @@ describe('ModuleManager', () => {
       }
     }
 
-    const module3WithProviders = Module3.withParams([Service2]);
+    const module3WithProviders = Module3.withOpts([Service2]);
 
     const moduleId = 'my-mix';
     @featureModule({ providersPerMod: [Service1], exports: [Service1] })
     class Module4 {
-      static withParams(providersPerMod: Provider[]): DynamicModule<Module4> {
+      static withOpts(providersPerMod: Provider[]): DynamicModule<Module4> {
         return {
           id: moduleId,
           module: Module4,
@@ -358,7 +358,7 @@ describe('ModuleManager', () => {
       }
     }
 
-    const module4WithProviders = Module4.withParams([Service2]);
+    const module4WithProviders = Module4.withOpts([Service2]);
 
     @rootModule({
       imports: [Module1, Module2, module3WithProviders, module4WithProviders],
@@ -373,7 +373,7 @@ describe('ModuleManager', () => {
     expectedMeta1.name = 'AppModule';
     expectedMeta1.modRefId = AppModule;
     expectedMeta1.importsModules = [Module1, Module2];
-    expectedMeta1.importsWithParams = [module3WithProviders, module4WithProviders];
+    expectedMeta1.importsWithOpts = [module3WithProviders, module4WithProviders];
     expectedMeta1.providersPerMod = [Service1];
     expectedMeta1.declaredInDir = expect.any(String);
     expectedMeta1.isExternal = undefined;
@@ -452,7 +452,7 @@ describe('ModuleManager', () => {
     expectedMeta2.name = 'AppModule';
     expectedMeta2.modRefId = AppModule;
     expectedMeta2.importsModules = [Module1];
-    expectedMeta2.importsWithParams = [module3WithProviders, module4WithProviders];
+    expectedMeta2.importsWithOpts = [module3WithProviders, module4WithProviders];
     expectedMeta2.providersPerMod = [Service1];
     expectedMeta2.declaredInDir = expect.any(String);
     expectedMeta2.isExternal = undefined;
@@ -463,17 +463,17 @@ describe('ModuleManager', () => {
     expect(mock.oldSnapshotMapId.size).toBe(2);
     expect(mock.oldSnapshotMap.size).toBe(5);
 
-    expect(mock.getNormalizedModuleMetaFromSnapshot('root')?.importsWithParams).toEqual([
+    expect(mock.getNormalizedModuleMetaFromSnapshot('root')?.importsWithOpts).toEqual([
       module3WithProviders,
       module4WithProviders,
     ]);
-    expect(mock.getNormalizedModuleMeta('root')?.importsWithParams).toEqual([
+    expect(mock.getNormalizedModuleMeta('root')?.importsWithOpts).toEqual([
       module3WithProviders,
       module4WithProviders,
     ]);
     expect(mock.removeImport(module3WithProviders)).toBe(true);
-    expect(mock.getNormalizedModuleMetaFromSnapshot('root')?.importsWithParams).toEqual([module4WithProviders]);
-    expect(mock.getNormalizedModuleMeta('root')?.importsWithParams).toEqual([
+    expect(mock.getNormalizedModuleMetaFromSnapshot('root')?.importsWithOpts).toEqual([module4WithProviders]);
+    expect(mock.getNormalizedModuleMeta('root')?.importsWithOpts).toEqual([
       module3WithProviders,
       module4WithProviders,
     ]);
@@ -485,7 +485,7 @@ describe('ModuleManager', () => {
     expectedMeta3.name = 'AppModule';
     expectedMeta3.modRefId = AppModule;
     expectedMeta3.importsModules = [Module1];
-    expectedMeta3.importsWithParams = [module4WithProviders];
+    expectedMeta3.importsWithOpts = [module4WithProviders];
     expectedMeta3.providersPerMod = [Service1];
     expectedMeta3.declaredInDir = expect.any(String);
     expectedMeta3.isExternal = undefined;
@@ -495,7 +495,7 @@ describe('ModuleManager', () => {
     expect(mock.getNormalizedModuleMetaFromSnapshot('root')).toEqual(expectedMeta3);
     expect(mock.oldSnapshotMapId.size).toBe(2);
     expect(mock.oldSnapshotMap.size).toBe(5);
-    expect(mock.oldSnapshotMap.get(AppModule)?.importsWithParams).toEqual([module3WithProviders, module4WithProviders]);
+    expect(mock.oldSnapshotMap.get(AppModule)?.importsWithOpts).toEqual([module3WithProviders, module4WithProviders]);
 
     const expectedMeta4 = new NormalizedModuleMeta();
     expectedMeta4.id = '';
@@ -784,14 +784,14 @@ describe('ModuleManager', () => {
     @featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
     class Module1 {}
 
-    const moduleWithParams: DynamicModule = { module: Module1 };
+    const dynamicModule: DynamicModule = { module: Module1 };
 
-    @initSome({ one: 'some-here', imports: [{ dynamicModule: moduleWithParams, path: 'some-prefix' }] })
+    @initSome({ one: 'some-here', imports: [{ dynamicModule: dynamicModule, path: 'some-prefix' }] })
     @rootModule()
     class AppModule {}
 
     mock.scanRootModule(AppModule);
-    const mod1 = mock.getNormalizedModuleMeta(moduleWithParams)!;
+    const mod1 = mock.getNormalizedModuleMeta(dynamicModule)!;
     expect(mod1.initMeta.get(initSome)).toEqual({ path: 'some-prefix' });
   });
 
@@ -826,20 +826,20 @@ describe('ModuleManager', () => {
     @featureModule({ providersPerApp: [{ token: 'token3', useValue: 'value3' }] })
     class Module3 {}
 
-    const moduleWithParams1: DynamicModule = { module: Module1 };
-    const moduleWithParams2: DynamicModule = { module: Module2 };
-    const moduleWithParams3: DynamicModule = { module: Module3 };
+    const dynamicModule1: DynamicModule = { module: Module1 };
+    const dynamicModule2: DynamicModule = { module: Module2 };
+    const dynamicModule3: DynamicModule = { module: Module3 };
 
     @initSome1({
       imports: [
-        { dynamicModule: moduleWithParams1, one: 'initSome1-1' },
-        { dynamicModule: moduleWithParams3, one: 'initSome1-3' },
+        { dynamicModule: dynamicModule1, one: 'initSome1-1' },
+        { dynamicModule: dynamicModule3, one: 'initSome1-3' },
       ],
     })
     @initSome2({
       imports: [
-        { dynamicModule: moduleWithParams2, three: 'initSome2-2' },
-        { dynamicModule: moduleWithParams3, three: 'initSome2-3' },
+        { dynamicModule: dynamicModule2, three: 'initSome2-2' },
+        { dynamicModule: dynamicModule3, three: 'initSome2-3' },
       ],
     })
     @rootModule()
@@ -847,11 +847,11 @@ describe('ModuleManager', () => {
 
     mock.scanRootModule(AppModule);
 
-    function getParams(moduleWithParams: DynamicModule) {
-      return [...(moduleWithParams.initParams?.values() || [])];
+    function getParams(dynamicModule: DynamicModule) {
+      return [...(dynamicModule.initParams?.values() || [])];
     }
-    expect(getParams(moduleWithParams1)).toEqual([{ one: 'initSome1-1' }]);
-    expect(getParams(moduleWithParams2)).toEqual([{ three: 'initSome2-2' }]);
-    expect(getParams(moduleWithParams3)).toEqual([{ three: 'initSome2-3' }, { one: 'initSome1-3' }]);
+    expect(getParams(dynamicModule1)).toEqual([{ one: 'initSome1-1' }]);
+    expect(getParams(dynamicModule2)).toEqual([{ three: 'initSome2-2' }]);
+    expect(getParams(dynamicModule3)).toEqual([{ three: 'initSome2-3' }, { one: 'initSome1-3' }]);
   });
 });

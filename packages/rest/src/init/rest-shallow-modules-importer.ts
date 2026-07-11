@@ -121,10 +121,10 @@ export class RestShallowModulesImporter {
 
   protected importAndAppendModules() {
     this.importOrAppendModules(
-      [...this.normalizedModuleMeta.importsModules, ...this.normalizedModuleMeta.importsWithParams],
+      [...this.normalizedModuleMeta.importsModules, ...this.normalizedModuleMeta.importsWithOpts],
       true,
     );
-    this.importOrAppendModules([...this.meta.appendsModules, ...this.meta.appendsWithParams]);
+    this.importOrAppendModules([...this.meta.appendsModules, ...this.meta.appendsWithOpts]);
   }
 
   protected importOrAppendModules(aModRefIds: RestModRefId[], isImport?: boolean) {
@@ -221,7 +221,7 @@ export class RestShallowModulesImporter {
   }
 
   protected checkImportsAndAppends(normalizedModuleMeta: NormalizedModuleMeta, meta1: RestInitMeta) {
-    meta1.appendsModules.concat(meta1.appendsWithParams as any[]).forEach((modRefId) => {
+    meta1.appendsModules.concat(meta1.appendsWithOpts as any[]).forEach((modRefId) => {
       const appendedNormalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(modRefId, true);
       const meta2 = this.getInitMeta(appendedNormalizedModuleMeta);
       if (!meta2.controllers.length) {
@@ -230,7 +230,7 @@ export class RestShallowModulesImporter {
       const mod = getModule(modRefId);
       if (
         normalizedModuleMeta.importsModules.includes(mod) ||
-        normalizedModuleMeta.importsWithParams.some((imp) => imp.module === mod)
+        normalizedModuleMeta.importsWithOpts.some((imp) => imp.module === mod)
       ) {
         throw new ModuleIncludesInImportsAndAppends(normalizedModuleMeta.name, appendedNormalizedModuleMeta.name);
       }

@@ -42,7 +42,7 @@ export class TrpcModuleNormalizer {
       !meta.exportedMultiProvidersPerMod.length &&
       !meta.exportsModules.length &&
       !meta.providersPerApp.length &&
-      !meta.exportsWithParams.length &&
+      !meta.exportsWithOpts.length &&
       !meta.exportedExtensionProviders.length &&
       !meta.extensionProviders.length &&
       !meta.exportedProvidersPerReq.length &&

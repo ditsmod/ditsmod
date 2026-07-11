@@ -66,7 +66,7 @@ function getImportedTokens(map: Map<any, ImportedProvider<Provider>> | undefined
       exports: [Provider3, Provider4],
     })
     class Module2 {
-      static withParams() {
+      static withOpts() {
         return { module: Module2 };
       }
     }
@@ -84,13 +84,13 @@ function getImportedTokens(map: Map<any, ImportedProvider<Provider>> | undefined
     })
     class Module5 {}
 
-    const module2WithParams: DynamicModule = Module2.withParams();
-    const module3WithParams: DynamicModuleWithInit = { module: Module3, initParams: new Map() };
-    module3WithParams.initParams.set(initRest, { path: 'one' });
-    const module4WithParams: DynamicModule = { module: Module4 };
+    const module2WithOpts: DynamicModule = Module2.withOpts();
+    const module3WithOpts: DynamicModuleWithInit = { module: Module3, initParams: new Map() };
+    module3WithOpts.initParams.set(initRest, { path: 'one' });
+    const module4WithOpts: DynamicModule = { module: Module4 };
     @rootModule({
-      imports: [Module0, Module1, module2WithParams, Module5, module3WithParams, module4WithParams],
-      exports: [Module0, module2WithParams, module3WithParams],
+      imports: [Module0, Module1, module2WithOpts, Module5, module3WithOpts, module4WithOpts],
+      exports: [Module0, module2WithOpts, module3WithOpts],
       providersPerApp: [Logger, { token: Router, useValue: 'fake' }],
     })
     class AppModule {}
@@ -120,7 +120,7 @@ function getImportedTokens(map: Map<any, ImportedProvider<Provider>> | undefined
       expectedPerMod.providers = [Provider0];
       expect(perMod.get(Provider0)).toEqual(expectedPerMod);
 
-      expectedPerMod.modRefId = module2WithParams;
+      expectedPerMod.modRefId = module2WithOpts;
       expectedPerMod.providers = [Provider3];
       expect(perMod.get(Provider3)).toEqual(expectedPerMod);
       expectedPerMod.providers = [Provider4];
@@ -129,7 +129,7 @@ function getImportedTokens(map: Map<any, ImportedProvider<Provider>> | undefined
       // App providers per a request
       const perReq = shallowModuleImports?.baseImportRegistry.perReq!;
       const expectedPerReq = new ImportedProvider();
-      expectedPerReq.modRefId = module3WithParams;
+      expectedPerReq.modRefId = module3WithOpts;
       expectedPerReq.providers = [Provider5];
       expect(perReq.get(Provider5)).toEqual(expectedPerReq);
       expectedPerReq.providers = [Provider6];
@@ -158,7 +158,7 @@ function getImportedTokens(map: Map<any, ImportedProvider<Provider>> | undefined
     });
 
     it('Module2', async () => {
-      const mod2 = shallowModuleImportsBase.get(module2WithParams);
+      const mod2 = shallowModuleImportsBase.get(module2WithOpts);
       expect(mod2?.normalizedModuleMeta.providersPerApp).toEqual([]);
       const moduleInfo: ModuleInfo = { path: '', moduleName: 'Module2', isExternal: false };
       const providerPerMod: Provider = { token: ModuleInfo, useValue: moduleInfo };
@@ -168,7 +168,7 @@ function getImportedTokens(map: Map<any, ImportedProvider<Provider>> | undefined
     });
 
     it('Module3', async () => {
-      const mod3 = shallowModuleImportsBase.get(module3WithParams);
+      const mod3 = shallowModuleImportsBase.get(module3WithOpts);
       expect(mod3?.normalizedModuleMeta.providersPerApp).toEqual([]);
       const moduleInfo: ModuleInfo = { path: 'one', moduleName: 'Module3', isExternal: false };
       const providerPerMod: Provider = {
@@ -183,7 +183,7 @@ function getImportedTokens(map: Map<any, ImportedProvider<Provider>> | undefined
     it('Module4', async () => {
       moduleManager.scanRootModule(AppModule);
       const shallowModuleImportsBase = mock.collectProvidersShallow(moduleManager);
-      const mod4 = shallowModuleImportsBase.get(module4WithParams);
+      const mod4 = shallowModuleImportsBase.get(module4WithOpts);
       expect(mod4?.normalizedModuleMeta.providersPerApp).toEqual([]);
       const moduleInfo: ModuleInfo = { path: '', moduleName: 'Module4', isExternal: false };
       const providerPerMod: Provider = { token: ModuleInfo, useValue: moduleInfo };

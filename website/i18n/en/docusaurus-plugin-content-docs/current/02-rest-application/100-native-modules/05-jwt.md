@@ -23,7 +23,7 @@ import { JwtModule } from '@ditsmod/jwt';
 import { AuthController } from './auth.controller.js';
 import { BearerGuard } from './bearer.guard.js';
 
-const dynamicModule = JwtModule.withParams({ secret: 'hard-to-guess-secret', signOptions: { expiresIn: '2m' } });
+const dynamicModule = JwtModule.withOpts({ secret: 'hard-to-guess-secret', signOptions: { expiresIn: '2m' } });
 
 @restModule({
   imports: [dynamicModule],

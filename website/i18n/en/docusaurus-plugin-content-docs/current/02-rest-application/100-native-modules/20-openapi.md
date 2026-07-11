@@ -27,7 +27,7 @@ export class SomeModule {}
 
 In this case, the documentation will be generated for the entire application at a URL that depends on the application's path prefix. For example, if the application's path prefix is `/api`, the OpenAPI documentation will be available at `/api/openapi`.
 
-You can also use the static method `OpenapiModule.withParams` to specify additional parameters for importing `OpenapiModule`:
+You can also use the static method `OpenapiModule.withOpts` to specify additional parameters for importing `OpenapiModule`:
 
 ```ts {11,14}
 import { restModule } from '@ditsmod/rest';
@@ -40,7 +40,7 @@ const swaggerOAuthOptions: SwaggerOAuthOptions = {
   clientId: 'implicit',
 };
 
-const dynamicModule = OpenapiModule.withParams(oasObject, 'absolute-path', swaggerOAuthOptions);
+const dynamicModule = OpenapiModule.withOpts(oasObject, 'absolute-path', swaggerOAuthOptions);
 
 @restModule({
   imports: [dynamicModule],

@@ -65,7 +65,7 @@ export class ModuleNormalizer {
     this.checkAndMarkExternalModule(decoratorOptions);
     this.normalizeDeclaredAndResolvedProviders(decoratorOptions);
     this.normalizeExports(decoratorOptions, 'Exports');
-    this.mergeModuleWithParams(modRefId);
+    this.mergeDynamicModule(modRefId);
     this.normalizeImports(decoratorOptions);
     this.normalizeExtensions(decoratorOptions);
     this.checkReexportModules();
@@ -171,8 +171,8 @@ export class ModuleNormalizer {
       }
       if (isDynamicModule(exp)) {
         // @todo Review this condition later
-        if (!this.normalizedModuleMeta.exportsWithParams.includes(exp)) {
-          this.normalizedModuleMeta.exportsWithParams.push(exp);
+        if (!this.normalizedModuleMeta.exportsWithOpts.includes(exp)) {
+          this.normalizedModuleMeta.exportsWithOpts.push(exp);
         }
       } else if (isProvider(exp) || declaredTokens.includes(exp)) {
         // Provider or token of provider
@@ -212,7 +212,7 @@ export class ModuleNormalizer {
     }
   }
 
-  protected mergeModuleWithParams(modWitParams: ModRefId) {
+  protected mergeDynamicModule(modWitParams: ModRefId) {
     if (!isDynamicModule(modWitParams)) {
       return;
     }
@@ -239,7 +239,7 @@ export class ModuleNormalizer {
         throw new UndefinedSymbol('Imports', this.normalizedModuleMeta.name, i);
       }
       if (isDynamicModule(imp)) {
-        this.normalizedModuleMeta.importsWithParams.push(imp);
+        this.normalizedModuleMeta.importsWithOpts.push(imp);
       } else {
         this.normalizedModuleMeta.importsModules.push(imp);
       }
@@ -324,8 +324,8 @@ export class ModuleNormalizer {
   }
 
   protected checkReexportModules() {
-    const imports = [...this.normalizedModuleMeta.importsModules, ...this.normalizedModuleMeta.importsWithParams];
-    const exports = [...this.normalizedModuleMeta.exportsModules, ...this.normalizedModuleMeta.exportsWithParams];
+    const imports = [...this.normalizedModuleMeta.importsModules, ...this.normalizedModuleMeta.importsWithOpts];
+    const exports = [...this.normalizedModuleMeta.exportsModules, ...this.normalizedModuleMeta.exportsWithOpts];
 
     exports.forEach((modRefId) => {
       if (!imports.includes(modRefId)) {
@@ -461,8 +461,8 @@ export class AppModule {}
     } else {
       dynamicModule.initParams.set(decorator, params);
     }
-    if (!this.normalizedModuleMeta.importsWithParams.includes(dynamicModule)) {
-      this.normalizedModuleMeta.importsWithParams.push(dynamicModule);
+    if (!this.normalizedModuleMeta.importsWithOpts.includes(dynamicModule)) {
+      this.normalizedModuleMeta.importsWithOpts.push(dynamicModule);
     }
   }
 
@@ -489,12 +489,12 @@ export class AppModule {}
     if (initDecoratorOptions.exports) {
       this.resolveAllForwardRefs(initDecoratorOptions.exports).forEach((exp) => {
         if (isDynamicModule(exp)) {
-          if (!this.normalizedModuleMeta.exportsWithParams.includes(exp)) {
-            this.normalizedModuleMeta.exportsWithParams.push(exp);
+          if (!this.normalizedModuleMeta.exportsWithOpts.includes(exp)) {
+            this.normalizedModuleMeta.exportsWithOpts.push(exp);
           }
         } else if (isDynamicModuleWrapper(exp)) {
-          if (!this.normalizedModuleMeta.exportsWithParams.includes(exp.dynamicModule)) {
-            this.normalizedModuleMeta.exportsWithParams.push(exp.dynamicModule);
+          if (!this.normalizedModuleMeta.exportsWithOpts.includes(exp.dynamicModule)) {
+            this.normalizedModuleMeta.exportsWithOpts.push(exp.dynamicModule);
           }
         } else if (Reflector.getClassLevelMeta(exp, isFeatureModule)) {
           if (!this.normalizedModuleMeta.exportsModules.includes(exp)) {
@@ -521,7 +521,7 @@ export class AppModule {}
       !this.normalizedModuleMeta.exportedMultiProvidersPerMod.length &&
       !this.normalizedModuleMeta.exportsModules.length &&
       !this.normalizedModuleMeta.providersPerApp.length &&
-      !this.normalizedModuleMeta.exportsWithParams.length &&
+      !this.normalizedModuleMeta.exportsWithOpts.length &&
       !this.normalizedModuleMeta.exportedExtensionProviders.length &&
       !this.normalizedModuleMeta.extensionProviders.length
     ) {

@@ -266,7 +266,7 @@ export class Module2 {}
 import { DynamicModule } from '@ditsmod/core';
 // ...
 export class Module1 {
-  static withParams(someParams: SomeParams): DynamicModule<Module1> {
+  static withOpts(someParams: SomeParams): DynamicModule<Module1> {
     return {
       module: this,
       // ...
@@ -332,7 +332,7 @@ export class Module2 {}
 У даному прикладі був використаний об'єкт, в якому передається модуль для долучення, він має наступний інтерфейс:
 
 ```ts
-interface AppendsWithParams<T extends AnyObj = AnyObj> {
+interface AppendsWithOpts<T extends AnyObj = AnyObj> {
   id?: string;
   path: string;
   module: ModuleType<T>;

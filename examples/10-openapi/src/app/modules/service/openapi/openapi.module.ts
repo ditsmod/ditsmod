@@ -8,4 +8,4 @@ const swaggerOAuthOptions: SwaggerOAuthOptions = {
   clientId: 'implicit',
 };
 
-export const openapiModuleWithParams = OpenapiModule.withParams(oasObject, '', swaggerOAuthOptions);
+export const openapiDynamicModule = OpenapiModule.withOpts(oasObject, '', swaggerOAuthOptions);

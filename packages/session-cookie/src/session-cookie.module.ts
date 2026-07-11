@@ -21,7 +21,7 @@ import { SessionCookieExtension } from './session-cookie.extension.js';
 })
 @featureModule()
 export class SessionCookieModule {
-  static withParams(opts: SessionCookieOptions): DynamicModule<SessionCookieModule> {
+  static withOpts(opts: SessionCookieOptions): DynamicModule<SessionCookieModule> {
     return {
       module: this,
       providersPerMod: [{ token: SessionCookieOptions, useValue: opts }],

@@ -37,7 +37,7 @@ describe('rest ModuleNormalizer', () => {
 
     @featureModule({ providersPerApp: [Service0] })
     class Module1 {
-      static withParams(): DynamicModuleWithInit<Module1> {
+      static withOpts(): DynamicModuleWithInit<Module1> {
         return {
           module: this,
           initParams: new Map(),
@@ -48,28 +48,28 @@ describe('rest ModuleNormalizer', () => {
     @featureModule({ providersPerApp: [Service0] })
     class Module2 {}
 
-    const moduleWithParams = Module1.withParams();
-    moduleWithParams.initParams.set(initRest, { path: 'test1' });
-    const appendWithParams: AppendsWithOptions = { module: Module2, path: 'test2' };
+    const dynamicModule = Module1.withOpts();
+    dynamicModule.initParams.set(initRest, { path: 'test1' });
+    const appendWithOpts: AppendsWithOptions = { module: Module2, path: 'test2' };
 
-    // Although in `AppModule` `appendWithParams` and `moduleWithParams` are used in the context of the `initRest` decorator, `Module1` and `Module2`
+    // Although in `AppModule` `appendWithOpts` and `dynamicModule` are used in the context of the `initRest` decorator, `Module1` and `Module2`
     // themselves do not have this decorator, so it's important that `Module1` and `Module2` are processed using the init hooks taken from `AppModule`.
     @initRest({
-      appends: [appendWithParams],
+      appends: [appendWithOpts],
     })
     @rootModule({
-      imports: [moduleWithParams],
+      imports: [dynamicModule],
     })
     class AppModule {}
 
     const meta1 = moduleManager.scanRootModule(AppModule).initMeta.get(initRest)!;
-    expect(moduleWithParams.initParams?.get(initRest)).toEqual({ path: 'test1' });
-    expect(meta1.appendsWithParams).toEqual([appendWithParams]);
+    expect(dynamicModule.initParams?.get(initRest)).toEqual({ path: 'test1' });
+    expect(meta1.appendsWithOpts).toEqual([appendWithOpts]);
 
-    const meta2 = moduleManager.getNormalizedModuleMeta(moduleWithParams, true).initMeta.get(initRest)!;
+    const meta2 = moduleManager.getNormalizedModuleMeta(dynamicModule, true).initMeta.get(initRest)!;
     expect(meta2.params.path).toEqual('test1');
 
-    const meta3 = moduleManager.getNormalizedModuleMeta(appendWithParams, true).initMeta.get(initRest)!;
+    const meta3 = moduleManager.getNormalizedModuleMeta(appendWithOpts, true).initMeta.get(initRest)!;
     expect(meta3.params.path).toEqual('test2');
   });
 
@@ -85,7 +85,7 @@ describe('rest ModuleNormalizer', () => {
 
     @featureModule({ providersPerApp: [Service0] })
     class Module2 {
-      static withParams(id: string): DynamicModuleWithInit<Module2> {
+      static withOpts(id: string): DynamicModuleWithInit<Module2> {
         return {
           id,
           module: this,
@@ -106,15 +106,15 @@ describe('rest ModuleNormalizer', () => {
     @featureModule({ providersPerApp: [Service0] })
     class Module6 {}
 
-    const module2WithParams = forwardRef(() => {
-      const module2WithParams = Module2.withParams('test-id');
-      module2WithParams.initParams.set(initRest, { path: 'test1' });
-      return module2WithParams;
+    const module2WithOpts = forwardRef(() => {
+      const module2WithOpts = Module2.withOpts('test-id');
+      module2WithOpts.initParams.set(initRest, { path: 'test1' });
+      return module2WithOpts;
     });
-    const module4WithParams: DynamicModule = { module: forwardRef(() => Module4) };
-    const appendWithParams: AppendsWithOptions = { module: forwardRef(() => Module6), path: 'test2' };
+    const module4WithOpts: DynamicModule = { module: forwardRef(() => Module4) };
+    const appendWithOpts: AppendsWithOptions = { module: forwardRef(() => Module6), path: 'test2' };
     @initRest({
-      appends: [forwardRef(() => Module5), appendWithParams],
+      appends: [forwardRef(() => Module5), appendWithOpts],
       providersPerRou: [
         forwardRef(() => Service1),
         { token: forwardRef(() => Service3), useClass: forwardRef(() => Service3), multi: true },
@@ -124,7 +124,7 @@ describe('rest ModuleNormalizer', () => {
         { token: forwardRef(() => Service4), useToken: forwardRef(() => Service4), multi: true },
       ],
       resolvedCollisionPerRou: [[forwardRef(() => Service1), forwardRef(() => Module3)]],
-      resolvedCollisionPerReq: [[forwardRef(() => Service2), module4WithParams]],
+      resolvedCollisionPerReq: [[forwardRef(() => Service2), module4WithOpts]],
       exports: [
         forwardRef(() => Service1),
         forwardRef(() => Service2),
@@ -133,7 +133,7 @@ describe('rest ModuleNormalizer', () => {
       ],
     })
     @rootModule({
-      imports: [forwardRef(() => Module1), module2WithParams],
+      imports: [forwardRef(() => Module1), module2WithOpts],
     })
     class AppModule {}
 
@@ -149,16 +149,16 @@ describe('rest ModuleNormalizer', () => {
     expect(meta1.resolvedCollisionPerRou).toEqual([[Service1, Module3]]);
     expect(meta1.resolvedCollisionPerReq).toEqual([[Service2, { module: Module4 }]]);
     expect(meta1.appendsModules).toEqual([Module5]);
-    expect(meta1.appendsWithParams).toEqual([appendWithParams]);
+    expect(meta1.appendsWithOpts).toEqual([appendWithOpts]);
 
     const meta2 = moduleManager.getNormalizedModuleMeta('test-id', true).initMeta.get(initRest)!;
     expect(meta2.params.path).toEqual('test1');
 
-    const meta3 = moduleManager.getNormalizedModuleMeta(appendWithParams, true).initMeta.get(initRest)!;
+    const meta3 = moduleManager.getNormalizedModuleMeta(appendWithOpts, true).initMeta.get(initRest)!;
     expect(meta3.params.path).toEqual('test2');
 
     expect(normalizedModuleMeta.importsModules).toEqual([Module1, RestModule]);
-    expect(normalizedModuleMeta.importsWithParams).toEqual([
+    expect(normalizedModuleMeta.importsWithOpts).toEqual([
       { id: 'test-id', module: Module2, initParams: expect.any(Map) },
     ]);
   });
@@ -185,14 +185,14 @@ describe('rest ModuleNormalizer', () => {
     @featureModule()
     class Module1 {}
 
-    const appendsWithParams: AppendsWithOptions = {
+    const appendsWithOpts: AppendsWithOptions = {
       path: 'one',
       guards: [Guard1, [Guard2, { property1: 'some-value' }]],
       module: Module1,
     };
 
     @initRest({
-      appends: [appendsWithParams],
+      appends: [appendsWithOpts],
     })
     @rootModule()
     class AppModule {}
@@ -200,11 +200,11 @@ describe('rest ModuleNormalizer', () => {
     const normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
     const meta1 = moduleManager.getNormalizedModuleMeta(AppModule, true).initMeta.get(initRest)!;
     const modRefIds = normalizedModuleMeta.allInitHooks.get(initRest)?.getModulesToScan(meta1);
-    expect(modRefIds).toEqual([appendsWithParams]);
+    expect(modRefIds).toEqual([appendsWithOpts]);
     expect(normalizedModuleMeta.importsModules).toEqual([RestModule]);
-    expect(normalizedModuleMeta.importsWithParams).toEqual([]);
+    expect(normalizedModuleMeta.importsWithOpts).toEqual([]);
 
-    const meta2 = moduleManager.getNormalizedModuleMeta(appendsWithParams, true).initMeta.get(initRest)!;
+    const meta2 = moduleManager.getNormalizedModuleMeta(appendsWithOpts, true).initMeta.get(initRest)!;
     expect(meta2.params.path).toBe('one');
     expect(meta2.params.guards).toEqual<NormalizedGuard[]>([
       { guard: Guard1 },
@@ -244,7 +244,7 @@ describe('rest ModuleNormalizer', () => {
     })
     @featureModule({ providersPerMod: [Service5] })
     class Module1 {
-      static withParams(): DynamicModuleWithInit<Module1> {
+      static withOpts(): DynamicModuleWithInit<Module1> {
         return {
           module: this,
           initParams: new Map(),
@@ -252,8 +252,8 @@ describe('rest ModuleNormalizer', () => {
       }
     }
 
-    const moduleWithParams = Module1.withParams();
-    moduleWithParams.initParams.set(initRest, {
+    const dynamicModule = Module1.withOpts();
+    dynamicModule.initParams.set(initRest, {
       path: 'one',
       guards: [Guard1, [Guard2, { property1: 'some-value' }]],
       providersPerApp: [Service8],
@@ -266,7 +266,7 @@ describe('rest ModuleNormalizer', () => {
     });
 
     @initRest()
-    @rootModule({ imports: [moduleWithParams] })
+    @rootModule({ imports: [dynamicModule] })
     class AppModule {}
 
     const normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
@@ -274,9 +274,9 @@ describe('rest ModuleNormalizer', () => {
     const modRefIds = normalizedModuleMeta.allInitHooks.get(initRest)?.getModulesToScan(meta1);
     expect(modRefIds).toEqual([]);
     expect(normalizedModuleMeta.importsModules).toEqual([RestModule]);
-    expect(normalizedModuleMeta.importsWithParams).toEqual([moduleWithParams]);
+    expect(normalizedModuleMeta.importsWithOpts).toEqual([dynamicModule]);
 
-    const meta2 = moduleManager.getNormalizedModuleMeta(moduleWithParams, true).initMeta.get(initRest)!;
+    const meta2 = moduleManager.getNormalizedModuleMeta(dynamicModule, true).initMeta.get(initRest)!;
     expect(meta2.params.path).toBe('one');
     expect(meta2.params.guards).toEqual<NormalizedGuard[]>([
       { guard: Guard1 },

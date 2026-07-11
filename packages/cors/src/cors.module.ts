@@ -19,7 +19,7 @@ import { CorsService } from './cors.service.js';
 })
 @featureModule()
 export class CorsModule {
-  static withParams(options: CorsOptions): DynamicModule<CorsModule> {
+  static withOpts(options: CorsOptions): DynamicModule<CorsModule> {
     return {
       module: this,
       providersPerMod: new ProviderBuilder().useValue<CorsOptions>(CorsOptions, options),

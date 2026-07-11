@@ -235,9 +235,9 @@ describe('ModuleManager', () => {
     @featureModule()
     class Module1 {}
 
-    const moduleWithParams: DynamicModule = { module: Module1 };
+    const dynamicModule: DynamicModule = { module: Module1 };
 
-    @initRest({ imports: [moduleWithParams], exports: [moduleWithParams] })
+    @initRest({ imports: [dynamicModule], exports: [dynamicModule] })
     @featureModule()
     class Module2 {}
 
@@ -251,7 +251,7 @@ describe('ModuleManager', () => {
 
     @featureModule()
     class Module1 {
-      static withParams(): DynamicModule<Module1> {
+      static withOpts(): DynamicModule<Module1> {
         return {
           module: this,
           providersPerMod: [{ token: Multi, useClass: Multi, multi: true }],
@@ -260,9 +260,9 @@ describe('ModuleManager', () => {
       }
     }
 
-    const moduleWithParams = Module1.withParams();
+    const dynamicModule = Module1.withOpts();
 
-    const meta = mock.scanModule(moduleWithParams);
+    const meta = mock.scanModule(dynamicModule);
     expect(meta.exportedProvidersPerMod.length).toBe(0);
     expect(meta.exportedMultiProvidersPerMod).toEqual(exportedMultiProvidersPerMod);
   });
@@ -274,18 +274,18 @@ describe('ModuleManager', () => {
     @initRest({ controllers: [Controller1] })
     @featureModule()
     class Module1 {
-      static withParams(): DynamicModule<Module1> {
+      static withOpts(): DynamicModule<Module1> {
         return {
           module: this,
         };
       }
     }
 
-    const moduleWithParams = Module1.withParams();
+    const dynamicModule = Module1.withOpts();
 
     @initRest({ controllers: [Controller1] })
     @featureModule({
-      imports: [moduleWithParams],
+      imports: [dynamicModule],
       exports: [Module1],
     })
     class Module2 {}
@@ -358,7 +358,7 @@ describe('ModuleManager', () => {
     @controller()
     class Controller1 {}
 
-    const fn = () => module4WithParams;
+    const fn = () => module4WithOpts;
     @initRest({ controllers: [Controller1] })
     @featureModule({ imports: [forwardRef(fn)] })
     class Module1 {}
@@ -380,7 +380,7 @@ describe('ModuleManager', () => {
     @initRest({ controllers: [Controller1] })
     @featureModule()
     class Module4 {
-      static withParams(providersPerMod: Provider[]): DynamicModule<Module4> {
+      static withOpts(providersPerMod: Provider[]): DynamicModule<Module4> {
         return {
           module: Module4,
           providersPerMod,
@@ -391,7 +391,7 @@ describe('ModuleManager', () => {
     @injectable()
     class Provider2 {}
 
-    const module4WithParams = Module4.withParams([Provider2]);
+    const module4WithOpts = Module4.withOpts([Provider2]);
 
     @initRest({ controllers: [] })
     @rootModule({
@@ -411,7 +411,7 @@ describe('ModuleManager', () => {
 
     expect(getInitMeta('root')?.importsModules).toEqual([Module1, Module2, RestModule]);
 
-    const initMeta = mock.map.get(module4WithParams)?.initMeta.get(initRest);
+    const initMeta = mock.map.get(module4WithOpts)?.initMeta.get(initRest);
     expect(initMeta?.importsModules).toEqual([RestModule]);
   });
 
@@ -439,7 +439,7 @@ describe('ModuleManager', () => {
     @initRest({ controllers: [Controller1] })
     @featureModule()
     class Module1 {
-      static withParams(): DynamicModuleWithInit<Module1> {
+      static withOpts(): DynamicModuleWithInit<Module1> {
         return {
           module: this,
           initParams: new Map(),
@@ -451,18 +451,18 @@ describe('ModuleManager', () => {
     @featureModule()
     class Module2 {}
 
-    const moduleWithParams = Module1.withParams();
-    moduleWithParams.initParams.set(initRest, { path: 'module1', guards: [Guard1] });
-    const appendsWithParams: AppendsWithOptions = { path: 'module2', module: Module2, guards: [Guard2] };
+    const dynamicModule = Module1.withOpts();
+    dynamicModule.initParams.set(initRest, { path: 'module1', guards: [Guard1] });
+    const appendsWithOpts: AppendsWithOptions = { path: 'module2', module: Module2, guards: [Guard2] };
 
-    @initRest({ appends: [appendsWithParams] })
-    @rootModule({ imports: [moduleWithParams] })
+    @initRest({ appends: [appendsWithOpts] })
+    @rootModule({ imports: [dynamicModule] })
     class AppModule {}
 
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(5);
-    expect(getInitMeta(moduleWithParams)?.params.guards).toMatchObject([{ guard: Guard1 }]);
-    expect(getInitMeta(appendsWithParams)?.params.guards).toMatchObject([{ guard: Guard2 }]);
+    expect(getInitMeta(dynamicModule)?.params.guards).toMatchObject([{ guard: Guard1 }]);
+    expect(getInitMeta(appendsWithOpts)?.params.guards).toMatchObject([{ guard: Guard2 }]);
   });
 
   it('root module with imported some extension', () => {

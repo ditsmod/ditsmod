@@ -663,15 +663,15 @@ describe('ShallowModulesImporter', () => {
         exports: [Provider1, Provider2],
       })
       class Module2 {
-        static withParams() {
+        static withOpts() {
           return { module: Module2 };
         }
       }
 
-      const baseModuleWithParams = Module2.withParams();
+      const baseDynamicModule = Module2.withOpts();
 
       @rootModule({
-        imports: [Module1, baseModuleWithParams],
+        imports: [Module1, baseDynamicModule],
         resolvedCollisionPerMod: [[Provider1, Module1]],
       })
       class AppModule {}
@@ -679,7 +679,7 @@ describe('ShallowModulesImporter', () => {
       expect(() => importModulesShallow(AppModule)).not.toThrow();
       expect([...mock.importedProvidersPerMod]).toEqual<[any, ImportedProvider][]>([
         [Provider1, { modRefId: Module1, providers: [Provider1] }],
-        [Provider2, { modRefId: baseModuleWithParams, providers: [Provider2] }],
+        [Provider2, { modRefId: baseDynamicModule, providers: [Provider2] }],
       ]);
     });
 

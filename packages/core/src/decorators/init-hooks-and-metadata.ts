@@ -191,7 +191,7 @@ export const initSome: InitDecorator<RootDecoratorOptions, { path?: string }, In
 
 @featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
 class Module1 {
-  static withParams(): DynamicModuleWithInit<Module1> {
+  static withOpts(): DynamicModuleWithInit<Module1> {
     return {
       module: this,
       initParams: new Map(),
@@ -199,12 +199,12 @@ class Module1 {
   }
 }
 
-const moduleWithParams = Module1.withParams();
-moduleWithParams.initParams.set(initSome, { path: 'some-prefix' });
+const dynamicModule = Module1.withOpts();
+dynamicModule.initParams.set(initSome, { path: 'some-prefix' });
 
 // Using the newly created init decorator
 @initSome({ one: 1, two: 2 })
-@featureModule({ imports: [moduleWithParams] })
+@featureModule({ imports: [dynamicModule] })
 class MyModule {
   // Your code here
 }

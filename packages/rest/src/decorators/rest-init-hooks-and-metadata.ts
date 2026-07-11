@@ -49,7 +49,7 @@ export class RestInitHooks extends InitHooks<RestInitDecoratorOptions> {
   }
 
   override getModulesToScan(meta?: RestInitMeta): RestModRefId[] {
-    return meta?.appendsModules.concat(meta?.appendsWithParams as any[]) || [];
+    return meta?.appendsModules.concat(meta?.appendsWithOpts as any[]) || [];
   }
 
   override exportAppProviders(config: ExportAppProvidersConfig): RestAppProviders {

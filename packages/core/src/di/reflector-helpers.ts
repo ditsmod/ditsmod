@@ -29,7 +29,7 @@ export const classMetaChainCache = new WeakMap<Class, ClassMetaChain | undefined
 
 export const classMetaMap = new WeakMap26<Class | AbstractClass, DecoratorMeta[]>();
 export const propMetaMap = new WeakMap26<Class | AbstractClass, Record<string | symbol, DecoratorMeta[]>>();
-export const methodWithParamsMap = new WeakMap26<Class | AbstractClass, Set<string | symbol>>();
+export const methodWithOptsMap = new WeakMap26<Class | AbstractClass, Set<string | symbol>>();
 export const constructorParamsMap = new WeakMap26<Class | AbstractClass, (DecoratorMeta<any>[] | null)[]>();
 
 export type ClassMetaChain<DecorValue = any, Proto extends AnyObj = AnyObj> = Map<

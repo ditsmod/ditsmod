@@ -27,7 +27,7 @@ export class SomeModule {}
 
 В такому разі, документація буде створюватись з усього застосунку за URL-адресою, яка буде залежати від path-префікса на рівні застосунку. Наприклад, якщо path-префікс на рівні застосунку буде `/api`, значить OpenAPI-документація буде за адресою `/api/openapi`.
 
-Також можна використовувати статичний метод `OpenapiModule.withParams` щоб вказати додаткові параметри для імпорту `OpenapiModule`:
+Також можна використовувати статичний метод `OpenapiModule.withOpts` щоб вказати додаткові параметри для імпорту `OpenapiModule`:
 
 ```ts {11,14}
 import { restModule } from '@ditsmod/rest';
@@ -40,7 +40,7 @@ const swaggerOAuthOptions: SwaggerOAuthOptions = {
   clientId: 'implicit',
 };
 
-const dynamicModule = OpenapiModule.withParams(oasObject, 'absolute-path', swaggerOAuthOptions);
+const dynamicModule = OpenapiModule.withOpts(oasObject, 'absolute-path', swaggerOAuthOptions);
 
 @restModule({
   imports: [dynamicModule],

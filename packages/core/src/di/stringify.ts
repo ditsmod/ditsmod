@@ -20,7 +20,7 @@ export function stringify(token: any): string {
   }
 
   if (token.module) {
-    return `${token.module.name}-withParams`;
+    return `${token.module.name}-withOpts`;
   }
 
   const res = token.toString();

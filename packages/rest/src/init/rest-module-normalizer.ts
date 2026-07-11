@@ -34,13 +34,13 @@ export class RestModuleNormalizer {
     if (decoratorOptions.controllers) {
       this.meta.controllers.push(...decoratorOptions.controllers);
     }
-    this.mergeModuleWithParams(normalizedModuleMeta.modRefId);
+    this.mergeDynamicModule(normalizedModuleMeta.modRefId);
     this.appendModules(decoratorOptions);
     this.checkMetadata();
     return meta;
   }
 
-  protected mergeModuleWithParams(modRefId: RestModRefId): void {
+  protected mergeDynamicModule(modRefId: RestModRefId): void {
     if (isAppendsWithOptions(modRefId)) {
       if (modRefId.absolutePath !== undefined) {
         this.meta.params.absolutePath = modRefId.absolutePath;
@@ -80,7 +80,7 @@ export class RestModuleNormalizer {
         } else {
           ap.initParams = new Map([[initRest, params]]);
         }
-        this.meta.appendsWithParams.push(ap);
+        this.meta.appendsWithOpts.push(ap);
       } else {
         this.meta.appendsModules.push(ap);
       }
@@ -127,7 +127,7 @@ export class RestModuleNormalizer {
       !meta.exportedMultiProvidersPerMod.length &&
       !meta.exportsModules.length &&
       !meta.providersPerApp.length &&
-      !meta.exportsWithParams.length &&
+      !meta.exportsWithOpts.length &&
       !meta.exportedExtensionProviders.length &&
       !meta.extensionProviders.length &&
       !meta.exportedProvidersPerReq.length &&
@@ -135,7 +135,7 @@ export class RestModuleNormalizer {
       !meta.exportedMultiProvidersPerRou.length &&
       !meta.exportedMultiProvidersPerReq.length &&
       !meta.controllers.length &&
-      !meta.appendsWithParams.length
+      !meta.appendsWithOpts.length
     ) {
       throw new EmptyModuleMetadata();
     }

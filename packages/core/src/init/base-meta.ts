@@ -13,13 +13,13 @@ export class NormalizedInitMeta<A extends AnyObj = AnyObj> {
    */
   id?: string = '';
   importsModules: ModuleType[];
-  importsWithParams: DynamicModule[];
+  importsWithOpts: DynamicModule[];
   providersPerApp: Provider[];
   providersPerMod: Provider[];
   providersPerRou: Provider[];
   providersPerReq: Provider[];
   exportsModules: ModuleType[];
-  exportsWithParams: DynamicModule[];
+  exportsWithOpts: DynamicModule[];
   exportedProvidersPerMod: Provider[];
   exportedProvidersPerRou: Provider[];
   exportedProvidersPerReq: Provider[];
@@ -128,13 +128,13 @@ export class NormalizedModuleMeta<
   constructor() {
     super();
     this.importsModules = [];
-    this.importsWithParams = [];
+    this.importsWithOpts = [];
     this.providersPerApp = [];
     this.providersPerMod = [];
     this.providersPerRou = [];
     this.providersPerReq = [];
     this.exportsModules = [];
-    this.exportsWithParams = [];
+    this.exportsWithOpts = [];
     this.exportedProvidersPerMod = [];
     this.exportedProvidersPerRou = [];
     this.exportedProvidersPerReq = [];

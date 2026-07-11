@@ -11,7 +11,7 @@ import { JwtServiceOptions } from './models/jwt-service-options.js';
 })
 @featureModule()
 export class JwtModule {
-  static withParams(jwtServiceOptions: JwtServiceOptions): DynamicModule<JwtModule> {
+  static withOpts(jwtServiceOptions: JwtServiceOptions): DynamicModule<JwtModule> {
     return {
       module: this,
       providersPerMod: [{ token: JwtServiceOptions, useValue: jwtServiceOptions }],

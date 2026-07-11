@@ -56,26 +56,26 @@ it('imports and appends with gruards for some modules', () => {
   @featureModule()
   class Module2 {}
 
-  const moduleWithParams: RestModuleOptions & DynamicModule = {
+  const dynamicModule: RestModuleOptions & DynamicModule = {
     path: 'module1',
     module: Module1,
     guards: [Guard1],
   };
-  const appendsWithParams: AppendsWithOptions = {
+  const appendsWithOpts: AppendsWithOptions = {
     path: 'module2',
     module: Module2,
     guards: [Guard2],
   };
 
   @restRootModule({
-    appends: [appendsWithParams],
-    imports: [moduleWithParams],
+    appends: [appendsWithOpts],
+    imports: [dynamicModule],
   })
   class AppModule {}
 
   mock.scanRootModule(AppModule);
-  const initMeta1 = mock.getNormalizedModuleMeta(moduleWithParams)?.initMeta.get(initRest)?.params;
-  const initMeta2 = mock.getNormalizedModuleMeta(appendsWithParams)?.initMeta.get(initRest)?.params;
+  const initMeta1 = mock.getNormalizedModuleMeta(dynamicModule)?.initMeta.get(initRest)?.params;
+  const initMeta2 = mock.getNormalizedModuleMeta(appendsWithOpts)?.initMeta.get(initRest)?.params;
   expect(mock.map.size).toBe(5);
   expect(initMeta1).toMatchObject({ guards: [{ guard: Guard1 }], path: 'module1' });
   expect(initMeta2).toMatchObject({ guards: [{ guard: Guard2 }], path: 'module2' });

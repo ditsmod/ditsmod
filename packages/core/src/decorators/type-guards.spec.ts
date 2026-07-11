@@ -110,7 +110,7 @@ describe('type guards', () => {
     it('module with params', () => {
       @featureModule({})
       class Module1 {
-        static withParams(): DynamicModule<Module1> {
+        static withOpts(): DynamicModule<Module1> {
           return {
             module: Module1,
             providersPerMod: [],
@@ -118,7 +118,7 @@ describe('type guards', () => {
         }
       }
 
-      const modObj = Module1.withParams();
+      const modObj = Module1.withOpts();
       expect(isDynamicModule(modObj)).toBe(true);
     });
   });

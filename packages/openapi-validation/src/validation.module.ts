@@ -24,7 +24,7 @@ import { ValidationExtension } from './validation.extension.js';
   ],
 })
 export class ValidationModule {
-  static withParams(current: DictGroup<Class<Dictionary>>[]): DynamicModule<ValidationModule> {
+  static withOpts(current: DictGroup<Class<Dictionary>>[]): DynamicModule<ValidationModule> {
     return {
       module: this,
       providersPerMod: new I18nProviders().i18n({ current }),

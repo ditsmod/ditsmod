@@ -7,7 +7,7 @@ import { SqbExtension } from './sqb.extension.js';
   extensions: [{ extension: SqbExtension, afterExtensions: [RestRouteExtension], export: true }],
 })
 export class SqbModule {
-  static withParams(): DynamicModule<SqbModule> {
+  static withOpts(): DynamicModule<SqbModule> {
     return {
       module: this,
       providersPerMod: [],

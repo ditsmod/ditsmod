@@ -28,7 +28,7 @@ export class OpenapiModule {
    * @param oasObject This object used for OpenAPI per application.
    * @param absolutePath This absolute path used for OpenAPI module with params.
    */
-  static withParams(
+  static withOpts(
     oasObject: XOasObject<any>,
     absolutePath?: string,
     swaggerOAuthOptions?: SwaggerOAuthOptions,

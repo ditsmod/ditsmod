@@ -9,7 +9,7 @@ import { current } from './locales/current/index.js';
 import { imported } from './locales/imported/index.js';
 
 @restModule({
-  imports: [BodyParserModule, ValidationModule.withParams(current)],
+  imports: [BodyParserModule, ValidationModule.withOpts(current)],
   providersPerMod: new I18nProviders().i18n({ imported }),
   controllers: [FirstController],
 })

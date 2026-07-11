@@ -4,9 +4,9 @@ import { OpenapiModule } from '@ditsmod/openapi';
 import { oasObject } from './oas-object.js';
 import { oasOptions } from './oas-options.js';
 
-export const openapiModuleWithParams = OpenapiModule.withParams(oasObject, '');
+export const openapiDynamicModule = OpenapiModule.withOpts(oasObject, '');
 
-openapiModuleWithParams.providersPerApp = [
-  ...(openapiModuleWithParams.providersPerApp || []),
+openapiDynamicModule.providersPerApp = [
+  ...(openapiDynamicModule.providersPerApp || []),
   { token: ExtensionMetaMap, useValue: { oasOptions } },
 ];
