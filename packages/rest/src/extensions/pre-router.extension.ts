@@ -25,7 +25,7 @@ import { routeChannel } from '#diagnostics-channel';
 import { RouteExtensionMeta, PreparedRouteMeta } from '../types/types.js';
 import { HTTP_INTERCEPTORS } from '../top/constants.js';
 import { ControllerMetadata } from '../types/controller-metadata.js';
-import { InterceptorWithGuardsPerRou } from '#interceptors/interceptor-with-guards-per-rou.js';
+import { RouteScopedGuardedInterceptor } from '#interceptors/interceptor-with-guards-per-rou.js';
 import { InterceptorWithGuards } from '#interceptors/interceptor-with-guards.js';
 import { RouteMeta } from '../types/route-data.js';
 import { ChainMaker } from '#interceptors/chain-maker.js';
@@ -137,8 +137,8 @@ export class PreRouterExtension implements Extension<void> {
     const controllerName = getDebugClassName(routeMeta.Controller) || 'unknown';
 
     if (routeExtensionMeta.guards1.length || controllerMetadata.guards.length) {
-      mergedPerRou.push(InterceptorWithGuardsPerRou);
-      mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: InterceptorWithGuardsPerRou, multi: true });
+      mergedPerRou.push(RouteScopedGuardedInterceptor);
+      mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: RouteScopedGuardedInterceptor, multi: true });
     }
     mergedPerRou.push(...routeExtensionMeta.meta.providersPerRou, ...providersPerRou);
 

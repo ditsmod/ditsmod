@@ -7,7 +7,7 @@ import { CanActivate } from './guard.js';
 import { RequestContext } from '#services/request-context.js';
 
 @injectable()
-export class InterceptorWithGuardsPerRou implements IInterceptorWithGuardsPerRou {
+export class RouteScopedGuardedInterceptor implements GuardedInterceptor {
   instantiatedGuards: InstantiatedGuard[] = [];
 
   constructor(
@@ -61,7 +61,7 @@ export class InterceptorWithGuardsPerRou implements IInterceptorWithGuardsPerRou
   }
 }
 
-export interface IInterceptorWithGuardsPerRou extends HttpInterceptor {
+export interface GuardedInterceptor extends HttpInterceptor {
   instantiatedGuards: InstantiatedGuard[];
 }
 

@@ -32,8 +32,8 @@ export {
 export { RouteMeta } from './types/route-data.js';
 export { ControllerMetadata } from './types/controller-metadata.js';
 export {
-  IInterceptorWithGuardsPerRou,
-  InterceptorWithGuardsPerRou,
+  GuardedInterceptor,
+  RouteScopedGuardedInterceptor,
   InstantiatedGuard,
 } from '#interceptors/interceptor-with-guards-per-rou.js';
 export { InterceptorWithGuards } from '#interceptors/interceptor-with-guards.js';

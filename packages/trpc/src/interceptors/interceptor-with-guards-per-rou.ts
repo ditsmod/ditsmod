@@ -8,7 +8,7 @@ import { TrpcRouteMeta } from '#types/trpc-route-data.js';
 import { TrpcOpts } from '#types/types.js';
 
 @injectable()
-export class InterceptorWithGuardsPerRou implements IInterceptorWithGuardsPerRou {
+export class RouteScopedGuardedInterceptor implements GuardedInterceptor {
   instantiatedGuards: InstantiatedGuard[] = [];
 
   constructor(
@@ -61,7 +61,7 @@ export class InterceptorWithGuardsPerRou implements IInterceptorWithGuardsPerRou
   }
 }
 
-export interface IInterceptorWithGuardsPerRou extends TrpcHttpInterceptor {
+export interface GuardedInterceptor extends TrpcHttpInterceptor {
   instantiatedGuards: InstantiatedGuard[];
 }
 

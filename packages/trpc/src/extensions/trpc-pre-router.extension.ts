@@ -43,7 +43,7 @@ import { PublicTrpcRouteService, TrpcRouteService } from '#services/route.servic
 import { TRPC_OPTS } from '#types/constants.js';
 import { TrpcOpts } from '#types/types.js';
 import { getResolvedGuards } from '#utils/prepare-guards.js';
-import { InterceptorWithGuardsPerRou } from '#interceptors/interceptor-with-guards-per-rou.js';
+import { RouteScopedGuardedInterceptor } from '#interceptors/interceptor-with-guards-per-rou.js';
 import { isInterceptor } from '#types/type.guards.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
 import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js';
@@ -124,8 +124,8 @@ export class TrpcPreRouterExtension implements Extension<void> {
     const controllerName = getDebugClassName(routeMeta.Controller) || 'unknown';
 
     if (routeExtensionMeta.guards1.length || controllerMetadata.guards.length) {
-      mergedPerRou.push(InterceptorWithGuardsPerRou);
-      mergedPerRou.push({ token: TRPC_HTTP_INTERCEPTORS, useToken: InterceptorWithGuardsPerRou, multi: true });
+      mergedPerRou.push(RouteScopedGuardedInterceptor);
+      mergedPerRou.push({ token: TRPC_HTTP_INTERCEPTORS, useToken: RouteScopedGuardedInterceptor, multi: true });
     }
 
     for (const Interceptor of controllerMetadata.interceptors) {
