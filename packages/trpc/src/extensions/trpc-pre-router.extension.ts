@@ -27,7 +27,7 @@ import { TrpcRouteExtension } from './trpc-route.extension.js';
 import { TrpcHttpBackend, TrpcHttpFrontend } from '#interceptors/tokens-and-types.js';
 import { TRPC_HTTP_INTERCEPTORS, RAW_REQ, RAW_RES } from '#types/types.js';
 import { ControllerMetadata } from '#types/controller-metadata.js';
-import { InterceptorWithGuards } from '#interceptors/interceptor-with-guards.js';
+import { RequestScopedGuardedInterceptor } from '#interceptors/interceptor-with-guards.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';
 import { TrpcChainMaker } from '#interceptors/chain-maker.js';
 import { ModuleScopedGuard } from '#interceptors/trpc-guard.js';
@@ -197,8 +197,8 @@ export class TrpcPreRouterExtension implements Extension<void> {
     const mergedPerReq: Provider[] = [];
     mergedPerReq.push({ token: TRPC_HTTP_INTERCEPTORS, useToken: TrpcHttpFrontend as any, multi: true });
     if (routeExtensionMeta.guards1.length || controllerMetadata.guards.length) {
-      mergedPerReq.push(InterceptorWithGuards);
-      mergedPerReq.push({ token: TRPC_HTTP_INTERCEPTORS, useToken: InterceptorWithGuards, multi: true });
+      mergedPerReq.push(RequestScopedGuardedInterceptor);
+      mergedPerReq.push({ token: TRPC_HTTP_INTERCEPTORS, useToken: RequestScopedGuardedInterceptor, multi: true });
     }
     mergedPerReq.push(...routeExtensionMeta.meta.providersPerReq, ...providersPerReq);
 

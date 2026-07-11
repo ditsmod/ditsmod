@@ -36,7 +36,7 @@ export {
   RouteScopedGuardedInterceptor,
   InstantiatedGuard,
 } from '#interceptors/interceptor-with-guards-per-rou.js';
-export { InterceptorWithGuards } from '#interceptors/interceptor-with-guards.js';
+export { RequestScopedGuardedInterceptor } from '#interceptors/interceptor-with-guards.js';
 export { DefaultHttpBackendPerRou } from '#interceptors/default-http-backend-per-rou.js';
 export { DefaultHttpBackend } from '#interceptors/default-http-backend.js';
 export { ChainMaker } from '#interceptors/chain-maker.js';

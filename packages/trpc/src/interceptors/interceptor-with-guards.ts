@@ -18,7 +18,7 @@ import { applyResponse } from '#utils/apply-web-response.js';
 import { TrpcOpts } from '#types/types.js';
 
 @injectable()
-export class InterceptorWithGuards implements TrpcHttpInterceptor {
+export class RequestScopedGuardedInterceptor implements TrpcHttpInterceptor {
   constructor(
     @skipSelf() protected routeMeta: TrpcRouteMeta,
     private injector: Injector,

@@ -17,7 +17,7 @@ import { RequestContext } from '#services/request-context.js';
 import { RAW_REQ, RAW_RES, A_PATH_PARAMS, QUERY_STRING, QUERY_PARAMS, PATH_PARAMS } from '../top/constants.js';
 
 @injectable()
-export class InterceptorWithGuards implements HttpInterceptor {
+export class RequestScopedGuardedInterceptor implements HttpInterceptor {
   constructor(
     @skipSelf() protected routeMeta: RouteMeta,
     private injector: Injector,

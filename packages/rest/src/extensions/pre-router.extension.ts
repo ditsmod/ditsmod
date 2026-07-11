@@ -26,7 +26,7 @@ import { RouteExtensionMeta, PreparedRouteMeta } from '../types/types.js';
 import { HTTP_INTERCEPTORS } from '../top/constants.js';
 import { ControllerMetadata } from '../types/controller-metadata.js';
 import { RouteScopedGuardedInterceptor } from '#interceptors/interceptor-with-guards-per-rou.js';
-import { InterceptorWithGuards } from '#interceptors/interceptor-with-guards.js';
+import { RequestScopedGuardedInterceptor } from '#interceptors/interceptor-with-guards.js';
 import { RouteMeta } from '../types/route-data.js';
 import { ChainMaker } from '#interceptors/chain-maker.js';
 import { DefaultHttpBackend } from '#interceptors/default-http-backend.js';
@@ -214,8 +214,8 @@ export class PreRouterExtension implements Extension<void> {
     const mergedPerReq: Provider[] = [];
     mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend, multi: true });
     if (routeExtensionMeta.guards1.length || controllerMetadata.guards.length) {
-      mergedPerReq.push(InterceptorWithGuards);
-      mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: InterceptorWithGuards, multi: true });
+      mergedPerReq.push(RequestScopedGuardedInterceptor);
+      mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: RequestScopedGuardedInterceptor, multi: true });
     }
     mergedPerReq.push(...routeExtensionMeta.meta.providersPerReq, ...providersPerReq);
 

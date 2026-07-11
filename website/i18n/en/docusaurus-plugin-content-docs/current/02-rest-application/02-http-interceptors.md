@@ -26,7 +26,7 @@ HTTP request processing has the following workflow:
 2. `PreRouter` uses the router to search for the request handler according to the URI.
 3. If the request handler is not found, `PreRouter` issues a 501 error.
 4. If a request handler is found, Ditsmod creates a provider instance with the [HttpFrontend][2] token at the request level, places it first in the queue of interceptors, and automatically calls it. By default, this interceptor is responsible for setting values for providers with `QUERY_PARAMS` and `PATH_PARAMS` tokens.
-5. If there are guards in the current route, then by default `InterceptorWithGuards` is run immediately after `HttpFrontend`.
+5. If there are guards in the current route, then by default `RequestScopedGuardedInterceptor` is run immediately after `HttpFrontend`.
 6. Other interceptors may be launched next, depending on whether the previous interceptor in the queue will launch them.
 7. If all interceptors have worked, Ditsmod starts [HttpBackend][3], which is instantiated at the request level. By default, `HttpBackend` runs directly the controller method responsible for processing the current request.
 
@@ -34,13 +34,13 @@ So, the approximate order of processing the request is as follows:
 
 1. `PreRouter`;
 2. `HttpFrontend`;
-3. `InterceptorWithGuards`;
+3. `RequestScopedGuardedInterceptor`;
 4. other interceptors;
 5. `HttpBackend`, which runs the controller method.
 
 Since the promise chain starts with `PreRouter` and ends with the controller method, this chain will be resolved in reverse order - from the controller method to `PreRouter`. This means that in the interceptor you can listen for the result of promise resolve, which returns the method of the controller.
 
-In addition, because `PreRouter`, `HttpFrontend`, `InterceptorWithGuards`, and `HttpBackend` instances are created using DI, you can replace them with your own version of the respective classes. For example, if you don't just want to send a 501 status when the required route is missing, but also want to add some text or change headers, you can substitute [PreRouter][7] with your own class.
+In addition, because `PreRouter`, `HttpFrontend`, `RequestScopedGuardedInterceptor`, and `HttpBackend` instances are created using DI, you can replace them with your own version of the respective classes. For example, if you don't just want to send a 501 status when the required route is missing, but also want to add some text or change headers, you can substitute [PreRouter][7] with your own class.
 
 ### Route-scoped mode {#route-scoped-mode}
 
