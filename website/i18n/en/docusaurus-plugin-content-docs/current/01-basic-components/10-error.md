@@ -69,14 +69,14 @@ The `CustomError` class constructor can accept cause error as the second argumen
 
 ### `CustomError` subclasses {#customerror-subclasses}
 
-It is recommended to use `CustomError` as a base class for creating any other error classes. For example, a new error `NormalizationFailed` is created as follows (the `ERR_` prefix is automatically added to this error’s `code`):
+It is recommended to use `CustomError` as a base class for creating any other error classes. For example, a new error `NormalizationFailure` is created as follows (the `DM_ERR_` prefix is automatically added to this error’s `code`):
 
 ```ts
 import { CustomError } from '@ditsmod/core/errors';
 /**
  * `Normalization of ${moduleName} failed`
  */
-export class NormalizationFailed extends CustomError {
+export class NormalizationFailure extends CustomError {
   constructor(moduleName: string, cause: Error) {
     super(
       {

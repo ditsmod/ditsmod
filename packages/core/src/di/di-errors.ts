@@ -71,7 +71,7 @@ export class InstantiationError extends CustomError {
 /**
  * `Token must be defined!`
  */
-export class TokenMustBeDefined extends CustomError {
+export class UndefinedToken extends CustomError {
   constructor() {
     super({
       msg1: 'Token must be defined!',
@@ -82,7 +82,7 @@ export class TokenMustBeDefined extends CustomError {
 /**
  * `Cannot find method in "${className}".`
  */
-export class CannotFindMethodInClass extends CustomError {
+export class MethodNotFound extends CustomError {
   constructor(className: string) {
     super({
       msg1: `Cannot find method in "${className}".`,
@@ -93,7 +93,7 @@ export class CannotFindMethodInClass extends CustomError {
 /**
  * `Cannot find "${factory.name}()" as method in "${className}".`
  */
-export class CannotFindFactoryAsMethod extends CustomError {
+export class FactoryNotFound extends CustomError {
   constructor(factoryName: string, className: string) {
     super({
       msg1: `Cannot find "${factoryName || 'anonymous'}()" as method in "${className}".`,
@@ -113,7 +113,7 @@ expect(() => Injector.resolveAndCreate([
 ])).toThrow();
 ```
    */
-export class MixMultiWithRegularProviders extends CustomError {
+export class MixedProviderTypes extends CustomError {
   constructor(token: NonNullable<unknown>) {
     const multiProvider = stringify(token);
     super({
@@ -231,7 +231,7 @@ export class CyclicDependency extends CustomError {
  * `Failed to create factory provider for ${stringify(token)}:
  * second argument in tuple of useFactory must be a function, got ${factoryType}`
  */
-export class FailedCreateFactoryProvider extends CustomError {
+export class FactoryProviderCreationFailure extends CustomError {
   constructor(token: string, factoryType: string) {
     super({
       msg1:

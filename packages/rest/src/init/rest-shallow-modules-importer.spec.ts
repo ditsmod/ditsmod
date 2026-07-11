@@ -24,7 +24,7 @@ import { RestShallowModulesImporter } from './rest-shallow-modules-importer.js';
 import { Level, RestAppProviders } from '#types/types.js';
 import { getImportedProviders } from '../utils/get-imports.js';
 import { ModuleMustHaveControllers } from '#services/rest-errors.js';
-import { ResolvingCollisionNotExistsOnThisLevel } from '@ditsmod/core/errors';
+import { LevelCollisionNotFound } from '@ditsmod/core/errors';
 
 @injectable()
 class MockShallowModulesImporter extends RestShallowModulesImporter {
@@ -138,7 +138,7 @@ describe('shallow importing modules', () => {
     @rootModule({ imports: [Module0, Module1, Module2] })
     class AppModule {}
 
-    const err = new ResolvingCollisionNotExistsOnThisLevel('AppModule', 'Module0', 'Req', 'Provider1');
+    const err = new LevelCollisionNotFound('AppModule', 'Module0', 'Req', 'Provider1');
     expect(() => importModulesShallow(AppModule)).toThrow(err);
   });
 

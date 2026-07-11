@@ -13,10 +13,10 @@ import { Extension, ExtensionCounters } from '#extension/extension-types.js';
 import { ProviderBuilder } from '#utils/providers.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
 import {
-  CannotResolveCollisionForMultiProviderPerApp,
-  ModuleNotImportedInApplication,
+  AppMultiProviderCollision,
+  ModuleNotImported,
   ProvidersCollision,
-  AppProviderMissingTokenName,
+  AppProviderMissingToken,
 } from '#error/core-errors.js';
 import { injectable } from '#di/decorators.js';
 
@@ -164,7 +164,7 @@ describe('BaseAppInitializer', () => {
       class AppModule {}
 
       mock.normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
-      const err = new ModuleNotImportedInApplication('AppModule', 'Module0', 'Provider1');
+      const err = new ModuleNotImported('AppModule', 'Module0', 'Provider1');
       expect(() => mock.prepareProvidersPerApp()).toThrow(err);
     });
 
@@ -228,7 +228,7 @@ describe('BaseAppInitializer', () => {
       class AppModule {}
 
       mock.normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
-      const err = new CannotResolveCollisionForMultiProviderPerApp('AppModule', 'Module1', 'Provider1');
+      const err = new AppMultiProviderCollision('AppModule', 'Module1', 'Provider1');
       expect(() => mock.prepareProvidersPerApp()).toThrow(err);
     });
 
@@ -255,7 +255,7 @@ describe('BaseAppInitializer', () => {
       class AppModule {}
 
       mock.normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
-      const err = new AppProviderMissingTokenName('AppModule', 'Module0', 'Provider1');
+      const err = new AppProviderMissingToken('AppModule', 'Module0', 'Provider1');
       expect(() => mock.prepareProvidersPerApp()).toThrow(err);
     });
 

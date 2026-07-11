@@ -8,9 +8,9 @@ import { InjectionToken } from './top/injection-token.js';
 import { Injector } from './injector.js';
 import { forwardRef } from './forward-ref.js';
 import {
-  CannotFindFactoryAsMethod,
+  FactoryNotFound,
   CyclicDependency,
-  FailedCreateFactoryProvider,
+  FactoryProviderCreationFailure,
   InstantiationError,
   NoAnnotation,
   NoProvider,
@@ -620,7 +620,7 @@ describe('injector', () => {
     }
 
     const providers: Provider[] = [{ token: 'someToken', useFactory: [ClassWithFactory, () => ({})] }];
-    expect(() => createInjector(providers)).toThrow(new CannotFindFactoryAsMethod('anonymous', 'ClassWithFactory'));
+    expect(() => createInjector(providers)).toThrow(new FactoryNotFound('anonymous', 'ClassWithFactory'));
   });
 
   it('should throw when passing fake value to useFactory', () => {
@@ -633,7 +633,7 @@ describe('injector', () => {
     }
 
     const providers: Provider[] = [{ token: 'someToken', useFactory: [ClassWithFactory, 'fakeValue' as any] }];
-    expect(() => createInjector(providers)).toThrow(new FailedCreateFactoryProvider('someToken', 'string'));
+    expect(() => createInjector(providers)).toThrow(new FactoryProviderCreationFailure('someToken', 'string'));
   });
 
   it('should cache instances', () => {

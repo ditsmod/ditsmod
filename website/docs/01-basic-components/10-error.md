@@ -69,14 +69,14 @@ interface ErrorInfo {
 
 ### Дочірні класи CustomError {#customerror-subclasses}
 
-Рекомендується використовувати `CustomError` у якості базового класу, на основі якого створювати будь-які інші класи помилок. Наприклад таким чином створюється нова помилка `NormalizationFailed` (префікс `ERR_` до `code` цієї помилки додається автоматично):
+Рекомендується використовувати `CustomError` у якості базового класу, на основі якого створювати будь-які інші класи помилок. Наприклад таким чином створюється нова помилка `NormalizationFailure` (префікс `DM_ERR_` до `code` цієї помилки додається автоматично):
 
 ```ts
 import { CustomError } from '@ditsmod/core/errors';
 /**
  * `Normalization of ${moduleName} failed`
  */
-export class NormalizationFailed extends CustomError {
+export class NormalizationFailure extends CustomError {
   constructor(moduleName: string, cause: Error) {
     super(
       {

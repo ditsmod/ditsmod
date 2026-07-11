@@ -45,7 +45,7 @@ describe('07-dynamically-composing-modules', () => {
     expect(status).toBe(500);
     expect(type).toBe('application/json');
     const expectStr = expect.stringContaining('ThirdModule-DynamicModule failed: this module should have');
-    expect(body).toEqual({ error: expectStr, code: 'NormalizationFailed' });
+    expect(body).toEqual({ error: expectStr, code: 'NormalizationFailure' });
   });
 
   it('case 6', async () => {

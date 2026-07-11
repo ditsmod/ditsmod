@@ -36,14 +36,14 @@ import {
 import {
   UndefinedSymbol,
   ResolvedCollisionTokensOnly,
-  ModuleDoesNotHaveDecorator,
+  MissingModuleDecorator,
   InvalidModRefId,
-  ReexportFailed,
+  ReexportFailure,
   InvalidExtension,
-  ExportingUnknownSymbol,
-  ForbiddenExportNormalizedProvider,
-  ForbiddenExportProvidersPerApp,
-  ModuleShouldHaveValue,
+  UnknownExport,
+  ForbiddenNormalizedExport,
+  ForbiddenAppExport,
+  EmptyModuleMetadata,
 } from '#errors';
 import type { RootDecoratorOptions } from '#decorators/root-module.js';
 
@@ -85,7 +85,7 @@ export class ModuleNormalizer {
       throw new InvalidModRefId();
     }
     if (!decoratorOptions) {
-      throw new ModuleDoesNotHaveDecorator(modName);
+      throw new MissingModuleDecorator(modName);
     }
 
     /**
@@ -167,7 +167,7 @@ export class ModuleNormalizer {
         throw new UndefinedSymbol(action, this.normalizedModuleMeta.name, i);
       }
       if (isNormalizedProvider(exp)) {
-        throw new ForbiddenExportNormalizedProvider(this.normalizedModuleMeta.name, exp.token.name || exp.token);
+        throw new ForbiddenNormalizedExport(this.normalizedModuleMeta.name, exp.token.name || exp.token);
       }
       if (isDynamicModule(exp)) {
         // @todo Review this condition later
@@ -183,7 +183,7 @@ export class ModuleNormalizer {
           this.normalizedModuleMeta.exportsModules.push(exp);
         }
       } else {
-        throw new ExportingUnknownSymbol(this.normalizedModuleMeta.name, stringify(exp));
+        throw new UnknownExport(this.normalizedModuleMeta.name, stringify(exp));
       }
     });
   }
@@ -205,9 +205,9 @@ export class ModuleNormalizer {
     if (!found) {
       const providerName = token.name || token;
       if (this.normalizedModuleMeta.providersPerApp.some((p) => getToken(p) === token)) {
-        throw new ForbiddenExportProvidersPerApp(this.normalizedModuleMeta.name, providerName);
+        throw new ForbiddenAppExport(this.normalizedModuleMeta.name, providerName);
       } else {
-        throw new ExportingUnknownSymbol(this.normalizedModuleMeta.name, providerName);
+        throw new UnknownExport(this.normalizedModuleMeta.name, providerName);
       }
     }
   }
@@ -329,7 +329,7 @@ export class ModuleNormalizer {
 
     exports.forEach((modRefId) => {
       if (!imports.includes(modRefId)) {
-        throw new ReexportFailed(this.normalizedModuleMeta.name, getDebugClassName(modRefId) || '""');
+        throw new ReexportFailure(this.normalizedModuleMeta.name, getDebugClassName(modRefId) || '""');
       }
     });
   }
@@ -525,7 +525,7 @@ export class AppModule {}
       !this.normalizedModuleMeta.exportedExtensionProviders.length &&
       !this.normalizedModuleMeta.extensionProviders.length
     ) {
-      throw new ModuleShouldHaveValue();
+      throw new EmptyModuleMetadata();
     }
   }
 }

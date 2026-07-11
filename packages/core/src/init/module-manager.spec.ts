@@ -12,7 +12,7 @@ import { ModRefId } from '#types/mix.js';
 import { DynamicModule } from '#decorators/module-decorator-options.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { isDynamicModule } from '#decorators/type-guards.js';
-import { ImportAdditionFailed } from '#errors';
+import { ImportAdditionFailure } from '#errors';
 import { injectable } from '#di/decorators.js';
 import { forwardRef } from '#di/forward-ref.js';
 import type { Provider } from '#di/top/types-and-models.js';
@@ -231,7 +231,7 @@ describe('ModuleManager', () => {
     expect(mock.map.has(AppModule)).toBe(true);
     expect(mock.map.has(Module1)).toBe(true);
 
-    expect(() => mock.addImport(Module2, 'fakeId')).toThrow(new ImportAdditionFailed('Module2', 'fakeId'));
+    expect(() => mock.addImport(Module2, 'fakeId')).toThrow(new ImportAdditionFailure('Module2', 'fakeId'));
     expect(mock.map.size).toBe(2);
     expect(mock.oldSnapshotMapId.size).toBe(0);
     expect(mock.oldSnapshotMap.size).toBe(0);

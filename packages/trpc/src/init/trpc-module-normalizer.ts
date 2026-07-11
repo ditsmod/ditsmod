@@ -1,6 +1,6 @@
 import type { Class, NormalizedModuleMeta } from '@ditsmod/core';
 import { isFeatureModule, Reflector, getDuplicates, getProxyForInitMeta } from '@ditsmod/core';
-import { ModuleShouldHaveValue } from '@ditsmod/core/errors';
+import { EmptyModuleMetadata } from '@ditsmod/core/errors';
 
 import type { TrpcInitDecoratorOptions } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
@@ -51,7 +51,7 @@ export class TrpcModuleNormalizer {
       !meta.exportedMultiProvidersPerReq.length &&
       !meta.controllers.length
     ) {
-      throw new ModuleShouldHaveValue();
+      throw new EmptyModuleMetadata();
     }
   }
 

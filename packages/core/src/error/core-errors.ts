@@ -5,7 +5,7 @@ import { CustomError } from './custom-error.js';
  * `You are trying to use the useFactories() method from the "ProviderBuilder" helper,
  * but the [${i}] element has no decorators or is not a class.`
  */
-export class ClassForUseFactoriesWithoutDecorators extends CustomError {
+export class ClassWithoutDecorators extends CustomError {
   constructor(i: number) {
     super({
       msg1:
@@ -18,7 +18,7 @@ export class ClassForUseFactoriesWithoutDecorators extends CustomError {
 /**
  * `Cannot reinit injector after stage1`
  */
-export class InjectorReinitAfterStage1Forbidden extends CustomError {
+export class ForbiddenInjectorReinit extends CustomError {
   constructor() {
     super({
       msg1: 'Cannot reinit injector after stage1',
@@ -29,7 +29,7 @@ export class InjectorReinitAfterStage1Forbidden extends CustomError {
 /**
  * `Repeated saving of module metadata snapshots is prohibited. It is done only once—after their normalization.`
  */
-export class ProhibitSavingModulesSnapshot extends CustomError {
+export class ForbiddenSavingSnapshot extends CustomError {
   constructor() {
     super({
       msg1: 'Repeated saving of module metadata snapshots is prohibited. It is done only once - after their normalization.',
@@ -72,7 +72,7 @@ export class ProvidersCollision extends CustomError {
  * `Resolving collisions for providersPer${level} in ${moduleName} failed: ${tokenName}
  * mapped with ${moduleName}, but providersPer${level} does not imports ${tokenName} in this module.`
  */
-export class ResolvingCollisionNotImportedInModule extends CustomError {
+export class LevelCollisionNotImported extends CustomError {
   constructor(moduleName: string, level: string, tokenName: string) {
     super({
       msg1:
@@ -88,7 +88,7 @@ export class ResolvingCollisionNotImportedInModule extends CustomError {
  * ${tokenName} mapped with ${moduleName2}, but ${tokenName} is a token of the multi providers,
  * and in this case it should not be included in resolvedCollisionPer${level}.`
  */
-export class CannotResolveCollisionForMultiProviderPerLevel extends CustomError {
+export class LevelMultiProviderCollision extends CustomError {
   constructor(moduleName1: string, moduleName2: string, level: string, tokenName: string) {
     super({
       msg1:
@@ -104,7 +104,7 @@ export class CannotResolveCollisionForMultiProviderPerLevel extends CustomError 
  * ${tokenName} mapped with ${moduleName}, but ${tokenName} is a token of the multi providers,
  * and in this case it should not be included in resolvedCollisionPerApp.`
  */
-export class CannotResolveCollisionForMultiProviderPerApp extends CustomError {
+export class AppMultiProviderCollision extends CustomError {
   constructor(rootModuleName: string, moduleName: string, tokenName: string) {
     super({
       msg1:
@@ -119,7 +119,7 @@ export class CannotResolveCollisionForMultiProviderPerApp extends CustomError {
  * `A configuration of extensions in ${moduleName}
  * creates a cyclic dependency in the startup sequence of different groups: ${strPath}.`
  */
-export class ExtensionConfigCauseCyclicDeps extends CustomError {
+export class ExtensionCyclicDependency extends CustomError {
   constructor(moduleName: string, strPath: string) {
     super({
       msg1:
@@ -133,7 +133,7 @@ export class ExtensionConfigCauseCyclicDeps extends CustomError {
  * `Resolving collisions for providersPer${level} in ${moduleName1} failed:
  * ${tokenName} mapped with ${moduleName2}, but ${tokenName} does not exists in providersPer${level} of this module.`
  */
-export class ResolvingCollisionNotExistsOnThisLevel extends CustomError {
+export class LevelCollisionNotFound extends CustomError {
   constructor(moduleName1: string, moduleName2: string, level: string, tokenName: string) {
     super({
       msg1:
@@ -162,7 +162,7 @@ export class InvalidCollisionResolution extends CustomError {
  * `Resolving collisions for providersPerApp in ${rootModuleName} failed:
  * ${tokenName} mapped with ${moduleName}, but providersPerApp does not includes ${tokenName} in this module.`
  */
-export class AppProviderMissingTokenName extends CustomError {
+export class AppProviderMissingToken extends CustomError {
   constructor(rootModuleName: string, moduleName: string, tokenName: string) {
     super({
       msg1:
@@ -176,7 +176,7 @@ export class AppProviderMissingTokenName extends CustomError {
  * `Resolving collisions for providersPer${level} in ${moduleName1} failed:
  * ${tokenName} mapped with ${moduleName2}, but ${moduleName1} is not imported into the application.`
  */
-export class ResolvingCollisionNotImportedInApplication extends CustomError {
+export class AppCollisionNotFound extends CustomError {
   constructor(moduleName1: string, moduleName2: string, level: string, tokenName: string) {
     super({
       msg1:
@@ -189,7 +189,7 @@ export class ResolvingCollisionNotImportedInApplication extends CustomError {
 /**
  * `this module should have "providersPerApp", or exports, or extensions.`
  */
-export class ModuleShouldHaveValue extends CustomError {
+export class EmptyModuleMetadata extends CustomError {
   constructor() {
     super({
       msg1: 'this module should have "providersPerApp", or exports, or extensions.',
@@ -201,7 +201,7 @@ export class ModuleShouldHaveValue extends CustomError {
  * `Exported "${providerName}" includes in "providersPerApp" and "exports" of ${moduleName}.
  * This is an error, because "providersPerApp" is always exported automatically.`
  */
-export class ForbiddenExportProvidersPerApp extends CustomError {
+export class ForbiddenAppExport extends CustomError {
   constructor(moduleName: string, providerName: string) {
     super({
       msg1:
@@ -214,7 +214,7 @@ export class ForbiddenExportProvidersPerApp extends CustomError {
 /**
  * `Exporting "${providerName}" from "${moduleName}" failed: in "exports" array must be includes tokens only.`
  */
-export class ForbiddenExportNormalizedProvider extends CustomError {
+export class ForbiddenNormalizedExport extends CustomError {
   constructor(moduleName: string, providerName: string) {
     super({
       msg1: `Exporting "${providerName}" from "${moduleName}" failed: in "exports" array must be includes tokens only.`,
@@ -226,7 +226,7 @@ export class ForbiddenExportNormalizedProvider extends CustomError {
  * `Exporting from ${moduleName} failed: if "${tokenName}" is a token of a provider, this provider
  * must be included in one of providersPer* array. If "${tokenName}" is a module, it must have "featureModule" decorator.`
  */
-export class ExportingUnknownSymbol extends CustomError {
+export class UnknownExport extends CustomError {
   constructor(moduleName: string, tokenName: string) {
     super({
       msg1:
@@ -253,7 +253,7 @@ export class InvalidExtension extends CustomError {
  * but not includes in imports. If in ${moduleName} you imports ${importedModuleName} as
  * module with params, same object you should export (if you need reexport).`
  */
-export class ReexportFailed extends CustomError {
+export class ReexportFailure extends CustomError {
   constructor(moduleName: string, importedModuleName: string) {
     super({
       msg1:
@@ -298,7 +298,7 @@ export class ResolvedCollisionTokensOnly extends CustomError {
 /**
  * `module "${modName}" does not have the "@rootModule()" or "@featureModule()" decorator`
  */
-export class ModuleDoesNotHaveDecorator extends CustomError {
+export class MissingModuleDecorator extends CustomError {
   constructor(modName: string) {
     super({
       msg1: `module "${modName}" does not have the "@rootModule()" or "@featureModule()" decorator`,
@@ -320,7 +320,7 @@ export class InvalidModRefId extends CustomError {
 /**
  * `Detected circular dependencies: ${circularNames}.`
  */
-export class CircularDepsInImports extends CustomError {
+export class CyclicImports extends CustomError {
   constructor(circularNames: string, prefixNames?: string) {
     let msg1 = `Detected circular dependencies: ${circularNames}.`;
     if (prefixNames) {
@@ -335,7 +335,7 @@ export class CircularDepsInImports extends CustomError {
 /**
  * `Initialization failed in ${debugModuleName} -> ${extensionName} at stage 3`
  */
-export class Stage3Failed extends CustomError {
+export class Stage3InitFailure extends CustomError {
   constructor(debugModuleName: string, extensionName: string, cause: any) {
     super(
       {
@@ -349,7 +349,7 @@ export class Stage3Failed extends CustomError {
 /**
  * `Initialization in ${debugModuleName} -> ${ext.constructor.name} at stage 2 failed`
  */
-export class Stage2Failed extends CustomError {
+export class Stage2InitFailure extends CustomError {
   constructor(debugModuleName: string, extensionName: string, cause: any) {
     super(
       {
@@ -363,7 +363,7 @@ export class Stage2Failed extends CustomError {
 /**
  * `Failed create injector per module for ${debugModuleName}`
  */
-export class ModuleInjectorCreationFailed extends CustomError {
+export class ModuleInjectorCreationFailure extends CustomError {
   constructor(debugModuleName: string, cause: any) {
     super(
       {
@@ -377,7 +377,7 @@ export class ModuleInjectorCreationFailed extends CustomError {
 /**
  * `Failed override metadata after stage1 for ${debugModuleName}`
  */
-export class MetaOverrideAfterStage1Failed extends CustomError {
+export class MetaOverrideFailure extends CustomError {
   constructor(debugModuleName: string, cause: any) {
     super(
       {
@@ -391,7 +391,7 @@ export class MetaOverrideAfterStage1Failed extends CustomError {
 /**
  * `Metadata collection from all modules for ${groupName} failed`
  */
-export class MetadataCollectionFailed extends CustomError {
+export class MetadataCollectionFailure extends CustomError {
   constructor(groupName: string, cause: any) {
     super(
       {
@@ -406,7 +406,7 @@ export class MetadataCollectionFailed extends CustomError {
  * `Resolving collisions for providersPerApp in ${rootModuleName} failed:
  * ${tokenName} mapped with ${moduleName}, but ${moduleName} is not imported into the application.`
  */
-export class ModuleNotImportedInApplication extends CustomError {
+export class ModuleNotImported extends CustomError {
   constructor(rootModuleName: string, moduleName: string, tokenName: string) {
     super({
       msg1:
@@ -430,7 +430,7 @@ export class LoggerNotSet extends CustomError {
 /**
  * `${ExtCls.name} is failed`
  */
-export class ExtensionFailed extends CustomError {
+export class ExtensionExecutionFailure extends CustomError {
   constructor(extensionName: string, moduleName: string, cause: Error) {
     super(
       {
@@ -444,7 +444,7 @@ export class ExtensionFailed extends CustomError {
 /**
  * `Detected circular dependencies: ${circularNames}.`
  */
-export class CircularDepsBetweenExtensions extends CustomError {
+export class CyclicExtensions extends CustomError {
   constructor(circularNames: string, prefixNames?: string) {
     let msg1 = `Detected circular dependencies: ${circularNames}.`;
     if (prefixNames) {
@@ -460,7 +460,7 @@ export class CircularDepsBetweenExtensions extends CustomError {
  * `extensionName1 attempted to call "extensionManager.stage1(extensionName2)",
  * but extensionName2 not declared in "afterExtensions" array in this module.`
  */
-export class NotDeclaredInAfterExtensionList extends CustomError {
+export class UndeclaredExtensionDependency extends CustomError {
   constructor(extensionName1: string, extensionName2: string) {
     super({
       msg1:
@@ -473,7 +473,7 @@ export class NotDeclaredInAfterExtensionList extends CustomError {
 /**
  * `Failed to import providers for ${moduleName}`
  */
-export class FailImportProviders extends CustomError {
+export class ProviderImportFailure extends CustomError {
   constructor(moduleName: string, cause: any) {
     super(
       {
@@ -487,7 +487,7 @@ export class FailImportProviders extends CustomError {
 /**
  * `Dependency resolution failed in ${moduleName}: no provider for ${tokenName}! ${partMsg}.`
  */
-export class NoProviderDuringResolveImports extends CustomError {
+export class NoProviderDuringImportResolution extends CustomError {
   constructor(moduleName: string, tokenName: string, partMsg: string) {
     super({
       msg1: `Dependency resolution failed in ${moduleName}: no provider for ${stringify(tokenName)}! ${partMsg}.`,
@@ -498,7 +498,7 @@ export class NoProviderDuringResolveImports extends CustomError {
 /**
  * `Module scaning failed: "${rootModuleName}" does not have the "@rootModule()" decorator`.
  */
-export class RootNotHaveDecorator extends CustomError {
+export class MissingRootDecorator extends CustomError {
   constructor(rootModuleName: string) {
     super({
       msg1: `Module scaning failed: "${rootModuleName}" does not have the "@rootModule()" decorator.`,
@@ -509,7 +509,7 @@ export class RootNotHaveDecorator extends CustomError {
 /**
  * `Failed adding ${modName} to imports: target module with ID "${modIdStr}" not found.`
  */
-export class ImportAdditionFailed extends CustomError {
+export class ImportAdditionFailure extends CustomError {
   constructor(modName?: string, modIdStr?: string) {
     super({
       msg1: `Failed adding ${modName} to imports: target module with ID "${modIdStr}" not found.`,
@@ -520,7 +520,7 @@ export class ImportAdditionFailed extends CustomError {
 /**
  * `Failed removing ${inputMeta.name} from "imports" array: target module with ID "${modIdStr}" not found.`
  */
-export class ImportRemovalFailed extends CustomError {
+export class ImportRemovalFailure extends CustomError {
   constructor(inputModName: string, modIdStr: string) {
     super({
       msg1: `Failed removing ${inputModName} from "imports" array: target module with ID "${modIdStr}" not found.`,
@@ -531,7 +531,7 @@ export class ImportRemovalFailed extends CustomError {
 /**
  * 'It is forbidden for rollback() to an empty state.'
  */
-export class ForbiddenRollbackEmptyState extends CustomError {
+export class ForbiddenRollback extends CustomError {
   constructor() {
     super({
       msg1: 'It is forbidden for rollback() to an empty state.',
@@ -542,7 +542,7 @@ export class ForbiddenRollbackEmptyState extends CustomError {
 /**
  * `${moduleId} not found in ModuleManager.`
  */
-export class ModuleIdNotFoundInModuleManager extends CustomError {
+export class ModuleIdNotFound extends CustomError {
   constructor(moduleId: string) {
     super({
       msg1: `${moduleId} not found in ModuleManager.`,
@@ -553,7 +553,7 @@ export class ModuleIdNotFoundInModuleManager extends CustomError {
 /**
  * `Normalization of ${moduleName} failed`
  */
-export class NormalizationFailed extends CustomError {
+export class NormalizationFailure extends CustomError {
   constructor(moduleName: string, cause: Error) {
     super(
       {

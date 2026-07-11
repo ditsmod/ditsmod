@@ -10,7 +10,7 @@ import {
   getProxyForInitMeta,
   isRootModule,
 } from '@ditsmod/core';
-import { ForbiddenExportNormalizedProvider, ModuleShouldHaveValue } from '@ditsmod/core/errors';
+import { ForbiddenNormalizedExport, EmptyModuleMetadata } from '@ditsmod/core/errors';
 
 import type { AppendsWithOptions, RestInitDecoratorOptions } from '#init/rest-init-raw-meta.js';
 import type { RestModRefId } from '#init/rest-init-meta.js';
@@ -70,7 +70,7 @@ export class RestModuleNormalizer {
     decoratorOptions.appends?.forEach((ap, i) => {
       ap = this.resolveForwardRef([ap])[0];
       if (isNormalizedProvider(ap)) {
-        throw new ForbiddenExportNormalizedProvider(this.normalizedModuleMeta.name, ap.token.name || ap.token);
+        throw new ForbiddenNormalizedExport(this.normalizedModuleMeta.name, ap.token.name || ap.token);
       }
       if (isAppendsWithOptions(ap)) {
         const params = { ...ap } as Partial<AppendsWithOptions>;
@@ -137,7 +137,7 @@ export class RestModuleNormalizer {
       !meta.controllers.length &&
       !meta.appendsWithParams.length
     ) {
-      throw new ModuleShouldHaveValue();
+      throw new EmptyModuleMetadata();
     }
   }
 

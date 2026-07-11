@@ -1,6 +1,6 @@
 import type { ExtensionClass } from '#extension/extension-types.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
-import { TokenMustBeDefined } from './errors.js';
+import { UndefinedToken } from './errors.js';
 import { resolveForwardRef } from './forward-ref.js';
 import { InjectionToken } from './top/injection-token.js';
 
@@ -49,7 +49,7 @@ export class KeyRegistry {
     }
 
     if (!token) {
-      throw new TokenMustBeDefined();
+      throw new UndefinedToken();
     }
     const newKey = new DualKey(token, this.#allKeys.size);
     this.#allKeys.set(token, newKey);

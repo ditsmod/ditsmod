@@ -10,7 +10,7 @@ export class CustomError extends ChainError {
     info = new ErrorInfo(info);
     let fnName = info.name || new.target.name;
     if (fnName == 'CustomError' && info.code) {
-      fnName = `ERR_${info.code}`;
+      fnName = `DM_ERR_${info.code}`;
     } else if (info.code) {
       fnName = `${fnName}_${info.code}`;
     }

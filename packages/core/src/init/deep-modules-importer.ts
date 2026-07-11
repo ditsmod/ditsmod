@@ -16,7 +16,7 @@ import { getProvidersTargets, getTokens } from '#utils/get-tokens.js';
 import { ExtensionCounters } from '#extension/extension-types.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { ProvidersByLevel } from '#types/providers-metadata.js';
-import { CircularDepsInImports, NoProviderDuringResolveImports, FailImportProviders } from '#errors';
+import { CyclicImports, NoProviderDuringImportResolution, ProviderImportFailure } from '#errors';
 import { ModuleInfo } from '#types/module-extract.js';
 import { stringify } from '#di/stringify.js';
 import { input } from '#di/decorators.js';
@@ -95,7 +95,7 @@ export class DeepModulesImporter {
             }
           });
         } catch (err: any) {
-          throw new FailImportProviders(normalizedModuleMeta.name, err);
+          throw new ProviderImportFailure(normalizedModuleMeta.name, err);
         }
       },
     );
@@ -405,7 +405,7 @@ export class DeepModulesImporter {
     const partMsg = path.length > 1 ? `(required by ${strPath}). Searched in ${levelsPath}` : levelsPath;
     // this.log.showProvidersInLogs(this, meta.name, meta.providersPerReq, meta.providersPerRou, meta.providersPerMod);
 
-    throw new NoProviderDuringResolveImports(normalizedModuleMeta.name, token.name || token, partMsg);
+    throw new NoProviderDuringImportResolution(normalizedModuleMeta.name, token.name || token, partMsg);
   }
 
   getDependencies(provider: Provider) {
@@ -459,6 +459,6 @@ export class DeepModulesImporter {
 
     const debugModuleName = getDebugClassName(modRefId);
     circularNames += ` -> [${getProviderName(provider)} in ${debugModuleName}]`;
-    throw new CircularDepsInImports(circularNames, prefixNames);
+    throw new CyclicImports(circularNames, prefixNames);
   }
 }

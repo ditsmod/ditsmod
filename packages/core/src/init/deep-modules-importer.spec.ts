@@ -6,7 +6,7 @@ import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
-import { CircularDepsInImports } from '#error/core-errors.js';
+import { CyclicImports } from '#error/core-errors.js';
 import { BaseImportRegistry } from './types.js';
 import { injectable } from '#di/decorators.js';
 import { Injector } from '#di/injector.js';
@@ -80,7 +80,7 @@ describe('DeepModulesImporter', () => {
         mock.addToUnfinishedSearchDependencies(Module1, Provider1);
         mock.addToUnfinishedSearchDependencies(Module2, Provider2);
         mock.addToUnfinishedSearchDependencies(Module3, Provider3);
-        const err = new CircularDepsInImports(
+        const err = new CyclicImports(
           '[Provider2 in Module2] -> [Provider3 in Module3] -> [Provider2 in Module2]',
           '[Provider1 in Module1]',
         );

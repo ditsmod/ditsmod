@@ -19,14 +19,14 @@ import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { ModuleNormalizer } from './module-normalizer.js';
 import { ProviderBuilder } from '#utils/providers.js';
 import {
-  ExportingUnknownSymbol,
-  ForbiddenExportNormalizedProvider,
-  ForbiddenExportProvidersPerApp,
+  UnknownExport,
+  ForbiddenNormalizedExport,
+  ForbiddenAppExport,
   InvalidExtension,
   InvalidModRefId,
-  ModuleDoesNotHaveDecorator,
-  ModuleShouldHaveValue,
-  ReexportFailed,
+  MissingModuleDecorator,
+  EmptyModuleMetadata,
+  ReexportFailure,
   ResolvedCollisionTokensOnly,
   UndefinedSymbol,
 } from '#error/core-errors.js';
@@ -180,7 +180,7 @@ describe('ModuleNormalizer', () => {
     @featureModule({ imports: [Module1], exports: [Module1] })
     class Module2 {}
 
-    expect(() => mock.normalize(Module2)).toThrow(new ExportingUnknownSymbol('Module2', 'Module1'));
+    expect(() => mock.normalize(Module2)).toThrow(new UnknownExport('Module2', 'Module1'));
   });
 
   it('imports module with params, but exports only a module class (without ref to module with params)', () => {
@@ -196,7 +196,7 @@ describe('ModuleNormalizer', () => {
     })
     class Module2 {}
 
-    expect(() => mock.normalize(Module2)).toThrow(new ReexportFailed('Module2', 'Module1'));
+    expect(() => mock.normalize(Module2)).toThrow(new ReexportFailure('Module2', 'Module1'));
   });
 
   it('module exported provider from providersPerApp', () => {
@@ -204,7 +204,7 @@ describe('ModuleNormalizer', () => {
     @featureModule({ providersPerApp: [Service1], exports: [Service1] })
     class Module2 {}
 
-    expect(() => mock.normalize(Module2)).toThrow(new ForbiddenExportProvidersPerApp('Module2', 'Service1'));
+    expect(() => mock.normalize(Module2)).toThrow(new ForbiddenAppExport('Module2', 'Service1'));
   });
 
   it('providers or modules with forwardRef', () => {
@@ -291,7 +291,7 @@ describe('ModuleNormalizer', () => {
     @featureModule({ providersPerMod: [Service1], exports: [{ token: Service1, useClass: Service1 }] })
     class Module2 {}
 
-    expect(() => mock.normalize(Module2)).toThrow(new ForbiddenExportNormalizedProvider('Module2', 'Service1'));
+    expect(() => mock.normalize(Module2)).toThrow(new ForbiddenNormalizedExport('Module2', 'Service1'));
   });
 
   it('exports module without imports it', () => {
@@ -302,7 +302,7 @@ describe('ModuleNormalizer', () => {
     @featureModule({ exports: [Module1] })
     class Module2 {}
 
-    expect(() => mock.normalize(Module2)).toThrow(new ReexportFailed('Module2', 'Module1'));
+    expect(() => mock.normalize(Module2)).toThrow(new ReexportFailure('Module2', 'Module1'));
   });
 
   it('module exports an invalid extension', () => {
@@ -535,10 +535,10 @@ describe('ModuleNormalizer', () => {
       expect(() => mock.normalize({} as ModRefId)).toThrow(new InvalidModRefId());
     });
 
-    it('throws ModuleDoesNotHaveDecorator for a class without decorator', () => {
+    it('throws MissingModuleDecorator for a class without decorator', () => {
       class UndecoratedModule {}
 
-      expect(() => mock.normalize(UndecoratedModule)).toThrow(new ModuleDoesNotHaveDecorator('UndecoratedModule'));
+      expect(() => mock.normalize(UndecoratedModule)).toThrow(new MissingModuleDecorator('UndecoratedModule'));
     });
 
     it('throws UndefinedSymbol when imports contain undefined', () => {
@@ -581,28 +581,28 @@ describe('ModuleNormalizer', () => {
       expect(() => mock.normalize(Module1)).toThrow(new ResolvedCollisionTokensOnly('Module1', 'Service1'));
     });
 
-    it('throws ModuleShouldHaveValue for empty feature module', () => {
+    it('throws EmptyModuleMetadata for empty feature module', () => {
       @featureModule()
       class EmptyModule {}
 
-      expect(() => mock.normalize(EmptyModule)).toThrow(new ModuleShouldHaveValue());
+      expect(() => mock.normalize(EmptyModule)).toThrow(new EmptyModuleMetadata());
     });
 
-    it('does not throw ModuleShouldHaveValue for empty root module', () => {
+    it('does not throw EmptyModuleMetadata for empty root module', () => {
       @rootModule()
       class AppModule {}
 
       expect(() => mock.normalize(AppModule)).not.toThrow();
     });
 
-    it('throws ExportingUnknownSymbol when exporting undeclared provider token', () => {
+    it('throws UnknownExport when exporting undeclared provider token', () => {
       class Service1 {}
       class Service2 {}
 
       @featureModule({ providersPerMod: [Service1], exports: [Service2] })
       class Module1 {}
 
-      expect(() => mock.normalize(Module1)).toThrow(new ExportingUnknownSymbol('Module1', 'Service2'));
+      expect(() => mock.normalize(Module1)).toThrow(new UnknownExport('Module1', 'Service2'));
     });
   });
 

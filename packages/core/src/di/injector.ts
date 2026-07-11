@@ -1,13 +1,13 @@
 import { input, fromSelf, inject, type InjectTransformResult, optional, skipSelf } from './decorators.js';
 import {
-  FailedCreateFactoryProvider,
+  FactoryProviderCreationFailure,
   InstantiationError,
   InvalidProvider,
-  MixMultiWithRegularProviders,
+  MixedProviderTypes,
   NoAnnotation,
   NoProvider,
-  CannotFindFactoryAsMethod,
-  CannotFindMethodInClass,
+  FactoryNotFound,
+  MethodNotFound,
 } from './errors.js';
 import { type ForwardRefFn, resolveForwardRef } from './forward-ref.js';
 import type { InjectionToken } from './top/injection-token.js';
@@ -281,7 +281,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
     if (typeof factory == 'function') {
       (factory as any)[DEBUG_NAME] = `${Cls.name}.prototype.${factory.name}`;
     } else {
-      throw new FailedCreateFactoryProvider(token, typeof factory);
+      throw new FactoryProviderCreationFailure(token, typeof factory);
     }
     const factoryKey = this.getFactoryKey(Cls, factory);
     const depsMeta = this.getDependencies(Cls);
@@ -340,10 +340,10 @@ expect(injector.get(Car) instanceof Car).toBe(true);
         }
       }
 
-      throw new CannotFindFactoryAsMethod(factory.name, Cls.name);
+      throw new FactoryNotFound(factory.name, Cls.name);
     }
 
-    throw new CannotFindMethodInClass(Cls.name);
+    throw new MethodNotFound(Cls.name);
   }
 
   protected static getDependencies(Cls: Class, propertyKey?: string | symbol): DepsMeta {
@@ -421,7 +421,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
       const existing = normalizedProvidersMap.get(provider.dualKey.id);
       if (existing) {
         if (provider.multi !== existing.multi) {
-          throw new MixMultiWithRegularProviders(existing.dualKey.token);
+          throw new MixedProviderTypes(existing.dualKey.token);
         }
         if (provider.multi) {
           for (let j = 0; j < provider.resolvedFactories.length; j++) {

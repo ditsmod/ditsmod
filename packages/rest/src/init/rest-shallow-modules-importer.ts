@@ -10,11 +10,7 @@ import {
   getLastProviders,
   getProxyForInitMeta,
 } from '@ditsmod/core';
-import {
-  ProvidersCollision,
-  ResolvingCollisionNotExistsOnThisLevel,
-  ResolvingCollisionNotImportedInApplication,
-} from '@ditsmod/core/errors';
+import { ProvidersCollision, LevelCollisionNotFound, AppCollisionNotFound } from '@ditsmod/core/errors';
 
 import type { ModuleScopedGuard } from '#interceptors/guard.js';
 import type { RestModRefId } from '#init/rest-init-meta.js';
@@ -214,11 +210,11 @@ export class RestShallowModulesImporter {
     const normalizedModuleMeta2 = this.moduleManager.getNormalizedModuleMeta(modRefId2);
     const meta2 = normalizedModuleMeta2?.initMeta.get(initRest);
     if (!normalizedModuleMeta2) {
-      throw new ResolvingCollisionNotImportedInApplication(this.moduleName, moduleName, level, tokenName);
+      throw new AppCollisionNotFound(this.moduleName, moduleName, level, tokenName);
     }
     const providers = getLastProviders(meta2?.[`providersPer${level}`] || []).filter((p) => getToken(p) === token2);
     if (!providers.length) {
-      throw new ResolvingCollisionNotExistsOnThisLevel(this.moduleName, moduleName, level, tokenName);
+      throw new LevelCollisionNotFound(this.moduleName, moduleName, level, tokenName);
     }
 
     return { module2: modRefId2, providers };

@@ -10,13 +10,13 @@ import { objectKeys } from '#utils/object-keys.js';
 import { ModuleNormalizer } from '#init/module-normalizer.js';
 import { AllInitHooks } from '#decorators/init-hooks-and-metadata.js';
 import {
-  ImportAdditionFailed,
-  ImportRemovalFailed,
-  ForbiddenRollbackEmptyState,
-  ModuleIdNotFoundInModuleManager,
-  NormalizationFailed,
-  ProhibitSavingModulesSnapshot,
-  RootNotHaveDecorator,
+  ImportAdditionFailure,
+  ImportRemovalFailure,
+  ForbiddenRollback,
+  ModuleIdNotFound,
+  NormalizationFailure,
+  ForbiddenSavingSnapshot,
+  MissingRootDecorator,
 } from '#errors';
 import { getModule } from '#utils/get-module.js';
 import { injectable } from '#di/decorators.js';
@@ -70,7 +70,7 @@ export class ModuleManager {
     }
     this.providersPerApp = [];
     if (!Reflector.getClassLevelMeta(appModule, isRootModule)) {
-      throw new RootNotHaveDecorator(appModule.name);
+      throw new MissingRootDecorator(appModule.name);
     }
 
     const normalizedModuleMeta = this.scanModule(appModule);
@@ -151,7 +151,7 @@ export class ModuleManager {
       } else {
         moduleName = getDebugClassName(moduleId) || 'unknown';
       }
-      throw new ModuleIdNotFoundInModuleManager(moduleName);
+      throw new ModuleIdNotFound(moduleName);
     }
 
     return normalizedModuleMeta;
@@ -168,7 +168,7 @@ export class ModuleManager {
     if (!targetNormalizedModuleMeta) {
       const modName = getDebugClassName(inputModule);
       const modIdStr = format(targetModuleId).slice(0, 50);
-      throw new ImportAdditionFailed(modName, modIdStr);
+      throw new ImportAdditionFailure(modName, modIdStr);
     }
 
     const prop = isDynamicModule(inputModule) ? 'importsWithParams' : 'importsModules';
@@ -203,7 +203,7 @@ export class ModuleManager {
     const targetMeta = this.getNormalizedModuleMetaFromSnapshot(targetModuleId);
     if (!targetMeta) {
       const modIdStr = format(targetModuleId).slice(0, 50);
-      throw new ImportRemovalFailed(inputNormalizedModuleMeta.name, modIdStr);
+      throw new ImportRemovalFailure(inputNormalizedModuleMeta.name, modIdStr);
     }
     const prop = isDynamicModule(inputNormalizedModuleMeta.modRefId) ? 'importsWithParams' : 'importsModules';
     const index = targetMeta[prop].findIndex((imp: ModRefId) => imp === inputNormalizedModuleMeta.modRefId);
@@ -245,7 +245,7 @@ export class ModuleManager {
 
   rollback(err?: Error) {
     if (!this.oldSnapshotMapId.size) {
-      throw new ForbiddenRollbackEmptyState();
+      throw new ForbiddenRollback();
     }
     this.snapshotMapId = this.oldSnapshotMapId;
     this.snapshotMap = this.oldSnapshotMap;
@@ -287,7 +287,7 @@ export class ModuleManager {
       if (modRefId) {
         this.injectorPerModMap.set(modRefId, injectorPerMod);
       } else {
-        throw new ModuleIdNotFoundInModuleManager(moduleId);
+        throw new ModuleIdNotFound(moduleId);
       }
     } else {
       this.injectorPerModMap.set(moduleId, injectorPerMod);
@@ -309,7 +309,7 @@ export class ModuleManager {
 
     if (!inj && throwErrIfNotFound) {
       const moduleName = getDebugClassName(moduleId) || 'unknown';
-      throw new ModuleIdNotFoundInModuleManager(moduleName);
+      throw new ModuleIdNotFound(moduleName);
     }
     return inj;
   }
@@ -403,13 +403,13 @@ export class ModuleManager {
       const moduleName = getDebugClassName(modRefId);
       let path = [...this.unfinishedScanModules].map((id) => getDebugClassName(id)).join(' -> ');
       path = this.unfinishedScanModules.size > 1 ? `${moduleName} (${path})` : `${moduleName}`;
-      throw new NormalizationFailed(path, err);
+      throw new NormalizationFailure(path, err);
     }
   }
 
   protected saveSnapshot() {
     if (this.snapshotMap.size) {
-      throw new ProhibitSavingModulesSnapshot();
+      throw new ForbiddenSavingSnapshot();
     } else {
       this.map.forEach((normalizedModuleMeta, modRefId) =>
         this.snapshotMap.set(modRefId, this.copyNormalizedModuleMeta(normalizedModuleMeta)),

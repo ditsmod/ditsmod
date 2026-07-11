@@ -1,7 +1,7 @@
 import type { UnionToIntersection } from '#types/mix.js';
 import type { AnyFn, Class, FunctionFactoryProvider, Provider, UseFactoryTuple } from '#di/top/types-and-models.js';
 import type { NormalizedProvider } from './ng-utils.js';
-import { ClassForUseFactoriesWithoutDecorators } from '#error/core-errors.js';
+import { ClassWithoutDecorators } from '#error/core-errors.js';
 import { Reflector } from '#di/reflector.js';
 import type { InjectionToken } from '#di/top/injection-token.js';
 import type { InjectionSymbol } from '#di/top/get-symbol.js';
@@ -101,7 +101,7 @@ export class ProviderBuilder {
     Classes.forEach((Cls, i) => {
       const classMeta = Reflector.collectMeta(Cls);
       if (!classMeta) {
-        throw new ClassForUseFactoriesWithoutDecorators(i);
+        throw new ClassWithoutDecorators(i);
       }
       let hasFactoryMethod = false;
       for (const methodName of classMeta) {
@@ -114,7 +114,7 @@ export class ProviderBuilder {
         }
       }
       if (!hasFactoryMethod) {
-        throw new ClassForUseFactoriesWithoutDecorators(i);
+        throw new ClassWithoutDecorators(i);
       }
     });
 

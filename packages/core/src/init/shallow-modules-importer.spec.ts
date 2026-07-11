@@ -9,9 +9,9 @@ import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import {
-  CannotResolveCollisionForMultiProviderPerLevel,
-  ExportingUnknownSymbol,
-  NormalizationFailed,
+  LevelMultiProviderCollision,
+  UnknownExport,
+  NormalizationFailure,
   ProvidersCollision,
 } from '#error/core-errors.js';
 import { ShallowModuleImports } from './types.js';
@@ -225,8 +225,8 @@ describe('ShallowModulesImporter', () => {
       @rootModule({ imports: [Module2] })
       class AppModule {}
 
-      const cause = new ExportingUnknownSymbol('Module2', 'Provider1');
-      const err = new NormalizationFailed('Module2', cause);
+      const cause = new UnknownExport('Module2', 'Provider1');
+      const err = new NormalizationFailure('Module2', cause);
       expect(() => moduleManager.scanRootModule(AppModule)).toThrow(err);
     });
 
@@ -544,7 +544,7 @@ describe('ShallowModulesImporter', () => {
       })
       class AppModule {}
 
-      const err = new CannotResolveCollisionForMultiProviderPerLevel('AppModule', 'Module1', 'Mod', 'Provider1');
+      const err = new LevelMultiProviderCollision('AppModule', 'Module1', 'Mod', 'Provider1');
       expect(() => importModulesShallow(AppModule)).toThrow(err);
     });
 

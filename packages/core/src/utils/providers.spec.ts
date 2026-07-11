@@ -6,7 +6,7 @@ import { ConsoleLogger } from '#logger/console-logger.js';
 import { ProviderBuilder } from './providers.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { ClassForUseFactoriesWithoutDecorators } from '#error/core-errors.js';
+import { ClassWithoutDecorators } from '#error/core-errors.js';
 import { factoryMethod, injectable } from '#di/decorators.js';
 
 describe('ProviderBuilder', () => {
@@ -173,7 +173,7 @@ describe('ProviderBuilder', () => {
         method3() {}
         method4() {}
       }
-      const err = new ClassForUseFactoriesWithoutDecorators(1);
+      const err = new ClassWithoutDecorators(1);
       expect(() => new ProviderBuilder().useFactories(A, B)).toThrow(err);
     });
   });

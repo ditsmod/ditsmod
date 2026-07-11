@@ -26,15 +26,15 @@ import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import type { ShallowModuleImports } from './types.js';
 import type { ProvidersByLevel } from '#types/providers-metadata.js';
 import {
-  MetadataCollectionFailed,
-  ModuleInjectorCreationFailed,
-  Stage2Failed,
-  Stage3Failed,
-  ModuleNotImportedInApplication,
-  CannotResolveCollisionForMultiProviderPerApp,
-  AppProviderMissingTokenName,
+  MetadataCollectionFailure,
+  ModuleInjectorCreationFailure,
+  Stage2InitFailure,
+  Stage3InitFailure,
+  ModuleNotImported,
+  AppMultiProviderCollision,
+  AppProviderMissingToken,
   ProvidersCollision,
-  MetaOverrideAfterStage1Failed,
+  MetaOverrideFailure,
 } from '#errors';
 import type { OnModuleInit } from './hooks.js';
 import { isMultiProvider } from '#di/utils.js';
@@ -112,14 +112,14 @@ export class BaseAppInitializer {
       const tokenName = token.name || token;
       const normalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(module);
       if (!normalizedModuleMeta) {
-        throw new ModuleNotImportedInApplication(rootModuleName, moduleName, tokenName);
+        throw new ModuleNotImported(rootModuleName, moduleName, tokenName);
       }
       const provider = getLastProviders(normalizedModuleMeta.providersPerApp).find((p) => getToken(p) === token);
       if (!provider) {
-        throw new AppProviderMissingTokenName(rootModuleName, moduleName, tokenName);
+        throw new AppProviderMissingToken(rootModuleName, moduleName, tokenName);
       }
       if (isMultiProvider(provider)) {
-        throw new CannotResolveCollisionForMultiProviderPerApp(rootModuleName, moduleName, tokenName);
+        throw new AppMultiProviderCollision(rootModuleName, moduleName, tokenName);
       }
       resolvedProviders.push(provider);
     });
@@ -284,7 +284,7 @@ export class BaseAppInitializer {
           await extension.stage1?.(true);
         } catch (err: any) {
           const groupName = getProviderName(ExtCls);
-          throw new MetadataCollectionFailed(groupName, err);
+          throw new MetadataCollectionFailure(groupName, err);
         }
       }
     }
@@ -297,7 +297,7 @@ export class BaseAppInitializer {
         );
       } catch (err: any) {
         const debugModuleName = getDebugClassName(modRefId) || 'unknown';
-        throw new MetaOverrideAfterStage1Failed(debugModuleName, err);
+        throw new MetaOverrideFailure(debugModuleName, err);
       }
     }
 
@@ -310,7 +310,7 @@ export class BaseAppInitializer {
         this.moduleManager.setInjectorPerMod(modRefId, injectorPerMod);
       } catch (err: any) {
         const debugModuleName = getDebugClassName(modRefId) || 'unknown';
-        throw new ModuleInjectorCreationFailed(debugModuleName, err);
+        throw new ModuleInjectorCreationFailure(debugModuleName, err);
       }
     }
 
@@ -324,7 +324,7 @@ export class BaseAppInitializer {
           await ext.stage2(injectorPerMod);
         } catch (err: any) {
           const debugModuleName = getDebugClassName(modRefId) || 'unknown';
-          throw new Stage2Failed(debugModuleName, ext.constructor.name, err);
+          throw new Stage2InitFailure(debugModuleName, ext.constructor.name, err);
         }
       }
     }
@@ -338,7 +338,7 @@ export class BaseAppInitializer {
           await ext.stage3();
         } catch (err: any) {
           const debugModuleName = getDebugClassName(modRefId) || 'unknown';
-          throw new Stage3Failed(debugModuleName, ext.constructor.name, err);
+          throw new Stage3InitFailure(debugModuleName, ext.constructor.name, err);
         }
       }
     }

@@ -13,7 +13,7 @@ import { ExtensionContext } from '#extension/extensions-context.js';
 import { NormalizedModuleMeta } from '#init/base-meta.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { isExtensionProvider } from './type-guards.js';
-import { NotDeclaredInAfterExtensionList, CircularDepsBetweenExtensions, ExtensionFailed } from '#errors';
+import { UndeclaredExtensionDependency, CyclicExtensions, ExtensionExecutionFailure } from '#errors';
 import { injectable } from '#di/decorators.js';
 import { Injector } from '#di/injector.js';
 import type { Class, TokenProvider } from '#di/top/types-and-models.js';
@@ -72,7 +72,7 @@ export class ExtensionManager {
     if (stageIteration) {
       if (stageIteration.index > currStageEntry.index) {
         const extensionName = this.getItemName([...this.unfinishedInit].at(-1)!) || 'unknown';
-        throw new NotDeclaredInAfterExtensionList(extensionName, ExtCls.name);
+        throw new UndeclaredExtensionDependency(extensionName, ExtCls.name);
       } else if (this.unfinishedInit.has(ExtCls)) {
         await stageIteration.promise;
       }
@@ -227,7 +227,7 @@ export class ExtensionManager {
     const prefixNames = prefixChain.map(this.getItemName).join(' -> ');
     let circularNames = circularChain.map(this.getItemName).join(' -> ');
     circularNames += ` -> ${this.getItemName(item)}`;
-    throw new CircularDepsBetweenExtensions(circularNames, prefixNames);
+    throw new CyclicExtensions(circularNames, prefixNames);
   }
 
   protected getItemName(classOrInstance: Extension | ExtensionClass) {
@@ -257,7 +257,7 @@ export class InternalExtensionManager extends ExtensionManager {
         this.updateExtensionPendingList();
       } catch (err: any) {
         const moduleName = getDebugClassName(normalizedModuleMeta.modRefId) || '""';
-        throw new ExtensionFailed(ExtCls.name, moduleName, err);
+        throw new ExtensionExecutionFailure(ExtCls.name, moduleName, err);
       }
     }
     this.setExtensionsToStage2(normalizedModuleMeta.modRefId);

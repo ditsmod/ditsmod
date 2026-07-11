@@ -1,12 +1,12 @@
 export {
   NoProvider,
   InstantiationError,
-  TokenMustBeDefined,
-  CannotFindMethodInClass,
-  CannotFindFactoryAsMethod,
-  MixMultiWithRegularProviders,
+  UndefinedToken,
+  MethodNotFound,
+  FactoryNotFound,
+  MixedProviderTypes,
   NoAnnotation,
   InvalidProvider,
   CyclicDependency,
-  FailedCreateFactoryProvider,
+  FactoryProviderCreationFailure,
 } from './di-errors.js';

@@ -23,11 +23,11 @@ import { getProviderName } from '#utils/get-provider-name.js';
 import { topologicalSort } from '#extension/topological-sort.js';
 import type { ExtensionClass } from '#extension/extension-types.js';
 import {
-  ExtensionConfigCauseCyclicDeps,
-  ResolvingCollisionNotExistsOnThisLevel,
-  ResolvingCollisionNotImportedInModule,
-  ResolvingCollisionNotImportedInApplication,
-  CannotResolveCollisionForMultiProviderPerLevel,
+  ExtensionCyclicDependency,
+  LevelCollisionNotFound,
+  LevelCollisionNotImported,
+  AppCollisionNotFound,
+  LevelMultiProviderCollision,
   ProvidersCollision,
   InvalidCollisionResolution,
 } from '#errors';
@@ -327,13 +327,13 @@ export class ShallowModulesImporter {
     const tokenName = token2.name || token2;
     const normalizedModuleMeta2 = this.moduleManager.getNormalizedModuleMeta(modRefId2);
     if (!normalizedModuleMeta2) {
-      throw new ResolvingCollisionNotImportedInApplication(this.moduleName, moduleName, level, tokenName);
+      throw new AppCollisionNotFound(this.moduleName, moduleName, level, tokenName);
     }
     const providers = getLastProviders(normalizedModuleMeta2[`providersPer${level}`]).filter(
       (p) => getToken(p) === token2,
     );
     if (!providers.length) {
-      throw new ResolvingCollisionNotExistsOnThisLevel(this.moduleName, moduleName, level, tokenName);
+      throw new LevelCollisionNotFound(this.moduleName, moduleName, level, tokenName);
     }
 
     this.setResolvedCollision(token2, level);
@@ -349,7 +349,7 @@ export class ShallowModulesImporter {
       const path = findCycle(extensionWithBeforeExtension);
       if (path) {
         const strPath = path.map(getProviderName).join(' -> ');
-        throw new ExtensionConfigCauseCyclicDeps(this.moduleName, strPath);
+        throw new ExtensionCyclicDependency(this.moduleName, strPath);
       }
     }
   }
@@ -362,7 +362,7 @@ export class ShallowModulesImporter {
       this.normalizedModuleMeta[`resolvedCollisionPer${level}`].some(([token]) => {
         if (tokens.includes(token)) {
           const tokenName = token.name || token;
-          throw new CannotResolveCollisionForMultiProviderPerLevel(this.moduleName, moduleName, level, tokenName);
+          throw new LevelMultiProviderCollision(this.moduleName, moduleName, level, tokenName);
         }
       });
     });
@@ -423,7 +423,7 @@ export class ShallowModulesImporter {
       if (this.normalizedModuleMeta.modRefId === module2) {
         if (!this[`importedProvidersPer${level}`].delete(token1)) {
           const tokenName = token1.name || token1;
-          throw new ResolvingCollisionNotImportedInModule(this.moduleName, level, tokenName);
+          throw new LevelCollisionNotImported(this.moduleName, level, tokenName);
         }
       } else {
         // Only check that the correct data is specified.
