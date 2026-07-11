@@ -6,8 +6,8 @@ export { DefaultRouter, PathParam, RouteHandler, Router, RouteMatch } from './se
 export { Tree } from './services/tree.js';
 export {
   AppendsWithOptions,
-  AppendsWithOptions1,
-  AppendsWithOptions2,
+  PathAppendsWithOptions,
+  AbsolutePathAppendsWithOptions,
   BaseAppendsWithOptions,
   RestInitDecoratorOptions,
   RestModuleOptions,

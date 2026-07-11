@@ -25,7 +25,7 @@ export interface RestInitDecoratorOptions extends InitDecoratorOptions<RestModul
   controllers?: Class[];
 }
 
-export type RestModuleOptions = RestModuleOptions1 | RestModuleOptions2;
+export type RestModuleOptions = PathRestModuleOptions | AbsolutePathRestModuleOptions;
 
 export interface BaseRestModuleOptions extends DynamicModuleOptions {
   /**
@@ -36,19 +36,19 @@ export interface BaseRestModuleOptions extends DynamicModuleOptions {
   guards?: GuardItem[];
 }
 
-export interface RestModuleOptions1 extends BaseRestModuleOptions {
+export interface PathRestModuleOptions extends BaseRestModuleOptions {
   path?: string;
   absolutePath?: never;
 }
 
-export interface RestModuleOptions2 extends BaseRestModuleOptions {
+export interface AbsolutePathRestModuleOptions extends BaseRestModuleOptions {
   absolutePath?: string;
   path?: never;
 }
 /**
  * Used for module metadata, for `appends` array.
  */
-export type AppendsWithOptions<T extends AnyObj = AnyObj> = AppendsWithOptions1<T> | AppendsWithOptions2<T>;
+export type AppendsWithOptions<T extends AnyObj = AnyObj> = PathAppendsWithOptions<T> | AbsolutePathAppendsWithOptions<T>;
 
 export interface BaseAppendsWithOptions<T extends AnyObj = AnyObj> {
   /**
@@ -60,12 +60,12 @@ export interface BaseAppendsWithOptions<T extends AnyObj = AnyObj> {
   initParams?: Map<AnyFn, any>;
 }
 
-export interface AppendsWithOptions1<T extends AnyObj = AnyObj> extends BaseAppendsWithOptions<T> {
+export interface PathAppendsWithOptions<T extends AnyObj = AnyObj> extends BaseAppendsWithOptions<T> {
   path?: string;
   absolutePath?: never;
 }
 
-export interface AppendsWithOptions2<T extends AnyObj = AnyObj> extends BaseAppendsWithOptions<T> {
+export interface AbsolutePathAppendsWithOptions<T extends AnyObj = AnyObj> extends BaseAppendsWithOptions<T> {
   absolutePath?: string;
   path?: never;
 }
