@@ -5,7 +5,7 @@ import { TRPC_OPTS } from '#types/constants.js';
 /**
  * Intended for use in service method parameters to provide context data such as `ctx`, `input`, `path`, and `signal`.
  */
-export const optsFactory = Reflector.makeParamDecorator(
+export const trpcOptsFactory = Reflector.makeParamDecorator(
   () => {
     return { token: ctx, input: TRPC_OPTS } satisfies InjectTransformResult;
   },
@@ -13,4 +13,4 @@ export const optsFactory = Reflector.makeParamDecorator(
   inject,
 );
 
-export const opts = optsFactory();
+export const opts = trpcOptsFactory();
