@@ -1,6 +1,6 @@
 import { Injector, ModuleInfo } from '@ditsmod/core';
 
-import type { Fn } from '../types/types.js';
+import type { AnyFn } from '../types/types.js';
 import { Tree } from '../services/tree.js';
 import { DefaultRouter } from '../services/router.js';
 
@@ -69,7 +69,7 @@ async function runBench() {
 /**
  * @param name Name of engine.
  */
-export function bench(name: string, onMethod: Fn, findRoute: Fn): void {
+export function bench(name: string, onMethod: AnyFn, findRoute: AnyFn): void {
   const widthTable = 60;
   const times = 100000;
   const startBench = now();

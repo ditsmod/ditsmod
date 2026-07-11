@@ -1,6 +1,6 @@
 import { injectable, optional } from '@ditsmod/core';
 
-import { Fn, TreeConfig, RouteType, RouteParam } from '../types/types.js';
+import { AnyFn, TreeConfig, RouteType, RouteParam } from '../types/types.js';
 import {
   CatchAllConflictWithExistingHandle,
   CatchAllRoutesOnlyAtEnd,
@@ -19,7 +19,7 @@ export class Tree {
   children: this[];
   protected path: string;
   protected wildChild: boolean;
-  protected handle: Fn | null;
+  protected handle: AnyFn | null;
   protected indices: string;
   protected priority: number;
 
@@ -30,7 +30,7 @@ export class Tree {
   /**
    * Adds a node with the given handle to the path.
    */
-  addRoute(path: string, handle: Fn) {
+  addRoute(path: string, handle: AnyFn) {
     this.priority++;
     const numParams = this.countParams(path);
 
@@ -55,7 +55,7 @@ export class Tree {
     return n;
   }
 
-  protected mergeTree(tree: this, fullPath: string, path: string, numParams: number, handle: Fn) {
+  protected mergeTree(tree: this, fullPath: string, path: string, numParams: number, handle: AnyFn) {
     // Find the longest common prefix
     // This also implies that the common prefix contains no ':' or '*'
     // since the existing key can't contain those chars.
@@ -117,7 +117,7 @@ export class Tree {
     }
   }
 
-  protected insertChild(numParams: number, path: string, fullPath: string, handle: Fn) {
+  protected insertChild(numParams: number, path: string, fullPath: string, handle: AnyFn) {
     /* eslint-disable  @typescript-eslint/no-this-alias */
     let tree = this;
     let offset = 0; // Already handled chars of the path
@@ -229,7 +229,7 @@ export class Tree {
     tree.handle = handle;
   }
 
-  protected checkWildcardMatches(tree: this, numParams: number, path: string, fullPath: string, handle: Fn) {
+  protected checkWildcardMatches(tree: this, numParams: number, path: string, fullPath: string, handle: AnyFn) {
     tree.priority++;
     numParams--;
 

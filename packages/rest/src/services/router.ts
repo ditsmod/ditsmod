@@ -2,7 +2,7 @@ import * as http from 'http';
 import { HttpMethod, injectable, Injector } from '@ditsmod/core';
 
 import { Tree } from './tree.js';
-import { MethodTree, Fn } from '../types/types.js';
+import { MethodTree, AnyFn } from '../types/types.js';
 import { RawRequest, RawResponse } from './request.js';
 
 export class Router {
@@ -25,7 +25,7 @@ export class DefaultRouter implements Router {
 
   constructor(private injector: Injector) {}
 
-  on(method: HttpMethod, path: string, handle: Fn): this {
+  on(method: HttpMethod, path: string, handle: AnyFn): this {
     if (path[0] != '/') {
       throw new Error("path must begin with '/'");
     }
@@ -36,7 +36,7 @@ export class DefaultRouter implements Router {
     return this;
   }
 
-  all(path: string, handle: Fn): this {
+  all(path: string, handle: AnyFn): this {
     http.METHODS.forEach((method) => {
       this.on(method as HttpMethod, path, handle);
     });

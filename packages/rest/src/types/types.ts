@@ -38,7 +38,7 @@ export interface PreparedRouteMeta {
   countOfGuards: number;
 }
 
-export type Fn = (...args: any[]) => any;
+export type AnyFn = (...args: any[]) => any;
 
 export type MethodTree = { [P in HttpMethod]?: Tree };
 
@@ -57,7 +57,7 @@ export class TreeConfig {
   type?: number = RouteType.static;
   indices?: string = '';
   children?: any[] = [];
-  handle?: Fn | null = null;
+  handle?: AnyFn | null = null;
   priority?: number = 0;
 }
 

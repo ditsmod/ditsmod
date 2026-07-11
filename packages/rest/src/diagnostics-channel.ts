@@ -390,11 +390,11 @@ interface TypedTracingChannel<T extends TracingChannels> extends TracingChannelC
    * @param args Optional arguments to pass to the function
    * @return The return value of the given function
    */
-  traceCallback<Fn extends (this: any, ...args: any[]) => any>(
-    fn: Fn,
+  traceCallback<AnyFn extends (this: any, ...args: any[]) => any>(
+    fn: AnyFn,
     position?: number,
     context?: TracingChannelMap[T],
     thisArg?: any,
-    ...args: Parameters<Fn>
+    ...args: Parameters<AnyFn>
   ): void;
 }

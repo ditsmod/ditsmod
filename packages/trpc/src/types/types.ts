@@ -103,7 +103,6 @@ export interface PreparedRouteMeta {
   countOfGuards: number;
 }
 
-export type Fn = (...args: any[]) => any;
 export type Args<T> = T extends (...args: infer A) => any ? A : never;
 export type Level = 'Req' | 'Rou' | 'Mod';
 export const TRPC_HTTP_INTERCEPTORS = new InjectionToken<TrpcHttpInterceptor[]>('TRPC_HTTP_INTERCEPTORS');
