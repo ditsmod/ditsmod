@@ -2,12 +2,12 @@ import { inspect } from 'node:util';
 import { injectable, Extension, Provider, Reflector, Class, HttpMethod, ResolvedModuleMetadata } from '@ditsmod/core';
 
 import { RouteExtensionMeta } from '#types/types.js';
-import { isCtrlDecor, isRoute } from '#types/type.guards.js';
+import { isControllerDecorator, isRoute } from '#types/type.guards.js';
 import { RouteMetadata } from '#decorators/route.js';
 import { ControllerMetadata } from '#types/controller-metadata.js';
 import { RouteMeta } from '#types/route-data.js';
 import { GuardItem, GuardPerMod1 } from '#interceptors/guard.js';
-import { ControllerDecoratorOptions1 } from '#types/controller.js';
+import { RequestScopedControllerOptions } from '#types/controller.js';
 import { AppOptions } from '#types/app-options.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { RestResolvedModuleMetadata } from '#init/types.js';
@@ -51,7 +51,7 @@ export class RestRouteExtension implements Extension<RouteExtensionMeta> {
             const providersPerRou: Provider[] = [];
             const providersPerReq: Provider[] = [];
             const route = decoratorMeta.value;
-            const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
+            const ctrlDecorator = classMeta.constructor.decorators.find(isControllerDecorator);
             const scope = ctrlDecorator?.value.scope;
             if (scope == 'route' && !normalizedModuleMeta.providersPerMod.includes(Controller)) {
               normalizedModuleMeta.providersPerMod.unshift(Controller);
@@ -61,7 +61,7 @@ export class RestRouteExtension implements Extension<RouteExtensionMeta> {
             const fullPath = this.getPath(prefix, controllerPath);
             const guards = this.normalizeGuards(httpMethod, fullPath, route.guards).slice();
             providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
-            providersPerReq.push(...((ctrlDecorator?.value as ControllerDecoratorOptions1).providersPerReq || []));
+            providersPerReq.push(...((ctrlDecorator?.value as RequestScopedControllerOptions).providersPerReq || []));
 
             const routeMeta: RouteMeta = {
               Controller,

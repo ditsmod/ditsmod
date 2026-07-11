@@ -4,7 +4,7 @@ import { Reflector } from '@ditsmod/core';
 /**
  * Metadata accepted by the default request-scoped trpcController.
  */
-export interface ControllerDecoratorOptions {
+export interface ControllerOptions {
   /**
    * ProviderBuilder per route.
    */
@@ -15,11 +15,11 @@ export interface ControllerDecoratorOptions {
   providersPerReq?: ProviderBuilder | Provider[];
 }
 
-export const trpcController: ControllerDecor = Reflector.makeClassDecorator(
-  (data?: ControllerDecoratorOptions) => data || {},
+export const trpcController: ControllerDecorator = Reflector.makeClassDecorator(
+  (data?: ControllerOptions) => data || {},
   'trpcController',
 );
 
-interface ControllerDecor {
-  (meta?: ControllerDecoratorOptions): any;
+interface ControllerDecorator {
+  (meta?: ControllerOptions): any;
 }

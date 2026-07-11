@@ -3,11 +3,11 @@ import type { AnyObj, Class, DecoratorMeta, ModRefId } from '@ditsmod/core';
 import { route } from '#decorators/route.js';
 import type { HttpInterceptor } from '#interceptors/tokens-and-types.js';
 import type { AppendsWithOptions, RestModuleOptions } from '#init/rest-init-raw-meta.js';
-import type { ControllerDecoratorOptions } from './controller.js';
+import type { ControllerOptions } from './controller.js';
 import { controller } from './controller.js';
 import type { Http2SecureServerOptions, ServerOptions } from './server-options.js';
 
-export function isCtrlDecor(decoratorMeta?: AnyObj): decoratorMeta is DecoratorMeta<ControllerDecoratorOptions> {
+export function isControllerDecorator(decoratorMeta?: AnyObj): decoratorMeta is DecoratorMeta<ControllerOptions> {
   return decoratorMeta?.decorator === controller;
 }
 

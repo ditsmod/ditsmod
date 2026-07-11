@@ -26,7 +26,7 @@ export {
   isRoute,
   isInterceptor,
   isAppendsWithOptions,
-  isCtrlDecor,
+  isControllerDecorator,
   isHttp2SecureServerOptions,
 } from './types/type.guards.js';
 export { RouteMeta } from './types/route-data.js';
@@ -71,9 +71,9 @@ export {
 } from './utils/create-helper-for-guards-with-params.js';
 export {
   controller,
-  ControllerDecoratorOptions,
-  ControllerDecoratorOptions1,
-  ControllerDecoratorOptions2,
+  ControllerOptions,
+  RequestScopedControllerOptions,
+  RouteScopedControllerOptions,
 } from './types/controller.js';
 export { defaultProvidersPerReq } from './providers/default-providers-per-req.js';
 export { HttpErrorHandler } from './services/http-error-handler.js';

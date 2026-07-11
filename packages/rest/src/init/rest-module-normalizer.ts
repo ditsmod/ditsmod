@@ -15,7 +15,7 @@ import { ForbiddenExportNormalizedProvider, ModuleShouldHaveValue } from '@ditsm
 import type { AppendsWithOptions, RestInitDecoratorOptions } from '#init/rest-init-raw-meta.js';
 import type { RestModRefId } from '#init/rest-init-meta.js';
 import { RestInitMeta } from '#init/rest-init-meta.js';
-import { isAppendsWithOptions, isCtrlDecor } from '#types/type.guards.js';
+import { isAppendsWithOptions, isControllerDecorator } from '#types/type.guards.js';
 import type { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
 import { ControllerDoesNotHaveDecorator, DuplicateOfControllers, InvalidGuard } from '#errors';
@@ -107,7 +107,7 @@ export class RestModuleNormalizer {
   }
 
   protected checkController(Controller: Class) {
-    if (!Reflector.getClassLevelMeta(Controller, isCtrlDecor)) {
+    if (!Reflector.getClassLevelMeta(Controller, isControllerDecorator)) {
       throw new ControllerDoesNotHaveDecorator(Controller.name);
     }
   }

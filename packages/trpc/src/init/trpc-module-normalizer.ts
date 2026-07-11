@@ -7,7 +7,7 @@ import { TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { ControllerDoesNotHaveDecorator, DuplicateOfControllers, InvalidGuard } from '../error/trpc-errors.js';
 import type { NormalizedGuard } from '#interceptors/trpc-guard.js';
 import { GuardItem } from '#interceptors/trpc-guard.js';
-import { isCtrlDecor } from '#types/type.guards.js';
+import { isControllerDecorator } from '#types/type.guards.js';
 
 /**
  * Normalizes and validates module metadata.
@@ -56,7 +56,7 @@ export class TrpcModuleNormalizer {
   }
 
   protected checkController(Controller: Class) {
-    if (!Reflector.getClassLevelMeta(Controller, isCtrlDecor)) {
+    if (!Reflector.getClassLevelMeta(Controller, isControllerDecorator)) {
       throw new ControllerDoesNotHaveDecorator(Controller.name);
     }
   }

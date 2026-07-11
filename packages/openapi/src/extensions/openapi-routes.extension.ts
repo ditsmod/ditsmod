@@ -11,8 +11,8 @@ import {
 import {
   AppOptions,
   ControllerMetadata,
-  ControllerDecoratorOptions1,
-  isCtrlDecor,
+  RequestScopedControllerOptions,
+  isControllerDecorator,
   RouteExtensionMeta,
   RestResolvedModuleMetadata,
   RouteMeta,
@@ -58,7 +58,7 @@ export class OpenapiRouteExtension extends RestRouteExtension implements Extensi
             const oasRoute = decoratorMeta.value;
             const providersPerRou: Provider[] = [];
             const providersPerReq: Provider[] = [];
-            const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
+            const ctrlDecorator = classMeta.constructor.decorators.find(isControllerDecorator);
             const scope = ctrlDecorator?.value.scope;
             if (scope == 'route') {
               normalizedModuleMeta.providersPerMod.unshift(Controller);
@@ -70,7 +70,7 @@ export class OpenapiRouteExtension extends RestRouteExtension implements Extensi
             guards.push(...this.normalizeGuards(httpMethod, fullPath, decoratorMeta.value.guards));
             const controllerFactory: FactoryProvider = { useFactory: [Controller, Controller.prototype[methodName]] };
             providersPerReq.push(
-              ...((ctrlDecorator?.value as ControllerDecoratorOptions1).providersPerReq || []),
+              ...((ctrlDecorator?.value as RequestScopedControllerOptions).providersPerReq || []),
               controllerFactory,
             );
             const clonedOperationObject = { ...(operationObject || {}) } as XOperationObject;

@@ -1,7 +1,7 @@
 import { featureModule, injectable, isDynamicModule, Reflector } from '@ditsmod/core';
 
 import { route } from '#decorators/route.js';
-import { isAppendsWithOptions, isCtrlDecor, isInterceptor, isRoute } from './type.guards.js';
+import { isAppendsWithOptions, isControllerDecorator, isInterceptor, isRoute } from './type.guards.js';
 import { HttpHandler, HttpInterceptor } from '#interceptors/tokens-and-types.js';
 import { CanActivate } from '#interceptors/guard.js';
 import { controller } from './controller.js';
@@ -14,13 +14,13 @@ describe('type guards', () => {
       @controller()
       class Module1 {}
       const metadata = Reflector.getClassLevelMeta(Module1)![0];
-      expect(isCtrlDecor(metadata)).toBe(true);
+      expect(isControllerDecorator(metadata)).toBe(true);
     });
 
     it('class without decorator', () => {
       class Module1 {}
       const metadata = Reflector.collectMeta(Module1);
-      expect(isCtrlDecor(metadata)).toBe(false);
+      expect(isControllerDecorator(metadata)).toBe(false);
     });
   });
 

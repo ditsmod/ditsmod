@@ -4,12 +4,12 @@ import { inspect } from 'node:util';
 import { TrpcResolvedModuleMetadata } from '#init/trpc-deep-modules-importer.js';
 import { initTrpcModule } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { TrpcRouteMetadata } from '#decorators/trpc-route.js';
-import { ControllerDecoratorOptions } from '#decorators/trpc-controller.js';
+import { ControllerOptions } from '#decorators/trpc-controller.js';
 import { RouteExtensionMeta } from '#types/types.js';
 import { ControllerMetadata } from '#types/controller-metadata.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';
 import { InvalidInterceptor } from '../error/trpc-errors.js';
-import { isCtrlDecor, isInterceptor, isTrpcRoute } from '#types/type.guards.js';
+import { isControllerDecorator, isInterceptor, isTrpcRoute } from '#types/type.guards.js';
 import { TRPC_HTTP_INTERCEPTORS } from '#types/types.js';
 import { TrpcRouteService } from '#services/route.service.js';
 import { normalizeGuards } from '#utils/prepare-guards.js';
@@ -46,10 +46,10 @@ export class TrpcRouteExtension implements Extension<RouteExtensionMeta> {
           const providersPerRou: Provider[] = [TrpcRouteService, { useFactory: [Controller, methodAsToken] }];
           const providersPerReq: Provider[] = [];
           const route = decoratorMeta.value as TrpcRouteMetadata;
-          const ctrlDecorator = classMeta.constructor.decorators.find(isCtrlDecor);
+          const ctrlDecorator = classMeta.constructor.decorators.find(isControllerDecorator);
           const guards = normalizeGuards(route.guards);
           providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
-          providersPerReq.push(...((ctrlDecorator?.value as ControllerDecoratorOptions).providersPerReq || []));
+          providersPerReq.push(...((ctrlDecorator?.value as ControllerOptions).providersPerReq || []));
 
           for (const Interceptor of route.interceptors) {
             if (isInterceptor(Interceptor)) {
