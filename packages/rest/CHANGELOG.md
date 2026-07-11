@@ -32,7 +32,7 @@
 
 | Commit | Type | Description |
 | -- | -- | -- |
-| [0a713a9a39](https://github.com/ditsmod/ditsmod/commit/0a713a9a39273b) | refactor | refactoring `PreRouterExtension`. |
+| [0a713a9a39](https://github.com/ditsmod/ditsmod/commit/0a713a9a39273b) | refactor | refactoring `DispatcherExtension`. |
 
 <a name="routing-2.3.0"></a>
 ## [routing-2.3.0](https://github.com/ditsmod/ditsmod/releases/tag/routing-2.3.0) (2024-08-06)

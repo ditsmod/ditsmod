@@ -1,5 +1,5 @@
 import { featureModule } from '@ditsmod/core';
-import { PreRouterExtension, RestRouteExtension } from '@ditsmod/rest';
+import { DispatcherExtension, RestRouteExtension } from '@ditsmod/rest';
 
 import { DictService } from './dict.service.js';
 import { I18nLogMediator } from './i18n-log-mediator.js';
@@ -14,7 +14,7 @@ import { I18nExtension } from './i18n.extension.js';
     {
       extension: I18nExtension,
       afterExtensions: [RestRouteExtension],
-      beforeExtensions: [PreRouterExtension],
+      beforeExtensions: [DispatcherExtension],
       exportOnly: true,
     },
   ],

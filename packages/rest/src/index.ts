@@ -17,7 +17,7 @@ export { RestShallowModuleImports, RestResolvedModuleMetadata } from '#init/type
 export { RestModule } from './init/rest.module.js';
 export { RequestContext } from './services/request-context.js';
 export { RestRouteExtension } from './extensions/rest-route.extension.js';
-export { PreRouterExtension } from './extensions/pre-router.extension.js';
+export { DispatcherExtension } from './extensions/pre-router.extension.js';
 export { UseInterceptorExtension } from './extensions/use-interceptor.extension.js';
 export { initRest, restRootModule, restModule } from './decorators/rest-init-hooks-and-metadata.js';
 export { RestInitMeta } from './init/rest-init-meta.js';

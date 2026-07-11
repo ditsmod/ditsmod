@@ -1,6 +1,6 @@
 import { Options } from 'ajv';
 import { featureModule, DynamicModule, ProviderBuilder, Class } from '@ditsmod/core';
-import { PreRouterExtension, RestRouteExtension } from '@ditsmod/rest';
+import { DispatcherExtension, RestRouteExtension } from '@ditsmod/rest';
 import { DictGroup, Dictionary, I18nModule, I18nProviders, I18N_TRANSLATIONS } from '@ditsmod/i18n';
 import { BodyParserExtension } from '@ditsmod/body-parser';
 
@@ -18,7 +18,7 @@ import { ValidationExtension } from './validation.extension.js';
     {
       extension: ValidationExtension,
       afterExtensions: [BodyParserExtension, RestRouteExtension],
-      beforeExtensions: [PreRouterExtension],
+      beforeExtensions: [DispatcherExtension],
       exportOnly: true,
     },
   ],

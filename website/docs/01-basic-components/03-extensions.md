@@ -207,16 +207,16 @@ extensions: [
 
 Спільний базовий інтерфейс даних, який повертає кожне з розширень у певній групі, - це важлива умова, оскільки інші розширення можуть очікувати дані із цієї групи, і вони будуть опиратись саме на цей базовий інтерфейс. Звичайно ж, базовий інтерфейс при потребі можна розширювати, але не звужувати.
 
-Окрім цього, важливою є також послідовність запуску окремих груп розширень і залежність між ними. У нашому прикладі, після того, як відпрацює група з `RestRouteExtension` та `OpenapiRouteExtension`, їхні дані збираються в один масив і передаються до `PreRouterExtension`. Навіть якщо ви пізніше зареєструєте більше нових розширень у цій групі, все-одно `PreRouterExtension` буде запускатись вже після того як відпрацюють абсолютно усі розширення у цій групі, включаючи ваші нові розширення. Така поведінка продиктована інструкціями, що записані під час оголошення `RestRouteExtension`:
+Окрім цього, важливою є також послідовність запуску окремих груп розширень і залежність між ними. У нашому прикладі, після того, як відпрацює група з `RestRouteExtension` та `OpenapiRouteExtension`, їхні дані збираються в один масив і передаються до `DispatcherExtension`. Навіть якщо ви пізніше зареєструєте більше нових розширень у цій групі, все-одно `DispatcherExtension` буде запускатись вже після того як відпрацюють абсолютно усі розширення у цій групі, включаючи ваші нові розширення. Така поведінка продиктована інструкціями, що записані під час оголошення `RestRouteExtension`:
 
 ```ts
 extensions: [
-  { extension: RestRouteExtension, beforeExtensions: [PreRouterExtension], exportOnly: true },
+  { extension: RestRouteExtension, beforeExtensions: [DispatcherExtension], exportOnly: true },
   // ...
 ],
 ```
 
-Як бачите, тут нічого не сказано про `OpenapiRouteExtension`, і навіть коли оголошували `OpenapiRouteExtension` - там теж не було сказано, що `OpenapiRouteExtension` повинно працювати перед `PreRouterExtension`. Достатньо щоб під час оголошення `OpenapiRouteExtension` було вказано `groups: [RestRouteExtension]`, і це вже автоматично ставить у чергу `OpenapiRouteExtension` після `RestRouteExtension`, але перед `PreRouterExtension`.
+Як бачите, тут нічого не сказано про `OpenapiRouteExtension`, і навіть коли оголошували `OpenapiRouteExtension` - там теж не було сказано, що `OpenapiRouteExtension` повинно працювати перед `DispatcherExtension`. Достатньо щоб під час оголошення `OpenapiRouteExtension` було вказано `groups: [RestRouteExtension]`, і це вже автоматично ставить у чергу `OpenapiRouteExtension` після `RestRouteExtension`, але перед `DispatcherExtension`.
 
 Ця фіча є дуже зручною, оскільки вона інколи дозволяє інтегрувати зовнішні модулі Ditsmod (наприклад, з npmjs.com) у ваш застосунок без жодних налаштувань, просто імпортуючи їх у потрібний модуль. Імпортовані розширення, що входять до певних груп, будуть запускатись у правильній послідовності, навіть якщо вони імпортовані з різних зовнішніх модулів.
 
@@ -422,17 +422,17 @@ export class BodyParserExtension implements Extension<void> {
 
 В даному разі, у метадані контролера додається HTTP-інтерсептор в масив `providersPerReq` або `providersPerRou` (в залежності від режиму роботи контролера). Зверніть увагу, що тут створюється [ієрархія інжекторів][8], яка використовуються лише щоб отримати значення для токена `BodyParserConfig`, що вказує нам чи потрібно додавати інтерсептор. Піля цього дані інжектори нікуди більше не передаються, тобто видаляються з пам'яті.
 
-А інжектори, що містять провайдери, зібрані від усіх розширень, будуть створені згодом - у `PreRouterExtension`. Саме тому у метаданих `BodyParserModule` прописано, що `BodyParserExtension` повинно працювати після `RestRouteExtension`, але перед `PreRouterExtension`:
+А інжектори, що містять провайдери, зібрані від усіх розширень, будуть створені згодом - у `DispatcherExtension`. Саме тому у метаданих `BodyParserModule` прописано, що `BodyParserExtension` повинно працювати після `RestRouteExtension`, але перед `DispatcherExtension`:
 
 ```ts {7-8}
-import { RestRouteExtension, PreRouterExtension } from '@ditsmod/rest';
+import { RestRouteExtension, DispatcherExtension } from '@ditsmod/rest';
 
 // ... Тут оголошується BodyParserModule
 extensions: [
   {
     extension: BodyParserExtension,
     afterExtensions: [RestRouteExtension],
-    beforeExtensions: [PreRouterExtension],
+    beforeExtensions: [DispatcherExtension],
     exportOnly: true,
   },
 ],

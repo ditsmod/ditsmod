@@ -207,16 +207,16 @@ As you can see, groups are formed thanks to the `groups` property in the module 
 
 A shared base interface of the data returned by each extension in a given group is an important condition, since other extensions may expect data from this group, and they will rely specifically on this base interface. Of course, the base interface can be extended if needed, but not narrowed.
 
-In addition, the execution order of individual extension groups and the dependencies between them are also important. In our example, after the group containing `RestRouteExtension` and `OpenapiRouteExtension` has finished executing, their data is collected into a single array and passed to `PreRouterExtension`. Even if you later register more new extensions in this group, `PreRouterExtension` will still execute only after absolutely all extensions in this group have finished executing, including your newly added extensions. This behavior is dictated by the instructions recorded during the declaration of `RestRouteExtension`:
+In addition, the execution order of individual extension groups and the dependencies between them are also important. In our example, after the group containing `RestRouteExtension` and `OpenapiRouteExtension` has finished executing, their data is collected into a single array and passed to `DispatcherExtension`. Even if you later register more new extensions in this group, `DispatcherExtension` will still execute only after absolutely all extensions in this group have finished executing, including your newly added extensions. This behavior is dictated by the instructions recorded during the declaration of `RestRouteExtension`:
 
 ```ts
 extensions: [
-  { extension: RestRouteExtension, beforeExtensions: [PreRouterExtension], exportOnly: true },
+  { extension: RestRouteExtension, beforeExtensions: [DispatcherExtension], exportOnly: true },
   // ...
 ],
 ```
 
-As you can see, nothing is said here about `OpenapiRouteExtension`, and even when `OpenapiRouteExtension` was declared, it also did not specify that `OpenapiRouteExtension` must run before `PreRouterExtension`. It is enough that `groups: [RestRouteExtension]` was specified during the declaration of `OpenapiRouteExtension`, and this automatically places `OpenapiRouteExtension` in the queue after `RestRouteExtension`, but before `PreRouterExtension`.
+As you can see, nothing is said here about `OpenapiRouteExtension`, and even when `OpenapiRouteExtension` was declared, it also did not specify that `OpenapiRouteExtension` must run before `DispatcherExtension`. It is enough that `groups: [RestRouteExtension]` was specified during the declaration of `OpenapiRouteExtension`, and this automatically places `OpenapiRouteExtension` in the queue after `RestRouteExtension`, but before `DispatcherExtension`.
 
 This feature is very convenient, as it sometimes allows you to integrate external Ditsmod modules (for example, from npmjs.com) into your application without any configuration, simply by importing them into the required module. Imported extensions that belong to certain groups will be executed in the correct order, even if they are imported from different external modules.
 
@@ -422,17 +422,17 @@ export class BodyParserExtension implements Extension<void> {
 
 In this case, an HTTP interceptor is added to the controller's metadata within the `providersPerReq` or `providersPerRou` array (depending on the controller's operating mode). Note that the [injector hierarchy][8] created here is used solely to resolve the value for the `BodyParserConfig` token, which determines whether the interceptor needs to be added. Afterward, these injectors are not passed anywhere else, meaning they are cleared from memory.
 
-The actual injectors containing providers collected from all extensions will be created later—in `PreRouterExtension`. This is precisely why the `BodyParserModule` metadata specifies that `BodyParserExtension` must run after `RestRouteExtension` but before `PreRouterExtension`:
+The actual injectors containing providers collected from all extensions will be created later—in `DispatcherExtension`. This is precisely why the `BodyParserModule` metadata specifies that `BodyParserExtension` must run after `RestRouteExtension` but before `DispatcherExtension`:
 
 ```ts {7-8}
-import { RestRouteExtension, PreRouterExtension } from '@ditsmod/rest';
+import { RestRouteExtension, DispatcherExtension } from '@ditsmod/rest';
 
 // ... Here BodyParserModule is declared
 extensions: [
   {
     extension: BodyParserExtension,
     afterExtensions: [RestRouteExtension],
-    beforeExtensions: [PreRouterExtension],
+    beforeExtensions: [DispatcherExtension],
     exportOnly: true,
   },
 ],

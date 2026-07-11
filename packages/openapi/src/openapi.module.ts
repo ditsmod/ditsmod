@@ -1,6 +1,6 @@
 import { XOasObject } from '@ts-stack/openapi-spec';
 import { featureModule, InitParamsMap, DynamicModule, ProviderBuilder } from '@ditsmod/core';
-import { RestModule, PreRouterExtension, RestRouteExtension, initRest } from '@ditsmod/rest';
+import { RestModule, DispatcherExtension, RestRouteExtension, initRest } from '@ditsmod/rest';
 
 import { OpenapiCompilerExtension } from './extensions/openapi-compiler.extension.js';
 import { OpenapiRouteExtension } from './extensions/openapi-routes.extension.js';
@@ -16,7 +16,7 @@ import { OpenapiLogMediator } from '#services/openapi-log-mediator.js';
     {
       extension: OpenapiCompilerExtension,
       afterExtensions: [RestRouteExtension],
-      beforeExtensions: [PreRouterExtension],
+      beforeExtensions: [DispatcherExtension],
       export: true,
     },
   ],

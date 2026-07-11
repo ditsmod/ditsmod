@@ -2,7 +2,7 @@ import { BaseAppOptions, Context, ContextModule, featureModule, getTokens } from
 
 import { DefaultRouter, Router } from '#services/router.js';
 import { RestRouteExtension } from '#extensions/rest-route.extension.js';
-import { PreRouterExtension } from '#extensions/pre-router.extension.js';
+import { DispatcherExtension } from '#extensions/pre-router.extension.js';
 import { UseInterceptorExtension } from '#extensions/use-interceptor.extension.js';
 import { AppOptions } from '#types/app-options.js';
 import { RequestDispatcher } from '#services/pre-router.js';
@@ -12,7 +12,7 @@ import { RouteContext } from '#services/route-context.js';
 import { RequestContext } from '#services/request-context.js';
 
 /**
- * Sets `Router` provider on application level, and adds `RestRouteExtension` with `PreRouterExtension`.
+ * Sets `Router` provider on application level, and adds `RestRouteExtension` with `DispatcherExtension`.
  */
 @featureModule({
   imports: [ContextModule],
@@ -26,12 +26,12 @@ import { RequestContext } from '#services/request-context.js';
   providersPerReq: [...defaultProvidersPerReq, RequestContext, { token: Context, useToken: RequestContext }],
   exports: [ContextModule, RequestContext, Context, ...getTokens(defaultProvidersPerRou.concat(defaultProvidersPerReq))],
   extensions: [
-    { extension: RestRouteExtension, beforeExtensions: [PreRouterExtension], exportOnly: true },
-    { extension: PreRouterExtension, afterExtensions: [RestRouteExtension], exportOnly: true },
+    { extension: RestRouteExtension, beforeExtensions: [DispatcherExtension], exportOnly: true },
+    { extension: DispatcherExtension, afterExtensions: [RestRouteExtension], exportOnly: true },
     {
       extension: UseInterceptorExtension,
       afterExtensions: [RestRouteExtension],
-      beforeExtensions: [PreRouterExtension],
+      beforeExtensions: [DispatcherExtension],
       exportOnly: true,
     },
   ],

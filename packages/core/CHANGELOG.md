@@ -41,7 +41,7 @@
 | [ded09792e5](https://github.com/ditsmod/ditsmod/commit/ded09792e566a828d2) | refactor | refactoring `moduleFactory.addProviders()`. |
 | [5ab6bb16ec](https://github.com/ditsmod/ditsmod/commit/5ab6bb16ec818826de) | refactor | introduced `GuardPerMod1`. |
 | [cecdec65c2](https://github.com/ditsmod/ditsmod/commit/cecdec65c2b1ba51b2) | refactor | fixed `getImported*` helpers. |
-| [865a115325](https://github.com/ditsmod/ditsmod/commit/865a115325c07388e2) | refactor | in PreRouterExtension moved part code to new method - `getResolvedGuards()`. |
+| [865a115325](https://github.com/ditsmod/ditsmod/commit/865a115325c07388e2) | refactor | in DispatcherExtension moved part code to new method - `getResolvedGuards()`. |
 | [0cfb244d5c](https://github.com/ditsmod/ditsmod/commit/0cfb244d5c8313000f) | refactor | removed `RouteMeta.resolveGuards()`. |
 | [6535ded6c9](https://github.com/ditsmod/ditsmod/commit/6535ded6c983dab64f) | refactor | removed `RouteMeta.resolveHandler()`. |
 | [9e592b17a6](https://github.com/ditsmod/ditsmod/commit/9e592b17a63afe4b19) | refactor | renamed normalizedGuardsPerMod to guardsPerMod. |

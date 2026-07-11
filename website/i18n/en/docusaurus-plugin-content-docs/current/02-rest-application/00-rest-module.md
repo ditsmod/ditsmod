@@ -8,7 +8,7 @@ title: "@ditsmod/rest"
 As the name suggests, the `@ditsmod/rest` module provides support for [REST][0]. It includes:
 
 - [init decorators][4] for the root module and the feature module - `restRootModule`, `restModule`;
-- extensions that provide REST route creation - `RestRouteExtension`, `PreRouterExtension`;
+- extensions that provide REST route creation - `RestRouteExtension`, `DispatcherExtension`;
 - a router of the following type:
 
 ```ts
@@ -75,9 +75,9 @@ export class MyCustomRouterModule {}
 
 This module exports `RestRouteExtension`. This extension returns metadata with the [`Array<RouteExtensionMeta>`][2] interface — an array of dynamic metadata intended for creating request handlers. Each element of this array represents a separate route.
 
-## `PreRouterExtension` {#pre-router-extension}
+## `DispatcherExtension` {#pre-router-extension}
 
-This module also exports `PreRouterExtension`. This extension uses the metadata returned by `RestRouteExtension` to create HTTP request handlers.
+This module also exports `DispatcherExtension`. This extension uses the metadata returned by `RestRouteExtension` to create HTTP request handlers.
 
 [0]: https://en.wikipedia.org/wiki/REST
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/01-hello-world

@@ -44,7 +44,7 @@ import { CheckingDepsInSandboxFailed, GuardNotFound, InvalidConfigurationOfRoute
 import { RouteContext } from '#services/route-context.js';
 
 @injectable()
-export class PreRouterExtension implements Extension<void> {
+export class DispatcherExtension implements Extension<void> {
   protected extensionGroupMeta: ExtensionGroupMeta<RouteExtensionMeta>;
   protected injectorPerMod: Injector;
 
