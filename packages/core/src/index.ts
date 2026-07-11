@@ -100,4 +100,4 @@ export { objectKeys } from '#utils/object-keys.js';
 export { Context } from '#ctx/context.js';
 export { ctxProviders } from '#ctx/providers.js';
 export { ctx } from '#ctx/decorators.js';
-export { CtxModule } from '#ctx/ctx.module.js';
+export { ContextModule } from '#ctx/ctx.module.js';

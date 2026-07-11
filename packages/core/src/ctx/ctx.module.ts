@@ -9,4 +9,4 @@ import { ctxProviders } from './providers.js';
   providersPerReq: [...ctxProviders],
   exports: getTokens(ctxProviders),
 })
-export class CtxModule {}
+export class ContextModule {}

@@ -1,4 +1,4 @@
-import { BaseAppOptions, Context, CtxModule, featureModule, getTokens } from '@ditsmod/core';
+import { BaseAppOptions, Context, ContextModule, featureModule, getTokens } from '@ditsmod/core';
 
 import { DefaultRouter, Router } from '#services/router.js';
 import { RestRouteExtension } from '#extensions/rest-route.extension.js';
@@ -15,7 +15,7 @@ import { RequestContext } from '#services/request-context.js';
  * Sets `Router` provider on application level, and adds `RestRouteExtension` with `PreRouterExtension`.
  */
 @featureModule({
-  imports: [CtxModule],
+  imports: [ContextModule],
   providersPerApp: [
     { token: Router, useClass: DefaultRouter },
     { token: AppOptions, useToken: BaseAppOptions },
@@ -24,7 +24,7 @@ import { RequestContext } from '#services/request-context.js';
   ],
   providersPerRou: [...defaultProvidersPerRou],
   providersPerReq: [...defaultProvidersPerReq, RequestContext, { token: Context, useToken: RequestContext }],
-  exports: [CtxModule, RequestContext, Context, ...getTokens(defaultProvidersPerRou.concat(defaultProvidersPerReq))],
+  exports: [ContextModule, RequestContext, Context, ...getTokens(defaultProvidersPerRou.concat(defaultProvidersPerReq))],
   extensions: [
     { extension: RestRouteExtension, beforeExtensions: [PreRouterExtension], exportOnly: true },
     { extension: PreRouterExtension, afterExtensions: [RestRouteExtension], exportOnly: true },

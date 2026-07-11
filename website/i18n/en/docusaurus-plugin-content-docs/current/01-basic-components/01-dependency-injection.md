@@ -954,7 +954,7 @@ context.set('key2', 'value2');
 injector.get('token1'); // { param1: 'value1', param2: 'value2' }
 ```
 
-This example illustrates a situation where a value is stored in `Context` in one part of the program and consumed elsewhere—in class method parameters. The same mechanism can be used to obtain context values in controller parameters (if you are using `@ditsmod/rest`). Note that the `ctxProviders` array is added to the providers list. It contains all the providers required for this mechanism to work. In real applications, if you use `@ditsmod/rest`, `CtxModule` is already re-exported with all the necessary providers.
+This example illustrates a situation where a value is stored in `Context` in one part of the program and consumed elsewhere—in class method parameters. The same mechanism can be used to obtain context values in controller parameters (if you are using `@ditsmod/rest`). Note that the `ctxProviders` array is added to the providers list. It contains all the providers required for this mechanism to work. In real applications, if you use `@ditsmod/rest`, `ContextModule` is already re-exported with all the necessary providers.
 
 You can find real-world examples of setting context values here:
 
