@@ -152,10 +152,7 @@ console.log(providers[0].resolvedFactories[0].dependencies);
    *
    * @param Registry If provided, `providers` extends the `Registry`.
    */
-  static prepareRegistry(
-    providers: ResolvedProvider[],
-    Registry?: typeof InjectorRegistry,
-  ): typeof InjectorRegistry {
+  static prepareRegistry(providers: ResolvedProvider[], Registry?: typeof InjectorRegistry): typeof InjectorRegistry {
     if (!Registry) {
       Registry = getNewRegistry();
     }

@@ -43,9 +43,7 @@ export interface RouteScopedControllerOptions {
 
 export type ControllerOptions = RequestScopedControllerOptions | RouteScopedControllerOptions;
 
-export const controller: ControllerDecorator = Reflector.makeClassDecorator(
-  (data?: ControllerOptions) => data || {},
-);
+export const controller: ControllerDecorator = Reflector.makeClassDecorator((data?: ControllerOptions) => data || {});
 
 interface ControllerDecorator {
   (meta?: RequestScopedControllerOptions): any;

@@ -48,7 +48,9 @@ export interface AbsolutePathRestModuleOptions extends BaseRestModuleOptions {
 /**
  * Used for module metadata, for `appends` array.
  */
-export type AppendsWithOptions<T extends AnyObj = AnyObj> = PathAppendsWithOptions<T> | AbsolutePathAppendsWithOptions<T>;
+export type AppendsWithOptions<T extends AnyObj = AnyObj> =
+  | PathAppendsWithOptions<T>
+  | AbsolutePathAppendsWithOptions<T>;
 
 export interface BaseAppendsWithOptions<T extends AnyObj = AnyObj> {
   /**

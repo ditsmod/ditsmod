@@ -349,7 +349,10 @@ export class DispatcherExtension implements Extension<void> {
     }
   }
 
-  protected setRoutes(extensionGroupMeta: ExtensionGroupMeta<RouteExtensionMeta>, preparedRouteMeta: PreparedRouteMeta[]) {
+  protected setRoutes(
+    extensionGroupMeta: ExtensionGroupMeta<RouteExtensionMeta>,
+    preparedRouteMeta: PreparedRouteMeta[],
+  ) {
     const router = this.injectorPerMod.get(Router);
     if (!extensionGroupMeta.delay) {
       const appHasRoutes = this.checkPresenceOfRoutesInApplication(extensionGroupMeta.groupDataPerApp);
