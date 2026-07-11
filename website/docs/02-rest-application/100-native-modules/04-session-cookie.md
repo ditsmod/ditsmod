@@ -20,17 +20,17 @@ npm i @ditsmod/session-cookie
 import { restModule } from '@ditsmod/rest';
 import { SessionCookieModule } from '@ditsmod/session-cookie';
 
-const sessionModuleWithParams = SessionCookieModule.withParams({
+const sessionDynamicModule = SessionCookieModule.withParams({
   cookieName: 'custom-session-name',
   httpOnly: true,
 });
 
 @restModule({
   imports: [
-    sessionModuleWithParams,
+    sessionDynamicModule,
     // ...
   ],
-  exports: [sessionModuleWithParams],
+  exports: [sessionDynamicModule],
 })
 export class AppModule {}
 ```

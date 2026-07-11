@@ -40,10 +40,10 @@ const swaggerOAuthOptions: SwaggerOAuthOptions = {
   clientId: 'implicit',
 };
 
-const moduleWithParams = OpenapiModule.withParams(oasObject, 'absolute-path', swaggerOAuthOptions);
+const dynamicModule = OpenapiModule.withParams(oasObject, 'absolute-path', swaggerOAuthOptions);
 
 @restModule({
-  imports: [moduleWithParams],
+  imports: [dynamicModule],
   // ...
 })
 export class SomeModule {}

@@ -364,11 +364,11 @@ import { restModule, RestModuleOptions } from '@ditsmod/rest';
 
 import { Module1 } from './module1.js';
 
-const firstModuleWithParams: DynamicModule & RestModuleOptions = { path: 'some-path', module: Module1 };
+const firstDynamicModule: DynamicModule & RestModuleOptions = { path: 'some-path', module: Module1 };
 
 @restModule({
-  imports: [firstModuleWithParams],
-  exports: [firstModuleWithParams],
+  imports: [firstDynamicModule],
+  exports: [firstDynamicModule],
 })
 export class Module2 {}
 ```
