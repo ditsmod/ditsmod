@@ -31,7 +31,7 @@
   "author": "",
   "license": "MIT",
   "peerDependencies": {
-    "@ditsmod/core": "^3.0.0-next.13"
+    "@ditsmod/core": "^3.0.0-next.14"
   },
   "devDependencies": {
     "jest": "^30.4.2",

@@ -1,7 +1,7 @@
 {
   "name": "@ditsmod/cors",
   "type": "module",
-  "version": "3.0.0-next.13",
+  "version": "3.0.0-next.14",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ditsmod/ditsmod.git"
@@ -35,8 +35,8 @@
     "@ts-stack/cors": "^1.4.2"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^3.0.0-next.13",
-    "@ditsmod/rest": "^3.0.0-next.13"
+    "@ditsmod/core": "^3.0.0-next.14",
+    "@ditsmod/rest": "^3.0.0-next.14"
   },
   "devDependencies": {
     "jest": "^30.4.2",
