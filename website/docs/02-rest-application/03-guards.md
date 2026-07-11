@@ -142,14 +142,14 @@ export class PermissionsGuard implements CanActivate {
 
 ## Хелпери для ґардів з параметрами {#helpers-for-guards-with-parameters}
 
-Оскільки ґарди з параметрами повинні передаватись у вигляді масива в масиві, це ускладнює читабельність та погіршує безпечність типів. Для таких випадків краще створити хелпер за допомогою фабрики `createHelperForGuardWithParams()`:
+Оскільки ґарди з параметрами повинні передаватись у вигляді масива в масиві, це ускладнює читабельність та погіршує безпечність типів. Для таких випадків краще створити хелпер за допомогою фабрики `createGuardHelper()`:
 
 ```ts {5}
-import { createHelperForGuardWithParams } from '@ditsmod/rest';
+import { createGuardHelper } from '@ditsmod/rest';
 import { Permission } from './types.js';
 import { PermissionsGuard } from './permissions-guard.js';
 
-export const requirePermissions = createHelperForGuardWithParams<Permission>(PermissionsGuard);
+export const requirePermissions = createGuardHelper<Permission>(PermissionsGuard);
 ```
 
 В даному прикладі у якості аргументу передається `PermissionsGuard`, який приймає параметри з типом `Permission` у своєму методі `canActivate()`. 

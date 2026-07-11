@@ -7,11 +7,11 @@ import type { CanActivate } from '../interceptors/guard.js';
  * ### An example of creating a helper
  * 
 ```ts
-import { createHelperForGuardWithParams } from '@ditsmod/core';
+import { createGuardHelper } from '@ditsmod/core';
 
 import { Permission } from './types.js';
 
-export const requirePermissions = createHelperForGuardWithParams<Permission>(PermissionsGuard);
+export const requirePermissions = createGuardHelper<Permission>(PermissionsGuard);
 ```
  * 
  * ### Usage
@@ -31,12 +31,12 @@ export class SomeController {
 }
 ```
  */
-export function createHelperForGuardWithParams<T>(Guard: Class<CanActivate>): HelperForGuardWithParams<T> {
+export function createGuardHelper<T>(Guard: Class<CanActivate>): GuardHelper<T> {
   return function requireArgs(...args: [T, ...T[]]): [Class<CanActivate>, T, ...T[]] {
     return [Guard, ...args];
   };
 }
 
-export interface HelperForGuardWithParams<T> {
+export interface GuardHelper<T> {
   (...args: [T, ...T[]]): [Class<CanActivate>, T, ...T[]];
 }

@@ -142,14 +142,14 @@ export class PermissionsGuard implements CanActivate {
 
 ## Helpers for guards with parameters {#helpers-for-guards-with-parameters}
 
-Because parameter guards must be passed as an array within an array, this makes readability and type safety worse. For such cases, it is better to create a helper using the `createHelperForGuardWithParams()` factory:
+Because parameter guards must be passed as an array within an array, this makes readability and type safety worse. For such cases, it is better to create a helper using the `createGuardHelper()` factory:
 
 ```ts {5}
-import { createHelperForGuardWithParams } from '@ditsmod/rest';
+import { createGuardHelper } from '@ditsmod/rest';
 import { Permission } from './types.js';
 import { PermissionsGuard } from './permissions-guard.js';
 
-export const requirePermissions = createHelperForGuardWithParams<Permission>(PermissionsGuard);
+export const requirePermissions = createGuardHelper<Permission>(PermissionsGuard);
 ```
 
 In this example, `PermissionsGuard` is passed as an argument, which accepts parameters of type `Permission` in its `canActivate()` method.

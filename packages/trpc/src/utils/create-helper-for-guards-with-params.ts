@@ -7,11 +7,11 @@ import type { TrpcCanActivate } from '#interceptors/trpc-guard.js';
  * ### An example of creating a helper
  * 
 ```ts
-import { createHelperForGuardWithParams } from '@ditsmod/trpc';
+import { createGuardHelper } from '@ditsmod/trpc';
 
 import { Permission } from './types.js';
 
-export const requirePermissions = createHelperForGuardWithParams<Permission>(PermissionsGuard);
+export const requirePermissions = createGuardHelper<Permission>(PermissionsGuard);
 ```
  * 
  * ### Usage
@@ -31,12 +31,12 @@ export class SomeController {
 }
 ```
  */
-export function createHelperForGuardWithParams<T>(Guard: Class<TrpcCanActivate>): HelperForGuardWithParams<T> {
+export function createGuardHelper<T>(Guard: Class<TrpcCanActivate>): GuardHelper<T> {
   return function requireArgs(...args: [T, ...T[]]): [Class<TrpcCanActivate>, T, ...T[]] {
     return [Guard, ...args];
   };
 }
 
-export interface HelperForGuardWithParams<T> {
+export interface GuardHelper<T> {
   (...args: [T, ...T[]]): [Class<TrpcCanActivate>, T, ...T[]];
 }
