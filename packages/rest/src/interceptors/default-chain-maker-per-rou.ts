@@ -25,7 +25,7 @@ class PreHttpBackend implements HttpBackend {
  * An injectable service that ties multiple interceptors in chain.
  */
 @injectable()
-export class DefaultChainMakerPerRou {
+export class RouteScopedChainMaker {
   constructor(
     private backend: HttpBackend,
     @inject(HTTP_INTERCEPTORS) @optional() private interceptors: HttpInterceptor[] = [],

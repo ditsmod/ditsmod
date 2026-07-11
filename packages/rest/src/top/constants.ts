@@ -23,7 +23,7 @@ export const A_PATH_PARAMS = createInjectionSymbol<PathParam[]>('A_PATH_PARAMS')
 export const PATH_PARAMS = createInjectionSymbol<AnyObj>('PATH_PARAMS');
 export const QUERY_PARAMS = createInjectionSymbol<AnyObj>('QUERY_PARAMS');
 /**
- * DI token for querystring that is returned by `PreRouter` after spliting `rawReq.url` by question mark.
+ * DI token for querystring that is returned by `RequestDispatcher` after spliting `rawReq.url` by question mark.
  */
 export const QUERY_STRING = createInjectionSymbol<string>('QUERY_STRING');
 

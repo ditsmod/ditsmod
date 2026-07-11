@@ -4,7 +4,7 @@ import { RouteMeta } from '../types/route-data.js';
 import { HttpBackend } from './tokens-and-types.js';
 
 @injectable()
-export class DefaultHttpBackend implements HttpBackend {
+export class RequestScopedHttpBackend implements HttpBackend {
   constructor(
     protected injector: Injector,
     @skipSelf() protected routeMeta: RouteMeta,

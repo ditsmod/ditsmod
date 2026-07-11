@@ -1,12 +1,12 @@
 import { parse } from 'querystring';
 import { AnyObj, injectable, Context } from '@ditsmod/core';
 
-import { DefaultHttpFrontendPerRou } from './default-http-frontend-per-rou.js';
+import { RouteScopedHttpFrontend } from './default-http-frontend-per-rou.js';
 import { RequestContext } from '#services/request-context.js';
 import { PATH_PARAMS, QUERY_PARAMS } from '../top/constants.js';
 
 @injectable()
-export class DefaultHttpFrontend extends DefaultHttpFrontendPerRou {
+export class RequestScopedHttpFrontend extends RouteScopedHttpFrontend {
   constructor(private ctx: Context) {
     super();
   }

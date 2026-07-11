@@ -15,7 +15,7 @@ title: "@ditsmod/rest"
 interface Router {
   on(method: HttpMethod, path: string, handle: RouteHandler): this;
   all(path: string, handle: RouteHandler): this;
-  find(method: HttpMethod, path: string): RouterReturns;
+  find(method: HttpMethod, path: string): RouteMatch;
 }
 
 type RouteHandler = (
@@ -25,7 +25,7 @@ type RouteHandler = (
   queryString: any
 ) => Promise<void>;
 
-class RouterReturns {
+class RouteMatch {
   handle: RouteHandler | null;
   params: PathParam[] | null;
 }

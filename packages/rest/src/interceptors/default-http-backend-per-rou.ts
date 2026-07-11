@@ -5,7 +5,7 @@ import { RouteScopedHttpBackend } from './tokens-and-types.js';
 import { RequestContext } from '#services/request-context.js';
 
 @injectable()
-export class DefaultHttpBackendPerRou implements RouteScopedHttpBackend {
+export class RouteScopedHttpBackendImpl implements RouteScopedHttpBackend {
   constructor(protected routeMeta: RouteMeta) {}
 
   async handle(ctx: RequestContext) {

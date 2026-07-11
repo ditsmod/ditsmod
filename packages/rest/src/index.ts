@@ -2,7 +2,7 @@ export { RestApplication } from './init/rest-application.js';
 export { HttpServer } from './types/server-options.js';
 export { AppOptions } from './types/app-options.js';
 export { RestAppInitializer } from './init/rest-app-initializer.js';
-export { DefaultRouter, PathParam, RouteHandler, Router, RouterReturns } from './services/router.js';
+export { DefaultRouter, PathParam, RouteHandler, Router, RouteMatch } from './services/router.js';
 export { Tree } from './services/tree.js';
 export {
   AppendsWithOptions,
@@ -37,12 +37,12 @@ export {
   InstantiatedGuard,
 } from '#interceptors/interceptor-with-guards-per-rou.js';
 export { RequestScopedGuardedInterceptor } from '#interceptors/interceptor-with-guards.js';
-export { DefaultHttpBackendPerRou } from '#interceptors/default-http-backend-per-rou.js';
-export { DefaultHttpBackend } from '#interceptors/default-http-backend.js';
+export { RouteScopedHttpBackendImpl } from '#interceptors/default-http-backend-per-rou.js';
+export { RequestScopedHttpBackend } from '#interceptors/default-http-backend.js';
 export { ChainMaker } from '#interceptors/chain-maker.js';
-export { DefaultChainMakerPerRou } from '#interceptors/default-chain-maker-per-rou.js';
-export { DefaultHttpFrontendPerRou } from '#interceptors/default-http-frontend-per-rou.js';
-export { DefaultHttpFrontend } from '#interceptors/default-http-frontend.js';
+export { RouteScopedChainMaker } from '#interceptors/default-chain-maker-per-rou.js';
+export { RouteScopedHttpFrontend } from '#interceptors/default-http-frontend-per-rou.js';
+export { RequestScopedHttpFrontend } from '#interceptors/default-http-frontend.js';
 export {
   HttpBackend,
   HttpFrontend,
@@ -52,7 +52,7 @@ export {
   RouteScopedHttpBackend,
 } from '#interceptors/tokens-and-types.js';
 export { guard, CanActivate, GuardItem, NormalizedGuard, ModuleScopedGuard } from '#interceptors/guard.js';
-export { PreRouter } from './services/pre-router.js';
+export { RequestDispatcher } from './services/pre-router.js';
 export {
   HTTP_INTERCEPTORS,
   RAW_REQ,

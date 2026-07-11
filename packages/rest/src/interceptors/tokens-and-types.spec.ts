@@ -17,7 +17,7 @@ import {
 } from '@ditsmod/core';
 
 import { ChainMaker } from './chain-maker.js';
-import { DefaultHttpBackend } from './default-http-backend.js';
+import { RequestScopedHttpBackend } from './default-http-backend.js';
 import { HttpBackend, HttpFrontend, HttpHandler, HttpInterceptor } from './tokens-and-types.js';
 import { HTTP_INTERCEPTORS } from '../top/constants.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
@@ -59,7 +59,7 @@ describe('HttpInterceptor', () => {
   const defaultProviders: Provider[] = [
     ...defaultProvidersPerApp,
     ...defaultProvidersPerReq,
-    { token: HttpBackend, useClass: DefaultHttpBackend },
+    { token: HttpBackend, useClass: RequestScopedHttpBackend },
     ChainMaker,
   ];
 

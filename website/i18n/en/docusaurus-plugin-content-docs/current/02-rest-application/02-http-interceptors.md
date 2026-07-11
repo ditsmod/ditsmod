@@ -22,9 +22,9 @@ Interceptors can be centrally enabled or disabled without modifying the code of 
 
 HTTP request processing has the following workflow:
 
-1. Ditsmod creates an instance of [PreRouter][7] at the application level.
-2. `PreRouter` uses the router to search for the request handler according to the URI.
-3. If the request handler is not found, `PreRouter` issues a 501 error.
+1. Ditsmod creates an instance of [RequestDispatcher][7] at the application level.
+2. `RequestDispatcher` uses the router to search for the request handler according to the URI.
+3. If the request handler is not found, `RequestDispatcher` issues a 501 error.
 4. If a request handler is found, Ditsmod creates a provider instance with the [HttpFrontend][2] token at the request level, places it first in the queue of interceptors, and automatically calls it. By default, this interceptor is responsible for setting values for providers with `QUERY_PARAMS` and `PATH_PARAMS` tokens.
 5. If there are guards in the current route, then by default `RequestScopedGuardedInterceptor` is run immediately after `HttpFrontend`.
 6. Other interceptors may be launched next, depending on whether the previous interceptor in the queue will launch them.
@@ -32,23 +32,23 @@ HTTP request processing has the following workflow:
 
 So, the approximate order of processing the request is as follows:
 
-1. `PreRouter`;
+1. `RequestDispatcher`;
 2. `HttpFrontend`;
 3. `RequestScopedGuardedInterceptor`;
 4. other interceptors;
 5. `HttpBackend`, which runs the controller method.
 
-Since the promise chain starts with `PreRouter` and ends with the controller method, this chain will be resolved in reverse order - from the controller method to `PreRouter`. This means that in the interceptor you can listen for the result of promise resolve, which returns the method of the controller.
+Since the promise chain starts with `RequestDispatcher` and ends with the controller method, this chain will be resolved in reverse order - from the controller method to `RequestDispatcher`. This means that in the interceptor you can listen for the result of promise resolve, which returns the method of the controller.
 
-In addition, because `PreRouter`, `HttpFrontend`, `RequestScopedGuardedInterceptor`, and `HttpBackend` instances are created using DI, you can replace them with your own version of the respective classes. For example, if you don't just want to send a 501 status when the required route is missing, but also want to add some text or change headers, you can substitute [PreRouter][7] with your own class.
+In addition, because `RequestDispatcher`, `HttpFrontend`, `RequestScopedGuardedInterceptor`, and `HttpBackend` instances are created using DI, you can replace them with your own version of the respective classes. For example, if you don't just want to send a 501 status when the required route is missing, but also want to add some text or change headers, you can substitute [RequestDispatcher][7] with your own class.
 
 ### Route-scoped mode {#route-scoped-mode}
 
 A route-scoped interceptor operates very similarly to an request-scoped interceptor but does not utilize the request-level injector. The workflow involving it differs at points 4 and 7, as the instance of a route-scoped interceptor is created at the route level:
 
-1. Ditsmod creates an instance of [PreRouter][7] at the application level.
-2. `PreRouter` uses the router to search for the request handler according to the URI.
-3. If the request handler is not found, `PreRouter` issues a 501 error.
+1. Ditsmod creates an instance of [RequestDispatcher][7] at the application level.
+2. `RequestDispatcher` uses the router to search for the request handler according to the URI.
+3. If the request handler is not found, `RequestDispatcher` issues a 501 error.
 4. If a request handler is found, Ditsmod uses a provider instance with the [HttpFrontend][2] token at the route level, places it first in the interceptor queue, and automatically invokes it. By default, this interceptor is responsible for setting `pathParams` and `queryParams` values for `RequestContext`.
 5. If there are guards in the current route, then by default `RouteScopedGuardedInterceptor` is run immediately after `HttpFrontend`.
 6. Other interceptors may be launched next, depending on whether the previous interceptor in the queue will launch them.

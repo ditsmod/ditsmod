@@ -14,7 +14,7 @@ export class Router {
     return this;
   }
 
-  find(method: HttpMethod, path: string): RouterReturns {
+  find(method: HttpMethod, path: string): RouteMatch {
     return { handle: null as any, params: null as any };
   }
 }
@@ -43,7 +43,7 @@ export class DefaultRouter implements Router {
     return this;
   }
 
-  find(method: HttpMethod, path: string): RouterReturns {
+  find(method: HttpMethod, path: string): RouteMatch {
     const tree = this.trees[method];
     if (tree) {
       return tree.search(path);
@@ -59,7 +59,7 @@ export type RouteHandler = (
   queryString: string,
 ) => Promise<void>;
 
-export class RouterReturns {
+export class RouteMatch {
   handle: RouteHandler | null;
   params: PathParam[] | null;
 }

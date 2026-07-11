@@ -1,12 +1,12 @@
 import { BaseAppInitializer } from '@ditsmod/core';
 
 import type { RequestListener } from '#services/request.js';
-import { PreRouter } from '#services/pre-router.js';
+import { RequestDispatcher } from '#services/pre-router.js';
 import type { HttpServer } from '#types/server-options.js';
 import { SERVER } from '../top/constants.js';
 
 export class RestAppInitializer extends BaseAppInitializer {
-  protected preRouter: PreRouter;
+  protected preRouter: RequestDispatcher;
   protected server: HttpServer;
 
   setServer(server: HttpServer) {
@@ -22,7 +22,7 @@ export class RestAppInitializer extends BaseAppInitializer {
 
   override async bootstrapModulesAndExtensions() {
     const injectorPerApp = await super.bootstrapModulesAndExtensions();
-    this.preRouter = injectorPerApp.get(PreRouter) as PreRouter;
+    this.preRouter = injectorPerApp.get(RequestDispatcher) as RequestDispatcher;
     return injectorPerApp;
   }
 }

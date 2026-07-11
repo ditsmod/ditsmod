@@ -5,7 +5,7 @@ import { Router } from './router.js';
 import { RawResponse, RequestListener } from './request.js';
 
 @injectable()
-export class PreRouter {
+export class RequestDispatcher {
   constructor(
     protected router: Router,
     protected systemLogMediator: SystemLogMediator,
