@@ -5,6 +5,7 @@
     "paths": {
       "@ditsmod/core": ["../core/src/index.js"],
       "@ditsmod/rest-testing": ["../rest-testing/src/index.js"],
+      "#top/*": ["./src/top/*"],
       "#interceptors/*": ["./src/interceptors/*"],
       "#errors": ["./src/errors.js"],
       "#utils/*": ["./src/utils/*"],

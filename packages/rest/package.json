@@ -28,6 +28,7 @@
     "#utils/*": "./dist/utils/*",
     "#init/*": "./dist/init/*",
     "#types/*": "./dist/types/*",
+    "#top/*": "./dist/top/*",
     "#decorators/*": "./dist/decorators/*",
     "#services/*": "./dist/services/*",
     "#providers/*": "./dist/providers/*",
