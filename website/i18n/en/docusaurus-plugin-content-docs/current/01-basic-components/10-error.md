@@ -98,7 +98,8 @@ Any errors that occur while processing an HTTP request that you have not caught 
 You can create your own error handler by creating a class that implements the [HttpErrorHandler][101] interface:
 
 ```ts
-import { HttpErrorHandler, injectable, Logger, RequestContext, HttpStatus } from '@ditsmod/core';
+import { injectable, Logger, HttpStatus } from '@ditsmod/core';
+import { HttpErrorHandler, RequestContext } from '@ditsmod/rest';
 import { isCustomError } from '@ditsmod/core/errors';
 import { randomUUID } from 'node:crypto';
 
@@ -137,7 +138,8 @@ export class MyHttpErrorHandler implements HttpErrorHandler {
 To add your new error handler centrally, you can do it directly in the root module:
 
 ```ts {6-7}
-import { rootModule, HttpErrorHandler } from '@ditsmod/core';
+import { rootModule } from '@ditsmod/core';
+import { HttpErrorHandler } from '@ditsmod/rest';
 import { MyHttpErrorHandler } from './my-http-error-handler.js';
 
 @rootModule({

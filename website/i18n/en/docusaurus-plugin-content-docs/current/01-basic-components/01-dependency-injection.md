@@ -245,7 +245,7 @@ More details about each of these types:
 
      export class ClassWithFactory {
        @factoryMethod()
-       method1(Dependency1: Dependency1, dependecy2: Dependecy2) {
+       method1(dependency1: Dependency1, dependency2: Dependency2) {
          // ...
          return '...';
        }
@@ -263,12 +263,12 @@ More details about each of these types:
    * **FunctionFactoryProvider** implies that a function can be passed to `useFactory`, which may have parameters — i.e., it may have dependencies. These dependencies must be explicitly specified in the `deps` property as an array of tokens, and the order of tokens is important:
 
      ```ts {6}
-     function fn(Dependency1: Dependency1, dependecy2: Dependecy2) {
+     function fn(dependency1: Dependency1, dependency2: Dependency2) {
        // ...
        return 'some value';
      }
 
-     { token: 'token3', deps: [Dependency1, Dependecy2], useFactory: fn }
+     { token: 'token3', deps: [Dependency1, Dependency2], useFactory: fn }
      ```
 
      Note that the `deps` property receives provider *tokens*, and DI treats them specifically as tokens, not as providers. That is, for these tokens, the corresponding providers still need to be passed in the providers array. Also note that [parameter decorators][103] (for example, `optional`, `skipSelf`, etc.) are not passed in `deps`. If your factory requires parameter decorators, you need to use `ClassFactoryProvider`.
@@ -888,7 +888,8 @@ To make it possible to substitute a specific multi-provider, you can do the foll
 3. next in the providers array add a provider that substitutes that class.
 
 ```ts
-import { Injector, HTTP_INTERCEPTORS } from '@ditsmod/core';
+import { Injector } from '@ditsmod/core';
+import { HTTP_INTERCEPTORS } from '@ditsmod/rest';
 
 import { DefaultInterceptor } from './default.interceptor.js';
 import { MyInterceptor } from './my.interceptor.js';

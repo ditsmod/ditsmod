@@ -114,7 +114,7 @@ describe('Service2', () => {
 
 ```ts {14,21}
 import request from 'supertest';
-import { HttpServer } from '@ditsmod/core';
+import { HttpServer } from '@ditsmod/rest';
 import { TestRestApplication } from '@ditsmod/rest-testing';
 import { jest } from '@jest/globals';
 

@@ -132,7 +132,8 @@ export class AppModule {}
 Інколи є потреба додавати цілий масив провайдерів, і щоб експортувати їхні токени, є хелпер `getTokens()`:
 
 ```ts {9}
-import { restRootModule, getTokens } from '@ditsmod/rest';
+import { restRootModule } from '@ditsmod/rest';
+import { getTokens } from '@ditsmod/core';
 import { defaultProviders } from './default-providers.js';
 
 @restRootModule({

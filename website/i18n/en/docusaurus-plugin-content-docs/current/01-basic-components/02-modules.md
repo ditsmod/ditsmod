@@ -132,7 +132,8 @@ In this case, `Service1` will not be added to `BodyParserModule` (because it is 
 Sometimes there is a need to add an entire array of providers, and to export their tokens, there is a helper `getTokens()`:
 
 ```ts {9}
-import { restRootModule, getTokens } from '@ditsmod/rest';
+import { restRootModule } from '@ditsmod/rest';
+import { getTokens } from '@ditsmod/core';
 import { defaultProviders } from './default-providers.js';
 
 @restRootModule({

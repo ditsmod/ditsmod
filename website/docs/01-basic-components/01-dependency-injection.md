@@ -245,7 +245,7 @@ import { ValueProvider, ClassProvider, FactoryProvider, TokenProvider } from '@d
 
       export class ClassWithFactory {
         @factoryMethod()
-        method1(Dependency1: Dependency1, dependecy2: Dependecy2) {
+        method1(dependency1: Dependency1, dependency2: Dependency2) {
           // ...
           return '...';
         }
@@ -263,12 +263,12 @@ import { ValueProvider, ClassProvider, FactoryProvider, TokenProvider } from '@d
     - **FunctionFactoryProvider** передбачає, що до `useFactory` можна передавати функцію, яка може мати параметри - тобто може мати залежність. Цю залежність необхідно додатково вручну вказувати у властивості `deps` у вигляді масиву токенів, причому порядок передачі токенів важливий:
 
       ```ts {6}
-      function fn(Dependency1: Dependency1, dependecy2: Dependecy2) {
+      function fn(dependency1: Dependency1, dependency2: Dependency2) {
         // ...
         return 'some value';
       }
 
-      { token: 'token3', deps: [Dependency1, Dependecy2], useFactory: fn }
+      { token: 'token3', deps: [Dependency1, Dependency2], useFactory: fn }
       ```
 
       Зверніть увагу, що у властивість `deps` передаються саме _токени_ провайдерів, і DI їх сприймає саме як токени, а не як провайдери. Тобто для цих токенів, в масив провайдерів ще треба буде передати відповідні провайдери. Також зверніть увагу, що у `deps` не передаються [декоратори для параметрів][103] (наприклад `optional`, `skipSelf` і т.д.). Якщо для вашої фабрики необхідні декоратори параметрів - вам потрібно скористатись `ClassFactoryProvider`.
@@ -888,7 +888,8 @@ const locals = child.get(LOCAL); // ['аа']
 3. наступним в масив провайдерів потрібно передати провайдер для підміни даного класу.
 
 ```ts
-import { Injector, HTTP_INTERCEPTORS } from '@ditsmod/core';
+import { Injector } from '@ditsmod/core';
+import { HTTP_INTERCEPTORS } from '@ditsmod/rest';
 
 import { DefaultInterceptor } from './default.interceptor.js';
 import { MyInterceptor } from './my.interceptor.js';

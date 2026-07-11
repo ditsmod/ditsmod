@@ -98,7 +98,8 @@ export class NormalizationFailed extends CustomError {
 Ви можете створити свій власний обробник помилок, для цього вам потрібно створити клас, що впроваджує інтерфейс [HttpErrorHandler][101]:
 
 ```ts
-import { HttpErrorHandler, injectable, Logger, RequestContext, HttpStatus } from '@ditsmod/core';
+import { injectable, Logger, HttpStatus } from '@ditsmod/core';
+import { HttpErrorHandler, RequestContext } from '@ditsmod/rest';
 import { isCustomError } from '@ditsmod/core/errors';
 import { randomUUID } from 'node:crypto';
 
@@ -137,7 +138,8 @@ export class MyHttpErrorHandler implements HttpErrorHandler {
 Щоб централізовано додати ваш новий обробник помилок, можете це зробити прямо у кореневому модулі:
 
 ```ts {6-7}
-import { rootModule, HttpErrorHandler } from '@ditsmod/core';
+import { rootModule } from '@ditsmod/core';
+import { HttpErrorHandler } from '@ditsmod/rest';
 import { MyHttpErrorHandler } from './my-http-error-handler.js';
 
 @rootModule({
