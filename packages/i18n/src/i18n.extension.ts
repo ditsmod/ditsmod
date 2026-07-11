@@ -9,7 +9,7 @@ import {
   inject,
   PROVIDERS_PER_APP,
 } from '@ditsmod/core';
-import { MetadataPerMod3, RestRouteExtension } from '@ditsmod/rest';
+import { RouteExtensionMeta, RestRouteExtension } from '@ditsmod/rest';
 
 import { I18nTransformer } from './i18n-transformer.js';
 import { I18nLogMediator } from './i18n-log-mediator.js';
@@ -33,7 +33,7 @@ export class I18nExtension implements Extension<void> {
     this.addI18nProviders(extensionGroupMeta, isLastModule);
   }
 
-  protected addI18nProviders(extensionGroupMeta: ExtensionGroupMeta<MetadataPerMod3>, isLastModule?: boolean) {
+  protected addI18nProviders(extensionGroupMeta: ExtensionGroupMeta<RouteExtensionMeta>, isLastModule?: boolean) {
     const injectorPerApp = Injector.resolveAndCreate(this.providersPerApp);
 
     const translationsPerApp = injectorPerApp.get(I18N_TRANSLATIONS, null);
@@ -43,9 +43,9 @@ export class I18nExtension implements Extension<void> {
       this.providersPerApp.push(...providers);
     }
 
-    for (const metadataPerMod3 of extensionGroupMeta.groupData) {
-      const { aControllerMetadata } = metadataPerMod3;
-      const { providersPerMod, providersPerRou, providersPerReq } = metadataPerMod3.meta;
+    for (const routeExtensionMeta of extensionGroupMeta.groupData) {
+      const { aControllerMetadata } = routeExtensionMeta;
+      const { providersPerMod, providersPerRou, providersPerReq } = routeExtensionMeta.meta;
       if (!aControllerMetadata.length) {
         continue;
       }

@@ -22,7 +22,7 @@ import {
 } from '@ditsmod/core';
 
 import { routeChannel } from '#diagnostics-channel';
-import { MetadataPerMod3, PreparedRouteMeta } from '../types/types.js';
+import { RouteExtensionMeta, PreparedRouteMeta } from '../types/types.js';
 import { HTTP_INTERCEPTORS } from '../top/constants.js';
 import { ControllerMetadata } from '../types/controller-metadata.js';
 import { InterceptorWithGuardsPerRou } from '#interceptors/interceptor-with-guards-per-rou.js';
@@ -45,7 +45,7 @@ import { RouteContext } from '#services/route-context.js';
 
 @injectable()
 export class PreRouterExtension implements Extension<void> {
-  protected extensionGroupMeta: ExtensionGroupMeta<MetadataPerMod3>;
+  protected extensionGroupMeta: ExtensionGroupMeta<RouteExtensionMeta>;
   protected injectorPerMod: Injector;
 
   constructor(
@@ -69,50 +69,50 @@ export class PreRouterExtension implements Extension<void> {
     this.setRoutes(this.extensionGroupMeta, preparedRouteMeta);
   }
 
-  protected addDefaultProviders(aMetadataPerMod3: MetadataPerMod3[]) {
+  protected addDefaultProviders(aRouteExtensionMeta: RouteExtensionMeta[]) {
     // Since each extension received the same `meta` array and not a copy of it,
     // we can take `meta` from any element in the `groupData` array.
-    const metadataPerMod3 = aMetadataPerMod3.at(0);
-    if (!metadataPerMod3) {
+    const routeExtensionMeta = aRouteExtensionMeta.at(0);
+    if (!routeExtensionMeta) {
       return;
     }
 
-    metadataPerMod3.meta.providersPerReq.unshift(
+    routeExtensionMeta.meta.providersPerReq.unshift(
       { token: HttpBackend, useClass: DefaultHttpBackend },
       { token: HttpFrontend, useClass: DefaultHttpFrontend },
       ChainMaker,
     );
 
-    metadataPerMod3.meta.providersPerRou.unshift(
+    routeExtensionMeta.meta.providersPerRou.unshift(
       { token: HttpBackend, useClass: DefaultHttpBackendPerRou },
       { token: ChainMaker, useClass: DefaultChainMakerPerRou },
       { token: HttpFrontend, useClass: DefaultHttpFrontendPerRou },
     );
   }
 
-  protected prepareRoutesMeta(aMetadataPerMod3: MetadataPerMod3[]) {
+  protected prepareRoutesMeta(aRouteExtensionMeta: RouteExtensionMeta[]) {
     const preparedRouteMeta: PreparedRouteMeta[] = [];
 
-    aMetadataPerMod3.forEach((metadataPerMod3) => {
-      if (!metadataPerMod3.aControllerMetadata.length) {
+    aRouteExtensionMeta.forEach((routeExtensionMeta) => {
+      if (!routeExtensionMeta.aControllerMetadata.length) {
         // No routes from this extension.
         return;
       }
 
-      const { aControllerMetadata, guards1 } = metadataPerMod3;
+      const { aControllerMetadata, guards1 } = routeExtensionMeta;
 
       aControllerMetadata.forEach((controllerMetadata) => {
         let handle: RouteHandler;
         if (controllerMetadata.scope == 'route') {
-          handle = this.getHandlerPerMod(metadataPerMod3, this.injectorPerMod, controllerMetadata);
+          handle = this.getHandlerPerMod(routeExtensionMeta, this.injectorPerMod, controllerMetadata);
         } else {
-          handle = this.getHandlerPerReq(metadataPerMod3, this.injectorPerMod, controllerMetadata);
+          handle = this.getHandlerPerReq(routeExtensionMeta, this.injectorPerMod, controllerMetadata);
         }
 
         const countOfGuards = controllerMetadata.routeMeta.resolvedGuards!.length + guards1.length;
 
         preparedRouteMeta.push({
-          moduleName: metadataPerMod3.normalizedModuleMeta.name,
+          moduleName: routeExtensionMeta.normalizedModuleMeta.name,
           httpMethods: controllerMetadata.httpMethods,
           fullPath: controllerMetadata.fullPath,
           handle,
@@ -125,7 +125,7 @@ export class PreRouterExtension implements Extension<void> {
   }
 
   protected getHandlerPerMod(
-    metadataPerMod3: MetadataPerMod3,
+    routeExtensionMeta: RouteExtensionMeta,
     injectorPerMod: Injector,
     controllerMetadata: ControllerMetadata,
   ) {
@@ -136,16 +136,16 @@ export class PreRouterExtension implements Extension<void> {
     mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend, multi: true });
     const controllerName = getDebugClassName(routeMeta.Controller) || 'unknown';
 
-    if (metadataPerMod3.guards1.length || controllerMetadata.guards.length) {
+    if (routeExtensionMeta.guards1.length || controllerMetadata.guards.length) {
       mergedPerRou.push(InterceptorWithGuardsPerRou);
       mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: InterceptorWithGuardsPerRou, multi: true });
     }
-    mergedPerRou.push(...metadataPerMod3.meta.providersPerRou, ...providersPerRou);
+    mergedPerRou.push(...routeExtensionMeta.meta.providersPerRou, ...providersPerRou);
 
     const resolvedPerRou = Injector.resolve(mergedPerRou);
     routeMeta.resolvedGuards = this.getResolvedGuards(controllerMetadata.guards, resolvedPerRou);
     routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(
-      metadataPerMod3.guards1,
+      routeExtensionMeta.guards1,
       controllerName,
       httpMethods,
       fullPath,
@@ -203,28 +203,28 @@ export class PreRouterExtension implements Extension<void> {
   }
 
   protected getHandlerPerReq(
-    metadataPerMod3: MetadataPerMod3,
+    routeExtensionMeta: RouteExtensionMeta,
     injectorPerMod: Injector,
     controllerMetadata: ControllerMetadata,
   ) {
     const { providersPerRou, providersPerReq, routeMeta, httpMethods: httpMethod, fullPath } = controllerMetadata;
-    const mergedPerRou = [...metadataPerMod3.meta.providersPerRou, ...providersPerRou];
+    const mergedPerRou = [...routeExtensionMeta.meta.providersPerRou, ...providersPerRou];
     const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'Rou');
 
     const mergedPerReq: Provider[] = [];
     mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend, multi: true });
-    if (metadataPerMod3.guards1.length || controllerMetadata.guards.length) {
+    if (routeExtensionMeta.guards1.length || controllerMetadata.guards.length) {
       mergedPerReq.push(InterceptorWithGuards);
       mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: InterceptorWithGuards, multi: true });
     }
-    mergedPerReq.push(...metadataPerMod3.meta.providersPerReq, ...providersPerReq);
+    mergedPerReq.push(...routeExtensionMeta.meta.providersPerReq, ...providersPerReq);
 
     const resolvedPerReq = Injector.resolve(mergedPerReq);
     const resolvedPerRou = Injector.resolve(mergedPerRou);
     const controllerName = getDebugClassName(routeMeta.Controller) || 'unknown';
     routeMeta.resolvedGuards = this.getResolvedGuards(controllerMetadata.guards, resolvedPerReq);
     routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(
-      metadataPerMod3.guards1,
+      routeExtensionMeta.guards1,
       controllerName,
       httpMethod,
       fullPath,
@@ -349,7 +349,7 @@ export class PreRouterExtension implements Extension<void> {
     }
   }
 
-  protected setRoutes(extensionGroupMeta: ExtensionGroupMeta<MetadataPerMod3>, preparedRouteMeta: PreparedRouteMeta[]) {
+  protected setRoutes(extensionGroupMeta: ExtensionGroupMeta<RouteExtensionMeta>, preparedRouteMeta: PreparedRouteMeta[]) {
     const router = this.injectorPerMod.get(Router);
     if (!extensionGroupMeta.delay) {
       const appHasRoutes = this.checkPresenceOfRoutesInApplication(extensionGroupMeta.groupDataPerApp);
@@ -378,7 +378,7 @@ export class PreRouterExtension implements Extension<void> {
     });
   }
 
-  protected checkPresenceOfRoutesInApplication(groupDataPerApp: AppExtensionGroupMeta<MetadataPerMod3>[]) {
+  protected checkPresenceOfRoutesInApplication(groupDataPerApp: AppExtensionGroupMeta<RouteExtensionMeta>[]) {
     return groupDataPerApp.reduce((prev1, curr1) => {
       return (
         prev1 || curr1.groupData.reduce((prev2, curr2) => prev2 || Boolean(curr2.aControllerMetadata.length), false)

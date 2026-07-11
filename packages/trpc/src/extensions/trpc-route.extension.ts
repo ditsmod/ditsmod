@@ -5,7 +5,7 @@ import { TrpcResolvedModuleMetadata } from '#init/trpc-deep-modules-importer.js'
 import { initTrpcModule } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { TrpcRouteMetadata } from '#decorators/trpc-route.js';
 import { ControllerDecoratorOptions } from '#decorators/trpc-controller.js';
-import { MetadataPerMod3 } from '#types/types.js';
+import { RouteExtensionMeta } from '#types/types.js';
 import { ControllerMetadata } from '#types/controller-metadata.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';
 import { InvalidInterceptor } from '../error/trpc-errors.js';
@@ -15,21 +15,21 @@ import { TrpcRouteService } from '#services/route.service.js';
 import { normalizeGuards } from '#utils/prepare-guards.js';
 
 @injectable()
-export class TrpcRouteExtension implements Extension<MetadataPerMod3> {
-  protected metadataPerMod3: MetadataPerMod3;
+export class TrpcRouteExtension implements Extension<RouteExtensionMeta> {
+  protected routeExtensionMeta: RouteExtensionMeta;
 
   constructor(protected resolvedModuleMetadata: ResolvedModuleMetadata<TrpcResolvedModuleMetadata>) {}
 
   async stage1() {
     const trpcResolvedModuleMetadata = this.resolvedModuleMetadata.deepImportedModules.get(initTrpcModule)!;
-    this.metadataPerMod3 = new MetadataPerMod3();
-    this.metadataPerMod3.meta = trpcResolvedModuleMetadata.meta;
-    this.metadataPerMod3.normalizedModuleMeta = this.resolvedModuleMetadata.normalizedModuleMeta;
-    this.metadataPerMod3.aControllerMetadata = this.getControllersMetadata(trpcResolvedModuleMetadata);
-    this.metadataPerMod3.guards1 = trpcResolvedModuleMetadata.guards1;
-    // this.metadataPerMod3.guards1 = [];
+    this.routeExtensionMeta = new RouteExtensionMeta();
+    this.routeExtensionMeta.meta = trpcResolvedModuleMetadata.meta;
+    this.routeExtensionMeta.normalizedModuleMeta = this.resolvedModuleMetadata.normalizedModuleMeta;
+    this.routeExtensionMeta.aControllerMetadata = this.getControllersMetadata(trpcResolvedModuleMetadata);
+    this.routeExtensionMeta.guards1 = trpcResolvedModuleMetadata.guards1;
+    // this.routeExtensionMeta.guards1 = [];
 
-    return this.metadataPerMod3;
+    return this.routeExtensionMeta;
   }
 
   protected getControllersMetadata(trpcResolvedModuleMetadata: TrpcResolvedModuleMetadata) {

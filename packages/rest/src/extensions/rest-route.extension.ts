@@ -1,7 +1,7 @@
 import { inspect } from 'node:util';
 import { injectable, Extension, Provider, Reflector, Class, HttpMethod, ResolvedModuleMetadata } from '@ditsmod/core';
 
-import { MetadataPerMod3 } from '#types/types.js';
+import { RouteExtensionMeta } from '#types/types.js';
 import { isCtrlDecor, isRoute } from '#types/type.guards.js';
 import { RouteMetadata } from '#decorators/route.js';
 import { ControllerMetadata } from '#types/controller-metadata.js';
@@ -14,8 +14,8 @@ import { RestResolvedModuleMetadata } from '#init/types.js';
 import { FailedValidationOfRoute } from '#errors';
 
 @injectable()
-export class RestRouteExtension implements Extension<MetadataPerMod3> {
-  protected metadataPerMod3: MetadataPerMod3;
+export class RestRouteExtension implements Extension<RouteExtensionMeta> {
+  protected routeExtensionMeta: RouteExtensionMeta;
 
   constructor(
     protected appOptions: AppOptions,
@@ -24,16 +24,16 @@ export class RestRouteExtension implements Extension<MetadataPerMod3> {
 
   async stage1() {
     const restResolvedModuleMetadata = this.resolvedModuleMetadata.deepImportedModules.get(initRest)!;
-    this.metadataPerMod3 = new MetadataPerMod3();
-    this.metadataPerMod3.meta = restResolvedModuleMetadata.meta;
+    this.routeExtensionMeta = new RouteExtensionMeta();
+    this.routeExtensionMeta.meta = restResolvedModuleMetadata.meta;
     const { path: prefixPerApp } = this.appOptions;
-    this.metadataPerMod3.prefixPerMod = restResolvedModuleMetadata.prefixPerMod;
-    this.metadataPerMod3.normalizedModuleMeta = this.resolvedModuleMetadata.normalizedModuleMeta;
-    this.metadataPerMod3.aControllerMetadata = this.getControllersMetadata(prefixPerApp, restResolvedModuleMetadata);
-    this.metadataPerMod3.guards1 = restResolvedModuleMetadata.guards1;
-    // this.metadataPerMod3.guards1 = [];
+    this.routeExtensionMeta.prefixPerMod = restResolvedModuleMetadata.prefixPerMod;
+    this.routeExtensionMeta.normalizedModuleMeta = this.resolvedModuleMetadata.normalizedModuleMeta;
+    this.routeExtensionMeta.aControllerMetadata = this.getControllersMetadata(prefixPerApp, restResolvedModuleMetadata);
+    this.routeExtensionMeta.guards1 = restResolvedModuleMetadata.guards1;
+    // this.routeExtensionMeta.guards1 = [];
 
-    return this.metadataPerMod3;
+    return this.routeExtensionMeta;
   }
 
   protected getControllersMetadata(prefixPerApp: string = '', restResolvedModuleMetadata: RestResolvedModuleMetadata) {

@@ -21,7 +21,7 @@ import {
   XSecurityRequirementObject,
 } from '@ts-stack/openapi-spec';
 import { stringify } from 'yaml';
-import { MetadataPerMod3, NormalizedGuard, RestRouteExtension } from '@ditsmod/rest';
+import { RouteExtensionMeta, NormalizedGuard, RestRouteExtension } from '@ditsmod/rest';
 
 import { OasRouteMeta } from '#types/oas-route-meta.js';
 import { DEFAULT_OAS_OBJECT, defaultForNonOasGuard } from '#constants';
@@ -33,7 +33,7 @@ import { OasRouteMetaNotFound } from '#errors';
 @injectable()
 export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
   protected oasObject: XOasObject;
-  protected extensionGroupMeta: PartialExtensionGroupMeta<MetadataPerMod3>;
+  protected extensionGroupMeta: PartialExtensionGroupMeta<RouteExtensionMeta>;
   protected injectorPerMod: Injector;
 
   constructor(
@@ -65,12 +65,12 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     }
   }
 
-  protected async compileOasObject(groupDataPerApp: AppExtensionGroupMeta<MetadataPerMod3>[]) {
+  protected async compileOasObject(groupDataPerApp: AppExtensionGroupMeta<RouteExtensionMeta>[]) {
     const paths: XPathsObject = {};
     this.initOasObject();
     for (const extensionGroupMetaPerApp of groupDataPerApp) {
-      for (const metadataPerMod3 of extensionGroupMetaPerApp.groupData) {
-        metadataPerMod3.aControllerMetadata.forEach(({ httpMethods, fullPath, routeMeta, guards }) => {
+      for (const routeExtensionMeta of extensionGroupMetaPerApp.groupData) {
+        routeExtensionMeta.aControllerMetadata.forEach(({ httpMethods, fullPath, routeMeta, guards }) => {
           httpMethods.forEach((method) => {
             const { oasPath, resolvedGuards, operationObject } = routeMeta as OasRouteMeta;
             if (operationObject) {
@@ -80,7 +80,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
               paths[`/${oasPath}`] = { ...(paths[`/${oasPath}`] || {}), ...pathItemObject };
             } else {
               if (!method) {
-                throw new OasRouteMetaNotFound(metadataPerMod3.normalizedModuleMeta.name);
+                throw new OasRouteMetaNotFound(routeExtensionMeta.normalizedModuleMeta.name);
               }
               this.applyNonOasRoute(fullPath, paths, method, guards);
             }

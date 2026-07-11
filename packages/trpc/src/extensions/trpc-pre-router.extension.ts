@@ -22,7 +22,7 @@ import { inspect } from 'node:util';
 import type { AnyMiddlewareFunction } from '@trpc/server';
 
 import { trpcRoute } from '#decorators/trpc-route.js';
-import { MetadataPerMod3 } from '#types/types.js';
+import { RouteExtensionMeta } from '#types/types.js';
 import { TrpcRouteExtension } from './trpc-route.extension.js';
 import { TrpcHttpBackend, TrpcHttpFrontend } from '#interceptors/tokens-and-types.js';
 import { TRPC_HTTP_INTERCEPTORS, RAW_REQ, RAW_RES } from '#types/types.js';
@@ -50,7 +50,7 @@ import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js'
 
 @injectable()
 export class TrpcPreRouterExtension implements Extension<void> {
-  protected extensionGroupMeta: ExtensionGroupMeta<MetadataPerMod3>;
+  protected extensionGroupMeta: ExtensionGroupMeta<RouteExtensionMeta>;
   protected injectorPerMod: Injector;
   protected injectorPerApp: Injector;
 
@@ -72,22 +72,22 @@ export class TrpcPreRouterExtension implements Extension<void> {
     this.prepareRoutesMeta(this.extensionGroupMeta.groupData);
   }
 
-  protected addDefaultProviders(aMetadataPerMod3: MetadataPerMod3[]) {
+  protected addDefaultProviders(aRouteExtensionMeta: RouteExtensionMeta[]) {
     // Since each extension received the same `meta` array and not a copy of it,
     // we can take `meta` from any element in the `groupData` array.
-    const metadataPerMod3 = aMetadataPerMod3.at(0);
-    if (!metadataPerMod3) {
+    const routeExtensionMeta = aRouteExtensionMeta.at(0);
+    if (!routeExtensionMeta) {
       return;
     }
 
-    metadataPerMod3.meta.providersPerReq.unshift(
+    routeExtensionMeta.meta.providersPerReq.unshift(
       { token: TrpcHttpBackend, useClass: DefaultTrpcHttpBackend },
       { token: TrpcHttpFrontend, useClass: DefaultTrpcHttpFrontend },
       TrpcChainMaker,
       ...defaultProvidersPerReq,
     );
 
-    metadataPerMod3.meta.providersPerRou.unshift(
+    routeExtensionMeta.meta.providersPerRou.unshift(
       { token: TrpcHttpBackend, useClass: RouteScopedDefaultTrpcHttpBackend },
       { token: TrpcChainMaker, useClass: RouteScopedDefaultTrpcChainMaker },
       { token: TrpcHttpFrontend, useClass: RouteScopedDefaultTrpcHttpFrontend },
@@ -95,24 +95,24 @@ export class TrpcPreRouterExtension implements Extension<void> {
     );
   }
 
-  protected prepareRoutesMeta(aMetadataPerMod3: MetadataPerMod3[]) {
-    aMetadataPerMod3.forEach((metadataPerMod3) => {
-      if (!metadataPerMod3.aControllerMetadata.length) {
+  protected prepareRoutesMeta(aRouteExtensionMeta: RouteExtensionMeta[]) {
+    aRouteExtensionMeta.forEach((routeExtensionMeta) => {
+      if (!routeExtensionMeta.aControllerMetadata.length) {
         // No routes from this extension.
         return;
       }
 
-      const { aControllerMetadata, guards1 } = metadataPerMod3;
+      const { aControllerMetadata, guards1 } = routeExtensionMeta;
 
       aControllerMetadata.forEach((controllerMetadata) => {
-        this.setHandlerPerReq(metadataPerMod3, this.injectorPerMod, controllerMetadata);
+        this.setHandlerPerReq(routeExtensionMeta, this.injectorPerMod, controllerMetadata);
         const countOfGuards = controllerMetadata.routeMeta.resolvedGuards!.length + guards1.length;
       });
     });
   }
 
   protected getHandlerPerRou(
-    metadataPerMod3: MetadataPerMod3,
+    routeExtensionMeta: RouteExtensionMeta,
     injectorPerMod: Injector,
     controllerMetadata: ControllerMetadata,
   ): AnyMiddlewareFunction {
@@ -123,7 +123,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
     mergedPerRou.push({ token: TRPC_HTTP_INTERCEPTORS, useToken: TrpcHttpFrontend as any, multi: true });
     const controllerName = getDebugClassName(routeMeta.Controller) || 'unknown';
 
-    if (metadataPerMod3.guards1.length || controllerMetadata.guards.length) {
+    if (routeExtensionMeta.guards1.length || controllerMetadata.guards.length) {
       mergedPerRou.push(InterceptorWithGuardsPerRou);
       mergedPerRou.push({ token: TRPC_HTTP_INTERCEPTORS, useToken: InterceptorWithGuardsPerRou, multi: true });
     }
@@ -136,11 +136,11 @@ export class TrpcPreRouterExtension implements Extension<void> {
         throw new InvalidInterceptor(whatIsThis);
       }
     }
-    mergedPerRou.push(...metadataPerMod3.meta.providersPerRou, ...providersPerRou);
+    mergedPerRou.push(...routeExtensionMeta.meta.providersPerRou, ...providersPerRou);
 
     const resolvedPerRou = Injector.resolve(mergedPerRou);
     routeMeta.resolvedGuards = getResolvedGuards(controllerMetadata.guards, resolvedPerRou);
-    routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(metadataPerMod3.guards1, controllerName);
+    routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(routeExtensionMeta.guards1, controllerName);
     const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou, 'Rou');
     this.checkDeps(injectorPerRou, routeMeta, controllerName);
     const resolvedTrpcChainMaker = resolvedPerRou.find((rp) => rp.dualKey.token === TrpcChainMaker)!;
@@ -186,27 +186,27 @@ export class TrpcPreRouterExtension implements Extension<void> {
   }
 
   protected setHandlerPerReq(
-    metadataPerMod3: MetadataPerMod3,
+    routeExtensionMeta: RouteExtensionMeta,
     injectorPerMod: Injector,
     controllerMetadata: ControllerMetadata,
   ) {
     const { providersPerRou, providersPerReq, routeMeta } = controllerMetadata;
-    const mergedPerRou: Provider[] = [...metadataPerMod3.meta.providersPerRou, ...providersPerRou];
+    const mergedPerRou: Provider[] = [...routeExtensionMeta.meta.providersPerRou, ...providersPerRou];
     const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'Rou');
 
     const mergedPerReq: Provider[] = [];
     mergedPerReq.push({ token: TRPC_HTTP_INTERCEPTORS, useToken: TrpcHttpFrontend as any, multi: true });
-    if (metadataPerMod3.guards1.length || controllerMetadata.guards.length) {
+    if (routeExtensionMeta.guards1.length || controllerMetadata.guards.length) {
       mergedPerReq.push(InterceptorWithGuards);
       mergedPerReq.push({ token: TRPC_HTTP_INTERCEPTORS, useToken: InterceptorWithGuards, multi: true });
     }
-    mergedPerReq.push(...metadataPerMod3.meta.providersPerReq, ...providersPerReq);
+    mergedPerReq.push(...routeExtensionMeta.meta.providersPerReq, ...providersPerReq);
 
     const resolvedPerReq = Injector.resolve(mergedPerReq);
     const resolvedPerRou = Injector.resolve(mergedPerRou);
     const controllerName = getDebugClassName(routeMeta.Controller) || 'unknown';
     routeMeta.resolvedGuards = getResolvedGuards(controllerMetadata.guards, resolvedPerReq);
-    routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(metadataPerMod3.guards1, controllerName, true);
+    routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(routeExtensionMeta.guards1, controllerName, true);
     const injPerReq = injectorPerRou.createChildFromResolved(resolvedPerReq, 'Req');
     // routeMeta.resolvedHandler = this.getResolvedHandler(routeMeta, resolvedPerReq);
     this.checkDeps(injPerReq, routeMeta, controllerName);
@@ -229,7 +229,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
     };
 
     const routeService = injectorPerRou.get(TrpcRouteService) as PublicTrpcRouteService;
-    const middlewarePerRou = () => this.getHandlerPerRou(metadataPerMod3, injectorPerMod, controllerMetadata);
+    const middlewarePerRou = () => this.getHandlerPerRou(routeExtensionMeta, injectorPerMod, controllerMetadata);
     routeService.setHandlerPerReq(routeMeta, resolvedPerReq, middlewarePerRou, handlerPerReq);
 
     const methodAsToken = routeMeta.Controller.prototype[routeMeta.methodName];

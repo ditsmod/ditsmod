@@ -73,7 +73,7 @@ export class MyCustomRouterModule {}
 
 ## `RestRouteExtension` {#route-extension}
 
-This module exports `RestRouteExtension`. This extension returns metadata with the [`Array<MetadataPerMod3>`][2] interface — an array of dynamic metadata intended for creating request handlers. Each element of this array represents a separate route.
+This module exports `RestRouteExtension`. This extension returns metadata with the [`Array<RouteExtensionMeta>`][2] interface — an array of dynamic metadata intended for creating request handlers. Each element of this array represents a separate route.
 
 ## `PreRouterExtension` {#pre-router-extension}
 

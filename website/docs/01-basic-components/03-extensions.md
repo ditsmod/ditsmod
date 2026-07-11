@@ -323,7 +323,7 @@ export class Extension2 implements Extension<void> {
     }
 
     extensionGroupMeta.groupDataPerApp.forEach((totaStage1Meta) => {
-      totaStage1Meta.groupData.forEach((metadataPerMod3) => {
+      totaStage1Meta.groupData.forEach((routeExtensionMeta) => {
         // Do something here.
         // ...
       });
@@ -368,7 +368,7 @@ await this.extensionManager.stage1(Extension3); // Повертаються да
 
 ## Динамічне додавання провайдерів {#dynamic-addition-of-providers}
 
-Якщо ви використовуєте `@ditsmod/rest`, будь-яке розширення може вказати залежність від `RestRouteExtension`, щоб динамічно додавати провайдери на будь-якому рівні. Це розширення використовує метадані з інтерфейсом `ResolvedModuleMetadata` і повертає метадані з інтерфейсом `MetadataPerMod3`.
+Якщо ви використовуєте `@ditsmod/rest`, будь-яке розширення може вказати залежність від `RestRouteExtension`, щоб динамічно додавати провайдери на будь-якому рівні. Це розширення використовує метадані з інтерфейсом `ResolvedModuleMetadata` і повертає метадані з інтерфейсом `RouteExtensionMeta`.
 
 Можна проглянути як це зроблено у [BodyParserExtension][102]:
 
@@ -386,13 +386,13 @@ export class BodyParserExtension implements Extension<void> {
 
   async stage1() {
     const extensionGroupMeta = await this.extensionManager.stage1(RestRouteExtension);
-    extensionGroupMeta.groupData.forEach((metadataPerMod3) => {
-      const { aControllerMetadata } = metadataPerMod3;
-      const { providersPerMod } = metadataPerMod3.normalizedModuleMeta;
+    extensionGroupMeta.groupData.forEach((routeExtensionMeta) => {
+      const { aControllerMetadata } = routeExtensionMeta;
+      const { providersPerMod } = routeExtensionMeta.normalizedModuleMeta;
       aControllerMetadata.forEach(({ providersPerRou, providersPerReq, httpMethods, scope }) => {
         // Merging the providers from a module and a controller
-        const mergedProvidersPerRou = [...metadataPerMod3.meta.providersPerRou, ...providersPerRou];
-        const mergedProvidersPerReq = [...metadataPerMod3.meta.providersPerReq, ...providersPerReq];
+        const mergedProvidersPerRou = [...routeExtensionMeta.meta.providersPerRou, ...providersPerRou];
+        const mergedProvidersPerReq = [...routeExtensionMeta.meta.providersPerReq, ...providersPerReq];
 
         // Creating a hierarchy of injectors.
         const injectorPerApp = Injector.resolveAndCreate(this.providersPerApp, 'App');

@@ -13,7 +13,7 @@ import {
   ControllerMetadata,
   ControllerDecoratorOptions1,
   isCtrlDecor,
-  MetadataPerMod3,
+  RouteExtensionMeta,
   RestResolvedModuleMetadata,
   RouteMeta,
   RestRouteExtension,
@@ -28,7 +28,7 @@ import { OasOptions } from '#types/oas-options.js';
 import { CompilingOasRoutesFailed, ThrowParamNotFoundInPath } from '#errors';
 
 @injectable()
-export class OpenapiRouteExtension extends RestRouteExtension implements Extension<MetadataPerMod3> {
+export class OpenapiRouteExtension extends RestRouteExtension implements Extension<RouteExtensionMeta> {
   constructor(
     protected override appOptions: AppOptions,
     protected override resolvedModuleMetadata: ResolvedModuleMetadata<RestResolvedModuleMetadata>,

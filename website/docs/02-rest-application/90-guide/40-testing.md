@@ -227,13 +227,13 @@ TestRestApplication.createTestApp(AppModule)
 
 ```ts
 import { Provider } from '@ditsmod/core';
-import { MetadataPerMod3, RestRouteExtension } from '@ditsmod/rest';
+import { RouteExtensionMeta, RestRouteExtension } from '@ditsmod/rest';
 import { TestRestApplication, ExtensionMetaOverrider } from '@ditsmod/rest-testing';
 
 export class TestRestPlugin extends TestRestApplication {
   overrideExtensionRestMeta(providersToOverride: Provider[]) {
-    const overrideRoutesMeta: ExtensionMetaOverrider<MetadataPerMod3> = (extensionGroupMeta) => {
-      extensionGroupMeta.groupData?.forEach((metadataPerMod3) => {
+    const overrideRoutesMeta: ExtensionMetaOverrider<RouteExtensionMeta> = (extensionGroupMeta) => {
+      extensionGroupMeta.groupData?.forEach((routeExtensionMeta) => {
         // ...
       });
     };

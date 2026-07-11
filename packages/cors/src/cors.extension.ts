@@ -15,7 +15,7 @@ import {
   RequestContext,
   ControllerMetadata,
   HTTP_INTERCEPTORS,
-  MetadataPerMod3,
+  RouteExtensionMeta,
   RouteMeta,
   RestRouteExtension,
 } from '@ditsmod/rest';
@@ -42,11 +42,11 @@ export class CorsExtension implements Extension<void | false> {
     return; // Make TypeScript happy
   }
 
-  protected prepareDataAndSetInterceptors(groupDataPerApp: AppExtensionGroupMeta<MetadataPerMod3>[]) {
+  protected prepareDataAndSetInterceptors(groupDataPerApp: AppExtensionGroupMeta<RouteExtensionMeta>[]) {
     groupDataPerApp.forEach((extensionGroupMetaPerApp) => {
-      extensionGroupMetaPerApp.groupData.forEach((metadataPerMod3) => {
-        const { aControllerMetadata } = metadataPerMod3;
-        const { providersPerMod } = metadataPerMod3.normalizedModuleMeta;
+      extensionGroupMetaPerApp.groupData.forEach((routeExtensionMeta) => {
+        const { aControllerMetadata } = routeExtensionMeta;
+        const { providersPerMod } = routeExtensionMeta.normalizedModuleMeta;
         const injector = Injector.resolveAndCreate([...this.providersPerApp, ...providersPerMod]);
         const routesWithOptions = this.getRoutesWithOptions(
           providersPerMod,
@@ -56,7 +56,7 @@ export class CorsExtension implements Extension<void | false> {
         aControllerMetadata.push(...routesWithOptions);
 
         aControllerMetadata.forEach(({ providersPerReq, providersPerRou, scope }) => {
-          const mergedPerRou = [...metadataPerMod3.meta.providersPerRou, ...providersPerRou];
+          const mergedPerRou = [...routeExtensionMeta.meta.providersPerRou, ...providersPerRou];
           const corsOptions = this.getCorsOptions(injector, mergedPerRou);
           const mergedCorsOptions = mergeOptions(corsOptions);
           providersPerRou.unshift({ token: CorsOptions, useValue: mergedCorsOptions });
@@ -81,11 +81,11 @@ export class CorsExtension implements Extension<void | false> {
     return clonedCorsOptions;
   }
 
-  protected getPathWtihOptions(aMetadataPerMod3: MetadataPerMod3[]) {
+  protected getPathWtihOptions(aRouteExtensionMeta: RouteExtensionMeta[]) {
     const sPathWithOptions = new Set<string>();
 
-    aMetadataPerMod3.forEach((metadataPerMod3) => {
-      metadataPerMod3.aControllerMetadata
+    aRouteExtensionMeta.forEach((routeExtensionMeta) => {
+      routeExtensionMeta.aControllerMetadata
         .filter(({ httpMethods }) => httpMethods.includes('OPTIONS'))
         .forEach(({ fullPath }) => sPathWithOptions.add(fullPath));
     });
@@ -95,10 +95,10 @@ export class CorsExtension implements Extension<void | false> {
 
   protected getRoutesWithOptions(
     providersPerMod: Provider[],
-    aMetadataPerMod3: MetadataPerMod3[],
+    aRouteExtensionMeta: RouteExtensionMeta[],
     aControllerMetadata: ControllerMetadata[],
   ) {
-    const sPathWithOptions = this.getPathWtihOptions(aMetadataPerMod3);
+    const sPathWithOptions = this.getPathWtihOptions(aRouteExtensionMeta);
     const newArrControllersMetadata2: ControllerMetadata[] = []; // Routes with OPTIONS methods
 
     aControllerMetadata.forEach(({ httpMethods, fullPath }) => {

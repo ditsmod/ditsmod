@@ -12,7 +12,7 @@ export {
   RestInitDecoratorOptions,
   RestModuleOptions,
 } from './init/rest-init-raw-meta.js';
-export { RouteParam, MetadataPerMod3, RedirectStatusCodes } from './types/types.js';
+export { RouteParam, RouteExtensionMeta, RedirectStatusCodes } from './types/types.js';
 export { RestShallowModuleImports, RestResolvedModuleMetadata } from '#init/types.js';
 export { RestModule } from './init/rest.module.js';
 export { RequestContext } from './services/request-context.js';

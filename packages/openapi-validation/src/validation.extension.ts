@@ -23,9 +23,9 @@ export class ValidationExtension implements Extension<void> {
   protected async filterParameters() {
     const extensionGroupMeta = await this.extensionManager.stage1(RestRouteExtension);
 
-    extensionGroupMeta.groupData.forEach((metadataPerMod3) => {
-      const { aControllerMetadata } = metadataPerMod3;
-      const { providersPerMod } = metadataPerMod3.normalizedModuleMeta;
+    extensionGroupMeta.groupData.forEach((routeExtensionMeta) => {
+      const { aControllerMetadata } = routeExtensionMeta;
+      const { providersPerMod } = routeExtensionMeta.normalizedModuleMeta;
       providersPerMod.push({ token: AjvService, useValue: this.ajvService });
 
       aControllerMetadata.forEach(({ providersPerReq, routeMeta }) => {
@@ -57,7 +57,7 @@ export class ValidationExtension implements Extension<void> {
         validationRouteMeta.options = this.validationOptions || new ValidationOptions();
 
         if (validationRouteMeta.parameters.length) {
-          metadataPerMod3.meta.providersPerReq.unshift(ParametersInterceptor);
+          routeExtensionMeta.meta.providersPerReq.unshift(ParametersInterceptor);
           providersPerReq.push({
             token: HTTP_INTERCEPTORS,
             useToken: ParametersInterceptor,
@@ -65,7 +65,7 @@ export class ValidationExtension implements Extension<void> {
           });
         }
         if (validationRouteMeta.requestBodySchema) {
-          metadataPerMod3.meta.providersPerReq.unshift(RequestBodyInterceptor);
+          routeExtensionMeta.meta.providersPerReq.unshift(RequestBodyInterceptor);
           providersPerReq.push({
             token: HTTP_INTERCEPTORS,
             useToken: RequestBodyInterceptor,

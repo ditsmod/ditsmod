@@ -1,5 +1,5 @@
 import type { Provider, ProviderBuilder } from '@ditsmod/core';
-import type { MetadataPerMod3} from '@ditsmod/rest';
+import type { RouteExtensionMeta} from '@ditsmod/rest';
 import { RestRouteExtension } from '@ditsmod/rest';
 
 import { TestRestApplication } from './test-application.js';
@@ -9,12 +9,12 @@ import { TestOverrider } from './test-overrider.js';
 export class TestRestPlugin extends TestRestApplication {
   overrideExtensionRestMeta(providersToOverride: ProviderBuilder | Provider[]) {
     const aProvidersToOverride: Provider[] = [...providersToOverride];
-    const overrideRoutesMeta: ExtensionMetaOverrider<MetadataPerMod3> = (extensionGroupMeta) => {
+    const overrideRoutesMeta: ExtensionMetaOverrider<RouteExtensionMeta> = (extensionGroupMeta) => {
       if (!aProvidersToOverride.length) {
         return;
       }
-      extensionGroupMeta.groupData?.forEach((metadataPerMod3) => {
-        metadataPerMod3.aControllerMetadata.forEach((controllerMetadata) => {
+      extensionGroupMeta.groupData?.forEach((routeExtensionMeta) => {
+        routeExtensionMeta.aControllerMetadata.forEach((controllerMetadata) => {
           aProvidersToOverride.forEach((providerToOverride) => {
             TestOverrider.overrideProvider(
               [controllerMetadata.providersPerRou, controllerMetadata.providersPerReq],
