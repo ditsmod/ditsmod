@@ -39,7 +39,7 @@ import { DefaultTrpcHttpBackend } from '#interceptors/default-http-backend.js';
 import { DefaultTrpcHttpFrontend } from '#interceptors/default-http-frontend.js';
 import { RouteScopedDefaultTrpcHttpBackend } from '#interceptors/default-ctx-http-backend.js';
 import { RouteScopedDefaultTrpcChainMaker } from '#interceptors/default-ctx-chain-maker.js';
-import { PublicTrpcRouteService, TrpcRouteService } from '#services/route.service.js';
+import { InternalTrpcRouteService, TrpcRouteService } from '#services/route.service.js';
 import { TRPC_OPTS } from '#types/constants.js';
 import { TrpcOpts } from '#types/types.js';
 import { getResolvedGuards } from '#utils/prepare-guards.js';
@@ -49,7 +49,7 @@ import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js'
 import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js';
 
 @injectable()
-export class TrpcPreRouterExtension implements Extension<void> {
+export class TrpcRequestDispatcherExtension implements Extension<void> {
   protected extensionGroupMeta: ExtensionGroupMeta<RouteExtensionMeta>;
   protected injectorPerMod: Injector;
   protected injectorPerApp: Injector;
@@ -228,7 +228,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
       // });
     };
 
-    const routeService = injectorPerRou.get(TrpcRouteService) as PublicTrpcRouteService;
+    const routeService = injectorPerRou.get(TrpcRouteService) as InternalTrpcRouteService;
     const middlewarePerRou = () => this.getHandlerPerRou(routeExtensionMeta, injectorPerMod, controllerMetadata);
     routeService.setHandlerPerReq(routeMeta, resolvedPerReq, middlewarePerRou, handlerPerReq);
 

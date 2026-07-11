@@ -186,7 +186,7 @@ export class TrpcRouteService<Context extends AnyObj = AnyObj, Input = void> {
 /**
  * Opens protected properties.
  */
-export class PublicTrpcRouteService extends TrpcRouteService {
+export class InternalTrpcRouteService extends TrpcRouteService {
   override setHandlerPerReq(
     routeMeta: TrpcRouteMeta,
     resolvedPerReq: ResolvedProvider[],

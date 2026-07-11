@@ -4,19 +4,19 @@ import { initTRPC } from '@trpc/server';
 
 import type { RequestListener, TrpcRootModule } from '../types/types.js';
 import { SERVER } from '../types/types.js';
-import { TrpcPreRouter } from '#services/pre-router.js';
+import { TrpcRequestDispatcher } from '#services/pre-router.js';
 import type { HttpServer } from '#types/server-options.js';
 import { TRPC_ROOT } from '#types/constants.js';
 import { TrpcInternalService } from '#services/trpc-internal.service.js';
 import { TrpcService } from '#services/trpc.service.js';
 
 export class TrpcAppInitializer extends BaseAppInitializer {
-  protected preRouter: TrpcPreRouter;
+  protected preRouter: TrpcRequestDispatcher;
   protected server: HttpServer;
 
   protected override addDefaultProvidersPerApp() {
     this.normalizedModuleMeta.providersPerApp.unshift(
-      TrpcPreRouter,
+      TrpcRequestDispatcher,
       { token: SERVER, useFactory: () => this.server },
       {
         token: TRPC_ROOT,
@@ -33,7 +33,7 @@ export class TrpcAppInitializer extends BaseAppInitializer {
 
   override async bootstrapModulesAndExtensions() {
     const injectorPerApp = await super.bootstrapModulesAndExtensions();
-    this.preRouter = injectorPerApp.get(TrpcPreRouter) as TrpcPreRouter;
+    this.preRouter = injectorPerApp.get(TrpcRequestDispatcher) as TrpcRequestDispatcher;
     return injectorPerApp;
   }
 

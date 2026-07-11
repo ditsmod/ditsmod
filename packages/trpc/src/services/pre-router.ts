@@ -3,7 +3,7 @@ import { createHTTPHandler } from '@trpc/server/adapters/standalone';
 import { RequestListener, TrpcRouterOpts } from '#types/types.js';
 
 @injectable()
-export class TrpcPreRouter {
+export class TrpcRequestDispatcher {
   trpcRouter: TrpcRouterOpts;
 
   requestListener: RequestListener;
