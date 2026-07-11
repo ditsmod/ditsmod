@@ -23,6 +23,7 @@ const Configuration: UserConfig = {
     'scope-enum': [2, 'always', [...getPackages(), 'website', 'examples', 'ci', 'experiments', 'cross']],
     'scope-empty': [2, 'never'],
     'header-max-length': [2, 'always', 120],
+    'body-max-line-length': [0],
   },
   helpUrl:
     'https://github.com/ditsmod/ditsmod/blob/main/CONTRIBUTING.md\n\n' +
