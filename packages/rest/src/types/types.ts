@@ -51,7 +51,7 @@ export enum RouteType {
   catchAll = 3,
 }
 
-export class TreeConfig {
+export class RadixTreeNode {
   path?: string = '';
   wildChild?: boolean = false;
   type?: number = RouteType.static;

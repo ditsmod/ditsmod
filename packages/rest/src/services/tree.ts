@@ -1,6 +1,6 @@
 import { injectable, optional } from '@ditsmod/core';
 
-import { AnyFn, TreeConfig, RouteType, RouteParam } from '../types/types.js';
+import { AnyFn, RadixTreeNode, RouteType, RouteParam } from '../types/types.js';
 import {
   CatchAllConflictWithExistingHandle,
   CatchAllRoutesOnlyAtEnd,
@@ -23,8 +23,8 @@ export class Tree {
   protected indices: string;
   protected priority: number;
 
-  constructor(@optional() treeConfig?: TreeConfig) {
-    Object.assign(this, new TreeConfig(), treeConfig);
+  constructor(@optional() treeConfig?: RadixTreeNode) {
+    Object.assign(this, new RadixTreeNode(), treeConfig);
   }
 
   /**
@@ -100,7 +100,7 @@ export class Tree {
       // Otherwise insert it
       if (firstChar != ':' && firstChar != '*') {
         tree.indices += firstChar;
-        const treeConfig: TreeConfig = { path: '', wildChild: false, type: RouteType.static };
+        const treeConfig: RadixTreeNode = { path: '', wildChild: false, type: RouteType.static };
         const child = this.newTree(treeConfig);
         tree.children.push(child);
         tree.addPriority(tree.indices.length - 1);
@@ -157,7 +157,7 @@ export class Tree {
           offset = i;
         }
 
-        const treeConfig1: TreeConfig = { path: '', wildChild: false, type: RouteType.param };
+        const treeConfig1: RadixTreeNode = { path: '', wildChild: false, type: RouteType.param };
         const child = this.newTree(treeConfig1);
         tree.children = [child];
         tree.wildChild = true;
@@ -168,7 +168,7 @@ export class Tree {
           tree.path = path.slice(offset, end);
           offset = end;
 
-          const treeConfig2: TreeConfig = {
+          const treeConfig2: RadixTreeNode = {
             path: '',
             wildChild: false,
             type: RouteType.static,
@@ -197,7 +197,7 @@ export class Tree {
 
         tree.path = path.slice(offset, i);
 
-        const treeConfig1: TreeConfig = { path: '', wildChild: true, type: RouteType.catchAll };
+        const treeConfig1: RadixTreeNode = { path: '', wildChild: true, type: RouteType.catchAll };
 
         // first node: catchAll node with empty path
         const catchAllChild = this.newTree(treeConfig1);
@@ -206,7 +206,7 @@ export class Tree {
         tree = catchAllChild;
         tree.priority++;
 
-        const treeConfig2: TreeConfig = {
+        const treeConfig2: RadixTreeNode = {
           path: path.slice(i),
           wildChild: false,
           type: RouteType.catchAll,
@@ -257,7 +257,7 @@ export class Tree {
   }
 
   protected splitAdge(tree: this, path: string, i: number) {
-    const treeConfig: TreeConfig = {
+    const treeConfig: RadixTreeNode = {
       path: tree.path.slice(i),
       wildChild: tree.wildChild,
       type: RouteType.static,
@@ -349,7 +349,7 @@ export class Tree {
     }
   }
 
-  protected newTree(treeConfig?: TreeConfig) {
+  protected newTree(treeConfig?: RadixTreeNode) {
     return new (this.constructor as typeof Tree)(treeConfig) as this;
   }
 
