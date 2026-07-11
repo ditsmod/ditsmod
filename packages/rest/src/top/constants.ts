@@ -19,7 +19,7 @@ export const RAW_RES = createInjectionSymbol<RawResponse>('RAW_RES');
 /**
  * DI token for path params that is returned by `@ditsmod/rest`.
  */
-export const A_PATH_PARAMS = createInjectionSymbol<PathParam[]>('A_PATH_PARAMS');
+export const RAW_PATH_PARAMS = createInjectionSymbol<PathParam[]>('RAW_PATH_PARAMS');
 export const PATH_PARAMS = createInjectionSymbol<AnyObj>('PATH_PARAMS');
 export const QUERY_PARAMS = createInjectionSymbol<AnyObj>('QUERY_PARAMS');
 /**

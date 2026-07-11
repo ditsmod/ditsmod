@@ -14,7 +14,7 @@ import { RouteMeta } from '../types/route-data.js';
 import { HttpHandler, HttpInterceptor } from './tokens-and-types.js';
 import { applyResponse } from '#utils/apply-web-response.js';
 import { RequestContext } from '#services/request-context.js';
-import { RAW_REQ, RAW_RES, A_PATH_PARAMS, QUERY_STRING, QUERY_PARAMS, PATH_PARAMS } from '../top/constants.js';
+import { RAW_REQ, RAW_RES, RAW_PATH_PARAMS, QUERY_STRING, QUERY_PARAMS, PATH_PARAMS } from '../top/constants.js';
 
 @injectable()
 export class RequestScopedGuardedInterceptor implements HttpInterceptor {
@@ -57,7 +57,7 @@ export class RequestScopedGuardedInterceptor implements HttpInterceptor {
   protected getInjectorPerReq(rg: ModuleScopedResolvedGuard) {
     const inj = rg.injectorPerRou.createChildFromResolved(rg.resolvedPerReq!, 'Req');
     const ctx = this.injector.get(Context, undefined, undefined, fromSelf) as Context;
-    ctx.fill(inj, [RAW_REQ, RAW_RES, A_PATH_PARAMS, QUERY_STRING, QUERY_PARAMS, PATH_PARAMS]);
+    ctx.fill(inj, [RAW_REQ, RAW_RES, RAW_PATH_PARAMS, QUERY_STRING, QUERY_PARAMS, PATH_PARAMS]);
     return inj;
   }
 
