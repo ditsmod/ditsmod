@@ -29,7 +29,7 @@ import {
   ResolvingCollisionNotImportedInApplication,
   CannotResolveCollisionForMultiProviderPerLevel,
   ProvidersCollision,
-  FalseResolvedCollision,
+  InvalidCollisionResolution,
 } from '#errors';
 import { defaultProvidersPerMod } from './default-providers-per-mod.js';
 import type { GroupToken } from '#di/key-registry.js';
@@ -448,7 +448,7 @@ export class ShallowModulesImporter {
         if (!levels || !levels.has(level)) {
           const moduleName = getDebugClassName(module) || 'unknown';
           const tokenName = token.name || token;
-          throw new FalseResolvedCollision(this.moduleName, moduleName, level, tokenName);
+          throw new InvalidCollisionResolution(this.moduleName, moduleName, level, tokenName);
         }
       });
     });

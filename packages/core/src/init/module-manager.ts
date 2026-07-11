@@ -10,8 +10,8 @@ import { objectKeys } from '#utils/object-keys.js';
 import { ModuleNormalizer } from '#init/module-normalizer.js';
 import { AllInitHooks } from '#decorators/init-hooks-and-metadata.js';
 import {
-  FailAddingToImports,
-  FailRemovingImport,
+  ImportAdditionFailed,
+  ImportRemovalFailed,
   ForbiddenRollbackEmptyState,
   ModuleIdNotFoundInModuleManager,
   NormalizationFailed,
@@ -168,7 +168,7 @@ export class ModuleManager {
     if (!targetNormalizedModuleMeta) {
       const modName = getDebugClassName(inputModule);
       const modIdStr = format(targetModuleId).slice(0, 50);
-      throw new FailAddingToImports(modName, modIdStr);
+      throw new ImportAdditionFailed(modName, modIdStr);
     }
 
     const prop = isDynamicModule(inputModule) ? 'importsWithParams' : 'importsModules';
@@ -203,7 +203,7 @@ export class ModuleManager {
     const targetMeta = this.getNormalizedModuleMetaFromSnapshot(targetModuleId);
     if (!targetMeta) {
       const modIdStr = format(targetModuleId).slice(0, 50);
-      throw new FailRemovingImport(inputNormalizedModuleMeta.name, modIdStr);
+      throw new ImportRemovalFailed(inputNormalizedModuleMeta.name, modIdStr);
     }
     const prop = isDynamicModule(inputNormalizedModuleMeta.modRefId) ? 'importsWithParams' : 'importsModules';
     const index = targetMeta[prop].findIndex((imp: ModRefId) => imp === inputNormalizedModuleMeta.modRefId);

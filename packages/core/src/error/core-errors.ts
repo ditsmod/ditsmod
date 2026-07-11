@@ -18,7 +18,7 @@ export class ClassForUseFactoriesWithoutDecorators extends CustomError {
 /**
  * `Cannot reinit injector after stage1`
  */
-export class CannotReinitInjectorAfterStage1 extends CustomError {
+export class InjectorReinitAfterStage1Forbidden extends CustomError {
   constructor() {
     super({
       msg1: 'Cannot reinit injector after stage1',
@@ -147,7 +147,7 @@ export class ResolvingCollisionNotExistsOnThisLevel extends CustomError {
  * `Resolving collisions for providersPer${level} in ${moduleName1} failed: ${tokenName} mapped with
  * ${moduleName2}, but there are no collisions with ${tokenName} in the providersPer${level} array.`,
  */
-export class FalseResolvedCollision extends CustomError {
+export class InvalidCollisionResolution extends CustomError {
   constructor(moduleName1: string, moduleName2: string, level: string, tokenName: string) {
     super({
       msg1:
@@ -162,7 +162,7 @@ export class FalseResolvedCollision extends CustomError {
  * `Resolving collisions for providersPerApp in ${rootModuleName} failed:
  * ${tokenName} mapped with ${moduleName}, but providersPerApp does not includes ${tokenName} in this module.`
  */
-export class ProvidersPerAppMissingTokenName extends CustomError {
+export class AppProviderMissingTokenName extends CustomError {
   constructor(rootModuleName: string, moduleName: string, tokenName: string) {
     super({
       msg1:
@@ -335,7 +335,7 @@ export class CircularDepsInImports extends CustomError {
 /**
  * `Initialization failed in ${debugModuleName} -> ${extensionName} at stage 3`
  */
-export class FailedStage3 extends CustomError {
+export class Stage3Failed extends CustomError {
   constructor(debugModuleName: string, extensionName: string, cause: any) {
     super(
       {
@@ -349,7 +349,7 @@ export class FailedStage3 extends CustomError {
 /**
  * `Initialization in ${debugModuleName} -> ${ext.constructor.name} at stage 2 failed`
  */
-export class FailedStage2 extends CustomError {
+export class Stage2Failed extends CustomError {
   constructor(debugModuleName: string, extensionName: string, cause: any) {
     super(
       {
@@ -363,7 +363,7 @@ export class FailedStage2 extends CustomError {
 /**
  * `Failed create injector per module for ${debugModuleName}`
  */
-export class FailedCreateInjectorPerMod extends CustomError {
+export class ModuleInjectorCreationFailed extends CustomError {
   constructor(debugModuleName: string, cause: any) {
     super(
       {
@@ -377,7 +377,7 @@ export class FailedCreateInjectorPerMod extends CustomError {
 /**
  * `Failed override metadata after stage1 for ${debugModuleName}`
  */
-export class FailedOverrideMetaAfterStage1 extends CustomError {
+export class MetaOverrideAfterStage1Failed extends CustomError {
   constructor(debugModuleName: string, cause: any) {
     super(
       {
@@ -391,7 +391,7 @@ export class FailedOverrideMetaAfterStage1 extends CustomError {
 /**
  * `Metadata collection from all modules for ${groupName} failed`
  */
-export class FailedCollectingMetadata extends CustomError {
+export class MetadataCollectionFailed extends CustomError {
   constructor(groupName: string, cause: any) {
     super(
       {
@@ -509,7 +509,7 @@ export class RootNotHaveDecorator extends CustomError {
 /**
  * `Failed adding ${modName} to imports: target module with ID "${modIdStr}" not found.`
  */
-export class FailAddingToImports extends CustomError {
+export class ImportAdditionFailed extends CustomError {
   constructor(modName?: string, modIdStr?: string) {
     super({
       msg1: `Failed adding ${modName} to imports: target module with ID "${modIdStr}" not found.`,
@@ -520,7 +520,7 @@ export class FailAddingToImports extends CustomError {
 /**
  * `Failed removing ${inputMeta.name} from "imports" array: target module with ID "${modIdStr}" not found.`
  */
-export class FailRemovingImport extends CustomError {
+export class ImportRemovalFailed extends CustomError {
   constructor(inputModName: string, modIdStr: string) {
     super({
       msg1: `Failed removing ${inputModName} from "imports" array: target module with ID "${modIdStr}" not found.`,

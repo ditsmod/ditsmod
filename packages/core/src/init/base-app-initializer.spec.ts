@@ -16,7 +16,7 @@ import {
   CannotResolveCollisionForMultiProviderPerApp,
   ModuleNotImportedInApplication,
   ProvidersCollision,
-  ProvidersPerAppMissingTokenName,
+  AppProviderMissingTokenName,
 } from '#error/core-errors.js';
 import { injectable } from '#di/decorators.js';
 
@@ -255,7 +255,7 @@ describe('BaseAppInitializer', () => {
       class AppModule {}
 
       mock.normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
-      const err = new ProvidersPerAppMissingTokenName('AppModule', 'Module0', 'Provider1');
+      const err = new AppProviderMissingTokenName('AppModule', 'Module0', 'Provider1');
       expect(() => mock.prepareProvidersPerApp()).toThrow(err);
     });
 
