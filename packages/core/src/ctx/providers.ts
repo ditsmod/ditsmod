@@ -8,7 +8,7 @@ import { Injector } from '#di/injector.js';
  * ProviderBuilder required for `Context` service and the `ctx` parameter decorator to work. These providers need
  * to be added to each injector where `Context` is used, i.e. when there is a need to set certain context data.
  */
-export const ctxProviders: Provider[] = [
+export const contextProviders: Provider[] = [
   Context,
   {
     token: ctx,

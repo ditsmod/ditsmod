@@ -935,7 +935,7 @@ childCtx.getInScope('key2', child); // value2
 Особливо просто і зручно користуватись сервісом `Context` у параметрах методів класів:
 
 ```ts {4}
-import { Injector, Context, ctx, ctxProviders } from '@ditsmod/core';
+import { Injector, Context, ctx, contextProviders } from '@ditsmod/core';
 
 class Service1 {
   method1(@ctx('key1') param1: any, @ctx('key2') param2: any) {
@@ -944,7 +944,7 @@ class Service1 {
 }
 
 const injector = Injector.resolveAndCreate(
-  [...ctxProviders, { token: 'token1', useFactory: [Service1, Service1.prototype.method1] }],
+  [...contextProviders, { token: 'token1', useFactory: [Service1, Service1.prototype.method1] }],
 );
 
 const context = injector.get(Context);
@@ -954,7 +954,7 @@ context.set('key2', 'value2');
 injector.get('token1'); // { param1: 'value1', param2: 'value2' }
 ```
 
-В даному прикладі умовно показано ситуацію, коли значення для `Context` встановлюється в одному місці програми, а використовується це значення в іншому місці - у параметрах методу класу. Точно по цій схемі можна отримати значення контекста у параметрах контролера (якщо ви використовуєте `@ditsmod/rest`). Зверніть увагу, що в даному прикладі до провайдерів додається масив `ctxProviders`, де є усі необхідні провайдери, щоб ця схема працювала. В реальних же застосунках, якщо ви використовуєте `@ditsmod/rest`, там вже робиться реекспорт `ContextModule` з усіма необхідними провайдерами.
+В даному прикладі умовно показано ситуацію, коли значення для `Context` встановлюється в одному місці програми, а використовується це значення в іншому місці - у параметрах методу класу. Точно по цій схемі можна отримати значення контекста у параметрах контролера (якщо ви використовуєте `@ditsmod/rest`). Зверніть увагу, що в даному прикладі до провайдерів додається масив `contextProviders`, де є усі необхідні провайдери, щоб ця схема працювала. В реальних же застосунках, якщо ви використовуєте `@ditsmod/rest`, там вже робиться реекспорт `ContextModule` з усіма необхідними провайдерами.
 
 Реальний приклад встановлення значень для контексту можна знайти ось тут:
 

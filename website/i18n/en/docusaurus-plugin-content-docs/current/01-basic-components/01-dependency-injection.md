@@ -935,7 +935,7 @@ The `Context` service is used by [interceptors][105], [guards][106], request han
 Using the `Context` service in class method parameters is especially simple and convenient:
 
 ```ts {4}
-import { Injector, Context, ctx, ctxProviders } from '@ditsmod/core';
+import { Injector, Context, ctx, contextProviders } from '@ditsmod/core';
 
 class Service1 {
   method1(@ctx('key1') param1: any, @ctx('key2') param2: any) {
@@ -944,7 +944,7 @@ class Service1 {
 }
 
 const injector = Injector.resolveAndCreate(
-  [...ctxProviders, { token: 'token1', useFactory: [Service1, Service1.prototype.method1] }],
+  [...contextProviders, { token: 'token1', useFactory: [Service1, Service1.prototype.method1] }],
 );
 
 const context = injector.get(Context);
@@ -954,7 +954,7 @@ context.set('key2', 'value2');
 injector.get('token1'); // { param1: 'value1', param2: 'value2' }
 ```
 
-This example illustrates a situation where a value is stored in `Context` in one part of the program and consumed elsewhere—in class method parameters. The same mechanism can be used to obtain context values in controller parameters (if you are using `@ditsmod/rest`). Note that the `ctxProviders` array is added to the providers list. It contains all the providers required for this mechanism to work. In real applications, if you use `@ditsmod/rest`, `ContextModule` is already re-exported with all the necessary providers.
+This example illustrates a situation where a value is stored in `Context` in one part of the program and consumed elsewhere—in class method parameters. The same mechanism can be used to obtain context values in controller parameters (if you are using `@ditsmod/rest`). Note that the `contextProviders` array is added to the providers list. It contains all the providers required for this mechanism to work. In real applications, if you use `@ditsmod/rest`, `ContextModule` is already re-exported with all the necessary providers.
 
 You can find real-world examples of setting context values here:
 

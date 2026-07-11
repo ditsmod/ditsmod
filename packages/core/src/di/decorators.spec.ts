@@ -2,7 +2,7 @@ import { Reflector } from './reflector.js';
 import { DecoratorMeta } from './top/decorator-and-value.js';
 import { ctx } from '#ctx/decorators.js';
 import { Injector } from './injector.js';
-import { ctxProviders } from '#ctx/providers.js';
+import { contextProviders } from '#ctx/providers.js';
 import { Context } from '#ctx/context.js';
 import { classMetaMap } from './reflector-helpers.js';
 
@@ -34,7 +34,7 @@ describe('Property decorators', () => {
     }
 
     const injector = Injector.resolveAndCreate([
-      ...ctxProviders,
+      ...contextProviders,
       { token: 'token3', useFactory: [Service1, Service1.prototype.method1] },
     ]);
 
