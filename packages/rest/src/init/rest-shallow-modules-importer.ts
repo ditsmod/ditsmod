@@ -16,7 +16,7 @@ import {
   ResolvingCollisionNotImportedInApplication,
 } from '@ditsmod/core/errors';
 
-import type { GuardPerMod1 } from '#interceptors/guard.js';
+import type { ModuleScopedGuard } from '#interceptors/guard.js';
 import type { RestModRefId } from '#init/rest-init-meta.js';
 import { RestInitMeta } from '#init/rest-init-meta.js';
 import type { Level, RestAppProviders } from '#types/types.js';
@@ -37,7 +37,7 @@ import { ModuleMustHaveControllers } from '#services/rest-errors.js';
 export class RestShallowModulesImporter {
   protected moduleName: string;
   protected prefixPerMod: string;
-  protected guards1: GuardPerMod1[];
+  protected guards1: ModuleScopedGuard[];
   protected normalizedModuleMeta: NormalizedModuleMeta;
   protected meta: RestInitMeta;
 
@@ -158,7 +158,7 @@ export class RestShallowModulesImporter {
 
   protected getPrefixAndGuards(modRefId: RestModRefId, meta: RestInitMeta, isImport?: boolean) {
     let prefixPerMod: string;
-    let guards1: GuardPerMod1[] = [];
+    let guards1: ModuleScopedGuard[] = [];
     const { absolutePath } = meta.params;
     const hasModuleParams = isDynamicModule(modRefId);
     if (hasModuleParams || !isImport) {
@@ -169,7 +169,7 @@ export class RestShallowModulesImporter {
         const path = hasModuleParams ? meta.params.path : '';
         prefixPerMod = [this.prefixPerMod, path].filter((s) => s).join('/');
       }
-      const impGuradsPerMod1 = meta.params.guards.map<GuardPerMod1>((g) => {
+      const impGuradsPerMod1 = meta.params.guards.map<ModuleScopedGuard>((g) => {
         return {
           ...g,
           meta: this.meta,

@@ -9,7 +9,7 @@ import type {
   ShallowModuleImports,
 } from '@ditsmod/core';
 
-import type { GuardPerMod1 } from '#interceptors/guard.js';
+import type { ModuleScopedGuard } from '#interceptors/guard.js';
 import type { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
 
 export class RestImportedProvider<T extends Provider = Provider> {
@@ -25,7 +25,7 @@ export class RestImportedProvider<T extends Provider = Provider> {
 export class RestShallowModuleImports {
   normalizedModuleMeta: NormalizedModuleMeta;
   prefixPerMod: string;
-  guards1: GuardPerMod1[];
+  guards1: ModuleScopedGuard[];
   /**
    * Snapshot of `RestInitMeta`. If you modify any array in this object,
    * the original array will remain unchanged.
@@ -55,7 +55,7 @@ export class RestProvidersByLevel {
 export class RestResolvedModuleMetadata {
   normalizedModuleMeta: NormalizedModuleMeta;
   meta: RestInitMeta;
-  guards1: GuardPerMod1[];
+  guards1: ModuleScopedGuard[];
   prefixPerMod: string;
   applyControllers?: boolean;
 }
@@ -72,7 +72,7 @@ export interface ImportModulesShallowConfig {
   modRefId: ModRefId;
   unfinishedScanModules: Set<ModRefId>;
   prefixPerMod: string;
-  guards1?: GuardPerMod1[];
+  guards1?: ModuleScopedGuard[];
   isAppends?: boolean;
 }
 

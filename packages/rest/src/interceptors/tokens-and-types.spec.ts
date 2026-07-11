@@ -154,7 +154,7 @@ describe('mix per app, per mod or per req', () => {
     override importedProvidersPerReq = new Map<any, ImportedProvider>();
     override importedMultiProvidersPerRou = new Map<ModRefId, Provider[]>();
     override importedMultiProvidersPerReq = new Map<ModRefId, Provider[]>();
-    // override guards1: GuardPerMod1[] = [];
+    // override guards1: ModuleScopedGuard[] = [];
 
     // override exportAppProviders(moduleManager: ModuleManager, providersPerApp: Provider[]) {
     //   return super.exportAppProviders(moduleManager, providersPerApp);

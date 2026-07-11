@@ -6,7 +6,7 @@ import { isControllerDecorator, isRoute } from '#types/type.guards.js';
 import { RouteMetadata } from '#decorators/route.js';
 import { ControllerMetadata } from '#types/controller-metadata.js';
 import { RouteMeta } from '#types/route-data.js';
-import { GuardItem, GuardPerMod1 } from '#interceptors/guard.js';
+import { GuardItem, ModuleScopedGuard } from '#interceptors/guard.js';
 import { RequestScopedControllerOptions } from '#types/controller.js';
 import { AppOptions } from '#types/app-options.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
@@ -105,10 +105,10 @@ export class RestRouteExtension implements Extension<RouteExtensionMeta> {
     return (guards || []).map((item) => {
       if (Array.isArray(item)) {
         this.checkGuardsPerMod(httpMethod, path, item[0]);
-        return { guard: item[0], params: item.slice(1) } as GuardPerMod1;
+        return { guard: item[0], params: item.slice(1) } as ModuleScopedGuard;
       } else {
         this.checkGuardsPerMod(httpMethod, path, item);
-        return { guard: item } as GuardPerMod1;
+        return { guard: item } as ModuleScopedGuard;
       }
     });
   }

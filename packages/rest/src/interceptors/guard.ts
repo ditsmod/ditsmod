@@ -16,7 +16,7 @@ export interface NormalizedGuard {
   params?: any[];
 }
 
-export interface GuardPerMod1 extends NormalizedGuard {
+export interface ModuleScopedGuard extends NormalizedGuard {
   meta: RestInitMeta;
   normalizedModuleMeta: NormalizedModuleMeta;
 }

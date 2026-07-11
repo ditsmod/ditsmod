@@ -35,7 +35,7 @@ import { DefaultChainMakerPerRou } from '#interceptors/default-chain-maker-per-r
 import { DefaultHttpFrontendPerRou } from '#interceptors/default-http-frontend-per-rou.js';
 import { DefaultHttpFrontend } from '#interceptors/default-http-frontend.js';
 import { HttpBackend, HttpFrontend } from '#interceptors/tokens-and-types.js';
-import { GuardPerMod1, NormalizedGuard } from '#interceptors/guard.js';
+import { ModuleScopedGuard, NormalizedGuard } from '#interceptors/guard.js';
 import { RouteHandler, Router } from '#services/router.js';
 import { HttpErrorHandler } from '#services/http-error-handler.js';
 import { RequestContext } from '#services/request-context.js';
@@ -255,7 +255,7 @@ export class PreRouterExtension implements Extension<void> {
   }
 
   protected getResolvedGuardsPerMod(
-    guards: GuardPerMod1[],
+    guards: ModuleScopedGuard[],
     controllerName: string,
     httpMethod: HttpMethod | HttpMethod[],
     path: string,

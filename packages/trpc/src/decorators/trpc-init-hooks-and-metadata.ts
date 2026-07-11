@@ -19,7 +19,7 @@ import { Reflector, InitHooks, NormalizedInitMeta, AppInitHooks } from '@ditsmod
 import { TrpcModule } from '../trpc.module.js';
 import { TrpcModuleNormalizer } from '#init/trpc-module-normalizer.js';
 import { TrpcShallowModulesImporter } from '#init/trpc-shallow-modules-importer.js';
-import type { GuardItem, GuardPerMod1, NormalizedGuard } from '#interceptors/trpc-guard.js';
+import type { GuardItem, ModuleScopedGuard, NormalizedGuard } from '#interceptors/trpc-guard.js';
 
 export type TrpcModRefId = ModRefId;
 
@@ -108,7 +108,7 @@ export interface ImportModulesShallowConfig {
   appProviders: AppProviders;
   modRefId: ModRefId;
   unfinishedScanModules: Set<ModRefId>;
-  guards1?: GuardPerMod1[];
+  guards1?: ModuleScopedGuard[];
 }
 
 export interface DeepModulesImporterConfig {
@@ -124,7 +124,7 @@ export interface DeepModulesImporterConfig {
 
 export class TrpcShallowModuleImports {
   normalizedModuleMeta: NormalizedModuleMeta;
-  guards1: GuardPerMod1[];
+  guards1: ModuleScopedGuard[];
   /**
    * Snapshot of `TrpcInitMeta`. If you modify any array in this object,
    * the original array will remain unchanged.

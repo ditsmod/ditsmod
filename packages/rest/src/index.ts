@@ -51,7 +51,7 @@ export {
   HttpInterceptorHandler,
   RouteScopedHttpBackend,
 } from '#interceptors/tokens-and-types.js';
-export { guard, CanActivate, GuardItem, NormalizedGuard, GuardPerMod1 } from '#interceptors/guard.js';
+export { guard, CanActivate, GuardItem, NormalizedGuard, ModuleScopedGuard } from '#interceptors/guard.js';
 export { PreRouter } from './services/pre-router.js';
 export {
   HTTP_INTERCEPTORS,

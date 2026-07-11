@@ -30,7 +30,7 @@ import { ControllerMetadata } from '#types/controller-metadata.js';
 import { InterceptorWithGuards } from '#interceptors/interceptor-with-guards.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';
 import { TrpcChainMaker } from '#interceptors/chain-maker.js';
-import { GuardPerMod1 } from '#interceptors/trpc-guard.js';
+import { ModuleScopedGuard } from '#interceptors/trpc-guard.js';
 import { RawRequest, RawResponse } from '#services/request.js';
 import { HttpErrorHandler } from '#services/http-error-handler.js';
 import { CheckingDepsInSandboxFailed, GuardNotFound, InvalidInterceptor } from '../error/trpc-errors.js';
@@ -267,7 +267,7 @@ export class TrpcPreRouterExtension implements Extension<void> {
       .find((rp) => rp.dualKey.token === Controller.prototype[methodName]);
   }
 
-  protected getResolvedGuardsPerMod(guards: GuardPerMod1[], controllerName: string, perReq?: boolean) {
+  protected getResolvedGuardsPerMod(guards: ModuleScopedGuard[], controllerName: string, perReq?: boolean) {
     return guards.map((g) => {
       const resolvedPerMod = Injector.resolve(g.normalizedModuleMeta.providersPerMod);
       const resolvedPerRou = Injector.resolve(g.meta.providersPerRou);

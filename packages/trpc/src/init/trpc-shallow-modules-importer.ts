@@ -8,7 +8,7 @@ import type {
   TrpcShallowModuleImports,
 } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { initTrpcModule, TrpcInitHooks, TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
-import type { GuardPerMod1 } from '#interceptors/trpc-guard.js';
+import type { ModuleScopedGuard } from '#interceptors/trpc-guard.js';
 
 /**
  * Recursively collects providers taking into account module imports/exports,
@@ -21,7 +21,7 @@ import type { GuardPerMod1 } from '#interceptors/trpc-guard.js';
  */
 export class TrpcShallowModulesImporter {
   protected moduleName: string;
-  protected guards1: GuardPerMod1[];
+  protected guards1: ModuleScopedGuard[];
   protected normalizedModuleMeta: NormalizedModuleMeta;
   protected meta: TrpcInitMeta;
 
@@ -119,10 +119,10 @@ export class TrpcShallowModulesImporter {
   }
 
   protected getPrefixAndGuards(modRefId: TrpcModRefId, meta: TrpcInitMeta, isImport?: boolean) {
-    let guards1: GuardPerMod1[] = [];
+    let guards1: ModuleScopedGuard[] = [];
     const hasModuleParams = isDynamicModule(modRefId);
     if (hasModuleParams || !isImport) {
-      const impGuradsPerMod1 = meta.params.guards.map<GuardPerMod1>((g) => {
+      const impGuradsPerMod1 = meta.params.guards.map<ModuleScopedGuard>((g) => {
         return {
           ...g,
           meta: this.meta,

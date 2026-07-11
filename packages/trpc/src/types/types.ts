@@ -14,7 +14,7 @@ import type { Http2ServerRequest, Http2ServerResponse } from 'http2';
 import type { HttpModule } from '#types/http-module.js';
 import type { ServerOptions } from '#types/server-options.js';
 import type { TrpcInitMeta, TrpcModRefId } from '#decorators/trpc-init-hooks-and-metadata.js';
-import type { GuardPerMod1 } from '#interceptors/trpc-guard.js';
+import type { ModuleScopedGuard } from '#interceptors/trpc-guard.js';
 import type { ControllerMetadata } from './controller-metadata.js';
 import type { TrpcHttpInterceptor } from '#interceptors/tokens-and-types.js';
 
@@ -90,7 +90,7 @@ export class RouteExtensionMeta {
   normalizedModuleMeta: NormalizedModuleMeta;
   meta: TrpcInitMeta;
   aControllerMetadata: ControllerMetadata[];
-  guards1: GuardPerMod1[];
+  guards1: ModuleScopedGuard[];
 }
 
 /**

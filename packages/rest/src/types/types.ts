@@ -3,7 +3,7 @@ import { ModuleInfo, AppInitHooks, Provider } from '@ditsmod/core';
 
 import { RestImportedProvider } from '#init/types.js';
 import type { Tree } from '#services/tree.js';
-import type { GuardPerMod1 } from '#interceptors/guard.js';
+import type { ModuleScopedGuard } from '#interceptors/guard.js';
 import type { RouteHandler } from '#services/router.js';
 import type { ControllerMetadata } from './controller-metadata.js';
 import type { RestInitMeta } from '#init/rest-init-meta.js';
@@ -24,7 +24,7 @@ export class RouteExtensionMeta {
   prefixPerMod: string;
   meta: RestInitMeta;
   aControllerMetadata: ControllerMetadata[];
-  guards1: GuardPerMod1[];
+  guards1: ModuleScopedGuard[];
 }
 
 /**

@@ -11,7 +11,7 @@ import { ModuleInfo } from '@ditsmod/core';
 
 import type { DeepModulesImporterConfig, TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
 import type { TrpcShallowModuleImports } from '#decorators/trpc-init-hooks-and-metadata.js';
-import type { GuardPerMod1 } from '#interceptors/trpc-guard.js';
+import type { ModuleScopedGuard } from '#interceptors/trpc-guard.js';
 
 /**
  * This metadata returns from `DeepModulesImporter`. The target for this metadata is `RestRouteExtension`.
@@ -20,7 +20,7 @@ import type { GuardPerMod1 } from '#interceptors/trpc-guard.js';
 export class TrpcResolvedModuleMetadata {
   normalizedModuleMeta: NormalizedModuleMeta;
   meta: TrpcInitMeta;
-  guards1: GuardPerMod1[];
+  guards1: ModuleScopedGuard[];
 }
 
 export class TrpcModuleInfo extends ModuleInfo {}
