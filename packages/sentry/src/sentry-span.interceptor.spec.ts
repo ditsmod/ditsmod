@@ -1,15 +1,20 @@
 import { jest } from '@jest/globals';
 
+const mockSpan = {
+  setStatus: jest.fn(),
+};
+
 jest.unstable_mockModule('@sentry/node', () => {
   return {
-    startSpan: jest.fn((options: any, callback: any) => callback()),
+    withIsolationScope: jest.fn((callback: any) => callback()),
+    startSpan: jest.fn((options: any, callback: any) => callback(mockSpan)),
   };
 });
 
 import type { HttpHandler, BaseRequestContext } from '@ditsmod/rest';
 
 // Import dynamically after mock
-const Sentry = await import('@sentry/node');
+const Sentry = (await import('@sentry/node')) as any;
 const { SentrySpanInterceptor } = await import('./sentry-span.interceptor.js');
 
 describe('SentrySpanInterceptor', () => {
@@ -40,6 +45,7 @@ describe('SentrySpanInterceptor', () => {
     interceptor = new SentrySpanInterceptor(routeMeta);
     await interceptor.intercept(next, ctx);
 
+    expect(Sentry.withIsolationScope).toHaveBeenCalled();
     expect(Sentry.startSpan).toHaveBeenCalledWith(
       {
         name: 'GET /users/:id',
@@ -58,6 +64,7 @@ describe('SentrySpanInterceptor', () => {
     interceptor = new SentrySpanInterceptor(undefined);
     await interceptor.intercept(next, ctx);
 
+    expect(Sentry.withIsolationScope).toHaveBeenCalled();
     expect(Sentry.startSpan).toHaveBeenCalledWith(
       {
         name: 'GET /users',
@@ -69,5 +76,15 @@ describe('SentrySpanInterceptor', () => {
       },
       expect.any(Function),
     );
+  });
+
+  it('should set span status to error if handle throws', async () => {
+    const err = new Error('database failure');
+    next.handle = jest.fn(() => Promise.reject(err));
+
+    interceptor = new SentrySpanInterceptor(undefined);
+    await expect(interceptor.intercept(next, ctx)).rejects.toThrow(err);
+
+    expect(mockSpan.setStatus).toHaveBeenCalledWith({ code: 2, message: 'database failure' });
   });
 });

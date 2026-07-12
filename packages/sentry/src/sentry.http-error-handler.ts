@@ -19,35 +19,34 @@ export class SentryHttpErrorHandler extends DefaultHttpErrorHandler {
 
   override async handleError(err: Error, ctx: RequestContext): Promise<void> {
     if (this.shouldCapture(err)) {
-      Sentry.withIsolationScope((scope) => {
-        // Attach HTTP request context
-        scope.setTag('http.method', ctx.rawReq.method ?? 'UNKNOWN');
-        scope.setTag('http.url', ctx.rawReq.url ?? '');
+      const scope = Sentry.getCurrentScope();
+      // Attach HTTP request context
+      scope.setTag('http.method', ctx.rawReq.method ?? 'UNKNOWN');
+      scope.setTag('http.url', ctx.rawReq.url ?? '');
 
-        // Attach Ditsmod-specific metadata from ErrorInfo
-        if (isCustomError(err)) {
-          scope.setTag('error.code', err.code ?? '');
-          scope.setTag('error.level', err.info.level ?? 'warn');
-          // msg2 is the internal developer message — send as extra
-          if (err.info.msg2) {
-            scope.setExtra('error.msg2', err.info.msg2);
-          }
-          if (err.info.args2) {
-            scope.setExtra('error.args2', err.info.args2);
-          }
+      // Attach Ditsmod-specific metadata from ErrorInfo
+      if (isCustomError(err)) {
+        scope.setTag('error.code', err.code ?? '');
+        scope.setTag('error.level', err.info.level ?? 'warn');
+        // msg2 is the internal developer message — send as extra
+        if (err.info.msg2) {
+          scope.setExtra('error.msg2', err.info.msg2);
         }
-
-        // Attach route parameters as breadcrumb/extra context
-        if (ctx.aPathParams?.length) {
-          scope.setExtra('route.params', Object.fromEntries(ctx.aPathParams.map(({ key, value }) => [key, value])));
+        if (err.info.args2) {
+          scope.setExtra('error.args2', err.info.args2);
         }
+      }
 
-        Sentry.captureException(err, {
-          mechanism: {
-            handled: false,
-            type: this.getMechanismType(err),
-          },
-        });
+      // Attach route parameters as breadcrumb/extra context
+      if (ctx.aPathParams?.length) {
+        scope.setExtra('route.params', Object.fromEntries(ctx.aPathParams.map(({ key, value }) => [key, value])));
+      }
+
+      Sentry.captureException(err, {
+        mechanism: {
+          handled: false,
+          type: this.getMechanismType(err),
+        },
       });
     }
 

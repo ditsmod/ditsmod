@@ -18,9 +18,9 @@ npm i @ditsmod/sentry @sentry/node
 Sentry необхідно ініціалізувати на самому початку файлу точки входу (`main.ts`) перед запуском застосунку Ditsmod:
 
 ```ts
-import * as Sentry from '@sentry/node';
+import { init } from '@ditsmod/sentry';
 
-Sentry.init({
+init({
   dsn: 'YOUR_SENTRY_DSN',
   tracesSampleRate: 1.0,
 });
@@ -46,9 +46,7 @@ import { SentryModule, SentryOptions } from '@ditsmod/sentry';
   providersPerMod: new ProviderBuilder().useValue<SentryOptions>(SentryOptions, {
     capture4xx: false,
   }),
-  resolvedCollisionPerRou: [
-    [HttpErrorHandler, SentryModule],
-  ],
+  resolvedCollisionPerRou: [[HttpErrorHandler, SentryModule]],
 })
 export class AppModule {}
 ```
@@ -64,6 +62,7 @@ export class AppModule {}
 ### Відстеження продуктивності {#performance-tracing}
 
 Якщо Sentry активовано, наступні інтерцептори будуть автоматично зареєстровані для всіх REST-маршрутів:
+
 - `SentryTracingInterceptor`: динамічно розпізнає шляхи роутів через `RouteMeta` та оновлює назви транзакцій.
 - `SentrySpanInterceptor`: обгортає виконання HTTP-запиту в спан відстеження продуктивності.
 

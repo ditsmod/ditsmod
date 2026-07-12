@@ -13,16 +13,23 @@ export class SentrySpanInterceptor implements HttpInterceptor {
     const method = (ctx.rawReq.method ?? 'GET').toUpperCase();
     const path = this.routeMeta ? `/${this.routeMeta.fullPath ?? ctx.rawReq.url}` : (ctx.rawReq.url ?? '/');
 
-    return Sentry.startSpan(
-      {
-        name: `${method} ${path}`,
-        op: 'http.server',
-        attributes: {
-          'http.method': method,
-          'http.route': path,
+    return Sentry.withIsolationScope(() => {
+      return Sentry.startSpan(
+        {
+          name: `${method} ${path}`,
+          op: 'http.server',
+          attributes: {
+            'http.method': method,
+            'http.route': path,
+          },
         },
-      },
-      () => next.handle(),
-    );
+        (span) => {
+          return next.handle().catch((err) => {
+            span?.setStatus({ code: 2, message: (err as Error).message });
+            throw err;
+          });
+        },
+      );
+    });
   }
 }

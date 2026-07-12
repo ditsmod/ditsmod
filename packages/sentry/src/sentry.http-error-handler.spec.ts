@@ -14,7 +14,7 @@ const mockScope = {
 
 jest.unstable_mockModule('@sentry/node', () => {
   return {
-    withIsolationScope: jest.fn((callback: any) => callback(mockScope)),
+    getCurrentScope: jest.fn(() => mockScope),
     captureException: jest.fn(),
   };
 });
@@ -57,7 +57,7 @@ describe('SentryHttpErrorHandler', () => {
     const err = new Error('unexpected database error');
     await errorHandler.handleError(err, ctx);
 
-    expect(Sentry.withIsolationScope).toHaveBeenCalled();
+    expect(Sentry.getCurrentScope).toHaveBeenCalled();
     expect(mockScope.setTag).toHaveBeenCalledWith('http.method', 'UNKNOWN');
     expect(Sentry.captureException).toHaveBeenCalledWith(err, {
       mechanism: {

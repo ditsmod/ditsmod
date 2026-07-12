@@ -1,4 +1,4 @@
-import { SEMANTIC_ATTRIBUTE_SENTRY_OP, SEMANTIC_ATTRIBUTE_SENTRY_ORIGIN } from '@sentry/core';
+import { SEMANTIC_ATTRIBUTE_SENTRY_OP, SEMANTIC_ATTRIBUTE_SENTRY_ORIGIN, isThenable } from '@sentry/core';
 import type { MonitorConfig } from '@sentry/core';
 import * as Sentry from '@sentry/node';
 
@@ -82,8 +82,8 @@ export function sentryExceptionCaptured() {
     descriptor.value = function (...args: unknown[]) {
       try {
         const result = originalMethod.apply(this, args);
-        if (result instanceof Promise) {
-          return result.catch((exception) => {
+        if (isThenable(result)) {
+          return result.then(undefined, (exception) => {
             if (!isExpectedError(exception)) {
               Sentry.captureException(exception, {
                 mechanism: { handled: false, type: 'auto.function.ditsmod.exception_captured' },

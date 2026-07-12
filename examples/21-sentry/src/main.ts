@@ -1,7 +1,7 @@
-import * as Sentry from '@sentry/node';
+import { init } from '@ditsmod/sentry';
 
 // Initialize Sentry before bootstrapping the Ditsmod application
-Sentry.init({
+init({
   dsn: 'https://00000000000000000000000000000000@o000000.ingest.sentry.io/0',
   tracesSampleRate: 1.0,
 });

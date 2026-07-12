@@ -18,9 +18,9 @@ npm i @ditsmod/sentry @sentry/node
 Sentry must be initialized at the very top of your entry point file (`main.ts`) before bootstrapping the Ditsmod application:
 
 ```ts
-import * as Sentry from '@sentry/node';
+import { init } from '@ditsmod/sentry';
 
-Sentry.init({
+init({
   dsn: 'YOUR_SENTRY_DSN',
   tracesSampleRate: 1.0,
 });
@@ -46,9 +46,7 @@ import { SentryModule, SentryOptions } from '@ditsmod/sentry';
   providersPerMod: new ProviderBuilder().useValue<SentryOptions>(SentryOptions, {
     capture4xx: false,
   }),
-  resolvedCollisionPerRou: [
-    [HttpErrorHandler, SentryModule],
-  ],
+  resolvedCollisionPerRou: [[HttpErrorHandler, SentryModule]],
 })
 export class AppModule {}
 ```
@@ -64,6 +62,7 @@ Optional 4xx capturing can be enabled by setting `capture4xx: true` in `SentryOp
 ### Performance Tracing {#performance-tracing}
 
 If Sentry is active, the following interceptors are automatically registered on all REST routes:
+
 - `SentryTracingInterceptor`: dynamically resolves route paths via `RouteMeta` and updates transaction names.
 - `SentrySpanInterceptor`: wraps the request execution in a performance tracking span.
 
