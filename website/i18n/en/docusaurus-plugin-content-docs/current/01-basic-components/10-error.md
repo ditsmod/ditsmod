@@ -101,14 +101,13 @@ You can create your own error handler by creating a class that implements the [H
 import { injectable, Logger, HttpStatus } from '@ditsmod/core';
 import { HttpErrorHandler, RequestContext } from '@ditsmod/rest';
 import { isCustomError } from '@ditsmod/core/errors';
-import { randomUUID } from 'node:crypto';
 
 @injectable()
 export class MyHttpErrorHandler implements HttpErrorHandler {
   constructor(protected logger: Logger) {}
 
   async handleError(err: Error, ctx: RequestContext) {
-    const requestId = randomUUID();
+    const requestId = ctx.requestId;
     const errObj = { requestId, err, note: 'This is my implementation of HttpErrorHandler' };
     if (isCustomError(err)) {
       const { level, status } = err.info;

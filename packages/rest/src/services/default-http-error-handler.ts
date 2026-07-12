@@ -1,6 +1,5 @@
 import { injectable, Logger, HttpStatus } from '@ditsmod/core';
 import { CustomError, isCustomError } from '@ditsmod/core/errors';
-import { randomUUID } from 'node:crypto';
 
 import { HttpErrorHandler } from './http-error-handler.js';
 import { RequestContext } from './request-context.js';
@@ -10,22 +9,21 @@ export class DefaultHttpErrorHandler implements HttpErrorHandler {
   constructor(protected logger: Logger) {}
 
   async handleError(err: Error, ctx: RequestContext) {
-    const requestId = randomUUID();
-    const errObj = { requestId, err };
+    const errObj = { requestId: ctx.requestId, err };
     if (isCustomError(err)) {
       const { level, status } = err.info;
       if (err.info.msg2) {
-        this.logMsg2(err, requestId);
+        this.logMsg2(err, ctx.requestId);
       } else {
         this.logger.log(level || 'debug', errObj);
       }
       ctx.rawRes.statusCode = status || HttpStatus.INTERNAL_SERVER_ERROR;
-      this.sendError(err.message, ctx, requestId, err.code);
+      this.sendError(err.message, ctx, ctx.requestId, err.code);
     } else {
       this.logger.log('error', errObj);
       const msg = err.message || 'Internal server error';
       ctx.rawRes.statusCode = (err as any).status || HttpStatus.INTERNAL_SERVER_ERROR;
-      this.sendError(msg, ctx, requestId);
+      this.sendError(msg, ctx, ctx.requestId);
     }
   }
 
