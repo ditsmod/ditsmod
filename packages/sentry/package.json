@@ -1,0 +1,45 @@
+{
+  "private": true,
+  "name": "@ditsmod/sentry",
+  "type": "module",
+  "version": "3.0.0-next.14",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ditsmod/ditsmod.git"
+  },
+  "homepage": "https://ditsmod.github.io/en/",
+  "description": "Ditsmod module to support...",
+  "module": "dist/index.js",
+  "exports": {
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b tsconfig.build.json",
+    "clean": "rm -rf dist*",
+    "test": "tsc -b tsconfig.unit.json && yarn esm-jest",
+    "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)"
+  },
+  "keywords": [
+    "ditsmod",
+    "sentry"
+  ],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "@ditsmod/core": "^3.0.0-next.14"
+  },
+  "devDependencies": {
+    "jest": "^30.4.2",
+    "npm-run-all": "^4.1.5",
+    "typescript-7": "npm:typescript@^7.0.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1107,6 +1107,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@ditsmod/sentry@workspace:packages/sentry":
+  version: 0.0.0-use.local
+  resolution: "@ditsmod/sentry@workspace:packages/sentry"
+  dependencies:
+    jest: "npm:^30.4.2"
+    npm-run-all: "npm:^4.1.5"
+    typescript-7: "npm:typescript@^7.0.2"
+  peerDependencies:
+    "@ditsmod/core": ^3.0.0-next.14
+  languageName: unknown
+  linkType: soft
+
 "@ditsmod/session-cookie@workspace:packages/session-cookie":
   version: 0.0.0-use.local
   resolution: "@ditsmod/session-cookie@workspace:packages/session-cookie"
