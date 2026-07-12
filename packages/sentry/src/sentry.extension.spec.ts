@@ -9,8 +9,9 @@ jest.unstable_mockModule('@sentry/core', async () => {
   const actual = await jest.requireActual<any>('@sentry/core');
   return {
     ...actual,
-    getIsolationScope: jest.fn(() => ({})),
-    getDefaultIsolationScope: jest.fn(() => ({})), // different object
+    getClient: jest.fn(() => ({
+      getDsn: () => ({}),
+    })),
   };
 });
 
@@ -66,11 +67,8 @@ describe('SentryExtension', () => {
   });
 
   it('should skip registration and log warning if Sentry is not initialized', async () => {
-    // Import Sentry core and mock both functions to return the same default scope object
-    const { getIsolationScope, getDefaultIsolationScope } = (await import('@sentry/core')) as any;
-    const defaultScope = {};
-    getIsolationScope.mockReturnValue(defaultScope);
-    getDefaultIsolationScope.mockReturnValue(defaultScope);
+    const { getClient } = (await import('@sentry/core')) as any;
+    getClient.mockReturnValue(undefined);
 
     const mockControllerMetadata = {
       providersPerReq: [] as any[],

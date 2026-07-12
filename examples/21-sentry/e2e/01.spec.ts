@@ -19,6 +19,9 @@ jest.unstable_mockModule('@sentry/core', async () => {
   const actual = await jest.requireActual<any>('@sentry/core');
   return {
     ...actual,
+    getClient: jest.fn(() => ({
+      getDsn: () => ({}),
+    })),
     getIsolationScope: jest.fn(() => ({
       setTransactionName: jest.fn(),
       setTag: jest.fn(),

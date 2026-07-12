@@ -1,4 +1,4 @@
-import { getIsolationScope, getDefaultIsolationScope } from '@sentry/core';
+import { getClient } from '@sentry/core';
 
 import { injectable, Logger, ExtensionManager } from '@ditsmod/core';
 import type { Extension } from '@ditsmod/core';
@@ -16,10 +16,10 @@ export class SentryExtension implements Extension<void> {
   ) {}
 
   async stage1(): Promise<void> {
-    if (getIsolationScope() === getDefaultIsolationScope()) {
+    if (!getClient()?.getDsn()) {
       this.logger.log(
         'warn',
-        'Sentry.init() was not called before application bootstrap. Sentry integration is disabled.',
+        'Sentry.init() was not called with a valid DSN before application bootstrap. Sentry integration is disabled.',
       );
       return;
     }
