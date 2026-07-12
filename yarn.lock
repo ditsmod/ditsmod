@@ -8225,6 +8225,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"example21@workspace:examples/21-sentry":
+  version: 0.0.0-use.local
+  resolution: "example21@workspace:examples/21-sentry"
+  dependencies:
+    "@ditsmod/cli": "npm:^3.0.0-next.14"
+    jest: "npm:^30.4.2"
+    typescript-7: "npm:typescript@^7.0.2"
+  languageName: unknown
+  linkType: soft
+
 "execa@npm:5.0.0":
   version: 5.0.0
   resolution: "execa@npm:5.0.0"
