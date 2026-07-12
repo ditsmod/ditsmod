@@ -1,14 +1,20 @@
 import * as Sentry from '@sentry/node';
 
-import { injectable, Logger, HttpStatus } from '@ditsmod/core';
+import { injectable, HttpStatus, optional, ParentParams } from '@ditsmod/core';
 import { isCustomError } from '@ditsmod/core/errors';
 import { DefaultHttpErrorHandler } from '@ditsmod/rest';
 import type { RequestContext } from '@ditsmod/rest';
 
+import { SentryOptions } from './types.js';
+
 @injectable()
 export class SentryHttpErrorHandler extends DefaultHttpErrorHandler {
-  constructor(protected override logger: Logger) {
-    super(logger);
+  constructor(
+    protected parentParams: ParentParams,
+    @optional() protected sentryOptions?: SentryOptions,
+  ) {
+    // @ts-expect-error auto inject
+    super(...parentParams);
   }
 
   override async handleError(err: Error, ctx: RequestContext): Promise<void> {
@@ -49,15 +55,16 @@ export class SentryHttpErrorHandler extends DefaultHttpErrorHandler {
     return super.handleError(err, ctx);
   }
 
-  /**
-   * Only capture errors that are NOT expected user-facing validation/client errors.
-   * An ErrorInfo with status < 500 and level='warn'|'debug'|'info' is "expected".
-   */
   protected shouldCapture(err: Error): boolean {
     if (!isCustomError(err)) return true; // always capture unknown errors
     const { status = HttpStatus.INTERNAL_SERVER_ERROR, level = 'warn' } = err.info;
-    if (status < HttpStatus.INTERNAL_SERVER_ERROR && (level === 'warn' || level === 'debug' || level === 'info')) {
-      return false;
+    if (status < HttpStatus.INTERNAL_SERVER_ERROR) {
+      if (this.sentryOptions?.capture4xx) {
+        return true;
+      }
+      if (level === 'warn' || level === 'debug' || level === 'info') {
+        return false;
+      }
     }
     return true;
   }

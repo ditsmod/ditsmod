@@ -5,7 +5,8 @@ import { SentryHttpErrorHandler } from './sentry.http-error-handler.js';
 import { SentryExtension } from './sentry.extension.js';
 
 @featureModule({
-  providersPerRou: [{ token: HttpErrorHandler, useClass: SentryHttpErrorHandler }],
+  providersPerRou: [SentryHttpErrorHandler, { token: HttpErrorHandler, useToken: SentryHttpErrorHandler }],
+  exports: [SentryHttpErrorHandler, HttpErrorHandler],
   extensions: [
     {
       extension: SentryExtension,

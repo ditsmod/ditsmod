@@ -23,6 +23,7 @@ jest.unstable_mockModule('@sentry/node', () => {
 const { SentryHttpErrorHandler: ErrorHandler } = await import('./sentry.http-error-handler.js');
 const Sentry = (await import('@sentry/node')) as any;
 const { RequestContext } = await import('@ditsmod/rest');
+const { SentryOptions } = await import('./types.js');
 
 describe('SentryHttpErrorHandler', () => {
   let errorHandler: SentryHttpErrorHandler;
@@ -76,6 +77,25 @@ describe('SentryHttpErrorHandler', () => {
     await errorHandler.handleError(err, ctx);
 
     expect(Sentry.captureException).not.toHaveBeenCalled();
+    expect(rawRes.end).toHaveBeenCalled();
+  });
+
+  it('should capture expected custom error (status 400, level warn) if capture4xx is true', async () => {
+    const injector = Injector.resolveAndCreate([
+      { token: Logger, useValue: logger },
+      { token: SentryOptions, useValue: { capture4xx: true } },
+      ErrorHandler,
+    ]);
+    errorHandler = injector.get(ErrorHandler);
+
+    const err = new CustomError({
+      msg1: 'bad request',
+      status: HttpStatus.BAD_REQUEST,
+      level: 'warn',
+    });
+    await errorHandler.handleError(err, ctx);
+
+    expect(Sentry.captureException).toHaveBeenCalledWith(err, expect.any(Object));
     expect(rawRes.end).toHaveBeenCalled();
   });
 

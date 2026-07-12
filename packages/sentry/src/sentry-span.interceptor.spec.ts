@@ -9,8 +9,8 @@ jest.unstable_mockModule('@sentry/node', () => {
 import type { HttpHandler, BaseRequestContext } from '@ditsmod/rest';
 
 // Import dynamically after mock
-const { SentrySpanInterceptor } = await import('./sentry-span.interceptor.js');
 const Sentry = await import('@sentry/node');
+const { SentrySpanInterceptor } = await import('./sentry-span.interceptor.js');
 
 describe('SentrySpanInterceptor', () => {
   let interceptor: any;

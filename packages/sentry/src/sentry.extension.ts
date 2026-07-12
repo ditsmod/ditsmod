@@ -1,7 +1,7 @@
 import { getIsolationScope, getDefaultIsolationScope } from '@sentry/core';
 
-import { injectable, Logger } from '@ditsmod/core';
-import type { Extension, ExtensionManager } from '@ditsmod/core';
+import { injectable, Logger, ExtensionManager } from '@ditsmod/core';
+import type { Extension } from '@ditsmod/core';
 import { RestRouteExtension, HTTP_INTERCEPTORS } from '@ditsmod/rest';
 
 import { SentrySpanInterceptor } from './sentry-span.interceptor.js';
