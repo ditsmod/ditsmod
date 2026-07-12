@@ -18,6 +18,7 @@
     { "path": "testing/tsconfig.json" },
     { "path": "trpc/tsconfig.json" },
     { "path": "graphql/tsconfig.json" },
+    { "path": "sentry/tsconfig.json" },
     { "path": "versions/tsconfig.json" }
   ]
 }
