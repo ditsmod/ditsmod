@@ -22,6 +22,7 @@
     { "path": "18-trpc-server/tsconfig.e2e.json" },
     { "path": "19-session-cookie/tsconfig.e2e.json" },
     { "path": "20-authjs/tsconfig.e2e.json" },
-    { "path": "21-sentry/tsconfig.e2e.json" }
+    { "path": "21-sentry/tsconfig.e2e.json" },
+    { "path": "22-schedule/tsconfig.e2e.json" }
   ]
 }

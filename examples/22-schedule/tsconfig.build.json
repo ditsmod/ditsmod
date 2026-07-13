@@ -1,0 +1,16 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "tsBuildInfoFile": "dist/build.tsbuildinfo"
+  },
+  "include": ["src"],
+  "exclude": ["src/**/*.spec.ts"],
+  "references": [
+    { "path": "../../packages/cli/tsconfig.build.json" },
+    { "path": "../../packages/core/tsconfig.build.json" },
+    { "path": "../../packages/rest/tsconfig.build.json" },
+    { "path": "../../packages/schedule/tsconfig.build.json" }
+  ]
+}

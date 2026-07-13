@@ -7866,6 +7866,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"example22@workspace:examples/22-schedule":
+  version: 0.0.0-use.local
+  resolution: "example22@workspace:examples/22-schedule"
+  dependencies:
+    "@ditsmod/cli": "npm:^3.0.0-next.14"
+    jest: "npm:^30.4.2"
+    typescript-7: "npm:typescript@^7.0.2"
+  languageName: unknown
+  linkType: soft
+
 "execa@npm:5.0.0":
   version: 5.0.0
   resolution: "execa@npm:5.0.0"
