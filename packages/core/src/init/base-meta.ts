@@ -13,12 +13,18 @@ export class NormalizedInitMeta<A extends AnyObj = AnyObj> {
    */
   id?: string = '';
   importsModules: ModuleType[];
+  /**
+   * Import dynamic modules.
+   */
   importsWithOpts: DynamicModule[];
   providersPerApp: Provider[];
   providersPerMod: Provider[];
   providersPerRou: Provider[];
   providersPerReq: Provider[];
   exportsModules: ModuleType[];
+  /**
+   * Export dynamic modules.
+   */
   exportsWithOpts: DynamicModule[];
   exportedProvidersPerMod: Provider[];
   exportedProvidersPerRou: Provider[];

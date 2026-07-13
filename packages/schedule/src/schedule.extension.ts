@@ -8,8 +8,8 @@ import {
   Injector,
   Logger,
   getProviderTarget,
+  Reflector,
 } from '@ditsmod/core';
-import { Reflector } from '@ditsmod/core/di';
 
 import { cron } from './cron.decorator.js';
 import { interval } from './interval.decorator.js';

@@ -30,6 +30,16 @@ export function getTokens<T = any>(providers: Provider[] | ReadonlyArray<Provide
   return tokens;
 }
 
+/**
+ * Extracts the implementation target (class, token, value, or factory) from a given DI provider.
+ *
+ * For example:
+ * - If it's a `ClassProvider`, returns `provider.useClass`.
+ * - If it's a `TokenProvider`, returns `provider.useToken`.
+ * - If it's a `ValueProvider`, returns `provider.useValue`.
+ * - If it's a `FactoryProvider`, returns `provider.useFactory`.
+ * - Otherwise (if it's a `TypeProvider`), returns the `provider` itself.
+ */
 export function getProviderTarget(provider: Provider) {
   if (isClassProvider(provider)) {
     return provider.useClass;
@@ -44,6 +54,11 @@ export function getProviderTarget(provider: Provider) {
   }
 }
 
+/**
+ * Extracts implementation targets from an array of DI providers.
+ *
+ * @see getProviderTarget
+ */
 export function getProvidersTargets(providers: Provider[]) {
   return providers.map(getProviderTarget);
 }
