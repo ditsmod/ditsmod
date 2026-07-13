@@ -1,6 +1,7 @@
 import * as http from 'http';
 import * as http2 from 'http2';
 import * as https from 'https';
+import { jest } from '@jest/globals';
 import {
   SystemLogMediator,
   ModuleType,
@@ -107,6 +108,56 @@ describe('RestApplication', () => {
       const { log } = mock;
       await mock.bootstrapApplication(appInitializer);
       expect(mock.log !== log).toBe(true);
+    });
+  });
+
+  describe('customShutdown()', () => {
+    it('should close server and handle idle/active connection draining', async () => {
+      const mockServer = {
+        close: jest.fn((cb: any) => cb()),
+        closeIdleConnections: jest.fn(),
+        closeAllConnections: jest.fn(),
+      };
+      mock.server = mockServer as any;
+
+      await (mock as any).customShutdown();
+
+      expect(mockServer.close).toHaveBeenCalled();
+      expect(mockServer.closeIdleConnections).toHaveBeenCalled();
+      expect(mockServer.closeAllConnections).not.toHaveBeenCalled();
+    });
+
+    it('should force close active connections after timeout if close hangs', async () => {
+      jest.useFakeTimers();
+
+      let closeCallback: any;
+      const mockServer = {
+        close: jest.fn((cb: any) => {
+          closeCallback = cb;
+        }),
+        closeIdleConnections: jest.fn(),
+        closeAllConnections: jest.fn(),
+      };
+
+      mock.server = mockServer as any;
+      mock.appOptions.shutdownTimeout = 5000;
+
+      const shutdownPromise = (mock as any).customShutdown();
+
+      expect(mockServer.close).toHaveBeenCalled();
+      expect(mockServer.closeIdleConnections).toHaveBeenCalled();
+      expect(mockServer.closeAllConnections).not.toHaveBeenCalled();
+
+      // Fast-forward time to hit the timeout
+      jest.advanceTimersByTime(5000);
+
+      expect(mockServer.closeAllConnections).toHaveBeenCalled();
+
+      // Complete the close
+      closeCallback();
+      await shutdownPromise;
+
+      jest.useRealTimers();
     });
   });
 });

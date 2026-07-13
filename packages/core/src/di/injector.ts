@@ -843,6 +843,21 @@ child.pull(Service).config; // pulls Service in current injector: { one: 11, two
     return this.#Registry.prototype[id];
   }
 
+  getInstances() {
+    const instances: any[] = [];
+    for (const id in this.#registry) {
+      const value = this.#registry[id] as any;
+      if (value && !value[ID]) {
+        if (Array.isArray(value)) {
+          instances.push(...value);
+        } else {
+          instances.push(value);
+        }
+      }
+    }
+    return instances;
+  }
+
   hasId(id: number) {
     return Object.hasOwn(this.#registry, id);
   }

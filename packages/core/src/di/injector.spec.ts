@@ -1369,3 +1369,26 @@ describe('InstantiationError', () => {
     expect(() => inj1.instantiateResolved(resolvedProvider)).toThrow(msg);
   });
 });
+
+describe('getInstances()', () => {
+  it('should return only instantiated instances, handling arrays for multi-providers', () => {
+    class ServiceA {}
+    class ServiceB {}
+    const multiToken = 'multi';
+
+    const injector = Injector.resolveAndCreate([
+      ServiceA,
+      ServiceB,
+      { token: multiToken, useValue: 'val1', multi: true },
+      { token: multiToken, useValue: 'val2', multi: true },
+    ]);
+
+    expect(injector.getInstances()).toEqual([]);
+
+    const instanceA = injector.get(ServiceA);
+    expect(injector.getInstances()).toEqual([instanceA]);
+
+    injector.get(multiToken);
+    expect(injector.getInstances().sort()).toEqual([instanceA, 'val1', 'val2'].sort());
+  });
+});

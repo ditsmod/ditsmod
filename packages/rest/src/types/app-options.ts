@@ -10,4 +10,11 @@ export class AppOptions extends BaseAppOptions {
    * This is the root prefix that will be added to all routes.
    */
   path?: string = '';
+  /**
+   * Time in milliseconds to wait for active connections to close during graceful shutdown.
+   * If this timeout is reached, all remaining connections will be forcefully closed.
+   *
+   * Default - `15000` (15 seconds).
+   */
+  shutdownTimeout?: number = 15000;
 }

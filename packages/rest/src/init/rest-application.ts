@@ -64,14 +64,47 @@ export class RestApplication extends BaseApplication {
   protected async createServer(requestListener: RequestListener): Promise<HttpServer> {
     if (isHttp2SecureServerOptions(this.appOptions.serverOptions || {})) {
       const serverModule = this.appOptions.httpModule as typeof http2;
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       return serverModule.createSecureServer(this.appOptions.serverOptions || {}, requestListener);
     } else {
       const serverModule = (this.appOptions.httpModule || (await import('http'))) as
         | HttpServerModule
         | HttpsServerModule;
       const serverOptions = this.appOptions.serverOptions as http.ServerOptions | https.ServerOptions;
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       return serverModule.createServer(serverOptions, requestListener);
     }
+  }
+
+  protected override async customShutdown(signal?: string): Promise<void> {
+    if (!this.server) {
+      return;
+    }
+
+    await new Promise<void>((resolve, reject) => {
+      let timer: NodeJS.Timeout | undefined;
+
+      if ('closeAllConnections' in this.server) {
+        const server = this.server;
+        const timeoutVal = this.appOptions.shutdownTimeout ?? 15000;
+        timer = setTimeout(() => server.closeAllConnections(), timeoutVal);
+      }
+
+      this.server.close((err) => {
+        if (timer) {
+          clearTimeout(timer);
+        }
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+
+      if ('closeIdleConnections' in this.server) {
+        this.server.closeIdleConnections();
+      }
+    });
   }
 }
 

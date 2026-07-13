@@ -1,3 +1,5 @@
+import { jest } from '@jest/globals';
+
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ModuleManager } from '#init/module-manager.js';
 // import { Router } from '#types/router.js';
@@ -69,6 +71,175 @@ describe('BaseApplication', () => {
       const { log: systemLogMediator } = mock;
       await mock.bootstrapApplication(baseAppInitializer);
       expect(mock.log !== systemLogMediator).toBe(true);
+    });
+  });
+
+  describe('graceful shutdown', () => {
+    let exitSpy: any;
+
+    beforeEach(() => {
+      exitSpy = jest.spyOn(process, 'exit').mockImplementation((() => {}) as any);
+    });
+
+    afterEach(() => {
+      exitSpy.mockRestore();
+    });
+
+    it('should call BeforeShutdown and OnShutdown hooks on instantiated providers in correct order', async () => {
+      const order: string[] = [];
+
+      class TestServiceBefore {
+        beforeShutdown(signal?: string) {
+          order.push(`before-${signal}`);
+        }
+      }
+
+      class TestServiceOn {
+        onShutdown(signal?: string) {
+          order.push(`on-${signal}`);
+        }
+      }
+
+      @rootModule({
+        providersPerApp: [TestServiceBefore, TestServiceOn, { token: LoggerConfig, useValue: { level: 'off' } }],
+      })
+      class AppModule {}
+
+      const app = mock;
+      const moduleManager = app.scanRootModule(AppModule);
+      const baseAppInitializer = new BaseAppInitializer(
+        new BaseAppOptions(),
+        moduleManager,
+        new SystemLogMediator({ moduleName: '' }),
+      );
+      await app.bootstrapApplication(baseAppInitializer);
+
+      // Instantiate them so they exist in registry
+      (app as any).injectorPerApp!.get(TestServiceBefore);
+      (app as any).injectorPerApp!.get(TestServiceOn);
+
+      // Define customShutdown spy
+      const customShutdownSpy = jest.spyOn(app as any, 'customShutdown').mockImplementation(async () => {
+        order.push('custom');
+      });
+
+      await app.close('SIGTERM');
+
+      expect(order).toEqual(['before-SIGTERM', 'custom', 'on-SIGTERM']);
+      expect(exitSpy).toHaveBeenCalledWith(0);
+
+      customShutdownSpy.mockRestore();
+    });
+
+    it('should not call hooks on uninstantiated providers', async () => {
+      const order: string[] = [];
+
+      class UnusedService {
+        beforeShutdown() {
+          order.push('unused');
+        }
+      }
+
+      @rootModule({
+        providersPerApp: [UnusedService, { token: LoggerConfig, useValue: { level: 'off' } }],
+      })
+      class AppModule {}
+
+      const app = mock;
+      const moduleManager = app.scanRootModule(AppModule);
+      const baseAppInitializer = new BaseAppInitializer(
+        new BaseAppOptions(),
+        moduleManager,
+        new SystemLogMediator({ moduleName: '' }),
+      );
+      await app.bootstrapApplication(baseAppInitializer);
+
+      await app.close('SIGTERM');
+
+      expect(order).toEqual([]);
+      expect(exitSpy).toHaveBeenCalledWith(0);
+    });
+
+    it('should continue running subsequent hooks and stages even if a hook fails', async () => {
+      const order: string[] = [];
+
+      class TestServiceBeforeFail {
+        beforeShutdown() {
+          order.push('before-fail');
+          throw new Error('before hook failed');
+        }
+      }
+
+      class TestServiceBeforeSuccess {
+        beforeShutdown() {
+          order.push('before-success');
+        }
+      }
+
+      class TestServiceOn {
+        onShutdown() {
+          order.push('on-success');
+        }
+      }
+
+      @rootModule({
+        providersPerApp: [
+          TestServiceBeforeFail,
+          TestServiceBeforeSuccess,
+          TestServiceOn,
+          { token: LoggerConfig, useValue: { level: 'off' } },
+        ],
+      })
+      class AppModule {}
+
+      const app = mock;
+      const moduleManager = app.scanRootModule(AppModule);
+      const baseAppInitializer = new BaseAppInitializer(
+        new BaseAppOptions(),
+        moduleManager,
+        new SystemLogMediator({ moduleName: '' }),
+      );
+      await app.bootstrapApplication(baseAppInitializer);
+
+      (app as any).injectorPerApp!.get(TestServiceBeforeFail);
+      (app as any).injectorPerApp!.get(TestServiceBeforeSuccess);
+      (app as any).injectorPerApp!.get(TestServiceOn);
+
+      const customShutdownSpy = jest.spyOn(app as any, 'customShutdown').mockImplementation(async () => {
+        order.push('custom');
+      });
+
+      await app.close('SIGTERM');
+
+      expect(order).toContain('before-fail');
+      expect(order).toContain('before-success');
+      expect(order.indexOf('custom')).toBeGreaterThan(order.indexOf('before-fail'));
+      expect(order.indexOf('custom')).toBeGreaterThan(order.indexOf('before-success'));
+      expect(order.indexOf('on-success')).toBeGreaterThan(order.indexOf('custom'));
+
+      expect(exitSpy).toHaveBeenCalledWith(0);
+
+      customShutdownSpy.mockRestore();
+    });
+
+    it('should prevent double shutdown execution', async () => {
+      const order: string[] = [];
+      const app = mock;
+      app.init();
+
+      const customShutdownSpy = jest.spyOn(app as any, 'customShutdown').mockImplementation(async () => {
+        order.push('custom');
+      });
+
+      // Call close twice
+      const p1 = app.close('SIGTERM');
+      const p2 = app.close('SIGTERM');
+      await Promise.all([p1, p2]);
+
+      expect(order).toEqual(['custom']);
+      expect(exitSpy).toHaveBeenCalledTimes(1);
+
+      customShutdownSpy.mockRestore();
     });
   });
 });

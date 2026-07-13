@@ -84,6 +84,35 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
+   * `info: ${className}: received ${signal}, starting graceful shutdown.`
+   */
+  shutdownStart(self: object, signal?: string) {
+    const className = self.constructor.name;
+    const msg = signal
+      ? `${className}: received ${signal}, starting graceful shutdown.`
+      : `${className}: starting graceful shutdown.`;
+    this.setLog('info', msg);
+  }
+
+  /**
+   * `info: ${className}: graceful shutdown complete.`
+   */
+  shutdownComplete(self: object) {
+    const className = self.constructor.name;
+    this.setLog('info', `${className}: graceful shutdown complete.`);
+  }
+
+  /**
+   * `error: ${className}: error in ${hookName} hook.`
+   */
+  shutdownError(self: object, hookName: string, err: any) {
+    const className = self.constructor.name;
+    const msg = `${className}: error in ${hookName} hook.`;
+    this.setLog('error', msg);
+    this.setLog('error', err.stack || err.message || err);
+  }
+
+  /**
    * `debug: start reinit the application.`
    */
   startReinitApp(self: object) {

@@ -281,6 +281,10 @@ export class ModuleManager {
     return new Map(this.map);
   }
 
+  getInjectorsPerMod() {
+    return this.injectorPerModMap;
+  }
+
   setInjectorPerMod(moduleId: ModuleId, injectorPerMod: Injector) {
     if (typeof moduleId == 'string') {
       const modRefId = this.mapId.get(moduleId);

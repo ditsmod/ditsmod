@@ -5,3 +5,5 @@
 export interface OnModuleInit {
   onModuleInit(): void | Promise<void>;
 }
+
+export * from './shutdown.js';
