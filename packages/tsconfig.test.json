@@ -13,6 +13,7 @@
     { "path": "rest/tsconfig.e2e.json" },
     { "path": "rest-diagnostics/tsconfig.unit.json" },
     { "path": "rest-testing/tsconfig.unit.json" },
+    { "path": "schedule/tsconfig.e2e.json" },
     { "path": "session-cookie/tsconfig.unit.json" },
     { "path": "sqb/tsconfig.unit.json" },
     { "path": "trpc/tsconfig.unit.json" },

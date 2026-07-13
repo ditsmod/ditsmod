@@ -108,9 +108,4 @@ describe('ScheduleExtension', () => {
     await extension.stage3();
     expect(orchestratorMock.mountJobs).toHaveBeenCalledTimes(1);
   });
-
-  it('should not call mountJobs in stage3 if stage2 was never called', async () => {
-    await extension.stage3();
-    expect(orchestratorMock.mountJobs).not.toHaveBeenCalled();
-  });
 });

@@ -9,6 +9,9 @@
   "homepage": "https://ditsmod.github.io/en/",
   "description": "Ditsmod module to support...",
   "module": "dist/index.js",
+  "imports": {
+    "#src/*": "./dist/*"
+  },
   "exports": {
     "./package.json": {
       "default": "./package.json"
@@ -21,7 +24,8 @@
   "scripts": {
     "build": "tsc -b tsconfig.build.json",
     "clean": "rm -rf dist*",
-    "test": "tsc -b tsconfig.unit.json && yarn esm-jest",
+    "test": "yarn build-test && yarn esm-jest",
+    "build-test": "tsc -b tsconfig.e2e.json",
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)"
   },
   "keywords": [
