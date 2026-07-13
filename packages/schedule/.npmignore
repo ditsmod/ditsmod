@@ -1,0 +1,14 @@
+*.tgz
+*.log
+*.spec.*
+yarn.*
+jest.*
+.*
+nodemon.json
+CHANGELOG.md
+*.tsbuildinfo
+tsconfig.e2e.json
+tsconfig.unit.json
+test
+e2e
+dist-*

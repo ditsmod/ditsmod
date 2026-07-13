@@ -1,6 +1,5 @@
 {
-  "private": true,
-  "name": "x-package-example",
+  "name": "@ditsmod/schedule",
   "type": "module",
   "version": "3.0.0-next.14",
   "repository": {
