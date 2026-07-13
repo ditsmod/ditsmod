@@ -29,6 +29,9 @@
   ],
   "author": "",
   "license": "MIT",
+  "dependencies": {
+    "cron": "4.4.0"
+  },
   "peerDependencies": {
     "@ditsmod/core": "^3.0.0-next.14"
   },

@@ -1150,6 +1150,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ditsmod/schedule@workspace:packages/schedule"
   dependencies:
+    cron: "npm:4.4.0"
     jest: "npm:^30.4.2"
     npm-run-all: "npm:^4.1.5"
     typescript-7: "npm:typescript@^7.0.2"
@@ -4033,6 +4034,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/luxon@npm:~3.7.0":
+  version: 3.7.2
+  resolution: "@types/luxon@npm:3.7.2"
+  checksum: 10c0/c29fd286d0804221b14b3380dd9b290390c188a0df67fa770ced16994e637ab62de89425daf4de82150ea44b9bbbbb9537e4c85677d381d98bec5afcf53f0b5a
+  languageName: node
+  linkType: hard
+
 "@types/methods@npm:^1.1.4":
   version: 1.1.4
   resolution: "@types/methods@npm:1.1.4"
@@ -6481,6 +6489,16 @@ __metadata:
   version: 1.1.1
   resolution: "create-require@npm:1.1.1"
   checksum: 10c0/157cbc59b2430ae9a90034a5f3a1b398b6738bf510f713edc4d4e45e169bc514d3d99dd34d8d01ca7ae7830b5b8b537e46ae8f3c8f932371b0875c0151d7ec91
+  languageName: node
+  linkType: hard
+
+"cron@npm:4.4.0":
+  version: 4.4.0
+  resolution: "cron@npm:4.4.0"
+  dependencies:
+    "@types/luxon": "npm:~3.7.0"
+    luxon: "npm:~3.7.0"
+  checksum: 10c0/e3762fda4a9a2404ac2e54e1104a3c6c695747e14b2321bbc5531aa1192c75a319075695fcaf68b6927e0ffd877b5454f314c680f6586db1a78b2c25b76b8a32
   languageName: node
   linkType: hard
 
@@ -10932,6 +10950,13 @@ __metadata:
   dependencies:
     yallist: "npm:^4.0.0"
   checksum: 10c0/cb53e582785c48187d7a188d3379c181b5ca2a9c78d2bce3e7dee36f32761d1c42983da3fe12b55cb74e1779fa94cdc2e5367c028a9b35317184ede0c07a30a9
+  languageName: node
+  linkType: hard
+
+"luxon@npm:~3.7.0":
+  version: 3.7.2
+  resolution: "luxon@npm:3.7.2"
+  checksum: 10c0/ed8f0f637826c08c343a29dd478b00628be93bba6f068417b1d8896b61cb61c6deacbe1df1e057dbd9298334044afa150f9aaabbeb3181418ac8520acfdc2ae2
   languageName: node
   linkType: hard
 
