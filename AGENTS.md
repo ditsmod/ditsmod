@@ -56,6 +56,12 @@ Run `yarn docs-en` to preview changes locally.
 
 ---
 
+## Code style
+
+- **Internal Package Imports**: Never map the current package's own name (e.g., mapping `@ditsmod/schedule` inside the `schedule` package) in `tsconfig.json` `paths` to reference local files. Self-mapping is not allowed; package-name mapping is reserved exclusively for external packages. To import files from the current package (e.g., inside E2E tests), use Node.js subpath imports (like `#src/*` or specific aliases) that resolve to `./src/*` in `tsconfig.json` and `./dist/*` in `package.json`'s `imports` block.
+
+---
+
 ## Language Rules
 
 - **Ukrainian Language**:
@@ -69,4 +75,3 @@ Run `yarn docs-en` to preview changes locally.
 ## User Interaction
 
 - If the user asks a question, do not modify any code immediately. It is sufficient to answer the question first. Only modify the code when the user explicitly instructs to do so.
-
