@@ -28,6 +28,8 @@ jobs:
           - openapi-validation
           - rest
           - rest-testing
+          - schedule
+          - sentry
           - session-cookie
           - trpc
         include:
