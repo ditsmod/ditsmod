@@ -4,7 +4,6 @@ import {
   Extension,
   injectable,
   ResolvedModuleMetadata,
-  ExtensionCounters,
   Provider,
   Injector,
   Logger,
@@ -20,11 +19,10 @@ import { SchedulerOrchestrator } from './scheduler.orchestrator.js';
 @injectable()
 export class ScheduleExtension implements Extension<void> {
   private readonly scannedProviders = new Set<any>();
+  private injectorPerMod?: Injector;
 
   constructor(
-    private orchestrator: SchedulerOrchestrator,
     private metadata: ResolvedModuleMetadata,
-    private counters: ExtensionCounters,
     private logger: Logger,
   ) {}
 
@@ -44,6 +42,8 @@ export class ScheduleExtension implements Extension<void> {
   }
 
   async stage2(injectorPerMod: Injector): Promise<void> {
+    this.injectorPerMod = injectorPerMod;
+
     for (const ProviderCls of this.scannedProviders) {
       const instance = injectorPerMod.get(ProviderCls, null);
       if (!instance) {
@@ -55,18 +55,23 @@ export class ScheduleExtension implements Extension<void> {
         continue;
       }
 
+      const orchestrator = injectorPerMod.parent!.get(SchedulerOrchestrator);
+
       for (const propName of classMeta) {
         const propMeta = classMeta[propName];
         propMeta.decorators.forEach((decor) => {
+          if (decor.decorator !== cron && decor.decorator !== interval && decor.decorator !== timeout) {
+            return;
+          }
           const boundFn = (instance[propName] as Function).bind(instance);
-          const name = decor.value.name || crypto.randomUUID();
+          const name = decor.value?.name || crypto.randomUUID();
 
           if (decor.decorator === cron) {
-            this.orchestrator.addCron(name, boundFn, decor.value);
+            orchestrator.addCron(name, boundFn, decor.value);
           } else if (decor.decorator === interval) {
-            this.orchestrator.addInterval(name, boundFn, decor.value.timeout);
+            orchestrator.addInterval(name, boundFn, decor.value.timeout);
           } else if (decor.decorator === timeout) {
-            this.orchestrator.addTimeout(name, boundFn, decor.value.timeout);
+            orchestrator.addTimeout(name, boundFn, decor.value.timeout);
           }
         });
       }
@@ -77,13 +82,14 @@ export class ScheduleExtension implements Extension<void> {
   }
 
   async stage3(): Promise<void> {
-    this.orchestrator.mountJobs();
+    const orchestrator = this.injectorPerMod!.parent!.get(SchedulerOrchestrator);
+    orchestrator.mountJobs();
   }
 
   private collectStatic(providers: Provider[]): void {
     providers.forEach((prov) => {
       const target = getProviderTarget(prov);
-      if (typeof target !== 'function') {
+      if (typeof target !== 'function' || !target.prototype) {
         return;
       }
 
@@ -106,7 +112,7 @@ export class ScheduleExtension implements Extension<void> {
   private scanAndWarn(providers: Provider[], scope: string): void {
     providers.forEach((prov) => {
       const target = getProviderTarget(prov);
-      if (typeof target !== 'function') {
+      if (typeof target !== 'function' || !target.prototype) {
         return;
       }
 

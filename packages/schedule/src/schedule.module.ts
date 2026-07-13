@@ -6,7 +6,6 @@ import { SchedulerRegistry } from './scheduler.registry.js';
 
 @featureModule({
   providersPerApp: [SchedulerRegistry, SchedulerOrchestrator],
-  exports: [SchedulerRegistry],
   extensions: [
     {
       extension: ScheduleExtension,

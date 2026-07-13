@@ -1,5 +1,4 @@
 import { CronJob } from 'cron';
-
 import { injectable, Logger } from '@ditsmod/core';
 
 import { DUPLICATE_SCHEDULER, NO_SCHEDULER_FOUND } from './schedule.messages.js';

@@ -1,7 +1,7 @@
 import 'reflect-metadata/lite';
 import { jest } from '@jest/globals';
 
-import { ExtensionCounters, Injector, Logger, ResolvedModuleMetadata } from '@ditsmod/core';
+import { Injector, Logger, ResolvedModuleMetadata } from '@ditsmod/core';
 
 import { cron } from './cron.decorator.js';
 import { interval } from './interval.decorator.js';
@@ -12,9 +12,9 @@ import { timeout } from './timeout.decorator.js';
 describe('ScheduleExtension', () => {
   let orchestratorMock: jest.Mocked<SchedulerOrchestrator>;
   let loggerMock: jest.Mocked<Logger>;
-  let injectorMock: jest.Mocked<Injector>;
+  let injectorPerModMock: jest.Mocked<Injector>;
+  let injectorPerAppMock: jest.Mocked<Injector>;
   let resolvedMetadataMock: ResolvedModuleMetadata;
-  let countersMock: ExtensionCounters;
   let extension: ScheduleExtension;
 
   class ModService {
@@ -47,8 +47,22 @@ describe('ScheduleExtension', () => {
       log: jest.fn(),
     } as any;
 
-    injectorMock = {
-      get: jest.fn(),
+    // injectorPerApp mock returns the orchestrator
+    injectorPerAppMock = {
+      get: jest.fn().mockReturnValue(orchestratorMock),
+    } as any;
+
+    const modInstance = new ModService();
+    const appInstance = new AppService();
+
+    // injectorPerMod mock: resolves services, and has a parent (the App injector)
+    injectorPerModMock = {
+      get: jest.fn().mockImplementation((token: any) => {
+        if (token === ModService) return modInstance;
+        if (token === AppService) return appInstance;
+        return null;
+      }),
+      parent: injectorPerAppMock,
     } as any;
 
     resolvedMetadataMock = {
@@ -60,9 +74,7 @@ describe('ScheduleExtension', () => {
       },
     } as any;
 
-    countersMock = new ExtensionCounters();
-
-    extension = new ScheduleExtension(orchestratorMock, resolvedMetadataMock, countersMock, loggerMock);
+    extension = new ScheduleExtension(resolvedMetadataMock, loggerMock);
   });
 
   it('should scan and collect providers in stage1, and warn about request-scoped ones', async () => {
@@ -82,17 +94,8 @@ describe('ScheduleExtension', () => {
   });
 
   it('should instantiate and register jobs in stage2', async () => {
-    const modInstance = new ModService();
-    const appInstance = new AppService();
-
-    injectorMock.get.mockImplementation((token: any) => {
-      if (token === ModService) return modInstance;
-      if (token === AppService) return appInstance;
-      return null;
-    });
-
     await extension.stage1(true);
-    await extension.stage2(injectorMock);
+    await extension.stage2(injectorPerModMock);
 
     expect(orchestratorMock.addCron).toHaveBeenCalledWith('cron1', expect.any(Function), expect.any(Object));
     expect(orchestratorMock.addInterval).toHaveBeenCalledWith(expect.any(String), expect.any(Function), 1000);
@@ -100,7 +103,14 @@ describe('ScheduleExtension', () => {
   });
 
   it('should trigger orchestrator.mountJobs in stage3', async () => {
+    await extension.stage1(true);
+    await extension.stage2(injectorPerModMock);
     await extension.stage3();
     expect(orchestratorMock.mountJobs).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not call mountJobs in stage3 if stage2 was never called', async () => {
+    await extension.stage3();
+    expect(orchestratorMock.mountJobs).not.toHaveBeenCalled();
   });
 });
