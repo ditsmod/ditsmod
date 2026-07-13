@@ -1,5 +1,5 @@
 ---
-sidebar_position: 9
+sidebar_position: 13
 ---
 
 # @ditsmod/schedule
@@ -17,11 +17,11 @@ yarn add @ditsmod/schedule
 To enable scheduling, import the `ScheduleModule` in your root or feature module, and register the class containing your tasks in `providersPerMod` (or `providersPerApp`):
 
 ```ts
-import { restRootModule } from '@ditsmod/rest';
+import { rootModule } from '@ditsmod/core';
 import { ScheduleModule } from '@ditsmod/schedule';
 import { MyTasks } from './my-tasks.service.js';
 
-@restRootModule({
+@rootModule({
   imports: [ScheduleModule],
   providersPerMod: [MyTasks],
 })
