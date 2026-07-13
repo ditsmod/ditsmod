@@ -62,6 +62,11 @@ Run `yarn docs-en` to preview changes locally.
   - When communicating or writing in Ukrainian, the English term **"application"** (or **"app"**) must either remain in English, or be translated as **"застосунок"**.
   - **Do NOT** translate it as **"додаток"**.
 
+## Architectural Suggestions
+
+- **Proposing Changes**: If an agent clearly sees that a truly useful architectural feature or improvement is missing in the framework, they are encouraged (and requested) to propose it to the user.
+
 ## User Interaction
 
 - If the user asks a question, do not modify any code immediately. It is sufficient to answer the question first. Only modify the code when the user explicitly instructs to do so.
+
