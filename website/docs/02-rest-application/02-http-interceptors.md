@@ -108,7 +108,7 @@ export class SomeModule {}
 [2]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/rest/src/interceptors/default-http-frontend.ts
 [3]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/rest/src/interceptors/default-http-backend.ts
 [5]: https://expressjs.com/en/guide/writing-middleware.html
-[7]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/rest/src/services/pre-router.ts
+[7]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/services/request-dispatcher.ts
 [8]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/rest/src/types/route-data.ts
 [9]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/body-parser/src/body-parser.extension.ts#L54
 

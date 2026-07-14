@@ -75,7 +75,7 @@ export class MyCustomRouterModule {}
 
 This module exports `RestRouteExtension`. This extension returns metadata with the [`Array<RouteExtensionMeta>`][2] interface — an array of dynamic metadata intended for creating request handlers. Each element of this array represents a separate route.
 
-## `DispatcherExtension` {#pre-router-extension}
+## `DispatcherExtension` {#request-dispatcher-extension}
 
 This module also exports `DispatcherExtension`. This extension uses the metadata returned by `RestRouteExtension` to create HTTP request handlers.
 

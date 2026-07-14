@@ -75,7 +75,7 @@ export class MyCustomRouterModule {}
 
 З даного модуля експортується `RestRouteExtension`. Дане розширення повертає метадані з інтерфейсом [`Array<RouteExtensionMeta>`][2] - це масив динамічних метаданих, які призначені для створення обробників запитів. Кожен елемент цього масиву - це окремий роут.
 
-## `DispatcherExtension` {#pre-router-extension}
+## `DispatcherExtension` {#request-dispatcher-extension}
 
 З даного модуля також експортується `DispatcherExtension`. Дане розширення використовує метадані, які повертає `RestRouteExtension`, щоб створювати обробники HTTP-запитів.
 

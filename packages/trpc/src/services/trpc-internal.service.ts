@@ -12,7 +12,7 @@ import {
 
 import { TRPC_ROOT } from '#types/constants.js';
 import { TrpcRouterOpts, TrpcRootObject, ModuleWithTrpcRoutes, RouterOptions, TrpcRootModule } from '#types/types.js';
-import { TrpcRequestDispatcher } from './pre-router.js';
+import { TrpcRequestDispatcher } from './request-dispatcher.js';
 import { isModuleWithTrpcRoutes } from '#utils/type.guards.js';
 import { TrpcService } from '#services/trpc.service.js';
 

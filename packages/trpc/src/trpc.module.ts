@@ -1,7 +1,7 @@
 import { ContextModule, featureModule } from '@ditsmod/core';
 
 import { TrpcRouteExtension } from './extensions/trpc-route.extension.js';
-import { TrpcRequestDispatcherExtension } from './extensions/trpc-pre-router.extension.js';
+import { TrpcRequestDispatcherExtension } from './extensions/trpc-request-dispatcher.extension.js';
 
 @featureModule({
   imports: [ContextModule],

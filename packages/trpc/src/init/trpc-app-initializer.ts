@@ -4,7 +4,7 @@ import { initTRPC } from '@trpc/server';
 
 import type { RequestListener, TrpcRootModule } from '../types/types.js';
 import { SERVER } from '../types/types.js';
-import { TrpcRequestDispatcher } from '#services/pre-router.js';
+import { TrpcRequestDispatcher } from '#services/request-dispatcher.js';
 import type { HttpServer } from '#types/server-options.js';
 import { TRPC_ROOT } from '#types/constants.js';
 import { TrpcInternalService } from '#services/trpc-internal.service.js';
