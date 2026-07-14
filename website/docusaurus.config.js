@@ -12,6 +12,10 @@ module.exports = {
   organizationName: 'ditsmod', // Usually your GitHub org/user name.
   projectName: 'ditsmod.github.io', // Usually your repo name.
   trailingSlash: true,
+  markdown: {
+    mermaid: true,
+  },
+  themes: ['@docusaurus/theme-mermaid'],
   themeConfig: {
     navbar: {
       // title: 'Головна',
