@@ -2,7 +2,7 @@ import { HttpMethod, injectable, HttpStatus, SystemLogMediator } from '@ditsmod/
 import { IncomingMessage, ServerResponse } from 'node:http';
 
 import { Router } from './router.js';
-import { RawResponse, RequestListener } from './request.js';
+import { RawRequest, RawResponse } from './request.js';
 
 @injectable()
 export class RequestDispatcher {
@@ -11,7 +11,7 @@ export class RequestDispatcher {
     protected systemLogMediator: SystemLogMediator,
   ) {}
 
-  requestListener: RequestListener = async (rawReq, rawRes) => {
+  async requestListener(rawReq: RawRequest, rawRes: RawResponse) {
     const [pathname, search] = (rawReq.url || '').split('?');
     let method = rawReq.method as HttpMethod;
     if (method == 'HEAD') {
@@ -26,7 +26,7 @@ export class RequestDispatcher {
     await handle(rawReq, rawRes, params, search).catch((err) => {
       this.sendInternalServerError(rawRes, err);
     });
-  };
+  }
 
   /**
    * Logs an error and sends the user message about an internal server error (500).
