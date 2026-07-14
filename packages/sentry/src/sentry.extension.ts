@@ -4,7 +4,6 @@ import { injectable, Logger, ExtensionManager } from '@ditsmod/core';
 import type { Extension } from '@ditsmod/core';
 import { RestRouteExtension, HTTP_INTERCEPTORS } from '@ditsmod/rest';
 
-import { SentrySpanInterceptor } from './sentry-span.interceptor.js';
 import { SentryTracingInterceptor } from './sentry-tracing.interceptor.js';
 import type { SentryRouteMeta } from './types.js';
 
@@ -31,20 +30,11 @@ export class SentryExtension implements Extension<void> {
         // Dynamically append the fullPath to routeMeta
         (controllerMetadata.routeMeta as SentryRouteMeta).fullPath = controllerMetadata.fullPath;
 
-        controllerMetadata.providersPerReq.push(
-          SentrySpanInterceptor,
-          {
-            token: HTTP_INTERCEPTORS,
-            useToken: SentrySpanInterceptor,
-            multi: true,
-          },
-          SentryTracingInterceptor,
-          {
-            token: HTTP_INTERCEPTORS,
-            useToken: SentryTracingInterceptor,
-            multi: true,
-          },
-        );
+        controllerMetadata.providersPerReq.push(SentryTracingInterceptor, {
+          token: HTTP_INTERCEPTORS,
+          useToken: SentryTracingInterceptor,
+          multi: true,
+        });
       }
     }
   }

@@ -17,7 +17,6 @@ jest.unstable_mockModule('@sentry/core', async () => {
 
 // Import dynamically after mock
 const { SentryExtension } = await import('./sentry.extension.js');
-const { SentrySpanInterceptor } = await import('./sentry-span.interceptor.js');
 const { SentryTracingInterceptor } = await import('./sentry-tracing.interceptor.js');
 
 describe('SentryExtension', () => {
@@ -35,7 +34,7 @@ describe('SentryExtension', () => {
     extension = new SentryExtension(extensionManager, logger);
   });
 
-  it('should push tracing and span interceptors to providersPerReq of all controllers', async () => {
+  it('should push tracing interceptor to providersPerReq of all controllers', async () => {
     const mockControllerMetadata = {
       providersPerReq: [] as any[],
       routeMeta: {} as any,
@@ -50,13 +49,6 @@ describe('SentryExtension', () => {
     });
 
     await extension.stage1();
-
-    expect(mockControllerMetadata.providersPerReq).toContain(SentrySpanInterceptor);
-    expect(mockControllerMetadata.providersPerReq).toContainEqual({
-      token: HTTP_INTERCEPTORS,
-      useToken: SentrySpanInterceptor,
-      multi: true,
-    });
 
     expect(mockControllerMetadata.providersPerReq).toContain(SentryTracingInterceptor);
     expect(mockControllerMetadata.providersPerReq).toContainEqual({
