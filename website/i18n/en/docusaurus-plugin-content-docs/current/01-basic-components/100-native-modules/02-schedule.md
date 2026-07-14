@@ -74,8 +74,6 @@ Allows running methods on a cron schedule. It accepts:
 - `@interval(timeoutMs)` or `@interval(name, timeoutMs)` — periodic execution every `timeoutMs` milliseconds.
 - `@timeout(timeoutMs)` or `@timeout(name, timeoutMs)` — single execution after `timeoutMs` milliseconds delay.
 
----
-
 ## Dynamic task management {#dynamic-management}
 
 You can inject `SchedulerRegistry` into your services or controllers to query, start, stop, or delete registered tasks dynamically:

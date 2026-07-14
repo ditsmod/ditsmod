@@ -74,8 +74,6 @@ export class MyTasks {
 - `@interval(timeoutMs)` або `@interval(name, timeoutMs)` — періодичне виконання кожні `timeoutMs` мілісекунд.
 - `@timeout(timeoutMs)` або `@timeout(name, timeoutMs)` — одноразове виконання після затримки у `timeoutMs` мілісекунд.
 
----
-
 ## Динамічне керування завданнями {#dynamic-management}
 
 Ви можете впровадити `SchedulerRegistry` у свої сервіси або контролери для динамічного пошуку, запуску, зупинки чи видалення зареєстрованих завдань:
