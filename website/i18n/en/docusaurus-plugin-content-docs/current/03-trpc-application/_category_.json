@@ -1,4 +1,5 @@
 {
-  "label": "tRPC appllication",
-  "position": 3
+  "label": "tRPC application",
+  "position": 3,
+  "key": "trpc-application"
 }

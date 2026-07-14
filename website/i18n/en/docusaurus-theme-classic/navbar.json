@@ -6,5 +6,9 @@
   "item.label.Документація Ditsmod": {
     "message": "Documentation of Ditsmod",
     "description": "Navbar item with label Документація"
+  },
+  "logo.alt": {
+    "message": "Ditsmod Logo",
+    "description": "The alt text of navbar logo"
   }
 }

@@ -1,4 +1,5 @@
 {
-  "label": "REST appllication",
-  "position": 2
+  "label": "REST application",
+  "position": 2,
+  "key": "rest-application"
 }

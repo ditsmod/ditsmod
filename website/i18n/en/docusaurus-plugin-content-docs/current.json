@@ -3,31 +3,36 @@
     "message": "Next",
     "description": "The label for version current"
   },
-  "sidebar.tutorialSidebar.category.Базові компоненти": {
-    "message": "Basic components"
+  "sidebar.tutorialSidebar.category.basic-components-native-modules": {
+    "message": "Native modules",
+    "description": "The label for category 'Рідні модулі' in sidebar 'tutorialSidebar'"
   },
-  "sidebar.tutorialSidebar.category.Гайди розробника": {
-    "message": "Developer guides"
+  "sidebar.tutorialSidebar.category.rest-application-native-modules": {
+    "message": "Native modules",
+    "description": "The label for category 'Рідні модулі' in sidebar 'tutorialSidebar'"
   },
-  "sidebar.tutorialSidebar.category.Рідні модулі": {
-    "message": "Native modules"
+  "sidebar.tutorialSidebar.category.basic-components": {
+    "message": "Basic components",
+    "description": "The label for category 'Базові компоненти' in sidebar 'tutorialSidebar'"
   },
-  "sidebar.tutorialSidebar.category.Приклади застосунків": {
-    "message": "RestApplication examples"
+  "sidebar.tutorialSidebar.category.rest-application": {
+    "message": "REST application",
+    "description": "The label for category 'REST застосунок' in sidebar 'tutorialSidebar'"
   },
-  "sidebar.tutorialSidebar.category.Глибоке занурення": {
-    "message": "Deep Dive"
+  "sidebar.tutorialSidebar.category.rest-application-guide": {
+    "message": "REST Guide",
+    "description": "The label for category 'REST Гід' in sidebar 'tutorialSidebar'"
   },
-  "sidebar.tutorialSidebar.category.Гід": {
-    "message": "Guide"
+  "sidebar.tutorialSidebar.category.trpc-application": {
+    "message": "tRPC application",
+    "description": "The label for category 'tRPC застосунок' in sidebar 'tutorialSidebar'"
   },
-  "sidebar.tutorialSidebar.category.REST Гід": {
-    "message": "REST Guide"
+  "sidebar.tutorialSidebar.category.guide": {
+    "message": "Guide",
+    "description": "The label for category 'Гід' in sidebar 'tutorialSidebar'"
   },
-  "sidebar.tutorialSidebar.category.REST застосунок": {
-    "message": "REST application"
-  },
-  "sidebar.tutorialSidebar.category.tRPC застосунок": {
-    "message": "tRPC application"
+  "sidebar.tutorialSidebar.category.deep-dive": {
+    "message": "Deep Dive",
+    "description": "The label for category 'Глибоке занурення' in sidebar 'tutorialSidebar'"
   }
 }
