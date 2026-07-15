@@ -84,7 +84,7 @@ export class BaseAppInitializer {
     const collisions = getCollisions(exportedTokensDuplicates, mergedProviders);
     if (collisions.length) {
       const modulesNames = this.findModulesCausedCollisions(collisions);
-      throw new ProvidersCollision(this.normalizedModuleMeta.name, collisions, modulesNames);
+      throw new ProvidersCollision(this.normalizedModuleMeta.name, collisions, modulesNames, 'App');
     }
     exportedProviders.push(...this.getResolvedCollisionPerApp());
     this.normalizedModuleMeta.providersPerApp.unshift(...getLastProviders(exportedProviders));

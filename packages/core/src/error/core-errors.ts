@@ -55,12 +55,17 @@ export class ProvidersCollision extends CustomError {
     let example = '';
     if (fromModuleNames.length) {
       fromModules = `from ${fromModuleNames.join(', ')} `;
-      example = ` For example: resolvedCollisionPer${level || 'App'}: [ [${aTokens[0]}, ${fromModuleNames[0]}] ].`;
+      if (!level || level == 'App') {
+        example = ` For example: resolvedCollisionPerApp: [ [${aTokens[0]}, ${fromModuleNames[0]}] ] in root module.`;
+      } else {
+        example = ` For example: resolvedCollisionPer${level}: [ [${aTokens[0]}, ${fromModuleNames[0]}] ].`;
+      }
     }
     const resolvedCollisionPer = level ? `resolvedCollisionPer${level}` : 'resolvedCollisionPer*';
     let msg1 = `Importing providers to ${moduleName} failed: exports ${fromModules}causes collision with ${tokenNames}. `;
     if (!isExternal) {
-      msg1 += `You should add ${tokenNames} to ${resolvedCollisionPer} in this module.${example}`;
+      msg1 += `You should add ${tokenNames} to ${resolvedCollisionPer} in `;
+      msg1 += (!level || level == 'App') ? `root module.${example}` : `this module.${example}`;
     }
     super({
       msg1,
