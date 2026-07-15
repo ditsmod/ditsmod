@@ -6,14 +6,14 @@ import type { HttpServer } from '#types/server-options.js';
 import { SERVER } from '../top/constants.js';
 
 export class RestAppInitializer extends BaseAppInitializer {
-  protected preRouter: RequestDispatcher;
+  protected requestDispatcher: RequestDispatcher;
   protected server: HttpServer;
 
   setServer(server: HttpServer) {
     this.server = server;
   }
 
-  requestListener: RequestListener = (rawReq, rawRes) => this.preRouter.requestListener(rawReq, rawRes);
+  requestListener: RequestListener = (rawReq, rawRes) => this.requestDispatcher.requestListener(rawReq, rawRes);
 
   protected override addDefaultProvidersPerApp() {
     this.normalizedModuleMeta.providersPerApp.unshift({ token: SERVER, useFactory: () => this.server });
@@ -22,7 +22,7 @@ export class RestAppInitializer extends BaseAppInitializer {
 
   override async bootstrapModulesAndExtensions() {
     const injectorPerApp = await super.bootstrapModulesAndExtensions();
-    this.preRouter = injectorPerApp.get(RequestDispatcher) as RequestDispatcher;
+    this.requestDispatcher = injectorPerApp.get(RequestDispatcher) as RequestDispatcher;
     return injectorPerApp;
   }
 }

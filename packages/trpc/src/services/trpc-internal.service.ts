@@ -19,7 +19,7 @@ import { TrpcService } from '#services/trpc.service.js';
 @injectable()
 export class TrpcInternalService {
   constructor(
-    protected preRouter: TrpcRequestDispatcher,
+    protected requestDispatcher: TrpcRequestDispatcher,
     protected trpcService: TrpcService,
     protected moduleManager: ModuleManager,
     @inject(TRPC_ROOT) protected t: TrpcRootObject<any>,
@@ -37,7 +37,7 @@ export class TrpcInternalService {
     const routerOpts = (mod.setAppRouterOptions?.() || {}) as unknown as TrpcRouterOpts;
     routerOpts.router = this.t.mergeRouters(...this.getRouters());
     routerOpts.createContext = (opts) => opts;
-    this.preRouter.setTrpcRequestListener(routerOpts);
+    this.requestDispatcher.setTrpcRequestListener(routerOpts);
   }
 
   protected getRouters() {

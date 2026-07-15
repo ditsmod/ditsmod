@@ -1,5 +1,6 @@
 node_modules
 .agents/
+*.code-workspace
 dist*
 *.tgz
 *.log

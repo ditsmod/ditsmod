@@ -11,7 +11,7 @@ import { TrpcInternalService } from '#services/trpc-internal.service.js';
 import { TrpcService } from '#services/trpc.service.js';
 
 export class TrpcAppInitializer extends BaseAppInitializer {
-  protected preRouter: TrpcRequestDispatcher;
+  protected requestDispatcher: TrpcRequestDispatcher;
   protected server: HttpServer;
 
   protected override addDefaultProvidersPerApp() {
@@ -33,11 +33,11 @@ export class TrpcAppInitializer extends BaseAppInitializer {
 
   override async bootstrapModulesAndExtensions() {
     const injectorPerApp = await super.bootstrapModulesAndExtensions();
-    this.preRouter = injectorPerApp.get(TrpcRequestDispatcher) as TrpcRequestDispatcher;
+    this.requestDispatcher = injectorPerApp.get(TrpcRequestDispatcher) as TrpcRequestDispatcher;
     return injectorPerApp;
   }
 
-  requestListener: RequestListener = (rawReq, rawRes) => this.preRouter.requestListener(rawReq, rawRes);
+  requestListener: RequestListener = (rawReq, rawRes) => this.requestDispatcher.requestListener(rawReq, rawRes);
 
   protected override overrideMetaAfterStage1(modRefId: ModRefId, normalizedModuleMeta: ProvidersByLevel): void {
     if (normalizedModuleMeta instanceof NormalizedModuleMeta) {
