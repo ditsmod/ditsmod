@@ -40,7 +40,7 @@ export class RequestDispatcher {
   }
 
   protected sendNotImplemented(rawRes: RawResponse) {
-    rawRes.statusCode = HttpStatus.NOT_IMPLEMENTED;
+    rawRes.statusCode = HttpStatus.NOT_FOUND;
     rawRes.end();
   }
 

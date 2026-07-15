@@ -25,7 +25,7 @@ describe('07-dynamically-composing-modules', () => {
 
   it('case 2', async () => {
     const { status } = await testAgent.get('/get-2');
-    expect(status).toBe(501);
+    expect(status).toBe(404);
   });
 
   xit('case 3', async () => {
@@ -68,7 +68,7 @@ describe('07-dynamically-composing-modules', () => {
 
   it('case 9', async () => {
     const { status } = await testAgent.get('/get-2');
-    expect(status).toBe(501);
+    expect(status).toBe(404);
   });
 
   it('case 10', async () => {
