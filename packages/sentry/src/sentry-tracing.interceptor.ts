@@ -7,7 +7,7 @@ import type { SentryRouteMeta } from './types.js';
 
 @injectable()
 export class SentryTracingInterceptor implements HttpInterceptor {
-  public readonly __SENTRY_INTERNAL__ = true;
+  readonly __SENTRY_INTERNAL__ = true;
 
   constructor(@optional() private routeMeta?: SentryRouteMeta) {}
 

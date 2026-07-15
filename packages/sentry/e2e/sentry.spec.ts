@@ -1,7 +1,6 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
-import { rootModule } from '@ditsmod/core';
-import { route, RestModule, controller, initRest, RequestDispatcher, HttpErrorHandler, restRootModule } from '@ditsmod/rest';
+import { route, RestModule, controller, RequestDispatcher, HttpErrorHandler, restRootModule } from '@ditsmod/rest';
 import { TestRestApplication, TestRestPlugin } from '@ditsmod/rest-testing';
 
 // 1. Mock Sentry before imports
@@ -63,8 +62,8 @@ class HelloController {
 @restRootModule({
   imports: [RestModule, SentryModule],
   controllers: [HelloController],
-  resolvedCollisionPerRou: [[HttpErrorHandler, SentryModule]],
   resolvedCollisionPerApp: [[RequestDispatcher, SentryModule]],
+  resolvedCollisionPerRou: [[HttpErrorHandler, SentryModule]],
 })
 class AppModule {}
 
