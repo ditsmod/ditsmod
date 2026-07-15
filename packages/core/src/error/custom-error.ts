@@ -13,6 +13,8 @@ export class CustomError extends ChainError {
       fnName = `DM_ERR_${info.code}`;
     } else if (info.code) {
       fnName = `${fnName}_${info.code}`;
+    } else if (fnName.slice(-5) != 'Error' && fnName.slice(-3) != 'Err') {
+      fnName = `${fnName}Error`;
     }
     super(`${info.msg1}`, { info, cause, constructorOpt: info.constructorOpt, name: fnName }, info.skipCauseMessage);
     this.code = info.code || new.target.name;
