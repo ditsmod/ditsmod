@@ -20,7 +20,7 @@ export class RequestDispatcher {
     }
     const { handle, params } = this.router.find(method, pathname);
     if (!handle) {
-      this.sendNotImplemented(rawRes);
+      this.sendNotFound(rawRes);
       return;
     }
     await handle(rawReq, rawRes, params, search).catch((err) => {
@@ -39,7 +39,7 @@ export class RequestDispatcher {
     rawRes.end();
   }
 
-  protected sendNotImplemented(rawRes: RawResponse) {
+  protected sendNotFound(rawRes: RawResponse) {
     rawRes.statusCode = HttpStatus.NOT_FOUND;
     rawRes.end();
   }
