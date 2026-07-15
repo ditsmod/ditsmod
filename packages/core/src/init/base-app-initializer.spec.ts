@@ -118,7 +118,7 @@ describe('BaseAppInitializer', () => {
       class AppModule {}
 
       mock.normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
-      const err = new ProvidersCollision('AppModule', [Provider1], ['Module1', 'Module2']);
+      const err = new ProvidersCollision('AppModule', [Provider1], ['Module1', 'Module2'], 'App');
       expect(() => mock.prepareProvidersPerApp()).toThrow(err);
     });
 
