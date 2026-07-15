@@ -5,8 +5,10 @@ const mockScope = {
   setExtra: jest.fn(),
 };
 
-jest.unstable_mockModule('@sentry/node', () => {
+jest.unstable_mockModule('@sentry/node', async () => {
+  const actual = await jest.requireActual<any>('@sentry/node');
   return {
+    ...actual,
     init: jest.fn(),
     captureException: jest.fn(),
     withIsolationScope: jest.fn((callback: any) => callback(mockScope)),
