@@ -10,7 +10,7 @@ import { ExampleController } from './example.controller.js';
   providersPerMod: new ProviderBuilder().useValue(SentryOptions, {
     capture4xx: false, // Default is false, change to true if you want to capture 4xx client errors
   }),
-  resolvedCollisionPerApp: [[RequestDispatcher, SentryModule]],
-  resolvedCollisionPerRou: [[HttpErrorHandler, SentryModule]],
+  resolvedCollisionsPerApp: [[RequestDispatcher, SentryModule]],
+  resolvedCollisionsPerRou: [[HttpErrorHandler, SentryModule]],
 })
 export class AppModule {}

@@ -73,7 +73,7 @@ export class BaseAppInitializer {
     const exportedNormProviders = normalizeProviders(exportedProviders);
     const exportedTokens = exportedNormProviders.map((np) => np.token);
     const exportedMultiTokens = exportedNormProviders.filter((np) => np.multi).map((np) => np.token);
-    const resolvedTokens = this.normalizedModuleMeta.resolvedCollisionPerApp.map(([token]) => token);
+    const resolvedTokens = this.normalizedModuleMeta.resolvedCollisionsPerApp.map(([token]) => token);
     const defaultTokens = getTokens(defaultProvidersPerApp);
     const rootTokens = getTokens(this.normalizedModuleMeta.providersPerApp);
     const mergedTokens = [...exportedTokens, ...defaultTokens];
@@ -86,7 +86,7 @@ export class BaseAppInitializer {
       const modulesNames = this.findModulesCausedCollisions(collisions);
       throw new ProvidersCollision(this.normalizedModuleMeta.name, collisions, modulesNames, 'App');
     }
-    exportedProviders.push(...this.getResolvedCollisionPerApp());
+    exportedProviders.push(...this.getResolvedCollisionsPerApp());
     this.normalizedModuleMeta.providersPerApp.unshift(...getLastProviders(exportedProviders));
   }
 
@@ -104,10 +104,10 @@ export class BaseAppInitializer {
     return modulesNames;
   }
 
-  protected getResolvedCollisionPerApp() {
+  protected getResolvedCollisionsPerApp() {
     const rootModuleName = this.moduleManager.getNormalizedModuleMeta('root', true).name;
     const resolvedProviders: Provider[] = [];
-    this.normalizedModuleMeta.resolvedCollisionPerApp.forEach(([token, module]) => {
+    this.normalizedModuleMeta.resolvedCollisionsPerApp.forEach(([token, module]) => {
       const moduleName = getDebugClassName(module) || 'unknown';
       const tokenName = token.name || token;
       const normalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(module);

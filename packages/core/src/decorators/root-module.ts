@@ -13,7 +13,7 @@ export class RootDecoratorOptions extends ModuleDecoratorOptions {
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  declare resolvedCollisionPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][];
+  declare resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][];
 }
 
 export const rootModule: RootModuleDecorator = Reflector.makeClassDecorator(transformModule, 'rootModule');

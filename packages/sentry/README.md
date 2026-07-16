@@ -5,7 +5,7 @@ This module provides integration with [Sentry](https://sentry.io) for Ditsmod ap
 ## Installation
 
 ```bash
-yarn add @ditsmod/sentry @sentry/node
+yarn add @ditsmod/sentry
 ```
 
 ## Basic Setup
@@ -46,7 +46,7 @@ import { ExampleController } from './example.controller.js';
   providersPerMod: new ProviderBuilder().useValue<SentryOptions>(SentryOptions, {
     capture4xx: false, // Set to true to also report 4xx client errors to Sentry
   }),
-  resolvedCollisionPerRou: [[HttpErrorHandler, SentryModule]],
+  resolvedCollisionsPerRou: [[HttpErrorHandler, SentryModule]],
 })
 export class AppModule {}
 ```

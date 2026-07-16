@@ -39,7 +39,7 @@ export class ForbiddenSavingSnapshot extends CustomError {
 }
 /**
  * `Importing providers to ${moduleName} failed: exports ${fromModules}causes collision with ${namesStr}.
- * You should add ${tokenNames} to ${resolvedCollisionPer} in this module.${example}`
+ * You should add ${tokenNames} to ${resolvedCollisionsPer} in this module.${example}`
  */
 export class ProvidersCollision extends CustomError {
   constructor(
@@ -56,15 +56,15 @@ export class ProvidersCollision extends CustomError {
     if (fromModuleNames.length) {
       fromModules = `from ${fromModuleNames.join(', ')} `;
       if (!level || level == 'App') {
-        example = ` For example: resolvedCollisionPerApp: [ [${aTokens[0]}, ${fromModuleNames[0]}] ] in root module.`;
+        example = ` For example: resolvedCollisionsPerApp: [ [${aTokens[0]}, ${fromModuleNames[0]}] ] in root module.`;
       } else {
-        example = ` For example: resolvedCollisionPer${level}: [ [${aTokens[0]}, ${fromModuleNames[0]}] ].`;
+        example = ` For example: resolvedCollisionsPer${level}: [ [${aTokens[0]}, ${fromModuleNames[0]}] ].`;
       }
     }
-    const resolvedCollisionPer = level ? `resolvedCollisionPer${level}` : 'resolvedCollisionPer*';
+    const resolvedCollisionsPer = level ? `resolvedCollisionsPer${level}` : 'resolvedCollisionsPer*';
     let msg1 = `Importing providers to ${moduleName} failed: exports ${fromModules}causes collision with ${tokenNames}. `;
     if (!isExternal) {
-      msg1 += `You should add ${tokenNames} to ${resolvedCollisionPer} in `;
+      msg1 += `You should add ${tokenNames} to ${resolvedCollisionsPer} in `;
       msg1 += (!level || level == 'App') ? `root module.${example}` : `this module.${example}`;
     }
     super({
@@ -91,7 +91,7 @@ export class LevelCollisionNotImported extends CustomError {
 /**
  * `Resolving collisions for providersPer${level} in ${moduleName1} failed:
  * ${tokenName} mapped with ${moduleName2}, but ${tokenName} is a token of the multi providers,
- * and in this case it should not be included in resolvedCollisionPer${level}.`
+ * and in this case it should not be included in resolvedCollisionsPer${level}.`
  */
 export class LevelMultiProviderCollision extends CustomError {
   constructor(moduleName1: string, moduleName2: string, level: string, tokenName: string) {
@@ -99,7 +99,7 @@ export class LevelMultiProviderCollision extends CustomError {
       msg1:
         `Resolving collisions for providersPer${level} in ${moduleName1} failed: ` +
         `${tokenName} mapped with ${moduleName2}, but ${tokenName} is a token of the multi providers, ` +
-        `and in this case it should not be included in resolvedCollisionPer${level}.`,
+        `and in this case it should not be included in resolvedCollisionsPer${level}.`,
       level: 'fatal',
     });
   }
@@ -107,7 +107,7 @@ export class LevelMultiProviderCollision extends CustomError {
 /**
  * `Resolving collisions for providersPerApp in ${rootModuleName} failed:
  * ${tokenName} mapped with ${moduleName}, but ${tokenName} is a token of the multi providers,
- * and in this case it should not be included in resolvedCollisionPerApp.`
+ * and in this case it should not be included in resolvedCollisionsPerApp.`
  */
 export class AppMultiProviderCollision extends CustomError {
   constructor(rootModuleName: string, moduleName: string, tokenName: string) {
@@ -115,7 +115,7 @@ export class AppMultiProviderCollision extends CustomError {
       msg1:
         `Resolving collisions for providersPerApp in ${rootModuleName} failed: ` +
         `${tokenName} mapped with ${moduleName}, but ${tokenName} is a token of the multi providers, and in this case ` +
-        'it should not be included in resolvedCollisionPerApp.',
+        'it should not be included in resolvedCollisionsPerApp.',
       level: 'fatal',
     });
   }
@@ -288,14 +288,14 @@ export class UndefinedSymbol extends CustomError {
 }
 /**
  * `Resolving collisions in ${moduleName} failed: for ${providerName} inside
- * "resolvedCollisionPer*" array must be includes tokens only.`
+ * "resolvedCollisionsPer*" array must be includes tokens only.`
  */
 export class ResolvedCollisionTokensOnly extends CustomError {
   constructor(moduleName: string, providerName: string) {
     super({
       msg1:
         `Resolving collisions in ${moduleName} failed: for ${providerName} inside ` +
-        '"resolvedCollisionPer*" array must be includes tokens only.',
+        '"resolvedCollisionsPer*" array must be includes tokens only.',
       level: 'fatal',
     });
   }

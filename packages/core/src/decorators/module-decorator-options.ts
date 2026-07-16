@@ -53,17 +53,17 @@ export class ModuleDecoratorOptions<T extends AnyObj = AnyObj> {
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  declare resolvedCollisionPerMod?: [any, ModRefId | ForwardRefFn<ModuleType>][];
+  declare resolvedCollisionsPerMod?: [any, ModRefId | ForwardRefFn<ModuleType>][];
   /**
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  declare resolvedCollisionPerRou?: [any, ModRefId | ForwardRefFn<ModuleType>][];
+  declare resolvedCollisionsPerRou?: [any, ModRefId | ForwardRefFn<ModuleType>][];
   /**
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  declare resolvedCollisionPerReq?: [any, ModRefId | ForwardRefFn<ModuleType>][];
+  declare resolvedCollisionsPerReq?: [any, ModRefId | ForwardRefFn<ModuleType>][];
 }
 
 export interface BaseDynamicModule<M extends AnyObj = AnyObj> {

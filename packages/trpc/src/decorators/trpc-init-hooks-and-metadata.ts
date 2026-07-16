@@ -50,7 +50,7 @@ export interface TrpcInitDecoratorOptions extends InitDecoratorOptions<TrpcModul
 export const initTrpcModule: InitDecorator<TrpcInitDecoratorOptions, TrpcModuleOptions, TrpcInitMeta> =
   Reflector.makeClassDecorator(transformInitMeta, 'initTrpcModule');
 export const trpcRootModule: InitDecorator<
-  TrpcInitDecoratorOptions & { resolvedCollisionPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][] },
+  TrpcInitDecoratorOptions & { resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][] },
   TrpcModuleOptions,
   TrpcInitMeta
 > = Reflector.makeClassDecorator(transformRootMetadata, 'trpcRootModule', initTrpcModule);

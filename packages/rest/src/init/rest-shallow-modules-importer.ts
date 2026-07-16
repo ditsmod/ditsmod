@@ -187,7 +187,7 @@ export class RestShallowModulesImporter {
     importedProvider: RestImportedProvider,
   ) {
     const declaredTokens = getTokens(this.meta[`providersPer${level}`]);
-    const resolvedTokens = this.meta[`resolvedCollisionPer${level}`].map(([token]) => token);
+    const resolvedTokens = this.meta[`resolvedCollisionsPer${level}`].map(([token]) => token);
     const duplImpTokens = [...declaredTokens, ...resolvedTokens].includes(token) ? [] : [token];
     const collisions = getCollisions(duplImpTokens, [...importedProvider.providers, provider]);
     if (collisions.length) {
@@ -203,8 +203,8 @@ export class RestShallowModulesImporter {
     }
   }
 
-  protected getResolvedCollisionPerLevel(level: Level, token1: any) {
-    const [token2, modRefId2] = this.meta[`resolvedCollisionPer${level}`].find(([token2]) => token1 === token2)!;
+  protected getResolvedCollisionsPerLevel(level: Level, token1: any) {
+    const [token2, modRefId2] = this.meta[`resolvedCollisionsPer${level}`].find(([token2]) => token1 === token2)!;
     const moduleName = getDebugClassName(modRefId2) || '""';
     const tokenName = token2.name || token2;
     const normalizedModuleMeta2 = this.moduleManager.getNormalizedModuleMeta(modRefId2);

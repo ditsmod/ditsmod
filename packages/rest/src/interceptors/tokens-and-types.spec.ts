@@ -205,7 +205,7 @@ describe('mix per app, per mod or per req', () => {
     @rootModule({
       imports: [Module1],
       providersPerApp: [Provider1],
-      resolvedCollisionPerMod: [[Provider1, Module1]],
+      resolvedCollisionsPerMod: [[Provider1, Module1]],
     })
     class AppModule {}
 
@@ -242,7 +242,7 @@ describe('mix per app, per mod or per req', () => {
     @featureModule()
     class Module1 {}
 
-    @initRest({ resolvedCollisionPerReq: [[Provider1, Module1]] })
+    @initRest({ resolvedCollisionsPerReq: [[Provider1, Module1]] })
     @rootModule({ imports: [Module1], providersPerMod: [Provider1] })
     class AppModule {}
 
@@ -266,11 +266,11 @@ describe('mix per app, per mod or per req', () => {
     })
     class Module2 {}
 
-    @initRest({ resolvedCollisionPerReq: [[Provider1, Module1]] })
+    @initRest({ resolvedCollisionsPerReq: [[Provider1, Module1]] })
     @rootModule({
       imports: [Module1, Module2],
       providersPerApp: [Provider1],
-      resolvedCollisionPerMod: [[Provider1, AppModule]],
+      resolvedCollisionsPerMod: [[Provider1, AppModule]],
     })
     class AppModule {}
 
@@ -287,7 +287,7 @@ describe('mix per app, per mod or per req', () => {
     @featureModule({ exports: [Provider1] })
     class Module1 {}
 
-    @initRest({ resolvedCollisionPerReq: [[Provider1, AppModule]] })
+    @initRest({ resolvedCollisionsPerReq: [[Provider1, AppModule]] })
     @rootModule({ imports: [Module1], providersPerMod: [Provider1] })
     class AppModule {}
 
@@ -303,7 +303,7 @@ describe('mix per app, per mod or per req', () => {
     @featureModule({ exports: [Provider2] })
     class Module1 {}
 
-    @initRest({ resolvedCollisionPerReq: [[Provider1, AppModule]] })
+    @initRest({ resolvedCollisionsPerReq: [[Provider1, AppModule]] })
     @rootModule({ imports: [Module1], providersPerMod: [Provider1] })
     class AppModule {}
 
@@ -321,7 +321,7 @@ describe('mix per app, per mod or per req', () => {
     })
     class Module0 {}
 
-    @initRest({ resolvedCollisionPerReq: [[HttpBackend, AppModule]] })
+    @initRest({ resolvedCollisionsPerReq: [[HttpBackend, AppModule]] })
     @rootModule({ imports: [Module0] })
     class AppModule {}
 
@@ -337,7 +337,7 @@ describe('mix per app, per mod or per req', () => {
     @featureModule({ exports: [RequestContext] })
     class Module1 {}
 
-    @initRest({ resolvedCollisionPerReq: [[RequestContext, Module1]] })
+    @initRest({ resolvedCollisionsPerReq: [[RequestContext, Module1]] })
     @rootModule({ imports: [Module1] })
     class AppModule {}
 
@@ -376,7 +376,7 @@ describe('mix per app, per mod or per req', () => {
     })
     class Module0 {}
 
-    @initRest({ resolvedCollisionPerReq: [[HttpBackend, AppModule]] })
+    @initRest({ resolvedCollisionsPerReq: [[HttpBackend, AppModule]] })
     @rootModule({ imports: [Module0] })
     class AppModule {}
 
@@ -392,7 +392,7 @@ describe('mix per app, per mod or per req', () => {
     @featureModule({ exports: [HttpBackend] })
     class Module1 {}
 
-    @initRest({ resolvedCollisionPerReq: [[HttpBackend, Module1]] })
+    @initRest({ resolvedCollisionsPerReq: [[HttpBackend, Module1]] })
     @rootModule({ imports: [Module1] })
     class AppModule {}
 

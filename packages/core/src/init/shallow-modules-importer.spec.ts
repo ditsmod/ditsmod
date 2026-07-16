@@ -39,8 +39,8 @@ describe('ShallowModulesImporter', () => {
       return super.exportAppProviders(moduleManager);
     }
 
-    override getResolvedCollisionPerLevel(level: Level, token1: any) {
-      return super.getResolvedCollisionPerLevel(level, token1);
+    override getResolvedCollisionsPerLevel(level: Level, token1: any) {
+      return super.getResolvedCollisionsPerLevel(level, token1);
     }
   }
 
@@ -295,7 +295,7 @@ describe('ShallowModulesImporter', () => {
 
       @rootModule({
         imports: [Module1, Module2],
-        resolvedCollisionPerMod: [[Provider1, Module1]],
+        resolvedCollisionsPerMod: [[Provider1, Module1]],
         exports: [Module1, Module2],
       })
       class AppModule {}
@@ -540,7 +540,7 @@ describe('ShallowModulesImporter', () => {
 
       @rootModule({
         imports: [Module1, Module2],
-        resolvedCollisionPerMod: [[Provider1, Module1]],
+        resolvedCollisionsPerMod: [[Provider1, Module1]],
       })
       class AppModule {}
 
@@ -572,7 +572,7 @@ describe('ShallowModulesImporter', () => {
       expect(() => importModulesShallow(AppModule)).not.toThrow();
     });
 
-    it('exporting duplicates of Provider2, declared in resolvedCollisionPerMod of root module', () => {
+    it('exporting duplicates of Provider2, declared in resolvedCollisionsPerMod of root module', () => {
       class Provider1 {}
       class Provider2 {}
       class Provider3 {}
@@ -601,7 +601,7 @@ describe('ShallowModulesImporter', () => {
 
       @rootModule({
         imports: [Module2, Module1],
-        resolvedCollisionPerMod: [[Provider2, Module1]],
+        resolvedCollisionsPerMod: [[Provider2, Module1]],
       })
       class AppModule {}
 
@@ -648,7 +648,7 @@ describe('ShallowModulesImporter', () => {
       ]);
     });
 
-    it('exporting duplicates in Module2 (with params), but declared in resolvedCollisionPerMod of root module', () => {
+    it('exporting duplicates in Module2 (with params), but declared in resolvedCollisionsPerMod of root module', () => {
       class Provider1 {}
       class Provider2 {}
 
@@ -672,7 +672,7 @@ describe('ShallowModulesImporter', () => {
 
       @rootModule({
         imports: [Module1, baseDynamicModule],
-        resolvedCollisionPerMod: [[Provider1, Module1]],
+        resolvedCollisionsPerMod: [[Provider1, Module1]],
       })
       class AppModule {}
 
@@ -698,14 +698,14 @@ describe('ShallowModulesImporter', () => {
 
       @featureModule({
         imports: [Module1, Module2],
-        resolvedCollisionPerMod: [[Provider1, Module1]],
+        resolvedCollisionsPerMod: [[Provider1, Module1]],
         exports: [Module1, Module2],
       })
       class Module3 {}
 
       @rootModule({
         imports: [Module3],
-        resolvedCollisionPerMod: [[Provider1, Module2]],
+        resolvedCollisionsPerMod: [[Provider1, Module2]],
       })
       class AppModule {}
 
@@ -767,7 +767,7 @@ describe('ShallowModulesImporter', () => {
       expect(() => importModulesShallow(AppModule)).toThrow(err);
     });
 
-    it('exporting duplicates of Provider2, but declared in resolvedCollisionPerMod of root module', () => {
+    it('exporting duplicates of Provider2, but declared in resolvedCollisionsPerMod of root module', () => {
       @featureModule({
         providersPerMod: [{ token: Provider1, useToken: Provider1 }, Provider2],
         exports: [Provider1, Provider2],
@@ -783,7 +783,7 @@ describe('ShallowModulesImporter', () => {
 
       @rootModule({
         imports: [Module2],
-        resolvedCollisionPerMod: [[Provider2, Module2]],
+        resolvedCollisionsPerMod: [[Provider2, Module2]],
       })
       class AppModule {}
 
@@ -824,7 +824,7 @@ describe('ShallowModulesImporter', () => {
       expect(() => importModulesShallow(AppModule)).toThrow(err);
     });
 
-    it('exporting duplicates of Provider1 from Module1 and Module2, but also includes in resolvedCollisionPerMod of root module', () => {
+    it('exporting duplicates of Provider1 from Module1 and Module2, but also includes in resolvedCollisionsPerMod of root module', () => {
       @featureModule({
         providersPerMod: [{ token: Provider1, useClass: Provider2 }, Provider2],
         exports: [Provider1, Provider2],
@@ -842,7 +842,7 @@ describe('ShallowModulesImporter', () => {
 
       @rootModule({
         imports: [Module1, Module2],
-        resolvedCollisionPerMod: [
+        resolvedCollisionsPerMod: [
           [Provider1, Module2],
           [Provider2, Module1],
         ],

@@ -62,8 +62,8 @@ class HelloController {
 @restRootModule({
   imports: [RestModule, SentryModule],
   controllers: [HelloController],
-  resolvedCollisionPerApp: [[RequestDispatcher, SentryModule]],
-  resolvedCollisionPerRou: [[HttpErrorHandler, SentryModule]],
+  resolvedCollisionsPerApp: [[RequestDispatcher, SentryModule]],
+  resolvedCollisionsPerRou: [[HttpErrorHandler, SentryModule]],
 })
 class AppModule {}
 

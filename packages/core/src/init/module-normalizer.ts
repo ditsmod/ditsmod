@@ -128,7 +128,7 @@ export class ModuleNormalizer {
   }
 
   protected normalizeDeclaredAndResolvedProviders(
-    decoratorOptions: InitDecoratorOptions & PickProps<RootDecoratorOptions, 'resolvedCollisionPerApp'>,
+    decoratorOptions: InitDecoratorOptions & PickProps<RootDecoratorOptions, 'resolvedCollisionsPerApp'>,
   ) {
     (['App', 'Mod', 'Rou', 'Req'] as const).forEach((level) => {
       const providersKey = `providersPer${level}` as const;
@@ -137,7 +137,7 @@ export class ModuleNormalizer {
         this.normalizedModuleMeta[providersKey].push(...providersPerLevel);
       }
 
-      const resolvedCollisionKey = `resolvedCollisionPer${level}` as const;
+      const resolvedCollisionKey = `resolvedCollisionsPer${level}` as const;
       if (decoratorOptions[resolvedCollisionKey]) {
         decoratorOptions[resolvedCollisionKey]!.forEach(([token, module]) => {
           token = resolveForwardRef(token);
@@ -247,16 +247,16 @@ export class ModuleNormalizer {
   }
 
   protected throwIfResolvingNormalizedProvider(
-    decoratorOptions: InitDecoratorOptions & PickProps<RootDecoratorOptions, 'resolvedCollisionPerApp'>,
+    decoratorOptions: InitDecoratorOptions & PickProps<RootDecoratorOptions, 'resolvedCollisionsPerApp'>,
   ) {
-    const resolvedCollisionPerLevel: [any, ModRefId | ForwardRefFn<ModuleType>][] = [];
+    const resolvedCollisionsPerLevel: [any, ModRefId | ForwardRefFn<ModuleType>][] = [];
     (['App', 'Mod', 'Rou', 'Req'] as const).forEach((level) => {
-      if (Array.isArray(decoratorOptions[`resolvedCollisionPer${level}`])) {
-        resolvedCollisionPerLevel.push(...decoratorOptions[`resolvedCollisionPer${level}`]!);
+      if (Array.isArray(decoratorOptions[`resolvedCollisionsPer${level}`])) {
+        resolvedCollisionsPerLevel.push(...decoratorOptions[`resolvedCollisionsPer${level}`]!);
       }
     });
 
-    resolvedCollisionPerLevel.forEach(([provider]) => {
+    resolvedCollisionsPerLevel.forEach(([provider]) => {
       provider = resolveForwardRef(provider);
       if (isNormalizedProvider(provider)) {
         const providerName = provider.token.name || provider.token;

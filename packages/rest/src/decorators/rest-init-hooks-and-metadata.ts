@@ -18,7 +18,7 @@ import { RestDeepModulesImporter } from '#init/rest-deep-modules-importer.js';
 export const initRest: InitDecorator<RestInitDecoratorOptions, RestModuleOptions, RestInitMeta> =
   Reflector.makeClassDecorator(transformInitMeta, 'initRest');
 export const restRootModule: InitDecorator<
-  RestInitDecoratorOptions & { resolvedCollisionPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][] },
+  RestInitDecoratorOptions & { resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][] },
   RestModuleOptions,
   RestInitMeta
 > = Reflector.makeClassDecorator(transformRootMeta, 'restRootModule', initRest);

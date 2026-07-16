@@ -273,11 +273,11 @@ export class ShallowModulesImporter {
 
       if (importedProvider && importedProvider.reexporter !== normalizedModuleMeta.modRefId) {
         this.checkCollisionsPerLevel(normalizedModuleMeta.modRefId, level, token1, provider, importedProvider);
-        const hasResolvedCollision = this.normalizedModuleMeta[`resolvedCollisionPer${level}`].some(
+        const hasResolvedCollision = this.normalizedModuleMeta[`resolvedCollisionsPer${level}`].some(
           ([token2]) => token2 === token1,
         );
         if (hasResolvedCollision) {
-          const { providers, module2 } = this.getResolvedCollisionPerLevel(level, token1);
+          const { providers, module2 } = this.getResolvedCollisionsPerLevel(level, token1);
           const newImportedProvider = new ImportedProvider();
           newImportedProvider.modRefId = module2;
           newImportedProvider.providers.push(...providers);
@@ -303,7 +303,7 @@ export class ShallowModulesImporter {
     importedProvider: ImportedProvider,
   ) {
     const declaredTokens = getTokens(this.normalizedModuleMeta[`providersPer${level}`]);
-    const resolvedTokens = this.normalizedModuleMeta[`resolvedCollisionPer${level}`].map(([token]) => token);
+    const resolvedTokens = this.normalizedModuleMeta[`resolvedCollisionsPer${level}`].map(([token]) => token);
     const duplImpTokens = [...declaredTokens, ...resolvedTokens].includes(token) ? [] : [token];
     const collisions = getCollisions(duplImpTokens, [...importedProvider.providers, provider]);
     if (collisions.length) {
@@ -319,8 +319,8 @@ export class ShallowModulesImporter {
     }
   }
 
-  protected getResolvedCollisionPerLevel(level: Level, token1: any) {
-    const [token2, modRefId2] = this.normalizedModuleMeta[`resolvedCollisionPer${level}`].find(
+  protected getResolvedCollisionsPerLevel(level: Level, token1: any) {
+    const [token2, modRefId2] = this.normalizedModuleMeta[`resolvedCollisionsPer${level}`].find(
       ([token2]) => token1 === token2,
     )!;
     const moduleName = getDebugClassName(modRefId2) || '""';
@@ -359,7 +359,7 @@ export class ShallowModulesImporter {
     levels.forEach((level) => {
       const tokens: any[] = [];
       this[`importedMultiProvidersPer${level}`].forEach((providers) => tokens.push(...getTokens(providers)));
-      this.normalizedModuleMeta[`resolvedCollisionPer${level}`].some(([token]) => {
+      this.normalizedModuleMeta[`resolvedCollisionsPer${level}`].some(([token]) => {
         if (tokens.includes(token)) {
           const tokenName = token.name || token;
           throw new LevelMultiProviderCollision(this.moduleName, moduleName, level, tokenName);
@@ -389,7 +389,7 @@ export class ShallowModulesImporter {
       for (const level of levels) {
         const declaredTokens = getTokens(this.normalizedModuleMeta[`providersPer${level}`]);
         const importedTokens = getImportedTokens(this[`importedProvidersPer${level}`]);
-        const resolvedTokens = this.normalizedModuleMeta[`resolvedCollisionPer${level}`].map(([t]) => t);
+        const resolvedTokens = this.normalizedModuleMeta[`resolvedCollisionsPer${level}`].map(([t]) => t);
         const collision = importedTokens.includes(token) && ![...declaredTokens, ...resolvedTokens].includes(token);
         if (collision) {
           const importedProvider = this[`importedProvidersPer${level}`].get(token)!;
@@ -417,7 +417,7 @@ export class ShallowModulesImporter {
 
   protected resolveCollisionsWithLevelsMix(token1: any, level: Level, resolvedTokens: any[]) {
     if (resolvedTokens.includes(token1)) {
-      const [, module2] = this.normalizedModuleMeta[`resolvedCollisionPer${level}`].find(
+      const [, module2] = this.normalizedModuleMeta[`resolvedCollisionsPer${level}`].find(
         ([token2]) => token1 === token2,
       )!;
       if (this.normalizedModuleMeta.modRefId === module2) {
@@ -427,7 +427,7 @@ export class ShallowModulesImporter {
         }
       } else {
         // Only check that the correct data is specified.
-        this.getResolvedCollisionPerLevel(level, token1);
+        this.getResolvedCollisionsPerLevel(level, token1);
       }
     }
   }
@@ -443,7 +443,7 @@ export class ShallowModulesImporter {
 
   protected checkFalseResolvingCollision() {
     (['Mod', 'Rou', 'Req'] as const).forEach((level) => {
-      this.normalizedModuleMeta[`resolvedCollisionPer${level}`].forEach(([token, module]) => {
+      this.normalizedModuleMeta[`resolvedCollisionsPer${level}`].forEach(([token, module]) => {
         const levels = this.resolvedCollision.get(token);
         if (!levels || !levels.has(level)) {
           const moduleName = getDebugClassName(module) || 'unknown';
