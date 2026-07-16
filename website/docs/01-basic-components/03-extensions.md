@@ -450,5 +450,5 @@ extensions: [
 
 [100]: https://nodejs.org/api/repl.html
 [101]: https://github.com/ditsmod/ditsmod/tree/main/examples/06-body-parser
-[102]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/body-parser/src/body-parser.extension.ts#L41
+[102]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/body-parser/src/body-parser.extension.ts#L46
 [103]: https://github.com/ditsmod/ditsmod/tree/main/examples/00-standalone-application

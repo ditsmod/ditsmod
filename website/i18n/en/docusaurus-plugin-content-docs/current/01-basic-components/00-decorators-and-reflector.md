@@ -140,7 +140,7 @@ node --watch dist/app/services.js
 Now, if in `src/app/services.ts` you pass `Service2` to the `getDependencies()` function, after a few seconds, you should see the output `[ { token: [class Service1], required: true } ]` in the second terminal.
 
 [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect
-[13]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/core/package.json#L61
+[13]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/core/package.json#L65
 [14]: https://github.com/tc39/proposal-decorators
 
 [101]: ../../#installation

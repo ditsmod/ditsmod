@@ -83,5 +83,5 @@ export class SomeModule {}
 ## Normalization and validation {#normalization-and-validation}
 
 [1]: /basic-components/modules/#DynamicModule
-[2]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/core/src/init/module-normalizer.spec.ts#L280-L475
-[3]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/rest/src/decorators/rest-init-hooks-and-metadata.ts
+[2]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/core/src/init/module-normalizer.spec.ts#L333-L531
+[3]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/decorators/rest-init-hooks-and-metadata.ts

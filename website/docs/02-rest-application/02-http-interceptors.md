@@ -104,13 +104,13 @@ export class SomeModule {}
 
 В даному разі інтерсептори передаються в метадані модуля. Так само вони можуть передаватись у метадані контролера. Тобто інтерсептори можуть працювати або для усіх контролерів у модулі без виключень, або тільки для конкретного контролера. Якщо інтерсептори потрібно додати лише до окремих роутів у межах контролерів, це ви можете зробити за допомогою [розширень][108] (таким чином додаються [інтерсептори для парсингу тіла запиту][9]).
 
-[1]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/rest/src/interceptors/tokens-and-types.ts#L14-L16
-[2]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/rest/src/interceptors/default-http-frontend.ts
-[3]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/rest/src/interceptors/default-http-backend.ts
+[1]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/interceptors/tokens-and-types.ts#L14-L16
+[2]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/interceptors/default-http-frontend.ts
+[3]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/interceptors/default-http-backend.ts
 [5]: https://expressjs.com/en/guide/writing-middleware.html
 [7]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/services/request-dispatcher.ts
-[8]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/rest/src/types/route-data.ts
-[9]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/body-parser/src/body-parser.extension.ts#L54
+[8]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/types/route-data.ts
+[9]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/body-parser/src/body-parser.extension.ts#L54
 
 [106]: /basic-components/dependency-injection
 [107]: /basic-components/dependency-injection#multi-providers

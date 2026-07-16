@@ -104,13 +104,13 @@ In this case, the interceptor is passed at the application level, but keep in mi
 
 In this case, the interceptors are passed in the module's metadata. They can also be passed in the controller metadata. This means that interceptors can either work for all controllers in the module without exception, or only for a specific controller. If you only need to add interceptors to individual routes within controllers, you can do so with [extensions][108] (this is how [interceptors for parsing the request body][9] are added).
 
-[1]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/rest/src/interceptors/tokens-and-types.ts#L14-L16
-[2]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/rest/src/interceptors/default-http-frontend.ts
-[3]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/rest/src/interceptors/default-http-backend.ts
+[1]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/interceptors/tokens-and-types.ts#L14-L16
+[2]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/interceptors/default-http-frontend.ts
+[3]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/interceptors/default-http-backend.ts
 [5]: https://expressjs.com/en/guide/writing-middleware.html
 [7]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/services/request-dispatcher.ts
-[8]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/rest/src/types/route-data.ts
-[9]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.8/packages/body-parser/src/body-parser.extension.ts#L54
+[8]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/types/route-data.ts
+[9]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/body-parser/src/body-parser.extension.ts#L54
 
 [106]: /basic-components/dependency-injection
 [107]: /basic-components/dependency-injection#multi-providers
