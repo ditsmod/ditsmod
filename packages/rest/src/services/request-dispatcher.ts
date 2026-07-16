@@ -1,14 +1,15 @@
 import { HttpMethod, injectable, HttpStatus, SystemLogMediator } from '@ditsmod/core';
-import { IncomingMessage, ServerResponse } from 'node:http';
 
 import { Router } from './router.js';
 import { RawRequest, RawResponse } from './request.js';
+import { HeadStrategy } from './head-strategy.js';
 
 @injectable()
 export class RequestDispatcher {
   constructor(
     protected router: Router,
     protected systemLogMediator: SystemLogMediator,
+    protected headStrategy: HeadStrategy,
   ) {}
 
   async requestListener(rawReq: RawRequest, rawRes: RawResponse) {
@@ -16,11 +17,11 @@ export class RequestDispatcher {
     let method = rawReq.method as HttpMethod;
     if (method == 'HEAD') {
       method = 'GET';
-      this.handleHeadMethod(rawRes);
+      rawRes = this.headStrategy.wrap(rawRes);
     }
     const { handle, params } = this.router.find(method, pathname);
     if (!handle) {
-      this.sendNotFound(rawRes);
+      this.sendNotFound(rawRes);  // use real res for error paths
       return;
     }
     await handle(rawReq, rawRes, params, search).catch((err) => {
@@ -42,30 +43,5 @@ export class RequestDispatcher {
   protected sendNotFound(rawRes: RawResponse) {
     rawRes.statusCode = HttpStatus.NOT_FOUND;
     rawRes.end();
-  }
-
-  protected handleHeadMethod(rawRes: RawResponse) {
-    let isChunked = false;
-    rawRes.write = () => (isChunked = true);
-    type Callback = () => void;
-
-    const rawEnd = rawRes.end.bind(rawRes);
-    rawRes.end = function (chunkOrFn?: Callback | string | Buffer, cbOrEncoding?: Callback | BufferEncoding) {
-      if (isChunked) {
-        if (!rawRes.headersSent) {
-          rawRes.setHeader('Transfer-Encoding', 'chunked');
-        }
-      } else {
-        let contentLenght = 0;
-        if (chunkOrFn && typeof chunkOrFn != 'function') {
-          const encoding: BufferEncoding = !cbOrEncoding || typeof cbOrEncoding == 'function' ? 'utf8' : cbOrEncoding;
-          contentLenght = Buffer.byteLength(chunkOrFn, encoding);
-        }
-        if (!rawRes.headersSent) {
-          rawRes.setHeader('Content-Length', contentLenght);
-        }
-      }
-      return rawEnd() as ServerResponse<IncomingMessage>;
-    };
   }
 }

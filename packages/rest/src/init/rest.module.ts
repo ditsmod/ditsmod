@@ -10,6 +10,7 @@ import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js'
 import { defaultProvidersPerRou } from '#providers/default-providers-per-rou.js';
 import { RouteContext } from '#services/route-context.js';
 import { RequestContext } from '#services/request-context.js';
+import { defaultProvidersPerApp } from '#providers/default-providers-per-app.js';
 
 /**
  * Sets `Router` provider on application level, and adds `RestRouteExtension` with `DispatcherExtension`.
@@ -17,6 +18,7 @@ import { RequestContext } from '#services/request-context.js';
 @featureModule({
   imports: [ContextModule],
   providersPerApp: [
+    ...defaultProvidersPerApp,
     { token: Router, useClass: DefaultRouter },
     { token: AppOptions, useToken: BaseAppOptions },
     { token: RouteContext, useValue: RouteContext },

@@ -53,6 +53,9 @@ export {
 } from '#interceptors/tokens-and-types.js';
 export { guard, CanActivate, GuardItem, NormalizedGuard, ModuleScopedGuard } from '#interceptors/guard.js';
 export { RequestDispatcher } from './services/request-dispatcher.js';
+export { NullBodyResponse } from './services/null-body-response.js';
+export { HeadStrategy } from './services/head-strategy.js';
+export { DefaultHeadStrategy } from './services/default-head-strategy.js';
 export {
   HTTP_INTERCEPTORS,
   RAW_REQ,
