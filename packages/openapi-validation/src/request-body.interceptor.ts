@@ -14,9 +14,8 @@ export class RequestBodyInterceptor extends ValidationInterceptor {
     const { options, requestBodySchema } = this.routeMeta as ValidationRouteMeta;
     const body = this.ctx.get(HTTP_BODY);
     if (body === undefined) {
-      const dict = this.getDict();
       throw new CustomError({
-        msg1: dict.missingRequestBody,
+        msg1: 'Missing request body',
         status: options.invalidStatus,
       });
     }

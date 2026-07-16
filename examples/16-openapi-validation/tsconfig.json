@@ -8,7 +8,6 @@
       "@ditsmod/core": ["../../packages/core/src/index.js"],
       "@ditsmod/rest": ["../../packages/rest/src/index.js"],
       "@ditsmod/openapi": ["../../packages/openapi/src/index.js"],
-      "@ditsmod/i18n": ["../../packages/i18n/src/index.js"],
       "@ditsmod/openapi-validation": ["../../packages/openapi-validation/src/index.js"],
       "@ditsmod/body-parser": ["../../packages/body-parser/src/index.js"],
       "@ditsmod/rest-testing": ["../../packages/rest-testing/src/index.js"],
@@ -21,7 +20,6 @@
     { "path": "../../packages/cli/tsconfig.build.json" },
     { "path": "../../packages/rest/tsconfig.build.json" },
     { "path": "../../packages/openapi/tsconfig.build.json" },
-    { "path": "../../packages/i18n/tsconfig.build.json" },
     { "path": "../../packages/rest-testing/tsconfig.build.json" },
     { "path": "../../packages/openapi-validation/tsconfig.build.json" },
   ]

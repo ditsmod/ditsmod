@@ -4,7 +4,7 @@ import { openapi } from '@ts-stack/openapi-spec';
 export const oasObject: XOasObject = {
   openapi,
   // Here works the servers that are described using this OpenAPI documentation.
-  servers: [{ url: 'http://localhost:3000' }],
+  servers: [{ url: 'http://0.0.0.0:3000' }],
   info: { title: 'Testing @ditsmod/openapi-validation', version: '1.0.0' },
   components: {
     responses: {

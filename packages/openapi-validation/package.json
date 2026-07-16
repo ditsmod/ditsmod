@@ -34,7 +34,6 @@
   },
   "peerDependencies": {
     "@ditsmod/core": "^3.0.0-next.15",
-    "@ditsmod/i18n": "^3.0.0-next.15",
     "@ditsmod/openapi": "^3.0.0-next.15",
     "@ditsmod/rest": "^3.0.0-next.15"
   },

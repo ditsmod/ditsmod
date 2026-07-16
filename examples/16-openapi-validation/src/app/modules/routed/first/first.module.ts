@@ -1,16 +1,12 @@
 import { InitParamsMap, DynamicModuleWithInit } from '@ditsmod/core';
-import { I18nProviders } from '@ditsmod/i18n';
 import { ValidationModule } from '@ditsmod/openapi-validation';
 import { BodyParserModule } from '@ditsmod/body-parser';
 import { initRest, restModule } from '@ditsmod/rest';
 
 import { FirstController } from './first.controller.js';
-import { current } from './locales/current/index.js';
-import { imported } from './locales/imported/index.js';
 
 @restModule({
-  imports: [BodyParserModule, ValidationModule.withOpts(current)],
-  providersPerMod: new I18nProviders().i18n({ imported }),
+  imports: [BodyParserModule, ValidationModule],
   controllers: [FirstController],
 })
 export class FirstModule {

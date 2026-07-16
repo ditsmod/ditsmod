@@ -1,11 +1,9 @@
 import { injectable, Injector, skipSelf, HttpStatus, Context } from '@ditsmod/core';
 import { CustomError } from '@ditsmod/core/errors';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
-import { DictService } from '@ditsmod/i18n';
 import { RawRequest, RawResponse, RequestContext, HttpHandler, HttpInterceptor, RouteMeta } from '@ditsmod/rest';
 
 import { ValidationRouteMeta } from './types.js';
-import { AssertDict } from './locales/current/_base-en/assert.dict.js';
 import { AjvService } from './ajv.service.js';
 
 @injectable()
@@ -32,8 +30,7 @@ export class ValidationInterceptor implements HttpInterceptor {
   protected validate(schema: XSchemaObject, value: any, parameter?: string) {
     const validate = this.ajvService.getValidator(schema);
     if (!validate) {
-      const dict = this.getDict();
-      throw new CustomError({ msg2: dict.ajvSchemaNotFound, status: HttpStatus.INTERNAL_SERVER_ERROR, level: 'error' });
+      throw new CustomError({ msg2: 'JSON schema not found for ajv', status: HttpStatus.INTERNAL_SERVER_ERROR, level: 'error' });
     }
     if (!validate(value)) {
       const msg1 = this.ajvService.ajv.errorsText(validate.errors);
@@ -46,10 +43,5 @@ export class ValidationInterceptor implements HttpInterceptor {
       const validationRouteMeta = this.routeMeta as ValidationRouteMeta;
       throw new CustomError({ msg1, args1, status: validationRouteMeta.options.invalidStatus, level: 'debug' });
     }
-  }
-
-  protected getDict() {
-    const dictService: DictService = this.injector.get(DictService);
-    return dictService.getDictionary(AssertDict);
   }
 }

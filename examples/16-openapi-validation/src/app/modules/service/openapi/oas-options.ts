@@ -7,7 +7,7 @@ export const oasOptions: OasOptions = {
         identify: (token: any) => token?.prototype?.getLng,
         tag: 'tag:yaml.org,2002:str',
         default: true,
-        resolve: () => 'fake resolve for @ditsmod/i18n dictionary',
+        resolve: () => 'fake resolve dictionary',
         stringify: (node) => (node.value as any).name,
       });
       return tags;

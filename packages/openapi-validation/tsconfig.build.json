@@ -6,7 +6,6 @@
     "tsBuildInfoFile": "dist/build.tsbuildinfo",
     "paths": {
       "@ditsmod/core": ["../core/src"],
-      "@ditsmod/i18n": ["../i18n/src"],
       "@ditsmod/body-parser": ["../body-parser/src"],
       "@ditsmod/openapi": ["../openapi/src"]
     }
@@ -18,6 +17,5 @@
     { "path": "../core/tsconfig.build.json" },
     { "path": "../body-parser/tsconfig.build.json" },
     { "path": "../openapi/tsconfig.build.json" },
-    { "path": "../i18n/tsconfig.build.json" },
   ]
 }

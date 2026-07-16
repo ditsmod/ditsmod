@@ -4,7 +4,6 @@
     "types": ["node", "jest"],
       "paths": {
       "@ditsmod/core": ["../core/src/index.js"],
-      "@ditsmod/i18n": ["../i18n/src/index.js"],
       "@ditsmod/body-parser": ["../body-parser/src/index.js"],
       "@ditsmod/openapi": ["../openapi/src/index.js"]
     },
@@ -32,6 +31,5 @@
     { "path": "../core/tsconfig.build.json" },
     { "path": "../body-parser/tsconfig.build.json" },
     { "path": "../openapi/tsconfig.build.json" },
-    { "path": "../i18n/tsconfig.build.json" },
   ]
 }

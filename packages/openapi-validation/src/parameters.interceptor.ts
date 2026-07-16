@@ -36,9 +36,8 @@ export class ParametersInterceptor extends ValidationInterceptor {
 
       if (value === undefined) {
         if (parameter.required) {
-          const dict = this.getDict();
           throw new CustomError({
-            msg1: dict.missingRequiredParameter(parameter.name, parameter.in),
+            msg1: `Missing required parameter '${parameter.name}' in ${parameter.in}`,
             status: options.invalidStatus,
           });
         }
