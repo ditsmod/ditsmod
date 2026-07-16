@@ -1,5 +1,6 @@
 node_modules
 .agents/
+.antigravity/
 *.code-workspace
 dist*
 *.tgz
