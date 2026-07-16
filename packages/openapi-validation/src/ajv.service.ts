@@ -1,4 +1,4 @@
-import { ctx, injectable, optional } from '@ditsmod/core';
+import { inject, injectable, optional } from '@ditsmod/core';
 import Ajv, { Options, ValidateFunction } from 'ajv';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
 import { REQUIRED } from '@ditsmod/openapi';
@@ -10,7 +10,7 @@ export class AjvService {
   #map = new Map<XSchemaObject, ValidateFunction>();
   ajv: Ajv.default;
 
-  constructor(@optional() @ctx(AJV_OPTIONS) ajvOptions?: Options | null) {
+  constructor(@optional() @inject(AJV_OPTIONS) ajvOptions?: Options | null) {
     this.ajv = new Ajv.default(ajvOptions || {});
     this.ajv.addVocabulary([REQUIRED]);
   }
