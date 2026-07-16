@@ -1,7 +1,7 @@
 {
   "name": "@ditsmod/openapi",
   "type": "module",
-  "version": "3.0.0-next.14",
+  "version": "3.0.0-next.15",
   "repository": {
     "type": "git",
     "url": "https://github.com/ditsmod/ditsmod.git",
@@ -62,8 +62,8 @@
     "yaml-loader": "^0.8.1"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^3.0.0-next.14",
-    "@ditsmod/rest": "^3.0.0-next.14"
+    "@ditsmod/core": "^3.0.0-next.15",
+    "@ditsmod/rest": "^3.0.0-next.15"
   },
   "gitHead": "eaf8f20b4e75e38c7a51fd1c3174b691cea756fa"
 }

@@ -1,7 +1,7 @@
 {
   "name": "@ditsmod/session-cookie",
   "type": "module",
-  "version": "3.0.0-next.14",
+  "version": "3.0.0-next.15",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ditsmod/ditsmod.git"
@@ -33,8 +33,8 @@
     "@ts-stack/cookies": "^1.2.2"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^3.0.0-next.14",
-    "@ditsmod/rest": "^3.0.0-next.14"
+    "@ditsmod/core": "^3.0.0-next.15",
+    "@ditsmod/rest": "^3.0.0-next.15"
   },
   "devDependencies": {
     "jest": "^30.4.2",

@@ -18,7 +18,7 @@
     "clean": "rm -r dist*"
   },
   "devDependencies": {
-    "@ditsmod/cli": "^3.0.0-next.14",
+    "@ditsmod/cli": "^3.0.0-next.15",
     "jest": "^30.4.2",
     "typescript-7": "npm:typescript@^7.0.2"
   }

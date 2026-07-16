@@ -9,7 +9,7 @@ program
   .name('ditsmod')
   .usage('[options] [command]\n       dm [options] [command]')
   .description('Ditsmod CLI — development tools for Ditsmod framework')
-  .version('3.0.0-next.14');
+  .version('3.0.0-next.15');
 
 startCommand(program);
 newCommand(program);
