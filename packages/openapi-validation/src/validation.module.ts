@@ -1,4 +1,3 @@
-import { Options } from 'ajv';
 import { featureModule, DynamicModule, ProviderBuilder, Class } from '@ditsmod/core';
 import { DispatcherExtension, RestRouteExtension } from '@ditsmod/rest';
 import { DictGroup, Dictionary, I18nModule, I18nProviders, I18N_TRANSLATIONS } from '@ditsmod/i18n';
@@ -11,7 +10,7 @@ import { ValidationExtension } from './validation.extension.js';
 
 @featureModule({
   imports: [I18nModule],
-  providersPerApp: new ProviderBuilder().passThrough(AjvService).useValue<Options>(AJV_OPTIONS, { coerceTypes: true }),
+  providersPerApp: new ProviderBuilder().passThrough(AjvService).useValue(AJV_OPTIONS, { coerceTypes: true }),
   providersPerMod: new I18nProviders().i18n({ current }),
   exports: [I18nModule, I18N_TRANSLATIONS],
   extensions: [
