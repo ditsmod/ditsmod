@@ -3,6 +3,7 @@ import { HttpMethod, injectable, HttpStatus, SystemLogMediator } from '@ditsmod/
 import { Router } from './router.js';
 import { RawRequest, RawResponse } from './request.js';
 import { HeadStrategy } from './head-strategy.js';
+import { HeadRouteNotSupported } from './rest-errors.js';
 
 @injectable()
 export class RequestDispatcher {
@@ -27,6 +28,12 @@ export class RequestDispatcher {
     await handle(rawReq, rawRes, params, search).catch((err) => {
       this.sendInternalServerError(rawRes, err);
     });
+  }
+
+  assertSupportedMethods(httpMethod: HttpMethod, fullPath: string) {
+    if (httpMethod == 'HEAD') {
+      throw new HeadRouteNotSupported(fullPath);
+    }
   }
 
   /**

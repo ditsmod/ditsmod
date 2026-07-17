@@ -6,6 +6,23 @@ import { CustomError } from '@ditsmod/core/errors';
 //     super();
 //   }
 // }
+
+/**
+ * `RequestDispatcher does not support routes with the HEAD method (see ${path})
+ * because they are automatically bound to GET in the current implementation.`
+ */
+export class HeadRouteNotSupported extends CustomError {
+  constructor(path: string) {
+    let msg1 = `RequestDispatcher does not support routes with the HEAD method (see ${path}) `;
+    msg1 += 'because they are automatically bound to GET in the current implementation.';
+    super(
+      {
+        msg1,
+        level: 'fatal',
+      },
+    );
+  }
+}
 /**
  * `Import with guards failed: Guard.prototype.canActivate must be a function, got: ${type}`
  */

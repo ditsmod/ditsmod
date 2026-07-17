@@ -42,6 +42,7 @@ import { RequestContext } from '#services/request-context.js';
 import { RestRouteExtension } from './rest-route.extension.js';
 import { CheckingDepsInSandboxFailed, GuardNotFound, InvalidConfigurationOfRoute } from '#errors';
 import { RouteContext } from '#services/route-context.js';
+import { RequestDispatcher } from '#services/request-dispatcher.js';
 
 @injectable()
 export class DispatcherExtension implements Extension<void> {
@@ -53,6 +54,7 @@ export class DispatcherExtension implements Extension<void> {
     protected moduleManager: ModuleManager,
     protected log: SystemLogMediator,
     protected extensionContext: ExtensionContext,
+    protected requestDispatcher: RequestDispatcher
   ) {}
 
   async stage1() {
@@ -372,6 +374,7 @@ export class DispatcherExtension implements Extension<void> {
       httpMethods.forEach((httpMethod) => {
         this.log.printRoute(this, httpMethod, fullPath, countOfGuards);
         routeChannel('ditsmod.route').publish({ moduleName, httpMethod, fullPath, countOfGuards });
+        this.requestDispatcher.assertSupportedMethods(httpMethod, fullPath);
         if (httpMethod == 'ALL') {
           router.all(`/${fullPath}`, handle);
         } else {

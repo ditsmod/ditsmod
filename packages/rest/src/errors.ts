@@ -19,4 +19,5 @@ export {
   ControllerDoesNotHaveDecorator,
   DuplicateOfControllers,
   InvalidGuard,
+  HeadRouteNotSupported
 } from '#services/rest-errors.js';
