@@ -28,13 +28,13 @@ describe('07-dynamically-composing-modules', () => {
     expect(status).toBe(404);
   });
 
-  xit('case 3', async () => {
+  it('case 3', async () => {
     const { status, text } = await testAgent.get('/add-2');
     expect(status).toBe(200);
     expect(text).toBe('second successfully importing!\n');
   });
 
-  xit('case 4', async () => {
+  it('case 4', async () => {
     const { status, text } = await testAgent.get('/get-2');
     expect(status).toBe(200);
     expect(text).toBe('second module.\n');
@@ -54,7 +54,7 @@ describe('07-dynamically-composing-modules', () => {
     expect(text).toBe('first module.\n');
   });
 
-  xit('case 7', async () => {
+  it('case 7', async () => {
     const { status, text } = await testAgent.get('/get-2');
     expect(status).toBe(200);
     expect(text).toBe('second module.\n');
