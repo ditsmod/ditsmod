@@ -9,7 +9,7 @@ import type { AllInitHooks, InitDecoratorOptions, InitHooks } from '#decorators/
 import { isProvider } from '#utils/type-guards.js';
 import { normalizeExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
-import { NormalizedModuleMeta } from '#init/base-meta.js';
+import { NormalizedModuleMeta } from '#init/normalized-meta.js';
 import { resolveForwardRef } from '#di/forward-ref.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
 import { ProviderBuilder } from '#utils/providers.js';

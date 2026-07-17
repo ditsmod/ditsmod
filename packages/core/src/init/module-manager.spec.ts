@@ -7,7 +7,7 @@ import { Extension } from '#extension/extension-types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ModuleId, ModuleManager } from './module-manager.js';
 import { AllInitHooks, InitDecoratorOptions, InitDecorator, InitHooks } from '#decorators/init-hooks-and-metadata.js';
-import { NormalizedInitMeta, NormalizedModuleMeta } from '#init/base-meta.js';
+import { NormalizedInitMeta, NormalizedModuleMeta } from '#init/normalized-meta.js';
 import { ModRefId } from '#types/mix.js';
 import { DynamicModule } from '#decorators/module-decorator-options.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';

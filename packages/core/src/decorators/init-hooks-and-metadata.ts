@@ -8,7 +8,7 @@ import type { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import type { featureModule } from './feature-module.js';
 import type { rootModule } from './root-module.js';
 import { AppInitHooks, type AppProviders } from '#types/metadata-per-mod.js';
-import { type NormalizedModuleMeta, getProxyForInitMeta, NormalizedInitMeta } from '#init/base-meta.js';
+import { type NormalizedModuleMeta, getProxyForInitMeta, NormalizedInitMeta } from '#init/normalized-meta.js';
 import type { ForwardRefFn } from '#di/forward-ref.js';
 
 export type AllInitHooks = Map<AnyFn, Omit<InitHooks, 'decoratorOptions'>>;

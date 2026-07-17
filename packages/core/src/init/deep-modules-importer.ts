@@ -7,7 +7,7 @@ import type { BaseImportRegistry, ShallowModuleImports } from '#init/types.js';
 import type { ResolvedModuleMetadata } from '#types/metadata-per-mod.js';
 import type { Level, ModRefId, AnyObj } from '#types/mix.js';
 import type { AnyFn, Provider } from '#di/top/types-and-models.js';
-import type { NormalizedModuleMeta } from '#init/base-meta.js';
+import type { NormalizedModuleMeta } from '#init/normalized-meta.js';
 import type { ReflectiveDependency } from '#utils/get-dependencies.js';
 import { getDependencies } from '#utils/get-dependencies.js';
 import { getLastProviders } from '#utils/get-last-providers.js';

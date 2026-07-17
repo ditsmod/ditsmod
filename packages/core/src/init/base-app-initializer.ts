@@ -2,7 +2,7 @@ import { DeepModulesImporter } from '#init/deep-modules-importer.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import type { PublicLogMediator } from '#logger/system-log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import type { NormalizedModuleMeta } from '#init/base-meta.js';
+import type { NormalizedModuleMeta } from '#init/normalized-meta.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
 import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import { ExtensionStatistics } from '#extension/counter.js';

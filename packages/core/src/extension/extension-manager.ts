@@ -10,7 +10,7 @@ import {
 import { ModRefId, OptionalProps } from '#types/mix.js';
 import { ExtensionStatistics } from '#extension/counter.js';
 import { ExtensionContext } from '#extension/extensions-context.js';
-import { NormalizedModuleMeta } from '#init/base-meta.js';
+import { NormalizedModuleMeta } from '#init/normalized-meta.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { isExtensionProvider } from './type-guards.js';
 import { UndeclaredExtensionDependency, CyclicExtensions, ExtensionExecutionFailure } from '#errors';

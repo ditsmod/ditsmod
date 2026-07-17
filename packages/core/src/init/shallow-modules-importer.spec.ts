@@ -1,6 +1,6 @@
 import { featureModule } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
-import { NormalizedModuleMeta } from '#init/base-meta.js';
+import { NormalizedModuleMeta } from '#init/normalized-meta.js';
 import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { AppProviders, ImportedProvider } from '#types/metadata-per-mod.js';

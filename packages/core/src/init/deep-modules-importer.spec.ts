@@ -1,5 +1,5 @@
 import { DeepModulesImporter } from '#init/deep-modules-importer.js';
-import { NormalizedModuleMeta } from '#init/base-meta.js';
+import { NormalizedModuleMeta } from '#init/normalized-meta.js';
 import { ModRefId, Level } from '#types/mix.js';
 import { Provider } from '#di/top/types-and-models.js';
 import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';

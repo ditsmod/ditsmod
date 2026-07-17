@@ -4,7 +4,7 @@ import { defaultProvidersPerApp } from '#init/default-providers-per-app.js';
 import { ExtensionContext } from '#extension/extensions-context.js';
 import { StageEntry, ExtensionManager } from '#extension/extension-manager.js';
 import { CyclicExtensions } from '#error/core-errors.js';
-import { NormalizedModuleMeta } from '#init/base-meta.js';
+import { NormalizedModuleMeta } from '#init/normalized-meta.js';
 import { injectable } from '#di/decorators.js';
 import { Injector } from '#di/injector.js';
 

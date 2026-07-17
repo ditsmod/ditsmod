@@ -3,7 +3,7 @@ import type { AnyObj, RequireProps } from '#types/mix.js';
 import type { DynamicModule } from '#decorators/module-decorator-options.js';
 import { ModuleDecoratorOptions } from '#decorators/module-decorator-options.js';
 import { InitHooks } from '#decorators/init-hooks-and-metadata.js';
-import { NormalizedModuleMeta } from '#init/base-meta.js';
+import { NormalizedModuleMeta } from '#init/normalized-meta.js';
 import { RootDecoratorOptions } from './root-module.js';
 
 export function isDynamicModuleWrapper(arg?: AnyObj): arg is { dynamicModule: DynamicModule } {

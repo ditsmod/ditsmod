@@ -2,7 +2,7 @@ import { featureModule } from '#decorators/feature-module.js';
 import { isFeatureModule, isDynamicModule, isRootModule } from '#decorators/type-guards.js';
 import { rootModule } from '#decorators/root-module.js';
 import { ModuleDecoratorOptions, DynamicModule } from '#decorators/module-decorator-options.js';
-import { NormalizedModuleMeta } from '#init/base-meta.js';
+import { NormalizedModuleMeta } from '#init/normalized-meta.js';
 import { InitHooks } from './init-hooks-and-metadata.js';
 import { Reflector } from '#di/reflector.js';
 import { DecoratorMeta } from '#di/top/decorator-and-value.js';

@@ -4,7 +4,7 @@ import {
   InitHooks,
   InitDecorator,
 } from '#decorators/init-hooks-and-metadata.js';
-import { NormalizedInitMeta, getProxyForInitMeta, NormalizedModuleMeta } from '#init/base-meta.js';
+import { NormalizedInitMeta, getProxyForInitMeta, NormalizedModuleMeta } from '#init/normalized-meta.js';
 import { rootModule, RootDecoratorOptions } from '#decorators/root-module.js';
 import { Reflector } from '#di/reflector.js';
 import { Extension } from '#extension/extension-types.js';

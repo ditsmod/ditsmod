@@ -1,6 +1,6 @@
 import type { AnyObj, ModRefId } from '#types/mix.js';
 import type { AnyFn, Provider } from '#di/top/types-and-models.js';
-import type { NormalizedModuleMeta } from '#init/base-meta.js';
+import type { NormalizedModuleMeta } from '#init/normalized-meta.js';
 import type { ImportedProvider } from '#types/metadata-per-mod.js';
 import type { ExtensionClass } from '#extension/extension-types.js';
 import type { GroupToken } from '#di/key-registry.js';
