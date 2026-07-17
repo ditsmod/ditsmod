@@ -11,7 +11,7 @@
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",
     "build-test": "tsc -b tsconfig.e2e.json",
     "build": "tsc -b tsconfig.build.json",
-    "tmp": "node --enable-source-maps --watch ./dist/tmp.js"
+    "tmp": "dm start ./dist/tmp.js"
   },
   "imports": {
     "#app/*": "./dist/app/*"
