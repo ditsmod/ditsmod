@@ -151,7 +151,7 @@ export async function runStart(entryFileArg: string | undefined, opts: StartComm
         const restartApp = async () => {
           restartTimer = null;
           if (!opts.preserveWatchOutput && !opts.verbose) {
-            process.stdout.write('\x1Bc');
+            process.stdout.write('\x1B[2J\x1B[3J\x1B[H');
           }
           const timestamp = new Date().toLocaleTimeString();
           console.log(`[${timestamp}] [ditsmod] Restarting application…\n`);
