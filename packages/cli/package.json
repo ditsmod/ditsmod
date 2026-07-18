@@ -40,11 +40,11 @@
     "typescript": ">=5.0.0"
   },
   "dependencies": {
-    "commander": "^14.0.0"
+    "commander": "^14.0.3"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
-    "@types/node": "^26.0.1",
+    "@types/node": "^26.1.1",
     "jest": "^30.4.2",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
     "typescript-7": "npm:typescript@^7.0.2"

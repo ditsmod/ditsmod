@@ -17,7 +17,7 @@
     "#auth": "./dist/app/modules/auth/index.js"
   },
   "dependencies": {
-    "dotenv": "^17.3.1"
+    "dotenv": "^17.4.2"
   },
   "devDependencies": {
     "@ditsmod/cli": "^3.0.0-next.15",

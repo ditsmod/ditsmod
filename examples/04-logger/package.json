@@ -17,8 +17,8 @@
   },
   "dependencies": {
     "bunyan": "^1.8.15",
-    "pino": "^9.9.4",
-    "winston": "^3.17.0"
+    "pino": "^9.14.0",
+    "winston": "^3.19.0"
   },
   "devDependencies": {
     "@ditsmod/cli": "^3.0.0-next.15",

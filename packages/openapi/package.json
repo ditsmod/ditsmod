@@ -45,7 +45,7 @@
   "license": "MIT",
   "dependencies": {
     "@ts-stack/openapi-spec": "^3.1.6",
-    "yaml": "^2.8.3"
+    "yaml": "^2.9.0"
   },
   "devDependencies": {
     "@types/swagger-ui": "^5.32.0",

@@ -30,7 +30,7 @@
   "license": "MIT",
   "dependencies": {
     "@ts-stack/cookies": "^1.2.2",
-    "ajv": "^8.17.1"
+    "ajv": "^8.20.0"
   },
   "peerDependencies": {
     "@ditsmod/core": "^3.0.0-next.15",
