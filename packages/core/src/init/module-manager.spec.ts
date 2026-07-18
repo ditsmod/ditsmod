@@ -7,7 +7,7 @@ import { Extension } from '#extension/extension-types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ModuleId, ModuleManager } from './module-manager.js';
 import { AllInitHooks, InitDecoratorOptions, InitDecorator, InitHooks } from '#decorators/init-hooks-and-metadata.js';
-import { NormalizedInitMeta, NormalizedModuleMeta } from '#init/normalized-meta.js';
+import { NormalizedInitMeta, NormalizedModuleMeta, getProxyForInitMeta } from '#init/normalized-meta.js';
 import { ModRefId } from '#types/mix.js';
 import { DynamicModule } from '#decorators/module-decorator-options.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
@@ -41,6 +41,10 @@ describe('ModuleManager', () => {
 
     override getNormalizedModuleMetaFromSnapshot(moduleId: ModuleId) {
       return super.getNormalizedModuleMetaFromSnapshot(moduleId);
+    }
+
+    override copyNormalizedModuleMeta(normalizedModuleMeta: NormalizedModuleMeta): NormalizedModuleMeta {
+      return super.copyNormalizedModuleMeta(normalizedModuleMeta);
     }
   }
 
@@ -467,16 +471,10 @@ describe('ModuleManager', () => {
       module3WithProviders,
       module4WithProviders,
     ]);
-    expect(mock.getNormalizedModuleMeta('root')?.importsWithOpts).toEqual([
-      module3WithProviders,
-      module4WithProviders,
-    ]);
+    expect(mock.getNormalizedModuleMeta('root')?.importsWithOpts).toEqual([module3WithProviders, module4WithProviders]);
     expect(mock.removeImport(module3WithProviders)).toBe(true);
     expect(mock.getNormalizedModuleMetaFromSnapshot('root')?.importsWithOpts).toEqual([module4WithProviders]);
-    expect(mock.getNormalizedModuleMeta('root')?.importsWithOpts).toEqual([
-      module3WithProviders,
-      module4WithProviders,
-    ]);
+    expect(mock.getNormalizedModuleMeta('root')?.importsWithOpts).toEqual([module3WithProviders, module4WithProviders]);
     expect(mock.snapshotMap.size).toBe(3);
     expect(mock.map.size).toBe(5);
 
@@ -853,5 +851,62 @@ describe('ModuleManager', () => {
     expect(getParams(dynamicModule1)).toEqual([{ one: 'initSome1-1' }]);
     expect(getParams(dynamicModule2)).toEqual([{ three: 'initSome2-2' }]);
     expect(getParams(dynamicModule3)).toEqual([{ three: 'initSome2-3' }, { one: 'initSome1-3' }]);
+  });
+
+  it('should copy NormalizedModuleMeta correctly, preserving prototype and recreating initMeta proxies wrapping the copy', () => {
+    interface RootInitDecoratorOptions extends InitDecoratorOptions<{ path?: string }> {
+      one?: string;
+    }
+    class InitMeta extends NormalizedInitMeta {
+      path?: string;
+    }
+    class InitHooks1 extends InitHooks<RootInitDecoratorOptions> {
+      override normalize(normalizedModuleMeta: NormalizedModuleMeta): InitMeta {
+        const meta = getProxyForInitMeta(normalizedModuleMeta, InitMeta);
+        if (isDynamicModule(normalizedModuleMeta.modRefId)) {
+          const params = normalizedModuleMeta.modRefId.initParams?.get(initSome);
+          meta.path = params?.path;
+        }
+        return meta;
+      }
+    }
+    const initSome: InitDecorator<RootInitDecoratorOptions, { path?: string }, InitMeta> = Reflector.makeClassDecorator(
+      (d) => new InitHooks1(d),
+    );
+
+    @featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
+    class Module1 {}
+
+    const dynamicModule: DynamicModule = { module: Module1 };
+
+    @initSome({ one: 'some-here', imports: [{ dynamicModule: dynamicModule, path: 'some-prefix' }] })
+    @rootModule()
+    class AppModule {}
+
+    mock.scanRootModule(AppModule);
+    const originalMod1 = mock.getNormalizedModuleMeta(dynamicModule)!;
+    expect(originalMod1).toBeInstanceOf(NormalizedModuleMeta);
+
+    // Call copyNormalizedModuleMeta
+    const copiedMod1 = mock.copyNormalizedModuleMeta(originalMod1);
+    expect(copiedMod1).toBeInstanceOf(NormalizedModuleMeta);
+    expect(copiedMod1).not.toBe(originalMod1);
+
+    // Maps should be new instances
+    expect(copiedMod1.mInitHooks).not.toBe(originalMod1.mInitHooks);
+    expect(copiedMod1.allInitHooks).not.toBe(originalMod1.allInitHooks);
+    expect(copiedMod1.initMeta).not.toBe(originalMod1.initMeta);
+
+    // The proxy inside copiedMod1.initMeta should wrap copiedMod1.
+    const originalProxy = originalMod1.initMeta.get(initSome) as InitMeta;
+    const copiedProxy = copiedMod1.initMeta.get(initSome) as InitMeta;
+
+    expect(copiedProxy).toBeDefined();
+    expect(copiedProxy).not.toBe(originalProxy);
+
+    // When we mutate providersPerApp of copiedMod1, it should NOT affect originalProxy, but it should affect copiedProxy.
+    copiedMod1.providersPerApp.push({ token: 'new-token', useValue: 'new-val' });
+    expect(originalProxy.providersPerApp.some((p) => (p as any).token === 'new-token')).toBe(false);
+    expect(copiedProxy.providersPerApp.some((p) => (p as any).token === 'new-token')).toBe(true);
   });
 });
