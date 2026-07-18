@@ -520,12 +520,12 @@ describe('ModuleNormalizer', () => {
   });
 
   describe('init decorators', () => {
-    interface SomeInitOpts extends DynamicModuleOptions {
+    interface SomeInitDynamicOptions extends DynamicModuleOptions {
       path?: string;
       num?: number;
     }
 
-    interface SomeInitOptions extends InitDecoratorOptions<SomeInitOpts> {
+    interface SomeInitOptions extends InitDecoratorOptions<SomeInitDynamicOptions> {
       one?: number;
       two?: number;
       flag?: boolean;
@@ -563,7 +563,7 @@ describe('ModuleNormalizer', () => {
       return new SomeInitHooks(Object.assign({}, data));
     }
 
-    const initSome: InitDecorator<SomeInitOptions, SomeInitOpts, SomeInitMeta> = Reflector.makeClassDecorator(
+    const initSome: InitDecorator<SomeInitOptions, SomeInitDynamicOptions, SomeInitMeta> = Reflector.makeClassDecorator(
       getInitHooks,
       'initSome',
     );
@@ -618,7 +618,7 @@ describe('ModuleNormalizer', () => {
       @featureModule()
       class Module2 {}
 
-      const dynamicModule1: DynamicModuleWithInit & SomeInitOpts = {
+      const dynamicModule1: DynamicModuleWithInit & SomeInitDynamicOptions = {
         module: Module1,
         providersPerMod: [Service1],
         providersPerApp: [Service3],
@@ -628,7 +628,7 @@ describe('ModuleNormalizer', () => {
       };
       dynamicModule1.initOpts.set(initSome, { path: 'path-1' });
 
-      const dynamicModule2: DynamicModuleWithInit & SomeInitOpts = {
+      const dynamicModule2: DynamicModuleWithInit & SomeInitDynamicOptions = {
         module: Module2,
         providersPerApp: [Service2],
         num: 12,
@@ -652,14 +652,14 @@ describe('ModuleNormalizer', () => {
       class AppModule {}
 
       normalizer.normalize(AppModule);
-      expect(dynamicModule1.initOpts.get(initSome)).toEqual<SomeInitOpts>({
+      expect(dynamicModule1.initOpts.get(initSome)).toEqual<SomeInitDynamicOptions>({
         path: 'path-1',
         providersPerMod: [Service1, Service2],
         extensionsMeta: { one: 1, two: 2 },
         num: 5,
         providersPerApp: [Service3],
       });
-      expect(dynamicModule2.initOpts.get(initSome)).toEqual<SomeInitOpts>({
+      expect(dynamicModule2.initOpts.get(initSome)).toEqual<SomeInitDynamicOptions>({
         providersPerApp: [Service1, Service2],
         num: 12,
         extensionsMeta: { three: 3, four: 4 },

@@ -141,7 +141,7 @@ export interface InitMetaMap {
   [Symbol.iterator](): any;
 }
 
-export interface InitOptsMap {
+export interface InitDynamicOptionsMap {
   set<T extends AnyObj>(decorator: InitDecorator<any, T, any>, params: T): this;
   get<T extends AnyObj>(decorator: InitDecorator<any, T, any>): T | undefined;
   forEach<T extends AnyObj>(callbackfn: (params: T, decorator: AnyFn, map: Map<AnyFn, T>) => void, thisArg?: any): void;
@@ -227,9 +227,9 @@ export interface DynamicModuleWrapper {
   module?: never;
 }
 
-export interface InitDecoratorOptions<InitOpts extends object = object> extends Omit<
+export interface InitDecoratorOptions<InitDynamicOptions extends object = object> extends Omit<
   ModuleDecoratorOptions,
   'imports'
 > {
-  imports?: (((DynamicModuleWrapper | DynamicModule) & InitOpts) | ModuleType | ForwardRefFn<ModuleType>)[];
+  imports?: (((DynamicModuleWrapper | DynamicModule) & InitDynamicOptions) | ModuleType | ForwardRefFn<ModuleType>)[];
 }

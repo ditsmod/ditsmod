@@ -436,12 +436,12 @@ export class AppModule {}
       this.resolveAllForwardRefs(initDecoratorOptions.imports).forEach((imp) => {
         if (isDynamicModule(imp)) {
           const params = { ...imp };
-          this.mergeInitOpts(decorator, params, imp);
+          this.mergeInitDynamicOptions(decorator, params, imp);
         } else if (isDynamicModuleWrapper(imp)) {
           const params = { ...imp } as { dynamicModule?: DynamicModule };
           this.mergeObjects(params, imp.dynamicModule);
           delete params.dynamicModule;
-          this.mergeInitOpts(decorator, params, imp.dynamicModule);
+          this.mergeInitDynamicOptions(decorator, params, imp.dynamicModule);
         } else {
           if (!this.normalizedModuleMeta.importsModules.includes(imp)) {
             this.normalizedModuleMeta.importsModules.push(imp);
@@ -451,7 +451,7 @@ export class AppModule {}
     }
   }
 
-  protected mergeInitOpts(decorator: AnyFn, params: AnyObj, dynamicModule: DynamicModule) {
+  protected mergeInitDynamicOptions(decorator: AnyFn, params: AnyObj, dynamicModule: DynamicModule) {
     delete params.module;
     delete params.initOpts;
     dynamicModule.initOpts ??= new Map();

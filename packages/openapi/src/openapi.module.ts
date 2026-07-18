@@ -1,5 +1,5 @@
 import { XOasObject } from '@ts-stack/openapi-spec';
-import { featureModule, InitOptsMap, DynamicModule, ProviderBuilder } from '@ditsmod/core';
+import { featureModule, InitDynamicOptionsMap, DynamicModule, ProviderBuilder } from '@ditsmod/core';
 import { RestModule, DispatcherExtension, RestRouteExtension, initRest } from '@ditsmod/rest';
 
 import { OpenapiCompilerExtension } from './extensions/openapi-compiler.extension.js';
@@ -38,7 +38,7 @@ export class OpenapiModule {
       swaggerOAuthOptions,
     };
 
-    const initOpts: InitOptsMap = new Map();
+    const initOpts: InitDynamicOptionsMap = new Map();
     if (absolutePath !== undefined) {
       initOpts.set(initRest, { absolutePath });
     }
