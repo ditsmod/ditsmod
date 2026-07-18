@@ -367,14 +367,39 @@ export class ModuleManager {
   }
 
   protected copyNormalizedModuleMeta(normalizedModuleMeta: NormalizedModuleMeta) {
-    normalizedModuleMeta = { ...(normalizedModuleMeta || ({} as NormalizedModuleMeta)) };
+    const copy = Object.create(Object.getPrototypeOf(normalizedModuleMeta || ({} as NormalizedModuleMeta))) as NormalizedModuleMeta;
+    Object.assign(copy, normalizedModuleMeta);
 
-    objectKeys(normalizedModuleMeta).forEach((p) => {
-      if (Array.isArray(normalizedModuleMeta[p])) {
-        (normalizedModuleMeta as any)[p] = normalizedModuleMeta[p].slice();
+    objectKeys(copy).forEach((p) => {
+      if (Array.isArray(copy[p])) {
+        (copy as any)[p] = copy[p].slice();
       }
     });
-    return normalizedModuleMeta;
+
+    if (copy.extensionsMeta) {
+      copy.extensionsMeta = { ...copy.extensionsMeta };
+    }
+    copy.mInitHooks = new Map(copy.mInitHooks);
+    copy.allInitHooks = new Map(copy.allInitHooks);
+    copy.mExtensionAsGroupToken = new Map(copy.mExtensionAsGroupToken);
+    copy.mExportedExtensionAsGroupToken = new Map(copy.mExportedExtensionAsGroupToken);
+    copy.initMeta = new Map();
+    copy.mInitHooks.forEach((initHooks, decorator) => {
+      const meta = initHooks.normalize(copy);
+      if (meta) {
+        copy.initMeta.set(decorator, meta);
+      }
+    });
+    copy.allInitHooks.forEach((initHooks, decorator) => {
+      if (!copy.mInitHooks.has(decorator)) {
+        const meta = initHooks.clone().normalize(copy);
+        if (meta) {
+          copy.initMeta.set(decorator, meta);
+        }
+      }
+    });
+
+    return copy;
   }
 
   /**

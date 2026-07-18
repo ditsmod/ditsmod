@@ -1,9 +1,5 @@
 import { featureModule } from '#decorators/feature-module.js';
-import {
-  InitDecoratorOptions as BaseInitDecoratorOptions,
-  InitHooks,
-  InitDecorator,
-} from '#decorators/init-hooks-and-metadata.js';
+import { InitDecoratorOptions, InitHooks, InitDecorator } from '#decorators/init-hooks-and-metadata.js';
 import { NormalizedInitMeta, getProxyForInitMeta, NormalizedModuleMeta } from '#init/normalized-meta.js';
 import { rootModule, RootDecoratorOptions } from '#decorators/root-module.js';
 import { Reflector } from '#di/reflector.js';
@@ -529,7 +525,7 @@ describe('ModuleNormalizer', () => {
       num?: number;
     }
 
-    interface SomeInitOptions extends BaseInitDecoratorOptions<SomeInitParams> {
+    interface SomeInitOptions extends InitDecoratorOptions<SomeInitParams> {
       one?: number;
       two?: number;
       flag?: boolean;
