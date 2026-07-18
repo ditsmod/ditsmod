@@ -32,7 +32,7 @@ import {
 /**
  * Об'єкт цього типу буде передано безпосередньо init-декоратору - @initSome({ one: 1, two: 2 })
  */
-interface ExtInitDecorOpts extends InitDecoratorOptions<InitParams> {
+interface ExtInitDecorOpts extends InitDecoratorOptions<InitOpts> {
   one?: number;
   two?: number;
 }
@@ -47,7 +47,7 @@ class SomeInitHooks extends InitHooks<ExtInitDecorOpts> {
 /**
  * Об'єкт цього типу буде передано в метаданих модуля як так званий "динамічний модуль".
  */
-interface InitParams extends DynamicModuleOptions {
+interface InitOpts extends DynamicModuleOptions {
   path?: string;
   num?: number;
 }
@@ -70,7 +70,7 @@ function transformInitDecoratorOptions(data?: ExtInitDecorOpts): InitHooks<ExtIn
 }
 
 // Створення ініт-декоратора
-const initSome: InitDecorator<ExtInitDecorOpts, InitParams, InitMeta> =
+const initSome: InitDecorator<ExtInitDecorOpts, InitOpts, InitMeta> =
   Reflector.makeClassDecorator(transformInitDecoratorOptions);
 
 // Використання ініт-декоратора
@@ -155,13 +155,13 @@ export const myFeatureModule = Reflector.makeClassDecorator(transformFeatureMeta
 export class MyFeatureModule {}
 ```
 
-## Параметри імпортованих модулів (MWP) {#parameters-of-imported-modules-mwp}
+## Опції імпортованих динамічних модулів {#imported-dynamic-module-options}
 
-При імпортуванні модуля з параметрами в контексті ініт-декоратора:
+Під час імпорту динамічного модуля в контексті ініт-декоратора:
 
-1. Кастомні параметри (такі як `path` або `guards`) автоматично об'єднуються в `dynamicModule.initParams` під токен-ключем декоратора.
-2. Якщо імпортований модуль є звичайним `@featureModule` (не декорованим ініт-декоратором), фреймворк отримує дефолтний клас хуків для цього декоратора з контексту застосунку, клонує його, реєструє в списку `mInitHooks` модуля та викликає метод `normalize()`.
-3. Це забезпечує коректну обробку таких параметрів, як префікси маршрутів та гарди, навіть при імпорті стандартних модулів фіч, які не мають кастомних анотацій ініт-декораторів.
+1. Кастомні параметри (такі як `path` або `guards`) автоматично додаються в Map `dynamicModule.initOpts` під токен-ключем декоратора.
+2. Якщо імпортований модуль має лише `@featureModule` (без ініт-декораторів), фреймворк отримує дефолтний клас хуків для цього декоратора з контексту застосунку, клонує його, реєструє у `mInitHooks` модуля та викликає метод `normalize()`.
+3. Це забезпечує коректну обробку кастомних опцій (таких як REST префікси маршрутів та гарди), навіть при імпорті стандартних модулів фіч, які не мають кастомних анотацій ініт-декораторів.
 
 [1]: /basic-components/modules/#DynamicModule
 [2]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/core/src/init/module-normalizer.spec.ts#L333-L531

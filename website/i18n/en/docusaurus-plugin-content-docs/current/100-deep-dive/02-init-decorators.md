@@ -32,7 +32,7 @@ import {
 /**
  * An object with this type will be passed directly to the init decorator - @initSome({ one: 1, two: 2 })
  */
-interface ExtInitDecorOpts extends InitDecoratorOptions<InitParams> {
+interface ExtInitDecorOpts extends InitDecoratorOptions<InitOpts> {
   one?: number;
   two?: number;
 }
@@ -47,7 +47,7 @@ class SomeInitHooks extends InitHooks<ExtInitDecorOpts> {
 /**
  * An object with this type will be passed in the module metadata as a so-called "DynamicModule".
  */
-interface InitParams extends DynamicModuleOptions {
+interface InitOpts extends DynamicModuleOptions {
   path?: string;
   num?: number;
 }
@@ -70,7 +70,7 @@ function transformInitDecoratorOptions(data?: ExtInitDecorOpts): InitHooks<ExtIn
 }
 
 // Creating the init decorator
-const initSome: InitDecorator<ExtInitDecorOpts, InitParams, InitMeta> =
+const initSome: InitDecorator<ExtInitDecorOpts, InitOpts, InitMeta> =
   Reflector.makeClassDecorator(transformInitDecoratorOptions);
 
 // Using init decorator
@@ -155,13 +155,13 @@ export const myFeatureModule = Reflector.makeClassDecorator(transformFeatureMeta
 export class MyFeatureModule {}
 ```
 
-## Parameters of Imported Modules (MWP) {#parameters-of-imported-modules-mwp}
+## Imported dynamic module options {#imported-dynamic-module-options}
 
-When importing a module with parameters in the context of an init decorator:
+When importing a dynamic module in the context of an init decorator:
 
-1. The custom parameters (like `path` or `guards`) are automatically merged into `dynamicModule.initParams` under the decorator's token key.
+1. The custom options (like `path` or `guards`) are automatically merged into `dynamicModule.initOpts` under the decorator's token key.
 2. If the imported module is a plain `@featureModule` (not decorated with the init decorator), the framework retrieves the default hook class for that decorator from the application context, clones it, registers it in the module's `mInitHooks` list, and calls `normalize()`.
-3. This ensures that parameters like route prefixes and guards are correctly processed even when importing standard feature modules that have no custom init decorator annotations.
+3. This ensures that options like route prefixes and guards are correctly processed even when importing standard feature modules that have no custom init decorator annotations.
 
 [1]: /basic-components/modules/#DynamicModule
 [2]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/core/src/init/module-normalizer.spec.ts#L333-L531
