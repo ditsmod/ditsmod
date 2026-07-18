@@ -442,7 +442,7 @@ describe('ModuleManager', () => {
       static withOpts(): DynamicModuleWithInit<Module1> {
         return {
           module: this,
-          initParams: new Map(),
+          initOpts: new Map(),
         };
       }
     }
@@ -452,7 +452,7 @@ describe('ModuleManager', () => {
     class Module2 {}
 
     const dynamicModule = Module1.withOpts();
-    dynamicModule.initParams.set(initRest, { path: 'module1', guards: [Guard1] });
+    dynamicModule.initOpts.set(initRest, { path: 'module1', guards: [Guard1] });
     const appendsWithOpts: AppendsWithOptions = { path: 'module2', module: Module2, guards: [Guard2] };
 
     @initRest({ appends: [appendsWithOpts] })

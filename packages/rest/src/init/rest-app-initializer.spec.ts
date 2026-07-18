@@ -85,8 +85,8 @@ function getImportedTokens(map: Map<any, ImportedProvider<Provider>> | undefined
     class Module5 {}
 
     const module2WithOpts: DynamicModule = Module2.withOpts();
-    const module3WithOpts: DynamicModuleWithInit = { module: Module3, initParams: new Map() };
-    module3WithOpts.initParams.set(initRest, { path: 'one' });
+    const module3WithOpts: DynamicModuleWithInit = { module: Module3, initOpts: new Map() };
+    module3WithOpts.initOpts.set(initRest, { path: 'one' });
     const module4WithOpts: DynamicModule = { module: Module4 };
     @rootModule({
       imports: [Module0, Module1, module2WithOpts, Module5, module3WithOpts, module4WithOpts],

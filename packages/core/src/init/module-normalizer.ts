@@ -387,7 +387,7 @@ export class AppModule {}
    * this method adds hooks so that the import of `Module1` with parameters can be properly handled.
    */
   protected addInitHooksForImportedMwp(allInitHooks: AllInitHooks) {
-    (this.normalizedModuleMeta.modRefId as DynamicModule).initParams?.forEach((params, decorator) => {
+    (this.normalizedModuleMeta.modRefId as DynamicModule).initOpts?.forEach((params, decorator) => {
       if (!this.normalizedModuleMeta.mInitHooks.has(decorator)) {
         const initHooks = allInitHooks.get(decorator)!;
         const newInitHooks = initHooks.clone();
@@ -436,12 +436,12 @@ export class AppModule {}
       this.resolveAllForwardRefs(initDecoratorOptions.imports).forEach((imp) => {
         if (isDynamicModule(imp)) {
           const params = { ...imp };
-          this.mergeInitParams(decorator, params, imp);
+          this.mergeInitOpts(decorator, params, imp);
         } else if (isDynamicModuleWrapper(imp)) {
           const params = { ...imp } as { dynamicModule?: DynamicModule };
           this.mergeObjects(params, imp.dynamicModule);
           delete params.dynamicModule;
-          this.mergeInitParams(decorator, params, imp.dynamicModule);
+          this.mergeInitOpts(decorator, params, imp.dynamicModule);
         } else {
           if (!this.normalizedModuleMeta.importsModules.includes(imp)) {
             this.normalizedModuleMeta.importsModules.push(imp);
@@ -451,15 +451,15 @@ export class AppModule {}
     }
   }
 
-  protected mergeInitParams(decorator: AnyFn, params: AnyObj, dynamicModule: DynamicModule) {
+  protected mergeInitOpts(decorator: AnyFn, params: AnyObj, dynamicModule: DynamicModule) {
     delete params.module;
-    delete params.initParams;
-    dynamicModule.initParams ??= new Map();
-    if (dynamicModule.initParams.has(decorator)) {
-      const existingParams = dynamicModule.initParams.get(decorator)!;
-      dynamicModule.initParams.set(decorator, this.mergeObjects(params, existingParams));
+    delete params.initOpts;
+    dynamicModule.initOpts ??= new Map();
+    if (dynamicModule.initOpts.has(decorator)) {
+      const existingParams = dynamicModule.initOpts.get(decorator)!;
+      dynamicModule.initOpts.set(decorator, this.mergeObjects(params, existingParams));
     } else {
-      dynamicModule.initParams.set(decorator, params);
+      dynamicModule.initOpts.set(decorator, params);
     }
     if (!this.normalizedModuleMeta.importsWithOpts.includes(dynamicModule)) {
       this.normalizedModuleMeta.importsWithOpts.push(dynamicModule);
@@ -468,7 +468,7 @@ export class AppModule {}
 
   protected mergeObjects(dstn: AnyObj, src: AnyObj) {
     objectKeys(src).forEach((prop) => {
-      if (prop == 'initParams' || prop == 'module') {
+      if (prop == 'initOpts' || prop == 'module') {
         // ignore
       } else if (Array.isArray(src[prop])) {
         if (src[prop].length) {

@@ -40,7 +40,7 @@ describe('rest ModuleNormalizer', () => {
       static withOpts(): DynamicModuleWithInit<Module1> {
         return {
           module: this,
-          initParams: new Map(),
+          initOpts: new Map(),
         };
       }
     }
@@ -49,7 +49,7 @@ describe('rest ModuleNormalizer', () => {
     class Module2 {}
 
     const dynamicModule = Module1.withOpts();
-    dynamicModule.initParams.set(initRest, { path: 'test1' });
+    dynamicModule.initOpts.set(initRest, { path: 'test1' });
     const appendWithOpts: AppendsWithOptions = { module: Module2, path: 'test2' };
 
     // Although in `AppModule` `appendWithOpts` and `dynamicModule` are used in the context of the `initRest` decorator, `Module1` and `Module2`
@@ -63,7 +63,7 @@ describe('rest ModuleNormalizer', () => {
     class AppModule {}
 
     const meta1 = moduleManager.scanRootModule(AppModule).initMeta.get(initRest)!;
-    expect(dynamicModule.initParams?.get(initRest)).toEqual({ path: 'test1' });
+    expect(dynamicModule.initOpts?.get(initRest)).toEqual({ path: 'test1' });
     expect(meta1.appendsWithOpts).toEqual([appendWithOpts]);
 
     const meta2 = moduleManager.getNormalizedModuleMeta(dynamicModule, true).initMeta.get(initRest)!;
@@ -89,7 +89,7 @@ describe('rest ModuleNormalizer', () => {
         return {
           id,
           module: this,
-          initParams: new Map(),
+          initOpts: new Map(),
         };
       }
     }
@@ -108,7 +108,7 @@ describe('rest ModuleNormalizer', () => {
 
     const module2WithOpts = forwardRef(() => {
       const module2WithOpts = Module2.withOpts('test-id');
-      module2WithOpts.initParams.set(initRest, { path: 'test1' });
+      module2WithOpts.initOpts.set(initRest, { path: 'test1' });
       return module2WithOpts;
     });
     const module4WithOpts: DynamicModule = { module: forwardRef(() => Module4) };
@@ -159,7 +159,7 @@ describe('rest ModuleNormalizer', () => {
 
     expect(normalizedModuleMeta.importsModules).toEqual([Module1, RestModule]);
     expect(normalizedModuleMeta.importsWithOpts).toEqual([
-      { id: 'test-id', module: Module2, initParams: expect.any(Map) },
+      { id: 'test-id', module: Module2, initOpts: expect.any(Map) },
     ]);
   });
 
@@ -247,13 +247,13 @@ describe('rest ModuleNormalizer', () => {
       static withOpts(): DynamicModuleWithInit<Module1> {
         return {
           module: this,
-          initParams: new Map(),
+          initOpts: new Map(),
         };
       }
     }
 
     const dynamicModule = Module1.withOpts();
-    dynamicModule.initParams.set(initRest, {
+    dynamicModule.initOpts.set(initRest, {
       path: 'one',
       guards: [Guard1, [Guard2, { property1: 'some-value' }]],
       providersPerApp: [Service8],

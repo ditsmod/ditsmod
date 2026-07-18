@@ -771,7 +771,7 @@ describe('ModuleManager', () => {
     class InitHooks1 extends InitHooks<RootDecoratorOptions> {
       override normalize({ modRefId }: NormalizedModuleMeta): InitMeta {
         if (isDynamicModule(modRefId)) {
-          const params = modRefId.initParams?.get(initSome);
+          const params = modRefId.initOpts?.get(initSome);
           return { path: params?.path } as InitMeta;
         }
 
@@ -793,7 +793,7 @@ describe('ModuleManager', () => {
     expect(mod1.initMeta.get(initSome)).toEqual({ path: 'some-prefix' });
   });
 
-  it('get initParams for three different modules with params', () => {
+  it('get initOpts for three different modules with params', () => {
     interface DecoratorOptions1 extends InitDecoratorOptions<{ one?: string }> {
       one?: string;
     }
@@ -846,7 +846,7 @@ describe('ModuleManager', () => {
     mock.scanRootModule(AppModule);
 
     function getParams(dynamicModule: DynamicModule) {
-      return [...(dynamicModule.initParams?.values() || [])];
+      return [...(dynamicModule.initOpts?.values() || [])];
     }
     expect(getParams(dynamicModule1)).toEqual([{ one: 'initSome1-1' }]);
     expect(getParams(dynamicModule2)).toEqual([{ three: 'initSome2-2' }]);
@@ -864,7 +864,7 @@ describe('ModuleManager', () => {
       override normalize(normalizedModuleMeta: NormalizedModuleMeta): InitMeta {
         const meta = getProxyForInitMeta(normalizedModuleMeta, InitMeta);
         if (isDynamicModule(normalizedModuleMeta.modRefId)) {
-          const params = normalizedModuleMeta.modRefId.initParams?.get(initSome);
+          const params = normalizedModuleMeta.modRefId.initOpts?.get(initSome);
           meta.path = params?.path;
         }
         return meta;

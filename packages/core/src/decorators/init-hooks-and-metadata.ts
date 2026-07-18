@@ -141,7 +141,7 @@ export interface InitMetaMap {
   [Symbol.iterator](): any;
 }
 
-export interface InitParamsMap {
+export interface InitOptsMap {
   set<T extends AnyObj>(decorator: InitDecorator<any, T, any>, params: T): this;
   get<T extends AnyObj>(decorator: InitDecorator<any, T, any>): T | undefined;
   forEach<T extends AnyObj>(callbackfn: (params: T, decorator: AnyFn, map: Map<AnyFn, T>) => void, thisArg?: any): void;
@@ -194,13 +194,13 @@ class Module1 {
   static withOpts(): DynamicModuleWithInit<Module1> {
     return {
       module: this,
-      initParams: new Map(),
+      initOpts: new Map(),
     };
   }
 }
 
 const dynamicModule = Module1.withOpts();
-dynamicModule.initParams.set(initSome, { path: 'some-prefix' });
+dynamicModule.initOpts.set(initSome, { path: 'some-prefix' });
 
 // Using the newly created init decorator
 @initSome({ one: 1, two: 2 })
@@ -227,9 +227,9 @@ export interface DynamicModuleWrapper {
   module?: never;
 }
 
-export interface InitDecoratorOptions<InitParams extends object = object> extends Omit<
+export interface InitDecoratorOptions<InitOpts extends object = object> extends Omit<
   ModuleDecoratorOptions,
   'imports'
 > {
-  imports?: (((DynamicModuleWrapper | DynamicModule) & InitParams) | ModuleType | ForwardRefFn<ModuleType>)[];
+  imports?: (((DynamicModuleWrapper | DynamicModule) & InitOpts) | ModuleType | ForwardRefFn<ModuleType>)[];
 }

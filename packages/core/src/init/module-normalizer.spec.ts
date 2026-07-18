@@ -520,12 +520,12 @@ describe('ModuleNormalizer', () => {
   });
 
   describe('init decorators', () => {
-    interface SomeInitParams extends DynamicModuleOptions {
+    interface SomeInitOpts extends DynamicModuleOptions {
       path?: string;
       num?: number;
     }
 
-    interface SomeInitOptions extends InitDecoratorOptions<SomeInitParams> {
+    interface SomeInitOptions extends InitDecoratorOptions<SomeInitOpts> {
       one?: number;
       two?: number;
       flag?: boolean;
@@ -547,7 +547,7 @@ describe('ModuleNormalizer', () => {
         meta.initDecoratorOptions = this.decoratorOptions;
 
         if (isDynamicModule(normalizedModuleMeta.modRefId)) {
-          const params = normalizedModuleMeta.modRefId.initParams?.get(initSome);
+          const params = normalizedModuleMeta.modRefId.initOpts?.get(initSome);
           meta.path = params?.path;
           meta.targetModRefId = normalizedModuleMeta.modRefId;
         } else {
@@ -563,7 +563,7 @@ describe('ModuleNormalizer', () => {
       return new SomeInitHooks(Object.assign({}, data));
     }
 
-    const initSome: InitDecorator<SomeInitOptions, SomeInitParams, SomeInitMeta> = Reflector.makeClassDecorator(
+    const initSome: InitDecorator<SomeInitOptions, SomeInitOpts, SomeInitMeta> = Reflector.makeClassDecorator(
       getInitHooks,
       'initSome',
     );
@@ -607,7 +607,7 @@ describe('ModuleNormalizer', () => {
       expect(normalizedModuleMeta.extensionsMeta).toEqual({ one: 1 });
     });
 
-    it('merges wrapper init params, dynamic module params, and existing initParams when importing modules with params', () => {
+    it('merges wrapper init params, dynamic module params, and existing initOpts when importing modules with params', () => {
       class Service1 {}
       class Service2 {}
       class Service3 {}
@@ -618,24 +618,24 @@ describe('ModuleNormalizer', () => {
       @featureModule()
       class Module2 {}
 
-      const dynamicModule1: DynamicModuleWithInit & SomeInitParams = {
+      const dynamicModule1: DynamicModuleWithInit & SomeInitOpts = {
         module: Module1,
         providersPerMod: [Service1],
         providersPerApp: [Service3],
         extensionsMeta: { one: 1 },
         num: 4,
-        initParams: new Map(),
+        initOpts: new Map(),
       };
-      dynamicModule1.initParams.set(initSome, { path: 'path-1' });
+      dynamicModule1.initOpts.set(initSome, { path: 'path-1' });
 
-      const dynamicModule2: DynamicModuleWithInit & SomeInitParams = {
+      const dynamicModule2: DynamicModuleWithInit & SomeInitOpts = {
         module: Module2,
         providersPerApp: [Service2],
         num: 12,
         extensionsMeta: { four: 4 },
-        initParams: new Map(),
+        initOpts: new Map(),
       };
-      dynamicModule2.initParams.set(initSome, {
+      dynamicModule2.initOpts.set(initSome, {
         path: 'path-2',
         providersPerApp: [Service1],
         num: 11,
@@ -652,14 +652,14 @@ describe('ModuleNormalizer', () => {
       class AppModule {}
 
       normalizer.normalize(AppModule);
-      expect(dynamicModule1.initParams.get(initSome)).toEqual<SomeInitParams>({
+      expect(dynamicModule1.initOpts.get(initSome)).toEqual<SomeInitOpts>({
         path: 'path-1',
         providersPerMod: [Service1, Service2],
         extensionsMeta: { one: 1, two: 2 },
         num: 5,
         providersPerApp: [Service3],
       });
-      expect(dynamicModule2.initParams.get(initSome)).toEqual<SomeInitParams>({
+      expect(dynamicModule2.initOpts.get(initSome)).toEqual<SomeInitOpts>({
         providersPerApp: [Service1, Service2],
         num: 12,
         extensionsMeta: { three: 3, four: 4 },
@@ -696,7 +696,7 @@ describe('ModuleNormalizer', () => {
       expect(normalizedModuleMeta.exportsModules).toEqual([Module1]);
       expect(normalizedModuleMeta.importsWithOpts).toEqual<DynamicModule[]>([
         dynamicModule2,
-        { module: Module3, initParams: expect.any(Map) },
+        { module: Module3, initOpts: expect.any(Map) },
         dynamicModule4,
       ]);
       expect(normalizedModuleMeta.exportsWithOpts).toEqual([dynamicModule2, dynamicModule4]);
@@ -735,7 +735,7 @@ describe('ModuleNormalizer', () => {
       expect(normalizedModuleMeta.importsModules).toEqual([Module1]);
       expect(normalizedModuleMeta.importsWithOpts).toEqual<DynamicModule[]>([
         dynamicModule2,
-        { module: Module3, initParams: expect.any(Map) },
+        { module: Module3, initOpts: expect.any(Map) },
         dynamicModule4,
       ]);
       expect(normalizedModuleMeta.exportsModules).toEqual([Module1]);

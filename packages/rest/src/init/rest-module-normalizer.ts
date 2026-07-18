@@ -53,7 +53,7 @@ export class RestModuleNormalizer {
     } else if (!isDynamicModule(modRefId)) {
       return;
     }
-    const params = modRefId.initParams?.get(initRest);
+    const params = modRefId.initOpts?.get(initRest);
 
     if (params) {
       if (params.absolutePath !== undefined) {
@@ -75,10 +75,10 @@ export class RestModuleNormalizer {
       if (isAppendsWithOptions(ap)) {
         const params = { ...ap } as Partial<AppendsWithOptions>;
         delete params.module;
-        if (ap.initParams) {
-          ap.initParams.set(initRest, params);
+        if (ap.initOpts) {
+          ap.initOpts.set(initRest, params);
         } else {
-          ap.initParams = new Map([[initRest, params]]);
+          ap.initOpts = new Map([[initRest, params]]);
         }
         this.meta.appendsWithOpts.push(ap);
       } else {

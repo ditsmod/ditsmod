@@ -2,7 +2,7 @@ import type { ProvidersByLevel } from '#types/providers-metadata.js';
 import type { AnyObj, ModRefId, ModuleType } from '#types/mix.js';
 import type { ExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import type { ExtensionClass } from '#extension/extension-types.js';
-import type { InitParamsMap } from '#decorators/init-hooks-and-metadata.js';
+import type { InitOptsMap } from '#decorators/init-hooks-and-metadata.js';
 import type { rootModule } from '#decorators/root-module.js';
 import type { featureModule } from '#decorators/feature-module.js';
 import type { ProviderBuilder } from '#utils/providers.js';
@@ -94,12 +94,12 @@ export interface DynamicModule<M extends AnyObj = AnyObj> extends BaseDynamicMod
   /**
    * If the current module has this property populated, this means it was used in the context of init decorators.
    */
-  initParams?: InitParamsMap;
+  initOpts?: InitOptsMap;
 }
 /**
- * This interface differs from `DynamicModule` only in that it requires the presence of the `initParams` property.
+ * This interface differs from `DynamicModule` only in that it requires the presence of the `initOpts` property.
  * It is convenient to use in static module methods that return `DynamicModule`.
  */
 export interface DynamicModuleWithInit<M extends AnyObj = AnyObj> extends DynamicModule<M> {
-  initParams: InitParamsMap;
+  initOpts: InitOptsMap;
 }

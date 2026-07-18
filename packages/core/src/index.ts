@@ -18,7 +18,7 @@ export {
   InitHooks,
   InitDecorator,
   InitMetaMap,
-  InitParamsMap,
+  InitOptsMap,
   AllInitHooks,
   InitDecoratorOptions,
 } from '#decorators/init-hooks-and-metadata.js';
