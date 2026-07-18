@@ -109,6 +109,10 @@ export class NormalizedModuleMeta<
    */
   isExternal?: boolean;
   /**
+   * Indicates whether this module inherits context/init hooks from parent modules.
+   */
+  inheritsContext?: boolean;
+  /**
    * Contains init hooks and raw metadata collected from init module decorators.
    */
   mInitHooks = new Map<AnyFn, InitHooks>();

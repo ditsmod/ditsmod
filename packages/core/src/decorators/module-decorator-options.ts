@@ -64,6 +64,11 @@ export class ModuleDecoratorOptions<T extends AnyObj = AnyObj> {
    * and in the second - the module from which to import the provider with the specified token.
    */
   declare resolvedCollisionsPerReq?: [any, ModRefId | ForwardRefFn<ModuleType>][];
+  /**
+   * Whether this module inherits init hooks / context (like REST or tRPC) from parent modules.
+   * By default, it is true for local modules and false for external modules.
+   */
+  declare inheritsContext?: boolean;
 }
 
 export interface BaseDynamicModule<M extends AnyObj = AnyObj> {

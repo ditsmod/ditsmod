@@ -72,13 +72,13 @@ export class ModuleNormalizer {
     this.addInitHooksForHostDecorator(allInitHooks);
     this.callInitHooksFromCurrentModule();
     this.addInitHooksForImportedDynamicModule(allInitHooks);
-    this.addInitHooksFromParent(allInitHooks);
     this.quickCheckMetadata(decoratorOptions);
     return normalizedModuleMeta;
   }
 
   protected addInitHooksFromParent(allInitHooks: AllInitHooks) {
-    if (this.normalizedModuleMeta.isExternal) {
+    const inheritsContext = this.normalizedModuleMeta.inheritsContext ?? !this.normalizedModuleMeta.isExternal;
+    if (!inheritsContext) {
       return;
     }
     if (this.normalizedModuleMeta.mInitHooks.size == 0) {
@@ -148,6 +148,10 @@ export class ModuleNormalizer {
           !declaredInDir.startsWith(this.rootDeclaredInDir) ||
           (!this.rootDeclaredInDir.includes('ditsmod/packages') && declaredInDir.includes('ditsmod/packages'));
       }
+    }
+
+    if (decoratorOptions.inheritsContext !== undefined) {
+      this.normalizedModuleMeta.inheritsContext = decoratorOptions.inheritsContext;
     }
   }
 
@@ -543,16 +547,24 @@ export class AppModule {}
 
   protected quickCheckMetadata(decoratorOptions: RootDecoratorOptions) {
     this.throwIfResolvingNormalizedProvider(decoratorOptions);
+  }
+
+  propagateParentHooks(normalizedModuleMeta: NormalizedModuleMeta, allInitHooks: AllInitHooks) {
+    this.normalizedModuleMeta = normalizedModuleMeta;
+    this.addInitHooksFromParent(allInitHooks);
+  }
+
+  checkEmptyMetadata(normalizedModuleMeta: NormalizedModuleMeta) {
     if (
-      !isRootModule(this.normalizedModuleMeta) &&
-      !this.normalizedModuleMeta.mInitHooks.size &&
-      !this.normalizedModuleMeta.exportedProvidersPerMod.length &&
-      !this.normalizedModuleMeta.exportedMultiProvidersPerMod.length &&
-      !this.normalizedModuleMeta.exportsModules.length &&
-      !this.normalizedModuleMeta.providersPerApp.length &&
-      !this.normalizedModuleMeta.exportsWithOpts.length &&
-      !this.normalizedModuleMeta.exportedExtensionProviders.length &&
-      !this.normalizedModuleMeta.extensionProviders.length
+      !isRootModule(normalizedModuleMeta) &&
+      !normalizedModuleMeta.mInitHooks.size &&
+      !normalizedModuleMeta.exportedProvidersPerMod.length &&
+      !normalizedModuleMeta.exportedMultiProvidersPerMod.length &&
+      !normalizedModuleMeta.exportsModules.length &&
+      !normalizedModuleMeta.providersPerApp.length &&
+      !normalizedModuleMeta.exportsWithOpts.length &&
+      !normalizedModuleMeta.exportedExtensionProviders.length &&
+      !normalizedModuleMeta.extensionProviders.length
     ) {
       throw new EmptyModuleMetadata();
     }

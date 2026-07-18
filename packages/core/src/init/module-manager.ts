@@ -50,6 +50,8 @@ export class ModuleManager {
   protected unfinishedScanModules = new Set<ModRefId>();
   protected scanedModules = new Set<ModRefId>();
   protected moduleNormalizer = new ModuleNormalizer();
+  protected childrenMap = new Map<ModRefId, Set<ModRefId>>();
+  protected oldChildrenMap = new Map<ModRefId, Set<ModRefId>>();
   protected propsWithModules = [
     'importsModules',
     'importsWithOpts',
@@ -73,7 +75,9 @@ export class ModuleManager {
       throw new MissingRootDecorator(appModule.name);
     }
 
+    this.childrenMap.clear();
     const normalizedModuleMeta = this.scanModule(appModule);
+
     this.injectorPerModMap.clear();
     this.unfinishedScanModules.clear();
     this.scanedModules.clear();
@@ -84,6 +88,7 @@ export class ModuleManager {
   }
 
   scanModule(modRefId: ModRefId | ForwardRefFn<ModuleType>, allInitHooks?: AllInitHooks, saveToShapshot?: boolean) {
+    const isRootScan = this.unfinishedScanModules.size === 0;
     allInitHooks ??= new Map();
     modRefId = resolveForwardRef(modRefId);
     const normalizedModuleMeta = this.normalizeMetadata(modRefId, allInitHooks);
@@ -100,7 +105,11 @@ export class ModuleManager {
       .map((p) => normalizedModuleMeta[p])
       .reduce<ModRefId[]>((prev, curr) => prev.concat(curr), importsOrExports);
 
+    const children = new Set<ModRefId>();
+    this.childrenMap.set(normalizedModuleMeta.modRefId, children);
+
     for (const input of inputs) {
+      children.add(input);
       if (this.unfinishedScanModules.has(input) || this.scanedModules.has(input)) {
         continue;
       }
@@ -124,6 +133,13 @@ export class ModuleManager {
       this.map.set(modRefId, normalizedModuleMeta);
     }
     normalizedModuleMeta.allInitHooks.forEach((initHooks, decorator) => allInitHooks.set(decorator, initHooks));
+
+    if (isRootScan) {
+      const rootModule = this.mapId.get('root') || resolveForwardRef(modRefId);
+      this.propagateContextHooks(rootModule);
+      this.checkEmptyMetadataForAllModules();
+    }
+
     return normalizedModuleMeta;
   }
 
@@ -181,6 +197,13 @@ export class ModuleManager {
     this.startTransaction();
     try {
       (targetNormalizedModuleMeta[prop] as ModRefId[]).push(inputModule);
+      let children = this.childrenMap.get(targetNormalizedModuleMeta.modRefId);
+      if (!children) {
+        children = new Set();
+        this.childrenMap.set(targetNormalizedModuleMeta.modRefId, children);
+      }
+      children.add(inputModule);
+
       this.scanModule(inputModule, undefined, true);
       this.systemLogMediator.successfulAddedModuleToImport(this, inputModule, targetNormalizedModuleMeta.name);
       return true;
@@ -216,11 +239,16 @@ export class ModuleManager {
     this.startTransaction();
     try {
       targetMeta[prop].splice(index, 1);
+      const targetChildren = this.childrenMap.get(targetMeta.modRefId);
+      if (targetChildren) {
+        targetChildren.delete(inputNormalizedModuleMeta.modRefId);
+      }
       if (!this.includesInSomeModule(inputModuleId, 'root')) {
         if (inputNormalizedModuleMeta.id) {
           this.snapshotMapId.delete(inputNormalizedModuleMeta.id);
         }
         this.snapshotMap.delete(inputNormalizedModuleMeta.modRefId);
+        this.childrenMap.delete(inputNormalizedModuleMeta.modRefId);
       }
       this.systemLogMediator.moduleSuccessfulRemoved(this, inputNormalizedModuleMeta.name, targetMeta.name);
       return true;
@@ -240,6 +268,11 @@ export class ModuleManager {
     );
     this.oldSnapshotMapId = new Map(this.snapshotMapId);
 
+    this.oldChildrenMap = new Map();
+    this.childrenMap.forEach((val, key) => {
+      this.oldChildrenMap.set(key, new Set(val));
+    });
+
     return true;
   }
 
@@ -249,6 +282,7 @@ export class ModuleManager {
     }
     this.snapshotMapId = this.oldSnapshotMapId;
     this.snapshotMap = this.oldSnapshotMap;
+    this.childrenMap = this.oldChildrenMap;
     this.commit();
     if (err) {
       throw err;
@@ -259,6 +293,7 @@ export class ModuleManager {
   commit() {
     this.oldSnapshotMapId = new Map();
     this.oldSnapshotMap = new Map();
+    this.oldChildrenMap = new Map();
     return this;
   }
 
@@ -367,7 +402,9 @@ export class ModuleManager {
   }
 
   protected copyNormalizedModuleMeta(normalizedModuleMeta: NormalizedModuleMeta) {
-    const copy = Object.create(Object.getPrototypeOf(normalizedModuleMeta || ({} as NormalizedModuleMeta))) as NormalizedModuleMeta;
+    const copy = Object.create(
+      Object.getPrototypeOf(normalizedModuleMeta || ({} as NormalizedModuleMeta)),
+    ) as NormalizedModuleMeta;
     Object.assign(copy, normalizedModuleMeta);
 
     objectKeys(copy).forEach((p) => {
@@ -445,5 +482,58 @@ export class ModuleManager {
       );
       this.snapshotMapId = new Map(this.mapId);
     }
+  }
+
+  protected propagateContextHooks(
+    startModule: ModRefId,
+    inheritedHooks: AllInitHooks = new Map(),
+    visited = new Set<ModRefId>(),
+  ) {
+    if (visited.has(startModule)) {
+      return;
+    }
+    visited.add(startModule);
+
+    const startMeta = this.map.get(startModule) || this.snapshotMap.get(startModule);
+    if (!startMeta) {
+      return;
+    }
+
+    const activeHooks: AllInitHooks = new Map(inheritedHooks);
+    startMeta.mInitHooks.forEach((initHooks, decorator) => {
+      activeHooks.set(decorator, initHooks);
+    });
+
+    if (startMeta.mInitHooks.size === 0 && activeHooks.size > 0) {
+      try {
+        this.moduleNormalizer.propagateParentHooks(startMeta, activeHooks);
+      } catch (err: any) {
+        throw new NormalizationFailure(startMeta.name, err);
+      }
+    }
+
+    const children = this.childrenMap.get(startModule);
+    if (children) {
+      for (const child of children) {
+        this.propagateContextHooks(child, activeHooks, visited);
+      }
+    }
+  }
+
+  protected checkEmptyMetadataForAllModules() {
+    this.map.forEach((meta) => {
+      try {
+        this.moduleNormalizer.checkEmptyMetadata(meta);
+      } catch (err: any) {
+        throw new NormalizationFailure(meta.name, err);
+      }
+    });
+    this.snapshotMap.forEach((meta) => {
+      try {
+        this.moduleNormalizer.checkEmptyMetadata(meta);
+      } catch (err: any) {
+        throw new NormalizationFailure(meta.name, err);
+      }
+    });
   }
 }
