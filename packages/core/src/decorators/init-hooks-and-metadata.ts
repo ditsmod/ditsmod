@@ -29,7 +29,7 @@ export class InitHooks<T1 extends InitDecoratorOptions = InitDecoratorOptions> {
   declare hostModule?: ModuleType;
 
   /**
-   * Raw metadata intended for the host module.
+   * Options intended for the host module.
    *
    * Sometimes, the host module (where the init hook class is declared) needs to be decorated
    * with its own init decorator. If you do this and also set {@link hostModule}, it creates
