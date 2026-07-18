@@ -71,7 +71,7 @@ export class ModuleNormalizer {
     this.checkReexportModules();
     this.addInitHooksForHostDecorator(allInitHooks);
     this.callInitHooksFromCurrentModule();
-    this.addInitHooksForImportedMwp(allInitHooks);
+    this.addInitHooksForImportedDynamicModule(allInitHooks);
     this.quickCheckMetadata(decoratorOptions);
     return normalizedModuleMeta;
   }
@@ -364,9 +364,9 @@ export class ModuleNormalizer {
   }
 
   /**
-   * If the current module was used with parameters in the context of init decorators, but
+   * If the current module was used as dynamic module in the context of init decorators, but
    * the class of the current module is not annotated with those decorators, then retrieve
-   * the corresponding init hooks (for reading parameters) from the `allInitHooks`.
+   * the corresponding init hooks (for reading dynamic options) from the `allInitHooks`.
    * 
    * ### Example
    * 
@@ -384,9 +384,9 @@ export class AppModule {}
    * 
    * As you can see, `Module1` is imported in the context of the `initRest` decorator,
    * but `Module1` itself does not have an annotation with `initRest`. For such cases,
-   * this method adds hooks so that the import of `Module1` with parameters can be properly handled.
+   * this method adds hooks so that the import of dynamic `Module1` can be properly handled.
    */
-  protected addInitHooksForImportedMwp(allInitHooks: AllInitHooks) {
+  protected addInitHooksForImportedDynamicModule(allInitHooks: AllInitHooks) {
     (this.normalizedModuleMeta.modRefId as DynamicModule).initOpts?.forEach((params, decorator) => {
       if (!this.normalizedModuleMeta.mInitHooks.has(decorator)) {
         const initHooks = allInitHooks.get(decorator)!;
