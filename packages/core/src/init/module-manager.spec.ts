@@ -793,6 +793,46 @@ describe('ModuleManager', () => {
     expect(mod1.initMeta.get(initSome)).toEqual({ path: 'some-prefix' });
   });
 
+  it('static Module1 does not have an annotation with initSome, but imported in AppModule with this decorator', () => {
+    interface RootDecoratorOptions extends InitDecoratorOptions<{ path?: string }> {
+      one?: string;
+      two?: string;
+    }
+    interface InitMeta extends NormalizedInitMeta {
+      path?: string;
+    }
+    @featureModule()
+    class HostModule1 {}
+
+    const initSome: InitDecorator<RootDecoratorOptions, { path?: string }, InitMeta> = Reflector.makeClassDecorator(
+      (d) => new InitHooks1(d),
+    );
+
+    class InitHooks1 extends InitHooks<RootDecoratorOptions> {
+      override hostModule = HostModule1;
+      override normalize({ modRefId }: NormalizedModuleMeta): InitMeta {
+        if (isDynamicModule(modRefId)) {
+          const params = modRefId.initOpts?.get(initSome);
+          return { path: params?.path } as InitMeta;
+        }
+
+        return { path: 'static-default' } as InitMeta;
+      }
+    }
+
+    @featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
+    class Module1 {}
+
+    @initSome({ one: 'some-here', imports: [Module1] })
+    @rootModule()
+    class AppModule {}
+
+    mock.scanRootModule(AppModule);
+    const mod1 = mock.getNormalizedModuleMeta(Module1)!;
+    expect(mod1.initMeta.get(initSome)).toEqual({ path: 'static-default' });
+    expect(mod1.importsModules.includes(HostModule1)).toBe(true);
+  });
+
   it('get initOpts for three different modules with params', () => {
     interface DecoratorOptions1 extends InitDecoratorOptions<{ one?: string }> {
       one?: string;

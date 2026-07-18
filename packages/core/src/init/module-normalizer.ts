@@ -72,8 +72,32 @@ export class ModuleNormalizer {
     this.addInitHooksForHostDecorator(allInitHooks);
     this.callInitHooksFromCurrentModule();
     this.addInitHooksForImportedDynamicModule(allInitHooks);
+    this.addInitHooksFromParent(allInitHooks);
     this.quickCheckMetadata(decoratorOptions);
     return normalizedModuleMeta;
+  }
+
+  protected addInitHooksFromParent(allInitHooks: AllInitHooks) {
+    if (this.normalizedModuleMeta.isExternal) {
+      return;
+    }
+    if (this.normalizedModuleMeta.mInitHooks.size == 0) {
+      allInitHooks.forEach((initHooks, decorator) => {
+        const newInitHooks = initHooks.clone();
+        this.normalizedModuleMeta.allInitHooks.set(decorator, newInitHooks);
+
+        if (newInitHooks.hostModule && !this.normalizedModuleMeta.importsModules.includes(newInitHooks.hostModule)) {
+          this.normalizedModuleMeta.importsModules.push(newInitHooks.hostModule);
+        }
+
+        this.callInitHook(decorator, newInitHooks);
+
+        /**
+         * This is needed for quickCheckMetadata and callInitHooksAfterScan.
+         */
+        this.normalizedModuleMeta.mInitHooks.set(decorator, newInitHooks);
+      });
+    }
   }
 
   protected init(modRefId: ModRefId) {
@@ -392,6 +416,11 @@ export class AppModule {}
         const initHooks = allInitHooks.get(decorator)!;
         const newInitHooks = initHooks.clone();
         this.normalizedModuleMeta.allInitHooks.set(decorator, newInitHooks);
+
+        if (newInitHooks.hostModule && !this.normalizedModuleMeta.importsModules.includes(newInitHooks.hostModule)) {
+          this.normalizedModuleMeta.importsModules.push(newInitHooks.hostModule);
+        }
+
         this.callInitHook(decorator, newInitHooks);
 
         /**
