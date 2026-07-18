@@ -40,7 +40,7 @@ import { restRootModule } from '@ditsmod/rest';
 @restRootModule({
   imports: [], // Imported modules
   appends: [], // Appending modules that have controllers
-  providersPerApp: [], // ProviderBuilder at the application level
+  providersPerApp: [], // Providers at the application level
   providersPerMod: [], //         ...at the module level
   providersPerRou: [], //         ...at the route level
   providersPerReq: [], //         ...at the HTTP request level
@@ -189,19 +189,19 @@ interface DynamicModule {
   id?: string;
   module: ModuleType<M>;
   /**
-   * ProviderBuilder per the application.
+   * Providers per the application.
    */
   providersPerApp?: ProviderBuilder | Provider[] = [];
   /**
-   * ProviderBuilder per a module.
+   * Providers per a module.
    */
   providersPerMod?: ProviderBuilder | Provider[] = [];
   /**
-   * ProviderBuilder per a route.
+   * Providers per a route.
    */
   providersPerRou?: ProviderBuilder | Provider[] = [];
   /**
-   * ProviderBuilder per a request.
+   * Providers per a request.
    */
   providersPerReq?: ProviderBuilder | Provider[] = [];
   /**

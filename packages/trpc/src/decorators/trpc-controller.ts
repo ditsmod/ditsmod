@@ -6,11 +6,11 @@ import { Reflector } from '@ditsmod/core';
  */
 export interface ControllerOptions {
   /**
-   * ProviderBuilder per route.
+   * Providers per route.
    */
   providersPerRou?: ProviderBuilder | Provider[];
   /**
-   * ProviderBuilder per HTTP request.
+   * Providers per HTTP request.
    */
   providersPerReq?: ProviderBuilder | Provider[];
 }

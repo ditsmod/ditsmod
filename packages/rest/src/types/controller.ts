@@ -6,11 +6,11 @@ import { Reflector } from '@ditsmod/core';
  */
 export interface RequestScopedControllerOptions {
   /**
-   * ProviderBuilder per route.
+   * Providers per route.
    */
   providersPerRou?: ProviderBuilder | Provider[];
   /**
-   * ProviderBuilder per HTTP request.
+   * Providers per HTTP request.
    */
   providersPerReq?: ProviderBuilder | Provider[];
   /**
@@ -28,7 +28,7 @@ export interface RequestScopedControllerOptions {
  */
 export interface RouteScopedControllerOptions {
   /**
-   * ProviderBuilder per route.
+   * Providers per route.
    */
   providersPerRou?: ProviderBuilder | Provider[];
   /**

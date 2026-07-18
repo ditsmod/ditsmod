@@ -14,19 +14,19 @@ import type { ForwardRefFn } from '#di/forward-ref.js';
  */
 export class ModuleDecoratorOptions<T extends AnyObj = AnyObj> {
   /**
-   * ProviderBuilder per the application.
+   * Providers per the application.
    */
   declare providersPerApp?: ProviderBuilder | (Provider | ForwardRefFn<Provider>)[];
   /**
-   * ProviderBuilder per a module.
+   * Providers per a module.
    */
   declare providersPerMod?: ProviderBuilder | (Provider | ForwardRefFn<Provider>)[];
   /**
-   * ProviderBuilder per a route.
+   * Providers per a route.
    */
   declare providersPerRou?: ProviderBuilder | (Provider | ForwardRefFn<Provider>)[];
   /**
-   * ProviderBuilder per a request.
+   * Providers per a request.
    */
   declare providersPerReq?: ProviderBuilder | (Provider | ForwardRefFn<Provider>)[];
   /**

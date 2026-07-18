@@ -4,19 +4,19 @@ import type { ProviderBuilder } from '#utils/providers.js';
 
 export class ProvidersByLevel<T = ProviderBuilder | (Provider | ForwardRefFn<Provider>)[]> {
   /**
-   * ProviderBuilder per the application.
+   * Providers per the application.
    */
   providersPerApp = [] as T;
   /**
-   * ProviderBuilder per a module.
+   * Providers per a module.
    */
   providersPerMod = [] as T;
   /**
-   * ProviderBuilder per a route.
+   * Providers per a route.
    */
   providersPerRou = [] as T;
   /**
-   * ProviderBuilder per a request.
+   * Providers per a request.
    */
   providersPerReq = [] as T;
 }

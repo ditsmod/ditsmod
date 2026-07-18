@@ -14,7 +14,7 @@ import type { GuardItem } from '#interceptors/guard.js';
  */
 export interface RestInitDecoratorOptions extends InitDecoratorOptions<RestModuleOptions> {
   /**
-   * List of modules that contain controllers. ProviderBuilder from these modules
+   * List of modules that contain controllers. Providers from these modules
    * are not imported into the current module. If the current module has a prefix path,
    * that path will be added to each controller route from the appended modules.
    */

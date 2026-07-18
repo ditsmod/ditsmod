@@ -189,19 +189,19 @@ interface DynamicModule {
   id?: string;
   module: ModuleType<M>;
   /**
-   * ProviderBuilder per the application.
+   * Providers per the application.
    */
   providersPerApp?: ProviderBuilder | Provider[] = [];
   /**
-   * ProviderBuilder per a module.
+   * Providers per a module.
    */
   providersPerMod?: ProviderBuilder | Provider[] = [];
   /**
-   * ProviderBuilder per a route.
+   * Providers per a route.
    */
   providersPerRou?: ProviderBuilder | Provider[] = [];
   /**
-   * ProviderBuilder per a request.
+   * Providers per a request.
    */
   providersPerReq?: ProviderBuilder | Provider[] = [];
   /**

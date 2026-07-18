@@ -158,7 +158,7 @@ const postClient = trpc as TRPCClient<PostRouter>;
 const post = await postClient.post.createPost.mutate({ title: 'hello client' });
 ```
 
-## Using DI for ProviderBuilder at the HTTP Request Level {#using-di-for-providers-at-the-http-request-level}
+## Using DI for Providers at the HTTP Request Level {#using-di-for-providers-at-the-http-request-level}
 
 When you write the following code, DI will provide route-level providers for you:
 
