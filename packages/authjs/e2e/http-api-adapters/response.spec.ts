@@ -17,7 +17,7 @@ export class Controller1 {
       headers: headers,
       status: 200,
     });
-    await applyResponse(webResponse, res.rawRes);
+    await applyResponse(webResponse, ctx.rawRes);
   }
 }
 
