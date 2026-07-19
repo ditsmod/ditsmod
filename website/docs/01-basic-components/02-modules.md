@@ -47,10 +47,10 @@ import { restRootModule } from '@ditsmod/rest';
   exports: [], // Експорт модулів та провайдерів з поточного модуля
   extensions: [], // Розширення
   extensionsMeta: {}, // Дані для роботи розширень
-  resolvedCollisionPerApp: [], // Вирішення колізій імпортованих класів на рівні застосунку
-  resolvedCollisionPerMod: [], //                                    ...на рівні модуля
-  resolvedCollisionPerRou: [], //                                    ...на рівні роуту
-  resolvedCollisionPerReq: [], //                                    ...на рівні HTTP запиту
+  resolvedCollisionsPerApp: [], // Вирішення колізій імпортованих класів на рівні застосунку
+  resolvedCollisionsPerMod: [], //                                    ...на рівні модуля
+  resolvedCollisionsPerRou: [], //                                    ...на рівні роуту
+  resolvedCollisionsPerReq: [], //                                    ...на рівні HTTP запиту
   controllers: [], // Список контролерів в поточному модулі
 })
 export class AppModule {}
@@ -69,7 +69,7 @@ export class SomeModule {}
 
 Файли модулів рекомендується називати із закінченням `*.module.ts`, а назви їхніх класів - із закінченням `*Module`.
 
-Він може містити точно такі самі метадані як і кореневі модулі, за виключенням властивості `resolvedCollisionPerApp`. Окрім того, що feature module можна декларувати прямо у застосунку, його також можна публікувати на npmjs.com.
+Він може містити точно такі самі метадані як і кореневі модулі, за виключенням властивості `resolvedCollisionsPerApp`. Окрім того, що feature module можна декларувати прямо у застосунку, його також можна публікувати на npmjs.com.
 
 ## Експорт, імпорт, долучення {#export-import-append}
 
@@ -406,7 +406,7 @@ class Module3 {}
 
 Щоб цього не сталось, якщо ви імпортуєте два або більше модулі, в яких експортуються неідентичні провайдери з однаковим токеном, Ditsmod кидатиме приблизно таку помилку:
 
-> Error: Importing providers to Module3 failed: exports from Module1, Module2 causes collision with Service1. You should add Service1 to resolvedCollisionPerMod in this module. For example: resolvedCollisionPerMod: [ [Service1, Module1] ].
+> Error: Importing providers to Module3 failed: exports from Module1, Module2 causes collision with Service1. You should add Service1 to resolvedCollisionsPerMod in this module. For example: resolvedCollisionsPerMod: [ [Service1, Module1] ].
 
 Конкретно у цій ситуації:
 
@@ -418,7 +418,7 @@ class Module3 {}
 
 ### Вирішення колізії {#collision-resolution}
 
-Якщо `Module3` оголошено у вашому застосунку (тобто не імпортовано з `node_modules`), колізія вирішується шляхом додавання до `resolvedCollisionPer*` масиву з двох елементів, де на першому місці йде токен провайдера, а на другому - модуль, з якого потрібно брати відповідний провайдер:
+Якщо `Module3` оголошено у вашому застосунку (тобто не імпортовано з `node_modules`), колізія вирішується шляхом додавання до `resolvedCollisionsPer*` масиву з двох елементів, де на першому місці йде токен провайдера, а на другому - модуль, з якого потрібно брати відповідний провайдер:
 
 ```ts {20}
 import { restModule, restRootModule } from '@ditsmod/rest';
@@ -440,7 +440,7 @@ class Module2 {}
 
 @restRootModule({
   imports: [Module1, Module2],
-  resolvedCollisionPerMod: [[Service1, Module1]],
+  resolvedCollisionsPerMod: [[Service1, Module1]],
 })
 class Module3 {}
 ```

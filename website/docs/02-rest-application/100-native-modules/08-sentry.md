@@ -46,7 +46,7 @@ import { SentryModule, SentryOptions } from '@ditsmod/sentry';
   providersPerMod: new ProviderBuilder().useValue<SentryOptions>(SentryOptions, {
     capture4xx: false,
   }),
-  resolvedCollisionPerRou: [[HttpErrorHandler, SentryModule]],
+  resolvedCollisionsPerRou: [[HttpErrorHandler, SentryModule]],
 })
 export class AppModule {}
 ```
