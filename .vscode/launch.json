@@ -13,9 +13,7 @@
       "preLaunchTask": "npm: build - examples/10-openapi",
       "cwd": "${workspaceFolder}/examples/10-openapi",
       "runtimeArgs": [
-        "--enable-source-maps",
-        "-r",
-        "dotenv/config"
+        "--enable-source-maps"
       ],
       "skipFiles": [
         "<node_internals>/**"

@@ -1,10 +1,10 @@
 import { Extension, ExtensionManager, Injector, injectable, inject, PROVIDERS_PER_APP } from '@ditsmod/core';
 import { HTTP_INTERCEPTORS, RestRouteExtension } from '@ditsmod/rest';
+import type { Provider } from '@ditsmod/core/di';
 
 import { BodyParserConfig } from './body-parser-config.js';
 import { BodyParserInterceptor } from './body-parser.interceptor.js';
 import { RouteScopedBodyParserInterceptor } from './ctx-body-parser.interceptor.js';
-import type { Provider } from '@ditsmod/core/di';
 
 @injectable()
 export class BodyParserExtension implements Extension<void> {
