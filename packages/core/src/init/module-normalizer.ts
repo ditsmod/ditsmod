@@ -72,7 +72,7 @@ export class ModuleNormalizer {
     this.addInitHooksForHostDecorator(allInitHooks);
     this.callInitHooksFromCurrentModule();
     this.addInitHooksForImportedDynamicModule(allInitHooks);
-    this.quickCheckMetadata(decoratorOptions);
+    this.quickCheckMeta(decoratorOptions);
     return normalizedModuleMeta;
   }
 
@@ -93,7 +93,7 @@ export class ModuleNormalizer {
         this.callInitHook(decorator, newInitHooks);
 
         /**
-         * This is needed for quickCheckMetadata and callInitHooksAfterScan.
+         * This is needed for quickCheckMeta and callInitHooksAfterScan.
          */
         this.normalizedModuleMeta.mInitHooks.set(decorator, newInitHooks);
       });
@@ -428,7 +428,7 @@ export class AppModule {}
         this.callInitHook(decorator, newInitHooks);
 
         /**
-         * This is needed for {@link quickCheckMetadata} only.
+         * This is needed for {@link quickCheckMeta} only.
          */
         this.normalizedModuleMeta.mInitHooks.set(decorator, newInitHooks);
       }
@@ -545,7 +545,7 @@ export class AppModule {}
     }
   }
 
-  protected quickCheckMetadata(decoratorOptions: RootDecoratorOptions) {
+  protected quickCheckMeta(decoratorOptions: RootDecoratorOptions) {
     this.throwIfResolvingNormalizedProvider(decoratorOptions);
   }
 

@@ -57,7 +57,7 @@ describe('ModuleManager', () => {
     mock = new MockModuleManager(systemLogMediator);
   });
 
-  describe('quickCheckMetadata()', () => {
+  describe('quickCheckMeta()', () => {
     it('should throw an error, when no export, no extensions and no controllers', () => {
       class Provider1 {}
 
