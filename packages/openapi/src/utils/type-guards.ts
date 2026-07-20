@@ -3,7 +3,7 @@ import type { ReferenceObject } from '@ts-stack/openapi-spec';
 
 import type { PropertyDecoratorItem } from '#decorators/property.js';
 import { property } from '#decorators/property.js';
-import type { OasGuardMetadata } from '#decorators/oas-guard.js';
+import type { OasGuardMeta } from '#decorators/oas-guard.js';
 import { oasGuard } from '#decorators/oas-guard.js';
 import type { OasRouteMetadata } from '#decorators/oas-route.js';
 import { oasRoute } from '#decorators/oas-route.js';
@@ -16,8 +16,8 @@ export function isReferenceObject(obj?: AnyObj): obj is ReferenceObject {
   return Boolean(obj?.hasOwnProperty('$ref'));
 }
 
-export function isOasGuard(decoratorsAndValues: AnyObj): decoratorsAndValues is DecoratorMeta<OasGuardMetadata> {
-  return (decoratorsAndValues as DecoratorMeta<OasGuardMetadata>).decorator === oasGuard;
+export function isOasGuard(decoratorsAndValues: AnyObj): decoratorsAndValues is DecoratorMeta<OasGuardMeta> {
+  return (decoratorsAndValues as DecoratorMeta<OasGuardMeta>).decorator === oasGuard;
 }
 
 export function isProperty(decoratorsAndValues: any): decoratorsAndValues is DecoratorMeta<PropertyDecoratorItem> {

@@ -99,7 +99,7 @@ export class CorsExtension implements Extension<void | false> {
     aControllerMeta: ControllerMeta[],
   ) {
     const sPathWithOptions = this.getPathWtihOptions(aRouteExtensionMeta);
-    const newArrControllersMetadata2: ControllerMeta[] = []; // Routes with OPTIONS methods
+    const newArrControllersMeta2: ControllerMeta[] = []; // Routes with OPTIONS methods
 
     aControllerMeta.forEach(({ httpMethods, fullPath }) => {
       httpMethods.forEach((method) => {
@@ -146,10 +146,10 @@ export class CorsExtension implements Extension<void | false> {
           guards: [],
         };
 
-        newArrControllersMetadata2.push(controllerMeta);
+        newArrControllersMeta2.push(controllerMeta);
       });
     });
 
-    return newArrControllersMetadata2;
+    return newArrControllersMeta2;
   }
 }

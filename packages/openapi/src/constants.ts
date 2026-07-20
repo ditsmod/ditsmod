@@ -1,4 +1,4 @@
-import type { OasGuardMetadata } from '#decorators/oas-guard.js';
+import type { OasGuardMeta } from '#decorators/oas-guard.js';
 import { HttpStatus } from '@ditsmod/core';
 import type { XOasObject } from '@ts-stack/openapi-spec';
 import { openapi } from '@ts-stack/openapi-spec';
@@ -16,7 +16,7 @@ export const DEFAULT_OAS_OBJECT: XOasObject = {
   components: {},
 };
 
-export const defaultForNonOasGuard: OasGuardMetadata = {
+export const defaultForNonOasGuard: OasGuardMeta = {
   securitySchemeObject: {
     type: 'http',
     scheme: 'bearer',
