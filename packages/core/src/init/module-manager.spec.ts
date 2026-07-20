@@ -42,8 +42,8 @@ describe('ModuleManager', () => {
     declare oldSnapshotMap: Map<ModRefId, NormalizedModuleMeta>;
     declare oldSnapshotMapId: Map<string, ModRefId>;
 
-    override normalizeMetadata(modRefId: ModRefId, allInitHooks: AllInitHooks): NormalizedModuleMeta {
-      return super.normalizeMetadata(modRefId, allInitHooks);
+    override normalizeMeta(modRefId: ModRefId, allInitHooks: AllInitHooks): NormalizedModuleMeta {
+      return super.normalizeMeta(modRefId, allInitHooks);
     }
 
     override getNormalizedModuleMetaFromSnapshot(moduleId: ModuleId) {
@@ -88,11 +88,11 @@ describe('ModuleManager', () => {
       @rootModule({ imports: [Module2] })
       class AppModule {}
 
-      jest.spyOn(mock, 'normalizeMetadata');
+      jest.spyOn(mock, 'normalizeMeta');
       mock.scanRootModule(AppModule);
-      expect(mock.normalizeMetadata).toHaveBeenNthCalledWith(1, AppModule, new Map());
-      expect(mock.normalizeMetadata).toHaveBeenNthCalledWith(2, Module2, new Map());
-      expect(mock.normalizeMetadata).toHaveBeenNthCalledWith(3, Module1, new Map());
+      expect(mock.normalizeMeta).toHaveBeenNthCalledWith(1, AppModule, new Map());
+      expect(mock.normalizeMeta).toHaveBeenNthCalledWith(2, Module2, new Map());
+      expect(mock.normalizeMeta).toHaveBeenNthCalledWith(3, Module1, new Map());
     });
 
     it('should throw MissingRootDecorator error if the module lacks a root module decorator', () => {

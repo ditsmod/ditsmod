@@ -91,7 +91,7 @@ export class ModuleManager {
     const isRootScan = this.unfinishedScanModules.size === 0;
     allInitHooks ??= new Map();
     modRefId = resolveForwardRef(modRefId);
-    const normalizedModuleMeta = this.normalizeMetadata(modRefId, allInitHooks);
+    const normalizedModuleMeta = this.normalizeMeta(modRefId, allInitHooks);
     const importsOrExports: (DynamicModule | ModuleType)[] = [];
     normalizedModuleMeta.mInitHooks.forEach((initHooks, decorator) => {
       const meta = normalizedModuleMeta.initMeta.get(decorator);
@@ -462,7 +462,7 @@ export class ModuleManager {
     );
   }
 
-  protected normalizeMetadata(modRefId: ModRefId, allInitHooks: AllInitHooks): NormalizedModuleMeta {
+  protected normalizeMeta(modRefId: ModRefId, allInitHooks: AllInitHooks): NormalizedModuleMeta {
     try {
       return this.moduleNormalizer.normalize(modRefId, allInitHooks);
     } catch (err: any) {
