@@ -6,7 +6,7 @@ import type { XOperationObject } from '@ts-stack/openapi-spec';
 /**
  * This route metadata has a `guards` property.
  */
-export interface OasRouteMetadata {
+export interface OasRouteMeta {
   httpMethod: HttpMethod | [HttpMethod, ...HttpMethod[]];
   path: string;
   guards: GuardItem[];
@@ -23,7 +23,7 @@ function oasRouteCallback(
   guardsOrOperationObj?: XOperationObject | GuardItem[],
   interceptorsOrOperationObj?: XOperationObject | Class<HttpInterceptor>[],
   operationObject?: XOperationObject,
-): OasRouteMetadata {
+): OasRouteMeta {
   if (operationObject) {
     return {
       httpMethod,
@@ -31,7 +31,7 @@ function oasRouteCallback(
       guards: (guardsOrOperationObj || []) as GuardItem[],
       interceptors: (interceptorsOrOperationObj || []) as Class<HttpInterceptor>[],
       operationObject: operationObject || {},
-    } satisfies OasRouteMetadata;
+    } satisfies OasRouteMeta;
   } else if (Array.isArray(interceptorsOrOperationObj)) {
     return {
       httpMethod,
@@ -39,7 +39,7 @@ function oasRouteCallback(
       guards: (guardsOrOperationObj || []) as GuardItem[],
       interceptors: interceptorsOrOperationObj,
       operationObject: {},
-    } satisfies OasRouteMetadata;
+    } satisfies OasRouteMeta;
   } else if (interceptorsOrOperationObj) {
     return {
       httpMethod,
@@ -47,7 +47,7 @@ function oasRouteCallback(
       guards: (guardsOrOperationObj || []) as GuardItem[],
       operationObject: interceptorsOrOperationObj,
       interceptors: [],
-    } satisfies OasRouteMetadata;
+    } satisfies OasRouteMeta;
   } else if (Array.isArray(guardsOrOperationObj)) {
     return {
       httpMethod,
@@ -55,7 +55,7 @@ function oasRouteCallback(
       guards: guardsOrOperationObj,
       operationObject: {},
       interceptors: [],
-    } satisfies OasRouteMetadata;
+    } satisfies OasRouteMeta;
   } else {
     return {
       httpMethod,
@@ -63,7 +63,7 @@ function oasRouteCallback(
       operationObject: guardsOrOperationObj || {},
       guards: [],
       interceptors: [],
-    } satisfies OasRouteMetadata;
+    } satisfies OasRouteMeta;
   }
 }
 

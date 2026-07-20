@@ -5,10 +5,10 @@ import type { PropertyDecoratorItem } from '#decorators/property.js';
 import { property } from '#decorators/property.js';
 import type { OasGuardMeta } from '#decorators/oas-guard.js';
 import { oasGuard } from '#decorators/oas-guard.js';
-import type { OasRouteMetadata } from '#decorators/oas-route.js';
+import type { OasRouteMeta } from '#decorators/oas-route.js';
 import { oasRoute } from '#decorators/oas-route.js';
 
-export function isOasRoute(decoratorMeta: AnyObj): decoratorMeta is DecoratorMeta<OasRouteMetadata> {
+export function isOasRoute(decoratorMeta: AnyObj): decoratorMeta is DecoratorMeta<OasRouteMeta> {
   return (decoratorMeta as DecoratorMeta).decorator === oasRoute;
 }
 
