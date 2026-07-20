@@ -48,12 +48,12 @@ export class CompilingOasRoutesFailed extends CustomError {
   }
 }
 /**
- * `[${moduleName}]: OpenapiCompilerExtension: OasRouteMeta not found.`
+ * `[${moduleName}]: OpenapiCompilerExtension: OasExtensionRouteMeta not found.`
  */
 export class OasRouteMetaNotFound extends CustomError {
   constructor(moduleName: string) {
     super({
-      msg1: `[${moduleName}]: OpenapiCompilerExtension: OasRouteMeta not found.`,
+      msg1: `[${moduleName}]: OpenapiCompilerExtension: OasExtensionRouteMeta not found.`,
       level: 'fatal',
     });
   }

@@ -22,7 +22,7 @@ import { ReferenceObject, XOperationObject, XParameterObject } from '@ts-stack/o
 
 import { isOasRoute, isReferenceObject } from '#utils/type-guards.js';
 import { BOUND_TO_HTTP_METHOD, BOUND_TO_PATH_PARAM } from '#utils/parameters.js';
-import { OasRouteMeta } from '#types/oas-route-meta.js';
+import { OasExtensionRouteMeta } from '#types/oas-route-meta.js';
 import { getLastParameterObjects, getLastReferenceObjects } from '#utils/get-last-params.js';
 import { OasOptions } from '#types/oas-options.js';
 import { CompilingOasRoutesFailed, ThrowParamNotFoundInPath } from '#errors';
@@ -89,7 +89,7 @@ export class OpenapiRouteExtension extends RestRouteExtension implements Extensi
             // For now, here ReferenceObjects is ignored, if it is intended for a path.
             const oasPath = this.transformToOasPath(normalizedModuleMeta.name, fullPath, paramsInPath);
             providersPerRou.push(...(ctrlDecorator?.value.providersPerRou || []));
-            const routeMeta: OasRouteMeta = {
+            const routeMeta: OasExtensionRouteMeta = {
               oasPath,
               operationObject: clonedOperationObject,
               Controller,

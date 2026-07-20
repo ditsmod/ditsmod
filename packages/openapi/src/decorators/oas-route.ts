@@ -70,9 +70,9 @@ function oasRouteCallback(
 /**
  * Open API Specification Route.
  */
-export const oasRoute: OasRouteInterface = Reflector.makePropDecorator(oasRouteCallback, 'oasRoute');
+export const oasRoute: OasRouteOptions = Reflector.makePropDecorator(oasRouteCallback, 'oasRoute');
 
-interface OasRouteInterface {
+interface OasRouteOptions {
   (
     httpMethod: HttpMethod | [HttpMethod, ...HttpMethod[]],
     path: string,

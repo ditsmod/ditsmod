@@ -23,7 +23,7 @@ import {
 import { stringify } from 'yaml';
 import { RouteExtensionMeta, NormalizedGuard, RestRouteExtension } from '@ditsmod/rest';
 
-import { OasRouteMeta } from '#types/oas-route-meta.js';
+import { OasExtensionRouteMeta } from '#types/oas-route-meta.js';
 import { DEFAULT_OAS_OBJECT, defaultForNonOasGuard } from '#constants';
 import { OAS_CONFIG_FILES, OasExtensionConfig } from '#types/oas-extension-options.js';
 import { OasOptions } from '#types/oas-options.js';
@@ -72,7 +72,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
       for (const routeExtensionMeta of extensionGroupMetaPerApp.groupData) {
         routeExtensionMeta.aControllerMeta.forEach(({ httpMethods, fullPath, routeMeta, guards }) => {
           httpMethods.forEach((method) => {
-            const { oasPath, resolvedGuards, operationObject } = routeMeta as OasRouteMeta;
+            const { oasPath, resolvedGuards, operationObject } = routeMeta as OasExtensionRouteMeta;
             if (operationObject) {
               const clonedOperationObject = { ...operationObject };
               this.setSecurityInfo(clonedOperationObject, guards);

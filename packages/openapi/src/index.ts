@@ -7,7 +7,7 @@ export { OpenapiModule } from './openapi.module.js';
 export { SwaggerOAuthOptions } from './swagger-ui/o-auth-options.js';
 export * from '#types/media-types.js';
 export { OasOptions } from '#types/oas-options.js';
-export { OasRouteMeta } from '#types/oas-route-meta.js';
+export { OasExtensionRouteMeta } from '#types/oas-route-meta.js';
 export * from '#utils/content.js';
 export { Parameters, getParams } from '#utils/parameters.js';
 export * from '#utils/type-guards.js';
