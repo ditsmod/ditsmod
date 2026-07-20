@@ -10,7 +10,7 @@ import { GuardItem, ModuleScopedGuard } from '#interceptors/guard.js';
 import { RequestScopedControllerOptions } from '#types/controller.js';
 import { AppOptions } from '#types/app-options.js';
 import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
-import { RestResolvedModuleMetadata } from '#init/types.js';
+import { RestResolvedModuleMeta } from '#init/types.js';
 import { FailedValidationOfRoute } from '#errors';
 
 @injectable()
@@ -19,7 +19,7 @@ export class RestRouteExtension implements Extension<RouteExtensionMeta> {
 
   constructor(
     protected appOptions: AppOptions,
-    protected resolvedModuleMetadata: ResolvedModuleMetadata<RestResolvedModuleMetadata>,
+    protected resolvedModuleMetadata: ResolvedModuleMetadata<RestResolvedModuleMeta>,
   ) {}
 
   async stage1() {
@@ -36,7 +36,7 @@ export class RestRouteExtension implements Extension<RouteExtensionMeta> {
     return this.routeExtensionMeta;
   }
 
-  protected getControllersMetadata(prefixPerApp: string = '', restResolvedModuleMetadata: RestResolvedModuleMetadata) {
+  protected getControllersMetadata(prefixPerApp: string = '', restResolvedModuleMetadata: RestResolvedModuleMeta) {
     const { normalizedModuleMeta, prefixPerMod, applyControllers } = restResolvedModuleMetadata;
 
     const aControllerMeta: ControllerMeta[] = [];

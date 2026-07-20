@@ -13,7 +13,7 @@ export {
   RestModuleOptions,
 } from './init/rest-init-raw-meta.js';
 export { RouteParam, RouteExtensionMeta, RedirectStatusCodes } from './types/types.js';
-export { RestShallowModuleImports, RestResolvedModuleMetadata } from '#init/types.js';
+export { RestShallowModuleImports, RestResolvedModuleMeta } from '#init/types.js';
 export { RestModule } from './init/rest.module.js';
 export { RequestContext } from './services/request-context.js';
 export { RestRouteExtension } from './extensions/rest-route.extension.js';

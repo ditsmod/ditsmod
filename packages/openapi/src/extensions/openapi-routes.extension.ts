@@ -14,7 +14,7 @@ import {
   RequestScopedControllerOptions,
   isControllerDecorator,
   RouteExtensionMeta,
-  RestResolvedModuleMetadata,
+  RestResolvedModuleMeta,
   RouteMeta,
   RestRouteExtension,
 } from '@ditsmod/rest';
@@ -31,14 +31,14 @@ import { CompilingOasRoutesFailed, ThrowParamNotFoundInPath } from '#errors';
 export class OpenapiRouteExtension extends RestRouteExtension implements Extension<RouteExtensionMeta> {
   constructor(
     protected override appOptions: AppOptions,
-    protected override resolvedModuleMetadata: ResolvedModuleMetadata<RestResolvedModuleMetadata>,
+    protected override resolvedModuleMetadata: ResolvedModuleMetadata<RestResolvedModuleMeta>,
   ) {
     super(appOptions, resolvedModuleMetadata);
   }
 
   protected override getControllersMetadata(
     prefixPerApp: string,
-    restResolvedModuleMetadata: RestResolvedModuleMetadata,
+    restResolvedModuleMetadata: RestResolvedModuleMeta,
   ) {
     const { normalizedModuleMeta, prefixPerMod, applyControllers, meta } = restResolvedModuleMetadata;
 
