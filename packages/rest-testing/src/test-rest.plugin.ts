@@ -14,10 +14,10 @@ export class TestRestPlugin extends TestRestApplication {
         return;
       }
       extensionGroupMeta.groupData?.forEach((routeExtensionMeta) => {
-        routeExtensionMeta.aControllerMetadata.forEach((controllerMetadata) => {
+        routeExtensionMeta.aControllerMeta.forEach((controllerMeta) => {
           aProvidersToOverride.forEach((providerToOverride) => {
             TestOverrider.overrideProvider(
-              [controllerMetadata.providersPerRou, controllerMetadata.providersPerReq],
+              [controllerMeta.providersPerRou, controllerMeta.providersPerReq],
               providerToOverride,
             );
           });

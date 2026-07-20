@@ -26,7 +26,7 @@ import { RouteExtensionMeta } from '#types/types.js';
 import { TrpcRouteExtension } from './trpc-route.extension.js';
 import { TrpcHttpBackend, TrpcHttpFrontend } from '#interceptors/tokens-and-types.js';
 import { TRPC_HTTP_INTERCEPTORS, RAW_REQ, RAW_RES } from '#types/types.js';
-import { ControllerMetadata } from '#types/controller-metadata.js';
+import { ControllerMeta } from '#types/controller-metadata.js';
 import { RequestScopedGuardedInterceptor } from '#interceptors/interceptor-with-guards.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';
 import { TrpcChainMaker } from '#interceptors/chain-maker.js';
@@ -97,16 +97,16 @@ export class TrpcRequestDispatcherExtension implements Extension<void> {
 
   protected prepareRoutesMeta(aRouteExtensionMeta: RouteExtensionMeta[]) {
     aRouteExtensionMeta.forEach((routeExtensionMeta) => {
-      if (!routeExtensionMeta.aControllerMetadata.length) {
+      if (!routeExtensionMeta.aControllerMeta.length) {
         // No routes from this extension.
         return;
       }
 
-      const { aControllerMetadata, guards1 } = routeExtensionMeta;
+      const { aControllerMeta, guards1 } = routeExtensionMeta;
 
-      aControllerMetadata.forEach((controllerMetadata) => {
-        this.setHandlerPerReq(routeExtensionMeta, this.injectorPerMod, controllerMetadata);
-        const countOfGuards = controllerMetadata.routeMeta.resolvedGuards!.length + guards1.length;
+      aControllerMeta.forEach((controllerMeta) => {
+        this.setHandlerPerReq(routeExtensionMeta, this.injectorPerMod, controllerMeta);
+        const countOfGuards = controllerMeta.routeMeta.resolvedGuards!.length + guards1.length;
       });
     });
   }
@@ -114,21 +114,21 @@ export class TrpcRequestDispatcherExtension implements Extension<void> {
   protected getHandlerPerRou(
     routeExtensionMeta: RouteExtensionMeta,
     injectorPerMod: Injector,
-    controllerMetadata: ControllerMetadata,
+    controllerMeta: ControllerMeta,
   ): AnyMiddlewareFunction {
-    const { providersPerRou, routeMeta: baseRouteMeta } = controllerMetadata;
+    const { providersPerRou, routeMeta: baseRouteMeta } = controllerMeta;
 
     const routeMeta = baseRouteMeta as typeof baseRouteMeta;
     const mergedPerRou: Provider[] = [];
     mergedPerRou.push({ token: TRPC_HTTP_INTERCEPTORS, useToken: TrpcHttpFrontend as any, multi: true });
     const controllerName = getDebugClassName(routeMeta.Controller) || 'unknown';
 
-    if (routeExtensionMeta.guards1.length || controllerMetadata.guards.length) {
+    if (routeExtensionMeta.guards1.length || controllerMeta.guards.length) {
       mergedPerRou.push(RouteScopedGuardedInterceptor);
       mergedPerRou.push({ token: TRPC_HTTP_INTERCEPTORS, useToken: RouteScopedGuardedInterceptor, multi: true });
     }
 
-    for (const Interceptor of controllerMetadata.interceptors) {
+    for (const Interceptor of controllerMeta.interceptors) {
       if (isInterceptor(Interceptor)) {
         providersPerRou.push({ token: TRPC_HTTP_INTERCEPTORS, useClass: Interceptor, multi: true });
       } else {
@@ -139,7 +139,7 @@ export class TrpcRequestDispatcherExtension implements Extension<void> {
     mergedPerRou.push(...routeExtensionMeta.meta.providersPerRou, ...providersPerRou);
 
     const resolvedPerRou = Injector.resolve(mergedPerRou);
-    routeMeta.resolvedGuards = getResolvedGuards(controllerMetadata.guards, resolvedPerRou);
+    routeMeta.resolvedGuards = getResolvedGuards(controllerMeta.guards, resolvedPerRou);
     routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(routeExtensionMeta.guards1, controllerName);
     const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou, 'Rou');
     this.checkDeps(injectorPerRou, routeMeta, controllerName);
@@ -188,15 +188,15 @@ export class TrpcRequestDispatcherExtension implements Extension<void> {
   protected setHandlerPerReq(
     routeExtensionMeta: RouteExtensionMeta,
     injectorPerMod: Injector,
-    controllerMetadata: ControllerMetadata,
+    controllerMeta: ControllerMeta,
   ) {
-    const { providersPerRou, providersPerReq, routeMeta } = controllerMetadata;
+    const { providersPerRou, providersPerReq, routeMeta } = controllerMeta;
     const mergedPerRou: Provider[] = [...routeExtensionMeta.meta.providersPerRou, ...providersPerRou];
     const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'Rou');
 
     const mergedPerReq: Provider[] = [];
     mergedPerReq.push({ token: TRPC_HTTP_INTERCEPTORS, useToken: TrpcHttpFrontend as any, multi: true });
-    if (routeExtensionMeta.guards1.length || controllerMetadata.guards.length) {
+    if (routeExtensionMeta.guards1.length || controllerMeta.guards.length) {
       mergedPerReq.push(RequestScopedGuardedInterceptor);
       mergedPerReq.push({ token: TRPC_HTTP_INTERCEPTORS, useToken: RequestScopedGuardedInterceptor, multi: true });
     }
@@ -205,7 +205,7 @@ export class TrpcRequestDispatcherExtension implements Extension<void> {
     const resolvedPerReq = Injector.resolve(mergedPerReq);
     const resolvedPerRou = Injector.resolve(mergedPerRou);
     const controllerName = getDebugClassName(routeMeta.Controller) || 'unknown';
-    routeMeta.resolvedGuards = getResolvedGuards(controllerMetadata.guards, resolvedPerReq);
+    routeMeta.resolvedGuards = getResolvedGuards(controllerMeta.guards, resolvedPerReq);
     routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(routeExtensionMeta.guards1, controllerName, true);
     const injPerReq = injectorPerRou.createChildFromResolved(resolvedPerReq, 'Req');
     // routeMeta.resolvedHandler = this.getResolvedHandler(routeMeta, resolvedPerReq);
@@ -229,7 +229,7 @@ export class TrpcRequestDispatcherExtension implements Extension<void> {
     };
 
     const routeService = injectorPerRou.get(TrpcRouteService) as InternalTrpcRouteService;
-    const middlewarePerRou = () => this.getHandlerPerRou(routeExtensionMeta, injectorPerMod, controllerMetadata);
+    const middlewarePerRou = () => this.getHandlerPerRou(routeExtensionMeta, injectorPerMod, controllerMeta);
     routeService.setHandlerPerReq(routeMeta, resolvedPerReq, middlewarePerRou, handlerPerReq);
 
     const methodAsToken = routeMeta.Controller.prototype[routeMeta.methodName];

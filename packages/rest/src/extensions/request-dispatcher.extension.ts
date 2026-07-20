@@ -24,7 +24,7 @@ import {
 import { routeChannel } from '#diagnostics-channel';
 import { RouteExtensionMeta, PreparedRouteMeta } from '../types/types.js';
 import { HTTP_INTERCEPTORS } from '../top/constants.js';
-import { ControllerMetadata } from '../types/controller-metadata.js';
+import { ControllerMeta } from '../types/controller-metadata.js';
 import { RouteScopedGuardedInterceptor } from '#interceptors/interceptor-with-guards-per-rou.js';
 import { RequestScopedGuardedInterceptor } from '#interceptors/interceptor-with-guards.js';
 import { RouteMeta } from '../types/route-data.js';
@@ -96,27 +96,27 @@ export class DispatcherExtension implements Extension<void> {
     const preparedRouteMeta: PreparedRouteMeta[] = [];
 
     aRouteExtensionMeta.forEach((routeExtensionMeta) => {
-      if (!routeExtensionMeta.aControllerMetadata.length) {
+      if (!routeExtensionMeta.aControllerMeta.length) {
         // No routes from this extension.
         return;
       }
 
-      const { aControllerMetadata, guards1 } = routeExtensionMeta;
+      const { aControllerMeta, guards1 } = routeExtensionMeta;
 
-      aControllerMetadata.forEach((controllerMetadata) => {
+      aControllerMeta.forEach((controllerMeta) => {
         let handle: RouteHandler;
-        if (controllerMetadata.scope == 'route') {
-          handle = this.getHandlerPerMod(routeExtensionMeta, this.injectorPerMod, controllerMetadata);
+        if (controllerMeta.scope == 'route') {
+          handle = this.getHandlerPerMod(routeExtensionMeta, this.injectorPerMod, controllerMeta);
         } else {
-          handle = this.getHandlerPerReq(routeExtensionMeta, this.injectorPerMod, controllerMetadata);
+          handle = this.getHandlerPerReq(routeExtensionMeta, this.injectorPerMod, controllerMeta);
         }
 
-        const countOfGuards = controllerMetadata.routeMeta.resolvedGuards!.length + guards1.length;
+        const countOfGuards = controllerMeta.routeMeta.resolvedGuards!.length + guards1.length;
 
         preparedRouteMeta.push({
           moduleName: routeExtensionMeta.normalizedModuleMeta.name,
-          httpMethods: controllerMetadata.httpMethods,
-          fullPath: controllerMetadata.fullPath,
+          httpMethods: controllerMeta.httpMethods,
+          fullPath: controllerMeta.fullPath,
           handle,
           countOfGuards,
         });
@@ -129,23 +129,23 @@ export class DispatcherExtension implements Extension<void> {
   protected getHandlerPerMod(
     routeExtensionMeta: RouteExtensionMeta,
     injectorPerMod: Injector,
-    controllerMetadata: ControllerMetadata,
+    controllerMeta: ControllerMeta,
   ) {
-    const { providersPerRou, routeMeta: baseRouteMeta, httpMethods, fullPath } = controllerMetadata;
+    const { providersPerRou, routeMeta: baseRouteMeta, httpMethods, fullPath } = controllerMeta;
 
     const routeMeta = baseRouteMeta as RequireProps<typeof baseRouteMeta, 'routeHandler'>;
     const mergedPerRou: Provider[] = [];
     mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend, multi: true });
     const controllerName = getDebugClassName(routeMeta.Controller) || 'unknown';
 
-    if (routeExtensionMeta.guards1.length || controllerMetadata.guards.length) {
+    if (routeExtensionMeta.guards1.length || controllerMeta.guards.length) {
       mergedPerRou.push(RouteScopedGuardedInterceptor);
       mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: RouteScopedGuardedInterceptor, multi: true });
     }
     mergedPerRou.push(...routeExtensionMeta.meta.providersPerRou, ...providersPerRou);
 
     const resolvedPerRou = Injector.resolve(mergedPerRou);
-    routeMeta.resolvedGuards = this.getResolvedGuards(controllerMetadata.guards, resolvedPerRou);
+    routeMeta.resolvedGuards = this.getResolvedGuards(controllerMeta.guards, resolvedPerRou);
     routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(
       routeExtensionMeta.guards1,
       controllerName,
@@ -207,15 +207,15 @@ export class DispatcherExtension implements Extension<void> {
   protected getHandlerPerReq(
     routeExtensionMeta: RouteExtensionMeta,
     injectorPerMod: Injector,
-    controllerMetadata: ControllerMetadata,
+    controllerMeta: ControllerMeta,
   ) {
-    const { providersPerRou, providersPerReq, routeMeta, httpMethods: httpMethod, fullPath } = controllerMetadata;
+    const { providersPerRou, providersPerReq, routeMeta, httpMethods: httpMethod, fullPath } = controllerMeta;
     const mergedPerRou = [...routeExtensionMeta.meta.providersPerRou, ...providersPerRou];
     const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'Rou');
 
     const mergedPerReq: Provider[] = [];
     mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend, multi: true });
-    if (routeExtensionMeta.guards1.length || controllerMetadata.guards.length) {
+    if (routeExtensionMeta.guards1.length || controllerMeta.guards.length) {
       mergedPerReq.push(RequestScopedGuardedInterceptor);
       mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: RequestScopedGuardedInterceptor, multi: true });
     }
@@ -224,7 +224,7 @@ export class DispatcherExtension implements Extension<void> {
     const resolvedPerReq = Injector.resolve(mergedPerReq);
     const resolvedPerRou = Injector.resolve(mergedPerRou);
     const controllerName = getDebugClassName(routeMeta.Controller) || 'unknown';
-    routeMeta.resolvedGuards = this.getResolvedGuards(controllerMetadata.guards, resolvedPerReq);
+    routeMeta.resolvedGuards = this.getResolvedGuards(controllerMeta.guards, resolvedPerReq);
     routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(
       routeExtensionMeta.guards1,
       controllerName,
@@ -387,7 +387,7 @@ export class DispatcherExtension implements Extension<void> {
   protected checkPresenceOfRoutesInApplication(groupDataPerApp: AppExtensionGroupMeta<RouteExtensionMeta>[]) {
     return groupDataPerApp.reduce((prev1, curr1) => {
       return (
-        prev1 || curr1.groupData.reduce((prev2, curr2) => prev2 || Boolean(curr2.aControllerMetadata.length), false)
+        prev1 || curr1.groupData.reduce((prev2, curr2) => prev2 || Boolean(curr2.aControllerMeta.length), false)
       );
     }, false);
   }

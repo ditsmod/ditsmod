@@ -4,7 +4,7 @@ import type { TrpcRouteMeta } from './trpc-route-data.js';
 import type { TrpcHttpInterceptor } from '#interceptors/tokens-and-types.js';
 import type { NormalizedGuard } from '../interceptors/trpc-guard.js';
 
-export interface ControllerMetadata {
+export interface ControllerMeta {
   /**
    * Providers per a route.
    */

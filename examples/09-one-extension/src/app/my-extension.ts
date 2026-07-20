@@ -10,6 +10,6 @@ export class MyExtension implements Extension<void> {
 
   async stage1() {
     const extensionGroupMeta = await this.extensionManager.stage1(RestRouteExtension);
-    this.logger.log('info', extensionGroupMeta.groupData[0].aControllerMetadata);
+    this.logger.log('info', extensionGroupMeta.groupData[0].aControllerMeta);
   }
 }

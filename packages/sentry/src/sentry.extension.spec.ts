@@ -35,13 +35,13 @@ describe('SentryExtension', () => {
   });
 
   it('should push tracing interceptor to providersPerReq of all controllers', async () => {
-    const mockControllerMetadata = {
+    const mockControllerMeta = {
       providersPerReq: [] as any[],
       routeMeta: {} as any,
     };
 
     const mockRouteExtensionMeta = {
-      aControllerMetadata: [mockControllerMetadata],
+      aControllerMeta: [mockControllerMeta],
     };
 
     extensionManager.stage1.mockResolvedValue({
@@ -50,8 +50,8 @@ describe('SentryExtension', () => {
 
     await extension.stage1();
 
-    expect(mockControllerMetadata.providersPerReq).toContain(SentryTracingInterceptor);
-    expect(mockControllerMetadata.providersPerReq).toContainEqual({
+    expect(mockControllerMeta.providersPerReq).toContain(SentryTracingInterceptor);
+    expect(mockControllerMeta.providersPerReq).toContainEqual({
       token: HTTP_INTERCEPTORS,
       useToken: SentryTracingInterceptor,
       multi: true,
@@ -62,12 +62,12 @@ describe('SentryExtension', () => {
     const { getClient } = (await import('@sentry/core')) as any;
     getClient.mockReturnValue(undefined);
 
-    const mockControllerMetadata = {
+    const mockControllerMeta = {
       providersPerReq: [] as any[],
       routeMeta: {} as any,
     };
     const mockRouteExtensionMeta = {
-      aControllerMetadata: [mockControllerMetadata],
+      aControllerMeta: [mockControllerMeta],
     };
     extensionManager.stage1.mockResolvedValue({
       groupData: [mockRouteExtensionMeta],
@@ -76,7 +76,7 @@ describe('SentryExtension', () => {
     await extension.stage1();
 
     expect(extensionManager.stage1).not.toHaveBeenCalled();
-    expect(mockControllerMetadata.providersPerReq).toHaveLength(0);
+    expect(mockControllerMeta.providersPerReq).toHaveLength(0);
     expect(logger.log).toHaveBeenCalledWith('warn', expect.stringContaining('Sentry.init() was not called'));
   });
 });

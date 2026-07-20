@@ -30,7 +30,7 @@ export {
   isHttp2SecureServerOptions,
 } from './types/type.guards.js';
 export { RouteMeta } from './types/route-data.js';
-export { ControllerMetadata } from './types/controller-metadata.js';
+export { ControllerMeta } from './types/controller-metadata.js';
 export {
   GuardedInterceptor,
   RouteScopedGuardedInterceptor,

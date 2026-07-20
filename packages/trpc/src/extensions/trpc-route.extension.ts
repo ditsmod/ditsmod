@@ -6,7 +6,7 @@ import { initTrpcModule } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { TrpcRouteMetadata } from '#decorators/trpc-route.js';
 import { ControllerOptions } from '#decorators/trpc-controller.js';
 import { RouteExtensionMeta } from '#types/types.js';
-import { ControllerMetadata } from '#types/controller-metadata.js';
+import { ControllerMeta } from '#types/controller-metadata.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';
 import { InvalidInterceptor } from '../error/trpc-errors.js';
 import { isControllerDecorator, isInterceptor, isTrpcRoute } from '#types/type.guards.js';
@@ -25,7 +25,7 @@ export class TrpcRouteExtension implements Extension<RouteExtensionMeta> {
     this.routeExtensionMeta = new RouteExtensionMeta();
     this.routeExtensionMeta.meta = trpcResolvedModuleMetadata.meta;
     this.routeExtensionMeta.normalizedModuleMeta = this.resolvedModuleMetadata.normalizedModuleMeta;
-    this.routeExtensionMeta.aControllerMetadata = this.getControllersMetadata(trpcResolvedModuleMetadata);
+    this.routeExtensionMeta.aControllerMeta = this.getControllersMetadata(trpcResolvedModuleMetadata);
     this.routeExtensionMeta.guards1 = trpcResolvedModuleMetadata.guards1;
     // this.routeExtensionMeta.guards1 = [];
 
@@ -33,7 +33,7 @@ export class TrpcRouteExtension implements Extension<RouteExtensionMeta> {
   }
 
   protected getControllersMetadata(trpcResolvedModuleMetadata: TrpcResolvedModuleMetadata) {
-    const aControllerMetadata: ControllerMetadata[] = [];
+    const aControllerMeta: ControllerMeta[] = [];
 
     for (const Controller of trpcResolvedModuleMetadata.meta.controllers as Class<Record<string | symbol, any>>[]) {
       const classMeta = Reflector.collectMeta(Controller)!;
@@ -65,7 +65,7 @@ export class TrpcRouteExtension implements Extension<RouteExtensionMeta> {
             methodName,
           };
           providersPerRou.push({ token: TrpcRouteMeta, useValue: routeMeta });
-          aControllerMetadata.push({
+          aControllerMeta.push({
             providersPerRou,
             providersPerReq,
             routeMeta,
@@ -76,6 +76,6 @@ export class TrpcRouteExtension implements Extension<RouteExtensionMeta> {
       }
     }
 
-    return aControllerMetadata;
+    return aControllerMeta;
   }
 }

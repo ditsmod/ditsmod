@@ -10,7 +10,7 @@ import {
 } from '@ditsmod/core';
 import {
   AppOptions,
-  ControllerMetadata,
+  ControllerMeta,
   RequestScopedControllerOptions,
   isControllerDecorator,
   RouteExtensionMeta,
@@ -46,7 +46,7 @@ export class OpenapiRouteExtension extends RestRouteExtension implements Extensi
     const prefixParams = oasOptions?.paratemers;
     const prefixTags = oasOptions?.tags;
 
-    const aControllerMetadata: ControllerMetadata[] = [];
+    const aControllerMeta: ControllerMeta[] = [];
     if (applyControllers)
       for (const Controller of meta.controllers as Class<Record<string | symbol, any>>[]) {
         const classMeta = Reflector.collectMeta(Controller)!;
@@ -98,7 +98,7 @@ export class OpenapiRouteExtension extends RestRouteExtension implements Extensi
 
             providersPerRou.push({ token: RouteMeta, useValue: routeMeta });
 
-            aControllerMetadata.push({
+            aControllerMeta.push({
               providersPerRou,
               providersPerReq,
               fullPath,
@@ -112,7 +112,7 @@ export class OpenapiRouteExtension extends RestRouteExtension implements Extensi
         }
       }
 
-    return aControllerMetadata;
+    return aControllerMeta;
   }
 
   protected mergeParams(

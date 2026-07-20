@@ -26,11 +26,11 @@ export class SentryExtension implements Extension<void> {
     const meta = await this.extensionManager.stage1(RestRouteExtension);
 
     for (const routeExtensionMeta of meta.groupData) {
-      for (const controllerMetadata of routeExtensionMeta.aControllerMetadata) {
+      for (const controllerMeta of routeExtensionMeta.aControllerMeta) {
         // Dynamically append the fullPath to routeMeta
-        (controllerMetadata.routeMeta as SentryRouteMeta).fullPath = controllerMetadata.fullPath;
+        (controllerMeta.routeMeta as SentryRouteMeta).fullPath = controllerMeta.fullPath;
 
-        controllerMetadata.providersPerReq.push(SentryTracingInterceptor, {
+        controllerMeta.providersPerReq.push(SentryTracingInterceptor, {
           token: HTTP_INTERCEPTORS,
           useToken: SentryTracingInterceptor,
           multi: true,

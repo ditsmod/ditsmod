@@ -4,7 +4,7 @@ import { injectable, Extension, Provider, Reflector, Class, HttpMethod, Resolved
 import { RouteExtensionMeta } from '#types/types.js';
 import { isControllerDecorator, isRoute } from '#types/type.guards.js';
 import { RouteMetadata } from '#decorators/route.js';
-import { ControllerMetadata } from '#types/controller-metadata.js';
+import { ControllerMeta } from '#types/controller-metadata.js';
 import { RouteMeta } from '#types/route-data.js';
 import { GuardItem, ModuleScopedGuard } from '#interceptors/guard.js';
 import { RequestScopedControllerOptions } from '#types/controller.js';
@@ -29,7 +29,7 @@ export class RestRouteExtension implements Extension<RouteExtensionMeta> {
     const { path: prefixPerApp } = this.appOptions;
     this.routeExtensionMeta.prefixPerMod = restResolvedModuleMetadata.prefixPerMod;
     this.routeExtensionMeta.normalizedModuleMeta = this.resolvedModuleMetadata.normalizedModuleMeta;
-    this.routeExtensionMeta.aControllerMetadata = this.getControllersMetadata(prefixPerApp, restResolvedModuleMetadata);
+    this.routeExtensionMeta.aControllerMeta = this.getControllersMetadata(prefixPerApp, restResolvedModuleMetadata);
     this.routeExtensionMeta.guards1 = restResolvedModuleMetadata.guards1;
     // this.routeExtensionMeta.guards1 = [];
 
@@ -39,7 +39,7 @@ export class RestRouteExtension implements Extension<RouteExtensionMeta> {
   protected getControllersMetadata(prefixPerApp: string = '', restResolvedModuleMetadata: RestResolvedModuleMetadata) {
     const { normalizedModuleMeta, prefixPerMod, applyControllers } = restResolvedModuleMetadata;
 
-    const aControllerMetadata: ControllerMetadata[] = [];
+    const aControllerMeta: ControllerMeta[] = [];
     if (applyControllers)
       for (const Controller of restResolvedModuleMetadata.meta.controllers) {
         const classMeta = Reflector.collectMeta(Controller)!;
@@ -68,7 +68,7 @@ export class RestRouteExtension implements Extension<RouteExtensionMeta> {
               methodName,
             };
             providersPerRou.push({ token: RouteMeta, useValue: routeMeta });
-            aControllerMetadata.push({
+            aControllerMeta.push({
               httpMethods: Array.isArray(httpMethod) ? httpMethod : [httpMethod],
               fullPath,
               providersPerRou,
@@ -82,7 +82,7 @@ export class RestRouteExtension implements Extension<RouteExtensionMeta> {
         }
       }
 
-    return aControllerMetadata;
+    return aControllerMeta;
   }
 
   /**

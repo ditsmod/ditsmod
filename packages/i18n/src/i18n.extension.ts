@@ -44,9 +44,9 @@ export class I18nExtension implements Extension<void> {
     }
 
     for (const routeExtensionMeta of extensionGroupMeta.groupData) {
-      const { aControllerMetadata } = routeExtensionMeta;
+      const { aControllerMeta } = routeExtensionMeta;
       const { providersPerMod, providersPerRou, providersPerReq } = routeExtensionMeta.meta;
-      if (!aControllerMetadata.length) {
+      if (!aControllerMeta.length) {
         continue;
       }
 
