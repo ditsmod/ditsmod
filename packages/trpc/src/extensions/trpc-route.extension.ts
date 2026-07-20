@@ -18,13 +18,13 @@ import { normalizeGuards } from '#utils/prepare-guards.js';
 export class TrpcRouteExtension implements Extension<RouteExtensionMeta> {
   protected routeExtensionMeta: RouteExtensionMeta;
 
-  constructor(protected resolvedModuleMetadata: ResolvedModuleMeta<TrpcResolvedModuleMeta>) {}
+  constructor(protected resolvedModuleMeta: ResolvedModuleMeta<TrpcResolvedModuleMeta>) {}
 
   async stage1() {
-    const trpcResolvedModuleMeta = this.resolvedModuleMetadata.deepImportedModules.get(initTrpcModule)!;
+    const trpcResolvedModuleMeta = this.resolvedModuleMeta.deepImportedModules.get(initTrpcModule)!;
     this.routeExtensionMeta = new RouteExtensionMeta();
     this.routeExtensionMeta.meta = trpcResolvedModuleMeta.meta;
-    this.routeExtensionMeta.normalizedModuleMeta = this.resolvedModuleMetadata.normalizedModuleMeta;
+    this.routeExtensionMeta.normalizedModuleMeta = this.resolvedModuleMeta.normalizedModuleMeta;
     this.routeExtensionMeta.aControllerMeta = this.getControllersMetadata(trpcResolvedModuleMeta);
     this.routeExtensionMeta.guards1 = trpcResolvedModuleMeta.guards1;
     // this.routeExtensionMeta.guards1 = [];

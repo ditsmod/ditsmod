@@ -250,10 +250,10 @@ export class BaseAppInitializer {
   ) {
     const extensionContext = new ExtensionContext();
 
-    for (const [, resolvedModuleMetadata] of mResolvedModuleMeta) {
+    for (const [, resolvedModuleMeta] of mResolvedModuleMeta) {
       const { normalizedModuleMeta, aOrderedExtensions } = this.overrideMetaBeforeExtensionHanling(
-        resolvedModuleMetadata.normalizedModuleMeta,
-        resolvedModuleMetadata.aOrderedExtensions,
+        resolvedModuleMeta.normalizedModuleMeta,
+        resolvedModuleMeta.aOrderedExtensions,
       );
       const injectorPerMod = this.injectorPerApp.resolveAndCreateChild(normalizedModuleMeta.providersPerMod, 'Mod');
       const systemLogMediator = injectorPerMod.pull(SystemLogMediator) as SystemLogMediator;
@@ -262,7 +262,7 @@ export class BaseAppInitializer {
         systemLogMediator.skippingStartExtensions(this);
         continue;
       }
-      const providers = this.getProvidersForExtensions(resolvedModuleMetadata, extensionCounters, extensionContext);
+      const providers = this.getProvidersForExtensions(resolvedModuleMeta, extensionCounters, extensionContext);
       const injectorForExtensions = injectorPerMod.resolveAndCreateChild(providers, 'injectorOfExtensions');
       const extensionManager = injectorForExtensions.get(InternalExtensionManager) as InternalExtensionManager;
 
@@ -357,7 +357,7 @@ export class BaseAppInitializer {
    * Note that this method is used for `@ditsmod/testing`.
    */
   protected getProvidersForExtensions(
-    resolvedModuleMetadata: ResolvedModuleMeta,
+    resolvedModuleMeta: ResolvedModuleMeta,
     extensionCounters: ExtensionCounters,
     extensionContext: ExtensionContext,
   ): Provider[] {
@@ -365,10 +365,10 @@ export class BaseAppInitializer {
       InternalExtensionManager,
       { token: ExtensionManager, useToken: InternalExtensionManager },
       { token: ExtensionContext, useValue: extensionContext },
-      { token: ResolvedModuleMeta, useValue: resolvedModuleMetadata },
+      { token: ResolvedModuleMeta, useValue: resolvedModuleMeta },
       { token: ExtensionCounters, useValue: extensionCounters },
       { token: PROVIDERS_PER_APP, useValue: this.normalizedModuleMeta.providersPerApp },
-      ...resolvedModuleMetadata.normalizedModuleMeta.extensionProviders,
+      ...resolvedModuleMeta.normalizedModuleMeta.extensionProviders,
     ];
   }
 

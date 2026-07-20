@@ -59,11 +59,11 @@ export class TestAppInitializer extends RestAppInitializer {
   }
 
   protected override getProvidersForExtensions(
-    resolvedModuleMetadata: ResolvedModuleMeta,
+    resolvedModuleMeta: ResolvedModuleMeta,
     extensionCounters: ExtensionCounters,
     extensionContext: ExtensionContext,
   ): Provider[] {
-    const providers = super.getProvidersForExtensions(resolvedModuleMetadata, extensionCounters, extensionContext);
+    const providers = super.getProvidersForExtensions(resolvedModuleMeta, extensionCounters, extensionContext);
     providers.push(
       { token: InternalExtensionManager, useClass: TestExtensionManager },
       { token: OVERRIDERS_CONFIG, useValue: this.aOverriderConfig },

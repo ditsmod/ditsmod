@@ -19,16 +19,16 @@ export class RestRouteExtension implements Extension<RouteExtensionMeta> {
 
   constructor(
     protected appOptions: AppOptions,
-    protected resolvedModuleMetadata: ResolvedModuleMeta<RestResolvedModuleMeta>,
+    protected resolvedModuleMeta: ResolvedModuleMeta<RestResolvedModuleMeta>,
   ) {}
 
   async stage1() {
-    const restResolvedModuleMeta = this.resolvedModuleMetadata.deepImportedModules.get(initRest)!;
+    const restResolvedModuleMeta = this.resolvedModuleMeta.deepImportedModules.get(initRest)!;
     this.routeExtensionMeta = new RouteExtensionMeta();
     this.routeExtensionMeta.meta = restResolvedModuleMeta.meta;
     const { path: prefixPerApp } = this.appOptions;
     this.routeExtensionMeta.prefixPerMod = restResolvedModuleMeta.prefixPerMod;
-    this.routeExtensionMeta.normalizedModuleMeta = this.resolvedModuleMetadata.normalizedModuleMeta;
+    this.routeExtensionMeta.normalizedModuleMeta = this.resolvedModuleMeta.normalizedModuleMeta;
     this.routeExtensionMeta.aControllerMeta = this.getControllersMetadata(prefixPerApp, restResolvedModuleMeta);
     this.routeExtensionMeta.guards1 = restResolvedModuleMeta.guards1;
     // this.routeExtensionMeta.guards1 = [];

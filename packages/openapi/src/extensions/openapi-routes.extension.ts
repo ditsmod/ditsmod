@@ -31,9 +31,9 @@ import { CompilingOasRoutesFailed, ThrowParamNotFoundInPath } from '#errors';
 export class OpenapiRouteExtension extends RestRouteExtension implements Extension<RouteExtensionMeta> {
   constructor(
     protected override appOptions: AppOptions,
-    protected override resolvedModuleMetadata: ResolvedModuleMeta<RestResolvedModuleMeta>,
+    protected override resolvedModuleMeta: ResolvedModuleMeta<RestResolvedModuleMeta>,
   ) {
-    super(appOptions, resolvedModuleMetadata);
+    super(appOptions, resolvedModuleMeta);
   }
 
   protected override getControllersMetadata(
