@@ -14,9 +14,6 @@ export interface PropertyDecoratorItem {
   customType?: CustomType;
 }
 export type PropertyDecoratorValue = [Class<AnyObj>, PropertyDecoratorItem, ...PropertyDecoratorItem[]];
-export interface PropertyDecoratorMetadata {
-  [key: string]: PropertyDecoratorValue;
-}
 
 function transformPropertyMeta(schema?: XSchemaObject, customType?: CustomType) {
   return { schema, customType };
