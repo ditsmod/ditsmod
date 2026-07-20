@@ -19,7 +19,7 @@ import { getDuplicates } from '#utils/get-duplicates.js';
 import { getLastProviders } from '#utils/get-last-providers.js';
 import { getProvidersTargets, getToken, getTokens } from '#utils/get-tokens.js';
 import { normalizeProviders } from '#utils/ng-utils.js';
-import { ResolvedModuleMetadata } from '#types/metadata-per-mod.js';
+import { ResolvedModuleMeta } from '#types/metadata-per-mod.js';
 import { getProviderName } from '#utils/get-provider-name.js';
 import { getModule } from '#utils/get-module.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
@@ -134,8 +134,8 @@ export class BaseAppInitializer {
       providersPerApp: this.normalizedModuleMeta.providersPerApp,
       log: this.log,
     });
-    const { extensionCounters, mResolvedModuleMetadata } = deepModulesImporter.importModulesDeep();
-    await this.handleExtensions(mResolvedModuleMetadata, extensionCounters);
+    const { extensionCounters, mResolvedModuleMeta } = deepModulesImporter.importModulesDeep();
+    await this.handleExtensions(mResolvedModuleMeta, extensionCounters);
     return this.injectorPerApp;
   }
 
@@ -245,12 +245,12 @@ export class BaseAppInitializer {
   }
 
   protected async handleExtensions(
-    mResolvedModuleMetadata: Map<ModRefId, ResolvedModuleMetadata>,
+    mResolvedModuleMeta: Map<ModRefId, ResolvedModuleMeta>,
     extensionCounters: ExtensionCounters,
   ) {
     const extensionContext = new ExtensionContext();
 
-    for (const [, resolvedModuleMetadata] of mResolvedModuleMetadata) {
+    for (const [, resolvedModuleMetadata] of mResolvedModuleMeta) {
       const { normalizedModuleMeta, aOrderedExtensions } = this.overrideMetaBeforeExtensionHanling(
         resolvedModuleMetadata.normalizedModuleMeta,
         resolvedModuleMetadata.aOrderedExtensions,
@@ -271,11 +271,11 @@ export class BaseAppInitializer {
       await this.handleExtensionsPerMod(normalizedModuleMeta, aOrderedExtensions, extensionManager, systemLogMediator);
       this.logExtensionsStatistic(this.injectorPerApp, systemLogMediator);
     }
-    await this.perAppHandling(mResolvedModuleMetadata, extensionContext);
+    await this.perAppHandling(mResolvedModuleMeta, extensionContext);
   }
 
   protected async perAppHandling(
-    mResolvedModuleMetadata: Map<ModRefId, ResolvedModuleMetadata>,
+    mResolvedModuleMeta: Map<ModRefId, ResolvedModuleMeta>,
     extensionContext: ExtensionContext,
   ) {
     for (const [ExtCls, mExtensions] of extensionContext.mExtensionPendingList) {
@@ -289,7 +289,7 @@ export class BaseAppInitializer {
       }
     }
 
-    for (const [modRefId, { normalizedModuleMeta }] of mResolvedModuleMetadata) {
+    for (const [modRefId, { normalizedModuleMeta }] of mResolvedModuleMeta) {
       try {
         this.overrideMetaAfterStage1(normalizedModuleMeta.modRefId, normalizedModuleMeta);
         normalizedModuleMeta.initMeta.forEach((meta) =>
@@ -304,7 +304,7 @@ export class BaseAppInitializer {
     // After the extensions have added new providers, injectorPerApp needs to be recreated one last time.
     this.createInjectorAndSetLogMediator();
 
-    for (const [modRefId, { normalizedModuleMeta }] of mResolvedModuleMetadata) {
+    for (const [modRefId, { normalizedModuleMeta }] of mResolvedModuleMeta) {
       try {
         const injectorPerMod = await this.initModuleAndGetInjectorPerMod(normalizedModuleMeta);
         this.moduleManager.setInjectorPerMod(modRefId, injectorPerMod);
@@ -357,7 +357,7 @@ export class BaseAppInitializer {
    * Note that this method is used for `@ditsmod/testing`.
    */
   protected getProvidersForExtensions(
-    resolvedModuleMetadata: ResolvedModuleMetadata,
+    resolvedModuleMetadata: ResolvedModuleMeta,
     extensionCounters: ExtensionCounters,
     extensionContext: ExtensionContext,
   ): Provider[] {
@@ -365,7 +365,7 @@ export class BaseAppInitializer {
       InternalExtensionManager,
       { token: ExtensionManager, useToken: InternalExtensionManager },
       { token: ExtensionContext, useValue: extensionContext },
-      { token: ResolvedModuleMetadata, useValue: resolvedModuleMetadata },
+      { token: ResolvedModuleMeta, useValue: resolvedModuleMetadata },
       { token: ExtensionCounters, useValue: extensionCounters },
       { token: PROVIDERS_PER_APP, useValue: this.normalizedModuleMeta.providersPerApp },
       ...resolvedModuleMetadata.normalizedModuleMeta.extensionProviders,

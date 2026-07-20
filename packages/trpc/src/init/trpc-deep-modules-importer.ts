@@ -17,7 +17,7 @@ import type { ModuleScopedGuard } from '#interceptors/trpc-guard.js';
  * This metadata returns from `DeepModulesImporter`. The target for this metadata is `RestRouteExtension`.
  */
 
-export class TrpcResolvedModuleMetadata {
+export class TrpcResolvedModuleMeta {
   normalizedModuleMeta: NormalizedModuleMeta;
   meta: TrpcInitMeta;
   guards1: ModuleScopedGuard[];

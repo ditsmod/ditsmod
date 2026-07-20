@@ -3,7 +3,7 @@ import crypto from 'node:crypto';
 import {
   Extension,
   injectable,
-  ResolvedModuleMetadata,
+  ResolvedModuleMeta,
   Provider,
   Injector,
   Logger,
@@ -22,7 +22,7 @@ export class ScheduleExtension implements Extension<void> {
   private injectorPerMod?: Injector;
 
   constructor(
-    private metadata: ResolvedModuleMetadata,
+    private metadata: ResolvedModuleMeta,
     private logger: Logger,
   ) {}
 

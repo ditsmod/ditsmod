@@ -1,7 +1,7 @@
 import 'reflect-metadata/lite';
 import { jest } from '@jest/globals';
 
-import { Injector, Logger, ResolvedModuleMetadata } from '@ditsmod/core';
+import { Injector, Logger, ResolvedModuleMeta } from '@ditsmod/core';
 
 import { cron } from './cron.decorator.js';
 import { interval } from './interval.decorator.js';
@@ -14,7 +14,7 @@ describe('ScheduleExtension', () => {
   let loggerMock: jest.Mocked<Logger>;
   let injectorPerModMock: jest.Mocked<Injector>;
   let injectorPerAppMock: jest.Mocked<Injector>;
-  let resolvedMetadataMock: ResolvedModuleMetadata;
+  let resolvedMetadataMock: ResolvedModuleMeta;
   let extension: ScheduleExtension;
 
   class ModService {

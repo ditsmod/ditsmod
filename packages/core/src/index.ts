@@ -49,7 +49,7 @@ export { LogEntry } from '#logger/types.js';
 export { SystemLogMediator } from '#logger/system-log-mediator.js';
 export { ModuleManager } from '#init/module-manager.js';
 export { Logger, LoggerConfig, InputLogLevel, OutputLogLevel } from '#logger/logger.js';
-export { ResolvedModuleMetadata } from '#types/metadata-per-mod.js';
+export { ResolvedModuleMeta } from '#types/metadata-per-mod.js';
 export {
   AnyObj,
   HttpMethod,

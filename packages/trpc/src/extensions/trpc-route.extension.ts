@@ -1,7 +1,7 @@
-import { injectable, Extension, ResolvedModuleMetadata, type Class, Reflector, Provider } from '@ditsmod/core';
+import { injectable, Extension, ResolvedModuleMeta, type Class, Reflector, Provider } from '@ditsmod/core';
 import { inspect } from 'node:util';
 
-import { TrpcResolvedModuleMetadata } from '#init/trpc-deep-modules-importer.js';
+import { TrpcResolvedModuleMeta } from '#init/trpc-deep-modules-importer.js';
 import { initTrpcModule } from '#decorators/trpc-init-hooks-and-metadata.js';
 import { TrpcRouteMetadata } from '#decorators/trpc-route.js';
 import { ControllerOptions } from '#decorators/trpc-controller.js';
@@ -18,24 +18,24 @@ import { normalizeGuards } from '#utils/prepare-guards.js';
 export class TrpcRouteExtension implements Extension<RouteExtensionMeta> {
   protected routeExtensionMeta: RouteExtensionMeta;
 
-  constructor(protected resolvedModuleMetadata: ResolvedModuleMetadata<TrpcResolvedModuleMetadata>) {}
+  constructor(protected resolvedModuleMetadata: ResolvedModuleMeta<TrpcResolvedModuleMeta>) {}
 
   async stage1() {
-    const trpcResolvedModuleMetadata = this.resolvedModuleMetadata.deepImportedModules.get(initTrpcModule)!;
+    const trpcResolvedModuleMeta = this.resolvedModuleMetadata.deepImportedModules.get(initTrpcModule)!;
     this.routeExtensionMeta = new RouteExtensionMeta();
-    this.routeExtensionMeta.meta = trpcResolvedModuleMetadata.meta;
+    this.routeExtensionMeta.meta = trpcResolvedModuleMeta.meta;
     this.routeExtensionMeta.normalizedModuleMeta = this.resolvedModuleMetadata.normalizedModuleMeta;
-    this.routeExtensionMeta.aControllerMeta = this.getControllersMetadata(trpcResolvedModuleMetadata);
-    this.routeExtensionMeta.guards1 = trpcResolvedModuleMetadata.guards1;
+    this.routeExtensionMeta.aControllerMeta = this.getControllersMetadata(trpcResolvedModuleMeta);
+    this.routeExtensionMeta.guards1 = trpcResolvedModuleMeta.guards1;
     // this.routeExtensionMeta.guards1 = [];
 
     return this.routeExtensionMeta;
   }
 
-  protected getControllersMetadata(trpcResolvedModuleMetadata: TrpcResolvedModuleMetadata) {
+  protected getControllersMetadata(trpcResolvedModuleMeta: TrpcResolvedModuleMeta) {
     const aControllerMeta: ControllerMeta[] = [];
 
-    for (const Controller of trpcResolvedModuleMetadata.meta.controllers as Class<Record<string | symbol, any>>[]) {
+    for (const Controller of trpcResolvedModuleMeta.meta.controllers as Class<Record<string | symbol, any>>[]) {
       const classMeta = Reflector.collectMeta(Controller)!;
       for (const methodName of classMeta) {
         for (const decoratorMeta of classMeta[methodName].decorators) {

@@ -1,5 +1,5 @@
 import { inspect } from 'node:util';
-import { injectable, Extension, Provider, Reflector, Class, HttpMethod, ResolvedModuleMetadata } from '@ditsmod/core';
+import { injectable, Extension, Provider, Reflector, Class, HttpMethod, ResolvedModuleMeta } from '@ditsmod/core';
 
 import { RouteExtensionMeta } from '#types/types.js';
 import { isControllerDecorator, isRoute } from '#types/type.guards.js';
@@ -19,29 +19,29 @@ export class RestRouteExtension implements Extension<RouteExtensionMeta> {
 
   constructor(
     protected appOptions: AppOptions,
-    protected resolvedModuleMetadata: ResolvedModuleMetadata<RestResolvedModuleMeta>,
+    protected resolvedModuleMetadata: ResolvedModuleMeta<RestResolvedModuleMeta>,
   ) {}
 
   async stage1() {
-    const restResolvedModuleMetadata = this.resolvedModuleMetadata.deepImportedModules.get(initRest)!;
+    const restResolvedModuleMeta = this.resolvedModuleMetadata.deepImportedModules.get(initRest)!;
     this.routeExtensionMeta = new RouteExtensionMeta();
-    this.routeExtensionMeta.meta = restResolvedModuleMetadata.meta;
+    this.routeExtensionMeta.meta = restResolvedModuleMeta.meta;
     const { path: prefixPerApp } = this.appOptions;
-    this.routeExtensionMeta.prefixPerMod = restResolvedModuleMetadata.prefixPerMod;
+    this.routeExtensionMeta.prefixPerMod = restResolvedModuleMeta.prefixPerMod;
     this.routeExtensionMeta.normalizedModuleMeta = this.resolvedModuleMetadata.normalizedModuleMeta;
-    this.routeExtensionMeta.aControllerMeta = this.getControllersMetadata(prefixPerApp, restResolvedModuleMetadata);
-    this.routeExtensionMeta.guards1 = restResolvedModuleMetadata.guards1;
+    this.routeExtensionMeta.aControllerMeta = this.getControllersMetadata(prefixPerApp, restResolvedModuleMeta);
+    this.routeExtensionMeta.guards1 = restResolvedModuleMeta.guards1;
     // this.routeExtensionMeta.guards1 = [];
 
     return this.routeExtensionMeta;
   }
 
-  protected getControllersMetadata(prefixPerApp: string = '', restResolvedModuleMetadata: RestResolvedModuleMeta) {
-    const { normalizedModuleMeta, prefixPerMod, applyControllers } = restResolvedModuleMetadata;
+  protected getControllersMetadata(prefixPerApp: string = '', restResolvedModuleMeta: RestResolvedModuleMeta) {
+    const { normalizedModuleMeta, prefixPerMod, applyControllers } = restResolvedModuleMeta;
 
     const aControllerMeta: ControllerMeta[] = [];
     if (applyControllers)
-      for (const Controller of restResolvedModuleMetadata.meta.controllers) {
+      for (const Controller of restResolvedModuleMeta.meta.controllers) {
         const classMeta = Reflector.collectMeta(Controller)!;
         for (const methodName of classMeta) {
           for (const decoratorMeta of classMeta[methodName].decorators) {

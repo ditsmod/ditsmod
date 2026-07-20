@@ -3,7 +3,7 @@ import type {
   ExtensionCounters,
   ExtensionContext,
   ForwardRefFn,
-  ResolvedModuleMetadata,
+  ResolvedModuleMeta,
   ModRefId,
   Provider,
   ProviderBuilder,
@@ -59,7 +59,7 @@ export class TestAppInitializer extends RestAppInitializer {
   }
 
   protected override getProvidersForExtensions(
-    resolvedModuleMetadata: ResolvedModuleMetadata,
+    resolvedModuleMetadata: ResolvedModuleMeta,
     extensionCounters: ExtensionCounters,
     extensionContext: ExtensionContext,
   ): Provider[] {
