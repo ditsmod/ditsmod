@@ -554,7 +554,7 @@ export class AppModule {}
     this.addInitHooksFromParent(allInitHooks);
   }
 
-  checkEmptyMetadata(normalizedModuleMeta: NormalizedModuleMeta) {
+  checkEmptyMeta(normalizedModuleMeta: NormalizedModuleMeta) {
     if (
       !isRootModule(normalizedModuleMeta) &&
       !normalizedModuleMeta.mInitHooks.size &&

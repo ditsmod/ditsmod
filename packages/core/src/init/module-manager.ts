@@ -137,7 +137,7 @@ export class ModuleManager {
     if (isRootScan) {
       const rootModule = this.mapId.get('root') || resolveForwardRef(modRefId);
       this.propagateContextHooks(rootModule);
-      this.checkEmptyMetadataForAllModules();
+      this.checkEmptyMetaForAllModules();
     }
 
     return normalizedModuleMeta;
@@ -520,17 +520,17 @@ export class ModuleManager {
     }
   }
 
-  protected checkEmptyMetadataForAllModules() {
+  protected checkEmptyMetaForAllModules() {
     this.map.forEach((meta) => {
       try {
-        this.moduleNormalizer.checkEmptyMetadata(meta);
+        this.moduleNormalizer.checkEmptyMeta(meta);
       } catch (err: any) {
         throw new NormalizationFailure(meta.name, err);
       }
     });
     this.snapshotMap.forEach((meta) => {
       try {
-        this.moduleNormalizer.checkEmptyMetadata(meta);
+        this.moduleNormalizer.checkEmptyMeta(meta);
       } catch (err: any) {
         throw new NormalizationFailure(meta.name, err);
       }

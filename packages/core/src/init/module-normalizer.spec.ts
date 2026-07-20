@@ -878,7 +878,7 @@ describe('ModuleNormalizer', () => {
       class EmptyModule {}
 
       const normalizedModuleMeta = normalizer.normalize(EmptyModule);
-      expect(() => normalizer.checkEmptyMetadata(normalizedModuleMeta)).toThrow(new EmptyModuleMeta());
+      expect(() => normalizer.checkEmptyMeta(normalizedModuleMeta)).toThrow(new EmptyModuleMeta());
     });
   });
 
