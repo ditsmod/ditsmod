@@ -23,6 +23,7 @@ export {
   InitDecoratorOptions,
 } from '#decorators/init-hooks-and-metadata.js';
 export { rootModule, RootDecoratorOptions } from '#decorators/root-module.js';
+export { defaultExtensionProviders } from '#extension/default-extensions-providers.js';
 export {
   ExtensionCounters,
   ExtensionClass,
