@@ -3,7 +3,7 @@ import { injectable, Extension, Provider, Reflector, Class, HttpMethod, Resolved
 
 import { RouteExtensionMeta } from '#types/types.js';
 import { isControllerDecorator, isRoute } from '#types/type.guards.js';
-import { RouteMetadata } from '#decorators/route.js';
+import { DecoratorRouteMeta } from '#decorators/route.js';
 import { ControllerMeta } from '#types/controller-metadata.js';
 import { RouteMeta } from '#types/route-data.js';
 import { GuardItem, ModuleScopedGuard } from '#interceptors/guard.js';
@@ -45,7 +45,7 @@ export class RestRouteExtension implements Extension<RouteExtensionMeta> {
         const classMeta = Reflector.collectMeta(Controller)!;
         for (const methodName of classMeta) {
           for (const decoratorMeta of classMeta[methodName].decorators) {
-            if (!isRoute<RouteMetadata>(decoratorMeta)) {
+            if (!isRoute<DecoratorRouteMeta>(decoratorMeta)) {
               continue;
             }
             const providersPerRou: Provider[] = [];

@@ -21,7 +21,7 @@ export { DispatcherExtension } from './extensions/request-dispatcher.extension.j
 export { InterceptorExtension } from './extensions/use-interceptor.extension.js';
 export { initRest, restRootModule, restModule } from './decorators/rest-init-hooks-and-metadata.js';
 export { RestInitMeta } from './init/rest-init-meta.js';
-export { route, RouteMetadata } from './decorators/route.js';
+export { route, DecoratorRouteMeta } from './decorators/route.js';
 export {
   isRoute,
   isInterceptor,

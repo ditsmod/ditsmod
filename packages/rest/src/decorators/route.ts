@@ -4,7 +4,7 @@ import { Reflector } from '@ditsmod/core';
 import type { GuardItem } from '#interceptors/guard.js';
 import type { HttpInterceptor } from '#interceptors/tokens-and-types.js';
 
-export interface RouteMetadata {
+export interface DecoratorRouteMeta {
   httpMethod: HttpMethod | [HttpMethod, ...HttpMethod[]];
   path: string;
   guards: GuardItem[];
@@ -20,7 +20,7 @@ function routeFn(
   path: string = '',
   guards: GuardItem[] = [],
   interceptors: Class<HttpInterceptor>[] = [],
-): RouteMetadata {
+): DecoratorRouteMeta {
   return { httpMethod, path, guards, interceptors };
 }
 
