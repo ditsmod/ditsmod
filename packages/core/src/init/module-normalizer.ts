@@ -43,7 +43,7 @@ import {
   UnknownExport,
   ForbiddenNormalizedExport,
   ForbiddenAppExport,
-  EmptyModuleMetadata,
+  EmptyModuleMeta,
 } from '#errors';
 import type { RootDecoratorOptions } from '#decorators/root-module.js';
 
@@ -566,7 +566,7 @@ export class AppModule {}
       !normalizedModuleMeta.exportedExtensionProviders.length &&
       !normalizedModuleMeta.extensionProviders.length
     ) {
-      throw new EmptyModuleMetadata();
+      throw new EmptyModuleMeta();
     }
   }
 }

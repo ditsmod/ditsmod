@@ -18,7 +18,7 @@ import {
   UnknownExport,
   ForbiddenNormalizedExport,
   InvalidExtension,
-  EmptyModuleMetadata,
+  EmptyModuleMeta,
   NormalizationFailure,
   MissingRootDecorator,
 } from '@ditsmod/core/errors';
@@ -64,7 +64,7 @@ describe('ModuleManager', () => {
       @featureModule({ providersPerMod: [Provider1] })
       class Module1 {}
 
-      const err = new NormalizationFailure('Module1', new EmptyModuleMetadata());
+      const err = new NormalizationFailure('Module1', new EmptyModuleMeta());
       expect(() => mock.scanModule(Module1)).toThrow(err);
     });
 

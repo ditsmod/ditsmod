@@ -194,7 +194,7 @@ export class AppCollisionNotFound extends CustomError {
 /**
  * `this module should have "providersPerApp", or exports, or extensions.`
  */
-export class EmptyModuleMetadata extends CustomError {
+export class EmptyModuleMeta extends CustomError {
   constructor() {
     super({
       msg1: 'this module should have "providersPerApp", or exports, or extensions.',

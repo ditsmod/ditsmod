@@ -10,7 +10,7 @@ import {
   getProxyForInitMeta,
   isRootModule,
 } from '@ditsmod/core';
-import { ForbiddenNormalizedExport, EmptyModuleMetadata } from '@ditsmod/core/errors';
+import { ForbiddenNormalizedExport, EmptyModuleMeta } from '@ditsmod/core/errors';
 
 import type { AppendsWithOptions, RestInitDecoratorOptions } from '#init/rest-init-raw-meta.js';
 import type { RestModRefId } from '#init/rest-init-meta.js';
@@ -137,7 +137,7 @@ export class RestModuleNormalizer {
       !meta.controllers.length &&
       !meta.appendsWithOpts.length
     ) {
-      throw new EmptyModuleMetadata();
+      throw new EmptyModuleMeta();
     }
   }
 

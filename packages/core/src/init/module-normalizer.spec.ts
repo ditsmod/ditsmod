@@ -21,7 +21,7 @@ import {
   InvalidExtension,
   InvalidModRefId,
   MissingModuleDecorator,
-  EmptyModuleMetadata,
+  EmptyModuleMeta,
   ReexportFailure,
   ResolvedCollisionTokensOnly,
   UndefinedSymbol,
@@ -873,12 +873,12 @@ describe('ModuleNormalizer', () => {
       expect(() => normalizer.normalize(Module1)).toThrow(new ResolvedCollisionTokensOnly('Module1', 'Service1'));
     });
 
-    it('throws EmptyModuleMetadata for a feature module that contributes no metadata', () => {
+    it('throws EmptyModuleMeta for a feature module that contributes no metadata', () => {
       @featureModule()
       class EmptyModule {}
 
       const normalizedModuleMeta = normalizer.normalize(EmptyModule);
-      expect(() => normalizer.checkEmptyMetadata(normalizedModuleMeta)).toThrow(new EmptyModuleMetadata());
+      expect(() => normalizer.checkEmptyMetadata(normalizedModuleMeta)).toThrow(new EmptyModuleMeta());
     });
   });
 
