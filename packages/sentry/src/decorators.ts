@@ -37,7 +37,7 @@ export const sentryCron = (monitorSlug: string, monitorConfig?: MonitorConfig): 
       );
     };
 
-    copyFunctionNameAndMetadata({ originalMethod, descriptor });
+    copyFunctionNameAndMeta({ originalMethod, descriptor });
 
     return descriptor;
   };
@@ -66,7 +66,7 @@ export function sentryTraced(op: string = 'function') {
       );
     };
 
-    copyFunctionNameAndMetadata({ originalMethod, descriptor });
+    copyFunctionNameAndMeta({ originalMethod, descriptor });
 
     return descriptor;
   };
@@ -103,7 +103,7 @@ export function sentryExceptionCaptured() {
       }
     };
 
-    copyFunctionNameAndMetadata({ originalMethod, descriptor });
+    copyFunctionNameAndMeta({ originalMethod, descriptor });
 
     return descriptor;
   };
@@ -112,7 +112,7 @@ export function sentryExceptionCaptured() {
 /**
  * Copies the function name and metadata from the original method to the decorated method.
  */
-function copyFunctionNameAndMetadata({
+function copyFunctionNameAndMeta({
   originalMethod,
   descriptor,
 }: {
