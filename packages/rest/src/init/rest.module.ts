@@ -2,7 +2,7 @@ import { BaseAppOptions, Context, ContextModule, featureModule, getTokens } from
 
 import { DefaultRouter, Router } from '#services/router.js';
 import { RestRouteExtension } from '#extensions/rest-route.extension.js';
-import { DispatcherExtension } from '#extensions/request-dispatcher.extension.js';
+import { DispatcherExtension } from '#extensions/dispatcher.extension.js';
 import { InterceptorExtension } from '#extensions/use-interceptor.extension.js';
 import { AppOptions } from '#types/app-options.js';
 import { RequestDispatcher } from '#services/request-dispatcher.js';
