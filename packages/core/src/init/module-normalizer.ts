@@ -310,7 +310,7 @@ export class ModuleNormalizer {
         this.checkStageMethodsForExtension(this.normalizedModuleMeta.name, p),
       );
       if (extProvidersAndConfigs.config) {
-        this.normalizedModuleMeta.aExtensionConfig.push(extProvidersAndConfigs.config);
+        this.normalizedModuleMeta.extensionConfigs.push(extProvidersAndConfigs.config);
       }
       if (extProvidersAndConfigs.exportedConfig) {
         this.normalizedModuleMeta.aExportedExtensionConfig.push(extProvidersAndConfigs.exportedConfig);

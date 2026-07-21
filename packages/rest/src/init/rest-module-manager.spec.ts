@@ -484,11 +484,11 @@ describe('ModuleManager', () => {
     class Module3 {}
 
     const expectedMeta3 = new RestInitMeta();
-    delete (expectedMeta3 as any).aExtensionConfig;
+    delete (expectedMeta3 as any).extensionConfigs;
     delete (expectedMeta3 as any).aExportedExtensionConfig;
 
     const expectedMeta1 = new RestInitMeta();
-    delete (expectedMeta1 as any).aExtensionConfig;
+    delete (expectedMeta1 as any).extensionConfigs;
     delete (expectedMeta1 as any).aExportedExtensionConfig;
 
     mock.scanRootModule(Module3);
@@ -516,11 +516,11 @@ describe('ModuleManager', () => {
     class Module3 {}
 
     const expectedMeta3 = new RestInitMeta();
-    delete (expectedMeta3 as any).aExtensionConfig;
+    delete (expectedMeta3 as any).extensionConfigs;
     delete (expectedMeta3 as any).aExportedExtensionConfig;
 
     const expectedMeta1 = new RestInitMeta();
-    delete (expectedMeta1 as any).aExtensionConfig;
+    delete (expectedMeta1 as any).extensionConfigs;
     delete (expectedMeta1 as any).aExportedExtensionConfig;
 
     mock.scanRootModule(Module3);

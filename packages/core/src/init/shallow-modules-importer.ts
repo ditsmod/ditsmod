@@ -126,7 +126,7 @@ export class ShallowModulesImporter {
     let multiPerReq: Map<ModRefId, Provider[]>;
     let extensionProviders: Map<ModRefId, Provider[]>;
     let extensionGroupTokens: Map<ModRefId, Map<ExtensionClass, GroupToken>>;
-    let aExtensionConfig: ExtensionConfig[];
+    let extensionConfigs: ExtensionConfig[];
     if (normalizedModuleMeta.isExternal) {
       // External modules do not require app providers and extensions from the application.
       perMod = new Map([...this.importedProvidersPerMod]);
@@ -137,7 +137,7 @@ export class ShallowModulesImporter {
       multiPerReq = new Map([...this.importedMultiProvidersPerReq]);
       extensionProviders = new Map([...this.importedExtensionProviders]);
       extensionGroupTokens = new Map([...this.importedExtensionGroupTokens]);
-      aExtensionConfig = [...this.aImportedExtensionConfig];
+      extensionConfigs = [...this.aImportedExtensionConfig];
     } else {
       this.appProviders.mInitValue.forEach(({ initHooks }, decorator) => {
         if (initHooks && !normalizedModuleMeta.allInitHooks.has(decorator)) {
@@ -158,10 +158,10 @@ export class ShallowModulesImporter {
         ...this.appProviders.importedExtensionGroupTokens,
         ...this.importedExtensionGroupTokens,
       ]);
-      aExtensionConfig = [...this.appProviders.aImportedExtensionConfig, ...this.aImportedExtensionConfig];
+      extensionConfigs = [...this.appProviders.aImportedExtensionConfig, ...this.aImportedExtensionConfig];
     }
 
-    const allExtensionConfigs = normalizedModuleMeta.aExtensionConfig.concat(aExtensionConfig);
+    const allExtensionConfigs = normalizedModuleMeta.extensionConfigs.concat(extensionConfigs);
     this.checkExtensionsGraph(allExtensionConfigs);
     const aOrderedExtensions = topologicalSort<ExtensionClass, BaseExtensionConfig>(allExtensionConfigs, true);
 
@@ -340,8 +340,8 @@ export class ShallowModulesImporter {
     return { module2: modRefId2, providers };
   }
 
-  protected checkExtensionsGraph(aExtensionConfig: (ExtensionConfig | OverrideExtensionConfig)[]) {
-    const extensionWithBeforeExtension = aExtensionConfig?.filter((config) => {
+  protected checkExtensionsGraph(extensionConfigs: (ExtensionConfig | OverrideExtensionConfig)[]) {
+    const extensionWithBeforeExtension = extensionConfigs?.filter((config) => {
       return !isOverrideExtensionConfig(config) && config.beforeExtensions;
     }) as ExtensionConfig[] | undefined;
 

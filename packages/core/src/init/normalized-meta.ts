@@ -38,7 +38,7 @@ export class NormalizedInitMeta<A extends AnyObj = AnyObj> {
   resolvedCollisionsPerReq: [any, ModRefId][];
   extensionProviders: Provider[];
   exportedExtensionProviders: Provider[];
-  aExtensionConfig: ExtensionConfig[];
+  extensionConfigs: ExtensionConfig[];
   aExportedExtensionConfig: ExtensionConfig[];
   /**
    * This property allows you to pass any information to extensions.
@@ -157,7 +157,7 @@ export class NormalizedModuleMeta<
     this.resolvedCollisionsPerReq = [];
     this.extensionProviders = [];
     this.exportedExtensionProviders = [];
-    this.aExtensionConfig = [];
+    this.extensionConfigs = [];
     this.aExportedExtensionConfig = [];
     this.extensionsMeta = {} as ExtensionMeta;
   }
