@@ -108,7 +108,7 @@ export interface ImportModulesShallowConfig {
   appProviders: AppProviders;
   modRefId: ModRefId;
   unfinishedScanModules: Set<ModRefId>;
-  guards1?: ModuleScopedGuard[];
+  guardsPerMod?: ModuleScopedGuard[];
 }
 
 export interface DeepModulesImporterConfig {
@@ -124,7 +124,7 @@ export interface DeepModulesImporterConfig {
 
 export class TrpcShallowModuleImports {
   normalizedModuleMeta: NormalizedModuleMeta;
-  guards1: ModuleScopedGuard[];
+  guardsPerMod: ModuleScopedGuard[];
   /**
    * Snapshot of `TrpcInitMeta`. If you modify any array in this object,
    * the original array will remain unchanged.

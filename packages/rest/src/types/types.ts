@@ -24,7 +24,7 @@ export class RouteExtensionMeta {
   prefixPerMod: string;
   meta: RestInitMeta;
   controllersMeta: ControllerMeta[];
-  guards1: ModuleScopedGuard[];
+  guardsPerMod: ModuleScopedGuard[];
 }
 
 /**

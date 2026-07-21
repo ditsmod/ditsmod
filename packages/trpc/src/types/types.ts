@@ -90,7 +90,7 @@ export class RouteExtensionMeta {
   normalizedModuleMeta: NormalizedModuleMeta;
   meta: TrpcInitMeta;
   controllersMeta: ControllerMeta[];
-  guards1: ModuleScopedGuard[];
+  guardsPerMod: ModuleScopedGuard[];
 }
 
 /**

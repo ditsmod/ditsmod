@@ -26,8 +26,8 @@ export class TrpcRouteExtension implements Extension<RouteExtensionMeta> {
     this.routeExtensionMeta.meta = trpcResolvedModuleMeta.meta;
     this.routeExtensionMeta.normalizedModuleMeta = this.resolvedModuleMeta.normalizedModuleMeta;
     this.routeExtensionMeta.controllersMeta = this.getControllersMetadata(trpcResolvedModuleMeta);
-    this.routeExtensionMeta.guards1 = trpcResolvedModuleMeta.guards1;
-    // this.routeExtensionMeta.guards1 = [];
+    this.routeExtensionMeta.guardsPerMod = trpcResolvedModuleMeta.guardsPerMod;
+    // this.routeExtensionMeta.guardsPerMod = [];
 
     return this.routeExtensionMeta;
   }

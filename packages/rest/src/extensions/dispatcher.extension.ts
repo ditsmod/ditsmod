@@ -101,7 +101,7 @@ export class DispatcherExtension implements Extension<void> {
         return;
       }
 
-      const { controllersMeta, guards1 } = routeExtensionMeta;
+      const { controllersMeta, guardsPerMod } = routeExtensionMeta;
 
       controllersMeta.forEach((controllerMeta) => {
         let handle: RouteHandler;
@@ -111,7 +111,7 @@ export class DispatcherExtension implements Extension<void> {
           handle = this.getHandlerPerReq(routeExtensionMeta, this.injectorPerMod, controllerMeta);
         }
 
-        const countOfGuards = controllerMeta.routeMeta.resolvedGuards!.length + guards1.length;
+        const countOfGuards = controllerMeta.routeMeta.resolvedGuards!.length + guardsPerMod.length;
 
         preparedRouteMeta.push({
           moduleName: routeExtensionMeta.normalizedModuleMeta.name,
@@ -138,7 +138,7 @@ export class DispatcherExtension implements Extension<void> {
     mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend, multi: true });
     const controllerName = getDebugClassName(routeMeta.Controller) || 'unknown';
 
-    if (routeExtensionMeta.guards1.length || controllerMeta.guards.length) {
+    if (routeExtensionMeta.guardsPerMod.length || controllerMeta.guards.length) {
       mergedPerRou.push(RouteScopedGuardedInterceptor);
       mergedPerRou.push({ token: HTTP_INTERCEPTORS, useToken: RouteScopedGuardedInterceptor, multi: true });
     }
@@ -147,7 +147,7 @@ export class DispatcherExtension implements Extension<void> {
     const resolvedPerRou = Injector.resolve(mergedPerRou);
     routeMeta.resolvedGuards = this.getResolvedGuards(controllerMeta.guards, resolvedPerRou);
     routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(
-      routeExtensionMeta.guards1,
+      routeExtensionMeta.guardsPerMod,
       controllerName,
       httpMethods,
       fullPath,
@@ -215,7 +215,7 @@ export class DispatcherExtension implements Extension<void> {
 
     const mergedPerReq: Provider[] = [];
     mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: HttpFrontend, multi: true });
-    if (routeExtensionMeta.guards1.length || controllerMeta.guards.length) {
+    if (routeExtensionMeta.guardsPerMod.length || controllerMeta.guards.length) {
       mergedPerReq.push(RequestScopedGuardedInterceptor);
       mergedPerReq.push({ token: HTTP_INTERCEPTORS, useToken: RequestScopedGuardedInterceptor, multi: true });
     }
@@ -226,7 +226,7 @@ export class DispatcherExtension implements Extension<void> {
     const controllerName = getDebugClassName(routeMeta.Controller) || 'unknown';
     routeMeta.resolvedGuards = this.getResolvedGuards(controllerMeta.guards, resolvedPerReq);
     routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(
-      routeExtensionMeta.guards1,
+      routeExtensionMeta.guardsPerMod,
       controllerName,
       httpMethod,
       fullPath,

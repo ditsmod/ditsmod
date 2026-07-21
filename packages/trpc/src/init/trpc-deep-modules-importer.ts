@@ -20,7 +20,7 @@ import type { ModuleScopedGuard } from '#interceptors/trpc-guard.js';
 export class TrpcResolvedModuleMeta {
   normalizedModuleMeta: NormalizedModuleMeta;
   meta: TrpcInitMeta;
-  guards1: ModuleScopedGuard[];
+  guardsPerMod: ModuleScopedGuard[];
 }
 
 export class TrpcModuleInfo extends ModuleInfo {}

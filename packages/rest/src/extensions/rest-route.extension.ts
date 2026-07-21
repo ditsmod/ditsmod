@@ -30,8 +30,8 @@ export class RestRouteExtension implements Extension<RouteExtensionMeta> {
     this.routeExtensionMeta.prefixPerMod = restResolvedModuleMeta.prefixPerMod;
     this.routeExtensionMeta.normalizedModuleMeta = this.resolvedModuleMeta.normalizedModuleMeta;
     this.routeExtensionMeta.controllersMeta = this.getControllersMetadata(prefixPerApp, restResolvedModuleMeta);
-    this.routeExtensionMeta.guards1 = restResolvedModuleMeta.guards1;
-    // this.routeExtensionMeta.guards1 = [];
+    this.routeExtensionMeta.guardsPerMod = restResolvedModuleMeta.guardsPerMod;
+    // this.routeExtensionMeta.guardsPerMod = [];
 
     return this.routeExtensionMeta;
   }

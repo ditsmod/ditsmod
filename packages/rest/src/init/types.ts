@@ -25,7 +25,7 @@ export class RestImportedProvider<T extends Provider = Provider> {
 export class RestShallowModuleImports {
   normalizedModuleMeta: NormalizedModuleMeta;
   prefixPerMod: string;
-  guards1: ModuleScopedGuard[];
+  guardsPerMod: ModuleScopedGuard[];
   /**
    * Snapshot of `RestInitMeta`. If you modify any array in this object,
    * the original array will remain unchanged.
@@ -55,7 +55,7 @@ export class RestProvidersByLevel {
 export class RestResolvedModuleMeta {
   normalizedModuleMeta: NormalizedModuleMeta;
   meta: RestInitMeta;
-  guards1: ModuleScopedGuard[];
+  guardsPerMod: ModuleScopedGuard[];
   prefixPerMod: string;
   applyControllers?: boolean;
 }
@@ -72,7 +72,7 @@ export interface ImportModulesShallowConfig {
   modRefId: ModRefId;
   unfinishedScanModules: Set<ModRefId>;
   prefixPerMod: string;
-  guards1?: ModuleScopedGuard[];
+  guardsPerMod?: ModuleScopedGuard[];
   isAppends?: boolean;
 }
 

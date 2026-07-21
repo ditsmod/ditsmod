@@ -38,11 +38,11 @@ export class RestDeepModulesImporter {
   }
 
   importModulesDeep(): RestResolvedModuleMeta | undefined {
-    const { guards1, prefixPerMod, meta, applyControllers } = this.shallowModuleImports;
+    const { guardsPerMod, prefixPerMod, meta, applyControllers } = this.shallowModuleImports;
     return {
       normalizedModuleMeta: this.shallowModuleImports.normalizedModuleMeta,
       meta,
-      guards1,
+      guardsPerMod,
       prefixPerMod,
       applyControllers,
     };

@@ -102,11 +102,11 @@ export class TrpcRequestDispatcherExtension implements Extension<void> {
         return;
       }
 
-      const { controllersMeta, guards1 } = routeExtensionMeta;
+      const { controllersMeta, guardsPerMod } = routeExtensionMeta;
 
       controllersMeta.forEach((controllerMeta) => {
         this.setHandlerPerReq(routeExtensionMeta, this.injectorPerMod, controllerMeta);
-        const countOfGuards = controllerMeta.routeMeta.resolvedGuards!.length + guards1.length;
+        const countOfGuards = controllerMeta.routeMeta.resolvedGuards!.length + guardsPerMod.length;
       });
     });
   }
@@ -123,7 +123,7 @@ export class TrpcRequestDispatcherExtension implements Extension<void> {
     mergedPerRou.push({ token: TRPC_HTTP_INTERCEPTORS, useToken: TrpcHttpFrontend as any, multi: true });
     const controllerName = getDebugClassName(routeMeta.Controller) || 'unknown';
 
-    if (routeExtensionMeta.guards1.length || controllerMeta.guards.length) {
+    if (routeExtensionMeta.guardsPerMod.length || controllerMeta.guards.length) {
       mergedPerRou.push(RouteScopedGuardedInterceptor);
       mergedPerRou.push({ token: TRPC_HTTP_INTERCEPTORS, useToken: RouteScopedGuardedInterceptor, multi: true });
     }
@@ -140,7 +140,7 @@ export class TrpcRequestDispatcherExtension implements Extension<void> {
 
     const resolvedPerRou = Injector.resolve(mergedPerRou);
     routeMeta.resolvedGuards = getResolvedGuards(controllerMeta.guards, resolvedPerRou);
-    routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(routeExtensionMeta.guards1, controllerName);
+    routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(routeExtensionMeta.guardsPerMod, controllerName);
     const injectorPerRou = injectorPerMod.createChildFromResolved(resolvedPerRou, 'Rou');
     this.checkDeps(injectorPerRou, routeMeta, controllerName);
     const resolvedTrpcChainMaker = resolvedPerRou.find((rp) => rp.dualKey.token === TrpcChainMaker)!;
@@ -196,7 +196,7 @@ export class TrpcRequestDispatcherExtension implements Extension<void> {
 
     const mergedPerReq: Provider[] = [];
     mergedPerReq.push({ token: TRPC_HTTP_INTERCEPTORS, useToken: TrpcHttpFrontend as any, multi: true });
-    if (routeExtensionMeta.guards1.length || controllerMeta.guards.length) {
+    if (routeExtensionMeta.guardsPerMod.length || controllerMeta.guards.length) {
       mergedPerReq.push(RequestScopedGuardedInterceptor);
       mergedPerReq.push({ token: TRPC_HTTP_INTERCEPTORS, useToken: RequestScopedGuardedInterceptor, multi: true });
     }
@@ -206,7 +206,7 @@ export class TrpcRequestDispatcherExtension implements Extension<void> {
     const resolvedPerRou = Injector.resolve(mergedPerRou);
     const controllerName = getDebugClassName(routeMeta.Controller) || 'unknown';
     routeMeta.resolvedGuards = getResolvedGuards(controllerMeta.guards, resolvedPerReq);
-    routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(routeExtensionMeta.guards1, controllerName, true);
+    routeMeta.resolvedGuardsPerMod = this.getResolvedGuardsPerMod(routeExtensionMeta.guardsPerMod, controllerName, true);
     const injPerReq = injectorPerRou.createChildFromResolved(resolvedPerReq, 'Req');
     // routeMeta.resolvedHandler = this.getResolvedHandler(routeMeta, resolvedPerReq);
     this.checkDeps(injPerReq, routeMeta, controllerName);

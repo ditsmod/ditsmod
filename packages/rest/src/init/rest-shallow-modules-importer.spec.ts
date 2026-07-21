@@ -31,7 +31,7 @@ class MockShallowModulesImporter extends RestShallowModulesImporter {
   declare prefixPerMod: string;
   override moduleName = 'MockModule';
   override normalizedModuleMeta = new NormalizedModuleMeta();
-  // override guards1: ModuleScopedGuard[] = [];
+  // override guardsPerMod: ModuleScopedGuard[] = [];
 
   protected override getResolvedCollisionsPerLevel(
     level: Level,

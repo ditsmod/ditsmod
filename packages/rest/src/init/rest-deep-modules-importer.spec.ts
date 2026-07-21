@@ -217,9 +217,9 @@ describe('DeepModulesImporter', () => {
     const rootMod = map.get(AppModule)?.deepImportedModules.get(initRest)!;
     const mod1 = map.get(dynamicModule)?.deepImportedModules.get(initRest)!;
     expect(mod1.prefixPerMod).toBe('test-prefix');
-    expect(mod1.guards1[0].guard).toBe(Guard1);
-    expect(mod1.guards1[0].meta).toBe(rootMod.meta);
-    expect(mod1.guards1[1].params).toEqual([{ one: 1 }]);
+    expect(mod1.guardsPerMod[0].guard).toBe(Guard1);
+    expect(mod1.guardsPerMod[0].meta).toBe(rootMod.meta);
+    expect(mod1.guardsPerMod[1].params).toEqual([{ one: 1 }]);
   });
 
   it('circular imports modules with forwardRef()', () => {
@@ -582,13 +582,13 @@ describe('DeepModulesImporter', () => {
     const mResolvedModuleMeta = getResolvedModuleMeta(AppModule);
     const mod1 = mResolvedModuleMeta.get(mod1WithOpts);
     const restResolvedModuleMeta = mod1?.deepImportedModules.get(initRest) as RestResolvedModuleMeta;
-    expect(restResolvedModuleMeta.guards1.at(0)?.guard).toBe(BearerGuard1);
+    expect(restResolvedModuleMeta.guardsPerMod.at(0)?.guard).toBe(BearerGuard1);
 
     // Guards per a module must have ref to host module normalizedModuleMeta.
-    expect(restResolvedModuleMeta.guards1.at(0)?.normalizedModuleMeta.modRefId).toBe(AppModule);
+    expect(restResolvedModuleMeta.guardsPerMod.at(0)?.normalizedModuleMeta.modRefId).toBe(AppModule);
 
     // The injector must have enough providers to create a guard instance.
-    const injector = Injector.resolveAndCreate(restResolvedModuleMeta.guards1.at(0)?.meta.providersPerRou || []);
+    const injector = Injector.resolveAndCreate(restResolvedModuleMeta.guardsPerMod.at(0)?.meta.providersPerRou || []);
     expect(() => injector.get(BearerGuard1)).not.toThrow();
     expect(injector.get(BearerGuard1)).toBeInstanceOf(BearerGuard2);
   });

@@ -21,7 +21,7 @@ import type { ModuleScopedGuard } from '#interceptors/trpc-guard.js';
  */
 export class TrpcShallowModulesImporter {
   protected moduleName: string;
-  protected guards1: ModuleScopedGuard[];
+  protected guardsPerMod: ModuleScopedGuard[];
   protected normalizedModuleMeta: NormalizedModuleMeta;
   protected meta: TrpcInitMeta;
 
@@ -63,7 +63,7 @@ export class TrpcShallowModulesImporter {
     appProviders,
     modRefId,
     unfinishedScanModules,
-    guards1,
+    guardsPerMod,
   }: ImportModulesShallowConfig): Map<ModRefId, TrpcShallowModuleImports> {
     this.moduleManager = moduleManager;
     const normalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(modRefId, true);
@@ -72,7 +72,7 @@ export class TrpcShallowModulesImporter {
     this.glProviders = appProviders;
     this.trpcGlProviders = appProviders.mInitValue.get(initTrpcModule) as TrpcAppProviders;
     this.moduleName = normalizedModuleMeta.name;
-    this.guards1 = guards1 || [];
+    this.guardsPerMod = guardsPerMod || [];
     this.unfinishedScanModules = unfinishedScanModules;
     this.importModules(
       [...this.normalizedModuleMeta.importsModules, ...this.normalizedModuleMeta.importsWithOpts],
@@ -81,7 +81,7 @@ export class TrpcShallowModulesImporter {
 
     return this.shallowModuleImportsMap.set(modRefId, {
       normalizedModuleMeta,
-      guards1: this.guards1,
+      guardsPerMod: this.guardsPerMod,
       meta: this.meta,
     });
   }
@@ -102,7 +102,7 @@ export class TrpcShallowModulesImporter {
         continue;
       }
       const meta = this.getInitMeta(normalizedModuleMeta);
-      const { guards1 } = this.getPrefixAndGuards(modRefId, meta, isImport);
+      const { guardsPerMod } = this.getPrefixAndGuards(modRefId, meta, isImport);
       const shallowModulesImporter = new TrpcShallowModulesImporter();
       this.unfinishedScanModules.add(modRefId);
       const shallowModuleImportsBase = shallowModulesImporter.importModulesShallow({
@@ -110,7 +110,7 @@ export class TrpcShallowModulesImporter {
         appProviders: this.glProviders,
         modRefId,
         unfinishedScanModules: this.unfinishedScanModules,
-        guards1,
+        guardsPerMod,
       });
       this.unfinishedScanModules.delete(modRefId);
 
@@ -119,7 +119,7 @@ export class TrpcShallowModulesImporter {
   }
 
   protected getPrefixAndGuards(modRefId: TrpcModRefId, meta: TrpcInitMeta, isImport?: boolean) {
-    let guards1: ModuleScopedGuard[] = [];
+    let guardsPerMod: ModuleScopedGuard[] = [];
     const hasModuleParams = isDynamicModule(modRefId);
     if (hasModuleParams || !isImport) {
       const impGuradsPerMod1 = meta.params.guards.map<ModuleScopedGuard>((g) => {
@@ -129,8 +129,8 @@ export class TrpcShallowModulesImporter {
           normalizedModuleMeta: this.normalizedModuleMeta,
         };
       });
-      guards1 = [...this.guards1, ...impGuradsPerMod1];
+      guardsPerMod = [...this.guardsPerMod, ...impGuradsPerMod1];
     }
-    return { guards1 };
+    return { guardsPerMod };
   }
 }
