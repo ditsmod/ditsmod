@@ -14,7 +14,7 @@ describe('ExtensionManager', () => {
   describe('circular dependencies', () => {
     class MockExtensionManager extends ExtensionManager {
       override normalizedModuleMeta = new NormalizedModuleMeta();
-      override stageIterationMap = new Map();
+      override stageEntryMap = new Map();
       override currStageEntry = new StageEntry(0);
     }
 

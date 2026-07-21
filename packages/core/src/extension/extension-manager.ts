@@ -43,7 +43,7 @@ export class ExtensionManager {
   /**
    * Settings by {@link InternalExtensionManager}.
    */
-  protected stageIterationMap: StageEntryMap;
+  protected stageEntryMap: StageEntryMap;
   protected currStageEntry: StageEntry;
   protected unfinishedInit = new Set<Extension | ExtensionClass>();
   /**
@@ -69,13 +69,13 @@ export class ExtensionManager {
   async stage1<T>(ExtCls: ExtensionClass<T>, pendingExtension: Extension): Promise<PartialExtensionGroupMeta<T>>;
   async stage1<T>(ExtCls: ExtensionClass<T>, pendingExtension?: Extension): Promise<ExtensionGroupMeta<T>> {
     const currStageEntry = this.currStageEntry;
-    const stageIteration = this.stageIterationMap.get(ExtCls);
-    if (stageIteration) {
-      if (stageIteration.index > currStageEntry.index) {
+    const stageEntry = this.stageEntryMap.get(ExtCls);
+    if (stageEntry) {
+      if (stageEntry.index > currStageEntry.index) {
         const extensionName = this.getItemName([...this.unfinishedInit].at(-1)!) || 'unknown';
         throw new UndeclaredExtensionDependency(extensionName, ExtCls.name);
       } else if (this.unfinishedInit.has(ExtCls)) {
-        await stageIteration.promise;
+        await stageEntry.promise;
       }
     }
     if (this.unfinishedInit.has(ExtCls)) {
@@ -167,9 +167,9 @@ export class ExtensionManager {
       extensions = this.injector.getOrderedMultiValues<TokenProvider>(
         groupToken,
         (a, b) => {
-          const stageIterationA = this.stageIterationMap.get(a.useToken) || { index: 0 };
-          const stageIterationB = this.stageIterationMap.get(b.useToken) || { index: 0 };
-          return stageIterationA.index - stageIterationB.index;
+          const stageEntryA = this.stageEntryMap.get(a.useToken) || { index: 0 };
+          const stageEntryB = this.stageEntryMap.get(b.useToken) || { index: 0 };
+          return stageEntryA.index - stageEntryB.index;
         },
         [],
       );
@@ -245,13 +245,13 @@ export class InternalExtensionManager extends ExtensionManager {
   async internalStage1(normalizedModuleMeta: NormalizedModuleMeta, aOrderedExtensions: ExtensionClass[]) {
     this.normalizedModuleMeta = normalizedModuleMeta;
     this.moduleName = normalizedModuleMeta.name;
-    const stageIterationMap = new Map() as StageEntryMap;
-    this.stageIterationMap = stageIterationMap;
+    const stageEntryMap = new Map() as StageEntryMap;
+    this.stageEntryMap = stageEntryMap;
     aOrderedExtensions.forEach((ExtCls, index) => {
-      stageIterationMap.set(ExtCls, new StageEntry(index));
+      stageEntryMap.set(ExtCls, new StageEntry(index));
     });
 
-    for (const [ExtCls, currStageEntry] of stageIterationMap) {
+    for (const [ExtCls, currStageEntry] of stageEntryMap) {
       try {
         this.currStageEntry = currStageEntry;
         await this.stage1(ExtCls);
