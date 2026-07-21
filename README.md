@@ -134,7 +134,7 @@ Run any example in dev mode:
 
 ```bash
 cd examples/01-hello-world
-yarn start:dev
+yarn start
 ```
 
 Preview English docs:
