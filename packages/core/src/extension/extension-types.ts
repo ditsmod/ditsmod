@@ -29,7 +29,9 @@ export class ExtensionGroupMeta<T = any> {
     public groupDebugMeta: ExtensionDebugMeta<T>[],
     public groupData: T[],
   ) {}
+}
 
+export class InternalExtensionGroupMeta<T = any> extends ExtensionGroupMeta<T> {
   addDebugMeta(debugMeta: ExtensionDebugMeta<T>) {
     this.groupDebugMeta.push(debugMeta);
     this.groupData.push(debugMeta.payload);

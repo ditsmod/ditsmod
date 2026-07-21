@@ -2,7 +2,8 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import {
   Extension,
   ExtensionDebugMeta,
-  ExtensionGroupMeta,
+  type ExtensionGroupMeta,
+  InternalExtensionGroupMeta,
   ExtensionCounters,
   PartialExtensionGroupMeta,
   ExtensionClass,
@@ -176,7 +177,7 @@ export class ExtensionManager {
       const result = this.injector.get(ExtCls, false);
       extensions = result ? [result] : [];
     }
-    const extensionGroupMeta = new ExtensionGroupMeta<T>(this.moduleName, [], []);
+    const extensionGroupMeta = new InternalExtensionGroupMeta<T>(this.moduleName, [], []);
     this.updateExtensionCounters(ExtCls, extensionGroupMeta);
 
     for (const extension of extensions) {
