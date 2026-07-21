@@ -16,9 +16,9 @@ export class BodyParserExtension implements Extension<void> {
   async stage1() {
     const extensionGroupMeta = await this.extensionManager.stage1(RestRouteExtension);
     extensionGroupMeta.groupData.forEach((routeExtensionMeta) => {
-      const { aControllerMeta } = routeExtensionMeta;
+      const { controllersMeta } = routeExtensionMeta;
       const { providersPerMod } = routeExtensionMeta.normalizedModuleMeta;
-      aControllerMeta.forEach(({ providersPerRou, providersPerReq, httpMethods, scope }) => {
+      controllersMeta.forEach(({ providersPerRou, providersPerReq, httpMethods, scope }) => {
         // Merging the providers from a module and a controller
         const mergedProvidersPerRou = [...routeExtensionMeta.meta.providersPerRou, ...providersPerRou];
         const mergedProvidersPerReq = [...routeExtensionMeta.meta.providersPerReq, ...providersPerReq];

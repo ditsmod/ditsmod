@@ -96,14 +96,14 @@ export class DispatcherExtension implements Extension<void> {
     const preparedRouteMeta: PreparedRouteMeta[] = [];
 
     aRouteExtensionMeta.forEach((routeExtensionMeta) => {
-      if (!routeExtensionMeta.aControllerMeta.length) {
+      if (!routeExtensionMeta.controllersMeta.length) {
         // No routes from this extension.
         return;
       }
 
-      const { aControllerMeta, guards1 } = routeExtensionMeta;
+      const { controllersMeta, guards1 } = routeExtensionMeta;
 
-      aControllerMeta.forEach((controllerMeta) => {
+      controllersMeta.forEach((controllerMeta) => {
         let handle: RouteHandler;
         if (controllerMeta.scope == 'route') {
           handle = this.getHandlerPerMod(routeExtensionMeta, this.injectorPerMod, controllerMeta);
@@ -387,7 +387,7 @@ export class DispatcherExtension implements Extension<void> {
   protected checkPresenceOfRoutesInApplication(groupDataPerApp: AppExtensionGroupMeta<RouteExtensionMeta>[]) {
     return groupDataPerApp.reduce((prev1, curr1) => {
       return (
-        prev1 || curr1.groupData.reduce((prev2, curr2) => prev2 || Boolean(curr2.aControllerMeta.length), false)
+        prev1 || curr1.groupData.reduce((prev2, curr2) => prev2 || Boolean(curr2.controllersMeta.length), false)
       );
     }, false);
   }

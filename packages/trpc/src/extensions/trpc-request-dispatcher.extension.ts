@@ -97,14 +97,14 @@ export class TrpcRequestDispatcherExtension implements Extension<void> {
 
   protected prepareRoutesMeta(aRouteExtensionMeta: RouteExtensionMeta[]) {
     aRouteExtensionMeta.forEach((routeExtensionMeta) => {
-      if (!routeExtensionMeta.aControllerMeta.length) {
+      if (!routeExtensionMeta.controllersMeta.length) {
         // No routes from this extension.
         return;
       }
 
-      const { aControllerMeta, guards1 } = routeExtensionMeta;
+      const { controllersMeta, guards1 } = routeExtensionMeta;
 
-      aControllerMeta.forEach((controllerMeta) => {
+      controllersMeta.forEach((controllerMeta) => {
         this.setHandlerPerReq(routeExtensionMeta, this.injectorPerMod, controllerMeta);
         const countOfGuards = controllerMeta.routeMeta.resolvedGuards!.length + guards1.length;
       });

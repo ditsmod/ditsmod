@@ -45,17 +45,17 @@ export class CorsExtension implements Extension<void | false> {
   protected prepareDataAndSetInterceptors(groupDataPerApp: AppExtensionGroupMeta<RouteExtensionMeta>[]) {
     groupDataPerApp.forEach((extensionGroupMetaPerApp) => {
       extensionGroupMetaPerApp.groupData.forEach((routeExtensionMeta) => {
-        const { aControllerMeta } = routeExtensionMeta;
+        const { controllersMeta } = routeExtensionMeta;
         const { providersPerMod } = routeExtensionMeta.normalizedModuleMeta;
         const injector = Injector.resolveAndCreate([...this.providersPerApp, ...providersPerMod]);
         const routesWithOptions = this.getRoutesWithOptions(
           providersPerMod,
           extensionGroupMetaPerApp.groupData,
-          aControllerMeta,
+          controllersMeta,
         );
-        aControllerMeta.push(...routesWithOptions);
+        controllersMeta.push(...routesWithOptions);
 
-        aControllerMeta.forEach(({ providersPerReq, providersPerRou, scope }) => {
+        controllersMeta.forEach(({ providersPerReq, providersPerRou, scope }) => {
           const mergedPerRou = [...routeExtensionMeta.meta.providersPerRou, ...providersPerRou];
           const corsOptions = this.getCorsOptions(injector, mergedPerRou);
           const mergedCorsOptions = mergeOptions(corsOptions);
@@ -85,7 +85,7 @@ export class CorsExtension implements Extension<void | false> {
     const sPathWithOptions = new Set<string>();
 
     aRouteExtensionMeta.forEach((routeExtensionMeta) => {
-      routeExtensionMeta.aControllerMeta
+      routeExtensionMeta.controllersMeta
         .filter(({ httpMethods }) => httpMethods.includes('OPTIONS'))
         .forEach(({ fullPath }) => sPathWithOptions.add(fullPath));
     });
@@ -96,12 +96,12 @@ export class CorsExtension implements Extension<void | false> {
   protected getRoutesWithOptions(
     providersPerMod: Provider[],
     aRouteExtensionMeta: RouteExtensionMeta[],
-    aControllerMeta: ControllerMeta[],
+    controllersMeta: ControllerMeta[],
   ) {
     const sPathWithOptions = this.getPathWtihOptions(aRouteExtensionMeta);
     const newArrControllersMeta2: ControllerMeta[] = []; // Routes with OPTIONS methods
 
-    aControllerMeta.forEach(({ httpMethods, fullPath }) => {
+    controllersMeta.forEach(({ httpMethods, fullPath }) => {
       httpMethods.forEach((method) => {
         // Search routes with non-OPTIONS methods, and makes new routes with OPTIONS methods
         if (sPathWithOptions.has(fullPath)) {

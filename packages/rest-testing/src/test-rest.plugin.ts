@@ -14,7 +14,7 @@ export class TestRestPlugin extends TestRestApplication {
         return;
       }
       extensionGroupMeta.groupData?.forEach((routeExtensionMeta) => {
-        routeExtensionMeta.aControllerMeta.forEach((controllerMeta) => {
+        routeExtensionMeta.controllersMeta.forEach((controllerMeta) => {
           aProvidersToOverride.forEach((providerToOverride) => {
             TestOverrider.overrideProvider(
               [controllerMeta.providersPerRou, controllerMeta.providersPerReq],

@@ -46,7 +46,7 @@ export class OpenapiRouteExtension extends RestRouteExtension implements Extensi
     const prefixParams = oasOptions?.paratemers;
     const prefixTags = oasOptions?.tags;
 
-    const aControllerMeta: ControllerMeta[] = [];
+    const controllersMeta: ControllerMeta[] = [];
     if (applyControllers)
       for (const Controller of meta.controllers as Class<Record<string | symbol, any>>[]) {
         const classMeta = Reflector.collectMeta(Controller)!;
@@ -98,7 +98,7 @@ export class OpenapiRouteExtension extends RestRouteExtension implements Extensi
 
             providersPerRou.push({ token: RouteMeta, useValue: routeMeta });
 
-            aControllerMeta.push({
+            controllersMeta.push({
               providersPerRou,
               providersPerReq,
               fullPath,
@@ -112,7 +112,7 @@ export class OpenapiRouteExtension extends RestRouteExtension implements Extensi
         }
       }
 
-    return aControllerMeta;
+    return controllersMeta;
   }
 
   protected mergeParams(

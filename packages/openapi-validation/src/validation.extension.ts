@@ -24,11 +24,11 @@ export class ValidationExtension implements Extension<void> {
     const extensionGroupMeta = await this.extensionManager.stage1(RestRouteExtension);
 
     extensionGroupMeta.groupData.forEach((routeExtensionMeta) => {
-      const { aControllerMeta } = routeExtensionMeta;
+      const { controllersMeta } = routeExtensionMeta;
       const { providersPerMod } = routeExtensionMeta.normalizedModuleMeta;
       providersPerMod.push({ token: AjvService, useValue: this.ajvService });
 
-      aControllerMeta.forEach(({ providersPerReq, routeMeta }) => {
+      controllersMeta.forEach(({ providersPerReq, routeMeta }) => {
         const validationRouteMeta = routeMeta as ValidationRouteMeta;
         validationRouteMeta.parameters = [];
         if (validationRouteMeta.operationObject?.parameters?.length) {

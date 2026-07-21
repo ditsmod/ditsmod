@@ -89,7 +89,7 @@ export type RedirectStatusCodes = 300 | 301 | 302 | 303 | 307 | 308;
 export class RouteExtensionMeta {
   normalizedModuleMeta: NormalizedModuleMeta;
   meta: TrpcInitMeta;
-  aControllerMeta: ControllerMeta[];
+  controllersMeta: ControllerMeta[];
   guards1: ModuleScopedGuard[];
 }
 

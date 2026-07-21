@@ -23,7 +23,7 @@ export class RouteExtensionMeta {
   normalizedModuleMeta: NormalizedModuleMeta;
   prefixPerMod: string;
   meta: RestInitMeta;
-  aControllerMeta: ControllerMeta[];
+  controllersMeta: ControllerMeta[];
   guards1: ModuleScopedGuard[];
 }
 

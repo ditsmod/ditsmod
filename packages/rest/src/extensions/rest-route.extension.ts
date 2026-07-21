@@ -29,7 +29,7 @@ export class RestRouteExtension implements Extension<RouteExtensionMeta> {
     const { path: prefixPerApp } = this.appOptions;
     this.routeExtensionMeta.prefixPerMod = restResolvedModuleMeta.prefixPerMod;
     this.routeExtensionMeta.normalizedModuleMeta = this.resolvedModuleMeta.normalizedModuleMeta;
-    this.routeExtensionMeta.aControllerMeta = this.getControllersMetadata(prefixPerApp, restResolvedModuleMeta);
+    this.routeExtensionMeta.controllersMeta = this.getControllersMetadata(prefixPerApp, restResolvedModuleMeta);
     this.routeExtensionMeta.guards1 = restResolvedModuleMeta.guards1;
     // this.routeExtensionMeta.guards1 = [];
 
@@ -39,7 +39,7 @@ export class RestRouteExtension implements Extension<RouteExtensionMeta> {
   protected getControllersMetadata(prefixPerApp: string = '', restResolvedModuleMeta: RestResolvedModuleMeta) {
     const { normalizedModuleMeta, prefixPerMod, applyControllers } = restResolvedModuleMeta;
 
-    const aControllerMeta: ControllerMeta[] = [];
+    const controllersMeta: ControllerMeta[] = [];
     if (applyControllers)
       for (const Controller of restResolvedModuleMeta.meta.controllers) {
         const classMeta = Reflector.collectMeta(Controller)!;
@@ -68,7 +68,7 @@ export class RestRouteExtension implements Extension<RouteExtensionMeta> {
               methodName,
             };
             providersPerRou.push({ token: RouteMeta, useValue: routeMeta });
-            aControllerMeta.push({
+            controllersMeta.push({
               httpMethods: Array.isArray(httpMethod) ? httpMethod : [httpMethod],
               fullPath,
               providersPerRou,
@@ -82,7 +82,7 @@ export class RestRouteExtension implements Extension<RouteExtensionMeta> {
         }
       }
 
-    return aControllerMeta;
+    return controllersMeta;
   }
 
   /**

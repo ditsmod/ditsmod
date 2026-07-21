@@ -25,7 +25,7 @@ export class TrpcRouteExtension implements Extension<RouteExtensionMeta> {
     this.routeExtensionMeta = new RouteExtensionMeta();
     this.routeExtensionMeta.meta = trpcResolvedModuleMeta.meta;
     this.routeExtensionMeta.normalizedModuleMeta = this.resolvedModuleMeta.normalizedModuleMeta;
-    this.routeExtensionMeta.aControllerMeta = this.getControllersMetadata(trpcResolvedModuleMeta);
+    this.routeExtensionMeta.controllersMeta = this.getControllersMetadata(trpcResolvedModuleMeta);
     this.routeExtensionMeta.guards1 = trpcResolvedModuleMeta.guards1;
     // this.routeExtensionMeta.guards1 = [];
 
@@ -33,7 +33,7 @@ export class TrpcRouteExtension implements Extension<RouteExtensionMeta> {
   }
 
   protected getControllersMetadata(trpcResolvedModuleMeta: TrpcResolvedModuleMeta) {
-    const aControllerMeta: ControllerMeta[] = [];
+    const controllersMeta: ControllerMeta[] = [];
 
     for (const Controller of trpcResolvedModuleMeta.meta.controllers as Class<Record<string | symbol, any>>[]) {
       const classMeta = Reflector.collectMeta(Controller)!;
@@ -65,7 +65,7 @@ export class TrpcRouteExtension implements Extension<RouteExtensionMeta> {
             methodName,
           };
           providersPerRou.push({ token: TrpcRouteMeta, useValue: routeMeta });
-          aControllerMeta.push({
+          controllersMeta.push({
             providersPerRou,
             providersPerReq,
             routeMeta,
@@ -76,6 +76,6 @@ export class TrpcRouteExtension implements Extension<RouteExtensionMeta> {
       }
     }
 
-    return aControllerMeta;
+    return controllersMeta;
   }
 }

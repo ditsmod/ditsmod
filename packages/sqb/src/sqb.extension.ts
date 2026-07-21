@@ -8,10 +8,10 @@ export class SqbExtension implements Extension<void> {
   async stage1() {
     const extensionGroupMeta = await this.extensionManager.stage1(RestRouteExtension);
     extensionGroupMeta.groupData.forEach((routeExtensionMeta) => {
-      const { aControllerMeta } = routeExtensionMeta;
+      const { controllersMeta } = routeExtensionMeta;
       console.log('-'.repeat(50), routeExtensionMeta.meta);
 
-      aControllerMeta.forEach(({ providersPerRou, providersPerReq }) => {
+      controllersMeta.forEach(({ providersPerRou, providersPerReq }) => {
         console.log(routeExtensionMeta.meta.providersPerMod, providersPerRou, providersPerReq);
       });
     });

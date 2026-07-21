@@ -30,8 +30,8 @@ export class AuthjsExtension implements Extension {
   async stage2(injectorPerMod: Injector): Promise<void> {
     const authjsConfig = injectorPerMod.get(AuthjsConfig);
     parent: for (const routeExtensionMeta of this.extensionGroupMeta.groupData) {
-      const { aControllerMeta } = routeExtensionMeta;
-      for (const obj of aControllerMeta) {
+      const { controllersMeta } = routeExtensionMeta;
+      for (const obj of controllersMeta) {
         const { fullPath, interceptors, httpMethods } = obj;
         const splitedPath = fullPath.split('/');
         if (interceptors.includes(AuthjsInterceptor)) {
@@ -40,7 +40,7 @@ export class AuthjsExtension implements Extension {
           }
           const basePath = splitedPath.slice(0, -2).join('/');
           (authjsConfig.basePath as unknown as string) = `/${basePath}`;
-          aControllerMeta.push({ ...obj, httpMethods: ['GET'], fullPath: `${basePath}/:action` });
+          controllersMeta.push({ ...obj, httpMethods: ['GET'], fullPath: `${basePath}/:action` });
           break parent;
         }
       }

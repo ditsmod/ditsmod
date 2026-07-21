@@ -17,7 +17,7 @@ export class InterceptorExtension implements Extension {
   async stage1() {
     const extensionGroupMeta = await this.extensionManager.stage1(RestRouteExtension);
     for (const routeExtensionMeta of extensionGroupMeta.groupData) {
-      for (const ctrlMeta of routeExtensionMeta.aControllerMeta) {
+      for (const ctrlMeta of routeExtensionMeta.controllersMeta) {
         for (const Interceptor of ctrlMeta.interceptors) {
           if (isInterceptor(Interceptor)) {
             const provider = { token: HTTP_INTERCEPTORS, useClass: Interceptor, multi: true };

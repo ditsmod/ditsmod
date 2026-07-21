@@ -41,7 +41,7 @@ describe('SentryExtension', () => {
     };
 
     const mockRouteExtensionMeta = {
-      aControllerMeta: [mockControllerMeta],
+      controllersMeta: [mockControllerMeta],
     };
 
     extensionManager.stage1.mockResolvedValue({
@@ -67,7 +67,7 @@ describe('SentryExtension', () => {
       routeMeta: {} as any,
     };
     const mockRouteExtensionMeta = {
-      aControllerMeta: [mockControllerMeta],
+      controllersMeta: [mockControllerMeta],
     };
     extensionManager.stage1.mockResolvedValue({
       groupData: [mockRouteExtensionMeta],
