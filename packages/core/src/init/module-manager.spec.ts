@@ -687,7 +687,7 @@ describe('ModuleManager', () => {
       expectedMeta3.mInitHooks = expect.any(Map);
       expectedMeta3.decoratorOptions = expect.any(Object);
       delete (expectedMeta3 as any).extensionConfigs;
-      delete (expectedMeta3 as any).aExportedExtensionConfig;
+      delete (expectedMeta3 as any).exportedExtensionConfigs;
 
       const expectedMeta1 = new NormalizedModuleMeta();
       expectedMeta1.id = '';
@@ -699,7 +699,7 @@ describe('ModuleManager', () => {
       expectedMeta1.isExternal = false;
       expectedMeta1.decoratorOptions = expect.any(Object);
       delete (expectedMeta1 as any).extensionConfigs;
-      delete (expectedMeta1 as any).aExportedExtensionConfig;
+      delete (expectedMeta1 as any).exportedExtensionConfigs;
       expectedMeta1.mInitHooks = expect.any(Map);
 
       mock.scanRootModule(Module3);
@@ -737,7 +737,7 @@ describe('ModuleManager', () => {
       expectedMeta3.decoratorOptions = expect.any(Object);
       expectedMeta3.mInitHooks = expect.any(Map);
       delete (expectedMeta3 as any).extensionConfigs;
-      delete (expectedMeta3 as any).aExportedExtensionConfig;
+      delete (expectedMeta3 as any).exportedExtensionConfigs;
 
       const expectedMeta1 = new NormalizedModuleMeta();
       expectedMeta1.id = '';
@@ -750,7 +750,7 @@ describe('ModuleManager', () => {
       expectedMeta1.decoratorOptions = expect.any(Object);
       expectedMeta1.mInitHooks = expect.any(Map);
       delete (expectedMeta1 as any).extensionConfigs;
-      delete (expectedMeta1 as any).aExportedExtensionConfig;
+      delete (expectedMeta1 as any).exportedExtensionConfigs;
 
       mock.scanRootModule(Module3);
       expect(mock.getNormalizedModuleMeta('root')).toMatchObject(expectedMeta3);

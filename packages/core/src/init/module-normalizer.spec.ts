@@ -515,7 +515,7 @@ describe('ModuleNormalizer', () => {
       const normalizedModuleMeta = normalizer.normalize(Module1);
       expect(normalizedModuleMeta.extensionProviders).toEqual([]);
       expect(normalizedModuleMeta.exportedExtensionProviders).toEqual([Extension1]);
-      expect(normalizedModuleMeta.aExportedExtensionConfig).toHaveLength(1);
+      expect(normalizedModuleMeta.exportedExtensionConfigs).toHaveLength(1);
     });
   });
 

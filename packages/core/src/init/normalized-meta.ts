@@ -39,7 +39,7 @@ export class NormalizedInitMeta<A extends AnyObj = AnyObj> {
   extensionProviders: Provider[];
   exportedExtensionProviders: Provider[];
   extensionConfigs: ExtensionConfig[];
-  aExportedExtensionConfig: ExtensionConfig[];
+  exportedExtensionConfigs: ExtensionConfig[];
   /**
    * This property allows you to pass any information to extensions.
    *
@@ -158,7 +158,7 @@ export class NormalizedModuleMeta<
     this.extensionProviders = [];
     this.exportedExtensionProviders = [];
     this.extensionConfigs = [];
-    this.aExportedExtensionConfig = [];
+    this.exportedExtensionConfigs = [];
     this.extensionsMeta = {} as ExtensionMeta;
   }
 }

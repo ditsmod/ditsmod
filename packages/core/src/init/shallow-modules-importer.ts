@@ -261,7 +261,7 @@ export class ShallowModulesImporter {
         normalizedModuleMeta1.modRefId,
         normalizedModuleMeta1.mExportedExtensionAsGroupToken,
       );
-      this.aImportedExtensionConfig.push(...normalizedModuleMeta1.aExportedExtensionConfig);
+      this.aImportedExtensionConfig.push(...normalizedModuleMeta1.exportedExtensionConfigs);
     }
     this.throwIfTryResolvingMultiprovidersCollisions(normalizedModuleMeta1.name);
   }

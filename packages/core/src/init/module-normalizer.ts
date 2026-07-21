@@ -313,7 +313,7 @@ export class ModuleNormalizer {
         this.normalizedModuleMeta.extensionConfigs.push(extProvidersAndConfigs.config);
       }
       if (extProvidersAndConfigs.exportedConfig) {
-        this.normalizedModuleMeta.aExportedExtensionConfig.push(extProvidersAndConfigs.exportedConfig);
+        this.normalizedModuleMeta.exportedExtensionConfigs.push(extProvidersAndConfigs.exportedConfig);
       }
       this.normalizedModuleMeta.extensionProviders.push(...extProvidersAndConfigs.providers);
       this.normalizedModuleMeta.exportedExtensionProviders.push(...extProvidersAndConfigs.exportedProviders);

@@ -485,11 +485,11 @@ describe('ModuleManager', () => {
 
     const expectedMeta3 = new RestInitMeta();
     delete (expectedMeta3 as any).extensionConfigs;
-    delete (expectedMeta3 as any).aExportedExtensionConfig;
+    delete (expectedMeta3 as any).exportedExtensionConfigs;
 
     const expectedMeta1 = new RestInitMeta();
     delete (expectedMeta1 as any).extensionConfigs;
-    delete (expectedMeta1 as any).aExportedExtensionConfig;
+    delete (expectedMeta1 as any).exportedExtensionConfigs;
 
     mock.scanRootModule(Module3);
     expect(getInitMeta('root')).toBeFalsy();
@@ -517,11 +517,11 @@ describe('ModuleManager', () => {
 
     const expectedMeta3 = new RestInitMeta();
     delete (expectedMeta3 as any).extensionConfigs;
-    delete (expectedMeta3 as any).aExportedExtensionConfig;
+    delete (expectedMeta3 as any).exportedExtensionConfigs;
 
     const expectedMeta1 = new RestInitMeta();
     delete (expectedMeta1 as any).extensionConfigs;
-    delete (expectedMeta1 as any).aExportedExtensionConfig;
+    delete (expectedMeta1 as any).exportedExtensionConfigs;
 
     mock.scanRootModule(Module3);
     expect(getInitMeta('root')).toBeFalsy();
