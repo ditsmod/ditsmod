@@ -15,9 +15,9 @@ export class RequestScopedHttpFrontend extends RouteScopedHttpFrontend {
     if (ctx.queryString) {
       this.ctx.set(QUERY_PARAMS, parse(ctx.queryString));
     }
-    if (ctx.aPathParams?.length) {
+    if (ctx.rawPathParams?.length) {
       const pathParams: AnyObj = {};
-      ctx.aPathParams.forEach((param) => (pathParams[param.key] = param.value));
+      ctx.rawPathParams.forEach((param) => (pathParams[param.key] = param.value));
       this.ctx.set(PATH_PARAMS, pathParams);
     }
     return this;

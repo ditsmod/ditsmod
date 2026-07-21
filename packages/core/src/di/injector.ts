@@ -137,11 +137,11 @@ console.log(providers[0].resolvedFactories[0].dependencies);
    */
   static resolve(providers: (Provider | ForwardRefFn<Provider>)[]): ResolvedProvider[] {
     const normalized = this.normalizeProviders(providers, []);
-    const aResolvedProviders: ResolvedProvider[] = [];
+    const resolvedProviders: ResolvedProvider[] = [];
     normalized.forEach((normProvider) => {
-      aResolvedProviders.push(...this.resolveProvider(normProvider));
+      resolvedProviders.push(...this.resolveProvider(normProvider));
     });
-    const map = this.mergeResolvedProviders(aResolvedProviders, new Map());
+    const map = this.mergeResolvedProviders(resolvedProviders, new Map());
     return Array.from(map.values());
   }
 
@@ -355,20 +355,20 @@ expect(injector.get(Car) instanceof Car).toBe(true);
     if (cache) {
       return cache;
     }
-    const { aParamsMeta, hasParentParams, recipe } = ParentParams.getParamsMetaAndRecipe([
+    const { paramsMeta, hasParentParams, recipe } = ParentParams.getParamsMetaAndRecipe([
       ...classPropMeta.paramChain!.values(),
     ]);
-    if (aParamsMeta.includes(null)) {
-      throw new NoAnnotation(Cls, aParamsMeta, propertyKey, hasParentParams, recipe);
+    if (paramsMeta.includes(null)) {
+      throw new NoAnnotation(Cls, paramsMeta, propertyKey, hasParentParams, recipe);
     }
-    const deps = (aParamsMeta as ParameterMeta[]).map((parameterMeta) => {
+    const deps = (paramsMeta as ParameterMeta[]).map((parameterMeta) => {
       const { token, input, isOptional, visibility } = this.extractPayload(parameterMeta);
       if (token != null) {
         return new Dependency(KeyRegistry.get(token), isOptional, visibility, input);
       } else if (isOptional) {
         return new Dependency(KeyRegistry.get(OptionalNullishToken), true, visibility, input);
       } else {
-        throw new NoAnnotation(Cls, aParamsMeta, propertyKey);
+        throw new NoAnnotation(Cls, paramsMeta, propertyKey);
       }
     });
 

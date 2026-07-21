@@ -93,7 +93,7 @@ export class ModuleManager {
     modRefId = resolveForwardRef(modRefId);
     const normalizedModuleMeta = this.normalizeMeta(modRefId, allInitHooks);
     const importsOrExports: (DynamicModule | ModuleType)[] = [];
-    normalizedModuleMeta.mInitHooks.forEach((initHooks, decorator) => {
+    normalizedModuleMeta.initHooksMap.forEach((initHooks, decorator) => {
       const meta = normalizedModuleMeta.initMeta.get(decorator);
       if (meta) {
         importsOrExports.push(...initHooks.getModulesToScan(meta));
@@ -392,7 +392,7 @@ export class ModuleManager {
    */
   protected callInitHooksAfterScan(normalizedModuleMeta: NormalizedModuleMeta) {
     normalizedModuleMeta.allInitHooks.forEach((initHooks, decorator) => {
-      if (!normalizedModuleMeta.mInitHooks.has(decorator)) {
+      if (!normalizedModuleMeta.initHooksMap.has(decorator)) {
         const meta = initHooks.clone().normalize(normalizedModuleMeta);
         if (meta) {
           normalizedModuleMeta.initMeta.set(decorator, meta);
@@ -416,19 +416,19 @@ export class ModuleManager {
     if (copy.extensionsMeta) {
       copy.extensionsMeta = { ...copy.extensionsMeta };
     }
-    copy.mInitHooks = new Map(copy.mInitHooks);
+    copy.initHooksMap = new Map(copy.initHooksMap);
     copy.allInitHooks = new Map(copy.allInitHooks);
-    copy.mExtensionAsGroupToken = new Map(copy.mExtensionAsGroupToken);
-    copy.mExportedExtensionAsGroupToken = new Map(copy.mExportedExtensionAsGroupToken);
+    copy.extensionGroupTokenMap = new Map(copy.extensionGroupTokenMap);
+    copy.exportedExtensionGroupTokenMap = new Map(copy.exportedExtensionGroupTokenMap);
     copy.initMeta = new Map();
-    copy.mInitHooks.forEach((initHooks, decorator) => {
+    copy.initHooksMap.forEach((initHooks, decorator) => {
       const meta = initHooks.normalize(copy);
       if (meta) {
         copy.initMeta.set(decorator, meta);
       }
     });
     copy.allInitHooks.forEach((initHooks, decorator) => {
-      if (!copy.mInitHooks.has(decorator)) {
+      if (!copy.initHooksMap.has(decorator)) {
         const meta = initHooks.clone().normalize(copy);
         if (meta) {
           copy.initMeta.set(decorator, meta);
@@ -452,13 +452,13 @@ export class ModuleManager {
       return false;
     }
 
-    const aModRefId = this.propsWithModules
+    const modRefIds = this.propsWithModules
       .map((p) => targetMeta[p])
       .reduce<ModRefId[]>((prev, curr) => prev.concat(curr), []);
 
     return (
-      aModRefId.some((modRefId) => inputModuleId === modRefId) ||
-      aModRefId.some((modRefId) => this.includesInSomeModule(inputModuleId, modRefId))
+      modRefIds.some((modRefId) => inputModuleId === modRefId) ||
+      modRefIds.some((modRefId) => this.includesInSomeModule(inputModuleId, modRefId))
     );
   }
 
@@ -500,11 +500,11 @@ export class ModuleManager {
     }
 
     const activeHooks: AllInitHooks = new Map(inheritedHooks);
-    startMeta.mInitHooks.forEach((initHooks, decorator) => {
+    startMeta.initHooksMap.forEach((initHooks, decorator) => {
       activeHooks.set(decorator, initHooks);
     });
 
-    if (startMeta.mInitHooks.size === 0 && activeHooks.size > 0) {
+    if (startMeta.initHooksMap.size === 0 && activeHooks.size > 0) {
       try {
         this.moduleNormalizer.propagateParentHooks(startMeta, activeHooks);
       } catch (err: any) {

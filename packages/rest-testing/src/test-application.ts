@@ -43,8 +43,8 @@ export class TestRestApplication extends RestApplication {
    * Adds providers to module metadata at any level. Use this method only if the
    * {@link overrideModuleMeta | this.overrideModuleMeta()} method is not suitable for you.
    */
-  addProvidersToModule(modRefId: ModRefId, aProviders: Provider[]) {
-    this.testAppInitializer.addProvidersToModule(modRefId, aProviders);
+  addProvidersToModule(modRefId: ModRefId, providers: Provider[]) {
+    this.testAppInitializer.addProvidersToModule(modRefId, providers);
     return this;
   }
 

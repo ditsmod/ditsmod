@@ -11,7 +11,7 @@ import type { PathParam } from './router.js';
 export abstract class BaseRequestContext<T = any> extends Context {
   rawReq: RawRequest;
   rawRes: RawResponse;
-  aPathParams: PathParam[] | null;
+  rawPathParams: PathParam[] | null;
   queryString: string;
   pathParams?: AnyObj;
   queryParams?: AnyObj;

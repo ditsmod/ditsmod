@@ -6,18 +6,18 @@ export type ParentRecipe = number | ParentRecipe[];
 
 export class ParentParams {
   static getParamsMetaAndRecipe(paramsMetaOfClass: (ParameterMeta | null)[][]) {
-    let aParamsMeta: (ParameterMeta | null)[] = [];
+    let paramsMeta: (ParameterMeta | null)[] = [];
     let recipe: ParentRecipe[] = [];
     let hasParentParams: boolean = false;
 
-    for (const aParameterMeta of paramsMetaOfClass) {
-      const parentParamsMeta = aParamsMeta;
+    for (const parametersMeta of paramsMetaOfClass) {
+      const parentParamsMeta = paramsMeta;
       const parentRecipe = recipe;
 
       const nextParamsMeta: (ParameterMeta | null)[] = [];
       const nextRecipe: ParentRecipe[] = [];
 
-      for (const parameterMeta of aParameterMeta) {
+      for (const parameterMeta of parametersMeta) {
         if (this.hasParentParams(parameterMeta)) {
           hasParentParams = true;
           const offset = nextParamsMeta.length;
@@ -32,11 +32,11 @@ export class ParentParams {
         }
       }
 
-      aParamsMeta = nextParamsMeta;
+      paramsMeta = nextParamsMeta;
       recipe = nextRecipe;
     }
 
-    return { aParamsMeta, recipe, hasParentParams };
+    return { paramsMeta, recipe, hasParentParams };
   }
 
   static getArgs(recipe: ParentRecipe[], results: unknown[]): unknown[] {

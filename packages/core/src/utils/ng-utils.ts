@@ -48,12 +48,12 @@ export function flatten<T = any>(list: any[], dst?: any[]): T[] {
  */
 export function normalizeProviders(
   providers: Provider[] | ReadonlyArray<Provider>,
-  arrayOfProviders: NormalizedProvider[] = [],
+  providerArrays: NormalizedProvider[] = [],
 ) {
   providers.forEach((provider) => {
     provider = resolveForwardRef(provider);
     if (provider instanceof Function) {
-      arrayOfProviders.push({ token: provider, useClass: provider });
+      providerArrays.push({ token: provider, useClass: provider });
     } else if (isNormalizedProvider(provider)) {
       provider.token = resolveForwardRef(provider.token);
       if (isClassProvider(provider)) {
@@ -61,13 +61,13 @@ export function normalizeProviders(
       } else if (isTokenProvider(provider)) {
         provider.useToken = resolveForwardRef(provider.useToken);
       }
-      arrayOfProviders.push(provider as NormalizedProvider);
+      providerArrays.push(provider as NormalizedProvider);
     } else {
       throw new InvalidProvider(provider);
     }
   });
 
-  return arrayOfProviders;
+  return providerArrays;
 }
 
 export type NormalizedProvider = ValueProvider | ClassProvider | TokenProvider | FactoryProvider;

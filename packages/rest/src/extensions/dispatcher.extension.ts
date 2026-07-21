@@ -71,10 +71,10 @@ export class DispatcherExtension implements Extension<void> {
     this.setRoutes(this.extensionGroupMeta, preparedRouteMeta);
   }
 
-  protected addDefaultProviders(aRouteExtensionMeta: RouteExtensionMeta[]) {
+  protected addDefaultProviders(routeExtensionsMeta: RouteExtensionMeta[]) {
     // Since each extension received the same `meta` array and not a copy of it,
     // we can take `meta` from any element in the `groupData` array.
-    const routeExtensionMeta = aRouteExtensionMeta.at(0);
+    const routeExtensionMeta = routeExtensionsMeta.at(0);
     if (!routeExtensionMeta) {
       return;
     }
@@ -92,10 +92,10 @@ export class DispatcherExtension implements Extension<void> {
     );
   }
 
-  protected prepareRoutesMeta(aRouteExtensionMeta: RouteExtensionMeta[]) {
+  protected prepareRoutesMeta(routeExtensionsMeta: RouteExtensionMeta[]) {
     const preparedRouteMeta: PreparedRouteMeta[] = [];
 
-    aRouteExtensionMeta.forEach((routeExtensionMeta) => {
+    routeExtensionsMeta.forEach((routeExtensionMeta) => {
       if (!routeExtensionMeta.controllersMeta.length) {
         // No routes from this extension.
         return;
@@ -164,8 +164,8 @@ export class DispatcherExtension implements Extension<void> {
     const RouteContextClass = injectorPerRou.getAny<typeof RouteContext>(RouteContext);
 
     if (this.hasInterceptors(mergedPerRou)) {
-      return (async (rawReq, rawRes, aPathParams, queryString) => {
-        const ctx = new RouteContextClass(rawReq, rawRes, aPathParams, queryString);
+      return (async (rawReq, rawRes, pathParams, queryString) => {
+        const ctx = new RouteContextClass(rawReq, rawRes, pathParams, queryString);
         await chainMaker
           .makeChain(ctx)
           .handle() // First HTTP handler in the chain of HTTP interceptors.
@@ -194,8 +194,8 @@ export class DispatcherExtension implements Extension<void> {
     errorHandler: HttpErrorHandler,
   ) {
     const interceptor = new RouteScopedHttpFrontend();
-    return (async (rawReq, rawRes, aPathParams, queryString) => {
-      const ctx = new RouteContextClass(rawReq, rawRes, aPathParams, queryString);
+    return (async (rawReq, rawRes, pathParams, queryString) => {
+      const ctx = new RouteContextClass(rawReq, rawRes, pathParams, queryString);
       try {
         interceptor.before(ctx).after(ctx, await routeHandler(ctx));
       } catch (err: any) {
@@ -241,9 +241,9 @@ export class DispatcherExtension implements Extension<void> {
       .find((rp) => rp.dualKey.token === HttpErrorHandler)!;
     const RegistryPerReq = Injector.prepareRegistry(resolvedPerReq);
 
-    return (async (rawReq, rawRes, aPathParams, queryString) => {
+    return (async (rawReq, rawRes, pathParams, queryString) => {
       const injector = new Injector(RegistryPerReq, 'Req', injectorPerRou);
-      const ctx = injector.get(RequestContext).setCtx(rawReq, rawRes, aPathParams, queryString);
+      const ctx = injector.get(RequestContext).setCtx(rawReq, rawRes, pathParams, queryString);
 
       await injector
         .instantiateResolved<ChainMaker>(resolvedChainMaker)

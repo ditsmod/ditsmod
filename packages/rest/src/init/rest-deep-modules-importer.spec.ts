@@ -51,8 +51,8 @@ describe('DeepModulesImporter', () => {
       providersPerApp: initializer.normalizedModuleMeta.providersPerApp,
       log: systemLogMediator,
     });
-    const { extensionCounters, mResolvedModuleMeta } = deepModulesImporter.importModulesDeep();
-    return mResolvedModuleMeta as Map<ModRefId, ResolvedModuleMeta<RestResolvedModuleMeta>>;
+    const { extensionCounters, resolvedModuleMetaMap } = deepModulesImporter.importModulesDeep();
+    return resolvedModuleMetaMap as Map<ModRefId, ResolvedModuleMeta<RestResolvedModuleMeta>>;
   }
 
   function getRestResolvedModuleMeta(rootModule: ModuleType) {
@@ -579,8 +579,8 @@ describe('DeepModulesImporter', () => {
     @restRootModule({ imports: [mod1WithOpts], providersPerRou: [provider, Service0, Service2] })
     class AppModule {}
 
-    const mResolvedModuleMeta = getResolvedModuleMeta(AppModule);
-    const mod1 = mResolvedModuleMeta.get(mod1WithOpts);
+    const resolvedModuleMetaMap = getResolvedModuleMeta(AppModule);
+    const mod1 = resolvedModuleMetaMap.get(mod1WithOpts);
     const restResolvedModuleMeta = mod1?.deepImportedModules.get(initRest) as RestResolvedModuleMeta;
     expect(restResolvedModuleMeta.guardsPerMod.at(0)?.guard).toBe(BearerGuard1);
 

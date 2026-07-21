@@ -38,8 +38,8 @@ export class SentryHttpErrorHandler extends DefaultHttpErrorHandler {
       }
 
       // Attach route parameters as breadcrumb/extra context
-      if (ctx.aPathParams?.length) {
-        scope.setExtra('route.params', Object.fromEntries(ctx.aPathParams.map(({ key, value }) => [key, value])));
+      if (ctx.rawPathParams?.length) {
+        scope.setExtra('route.params', Object.fromEntries(ctx.rawPathParams.map(({ key, value }) => [key, value])));
       }
 
       Sentry.captureException(err, {

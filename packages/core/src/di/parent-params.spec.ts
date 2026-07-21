@@ -120,10 +120,10 @@ describe('ParentParams', () => {
   describe('getParamsMetaAndRecipe()', () => {
     it('returns a one-dimensional array of params, without ParentParams', () => {
       const classMeta = Reflector.collectMeta(Class3);
-      const { aParamsMeta, recipe } = ParentParams.getParamsMetaAndRecipe([
+      const { paramsMeta, recipe } = ParentParams.getParamsMetaAndRecipe([
         ...classMeta!.constructor.paramChain!.values(),
       ]);
-      expect(aParamsMeta).toEqual<ParameterMeta[]>([
+      expect(paramsMeta).toEqual<ParameterMeta[]>([
         [Class2Param1],
         [Class1Param1],
         [Class1Param2],
@@ -142,7 +142,7 @@ describe('ParentParams', () => {
 
       expect(recipe).toEqual<ParentRecipe[]>([[0, [1, 2, [3, 4, 5]], 6, [7, 8, [9, 10, 11]]], 12, 13]);
 
-      const results = aParamsMeta.map((token) => (Array.isArray(token) ? token[0] : token));
+      const results = paramsMeta.map((token) => (Array.isArray(token) ? token[0] : token));
       const class3Args = ParentParams.getArgs(recipe, results);
       expect(class3Args).toEqual([
         [

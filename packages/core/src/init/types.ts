@@ -19,18 +19,18 @@ export class ShallowModuleImports<T extends AnyObj = AnyObj> {
    */
   baseImportRegistry: BaseImportRegistry;
   initImportRegistryMap = new Map<AnyFn, { normalizedModuleMeta: NormalizedModuleMeta } & T>();
-  aOrderedExtensions: ExtensionClass[] = [];
+  orderedExtensions: ExtensionClass[] = [];
 
   constructor(
     normalizedModuleMeta?: NormalizedModuleMeta,
-    aOrderedExtensions?: ExtensionClass[],
+    orderedExtensions?: ExtensionClass[],
     baseImportRegistry?: BaseImportRegistry,
   ) {
     if (normalizedModuleMeta) {
       this.normalizedModuleMeta = normalizedModuleMeta;
     }
-    if (aOrderedExtensions) {
-      this.aOrderedExtensions = aOrderedExtensions;
+    if (orderedExtensions) {
+      this.orderedExtensions = orderedExtensions;
     }
     if (baseImportRegistry) {
       this.baseImportRegistry = baseImportRegistry;

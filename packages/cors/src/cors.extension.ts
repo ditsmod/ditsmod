@@ -81,10 +81,10 @@ export class CorsExtension implements Extension<void | false> {
     return clonedCorsOptions;
   }
 
-  protected getPathWtihOptions(aRouteExtensionMeta: RouteExtensionMeta[]) {
+  protected getPathWtihOptions(routeExtensionsMeta: RouteExtensionMeta[]) {
     const sPathWithOptions = new Set<string>();
 
-    aRouteExtensionMeta.forEach((routeExtensionMeta) => {
+    routeExtensionsMeta.forEach((routeExtensionMeta) => {
       routeExtensionMeta.controllersMeta
         .filter(({ httpMethods }) => httpMethods.includes('OPTIONS'))
         .forEach(({ fullPath }) => sPathWithOptions.add(fullPath));
@@ -95,10 +95,10 @@ export class CorsExtension implements Extension<void | false> {
 
   protected getRoutesWithOptions(
     providersPerMod: Provider[],
-    aRouteExtensionMeta: RouteExtensionMeta[],
+    routeExtensionsMeta: RouteExtensionMeta[],
     controllersMeta: ControllerMeta[],
   ) {
-    const sPathWithOptions = this.getPathWtihOptions(aRouteExtensionMeta);
+    const sPathWithOptions = this.getPathWtihOptions(routeExtensionsMeta);
     const newArrControllersMeta2: ControllerMeta[] = []; // Routes with OPTIONS methods
 
     controllersMeta.forEach(({ httpMethods, fullPath }) => {

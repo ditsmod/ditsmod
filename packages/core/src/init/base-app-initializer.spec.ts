@@ -71,23 +71,23 @@ describe('BaseAppInitializer', () => {
 
     const extensionCounters = new ExtensionCounters();
 
-    extensionCounters.mExtensions.set(Extension1, 9);
-    extensionCounters.mExtensions.set(Extension2, 8);
-    extensionCounters.mExtensions.set(Extension3, 6);
+    extensionCounters.extensionsMap.set(Extension1, 9);
+    extensionCounters.extensionsMap.set(Extension2, 8);
+    extensionCounters.extensionsMap.set(Extension3, 6);
 
     it('counters should remain the same', () => {
       mock.decreaseExtensionsCounters(extensionCounters, []);
-      expect(extensionCounters.mExtensions.get(Extension1)).toBe(9);
-      expect(extensionCounters.mExtensions.get(Extension2)).toBe(8);
-      expect(extensionCounters.mExtensions.get(Extension3)).toBe(6);
+      expect(extensionCounters.extensionsMap.get(Extension1)).toBe(9);
+      expect(extensionCounters.extensionsMap.get(Extension2)).toBe(8);
+      expect(extensionCounters.extensionsMap.get(Extension3)).toBe(6);
     });
 
     it('counter should be changed', () => {
       const providers: Provider[] = [Extension2, Extension2, Extension1];
       mock.decreaseExtensionsCounters(extensionCounters, providers);
-      expect(extensionCounters.mExtensions.get(Extension1)).toBe(8);
-      expect(extensionCounters.mExtensions.get(Extension2)).toBe(7);
-      expect(extensionCounters.mExtensions.get(Extension3)).toBe(6);
+      expect(extensionCounters.extensionsMap.get(Extension1)).toBe(8);
+      expect(extensionCounters.extensionsMap.get(Extension2)).toBe(7);
+      expect(extensionCounters.extensionsMap.get(Extension3)).toBe(6);
     });
   });
 

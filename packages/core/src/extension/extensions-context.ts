@@ -5,12 +5,12 @@ import { ModRefId } from '#types/mix.js';
 
 @injectable()
 export class ExtensionContext {
-  mExtensionGroupMeta = new Map<ExtensionClass, ExtensionGroupMeta[]>();
+  extensionGroupMetaMap = new Map<ExtensionClass, ExtensionGroupMeta[]>();
   /**
    * The pending list of extensions that want to receive the initialization result
    * of `ExtensionClass` from the whole application.
    */
-  mExtensionPendingList = new Map<ExtensionClass, Map<Class<Extension>, Extension>>();
+  extensionPendingMap = new Map<ExtensionClass, Map<Class<Extension>, Extension>>();
 
-  mStage = new Map<ModRefId, Set<Extension>>();
+  stageMap = new Map<ModRefId, Set<Extension>>();
 }

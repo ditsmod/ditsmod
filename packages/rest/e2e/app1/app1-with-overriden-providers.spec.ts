@@ -28,13 +28,13 @@ describe('@ditsmod/rest/e2e', () => {
   });
 
   it('override services at any level', async () => {
-    const aProvidersToOverride = new ProviderBuilder()
+    const providersToOverride = new ProviderBuilder()
       .useValue<ServicePerRou2>(ServicePerRou2, { method: methodPerRou2 })
       .useValue<ServicePerReq2>(ServicePerReq2, { method: methodPerReq2 });
 
     const server = await TestRestApplication.createTestApp(AppModule)
       .$use(TestRestPlugin)
-      .overrideExtensionRestMeta(aProvidersToOverride)
+      .overrideExtensionRestMeta(providersToOverride)
       .overrideModuleMeta(
         new ProviderBuilder()
           .useValue<ServicePerApp>(ServicePerApp, { method: methodPerApp })

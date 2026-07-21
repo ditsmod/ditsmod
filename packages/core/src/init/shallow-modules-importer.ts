@@ -59,7 +59,7 @@ export class ShallowModulesImporter {
   protected importedMultiProvidersPerReq = new Map<ModRefId, Provider[]>();
   protected importedExtensionProviders = new Map<ModRefId, Provider[]>();
   protected importedExtensionGroupTokens = new Map<ModRefId, Map<ExtensionClass, GroupToken>>();
-  protected aImportedExtensionConfig: ExtensionConfig[] = [];
+  protected importedExtensionConfigs: ExtensionConfig[] = [];
 
   /**
    * AppProviders.
@@ -77,7 +77,7 @@ export class ShallowModulesImporter {
     this.normalizedModuleMeta = normalizedModuleMeta;
     this.importProvidersAndExtensions(normalizedModuleMeta);
     // this.checkAllCollisionsWithLevelsMix();
-    const mInitValue = new Map<AnyFn, AnyObj>();
+    const initValueMap = new Map<AnyFn, AnyObj>();
     const appProviders: AppProviders = {
       importedProvidersPerMod: this.importedProvidersPerMod,
       importedProvidersPerRou: this.importedProvidersPerRou,
@@ -87,13 +87,13 @@ export class ShallowModulesImporter {
       importedMultiProvidersPerReq: this.importedMultiProvidersPerReq,
       importedExtensionProviders: this.importedExtensionProviders,
       importedExtensionGroupTokens: this.importedExtensionGroupTokens,
-      aImportedExtensionConfig: this.aImportedExtensionConfig,
-      mInitValue,
+      importedExtensionConfigs: this.importedExtensionConfigs,
+      initValueMap,
     };
 
     normalizedModuleMeta.allInitHooks.forEach((initHooks, decorator) => {
       const val = initHooks.exportAppProviders({ moduleManager, appProviders, normalizedModuleMeta });
-      mInitValue.set(decorator, val);
+      initValueMap.set(decorator, val);
     });
 
     return appProviders;
@@ -137,9 +137,9 @@ export class ShallowModulesImporter {
       multiPerReq = new Map([...this.importedMultiProvidersPerReq]);
       extensionProviders = new Map([...this.importedExtensionProviders]);
       extensionGroupTokens = new Map([...this.importedExtensionGroupTokens]);
-      extensionConfigs = [...this.aImportedExtensionConfig];
+      extensionConfigs = [...this.importedExtensionConfigs];
     } else {
-      this.appProviders.mInitValue.forEach(({ initHooks }, decorator) => {
+      this.appProviders.initValueMap.forEach(({ initHooks }, decorator) => {
         if (initHooks && !normalizedModuleMeta.allInitHooks.has(decorator)) {
           normalizedModuleMeta.allInitHooks.set(decorator, initHooks);
         }
@@ -158,16 +158,16 @@ export class ShallowModulesImporter {
         ...this.appProviders.importedExtensionGroupTokens,
         ...this.importedExtensionGroupTokens,
       ]);
-      extensionConfigs = [...this.appProviders.aImportedExtensionConfig, ...this.aImportedExtensionConfig];
+      extensionConfigs = [...this.appProviders.importedExtensionConfigs, ...this.importedExtensionConfigs];
     }
 
     const allExtensionConfigs = normalizedModuleMeta.extensionConfigs.concat(extensionConfigs);
     this.checkExtensionsGraph(allExtensionConfigs);
-    const aOrderedExtensions = topologicalSort<ExtensionClass, BaseExtensionConfig>(allExtensionConfigs, true);
+    const orderedExtensions = topologicalSort<ExtensionClass, BaseExtensionConfig>(allExtensionConfigs, true);
 
     return this.shallowModuleImportsMap.set(
       modRefId,
-      new ShallowModuleImports(this.normalizedModuleMeta, aOrderedExtensions, {
+      new ShallowModuleImports(this.normalizedModuleMeta, orderedExtensions, {
         perMod,
         perRou,
         perReq,
@@ -195,10 +195,10 @@ export class ShallowModulesImporter {
   }
 
   protected importModules() {
-    const aModRefIds = this.normalizedModuleMeta.importsModules.concat(
+    const modRefIdss = this.normalizedModuleMeta.importsModules.concat(
       this.normalizedModuleMeta.importsWithOpts as any[],
     ) as ModRefId[];
-    for (const modRefId of aModRefIds) {
+    for (const modRefId of modRefIdss) {
       const normalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(modRefId, true);
       this.importProvidersAndExtensions(normalizedModuleMeta);
       if (this.unfinishedScanModules.has(modRefId)) {
@@ -259,9 +259,9 @@ export class ShallowModulesImporter {
       );
       this.importedExtensionGroupTokens.set(
         normalizedModuleMeta1.modRefId,
-        normalizedModuleMeta1.mExportedExtensionAsGroupToken,
+        normalizedModuleMeta1.exportedExtensionGroupTokenMap,
       );
-      this.aImportedExtensionConfig.push(...normalizedModuleMeta1.exportedExtensionConfigs);
+      this.importedExtensionConfigs.push(...normalizedModuleMeta1.exportedExtensionConfigs);
     }
     this.throwIfTryResolvingMultiprovidersCollisions(normalizedModuleMeta1.name);
   }

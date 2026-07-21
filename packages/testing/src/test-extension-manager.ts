@@ -27,7 +27,7 @@ export class TestExtensionManager extends InternalExtensionManager {
     extensionCounters: ExtensionCounters,
     @inject(OVERRIDERS_CONFIG)
     @optional()
-    protected aOverriderConfig: OverriderConfig[] = [],
+    protected overriderConfigs: OverriderConfig[] = [],
   ) {
     super(injector, systemLogMediator, counter, extensionContext, extensionCounters);
   }
@@ -36,7 +36,7 @@ export class TestExtensionManager extends InternalExtensionManager {
   override async stage1<T>(ExtCls: ExtensionClass<T>, pendingExtension: Extension): Promise<PartialExtensionGroupMeta<T>>;
   override async stage1<T>(ExtCls: ExtensionClass<T>, pendingExtension?: Extension) {
     const extensionGroupMeta = await super.stage1<T>(ExtCls, pendingExtension as Extension);
-    this.aOverriderConfig.forEach((overriderConfig) => {
+    this.overriderConfigs.forEach((overriderConfig) => {
       if (ExtCls === overriderConfig.ExtCls) {
         overriderConfig.override(extensionGroupMeta);
       }

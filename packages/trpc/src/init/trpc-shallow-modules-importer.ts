@@ -70,7 +70,7 @@ export class TrpcShallowModulesImporter {
     this.normalizedModuleMeta = normalizedModuleMeta;
     this.meta = this.getInitMeta(normalizedModuleMeta);
     this.glProviders = appProviders;
-    this.trpcGlProviders = appProviders.mInitValue.get(initTrpcModule) as TrpcAppProviders;
+    this.trpcGlProviders = appProviders.initValueMap.get(initTrpcModule) as TrpcAppProviders;
     this.moduleName = normalizedModuleMeta.name;
     this.guardsPerMod = guardsPerMod || [];
     this.unfinishedScanModules = unfinishedScanModules;
@@ -95,8 +95,8 @@ export class TrpcShallowModulesImporter {
     return meta;
   }
 
-  protected importModules(aModRefIds: TrpcModRefId[], isImport?: boolean) {
-    for (const modRefId of aModRefIds) {
+  protected importModules(modRefIdss: TrpcModRefId[], isImport?: boolean) {
+    for (const modRefId of modRefIdss) {
       const normalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(modRefId, true);
       if (this.unfinishedScanModules.has(modRefId)) {
         continue;

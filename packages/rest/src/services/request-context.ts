@@ -7,15 +7,15 @@ import { BaseRequestContext } from './base-request-context.js';
 
 @injectable()
 export class RequestContext extends BaseRequestContext {
-  setCtx(rawReq: RawRequest, rawRes: RawResponse, aPathParams: PathParam[] | null, queryString: string) {
+  setCtx(rawReq: RawRequest, rawRes: RawResponse, rawPathParams: PathParam[] | null, queryString: string) {
     this.rawReq = rawReq;
     this.rawRes = rawRes;
-    this.aPathParams = aPathParams;
+    this.rawPathParams = rawPathParams;
     this.queryString = queryString;
 
     this.set(RAW_REQ, rawReq)
       .set(RAW_RES, rawRes)
-      .set(RAW_PATH_PARAMS, aPathParams)
+      .set(RAW_PATH_PARAMS, rawPathParams)
       .set(QUERY_STRING, queryString || '');
     return this;
   }

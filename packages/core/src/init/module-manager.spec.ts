@@ -246,7 +246,7 @@ describe('ModuleManager', () => {
       expectedMeta1.providersPerMod = [Service1];
       expectedMeta1.declaredInDir = expect.any(String);
       expectedMeta1.isExternal = undefined;
-      expectedMeta1.mInitHooks = expect.any(Map);
+      expectedMeta1.initHooksMap = expect.any(Map);
       expectedMeta1.decoratorOptions = expect.any(Object);
       return expectedMeta1;
     };
@@ -319,7 +319,7 @@ describe('ModuleManager', () => {
       expectedMeta3.providersPerMod = [Service1];
       expectedMeta3.declaredInDir = expect.any(String);
       expectedMeta3.isExternal = undefined;
-      expectedMeta3.mInitHooks = expect.any(Map);
+      expectedMeta3.initHooksMap = expect.any(Map);
       expectedMeta3.decoratorOptions = expect.any(Object);
 
       expect(mock.getNormalizedModuleMeta('root')).toEqual(expectedMeta3);
@@ -339,7 +339,7 @@ describe('ModuleManager', () => {
       expectedMeta3.providersPerMod = [Service1];
       expectedMeta3.declaredInDir = expect.any(String);
       expectedMeta3.isExternal = undefined;
-      expectedMeta3.mInitHooks = expect.any(Map);
+      expectedMeta3.initHooksMap = expect.any(Map);
       expectedMeta3.decoratorOptions = expect.any(Object);
 
       mock.addImport(module3WithProviders);
@@ -412,7 +412,7 @@ describe('ModuleManager', () => {
       expectedMeta1.providersPerMod = [Service1];
       expectedMeta1.declaredInDir = expect.any(String);
       expectedMeta1.isExternal = undefined;
-      expectedMeta1.mInitHooks = expect.any(Map);
+      expectedMeta1.initHooksMap = expect.any(Map);
       expectedMeta1.decoratorOptions = expect.any(Object);
       return expectedMeta1;
     };
@@ -640,7 +640,7 @@ describe('ModuleManager', () => {
       expect(copiedMod1).not.toBe(originalMod1);
 
       // Maps should be new instances
-      expect(copiedMod1.mInitHooks).not.toBe(originalMod1.mInitHooks);
+      expect(copiedMod1.initHooksMap).not.toBe(originalMod1.initHooksMap);
       expect(copiedMod1.allInitHooks).not.toBe(originalMod1.allInitHooks);
       expect(copiedMod1.initMeta).not.toBe(originalMod1.initMeta);
 
@@ -684,7 +684,7 @@ describe('ModuleManager', () => {
       expectedMeta3.importsModules = [Module1];
       expectedMeta3.declaredInDir = expect.any(String);
       expectedMeta3.isExternal = undefined;
-      expectedMeta3.mInitHooks = expect.any(Map);
+      expectedMeta3.initHooksMap = expect.any(Map);
       expectedMeta3.decoratorOptions = expect.any(Object);
       delete (expectedMeta3 as any).extensionConfigs;
       delete (expectedMeta3 as any).exportedExtensionConfigs;
@@ -700,7 +700,7 @@ describe('ModuleManager', () => {
       expectedMeta1.decoratorOptions = expect.any(Object);
       delete (expectedMeta1 as any).extensionConfigs;
       delete (expectedMeta1 as any).exportedExtensionConfigs;
-      expectedMeta1.mInitHooks = expect.any(Map);
+      expectedMeta1.initHooksMap = expect.any(Map);
 
       mock.scanRootModule(Module3);
       expect(mock.getNormalizedModuleMeta('root')).toMatchObject(expectedMeta3);
@@ -735,7 +735,7 @@ describe('ModuleManager', () => {
       expectedMeta3.declaredInDir = expect.any(String);
       expectedMeta3.isExternal = undefined;
       expectedMeta3.decoratorOptions = expect.any(Object);
-      expectedMeta3.mInitHooks = expect.any(Map);
+      expectedMeta3.initHooksMap = expect.any(Map);
       delete (expectedMeta3 as any).extensionConfigs;
       delete (expectedMeta3 as any).exportedExtensionConfigs;
 
@@ -748,7 +748,7 @@ describe('ModuleManager', () => {
       expectedMeta1.declaredInDir = expect.any(String);
       expectedMeta1.isExternal = false;
       expectedMeta1.decoratorOptions = expect.any(Object);
-      expectedMeta1.mInitHooks = expect.any(Map);
+      expectedMeta1.initHooksMap = expect.any(Map);
       delete (expectedMeta1 as any).extensionConfigs;
       delete (expectedMeta1 as any).exportedExtensionConfigs;
 
@@ -787,7 +787,7 @@ describe('ModuleManager', () => {
       expectedMeta3.declaredInDir = expect.any(String);
       expectedMeta3.isExternal = undefined;
       expectedMeta3.decoratorOptions = expect.any(Object);
-      expectedMeta3.mInitHooks = expect.any(Map);
+      expectedMeta3.initHooksMap = expect.any(Map);
 
       const expectedMeta1 = new NormalizedModuleMeta();
       expectedMeta1.id = '';
@@ -799,7 +799,7 @@ describe('ModuleManager', () => {
       expectedMeta1.exportedMultiProvidersPerMod = providersPerMod.filter(isMultiProvider);
       expectedMeta1.declaredInDir = expect.any(String);
       expectedMeta1.isExternal = false;
-      expectedMeta1.mInitHooks = expect.any(Map);
+      expectedMeta1.initHooksMap = expect.any(Map);
 
       mock.scanRootModule(Module3);
       expect(mock.getNormalizedModuleMeta('root')).toEqual(expectedMeta3);

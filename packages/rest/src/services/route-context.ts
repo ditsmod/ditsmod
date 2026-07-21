@@ -3,11 +3,11 @@ import type { PathParam } from './router.js';
 import { BaseRequestContext } from './base-request-context.js';
 
 export class RouteContext extends BaseRequestContext {
-  constructor(rawReq: RawRequest, rawRes: RawResponse, aPathParams: PathParam[] | null, queryString: string) {
+  constructor(rawReq: RawRequest, rawRes: RawResponse, rawPathParams: PathParam[] | null, queryString: string) {
     super();
     this.rawReq = rawReq;
     this.rawRes = rawRes;
-    this.aPathParams = aPathParams;
+    this.rawPathParams = rawPathParams;
     this.queryString = queryString;
     this.scope = 'route';
   }

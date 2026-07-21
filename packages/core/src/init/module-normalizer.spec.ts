@@ -69,7 +69,7 @@ describe('ModuleNormalizer', () => {
         exportsModules: [],
         exportsWithOpts: [],
       });
-      expect(normalizedModuleMeta.mInitHooks).toBeInstanceOf(Map);
+      expect(normalizedModuleMeta.initHooksMap).toBeInstanceOf(Map);
     });
 
     it('normalizes imports, exports, providers, resolved collisions, and extension metadata from rootModule options', () => {
@@ -500,7 +500,7 @@ describe('ModuleNormalizer', () => {
         Extension1,
         { token: groupToken, useToken: Extension1, multi: true },
       ]);
-      expect(normalizedModuleMeta.mExtensionAsGroupToken.get(Extension2)).toBe(groupToken);
+      expect(normalizedModuleMeta.extensionGroupTokenMap.get(Extension2)).toBe(groupToken);
     });
 
     it('puts exportOnly extensions only into exported extension metadata', () => {
@@ -766,7 +766,7 @@ describe('ModuleNormalizer', () => {
       const allInitHooks = new Map([[hostInitSome, new HostInitHooks({})]]);
 
       const normalizedModuleMeta = normalizer.normalize(HostModule, allInitHooks);
-      expect(normalizedModuleMeta.mInitHooks.has(hostInitSome)).toBe(true);
+      expect(normalizedModuleMeta.initHooksMap.has(hostInitSome)).toBe(true);
       expect(normalizedModuleMeta.initMeta.get(hostInitSome)).toEqual({ flag: true, targetModRefId: HostModule });
     });
 

@@ -18,9 +18,9 @@ export class RouteScopedHttpFrontend implements HttpFrontend {
     if (ctx.queryString) {
       ctx.queryParams = parse(ctx.queryString);
     }
-    if (ctx.aPathParams?.length) {
+    if (ctx.rawPathParams?.length) {
       const pathParams: AnyObj = {};
-      ctx.aPathParams.forEach((param) => (pathParams[param.key] = param.value));
+      ctx.rawPathParams.forEach((param) => (pathParams[param.key] = param.value));
       ctx.pathParams = pathParams;
     }
     return this;

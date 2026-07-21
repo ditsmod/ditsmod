@@ -17,21 +17,21 @@ import { TestExtensionManager } from './test-extension-manager.js';
 import { OVERRIDERS_CONFIG } from './constants.js';
 
 export class TestAppInitializer extends RestAppInitializer {
-  protected mAdditionalProviders = new Map<ModRefId, Provider[]>();
+  protected additionalProvidersMap = new Map<ModRefId, Provider[]>();
   protected providersForOverride: Provider[] = [];
-  protected aOverriderConfig: OverriderConfig[] = [];
+  protected overriderConfigs: OverriderConfig[] = [];
 
   setOverriderConfig(config: OverriderConfig) {
-    this.aOverriderConfig.push(config);
+    this.overriderConfigs.push(config);
   }
 
   addProvidersToModule(modRefId: ModRefId, rawProviders: ProviderBuilder | (Provider | ForwardRefFn<Provider>)[]) {
-    const aProviders = this.mAdditionalProviders.get(modRefId) || [];
-    if (!this.mAdditionalProviders.has(modRefId)) {
-      this.mAdditionalProviders.set(modRefId, aProviders);
+    const providers = this.additionalProvidersMap.get(modRefId) || [];
+    if (!this.additionalProvidersMap.has(modRefId)) {
+      this.additionalProvidersMap.set(modRefId, providers);
     }
     const normalizedProviders = [...rawProviders].map(resolveForwardRef);
-    aProviders.push(...normalizedProviders);
+    providers.push(...normalizedProviders);
   }
 
   overrideModuleMeta(rawProviders: ProviderBuilder | (Provider | ForwardRefFn<Provider>)[]) {
@@ -40,9 +40,9 @@ export class TestAppInitializer extends RestAppInitializer {
   }
 
   protected override overrideMetaAfterStage1(modRefId: ModRefId, normalizedModuleMeta: NormalizedModuleMeta) {
-    const additionalProviders = this.mAdditionalProviders.get(modRefId);
+    const additionalProviders = this.additionalProvidersMap.get(modRefId);
     this.addAndOverrideProviders([normalizedModuleMeta.providersPerApp, normalizedModuleMeta.providersPerMod], additionalProviders);
-    normalizedModuleMeta.mInitHooks.forEach((initHooks, decorator) => {
+    normalizedModuleMeta.initHooksMap.forEach((initHooks, decorator) => {
       const meta = normalizedModuleMeta.initMeta.get(decorator);
       if (meta) {
         this.addAndOverrideProviders(initHooks.getProvidersToOverride(meta), additionalProviders);
@@ -51,11 +51,11 @@ export class TestAppInitializer extends RestAppInitializer {
     return normalizedModuleMeta;
   }
 
-  protected addAndOverrideProviders(aProviders: Provider[][], additionalProviders?: Provider[]) {
+  protected addAndOverrideProviders(providerArrays: Provider[][], additionalProviders?: Provider[]) {
     if (additionalProviders) {
-      aProviders.forEach((arr) => arr.push(...additionalProviders));
+      providerArrays.forEach((arr) => arr.push(...additionalProviders));
     }
-    TestOverrider.overrideAllProviders(this.normalizedModuleMeta.providersPerApp, aProviders, this.providersForOverride);
+    TestOverrider.overrideAllProviders(this.normalizedModuleMeta.providersPerApp, providerArrays, this.providersForOverride);
   }
 
   protected override getProvidersForExtensions(
@@ -66,7 +66,7 @@ export class TestAppInitializer extends RestAppInitializer {
     const providers = super.getProvidersForExtensions(resolvedModuleMeta, extensionCounters, extensionContext);
     providers.push(
       { token: InternalExtensionManager, useClass: TestExtensionManager },
-      { token: OVERRIDERS_CONFIG, useValue: this.aOverriderConfig },
+      { token: OVERRIDERS_CONFIG, useValue: this.overriderConfigs },
     );
     return providers;
   }

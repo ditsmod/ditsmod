@@ -7,7 +7,7 @@ import type { ProvidersByLevel } from '#app/types.js';
 
 describe('TestAppInitializer', () => {
   class MockTestAppInitializer extends TestAppInitializer {
-    override mAdditionalProviders = new Map<ModRefId, ProvidersByLevel<Provider[]>>();
+    override additionalProvidersMap = new Map<ModRefId, ProvidersByLevel<Provider[]>>();
 
     override overrideMetaAfterStage1(modRefId: ModRefId, providersByLevel: NormalizedModuleMeta) {
       return super.overrideMetaAfterStage1(modRefId, providersByLevel);
@@ -25,8 +25,8 @@ describe('TestAppInitializer', () => {
         providersPerMod: [Provider1],
       };
       mock.addProvidersToModule(modRefId, providersMeta1);
-      expect(mock.mAdditionalProviders.get(modRefId)?.providersPerApp).toEqual([Provider1]);
-      expect(mock.mAdditionalProviders.get(modRefId)?.providersPerMod).toEqual([Provider1]);
+      expect(mock.additionalProvidersMap.get(modRefId)?.providersPerApp).toEqual([Provider1]);
+      expect(mock.additionalProvidersMap.get(modRefId)?.providersPerMod).toEqual([Provider1]);
     });
 
     it('adding mix (Provider[] and instanse of ProviderBuilder) to providersPerApp', () => {
@@ -43,7 +43,7 @@ describe('TestAppInitializer', () => {
       };
       mock.addProvidersToModule(modRefId, providersMeta1);
       mock.addProvidersToModule(modRefId, providersMeta2);
-      expect(mock.mAdditionalProviders.get(modRefId)?.providersPerApp).toEqual([Provider1, Provider2]);
+      expect(mock.additionalProvidersMap.get(modRefId)?.providersPerApp).toEqual([Provider1, Provider2]);
     });
   });
 

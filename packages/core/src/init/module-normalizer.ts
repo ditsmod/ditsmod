@@ -81,7 +81,7 @@ export class ModuleNormalizer {
     if (!inheritsContext) {
       return;
     }
-    if (this.normalizedModuleMeta.mInitHooks.size == 0) {
+    if (this.normalizedModuleMeta.initHooksMap.size == 0) {
       allInitHooks.forEach((initHooks, decorator) => {
         const newInitHooks = initHooks.clone();
         this.normalizedModuleMeta.allInitHooks.set(decorator, newInitHooks);
@@ -95,14 +95,14 @@ export class ModuleNormalizer {
         /**
          * This is needed for quickCheckMeta and callInitHooksAfterScan.
          */
-        this.normalizedModuleMeta.mInitHooks.set(decorator, newInitHooks);
+        this.normalizedModuleMeta.initHooksMap.set(decorator, newInitHooks);
       });
     }
   }
 
   protected init(modRefId: ModRefId) {
-    const aDecoratorMeta = this.getDecoratorMeta(modRefId) || [];
-    const decorAndVal = aDecoratorMeta.find((d) => isModuleDecorator(d));
+    const decoratorsMeta = this.getDecoratorMeta(modRefId) || [];
+    const decorAndVal = decoratorsMeta.find((d) => isModuleDecorator(d));
     const decoratorOptions = decorAndVal?.value;
     const modName = getDebugClassName(modRefId);
     if (!modName) {
@@ -121,8 +121,8 @@ export class ModuleNormalizer {
     normalizedModuleMeta.decoratorOptions = decoratorOptions;
     normalizedModuleMeta.declaredInDir = decorAndVal?.declaredInDir || '.';
     normalizedModuleMeta.modRefId = modRefId;
-    aDecoratorMeta.filter(isModuleWithInitHooks).forEach(({ decoratorId, value }) => {
-      normalizedModuleMeta.mInitHooks.set(decoratorId!, value);
+    decoratorsMeta.filter(isModuleWithInitHooks).forEach(({ decoratorId, value }) => {
+      normalizedModuleMeta.initHooksMap.set(decoratorId!, value);
     });
     return { decoratorOptions, normalizedModuleMeta };
   }
@@ -317,14 +317,14 @@ export class ModuleNormalizer {
       }
       this.normalizedModuleMeta.extensionProviders.push(...extProvidersAndConfigs.providers);
       this.normalizedModuleMeta.exportedExtensionProviders.push(...extProvidersAndConfigs.exportedProviders);
-      extProvidersAndConfigs.mGroupToken?.forEach((groupToken, ext) => {
-        if (!this.normalizedModuleMeta.mExtensionAsGroupToken.has(ext)) {
-          this.normalizedModuleMeta.mExtensionAsGroupToken.set(ext, groupToken);
+      extProvidersAndConfigs.groupTokenMap?.forEach((groupToken, ext) => {
+        if (!this.normalizedModuleMeta.extensionGroupTokenMap.has(ext)) {
+          this.normalizedModuleMeta.extensionGroupTokenMap.set(ext, groupToken);
           this.normalizedModuleMeta.extensionProviders.unshift({ token: groupToken, useToken: ext, multi: true });
         }
       });
-      extProvidersAndConfigs.mExportedGroupToken?.forEach((groupToken, ext) => {
-        this.normalizedModuleMeta.mExportedExtensionAsGroupToken.set(ext, groupToken);
+      extProvidersAndConfigs.exportedGroupTokenMap?.forEach((groupToken, ext) => {
+        this.normalizedModuleMeta.exportedExtensionGroupTokenMap.set(ext, groupToken);
       });
     });
   }
@@ -370,13 +370,13 @@ export class ModuleNormalizer {
     allInitHooks.forEach((initHooks, decorator) => {
       if (initHooks.hostModule === this.normalizedModuleMeta.modRefId && initHooks.hostDecoratorOptions) {
         const newInitHooks = initHooks.clone(initHooks.hostDecoratorOptions);
-        this.normalizedModuleMeta.mInitHooks.set(decorator, newInitHooks);
+        this.normalizedModuleMeta.initHooksMap.set(decorator, newInitHooks);
       }
     });
   }
 
   protected callInitHooksFromCurrentModule() {
-    this.normalizedModuleMeta.mInitHooks.forEach((initHooks, decorator) => {
+    this.normalizedModuleMeta.initHooksMap.forEach((initHooks, decorator) => {
       this.normalizedModuleMeta.allInitHooks.set(decorator, initHooks);
 
       // Importing host module.
@@ -416,7 +416,7 @@ export class AppModule {}
    */
   protected addInitHooksForImportedDynamicModule(allInitHooks: AllInitHooks) {
     (this.normalizedModuleMeta.modRefId as DynamicModule).initOpts?.forEach((params, decorator) => {
-      if (!this.normalizedModuleMeta.mInitHooks.has(decorator)) {
+      if (!this.normalizedModuleMeta.initHooksMap.has(decorator)) {
         const initHooks = allInitHooks.get(decorator)!;
         const newInitHooks = initHooks.clone();
         this.normalizedModuleMeta.allInitHooks.set(decorator, newInitHooks);
@@ -430,7 +430,7 @@ export class AppModule {}
         /**
          * This is needed for {@link quickCheckMeta} only.
          */
-        this.normalizedModuleMeta.mInitHooks.set(decorator, newInitHooks);
+        this.normalizedModuleMeta.initHooksMap.set(decorator, newInitHooks);
       }
     });
   }
@@ -557,7 +557,7 @@ export class AppModule {}
   checkEmptyMeta(normalizedModuleMeta: NormalizedModuleMeta) {
     if (
       !isRootModule(normalizedModuleMeta) &&
-      !normalizedModuleMeta.mInitHooks.size &&
+      !normalizedModuleMeta.initHooksMap.size &&
       !normalizedModuleMeta.exportedProvidersPerMod.length &&
       !normalizedModuleMeta.exportedMultiProvidersPerMod.length &&
       !normalizedModuleMeta.exportsModules.length &&

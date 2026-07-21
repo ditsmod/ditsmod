@@ -72,10 +72,10 @@ export class TrpcRequestDispatcherExtension implements Extension<void> {
     this.prepareRoutesMeta(this.extensionGroupMeta.groupData);
   }
 
-  protected addDefaultProviders(aRouteExtensionMeta: RouteExtensionMeta[]) {
+  protected addDefaultProviders(routeExtensionsMeta: RouteExtensionMeta[]) {
     // Since each extension received the same `meta` array and not a copy of it,
     // we can take `meta` from any element in the `groupData` array.
-    const routeExtensionMeta = aRouteExtensionMeta.at(0);
+    const routeExtensionMeta = routeExtensionsMeta.at(0);
     if (!routeExtensionMeta) {
       return;
     }
@@ -95,8 +95,8 @@ export class TrpcRequestDispatcherExtension implements Extension<void> {
     );
   }
 
-  protected prepareRoutesMeta(aRouteExtensionMeta: RouteExtensionMeta[]) {
-    aRouteExtensionMeta.forEach((routeExtensionMeta) => {
+  protected prepareRoutesMeta(routeExtensionsMeta: RouteExtensionMeta[]) {
+    routeExtensionsMeta.forEach((routeExtensionMeta) => {
       if (!routeExtensionMeta.controllersMeta.length) {
         // No routes from this extension.
         return;

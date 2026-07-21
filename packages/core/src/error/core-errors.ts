@@ -49,16 +49,16 @@ export class ProvidersCollision extends CustomError {
     level?: string,
     isExternal?: boolean,
   ) {
-    const aTokens = duplicates.map((p) => p.name || p);
-    const tokenNames = aTokens.join(', ');
+    const tokens = duplicates.map((p) => p.name || p);
+    const tokenNames = tokens.join(', ');
     let fromModules = 'from several modules ';
     let example = '';
     if (fromModuleNames.length) {
       fromModules = `from ${fromModuleNames.join(', ')} `;
       if (!level || level == 'App') {
-        example = ` For example: resolvedCollisionsPerApp: [ [${aTokens[0]}, ${fromModuleNames[0]}] ] in root module.`;
+        example = ` For example: resolvedCollisionsPerApp: [ [${tokens[0]}, ${fromModuleNames[0]}] ] in root module.`;
       } else {
-        example = ` For example: resolvedCollisionsPer${level}: [ [${aTokens[0]}, ${fromModuleNames[0]}] ].`;
+        example = ` For example: resolvedCollisionsPer${level}: [ [${tokens[0]}, ${fromModuleNames[0]}] ].`;
       }
     }
     const resolvedCollisionsPer = level ? `resolvedCollisionsPer${level}` : 'resolvedCollisionsPer*';

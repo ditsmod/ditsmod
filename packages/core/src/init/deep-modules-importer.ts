@@ -60,13 +60,13 @@ export class DeepModulesImporter {
 
   importModulesDeep() {
     const levels: Level[] = ['Req', 'Rou', 'Mod'];
-    const mResolvedModuleMeta = new Map<ModRefId, ResolvedModuleMeta>();
+    const resolvedModuleMetaMap = new Map<ModRefId, ResolvedModuleMeta>();
     this.tokensPerApp = getTokens(this.providersPerApp);
     this.shallowModuleImportsMap.forEach(
-      ({ normalizedModuleMeta, aOrderedExtensions, baseImportRegistry, initImportRegistryMap }, modRefId) => {
+      ({ normalizedModuleMeta, orderedExtensions, baseImportRegistry, initImportRegistryMap }, modRefId) => {
         try {
           const deepImportedModules = new Map<AnyFn, AnyObj>();
-          mResolvedModuleMeta.set(modRefId, { normalizedModuleMeta, aOrderedExtensions, deepImportedModules });
+          resolvedModuleMetaMap.set(modRefId, { normalizedModuleMeta, orderedExtensions, deepImportedModules });
           const targetProviders = new ProvidersByLevel<Provider[]>();
           this.resolveImportedProviders(targetProviders, baseImportRegistry, levels);
           this.resolveProvidersForExtensions(normalizedModuleMeta, baseImportRegistry);
@@ -100,7 +100,7 @@ export class DeepModulesImporter {
       },
     );
 
-    return { extensionCounters: this.extensionCounters, mResolvedModuleMeta };
+    return { extensionCounters: this.extensionCounters, resolvedModuleMetaMap };
   }
 
   protected resolveImportedProviders(
@@ -184,8 +184,8 @@ export class DeepModulesImporter {
 
       const newGroupProviders: Provider[] = [];
       baseImportRegistry.extensionGroupTokens.get(srcModRefId)?.forEach((groupToken, ext) => {
-        if (!targetProviders.mExtensionAsGroupToken.has(ext)) {
-          targetProviders.mExtensionAsGroupToken.set(ext, groupToken);
+        if (!targetProviders.extensionGroupTokenMap.has(ext)) {
+          targetProviders.extensionGroupTokenMap.set(ext, groupToken);
           newGroupProviders.push({ token: groupToken, useToken: ext, multi: true });
         }
       });
@@ -204,8 +204,8 @@ export class DeepModulesImporter {
     const uniqTargets = new Set<Provider>(getProvidersTargets(extensionProviders));
 
     uniqTargets.forEach((target) => {
-      const counter = this.extensionCounters.mExtensions.get(target) || 0;
-      this.extensionCounters.mExtensions.set(target, counter + 1);
+      const counter = this.extensionCounters.extensionsMap.get(target) || 0;
+      this.extensionCounters.extensionsMap.set(target, counter + 1);
     });
   }
 

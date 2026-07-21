@@ -34,12 +34,12 @@ export class AppProviders {
   importedMultiProvidersPerReq = new Map<ModRefId, Provider[]>();
   importedExtensionProviders = new Map<ModRefId, Provider[]>();
   importedExtensionGroupTokens = new Map<ModRefId, Map<ExtensionClass, GroupToken>>();
-  aImportedExtensionConfig: ExtensionConfig[] = [];
-  mInitValue = new Map<AnyFn, AppInitHooks>();
+  importedExtensionConfigs: ExtensionConfig[] = [];
+  initValueMap = new Map<AnyFn, AppInitHooks>();
 }
 
 export class ResolvedModuleMeta<T extends AnyObj = AnyObj> {
   normalizedModuleMeta: NormalizedModuleMeta;
-  aOrderedExtensions: ExtensionClass[];
+  orderedExtensions: ExtensionClass[];
   deepImportedModules: Map<AnyFn, T>;
 }

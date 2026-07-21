@@ -115,7 +115,7 @@ export class NormalizedModuleMeta<
   /**
    * Contains init hooks and raw metadata collected from init module decorators.
    */
-  mInitHooks = new Map<AnyFn, InitHooks>();
+  initHooksMap = new Map<AnyFn, InitHooks>();
   /**
    * Contains normalized metadata collected from module init decorators.
    */
@@ -128,12 +128,12 @@ export class NormalizedModuleMeta<
    * The mapping between an extension specified in {@link BaseExtensionConfig.groups | ExtensionConfig.groups}
    * and the extension group token assigned to it.
    */
-  mExtensionAsGroupToken = new Map<ExtensionClass, GroupToken>();
+  extensionGroupTokenMap = new Map<ExtensionClass, GroupToken>();
   /**
    * The mapping between an extension specified in {@link BaseExtensionConfig.groups | ExtensionConfig.groups}
    * and the extension group token assigned to it.
    */
-  mExportedExtensionAsGroupToken = new Map<ExtensionClass, GroupToken>();
+  exportedExtensionGroupTokenMap = new Map<ExtensionClass, GroupToken>();
 
   constructor() {
     super();

@@ -89,7 +89,7 @@ export class ExtensionManager {
     }
 
     extensionGroupMeta = await this.prepareAndInitExtension<T>(ExtCls);
-    extensionGroupMeta.groupDataPerApp = this.extensionContext.mExtensionGroupMeta.get(ExtCls)!;
+    extensionGroupMeta.groupDataPerApp = this.extensionContext.extensionGroupMetaMap.get(ExtCls)!;
     extensionGroupMeta = this.updatePerAppState(ExtCls, extensionGroupMeta, pendingExtension);
     currStageEntry.resolve();
     return extensionGroupMeta;
@@ -133,12 +133,12 @@ export class ExtensionManager {
    */
   protected addExtensionToPendingList(ExtCls: ExtensionClass, pendingExtension: Extension) {
     const ExtensionClass = pendingExtension.constructor as Class<Extension>;
-    const mExtensions =
-      this.extensionContext.mExtensionPendingList.get(ExtCls) || new Map<Class<Extension>, Extension>();
+    const extensionsMap =
+      this.extensionContext.extensionPendingMap.get(ExtCls) || new Map<Class<Extension>, Extension>();
 
-    if (!mExtensions.has(ExtensionClass)) {
-      mExtensions.set(ExtensionClass, pendingExtension);
-      this.extensionContext.mExtensionPendingList.set(ExtCls, mExtensions);
+    if (!extensionsMap.has(ExtensionClass)) {
+      extensionsMap.set(ExtensionClass, pendingExtension);
+      this.extensionContext.extensionPendingMap.set(ExtCls, extensionsMap);
     }
   }
 
@@ -162,7 +162,7 @@ export class ExtensionManager {
 
   protected async initExtension<T>(ExtCls: ExtensionClass): Promise<ExtensionGroupMeta> {
     let extensions: Extension<T>[];
-    const groupToken = this.normalizedModuleMeta.mExtensionAsGroupToken.get(ExtCls);
+    const groupToken = this.normalizedModuleMeta.extensionGroupTokenMap.get(ExtCls);
     if (groupToken) {
       extensions = this.injector.getOrderedMultiValues<TokenProvider>(
         groupToken,
@@ -193,7 +193,7 @@ export class ExtensionManager {
       this.unfinishedInit.add(extension);
       this.log.startInitExtension(this, this.unfinishedInit);
       const ExtensionClass = extension.constructor as Class<Extension<T>>;
-      const countdown = this.extensionCounters.mExtensions.get(ExtensionClass) || 0;
+      const countdown = this.extensionCounters.extensionsMap.get(ExtensionClass) || 0;
       const isLastModule = countdown === 0;
       const data = (await extension.stage1?.(isLastModule)) as T;
       this.extensionsListForStage2.add(extension);
@@ -210,13 +210,13 @@ export class ExtensionManager {
   protected setAppExtensionGroupMeta(ExtCls: ExtensionClass, extensionGroupMeta: ExtensionGroupMeta) {
     const copyExtensionGroupMeta = { ...extensionGroupMeta } as ExtensionGroupMeta;
     delete (copyExtensionGroupMeta as OptionalProps<ExtensionGroupMeta, 'groupDataPerApp'>).groupDataPerApp;
-    const aExtensionGroupMeta = this.extensionContext.mExtensionGroupMeta.get(ExtCls) || [];
-    aExtensionGroupMeta.push(copyExtensionGroupMeta);
-    this.extensionContext.mExtensionGroupMeta.set(ExtCls, aExtensionGroupMeta);
+    const extensionsGroupMeta = this.extensionContext.extensionGroupMetaMap.get(ExtCls) || [];
+    extensionsGroupMeta.push(copyExtensionGroupMeta);
+    this.extensionContext.extensionGroupMetaMap.set(ExtCls, extensionsGroupMeta);
   }
 
   protected updateExtensionCounters(ExtCls: ExtensionClass, extensionGroupMeta: ExtensionGroupMeta) {
-    extensionGroupMeta.countdown = this.extensionCounters.mExtensions.get(ExtCls)!;
+    extensionGroupMeta.countdown = this.extensionCounters.extensionsMap.get(ExtCls)!;
     extensionGroupMeta.delay = extensionGroupMeta.countdown > 0;
   }
 
@@ -242,12 +242,12 @@ export class ExtensionManager {
 
 @injectable()
 export class InternalExtensionManager extends ExtensionManager {
-  async internalStage1(normalizedModuleMeta: NormalizedModuleMeta, aOrderedExtensions: ExtensionClass[]) {
+  async internalStage1(normalizedModuleMeta: NormalizedModuleMeta, orderedExtensions: ExtensionClass[]) {
     this.normalizedModuleMeta = normalizedModuleMeta;
     this.moduleName = normalizedModuleMeta.name;
     const stageEntryMap = new Map() as StageEntryMap;
     this.stageEntryMap = stageEntryMap;
-    aOrderedExtensions.forEach((ExtCls, index) => {
+    orderedExtensions.forEach((ExtCls, index) => {
       stageEntryMap.set(ExtCls, new StageEntry(index));
     });
 
@@ -265,16 +265,16 @@ export class InternalExtensionManager extends ExtensionManager {
   }
 
   protected setExtensionsToStage2(modRefId: ModRefId) {
-    this.extensionContext.mStage.set(modRefId, this.extensionsListForStage2);
+    this.extensionContext.stageMap.set(modRefId, this.extensionsListForStage2);
   }
 
   protected updateExtensionPendingList() {
     for (const [ExtCls, sExtensions] of this.excludedExtensionPendingList) {
       for (const ExtensionClass of sExtensions) {
-        const mExtensions = this.extensionContext.mExtensionPendingList.get(ExtCls);
-        mExtensions?.delete(ExtensionClass);
-        if (!mExtensions?.size) {
-          this.extensionContext.mExtensionPendingList.delete(ExtCls);
+        const extensionsMap = this.extensionContext.extensionPendingMap.get(ExtCls);
+        extensionsMap?.delete(ExtensionClass);
+        if (!extensionsMap?.size) {
+          this.extensionContext.extensionPendingMap.delete(ExtCls);
         }
       }
     }

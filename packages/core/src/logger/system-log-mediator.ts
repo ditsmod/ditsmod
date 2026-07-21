@@ -364,11 +364,11 @@ export class SystemLogMediator extends LogMediator {
   /**
    * `trace: ${className}: The sequence of extension group operations: ...`
    */
-  sequenceOfExtensions(self: object, aOrderedExtensions: ExtensionClass[]) {
+  sequenceOfExtensions(self: object, orderedExtensions: ExtensionClass[]) {
     const className = self.constructor.name;
     const msg =
       `${className}: The sequence of extension group operations: ` +
-      `${aOrderedExtensions.map((e, i) => `${i + 1}. ${getDebugClassName(e)}`).join(', ')}.`;
+      `${orderedExtensions.map((e, i) => `${i + 1}. ${getDebugClassName(e)}`).join(', ')}.`;
     this.setLog('trace', msg);
   }
 

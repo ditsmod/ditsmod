@@ -84,7 +84,7 @@ export class RestShallowModulesImporter {
     this.normalizedModuleMeta = normalizedModuleMeta;
     this.meta = this.getInitMeta(normalizedModuleMeta);
     this.appProviders = appProviders;
-    this.restGlProviders = appProviders.mInitValue.get(initRest) as RestAppProviders;
+    this.restGlProviders = appProviders.initValueMap.get(initRest) as RestAppProviders;
     this.prefixPerMod = prefixPerMod || '';
     this.moduleName = normalizedModuleMeta.name;
     this.guardsPerMod = guardsPerMod || [];
@@ -127,8 +127,8 @@ export class RestShallowModulesImporter {
     this.importOrAppendModules([...this.meta.appendsModules, ...this.meta.appendsWithOpts]);
   }
 
-  protected importOrAppendModules(aModRefIds: RestModRefId[], isImport?: boolean) {
-    for (const modRefId of aModRefIds) {
+  protected importOrAppendModules(modRefIdss: RestModRefId[], isImport?: boolean) {
+    for (const modRefId of modRefIdss) {
       const normalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(modRefId, true);
       if (this.unfinishedScanModules.has(modRefId)) {
         continue;

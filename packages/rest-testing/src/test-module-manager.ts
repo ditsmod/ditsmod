@@ -4,8 +4,8 @@ import { getModule, ModuleManager } from '@ditsmod/core';
 export class TestModuleManager extends ModuleManager {
   protected externalModules = new Set<ModRefId>();
 
-  markModuleAsExternal(...aModRefId: ModRefId[]) {
-    aModRefId.forEach((modRefId) => {
+  markModuleAsExternal(...modRefIds: ModRefId[]) {
+    modRefIds.forEach((modRefId) => {
       const mod = getModule(modRefId);
       this.externalModules.add(mod);
     });

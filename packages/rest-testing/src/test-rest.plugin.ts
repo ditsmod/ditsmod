@@ -7,15 +7,15 @@ import type { ExtensionMetaOverrider } from './types.js';
 import { TestOverrider } from './test-overrider.js';
 
 export class TestRestPlugin extends TestRestApplication {
-  overrideExtensionRestMeta(providersToOverride: ProviderBuilder | Provider[]) {
-    const aProvidersToOverride: Provider[] = [...providersToOverride];
+  overrideExtensionRestMeta(rawProvidersToOverride: ProviderBuilder | Provider[]) {
+    const providersToOverride: Provider[] = [...rawProvidersToOverride];
     const overrideRoutesMeta: ExtensionMetaOverrider<RouteExtensionMeta> = (extensionGroupMeta) => {
-      if (!aProvidersToOverride.length) {
+      if (!providersToOverride.length) {
         return;
       }
       extensionGroupMeta.groupData?.forEach((routeExtensionMeta) => {
         routeExtensionMeta.controllersMeta.forEach((controllerMeta) => {
-          aProvidersToOverride.forEach((providerToOverride) => {
+          providersToOverride.forEach((providerToOverride) => {
             TestOverrider.overrideProvider(
               [controllerMeta.providersPerRou, controllerMeta.providersPerReq],
               providerToOverride,

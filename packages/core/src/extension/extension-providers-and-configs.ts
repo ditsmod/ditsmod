@@ -7,11 +7,11 @@ import type { Provider } from '#di/top/types-and-models.js';
 export class NormalizedExtensionConfig {
   providers: Provider[];
   config?: ExtensionConfig;
-  mGroupToken?: Map<ExtensionClass, GroupToken<any>>;
+  groupTokenMap?: Map<ExtensionClass, GroupToken<any>>;
 
   exportedProviders: Provider[];
   exportedConfig?: ExtensionConfig;
-  mExportedGroupToken?: Map<ExtensionClass, GroupToken<any>>;
+  exportedGroupTokenMap?: Map<ExtensionClass, GroupToken<any>>;
 }
 
 export interface BaseExtensionConfig {
@@ -73,13 +73,13 @@ export function normalizeExtensionConfig(extensionConfig: ExtensionConfig): Norm
     };
   }
 
-  const mGroupToken = new Map<ExtensionClass, GroupToken>();
+  const groupTokenMap = new Map<ExtensionClass, GroupToken>();
   const providers: Provider[] = [extensionConfig.extension];
 
   // Creating a group of extensions using multi-providers
   extensionConfig.groups?.forEach((ext) => {
     const groupToken = KeyRegistry.getGroupToken(ext);
-    mGroupToken.set(ext, groupToken);
+    groupTokenMap.set(ext, groupToken);
     providers.push({ token: groupToken, useToken: extensionConfig.extension, multi: true });
   });
 
@@ -88,7 +88,7 @@ export function normalizeExtensionConfig(extensionConfig: ExtensionConfig): Norm
       providers: [],
       exportedProviders: providers,
       exportedConfig: extensionConfig,
-      mExportedGroupToken: mGroupToken,
+      exportedGroupTokenMap: groupTokenMap,
     };
   } else if (extensionConfig.export) {
     return {
@@ -96,15 +96,15 @@ export function normalizeExtensionConfig(extensionConfig: ExtensionConfig): Norm
       exportedProviders: providers,
       config: extensionConfig,
       exportedConfig: extensionConfig,
-      mGroupToken,
-      mExportedGroupToken: mGroupToken,
+      groupTokenMap,
+      exportedGroupTokenMap: groupTokenMap,
     };
   } else {
     return {
       providers,
       exportedProviders: [],
       config: extensionConfig,
-      mGroupToken,
+      groupTokenMap,
     };
   }
 }
