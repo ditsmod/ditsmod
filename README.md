@@ -1,30 +1,59 @@
-## Why You Should Try Ditsmod
+# Ditsmod
 
-As of late 2025, there are roughly three dozen well-known backend web frameworks for Node.js. The majority are written in JavaScript, while the rest use TypeScript. Newer frameworks are almost always written in TypeScript, since it brings a number of significant advantages. Around ten of these frameworks provide built-in Dependency Injection (DI) and use decorators for metaprogramming. Only a handful – maybe five – offer first-class modularity. And just about three of them have their codebase written in pure ESM.
+> A modern, fast, and scalable Node.js framework built with TypeScript, native ESM, hierarchical Dependency Injection, and explicit modular architecture.
 
-It’s understandable that mature frameworks with large ecosystems and user bases can’t easily switch to the newest ECMAScript features. Smaller or less popular frameworks, on the other hand, can experiment more freely, introduce breaking changes, and fix deep architectural issues along the way.
+**Ditsmod** (DI + TS + Module) is designed for developers who appreciate strong architectural integrity, type safety, and clean separation of concerns without global-scope magic.
 
-**Ditsmod** has been in development since early 2020, and its third major release is planned for 2026. Version 3 will focus on framework stabilization, full test coverage, and API refinements.
+## Key Features
 
-So why should you give **Ditsmod** a try?  
-Earlier versions went through a lot of breaking changes, but as a result, Ditsmod now has a solid, modular, and flexible architecture designed for building modern, scalable applications. Its codebase is written in TypeScript and uses ESM natively. It comes with hierarchical Dependency Injection – a perfect match for modular applications. With built-in helpers for decorators and TypeScript-powered reflection, Ditsmod makes metaprogramming practical and productive, simplifying dependency management, module integration, and testing.
+- **Pure ESM & TypeScript-First**: Built from the ground up to leverage modern ECMAScript modules and Node.js features.
+- **Hierarchical Dependency Injection**: Fine-grained control over provider scopes (`perApp`, `perMod`, `perRou`, `perReq`), making testing and memory isolation straightforward.
+- **Explicit Modularity**: Modules explicitly state what they import and export, preventing unwanted side effects and hidden dependencies.
+- **Powerful Extensions API**: Dynamically register providers, attach custom metadata, and build framework-level features using multi-stage initialization hooks.
+- **High Performance**: Light core with low overhead, significantly outperforming many traditional Node.js backend frameworks.
+- **Pluggable Architecture**: Keep your core lean. Add REST (`@ditsmod/rest`), tRPC (`@ditsmod/trpc`), Scheduling (`@ditsmod/schedule`), or OpenAPI integration only when needed.
 
-For more info, see the documentation:
+## Quick Start Example
 
-- [The English version of the documentation](https://ditsmod.github.io/en/).
-- [Українська версія документації](https://ditsmod.github.io/).
+Here is a minimal REST application using `@ditsmod/rest`:
+
+```ts
+import { rootModule, Controller, Res, Route } from '@ditsmod/rest';
+import { Application } from '@ditsmod/core';
+
+@Controller()
+export class HelloWorldController {
+  @Route('GET')
+  tellHello(res: Res) {
+    res.send('Hello, World!');
+  }
+}
+
+@rootModule({
+  controllers: [HelloWorldController],
+})
+export class AppModule {}
+
+const app = await Application.createApp(AppModule);
+app.getServer().listen(3000);
+```
+
+## Documentation
+
+- 🇬🇧 [English Documentation](https://ditsmod.github.io/en/)
+- 🇺🇦 [Українська версія документації](https://ditsmod.github.io/)
 
 ## Benchmarks
 
-You can view [benchmarks for backend frameworks on the JavaScript stack][4].
+Ditsmod is built with performance in mind. Check out the [web framework benchmark comparison][4].
 
-![benchmarks for backend frameworks on the JavaScript stack][10]
+![Framework Benchmarks][10]
 
-## About the repo
+## Monorepo Development
 
-This monorepository uses yarn workspaces (see `package.json`).
+This monorepository uses Yarn Workspaces.
 
-During you run the following command:
+### Initial Setup
 
 ```bash
 corepack enable
@@ -32,34 +61,28 @@ corepack install
 yarn install
 yarn prepare
 yarn build
-yarn build-openapi-ui
 ```
 
-yarn will create symlinks in `node_modules` for all packages listed in the `packages/*` and `examples/*` folders. Also, modules in the `packages/*` folder are linked to the applications in the `examples/*` folder thanks to [compilerOptions.paths][2] as well as [Project References][3]. So, after any change in the source files in `packages/*`, these changes are automatically reflected in `examples/*`.
+All packages inside `packages/*` are automatically linked to `examples/*` using TypeScript project references and subpath mappings. Any changes in `packages/*` immediately update the build for example applications.
 
-Development mode for any application in the `examples/*` directory can be started with this command:
+### Running Examples
+
+To run an example application in development mode:
 
 ```bash
-cd examples/01*
-yarn start:dev
+cd examples/01-hello-world
+yarn start
 ```
 
-### Documentation
+### Documentation Site
 
-The web version of the documentation is launched with the following command:
+To preview the documentation site locally:
 
 ```bash
 yarn docs-en
 ```
 
-The documentation files are located in the following folders:
+Documentation files are located in `website/i18n/en/docusaurus-plugin-content-docs/current/`.
 
-- `website/docs`
-- `website/i18n/en/docusaurus-plugin-content-docs/current`
-
-[1]: https://github.com/angular/angular
-[2]: https://www.typescriptlang.org/tsconfig#paths
-[3]: https://www.typescriptlang.org/docs/handbook/project-references.html
 [4]: https://github.com/ditsmod/vs-webframework
-[5]: https://github.com/tanem/express-bookshelf-realworld-example-app
 [10]: https://github.com/ditsmod/vs-webframework/blob/main/req-per-sec-frameworks4.png
