@@ -2,7 +2,7 @@
 
 **DI + TypeScript + Modularity** — Node.js framework for building scalable server-side applications.
 
-[![npm next](https://img.shields.io/npm/v/@ditsmod/core/next.svg?label=npm%40next)](https://www.npmjs.com/package/@ditsmod/core/v/3.0.0-next.16)
+[![npm next](https://img.shields.io/npm/v/@ditsmod/core/next.svg?label=npm%40next)](https://www.npmjs.com/package/@ditsmod/core/v/3.0.0-next.17)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 [English docs](https://ditsmod.github.io/en/) · [Українська документація](https://ditsmod.github.io/)
