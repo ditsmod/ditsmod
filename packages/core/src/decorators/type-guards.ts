@@ -69,7 +69,7 @@ export function isModuleDecorator(arg?: any) {
 }
 
 export function isModuleWithInitHooks(metadata?: InitHooks<AnyObj>): metadata is InitHooks<AnyObj>;
-export function isModuleWithInitHooks(arg?: DecoratorMeta): arg is DecoratorMeta<InitHooks<AnyObj>>;
+export function isModuleWithInitHooks(arg?: DecoratorMeta): arg is Required<DecoratorMeta<InitHooks<AnyObj>>>;
 export function isModuleWithInitHooks(
   arg?: DecoratorMeta | InitHooks<AnyObj>,
 ): arg is DecoratorMeta<InitHooks<AnyObj>> {
