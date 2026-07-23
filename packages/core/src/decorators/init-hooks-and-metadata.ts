@@ -12,7 +12,7 @@ import { AppInitHooks, type AppProviders } from '#types/metadata-per-mod.js';
 import { type NormalizedModuleMeta, getProxyForInitMeta, NormalizedInitMeta } from '#init/normalized-meta.js';
 import type { ForwardRefFn } from '#di/forward-ref.js';
 
-export type AllInitHooks = Map<AnyFn, Omit<InitHooks, 'decoratorOptions'>>;
+export type AllInitHooks = Map<AnyFn, Omit<InitHooks, 'moduleOptions'>>;
 
 /**
  * Init hooks and metadata attached by init decorators,
@@ -45,15 +45,15 @@ export class InitHooks<T1 extends InitDecoratorOptions = InitDecoratorOptions> {
    */
   declare hostDecoratorOptions?: T1;
 
-  constructor(public decoratorOptions: T1) {
-    this.decoratorOptions ??= {} as T1;
+  constructor(public moduleOptions: T1) {
+    this.moduleOptions ??= {} as T1;
   }
 
   /**
    * Returns a new instance of the current class. Most likely, you don't need to override this method.
    */
-  clone<R extends this>(decoratorOptions?: T1) {
-    return new (this.constructor as { new (arg: object): R })(decoratorOptions || {});
+  clone<R extends this>(moduleOptions?: T1) {
+    return new (this.constructor as { new (arg: object): R })(moduleOptions || {});
   }
 
   /**

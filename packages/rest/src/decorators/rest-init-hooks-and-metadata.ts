@@ -45,7 +45,7 @@ export class RestInitHooks extends InitHooks<RestInitDecoratorOptions> {
   override hostModule = RestModule;
 
   override normalize(normalizedModuleMeta: NormalizedModuleMeta): RestInitMeta {
-    return new RestModuleNormalizer().normalize(normalizedModuleMeta, this.decoratorOptions);
+    return new RestModuleNormalizer().normalize(normalizedModuleMeta, this.moduleOptions);
   }
 
   override getModulesToScan(meta?: RestInitMeta): RestModRefId[] {

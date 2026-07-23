@@ -16,12 +16,12 @@ export class TrpcModuleNormalizer {
   protected normalizedModuleMeta: NormalizedModuleMeta;
   protected meta: TrpcInitMeta;
 
-  normalize(normalizedModuleMeta: NormalizedModuleMeta, decoratorOptions: TrpcInitDecoratorOptions) {
+  normalize(normalizedModuleMeta: NormalizedModuleMeta, moduleOptions: TrpcInitDecoratorOptions) {
     this.normalizedModuleMeta = normalizedModuleMeta;
     const meta = getProxyForInitMeta(normalizedModuleMeta, TrpcInitMeta);
     this.meta = meta;
-    if (decoratorOptions.controllers) {
-      this.meta.controllers.push(...decoratorOptions.controllers);
+    if (moduleOptions.controllers) {
+      this.meta.controllers.push(...moduleOptions.controllers);
     }
     this.checkMetadata();
     return meta;

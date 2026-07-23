@@ -43,20 +43,20 @@ describe('type guards', () => {
 
       const normalizedModuleMeta = new NormalizedModuleMeta();
       const metadata = Reflector.getClassLevelMeta(Module1)![0];
-      normalizedModuleMeta.decoratorOptions = metadata.value;
+      normalizedModuleMeta.moduleOptions = metadata.value;
       expect(isFeatureModule(normalizedModuleMeta)).toBe(true);
     });
 
     it('NormalizedModuleMeta false', () => {
       const normalizedModuleMeta = new NormalizedModuleMeta();
-      normalizedModuleMeta.decoratorOptions = {};
+      normalizedModuleMeta.moduleOptions = {};
       expect(isFeatureModule(normalizedModuleMeta)).toBe(false);
     });
 
     it('initHooks in NormalizedModuleMeta false', () => {
       const initHooks = new InitHooks({});
       const normalizedModuleMeta = new NormalizedModuleMeta();
-      normalizedModuleMeta.decoratorOptions = initHooks;
+      normalizedModuleMeta.moduleOptions = initHooks;
       expect(isFeatureModule(normalizedModuleMeta)).toBe(false);
     });
 
@@ -64,7 +64,7 @@ describe('type guards', () => {
       const initHooks = new InitHooks({});
       initHooks.moduleRole = 'feature';
       const normalizedModuleMeta = new NormalizedModuleMeta();
-      normalizedModuleMeta.decoratorOptions = initHooks;
+      normalizedModuleMeta.moduleOptions = initHooks;
       expect(isFeatureModule(normalizedModuleMeta)).toBe(true);
     });
 
@@ -88,8 +88,8 @@ describe('type guards', () => {
     it('class with decorator', () => {
       @rootModule({})
       class Module1 {}
-      const decoratorOptions = Reflector.getClassLevelMeta(Module1, isRootModule);
-      expect(decoratorOptions).toBeDefined();
+      const moduleOptions = Reflector.getClassLevelMeta(Module1, isRootModule);
+      expect(moduleOptions).toBeDefined();
     });
 
     it('class without decorator', () => {

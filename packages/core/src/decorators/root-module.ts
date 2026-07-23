@@ -23,14 +23,14 @@ export interface RootModuleDecorator {
 }
 
 function transformModule(data?: RootModuleOptions): RootModuleOptions {
-  const decoratorOptions = Object.assign(new RootModuleOptions(), data) as RootModuleOptions;
-  objectKeys(decoratorOptions).forEach((p) => {
-    if (decoratorOptions[p] instanceof ProviderBuilder) {
-      (decoratorOptions as any)[p] = [...decoratorOptions[p]];
-    } else if (Array.isArray(decoratorOptions[p])) {
-      (decoratorOptions as any)[p] = decoratorOptions[p].slice();
+  const moduleOptions = Object.assign(new RootModuleOptions(), data) as RootModuleOptions;
+  objectKeys(moduleOptions).forEach((p) => {
+    if (moduleOptions[p] instanceof ProviderBuilder) {
+      (moduleOptions as any)[p] = [...moduleOptions[p]];
+    } else if (Array.isArray(moduleOptions[p])) {
+      (moduleOptions as any)[p] = moduleOptions[p].slice();
     }
   });
 
-  return decoratorOptions;
+  return moduleOptions;
 }

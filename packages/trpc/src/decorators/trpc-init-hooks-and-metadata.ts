@@ -77,7 +77,7 @@ export class TrpcInitHooks extends InitHooks<TrpcInitDecoratorOptions> {
   override hostModule = TrpcModule;
 
   override normalize(normalizedModuleMeta: NormalizedModuleMeta): TrpcInitMeta {
-    return new TrpcModuleNormalizer().normalize(normalizedModuleMeta, this.decoratorOptions);
+    return new TrpcModuleNormalizer().normalize(normalizedModuleMeta, this.moduleOptions);
   }
 
   override getModulesToScan(meta?: TrpcInitMeta): TrpcModRefId[] {

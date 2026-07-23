@@ -247,7 +247,7 @@ describe('ModuleManager', () => {
       expectedMeta1.declaredInDir = expect.any(String);
       expectedMeta1.isExternal = undefined;
       expectedMeta1.initHooksMap = expect.any(Map);
-      expectedMeta1.decoratorOptions = expect.any(Object);
+      expectedMeta1.moduleOptions = expect.any(Object);
       return expectedMeta1;
     };
 
@@ -320,7 +320,7 @@ describe('ModuleManager', () => {
       expectedMeta3.declaredInDir = expect.any(String);
       expectedMeta3.isExternal = undefined;
       expectedMeta3.initHooksMap = expect.any(Map);
-      expectedMeta3.decoratorOptions = expect.any(Object);
+      expectedMeta3.moduleOptions = expect.any(Object);
 
       expect(mock.getNormalizedModuleMeta('root')).toEqual(expectedMeta3);
     });
@@ -340,7 +340,7 @@ describe('ModuleManager', () => {
       expectedMeta3.declaredInDir = expect.any(String);
       expectedMeta3.isExternal = undefined;
       expectedMeta3.initHooksMap = expect.any(Map);
-      expectedMeta3.decoratorOptions = expect.any(Object);
+      expectedMeta3.moduleOptions = expect.any(Object);
 
       mock.addImport(module3WithProviders);
       expect(mock.snapshotMap.size).toBe(3);
@@ -413,7 +413,7 @@ describe('ModuleManager', () => {
       expectedMeta1.declaredInDir = expect.any(String);
       expectedMeta1.isExternal = undefined;
       expectedMeta1.initHooksMap = expect.any(Map);
-      expectedMeta1.decoratorOptions = expect.any(Object);
+      expectedMeta1.moduleOptions = expect.any(Object);
       return expectedMeta1;
     };
 
@@ -685,7 +685,7 @@ describe('ModuleManager', () => {
       expectedMeta3.declaredInDir = expect.any(String);
       expectedMeta3.isExternal = undefined;
       expectedMeta3.initHooksMap = expect.any(Map);
-      expectedMeta3.decoratorOptions = expect.any(Object);
+      expectedMeta3.moduleOptions = expect.any(Object);
       delete (expectedMeta3 as any).extensionConfigs;
       delete (expectedMeta3 as any).exportedExtensionConfigs;
 
@@ -697,7 +697,7 @@ describe('ModuleManager', () => {
       expectedMeta1.exportedExtensionProviders = extensionProviders;
       expectedMeta1.declaredInDir = expect.any(String);
       expectedMeta1.isExternal = false;
-      expectedMeta1.decoratorOptions = expect.any(Object);
+      expectedMeta1.moduleOptions = expect.any(Object);
       delete (expectedMeta1 as any).extensionConfigs;
       delete (expectedMeta1 as any).exportedExtensionConfigs;
       expectedMeta1.initHooksMap = expect.any(Map);
@@ -734,7 +734,7 @@ describe('ModuleManager', () => {
       expectedMeta3.exportsModules = [Module1];
       expectedMeta3.declaredInDir = expect.any(String);
       expectedMeta3.isExternal = undefined;
-      expectedMeta3.decoratorOptions = expect.any(Object);
+      expectedMeta3.moduleOptions = expect.any(Object);
       expectedMeta3.initHooksMap = expect.any(Map);
       delete (expectedMeta3 as any).extensionConfigs;
       delete (expectedMeta3 as any).exportedExtensionConfigs;
@@ -747,7 +747,7 @@ describe('ModuleManager', () => {
       expectedMeta1.exportedExtensionProviders = extensionProviders;
       expectedMeta1.declaredInDir = expect.any(String);
       expectedMeta1.isExternal = false;
-      expectedMeta1.decoratorOptions = expect.any(Object);
+      expectedMeta1.moduleOptions = expect.any(Object);
       expectedMeta1.initHooksMap = expect.any(Map);
       delete (expectedMeta1 as any).extensionConfigs;
       delete (expectedMeta1 as any).exportedExtensionConfigs;
@@ -786,14 +786,14 @@ describe('ModuleManager', () => {
       expectedMeta3.importsModules = [Module1];
       expectedMeta3.declaredInDir = expect.any(String);
       expectedMeta3.isExternal = undefined;
-      expectedMeta3.decoratorOptions = expect.any(Object);
+      expectedMeta3.moduleOptions = expect.any(Object);
       expectedMeta3.initHooksMap = expect.any(Map);
 
       const expectedMeta1 = new NormalizedModuleMeta();
       expectedMeta1.id = '';
       expectedMeta1.name = 'Module1';
       expectedMeta1.modRefId = Module1;
-      expectedMeta1.decoratorOptions = expect.any(Object);
+      expectedMeta1.moduleOptions = expect.any(Object);
       expectedMeta1.providersPerMod = providersPerMod;
       expectedMeta1.exportedProvidersPerMod = [Service3];
       expectedMeta1.exportedMultiProvidersPerMod = providersPerMod.filter(isMultiProvider);

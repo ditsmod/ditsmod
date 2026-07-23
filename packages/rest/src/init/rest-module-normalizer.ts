@@ -27,15 +27,15 @@ export class RestModuleNormalizer {
   protected normalizedModuleMeta: NormalizedModuleMeta;
   protected meta: RestInitMeta;
 
-  normalize(normalizedModuleMeta: NormalizedModuleMeta, decoratorOptions: RestInitDecoratorOptions) {
+  normalize(normalizedModuleMeta: NormalizedModuleMeta, moduleOptions: RestInitDecoratorOptions) {
     this.normalizedModuleMeta = normalizedModuleMeta;
     const meta = getProxyForInitMeta(normalizedModuleMeta, RestInitMeta);
     this.meta = meta;
-    if (decoratorOptions.controllers) {
-      this.meta.controllers.push(...decoratorOptions.controllers);
+    if (moduleOptions.controllers) {
+      this.meta.controllers.push(...moduleOptions.controllers);
     }
     this.mergeDynamicModule(normalizedModuleMeta.modRefId);
-    this.appendModules(decoratorOptions);
+    this.appendModules(moduleOptions);
     this.checkMetadata();
     return meta;
   }
@@ -66,8 +66,8 @@ export class RestModuleNormalizer {
     }
   }
 
-  protected appendModules(decoratorOptions: RestInitDecoratorOptions) {
-    decoratorOptions.appends?.forEach((ap, i) => {
+  protected appendModules(moduleOptions: RestInitDecoratorOptions) {
+    moduleOptions.appends?.forEach((ap, i) => {
       ap = this.resolveForwardRef([ap])[0];
       if (isNormalizedProvider(ap)) {
         throw new ForbiddenNormalizedExport(this.normalizedModuleMeta.name, ap.token.name || ap.token);

@@ -91,7 +91,7 @@ export class NormalizedModuleMeta<
   /**
    * Metadata returned by the decorator transformer for the module.
    */
-  decoratorOptions: AnyObj;
+  moduleOptions: AnyObj;
   /**
    * The module setted here must be identical to the module
    * passed to "imports", "exports" array of `@featureModule` metadata.

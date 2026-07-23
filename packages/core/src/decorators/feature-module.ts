@@ -10,14 +10,14 @@ export interface FeatureModuleDecorator {
 }
 
 function transformModule(data?: FeatureModuleOptions): FeatureModuleOptions {
-  const decoratorOptions = Object.assign(new FeatureModuleOptions(), data);
-  objectKeys(decoratorOptions).forEach((p) => {
-    if (decoratorOptions[p] instanceof ProviderBuilder) {
-      (decoratorOptions as any)[p] = [...decoratorOptions[p]];
-    } else if (Array.isArray(decoratorOptions[p])) {
-      (decoratorOptions as any)[p] = decoratorOptions[p].slice();
+  const moduleOptions = Object.assign(new FeatureModuleOptions(), data);
+  objectKeys(moduleOptions).forEach((p) => {
+    if (moduleOptions[p] instanceof ProviderBuilder) {
+      (moduleOptions as any)[p] = [...moduleOptions[p]];
+    } else if (Array.isArray(moduleOptions[p])) {
+      (moduleOptions as any)[p] = moduleOptions[p].slice();
     }
   });
 
-  return decoratorOptions;
+  return moduleOptions;
 }

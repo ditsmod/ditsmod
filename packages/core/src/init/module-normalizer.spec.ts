@@ -529,14 +529,14 @@ describe('ModuleNormalizer', () => {
       override normalize(normalizedModuleMeta: NormalizedModuleMeta) {
         const meta = getProxyForInitMeta(normalizedModuleMeta, SomeInitMeta);
         meta.normalizedModuleMeta = normalizedModuleMeta;
-        meta.initDecoratorOptions = this.decoratorOptions;
+        meta.initDecoratorOptions = this.moduleOptions;
 
         if (isDynamicModule(normalizedModuleMeta.modRefId)) {
           const params = normalizedModuleMeta.modRefId.initOpts?.get(initSome);
           meta.path = params?.path;
           meta.targetModRefId = normalizedModuleMeta.modRefId;
         } else {
-          meta.flag = this.decoratorOptions.flag;
+          meta.flag = this.moduleOptions.flag;
           meta.targetModRefId = normalizedModuleMeta.modRefId;
         }
 
@@ -554,15 +554,15 @@ describe('ModuleNormalizer', () => {
     );
 
     it('stores metadata returned by InitHooks.normalize() in normalizedModuleMeta.initMeta', () => {
-      const decoratorOptions: SomeInitOptions = { one: 1, two: 2, flag: true };
+      const moduleOptions: SomeInitOptions = { one: 1, two: 2, flag: true };
 
-      @initSome(decoratorOptions)
+      @initSome(moduleOptions)
       @featureModule()
       class Module1 {}
 
       const initMeta = normalizer.normalize(Module1).initMeta.get(initSome);
       expect(initMeta?.normalizedModuleMeta?.modRefId).toBe(Module1);
-      expect(initMeta?.initDecoratorOptions).toEqual(decoratorOptions);
+      expect(initMeta?.initDecoratorOptions).toEqual(moduleOptions);
       expect(initMeta?.targetModRefId).toBe(Module1);
       expect(initMeta?.flag).toBe(true);
     });
@@ -739,7 +739,7 @@ describe('ModuleNormalizer', () => {
 
         override normalize(normalizedModuleMeta: NormalizedModuleMeta): SomeInitMeta {
           return {
-            flag: this.decoratorOptions.flag,
+            flag: this.moduleOptions.flag,
             targetModRefId: normalizedModuleMeta.modRefId,
           } as SomeInitMeta;
         }

@@ -62,30 +62,30 @@ export class ModuleNormalizer {
    * Returns normalized module metadata.
    */
   normalize(modRefId: ModRefId, allInitHooks: AllInitHooks) {
-    const { decoratorOptions, normalizedModuleMeta } = this.init(modRefId);
-    this.checkAndMarkExternalModule(decoratorOptions);
-    this.normalizeDeclaredAndResolvedProviders(decoratorOptions);
-    this.normalizeExports(decoratorOptions, 'Exports');
+    const { moduleOptions, normalizedModuleMeta } = this.init(modRefId);
+    this.checkAndMarkExternalModule(moduleOptions);
+    this.normalizeDeclaredAndResolvedProviders(moduleOptions);
+    this.normalizeExports(moduleOptions, 'Exports');
     this.mergeDynamicModule(modRefId);
-    this.normalizeImports(decoratorOptions);
-    this.normalizeExtensions(decoratorOptions);
+    this.normalizeImports(moduleOptions);
+    this.normalizeExtensions(moduleOptions);
     this.checkReexportModules();
     this.addInitHooksForHostDecorator(allInitHooks);
     this.callInitHooksFromCurrentModule();
     this.addInitHooksForImportedDynamicModule(allInitHooks);
-    this.quickCheckMeta(decoratorOptions);
+    this.quickCheckMeta(moduleOptions);
     return normalizedModuleMeta;
   }
 
   protected init(modRefId: ModRefId) {
     const decoratorsMeta = this.getDecoratorMeta(modRefId) || [];
     const decoratorMeta = decoratorsMeta.find((d) => isModuleDecorator(d));
-    const decoratorOptions = decoratorMeta?.value;
+    const moduleOptions = decoratorMeta?.value;
     const modName = getDebugClassName(modRefId);
     if (!modName) {
       throw new InvalidModRefId();
     }
-    if (!decoratorOptions) {
+    if (!moduleOptions) {
       throw new MissingModuleDecorator(modName);
     }
 
@@ -95,13 +95,13 @@ export class ModuleNormalizer {
     const normalizedModuleMeta = new NormalizedModuleMeta();
     this.normalizedModuleMeta = normalizedModuleMeta;
     normalizedModuleMeta.name = modName;
-    normalizedModuleMeta.decoratorOptions = decoratorOptions;
+    normalizedModuleMeta.moduleOptions = moduleOptions;
     normalizedModuleMeta.declaredInDir = decoratorMeta?.declaredInDir || '.';
     normalizedModuleMeta.modRefId = modRefId;
     decoratorsMeta.filter(isModuleWithInitHooks).forEach(({ decoratorId, value }) => {
       normalizedModuleMeta.initHooksMap.set(decoratorId!, value);
     });
-    return { decoratorOptions, normalizedModuleMeta };
+    return { moduleOptions, normalizedModuleMeta };
   }
 
   protected getDecoratorMeta(modRefId: ModRefId) {
@@ -114,8 +114,8 @@ export class ModuleNormalizer {
    * Since this method relies on the established variable {@link rootDeclaredInDir},
    * during scanning the {@link ModuleManager} must first scan the root module.
    */
-  protected checkAndMarkExternalModule(decoratorOptions: RootModuleOptions) {
-    if (isRootModule(decoratorOptions)) {
+  protected checkAndMarkExternalModule(moduleOptions: RootModuleOptions) {
+    if (isRootModule(moduleOptions)) {
       this.rootDeclaredInDir = this.normalizedModuleMeta.declaredInDir;
     } else if (this.rootDeclaredInDir) {
       const { declaredInDir } = this.normalizedModuleMeta;
@@ -127,24 +127,24 @@ export class ModuleNormalizer {
       }
     }
 
-    if (decoratorOptions.inheritsContext !== undefined) {
-      this.normalizedModuleMeta.inheritsContext = decoratorOptions.inheritsContext;
+    if (moduleOptions.inheritsContext !== undefined) {
+      this.normalizedModuleMeta.inheritsContext = moduleOptions.inheritsContext;
     }
   }
 
   protected normalizeDeclaredAndResolvedProviders(
-    decoratorOptions: InitDecoratorOptions & PickProps<RootModuleOptions, 'resolvedCollisionsPerApp'>,
+    moduleOptions: InitDecoratorOptions & PickProps<RootModuleOptions, 'resolvedCollisionsPerApp'>,
   ) {
     (['App', 'Mod', 'Rou', 'Req'] as const).forEach((level) => {
       const providersKey = `providersPer${level}` as const;
-      if (decoratorOptions[providersKey]) {
-        const providersPerLevel = this.resolveAllForwardRefs(decoratorOptions[providersKey]);
+      if (moduleOptions[providersKey]) {
+        const providersPerLevel = this.resolveAllForwardRefs(moduleOptions[providersKey]);
         this.normalizedModuleMeta[providersKey].push(...providersPerLevel);
       }
 
       const resolvedCollisionKey = `resolvedCollisionsPer${level}` as const;
-      if (decoratorOptions[resolvedCollisionKey]) {
-        decoratorOptions[resolvedCollisionKey]!.forEach(([token, module]) => {
+      if (moduleOptions[resolvedCollisionKey]) {
+        moduleOptions[resolvedCollisionKey]!.forEach(([token, module]) => {
           token = resolveForwardRef(token);
           module = resolveForwardRef(module);
           if (isDynamicModule(module)) {
@@ -156,8 +156,8 @@ export class ModuleNormalizer {
     });
   }
 
-  protected normalizeExports(decoratorOptions: { exports?: any[] }, action: 'Exports' | 'Exports with params') {
-    if (!decoratorOptions.exports) {
+  protected normalizeExports(moduleOptions: { exports?: any[] }, action: 'Exports' | 'Exports with params') {
+    if (!moduleOptions.exports) {
       return;
     }
     const declaredTokens = getTokens(
@@ -167,7 +167,7 @@ export class ModuleNormalizer {
       ),
     );
 
-    this.resolveAllForwardRefs(decoratorOptions.exports).forEach((exp, i) => {
+    this.resolveAllForwardRefs(moduleOptions.exports).forEach((exp, i) => {
       if (exp === undefined) {
         throw new UndefinedSymbol(action, this.normalizedModuleMeta.name, i);
       }
@@ -238,8 +238,8 @@ export class ModuleNormalizer {
     }
   }
 
-  protected normalizeImports(decoratorOptions: RootModuleOptions) {
-    this.resolveAllForwardRefs(decoratorOptions.imports).forEach((imp, i) => {
+  protected normalizeImports(moduleOptions: RootModuleOptions) {
+    this.resolveAllForwardRefs(moduleOptions.imports).forEach((imp, i) => {
       if (imp === undefined) {
         throw new UndefinedSymbol('Imports', this.normalizedModuleMeta.name, i);
       }
@@ -252,12 +252,12 @@ export class ModuleNormalizer {
   }
 
   protected throwIfResolvingNormalizedProvider(
-    decoratorOptions: InitDecoratorOptions & PickProps<RootModuleOptions, 'resolvedCollisionsPerApp'>,
+    moduleOptions: InitDecoratorOptions & PickProps<RootModuleOptions, 'resolvedCollisionsPerApp'>,
   ) {
     const resolvedCollisionsPerLevel: [any, ModRefId | ForwardRefFn<StaticModule>][] = [];
     (['App', 'Mod', 'Rou', 'Req'] as const).forEach((level) => {
-      if (Array.isArray(decoratorOptions[`resolvedCollisionsPer${level}`])) {
-        resolvedCollisionsPerLevel.push(...decoratorOptions[`resolvedCollisionsPer${level}`]!);
+      if (Array.isArray(moduleOptions[`resolvedCollisionsPer${level}`])) {
+        resolvedCollisionsPerLevel.push(...moduleOptions[`resolvedCollisionsPer${level}`]!);
       }
     });
 
@@ -270,15 +270,15 @@ export class ModuleNormalizer {
     });
   }
 
-  protected normalizeExtensions(decoratorOptions: PickProps<FeatureModuleOptions, 'extensions' | 'extensionsMeta'>) {
-    if (decoratorOptions.extensionsMeta) {
+  protected normalizeExtensions(moduleOptions: PickProps<FeatureModuleOptions, 'extensions' | 'extensionsMeta'>) {
+    if (moduleOptions.extensionsMeta) {
       this.normalizedModuleMeta.extensionsMeta = {
-        ...decoratorOptions.extensionsMeta,
+        ...moduleOptions.extensionsMeta,
         ...this.normalizedModuleMeta.extensionsMeta,
       };
     }
 
-    decoratorOptions.extensions?.forEach((extensionOrConfig) => {
+    moduleOptions.extensions?.forEach((extensionOrConfig) => {
       if (!isExtensionConfig(extensionOrConfig)) {
         extensionOrConfig = { extension: extensionOrConfig } as BaseExtensionConfig;
       }
@@ -363,7 +363,7 @@ export class ModuleNormalizer {
         this.normalizedModuleMeta.importsModules.push(initHooks.hostModule);
       }
 
-      this.fetchInitDecoratorOptions(decorator, initHooks.decoratorOptions);
+      this.fetchInitDecoratorOptions(decorator, initHooks.moduleOptions);
       this.callInitHook(decorator, initHooks);
     });
   }
@@ -522,8 +522,8 @@ export class AppModule {}
     }
   }
 
-  protected quickCheckMeta(decoratorOptions: RootModuleOptions) {
-    this.throwIfResolvingNormalizedProvider(decoratorOptions);
+  protected quickCheckMeta(moduleOptions: RootModuleOptions) {
+    this.throwIfResolvingNormalizedProvider(moduleOptions);
   }
 
   propagateParentHooks(normalizedModuleMeta: NormalizedModuleMeta, allInitHooks: AllInitHooks) {
