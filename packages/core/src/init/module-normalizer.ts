@@ -62,7 +62,8 @@ export class ModuleNormalizer {
    * Returns normalized module metadata.
    */
   normalize(modRefId: ModRefId, allInitHooks: AllInitHooks) {
-    const { moduleOptions, normalizedModuleMeta } = this.initNormalizedModuleMeta(modRefId);
+    const normalizedModuleMeta = this.initNormalizedModuleMeta(modRefId);
+    const { moduleOptions } = normalizedModuleMeta;
     this.checkAndMarkExternalModule(moduleOptions);
 
     // Phase 1: Normalize base decorator metadata.
@@ -108,7 +109,7 @@ export class ModuleNormalizer {
     decoratorsMeta.filter(isModuleWithInitHooks).forEach(({ decoratorId, value }) => {
       normalizedModuleMeta.initHooksMap.set(decoratorId, value);
     });
-    return { moduleOptions, normalizedModuleMeta };
+    return normalizedModuleMeta;
   }
 
   protected getDecoratorMeta(modRefId: ModRefId) {
