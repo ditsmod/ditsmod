@@ -9,7 +9,7 @@ This package provides a Command Line Interface (CLI) and development tools for D
 ## Installation {#installation}
 
 ```bash
-npm i -D @ditsmod/cli
+npm i -g @ditsmod/cli
 ```
 
 Or run it directly without installation using `npx`:

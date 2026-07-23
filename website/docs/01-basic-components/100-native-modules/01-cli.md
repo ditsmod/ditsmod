@@ -9,7 +9,7 @@ sidebar_position: 1
 ## Встановлення {#installation}
 
 ```bash
-npm i -D @ditsmod/cli
+npm i -g @ditsmod/cli
 ```
 
 Або запустіть його безпосередньо без встановлення за допомогою `npx`:
