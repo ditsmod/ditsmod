@@ -1,4 +1,4 @@
-import { ModuleDecoratorOptions } from '#decorators/module-decorator-options.js';
+import { FeatureModuleOptions } from '#decorators/module-decorator-options.js';
 import { Reflector } from '#di/reflector.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { ProviderBuilder } from '#utils/providers.js';
@@ -6,11 +6,11 @@ import { ProviderBuilder } from '#utils/providers.js';
 export const featureModule: FeatureModuleDecorator = Reflector.makeClassDecorator(transformModule, 'featureModule');
 
 export interface FeatureModuleDecorator {
-  (data?: ModuleDecoratorOptions): any;
+  (data?: FeatureModuleOptions): any;
 }
 
-function transformModule(data?: ModuleDecoratorOptions): ModuleDecoratorOptions {
-  const decoratorOptions = Object.assign(new ModuleDecoratorOptions(), data);
+function transformModule(data?: FeatureModuleOptions): FeatureModuleOptions {
+  const decoratorOptions = Object.assign(new FeatureModuleOptions(), data);
   objectKeys(decoratorOptions).forEach((p) => {
     if (decoratorOptions[p] instanceof ProviderBuilder) {
       (decoratorOptions as any)[p] = [...decoratorOptions[p]];

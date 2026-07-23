@@ -3,12 +3,12 @@ import type { ModRefId, StaticModule } from './module-decorator-options.js';
 import { Reflector } from '#di/reflector.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { ProviderBuilder } from '#utils/providers.js';
-import { ModuleDecoratorOptions } from './module-decorator-options.js';
+import { FeatureModuleOptions } from './module-decorator-options.js';
 
 /**
  * Raw module metadata returned by reflector.
  */
-export class RootDecoratorOptions extends ModuleDecoratorOptions {
+export class RootModuleOptions extends FeatureModuleOptions {
   /**
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
@@ -19,11 +19,11 @@ export class RootDecoratorOptions extends ModuleDecoratorOptions {
 export const rootModule: RootModuleDecorator = Reflector.makeClassDecorator(transformModule, 'rootModule');
 
 export interface RootModuleDecorator {
-  (data?: RootDecoratorOptions): any;
+  (data?: RootModuleOptions): any;
 }
 
-function transformModule(data?: RootDecoratorOptions): RootDecoratorOptions {
-  const decoratorOptions = Object.assign(new RootDecoratorOptions(), data) as RootDecoratorOptions;
+function transformModule(data?: RootModuleOptions): RootModuleOptions {
+  const decoratorOptions = Object.assign(new RootModuleOptions(), data) as RootModuleOptions;
   objectKeys(decoratorOptions).forEach((p) => {
     if (decoratorOptions[p] instanceof ProviderBuilder) {
       (decoratorOptions as any)[p] = [...decoratorOptions[p]];

@@ -6,7 +6,7 @@ import type { DepsMeta } from './resolved-provider.js';
 import { DEPS_KEY } from './constants.js';
 
 export type Class<T = any, A extends any[] = any> = (new (...args: A) => T) & { prototype: T };
-export type AbstractClass<T = any, A extends any[]= any> = (abstract new (...args: A) => T) & { prototype: T };
+export type AbstractClass<T = any, A extends any[] = any> = (abstract new (...args: A) => T) & { prototype: T };
 
 /**
  * Used to indicate the unknown data type of a particular

@@ -1,67 +1,69 @@
 import { DecoratorMeta } from '#di/top/decorator-and-value.js';
 import type { AnyObj, RequireProps } from '#types/mix.js';
 import type { DynamicModule } from '#decorators/module-decorator-options.js';
-import { ModuleDecoratorOptions } from '#decorators/module-decorator-options.js';
+import { FeatureModuleOptions } from '#decorators/module-decorator-options.js';
 import { InitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { NormalizedModuleMeta } from '#init/normalized-meta.js';
-import { RootDecoratorOptions } from './root-module.js';
+import { RootModuleOptions } from './root-module.js';
 
 export function isDynamicModuleWrapper(arg?: AnyObj): arg is { dynamicModule: DynamicModule } {
   return isDynamicModule((arg as { dynamicModule: DynamicModule } | undefined)?.dynamicModule);
 }
 
-export function isRootModule(decorAndVal?: DecoratorMeta): decorAndVal is DecoratorMeta<RootDecoratorOptions>;
+export function isRootModule(decorAndVal?: DecoratorMeta): decorAndVal is DecoratorMeta<RootModuleOptions>;
 export function isRootModule(
   normalizedModuleMeta?: NormalizedModuleMeta,
-): normalizedModuleMeta is NormalizedModuleMeta<RootDecoratorOptions>;
-export function isRootModule(decoratorOptions?: AnyObj): decoratorOptions is RootDecoratorOptions;
+): normalizedModuleMeta is NormalizedModuleMeta<RootModuleOptions>;
+export function isRootModule(decoratorOptions?: AnyObj): decoratorOptions is RootModuleOptions;
 export function isRootModule(
-  arg?: DecoratorMeta | RootDecoratorOptions | NormalizedModuleMeta,
-): arg is DecoratorMeta<RootDecoratorOptions> {
+  arg?: DecoratorMeta | RootModuleOptions | NormalizedModuleMeta,
+): arg is DecoratorMeta<RootModuleOptions> {
   if (arg instanceof DecoratorMeta) {
     if (arg.value instanceof InitHooks) {
       return arg.value.moduleRole === 'root';
     }
-    return arg.value instanceof RootDecoratorOptions;
+    return arg.value instanceof RootModuleOptions;
   } else if (arg instanceof NormalizedModuleMeta) {
     if (arg.decoratorOptions instanceof InitHooks) {
       return arg.decoratorOptions.moduleRole === 'root';
     }
-    return arg.decoratorOptions instanceof RootDecoratorOptions;
+    return arg.decoratorOptions instanceof RootModuleOptions;
   } else if (arg instanceof InitHooks) {
     return arg.moduleRole === 'root';
   }
-  return arg instanceof RootDecoratorOptions;
+  return arg instanceof RootModuleOptions;
 }
 
-export function isFeatureModule(arg?: DecoratorMeta): arg is DecoratorMeta<ModuleDecoratorOptions>;
+export function isFeatureModule(arg?: DecoratorMeta): arg is DecoratorMeta<FeatureModuleOptions>;
 export function isFeatureModule(
   normalizedModuleMeta?: NormalizedModuleMeta,
-): normalizedModuleMeta is NormalizedModuleMeta<ModuleDecoratorOptions>;
-export function isFeatureModule(arg?: AnyObj): arg is ModuleDecoratorOptions;
+): normalizedModuleMeta is NormalizedModuleMeta<FeatureModuleOptions>;
+export function isFeatureModule(arg?: AnyObj): arg is FeatureModuleOptions;
 export function isFeatureModule(
-  arg?: DecoratorMeta | ModuleDecoratorOptions | NormalizedModuleMeta,
-): arg is DecoratorMeta<ModuleDecoratorOptions> {
+  arg?: DecoratorMeta | FeatureModuleOptions | NormalizedModuleMeta,
+): arg is DecoratorMeta<FeatureModuleOptions> {
   if (arg instanceof DecoratorMeta) {
     if (arg.value instanceof InitHooks) {
       return arg.value.moduleRole === 'feature';
     }
-    return arg.value instanceof ModuleDecoratorOptions;
+    return arg.value instanceof FeatureModuleOptions;
   } else if (arg instanceof NormalizedModuleMeta) {
     if (arg.decoratorOptions instanceof InitHooks) {
       return arg.decoratorOptions.moduleRole === 'feature';
     }
-    return arg.decoratorOptions instanceof ModuleDecoratorOptions;
+    return arg.decoratorOptions instanceof FeatureModuleOptions;
   } else if (arg instanceof InitHooks) {
     return arg.moduleRole === 'feature';
   }
-  return arg instanceof ModuleDecoratorOptions;
+  return arg instanceof FeatureModuleOptions;
 }
 
 export function isModuleDecorator(
   arg?: DecoratorMeta,
-): arg is DecoratorMeta<RootDecoratorOptions | ModuleDecoratorOptions>;
-export function isModuleDecorator(arg?: RootDecoratorOptions): arg is RootDecoratorOptions | ModuleDecoratorOptions;
+): arg is DecoratorMeta<RootModuleOptions | FeatureModuleOptions>;
+export function isModuleDecorator(
+  arg?: RootModuleOptions,
+): arg is RootModuleOptions | FeatureModuleOptions;
 export function isModuleDecorator(arg?: any) {
   return isRootModule(arg) || isFeatureModule(arg);
 }

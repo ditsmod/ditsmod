@@ -12,7 +12,7 @@ import type { ForwardRefFn } from '#di/forward-ref.js';
 /**
  * Raw metadata that is passed to the {@link rootModule} and {@link featureModule} decorators.
  */
-export class ModuleDecoratorOptions<T extends AnyObj = AnyObj> {
+export class FeatureModuleOptions<T extends AnyObj = AnyObj> {
   /**
    * Providers per the application.
    */

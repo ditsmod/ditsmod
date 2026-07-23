@@ -1,7 +1,7 @@
 import { featureModule } from '#decorators/feature-module.js';
 import { isFeatureModule, isDynamicModule, isRootModule } from '#decorators/type-guards.js';
 import { rootModule } from '#decorators/root-module.js';
-import { ModuleDecoratorOptions, DynamicModule } from '#decorators/module-decorator-options.js';
+import { FeatureModuleOptions, DynamicModule } from '#decorators/module-decorator-options.js';
 import { NormalizedModuleMeta } from '#init/normalized-meta.js';
 import { InitHooks } from './init-hooks-and-metadata.js';
 import { Reflector } from '#di/reflector.js';
@@ -79,8 +79,8 @@ describe('type guards', () => {
       expect(isFeatureModule(initHooks)).toBe(false);
     });
 
-    it('ModuleDecoratorOptions', () => {
-      expect(isFeatureModule(new ModuleDecoratorOptions())).toBe(true);
+    it('FeatureModuleOptions', () => {
+      expect(isFeatureModule(new FeatureModuleOptions())).toBe(true);
     });
   });
 

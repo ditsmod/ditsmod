@@ -22,7 +22,7 @@ export {
   AllInitHooks,
   InitDecoratorOptions,
 } from '#decorators/init-hooks-and-metadata.js';
-export { rootModule, RootDecoratorOptions } from '#decorators/root-module.js';
+export { rootModule, RootModuleOptions } from '#decorators/root-module.js';
 export { defaultExtensionProviders } from '#extension/default-extensions-providers.js';
 export {
   ExtensionCounters,
@@ -63,7 +63,7 @@ export {
   UnionToIntersection,
 } from '#types/mix.js';
 export {
-  ModuleDecoratorOptions,
+  FeatureModuleOptions,
   DynamicModule,
   DynamicModuleWithInit,
   BaseDynamicModule,

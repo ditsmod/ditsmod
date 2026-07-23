@@ -3,7 +3,7 @@ import type { ModuleManager } from './module-manager.js';
 import type { AnyObj, Level, PickProps } from '#types/mix.js';
 import type { ModRefId, StaticModule } from '#decorators/module-decorator-options.js';
 import type { AnyFn, Provider, Class } from '#di/top/types-and-models.js';
-import type { DynamicModule, ModuleDecoratorOptions } from '#decorators/module-decorator-options.js';
+import type { DynamicModule, FeatureModuleOptions } from '#decorators/module-decorator-options.js';
 import type { ForwardRefFn } from '#di/forward-ref.js';
 import type { Extension } from '#extension/extension-types.js';
 import type { AllInitHooks, InitDecoratorOptions, InitHooks } from '#decorators/init-hooks-and-metadata.js';
@@ -46,7 +46,7 @@ import {
   ForbiddenAppExport,
   EmptyModuleMeta,
 } from '#errors';
-import type { RootDecoratorOptions } from '#decorators/root-module.js';
+import type { RootModuleOptions } from '#decorators/root-module.js';
 
 /**
  * Normalizes and validates module metadata.
@@ -79,8 +79,8 @@ export class ModuleNormalizer {
 
   protected init(modRefId: ModRefId) {
     const decoratorsMeta = this.getDecoratorMeta(modRefId) || [];
-    const decorAndVal = decoratorsMeta.find((d) => isModuleDecorator(d));
-    const decoratorOptions = decorAndVal?.value;
+    const decoratorMeta = decoratorsMeta.find((d) => isModuleDecorator(d));
+    const decoratorOptions = decoratorMeta?.value;
     const modName = getDebugClassName(modRefId);
     if (!modName) {
       throw new InvalidModRefId();
@@ -96,7 +96,7 @@ export class ModuleNormalizer {
     this.normalizedModuleMeta = normalizedModuleMeta;
     normalizedModuleMeta.name = modName;
     normalizedModuleMeta.decoratorOptions = decoratorOptions;
-    normalizedModuleMeta.declaredInDir = decorAndVal?.declaredInDir || '.';
+    normalizedModuleMeta.declaredInDir = decoratorMeta?.declaredInDir || '.';
     normalizedModuleMeta.modRefId = modRefId;
     decoratorsMeta.filter(isModuleWithInitHooks).forEach(({ decoratorId, value }) => {
       normalizedModuleMeta.initHooksMap.set(decoratorId!, value);
@@ -106,15 +106,15 @@ export class ModuleNormalizer {
 
   protected getDecoratorMeta(modRefId: ModRefId) {
     modRefId = resolveForwardRef(modRefId);
-    const mod = isDynamicModule(modRefId) ? resolveForwardRef(modRefId.module) : modRefId;
-    return Reflector.getClassLevelMeta(mod);
+    const staticModule = isDynamicModule(modRefId) ? resolveForwardRef(modRefId.module) : modRefId;
+    return Reflector.getClassLevelMeta(staticModule);
   }
 
   /**
    * Since this method relies on the established variable {@link rootDeclaredInDir},
    * during scanning the {@link ModuleManager} must first scan the root module.
    */
-  protected checkAndMarkExternalModule(decoratorOptions: RootDecoratorOptions) {
+  protected checkAndMarkExternalModule(decoratorOptions: RootModuleOptions) {
     if (isRootModule(decoratorOptions)) {
       this.rootDeclaredInDir = this.normalizedModuleMeta.declaredInDir;
     } else if (this.rootDeclaredInDir) {
@@ -133,7 +133,7 @@ export class ModuleNormalizer {
   }
 
   protected normalizeDeclaredAndResolvedProviders(
-    decoratorOptions: InitDecoratorOptions & PickProps<RootDecoratorOptions, 'resolvedCollisionsPerApp'>,
+    decoratorOptions: InitDecoratorOptions & PickProps<RootModuleOptions, 'resolvedCollisionsPerApp'>,
   ) {
     (['App', 'Mod', 'Rou', 'Req'] as const).forEach((level) => {
       const providersKey = `providersPer${level}` as const;
@@ -238,7 +238,7 @@ export class ModuleNormalizer {
     }
   }
 
-  protected normalizeImports(decoratorOptions: RootDecoratorOptions) {
+  protected normalizeImports(decoratorOptions: RootModuleOptions) {
     this.resolveAllForwardRefs(decoratorOptions.imports).forEach((imp, i) => {
       if (imp === undefined) {
         throw new UndefinedSymbol('Imports', this.normalizedModuleMeta.name, i);
@@ -252,7 +252,7 @@ export class ModuleNormalizer {
   }
 
   protected throwIfResolvingNormalizedProvider(
-    decoratorOptions: InitDecoratorOptions & PickProps<RootDecoratorOptions, 'resolvedCollisionsPerApp'>,
+    decoratorOptions: InitDecoratorOptions & PickProps<RootModuleOptions, 'resolvedCollisionsPerApp'>,
   ) {
     const resolvedCollisionsPerLevel: [any, ModRefId | ForwardRefFn<StaticModule>][] = [];
     (['App', 'Mod', 'Rou', 'Req'] as const).forEach((level) => {
@@ -270,7 +270,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected normalizeExtensions(decoratorOptions: PickProps<ModuleDecoratorOptions, 'extensions' | 'extensionsMeta'>) {
+  protected normalizeExtensions(decoratorOptions: PickProps<FeatureModuleOptions, 'extensions' | 'extensionsMeta'>) {
     if (decoratorOptions.extensionsMeta) {
       this.normalizedModuleMeta.extensionsMeta = {
         ...decoratorOptions.extensionsMeta,
@@ -522,7 +522,7 @@ export class AppModule {}
     }
   }
 
-  protected quickCheckMeta(decoratorOptions: RootDecoratorOptions) {
+  protected quickCheckMeta(decoratorOptions: RootModuleOptions) {
     this.throwIfResolvingNormalizedProvider(decoratorOptions);
   }
 

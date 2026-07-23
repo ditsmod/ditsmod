@@ -1,14 +1,14 @@
 import { featureModule } from '#decorators/feature-module.js';
 import { InitDecoratorOptions, InitHooks, InitDecorator } from '#decorators/init-hooks-and-metadata.js';
 import { NormalizedInitMeta, getProxyForInitMeta, NormalizedModuleMeta } from '#init/normalized-meta.js';
-import { rootModule, RootDecoratorOptions } from '#decorators/root-module.js';
+import { rootModule, RootModuleOptions } from '#decorators/root-module.js';
 import { Reflector } from '#di/reflector.js';
 import { Extension } from '#extension/extension-types.js';
 import { AnyObj } from '#types/mix.js';
 import { ModRefId } from '#decorators/module-decorator-options.js';
 import {
   DynamicModuleOptions,
-  ModuleDecoratorOptions,
+  FeatureModuleOptions,
   DynamicModuleWithInit,
   DynamicModule,
 } from '#decorators/module-decorator-options.js';
@@ -887,10 +887,15 @@ describe('ModuleNormalizer', () => {
       class InternalModule {}
 
       const dummyDecorator = () => {};
-      const rootDec = new DecoratorMeta(dummyDecorator, new RootDecoratorOptions(), undefined, '/user-project/src');
+      const rootDec = new DecoratorMeta(
+        dummyDecorator,
+        new RootModuleOptions(),
+        undefined,
+        '/user-project/src',
+      );
       externalModuleNormalizer.customMeta.set(AppModule, [rootDec]);
 
-      const externalModuleOptions = Object.assign(new ModuleDecoratorOptions(), {
+      const externalModuleOptions = Object.assign(new FeatureModuleOptions(), {
         providersPerApp: [{ token: 'external-token', useValue: 1 }],
       });
       const externalDec = new DecoratorMeta(
@@ -901,7 +906,7 @@ describe('ModuleNormalizer', () => {
       );
       externalModuleNormalizer.customMeta.set(ExternalModule, [externalDec]);
 
-      const internalModuleOptions = Object.assign(new ModuleDecoratorOptions(), {
+      const internalModuleOptions = Object.assign(new FeatureModuleOptions(), {
         providersPerApp: [{ token: 'internal-token', useValue: 1 }],
       });
       const internalDec = new DecoratorMeta(
@@ -923,10 +928,15 @@ describe('ModuleNormalizer', () => {
       class DitsmodModule {}
 
       const dummyDecorator = () => {};
-      const rootDec = new DecoratorMeta(dummyDecorator, new RootDecoratorOptions(), undefined, '/user-project/src');
+      const rootDec = new DecoratorMeta(
+        dummyDecorator,
+        new RootModuleOptions(),
+        undefined,
+        '/user-project/src',
+      );
       externalModuleNormalizer.customMeta.set(AppModule, [rootDec]);
 
-      const ditsmodModuleOptions = Object.assign(new ModuleDecoratorOptions(), {
+      const ditsmodModuleOptions = Object.assign(new FeatureModuleOptions(), {
         providersPerApp: [{ token: 'ditsmod-token', useValue: 1 }],
       });
       const ditsmodDec = new DecoratorMeta(

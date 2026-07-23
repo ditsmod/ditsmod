@@ -1,4 +1,4 @@
-import { rootModule, type RootDecoratorOptions } from './root-module.js';
+import { rootModule, type RootModuleOptions } from './root-module.js';
 import { Reflector } from '#di/reflector.js';
 
 describe('RootModule decorator', () => {
@@ -30,7 +30,7 @@ describe('RootModule decorator', () => {
   });
 
   it('decorator with all allowed properties', () => {
-    const rootDecoratorOptions: RootDecoratorOptions = {
+    const rootDecoratorOptions: RootModuleOptions = {
       imports: [],
       providersPerApp: [],
       providersPerMod: [],

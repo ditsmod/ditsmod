@@ -891,18 +891,17 @@ describe('ModuleManager', () => {
     });
 
     it('should handle Module1 not having an annotation with initSome, but imported in AppModule with this decorator', () => {
-      interface RootDecoratorOptions extends InitDecoratorOptions<{ path?: string }> {
+      interface RootModuleOptions extends InitDecoratorOptions<{ path?: string }> {
         one?: string;
         two?: string;
       }
       interface InitMeta extends NormalizedInitMeta {
         path?: string;
       }
-      const initSome: InitDecorator<RootDecoratorOptions, { path?: string }, InitMeta> = Reflector.makeClassDecorator(
-        (d) => new InitHooks1(d),
-      );
+      const initSome: InitDecorator<RootModuleOptions, { path?: string }, InitMeta> =
+        Reflector.makeClassDecorator((d) => new InitHooks1(d));
 
-      class InitHooks1Local extends InitHooks<RootDecoratorOptions> {
+      class InitHooks1Local extends InitHooks<RootModuleOptions> {
         override normalize({ modRefId }: NormalizedModuleMeta): InitMeta {
           if (isDynamicModule(modRefId)) {
             const params = modRefId.initOpts?.get(initSomeLocal);
@@ -917,7 +916,7 @@ describe('ModuleManager', () => {
 
       const dynamicModule: DynamicModule = { module: Module1 };
 
-      const initSomeLocal: InitDecorator<RootDecoratorOptions, { path?: string }, InitMeta> =
+      const initSomeLocal: InitDecorator<RootModuleOptions, { path?: string }, InitMeta> =
         Reflector.makeClassDecorator((d) => new InitHooks1Local(d));
 
       @initSomeLocal({ one: 'some-here', imports: [{ dynamicModule: dynamicModule, path: 'some-prefix' }] })
@@ -930,7 +929,7 @@ describe('ModuleManager', () => {
     });
 
     it('should handle static Module1 not having an annotation with initSome, but imported in AppModule with this decorator', () => {
-      interface RootDecoratorOptions extends InitDecoratorOptions<{ path?: string }> {
+      interface RootModuleOptions extends InitDecoratorOptions<{ path?: string }> {
         one?: string;
         two?: string;
       }
@@ -941,7 +940,7 @@ describe('ModuleManager', () => {
       @featureModule()
       class HostModule1Local {}
 
-      class InitHooks1Local extends InitHooks<RootDecoratorOptions> {
+      class InitHooks1Local extends InitHooks<RootModuleOptions> {
         override hostModule = HostModule1Local;
         override normalize({ modRefId }: NormalizedModuleMeta): InitMeta {
           return { path: 'static-default' } as InitMeta;
@@ -951,7 +950,7 @@ describe('ModuleManager', () => {
       @featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
       class Module1 {}
 
-      const initSomeLocal: InitDecorator<RootDecoratorOptions, { path?: string }, InitMeta> =
+      const initSomeLocal: InitDecorator<RootModuleOptions, { path?: string }, InitMeta> =
         Reflector.makeClassDecorator((d) => new InitHooks1Local(d));
 
       @initSomeLocal({ one: 'some-here', imports: [Module1] })
@@ -965,7 +964,7 @@ describe('ModuleManager', () => {
     });
 
     it('should not propagate context hooks when inheritsContext is false for static Module1', () => {
-      interface RootDecoratorOptions extends InitDecoratorOptions<{ path?: string }> {
+      interface RootModuleOptions extends InitDecoratorOptions<{ path?: string }> {
         one?: string;
       }
       interface InitMeta extends NormalizedInitMeta {
@@ -975,14 +974,14 @@ describe('ModuleManager', () => {
       @featureModule()
       class HostModule1Local {}
 
-      class InitHooks1Local extends InitHooks<RootDecoratorOptions> {
+      class InitHooks1Local extends InitHooks<RootModuleOptions> {
         override hostModule = HostModule1Local;
         override normalize({ modRefId }: NormalizedModuleMeta): InitMeta {
           return { path: 'static-default' } as InitMeta;
         }
       }
 
-      const initSomeLocal: InitDecorator<RootDecoratorOptions, { path?: string }, InitMeta> =
+      const initSomeLocal: InitDecorator<RootModuleOptions, { path?: string }, InitMeta> =
         Reflector.makeClassDecorator((d) => new InitHooks1Local(d));
 
       @featureModule({

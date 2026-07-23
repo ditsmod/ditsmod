@@ -65,7 +65,7 @@ export class ProvidersCollision extends CustomError {
     let msg1 = `Importing providers to ${moduleName} failed: exports ${fromModules}causes collision with ${tokenNames}. `;
     if (!isExternal) {
       msg1 += `You should add ${tokenNames} to ${resolvedCollisionsPer} in `;
-      msg1 += (!level || level == 'App') ? `root module.${example}` : `this module.${example}`;
+      msg1 += !level || level == 'App' ? `root module.${example}` : `this module.${example}`;
     }
     super({
       msg1,

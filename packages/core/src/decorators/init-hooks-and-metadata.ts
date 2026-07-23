@@ -4,7 +4,7 @@ import type { SystemLogMediator } from '#logger/system-log-mediator.js';
 import type { AnyObj } from '#types/mix.js';
 import type { ModRefId, StaticModule } from './module-decorator-options.js';
 import type { AnyFn, Provider } from '#di/top/types-and-models.js';
-import type { DynamicModule, ModuleDecoratorOptions } from '#decorators/module-decorator-options.js';
+import type { DynamicModule, FeatureModuleOptions } from '#decorators/module-decorator-options.js';
 import type { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import type { featureModule } from './feature-module.js';
 import type { rootModule } from './root-module.js';
@@ -77,7 +77,7 @@ export class InitHooks<T1 extends InitDecoratorOptions = InitDecoratorOptions> {
 
   /**
    * This method gets metadata from {@link rootModule} decorator to collect
-   * providers from the {@link ModuleDecoratorOptions.exports | exports } property.
+   * providers from the {@link FeatureModuleOptions.exports | exports } property.
    */
   exportAppProviders(config: {
     moduleManager: ModuleManager;
@@ -175,7 +175,7 @@ import {
   DynamicModuleWithInit,
 } from '@ditsmod/core';
 
-interface RootDecoratorOptions {
+interface RootModuleOptions {
   one?: number;
   two?: number;
 }
@@ -183,12 +183,12 @@ interface InitMeta {
   other?: string;
 }
 
-function getInitHooks(data?: RootDecoratorOptions): InitHooks<RootDecoratorOptions> {
+function getInitHooks(data?: RootModuleOptions): InitHooks<RootModuleOptions> {
   const metadata = Object.assign({}, data);
   return new MyInitHooks(metadata);
 }
 // Creating an init decorator
-export const initSome: InitDecorator<RootDecoratorOptions, { path?: string }, InitMeta> = makeClassDecorator(getInitHooks);
+export const initSome: InitDecorator<RootModuleOptions, { path?: string }, InitMeta> = makeClassDecorator(getInitHooks);
 
 @featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
 class Module1 {
@@ -210,7 +210,7 @@ class MyModule {
   // Your code here
 }
 
-class MyInitHooks extends InitHooks<RootDecoratorOptions> {}
+class MyInitHooks extends InitHooks<RootModuleOptions> {}
 ```
  */
 export interface InitDecorator<T extends InitDecoratorOptions, ModuleParams, InitMeta> {
@@ -229,8 +229,10 @@ export interface DynamicModuleWrapper {
 }
 
 export interface InitDecoratorOptions<InitDynamicOptions extends object = object> extends Omit<
-  ModuleDecoratorOptions,
+  FeatureModuleOptions,
   'imports'
 > {
-  imports?: (((DynamicModuleWrapper | DynamicModule) & InitDynamicOptions) | StaticModule | ForwardRefFn<StaticModule>)[];
+  imports?: (
+    ((DynamicModuleWrapper | DynamicModule) & InitDynamicOptions) | StaticModule | ForwardRefFn<StaticModule>
+  )[];
 }

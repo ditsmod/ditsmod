@@ -7,13 +7,7 @@ import type { InjectionToken } from '#di/top/injection-token.js';
 import type { InjectionSymbol } from '#di/top/get-symbol.js';
 
 type ProviderToken<T> =
-  | InjectionToken<T>
-  | Class<T>
-  | InjectionSymbol<T>
-  | string
-  | symbol
-  | number
-  | NonNullable<unknown>;
+  InjectionToken<T> | Class<T> | InjectionSymbol<T> | string | symbol | number | NonNullable<unknown>;
 /**
  * This class has utilites to adding providers to DI in more type safe way.
  * 
