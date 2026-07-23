@@ -1,7 +1,8 @@
 import type { ModuleManager } from '#init/module-manager.js';
 import type { ShallowModuleImports } from '#init/types.js';
 import type { SystemLogMediator } from '#logger/system-log-mediator.js';
-import type { AnyObj, ModRefId, ModuleType } from '#types/mix.js';
+import type { AnyObj } from '#types/mix.js';
+import type { ModRefId, ModuleType } from './module-decorator-options.js';
 import type { AnyFn, Provider } from '#di/top/types-and-models.js';
 import type { DynamicModule, ModuleDecoratorOptions } from '#decorators/module-decorator-options.js';
 import type { ShallowModulesImporter } from '#init/shallow-modules-importer.js';

@@ -1,7 +1,7 @@
 import { injectable } from '#di/decorators.js';
 import type { Class } from '#di/top/types-and-models.js';
 import { ExtensionClass, ExtensionGroupMeta, Extension } from '#extension/extension-types.js';
-import { ModRefId } from '#types/mix.js';
+import { ModRefId } from '#decorators/module-decorator-options.js';
 
 @injectable()
 export class ExtensionContext {

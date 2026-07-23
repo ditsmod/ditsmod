@@ -4,7 +4,7 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ModuleManager } from '#init/module-manager.js';
 // import { Router } from '#types/router.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
-import { ModuleType } from '#types/mix.js';
+import { ModuleType } from '#decorators/module-decorator-options.js';
 import { BaseAppInitializer } from '#init/base-app-initializer.js';
 import { BaseApplication } from '#init/base-application.js';
 import { rootModule } from '#decorators/root-module.js';

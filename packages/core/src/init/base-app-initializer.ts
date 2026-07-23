@@ -10,7 +10,7 @@ import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ExtensionContext } from '#extension/extensions-context.js';
 import { ExtensionManager, InternalExtensionManager } from '#extension/extension-manager.js';
 import { ModuleManager } from '#init/module-manager.js';
-import type { ModRefId } from '#types/mix.js';
+import type { ModRefId } from '#decorators/module-decorator-options.js';
 import type { Provider } from '#di/top/types-and-models.js';
 import type { ExtensionClass } from '#extension/extension-types.js';
 import { ExtensionCounters } from '#extension/extension-types.js';

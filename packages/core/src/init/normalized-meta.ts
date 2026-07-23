@@ -1,4 +1,5 @@
-import type { AnyObj, ModRefId, ModuleType } from '#types/mix.js';
+import type { AnyObj } from '#types/mix.js';
+import type { ModRefId, ModuleType } from '#decorators/module-decorator-options.js';
 import type { AnyFn, Class, Provider } from '#di/top/types-and-models.js';
 import type { DynamicModule } from '../decorators/module-decorator-options.js';
 import type { ExtensionConfig, BaseExtensionConfig } from '#extension/extension-providers-and-configs.js';

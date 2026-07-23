@@ -1,7 +1,8 @@
 import { format } from 'node:util';
 
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { AnyObj, ModuleType, ModRefId } from '#types/mix.js';
+import { AnyObj } from '#types/mix.js';
+import { ModuleType, ModRefId } from '#decorators/module-decorator-options.js';
 import { DynamicModule } from '#decorators/module-decorator-options.js';
 import { NormalizedInitMeta, NormalizedModuleMeta } from '#init/normalized-meta.js';
 import { isDynamicModule, isRootModule } from '#decorators/type-guards.js';

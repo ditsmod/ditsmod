@@ -8,7 +8,7 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ModuleId, ModuleManager } from './module-manager.js';
 import { AllInitHooks, InitDecoratorOptions, InitDecorator, InitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { NormalizedInitMeta, NormalizedModuleMeta, getProxyForInitMeta } from '#init/normalized-meta.js';
-import { ModRefId } from '#types/mix.js';
+import { ModRefId } from '#decorators/module-decorator-options.js';
 import { DynamicModule } from '#decorators/module-decorator-options.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { isDynamicModule } from '#decorators/type-guards.js';

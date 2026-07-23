@@ -8,7 +8,8 @@ import {
   PartialExtensionGroupMeta,
   ExtensionClass,
 } from '#extension/extension-types.js';
-import { ModRefId, OptionalProps } from '#types/mix.js';
+import { OptionalProps } from '#types/mix.js';
+import { ModRefId } from '#decorators/module-decorator-options.js';
 import { ExtensionStatistics } from '#extension/counter.js';
 import { ExtensionContext } from '#extension/extensions-context.js';
 import { NormalizedModuleMeta } from '#init/normalized-meta.js';

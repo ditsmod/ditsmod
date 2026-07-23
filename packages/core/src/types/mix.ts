@@ -1,7 +1,5 @@
-import type { DynamicModule } from '#decorators/module-decorator-options.js';
 import type { Injector } from '#di/injector.js';
 import type { ResolvedProvider } from '#di/top/resolved-provider.js';
-import type { Class } from '#di/top/types-and-models.js';
 
 /**
  * Help type for combining interfaces.
@@ -31,11 +29,6 @@ class Base {
  */
 export type UnionToIntersection<U> = (U extends any ? (x: U) => any : never) extends (x: infer I) => any ? I : never;
 
-export type ModuleType<T extends AnyObj = AnyObj> = Class<T>;
-/**
- * Module reference ID.
- */
-export type ModRefId<T extends AnyObj = AnyObj> = ModuleType<T> | DynamicModule<T>;
 /**
  * Require only specified properties from the `K` list for `T`.
  * 

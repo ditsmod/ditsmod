@@ -1,6 +1,7 @@
 import type { BaseExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import type { ModuleManager } from './module-manager.js';
-import type { AnyObj, Level, ModRefId, ModuleType, PickProps } from '#types/mix.js';
+import type { AnyObj, Level, PickProps } from '#types/mix.js';
+import type { ModRefId, ModuleType } from '#decorators/module-decorator-options.js';
 import type { AnyFn, Provider, Class } from '#di/top/types-and-models.js';
 import type { DynamicModule, ModuleDecoratorOptions } from '#decorators/module-decorator-options.js';
 import type { ForwardRefFn } from '#di/forward-ref.js';

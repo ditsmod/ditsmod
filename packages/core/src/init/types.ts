@@ -1,4 +1,5 @@
-import type { AnyObj, ModRefId } from '#types/mix.js';
+import type { AnyObj } from '#types/mix.js';
+import type { ModRefId } from '#decorators/module-decorator-options.js';
 import type { AnyFn, Provider } from '#di/top/types-and-models.js';
 import type { NormalizedModuleMeta } from '#init/normalized-meta.js';
 import type { ImportedProvider } from '#types/metadata-per-mod.js';

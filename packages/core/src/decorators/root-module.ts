@@ -1,5 +1,5 @@
 import type { ForwardRefFn } from '#di/forward-ref.js';
-import type { ModRefId, ModuleType } from '#types/mix.js';
+import type { ModRefId, ModuleType } from './module-decorator-options.js';
 import { Reflector } from '#di/reflector.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { ProviderBuilder } from '#utils/providers.js';

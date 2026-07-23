@@ -1,5 +1,5 @@
 import { resolveForwardRef, type ForwardRefFn } from '#di/forward-ref.js';
-import type { ModRefId, ModuleType } from '#types/mix.js';
+import type { ModRefId, ModuleType } from '#decorators/module-decorator-options.js';
 import { isDynamicModule } from '#decorators/type-guards.js';
 
 const debugClassNames = new WeakMap<ModRefId, string>();

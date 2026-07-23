@@ -53,14 +53,12 @@ export { ResolvedModuleMeta } from '#types/metadata-per-mod.js';
 export {
   AnyObj,
   HttpMethod,
-  ModuleType,
   ResolvedGuard,
   ModuleScopedResolvedGuard,
   RequireProps,
   PickProps,
   RequireOnlyProps,
   OptionalProps,
-  ModRefId,
   Override,
   UnionToIntersection,
 } from '#types/mix.js';
@@ -70,6 +68,8 @@ export {
   DynamicModuleWithInit,
   BaseDynamicModule,
   DynamicModuleOptions,
+  ModuleType,
+  ModRefId,
 } from '#decorators/module-decorator-options.js';
 export { ImportedProvider } from '#types/metadata-per-mod.js';
 export { mergeArrays } from '#utils/merge-arrays.js';

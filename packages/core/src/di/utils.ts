@@ -1,4 +1,4 @@
-import type { ModRefId } from '#types/mix.js';
+import type { ModRefId } from '#decorators/module-decorator-options.js';
 import type {
   ClassFactoryProvider,
   ClassProvider,

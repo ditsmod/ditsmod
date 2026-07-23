@@ -126,7 +126,7 @@ export class Reflector {
    * or `undefined` if no appropriate decorators.
    */
   static getClassLevelMeta<T extends DecoratorMeta>(
-    Cls: Class,
+    Cls: Class | AbstractClass,
     typeGuard: TypeGuard<T>,
   ): (T extends DecoratorMeta<infer V> ? DecoratorMeta<V> : never)[] | undefined;
   /**

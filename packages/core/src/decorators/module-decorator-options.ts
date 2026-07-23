@@ -1,12 +1,12 @@
 import type { ProvidersByLevel } from '#types/providers-metadata.js';
-import type { AnyObj, ModRefId, ModuleType } from '#types/mix.js';
+import type { AnyObj } from '#types/mix.js';
 import type { ExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import type { ExtensionClass } from '#extension/extension-types.js';
 import type { InitDynamicOptionsMap } from '#decorators/init-hooks-and-metadata.js';
 import type { rootModule } from '#decorators/root-module.js';
 import type { featureModule } from '#decorators/feature-module.js';
 import type { ProviderBuilder } from '#utils/providers.js';
-import type { Provider } from '#di/top/types-and-models.js';
+import type { Class, Provider } from '#di/top/types-and-models.js';
 import type { ForwardRefFn } from '#di/forward-ref.js';
 
 /**
@@ -108,3 +108,9 @@ export interface DynamicModule<M extends AnyObj = AnyObj> extends BaseDynamicMod
 export interface DynamicModuleWithInit<M extends AnyObj = AnyObj> extends DynamicModule<M> {
   initOpts: InitDynamicOptionsMap;
 }
+
+export type ModuleType<T extends AnyObj = AnyObj> = Class<T>;
+/**
+ * Module reference ID.
+ */
+export type ModRefId<T extends AnyObj = AnyObj> = ModuleType<T> | DynamicModule<T>;

@@ -4,7 +4,8 @@ import { NormalizedInitMeta, getProxyForInitMeta, NormalizedModuleMeta } from '#
 import { rootModule, RootDecoratorOptions } from '#decorators/root-module.js';
 import { Reflector } from '#di/reflector.js';
 import { Extension } from '#extension/extension-types.js';
-import { AnyObj, ModRefId } from '#types/mix.js';
+import { AnyObj } from '#types/mix.js';
+import { ModRefId } from '#decorators/module-decorator-options.js';
 import {
   DynamicModuleOptions,
   ModuleDecoratorOptions,

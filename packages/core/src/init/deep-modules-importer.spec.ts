@@ -1,6 +1,7 @@
 import { DeepModulesImporter } from '#init/deep-modules-importer.js';
 import { NormalizedModuleMeta } from '#init/normalized-meta.js';
-import { ModRefId, Level } from '#types/mix.js';
+import { Level } from '#types/mix.js';
+import { ModRefId } from '#decorators/module-decorator-options.js';
 import { Provider } from '#di/top/types-and-models.js';
 import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import { ModuleManager } from '#init/module-manager.js';
