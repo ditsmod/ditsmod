@@ -71,6 +71,9 @@ export class ModuleDecoratorOptions<T extends AnyObj = AnyObj> {
   declare inheritsContext?: boolean;
 }
 
+/**
+ * Base interface for a dynamic module, containing the target module reference and optional module ID.
+ */
 export interface BaseDynamicModule<M extends AnyObj = AnyObj> {
   /**
    * The module ID.
@@ -78,9 +81,13 @@ export interface BaseDynamicModule<M extends AnyObj = AnyObj> {
   id?: string;
   module: StaticModule<M> | ForwardRefFn<StaticModule<M>>;
 }
+
+/**
+ * Options that can be passed to configure a dynamic module.
+ */
 export interface DynamicModuleOptions<E extends AnyObj = AnyObj> extends Partial<ProvidersByLevel> {
   /**
-   * List of modules, `DynamicModule` or tokens of providers exported by this
+   * List of modules, {@link DynamicModule} or tokens of providers exported by this
    * module.
    */
   exports?: any[];
@@ -92,8 +99,11 @@ export interface DynamicModuleOptions<E extends AnyObj = AnyObj> extends Partial
   extensionsMeta?: E;
 }
 /**
- * An object with this type is passed into the `imports` array of
- * the module with the `featureModule` or `rootModule` decorator.
+ * Represents a dynamically configured module that pairs a target module reference (a {@link StaticModule})
+ * with runtime options (such as provider overrides, exports, or extension metadata).
+ *
+ * An object of this type is typically returned by static module factory methods (e.g. `MyModule.withOptions(...)`)
+ * and passed into the `imports` or `exports` array of a root or feature module.
  */
 export interface DynamicModule<M extends AnyObj = AnyObj> extends BaseDynamicModule<M>, DynamicModuleOptions {
   /**
@@ -102,19 +112,21 @@ export interface DynamicModule<M extends AnyObj = AnyObj> extends BaseDynamicMod
   initOpts?: InitDynamicOptionsMap;
 }
 /**
- * This interface differs from `DynamicModule` only in that it requires the presence of the `initOpts` property.
- * It is convenient to use in static module methods that return `DynamicModule`.
+ * This interface differs from {@link DynamicModule} only in that it requires the presence of the `initOpts` property.
+ * It is convenient to use in static module methods that return a dynamic module configured with init options.
  */
 export interface DynamicModuleWithInit<M extends AnyObj = AnyObj> extends DynamicModule<M> {
   initOpts: InitDynamicOptionsMap;
 }
 
+/**
+ * Represents a static module class (constructor) decorated with a module decorator.
+ */
 export type StaticModule<T extends AnyObj = AnyObj> = Class<T>;
 /**
- * A module reference identifier.
+ * A module reference identifier for a {@link StaticModule} or {@link DynamicModule}.
  *
- * Represents either a static module class ({@link StaticModule}) or a dynamic module ({@link DynamicModule}).
  * Used across the framework (e.g. in `imports`, `exports`, collision resolutions, and module manager)
- * to uniquely reference a module.
+ * to reference a module.
  */
 export type ModRefId<T extends AnyObj = AnyObj> = StaticModule<T> | DynamicModule<T>;
