@@ -2,7 +2,7 @@ import type * as http from 'node:http';
 import type * as http2 from 'node:http2';
 import type * as https from 'node:https';
 import type { AddressInfo } from 'node:net';
-import type { ModuleType } from '@ditsmod/core';
+import type { StaticModule } from '@ditsmod/core';
 import { SystemLogMediator, BaseApplication } from '@ditsmod/core';
 
 import type { RequestListener, TrpcAppOptions } from '#types/types.js';
@@ -20,7 +20,7 @@ export class TrpcApplication extends BaseApplication {
    * @param appModule The root module of the application.
    * @param trpcAppOptions TrpcApplication options.
    */
-  static async create(appModule: ModuleType, trpcAppOptions?: TrpcAppOptions) {
+  static async create(appModule: StaticModule, trpcAppOptions?: TrpcAppOptions) {
     const app = new this();
     try {
       app.init(trpcAppOptions);

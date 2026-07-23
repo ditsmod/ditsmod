@@ -5,7 +5,7 @@ import type {
   Provider,
   InitDecoratorOptions,
   DynamicModuleOptions,
-  ModuleType,
+  StaticModule,
   Class,
   ModuleManager,
   AppProviders,
@@ -28,7 +28,7 @@ class NormalizedParams {
 }
 
 export class TrpcInitMeta extends NormalizedInitMeta {
-  appendsModules: ModuleType[] = [];
+  appendsModules: StaticModule[] = [];
   controllers: Class[] = [];
   params = new NormalizedParams();
 }
@@ -50,7 +50,7 @@ export interface TrpcInitDecoratorOptions extends InitDecoratorOptions<TrpcModul
 export const initTrpcModule: InitDecorator<TrpcInitDecoratorOptions, TrpcModuleOptions, TrpcInitMeta> =
   Reflector.makeClassDecorator(transformInitMeta, 'initTrpcModule');
 export const trpcRootModule: InitDecorator<
-  TrpcInitDecoratorOptions & { resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][] },
+  TrpcInitDecoratorOptions & { resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<StaticModule>][] },
   TrpcModuleOptions,
   TrpcInitMeta
 > = Reflector.makeClassDecorator(transformRootMetadata, 'trpcRootModule', initTrpcModule);

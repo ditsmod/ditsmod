@@ -2,7 +2,7 @@ import { format } from 'node:util';
 
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyObj } from '#types/mix.js';
-import { ModuleType, ModRefId } from '#decorators/module-decorator-options.js';
+import { StaticModule, ModRefId } from '#decorators/module-decorator-options.js';
 import { DynamicModule } from '#decorators/module-decorator-options.js';
 import { NormalizedInitMeta, NormalizedModuleMeta } from '#init/normalized-meta.js';
 import { isDynamicModule, isRootModule } from '#decorators/type-guards.js';
@@ -66,7 +66,7 @@ export class ModuleManager {
    * Creates a snapshot of {@link NormalizedModuleMeta} for the root module, stores locally and returns it.
    * You can also get the result this way: `moduleManager.getMetadata('root')`.
    */
-  scanRootModule(appModule: ModuleType): NormalizedModuleMeta {
+  scanRootModule(appModule: StaticModule): NormalizedModuleMeta {
     if (this.snapshotMap.size) {
       this.systemLogMediator.forbiddenRescanRootModule(this);
       return this.getNormalizedModuleMeta('root', true);
@@ -88,12 +88,12 @@ export class ModuleManager {
     return normalizedModuleMeta;
   }
 
-  scanModule(modRefId: ModRefId | ForwardRefFn<ModuleType>, allInitHooks?: AllInitHooks, saveToShapshot?: boolean) {
+  scanModule(modRefId: ModRefId | ForwardRefFn<StaticModule>, allInitHooks?: AllInitHooks, saveToShapshot?: boolean) {
     const isRootScan = this.unfinishedScanModules.size == 0;
     allInitHooks ??= new Map();
     modRefId = resolveForwardRef(modRefId);
     const normalizedModuleMeta = this.normalizeMeta(modRefId, allInitHooks);
-    const importsOrExports: (DynamicModule | ModuleType)[] = [];
+    const importsOrExports: (DynamicModule | StaticModule)[] = [];
     normalizedModuleMeta.initHooksMap.forEach((initHooks, decorator) => {
       const meta = normalizedModuleMeta.initMeta.get(decorator);
       if (meta) {

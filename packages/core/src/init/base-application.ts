@@ -1,7 +1,7 @@
 import { BaseAppOptions } from '#init/base-app-options.js';
 import type { PublicLogMediator } from '#logger/system-log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import type { ModuleType } from '#decorators/module-decorator-options.js';
+import type { StaticModule } from '#decorators/module-decorator-options.js';
 import type { BaseAppInitializer } from '#init/base-app-initializer.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { ModuleManager } from '#init/module-manager.js';
@@ -101,7 +101,7 @@ export abstract class BaseApplication {
    * Initializes the ModuleManager and starts the recursive scanning process
    * for the root module and all its dependencies.
    */
-  protected scanRootModule(appModule: ModuleType) {
+  protected scanRootModule(appModule: StaticModule) {
     this.moduleManager = new ModuleManager(this.log);
     this.moduleManager.scanRootModule(appModule);
     return this.moduleManager;

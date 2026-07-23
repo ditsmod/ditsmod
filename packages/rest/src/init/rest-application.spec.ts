@@ -4,7 +4,7 @@ import * as https from 'https';
 import { jest } from '@jest/globals';
 import {
   SystemLogMediator,
-  ModuleType,
+  StaticModule,
   BaseAppInitializer,
   LogMediator,
   rootModule,
@@ -28,7 +28,7 @@ describe('RestApplication', () => {
       return super.checkSecureServerOption();
     }
 
-    override scanRootModule(appModule: ModuleType) {
+    override scanRootModule(appModule: StaticModule) {
       return super.scanRootModule(appModule);
     }
 

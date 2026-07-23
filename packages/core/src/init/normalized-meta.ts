@@ -1,5 +1,5 @@
 import type { AnyObj } from '#types/mix.js';
-import type { ModRefId, ModuleType } from '#decorators/module-decorator-options.js';
+import type { ModRefId, StaticModule } from '#decorators/module-decorator-options.js';
 import type { AnyFn, Class, Provider } from '#di/top/types-and-models.js';
 import type { DynamicModule } from '../decorators/module-decorator-options.js';
 import type { ExtensionConfig, BaseExtensionConfig } from '#extension/extension-providers-and-configs.js';
@@ -13,7 +13,7 @@ export class NormalizedInitMeta<A extends AnyObj = AnyObj> {
    * The module ID.
    */
   id?: string = '';
-  importsModules: ModuleType[];
+  importsModules: StaticModule[];
   /**
    * Import dynamic modules.
    */
@@ -22,7 +22,7 @@ export class NormalizedInitMeta<A extends AnyObj = AnyObj> {
   providersPerMod: Provider[];
   providersPerRou: Provider[];
   providersPerReq: Provider[];
-  exportsModules: ModuleType[];
+  exportsModules: StaticModule[];
   /**
    * Export dynamic modules.
    */

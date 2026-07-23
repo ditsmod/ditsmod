@@ -7,7 +7,7 @@ import {
   injectable,
   ModRefId,
   ModuleManager,
-  ModuleType,
+  StaticModule,
   DynamicModule,
   NormalizedModuleMeta,
   Provider,
@@ -52,7 +52,7 @@ beforeEach(() => {
 });
 
 describe('shallow importing modules', () => {
-  function importModulesShallow(modRefId: ModuleType) {
+  function importModulesShallow(modRefId: StaticModule) {
     expect(() => moduleManager.scanRootModule(modRefId)).not.toThrow();
     const shallowModuleImportsBase = new ShallowModulesImporterBase().importModulesShallow({
       appProviders: new AppProviders(),

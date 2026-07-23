@@ -68,7 +68,7 @@ export {
   DynamicModuleWithInit,
   BaseDynamicModule,
   DynamicModuleOptions,
-  ModuleType,
+  StaticModule,
   ModRefId,
 } from '#decorators/module-decorator-options.js';
 export { ImportedProvider } from '#types/metadata-per-mod.js';

@@ -1,4 +1,4 @@
-import type { ModRefId, NormalizedModuleMeta, InitDecorator, Provider, ForwardRefFn, ModuleType } from '@ditsmod/core';
+import type { ModRefId, NormalizedModuleMeta, InitDecorator, Provider, ForwardRefFn, StaticModule } from '@ditsmod/core';
 import { Reflector, InitHooks } from '@ditsmod/core';
 
 import type { RestInitDecoratorOptions, RestModuleOptions } from '#init/rest-init-raw-meta.js';
@@ -18,7 +18,7 @@ import { RestDeepModulesImporter } from '#init/rest-deep-modules-importer.js';
 export const initRest: InitDecorator<RestInitDecoratorOptions, RestModuleOptions, RestInitMeta> =
   Reflector.makeClassDecorator(transformInitMeta, 'initRest');
 export const restRootModule: InitDecorator<
-  RestInitDecoratorOptions & { resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<ModuleType>][] },
+  RestInitDecoratorOptions & { resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<StaticModule>][] },
   RestModuleOptions,
   RestInitMeta
 > = Reflector.makeClassDecorator(transformRootMeta, 'restRootModule', initRest);

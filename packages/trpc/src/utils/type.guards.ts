@@ -1,4 +1,4 @@
-import type { ModRefId, ModuleType } from '@ditsmod/core';
+import type { ModRefId, StaticModule } from '@ditsmod/core';
 import { getModule } from '@ditsmod/core';
 
 import type { Http2SecureServerOptions, ServerOptions } from '#types/server-options.js';
@@ -9,6 +9,6 @@ export function isHttp2SecureServerOptions(serverOptions: ServerOptions): server
 }
 
 export function isModuleWithTrpcRoutes(modRefId: ModRefId): modRefId is ModRefId<ModuleWithTrpcRoutes> {
-  const Mod = getModule(modRefId) as ModuleType<ModuleWithTrpcRoutes>;
+  const Mod = getModule(modRefId) as StaticModule<ModuleWithTrpcRoutes>;
   return typeof Mod.prototype.getRouterConfig == 'function';
 }

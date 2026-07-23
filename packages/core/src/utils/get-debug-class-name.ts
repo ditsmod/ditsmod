@@ -1,5 +1,5 @@
 import { resolveForwardRef, type ForwardRefFn } from '#di/forward-ref.js';
-import type { ModRefId, ModuleType } from '#decorators/module-decorator-options.js';
+import type { ModRefId, StaticModule } from '#decorators/module-decorator-options.js';
 import { isDynamicModule } from '#decorators/type-guards.js';
 
 const debugClassNames = new WeakMap<ModRefId, string>();
@@ -17,7 +17,7 @@ const debugClassNameCounters = new Map<string, number>();
  * If you use this function in tests, remember to run
  * the {@link clearDebugClassNames | clearDebugClassNames()} function before each test.
  */
-export function getDebugClassName(modRefId: string | ModRefId | ForwardRefFn<ModuleType>): string | undefined {
+export function getDebugClassName(modRefId: string | ModRefId | ForwardRefFn<StaticModule>): string | undefined {
   if (!modRefId) {
     return;
   } else if (typeof modRefId == 'string') {

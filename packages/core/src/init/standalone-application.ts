@@ -1,5 +1,5 @@
 import type { PublicLogMediator } from '#logger/system-log-mediator.js';
-import type { ModuleType } from '#decorators/module-decorator-options.js';
+import type { StaticModule } from '#decorators/module-decorator-options.js';
 import { BaseAppInitializer } from './base-app-initializer.js';
 import type { BaseAppOptions } from './base-app-options.js';
 import { BaseApplication } from './base-application.js';
@@ -23,7 +23,7 @@ export class StandaloneApplication extends BaseApplication {
    * @param baseOptions App options for the application bootstrap process.
    * @returns An instance of StandaloneApplication.
    */
-  static async create(appModule: ModuleType, baseOptions?: BaseAppOptions) {
+  static async create(appModule: StaticModule, baseOptions?: BaseAppOptions) {
     const app = new this();
     try {
       app.init(baseOptions);

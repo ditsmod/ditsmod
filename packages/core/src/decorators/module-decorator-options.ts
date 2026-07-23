@@ -33,7 +33,7 @@ export class ModuleDecoratorOptions<T extends AnyObj = AnyObj> {
    * List of modules or `DynamicModule` imported by this module.
    * Also you can imports modules and set some prefix per each the module.
    */
-  declare imports?: (ModRefId | ForwardRefFn<ModuleType>)[];
+  declare imports?: (ModRefId | ForwardRefFn<StaticModule>)[];
   /**
    * List of modules, {@link DynamicModule} or tokens of providers exported by this
    * module.
@@ -53,17 +53,17 @@ export class ModuleDecoratorOptions<T extends AnyObj = AnyObj> {
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  declare resolvedCollisionsPerMod?: [any, ModRefId | ForwardRefFn<ModuleType>][];
+  declare resolvedCollisionsPerMod?: [any, ModRefId | ForwardRefFn<StaticModule>][];
   /**
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  declare resolvedCollisionsPerRou?: [any, ModRefId | ForwardRefFn<ModuleType>][];
+  declare resolvedCollisionsPerRou?: [any, ModRefId | ForwardRefFn<StaticModule>][];
   /**
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  declare resolvedCollisionsPerReq?: [any, ModRefId | ForwardRefFn<ModuleType>][];
+  declare resolvedCollisionsPerReq?: [any, ModRefId | ForwardRefFn<StaticModule>][];
   /**
    * Whether this module inherits init hooks / context (like REST or tRPC) from parent modules.
    * By default, it is true for local modules and false for external modules.
@@ -76,7 +76,7 @@ export interface BaseDynamicModule<M extends AnyObj = AnyObj> {
    * The module ID.
    */
   id?: string;
-  module: ModuleType<M> | ForwardRefFn<ModuleType<M>>;
+  module: StaticModule<M> | ForwardRefFn<StaticModule<M>>;
 }
 export interface DynamicModuleOptions<E extends AnyObj = AnyObj> extends Partial<ProvidersByLevel> {
   /**
@@ -109,8 +109,12 @@ export interface DynamicModuleWithInit<M extends AnyObj = AnyObj> extends Dynami
   initOpts: InitDynamicOptionsMap;
 }
 
-export type ModuleType<T extends AnyObj = AnyObj> = Class<T>;
+export type StaticModule<T extends AnyObj = AnyObj> = Class<T>;
 /**
- * Module reference ID.
+ * A module reference identifier.
+ *
+ * Represents either a static module class ({@link StaticModule}) or a dynamic module ({@link DynamicModule}).
+ * Used across the framework (e.g. in `imports`, `exports`, collision resolutions, and module manager)
+ * to uniquely reference a module.
  */
-export type ModRefId<T extends AnyObj = AnyObj> = ModuleType<T> | DynamicModule<T>;
+export type ModRefId<T extends AnyObj = AnyObj> = StaticModule<T> | DynamicModule<T>;

@@ -1,6 +1,6 @@
 import type {
   AnyObj,
-  ModuleType,
+  StaticModule,
   Class,
   AnyFn,
   InitDecoratorOptions,
@@ -18,7 +18,7 @@ export interface RestInitDecoratorOptions extends InitDecoratorOptions<RestModul
    * are not imported into the current module. If the current module has a prefix path,
    * that path will be added to each controller route from the appended modules.
    */
-  appends?: Array<ModuleType | AppendsWithOptions | ForwardRefFn<ModuleType>>;
+  appends?: Array<StaticModule | AppendsWithOptions | ForwardRefFn<StaticModule>>;
   /**
    * The application controllers.
    */
@@ -57,7 +57,7 @@ export interface BaseAppendsWithOptions<T extends AnyObj = AnyObj> {
    * The module ID.
    */
   id?: string;
-  module: ModuleType<T> | ForwardRefFn<ModuleType<T>>;
+  module: StaticModule<T> | ForwardRefFn<StaticModule<T>>;
   guards?: GuardItem[];
   initOpts?: Map<AnyFn, any>;
 }

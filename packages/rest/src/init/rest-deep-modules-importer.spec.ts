@@ -6,7 +6,7 @@ import {
   injectable,
   Injector,
   ModuleManager,
-  ModuleType,
+  StaticModule,
   Provider,
   rootModule,
   SystemLogMediator,
@@ -36,7 +36,7 @@ describe('DeepModulesImporter', () => {
     }
   }
 
-  function getResolvedModuleMeta(rootModule: ModuleType) {
+  function getResolvedModuleMeta(rootModule: StaticModule) {
     const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
     const moduleManager = new ModuleManager(systemLogMediator);
     moduleManager.scanRootModule(rootModule);
@@ -55,7 +55,7 @@ describe('DeepModulesImporter', () => {
     return resolvedModuleMetaMap as Map<ModRefId, ResolvedModuleMeta<RestResolvedModuleMeta>>;
   }
 
-  function getRestResolvedModuleMeta(rootModule: ModuleType) {
+  function getRestResolvedModuleMeta(rootModule: StaticModule) {
     return getResolvedModuleMeta(rootModule).get(rootModule)?.deepImportedModules.get(initRest);
   }
 

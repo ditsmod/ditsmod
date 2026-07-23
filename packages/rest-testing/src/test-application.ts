@@ -1,5 +1,5 @@
 import type {
-  ModuleType,
+  StaticModule,
   ProviderBuilder,
   ExtensionClass,
   Class,
@@ -18,13 +18,13 @@ import { TestModuleManager } from './test-module-manager.js';
 export class TestRestApplication extends RestApplication {
   protected testAppInitializer: TestAppInitializer;
   protected testModuleManager: TestModuleManager;
-  protected appModule: ModuleType;
+  protected appModule: StaticModule;
 
   /**
    * @param appModule The root module of the application.
    * @param appOptions REST application options.
    */
-  static createTestApp(appModule: ModuleType, appOptions?: AppOptions) {
+  static createTestApp(appModule: StaticModule, appOptions?: AppOptions) {
     const app = new this();
     try {
       app.init(appOptions);

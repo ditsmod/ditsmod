@@ -1,4 +1,4 @@
-import type { AnyObj, ModuleType, Class, ModRefId } from '@ditsmod/core';
+import type { AnyObj, StaticModule, Class, ModRefId } from '@ditsmod/core';
 import { Provider, MultiProvider, NormalizedInitMeta } from '@ditsmod/core';
 
 import type { NormalizedGuard } from '#interceptors/guard.js';
@@ -12,7 +12,7 @@ class NormalizedParams {
 
 export class RestInitMeta extends NormalizedInitMeta {
   appendsWithOpts: AppendsWithOptions[] = [];
-  appendsModules: ModuleType[] = [];
+  appendsModules: StaticModule[] = [];
   controllers: Class<Record<string | symbol, any>>[] = [];
   params = new NormalizedParams();
 }

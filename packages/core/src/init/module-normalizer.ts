@@ -1,7 +1,7 @@
 import type { BaseExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import type { ModuleManager } from './module-manager.js';
 import type { AnyObj, Level, PickProps } from '#types/mix.js';
-import type { ModRefId, ModuleType } from '#decorators/module-decorator-options.js';
+import type { ModRefId, StaticModule } from '#decorators/module-decorator-options.js';
 import type { AnyFn, Provider, Class } from '#di/top/types-and-models.js';
 import type { DynamicModule, ModuleDecoratorOptions } from '#decorators/module-decorator-options.js';
 import type { ForwardRefFn } from '#di/forward-ref.js';
@@ -254,7 +254,7 @@ export class ModuleNormalizer {
   protected throwIfResolvingNormalizedProvider(
     decoratorOptions: InitDecoratorOptions & PickProps<RootDecoratorOptions, 'resolvedCollisionsPerApp'>,
   ) {
-    const resolvedCollisionsPerLevel: [any, ModRefId | ForwardRefFn<ModuleType>][] = [];
+    const resolvedCollisionsPerLevel: [any, ModRefId | ForwardRefFn<StaticModule>][] = [];
     (['App', 'Mod', 'Rou', 'Req'] as const).forEach((level) => {
       if (Array.isArray(decoratorOptions[`resolvedCollisionsPer${level}`])) {
         resolvedCollisionsPerLevel.push(...decoratorOptions[`resolvedCollisionsPer${level}`]!);

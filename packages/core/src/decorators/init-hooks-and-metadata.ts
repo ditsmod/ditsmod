@@ -2,7 +2,7 @@ import type { ModuleManager } from '#init/module-manager.js';
 import type { ShallowModuleImports } from '#init/types.js';
 import type { SystemLogMediator } from '#logger/system-log-mediator.js';
 import type { AnyObj } from '#types/mix.js';
-import type { ModRefId, ModuleType } from './module-decorator-options.js';
+import type { ModRefId, StaticModule } from './module-decorator-options.js';
 import type { AnyFn, Provider } from '#di/top/types-and-models.js';
 import type { DynamicModule, ModuleDecoratorOptions } from '#decorators/module-decorator-options.js';
 import type { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
@@ -27,7 +27,7 @@ export class InitHooks<T1 extends InitDecoratorOptions = InitDecoratorOptions> {
    * The host module where the current init decorator is declared. If you add this module,
    * it will be imported into the module where the corresponding init decorator is used.
    */
-  declare hostModule?: ModuleType;
+  declare hostModule?: StaticModule;
 
   /**
    * Options intended for the host module.
@@ -232,5 +232,5 @@ export interface InitDecoratorOptions<InitDynamicOptions extends object = object
   ModuleDecoratorOptions,
   'imports'
 > {
-  imports?: (((DynamicModuleWrapper | DynamicModule) & InitDynamicOptions) | ModuleType | ForwardRefFn<ModuleType>)[];
+  imports?: (((DynamicModuleWrapper | DynamicModule) & InitDynamicOptions) | StaticModule | ForwardRefFn<StaticModule>)[];
 }

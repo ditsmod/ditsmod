@@ -5,7 +5,7 @@ import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { AppProviders, ImportedProvider } from '#types/metadata-per-mod.js';
 import { Level } from '#types/mix.js';
-import { ModuleType, ModRefId } from '#decorators/module-decorator-options.js';
+import { StaticModule, ModRefId } from '#decorators/module-decorator-options.js';
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
@@ -31,7 +31,7 @@ describe('ShallowModulesImporter', () => {
   class MockShallowModulesImporter extends ShallowModulesImporter {
     override moduleName = 'MockModule';
     override normalizedModuleMeta = new NormalizedModuleMeta();
-    override shallowModuleImportsMap = new Map<ModuleType, ShallowModuleImports>();
+    override shallowModuleImportsMap = new Map<StaticModule, ShallowModuleImports>();
     override importedProvidersPerMod = new Map<any, ImportedProvider>();
     override importedMultiProvidersPerMod = new Map<ModRefId, Provider[]>();
     override importedExtensionProviders = new Map<ModRefId, Provider[]>();
