@@ -755,6 +755,32 @@ describe('ModuleNormalizer', () => {
       expect(normalizedModuleMeta.initMeta.get(hostInitSome)).toEqual({ flag: true, targetModRefId: HostModule });
     });
 
+    it('does not add host module to importsModules when the current module is the host module itself', () => {
+      @featureModule()
+      class HostModule {}
+
+      class HostInitHooks extends InitHooks<SomeInitOptions> {
+        override hostModule = HostModule;
+        override hostDecoratorOptions = { flag: true };
+
+        override normalize(normalizedModuleMeta: NormalizedModuleMeta): SomeInitMeta {
+          return {
+            flag: this.moduleOptions.flag,
+            targetModRefId: normalizedModuleMeta.modRefId,
+          } as SomeInitMeta;
+        }
+      }
+
+      const hostInitSome: InitDecorator<SomeInitOptions, {}, {}> = Reflector.makeClassDecorator(
+        (data) => new HostInitHooks(data),
+      );
+      const allInitHooks = new Map([[hostInitSome, new HostInitHooks({})]]);
+
+      const normalizedModuleMeta = normalizer.normalize(HostModule, allInitHooks);
+      expect(normalizedModuleMeta.initHooksMap.has(hostInitSome)).toBe(true);
+      expect(normalizedModuleMeta.importsModules).not.toContain(HostModule);
+    });
+
     it('imports the host module when an init decorator declares hostModule on a different module', () => {
       @featureModule()
       class HostModule {}
@@ -797,6 +823,79 @@ describe('ModuleNormalizer', () => {
         path: 'prefix',
         targetModRefId: dynamicModule,
       });
+    });
+  });
+
+  describe('propagateParentHooks', () => {
+    class PropagateInitMeta extends NormalizedInitMeta {
+      propagated?: boolean;
+    }
+
+    class PropagateInitHooks extends InitHooks {
+      override normalize(normalizedModuleMeta: NormalizedModuleMeta) {
+        const meta = getProxyForInitMeta(normalizedModuleMeta, PropagateInitMeta);
+        meta.propagated = true;
+        return meta;
+      }
+    }
+
+    const initPropagate: InitDecorator<InitDecoratorOptions, {}, PropagateInitMeta> = Reflector.makeClassDecorator(
+      (data) => new PropagateInitHooks(data || {}),
+      'initPropagate',
+    );
+
+    it('propagates init hooks to a module without init decorators when inheritsContext defaults to true', () => {
+      @featureModule({ providersPerApp: [{ token: 'tok', useValue: 1 }] })
+      class Module1 {}
+
+      const normalizedModuleMeta = normalizer.normalize(Module1);
+      expect(normalizedModuleMeta.initHooksMap.size).toBe(0);
+
+      const allInitHooks = new Map([[initPropagate, new PropagateInitHooks({})]]);
+      normalizer.propagateParentHooks(normalizedModuleMeta, allInitHooks);
+
+      expect(normalizedModuleMeta.initHooksMap.has(initPropagate)).toBe(true);
+      expect(normalizedModuleMeta.initMeta.get(initPropagate)?.propagated).toBe(true);
+    });
+
+    it('does not propagate init hooks when inheritsContext is false', () => {
+      @featureModule({ inheritsContext: false, providersPerApp: [{ token: 'tok', useValue: 1 }] })
+      class Module1 {}
+
+      const normalizedModuleMeta = normalizer.normalize(Module1);
+
+      const allInitHooks = new Map([[initPropagate, new PropagateInitHooks({})]]);
+      normalizer.propagateParentHooks(normalizedModuleMeta, allInitHooks);
+
+      expect(normalizedModuleMeta.initHooksMap.has(initPropagate)).toBe(false);
+    });
+
+    it('does not propagate init hooks when isExternal is true and inheritsContext is not set', () => {
+      @featureModule({ providersPerApp: [{ token: 'tok', useValue: 1 }] })
+      class Module1 {}
+
+      const normalizedModuleMeta = normalizer.normalize(Module1);
+      normalizedModuleMeta.isExternal = true;
+
+      const allInitHooks = new Map([[initPropagate, new PropagateInitHooks({})]]);
+      normalizer.propagateParentHooks(normalizedModuleMeta, allInitHooks);
+
+      expect(normalizedModuleMeta.initHooksMap.has(initPropagate)).toBe(false);
+    });
+
+    it('does not propagate init hooks when the module already has its own init decorators', () => {
+      @initPropagate({})
+      @featureModule({ providersPerApp: [{ token: 'tok', useValue: 1 }] })
+      class Module1 {}
+
+      const normalizedModuleMeta = normalizer.normalize(Module1);
+      const originalSize = normalizedModuleMeta.initHooksMap.size;
+      expect(originalSize).toBeGreaterThan(0);
+
+      const allInitHooks = new Map([[initPropagate, new PropagateInitHooks({})]]);
+      normalizer.propagateParentHooks(normalizedModuleMeta, allInitHooks);
+
+      expect(normalizedModuleMeta.initHooksMap.size).toBe(originalSize);
     });
   });
 
@@ -865,6 +964,14 @@ describe('ModuleNormalizer', () => {
       const normalizedModuleMeta = normalizer.normalize(EmptyModule);
       expect(() => normalizer.checkEmptyMeta(normalizedModuleMeta)).toThrow(new EmptyModuleMeta());
     });
+
+    it('does not throw EmptyModuleMeta for a root module even with no other metadata', () => {
+      @rootModule()
+      class AppModule {}
+
+      const normalizedModuleMeta = normalizer.normalize(AppModule);
+      expect(() => normalizer.checkEmptyMeta(normalizedModuleMeta)).not.toThrow();
+    });
   });
 
   describe('external module detection', () => {
@@ -887,12 +994,7 @@ describe('ModuleNormalizer', () => {
       class InternalModule {}
 
       const dummyDecorator = () => {};
-      const rootDec = new DecoratorMeta(
-        dummyDecorator,
-        new RootModuleOptions(),
-        undefined,
-        '/user-project/src',
-      );
+      const rootDec = new DecoratorMeta(dummyDecorator, new RootModuleOptions(), undefined, '/user-project/src');
       externalModuleNormalizer.customMeta.set(AppModule, [rootDec]);
 
       const externalModuleOptions = Object.assign(new FeatureModuleOptions(), {
@@ -928,12 +1030,7 @@ describe('ModuleNormalizer', () => {
       class DitsmodModule {}
 
       const dummyDecorator = () => {};
-      const rootDec = new DecoratorMeta(
-        dummyDecorator,
-        new RootModuleOptions(),
-        undefined,
-        '/user-project/src',
-      );
+      const rootDec = new DecoratorMeta(dummyDecorator, new RootModuleOptions(), undefined, '/user-project/src');
       externalModuleNormalizer.customMeta.set(AppModule, [rootDec]);
 
       const ditsmodModuleOptions = Object.assign(new FeatureModuleOptions(), {
@@ -949,6 +1046,14 @@ describe('ModuleNormalizer', () => {
 
       externalModuleNormalizer.normalize(AppModule);
       expect(externalModuleNormalizer.normalize(DitsmodModule).isExternal).toBe(true);
+    });
+
+    it('sets inheritsContext from moduleOptions when explicitly specified', () => {
+      @featureModule({ inheritsContext: false, providersPerApp: [{ token: 'tok', useValue: 1 }] })
+      class Module1 {}
+
+      const normalizedModuleMeta = normalizer.normalize(Module1);
+      expect(normalizedModuleMeta.inheritsContext).toBe(false);
     });
   });
 });

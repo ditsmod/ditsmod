@@ -64,15 +64,22 @@ export class ModuleNormalizer {
   normalize(modRefId: ModRefId, allInitHooks: AllInitHooks) {
     const { moduleOptions, normalizedModuleMeta } = this.initNormalizedModuleMeta(modRefId);
     this.checkAndMarkExternalModule(moduleOptions);
+
+    // Phase 1: Normalize base decorator metadata.
     this.normalizeDeclaredAndResolvedProviders(moduleOptions);
     this.normalizeExports(moduleOptions, 'Exports');
     this.mergeDynamicModule(modRefId);
     this.normalizeImports(moduleOptions);
     this.normalizeExtensions(moduleOptions);
     this.checkReexportModules();
+
+    // Phase 2: Execute init hooks for the current module's init decorators.
     this.addInitHooksForHostDecorator(allInitHooks);
     this.callInitHooksFromCurrentModule();
+
+    // Phase 3: Handle init hooks for imported dynamic modules lacking their own init decorators.
     this.addInitHooksForImportedDynamicModule(allInitHooks);
+
     this.quickCheckMeta(moduleOptions);
     return normalizedModuleMeta;
   }
@@ -135,13 +142,24 @@ export class ModuleNormalizer {
   protected normalizeDeclaredAndResolvedProviders(
     moduleOptions: InitDecoratorOptions & PickProps<RootModuleOptions, 'resolvedCollisionsPerApp'>,
   ) {
+    this.normalizeDeclaredProviders(moduleOptions);
+    this.normalizeResolvedCollisions(moduleOptions);
+  }
+
+  protected normalizeDeclaredProviders(moduleOptions: InitDecoratorOptions) {
     (['App', 'Mod', 'Rou', 'Req'] as const).forEach((level) => {
       const providersKey = `providersPer${level}` as const;
       if (moduleOptions[providersKey]) {
         const providersPerLevel = this.resolveAllForwardRefs(moduleOptions[providersKey]);
         this.normalizedModuleMeta[providersKey].push(...providersPerLevel);
       }
+    });
+  }
 
+  protected normalizeResolvedCollisions(
+    moduleOptions: InitDecoratorOptions & PickProps<RootModuleOptions, 'resolvedCollisionsPerApp'>,
+  ) {
+    (['App', 'Mod', 'Rou', 'Req'] as const).forEach((level) => {
       const resolvedCollisionKey = `resolvedCollisionsPer${level}` as const;
       if (moduleOptions[resolvedCollisionKey]) {
         moduleOptions[resolvedCollisionKey]!.forEach(([token, module]) => {
@@ -352,17 +370,37 @@ export class ModuleNormalizer {
     });
   }
 
+  /**
+   * Ensures the host module (if any) is added to `importsModules` for the current module,
+   * unless the current module itself is the host module.
+   */
+  protected ensureHostModuleImported(initHooks: InitHooks): void {
+    const { hostModule } = initHooks;
+    if (
+      hostModule &&
+      hostModule !== this.normalizedModuleMeta.modRefId &&
+      !this.normalizedModuleMeta.importsModules.includes(hostModule)
+    ) {
+      this.normalizedModuleMeta.importsModules.push(hostModule);
+    }
+  }
+
+  /**
+   * Registers an init hook into `allInitHooks`, ensures the host module is imported,
+   * calls the init hook, and backfills `initHooksMap` (needed for `quickCheckMeta`
+   * and `callInitHooksAfterScan`).
+   */
+  protected registerAndCallInitHook(decorator: AnyFn, initHooks: InitHooks): void {
+    this.normalizedModuleMeta.allInitHooks.set(decorator, initHooks);
+    this.ensureHostModuleImported(initHooks);
+    this.callInitHook(decorator, initHooks);
+    this.normalizedModuleMeta.initHooksMap.set(decorator, initHooks);
+  }
+
   protected callInitHooksFromCurrentModule() {
     this.normalizedModuleMeta.initHooksMap.forEach((initHooks, decorator) => {
       this.normalizedModuleMeta.allInitHooks.set(decorator, initHooks);
-
-      // Importing host module.
-      if (initHooks.hostModule === this.normalizedModuleMeta.modRefId) {
-        // No need import host module in host module.
-      } else if (initHooks.hostModule && !this.normalizedModuleMeta.importsModules.includes(initHooks.hostModule)) {
-        this.normalizedModuleMeta.importsModules.push(initHooks.hostModule);
-      }
-
+      this.ensureHostModuleImported(initHooks);
       this.fetchInitDecoratorOptions(decorator, initHooks.moduleOptions);
       this.callInitHook(decorator, initHooks);
     });
@@ -394,20 +432,8 @@ export class AppModule {}
   protected addInitHooksForImportedDynamicModule(allInitHooks: AllInitHooks) {
     (this.normalizedModuleMeta.modRefId as DynamicModule).initOpts?.forEach((params, decorator) => {
       if (!this.normalizedModuleMeta.initHooksMap.has(decorator)) {
-        const initHooks = allInitHooks.get(decorator)!;
-        const newInitHooks = initHooks.clone();
-        this.normalizedModuleMeta.allInitHooks.set(decorator, newInitHooks);
-
-        if (newInitHooks.hostModule && !this.normalizedModuleMeta.importsModules.includes(newInitHooks.hostModule)) {
-          this.normalizedModuleMeta.importsModules.push(newInitHooks.hostModule);
-        }
-
-        this.callInitHook(decorator, newInitHooks);
-
-        /**
-         * This is needed for {@link quickCheckMeta} only.
-         */
-        this.normalizedModuleMeta.initHooksMap.set(decorator, newInitHooks);
+        const newInitHooks = allInitHooks.get(decorator)!.clone();
+        this.registerAndCallInitHook(decorator, newInitHooks);
       }
     });
   }
@@ -533,26 +559,13 @@ export class AppModule {}
 
   protected addInitHooksFromParent(allInitHooks: AllInitHooks) {
     const inheritsContext = this.normalizedModuleMeta.inheritsContext ?? !this.normalizedModuleMeta.isExternal;
-    if (!inheritsContext) {
+    if (!inheritsContext || this.normalizedModuleMeta.initHooksMap.size > 0) {
       return;
     }
-    if (this.normalizedModuleMeta.initHooksMap.size == 0) {
-      allInitHooks.forEach((initHooks, decorator) => {
-        const newInitHooks = initHooks.clone();
-        this.normalizedModuleMeta.allInitHooks.set(decorator, newInitHooks);
-
-        if (newInitHooks.hostModule && !this.normalizedModuleMeta.importsModules.includes(newInitHooks.hostModule)) {
-          this.normalizedModuleMeta.importsModules.push(newInitHooks.hostModule);
-        }
-
-        this.callInitHook(decorator, newInitHooks);
-
-        /**
-         * This is needed for quickCheckMeta and callInitHooksAfterScan.
-         */
-        this.normalizedModuleMeta.initHooksMap.set(decorator, newInitHooks);
-      });
-    }
+    allInitHooks.forEach((initHooks, decorator) => {
+      const newInitHooks = initHooks.clone();
+      this.registerAndCallInitHook(decorator, newInitHooks);
+    });
   }
 
   checkEmptyMeta(normalizedModuleMeta: NormalizedModuleMeta) {
