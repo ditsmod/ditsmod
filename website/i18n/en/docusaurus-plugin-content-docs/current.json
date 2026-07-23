@@ -5,34 +5,34 @@
   },
   "sidebar.tutorialSidebar.category.basic-components-native-modules": {
     "message": "Native modules",
-    "description": "The label for category 'Рідні модулі' in sidebar 'tutorialSidebar'"
+    "description": "The label for category 'Native modules' in sidebar 'tutorialSidebar'"
   },
   "sidebar.tutorialSidebar.category.rest-application-native-modules": {
     "message": "Native modules",
-    "description": "The label for category 'Рідні модулі' in sidebar 'tutorialSidebar'"
+    "description": "The label for category 'Native modules' in sidebar 'tutorialSidebar'"
   },
   "sidebar.tutorialSidebar.category.basic-components": {
     "message": "Basic components",
-    "description": "The label for category 'Базові компоненти' in sidebar 'tutorialSidebar'"
+    "description": "The label for category 'Basic components' in sidebar 'tutorialSidebar'"
   },
   "sidebar.tutorialSidebar.category.rest-application": {
     "message": "REST application",
-    "description": "The label for category 'REST застосунок' in sidebar 'tutorialSidebar'"
+    "description": "The label for category 'REST application' in sidebar 'tutorialSidebar'"
   },
   "sidebar.tutorialSidebar.category.rest-application-guide": {
     "message": "REST Guide",
-    "description": "The label for category 'REST Гід' in sidebar 'tutorialSidebar'"
+    "description": "The label for category 'REST Guide' in sidebar 'tutorialSidebar'"
   },
   "sidebar.tutorialSidebar.category.trpc-application": {
     "message": "tRPC application",
-    "description": "The label for category 'tRPC застосунок' in sidebar 'tutorialSidebar'"
+    "description": "The label for category 'tRPC application' in sidebar 'tutorialSidebar'"
   },
   "sidebar.tutorialSidebar.category.guide": {
     "message": "Guide",
-    "description": "The label for category 'Гід' in sidebar 'tutorialSidebar'"
+    "description": "The label for category 'Guide' in sidebar 'tutorialSidebar'"
   },
   "sidebar.tutorialSidebar.category.deep-dive": {
     "message": "Deep Dive",
-    "description": "The label for category 'Глибоке занурення' in sidebar 'tutorialSidebar'"
+    "description": "The label for category 'Deep Dive' in sidebar 'tutorialSidebar'"
   }
 }

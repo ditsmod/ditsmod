@@ -17,5 +17,7 @@ The initialization stages of applications with different architectural styles ma
 [1]: /basic-components/application/
 [2]: /deep-dive/module-manager/
 [3]: /deep-dive/init-decorators/
-[4]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/core/src/init/base-app-initializer.ts
+[4]: /deep-dive/app-initializer/
 [5]: /basic-components/modules/
+[6]: /deep-dive/extension-manager/
+
