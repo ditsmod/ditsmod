@@ -3,7 +3,7 @@ import { DispatcherExtension, RestRouteExtension, restModule } from '@ditsmod/re
 import { BodyParserGroup } from '@ts-stack/body-parser';
 import { Multer } from '@ts-stack/multer';
 
-import { HTTP_BODY, BodyParserConfig } from './body-parser-config.js';
+import { BodyParserConfig } from './body-parser-config.js';
 import { BodyParserExtension } from './body-parser.extension.js';
 import { BodyParserGroupFactory } from './body-parser-group.factory.js';
 import { MulterFactory } from './multer.factory.js';
