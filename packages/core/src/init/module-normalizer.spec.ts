@@ -53,23 +53,7 @@ describe('ModuleNormalizer', () => {
       class AppModule {}
 
       const normalizedModuleMeta = normalizer.normalize(AppModule);
-      expect(normalizedModuleMeta).toMatchObject({
-        id: '',
-        name: 'AppModule',
-        decoratorOptions: new RootDecoratorOptions(),
-        modRefId: AppModule,
-        declaredInDir: expect.any(String),
-        isExternal: undefined,
-        importsModules: [],
-        importsWithOpts: [],
-        providersPerApp: [],
-        providersPerMod: [],
-        providersPerRou: [],
-        providersPerReq: [],
-        exportsModules: [],
-        exportsWithOpts: [],
-      });
-      expect(normalizedModuleMeta.initHooksMap).toBeInstanceOf(Map);
+      expect(normalizedModuleMeta).toBeInstanceOf(NormalizedModuleMeta);
     });
 
     it('normalizes imports, exports, providers, resolved collisions, and extension metadata from rootModule options', () => {

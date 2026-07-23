@@ -88,7 +88,7 @@ export class ModuleManager {
   }
 
   scanModule(modRefId: ModRefId | ForwardRefFn<ModuleType>, allInitHooks?: AllInitHooks, saveToShapshot?: boolean) {
-    const isRootScan = this.unfinishedScanModules.size === 0;
+    const isRootScan = this.unfinishedScanModules.size == 0;
     allInitHooks ??= new Map();
     modRefId = resolveForwardRef(modRefId);
     const normalizedModuleMeta = this.normalizeMeta(modRefId, allInitHooks);

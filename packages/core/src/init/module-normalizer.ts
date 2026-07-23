@@ -76,30 +76,6 @@ export class ModuleNormalizer {
     return normalizedModuleMeta;
   }
 
-  protected addInitHooksFromParent(allInitHooks: AllInitHooks) {
-    const inheritsContext = this.normalizedModuleMeta.inheritsContext ?? !this.normalizedModuleMeta.isExternal;
-    if (!inheritsContext) {
-      return;
-    }
-    if (this.normalizedModuleMeta.initHooksMap.size == 0) {
-      allInitHooks.forEach((initHooks, decorator) => {
-        const newInitHooks = initHooks.clone();
-        this.normalizedModuleMeta.allInitHooks.set(decorator, newInitHooks);
-
-        if (newInitHooks.hostModule && !this.normalizedModuleMeta.importsModules.includes(newInitHooks.hostModule)) {
-          this.normalizedModuleMeta.importsModules.push(newInitHooks.hostModule);
-        }
-
-        this.callInitHook(decorator, newInitHooks);
-
-        /**
-         * This is needed for quickCheckMeta and callInitHooksAfterScan.
-         */
-        this.normalizedModuleMeta.initHooksMap.set(decorator, newInitHooks);
-      });
-    }
-  }
-
   protected init(modRefId: ModRefId) {
     const decoratorsMeta = this.getDecoratorMeta(modRefId) || [];
     const decorAndVal = decoratorsMeta.find((d) => isModuleDecorator(d));
@@ -552,6 +528,30 @@ export class AppModule {}
   propagateParentHooks(normalizedModuleMeta: NormalizedModuleMeta, allInitHooks: AllInitHooks) {
     this.normalizedModuleMeta = normalizedModuleMeta;
     this.addInitHooksFromParent(allInitHooks);
+  }
+
+  protected addInitHooksFromParent(allInitHooks: AllInitHooks) {
+    const inheritsContext = this.normalizedModuleMeta.inheritsContext ?? !this.normalizedModuleMeta.isExternal;
+    if (!inheritsContext) {
+      return;
+    }
+    if (this.normalizedModuleMeta.initHooksMap.size == 0) {
+      allInitHooks.forEach((initHooks, decorator) => {
+        const newInitHooks = initHooks.clone();
+        this.normalizedModuleMeta.allInitHooks.set(decorator, newInitHooks);
+
+        if (newInitHooks.hostModule && !this.normalizedModuleMeta.importsModules.includes(newInitHooks.hostModule)) {
+          this.normalizedModuleMeta.importsModules.push(newInitHooks.hostModule);
+        }
+
+        this.callInitHook(decorator, newInitHooks);
+
+        /**
+         * This is needed for quickCheckMeta and callInitHooksAfterScan.
+         */
+        this.normalizedModuleMeta.initHooksMap.set(decorator, newInitHooks);
+      });
+    }
   }
 
   checkEmptyMeta(normalizedModuleMeta: NormalizedModuleMeta) {
