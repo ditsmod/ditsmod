@@ -15,7 +15,7 @@ const debugClassNameCounters = new Map<string, number>();
  * Returns `undefined` if the passed argument is not a class and is not a module with parameters.
  *
  * If you use this function in tests, remember to run
- * the `clearDebugClassNames()` function before each test.
+ * the {@link clearDebugClassNames | clearDebugClassNames()} function before each test.
  */
 export function getDebugClassName(modRefId: string | ModRefId | ForwardRefFn<ModuleType>): string | undefined {
   if (!modRefId) {
@@ -49,6 +49,10 @@ export function getDebugClassName(modRefId: string | ModRefId | ForwardRefFn<Mod
   return newDebugClassName;
 }
 
+/**
+ * This function works in conjunction with the {@link getDebugClassName | getDebugClassName()} function.
+ * It is necessary when performing tests.
+ */
 export function clearDebugClassNames() {
   debugClassNameCounters.clear();
 }
