@@ -114,7 +114,7 @@ export class NormalizedModuleMeta<
    */
   inheritsContext?: boolean;
   /**
-   * Contains init hooks and raw metadata collected from init module decorators.
+   * Contains init hooks and init options collected from init module decorators.
    */
   initHooksMap = new Map<AnyFn, InitHooks>();
   /**

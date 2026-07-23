@@ -62,7 +62,7 @@ export class ModuleNormalizer {
    * Returns normalized module metadata.
    */
   normalize(modRefId: ModRefId, allInitHooks: AllInitHooks) {
-    const { moduleOptions, normalizedModuleMeta } = this.init(modRefId);
+    const { moduleOptions, normalizedModuleMeta } = this.initNormalizedModuleMeta(modRefId);
     this.checkAndMarkExternalModule(moduleOptions);
     this.normalizeDeclaredAndResolvedProviders(moduleOptions);
     this.normalizeExports(moduleOptions, 'Exports');
@@ -77,16 +77,16 @@ export class ModuleNormalizer {
     return normalizedModuleMeta;
   }
 
-  protected init(modRefId: ModRefId) {
+  protected initNormalizedModuleMeta(modRefId: ModRefId) {
     const decoratorsMeta = this.getDecoratorMeta(modRefId) || [];
     const decoratorMeta = decoratorsMeta.find((d) => isModuleDecorator(d));
     const moduleOptions = decoratorMeta?.value;
-    const modName = getDebugClassName(modRefId);
-    if (!modName) {
+    const moduleName = getDebugClassName(modRefId);
+    if (!moduleName) {
       throw new InvalidModRefId();
     }
     if (!moduleOptions) {
-      throw new MissingModuleDecorator(modName);
+      throw new MissingModuleDecorator(moduleName);
     }
 
     /**
@@ -94,12 +94,12 @@ export class ModuleNormalizer {
      */
     const normalizedModuleMeta = new NormalizedModuleMeta();
     this.normalizedModuleMeta = normalizedModuleMeta;
-    normalizedModuleMeta.name = modName;
+    normalizedModuleMeta.name = moduleName;
     normalizedModuleMeta.moduleOptions = moduleOptions;
     normalizedModuleMeta.declaredInDir = decoratorMeta?.declaredInDir || '.';
     normalizedModuleMeta.modRefId = modRefId;
     decoratorsMeta.filter(isModuleWithInitHooks).forEach(({ decoratorId, value }) => {
-      normalizedModuleMeta.initHooksMap.set(decoratorId!, value);
+      normalizedModuleMeta.initHooksMap.set(decoratorId, value);
     });
     return { moduleOptions, normalizedModuleMeta };
   }
