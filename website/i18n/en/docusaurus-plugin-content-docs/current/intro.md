@@ -69,7 +69,7 @@ npm run setup:agents
 Additionally, you can install [AI agent skills][5] to help them better understand the specifics of Ditsmod applications:
 
 ```bash
-npx skills add ditsmod/agent-skills --skill '*' -y
+npx skills add https://github.com/ditsmod/agent-skills --skill '*' -y
 ```
 
 AI agent skills are only loaded when needed, when you ask something relevant to them.

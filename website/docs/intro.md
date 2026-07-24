@@ -69,7 +69,7 @@ npm run setup:agents
 Додатково можна встановити ще й [скіли для ШІ-агентів][5], щоб вони краще розуміли особливості Ditsmod-застосунків:
 
 ```bash
-npx skills add ditsmod/agent-skills --skill '*' -y
+npx skills add https://github.com/ditsmod/agent-skills --skill '*' -y
 ```
 
 Скіли ШІ-агентами зчитуються лише у разі потреби, коли ви запитуєте щось релевантне у них.
