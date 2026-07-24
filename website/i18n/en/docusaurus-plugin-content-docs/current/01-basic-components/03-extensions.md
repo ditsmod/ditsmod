@@ -79,7 +79,7 @@ import { restModule } from '@ditsmod/rest';
 import { SimpleExtension } from './simple-extension.js';
 
 @restModule({
-  extensions: [SimpleExtension]
+  extensions: [SimpleExtension],
 })
 export class AppModule {}
 ```
@@ -145,6 +145,60 @@ extensions: [
 ```
 
 In this case, `ExternalExtension` is imported into the current module, where you override it with `MyExtension`.
+
+### Passing metadata for extensions (extensionsMeta) {#passing-metadata-for-extensions}
+
+You can pass custom data in the module metadata using the `extensionsMeta` property. Each extension stores its metadata under its own dedicated key in this object:
+
+  ```ts
+  @featureModule({
+    extensions: [MyExtension],
+    extensionsMeta: {
+      myExtensionKey: { enableFeature: true },
+    },
+  })
+  export class FeatureModule {}
+  ```
+
+During module normalization, this configuration is saved in `normalizedModuleMeta.extensionsMeta`. An extension can read this property in one of two common ways:
+
+1. **Directly in the extension constructor** by injecting `ResolvedModuleMeta`:
+
+  ```ts
+  import { injectable, Extension, ResolvedModuleMeta } from '@ditsmod/core';
+
+  @injectable()
+  export class MyExtension implements Extension<void> {
+    constructor(private resolvedModuleMeta: ResolvedModuleMeta) {}
+
+    async stage1() {
+      const myOptions = this.resolvedModuleMeta.normalizedModuleMeta.extensionsMeta.myExtensionKey;
+      if (myOptions?.enableFeature) {
+        // Do something with options
+      }
+    }
+  }
+  ```
+
+2. **From other extensions** via `ExtensionManager`:
+
+  ```ts
+  import { injectable, Extension, ExtensionManager } from '@ditsmod/core';
+  import { RestRouteExtension } from '@ditsmod/rest';
+
+  @injectable()
+  export class MyExtension implements Extension<void> {
+    constructor(private extensionManager: ExtensionManager) {}
+
+    async stage1() {
+      const groupMeta = await this.extensionManager.stage1(RestRouteExtension);
+      groupMeta.groupData.forEach((routeExtensionMeta) => {
+        const myOptions = routeExtensionMeta.normalizedModuleMeta.extensionsMeta.myExtensionKey;
+        // Do something with options
+      });
+    }
+  }
+  ```
 
 ## Extension groups {#group-of-extensions}
 
@@ -239,16 +293,16 @@ interface ExtensionGroupMeta<T = any> {
   delay: boolean;
   countdown: number;
   groupDataPerApp: AppExtensionGroupMeta<T>[];
-  moduleName: string,
-  groupDebugMeta: ExtensionDebugMeta<T>[],
-  groupData: T[],
+  moduleName: string;
+  groupDebugMeta: ExtensionDebugMeta<T>[];
+  groupData: T[];
 }
 
 interface ExtensionDebugMeta<T = any> {
-  extension: Extension<T>,
-  payload: T,
-  delay: boolean,
-  countdown: number,
+  extension: Extension<T>;
+  payload: T;
+  delay: boolean;
+  countdown: number;
 }
 ```
 
@@ -337,7 +391,7 @@ import { HTTP_INTERCEPTORS, RestRouteExtension } from '@ditsmod/rest';
 export class BodyParserExtension implements Extension<void> {
   constructor(
     protected extensionManager: ExtensionManager,
-   @inject(PROVIDERS_PER_APP) protected providersPerApp: Provider[],
+    @inject(PROVIDERS_PER_APP) protected providersPerApp: Provider[],
   ) {}
 
   async stage1() {
@@ -359,7 +413,11 @@ export class BodyParserExtension implements Extension<void> {
             let bodyParserConfig = injectorPerRou.get(BodyParserConfig, {}) as BodyParserConfig;
             bodyParserConfig = { ...new BodyParserConfig(), ...bodyParserConfig }; // Merge with default.
             if (bodyParserConfig.acceptMethods!.includes(method)) {
-              providersPerRou.push({ token: HTTP_INTERCEPTORS, useClass: RouteScopedBodyParserInterceptor, multi: true });
+              providersPerRou.push({
+                token: HTTP_INTERCEPTORS,
+                useClass: RouteScopedBodyParserInterceptor,
+                multi: true,
+              });
             }
           } else {
             const injectorPerReq = injectorPerRou.resolveAndCreateChild(mergedProvidersPerReq);
@@ -407,9 +465,7 @@ import { createDbConnection, DbClient } from './db-connection.js';
 
 @injectable()
 export class DbExtension implements Extension<void> {
-  constructor(
-    @inject(PROVIDERS_PER_APP) protected providersPerApp: Provider[],
-  ) {}
+  constructor(@inject(PROVIDERS_PER_APP) protected providersPerApp: Provider[]) {}
 
   async stage1() {
     const dbClient = await createDbConnection();
@@ -427,7 +483,6 @@ After this, any service or controller in the application can inject `DbClient` v
 [8]: /basic-components/dependency-injection#hierarchy-of-injectors-in-the-ditsmod-application
 [10]: /rest-application/http-interceptors/
 [11]: /basic-components/dependency-injection/#provider
-
 [100]: https://nodejs.org/api/repl.html
 [101]: https://github.com/ditsmod/ditsmod/tree/main/examples/06-body-parser
 [102]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/body-parser/src/body-parser.extension.ts#L46
