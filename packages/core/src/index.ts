@@ -27,7 +27,6 @@ export { defaultExtensionProviders } from '#extension/default-extensions-provide
 export {
   ExtensionCounters,
   ExtensionClass,
-  ExtensionMetaMap,
   Extension,
   ExtensionDebugMeta,
   ExtensionGroupMeta,

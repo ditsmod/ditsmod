@@ -1,10 +1,6 @@
-import type { AnyObj, OptionalProps } from '#types/mix.js';
+import type { OptionalProps } from '#types/mix.js';
 import type { Class, Provider } from '#di/top/types-and-models.js';
 import type { Injector } from '#di/injector.js';
-
-export class ExtensionMetaMap {
-  [key: string]: AnyObj;
-}
 
 export class ExtensionDebugMeta<T = any> {
   /**

@@ -1,7 +1,6 @@
 import {
   Extension,
   ExtensionManager,
-  ExtensionMetaMap,
   HttpMethod,
   injectable,
   Injector,
@@ -39,7 +38,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
   constructor(
     private extensionManager: ExtensionManager,
     private log: OpenapiLogMediator,
-    @optional() private extensionsMetaPerApp?: ExtensionMetaMap,
+    @optional() private oasOptions?: OasOptions,
   ) {}
 
   async stage1() {
@@ -58,8 +57,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
       this.log.applyingAccumulatedData(this);
       await this.compileOasObject(this.extensionGroupMeta.groupDataPerApp);
       const json = JSON.stringify(this.oasObject);
-      const oasOptions = this.extensionsMetaPerApp?.oasOptions as OasOptions | undefined;
-      const yaml = stringify(this.oasObject, oasOptions?.yamlSchemaOptions);
+      const yaml = stringify(this.oasObject, this.oasOptions?.yamlSchemaOptions);
       const ctx = injectorPerMod.parent?.get(Context) as Context;
       ctx.set(OAS_CONFIG_FILES, { json, yaml });
     }
