@@ -5,9 +5,6 @@ import type { DataSource } from 'typeorm';
  * Centralized manager for all `DataSource` instances registered via
  * `TypeormModule.forRoot()`. Implements `OnShutdown` to gracefully
  * destroy all connections during application shutdown.
- *
- * This replaces the NestJS pattern where the core module itself implements
- * `OnApplicationShutdown` and uses `ModuleRef` to look up the `DataSource`.
  */
 @injectable()
 export class DataSourceManager implements OnShutdown {

@@ -10,9 +10,6 @@ export interface TypeormRetryOptions {
 
 /**
  * Attempts to initialize a `DataSource` with configurable retry and backoff.
- *
- * Unlike `@nestjs/typeorm` which uses RxJS `defer().pipe(retryWhen(...))`,
- * this uses a simple async loop — no RxJS dependency required.
  */
 export async function initializeWithRetry(
   dataSource: DataSource,
