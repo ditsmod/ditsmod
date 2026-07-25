@@ -1,6 +1,7 @@
 export { TypeormModule } from './typeorm.module.js';
 export { TypeormExtension } from './typeorm.extension.js';
 export { DataSourceManager } from './data-source-manager.js';
+export { DataSourceNameRegistry } from './data-source-name-registry.js';
 export { EntitiesMetadataStorage } from './entities-metadata-storage.js';
 export { injectRepository, injectDataSource, injectEntityManager } from './typeorm.decorators.js';
 export { getDataSourceToken, getEntityManagerToken, getRepositoryToken } from './typeorm.utils.js';

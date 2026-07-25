@@ -23,7 +23,7 @@ export class TypeormExtension implements Extension<void> {
   constructor(
     @inject(PROVIDERS_PER_APP) protected providersPerApp: Provider[],
     protected logger: Logger,
-    protected tempInjectorPerMod: Injector
+    protected tempInjectorPerMod: Injector,
   ) {}
 
   async stage1(isLastModule: boolean): Promise<void> {
@@ -52,7 +52,7 @@ export class TypeormExtension implements Extension<void> {
       ...dsOptionsRest
     } = options;
 
-    // Merge auto-loaded entities
+    // Merge auto-loaded entities (default: true)
     const autoLoadEntities = autoLoadEntitiesOpt !== false;
     let entities = dsOptionsRest.entities;
     if (autoLoadEntities) {
@@ -101,18 +101,36 @@ export class TypeormExtension implements Extension<void> {
   }
 
   async stage2(injectorPerMod: Injector): Promise<void> {
-    // Register each DataSource into the DataSourceManager for shutdown management
-    const manager = injectorPerMod.parent?.get(DataSourceManager, null);
-    if (!manager) {
+    const options = this.tempInjectorPerMod.get(TYPEORM_OPTIONS, null);
+    if (!options) {
       return;
     }
 
-    for (const options of this.tempInjectorPerMod.get(TYPEORM_OPTIONS, [])) {
-      const name = options.name || DEFAULT_DATA_SOURCE_NAME;
+    // Register each DataSource into the DataSourceManager for shutdown management
+    const manager = injectorPerMod.parent?.get(DataSourceManager, null);
+    if (!manager) {
+      this.logger.log(
+        'warn',
+        'TypeormExtension stage2: DataSourceManager not found in the app injector. ' +
+          'DataSource connections will not be managed for graceful shutdown. ' +
+          'Ensure TypeormModule is imported in your root module.',
+      );
+      return;
+    }
+
+    for (const opt of options) {
+      const name = opt.name || DEFAULT_DATA_SOURCE_NAME;
       const dsToken = getDataSourceToken(name);
       const dataSource = injectorPerMod.parent?.get(dsToken, null) as DataSource | null;
       if (dataSource) {
         manager.register(name, dataSource);
+      } else {
+        this.logger.log(
+          'warn',
+          `TypeormExtension stage2: DataSource "${name}" not found in the app injector. ` +
+            'It will not be managed for graceful shutdown. ' +
+            'This may indicate that stage1() failed or was not called for this DataSource.',
+        );
       }
     }
   }

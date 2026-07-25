@@ -1,6 +1,8 @@
 import { injectable, Logger, OnShutdown } from '@ditsmod/core';
 import type { DataSource } from 'typeorm';
 
+import { DataSourceNameRegistry } from './data-source-name-registry.js';
+
 /**
  * Centralized manager for all `DataSource` instances registered via
  * `TypeormModule.forRoot()`. Implements `OnShutdown` to gracefully
@@ -10,7 +12,10 @@ import type { DataSource } from 'typeorm';
 export class DataSourceManager implements OnShutdown {
   private readonly dataSources = new Map<string, DataSource>();
 
-  constructor(private logger: Logger) {}
+  constructor(private logger: Logger) {
+    // Make the registry use the same logger as the application
+    DataSourceNameRegistry.setLogger(logger);
+  }
 
   register(name: string, dataSource: DataSource): void {
     if (this.dataSources.has(name)) {
@@ -30,6 +35,7 @@ export class DataSourceManager implements OnShutdown {
   async onShutdown(): Promise<void> {
     const destroyPromises: Promise<void>[] = [];
     for (const [name, ds] of this.dataSources) {
+      DataSourceNameRegistry.unregister(name);
       if (ds.isInitialized) {
         destroyPromises.push(
           ds.destroy().catch((err) => {

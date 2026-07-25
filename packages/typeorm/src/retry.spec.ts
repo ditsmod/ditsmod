@@ -62,6 +62,19 @@ describe('retry', () => {
     expect(loggerMock.log).toHaveBeenCalledTimes(2);
   });
 
+  it('should rethrow the last error (not a wrapper) when retries are exhausted', async () => {
+    const originalError = new Error('Specific DB error');
+    const dsMock = {
+      initialize: jest.fn<any>().mockRejectedValue(originalError),
+    } as any;
+
+    const thrown = await initializeWithRetry(dsMock, { retryAttempts: 1, retryDelay: 1 }, loggerMock, 'default').catch(
+      (e) => e,
+    );
+
+    expect(thrown).toBe(originalError);
+  });
+
   it('should stop retrying immediately if toRetry returns false', async () => {
     const error = new Error('Fatal auth error');
     const dsMock = {
@@ -76,6 +89,43 @@ describe('retry', () => {
 
     expect(dsMock.initialize).toHaveBeenCalledTimes(1);
     expect(toRetry).toHaveBeenCalledWith(error);
+    expect(loggerMock.log).not.toHaveBeenCalled();
+  });
+
+  it('should retry when toRetry returns true', async () => {
+    const error = new Error('Transient error');
+    const dsMock = {
+      initialize: jest.fn<any>(),
+    } as any;
+    dsMock.initialize.mockRejectedValueOnce(error).mockResolvedValue(dsMock);
+
+    const toRetry = jest.fn<(err: any) => boolean>().mockReturnValue(true);
+
+    const result = await initializeWithRetry(
+      dsMock,
+      { retryAttempts: 2, retryDelay: 1, toRetry },
+      loggerMock,
+      'default',
+    );
+
+    expect(result).toBe(dsMock);
+    expect(toRetry).toHaveBeenCalledWith(error);
+    expect(dsMock.initialize).toHaveBeenCalledTimes(2);
+    expect(loggerMock.log).toHaveBeenCalledTimes(1);
+  });
+
+  it('should make exactly 1 attempt when retryAttempts is 0', async () => {
+    const error = new Error('Immediate failure');
+    const dsMock = {
+      initialize: jest.fn<any>().mockRejectedValue(error),
+    } as any;
+
+    await expect(
+      initializeWithRetry(dsMock, { retryAttempts: 0, retryDelay: 1 }, loggerMock, 'default'),
+    ).rejects.toThrow('Immediate failure');
+
+    // 1 attempt, 0 retries, 0 log messages
+    expect(dsMock.initialize).toHaveBeenCalledTimes(1);
     expect(loggerMock.log).not.toHaveBeenCalled();
   });
 

@@ -42,4 +42,22 @@ describe('EntitiesMetadataStorage', () => {
     expect(EntitiesMetadataStorage.getEntities('default')).toEqual([]);
     expect(EntitiesMetadataStorage.getEntities('analytics')).toEqual([]);
   });
+
+  it('should clear entities for a single data source via clearForDataSource()', () => {
+    EntitiesMetadataStorage.addEntities('default', [User]);
+    EntitiesMetadataStorage.addEntities('analytics', [Post]);
+
+    EntitiesMetadataStorage.clearForDataSource('analytics');
+
+    // 'analytics' is cleared, 'default' is untouched
+    expect(EntitiesMetadataStorage.getEntities('analytics')).toEqual([]);
+    expect(EntitiesMetadataStorage.getEntities('default')).toEqual([User]);
+  });
+
+  it('should be a no-op when clearForDataSource() is called for an unknown name', () => {
+    EntitiesMetadataStorage.addEntities('default', [User]);
+
+    expect(() => EntitiesMetadataStorage.clearForDataSource('nonexistent')).not.toThrow();
+    expect(EntitiesMetadataStorage.getEntities('default')).toEqual([User]);
+  });
 });

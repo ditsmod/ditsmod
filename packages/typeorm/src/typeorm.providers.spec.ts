@@ -27,6 +27,7 @@ describe('typeorm.providers', () => {
 
     const mockRepo = {};
     const mockDs = {
+      isInitialized: true,
       entityMetadatas: [{ target: User }],
       getRepository: jest.fn<any>().mockReturnValue(mockRepo),
       getTreeRepository: jest.fn(),
@@ -45,6 +46,7 @@ describe('typeorm.providers', () => {
 
     const mockTreeRepo = {};
     const mockDs = {
+      isInitialized: true,
       entityMetadatas: [{ target: Category, treeType: 'nested-set' }],
       getRepository: jest.fn(),
       getTreeRepository: jest.fn<any>().mockReturnValue(mockTreeRepo),
@@ -63,5 +65,52 @@ describe('typeorm.providers', () => {
 
     expect(provider.token).toEqual(getRepositoryToken(User, 'analytics'));
     expect(provider.deps).toEqual([getDataSourceToken('analytics')]);
+  });
+
+  it('should throw a descriptive error when DataSource is not initialized', () => {
+    const providers = createRepositoryProviders([User]);
+    const provider = providers[0];
+
+    const uninitializedDs = {
+      isInitialized: false,
+      entityMetadatas: [],
+      getRepository: jest.fn(),
+      getTreeRepository: jest.fn(),
+    };
+
+    expect(() => provider.useFactory(uninitializedDs)).toThrow(
+      expect.objectContaining({
+        message: expect.stringContaining('User'),
+      }),
+    );
+    expect(() => provider.useFactory(uninitializedDs)).toThrow(
+      expect.objectContaining({
+        message: expect.stringContaining('not initialized'),
+      }),
+    );
+    expect(() => provider.useFactory(uninitializedDs)).toThrow(
+      expect.objectContaining({
+        message: expect.stringContaining('manualInitialization'),
+      }),
+    );
+  });
+
+  it('should use getRepository when entity is not found in entityMetadatas', () => {
+    // Entity not registered in the DataSource — falls back to regular repo
+    const providers = createRepositoryProviders([User]);
+    const provider = providers[0];
+
+    const mockRepo = {};
+    const mockDs = {
+      isInitialized: true,
+      entityMetadatas: [], // User is NOT listed
+      getRepository: jest.fn<any>().mockReturnValue(mockRepo),
+      getTreeRepository: jest.fn(),
+    };
+
+    const repo = provider.useFactory(mockDs);
+
+    expect(mockDs.getRepository).toHaveBeenCalledWith(User);
+    expect(repo).toBe(mockRepo);
   });
 });

@@ -3,12 +3,14 @@ import type { Logger } from '@ditsmod/core';
 import type { DataSource } from 'typeorm';
 
 import { DataSourceManager } from './data-source-manager.js';
+import { DataSourceNameRegistry } from './data-source-name-registry.js';
 
 describe('DataSourceManager', () => {
   let manager: DataSourceManager;
   let loggerMock: jest.Mocked<Logger>;
 
   beforeEach(() => {
+    DataSourceNameRegistry.clear();
     loggerMock = {
       log: jest.fn(),
     } as any;
@@ -89,5 +91,23 @@ describe('DataSourceManager', () => {
     expect(loggerMock.log).toHaveBeenCalledWith('error', `Failed to close DataSource "fail": ${destroyError.message}`);
     expect(destroySuccess).toHaveBeenCalledTimes(1);
     expect(manager.getAll().size).toBe(0);
+  });
+
+  it('should unregister DataSource names from DataSourceNameRegistry on shutdown', async () => {
+    const destroy = jest.fn<any>().mockResolvedValue(undefined);
+    const ds = { isInitialized: true, destroy } as unknown as DataSource;
+
+    DataSourceNameRegistry.register('default');
+    DataSourceNameRegistry.register('analytics');
+    manager.register('default', ds);
+    manager.register('analytics', ds);
+
+    expect(DataSourceNameRegistry.has('default')).toBe(true);
+    expect(DataSourceNameRegistry.has('analytics')).toBe(true);
+
+    await manager.onShutdown();
+
+    expect(DataSourceNameRegistry.has('default')).toBe(false);
+    expect(DataSourceNameRegistry.has('analytics')).toBe(false);
   });
 });
