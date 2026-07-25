@@ -1,7 +1,7 @@
-import { injectable, Logger, OnShutdown } from '@ditsmod/core';
+import { injectable, OnShutdown } from '@ditsmod/core';
 import type { DataSource } from 'typeorm';
 
-import { DataSourceNameRegistry } from './data-source-name-registry.js';
+import { TypeormLogMediator } from './typeorm.log-mediator.js';
 
 /**
  * Centralized manager for all `DataSource` instances registered via
@@ -12,11 +12,11 @@ import { DataSourceNameRegistry } from './data-source-name-registry.js';
 export class DataSourceManager implements OnShutdown {
   private readonly dataSources = new Map<string, DataSource>();
 
-  constructor(private logger: Logger) {}
+  constructor(private log: TypeormLogMediator) {}
 
   register(name: string, dataSource: DataSource): void {
     if (this.dataSources.has(name)) {
-      this.logger.log('warn', `DataSource "${name}" is already registered. It will be overwritten.`);
+      this.log.duplicateDataSourceRegistration(this, name);
     }
     this.dataSources.set(name, dataSource);
   }
@@ -32,11 +32,10 @@ export class DataSourceManager implements OnShutdown {
   async onShutdown(): Promise<void> {
     const destroyPromises: Promise<void>[] = [];
     for (const [name, ds] of this.dataSources) {
-      DataSourceNameRegistry.unregister(name);
       if (ds.isInitialized) {
         destroyPromises.push(
           ds.destroy().catch((err) => {
-            this.logger.log('error', `Failed to close DataSource "${name}": ${err.message}`);
+            this.log.failedToCloseDataSource(this, name, err);
           }),
         );
       }

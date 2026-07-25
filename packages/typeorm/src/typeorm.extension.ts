@@ -1,4 +1,4 @@
-import { Extension, injectable, inject, PROVIDERS_PER_APP, Injector, Logger, isValueProvider } from '@ditsmod/core';
+import { Extension, injectable, inject, PROVIDERS_PER_APP, Injector, isValueProvider } from '@ditsmod/core';
 import type { Provider, ValueProvider } from '@ditsmod/core';
 import { DataSource } from 'typeorm';
 import type { DataSourceOptions, EntityManager } from 'typeorm';
@@ -7,6 +7,7 @@ import { TYPEORM_OPTIONS, DEFAULT_DATA_SOURCE_NAME } from './constants.js';
 import { DataSourceManager } from './data-source-manager.js';
 import { EntitiesMetadataStorage } from './entities-metadata-storage.js';
 import { initializeWithRetry } from './retry.js';
+import { TypeormLogMediator } from './typeorm.log-mediator.js';
 import type { TypeormModuleOptions } from './types.js';
 import { getDataSourceToken, getEntityManagerToken } from './typeorm.utils.js';
 
@@ -22,7 +23,7 @@ import { getDataSourceToken, getEntityManagerToken } from './typeorm.utils.js';
 export class TypeormExtension implements Extension<void> {
   constructor(
     @inject(PROVIDERS_PER_APP) protected providersPerApp: Provider[],
-    protected logger: Logger,
+    protected log: TypeormLogMediator,
     protected tempInjectorPerMod: Injector,
   ) {}
 
@@ -31,7 +32,15 @@ export class TypeormExtension implements Extension<void> {
       return;
     }
 
-    for (const options of this.tempInjectorPerMod.get(TYPEORM_OPTIONS, [])) {
+    const optionsList = this.tempInjectorPerMod.get(TYPEORM_OPTIONS, []);
+    const seenNames = new Set<string>();
+
+    for (const options of optionsList) {
+      const name = options.name || DEFAULT_DATA_SOURCE_NAME;
+      if (seenNames.has(name)) {
+        this.log.duplicateDataSourceName(this, name);
+      }
+      seenNames.add(name);
       await this.initDataSource(options);
     }
   }
@@ -74,7 +83,8 @@ export class TypeormExtension implements Extension<void> {
       dataSource = await initializeWithRetry(
         dataSource,
         { retryAttempts, retryDelay, toRetry, verboseRetryLog },
-        this.logger,
+        this.log,
+        this,
         name,
       );
     }
@@ -109,12 +119,7 @@ export class TypeormExtension implements Extension<void> {
     // Register each DataSource into the DataSourceManager for shutdown management
     const manager = injectorPerMod.parent?.get(DataSourceManager, null);
     if (!manager) {
-      this.logger.log(
-        'warn',
-        'TypeormExtension stage2: DataSourceManager not found in the app injector. ' +
-          'DataSource connections will not be managed for graceful shutdown. ' +
-          'Ensure TypeormModule is imported in your root module.',
-      );
+      this.log.dataSourceManagerNotFound(this);
       return;
     }
 
@@ -125,12 +130,7 @@ export class TypeormExtension implements Extension<void> {
       if (dataSource) {
         manager.register(name, dataSource);
       } else {
-        this.logger.log(
-          'warn',
-          `TypeormExtension stage2: DataSource "${name}" not found in the app injector. ` +
-            'It will not be managed for graceful shutdown. ' +
-            'This may indicate that stage1() failed or was not called for this DataSource.',
-        );
+        this.log.dataSourceNotFoundInAppInjector(this, name);
       }
     }
   }

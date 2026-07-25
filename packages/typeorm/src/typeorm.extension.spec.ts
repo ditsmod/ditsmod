@@ -1,13 +1,13 @@
 import { jest } from '@jest/globals';
-import type { Logger, Provider } from '@ditsmod/core';
+import type { Provider } from '@ditsmod/core';
 import { Injector } from '@ditsmod/core';
 import type { DataSource } from 'typeorm';
 
 import { TYPEORM_OPTIONS } from './constants.js';
 import { DataSourceManager } from './data-source-manager.js';
-import { DataSourceNameRegistry } from './data-source-name-registry.js';
 import { EntitiesMetadataStorage } from './entities-metadata-storage.js';
 import { TypeormExtension } from './typeorm.extension.js';
+import type { TypeormLogMediator } from './typeorm.log-mediator.js';
 import { getDataSourceToken, getEntityManagerToken } from './typeorm.utils.js';
 
 class User {}
@@ -15,14 +15,16 @@ class Post {}
 
 describe('TypeormExtension', () => {
   let providersPerApp: Provider[];
-  let loggerMock: jest.Mocked<Logger>;
+  let logMediatorMock: jest.Mocked<TypeormLogMediator>;
 
   beforeEach(() => {
     EntitiesMetadataStorage.clear();
-    DataSourceNameRegistry.clear();
     providersPerApp = [];
-    loggerMock = {
-      log: jest.fn(),
+    logMediatorMock = {
+      duplicateDataSourceName: jest.fn(),
+      dataSourceManagerNotFound: jest.fn(),
+      dataSourceNotFoundInAppInjector: jest.fn(),
+      unableToConnectToDatabase: jest.fn(),
     } as any;
   });
 
@@ -35,7 +37,7 @@ describe('TypeormExtension', () => {
           multi: true,
         },
       ]);
-      const extension = new TypeormExtension(providersPerApp, loggerMock, tempInjectorPerMod);
+      const extension = new TypeormExtension(providersPerApp, logMediatorMock, tempInjectorPerMod);
 
       await extension.stage1(false);
 
@@ -43,7 +45,7 @@ describe('TypeormExtension', () => {
     });
 
     it('should do nothing if TYPEORM_OPTIONS is missing', async () => {
-      const extension = new TypeormExtension(providersPerApp, loggerMock, Injector.resolveAndCreate([]));
+      const extension = new TypeormExtension(providersPerApp, logMediatorMock, Injector.resolveAndCreate([]));
       await extension.stage1(true);
 
       expect(providersPerApp.length).toBe(0);
@@ -71,7 +73,7 @@ describe('TypeormExtension', () => {
           multi: true,
         },
       ]);
-      const extension = new TypeormExtension(providersPerApp, loggerMock, tempInjectorPerMod);
+      const extension = new TypeormExtension(providersPerApp, logMediatorMock, tempInjectorPerMod);
 
       await extension.stage1(true);
 
@@ -111,7 +113,7 @@ describe('TypeormExtension', () => {
           multi: true,
         },
       ]);
-      const extension = new TypeormExtension(providersPerApp, loggerMock, tempInjectorPerMod);
+      const extension = new TypeormExtension(providersPerApp, logMediatorMock, tempInjectorPerMod);
 
       await extension.stage1(true);
 
@@ -128,6 +130,32 @@ describe('TypeormExtension', () => {
       expect(analyticsProvider).toBeDefined();
     });
 
+    it('should warn via logMediator when duplicate DataSource names are configured', async () => {
+      const mockDs1 = { isInitialized: true, manager: {} };
+      const mockDs2 = { isInitialized: true, manager: {} };
+
+      const factory1 = jest.fn<any>().mockResolvedValue(mockDs1);
+      const factory2 = jest.fn<any>().mockResolvedValue(mockDs2);
+
+      const tempInjectorPerMod = Injector.resolveAndCreate([
+        {
+          token: TYPEORM_OPTIONS,
+          useValue: { name: 'default', manualInitialization: true, dataSourceFactory: factory1 },
+          multi: true,
+        },
+        {
+          token: TYPEORM_OPTIONS,
+          useValue: { name: 'default', manualInitialization: true, dataSourceFactory: factory2 },
+          multi: true,
+        },
+      ]);
+      const extension = new TypeormExtension(providersPerApp, logMediatorMock, tempInjectorPerMod);
+
+      await extension.stage1(true);
+
+      expect(logMediatorMock.duplicateDataSourceName).toHaveBeenCalledWith(extension, 'default');
+    });
+
     it('should skip auto-loaded entities when autoLoadEntities is false', async () => {
       EntitiesMetadataStorage.addEntities('default', [User]);
 
@@ -141,7 +169,7 @@ describe('TypeormExtension', () => {
           multi: true,
         },
       ]);
-      const extension = new TypeormExtension(providersPerApp, loggerMock, tempInjectorPerMod);
+      const extension = new TypeormExtension(providersPerApp, logMediatorMock, tempInjectorPerMod);
 
       await extension.stage1(true);
 
@@ -157,12 +185,11 @@ describe('TypeormExtension', () => {
       const tempInjectorPerMod = Injector.resolveAndCreate([
         {
           token: TYPEORM_OPTIONS,
-          // User is explicit, Post is auto-loaded via forFeature
           useValue: { manualInitialization: true, dataSourceFactory, entities: [User] },
           multi: true,
         },
       ]);
-      const extension = new TypeormExtension(providersPerApp, loggerMock, tempInjectorPerMod);
+      const extension = new TypeormExtension(providersPerApp, logMediatorMock, tempInjectorPerMod);
 
       await extension.stage1(true);
 
@@ -175,7 +202,6 @@ describe('TypeormExtension', () => {
       const dsToken = getDataSourceToken('default');
       const emToken = getEntityManagerToken('default');
 
-      // Pre-populate with null placeholders (as forRoot() does)
       providersPerApp.push({ token: dsToken, useValue: null });
       providersPerApp.push({ token: emToken, useValue: null });
 
@@ -186,11 +212,10 @@ describe('TypeormExtension', () => {
           multi: true,
         },
       ]);
-      const extension = new TypeormExtension(providersPerApp, loggerMock, tempInjectorPerMod);
+      const extension = new TypeormExtension(providersPerApp, logMediatorMock, tempInjectorPerMod);
 
       await extension.stage1(true);
 
-      // Should have updated in-place, not added more providers
       const dsProviders = providersPerApp.filter((p: any) => p.token === dsToken);
       const emProviders = providersPerApp.filter((p: any) => p.token === emToken);
 
@@ -214,7 +239,7 @@ describe('TypeormExtension', () => {
           multi: true,
         },
       ]);
-      const extension = new TypeormExtension(providersPerApp, loggerMock, tempInjectorPerMod);
+      const extension = new TypeormExtension(providersPerApp, logMediatorMock, tempInjectorPerMod);
 
       const parentInjector = {
         get: jest.fn((token) => {
@@ -238,7 +263,7 @@ describe('TypeormExtension', () => {
     });
 
     it('should do nothing when TYPEORM_OPTIONS is empty', async () => {
-      const extension = new TypeormExtension(providersPerApp, loggerMock, Injector.resolveAndCreate([]));
+      const extension = new TypeormExtension(providersPerApp, logMediatorMock, Injector.resolveAndCreate([]));
       const parentInjector = { get: jest.fn() } as unknown as Injector;
       const injectorPerMod = { parent: parentInjector } as Injector;
 
@@ -247,7 +272,7 @@ describe('TypeormExtension', () => {
       expect(parentInjector.get).not.toHaveBeenCalled();
     });
 
-    it('should warn when DataSourceManager is not found in app injector', async () => {
+    it('should warn via logMediator when DataSourceManager is not found in app injector', async () => {
       const tempInjectorPerMod = Injector.resolveAndCreate([
         {
           token: TYPEORM_OPTIONS,
@@ -255,7 +280,7 @@ describe('TypeormExtension', () => {
           multi: true,
         },
       ]);
-      const extension = new TypeormExtension(providersPerApp, loggerMock, tempInjectorPerMod);
+      const extension = new TypeormExtension(providersPerApp, logMediatorMock, tempInjectorPerMod);
 
       const parentInjector = {
         get: jest.fn().mockReturnValue(null),
@@ -264,10 +289,10 @@ describe('TypeormExtension', () => {
 
       await extension.stage2(injectorPerMod);
 
-      expect(loggerMock.log).toHaveBeenCalledWith('warn', expect.stringContaining('DataSourceManager'));
+      expect(logMediatorMock.dataSourceManagerNotFound).toHaveBeenCalledWith(extension);
     });
 
-    it('should warn when a DataSource is not found in app injector', async () => {
+    it('should warn via logMediator when a DataSource is not found in app injector', async () => {
       const mockManager = { register: jest.fn() };
 
       const tempInjectorPerMod = Injector.resolveAndCreate([
@@ -277,12 +302,12 @@ describe('TypeormExtension', () => {
           multi: true,
         },
       ]);
-      const extension = new TypeormExtension(providersPerApp, loggerMock, tempInjectorPerMod);
+      const extension = new TypeormExtension(providersPerApp, logMediatorMock, tempInjectorPerMod);
 
       const parentInjector = {
         get: jest.fn((token) => {
           if (token === DataSourceManager) return mockManager;
-          return null; // DataSource not found
+          return null;
         }),
       } as unknown as Injector;
       const injectorPerMod = { parent: parentInjector } as Injector;
@@ -290,7 +315,7 @@ describe('TypeormExtension', () => {
       await extension.stage2(injectorPerMod);
 
       expect(mockManager.register).not.toHaveBeenCalled();
-      expect(loggerMock.log).toHaveBeenCalledWith('warn', expect.stringContaining('"missing"'));
+      expect(logMediatorMock.dataSourceNotFoundInAppInjector).toHaveBeenCalledWith(extension, 'missing');
     });
   });
 });

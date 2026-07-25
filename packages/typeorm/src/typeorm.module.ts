@@ -8,7 +8,7 @@ import { createRepositoryProviders } from './typeorm.providers.js';
 import { getDataSourceToken, getEntityManagerToken } from './typeorm.utils.js';
 import type { EntityClassOrSchema, TypeormModuleOptions } from './types.js';
 import { DataSourceManager } from './data-source-manager.js';
-import { DataSourceNameRegistry } from './data-source-name-registry.js';
+import { TypeormLogMediator } from './typeorm.log-mediator.js';
 
 /**
  * Ditsmod integration module for TypeORM (>= v1.0.0).
@@ -32,7 +32,7 @@ import { DataSourceNameRegistry } from './data-source-name-registry.js';
  * ```
  */
 @featureModule({
-  providersPerApp: [DataSourceManager],
+  providersPerApp: [DataSourceManager, TypeormLogMediator],
   extensions: [
     {
       extension: TypeormExtension,
@@ -52,10 +52,6 @@ export class TypeormModule {
    */
   static forRoot(options: TypeormModuleOptions = {}): DynamicModule<TypeormModule> {
     const name = options.name || DEFAULT_DATA_SOURCE_NAME;
-
-    // Warn early (at module-decorator evaluation time) via console.warn if this name is already in use.
-    DataSourceNameRegistry.register(name);
-
     const dsToken = getDataSourceToken(name);
     const emToken = getEntityManagerToken(name);
 

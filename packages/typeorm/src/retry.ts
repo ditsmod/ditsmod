@@ -1,5 +1,6 @@
-import type { Logger } from '@ditsmod/core';
 import type { DataSource } from 'typeorm';
+
+import type { TypeormLogMediator } from './typeorm.log-mediator.js';
 
 export interface TypeormRetryOptions {
   retryAttempts?: number;
@@ -21,7 +22,8 @@ export interface TypeormRetryOptions {
 export async function initializeWithRetry(
   dataSource: DataSource,
   options: TypeormRetryOptions,
-  logger: Logger,
+  log: TypeormLogMediator,
+  sender: object,
   dataSourceName: string,
 ): Promise<DataSource> {
   const { retryAttempts = 9, retryDelay = 3000, toRetry, verboseRetryLog } = options;
@@ -36,12 +38,8 @@ export async function initializeWithRetry(
       }
       lastError = err;
       if (attempt < retryAttempts) {
-        const dsInfo = dataSourceName === 'default' ? '' : ` (${dataSourceName})`;
         const verboseMessage = verboseRetryLog ? ` Message: ${(err as Error).message}.` : '';
-        logger.log(
-          'error',
-          `Unable to connect to the database${dsInfo}.${verboseMessage} Retrying (${attempt + 1})...`,
-        );
+        log.unableToConnectToDatabase(sender, dataSourceName, attempt + 1, verboseMessage);
         await new Promise((resolve) => setTimeout(resolve, retryDelay));
       }
     }

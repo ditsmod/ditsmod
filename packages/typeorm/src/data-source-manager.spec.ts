@@ -1,20 +1,20 @@
 import { jest } from '@jest/globals';
-import type { Logger } from '@ditsmod/core';
+import type { ModuleInfo } from '@ditsmod/core';
 import type { DataSource } from 'typeorm';
 
 import { DataSourceManager } from './data-source-manager.js';
-import { DataSourceNameRegistry } from './data-source-name-registry.js';
+import type { TypeormLogMediator } from './typeorm.log-mediator.js';
 
 describe('DataSourceManager', () => {
   let manager: DataSourceManager;
-  let loggerMock: jest.Mocked<Logger>;
+  let logMediatorMock: jest.Mocked<TypeormLogMediator>;
 
   beforeEach(() => {
-    DataSourceNameRegistry.clear();
-    loggerMock = {
-      log: jest.fn(),
+    logMediatorMock = {
+      duplicateDataSourceRegistration: jest.fn(),
+      failedToCloseDataSource: jest.fn(),
     } as any;
-    manager = new DataSourceManager(loggerMock);
+    manager = new DataSourceManager(logMediatorMock);
   });
 
   it('should register and retrieve a DataSource', () => {
@@ -28,17 +28,14 @@ describe('DataSourceManager', () => {
     expect(manager.get('unknown')).toBeUndefined();
   });
 
-  it('should warn when registering a DataSource with duplicate name', () => {
+  it('should warn via logMediator when registering a DataSource with duplicate name', () => {
     const mockDs1 = {} as DataSource;
     const mockDs2 = {} as DataSource;
 
     manager.register('default', mockDs1);
     manager.register('default', mockDs2);
 
-    expect(loggerMock.log).toHaveBeenCalledWith(
-      'warn',
-      'DataSource "default" is already registered. It will be overwritten.',
-    );
+    expect(logMediatorMock.duplicateDataSourceRegistration).toHaveBeenCalledWith(manager, 'default');
     expect(manager.get('default')).toBe(mockDs2);
   });
 
@@ -75,7 +72,7 @@ describe('DataSourceManager', () => {
     expect(manager.getAll().size).toBe(0);
   });
 
-  it('should catch and log errors during DataSource destroy on shutdown', async () => {
+  it('should catch and log errors via logMediator during DataSource destroy on shutdown', async () => {
     const destroyError = new Error('Connection error during close');
     const destroyFail = jest.fn<any>().mockRejectedValue(destroyError);
     const destroySuccess = jest.fn<any>().mockResolvedValue(undefined);
@@ -88,26 +85,8 @@ describe('DataSourceManager', () => {
 
     await expect(manager.onShutdown()).resolves.not.toThrow();
 
-    expect(loggerMock.log).toHaveBeenCalledWith('error', `Failed to close DataSource "fail": ${destroyError.message}`);
+    expect(logMediatorMock.failedToCloseDataSource).toHaveBeenCalledWith(manager, 'fail', destroyError);
     expect(destroySuccess).toHaveBeenCalledTimes(1);
     expect(manager.getAll().size).toBe(0);
-  });
-
-  it('should unregister DataSource names from DataSourceNameRegistry on shutdown', async () => {
-    const destroy = jest.fn<any>().mockResolvedValue(undefined);
-    const ds = { isInitialized: true, destroy } as unknown as DataSource;
-
-    DataSourceNameRegistry.register('default');
-    DataSourceNameRegistry.register('analytics');
-    manager.register('default', ds);
-    manager.register('analytics', ds);
-
-    expect(DataSourceNameRegistry.has('default')).toBe(true);
-    expect(DataSourceNameRegistry.has('analytics')).toBe(true);
-
-    await manager.onShutdown();
-
-    expect(DataSourceNameRegistry.has('default')).toBe(false);
-    expect(DataSourceNameRegistry.has('analytics')).toBe(false);
   });
 });
