@@ -1,3 +1,5 @@
+import type { Provider } from '@ditsmod/core';
+
 import { EntitiesMetadataStorage } from './entities-metadata-storage.js';
 import { TYPEORM_OPTIONS } from './constants.js';
 import { TypeormModule } from './typeorm.module.js';
@@ -41,7 +43,7 @@ describe('TypeormModule', () => {
 
       expect(EntitiesMetadataStorage.getEntities('default')).toEqual([User, Post]);
       expect(dynamicModule.module).toBe(TypeormModule);
-      expect((dynamicModule.providersPerMod as any[])?.length).toBe(2);
+      expect((dynamicModule.providersPerMod as Provider[])?.length).toBe(2);
       expect(dynamicModule.exports?.length).toBe(2);
     });
 
@@ -49,7 +51,7 @@ describe('TypeormModule', () => {
       const dynamicModule = TypeormModule.forFeature([User], 'analytics');
 
       expect(EntitiesMetadataStorage.getEntities('analytics')).toEqual([User]);
-      expect((dynamicModule.providersPerMod as any[])?.length).toBe(1);
+      expect((dynamicModule.providersPerMod as Provider[])?.length).toBe(1);
     });
   });
 });

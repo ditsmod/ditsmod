@@ -50,7 +50,7 @@ describe('TypeormExtension', () => {
       const mockDs = {
         isInitialized: true,
         manager: mockManager,
-      } as any;
+      };
 
       const dataSourceFactory = jest.fn<any>().mockResolvedValue(mockDs);
 
@@ -108,7 +108,7 @@ describe('TypeormExtension', () => {
           }
           return null;
         }),
-      } as any;
+      } as unknown as Injector;
 
       const injectorPerMod = {
         parent: parentInjector,
