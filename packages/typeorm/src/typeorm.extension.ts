@@ -21,8 +21,9 @@ import { getDataSourceToken, getEntityManagerToken } from './typeorm.utils.js';
 @injectable()
 export class TypeormExtension implements Extension<void> {
   constructor(
-    @inject(PROVIDERS_PER_APP) private providersPerApp: Provider[],
-    private logger: Logger,
+    @inject(PROVIDERS_PER_APP) protected providersPerApp: Provider[],
+    protected logger: Logger,
+    protected tempInjectorPerMod: Injector
   ) {}
 
   async stage1(isLastModule: boolean): Promise<void> {
@@ -30,17 +31,7 @@ export class TypeormExtension implements Extension<void> {
       return;
     }
 
-    // Resolve all TYPEORM_OPTIONS from providersPerApp (multi-provider → array)
-    const injectorPerApp = Injector.resolveAndCreate(this.providersPerApp, 'TypeormTempApp');
-    const allOptions = injectorPerApp.get(TYPEORM_OPTIONS, null);
-
-    if (!allOptions) {
-      return;
-    }
-
-    const optionsArray = Array.isArray(allOptions) ? allOptions : [allOptions];
-
-    for (const options of optionsArray) {
+    for (const options of this.tempInjectorPerMod.get(TYPEORM_OPTIONS, [])) {
       await this.initDataSource(options);
     }
   }
@@ -116,14 +107,7 @@ export class TypeormExtension implements Extension<void> {
       return;
     }
 
-    const injectorPerApp = Injector.resolveAndCreate(this.providersPerApp, 'TypeormTempApp2');
-    const allOptions = injectorPerApp.get(TYPEORM_OPTIONS, null);
-    if (!allOptions) {
-      return;
-    }
-
-    const optionsArray = Array.isArray(allOptions) ? allOptions : [allOptions];
-    for (const options of optionsArray) {
+    for (const options of this.tempInjectorPerMod.get(TYPEORM_OPTIONS, [])) {
       const name = options.name || DEFAULT_DATA_SOURCE_NAME;
       const dsToken = getDataSourceToken(name);
       const dataSource = injectorPerMod.parent?.get(dsToken, null) as DataSource | null;

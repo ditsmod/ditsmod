@@ -1,5 +1,6 @@
 import { jest } from '@jest/globals';
-import type { Logger, Provider, Injector } from '@ditsmod/core';
+import type { Logger, Provider } from '@ditsmod/core';
+import { Injector } from '@ditsmod/core';
 import type { DataSource } from 'typeorm';
 
 import { TYPEORM_OPTIONS } from './constants.js';
@@ -13,7 +14,6 @@ class User {}
 describe('TypeormExtension', () => {
   let providersPerApp: Provider[];
   let loggerMock: jest.Mocked<Logger>;
-  let extension: TypeormExtension;
 
   beforeEach(() => {
     EntitiesMetadataStorage.clear();
@@ -21,23 +21,26 @@ describe('TypeormExtension', () => {
     loggerMock = {
       log: jest.fn(),
     } as any;
-    extension = new TypeormExtension(providersPerApp, loggerMock);
   });
 
   describe('stage1()', () => {
     it('should do nothing if isLastModule is false', async () => {
-      providersPerApp.push({
-        token: TYPEORM_OPTIONS,
-        useValue: { type: 'postgres' },
-        multi: true,
-      });
+      const tempInjectorPerMod = Injector.resolveAndCreate([
+        {
+          token: TYPEORM_OPTIONS,
+          useValue: { type: 'postgres' },
+          multi: true,
+        },
+      ]);
+      const extension = new TypeormExtension(providersPerApp, loggerMock, tempInjectorPerMod);
 
       await extension.stage1(false);
 
-      expect(providersPerApp.length).toBe(1);
+      expect(providersPerApp.length).toBe(0);
     });
 
     it('should do nothing if TYPEORM_OPTIONS is missing', async () => {
+      const extension = new TypeormExtension(providersPerApp, loggerMock, Injector.resolveAndCreate([]));
       await extension.stage1(true);
 
       expect(providersPerApp.length).toBe(0);
@@ -54,15 +57,18 @@ describe('TypeormExtension', () => {
 
       const dataSourceFactory = jest.fn<any>().mockResolvedValue(mockDs);
 
-      providersPerApp.push({
-        token: TYPEORM_OPTIONS,
-        useValue: {
-          manualInitialization: true,
-          dataSourceFactory,
-          entities: [],
+      const tempInjectorPerMod = Injector.resolveAndCreate([
+        {
+          token: TYPEORM_OPTIONS,
+          useValue: {
+            manualInitialization: true,
+            dataSourceFactory,
+            entities: [],
+          },
+          multi: true,
         },
-        multi: true,
-      });
+      ]);
+      const extension = new TypeormExtension(providersPerApp, loggerMock, tempInjectorPerMod);
 
       await extension.stage1(true);
 
@@ -91,11 +97,14 @@ describe('TypeormExtension', () => {
       };
       const mockDs = {} as DataSource;
 
-      providersPerApp.push({
-        token: TYPEORM_OPTIONS,
-        useValue: { name: 'analytics' },
-        multi: true,
-      });
+      const tempInjectorPerMod = Injector.resolveAndCreate([
+        {
+          token: TYPEORM_OPTIONS,
+          useValue: { name: 'analytics' },
+          multi: true,
+        },
+      ]);
+      const extension = new TypeormExtension(providersPerApp, loggerMock, tempInjectorPerMod);
 
       const parentInjector = {
         get: jest.fn((token) => {
