@@ -32,8 +32,7 @@ export class TypeormExtension implements Extension<void> {
 
     // Resolve all TYPEORM_OPTIONS from providersPerApp (multi-provider → array)
     const injectorPerApp = Injector.resolveAndCreate(this.providersPerApp, 'TypeormTempApp');
-    const allOptions = injectorPerApp.get(TYPEORM_OPTIONS, null) as
-      TypeormModuleOptions | TypeormModuleOptions[] | null;
+    const allOptions = injectorPerApp.get(TYPEORM_OPTIONS, null);
 
     if (!allOptions) {
       return;
@@ -121,8 +120,7 @@ export class TypeormExtension implements Extension<void> {
     }
 
     const injectorPerApp = Injector.resolveAndCreate(this.providersPerApp, 'TypeormTempApp2');
-    const allOptions = injectorPerApp.get(TYPEORM_OPTIONS, null) as
-      TypeormModuleOptions | TypeormModuleOptions[] | null;
+    const allOptions = injectorPerApp.get(TYPEORM_OPTIONS, null);
     if (!allOptions) {
       return;
     }
