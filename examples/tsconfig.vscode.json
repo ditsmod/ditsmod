@@ -25,6 +25,7 @@
     { "path": "19-session-cookie/tsconfig.json" },
     { "path": "20-authjs/tsconfig.json" },
     { "path": "21-sentry/tsconfig.json" },
-    { "path": "22-schedule/tsconfig.json" }
+    { "path": "22-schedule/tsconfig.json" },
+    { "path": "23-typeorm/tsconfig.json" }
   ]
 }
