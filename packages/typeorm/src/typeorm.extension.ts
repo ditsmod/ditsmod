@@ -40,9 +40,6 @@ export class TypeormExtension implements Extension<void> {
 
     const optionsArray = Array.isArray(allOptions) ? allOptions : [allOptions];
 
-    // Register DataSourceManager as an app-level singleton
-    this.providersPerApp.push(DataSourceManager);
-
     for (const options of optionsArray) {
       await this.initDataSource(options);
     }
@@ -114,7 +111,7 @@ export class TypeormExtension implements Extension<void> {
 
   async stage2(injectorPerMod: Injector): Promise<void> {
     // Register each DataSource into the DataSourceManager for shutdown management
-    const manager = injectorPerMod.parent?.get(DataSourceManager, null) as DataSourceManager | null;
+    const manager = injectorPerMod.parent?.get(DataSourceManager, null);
     if (!manager) {
       return;
     }

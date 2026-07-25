@@ -66,7 +66,6 @@ describe('TypeormExtension', () => {
 
       await extension.stage1(true);
 
-      expect(providersPerApp).toContain(DataSourceManager);
       expect(dataSourceFactory).toHaveBeenCalledWith(
         expect.objectContaining({
           entities: [User],

@@ -7,6 +7,7 @@ import { EntitiesMetadataStorage } from './entities-metadata-storage.js';
 import { createRepositoryProviders } from './typeorm.providers.js';
 import { getDataSourceToken, getEntityManagerToken } from './typeorm.utils.js';
 import type { EntityClassOrSchema, TypeormModuleOptions } from './types.js';
+import { DataSourceManager } from './data-source-manager.js';
 
 /**
  * Ditsmod integration module for TypeORM (>= v1.0.0).
@@ -30,6 +31,7 @@ import type { EntityClassOrSchema, TypeormModuleOptions } from './types.js';
  * ```
  */
 @featureModule({
+  providersPerApp: [DataSourceManager],
   extensions: [
     {
       extension: TypeormExtension,
