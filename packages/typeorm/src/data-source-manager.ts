@@ -1,0 +1,47 @@
+import { injectable, Logger, OnShutdown } from '@ditsmod/core';
+import type { DataSource } from 'typeorm';
+
+/**
+ * Centralized manager for all `DataSource` instances registered via
+ * `TypeormModule.forRoot()`. Implements `OnShutdown` to gracefully
+ * destroy all connections during application shutdown.
+ *
+ * This replaces the NestJS pattern where the core module itself implements
+ * `OnApplicationShutdown` and uses `ModuleRef` to look up the `DataSource`.
+ */
+@injectable()
+export class DataSourceManager implements OnShutdown {
+  private readonly dataSources = new Map<string, DataSource>();
+
+  constructor(private logger: Logger) {}
+
+  register(name: string, dataSource: DataSource): void {
+    if (this.dataSources.has(name)) {
+      this.logger.log('warn', `DataSource "${name}" is already registered. It will be overwritten.`);
+    }
+    this.dataSources.set(name, dataSource);
+  }
+
+  get(name: string): DataSource | undefined {
+    return this.dataSources.get(name);
+  }
+
+  getAll(): Map<string, DataSource> {
+    return new Map(this.dataSources);
+  }
+
+  async onShutdown(): Promise<void> {
+    const destroyPromises: Promise<void>[] = [];
+    for (const [name, ds] of this.dataSources) {
+      if (ds.isInitialized) {
+        destroyPromises.push(
+          ds.destroy().catch((err) => {
+            this.logger.log('error', `Failed to close DataSource "${name}": ${err.message}`);
+          }),
+        );
+      }
+    }
+    await Promise.allSettled(destroyPromises);
+    this.dataSources.clear();
+  }
+}
