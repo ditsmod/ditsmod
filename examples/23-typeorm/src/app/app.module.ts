@@ -14,7 +14,7 @@ import { SystemModule } from './modules/system/system.module.js';
       username: process.env.MYSQL_USERNAME || 'root',
       password: process.env.MYSQL_PASSWORD || 'password',
       database: process.env.MYSQL_DATABASE || 'test_db',
-      synchronize: true,
+      synchronize: true, // ⚠️ Warning: Disable synchronize in production! Use migrations instead.
       autoLoadEntities: true,
     }),
   ],

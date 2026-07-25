@@ -21,6 +21,14 @@ function createMockDataSource() {
     }),
   };
 
+  const mockEntityManager = {
+    create: jest.fn<any>().mockImplementation((_entityClass: any, dto: any) => ({ id: users.length + 1, ...dto })),
+    save: jest.fn<any>().mockImplementation(async (entity: any) => {
+      users.push(entity);
+      return entity;
+    }),
+  };
+
   const ds = {
     isInitialized: false,
     entityMetadatas: [{ target: User }],
@@ -33,7 +41,10 @@ function createMockDataSource() {
     }),
     getRepository: jest.fn<any>().mockReturnValue(mockRepo),
     getTreeRepository: jest.fn<any>().mockReturnValue(mockRepo),
-    manager: {} as EntityManager,
+    manager: mockEntityManager as unknown as EntityManager,
+    transaction: jest.fn<any>().mockImplementation(async (runInTransaction: (em: any) => Promise<any>) => {
+      return runInTransaction(mockEntityManager);
+    }),
   } as unknown as DataSource;
 
   return ds;
@@ -76,13 +87,14 @@ describe('23-typeorm E2E', () => {
     });
   });
 
-  it('should create and list users via /users', async () => {
-    const postRes = await testAgent.post('/users');
+  it('should create user with body payload and list via /users', async () => {
+    const customUser = { name: 'Dave', email: 'dave@example.com' };
+    const postRes = await testAgent.post('/users').send(customUser);
     expect(postRes.status).toBe(200);
     expect(postRes.body).toEqual({
       id: 1,
-      name: 'Alice',
-      email: 'alice@example.com',
+      name: 'Dave',
+      email: 'dave@example.com',
     });
 
     const getRes = await testAgent.get('/users');
@@ -90,8 +102,24 @@ describe('23-typeorm E2E', () => {
     expect(getRes.body).toHaveLength(1);
     expect(getRes.body[0]).toEqual({
       id: 1,
-      name: 'Alice',
-      email: 'alice@example.com',
+      name: 'Dave',
+      email: 'dave@example.com',
     });
+  });
+
+  it('should create multiple users in a transaction via POST /users/batch', async () => {
+    const batchUsers = [
+      { name: 'Eve', email: 'eve@example.com' },
+      { name: 'Frank', email: 'frank@example.com' },
+    ];
+    const postRes = await testAgent.post('/users/batch').send(batchUsers);
+    expect(postRes.status).toBe(200);
+    expect(postRes.body).toHaveLength(2);
+    expect(postRes.body[0]).toEqual(expect.objectContaining({ name: 'Eve', email: 'eve@example.com' }));
+    expect(postRes.body[1]).toEqual(expect.objectContaining({ name: 'Frank', email: 'frank@example.com' }));
+
+    const getRes = await testAgent.get('/users');
+    expect(getRes.status).toBe(200);
+    expect(getRes.body).toHaveLength(3);
   });
 });

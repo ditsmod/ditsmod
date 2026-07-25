@@ -1,24 +1,34 @@
-import { controller, route } from '@ditsmod/rest';
-import { injectRepository } from '@ditsmod/typeorm';
-import type { Repository } from 'typeorm';
+import { ctx } from '@ditsmod/core';
+import { controller, route, RequestContext } from '@ditsmod/rest';
+import { HTTP_BODY } from '@ditsmod/body-parser';
 
+import { UserService } from './user.service.js';
 import { User } from './user.entity.js';
 
 @controller()
 export class UserController {
-  constructor(@injectRepository(User) private userRepo: Repository<User>) {}
+  constructor(private userService: UserService) {}
 
   @route('GET', 'users')
   async getUsers() {
-    return this.userRepo.find();
+    return this.userService.findAll();
   }
 
   @route('POST', 'users')
-  async createUser() {
-    const user = this.userRepo.create({
-      name: 'Alice',
-      email: 'alice@example.com',
-    });
-    return this.userRepo.save(user);
+  async createUser(ctx: RequestContext, @ctx(HTTP_BODY) body: Partial<User>) {
+    const userData = body?.name ? body : { name: 'Alice', email: 'alice@example.com' };
+    return this.userService.create(userData);
+  }
+
+  @route('POST', 'users/batch')
+  async createUsersBatch(ctx: RequestContext, @ctx(HTTP_BODY) body: Partial<User>[]) {
+    const usersData =
+      Array.isArray(body) && body.length > 0
+        ? body
+        : [
+            { name: 'Bob', email: 'bob@example.com' },
+            { name: 'Charlie', email: 'charlie@example.com' },
+          ];
+    return this.userService.createUsersInTransaction(usersData);
   }
 }
