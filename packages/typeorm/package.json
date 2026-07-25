@@ -28,7 +28,9 @@
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)"
   },
   "keywords": [
-    "ditsmod"
+    "ditsmod",
+    "typeorm",
+    "orm"
   ],
   "author": "",
   "license": "MIT",
