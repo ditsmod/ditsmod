@@ -230,6 +230,7 @@ describe('TypeormExtension', () => {
     it('should register created DataSource into DataSourceManager', async () => {
       const mockManager = {
         register: jest.fn(),
+        has: jest.fn().mockReturnValue(false),
       };
       const mockDs = {} as DataSource;
 
@@ -263,6 +264,44 @@ describe('TypeormExtension', () => {
       expect(mockManager.register).toHaveBeenCalledWith('analytics', mockDs);
     });
 
+    it('should not register DataSource if already registered in DataSourceManager', async () => {
+      const mockManager = {
+        register: jest.fn(),
+        has: jest.fn().mockReturnValue(true),
+      };
+      const mockDs = {} as DataSource;
+
+      const tempInjectorPerMod = Injector.resolveAndCreate([
+        {
+          token: TYPEORM_OPTIONS,
+          useValue: { name: 'analytics' },
+          multi: true,
+        },
+      ]);
+      const extension = new TypeormExtension(providersPerApp, logMediatorMock, tempInjectorPerMod);
+
+      const parentInjector = {
+        get: jest.fn((token) => {
+          if (token === DataSourceManager) {
+            return mockManager;
+          }
+          if (token === getDataSourceToken('analytics')) {
+            return mockDs;
+          }
+          return null;
+        }),
+      } as unknown as Injector;
+
+      const injectorPerMod = {
+        parent: parentInjector,
+      } as Injector;
+
+      await extension.stage2(injectorPerMod);
+
+      expect(mockManager.has).toHaveBeenCalledWith('analytics');
+      expect(mockManager.register).not.toHaveBeenCalled();
+    });
+
     it('should do nothing when TYPEORM_OPTIONS is empty', async () => {
       const extension = new TypeormExtension(providersPerApp, logMediatorMock, Injector.resolveAndCreate([]));
       const parentInjector = { get: jest.fn() } as unknown as Injector;
@@ -294,7 +333,7 @@ describe('TypeormExtension', () => {
     });
 
     it('should warn via logMediator when a DataSource is not found in app injector', async () => {
-      const mockManager = { register: jest.fn() };
+      const mockManager = { register: jest.fn(), has: jest.fn().mockReturnValue(false) };
 
       const tempInjectorPerMod = Injector.resolveAndCreate([
         {

@@ -168,7 +168,9 @@ export class TypeormExtension implements Extension<void> {
       const dsToken = getDataSourceToken(name);
       const dataSource = injectorPerMod.parent?.get(dsToken, null) as DataSource | null;
       if (dataSource) {
-        manager.register(name, dataSource);
+        if (!manager.has(name)) {
+          manager.register(name, dataSource);
+        }
       } else {
         this.log.dataSourceNotFoundInAppInjector(this, name);
       }

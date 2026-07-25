@@ -25,6 +25,10 @@ export class DataSourceManager implements OnShutdown {
     return this.dataSources.get(name);
   }
 
+  has(name: string): boolean {
+    return this.dataSources.has(name);
+  }
+
   getAll(): Map<string, DataSource> {
     return new Map(this.dataSources);
   }
