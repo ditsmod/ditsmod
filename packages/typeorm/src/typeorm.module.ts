@@ -77,7 +77,7 @@ export class TypeormModule {
    * `Repository<Entity>` providers for each.
    *
    * The created repositories are available for injection via
-   * `@InjectRepository(Entity)` or `@inject(getRepositoryToken(Entity))`.
+   * `@injectRepository(Entity)` or `@inject(getRepositoryToken(Entity))`.
    *
    * Entities are automatically collected into `EntitiesMetadataStorage`
    * for auto-loading into the `DataSource` (when `autoLoadEntities` is enabled).

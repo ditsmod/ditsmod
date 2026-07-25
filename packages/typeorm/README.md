@@ -69,17 +69,17 @@ export class UserModule {}
 
 ### 3. Inject Repositories
 
-Inject entity repositories into your controllers or services using `@InjectRepository(Entity)`:
+Inject entity repositories into your controllers or services using `@injectRepository(Entity)`:
 
 ```ts
 import { controller, route } from '@ditsmod/rest';
-import { InjectRepository } from '@ditsmod/typeorm';
+import { injectRepository } from '@ditsmod/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity.js';
 
 @controller()
 export class UserController {
-  constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
+  constructor(@injectRepository(User) private userRepo: Repository<User>) {}
 
   @route('GET', 'users')
   async getUsers() {
@@ -100,14 +100,14 @@ You can inject the initialized `DataSource` or `EntityManager` instances directl
 
 ```ts
 import { controller, route } from '@ditsmod/rest';
-import { InjectDataSource, InjectEntityManager } from '@ditsmod/typeorm';
+import { injectDataSource, injectEntityManager } from '@ditsmod/typeorm';
 import { DataSource, EntityManager } from 'typeorm';
 
 @controller()
 export class SystemController {
   constructor(
-    @InjectDataSource() private dataSource: DataSource,
-    @InjectEntityManager() private entityManager: EntityManager,
+    @injectDataSource() private dataSource: DataSource,
+    @injectEntityManager() private entityManager: EntityManager,
   ) {}
 
   @route('GET', 'db-status')
@@ -161,8 +161,8 @@ Inject repositories or data sources for named databases:
 @controller()
 export class AnalyticsController {
   constructor(
-    @InjectRepository(LogEntity, 'analytics') private logRepo: Repository<LogEntity>,
-    @InjectDataSource('analytics') private analyticsDs: DataSource,
+    @injectRepository(LogEntity, 'analytics') private logRepo: Repository<LogEntity>,
+    @injectDataSource('analytics') private analyticsDs: DataSource,
   ) {}
 }
 ```

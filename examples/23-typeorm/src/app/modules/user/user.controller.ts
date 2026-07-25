@@ -1,12 +1,12 @@
 import { controller, route } from '@ditsmod/rest';
-import { InjectRepository } from '@ditsmod/typeorm';
+import { injectRepository } from '@ditsmod/typeorm';
 import type { Repository } from 'typeorm';
 
 import { User } from './user.entity.js';
 
 @controller()
 export class UserController {
-  constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
+  constructor(@injectRepository(User) private userRepo: Repository<User>) {}
 
   @route('GET', 'users')
   async getUsers() {

@@ -1,12 +1,12 @@
 import { controller, route } from '@ditsmod/rest';
-import { InjectDataSource, InjectEntityManager } from '@ditsmod/typeorm';
+import { injectDataSource, injectEntityManager } from '@ditsmod/typeorm';
 import type { DataSource, EntityManager } from 'typeorm';
 
 @controller()
 export class SystemController {
   constructor(
-    @InjectDataSource() private dataSource: DataSource,
-    @InjectEntityManager() private entityManager: EntityManager,
+    @injectDataSource() private dataSource: DataSource,
+    @injectEntityManager() private entityManager: EntityManager,
   ) {}
 
   @route('GET', 'db-status')

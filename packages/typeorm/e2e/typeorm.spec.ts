@@ -5,7 +5,7 @@ import { controller, route, restRootModule, restModule, HttpServer } from '@dits
 import { TestRestApplication } from '@ditsmod/rest-testing';
 import { DataSource, Repository, EntityManager } from 'typeorm';
 
-import { TypeormModule, InjectRepository, InjectDataSource, InjectEntityManager } from '#src/index.js';
+import { TypeormModule, injectRepository, injectDataSource, injectEntityManager } from '#src/index.js';
 
 class User {
   id!: number;
@@ -20,9 +20,9 @@ class LogEntity {
 @controller()
 class UserController {
   constructor(
-    @InjectRepository(User) private userRepo: Repository<User>,
-    @InjectDataSource() private ds: DataSource,
-    @InjectEntityManager() private em: EntityManager,
+    @injectRepository(User) private userRepo: Repository<User>,
+    @injectDataSource() private ds: DataSource,
+    @injectEntityManager() private em: EntityManager,
   ) {}
 
   @route('GET', 'users')
@@ -45,8 +45,8 @@ class UserModule {}
 @controller()
 class AnalyticsController {
   constructor(
-    @InjectRepository(LogEntity, 'analytics') private logRepo: Repository<LogEntity>,
-    @InjectDataSource('analytics') private analyticsDs: DataSource,
+    @injectRepository(LogEntity, 'analytics') private logRepo: Repository<LogEntity>,
+    @injectDataSource('analytics') private analyticsDs: DataSource,
   ) {}
 
   @route('GET', 'analytics/logs')
