@@ -17,6 +17,7 @@
     { "path": "session-cookie/tsconfig.unit.json" },
     { "path": "sqb/tsconfig.unit.json" },
     { "path": "trpc/tsconfig.unit.json" },
+    { "path": "typeorm/tsconfig.e2e.json" },
     { "path": "testing/tsconfig.unit.json" },
     { "path": "graphql/tsconfig.unit.json" },
     { "path": "sentry/tsconfig.unit.json" },
