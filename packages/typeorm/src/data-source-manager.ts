@@ -12,10 +12,7 @@ import { DataSourceNameRegistry } from './data-source-name-registry.js';
 export class DataSourceManager implements OnShutdown {
   private readonly dataSources = new Map<string, DataSource>();
 
-  constructor(private logger: Logger) {
-    // Make the registry use the same logger as the application
-    DataSourceNameRegistry.setLogger(logger);
-  }
+  constructor(private logger: Logger) {}
 
   register(name: string, dataSource: DataSource): void {
     if (this.dataSources.has(name)) {

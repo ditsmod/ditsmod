@@ -67,32 +67,22 @@ describe('typeorm.providers', () => {
     expect(provider.deps).toEqual([getDataSourceToken('analytics')]);
   });
 
-  it('should throw a descriptive error when DataSource is not initialized', () => {
+  it('should return repository even if DataSource is uninitialized (allowing manualInitialization)', () => {
     const providers = createRepositoryProviders([User]);
     const provider = providers[0];
 
+    const mockRepo = {};
     const uninitializedDs = {
       isInitialized: false,
-      entityMetadatas: [],
-      getRepository: jest.fn(),
+      entityMetadatas: [{ target: User }],
+      getRepository: jest.fn<any>().mockReturnValue(mockRepo),
       getTreeRepository: jest.fn(),
     };
 
-    expect(() => provider.useFactory(uninitializedDs)).toThrow(
-      expect.objectContaining({
-        message: expect.stringContaining('User'),
-      }),
-    );
-    expect(() => provider.useFactory(uninitializedDs)).toThrow(
-      expect.objectContaining({
-        message: expect.stringContaining('not initialized'),
-      }),
-    );
-    expect(() => provider.useFactory(uninitializedDs)).toThrow(
-      expect.objectContaining({
-        message: expect.stringContaining('manualInitialization'),
-      }),
-    );
+    const repo = provider.useFactory(uninitializedDs);
+
+    expect(uninitializedDs.getRepository).toHaveBeenCalledWith(User);
+    expect(repo).toBe(mockRepo);
   });
 
   it('should use getRepository when entity is not found in entityMetadatas', () => {

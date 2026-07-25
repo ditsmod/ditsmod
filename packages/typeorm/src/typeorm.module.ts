@@ -53,9 +53,7 @@ export class TypeormModule {
   static forRoot(options: TypeormModuleOptions = {}): DynamicModule<TypeormModule> {
     const name = options.name || DEFAULT_DATA_SOURCE_NAME;
 
-    // Warn early (at module-decorator evaluation time) if this name is already in use.
-    // The DI logger is not yet available here, so DataSourceNameRegistry falls back
-    // to console.warn until DataSourceManager wires up the application logger.
+    // Warn early (at module-decorator evaluation time) via console.warn if this name is already in use.
     DataSourceNameRegistry.register(name);
 
     const dsToken = getDataSourceToken(name);
