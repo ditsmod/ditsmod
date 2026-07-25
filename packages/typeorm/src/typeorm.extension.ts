@@ -1,7 +1,7 @@
-import { Extension, injectable, inject, PROVIDERS_PER_APP, Injector, Logger } from '@ditsmod/core';
-import type { Provider } from '@ditsmod/core';
+import { Extension, injectable, inject, PROVIDERS_PER_APP, Injector, Logger, isValueProvider } from '@ditsmod/core';
+import type { Provider, ValueProvider } from '@ditsmod/core';
 import { DataSource } from 'typeorm';
-import type { DataSourceOptions } from 'typeorm';
+import type { DataSourceOptions, EntityManager } from 'typeorm';
 
 import { TYPEORM_OPTIONS, DEFAULT_DATA_SOURCE_NAME } from './constants.js';
 import { DataSourceManager } from './data-source-manager.js';
@@ -96,16 +96,18 @@ export class TypeormExtension implements Extension<void> {
     const dsToken = getDataSourceToken(name);
     const emToken = getEntityManagerToken(name);
 
-    const dsProvider = this.providersPerApp.find((p) => (p as any).token === dsToken);
-    if (dsProvider && 'useValue' in (dsProvider as any)) {
-      (dsProvider as any).useValue = dataSource;
+    const dsProvider = this.providersPerApp.find((p) => isValueProvider(p) && p.token === dsToken) as
+      ValueProvider<DataSource> | undefined;
+    if (dsProvider) {
+      dsProvider.useValue = dataSource;
     } else {
       this.providersPerApp.push({ token: dsToken, useValue: dataSource });
     }
 
-    const emProvider = this.providersPerApp.find((p) => (p as any).token === emToken);
-    if (emProvider && 'useValue' in (emProvider as any)) {
-      (emProvider as any).useValue = dataSource.manager;
+    const emProvider = this.providersPerApp.find((p) => isValueProvider(p) && p.token === emToken) as
+      ValueProvider<EntityManager> | undefined;
+    if (emProvider) {
+      emProvider.useValue = dataSource.manager;
     } else {
       this.providersPerApp.push({ token: emToken, useValue: dataSource.manager });
     }
@@ -129,7 +131,7 @@ export class TypeormExtension implements Extension<void> {
     for (const options of optionsArray) {
       const name = options.name || DEFAULT_DATA_SOURCE_NAME;
       const dsToken = getDataSourceToken(name);
-      const dataSource = injectorPerMod.parent?.get(dsToken as any, null) as DataSource | null;
+      const dataSource = injectorPerMod.parent?.get(dsToken, null) as DataSource | null;
       if (dataSource) {
         manager.register(name, dataSource);
       }

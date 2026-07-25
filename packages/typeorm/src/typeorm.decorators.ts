@@ -24,7 +24,7 @@ export const injectRepository = (entity: EntityClassOrSchema, dataSourceName?: s
  * ```
  */
 export const injectDataSource = (dataSourceName?: string): ReturnType<typeof inject> =>
-  inject(getDataSourceToken(dataSourceName) as any);
+  inject(getDataSourceToken(dataSourceName));
 
 /**
  * Parameter decorator that injects the `EntityManager` (default or named).
@@ -35,4 +35,4 @@ export const injectDataSource = (dataSourceName?: string): ReturnType<typeof inj
  * ```
  */
 export const injectEntityManager = (dataSourceName?: string): ReturnType<typeof inject> =>
-  inject(getEntityManagerToken(dataSourceName) as any);
+  inject(getEntityManagerToken(dataSourceName));

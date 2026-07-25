@@ -23,7 +23,7 @@ export function createRepositoryProviders(
     useFactory: (dataSource: DataSource) => {
       const entityMetadata = dataSource.entityMetadatas.find((meta) => meta.target === entity);
       const isTreeEntity = typeof entityMetadata?.treeType !== 'undefined';
-      return isTreeEntity ? dataSource.getTreeRepository(entity as any) : dataSource.getRepository(entity as any);
+      return isTreeEntity ? dataSource.getTreeRepository(entity) : dataSource.getRepository(entity);
     },
   }));
 }
