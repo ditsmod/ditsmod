@@ -1,3 +1,4 @@
+import type { AnyObj} from '@ditsmod/core';
 import { InjectionToken } from '@ditsmod/core';
 import { DataSource, EntityManager, EntitySchema } from 'typeorm';
 import type { Repository } from 'typeorm';
@@ -61,16 +62,16 @@ export function getEntityManagerToken(
  * because `Repository` is generic and the class reference alone cannot
  * distinguish between `Repository<User>` and `Repository<Post>`.
  */
-export function getRepositoryToken(
-  entity: EntityClassOrSchema,
+export function getRepositoryToken<T extends AnyObj = AnyObj>(
+  entity: EntityClassOrSchema<T>,
   dataSourceName: string = DEFAULT_DATA_SOURCE_NAME,
-): InjectionToken<Repository<any>> {
+): InjectionToken<Repository<T>> {
   const entityName = getEntityName(entity);
   const prefix = dataSourceName === DEFAULT_DATA_SOURCE_NAME ? '' : `${dataSourceName}_`;
   const key = `${prefix}${entityName}Repository`;
   let token = repositoryTokens.get(key);
   if (!token) {
-    token = new InjectionToken<Repository<any>>(key);
+    token = new InjectionToken<Repository<T>>(key);
     repositoryTokens.set(key, token);
   }
   return token;
