@@ -3,4 +3,5 @@
 1. Copy this directory.
 2. Rename the package name and description in it.
 3. Review dependencies.
-4. Add this package to `packages/tsconfig*.json`. 
+4. Add `references` to `tsconfig*.json`. 
+5. Add this package to `packages/tsconfig*.json`. 

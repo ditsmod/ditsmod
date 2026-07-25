@@ -8,6 +8,5 @@
   "include": ["src/**/*.spec.ts", "src/**/*.d.ts"],
   "references": [
     { "path": "./tsconfig.build.json" },
-    { "path": "../rest-testing/tsconfig.build.json" },
   ]
 }
