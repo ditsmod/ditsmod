@@ -57,9 +57,9 @@ describe('DataSourceManager', () => {
     const destroy1 = jest.fn<any>().mockResolvedValue(undefined);
     const destroy2 = jest.fn<any>().mockResolvedValue(undefined);
 
-    const ds1 = { isInitialized: true, destroy: destroy1 } as any;
-    const ds2 = { isInitialized: true, destroy: destroy2 } as any;
-    const dsUninit = { isInitialized: false, destroy: jest.fn() } as any;
+    const ds1 = { isInitialized: true, destroy: destroy1 } as unknown as DataSource;
+    const ds2 = { isInitialized: true, destroy: destroy2 } as unknown as DataSource;
+    const dsUninit = { isInitialized: false, destroy: jest.fn() } as unknown as DataSource;
 
     manager.register('ds1', ds1);
     manager.register('ds2', ds2);
@@ -78,8 +78,8 @@ describe('DataSourceManager', () => {
     const destroyFail = jest.fn<any>().mockRejectedValue(destroyError);
     const destroySuccess = jest.fn<any>().mockResolvedValue(undefined);
 
-    const dsFail = { isInitialized: true, destroy: destroyFail } as any;
-    const dsSuccess = { isInitialized: true, destroy: destroySuccess } as any;
+    const dsFail = { isInitialized: true, destroy: destroyFail } as unknown as DataSource;
+    const dsSuccess = { isInitialized: true, destroy: destroySuccess } as unknown as DataSource;
 
     manager.register('fail', dsFail);
     manager.register('success', dsSuccess);
