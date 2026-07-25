@@ -1,4 +1,4 @@
-import type { Provider } from '@ditsmod/core';
+import type { FunctionFactoryProvider } from '@ditsmod/core';
 import type { DataSource } from 'typeorm';
 
 import type { EntityClassOrSchema } from './types.js';
@@ -15,7 +15,7 @@ import { DEFAULT_DATA_SOURCE_NAME } from './constants.js';
 export function createRepositoryProviders(
   entities: EntityClassOrSchema[],
   dataSourceName: string = DEFAULT_DATA_SOURCE_NAME,
-): Provider[] {
+): FunctionFactoryProvider[] {
   const dsToken = getDataSourceToken(dataSourceName);
   return entities.map((entity) => ({
     token: getRepositoryToken(entity, dataSourceName),
